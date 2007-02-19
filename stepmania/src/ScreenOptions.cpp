@@ -116,7 +116,7 @@ void ScreenOptions::Init()
 
 	m_sprPage.Load( THEME->GetPathG(m_sName,"page") );
 	m_sprPage->SetName( "Page" );
-	SET_XY( m_sprPage );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprPage );
 	m_framePage.AddChild( m_sprPage );
 
 	// init line line highlights
@@ -145,7 +145,7 @@ void ScreenOptions::Init()
 			m_textExplanation[p].LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
 			m_textExplanation[p].SetDrawOrder( 2 );
 			m_textExplanation[p].SetName( "Explanation" + PlayerNumberToString(p) );
-			SET_XY( m_textExplanation[p] );
+			LOAD_ALL_COMMANDS_AND_SET_XY( m_textExplanation[p] );
 			m_framePage.AddChild( &m_textExplanation[p] );
 
 		}
@@ -154,7 +154,7 @@ void ScreenOptions::Init()
 		m_textExplanationTogether.LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
 		m_textExplanationTogether.SetDrawOrder( 2 );
 		m_textExplanationTogether.SetName( "ExplanationTogether" );
-		SET_XY( m_textExplanationTogether );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_textExplanationTogether );
 		m_framePage.AddChild( &m_textExplanationTogether );
 		break;
 	default:
@@ -169,14 +169,14 @@ void ScreenOptions::Init()
 		m_ScrollBar.Load( "DualScrollBar" );
 		FOREACH_PlayerNumber( p )
 			m_ScrollBar.EnablePlayer( p, GAMESTATE->IsHumanPlayer(p) );
-		SET_XY( m_ScrollBar );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_ScrollBar );
 		m_ScrollBar.SetDrawOrder( 2 );
 		m_framePage.AddChild( &m_ScrollBar );
 	}
 
 	m_sprMore.Load( THEME->GetPathG( m_sName,"more") );
 	m_sprMore->SetName( "More" );
-	SET_XY( m_sprMore );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprMore );
 	m_sprMore->SetDrawOrder( 2 );
 	m_sprMore->PlayCommand( "LoseFocus" );
 	m_framePage.AddChild( m_sprMore );

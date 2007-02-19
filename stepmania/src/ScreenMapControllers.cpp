@@ -36,7 +36,7 @@ void ScreenMapControllers::Init()
 
 	m_textDevices.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textDevices.SetName( "Devices" );
-	SET_XY_AND_ON_COMMAND( m_textDevices );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textDevices );
 	this->AddChild( &m_textDevices );
 
 

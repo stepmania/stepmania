@@ -44,7 +44,7 @@ void ScreenSelectMode::Init()
 	{
 		m_iCurrentChar[pn]= -1; // minus 1 indicates no character.
 		m_CurChar[pn].SetName(ssprintf("CharacterIconP%d",pn+1));
-		SET_XY( m_CurChar[pn] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_CurChar[pn] );
 	}
 	m_bSelected = false;
 	m_ChoiceListFrame.Load( THEME->GetPathG("ScreenSelectMode","list frame"));

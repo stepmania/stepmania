@@ -52,7 +52,7 @@ void ScreenUnlockBrowse::MenuStart( const InputEventPlus &input )
 
 void ScreenUnlockBrowse::TweenOnScreen()
 {
-	SET_XY_AND_ON_COMMAND( m_banner );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_banner );
 	ScreenSelectMaster::TweenOnScreen();
 }
 

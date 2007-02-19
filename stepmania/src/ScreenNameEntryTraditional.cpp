@@ -47,14 +47,14 @@ void HighScoreWheelItem::Load( int iRankIndex, const HighScore& hs )
 	m_textRank.SetText( ssprintf("%d", iRankIndex+1) );
 	m_textRank.SetShadowLength( 2 );
 	this->AddChild( &m_textRank );
-	SET_XY_AND_ON_COMMAND( m_textRank );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textRank );
 
 	m_textName.SetName( "Name" );
 	m_textName.LoadFromFont( THEME->GetPathF(m_sName,"name") );
 	m_textName.SetText( hs.GetDisplayName() );
 	m_textName.SetShadowLength( 2 );
 	this->AddChild( &m_textName );
-	SET_XY_AND_ON_COMMAND( m_textName );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textName );
 
 	m_textScore.SetName( "Score" );
 	m_textScore.LoadFromFont( THEME->GetPathF(m_sName,"score") );
@@ -64,14 +64,14 @@ void HighScoreWheelItem::Load( int iRankIndex, const HighScore& hs )
 		m_textScore.SetText( ssprintf("%i", hs.GetScore()) );
 	m_textScore.SetShadowLength( 2 );
 	this->AddChild( &m_textScore );
-	SET_XY_AND_ON_COMMAND( m_textScore );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textScore );
 
 	m_textDate.SetName( "Date" );
 	m_textDate.LoadFromFont( THEME->GetPathF(m_sName,"date") );
 	m_textDate.SetText( ssprintf("%02d/%02d", hs.GetDateTime().tm_mon+1, hs.GetDateTime().tm_mday) );
 	m_textDate.SetShadowLength( 2 );
 	this->AddChild( &m_textDate );
-	SET_XY_AND_ON_COMMAND( m_textDate );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textDate );
 }
 
 void HighScoreWheelItem::LoadBlank( int iRankIndex )
@@ -213,7 +213,7 @@ void ScreenNameEntryTraditional::Init()
 			{
 				m_sprOutOfRanking[p].Load( THEME->GetPathG( m_sName,ssprintf("OutOfRankingP%i",p+1)) );
 				m_sprOutOfRanking[p]->SetName( ssprintf("OutOfRankingP%i",p+1) );
-				SET_XY_AND_ON_COMMAND( m_sprOutOfRanking[p] );
+				LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprOutOfRanking[p] );
 				this->AddChild( m_sprOutOfRanking[p] );
 
 				continue;	// skip
@@ -221,11 +221,11 @@ void ScreenNameEntryTraditional::Init()
 
 			m_sprNameFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("name frame p%i",p+1)) );
 			m_sprNameFrame[p]->SetName( ssprintf("EntryFrameP%i",p+1) );
-			SET_XY_AND_ON_COMMAND( m_sprNameFrame[p] );
+			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprNameFrame[p] );
 			this->AddChild( m_sprNameFrame[p] );
 
 			m_Keyboard[p].SetName( ssprintf("KeyboardP%i",p+1) );
-			SET_XY_AND_ON_COMMAND( m_Keyboard[p] );
+			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_Keyboard[p] );
 			this->AddChild( &m_Keyboard[p] );
 
 			/* Add letters to m_Keyboard. */
@@ -286,7 +286,7 @@ void ScreenNameEntryTraditional::Init()
 
 			m_textSelection[p].SetName( ssprintf("SelectionP%i",p+1) );
 			m_textSelection[p].LoadFromFont( THEME->GetPathF(m_sName,"entry") );
-			SET_XY_AND_ON_COMMAND( m_textSelection[p] );
+			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textSelection[p] );
 			this->AddChild( &m_textSelection[p] );
 
 			m_SelectedChar[p] = 0;
@@ -321,7 +321,7 @@ void ScreenNameEntryTraditional::Init()
 		 * all actors, even if we're going to hide it anyway, so any style commands
 		 * are run. */
 #define SET_ON( actor ) \
-	SET_XY_AND_ON_COMMAND( actor ); \
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( actor ); \
 	if( m_FeatDisplay[p].size()>1 ) \
 	{ \
 		(actor).FinishTweening(); \
@@ -433,7 +433,7 @@ void ScreenNameEntryTraditional::Init()
 			 * itself is ugly. */
 			display.m_sprBannerFrame.Load( THEME->GetPathG(m_sName,ssprintf("banner frame p%i",p+1)) );
 			display.m_sprBannerFrame->SetName( ssprintf("BannerFrameP%i",p+1) );
-			SET_XY_AND_ON_COMMAND( display.m_sprBannerFrame );
+			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( display.m_sprBannerFrame );
 			this->AddChild( display.m_sprBannerFrame );
 		}
 #undef SET_ON

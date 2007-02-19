@@ -238,13 +238,13 @@ void ScreenSelectGroup::TweenOffScreen()
 
 void ScreenSelectGroup::TweenOnScreen() 
 {
-	SET_XY_AND_ON_COMMAND( m_sprExplanation );
-	SET_XY_AND_ON_COMMAND( m_sprFrame );
-	SET_XY_AND_ON_COMMAND( m_Banner );
-	SET_XY_AND_ON_COMMAND( m_textNumber );
-	SET_XY_AND_ON_COMMAND( m_sprContents );
-	SET_XY_AND_ON_COMMAND( m_MusicList );
-	SET_XY_AND_ON_COMMAND( m_GroupList );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprExplanation );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprFrame );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_Banner );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textNumber );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprContents );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_MusicList );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_GroupList );
 	m_MusicList.TweenOnScreen();
 	m_GroupList.TweenOnScreen();
 

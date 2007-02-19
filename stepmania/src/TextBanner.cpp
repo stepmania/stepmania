@@ -33,9 +33,9 @@ void TextBanner::Load( RString sType )
 	THREE_LINES_SUBTITLE_COMMAND	.Load(sType,"ThreeLinesSubtitleCommand");
 	THREE_LINES_ARTIST_COMMAND		.Load(sType,"ThreeLinesArtistCommand");
 
-	ActorUtil::SetXYAndOnCommand( m_textTitle, sType );
-	ActorUtil::SetXYAndOnCommand( m_textSubTitle, sType );
-	ActorUtil::SetXYAndOnCommand( m_textArtist, sType );
+	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTitle, sType );
+	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textSubTitle, sType );
+	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textArtist, sType );
 }
 
 TextBanner::TextBanner()

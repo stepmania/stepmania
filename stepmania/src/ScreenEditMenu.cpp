@@ -45,13 +45,13 @@ void ScreenEditMenu::Init()
 
 	m_textExplanation.SetName( "Explanation" );
 	m_textExplanation.LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
-	SET_XY( m_textExplanation );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_textExplanation );
 	RefreshExplanationText();
 	this->AddChild( &m_textExplanation );
 
 	m_textNumStepsLoadedFromProfile.SetName( "NumStepsLoadedFromProfile" );
 	m_textNumStepsLoadedFromProfile.LoadFromFont( THEME->GetPathF(m_sName,"NumStepsLoadedFromProfile") );
-	SET_XY_AND_ON_COMMAND( m_textNumStepsLoadedFromProfile );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textNumStepsLoadedFromProfile );
 	RefreshNumStepsLoadedFromProfile();
 	this->AddChild( &m_textNumStepsLoadedFromProfile );
 }

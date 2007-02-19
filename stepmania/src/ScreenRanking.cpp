@@ -127,8 +127,8 @@ void ScreenRanking::Init()
 
 void ScreenRanking::BeginScreen()
 {
-	SET_XY( m_textStepsType );
-	SET_XY( m_sprPageType );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_textStepsType );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprPageType );
 
 	m_iNextPageToShow = 0;
 
@@ -468,7 +468,7 @@ void ScreenRankingScroller::BeginScreen()
 {
 	ScreenRanking::BeginScreen();
 
-	SET_XY( m_ListScoreRowItems );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_ListScoreRowItems );
 }
 
 void ScoreScroller::SetScoreFromHighScoreList( BitmapText *pTextStepsScore, const HighScoreList &hsl )
@@ -757,12 +757,12 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 void ScreenRankingLines::BeginScreen()
 {
 	if( m_PageType == PageType_Category )
-		SET_XY( m_textCategory );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_textCategory );
 
 	if( m_PageType == PageType_Trail )
 	{
-		SET_XY( m_Banner );
-		SET_XY( m_textCourseTitle );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_Banner );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_textCourseTitle );
 	}
 
 	ScreenRanking::BeginScreen();

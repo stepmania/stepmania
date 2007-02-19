@@ -14,7 +14,7 @@ void ScreenStatsOverlay::Init()
 	
  	m_textStats.LoadFromFont( THEME->GetPathF(m_sName,"stats") );
 	m_textStats.SetName( "Stats" );
-	SET_XY_AND_ON_COMMAND( m_textStats ); 
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textStats ); 
 	this->AddChild( &m_textStats );
 
 	/* "Was that a skip?"  This displays a message when an update takes

@@ -103,7 +103,7 @@ void ScreenEnding::Init()
 			break;
 		}
 		ActorUtil::LoadAllCommands( m_sprRemoveMemoryCard[p], m_sName );
-		SET_XY_AND_ON_COMMAND( m_sprRemoveMemoryCard[p] );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprRemoveMemoryCard[p] );
 		this->AddChild( &m_sprRemoveMemoryCard[p] );
 	}
 

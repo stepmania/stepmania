@@ -52,7 +52,7 @@ void ScreenTestFonts::Init()
 
 	txt.SetName( "Text" );
 	SetFont( THEME->GetPathF("", FONT(1)) );
-	SET_XY_AND_ON_COMMAND( txt );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( txt );
 	SetText( "Foo" );
 }
 

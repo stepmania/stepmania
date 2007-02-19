@@ -26,7 +26,7 @@ void CourseEntryDisplay::Load()
 
 	m_sprFrame.SetName( "Bar" );
 	m_sprFrame.Load( THEME->GetPathG("CourseEntryDisplay","bar") );
-	SET_XY_AND_ON_COMMAND( &m_sprFrame );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( &m_sprFrame );
 	this->AddChild( &m_sprFrame );
 
 	this->m_size.x = m_sprFrame.GetUnzoomedWidth();
@@ -34,12 +34,12 @@ void CourseEntryDisplay::Load()
 
 	m_textNumber.SetName( "Number" );
 	m_textNumber.LoadFromFont( THEME->GetPathF("CourseEntryDisplay","number") );
-	SET_XY_AND_ON_COMMAND( &m_textNumber );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( &m_textNumber );
 	this->AddChild( &m_textNumber );
 
 	m_TextBanner.SetName( "TextBanner" );
 	m_TextBanner.Load( TEXT_BANNER_TYPE );
-	SET_XY_AND_ON_COMMAND( &m_TextBanner );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( &m_TextBanner );
 	/* Load the m_TextBanner now, so any actor commands sent to us will propagate correctly. */
 	m_TextBanner.LoadFromString( "", "", "", "", "", "" );
 	this->AddChild( &m_TextBanner );
@@ -51,18 +51,18 @@ void CourseEntryDisplay::Load()
 
 		m_textFoot[pn].SetName( SEPARATE_COURSE_METERS? ssprintf("FootP%i", pn+1):RString("Foot") );
 		m_textFoot[pn].LoadFromTextureAndChars( THEME->GetPathF("CourseEntryDisplay","difficulty"),"10" );
-		SET_XY_AND_ON_COMMAND( &m_textFoot[pn] );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( &m_textFoot[pn] );
 		this->AddChild( &m_textFoot[pn] );
 
 		m_textDifficultyNumber[pn].SetName( SEPARATE_COURSE_METERS? ssprintf("DifficultyP%i", pn+1):RString("Difficulty") );
 		m_textDifficultyNumber[pn].LoadFromFont( THEME->GetPathF("Common","normal") );
-		SET_XY_AND_ON_COMMAND( &m_textDifficultyNumber[pn] );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( &m_textDifficultyNumber[pn] );
 		this->AddChild( &m_textDifficultyNumber[pn] );
 	}
 
 	m_textModifiers.SetName( "Modifiers" );
 	m_textModifiers.LoadFromFont( THEME->GetPathF("Common","normal") );
-	SET_XY_AND_ON_COMMAND( &m_textModifiers );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( &m_textModifiers );
 	this->AddChild( &m_textModifiers );
 }
 

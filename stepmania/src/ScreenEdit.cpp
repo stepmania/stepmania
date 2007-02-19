@@ -746,18 +746,18 @@ void ScreenEdit::Init()
 	m_textInputTips.SetName( "EditHelp" );
 	m_textInputTips.LoadFromFont( THEME->GetPathF("ScreenEdit","EditHelp") );
 	m_textInputTips.SetText( EDIT_HELP_TEXT );
-	SET_XY_AND_ON_COMMAND( m_textInputTips );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textInputTips );
 	this->AddChild( &m_textInputTips );
 
 	m_textInfo.SetName( "Info" );
 	m_textInfo.LoadFromFont( THEME->GetPathF("ScreenEdit","Info") );
-	SET_XY_AND_ON_COMMAND( m_textInfo );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textInfo );
 	this->AddChild( &m_textInfo );
 
 	m_textPlayRecordHelp.SetName( "PlayRecordHelp" );
 	m_textPlayRecordHelp.LoadFromFont( THEME->GetPathF("ScreenEdit","PlayRecordHelp") );
 	m_textPlayRecordHelp.SetText( PLAY_RECORD_HELP_TEXT );
-	SET_XY_AND_ON_COMMAND( m_textPlayRecordHelp );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textPlayRecordHelp );
 	this->AddChild( &m_textPlayRecordHelp );
 
 	m_soundAddNote.Load(		THEME->GetPathS("ScreenEdit","AddNote"), true );

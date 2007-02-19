@@ -30,7 +30,7 @@ void MenuTimer::Load()
 	{
 		m_text[i].LoadFromFont( THEME->GetPathF("MenuTimer","numbers") );
 		m_text[i].SetName( ssprintf("Text%d",i+1) );
-		ActorUtil::OnCommand( m_text[i], "MenuTimer" );
+		ActorUtil::LoadAllCommandsAndOnCommand( m_text[i], "MenuTimer" );
 		this->AddChild( &m_text[i] );
 	}
 

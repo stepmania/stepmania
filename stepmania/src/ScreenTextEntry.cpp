@@ -135,8 +135,8 @@ void ScreenTextEntry::BeginScreen()
 	ScreenWithMenuElements::BeginScreen();
 
 	m_textQuestion.SetText( g_sQuestion );
-	SET_XY_AND_ON_COMMAND( m_textQuestion );
-	SET_XY_AND_ON_COMMAND( m_textAnswer );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textQuestion );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textAnswer );
 
 	UpdateAnswerText();
 }

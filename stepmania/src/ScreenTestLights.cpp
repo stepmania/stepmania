@@ -22,7 +22,7 @@ void ScreenTestLights::Init()
 	m_textInputs.SetName( "Text" );
 	m_textInputs.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textInputs.SetText( "" );
-	SET_XY_AND_ON_COMMAND( m_textInputs );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textInputs );
 	this->AddChild( &m_textInputs );
 }
 

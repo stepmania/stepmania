@@ -80,12 +80,12 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 
 	m_textCourse.SetName( "CourseName" );
 	m_textCourse.LoadFromFont( THEME->GetPathF(sType,"course") );
-	SET_XY_AND_ON_COMMAND( &m_textCourse );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( &m_textCourse );
 	this->AddChild( &m_textCourse );
 
 	m_textSort.SetName( "Sort" );
 	m_textSort.LoadFromFont( THEME->GetPathF(sType,"sort") );
-	SET_XY_AND_ON_COMMAND( &m_textSort );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( &m_textSort );
 	this->AddChild( &m_textSort );
 
 	FOREACH_PlayerNumber( p )

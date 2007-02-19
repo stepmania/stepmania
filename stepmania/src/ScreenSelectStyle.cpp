@@ -121,12 +121,12 @@ void ScreenSelectStyle::Init()
 	//
 	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
 	{
-		SET_XY( m_textIcon[i] );
-		SET_XY( m_sprIcon[i] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_textIcon[i] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprIcon[i] );
 	}
-	SET_XY( m_sprExplanation );
-	SET_XY( m_sprWarning );
-	SET_XY( m_sprPremium );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprExplanation );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprWarning );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprPremium );
 
 	// let AfterChange tween Picture and Info
 }
@@ -293,8 +293,8 @@ void ScreenSelectStyle::AfterChange()
 	m_sprInfo[m_iSelection].SetDiffuse( RageColor(1,1,1,1) );
 	m_sprPicture[m_iSelection].SetZoom( 1 );
 	m_sprInfo[m_iSelection].SetZoom( 1 );
-	SET_XY_AND_ON_COMMAND( m_sprPicture[m_iSelection] );
-	SET_XY_AND_ON_COMMAND( m_sprInfo[m_iSelection] );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprPicture[m_iSelection] );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprInfo[m_iSelection] );
 }
 
 /*

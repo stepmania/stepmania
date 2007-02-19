@@ -113,24 +113,24 @@ void ScreenSelectMusic::Init()
 
 	m_MusicWheel.SetName( "MusicWheel" );
 	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
-	SET_XY( m_MusicWheel );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
 
 	// this is loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
 	m_Banner.SetZTestMode( ZTEST_WRITE_ON_PASS );	// do have to pass the z test
-	SET_XY( m_Banner );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_Banner );
 	this->AddChild( &m_Banner );
 
 	m_sprCDTitleFront.SetName( "CDTitle" );
 	m_sprCDTitleFront.Load( THEME->GetPathG(m_sName,"fallback cdtitle") );
-	SET_XY( m_sprCDTitleFront );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprCDTitleFront );
 	COMMAND( m_sprCDTitleFront, "Front" );
 	this->AddChild( &m_sprCDTitleFront );
 
 	m_sprCDTitleBack.SetName( "CDTitle" );
 	m_sprCDTitleBack.Load( THEME->GetPathG(m_sName,"fallback cdtitle") );
-	SET_XY( m_sprCDTitleBack );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprCDTitleBack );
 	COMMAND( m_sprCDTitleBack, "Back" );
 	this->AddChild( &m_sprCDTitleBack );
 
@@ -138,14 +138,14 @@ void ScreenSelectMusic::Init()
 	{
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
 		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("score frame p%d",p+1)) );
-		SET_XY( m_sprHighScoreFrame[p] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprHighScoreFrame[p] );
 		this->AddChild( &m_sprHighScoreFrame[p] );
 
 		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
 		m_textHighScore[p].LoadFromFont( THEME->GetPathF(m_sName,"score") );
 		m_textHighScore[p].SetShadowLength( 0 );
 		m_textHighScore[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
-		SET_XY( m_textHighScore[p] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_textHighScore[p] );
 		this->AddChild( &m_textHighScore[p] );
 	}	
 

@@ -24,7 +24,7 @@ void ScreenPlayerOptions::Init()
 	{
 		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
 		m_sprDisqualify[p]->SetName( ssprintf("DisqualifyP%i",p+1) );
-		SET_XY( m_sprDisqualify[p] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprDisqualify[p] );
 		m_sprDisqualify[p]->SetVisible( false );	// unhide later if handicapping options are discovered
 		m_sprDisqualify[p]->SetDrawOrder( 2 );
 		m_framePage.AddChild( m_sprDisqualify[p] );

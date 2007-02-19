@@ -795,7 +795,7 @@ void ScreenSelectMaster::TweenOnScreen()
 			m_vsprIcon[c]->PlayCommand( (int(c) == m_iChoice[0])? "GainFocus":"LoseFocus" );
 			m_vsprIcon[c]->FinishTweening();
 			if( USE_ICON_METRICS )
-				SET_XY_AND_ON_COMMAND( m_vsprIcon[c] );
+				LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_vsprIcon[c] );
 			else
 				m_vsprIcon[c]->PlayCommand( "On" );
 		}
@@ -814,7 +814,7 @@ void ScreenSelectMaster::TweenOnScreen()
 			}
 
 			m_Scroller[*p].SetCurrentAndDestinationItem( (float)m_iChoice[*p] );
-			SET_XY_AND_ON_COMMAND( m_Scroller[*p] );
+			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_Scroller[*p] );
 		}
 	}
 

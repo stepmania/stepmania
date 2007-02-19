@@ -45,25 +45,63 @@ namespace ActorUtil
 
 	apActorCommands ParseActorCommands( const RString &sCommands, const RString &sName = "" );
 	void SetXY( Actor& actor, const RString &sType );
+	inline void PlayCommand( Actor& actor, const RString &sCommandName ) { actor.PlayCommand( sCommandName ); }
+	inline void OnCommand( Actor& actor )
+	{
+		ASSERT( actor.HasCommand("On") );
+		actor.PlayCommand("On");
+	}
+	inline void OffCommand( Actor& actor )
+	{
+		// HACK:  It's very often that we command things to TweenOffScreen 
+		// that we aren't drawing.  We know that an Actor is not being
+		// used if its name is blank.  So, do nothing on Actors with a blank name.
+		// (Do "playcommand" anyway; BGAs often have no name.)
+		if( actor.GetName().empty() )
+			return;
+		ASSERT( actor.HasCommand("Off") );
+		actor.PlayCommand("Off");
+	}
+
 	void LoadCommand( Actor& actor, const RString &sType, const RString &sCommandName );
 	void LoadCommandFromName( Actor& actor, const RString &sType, const RString &sCommandName, const RString &sName );
-	void LoadAndPlayCommand( Actor& actor, const RString &sType, const RString &sCommandName );
 	void LoadAllCommands( Actor& actor, const RString &sType );
 	void LoadAllCommandsFromName( Actor& actor, const RString &sType, const RString &sName );
-	inline void OnCommand( Actor& actor, const RString &sType ) { LoadAndPlayCommand( actor, sType, "On" ); }
-	inline void OffCommand( Actor& actor, const RString &sType ) { LoadAndPlayCommand( actor, sType, "Off" ); }
+
+	inline void LoadAllCommandsAndSetXY( Actor& actor, const RString &sType )
+	{
+		LoadAllCommands( actor, sType );
+		SetXY( actor, sType );
+	}
+	inline void LoadAllCommandsAndOnCommand( Actor& actor, const RString &sType )
+	{
+		LoadAllCommands( actor, sType );
+		OnCommand( actor );
+	}
 	inline void SetXYAndOnCommand( Actor& actor, const RString &sType )
 	{
 		SetXY( actor, sType );
-		OnCommand( actor, sType );
+		OnCommand( actor );
+	}
+	inline void LoadAllCommandsAndSetXYAndOnCommand( Actor& actor, const RString &sType )
+	{
+		LoadAllCommands( actor, sType );
+		SetXY( actor, sType );
+		OnCommand( actor );
 	}
 
 	/* convenience */
 	inline void SetXY( Actor* pActor, const RString &sType ) { SetXY( *pActor, sType ); }
-	inline void LoadAndPlayCommand( Actor* pActor, const RString &sType, const RString &sCommandName ) { if(pActor) LoadAndPlayCommand( *pActor, sType, sCommandName ); }
-	inline void OnCommand( Actor* pActor, const RString &sType ) { if(pActor) OnCommand( *pActor, sType ); }
-	inline void OffCommand( Actor* pActor, const RString &sType ) { if(pActor) OffCommand( *pActor, sType ); }
+	inline void PlayCommand( Actor* pActor, const RString &sCommandName ) { if(pActor) pActor->PlayCommand( sCommandName ); }
+	inline void OnCommand( Actor* pActor ) { if(pActor) ActorUtil::OnCommand( *pActor ); }
+	inline void OffCommand( Actor* pActor ) { if(pActor) ActorUtil::OffCommand( *pActor ); }
+
+	inline void LoadAllCommands( Actor* pActor, const RString &sType ) { if(pActor) LoadAllCommands( *pActor, sType ); }
+
+	inline void LoadAllCommandsAndSetXY( Actor* pActor, const RString &sType ) { if(pActor) LoadAllCommandsAndSetXY( *pActor, sType ); }
+	inline void LoadAllCommandsAndOnCommand( Actor* pActor, const RString &sType ) { if(pActor) LoadAllCommandsAndOnCommand( *pActor, sType ); }
 	inline void SetXYAndOnCommand( Actor* pActor, const RString &sType ) { if(pActor) SetXYAndOnCommand( *pActor, sType ); }
+	inline void LoadAllCommandsAndSetXYAndOnCommand( Actor* pActor, const RString &sType ) { if(pActor) LoadAllCommandsAndSetXYAndOnCommand( *pActor, sType ); }
 
 	// Return a Sprite, BitmapText, or Model depending on the file type
 	Actor* LoadFromNode( const XNode* pNode, Actor *pParentActor = NULL );
@@ -81,10 +119,14 @@ namespace ActorUtil
 };
 
 #define SET_XY( actor )			ActorUtil::SetXY( actor, m_sName )
-#define ON_COMMAND( actor )		ActorUtil::OnCommand( actor, m_sName )
-#define OFF_COMMAND( actor )		ActorUtil::OffCommand( actor, m_sName )
+#define ON_COMMAND( actor )		ActorUtil::OnCommand( actor )
+#define OFF_COMMAND( actor )		ActorUtil::OffCommand( actor )
 #define SET_XY_AND_ON_COMMAND( actor )	ActorUtil::SetXYAndOnCommand( actor, m_sName )
-#define COMMAND( actor, command_name )	ActorUtil::LoadAndPlayCommand( actor, m_sName, command_name )
+#define COMMAND( actor, command_name )	ActorUtil::PlayCommand( actor, command_name )
+#define LOAD_ALL_COMMANDS( actor )	ActorUtil::LoadAllCommands( actor, m_sName )
+#define LOAD_ALL_COMMANDS_AND_SET_XY( actor )			ActorUtil::LoadAllCommandsAndSetXY( actor, m_sName )
+#define LOAD_ALL_COMMANDS_AND_ON_COMMAND( actor )		ActorUtil::LoadAllCommandsAndOnCommand( actor, m_sName )
+#define LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( actor )	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( actor, m_sName )
 
 
 #endif

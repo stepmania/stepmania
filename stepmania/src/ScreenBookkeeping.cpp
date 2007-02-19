@@ -18,19 +18,19 @@ void ScreenBookkeeping::Init()
 
 	m_textAllTime.LoadFromFont( THEME->GetPathF(m_sName,"AllTime") );
 	m_textAllTime.SetName( "AllTime" );
-	SET_XY_AND_ON_COMMAND( m_textAllTime );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textAllTime );
 	this->AddChild( &m_textAllTime );
 
 	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"title") );
 	m_textTitle.SetName( "Title" );
-	SET_XY_AND_ON_COMMAND( m_textTitle );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textTitle );
 	this->AddChild( &m_textTitle );
 
 	for( int i=0; i<NUM_BOOKKEEPING_COLS; i++ )
 	{
 		m_textData[i].LoadFromFont( THEME->GetPathF(m_sName,"data") );
 		m_textData[i].SetName( "Data" );
-		SET_XY_AND_ON_COMMAND( m_textData[i] );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textData[i] );
 		float fX = SCALE( i, 0.f, NUM_BOOKKEEPING_COLS-1, SCREEN_LEFT+50, SCREEN_RIGHT-160 );
 		m_textData[i].SetX( fX );
 		this->AddChild( &m_textData[i] );

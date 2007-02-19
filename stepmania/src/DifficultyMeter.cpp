@@ -73,7 +73,7 @@ void DifficultyMeter::Load( const RString &sType )
 			Feet = "0X";
 		}
 		m_textFeet.LoadFromTextureAndChars( THEME->GetPathF(sType,"bar"), Feet );
-		ActorUtil::SetXYAndOnCommand( m_textFeet, sType );
+		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textFeet, sType );
 		this->AddChild( &m_textFeet );
 	}
 
@@ -81,7 +81,7 @@ void DifficultyMeter::Load( const RString &sType )
 	{
 		m_Difficulty.Load( THEME->GetPathG(sType,"difficulty") );
 		m_Difficulty->SetName( "Difficulty" );
-		ActorUtil::SetXYAndOnCommand( m_Difficulty, sType );
+		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_Difficulty, sType );
 		this->AddChild( m_Difficulty );
 
 		// These commands should have been loaded by SetXYAndOnCommand above.
@@ -96,7 +96,7 @@ void DifficultyMeter::Load( const RString &sType )
 	{
 		m_textMeter.SetName( "Meter" );
 		m_textMeter.LoadFromFont( THEME->GetPathF(sType,"meter") );
-		ActorUtil::SetXYAndOnCommand( m_textMeter, sType );
+		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textMeter, sType );
 		this->AddChild( &m_textMeter );
 
 		// These commands should have been loaded by SetXYAndOnCommand above.
@@ -111,7 +111,7 @@ void DifficultyMeter::Load( const RString &sType )
 	{
 		m_textEditDescription.SetName( "EditDescription" );
 		m_textEditDescription.LoadFromFont( THEME->GetPathF(sType,"EditDescription") );
-		ActorUtil::SetXYAndOnCommand( m_textEditDescription, sType );
+		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textEditDescription, sType );
 		this->AddChild( &m_textEditDescription );
 	}
 

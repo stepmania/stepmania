@@ -56,25 +56,25 @@ void ScreenSelectDifficulty::Init()
 		{
 			m_sprPicture[page][choice].SetName( ssprintf("PicturePage%dChoice%d",page+1,choice+1) );
 			m_sprPicture[page][choice].Load( THEME->GetPathG(m_sName,ssprintf("picture%d",c+1)) );
-			SET_XY( m_sprPicture[page][choice] );
+			LOAD_ALL_COMMANDS_AND_SET_XY( m_sprPicture[page][choice] );
 			m_framePages.AddChild( &m_sprPicture[page][choice] );
 
 			m_sprInfo[page][choice].SetName( ssprintf("InfoPage%dChoice%d",page+1,choice+1) );
 			m_sprInfo[page][choice].Load( THEME->GetPathG(m_sName,ssprintf("info%d",c+1)) );
-			SET_XY( m_sprInfo[page][choice] );
+			LOAD_ALL_COMMANDS_AND_SET_XY( m_sprInfo[page][choice] );
 			m_framePages.AddChild( &m_sprInfo[page][choice] );
 		}
 
 		m_sprMore[page].SetName( ssprintf("MorePage%d",page+1) );
 		m_sprMore[page].Load( THEME->GetPathG(m_sName,ssprintf("more page%d",page+1)) );
-		SET_XY( m_sprMore[page] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprMore[page] );
 		m_framePages.AddChild( &m_sprMore[page] );
 
 		m_sprExplanation[page].SetName( ssprintf("ExplanationPage%d",page+1) );
 		m_sprExplanation[page].Load( THEME->GetPathG(m_sName,"explanation") );
 		m_sprExplanation[page].StopAnimating();
 		m_sprExplanation[page].SetState( page );
-		SET_XY( m_sprExplanation[page] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprExplanation[page] );
 		m_framePages.AddChild( &m_sprExplanation[page] );
 	}
 
@@ -109,6 +109,7 @@ void ScreenSelectDifficulty::Init()
 
 		m_sprOK[p].SetName( "OK" );
 		m_sprOK[p].Load( THEME->GetPathG(m_sName,"ok 2x1") );
+		ActorUtil::LoadAllCommands( m_sprOK[p], m_sName );
 		m_sprOK[p].SetState( p );
 		m_sprOK[p].StopAnimating();
 		m_sprOK[p].SetDiffuse( RageColor(1,1,1,0) );

@@ -609,13 +609,13 @@ void ScreenEz2SelectMusic::MusicChanged()
 	{
 		m_sprBalloon.StopTweening();
 		m_sprBalloon.Load( THEME->GetPathG("ScreenSelectMusic","balloon marathon") );
-		SET_XY_AND_ON_COMMAND( m_sprBalloon );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprBalloon );
 	}
 	else if( pSong->IsLong() )
 	{
 		m_sprBalloon.StopTweening();
 		m_sprBalloon.Load( THEME->GetPathG("ScreenSelectMusic","balloon long") );
-		SET_XY_AND_ON_COMMAND( m_sprBalloon );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprBalloon );
 	}
 	else
 	{

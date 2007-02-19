@@ -26,18 +26,18 @@ void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerSt
 	m_sprFrame.Load( THEME->GetPathG(sType,"frame") );
 	m_sprFrame->SetName( "Frame" );
 	this->AddChild( m_sprFrame );
-	ActorUtil::OnCommand( m_sprFrame, sType );
+	ActorUtil::LoadAllCommandsAndOnCommand( m_sprFrame, sType );
 
 	m_textTimeRemaining.LoadFromFont( THEME->GetPathF(sType, "TimeRemaining") );
 	m_textTimeRemaining.SetName( "TimeRemaining" );
 	this->AddChild( &m_textTimeRemaining );
-	ActorUtil::OnCommand( m_textTimeRemaining, sType );
+	ActorUtil::LoadAllCommandsAndOnCommand( m_textTimeRemaining, sType );
 	m_textTimeRemaining.RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(pn) );
 	
 	m_textDeltaSeconds.LoadFromFont( THEME->GetPathF(sType,"DeltaSeconds") );
 	m_textDeltaSeconds.SetName( "DeltaSeconds" );
 	this->AddChild( &m_textDeltaSeconds );
-	ActorUtil::OnCommand( m_textDeltaSeconds, sType );
+	ActorUtil::LoadAllCommandsAndOnCommand( m_textDeltaSeconds, sType );
 
 	FOREACH_TapNoteScore( tns )
 	{

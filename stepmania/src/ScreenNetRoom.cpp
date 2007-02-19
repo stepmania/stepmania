@@ -50,20 +50,20 @@ void ScreenNetRoom::Init()
 	m_sprTitleBG.SetName( "TitleBG" );
 	m_sprTitleBG.SetWidth( TITLEBG_WIDTH );
 	m_sprTitleBG.SetHeight( TITLEBG_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_sprTitleBG );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprTitleBG );
 	this->AddChild( &m_sprTitleBG);
 
 	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
 	m_textTitle.SetShadowLength( 0 );
 	m_textTitle.SetName( "Title" );
 	m_textTitle.SetMaxWidth( TITLEBG_WIDTH );
-	SET_XY_AND_ON_COMMAND( m_textTitle );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textTitle );
 	this->AddChild( &m_textTitle);
 
 	m_RoomWheel.SetName( "RoomWheel" );
 	m_RoomWheel.Load( "RoomWheel" );
 	m_RoomWheel.BeginScreen();
-	SET_XY_AND_ON_COMMAND( m_RoomWheel );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_RoomWheel );
 	this->AddChild( &m_RoomWheel );
 
 	m_roomInfo.SetName( "RoomInfoDisplay" );

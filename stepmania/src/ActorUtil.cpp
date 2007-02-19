@@ -437,14 +437,6 @@ void ActorUtil::SetXY( Actor& actor, const RString &sType )
 	ASSERT( !actor.GetName().empty() );
 
 	/*
-	 * Hack: We normally SET_XY in Init(), and run ON_COMMAND in BeginScreen.  We
-	 * want to load the actor's commands in Init(), since that takes long enough
-	 * to skip.  So, run LoadAllCommands here if it hasn't been run yet.
-	 */
-	if( !actor.HasCommand("On") )	// this actor hasn't loaded commands yet
-		LoadAllCommands( actor, sType );
-
-	/*
 	 * Hack: This is run after InitCommand, and InitCommand might set X/Y.  If
 	 * these are both 0, leave the actor where it is.  If InitCommand doesn't,
 	 * then 0,0 is the default, anyway.
@@ -465,41 +457,6 @@ void ActorUtil::LoadCommandFromName( Actor& actor, const RString &sType, const R
 	actor.AddCommand( sCommandName, THEME->GetMetricA(sType,sName+sCommandName+"Command") );
 }
 
-void ActorUtil::LoadAndPlayCommand( Actor& actor, const RString &sType, const RString &sCommandName )
-{
-	// HACK:  It's very often that we command things to TweenOffScreen 
-	// that we aren't drawing.  We know that an Actor is not being
-	// used if its name is blank.  So, do nothing on Actors with a blank name.
-	// (Do "playcommand" anyway; BGAs often have no name.)
-	if( sCommandName=="Off" && actor.GetName().empty() )
-		return;
-
-	ASSERT_M( 
-		!actor.GetName().empty(), 
-		ssprintf("!actor.GetName().empty() ('%s', '%s')", sType.c_str(), sCommandName.c_str()) 
-		);
-	ASSERT_M( 
-		!sType.empty(), 
-		ssprintf("!sType.empty() ('%s', '%s')", sType.c_str(), sCommandName.c_str()) 
-		);
-
-	if( !actor.HasCommand(sCommandName ) )	// this actor hasn't loaded commands yet
-		LoadAllCommands( actor, sType );
-
-	// If we didn't load the command in LoadAllCommands, load the requested command 
-	// explicitly.  The metric is missing, and ThemeManager will prompt.
-	if( !actor.HasCommand(sCommandName) )
-	{
-		// If this metric exists and we didn't load it in LoadAllCommands, then 
-		// LoadAllCommands has a bug.
-		DEBUG_ASSERT( !THEME->HasMetric(sType,actor.GetName()+sCommandName+"Command") );
-		
-		LoadCommand( actor, sType, sCommandName );
-	}
-
-	actor.PlayCommand( sCommandName );
-}
-
 void ActorUtil::LoadAllCommands( Actor& actor, const RString &sType )
 {
 	LoadAllCommandsFromName( actor, sType, actor.GetName() );
@@ -513,7 +470,7 @@ void ActorUtil::LoadAllCommandsFromName( Actor& actor, const RString &sType, con
 	FOREACHS_CONST( RString, vsValueNames, v )
 	{
 		const RString &sv = *v;
-		static RString sEnding = "Command"; 
+		static const RString sEnding = "Command"; 
 		if( EndsWith(sv,sEnding) )
 		{
 			RString sCommandName( sv.begin()+sName.size(), sv.end()-sEnding.size() );

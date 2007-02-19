@@ -53,7 +53,7 @@ void ScreenNetSelectMusic::Init()
 	m_sprDiff.SetName( "DiffBG" );
 	m_sprDiff.SetWidth( DIFFBG_WIDTH );
 	m_sprDiff.SetHeight( DIFFBG_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_sprDiff );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprDiff );
 	this->AddChild( &m_sprDiff);
 
 	FOREACH_EnabledPlayer (p)
@@ -62,20 +62,20 @@ void ScreenNetSelectMusic::Init()
 		m_DifficultyIcon[p].Load( THEME->GetPathG( "ScreenSelectMusic",
 												   ssprintf("difficulty icons 1x%d",
 															NUM_Difficulty)) );
-		SET_XY( m_DifficultyIcon[p] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_DifficultyIcon[p] );
 		this->AddChild( &m_DifficultyIcon[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 
 		m_DifficultyMeters[p].SetName( ssprintf("MeterP%d",p+1) );
 		m_DifficultyMeters[p].Load( "DifficultyMeter" );
-		SET_XY_AND_ON_COMMAND( m_DifficultyMeters[p] );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_DifficultyMeters[p] );
 		this->AddChild( &m_DifficultyMeters[p] );
 	}
 
 	m_MusicWheel.SetName( "MusicWheel" );
 	m_MusicWheel.Load( "MusicWheel" );
-	SET_XY( m_MusicWheel );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_MusicWheel );
 	m_MusicWheel.BeginScreen();
 	ON_COMMAND( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
@@ -86,7 +86,7 @@ void ScreenNetSelectMusic::Init()
 	m_BPMDisplay.SetName( "BPMDisplay" );
 	m_BPMDisplay.LoadFromFont( THEME->GetPathF("BPMDisplay","bpm") );
 	m_BPMDisplay.Load();
-	SET_XY_AND_ON_COMMAND( m_BPMDisplay );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
 
 	FOREACH_EnabledPlayer( p )
@@ -94,7 +94,7 @@ void ScreenNetSelectMusic::Init()
 		m_OptionIconRow[p].SetName( ssprintf("OptionIconsP%d",p+1) );
 		m_OptionIconRow[p].Load();
 		m_OptionIconRow[p].SetFromGameState( p );
-		SET_XY_AND_ON_COMMAND( m_OptionIconRow[p] );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_OptionIconRow[p] );
 		this->AddChild( &m_OptionIconRow[p] );
 	}
 

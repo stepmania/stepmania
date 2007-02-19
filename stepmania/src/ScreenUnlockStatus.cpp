@@ -60,7 +60,7 @@ void ScreenUnlockStatus::Init()
 
 		// set graphic location
 		pSpr->SetName( ssprintf("Unlock%04d",i) );
-		SET_XY( pSpr );
+		LOAD_ALL_COMMANDS_AND_SET_XY( pSpr );
 
 		pSpr->RunCommands(IconCommand);
 		Unlocks.push_back(pSpr);
@@ -303,7 +303,7 @@ void ScreenUnlockStatus::Init()
 	}
 
 	PointsUntilNextUnlock.SetZoom( POINTS_ZOOM );
-	SET_XY( PointsUntilNextUnlock );
+	LOAD_ALL_COMMANDS_AND_SET_XY( PointsUntilNextUnlock );
 	this->AddChild( &PointsUntilNextUnlock );
 
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow

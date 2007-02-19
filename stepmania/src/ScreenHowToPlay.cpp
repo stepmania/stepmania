@@ -84,7 +84,7 @@ void ScreenHowToPlay::Init()
 		m_pmDancePad->SetName( "Pad" );
 		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) );
 		m_pmDancePad->SetRotationX( 35 );
-		SET_XY_AND_ON_COMMAND( m_pmDancePad );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pmDancePad );
 	}
 	
 	// Display random character
@@ -114,7 +114,7 @@ void ScreenHowToPlay::Init()
 			
 			m_pmCharacter->SetRotationX( 40 );
 			m_pmCharacter->SetCullMode( CULL_NONE );	// many of the models floating around have the vertex order flipped
-			SET_XY_AND_ON_COMMAND( m_pmCharacter );
+			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pmCharacter );
 		}
 	}
 	
@@ -124,7 +124,7 @@ void ScreenHowToPlay::Init()
 		m_pLifeMeterBar = new LifeMeterBar;
 		m_pLifeMeterBar->SetName("LifeMeterBar");
 		m_pLifeMeterBar->Load( GAMESTATE->m_pPlayerState[PLAYER_1], &STATSMAN->m_CurStageStats.m_player[PLAYER_1] );
-		SET_XY_AND_ON_COMMAND( m_pLifeMeterBar );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pLifeMeterBar );
 		m_pLifeMeterBar->FillForHowToPlay( NUM_W2S, NUM_MISSES );
 	}
 
@@ -162,7 +162,7 @@ void ScreenHowToPlay::Init()
 		m_Player.Load( m_NoteData );
 		m_Player->SetName( "Player" );
 		this->AddChild( m_Player );
-		SET_XY_AND_ON_COMMAND( m_Player );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_Player );
 
 		// Don't show judgement
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fBlind, 1.0f );

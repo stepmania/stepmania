@@ -42,14 +42,14 @@ void ScreenWithMenuElements::Init()
 
 	m_autoHeader.Load( THEME->GetPathG(m_sName,"header") );
 	m_autoHeader->SetName("Header");
-	SET_XY( m_autoHeader );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_autoHeader );
 	this->AddChild( m_autoHeader );
 
 	if( SHOW_STAGE )
 	{
 		m_sprStage.Load( THEME->GetPathG(m_sName,"stage") );
 		m_sprStage->SetName( "Stage" );
-		SET_XY( m_sprStage );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprStage );
 		this->AddChild( m_sprStage );
 	}
 	
@@ -61,7 +61,7 @@ void ScreenWithMenuElements::Init()
 			m_MemoryCardDisplay[p] = new MemoryCardDisplay;
 			m_MemoryCardDisplay[p]->Load( p );
 			m_MemoryCardDisplay[p]->SetName( ssprintf("MemoryCardDisplayP%d",p+1) );
-			SET_XY( m_MemoryCardDisplay[p] );
+			LOAD_ALL_COMMANDS_AND_SET_XY( m_MemoryCardDisplay[p] );
 			this->AddChild( m_MemoryCardDisplay[p] );
 		}
 	}
@@ -74,33 +74,33 @@ void ScreenWithMenuElements::Init()
 		m_MenuTimer->SetName( "Timer" );
 		if( TIMER_STEALTH )
 			m_MenuTimer->EnableStealth( true );
-		SET_XY( m_MenuTimer );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_MenuTimer );
 		ResetTimer();
 		this->AddChild( m_MenuTimer );
 	}
 
 	m_autoFooter.Load( THEME->GetPathG(m_sName,"footer") );
 	m_autoFooter->SetName("Footer");
-	SET_XY( m_autoFooter );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_autoFooter );
 	this->AddChild( m_autoFooter );
 
 	m_textHelp->SetName( "Help" );
 	m_textHelp->Load( "HelpDisplay" );
 	m_textHelp->LoadFromFont( THEME->GetPathF("HelpDisplay","text") );
-	SET_XY( m_textHelp );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_textHelp );
 	LoadHelpText();
 	this->AddChild( m_textHelp );
 
 	m_sprUnderlay.Load( THEME->GetPathB(m_sName,"underlay") );
 	m_sprUnderlay->SetName("Underlay");
 	m_sprUnderlay->SetDrawOrder( DRAW_ORDER_UNDERLAY );
-	SET_XY( m_sprUnderlay );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprUnderlay );
 	this->AddChild( m_sprUnderlay );
 	
 	m_sprOverlay.Load( THEME->GetPathB(m_sName,"overlay") );
 	m_sprOverlay->SetName("Overlay");
 	m_sprOverlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
-	SET_XY( m_sprOverlay );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprOverlay );
 	this->AddChild( m_sprOverlay );
 
 	m_In.SetName( "In" );

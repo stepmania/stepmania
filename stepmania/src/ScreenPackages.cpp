@@ -42,12 +42,12 @@ void ScreenPackages::Init()
 
 	m_sprExistingBG.SetName( "PackagesBG" );
 	m_sprExistingBG.Load( THEME->GetPathG( m_sName, "PackagesBG" ) );
-	SET_XY_AND_ON_COMMAND( m_sprExistingBG );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprExistingBG );
 	this->AddChild( &m_sprExistingBG );
 
 	m_sprWebBG.SetName( "WebBG" );
 	m_sprWebBG.Load( THEME->GetPathG( m_sName, "WebBG" ) );
-	SET_XY_AND_ON_COMMAND( m_sprWebBG );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprWebBG );
 	this->AddChild( &m_sprWebBG );
 
 	COMMAND( m_sprExistingBG, "Back" );
@@ -58,7 +58,7 @@ void ScreenPackages::Init()
 	m_textPackages.SetShadowLength( 0 );
 	m_textPackages.SetName( "Packages" );
 	m_textPackages.SetMaxWidth( EXISTINGBG_WIDTH );
-	SET_XY_AND_ON_COMMAND( m_textPackages );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textPackages );
 	this->AddChild( &m_textPackages );
 	RefreshPackages();
 
@@ -66,7 +66,7 @@ void ScreenPackages::Init()
 	m_textWeb.SetShadowLength( 0 );
 	m_textWeb.SetName( "Web" );
 	m_textWeb.SetMaxWidth( WEBBG_WIDTH );
-	SET_XY_AND_ON_COMMAND( m_textWeb );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textWeb );
 	this->AddChild( &m_textWeb);
 	m_Links.push_back( " " );
 	m_LinkTitles.push_back( "--Visit URL--" );
@@ -74,31 +74,31 @@ void ScreenPackages::Init()
 	m_textURL.LoadFromFont( THEME->GetPathF( m_sName,"default") );
 	m_textURL.SetShadowLength( 0 );
 	m_textURL.SetName( "WebURL" );
-	SET_XY_AND_ON_COMMAND( m_textURL );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textURL );
 	this->AddChild( &m_textURL );
 	UpdateLinksList();
 	
 	m_sprWebSel.SetName( "WebSel" );
 	m_sprWebSel.Load( THEME->GetPathG( m_sName, "WebSel" ) );
-	SET_XY_AND_ON_COMMAND( m_sprWebSel );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprWebSel );
 	this->AddChild( &m_sprWebSel );
 
 	m_sprDLBG.SetName( "Download" );
 	m_sprDLBG.Load( THEME->GetPathG( m_sName, "DownloadBG" ) );
-	SET_XY_AND_ON_COMMAND( m_sprDLBG );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprDLBG );
 	this->AddChild( &m_sprDLBG );
 
 	//(HTTP ELEMENTS)
 	m_sprDL.SetName( "Download" );
 	m_sprDL.Load( THEME->GetPathG( m_sName, "Download" ) );
-	SET_XY_AND_ON_COMMAND( m_sprDL );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprDL );
 	this->AddChild( &m_sprDL );
 	m_sprDL.RunCommands( THEME->GetMetricA( m_sName, "DownloadProgressCommand" ) );
 
 	m_textStatus.LoadFromFont( THEME->GetPathF(m_sName,"default") );
 	m_textStatus.SetShadowLength( 0 );
 	m_textStatus.SetName( "DownloadStatus" );
-	SET_XY_AND_ON_COMMAND( m_textStatus );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textStatus );
 	this->AddChild( &m_textStatus );
 
 	UpdateProgress();

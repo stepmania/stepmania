@@ -80,7 +80,7 @@ void ScreenPrompt::BeginScreen()
 	ENUM_CLAMP( m_Answer, PromptAnswer(0), PromptAnswer(g_PromptType) );
 
 	m_textQuestion.SetText( g_sText );
-	SET_XY_AND_ON_COMMAND( m_textQuestion );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textQuestion );
 
 	ON_COMMAND( m_sprCursor );
 
@@ -94,7 +94,7 @@ void ScreenPrompt::BeginScreen()
 			sAnswer = "OK";
 		
 		m_textAnswer[i].SetText( ANSWER_TEXT(sAnswer) );
-		SET_XY_AND_ON_COMMAND( m_textAnswer[i] );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textAnswer[i] );
 	}
 
 	for( int i=g_PromptType+1; i<NUM_PromptAnswer; i++ )

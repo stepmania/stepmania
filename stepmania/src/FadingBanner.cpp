@@ -29,7 +29,7 @@ FadingBanner::FadingBanner()
 	for( int i=0; i<NUM_BANNERS; i++ )
 	{
 		m_Banner[i].SetName( "Banner" );
-		ActorUtil::OnCommand( m_Banner[i], "FadingBanner" );
+		ActorUtil::LoadAllCommandsAndOnCommand( m_Banner[i], "FadingBanner" );
 		this->AddChild( &m_Banner[i] );
 	}
 }

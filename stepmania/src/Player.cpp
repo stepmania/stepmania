@@ -383,14 +383,14 @@ void Player::Init(
 	{
 		m_pCombo->SetName( "Combo" );
 		m_pCombo->Load( m_pPlayerState, m_pPlayerStageStats );
-		ActorUtil::OnCommand( m_pCombo, sType );
+		ActorUtil::LoadAllCommandsAndOnCommand( m_pCombo, sType );
 	}
 
 	if( m_pJudgment )
 	{
 		m_pJudgment->SetName( "Judgment" );
 		m_pJudgment->LoadNormal();
-		ActorUtil::OnCommand( m_pJudgment, sType );
+		ActorUtil::LoadAllCommandsAndOnCommand( m_pJudgment, sType );
 	}
 
 	// Load HoldJudgments
