@@ -27,10 +27,16 @@ public:
 		LuaHelpers::Push( L, p->GetLife() );
 		return 1;
 	}
+	static int IsInDanger( T* p, lua_State *L ) { LuaHelpers::Push( L, p->IsInDanger() ); return 1; }
+	static int IsHot( T* p, lua_State *L ) { LuaHelpers::Push( L, p->IsHot() ); return 1; }
+	static int IsFailing( T* p, lua_State *L ) { LuaHelpers::Push( L, p->IsFailing() ); return 1; }
 
 	LunaLifeMeter()
 	{
   		ADD_METHOD( GetLife );
+  		ADD_METHOD( IsInDanger );
+  		ADD_METHOD( IsHot );
+  		ADD_METHOD( IsFailing );
 	}
 };
 
