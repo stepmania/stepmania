@@ -88,6 +88,55 @@ function ActorFrame:RunCommandsRecursively(func, ...)
 	self:RunCommandsOnChildren( func, ... );
 end
 
+local HorizNumPad = {
+	"HorizAlign_Left",
+	"HorizAlign_Center",
+	"HorizAlign_Right",
+	"HorizAlign_Left",
+	"HorizAlign_Center",
+	"HorizAlign_Right",
+	"HorizAlign_Left",
+	"HorizAlign_Center",
+	"HorizAlign_Right",
+};
+
+local VertNumPad = {
+	"VertAlign_Bottom",
+	"VertAlign_Bottom",
+	"VertAlign_Bottom",
+	"VertAlign_Middle",
+	"VertAlign_Middle",
+	"VertAlign_Middle",
+	"VertAlign_Top",
+	"VertAlign_Top",
+	"VertAlign_Top",
+};
+
+-- Shortcut for alignment.
+--   cmd(align,5)  -- align center
+--   cmd(align,7)  -- align top-left
+--   cmd(align,8)  -- align top-center
+--   cmd(valign,8)  -- align top (don't change horiz)
+--   cmd(halign,4)  -- align left (don't change vert)
+function Actor:align(angle)
+	local horiz = HorizNumPad[angle];
+	assert( horiz, angle );
+	self:horizalign( horiz );
+	local vert = VertNumPad[angle];
+	assert( vert, angle );
+	self:vertalign( vert );
+end
+
+function Actor:halign(angle)
+	local horiz = HorizNumPad[angle];
+	self:horizalign( horiz );
+end
+
+function Actor:valign(angle)
+	local vert = VertNumPad[angle];
+	self:vertalign( vert );
+end
+
 -- Most backgrounds are 640x480.  Some are 768x480.  Stretch the 640x480 ones.
 function Actor:scale_or_crop_background()
 	if self:GetWidth() == 640 and self:GetHeight() == 480 then
