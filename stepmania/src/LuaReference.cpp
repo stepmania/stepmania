@@ -15,9 +15,9 @@ LuaReference::~LuaReference()
 
 LuaReference::LuaReference( const LuaReference &cpy )
 {
-	if( cpy.m_iReference == LUA_NOREF )
+	if( cpy.m_iReference == LUA_NOREF || cpy.m_iReference == LUA_REFNIL )
 	{
-		m_iReference = LUA_NOREF;
+		m_iReference = cpy.m_iReference;
 	}
 	else
 	{
@@ -36,9 +36,9 @@ LuaReference &LuaReference::operator=( const LuaReference &cpy )
 
 	Unregister();
 
-	if( cpy.m_iReference == LUA_NOREF )
+	if( cpy.m_iReference == LUA_NOREF || cpy.m_iReference == LUA_REFNIL )
 	{
-		m_iReference = LUA_NOREF;
+		m_iReference = cpy.m_iReference;
 	}
 	else
 	{
