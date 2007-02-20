@@ -3,6 +3,7 @@
 #include "XmlFile.h"
 #include "LuaManager.h"
 #include "ActorUtil.h"
+#include "RageLog.h"
 #include "RageUtil.h"
 #include "LuaBinding.h"
 
@@ -41,7 +42,10 @@ void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 		ASSERT( !lua_isnil(L, -1) );
 		lua_pushnil( L );
 		lua_pushnil( L );
-		lua_call( L, 2, 1 ); // 2 args, 1 results
+
+		RString sError;
+		if( !LuaHelpers::RunScriptOnStack(L, sError, 2, 1) ) // 2 args, 1 result
+			LOG->Warn( "Error running LoadFunction: %s", sError.c_str() );
 
 		m_iNumItems = (int) luaL_checknumber( L, -1 );
 		lua_pop( L, 1 );
@@ -117,7 +121,11 @@ void DynamicActorScroller::ConfigureActor( Actor *pActor, int iItem )
 	ASSERT( !lua_isnil(L, -1) );
 	pActor->PushSelf( L );
 	LuaHelpers::Push( L, iItem );
-	lua_call( L, 2, 0 ); // 2 args, 0 results
+
+	RString sError;
+	if( !LuaHelpers::RunScriptOnStack(L, sError, 2, 0) ) // 2 args, 0 results
+		LOG->Warn( "Error running LoadFunction: %s", sError.c_str() );
+
 	LUA->Release(L);
 }
 

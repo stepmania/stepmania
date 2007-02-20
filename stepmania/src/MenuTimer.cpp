@@ -1,5 +1,6 @@
 #include "global.h"
 #include "MenuTimer.h"
+#include "RageLog.h"
 #include "RageUtil.h"
 #include "ScreenManager.h"
 #include "ThemeManager.h"
@@ -165,7 +166,9 @@ void MenuTimer::SetText( float fSeconds )
 		LuaHelpers::Push( L, fSeconds );
 		
 		// call function with 1 argument and 1 result
-		lua_call(L, 1, 1); 
+		RString sError;
+		if( !LuaHelpers::RunScriptOnStack(L, sError, 1, 1) )
+			LOG->Warn( "Error running Text%iFormatFunction: %s", i+1, sError.c_str() );
 
 		RString sText;
 		LuaHelpers::Pop( L, sText );
