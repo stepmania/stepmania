@@ -94,13 +94,11 @@ void ScreenWithMenuElements::Init()
 	m_sprUnderlay.Load( THEME->GetPathB(m_sName,"underlay") );
 	m_sprUnderlay->SetName("Underlay");
 	m_sprUnderlay->SetDrawOrder( DRAW_ORDER_UNDERLAY );
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprUnderlay );
 	this->AddChild( m_sprUnderlay );
 	
 	m_sprOverlay.Load( THEME->GetPathB(m_sName,"overlay") );
 	m_sprOverlay->SetName("Overlay");
 	m_sprOverlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprOverlay );
 	this->AddChild( m_sprOverlay );
 
 	m_In.SetName( "In" );
@@ -178,8 +176,8 @@ void ScreenWithMenuElements::TweenOnScreen()
 
 	ON_COMMAND( m_autoFooter );
 	ON_COMMAND( m_textHelp );
-	ON_COMMAND( m_sprUnderlay );
-	ON_COMMAND( m_sprOverlay );
+	m_sprUnderlay->PlayCommand("On");
+	m_sprOverlay->PlayCommand("On");;
 }
 
 ScreenWithMenuElements::~ScreenWithMenuElements()
@@ -275,8 +273,8 @@ void ScreenWithMenuElements::TweenOffScreen()
 			OFF_COMMAND( m_MemoryCardDisplay[p] );
 	OFF_COMMAND( m_autoFooter );
 	OFF_COMMAND( m_textHelp );
-	OFF_COMMAND( m_sprUnderlay );
-	OFF_COMMAND( m_sprOverlay );
+	m_sprUnderlay->PlayCommand("Off");
+	m_sprOverlay->PlayCommand("Off");;
 
 	// If we're a stacked screen, then there's someone else between us and the
 	// background, so don't tween it off.
