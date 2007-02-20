@@ -87,7 +87,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 
 	m_textPercent.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
 	ActorUtil::SetXY( m_textPercent, sMetricsGroup );
-	ASSERT( m_textPercent.HasCommand("Off") );
+	ActorUtil::LoadAllCommands( m_textPercent, sMetricsGroup );
 	this->AddChild( &m_textPercent );
 
 	if( !PREFSMAN->m_bDancePointsForOni && m_bUseRemainder )
