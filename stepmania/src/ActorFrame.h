@@ -40,6 +40,8 @@ public:
 	void PushChildrenTable( lua_State *L );
 	void PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable = NULL );
 	void PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable = NULL );
+
+	virtual void RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
 	virtual void RunCommandsOnChildren( const LuaReference& cmds, const LuaReference *pParamTable = NULL ); /* but not on self */
 	void RunCommandsOnChildren( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommandsOnChildren( *cmds, pParamTable ); }	// convenience
 	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = NULL ); /* but not on self */

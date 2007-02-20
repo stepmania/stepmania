@@ -277,6 +277,13 @@ void ActorFrame::PlayCommandOnLeaves( const RString &sCommandName, const LuaRefe
 		RunCommandsOnLeaves( **pCmd, pParamTable );
 }
 
+void ActorFrame::RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable )
+{
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->RunCommandsRecursively( cmds, pParamTable );
+	Actor::RunCommandsRecursively( cmds, pParamTable );
+}
+
 void ActorFrame::RunCommandsOnChildren( const LuaReference& cmds, const LuaReference *pParamTable )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )

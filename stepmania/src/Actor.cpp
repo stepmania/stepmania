@@ -1347,6 +1347,23 @@ public:
 
 		return 1;
 	}
+	static int RunCommandsRecursively( T* p, lua_State *L )
+	{
+		luaL_checktype( L, 1, LUA_TFUNCTION );
+		if( !lua_istable(L, 2) && !lua_isnoneornil(L, 2) )
+			luaL_typerror( L, 2, "table or nil" );
+
+		LuaReference ref;
+		lua_pushvalue( L, 1 );
+		ref.SetFromStack( L );
+
+		LuaReference ParamTable;
+		lua_pushvalue( L, 2 );
+		ParamTable.SetFromStack( L );
+
+		p->RunCommandsRecursively( ref, &ParamTable );
+		return 0;
+	}
 
 	static int GetX( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetX() ); return 1; }
 	static int GetY( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetY() ); return 1; }
@@ -1494,6 +1511,7 @@ public:
 		ADD_METHOD( queuemessage );
 		ADD_METHOD( addcommand );
 		ADD_METHOD( GetCommand );
+		ADD_METHOD( RunCommandsRecursively );
 
 		ADD_METHOD( GetX );
 		ADD_METHOD( GetY );

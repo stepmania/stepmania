@@ -346,15 +346,20 @@ public:
 	virtual void PushContext( lua_State *L );
 
 	//
-	// Commands
+	// Named commands
 	//
 	void AddCommand( const RString &sCmdName, apActorCommands apac );
 	bool HasCommand( const RString &sCmdName );
 	const apActorCommands *GetCommand( const RString &sCommandName ) const;
 	void PlayCommand( const RString &sCommandName ) { HandleMessage( Message(sCommandName) ); } // convenience
 	void PlayCommandNoRecurse( const Message &sCommandName );
+
+	//
+	// Commands by reference
+	//
 	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
 	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
+	virtual void RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable = NULL ) { RunCommands(cmds, pParamTable); }
 	// If we're a leaf, then execute this command.
 	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = NULL ) { RunCommands(cmds, pParamTable); }
 
