@@ -27,6 +27,8 @@ public:
 	void SortByDrawOrder();
 	void SetDrawByZPosition( bool b );
 
+	void SetDrawFunction( const LuaReference &DrawFunction ) { m_DrawFunction = DrawFunction; }
+	LuaReference GetDrawFunction() const { return m_DrawFunction; }
 	virtual bool AutoLoadChildren() const { return false; } // derived classes override to automatically LoadChildrenFromNode
 	void DeleteChildrenWhenDone( bool bDelete=true ) { m_bDeleteChildren = bDelete; }
 	void DeleteAllChildren();
@@ -76,6 +78,7 @@ protected:
 	bool m_bPropagateCommands;
 	bool m_bDeleteChildren;
 	bool m_bDrawByZPosition;
+	LuaReference m_DrawFunction;
 
 	// state effects
 	float m_fUpdateRate;

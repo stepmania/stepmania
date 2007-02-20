@@ -2,6 +2,7 @@
 #include "ActorFrame.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 #include "XmlFile.h"
 #include "ActorUtil.h"
 #include "LuaBinding.h"
@@ -25,6 +26,7 @@ ActorFrame::ActorFrame()
 	m_bPropagateCommands = false;
 	m_bDeleteChildren = false;
 	m_bDrawByZPosition = false;
+	m_DrawFunction.SetFromNil();
 	m_fUpdateRate = 1;
 	m_fFOV = -1;
 	m_fVanishX = SCREEN_CENTER_X;
@@ -46,6 +48,7 @@ ActorFrame::ActorFrame( const ActorFrame &cpy ):
 	CPY( m_bPropagateCommands );
 	CPY( m_bDeleteChildren );
 	CPY( m_bDrawByZPosition );
+	CPY( m_DrawFunction );
 	CPY( m_fUpdateRate );
 	CPY( m_fFOV );
 	CPY( m_fVanishX );
@@ -203,6 +206,19 @@ void ActorFrame::DrawPrimitives()
 	// Don't set Actor-defined render states because we won't be drawing 
 	// any geometry that belongs to this object.
 	// Actor::DrawPrimitives();
+
+	if( unlikely(!m_DrawFunction.IsNil()) )
+	{
+		Lua *L = LUA->Get();
+		m_DrawFunction.PushSelf( L );
+		ASSERT( !lua_isnil(L, -1) );
+		this->PushSelf( L );
+		RString sError;
+		if( !LuaHelpers::RunScriptOnStack(L, sError, 1, 0) ) // 1 arg, 0 results
+			LOG->Warn( "Error running DrawFunction: %s", sError.c_str() );
+		LUA->Release(L);
+		return;
+	}
 
 	// draw all sub-ActorFrames while we're in the ActorFrame's local coordinate space
 	if( m_bDrawByZPosition )
@@ -423,6 +439,21 @@ public:
 	}
 	static int GetNumChildren( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumChildren() ); return 1; }
 	static int SetDrawByZPosition( T* p, lua_State *L )	{ p->SetDrawByZPosition( BArg(1) ); return 1; }
+	static int SetDrawFunction( T* p, lua_State *L )
+	{
+		luaL_checktype( L, 1, LUA_TFUNCTION );
+
+		LuaReference ref;
+		lua_pushvalue( L, 1 );
+		ref.SetFromStack( L );
+		p->SetDrawFunction( ref );
+		return 0;
+	}
+	static int GetDrawFunction( T* p, lua_State *L )
+	{
+		p->GetDrawFunction().PushSelf(L);
+		return 1;
+	}
 
 	LunaActorFrame()
 	{
@@ -438,6 +469,8 @@ public:
 		ADD_METHOD( GetChildren );
 		ADD_METHOD( GetNumChildren );
 		ADD_METHOD( SetDrawByZPosition );
+		ADD_METHOD( SetDrawFunction );
+		ADD_METHOD( GetDrawFunction );
 	}
 };
 
