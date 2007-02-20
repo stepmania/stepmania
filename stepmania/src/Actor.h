@@ -63,7 +63,7 @@ public:
 	static void SetBGMTime( float fTime, float fBeat );
 	static void SetBGMLight( int iLightNumber, float fCabinetLights );
 
-	enum Effect { no_effect, effect_lua,
+	enum Effect { no_effect,
 			diffuse_blink, diffuse_shift, diffuse_ramp,
 			glow_blink, glow_shift,
 			rainbow,
@@ -231,9 +231,7 @@ public:
 	virtual float GetTweenTimeLeft() const;	// Amount of time until all tweens have stopped
 	TweenState& DestTweenState() // where Actor will end when its tween finish
 	{
-		if( m_pTempState != NULL ) // effect_lua running
-			return *m_pTempState;
-		else if( m_Tweens.empty() )	// not tweening
+		if( m_Tweens.empty() )	// not tweening
 			return m_current;
 		else
 			return m_Tweens.back()->state;
@@ -277,7 +275,6 @@ public:
 	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
 	RageVector3 GetEffectMagnitude() const		{ return m_vEffectMagnitude; }
 
-	void SetEffectLua( const RString &sCommand );
 	void SetEffectDiffuseBlink( 
 		float fEffectPeriodSeconds = 1.0f,
 		RageColor c1 = RageColor(0.5f,0.5f,0.5f,1), 
@@ -429,7 +426,6 @@ protected:
 	// Stuff for effects
 	//
 	Effect m_Effect;
-	RString m_sEffectCommand; // effect_lua
 	float m_fSecsIntoEffect;
 	float m_fEffectDelta;
 	

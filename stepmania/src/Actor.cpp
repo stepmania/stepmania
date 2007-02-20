@@ -170,7 +170,6 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_VertAlign );
 
 	CPY( m_Effect );
-	CPY( m_sEffectCommand );
 	CPY( m_fSecsIntoEffect );
 	CPY( m_fEffectDelta );
 	CPY( m_fEffectRampUp );
@@ -267,19 +266,6 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	static TweenState tempState;
 	if( m_Effect == no_effect )
 	{
-	}
-	else if( m_Effect == effect_lua )
-	{
-		/* Allow a Lua function to set the frame's draw state.  This may be expensive
-		 * and has not been well-benchmarked yet; use wisely.  This allows arbitrary
-		 * effects, instead of the mess of parameters below.  (In fact, all this does
-		 * is run a command, but to avoid calling RunCommand() all the time, and due
-		 * to the fact that this is the only place where the TempState is meaningful,
-		 * we treat this as an effect.) */
-		m_pTempState = &tempState;
-		tempState = m_current;
-
-		PlayCommand( m_sEffectCommand );
 	}
 	else
 	{
@@ -825,12 +811,6 @@ void Actor::SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, floa
 
 // effect "macros"
 
-void Actor::SetEffectLua( const RString &sCommand )
-{
-	m_Effect = effect_lua;
-	m_sEffectCommand = sCommand;
-}
-
 void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
 	if( m_Effect != diffuse_blink )
@@ -1292,7 +1272,6 @@ public:
 	static int shadowlength( T* p, lua_State *L )		{ p->SetShadowLength(FArg(1)); return 0; }
 	static int horizalign( T* p, lua_State *L )		{ p->SetHorizAlign(Enum::Check<HorizAlign>(L, 1)); return 0; }
 	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlign(Enum::Check<VertAlign>(L, 1)); return 0; }
-	static int luaeffect( T* p, lua_State *L )		{ p->SetEffectLua(SArg(1)); return 0; }
 	static int diffuseblink( T* p, lua_State *L )		{ p->SetEffectDiffuseBlink(); return 0; }
 	static int diffuseshift( T* p, lua_State *L )		{ p->SetEffectDiffuseShift(); return 0; }
 	static int diffuseramp( T* p, lua_State *L )		{ p->SetEffectDiffuseRamp(); return 0; }
@@ -1469,7 +1448,6 @@ public:
 		ADD_METHOD( shadowlength );
 		ADD_METHOD( horizalign );
 		ADD_METHOD( vertalign );
-		ADD_METHOD( luaeffect );
 		ADD_METHOD( diffuseblink );
 		ADD_METHOD( diffuseshift );
 		ADD_METHOD( diffuseramp );
