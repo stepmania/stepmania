@@ -83,11 +83,6 @@ function ActorFrame:propagatecommand(...)
 	self:propagate(0);
 end
 
-function ActorFrame:RunCommandsRecursively(func, ...)
-	func(self, ...);
-	self:RunCommandsOnChildren( func, ... );
-end
-
 local HorizNumPad = {
 	"HorizAlign_Left",
 	"HorizAlign_Center",
