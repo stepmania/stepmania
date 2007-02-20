@@ -16,6 +16,8 @@ enum TextureUnit
 {
 	TextureUnit_1,
 	TextureUnit_2,
+	TextureUnit_3,
+	TextureUnit_4,
 	NUM_TextureUnit
 };
 
