@@ -11,7 +11,7 @@ struct madlib_t;
 class RageSoundReader_MP3: public RageSoundReader_FileReader
 {
 public:
-	OpenResult Open(RString filename);
+	OpenResult Open( RageFileBasic *pFile );
 	void Close();
 	int GetLength() const { return GetLengthConst(false); }
 	int GetLength_Fast() const { return GetLengthConst(true); }
@@ -32,8 +32,6 @@ private:
 	int Channels;
 	bool m_bAccurateSync;
 
-	RString filename;
-	RageFile file;
 	madlib_t *mad;
 
 

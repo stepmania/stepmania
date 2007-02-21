@@ -11,8 +11,7 @@ class RageFileBasic;
 class RageSoundReader_Vorbisfile: public RageSoundReader_FileReader
 {
 public:
-	OpenResult Open(RString filename);
-	OpenResult Open( RageFileBasic *f );
+	OpenResult Open( RageFileBasic *pFile );
 
 	int GetLength() const;
 	int SetPosition( int iFrame );

@@ -4,6 +4,8 @@
 #define RAGE_SOUND_READER_FILE_READER_H
 
 #include "RageSoundReader.h"
+#include "RageUtil_AutoPtr.h"
+class RageFileBasic;
 
 #define SoundReader_FileReader RageSoundReader_FileReader
 class RageSoundReader_FileReader: public RageSoundReader
@@ -23,7 +25,9 @@ public:
 		OPEN_UNKNOWN_FILE_FORMAT=1,
 		OPEN_FATAL_ERROR=2,
 	};
-	virtual OpenResult Open(RString filename) = 0;
+
+	/* Takes ownership of pFile (even on failure). */
+	virtual OpenResult Open( RageFileBasic *pFile ) = 0;
 	virtual float GetStreamToSourceRatio() const { return 1.0f; }
 	virtual RString GetError() const { return m_sError; }
 
@@ -31,6 +35,7 @@ public:
 
 protected:
 	void SetError( RString sError ) const { m_sError = sError; }
+	HiddenPtr<RageFileBasic> m_pFile;
 
 private:
 	static RageSoundReader_FileReader *TryOpenFile( RString filename, RString &error, RString format, bool &bKeepTrying );

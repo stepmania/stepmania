@@ -348,16 +348,16 @@ int RageSoundReader_MP3::fill_buffer()
 		mad->inbuf_filepos += mad->Stream.next_frame - mad->inbuf;
 	}
 
-	const bool bWasAtEOF = file.AtEOF();
+	const bool bWasAtEOF = m_pFile->AtEOF();
 
-	int rc = file.Read( mad->inbuf + inbytes, sizeof(mad->inbuf)-inbytes-MAD_BUFFER_GUARD );
+	int rc = m_pFile->Read( mad->inbuf + inbytes, sizeof(mad->inbuf)-inbytes-MAD_BUFFER_GUARD );
 	if( rc < 0 )
 	{
-		SetError( file.GetError() );
+		SetError( m_pFile->GetError() );
 		return -1;
 	}
 
-	if ( file.AtEOF() && !bWasAtEOF )
+	if ( m_pFile->AtEOF() && !bWasAtEOF )
 	{
 		/* We just reached EOF.  Append MAD_BUFFER_GUARD bytes of NULs to the
 		 * buffer, to ensure that the last frame is flushed. */
@@ -545,7 +545,7 @@ void RageSoundReader_MP3::synth_output()
  * to use this. */
 int RageSoundReader_MP3::seek_stream_to_byte( int byte )
 {
-	if( file.Seek(byte) == -1 )
+	if( m_pFile->Seek(byte) == -1 )
 	{
 		SetError( strerror(errno) );
 		return 0;
@@ -644,16 +644,11 @@ RageSoundReader_MP3::~RageSoundReader_MP3()
 	delete mad;
 }
 
-RageSoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( RString filename_ )
+RageSoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( RageFileBasic *pFile )
 {
-	filename = filename_;
-	if( !file.Open( filename ) )
-	{
-		SetError( ssprintf("Couldn't open file: %s", file.GetError().c_str()) );
-		return OPEN_FATAL_ERROR;
-	}
+	m_pFile = pFile;
 
-	mad->filesize = file.GetFileSize();
+	mad->filesize = m_pFile->GetFileSize();
 	ASSERT( mad->filesize != -1 );
 
 	/* Make sure we can decode at least one frame.  This will also fill in header info. */
@@ -697,10 +692,6 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( RString filena
 RageSoundReader_MP3 *RageSoundReader_MP3::Copy() const
 {
 	RageSoundReader_MP3 *ret = new RageSoundReader_MP3;
-
-	ret->filename = filename;
-	bool b = ret->file.Open( filename );
-	ASSERT( b );
 
 	ret->m_bAccurateSync = m_bAccurateSync;
 	ret->mad->filesize = mad->filesize;
@@ -771,7 +762,7 @@ int RageSoundReader_MP3::Read( float *buf, int iFrames )
 
 bool RageSoundReader_MP3::MADLIB_rewind()
 {
-	this->file.Seek(0);
+	m_pFile->Seek(0);
 			
 	mad_frame_mute(&mad->Frame);
 	mad_synth_mute(&mad->Synth);

@@ -13,7 +13,7 @@
 #include "RageSoundReader_WAV.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "RageFile.h"
+#include "RageFileBasic.h"
 
 namespace
 {
@@ -84,7 +84,7 @@ namespace
 
 struct WavReader
 {
-	WavReader( RageFile &f, const RageSoundReader_WAV::WavData &data ):
+	WavReader( RageFileBasic &f, const RageSoundReader_WAV::WavData &data ):
 		m_File(f), m_WavData(data) { }
 	virtual ~WavReader() { }
 	virtual int Read( float *pBuf, int iFrames ) = 0;
@@ -95,14 +95,14 @@ struct WavReader
 	RString GetError() const { return m_sError; }
 
 protected:
-	RageFile &m_File;
+	RageFileBasic &m_File;
 	const RageSoundReader_WAV::WavData &m_WavData;
 	RString m_sError;
 };
 
 struct WavReaderPCM: public WavReader
 {
-	WavReaderPCM( RageFile &f, const RageSoundReader_WAV::WavData &data ):
+	WavReaderPCM( RageFileBasic &f, const RageSoundReader_WAV::WavData &data ):
 		WavReader(f, data) { }
 
 	bool Init()
@@ -197,7 +197,7 @@ public:
 	float *m_pBuffer;
 	int m_iBufferAvail, m_iBufferUsed;
 	
-	WavReaderADPCM( RageFile &f, const RageSoundReader_WAV::WavData &data ):
+	WavReaderADPCM( RageFileBasic &f, const RageSoundReader_WAV::WavData &data ):
 		WavReader(f, data)
 	{
 		m_pBuffer = NULL;
@@ -274,7 +274,7 @@ public:
 		{
 			if( iPredictor[i] >= (int) m_iaCoef1.size() )
 			{
-				LOG->Trace( "%s: predictor out of range", m_File.GetPath().c_str() );
+				LOG->Trace( "%s: predictor out of range", m_File.GetDisplayPath().c_str() );
 
 				/* XXX: silence this block? */
 				iPredictor[i] = 0;
@@ -450,7 +450,7 @@ public:
 	}
 };
 
-RString ReadString( RageFile &f, int iSize, RString &sError )
+RString ReadString( RageFileBasic &f, int iSize, RString &sError )
 {
 	if( sError.size() != 0 )
 		return RString();
@@ -469,24 +469,21 @@ RString ReadString( RageFile &f, int iSize, RString &sError )
 	return OPEN_FATAL_ERROR; \
 }
 
-RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filename_ )
+RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RageFileBasic *pFile )
 {
-	m_sFilename = filename_;
+	m_pFile = pFile;
 
 	RString sError;
 
-	if( !m_File.Open( m_sFilename ) )
-		FATAL_ERROR( ssprintf("wav: opening \"%s\" failed: %s", m_sFilename.c_str(), m_File.GetError().c_str()) );
-
 	/* RIFF header: */
-	if( ReadString( m_File, 4, sError ) != "RIFF" )
+	if( ReadString( *m_pFile, 4, sError ) != "RIFF" )
 	{
 		SetError( "Not a WAV file" );
 		return OPEN_UNKNOWN_FILE_FORMAT;
 	}
 
-	FileReading::read_32_le( m_File, sError ); /* file size */
-	if( ReadString( m_File, 4, sError ) != "WAVE" )
+	FileReading::read_32_le( *m_pFile, sError ); /* file size */
+	if( ReadString( *m_pFile, 4, sError ) != "WAVE" )
 	{
 		SetError( "Not a WAV file" );
 		return OPEN_UNKNOWN_FILE_FORMAT;
@@ -495,8 +492,8 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filena
 	bool bGotFormatChunk = false, bGotDataChunk = false;
 	while( !bGotFormatChunk || !bGotDataChunk )
 	{
-		RString ChunkID = ReadString( m_File, 4, sError );
-		int32_t iChunkSize = FileReading::read_32_le( m_File, sError );
+		RString ChunkID = ReadString( *m_pFile, 4, sError );
+		int32_t iChunkSize = FileReading::read_32_le( *m_pFile, sError );
 
 		if( sError.size() != 0 )
 		{
@@ -504,22 +501,22 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filena
 			return OPEN_FATAL_ERROR;
 		}
 
-		int iNextChunk = m_File.Tell() + iChunkSize;
+		int iNextChunk = m_pFile->Tell() + iChunkSize;
 		/* Chunks are always word-aligned: */
 		iNextChunk = (iNextChunk+1)&~1;
 
 		if( ChunkID == "fmt " )
 		{
 			if( bGotFormatChunk )
-				LOG->Warn( "File %s has more than one fmt chunk", m_File.GetPath().c_str() );
+				LOG->Warn( "File %s has more than one fmt chunk", m_pFile->GetDisplayPath().c_str() );
 
-			m_WavData.m_iFormatTag = FileReading::read_16_le( m_File, sError );
-			m_WavData.m_iChannels = FileReading::read_16_le( m_File, sError );
-			m_WavData.m_iSampleRate = FileReading::read_32_le( m_File, sError );
-			FileReading::read_32_le( m_File, sError ); /* BytesPerSec */
-			m_WavData.m_iBlockAlign = FileReading::read_16_le( m_File, sError );
-			m_WavData.m_iBitsPerSample = FileReading::read_16_le( m_File, sError );
-			m_WavData.m_iExtraFmtBytes = FileReading::read_16_le( m_File, sError );
+			m_WavData.m_iFormatTag = FileReading::read_16_le( *m_pFile, sError );
+			m_WavData.m_iChannels = FileReading::read_16_le( *m_pFile, sError );
+			m_WavData.m_iSampleRate = FileReading::read_32_le( *m_pFile, sError );
+			FileReading::read_32_le( *m_pFile, sError ); /* BytesPerSec */
+			m_WavData.m_iBlockAlign = FileReading::read_16_le( *m_pFile, sError );
+			m_WavData.m_iBitsPerSample = FileReading::read_16_le( *m_pFile, sError );
+			m_WavData.m_iExtraFmtBytes = FileReading::read_16_le( *m_pFile, sError );
 
 			if( m_WavData.m_iChannels < 1 || m_WavData.m_iChannels > 2 )
 				FATAL_ERROR( ssprintf( "Unsupported channel count: %i", m_WavData.m_iChannels) );
@@ -527,21 +524,21 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filena
 			if( m_WavData.m_iSampleRate < 4000 || m_WavData.m_iSampleRate > 100000 ) /* unlikely */
 				FATAL_ERROR( ssprintf( "Invalid sample rate: %i", m_WavData.m_iSampleRate) );
 
-			m_WavData.m_iExtraFmtPos = m_File.Tell();
+			m_WavData.m_iExtraFmtPos = m_pFile->Tell();
 
 			bGotFormatChunk = true;
 		}
 
 		if( ChunkID == "data" )
 		{
-			m_WavData.m_iDataChunkPos = m_File.Tell();
+			m_WavData.m_iDataChunkPos = m_pFile->Tell();
 			m_WavData.m_iDataChunkSize = iChunkSize;
 
-			int iFileSize = m_File.GetFileSize();
+			int iFileSize = m_pFile->GetFileSize();
 			int iMaxSize = iFileSize-m_WavData.m_iDataChunkPos;
 			if( iMaxSize < m_WavData.m_iDataChunkSize )
 			{
-				LOG->Warn( "File %s truncated (%i < data chunk size %i)", m_File.GetPath().c_str(),
+				LOG->Warn( "File %s truncated (%i < data chunk size %i)", m_pFile->GetDisplayPath().c_str(),
 					iMaxSize, m_WavData.m_iDataChunkSize );
 
 				m_WavData.m_iDataChunkSize = iMaxSize;
@@ -549,7 +546,7 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filena
 
 			bGotDataChunk = true;
 		}
-		m_File.Seek( iNextChunk );
+		m_pFile->Seek( iNextChunk );
 	}
 
 	if( sError.size() != 0 )
@@ -562,10 +559,10 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filena
 	{
 	case 1: // PCM
 	case 3: // FLOAT
-		m_pImpl = new WavReaderPCM( m_File, m_WavData );
+		m_pImpl = new WavReaderPCM( *m_pFile, m_WavData );
 		break;
 	case 2: // ADPCM
-		m_pImpl = new WavReaderADPCM( m_File, m_WavData );
+		m_pImpl = new WavReaderADPCM( *m_pFile, m_WavData );
 		break;
 	case 85: // MP3
 		/* Return unknown, so other decoders will be tried.  MAD can read MP3s embedded in WAVs. */
@@ -620,7 +617,7 @@ RageSoundReader_WAV::~RageSoundReader_WAV()
 RageSoundReader_WAV *RageSoundReader_WAV::Copy() const
 {
 	RageSoundReader_WAV *ret = new RageSoundReader_WAV;
-	ret->Open( m_sFilename );
+	ret->Open( m_pFile->Copy() );
 	return ret;
 }
 
