@@ -27,6 +27,9 @@ using namespace X11Helper;
 static GLXContext g_pContext = NULL;
 static GLXContext g_pBackgroundContext = NULL;
 static Window g_AltWindow = None;
+static Rotation g_OldRotation;
+static int g_iOldSize;
+XRRScreenConfiguration *g_pScreenConfig = NULL;
 
 static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server" );
 LowLevelWindow_X11::LowLevelWindow_X11()
@@ -50,6 +53,7 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( Dpy, GLX_VENDOR ), glXGetClientString( Dpy, GLX_VERSION ) );
 	
 	m_bWasWindowed = true;
+	g_pScreenConfig = XRRGetScreenInfo( Dpy, RootWindow(Dpy, DefaultScreen(Dpy)) );
 }
 
 LowLevelWindow_X11::~LowLevelWindow_X11()
@@ -57,9 +61,7 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	// Reset the display
 	if( !m_bWasWindowed )
 	{
-		XRRScreenConfiguration *pScreenConfig = XRRGetScreenInfo( Dpy, RootWindow( Dpy, DefaultScreen( Dpy ) ) );
-		XRRSetScreenConfig( Dpy, pScreenConfig, RootWindow( Dpy, DefaultScreen( Dpy ) ), 0, 1, CurrentTime );
-		XRRFreeScreenConfigInfo( pScreenConfig );
+		XRRSetScreenConfig( Dpy, g_pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), g_iOldSize, g_OldRotation, CurrentTime );
 		
 		XUngrabKeyboard( Dpy, CurrentTime );
 	}
@@ -73,6 +75,9 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 		glXDestroyContext( Dpy, g_pBackgroundContext );
 		g_pBackgroundContext = NULL;
 	}
+	XRRFreeScreenConfigInfo( g_pScreenConfig );
+	g_pScreenConfig = NULL;
+
 	XDestroyWindow( Dpy, Win );
 	Win = None;
 	XDestroyWindow( Dpy, g_AltWindow );
@@ -180,7 +185,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		bNewDeviceOut = false;
 	}
 	
-	XRRScreenConfiguration *pScreenConfig = XRRGetScreenInfo( Dpy, RootWindow(Dpy, DefaultScreen(Dpy)) );
+	g_iOldSize = XRRConfigCurrentConfiguration( g_pScreenConfig, &g_OldRotation );
 	
 	if( !p.windowed )
 	{
@@ -202,7 +207,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		// Set this mode.
 		// XXX: This doesn't handle if the config has changed since we queried it (see man Xrandr)
-		XRRSetScreenConfig( Dpy, pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), iSizeMatch, 1, CurrentTime );
+		XRRSetScreenConfig( Dpy, g_pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), iSizeMatch, 1, CurrentTime );
 		
 		// Move the window to the corner that the screen focuses in on.
 		XMoveWindow( Dpy, Win, 0, 0 );
@@ -220,16 +225,14 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	{
 		if( !m_bWasWindowed )
 		{
-			XRRSetScreenConfig( Dpy, pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), 0, 1, CurrentTime );
+			XRRSetScreenConfig( Dpy, g_pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), g_iOldSize, g_OldRotation, CurrentTime );
 			// In windowed mode, we actually want the WM to function normally.
 			// Release any previous grab.
 			XUngrabKeyboard( Dpy, CurrentTime );
 			m_bWasWindowed = true;
 		}
 	}
-	int rate = XRRConfigCurrentRate( pScreenConfig );
-
-	XRRFreeScreenConfigInfo( pScreenConfig );
+	int rate = XRRConfigCurrentRate( g_pScreenConfig );
 
 	// Do this before resizing the window so that pane-style WMs (Ion,
 	// ratpoison) don't resize us back inappropriately.
