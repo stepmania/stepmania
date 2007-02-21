@@ -9,8 +9,8 @@ vec4 ApplyDodge( vec4 over, vec4 under, float fill )
 	vec4 ret;
 	ret.rgb = under.rgb;
 
-	ret.rgb /= max(1-over.rgb, 0.000001);
-	ret.rgb = min(ret.rgb, 1);
+	ret.rgb /= max(1.0-over.rgb, 0.000001);
+	ret.rgb = min(ret.rgb, 1.0);
 	ret.rgb *= over.a*under.a;
 //	ret = clamp( ret, 0.0, 1.0 );
 

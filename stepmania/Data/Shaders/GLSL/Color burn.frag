@@ -7,7 +7,7 @@ vec4 ApplyBurn( vec4 over, vec4 under, float fill )
 	over.rgb = mix( NeutralColor, over.rgb, fill );
 
 	vec4 ret;
-	ret.rgb = (over.rgb + under.rgb - 1);
+	ret.rgb = (over.rgb + under.rgb - 1.0);
 
 	ret.rgb /= max(over.rgb, 0.000001);
 	ret.rgb *= over.a*under.a;

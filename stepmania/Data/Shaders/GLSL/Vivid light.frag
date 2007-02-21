@@ -11,8 +11,8 @@ vec4 ApplyVividLight( vec4 over, vec4 under, float fill )
 
 	vec4 ret;
 	ret.rgb = under.rgb;
-	ret.rgb += min(over.rgb, 0);
-	ret.rgb /= max(1-abs(over.rgb), 0.000001);
+	ret.rgb += min(over.rgb, 0.0);
+	ret.rgb /= max(1.0-abs(over.rgb), 0.000001);
 	ret.rgb *= under.a;
 	ret = clamp( ret, 0.0, 1.0 );
 	ret.rgb *= over.a;
