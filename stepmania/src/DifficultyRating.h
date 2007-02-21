@@ -4,7 +4,6 @@
 #define DIFFICULTY_RATING_H
 
 #include "ActorFrame.h"
-#include "Banner.h"
 #include "Sprite.h"
 #include "ThemeManager.h"
 

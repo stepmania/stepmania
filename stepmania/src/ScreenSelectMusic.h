@@ -8,7 +8,6 @@
 #include "BitmapText.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicWheel.h"
-#include "Banner.h"
 #include "FadingBanner.h"
 #include "RageUtil_BackgroundLoader.h"
 #include "ThemeMetric.h"

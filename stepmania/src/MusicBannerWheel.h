@@ -4,7 +4,6 @@
 #define MUSICBANNERWHEEL_H
 
 #include "ActorFrame.h"
-#include "Banner.h"
 #include "Sprite.h"
 #include "ScrollingList.h"
 #include "SongManager.h"
