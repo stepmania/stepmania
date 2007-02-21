@@ -27,7 +27,14 @@
 #include "RageDisplay.h"
 #include "Foreach.h"
 
+#include <map>
+
 RageTextureManager*		TEXTUREMAN		= NULL;
+
+namespace
+{
+	map<RageTextureID, RageTexture*> m_mapPathToTexture;
+};
 
 RageTextureManager::RageTextureManager()
 {

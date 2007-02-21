@@ -5,8 +5,6 @@
 
 #include "RageTexture.h"
 
-#include <map>
-
 struct RageTextureManagerPrefs
 {
 	int m_iTextureColorDepth;
@@ -93,7 +91,6 @@ private:
 	RageTexture* LoadTextureInternal( RageTextureID ID );
 
 	RageTextureManagerPrefs m_Prefs;
-	std::map<RageTextureID, RageTexture*> m_mapPathToTexture;
 	int m_iNoWarnAboutOddDimensions;
 	RageTextureID::TexPolicy m_TexturePolicy;
 };
