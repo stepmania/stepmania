@@ -6,6 +6,10 @@ string.lower = Lowercase
 Uppercase = nil -- don't use directly
 Lowercase = nil -- don't use directly
 
+Trace = lua.Trace
+Warn = lua.Warn
+print = Trace
+
 PLAYER_1 = "PlayerNumber_P1"
 PLAYER_2 = "PlayerNumber_P2"
 NUM_PLAYERS = #PlayerNumber
