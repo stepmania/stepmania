@@ -20,6 +20,7 @@
 #include "GameState.h"
 #include "song.h"
 #include "RageSoundReader_Chain.h"
+#include "RageSoundReader_Extend.h"
 #include "RageSoundReader_PitchChange.h"
 #include "RageSoundReader_PostBuffering.h"
 #include "RageSoundManager.h"
@@ -133,6 +134,8 @@ void AutoKeysounds::FinishLoading()
 	pChain->Finish();
 
 	RageSoundReader *pReader = pChain;
+
+	pReader = new RageSoundReader_Extend( pReader );
 
 	/* Load a pitch shifter for the whole sound. */
 	pReader = new RageSoundReader_PitchChange( pReader );
