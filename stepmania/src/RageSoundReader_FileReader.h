@@ -31,9 +31,10 @@ public:
 	virtual float GetStreamToSourceRatio() const { return 1.0f; }
 	virtual RString GetError() const { return m_sError; }
 
-	/* Takes ownership of pFile (even on failure). */
-	static RageSoundReader_FileReader *OpenFile( RageFileBasic *pFile, RString &error );
-	static RageSoundReader_FileReader *OpenFile( RString filename, RString &error );
+	/* Open a file.  If pPrebuffer is non-NULL, and the file is sufficiently small,
+	 * the (possibly compressed) data will be loaded entirely into memory, and pPrebuffer
+	 * will be set to true. */
+	static RageSoundReader_FileReader *OpenFile( RString filename, RString &error, bool *pPrebuffer = NULL );
 
 protected:
 	void SetError( RString sError ) const { m_sError = sError; }

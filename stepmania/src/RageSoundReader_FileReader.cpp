@@ -83,28 +83,49 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 	return NULL;
 }
 
-RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filename, RString &error )
+#include "RageFileDriverMemory.h"
+
+RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filename, RString &error, bool *pPrebuffer )
 {
-	RageFile *pFile = new RageFile;
-	if( !pFile->Open(filename) )
+	RageFileBasic *pFile = NULL;
 	{
-		error = pFile->GetError();
-		delete pFile;
-		return NULL;
+		RageFile *pFileOpen = new RageFile;
+		if( !pFileOpen->Open(filename) )
+		{
+			error = pFile->GetError();
+			delete pFileOpen;
+			return NULL;
+		}
+		pFile = pFileOpen;
 	}
 
-	return OpenFile( pFile, error );
-}
-
-
-RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RageFileBasic *pFile, RString &error )
-{
+	if( pPrebuffer )
+	{
+		if( pFile->GetFileSize() < 1024*50 )
+		{
+			RageFileObjMem *pMem = new RageFileObjMem;
+			bool bRet = FileCopy( *pFile, *pMem, error, NULL );
+			delete pFile;
+			pFile = pMem;
+			if( !bRet )
+			{
+				delete pFile;
+				return NULL;
+			}
+			pFile->Seek( 0 );
+			*pPrebuffer = true;
+		}
+		else
+		{
+			*pPrebuffer = false;
+		}
+	}
 	set<RString> FileTypes;
 	FileTypes.insert("ogg");
 	FileTypes.insert("mp3");
 	FileTypes.insert("wav");
 
-	RString format = GetExtension( pFile->GetDisplayPath() );
+	RString format = GetExtension( filename );
 	format.MakeLower();
 
 	error = "";
