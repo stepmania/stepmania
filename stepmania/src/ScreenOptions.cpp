@@ -112,6 +112,7 @@ void ScreenOptions::Init()
 
 	// add everything to m_framePage so we can animate everything at once
 	m_framePage.SetName( "Frame" );
+	LOAD_ALL_COMMANDS( m_framePage );
 	this->AddChild( &m_framePage );
 
 	m_sprPage.Load( THEME->GetPathG(m_sName,"page") );
@@ -125,6 +126,7 @@ void ScreenOptions::Init()
 		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName,"line highlight") );
 		m_sprLineHighlight[p]->SetName( "LineHighlight" );
 		m_sprLineHighlight[p]->SetX( LINE_HIGHLIGHT_X );
+		LOAD_ALL_COMMANDS( m_sprLineHighlight[p] );
 		m_framePage.AddChild( m_sprLineHighlight[p] );
 	}
 
@@ -134,6 +136,7 @@ void ScreenOptions::Init()
 		m_Cursor[p].Load( m_sName, OptionsCursorPlus::cursor );
 		m_Cursor[p].Set( p );
 		m_Cursor[p].SetName( "Cursor" );
+		LOAD_ALL_COMMANDS( m_Cursor[p] );
 		m_framePage.AddChild( &m_Cursor[p] );
 	}
 	
