@@ -12,6 +12,9 @@ ActorFrameTexture::ActorFrameTexture()
 	m_bDepthBuffer = false;
 	m_bAlphaBuffer = false;
 	m_bPreserveTexture = false;
+	static uint64_t i = 0;
+	++i;
+	m_sTextureName = ssprintf( ConvertI64FormatString("ActorFrameTexture %lli"), i );
 
 	m_pRenderTarget = NULL;
 }
