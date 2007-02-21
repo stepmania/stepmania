@@ -108,7 +108,7 @@ public:
 	RageTexture_Default():
 		RageTexture( RageTextureID() )
 	{
-		m_uTexHandle = DISPLAY->CreateTextureDefault();
+		m_uTexHandle = 0;
 		m_iSourceWidth = m_iSourceHeight = 1;
 		m_iTextureWidth = m_iTextureHeight = 1;
 		m_iImageWidth = m_iImageHeight = 1;
