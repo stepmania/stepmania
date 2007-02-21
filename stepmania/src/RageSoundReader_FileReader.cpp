@@ -42,6 +42,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RString fil
 	{
 		error = ssprintf( "Couldn't open file: %s", file.GetError().c_str() );
 		bKeepTrying = false;
+		return NULL;
 	}
 
 	OpenResult ret = Sample->Open( file.Copy() );
