@@ -45,6 +45,9 @@ void ActorFrameTexture::Create()
 
 void ActorFrameTexture::DrawPrimitives()
 {
+	if( m_pRenderTarget == NULL )
+		return;
+
 	m_pRenderTarget->BeginRenderingTo( m_bPreserveTexture );
 
 	ActorFrame::DrawPrimitives();
