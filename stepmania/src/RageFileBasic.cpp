@@ -1,6 +1,9 @@
 #include "global.h"
 #include "RageFileBasic.h"
 #include "RageUtil.h"
+#include "RageUtil_AutoPtr.h"
+
+REGISTER_CLASS_TRAITS( RageFileBasic, pCopy->Copy() );
 
 RageFileObj::RageFileObj()
 {
