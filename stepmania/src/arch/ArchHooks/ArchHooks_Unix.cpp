@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ArchHooks_Unix.h"
+#include "ProductInfo.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageThreads.h"
@@ -251,24 +252,19 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	 * (Deprecated; use rootfs.) */
 	FILEMAN->Mount( "dir", "/proc", "/proc" );
 	
-	/* We can almost do this, to have machine profiles be system-global to eg. share
-	 * scores.  It would need to handle permissions properly. */
-/*	RageFileManager::Mount( "dir", "/var/lib/games/stepmania", "/Save/Profiles" ); */
-	
-	// RString Home = getenv( "HOME" ) + "/" + PRODUCT_ID;
-
 	/*
-	 * Next: path to write general mutable user data.  If the above path fails (eg.
-	 * wrong permissions, doesn't exist), machine memcard data will also go in here. 
-	 * XXX: It seems silly to have two ~ directories.  If we're going to create a
-	 * directory on our own, it seems like it should be a dot directory, but it
-	 * seems wrong to put lots of data (eg. music) in one.  Hmm. 
+	 * Next: path to write general mutable user data.
+	 *
+	 * Lowercase the PRODUCT_ID; dotfiles and directories are almost always lowercase.
 	 */
-	/* XXX: create */
-/*	RageFileManager::Mount( "dir", Home + "." PRODUCT_ID, "/Data" ); */
-
-	/* Next, search ~/StepMania.  This is where users can put music, themes, etc. */
-	/* RageFileManager::Mount( "dir", Home + PRODUCT_ID, "/" ); */
+	const char *szHome = getenv( "HOME" );
+	RString sProductId = PRODUCT_ID;
+	sProductId.MakeLower();
+	RString sUserDataPath = ssprintf( "%s/.%s", szHome? szHome:".", sProductId.c_str() );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Cache", "/Cache" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Logs", "/Logs" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Save", "/Save" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Screenshots", "/Screenshots" );
 
 	/* Search for a directory with "Songs" in it.  Be careful: the CWD is likely to
 	 * be ~, and it's possible that some users will have a ~/Songs/ directory that
