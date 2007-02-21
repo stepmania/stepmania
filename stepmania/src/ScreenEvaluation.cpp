@@ -109,10 +109,13 @@ ScreenEvaluation::ScreenEvaluation()
 
 			GAMESTATE->JoinPlayer( p );
 			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
-			vector<Trail*> apTrails;
-			GAMESTATE->m_pCurCourse->GetAllTrails( apTrails );
-			if( apTrails.size() )
-				GAMESTATE->m_pCurTrail[p].Set( apTrails[0] );
+			if( GAMESTATE->m_pCurCourse )
+			{
+				vector<Trail*> apTrails;
+				GAMESTATE->m_pCurCourse->GetAllTrails( apTrails );
+				if( apTrails.size() )
+					GAMESTATE->m_pCurTrail[p].Set( apTrails[0] );
+			}
 			STATSMAN->m_CurStageStats.m_player[p].m_vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			STATSMAN->m_CurStageStats.m_player[p].m_vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			
