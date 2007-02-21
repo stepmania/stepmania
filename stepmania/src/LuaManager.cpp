@@ -864,20 +864,6 @@ void LuaHelpers::PushValueFunc( lua_State *L, int iArgs )
 	lua_pushcclosure( L, lua_pushvalues, iArgs+1 );
 }
 
-static bool Trace( const RString &sString )
-{
-	LOG->Trace( "%s", sString.c_str() );
-	return true;
-}
-LuaFunction( Trace, Trace(SArg(1)) );
-
-static bool Warn( const RString &sString )
-{
-	LOG->Warn( "%s", sString.c_str() );
-	return true;
-}
-LuaFunction( Warn, Warn(SArg(1)) );
-
 #include "ProductInfo.h"
 LuaFunction( ProductVersion, (RString) PRODUCT_VER );
 LuaFunction( ProductID, (RString) PRODUCT_ID );
@@ -893,6 +879,18 @@ LuaFunction( clamp, clamp(FArg(1), FArg(2), FArg(3)) );
 #include "LuaBinding.h"
 namespace
 {
+	static int Trace( lua_State *L )
+	{
+		RString sString = SArg(1);
+		LOG->Trace( "%s", sString.c_str() );
+		return 0;
+	}
+	static int Warn( lua_State *L )
+	{
+		RString sString = SArg(1);
+		LOG->Warn( "%s", sString.c_str() );
+		return 0;
+	}
 	static int ReadFile( lua_State *L )
 	{
 		RString sPath = SArg(1);
@@ -958,6 +956,8 @@ namespace
 	
 	const luaL_Reg luaTable[] =
 	{
+		LIST_METHOD( Trace ),
+		LIST_METHOD( Warn ),
 		LIST_METHOD( ReadFile ),
 		LIST_METHOD( RunWithThreadVariables ),
 		LIST_METHOD( GetThreadVariable ),
