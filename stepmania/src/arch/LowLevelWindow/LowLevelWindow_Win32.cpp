@@ -40,7 +40,7 @@ void *LowLevelWindow_Win32::GetProcAddress( RString s )
 	if( pRet != NULL )
 		return pRet;
 
-	return GetProcAddress( s );
+	return ::GetProcAddress( GetModuleHandle(NULL), s );
 }
 
 LowLevelWindow_Win32::LowLevelWindow_Win32()
