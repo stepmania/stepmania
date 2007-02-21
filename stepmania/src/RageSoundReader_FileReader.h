@@ -31,14 +31,16 @@ public:
 	virtual float GetStreamToSourceRatio() const { return 1.0f; }
 	virtual RString GetError() const { return m_sError; }
 
-	static RageSoundReader *OpenFile( RString filename, RString &error );
+	/* Takes ownership of pFile (even on failure). */
+	static RageSoundReader_FileReader *OpenFile( RageFileBasic *pFile, RString &error );
+	static RageSoundReader_FileReader *OpenFile( RString filename, RString &error );
 
 protected:
 	void SetError( RString sError ) const { m_sError = sError; }
 	HiddenPtr<RageFileBasic> m_pFile;
 
 private:
-	static RageSoundReader_FileReader *TryOpenFile( RString filename, RString &error, RString format, bool &bKeepTrying );
+	static RageSoundReader_FileReader *TryOpenFile( RageFileBasic *pFile, RString &error, RString format, bool &bKeepTrying );
 	mutable RString m_sError;
 };
 

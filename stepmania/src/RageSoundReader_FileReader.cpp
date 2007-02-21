@@ -16,7 +16,7 @@
 #include "RageSoundReader_Vorbisfile.h"
 #endif
 
-RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RString filename, RString &error, RString format, bool &bKeepTrying )
+RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBasic *pFile, RString &error, RString format, bool &bKeepTrying )
 {
 	RageSoundReader_FileReader *Sample = NULL;
 
@@ -37,15 +37,8 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RString fil
 	if( !Sample )
 		return NULL;
 
-	RageFile file;
-	if( !file.Open(filename) )
-	{
-		error = ssprintf( "Couldn't open file: %s", file.GetError().c_str() );
-		bKeepTrying = false;
-		return NULL;
-	}
-
-	OpenResult ret = Sample->Open( file.Copy() );
+	OpenResult ret = Sample->Open( pFile );
+	pFile = NULL; // Sample owns it now
 	if( ret == OPEN_OK )
 		return Sample;
 
@@ -90,23 +83,28 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RString fil
 	return NULL;
 }
 
-RageSoundReader *RageSoundReader_FileReader::OpenFile( RString filename, RString &error )
+RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filename, RString &error )
 {
+	RageFile *pFile = new RageFile;
+	if( !pFile->Open(filename) )
 	{
-		RageFile TestOpen;
-		if( !TestOpen.Open( filename ) )
-		{
-			error = TestOpen.GetError();
-			return NULL;
-		}
+		error = pFile->GetError();
+		delete pFile;
+		return NULL;
 	}
 
+	return OpenFile( pFile, error );
+}
+
+
+RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RageFileBasic *pFile, RString &error )
+{
 	set<RString> FileTypes;
 	FileTypes.insert("ogg");
 	FileTypes.insert("mp3");
 	FileTypes.insert("wav");
 
-	RString format = GetExtension(filename);
+	RString format = GetExtension( pFile->GetDisplayPath() );
 	format.MakeLower();
 
 	error = "";
@@ -116,7 +114,7 @@ RageSoundReader *RageSoundReader_FileReader::OpenFile( RString filename, RString
 	/* If the extension matches a format, try that first. */
 	if( FileTypes.find(format) != FileTypes.end() )
 	{
-		RageSoundReader_FileReader *NewSample = TryOpenFile( filename, error, format, bKeepTrying );
+		RageSoundReader_FileReader *NewSample = TryOpenFile( pFile->Copy(), error, format, bKeepTrying );
 		if( NewSample )
 			return NewSample;
 		FileTypes.erase( format );
@@ -124,10 +122,10 @@ RageSoundReader *RageSoundReader_FileReader::OpenFile( RString filename, RString
 
 	for( set<RString>::iterator it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
 	{
-		RageSoundReader_FileReader *NewSample = TryOpenFile( filename, error, *it, bKeepTrying );
+		RageSoundReader_FileReader *NewSample = TryOpenFile( pFile->Copy(), error, *it, bKeepTrying );
 		if( NewSample )
 		{
-			LOG->UserLog( "Sound file", filename, "is really %s.", it->c_str() );
+			LOG->UserLog( "Sound file", pFile->GetDisplayPath(), "is really %s.", it->c_str() );
 			return NewSample;
 		}
 	}
