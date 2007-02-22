@@ -710,23 +710,6 @@ RageSoundReader_MP3 *RageSoundReader_MP3::Copy() const
 	return ret;
 }
 
-
-/* dst and src are buffers of 16-bit samples.  len is the number of bytes
- * to copy from src.  len must be even. */
-static void mono_to_stereo( char *dst, const char *src, unsigned len )
-{
-	ASSERT( (len % 2) == 0 );
-	const char *src_end = src + len;
-
-	while( src != src_end )
-	{
-		dst[0] = dst[2] = src[0];
-		dst[1] = dst[3] = src[1];
-		dst += 4;
-		src += 2;
-	}
-}
-
 int RageSoundReader_MP3::Read( float *buf, int iFrames )
 {
 	int iFramesWritten = 0;
