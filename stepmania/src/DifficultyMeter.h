@@ -26,8 +26,8 @@ public:
 	virtual DifficultyMeter *Copy() const;
 
 	void SetFromGameState( PlayerNumber pn );
-	void SetFromMeterAndDifficulty( int iMeter, Difficulty dc );
-	void SetFromMeterAndCourseDifficulty( int iMeter, CourseDifficulty cd );
+	void SetFromStepsTypeAndMeterAndDifficulty( StepsType st, int iMeter, Difficulty dc );
+	void SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType st, int iMeter, CourseDifficulty cd );
 	void SetFromSteps( const Steps* pSteps );
 	void SetFromTrail( const Trail* pTrail );
 	void Unset();
@@ -36,21 +36,40 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	void SetInternal( int iMeter, Difficulty dc, const RString &sDifficultyCommand, const RString &sDescription );
+	struct SetParams
+	{
+		int iMeter;
+		StepsType st;
+		Difficulty dc;
+		bool bIsCourseDifficulty;
+		RString sEditDescription;
 
-	BitmapText		m_textFeet;		// bar
-	RString			m_sCurDifficultyCommand;
+		bool operator==( const SetParams &other )
+		{
+#define COMPARE( x )	if( x != other.x ) return false;
+			COMPARE( iMeter );
+			COMPARE( st );
+			COMPARE( dc );
+			COMPARE( bIsCourseDifficulty );
+			COMPARE( sEditDescription );
+#undef COMPARE
+			return true;
+		}
+	};
+	void SetInternal( const SetParams &params );
+
+	BitmapText		m_textTicks;	/* XXXX000000 */
 	AutoActor		m_Difficulty;	/* "easy", "hard" */
 	BitmapText		m_textMeter;	/* 3, 9 */
 	BitmapText		m_textEditDescription;
 
-	ThemeMetric<int>	m_iNumFeetInMeter;
-	ThemeMetric<int>	m_iMaxFeetInMeter;
-	ThemeMetric<bool>	m_bShowFeet;
+	ThemeMetric<int>	m_iNumTicks;
+	ThemeMetric<int>	m_iMaxTicks;
+	ThemeMetric<bool>	m_bShowTicks;
 	ThemeMetric<bool>	m_bShowDifficulty;
 	ThemeMetric<bool>	m_bShowMeter;
 	ThemeMetric<bool>	m_bShowEditDescription;
-	ThemeMetric<bool>	m_bAutoColorFeet;
+	ThemeMetric<bool>	m_bAutoColorTicks;
 	ThemeMetric<RString> m_sZeroMeterString;
 };
 

@@ -498,7 +498,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		if( GetSelectedSteps() )
 			m_Meter.SetFromSteps( GetSelectedSteps() );
 		else
-			m_Meter.SetFromMeterAndDifficulty( 0, GetSelectedDifficulty() );
+			m_Meter.SetFromStepsTypeAndMeterAndDifficulty( GetSelectedSourceStepsType(), 0, GetSelectedDifficulty() );
 		// fall through
 	case ROW_SOURCE_STEPS_TYPE:
 		m_textLabel[ROW_SOURCE_STEPS_TYPE].SetVisible( GetSelectedSteps() ? false : true );
@@ -546,7 +546,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			else if( GetSelectedSourceSteps() )
 				m_SourceMeter.SetFromSteps( GetSelectedSourceSteps() );
 			else
-				m_SourceMeter.SetFromMeterAndDifficulty( 0, GetSelectedSourceDifficulty() );
+				m_SourceMeter.SetFromStepsTypeAndMeterAndDifficulty( GetSelectedSourceStepsType(), 0, GetSelectedSourceDifficulty() );
 			m_SourceMeter.SetVisible( !(bHideMeter || GetSelectedSteps()) );
 
 			m_Actions.clear();

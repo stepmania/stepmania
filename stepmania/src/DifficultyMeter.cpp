@@ -19,10 +19,6 @@ DifficultyMeter::DifficultyMeter()
 {
 }
 
-static RString GetDifficultyCommandName( Difficulty d ) { return "Set"+DifficultyToString(d); }
-static RString GetCourseDifficultyCommandName( CourseDifficulty d ) { return "Set"+DifficultyToString(d)+"Course"; }
-static const RString DIFFICULTY_COMMAND_NAME_NONE = "SetNone";
-
 /* sID experiment:
  *
  * Names of an actor, "Foo":
@@ -49,32 +45,32 @@ void DifficultyMeter::Load( const RString &sType )
 {
 	/* We can't use global ThemeMetric<RString>s, because we can have multiple
 	 * DifficultyMeters on screen at once, with different names. */
-	m_iNumFeetInMeter.Load(sType,"NumFeetInMeter");
-	m_iMaxFeetInMeter.Load(sType,"MaxFeetInMeter");
-	m_bShowFeet.Load(sType,"ShowFeet");
+	m_iNumTicks.Load(sType,"NumTicks");
+	m_iMaxTicks.Load(sType,"MaxTicks");
+	m_bShowTicks.Load(sType,"ShowTicks");
 	m_bShowDifficulty.Load(sType,"ShowDifficulty");
 	m_bShowMeter.Load(sType,"ShowMeter");
 	m_bShowEditDescription.Load(sType,"ShowEditDescription");
-	m_bAutoColorFeet.Load(sType,"AutoColorFeet");
+	m_bAutoColorTicks.Load(sType,"AutoColorTicks");
 	m_sZeroMeterString.Load(sType,"ZeroMeterString");
 
-	if( m_bShowFeet )
+	if( m_bShowTicks )
 	{
-		m_textFeet.SetName( "Feet" );
-		RString Feet;
-		if( !m_bAutoColorFeet )
+		m_textTicks.SetName( "Ticks" );
+		RString sChars;
+		if( !m_bAutoColorTicks )
 		{
 			for( unsigned i = 0; i < NUM_Difficulty; ++i )
-				Feet += char(i + '0'); // 01234
-			Feet += 'X'; // Off
+				sChars += char(i + '0'); // 01234
+			sChars += 'X'; // Off
 		}
 		else
 		{
-			Feet = "0X";
+			sChars = "0X";
 		}
-		m_textFeet.LoadFromTextureAndChars( THEME->GetPathF(sType,"bar"), Feet );
-		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textFeet, sType );
-		this->AddChild( &m_textFeet );
+		m_textTicks.LoadFromTextureAndChars( THEME->GetPathF(sType,"ticks"), sChars );
+		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTicks, sType );
+		this->AddChild( &m_textTicks );
 	}
 
 	if( m_bShowDifficulty )
@@ -85,11 +81,7 @@ void DifficultyMeter::Load( const RString &sType )
 		this->AddChild( m_Difficulty );
 
 		// These commands should have been loaded by SetXYAndOnCommand above.
-		FOREACH_Difficulty( d )
-			ASSERT( m_Difficulty->HasCommand(GetDifficultyCommandName(d)) );
-		FOREACH_CourseDifficulty( d )
-			ASSERT( m_Difficulty->HasCommand(GetCourseDifficultyCommandName(d)) );
-		ASSERT( m_Difficulty->HasCommand(DIFFICULTY_COMMAND_NAME_NONE) );
+		ASSERT( m_Difficulty->HasCommand("Set") );
 	}
 
 	if( m_bShowMeter )
@@ -100,11 +92,7 @@ void DifficultyMeter::Load( const RString &sType )
 		this->AddChild( &m_textMeter );
 
 		// These commands should have been loaded by SetXYAndOnCommand above.
-		FOREACH_Difficulty( d )
-			ASSERT( m_textMeter.HasCommand(GetDifficultyCommandName(d)) );
-		FOREACH_CourseDifficulty( d )
-			ASSERT( m_textMeter.HasCommand(GetCourseDifficultyCommandName(d)) );
-		ASSERT( m_textMeter.HasCommand(DIFFICULTY_COMMAND_NAME_NONE) );
+		ASSERT( m_textMeter.HasCommand("Set") );
 	}
 	
 	if( m_bShowEditDescription )
@@ -136,7 +124,7 @@ void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 		if( pTrail )
 			SetFromTrail( pTrail );
 		else
-			SetFromMeterAndCourseDifficulty( 0, GAMESTATE->m_PreferredCourseDifficulty[pn] );
+			SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType_Invalid, 0, GAMESTATE->m_PreferredCourseDifficulty[pn] );
 	}
 	else
 	{
@@ -144,7 +132,7 @@ void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 		if( pSteps )
 			SetFromSteps( pSteps );
 		else
-			SetFromMeterAndDifficulty( 0, GAMESTATE->m_PreferredDifficulty[pn] );
+			SetFromStepsTypeAndMeterAndDifficulty( StepsType_Invalid, 0, GAMESTATE->m_PreferredDifficulty[pn] );
 	}
 }
 
@@ -156,8 +144,8 @@ void DifficultyMeter::SetFromSteps( const Steps* pSteps )
 		return;
 	}
 
-	Difficulty dc = pSteps->GetDifficulty();
-	SetInternal( pSteps->GetMeter(), dc, GetDifficultyCommandName(dc), dc == DIFFICULTY_EDIT ? pSteps->GetDescription() : RString() );
+	SetParams params = { pSteps->GetMeter(), pSteps->m_StepsType, pSteps->GetDifficulty(), false, pSteps->GetDescription() };
+	SetInternal( params );
 }
 
 void DifficultyMeter::SetFromTrail( const Trail* pTrail )
@@ -168,60 +156,63 @@ void DifficultyMeter::SetFromTrail( const Trail* pTrail )
 		return;
 	}
 
-	CourseDifficulty cd = pTrail->m_CourseDifficulty;
-	SetInternal( pTrail->GetMeter(), cd, GetCourseDifficultyCommandName( cd ), RString() );
+	SetParams params = { pTrail->GetMeter(), pTrail->m_StepsType, pTrail->m_CourseDifficulty, true, RString() };
+	SetInternal( params );
 }
 
 void DifficultyMeter::Unset()
 {
-	SetInternal( 0, DIFFICULTY_EDIT, DIFFICULTY_COMMAND_NAME_NONE, RString() );
+	SetParams params = { 0, StepsType_Invalid, Difficulty_Invalid, false, RString() };
+	SetInternal( params );
 }
 
-void DifficultyMeter::SetFromMeterAndDifficulty( int iMeter, Difficulty dc )
+void DifficultyMeter::SetFromStepsTypeAndMeterAndDifficulty( StepsType st, int iMeter, Difficulty dc )
 {
-	SetInternal( 0, dc, GetDifficultyCommandName(dc), RString() );
+	SetParams params = { iMeter, st, dc, false, RString() };
+	SetInternal( params );
 }
 
-void DifficultyMeter::SetFromMeterAndCourseDifficulty( int iMeter, CourseDifficulty cd )
+void DifficultyMeter::SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType st, int iMeter, CourseDifficulty cd )
 {
-	SetInternal( 0, cd, GetCourseDifficultyCommandName(cd), RString() );
+	SetParams params = { 0, st, cd, true, RString() };
+	SetInternal( params );
 }
 
-void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const RString &sDifficultyCommand, const RString &sDescription )
+void DifficultyMeter::SetInternal( const SetParams &params )
 {
-	if( m_bShowFeet )
+	if( m_bShowTicks )
 	{
 		char on = '0';
 		char off = 'X';
-		if( !m_bAutoColorFeet )
-			on = char(dc + '0');
+		if( !m_bAutoColorTicks )
+			on = char(params.dc + '0');
 
 		RString sNewText;
-		int iNumOn = min( (int)m_iMaxFeetInMeter, iMeter );
+		int iNumOn = min( (int)m_iMaxTicks, params.iMeter );
 		sNewText.insert( sNewText.end(), iNumOn, on );
-		int iNumOff = max( 0, m_iNumFeetInMeter-iNumOn );
+		int iNumOff = max( 0, m_iNumTicks-iNumOn );
 		sNewText.insert( sNewText.end(), iNumOff, off );
 
 		Lua *L = LUA->Get();
-		LuaHelpers::Push( L, dc );
-		m_textFeet.m_pLuaInstance->Set( L, "Difficulty" );
-		LuaHelpers::Push( L, iMeter );
-		m_textFeet.m_pLuaInstance->Set( L, "Meter" );
+		LuaHelpers::Push( L, params.dc );
+		m_textTicks.m_pLuaInstance->Set( L, "Difficulty" );
+		LuaHelpers::Push( L, params.iMeter );
+		m_textTicks.m_pLuaInstance->Set( L, "Meter" );
 		LUA->Release(L);
-		m_textFeet.PlayCommand( "DifficultyChanged" );
+		m_textTicks.PlayCommand( "DifficultyChanged" );
 
-		m_textFeet.SetText( sNewText );
+		m_textTicks.SetText( sNewText );
 	}
 
 	if( m_bShowMeter )
 	{
-		if( iMeter == 0 )	// Unset calls with this
+		if( params.iMeter == 0 )	// Unset calls with this
 		{
 			m_textMeter.SetText( m_sZeroMeterString );
 		}
 		else
 		{
-			const RString sMeter = ssprintf( "%i", iMeter );
+			const RString sMeter = ssprintf( "%i", params.iMeter );
 			m_textMeter.SetText( sMeter );
 		}
 
@@ -230,10 +221,10 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const RString &sDi
 
 	if( m_bShowEditDescription )
 	{
-		if( dc == DIFFICULTY_EDIT )
+		if( params.dc == DIFFICULTY_EDIT )
 		{
 			m_textEditDescription.SetVisible( true );
-			m_textEditDescription.SetText( sDescription );
+			m_textEditDescription.SetText( params.sEditDescription );
 		}
 		else
 		{
@@ -241,14 +232,17 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const RString &sDi
 		}
 	}
 
-	if( m_sCurDifficultyCommand == sDifficultyCommand )
-		return;
-	m_sCurDifficultyCommand = sDifficultyCommand;
-
+	Message msg( "Set" );
+	msg.SetParam( "Meter", params.iMeter );
+	msg.SetParam( "StepsType", params.st );
+	msg.SetParam( "Difficulty", params.dc );
+	msg.SetParam( "IsCourseDifficulty", params.bIsCourseDifficulty );
+	msg.SetParam( "EditDescription", params.sEditDescription );
+	
 	if( m_bShowDifficulty )
-		m_Difficulty->PlayCommand( sDifficultyCommand );
+		m_Difficulty->HandleMessage( msg );
 	if( m_bShowMeter )
-		m_textMeter.PlayCommand( sDifficultyCommand );
+		m_textMeter.HandleMessage( msg );
 }
 
 // lua start
@@ -258,7 +252,7 @@ class LunaDifficultyMeter: public Luna<DifficultyMeter>
 {
 public:
 	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1) ); return 0; }
-	static int SetFromMeterAndDifficulty( T* p, lua_State *L )		{ p->SetFromMeterAndDifficulty( IArg(1), Enum::Check<Difficulty>(L, 2) ); return 0; }
+	static int SetFromStepsTypeAndMeterAndDifficulty( T* p, lua_State *L )		{ p->SetFromStepsTypeAndMeterAndDifficulty( Enum::Check<StepsType>(L, 1), IArg(2), Enum::Check<Difficulty>(L, 3) ); return 0; }
 	static int SetFromSteps( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) )
@@ -295,7 +289,7 @@ public:
 	LunaDifficultyMeter()
 	{
 		ADD_METHOD( Load );
-		ADD_METHOD( SetFromMeterAndDifficulty );
+		ADD_METHOD( SetFromStepsTypeAndMeterAndDifficulty );
 		ADD_METHOD( SetFromSteps );
 		ADD_METHOD( SetFromTrail );
 		ADD_METHOD( SetFromGameState );
