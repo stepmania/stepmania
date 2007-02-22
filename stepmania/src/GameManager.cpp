@@ -48,48 +48,42 @@ const int TECHNO_VERSUS_COL_SPACING = 33;
 const int POPN5_COL_SPACING = 32; 
 const int POPN9_COL_SPACING = 32; 
 
-enum
-{
-	ST_FLAGS_NONE = 0,
-	ST_FLAGS_DONT_AUTOGEN = 1 << 0
-};
-
 static struct
 {
-	char *name;
-	int NumTracks;
-	uint32_t flags;
+	char *szName;
+	int iNumTracks;
+	bool bAllowAutogen;
 } const g_StepsTypes[NUM_StepsType] = {
-	{ "dance-single",	4,			ST_FLAGS_NONE },
-	{ "dance-double",	8,			ST_FLAGS_NONE },
-	{ "dance-couple",	8,			ST_FLAGS_NONE },
-	{ "dance-solo",		6,			ST_FLAGS_NONE },
-	{ "dance-routine",	8,			ST_FLAGS_DONT_AUTOGEN },
-	{ "pump-single",	5,			ST_FLAGS_NONE },
-	{ "pump-halfdouble",	6,			ST_FLAGS_NONE },
-	{ "pump-double",	10,			ST_FLAGS_NONE },
-	{ "pump-couple",	10,			ST_FLAGS_NONE },
-	{ "ez2-single",		5,			ST_FLAGS_NONE },	// Single: TL,LHH,D,RHH,TR
-	{ "ez2-double",		10,			ST_FLAGS_NONE },	// Double: Single x2
-	{ "ez2-real",		7,			ST_FLAGS_NONE },	// Real: TL,LHH,LHL,D,RHL,RHH,TR
-	{ "para-single",	5,			ST_FLAGS_NONE },
-	{ "para-versus",	10,			ST_FLAGS_NONE },
-	{ "ds3ddx-single",	8,			ST_FLAGS_NONE },
-	{ "bm-single5",		6,			ST_FLAGS_NONE },	// called "bm" for backward compat
-	{ "bm-double5",		12,			ST_FLAGS_NONE },	// called "bm" for backward compat
-	{ "bm-single7",		8,			ST_FLAGS_NONE },	// called "bm" for backward compat
-	{ "bm-double7",		16,			ST_FLAGS_NONE },	// called "bm" for backward compat
-	{ "maniax-single",	4,			ST_FLAGS_NONE },
-	{ "maniax-double",	8,			ST_FLAGS_NONE },
-	{ "techno-single4",	4,			ST_FLAGS_NONE },
-	{ "techno-single5",	5,			ST_FLAGS_NONE },
-	{ "techno-single8",	8,			ST_FLAGS_NONE },
-	{ "techno-double4",	8,			ST_FLAGS_NONE },
-	{ "techno-double5",	10,			ST_FLAGS_NONE },
-	{ "pnm-five",		5,			ST_FLAGS_NONE },	// called "pnm" for backward compat
-	{ "pnm-nine",		9,			ST_FLAGS_NONE },	// called "pnm" for backward compat
-	{ "guitar-five",	5,			ST_FLAGS_NONE },
-	{ "lights-cabinet",	NUM_CabinetLight,	ST_FLAGS_DONT_AUTOGEN }, // XXX disable lights autogen for now
+	{ "dance-single",	4,			true },
+	{ "dance-double",	8,			true },
+	{ "dance-couple",	8,			true },
+	{ "dance-solo",		6,			true },
+	{ "dance-routine",	8,			false },
+	{ "pump-single",	5,			true },
+	{ "pump-halfdouble",	6,			true },
+	{ "pump-double",	10,			true },
+	{ "pump-couple",	10,			true },
+	{ "ez2-single",		5,			true },	// Single: TL,LHH,D,RHH,TR
+	{ "ez2-double",		10,			true },	// Double: Single x2
+	{ "ez2-real",		7,			true },	// Real: TL,LHH,LHL,D,RHL,RHH,TR
+	{ "para-single",	5,			true },
+	{ "para-versus",	10,			true },
+	{ "ds3ddx-single",	8,			true },
+	{ "bm-single5",		6,			true },	// called "bm" for backward compat
+	{ "bm-double5",		12,			true },	// called "bm" for backward compat
+	{ "bm-single7",		8,			true },	// called "bm" for backward compat
+	{ "bm-double7",		16,			true },	// called "bm" for backward compat
+	{ "maniax-single",	4,			true },
+	{ "maniax-double",	8,			true },
+	{ "techno-single4",	4,			true },
+	{ "techno-single5",	5,			true },
+	{ "techno-single8",	8,			true },
+	{ "techno-double4",	8,			true },
+	{ "techno-double5",	10,			true },
+	{ "pnm-five",		5,			true },	// called "pnm" for backward compat
+	{ "pnm-nine",		9,			true },	// called "pnm" for backward compat
+	{ "guitar-five",	5,			true },
+	{ "lights-cabinet",	NUM_CabinetLight,	false }, // XXX disable lights autogen for now
 };
 
 
@@ -2395,13 +2389,13 @@ bool GameManager::IsGameEnabled( const Game *pGame ) const
 int GameManager::StepsTypeToNumTracks( StepsType st )
 {
 	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
-	return g_StepsTypes[st].NumTracks;
+	return g_StepsTypes[st].iNumTracks;
 }
 
 bool GameManager::CanAutoGenStepsType( StepsType st )
 {
 	ASSERT_M( st < NUM_StepsType, ssprintf("%d", st) );
-	return !(g_StepsTypes[st].flags & ST_FLAGS_DONT_AUTOGEN);
+	return g_StepsTypes[st].bAllowAutogen;
 }
 
 StepsType GameManager::StringToStepsType( RString sStepsType )
@@ -2417,7 +2411,7 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 		sStepsType = "para-single";
 
 	for( int i=0; i<NUM_StepsType; i++ )
-		if( g_StepsTypes[i].name == sStepsType )
+		if( g_StepsTypes[i].szName == sStepsType )
 			return StepsType(i);
 	
 	// invalid StepsType
@@ -2428,7 +2422,7 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 RString GameManager::StepsTypeToString( StepsType st )
 {
 	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
-	return g_StepsTypes[st].name;
+	return g_StepsTypes[st].szName;
 }
 
 RString GameManager::StepsTypeToLocalizedString( StepsType st )
