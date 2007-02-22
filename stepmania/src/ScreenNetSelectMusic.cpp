@@ -490,7 +490,7 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 {
 	if ( GAMESTATE->m_pCurSong == NULL )
 	{
-		m_DifficultyMeters[pn].SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER ); 
+		m_DifficultyMeters[pn].SetFromStepsTypeAndMeterAndDifficulty( StepsType_Invalid, 0, DIFFICULTY_BEGINNER ); 
 		m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
 		return;
 	}
@@ -510,7 +510,7 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 	if ( ( m_DC[pn] < NUM_Difficulty ) && ( m_DC[pn] >= DIFFICULTY_BEGINNER ) )
 		m_DifficultyMeters[pn].SetFromSteps( pSteps );
 	else
-		m_DifficultyMeters[pn].SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER ); 
+		m_DifficultyMeters[pn].SetFromStepsTypeAndMeterAndDifficulty( StepsType_Invalid, 0, DIFFICULTY_BEGINNER ); 
 }
 
 void ScreenNetSelectMusic::MusicChanged()
