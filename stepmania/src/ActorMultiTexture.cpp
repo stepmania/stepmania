@@ -79,14 +79,6 @@ void ActorMultiTexture::SetTextureMode( int iIndex, TextureMode tm )
 	m_aTextureUnits[iIndex].m_TextureMode = tm;
 }
 
-static void TexCoordArrayFromRect( float fImageCoords[8], const RectF &rect )
-{
-	fImageCoords[0] = rect.left;	fImageCoords[1] = rect.top;	// top left
-	fImageCoords[2] = rect.left;	fImageCoords[3] = rect.bottom;	// bottom left
-	fImageCoords[4] = rect.right;	fImageCoords[5] = rect.bottom;	// bottom right
-	fImageCoords[6] = rect.right;	fImageCoords[7] = rect.top;	// top right
-}
-
 void ActorMultiTexture::DrawPrimitives()
 {
 	Actor::SetGlobalRenderStates();	// set Actor-specified render states
