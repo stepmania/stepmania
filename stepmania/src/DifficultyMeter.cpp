@@ -190,7 +190,6 @@ void DifficultyMeter::SetInternal( const SetParams &params )
 		int iNumOff = max( 0, m_iNumTicks-iNumOn );
 		sNewText.insert( sNewText.end(), iNumOff, off );
 		m_textTicks.SetText( sNewText );
-		m_textTicks.HandleMessage( msg );
 	}
 
 	if( m_bShowMeter )
@@ -204,8 +203,6 @@ void DifficultyMeter::SetInternal( const SetParams &params )
 			const RString sMeter = ssprintf( "%i", params.iMeter );
 			m_textMeter.SetText( sMeter );
 		}
-
-		m_textMeter.HandleMessage( msg );
 	}
 
 	if( m_bShowEditDescription )
@@ -219,11 +216,9 @@ void DifficultyMeter::SetInternal( const SetParams &params )
 		{
 			m_textEditDescription.SetVisible( false );
 		}
-		m_textEditDescription.HandleMessage( msg );
 	}
 	
-	if( m_bShowMeter )
-		m_textMeter.HandleMessage( msg );
+	this->HandleMessage( msg );
 }
 
 // lua start
