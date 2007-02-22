@@ -24,6 +24,10 @@
 /* Begin PBXBuildFile section */
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
 		1215D7A308C6559A00B87D8B /* ScreenGameplayNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */; };
+		AA059ABC0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
+		AA059ABD0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */; };
+		AA059ABE0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
+		AA059ABF0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */; };
 		AA07008A0B61F177003B85BB /* RageSoundReader_PostBuffering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0700880B61F177003B85BB /* RageSoundReader_PostBuffering.cpp */; };
 		AA07008B0B61F177003B85BB /* RageSoundReader_PostBuffering.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0700890B61F177003B85BB /* RageSoundReader_PostBuffering.h */; };
 		AA07008C0B61F177003B85BB /* RageSoundReader_PostBuffering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0700880B61F177003B85BB /* RageSoundReader_PostBuffering.cpp */; };
@@ -2160,6 +2164,8 @@
 		1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenGameplayNormal.h; path = ../src/ScreenGameplayNormal.h; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorMultiTexture.cpp; path = ../src/ActorMultiTexture.cpp; sourceTree = "<group>"; };
+		AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorMultiTexture.h; path = ../src/ActorMultiTexture.h; sourceTree = "<group>"; };
 		AA0700880B61F177003B85BB /* RageSoundReader_PostBuffering.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageSoundReader_PostBuffering.cpp; path = ../src/RageSoundReader_PostBuffering.cpp; sourceTree = "<group>"; };
 		AA0700890B61F177003B85BB /* RageSoundReader_PostBuffering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageSoundReader_PostBuffering.h; path = ../src/RageSoundReader_PostBuffering.h; sourceTree = "<group>"; };
 		AA07328B0954381800F396C5 /* DisplayResolutions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DisplayResolutions.h; path = ../src/DisplayResolutions.h; sourceTree = "<group>"; };
@@ -3905,9 +3911,7 @@
 			isa = PBXGroup;
 			children = (
 				AA1DCB6104A4872700D02EE9 /* glext.h */,
-				AA6EFD6D04770A7C005F316C /* RageBitmapTexture.cpp */,
 				AA6EFD6E04770A7C005F316C /* RageBitmapTexture.h */,
-				AA6EFD6F04770A7C005F316C /* RageDisplay.cpp */,
 				AA6EFD7004770A7C005F316C /* RageDisplay.h */,
 				AAF7458E061181F700B19AD1 /* RageDisplay_Null.cpp */,
 				AAF7458F061181F700B19AD1 /* RageDisplay_Null.h */,
@@ -4024,6 +4028,8 @@
 				AA6EFD9004770A7C005F316C /* RageTimer.h */,
 				AAE77F570AC3B52500AEFC64 /* RageTypes.cpp */,
 				AA6EFD9104770A7C005F316C /* RageTypes.h */,
+				AA6EFD6D04770A7C005F316C /* RageBitmapTexture.cpp */,
+				AA6EFD6F04770A7C005F316C /* RageDisplay.cpp */,
 				AA6EFD9204770A7C005F316C /* RageUtil.cpp */,
 				AA6EFD9304770A7C005F316C /* RageUtil.h */,
 				AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */,
@@ -4417,6 +4423,8 @@
 				AA6EFF7804770FFD005F316C /* ActorFrame.h */,
 				AA5D166A0A798C0E00F17E86 /* ActorFrameTexture.cpp */,
 				AA5D166B0A798C0E00F17E86 /* ActorFrameTexture.h */,
+				AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */,
+				AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */,
 				AAFE71090A91ADE6005F2290 /* ActorProxy.cpp */,
 				AAFE710A0A91ADE6005F2290 /* ActorProxy.h */,
 				AA6EFF7904770FFD005F316C /* ActorScroller.cpp */,
@@ -5645,6 +5653,7 @@
 				AAEBF57F0B5C83F4005F3C7C /* SoundEffectControl.h in Headers */,
 				AA07008B0B61F177003B85BB /* RageSoundReader_PostBuffering.h in Headers */,
 				AA7C8DB10B68CB2200FD9940 /* GameplayAssist.h in Headers */,
+				AA059ABF0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6064,6 +6073,7 @@
 				AAEBF5810B5C83F4005F3C7C /* SoundEffectControl.h in Headers */,
 				AA07008D0B61F177003B85BB /* RageSoundReader_PostBuffering.h in Headers */,
 				AA7C8DAF0B68CB2200FD9940 /* GameplayAssist.h in Headers */,
+				AA059ABD0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6814,6 +6824,7 @@
 				AAEBF57E0B5C83F4005F3C7C /* SoundEffectControl.cpp in Sources */,
 				AA07008A0B61F177003B85BB /* RageSoundReader_PostBuffering.cpp in Sources */,
 				AA7C8DB00B68CB2200FD9940 /* GameplayAssist.cpp in Sources */,
+				AA059ABE0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7223,6 +7234,7 @@
 				AAEBF5800B5C83F4005F3C7C /* SoundEffectControl.cpp in Sources */,
 				AA07008C0B61F177003B85BB /* RageSoundReader_PostBuffering.cpp in Sources */,
 				AA7C8DAE0B68CB2200FD9940 /* GameplayAssist.cpp in Sources */,
+				AA059ABC0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
