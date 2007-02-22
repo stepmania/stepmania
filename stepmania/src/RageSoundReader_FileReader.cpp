@@ -87,12 +87,12 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 
 RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filename, RString &error, bool *pPrebuffer )
 {
-	RageFileBasic *pFile = NULL;
+	HiddenPtr<RageFileBasic> pFile;
 	{
 		RageFile *pFileOpen = new RageFile;
 		if( !pFileOpen->Open(filename) )
 		{
-			error = pFile->GetError();
+			error = pFileOpen->GetError();
 			delete pFileOpen;
 			return NULL;
 		}
@@ -105,13 +105,13 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		{
 			RageFileObjMem *pMem = new RageFileObjMem;
 			bool bRet = FileCopy( *pFile, *pMem, error, NULL );
-			delete pFile;
-			pFile = pMem;
 			if( !bRet )
 			{
-				delete pFile;
+				delete pMem;
 				return NULL;
 			}
+
+			pFile = pMem;
 			pFile->Seek( 0 );
 			*pPrebuffer = true;
 		}

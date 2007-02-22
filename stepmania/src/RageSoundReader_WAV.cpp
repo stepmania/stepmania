@@ -617,7 +617,9 @@ RageSoundReader_WAV::~RageSoundReader_WAV()
 RageSoundReader_WAV *RageSoundReader_WAV::Copy() const
 {
 	RageSoundReader_WAV *ret = new RageSoundReader_WAV;
-	ret->Open( m_pFile->Copy() );
+	RageFileBasic *pFile = m_pFile->Copy();;
+	pFile->Seek( 0 );
+	ret->Open( pFile );
 	return ret;
 }
 

@@ -693,6 +693,8 @@ RageSoundReader_MP3 *RageSoundReader_MP3::Copy() const
 {
 	RageSoundReader_MP3 *ret = new RageSoundReader_MP3;
 
+	ret->m_pFile = m_pFile->Copy();
+	ret->m_pFile->Seek( 0 );
 	ret->m_bAccurateSync = m_bAccurateSync;
 	ret->mad->filesize = mad->filesize;
 	ret->mad->bitrate = mad->bitrate;
