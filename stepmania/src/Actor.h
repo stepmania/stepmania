@@ -352,7 +352,7 @@ public:
 	bool HasCommand( const RString &sCmdName );
 	const apActorCommands *GetCommand( const RString &sCommandName ) const;
 	void PlayCommand( const RString &sCommandName ) { HandleMessage( Message(sCommandName) ); } // convenience
-	void PlayCommandNoRecurse( const Message &sCommandName );
+	void PlayCommandNoRecurse( const Message &msg );
 
 	//
 	// Commands by reference
