@@ -238,7 +238,7 @@ void Player::Init(
 		//
 		LuaReference expr = THEME->GetMetricR( sType,"JudgmentTransformCommandFunction" );
 
-		bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
+		bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==StyleType_OnePlayerTwoSides;
 		Actor temp;
 
 		int iEnabledPlayerIndex = -1;
@@ -502,7 +502,7 @@ void Player::Load()
 	}
 
 	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetStage().GetReversePercentForColumn( 0 ) == 1;
-	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
+	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==StyleType_OnePlayerTwoSides;
 	if( m_pCombo )
 	{
 		m_pCombo->SetX( COMBO_X.GetValue(pn, bPlayerUsingBothSides) );
@@ -1025,7 +1025,7 @@ void Player::DrawPrimitives()
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	// May have both players in doubles (for battle play); only draw primary player.
-	if( GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_TWO_SIDES  &&
+	if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_OnePlayerTwoSides  &&
 		pn != GAMESTATE->m_MasterPlayerNumber )
 		return;
 

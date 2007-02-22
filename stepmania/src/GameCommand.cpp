@@ -411,12 +411,12 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 
 	switch( style->m_StyleType )
 	{
-	case ONE_PLAYER_ONE_SIDE:
+	case StyleType_OnePlayerOneSide:
 		return 1;
-	case TWO_PLAYERS_SHARED_SIDES:
-	case TWO_PLAYERS_TWO_SIDES:
+	case StyleType_TwoPlayersSharedSides:
+	case StyleType_TwoPlayersTwoSides:
 		return 2;
-	case ONE_PLAYER_TWO_SIDES:
+	case StyleType_OnePlayerTwoSides:
 		return (GAMESTATE->GetPremium() == PREMIUM_DOUBLE) ? 1 : 2;
 	DEFAULT_FAIL( style->m_StyleType );
 	}
@@ -439,7 +439,7 @@ static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 			return false;
 		
 		/* Don't allow battle modes if the style takes both sides. */
-		if( style->m_StyleType==ONE_PLAYER_TWO_SIDES )
+		if( style->m_StyleType==StyleType_OnePlayerTwoSides )
 			return false;
 	}
 
@@ -500,7 +500,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 		/* If both sides are joined, disallow singles modes, since easy to select them
 		 * accidentally, instead of versus mode. */
-		if( m_pStyle->m_StyleType == ONE_PLAYER_ONE_SIDE &&
+		if( m_pStyle->m_StyleType == StyleType_OnePlayerOneSide &&
 			GAMESTATE->GetNumSidesJoined() > 1 )
 		{
 			if( why )
@@ -642,11 +642,11 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		// that requires both sides, join the other side.
 		switch( m_pStyle->m_StyleType )
 		{
-		case ONE_PLAYER_ONE_SIDE:
+		case StyleType_OnePlayerOneSide:
 			break;
-		case TWO_PLAYERS_TWO_SIDES:
-		case ONE_PLAYER_TWO_SIDES:
-		case TWO_PLAYERS_SHARED_SIDES:
+		case StyleType_TwoPlayersTwoSides:
+		case StyleType_OnePlayerTwoSides:
+		case StyleType_TwoPlayersSharedSides:
 			{
 				FOREACH_PlayerNumber( p )
 					GAMESTATE->JoinPlayer( p );

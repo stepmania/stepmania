@@ -564,7 +564,7 @@ void ScreenGameplay::Init()
 
 #if !defined(WITHOUT_NETWORKING)
 	// Only used in SMLAN/SMOnline:
-	if( NSMAN->useSMserver && GAMESTATE->GetCurrentStyle()->m_StyleType != ONE_PLAYER_TWO_SIDES )
+	if( NSMAN->useSMserver && GAMESTATE->GetCurrentStyle()->m_StyleType != StyleType_OnePlayerTwoSides )
 	{
 		m_bShowScoreboard = PREFSMAN->m_bEnableScoreboard.Get();
 		PlayerNumber pn = GAMESTATE->GetFirstDisabledPlayer();
@@ -795,7 +795,7 @@ bool ScreenGameplay::Center1Player() const
 		(bool)ALLOW_CENTER_1_PLAYER &&
 		GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
-		GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_ONE_SIDE;
+		GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_OnePlayerOneSide;
 }
 
 //

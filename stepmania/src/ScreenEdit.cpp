@@ -1099,11 +1099,11 @@ static void ShiftToRightSide( int &iCol, int iNumTracks )
 	switch( GAMESTATE->GetCurrentStyle()->m_StyleType )
 	{
 	DEFAULT_FAIL( GAMESTATE->GetCurrentStyle()->m_StyleType );
-	case ONE_PLAYER_ONE_SIDE:
+	case StyleType_OnePlayerOneSide:
 		break;
-	case TWO_PLAYERS_TWO_SIDES:
-	case ONE_PLAYER_TWO_SIDES:
-	case TWO_PLAYERS_SHARED_SIDES:
+	case StyleType_TwoPlayersTwoSides:
+	case StyleType_OnePlayerTwoSides:
+	case StyleType_TwoPlayersSharedSides:
 		iCol += iNumTracks/2;
 		break;
 	}
@@ -2058,7 +2058,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 		m_Player->Step( iCol, -1, input.DeviceI.ts, false, input.type == IET_RELEASE ); 
 		break;
 	case PLAYER_2:
-		if( GAMESTATE->GetCurrentStyle()->m_StyleType == TWO_PLAYERS_SHARED_SIDES )
+		if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_TwoPlayersSharedSides )
 			m_Player->Step( iCol, -1, input.DeviceI.ts, false, input.type == IET_RELEASE );
 	}
 }

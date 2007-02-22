@@ -396,10 +396,10 @@ struct DisplayBpms
 
 enum StyleType
 {
-	ONE_PLAYER_ONE_SIDE,	// e.g. single
-	TWO_PLAYERS_TWO_SIDES,	// e.g. versus
-	ONE_PLAYER_TWO_SIDES,	// e.g. double
-	TWO_PLAYERS_SHARED_SIDES, // e.g. routine
+	StyleType_OnePlayerOneSide,	// e.g. single
+	StyleType_TwoPlayersTwoSides,	// e.g. versus
+	StyleType_OnePlayerTwoSides,	// e.g. double
+	StyleType_TwoPlayersSharedSides, // e.g. routine
 	NUM_StyleType,
 	StyleType_Invalid
 };

@@ -901,7 +901,7 @@ void GameState::SetCurrentStyle( const Style *pStyle )
 	m_pCurStyle.Set( pStyle );
 	if( INPUTMAPPER )
 	{
-		if( GetCurrentStyle() && GetCurrentStyle()->m_StyleType == ONE_PLAYER_TWO_SIDES )
+		if( GetCurrentStyle() && GetCurrentStyle()->m_StyleType == StyleType_OnePlayerTwoSides )
 			INPUTMAPPER->SetJoinControllers( m_MasterPlayerNumber );
 		else
 			INPUTMAPPER->SetJoinControllers( PLAYER_INVALID );
@@ -958,11 +958,11 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 
 	switch( GetCurrentStyle()->m_StyleType )
 	{
-	case TWO_PLAYERS_TWO_SIDES:
-	case TWO_PLAYERS_SHARED_SIDES:
+	case StyleType_TwoPlayersTwoSides:
+	case StyleType_TwoPlayersSharedSides:
 		return true;
-	case ONE_PLAYER_ONE_SIDE:
-	case ONE_PLAYER_TWO_SIDES:
+	case StyleType_OnePlayerOneSide:
+	case StyleType_OnePlayerTwoSides:
 		return pn == m_MasterPlayerNumber;
 	default:
 		ASSERT(0);		// invalid style type
