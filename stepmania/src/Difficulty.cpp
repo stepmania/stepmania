@@ -22,6 +22,9 @@ LuaFunction( DifficultyToLocalizedString, DifficultyToLocalizedString( Enum::Che
 
 /* We prefer the above names; recognize a number of others, too.  (They'l
  * get normalized when written to SMs, etc.) */
+/* TODO: Format specific hacks should be moved into the file loader for 
+ * that format.  We don't want to carry these hacks forward to file
+ * formats that don't need them. */
 Difficulty StringToDifficulty( const RString& sDC )
 {
 	RString s2 = sDC;

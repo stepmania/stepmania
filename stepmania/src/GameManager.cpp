@@ -2402,6 +2402,8 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 {
 	sStepsType.MakeLower();
 
+	// TODO: Format specific hacks should be moved into the file loader for that format.
+
 	// HACK!  We elminitated "ez2-single-hard", but we should still handle it.
 	if( sStepsType == "ez2-single-hard" )
 		sStepsType = "ez2-single";
