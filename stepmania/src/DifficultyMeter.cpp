@@ -48,10 +48,15 @@ void DifficultyMeter::Load( const RString &sType )
 	m_iNumTicks.Load(sType,"NumTicks");
 	m_iMaxTicks.Load(sType,"MaxTicks");
 	m_bShowTicks.Load(sType,"ShowTicks");
-	m_bShowDifficulty.Load(sType,"ShowDifficulty");
 	m_bShowMeter.Load(sType,"ShowMeter");
 	m_bShowEditDescription.Load(sType,"ShowEditDescription");
 	m_sZeroMeterString.Load(sType,"ZeroMeterString");
+
+
+	m_sprFrame.Load( THEME->GetPathG(sType,"frame") );
+	m_sprFrame->SetName( "Frame" );
+	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_sprFrame, sType );
+	this->AddChild( m_sprFrame );
 
 	if( m_bShowTicks )
 	{
@@ -63,17 +68,6 @@ void DifficultyMeter::Load( const RString &sType )
 		m_textTicks.LoadFromTextureAndChars( THEME->GetPathF(sType,"ticks"), sChars );
 		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTicks, sType );
 		this->AddChild( &m_textTicks );
-	}
-
-	if( m_bShowDifficulty )
-	{
-		m_Difficulty.Load( THEME->GetPathG(sType,"difficulty") );
-		m_Difficulty->SetName( "Difficulty" );
-		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_Difficulty, sType );
-		this->AddChild( m_Difficulty );
-
-		// These commands should have been loaded by SetXYAndOnCommand above.
-		ASSERT( m_Difficulty->HasCommand("Set") );
 	}
 
 	if( m_bShowMeter )
@@ -136,7 +130,7 @@ void DifficultyMeter::SetFromSteps( const Steps* pSteps )
 		return;
 	}
 
-	SetParams params = { pSteps->GetMeter(), pSteps->m_StepsType, pSteps->GetDifficulty(), false, pSteps->GetDescription() };
+	SetParams params = { pSteps, NULL, pSteps->GetMeter(), pSteps->m_StepsType, pSteps->GetDifficulty(), false, pSteps->GetDescription() };
 	SetInternal( params );
 }
 
@@ -148,37 +142,42 @@ void DifficultyMeter::SetFromTrail( const Trail* pTrail )
 		return;
 	}
 
-	SetParams params = { pTrail->GetMeter(), pTrail->m_StepsType, pTrail->m_CourseDifficulty, true, RString() };
+	SetParams params = { NULL, pTrail, pTrail->GetMeter(), pTrail->m_StepsType, pTrail->m_CourseDifficulty, true, RString() };
 	SetInternal( params );
 }
 
 void DifficultyMeter::Unset()
 {
-	SetParams params = { 0, StepsType_Invalid, Difficulty_Invalid, false, RString() };
+	SetParams params = { NULL, NULL, 0, StepsType_Invalid, Difficulty_Invalid, false, RString() };
 	SetInternal( params );
 }
 
 void DifficultyMeter::SetFromStepsTypeAndMeterAndDifficulty( StepsType st, int iMeter, Difficulty dc )
 {
-	SetParams params = { iMeter, st, dc, false, RString() };
+	SetParams params = { NULL, NULL, iMeter, st, dc, false, RString() };
 	SetInternal( params );
 }
 
 void DifficultyMeter::SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType st, int iMeter, CourseDifficulty cd )
 {
-	SetParams params = { 0, st, cd, true, RString() };
+	SetParams params = { NULL, NULL, 0, st, cd, true, RString() };
 	SetInternal( params );
 }
 
 void DifficultyMeter::SetInternal( const SetParams &params )
 {
 	Message msg( "Set" );
+	if( params.pSteps )
+		msg.SetParam( "Steps", LuaReference::CreateFromPush(*(Steps*)params.pSteps) );
+	if( params.pTrail )
+		msg.SetParam( "Trail", LuaReference::CreateFromPush(*(Trail*)params.pTrail) );
 	msg.SetParam( "Meter", params.iMeter );
 	msg.SetParam( "StepsType", params.st );
 	msg.SetParam( "Difficulty", params.dc );
 	msg.SetParam( "IsCourseDifficulty", params.bIsCourseDifficulty );
 	msg.SetParam( "EditDescription", params.sEditDescription );
 
+	m_sprFrame->HandleMessage( msg );
 
 	if( m_bShowTicks )
 	{
@@ -223,8 +222,6 @@ void DifficultyMeter::SetInternal( const SetParams &params )
 		m_textEditDescription.HandleMessage( msg );
 	}
 	
-	if( m_bShowDifficulty )
-		m_Difficulty->HandleMessage( msg );
 	if( m_bShowMeter )
 		m_textMeter.HandleMessage( msg );
 }

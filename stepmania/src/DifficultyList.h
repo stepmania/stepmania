@@ -40,7 +40,7 @@ private:
 	ThemeMetric<apActorCommands> MOVE_COMMAND;
 
 	AutoActor		m_Cursors[NUM_PLAYERS];
-	ActorFrame		m_CursorFrames[NUM_PLAYERS];
+	ActorFrame		m_CursorFrames[NUM_PLAYERS];	// contains Cursor so that color can fade independent of other tweens
 
 	struct Line
 	{

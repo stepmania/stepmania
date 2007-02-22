@@ -38,35 +38,24 @@ public:
 private:
 	struct SetParams
 	{
+		const Steps *pSteps;
+		const Trail *pTrail;
 		int iMeter;
 		StepsType st;
 		Difficulty dc;
 		bool bIsCourseDifficulty;
 		RString sEditDescription;
-
-		bool operator==( const SetParams &other )
-		{
-#define COMPARE( x )	if( x != other.x ) return false;
-			COMPARE( iMeter );
-			COMPARE( st );
-			COMPARE( dc );
-			COMPARE( bIsCourseDifficulty );
-			COMPARE( sEditDescription );
-#undef COMPARE
-			return true;
-		}
 	};
 	void SetInternal( const SetParams &params );
 
+	AutoActor		m_sprFrame;
 	BitmapText		m_textTicks;	/* XXXX000000 */
-	AutoActor		m_Difficulty;	/* "easy", "hard" */
 	BitmapText		m_textMeter;	/* 3, 9 */
 	BitmapText		m_textEditDescription;
 
 	ThemeMetric<int>	m_iNumTicks;
 	ThemeMetric<int>	m_iMaxTicks;
 	ThemeMetric<bool>	m_bShowTicks;
-	ThemeMetric<bool>	m_bShowDifficulty;
 	ThemeMetric<bool>	m_bShowMeter;
 	ThemeMetric<bool>	m_bShowEditDescription;
 	ThemeMetric<RString> m_sZeroMeterString;
