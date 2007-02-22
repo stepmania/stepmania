@@ -51,23 +51,15 @@ void DifficultyMeter::Load( const RString &sType )
 	m_bShowDifficulty.Load(sType,"ShowDifficulty");
 	m_bShowMeter.Load(sType,"ShowMeter");
 	m_bShowEditDescription.Load(sType,"ShowEditDescription");
-	m_bAutoColorTicks.Load(sType,"AutoColorTicks");
 	m_sZeroMeterString.Load(sType,"ZeroMeterString");
 
 	if( m_bShowTicks )
 	{
 		m_textTicks.SetName( "Ticks" );
 		RString sChars;
-		if( !m_bAutoColorTicks )
-		{
-			for( unsigned i = 0; i < NUM_Difficulty; ++i )
-				sChars += char(i + '0'); // 01234
-			sChars += 'X'; // Off
-		}
-		else
-		{
-			sChars = "0X";
-		}
+		for( unsigned i = 0; i < NUM_Difficulty; ++i )
+			sChars += char(i + '0'); // 01234
+		sChars += 'X'; // Off
 		m_textTicks.LoadFromTextureAndChars( THEME->GetPathF(sType,"ticks"), sChars );
 		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTicks, sType );
 		this->AddChild( &m_textTicks );
@@ -180,28 +172,26 @@ void DifficultyMeter::SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType st,
 
 void DifficultyMeter::SetInternal( const SetParams &params )
 {
+	Message msg( "Set" );
+	msg.SetParam( "Meter", params.iMeter );
+	msg.SetParam( "StepsType", params.st );
+	msg.SetParam( "Difficulty", params.dc );
+	msg.SetParam( "IsCourseDifficulty", params.bIsCourseDifficulty );
+	msg.SetParam( "EditDescription", params.sEditDescription );
+
+
 	if( m_bShowTicks )
 	{
-		char on = '0';
+		char on = char(params.dc + '0');
 		char off = 'X';
-		if( !m_bAutoColorTicks )
-			on = char(params.dc + '0');
 
 		RString sNewText;
 		int iNumOn = min( (int)m_iMaxTicks, params.iMeter );
 		sNewText.insert( sNewText.end(), iNumOn, on );
 		int iNumOff = max( 0, m_iNumTicks-iNumOn );
 		sNewText.insert( sNewText.end(), iNumOff, off );
-
-		Lua *L = LUA->Get();
-		LuaHelpers::Push( L, params.dc );
-		m_textTicks.m_pLuaInstance->Set( L, "Difficulty" );
-		LuaHelpers::Push( L, params.iMeter );
-		m_textTicks.m_pLuaInstance->Set( L, "Meter" );
-		LUA->Release(L);
-		m_textTicks.PlayCommand( "DifficultyChanged" );
-
 		m_textTicks.SetText( sNewText );
+		m_textTicks.HandleMessage( msg );
 	}
 
 	if( m_bShowMeter )
@@ -216,7 +206,7 @@ void DifficultyMeter::SetInternal( const SetParams &params )
 			m_textMeter.SetText( sMeter );
 		}
 
-		m_textMeter.PlayCommand( "TextChanged" );
+		m_textMeter.HandleMessage( msg );
 	}
 
 	if( m_bShowEditDescription )
@@ -230,14 +220,8 @@ void DifficultyMeter::SetInternal( const SetParams &params )
 		{
 			m_textEditDescription.SetVisible( false );
 		}
+		m_textEditDescription.HandleMessage( msg );
 	}
-
-	Message msg( "Set" );
-	msg.SetParam( "Meter", params.iMeter );
-	msg.SetParam( "StepsType", params.st );
-	msg.SetParam( "Difficulty", params.dc );
-	msg.SetParam( "IsCourseDifficulty", params.bIsCourseDifficulty );
-	msg.SetParam( "EditDescription", params.sEditDescription );
 	
 	if( m_bShowDifficulty )
 		m_Difficulty->HandleMessage( msg );
