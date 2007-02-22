@@ -263,7 +263,7 @@ void GameCommand::LoadOne( const Command& cmd )
 				RageException::Throw( "Must set Song and Style to set Steps." );
 
 			Difficulty dc = StringToDifficulty( sSteps );
-			if( dc != DIFFICULTY_EDIT )
+			if( dc != Difficulty_Edit )
 				m_pSteps = SongUtil::GetStepsByDifficulty( pSong, pStyle->m_StepsType, dc );
 			else
 				m_pSteps = SongUtil::GetStepsByDescription( pSong, pStyle->m_StepsType, sSteps );

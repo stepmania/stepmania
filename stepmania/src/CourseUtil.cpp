@@ -148,7 +148,7 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCours
 	course_sort_val.clear();
 	for( unsigned i = 0; i < vpCoursesInOut.size(); ++i )
 	{
-		int iMeter = vpCoursesInOut[i]->GetMeter( GAMESTATE->GetCurrentStyle()->m_StepsType, DIFFICULTY_MEDIUM );
+		int iMeter = vpCoursesInOut[i]->GetMeter( GAMESTATE->GetCurrentStyle()->m_StepsType, Difficulty_Medium );
 		course_sort_val[vpCoursesInOut[i]] = ssprintf( "%06i", iMeter );
 	}
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTitle );
@@ -193,7 +193,7 @@ void CourseUtil::SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesI
 void CourseUtil::MakeDefaultEditCourseEntry( CourseEntry& out )
 {
 	out.pSong = GAMESTATE->GetDefaultSong();
-	out.stepsCriteria.m_difficulty = DIFFICULTY_MEDIUM;
+	out.stepsCriteria.m_difficulty = Difficulty_Medium;
 }
 
 //////////////////////////////////

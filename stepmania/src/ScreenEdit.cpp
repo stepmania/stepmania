@@ -2634,7 +2634,7 @@ static void ChangeDescription( const RString &sNew )
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 
 	/* Don't erase edit descriptions. */
-	if( sNew.empty() && pSteps->GetDifficulty() == DIFFICULTY_EDIT )
+	if( sNew.empty() && pSteps->GetDifficulty() == Difficulty_Edit )
 		return;
 
 	pSteps->SetDescription(sNew);
@@ -3248,7 +3248,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 			SM_None, 
 			ENTER_NEW_DESCRIPTION, 
 			m_pSteps->GetDescription(), 
-			(dc == DIFFICULTY_EDIT) ? MAX_EDIT_STEPS_DESCRIPTION_LENGTH : 255,
+			(dc == Difficulty_Edit) ? MAX_EDIT_STEPS_DESCRIPTION_LENGTH : 255,
 			SongUtil::ValidateCurrentStepsDescription,
 			ChangeDescription, 
 			NULL 

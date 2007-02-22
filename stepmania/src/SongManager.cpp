@@ -428,8 +428,8 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 			const Steps* pSteps = vpSteps[i];
 			switch( pSteps->GetDifficulty() )
 			{
-			case DIFFICULTY_CHALLENGE:
-			case DIFFICULTY_EDIT:
+			case Difficulty_Challenge:
+			case Difficulty_Edit:
 				continue;
 			}
 
@@ -735,11 +735,11 @@ void SongManager::InitAutogenCourses()
 
 		// Generate random courses from each group.
 		pCourse = new Course;
-		CourseUtil::AutogenEndlessFromGroup( sGroupName, DIFFICULTY_MEDIUM, *pCourse );
+		CourseUtil::AutogenEndlessFromGroup( sGroupName, Difficulty_Medium, *pCourse );
 		m_pCourses.push_back( pCourse );
 
 		pCourse = new Course;
-		CourseUtil::AutogenNonstopFromGroup( sGroupName, DIFFICULTY_MEDIUM, *pCourse );
+		CourseUtil::AutogenNonstopFromGroup( sGroupName, Difficulty_Medium, *pCourse );
 		m_pCourses.push_back( pCourse );
 	}
 	
@@ -747,7 +747,7 @@ void SongManager::InitAutogenCourses()
 
 	// Generate "All Songs" endless course.
 	pCourse = new Course;
-	CourseUtil::AutogenEndlessFromGroup( "", DIFFICULTY_MEDIUM, *pCourse );
+	CourseUtil::AutogenEndlessFromGroup( "", Difficulty_Medium, *pCourse );
 	m_pCourses.push_back( pCourse );
 
 	/* Generate Oni courses from artists.  Only create courses if we have at least
@@ -782,7 +782,7 @@ void SongManager::InitAutogenCourses()
 				sCurArtist.CompareNoCase("Unknown artist") )
 			{
 				pCourse = new Course;
-				CourseUtil::AutogenOniFromArtist( sCurArtist, sCurArtistTranslit, aSongs, DIFFICULTY_HARD, *pCourse );
+				CourseUtil::AutogenOniFromArtist( sCurArtist, sCurArtistTranslit, aSongs, Difficulty_Hard, *pCourse );
 				m_pCourses.push_back( pCourse );
 			}
 
@@ -1030,8 +1030,8 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredG
 bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 {
 	/* Equate CHALLENGE to HARD. */
-	Difficulty d1 = min(n1->GetDifficulty(), DIFFICULTY_HARD);
-	Difficulty d2 = min(n2->GetDifficulty(), DIFFICULTY_HARD);
+	Difficulty d1 = min(n1->GetDifficulty(), Difficulty_Hard);
+	Difficulty d2 = min(n2->GetDifficulty(), Difficulty_Hard);
 
 	if(d1 < d2) return true;
 	if(d1 > d2) return false;

@@ -433,7 +433,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 				// obey order specified by the preferred sort list
 				break;
 			case SORT_ROULETTE:
-				SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_EASY );
+				SongUtil::SortSongPointerArrayByMeter( arraySongs, Difficulty_Easy );
 				if( (bool)PREFSMAN->m_bPreferredSortUsesGroups )
 					stable_sort( arraySongs.begin(), arraySongs.end(), SongUtil::CompareSongPointersByGroup );
 				bUseSections = false;
@@ -463,16 +463,16 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 				SongUtil::SortSongPointerArrayByGenre( arraySongs );
 				break;
 			case SORT_EASY_METER:
-				SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_EASY );
+				SongUtil::SortSongPointerArrayByMeter( arraySongs, Difficulty_Easy );
 				break;
 			case SORT_MEDIUM_METER:
-				SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_MEDIUM );
+				SongUtil::SortSongPointerArrayByMeter( arraySongs, Difficulty_Medium );
 				break;
 			case SORT_HARD_METER:
-				SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_HARD );
+				SongUtil::SortSongPointerArrayByMeter( arraySongs, Difficulty_Hard );
 				break;
 			case SORT_CHALLENGE_METER:
-				SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_CHALLENGE );
+				SongUtil::SortSongPointerArrayByMeter( arraySongs, Difficulty_Challenge );
 				break;
 			default:
 				ASSERT(0);	// unhandled SortOrder
@@ -737,10 +737,10 @@ void MusicWheel::UpdateSwitch()
 			Difficulty dc = Difficulty_Invalid;
 			switch( GAMESTATE->m_SortOrder )
 			{
-			case SORT_EASY_METER:		dc = DIFFICULTY_EASY;		break;
-			case SORT_MEDIUM_METER:		dc = DIFFICULTY_MEDIUM;		break;
-			case SORT_HARD_METER:		dc = DIFFICULTY_HARD;		break;
-			case SORT_CHALLENGE_METER:	dc = DIFFICULTY_CHALLENGE;	break;
+			case SORT_EASY_METER:		dc = Difficulty_Easy;		break;
+			case SORT_MEDIUM_METER:		dc = Difficulty_Medium;		break;
+			case SORT_HARD_METER:		dc = Difficulty_Hard;		break;
+			case SORT_CHALLENGE_METER:	dc = Difficulty_Challenge;	break;
 			}
 			if( dc != Difficulty_Invalid )
 			{
@@ -1049,10 +1049,10 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 			continue;	// skip
 
 		// TRICKY: Don't require that edits be present if perferred 
-		// difficulty is DIFFICULTY_EDIT.  Otherwise, players could use this 
+		// difficulty is Difficulty_Edit.  Otherwise, players could use this 
 		// to set up a 100% chance of getting a particular locked song by 
 		// having a single edit for a locked song.
-		if( GAMESTATE->m_PreferredDifficulty[p] == DIFFICULTY_EDIT )
+		if( GAMESTATE->m_PreferredDifficulty[p] == Difficulty_Edit )
 			continue;	// skip
 
 		vDifficultiesToRequire.push_back( GAMESTATE->m_PreferredDifficulty[p] );

@@ -158,7 +158,7 @@ Grade PlayerStageStats::GetGrade() const
 
 	bool bIsBeginner = false;
 	if( m_vpPlayedSteps.size() && !GAMESTATE->IsCourseMode() )
-		bIsBeginner = m_vpPlayedSteps[0]->GetDifficulty() == DIFFICULTY_BEGINNER;
+		bIsBeginner = m_vpPlayedSteps[0]->GetDifficulty() == Difficulty_Beginner;
 
 	FOREACH_TapNoteScore( tns )
 	{
@@ -186,7 +186,7 @@ Grade PlayerStageStats::GetGrade() const
 		PREFSMAN->m_bMercifulBeginner;
 	FOREACH_CONST( Steps*, m_vpPlayedSteps, s )
 	{
-		if( (*s)->GetDifficulty() != DIFFICULTY_BEGINNER )
+		if( (*s)->GetDifficulty() != Difficulty_Beginner )
 			bMerciful = false;
 	}
 

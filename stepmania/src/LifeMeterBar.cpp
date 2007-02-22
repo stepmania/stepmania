@@ -110,7 +110,7 @@ void LifeMeterBar::Load( const PlayerState *pPlayerState, PlayerStageStats *pPla
 	bool bMercifulBeginnerInEffect = 
 		GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR  &&  
 		GAMESTATE->IsPlayerEnabled( pPlayerState )  &&
-		GAMESTATE->m_pCurSteps[pn]->GetDifficulty() == DIFFICULTY_BEGINNER  &&
+		GAMESTATE->m_pCurSteps[pn]->GetDifficulty() == Difficulty_Beginner  &&
 		PREFSMAN->m_bMercifulBeginner;
 	if( bMercifulBeginnerInEffect )
 	{

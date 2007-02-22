@@ -229,7 +229,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 
 	/* MercifulBeginner shouldn't clamp weights in course mode, even if a beginner song
 	 * is in a course, since that makes PlayerStageStats::GetGrade hard. */
-	m_bIsBeginner = pSteps->GetDifficulty() == DIFFICULTY_BEGINNER && !GAMESTATE->IsCourseMode();
+	m_bIsBeginner = pSteps->GetDifficulty() == Difficulty_Beginner && !GAMESTATE->IsCourseMode();
 
 	ASSERT( m_iPointBonus >= 0 );
 

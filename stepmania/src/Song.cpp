@@ -979,11 +979,11 @@ bool Song::IsEasy( StepsType st ) const
 	/* The easy marker indicates which songs a beginner, having selected "beginner",
 	 * can play and actually get a very easy song: if there are actual beginner
 	 * steps, or if the light steps are 1- or 2-foot. */
-	const Steps* pBeginnerNotes = SongUtil::GetStepsByDifficulty( this, st, DIFFICULTY_BEGINNER );
+	const Steps* pBeginnerNotes = SongUtil::GetStepsByDifficulty( this, st, Difficulty_Beginner );
 	if( pBeginnerNotes )
 		return true;
 	
-	const Steps* pEasyNotes = SongUtil::GetStepsByDifficulty( this, st, DIFFICULTY_EASY );
+	const Steps* pEasyNotes = SongUtil::GetStepsByDifficulty( this, st, Difficulty_Easy );
 	if( pEasyNotes && pEasyNotes->GetMeter() == 1 )
 		return true;
 
@@ -997,7 +997,7 @@ bool Song::IsTutorial() const
 	{
 		if( (*s)->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
 			continue;	// ignore
-		if( (*s)->GetDifficulty() != DIFFICULTY_BEGINNER )
+		if( (*s)->GetDifficulty() != Difficulty_Beginner )
 			return false;
 	}
 
@@ -1010,7 +1010,7 @@ bool Song::HasEdits( StepsType st ) const
 	{
 		Steps* pSteps = m_vpSteps[i];
 		if( pSteps->m_StepsType == st &&
-			pSteps->GetDifficulty() == DIFFICULTY_EDIT )
+			pSteps->GetDifficulty() == Difficulty_Edit )
 		{
 			return true;
 		}
@@ -1273,12 +1273,12 @@ int Song::GetNumStepsLoadedFromProfile( ProfileSlot slot ) const
 
 bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 {
-	ASSERT( pSteps->GetDifficulty() == DIFFICULTY_EDIT );
+	ASSERT( pSteps->GetDifficulty() == Difficulty_Edit );
 
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 	{
 		Steps* pOther = m_vpSteps[i];
-		if( pOther->GetDifficulty() == DIFFICULTY_EDIT &&
+		if( pOther->GetDifficulty() == Difficulty_Edit &&
 			pOther->m_StepsType == pSteps->m_StepsType &&
 			pOther->GetHash() == pSteps->GetHash() )
 		{

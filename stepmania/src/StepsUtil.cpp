@@ -199,7 +199,7 @@ void StepsID::FromSteps( const Steps *p )
 	{
 		st = p->m_StepsType;
 		dc = p->GetDifficulty();
-		if( dc == DIFFICULTY_EDIT )
+		if( dc == Difficulty_Edit )
 		{
 			sDescription = p->GetDescription();
 			uHash = p->GetHash();
@@ -240,7 +240,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 	}
 
 	Steps *ret = NULL;
-	if( dc == DIFFICULTY_EDIT )
+	if( dc == Difficulty_Edit )
 	{
 		ret = SongUtil::GetOneSteps( p, st, dc, -1, -1, sDescription, uHash, true );
 	}
@@ -264,7 +264,7 @@ XNode* StepsID::CreateNode() const
 
 	pNode->AppendAttr( "StepsType", GameManager::StepsTypeToString(st) );
 	pNode->AppendAttr( "Difficulty", DifficultyToString(dc) );
-	if( dc == DIFFICULTY_EDIT )
+	if( dc == Difficulty_Edit )
 	{
 		pNode->AppendAttr( "Description", sDescription );
 		pNode->AppendAttr( "Hash", uHash );
@@ -291,7 +291,7 @@ void StepsID::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue("Difficulty", sTemp);
 	dc = StringToDifficulty( sTemp );
 
-	if( dc == DIFFICULTY_EDIT )
+	if( dc == Difficulty_Edit )
 	{
 		pNode->GetAttrValue("Description", sDescription);
 		pNode->GetAttrValue("Hash", uHash);
@@ -307,7 +307,7 @@ RString StepsID::ToString() const
 {
 	RString s = GameManager::StepsTypeToString(st);
 	s += " " + DifficultyToString(dc);
-	if( dc == DIFFICULTY_EDIT )
+	if( dc == Difficulty_Edit )
 	{
 		s += " " + sDescription;
 		s += ssprintf(" %u", uHash );

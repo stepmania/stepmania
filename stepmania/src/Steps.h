@@ -31,7 +31,7 @@ public:
 	bool IsAutogen() const				{ return parent != NULL; } // Was created by autogen?
 
 	// Use a special value of difficulty
-	bool IsAnEdit() const				{ return m_Difficulty == DIFFICULTY_EDIT; }
+	bool IsAnEdit() const				{ return m_Difficulty == Difficulty_Edit; }
 	bool IsAPlayerEdit() const			{ return IsAnEdit() && GetLoadedFromProfileSlot() < ProfileSlot_Machine; }
 	bool WasLoadedFromProfile() const		{ return m_LoadedFromProfile != ProfileSlot_Invalid; }
 	ProfileSlot GetLoadedFromProfileSlot() const	{ return m_LoadedFromProfile; }
@@ -87,7 +87,7 @@ private:
 	ProfileSlot			m_LoadedFromProfile;	// ProfileSlot_Invalid if wasn't loaded from a profile
 
 	/* These values are pulled from the autogen source first, if there is one. */
-	mutable unsigned		m_iHash;		// only used if m_Difficulty == DIFFICULTY_EDIT
+	mutable unsigned		m_iHash;		// only used if m_Difficulty == Difficulty_Edit
 	RString				m_sDescription;		// Step author, edit name, or something meaningful
 	Difficulty			m_Difficulty;		// difficulty classification
 	int				m_iMeter;		// difficulty rating from MIN_METER to MAX_METER

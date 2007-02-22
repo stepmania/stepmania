@@ -205,7 +205,7 @@ Steps* SongUtil::GetClosestNotes( const Song *pSong, StepsType st, Difficulty dc
 	{
 		Steps* pSteps = vpSteps[i];
 
-		if( pSteps->GetDifficulty() == DIFFICULTY_EDIT && dc != DIFFICULTY_EDIT )
+		if( pSteps->GetDifficulty() == Difficulty_Edit && dc != Difficulty_Edit )
 			continue;
 		if( bIgnoreLocked && UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
 			continue;
@@ -230,7 +230,7 @@ void SongUtil::AdjustDuplicateSteps( Song *pSong )
 	{
 		FOREACH_Difficulty( dc )
 		{
-			if( dc == DIFFICULTY_EDIT )
+			if( dc == Difficulty_Edit )
 				continue;
 
 			vector<Steps*> vSteps;
@@ -245,7 +245,7 @@ void SongUtil::AdjustDuplicateSteps( Song *pSong )
 			CHECKPOINT;
 			for( unsigned k=1; k<vSteps.size(); k++ )
 			{
-				vSteps[k]->SetDifficulty( DIFFICULTY_EDIT );
+				vSteps[k]->SetDifficulty( Difficulty_Edit );
 				if( vSteps[k]->GetDescription() == "" )
 				{
 					/* "Hard Edit" */
@@ -576,28 +576,28 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 		}
 	case SORT_EASY_METER:
 		{
-			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_EASY);
+			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,Difficulty_Easy);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return SORT_NOT_AVAILABLE.GetValue();
 		}
 	case SORT_MEDIUM_METER:
 		{
-			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_MEDIUM);
+			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,Difficulty_Medium);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return SORT_NOT_AVAILABLE.GetValue();
 		}
 	case SORT_HARD_METER:
 		{
-			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_HARD);
+			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,Difficulty_Hard);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return SORT_NOT_AVAILABLE.GetValue();
 		}
 	case SORT_CHALLENGE_METER:
 		{
-			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_CHALLENGE);
+			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,Difficulty_Challenge);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return SORT_NOT_AVAILABLE.GetValue();
@@ -685,7 +685,7 @@ bool SongUtil::IsEditDescriptionUnique( const Song* pSong, StepsType st, const R
 	{
 		Steps *pSteps = *s;
 
-		if( pSteps->GetDifficulty() != DIFFICULTY_EDIT )
+		if( pSteps->GetDifficulty() != Difficulty_Edit )
 			continue;
 		if( pSteps->m_StepsType != st )
 			continue;
@@ -744,7 +744,7 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 
 	// Steps name must be unique for this song.
 	vector<Steps*> v;
-	GetSteps( pSong, v, StepsType_Invalid, DIFFICULTY_EDIT ); 
+	GetSteps( pSong, v, StepsType_Invalid, Difficulty_Edit ); 
 	FOREACH_CONST( Steps*, v, s )
 	{
 		if( pSteps == *s )

@@ -72,8 +72,8 @@ RString ModeSwitcher::GetStyleName()
 		{
 			switch( GAMESTATE->m_PreferredDifficulty[i].Get() )
 			{
-				case DIFFICULTY_BEGINNER: sDiff[i] = "Beginner\n"; break;
-				case DIFFICULTY_EASY:
+				case Difficulty_Beginner: sDiff[i] = "Beginner\n"; break;
+				case Difficulty_Easy:
 				{
 					if(GAMESTATE->m_pCurGame->m_szName == RString("pump"))
 					{
@@ -84,7 +84,7 @@ RString ModeSwitcher::GetStyleName()
 						sDiff[i] = "Light\n"; break;
 					}
 				} 
-				case DIFFICULTY_MEDIUM:
+				case Difficulty_Medium:
 				{
 					if(GAMESTATE->m_pCurGame->m_szName == RString("pump"))
 					{
@@ -95,7 +95,7 @@ RString ModeSwitcher::GetStyleName()
 						sDiff[i] = "Standard\n"; break;
 					}
 				} 				
-				case DIFFICULTY_HARD:
+				case Difficulty_Hard:
 				{
 					if(GAMESTATE->m_pCurGame->m_szName == RString("pump"))
 					{
@@ -106,7 +106,7 @@ RString ModeSwitcher::GetStyleName()
 						sDiff[i] = "Heavy\n"; break;
 					}
 				} 				
-				case DIFFICULTY_CHALLENGE: sDiff[i] = "Challenge\n"; break;
+				case Difficulty_Challenge: sDiff[i] = "Challenge\n"; break;
 				default: sDiff[i] = ""; break;
 			}
 		}
@@ -129,14 +129,14 @@ RString ModeSwitcher::GetNextStyleName()
 	{
 		if(GAMESTATE->IsPlayerEnabled(i))
 		{
-			if(GAMESTATE->m_PreferredDifficulty[i] != DIFFICULTY_CHALLENGE)
+			if(GAMESTATE->m_PreferredDifficulty[i] != Difficulty_Challenge)
 			{
 				sStyleName[i] = GAMESTATE->GetCurrentStyle()->m_szName;
 				sStyleName[i].MakeUpper();
 
 				switch(GAMESTATE->m_PreferredDifficulty[i])
 				{
-					case DIFFICULTY_BEGINNER:
+					case Difficulty_Beginner:
 					{
 						if(GAMESTATE->m_pCurGame->m_szName == RString("pump"))
 						{
@@ -147,7 +147,7 @@ RString ModeSwitcher::GetNextStyleName()
 							sDiff[i] = "Light\n"; break;
 						}
 					} 				
-					case DIFFICULTY_EASY:
+					case Difficulty_Easy:
 					{
 						if(GAMESTATE->m_pCurGame->m_szName == RString("pump"))
 						{
@@ -158,7 +158,7 @@ RString ModeSwitcher::GetNextStyleName()
 							sDiff[i] = "Standard\n"; break;
 						}
 					} 	
-					case DIFFICULTY_MEDIUM:
+					case Difficulty_Medium:
 					{
 						if(GAMESTATE->m_pCurGame->m_szName == RString("pump"))
 						{
@@ -169,8 +169,8 @@ RString ModeSwitcher::GetNextStyleName()
 							sDiff[i] = "Heavy\n"; break;
 						}
 					} 					
-					case DIFFICULTY_HARD: sDiff[i] = "Challenge\n"; break;			
-					case DIFFICULTY_CHALLENGE: sDiff[i] = "Beginner\n"; break;
+					case Difficulty_Hard: sDiff[i] = "Challenge\n"; break;			
+					case Difficulty_Challenge: sDiff[i] = "Beginner\n"; break;
 					default: sDiff[i] = ""; break;
 				}
 			}
@@ -202,14 +202,14 @@ RString ModeSwitcher::GetPrevStyleName()
 	{
 		if(GAMESTATE->IsPlayerEnabled(i))
 		{
-			if(GAMESTATE->m_PreferredDifficulty[i] != DIFFICULTY_BEGINNER)
+			if(GAMESTATE->m_PreferredDifficulty[i] != Difficulty_Beginner)
 			{
 				sStyleName[i] = GAMESTATE->GetCurrentStyle()->m_szName;
 				sStyleName[i].MakeUpper();
 
 				switch(GAMESTATE->m_PreferredDifficulty[i])
 				{
-					case DIFFICULTY_CHALLENGE:
+					case Difficulty_Challenge:
 					{
 						if(GAMESTATE->m_pCurGame->m_szName == RString("pump"))
 						{
@@ -220,8 +220,8 @@ RString ModeSwitcher::GetPrevStyleName()
 							sDiff[i] = "Heavy\n"; break;
 						}
 					} 				
-					case DIFFICULTY_EASY: sDiff[i] = "Beginner\n"; break;
-					case DIFFICULTY_MEDIUM:
+					case Difficulty_Easy: sDiff[i] = "Beginner\n"; break;
+					case Difficulty_Medium:
 					{
 						if(GAMESTATE->m_pCurGame->m_szName == RString("pump"))
 						{
@@ -232,7 +232,7 @@ RString ModeSwitcher::GetPrevStyleName()
 							sDiff[i] = "Light\n"; break;
 						}
 					} 					
-					case DIFFICULTY_HARD:
+					case Difficulty_Hard:
 					{
 						if(GAMESTATE->m_pCurGame->m_szName == RString("pump"))
 						{
@@ -243,7 +243,7 @@ RString ModeSwitcher::GetPrevStyleName()
 							sDiff[i] = "Standard\n"; break;
 						}					
 					}		
-					case DIFFICULTY_BEGINNER: sDiff[i] = "Challenge\n"; break;
+					case Difficulty_Beginner: sDiff[i] = "Challenge\n"; break;
 					default: sDiff[i] = ""; break;
 				}
 			}
@@ -272,14 +272,14 @@ void ModeSwitcher::ChangeMode(PlayerNumber pn, int dir)
 	{
 		if(GAMESTATE->IsPlayerEnabled(pn))
 		{
-			if(GAMESTATE->m_PreferredDifficulty[pn] != 	DIFFICULTY_CHALLENGE)
+			if(GAMESTATE->m_PreferredDifficulty[pn] != 	Difficulty_Challenge)
 			{
 				switch(GAMESTATE->m_PreferredDifficulty[pn])
 				{
-					case DIFFICULTY_BEGINNER: GAMESTATE->m_PreferredDifficulty[pn].Set( DIFFICULTY_EASY ); break;
-					case DIFFICULTY_EASY: GAMESTATE->m_PreferredDifficulty[pn].Set( DIFFICULTY_MEDIUM ); break;
-					case DIFFICULTY_MEDIUM: GAMESTATE->m_PreferredDifficulty[pn].Set( DIFFICULTY_HARD ); break;
-					case DIFFICULTY_HARD: GAMESTATE->m_PreferredDifficulty[pn].Set( DIFFICULTY_CHALLENGE ); break;
+					case Difficulty_Beginner: GAMESTATE->m_PreferredDifficulty[pn].Set( Difficulty_Easy ); break;
+					case Difficulty_Easy: GAMESTATE->m_PreferredDifficulty[pn].Set( Difficulty_Medium ); break;
+					case Difficulty_Medium: GAMESTATE->m_PreferredDifficulty[pn].Set( Difficulty_Hard ); break;
+					case Difficulty_Hard: GAMESTATE->m_PreferredDifficulty[pn].Set( Difficulty_Challenge ); break;
 				}
 				m_Stylename.SetText(GetStyleName());
 				m_Nextmode.SetText(GetNextStyleName());
@@ -289,9 +289,9 @@ void ModeSwitcher::ChangeMode(PlayerNumber pn, int dir)
 			else
 			{
 				if(GAMESTATE->IsPlayerEnabled(PLAYER_1))
-					GAMESTATE->m_PreferredDifficulty[PLAYER_1].Set( DIFFICULTY_CHALLENGE );
+					GAMESTATE->m_PreferredDifficulty[PLAYER_1].Set( Difficulty_Challenge );
 				if(GAMESTATE->IsPlayerEnabled(PLAYER_2))
-					GAMESTATE->m_PreferredDifficulty[PLAYER_2].Set( DIFFICULTY_CHALLENGE );
+					GAMESTATE->m_PreferredDifficulty[PLAYER_2].Set( Difficulty_Challenge );
 			}
 		}
 

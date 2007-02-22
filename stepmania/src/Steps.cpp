@@ -153,10 +153,10 @@ void Steps::TidyUpData()
 	
 	if( GetDifficulty() == Difficulty_Invalid )
 	{
-		if(	 GetMeter() == 1 )	SetDifficulty( DIFFICULTY_BEGINNER );
-		else if( GetMeter() <= 3 )	SetDifficulty( DIFFICULTY_EASY );
-		else if( GetMeter() <= 6 )	SetDifficulty( DIFFICULTY_MEDIUM );
-		else				SetDifficulty( DIFFICULTY_HARD );
+		if(	 GetMeter() == 1 )	SetDifficulty( Difficulty_Beginner );
+		else if( GetMeter() <= 3 )	SetDifficulty( Difficulty_Easy );
+		else if( GetMeter() <= 6 )	SetDifficulty( Difficulty_Medium );
+		else				SetDifficulty( Difficulty_Hard );
 	}
 
 	if( GetMeter() < 1) // meter is invalid
@@ -359,7 +359,7 @@ void Steps::SetDifficultyAndDescription( Difficulty dc, RString sDescription )
 	DeAutogen();
 	m_Difficulty = dc;
 	m_sDescription = sDescription;
-	if( GetDifficulty() == DIFFICULTY_EDIT )
+	if( GetDifficulty() == Difficulty_Edit )
 		MakeValidEditDescription( m_sDescription );
 }
 

@@ -136,7 +136,7 @@ void ScreenEditMenu::MenuRight( const InputEventPlus &input )
 static RString GetCopyDescription( const Steps *pSourceSteps )
 {
 	RString s;
-	if( pSourceSteps->GetDifficulty() == DIFFICULTY_EDIT )
+	if( pSourceSteps->GetDifficulty() == Difficulty_Edit )
 		s = pSourceSteps->GetDescription();
 	else
 		s = DifficultyToLocalizedString( pSourceSteps->GetDifficulty() );
@@ -302,7 +302,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 		{
 			// Prepare prepare for ScreenEdit
 			ASSERT( pSteps );
-			bool bPromptToNameSteps = (action == EditMenuAction_Create && dc == DIFFICULTY_EDIT);
+			bool bPromptToNameSteps = (action == EditMenuAction_Create && dc == Difficulty_Edit);
 			if( bPromptToNameSteps )
 			{
 				ScreenTextEntry::TextEntry( 

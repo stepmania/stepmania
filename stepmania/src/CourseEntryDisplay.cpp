@@ -158,7 +158,7 @@ void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )
 
 			Difficulty dc = te->dc;
 			if( dc == Difficulty_Invalid )
-				dc = DIFFICULTY_EDIT;
+				dc = Difficulty_Edit;
 			
 			SetDifficulty( pn, s, dc );
 		}

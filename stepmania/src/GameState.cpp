@@ -237,7 +237,7 @@ void GameState::Reset()
 	FOREACH_PlayerNumber( p )
 	{
 		m_PreferredDifficulty[p].Set( Difficulty_Invalid );
-		m_PreferredCourseDifficulty[p].Set( DIFFICULTY_MEDIUM );
+		m_PreferredCourseDifficulty[p].Set( Difficulty_Medium );
 	}
 	m_SortOrder.Set( SortOrder_Invalid );
 	m_PreferredSortOrder = GetDefaultSort();
@@ -1052,8 +1052,8 @@ bool GameState::HasEarnedExtraStage() const
 	
 	FOREACH_EnabledPlayer( pn )
 	{
-		if( m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_HARD && 
-		    m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_CHALLENGE )
+		if( m_pCurSteps[pn]->GetDifficulty() != Difficulty_Hard && 
+		    m_pCurSteps[pn]->GetDifficulty() != Difficulty_Challenge )
 			continue; /* not hard enough! */
 
 		if( (IsFinalStage() && STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_1) || 
@@ -1269,18 +1269,18 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 		bool bFirstStage = !IsEventMode() && m_iCurrentStageIndex == 0;
 
 		/* Easy and beginner are never harder than FAIL_IMMEDIATE_CONTINUE. */
-		if( dc <= DIFFICULTY_EASY )
+		if( dc <= Difficulty_Easy )
 			setmax( ft, SongOptions::FAIL_IMMEDIATE_CONTINUE );
 
-		if( dc <= DIFFICULTY_EASY && bFirstStage && PREFSMAN->m_bFailOffForFirstStageEasy )
+		if( dc <= Difficulty_Easy && bFirstStage && PREFSMAN->m_bFailOffForFirstStageEasy )
 			setmax( ft, SongOptions::FAIL_OFF );
 
 		/* If beginner's steps were chosen, and this is the first stage,
 		 * turn off failure completely. */
-		if( dc == DIFFICULTY_BEGINNER && bFirstStage )
+		if( dc == Difficulty_Beginner && bFirstStage )
 			setmax( ft, SongOptions::FAIL_OFF );
 
-		if( dc == DIFFICULTY_BEGINNER && PREFSMAN->m_bFailOffInBeginner )
+		if( dc == Difficulty_Beginner && PREFSMAN->m_bFailOffInBeginner )
 			setmax( ft, SongOptions::FAIL_OFF );
 	}
 
@@ -1483,7 +1483,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.Type = RankingFeat::COURSE;
 					feat.pCourse = pCourse;
 					feat.Feat = ssprintf("MR #%d in %s", i+1, pCourse->GetDisplayFullTitle().c_str() );
-					if( cd != DIFFICULTY_MEDIUM )
+					if( cd != Difficulty_Medium )
 						feat.Feat += " " + CourseDifficultyToLocalizedString(cd);
 					feat.pStringToFill = hs.GetNameMutable();
 					feat.grade = Grade_NoData;
@@ -1700,7 +1700,7 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 }
 
 /* The user may be set to prefer a difficulty that isn't always shown; typically,
- * DIFFICULTY_EDIT.  Return the closest shown difficulty <= m_PreferredDifficulty. */
+ * Difficulty_Edit.  Return the closest shown difficulty <= m_PreferredDifficulty. */
 Difficulty GameState::GetClosestShownDifficulty( PlayerNumber pn ) const
 {
 	const vector<Difficulty> &v = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();

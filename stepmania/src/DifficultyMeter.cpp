@@ -210,7 +210,7 @@ void DifficultyMeter::SetInternal( const SetParams &params )
 
 	if( m_bShowEditDescription )
 	{
-		if( params.dc == DIFFICULTY_EDIT )
+		if( params.dc == Difficulty_Edit )
 		{
 			m_textEditDescription.SetVisible( true );
 			m_textEditDescription.SetText( params.sEditDescription );

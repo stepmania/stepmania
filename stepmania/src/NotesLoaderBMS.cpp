@@ -274,16 +274,16 @@ static void SearchForDifficulty( RString sTag, Steps *pOut )
 	/* Only match "Light" in parentheses. */
 	if( sTag.find( "(light" ) != sTag.npos )
 	{
-		pOut->SetDifficulty( DIFFICULTY_EASY );
+		pOut->SetDifficulty( Difficulty_Easy );
 	}
 	else if( sTag.find( "another" ) != sTag.npos )
 	{
-		pOut->SetDifficulty( DIFFICULTY_HARD );
+		pOut->SetDifficulty( Difficulty_Hard );
 	}
 	else if( sTag.find( "(solo)" ) != sTag.npos )
 	{
 		pOut->SetDescription( "Solo" );
-		pOut->SetDifficulty( DIFFICULTY_EDIT );
+		pOut->SetDifficulty( Difficulty_Edit );
 	}
 
 	LOG->Trace( "Tag \"%s\" is %s", sTag.c_str(), DifficultyToString(pOut->GetDifficulty()).c_str() );
@@ -934,7 +934,7 @@ static void SlideDuplicateDifficulties( Song &p )
 	{
 		FOREACH_Difficulty( dc )
 		{
-			if( dc == DIFFICULTY_EDIT )
+			if( dc == Difficulty_Edit )
 				continue;
 			
 			vector<Steps*> vSteps;
@@ -945,7 +945,7 @@ static void SlideDuplicateDifficulties( Song &p )
 			{
 				Steps* pSteps = vSteps[k];
 				
-				Difficulty dc2 = min( (Difficulty)(dc+1), DIFFICULTY_CHALLENGE );
+				Difficulty dc2 = min( (Difficulty)(dc+1), Difficulty_Challenge );
 				pSteps->SetDifficulty( dc2 );
 			}
 		}
@@ -999,7 +999,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	for( unsigned i=0; i<aBMSData.size(); i++ )
 	{
 		Steps *pSteps = apSteps[i];
-		pSteps->SetDifficulty( DIFFICULTY_MEDIUM );
+		pSteps->SetDifficulty( Difficulty_Medium );
 		RString sTag;
 		if( GetTagFromMap( aBMSData[i], "#title", sTag ) && sTag.size() != commonSubstring.size() )
 		{
@@ -1017,20 +1017,20 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 				if( lPos > 2 && sTag.substr(lPos-2,4) == "solo" )
 				{
 					// (solo) -- an edit, apparently (Thanks Glenn!)
-					pSteps->SetDifficulty( DIFFICULTY_EDIT );
+					pSteps->SetDifficulty( Difficulty_Edit );
 				}
 				else
 				{
 					// Any of [L7] [L14] (LIGHT7) (LIGHT14) (LIGHT) [L] <LIGHT7> <L7>... you get the idea.
-					pSteps->SetDifficulty( DIFFICULTY_EASY );
+					pSteps->SetDifficulty( Difficulty_Easy );
 				}
 			}
 			// [A] <A> (A) [ANOTHER] <ANOTHER> (ANOTHER) (ANOTHER7) Another (DP ANOTHER) (Another) -ANOTHER- [A7] [A14] etc etc etc
 			else if( sTag.find('a') != sTag.npos )
-				pSteps->SetDifficulty( DIFFICULTY_HARD );
+				pSteps->SetDifficulty( Difficulty_Hard );
 			// XXX: Can also match (double), but should match [B] or [B7]
 			else if( sTag.find('b') != sTag.npos )
-				pSteps->SetDifficulty( DIFFICULTY_BEGINNER );
+				pSteps->SetDifficulty( Difficulty_Beginner );
 			// Other tags I've seen here include (5KEYS) (10KEYS) (7keys) (14keys) (dp) [MIX] [14] (14 Keys Mix)
 			// XXX: I'm sure [MIX] means something... anyone know?
 		}
@@ -1046,7 +1046,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 		{
 			// XXX: Is this really effective if Common Substring parsing failed?
 			Steps *pSteps = apSteps[i];
-			pSteps->SetDifficulty( DIFFICULTY_MEDIUM );
+			pSteps->SetDifficulty( Difficulty_Medium );
 			RString sTag;
 			if( GetTagFromMap( aBMSData[i], "#title", sTag ) )
 				SearchForDifficulty( sTag, pSteps );
@@ -1055,12 +1055,12 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 		}
 	}
 
-	/* Prefer to read global tags from a DIFFICULTY_MEDIUM file.  These tend to
+	/* Prefer to read global tags from a Difficulty_Medium file.  These tend to
 	 * have the least cruft in the #TITLE tag, so it's more likely to get a clean
 	 * title. */
 	int iMainDataIndex = 0;
 	for( unsigned i=1; i<apSteps.size(); i++ )
-		if( apSteps[i]->GetDifficulty() == DIFFICULTY_MEDIUM )
+		if( apSteps[i]->GetDifficulty() == Difficulty_Medium )
 			iMainDataIndex = i;
 
 	MeasureToTimeSig_t sigAdjustments;

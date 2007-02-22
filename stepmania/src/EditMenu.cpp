@@ -400,7 +400,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			
 			FOREACH_Difficulty( dc )
 			{
-				if( dc == DIFFICULTY_EDIT )
+				if( dc == Difficulty_Edit )
 				{
 					switch( EDIT_MODE.GetValue() )
 					{
@@ -409,7 +409,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					case EditMode_Practice:
 						{
 							vector<Steps*> v;
-							SongUtil::GetSteps( GetSelectedSong(), v, GetSelectedStepsType(), DIFFICULTY_EDIT );
+							SongUtil::GetSteps( GetSelectedSong(), v, GetSelectedStepsType(), Difficulty_Edit );
 							StepsUtil::SortStepsByDescription( v );
 							FOREACH_CONST( Steps*, v, p )
 								m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
@@ -510,7 +510,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		FOREACH_Difficulty( dc )
 		{
 			// fill in m_vpSourceSteps
-			if( dc != DIFFICULTY_EDIT )
+			if( dc != Difficulty_Edit )
 			{
 				Steps *pSteps = SongUtil::GetStepsByDifficulty( GetSelectedSong(), GetSelectedSourceStepsType(), dc );
 				if( pSteps != NULL )

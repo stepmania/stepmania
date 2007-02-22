@@ -397,7 +397,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				Steps* pSteps = vpSteps[i];
 
 				RString s;
-				if( pSteps->GetDifficulty() == DIFFICULTY_EDIT )
+				if( pSteps->GetDifficulty() == Difficulty_Edit )
 					s = pSteps->GetDescription();
 				else
 					s = DifficultyToLocalizedString( pSteps->GetDifficulty() );
@@ -482,19 +482,19 @@ public:
 		{
 			FOREACH_Difficulty( dc )
 			{
-				if( dc == DIFFICULTY_EDIT )
+				if( dc == Difficulty_Edit )
 					continue;
 				m_vDifficulties.push_back( dc );
 				Steps* pSteps = SongUtil::GetStepsByDifficulty( GAMESTATE->m_pCurSong, *m_pst, dc );
 				m_vSteps.push_back( pSteps );
 			}
-			SongUtil::GetSteps( GAMESTATE->m_pCurSong, m_vSteps, *m_pst, DIFFICULTY_EDIT );
-			m_vDifficulties.resize( m_vSteps.size(), DIFFICULTY_EDIT );
+			SongUtil::GetSteps( GAMESTATE->m_pCurSong, m_vSteps, *m_pst, Difficulty_Edit );
+			m_vDifficulties.resize( m_vSteps.size(), Difficulty_Edit );
 
 			if( sParam == "EditSteps" )
 			{
 				m_vSteps.push_back( NULL );
-				m_vDifficulties.push_back( DIFFICULTY_EDIT );
+				m_vDifficulties.push_back( Difficulty_Edit );
 			}
 
 			for( unsigned i=0; i<m_vSteps.size(); i++ )
@@ -503,7 +503,7 @@ public:
 				Difficulty dc = m_vDifficulties[i];
 
 				RString s;
-				if( dc == DIFFICULTY_EDIT )
+				if( dc == Difficulty_Edit )
 				{
 					if( pSteps )
 						s = pSteps->GetDescription();
@@ -519,7 +519,7 @@ public:
 		}
 		else
 		{
-			m_vDifficulties.push_back( DIFFICULTY_EDIT );
+			m_vDifficulties.push_back( Difficulty_Edit );
 			m_vSteps.push_back( NULL );
 			m_Def.m_vsChoices.push_back( "none" );
 		}

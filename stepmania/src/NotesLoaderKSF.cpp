@@ -116,23 +116,23 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		if( sFName.find("crazy") != string::npos || sFName.find("nightmare") != string::npos || 
 			sFName.find("crazydouble") != string::npos )
 		{
-			out.SetDifficulty( DIFFICULTY_HARD );
+			out.SetDifficulty( Difficulty_Hard );
 			if( !out.GetMeter() ) out.SetMeter( 14 ); // Set the meters to the Pump scale, not DDR.
 		}
 		else if( sFName.find("hard") != string::npos || sFName.find("freestyle") != string::npos ||
 			sFName.find("double") != string::npos )
 		{
-			out.SetDifficulty( DIFFICULTY_MEDIUM );
+			out.SetDifficulty( Difficulty_Medium );
 			if( !out.GetMeter() ) out.SetMeter( 8 );
 		}
 		else if( sFName.find("easy") != string::npos || sFName.find("normal") != string::npos )
 		{
-			out.SetDifficulty( DIFFICULTY_EASY );
+			out.SetDifficulty( Difficulty_Easy );
 			if( !out.GetMeter() ) out.SetMeter( 4 );
 		}
 		else
 		{
-			out.SetDifficulty( DIFFICULTY_MEDIUM );
+			out.SetDifficulty( Difficulty_Medium );
 			if( !out.GetMeter() ) out.SetMeter( 8 );
 		}
 

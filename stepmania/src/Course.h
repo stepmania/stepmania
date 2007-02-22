@@ -115,11 +115,11 @@ public:
 	RString GetTranslitFullTitle() const;
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
-	Trail* GetTrail( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;
-	Trail* GetTrailForceRegenCache( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;
+	Trail* GetTrail( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
+	Trail* GetTrailForceRegenCache( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
 	void GetTrails( vector<Trail*> &AddTo, StepsType st ) const;
 	void GetAllTrails( vector<Trail*> &AddTo ) const;
-	int GetMeter( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;
+	int GetMeter( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
 	bool HasMods() const;
 	bool AllSongsAreFixed() const;
 

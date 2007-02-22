@@ -87,7 +87,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		{
 			if( sParams.params.size() == 2 )
 			{
-				out.m_iCustomMeter[DIFFICULTY_MEDIUM] = max( atoi(sParams[1]), 0 ); /* compat */
+				out.m_iCustomMeter[Difficulty_Medium] = max( atoi(sParams[1]), 0 ); /* compat */
 			}
 			else if( sParams.params.size() == 3 )
 			{

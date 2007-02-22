@@ -376,7 +376,7 @@ void ScreenGameplay::Init()
 		return;	// ScreenDemonstration will move us to the next screen.  We just need to survive for one update without crashing.
 
 	/* Save settings to the profile now.  Don't do this on extra stages, since the
-	 * user doesn't have full control; saving would force profiles to DIFFICULTY_HARD
+	 * user doesn't have full control; saving would force profiles to Difficulty_Hard
 	 * and save over their default modifiers every time someone got an extra stage.
 	 * Do this before course modifiers are set up. */
 	if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
@@ -1170,7 +1170,7 @@ void ScreenGameplay::LoadNextSong()
 		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 		{
 			Steps *pSteps = GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ];
-			if( pSteps->GetDifficulty() == DIFFICULTY_BEGINNER )
+			if( pSteps->GetDifficulty() == Difficulty_Beginner )
 				m_BeginnerHelper.AddPlayer( pi->GetStepsAndTrailIndex(), pi->m_pPlayer->GetNoteData() );
 		}
 	}
@@ -1262,7 +1262,7 @@ void ScreenGameplay::LoadLights()
 	m_CabinetLightsNoteData.Init();
 	ASSERT( GAMESTATE->m_pCurSong );
 
-	const Steps *pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, STEPS_TYPE_LIGHTS_CABINET, DIFFICULTY_MEDIUM );
+	const Steps *pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, STEPS_TYPE_LIGHTS_CABINET, Difficulty_Medium );
 	if( pSteps != NULL )
 	{
 		pSteps->GetNoteData( m_CabinetLightsNoteData );
@@ -1951,7 +1951,7 @@ void ScreenGameplay::SendCrossedMessages()
 		PlayerNumber pn = PLAYER_INVALID;
 		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 		{
-			if( GAMESTATE->m_pCurSteps[ pi->m_pn ]->GetDifficulty() == DIFFICULTY_BEGINNER )
+			if( GAMESTATE->m_pCurSteps[ pi->m_pn ]->GetDifficulty() == Difficulty_Beginner )
 			{
 				pn = pi->m_pn;
 				break;

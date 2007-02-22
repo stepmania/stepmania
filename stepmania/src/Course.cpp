@@ -64,7 +64,7 @@ RString CourseEntry::GetTextDescription() const
 		vsEntryDescription.push_back( songCriteria.m_sGroupName );
 	if( songCriteria.m_bUseSongGenreAllowedList )
 		vsEntryDescription.push_back( join(",",songCriteria.m_vsSongGenreAllowedList) );
-	if( stepsCriteria.m_difficulty != Difficulty_Invalid  &&  stepsCriteria.m_difficulty != DIFFICULTY_MEDIUM )
+	if( stepsCriteria.m_difficulty != Difficulty_Invalid  &&  stepsCriteria.m_difficulty != Difficulty_Medium )
 		vsEntryDescription.push_back( DifficultyToLocalizedString(stepsCriteria.m_difficulty) );
 	if( stepsCriteria.m_iLowMeter != -1 )
 		vsEntryDescription.push_back( ssprintf("Low meter: %d", stepsCriteria.m_iLowMeter) );
@@ -338,16 +338,16 @@ bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 
 	if( this->m_bSortByMeter )
 	{
-		/* Sort according to DIFFICULTY_MEDIUM, since the order of songs
+		/* Sort according to Difficulty_Medium, since the order of songs
 		 * must not change across difficulties. */
 		Trail SortTrail;
-		if( cd == DIFFICULTY_MEDIUM )
+		if( cd == Difficulty_Medium )
 			SortTrail = trail;
 		else
 		{
-			bool bOK = GetTrailUnsorted( st, DIFFICULTY_MEDIUM, SortTrail );
+			bool bOK = GetTrailUnsorted( st, Difficulty_Medium, SortTrail );
 
-			/* If we have any other difficulty, we must have DIFFICULTY_MEDIUM. */
+			/* If we have any other difficulty, we must have Difficulty_Medium. */
 			ASSERT( bOK );
 		}
 		ASSERT_M( trail.m_vEntries.size() == SortTrail.m_vEntries.size(),
@@ -412,8 +412,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 	switch( cd )
 	{
-	case DIFFICULTY_BEGINNER:
-	case DIFFICULTY_CHALLENGE:
+	case Difficulty_Beginner:
+	case Difficulty_Challenge:
 		return false;
 	}
 
@@ -443,7 +443,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	trail.m_CourseDifficulty = cd;
 
 	/* Set to true if CourseDifficulty is able to change something. */
-	bool bCourseDifficultyIsSignificant = (cd == DIFFICULTY_MEDIUM);
+	bool bCourseDifficultyIsSignificant = (cd == Difficulty_Medium);
 
 	vector<Song*> vpAllPossibleSongs;
 	vector<SongAndSteps> vSongAndSteps;
@@ -527,10 +527,10 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		Difficulty dc = resolved.pSteps->GetDifficulty();
 		int iLowMeter = e->stepsCriteria.m_iLowMeter;
 		int iHighMeter = e->stepsCriteria.m_iHighMeter;
-		if( cd != DIFFICULTY_MEDIUM  &&  !e->bNoDifficult )
+		if( cd != Difficulty_Medium  &&  !e->bNoDifficult )
 		{
-			Difficulty new_dc = (Difficulty)(dc + cd - DIFFICULTY_MEDIUM);
-			new_dc = clamp( new_dc, (Difficulty)0, (Difficulty)(DIFFICULTY_EDIT-1) );
+			Difficulty new_dc = (Difficulty)(dc + cd - Difficulty_Medium);
+			new_dc = clamp( new_dc, (Difficulty)0, (Difficulty)(Difficulty_Edit-1) );
 
 			bool bChangedDifficulty = false;
 			if( new_dc != dc )
@@ -620,7 +620,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		trail.m_iSpecifiedMeter = m_iCustomMeter[cd];
 
 	/* If the course difficulty never actually changed anything, then this difficulty
-	 * is equivalent to DIFFICULTY_MEDIUM; it doesn't exist. */
+	 * is equivalent to Difficulty_Medium; it doesn't exist. */
 	return bCourseDifficultyIsSignificant;
 }
 
@@ -761,7 +761,7 @@ bool Course::GetTotalSeconds( StepsType st, float& fSecondsOut ) const
 	if( !AllSongsAreFixed() )
 		return false;
 
-	Trail* pTrail = GetTrail( st, DIFFICULTY_MEDIUM );
+	Trail* pTrail = GetTrail( st, Difficulty_Medium );
 
 	fSecondsOut = pTrail->GetLengthSeconds();
 	return true;
@@ -801,7 +801,7 @@ void Course::UpdateCourseStats( StepsType st )
 		return;
 	}
 
-	const Trail* pTrail = GetTrail( st, DIFFICULTY_MEDIUM );
+	const Trail* pTrail = GetTrail( st, Difficulty_Medium );
 
 	m_SortOrder_TotalDifficulty += pTrail != NULL? pTrail->GetTotalMeter():0;
 

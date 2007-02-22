@@ -8,12 +8,12 @@
 //
 enum Difficulty 
 {
-	DIFFICULTY_BEGINNER,
-	DIFFICULTY_EASY,
-	DIFFICULTY_MEDIUM,
-	DIFFICULTY_HARD,
-	DIFFICULTY_CHALLENGE,
-	DIFFICULTY_EDIT,
+	Difficulty_Beginner,
+	Difficulty_Easy,
+	Difficulty_Medium,
+	Difficulty_Hard,
+	Difficulty_Challenge,
+	Difficulty_Edit,
 	NUM_Difficulty,
 	Difficulty_Invalid
 };

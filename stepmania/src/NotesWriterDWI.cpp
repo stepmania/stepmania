@@ -315,7 +315,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 
 static bool WriteDWINotesTag( RageFile &f, const Steps &out )
 {
-	if( out.GetDifficulty() == DIFFICULTY_EDIT )
+	if( out.GetDifficulty() == Difficulty_Edit )
 		return false;	// not supported by DWI
 
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
@@ -334,11 +334,11 @@ static bool WriteDWINotesTag( RageFile &f, const Steps &out )
 
 	switch( out.GetDifficulty() )
 	{
-	case DIFFICULTY_BEGINNER:	f.Write( "BEGINNER:" ); break;
-	case DIFFICULTY_EASY:		f.Write( "BASIC:" );	break;
-	case DIFFICULTY_MEDIUM:		f.Write( "ANOTHER:" );	break;
-	case DIFFICULTY_HARD:		f.Write( "MANIAC:" );	break;
-	case DIFFICULTY_CHALLENGE:	f.Write( "SMANIAC:" );	break;
+	case Difficulty_Beginner:	f.Write( "BEGINNER:" ); break;
+	case Difficulty_Easy:		f.Write( "BASIC:" );	break;
+	case Difficulty_Medium:		f.Write( "ANOTHER:" );	break;
+	case Difficulty_Hard:		f.Write( "MANIAC:" );	break;
+	case Difficulty_Challenge:	f.Write( "SMANIAC:" );	break;
 	default:	ASSERT(0);	return false;
 	}
 

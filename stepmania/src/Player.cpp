@@ -2494,7 +2494,7 @@ bool Player::IsPlayingBeginner() const
 	if( m_pPlayerStageStats != NULL && !m_pPlayerStageStats->m_vpPossibleSteps.empty() )
 	{
 		Steps *pSteps = m_pPlayerStageStats->m_vpPossibleSteps[0];
-		return pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
+		return pSteps->GetDifficulty() == Difficulty_Beginner;
 	}
 
 	if( m_pPlayerState == NULL )
@@ -2503,7 +2503,7 @@ bool Player::IsPlayingBeginner() const
 	if( m_pPlayerState->m_PlayerNumber == PLAYER_INVALID )
 		return false;
 	Steps *pSteps = GAMESTATE->m_pCurSteps[ m_pPlayerState->m_PlayerNumber ];
-	return pSteps && pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
+	return pSteps && pSteps->GetDifficulty() == Difficulty_Beginner;
 }
 
 void Player::SetJudgment( TapNoteScore tns, bool bEarly )

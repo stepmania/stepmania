@@ -36,14 +36,14 @@ static void LoadFromSMTokens(
 	out.SetDescription( sDescription );
 	out.SetDifficulty( StringToDifficulty(sDifficulty) );
 
-	// HACK:  We used to store SMANIAC as DIFFICULTY_HARD with special description.
-	// Now, it has its own DIFFICULTY_CHALLENGE
+	// HACK:  We used to store SMANIAC as Difficulty_Hard with special description.
+	// Now, it has its own Difficulty_Challenge
 	if( sDescription.CompareNoCase("smaniac") == 0 ) 
-		out.SetDifficulty( DIFFICULTY_CHALLENGE );
-	// HACK:  We used to store CHALLENGE as DIFFICULTY_HARD with special description.
-	// Now, it has its own DIFFICULTY_CHALLENGE
+		out.SetDifficulty( Difficulty_Challenge );
+	// HACK:  We used to store CHALLENGE as Difficulty_Hard with special description.
+	// Now, it has its own Difficulty_Challenge
 	if( sDescription.CompareNoCase("challenge") == 0 ) 
-		out.SetDifficulty( DIFFICULTY_CHALLENGE );
+		out.SetDifficulty( Difficulty_Challenge );
 
 	out.SetMeter( atoi(sMeter) );
 	vector<RString> saValues;
@@ -540,7 +540,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 				*pNewNotes);
 
 			pNewNotes->SetLoadedFromProfile( slot );
-			pNewNotes->SetDifficulty( DIFFICULTY_EDIT );
+			pNewNotes->SetDifficulty( Difficulty_Edit );
 			pNewNotes->SetFilename( sEditFilePath );
 
 			if( pSong->IsEditAlreadyLoaded(pNewNotes) )
