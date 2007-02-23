@@ -47,7 +47,7 @@ bool SongCriteria::Matches( const Song *pSong ) const
 			return false;
 	}
 
-	if( m_iStagesForSong != -1  &&  SONGMAN->GetNumStagesForSong(pSong) != m_iStagesForSong )
+	if( m_iMaxStagesForSong != -1  &&  GAMESTATE->GetNumStagesForSong(pSong) > m_iMaxStagesForSong )
 		return false;
 
 	switch( m_Tutorial )
