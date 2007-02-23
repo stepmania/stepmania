@@ -239,7 +239,7 @@ void RunChild()
         WriteToChild( hToStdin, buf, iSize );
 
         /* 6. Write the crashed thread's name. */
-        p = RageThread::GetCurThreadName();
+        p = RageThread::GetCurrentThreadName();
         iSize = strlen( p )+1;
         WriteToChild( hToStdin, &iSize, sizeof(iSize) );
         WriteToChild( hToStdin, p, iSize );

@@ -91,7 +91,7 @@ static DWORD WINAPI StartThread( LPVOID pData )
 {
 	ThreadImpl_Win32 *pThis = (ThreadImpl_Win32 *) pData;
 
-	SetThreadName( GetCurrentThreadId(), RageThread::GetCurThreadName() );
+	SetThreadName( GetCurrentThreadId(), RageThread::GetCurrentThreadName() );
 
 	DWORD ret = (DWORD) pThis->m_pFunc( pThis->m_pData );
 
@@ -131,7 +131,7 @@ ThreadImpl *MakeThisThread()
 {
 	ThreadImpl_Win32 *thread = new ThreadImpl_Win32;
 
-	SetThreadName( GetCurrentThreadId(), RageThread::GetCurThreadName() );
+	SetThreadName( GetCurrentThreadId(), RageThread::GetCurrentThreadName() );
 
 	const HANDLE CurProc = GetCurrentProcess();
 	int ret = DuplicateHandle( CurProc, GetCurrentThread(), CurProc, 
