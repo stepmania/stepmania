@@ -2,6 +2,7 @@
 #include "RageException.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageThreads.h"
 
 #include <cstdarg>
 
@@ -13,9 +14,11 @@ using CrashHandler::IsDebuggerPresent;
 using CrashHandler::DebugBreak;
 #endif
 
+static uint64_t g_HandlerThreadID = RageThread::GetInvalidThreadID();
 static void (*g_CleanupHandler)( const RString &sError ) = NULL;
 void RageException::SetCleanupHandler( void (*pHandler)(const RString &sError) )
 {
+	g_HandlerThreadID = RageThread::GetCurrentThreadID();
 	g_CleanupHandler = pHandler;
 }
 
@@ -51,6 +54,7 @@ void RageException::Throw( const char *sFmt, ... )
 		DebugBreak();
 #endif
 
+	ASSERT( g_HandlerThreadID == RageThread::GetInvalidThreadID() || g_HandlerThreadID == RageThread::GetCurrentThreadID() );
 	if( g_CleanupHandler != NULL )
 		g_CleanupHandler( error );
 
