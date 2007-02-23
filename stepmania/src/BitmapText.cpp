@@ -680,11 +680,9 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 		if( FirstThree.CompareNoCase("|c0") == 0 && iCharsLeft > 8 )
 		{
 			ColorChange change;
-			int k;
-			sscanf( m_sText.substr( i+3, 2 ).c_str(), "%x", &k ); change.c.r = float( k ) / 255.0f;
-			sscanf( m_sText.substr( i+5, 2 ).c_str(), "%x", &k ); change.c.g = float( k ) / 255.0f;
-			sscanf( m_sText.substr( i+7, 2 ).c_str(), "%x", &k ); change.c.b = float( k ) / 255.0f;
-			change.c.a = 1;
+			int r, g, b;
+			sscanf( m_sText, "|%*c0%2x%2x%2x", &r, &g, &b );
+			change.c = RageColor( r/255.f, g/255.f, b/255.f, 1.f );
 			change.l = iGlyphsSoFar;
 			if( iGlyphsSoFar == 0 )
 				m_vColors[0] = change;
@@ -694,9 +692,8 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			continue;
 		}
 
-		RString curCStr = m_sText.substr( i, 1 );
-		char curChar = curCStr.c_str()[0];
-		int iCharLen = m_pFont->GetLineWidthInSourcePixels( RStringToWstring( curCStr ) );
+		char curChar = m_sText[0];
+		int iCharLen = m_pFont->GetLineWidthInSourcePixels( wstring(1, curChar) );
 
 		switch( curChar )
 		{
