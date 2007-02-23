@@ -164,15 +164,12 @@ static void InitThreads()
 	if( bInitialized )
 		return;
 
-	GetThreadSlotsLock().Lock();
+	LockMut( GetThreadSlotsLock() );
 
 	/* Libraries might start threads on their own, which might call user callbacks,
 	 * which could come back here.  Make sure we don't accidentally initialize twice. */
 	if( bInitialized )
-	{
-		GetThreadSlotsLock().Unlock();
 		return;
-	}
 
 	bInitialized = true;
 
@@ -182,8 +179,6 @@ static void InitThreads()
 	g_ThreadSlots[slot].m_iID = GetInvalidThreadId();
 	sprintf( g_ThreadSlots[slot].m_szThreadFormattedOutput, "Unknown thread" );
 	g_pUnknownThreadSlot = &g_ThreadSlots[slot];
-
-	GetThreadSlotsLock().Unlock();
 }
 
 
