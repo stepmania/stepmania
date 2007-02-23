@@ -360,6 +360,10 @@ uint64_t RageThread::GetCurrentThreadID()
 {
 	return GetThisThreadId();
 }
+uint64_t RageThread::GetInvalidThreadID()
+{
+	return GetInvalidThreadId();
+}
 
 /* Normally, checkpoints are only seen in crash logs.  It's occasionally useful
  * to see them in logs, but this outputs a huge amount of text. */

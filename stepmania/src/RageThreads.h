@@ -39,6 +39,7 @@ public:
 
 	static bool GetIsShowingDialog() { return s_bIsShowingDialog; }
 	static void SetIsShowingDialog( bool b ) { s_bIsShowingDialog = b; }
+	static uint64_t GetInvalidThreadID();
 
 private:
 	ThreadSlot *m_pSlot;
