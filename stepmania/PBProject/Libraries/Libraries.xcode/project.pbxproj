@@ -22,6 +22,7 @@
 				AA3AE88B097B738D00575EA1 /* PBXTargetDependency */,
 				AA3AE88D097B738D00575EA1 /* PBXTargetDependency */,
 				AA3AE88F097B738D00575EA1 /* PBXTargetDependency */,
+				AA059E280B8F0BF5006F8139 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = All;
@@ -29,6 +30,29 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		AA059DB70B8F0A32006F8139 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059CCB0B8F0A30006F8139 /* adler32.c */; };
+		AA059DB90B8F0A32006F8139 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059CD60B8F0A30006F8139 /* compress.c */; };
+		AA059DFA0B8F0A32006F8139 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059D6C0B8F0A31006F8139 /* crc32.c */; };
+		AA059DFB0B8F0A32006F8139 /* crc32.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059D6D0B8F0A31006F8139 /* crc32.h */; };
+		AA059DFC0B8F0A32006F8139 /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059D6E0B8F0A31006F8139 /* deflate.c */; };
+		AA059DFD0B8F0A32006F8139 /* deflate.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059D6F0B8F0A31006F8139 /* deflate.h */; };
+		AA059E070B8F0A32006F8139 /* gzio.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059D7D0B8F0A31006F8139 /* gzio.c */; };
+		AA059E080B8F0A32006F8139 /* infback.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059D7F0B8F0A31006F8139 /* infback.c */; };
+		AA059E090B8F0A32006F8139 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059D800B8F0A31006F8139 /* inffast.c */; };
+		AA059E0A0B8F0A32006F8139 /* inffast.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059D810B8F0A31006F8139 /* inffast.h */; };
+		AA059E0B0B8F0A32006F8139 /* inffixed.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059D820B8F0A31006F8139 /* inffixed.h */; };
+		AA059E0C0B8F0A32006F8139 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059D830B8F0A31006F8139 /* inflate.c */; };
+		AA059E0D0B8F0A32006F8139 /* inflate.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059D840B8F0A31006F8139 /* inflate.h */; };
+		AA059E0E0B8F0A32006F8139 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059D850B8F0A31006F8139 /* inftrees.c */; };
+		AA059E0F0B8F0A32006F8139 /* inftrees.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059D860B8F0A31006F8139 /* inftrees.h */; };
+		AA059E120B8F0A32006F8139 /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059DA50B8F0A32006F8139 /* trees.c */; };
+		AA059E130B8F0A32006F8139 /* trees.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059DA60B8F0A32006F8139 /* trees.h */; };
+		AA059E140B8F0A32006F8139 /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059DA70B8F0A32006F8139 /* uncompr.c */; };
+		AA059E150B8F0A32006F8139 /* zconf.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059DB10B8F0A32006F8139 /* zconf.h */; };
+		AA059E160B8F0A32006F8139 /* zconf.in.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059DB20B8F0A32006F8139 /* zconf.in.h */; };
+		AA059E170B8F0A32006F8139 /* zlib.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059DB40B8F0A32006F8139 /* zlib.h */; };
+		AA059E180B8F0A32006F8139 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059DB50B8F0A32006F8139 /* zutil.c */; };
+		AA059E190B8F0A32006F8139 /* zutil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059DB60B8F0A32006F8139 /* zutil.h */; };
 		AA3AE054097B250700575EA1 /* ansi2knr.c in Sources */ = {isa = PBXBuildFile; fileRef = AA3ADFC4097B250700575EA1 /* ansi2knr.c */; };
 		AA3AE055097B250700575EA1 /* cderror.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3ADFC5097B250700575EA1 /* cderror.h */; };
 		AA3AE056097B250700575EA1 /* cdjpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = AA3ADFC6097B250700575EA1 /* cdjpeg.c */; };
@@ -671,6 +695,13 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		AA059E270B8F0BF5006F8139 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA059CC80B8F09DB006F8139 /* z */;
+			remoteInfo = z;
+		};
 		AA3AE1A8097B473600575EA1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -746,6 +777,30 @@
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8D07F2C70486CC7A007CD1D0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		AA059CC90B8F09DB006F8139 /* libz.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libz.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA059CCB0B8F0A30006F8139 /* adler32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adler32.c; sourceTree = "<group>"; };
+		AA059CD60B8F0A30006F8139 /* compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = compress.c; sourceTree = "<group>"; };
+		AA059D6C0B8F0A31006F8139 /* crc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crc32.c; sourceTree = "<group>"; };
+		AA059D6D0B8F0A31006F8139 /* crc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crc32.h; sourceTree = "<group>"; };
+		AA059D6E0B8F0A31006F8139 /* deflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = deflate.c; sourceTree = "<group>"; };
+		AA059D6F0B8F0A31006F8139 /* deflate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deflate.h; sourceTree = "<group>"; };
+		AA059D7D0B8F0A31006F8139 /* gzio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gzio.c; sourceTree = "<group>"; };
+		AA059D7F0B8F0A31006F8139 /* infback.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = infback.c; sourceTree = "<group>"; };
+		AA059D800B8F0A31006F8139 /* inffast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inffast.c; sourceTree = "<group>"; };
+		AA059D810B8F0A31006F8139 /* inffast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inffast.h; sourceTree = "<group>"; };
+		AA059D820B8F0A31006F8139 /* inffixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inffixed.h; sourceTree = "<group>"; };
+		AA059D830B8F0A31006F8139 /* inflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inflate.c; sourceTree = "<group>"; };
+		AA059D840B8F0A31006F8139 /* inflate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inflate.h; sourceTree = "<group>"; };
+		AA059D850B8F0A31006F8139 /* inftrees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inftrees.c; sourceTree = "<group>"; };
+		AA059D860B8F0A31006F8139 /* inftrees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inftrees.h; sourceTree = "<group>"; };
+		AA059DA50B8F0A32006F8139 /* trees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trees.c; sourceTree = "<group>"; };
+		AA059DA60B8F0A32006F8139 /* trees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
+		AA059DA70B8F0A32006F8139 /* uncompr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uncompr.c; sourceTree = "<group>"; };
+		AA059DB10B8F0A32006F8139 /* zconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
+		AA059DB20B8F0A32006F8139 /* zconf.in.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zconf.in.h; sourceTree = "<group>"; };
+		AA059DB40B8F0A32006F8139 /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
+		AA059DB50B8F0A32006F8139 /* zutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zutil.c; sourceTree = "<group>"; };
+		AA059DB60B8F0A32006F8139 /* zutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zutil.h; sourceTree = "<group>"; };
 		AA3ADFBA097B23BE00575EA1 /* libjpeg.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libjpeg.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA3ADFC4097B250700575EA1 /* ansi2knr.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ansi2knr.c; sourceTree = "<group>"; };
 		AA3ADFC5097B250700575EA1 /* cderror.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = cderror.h; sourceTree = "<group>"; };
@@ -1183,6 +1238,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		AA059CC70B8F09DB006F8139 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA3ADFB8097B23BE00575EA1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1261,6 +1323,7 @@
 				AA3AE623097B6B7800575EA1 /* libvorbis.a */,
 				AA3AE72D097B705A00575EA1 /* libtheora.a */,
 				AA3AE785097B723000575EA1 /* liblua.a */,
+				AA059CC90B8F09DB006F8139 /* libz.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1268,6 +1331,7 @@
 		0867D691FE84028FC02AAC07 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				AA059CCA0B8F0A30006F8139 /* zlib-1.2.3 */,
 				AA4B432D05737046005FB5DB /* ffmpeg-0.4.9-pre1 */,
 				AA3AE277097B475400575EA1 /* ffmpeg-Info copy.plist */,
 				AA3ADFC2097B250700575EA1 /* jpeg-6b */,
@@ -1290,6 +1354,36 @@
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		AA059CCA0B8F0A30006F8139 /* zlib-1.2.3 */ = {
+			isa = PBXGroup;
+			children = (
+				AA059CCB0B8F0A30006F8139 /* adler32.c */,
+				AA059CD60B8F0A30006F8139 /* compress.c */,
+				AA059D6C0B8F0A31006F8139 /* crc32.c */,
+				AA059D6D0B8F0A31006F8139 /* crc32.h */,
+				AA059D6E0B8F0A31006F8139 /* deflate.c */,
+				AA059D6F0B8F0A31006F8139 /* deflate.h */,
+				AA059D7D0B8F0A31006F8139 /* gzio.c */,
+				AA059D7F0B8F0A31006F8139 /* infback.c */,
+				AA059D800B8F0A31006F8139 /* inffast.c */,
+				AA059D810B8F0A31006F8139 /* inffast.h */,
+				AA059D820B8F0A31006F8139 /* inffixed.h */,
+				AA059D830B8F0A31006F8139 /* inflate.c */,
+				AA059D840B8F0A31006F8139 /* inflate.h */,
+				AA059D850B8F0A31006F8139 /* inftrees.c */,
+				AA059D860B8F0A31006F8139 /* inftrees.h */,
+				AA059DA50B8F0A32006F8139 /* trees.c */,
+				AA059DA60B8F0A32006F8139 /* trees.h */,
+				AA059DA70B8F0A32006F8139 /* uncompr.c */,
+				AA059DB10B8F0A32006F8139 /* zconf.h */,
+				AA059DB20B8F0A32006F8139 /* zconf.in.h */,
+				AA059DB40B8F0A32006F8139 /* zlib.h */,
+				AA059DB50B8F0A32006F8139 /* zutil.c */,
+				AA059DB60B8F0A32006F8139 /* zutil.h */,
+			);
+			path = "zlib-1.2.3";
 			sourceTree = "<group>";
 		};
 		AA3ADFC2097B250700575EA1 /* jpeg-6b */ = {
@@ -1879,6 +1973,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		AA059CC50B8F09DB006F8139 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA059DFB0B8F0A32006F8139 /* crc32.h in Headers */,
+				AA059DFD0B8F0A32006F8139 /* deflate.h in Headers */,
+				AA059E0A0B8F0A32006F8139 /* inffast.h in Headers */,
+				AA059E0B0B8F0A32006F8139 /* inffixed.h in Headers */,
+				AA059E0D0B8F0A32006F8139 /* inflate.h in Headers */,
+				AA059E0F0B8F0A32006F8139 /* inftrees.h in Headers */,
+				AA059E130B8F0A32006F8139 /* trees.h in Headers */,
+				AA059E150B8F0A32006F8139 /* zconf.h in Headers */,
+				AA059E160B8F0A32006F8139 /* zconf.in.h in Headers */,
+				AA059E170B8F0A32006F8139 /* zlib.h in Headers */,
+				AA059E190B8F0A32006F8139 /* zutil.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA3ADFB6097B23BE00575EA1 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -2113,6 +2225,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		AA059CC80B8F09DB006F8139 /* z */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA059E1A0B8F0A32006F8139 /* Build configuration list for PBXNativeTarget "z" */;
+			buildPhases = (
+				AA059CC50B8F09DB006F8139 /* Headers */,
+				AA059CC60B8F09DB006F8139 /* Sources */,
+				AA059CC70B8F09DB006F8139 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = z;
+			productName = libz;
+			productReference = AA059CC90B8F09DB006F8139 /* libz.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		AA3ADFB9097B23BE00575EA1 /* jpeg */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AA3ADFBB097B23F000575EA1 /* Build configuration list for PBXNativeTarget "jpeg" */;
@@ -2305,6 +2434,7 @@
 				AA3AE622097B6B7800575EA1 /* vorbis */,
 				AA3AE72C097B705A00575EA1 /* theora */,
 				AA3AE784097B723000575EA1 /* lua */,
+				AA059CC80B8F09DB006F8139 /* z */,
 			);
 		};
 /* End PBXProject section */
@@ -2437,6 +2567,25 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		AA059CC60B8F09DB006F8139 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA059DB70B8F0A32006F8139 /* adler32.c in Sources */,
+				AA059DB90B8F0A32006F8139 /* compress.c in Sources */,
+				AA059DFA0B8F0A32006F8139 /* crc32.c in Sources */,
+				AA059DFC0B8F0A32006F8139 /* deflate.c in Sources */,
+				AA059E070B8F0A32006F8139 /* gzio.c in Sources */,
+				AA059E080B8F0A32006F8139 /* infback.c in Sources */,
+				AA059E090B8F0A32006F8139 /* inffast.c in Sources */,
+				AA059E0C0B8F0A32006F8139 /* inflate.c in Sources */,
+				AA059E0E0B8F0A32006F8139 /* inftrees.c in Sources */,
+				AA059E120B8F0A32006F8139 /* trees.c in Sources */,
+				AA059E140B8F0A32006F8139 /* uncompr.c in Sources */,
+				AA059E180B8F0A32006F8139 /* zutil.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AA3ADFB7097B23BE00575EA1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2923,6 +3072,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		AA059E280B8F0BF5006F8139 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA059CC80B8F09DB006F8139 /* z */;
+			targetProxy = AA059E270B8F0BF5006F8139 /* PBXContainerItemProxy */;
+		};
 		AA3AE1A9097B473600575EA1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AA3ADFB9097B23BE00575EA1 /* jpeg */;
@@ -2987,6 +3141,32 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		AA059E1B0B8F0A32006F8139 /* . */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G4;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_STRICT_ALIASING = YES;
+				GCC_UNROLL_LOOPS = NO;
+				GCC_VERSION_i386 = 4.0;
+				GCC_VERSION_ppc = 3.3;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = STATIC;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
+				PREBINDING = NO;
+				PRODUCT_NAME = z;
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+				ZERO_LINK = NO;
+			};
+			name = .;
+		};
 		AA3ADFBC097B23F000575EA1 /* . */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3402,6 +3582,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		AA059E1A0B8F0A32006F8139 /* Build configuration list for PBXNativeTarget "z" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA059E1B0B8F0A32006F8139 /* . */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = .;
+		};
 		AA3ADFBB097B23F000575EA1 /* Build configuration list for PBXNativeTarget "jpeg" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
