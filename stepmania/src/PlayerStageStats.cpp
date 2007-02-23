@@ -136,7 +136,7 @@ Grade GetGradeFromPercent( float fPercent, bool bMerciful )
 
 	Grade grade = Grade_Failed;
 
-	FOREACH_Grade(g)
+	FOREACH_ENUM( Grade,g)
 	{
 		if( fPercent >= GRADE_PERCENT_TIER(g) )
 		{
@@ -160,14 +160,14 @@ Grade PlayerStageStats::GetGrade() const
 	if( m_vpPlayedSteps.size() && !GAMESTATE->IsCourseMode() )
 		bIsBeginner = m_vpPlayedSteps[0]->GetDifficulty() == Difficulty_Beginner;
 
-	FOREACH_TapNoteScore( tns )
+	FOREACH_ENUM( TapNoteScore, tns )
 	{
 		int iTapScoreValue = ScoreKeeperNormal::TapNoteScoreToGradePoints( tns, bIsBeginner );
 		fActual += m_iTapNoteScores[tns] * iTapScoreValue;
 		LOG->Trace( "GetGrade actual: %i * %i", m_iTapNoteScores[tns], iTapScoreValue );
 	}
 
-	FOREACH_HoldNoteScore( hns )
+	FOREACH_ENUM( HoldNoteScore, hns )
 	{
 		int iHoldScoreValue = ScoreKeeperNormal::HoldNoteScoreToGradePoints( hns, bIsBeginner );
 		fActual += m_iHoldNoteScores[hns] * iHoldScoreValue;
@@ -253,7 +253,7 @@ int PlayerStageStats::GetLessonScoreActual() const
 {
 	int iScore = 0;
 
-	FOREACH_TapNoteScore( tns )
+	FOREACH_ENUM( TapNoteScore, tns )
 	{
 		switch( tns )
 		{
@@ -268,7 +268,7 @@ int PlayerStageStats::GetLessonScoreActual() const
 		}
 	}
 
-	FOREACH_HoldNoteScore( hns )
+	FOREACH_ENUM( HoldNoteScore, hns )
 	{
 		switch( hns )
 		{
@@ -295,9 +295,9 @@ void PlayerStageStats::ResetScoreForLesson()
 {
 	m_iCurPossibleDancePoints = 0;
 	m_iActualDancePoints = 0;
-	FOREACH_TapNoteScore( tns )
+	FOREACH_ENUM( TapNoteScore, tns )
 		m_iTapNoteScores[tns] = 0;
-	FOREACH_HoldNoteScore( hns )
+	FOREACH_ENUM( HoldNoteScore, hns )
 		m_iHoldNoteScores[hns] = 0;
 	m_iCurCombo = 0;
 	m_iMaxCombo = 0;
@@ -600,7 +600,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	int iComboAtStartOfStage = GetComboAtStartOfStage();
 	int iPeakCombo = GetMaxCombo().m_cnt;
 
-	FOREACH_PeakComboAward( pca )
+	FOREACH_ENUM( PeakComboAward,pca )
 	{
 		int iLevel = 1000 * (pca+1);
 		bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;

@@ -206,7 +206,7 @@ void Course::Init()
 	m_bRepeat = false;
 	m_bShuffle = false;
 	m_iLives = -1;
-	FOREACH_Difficulty(dc)
+	FOREACH_ENUM( Difficulty,dc)
 		m_iCustomMeter[dc] = -1;
 	m_bSortByMeter = false;
 
@@ -691,7 +691,7 @@ void Course::Invalidate( const Song *pStaleSong )
 	// If we find a Trail that contains this song, then it's part of a 
 	// non-fixed entry.  So, regenerating the Trail will force different
 	// songs to be chosen.
-	FOREACH_StepsType( st )
+	FOREACH_ENUM( StepsType,st )
 	{
 		FOREACH_ShownCourseDifficulty( cd )
 		{
@@ -860,9 +860,9 @@ bool Course::ShowInDemonstrationAndRanking() const
 
 void Course::CalculateRadarValues()
 {
-	FOREACH_StepsType( st )
+	FOREACH_ENUM( StepsType,st )
 	{
-		FOREACH_CourseDifficulty( cd )
+		FOREACH_ENUM( CourseDifficulty,cd )
 		{
 			// For courses that aren't fixed, the radar values are meaningless.
 			// Makes non-fixed courses have unknown radar values.

@@ -39,13 +39,13 @@ void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerSt
 	this->AddChild( &m_textDeltaSeconds );
 	ActorUtil::LoadAllCommandsAndOnCommand( m_textDeltaSeconds, sType );
 
-	FOREACH_TapNoteScore( tns )
+	FOREACH_ENUM( TapNoteScore, tns )
 	{
 		const RString &sCommand = TapNoteScoreToString(tns);
 		if( !m_textDeltaSeconds.HasCommand( sCommand ) )
 			ActorUtil::LoadCommand( m_textDeltaSeconds, sType, sCommand );
 	}
-	FOREACH_HoldNoteScore( hns )
+	FOREACH_ENUM( HoldNoteScore, hns )
 	{
 		const RString &sCommand = HoldNoteScoreToString(hns);
 		if( !m_textDeltaSeconds.HasCommand( sCommand ) )

@@ -682,7 +682,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 {
 	// The for loop and the assert are used to ensure that all fields of 
 	// RadarValue get set in here.
-	FOREACH_RadarCategory( rc )
+	FOREACH_ENUM( RadarCategory, rc )
 	{
 		switch( rc )
 		{

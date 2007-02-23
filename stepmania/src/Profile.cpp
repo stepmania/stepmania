@@ -128,10 +128,10 @@ void Profile::InitGeneralData()
 	m_iTotalMines = 0;
 	m_iTotalHands = 0;
 
-	FOREACH_PlayMode( i )
+	FOREACH_ENUM( PlayMode, i )
 		m_iNumSongsPlayedByPlayMode[i] = 0;
 	m_iNumSongsPlayedByStyle.clear();
-	FOREACH_Difficulty( i )
+	FOREACH_ENUM( Difficulty, i )
 		m_iNumSongsPlayedByDifficulty[i] = 0;
 	for( int i=0; i<MAX_METER+1; i++ )
 		m_iNumSongsPlayedByMeter[i] = 0;
@@ -152,8 +152,8 @@ void Profile::InitCourseScores()
 
 void Profile::InitCategoryScores()
 {
-	FOREACH_StepsType( st )
-		FOREACH_RankingCategory( rc )
+	FOREACH_ENUM( StepsType,st )
+		FOREACH_ENUM( RankingCategory,rc )
 			m_CategoryHighScores[st][rc].Init();
 }
 
@@ -232,7 +232,7 @@ float Profile::GetCaloriesBurnedToday() const
 int Profile::GetTotalNumSongsPassed() const
 {
 	int iTotal = 0;
-	FOREACH_PlayMode( i )
+	FOREACH_ENUM( PlayMode, i )
 		iTotal += m_iNumStagesPassedByPlayMode[i];
 	return iTotal;
 }
@@ -448,12 +448,12 @@ float Profile::GetSongsAndCoursesPercentCompleteAllDifficulties( StepsType st ) 
 {
 	float fActual = 0;
 	float fPossible = 0;
-	FOREACH_Difficulty( d )
+	FOREACH_ENUM( Difficulty, d )
 	{
 		fActual += GetSongsActual(st,d);
 		fPossible += GetSongsPossible(st,d);
 	}
-	FOREACH_CourseDifficulty( d )
+	FOREACH_ENUM( CourseDifficulty, d )
 	{
 		fActual += GetCoursesActual(st,d);
 		fPossible += GetCoursesPossible(st,d);
@@ -646,7 +646,7 @@ void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_Grade]
 	if( hsSong == NULL )
 		return;
 
-	FOREACH_Grade(g)
+	FOREACH_ENUM( Grade,g)
 	{
 		FOREACHM_CONST( StepsID, HighScoresForASteps, hsSong->m_StepsHighScores, it )
 		{
@@ -761,7 +761,7 @@ HighScoreList& Profile::GetCategoryHighScoreList( StepsType st, RankingCategory 
 int Profile::GetCategoryNumTimesPlayed( StepsType st ) const
 {
 	int iNumTimesPlayed = 0;
-	FOREACH_RankingCategory( rc )
+	FOREACH_ENUM( RankingCategory,rc )
 		iNumTimesPlayed += m_CategoryHighScores[st][rc].GetNumTimesPlayed();
 	return iNumTimesPlayed;
 }
@@ -1092,7 +1092,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 
 	{
 		XNode* pNumSongsPlayedByPlayMode = pGeneralDataNode->AppendChild("NumSongsPlayedByPlayMode");
-		FOREACH_PlayMode( pm )
+		FOREACH_ENUM( PlayMode, pm )
 		{
 			/* Don't save unplayed PlayModes. */
 			if( !m_iNumSongsPlayedByPlayMode[pm] )
@@ -1117,7 +1117,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 
 	{
 		XNode* pNumSongsPlayedByDifficulty = pGeneralDataNode->AppendChild("NumSongsPlayedByDifficulty");
-		FOREACH_Difficulty( dc )
+		FOREACH_ENUM( Difficulty, dc )
 		{
 			if( !m_iNumSongsPlayedByDifficulty[dc] )
 				continue;
@@ -1139,7 +1139,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 
 	{
 		XNode* pNumStagesPassedByPlayMode = pGeneralDataNode->AppendChild("NumStagesPassedByPlayMode");
-		FOREACH_PlayMode( pm )
+		FOREACH_ENUM( PlayMode, pm )
 		{
 			/* Don't save unplayed PlayModes. */
 			if( !m_iNumStagesPassedByPlayMode[pm] )
@@ -1150,7 +1150,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 
 	{
 		XNode* pNumStagesPassedByGrade = pGeneralDataNode->AppendChild("NumStagesPassedByGrade");
-		FOREACH_Grade( g )
+		FOREACH_ENUM( Grade, g )
 		{
 			if( !m_iNumStagesPassedByGrade[g] )
 				continue;
@@ -1263,7 +1263,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	{
 		const XNode* pNumSongsPlayedByPlayMode = pNode->GetChild("NumSongsPlayedByPlayMode");
 		if( pNumSongsPlayedByPlayMode )
-			FOREACH_PlayMode( pm )
+			FOREACH_ENUM( PlayMode, pm )
 				pNumSongsPlayedByPlayMode->GetChildValue( PlayModeToString(pm), m_iNumSongsPlayedByPlayMode[pm] );
 	}
 
@@ -1290,7 +1290,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	{
 		const XNode* pNumSongsPlayedByDifficulty = pNode->GetChild("NumSongsPlayedByDifficulty");
 		if( pNumSongsPlayedByDifficulty )
-			FOREACH_Difficulty( dc )
+			FOREACH_ENUM( Difficulty, dc )
 				pNumSongsPlayedByDifficulty->GetChildValue( DifficultyToString(dc), m_iNumSongsPlayedByDifficulty[dc] );
 	}
 
@@ -1306,14 +1306,14 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	{
 		const XNode* pNumStagesPassedByGrade = pNode->GetChild("NumStagesPassedByGrade");
 		if( pNumStagesPassedByGrade )
-			FOREACH_Grade( g )
+			FOREACH_ENUM( Grade, g )
 				pNumStagesPassedByGrade->GetChildValue( GradeToString(g), m_iNumStagesPassedByGrade[g] );
 	}
 
 	{
 		const XNode* pNumStagesPassedByPlayMode = pNode->GetChild("NumStagesPassedByPlayMode");
 		if( pNumStagesPassedByPlayMode )
-			FOREACH_PlayMode( pm )
+			FOREACH_ENUM( PlayMode, pm )
 				pNumStagesPassedByPlayMode->GetChildValue( PlayModeToString(pm), m_iNumStagesPassedByPlayMode[pm] );
 	
 	}
@@ -1533,7 +1533,7 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 
 	XNode* pNode = new XNode( "CategoryScores" );
 
-	FOREACH_StepsType( st )
+	FOREACH_ENUM( StepsType,st )
 	{
 		// skip steps types that have never been played
 		if( pProfile->GetCategoryNumTimesPlayed( st ) == 0 )
@@ -1542,7 +1542,7 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 		XNode* pStepsTypeNode = pNode->AppendChild( "StepsType" );
 		pStepsTypeNode->AppendAttr( "Type", GameManager::StepsTypeToString(st) );
 
-		FOREACH_RankingCategory( rc )
+		FOREACH_ENUM( RankingCategory,rc )
 		{
 			// skip steps types/categories that have never been played
 			if( pProfile->GetCategoryHighScoreList(st,rc).GetNumTimesPlayed() == 0 )

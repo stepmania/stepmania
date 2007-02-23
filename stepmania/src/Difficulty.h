@@ -17,7 +17,6 @@ enum Difficulty
 	NUM_Difficulty,
 	Difficulty_Invalid
 };
-#define FOREACH_Difficulty( dc ) FOREACH_ENUM( Difficulty, dc )
 const RString& DifficultyToString( Difficulty dc );
 const RString& DifficultyToLocalizedString( Difficulty dc );
 Difficulty StringToDifficulty( const RString& sDC );
@@ -25,7 +24,7 @@ LuaDeclareType( Difficulty );
 
 
 typedef Difficulty CourseDifficulty;
-#define FOREACH_CourseDifficulty FOREACH_Difficulty
+const int NUM_CourseDifficulty = NUM_Difficulty;
 #define FOREACH_ShownCourseDifficulty( cd ) for( Difficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); cd!=Difficulty_Invalid; cd=GetNextShownCourseDifficulty(cd) )
 
 const RString& CourseDifficultyToLocalizedString( Difficulty dc );

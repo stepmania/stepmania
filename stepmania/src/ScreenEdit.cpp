@@ -2765,7 +2765,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				float fMusicSeconds = m_soundMusic.GetLengthSeconds();
 
 				g_StepsInformation.rows[difficulty].choices.clear();
-				FOREACH_Difficulty( dc )
+				FOREACH_ENUM( Difficulty, dc )
 					g_StepsInformation.rows[difficulty].choices.push_back( "|" + DifficultyToLocalizedString(pSteps->GetDifficulty()) );
 				g_StepsInformation.rows[difficulty].iDefaultChoice = pSteps->GetDifficulty();
 				g_StepsInformation.rows[difficulty].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);

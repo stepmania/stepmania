@@ -108,7 +108,7 @@ void MusicWheel::Load( RString sType )
 	RString times;
 	/* Build all of the wheel item data.  Do this after selecting
 	 * the extra stage, so it knows to always display it. */
-	FOREACH_SortOrder( so )
+	FOREACH_ENUM( SortOrder, so )
 	{
 		BuildWheelItemDatas( m_WheelItemDatas[so], so );
 		times += ssprintf( "%i:%.3f ", so, timer.GetDeltaTime() );
@@ -187,7 +187,7 @@ void MusicWheel::BeginScreen()
 
 MusicWheel::~MusicWheel()
 {
-	FOREACH_SortOrder( so )
+	FOREACH_ENUM( SortOrder, so )
 		FOREACH( WheelItemData*, m_WheelItemDatas[so], i )
 			delete *i;
 }

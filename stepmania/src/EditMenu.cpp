@@ -398,7 +398,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 
 			m_vpSteps.clear();
 			
-			FOREACH_Difficulty( dc )
+			FOREACH_ENUM( Difficulty, dc )
 			{
 				if( dc == Difficulty_Edit )
 				{
@@ -507,7 +507,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 
 		m_vpSourceSteps.clear();
 		m_vpSourceSteps.push_back( StepsAndDifficulty(NULL,Difficulty_Invalid) );	// "blank"
-		FOREACH_Difficulty( dc )
+		FOREACH_ENUM( Difficulty, dc )
 		{
 			// fill in m_vpSourceSteps
 			if( dc != Difficulty_Edit )

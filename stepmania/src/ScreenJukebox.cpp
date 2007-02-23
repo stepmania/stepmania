@@ -63,7 +63,7 @@ void ScreenJukebox::SetSong()
 		}
 		else
 		{
-			FOREACH_Difficulty( dc )
+			FOREACH_ENUM( Difficulty, dc )
 				vDifficultiesToShow.push_back( dc );
 		}
 	}

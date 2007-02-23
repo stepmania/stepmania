@@ -675,12 +675,12 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 	hs.SetPlayerGuid( Profile::MakeGuid() );
 	hs.SetMachineGuid( Profile::MakeGuid() );
 	hs.SetProductID( RandomInt(10) );
-	FOREACH_TapNoteScore( tns )
+	FOREACH_ENUM( TapNoteScore, tns )
 		hs.SetTapNoteScore( tns, RandomInt(100) );
-	FOREACH_HoldNoteScore( hns )
+	FOREACH_ENUM( HoldNoteScore, hns )
 		hs.SetHoldNoteScore( hns, RandomInt(100) );
 	RadarValues rv;
-	FOREACH_RadarCategory( rc )
+	FOREACH_ENUM( RadarCategory, rc )
 		rv.m_Values.f[rc] = randomf( 0, 1 );
 	hs.SetRadarValues( rv );
 

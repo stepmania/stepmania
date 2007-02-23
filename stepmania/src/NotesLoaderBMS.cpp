@@ -930,9 +930,9 @@ static void SlideDuplicateDifficulties( Song &p )
 	* difficulties slid upwards due to (for example) having two beginner steps.
 	* We do a second pass in Song::TidyUpData to eliminate any remaining duplicates
 	* after this. */
-	FOREACH_StepsType( st )
+	FOREACH_ENUM( StepsType,st )
 	{
-		FOREACH_Difficulty( dc )
+		FOREACH_ENUM( Difficulty, dc )
 		{
 			if( dc == Difficulty_Edit )
 				continue;

@@ -480,7 +480,7 @@ public:
 
 		if( GAMESTATE->m_pCurSong )
 		{
-			FOREACH_Difficulty( dc )
+			FOREACH_ENUM( Difficulty, dc )
 			{
 				if( dc == Difficulty_Edit )
 					continue;

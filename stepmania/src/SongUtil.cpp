@@ -228,9 +228,9 @@ Steps* SongUtil::GetClosestNotes( const Song *pSong, StepsType st, Difficulty dc
  * on this; see BMSLoader::SlideDuplicateDifficulties.) */
 void SongUtil::AdjustDuplicateSteps( Song *pSong )
 {
-	FOREACH_StepsType( st )
+	FOREACH_ENUM( StepsType, st )
 	{
-		FOREACH_Difficulty( dc )
+		FOREACH_ENUM( Difficulty, dc )
 		{
 			if( dc == Difficulty_Edit )
 				continue;

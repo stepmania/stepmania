@@ -178,7 +178,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCac
 	FOREACH_PlayerNumber( pn )
 	{
 		const RadarValues &rv = in.GetRadarValues( pn );
-		FOREACH_RadarCategory( rc )
+		FOREACH_ENUM( RadarCategory, rc )
 			asRadarValues.push_back( ssprintf("%.3f", rv[rc]) );
 	}
 	lines.push_back( ssprintf( "     %s:", join(",",asRadarValues).c_str() ) );

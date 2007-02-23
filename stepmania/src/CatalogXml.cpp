@@ -117,7 +117,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 						iNumStepsInGroupAndStepsType[pSteps->GetDifficulty()]++;
 					}
 				}
-				FOREACH_Difficulty( dc )
+				FOREACH_ENUM( Difficulty, dc )
 					p3->AppendChild( DifficultyToString(dc), iNumStepsInGroupAndStepsType[dc] );
 			}
 
@@ -299,7 +299,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 
 		{
 			XNode* pNode2 = pNode->AppendChild( "PlayMode" );
-			FOREACH_PlayMode( pm )
+			FOREACH_ENUM( PlayMode, pm )
 			{
 				if( !SHOW_PLAY_MODE(pm) )
 					continue;
@@ -343,7 +343,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 
 		{
 			XNode* pNode2 = pNode->AppendChild( "TapNoteScore" );
-			FOREACH_TapNoteScore( tns )
+			FOREACH_ENUM( TapNoteScore, tns )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "TapNoteScore", TapNoteScoreToString(tns) );
 				pNode3->AppendAttr( "DisplayAs", TapNoteScoreToLocalizedString(tns) );
@@ -352,7 +352,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 
 		{
 			XNode* pNode2 = pNode->AppendChild( "HoldNoteScore" );
-			FOREACH_HoldNoteScore( hns )
+			FOREACH_ENUM( HoldNoteScore, hns )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "HoldNoteScore", HoldNoteScoreToString(hns) );
 				pNode3->AppendAttr( "DisplayAs", HoldNoteScoreToLocalizedString(hns) );
@@ -361,7 +361,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 
 		{
 			XNode* pNode2 = pNode->AppendChild( "RadarValue" );
-			FOREACH_RadarCategory( rc )
+			FOREACH_ENUM( RadarCategory, rc )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "RadarValue", RadarCategoryToString(rc) );
 				pNode3->AppendAttr( "DisplayAs", RadarCategoryToLocalizedString(rc) );

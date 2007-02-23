@@ -12,13 +12,13 @@ RadarValues::RadarValues()
 
 void RadarValues::MakeUnknown()
 {
-	FOREACH_RadarCategory( rc )
+	FOREACH_ENUM( RadarCategory, rc )
 		m_Values.f[rc] = RADAR_VAL_UNKNOWN;
 }
 
 void RadarValues::Zero()
 {
-	FOREACH_RadarCategory( rc )
+	FOREACH_ENUM( RadarCategory, rc )
 		m_Values.f[rc] = 0;
 }
 
@@ -27,7 +27,7 @@ XNode* RadarValues::CreateNode( bool bIncludeSimpleValues, bool bIncludeComplexV
 	XNode* pNode = new XNode( "RadarValues" );
 
 	// TRICKY: Don't print a remainder for the integer values.
-	FOREACH_RadarCategory( rc )
+	FOREACH_ENUM( RadarCategory, rc )
 	{
 		if( rc >= RadarCategory_TapsAndHolds )
 		{
@@ -50,7 +50,7 @@ void RadarValues::LoadFromNode( const XNode* pNode )
 
 	Zero();
 
-	FOREACH_RadarCategory( rc )
+	FOREACH_ENUM( RadarCategory, rc )
 		pNode->GetChildValue( RadarCategoryToString(rc),	m_Values.f[rc] );
 }
 
@@ -80,7 +80,7 @@ void RadarValues::FromString( RString sRadarValues )
 		return;
 	}
 
-	FOREACH_RadarCategory(rc)
+	FOREACH_ENUM( RadarCategory, rc )
 		m_Values.f[rc] = StringToFloat( saValues[rc] );
     
 }

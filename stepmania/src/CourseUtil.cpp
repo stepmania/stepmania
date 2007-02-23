@@ -206,7 +206,7 @@ void CourseUtil::AutogenEndlessFromGroup( const RString &sGroupName, Difficulty 
 	out.m_bRepeat = true;
 	out.m_bShuffle = true;
 	out.m_iLives = -1;
-	FOREACH_Difficulty(dc)
+	FOREACH_ENUM( Difficulty,dc)
 		out.m_iCustomMeter[dc] = -1;
 
 	if( sGroupName == "" )
@@ -257,7 +257,7 @@ void CourseUtil::AutogenOniFromArtist( const RString &sArtistName, RString sArti
 	out.m_bSortByMeter = true;
 
 	out.m_iLives = 4;
-	FOREACH_Difficulty(cd)
+	FOREACH_ENUM( Difficulty,cd)
 		out.m_iCustomMeter[cd] = -1;
 
 	ASSERT( sArtistName != "" );

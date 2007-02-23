@@ -1446,7 +1446,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 
 			// Find Machine Category Records
-			FOREACH_RankingCategory( rc )
+			FOREACH_ENUM( RankingCategory, rc )
 			{
 				HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCategoryHighScoreList( st, rc );
 				for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
@@ -1467,7 +1467,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			}
 
 			// Find Personal Category Records
-			FOREACH_RankingCategory( rc )
+			FOREACH_ENUM( RankingCategory, rc )
 			{
 				if( pProf )
 				{

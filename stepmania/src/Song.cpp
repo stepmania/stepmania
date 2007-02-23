@@ -77,7 +77,7 @@ Song::~Song()
 void Song::DetachSteps()
 {
 	m_vpSteps.clear();
-	FOREACH_StepsType( st )
+	FOREACH_ENUM( StepsType, st )
 		m_vpStepsByType[st].clear();
 }
 
@@ -87,7 +87,7 @@ void Song::Reset()
 	FOREACH( Steps*, m_vpSteps, s )
 		SAFE_DELETE( *s );
 	m_vpSteps.clear();
-	FOREACH_StepsType( st )
+	FOREACH_ENUM( StepsType, st )
 		m_vpStepsByType[st].clear();
 
 	Song empty;
@@ -288,7 +288,7 @@ bool Song::ReloadFromSongDir( RString sDir )
 
 	// Now we wipe out the new pointers, which were shallow copied and not deep copied...
 	m_vpSteps.clear();
-	FOREACH_StepsType( i )
+	FOREACH_ENUM( StepsType, i )
 		m_vpStepsByType[i].clear();
 
 	// Then we copy as many Steps as possible on top of the old pointers.
@@ -889,7 +889,7 @@ void Song::AddAutoGenNotes()
 		HasNotes[st] = true;
 	}
 		
-	FOREACH_StepsType( stMissing )
+	FOREACH_ENUM( StepsType, stMissing )
 	{
 		if( HasNotes[stMissing] )
 			continue;
@@ -907,7 +907,7 @@ void Song::AddAutoGenNotes()
 		StepsType stBestMatch = StepsType_Invalid;
 		int			iBestTrackDifference = INT_MAX;
 
-		FOREACH_StepsType( st )
+		FOREACH_ENUM( StepsType, st )
 		{
 			if( !HasNotes[st] )
 				continue;
@@ -945,7 +945,7 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 
 void Song::RemoveAutoGenNotes()
 {
-	FOREACH_StepsType(st)
+	FOREACH_ENUM( StepsType, st )
 	{
 		for( int j=m_vpStepsByType[st].size()-1; j>=0; j-- )
 		{

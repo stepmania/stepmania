@@ -45,7 +45,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 	if( course.m_iLives != -1 )
 		f.PutLine( ssprintf("#LIVES:%i;", course.m_iLives) );
 
-	FOREACH_CourseDifficulty( cd )
+	FOREACH_ENUM( CourseDifficulty,cd )
 	{
 		if( course.m_iCustomMeter[cd] == -1 )
 			continue;

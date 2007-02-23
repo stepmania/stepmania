@@ -208,7 +208,7 @@ static float GetArcadePoints( const Profile *pProfile )
 {
 	float fAP =	0;
 
-	FOREACH_Grade(g)
+	FOREACH_ENUM( Grade, g )
 	{
 		switch(g)
 		{
@@ -223,7 +223,7 @@ static float GetArcadePoints( const Profile *pProfile )
 		}
 	}
 
-	FOREACH_PlayMode(pm)
+	FOREACH_ENUM( PlayMode, pm )
 	{
 		switch(pm)
 		{
@@ -243,7 +243,7 @@ static float GetSongPoints( const Profile *pProfile )
 {
 	float fSP =	0;
 
-	FOREACH_Grade(g)
+	FOREACH_ENUM( Grade, g )
 	{
 		switch( g )
 		{
@@ -261,7 +261,7 @@ static float GetSongPoints( const Profile *pProfile )
 		}
 	}
 
-	FOREACH_PlayMode(pm)
+	FOREACH_ENUM( PlayMode, pm )
 	{
 		switch(pm)
 		{

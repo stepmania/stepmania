@@ -41,13 +41,13 @@ struct RadarValues
 
 	RadarValues& operator+=( const RadarValues& other )
 	{
-		FOREACH_RadarCategory( rc )
+		FOREACH_ENUM( RadarCategory, rc )
 			m_Values.f[rc] += other.m_Values.f[rc];
 		return *this;
 	}
 	bool operator==( const RadarValues& other ) const
 	{
-		FOREACH_RadarCategory( rc )
+		FOREACH_ENUM( RadarCategory, rc )
 		{
 			if( m_Values.f[rc] != other.m_Values.f[rc] )
 				return false;

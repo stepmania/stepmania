@@ -170,9 +170,9 @@ void StageStats::CommitScores( bool bSummary )
 		hs.SetPlayerGuid( PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : RString("") );
 		hs.SetMachineGuid( PROFILEMAN->GetMachineProfile()->m_sGuid );
 		hs.SetProductID( PREFSMAN->m_iProductID );
-		FOREACH_TapNoteScore( tns )
+		FOREACH_ENUM( TapNoteScore, tns )
 			hs.SetTapNoteScore( tns, m_player[p].m_iTapNoteScores[tns] );
-		FOREACH_HoldNoteScore( hns )
+		FOREACH_ENUM( HoldNoteScore, hns )
 			hs.SetHoldNoteScore( hns, m_player[p].m_iHoldNoteScores[hns] );
 		hs.SetRadarValues( m_player[p].m_radarActual );
 		hs.SetLifeRemainingSeconds( m_player[p].m_fLifeRemainingSeconds );

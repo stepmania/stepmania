@@ -52,7 +52,7 @@ static void LoadFromSMTokens(
 	{
 		RadarValues v[NUM_PLAYERS];
 		FOREACH_PlayerNumber( pn )
-			FOREACH_RadarCategory( rc )
+			FOREACH_ENUM( RadarCategory, rc )
 				v[pn][rc] = StringToFloat( saValues[pn*NUM_RadarCategory + rc] );
 		out.SetCachedRadarValues( v );
 	}

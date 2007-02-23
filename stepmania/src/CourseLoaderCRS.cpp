@@ -29,7 +29,7 @@ const char *g_CRSDifficultyNames[] =
 
 static CourseDifficulty CRSStringToDifficulty( const RString& s )
 {
-	FOREACH_Difficulty(i)
+	FOREACH_ENUM( Difficulty,i)
 		if( !s.CompareNoCase(g_CRSDifficultyNames[i]) )
 			return i;
 	return Difficulty_Invalid;

@@ -2293,7 +2293,7 @@ const Style* GameManager::GetEditorStyleForStepsType( StepsType st ) const
 
 void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aStepsTypeAddTo ) const
 {
-	FOREACH_StepsType( st )
+	FOREACH_ENUM( StepsType, st )
 	{
 		bool found = false;
 		for( unsigned s=0; !found && s<NUM_STYLES; s++ )

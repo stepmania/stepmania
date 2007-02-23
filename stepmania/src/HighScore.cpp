@@ -48,9 +48,9 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 	COMPARE( sPlayerGuid );
 	COMPARE( sMachineGuid );
 	COMPARE( iProductID );
-	FOREACH_TapNoteScore( tns )
+	FOREACH_ENUM( TapNoteScore, tns )
 		COMPARE( iTapNoteScores[tns] );
-	FOREACH_HoldNoteScore( hns )
+	FOREACH_ENUM( HoldNoteScore, hns )
 		COMPARE( iHoldNoteScores[hns] );
 	COMPARE( radarValues );
 	COMPARE( fLifeRemainingSeconds );
@@ -95,11 +95,11 @@ XNode *HighScoreImpl::CreateNode() const
 	pNode->AppendChild( "MachineGuid",		sMachineGuid );
 	pNode->AppendChild( "ProductID",		iProductID );
 	XNode* pTapNoteScores = pNode->AppendChild( "TapNoteScores" );
-	FOREACH_TapNoteScore( tns )
+	FOREACH_ENUM( TapNoteScore, tns )
 		if( tns != TNS_None )	// HACK: don't save meaningless "none" count
 			pTapNoteScores->AppendChild( TapNoteScoreToString(tns), iTapNoteScores[tns] );
 	XNode* pHoldNoteScores = pNode->AppendChild( "HoldNoteScores" );
-	FOREACH_HoldNoteScore( hns )
+	FOREACH_ENUM( HoldNoteScore, hns )
 		if( hns != HNS_None )	// HACK: don't save meaningless "none" count
 			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 	pNode->AppendChild( radarValues.CreateNode(bWriteSimpleValues, bWriteComplexValues) );
@@ -127,11 +127,11 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	pNode->GetChildValue( "ProductID",		iProductID );
 	const XNode* pTapNoteScores = pNode->GetChild( "TapNoteScores" );
 	if( pTapNoteScores )
-		FOREACH_TapNoteScore( tns )
+		FOREACH_ENUM( TapNoteScore, tns )
 			pTapNoteScores->GetChildValue( TapNoteScoreToString(tns), iTapNoteScores[tns] );
 	const XNode* pHoldNoteScores = pNode->GetChild( "HoldNoteScores" );
 	if( pHoldNoteScores )
-		FOREACH_HoldNoteScore( hns )
+		FOREACH_ENUM( HoldNoteScore, hns )
 			pHoldNoteScores->GetChildValue( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 	const XNode* pRadarValues = pNode->GetChild( "RadarValues" );
 	if( pRadarValues )

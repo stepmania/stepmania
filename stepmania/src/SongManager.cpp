@@ -1300,13 +1300,13 @@ void SongManager::UpdatePopular()
 	SongUtil::SortSongPointerArrayByTitle( apBestSongs );
 	
 	vector<Course*> apBestCourses[NUM_CourseType];
-	FOREACH_CourseType( ct )
+	FOREACH_ENUM( CourseType, ct )
 	{
 		GetCourses( ct, apBestCourses[ct], PREFSMAN->m_bAutogenGroupCourses );
 		CourseUtil::SortCoursePointerArrayByTitle( apBestCourses[ct] );
 	}
 
-	FOREACH_ProfileSlot( i )
+	FOREACH_ENUM( ProfileSlot, i )
 	{
 		m_pPopularSongs[i] = apBestSongs;
 
