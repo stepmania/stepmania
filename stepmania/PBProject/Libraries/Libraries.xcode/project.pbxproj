@@ -53,6 +53,8 @@
 		AA059E170B8F0A32006F8139 /* zlib.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059DB40B8F0A32006F8139 /* zlib.h */; };
 		AA059E180B8F0A32006F8139 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = AA059DB50B8F0A32006F8139 /* zutil.c */; };
 		AA059E190B8F0A32006F8139 /* zutil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059DB60B8F0A32006F8139 /* zutil.h */; };
+		AA059E560B8F10B0006F8139 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA059CC90B8F09DB006F8139 /* libz.a */; };
+		AA059E570B8F10B8006F8139 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA059CC90B8F09DB006F8139 /* libz.a */; };
 		AA3AE054097B250700575EA1 /* ansi2knr.c in Sources */ = {isa = PBXBuildFile; fileRef = AA3ADFC4097B250700575EA1 /* ansi2knr.c */; };
 		AA3AE055097B250700575EA1 /* cderror.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3ADFC5097B250700575EA1 /* cderror.h */; };
 		AA3AE056097B250700575EA1 /* cdjpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = AA3ADFC6097B250700575EA1 /* cdjpeg.c */; };
@@ -702,6 +704,20 @@
 			remoteGlobalIDString = AA059CC80B8F09DB006F8139 /* z */;
 			remoteInfo = z;
 		};
+		AA059E4C0B8F1093006F8139 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA059CC80B8F09DB006F8139 /* z */;
+			remoteInfo = z;
+		};
+		AA059E500B8F109D006F8139 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA059CC80B8F09DB006F8139 /* z */;
+			remoteInfo = z;
+		};
 		AA3AE1A8097B473600575EA1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1256,6 +1272,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA059E570B8F10B8006F8139 /* libz.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1298,6 +1315,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA059E560B8F10B0006F8139 /* libz.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2277,6 +2295,7 @@
 			);
 			dependencies = (
 				AA3AE8B5097B7A5300575EA1 /* PBXTargetDependency */,
+				AA059E510B8F109D006F8139 /* PBXTargetDependency */,
 			);
 			name = "ffmpeg-i386";
 			productName = ffmpeg;
@@ -2385,6 +2404,7 @@
 				AA91AD1E087C609500FB2F8F /* PBXBuildRule */,
 			);
 			dependencies = (
+				AA059E4D0B8F1093006F8139 /* PBXTargetDependency */,
 			);
 			name = ffmpeg;
 			productName = ffmpeg;
@@ -3077,6 +3097,16 @@
 			target = AA059CC80B8F09DB006F8139 /* z */;
 			targetProxy = AA059E270B8F0BF5006F8139 /* PBXContainerItemProxy */;
 		};
+		AA059E4D0B8F1093006F8139 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA059CC80B8F09DB006F8139 /* z */;
+			targetProxy = AA059E4C0B8F1093006F8139 /* PBXContainerItemProxy */;
+		};
+		AA059E510B8F109D006F8139 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA059CC80B8F09DB006F8139 /* z */;
+			targetProxy = AA059E500B8F109D006F8139 /* PBXContainerItemProxy */;
+		};
 		AA3AE1A9097B473600575EA1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AA3ADFB9097B23BE00575EA1 /* jpeg */;
@@ -3245,7 +3275,7 @@
 				OTHER_LDFLAGS = (
 					"-seg1addr",
 					0x2F600000,
-					"-lz",
+					"-Wl,-search_paths_first",
 				);
 				OTHER_REZFLAGS = "";
 				PER_ARCH_CFLAGS_i386 = "-mmmx -msse3";
@@ -3530,7 +3560,7 @@
 				OTHER_LDFLAGS = (
 					"-seg1addr",
 					0x2F600000,
-					"-lz",
+					"-Wl,-search_paths_first",
 				);
 				OTHER_REZFLAGS = "";
 				PER_ARCH_CFLAGS_i386 = "-mmmx -msse3";
