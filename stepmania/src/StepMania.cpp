@@ -295,6 +295,7 @@ static void HandleException( const RString &sError )
 
 	/* Throw up a pretty error dialog. */
 	Dialog::Error( sError );
+	Dialog::Shutdown(); // Shut it back down.
 }
 	
 void StepMania::ResetGame()
