@@ -57,9 +57,18 @@ MusicBannerWheel::MusicBannerWheel()
 	this->AddChild( &m_ScrollingList );
 
 	if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL )
-		SONGMAN->GetSongs( arraySongs, GAMESTATE->GetNumStagesLeft() );
+		SONGMAN->GetSongs( arraySongs );
 	else // Get the Group They Want
-		SONGMAN->GetSongs( arraySongs, GAMESTATE->m_sPreferredSongGroup, GAMESTATE->GetNumStagesLeft() );
+		SONGMAN->GetSongs( arraySongs, GAMESTATE->m_sPreferredSongGroup );
+
+	// filter songs that we don't have enough stages to play
+	{
+		vector<Song*> vTempSongs;
+		SongCriteria sc;
+		sc.m_iMaxStagesForSong = GAMESTATE->GetNumStagesLeft();
+		SongUtil::FilterSongs( sc, arraySongs, vTempSongs );
+		arraySongs = vTempSongs;
+	}
 
 	//Detect autogenned songs		
 	if ( !PREFSMAN->m_bAutogenSteps )

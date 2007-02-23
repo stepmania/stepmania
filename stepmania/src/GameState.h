@@ -118,6 +118,9 @@ public:
 	int				m_iNumStagesOfThisSong;
 	int				m_iCurrentStageIndex;
 
+	static int GetNumStagesForSong( const Song* pSong );
+	static int GetNumStagesForSongAndStyle( const Song* pSong, const Style *pStyle );
+
 	int		GetStageIndex() const;
 	void		BeginStage();
 	void		CancelStage();

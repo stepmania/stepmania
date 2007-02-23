@@ -109,6 +109,8 @@ namespace SongUtil
 
 	void GetAllSongGenres( vector<RString> &vsOut );
 	void FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out );
+
+	void GetPossibleSteps( const Song *pSong, vector<Steps*> &vOut );
 }
 
 class SongID

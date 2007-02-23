@@ -10,6 +10,7 @@
 #include "LightsManager.h"	// for NUM_CabinetLight
 #include "Game.h"
 #include "Style.h"
+#include "Foreach.h"
 
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -2334,6 +2335,52 @@ const Style* GameManager::GetHowToPlayStyleForGame( const Game *pGame ) const
 	ASSERT(0);	// this Game is missing a Style that can be used with HowToPlay
 	return NULL;
 }
+
+void GameManager::GetCompatibleStyles( const Game *pGame, int iNumPlayers, vector<const Style*> &vpStylesOut ) const
+{
+	FOREACH_ENUM( StyleType, styleType )
+	{
+		switch( styleType )
+		{
+		DEFAULT_FAIL( styleType );
+		case StyleType_OnePlayerOneSide:
+		case StyleType_OnePlayerTwoSides:
+			if( iNumPlayers != 1 )
+				continue;
+			break;
+		case StyleType_TwoPlayersTwoSides:
+		case StyleType_TwoPlayersSharedSides:
+			if( iNumPlayers != 2 )
+				continue;
+			break;
+		}
+
+		for( unsigned s=0; s<NUM_STYLES; s++ ) 
+		{
+			const Style* style = &g_Styles[s];
+			if( style->m_pGame != pGame )
+				continue;
+			if( style->m_StyleType != styleType )
+				continue;
+			if( !style->m_bUsedForGameplay )
+				continue;
+
+			vpStylesOut.push_back( style );
+		}
+	}
+}
+
+const Style *GameManager::GetFirstCompatibleStyle( const Game *pGame, int iNumPlayers, StepsType st ) const
+{
+	vector<const Style*> vpStyles;
+	GetCompatibleStyles( pGame, iNumPlayers, vpStyles );
+	FOREACH_CONST( const Style*, vpStyles, s )
+		if( (*s)->m_StepsType == st )
+			return *s;
+	FAIL_M("");
+	return NULL;
+}
+
 
 void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut ) const
 {

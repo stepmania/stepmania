@@ -282,19 +282,16 @@ void DifficultyList::SetFromGameState()
 		}
 		else
 		{
-			vector<Steps*>	CurSteps;
-			SongUtil::GetSteps( pSong, CurSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
-
+			vector<Steps*>	vpSteps;
+			SongUtil::GetPossibleSteps( pSong, vpSteps );
 			/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
-			StepsUtil::RemoveLockedSteps( pSong, CurSteps );
-			StepsUtil::SortNotesArrayByDifficulty( CurSteps );
 
-			m_Rows.resize( CurSteps.size() );
-			for( unsigned i = 0; i < CurSteps.size(); ++i )
+			m_Rows.resize( vpSteps.size() );
+			for( unsigned i = 0; i < vpSteps.size(); ++i )
 			{
 				Row &row = m_Rows[i];
 
-				row.m_Steps = CurSteps[i];
+				row.m_Steps = vpSteps[i];
 
 				m_Lines[i].m_Meter.SetFromSteps( m_Rows[i].m_Steps );
 

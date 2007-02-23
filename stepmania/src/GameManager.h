@@ -16,11 +16,13 @@ public:
 	GameManager();
 	~GameManager();
 
-	void	GetStylesForGame( const Game* pGame, vector<const Style*>& aStylesAddTo, bool editor=false ) const;
-	void	GetStepsTypesForGame( const Game* pGame, vector<StepsType>& aStepsTypeAddTo ) const;
-	const Style*	GetEditorStyleForStepsType( StepsType st ) const;
+	void GetStylesForGame( const Game* pGame, vector<const Style*>& aStylesAddTo, bool editor=false ) const;
+	void GetStepsTypesForGame( const Game* pGame, vector<StepsType>& aStepsTypeAddTo ) const;
+	const Style *GetEditorStyleForStepsType( StepsType st ) const;
 	void GetDemonstrationStylesForGame( const Game *pGame, vector<const Style*> &vpStylesOut ) const;
-	const Style*	GetHowToPlayStyleForGame( const Game* pGame ) const;
+	const Style *GetHowToPlayStyleForGame( const Game* pGame ) const;
+	void GameManager::GetCompatibleStyles( const Game *pGame, int iNumPlayers, vector<const Style*> &vpStylesOut ) const;
+	const Style *GameManager::GetFirstCompatibleStyle( const Game *pGame, int iNumPlayers, StepsType st ) const;
 
 	void GetEnabledGames( vector<const Game*>& aGamesOut ) const;
 	const Game* GetDefaultGame() const;

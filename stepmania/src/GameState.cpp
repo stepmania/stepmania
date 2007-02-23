@@ -505,11 +505,44 @@ void GameState::EndGame()
 	m_timeGameStarted.SetZero();
 }
 
-static int GetNumStagesForCurrentSong()
+int GameState::GetNumStagesForSong( const Song* pSong )
+{
+	int iNumStages = 1;
+
+	ASSERT( pSong );
+	if( pSong->IsMarathon() )
+		iNumStages *= 3;
+	if( pSong->IsLong() )
+		iNumStages *= 2;
+
+	return iNumStages;
+}
+
+int GameState::GetNumStagesForSongAndStyle( const Song* pSong, const Style *pStyle )
+{
+	int iNumStages = GetNumStagesForSong( pSong );
+
+	// One player, two-sides styles cost extra 
+	switch( pStyle->m_StyleType )
+	{
+	DEFAULT_FAIL( pStyle->m_StyleType );
+	case StyleType_OnePlayerOneSide:
+		iNumStages *= 2;
+		break;
+	case StyleType_TwoPlayersTwoSides:
+	case StyleType_OnePlayerTwoSides:
+	case StyleType_TwoPlayersSharedSides:
+		break;
+	}
+
+	return iNumStages;
+}
+
+static int GetNumStagesForCurrentSongOrCourse()
 {
 	int iNumStagesOfThisSong = 1;
 	if( GAMESTATE->m_pCurSong )
-		iNumStagesOfThisSong = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
+		iNumStagesOfThisSong = GameState::GetNumStagesForSong( GAMESTATE->m_pCurSong );
 	else if( GAMESTATE->m_pCurCourse )
 		iNumStagesOfThisSong = 1;
 	else
@@ -553,7 +586,7 @@ void GameState::BeginStage()
 		m_SongOptions.Assign( ModsLevel_Stage, m_SongOptions.GetPreferred() );
 
 	STATSMAN->m_CurStageStats.m_fMusicRate = m_SongOptions.GetSong().m_fMusicRate;
-	m_iNumStagesOfThisSong = GetNumStagesForCurrentSong();
+	m_iNumStagesOfThisSong = GetNumStagesForCurrentSongOrCourse();
 	ASSERT( m_iNumStagesOfThisSong != -1 );
 }
 
@@ -771,7 +804,7 @@ bool GameState::IsFinalStage() const
 		return true;
 
 	/* This changes dynamically on ScreenSelectMusic as the wheel turns. */
-	int iPredictedStageForCurSong = GetNumStagesForCurrentSong();
+	int iPredictedStageForCurSong = GetNumStagesForCurrentSongOrCourse();
 	if( iPredictedStageForCurSong == -1 )
 		iPredictedStageForCurSong = 1;
 	return m_iCurrentStageIndex + iPredictedStageForCurSong == PREFSMAN->m_iSongsPerPlay;

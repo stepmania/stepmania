@@ -462,7 +462,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		soc.m_Tutorial = SongCriteria::Tutorial_No;
 		soc.m_Locked = SongCriteria::Locked_Unlocked;
 		if( !soc.m_bUseSongAllowedList )
-			soc.m_iStagesForSong = 1;
+			soc.m_iMaxStagesForSong = 1;
 
 		StepsCriteria stc = e->stepsCriteria;
 		stc.m_st = st;

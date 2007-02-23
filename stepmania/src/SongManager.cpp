@@ -514,31 +514,30 @@ RageColor SongManager::GetCourseColor( const Course* pCourse )
 	}
 }
 
-static void GetSongsFromVector( const vector<Song*> &Songs, vector<Song*> &AddTo, RString sGroupName, int iMaxStages )
+static void GetSongsFromVector( const vector<Song*> &Songs, vector<Song*> &vOut, RString sGroupName )
 {
-	AddTo.clear();
+	vOut.clear();
 
 	for( unsigned i=0; i<Songs.size(); i++ )
 		if( sGroupName==GROUP_ALL || sGroupName==Songs[i]->m_sGroupName )
-			if( SongManager::GetNumStagesForSong(Songs[i]) <= iMaxStages )
-				AddTo.push_back( Songs[i] );
+			vOut.push_back( Songs[i] );
 }
 
-void SongManager::GetSongs( vector<Song*> &AddTo, RString sGroupName, int iMaxStages ) const
+void SongManager::GetSongs( vector<Song*> &AddTo, RString sGroupName ) const
 {
-	GetSongsFromVector( m_pSongs, AddTo, sGroupName, iMaxStages );
+	GetSongsFromVector( m_pSongs, AddTo, sGroupName );
 }
 
-void SongManager::GetPopularSongs( vector<Song*> &AddTo, RString sGroupName, int iMaxStages, ProfileSlot slot ) const
+void SongManager::GetPopularSongs( vector<Song*> &AddTo, RString sGroupName, ProfileSlot slot ) const
 {
-	GetSongsFromVector( m_pPopularSongs[slot], AddTo, sGroupName, iMaxStages );
+	GetSongsFromVector( m_pPopularSongs[slot], AddTo, sGroupName );
 }
 
-void SongManager::GetPreferredSortSongs( vector<Song*> &AddTo, int iMaxStages ) const
+void SongManager::GetPreferredSortSongs( vector<Song*> &AddTo ) const
 {
 	if( m_vPreferredSongSort.empty() )
 	{
-		GetSongs( AddTo, iMaxStages );
+		GetSongs( AddTo );
 		return;
 	}
 
@@ -659,17 +658,6 @@ RString SongManager::ShortenGroupName( RString sLongGroupName )
 	title.Title = sLongGroupName;
 	tsub.Subst( title );
 	return title.Title;
-}
-
-int SongManager::GetNumStagesForSong( const Song* pSong )
-{
-	ASSERT( pSong );
-	if( pSong->IsMarathon() )
-		return 3;
-	if( pSong->IsLong() )
-		return 2;
-	else
-		return 1;
 }
 
 static LocalizedString LOADING_COURSES ( "SongManager", "Loading courses..." );

@@ -273,6 +273,14 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
 
+	// temp Chris debug
+	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F8 )
+	{
+		if( input.type != IET_FIRST_PRESS ) 
+			return;
+		MESSAGEMAN->Broadcast("SongChosen");
+	}
+
 	// debugging?
 	// I just like being able to see untransliterated titles occasionally.
 	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F9 )
@@ -932,9 +940,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 		m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
-		SongUtil::GetSteps( pSong, m_vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
-		StepsUtil::RemoveLockedSteps( pSong, m_vpSteps );
-		StepsUtil::SortNotesArrayByDifficulty( m_vpSteps );
+		SongUtil::GetPossibleSteps( pSong, m_vpSteps );
 
 		if ( PREFSMAN->m_bShowBanners )
 			g_sBannerPath = pSong->GetBannerPath();

@@ -155,16 +155,26 @@ void MusicWheel::BeginScreen()
 	if( GAMESTATE->m_PreferredSortOrder == SortOrder_Invalid )
 		GAMESTATE->m_PreferredSortOrder = GAMESTATE->m_SortOrder;
 
-	// HACK: invalidate currently selected song in the case that it
-	// cannot be played due to lack of stages remaining
-	// checking for event mode shouldn't be necessary here
-	// but someone mentioned it does it sometimes.
+	/* Invalidate current Song if it can't be played
+	 * because there are not enough stages remaining. */
 	if( GAMESTATE->m_pCurSong != NULL && 
-		SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong ) + GAMESTATE->m_iCurrentStageIndex > PREFSMAN->m_iSongsPerPlay
-		&& !GAMESTATE->IsEventMode()
-		&& !GAMESTATE->IsAnExtraStage() )
+		GameState::GetNumStagesForSong( GAMESTATE->m_pCurSong ) > GAMESTATE->GetNumStagesLeft() )
 	{
 		GAMESTATE->m_pCurSong.Set( NULL );
+	}
+
+	/* Invalidate current Steps if it can't be played
+	 * because there are not enough stages remaining. */
+	FOREACH_ENUM( PlayerNumber, p )
+	{
+		if( GAMESTATE->m_pCurSteps[p] != NULL )
+		{
+			vector<Steps*> vpPossibleSteps;
+			SongUtil::GetPossibleSteps( GAMESTATE->m_pCurSong, vpPossibleSteps );
+			bool bStepsIsPossible = find( vpPossibleSteps.begin(), vpPossibleSteps.end(), GAMESTATE->m_pCurSteps[p] ) == vpPossibleSteps.end();
+			if( !bStepsIsPossible )
+				GAMESTATE->m_pCurSteps[p].Set( NULL );
+		}
 	}
 
 	// Select the the previously selected song (if any)
@@ -316,14 +326,23 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 	switch( so )
 	{
 	case SORT_PREFERRED:
-		SONGMAN->GetPreferredSortSongs( apAllSongs, GAMESTATE->GetNumStagesLeft() );
+		SONGMAN->GetPreferredSortSongs( apAllSongs );
 		break;
 	case SORT_POPULARITY:
-		SONGMAN->GetPopularSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup, GAMESTATE->GetNumStagesLeft() );
+		SONGMAN->GetPopularSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup );
 		break;
 	default:
-		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup, GAMESTATE->GetNumStagesLeft() );
+		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup );
 		break;
+	}
+
+	// filter songs that we don't have enough stages to play
+	{
+		vector<Song*> vTempSongs;
+		SongCriteria sc;
+		sc.m_iMaxStagesForSong = GAMESTATE->GetNumStagesLeft();
+		SongUtil::FilterSongs( sc, apAllSongs, vTempSongs );
+		apAllSongs = vTempSongs;
 	}
 
 	// copy only songs that have at least one Steps for the current GameMode
@@ -678,7 +697,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 		{
 			WID.m_Flags.bHasBeginnerOr1Meter = WID.m_pSong->IsEasy( GAMESTATE->GetCurrentStyle()->m_StepsType );
 			WID.m_Flags.bEdits = WID.m_pSong->HasEdits( GAMESTATE->GetCurrentStyle()->m_StepsType );
-			WID.m_Flags.iStagesForSong = SongManager::GetNumStagesForSong( WID.m_pSong );
+			WID.m_Flags.iStagesForSong = GameState::GetNumStagesForSong( WID.m_pSong );
 		}
 		else if( WID.m_pCourse != NULL )
 		{

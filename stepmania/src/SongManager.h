@@ -69,18 +69,16 @@ public:
 	RageColor GetCourseColor( const Course* pCourse );
 	
 	static RString ShortenGroupName( RString sLongGroupName );
-	static int     GetNumStagesForSong( const Song* pSong );	// LongVer songs take 2 stages, MarathonVer take 3
 
 
 	// Lookup
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
-	void GetPopularSongs( vector<Song*> &AddTo, RString sGroupName, int iMaxStages = INT_MAX, ProfileSlot slot=ProfileSlot_Machine ) const;
-	void GetPreferredSortSongs( vector<Song*> &AddTo, int iMaxStages = INT_MAX ) const;
+	void GetPopularSongs( vector<Song*> &AddTo, RString sGroupName, ProfileSlot slot=ProfileSlot_Machine ) const;
+	void GetPreferredSortSongs( vector<Song*> &AddTo ) const;
 	const vector<Song*> &GetPopularSongs( ProfileSlot slot=ProfileSlot_Machine ) const { return m_pPopularSongs[slot]; }
 	const vector<Course*> &GetPopularCourses( CourseType ct, ProfileSlot slot=ProfileSlot_Machine ) const { return m_pPopularCourses[slot][ct]; }
-	void GetSongs( vector<Song*> &AddTo, RString sGroupName, int iMaxStages = INT_MAX ) const;
-	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,GROUP_ALL,iMaxStages); }
-	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,GROUP_ALL,INT_MAX); }
+	void GetSongs( vector<Song*> &AddTo, RString sGroupName ) const;
+	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,GROUP_ALL); }
 	Song *FindSong( RString sPath );
 	Song *FindSong( RString sGroup, RString sSong );
 	Course *FindCourse( RString sPath );

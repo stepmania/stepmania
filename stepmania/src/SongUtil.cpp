@@ -14,6 +14,8 @@
 #include "ThemeMetric.h"
 #include "LocalizedString.h"
 #include "RageLog.h"
+#include "GameManager.h"
+#include "CommonMetrics.h"
 
 bool SongCriteria::Matches( const Song *pSong ) const
 {
@@ -808,6 +810,35 @@ void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vec
 	}
 }
 
+void SongUtil::GetPossibleSteps( const Song *pSong, vector<Steps*> &vOut )
+{
+	vector<const Style*> vpPossibleStyles;
+	if( CommonMetrics::ALL_STEPS_TYPES_IN_ONE_LIST )
+		GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
+	else
+		vpPossibleStyles.push_back( GAMESTATE->m_pCurStyle );
+
+	set<StepsType> vStepsType;
+	FOREACH( const Style*, vpPossibleStyles, s )
+		vStepsType.insert( (*s)->m_StepsType );
+
+	FOREACHS( StepsType, vStepsType, st )
+		SongUtil::GetSteps( pSong, vOut, *st );
+
+	StepsUtil::RemoveLockedSteps( pSong, vOut );
+	StepsUtil::SortNotesArrayByDifficulty( vOut );
+	StepsUtil::SortStepsByTypeAndDifficulty( vOut );
+
+	// remove steps that we don't have enough stages left to play
+	for( int i=vOut.size()-1; i>=0; i-- )
+	{
+		Steps *pSteps = vOut[i];
+		StepsType st = pSteps->m_StepsType;
+		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), st );
+		if( GAMESTATE->GetNumStagesForSongAndStyle(pSong,pStyle) > GAMESTATE->GetNumStagesLeft() )
+			vOut.erase( vOut.begin() + i );
+	}
+}
 
 //////////////////////////////////
 // SongID
