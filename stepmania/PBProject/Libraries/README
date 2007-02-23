@@ -4,9 +4,9 @@ libmad-0.1.5.1b
 
 Static Libraries:
 jpeg-6b
-libogg-1.1
-libpng-1.2.7
-libvorbis-1.0.1
+libogg-1.1.2
+libpng-1.2.8
+libvorbis-1.1.1
 libtheora-1.0alpha5
 zlib-1.2.3
 
