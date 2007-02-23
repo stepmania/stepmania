@@ -284,7 +284,7 @@ RageThreadRegister::~RageThreadRegister()
 	m_pSlot = NULL;
 }
 
-const char *RageThread::GetCurThreadName()
+const char *RageThread::GetCurrentThreadName()
 {
 	return GetThreadNameByID( GetCurrentThreadID() );
 }

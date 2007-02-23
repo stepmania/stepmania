@@ -171,7 +171,7 @@ static void parent_process( int to_child, const CrashData *crash )
 		return;
 	
 	/* 6. Write the crashed thread's name. */
-	p = RageThread::GetCurThreadName();
+	p = RageThread::GetCurrentThreadName();
 	size = strlen( p )+1;
 	if( !parent_write(to_child, &size, sizeof(size)) )
 		return;
@@ -365,7 +365,7 @@ void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
 		strncpy( crash.m_ThreadName[1], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
 	}
 
-	strncpy( crash.m_ThreadName[0], RageThread::GetCurThreadName(), sizeof(crash.m_ThreadName[0])-1 );
+	strncpy( crash.m_ThreadName[0], RageThread::GetCurrentThreadName(), sizeof(crash.m_ThreadName[0])-1 );
 
 	strncpy( crash.reason, reason, min(sizeof(crash.reason) - 1, reason.length()) );
 	crash.reason[ sizeof(crash.reason)-1 ] = 0;
@@ -394,7 +394,7 @@ void CrashHandler::CrashSignalHandler( int signal, siginfo_t *si, const ucontext
 		BacktraceAllThreads( crash );
 #endif
 
-	strncpy( crash.m_ThreadName[0], RageThread::GetCurThreadName(), sizeof(crash.m_ThreadName[0])-1 );
+	strncpy( crash.m_ThreadName[0], RageThread::GetCurrentThreadName(), sizeof(crash.m_ThreadName[0])-1 );
 
 	RunCrashHandler( &crash );
 }

@@ -25,7 +25,7 @@ public:
 
 	static uint64_t GetCurrentThreadID();
 
-	static const char *GetCurThreadName();
+	static const char *GetCurrentThreadName();
 	static const char *GetThreadNameByID( uint64_t iID );
 	static bool EnumThreadIDs( int n, uint64_t &iID );
 	int Wait();
@@ -49,7 +49,7 @@ private:
 	static bool s_bIsShowingDialog;
 };
 
-/* Register a thread created outside of RageThread.  This gives it a name for RageThread::GetCurThreadName,
+/* Register a thread created outside of RageThread.  This gives it a name for RageThread::GetCurrentThreadName,
  * and allocates a slot for checkpoints. */
 class RageThreadRegister
 {
