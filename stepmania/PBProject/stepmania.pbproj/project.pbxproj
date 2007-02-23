@@ -28,6 +28,8 @@
 		AA059ABD0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */; };
 		AA059ABE0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
 		AA059ABF0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */; };
+		AA059E2B0B8F0C67006F8139 /* libz_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA059E2A0B8F0C66006F8139 /* libz_link.a */; };
+		AA059E2C0B8F0C67006F8139 /* libz_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA059E2A0B8F0C66006F8139 /* libz_link.a */; };
 		AA07008A0B61F177003B85BB /* RageSoundReader_PostBuffering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0700880B61F177003B85BB /* RageSoundReader_PostBuffering.cpp */; };
 		AA07008B0B61F177003B85BB /* RageSoundReader_PostBuffering.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0700890B61F177003B85BB /* RageSoundReader_PostBuffering.h */; };
 		AA07008C0B61F177003B85BB /* RageSoundReader_PostBuffering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0700880B61F177003B85BB /* RageSoundReader_PostBuffering.cpp */; };
@@ -2166,6 +2168,7 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorMultiTexture.cpp; path = ../src/ActorMultiTexture.cpp; sourceTree = "<group>"; };
 		AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorMultiTexture.h; path = ../src/ActorMultiTexture.h; sourceTree = "<group>"; };
+		AA059E2A0B8F0C66006F8139 /* libz_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libz_link.a; sourceTree = "<group>"; };
 		AA0700880B61F177003B85BB /* RageSoundReader_PostBuffering.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageSoundReader_PostBuffering.cpp; path = ../src/RageSoundReader_PostBuffering.cpp; sourceTree = "<group>"; };
 		AA0700890B61F177003B85BB /* RageSoundReader_PostBuffering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageSoundReader_PostBuffering.h; path = ../src/RageSoundReader_PostBuffering.h; sourceTree = "<group>"; };
 		AA07328B0954381800F396C5 /* DisplayResolutions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DisplayResolutions.h; path = ../src/DisplayResolutions.h; sourceTree = "<group>"; };
@@ -3384,6 +3387,7 @@
 				AAE782030AC7E64D00AEFC64 /* liblua-5.1.a in Frameworks */,
 				AA7C8D200B6748E400FD9940 /* libtomcrypt.a in Frameworks */,
 				AA7C8D1F0B6748E300FD9940 /* libtommath.a in Frameworks */,
+				AA059E2C0B8F0C67006F8139 /* libz_link.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3410,6 +3414,7 @@
 				AAE782040AC7E65200AEFC64 /* liblua-5.1.a in Frameworks */,
 				AA7C8D440B674F4F00FD9940 /* libtomcrypt.a in Frameworks */,
 				AA7C8D430B674F4E00FD9940 /* libtommath.a in Frameworks */,
+				AA059E2B0B8F0C67006F8139 /* libz_link.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5065,6 +5070,7 @@
 		AAA3741C09099ADA00141131 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				AA059E2A0B8F0C66006F8139 /* libz_link.a */,
 				AA21E4730A9826CD00684CEA /* libjpeg_link.a */,
 				AA21E4750A9826CD00684CEA /* libogg_link.a */,
 				AA21E4760A9826CD00684CEA /* libpng_link.a */,
@@ -6370,7 +6376,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "for i in theora vorbis jpeg ogg png; do\n\tcp \"$SRCROOT\"/Libraries/lib${i}.a \"$SRCROOT\"/Libraries/lib${i}_link.a\n\tranlib \"$SRCROOT\"/Libraries/lib${i}_link.a\ndone";
+			shellScript = "for i in theora vorbis jpeg ogg png z; do\n\tcp \"$SRCROOT\"/Libraries/lib${i}.a \"$SRCROOT\"/Libraries/lib${i}_link.a\n\tranlib \"$SRCROOT\"/Libraries/lib${i}_link.a\ndone";
 		};
 		AA40D1B709A08D650068C0D5 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6408,7 +6414,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "for i in theora vorbis jpeg ogg png; do\n\tcp \"$SRCROOT\"/Libraries/lib${i}.a \"$SRCROOT\"/Libraries/lib${i}_link.a\n\tranlib \"$SRCROOT\"/Libraries/lib${i}_link.a\ndone";
+			shellScript = "for i in theora vorbis jpeg ogg png z; do\n\tcp \"$SRCROOT\"/Libraries/lib${i}.a \"$SRCROOT\"/Libraries/lib${i}_link.a\n\tranlib \"$SRCROOT\"/Libraries/lib${i}_link.a\ndone";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -7757,7 +7763,7 @@
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
-				OTHER_LDFLAGS = "-lz";
+				OTHER_LDFLAGS = "";
 				PREBINDING = "$(PREBINDING_$(CURRENT_ARCH))";
 				PREBINDING_i386 = NO;
 				PREBINDING_ppc = YES;
@@ -7877,7 +7883,7 @@
 					"-fsingle-precision-constant",
 					"-fno-exceptions",
 				);
-				OTHER_LDFLAGS = "-lz";
+				OTHER_LDFLAGS = "";
 				PREBINDING = "$(PREBINDING_$(CURRENT_ARCH))";
 				PREBINDING_i386 = NO;
 				PREBINDING_ppc = YES;
@@ -7963,7 +7969,7 @@
 					"-fsingle-precision-constant",
 					"-fno-exceptions",
 				);
-				OTHER_LDFLAGS = "-lz";
+				OTHER_LDFLAGS = "";
 				PREBINDING = "$(PREBINDING_$(CURRENT_ARCH))";
 				PREBINDING_i386 = NO;
 				PREBINDING_ppc = YES;
@@ -8051,7 +8057,7 @@
 					"-fsingle-precision-constant",
 					"-fno-exceptions",
 				);
-				OTHER_LDFLAGS = "-lz";
+				OTHER_LDFLAGS = "";
 				PREBINDING = "$(PREBINDING_$(CURRENT_ARCH))";
 				PREBINDING_i386 = NO;
 				PREBINDING_ppc = YES;
@@ -8385,7 +8391,7 @@
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
-				OTHER_LDFLAGS = "-lz";
+				OTHER_LDFLAGS = "";
 				PREBINDING = "$(PREBINDING_$(CURRENT_ARCH))";
 				PREBINDING_i386 = NO;
 				PREBINDING_ppc = YES;
@@ -8538,7 +8544,7 @@
 					"-fno-exceptions",
 					"-falign-loops=16",
 				);
-				OTHER_LDFLAGS = "-lz";
+				OTHER_LDFLAGS = "";
 				PREBINDING = "$(PREBINDING_$(CURRENT_ARCH))";
 				PREBINDING_i386 = NO;
 				PREBINDING_ppc = YES;
