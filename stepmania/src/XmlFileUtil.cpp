@@ -89,11 +89,6 @@ static void tcsskip( const RString &s, unsigned &i )
 	i = s.find_first_not_of( " \t\r\n", i );
 }
 
-static bool XIsEmptyString( const RString &s )
-{
-	return s.find_first_not_of( "\r\n\t " ) == s.npos;
-}
-
 // put string of (psz~end) on ps string
 static void SetString( const RString &s, int iStart, int iEnd, RString* ps, bool trim = false )
 {
