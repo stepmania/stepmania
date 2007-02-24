@@ -130,7 +130,8 @@ struct RenderTargetParam
 		iWidth(0),
 		iHeight(0),
 		bWithDepthBuffer(false),
-		bWithAlpha(false)
+		bWithAlpha(false),
+		bFloat(false)
 	{
 	}
 
@@ -139,6 +140,7 @@ struct RenderTargetParam
 
 	bool bWithDepthBuffer;
 	bool bWithAlpha;
+	bool bFloat;
 };
 
 class RageDisplay
