@@ -97,9 +97,12 @@ static const char *EffectModeNames[] =
 	/* Normal blending.  All supported texture modes have their standard effects. */
 	"Normal",
 
+	/* After rendering to a destination alpha render target, the color will be premultiplied
+	 * with its alpha.  An Unpremultiply pass with CopySrc blending must be performed to
+	 * correct this. */
 	"Unpremultiply",
 
-	/* Layered blending. */
+	/* Layered blending.    These shaders take two source textures. */
 	"ColorBurn",
 	"ColorDodge",
 	"VividLight",
