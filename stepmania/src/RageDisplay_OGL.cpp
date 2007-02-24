@@ -1645,8 +1645,8 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 	DEFAULT_FAIL( mode );
 	}
 
-	if( GLExt.glBlendFuncSeparate != NULL )
-		GLExt.glBlendFuncSeparate( iSourceRGB, iDestRGB, iSourceAlpha, iDestAlpha );
+	if( GLExt.glBlendFuncSeparateEXT != NULL )
+		GLExt.glBlendFuncSeparateEXT( iSourceRGB, iDestRGB, iSourceAlpha, iDestAlpha );
 	else
 		glBlendFunc( iSourceRGB, iDestRGB );
 }
