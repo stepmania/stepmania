@@ -65,6 +65,7 @@ struct GLExt_t
 	bool m_bARB_texture_env_combine;
 	bool m_bEXT_texture_env_combine;
 	bool m_bGL_EXT_bgra;
+	bool m_bGL_ARB_texture_float;
 
 	PWSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 	PFNGLCOLORTABLEPROC glColorTableEXT;

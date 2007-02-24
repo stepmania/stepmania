@@ -2132,8 +2132,15 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 	iTextureHeightOut = iTextureHeight;
 
 	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
-	glTexImage2D( GL_TEXTURE_2D, 0, param.bWithAlpha? GL_RGBA8:GL_RGB8,
-			iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB, GL_UNSIGNED_BYTE, NULL );
+	GLenum internalformat;
+	GLenum type = param.bWithAlpha? GL_RGBA:GL_RGB;
+	if( param.bFloat && GLExt.m_bGL_ARB_texture_float )
+		internalformat = param.bWithAlpha? GL_RGBA16F_ARB:GL_RGB16F_ARB;
+	else
+		internalformat = param.bWithAlpha? GL_RGBA8:GL_RGB8;
+	
+	glTexImage2D( GL_TEXTURE_2D, 0, internalformat,
+			iTextureWidth, iTextureHeight, 0, type, GL_UNSIGNED_BYTE, NULL );
 	AssertNoGLError();
 
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );

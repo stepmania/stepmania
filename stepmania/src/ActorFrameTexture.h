@@ -22,6 +22,7 @@ public:
 
 	void EnableDepthBuffer( bool b ) { m_bDepthBuffer = b; }
 	void EnableAlphaBuffer( bool b ) { m_bAlphaBuffer = b; }
+	void EnableFloat( bool b ) { m_bFloat = b; }
 	void EnablePreserveTexture( bool b ) { m_bPreserveTexture = b; }
 
 	void Create();
@@ -38,6 +39,7 @@ private:
 
 	bool m_bDepthBuffer;
 	bool m_bAlphaBuffer;
+	bool m_bFloat;
 	bool m_bPreserveTexture;
 	RString m_sTextureName;
 };

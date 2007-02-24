@@ -11,6 +11,7 @@ ActorFrameTexture::ActorFrameTexture()
 {
 	m_bDepthBuffer = false;
 	m_bAlphaBuffer = false;
+	m_bFloat = false;
 	m_bPreserveTexture = false;
 	static uint64_t i = 0;
 	++i;
@@ -37,6 +38,7 @@ void ActorFrameTexture::Create()
 	RenderTargetParam param;
 	param.bWithDepthBuffer = m_bDepthBuffer;
 	param.bWithAlpha = m_bAlphaBuffer;
+	param.bFloat = m_bFloat;
 	param.iWidth = (int) m_size.x;
 	param.iHeight = (int) m_size.y;
 	m_pRenderTarget = new RageTextureRenderTarget( id, param );
@@ -67,6 +69,7 @@ public:
 	static int Create( T* p, lua_State *L )				{ p->Create(); return 0; }
 	static int EnableDepthBuffer( T* p, lua_State *L )		{ p->EnableDepthBuffer(BArg(1)); return 0; }
 	static int EnableAlphaBuffer( T* p, lua_State *L )		{ p->EnableAlphaBuffer(BArg(1)); return 0; }
+	static int EnableFloat( T* p, lua_State *L )			{ p->EnableFloat(BArg(1)); return 0; }
 	static int EnablePreserveTexture( T* p, lua_State *L )		{ p->EnablePreserveTexture(BArg(1)); return 0; }
 	static int SetTextureName( T* p, lua_State *L )			{ p->SetTextureName(SArg(1)); return 0; }
 	static int GetTexture( T* p, lua_State *L )
@@ -83,6 +86,7 @@ public:
 		ADD_METHOD( Create );
 		ADD_METHOD( EnableDepthBuffer );
 		ADD_METHOD( EnableAlphaBuffer );
+		ADD_METHOD( EnableFloat );
 		ADD_METHOD( EnablePreserveTexture );
 		ADD_METHOD( SetTextureName );
 		ADD_METHOD( GetTexture );

@@ -106,6 +106,7 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 	m_bARB_texture_env_combine = HasExtension("GL_ARB_texture_env_combine");
 	m_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	m_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
+	m_bGL_ARB_texture_float = HasExtension("GL_ARB_texture_float");
 
 #if defined(WIN32)
 	if( HasExtension("WGL_EXT_swap_control") )
