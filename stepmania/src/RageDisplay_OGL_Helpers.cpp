@@ -129,6 +129,9 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 		LoadAllOrNothing( funcs, pWind);
 	}
 
+	if( HasExtension("GL_EXT_blend_func_separate") )
+		glBlendFuncSeparate = (PFNGLBLENDFUNCSEPARATEPROC) pWind->GetProcAddress("glBlendFuncSeparate");
+
 	if( HasExtension("GL_EXT_blend_subtract") )
 		glBlendEquation = (PFNGLBLENDEQUATIONPROC) pWind->GetProcAddress("glBlendEquation");
 

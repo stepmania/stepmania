@@ -1596,6 +1596,7 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 	}
 
 	int iSourceRGB, iDestRGB;
+	int iSourceAlpha = GL_ONE, iDestAlpha = GL_ONE_MINUS_SRC_ALPHA;
 	switch( mode )
 	{
 	case BLEND_NORMAL:
@@ -1615,11 +1616,15 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 		break;
 	case BLEND_NO_EFFECT:
 		iSourceRGB = GL_ZERO; iDestRGB = GL_ONE;
+		iSourceAlpha = GL_ZERO; iSourceAlpha = GL_ONE;
 		break;
 	DEFAULT_FAIL( mode );
 	}
 
-	glBlendFunc( iSourceRGB, iDestRGB );
+	if( GLExt.glBlendFuncSeparate != NULL )
+		GLExt.glBlendFuncSeparate( iSourceRGB, iDestRGB, iSourceAlpha, iDestAlpha );
+	else
+		glBlendFunc( iSourceRGB, iDestRGB );
 }
 
 bool RageDisplay_OGL::IsZWriteEnabled() const
