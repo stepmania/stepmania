@@ -74,6 +74,7 @@ static const char *BlendModeNames[] =
 {
 	"Normal",
 	"Add",
+	"CopySrc",
 	"WeightedMultiply",
 	"InvertDest",
 	"NoEffect"
