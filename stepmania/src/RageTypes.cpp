@@ -96,6 +96,8 @@ static const char *EffectModeNames[] =
 	/* Normal blending.  All supported texture modes have their standard effects. */
 	"Normal",
 
+	"Unpremultiply",
+
 	/* Layered blending. */
 	"ColorBurn",
 	"ColorDodge",

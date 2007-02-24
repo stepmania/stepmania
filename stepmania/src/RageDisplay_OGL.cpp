@@ -350,6 +350,7 @@ GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefi
 
 static int g_iAttribTextureMatrixScale;
 
+static GLhandleARB g_bUnpremultiplyShader = 0;
 static GLhandleARB g_bColorBurnShader = 0;
 static GLhandleARB g_bColorDodgeShader = 0;
 static GLhandleARB g_bVividLightShader = 0;
@@ -359,6 +360,7 @@ void InitShaders()
 {
 	vector<RString> asDefines;
 	g_bTextureMatrixShader = LoadShader( GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Texture matrix scaling.vert", asDefines );
+	g_bUnpremultiplyShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Unpremultiply.frag", asDefines );
 	g_bColorBurnShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Color burn.frag", asDefines );
 	g_bColorDodgeShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Color dodge.frag", asDefines );
 	g_bVividLightShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Vivid light.frag", asDefines );
@@ -1576,6 +1578,7 @@ void RageDisplay_OGL::SetEffectMode( EffectMode effect )
 	switch( effect )
 	{
 	case EffectMode_Normal:		hShader = 0; break;
+	case EffectMode_Unpremultiply:	hShader = g_bUnpremultiplyShader; break;
 	case EffectMode_ColorBurn:	hShader = g_bColorBurnShader; break;
 	case EffectMode_ColorDodge:	hShader = g_bColorDodgeShader; break;
 	case EffectMode_VividLight:	hShader = g_bVividLightShader; break;
@@ -1598,6 +1601,7 @@ bool RageDisplay_OGL::IsEffectModeSupported( EffectMode effect )
 	switch( effect )
 	{
 	case EffectMode_Normal:		return true;
+	case EffectMode_Unpremultiply:	return g_bUnpremultiplyShader != 0;
 	case EffectMode_ColorBurn:	return g_bColorBurnShader != 0;
 	case EffectMode_ColorDodge:	return g_bColorDodgeShader != 0;
 	case EffectMode_VividLight:	return g_bVividLightShader != 0;
