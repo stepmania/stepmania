@@ -292,6 +292,7 @@ public:
 
 	virtual RString GetTextureDiagnostics( unsigned id ) const { return RString(); }
 	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must delete it.
+	virtual RageSurface *GetTexture( unsigned iTexture ) { return NULL; } // allocates a surface.  Caller must delete it.
 
 protected:
 	virtual void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;

@@ -763,6 +763,30 @@ RageSurface* RageDisplay_OGL::CreateScreenshot()
 	return image;
 }
 
+RageSurface *RageDisplay_OGL::GetTexture( unsigned iTexture )
+{
+	if( iTexture == 0 )
+		return NULL; // XXX
+
+	FlushGLErrors();
+
+	glBindTexture( GL_TEXTURE_2D, iTexture );
+	GLint iHeight, iWidth, iAlphaBits;
+	glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &iHeight );
+	glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &iWidth );
+	glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &iAlphaBits );
+	int iFormat = iAlphaBits? PixelFormat_RGBA8:PixelFormat_RGB8;
+
+	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[iFormat];
+	RageSurface *pImage = CreateSurface( iWidth, iHeight, desc.bpp,
+		desc.masks[0], desc.masks[1], desc.masks[2], desc.masks[3] );
+
+	glGetTexImage( GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pImage->pixels );
+	AssertNoGLError();
+
+	return pImage;
+}
+
 VideoModeParams RageDisplay_OGL::GetActualVideoModeParams() const 
 {
 	return g_pWind->GetActualVideoModeParams();

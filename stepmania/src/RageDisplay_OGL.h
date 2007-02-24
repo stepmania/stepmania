@@ -40,6 +40,8 @@ public:
 		int xoffset, int yoffset, int width, int height 
 		);
 	void DeleteTexture( unsigned iTexHandle );
+	RageSurface *GetTexture( unsigned iTexture );
+
 	void ClearAllTextures();
 	int GetNumTextureUnits();
 	void SetTexture( TextureUnit tu, unsigned iTexture );
