@@ -5,7 +5,6 @@ void main(void)
 	vec4 ret = texture2DProj( Texture1, gl_TexCoord[0] );
 	if( ret.a != 0 )
 		ret.rgb /= ret.a;
-//ret.a = 1;
 
 	gl_FragColor = ret;
 	return;
