@@ -118,7 +118,6 @@ protected:
 	float m_fLastMusicSeconds;
 	bool m_bDangerAllWasVisible;
 
-	AutoActor		m_DangerPlayer[NUM_PLAYERS];
 
 	// cover up the edge of animations that might hang outside of the background rectangle
 	Quad m_quadBorderLeft, m_quadBorderTop, m_quadBorderRight, m_quadBorderBottom;
@@ -194,9 +193,6 @@ void BackgroundImpl::Init()
 			bgt.cmdRoot = ActorUtil::ParseActorCommands( sCmdRoot );
 		}
 	}
-
-	FOREACH_PlayerNumber( p )
-		m_DangerPlayer[p].Load( THEME->GetPathB("ScreenGameplay",ssprintf("danger p%d",p+1)) );
 
 	bool bOneOrMoreChars = false;
 	bool bShowingBeginnerHelper = false;
@@ -533,11 +529,6 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 	TEXTUREMAN->DisableOddDimensionWarning();
 
-	const float fXZoom = RECT_BACKGROUND.GetWidth() / (float)SCREEN_WIDTH;
-	const float fYZoom = RECT_BACKGROUND.GetHeight() / (float)SCREEN_HEIGHT;
-
-
-
 	if( !g_bSongBackgrounds )
 	{
 		/* Backgrounds are disabled; just display the song background. */
@@ -672,15 +663,6 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 	// Re-sort.
 	BackgroundUtil::SortBackgroundChangesArray( mainlayer.m_aBGChanges );
-
-	FOREACH_PlayerNumber( p )
-	{
-		m_DangerPlayer[p]->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
-		m_DangerPlayer[p]->SetZoomX( fXZoom );
-		m_DangerPlayer[p]->SetZoomY( fYZoom );
-		m_DangerPlayer[p]->FinishTweening();
-		m_DangerPlayer[p]->PlayCommand( "On" );
-	}
 
 	TEXTUREMAN->EnableOddDimensionWarning();
 
@@ -828,12 +810,6 @@ void BackgroundImpl::Update( float fDeltaTime )
 		m_bDangerAllWasVisible = bVisible;
 	}
 
-	FOREACH_PlayerNumber( p )
-	{
-		if( g_bShowDanger && GAMESTATE->m_pPlayerState[p]->m_HealthState == HealthState_Danger )
-			m_DangerPlayer[p]->Update( fDeltaTime );
-	}
-
 	if( m_pDancingCharacters )
 		m_pDancingCharacters->Update( fDeltaTime );
 
@@ -868,12 +844,6 @@ void BackgroundImpl::DrawPrimitives()
 				layer.m_pCurrentBGA->Draw();
 			if( layer.m_pFadingBGA )
 				layer.m_pFadingBGA->Draw();
-		}
-
-		FOREACH_PlayerNumber( p )
-		{
-			if( g_bShowDanger && GAMESTATE->m_pPlayerState[p]->m_HealthState == PlayerState::DANGER )
-				m_DangerPlayer[p]->Draw();
 		}
 	}
 
