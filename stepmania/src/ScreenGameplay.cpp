@@ -1531,6 +1531,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		HealthState &hs = pi->GetPlayerState()->m_HealthState;
+		HealthState OldHealthState = hs;
 		if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != SongOptions::FAIL_OFF &&
 			pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing() )
 		{
@@ -1548,6 +1549,14 @@ void ScreenGameplay::Update( float fDeltaTime )
 		else
 		{
 			hs = HealthState_Alive;
+		}
+
+		if( hs != OldHealthState )
+		{
+			Message msg( "HealthStateChanged" );
+			msg.SetParam( "PlayerNumber", pi->m_pn );
+			msg.SetParam( "HealthState", hs );
+			MESSAGEMAN->Broadcast( msg );
 		}
 		
 		pi->m_SoundEffectControl.Update( fDeltaTime );
