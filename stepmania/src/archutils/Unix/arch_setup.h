@@ -5,8 +5,10 @@
 #include <stdint.h>
 #endif
 
-#ifdef BSD
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
+#endif
+#ifdef BSD
 #undef ALIGN
 #undef MACHINE
 #if defined(__NetBSD_Version__) && __NetBSD_Version__ < 299000900
