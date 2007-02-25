@@ -830,7 +830,7 @@ void BackgroundImpl::Update( float fDeltaTime )
 
 	FOREACH_PlayerNumber( p )
 	{
-		if( g_bShowDanger && GAMESTATE->m_pPlayerState[p]->m_HealthState == PlayerState::DANGER )
+		if( g_bShowDanger && GAMESTATE->m_pPlayerState[p]->m_HealthState == HealthState_Danger )
 			m_DangerPlayer[p]->Update( fDeltaTime );
 	}
 

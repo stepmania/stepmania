@@ -17,7 +17,7 @@ void PlayerState::Reset()
 
 	m_fLastDrawnBeat = -100;
 
-	m_HealthState = ALIVE;
+	m_HealthState = HealthState_Alive;
 
 	m_fLastHopoNoteMusicSeconds = -1;
 	m_iLastHopoNoteCol = -1;

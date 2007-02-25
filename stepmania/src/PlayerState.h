@@ -32,7 +32,6 @@ public:
 	//
 	mutable float		m_fLastDrawnBeat;	// Set by NoteField.  Used to push note-changing modifers back so that notes doesn't pop.
 
-	enum HealthState { HOT, ALIVE, DANGER, DEAD };
 	HealthState		m_HealthState;
 
 	float			m_fLastStrumMusicSeconds;	// Set to the MusicSeconds of when the a strum button was pressed.  If -1, the strum window has passed.

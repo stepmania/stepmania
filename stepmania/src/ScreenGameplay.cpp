@@ -1530,23 +1530,24 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
+		HealthState &hs = pi->GetPlayerState()->m_HealthState;
 		if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != SongOptions::FAIL_OFF &&
 			pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing() )
 		{
-			pi->GetPlayerState()->m_HealthState = PlayerState::DEAD;
+			hs = HealthState_Dead;
 		}
 		else if( pi->m_pLifeMeter && pi->m_pLifeMeter->IsHot() )
 		{
-			pi->GetPlayerState()->m_HealthState = PlayerState::HOT;
+			hs = HealthState_Hot;
 		}
 		else if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != SongOptions::FAIL_OFF &&
 			pi->m_pLifeMeter && pi->m_pLifeMeter->IsInDanger() )
 		{
-			pi->GetPlayerState()->m_HealthState = PlayerState::DANGER;
+			hs = HealthState_Danger;
 		}
 		else
 		{
-			pi->GetPlayerState()->m_HealthState = PlayerState::ALIVE;
+			hs = HealthState_Alive;
 		}
 		
 		pi->m_SoundEffectControl.Update( fDeltaTime );
@@ -1710,7 +1711,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 					break;
 				}
 
-				if( state == AS2D_GREAT && pi->GetPlayerState()->m_HealthState == PlayerState::HOT )
+				if( state == AS2D_GREAT && pi->GetPlayerState()->m_HealthState == HealthState_Hot )
 					state = AS2D_FEVER;
 
 				pCharacter->Change2DAnimState( pi->m_pn, state );
@@ -2349,7 +2350,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				/* XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ). */
 				if( pi->GetPlayerStageStats()->m_bFailed )
 					pDancers->Change2DAnimState( pi->m_pn, AS2D_FAIL ); // fail anim
-				else if( pi->m_pLifeMeter && pi->GetPlayerState()->m_HealthState == PlayerState::HOT )
+				else if( pi->m_pLifeMeter && pi->GetPlayerState()->m_HealthState == HealthState_Hot )
 					pDancers->Change2DAnimState( pi->m_pn, AS2D_WINFEVER ); // full life pass anim
 				else
 					pDancers->Change2DAnimState( pi->m_pn, AS2D_WIN ); // pass anim

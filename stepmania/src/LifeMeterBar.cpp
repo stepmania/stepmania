@@ -287,7 +287,7 @@ void LifeMeterBar::Update( float fDeltaTime )
 	m_pStream->SetPassingAlpha( m_fPassingAlpha );
 	m_pStream->SetHotAlpha( m_fHotAlpha );
 
-	if( m_pPlayerState->m_HealthState == PlayerState::DANGER )
+	if( m_pPlayerState->m_HealthState == HealthState_Danger )
 		m_quadDangerGlow.SetDiffuseAlpha( 1 );
 	else
 		m_quadDangerGlow.SetDiffuseAlpha( 0 );

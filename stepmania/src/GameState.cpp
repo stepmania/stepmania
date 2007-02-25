@@ -737,7 +737,7 @@ void GameState::ResetStageStatistics()
 	FOREACH_PlayerNumber( p )
 	{
 		m_pPlayerState[p]->m_fSuperMeter = 0;
-		m_pPlayerState[p]->m_HealthState = PlayerState::ALIVE;
+		m_pPlayerState[p]->m_HealthState = HealthState_Alive;
 
 		m_pPlayerState[p]->m_iLastPositiveSumOfAttackLevels = 0;
 		m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut = 0;	// PlayerAI not affected
@@ -1643,7 +1643,7 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 bool GameState::AllAreInDangerOrWorse() const
 {
 	FOREACH_EnabledPlayer( p )
-		if( m_pPlayerState[p]->m_HealthState < PlayerState::DANGER )
+		if( m_pPlayerState[p]->m_HealthState < HealthState_Danger )
 			return false;
 	return true;
 }
@@ -1659,7 +1659,7 @@ bool GameState::AllHumanHaveComboOf30OrMoreMisses() const
 bool GameState::OneIsHot() const
 {
 	FOREACH_EnabledPlayer( p )
-		if( m_pPlayerState[p]->m_HealthState == PlayerState::HOT )
+		if( m_pPlayerState[p]->m_HealthState == HealthState_Hot )
 			return true;
 	return false;
 }

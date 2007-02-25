@@ -271,6 +271,17 @@ enum PlayerController
 const RString& PlayerControllerToString( PlayerController pc );
 
 
+enum HealthState
+{
+	HealthState_Hot,
+	HealthState_Alive,
+	HealthState_Danger,
+	HealthState_Dead,
+	NUM_HealthState,
+	HealthState_Invalid
+};
+LuaDeclareType( HealthState );
+
 enum StageResult
 {
 	RESULT_WIN,

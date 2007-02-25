@@ -93,6 +93,16 @@ XToLocalizedString( PlayerController );
 LuaXType( PlayerController );
 
 
+static const char *HealthStateNames[] = {
+	"Hot",
+	"Alive",
+	"Danger",
+	"Dead",
+};
+XToString( HealthState );
+LuaXType( HealthState );
+
+
 static const char *CoinModeNames[] = {
 	"Home",
 	"Pay",
