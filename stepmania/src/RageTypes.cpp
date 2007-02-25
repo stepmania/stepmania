@@ -74,7 +74,33 @@ static const char *BlendModeNames[] =
 {
 	"Normal",
 	"Add",
+
+	/*
+	 * Copy the source directly to the destination.  Alpha is not premultiplied.
+	 *
+	 * Co = Cs
+	 * Ao = As
+	 */
 	"CopySrc",
+
+	/*
+	 * Leave the color alone, and apply the source alpha on top of the existing alpha.
+	 * Transparent areas in the source become transparent in the destination.
+	 *
+	 * Be sure to disable alpha test with this blend mode.
+	 *
+	 * Co = Cd
+	 * Ao = Ad*As
+	 */
+	"AlphaMask",
+
+	/*
+	 * Leave the color alone, and apply the source alpha on top of the existing alpha.
+	 * Transparent areas in the source become transparent in the destination.
+	 * Co = Cd
+	 * Ao = Ad*(1-As)
+	 */
+	"AlphaKnockOut",
 	"WeightedMultiply",
 	"InvertDest",
 	"NoEffect"

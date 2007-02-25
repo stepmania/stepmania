@@ -1637,6 +1637,14 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 		iSourceRGB = GL_ONE; iDestRGB = GL_ZERO;
 		iSourceAlpha = GL_ONE; iDestAlpha = GL_ZERO;
 		break;
+	case BLEND_ALPHA_MASK:
+		iSourceRGB = GL_ZERO; iDestRGB = GL_ONE;
+		iSourceAlpha = GL_ZERO; iDestAlpha = GL_SRC_ALPHA;
+		break;
+	case BLEND_ALPHA_KNOCK_OUT:
+		iSourceRGB = GL_ZERO; iDestRGB = GL_ONE;
+		iSourceAlpha = GL_ZERO; iDestAlpha = GL_ONE_MINUS_SRC_ALPHA;
+		break;
 	case BLEND_WEIGHTED_MULTIPLY:
 		/* output = 2*(dst*src).  0.5,0.5,0.5 is identity; darker colors darken the image,
 		 * and brighter colors lighten the image. */
