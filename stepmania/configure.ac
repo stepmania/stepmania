@@ -50,6 +50,8 @@ esac
 # Define UNIX for all Unix-like systems.  Don't define it for cross-compiling to
 # non-Unix-like systems.  (-DUNIX selects the archutils and ArchHooks to use; if
 # your platform doesn't use the Unix ones, you probably don't want to define UNIX.)
+
+AC_CHECK_HEADERS([sys/param.h])
 case $host_os in
 *linux*)
 	AC_DEFINE(LINUX, 1, [Linux])
@@ -59,7 +61,10 @@ case $host_os in
 	;;
 
 *bsd*)
-	AC_DEFINE(BSD, 1, [BSD])
+	AC_CHECK_DECL(BSD,,AC_DEFINE(BSD, 1, [BSD]),[
+#if HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif])
 	AC_DEFINE(UNIX, 1, [Unix])
 	bsd=yes
 	unix=yes
