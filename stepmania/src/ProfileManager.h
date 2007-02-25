@@ -7,6 +7,7 @@
 #include "GameConstantsAndTypes.h"
 #include "Difficulty.h"
 #include "Preference.h"
+#include "Grade.h"
 
 class Profile;
 class Song;
@@ -94,7 +95,7 @@ public:
 	bool IsSongNew( const Song* pSong ) const { return GetSongNumTimesPlayed(pSong,ProfileSlot_Machine)==0; }
 	void AddStepsScore( const Song* pSong, const Steps* pSteps , PlayerNumber pn, const HighScore &hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn );
-	void GetHighScoreForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc, HighScore &hsOut ) const;
+	Grade GetHighGradeForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc ) const;
 
 	//
 	// Course stats

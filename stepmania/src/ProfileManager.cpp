@@ -680,7 +680,7 @@ void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pS
 	PROFILEMAN->GetMachineProfile()->IncrementStepsPlayCount( pSong, pSteps );
 }
 
-void ProfileManager::GetHighScoreForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc, HighScore &hsOut ) const
+Grade ProfileManager::GetHighGradeForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc ) const
 {
 	// return max grade of notes in difficulty class
 	vector<Steps*> aNotes;
@@ -690,9 +690,8 @@ void ProfileManager::GetHighScoreForDifficulty( const Song *s, const Style *st, 
 	const Steps* pSteps = SongUtil::GetStepsByDifficulty( s, st->m_StepsType, dc );
 
 	if( pSteps && PROFILEMAN->IsPersistentProfile(slot) )
-		hsOut = PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(s,pSteps).GetTopScore();
-	else
-		hsOut = HighScore();
+		return PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(s,pSteps).HighGrade;
+	return Grade_NoData;
 }
 
 
