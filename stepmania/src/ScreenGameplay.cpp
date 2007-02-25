@@ -584,13 +584,6 @@ void ScreenGameplay::Init()
 	}
 #endif
 
-	m_MaxCombo.LoadFromFont( THEME->GetPathF(m_sName,"max combo") );
-	m_MaxCombo.SetName( "MaxCombo" );
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_MaxCombo );
-	m_MaxCombo.SetText( ssprintf("%d", m_vPlayerInfo[0].GetPlayerStageStats()->m_iMaxCombo) ); // TODO: Make this work for both players
-	this->AddChild( &m_MaxCombo );
-
-
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		// primary score display
@@ -1518,9 +1511,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 	if( m_bPaused )
 		return;
 
-	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID && m_MaxCombo.GetVisible() )
-		m_MaxCombo.SetText( ssprintf("%d", STATSMAN->m_CurStageStats.m_player[GAMESTATE->m_MasterPlayerNumber].m_iMaxCombo) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
-	
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
 	m_AutoKeysounds.Update(fDeltaTime);

@@ -206,8 +206,6 @@ protected:
 	RageTimer		m_GiveUpTimer;
 	void AbortGiveUp( bool bShowText );
 
-	BitmapText		m_MaxCombo;		// TODO: move this into an overlay
-
 	Transition		m_Ready;
 	Transition		m_Go;
 	Transition		m_Failed;
