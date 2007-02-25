@@ -195,7 +195,6 @@ protected:
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 	Sprite			m_sprCourseSongNumber;
 
-	Sprite			m_sprScoreFrame;
 	BitmapText		m_textSongOptions;
 	BitmapText		m_Scoreboard[NUM_NSScoreBoardColumn];	// for NSMAN, so we can have a scoreboard
 

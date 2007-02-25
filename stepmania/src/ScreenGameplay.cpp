@@ -502,15 +502,6 @@ void ScreenGameplay::Init()
 	this->AddChild( m_sprLifeFrame );
 
 	//
-	// Add score frame
-	//
-	m_sprScoreFrame.Load( THEME->GetPathG(m_sName,bBattery?"oni score frame":"score frame") );
-	m_sprScoreFrame.SetName( "ScoreFrame" );
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprScoreFrame );
-	this->AddChild( &m_sprScoreFrame );
-
-
-	//
 	// Add combined life meter
 	//
 	switch( GAMESTATE->m_PlayMode )
