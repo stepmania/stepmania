@@ -615,7 +615,7 @@ void GameState::FinishStage()
 	if( m_iNumStagesOfThisSong == 0 )
 		return;
 
-	/* If we havn't committed stats yet, do so. */
+	/* If we haven't committed stats yet, do so. */
 	if( !m_bMultiplayer )	// no saved stats in multiplayer
 		CommitStageStats();
 
