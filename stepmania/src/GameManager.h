@@ -21,8 +21,8 @@ public:
 	const Style *GetEditorStyleForStepsType( StepsType st ) const;
 	void GetDemonstrationStylesForGame( const Game *pGame, vector<const Style*> &vpStylesOut ) const;
 	const Style *GetHowToPlayStyleForGame( const Game* pGame ) const;
-	void GameManager::GetCompatibleStyles( const Game *pGame, int iNumPlayers, vector<const Style*> &vpStylesOut ) const;
-	const Style *GameManager::GetFirstCompatibleStyle( const Game *pGame, int iNumPlayers, StepsType st ) const;
+	void GetCompatibleStyles( const Game *pGame, int iNumPlayers, vector<const Style*> &vpStylesOut ) const;
+	const Style *GetFirstCompatibleStyle( const Game *pGame, int iNumPlayers, StepsType st ) const;
 
 	void GetEnabledGames( vector<const Game*>& aGamesOut ) const;
 	const Game* GetDefaultGame() const;
