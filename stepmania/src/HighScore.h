@@ -72,7 +72,7 @@ struct HighScoreList
 public:
 	HighScoreList()
 	{
-		iNumTimesPlayed = 0;
+		Init();
 	}
 	void Init();
 	
@@ -96,6 +96,7 @@ public:
 	void LoadFromNode( const XNode* pNode );
 
 	vector<HighScore> vHighScores;
+	Grade HighGrade;
 private:
 	int iNumTimesPlayed;
 	DateTime dtLastPlayed;	// meaningless if iNumTimesPlayed == 0

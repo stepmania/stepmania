@@ -236,6 +236,7 @@ void HighScoreList::Init()
 {
 	iNumTimesPlayed = 0;
 	vHighScores.clear();
+	HighGrade = Grade_NoData;
 }
 
 void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine )
@@ -261,6 +262,7 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine 
 		if( !bIsMachine )
 			ClampSize( bIsMachine );
 	}
+	HighGrade = min( hs.GetGrade(), HighGrade );
 }
 
 void HighScoreList::IncrementPlayCount( DateTime _dtLastPlayed )
@@ -289,6 +291,8 @@ XNode* HighScoreList::CreateNode() const
 
 	pNode->AppendChild( "NumTimesPlayed", iNumTimesPlayed );
 	pNode->AppendChild( "LastPlayed", dtLastPlayed.GetString() );
+	if( HighGrade != Grade_NoData )
+		pNode->AppendChild( "HighGrade", GradeToString(HighGrade) );
 
 	for( unsigned i=0; i<vHighScores.size(); i++ )
 	{
@@ -306,17 +310,24 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 	ASSERT( pHighScoreList->GetName() == "HighScoreList" );
 	FOREACH_CONST_Child( pHighScoreList, p )
 	{
-		if( p->GetName() == "NumTimesPlayed" )
+		const RString &name = p->GetName();
+		if( name == "NumTimesPlayed" )
 		{
 			p->GetTextValue( iNumTimesPlayed );
 		}
-		else if( p->GetName() == "LastPlayed" )
+		else if( name == "LastPlayed" )
 		{
 			RString s;
 			p->GetTextValue( s );
 			dtLastPlayed.FromString( s );
 		}
-		else if( p->GetName() == "HighScore" )
+		else if( name == "HighGrade" )
+		{
+			RString s;
+			p->GetTextValue( s );
+			HighGrade = StringToGrade( s );
+		}
+		else if( name == "HighScore" )
 		{
 			vHighScores.resize( vHighScores.size()+1 );
 			vHighScores.back().LoadFromNode( p );
@@ -324,6 +335,8 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 			// ignore all high scores that are 0
 			if( vHighScores.back().GetScore() == 0 )
 				vHighScores.pop_back();
+			else
+				HighGrade = min( vHighScores.back().GetGrade(), HighGrade );
 		}
 	}
 }
