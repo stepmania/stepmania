@@ -3,7 +3,7 @@ uniform sampler2D Texture1;
 void main(void)
 {
 	vec4 ret = texture2DProj( Texture1, gl_TexCoord[0] );
-	if( ret.a != 0 )
+	if( ret.a != 0.0 )
 		ret.rgb /= ret.a;
 
 	gl_FragColor = ret;
