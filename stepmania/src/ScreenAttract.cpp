@@ -55,13 +55,13 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 	case MENU_BUTTON_COIN:
 		switch( GAMESTATE->GetCoinMode() )
 		{
-		case COIN_MODE_PAY:
+		case CoinMode_Pay:
 			LOG->Trace("ScreenAttract::AttractInput: COIN_PAY (%i/%i)", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
 			if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
 				break;	// don't fall through
 			// fall through
-		case COIN_MODE_HOME:
-		case COIN_MODE_FREE:
+		case CoinMode_Home:
+		case CoinMode_Free:
 			if( pScreen->IsTransitioning() )
 				return;
 

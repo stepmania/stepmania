@@ -100,6 +100,7 @@ static void MoveMap( int &sel, IPreference &opt, bool ToSel, const T *mapping, u
 template <class T>
 static void MoveMap( int &sel, const ConfOption *pConfOption, bool ToSel, const T *mapping, unsigned cnt )
 {
+	ASSERT( pConfOption );
 	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
 	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
 
@@ -368,16 +369,16 @@ static void MusicWheelSwitchSpeed( int &sel, bool ToSel, const ConfOption *pConf
 /* Gameplay options */
 static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	// The mapping without home is easy: subtract one to compensate for the missing COIN_MODE_HOME
+	// The mapping without home is easy: subtract one to compensate for the missing CoinMode_Home
 	if( ToSel )
 	{
 		MovePref<CoinMode>( sel, ToSel, pConfOption );
-		if( sel > static_cast<int>(COIN_MODE_HOME) )
+		if( sel > static_cast<int>(CoinMode_Home) )
 			--sel;
 	}
 	else
 	{
-		if( sel >= static_cast<int>(COIN_MODE_HOME) )
+		if( sel >= static_cast<int>(CoinMode_Home) )
 			++sel;
 		MovePref<CoinMode>( sel, ToSel, pConfOption );
 	}
@@ -423,7 +424,7 @@ static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption 
 static int GetLifeDifficulty()
 {
 	int iLifeDifficulty = 0;
-	LifeDifficulty( iLifeDifficulty, true, NULL );	
+	LifeDifficulty( iLifeDifficulty, true, ConfOption::Find("Premium") );	
 	iLifeDifficulty++;	// LifeDifficulty returns an index
 	return iLifeDifficulty;
 }
@@ -661,7 +662,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ProgressiveNonstopLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
 	ADD( ConfOption( "DefaultFailType",		DefaultFailType,	"Immediate","ImmediateContinue","End of Song","Off" ) );	
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
-	ADD( ConfOption( "Premium",			MovePref<Premium>,	"Off","Double for 1 Credit","Joint Premium" ) );
+	ADD( ConfOption( "Premium",			MovePref<Premium>,	"Off","Double for 1 Credit","2 Players for 1 Credit" ) );
 	ADD( ConfOption( "ShowSongOptions",		MovePref<Maybe>,	"Ask", "Hide","Show" ) );
 	ADD( ConfOption( "GetRankingName",		MovePref<GetRankingName>, "Off", "On", "Ranking Songs" ) );
 

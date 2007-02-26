@@ -312,9 +312,9 @@ const int ITEM_NONE = -1;
 
 enum CoinMode
 {
-	COIN_MODE_HOME, 
-	COIN_MODE_PAY, 
-	COIN_MODE_FREE, 
+	CoinMode_Home, 
+	CoinMode_Pay, 
+	CoinMode_Free, 
 	NUM_CoinMode,
 	CoinMode_Invalid
 };
@@ -327,13 +327,14 @@ LuaDeclareType( CoinMode );
 //
 enum Premium
 {
-	PREMIUM_NONE,
-	PREMIUM_DOUBLE,
-	PREMIUM_JOINT,
+	Premium_Off,
+	Premium_DoubleFor1Credit,
+	Premium_2PlayersFor1Credit,
 	NUM_Premium,
 	Premium_Invalid
 };
 const RString& PremiumToString( Premium p );
+const RString& PremiumToLocalizedString( Premium p );
 LuaDeclareType( Premium );
 
 

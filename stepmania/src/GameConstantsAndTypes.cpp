@@ -114,12 +114,13 @@ LuaXType( CoinMode );
 
 
 static const char *PremiumNames[] = {
-	"None",
-	"Double",
-	"Joint",
+	"Off",
+	"DoubleFor1Credit",
+	"2PlayersFor1Credit",
 };
 XToString( Premium );
 StringToX( Premium );
+XToLocalizedString( Premium );
 LuaXType( Premium );
 
 

@@ -97,7 +97,7 @@ static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_2 ("GameState","GradeTierFo
 static DynamicThemeMetric<bool> ARE_STAGE_PLAYER_MODS_FORCED( "GameState","AreStagePlayerModsForced" );
 static DynamicThemeMetric<bool> ARE_STAGE_SONG_MODS_FORCED( "GameState","AreStageSongModsForced" );
 
-static Preference<Premium> g_Premium( "Premium", PREMIUM_NONE );
+static Preference<Premium> g_Premium( "Premium", Premium_Off );
 
 GameState::GameState() :
 	m_pCurGame(			Message_CurrentGameChanged ),
@@ -356,11 +356,11 @@ int GameState::GetCoinsNeededToJoin() const
 {
 	int iCoinsToCharge = 0;
 
-	if( GetCoinMode() == COIN_MODE_PAY )
+	if( GetCoinMode() == CoinMode_Pay )
 		iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
 
 	// If joint premium don't take away a credit for the 2nd join.
-	if( GetPremium() == PREMIUM_JOINT  &&  
+	if( GetPremium() == Premium_2PlayersFor1Credit  &&  
 		GetNumSidesJoined() == 1 )
 		iCoinsToCharge = 0;
 
@@ -1816,8 +1816,8 @@ bool GameState::IsEventMode() const
 
 CoinMode GameState::GetCoinMode() const
 {
-	if( IsEventMode() && GamePreferences::m_CoinMode == COIN_MODE_PAY )
-		return COIN_MODE_FREE; 
+	if( IsEventMode() && GamePreferences::m_CoinMode == CoinMode_Pay )
+		return CoinMode_Free; 
 	else 
 		return GamePreferences::m_CoinMode;
 }
@@ -1825,7 +1825,7 @@ CoinMode GameState::GetCoinMode() const
 Premium	GameState::GetPremium() const
 { 
 	if( IsEventMode() ) 
-		return PREMIUM_NONE; 
+		return Premium_Off; 
 	else 
 		return g_Premium; 
 }

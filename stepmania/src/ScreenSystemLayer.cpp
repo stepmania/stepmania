@@ -98,13 +98,13 @@ namespace
 		{
 			switch( GAMESTATE->GetCoinMode() )
 			{
-			case COIN_MODE_HOME:
+			case CoinMode_Home:
 				if( GAMESTATE->PlayersCanJoin() )
 					return CREDITS_PRESS_START.GetValue();
 				else
 					return CREDITS_NOT_PRESENT.GetValue();
 
-			case COIN_MODE_PAY:
+			case CoinMode_Pay:
 			{
 				int Credits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 				int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
@@ -115,7 +115,7 @@ namespace
 					sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit.Get() );
 				return sCredits;
 			}
-			case COIN_MODE_FREE:
+			case CoinMode_Free:
 				if( GAMESTATE->PlayersCanJoin() )
 					return CREDITS_FREE_PLAY.GetValue();
 				else

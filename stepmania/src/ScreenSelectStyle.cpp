@@ -102,11 +102,11 @@ void ScreenSelectStyle::Init()
 
 	switch( GAMESTATE->GetPremium() )
 	{
-	case PREMIUM_DOUBLE:
+	case Premium_DoubleFor1Credit:
 		m_sprPremium.Load( THEME->GetPathG(m_sName,"doubles premium") );
 		this->AddChild( &m_sprPremium );
 		break;
-	case PREMIUM_JOINT:
+	case Premium_2PlayersFor1Credit:
 		m_sprPremium.Load( THEME->GetPathG(m_sName,"joint premium") );
 		this->AddChild( &m_sprPremium );
 		break;

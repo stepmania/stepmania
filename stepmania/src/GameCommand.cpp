@@ -397,7 +397,7 @@ int GetNumCreditsPaid()
 	int iNumCreditsPaid = GAMESTATE->GetNumSidesJoined();
 
 	// players other than the first joined for free
-	if( GAMESTATE->GetPremium() == PREMIUM_JOINT )
+	if( GAMESTATE->GetPremium() == Premium_2PlayersFor1Credit )
 		iNumCreditsPaid = min( iNumCreditsPaid, 1 );
 
 	return iNumCreditsPaid;
@@ -406,7 +406,7 @@ int GetNumCreditsPaid()
 
 int GetCreditsRequiredToPlayStyle( const Style *style )
 {
-	if( GAMESTATE->GetPremium() == PREMIUM_JOINT )
+	if( GAMESTATE->GetPremium() == Premium_2PlayersFor1Credit )
 		return 1;
 
 	switch( style->m_StyleType )
@@ -417,7 +417,7 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 	case StyleType_TwoPlayersTwoSides:
 		return 2;
 	case StyleType_OnePlayerTwoSides:
-		return (GAMESTATE->GetPremium() == PREMIUM_DOUBLE) ? 1 : 2;
+		return (GAMESTATE->GetPremium() == Premium_DoubleFor1Credit) ? 1 : 2;
 	DEFAULT_FAIL( style->m_StyleType );
 	}
 }
@@ -463,8 +463,8 @@ bool GameCommand::IsPlayable( RString *why ) const
 		
 		switch( GAMESTATE->GetCoinMode() )
 		{
-		case COIN_MODE_HOME:
-		case COIN_MODE_FREE:
+		case CoinMode_Home:
+		case CoinMode_Free:
 			iCredits = NUM_PLAYERS; /* not iNumCreditsPaid */
 		}
 		
@@ -627,7 +627,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		// players joined.  If enough players aren't joined, then 
 		// we need to subtract credits for the sides that will be
 		// joined as a result of applying this option.
-		if( GAMESTATE->GetCoinMode() == COIN_MODE_PAY )
+		if( GAMESTATE->GetCoinMode() == CoinMode_Pay )
 		{
 			int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
 			int iNumCreditsPaid = GetNumCreditsPaid();
