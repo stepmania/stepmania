@@ -12,7 +12,6 @@ void Transition::Load( RString sBGAniDir )
 	this->RemoveAllChildren();
 
 	m_sprTransition.Load( sBGAniDir );
-	m_sprTransition->PlayCommand( "On" );
 	this->AddChild( m_sprTransition );
 
 	m_State = waiting;
@@ -41,26 +40,12 @@ void Transition::Reset()
 	m_bFirstUpdate = true;
 
 	if( m_sprTransition.IsLoaded() )
-	{
 		m_sprTransition->FinishTweening();
-		m_sprTransition->PlayCommand( "On" );
-	}
 }
 
 bool Transition::EarlyAbortDraw() const
 {
 	return m_State == waiting;
-}
-
-/* Our parent might send us OnCommand.  We do that ourself, because
- * we sometimes want to know GetLengthSeconds before StartTransitioning.
- * Make sure we don't process OnCommand twice. */
-void Transition::HandleMessage( const Message &msg )
-{
-	if( msg.GetName() == "On" )
-		return;
-
-	ActorFrame::HandleMessage( msg );
 }
 
 void Transition::StartTransitioning( ScreenMessage send_when_done )

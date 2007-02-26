@@ -16,7 +16,6 @@ public:
 	void Load( RString sBGAniDir );
 
 	virtual void UpdateInternal( float fDeltaTime );
-	virtual void HandleMessage( const Message &msg );
 
 	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
 	virtual bool EarlyAbortDraw() const;
