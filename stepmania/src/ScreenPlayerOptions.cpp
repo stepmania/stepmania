@@ -33,25 +33,6 @@ void ScreenPlayerOptions::Init()
 	m_bAskOptionsMessage =
 		!GAMESTATE->IsEditing() && PREFSMAN->m_ShowSongOptions == Maybe_ASK;
 
-	/* If we're going to "press start for more options" or skipping options
-	 * entirely, we need a different fade out. XXX: this is a hack */
-	if( PREFSMAN->m_ShowSongOptions == Maybe_NO || GAMESTATE->IsEditing() )
-	{
-		m_Out.Load( THEME->GetPathB("ScreenPlayerOptions","direct out") ); /* direct to stage */
-	}
-	else if( m_bAskOptionsMessage )
-	{
-		m_Out.Load( THEME->GetPathB("ScreenPlayerOptions","option out") ); /* optional song options */
-
-		m_sprOptionsMessage.Load( THEME->GetPathG("ScreenPlayerOptions","options") );
-		m_sprOptionsMessage.StopAnimating();
-		m_sprOptionsMessage.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
-		m_sprOptionsMessage.SetZoom( 1 );
-		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-		m_sprOptionsMessage.SetDrawOrder( DRAW_ORDER_TRANSITIONS+1 );
-		this->AddChild( &m_sprOptionsMessage );
-	}
-
 	m_bAcceptedChoices = false;
 	m_bGoToOptions = ( PREFSMAN->m_ShowSongOptions == Maybe_YES );
 
@@ -86,7 +67,7 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 		if( m_bAcceptedChoices  &&  !m_bGoToOptions )
 		{
 			m_bGoToOptions = true;
-			m_sprOptionsMessage.SetState( 1 );
+			this->PlayCommand( "GoToOptions" );
 			SCREENMAN->PlayStartSound();
 		}
 	}
@@ -129,17 +110,8 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 	{
 		m_bAcceptedChoices = true;
 
-		float fShowSeconds = max( m_Out.GetLengthSeconds()-0.3f, 0 );
-
 		// show "hold START for options"
-		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-		m_sprOptionsMessage.BeginTweening( 0.15f );     // fade in
-		m_sprOptionsMessage.SetZoomY( 1 );
-		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );
-		m_sprOptionsMessage.BeginTweening( fShowSeconds ); // sleep
-		m_sprOptionsMessage.BeginTweening( 0.15f );     // fade out
-		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-		m_sprOptionsMessage.SetZoomY( 0 );
+		this->PlayCommand( "AskForGoToOptions" );
 	}
 
 	ScreenOptionsMaster::HandleScreenMessage( SM );

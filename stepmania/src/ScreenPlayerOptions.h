@@ -27,7 +27,6 @@ private:
 	bool        m_bAcceptedChoices;
 	bool        m_bGoToOptions;
 	bool        m_bAskOptionsMessage;
-	Sprite      m_sprOptionsMessage;
 
 	// show if the current selections will disqualify a high score
 	AutoActor		m_sprDisqualify[NUM_PLAYERS];
