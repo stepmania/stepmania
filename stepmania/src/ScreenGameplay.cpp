@@ -1290,7 +1290,7 @@ void ScreenGameplay::LoadLights()
 	NoteDataUtil::LoadTransformedLights( TapNoteData1, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
 }
 
-float ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMusic )
+void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMusic )
 {
 	ASSERT( fMinTimeToNotes >= 0 );
 	ASSERT( fMinTimeToMusic >= 0 );
@@ -1318,9 +1318,6 @@ float ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToM
 	UpdateSongPosition(0);
 
 	ASSERT( GAMESTATE->m_fMusicSeconds > -4000 ); /* make sure the "fake timer" code doesn't trigger */
-
-	/* Return the amount of time until the first beat. */
-	return fFirstSecond - fStartSecond;
 }
 
 
@@ -1450,7 +1447,7 @@ void ScreenGameplay::BeginScreen()
 		 * a bit of space at the beginning of the music with no steps. 
 		 */
 
-		/*float delay =*/ StartPlayingSong( fMinTimeToNotes, fMinTimeToMusic );
+		StartPlayingSong( fMinTimeToNotes, fMinTimeToMusic );
 	}
 }
 
