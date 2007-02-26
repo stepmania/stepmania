@@ -1295,18 +1295,19 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 	ASSERT( fMinTimeToNotes >= 0 );
 	ASSERT( fMinTimeToMusic >= 0 );
 
-	const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
-	const float fFirstSecond = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fFirstBeat );
-	float fStartSecond = fFirstSecond - fMinTimeToNotes;
-
-	fStartSecond = min( fStartSecond, -fMinTimeToMusic );
-	
 	m_pSoundMusic->SetProperty( "AccurateSync", true );
 
 	RageSoundParams p;
 	p.m_fSpeed = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 	p.StopMode = RageSoundParams::M_CONTINUE;
-	p.m_StartSecond = fStartSecond;
+
+	{
+		const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
+		const float fFirstSecond = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fFirstBeat );
+		float fStartDelay = fMinTimeToNotes - fFirstSecond;
+		fStartDelay = max( fStartDelay, fMinTimeToMusic );
+		p.m_StartSecond = -fStartDelay;
+	}
 
 	ASSERT( !m_pSoundMusic->IsPlaying() );
 	m_pSoundMusic->Play( &p );
