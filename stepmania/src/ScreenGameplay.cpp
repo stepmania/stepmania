@@ -1295,7 +1295,6 @@ float ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToM
 	ASSERT( fMinTimeToNotes >= 0 );
 	ASSERT( fMinTimeToMusic >= 0 );
 
-	/* XXX: We want the first beat *in use*, so we don't delay needlessly. */
 	const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
 	const float fFirstSecond = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fFirstBeat );
 	float fStartSecond = fFirstSecond - fMinTimeToNotes;
