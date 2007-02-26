@@ -4,6 +4,7 @@
 #define RARAR_VALUES_H
 
 #include "GameConstantsAndTypes.h"
+#include "ThemeMetric.h"
 
 #define RADAR_VAL_UNKNOWN -1
 
@@ -64,6 +65,9 @@ struct RadarValues
 
 	RString ToString( int iMaxValues = -1 ) const; // default = all
 	void FromString( RString sValues );
+
+	static ThemeMetric<bool> WRITE_SIMPLE_VALIES;
+	static ThemeMetric<bool> WRITE_COMPLEX_VALIES;
 
 	// Lua
 	void PushSelf( lua_State *L );

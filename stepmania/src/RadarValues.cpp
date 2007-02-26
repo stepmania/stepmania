@@ -5,6 +5,9 @@
 #include "XmlFile.h"
 #include "ThemeManager.h"
 
+ThemeMetric<bool> RadarValues::WRITE_SIMPLE_VALIES( "RadarValues", "WriteSimpleValues" );
+ThemeMetric<bool> RadarValues::WRITE_COMPLEX_VALIES( "RadarValues", "WriteComplexValues" );
+
 RadarValues::RadarValues()
 {
 	MakeUnknown();

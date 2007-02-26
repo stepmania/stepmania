@@ -54,8 +54,8 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 	const vector<StepsType> &vStepsTypesToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
 	const vector<Difficulty> &vDifficultiesToShow = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
 	const vector<CourseDifficulty> &vCourseDifficultiesToShow = CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue();
-	const bool bWriteSimpleValues = THEME->GetMetricB( "RadarValues", "WriteSimpleValues" );
-	const bool bWriteComplexValues = THEME->GetMetricB( "RadarValues", "WriteComplexValues" );
+	const bool bWriteSimpleValues = RadarValues::WRITE_SIMPLE_VALIES;
+	const bool bWriteComplexValues = RadarValues::WRITE_COMPLEX_VALIES;
 
 	{
 		XNode* pNode = xml.AppendChild( "Totals" );

@@ -80,8 +80,8 @@ HighScoreImpl::HighScoreImpl()
 XNode *HighScoreImpl::CreateNode() const
 {
 	XNode *pNode = new XNode( "HighScore" );
-	const bool bWriteSimpleValues = THEME->GetMetricB( "RadarValues", "WriteSimpleValues" );
-	const bool bWriteComplexValues = THEME->GetMetricB( "RadarValues", "WriteComplexValues" );
+	const bool bWriteSimpleValues = RadarValues::WRITE_SIMPLE_VALIES;
+	const bool bWriteComplexValues = RadarValues::WRITE_COMPLEX_VALIES;
 
 	// TRICKY:  Don't write "name to fill in" markers.
 	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? RString("") : sName );
