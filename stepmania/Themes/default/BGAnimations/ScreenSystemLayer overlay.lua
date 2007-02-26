@@ -4,11 +4,23 @@ function CreditsText( pn )
 		self:settext(str);
 	end
 
-	local text = LoadFont("ScreenManager","credits") .. {
-		InitCommand=cmd(shadowlength,0);
+	function UpdateVisible(self)
+		local screen = SCREENMAN:GetTopScreen();
+		local bShow = true;
+		if screen then
+			local sClass = screen:GetName();
+			bShow = THEME:GetMetric( sClass, "ShowCoinsAndCredits" );
+		end
+
+		self:visible( bShow );
+	end
+
+	local text = LoadFont(Var "LoadingScreen","credits") .. {
+		InitCommand=THEME:GetMetric(Var "LoadingScreen","CreditsInitCommand");
 		RefreshCreditTextMessageCommand=update;
 		CoinInsertedMessageCommand=update;
 		PlayerJoinedMessageCommand=update;
+		ScreenChangedMessageCommand=UpdateVisible;
 	};
 	return text;
 end
@@ -36,10 +48,10 @@ local t = Def.ActorFrame {
 			HideSystemMessageMessageCommand = cmd(finishtweening);
 		};
 		CreditsText( PLAYER_1 ) .. {
-			InitCommand=cmd(x,SCREEN_LEFT+120;y,SCREEN_BOTTOM-6);
+			InitCommand=cmd(x,THEME:GetMetric(Var "LoadingScreen","CreditsP1X");y,THEME:GetMetric(Var "LoadingScreen","CreditsP1Y"););
 		};
 		CreditsText( PLAYER_2 ) .. {
-			InitCommand=cmd(x,SCREEN_RIGHT-120;y,SCREEN_BOTTOM-6);
+			InitCommand=cmd(x,THEME:GetMetric(Var "LoadingScreen","CreditsP2X");y,THEME:GetMetric(Var "LoadingScreen","CreditsP2Y"););
 		};
 
 	};
