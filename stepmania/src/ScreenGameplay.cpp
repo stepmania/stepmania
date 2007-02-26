@@ -456,6 +456,7 @@ void ScreenGameplay::Init()
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
 		m_Toasty.Load( THEME->GetPathB(m_sName,"toasty") );
+		m_Toasty.PlayCommand("On");
 		this->AddChild( &m_Toasty );
 	}
 
@@ -487,10 +488,12 @@ void ScreenGameplay::Init()
 
 	m_NextSong.Load( THEME->GetPathB(m_sName,"next course song") );
 	m_NextSong.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
+	m_NextSong.PlayCommand("On");
 	this->AddChild( &m_NextSong );
 
 	m_SongFinished.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
 	m_SongFinished.Load( THEME->GetPathB(m_sName,"song finished") );
+	m_SongFinished.PlayCommand("On");
 	this->AddChild( &m_SongFinished );
 
 
@@ -694,13 +697,16 @@ void ScreenGameplay::Init()
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
 		m_Ready.Load( THEME->GetPathB(m_sName,"ready") );
+		m_Ready.PlayCommand("On");
 		this->AddChild( &m_Ready );
 
 		m_Go.Load( THEME->GetPathB(m_sName,"go") );
+		m_Go.PlayCommand("On");
 		this->AddChild( &m_Go );
 
 		m_Failed.Load( THEME->GetPathB(m_sName,"failed") );
 		m_Failed.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 ); // on top of everything else
+		m_Failed.PlayCommand("On");
 		this->AddChild( &m_Failed );
 
 		m_textDebug.LoadFromFont( THEME->GetPathF("Common","normal") );

@@ -35,14 +35,17 @@ void ScreenStage::Init()
 	m_In.Load( THEME->GetPathB(m_sName,"in") );
 	m_In.StartTransitioning();
 	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
+	m_In.PlayCommand("On");
 	this->AddChild( &m_In );
 
 	m_Out.Load( THEME->GetPathB(m_sName,"out") );
 	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
+	m_Out.PlayCommand("On");
 	this->AddChild( &m_Out );
 
 	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
 	m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
+	m_Cancel.PlayCommand("On");
 	this->AddChild( &m_Cancel );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage "+StageToString(GAMESTATE->GetCurrentStage())) );
