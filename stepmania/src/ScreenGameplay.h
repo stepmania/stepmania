@@ -139,6 +139,9 @@ protected:
 	LocalizedString GIVE_UP_BACK_TEXT;
 	LocalizedString GIVE_UP_ABORTED_TEXT;
 	ThemeMetric<float> MUSIC_FADE_OUT_SECONDS;
+	ThemeMetric<float> MIN_SECONDS_TO_STEP;
+	ThemeMetric<float> MIN_SECONDS_TO_MUSIC;
+	ThemeMetric<float> MIN_SECONDS_TO_STEP_NEXT_SONG;
 	ThemeMetric<bool> START_GIVES_UP;
 	ThemeMetric<bool> BACK_GIVES_UP;
 	ThemeMetric<bool> GIVING_UP_GOES_TO_PREV_SCREEN;

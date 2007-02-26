@@ -339,6 +339,9 @@ void ScreenGameplay::Init()
 	GIVE_UP_BACK_TEXT.Load(			m_sName, "GiveUpBackText" );
 	GIVE_UP_ABORTED_TEXT.Load(		m_sName, "GiveUpAbortedText" );
 	MUSIC_FADE_OUT_SECONDS.Load(		m_sName, "MusicFadeOutSeconds" );
+	MIN_SECONDS_TO_STEP.Load(		m_sName, "MinSecondsToStep" );
+	MIN_SECONDS_TO_MUSIC.Load(		m_sName, "MinSecondsToMusic" );
+	MIN_SECONDS_TO_STEP_NEXT_SONG.Load(	m_sName, "MinSecondsToStepNextSong" );
 	START_GIVES_UP.Load(			m_sName, "StartGivesUp" );
 	BACK_GIVES_UP.Load(			m_sName, "BackGivesUp" );
 	GIVING_UP_GOES_TO_PREV_SCREEN.Load(	m_sName, "GivingUpGoesToPrevScreen" );
@@ -1409,7 +1412,7 @@ void ScreenGameplay::BeginScreen()
 	//
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
 	{
-		StartPlayingSong( 0, 0 );	// *kick* (no transitions)
+		StartPlayingSong( MIN_SECONDS_TO_STEP, MIN_SECONDS_TO_MUSIC );
 	}
 	else if( NSMAN->useSMserver )
 	{
@@ -1435,20 +1438,7 @@ void ScreenGameplay::BeginScreen()
 	}
 	else
 	{
-		float fMinTimeToMusic = m_In.GetLengthSeconds();	// start of m_Ready
-		float fMinTimeToNotes = fMinTimeToMusic + m_Ready.GetLengthSeconds() + m_Go.GetLengthSeconds()+2;	// end of Go
-
-		/*
-		 * Tell the music to start, but don't actually make any noise for
-		 * at least 2.5 (or 1.5) seconds.  (This is so we scroll on screen smoothly.)
-		 *
-		 * This is only a minimum: the music might be started later, to meet
-		 * the minimum-time-to-notes value.  If you're writing song data,
-		 * and you want to make sure we get ideal timing here, make sure there's
-		 * a bit of space at the beginning of the music with no steps. 
-		 */
-
-		StartPlayingSong( fMinTimeToNotes, fMinTimeToMusic );
+		StartPlayingSong( MIN_SECONDS_TO_STEP, MIN_SECONDS_TO_MUSIC );
 	}
 }
 
@@ -2413,9 +2403,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_NextSong.PlayCommand( "Finish" );
 		m_NextSong.StartTransitioning( SM_None );
 
-		/* We're fading in, so don't hit any notes for a few seconds; they'll be
-		 * obscured by the fade. */
-		StartPlayingSong( m_NextSong.GetLengthSeconds()+2, 0 );
+		StartPlayingSong( MIN_SECONDS_TO_STEP_NEXT_SONG, 0 );
 	}
 	else if( SM == SM_PlayToasty )
 	{
