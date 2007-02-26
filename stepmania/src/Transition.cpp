@@ -2,16 +2,6 @@
 #include "Transition.h"
 #include "ScreenManager.h"
 
-
-/*
- * XXX: We send OnCommand on load, then we send no updates until we get
- * StartTransitioning.  Historically, this was fine, but it's incorrect now
- * that commands can have arbitrary side-effects.  We should only send OnCommand
- * when we get StartTransitioning, but we need to run it early to set m_fLengthSeconds.
- * Eventually, phase out GetLengthSeconds (ScreenGameplay is somewhat tricky).  For
- * now, play a "StartTransitioning" command; put anything that has side-effects in
- * there, instead.
- */
 Transition::Transition()
 {
 	m_State = waiting;
@@ -24,7 +14,6 @@ void Transition::Load( RString sBGAniDir )
 	m_sprTransition.Load( sBGAniDir );
 	m_sprTransition->PlayCommand( "On" );
 	this->AddChild( m_sprTransition );
-	m_fLengthSeconds = m_sprTransition->GetTweenTimeLeft();
 
 	m_State = waiting;
 }
@@ -88,11 +77,6 @@ void Transition::StartTransitioning( ScreenMessage send_when_done )
 
 	m_MessageToSendWhenDone = send_when_done;
 	m_State = transitioning;
-}
-
-float Transition::GetLengthSeconds() const
-{
-	return m_fLengthSeconds;
 }
 
 float Transition::GetTweenTimeLeft() const

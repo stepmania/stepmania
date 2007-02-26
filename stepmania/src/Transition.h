@@ -25,7 +25,6 @@ public:
 
 	bool IsTransitioning() const	{ return m_State == transitioning; };
 	bool IsFinished() const	{ return m_State == finished; };
-	float GetLengthSeconds() const;
 
 protected:
 
@@ -36,7 +35,6 @@ protected:
 	} m_State;
 
 	AutoActor m_sprTransition;
-	float	m_fLengthSeconds;
 
 	ScreenMessage	m_MessageToSendWhenDone;
 };
