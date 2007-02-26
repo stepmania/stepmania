@@ -1290,17 +1290,17 @@ void ScreenGameplay::LoadLights()
 	NoteDataUtil::LoadTransformedLights( TapNoteData1, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
 }
 
-float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic)
+float ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMusic )
 {
-	ASSERT(MinTimeToNotes >= 0);
-	ASSERT(MinTimeToMusic >= 0);
+	ASSERT( fMinTimeToNotes >= 0 );
+	ASSERT( fMinTimeToMusic >= 0 );
 
 	/* XXX: We want the first beat *in use*, so we don't delay needlessly. */
 	const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
 	const float fFirstSecond = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fFirstBeat );
-	float fStartSecond = fFirstSecond - MinTimeToNotes;
+	float fStartSecond = fFirstSecond - fMinTimeToNotes;
 
-	fStartSecond = min(fStartSecond, -MinTimeToMusic);
+	fStartSecond = min( fStartSecond, -fMinTimeToMusic );
 	
 	m_pSoundMusic->SetProperty( "AccurateSync", true );
 

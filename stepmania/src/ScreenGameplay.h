@@ -150,8 +150,8 @@ protected:
 	void SetupSong( int iSongIndex );
 	void ReloadCurrentSong();
 	virtual void LoadNextSong();
-	void LoadCourseSongNumber( int SongNumber );
-	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
+	void LoadCourseSongNumber( int iSongNumber );
+	float StartPlayingSong( float MinTimeToNotes, float fMinTimeToMusic );
 	void LoadLights();
 	void PauseGame( bool bPause, GameController gc = GameController_Invalid );
 	void PlayAnnouncer( RString type, float fSeconds );
