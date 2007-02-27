@@ -56,6 +56,7 @@ XToString( StatLine );
 // metrics that are specific to classes derived from ScreenEvaluation
 #define SHOW_BANNER_AREA		THEME->GetMetricB(m_sName,"ShowBannerArea")
 #define SHOW_GRADE_AREA			THEME->GetMetricB(m_sName,"ShowGradeArea")
+#define SHOW_DIFFICULTY_METERS		THEME->GetMetricB(m_sName,"ShowDifficultyMeters")
 #define SHOW_POINTS_AREA		THEME->GetMetricB(m_sName,"ShowPointsArea")
 #define SHOW_BONUS_AREA			THEME->GetMetricB(m_sName,"ShowBonusArea")
 #define SHOW_SURVIVED_AREA		THEME->GetMetricB(m_sName,"ShowSurvivedArea")
@@ -323,15 +324,18 @@ void ScreenEvaluation::Init()
 				SET_XY( m_DifficultyIcon[p] );
 				this->AddChild( &m_DifficultyIcon[p] );
 				
-				m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d",p+1) );
-				m_DifficultyMeter[p].Load( ssprintf("ScreenEvaluation DifficultyMeterP%d",p+1) );
-				if( GAMESTATE->IsCourseMode() )
-					m_DifficultyMeter[p].SetFromTrail( GAMESTATE->m_pCurTrail[p] );
-				else
-					m_DifficultyMeter[p].SetFromSteps( GAMESTATE->m_pCurSteps[p] );
-				ActorUtil::LoadAllCommands( m_DifficultyMeter[p], m_sName );
-				SET_XY( m_DifficultyMeter[p] );
-				this->AddChild( &m_DifficultyMeter[p] );
+				if( SHOW_DIFFICULTY_METERS )
+				{
+					m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d",p+1) );
+					m_DifficultyMeter[p].Load( ssprintf("ScreenEvaluation DifficultyMeterP%d",p+1) );
+					if( GAMESTATE->IsCourseMode() )
+						m_DifficultyMeter[p].SetFromTrail( GAMESTATE->m_pCurTrail[p] );
+					else
+						m_DifficultyMeter[p].SetFromSteps( GAMESTATE->m_pCurSteps[p] );
+					ActorUtil::LoadAllCommands( m_DifficultyMeter[p], m_sName );
+					SET_XY( m_DifficultyMeter[p] );
+					this->AddChild( &m_DifficultyMeter[p] );
+				}
 				
 				m_textPlayerOptions[p].LoadFromFont( THEME->GetPathF(m_sName,"PlayerOptions") );
 				m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
