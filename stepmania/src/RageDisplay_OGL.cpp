@@ -2278,6 +2278,9 @@ void RageDisplay_OGL::SetRenderTarget( unsigned iTexture, bool bPreserveTexture 
 		g_bInvertY = false;
 		glFrontFace( GL_CCW );
 		
+		/* Pop matrixes affected by SetDefaultRenderStates. */
+		DISPLAY->CameraPopMatrix();
+
 		/* Reset the viewport. */
 		int fWidth = g_pWind->GetActualVideoModeParams().width;
 		int fHeight = g_pWind->GetActualVideoModeParams().height;
@@ -2309,7 +2312,8 @@ void RageDisplay_OGL::SetRenderTarget( unsigned iTexture, bool bPreserveTexture 
 		glFrontFace( GL_CW );
 
 	/* The render target may be in a different OpenGL context, so re-send
-	 * state. */
+	 * state.  Push matrixes affected by SetDefaultRenderStates. */
+	DISPLAY->CameraPushMatrix();
 	SetDefaultRenderStates();
 
 	/* Clear the texture, if requested.  Always set the associated state, for
