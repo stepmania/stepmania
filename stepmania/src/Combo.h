@@ -5,9 +5,8 @@
 
 #include "ActorFrame.h"
 #include "AutoActor.h"
-#include "BitmapText.h"
 #include "PlayerNumber.h"
-#include "ThemeMetric.h"
+//#include "ThemeMetric.h"
 class PlayerState;
 class PlayerStageStats;
 
@@ -16,31 +15,15 @@ class Combo : public ActorFrame
 public:
 	Combo();
 
-	void Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats );
+	void Load( const RString &sPath, const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats );
 
 	void SetCombo( int iCombo, int iMisses );
 
 protected:
-	ThemeMetric<int>		SHOW_COMBO_AT;
-	ThemeMetric<float>		NUMBER_MIN_ZOOM;
-	ThemeMetric<float>		NUMBER_MAX_ZOOM;
-	ThemeMetric<float>		NUMBER_MAX_ZOOM_AT;
-	ThemeMetric<apActorCommands>	PULSE_COMMAND;
-	ThemeMetric<float>		TWEEN_SECONDS;
-	ThemeMetric<apActorCommands>	FULL_COMBO_W3_COMMAND;
-	ThemeMetric<apActorCommands>	FULL_COMBO_W2_COMMAND;
-	ThemeMetric<apActorCommands>	FULL_COMBO_W1_COMMAND;
-	ThemeMetric<apActorCommands>	FULL_COMBO_BROKEN_COMMAND;
-	ThemeMetric<apActorCommands>	MISS_COMBO_COMMAND;
-
 	const PlayerState *m_pPlayerState;
 	const PlayerStageStats *m_pPlayerStageStats;
 
-	AutoActor	m_spr100Milestone;
-	AutoActor	m_spr1000Milestone;
 	AutoActor	m_sprComboLabel;
-	AutoActor	m_sprMissesLabel;
-	BitmapText	m_textNumber;
 
 	int m_iLastSeenCombo;
 };

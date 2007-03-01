@@ -382,7 +382,7 @@ void Player::Init(
 	if( m_pCombo )
 	{
 		m_pCombo->SetName( "Combo" );
-		m_pCombo->Load( m_pPlayerState, m_pPlayerStageStats );
+		m_pCombo->Load( THEME->GetPathG(sType,"combo"), m_pPlayerState, m_pPlayerStageStats );
 		ActorUtil::LoadAllCommandsAndOnCommand( m_pCombo, sType );
 	}
 
