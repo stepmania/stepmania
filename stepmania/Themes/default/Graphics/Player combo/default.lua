@@ -32,9 +32,7 @@ return Def.ActorFrame {
 	end;
 
 	ComboCommand=function(self, param)
---[[	param.Misses = nil;
-	param.Combo = 123;
-]]		local iCombo = param.Misses or param.Combo;
+		local iCombo = param.Misses or param.Combo;
 		if not iCombo or iCombo < ShowComboAt then
 			c.Number:visible(false);
 			c.ComboLabel:visible(false);
