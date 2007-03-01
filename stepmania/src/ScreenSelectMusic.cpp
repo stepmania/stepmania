@@ -28,6 +28,7 @@
 #include "BannerCache.h"
 #include "song.h"
 #include "InputEventPlus.h"
+#include "OptionsList.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -68,6 +69,7 @@ void ScreenSelectMusic::Init()
 	MUSIC_WHEEL_TYPE.Load( m_sName, "MusicWheelType" );
 	SELECT_MENU_AVAILABLE.Load( m_sName, "SelectMenuAvailable" );
 	MODE_MENU_AVAILABLE.Load( m_sName, "ModeMenuAvailable" );
+	USE_OPTIONS_LIST.Load( m_sName, "UseOptionsList" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
 	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextSongButton") );
@@ -115,6 +117,18 @@ void ScreenSelectMusic::Init()
 	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
+
+	if( USE_OPTIONS_LIST )
+	{
+		FOREACH_PlayerNumber(p)
+		{
+			m_OptionsList[p].SetName( "OptionsList" + PlayerNumberToString(p) );
+			m_OptionsList[p].Load( "OptionsList" );
+			m_OptionsList[p].SetDrawOrder( 100 );
+			ActorUtil::LoadAllCommands( m_OptionsList[p], m_sName );
+			this->AddChild( &m_OptionsList[p] );
+		}
+	}
 
 	// this is loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
@@ -280,6 +294,48 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			return;
 		MESSAGEMAN->Broadcast("SongChosen");
 	}
+
+	if( USE_OPTIONS_LIST )
+	{
+		PlayerNumber pn = input.pn;
+		if( pn != PLAYER_INVALID )
+		{
+			if( m_OptionsList[pn].IsOpened() )
+			{
+				if( input.type == IET_FIRST_PRESS )
+				{
+					switch( input.MenuI )
+					{
+					case GAME_BUTTON_SELECT:
+						this->PlayCommand( ssprintf("OptionsClosedP%i", pn+1) );
+						m_OptionsList[pn].Close();
+						break;
+					case GAME_BUTTON_START:
+						if( m_OptionsList[pn].Start() )
+						{
+							this->PlayCommand( ssprintf("OptionsClosedP%i", pn+1) );
+							m_OptionsList[pn].Close();
+						}
+						break;
+					default:
+						m_OptionsList[pn].Input( input );
+						break;
+					}
+				}
+				return;
+			}
+			else
+			{
+				if( input.type == IET_FIRST_PRESS  &&  input.MenuI == GAME_BUTTON_SELECT )
+				{
+					this->PlayCommand( ssprintf("OptionsOpenedP%i", pn+1) );
+					m_OptionsList[pn].Open();
+					return;
+				}
+			}
+		}
+	}
+
 
 	// debugging?
 	// I just like being able to see untransliterated titles occasionally.
