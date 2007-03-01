@@ -420,18 +420,16 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	}	
 
 	
+	if( m_pTempState->pos.x != 0 || m_pTempState->pos.y != 0 || m_pTempState->pos.z != 0 )	
 	{
-		if( m_pTempState->pos.x != 0 || m_pTempState->pos.y != 0 || m_pTempState->pos.z != 0 )	
-		{
-			RageMatrix m;
-			RageMatrixTranslate( 
-				&m, 
-				m_pTempState->pos.x,
-				m_pTempState->pos.y,
-				m_pTempState->pos.z
-				);
-			DISPLAY->PreMultMatrix( m );
-		}
+		RageMatrix m;
+		RageMatrixTranslate( 
+			&m, 
+			m_pTempState->pos.x,
+			m_pTempState->pos.y,
+			m_pTempState->pos.z
+			);
+		DISPLAY->PreMultMatrix( m );
 	}
 
 	{
