@@ -111,24 +111,12 @@ local VertNumPad = {
 --   cmd(align,5)  -- align center
 --   cmd(align,7)  -- align top-left
 --   cmd(align,8)  -- align top-center
---   cmd(valign,8)  -- align top (don't change horiz)
---   cmd(halign,4)  -- align left (don't change vert)
 function Actor:align(angle)
 	local horiz = HorizNumPad[angle];
 	assert( horiz, angle );
 	self:horizalign( horiz );
 	local vert = VertNumPad[angle];
 	assert( vert, angle );
-	self:vertalign( vert );
-end
-
-function Actor:halign(angle)
-	local horiz = HorizNumPad[angle];
-	self:horizalign( horiz );
-end
-
-function Actor:valign(angle)
-	local vert = VertNumPad[angle];
 	self:vertalign( vert );
 end
 
