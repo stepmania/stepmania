@@ -3,8 +3,8 @@
 #ifndef JUDGMENT_H
 #define JUDGMENT_H
 
-#include "Sprite.h"
 #include "ActorFrame.h"
+#include "AutoActor.h"
 #include "GameConstantsAndTypes.h"
 
 
@@ -27,7 +27,7 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	Sprite		m_sprJudgment;
+	AutoActor	m_sprJudgment;
 	MultiPlayer	m_mpToTrack;
 };
 

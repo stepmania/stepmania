@@ -40,20 +40,20 @@ void Judgment::LoadNormal()
 void Judgment::LoadNormal( const RString &sPath )
 {
 	m_sprJudgment.Load( sPath );
-	ASSERT( m_sprJudgment.GetNumStates() == 6  ||  m_sprJudgment.GetNumStates() == 12 );
-	m_sprJudgment.StopAnimating();
-	m_sprJudgment.SetName( "Judgment" );
+	m_sprJudgment->SetName( "Judgment" );
+	ASSERT( m_sprJudgment->GetNumStates() == 6  ||  m_sprJudgment->GetNumStates() == 12 );
+	m_sprJudgment->StopAnimating();
 	ActorUtil::LoadAllCommands( m_sprJudgment, "Judgment" );
 	Reset();
-	this->AddChild( &m_sprJudgment );
+	this->AddChild( m_sprJudgment );
 }
 
 void Judgment::Reset()
 {
-	m_sprJudgment.FinishTweening();
-	m_sprJudgment.SetXY( 0, 0 );
-	m_sprJudgment.StopEffect();
-	m_sprJudgment.SetVisible( false );
+	m_sprJudgment->FinishTweening();
+	m_sprJudgment->SetXY( 0, 0 );
+	m_sprJudgment->StopEffect();
+	m_sprJudgment->SetVisible( false );
 }
 
 void Judgment::SetJudgment( TapNoteScore score, bool bEarly )
@@ -62,36 +62,36 @@ void Judgment::SetJudgment( TapNoteScore score, bool bEarly )
 
 	Reset();
 
-	m_sprJudgment.SetVisible( true );
+	m_sprJudgment->SetVisible( true );
 
-	int iStateMult = (m_sprJudgment.GetNumStates()==12) ? 2 : 1;
+	int iStateMult = (m_sprJudgment->GetNumStates()==12) ? 2 : 1;
 	int iStateAdd = ( bEarly || ( iStateMult == 1 ) ) ? 0 : 1;
 
 	switch( score )
 	{
 	case TNS_W1:
-		m_sprJudgment.SetState( 0 * iStateMult + iStateAdd );
-		m_sprJudgment.PlayCommand( "W1" );
+		m_sprJudgment->SetState( 0 * iStateMult + iStateAdd );
+		this->PlayCommand( "W1" );
 		break;
 	case TNS_W2:
-		m_sprJudgment.SetState( 1 * iStateMult + iStateAdd );
-		m_sprJudgment.PlayCommand( "W2" );
+		m_sprJudgment->SetState( 1 * iStateMult + iStateAdd );
+		this->PlayCommand( "W2" );
 		break;
 	case TNS_W3:
-		m_sprJudgment.SetState( 2 * iStateMult + iStateAdd );
-		m_sprJudgment.PlayCommand( "W3" );
+		m_sprJudgment->SetState( 2 * iStateMult + iStateAdd );
+		this->PlayCommand( "W3" );
 		break;
 	case TNS_W4:
-		m_sprJudgment.SetState( 3 * iStateMult + iStateAdd );
-		m_sprJudgment.PlayCommand( "W4" );
+		m_sprJudgment->SetState( 3 * iStateMult + iStateAdd );
+		this->PlayCommand( "W4" );
 		break;
 	case TNS_W5:
-		m_sprJudgment.SetState( 4 * iStateMult + iStateAdd );
-		m_sprJudgment.PlayCommand( "W5" );
+		m_sprJudgment->SetState( 4 * iStateMult + iStateAdd );
+		this->PlayCommand( "W5" );
 		break;
 	case TNS_Miss:
-		m_sprJudgment.SetState( 5 * iStateMult + iStateAdd );
-		m_sprJudgment.PlayCommand( "Miss" );
+		m_sprJudgment->SetState( 5 * iStateMult + iStateAdd );
+		this->PlayCommand( "Miss" );
 		break;
 	default:
 		ASSERT(0);
