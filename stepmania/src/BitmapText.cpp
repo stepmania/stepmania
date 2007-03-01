@@ -608,15 +608,6 @@ void BitmapText::SetHorizAlign( HorizAlign ha )
 	BuildChars();
 }
 
-void BitmapText::SetVertAlign( VertAlign va )
-{
-	float fVertAlign = m_fVertAlign;
-	Actor::SetVertAlign(va);
-	if( fVertAlign == m_fVertAlign )
-		return;
-	BuildChars();
-}
-
 void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )
 {
 	ASSERT( m_pFont ); // always load a font first

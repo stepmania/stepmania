@@ -35,7 +35,6 @@ public:
 	void SetJitter( bool b )	{ m_bJitter = b; }
 
 	void SetHorizAlign( HorizAlign ha );
-	void SetVertAlign( VertAlign va );
 
 	void GetLines( vector<wstring> &wTextLines ) { wTextLines = m_wTextLines; }
 
