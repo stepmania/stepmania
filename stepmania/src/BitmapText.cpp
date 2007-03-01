@@ -188,14 +188,12 @@ void BitmapText::BuildChars()
 	/* There's padding between every line: */
 	m_size.y += iPadding * int(m_wTextLines.size()-1);
 
-	int iY;	//	 the top position of the first row of characters
-	switch( m_VertAlign )
-	{
-	case VertAlign_Top:	iY = 0;					break;
-	case VertAlign_Middle:	iY = -lrintf(m_size.y/2.0f);		break;
-	case VertAlign_Bottom:	iY = -(int)m_size.y;			break;
-	default:		ASSERT( false );
-	}
+	RageVector2 center = m_size;
+//	center.x *= m_fHorizAlign*-0.5f;
+	center.y *= m_fVertAlign*-0.5f;
+
+	// the top position of the first row of characters
+	int iY = lrintf(center.y - m_size.y/2.0f);
 
 	for( unsigned i=0; i<m_wTextLines.size(); i++ )		// foreach line
 	{
@@ -206,14 +204,8 @@ void BitmapText::BuildChars()
 			reverse( sLine.begin(), sLine.end() );
 		const int iLineWidth = m_iLineWidths[i];
 		
-		int iX;
-		switch( m_HorizAlign )
-		{
-		case HorizAlign_Left:	iX = 0;					break;
-		case HorizAlign_Center:	iX = -lrintf(iLineWidth/2.0f);	break;
-		case HorizAlign_Right:	iX = -iLineWidth;			break;
-		default:		ASSERT( false );
-		}
+		float fCenterX = iLineWidth * m_fHorizAlign * -0.5f;
+		int iX = lrintf(fCenterX - iLineWidth/2.0f);
 
 		for( unsigned i = 0; i < sLine.size(); ++i )
 		{
@@ -613,17 +605,19 @@ void BitmapText::DrawPrimitives()
 /* Rebuild when these change. */
 void BitmapText::SetHorizAlign( HorizAlign ha )
 {
-	if( ha == m_HorizAlign )
-		return;
+	float fHorizAlign = m_fHorizAlign;
 	Actor::SetHorizAlign(ha);
+	if( fHorizAlign == m_fHorizAlign )
+		return;
 	BuildChars();
 }
 
 void BitmapText::SetVertAlign( VertAlign va )
 {
-	if( va == m_VertAlign )
-		return;
+	float fVertAlign = m_fVertAlign;
 	Actor::SetVertAlign(va);
+	if( fVertAlign == m_fVertAlign )
+		return;
 	BuildChars();
 }
 

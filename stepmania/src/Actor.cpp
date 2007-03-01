@@ -72,8 +72,8 @@ void Actor::InitState()
 	m_start.Init();
 	m_current.Init();
 
-	m_HorizAlign = HorizAlign_Center;
-	m_VertAlign = VertAlign_Middle;
+	m_fHorizAlign = 0.0f;
+	m_fVertAlign = 0.0f;
 
 	m_Effect =  no_effect;
 	m_fSecsIntoEffect = 0;
@@ -166,8 +166,8 @@ Actor::Actor( const Actor &cpy ):
 
 	CPY( m_bFirstUpdate );
 
-	CPY( m_HorizAlign );
-	CPY( m_VertAlign );
+	CPY( m_fHorizAlign );
+	CPY( m_fVertAlign );
 
 	CPY( m_Effect );
 	CPY( m_fSecsIntoEffect );
@@ -730,19 +730,8 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 		break;
 	}
 
-	switch( m_HorizAlign )
-	{
-	case HorizAlign_Left: SetX( rect.left ); break;
-	case HorizAlign_Center: SetX( rect.left + rect_width/2 ); break;
-	case HorizAlign_Right: SetX( rect.left + rect_width ); break;
-	}
-
-	switch( m_VertAlign )
-	{
-	case VertAlign_Top: SetY( rect.top ); break;
-	case VertAlign_Middle: SetY( rect.top + rect_height/2 ); break;
-	case VertAlign_Bottom: SetY( rect.top + rect_height ); break;
-	}
+	SetX( rect.left + rect_width * SCALE( m_fHorizAlign, -1.0f, +1.0f, 0.0f, 1.0f ) );
+	SetY( rect.top + rect_height * SCALE( m_fVertAlign, -1.0f, +1.0f, 0.0f, 1.0f ) );
 
 	SetZoom( fNewZoom );
 }

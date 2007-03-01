@@ -426,23 +426,15 @@ void Sprite::DrawTexture( const TweenState *state )
 		return; 
 
 	// use m_temp_* variables to draw the object
+	RageVector2 center = m_size;
+	center.x *= m_fHorizAlign * -0.5f;
+	center.y *= m_fVertAlign * -0.5f;
+
 	RectF quadVerticies;
-
-	switch( m_HorizAlign )
-	{
-	case HorizAlign_Left:	quadVerticies.left = 0;			quadVerticies.right = m_size.x;		break;
-	case HorizAlign_Center:	quadVerticies.left = -m_size.x/2;	quadVerticies.right = m_size.x/2;	break;
-	case HorizAlign_Right:	quadVerticies.left = -m_size.x;		quadVerticies.right = 0;		break;
-	default:		ASSERT( false );
-	}
-
-	switch( m_VertAlign )
-	{
-	case VertAlign_Top:	quadVerticies.top = 0;			quadVerticies.bottom = m_size.y;	break;
-	case VertAlign_Middle:	quadVerticies.top = -m_size.y/2;	quadVerticies.bottom = m_size.y/2;	break;
-	case VertAlign_Bottom:	quadVerticies.top = -m_size.y;		quadVerticies.bottom = 0;		break;
-	default:		ASSERT(0);
-	}
+	quadVerticies.left   = center.x - m_size.x/2.0f;
+	quadVerticies.right  = center.x + m_size.x/2.0f;
+	quadVerticies.top    = center.y - m_size.y/2.0f;
+	quadVerticies.bottom = center.y + m_size.y/2.0f;
 
 
 	/* Don't draw anything outside of the texture's image area.  Texels outside 
