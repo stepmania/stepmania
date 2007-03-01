@@ -83,41 +83,13 @@ function ActorFrame:propagatecommand(...)
 	self:propagate(0);
 end
 
-local HorizNumPad = {
-	"HorizAlign_Left",
-	"HorizAlign_Center",
-	"HorizAlign_Right",
-	"HorizAlign_Left",
-	"HorizAlign_Center",
-	"HorizAlign_Right",
-	"HorizAlign_Left",
-	"HorizAlign_Center",
-	"HorizAlign_Right",
-};
-
-local VertNumPad = {
-	"VertAlign_Bottom",
-	"VertAlign_Bottom",
-	"VertAlign_Bottom",
-	"VertAlign_Middle",
-	"VertAlign_Middle",
-	"VertAlign_Middle",
-	"VertAlign_Top",
-	"VertAlign_Top",
-	"VertAlign_Top",
-};
-
 -- Shortcut for alignment.
---   cmd(align,5)  -- align center
---   cmd(align,7)  -- align top-left
---   cmd(align,8)  -- align top-center
-function Actor:align(angle)
-	local horiz = HorizNumPad[angle];
-	assert( horiz, angle );
-	self:horizalign( horiz );
-	local vert = VertNumPad[angle];
-	assert( vert, angle );
-	self:vertalign( vert );
+--   cmd(align,0.5,0.5)  -- align center
+--   cmd(align,0.0,0.0)  -- align top-left
+--   cmd(align,0.5,0.0)  -- align top-center
+function Actor:align(h, v)
+	self:halign( h );
+	self:valign( v );
 end
 
 -- Most backgrounds are 640x480.  Some are 768x480.  Stretch the 640x480 ones.
