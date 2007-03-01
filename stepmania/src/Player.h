@@ -12,6 +12,7 @@
 #include "AttackDisplay.h"
 #include "NoteData.h"
 #include "ScreenMessage.h"
+#include "ThemeMetric.h"
 
 class ScoreDisplay;
 class LifeMeter;
