@@ -1273,6 +1273,8 @@ public:
 	static int shadowlength( T* p, lua_State *L )		{ p->SetShadowLength(FArg(1)); return 0; }
 	static int horizalign( T* p, lua_State *L )		{ p->SetHorizAlign(Enum::Check<HorizAlign>(L, 1)); return 0; }
 	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlign(Enum::Check<VertAlign>(L, 1)); return 0; }
+	static int halign( T* p, lua_State *L )			{ p->SetHorizAlign(FArg(1)); return 0; }
+	static int valign( T* p, lua_State *L )			{ p->SetVertAlign(FArg(1)); return 0; }
 	static int diffuseblink( T* p, lua_State *L )		{ p->SetEffectDiffuseBlink(); return 0; }
 	static int diffuseshift( T* p, lua_State *L )		{ p->SetEffectDiffuseShift(); return 0; }
 	static int diffuseramp( T* p, lua_State *L )		{ p->SetEffectDiffuseRamp(); return 0; }
@@ -1466,6 +1468,8 @@ public:
 		ADD_METHOD( shadowlength );
 		ADD_METHOD( horizalign );
 		ADD_METHOD( vertalign );
+		ADD_METHOD( halign );
+		ADD_METHOD( valign );
 		ADD_METHOD( diffuseblink );
 		ADD_METHOD( diffuseshift );
 		ADD_METHOD( diffuseramp );

@@ -599,10 +599,10 @@ void BitmapText::DrawPrimitives()
 }
 
 /* Rebuild when these change. */
-void BitmapText::SetHorizAlign( HorizAlign ha )
+void BitmapText::SetHorizAlign( float f )
 {
 	float fHorizAlign = m_fHorizAlign;
-	Actor::SetHorizAlign(ha);
+	Actor::SetHorizAlign(f);
 	if( fHorizAlign == m_fHorizAlign )
 		return;
 	BuildChars();

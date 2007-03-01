@@ -251,8 +251,10 @@ public:
 	//
 	// Alignment settings.  These need to be virtual for BitmapText
 	//
-	virtual void SetHorizAlign( HorizAlign ha ) { m_fHorizAlign = (ha == HorizAlign_Left)? 0.0f: (ha == HorizAlign_Center)? 0.5f: +1.0f; }
-	virtual void SetVertAlign( VertAlign va ) { m_fVertAlign = (va == VertAlign_Top)? 0.0f: (va == VertAlign_Middle)? 0.5f: +1.0f; }
+	virtual void SetHorizAlign( float f ) { m_fHorizAlign = f; }
+	virtual void SetVertAlign( float f ) { m_fVertAlign = f; }
+	void SetHorizAlign( HorizAlign ha ) { SetHorizAlign( (ha == HorizAlign_Left)? 0.0f: (ha == HorizAlign_Center)? 0.5f: +1.0f ); }
+	void SetVertAlign( VertAlign va ) { SetVertAlign( (va == VertAlign_Top)? 0.0f: (va == VertAlign_Middle)? 0.5f: +1.0f ); }
 
 
 	//

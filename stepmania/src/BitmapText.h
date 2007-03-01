@@ -34,7 +34,7 @@ public:
 	void SetRainbowScroll( bool b )	{ m_bRainbowScroll = b; }
 	void SetJitter( bool b )	{ m_bJitter = b; }
 
-	void SetHorizAlign( HorizAlign ha );
+	void SetHorizAlign( float f );
 
 	void GetLines( vector<wstring> &wTextLines ) { wTextLines = m_wTextLines; }
 
