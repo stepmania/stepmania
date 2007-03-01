@@ -16,7 +16,7 @@ class Combo : public ActorFrame
 public:
 	Combo();
 
-	void Load( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
+	void Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats );
 
 	void SetCombo( int iCombo, int iMisses );
 
@@ -39,8 +39,8 @@ protected:
 	ThemeMetric<apActorCommands>	FULL_COMBO_BROKEN_COMMAND;
 	ThemeMetric<apActorCommands>	MISS_COMBO_COMMAND;
 
-	PlayerState *m_pPlayerState;
-	PlayerStageStats *m_pPlayerStageStats;
+	const PlayerState *m_pPlayerState;
+	const PlayerStageStats *m_pPlayerStageStats;
 
 	AutoActor	m_spr100Milestone;
 	AutoActor	m_spr1000Milestone;

@@ -15,7 +15,7 @@ Combo::Combo()
 	this->SubscribeToMessage( Message_BeatCrossed );
 }
 
-void Combo::Load( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
+void Combo::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats )
 {
 	ASSERT( m_SubActors.empty() );	// don't load twice
 
