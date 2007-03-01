@@ -72,8 +72,8 @@ void Actor::InitState()
 	m_start.Init();
 	m_current.Init();
 
-	m_fHorizAlign = 0.0f;
-	m_fVertAlign = 0.0f;
+	m_fHorizAlign = 0.5f;
+	m_fVertAlign = 0.5f;
 
 	m_Effect =  no_effect;
 	m_fSecsIntoEffect = 0;
@@ -467,6 +467,20 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		}
 	}
 
+	if( unlikely(m_fHorizAlign != 0.5f || m_fVertAlign != 0.5f) )
+	{
+		float fX = SCALE( m_fHorizAlign, 0.0f, 1.0f, +m_size.x/2.0f, -m_size.x/2.0f );
+		float fY = SCALE( m_fVertAlign, 0.0f, 1.0f, +m_size.y/2.0f, -m_size.y/2.0f );
+		RageMatrix m;
+		RageMatrixTranslate( 
+			&m, 
+			fX,
+			fY,
+			0
+			);
+		DISPLAY->PreMultMatrix( m );
+	}
+
 	if( m_pTempState->quat.x != 0 ||  m_pTempState->quat.y != 0 ||  m_pTempState->quat.z != 0 || m_pTempState->quat.w != 1 )
 	{
 		RageMatrix mat;
@@ -730,8 +744,8 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 		break;
 	}
 
-	SetX( rect.left + rect_width * SCALE( m_fHorizAlign, -1.0f, +1.0f, 0.0f, 1.0f ) );
-	SetY( rect.top + rect_height * SCALE( m_fVertAlign, -1.0f, +1.0f, 0.0f, 1.0f ) );
+	SetX( rect.left + rect_width * m_fHorizAlign );
+	SetY( rect.top + rect_height * m_fVertAlign );
 
 	SetZoom( fNewZoom );
 }

@@ -83,15 +83,11 @@ void ActorMultiTexture::DrawPrimitives()
 {
 	Actor::SetGlobalRenderStates();	// set Actor-specified render states
 
-	RageVector2 center = m_size;
-	center.x *= m_fHorizAlign * -0.5f;
-	center.y *= m_fVertAlign * -0.5f;
-
 	RectF quadVerticies;
-	quadVerticies.left   = center.x - m_size.x/2.0f;
-	quadVerticies.right  = center.x + m_size.x/2.0f;
-	quadVerticies.top    = center.y - m_size.y/2.0f;
-	quadVerticies.bottom = center.y + m_size.y/2.0f;
+	quadVerticies.left   = -m_size.x/2.0f;
+	quadVerticies.right  = +m_size.x/2.0f;
+	quadVerticies.top    = -m_size.y/2.0f;
+	quadVerticies.bottom = +m_size.y/2.0f;
 
 	DISPLAY->ClearAllTextures();
 	for( size_t i = 0; i < m_aTextureUnits.size(); ++i )

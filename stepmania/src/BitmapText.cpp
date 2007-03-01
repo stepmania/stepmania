@@ -188,12 +188,8 @@ void BitmapText::BuildChars()
 	/* There's padding between every line: */
 	m_size.y += iPadding * int(m_wTextLines.size()-1);
 
-	RageVector2 center = m_size;
-//	center.x *= m_fHorizAlign*-0.5f;
-	center.y *= m_fVertAlign*-0.5f;
-
 	// the top position of the first row of characters
-	int iY = lrintf(center.y - m_size.y/2.0f);
+	int iY = lrintf(-m_size.y/2.0f);
 
 	for( unsigned i=0; i<m_wTextLines.size(); i++ )		// foreach line
 	{
@@ -203,9 +199,9 @@ void BitmapText::BuildChars()
 		if( m_pFont->IsRightToLeft() )
 			reverse( sLine.begin(), sLine.end() );
 		const int iLineWidth = m_iLineWidths[i];
-		
-		float fCenterX = iLineWidth * m_fHorizAlign * -0.5f;
-		int iX = lrintf(fCenterX - iLineWidth/2.0f);
+
+		float fX = SCALE( m_fHorizAlign, 0.0f, 1.0f, -m_size.x/2.0f, +m_size.x/2.0f - iLineWidth );
+		int iX = lrintf( fX );
 
 		for( unsigned i = 0; i < sLine.size(); ++i )
 		{
