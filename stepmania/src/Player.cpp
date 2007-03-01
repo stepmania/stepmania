@@ -2508,33 +2508,25 @@ bool Player::IsPlayingBeginner() const
 
 void Player::SetJudgment( TapNoteScore tns, bool bEarly )
 {
-	if( m_pPlayerStageStats )
-		m_pPlayerStageStats->m_tnsLast = tns;
-	if( m_pPlayerState->m_mp != MultiPlayer_Invalid )
-		MESSAGEMAN->Broadcast( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
-
 	if( m_pJudgment )
 		m_pJudgment->SetJudgment( tns, bEarly );
 
 	Message msg("Judgment");
 	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
 	msg.SetParam( "TapNoteScore", tns );
-	msg.SetParam( "HoldNoteScore", HoldNoteScore_Invalid );
+	msg.SetParam( "Early", bEarly );
 	MESSAGEMAN->Broadcast( msg );
 }
 
 void Player::SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack )
 {
-	if( m_pPlayerStageStats != NULL )
-		m_pPlayerStageStats->m_hnsLast = hns;
-	if( m_pPlayerState->m_mp != MultiPlayer_Invalid )
-		MESSAGEMAN->Broadcast( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
-
 	ASSERT( iTrack < (int)m_vHoldJudgment.size() );
 	m_vHoldJudgment[iTrack]->SetHoldJudgment( hns );
 
 	Message msg("Judgment");
 	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
 	msg.SetParam( "TapNoteScore", tns );
 	msg.SetParam( "HoldNoteScore", hns );
 	MESSAGEMAN->Broadcast( msg );

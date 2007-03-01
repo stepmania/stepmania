@@ -5,7 +5,6 @@
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
-#include "StatsManager.h"
 #include "XmlFile.h"
 
 REGISTER_ACTOR_CLASS( HoldJudgment )
@@ -74,15 +73,20 @@ void HoldJudgment::LoadFromMultiPlayer( MultiPlayer mp )
 {
 	ASSERT( m_mpToTrack == MultiPlayer_Invalid );	// assert only load once
 	m_mpToTrack = mp;
-	this->SubscribeToMessage( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_mpToTrack) );
+	this->SubscribeToMessage( "Judgment" );
 }
 
 void HoldJudgment::HandleMessage( const Message &msg )
 {
-	if( msg == enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_mpToTrack) )
+	if( m_mpToTrack != MultiPlayer_Invalid && msg.GetName() == "Judgment" )
 	{
-		ASSERT( m_mpToTrack != MultiPlayer_Invalid );
-		SetHoldJudgment( STATSMAN->m_CurStageStats.m_multiPlayer[m_mpToTrack].m_hnsLast );
+		MultiPlayer mp;
+		if( msg.GetParam("MultiPlayer", mp) && mp == m_mpToTrack )
+		{
+			HoldNoteScore hns;
+			if( msg.GetParam("HoldNoteScore", hns) )
+				SetHoldJudgment( hns );
+		}
 	}
 
 	ActorFrame::HandleMessage( msg );

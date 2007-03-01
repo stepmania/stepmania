@@ -40,8 +40,6 @@ void PlayerStageStats::Init()
 	m_iSongsPlayed = 0;
 	m_fLifeRemainingSeconds = 0;
 	m_fCaloriesBurned = 0;
-	m_tnsLast = TapNoteScore_Invalid;
-	m_hnsLast = HoldNoteScore_Invalid;
 
 	ZERO( m_iTapNoteScores );
 	ZERO( m_iHoldNoteScores );

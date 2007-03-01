@@ -2,11 +2,9 @@
 #include "Judgment.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "GameState.h"
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
-#include "StatsManager.h"
 #include "XmlFile.h"
 
 REGISTER_ACTOR_CLASS( Judgment )
@@ -102,13 +100,26 @@ void Judgment::LoadFromMultiPlayer( MultiPlayer mp )
 {
 	ASSERT( m_mpToTrack == MultiPlayer_Invalid );	// assert only load once
 	m_mpToTrack = mp;
-	this->SubscribeToMessage( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_mpToTrack) );
+	this->SubscribeToMessage( "Judgment" );
 }
 
 void Judgment::HandleMessage( const Message &msg )
 {
-	if( m_mpToTrack != MultiPlayer_Invalid  &&  msg == enum_add2(Message_ShowJudgmentMuliPlayerP1,m_mpToTrack) )
-		SetJudgment( STATSMAN->m_CurStageStats.m_multiPlayer[m_mpToTrack].m_tnsLast, false );	// FIXME: save and pass early bool?
+	if( m_mpToTrack != MultiPlayer_Invalid && msg.GetName() == "Judgment" )
+	{
+		MultiPlayer mp;
+		HoldNoteScore hns;
+		if( msg.GetParam("MultiPlayer", mp) && 
+			mp == m_mpToTrack &&
+			!msg.GetParam("HoldNoteScore", hns) )
+		{
+			TapNoteScore tns;
+			bool bEarly;
+			msg.GetParam( "TapNoteScore", tns );
+			msg.GetParam( "Early", bEarly );
+			SetJudgment( tns, bEarly );
+		}
+	}
 
 	ActorFrame::HandleMessage( msg );
 }

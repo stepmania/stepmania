@@ -59,9 +59,6 @@ public:
 	// workout
 	float		m_fCaloriesBurned;
 
-	TapNoteScore	m_tnsLast;
-	HoldNoteScore	m_hnsLast;
-
 	map<float,float> m_fLifeRecord;
 	void	SetLifeRecordAt( float fLife, float fStepsSecond );
 	void	GetLifeRecord( float *fLifeOut, int iNumSamples, float fStepsEndSecond ) const;
