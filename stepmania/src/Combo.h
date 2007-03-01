@@ -21,18 +21,18 @@ public:
 	void SetCombo( int iCombo, int iMisses );
 
 protected:
-	ThemeMetric<int>				SHOW_COMBO_AT;
-	ThemeMetric<float>				LABEL_X;
-	ThemeMetric<float>				LABEL_Y;
+	ThemeMetric<int>		SHOW_COMBO_AT;
+	ThemeMetric<float>		LABEL_X;
+	ThemeMetric<float>		LABEL_Y;
 	ThemeMetric<apActorCommands>	LABEL_ON_COMMAND;
-	ThemeMetric<float>				NUMBER_X;
-	ThemeMetric<float>				NUMBER_Y;
+	ThemeMetric<float>		NUMBER_X;
+	ThemeMetric<float>		NUMBER_Y;
 	ThemeMetric<apActorCommands>	NUMBER_ON_COMMAND;
-	ThemeMetric<float>				NUMBER_MIN_ZOOM;
-	ThemeMetric<float>				NUMBER_MAX_ZOOM;
-	ThemeMetric<float>				NUMBER_MAX_ZOOM_AT;
+	ThemeMetric<float>		NUMBER_MIN_ZOOM;
+	ThemeMetric<float>		NUMBER_MAX_ZOOM;
+	ThemeMetric<float>		NUMBER_MAX_ZOOM_AT;
 	ThemeMetric<apActorCommands>	PULSE_COMMAND;
-	ThemeMetric<float>				TWEEN_SECONDS;
+	ThemeMetric<float>		TWEEN_SECONDS;
 	ThemeMetric<apActorCommands>	FULL_COMBO_W3_COMMAND;
 	ThemeMetric<apActorCommands>	FULL_COMBO_W2_COMMAND;
 	ThemeMetric<apActorCommands>	FULL_COMBO_W1_COMMAND;
