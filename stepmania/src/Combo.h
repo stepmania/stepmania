@@ -22,12 +22,6 @@ public:
 
 protected:
 	ThemeMetric<int>		SHOW_COMBO_AT;
-	ThemeMetric<float>		LABEL_X;
-	ThemeMetric<float>		LABEL_Y;
-	ThemeMetric<apActorCommands>	LABEL_ON_COMMAND;
-	ThemeMetric<float>		NUMBER_X;
-	ThemeMetric<float>		NUMBER_Y;
-	ThemeMetric<apActorCommands>	NUMBER_ON_COMMAND;
 	ThemeMetric<float>		NUMBER_MIN_ZOOM;
 	ThemeMetric<float>		NUMBER_MAX_ZOOM;
 	ThemeMetric<float>		NUMBER_MAX_ZOOM_AT;

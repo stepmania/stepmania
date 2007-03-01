@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "song.h"
 #include "PlayerState.h"
+#include "ActorUtil.h"
 
 Combo::Combo()
 {
@@ -23,12 +24,6 @@ void Combo::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlay
 	m_pPlayerStageStats = pPlayerStageStats;
 
 	SHOW_COMBO_AT			.Load(m_sName,"ShowComboAt");
-	LABEL_X				.Load(m_sName,"LabelX");
-	LABEL_Y				.Load(m_sName,"LabelY");
-	LABEL_ON_COMMAND		.Load(m_sName,"LabelOnCommand");
-	NUMBER_X			.Load(m_sName,"NumberX");
-	NUMBER_Y			.Load(m_sName,"NumberY");
-	NUMBER_ON_COMMAND		.Load(m_sName,"NumberOnCommand");
 	NUMBER_MIN_ZOOM			.Load(m_sName,"NumberMinZoom");
 	NUMBER_MAX_ZOOM			.Load(m_sName,"NumberMaxZoom");
 	NUMBER_MAX_ZOOM_AT		.Load(m_sName,"NumberMaxZoomAt");
@@ -46,24 +41,25 @@ void Combo::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlay
 	this->AddChild( m_spr1000Milestone );
 
 	m_sprComboLabel.Load( THEME->GetPathG(m_sName,"label") );
-	m_sprComboLabel->StopAnimating();
-	m_sprComboLabel->SetXY( LABEL_X, LABEL_Y );
-	m_sprComboLabel->RunCommands( LABEL_ON_COMMAND );
+	m_sprComboLabel->SetName( "Label" );
 	m_sprComboLabel->SetVisible( false );
+	LOAD_ALL_COMMANDS( m_sprComboLabel );
 	this->AddChild( m_sprComboLabel );
+	m_sprComboLabel->PlayCommand( "On" );
 
 	m_sprMissesLabel.Load( THEME->GetPathG(m_sName,"misses") );
-	m_sprMissesLabel->StopAnimating();
-	m_sprMissesLabel->SetXY( LABEL_X, LABEL_Y );
-	m_sprMissesLabel->RunCommands( LABEL_ON_COMMAND );
+	m_sprMissesLabel->SetName( "Label" );
 	m_sprMissesLabel->SetVisible( false );
+	LOAD_ALL_COMMANDS( m_sprMissesLabel );
 	this->AddChild( m_sprMissesLabel );
+	m_sprMissesLabel->PlayCommand( "On" );
 
 	m_textNumber.LoadFromFont( THEME->GetPathF(m_sName,"numbers") );
-	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
-	m_textNumber.RunCommands( NUMBER_ON_COMMAND );
+	m_textNumber.SetName( "Number" );
 	m_textNumber.SetVisible( false );
+	LOAD_ALL_COMMANDS( m_textNumber );
 	this->AddChild( &m_textNumber );
+	m_textNumber.PlayCommand( "On" );
 }
 
 void Combo::SetCombo( int iCombo, int iMisses )
