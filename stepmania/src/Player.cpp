@@ -139,7 +139,7 @@ float Player::GetWindowSeconds( TimingWindow tw )
 	return fSecs;
 }
 
-Player::Player( NoteData &nd, bool bShowNoteField, bool bShowJudgment ) : m_NoteData(nd)
+Player::Player( NoteData &nd, bool bShowNoteField ) : m_NoteData(nd)
 {
 	m_bLoaded = false;
 
@@ -156,20 +156,6 @@ Player::Player( NoteData &nd, bool bShowNoteField, bool bShowJudgment ) : m_Note
 	m_pInventory = NULL;
 	
 	m_bPaused = false;
-
-	m_pJudgment = NULL;
-	if( bShowJudgment )
-	{
-		m_pJudgment = new Judgment;
-		this->AddChild( m_pJudgment );
-	}
-
-	m_pCombo = NULL;
-	if( bShowJudgment )
-	{
-		m_pCombo = new Combo;
-		this->AddChild( m_pCombo );
-	}
 
 	m_pAttackDisplay = NULL;
 	if( bShowNoteField )
@@ -191,8 +177,6 @@ Player::Player( NoteData &nd, bool bShowNoteField, bool bShowJudgment ) : m_Note
 
 Player::~Player()
 {
-	SAFE_DELETE( m_pJudgment );
-	SAFE_DELETE( m_pCombo );
 	SAFE_DELETE( m_pAttackDisplay );
 	SAFE_DELETE( m_pNoteField );
 	for( unsigned i = 0; i < m_vHoldJudgment.size(); ++i )
@@ -231,7 +215,6 @@ void Player::Init(
 	DRAW_DISTANCE_AFTER_TARGET_PIXELS.Load(		sType, "DrawDistanceAfterTargetsPixels" );
 	DRAW_DISTANCE_BEFORE_TARGET_PIXELS.Load(	sType, "DrawDistanceBeforeTargetsPixels" );
 
-	if( m_pJudgment )
 	{
 		//
 		// Init judgment positions
@@ -379,18 +362,19 @@ void Player::Init(
 	m_soundAttackLaunch.SetProperty( "Pan", fBalance );
 	m_soundAttackEnding.SetProperty( "Pan", fBalance );
 
-	if( m_pCombo )
 	{
-		m_pCombo->SetName( "Combo" );
-		m_pCombo->Load( THEME->GetPathG(sType,"combo"), m_pPlayerState, m_pPlayerStageStats );
-		ActorUtil::LoadAllCommandsAndOnCommand( m_pCombo, sType );
+		m_Combo.SetName( "Combo" );
+		m_Combo.Load( THEME->GetPathG(sType,"combo"), m_pPlayerState, m_pPlayerStageStats );
+		ActorUtil::LoadAllCommandsAndOnCommand( m_Combo, sType );
+		this->AddChild( &m_Combo );
 	}
 
-	if( m_pJudgment )
 	{
+		LuaThreadVariable var( "Player", LuaReference::Create(m_pPlayerState->m_PlayerNumber) );
+		m_pJudgment.Load( THEME->GetPathG(sType,"judgment") );
 		m_pJudgment->SetName( "Judgment" );
-		m_pJudgment->LoadNormal();
 		ActorUtil::LoadAllCommandsAndOnCommand( m_pJudgment, sType );
+		this->AddChild( m_pJudgment );
 	}
 
 	// Load HoldJudgments
@@ -436,18 +420,14 @@ void Player::Load()
 	/* The editor reuses Players ... so we really need to make sure everything
 	 * is reset and not tweening.  Perhaps ActorFrame should recurse to subactors;
 	 * then we could just this->StopTweening()? -glenn */
-	if( m_pJudgment )
-		m_pJudgment->StopTweening();
-//	m_pCombo->Reset();				// don't reset combos between songs in a course!
+	m_pJudgment->PlayCommand("Reset");
+//	m_Combo.Reset();				// don't reset combos between songs in a course!
 	if( m_pPlayerStageStats )
 	{
-		if( m_pCombo ) 
-			m_pCombo->SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );	// combo can persist between songs and games
+		m_Combo.SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );	// combo can persist between songs and games
 	}
 	if( m_pAttackDisplay )
 		m_pAttackDisplay->Init( m_pPlayerState );
-	if( m_pJudgment )
-		m_pJudgment->Reset();
 
 	/* Don't re-init this; that'll reload graphics.  Add a separate Reset() call
 	 * if some ScoreDisplays need it. */
@@ -503,11 +483,8 @@ void Player::Load()
 
 	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetStage().GetReversePercentForColumn( 0 ) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==StyleType_OnePlayerTwoSides;
-	if( m_pCombo )
-	{
-		m_pCombo->SetX( COMBO_X.GetValue(pn, bPlayerUsingBothSides) );
-		m_pCombo->SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
-	}
+	m_Combo.SetX( COMBO_X.GetValue(pn, bPlayerUsingBothSides) );
+	m_Combo.SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
 	if( m_pAttackDisplay )
 		m_pAttackDisplay->SetX( ATTACK_DISPLAY_X.GetValue(pn, bPlayerUsingBothSides) - 40 );
 	// set this in Update //m_pAttackDisplay->SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
@@ -622,14 +599,11 @@ void Player::Update( float fDeltaTime )
 
 	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0) == 1;
 	float fPercentCentered = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_CENTERED];
-	if( m_pCombo )
-	{
-		m_pCombo->SetY( 
-			bReverse ? 
-			COMBO_Y_REVERSE + fPercentCentered * COMBO_CENTERED_ADDY_REVERSE : 
-			COMBO_Y + fPercentCentered * COMBO_CENTERED_ADDY );
-	}
-	if( m_pJudgment )
+	m_Combo.SetY( 
+		bReverse ? 
+		COMBO_Y_REVERSE + fPercentCentered * COMBO_CENTERED_ADDY_REVERSE : 
+		COMBO_Y + fPercentCentered * COMBO_CENTERED_ADDY );
+
 	{
 		const Actor::TweenState &ts1 = m_tsJudgment[bReverse?1:0][0];
 		const Actor::TweenState &ts2 = m_tsJudgment[bReverse?1:0][1];
@@ -642,8 +616,7 @@ void Player::Update( float fDeltaTime )
 	float fNoteFieldZoom = 1 - fTinyPercent*0.5f;
 	if( m_pNoteField )
 		m_pNoteField->SetZoom( fNoteFieldZoom );
-	if( m_pJudgment )
-		m_pJudgment->SetZoom( m_pJudgment->GetZoom() * fJudgmentZoom );
+	m_pJudgment->SetZoom( m_pJudgment->GetZoom() * fJudgmentZoom );
 	if( m_sprJudgmentFrame.IsLoaded() )
 		m_sprJudgmentFrame->SetZoom( m_sprJudgmentFrame->GetZoom() * fJudgmentZoom );
 
@@ -1032,10 +1005,7 @@ void Player::DrawPrimitives()
 
 	// Draw these below everything else.
 	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind == 0 )
-	{
-		if( m_pCombo )
-			m_pCombo->Draw();
-	}
+		m_Combo.Draw();
 
 	if( m_pAttackDisplay )
 		m_pAttackDisplay->Draw();
@@ -1102,8 +1072,7 @@ void Player::DrawTapJudgments()
 
 	if( m_sprJudgmentFrame.IsLoaded() )
 		m_sprJudgmentFrame->Draw();
-	if( m_pJudgment )
-		m_pJudgment->Draw();
+	m_pJudgment->Draw();
 }
 
 void Player::DrawHoldJudgments()
@@ -2365,9 +2334,9 @@ void Player::HandleTapRowScore( unsigned row )
 
 	SendComboMessages( iOldCombo, iOldMissCombo );
 
-	if( m_pPlayerStageStats && m_pCombo )
+	if( m_pPlayerStageStats )
 	{
-		m_pCombo->SetCombo( iCurCombo, iCurMissCombo );
+		m_Combo.SetCombo( iCurCombo, iCurMissCombo );
 	}
 
 #define CROSSED( x ) (iOldCombo<x && iCurCombo>=x)
@@ -2474,8 +2443,7 @@ void Player::FadeToFail()
 		m_pNoteField->FadeToFail();
 
 	// clear miss combo
-	if( m_pCombo )
-		m_pCombo->SetCombo( 0, 0 );
+	m_Combo.SetCombo( 0, 0 );
 }
 
 void Player::CacheAllUsedNoteSkins()
@@ -2503,9 +2471,6 @@ bool Player::IsPlayingBeginner() const
 
 void Player::SetJudgment( TapNoteScore tns, bool bEarly )
 {
-	if( m_pJudgment )
-		m_pJudgment->SetJudgment( tns, bEarly );
-
 	Message msg("Judgment");
 	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );

@@ -4,7 +4,6 @@
 #define PLAYER_H
 
 #include "ActorFrame.h"
-#include "Judgment.h"
 #include "HoldJudgment.h"
 #include "Combo.h"
 #include "NoteDataWithScoring.h"
@@ -41,7 +40,7 @@ class Player: public ActorFrame
 {
 public:
 	// The passed in NoteData isn't touched until Load() is called.
-	Player( NoteData &nd, bool bShowNoteField = true, bool bShowJudgment = true );
+	Player( NoteData &nd, bool bShowNoteField = true );
 	~Player();
 
 	virtual void Update( float fDeltaTime );
@@ -144,10 +143,10 @@ protected:
 
 	vector<HoldJudgment*>	m_vHoldJudgment;
 
-	Judgment		*m_pJudgment;
+	AutoActor		m_pJudgment;
 	AutoActor		m_sprJudgmentFrame;
 		
-	Combo			*m_pCombo;
+	Combo			m_Combo;
 
 	AttackDisplay		*m_pAttackDisplay;
 

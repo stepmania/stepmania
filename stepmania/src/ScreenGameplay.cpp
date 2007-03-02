@@ -179,7 +179,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 
 	m_ptextPlayerOptions = NULL;
 	m_pActiveAttackList = NULL;
-	m_pPlayer = new Player( m_NoteData, bShowNoteField, true );
+	m_pPlayer = new Player( m_NoteData, bShowNoteField );
 	m_pInventory = NULL;
 	m_pDifficultyIcon = NULL;
 	m_pDifficultyMeter = NULL;
@@ -196,7 +196,7 @@ void PlayerInfo::LoadDummyP1()
 	m_bIsDummy = true;
 
 	// don't init any of the scoring objects
-	m_pPlayer = new Player( m_NoteData, true, false );
+	m_pPlayer = new Player( m_NoteData, true );
 
 	m_PlayerStateDummy = *GAMESTATE->m_pPlayerState[PLAYER_1];
 	m_PlayerStateDummy.m_PlayerController = PC_AUTOPLAY;
@@ -743,8 +743,11 @@ void ScreenGameplay::Init()
 
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
+		RString sType = PLAYER_TYPE;
+		if( pi->m_bIsDummy )
+			sType += "Dummy";
 		pi->m_pPlayer->Init( 
-			PLAYER_TYPE,
+			sType,
 			pi->GetPlayerState(),
 			pi->GetPlayerStageStats(),
 			pi->m_pLifeMeter, 

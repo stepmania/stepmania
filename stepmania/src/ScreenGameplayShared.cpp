@@ -26,7 +26,7 @@ void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 		pi.m_pPrimaryScoreDisplay = new ScoreDisplayNormal;
 		pi.m_pPrimaryScoreDisplay->Init( pPlayerState, pPlayerStageStats );
 		pi.m_pPrimaryScoreKeeper = new ScoreKeeperShared( pPlayerState, pPlayerStageStats );
-		pi.m_pPlayer = new Player( mpi.m_NoteData, pn == mpn, true );
+		pi.m_pPlayer = new Player( mpi.m_NoteData, pn == mpn );
 	}
 }
 
