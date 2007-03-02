@@ -219,10 +219,12 @@ void Player::Init(
 		//
 		// Init judgment positions
 		//
-		LuaReference expr = THEME->GetMetricR( sType,"JudgmentTransformCommandFunction" );
+		LuaReference expr = THEME->GetMetricR( sType,"JudgmentTransformCommand" );
 
 		bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==StyleType_OnePlayerTwoSides;
 		Actor temp;
+		temp.SetName( "Judgment" );
+		ActorUtil::LoadCommand( temp, sType, "Transform" );
 
 		int iEnabledPlayerIndex = -1;
 		int iNumEnabledPlayers = 0;
@@ -255,19 +257,15 @@ void Player::Init(
 		{
 			for( int j=0; j<NUM_CENTERED; j++ )
 			{
-				Lua *L = LUA->Get();
-				expr.PushSelf( L );
-				ASSERT( !lua_isnil(L, -1) );
-				temp.PushSelf( L );
-				LuaHelpers::Push( L, pPlayerState->m_PlayerNumber );
-				LuaHelpers::Push( L, pPlayerState->m_mp );
-				LuaHelpers::Push( L, iEnabledPlayerIndex );
-				LuaHelpers::Push( L, iNumEnabledPlayers );
-				LuaHelpers::Push( L, bPlayerUsingBothSides );
-				LuaHelpers::Push( L, !!i );
-				LuaHelpers::Push( L, !!j );
-				lua_call( L, 8, 0 ); // 8 args, 0 results
-				LUA->Release(L);
+				LuaThreadVariable var1( "Player", LuaReference::Create(pPlayerState->m_PlayerNumber) );
+				LuaThreadVariable var2( "MultiPlayer", LuaReference::Create(pPlayerState->m_mp) );
+				LuaThreadVariable var3( "iEnabledPlayerIndex", LuaReference::Create(iEnabledPlayerIndex) );
+				LuaThreadVariable var4( "iNumEnabledPlayers", LuaReference::Create(iNumEnabledPlayers) );
+				LuaThreadVariable var5( "bPlayerUsingBothSides", LuaReference::Create(bPlayerUsingBothSides) );
+				LuaThreadVariable var6( "bReverse", LuaReference::Create(!!i) );
+				LuaThreadVariable var7( "bCentered", LuaReference::Create(!!j) );
+
+				temp.PlayCommand( "Transform" );
 				
 				m_tsJudgment[i][j] = temp.DestTweenState();
 			}
