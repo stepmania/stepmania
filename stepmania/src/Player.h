@@ -144,7 +144,6 @@ protected:
 	vector<HoldJudgment*>	m_vHoldJudgment;
 
 	AutoActor		m_pJudgment;
-	AutoActor		m_sprJudgmentFrame;
 		
 	Combo			m_Combo;
 

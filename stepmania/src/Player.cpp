@@ -272,42 +272,6 @@ void Player::Init(
 				m_tsJudgment[i][j] = temp.DestTweenState();
 			}
 		}
-
-		// Load Judgment frame
-		if( GAMESTATE->m_bMultiplayer  &&  !m_sprJudgmentFrame.IsLoaded() )	// only load the first time
-		{
-			GameCommand gc;
-			ASSERT( pPlayerState->m_mp != MultiPlayer_Invalid );
-			gc.m_MultiPlayer = pPlayerState->m_mp;
-			
-			{
-				Lua *L = LUA->Get();		
-				gc.PushSelf( L );
-				lua_setglobal( L, "ThisGameCommand" );
-				LUA->Release( L );
-			}
-			
-			m_sprJudgmentFrame.Load( THEME->GetPathG(sType,"JudgmentFrame") );
-
-			{
-				Lua *L = LUA->Get();		
-				expr.PushSelf( L );
-				ASSERT( !lua_isnil(L, -1) );
-				m_sprJudgmentFrame->PushSelf( L );
-				LuaHelpers::Push( L, pPlayerState->m_PlayerNumber );
-				LuaHelpers::Push( L, pPlayerState->m_mp );
-				LuaHelpers::Push( L, iEnabledPlayerIndex );
-				LuaHelpers::Push( L, iNumEnabledPlayers );
-				LuaHelpers::Push( L, bPlayerUsingBothSides );
-				LuaHelpers::Push( L, false );
-				LuaHelpers::Push( L, false );
-				lua_call( L, 8, 0 ); // 8 args, 0 results
-				LUA->Release( L );
-			}
-
-			LUA->UnsetGlobal( "ThisGameCommand" );
-			this->AddChild( m_sprJudgmentFrame );
-		}
 	}
 
 	this->SortByDrawOrder();
@@ -371,6 +335,7 @@ void Player::Init(
 
 	{
 		LuaThreadVariable var( "Player", LuaReference::Create(m_pPlayerState->m_PlayerNumber) );
+		LuaThreadVariable var2( "MultiPlayer", LuaReference::Create(m_pPlayerState->m_mp) );
 		m_pJudgment.Load( THEME->GetPathG(sType,"judgment") );
 		m_pJudgment->SetName( "Judgment" );
 		ActorUtil::LoadAllCommandsAndOnCommand( m_pJudgment, sType );
@@ -608,17 +573,12 @@ void Player::Update( float fDeltaTime )
 		const Actor::TweenState &ts1 = m_tsJudgment[bReverse?1:0][0];
 		const Actor::TweenState &ts2 = m_tsJudgment[bReverse?1:0][1];
 		Actor::TweenState::MakeWeightedAverage( m_pJudgment->DestTweenState(), ts1, ts2, fPercentCentered );
-		if( m_sprJudgmentFrame.IsLoaded() )
-			Actor::TweenState::MakeWeightedAverage( m_sprJudgmentFrame->DestTweenState(), ts1, ts2, fPercentCentered );
 	}
-
 
 	float fNoteFieldZoom = 1 - fTinyPercent*0.5f;
 	if( m_pNoteField )
 		m_pNoteField->SetZoom( fNoteFieldZoom );
 	m_pJudgment->SetZoom( m_pJudgment->GetZoom() * fJudgmentZoom );
-	if( m_sprJudgmentFrame.IsLoaded() )
-		m_sprJudgmentFrame->SetZoom( m_sprJudgmentFrame->GetZoom() * fJudgmentZoom );
 
 	// If we're paused, don't update tap or hold note logic, so hold notes can be released
 	// during pause.
@@ -1070,8 +1030,6 @@ void Player::DrawTapJudgments()
 	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind > 0 )
 		return;
 
-	if( m_sprJudgmentFrame.IsLoaded() )
-		m_sprJudgmentFrame->Draw();
 	m_pJudgment->Draw();
 }
 
