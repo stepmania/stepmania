@@ -23,18 +23,25 @@ PercentageDisplay::PercentageDisplay()
 	m_Last = -1;
 	m_LastMax = -1;
 	m_iDancePointsDigits = 0;
+	m_bUseRemainder = false;
+	m_bApplyScoreDisplayOptions = false;
+	m_bAutoRefresh = false;
 	m_Format.SetFromExpression( "FormatPercentScore" );
 }
 
 void PercentageDisplay::LoadFromNode( const XNode* pNode )
 {
 	pNode->GetAttrValue( "DancePointsDigits", m_iDancePointsDigits );
-	pNode->GetAttrValue( "PercentUseRemainder", m_bUseRemainder );
 	pNode->GetAttrValue( "ApplyScoreDisplayOptions", m_bApplyScoreDisplayOptions );
 	pNode->GetAttrValue( "AutoRefresh", m_bAutoRefresh );
-	RString sStr = "FormatPercentScore";
-	pNode->GetAttrValue( "Format", sStr );
-	m_Format.SetFromExpression( sStr );
+	{
+		Lua *L = LUA->Get();
+		if( pNode->PushAttrValue(L, "Format") )
+			m_Format.SetFromStack( L );
+		else
+			lua_pop(L, 1);
+		LUA->Release(L);
+	}
 
 	const XNode *pChild = pNode->GetChild( "Percent" );
 	if( pChild == NULL )
@@ -42,11 +49,10 @@ void PercentageDisplay::LoadFromNode( const XNode* pNode )
 	m_textPercent.LoadFromNode( pChild );
 	this->AddChild( &m_textPercent );
 
-	if( !PREFSMAN->m_bDancePointsForOni && m_bUseRemainder )
+	pChild = pNode->GetChild( "PercentRemainder" );
+	if( !PREFSMAN->m_bDancePointsForOni && pChild != NULL )
 	{
-		const XNode *pChild = pNode->GetChild( "PercentRemainder" );
-		if( pChild == NULL )
-			RageException::Throw( "%s: ComboGraph: missing the node \"PercentRemainder\"", ActorUtil::GetWhere(pNode).c_str() );
+		m_bUseRemainder = true;
 		m_textPercentRemainder.LoadFromNode( pChild );
 		this->AddChild( &m_textPercentRemainder );
 	}
