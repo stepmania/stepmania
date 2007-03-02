@@ -257,15 +257,16 @@ void Player::Init(
 		{
 			for( int j=0; j<NUM_CENTERED; j++ )
 			{
-				LuaThreadVariable var1( "Player", LuaReference::Create(pPlayerState->m_PlayerNumber) );
-				LuaThreadVariable var2( "MultiPlayer", LuaReference::Create(pPlayerState->m_mp) );
-				LuaThreadVariable var3( "iEnabledPlayerIndex", LuaReference::Create(iEnabledPlayerIndex) );
-				LuaThreadVariable var4( "iNumEnabledPlayers", LuaReference::Create(iNumEnabledPlayers) );
-				LuaThreadVariable var5( "bPlayerUsingBothSides", LuaReference::Create(bPlayerUsingBothSides) );
-				LuaThreadVariable var6( "bReverse", LuaReference::Create(!!i) );
-				LuaThreadVariable var7( "bCentered", LuaReference::Create(!!j) );
+				Message msg( "Transform" );
+				msg.SetParam( "Player", pPlayerState->m_PlayerNumber );
+				msg.SetParam( "MultiPlayer", pPlayerState->m_mp );
+				msg.SetParam( "iEnabledPlayerIndex", iEnabledPlayerIndex );
+				msg.SetParam( "iNumEnabledPlayers", iNumEnabledPlayers );
+				msg.SetParam( "bPlayerUsingBothSides", bPlayerUsingBothSides );
+				msg.SetParam( "bReverse", !!i );
+				msg.SetParam( "bCentered", !!j );
 
-				temp.PlayCommand( "Transform" );
+				temp.HandleMessage( msg );
 				
 				m_tsJudgment[i][j] = temp.DestTweenState();
 			}
