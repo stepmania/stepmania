@@ -390,6 +390,10 @@ void ActorFrame::HandleMessage( const Message &msg )
 {
 	Actor::HandleMessage( msg );
 
+	/* Don't propagate broadcasts.  They'll receive it directly if they're subscribed. */
+	if( msg.IsBroadcast() )
+		return;
+
 	for( unsigned i=0; i<m_SubActors.size(); i++ ) 
 	{
 		Actor* pActor = m_SubActors[i];

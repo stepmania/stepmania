@@ -88,6 +88,9 @@ struct Message
 	~Message();
 	RString GetName() const { return m_sName; }
 
+	bool IsBroadcast() const { return m_bBroadcast; }
+	void SetBroadcast( bool b ) { m_bBroadcast = b; }
+
 	void PushParamTable( lua_State *L );
 	const LuaReference &GetParamTable() const;
 	void SetParamTable( const LuaReference &params );
@@ -120,6 +123,7 @@ struct Message
 private:
 	RString m_sName;
 	LuaTable *m_pParams;
+	bool m_bBroadcast;
 };
 
 class IMessageSubscriber
@@ -162,7 +166,7 @@ public:
 	void Subscribe( IMessageSubscriber* pSubscriber, MessageID m );
 	void Unsubscribe( IMessageSubscriber* pSubscriber, const RString& sMessage );
 	void Unsubscribe( IMessageSubscriber* pSubscriber, MessageID m );
-	void Broadcast( const Message &msg ) const;
+	void Broadcast( Message &msg ) const;
 	void Broadcast( const RString& sMessage ) const;
 	void Broadcast( MessageID m ) const;
 

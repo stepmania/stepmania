@@ -91,11 +91,13 @@ Message::Message( const RString &s )
 {
 	m_sName = s;
 	m_pParams = new LuaTable;
+	m_bBroadcast = false;
 }
 
 Message::Message( const RString &s, const LuaReference &params )
 {
 	m_sName = s;
+	m_bBroadcast = false;
 	Lua *L = LUA->Get();
 	m_pParams = new LuaTable; // XXX: creates an extra table
 	params.PushSelf( L );
@@ -187,8 +189,10 @@ void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, MessageID m )
 	Unsubscribe( pSubscriber, MessageIDToString(m) );
 }
 
-void MessageManager::Broadcast( const Message &msg ) const
+void MessageManager::Broadcast( Message &msg ) const
 {
+	msg.SetBroadcast(true);
+
 	LockMut(g_Mutex);
 
 	map<RString,SubscribersSet>::const_iterator iter = g_MessageToSubscribers.find( msg.GetName() );
@@ -205,7 +209,8 @@ void MessageManager::Broadcast( const Message &msg ) const
 void MessageManager::Broadcast( const RString& sMessage ) const
 {
 	ASSERT( !sMessage.empty() );
-	Broadcast( Message(sMessage) );
+	Message msg(sMessage);
+	Broadcast( msg );
 }
 
 void MessageManager::Broadcast( MessageID m ) const
