@@ -4,8 +4,8 @@ local player = Var "Player";
 local t = {
 	LoadActor("_judgments") .. {
 		Name="Judgment";
-		InitCommand=cmd(pause;x,0;y,0;visible,false);
-		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
+		InitCommand=cmd(pause;visible,false);
+		ResetCommand=cmd(finishtweening;x,0;y,0;stopeffect;visible,false);
 	};
 };
 
