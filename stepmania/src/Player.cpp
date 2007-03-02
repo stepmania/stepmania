@@ -286,6 +286,7 @@ void Player::Init(
 	m_pPrimaryScoreKeeper = pPrimaryScoreKeeper;
 	m_pSecondaryScoreKeeper = pSecondaryScoreKeeper;
 
+	m_iLastSeenCombo      = -1;
 	
 	// set initial life
 	if( m_pLifeMeter && m_pPlayerStageStats )
@@ -330,10 +331,10 @@ void Player::Init(
 		LuaThreadVariable var( "Player", LuaReference::Create(m_pPlayerState->m_PlayerNumber) );
 		LuaThreadVariable var2( "MultiPlayer", LuaReference::Create(m_pPlayerState->m_mp) );
 
-		m_Combo.SetName( "Combo" );
-		m_Combo.Load( THEME->GetPathG(sType,"combo"), m_pPlayerState, m_pPlayerStageStats );
+		m_Combo.Load( THEME->GetPathG(sType,"combo") );
+		m_Combo->SetName( "Combo" );
 		ActorUtil::LoadAllCommandsAndOnCommand( m_Combo, sType );
-		this->AddChild( &m_Combo );
+		this->AddChild( m_Combo );
 
 		m_pJudgment.Load( THEME->GetPathG(sType,"judgment") );
 		m_pJudgment->SetName( "Judgment" );
@@ -385,10 +386,9 @@ void Player::Load()
 	 * is reset and not tweening.  Perhaps ActorFrame should recurse to subactors;
 	 * then we could just this->StopTweening()? -glenn */
 	m_pJudgment->PlayCommand("Reset");
-//	m_Combo.Reset();				// don't reset combos between songs in a course!
 	if( m_pPlayerStageStats )
 	{
-		m_Combo.SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );	// combo can persist between songs and games
+		SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );	// combo can persist between songs and games
 	}
 	if( m_pAttackDisplay )
 		m_pAttackDisplay->Init( m_pPlayerState );
@@ -447,8 +447,8 @@ void Player::Load()
 
 	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetStage().GetReversePercentForColumn( 0 ) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==StyleType_OnePlayerTwoSides;
-	m_Combo.SetX( COMBO_X.GetValue(pn, bPlayerUsingBothSides) );
-	m_Combo.SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
+	m_Combo->SetX( COMBO_X.GetValue(pn, bPlayerUsingBothSides) );
+	m_Combo->SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
 	if( m_pAttackDisplay )
 		m_pAttackDisplay->SetX( ATTACK_DISPLAY_X.GetValue(pn, bPlayerUsingBothSides) - 40 );
 	// set this in Update //m_pAttackDisplay->SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
@@ -563,7 +563,7 @@ void Player::Update( float fDeltaTime )
 
 	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0) == 1;
 	float fPercentCentered = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_CENTERED];
-	m_Combo.SetY( 
+	m_Combo->SetY( 
 		bReverse ? 
 		COMBO_Y_REVERSE + fPercentCentered * COMBO_CENTERED_ADDY_REVERSE : 
 		COMBO_Y + fPercentCentered * COMBO_CENTERED_ADDY );
@@ -964,7 +964,7 @@ void Player::DrawPrimitives()
 
 	// Draw these below everything else.
 	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind == 0 )
-		m_Combo.Draw();
+		m_Combo->Draw();
 
 	if( m_pAttackDisplay )
 		m_pAttackDisplay->Draw();
@@ -2293,7 +2293,7 @@ void Player::HandleTapRowScore( unsigned row )
 
 	if( m_pPlayerStageStats )
 	{
-		m_Combo.SetCombo( iCurCombo, iCurMissCombo );
+		SetCombo( iCurCombo, iCurMissCombo );
 	}
 
 #define CROSSED( x ) (iOldCombo<x && iCurCombo>=x)
@@ -2400,7 +2400,7 @@ void Player::FadeToFail()
 		m_pNoteField->FadeToFail();
 
 	// clear miss combo
-	m_Combo.SetCombo( 0, 0 );
+	SetCombo( 0, 0 );
 }
 
 void Player::CacheAllUsedNoteSkins()
@@ -2447,6 +2447,45 @@ void Player::SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack )
 	msg.SetParam( "TapNoteScore", tns );
 	msg.SetParam( "HoldNoteScore", hns );
 	MESSAGEMAN->Broadcast( msg );
+}
+
+void Player::SetCombo( int iCombo, int iMisses )
+{
+	if( m_iLastSeenCombo == -1 )	// first update, don't set bIsMilestone=true
+		m_iLastSeenCombo = iCombo;
+
+	bool b100Milestone = false;
+	bool b1000Milestone = false;
+	for( int i=m_iLastSeenCombo+1; i<=iCombo; i++ )
+	{
+		if( i < 600 )
+			b100Milestone |= ((i % 100) == 0);
+		else
+			b1000Milestone |= ((i % 200) == 0);
+	}
+	m_iLastSeenCombo = iCombo;
+
+	if( b100Milestone )
+		this->PlayCommand( "100Milestone" );
+	if( b1000Milestone )
+		this->PlayCommand( "1000Milestone" );
+
+	// don't show a colored combo until 1/4 of the way through the song
+	bool bPastMidpoint = GAMESTATE->GetCourseSongIndex()>0 ||
+		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds/4;
+
+	Message msg("Combo");
+	if( iCombo )
+		msg.SetParam( "Combo", iCombo );
+	if( iMisses )
+		msg.SetParam( "Misses", iMisses );
+	if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W1) )
+		msg.SetParam( "FullComboW1", true );
+	if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W2) )
+		msg.SetParam( "FullComboW2", true );
+	if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W3) )
+		msg.SetParam( "FullComboW3", true );
+	this->HandleMessage( msg );
 }
 
 /*

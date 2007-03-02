@@ -5,7 +5,6 @@
 
 #include "ActorFrame.h"
 #include "HoldJudgment.h"
-#include "Combo.h"
 #include "NoteDataWithScoring.h"
 #include "RageSound.h"
 #include "AttackDisplay.h"
@@ -112,6 +111,7 @@ protected:
 
 	void SetJudgment( TapNoteScore tns, bool bEarly );
 	void SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack );
+	void SetCombo( int iCombo, int iMisses );
 
 	void ChangeLife( TapNoteScore tns );
 	void ChangeLife( HoldNoteScore hns, TapNoteScore tns );
@@ -144,8 +144,7 @@ protected:
 	vector<HoldJudgment*>	m_vHoldJudgment;
 
 	AutoActor		m_pJudgment;
-		
-	Combo			m_Combo;
+	AutoActor		m_Combo;
 
 	AttackDisplay		*m_pAttackDisplay;
 
@@ -162,6 +161,7 @@ protected:
 	int			m_iMineRowLastCrossed;
 	int			m_iRowLastJudged; // Everything up to and including this row has been judged.
 	int			m_iMineRowLastJudged;
+	int			m_iLastSeenCombo;
 	JudgedRows		*m_pJudgedRows;
 
 	RageSound		m_soundMine;
