@@ -327,15 +327,14 @@ void Player::Init(
 	m_soundAttackEnding.SetProperty( "Pan", fBalance );
 
 	{
+		LuaThreadVariable var( "Player", LuaReference::Create(m_pPlayerState->m_PlayerNumber) );
+		LuaThreadVariable var2( "MultiPlayer", LuaReference::Create(m_pPlayerState->m_mp) );
+
 		m_Combo.SetName( "Combo" );
 		m_Combo.Load( THEME->GetPathG(sType,"combo"), m_pPlayerState, m_pPlayerStageStats );
 		ActorUtil::LoadAllCommandsAndOnCommand( m_Combo, sType );
 		this->AddChild( &m_Combo );
-	}
 
-	{
-		LuaThreadVariable var( "Player", LuaReference::Create(m_pPlayerState->m_PlayerNumber) );
-		LuaThreadVariable var2( "MultiPlayer", LuaReference::Create(m_pPlayerState->m_mp) );
 		m_pJudgment.Load( THEME->GetPathG(sType,"judgment") );
 		m_pJudgment->SetName( "Judgment" );
 		ActorUtil::LoadAllCommandsAndOnCommand( m_pJudgment, sType );

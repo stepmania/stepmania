@@ -11,8 +11,6 @@ Combo::Combo()
 	m_iLastSeenCombo = -1;
 	m_pPlayerState = NULL;
 	m_pPlayerStageStats = NULL;
-
-	this->SubscribeToMessage( Message_BeatCrossed );
 }
 
 void Combo::Load( const RString &sPath, const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats )
@@ -22,7 +20,6 @@ void Combo::Load( const RString &sPath, const PlayerState *pPlayerState, const P
 	m_pPlayerState = pPlayerState;
 	m_pPlayerStageStats = pPlayerStageStats;
 
-	LuaThreadVariable var( "Player", LuaReference::Create(m_pPlayerState->m_PlayerNumber) );
 	m_sprComboLabel.Load( sPath );
 	this->AddChild( m_sprComboLabel );
 }
