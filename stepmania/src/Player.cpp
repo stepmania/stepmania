@@ -2094,7 +2094,6 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 	// m_iRowLastJudged and m_iMineRowLastJudged have already been judged.
 	const int iStartIndex = min( m_iRowLastJudged, m_iMineRowLastJudged ) + 1;
-	bool bMisses = false;
 	
 	NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( iStartIndex, iMissIfOlderThanThisIndex-1, Unjudged );
 	
@@ -2117,13 +2116,9 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		}
 		else
 		{
-			bMisses = true;
 			tn.result.tns = TNS_Miss;
 		}
 	}
-		
-	if( bMisses )
-		SetJudgment( TNS_Miss, false );
 }
 
 static bool MinesNotHidden( const TapNote &tn )
