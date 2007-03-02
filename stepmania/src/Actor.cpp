@@ -1302,6 +1302,7 @@ public:
 	static int play( T* p, lua_State *L )			{ p->EnableAnimation(true); return 0; }
 	static int pause( T* p, lua_State *L )			{ p->EnableAnimation(false); return 0; }
 	static int setstate( T* p, lua_State *L )		{ p->SetState(IArg(1)); return 0; }
+	static int GetNumStates( T* p, lua_State *L )		{ LuaHelpers::Push( L, p->GetNumStates() ); return 1; }
 	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(BIArg(1)); return 0; }
 	static int blend( T* p, lua_State *L )			{ p->SetBlendMode( Enum::Check<BlendMode>(L, 1) ); return 0; }
 	static int zbuffer( T* p, lua_State *L )		{ p->SetUseZBuffer(BIArg(1)); return 0; }
@@ -1497,6 +1498,7 @@ public:
 		ADD_METHOD( play );
 		ADD_METHOD( pause );
 		ADD_METHOD( setstate );
+		ADD_METHOD( GetNumStates );
 		ADD_METHOD( texturewrapping );
 		ADD_METHOD( blend );
 		ADD_METHOD( zbuffer );
