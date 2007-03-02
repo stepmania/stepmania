@@ -8,21 +8,21 @@ function FormatNumSongsPlayed( num )
 	return s
 end
 
-function JudgmentTransformCommand( self, pn, mp, iEnabledPlayerIndex, iNumEnabledPlayers, bUsingBothSides, bReverse, bCentered )
+function JudgmentTransformCommand( self, params )
 	local x = 0
 	local y = -30
-	if bReverse then y = y * -1 end
+	if params.bReverse then y = y * -1 end
 	-- This makes no sense and wasn't even being used due to misspelling.
 	-- if bCentered then y = y * 2 end
 	self:x( x )
 	self:y( y )
 end
 
-function JudgmentTransformSharedCommand( self, pn, mp, iEnabledPlayerIndex, iNumEnabledPlayers, bUsingBothSides, bReverse, bCentered )
+function JudgmentTransformSharedCommand( self, params )
 	local x = -120
 	local y = -30
-	if bReverse then y = 30 end
-	if pn == 1 then x = 120 end
+	if params.bReverse then y = 30 end
+	if params.Player == PLAYER_1 then x = 120 end
 	self:x( x )
 	self:y( y )
 end
