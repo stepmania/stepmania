@@ -145,8 +145,6 @@ protected:
 
 	AutoActor		m_pJudgment;
 	AutoActor		m_Combo;
-	Actor			*m_pActorWithJudgmentPosition;
-	Actor			*m_pActorWithComboPosition;
 
 	AttackDisplay		*m_pAttackDisplay;
 
