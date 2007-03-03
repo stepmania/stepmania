@@ -1913,7 +1913,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 
 	// These aren't affects by the above inserts very much.
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_MINES] )		NoteDataUtil::AddMines( nd, iStartIndex, iEndIndex );
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_ECHO]	)		NoteDataUtil::Echo( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_ECHO] )		NoteDataUtil::Echo( nd, iStartIndex, iEndIndex );
 
 	// Jump-adding transforms aren't much affected by additional taps.
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_WIDE] )		NoteDataUtil::Wide( nd, iStartIndex, iEndIndex );
@@ -1928,10 +1928,10 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 
 	// Apply turns and shuffles last so that they affect inserts.
 	if( po.m_bTurns[PlayerOptions::TURN_MIRROR] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::mirror, iStartIndex, iEndIndex );
-	if( po.m_bTurns[PlayerOptions::TURN_LEFT] )				NoteDataUtil::Turn( nd, st, NoteDataUtil::left, iStartIndex, iEndIndex );
+	if( po.m_bTurns[PlayerOptions::TURN_LEFT] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::left, iStartIndex, iEndIndex );
 	if( po.m_bTurns[PlayerOptions::TURN_RIGHT] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::right, iStartIndex, iEndIndex );
 	if( po.m_bTurns[PlayerOptions::TURN_SHUFFLE] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::shuffle, iStartIndex, iEndIndex );
-	if( po.m_bTurns[PlayerOptions::TURN_SUPER_SHUFFLE] )	NoteDataUtil::Turn( nd, st, NoteDataUtil::super_shuffle, iStartIndex, iEndIndex );
+	if( po.m_bTurns[PlayerOptions::TURN_SUPER_SHUFFLE] )		NoteDataUtil::Turn( nd, st, NoteDataUtil::super_shuffle, iStartIndex, iEndIndex );
 }
 
 void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
