@@ -28,7 +28,6 @@ class Player;
 class LifeMeter;
 class ScoreDisplay;
 class DifficultyIcon;
-class DifficultyMeter;
 class Inventory;
 class ScoreKeeper;
 class Background;
@@ -97,7 +96,6 @@ public:
 	Inventory		*m_pInventory;
 	
 	DifficultyIcon		*m_pDifficultyIcon;
-	DifficultyMeter		*m_pDifficultyMeter;
 
 	AutoActor		m_sprOniGameOver;
 };

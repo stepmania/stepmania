@@ -114,7 +114,6 @@ PlayerInfo::PlayerInfo()
 	m_pPlayer = NULL;
 	m_pInventory = NULL;
 	m_pDifficultyIcon = NULL;
-	m_pDifficultyMeter = NULL;
 }
 
 void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
@@ -182,7 +181,6 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 	m_pPlayer = new Player( m_NoteData, bShowNoteField );
 	m_pInventory = NULL;
 	m_pDifficultyIcon = NULL;
-	m_pDifficultyMeter = NULL;
 
 	if( IsMultiPlayer() )
 	{
@@ -216,7 +214,6 @@ PlayerInfo::~PlayerInfo()
 	SAFE_DELETE( m_pPlayer );
 	SAFE_DELETE( m_pInventory );
 	SAFE_DELETE( m_pDifficultyIcon );
-	SAFE_DELETE( m_pDifficultyMeter );
 }
 
 void PlayerInfo::ShowOniGameOver()
@@ -653,13 +650,6 @@ void ScreenGameplay::Init()
 		/* Position it in LoadNextSong. */
 		this->AddChild( pi->m_pDifficultyIcon );
 
-		ASSERT( pi->m_pDifficultyMeter == NULL );
-		pi->m_pDifficultyMeter = new DifficultyMeter;
-		pi->m_pDifficultyMeter->Load( m_sName + ssprintf(" DifficultyMeter%s",pi->GetName().c_str()) );
-		ActorUtil::LoadAllCommands( *pi->m_pDifficultyMeter, m_sName );
-		/* Position it in LoadNextSong. */
-		this->AddChild( pi->m_pDifficultyMeter );
-
 //		switch( GAMESTATE->m_PlayMode )
 //		{
 //		case PLAY_MODE_BATTLE:
@@ -1077,12 +1067,6 @@ void ScreenGameplay::LoadNextSong()
 		if( pi->m_pDifficultyIcon )
 			pi->m_pDifficultyIcon->SetFromSteps( pi->GetStepsAndTrailIndex(), pSteps );
 
-		if( pi->m_pDifficultyMeter )
-		{
-			pi->m_pDifficultyMeter->SetName( m_sName + ssprintf(" DifficultyMeter%s",pi->GetName().c_str()) );
-			pi->m_pDifficultyMeter->SetFromSteps( pSteps );
-		}
-
 		/* The actual note data for scoring is the base class of Player.  This includes
 		 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */
 		if( pi->m_pPrimaryScoreKeeper )
@@ -1132,12 +1116,6 @@ void ScreenGameplay::LoadNextSong()
 		{
 			pi->m_pDifficultyIcon->SetName( ssprintf("Difficulty%s%s",pi->GetName().c_str(),bReverse?"Reverse":"") );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pDifficultyIcon );
-		}
-
-		if( pi->m_pDifficultyMeter )
-		{
-			pi->m_pDifficultyMeter->SetName( ssprintf("DifficultyMeter%s%s",pi->GetName().c_str(),bReverse?"Reverse":"") );
-			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pDifficultyMeter );
 		}
 	}
 
