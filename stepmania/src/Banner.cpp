@@ -14,7 +14,7 @@
 REGISTER_ACTOR_CLASS( Banner )
 
 ThemeMetric<bool> SCROLL_RANDOM		("Banner","ScrollRandom");
-ThemeMetric<bool> SCROLL_ROULETTE		("Banner","ScrollRoulette");
+ThemeMetric<bool> SCROLL_ROULETTE	("Banner","ScrollRoulette");
 
 Banner::Banner()
 {
