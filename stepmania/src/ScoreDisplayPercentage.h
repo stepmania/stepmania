@@ -14,7 +14,7 @@ public:
 	void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
 private:
-	AutoActor			m_sprFrame;
+	AutoActor		m_sprFrame;
 	PercentageDisplay	m_Percent;
 };
 
