@@ -332,13 +332,15 @@ void Player::Init(
 
 		m_Combo.Load( THEME->GetPathG(sType,"combo") );
 		m_Combo->SetName( "Combo" );
-		ActorUtil::LoadAllCommandsAndOnCommand( m_Combo, sType );
+		m_pActorWithJudgmentPosition = &*m_pJudgment;
 		this->AddChild( m_Combo );
+		m_Combo->PlayCommand( "On" );
 
 		m_pJudgment.Load( THEME->GetPathG(sType,"judgment") );
 		m_pJudgment->SetName( "Judgment" );
-		ActorUtil::LoadAllCommandsAndOnCommand( m_pJudgment, sType );
+		m_pActorWithComboPosition = &*m_Combo;
 		this->AddChild( m_pJudgment );
+		m_pJudgment->PlayCommand( "On" );
 	}
 
 	// Load HoldJudgments
@@ -560,16 +562,18 @@ void Player::Update( float fDeltaTime )
 	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0) == 1;
 	float fPercentCentered = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_CENTERED];
 
+	if( m_pActorWithJudgmentPosition != NULL )
 	{
 		const Actor::TweenState &ts1 = m_tsJudgment[bReverse?1:0][0];
 		const Actor::TweenState &ts2 = m_tsJudgment[bReverse?1:0][1];
-		Actor::TweenState::MakeWeightedAverage( m_pJudgment->DestTweenState(), ts1, ts2, fPercentCentered );
+		Actor::TweenState::MakeWeightedAverage( m_pActorWithJudgmentPosition->DestTweenState(), ts1, ts2, fPercentCentered );
 	}
 
+	if( m_pActorWithComboPosition != NULL )
 	{
 		const Actor::TweenState &ts1 = m_tsCombo[bReverse?1:0][0];
 		const Actor::TweenState &ts2 = m_tsCombo[bReverse?1:0][1];
-		Actor::TweenState::MakeWeightedAverage( m_Combo->DestTweenState(), ts1, ts2, fPercentCentered );
+		Actor::TweenState::MakeWeightedAverage( m_pActorWithComboPosition->DestTweenState(), ts1, ts2, fPercentCentered );
 	}
 
 	float fNoteFieldZoom = 1 - fTinyPercent*0.5f;
@@ -2246,7 +2250,7 @@ void Player::RandomizeNotes( int iNoteRow )
 
 void Player::HandleTapRowScore( unsigned row )
 {
-	bool bNoCheating = true;
+	bool bNoCheating = 0;//true;
 #ifdef DEBUG
 	bNoCheating = false;
 #endif
@@ -2355,7 +2359,7 @@ void Player::HandleHoldScore( const TapNote &tn )
 {
 	HoldNoteScore holdScore = tn.HoldResult.hns;
 	TapNoteScore tapScore = tn.result.tns;
-	bool NoCheating = true;
+	bool NoCheating = 0;//true;
 #ifdef DEBUG
 	NoCheating = false;
 #endif
@@ -2485,6 +2489,25 @@ void Player::SetCombo( int iCombo, int iMisses )
 		msg.SetParam( "FullComboW3", true );
 	this->HandleMessage( msg );
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaPlayer: public Luna<Player>
+{
+public:
+	static int SetActorWithJudgmentPosition( T* p, lua_State *L )	{ Actor *pActor = Luna<Actor>::check(L, 1); p->SetActorWithJudgmentPosition(pActor); return 0; }
+	static int SetActorWithComboPosition( T* p, lua_State *L )	{ Actor *pActor = Luna<Actor>::check(L, 1); p->SetActorWithComboPosition(pActor); return 0; }
+
+	LunaPlayer()
+	{
+		ADD_METHOD( SetActorWithJudgmentPosition );
+		ADD_METHOD( SetActorWithComboPosition );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( Player, ActorFrame )
+// lua end
 
 /*
  * (c) 2001-2006 Chris Danford, Steve Checkoway

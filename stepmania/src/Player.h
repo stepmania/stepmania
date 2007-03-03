@@ -99,6 +99,14 @@ public:
 	const NoteData &GetNoteData() const { return m_NoteData; }
 	bool HasNoteField() const { return m_pNoteField != NULL; }
 
+	void SetActorWithJudgmentPosition( Actor *pActor ) { m_pActorWithJudgmentPosition = pActor; }
+	void SetActorWithComboPosition( Actor *pActor ) { m_pActorWithComboPosition = pActor; }
+
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void UpdateJudgedRows();
@@ -145,6 +153,8 @@ protected:
 
 	AutoActor		m_pJudgment;
 	AutoActor		m_Combo;
+	Actor			*m_pActorWithJudgmentPosition;
+	Actor			*m_pActorWithComboPosition;
 
 	AttackDisplay		*m_pAttackDisplay;
 
