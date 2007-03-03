@@ -678,11 +678,12 @@ void ScreenGameplay::Init()
 		this->AddChild( pi->m_pActiveAttackList );
 	}
 
-
-
-
 	if( g_bShowLyrics )
+	{
+		m_LyricDisplay.SetName( "Lyrics" );
+		LOAD_ALL_COMMANDS( m_LyricDisplay );
 		this->AddChild( &m_LyricDisplay );
+	}
 
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
@@ -1116,11 +1117,7 @@ void ScreenGameplay::LoadNextSong()
 			pi->m_pDifficultyIcon->PlayCommand( bReverse? "SetReverse":"SetNoReverse" );
 	}
 
-
-	/* XXX: We want to put the lyrics out of the way, but it's likely that one
-	 * player is in reverse and the other isn't.  What to do? */
-	m_LyricDisplay.SetName( ssprintf( "Lyrics%s", bAllReverse? "Reverse": (bAtLeastOneReverse? "OneReverse": "")) );
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_LyricDisplay );
+	m_LyricDisplay.PlayCommand( bAllReverse? "SetReverse": bAtLeastOneReverse? "SetOneReverse": "SetNoReverse" );
 
 	m_SongFinished.Reset();
 
