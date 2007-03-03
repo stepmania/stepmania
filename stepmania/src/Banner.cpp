@@ -56,10 +56,10 @@ void Banner::Update( float fDeltaTime )
  
 		float fTexCoords[8] = 
 		{
-			0+m_fPercentScrolling, pTextureRect->top,		// top left
+			0+m_fPercentScrolling, pTextureRect->top,	// top left
 			0+m_fPercentScrolling, pTextureRect->bottom,	// bottom left
 			1+m_fPercentScrolling, pTextureRect->bottom,	// bottom right
-			1+m_fPercentScrolling, pTextureRect->top,		// top right
+			1+m_fPercentScrolling, pTextureRect->top,	// top right
 		};
 		Sprite::SetCustomTextureCoords( fTexCoords );
 	}
@@ -76,9 +76,9 @@ void Banner::SetScrolling( bool bScroll, float Percent)
 
 void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
-	if( pSong == NULL )					LoadFallback();
-	else if( pSong->HasBanner() )		Load( pSong->GetBannerPath() );
-	else								LoadFallback();
+	if( pSong == NULL )				LoadFallback();
+	else if( pSong->HasBanner() )			Load( pSong->GetBannerPath() );
+	else						LoadFallback();
 
 	m_bScrolling = false;
 }
