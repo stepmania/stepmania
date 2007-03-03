@@ -9,7 +9,6 @@
 #include "GradeDisplay.h"
 #include "Banner.h"
 #include "DifficultyIcon.h"
-#include "DifficultyMeter.h"
 #include "PercentageDisplay.h"
 #include "ActorUtil.h"
 #include "RageSound.h"
@@ -61,7 +60,6 @@ protected:
 	Banner			m_LargeBanner;
 	AutoActor		m_sprLargeBannerFrame;
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
-	DifficultyMeter		m_DifficultyMeter[NUM_PLAYERS];
 	BitmapText		m_textPlayerOptions[NUM_PLAYERS];
 	Banner			m_SmallBanner[MAX_SONGS_TO_SHOW];
 	AutoActor		m_sprSmallBannerFrame[MAX_SONGS_TO_SHOW];
