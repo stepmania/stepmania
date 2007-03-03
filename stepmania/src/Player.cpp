@@ -96,7 +96,6 @@ public:
 };
 
 
-RString COMBO_X_NAME( size_t p, size_t both_sides )		{ return "ComboXOffset" + (both_sides ? RString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides )	{ return "AttackDisplayXOffset" + (both_sides ? RString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 
 /* Distance to search for a note in Step(), in seconds. */
@@ -199,11 +198,6 @@ void Player::Init(
 {
 	GRAY_ARROWS_Y_STANDARD.Load(			sType, "ReceptorArrowsYStandard" );
 	GRAY_ARROWS_Y_REVERSE.Load(			sType, "ReceptorArrowsYReverse" );
-	COMBO_X.Load(					sType, COMBO_X_NAME, NUM_PLAYERS, 2 );
-	COMBO_Y.Load(					sType, "ComboY" );
-	COMBO_Y_REVERSE.Load(				sType, "ComboYReverse" );
-	COMBO_CENTERED_ADDY.Load(			sType, "ComboCenteredAddY" );
-	COMBO_CENTERED_ADDY_REVERSE.Load(		sType, "ComboCenteredAddYReverse" );
 	ATTACK_DISPLAY_X.Load(				sType, ATTACK_DISPLAY_X_NAME, NUM_PLAYERS, 2 );
 	ATTACK_DISPLAY_Y.Load(				sType, "AttackDisplayY" );
 	ATTACK_DISPLAY_Y_REVERSE.Load(			sType, "AttackDisplayYReverse" );
@@ -222,9 +216,13 @@ void Player::Init(
 		LuaReference expr = THEME->GetMetricR( sType,"JudgmentTransformCommand" );
 
 		bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==StyleType_OnePlayerTwoSides;
-		Actor temp;
-		temp.SetName( "Judgment" );
-		ActorUtil::LoadCommand( temp, sType, "Transform" );
+		Actor TempJudgment;
+		TempJudgment.SetName( "Judgment" );
+		ActorUtil::LoadCommand( TempJudgment, sType, "Transform" );
+
+		Actor TempCombo;
+		TempCombo.SetName( "Combo" );
+		ActorUtil::LoadCommand( TempCombo, sType, "Transform" );
 
 		int iEnabledPlayerIndex = -1;
 		int iNumEnabledPlayers = 0;
@@ -266,9 +264,11 @@ void Player::Init(
 				msg.SetParam( "bReverse", !!i );
 				msg.SetParam( "bCentered", !!j );
 
-				temp.HandleMessage( msg );
-				
-				m_tsJudgment[i][j] = temp.DestTweenState();
+				TempJudgment.HandleMessage( msg );
+				m_tsJudgment[i][j] = TempJudgment.DestTweenState();
+
+				TempCombo.HandleMessage( msg );
+				m_tsCombo[i][j] = TempCombo.DestTweenState();
 			}
 		}
 	}
@@ -444,10 +444,7 @@ void Player::Load()
 		m_pNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
 	}
 
-	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetStage().GetReversePercentForColumn( 0 ) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==StyleType_OnePlayerTwoSides;
-	m_Combo->SetX( COMBO_X.GetValue(pn, bPlayerUsingBothSides) );
-	m_Combo->SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
 	if( m_pAttackDisplay )
 		m_pAttackDisplay->SetX( ATTACK_DISPLAY_X.GetValue(pn, bPlayerUsingBothSides) - 40 );
 	// set this in Update //m_pAttackDisplay->SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
@@ -562,15 +559,17 @@ void Player::Update( float fDeltaTime )
 
 	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0) == 1;
 	float fPercentCentered = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_CENTERED];
-	m_Combo->SetY( 
-		bReverse ? 
-		COMBO_Y_REVERSE + fPercentCentered * COMBO_CENTERED_ADDY_REVERSE : 
-		COMBO_Y + fPercentCentered * COMBO_CENTERED_ADDY );
 
 	{
 		const Actor::TweenState &ts1 = m_tsJudgment[bReverse?1:0][0];
 		const Actor::TweenState &ts2 = m_tsJudgment[bReverse?1:0][1];
 		Actor::TweenState::MakeWeightedAverage( m_pJudgment->DestTweenState(), ts1, ts2, fPercentCentered );
+	}
+
+	{
+		const Actor::TweenState &ts1 = m_tsCombo[bReverse?1:0][0];
+		const Actor::TweenState &ts2 = m_tsCombo[bReverse?1:0][1];
+		Actor::TweenState::MakeWeightedAverage( m_Combo->DestTweenState(), ts1, ts2, fPercentCentered );
 	}
 
 	float fNoteFieldZoom = 1 - fTinyPercent*0.5f;

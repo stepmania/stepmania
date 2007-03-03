@@ -145,6 +145,8 @@ protected:
 
 	AutoActor		m_pJudgment;
 	AutoActor		m_Combo;
+	Actor			*m_pActorWithJudgmentPosition;
+	Actor			*m_pActorWithComboPosition;
 
 	AttackDisplay		*m_pAttackDisplay;
 
@@ -176,11 +178,6 @@ protected:
 
 	ThemeMetric<float>	GRAY_ARROWS_Y_STANDARD;
 	ThemeMetric<float>	GRAY_ARROWS_Y_REVERSE;
-	ThemeMetric2D<float>	COMBO_X;
-	ThemeMetric<float>	COMBO_Y;
-	ThemeMetric<float>	COMBO_Y_REVERSE;
-	ThemeMetric<float>	COMBO_CENTERED_ADDY;
-	ThemeMetric<float>	COMBO_CENTERED_ADDY_REVERSE;
 	ThemeMetric2D<float>	ATTACK_DISPLAY_X;
 	ThemeMetric<float>	ATTACK_DISPLAY_Y;
 	ThemeMetric<float>	ATTACK_DISPLAY_Y_REVERSE;
@@ -195,6 +192,7 @@ protected:
 #define NUM_REVERSE 2
 #define NUM_CENTERED 2
 	TweenState		m_tsJudgment[NUM_REVERSE][NUM_CENTERED];
+	TweenState		m_tsCombo[NUM_REVERSE][NUM_CENTERED];
 };
 
 class PlayerPlus
