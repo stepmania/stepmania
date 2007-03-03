@@ -646,8 +646,8 @@ void ScreenGameplay::Init()
 		ASSERT( pi->m_pDifficultyIcon == NULL );
 		pi->m_pDifficultyIcon = new DifficultyIcon;
 		pi->m_pDifficultyIcon->Load( THEME->GetPathG(m_sName,ssprintf("difficulty icons %dx%d",NUM_PLAYERS,NUM_Difficulty)) );
-		ActorUtil::LoadAllCommands( *pi->m_pDifficultyIcon, m_sName );
-		/* Position it in LoadNextSong. */
+		pi->m_pDifficultyIcon->SetName( ssprintf("Difficulty%s",pi->GetName().c_str()) );
+		LOAD_ALL_COMMANDS( pi->m_pDifficultyIcon );
 		this->AddChild( pi->m_pDifficultyIcon );
 
 //		switch( GAMESTATE->m_PlayMode )
@@ -1113,10 +1113,7 @@ void ScreenGameplay::LoadNextSong()
 		bool bReverse = pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1;
 
 		if( pi->m_pDifficultyIcon )
-		{
-			pi->m_pDifficultyIcon->SetName( ssprintf("Difficulty%s%s",pi->GetName().c_str(),bReverse?"Reverse":"") );
-			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pDifficultyIcon );
-		}
+			pi->m_pDifficultyIcon->PlayCommand( bReverse? "SetReverse":"SetNoReverse" );
 	}
 
 
