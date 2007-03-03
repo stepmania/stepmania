@@ -3,6 +3,7 @@
 #include "Quad.h"
 #include "BitmapText.h"
 #include "ScreenMessage.h"
+#include "DifficultyIcon.h"
 
 class ScreenNetEvaluation: public ScreenEvaluation
 {
@@ -20,6 +21,7 @@ protected:
 	void UpdateStats( );
 private:
 	Quad			m_rectUsersBG;
+	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 
 	vector<BitmapText>		m_textUsers;
 	int				m_iCurrentPlayer;

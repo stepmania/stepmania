@@ -313,16 +313,6 @@ void ScreenEvaluation::Init()
 		{
 			FOREACH_EnabledPlayer( p )
 			{
-				m_DifficultyIcon[p].Load( THEME->GetPathG(m_sName,"difficulty icons") );
-				if( GAMESTATE->IsCourseMode() )
-					m_DifficultyIcon[p].SetFromTrail( p, GAMESTATE->m_pCurTrail[p] );
-				else
-					m_DifficultyIcon[p].SetFromSteps( p, GAMESTATE->m_pCurSteps[p] );
-				m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
-				ActorUtil::LoadAllCommands( m_DifficultyIcon[p], m_sName );
-				SET_XY( m_DifficultyIcon[p] );
-				this->AddChild( &m_DifficultyIcon[p] );
-				
 				m_textPlayerOptions[p].LoadFromFont( THEME->GetPathF(m_sName,"PlayerOptions") );
 				m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
 				ActorUtil::LoadAllCommands( m_textPlayerOptions[p], m_sName );
