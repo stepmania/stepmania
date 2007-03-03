@@ -101,6 +101,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 		m_textPercentRemainder.SetName( "PercentRemainder" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
 		m_textPercentRemainder.LoadFromFont( THEME->GetPathF(sMetricsGroup,"remainder") );
 		ActorUtil::SetXY( m_textPercentRemainder, sMetricsGroup );
+		ActorUtil::LoadAllCommands( m_textPercentRemainder, sMetricsGroup );
 		ASSERT( m_textPercentRemainder.HasCommand("Off") );
 		m_textPercentRemainder.SetText( "456" );
 		this->AddChild( &m_textPercentRemainder );
