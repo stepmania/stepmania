@@ -147,7 +147,7 @@ void ScreenSelectMusic::Init()
 	COMMAND( m_sprCDTitleBack, "Back" );
 	this->AddChild( &m_sprCDTitleBack );
 
-	FOREACH_HumanPlayer( p )
+	FOREACH_ENUM( PlayerNumber, p )
 	{
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
 		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("score frame p%d",p+1)) );
@@ -286,6 +286,18 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 void ScreenSelectMusic::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
+
+
+	if( input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
+	{
+
+		int iSel = 0;
+		m_iSelection[input.pn] = iSel;
+		SwitchToPreferredDifficulty();
+		return;	// don't handle this press again below
+	}
+
+
 
 	// temp Chris debug
 	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F8 )
@@ -432,7 +444,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			
 			bool bLeftIsDown = false;
 			bool bRightIsDown = false;
-			FOREACH_EnabledPlayer( p )
+			FOREACH_HumanPlayer( p )
 			{
 				bLeftIsDown |= INPUTMAPPER->IsBeingPressed( m_GameButtonPreviousSong, p );
 				bRightIsDown |= INPUTMAPPER->IsBeingPressed( m_GameButtonNextSong, p );
@@ -540,7 +552,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 void ScreenSelectMusic::UpdateSelectButton()
 {
 	bool bSelectIsDown = false;
-	FOREACH_EnabledPlayer( pn )
+	FOREACH_HumanPlayer( pn )
 		bSelectIsDown |= INPUTMAPPER->IsBeingPressed( MENU_BUTTON_SELECT, pn );
 	if( !SELECT_MENU_AVAILABLE )
 		bSelectIsDown = false;
@@ -590,7 +602,7 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 	}
 
 	vector<PlayerNumber> vpns;
-	FOREACH_HumanPlayer( p )
+	FOREACH_ENUM( PlayerNumber,  p )
 	{
 		if( pn == p || GAMESTATE->DifficultiesLocked() )
 		{

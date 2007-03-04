@@ -27,6 +27,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual bool AllowLateJoin() const { return true; }
 
 	virtual void MenuStart( const InputEventPlus &input );
 	virtual void MenuBack( const InputEventPlus &input );

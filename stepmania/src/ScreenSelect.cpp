@@ -134,7 +134,7 @@ void ScreenSelect::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenSelect::Input()" );
 
-	/* Reset the demonstration timer when a key is pressed. */
+	/* Reset the announcer timers when a key is pressed. */
 	m_timerIdleComment.GetDeltaTime();
 	m_timerIdleTimeout.GetDeltaTime();
 

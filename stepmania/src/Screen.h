@@ -55,6 +55,7 @@ public:
 
 	virtual ScreenType GetScreenType() const { return ALLOW_OPERATOR_MENU_BUTTON ? game_menu : system_menu; }
 	bool AllowOperatorMenuButton() const { return ALLOW_OPERATOR_MENU_BUTTON; }
+	virtual bool AllowLateJoin() const { return false; }
 
 	//
 	// Lua

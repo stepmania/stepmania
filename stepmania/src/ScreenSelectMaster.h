@@ -38,6 +38,7 @@ public:
 	virtual void TweenOffScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual bool AllowLateJoin() const { return true; }
 
 protected:
 	enum Page { PAGE_1, PAGE_2, NUM_PAGES };	// on PAGE_2, cursors are locked together

@@ -35,6 +35,8 @@
 #include "Style.h"
 #include "ThemeManager.h"
 #include "UnlockManager.h"
+#include "ScreenManager.h"
+#include "Screen.h"
 
 #include <ctime>
 #include <set>
@@ -76,6 +78,7 @@ struct GameStateImpl
 };
 static GameStateImpl *g_pImpl = NULL;
 
+ThemeMetric<bool> ALLOW_LATE_JOIN("GameState","AllowLateJoin");
 ThemeMetric<bool> USE_NAME_BLACKLIST("GameState","UseNameBlacklist");
 
 ThemeMetric<RString> DEFAULT_SORT	("GameState","DefaultSort");
@@ -317,9 +320,6 @@ void GameState::Reset()
 void GameState::JoinPlayer( PlayerNumber pn )
 {
 	m_bSideIsJoined[pn] = true;
-	Message msg( MessageIDToString(Message_PlayerJoined) );
-	msg.SetParam( "Player", pn );
-	MESSAGEMAN->Broadcast( msg );
 
 	if( m_MasterPlayerNumber == PLAYER_INVALID )
 		m_MasterPlayerNumber = pn;
@@ -327,6 +327,17 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	// if first player to join, set start time
 	if( GetNumSidesJoined() == 1 )
 		BeginGame();
+
+	// Set the current style to something appropriate for the new number of joined players.
+	if( ALLOW_LATE_JOIN  &&  GAMESTATE->m_pCurStyle != NULL )
+	{
+		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), m_pCurStyle->m_StepsType );
+		GAMESTATE->m_pCurStyle.Set( pStyle );
+	}
+
+	Message msg( MessageIDToString(Message_PlayerJoined) );
+	msg.SetParam( "Player", pn );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 /* Handle an input that can join a player.  Return true if the player joined. */
@@ -906,7 +917,14 @@ RString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 
 bool GameState::PlayersCanJoin() const
 {
-	return GetNumSidesJoined() == 0 || GetCurrentStyle() == NULL;	// selecting a style finalizes the players
+	bool b = GetNumSidesJoined() == 0 || GetCurrentStyle() == NULL;	// selecting a style finalizes the players
+	if( ALLOW_LATE_JOIN.IsLoaded()  &&  ALLOW_LATE_JOIN )
+	{
+		Screen *pScreen = SCREENMAN->GetTopScreen();
+		if( pScreen )
+			b |= pScreen->AllowLateJoin();
+	}
+	return b;
 }
 
 int GameState::GetNumSidesJoined() const
