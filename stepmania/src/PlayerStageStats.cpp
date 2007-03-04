@@ -638,6 +638,9 @@ public:
 	DEFINE_METHOD( MaxCombo,			GetMaxCombo().m_cnt )
 	DEFINE_METHOD( GetCurrentLife,			GetCurrentLife() )
 	DEFINE_METHOD( GetGrade,			GetGrade() )
+	DEFINE_METHOD( GetActualDancePoints,		m_iActualDancePoints )
+	DEFINE_METHOD( GetPossibleDancePoints,		m_iPossibleDancePoints )
+	DEFINE_METHOD( GetPercentDancePoints,		GetPercentDancePoints() )
 	DEFINE_METHOD( GetLessonScoreActual,		GetLessonScoreActual() )
 	DEFINE_METHOD( GetLessonScoreNeeded,		GetLessonScoreNeeded() )
 	DEFINE_METHOD( GetPersonalHighScoreIndex,	m_iPersonalHighScoreIndex )
@@ -659,6 +662,9 @@ public:
 		ADD_METHOD( MaxCombo );
 		ADD_METHOD( GetCurrentLife );
 		ADD_METHOD( GetGrade );
+		ADD_METHOD( GetActualDancePoints );
+		ADD_METHOD( GetPossibleDancePoints );
+		ADD_METHOD( GetPercentDancePoints );
 		ADD_METHOD( GetLessonScoreActual );
 		ADD_METHOD( GetLessonScoreNeeded );
 		ADD_METHOD( GetPersonalHighScoreIndex );
