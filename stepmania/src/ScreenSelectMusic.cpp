@@ -104,6 +104,13 @@ void ScreenSelectMusic::Init()
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","mode")) );
 	}
 
+	if( CommonMetrics::ALL_STEPS_TYPES_IN_ONE_LIST )
+	{
+		vector<StepsType> vst;
+		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
+		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
+		GAMESTATE->m_pCurStyle.Set( pStyle );
+	}
 	if( GAMESTATE->GetCurrentStyle() == NULL )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
 
