@@ -28,6 +28,18 @@ function Sprite:rate( f )
 	self:GetTexture():rate( f );
 end
 
+function Sprite.LinearFrames(NumFrames, Seconds)
+	local Frames = {};
+	for i = 0,NumFrames-1 do
+		Frames[#Frames+1] = {
+			Frame = i;
+			Delay = (1/NumFrames)*Seconds;
+		};
+	end
+
+	return Frames;
+end
+
 -- (c) 2005 Glenn Maynard
 -- All rights reserved.
 -- 
