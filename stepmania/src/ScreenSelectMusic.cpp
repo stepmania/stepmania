@@ -297,10 +297,19 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	if( input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
 	{
-
 		int iSel = 0;
-		m_iSelection[input.pn] = iSel;
-		SwitchToPreferredDifficulty();
+		PlayerNumber pn = input.pn;
+		m_iSelection[pn] = iSel;
+		if( GAMESTATE->IsCourseMode() )
+		{
+			Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
+			GAMESTATE->m_pCurTrail[pn].Set( pTrail );
+		}
+		else
+		{
+			Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
+			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
+		}
 		return;	// don't handle this press again below
 	}
 
@@ -326,13 +335,19 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 					switch( input.MenuI )
 					{
 					case GAME_BUTTON_SELECT:
-						this->PlayCommand( ssprintf("OptionsClosedP%i", pn+1) );
-						m_OptionsList[pn].Close();
+						{
+							Message msg("OptionsClosed");
+							msg.SetParam( "Player", pn );
+							MESSAGEMAN->Broadcast( msg );
+							m_OptionsList[pn].Close();
+						}
 						break;
 					case GAME_BUTTON_START:
 						if( m_OptionsList[pn].Start() )
 						{
-							this->PlayCommand( ssprintf("OptionsClosedP%i", pn+1) );
+							Message msg("OptionsClosed");
+							msg.SetParam( "Player", pn );
+							MESSAGEMAN->Broadcast( msg );
 							m_OptionsList[pn].Close();
 						}
 						break;
@@ -347,7 +362,9 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			{
 				if( input.type == IET_FIRST_PRESS  &&  input.MenuI == GAME_BUTTON_SELECT )
 				{
-					this->PlayCommand( ssprintf("OptionsOpenedP%i", pn+1) );
+					Message msg("OptionsOpened");
+					msg.SetParam( "Player", pn );
+					MESSAGEMAN->Broadcast( msg );
 					m_OptionsList[pn].Open();
 					return;
 				}
