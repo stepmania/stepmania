@@ -454,6 +454,7 @@ class LunaNoteSkinManager: public Luna<NoteSkinManager>
 public:
 	static int GetPath( T* p, lua_State *L )		{ lua_pushstring(L, p->GetPath(SArg(1),SArg(2)) ); return 1; }
 	static int GetMetricA( T* p, lua_State *L )		{ p->GetMetricA(SArg(1),SArg(2))->PushSelf(L); return 1; }
+	static int GetMetricF( T* p, lua_State *L )		{ float f = p->GetMetricF(SArg(1),SArg(2)); LuaHelpers::Push(L, f); return 1; }
 	static int LoadActor( T* p, lua_State *L )
 	{
 		RString sButton = SArg(1);
@@ -468,6 +469,7 @@ public:
 	{
 		ADD_METHOD( GetPath );
 		ADD_METHOD( GetMetricA );
+		ADD_METHOD( GetMetricF );
 		ADD_METHOD( LoadActor );
 	}
 };
