@@ -74,7 +74,7 @@ function Actor:hide_if(b)
 end
 
 function Actor:player(p)
-        self:hide_if( not GAMESTATE:IsHumanPlayer(p) )
+	self:visible( GAMESTATE:IsHumanPlayer(p) )
 end
 
 function ActorFrame:propagatecommand(...)
