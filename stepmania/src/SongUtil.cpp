@@ -817,10 +817,23 @@ void SongUtil::GetPossibleSteps( const Song *pSong, vector<Steps*> &vOut )
 		GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
 	else
 		vpPossibleStyles.push_back( GAMESTATE->m_pCurStyle );
-
 	set<StepsType> vStepsType;
 	FOREACH( const Style*, vpPossibleStyles, s )
 		vStepsType.insert( (*s)->m_StepsType );
+
+	// filter out hidden StepsTypes
+	const vector<StepsType> &vstToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
+	FOREACHS( StepsType, vStepsType, st )
+	{
+		bool bShowThis = find( vstToShow.begin(), vstToShow.end(), *st ) != vstToShow.end();
+		if( !bShowThis )
+		{
+			set<StepsType>::iterator to_erase = st;
+			++st;
+			vStepsType.erase( to_erase );
+			--st;
+		}
+	}
 
 	FOREACHS( StepsType, vStepsType, st )
 		SongUtil::GetSteps( pSong, vOut, *st );
