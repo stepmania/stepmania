@@ -121,6 +121,7 @@ enum SortOrder
 };
 const SortOrder MAX_SELECTABLE_SORT = (SortOrder)(SORT_ROULETTE-1);
 const RString& SortOrderToString( SortOrder so );
+const RString& SortOrderToLocalizedString( SortOrder so );
 SortOrder StringToSortOrder( const RString& str );
 LuaDeclareType( SortOrder );
 

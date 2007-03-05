@@ -147,6 +147,8 @@ static const char *SortOrderNames[] = {
 XToString( SortOrder );
 StringToX( SortOrder );
 LuaXType( SortOrder );
+XToLocalizedString( SortOrder );
+LuaFunction( SortOrderToLocalizedString, SortOrderToLocalizedString(Enum::Check<SortOrder>(L, 1)) );
 
 
 static const char *TapNoteScoreNames[] = {
