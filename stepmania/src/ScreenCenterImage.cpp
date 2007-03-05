@@ -21,10 +21,8 @@ void ScreenCenterImage::Init()
 	ScreenWithMenuElements::Init();
 
 #if defined(XBOX)
-	vector<RString> strArray;
-	RString text("Use the left analog stick to translate the screen and right right analog stick to scale");
-	strArray.push_back(text);
-	m_textHelp->SetTips(strArray);
+	// XXX
+	SetHelpText( "Use the left analog stick to translate the screen and right right analog stick to scale" );
 #endif
 	
 	m_textInstructions.LoadFromFont( THEME->GetPathF("Common","normal") );

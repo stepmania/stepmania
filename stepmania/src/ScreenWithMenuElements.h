@@ -7,7 +7,6 @@
 #include "ThemeMetric.h"
 
 class MenuTimer;
-class HelpDisplay;
 class MemoryCardDisplay;
 
 class ScreenWithMenuElements : public Screen
@@ -37,7 +36,7 @@ public:
 
 protected:
 	virtual void StartPlayingMusic();
-	virtual void LoadHelpText();
+	void SetHelpText( RString s );
 
 	/* If true, BeginScreen() will run OnCommand on the whole screen, and
 	 * TweenOnScreen will not be called.  (Eventually, all screens should
@@ -51,7 +50,6 @@ protected:
 	MemoryCardDisplay		*m_MemoryCardDisplay[NUM_PLAYERS];
 	MenuTimer			*m_MenuTimer;
 	AutoActor			m_autoFooter;
-	HelpDisplay			*m_textHelp;
 	AutoActor			m_sprOverlay;
 
 	Transition			m_In;

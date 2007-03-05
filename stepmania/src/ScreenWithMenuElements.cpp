@@ -1,7 +1,6 @@
 #include "global.h"
 #include "ScreenWithMenuElements.h"
 #include "MenuTimer.h"
-#include "HelpDisplay.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "GameState.h"
@@ -22,7 +21,6 @@
 ScreenWithMenuElements::ScreenWithMenuElements()
 {
 	m_MenuTimer = NULL;
-	m_textHelp = new HelpDisplay;
 	FOREACH_PlayerNumber( p )
 		m_MemoryCardDisplay[p] = NULL;
 	m_MenuTimer = NULL;
@@ -83,13 +81,6 @@ void ScreenWithMenuElements::Init()
 	m_autoFooter->SetName("Footer");
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_autoFooter );
 	this->AddChild( m_autoFooter );
-
-	m_textHelp->SetName( "Help" );
-	m_textHelp->Load( "HelpDisplay" );
-	m_textHelp->LoadFromFont( THEME->GetPathF("HelpDisplay","text") );
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_textHelp );
-	LoadHelpText();
-	this->AddChild( m_textHelp );
 
 	m_sprUnderlay.Load( THEME->GetPathB(m_sName,"underlay") );
 	m_sprUnderlay->SetName("Underlay");
@@ -175,7 +166,6 @@ void ScreenWithMenuElements::TweenOnScreen()
 		ON_COMMAND( m_MenuTimer );
 
 	ON_COMMAND( m_autoFooter );
-	ON_COMMAND( m_textHelp );
 	m_sprUnderlay->PlayCommand("On");
 	m_sprOverlay->PlayCommand("On");;
 	m_In.PlayCommand("On");;
@@ -186,7 +176,6 @@ void ScreenWithMenuElements::TweenOnScreen()
 ScreenWithMenuElements::~ScreenWithMenuElements()
 {
 	SAFE_DELETE( m_MenuTimer );
-	SAFE_DELETE( m_textHelp );
 	FOREACH_PlayerNumber( p )
 	{
 		if( m_MemoryCardDisplay[p] != NULL )
@@ -194,14 +183,11 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 	}
 }
 
-void ScreenWithMenuElements::LoadHelpText()
+void ScreenWithMenuElements::SetHelpText( RString s )
 {
-	vector<RString> vs;
-	RString s = THEME->GetString(m_sName,"HelpText");
-	split( s, "::", vs );
-
-	m_textHelp->SetTips( vs );
-	m_textHelp->PlayCommand( "Changed" );
+	Message msg("SetHelpText");
+	msg.SetParam( "Text", s );
+	this->HandleMessage( msg );
 }
 
 void ScreenWithMenuElements::StartPlayingMusic()
@@ -275,7 +261,6 @@ void ScreenWithMenuElements::TweenOffScreen()
 		if( m_MemoryCardDisplay[p] )
 			OFF_COMMAND( m_MemoryCardDisplay[p] );
 	OFF_COMMAND( m_autoFooter );
-	OFF_COMMAND( m_textHelp );
 	m_sprUnderlay->PlayCommand("Off");
 	m_sprOverlay->PlayCommand("Off");;
 
