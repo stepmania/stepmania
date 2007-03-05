@@ -90,6 +90,13 @@ public:
 
 		return 0;
 	}
+	static int SetTipsColonSeparated( T* p, lua_State *L )
+	{
+		vector<RString> vs;
+		split( SArg(1), "::", vs );
+		p->SetTips( vs );
+		return 0;
+	}
 
 	static int gettips( T* p, lua_State *L )
 	{
@@ -106,6 +113,7 @@ public:
 	LunaHelpDisplay()
 	{
 		ADD_METHOD( settips );
+		ADD_METHOD( SetTipsColonSeparated );
 		ADD_METHOD( gettips );
 		ADD_METHOD( setsecsbetweenswitches );
 	}
