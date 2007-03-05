@@ -1594,12 +1594,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CombinedLifeMeterTug.h">
 			</File>
 			<File
-				RelativePath=".\Combo.cpp">
-			</File>
-			<File
-				RelativePath=".\Combo.h">
-			</File>
-			<File
 				RelativePath="DancingCharacters.cpp">
 			</File>
 			<File
@@ -1622,12 +1616,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="HoldJudgment.h">
-			</File>
-			<File
-				RelativePath="Judgment.cpp">
-			</File>
-			<File
-				RelativePath="Judgment.h">
 			</File>
 			<File
 				RelativePath=".\LifeMeter.cpp">
