@@ -381,6 +381,8 @@ RageUtil_WorkerThread.cpp RageUtil_WorkerThread.h
 
 Actors = \
 Actor.cpp Actor.h ActorFrame.cpp ActorFrame.h \
+ActorFrameTexture.cpp ActorFrameTexture.h \
+ActorMultiTexture.cpp ActorMultiTexture.h \
 ActorProxy.cpp ActorProxy.h \
 ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h \
 ActorSound.cpp ActorSound.h \
