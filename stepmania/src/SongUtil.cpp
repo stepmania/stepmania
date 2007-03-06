@@ -16,6 +16,8 @@
 #include "RageLog.h"
 #include "GameManager.h"
 #include "CommonMetrics.h"
+#include "LuaBinding.h"
+#include "EnumHelper.h"
 
 bool SongCriteria::Matches( const Song *pSong ) const
 {
@@ -810,30 +812,35 @@ void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vec
 	}
 }
 
-void SongUtil::GetPossibleSteps( const Song *pSong, vector<Steps*> &vOut )
+static void GetPlayableStepsTypes( set<StepsType> &vOut )
 {
 	vector<const Style*> vpPossibleStyles;
 	if( CommonMetrics::ALL_STEPS_TYPES_IN_ONE_LIST )
 		GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
 	else
 		vpPossibleStyles.push_back( GAMESTATE->m_pCurStyle );
-	set<StepsType> vStepsType;
 	FOREACH( const Style*, vpPossibleStyles, s )
-		vStepsType.insert( (*s)->m_StepsType );
+		vOut.insert( (*s)->m_StepsType );
 
 	// filter out hidden StepsTypes
 	const vector<StepsType> &vstToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
-	FOREACHS( StepsType, vStepsType, st )
+	FOREACHS( StepsType, vOut, st )
 	{
 		bool bShowThis = find( vstToShow.begin(), vstToShow.end(), *st ) != vstToShow.end();
 		if( !bShowThis )
 		{
 			set<StepsType>::iterator to_erase = st;
 			++st;
-			vStepsType.erase( to_erase );
+			vOut.erase( to_erase );
 			--st;
 		}
 	}
+}
+
+void SongUtil::GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut )
+{
+	set<StepsType> vStepsType;
+	GetPlayableStepsTypes( vStepsType );
 
 	FOREACHS( StepsType, vStepsType, st )
 		SongUtil::GetSteps( pSong, vOut, *st );
@@ -851,6 +858,13 @@ void SongUtil::GetPossibleSteps( const Song *pSong, vector<Steps*> &vOut )
 		if( GAMESTATE->GetNumStagesForSongAndStyle(pSong,pStyle) > GAMESTATE->GetNumStagesLeft() )
 			vOut.erase( vOut.begin() + i );
 	}
+}
+
+bool SongUtil::IsStepsTypePlayable( StepsType st  )
+{
+	set<StepsType> vStepsType;
+	GetPlayableStepsTypes( vStepsType );
+	return vStepsType.find( st ) != vStepsType.end();
 }
 
 //////////////////////////////////
@@ -905,6 +919,29 @@ bool SongID::IsValid() const
 {
 	return !sDir.empty();
 }
+
+// lua start
+#include "LuaBinding.h"
+
+namespace
+{
+	int IsStepsTypePlayable( lua_State *L )
+	{
+		StepsType st = Enum::Check<StepsType>(L, 1);
+		bool b = SongUtil::IsStepsTypePlayable( st );
+		LuaHelpers::Push( L, b );
+		return 1;
+	}
+
+	const luaL_Reg SongUtilTable[] =
+	{
+		LIST_METHOD( IsStepsTypePlayable ),
+		{ NULL, NULL }
+	};
+}
+
+LUA_REGISTER_NAMESPACE( SongUtil )
+
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

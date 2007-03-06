@@ -2340,20 +2340,22 @@ void GameManager::GetCompatibleStyles( const Game *pGame, int iNumPlayers, vecto
 {
 	FOREACH_ENUM( StyleType, styleType )
 	{
+		int iNumPlayersRequired;
 		switch( styleType )
 		{
 		DEFAULT_FAIL( styleType );
 		case StyleType_OnePlayerOneSide:
 		case StyleType_OnePlayerTwoSides:
-			if( iNumPlayers != 1 )
-				continue;
+			iNumPlayersRequired = 1;
 			break;
 		case StyleType_TwoPlayersTwoSides:
 		case StyleType_TwoPlayersSharedSides:
-			if( iNumPlayers != 2 )
-				continue;
+			iNumPlayersRequired = 2;
 			break;
 		}
+
+		if( iNumPlayers != iNumPlayersRequired )
+			continue;
 
 		for( unsigned s=0; s<NUM_STYLES; s++ ) 
 		{

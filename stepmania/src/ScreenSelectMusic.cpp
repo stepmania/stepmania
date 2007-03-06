@@ -298,6 +298,9 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	// Handle late joining
 	if( input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
 	{
+		// refresh the steps list so that 2-side StepsTypes will be removed since they're no longer playable
+		AfterMusicChange();
+
 		int iSel = 0;
 		PlayerNumber pn = input.pn;
 		m_iSelection[pn] = iSel;
@@ -311,6 +314,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
 			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 		}
+
 		return;	// don't handle this press again below
 	}
 
@@ -1058,7 +1062,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 		m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
-		SongUtil::GetPossibleSteps( pSong, m_vpSteps );
+		SongUtil::GetPlayableSteps( pSong, m_vpSteps );
 
 		if ( PREFSMAN->m_bShowBanners )
 			g_sBannerPath = pSong->GetBannerPath();

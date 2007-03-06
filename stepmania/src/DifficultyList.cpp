@@ -247,67 +247,56 @@ void DifficultyList::SetFromGameState()
 {
 	const Song *pSong = GAMESTATE->m_pCurSong;
 
-	const bool bSongChanged = (pSong != m_CurSong);
-
-	/* If the song has changed, update displays: */
-	if( bSongChanged )
+	for( int m = 0; m < MAX_METERS; ++m )
 	{
-		m_CurSong = pSong;
+		m_Lines[m].m_Meter.Unset();
+	}
 
-		for( int m = 0; m < MAX_METERS; ++m )
+	m_Rows.clear();
+
+	if( pSong == NULL )
+	{
+		// FIXME: This clamps to between the min and the max difficulty, but
+		// it really should round to the nearest difficulty that's in 
+		// DIFFICULTIES_TO_SHOW.
+		unsigned i=0;
+		FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), d )
 		{
-			m_Lines[m].m_Meter.Unset();
+			m_Rows.resize( m_Rows.size()+1 );
+
+			Row &row = m_Rows.back();
+
+			row.m_dc = *d;
+
+			m_Lines[i].m_Meter.SetFromStepsTypeAndMeterAndDifficulty( StepsType_Invalid, 0, *d );
+
+			i++;
 		}
+	}
+	else
+	{
+		vector<Steps*>	vpSteps;
+		SongUtil::GetPlayableSteps( pSong, vpSteps );
+		/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
 
-		m_Rows.clear();
-
-		if( pSong == NULL )
+		m_Rows.resize( vpSteps.size() );
+		for( unsigned i = 0; i < vpSteps.size(); ++i )
 		{
-			// FIXME: This clamps to between the min and the max difficulty, but
-			// it really should round to the nearest difficulty that's in 
-			// DIFFICULTIES_TO_SHOW.
-			unsigned i=0;
-			FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), d )
-			{
-				m_Rows.resize( m_Rows.size()+1 );
+			Row &row = m_Rows[i];
 
-				Row &row = m_Rows.back();
+			row.m_Steps = vpSteps[i];
 
-				row.m_dc = *d;
+			m_Lines[i].m_Meter.SetFromSteps( m_Rows[i].m_Steps );
 
-				m_Lines[i].m_Meter.SetFromStepsTypeAndMeterAndDifficulty( StepsType_Invalid, 0, *d );
-
-				i++;
-			}
-		}
-		else
-		{
-			vector<Steps*>	vpSteps;
-			SongUtil::GetPossibleSteps( pSong, vpSteps );
-			/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
-
-			m_Rows.resize( vpSteps.size() );
-			for( unsigned i = 0; i < vpSteps.size(); ++i )
-			{
-				Row &row = m_Rows[i];
-
-				row.m_Steps = vpSteps[i];
-
-				m_Lines[i].m_Meter.SetFromSteps( m_Rows[i].m_Steps );
-
-				row.m_dc = row.m_Steps->GetDifficulty();
-			}
+			row.m_dc = row.m_Steps->GetDifficulty();
 		}
 	}
 
 	UpdatePositions();
 	PositionItems();
 
-	if( bSongChanged )
-	{
-		for( int m = 0; m < MAX_METERS; ++m )
-			m_Lines[m].m_Meter.FinishTweening();
-	}
+	for( int m = 0; m < MAX_METERS; ++m )
+		m_Lines[m].m_Meter.FinishTweening();
 }
 
 void DifficultyList::HideRows()
