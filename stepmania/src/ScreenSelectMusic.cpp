@@ -106,7 +106,7 @@ void ScreenSelectMusic::Init()
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","mode")) );
 	}
 
-	if( CommonMetrics::ALL_STEPS_TYPES_IN_ONE_LIST )
+	if( CommonMetrics::AUTO_SET_STYLE )
 	{
 		vector<StepsType> vst;
 		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
@@ -810,10 +810,6 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			return;
 		}
 
-		m_SelectionState = GetNextSelectionState();
-
-		m_soundStart.Play();
-
 		MESSAGEMAN->Broadcast("SongChosen");
 
 		break;
@@ -821,9 +817,28 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	case SelectionState_SelectingSteps:
 		break;
 	}
-	
+
+	m_SelectionState = GetNextSelectionState();
+	m_soundStart.Play();
+
+
 	if( m_SelectionState == SelectionState_Finalized )
 	{
+		if( CommonMetrics::AUTO_SET_STYLE )
+		{
+			/* Now that Steps have been chosen, set a Style that can play them. */
+			StepsType stCurrent;
+			PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+			if( GAMESTATE->IsCourseMode() )
+				stCurrent = GAMESTATE->m_pCurTrail[pn]->m_StepsType;
+			else
+				stCurrent = GAMESTATE->m_pCurSteps[pn]->m_StepsType;
+			vector<StepsType> vst;
+			const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), stCurrent );
+			GAMESTATE->m_pCurStyle.Set( pStyle );
+		}
+
+
 		/* If we're currently waiting on song assets, abort all except the music and
 		* start the music, so if we make a choice quickly before background requests
 		* come through, the music will still start. */

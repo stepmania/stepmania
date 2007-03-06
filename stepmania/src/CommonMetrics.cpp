@@ -23,7 +23,7 @@ ThemeMetric<RString>			CommonMetrics::DEFAULT_NOTESKIN_NAME		("Common","DefaultN
 ThemeMetricDifficultiesToShow		CommonMetrics::DIFFICULTIES_TO_SHOW		("Common","DifficultiesToShow");
 ThemeMetricCourseDifficultiesToShow	CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW	("Common","CourseDifficultiesToShow");
 ThemeMetricStepsTypesToShow		CommonMetrics::STEPS_TYPES_TO_SHOW		("Common","StepsTypesToHide");	// This metric takes a list of StepsTypes to hide and returns a list of StepsTypes to show
-ThemeMetric<bool>			CommonMetrics::ALL_STEPS_TYPES_IN_ONE_LIST	("Common","AllStepsTypeInOneList");
+ThemeMetric<bool>			CommonMetrics::AUTO_SET_STYLE			("Common","AutoSetStyle");
 
 
 ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const RString& sGroup, const RString& sName ) : 
