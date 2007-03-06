@@ -64,8 +64,6 @@ int RageSoundReader_Extend::GetData( float *pBuffer, int iFrames )
 	if( m_iPositionFrames < 0 )
 	{
 		iFramesToRead = min( iFramesToRead, -m_iPositionFrames );
-
-		m_iPositionFrames += iFramesToRead;
 		memset( pBuffer, 0, iFramesToRead * sizeof(float) * this->GetNumChannels() );
 		return iFramesToRead;
 	}
