@@ -1385,6 +1385,7 @@ public:
 	static int GetSecsIntoEffect( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecsIntoEffect() ); return 1; }
 	static int GetEffectDelta( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetEffectDelta() ); return 1; }
 	static int GetDiffuseAlpha( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetDiffuseAlpha() ); return 1; }
+	static int GetVisible( T* p, lua_State *L )		{ lua_pushboolean( L, p->GetVisible() ); return 1; }
 
 	static int GetName( T* p, lua_State *L )		{ lua_pushstring( L, p->GetName() ); return 1; }
 	static int GetParent( T* p, lua_State *L )
@@ -1536,6 +1537,7 @@ public:
 		ADD_METHOD( GetSecsIntoEffect );
 		ADD_METHOD( GetEffectDelta );
 		ADD_METHOD( GetDiffuseAlpha );
+		ADD_METHOD( GetVisible );
 
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetParent );
