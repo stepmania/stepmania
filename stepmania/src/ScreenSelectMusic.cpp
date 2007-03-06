@@ -442,7 +442,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 				return;
 			case MENU_BUTTON_START:
 				if( MODE_MENU_AVAILABLE )
-					m_MusicWheel.ChangeSort( SORT_MODE_MENU );
+					m_MusicWheel.NextSort();
 				else
 					m_soundLocked.Play();
 				return;
@@ -517,6 +517,26 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 	}
 
+	if( m_SelectionState == SelectionState_SelectingSteps  &&
+		input.type == IET_FIRST_PRESS  &&
+		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) )
+	{
+		if( input.MenuI == m_GameButtonPreviousSong )
+		{
+			if( GAMESTATE->IsAnExtraStage() )
+				m_soundLocked.Play();
+			else
+				ChangeDifficulty( input.pn, -1 );
+		}
+		else if( input.MenuI == m_GameButtonNextSong )
+		{
+			if( GAMESTATE->IsAnExtraStage() )
+				m_soundLocked.Play();
+			else
+				ChangeDifficulty( input.pn, +1 );
+		}		
+	}
+
 	if( input.type == IET_FIRST_PRESS && DetectCodes(input) )
 		return;
 
@@ -571,7 +591,7 @@ void ScreenSelectMusic::UpdateSelectButton()
 	FOREACH_HumanPlayer( p )
 	{
 		bool bSelectIsDown = INPUTMAPPER->IsBeingPressed( MENU_BUTTON_SELECT, p );
-		if( !SELECT_MENU_AVAILABLE )
+		if( !SELECT_MENU_AVAILABLE  ||  !CanChangeSong() )
 			bSelectIsDown = false;
 
 		if( m_bSelectIsDown[p] != bSelectIsDown )

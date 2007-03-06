@@ -77,8 +77,8 @@ protected:
 		SelectionState_SelectingSteps,
 		SelectionState_Finalized
 	};
-	bool CanChangeSong() const { return !TWO_PART_SELECTION || m_SelectionState == SelectionState_SelectingSong; }
-	bool CanChangeSteps() const { return !TWO_PART_SELECTION || m_SelectionState == SelectionState_SelectingSteps; }
+	bool CanChangeSong() const { return m_SelectionState == SelectionState_SelectingSong; }
+	bool CanChangeSteps() const { return TWO_PART_SELECTION ? m_SelectionState == SelectionState_SelectingSteps : m_SelectionState == SelectionState_SelectingSong; }
 	SelectionState GetNextSelectionState() const
 	{
 		switch( m_SelectionState )
