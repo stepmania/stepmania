@@ -334,13 +334,11 @@ void Player::Init(
 		m_Combo->SetName( "Combo" );
 		m_pActorWithJudgmentPosition = &*m_pJudgment;
 		this->AddChild( m_Combo );
-		m_Combo->PlayCommand( "On" );
 
 		m_pJudgment.Load( THEME->GetPathG(sType,"judgment") );
 		m_pJudgment->SetName( "Judgment" );
 		m_pActorWithComboPosition = &*m_Combo;
 		this->AddChild( m_pJudgment );
-		m_pJudgment->PlayCommand( "On" );
 	}
 
 	// Load HoldJudgments

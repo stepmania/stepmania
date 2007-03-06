@@ -470,6 +470,7 @@ void ScreenGameplay::Init()
 		pi->m_pPlayer->SetX( fPlayerX );
 		pi->m_pPlayer->RunCommands( PLAYER_INIT_COMMAND );
 		this->AddChild( pi->m_pPlayer );
+		pi->m_pPlayer->PlayCommand( "On" );
 	}
 	
 	FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
