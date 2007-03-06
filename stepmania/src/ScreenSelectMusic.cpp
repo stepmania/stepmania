@@ -337,7 +337,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 							MESSAGEMAN->Broadcast( msg );
 							m_OptionsList[pn].Close();
 						}
-						break;
+						return;
 					case GAME_BUTTON_START:
 						if( m_OptionsList[pn].Start() )
 						{
@@ -346,13 +346,13 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 							MESSAGEMAN->Broadcast( msg );
 							m_OptionsList[pn].Close();
 						}
-						break;
-					default:
+						return;
+					case GAME_BUTTON_MENULEFT:
+					case GAME_BUTTON_MENURIGHT:
 						m_OptionsList[pn].Input( input );
-						break;
+						return;
 					}
 				}
-				return;
 			}
 			else
 			{
