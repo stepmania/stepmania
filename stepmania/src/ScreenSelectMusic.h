@@ -69,6 +69,27 @@ protected:
 	DynamicThemeMetric<bool> SELECT_MENU_AVAILABLE;
 	DynamicThemeMetric<bool> MODE_MENU_AVAILABLE;
 	ThemeMetric<bool> USE_OPTIONS_LIST;
+	ThemeMetric<bool> TWO_PART_SELECTION;
+
+	enum SelectionState
+	{
+		SelectionState_SelectingSong,
+		SelectionState_SelectingSteps,
+		SelectionState_Finalized
+	};
+	bool CanChangeSong() const { return !TWO_PART_SELECTION || m_SelectionState == SelectionState_SelectingSong; }
+	bool CanChangeSteps() const { return !TWO_PART_SELECTION || m_SelectionState == SelectionState_SelectingSteps; }
+	SelectionState GetNextSelectionState() const
+	{
+		switch( m_SelectionState )
+		{
+			DEFAULT_FAIL( m_SelectionState );
+		case SelectionState_SelectingSong:
+			return TWO_PART_SELECTION ? SelectionState_SelectingSteps : SelectionState_Finalized;
+		case SelectionState_SelectingSteps:
+			return SelectionState_Finalized;
+		}
+	}
 
 	GameButton m_GameButtonPreviousSong;
 	GameButton m_GameButtonNextSong;
@@ -88,20 +109,19 @@ protected:
 	OptionsList		m_OptionsList[NUM_PLAYERS];
 
 
-	bool			m_bMadeChoice;
+	SelectionState		m_SelectionState;
 	bool			m_bGoToOptions;
 	RString			m_sSampleMusicToPlay;
 	TimingData		*m_pSampleMusicTimingData;
 	float			m_fSampleStartSeconds, m_fSampleLengthSeconds;
 	bool			m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
-	bool			m_bSelectIsDown;
+	bool			m_bSelectIsDown[NUM_PLAYERS];
 
 	RageSound		m_soundStart;
 	RageSound		m_soundDifficultyEasier;
 	RageSound		m_soundDifficultyHarder;
 	RageSound		m_soundOptionsChange;
 	RageSound		m_soundLocked;
-	RageSound		m_soundSelectPressed;
 
 	BackgroundLoader	m_BackgroundLoader;
 	RageTexturePreloader	m_TexturePreload;

@@ -70,6 +70,7 @@ void ScreenSelectMusic::Init()
 	SELECT_MENU_AVAILABLE.Load( m_sName, "SelectMenuAvailable" );
 	MODE_MENU_AVAILABLE.Load( m_sName, "ModeMenuAvailable" );
 	USE_OPTIONS_LIST.Load( m_sName, "UseOptionsList" );
+	TWO_PART_SELECTION.Load( m_sName, "TwoPartSelection" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
 	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextSongButton") );
@@ -80,7 +81,8 @@ void ScreenSelectMusic::Init()
 	 * Do this before anything that might look at GAMESTATE->m_iCurrentStageIndex. */
 	GAMESTATE->FinishStage();
 
-	m_bSelectIsDown = false; // used by UpdateSelectButton
+	FOREACH_ENUM( PlayerNumber, p )
+		m_bSelectIsDown[p] = false; // used by UpdateSelectButton
 
 	ScreenWithMenuElements::Init();
 
@@ -174,7 +176,6 @@ void ScreenSelectMusic::Init()
 	m_soundDifficultyHarder.Load( THEME->GetPathS(m_sName,"difficulty harder") );
 	m_soundOptionsChange.Load( THEME->GetPathS(m_sName,"options") );
 	m_soundLocked.Load( THEME->GetPathS(m_sName,"locked") );
-	m_soundSelectPressed.Load( THEME->GetPathS(m_sName,"select down"), true );
 
 	this->SortByDrawOrder();
 }
@@ -186,7 +187,7 @@ void ScreenSelectMusic::BeginScreen()
 	
 	m_MusicWheel.BeginScreen();
 	
-	m_bMadeChoice = false;
+	m_SelectionState = (SelectionState)0;
 	m_bGoToOptions = false;
 	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;
 	ZERO( m_iSelection );
@@ -294,7 +295,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
 
-
+	// Handle late joining
 	if( input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
 	{
 		int iSel = 0;
@@ -313,17 +314,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;	// don't handle this press again below
 	}
 
-
-
-	// temp Chris debug
-	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F8 )
-	{
-		if( input.type != IET_FIRST_PRESS ) 
-			return;
-		MESSAGEMAN->Broadcast("SongChosen");
-	}
-
-	if( USE_OPTIONS_LIST )
+	// handle options list input
+	if( USE_OPTIONS_LIST  &&  m_SelectionState == SelectionState_SelectingSteps )
 	{
 		PlayerNumber pn = input.pn;
 		if( pn != PLAYER_INVALID )
@@ -393,7 +385,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;
 
 	// Check for "Press START again for options" button press
-	if( m_bMadeChoice  &&
+	if( m_SelectionState == SelectionState_Finalized  &&
 	    input.MenuI == MENU_BUTTON_START  &&
 	    input.type != IET_RELEASE  &&
 	    OPTIONS_MENU_AVAILABLE.GetValue() )
@@ -423,7 +415,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;		// ignore
 
-	if( m_bMadeChoice )
+	if( m_SelectionState == SelectionState_Finalized )
 		return;		// ignore
 
 	UpdateSelectButton();
@@ -459,7 +451,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;
 	}
 
-	if( input.MenuI == m_GameButtonNextSong  ||  input.MenuI == m_GameButtonPreviousSong )
+	if( m_SelectionState == SelectionState_SelectingSong  &&
+		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) )
 	{
 		{
 			/* If we're rouletting, hands off. */
@@ -575,23 +568,19 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 
 void ScreenSelectMusic::UpdateSelectButton()
 {
-	bool bSelectIsDown = false;
-	FOREACH_HumanPlayer( pn )
-		bSelectIsDown |= INPUTMAPPER->IsBeingPressed( MENU_BUTTON_SELECT, pn );
-	if( !SELECT_MENU_AVAILABLE )
-		bSelectIsDown = false;
-
-	/* If m_soundSelectPressed isn't loaded yet, wait until it is before we do this. */
-	if( m_bSelectIsDown != bSelectIsDown && m_soundSelectPressed.IsLoaded() )
+	FOREACH_HumanPlayer( p )
 	{
-		if( bSelectIsDown )
-			m_soundSelectPressed.Play();
+		bool bSelectIsDown = INPUTMAPPER->IsBeingPressed( MENU_BUTTON_SELECT, p );
+		if( !SELECT_MENU_AVAILABLE )
+			bSelectIsDown = false;
 
-		m_bSelectIsDown = bSelectIsDown;
-		if( bSelectIsDown )
-			MESSAGEMAN->Broadcast( "SelectMenuOn" );
-		else
-			MESSAGEMAN->Broadcast( "SelectMenuOff" );
+		if( m_bSelectIsDown[p] != bSelectIsDown )
+		{
+			m_bSelectIsDown[p] = bSelectIsDown;
+			Message msg( bSelectIsDown ? "SelectMenuOpened" : "SelectMenuClosed" );
+			msg.SetParam( "Player", p );
+			MESSAGEMAN->Broadcast( msg );
+		}
 	}
 }
 
@@ -726,102 +715,119 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 {
 	if( input.type != IET_FIRST_PRESS )
 		return;
-	/* If false, we don't have a selection just yet. */
-	if( !m_MusicWheel.Select() )
-		return;
 
-	// a song was selected
-	if( m_MusicWheel.GetSelectedSong() != NULL )
+	switch( m_SelectionState )
 	{
-		const bool bIsNew = PROFILEMAN->IsSongNew( m_MusicWheel.GetSelectedSong() );
-		bool bIsHard = false;
-		FOREACH_HumanPlayer( p )
+	DEFAULT_FAIL( m_SelectionState );
+	case SelectionState_SelectingSong:
+
+		/* If false, we don't have a selection just yet. */
+		if( !m_MusicWheel.Select() )
+			return;
+
+		// a song was selected
+		if( m_MusicWheel.GetSelectedSong() != NULL )
 		{
-			if( GAMESTATE->m_pCurSteps[p]  &&  GAMESTATE->m_pCurSteps[p]->GetMeter() >= 10 )
-				bIsHard = true;
+			const bool bIsNew = PROFILEMAN->IsSongNew( m_MusicWheel.GetSelectedSong() );
+			bool bIsHard = false;
+			FOREACH_HumanPlayer( p )
+			{
+				if( GAMESTATE->m_pCurSteps[p]  &&  GAMESTATE->m_pCurSteps[p]->GetMeter() >= 10 )
+					bIsHard = true;
+			}
+
+			/* See if this song is a repeat.  If we're in event mode, only check the last five songs. */
+			bool bIsRepeat = false;
+			int i = 0;
+			if( GAMESTATE->IsEventMode() )
+				i = max( 0, int(STATSMAN->m_vPlayedStageStats.size())-5 );
+			for( ; i < (int)STATSMAN->m_vPlayedStageStats.size(); ++i )
+				if( STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs.back() == m_MusicWheel.GetSelectedSong() )
+					bIsRepeat = true;
+
+			/* Don't complain about repeats if the user didn't get to pick. */
+			if( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage )
+				bIsRepeat = false;
+
+			if( bIsRepeat )
+				SOUND->PlayOnceFromAnnouncer( "select music comment repeat" );
+			else if( bIsNew )
+				SOUND->PlayOnceFromAnnouncer( "select music comment new" );
+			else if( bIsHard )
+				SOUND->PlayOnceFromAnnouncer( "select music comment hard" );
+			else
+				SOUND->PlayOnceFromAnnouncer( "select music comment general" );
+
+			/* If we're in event mode, we may have just played a course (putting us
+			* in course mode).  Make sure we're in a single song mode. */
+			if( GAMESTATE->IsCourseMode() )
+				GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		}
+		else if( m_MusicWheel.GetSelectedCourse() != NULL )
+		{
+			SOUND->PlayOnceFromAnnouncer( "select course comment general" );
 
-		/* See if this song is a repeat.  If we're in event mode, only check the last five songs. */
-		bool bIsRepeat = false;
-		int i = 0;
-		if( GAMESTATE->IsEventMode() )
-			i = max( 0, int(STATSMAN->m_vPlayedStageStats.size())-5 );
-		for( ; i < (int)STATSMAN->m_vPlayedStageStats.size(); ++i )
-			if( STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs.back() == m_MusicWheel.GetSelectedSong() )
-				bIsRepeat = true;
+			Course *pCourse = m_MusicWheel.GetSelectedCourse();
+			ASSERT( pCourse );
+			GAMESTATE->m_PlayMode.Set( pCourse->GetPlayMode() );
 
-		/* Don't complain about repeats if the user didn't get to pick. */
-		if( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage )
-			bIsRepeat = false;
-
-		if( bIsRepeat )
-			SOUND->PlayOnceFromAnnouncer( "select music comment repeat" );
-		else if( bIsNew )
-			SOUND->PlayOnceFromAnnouncer( "select music comment new" );
-		else if( bIsHard )
-			SOUND->PlayOnceFromAnnouncer( "select music comment hard" );
+			// apply #LIVES
+			if( pCourse->m_iLives != -1 )
+			{
+				SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
+				SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_iBatteryLives, pCourse->m_iLives );
+			}
+			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL)
+				SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_TIME );
+		}
 		else
-			SOUND->PlayOnceFromAnnouncer( "select music comment general" );
-
-		/* If we're in event mode, we may have just played a course (putting us
-		 * in course mode).  Make sure we're in a single song mode. */
-		if( GAMESTATE->IsCourseMode() )
-			GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-	}
-	else if( m_MusicWheel.GetSelectedCourse() != NULL )
-	{
-		SOUND->PlayOnceFromAnnouncer( "select course comment general" );
-
-		Course *pCourse = m_MusicWheel.GetSelectedCourse();
-		ASSERT( pCourse );
-		GAMESTATE->m_PlayMode.Set( pCourse->GetPlayMode() );
-
-		// apply #LIVES
-		if( pCourse->m_iLives != -1 )
 		{
-			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
-			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_iBatteryLives, pCourse->m_iLives );
+			/* We havn't made a selection yet. */
+			return;
 		}
-		if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL)
-			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_TIME );
+
+		m_SelectionState = GetNextSelectionState();
+
+		m_soundStart.Play();
+
+		MESSAGEMAN->Broadcast("SongChosen");
+
+		break;
+
+	case SelectionState_SelectingSteps:
+		break;
 	}
-	else
+	
+	if( m_SelectionState == SelectionState_Finalized )
 	{
-		/* We havn't made a selection yet. */
-		return;
-	}
+		/* If we're currently waiting on song assets, abort all except the music and
+		* start the music, so if we make a choice quickly before background requests
+		* come through, the music will still start. */
+		g_bCDTitleWaiting = g_bBannerWaiting = false;
+		m_BackgroundLoader.Abort();
+		CheckBackgroundRequests( true );
 
-	m_bMadeChoice = true;
+		if( OPTIONS_MENU_AVAILABLE )
+		{
+			// show "hold START for options"
+			this->PlayCommand( "ShowPressStartForOptions" );
 
-	m_soundStart.Play();
+			m_bAllowOptionsMenu = true;
 
-	/* If we're currently waiting on song assets, abort all except the music and
-	 * start the music, so if we make a choice quickly before background requests
-	 * come through, the music will still start. */
-	g_bCDTitleWaiting = g_bBannerWaiting = false;
-	m_BackgroundLoader.Abort();
-	CheckBackgroundRequests( true );
+			/* Don't accept a held START for a little while, so it's not
+			* hit accidentally.  Accept an initial START right away, though,
+			* so we don't ignore deliberate fast presses (which would be
+			* annoying). */
+			this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
 
-	if( OPTIONS_MENU_AVAILABLE )
-	{
-		// show "hold START for options"
-		this->PlayCommand( "ShowPressStartForOptions" );
-
-		m_bAllowOptionsMenu = true;
-
-		/* Don't accept a held START for a little while, so it's not
-		 * hit accidentally.  Accept an initial START right away, though,
-		 * so we don't ignore deliberate fast presses (which would be
-		 * annoying). */
-		this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
-
-		StartTransitioningScreen( SM_None );
-		float fTime = max( SHOW_OPTIONS_MESSAGE_SECONDS, this->GetTweenTimeLeft() );
-		this->PostScreenMessage( SM_BeginFadingOut, fTime );
-	}
-	else
-	{
-		StartTransitioningScreen( SM_BeginFadingOut );
+			StartTransitioningScreen( SM_None );
+			float fTime = max( SHOW_OPTIONS_MESSAGE_SECONDS, this->GetTweenTimeLeft() );
+			this->PostScreenMessage( SM_BeginFadingOut, fTime );
+		}
+		else
+		{
+			StartTransitioningScreen( SM_BeginFadingOut );
+		}
 	}
 }
 
