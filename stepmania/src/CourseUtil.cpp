@@ -11,7 +11,6 @@
 #include "Foreach.h"
 #include "GameState.h"
 #include "LocalizedString.h"
-#include "LuaManager.h"
 
 
 //
