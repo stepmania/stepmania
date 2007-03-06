@@ -42,7 +42,7 @@ void DifficultyList::LoadFromNode( const XNode* pNode )
 	m_Lines.resize( MAX_METERS );
 	m_CurSong = NULL;
 
-	FOREACH_HumanPlayer( pn )
+	FOREACH_ENUM( PlayerNumber, pn )
 	{
 		const XNode *pChild = pNode->GetChild( ssprintf("CursorP%i",pn+1) );
 		if( pChild == NULL )
