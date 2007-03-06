@@ -57,15 +57,18 @@ void ScreenPrompt::Init()
 
 	m_textQuestion.LoadFromFont( THEME->GetPathF(m_sName,"question") );
 	m_textQuestion.SetName( "Question" );
+	LOAD_ALL_COMMANDS( m_textQuestion );
 	this->AddChild( &m_textQuestion );
 
 	m_sprCursor.Load( THEME->GetPathG(m_sName,"cursor") );
 	m_sprCursor->SetName( "Cursor" );
+	LOAD_ALL_COMMANDS( m_sprCursor );
 	this->AddChild( m_sprCursor );
 
 	for( int i=0; i<NUM_PromptAnswer; i++ )
 	{
 		m_textAnswer[i].LoadFromFont( THEME->GetPathF(m_sName,"answer") );
+		LOAD_ALL_COMMANDS( m_textAnswer[i] );
 		this->AddChild( &m_textAnswer[i] );
 	}
 
@@ -80,9 +83,10 @@ void ScreenPrompt::BeginScreen()
 	ENUM_CLAMP( m_Answer, PromptAnswer(0), PromptAnswer(g_PromptType) );
 
 	m_textQuestion.SetText( g_sText );
-	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textQuestion );
+	SET_XY( m_textQuestion );
+	m_textQuestion.PlayCommand( "On" );
 
-	ON_COMMAND( m_sprCursor );
+	m_sprCursor->PlayCommand( "On" );
 
 	for( int i=0; i<=g_PromptType; i++ )
 	{
@@ -94,7 +98,8 @@ void ScreenPrompt::BeginScreen()
 			sAnswer = "OK";
 		
 		m_textAnswer[i].SetText( ANSWER_TEXT(sAnswer) );
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textAnswer[i] );
+		m_textAnswer[i].PlayCommand( "On" );
+		SET_XY( m_textAnswer[i] );
 	}
 
 	for( int i=g_PromptType+1; i<NUM_PromptAnswer; i++ )
@@ -237,10 +242,10 @@ void ScreenPrompt::PositionCursor()
 
 void ScreenPrompt::TweenOffScreen()
 {
-	OFF_COMMAND( m_textQuestion );
-	OFF_COMMAND( m_sprCursor );
+	m_textQuestion.PlayCommand( "Off" );
+	m_sprCursor->PlayCommand( "Off" );
 	for( int i=0; i<=g_PromptType; i++ )
-		OFF_COMMAND( m_textAnswer[i] );
+		m_textAnswer[i].PlayCommand( "Off" );
 
 	ScreenWithMenuElements::TweenOffScreen();
 }
