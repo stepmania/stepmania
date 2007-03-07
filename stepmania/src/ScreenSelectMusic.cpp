@@ -313,7 +313,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 
 	// Handle late joining
-	if( input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
+	if( m_SelectionState != SelectionState_Finalized  &&  input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
 	{
 		// refresh the steps list so that 2-side StepsTypes will be removed since they're no longer playable
 		AfterMusicChange();
