@@ -14,7 +14,7 @@
 #include "ThemeMetric.h"
 #include <float.h>
 
-const float ARROW_SPACING	= ARROW_SIZE;// + 2;
+static ThemeMetric<float>	ARROW_SPACING( "ArrowEffects", "ArrowSpacing" );
 
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
