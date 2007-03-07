@@ -111,6 +111,7 @@ protected:
 	void CloseOptionsList( PlayerNumber pn );
 
 	SelectionState		m_SelectionState;
+	bool			m_bStepsSelected[NUM_PLAYERS];	// only used in SelectionState_SelectingSteps
 	bool			m_bGoToOptions;
 	RString			m_sSampleMusicToPlay;
 	TimingData		*m_pSampleMusicTimingData;

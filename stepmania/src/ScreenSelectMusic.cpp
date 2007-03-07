@@ -188,6 +188,7 @@ void ScreenSelectMusic::BeginScreen()
 	m_MusicWheel.BeginScreen();
 	
 	m_SelectionState = (SelectionState)0;
+	ZERO( m_bStepsSelected );
 	m_bGoToOptions = false;
 	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;
 	ZERO( m_iSelection );
@@ -295,6 +296,22 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
 
+
+	// debugging?
+	// I just like being able to see untransliterated titles occasionally.
+	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F9 )
+	{
+		if( input.type != IET_FIRST_PRESS ) 
+			return;
+		PREFSMAN->m_bShowNativeLanguage.Set( !PREFSMAN->m_bShowNativeLanguage );
+		m_MusicWheel.RebuildWheelItems();
+		return;
+	}
+
+	if( !input.GameI.IsValid() )
+		return;		// don't care
+
+
 	// Handle late joining
 	if( input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
 	{
@@ -317,6 +334,45 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 		return;	// don't handle this press again below
 	}
+
+	if( !GAMESTATE->IsHumanPlayer(input.pn) )
+		return;
+
+	// Check for "Press START again for options" button press
+	if( m_SelectionState == SelectionState_Finalized  &&
+	    input.MenuI == MENU_BUTTON_START  &&
+	    input.type != IET_RELEASE  &&
+	    OPTIONS_MENU_AVAILABLE.GetValue() )
+	{
+		if( m_bGoToOptions )
+			return; /* got it already */
+		if( !m_bAllowOptionsMenu )
+			return; /* not allowed */
+
+		if( !m_bAllowOptionsMenuRepeat && input.type == IET_REPEAT )
+		{
+			return; /* not allowed yet */
+		}
+		
+		m_bGoToOptions = true;
+		m_soundStart.Play();
+		this->PlayCommand( "ShowEnteringOptions" );
+
+		// Re-queue SM_BeginFadingOut, since ShowEnteringOptions may have
+		// short-circuited animations.
+		this->ClearMessageQueue( SM_BeginFadingOut );
+		this->PostScreenMessage( SM_BeginFadingOut, this->GetTweenTimeLeft() );
+
+		return;
+	}
+
+	if( IsTransitioning() )
+		return;		// ignore
+
+	if( m_SelectionState == SelectionState_Finalized  ||
+		m_bStepsSelected[input.pn] )
+		return;		// ignore
+
 
 	// handle options list input
 	if( USE_OPTIONS_LIST  &&  m_SelectionState == SelectionState_SelectingSteps )
@@ -356,59 +412,6 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	}
 
 
-	// debugging?
-	// I just like being able to see untransliterated titles occasionally.
-	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F9 )
-	{
-		if( input.type != IET_FIRST_PRESS ) 
-			return;
-		PREFSMAN->m_bShowNativeLanguage.Set( !PREFSMAN->m_bShowNativeLanguage );
-		m_MusicWheel.RebuildWheelItems();
-		return;
-	}
-
-	if( !input.GameI.IsValid() )
-		return;		// don't care
-
-
-	PlayerNumber pn = input.pn;
-	if( !GAMESTATE->IsHumanPlayer(pn) )
-		return;
-
-	// Check for "Press START again for options" button press
-	if( m_SelectionState == SelectionState_Finalized  &&
-	    input.MenuI == MENU_BUTTON_START  &&
-	    input.type != IET_RELEASE  &&
-	    OPTIONS_MENU_AVAILABLE.GetValue() )
-	{
-		if( m_bGoToOptions )
-			return; /* got it already */
-		if( !m_bAllowOptionsMenu )
-			return; /* not allowed */
-
-		if( !m_bAllowOptionsMenuRepeat && input.type == IET_REPEAT )
-		{
-			return; /* not allowed yet */
-		}
-		
-		m_bGoToOptions = true;
-		m_soundStart.Play();
-		this->PlayCommand( "ShowEnteringOptions" );
-
-		// Re-queue SM_BeginFadingOut, since ShowEnteringOptions may have
-		// short-circuited animations.
-		this->ClearMessageQueue( SM_BeginFadingOut );
-		this->PostScreenMessage( SM_BeginFadingOut, this->GetTweenTimeLeft() );
-
-		return;
-	}
-
-	if( IsTransitioning() )
-		return;		// ignore
-
-	if( m_SelectionState == SelectionState_Finalized )
-		return;		// ignore
-
 	UpdateSelectButton();
 
 	if( input.MenuI == MENU_BUTTON_SELECT )
@@ -419,17 +422,17 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;
 	}
 
-	if( SELECT_MENU_AVAILABLE  &&  INPUTMAPPER->IsBeingPressed( MENU_BUTTON_SELECT, pn ) )
+	if( SELECT_MENU_AVAILABLE  &&  INPUTMAPPER->IsBeingPressed( MENU_BUTTON_SELECT, input.pn ) )
 	{
 		if( input.type == IET_FIRST_PRESS )
 		{
 			switch( input.MenuI )
 			{
 			case MENU_BUTTON_LEFT:
-				ChangeDifficulty( pn, -1 );
+				ChangeDifficulty( input.pn, -1 );
 				return;
 			case MENU_BUTTON_RIGHT:
-				ChangeDifficulty( pn, +1 );
+				ChangeDifficulty( input.pn, +1 );
 				return;
 			case MENU_BUTTON_START:
 				if( MODE_MENU_AVAILABLE )
@@ -799,6 +802,29 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		break;
 
 	case SelectionState_SelectingSteps:
+		{
+			PlayerNumber pn = input.pn;
+			bool bInitiatedByMenuTimer = pn == PLAYER_INVALID;
+			bool bAllOtherHumanPlayersDone = true;
+			FOREACH_HumanPlayer( p )
+			{
+				if( p == pn )
+					continue;
+				bAllOtherHumanPlayersDone &= m_bStepsSelected[p];
+			}
+
+			bool bAllPlayersDoneSelectingSteps = bInitiatedByMenuTimer || bAllOtherHumanPlayersDone;
+			if( !bAllPlayersDoneSelectingSteps )
+			{
+				m_bStepsSelected[pn] = true;
+				m_soundStart.Play();
+
+				Message msg("StepsSelected");
+				msg.SetParam( "Player", pn );
+				MESSAGEMAN->Broadcast( msg );
+				return;
+			}
+		}
 		break;
 	}
 
@@ -808,6 +834,22 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 
 	if( m_SelectionState == SelectionState_Finalized )
 	{
+		m_MenuTimer->Stop();
+
+
+		FOREACH_HumanPlayer( p )
+		{
+			if( !m_bStepsSelected[p] )
+			{
+				m_bStepsSelected[p] = true;
+				m_soundStart.Play();
+
+				Message msg("StepsSelected");
+				msg.SetParam( "Player", p );
+				MESSAGEMAN->Broadcast( msg );
+			}
+		}
+
 		if( CommonMetrics::AUTO_SET_STYLE )
 		{
 			/* Now that Steps have been chosen, set a Style that can play them. */
