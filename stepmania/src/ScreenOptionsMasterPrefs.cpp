@@ -424,7 +424,7 @@ static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption 
 static int GetLifeDifficulty()
 {
 	int iLifeDifficulty = 0;
-	LifeDifficulty( iLifeDifficulty, true, ConfOption::Find("Premium") );	
+	LifeDifficulty( iLifeDifficulty, true, ConfOption::Find("LifeDifficulty") );	
 	iLifeDifficulty++;	// LifeDifficulty returns an index
 	return iLifeDifficulty;
 }
