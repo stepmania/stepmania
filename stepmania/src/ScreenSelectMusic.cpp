@@ -842,7 +842,8 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			if( !m_bStepsSelected[p] )
 			{
 				m_bStepsSelected[p] = true;
-				m_soundStart.Play();
+				/* Don't play start sound.  We play it again below on finalized */
+				//m_soundStart.Play();
 
 				Message msg("StepsSelected");
 				msg.SetParam( "Player", p );
