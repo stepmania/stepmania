@@ -34,6 +34,7 @@ AutoScreenMessage( SM_SortOrderChanged );
 
 static const SortOrder g_SongSortOrders[] =
 {
+	SORT_PREFERRED,
 	SORT_GROUP, 
 	SORT_TITLE, 
 	SORT_BPM, 
