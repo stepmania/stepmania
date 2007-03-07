@@ -765,7 +765,7 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_MenuTimer )
 	{
-		EndScreen();
+		HandleMenuStart();
 	}
 	else if( SM == SM_PlayCheer )
 	{
@@ -805,10 +805,10 @@ void ScreenEvaluation::MenuStart( const InputEventPlus &input )
 {
 	m_soundStart.Play();
 
-	EndScreen();
+	HandleMenuStart();
 }
 
-void ScreenEvaluation::EndScreen()
+void ScreenEvaluation::HandleMenuStart()
 {
 	FOREACH_PlayerNumber( p )
 		m_Grades[p].SettleImmediately();
