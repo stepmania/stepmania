@@ -1566,6 +1566,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 			LOG->Trace("Player %d failed", (int)pn);
 			pi->GetPlayerStageStats()->m_bFailed = true;	// fail
 
+			{
+				Message msg("PlayerFailed");
+				msg.SetParam( "PlayerNumber", pi->m_pn );
+				MESSAGEMAN->Broadcast( msg );
+			}
+
 			//
 			// Check for and do Oni die.
 			//
