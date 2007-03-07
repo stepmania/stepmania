@@ -187,11 +187,13 @@ class LunaMenuTimer: public Luna<MenuTimer>
 public:
 	static int setseconds( T* p, lua_State *L )		{ p->SetSeconds(FArg(1)); return 0; }
 	static int pause( T* p, lua_State *L )			{ p->Pause(); return 0; }
+	static int stop( T* p, lua_State *L )			{ p->Stop(); return 0; }
 
 	LunaMenuTimer()
 	{
   		ADD_METHOD( setseconds );
   		ADD_METHOD( pause );
+  		ADD_METHOD( stop );
 	}
 };
 
