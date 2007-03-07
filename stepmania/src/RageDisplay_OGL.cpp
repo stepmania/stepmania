@@ -369,6 +369,7 @@ void InitShaders()
 	// Bind attributes.
 	if( g_bTextureMatrixShader )
 	{
+		FlushGLErrors();
 		g_iAttribTextureMatrixScale = GLExt.glGetAttribLocationARB( g_bTextureMatrixShader, "TextureMatrixScale" );
 		if( g_iAttribTextureMatrixScale == -1 )
 		{
