@@ -18,8 +18,6 @@ public:
 
 	void PositionCursor( Actor *pCursor, int iSelection );
 
-	void Up();
-	void Down();
 	void Start();
 
 private:
@@ -49,7 +47,7 @@ public:
 	void Input( const InputEventPlus &input );
 	bool IsOpened() const { return m_asMenuStack.size() > 0; }
 
-	bool Start();	/* return true if the last menu was popped in response to this press */
+	bool Start( PlayerNumber pn );	/* return true if the last menu was popped in response to this press */
 
 private:
 	void SwitchMenu( int iDir );

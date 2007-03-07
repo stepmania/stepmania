@@ -390,7 +390,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 						CloseOptionsList( pn );
 						return;
 					case GAME_BUTTON_START:
-						if( m_OptionsList[pn].Start() )
+						if( m_OptionsList[pn].Start(pn) )
 							CloseOptionsList( pn );
 						return;
 					case GAME_BUTTON_MENULEFT:
@@ -1194,7 +1194,7 @@ void ScreenSelectMusic::AfterMusicChange()
 void ScreenSelectMusic::OpenOptionsList( PlayerNumber pn )
 {
 	m_OptionsList[pn].Open();
-	Message msg("OptionsOpened");
+	Message msg("OptionsListOpened");
 	msg.SetParam( "Player", pn );
 	MESSAGEMAN->Broadcast( msg );
 }
@@ -1202,7 +1202,7 @@ void ScreenSelectMusic::OpenOptionsList( PlayerNumber pn )
 void ScreenSelectMusic::CloseOptionsList( PlayerNumber pn )
 {
 	m_OptionsList[pn].Close();
-	Message msg("OptionsClosed");
+	Message msg("OptionsListClosed");
 	msg.SetParam( "Player", pn );
 	MESSAGEMAN->Broadcast( msg );
 }

@@ -280,6 +280,10 @@ void OptionsList::Input( const InputEventPlus &input )
 		--m_iMenuStackSelection;
 		wrap( m_iMenuStackSelection, pHandler->m_Def.m_vsChoices.size()+1 ); // +1 for exit row
 		PositionCursor();
+
+		Message msg("OptionsListLeft");
+		msg.SetParam( "Player", input.pn );
+		MESSAGEMAN->Broadcast( msg );
 	}
 	else if( input.MenuI == MENU_BUTTON_RIGHT )
 	{
@@ -294,11 +298,15 @@ void OptionsList::Input( const InputEventPlus &input )
 		++m_iMenuStackSelection;
 		wrap( m_iMenuStackSelection, pHandler->m_Def.m_vsChoices.size()+1 ); // +1 for exit row
 		PositionCursor();
+
+		Message msg("OptionsListRight");
+		msg.SetParam( "Player", input.pn );
+		MESSAGEMAN->Broadcast( msg );
 	}
 	else if( input.MenuI == MENU_BUTTON_START )
 	{
-			LOG->Trace( "X5" );
-		Start();
+		LOG->Trace( "X5" );
+		Start( input.pn );
 	}
 }
 
@@ -415,7 +423,7 @@ void OptionsList::Push( RString sDest )
 	SwitchToCurrentRow();
 }
 
-bool OptionsList::Start()
+bool OptionsList::Start( PlayerNumber pn )
 {
 	const OptionRowHandler *pHandler = GetCurrentHandler();
 	const RString &sCurrentRow = m_asMenuStack.back();
@@ -462,6 +470,10 @@ bool OptionsList::Start()
 		m_iMenuStackSelection = (int)bSelections.size();
 		PositionCursor();
 	}
+
+	Message msg("OptionsListStart");
+	msg.SetParam( "Player", pn );
+	MESSAGEMAN->Broadcast( msg );
 
 	return false;
 }
