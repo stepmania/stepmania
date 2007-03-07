@@ -74,6 +74,7 @@ const RString BACKGROUND_TRANSITIONS_DIR =	"BackgroundTransitions/";
 const RString BG_ANIMS_DIR			= "BGAnimations/";
 const RString VISUALIZATIONS_DIR	= "Visualizations/";
 const RString RANDOMMOVIES_DIR		= "RandomMovies/";
+const RString SONG_MOVIES_DIR		= "SongMovies/";
 
 const RString RANDOM_BACKGROUND_FILE    = "-random-";
 const RString NO_SONG_BG_FILE           = "-nosongbg-";
@@ -262,6 +263,7 @@ void BackgroundUtil::GetGlobalRandomMovies(
 	// Check for an exact match
 	if( !sMatch.empty() )
 	{
+		GetDirListing( SONG_MOVIES_DIR+sMatch, vsPathsOut, false, true );
 		GetDirListing( RANDOMMOVIES_DIR+sMatch, vsPathsOut, false, true );
 		if( !vsPathsOut.empty() )
 			goto found_files;
