@@ -1,28 +1,33 @@
 local children = { };
 
-children[#children+1] = Def.HelpDisplay {
-	File = THEME:GetPathF("HelpDisplay", "text");
+local function MakeHelpDisplay()
+	local X = self:x( ScreenMetric("HelpX") );
+	local Y = self:y( ScreenMetric("HelpY") );
+	local On = ScreenMetric("HelpOnCommand");
+	local Off = ScreenMetric("HelpOffCommand");
 
-	InitCommand=function(self)
-		local s = ScreenString("HelpText");
-		self:SetTipsColonSeparated(s);
-	end;
+	local t = Def.HelpDisplay {
+		File = THEME:GetPathF("HelpDisplay", "text");
 
-	SetHelpTextCommand=function(self, params)
-		self:SetTipsColonSeparated( params.Text );
-	end;
-	OnCommand=function(self)
-		self:x( ScreenMetric("HelpX") );
-		self:y( ScreenMetric("HelpY") );
-		local f = ScreenMetric("HelpOnCommand");
-		f(self);
-	end;
-	OffCommand=function(self)
-		local f = ScreenMetric("HelpOffCommand");
-		f(self);
-	end;
-};
+		InitCommand=function(self)
+			local s = ScreenString("HelpText");
+			self:SetTipsColonSeparated(s);
+		end;
 
+		SetHelpTextCommand=function(self, params)
+			self:SetTipsColonSeparated( params.Text );
+		end;
+		OnCommand=function(self)
+			self:x( X );
+			self:y( Y );
+			On(self);
+		end;
+		OffCommand=Off;
+	};
+	return t;
+end
+
+children[#children+1] = MakeHelpDisplay();
 return Def.ActorFrame {
 	children = children;
 };
