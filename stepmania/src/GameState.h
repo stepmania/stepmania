@@ -120,6 +120,7 @@ public:
 
 	static int GetNumStagesForSong( const Song* pSong );
 	static int GetNumStagesForSongAndStyle( const Song* pSong, const Style *pStyle );
+	static int GetNumStagesForCurrentSongAndStepsOrCourse();
 
 	int		GetStageIndex() const;
 	void		BeginStage();

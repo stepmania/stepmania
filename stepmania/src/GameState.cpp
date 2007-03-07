@@ -549,11 +549,28 @@ int GameState::GetNumStagesForSongAndStyle( const Song* pSong, const Style *pSty
 	return iNumStages;
 }
 
-static int GetNumStagesForCurrentSongOrCourse()
+int GameState::GetNumStagesForCurrentSongAndStepsOrCourse()
 {
 	int iNumStagesOfThisSong = 1;
 	if( GAMESTATE->m_pCurSong )
-		iNumStagesOfThisSong = GameState::GetNumStagesForSong( GAMESTATE->m_pCurSong );
+	{
+		Steps *pSteps = GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber];
+		StepsType st;
+		if( pSteps )
+		{
+			st = pSteps->m_StepsType;
+		}
+		else
+		{
+			vector<const Style*> vpStyles;
+			GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vpStyles );
+			ASSERT( !vpStyles.empty() );
+			const Style *pStyle = vpStyles[0];
+			st = pStyle->m_StepsType;
+		}
+		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), st );
+		iNumStagesOfThisSong = GameState::GetNumStagesForSongAndStyle( GAMESTATE->m_pCurSong, pStyle );
+	}
 	else if( GAMESTATE->m_pCurCourse )
 		iNumStagesOfThisSong = 1;
 	else
@@ -597,7 +614,7 @@ void GameState::BeginStage()
 		m_SongOptions.Assign( ModsLevel_Stage, m_SongOptions.GetPreferred() );
 
 	STATSMAN->m_CurStageStats.m_fMusicRate = m_SongOptions.GetSong().m_fMusicRate;
-	m_iNumStagesOfThisSong = GetNumStagesForCurrentSongOrCourse();
+	m_iNumStagesOfThisSong = GetNumStagesForCurrentSongAndStepsOrCourse();
 	ASSERT( m_iNumStagesOfThisSong != -1 );
 }
 
@@ -815,7 +832,7 @@ bool GameState::IsFinalStage() const
 		return true;
 
 	/* This changes dynamically on ScreenSelectMusic as the wheel turns. */
-	int iPredictedStageForCurSong = GetNumStagesForCurrentSongOrCourse();
+	int iPredictedStageForCurSong = GetNumStagesForCurrentSongAndStepsOrCourse();
 	if( iPredictedStageForCurSong == -1 )
 		iPredictedStageForCurSong = 1;
 	return m_iCurrentStageIndex + iPredictedStageForCurSong == PREFSMAN->m_iSongsPerPlay;
@@ -2191,6 +2208,7 @@ public:
 		lua_pushboolean(L, bUsingMemoryCard );
 		return 1;
 	}
+	static int GetNumStagesForCurrentSongAndStepsOrCourse( T* p, lua_State *L ) { lua_pushnumber(L, GameState::GetNumStagesForCurrentSongAndStepsOrCourse() ); return 1; }
 		
 	LunaGameState() 
 	{
@@ -2264,6 +2282,7 @@ public:
 		ADD_METHOD( GetDefaultSongOptions );
 		ADD_METHOD( GetCurrentStyle );
 		ADD_METHOD( IsAnyHumanPlayerUsingMemoryCard );
+		ADD_METHOD( GetNumStagesForCurrentSongAndStepsOrCourse );
 	}
 };
 
