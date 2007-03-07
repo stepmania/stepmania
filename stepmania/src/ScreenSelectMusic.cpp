@@ -432,7 +432,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;
 	}
 
-	if( SELECT_MENU_AVAILABLE && INPUTMAPPER->IsBeingPressed( MENU_BUTTON_SELECT, pn ) )
+	if( SELECT_MENU_AVAILABLE  &&  INPUTMAPPER->IsBeingPressed( MENU_BUTTON_SELECT, pn ) )
 	{
 		if( input.type == IET_FIRST_PRESS )
 		{
@@ -867,6 +867,11 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		{
 			StartTransitioningScreen( SM_BeginFadingOut );
 		}
+	}
+	else // !finalized.  Set the timer for selecting difficulty and mods.
+	{
+		m_MenuTimer->SetSeconds( 25 );
+		m_MenuTimer->Start();
 	}
 }
 
