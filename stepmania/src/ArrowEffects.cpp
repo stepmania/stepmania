@@ -184,7 +184,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	{
 		float fSongBeat = GAMESTATE->m_fSongBeat;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
-		float fYOffsetBeatSpacing = fBeatsUntilStep * ARROW_SPACING;
+		float fYOffsetBeatSpacing = fBeatsUntilStep;
 		fYOffset += fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
 	}
 
@@ -195,9 +195,11 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
 		float fBPM = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollBPM;
 		float fBPS = fBPM/60.f;
-		float fYOffsetTimeSpacing = fSecondsUntilStep * fBPS * ARROW_SPACING;
+		float fYOffsetTimeSpacing = fSecondsUntilStep * fBPS;
 		fYOffset += fYOffsetTimeSpacing * pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing;
 	}
+
+	fYOffset *= ARROW_SPACING;
 
 	// don't mess with the arrows after they've crossed 0
 	if( fYOffset < 0 )
