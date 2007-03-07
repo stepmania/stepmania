@@ -33,7 +33,9 @@ ActorFrameTexture::~ActorFrameTexture()
 
 void ActorFrameTexture::Create()
 {
+	ASSERT( m_pRenderTarget == NULL );
 	RageTextureID id( m_sTextureName );
+	id.Policy = RageTextureID::TEX_VOLATILE;
 
 	RenderTargetParam param;
 	param.bWithDepthBuffer = m_bDepthBuffer;
@@ -42,6 +44,7 @@ void ActorFrameTexture::Create()
 	param.iWidth = (int) m_size.x;
 	param.iHeight = (int) m_size.y;
 	m_pRenderTarget = new RageTextureRenderTarget( id, param );
+	m_pRenderTarget->m_bWasUsed = true;
 
 	/* This passes ownership of m_pRenderTarget to TEXTUREMAN, but we retain
 	 * our reference to it until we call TEXTUREMAN->UnloadTexture. */
