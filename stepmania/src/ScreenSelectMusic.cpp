@@ -331,21 +331,11 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 					switch( input.MenuI )
 					{
 					case GAME_BUTTON_SELECT:
-						{
-							Message msg("OptionsClosed");
-							msg.SetParam( "Player", pn );
-							MESSAGEMAN->Broadcast( msg );
-							m_OptionsList[pn].Close();
-						}
+						CloseOptionsList( pn );
 						return;
 					case GAME_BUTTON_START:
 						if( m_OptionsList[pn].Start() )
-						{
-							Message msg("OptionsClosed");
-							msg.SetParam( "Player", pn );
-							MESSAGEMAN->Broadcast( msg );
-							m_OptionsList[pn].Close();
-						}
+							CloseOptionsList( pn );
 						return;
 					case GAME_BUTTON_MENULEFT:
 					case GAME_BUTTON_MENURIGHT:
@@ -358,10 +348,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			{
 				if( input.type == IET_FIRST_PRESS  &&  input.MenuI == GAME_BUTTON_SELECT )
 				{
-					Message msg("OptionsOpened");
-					msg.SetParam( "Player", pn );
-					MESSAGEMAN->Broadcast( msg );
-					m_OptionsList[pn].Open();
+					OpenOptionsList( pn );
 					return;
 				}
 			}
@@ -670,18 +657,11 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			m_MenuTimer->SetSeconds( 15 );
 			m_MenuTimer->Start();
 		}
-		else if( DO_ROULETTE_ON_MENU_TIMER )
+		else if( DO_ROULETTE_ON_MENU_TIMER  &&  m_MusicWheel.GetSelectedSong() == NULL  &&  m_MusicWheel.GetSelectedCourse() == NULL )
 		{
-			if( m_MusicWheel.GetSelectedSong() == NULL && m_MusicWheel.GetSelectedCourse() == NULL )
-			{
-				m_MusicWheel.StartRoulette();
-				m_MenuTimer->SetSeconds( 15 );
-				m_MenuTimer->Start();
-			}
-			else
-			{
-				MenuStart( InputEventPlus() );
-			}
+			m_MusicWheel.StartRoulette();
+			m_MenuTimer->SetSeconds( 15 );
+			m_MenuTimer->Start();
 		}
 		else
 		{
@@ -690,6 +670,10 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			m_MusicWheel.FinishChangingSorts();
 			if( m_MusicWheel.GetSelectedSong() == NULL && m_MusicWheel.GetSelectedCourse() == NULL )
 				m_MusicWheel.StartRandom();
+
+			FOREACH_ENUM( PlayerNumber, p )
+				if( m_OptionsList[p].IsOpened() )
+					CloseOptionsList(p);
 
 			MenuStart( InputEventPlus() );
 		}
@@ -1163,6 +1147,22 @@ void ScreenSelectMusic::AfterMusicChange()
 		vpns.push_back( p );
 
 	AfterStepsOrTrailChange( vpns );
+}
+
+void ScreenSelectMusic::OpenOptionsList( PlayerNumber pn )
+{
+	m_OptionsList[pn].Open();
+	Message msg("OptionsOpened");
+	msg.SetParam( "Player", pn );
+	MESSAGEMAN->Broadcast( msg );
+}
+
+void ScreenSelectMusic::CloseOptionsList( PlayerNumber pn )
+{
+	m_OptionsList[pn].Close();
+	Message msg("OptionsClosed");
+	msg.SetParam( "Player", pn );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 // lua start
