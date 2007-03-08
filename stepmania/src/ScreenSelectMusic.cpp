@@ -315,7 +315,14 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	// Handle late joining
 	if( m_SelectionState != SelectionState_Finalized  &&  input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
 	{
-		// refresh the steps list so that 2-side StepsTypes will be removed since they're no longer playable
+		// The current steps may no longer be playable.  If one player has double steps 
+		// selected, they are no longer playable now that P2 has joined.  
+		
+		// TODO: Invalidate the CurSteps only if they are no longer playable.  That way, 
+		// after music change will clamp to the nearest in the DifficultyList.
+		FOREACH_ENUM( PlayerNumber, p )
+			GAMESTATE->m_pCurSteps[p].Set( NULL );
+
 		AfterMusicChange();
 
 		int iSel = 0;
