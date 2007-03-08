@@ -431,6 +431,11 @@ bool OptionsList::Start( PlayerNumber pn )
 	if( m_iMenuStackSelection == (int)bSelections.size() )
 	{
 		Pop();
+
+		Message msg("OptionsListPop");
+		msg.SetParam( "Player", pn );
+		MESSAGEMAN->Broadcast( msg );
+
 		return m_asMenuStack.empty();
 	}
 
@@ -439,6 +444,11 @@ bool OptionsList::Start( PlayerNumber pn )
 	{
 		Push( sDest );
 		TweenOnCurrentRow( true );
+
+		Message msg("OptionsListPush");
+		msg.SetParam( "Player", pn );
+		MESSAGEMAN->Broadcast( msg );
+
 		return false;
 	}
 
