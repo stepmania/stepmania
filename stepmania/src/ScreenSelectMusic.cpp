@@ -111,7 +111,7 @@ void ScreenSelectMusic::Init()
 		vector<StepsType> vst;
 		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
 		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
-		GAMESTATE->m_pCurStyle.Set( pStyle );
+		GAMESTATE->SetCurrentStyle( pStyle );
 	}
 	if( GAMESTATE->GetCurrentStyle() == NULL )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
@@ -869,7 +869,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 				stCurrent = GAMESTATE->m_pCurSteps[pn]->m_StepsType;
 			vector<StepsType> vst;
 			const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), stCurrent );
-			GAMESTATE->m_pCurStyle.Set( pStyle );
+			GAMESTATE->SetCurrentStyle( pStyle );
 		}
 
 
