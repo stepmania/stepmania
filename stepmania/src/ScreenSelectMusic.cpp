@@ -132,7 +132,7 @@ void ScreenSelectMusic::Init()
 		FOREACH_PlayerNumber(p)
 		{
 			m_OptionsList[p].SetName( "OptionsList" + PlayerNumberToString(p) );
-			m_OptionsList[p].Load( "OptionsList" );
+			m_OptionsList[p].Load( "OptionsList", p );
 			m_OptionsList[p].SetDrawOrder( 100 );
 			ActorUtil::LoadAllCommands( m_OptionsList[p], m_sName );
 			this->AddChild( &m_OptionsList[p] );

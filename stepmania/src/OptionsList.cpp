@@ -123,8 +123,10 @@ OptionsList::~OptionsList()
 		delete hand->second;
 }
 
-void OptionsList::Load( RString sType )
+void OptionsList::Load( RString sType, PlayerNumber pn )
 {
+	m_pn = pn;
+
 	m_Cursor.Load( THEME->GetPathG(sType, "cursor") );
 	m_Cursor->SetName( "Cursor" );
 	ActorUtil::LoadAllCommands( *m_Cursor, sType );
@@ -343,11 +345,11 @@ void OptionsList::ImportRow( RString sRow )
 {
 	vector<bool> aSelections[NUM_PLAYERS];
 	vector<PlayerNumber> vpns;
-	vpns.push_back(PLAYER_1); // XXX
+	vpns.push_back( m_pn ); // XXX
 	OptionRowHandler *pHandler = m_Rows[sRow];
-	aSelections[PLAYER_1].resize( pHandler->m_Def.m_vsChoices.size() );
+	aSelections[ m_pn ].resize( pHandler->m_Def.m_vsChoices.size() );
 	pHandler->ImportOption( vpns, aSelections );
-	m_bSelections[sRow] = aSelections[PLAYER_1];
+	m_bSelections[sRow] = aSelections[ m_pn ];
 
 	if( RowIsMenusOnly(sRow) )
 		fill( m_bSelections[sRow].begin(), m_bSelections[sRow].end(), false );
@@ -359,10 +361,10 @@ void OptionsList::ExportRow( RString sRow )
 		return;
 
 	vector<bool> aSelections[NUM_PLAYERS];
-	aSelections[PLAYER_1] = m_bSelections[sRow];
+	aSelections[m_pn] = m_bSelections[sRow];
 
 	vector<PlayerNumber> vpns;
-	vpns.push_back(PLAYER_1); // XXX
+	vpns.push_back( m_pn ); // XXX
 
 	m_Rows[sRow]->ExportOption( vpns, aSelections );
 }

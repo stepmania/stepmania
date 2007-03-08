@@ -36,7 +36,7 @@ public:
 	OptionsList();
 	~OptionsList();
 
-	void Load( RString sType );
+	void Load( RString sType, PlayerNumber pn );
 
 	/* Show the top-level menu. */
 	void Open();
@@ -66,6 +66,7 @@ private:
 	map<RString, OptionRowHandler *> m_Rows;
 	map<RString, vector<bool> > m_bSelections;
 
+	PlayerNumber m_pn;
 	AutoActor m_Cursor;
 	OptionListRow m_Row[2];
 	int m_iCurrentRow;
