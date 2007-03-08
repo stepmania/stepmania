@@ -1218,8 +1218,8 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		if( SCREENMAN->AllowOperatorMenuButton() )
 		{
 			SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED );
-			GAMESTATE->Reset();
 			SCREENMAN->PopAllScreens();
+			GAMESTATE->Reset();
 			SCREENMAN->SetNewScreen( "ScreenOptionsService" );
 		}
 		return true;
