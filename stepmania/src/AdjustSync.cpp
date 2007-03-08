@@ -277,7 +277,7 @@ void AdjustSync::GetSyncChangeTextGlobal( vector<RString> &vsAddTo )
 		float fNew = Quantize( PREFSMAN->m_fGlobalOffsetSeconds, 0.001f ) ;
 		float fDelta = fNew - fOld;
 
-		if( fabsf(fDelta) > 0.00001f )
+		if( fabsf(fDelta) > 0.0001f )
 		{
 			vsAddTo.push_back( ssprintf( 
 				GLOBAL_OFFSET_FROM.GetValue(),
@@ -299,7 +299,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			float fNew = Quantize( GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds, 0.001f );
 			float fDelta = fNew - fOld;
 
-			if( fabsf(fDelta) > 0.00001f )
+			if( fabsf(fDelta) > 0.0001f )
 			{
 				vsAddTo.push_back( ssprintf( 
 					SONG_OFFSET_FROM.GetValue(),
@@ -315,7 +315,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			float fNew = Quantize( GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].GetBPM(), 0.001f );
 			float fDelta = fNew - fOld;
 
-			if( fabsf(fDelta) > 0.00001f )
+			if( fabsf(fDelta) > 0.0001f )
 			{
 				if ( i >= 4 ) 
 				{
@@ -336,7 +336,7 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
 			float fNew = Quantize( GAMESTATE->m_pCurSong->m_Timing.m_StopSegments[i].m_fStopSeconds, 0.001f );
 			float fDelta = fNew - fOld;
 
-			if( fabsf(fDelta) > 0.00001f )
+			if( fabsf(fDelta) > 0.0001f )
 			{
 				if ( i >= 4 )
 				{
