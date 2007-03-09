@@ -2391,7 +2391,13 @@ void Player::HandleHoldScore( const TapNote &tn )
 
 float Player::GetMaxStepDistanceSeconds()
 {
-	return GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * GetWindowSeconds(TW_W5);
+	float fMax = 0;
+	fMax = max( fMax, GetWindowSeconds(TW_W5) );
+	fMax = max( fMax, GetWindowSeconds(TW_W4) );
+	fMax = max( fMax, GetWindowSeconds(TW_W3) );
+	fMax = max( fMax, GetWindowSeconds(TW_W2) );
+	fMax = max( fMax, GetWindowSeconds(TW_W1) );
+	return GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * fMax;
 }
 
 void Player::FadeToFail()
