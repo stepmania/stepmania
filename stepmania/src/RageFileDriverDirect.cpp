@@ -380,7 +380,6 @@ int RageFileObjDirect::WriteInternal( const void *pBuf, size_t iBytes )
 	int iRet = RetriedWrite( m_iFD, pBuf, iBytes );
 	if( iRet == -1 )
 	{
-		LOG->Warn("Error writing %s: %s", this->m_sPath.c_str(), strerror(errno) );
 		SetError( strerror(errno) );
 		m_bWriteFailed = true;
 		return -1;
