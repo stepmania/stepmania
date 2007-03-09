@@ -727,6 +727,8 @@ void GameState::ResetMusicStatistics()
 	m_fSongBeatNoOffset = 0;
 	m_fCurBPS = 10;
 	m_bFreeze = false;
+	m_fMusicSecondsVisible = 0;
+	m_fSongBeatVisible = 0;
 	Actor::SetBGMTime( 0, 0 );
 
 
@@ -785,6 +787,7 @@ void GameState::ResetStageStatistics()
 	m_iStageSeed = rand();
 }
 
+static Preference<float> g_fVisualDelaySeconds( "VisualDelaySeconds", 0.0f );
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
 {
 	if( !timestamp.IsZero() )
@@ -799,7 +802,12 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 
 	m_fSongBeatNoOffset = timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
 	Actor::SetBGMTime( fPositionSeconds, m_fSongBeatNoOffset );
-	
+
+	m_fMusicSecondsVisible = fPositionSeconds - g_fVisualDelaySeconds.Get();
+	float fThrowAway;
+	bool bThrowAway;
+	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway );
+
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 }
 

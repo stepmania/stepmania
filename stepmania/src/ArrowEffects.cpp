@@ -134,7 +134,7 @@ void ArrowEffects::Update()
 			fAccelTime /= fDiv;
 			fTotalTime /= fDiv;
 
-			float fBeat = GAMESTATE->m_fSongBeat + fAccelTime;
+			float fBeat = GAMESTATE->m_fSongBeatVisible + fAccelTime;
 			fBeat /= fDiv;
 
 			const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
@@ -182,7 +182,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	 * entirely time spacing (respectively).  Occasionally, we tween between them. */
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 1.0f )
 	{
-		float fSongBeat = GAMESTATE->m_fSongBeat;
+		float fSongBeat = GAMESTATE->m_fSongBeatVisible;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
 		float fYOffsetBeatSpacing = fBeatsUntilStep;
 		fYOffset += fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
@@ -190,7 +190,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 0.0f )
 	{
-		float fSongSeconds = GAMESTATE->m_fMusicSeconds;
+		float fSongSeconds = GAMESTATE->m_fMusicSecondsVisible;
 		float fNoteSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fNoteBeat);
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
 		float fBPM = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollBPM;
@@ -398,7 +398,7 @@ float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBea
 {
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_DIZZY] != 0 )
 	{
-		const float fSongBeat = GAMESTATE->m_fSongBeat;
+		const float fSongBeat = GAMESTATE->m_fSongBeatVisible;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
 		fDizzyRotation *= pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_DIZZY];
 		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
@@ -553,7 +553,7 @@ float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteB
 	if( GAMESTATE->IsEditing() )
 		return 1;
 
-	float fSongBeat = GAMESTATE->m_fSongBeat;
+	float fSongBeat = GAMESTATE->m_fSongBeatVisible;
 	float fBeatsUntilStep = fNoteBeat - fSongBeat;
 
 	float fBrightness = SCALE( fBeatsUntilStep, 0, -1, 1.f, 0.f );

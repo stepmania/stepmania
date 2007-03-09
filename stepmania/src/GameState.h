@@ -172,6 +172,9 @@ public:
 	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
+	float		m_fMusicSecondsVisible;
+	float		m_fSongBeatVisible;
+
 	void GetAllUsedNoteSkins( vector<RString> &out ) const;
 
 	static const float MUSIC_SECONDS_INVALID;
