@@ -46,8 +46,8 @@ void StageStats::AssertValid( PlayerNumber pn ) const
 	ASSERT_M( m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode) );
 	ASSERT( m_pStyle != NULL );
 	ASSERT_M( m_player[pn].m_vpPlayedSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("difficulty %i", m_player[pn].m_vpPlayedSteps[0]->GetDifficulty()) );
-	ASSERT_M( m_vpPlayedSongs.size() == m_player[pn].m_vpPlayedSteps.size(), ssprintf("%i, %i, %i", m_vpPlayedSongs.size(), m_player[pn].m_vpPlayedSteps.size(), pn) );
-	ASSERT_M( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size(), ssprintf("%i, %i, %i", m_vpPossibleSongs.size(), m_player[pn].m_vpPossibleSteps.size(), pn) );
+	ASSERT_M( m_vpPlayedSongs.size() == m_player[pn].m_vpPlayedSteps.size(), ssprintf("%i, %i, %i", (int)m_vpPlayedSongs.size(), (int)m_player[pn].m_vpPlayedSteps.size(), pn) );
+	ASSERT_M( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size(), ssprintf("%i, %i, %i", (int)m_vpPossibleSongs.size(), (int)m_player[pn].m_vpPossibleSteps.size(), pn) );
 }
 
 void StageStats::AssertValid( MultiPlayer pn ) const
