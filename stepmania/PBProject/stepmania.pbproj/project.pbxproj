@@ -30,6 +30,10 @@
 		AA059ABF0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */; };
 		AA059E2B0B8F0C67006F8139 /* libz_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA059E2A0B8F0C66006F8139 /* libz_link.a */; };
 		AA059E2C0B8F0C67006F8139 /* libz_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA059E2A0B8F0C66006F8139 /* libz_link.a */; };
+		AA05A0B00BA2EFF3006F8139 /* OptionsList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA05A0AE0BA2EFF3006F8139 /* OptionsList.cpp */; };
+		AA05A0B10BA2EFF3006F8139 /* OptionsList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA05A0AF0BA2EFF3006F8139 /* OptionsList.h */; };
+		AA05A0B20BA2EFF3006F8139 /* OptionsList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA05A0AE0BA2EFF3006F8139 /* OptionsList.cpp */; };
+		AA05A0B30BA2EFF3006F8139 /* OptionsList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA05A0AF0BA2EFF3006F8139 /* OptionsList.h */; };
 		AA07008A0B61F177003B85BB /* RageSoundReader_PostBuffering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0700880B61F177003B85BB /* RageSoundReader_PostBuffering.cpp */; };
 		AA07008B0B61F177003B85BB /* RageSoundReader_PostBuffering.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0700890B61F177003B85BB /* RageSoundReader_PostBuffering.h */; };
 		AA07008C0B61F177003B85BB /* RageSoundReader_PostBuffering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0700880B61F177003B85BB /* RageSoundReader_PostBuffering.cpp */; };
@@ -178,11 +182,9 @@
 		AA29CC850558741A00961A51 /* Background.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0004770F63005F316C /* Background.h */; };
 		AA29CC860558741A00961A51 /* BGAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0204770F63005F316C /* BGAnimation.h */; };
 		AA29CC870558741A00961A51 /* BGAnimationLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0404770F63005F316C /* BGAnimationLayer.h */; };
-		AA29CC880558741A00961A51 /* Combo.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0604770F63005F316C /* Combo.h */; };
 		AA29CC890558741A00961A51 /* DancingCharacters.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0804770F63005F316C /* DancingCharacters.h */; };
 		AA29CC8B0558741A00961A51 /* GhostArrowRow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0E04770F63005F316C /* GhostArrowRow.h */; };
 		AA29CC8F0558741A00961A51 /* HoldJudgment.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1604770F63005F316C /* HoldJudgment.h */; };
-		AA29CC900558741A00961A51 /* Judgment.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1804770F63005F316C /* Judgment.h */; };
 		AA29CC910558741A00961A51 /* LifeMeter.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1A04770F63005F316C /* LifeMeter.h */; };
 		AA29CC920558741A00961A51 /* LifeMeterBar.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1C04770F63005F316C /* LifeMeterBar.h */; };
 		AA29CC930558741A00961A51 /* LifeMeterBattery.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1E04770F63005F316C /* LifeMeterBattery.h */; };
@@ -388,11 +390,9 @@
 		AA29CD990558741A00961A51 /* Background.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEFF04770F63005F316C /* Background.cpp */; };
 		AA29CD9A0558741A00961A51 /* BGAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0104770F63005F316C /* BGAnimation.cpp */; };
 		AA29CD9B0558741A00961A51 /* BGAnimationLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0304770F63005F316C /* BGAnimationLayer.cpp */; };
-		AA29CD9C0558741A00961A51 /* Combo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0504770F63005F316C /* Combo.cpp */; };
 		AA29CD9D0558741A00961A51 /* DancingCharacters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0704770F63005F316C /* DancingCharacters.cpp */; };
 		AA29CD9F0558741A00961A51 /* GhostArrowRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0D04770F63005F316C /* GhostArrowRow.cpp */; };
 		AA29CDA30558741A00961A51 /* HoldJudgment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1504770F63005F316C /* HoldJudgment.cpp */; };
-		AA29CDA40558741A00961A51 /* Judgment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1704770F63005F316C /* Judgment.cpp */; };
 		AA29CDA50558741A00961A51 /* LifeMeterBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1B04770F63005F316C /* LifeMeterBar.cpp */; };
 		AA29CDA60558741A00961A51 /* LifeMeterBattery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1D04770F63005F316C /* LifeMeterBattery.cpp */; };
 		AA29CDA70558741A00961A51 /* LyricDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1F04770F63005F316C /* LyricDisplay.cpp */; };
@@ -629,11 +629,9 @@
 		AA40D20D09A08D650068C0D5 /* Background.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0004770F63005F316C /* Background.h */; };
 		AA40D20E09A08D650068C0D5 /* BGAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0204770F63005F316C /* BGAnimation.h */; };
 		AA40D20F09A08D650068C0D5 /* BGAnimationLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0404770F63005F316C /* BGAnimationLayer.h */; };
-		AA40D21009A08D650068C0D5 /* Combo.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0604770F63005F316C /* Combo.h */; };
 		AA40D21109A08D650068C0D5 /* DancingCharacters.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0804770F63005F316C /* DancingCharacters.h */; };
 		AA40D21209A08D650068C0D5 /* GhostArrowRow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0E04770F63005F316C /* GhostArrowRow.h */; };
 		AA40D21309A08D650068C0D5 /* HoldJudgment.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1604770F63005F316C /* HoldJudgment.h */; };
-		AA40D21409A08D650068C0D5 /* Judgment.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1804770F63005F316C /* Judgment.h */; };
 		AA40D21509A08D650068C0D5 /* LifeMeter.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1A04770F63005F316C /* LifeMeter.h */; };
 		AA40D21609A08D650068C0D5 /* LifeMeterBar.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1C04770F63005F316C /* LifeMeterBar.h */; };
 		AA40D21709A08D650068C0D5 /* LifeMeterBattery.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1E04770F63005F316C /* LifeMeterBattery.h */; };
@@ -1000,11 +998,9 @@
 		AA40D3CF09A08D650068C0D5 /* Background.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEFF04770F63005F316C /* Background.cpp */; };
 		AA40D3D009A08D650068C0D5 /* BGAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0104770F63005F316C /* BGAnimation.cpp */; };
 		AA40D3D109A08D650068C0D5 /* BGAnimationLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0304770F63005F316C /* BGAnimationLayer.cpp */; };
-		AA40D3D209A08D650068C0D5 /* Combo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0504770F63005F316C /* Combo.cpp */; };
 		AA40D3D309A08D650068C0D5 /* DancingCharacters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0704770F63005F316C /* DancingCharacters.cpp */; };
 		AA40D3D409A08D650068C0D5 /* GhostArrowRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0D04770F63005F316C /* GhostArrowRow.cpp */; };
 		AA40D3D509A08D650068C0D5 /* HoldJudgment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1504770F63005F316C /* HoldJudgment.cpp */; };
-		AA40D3D609A08D650068C0D5 /* Judgment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1704770F63005F316C /* Judgment.cpp */; };
 		AA40D3D709A08D650068C0D5 /* LifeMeterBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1B04770F63005F316C /* LifeMeterBar.cpp */; };
 		AA40D3D809A08D650068C0D5 /* LifeMeterBattery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1D04770F63005F316C /* LifeMeterBattery.cpp */; };
 		AA40D3D909A08D650068C0D5 /* LyricDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1F04770F63005F316C /* LyricDisplay.cpp */; };
@@ -2169,6 +2165,8 @@
 		AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorMultiTexture.cpp; path = ../src/ActorMultiTexture.cpp; sourceTree = "<group>"; };
 		AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorMultiTexture.h; path = ../src/ActorMultiTexture.h; sourceTree = "<group>"; };
 		AA059E2A0B8F0C66006F8139 /* libz_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libz_link.a; sourceTree = "<group>"; };
+		AA05A0AE0BA2EFF3006F8139 /* OptionsList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OptionsList.cpp; path = ../src/OptionsList.cpp; sourceTree = "<group>"; };
+		AA05A0AF0BA2EFF3006F8139 /* OptionsList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OptionsList.h; path = ../src/OptionsList.h; sourceTree = "<group>"; };
 		AA0700880B61F177003B85BB /* RageSoundReader_PostBuffering.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageSoundReader_PostBuffering.cpp; path = ../src/RageSoundReader_PostBuffering.cpp; sourceTree = "<group>"; };
 		AA0700890B61F177003B85BB /* RageSoundReader_PostBuffering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageSoundReader_PostBuffering.h; path = ../src/RageSoundReader_PostBuffering.h; sourceTree = "<group>"; };
 		AA07328B0954381800F396C5 /* DisplayResolutions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DisplayResolutions.h; path = ../src/DisplayResolutions.h; sourceTree = "<group>"; };
@@ -2585,16 +2583,12 @@
 		AA6EFF0204770F63005F316C /* BGAnimation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = BGAnimation.h; path = ../src/BGAnimation.h; sourceTree = "<group>"; };
 		AA6EFF0304770F63005F316C /* BGAnimationLayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = BGAnimationLayer.cpp; path = ../src/BGAnimationLayer.cpp; sourceTree = "<group>"; };
 		AA6EFF0404770F63005F316C /* BGAnimationLayer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = BGAnimationLayer.h; path = ../src/BGAnimationLayer.h; sourceTree = "<group>"; };
-		AA6EFF0504770F63005F316C /* Combo.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Combo.cpp; path = ../src/Combo.cpp; sourceTree = "<group>"; };
-		AA6EFF0604770F63005F316C /* Combo.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Combo.h; path = ../src/Combo.h; sourceTree = "<group>"; };
 		AA6EFF0704770F63005F316C /* DancingCharacters.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = DancingCharacters.cpp; path = ../src/DancingCharacters.cpp; sourceTree = "<group>"; };
 		AA6EFF0804770F63005F316C /* DancingCharacters.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DancingCharacters.h; path = ../src/DancingCharacters.h; sourceTree = "<group>"; };
 		AA6EFF0D04770F63005F316C /* GhostArrowRow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = GhostArrowRow.cpp; path = ../src/GhostArrowRow.cpp; sourceTree = "<group>"; };
 		AA6EFF0E04770F63005F316C /* GhostArrowRow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = GhostArrowRow.h; path = ../src/GhostArrowRow.h; sourceTree = "<group>"; };
 		AA6EFF1504770F63005F316C /* HoldJudgment.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = HoldJudgment.cpp; path = ../src/HoldJudgment.cpp; sourceTree = "<group>"; };
 		AA6EFF1604770F63005F316C /* HoldJudgment.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = HoldJudgment.h; path = ../src/HoldJudgment.h; sourceTree = "<group>"; };
-		AA6EFF1704770F63005F316C /* Judgment.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Judgment.cpp; path = ../src/Judgment.cpp; sourceTree = "<group>"; };
-		AA6EFF1804770F63005F316C /* Judgment.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Judgment.h; path = ../src/Judgment.h; sourceTree = "<group>"; };
 		AA6EFF1A04770F63005F316C /* LifeMeter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = LifeMeter.h; path = ../src/LifeMeter.h; sourceTree = "<group>"; };
 		AA6EFF1B04770F63005F316C /* LifeMeterBar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LifeMeterBar.cpp; path = ../src/LifeMeterBar.cpp; sourceTree = "<group>"; };
 		AA6EFF1C04770F63005F316C /* LifeMeterBar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = LifeMeterBar.h; path = ../src/LifeMeterBar.h; sourceTree = "<group>"; };
@@ -4312,6 +4306,8 @@
 				AA8BD2B507C939A200EA04E1 /* OptionRow.h */,
 				AA6EFEAC04770E7C005F316C /* OptionsCursor.cpp */,
 				AA6EFEAD04770E7C005F316C /* OptionsCursor.h */,
+				AA05A0AE0BA2EFF3006F8139 /* OptionsList.cpp */,
+				AA05A0AF0BA2EFF3006F8139 /* OptionsList.h */,
 				AAC6DDDE0569C71000B5D56F /* PaneDisplay.cpp */,
 				AAC6DDDF0569C71000B5D56F /* PaneDisplay.h */,
 				AAFE711D0A91B551005F2290 /* RoomInfoDisplay.cpp */,
@@ -4358,8 +4354,6 @@
 				AA9D236C0561B6CE00FC7F14 /* CombinedLifeMeter.h */,
 				AAE443EB04B0F9F600D02EE9 /* CombinedLifeMeterTug.cpp */,
 				AAE443EC04B0F9F600D02EE9 /* CombinedLifeMeterTug.h */,
-				AA6EFF0504770F63005F316C /* Combo.cpp */,
-				AA6EFF0604770F63005F316C /* Combo.h */,
 				AA6EFF0704770F63005F316C /* DancingCharacters.cpp */,
 				AA6EFF0804770F63005F316C /* DancingCharacters.h */,
 				AABE321E05ACD931001A0E84 /* Foreground.cpp */,
@@ -4370,8 +4364,6 @@
 				AA6EFF1604770F63005F316C /* HoldJudgment.h */,
 				AA6EFDE104770C79005F316C /* Inventory.cpp */,
 				AA6EFDE204770C79005F316C /* Inventory.h */,
-				AA6EFF1704770F63005F316C /* Judgment.cpp */,
-				AA6EFF1804770F63005F316C /* Judgment.h */,
 				AA6EFF1A04770F63005F316C /* LifeMeter.h */,
 				AA6EFF1B04770F63005F316C /* LifeMeterBar.cpp */,
 				AA6EFF1C04770F63005F316C /* LifeMeterBar.h */,
@@ -5326,11 +5318,9 @@
 				AA29CC850558741A00961A51 /* Background.h in Headers */,
 				AA29CC860558741A00961A51 /* BGAnimation.h in Headers */,
 				AA29CC870558741A00961A51 /* BGAnimationLayer.h in Headers */,
-				AA29CC880558741A00961A51 /* Combo.h in Headers */,
 				AA29CC890558741A00961A51 /* DancingCharacters.h in Headers */,
 				AA29CC8B0558741A00961A51 /* GhostArrowRow.h in Headers */,
 				AA29CC8F0558741A00961A51 /* HoldJudgment.h in Headers */,
-				AA29CC900558741A00961A51 /* Judgment.h in Headers */,
 				AA29CC910558741A00961A51 /* LifeMeter.h in Headers */,
 				AA29CC920558741A00961A51 /* LifeMeterBar.h in Headers */,
 				AA29CC930558741A00961A51 /* LifeMeterBattery.h in Headers */,
@@ -5660,6 +5650,7 @@
 				AA07008B0B61F177003B85BB /* RageSoundReader_PostBuffering.h in Headers */,
 				AA7C8DB10B68CB2200FD9940 /* GameplayAssist.h in Headers */,
 				AA059ABF0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */,
+				AA05A0B30BA2EFF3006F8139 /* OptionsList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5751,11 +5742,9 @@
 				AA40D20D09A08D650068C0D5 /* Background.h in Headers */,
 				AA40D20E09A08D650068C0D5 /* BGAnimation.h in Headers */,
 				AA40D20F09A08D650068C0D5 /* BGAnimationLayer.h in Headers */,
-				AA40D21009A08D650068C0D5 /* Combo.h in Headers */,
 				AA40D21109A08D650068C0D5 /* DancingCharacters.h in Headers */,
 				AA40D21209A08D650068C0D5 /* GhostArrowRow.h in Headers */,
 				AA40D21309A08D650068C0D5 /* HoldJudgment.h in Headers */,
-				AA40D21409A08D650068C0D5 /* Judgment.h in Headers */,
 				AA40D21509A08D650068C0D5 /* LifeMeter.h in Headers */,
 				AA40D21609A08D650068C0D5 /* LifeMeterBar.h in Headers */,
 				AA40D21709A08D650068C0D5 /* LifeMeterBattery.h in Headers */,
@@ -6080,6 +6069,7 @@
 				AA07008D0B61F177003B85BB /* RageSoundReader_PostBuffering.h in Headers */,
 				AA7C8DAF0B68CB2200FD9940 /* GameplayAssist.h in Headers */,
 				AA059ABD0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */,
+				AA05A0B10BA2EFF3006F8139 /* OptionsList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6502,11 +6492,9 @@
 				AA29CD990558741A00961A51 /* Background.cpp in Sources */,
 				AA29CD9A0558741A00961A51 /* BGAnimation.cpp in Sources */,
 				AA29CD9B0558741A00961A51 /* BGAnimationLayer.cpp in Sources */,
-				AA29CD9C0558741A00961A51 /* Combo.cpp in Sources */,
 				AA29CD9D0558741A00961A51 /* DancingCharacters.cpp in Sources */,
 				AA29CD9F0558741A00961A51 /* GhostArrowRow.cpp in Sources */,
 				AA29CDA30558741A00961A51 /* HoldJudgment.cpp in Sources */,
-				AA29CDA40558741A00961A51 /* Judgment.cpp in Sources */,
 				AA29CDA50558741A00961A51 /* LifeMeterBar.cpp in Sources */,
 				AA29CDA60558741A00961A51 /* LifeMeterBattery.cpp in Sources */,
 				AA29CDA70558741A00961A51 /* LyricDisplay.cpp in Sources */,
@@ -6831,6 +6819,7 @@
 				AA07008A0B61F177003B85BB /* RageSoundReader_PostBuffering.cpp in Sources */,
 				AA7C8DB00B68CB2200FD9940 /* GameplayAssist.cpp in Sources */,
 				AA059ABE0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */,
+				AA05A0B20BA2EFF3006F8139 /* OptionsList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6917,11 +6906,9 @@
 				AA40D3CF09A08D650068C0D5 /* Background.cpp in Sources */,
 				AA40D3D009A08D650068C0D5 /* BGAnimation.cpp in Sources */,
 				AA40D3D109A08D650068C0D5 /* BGAnimationLayer.cpp in Sources */,
-				AA40D3D209A08D650068C0D5 /* Combo.cpp in Sources */,
 				AA40D3D309A08D650068C0D5 /* DancingCharacters.cpp in Sources */,
 				AA40D3D409A08D650068C0D5 /* GhostArrowRow.cpp in Sources */,
 				AA40D3D509A08D650068C0D5 /* HoldJudgment.cpp in Sources */,
-				AA40D3D609A08D650068C0D5 /* Judgment.cpp in Sources */,
 				AA40D3D709A08D650068C0D5 /* LifeMeterBar.cpp in Sources */,
 				AA40D3D809A08D650068C0D5 /* LifeMeterBattery.cpp in Sources */,
 				AA40D3D909A08D650068C0D5 /* LyricDisplay.cpp in Sources */,
@@ -7241,6 +7228,7 @@
 				AA07008C0B61F177003B85BB /* RageSoundReader_PostBuffering.cpp in Sources */,
 				AA7C8DAE0B68CB2200FD9940 /* GameplayAssist.cpp in Sources */,
 				AA059ABC0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */,
+				AA05A0B00BA2EFF3006F8139 /* OptionsList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
