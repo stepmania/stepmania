@@ -741,8 +741,12 @@ void NoteField::DrawPrimitives()
 
 	float fSelectedRangeGlow = SCALE( RageFastCos(RageTimer::GetTimeSinceStartFast()*2), -1, 1, 0.1f, 0.3f );
 
-	for( int c=0; c<m_pNoteData->GetNumTracks(); c++ )	// for each arrow column
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	ASSERT( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer == m_pNoteData->GetNumTracks() );
+
+	for( int i=0; i<m_pNoteData->GetNumTracks(); i++ )	// for each arrow column
 	{
+		const int c = pStyle->m_iColumnDrawOrder[i];
 		//
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
 		//	
