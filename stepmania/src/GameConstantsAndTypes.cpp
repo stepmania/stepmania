@@ -45,6 +45,7 @@ RString StepsTypeToString( StepsType st )
 	}
 	return s;
 }
+namespace StringConversion { template<> RString ToString<StepsType>( const StepsType &value ) { return StepsTypeToString(value); } }
 
 LuaXType( StepsType );
 
