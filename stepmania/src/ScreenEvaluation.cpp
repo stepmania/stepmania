@@ -763,11 +763,7 @@ void ScreenEvaluation::Input( const InputEventPlus &input )
 
 void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_MenuTimer )
-	{
-		HandleMenuStart();
-	}
-	else if( SM == SM_PlayCheer )
+	if( SM == SM_PlayCheer )
 	{
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
 	}
@@ -803,6 +799,9 @@ void ScreenEvaluation::MenuBack( const InputEventPlus &input )
 
 void ScreenEvaluation::MenuStart( const InputEventPlus &input )
 {
+	if( IsTransitioning() )
+		return;
+
 	m_soundStart.Play();
 
 	HandleMenuStart();
