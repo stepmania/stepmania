@@ -385,7 +385,7 @@ namespace RageFileUtil
 }
 
 /*
- * Copyright (c) 2003-2004 Glenn Maynard, Chris Danford, Steve Checkoway
+ * Copyright (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
