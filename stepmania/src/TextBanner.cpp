@@ -25,13 +25,8 @@ void TextBanner::Load( RString sType )
 	m_textArtist.LoadFromFont( THEME->GetPathF(sType,"text") );
 	this->AddChild( &m_textArtist );
 
+	AddCommand( "Set", THEME->GetMetricA(sType,"SetCommand") );
 	ARTIST_PREPEND_STRING			.Load(sType,"ArtistPrependString");
-	TWO_LINES_TITLE_COMMAND			.Load(sType,"TwoLinesTitleCommand");
-	TWO_LINES_SUBTITLE_COMMAND		.Load(sType,"TwoLinesSubtitleCommand");
-	TWO_LINES_ARTIST_COMMAND		.Load(sType,"TwoLinesArtistCommand");
-	THREE_LINES_TITLE_COMMAND		.Load(sType,"ThreeLinesTitleCommand");
-	THREE_LINES_SUBTITLE_COMMAND	.Load(sType,"ThreeLinesSubtitleCommand");
-	THREE_LINES_ARTIST_COMMAND		.Load(sType,"ThreeLinesArtistCommand");
 
 	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTitle, sType );
 	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textSubTitle, sType );
@@ -49,13 +44,7 @@ TextBanner::TextBanner( const TextBanner &cpy ):
 	m_textTitle( cpy.m_textTitle ),
 	m_textSubTitle( cpy.m_textSubTitle ),
 	m_textArtist( cpy.m_textArtist ),
-	ARTIST_PREPEND_STRING( cpy.ARTIST_PREPEND_STRING ),
-	TWO_LINES_TITLE_COMMAND( cpy.TWO_LINES_TITLE_COMMAND ),
-	TWO_LINES_SUBTITLE_COMMAND( cpy.TWO_LINES_SUBTITLE_COMMAND ),
-	TWO_LINES_ARTIST_COMMAND( cpy.TWO_LINES_ARTIST_COMMAND ),
-	THREE_LINES_TITLE_COMMAND( cpy.THREE_LINES_TITLE_COMMAND ),
-	THREE_LINES_SUBTITLE_COMMAND( cpy.THREE_LINES_SUBTITLE_COMMAND ),
-	THREE_LINES_ARTIST_COMMAND( cpy.THREE_LINES_ARTIST_COMMAND )
+	ARTIST_PREPEND_STRING( cpy.ARTIST_PREPEND_STRING )
 {
 	this->AddChild( &m_textTitle );
 	this->AddChild( &m_textSubTitle );
@@ -67,29 +56,31 @@ void TextBanner::LoadFromString(
 	const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
 	const RString &sDisplayArtist, const RString &sTranslitArtist )
 {
+	LoadInternal( 
+		NULL,
+		sDisplayTitle, sTranslitTitle, 
+		sDisplaySubTitle, sTranslitSubTitle, 
+		sDisplayArtist, sTranslitArtist );
+}
+
+void TextBanner::LoadInternal( 
+	Song *pSong,
+	const RString &sDisplayTitle, const RString &sTranslitTitle, 
+	const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
+	const RString &sDisplayArtist, const RString &sTranslitArtist )
+{
 	ASSERT( m_bInitted );
 
 	m_textTitle.SetText( sDisplayTitle, sTranslitTitle );
 	m_textSubTitle.SetText( sDisplaySubTitle, sTranslitSubTitle );
 	m_textArtist.SetText( sDisplayArtist, sTranslitArtist );
 
-	bool bTwoLines = sDisplaySubTitle.size() == 0;
-
-	if( bTwoLines )
-	{
-		m_textTitle.RunCommands( TWO_LINES_TITLE_COMMAND );
-		m_textSubTitle.RunCommands( TWO_LINES_SUBTITLE_COMMAND );
-		m_textArtist.RunCommands( TWO_LINES_ARTIST_COMMAND );
-	}
-	else
-	{
-		m_textTitle.RunCommands( THREE_LINES_TITLE_COMMAND );
-		m_textSubTitle.RunCommands( THREE_LINES_SUBTITLE_COMMAND );
-		m_textArtist.RunCommands( THREE_LINES_ARTIST_COMMAND );
-	}
+	Message msg( "Set" );
+	msg.SetParam( "Song", pSong );
+	this->HandleMessage( msg );
 }
 
-void TextBanner::LoadFromSong( const Song* pSong )
+void TextBanner::LoadFromSong( Song* pSong )
 {
 	ASSERT( m_bInitted );
 
@@ -100,7 +91,8 @@ void TextBanner::LoadFromSong( const Song* pSong )
 	RString sDisplayArtist		= pSong ? (RString)ARTIST_PREPEND_STRING + pSong->GetDisplayArtist() : RString("");
 	RString sTranslitArtist		= pSong ? (RString)ARTIST_PREPEND_STRING + pSong->GetTranslitArtist() : RString("");
 
-	LoadFromString( 
+	LoadInternal(
+		pSong,
 		sDisplayTitle, sTranslitTitle, 
 		sDisplaySubTitle, sTranslitSubTitle, 
 		sDisplayArtist, sTranslitArtist );

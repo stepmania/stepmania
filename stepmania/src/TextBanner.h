@@ -14,24 +14,24 @@ public:
 	TextBanner();
 	TextBanner( const TextBanner &cpy );
 	void Load( RString sType );	// load metrics
-	void LoadFromSong( const Song* pSong );
+	void LoadFromSong( Song* pSong );
 	void LoadFromString( 
 		const RString &sDisplayTitle, const RString &sTranslitTitle, 
 		const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
 		const RString &sDisplayArtist, const RString &sTranslitArtist );
 
 private:
+	void LoadInternal( 
+		Song* pSong,
+		const RString &sDisplayTitle, const RString &sTranslitTitle, 
+		const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
+		const RString &sDisplayArtist, const RString &sTranslitArtist );
+
 	bool m_bInitted;
 
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
 
 	ThemeMetric<RString>		ARTIST_PREPEND_STRING;
-	ThemeMetric<apActorCommands> TWO_LINES_TITLE_COMMAND;
-	ThemeMetric<apActorCommands> TWO_LINES_SUBTITLE_COMMAND;
-	ThemeMetric<apActorCommands> TWO_LINES_ARTIST_COMMAND;
-	ThemeMetric<apActorCommands> THREE_LINES_TITLE_COMMAND;
-	ThemeMetric<apActorCommands> THREE_LINES_SUBTITLE_COMMAND;
-	ThemeMetric<apActorCommands> THREE_LINES_ARTIST_COMMAND;
 };
 
 #endif
