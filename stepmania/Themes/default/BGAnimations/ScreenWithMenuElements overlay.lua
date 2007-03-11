@@ -1,8 +1,8 @@
 local children = { };
 
 local function MakeHelpDisplay()
-	local X = self:x( ScreenMetric("HelpX") );
-	local Y = self:y( ScreenMetric("HelpY") );
+	local X = ScreenMetric("HelpX");
+	local Y = ScreenMetric("HelpY");
 	local On = ScreenMetric("HelpOnCommand");
 	local Off = ScreenMetric("HelpOffCommand");
 
