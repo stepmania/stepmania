@@ -4,6 +4,7 @@
 #define RAGE_FILE_H
 
 #include "RageFileBasic.h"
+struct lua_State;
 
 /* This is the high-level interface, which interfaces with RageFileObj implementations
  * and RageFileManager. */
@@ -70,6 +71,8 @@ public:
 	void EnableCRC32( bool on=true );
 	bool GetCRC32( uint32_t *iRet );
 
+	// Lua
+	virtual void PushSelf( lua_State *L );
 private:
 	void SetError( const RString &err );
 	

@@ -302,6 +302,88 @@ int32_t FileReading::read_32_le( RageFileBasic &f, RString &sError )
 		return 0;
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaRageFile: public Luna<RageFile>
+{
+public:
+	static int destroy( T* p, lua_State *L )
+	{
+		SAFE_DELETE(p);
+		return 1;
+	}
+
+	static int Open( T* p, lua_State *L )
+	{
+		lua_pushboolean( L, p->Open( SArg(1), IArg(2) ) );
+		return 1;
+	}
+
+	static int Close( T* p, lua_State *L )
+	{
+		p->Close();
+		return 1;
+	}
+
+	static int Write( T* p, lua_State *L )
+	{
+		lua_pushinteger( L, p->Write( SArg(1) ) );
+		return 1;
+	}
+
+	static int Read( T* p, lua_State *L )
+	{
+		RString string;
+		p->Read(string);
+		lua_pushstring( L, string );
+		return 1;
+	}
+
+	static int GetLine( T* p, lua_State *L )
+	{
+		RString string;
+		p->GetLine(string);
+		lua_pushstring( L, string );
+		return 1;
+	}
+
+	static int PutLine( T* p, lua_State *L )
+	{
+		lua_pushinteger( L, p->PutLine( SArg(1) ) );
+		return 1;
+	}
+
+	LunaRageFile() 
+	{
+		ADD_METHOD( Open );
+		ADD_METHOD( Close );
+		ADD_METHOD( Write );
+		ADD_METHOD( Read );
+		ADD_METHOD( GetLine );
+		ADD_METHOD( PutLine );
+		ADD_METHOD( destroy );
+	}
+};
+
+LUA_REGISTER_CLASS( RageFile )
+
+namespace RageFileUtil
+{
+	int CreateRageFile( lua_State *L )
+	{
+		RageFile *pFile = new RageFile;
+		pFile->PushSelf( L );
+		return 1;
+	}
+	const luaL_Reg RageFileUtilTable[] =
+	{
+		LIST_METHOD( CreateRageFile ),
+		{ NULL, NULL }
+	};
+	LUA_REGISTER_NAMESPACE( RageFileUtil );
+}
+
 /*
  * Copyright (c) 2003-2004 Glenn Maynard, Chris Danford, Steve Checkoway
  * All rights reserved.
