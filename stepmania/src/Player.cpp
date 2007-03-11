@@ -1343,7 +1343,7 @@ void Player::DoTapScoreNone()
 
 	if( PENALIZE_TAP_SCORE_NONE )
 	{
-		SetJudgment( TNS_Miss, false );
+		SetJudgment( TNS_Miss, 0 );
 		// the ScoreKeeper will subrtract points later.
 	}
 }
@@ -2081,12 +2081,12 @@ void Player::UpdateJudgedRows()
 				const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
 				if( tn.type == TapNote::empty || tn.type == TapNote::mine ) continue;
 				if( tn.pn != PLAYER_INVALID && tn.pn != pn ) continue;
-				SetJudgment( tn.result.tns, tn.result.fTapNoteOffset < 0.0f );
+				SetJudgment( tn.result.tns, tn.result.fTapNoteOffset );
 			}
 		}
 		else
 		{
-			SetJudgment( lastTNR.tns, lastTNR.fTapNoteOffset < 0.0f );
+			SetJudgment( lastTNR.tns, lastTNR.fTapNoteOffset );
 		}
 		HandleTapRowScore( iRow );
 	}
@@ -2432,13 +2432,14 @@ bool Player::IsPlayingBeginner() const
 	return pSteps && pSteps->GetDifficulty() == Difficulty_Beginner;
 }
 
-void Player::SetJudgment( TapNoteScore tns, bool bEarly )
+void Player::SetJudgment( TapNoteScore tns, float fTapNoteOffset )
 {
 	Message msg("Judgment");
 	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
 	msg.SetParam( "TapNoteScore", tns );
-	msg.SetParam( "Early", bEarly );
+	msg.SetParam( "Early", fTapNoteOffset < 0.0f );
+	msg.SetParam( "TapNoteOffset", fTapNoteOffset );
 	MESSAGEMAN->Broadcast( msg );
 }
 

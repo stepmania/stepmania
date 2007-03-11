@@ -117,7 +117,7 @@ protected:
 	void DrawHoldJudgments();
 	void SendComboMessages( int iOldCombo, int iOldMissCombo );
 
-	void SetJudgment( TapNoteScore tns, bool bEarly );
+	void SetJudgment( TapNoteScore tns, float fTapNoteOffset );
 	void SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack );
 	void SetCombo( int iCombo, int iMisses );
 
