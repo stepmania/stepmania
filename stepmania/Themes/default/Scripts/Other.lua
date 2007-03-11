@@ -75,6 +75,21 @@ function ScreenString( sName )
         return THEME:GetString( sClass, sName )
 end
 
+function TextBannerSet(self,param) 
+	local Title=self:GetChild("Title"); 
+	local Subtitle=self:GetChild("Subtitle"); 
+	local Artist=self:GetChild("Artist"); 
+	if Subtitle:GetText() == "" then 
+		(cmd(zoom,1;maxwidth,180;y,-8))(Title); 
+		(cmd(visible,false))(Subtitle); 
+		(cmd(zoom,0.6;maxwidth,266;y,8))(Artist); 
+	else
+		(cmd(zoom,1;maxwidth,180;y,-10))(Title);
+		(cmd(visible,true;zoom,.5;maxwidth,360))(Subtitle); 
+		(cmd(zoom,0.6;maxwidth,266;y,10))(Artist); 
+	end
+end
+
 -- (c) 2005 Chris Danford
 -- All rights reserved.
 -- 
