@@ -912,6 +912,14 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 
 void ScreenSelectMusic::MenuBack( const InputEventPlus &input )
 {
+	if( TWO_PART_SELECTION && m_SelectionState == SelectionState_SelectingSteps )
+	{
+		m_SelectionState = SelectionState_SelectingSong;
+		// XXX: What sound should be played here?
+		SCREENMAN->PlayCancelSound();
+		return;
+	}
+
 	m_BackgroundLoader.Abort();
 
 	Cancel( SM_GoToPrevScreen );
