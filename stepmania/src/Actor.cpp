@@ -1219,6 +1219,7 @@ public:
 	static int stoptweening( T* p, lua_State *L )		{ p->StopTweening(); return 0; }
 	static int finishtweening( T* p, lua_State *L )		{ p->FinishTweening(); return 0; }
 	static int hurrytweening( T* p, lua_State *L )		{ p->HurryTweening(FArg(1)); return 0; }
+	static int GetTweenTimeLeft( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetTweenTimeLeft() ); return 1; }
 	static int x( T* p, lua_State *L )			{ p->SetX(FArg(1)); return 0; }
 	static int y( T* p, lua_State *L )			{ p->SetY(FArg(1)); return 0; }
 	static int z( T* p, lua_State *L )			{ p->SetZ(FArg(1)); return 0; }
@@ -1233,6 +1234,8 @@ public:
 	static int zoomtowidth( T* p, lua_State *L )		{ p->ZoomToWidth(FArg(1)); return 0; }
 	static int zoomtoheight( T* p, lua_State *L )		{ p->ZoomToHeight(FArg(1)); return 0; }
 	static int setsize( T* p, lua_State *L )		{ p->SetWidth(FArg(1)); p->SetHeight(FArg(2)); return 0; }
+	static int SetWidth( T* p, lua_State *L )		{ p->SetWidth(FArg(1)); return 0; }
+	static int SetHeight( T* p, lua_State *L )		{ p->SetHeight(FArg(1)); return 0; }
 	static int basealpha( T* p, lua_State *L )		{ p->SetBaseAlpha(FArg(1)); return 0; }
 	static int basezoomx( T* p, lua_State *L )		{ p->SetBaseZoomX(FArg(1)); return 0; }
 	static int basezoomy( T* p, lua_State *L )		{ p->SetBaseZoomY(FArg(1)); return 0; }
@@ -1416,6 +1419,7 @@ public:
 		ADD_METHOD( stoptweening );
 		ADD_METHOD( finishtweening );
 		ADD_METHOD( hurrytweening );
+		ADD_METHOD( GetTweenTimeLeft );
 		ADD_METHOD( x );
 		ADD_METHOD( y );
 		ADD_METHOD( z );
@@ -1430,6 +1434,8 @@ public:
 		ADD_METHOD( zoomtowidth );
 		ADD_METHOD( zoomtoheight );
 		ADD_METHOD( setsize );
+		ADD_METHOD( SetWidth );
+		ADD_METHOD( SetHeight );
 		ADD_METHOD( basealpha );
 		ADD_METHOD( basezoomx );
 		ADD_METHOD( basezoomy );
