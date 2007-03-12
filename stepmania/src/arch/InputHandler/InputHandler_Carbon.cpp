@@ -47,8 +47,11 @@ int InputHandler_Carbon::Run( void *data )
 	CFRetain( This->m_LoopRef );
 	
 	This->StartDevices();
-	SetThreadPrecedence( 1.0f );
-
+	{
+		const RString sError = SetThreadPrecedence( 1.0f );
+		if( !sError.empty() )
+			LOG->Warn( "Could not set precedence of the input thread: %s", sError.c_str() );
+	}
 	// Add an observer for the start of the run loop
 	{
 		/* The function copies the information out of the structure, so the memory pointed

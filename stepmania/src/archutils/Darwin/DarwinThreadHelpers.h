@@ -5,7 +5,7 @@ bool SuspendThread( uint64_t threadHandle );
 bool ResumeThread( uint64_t threadHandle );
 uint64_t GetCurrentThreadId();
 // Valid values are from 0.0f to 1.0f. 0.5f is default.
-void SetThreadPrecedence( float prec );
+RString SetThreadPrecedence( float prec );
 
 #endif
 

@@ -194,7 +194,9 @@ int64_t RageSoundDriver_AU::GetPosition() const
 void RageSoundDriver_AU::SetupDecodingThread()
 {
 	/* Increase the scheduling precedence of the decoder thread. */
-	SetThreadPrecedence( 0.75f );
+	const RString sError = SetThreadPrecedence( 0.75f );
+	if( !sError.empty() )
+		LOG->Warn( "Could not set precedence of the decoding thread: %s", sError.c_str() );
 }
 
 float RageSoundDriver_AU::GetPlayLatency() const

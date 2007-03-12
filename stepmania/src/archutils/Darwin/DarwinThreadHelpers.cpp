@@ -3,8 +3,6 @@
 #include <mach/mach_init.h>
 #include <mach/mach_error.h>
 #include "Backtrace.h"
-#include "RageLog.h"
-#include "RageUtil.h"
 
 bool SuspendThread( uint64_t threadHandle )
 {
@@ -53,18 +51,17 @@ bool GetThreadBacktraceContext( uint64_t iID, BacktraceContext *ctx )
 #endif
 }
 
-void SetThreadPrecedence( float prec )
+RString SetThreadPrecedence( float prec )
 {
 	// Real values are between 0 and 63.
-	if( CLAMP(prec, 0.0f, 1.0f) )
-		LOG->Warn( "Thread precedence clamped to %f.", prec );
+	DEBUG_ASSERT( 0.0f <= prec && prec <= 1.0f );
 	thread_precedence_policy po = { integer_t( lrintf(prec * 63) ) };
 	kern_return_t ret = thread_policy_set( mach_thread_self(), THREAD_PRECEDENCE_POLICY,
 					       (thread_policy_t)&po, THREAD_PRECEDENCE_POLICY_COUNT );
 	
 	if( ret != KERN_SUCCESS )
-		LOG->Warn( "Couldn't set the precedence for the input thread: %s",
-			   mach_error_string(ret) );
+		return mach_error_string( ret );
+	return RString();
 }
 	
 /*
