@@ -19,11 +19,15 @@ void ActorSound::Play()
 
 void ActorSound::LoadFromNode( const XNode* pNode )
 {
+	RageSoundLoadParams params;
+	pNode->GetAttrValue("SupportPan", params.m_bSupportPan);
+	pNode->GetAttrValue("SupportRateChanging", params.m_bSupportRateChanging);
+	
 	Actor::LoadFromNode( pNode );
 
 	RString sFile;
 	if( ActorUtil::GetAttrPath(pNode, "File", sFile) )
-		Load( sFile );
+		m_Sound.Load( sFile, true, &params );
 }
 
 // lua start
