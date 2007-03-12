@@ -51,7 +51,7 @@ bool SongCriteria::Matches( const Song *pSong ) const
 			return false;
 	}
 
-	if( m_iMaxStagesForSong != -1  &&  GAMESTATE->GetNumStagesForSong(pSong) > m_iMaxStagesForSong )
+	if( m_iMaxStagesForSong != -1  &&  GAMESTATE->GetNumStagesMultiplierForSong(pSong) > m_iMaxStagesForSong )
 		return false;
 
 	switch( m_Tutorial )
@@ -812,7 +812,7 @@ void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vec
 	}
 }
 
-static void GetPlayableStepsTypes( set<StepsType> &vOut )
+static void GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 {
 	vector<const Style*> vpPossibleStyles;
 	if( CommonMetrics::AUTO_SET_STYLE )
@@ -823,11 +823,16 @@ static void GetPlayableStepsTypes( set<StepsType> &vOut )
 		vOut.insert( (*s)->m_StepsType );
 
 	// filter out hidden StepsTypes
+	// remove steps that we don't have enough stages left to play
 	const vector<StepsType> &vstToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
 	FOREACHS( StepsType, vOut, st )
 	{
-		bool bShowThis = find( vstToShow.begin(), vstToShow.end(), *st ) != vstToShow.end();
-		if( !bShowThis )
+		bool bShowThisStepsType = find( vstToShow.begin(), vstToShow.end(), *st ) != vstToShow.end();
+
+		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), *st );
+		bool bEnoughStages = GAMESTATE->GetNumStagesLeft() >= GAMESTATE->GetNumStagesForSongAndStyle(pSong,pStyle);
+
+		if( !bShowThisStepsType || !bEnoughStages )
 		{
 			set<StepsType>::iterator to_erase = st;
 			++st;
@@ -840,7 +845,7 @@ static void GetPlayableStepsTypes( set<StepsType> &vOut )
 void SongUtil::GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut )
 {
 	set<StepsType> vStepsType;
-	GetPlayableStepsTypes( vStepsType );
+	GetPlayableStepsTypes( pSong, vStepsType );
 
 	FOREACHS( StepsType, vStepsType, st )
 		SongUtil::GetSteps( pSong, vOut, *st );
@@ -848,23 +853,21 @@ void SongUtil::GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut )
 	StepsUtil::RemoveLockedSteps( pSong, vOut );
 	StepsUtil::SortNotesArrayByDifficulty( vOut );
 	StepsUtil::SortStepsByTypeAndDifficulty( vOut );
-
-	// remove steps that we don't have enough stages left to play
-	for( int i=vOut.size()-1; i>=0; i-- )
-	{
-		Steps *pSteps = vOut[i];
-		StepsType st = pSteps->m_StepsType;
-		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), st );
-		if( GAMESTATE->GetNumStagesForSongAndStyle(pSong,pStyle) > GAMESTATE->GetNumStagesLeft() )
-			vOut.erase( vOut.begin() + i );
-	}
 }
 
-bool SongUtil::IsStepsTypePlayable( StepsType st  )
+bool SongUtil::IsStepsTypePlayable( Song *pSong, StepsType st )
 {
+	void GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut );
 	set<StepsType> vStepsType;
-	GetPlayableStepsTypes( vStepsType );
+	GetPlayableStepsTypes( pSong, vStepsType );
 	return vStepsType.find( st ) != vStepsType.end();
+}
+
+bool SongUtil::IsStepsPlayable( Song *pSong, Steps *pSteps )
+{
+	vector<Steps*> vpSteps;
+	GetPlayableSteps( pSong, vpSteps );
+	return find( vpSteps.begin(), vpSteps.end(), pSteps ) != vpSteps.end();
 }
 
 //////////////////////////////////
@@ -927,8 +930,17 @@ namespace
 {
 	int IsStepsTypePlayable( lua_State *L )
 	{
-		StepsType st = Enum::Check<StepsType>(L, 1);
-		bool b = SongUtil::IsStepsTypePlayable( st );
+		Song *pSong = Luna<Song>::check( L, 1, true );
+		StepsType st = Enum::Check<StepsType>(L, 2);
+		bool b = SongUtil::IsStepsTypePlayable( pSong, st );
+		LuaHelpers::Push( L, b );
+		return 1;
+	}
+	int IsStepsPlayable( lua_State *L )
+	{
+		Song *pSong = Luna<Song>::check( L, 1, true );
+		Steps *pSteps = Luna<Steps>::check( L, 2, true );
+		bool b = SongUtil::IsStepsPlayable( pSong, pSteps );
 		LuaHelpers::Push( L, b );
 		return 1;
 	}
@@ -936,6 +948,7 @@ namespace
 	const luaL_Reg SongUtilTable[] =
 	{
 		LIST_METHOD( IsStepsTypePlayable ),
+		LIST_METHOD( IsStepsPlayable ),
 		{ NULL, NULL }
 	};
 }

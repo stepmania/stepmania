@@ -206,7 +206,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 		const int iMeter = clamp( pSteps->GetMeter(), 1, 10 );
 
 		// long ver and marathon ver songs have higher max possible scores
-		int iLengthMultiplier = GameState::GetNumStagesForSong( GAMESTATE->m_pCurSong );
+		int iLengthMultiplier = GameState::GetNumStagesMultiplierForSong( GAMESTATE->m_pCurSong );
 		switch( PREFSMAN->m_ScoringType )
 		{
 		case SCORING_NEW:

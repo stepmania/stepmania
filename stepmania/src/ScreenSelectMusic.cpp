@@ -321,7 +321,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		// TODO: Invalidate the CurSteps only if they are no longer playable.  That way, 
 		// after music change will clamp to the nearest in the DifficultyList.
 		FOREACH_ENUM( PlayerNumber, p )
-			GAMESTATE->m_pCurSteps[p].Set( NULL );
+			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
 
 		AfterMusicChange();
 

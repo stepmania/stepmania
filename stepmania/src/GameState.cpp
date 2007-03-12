@@ -516,7 +516,7 @@ void GameState::EndGame()
 	m_timeGameStarted.SetZero();
 }
 
-int GameState::GetNumStagesForSong( const Song* pSong )
+int GameState::GetNumStagesMultiplierForSong( const Song* pSong )
 {
 	int iNumStages = 1;
 
@@ -531,7 +531,7 @@ int GameState::GetNumStagesForSong( const Song* pSong )
 
 int GameState::GetNumStagesForSongAndStyle( const Song* pSong, const Style *pStyle )
 {
-	int iNumStages = GetNumStagesForSong( pSong );
+	int iNumStages = GetNumStagesMultiplierForSong( pSong );
 
 	// One player, two-sides styles cost extra 
 	switch( pStyle->m_StyleType )

@@ -111,7 +111,8 @@ namespace SongUtil
 	void FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out );
 
 	void GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut );
-	bool IsStepsTypePlayable( StepsType st );
+	bool IsStepsTypePlayable( Song *pSong, StepsType st );
+	bool IsStepsPlayable( Song *pSong, Steps *pSteps );
 }
 
 class SongID

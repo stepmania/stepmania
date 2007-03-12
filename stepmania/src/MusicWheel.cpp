@@ -159,7 +159,7 @@ void MusicWheel::BeginScreen()
 	/* Invalidate current Song if it can't be played
 	 * because there are not enough stages remaining. */
 	if( GAMESTATE->m_pCurSong != NULL && 
-		GameState::GetNumStagesForSong( GAMESTATE->m_pCurSong ) > GAMESTATE->GetNumStagesLeft() )
+		GameState::GetNumStagesMultiplierForSong( GAMESTATE->m_pCurSong ) > GAMESTATE->GetNumStagesLeft() )
 	{
 		GAMESTATE->m_pCurSong.Set( NULL );
 	}
@@ -698,7 +698,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 		{
 			WID.m_Flags.bHasBeginnerOr1Meter = WID.m_pSong->IsEasy( GAMESTATE->GetCurrentStyle()->m_StepsType );
 			WID.m_Flags.bEdits = WID.m_pSong->HasEdits( GAMESTATE->GetCurrentStyle()->m_StepsType );
-			WID.m_Flags.iStagesForSong = GameState::GetNumStagesForSong( WID.m_pSong );
+			WID.m_Flags.iStagesForSong = GameState::GetNumStagesMultiplierForSong( WID.m_pSong );
 		}
 		else if( WID.m_pCourse != NULL )
 		{
