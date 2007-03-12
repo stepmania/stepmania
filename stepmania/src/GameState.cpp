@@ -538,7 +538,8 @@ int GameState::GetNumStagesForSongAndStyle( const Song* pSong, const Style *pSty
 	{
 	DEFAULT_FAIL( pStyle->m_StyleType );
 	case StyleType_OnePlayerTwoSides:
-		iNumStages *= 2;
+		if( g_Premium == Premium_Off )
+			iNumStages *= 2;
 		break;
 	case StyleType_TwoPlayersTwoSides:
 	case StyleType_OnePlayerOneSide:
