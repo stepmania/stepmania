@@ -128,6 +128,7 @@ Preference<float> g_fTimingWindowHopo		( "TimingWindowHopo",		0.25 );		// max ti
 Preference<float> g_fTimingWindowStrum		( "TimingWindowStrum",		0.1f );		// max time between strum and when the frets must match
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
+ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
 
 
 float Player::GetWindowSeconds( TimingWindow tw )
@@ -369,8 +370,8 @@ void Player::Load()
 	m_LastTapNoteScore = TNS_None;
 	// The editor can start playing in the middle of the song.
 	const int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
-	m_iRowLastCrossed     = iNoteRow - 1;
-	m_iMineRowLastCrossed = iNoteRow - 1;
+	m_iFirstUncrossedRow     = iNoteRow - 1;
+	m_iFirstUncrossedMineRow = iNoteRow - 1;
 	m_iRowLastJudged      = iNoteRow - 1;
 	m_iMineRowLastJudged  = iNoteRow - 1;
 	m_pJudgedRows->Reset( iNoteRow );
@@ -708,11 +709,9 @@ void Player::Update( float fDeltaTime )
 		const int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
 		if( iRowNow >= 0 )
 		{
-			// for each index we crossed since the last update
 			if( GAMESTATE->IsPlayerEnabled(m_pPlayerState) )
-				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iRowLastCrossed, iRowNow+1 )
-					CrossedRow( r, now );
-			m_iRowLastCrossed = iRowNow+1;
+				CrossedRows( m_iFirstUncrossedRow, iRowNow, now );
+			m_iFirstUncrossedRow = iRowNow+1;
 		}
 	}
 	
@@ -726,9 +725,9 @@ void Player::Update( float fDeltaTime )
 		{
 			// for each index we crossed since the last update
 			if( GAMESTATE->IsPlayerEnabled(m_pPlayerState) )
-				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iMineRowLastCrossed, iRowNow+1 )
+				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iFirstUncrossedMineRow, iRowNow+1 )
 					CrossedMineRow( r, now );
-			m_iMineRowLastCrossed = iRowNow+1;
+			m_iFirstUncrossedMineRow = iRowNow+1;
 		}
 	}
 	
@@ -2166,23 +2165,101 @@ void Player::FlashGhostRow( int iRow, PlayerNumber pn )
 	}
 }
 
-void Player::CrossedRow( int iNoteRow, const RageTimer &now )
+void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageTimer &now )
 {
-	// If we're doing random vanish, randomise notes on the fly.
-	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1 )
-		RandomizeNotes( iNoteRow );
+	//LOG->Trace( "Player::CrossedRows   %d    %d", iFirstRowCrossed, iLastRowCrossed );
 
-	// check to see if there's a note at the crossed row
-	if( m_pPlayerState->m_PlayerController != PC_HUMAN )
+	// for each index we crossed since the last update
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iFirstUncrossedRow, iLastRowCrossed+1 )
 	{
-		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
+		// If we're doing random vanish, randomise notes on the fly.
+		if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1 )
+			RandomizeNotes( r );
+
+		// check to see if there's a note at the crossed row
+		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 		{
-			const TapNote &tn = m_NoteData.GetTapNote( t, iNoteRow );
-			if( tn.type != TapNote::empty && tn.result.tns == TNS_None )
+			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 			{
-				Step( t, iNoteRow, now, false, false );
-				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
-					STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
+				const TapNote &tn = m_NoteData.GetTapNote( t, r );
+				if( tn.type != TapNote::empty && tn.result.tns == TNS_None )
+				{
+					Step( t, r, now, false, false );
+					if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+						STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
+				}
+			}
+		}
+	}
+
+
+	//
+	// Update hold checkpoints
+	//
+
+	if( HOLD_CHECKPOINTS )
+	{
+		int iFirstCheckpointInRange = ((iFirstRowCrossed+ROWS_PER_BEAT-1)/ROWS_PER_BEAT) * ROWS_PER_BEAT;
+		int iLastCheckpointInRange = ((iLastRowCrossed)/ROWS_PER_BEAT) * ROWS_PER_BEAT;
+
+		for( int r = iFirstCheckpointInRange; r <= iLastCheckpointInRange; r += ROWS_PER_BEAT )
+		{
+			LOG->Trace( "%d...", r );
+			bool bAnyHoldsThisRow = false;
+			bool bAllHoldsHeldThisRow = true;
+
+			// start at r-1 so that we can count the tail of a hold as a checkpoint
+			NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( r-1, r+1, NULL, true );
+			for( ; !iter.IsAtEnd(); ++iter )
+			{
+				TapNote &tn = *iter;
+				if( tn.type != TapNote::hold_head )
+					continue;
+
+				int iStartRow = iter.Row();
+				int iEndRow = iStartRow + tn.iDuration;
+
+				// First checkpoint is the first row after the hold head that lands on a beat.
+				int iFirstCheckpointOfHold = ((iStartRow+ROWS_PER_BEAT)/ROWS_PER_BEAT) * ROWS_PER_BEAT;
+				
+				// The last checkpoint is the end row or the first earlier row that lands on a beat.
+				int iLastCheckpointOfHold = ((iEndRow)/ROWS_PER_BEAT) * ROWS_PER_BEAT;
+
+				// count the end of the hold as a checkpoint
+
+				bool bHoldOverlapsRow = iFirstCheckpointOfHold <= r  &&   r <= iLastCheckpointOfHold;
+				if( !bHoldOverlapsRow )
+					continue;
+
+				bAnyHoldsThisRow = true;
+				bAllHoldsHeldThisRow &= tn.HoldResult.bHeld;
+			}
+
+			if( bAnyHoldsThisRow )
+			{
+				if( m_pPlayerStageStats )
+				{
+					// increment combo
+					const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+					const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+
+					if( bAnyHoldsThisRow )
+					{
+						m_pPlayerStageStats->m_iCurCombo++;
+						m_pPlayerStageStats->m_iCurMissCombo = 0;
+					}
+					else
+					{
+						m_pPlayerStageStats->m_iCurCombo = 0;
+						m_pPlayerStageStats->m_iCurMissCombo++;
+					}
+
+					SendComboMessages( iOldCombo, iOldMissCombo );
+					if( m_pPlayerStageStats )
+					{
+						SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+					}
+				}
 			}
 		}
 	}

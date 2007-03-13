@@ -65,7 +65,7 @@ public:
 		ScoreKeeper* pPrimaryScoreKeeper, 
 		ScoreKeeper* pSecondaryScoreKeeper );
 	void Load();
-	void CrossedRow( int iNoteRow, const RageTimer &now );
+	void CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageTimer &now );
 	void CrossedMineRow( int iNoteRow, const RageTimer &now );
 	bool IsOniDead() const;
 
@@ -167,8 +167,8 @@ protected:
 	ScoreKeeper		*m_pSecondaryScoreKeeper;
 	Inventory		*m_pInventory;
 
-	int			m_iRowLastCrossed;
-	int			m_iMineRowLastCrossed;
+	int			m_iFirstUncrossedRow;
+	int			m_iFirstUncrossedMineRow;
 	int			m_iRowLastJudged; // Everything up to and including this row has been judged.
 	int			m_iMineRowLastJudged;
 	int			m_iLastSeenCombo;
