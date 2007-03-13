@@ -467,10 +467,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	{
 		m_pPlayerStageStats->m_iCurCombo = 0;
 		if( scoreOfLastTap == TNS_Miss )
-			// The standard among Bemani games is to only count one miss per "step", regardless of
-			// how many taps are in that step.  If there is a big demand for something different,
-			// we can add a variable similar to m_bComboIsPerRow.
-			++m_pPlayerStageStats->m_iCurMissCombo;
+			m_pPlayerStageStats->m_iCurMissCombo += iComboCountIfHit;
 	}
 
 	if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
