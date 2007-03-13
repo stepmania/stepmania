@@ -737,11 +737,13 @@ public:
 		return 0;
 	}
 	static int PlayOnce( T* p, lua_State *L ) { RString sPath = SArg(1); p->PlayOnce( sPath ); return 0; }
+	static int GetPlayerBalance( T* p, lua_State *L ) { PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); lua_pushnumber( L, p->GetPlayerBalance(pn) ); return 1; }
 
 	LunaGameSoundManager()
 	{
 		ADD_METHOD( DimMusic );
 		ADD_METHOD( PlayOnce );
+		ADD_METHOD( GetPlayerBalance );
 	}
 };
 
