@@ -2233,8 +2233,8 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 			vector<int> viColsWithHold;
 			bool bAllHoldsHeldThisRow = true;
 
-			// start at r-1 so that we can count the tail of a hold as a checkpoint
-			NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( r-1, r+1, NULL, true );
+			// start at r-1 so that we consider holds whose end rows are equal to the checkpoint row
+			NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( r-1, r, NULL, true );
 			for( ; !iter.IsAtEnd(); ++iter )
 			{
 				TapNote &tn = *iter;
@@ -2257,7 +2257,7 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 					continue;
 
 				viColsWithHold.push_back( iTrack );
-				bAllHoldsHeldThisRow &= tn.HoldResult.bHeld;
+				bAllHoldsHeldThisRow &= tn.HoldResult.fLife > 0;
 			}
 
 			if( !viColsWithHold.empty() )
