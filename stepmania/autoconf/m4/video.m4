@@ -1,5 +1,5 @@
 AC_DEFUN([SM_VIDEO], [
-AC_ARG_WITH(ffmpeg, AC_HELP_STRING([--without-ffmpeg], [Disable ffmpeg support]), with_ffmpeg=$withval, with_ffmpeg=yes)
+AC_ARG_WITH(ffmpeg, AS_HELP_STRING([--without-ffmpeg],[Disable ffmpeg support]), with_ffmpeg=$withval, with_ffmpeg=yes)
 
 old_LIBS="$LIBS"
 old_CFLAGS="$CFLAGS"
@@ -23,39 +23,39 @@ if test "$with_ffmpeg" != "no"; then
 
 if test "$have_libavcodec" = "yes"; then
   AC_MSG_CHECKING([for matching libavcodec headers and libs])
-  AC_TRY_RUN([
+  AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	#include <ffmpeg/avcodec.h>
 	int main()
 	{
 		return ( LIBAVCODEC_VERSION_INT == avcodec_version() &&
 			 LIBAVCODEC_BUILD == avcodec_build() ) ? 0:1;
 	}
-	],,have_libavcodec=no,)
+	]])],[],[have_libavcodec=no],[])
   AC_MSG_RESULT($have_libavcodec)
   if test "$have_libavcodec" = "yes"; then
     AC_MSG_CHECKING([for libavcodec = 0.4.9-pre1])
-    AC_TRY_RUN([
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	#include <ffmpeg/avcodec.h>
 	int main()
 	{
 		return ( LIBAVCODEC_VERSION_INT == 0x000409 &&
 			 LIBAVCODEC_BUILD == 4718 ) ? 0:1;
 	}
-	],,have_libavcodec=no,)
+	]])],[],[have_libavcodec=no],[])
     AC_MSG_RESULT($have_libavcodec)
   fi
 fi
 
 if test "$have_libavformat" = "yes"; then
   AC_MSG_CHECKING([for libavformat = 0.4.9-pre1])
-  AC_TRY_RUN([
+  AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	#include <ffmpeg/avformat.h>
 	int main()
 	{
 		return ( LIBAVFORMAT_VERSION_INT == 0x000409 &&
 			 LIBAVFORMAT_BUILD == 4616 )? 0:1;
 	}
-	],,have_libavformat=no,)
+	]])],[],[have_libavformat=no],[])
   AC_MSG_RESULT($have_libavformat)
 fi
 fi
@@ -73,7 +73,7 @@ AM_CONDITIONAL(HAVE_FFMPEG, test "$have_ffmpeg" = "yes")
 
 
 
-AC_ARG_WITH(theora, AC_HELP_STRING([--without-theora], [Disable Theora support]), with_theora=$withval, with_theora=yes)
+AC_ARG_WITH(theora, AS_HELP_STRING([--without-theora],[Disable Theora support]), with_theora=$withval, with_theora=yes)
 
 have_vorbis=no
 if test "$with_theora" = "yes"; then

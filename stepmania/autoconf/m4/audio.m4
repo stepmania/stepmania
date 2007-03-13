@@ -1,9 +1,9 @@
 AC_DEFUN([SM_AUDIO], [
 
-AC_ARG_WITH(vorbis, AC_HELP_STRING([--without-vorbis], [Disable Vorbis support]), with_vorbis=$withval, with_vorbis=yes)
+AC_ARG_WITH(vorbis, AS_HELP_STRING([--without-vorbis],[Disable Vorbis support]), with_vorbis=$withval, with_vorbis=yes)
 
 # This is used to force the integer decoder, on systems that prefer it.
-AC_ARG_WITH(integer-vorbis, AC_HELP_STRING([--with-integer-vorbis], [Integer vorbis decoding only]), with_int_vorbis=$withval, with_int_vorbis=no)
+AC_ARG_WITH(integer-vorbis, AS_HELP_STRING([--with-integer-vorbis],[Integer vorbis decoding only]), with_int_vorbis=$withval, with_int_vorbis=no)
 
 have_vorbis=no
 if test "$with_vorbis" = "yes" -a "$with_int_vorbis" = "no"; then
@@ -44,7 +44,7 @@ fi
 AM_CONDITIONAL(HAVE_VORBIS, test "$have_vorbis" = "yes" )
 
 
-AC_ARG_WITH(mp3, AC_HELP_STRING([--without-mp3], [Disable MP3 support]), with_mp3=$withval, with_mp3=yes)
+AC_ARG_WITH(mp3, AS_HELP_STRING([--without-mp3],[Disable MP3 support]), with_mp3=$withval, with_mp3=yes)
 if test "$with_mp3" = "yes"; then
 	AC_CHECK_LIB(mad, mad_synth_init, have_mad=yes,  have_mad=no)
 else

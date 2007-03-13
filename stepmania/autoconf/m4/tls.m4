@@ -5,7 +5,7 @@
 AC_DEFUN([SM_TLS],
 [
     AC_MSG_CHECKING(for TLS)
-    AC_TRY_RUN( [ static __thread int val; int main() { return 0; } ], have_tls=yes,have_tls=no,have_tls=no )
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[ static __thread int val; int main() { return 0; } ]])],[have_tls=yes],[have_tls=no],[have_tls=no ])
     AC_MSG_RESULT($have_tls)
     if test "$have_tls" = "yes"; then
         AC_DEFINE([HAVE_TLS],[1],[Define if the compiler supports __thread])

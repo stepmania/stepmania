@@ -2,16 +2,15 @@
 AC_DEFUN([SM_FUNC_BACKTRACE_SYMBOLS],
 [
     AC_MSG_CHECKING(for working backtrace_symbols())
-    AC_TRY_RUN(
-    [
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	    #include <execinfo.h>
 	    int main()
 	    {
 		    void *BacktracePointer=main;
 		    return backtrace_symbols (&BacktracePointer, 1) == 0? 1:0;
 	    }
-    ], have_backtrace_symbols=yes,have_backtrace_symbols=no,have_backtrace_symbols=no
-    )
+    ]])],[have_backtrace_symbols=yes],[have_backtrace_symbols=no],[have_backtrace_symbols=no
+    ])
     AC_MSG_RESULT($have_backtrace_symbols)
 ])
 
@@ -20,8 +19,7 @@ AC_DEFUN([SM_FUNC_CXA_DEMANGLE],
     # Check for abi::__cxa_demangle (gcc 3.1+)
     AC_MSG_CHECKING(for working cxa_demangle)
     AC_LANG_PUSH(C++)
-    AC_TRY_RUN(
-    [
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	    #include <cxxabi.h>
 	    #include <stdlib.h>
 	    #include <typeinfo>
@@ -34,8 +32,8 @@ AC_DEFUN([SM_FUNC_CXA_DEMANGLE],
 		    free( realname );
 		    return 0;
 	    }
-    ], have_cxa_demangle=yes,have_cxa_demangle=no,have_cxa_demangle=no
-    )
+    ]])],[have_cxa_demangle=yes],[have_cxa_demangle=no],[have_cxa_demangle=no
+    ])
     AC_LANG_POP(C++)
     AC_MSG_RESULT($have_cxa_demangle)
     if test "$have_cxa_demangle" = "yes"; then

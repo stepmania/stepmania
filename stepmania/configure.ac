@@ -1,11 +1,12 @@
 # only tested with autoconf 2.57
-AC_PREREQ(2.53)
-AC_INIT(src/StepMania.cpp)
+AC_PREREQ(2.60)
+AC_INIT
+AC_CONFIG_SRCDIR([src/StepMania.cpp])
 AC_CONFIG_AUX_DIR(autoconf)
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE(StepMania, 3.001)
-AM_CONFIG_HEADER(src/config.h)
+AC_CONFIG_HEADERS([src/config.h])
 AM_MAINTAINER_MODE
 
 # We don't want PROG_CC/CXX default settings, but don't ignore explicit settings.
@@ -23,8 +24,8 @@ test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused -Wno-switch"
 test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
 compile=release
-AC_ARG_WITH(debug, AC_HELP_STRING([--with-debug], [Enable debug mode]), with_debug=$withval, with_debug=no)
-AC_ARG_WITH(fast-compile, AC_HELP_STRING([--with-fast-compile], [Enable fast compile]), with_fast_compile=$withval, with_fast_compile=no)
+AC_ARG_WITH(debug, AS_HELP_STRING([--with-debug],[Enable debug mode]), with_debug=$withval, with_debug=no)
+AC_ARG_WITH(fast-compile, AS_HELP_STRING([--with-fast-compile],[Enable fast compile]), with_fast_compile=$withval, with_fast_compile=no)
 if test "$with_debug" = "yes"; then
 	compile=debug
 fi
@@ -114,7 +115,7 @@ AC_C_BIGENDIAN(
 	AC_DEFINE(ENDIAN_LITTLE, 1, [Little endian]),
 	AC_MSG_ERROR([Can't determine endianness]) )
 
-AC_ARG_WITH(prof, AC_HELP_STRING([--with-prof], [Enable profiling]), with_prof=$withval, with_prof=no)
+AC_ARG_WITH(prof, AS_HELP_STRING([--with-prof],[Enable profiling]), with_prof=$withval, with_prof=no)
 if test "$with_prof" = "yes"; then
 	test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="$CFLAGS -pg"
 	test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="$CXXFLAGS -pg"
@@ -134,7 +135,7 @@ if test "$have_libpng" = "no"; then
 fi
 LIBS="$LIBS -lpng -lz -lm"
 
-AC_ARG_WITH(jpeg, AC_HELP_STRING([--without-jpeg], [Disable JPEG support]), with_jpeg=$withval, with_jpeg=yes)
+AC_ARG_WITH(jpeg, AS_HELP_STRING([--without-jpeg],[Disable JPEG support]), with_jpeg=$withval, with_jpeg=yes)
 
 if test "$with_jpeg" = "yes"; then
 	have_libjpeg=yes
@@ -156,7 +157,7 @@ else
 	AC_DEFINE(NO_JPEG_SUPPORT, 1, [JPEG support not available])
 fi
 
-AC_ARG_WITH(network, AC_HELP_STRING([--without-network], [Disable networking]), with_network=$withval, with_network=yes)
+AC_ARG_WITH(network, AS_HELP_STRING([--without-network],[Disable networking]), with_network=$withval, with_network=yes)
 if test "$with_network" = "no"; then
 	AC_DEFINE(WITHOUT_NETWORKING, 1, [Networking support not available])
 fi
@@ -173,7 +174,7 @@ AM_PATH_ALSA(0.9.0,AC_DEFINE([HAVE_ALSA],1,[Define presence of ALSA]),alsa=false
 
 AM_ICONV
 
-AC_ARG_ENABLE(gtk2, AC_HELP_STRING([--disable-gtk2], [Disable GTK support]), enable_gtk2=$enableval, enable_gtk2=yes)
+AC_ARG_ENABLE(gtk2, AS_HELP_STRING([--disable-gtk2],[Disable GTK support]), enable_gtk2=$enableval, enable_gtk2=yes)
 
 if test x$enable_gtk2 = xyes; then
   AM_PATH_GTK_2_0(2.0.0,AC_DEFINE([HAVE_GTK],1,[Define presence of GTK]),enable_gtk2=no)
@@ -181,20 +182,17 @@ fi
 
 AC_CHECK_HEADER(sys/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support available])])
 AC_CHECK_DECL(OSS_GETVERSION, AC_DEFINE([HAVE_OSS_GETVERSION],1,[OSS_GETVERSION is defined]), , [#include <sys/soundcard.h>])
-AC_ARG_ENABLE(force-oss, AC_HELP_STRING([--enable-force-oss], [Force OSS]), force_oss=$enableval, force_oss=no)
+AC_ARG_ENABLE(force-oss, AS_HELP_STRING([--enable-force-oss],[Force OSS]), force_oss=$enableval, force_oss=no)
 AC_CHECK_HEADER(stdint.h, , [AC_DEFINE(MISSING_STDINT_H, 1, [stdint.h is missing])])
 AC_CHECK_HEADERS([inttypes.h endian.h machine/endian.h])
 
 AC_MSG_CHECKING(if cstdlib breaks llabs)
 AC_LANG_PUSH(C++)
-AC_TRY_COMPILE(	[#include <stdlib.h>
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
 		 #include <cstdlib> 
-		 using namespace std;],
-		[llabs(1)],
-		[AC_MSG_RESULT(no)],
-		[AC_MSG_RESULT(yes)
-		 AC_DEFINE([NEED_CSTDLIB_WORKAROUND], 1, [cstdlib breaks llabs])]
-	      )
+		 using namespace std;]], [[llabs(1)]])],[AC_MSG_RESULT(no)],[AC_MSG_RESULT(yes)
+		 AC_DEFINE([NEED_CSTDLIB_WORKAROUND], 1, [cstdlib breaks llabs])
+	      ])
 AC_LANG_POP(C++)
 AC_CHECK_LIB( pthread, pthread_create, AC_DEFINE([HAVE_LIBPTHREAD],1,[libpthread is available]) )
 AC_CHECK_LIB( pthread, pthread_mutex_timedlock, AC_DEFINE([HAVE_PTHREAD_MUTEX_TIMEDLOCK],1,[pthreads has pthread_mutex_timedlock()]) )
@@ -227,7 +225,7 @@ AC_CHECK_DECL(strtof, , AC_DEFINE([NEED_STRTOF],1,[Need strtof]), [#include <std
 
 AC_CHECK_DECLS([SIGPWR, SIGUSR1],,,[#include <signal.h>])
 
-AC_ARG_ENABLE(tests, AC_HELP_STRING([--enable-tests], [Build test programs]), enable_tests=$enableval, enable_tests=no)
+AC_ARG_ENABLE(tests, AS_HELP_STRING([--enable-tests],[Build test programs]), enable_tests=$enableval, enable_tests=no)
 AM_CONDITIONAL(BUILD_TESTS, test "$enable_tests" = "yes" )
 
 AC_CONFIG_FILES(Makefile)

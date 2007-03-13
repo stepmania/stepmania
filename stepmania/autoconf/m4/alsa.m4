@@ -61,11 +61,10 @@ no_alsa=""
     alsa_min_micro_version=`echo $min_alsa_version | \
            sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
 
-AC_LANG_SAVE
-AC_LANG_C
-AC_TRY_COMPILE([
+AC_LANG_PUSH([C])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <alsa/asoundlib.h>
-], [
+]], [[
 /* ensure backward compatibility */
 #if !defined(SND_LIB_MAJOR) && defined(SOUNDLIB_VERSION_MAJOR)
 #define SND_LIB_MAJOR SOUNDLIB_VERSION_MAJOR
@@ -97,13 +96,11 @@ AC_TRY_COMPILE([
 #    endif
 #  endif
 exit(0);
-],
-  [AC_MSG_RESULT(found.)],
-  [AC_MSG_RESULT(not present.)
+]])],[AC_MSG_RESULT(found.)],[AC_MSG_RESULT(not present.)
    ifelse([$3], , [AC_MSG_ERROR(Sufficiently new version of libasound not found.)])
-   alsa_found=no]
-)
-AC_LANG_RESTORE
+   alsa_found=no
+])
+AC_LANG_POP([])
 
 dnl Now that we know that we have the right version, let's see if we have the library and not just the headers.
 AC_CHECK_LIB([asound], [snd_ctl_open],,

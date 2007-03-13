@@ -17,10 +17,8 @@ AC_DEFUN([SM_X_WITH_OPENGL],
 	if test -n "$x_includes"; then
 	    # See if we can compile X applications without using $XCFLAGS.
 	    AC_MSG_CHECKING(if $XCFLAGS is really necessary)
-	    AC_TRY_COMPILE( [#include <X11/Xos.h>], [],
-		[XCFLAGS=
-		AC_MSG_RESULT(no)],
-		[AC_MSG_RESULT(yes)])
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <X11/Xos.h>]], [[]])],[XCFLAGS=
+		AC_MSG_RESULT(no)],[AC_MSG_RESULT(yes)])
 	fi
 
 	# Check for libXtst.
