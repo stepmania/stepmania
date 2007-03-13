@@ -2199,16 +2199,18 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 
 	if( HOLD_CHECKPOINTS )
 	{
+		const int CHECKPOINT_FREQUENCY_ROWS = ROWS_PER_BEAT/2;
+
 		// "the first row after the start of the range that lands on a beat"
-		int iFirstCheckpointInRange = ((iFirstRowCrossed+ROWS_PER_BEAT-1)/ROWS_PER_BEAT) * ROWS_PER_BEAT;
+		int iFirstCheckpointInRange = ((iFirstRowCrossed+CHECKPOINT_FREQUENCY_ROWS-1)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;
 		
 		// "the last row or first row earlier that lands on a beat"
-		int iLastCheckpointInRange = ((iLastRowCrossed)/ROWS_PER_BEAT) * ROWS_PER_BEAT;
+		int iLastCheckpointInRange = ((iLastRowCrossed)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;
 
-		for( int r = iFirstCheckpointInRange; r <= iLastCheckpointInRange; r += ROWS_PER_BEAT )
+		for( int r = iFirstCheckpointInRange; r <= iLastCheckpointInRange; r += CHECKPOINT_FREQUENCY_ROWS )
 		{
 			LOG->Trace( "%d...", r );
-			bool bAnyHoldsThisRow = false;
+			vector<int> viColsWithHold;
 			bool bAllHoldsHeldThisRow = true;
 
 			// start at r-1 so that we can count the tail of a hold as a checkpoint
@@ -2221,23 +2223,24 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 
 				int iStartRow = iter.Row();
 				int iEndRow = iStartRow + tn.iDuration;
+				int iTrack = iter.Track();
 
 				// "the first row after the hold head that lands on a beat"
-				int iFirstCheckpointOfHold = ((iStartRow+ROWS_PER_BEAT)/ROWS_PER_BEAT) * ROWS_PER_BEAT;
+				int iFirstCheckpointOfHold = ((iStartRow+CHECKPOINT_FREQUENCY_ROWS)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;
 				
 				// "the end row or the first earlier row that lands on a beat"
-				int iLastCheckpointOfHold = ((iEndRow)/ROWS_PER_BEAT) * ROWS_PER_BEAT;
+				int iLastCheckpointOfHold = ((iEndRow)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;
 
 				// count the end of the hold as a checkpoint
 				bool bHoldOverlapsRow = iFirstCheckpointOfHold <= r  &&   r <= iLastCheckpointOfHold;
 				if( !bHoldOverlapsRow )
 					continue;
 
-				bAnyHoldsThisRow = true;
+				viColsWithHold.push_back( iTrack );
 				bAllHoldsHeldThisRow &= tn.HoldResult.bHeld;
 			}
 
-			if( bAnyHoldsThisRow )
+			if( !viColsWithHold.empty() )
 			{
 				if( m_pPlayerStageStats )
 				{
@@ -2245,7 +2248,7 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 					const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
 					const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
-					if( bAnyHoldsThisRow )
+					if( bAllHoldsHeldThisRow )
 					{
 						m_pPlayerStageStats->m_iCurCombo++;
 						m_pPlayerStageStats->m_iCurMissCombo = 0;
@@ -2261,6 +2264,13 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 					{
 						SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
 					}
+				}
+
+				FOREACH( int, viColsWithHold, i )
+				{
+					bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+					if( m_pNoteField )
+						m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
 				}
 			}
 		}
