@@ -20,15 +20,15 @@ public:
 	
 	void DidTapNote( int iCol, TapNoteScore tns, bool bBright );
 	void DidHoldNote( int iCol, HoldNoteScore hns, bool bBright );
-	void SetHoldIsActive( int iCol );
+	void SetHoldShowing( int iCol );
 	
 protected:
 	float m_fYReverseOffsetPixels;
 	const PlayerState* m_pPlayerState;
 
 	vector<Actor *> 	m_Ghost;
-	vector<bool> m_bHoldIsActive;
-	vector<bool> m_bHoldWasActive;
+	vector<bool> m_bIsHoldShowing;
+	vector<bool> m_bWasHoldShowing;
 };
 
 

@@ -589,10 +589,10 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	float fStartBeat = NoteRowToBeat( max(tn.HoldResult.iLastHeldRow, iRow) );
 	float fThrowAway = 0;
 
-	// HACK: If active, don't set YOffset to 0 so that it doesn't jiggle around the receptor.
+	// HACK: If life > 0, don't set YOffset to 0 so that it doesn't jiggle around the receptor.
 	bool bStartIsPastPeak = true;
 	float fStartYOffset	= 0;
-	if( tn.HoldResult.bActive )
+	if( tn.HoldResult.bActive  &&  tn.HoldResult.fLife > 0 )
 		;	// use the default values filled in above
 	else
 		fStartYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fStartBeat, fThrowAway, bStartIsPastPeak );

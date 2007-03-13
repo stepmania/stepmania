@@ -789,10 +789,10 @@ void NoteField::DrawPrimitives()
 				bool bIsAddition = (tn.source == TapNote::addition);
 				bool bIsHopoPossible = (tn.bHopoPossible);
 				bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
-				const bool bIsActive = tn.HoldResult.bActive;
+				const bool bHoldGhostShowing = tn.HoldResult.bActive  &&  tn.HoldResult.fLife > 0;
 				const bool bIsHoldingNote = tn.HoldResult.bHeld;
-				if( bIsActive )
-					m_pCurDisplay->m_GhostArrowRow.SetHoldIsActive( c );
+				if( bHoldGhostShowing )
+					m_pCurDisplay->m_GhostArrowRow.SetHoldShowing( c );
 				
 				ASSERT_M( NoteRowToBeat(iStartRow) > -2000, ssprintf("%i %i %i", iStartRow, iEndRow, c) );
 

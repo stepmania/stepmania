@@ -27,8 +27,8 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	{
 		const RString &sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( c );
 
-		m_bHoldIsActive.push_back( false );
-		m_bHoldWasActive.push_back( false );
+		m_bIsHoldShowing.push_back( false );
+		m_bWasHoldShowing.push_back( false );
 
 		m_Ghost.push_back( NOTESKIN->LoadActor(sButton, "Explosion", this) );
 		m_Ghost[c]->SetName( "GhostArrow" );
@@ -60,14 +60,14 @@ void GhostArrowRow::Update( float fDeltaTime )
 		m_Ghost[c]->SetZoom( fZoom );
 	}
 
-	for( unsigned i = 0; i < m_bHoldIsActive.size(); ++i )
+	for( unsigned i = 0; i < m_bIsHoldShowing.size(); ++i )
 	{
-		if( !m_bHoldWasActive[i] && m_bHoldIsActive[i] )
+		if( !m_bWasHoldShowing[i] && m_bIsHoldShowing[i] )
 			m_Ghost[i]->PlayCommand( "HoldingOn" );
-		else if( m_bHoldWasActive[i] && !m_bHoldIsActive[i] )
+		else if( m_bWasHoldShowing[i] && !m_bIsHoldShowing[i] )
 			m_Ghost[i]->PlayCommand( "HoldingOff" );
-		m_bHoldWasActive[i] = m_bHoldIsActive[i];
-		m_bHoldIsActive[i] = false;
+		m_bWasHoldShowing[i] = m_bIsHoldShowing[i];
+		m_bIsHoldShowing[i] = false;
 	}
 }
 
@@ -115,10 +115,10 @@ void GhostArrowRow::DidHoldNote( int iCol, HoldNoteScore hns, bool bBright )
 	m_Ghost[iCol]->PlayCommand( Capitalize(sJudge) );
 }
 
-void GhostArrowRow::SetHoldIsActive( int iCol )
+void GhostArrowRow::SetHoldShowing( int iCol )
 {
 	ASSERT( iCol >= 0  &&  iCol < (int) m_Ghost.size() );
-	m_bHoldIsActive[iCol] = true;
+	m_bIsHoldShowing[iCol] = true;
 }
 
 /*
