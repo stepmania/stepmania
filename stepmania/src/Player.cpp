@@ -129,6 +129,7 @@ Preference<float> g_fTimingWindowStrum		( "TimingWindowStrum",		0.1f );		// max 
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
 ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
+ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
 
 
 float Player::GetWindowSeconds( TimingWindow tw )
@@ -896,22 +897,33 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	}
 
 	/* check for LetGo.  If the head was missed completely, don't count an LetGo. */
-	if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
-		hns = HNS_LetGo;
-
-	// check for OK
-	if( iSongRow >= iMaxEndRow  &&  bSteppedOnTapNote  &&  fLife > 0 )	// if this HoldNote is in the past
+	/* Why?  If you never step on the head, then it will be left as HNS_None, which doesn't seem correct. */
+	if( IMMEDIATE_HOLD_LET_GO )
 	{
-		fLife = 1;
-		hns = HNS_Held;
-		bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-		if( m_pNoteField )
+		if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
+			hns = HNS_LetGo;
+	}
+
+	// score hold notes that have passed
+	if( iSongRow >= iMaxEndRow )
+	{
+		if( bSteppedOnTapNote  &&  fLife > 0 )
 		{
-			FOREACH( TrackRowTapNote, vTN, trtn )
+			fLife = 1;
+			hns = HNS_Held;
+			bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+			if( m_pNoteField )
 			{
-				int iTrack = trtn->iTrack;
-				m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
+				FOREACH( TrackRowTapNote, vTN, trtn )
+				{
+					int iTrack = trtn->iTrack;
+					m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
+				}
 			}
+		}
+		else
+		{
+			hns = HNS_LetGo;
 		}
 	}
 		
