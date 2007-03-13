@@ -131,7 +131,7 @@ if [ ! -f _build/src/config.h ]; then
 	message 'Configuring StepMania'
 	mkdir -p _build
 	cd _build
-	call ../configure --with-static-ffmpeg-prefix=../$ffmpeg/_inst $@
+	call ../configure --with-ffmpeg=../$ffmpeg/_inst $@
 	cd ..
 fi
 if [ -n "$s_configure" ]; then exit 0; fi
