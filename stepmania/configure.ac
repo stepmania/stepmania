@@ -47,6 +47,17 @@ case $compile in
 	;;
 esac
 
+
+# Some (broken?) versions of gcc treat char as unsigned, check for that.
+AC_LANG_PUSH([C])
+AC_MSG_CHECKING([for gcc option to use signed chars])
+AC_RUN_IFELSE([AC_LANG_SOURCE([[int main(){return (char)-1==-1?0:1;}]])],
+	   [sc_option=],[sc_option=-fsigned-char])
+AC_MSG_RESULT([${sc_option-none}])
+CFLAGS="$CFLAGS $sc_option"
+CXXFLAGS="$CXXFLAGS $sc_option"
+AC_LANG_POP([C])
+
 # Define UNIX for all Unix-like systems.  Don't define it for cross-compiling to
 # non-Unix-like systems.  (-DUNIX selects the archutils and ArchHooks to use; if
 # your platform doesn't use the Unix ones, you probably don't want to define UNIX.)
