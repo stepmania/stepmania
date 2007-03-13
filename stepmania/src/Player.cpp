@@ -2199,7 +2199,10 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 
 	if( HOLD_CHECKPOINTS )
 	{
+		// "the first row after the start of the range that lands on a beat"
 		int iFirstCheckpointInRange = ((iFirstRowCrossed+ROWS_PER_BEAT-1)/ROWS_PER_BEAT) * ROWS_PER_BEAT;
+		
+		// "the last row or first row earlier that lands on a beat"
 		int iLastCheckpointInRange = ((iLastRowCrossed)/ROWS_PER_BEAT) * ROWS_PER_BEAT;
 
 		for( int r = iFirstCheckpointInRange; r <= iLastCheckpointInRange; r += ROWS_PER_BEAT )
@@ -2219,14 +2222,13 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 				int iStartRow = iter.Row();
 				int iEndRow = iStartRow + tn.iDuration;
 
-				// First checkpoint is the first row after the hold head that lands on a beat.
+				// "the first row after the hold head that lands on a beat"
 				int iFirstCheckpointOfHold = ((iStartRow+ROWS_PER_BEAT)/ROWS_PER_BEAT) * ROWS_PER_BEAT;
 				
-				// The last checkpoint is the end row or the first earlier row that lands on a beat.
+				// "the end row or the first earlier row that lands on a beat"
 				int iLastCheckpointOfHold = ((iEndRow)/ROWS_PER_BEAT) * ROWS_PER_BEAT;
 
 				// count the end of the hold as a checkpoint
-
 				bool bHoldOverlapsRow = iFirstCheckpointOfHold <= r  &&   r <= iLastCheckpointOfHold;
 				if( !bHoldOverlapsRow )
 					continue;
