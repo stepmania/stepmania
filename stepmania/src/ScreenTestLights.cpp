@@ -91,13 +91,15 @@ void ScreenTestLights::Input( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
 		return;	// ignore
 
-	Screen::Input( input );	// default handler
+	ScreenWithMenuElements::Input( input );	// default handler
 }
 
 void ScreenTestLights::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_LoseFocus )
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
+
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenTestLights::MenuLeft( const InputEventPlus &input )
