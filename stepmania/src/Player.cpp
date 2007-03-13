@@ -130,6 +130,7 @@ ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
 ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
+ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads" );
 
 
 float Player::GetWindowSeconds( TimingWindow tw )
@@ -793,15 +794,22 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	if( hns != HNS_None )	// if this HoldNote already has a result
 		return;	// we don't need to update the logic for this group
 
-	bool bSteppedOnTapNote = true;
-	FOREACH( TrackRowTapNote, vTN, trtn )
+	bool bInitiatedNote = true;
+	if( REQUIRE_STEP_ON_HOLD_HEADS )
 	{
-		TapNote &tn = *trtn->pTN;
-		TapNoteScore tns = tn.result.tns;
+		FOREACH( TrackRowTapNote, vTN, trtn )
+		{
+			TapNote &tn = *trtn->pTN;
+			TapNoteScore tns = tn.result.tns;
 
-		// TODO: When using JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER, require that the whole row of 
-		// taps was hit before activating this group of holds.
-		bSteppedOnTapNote &= tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start of this hold?
+			// TODO: When using JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER, require that the whole row of 
+			// taps was hit before activating this group of holds.
+			bInitiatedNote &= tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start of this hold?
+		}
+	}
+	else
+	{
+		bInitiatedNote = true;
 	}
 
 	bool bIsHoldingButton = true;
@@ -826,7 +834,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		}
 	}
 
-	if( bSteppedOnTapNote && fLife != 0 )
+	if( bInitiatedNote && fLife != 0 )
 	{
 		/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
 			* Do this even if we're a little beyond the end of the hold note, to make sure
@@ -851,11 +859,11 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				TapNote &tn = *trtn->pTN;
 			
 				// set hold flag so NoteField can do intelligent drawing
-				tn.HoldResult.bHeld = bIsHoldingButton && bSteppedOnTapNote;
-				tn.HoldResult.bActive = bSteppedOnTapNote;
+				tn.HoldResult.bHeld = bIsHoldingButton && bInitiatedNote;
+				tn.HoldResult.bActive = bInitiatedNote;
 			}
 
-			if( bSteppedOnTapNote && bIsHoldingButton )
+			if( bInitiatedNote && bIsHoldingButton )
 			{
 				// Increase life
 				fLife = 1;
@@ -872,7 +880,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			{
 				TapNote &tn = *trtn->pTN;
 				tn.HoldResult.bHeld = true;
-				tn.HoldResult.bActive = bSteppedOnTapNote;
+				tn.HoldResult.bActive = bInitiatedNote;
 			}
 
 			// give positive life in Step(), not here.
@@ -900,14 +908,14 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	/* Why?  If you never step on the head, then it will be left as HNS_None, which doesn't seem correct. */
 	if( IMMEDIATE_HOLD_LET_GO )
 	{
-		if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
+		if( bInitiatedNote && fLife == 0 )	// the player has not pressed the button for a long time!
 			hns = HNS_LetGo;
 	}
 
 	// score hold notes that have passed
 	if( iSongRow >= iMaxEndRow )
 	{
-		if( bSteppedOnTapNote  &&  fLife > 0 )
+		if( bInitiatedNote  &&  fLife > 0 )
 		{
 			fLife = 1;
 			hns = HNS_Held;
