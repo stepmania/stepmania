@@ -2229,7 +2229,7 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 
 		for( int r = iFirstCheckpointInRange; r <= iLastCheckpointInRange; r += CHECKPOINT_FREQUENCY_ROWS )
 		{
-			LOG->Trace( "%d...", r );
+			//LOG->Trace( "%d...", r );
 			vector<int> viColsWithHold;
 			bool bAllHoldsHeldThisRow = true;
 
