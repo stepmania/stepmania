@@ -2252,6 +2252,13 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 					{
 						m_pPlayerStageStats->m_iCurCombo++;
 						m_pPlayerStageStats->m_iCurMissCombo = 0;
+
+						FOREACH( int, viColsWithHold, i )
+						{
+							bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+							if( m_pNoteField )
+								m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
+						}
 					}
 					else
 					{
@@ -2264,13 +2271,6 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 					{
 						SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
 					}
-				}
-
-				FOREACH( int, viColsWithHold, i )
-				{
-					bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-					if( m_pNoteField )
-						m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
 				}
 			}
 		}
