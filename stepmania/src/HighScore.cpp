@@ -405,6 +405,29 @@ public:
 };
 
 LUA_REGISTER_CLASS( HighScore )
+
+class LunaHighScoreList: public Luna<HighScoreList>
+{
+public:
+	static int GetHighScores( T* p, lua_State *L )
+	{
+		lua_newtable(L);
+		for( int i = 0; i < (int) p->vHighScores.size(); ++i )
+		{
+			p->vHighScores[i].PushSelf(L);
+			lua_rawseti( L, -2, i+1 );
+		}
+
+		return 1;
+	}
+
+	LunaHighScoreList()
+	{
+		ADD_METHOD( GetHighScores );
+	}
+};
+
+LUA_REGISTER_CLASS( HighScoreList )
 // lua end
 
 /*

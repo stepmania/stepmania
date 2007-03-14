@@ -1952,6 +1952,29 @@ class LunaProfile: public Luna<Profile>
 {
 public:
 	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName ); return 1; }
+	static int GetHighScoreList( T* p, lua_State *L )
+	{
+		if( LuaBinding::CheckLuaObjectType(L, 1, "Song") )
+		{
+			const Song *pSong = Luna<Song>::check(L,1);
+			const Steps *pSteps = Luna<Steps>::check(L,2);
+			HighScoreList &hsl = p->GetStepsHighScoreList( pSong, pSteps );
+			hsl.PushSelf( L );
+			return 1;
+		}
+		else if( LuaBinding::CheckLuaObjectType(L, 1, "Course") )
+		{
+			const Course *pCourse = Luna<Course>::check(L,1);
+			const Trail *pTrail = Luna<Trail>::check(L,2);
+			HighScoreList &hsl = p->GetCourseHighScoreList( pCourse, pTrail );
+			hsl.PushSelf( L );
+			return 1;
+		}
+
+		luaL_typerror( L, 1, "Song or Course" );
+		return 0;
+	}
+
 	static int GetCharacter( T* p, lua_State *L )			{ p->GetCharacter()->PushSelf(L); return 1; }
 	static int GetWeightPounds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iWeightPounds ); return 1; }
 	static int SetWeightPounds( T* p, lua_State *L )		{ p->m_iWeightPounds = IArg(1); return 0; }
@@ -2013,6 +2036,7 @@ public:
 	LunaProfile()
 	{
 		ADD_METHOD( GetDisplayName );
+		ADD_METHOD( GetHighScoreList );
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( GetWeightPounds );
 		ADD_METHOD( SetWeightPounds );

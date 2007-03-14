@@ -218,8 +218,18 @@ class LunaStatsManager: public Luna<StatsManager>
 {
 public:
 	static int GetCurStageStats( T* p, lua_State *L )	{ p->m_CurStageStats.PushSelf(L); return 1; }
-	static int GetAccumPlayedStageStats( T* p, lua_State *L )	{ p->GetAccumPlayedStageStats().PushSelf(L); return 1; }
+	static int GetPlayedStageStats( T* p, lua_State *L )
+	{
+		int iAgo = IArg(1);
+		int iIndex = p->m_vPlayedStageStats.size() - iAgo;
+		if( iIndex < 0 || iIndex >= (int) p->m_vPlayedStageStats.size() )
+			return 0;
+
+		p->m_vPlayedStageStats[iIndex].PushSelf(L);
+		return 1;
+	}
 	static int Reset( T* p, lua_State *L )			{ p->Reset(); return 0; }
+	static int GetAccumPlayedStageStats( T* p, lua_State *L )	{ p->GetAccumPlayedStageStats().PushSelf(L); return 1; }
 	static int GetFinalGrade( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
@@ -285,6 +295,7 @@ public:
 	LunaStatsManager()
 	{
 		ADD_METHOD( GetCurStageStats );
+		ADD_METHOD( GetPlayedStageStats );
 		ADD_METHOD( GetAccumPlayedStageStats );
 		ADD_METHOD( Reset );
 		ADD_METHOD( GetFinalGrade );

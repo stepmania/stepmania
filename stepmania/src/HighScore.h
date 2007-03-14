@@ -97,6 +97,10 @@ public:
 
 	vector<HighScore> vHighScores;
 	Grade HighGrade;
+
+	// Lua
+	void PushSelf( lua_State *L );
+
 private:
 	int iNumTimesPlayed;
 	DateTime dtLastPlayed;	// meaningless if iNumTimesPlayed == 0
