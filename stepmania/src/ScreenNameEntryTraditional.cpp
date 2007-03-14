@@ -205,111 +205,109 @@ void ScreenNameEntryTraditional::Init()
 	//
 	// init keyboards
 	//
+	FOREACH_HumanPlayer( p )
 	{
-		FOREACH_HumanPlayer( p )
+		// don't show keyboard if didn't make any high scores
+		if( !m_bStillEnteringName[p] )
 		{
-			// don't show keyboard if didn't make any high scores
-			if( !m_bStillEnteringName[p] )
-			{
-				m_sprOutOfRanking[p].Load( THEME->GetPathG( m_sName,ssprintf("OutOfRankingP%i",p+1)) );
-				m_sprOutOfRanking[p]->SetName( ssprintf("OutOfRankingP%i",p+1) );
-				LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprOutOfRanking[p] );
-				this->AddChild( m_sprOutOfRanking[p] );
+			m_sprOutOfRanking[p].Load( THEME->GetPathG( m_sName,ssprintf("OutOfRankingP%i",p+1)) );
+			m_sprOutOfRanking[p]->SetName( ssprintf("OutOfRankingP%i",p+1) );
+			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprOutOfRanking[p] );
+			this->AddChild( m_sprOutOfRanking[p] );
 
-				continue;	// skip
-			}
-
-			m_sprNameFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("name frame p%i",p+1)) );
-			m_sprNameFrame[p]->SetName( ssprintf("EntryFrameP%i",p+1) );
-			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprNameFrame[p] );
-			this->AddChild( m_sprNameFrame[p] );
-
-			m_Keyboard[p].SetName( ssprintf("KeyboardP%i",p+1) );
-			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_Keyboard[p] );
-			this->AddChild( &m_Keyboard[p] );
-
-			/* Add letters to m_Keyboard. */
-			const RString sFontPath = THEME->GetPathF(m_sName,"letters");
-			const wstring sChars = RStringToWstring(KEYBOARD_LETTERS);
-
-			BitmapText *pLetterTemplate = new BitmapText;
-			pLetterTemplate->SetName( "Letter" );
-			pLetterTemplate->LoadFromFont( sFontPath );
-			ActorUtil::LoadAllCommands( *pLetterTemplate, m_sName );
-			pLetterTemplate->PlayCommand( "AlphabetInit" );
-			for( unsigned ch = 0; ch < sChars.size(); ++ch )
-			{
-				BitmapText *pLetter = new BitmapText( *pLetterTemplate );
-				pLetter->SetText( ssprintf("%lc", sChars[ch]) );
-				m_textAlphabet[p].push_back( pLetter );
-				m_Keyboard[p].AddChild( pLetter );
-
-				m_AlphabetLetter[p].push_back( sChars[ch] );
-			}
-			delete pLetterTemplate;
-
-			/* Add "<-". */
-			{
-				BitmapText *pLetter = new BitmapText;
-				pLetter->SetName( ssprintf("LetterP%i",p+1) );
-				ActorUtil::LoadAllCommands( *pLetter, m_sName );
-				pLetter->LoadFromFont( sFontPath );
-				RString sText = "&leftarrow;";
-				FontCharAliases::ReplaceMarkers( sText );
-				pLetter->SetText( sText );
-				pLetter->PlayCommand( "OKInit" );
-				m_textAlphabet[p].push_back( pLetter );
-				m_Keyboard[p].AddChild( pLetter );
-
-				m_AlphabetLetter[p].push_back( CHAR_BACK );
-			}
-
-			/* Add "OK". */
-			{
-				BitmapText *pLetter = new BitmapText;
-				pLetter->SetName( ssprintf("LetterP%i",p+1) );
-				ActorUtil::LoadAllCommands( *pLetter, m_sName );
-				pLetter->LoadFromFont( sFontPath );
-				RString sText = "&ok;";
-				FontCharAliases::ReplaceMarkers( sText );
-				pLetter->SetText( sText );
-				pLetter->PlayCommand( "OKInit" );
-				m_textAlphabet[p].push_back( pLetter );
-				m_Keyboard[p].AddChild( pLetter );
-
-				m_AlphabetLetter[p].push_back( CHAR_OK );
-			}
-
-			m_sprCursor[p].SetName( ssprintf("CursorP%i",p+1) );
-			m_sprCursor[p].Load( THEME->GetPathG(m_sName,ssprintf("cursor p%i",p+1)) );
-			m_Keyboard[p].AddChild( &m_sprCursor[p] );
-
-			m_textSelection[p].SetName( ssprintf("SelectionP%i",p+1) );
-			m_textSelection[p].LoadFromFont( THEME->GetPathF(m_sName,"entry") );
-			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textSelection[p] );
-			this->AddChild( &m_textSelection[p] );
-
-			m_SelectedChar[p] = 0;
-			PositionCharsAndCursor( p );
-
-			// load last used ranking name if any
-			const Profile* pProfile = PROFILEMAN->GetProfile(p);
-			if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
-			{
-				m_sSelection[p] = RStringToWstring( pProfile->m_sLastUsedHighScoreName );
-				if( (int) m_sSelection[p].size() > MAX_RANKING_NAME_LENGTH )
-					m_sSelection[p].erase( MAX_RANKING_NAME_LENGTH );
-				ASSERT( (int) m_sSelection[p].size() <= MAX_RANKING_NAME_LENGTH );
-				if( m_sSelection[p].size() )
-					SelectChar(  p, CHAR_OK, false );
-			}
-
-			UpdateSelectionText( p );
-
-			/* Don't tween to the initial position. */
-			for( unsigned i = 0; i < m_textAlphabet[p].size(); ++i )
-				m_textAlphabet[p][i]->FinishTweening();
+			continue;	// skip
 		}
+
+		m_sprNameFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("name frame p%i",p+1)) );
+		m_sprNameFrame[p]->SetName( ssprintf("EntryFrameP%i",p+1) );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprNameFrame[p] );
+		this->AddChild( m_sprNameFrame[p] );
+
+		m_Keyboard[p].SetName( ssprintf("KeyboardP%i",p+1) );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_Keyboard[p] );
+		this->AddChild( &m_Keyboard[p] );
+
+		/* Add letters to m_Keyboard. */
+		const RString sFontPath = THEME->GetPathF(m_sName,"letters");
+		const wstring sChars = RStringToWstring(KEYBOARD_LETTERS);
+
+		BitmapText *pLetterTemplate = new BitmapText;
+		pLetterTemplate->SetName( "Letter" );
+		pLetterTemplate->LoadFromFont( sFontPath );
+		ActorUtil::LoadAllCommands( *pLetterTemplate, m_sName );
+		pLetterTemplate->PlayCommand( "AlphabetInit" );
+		for( unsigned ch = 0; ch < sChars.size(); ++ch )
+		{
+			BitmapText *pLetter = new BitmapText( *pLetterTemplate );
+			pLetter->SetText( ssprintf("%lc", sChars[ch]) );
+			m_textAlphabet[p].push_back( pLetter );
+			m_Keyboard[p].AddChild( pLetter );
+
+			m_AlphabetLetter[p].push_back( sChars[ch] );
+		}
+		delete pLetterTemplate;
+
+		/* Add "<-". */
+		{
+			BitmapText *pLetter = new BitmapText;
+			pLetter->SetName( ssprintf("LetterP%i",p+1) );
+			ActorUtil::LoadAllCommands( *pLetter, m_sName );
+			pLetter->LoadFromFont( sFontPath );
+			RString sText = "&leftarrow;";
+			FontCharAliases::ReplaceMarkers( sText );
+			pLetter->SetText( sText );
+			pLetter->PlayCommand( "OKInit" );
+			m_textAlphabet[p].push_back( pLetter );
+			m_Keyboard[p].AddChild( pLetter );
+
+			m_AlphabetLetter[p].push_back( CHAR_BACK );
+		}
+
+		/* Add "OK". */
+		{
+			BitmapText *pLetter = new BitmapText;
+			pLetter->SetName( ssprintf("LetterP%i",p+1) );
+			ActorUtil::LoadAllCommands( *pLetter, m_sName );
+			pLetter->LoadFromFont( sFontPath );
+			RString sText = "&ok;";
+			FontCharAliases::ReplaceMarkers( sText );
+			pLetter->SetText( sText );
+			pLetter->PlayCommand( "OKInit" );
+			m_textAlphabet[p].push_back( pLetter );
+			m_Keyboard[p].AddChild( pLetter );
+
+			m_AlphabetLetter[p].push_back( CHAR_OK );
+		}
+
+		m_sprCursor[p].SetName( ssprintf("CursorP%i",p+1) );
+		m_sprCursor[p].Load( THEME->GetPathG(m_sName,ssprintf("cursor p%i",p+1)) );
+		m_Keyboard[p].AddChild( &m_sprCursor[p] );
+
+		m_textSelection[p].SetName( ssprintf("SelectionP%i",p+1) );
+		m_textSelection[p].LoadFromFont( THEME->GetPathF(m_sName,"entry") );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textSelection[p] );
+		this->AddChild( &m_textSelection[p] );
+
+		m_SelectedChar[p] = 0;
+		PositionCharsAndCursor( p );
+
+		// load last used ranking name if any
+		const Profile* pProfile = PROFILEMAN->GetProfile(p);
+		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
+		{
+			m_sSelection[p] = RStringToWstring( pProfile->m_sLastUsedHighScoreName );
+			if( (int) m_sSelection[p].size() > MAX_RANKING_NAME_LENGTH )
+				m_sSelection[p].erase( MAX_RANKING_NAME_LENGTH );
+			ASSERT( (int) m_sSelection[p].size() <= MAX_RANKING_NAME_LENGTH );
+			if( m_sSelection[p].size() )
+				SelectChar(  p, CHAR_OK, false );
+		}
+
+		UpdateSelectionText( p );
+
+		/* Don't tween to the initial position. */
+		for( unsigned i = 0; i < m_textAlphabet[p].size(); ++i )
+			m_textAlphabet[p][i]->FinishTweening();
 	}
 
 	//
