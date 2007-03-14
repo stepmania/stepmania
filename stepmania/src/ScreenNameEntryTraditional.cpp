@@ -418,15 +418,6 @@ void ScreenNameEntryTraditional::Init()
 			SET_ON( display.m_textScore );
 			this->AddChild( &display.m_textScore );
 
-//			if( feat.Feat != "" )
-//			{
-//				display.m_textCategory.SetName( ssprintf("CategoryP%i", p+1) );
-//				display.m_textCategory.LoadFromFont( THEME->GetPathF(m_sName, "category") );
-//				display.m_textCategory.SetText( feat.Feat );
-//				SET_ON( display.m_textCategory );
-//				this->AddChild( &display.m_textCategory );
-//			}
-
 			/* We always show the banner frame (if any), because fading from a graphic to
 			 * itself is ugly. */
 			display.m_sprBannerFrame.Load( THEME->GetPathG(m_sName,ssprintf("banner frame p%i",p+1)) );
