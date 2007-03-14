@@ -2,23 +2,16 @@
 #define ARCH_HOOKS_DARWIN_H
 
 #include "ArchHooks.h"
-class RageMutex;
 
 class ArchHooks_darwin : public ArchHooks
 {
 public:
 	void Init();
-	~ArchHooks_darwin();
 	RString GetArchName() const;
 	RString GetMachineId() const;
 	void DumpDebugInfo();
 	RString GetPreferredLanguage();
-	void EnterTimeCriticalSection();
-	void ExitTimeCriticalSection();
 	bool GoToURL( RString sUrl );
-	
-protected:
-	RageMutex *TimeCritMutex;
 };
 
 #ifdef ARCH_HOOKS

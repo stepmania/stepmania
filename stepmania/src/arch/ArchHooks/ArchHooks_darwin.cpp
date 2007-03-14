@@ -1,35 +1,18 @@
 #include "global.h"
 #include "ArchHooks_darwin.h"
 #include "RageLog.h"
-#include "RageThreads.h"
-#include "RageTimer.h"
 #include "RageUtil.h"
-#include "archutils/Darwin/Crash.h"
 #include "archutils/Unix/CrashHandler.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "ProductInfo.h"
 #include <Carbon/Carbon.h>
-#include <CoreFoundation/CoreFoundation.h>
-#include <mach/thread_act.h>
 #include <mach/mach.h>
-#include <mach/host_info.h>
 #include <mach/mach_time.h>
-#include <mach/mach_error.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/sysctl.h>
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOKitKeys.h>
 #include <IOKit/network/IOEthernetInterface.h>
 #include <IOKit/network/IONetworkInterface.h>
 #include <IOKit/network/IOEthernetController.h>
-
-#define REAL_TIME_CRITICAL_SECTION 0
-
-#if REAL_TIME_CRITICAL_SECTION
-static thread_time_constraint_policy g_oldttcpolicy;
-static float g_fStartedTimeCritAt;
-#endif
 
 static bool IsFatalSignal( int signal )
 {
@@ -74,9 +57,6 @@ void ArchHooks_darwin::Init()
 #if defined(CRASH_HANDLER)
 	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
 	SignalHandler::OnClose( DoCrashSignalHandler );
-#endif
-#if REAL_TIME_CRITICAL_SECTION
-	TimeCritMutex = new RageMutex("TimeCritMutex");
 #endif
 
 	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
@@ -130,13 +110,6 @@ void ArchHooks_darwin::Init()
 	}
 	CFRelease( value );
 	CFRelease( path );
-}
-
-ArchHooks_darwin::~ArchHooks_darwin()
-{
-#if REAL_TIME_CRITICAL_SECTION
-	delete TimeCritMutex;
-#endif
 }
 
 RString ArchHooks_darwin::GetArchName() const
@@ -347,64 +320,6 @@ RString ArchHooks::GetPreferredLanguage()
 	
 	CFRelease( languages );
 	return ret;
-}
-
-void ArchHooks_darwin::EnterTimeCriticalSection()
-{
-#if REAL_TIME_CRITICAL_SECTION
-	TimeCritMutex->Lock();
-	
-	mach_msg_type_number_t cnt = THREAD_TIME_CONSTRAINT_POLICY_COUNT;
-	boolean_t bDefaults = false;
-	kern_return_t ret;
-
-	ret = thread_policy_get( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY,
-				 (int*)&g_oldttcpolicy, &cnt, &bDefaults );
-	
-	if( unlikely(ret != KERN_SUCCESS) )
-		LOG->Warn( "thread_policy_get(): %s", mach_error_string(ret) );
-
-	/* We want to monopolize the CPU for a very short period of time.  This means that the
-	 * period doesn't really matter, and we don't want to be preempted. The thread_policy_set
-	 * call will fail unless 50 us <= computation <= constraint <= 50 ms. This isn't
-	 * anywhere except in the kernel source: min_rt_quantum and max_rt_quantum in
-	 * http://darwinsource.opendarwin.org/10.4/xnu-792/osfmk/kern/sched_prim.c */
-	thread_time_constraint_policy ttcpolicy;
-	mach_timebase_info_data_t timeBase;
-		
-	mach_timebase_info( &timeBase );
-	
-	ttcpolicy.period = 0; // no periodicity
-	// http://developer.apple.com/qa/qa2004/qa1398.html
-	ttcpolicy.computation = uint32_t( 3000000.0 * timeBase.denom / timeBase.numer ); // 3 ms
-	ttcpolicy.constraint = ttcpolicy.computation;
-	ttcpolicy.preemptible = 0;
-	ret = thread_policy_set( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY,
-				 (int*)&ttcpolicy, THREAD_TIME_CONSTRAINT_POLICY_COUNT );
-	
-	if( unlikely(ret != KERN_SUCCESS) )
-		LOG->Warn( "thread_policy_set(THREAD_TIME_CONSTRAINT_POLICY): %s", mach_error_string(ret) );
-
-	g_fStartedTimeCritAt = RageTimer::GetTimeSinceStart();
-#endif
-}
-
-void ArchHooks_darwin::ExitTimeCriticalSection()
-{
-#if REAL_TIME_CRITICAL_SECTION
-	kern_return_t ret;
-	
-	ret = thread_policy_set( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY,
-				 (int*) &g_oldttcpolicy, THREAD_TIME_CONSTRAINT_POLICY_COUNT );
-	
-	TimeCritMutex->Unlock();
-	if( unlikely(ret != KERN_SUCCESS) )
-		LOG->Warn( "thread_policy_set(g_oldttcpolicy): %s", mach_error_string(ret) );
-
-	float fTimeCritLen = RageTimer::GetTimeSinceStart() - g_fStartedTimeCritAt;
-	if( fTimeCritLen > 0.003f )
-		LOG->Warn( "Time-critical section lasted for %f", fTimeCritLen );
-#endif
 }
 
 bool ArchHooks_darwin::GoToURL( RString sUrl )
