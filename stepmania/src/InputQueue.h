@@ -18,6 +18,8 @@ public:
 	bool MatchesSequence( GameController c, const GameButton* button_sequence, int iNumButtons, float fMaxSecondsBack );
 	bool WasPressedRecently( GameController c, const GameButton button, const RageTimer &OldestTimeAllowed, InputEventPlus *pIEP = NULL );
 	bool AllWerePressedRecently( GameController c, const GameButton* buttons, int iNumButtons, float fMaxSecondsBack );
+	const vector<InputEventPlus> &GetQueue( GameController c ) const { return m_aQueue[c]; }
+	void ClearQueue( GameController c );
 
 protected:
 	vector<InputEventPlus> m_aQueue[NUM_GameController];

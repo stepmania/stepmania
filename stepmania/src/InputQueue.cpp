@@ -82,8 +82,13 @@ bool InputQueue::AllWerePressedRecently( GameController c, const GameButton* but
 			return false;	// didn't find the button
 	}
 
-	m_aQueue[c].clear();	// empty the queue so we don't match on it again
+	ClearQueue( c );	// empty the queue so we don't match on it again
 	return true;
+}
+
+void InputQueue::ClearQueue( GameController c )
+{
+	m_aQueue[c].clear();
 }
 
 /*

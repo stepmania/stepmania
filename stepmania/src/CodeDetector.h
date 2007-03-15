@@ -56,14 +56,15 @@ public:
 	bool EnteredCode( GameController controller ) const;
 
 private:
-	vector<GameButton> buttons;
-	enum Type
-	{ 
-		sequence,		// press the buttons in sequence
-		hold_and_press,		// hold the first iNumButtons-1 buttons, then press the last
-		tap			// press all buttons simultaneously
+	struct ButtonPress
+	{
+		ButtonPress() { m_bAllowIntermediatePresses = true; }
+		vector<GameButton> m_aButtonsToHold;
+		vector<GameButton> m_aButtonsToPress;
+		bool m_bAllowIntermediatePresses;
 	};
-	Type m_Type;
+	vector<ButtonPress> m_aPresses;
+
 	float fMaxSecondsBack;
 };	
 
