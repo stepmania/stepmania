@@ -6,6 +6,7 @@
 
 InputHandler_MonkeyKeyboard::InputHandler_MonkeyKeyboard()
 {
+	m_dbLast = DeviceButton_Invalid;
 }
 
 InputHandler_MonkeyKeyboard::~InputHandler_MonkeyKeyboard()
@@ -59,12 +60,12 @@ void InputHandler_MonkeyKeyboard::Update()
 {
 	if( !PREFSMAN->m_bMonkeyInput )
 	{
-		if( m_diLast.IsValid() )
+		if( m_dbLast != DeviceButton_Invalid )
 		{
 			// End the previous key
-			m_diLast.level = 0;
-			ButtonPressed( m_diLast );
-			m_diLast.MakeInvalid();
+			DeviceInput di = DeviceInput( DEVICE_KEYBOARD, m_dbLast, 0 );
+			ButtonPressed( di );
+			m_dbLast = DeviceButton_Invalid;
 		}
 		InputHandler::UpdateTimer();
 		return;
@@ -74,18 +75,17 @@ void InputHandler_MonkeyKeyboard::Update()
 
 	if( fSecsAgo > 0.5 )
 	{
-		if( m_diLast.IsValid() )
+		if( m_dbLast != DeviceButton_Invalid )
 		{
 			// End the previous key
-			m_diLast.level = 0;
-			ButtonPressed( m_diLast );
+			DeviceInput di = DeviceInput( DEVICE_KEYBOARD, m_dbLast, 0 );
+			ButtonPressed( di );
 		}
 
 		// Choose a new key and send it.
-		m_diLast = DeviceInput( DEVICE_KEYBOARD, GetRandomKeyboardKey() );
-		m_diLast.level = 1;
-		ButtonPressed( m_diLast );
-
+		m_dbLast = GetRandomKeyboardKey();
+		DeviceInput di = DeviceInput( DEVICE_KEYBOARD, m_dbLast, 1 );
+		ButtonPressed( di );
 		m_timerPressButton.Touch();
 	}
 

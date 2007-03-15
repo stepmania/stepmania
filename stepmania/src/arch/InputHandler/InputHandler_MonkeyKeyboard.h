@@ -15,7 +15,7 @@ public:
 
 private:
 	RageTimer m_timerPressButton;
-	DeviceInput m_diLast;	// Last input that we sent
+	DeviceButton m_dbLast;	// Last input that we sent
 };
 
 #endif
