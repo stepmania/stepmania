@@ -243,7 +243,7 @@ void CodeDetector::RefreshCacheItems( RString sClass )
 {
 	if( sClass == "" )
 		sClass = "CodeDetector";
-	FOREACH_Code( c )
+	FOREACH_ENUM( Code, c )
 	{
 		CodeItem& item = g_CodeItems[c];
 		const RString sCodeName = CodeToString(c);
