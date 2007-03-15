@@ -24,36 +24,6 @@ void InputQueue::RememberInput( const InputEventPlus &iep )
 	m_aQueue[c].push_back( iep );
 }
 
-bool InputQueue::MatchesSequence( GameController c, const GameButton* button_sequence, const int iNumButtons, float fMaxSecondsBack )
-{
-	if( c == GameController_Invalid )
-		return false;
-
-	if( fMaxSecondsBack == -1 )
-		fMaxSecondsBack = 0.4f + iNumButtons*0.15f;
-
-	RageTimer OldestTimeAllowed;
-	OldestTimeAllowed += -fMaxSecondsBack;
-
-	int sequence_index = iNumButtons-1;	// count down
-	for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
-	{
-		const InputEventPlus &iep = m_aQueue[c][queue_index];
-		if( iep.GameI.button != button_sequence[sequence_index]  ||
-			iep.DeviceI.ts < OldestTimeAllowed )
-		{
-			return false;
-		}
-		if( sequence_index == 0 )		// we matched the whole pattern
-		{
-			m_aQueue[c].clear();	// empty the queue so we don't match on it again
-			return true;
-		}
-		sequence_index--;
-	}
-	return false;
-}
-
 bool InputQueue::WasPressedRecently( GameController c, const GameButton button, const RageTimer &OldestTimeAllowed, InputEventPlus *pIEP )
 {
 	for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
@@ -72,21 +42,6 @@ bool InputQueue::WasPressedRecently( GameController c, const GameButton button, 
 	}
 
 	return false;	// didn't find the button
-}
-
-bool InputQueue::AllWerePressedRecently( GameController c, const GameButton* buttons, int iNumButtons, float fMaxSecondsBack )
-{
-	RageTimer OldestTimeAllowed;
-	OldestTimeAllowed += -fMaxSecondsBack;
-
-	for( int b=0; b<iNumButtons; b++ )
-	{
-		if( !WasPressedRecently(c, buttons[b], OldestTimeAllowed) )
-			return false;	// didn't find the button
-	}
-
-	ClearQueue( c );	// empty the queue so we don't match on it again
-	return true;
 }
 
 void InputQueue::ClearQueue( GameController c )
@@ -271,7 +226,7 @@ bool InputQueueCode::Load( RString sButtonsNames )
 }
 
 /*
- * (c) 2001-2003 Chris Danford
+ * (c) 2001-2007 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -15,9 +15,7 @@ public:
 	InputQueue();
 
 	void RememberInput( const InputEventPlus &gi );
-	bool MatchesSequence( GameController c, const GameButton* button_sequence, int iNumButtons, float fMaxSecondsBack );
 	bool WasPressedRecently( GameController c, const GameButton button, const RageTimer &OldestTimeAllowed, InputEventPlus *pIEP = NULL );
-	bool AllWerePressedRecently( GameController c, const GameButton* buttons, int iNumButtons, float fMaxSecondsBack );
 	const vector<InputEventPlus> &GetQueue( GameController c ) const { return m_aQueue[c]; }
 	void ClearQueue( GameController c );
 
@@ -49,7 +47,7 @@ extern InputQueue*	INPUTQUEUE;	// global and accessable from anywhere in our pro
 #endif
 
 /*
- * (c) 2001-2003 Chris Danford
+ * (c) 2001-2007 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
