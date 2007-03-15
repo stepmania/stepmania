@@ -1379,8 +1379,7 @@ void HandleInputEvents(float fDeltaTime)
 			input.pn = INPUTMAPPER->ControllerToPlayerNumber( input.GameI.controller );
 		}
 
-		if( input.GameI.IsValid()  &&  input.type == IET_FIRST_PRESS )
-			INPUTQUEUE->RememberInput( input );
+		INPUTQUEUE->RememberInput( input );
 
 		if( HandleGlobalInputs(input) )
 			continue;	// skip

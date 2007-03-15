@@ -18,6 +18,11 @@ InputQueue::InputQueue()
 
 void InputQueue::RememberInput( const InputEventPlus &iep )
 {
+	if( !iep.GameI.IsValid() )
+		return;
+	if( iep.type != IET_FIRST_PRESS )
+		return;
+
 	int c = iep.GameI.controller;
 	if( m_aQueue[c].size() >= MAX_INPUT_QUEUE_LENGTH )	// full
 		m_aQueue[c].erase( m_aQueue[c].begin(), m_aQueue[c].begin() + (m_aQueue[c].size()-MAX_INPUT_QUEUE_LENGTH+1) );
