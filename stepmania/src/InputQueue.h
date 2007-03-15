@@ -25,6 +25,24 @@ protected:
 	vector<InputEventPlus> m_aQueue[NUM_GameController];
 };
 
+struct InputQueueCode
+{
+public:
+	bool Load( RString sButtonsNames );
+	bool EnteredCode( GameController controller ) const;
+
+private:
+	struct ButtonPress
+	{
+		ButtonPress() { m_bAllowIntermediatePresses = true; }
+		vector<GameButton> m_aButtonsToHold;
+		vector<GameButton> m_aButtonsToPress;
+		bool m_bAllowIntermediatePresses;
+	};
+	vector<ButtonPress> m_aPresses;
+
+	float fMaxSecondsBack;
+};	
 
 extern InputQueue*	INPUTQUEUE;	// global and accessable from anywhere in our program
 

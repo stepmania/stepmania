@@ -68,7 +68,7 @@ void ScreenSelect::Init()
 		{
 			RString sCodeName = vsCodeNames[c];
 
-			CodeItem code;
+			InputQueueCode code;
 			if( !code.Load( CODE(sCodeName) ) )
 				continue;
 

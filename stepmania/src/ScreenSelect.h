@@ -5,7 +5,7 @@
 
 #include "ScreenWithMenuElements.h"
 #include "GameCommand.h"
-#include "CodeDetector.h"
+#include "InputQueue.h"
 #include "ThemeMetric.h"
 
 class ScreenSelect : public ScreenWithMenuElements
@@ -28,7 +28,7 @@ protected:
 	
 	vector<GameCommand>	m_aGameCommands;		// derived classes should look here for what choices are available
 
-	vector<CodeItem>	m_aCodes;
+	vector<InputQueueCode>	m_aCodes;
 	vector<GameCommand>	m_aCodeChoices;
 	vector<RString>		m_asSubscribedMessages;
 
