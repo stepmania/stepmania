@@ -72,6 +72,8 @@ protected:
 	static bool SortMessagesByDelayRemaining(const QueuedScreenMessage &m1, const QueuedScreenMessage &m2);
 
 	ThemeMetric<bool>	ALLOW_OPERATOR_MENU_BUTTON;
+	ThemeMetric<float>	REPEAT_RATE;
+	ThemeMetric<float>	REPEAT_DELAY;
 
 	// If left blank, the NextScreen metric will be used.
 	RString m_sNextScreen;

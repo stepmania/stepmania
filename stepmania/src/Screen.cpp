@@ -33,6 +33,8 @@ bool Screen::SortMessagesByDelayRemaining( const Screen::QueuedScreenMessage &m1
 void Screen::Init()
 {
 	ALLOW_OPERATOR_MENU_BUTTON.Load( m_sName, "AllowOperatorMenuButton" );
+	REPEAT_RATE.Load( m_sName, "RepeatRate" );
+	REPEAT_DELAY.Load( m_sName, "RepeatDelay" );
 
 	SetFOV( 0 );
 
@@ -194,6 +196,17 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->PopTopScreen( m_smSendOnPop );
 		else
 			SCREENMAN->SetNewScreen( SM == SM_GoToNextScreen? GetNextScreen():GetPrevScreen() );
+	}
+	else if( SM == SM_GainFocus )
+	{
+		if( REPEAT_RATE != -1.0f )
+			INPUTFILTER->SetRepeatRate( REPEAT_RATE );
+		if( REPEAT_DELAY != -1.0f )
+			INPUTFILTER->SetRepeatDelay( REPEAT_DELAY );
+	}
+	else if( SM == SM_LoseFocus )
+	{
+		INPUTFILTER->ResetRepeatRate();
 	}
 }
 
