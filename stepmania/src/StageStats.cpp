@@ -264,6 +264,39 @@ void StageStats::CommitScores( bool bSummary )
 
 }
 
+bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
+{
+	const Song *pSong = m_vpPlayedSongs[0];
+	const Steps *pSteps = m_player[pn].m_vpPlayedSteps[0];
+	const Course *pCourse = GAMESTATE->m_pCurCourse;
+	const Trail *pTrail = GAMESTATE->m_pCurTrail[pn];
+
+	// If this is a SHOW_NEVER song, then it's probably a training.
+	// Don't show a high score
+	if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
+		return false;
+
+	const HighScoreList &hsl = 
+		GAMESTATE->IsCourseMode() ?
+		PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, pTrail) :
+		PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong, pSteps);
+
+	int iScore = m_player[pn].m_iScore;
+	float fPercentDP = m_player[pn].GetPercentDancePoints();
+	for( int h=0; h<(int)hsl.vHighScores.size() && h<PREFSMAN->m_iMaxHighScoresPerListForMachine; ++h )
+	{
+		const HighScore &hs = hsl.vHighScores[h];
+		if( hs.GetName() == RANKING_TO_FILL_IN_MARKER[pn]  &&
+			hs.GetPercentDP() == fPercentDP  && 
+			hs.GetScore() == iScore )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 // lua start
 #include "LuaBinding.h"
 
@@ -296,6 +329,11 @@ public:
 	static int GetGameplaySeconds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_fGameplaySeconds); return 1; }
 	static int OnePassed( T* p, lua_State *L )			{ lua_pushboolean(L, p->OnePassed()); return 1; }
 	static int AllFailed( T* p, lua_State *L )			{ lua_pushboolean(L, p->AllFailed()); return 1; }
+	static int PlayerHasHighScore( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->PlayerHasHighScore(Enum::Check<PlayerNumber>(L, 1)));
+		return 1;
+	}
 
 	LunaStageStats()
 	{
@@ -306,6 +344,7 @@ public:
 		ADD_METHOD( GetGameplaySeconds );
 		ADD_METHOD( OnePassed );
 		ADD_METHOD( AllFailed );
+		ADD_METHOD( PlayerHasHighScore );
 	}
 };
 

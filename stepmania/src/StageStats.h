@@ -48,6 +48,7 @@ public:
 	PlayerStageStats m_multiPlayer[NUM_MultiPlayer];
 
 	void CommitScores( bool bSummary );
+	bool PlayerHasHighScore( PlayerNumber pn ) const;
 
 	// Lua
 	void PushSelf( lua_State *L );
