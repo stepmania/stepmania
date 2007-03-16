@@ -396,11 +396,13 @@ class LunaHighScore: public Luna<HighScore>
 public:
 	static int GetName( T* p, lua_State *L )			{ lua_pushstring(L, p->GetName() ); return 1; }
 	static int GetScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetScore() ); return 1; }
+	static int GetPercentDP( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetPercentDP() ); return 1; }
 
 	LunaHighScore()
 	{
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetScore );
+		ADD_METHOD( GetPercentDP );
 	}
 };
 
