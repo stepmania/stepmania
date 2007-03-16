@@ -23,6 +23,7 @@ MenuTimer::MenuTimer() :
 	m_fStallSeconds = 0;
 	m_fStallSecondsLeft = MAX_STALL_SECONDS;
 	m_bPaused = false;
+	m_bSilent = false;
 }
 
 void MenuTimer::Load()
@@ -45,10 +46,7 @@ void MenuTimer::Load()
 
 void MenuTimer::EnableStealth( bool bStealth )
 {
-	if( bStealth )
-		m_soundBeep.Unload(); // unload the sound
-	else
-		m_soundBeep.Load( THEME->GetPathS("MenuTimer","tick") ); // reload the sound
+	EnableSilent( bStealth );
 
 	for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
 	{
@@ -92,7 +90,7 @@ void MenuTimer::Update( float fDeltaTime )
 				m_text[i].RunCommands( WARNING_COMMAND.GetValue(iCrossed) );
 		}
 		
-		if( iCrossed <= WARNING_BEEP_START && m_soundBeep.IsLoaded() )
+		if( iCrossed <= WARNING_BEEP_START && m_soundBeep.IsLoaded() && !m_bSilent )
 			m_soundBeep.Play();
 	}
 	
@@ -188,12 +186,16 @@ public:
 	static int setseconds( T* p, lua_State *L )		{ p->SetSeconds(FArg(1)); return 0; }
 	static int pause( T* p, lua_State *L )			{ p->Pause(); return 0; }
 	static int stop( T* p, lua_State *L )			{ p->Stop(); return 0; }
+	static int silent( T* p, lua_State *L )			{ p->EnableSilent(BArg(1)); return 0; }
+	static int stealth( T* p, lua_State *L )		{ p->EnableStealth(BArg(1)); return 0; }
 
 	LunaMenuTimer()
 	{
   		ADD_METHOD( setseconds );
   		ADD_METHOD( pause );
   		ADD_METHOD( stop );
+  		ADD_METHOD( silent );
+  		ADD_METHOD( stealth );
 	}
 };
 

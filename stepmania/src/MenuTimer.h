@@ -22,6 +22,7 @@ public:
 	void Stop();		// set to "00" and pause
 	void Disable();		// set to "99" and pause
 	void Stall();		// pause countdown for a sec
+	void EnableSilent( bool bSilent ) { m_bSilent = bSilent; }	// make timer silent
 	void EnableStealth( bool bStealth );	// make timer invisible and silent
 
 	//
@@ -37,6 +38,8 @@ protected:
 	void SetText( float fSeconds );
 
 #define NUM_MENU_TIMER_TEXTS 2
+
+	bool m_bSilent;
 
 	BitmapText		m_text[NUM_MENU_TIMER_TEXTS];
 
