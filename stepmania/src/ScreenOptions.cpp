@@ -555,15 +555,6 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 
 		this->HandleScreenMessage( SM_GoToNextScreen );
 	}
-	else if( SM == SM_GainFocus )
-	{
-		INPUTFILTER->SetRepeatRate( 12 );
-		INPUTFILTER->SetRepeatDelay( 0.25f );
-	}
-	else if( SM == SM_LoseFocus )
-	{
-		INPUTFILTER->ResetRepeatRate();
-	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
