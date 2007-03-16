@@ -171,9 +171,12 @@ void ScreenSelectMusic::Init()
 		this->AddChild( &m_textHighScore[p] );
 	}	
 
+	RageSoundLoadParams SoundParams;
+	SoundParams.m_bSupportPan = true;
+
 	m_soundStart.Load( THEME->GetPathS(m_sName,"start") );
-	m_soundDifficultyEasier.Load( THEME->GetPathS(m_sName,"difficulty easier") );
-	m_soundDifficultyHarder.Load( THEME->GetPathS(m_sName,"difficulty harder") );
+	m_soundDifficultyEasier.Load( THEME->GetPathS(m_sName,"difficulty easier"), false, &SoundParams );
+	m_soundDifficultyHarder.Load( THEME->GetPathS(m_sName,"difficulty harder"), false, &SoundParams );
 	m_soundOptionsChange.Load( THEME->GetPathS(m_sName,"options") );
 	m_soundLocked.Load( THEME->GetPathS(m_sName,"locked") );
 
@@ -320,6 +323,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		
 		// TODO: Invalidate the CurSteps only if they are no longer playable.  That way, 
 		// after music change will clamp to the nearest in the DifficultyList.
+		GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber].SetWithoutBroadcast( NULL );
 		FOREACH_ENUM( PlayerNumber, p )
 			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
 
@@ -646,10 +650,17 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 	}
 	AfterStepsOrTrailChange( vpns );
 
+	float fBalance = GameSoundManager::GetPlayerBalance( pn );
 	if( dir < 0 )
-		m_soundDifficultyEasier.Play();
+	{
+		m_soundDifficultyEasier.SetProperty( "Pan", fBalance );
+		m_soundDifficultyEasier.PlayCopy();
+	}
 	else
-		m_soundDifficultyHarder.Play();
+	{
+		m_soundDifficultyHarder.SetProperty( "Pan", fBalance );
+		m_soundDifficultyHarder.PlayCopy();
+	}
 }
 
 
