@@ -397,12 +397,21 @@ public:
 	static int GetName( T* p, lua_State *L )			{ lua_pushstring(L, p->GetName() ); return 1; }
 	static int GetScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetScore() ); return 1; }
 	static int GetPercentDP( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetPercentDP() ); return 1; }
+	static int IsFillInMarker( T* p, lua_State *L )
+	{
+		bool bIsFillInMarker = false;
+		FOREACH_PlayerNumber( pn )
+			bIsFillInMarker |= p->GetName() == RANKING_TO_FILL_IN_MARKER[pn];
+		lua_pushboolean( L, bIsFillInMarker );
+		return 1;
+	}
 
 	LunaHighScore()
 	{
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetScore );
 		ADD_METHOD( GetPercentDP );
+		ADD_METHOD( IsFillInMarker );
 	}
 };
 
