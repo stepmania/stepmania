@@ -4,112 +4,47 @@
 #define SCREEN_NAME_ENTRY_TRADITIONAL_H
 
 #include "ScreenWithMenuElements.h"
-#include "BitmapText.h"
-#include "GradeDisplay.h"
-#include "Banner.h"
-#include "HighScore.h"
-#include "DifficultyIcon.h"
-#include "PercentageDisplay.h"
-#include "ActorScroller.h"
 #include "ThemeMetric.h"
-#include "DifficultyMeter.h"
-#include "RageSound.h"
 #include "LocalizedString.h"
+#include "InputQueue.h"
 
-
-class HighScoreWheelItem : public ActorFrame
+class ScreenNameEntryTraditional: public ScreenWithMenuElements
 {
 public:
-	void Load( int iRankIndex, const HighScore& hs );
-	void LoadBlank( int iRankIndex );
-	void ShowFocus();
-
-	BitmapText m_textRank;
-	BitmapText m_textName;
-	BitmapText m_textScore;
-	BitmapText m_textDate;
-};
-
-class HighScoreWheel : public ActorScroller
-{
-public:
-	void Load( const HighScoreList& hsl, int iIndexToFocus );
-	float Scroll();	// return seconds until done scrolling
-
-	vector<HighScoreWheelItem>	m_Items;
-	int m_iIndexToFocus;
-};
-
-class ScreenNameEntryTraditional : public ScreenWithMenuElements
-{
-public:
-	ScreenNameEntryTraditional();
 	virtual void Init();
-	virtual ~ScreenNameEntryTraditional();
+	virtual void BeginScreen();
 
-	void Update( float fDeltaTime );
-	void HandleScreenMessage( const ScreenMessage SM );
-	void Input( const InputEventPlus &input );
+	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void Input( const InputEventPlus &input );
 
-	void MenuStart( const InputEventPlus &input );
-	void MenuSelect( const InputEventPlus &input );
-	void MenuLeft( const InputEventPlus &input );
-	void MenuRight( const InputEventPlus &input );
+	virtual bool GenericTweenOn() const { return true; }
+	virtual bool GenericTweenOff() const { return true; }
 
-private:
+	bool EnterKey( PlayerNumber pn, wchar_t sLetter );
+	bool Backspace( PlayerNumber pn );
+
+	// Lua
+	void PushSelf( lua_State *L );
+
 	bool AnyStillEntering() const;
-	void AllFinished();
-	void PositionCharsAndCursor( int pn );
-	void Finish( PlayerNumber pn );
-	void UpdateSelectionText( int pn );
-	void ChangeDisplayedFeat();
-	bool SelectChar( PlayerNumber pn, int c, bool bOptional );
-	void Backspace( PlayerNumber pn );
-	void HandleStart( PlayerNumber pn );
+	bool AnyEntering() const;
+	bool Finish( PlayerNumber pn );
+	void UpdateSelectionText( PlayerNumber pn );
+	void SelectChar( PlayerNumber pn, const RString &sKey );
 
-	ThemeMetric<float> ALPHABET_GAP_X;
-	ThemeMetric<int> NUM_ALPHABET_DISPLAYED;
-	ThemeMetric<int> MAX_RANKING_NAME_LENGTH;
-	ThemeMetric<float> FEAT_INTERVAL;
-	LocalizedString KEYBOARD_LETTERS;
-
-	ActorFrame		m_Keyboard[NUM_PLAYERS];
-	Sprite			m_sprCursor[NUM_PLAYERS];
-	vector<BitmapText*>	m_textAlphabet[NUM_PLAYERS];
-	vector<int>		m_AlphabetLetter[NUM_PLAYERS];
-	int			m_SelectedChar[NUM_PLAYERS];
-	AutoActor		m_sprOutOfRanking[NUM_PLAYERS];	// shown if didn't make any high scores
-	AutoActor		m_sprNameFrame[NUM_PLAYERS];
-	BitmapText		m_textSelection[NUM_PLAYERS];
-
-	/* Feat display: */
-	struct FeatDisplay
-	{
-		HighScoreWheel		m_Wheel;
-		GradeDisplay		m_Grade;
-		DifficultyIcon		m_DifficultyIcon;
-		DifficultyMeter		m_DifficultyMeter;
-		BitmapText		m_textCategory;
-		PercentageDisplay	m_textScore;
-		Banner			m_sprBanner;
-		AutoActor		m_sprBannerFrame;
-	};
-
-	vector<FeatDisplay>		m_FeatDisplay[NUM_PLAYERS];
-	int				m_CurFeat[NUM_PLAYERS];
-	
-	RageSound		m_soundChange;
-	RageSound		m_soundKey;
-	RageSound		m_soundInvalid;
+	ThemeMetric<int>	MAX_RANKING_NAME_LENGTH;
+	vector<InputQueueCode>	m_aCodes;
+	vector<RString>		m_asCodeNames;
 
 	wstring			m_sSelection[NUM_PLAYERS];
-	bool			m_bStillEnteringName[NUM_PLAYERS];
+	bool			m_bEnteringName[NUM_PLAYERS];
+	bool			m_bFinalized[NUM_PLAYERS];
 };
 
 #endif
 
 /*
- * (c) 2001-2004 Glenn Maynard, Chris Danford
+ * (c) 2001-2007 Glenn Maynard, Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
