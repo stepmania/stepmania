@@ -90,6 +90,7 @@ BackgroundUtil.cpp BackgroundUtil.h \
 BannerCache.cpp BannerCache.h CatalogXml.cpp CatalogXml.h \
 Character.cpp Character.h \
 CodeDetector.cpp CodeDetector.h \
+CodeSet.cpp CodeSet.h \
 Command.cpp Command.h \
 CommonMetrics.cpp CommonMetrics.h \
 Course.cpp Course.h \
