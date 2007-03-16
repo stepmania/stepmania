@@ -2595,6 +2595,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OptionsList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OptionsList.h"
+				>
+			</File>
+			<File
 				RelativePath="PaneDisplay.cpp"
 				>
 			</File>
@@ -4600,6 +4608,14 @@
 			</File>
 			<File
 				RelativePath=".\ActorFrameTexture.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ActorMultiTexture.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ActorMultiTexture.h"
 				>
 			</File>
 			<File
