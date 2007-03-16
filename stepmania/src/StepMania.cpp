@@ -1381,6 +1381,16 @@ void HandleInputEvents(float fDeltaTime)
 
 		INPUTQUEUE->RememberInput( input );
 
+		/* When a GameButton is pressed, stop repeating other keys on the same controller. */
+		if( input.type == IET_FIRST_PRESS && input.MenuI != GameButton_Invalid )
+		{
+			FOREACH_GameButton( m )
+			{
+				if( input.MenuI != m )
+					INPUTMAPPER->RepeatStopKey( m, input.pn );
+			}
+		}
+
 		if( HandleGlobalInputs(input) )
 			continue;	// skip
 		
