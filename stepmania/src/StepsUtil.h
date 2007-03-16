@@ -46,7 +46,7 @@ public:
 	SongAndSteps() : pSong(NULL), pSteps(NULL) { }
 	SongAndSteps( Song *pSong_, Steps *pSteps_ ) : pSong(pSong_), pSteps(pSteps_) { }
 	bool operator==( const SongAndSteps& other ) const { return pSong==other.pSong && pSteps==other.pSteps; }
-	bool operator<( const SongAndSteps& other ) const { return pSong<=other.pSong && pSteps<=other.pSteps; }
+	bool operator<( const SongAndSteps& other ) const { if( pSong!=other.pSong ) return pSong<other.pSong; return pSteps<other.pSteps; }
 };
 
 namespace StepsUtil
