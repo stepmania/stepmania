@@ -100,11 +100,6 @@ void ScreenNameEntryTraditional::BeginScreen()
 		vector<GameState::RankingFeat> aFeats;
 		GAMESTATE->GetRankingFeats( pn, aFeats );
 		m_bEnteringName[pn] = aFeats.size()>0;
-		for( int i = 0; i < (int) aFeats.size(); ++i )
-		{
-			LOG->Trace( "%i: %i: %s",
-				pn, i, aFeats[i].Feat.c_str() );
-		}
 		m_bFinalized[pn] = !m_bEnteringName[pn];
 	}
 
