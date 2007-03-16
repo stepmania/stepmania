@@ -5,7 +5,6 @@
 
 #include "ScreenWithMenuElements.h"
 #include "GameCommand.h"
-#include "InputQueue.h"
 #include "ThemeMetric.h"
 
 class ScreenSelect : public ScreenWithMenuElements
@@ -28,8 +27,6 @@ protected:
 	
 	vector<GameCommand>	m_aGameCommands;		// derived classes should look here for what choices are available
 
-	vector<InputQueueCode>	m_aCodes;
-	vector<GameCommand>	m_aCodeChoices;
 	vector<RString>		m_asSubscribedMessages;
 
 	RageTimer		m_timerIdleComment;	// count up to time between idle comment announcer sounds

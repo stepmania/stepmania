@@ -12,9 +12,6 @@
 
 #define CHOICE_NAMES		THEME->GetMetric (m_sName,"ChoiceNames")
 #define CHOICE( s )		THEME->GetMetric (m_sName,ssprintf("Choice%s",s.c_str()))
-#define CODE_NAMES		THEME->GetMetric (m_sName,"CodeNames")
-#define CODE( s )		THEME->GetMetric (m_sName,ssprintf("Code%s",s.c_str()))
-#define CODE_ACTION( s )	THEME->GetMetric (m_sName,ssprintf("Code%sAction",s.c_str()))
 #define IDLE_TIMEOUT_SCREEN	THEME->GetMetric (m_sName,"IdleTimeoutScreen")
 #define UPDATE_ON_MESSAGE	THEME->GetMetric (m_sName,"UpdateOnMessage")
 
@@ -54,29 +51,6 @@ void ScreenSelect::Init()
 			Commands cmd = ParseCommands( CHOICE(sChoiceName) );
 			mc.Load( c, cmd );
 			m_aGameCommands.push_back( mc );
-		}
-	}
-
-	//
-	// Load codes
-	//
-	{
-		vector<RString> vsCodeNames;
-		split( CODE_NAMES, ",", vsCodeNames, true );
-
-		for( unsigned c=0; c<vsCodeNames.size(); c++ )
-		{
-			RString sCodeName = vsCodeNames[c];
-
-			InputQueueCode code;
-			if( !code.Load( CODE(sCodeName) ) )
-				continue;
-
-			m_aCodes.push_back( code );
-			GameCommand mc;
-			Commands cmd = ParseCommands( CODE_ACTION(sCodeName) );
-			mc.Load( c, cmd );
-			m_aCodeChoices.push_back( mc );
 		}
 	}
 
@@ -163,14 +137,6 @@ void ScreenSelect::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	for( unsigned i = 0; i < m_aCodes.size(); ++i )
-	{
-		if( !m_aCodes[i].EnteredCode( input.GameI.controller ) )
-			continue;
-
-		LOG->Trace("entered code for index %d", i);
-		m_aCodeChoices[i].Apply( input.pn );
-	}
 	ScreenWithMenuElements::Input( input );	// default input handler
 }
 

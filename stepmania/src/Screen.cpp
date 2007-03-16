@@ -13,6 +13,8 @@
 #define PREPARE_SCREENS		THEME->GetMetric (m_sName,"PrepareScreens")
 #define PERSIST_SCREENS		THEME->GetMetric (m_sName,"PersistScreens")
 #define GROUPED_SCREENS		THEME->GetMetric (m_sName,"GroupedScreens")
+#define CODE_NAMES		THEME->GetMetric (m_sName,"CodeNames")
+#define CODE( s )		THEME->GetMetric (m_sName,ssprintf("Code%s",s.c_str()))
 
 void Screen::InitScreen( Screen *pScreen )
 {
@@ -35,6 +37,28 @@ void Screen::Init()
 	ALLOW_OPERATOR_MENU_BUTTON.Load( m_sName, "AllowOperatorMenuButton" );
 	REPEAT_RATE.Load( m_sName, "RepeatRate" );
 	REPEAT_DELAY.Load( m_sName, "RepeatDelay" );
+
+	//
+	// Load codes
+	//
+	{
+		split( CODE_NAMES, ",", m_asCodeNames, true );
+
+		for( unsigned c=0; c<m_asCodeNames.size(); c++ )
+		{
+			vector<RString> asBits;
+			split( m_asCodeNames[c], "=", asBits, true );
+			RString sCodeName = asBits[0];
+			if( asBits.size() > 1 )
+				m_asCodeNames[c] = asBits[1];
+
+			InputQueueCode code;
+			if( !code.Load(CODE(sCodeName)) )
+				continue;
+
+			m_aCodes.push_back( code );
+		}
+	}
 
 	SetFOV( 0 );
 
@@ -160,6 +184,17 @@ bool Screen::OverlayInput( const InputEventPlus &input )
 
 void Screen::Input( const InputEventPlus &input )
 {
+	for( unsigned i = 0; i < m_aCodes.size(); ++i )
+	{
+		if( !m_aCodes[i].EnteredCode(input.GameI.controller) )
+			continue;
+
+		Message msg("Code");
+		msg.SetParam( "PlayerNumber", input.pn );
+		msg.SetParam( "Name", m_asCodeNames[i] );
+		this->HandleMessage( msg );
+	}
+
 	/* Don't send release messages with the default handler. */
 	switch( input.type )
 	{

@@ -15,9 +15,6 @@
 
 REGISTER_SCREEN_CLASS( ScreenNameEntryTraditional );
 
-#define CODE_NAMES		THEME->GetMetric (m_sName,"CodeNames")
-#define CODE( s )		THEME->GetMetric (m_sName,ssprintf("Code%s",s.c_str()))
-
 void ScreenNameEntryTraditional::Init()
 {
 	if( PREFSMAN->m_bScreenTestMode )
@@ -70,28 +67,6 @@ void ScreenNameEntryTraditional::Init()
 	}
 
 	MAX_RANKING_NAME_LENGTH.Load( m_sName, "MaxRankingNameLength" );
-	
-	//
-	// Load codes
-	//
-	{
-		split( CODE_NAMES, ",", m_asCodeNames, true );
-
-		for( unsigned c=0; c<m_asCodeNames.size(); c++ )
-		{
-			vector<RString> asBits;
-			split( m_asCodeNames[c], "=", asBits, true );
-			RString sCodeName = asBits[0];
-			if( asBits.size() > 1 )
-				m_asCodeNames[c] = asBits[1];
-
-			InputQueueCode code;
-			if( !code.Load(CODE(sCodeName)) )
-				continue;
-
-			m_aCodes.push_back( code );
-		}
-	}
 
 	ScreenWithMenuElements::Init();
 }
@@ -166,17 +141,6 @@ void ScreenNameEntryTraditional::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;
-
-	for( unsigned i = 0; i < m_aCodes.size(); ++i )
-	{
-		if( !m_aCodes[i].EnteredCode(input.GameI.controller) )
-			continue;
-
-		Message msg("Code");
-		msg.SetParam( "PlayerNumber", input.pn );
-		msg.SetParam( "Name", m_asCodeNames[i] );
-		this->HandleMessage( msg );
-	}
 
 	ScreenWithMenuElements::Input( input );
 }

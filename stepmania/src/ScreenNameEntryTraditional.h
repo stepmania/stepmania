@@ -33,8 +33,6 @@ public:
 	void SelectChar( PlayerNumber pn, const RString &sKey );
 
 	ThemeMetric<int>	MAX_RANKING_NAME_LENGTH;
-	vector<InputQueueCode>	m_aCodes;
-	vector<RString>		m_asCodeNames;
 
 	wstring			m_sSelection[NUM_PLAYERS];
 	bool			m_bEnteringName[NUM_PLAYERS];
