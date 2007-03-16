@@ -123,8 +123,8 @@ void InputFilter::SetRepeatDelay( float fDelay )
 
 void InputFilter::ResetRepeatRate()
 {
-	SetRepeatRate( TIME_BEFORE_REPEATS );
-	SetRepeatDelay( REPEATS_PER_SEC );
+	SetRepeatRate( REPEATS_PER_SEC );
+	SetRepeatDelay( TIME_BEFORE_REPEATS );
 }
 
 ButtonState::ButtonState():
