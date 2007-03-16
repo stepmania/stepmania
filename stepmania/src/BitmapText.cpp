@@ -173,6 +173,10 @@ void BitmapText::BuildChars()
 		m_size.x = max( m_size.x, m_iLineWidths.back() );
 	}
 
+	/* Ensure that the width is always even.  This maintains pixel alignment; fX below will
+	 * always be an integer. */
+	m_size.x = QuantizeUp( m_size.x, 2.0f );
+
 	m_aVertices.clear();
 	m_pTextures.clear();
 	
