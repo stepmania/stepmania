@@ -111,15 +111,20 @@ void InputFilter::Reset()
 		ResetDevice( InputDevice(i) );
 }
 
-void InputFilter::SetRepeatRate( float fDelay, float fRepeatRate )
+void InputFilter::SetRepeatRate( float fRepeatRate )
+{
+	g_fTimeBetweenRepeats = 1/fRepeatRate;
+}
+
+void InputFilter::SetRepeatDelay( float fDelay )
 {
 	g_fTimeBeforeRepeats = fDelay;
-	g_fTimeBetweenRepeats = 1/fRepeatRate;
 }
 
 void InputFilter::ResetRepeatRate()
 {
-	SetRepeatRate( TIME_BEFORE_REPEATS, REPEATS_PER_SEC );
+	SetRepeatRate( TIME_BEFORE_REPEATS );
+	SetRepeatDelay( REPEATS_PER_SEC );
 }
 
 ButtonState::ButtonState():
