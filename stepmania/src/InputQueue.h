@@ -4,8 +4,8 @@
 #define INPUT_QUEUE_H
 
 #include "GameInput.h"
+#include "InputFilter.h"
 
-const unsigned MAX_INPUT_QUEUE_LENGTH = 16;
 class InputEventPlus;
 class RageTimer;
 
@@ -32,9 +32,11 @@ public:
 private:
 	struct ButtonPress
 	{
-		ButtonPress() { m_bAllowIntermediatePresses = true; }
+		ButtonPress() { m_bAllowIntermediatePresses = false; memset( m_InputTypes, 0, sizeof(m_InputTypes) ); m_InputTypes[IET_FIRST_PRESS] = true; }
 		vector<GameButton> m_aButtonsToHold;
 		vector<GameButton> m_aButtonsToPress;
+
+		bool m_InputTypes[NUM_InputEventType];
 		bool m_bAllowIntermediatePresses;
 	};
 	vector<ButtonPress> m_aPresses;
