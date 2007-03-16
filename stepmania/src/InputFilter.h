@@ -17,6 +17,9 @@ enum InputEventType
 	/* The device is no longer pressed.  Exactly one IET_RELEASE event will be sent
 	 * for each IET_FIRST_PRESS. */
 	IET_RELEASE,
+
+	NUM_InputEventType,
+	InputEventType_Invalid
 };
 
 struct InputEvent
