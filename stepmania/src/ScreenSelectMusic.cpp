@@ -513,11 +513,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			// code at the same if L & R aren't released at the exact same time.
 			if( input.type == IET_RELEASE )
 			{
-				FOREACH_HumanPlayer( p )
-				{
-					INPUTMAPPER->ResetKeyRepeat( m_GameButtonPreviousSong, p );
-					INPUTMAPPER->ResetKeyRepeat( m_GameButtonNextSong, p );
-				}
+				INPUTMAPPER->ResetKeyRepeat( m_GameButtonPreviousSong, input.pn );
+				INPUTMAPPER->ResetKeyRepeat( m_GameButtonNextSong, input.pn );
 			}
 		}
 	}
