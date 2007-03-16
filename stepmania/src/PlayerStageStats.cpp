@@ -648,6 +648,27 @@ public:
 	DEFINE_METHOD( GetPerDifficultyAward,		m_pdaToShow )
 	DEFINE_METHOD( GetPeakComboAward,		m_pcaToShow )
 
+	static int GetPlayedSteps( T* p, lua_State *L )
+	{
+		lua_newtable(L);
+		for( int i = 0; i < (int) p->m_vpPlayedSteps.size(); ++i )
+		{
+			p->m_vpPlayedSteps[i]->PushSelf(L);
+			lua_rawseti( L, -2, i+1 );
+		}
+		return 1;
+	}
+	static int GetPossibleSteps( T* p, lua_State *L )
+	{
+		lua_newtable(L);
+		for( int i = 0; i < (int) p->m_vpPossibleSteps.size(); ++i )
+		{
+			p->m_vpPossibleSteps[i]->PushSelf(L);
+			lua_rawseti( L, -2, i+1 );
+		}
+		return 1;
+	}
+
 	LunaPlayerStageStats()
 	{
 		ADD_METHOD( GetCaloriesBurned );
@@ -671,6 +692,8 @@ public:
 		ADD_METHOD( GetMachineHighScoreIndex );
 		ADD_METHOD( GetPerDifficultyAward );
 		ADD_METHOD( GetPeakComboAward );
+		ADD_METHOD( GetPlayedSteps );
+		ADD_METHOD( GetPossibleSteps );
 	}
 };
 
