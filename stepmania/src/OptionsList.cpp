@@ -275,12 +275,10 @@ void OptionsList::Input( const InputEventPlus &input )
 	{
 		if( INPUTMAPPER->IsBeingPressed(MENU_BUTTON_RIGHT, pn) )
 		{
-			LOG->Trace( "X1" );
 			SwitchMenu( -1 );
 			return;
 		}
 
-		LOG->Trace( "X2" );
 		--m_iMenuStackSelection;
 		wrap( m_iMenuStackSelection, pHandler->m_Def.m_vsChoices.size()+1 ); // +1 for exit row
 		PositionCursor();
@@ -294,12 +292,10 @@ void OptionsList::Input( const InputEventPlus &input )
 	{
 		if( INPUTMAPPER->IsBeingPressed(MENU_BUTTON_LEFT, pn) )
 		{
-			LOG->Trace( "X3" );
 			SwitchMenu( +1 );
 			return;
 		}
 
-		LOG->Trace( "X4" );
 		++m_iMenuStackSelection;
 		wrap( m_iMenuStackSelection, pHandler->m_Def.m_vsChoices.size()+1 ); // +1 for exit row
 		PositionCursor();
@@ -311,7 +307,6 @@ void OptionsList::Input( const InputEventPlus &input )
 	}
 	else if( input.MenuI == MENU_BUTTON_START )
 	{
-		LOG->Trace( "X5" );
 		Start( input.pn );
 		return;
 	}
