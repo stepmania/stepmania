@@ -9,6 +9,7 @@
 #include "ThemeMetric.h"
 #include "PlayerNumber.h"
 #include "InputQueue.h"
+#include "CodeSet.h"
 
 class InputEventPlus;
 class Screen;
@@ -72,8 +73,7 @@ protected:
 	vector<QueuedScreenMessage>	m_QueuedMessages;
 	static bool SortMessagesByDelayRemaining(const QueuedScreenMessage &m1, const QueuedScreenMessage &m2);
 
-	vector<InputQueueCode>	m_aCodes;
-	vector<RString>		m_asCodeNames;
+	InputQueueCodeSet	m_Codes;
 
 	ThemeMetric<bool>	ALLOW_OPERATOR_MENU_BUTTON;
 	ThemeMetric<float>	REPEAT_RATE;
