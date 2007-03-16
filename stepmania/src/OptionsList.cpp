@@ -265,6 +265,8 @@ void OptionsList::Input( const InputEventPlus &input )
 {
 	if( input.type == IET_RELEASE )
 		return;
+	if( input.type != IET_FIRST_PRESS )
+		return;
 
 	const OptionRowHandler *pHandler = GetCurrentHandler();
 
@@ -286,6 +288,7 @@ void OptionsList::Input( const InputEventPlus &input )
 		Message msg("OptionsListLeft");
 		msg.SetParam( "Player", input.pn );
 		MESSAGEMAN->Broadcast( msg );
+		return;
 	}
 	else if( input.MenuI == MENU_BUTTON_RIGHT )
 	{
@@ -304,11 +307,18 @@ void OptionsList::Input( const InputEventPlus &input )
 		Message msg("OptionsListRight");
 		msg.SetParam( "Player", input.pn );
 		MESSAGEMAN->Broadcast( msg );
+		return;
 	}
 	else if( input.MenuI == MENU_BUTTON_START )
 	{
 		LOG->Trace( "X5" );
 		Start( input.pn );
+		return;
+	}
+	else if( input.MenuI == MENU_BUTTON_SELECT )
+	{
+		Close();
+		return;
 	}
 }
 

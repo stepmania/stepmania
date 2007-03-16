@@ -393,23 +393,12 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		{
 			if( m_OptionsList[pn].IsOpened() )
 			{
-				if( input.type == IET_FIRST_PRESS )
-				{
-					switch( input.MenuI )
-					{
-					case GAME_BUTTON_SELECT:
-						CloseOptionsList( pn );
-						return;
-					case GAME_BUTTON_START:
-						if( m_OptionsList[pn].Start(pn) )
-							CloseOptionsList( pn );
-						return;
-					case GAME_BUTTON_MENULEFT:
-					case GAME_BUTTON_MENURIGHT:
-						m_OptionsList[pn].Input( input );
-						return;
-					}
-				}
+				m_OptionsList[pn].Input( input );
+
+				if( !m_OptionsList[pn].IsOpened() )
+					CloseOptionsList( pn );
+
+				return;
 			}
 			else
 			{
