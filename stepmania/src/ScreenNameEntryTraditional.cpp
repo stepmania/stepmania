@@ -79,7 +79,11 @@ void ScreenNameEntryTraditional::Init()
 
 		for( unsigned c=0; c<m_asCodeNames.size(); c++ )
 		{
-			RString sCodeName = m_asCodeNames[c];
+			vector<RString> asBits;
+			split( m_asCodeNames[c], "=", asBits, true );
+			RString sCodeName = asBits[0];
+			if( asBits.size() > 1 )
+				m_asCodeNames[c] = asBits[1];
 
 			InputQueueCode code;
 			if( !code.Load(CODE(sCodeName)) )
