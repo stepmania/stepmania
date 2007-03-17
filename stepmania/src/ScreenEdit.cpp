@@ -943,6 +943,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		fapproach( m_fTrailingBeat, GAMESTATE->m_fSongBeat,
 			fabsf(fDelta) * fDeltaTime*5 );
 
+	LOG->Trace( "%f (%f)", m_fTrailingBeat, GAMESTATE->m_fSongBeat );
 	PlayTicks();
 }
 
@@ -1047,11 +1048,24 @@ void ScreenEdit::DrawPrimitives()
 {
 	// HACK:  Draw using the trailing beat
 	float fSongBeat = GAMESTATE->m_fSongBeat;	// save song beat
-	GAMESTATE->m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
+	float fSongBeatNoOffset = GAMESTATE->m_fSongBeatNoOffset;
+	float fSongBeatVisible = GAMESTATE->m_fSongBeatVisible;
+
+	if( !m_soundMusic.IsPlaying() )
+	{
+		GAMESTATE->m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
+		GAMESTATE->m_fSongBeatNoOffset = m_fTrailingBeat;	// put trailing beat in effect
+		GAMESTATE->m_fSongBeatVisible = m_fTrailingBeat;	// put trailing beat in effect
+	}
 
 	ScreenWithMenuElements::DrawPrimitives();
 
-	GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
+	if( !m_soundMusic.IsPlaying() )
+	{
+		GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
+		GAMESTATE->m_fSongBeatNoOffset = fSongBeatNoOffset;
+		GAMESTATE->m_fSongBeatVisible = fSongBeatVisible;
+	}
 }
 
 void ScreenEdit::Input( const InputEventPlus &input )
