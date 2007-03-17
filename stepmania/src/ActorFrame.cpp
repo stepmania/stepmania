@@ -415,6 +415,15 @@ class LunaActorFrame : public Luna<ActorFrame>
 public:
 	static int playcommandonchildren( T* p, lua_State *L )		{ p->PlayCommandOnChildren(SArg(1)); return 0; }
 	static int playcommandonleaves( T* p, lua_State *L )		{ p->PlayCommandOnLeaves(SArg(1)); return 0; }
+	static int runcommandsonleaves( T* p, lua_State *L )
+	{
+		luaL_checktype( L, 1, LUA_TFUNCTION );
+		LuaReference cmds;
+		cmds.SetFromStack( L );
+
+		p->RunCommandsOnLeaves( cmds );
+		return 0;
+	}
 	static int RunCommandsOnChildren( T* p, lua_State *L )
 	{
 		luaL_checktype( L, 1, LUA_TFUNCTION );
@@ -470,6 +479,7 @@ public:
 	{
 		ADD_METHOD( playcommandonchildren );
 		ADD_METHOD( playcommandonleaves );
+		ADD_METHOD( runcommandsonleaves );
 		ADD_METHOD( RunCommandsOnChildren );
 		ADD_METHOD( propagate ); // deprecated
 		ADD_METHOD( fov );
