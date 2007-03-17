@@ -171,7 +171,8 @@ void MusicWheel::BeginScreen()
 		if( GAMESTATE->m_pCurSteps[p] != NULL )
 		{
 			vector<Steps*> vpPossibleSteps;
-			SongUtil::GetPlayableSteps( GAMESTATE->m_pCurSong, vpPossibleSteps );
+			if( GAMESTATE->m_pCurSong != NULL )
+				SongUtil::GetPlayableSteps( GAMESTATE->m_pCurSong, vpPossibleSteps );
 			bool bStepsIsPossible = find( vpPossibleSteps.begin(), vpPossibleSteps.end(), GAMESTATE->m_pCurSteps[p] ) == vpPossibleSteps.end();
 			if( !bStepsIsPossible )
 				GAMESTATE->m_pCurSteps[p].Set( NULL );
