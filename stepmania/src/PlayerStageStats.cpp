@@ -193,26 +193,13 @@ Grade PlayerStageStats::GetGrade() const
 	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER02_IS_ALL_W2S );
 	if( GRADE_TIER02_IS_ALL_W2S )
 	{
-		if(	m_iTapNoteScores[TNS_W1] > 0 &&
-			m_iTapNoteScores[TNS_W2] == 0 &&
-			m_iTapNoteScores[TNS_W3] == 0 &&
-			m_iTapNoteScores[TNS_W4] == 0 &&
-			m_iTapNoteScores[TNS_W5] == 0 &&
-			m_iTapNoteScores[TNS_Miss] == 0 &&
-			m_iTapNoteScores[TNS_HitMine] == 0 &&
-			m_iHoldNoteScores[HNS_LetGo] == 0 )
+		if( FullComboOfScore(TNS_W1) )
 			return Grade_Tier01;
 
-		if(	m_iTapNoteScores[TNS_W2] > 0 &&
-			m_iTapNoteScores[TNS_W3] == 0 &&
-			m_iTapNoteScores[TNS_W4] == 0 &&
-			m_iTapNoteScores[TNS_W5] == 0 &&
-			m_iTapNoteScores[TNS_Miss] == 0 &&
-			m_iTapNoteScores[TNS_HitMine] == 0 &&
-			m_iHoldNoteScores[HNS_LetGo] == 0 )
+		if( FullComboOfScore(TNS_W2) )
 			return Grade_Tier02;
 
-		return max( grade, Grade_Tier03 );
+		grade = max( grade, Grade_Tier03 );
 	}
 
 	return grade;
