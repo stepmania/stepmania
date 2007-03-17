@@ -2262,35 +2262,38 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 
 			if( !viColsWithHold.empty() )
 			{
+				// increment combo
+				const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+				const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+
 				if( m_pPlayerStageStats )
 				{
-					// increment combo
-					const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-					const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
-
 					if( bAllHoldsHeldThisRow )
 					{
 						m_pPlayerStageStats->m_iCurCombo++;
 						m_pPlayerStageStats->m_iCurMissCombo = 0;
-
-						FOREACH( int, viColsWithHold, i )
-						{
-							bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-							if( m_pNoteField )
-								m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
-						}
 					}
 					else
 					{
 						m_pPlayerStageStats->m_iCurCombo = 0;
 						m_pPlayerStageStats->m_iCurMissCombo++;
 					}
+				}
 
-					SendComboMessages( iOldCombo, iOldMissCombo );
-					if( m_pPlayerStageStats )
+				if( bAllHoldsHeldThisRow )
+				{
+					FOREACH( int, viColsWithHold, i )
 					{
-						SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+						if( m_pNoteField )
+							m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
 					}
+				}
+
+				SendComboMessages( iOldCombo, iOldMissCombo );
+				if( m_pPlayerStageStats )
+				{
+					SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
 				}
 			}
 		}
