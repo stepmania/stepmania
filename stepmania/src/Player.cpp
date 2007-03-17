@@ -404,17 +404,6 @@ void Player::Load()
 	/* Apply transforms. */
 	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle()->m_StepsType );
 
-	/* Apply InitialHoldLife. */
-	{
-		NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( 0, MAX_NOTE_ROW, NULL, true );
-		for( ; !iter.IsAtEnd(); ++iter )
-		{
-			TapNote &tn = *iter;
-			if( tn.type == TapNote::hold_head )
-				tn.HoldResult.fLife = INITIAL_HOLD_LIFE;
-		}
-	}
-
 	const Song* pSong = GAMESTATE->m_pCurSong;
 	if( GAMESTATE->m_pCurGame->m_bAllowHopos )
 		NoteDataUtil::SetHopoPossibleFlags( pSong, m_NoteData );
@@ -2200,6 +2189,17 @@ void Player::FlashGhostRow( int iRow, PlayerNumber pn )
 void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageTimer &now )
 {
 	//LOG->Trace( "Player::CrossedRows   %d    %d", iFirstRowCrossed, iLastRowCrossed );
+
+	/* Apply InitialHoldLife. */
+	{
+		NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( iFirstRowCrossed, iLastRowCrossed+1, NULL, false );
+		for( ; !iter.IsAtEnd(); ++iter )
+		{
+			TapNote &tn = *iter;
+			if( tn.type == TapNote::hold_head )
+				tn.HoldResult.fLife = INITIAL_HOLD_LIFE;
+		}
+	}
 
 	// for each index we crossed since the last update
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iFirstUncrossedRow, iLastRowCrossed+1 )
