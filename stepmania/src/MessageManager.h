@@ -86,6 +86,8 @@ struct Message
 	explicit Message( const RString &s );
 	Message( const RString &s, const LuaReference &params );
 	~Message();
+
+	void SetName( const RString &sName ) { m_sName = sName; }
 	RString GetName() const { return m_sName; }
 
 	bool IsBroadcast() const { return m_bBroadcast; }
@@ -124,6 +126,9 @@ private:
 	RString m_sName;
 	LuaTable *m_pParams;
 	bool m_bBroadcast;
+
+	Message &operator=( const Message &rhs ); // don't use
+	Message( const Message &rhs ); // don't use
 };
 
 class IMessageSubscriber

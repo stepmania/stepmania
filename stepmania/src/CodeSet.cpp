@@ -47,7 +47,7 @@ bool InputQueueCodeSet::InputMessage( const InputEventPlus &input, Message &msg 
 	if( sCodeName.empty() )
 		return false;
 
-	msg = Message("Code");
+	msg.SetName("Code");
 	msg.SetParam( "PlayerNumber", input.pn );
 	msg.SetParam( "Name", sCodeName );
 	return true;
