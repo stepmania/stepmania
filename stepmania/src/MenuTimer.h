@@ -17,6 +17,7 @@ public:
 	virtual void Update( float fDeltaTime ); 
 
 	void SetSeconds( float fSeconds );
+	float GetSeconds() const { return m_fSecondsLeft; }
 	void Start();		// resume countdown from paused
 	void Pause();		// don't count down
 	void Stop();		// set to "00" and pause
