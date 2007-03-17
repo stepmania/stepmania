@@ -819,26 +819,23 @@ static void GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 		GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
 	else
 		vpPossibleStyles.push_back( GAMESTATE->m_pCurStyle );
+
+	set<StepsType> vStepsTypes;
 	FOREACH( const Style*, vpPossibleStyles, s )
-		vOut.insert( (*s)->m_StepsType );
+		vStepsTypes.insert( (*s)->m_StepsType );
 
 	// filter out hidden StepsTypes
 	// remove steps that we don't have enough stages left to play
 	const vector<StepsType> &vstToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
-	FOREACHS( StepsType, vOut, st )
+	FOREACHS( StepsType, vStepsTypes, st )
 	{
 		bool bShowThisStepsType = find( vstToShow.begin(), vstToShow.end(), *st ) != vstToShow.end();
 
 		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), *st );
 		bool bEnoughStages = GAMESTATE->GetNumStagesLeft() >= GAMESTATE->GetNumStagesForSongAndStyle(pSong,pStyle);
 
-		if( !bShowThisStepsType || !bEnoughStages )
-		{
-			set<StepsType>::iterator to_erase = st;
-			++st;
-			vOut.erase( to_erase );
-			--st;
-		}
+		if( bShowThisStepsType && bEnoughStages )
+			vOut.insert( *st );
 	}
 }
 
