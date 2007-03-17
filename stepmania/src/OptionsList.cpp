@@ -127,6 +127,8 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 {
 	m_pn = pn;
 
+	m_Codes.Load( sType );
+
 	m_Cursor.Load( THEME->GetPathG(sType, "cursor") );
 	m_Cursor->SetName( "Cursor" );
 	ActorUtil::LoadAllCommands( *m_Cursor, sType );
@@ -263,6 +265,10 @@ void OptionsList::SwitchMenu( int iDir )
 
 void OptionsList::Input( const InputEventPlus &input )
 {
+	Message msg("");
+	if( m_Codes.InputMessage(input, msg) )
+		this->HandleMessage( msg );
+
 	if( input.type == IET_RELEASE )
 		return;
 	if( input.type != IET_FIRST_PRESS )

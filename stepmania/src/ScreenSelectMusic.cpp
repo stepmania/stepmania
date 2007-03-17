@@ -82,7 +82,10 @@ void ScreenSelectMusic::Init()
 	GAMESTATE->FinishStage();
 
 	FOREACH_ENUM( PlayerNumber, p )
+	{
 		m_bSelectIsDown[p] = false; // used by UpdateSelectButton
+		m_bAcceptSelectRelease[p] = false;
+	}
 
 	ScreenWithMenuElements::Init();
 
@@ -386,7 +389,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 
 	// handle options list input
-	if( USE_OPTIONS_LIST  &&  m_SelectionState == SelectionState_SelectingSteps )
+	if( USE_OPTIONS_LIST )
 	{
 		PlayerNumber pn = input.pn;
 		if( pn != PLAYER_INVALID )
@@ -402,27 +405,21 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			}
 			else
 			{
-				if( input.type == IET_FIRST_PRESS  &&  input.MenuI == GAME_BUTTON_SELECT )
-				{
+				if( input.type == IET_RELEASE  &&  input.MenuI == GAME_BUTTON_SELECT && m_bAcceptSelectRelease[pn] )
 					OpenOptionsList( pn );
-					return;
-				}
 			}
 		}
 	}
 
+	if( input.MenuI == MENU_BUTTON_SELECT && input.type != IET_REPEAT )
+		m_bAcceptSelectRelease[input.pn] = (input.type == IET_FIRST_PRESS);
 
-	UpdateSelectButton();
+	if( SELECT_MENU_AVAILABLE && input.MenuI == MENU_BUTTON_SELECT && input.type != IET_REPEAT )
+		UpdateSelectButton( input.pn, input.type == IET_FIRST_PRESS );
 
-	if( input.MenuI == MENU_BUTTON_SELECT )
-	{
-		if( input.type == IET_FIRST_PRESS )
-			m_MusicWheel.Move( 0 );
 
-		return;
-	}
 
-	if( SELECT_MENU_AVAILABLE  &&  INPUTMAPPER->IsBeingPressed( MENU_BUTTON_SELECT, input.pn ) )
+	if( SELECT_MENU_AVAILABLE  &&  m_bSelectIsDown[input.pn] )
 	{
 		if( input.type == IET_FIRST_PRESS )
 		{
@@ -430,23 +427,26 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			{
 			case MENU_BUTTON_LEFT:
 				ChangeDifficulty( input.pn, -1 );
-				return;
+				m_bAcceptSelectRelease[input.pn] = false;
+				break;
 			case MENU_BUTTON_RIGHT:
 				ChangeDifficulty( input.pn, +1 );
-				return;
+				m_bAcceptSelectRelease[input.pn] = false;
+				break;
 			case MENU_BUTTON_START:
+				m_bAcceptSelectRelease[input.pn] = false;
 				if( MODE_MENU_AVAILABLE )
 					m_MusicWheel.NextSort();
 				else
 					m_soundLocked.Play();
-				return;
+				break;
 			}
 		}
-		return;
+//		return;
 	}
 
 	if( m_SelectionState == SelectionState_SelectingSong  &&
-		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) )
+		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong || input.MenuI == MENU_BUTTON_SELECT) )
 	{
 		{
 			/* If we're rouletting, hands off. */
@@ -457,6 +457,11 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			bool bRightIsDown = false;
 			FOREACH_HumanPlayer( p )
 			{
+				if( m_OptionsList[p].IsOpened() )
+					continue;
+				if( SELECT_MENU_AVAILABLE && INPUTMAPPER->IsBeingPressed(MENU_BUTTON_SELECT, p) )
+					continue;
+
 				bLeftIsDown |= INPUTMAPPER->IsBeingPressed( m_GameButtonPreviousSong, p );
 				bRightIsDown |= INPUTMAPPER->IsBeingPressed( m_GameButtonNextSong, p );
 			}
@@ -577,21 +582,17 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 	return true;
 }	
 
-void ScreenSelectMusic::UpdateSelectButton()
+void ScreenSelectMusic::UpdateSelectButton( PlayerNumber pn, bool bSelectIsDown )
 {
-	FOREACH_HumanPlayer( p )
-	{
-		bool bSelectIsDown = INPUTMAPPER->IsBeingPressed( MENU_BUTTON_SELECT, p );
-		if( !SELECT_MENU_AVAILABLE  ||  !CanChangeSong() )
-			bSelectIsDown = false;
+	if( !SELECT_MENU_AVAILABLE  ||  !CanChangeSong() )
+		bSelectIsDown = false;
 
-		if( m_bSelectIsDown[p] != bSelectIsDown )
-		{
-			m_bSelectIsDown[p] = bSelectIsDown;
-			Message msg( bSelectIsDown ? "SelectMenuOpened" : "SelectMenuClosed" );
-			msg.SetParam( "Player", p );
-			MESSAGEMAN->Broadcast( msg );
-		}
+	if( m_bSelectIsDown[pn] != bSelectIsDown )
+	{
+		m_bSelectIsDown[pn] = bSelectIsDown;
+		Message msg( bSelectIsDown ? "SelectMenuOpened" : "SelectMenuClosed" );
+		msg.SetParam( "Player", pn );
+		MESSAGEMAN->Broadcast( msg );
 	}
 }
 
@@ -677,10 +678,6 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			m_MusicWheel.FinishChangingSorts();
 			if( m_MusicWheel.GetSelectedSong() == NULL && m_MusicWheel.GetSelectedCourse() == NULL )
 				m_MusicWheel.StartRandom();
-
-			FOREACH_ENUM( PlayerNumber, p )
-				if( m_OptionsList[p].IsOpened() )
-					CloseOptionsList(p);
 
 			MenuStart( InputEventPlus() );
 		}
@@ -832,6 +829,16 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		break;
 	}
 
+	FOREACH_ENUM( PlayerNumber, p )
+	{
+		if( !TWO_PART_SELECTION || m_SelectionState == SelectionState_SelectingSteps )
+		{
+			if( m_OptionsList[p].IsOpened() )
+				CloseOptionsList(p);
+		}
+		UpdateSelectButton( p, false );
+	}
+
 	m_SelectionState = GetNextSelectionState();
 	m_soundStart.Play();
 
@@ -901,8 +908,12 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	}
 	else // !finalized.  Set the timer for selecting difficulty and mods.
 	{
-		m_MenuTimer->SetSeconds( 25 );
-		m_MenuTimer->Start();
+		float fSeconds = m_MenuTimer->GetSeconds();
+		if( fSeconds < 10 )
+		{
+			m_MenuTimer->SetSeconds( 10 );
+			m_MenuTimer->Start();
+		}
 	}
 }
 

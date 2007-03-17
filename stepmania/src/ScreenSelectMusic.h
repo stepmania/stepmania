@@ -45,7 +45,7 @@ public:
 protected:
 	virtual bool GenericTweenOn() const { return true; }
 	virtual bool GenericTweenOff() const { return true; }
-	void UpdateSelectButton();
+	void UpdateSelectButton( PlayerNumber pn, bool bBeingPressed );
 
 	void ChangeDifficulty( PlayerNumber pn, int dir );
 
@@ -118,6 +118,7 @@ protected:
 	float			m_fSampleStartSeconds, m_fSampleLengthSeconds;
 	bool			m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
 	bool			m_bSelectIsDown[NUM_PLAYERS];
+	bool			m_bAcceptSelectRelease[NUM_PLAYERS];
 
 	RageSound		m_soundStart;
 	RageSound		m_soundDifficultyEasier;
