@@ -126,6 +126,7 @@ static Preference1D<float> m_fTimingWindowSeconds( TimingWindowSecondsInit, NUM_
 static Preference<float> m_fTimingWindowJump	( "TimingWindowJump",		0.25 );
 Preference<float> g_fTimingWindowHopo		( "TimingWindowHopo",		0.25 );		// max time between notes in a hopo chain
 Preference<float> g_fTimingWindowStrum		( "TimingWindowStrum",		0.1f );		// max time between strum and when the frets must match
+ThemeMetric<float> INITIAL_HOLD_LIFE		( "Player", "InitialHoldLife" );
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
 ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
@@ -402,7 +403,18 @@ void Player::Load()
 
 	/* Apply transforms. */
 	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle()->m_StepsType );
-	
+
+	/* Apply InitialHoldLife. */
+	{
+		NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( 0, MAX_NOTE_ROW, NULL, true );
+		for( ; !iter.IsAtEnd(); ++iter )
+		{
+			TapNote &tn = *iter;
+			if( tn.type == TapNote::hold_head )
+				tn.HoldResult.fLife = INITIAL_HOLD_LIFE;
+		}
+	}
+
 	const Song* pSong = GAMESTATE->m_pCurSong;
 	if( GAMESTATE->m_pCurGame->m_bAllowHopos )
 		NoteDataUtil::SetHopoPossibleFlags( pSong, m_NoteData );
