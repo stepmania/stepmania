@@ -801,6 +801,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CodeDetector.h">
 			</File>
 			<File
+				RelativePath=".\CodeSet.cpp">
+			</File>
+			<File
+				RelativePath=".\CodeSet.h">
+			</File>
+			<File
 				RelativePath="Command.cpp">
 			</File>
 			<File
