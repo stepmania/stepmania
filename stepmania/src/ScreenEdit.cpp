@@ -772,7 +772,9 @@ void ScreenEdit::Init()
 	m_soundSave.Load(		THEME->GetPathS("ScreenEdit","save") );
 	m_GameplayAssist.Init();
 
-	m_soundMusic.Load( m_pSong->GetMusicPath() );
+	RageSoundLoadParams params;
+	params.m_bSupportRateChanging = true;
+	m_soundMusic.Load( m_pSong->GetMusicPath(), false, &params );
 
 	this->HandleScreenMessage( SM_UpdateTextInfo );
 	m_bTextInfoNeedsUpdate = true;
