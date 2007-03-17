@@ -943,7 +943,6 @@ void ScreenEdit::Update( float fDeltaTime )
 		fapproach( m_fTrailingBeat, GAMESTATE->m_fSongBeat,
 			fabsf(fDelta) * fDeltaTime*5 );
 
-	LOG->Trace( "%f (%f)", m_fTrailingBeat, GAMESTATE->m_fSongBeat );
 	PlayTicks();
 }
 
