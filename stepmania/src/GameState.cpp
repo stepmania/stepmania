@@ -529,14 +529,14 @@ int GameState::GetNumStagesMultiplierForSong( const Song* pSong )
 	return iNumStages;
 }
 
-int GameState::GetNumStagesForSongAndStyle( const Song* pSong, const Style *pStyle )
+int GameState::GetNumStagesForSongAndStyleType( const Song* pSong, StyleType st )
 {
 	int iNumStages = GetNumStagesMultiplierForSong( pSong );
 
 	// One player, two-sides styles cost extra 
-	switch( pStyle->m_StyleType )
+	switch( st )
 	{
-	DEFAULT_FAIL( pStyle->m_StyleType );
+	DEFAULT_FAIL( st );
 	case StyleType_OnePlayerTwoSides:
 		if( g_Premium == Premium_Off )
 			iNumStages *= 2;
@@ -555,7 +555,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse()
 	int iNumStagesOfThisSong = 1;
 	if( GAMESTATE->m_pCurSong )
 	{
-		Steps *pSteps = GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber];
+		const Steps *pSteps = GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber];
 		StepsType st;
 		if( pSteps )
 		{
@@ -570,7 +570,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse()
 			st = pStyle->m_StepsType;
 		}
 		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), st );
-		iNumStagesOfThisSong = GameState::GetNumStagesForSongAndStyle( GAMESTATE->m_pCurSong, pStyle );
+		iNumStagesOfThisSong = GameState::GetNumStagesForSongAndStyleType( GAMESTATE->m_pCurSong, pStyle->m_StyleType );
 	}
 	else if( GAMESTATE->m_pCurCourse )
 		iNumStagesOfThisSong = 1;

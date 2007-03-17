@@ -119,7 +119,7 @@ public:
 	int				m_iCurrentStageIndex;
 
 	static int GetNumStagesMultiplierForSong( const Song* pSong );
-	static int GetNumStagesForSongAndStyle( const Song* pSong, const Style *pStyle );
+	static int GetNumStagesForSongAndStyleType( const Song* pSong, StyleType st );
 	static int GetNumStagesForCurrentSongAndStepsOrCourse();
 
 	int		GetStageIndex() const;
