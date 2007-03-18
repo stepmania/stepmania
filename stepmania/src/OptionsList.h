@@ -10,18 +10,22 @@
 #include "OptionsCursor.h"
 #include "CodeSet.h"
 
+class OptionsList;
 class OptionListRow: public ActorFrame
 {
 public:
-	void Load( const RString &sType );
+	void Load( OptionsList *pOptions, const RString &sType );
 	void SetFromHandler( const OptionRowHandler *pHandler );
-	void SetUnderlines( const vector<bool> &aSelections );
+	void SetTextFromHandler( const OptionRowHandler *pHandler );
+	void SetUnderlines( const vector<bool> &aSelections, const OptionRowHandler *pHandler );
 
 	void PositionCursor( Actor *pCursor, int iSelection );
 
 	void Start();
 
 private:
+	OptionsList *m_pOptions;
+
 	vector<BitmapText> m_Text;
 	// underline for each ("self or child has selection")
 	vector<AutoActor> m_Underlines;
@@ -34,6 +38,8 @@ private:
 class OptionsList: public ActorFrame
 {
 public:
+	friend class OptionListRow;
+
 	OptionsList();
 	~OptionsList();
 
@@ -51,9 +57,13 @@ public:
 	bool Start( PlayerNumber pn );	/* return true if the last menu was popped in response to this press */
 
 private:
+	void SelectItem( const RString &sRowName, int iMenuItem );
+	void MoveItem( const RString &sRowName, int iMove );
 	void SwitchMenu( int iDir );
 	void PositionCursor();
+	RString GetCurrentRow() const;
 	const OptionRowHandler *GetCurrentHandler();
+	int GetOneSelection( RString sRow, bool bAllowFail=false ) const;
 	void SwitchToCurrentRow();
 	void TweenOnCurrentRow( bool bForward );
 	void SetDefaultCurrentRow();
@@ -65,9 +75,13 @@ private:
 
 	InputQueueCodeSet	m_Codes;
 
+	bool			m_bStartIsDown;
+	bool			m_bAcceptStartRelease;
+
 	vector<RString> m_asLoadedRows;
 	map<RString, OptionRowHandler *> m_Rows;
 	map<RString, vector<bool> > m_bSelections;
+	set<RString> m_setDirectRows;
 
 	PlayerNumber m_pn;
 	AutoActor m_Cursor;
