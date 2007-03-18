@@ -100,16 +100,19 @@ void ActorFrame::LoadChildrenFromNode( const XNode* pNode )
 	// Load children
 	//
 	const XNode* pChildren = pNode->GetChild("children");
-	if( pChildren )
+	if( pChildren == NULL )
+		pChildren = pNode;
+
+	FOREACH_CONST_Child( pChildren, pChild )
 	{
-		FOREACH_CONST_Child( pChildren, pChild )
-		{
-			Actor* pChildActor = ActorUtil::LoadFromNode( pChild, this );
-			if( pChildActor )
-				AddChild( pChildActor );
-		}
-		SortByDrawOrder();
+		if( !IsAnInt(pChild->GetName()) )
+			continue;
+
+		Actor* pChildActor = ActorUtil::LoadFromNode( pChild, this );
+		if( pChildActor )
+			AddChild( pChildActor );
 	}
+	SortByDrawOrder();
 }
 
 void ActorFrame::AddChild( Actor* pActor )
