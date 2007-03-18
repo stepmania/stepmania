@@ -496,7 +496,7 @@ void OptionsList::ImportRow( RString sRow )
 {
 	vector<bool> aSelections[NUM_PLAYERS];
 	vector<PlayerNumber> vpns;
-	vpns.push_back( m_pn ); // XXX
+	vpns.push_back( m_pn );
 	OptionRowHandler *pHandler = m_Rows[sRow];
 	aSelections[ m_pn ].resize( pHandler->m_Def.m_vsChoices.size() );
 	pHandler->ImportOption( vpns, aSelections );
@@ -515,7 +515,7 @@ void OptionsList::ExportRow( RString sRow )
 	aSelections[m_pn] = m_bSelections[sRow];
 
 	vector<PlayerNumber> vpns;
-	vpns.push_back( m_pn ); // XXX
+	vpns.push_back( m_pn );
 
 	m_Rows[sRow]->ExportOption( vpns, aSelections );
 }
