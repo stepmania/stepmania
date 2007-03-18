@@ -2252,6 +2252,8 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 				TapNote &tn = *iter;
 				if( tn.type != TapNote::hold_head )
 					continue;
+				if( tn.subType != TapNote::hold_head_hold )
+					continue;
 
 				int iStartRow = iter.Row();
 				int iEndRow = iStartRow + tn.iDuration;
