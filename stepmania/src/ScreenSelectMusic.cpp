@@ -729,6 +729,12 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS )
 		return;
 
+	/* If select is being pressed, this is probably an attempt to change the sort, not
+	 * to pick a song or difficulty.  If it gets here, the actual select press was probably
+	 * hit during a tween and ignored.  Ignore it. */
+	if( input.pn != PLAYER_INVALID && INPUTMAPPER->IsBeingPressed(MENU_BUTTON_SELECT, input.pn) )
+		return;
+
 	switch( m_SelectionState )
 	{
 	DEFAULT_FAIL( m_SelectionState );
