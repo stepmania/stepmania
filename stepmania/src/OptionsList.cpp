@@ -257,6 +257,7 @@ void OptionsList::Open()
 
 void OptionsList::Close()
 {
+	m_bStartIsDown = false;
 	m_asMenuStack.clear();
 	this->PlayCommand( "TweenOff" );
 }
