@@ -393,12 +393,13 @@ void OptionsList::Input( const InputEventPlus &input )
 
 	if( input.MenuI == MENU_BUTTON_LEFT )
 	{
-		if( input.type != IET_FIRST_PRESS )
+		if( input.type == IET_RELEASE )
 			return;
 
 		if( INPUTMAPPER->IsBeingPressed(MENU_BUTTON_RIGHT, pn) )
 		{
-			SwitchMenu( -1 );
+			if( input.type == IET_FIRST_PRESS )
+				SwitchMenu( -1 );
 			return;
 		}
 
@@ -413,12 +414,13 @@ void OptionsList::Input( const InputEventPlus &input )
 	}
 	else if( input.MenuI == MENU_BUTTON_RIGHT )
 	{
-		if( input.type != IET_FIRST_PRESS )
+		if( input.type == IET_RELEASE )
 			return;
 
 		if( INPUTMAPPER->IsBeingPressed(MENU_BUTTON_LEFT, pn) )
 		{
-			SwitchMenu( +1 );
+			if( input.type == IET_FIRST_PRESS )
+				SwitchMenu( +1 );
 			return;
 		}
 
