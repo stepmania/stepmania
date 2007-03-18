@@ -41,6 +41,7 @@ struct OptionRowDefinition
 	LayoutType m_layoutType;
 	vector<RString> m_vsChoices;
 	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
+	int m_iDefault;
 	bool	m_bExportOnChange;
 	bool	m_bAllowThemeItems;	// Should be true for dynamic strings.
 	bool	m_bAllowThemeTitle;	// Should be true for dynamic strings.
@@ -64,6 +65,7 @@ struct OptionRowDefinition
 		m_vEnabledForPlayers.clear();
 		FOREACH_PlayerNumber( pn )
 			m_vEnabledForPlayers.insert( pn );
+		m_iDefault = -1;
 		m_bExportOnChange = false;
 		m_bAllowThemeItems = true;
 		m_bAllowThemeTitle = true;
@@ -120,6 +122,7 @@ public:
 	enum ReloadChanged { RELOAD_CHANGED_NONE, RELOAD_CHANGED_ENABLED, RELOAD_CHANGED_ALL };
 	virtual ReloadChanged Reload() { return RELOAD_CHANGED_NONE; }
 
+	virtual int GetDefaultOption() const { return -1; }
 	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
 	/* Returns an OPT mask. */
 	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }

@@ -161,6 +161,7 @@ public:
 				else if( sName == "selectone" )		m_Def.m_selectType = SELECT_ONE;
 				else if( sName == "selectnone" )	m_Def.m_selectType = SELECT_NONE;
 				else if( sName == "showoneinrow" )	m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+				else if( sName == "default" )		m_Def.m_iDefault = atoi( cmd.GetArg(1).s ) - 1; // match ENTRY_MODE
 				else if( sName == "reloadrowmessages" )
 				{
 					for( unsigned a=1; a<cmd.m_vsArgs.size(); a++ )
@@ -211,6 +212,16 @@ public:
 				m_Def.m_vsChoices.push_back( sChoice );
 			}
 		}
+
+		if( m_Def.m_selectType != SELECT_MULTIPLE && m_Def.m_iDefault != -1 )
+		{
+			for( unsigned e = 0; e < m_aListEntries.size(); ++e )
+			{
+				const GameCommand &mc = m_aListEntries[e];
+				if( mc.IsZero() )
+					m_Def.m_iDefault = e;
+			}
+		}
 	}
 	void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
@@ -219,7 +230,6 @@ public:
 			PlayerNumber p = *pn;
 			vector<bool> &vbSelOut = vbSelectedOut[p];
 
-			int iFallbackOption = -1;
 			bool bUseFallbackOption = true;
 
 			for( unsigned e = 0; e < m_aListEntries.size(); ++e )
@@ -233,8 +243,6 @@ public:
 					/* The entry has no effect.  This is usually a default "none of the
 					 * above" entry.  It will always return true for DescribesCurrentMode().
 					 * It's only the selected choice if nothing else matches. */
-					if( m_Def.m_selectType != SELECT_MULTIPLE )
-						iFallbackOption = e;
 					continue;
 				}
 
@@ -264,6 +272,7 @@ public:
 
 			if( m_Def.m_selectType == SELECT_ONE && bUseFallbackOption )
 			{
+				int iFallbackOption = m_Def.m_iDefault;
 				if( iFallbackOption == -1 )
 				{
 					RString s = ssprintf("No options in row \"list,%s\" were selected, and no fallback row found; selected entry 0", m_Def.m_sName.c_str());
@@ -296,6 +305,11 @@ public:
 		FOREACH_CONST( RString, m_vsBroadcastOnExport, s )
 			MESSAGEMAN->Broadcast( *s );
 		return 0;
+	}
+
+	virtual int GetDefaultOption() const
+	{
+		return m_Def.m_iDefault;
 	}
 
 	virtual void GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const
@@ -334,6 +348,8 @@ class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
 		NOTESKIN->GetNoteSkinNames( arraySkinNames );
 		for( unsigned skin=0; skin<arraySkinNames.size(); skin++ )
 		{
+			if( arraySkinNames[skin] == CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() )
+				m_Def.m_iDefault = skin;
 			GameCommand mc;
 			mc.m_sPreferredModifiers = arraySkinNames[skin];
 			m_aListEntries.push_back( mc );
