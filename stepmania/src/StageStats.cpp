@@ -28,6 +28,7 @@ StageStats::StageStats()
 	m_fGameplaySeconds = 0;
 	m_fStepsSeconds = 0;
 	m_fMusicRate = 1;
+	m_fAccumulatedHaste = 0;
 }
 
 void StageStats::Init()

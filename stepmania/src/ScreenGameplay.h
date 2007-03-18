@@ -159,6 +159,7 @@ protected:
 	void UpdateLights();
 	void SendCrossedMessages();
 	void BeginBackingOutFromGameplay();
+	float GetHasteRate();
 
 	void PlayTicks();
 	void UpdateSongPosition( float fDeltaTime );

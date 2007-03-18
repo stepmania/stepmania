@@ -41,6 +41,8 @@ public:
 	float	m_fStepsSeconds;		// this is <= fGameplaySeconds unless the song has steps past the end
 	float	m_fMusicRate;
 
+	float	m_fAccumulatedHaste;
+
 	// Total number of seconds between first beat and last beat for every song.
 	float GetTotalPossibleStepsSeconds() const;
 
