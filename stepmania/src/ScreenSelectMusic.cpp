@@ -188,7 +188,6 @@ void ScreenSelectMusic::Init()
 
 void ScreenSelectMusic::BeginScreen()
 {
-	ScreenWithMenuElements::BeginScreen();
 	OPTIONS_MENU_AVAILABLE.Load( m_sName, "OptionsMenuAvailable" );
 	
 	m_MusicWheel.BeginScreen();
@@ -202,6 +201,8 @@ void ScreenSelectMusic::BeginScreen()
 	AfterMusicChange();
 
 	SOUND->PlayOnceFromAnnouncer( "select music intro" );
+
+	ScreenWithMenuElements::BeginScreen();
 }
 
 ScreenSelectMusic::~ScreenSelectMusic()
