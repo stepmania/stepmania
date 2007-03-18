@@ -375,10 +375,15 @@ void OptionsList::Input( const InputEventPlus &input )
 				if( pTarget->m_Def.m_selectType == SELECT_ONE )
 				{
 					int iSelection = GetOneSelection(sDest);
-					iSelection += (input.MenuI == MENU_BUTTON_RIGHT? +1:-1);
+					int iDir = (input.MenuI == MENU_BUTTON_RIGHT? +1:-1);
+					iSelection += iDir;
 					wrap( iSelection, bTargetSelections.size() );
-					LOG->Trace( "sDest: %s, %i", sDest.c_str(), iSelection );
 					SelectItem( sDest, iSelection );
+
+					Message msg("OptionsListQuickChange");
+					msg.SetParam( "Player", pn );
+					msg.SetParam( "Direction", iDir );
+					MESSAGEMAN->Broadcast( msg );
 				}
 			}
 			return;
