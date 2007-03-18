@@ -1454,10 +1454,14 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 			// if they got a bad score or haven't stepped on the corresponding tap yet
 			const TapNoteScore tns = tn.result.tns;
-			const bool bSteppedOnTapNote = tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start of this roll?
+			bool bInitiatedNote = true;
+			if( REQUIRE_STEP_ON_HOLD_HEADS )
+				bInitiatedNote = tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start?
+			else
+				bInitiatedNote = true;
 			const int iEndRow = iRow + tn.iDuration;
 
-			if( bSteppedOnTapNote && tn.HoldResult.fLife != 0 )
+			if( bInitiatedNote && tn.HoldResult.fLife != 0 )
 			{
 				/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
 				 * Do this even if we're a little beyond the end of the hold note, to make sure
@@ -1474,10 +1478,24 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 					// this is handled in Update
 					break;
 				case TapNote::hold_head_roll:
-					if( bSteppedOnTapNote )
+					if( bInitiatedNote )
 					{
 						// Increase life
 						tn.HoldResult.fLife = 1;
+
+						// increment combo
+						const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+						const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+
+						if( m_pPlayerStageStats )
+						{
+							m_pPlayerStageStats->m_iCurCombo++;
+							m_pPlayerStageStats->m_iCurMissCombo = 0;
+						}
+
+						SendComboMessages( iOldCombo, iOldMissCombo );
+						if( m_pPlayerStageStats )
+							SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
 
 						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 						if( m_pNoteField )
