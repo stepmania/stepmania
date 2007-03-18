@@ -118,6 +118,8 @@ void ScreenSelectMaster::Init()
 			m_vsprIcon[c].Load( THEME->GetPathG(m_sName,sElement) );
 			RString sName = "Icon" "Choice" + mc.m_sName;
 			m_vsprIcon[c]->SetName( sName );
+			if( USE_ICON_METRICS )
+				LOAD_ALL_COMMANDS_AND_SET_XY( m_vsprIcon[c] );
 			this->AddChild( m_vsprIcon[c] );
 		}
 
@@ -158,6 +160,7 @@ void ScreenSelectMaster::Init()
 			m_Scroller[*p].SetSecondsPerItem( SCROLLER_SECONDS_PER_ITEM );
 			m_Scroller[*p].SetNumSubdivisions( SCROLLER_SUBDIVISIONS );
 			m_Scroller[*p].SetName( "Scroller"+PLAYER_APPEND_NO_SPACE(*p) );
+			LOAD_ALL_COMMANDS_AND_SET_XY( m_Scroller[*p] );
 			this->AddChild( &m_Scroller[*p] );
 		}
 	}
@@ -794,10 +797,7 @@ void ScreenSelectMaster::TweenOnScreen()
 		{
 			m_vsprIcon[c]->PlayCommand( (int(c) == m_iChoice[0])? "GainFocus":"LoseFocus" );
 			m_vsprIcon[c]->FinishTweening();
-			if( USE_ICON_METRICS )
-				LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_vsprIcon[c] );
-			else
-				m_vsprIcon[c]->PlayCommand( "On" );
+			m_vsprIcon[c]->PlayCommand( "On" );
 		}
 	}
 
@@ -814,7 +814,7 @@ void ScreenSelectMaster::TweenOnScreen()
 			}
 
 			m_Scroller[*p].SetCurrentAndDestinationItem( (float)m_iChoice[*p] );
-			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_Scroller[*p] );
+			m_Scroller[*p].PlayCommand( "On" );
 		}
 	}
 
