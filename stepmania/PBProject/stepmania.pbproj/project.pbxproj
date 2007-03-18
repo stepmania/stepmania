@@ -513,6 +513,10 @@
 		AA29CE3F0558741A00961A51 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA0F7D2047ACBC9005F316C /* QuickTime.framework */; };
 		AA29CE400558741A00961A51 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA8DD84904A2E51400D02EE9 /* OpenGL.framework */; };
 		AA29CE420558741A00961A51 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAF33F2A04FF213100F93C24 /* CoreFoundation.framework */; };
+		AA2C9CA10BAD6F54002441E9 /* CodeSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2C9C9F0BAD6F54002441E9 /* CodeSet.cpp */; };
+		AA2C9CA20BAD6F55002441E9 /* CodeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2C9CA00BAD6F54002441E9 /* CodeSet.h */; };
+		AA2C9CA30BAD6F55002441E9 /* CodeSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2C9C9F0BAD6F54002441E9 /* CodeSet.cpp */; };
+		AA2C9CA40BAD6F55002441E9 /* CodeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2C9CA00BAD6F54002441E9 /* CodeSet.h */; };
 		AA2EA0010A770208003A0C11 /* ScreenSelectLanguage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2E9FFF0A770208003A0C11 /* ScreenSelectLanguage.cpp */; };
 		AA2EA0020A770208003A0C11 /* ScreenSelectLanguage.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2EA0000A770208003A0C11 /* ScreenSelectLanguage.h */; };
 		AA2EA0030A770208003A0C11 /* ScreenSelectLanguage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2E9FFF0A770208003A0C11 /* ScreenSelectLanguage.cpp */; };
@@ -2236,6 +2240,8 @@
 		AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MemoryCardManager.h; path = ../src/MemoryCardManager.h; sourceTree = "<group>"; };
 		AA29CE570558741A00961A51 /* Info-StepMania.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; path = "Info-StepMania.plist"; sourceTree = SOURCE_ROOT; };
 		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA2C9C9F0BAD6F54002441E9 /* CodeSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeSet.cpp; path = ../src/CodeSet.cpp; sourceTree = "<group>"; };
+		AA2C9CA00BAD6F54002441E9 /* CodeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodeSet.h; path = ../src/CodeSet.h; sourceTree = "<group>"; };
 		AA2E9FFF0A770208003A0C11 /* ScreenSelectLanguage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenSelectLanguage.cpp; path = ../src/ScreenSelectLanguage.cpp; sourceTree = "<group>"; };
 		AA2EA0000A770208003A0C11 /* ScreenSelectLanguage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenSelectLanguage.h; path = ../src/ScreenSelectLanguage.h; sourceTree = "<group>"; };
 		AA2FB638091212AF000FD574 /* LifeMeter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LifeMeter.cpp; path = ../src/LifeMeter.cpp; sourceTree = "<group>"; };
@@ -4064,6 +4070,8 @@
 				AA6EFDCC04770C79005F316C /* Character.h */,
 				AA6EFDCD04770C79005F316C /* CodeDetector.cpp */,
 				AA6EFDCE04770C79005F316C /* CodeDetector.h */,
+				AA2C9C9F0BAD6F54002441E9 /* CodeSet.cpp */,
+				AA2C9CA00BAD6F54002441E9 /* CodeSet.h */,
 				AA1B08370762532800835464 /* Command.cpp */,
 				AA1B08380762532800835464 /* Command.h */,
 				AA8BD2C607C93A1E00EA04E1 /* CommonMetrics.cpp */,
@@ -5651,6 +5659,7 @@
 				AA7C8DB10B68CB2200FD9940 /* GameplayAssist.h in Headers */,
 				AA059ABF0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */,
 				AA05A0B30BA2EFF3006F8139 /* OptionsList.h in Headers */,
+				AA2C9CA40BAD6F55002441E9 /* CodeSet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6070,6 +6079,7 @@
 				AA7C8DAF0B68CB2200FD9940 /* GameplayAssist.h in Headers */,
 				AA059ABD0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */,
 				AA05A0B10BA2EFF3006F8139 /* OptionsList.h in Headers */,
+				AA2C9CA20BAD6F55002441E9 /* CodeSet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6820,6 +6830,7 @@
 				AA7C8DB00B68CB2200FD9940 /* GameplayAssist.cpp in Sources */,
 				AA059ABE0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */,
 				AA05A0B20BA2EFF3006F8139 /* OptionsList.cpp in Sources */,
+				AA2C9CA30BAD6F55002441E9 /* CodeSet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7229,6 +7240,7 @@
 				AA7C8DAE0B68CB2200FD9940 /* GameplayAssist.cpp in Sources */,
 				AA059ABC0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */,
 				AA05A0B00BA2EFF3006F8139 /* OptionsList.cpp in Sources */,
+				AA2C9CA10BAD6F54002441E9 /* CodeSet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
