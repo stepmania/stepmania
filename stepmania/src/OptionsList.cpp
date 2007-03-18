@@ -444,7 +444,7 @@ void OptionsList::Input( const InputEventPlus &input )
 		if( input.type == IET_RELEASE )
 		{
 			if( m_bAcceptStartRelease )
-				Start( input.pn );
+				Start();
 			m_bStartIsDown = false;
 		}
 
@@ -604,7 +604,7 @@ void OptionsList::SelectItem( const RString &sRowName, int iMenuItem )
 	}
 }
 
-bool OptionsList::Start( PlayerNumber pn )
+bool OptionsList::Start()
 {
 	const OptionRowHandler *pHandler = GetCurrentHandler();
 	const RString &sCurrentRow = m_asMenuStack.back();
@@ -614,7 +614,7 @@ bool OptionsList::Start( PlayerNumber pn )
 		Pop();
 
 		Message msg("OptionsListPop");
-		msg.SetParam( "Player", pn );
+		msg.SetParam( "Player", m_pn );
 		MESSAGEMAN->Broadcast( msg );
 
 		return m_asMenuStack.empty();
@@ -627,7 +627,7 @@ bool OptionsList::Start( PlayerNumber pn )
 		TweenOnCurrentRow( true );
 
 		Message msg("OptionsListPush");
-		msg.SetParam( "Player", pn );
+		msg.SetParam( "Player", m_pn );
 		MESSAGEMAN->Broadcast( msg );
 
 		return false;
@@ -645,7 +645,7 @@ bool OptionsList::Start( PlayerNumber pn )
 	}
 
 	Message msg("OptionsListStart");
-	msg.SetParam( "Player", pn );
+	msg.SetParam( "Player", m_pn );
 	MESSAGEMAN->Broadcast( msg );
 
 	return false;

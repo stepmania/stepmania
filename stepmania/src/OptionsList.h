@@ -54,7 +54,7 @@ public:
 	void Input( const InputEventPlus &input );
 	bool IsOpened() const { return m_asMenuStack.size() > 0; }
 
-	bool Start( PlayerNumber pn );	/* return true if the last menu was popped in response to this press */
+	bool Start();	/* return true if the last menu was popped in response to this press */
 
 private:
 	void SelectItem( const RString &sRowName, int iMenuItem );
