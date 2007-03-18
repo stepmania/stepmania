@@ -100,12 +100,16 @@ void ActorFrame::LoadChildrenFromNode( const XNode* pNode )
 	// Load children
 	//
 	const XNode* pChildren = pNode->GetChild("children");
+	bool bArrayOnly = false;
 	if( pChildren == NULL )
+	{
+		bArrayOnly = true;
 		pChildren = pNode;
+	}
 
 	FOREACH_CONST_Child( pChildren, pChild )
 	{
-		if( !IsAnInt(pChild->GetName()) )
+		if( bArrayOnly && !IsAnInt(pChild->GetName()) )
 			continue;
 
 		Actor* pChildActor = ActorUtil::LoadFromNode( pChild, this );
