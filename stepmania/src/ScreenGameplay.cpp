@@ -1788,17 +1788,16 @@ float ScreenGameplay::GetHasteRate()
 		fLife = max( fLife, pi->m_pLifeMeter->GetLife() );
 	}
 
-	/* Scale the music nonlinearly.  Only slow the song down below 0.25, so we
-	 * don't drag the music out too long.  Stick at 1x up to 0.5, so we start
-	 * at 1x if the life meter defaults to 0.5.  Increase gradually up to 0.9.
+	/* Scale the music nonlinearly.  Stick at 1x up to 0.5, so we start at 1x
+	 * if the life meter defaults to 0.5.  Increase gradually up to 0.9.
 	 * Accelerate sharply above 0.9. */
 	float fSpeed = 1.0f;
-	if( fLife < 0.25f )
-		fSpeed = SCALE( fLife, 0.0f, 0.25f, 0.5f, 1.0f );
+	if( fLife < 0.50f )
+		fSpeed = SCALE( fLife, 0.0f, 0.50f, 0.5f, 1.0f );
 	else if( fLife > 0.5f && fLife < 0.9f )
 		fSpeed = SCALE( fLife, 0.5f, 0.9f, 1.0f, 1.25f );
 	else if( fLife >= 0.9f )
-		fSpeed = SCALE( fLife, 0.9f, 1.0f, 1.25f, 2.5f );
+		fSpeed = SCALE( fLife, 0.9f, 1.0f, 1.25f, 2.0f );
 	fSpeed *= GAMESTATE->m_SongOptions.GetCurrent().m_fHaste;
 
 	if( STATSMAN->m_CurStageStats.m_fAccumulatedHaste <= 1 )
