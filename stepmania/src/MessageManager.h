@@ -128,6 +128,11 @@ private:
 	bool m_bBroadcast;
 
 	Message &operator=( const Message &rhs ); // don't use
+/* Work around a gcc bug where HandleMessage( Message("Init") ) fails because the copy ctor is private.
+ * The copy ctor is not even used so I have no idea why it being private is an issue. Also, if the
+ * Message object were constructed implicitly (remove explicit above), it works: HandleMessage( "Init" ).
+ * Leaving this undefined but public changes a compile time error into a link time error. Hmm.*/
+public:
 	Message( const Message &rhs ); // don't use
 };
 
