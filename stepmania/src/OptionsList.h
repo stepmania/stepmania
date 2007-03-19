@@ -45,6 +45,8 @@ public:
 
 	void Load( RString sType, PlayerNumber pn );
 
+	void Link( OptionsList *pLink ) { m_pLinked = pLink; }
+
 	/* Show the top-level menu. */
 	void Open();
 
@@ -61,6 +63,7 @@ private:
 	void MoveItem( const RString &sRowName, int iMove );
 	void SwitchMenu( int iDir );
 	void PositionCursor();
+	void UpdateMenuFromSelections();
 	RString GetCurrentRow() const;
 	const OptionRowHandler *GetCurrentHandler();
 	int GetOneSelection( RString sRow, bool bAllowFail=false ) const;
@@ -74,6 +77,8 @@ private:
 	bool RowIsMenusOnly( RString sRow ) const;
 
 	InputQueueCodeSet	m_Codes;
+
+	OptionsList		*m_pLinked;
 
 	bool			m_bStartIsDown;
 	bool			m_bAcceptStartRelease;

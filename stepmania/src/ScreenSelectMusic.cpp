@@ -140,6 +140,8 @@ void ScreenSelectMusic::Init()
 			ActorUtil::LoadAllCommands( m_OptionsList[p], m_sName );
 			this->AddChild( &m_OptionsList[p] );
 		}
+		m_OptionsList[PLAYER_1].Link( &m_OptionsList[PLAYER_2] );
+		m_OptionsList[PLAYER_2].Link( &m_OptionsList[PLAYER_1] );
 	}
 
 	// this is loaded SetSong and TweenToSong

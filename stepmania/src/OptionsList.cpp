@@ -168,6 +168,7 @@ void OptionListRow::PositionCursor( Actor *pCursor, int iSelection )
 OptionsList::OptionsList()
 {
 	m_iCurrentRow = 0;
+	m_pLinked = NULL;
 }
 
 OptionsList::~OptionsList()
@@ -595,13 +596,24 @@ void OptionsList::SelectItem( const RString &sRowName, int iMenuItem )
 		bSelections[iMenuItem] = true;
 	}
 
+	if( pHandler->m_Def.m_bOneChoiceForAllPlayers && m_pLinked != NULL )
+	{
+		vector<bool> &bLinkedSelections = m_pLinked->m_bSelections[sRowName];
+		bLinkedSelections = bSelections;
+		if( m_pLinked->IsOpened() )
+			m_pLinked->UpdateMenuFromSelections();
+	}
+
 	ExportRow( sRowName );
 
-	{
-		const vector<bool> &bCurrentSelections = m_bSelections.find(GetCurrentRow())->second;
-		m_Row[m_iCurrentRow].SetUnderlines( bCurrentSelections, GetCurrentHandler() );
-		m_Row[m_iCurrentRow].SetTextFromHandler( GetCurrentHandler() );
-	}
+	UpdateMenuFromSelections();
+}
+
+void OptionsList::UpdateMenuFromSelections()
+{
+	const vector<bool> &bCurrentSelections = m_bSelections.find(GetCurrentRow())->second;
+	m_Row[m_iCurrentRow].SetUnderlines( bCurrentSelections, GetCurrentHandler() );
+	m_Row[m_iCurrentRow].SetTextFromHandler( GetCurrentHandler() );
 }
 
 bool OptionsList::Start()
