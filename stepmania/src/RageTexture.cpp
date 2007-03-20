@@ -15,7 +15,7 @@ RageTexture::RageTexture( RageTextureID name ):
 	m_iSourceWidth = m_iSourceHeight = 0;
 	m_iTextureWidth = m_iTextureHeight = 0;
 	m_iImageWidth = m_iImageHeight = 0;
-	m_iFramesWide = m_iFramesHigh = 0;
+	m_iFramesWide = m_iFramesHigh = 1;
 }
 
 
