@@ -55,6 +55,7 @@ public:
 	void GetActiveTextureCoords(float fTexCoordsOut[8]) const;
 	void StretchTexCoords( float fX, float fY );
 	void AddImageCoords( float fX, float fY ); // in image pixel space
+	void SetEffectMode( EffectMode em ) { m_EffectMode = em; }
 
 	void SetTexCoordVelocity(float fVelX, float fVelY);
 	// Scale the Sprite maintaining the aspect ratio so that it fits 
@@ -86,6 +87,7 @@ private:
 	int		m_iCurState;
 	float	m_fSecsIntoState;	// number of seconds that have elapsed since we switched to this frame
 
+	EffectMode m_EffectMode;
 	bool m_bUsingCustomTexCoords;
 	bool m_bSkipNextUpdate;
 	float m_CustomTexCoords[8];	// (x,y) * 4: top left, bottom left, bottom right, top right

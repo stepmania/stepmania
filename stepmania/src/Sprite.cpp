@@ -24,6 +24,7 @@ Sprite::Sprite()
 	m_fSecsIntoState = 0.0f;
 	m_bUsingCustomTexCoords = false;
 	m_bSkipNextUpdate = false;
+	m_EffectMode = EffectMode_Normal;
 	
 	m_fRememberedClipWidth = -1;
 	m_fRememberedClipHeight = -1;
@@ -465,6 +466,7 @@ void Sprite::DrawTexture( const TweenState *state )
 	// Must call this after setting the texture or else texture 
 	// parameters have no effect.
 	Actor::SetTextureRenderStates();	// set Actor-specified render states
+	DISPLAY->SetEffectMode( m_EffectMode );
 
 	if( m_pTexture )
 	{
@@ -547,6 +549,7 @@ void Sprite::DrawTexture( const TweenState *state )
 		v[0].c = v[1].c = v[2].c = v[3].c = state->glow;
 		DISPLAY->DrawQuad( v );
 	}
+	DISPLAY->SetEffectMode( EffectMode_Normal );
 }
 
 bool Sprite::EarlyAbortDraw() const
@@ -1003,6 +1006,12 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
+	static int SetEffectMode( T* p, lua_State *L )
+	{
+		EffectMode em = Enum::Check<EffectMode>(L, 1);
+		p->SetEffectMode( em );
+		return 0;
+	}
 
 	LunaSprite()
 	{
@@ -1019,6 +1028,7 @@ public:
 		ADD_METHOD( GetAnimationLengthSeconds );
 		ADD_METHOD( SetTexture );
 		ADD_METHOD( GetTexture );
+		ADD_METHOD( SetEffectMode );
 	}
 };
 
