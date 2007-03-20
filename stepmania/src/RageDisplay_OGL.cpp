@@ -776,7 +776,7 @@ RageSurface *RageDisplay_OGL::GetTexture( unsigned iTexture )
 	glBindTexture( GL_TEXTURE_2D, iTexture );
 	GLint iHeight, iWidth, iAlphaBits;
 	glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &iHeight );
-	glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &iWidth );
+	glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &iWidth );
 	glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_SIZE, &iAlphaBits );
 	int iFormat = iAlphaBits? PixelFormat_RGBA8:PixelFormat_RGB8;
 
@@ -784,7 +784,7 @@ RageSurface *RageDisplay_OGL::GetTexture( unsigned iTexture )
 	RageSurface *pImage = CreateSurface( iWidth, iHeight, desc.bpp,
 		desc.masks[0], desc.masks[1], desc.masks[2], desc.masks[3] );
 
-	glGetTexImage( GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pImage->pixels );
+	glGetTexImage( GL_TEXTURE_2D, 0, g_GLPixFmtInfo[iFormat].format, GL_UNSIGNED_BYTE, pImage->pixels );
 	AssertNoGLError();
 
 	return pImage;
