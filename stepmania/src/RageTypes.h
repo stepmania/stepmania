@@ -45,6 +45,7 @@ enum EffectMode
 	EffectMode_ColorDodge,
 	EffectMode_VividLight,
 	EffectMode_HardMix,
+	EffectMode_YUYV422,
 	NUM_EffectMode,
 	EffectMode_Invalid
 };

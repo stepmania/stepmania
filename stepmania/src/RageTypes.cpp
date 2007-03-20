@@ -133,6 +133,8 @@ static const char *EffectModeNames[] =
 	"ColorDodge",
 	"VividLight",
 	"HardMix",
+
+	"YUYV422"
 };
 XToString( EffectMode );
 LuaXType( EffectMode );
