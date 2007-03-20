@@ -65,6 +65,7 @@ static const char *PixelFormatNames[] = {
 	"PAL",
 	"BGR8",
 	"A1BGR5",
+	"X1RGB5",
 };
 XToString( PixelFormat );
 

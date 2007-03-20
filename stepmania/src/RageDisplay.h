@@ -64,6 +64,7 @@ enum PixelFormat
 	* directly; they'll be matched automatically by FindPixelFormat. */
 	PixelFormat_BGR8,
 	PixelFormat_A1BGR5,
+	PixelFormat_X1RGB5,
 	NUM_PixelFormat,
 	PixelFormat_Invalid
 };

@@ -168,6 +168,9 @@ static const RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 	}, {
 		/* ABGR (N/A; OpenGL only) */
 		0, { 0,0,0,0 }
+	}, {
+		/* X1R5G5B5 */
+		0, { 0,0,0,0 }
 	}
 };
 
@@ -184,7 +187,8 @@ static D3DFORMAT D3DFORMATS[NUM_PixelFormat] =
 #endif
 	D3DFMT_P8,
 	D3DFMT_UNKNOWN, /* no BGR */
-	D3DFMT_UNKNOWN /* no ABGR */
+	D3DFMT_UNKNOWN, /* no ABGR */
+	D3DFMT_UNKNOWN, /* X1R5G5B5 */
 };
 
 const RageDisplay::PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const

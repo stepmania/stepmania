@@ -119,6 +119,13 @@ static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 		  0x03E0,
 		  0x001F,
 		  0x8000 },
+	}, {
+		/* X1R5G5B5 */
+		16,
+		{ 0x7C00,
+		  0x03E0,
+		  0x001F,
+		  0x0000 },
 	}
 };
 
@@ -175,6 +182,11 @@ struct GLPixFmtInfo_t {
 	}, {
 		/* A1R5G5B5 (matches D3DFMT_A1R5G5B5) */
 		GL_RGB5_A1,
+		GL_BGRA,
+		GL_UNSIGNED_SHORT_1_5_5_5_REV,
+	}, {
+		/* X1R5G5B5 */
+		GL_RGB5,
 		GL_BGRA,
 		GL_UNSIGNED_SHORT_1_5_5_5_REV,
 	}
