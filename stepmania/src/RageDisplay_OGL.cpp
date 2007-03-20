@@ -113,7 +113,7 @@ static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 		  0xFF0000,
 		  0x000000 }
 	}, {
-		/* A1B5G5R5 */
+		/* A1R5G5B5 */
 		16,
 		{ 0x7C00,
 		  0x03E0,
