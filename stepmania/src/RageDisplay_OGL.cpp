@@ -88,7 +88,7 @@ static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 		  0x003E,
 		  0x0001 },
 	}, {
-		/* R5G5B5 */
+		/* R5G5B5X1 */
 		16,
 		{ 0xF800,
 		  0x07C0,
@@ -106,7 +106,7 @@ static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 		8,
 		{ 0,0,0,0 } /* N/A */
 	}, {
-		/* B8G8R8A8 */
+		/* B8G8R8 */
 		24,
 		{ 0x0000FF,
 		  0x00FF00,
