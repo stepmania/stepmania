@@ -4,7 +4,7 @@ as usual.
 Compile with MingW.
 Configured with ./configure --enable-shared --enable-mingw32 --enable-small --disable-debug
 
-svn co -r 8448 svn://svn.mplayerhq.hu/ffmpeg
+svn co -r 8448 svn://svn.mplayerhq.hu/ffmpeg/trunk/ ffmpeg
 
 ./configure --enable-shared --disable-static --disable-debug --disable-vhook --enable-memalign-hack --disable-network  --enable-small \
   --disable-encoders --disable-ffmpeg --disable-ffserver --disable-ffplay --disable-muxers \
