@@ -367,6 +367,7 @@ static GLhandleARB g_bColorBurnShader = 0;
 static GLhandleARB g_bColorDodgeShader = 0;
 static GLhandleARB g_bVividLightShader = 0;
 static GLhandleARB g_hHardMixShader = 0;
+static GLhandleARB g_hYUYV422Shader = 0;
 
 void InitShaders()
 {
@@ -377,6 +378,7 @@ void InitShaders()
 	g_bColorDodgeShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Color dodge.frag", asDefines );
 	g_bVividLightShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Vivid light.frag", asDefines );
 	g_hHardMixShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Hard mix.frag", asDefines );
+	g_hYUYV422Shader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/YUYV422.frag", asDefines );
 
 	// Bind attributes.
 	if( g_bTextureMatrixShader )
@@ -1596,6 +1598,7 @@ void RageDisplay_OGL::SetEffectMode( EffectMode effect )
 	case EffectMode_ColorDodge:	hShader = g_bColorDodgeShader; break;
 	case EffectMode_VividLight:	hShader = g_bVividLightShader; break;
 	case EffectMode_HardMix:	hShader = g_hHardMixShader; break;
+	case EffectMode_YUYV422:	hShader = g_hYUYV422Shader; break;
 	}
 
 	FlushGLErrors();
@@ -1606,6 +1609,15 @@ void RageDisplay_OGL::SetEffectMode( EffectMode effect )
 	GLint iTexture2 = GLExt.glGetUniformLocationARB( hShader, "Texture2" );
 	GLExt.glUniform1iARB( iTexture1, 0 );
 	GLExt.glUniform1iARB( iTexture2, 1 );
+
+	if( effect == EffectMode_YUYV422 )
+	{
+		GLint iTextureWidthUniform = GLExt.glGetUniformLocationARB( hShader, "TextureWidth" );
+		GLint iWidth;
+		glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &iWidth );
+		GLExt.glUniform1iARB( iTextureWidthUniform, iWidth );
+	}
+
 	AssertNoGLError();
 }
 
@@ -1619,6 +1631,7 @@ bool RageDisplay_OGL::IsEffectModeSupported( EffectMode effect )
 	case EffectMode_ColorDodge:	return g_bColorDodgeShader != 0;
 	case EffectMode_VividLight:	return g_bVividLightShader != 0;
 	case EffectMode_HardMix:	return g_hHardMixShader != 0;
+	case EffectMode_YUYV422:	return g_hYUYV422Shader != 0;
 	}
 
 	return false;
