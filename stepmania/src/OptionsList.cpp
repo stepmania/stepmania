@@ -472,6 +472,11 @@ void OptionsList::SwitchToCurrentRow()
 	m_Row[m_iCurrentRow].SetFromHandler( GetCurrentHandler() );
 	m_Row[m_iCurrentRow].SetUnderlines( m_bSelections[m_asMenuStack.back()], GetCurrentHandler() );
 	PositionCursor();
+
+	Message msg("OptionsMenuChanged");
+	msg.SetParam( "Player", m_pn );
+	msg.SetParam( "Menu", m_asMenuStack.back() );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 /* After setting up a new row, tween it on. */
