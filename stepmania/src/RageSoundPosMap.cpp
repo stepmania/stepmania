@@ -79,7 +79,7 @@ void pos_map_queue::Insert( int64_t iSourceFrame, int iFrames, int64_t iDestFram
 				last.m_iFrames = iDeleteFrames;
 
 				next.m_iSourceFrame += iDeleteFrames;
-				next.m_iFrames -= iFrames;
+				next.m_iFrames -= iDeleteFrames;
 				next.m_iDestFrame += lrintf( iDeleteFrames * next.m_fSourceToDestRatio );
 
 				m_pImpl->m_Queue.push_back( next );
