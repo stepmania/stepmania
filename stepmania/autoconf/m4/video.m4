@@ -12,11 +12,14 @@ if test "$with_ffmpeg" != "no"; then
 		fi
 		CFLAGS="-I$with_ffmpeg/include $CFLAGS"
 		CXXFLAGS="-I$with_ffmpeg/include $CXXFLAGS"
+		LIBS="$with_ffmpeg/lib/libavutil.a $LIBS"
+		AC_CHECK_FUNC([av_free], have_libavutil=yes, have_libavutil=no)
 		LIBS="$with_ffmpeg/lib/libavcodec.a $LIBS"
 		AC_CHECK_FUNC([avcodec_init], have_libavcodec=yes, have_libavcodec=no)
 		LIBS="$with_ffmpeg/lib/libavformat.a $LIBS"
 		AC_CHECK_FUNC([guess_format], have_libavformat=yes, have_libavformat=no)
 	else
+		AC_SEARCH_LIBS(av_free, [avutil], have_libavutil=yes,  have_libavutil=no)
 		AC_SEARCH_LIBS(avcodec_init, [avcodec], have_libavcodec=yes,  have_libavcodec=no)
 		AC_SEARCH_LIBS(guess_format, [avformat], have_libavformat=yes,  have_libavformat=no)
 	fi
@@ -33,13 +36,12 @@ if test "$have_libavcodec" = "yes"; then
 	]])],[],[have_libavcodec=no],[])
   AC_MSG_RESULT($have_libavcodec)
   if test "$have_libavcodec" = "yes"; then
-    AC_MSG_CHECKING([for libavcodec = 0.4.9-pre1])
+    AC_MSG_CHECKING([libavcodec revision])
     AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	#include <ffmpeg/avcodec.h>
 	int main()
 	{
-		return ( LIBAVCODEC_VERSION_INT == 0x000409 &&
-			 LIBAVCODEC_BUILD == 4718 ) ? 0:1;
+		return ( LIBAVCODEC_VERSION_INT == 0x332800 ) ? 0:1;
 	}
 	]])],[],[have_libavcodec=no],[])
     AC_MSG_RESULT($have_libavcodec)
@@ -47,13 +49,12 @@ if test "$have_libavcodec" = "yes"; then
 fi
 
 if test "$have_libavformat" = "yes"; then
-  AC_MSG_CHECKING([for libavformat = 0.4.9-pre1])
+  AC_MSG_CHECKING([libavformat revision])
   AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	#include <ffmpeg/avformat.h>
 	int main()
 	{
-		return ( LIBAVFORMAT_VERSION_INT == 0x000409 &&
-			 LIBAVFORMAT_BUILD == 4616 )? 0:1;
+		return ( LIBAVFORMAT_VERSION_INT == 0x330B00 )? 0:1;
 	}
 	]])],[],[have_libavformat=no],[])
   AC_MSG_RESULT($have_libavformat)
@@ -61,7 +62,7 @@ fi
 fi
 
 have_ffmpeg=no
-if test "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes"; then
+if test "$have_libavutil" = "yes" -a test "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes"; then
 	have_ffmpeg=yes
 	AC_DEFINE(HAVE_FFMPEG, 1, [FFMPEG support available])
 else
