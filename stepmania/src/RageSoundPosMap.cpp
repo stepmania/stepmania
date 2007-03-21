@@ -119,6 +119,9 @@ void pos_map_impl::Cleanup()
 
 int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 {
+	if( bApproximate )
+		*bApproximate = false;
+
 	if( IsEmpty() )
 	{
 		if( bApproximate )
