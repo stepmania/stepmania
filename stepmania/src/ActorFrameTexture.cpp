@@ -20,7 +20,8 @@ ActorFrameTexture::ActorFrameTexture()
 	m_pRenderTarget = NULL;
 }
 
-ActorFrameTexture::ActorFrameTexture( const ActorFrameTexture &cpy )
+ActorFrameTexture::ActorFrameTexture( const ActorFrameTexture &cpy ):
+	ActorFrame(cpy)
 {
 	FAIL_M( "ActorFrameTexture copy not implemented" );
 }
