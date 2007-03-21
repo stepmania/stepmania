@@ -75,12 +75,6 @@ void ScreenSelectMusic::Init()
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
 	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextSongButton") );
 
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
-
-	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 
-	 * Do this before anything that might look at GAMESTATE->m_iCurrentStageIndex. */
-	GAMESTATE->FinishStage();
-
 	FOREACH_ENUM( PlayerNumber, p )
 	{
 		m_bSelectIsDown[p] = false; // used by UpdateSelectButton
@@ -116,11 +110,6 @@ void ScreenSelectMusic::Init()
 		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
 		GAMESTATE->SetCurrentStyle( pStyle );
 	}
-	if( GAMESTATE->GetCurrentStyle() == NULL )
-		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
-
-	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
-		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before loading ScreenSelectMusic." );
 
 	/* Load low-res banners, if needed. */
 	BANNERCACHE->Demand();
@@ -190,6 +179,18 @@ void ScreenSelectMusic::Init()
 
 void ScreenSelectMusic::BeginScreen()
 {
+	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 
+	 * Do this before anything that might look at GAMESTATE->m_iCurrentStageIndex. */
+	GAMESTATE->FinishStage();
+
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
+
+	if( GAMESTATE->GetCurrentStyle() == NULL )
+		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
+
+	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
+		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before loading ScreenSelectMusic." );
+
 	OPTIONS_MENU_AVAILABLE.Load( m_sName, "OptionsMenuAvailable" );
 	
 	m_MusicWheel.BeginScreen();
