@@ -48,6 +48,7 @@ Sprite::Sprite( const Sprite &cpy ):
 	CPY( m_fSecsIntoState );
 	CPY( m_bUsingCustomTexCoords );
 	CPY( m_bSkipNextUpdate );
+	CPY( m_EffectMode );
 	memcpy( m_CustomTexCoords, cpy.m_CustomTexCoords, sizeof(m_CustomTexCoords) );
 	CPY( m_fRememberedClipWidth );
 	CPY( m_fRememberedClipHeight );
