@@ -1963,7 +1963,6 @@ unsigned RageDisplay_OGL::CreateTexture(
 	bool bGenerateMipMaps )
 {
 	ASSERT( pixfmt < NUM_PixelFormat );
-	ASSERT( pImg->w == power_of_two(pImg->w) && pImg->h == power_of_two(pImg->h) );
 
 
 	/* Find the pixel format of the surface we've been given. */
@@ -2089,8 +2088,13 @@ unsigned RageDisplay_OGL::CreateTexture(
 	{
 		glTexImage2D(
 			GL_TEXTURE_2D, 0, glTexFormat, 
-			pImg->w, pImg->h, 0,
-			glImageFormat, glImageType, pImg->pixels);
+			power_of_two(pImg->w), power_of_two(pImg->h), 0,
+			glImageFormat, glImageType, NULL );
+		if( pImg->pixels )
+			glTexSubImage2D( GL_TEXTURE_2D, 0,
+				0, 0,
+				pImg->w, pImg->h,
+				glImageFormat, glImageType, pImg->pixels );
 		
 		GLenum error = glGetError();
 		ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
