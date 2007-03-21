@@ -20,10 +20,15 @@ success () {
 }
 
 failure () {
-	if [ $verbose -gt 0 ]; then
-		echo "$msg...failed."
+	if [ $# -gt 0 ]; then
+		error=": $1"
 	else
-		echo failed.
+		error='.'
+	fi
+	if [ $verbose -gt 0 ]; then
+		echo "$msg...failed$error"
+	else
+		echo failed$error
 	fi
 	exit 1
 }
@@ -57,9 +62,9 @@ usage () {
 }
 
 version () {
-	echo 'build.sh (StepMania) 2.0'
-	echo 'Copyright (C) 2006 Steve Checkoway'
-	echo 'StepMania is Copyright (C) 2001-2006 Chris Danford et al.'
+	echo 'build.sh (StepMania) 2.5'
+	echo 'Copyright (C) 2006-2007 Steve Checkoway'
+	echo 'StepMania is Copyright (C) 2001-2007 Chris Danford et al.'
 	exit 0
 }
 
@@ -87,43 +92,46 @@ while [ $# -gt 0 ]; do
 		*)		usage 1			;;
 	esac
 done
-url=http://stepmania.sf.net
-ffmpeg=ffmpeg-0.4.9-pre1
-patch1=ffmpeg-0.4.9-pre1-sm.patch
-patch2=ffmpeg-0.4.9-pre1-gcc4-1.patch
-patch3=ffmpeg-0.4.9-pre1-altivec.patch
+revision=8448
+ffmpeg=ffmpeg-r$revision
+repository=svn://svn.mplayerhq.hu/ffmpeg/trunk/
 if [ ! -d $ffmpeg ]; then
-	if [ ! -f $ffmpeg.tar.gz ]; then
-		message 'Downloading ffmpeg'
-		if which wget &>/dev/null; then
-			dl=wget
-		elif which curl &>/dev/null; then
-			dl="curl -O -O"
-		else
-			failure
-		fi
-		call $dl $url/$ffmpeg.tar.gz $url/$patch1 \
-			$url/$patch2 $url/$patch3
+	message 'Downloading ffmpeg'
+	if which svn &>/dev/null; then
+		call svn co -r $revision $repository $ffmpeg
+	else
+		failure 'Install subversion.'
 	fi
-	message 'Decompressing ffmpeg'
-	call tar zxf $ffmpeg.tar.gz
-	message 'Patching ffmpeg[1]'
-	call patch -p0 "<$patch1"
-	message 'Patching ffmpeg[2]'
-	call patch -p0 "<$patch2"
-	message 'Patching ffmpeg[3]'
-	call patch -p0 "<$patch3"
 fi
 
 if [ -n "$s_download" ]; then exit 0; fi
+args='--disable-shared --enable-static --disable-debug --disable-vhook
+--enable-memalign-hack --disable-network --enable-small
+--disable-encoders --disable-ffmpeg --disable-ffserver
+--disable-ffplay --disable-muxers --enable-demuxer=avi
+--enable-demuxer=h261 --enable-demuxer=h263 --enable-demuxer=h264
+--enable-demuxer=m4v --enable-demuxer=mjpeg --enable-demuxer=mov
+--enable-demuxer=mpegps --enable-demuxer=mpegts
+--enable-demuxer=mpegvideo --enable-demuxer=ogg
+--enable-demuxer=rawvideo --enable-demuxer=yuv4mpegpipe
+--disable-decoders   --enable-decoder=h261 --enable-decoder=h263
+--enable-decoder=h263i --enable-decoder=h264 --enable-decoder=huffyuv
+--enable-decoder=mjpeg --enable-decoder=mjpegb
+--enable-decoder=mpeg_xvmc --enable-decoder=mpeg1video
+--enable-decoder=mpeg2video --enable-decoder=mpeg4
+--enable-decoder=mpegvideo --enable-decoder=msmpeg4v1
+--enable-decoder=msmpeg4v2 --enable-decoder=msmpeg4v3
+--enable-decoder=rawvideo --enable-decoder=theora --disable-parsers
+--enable-parser=h261 --enable-parser=h263 --enable-parser=h264
+--enable-parser=mjpeg --enable-parser=mpeg4video
+--enable-parser=mpegaudio --enable-parser=mpegvideo
+--enable-parser=ac3'
 if [ ! -f $ffmpeg/_inst/lib/libavcodec.a ]; then
 	cd $ffmpeg
 	message 'Configuring ffmpeg'
-	call ./configure --prefix="`pwd`/_inst"
+	call ./configure --prefix="`pwd`/_inst" $args
 	message 'Building ffmpeg'
-	# Hack around broken configure script
-	mkdir -p _inst/lib
-	call make installlib
+	call make install-libs install-headers
 	cd ..
 fi
 if [ -n "$s_ffmpeg" ]; then exit 0; fi
@@ -148,7 +156,7 @@ if [ ! -f stepmania -o ! -f GtkModule.so ]; then
 fi
 
 
-# (c) 2006 Steve Checkoway
+# (c) 2006-2007 Steve Checkoway
 # All rights reserved.
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a
