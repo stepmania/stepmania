@@ -14,6 +14,9 @@ typedef signed long        SInt32;
 typedef signed long long   SInt64;
 typedef unsigned long long UInt64;
 
+#define __STDC_CONSTANT_MACROS
+#include <stdint.h>
+
 // We cannot include MacTypes.h here because it defines Style which conflicts with struct Style.
 #define __MACTYPES__
 #include <libkern/OSByteOrder.h>
@@ -220,6 +223,12 @@ namespace std
 
 // Cleanup macro
 #undef _GLIB_CHECK
+
+#include <sys/errno.h>
+#ifndef EILSEQ
+#define EILSEQ      92
+#endif
+#define attribute_deprecated // Shut ffmpeg up!
 
 #endif
 
