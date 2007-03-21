@@ -62,7 +62,7 @@ fi
 fi
 
 have_ffmpeg=no
-if test "$have_libavutil" = "yes" -a test "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes"; then
+if test "$have_libavutil" = "yes" -a "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes"; then
 	have_ffmpeg=yes
 	AC_DEFINE(HAVE_FFMPEG, 1, [FFMPEG support available])
 else
