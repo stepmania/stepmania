@@ -30,9 +30,10 @@ public:
 
 	RString Open( RString sFile );
 	void Close();
+	void Rewind() { } // XXX
 
 	int GetFrame( RageSurface *pOut, float fTargetTime );
-	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor );
+	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr &fmtout );
 
 	int GetWidth() const { return m_TheoraInfo.frame_width; }
 	int GetHeight() const { return m_TheoraInfo.frame_height; }
@@ -265,9 +266,9 @@ int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
 	}
 }
 
-RageSurface *MovieDecoder_Theora::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor )
+RageSurface *MovieDecoder_Theora::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr &fmtout )
 {
-	return RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, *ConvertValue<int>(&m_OutputPixFmt) );
+	return RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, *ConvertValue<int>(&m_OutputPixFmt), fmtout );
 }
 
 void MovieDecoder_Theora::ConvertToSurface( RageSurface *pSurface ) const
@@ -347,7 +348,7 @@ public:
 	void Close();
 
 	int GetFrame( RageSurface *pOut, float fTargetTime );
-	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor );
+	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr &fmtout );
 
 	int GetWidth() const { return m_TheoraInfo.frame_width; }
 	int GetHeight() const { return m_TheoraInfo.frame_height; }
@@ -602,7 +603,7 @@ int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
 	}
 }
 
-RageSurface *MovieDecoder_Theora::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor )
+RageSurface *MovieDecoder_Theora::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr &fmtout )
 {
 	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, *ConvertValue<int>(&m_OutputPixFmt) );
 }

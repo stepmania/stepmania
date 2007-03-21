@@ -5,7 +5,9 @@
 #include "RageLog.h"
 #include "RageSurface.h"
 #include "RageTextureManager.h"
+#include "RageTextureRenderTarget.h"
 #include "RageUtil.h"
+#include "Sprite.h"
 
 #if defined(WIN32) && !defined(XBOX)
 #include "archutils/Win32/ErrorStrings.h"
@@ -22,6 +24,8 @@ MovieTexture_Generic::MovieTexture_Generic( RageTextureID ID, MovieDecoder *pDec
 	m_pDecoder = pDecoder;
 
 	m_uTexHandle = 0;
+	m_pRenderTarget = NULL;
+	m_pTextureIntermediate = NULL;
 	m_bLoop = true;
 	m_State = DECODER_QUIT; /* it's quit until we call StartThread */
 	m_pSurface = NULL;
@@ -31,6 +35,7 @@ MovieTexture_Generic::MovieTexture_Generic( RageTextureID ID, MovieDecoder *pDec
 	m_fClock = 0;
 	m_bFrameSkipMode = false;
 	m_bThreaded = PREFSMAN->m_bThreadedMovieDecode.Get();
+	m_pSprite = new Sprite;
 }
 
 RString MovieTexture_Generic::Init()
@@ -75,6 +80,7 @@ MovieTexture_Generic::~MovieTexture_Generic()
 	DestroyTexture();
 
 	delete m_pDecoder;
+	delete m_pSprite;
 }
 
 /* Delete the surface and texture.  The decoding thread must be stopped, and this
@@ -89,12 +95,91 @@ void MovieTexture_Generic::DestroyTexture()
 		DISPLAY->DeleteTexture( m_uTexHandle );
 		m_uTexHandle = 0;
 	}
+
+	delete m_pRenderTarget;
+	m_pRenderTarget = NULL;
+	delete m_pTextureIntermediate;
+	m_pTextureIntermediate = NULL;
 }
 
+class RageMovieTexture_Generic_Intermediate : public RageTexture
+{
+public:
+	RageMovieTexture_Generic_Intermediate( RageTextureID ID, int iWidth, int iHeight, 
+		int iImageWidth, int iImageHeight, int iTextureWidth, int iTextureHeight,
+		RageSurfaceFormat SurfaceFormat, PixelFormat pixfmt ):
+		RageTexture(ID),
+		m_SurfaceFormat( SurfaceFormat )
+	{
+		m_PixFmt = pixfmt;
+		m_iSourceWidth = iWidth;
+		m_iSourceHeight = iHeight;
+/*		int iMaxSize = min( GetID().iMaxSize, DISPLAY->GetMaxTextureSize() );
+		m_iImageWidth = min( m_iSourceWidth, iMaxSize );
+		m_iImageHeight = min( m_iSourceHeight, iMaxSize );
+		m_iTextureWidth = power_of_two( m_iImageWidth );
+		m_iTextureHeight = power_of_two( m_iImageHeight );
+*/
+		
+		m_iImageWidth = iImageWidth;
+		m_iImageHeight = iImageHeight;
+		m_iTextureWidth = iTextureWidth;
+		m_iTextureHeight = iTextureHeight;
+
+		CreateFrameRects();
+
+		m_uTexHandle = 0;
+		CreateTexture();
+	}
+	virtual ~RageMovieTexture_Generic_Intermediate()
+	{
+		if( m_uTexHandle )
+		{
+			DISPLAY->DeleteTexture( m_uTexHandle );
+			m_uTexHandle = 0;
+		}
+	}
+
+	virtual void Invalidate() { m_uTexHandle = 0; }
+	virtual void Reload() { }
+	virtual unsigned GetTexHandle() const
+	{
+		return m_uTexHandle;
+	}
+
+	bool IsAMovie() const { return true; }
+private:
+	void CreateTexture()
+	{
+		if( m_uTexHandle )
+			return;
+
+		RageSurface *pSurface = CreateSurfaceFrom( m_iImageWidth, m_iImageHeight,
+			m_SurfaceFormat.BitsPerPixel,
+			m_SurfaceFormat.Mask[0],
+			m_SurfaceFormat.Mask[1],
+			m_SurfaceFormat.Mask[2],
+			m_SurfaceFormat.Mask[3], NULL, 1 );
+
+		m_uTexHandle = DISPLAY->CreateTexture( m_PixFmt, pSurface, false );
+		delete pSurface;
+	}
+
+	unsigned m_uTexHandle;
+	RageSurfaceFormat m_SurfaceFormat;
+	PixelFormat m_PixFmt;
+};
+
+void MovieTexture_Generic::Invalidate()
+{
+	m_uTexHandle = 0;
+	if( m_pTextureIntermediate != NULL )
+		m_pTextureIntermediate->Invalidate();
+}
 
 void MovieTexture_Generic::CreateTexture()
 {
-	if( m_uTexHandle )
+	if( m_uTexHandle || m_pRenderTarget != NULL )
 		return;
 
 	CHECKPOINT;
@@ -117,9 +202,9 @@ void MovieTexture_Generic::CreateTexture()
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two( m_iImageWidth );
 	m_iTextureHeight = power_of_two( m_iImageHeight );
-
+	MovieDecoderPixelFormatYCbCr fmt = PixelFormatYCbCr_Invalid;
 	if( m_pSurface == NULL )
-		m_pSurface = m_pDecoder->CreateCompatibleSurface( m_iTextureWidth, m_iTextureHeight, TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32 );
+		m_pSurface = m_pDecoder->CreateCompatibleSurface( m_iImageWidth, m_iImageHeight, TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32, fmt );
 
 	PixelFormat pixfmt = DISPLAY->FindPixelFormat( m_pSurface->format->BitsPerPixel,
 			m_pSurface->format->Mask[0],
@@ -156,9 +241,46 @@ void MovieTexture_Generic::CreateTexture()
 		}
 	}
 
+	if( fmt != PixelFormatYCbCr_Invalid )
+	{
+		SAFE_DELETE( m_pTextureIntermediate );
+		m_pSprite->UnloadTexture();
+
+		/* Create the render target.  This will receive the final, converted texture. */
+		RenderTargetParam param;
+		param.iWidth = m_iImageWidth;
+		param.iHeight = m_iImageHeight;
+
+		RageTextureID TargetID( GetID() );
+		TargetID.filename += " target";
+		m_pRenderTarget = new RageTextureRenderTarget( TargetID, param );
+
+		/* Create the intermediate texture.  This receives the YUV image. */
+		RageTextureID IntermedID( GetID() );
+		IntermedID.filename += " intermediate";
+
+		m_pTextureIntermediate = new RageMovieTexture_Generic_Intermediate( IntermedID,
+			m_pDecoder->GetWidth(), m_pDecoder->GetHeight(),
+			m_pSurface->w, m_pSurface->h,
+			power_of_two(m_pSurface->w), power_of_two(m_pSurface->h),
+			*m_pSurface->format, pixfmt );
+
+		/* Configure the sprite.  This blits the intermediate onto the ifnal render target. */
+		m_pSprite->SetHorizAlign( 0 );
+		m_pSprite->SetVertAlign( 0 );
+
+		/* Hack: Sprite wants to take ownership of the texture, and will decrement the refcount
+		 * when it unloads the texture.  Normally we'd make a "copy", but we can't access
+		 * RageTextureManager from here.  Just increment the refcount. */
+		++m_pTextureIntermediate->m_iRefCount;
+		m_pSprite->SetTexture( m_pTextureIntermediate );
+		m_pSprite->SetEffectMode( GetEffectMode(fmt) );
+
+		return;
+	}
+
 	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, m_pSurface, false );
 }
-
 
 /* Handle decoding for a frame.  Return true if a frame was decoded, false if not
  * (due to quit, error, EOF, etc).  If true is returned, we'll be in FRAME_DECODED. */
@@ -187,10 +309,7 @@ bool MovieTexture_Generic::DecodeFrame()
 			float fDelay = m_pDecoder->GetFrameDuration();
 
 			/* Restart. */
-			m_pDecoder->Close();
-			RString sError = m_pDecoder->Open( GetID().filename );
-			if( sError != "" )
-				RageException::Throw( "Error rewinding stream \"%s\": %s", GetID().filename.c_str(), sError.c_str() );
+			m_pDecoder->Rewind();
 
 			m_fClock = -fDelay;
 		}
@@ -385,6 +504,7 @@ void MovieTexture_Generic::Update(float fDeltaTime)
 	LOG->MapLog( "movie_looping", "MovieTexture_Generic::Update looping" );
 }
 
+
 /* Call from the main thread when m_ImageWaiting == FRAME_WAITING to update the
  * texture.  Sets FRAME_NONE.  Does not signal m_BufferFinished. */
 void MovieTexture_Generic::UpdateFrame()
@@ -394,15 +514,45 @@ void MovieTexture_Generic::UpdateFrame()
 	/* Just in case we were invalidated: */
 	CreateTexture();
 
-	CHECKPOINT;
-	DISPLAY->UpdateTexture(
-		m_uTexHandle,
-		m_pSurface,
-		0, 0,
-		m_iImageWidth, m_iImageHeight );
-	CHECKPOINT;
+	if( m_pRenderTarget != NULL )
+	{
+		CHECKPOINT;
+
+		DISPLAY->UpdateTexture(
+			m_pTextureIntermediate->GetTexHandle(),
+			m_pSurface,
+			0, 0,
+			m_pSurface->w, m_pSurface->h );
+		CHECKPOINT;
+
+		m_pRenderTarget->BeginRenderingTo( false );
+		m_pSprite->Draw();
+		m_pRenderTarget->FinishRenderingTo();
+	}
+	else
+	{
+		CHECKPOINT;
+		DISPLAY->UpdateTexture(
+			m_uTexHandle,
+			m_pSurface,
+			0, 0,
+			m_iImageWidth, m_iImageHeight );
+		CHECKPOINT;
+	}
 
 	m_ImageWaiting = FRAME_NONE;
+}
+
+static EffectMode EffectModes[] = 
+{
+	EffectMode_YUYV422,
+};
+COMPILE_ASSERT( ARRAYSIZE(EffectModes) == NUM_PixelFormatYCbCr );
+
+EffectMode MovieTexture_Generic::GetEffectMode( MovieDecoderPixelFormatYCbCr fmt )
+{
+	ASSERT( fmt != PixelFormatYCbCr_Invalid );
+	return EffectModes[fmt];
 }
 
 void MovieTexture_Generic::Reload()
@@ -468,6 +618,14 @@ void MovieTexture_Generic::DecodeSeconds( float fSeconds )
 	 * and not on the next frame.  Update() may have already been called for this
 	 * frame; call it again to be sure. */
 	Update(0);
+}
+
+unsigned MovieTexture_Generic::GetTexHandle() const
+{
+	if( m_pRenderTarget != NULL )
+		return m_pRenderTarget->GetTexHandle();
+
+	return m_uTexHandle;
 }
 
 /*

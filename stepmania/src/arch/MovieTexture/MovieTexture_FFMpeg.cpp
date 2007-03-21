@@ -26,7 +26,19 @@ static struct AVPixelFormat_t
 	avcodec::PixelFormat pf;
 	bool bHighColor;
 	bool bByteSwapOnLittleEndian;
+	MovieDecoderPixelFormatYCbCr YUV;
 } AVPixelFormats[] = {
+	{
+		32,
+		{ 0xFF000000,
+		  0x00FF0000,
+		  0x0000FF00,
+		  0x000000FF },
+		avcodec::PIX_FMT_YUYV422,
+		false, /* N/A */
+		true,
+		PixelFormatYCbCr_YUYV422,
+	},
 	{ 
 		/* This format is really ARGB, and is affected by endianness, unlike PIX_FMT_RGB24
 		 * and PIX_FMT_BGR24. */
@@ -37,7 +49,8 @@ static struct AVPixelFormat_t
 		  0xFF000000 },
 		avcodec::PIX_FMT_RGBA32,
 		true,
-		false
+		false,
+		PixelFormatYCbCr_Invalid,
 	},
 	{ 
 		24,
@@ -47,7 +60,8 @@ static struct AVPixelFormat_t
 		  0x000000 },
 		avcodec::PIX_FMT_RGB24,
 		true,
-		true
+		true,
+		PixelFormatYCbCr_Invalid,
 	},
 	{ 
 		24,
@@ -57,17 +71,19 @@ static struct AVPixelFormat_t
 		  0x000000 },
 		avcodec::PIX_FMT_BGR24,
 		true,
-		true
+		true,
+		PixelFormatYCbCr_Invalid,
 	},
 	{
 		16,
 		{ 0x7C00,
 		  0x03E0,
 		  0x001F,
-		  0x8000 },
+		  0x0000 },
 		avcodec::PIX_FMT_RGB555,
 		false,
-		false
+		false,
+		PixelFormatYCbCr_Invalid,
 	},
 	{ 0, { 0,0,0,0 }, avcodec::PIX_FMT_NB, true, false }
 };
@@ -107,8 +123,16 @@ static int FindCompatibleAVFormat( bool bHighColor )
 	for( int i = 0; AVPixelFormats[i].bpp; ++i )
 	{
 		AVPixelFormat_t &fmt = AVPixelFormats[i];
-		if( fmt.bHighColor != bHighColor )
+		if( fmt.YUV != PixelFormatYCbCr_Invalid )
+		{
+			EffectMode em = MovieTexture_Generic::GetEffectMode( fmt.YUV );
+			if( !DISPLAY->IsEffectModeSupported(em) )
+				continue;
+		}
+		else if( fmt.bHighColor != bHighColor )
+		{
 			continue;
+		}
 
 		PixelFormat pixfmt = DISPLAY->FindPixelFormat( fmt.bpp,
 				fmt.masks[0],
@@ -133,10 +157,10 @@ public:
 	MovieTexture_FFMpeg( RageTextureID ID );
 
 	static void RegisterProtocols();
-	static RageSurface *AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt );
+	static RageSurface *AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt, MovieDecoderPixelFormatYCbCr &fmtout );
 };
 
-RageSurface *RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt )
+RageSurface *RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt, MovieDecoderPixelFormatYCbCr &fmtout )
 {
 	FixLilEndian();
 
@@ -156,9 +180,13 @@ RageSurface *RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( int 
 	
 	const AVPixelFormat_t *pfd = &AVPixelFormats[iAVTexfmtIndex];
 	iAVTexfmt = pfd->pf;
+	fmtout = pfd->YUV;
 
-	LOG->Trace( "Texture pixel format: %i (%ibpp, %08x %08x %08x %08x)", iAVTexfmt,
+	LOG->Trace( "Texture pixel format: %i %i (%ibpp, %08x %08x %08x %08x)", iAVTexfmt, fmtout,
 		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
+
+	if( pfd->YUV == PixelFormatYCbCr_YUYV422 )
+		iTextureWidth /= 2;
 
 	return CreateSurface( iTextureWidth, iTextureHeight, pfd->bpp,
 		pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
@@ -172,19 +200,21 @@ public:
 
 	RString Open( RString sFile );
 	void Close();
+	void Rewind();
 
 	int GetFrame( RageSurface *pOut, float fTargetTime );
 
-	int GetWidth() const { return m_pStream->codec.width; }
-	int GetHeight() const { return m_pStream->codec.height; }
+	int GetWidth() const { return m_pStream->codec->width; }
+	int GetHeight() const { return m_pStream->codec->height; }
 
-	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor );
+	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr &fmtout );
 
 	float GetTimestamp() const;
 	float GetFrameDuration() const;
 
 private:
 	void Init();
+	RString OpenCodec();
 	int ReadPacket();
 	int DecodePacket( RageSurface *pOut, float fTargetTime );
 	void ConvertToSurface( RageSurface *pSurface ) const;
@@ -276,6 +306,7 @@ float MovieDecoder_FFMpeg::GetFrameDuration() const
 	return m_fLastFrameDelay;
 }
 
+
 /* Read a packet.  Return -1 on error, 0 on EOF, 1 on OK. */
 int MovieDecoder_FFMpeg::ReadPacket()
 {
@@ -313,7 +344,6 @@ int MovieDecoder_FFMpeg::ReadPacket()
 	}
 }
 
-
 /* Decode data from the current packet.  Return -1 on error, 0 if the packet is finished,
  * and 1 if we have a frame (we may have more data in the packet). */
 int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
@@ -325,8 +355,8 @@ int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
 	{
 		if( m_bGetNextTimestamp )
 		{
-			if (m_Packet.dts != int64_t(AV_NOPTS_VALUE))
-				m_fPTS = (float)m_Packet.dts / AV_TIME_BASE;
+			if (m_Packet.pts != int64_t(AV_NOPTS_VALUE))
+				m_fPTS = m_Packet.dts * av_q2d(m_pStream->time_base);
 			else
 				m_fPTS = -1;
 			m_bGetNextTimestamp = false;
@@ -342,7 +372,7 @@ int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
 		bool bSkipThisFrame = 
 			fTargetTime != -1 &&
 			GetTimestamp() + GetFrameDuration() <= fTargetTime &&
-			(m_pStream->codec.frame_number % 2) == 0;
+			(m_pStream->codec->frame_number % 2) == 0;
 
 		int iGotFrame;
 		CHECKPOINT;
@@ -350,7 +380,7 @@ int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
 		 * to give it a buffer to read from since it tries to read anyway. */
 		static uint8_t dummy[FF_INPUT_BUFFER_PADDING_SIZE] = { 0 };
 		int len = avcodec::avcodec_decode_video(
-				&m_pStream->codec, 
+				m_pStream->codec, 
 				&m_Frame, &iGotFrame,
 				m_Packet.size? m_Packet.data:dummy, m_Packet.size );
 		CHECKPOINT;
@@ -384,7 +414,7 @@ int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
 		}
 
 		/* Length of this frame: */
-		m_fLastFrameDelay = (float)m_pStream->codec.frame_rate_base / m_pStream->codec.frame_rate;
+		m_fLastFrameDelay = (float)m_pStream->codec->time_base.num / m_pStream->codec->time_base.den;
 		m_fLastFrameDelay += m_Frame.repeat_pict * (m_fLastFrameDelay * 0.5f);
 
 		++m_iFrameNumber;
@@ -425,17 +455,17 @@ void MovieDecoder_FFMpeg::ConvertToSurface( RageSurface *pSurface ) const
 	pict.linesize[0] = pSurface->pitch;
 
 	avcodec::img_convert( &pict, m_AVTexfmt,
-			(avcodec::AVPicture *) &m_Frame, m_pStream->codec.pix_fmt, 
-			m_pStream->codec.width, m_pStream->codec.height );
+			(avcodec::AVPicture *) &m_Frame, m_pStream->codec->pix_fmt, 
+			m_pStream->codec->width, m_pStream->codec->height );
 }
 
 static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
 {
 	ASSERT_M( m_fctx->nb_streams <= MAX_STREAMS, ssprintf( "m_fctx->nb_streams = %d", m_fctx->nb_streams) );
-	for( int stream = 0; stream < m_fctx->nb_streams; ++stream )
+	for( unsigned stream = 0; stream < m_fctx->nb_streams; ++stream )
 	{
 		avcodec::AVStream *enc = m_fctx->streams[stream];
-		if( enc->codec.codec_type == avcodec::CODEC_TYPE_VIDEO )
+		if( enc->codec->codec_type == avcodec::CODEC_TYPE_VIDEO )
 			return enc;
 	}
 	return NULL;
@@ -459,7 +489,6 @@ static RString averr_ssprintf( int err, const char *fmt, ... )
 	case AVERROR_INVALIDDATA:	Error = "invalid data found"; break;
 	case AVERROR_NOMEM:		Error = "not enough memory"; break;
 	case AVERROR_NOFMT:		Error = "unknown format"; break;
-	case AVERROR_UNKNOWN:		Error = "unknown error"; break;
 	default: Error = ssprintf( "unknown error %i", err ); break;
 	}
 
@@ -511,6 +540,12 @@ int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
 avcodec::offset_t URLRageFile_seek( avcodec::URLContext *h, avcodec::offset_t pos, int whence )
 {
 	RageFile *f = (RageFile *) h->priv_data;
+	if( whence == AVSEEK_SIZE )
+		return f->Tell();
+
+	if( whence != SEEK_SET && whence != SEEK_CUR && whence != SEEK_END )
+		return -1;
+
 	return f->Seek( (int) pos, whence );
 }
 
@@ -555,34 +590,50 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 	if( ret < 0 )
 		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
 
-	avcodec::AVStream *stream = FindVideoStream( m_fctx );
-	if ( stream == NULL )
-		return ssprintf( "AVCodec (%s): Couldn't find any video streams", sFile.c_str() );
+	avcodec::AVStream *pStream = FindVideoStream( m_fctx );
+	if( pStream == NULL )
+		return "Couldn't find any video streams";
+	m_pStream = pStream;
 
-	if( stream->codec.codec_id == avcodec::CODEC_ID_NONE )
-		return ssprintf( "AVCodec (%s): Unsupported codec %08x", sFile.c_str(), stream->codec.codec_tag );
+	if( m_pStream->codec->codec_id == avcodec::CODEC_ID_NONE )
+		return ssprintf( "Unsupported codec %08x", m_pStream->codec->codec_tag );
 
-	avcodec::AVCodec *codec = avcodec::avcodec_find_decoder( stream->codec.codec_id );
-	if( codec == NULL )
-		return ssprintf( "AVCodec (%s): Couldn't find decoder %i", sFile.c_str(), stream->codec.codec_id );
+	RString sError = OpenCodec();
+	if( !sError.empty() )
+		return ssprintf( "AVCodec (%s): %s", sFile.c_str(), sError.c_str() );
 
-	LOG->Trace("Opening codec %s", codec->name );
-	ret = avcodec::avcodec_open( &stream->codec, codec );
-	if ( ret < 0 )
-		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't open codec \"%s\"", sFile.c_str(), codec->name) );
-	m_pStream = stream;
+	LOG->Trace( "Bitrate: %i", m_pStream->codec->bit_rate );
+	LOG->Trace( "Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(m_pStream->codec->pix_fmt) );
 
-	LOG->Trace( "Bitrate: %i", m_pStream->codec.bit_rate );
-	LOG->Trace( "Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(m_pStream->codec.pix_fmt) );
+	return RString();
+}
+
+RString MovieDecoder_FFMpeg::OpenCodec()
+{
+	Init();
+
+	ASSERT( m_pStream );
+	if( m_pStream->codec->codec )
+		avcodec::avcodec_close( m_pStream->codec );
+
+	avcodec::AVCodec *pCodec = avcodec::avcodec_find_decoder( m_pStream->codec->codec_id );
+	if( pCodec == NULL )
+		return ssprintf( "Couldn't find decoder %i", m_pStream->codec->codec_id );
+
+	LOG->Trace("Opening codec %s", pCodec->name );
+	int ret = avcodec::avcodec_open( m_pStream->codec, pCodec );
+	if( ret < 0 )
+		return ssprintf( averr_ssprintf(ret, "Couldn't open codec \"%s\"", pCodec->name) );
+	ASSERT( m_pStream->codec->codec );
 
 	return RString();
 }
 
 void MovieDecoder_FFMpeg::Close()
 {
-	if( m_pStream )
+	if( m_pStream && m_pStream->codec->codec )
 	{
-		avcodec::avcodec_close( &m_pStream->codec );
+		avcodec::avcodec_close( m_pStream->codec );
 		m_pStream = NULL;
 	}
 
@@ -595,10 +646,15 @@ void MovieDecoder_FFMpeg::Close()
 	Init();
 }
 
-
-RageSurface *MovieDecoder_FFMpeg::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor )
+void MovieDecoder_FFMpeg::Rewind()
 {
-	return RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, *ConvertValue<int>(&m_AVTexfmt) );
+	avcodec::av_seek_frame( m_fctx, -1, 0, 0 );
+	OpenCodec();
+}
+
+RageSurface *MovieDecoder_FFMpeg::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr &fmtout )
+{
+	return RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, *ConvertValue<int>(&m_AVTexfmt), fmtout );
 }
 
 MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):

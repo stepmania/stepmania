@@ -6,6 +6,16 @@
 
 class FFMpeg_Helper;
 struct RageSurface;
+class RageTextureRenderTarget;
+class Sprite;
+
+enum MovieDecoderPixelFormatYCbCr
+{
+	PixelFormatYCbCr_YUYV422,
+	NUM_PixelFormatYCbCr,
+	PixelFormatYCbCr_Invalid
+};
+
 
 class MovieDecoder
 {
@@ -14,6 +24,7 @@ public:
 
 	virtual RString Open( RString sFile ) = 0;
 	virtual void Close() = 0;
+	virtual void Rewind() = 0;
 
 	/*
 	 * Decode a frame.  Return 1 on success, 0 on EOF, -1 on fatal error.
@@ -35,12 +46,18 @@ public:
 	/* Return the aspect ratio of a pixel in the image.  Usually 1. */
 	virtual float GetSourceAspectRatio() const { return 1.0f; }
 
-	/* Create a surface acceptable to pass to GetFrame.  This should be
+	/*
+	 * Create a surface acceptable to pass to GetFrame.  This should be
 	 * a surface which is realtime-compatible with DISPLAY, and should
 	 * attempt to obey bPreferHighColor.  The given size will usually be
 	 * the next power of two higher than GetWidth/GetHeight, but on systems
-	 * with limited texture resolution, may be smaller. */
-	virtual RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor ) = 0;
+	 * with limited texture resolution, may be smaller.
+	 *
+	 * If DISPLAY supports the EffectMode_YUYV422 blend mode, this may be
+	 * a packed-pixel YUV surface.  UYVY maps to RGBA, respectively.  If
+	 * used, set fmtout.
+	 */
+	virtual RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr &fmtout ) = 0;
 
 	/* The following functions return information about the current frame,
 	 * decoded by the last successful call to GetFrame, and will never be
@@ -63,7 +80,7 @@ public:
 	RString Init();
 
 	/* only called by RageTextureManager::InvalidateTextures */
-	void Invalidate() { m_uTexHandle = 0; }
+	void Invalidate();
 	void Update( float fDeltaTime );
 
 	virtual void Reload();
@@ -72,7 +89,9 @@ public:
 	virtual void DecodeSeconds( float fSeconds );
 	virtual void SetPlaybackRate( float fRate ) { m_fRate = fRate; }
 	void SetLooping( bool bLooping=true ) { m_bLoop = bLooping; }
-	unsigned GetTexHandle() const { return m_uTexHandle; }
+	unsigned GetTexHandle() const;
+
+	static EffectMode GetEffectMode( MovieDecoderPixelFormatYCbCr fmt );
 
 private:
 	MovieDecoder *m_pDecoder;
@@ -101,6 +120,9 @@ private:
 	enum State { DECODER_QUIT, DECODER_RUNNING } m_State;
 
 	unsigned m_uTexHandle;
+	RageTextureRenderTarget *m_pRenderTarget;
+	RageTexture *m_pTextureIntermediate;
+	Sprite *m_pSprite;
 
 	RageSurface *m_pSurface;
 
