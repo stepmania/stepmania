@@ -77,10 +77,13 @@ MovieTexture_Generic::~MovieTexture_Generic()
 	StopThread();
 	if( m_pDecoder )
 		m_pDecoder->Close();
+
+	/* m_pSprite may reference the texture; delete it before DestroyTexture. */
+	delete m_pSprite;
+	
 	DestroyTexture();
 
 	delete m_pDecoder;
-	delete m_pSprite;
 }
 
 /* Delete the surface and texture.  The decoding thread must be stopped, and this
