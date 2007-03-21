@@ -596,17 +596,18 @@ void OptionsList::SelectItem( const RString &sRowName, int iMenuItem )
 		bSelections[iMenuItem] = true;
 	}
 
+	ExportRow( sRowName );
+
+	UpdateMenuFromSelections();
+
 	if( pHandler->m_Def.m_bOneChoiceForAllPlayers && m_pLinked != NULL )
 	{
 		vector<bool> &bLinkedSelections = m_pLinked->m_bSelections[sRowName];
 		bLinkedSelections = bSelections;
+
 		if( m_pLinked->IsOpened() )
 			m_pLinked->UpdateMenuFromSelections();
 	}
-
-	ExportRow( sRowName );
-
-	UpdateMenuFromSelections();
 }
 
 void OptionsList::UpdateMenuFromSelections()
