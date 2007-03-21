@@ -1,5 +1,5 @@
 Frameworks:
-ffmpeg-0.4.9-pre1
+ffmpeg-r8448
 libmad-0.1.5.1b
 
 Static Libraries:
@@ -12,7 +12,8 @@ zlib-1.2.3
 
 Directions:
 1. Decompress all of those in the Libraries directory.
-2. Patch ffmpeg using ffmpeg-0.4.9-pre1-sm.patch.
+2. Get ffmpeg via
+svn co -r 8448 svn://svn.mplayerhq.hu/ffmpeg/trunk/ ffmpeg-r8448
 3. Open Libraries.xcode and build target all.
 4. Copy the frameworks (except for ffmpeg-i386.framework) to
 stepmania/PBProject/Frameworks and the static libraries to
