@@ -16,8 +16,7 @@
 
 
 MovieTexture_Generic::MovieTexture_Generic( RageTextureID ID, MovieDecoder *pDecoder ):
-	RageMovieTexture( ID ),
-	m_BufferFinished( "BufferFinished", 0 )
+	RageMovieTexture( ID )
 {
 	LOG->Trace( "MovieTexture_Generic::MovieTexture_Generic(%s)", ID.filename.c_str() );
 
@@ -27,14 +26,13 @@ MovieTexture_Generic::MovieTexture_Generic( RageTextureID ID, MovieDecoder *pDec
 	m_pRenderTarget = NULL;
 	m_pTextureIntermediate = NULL;
 	m_bLoop = true;
-	m_State = DECODER_QUIT; /* it's quit until we call StartThread */
 	m_pSurface = NULL;
+	m_pTextureLock = NULL;
 	m_ImageWaiting = FRAME_NONE;
 	m_fRate = 1;
 	m_bWantRewind = false;
 	m_fClock = 0;
 	m_bFrameSkipMode = false;
-	m_bThreaded = PREFSMAN->m_bThreadedMovieDecode.Get();
 	m_pSprite = new Sprite;
 }
 
@@ -48,7 +46,7 @@ RString MovieTexture_Generic::Init()
 	CreateFrameRects();
 
 	/* Decode one frame, to guarantee that the texture is drawn when this function returns. */
-	int ret = m_pDecoder->GetFrame( m_pSurface, -1 );
+	int ret = GetFrame( -1 );
 	if( ret == -1 )
 		return ssprintf( "%s: error getting first frame", GetID().filename.c_str() );
 	if( ret == 0 )
@@ -67,14 +65,11 @@ RString MovieTexture_Generic::Init()
 
 	CHECKPOINT;
 
-	StartThread();
-
 	return RString();
 }
 
 MovieTexture_Generic::~MovieTexture_Generic()
 {
-	StopThread();
 	if( m_pDecoder )
 		m_pDecoder->Close();
 
@@ -92,6 +87,9 @@ void MovieTexture_Generic::DestroyTexture()
 {
 	delete m_pSurface;
 	m_pSurface = NULL;
+
+	delete m_pTextureLock;
+	m_pTextureLock = NULL;
 
 	if( m_uTexHandle )
 	{
@@ -207,7 +205,19 @@ void MovieTexture_Generic::CreateTexture()
 	m_iTextureHeight = power_of_two( m_iImageHeight );
 	MovieDecoderPixelFormatYCbCr fmt = PixelFormatYCbCr_Invalid;
 	if( m_pSurface == NULL )
-		m_pSurface = m_pDecoder->CreateCompatibleSurface( m_iImageWidth, m_iImageHeight, TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32, fmt );
+	{
+		ASSERT( m_pTextureLock == NULL );
+		m_pTextureLock = DISPLAY->CreateTextureLock();
+
+		m_pSurface = m_pDecoder->CreateCompatibleSurface( m_iImageWidth, m_iImageHeight,
+			TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32, fmt );
+		if( m_pTextureLock != NULL )
+		{
+			delete [] m_pSurface->pixels;
+			m_pSurface->pixels = NULL;
+		}
+
+	}
 
 	PixelFormat pixfmt = DISPLAY->FindPixelFormat( m_pSurface->format->BitsPerPixel,
 			m_pSurface->format->Mask[0],
@@ -294,9 +304,6 @@ bool MovieTexture_Generic::DecodeFrame()
 	bool bTriedRewind = false;
 	do
 	{
-		if( m_State == DECODER_QUIT )
-			return false;
-
 		if( m_bWantRewind )
 		{
 			if( bTriedRewind )
@@ -324,7 +331,7 @@ bool MovieTexture_Generic::DecodeFrame()
 		if( m_bFrameSkipMode && m_fClock > m_pDecoder->GetTimestamp() )
 			fTargetTime = m_fClock;
 
-		int ret = m_pDecoder->GetFrame( m_pSurface, fTargetTime );
+		int ret = GetFrame( fTargetTime );
 		if( ret == -1 )
 			return false;
 
@@ -411,61 +418,6 @@ void MovieTexture_Generic::DiscardFrame()
 	m_ImageWaiting = FRAME_NONE;
 }
 
-void MovieTexture_Generic::DecoderThread()
-{
-#if defined(_WINDOWS)
-	/* Windows likes to boost priority when processes come out of a wait state.  We don't
-	 * want that, since it'll result in us having a small priority boost after each movie
-	 * frame, resulting in skips in the gameplay thread. */
-	if( !SetThreadPriorityBoost(GetCurrentThread(), TRUE) && GetLastError() != ERROR_CALL_NOT_IMPLEMENTED )
-		LOG->Warn( werr_ssprintf(GetLastError(), "SetThreadPriorityBoost failed") );
-#endif
-
-	CHECKPOINT;
-
-	while( m_State != DECODER_QUIT )
-	{
-		if( m_ImageWaiting == FRAME_NONE )
-			DecodeFrame();
-
-		/* If we still have no frame, we're at EOF and we didn't loop. */
-		if( m_ImageWaiting != FRAME_DECODED )
-		{
-			usleep( 10000 );
-			continue;
-		}
-
-		const float fTime = CheckFrameTime();
-		if( fTime > 0 )		// not time to decode a new frame yet
-		{
-			/* This needs to be relatively short so that we wake up quickly 
-			 * from being paused or for changes in m_fRate. */
-			usleep( 10000 );
-		}
-		else // fTime == 0
-		{
-			{
-				/* The only reason m_BufferFinished might be non-zero right now (before
-				 * ConvertFrame()) is if we're quitting. */
-				int n = m_BufferFinished.GetValue();
-				ASSERT_M( n == 0 || m_State == DECODER_QUIT, ssprintf("%i, %i", n, m_State) );
-			}
-
-			m_ImageWaiting = FRAME_WAITING;
-
-			/* We just went into FRAME_WAITING.  Don't actually check; the main thread
-			 * will change us back to FRAME_NONE without locking, and poke m_BufferFinished.
-			 * Don't time out on this; if a new screen has started loading, this might not
-			 * return for a while. */
-			m_BufferFinished.Wait( false );
-
-			/* If the frame wasn't used, then we must be shutting down. */
-			ASSERT_M( m_ImageWaiting == FRAME_NONE || m_State == DECODER_QUIT, ssprintf("%i, %i", m_ImageWaiting, m_State) );
-		}
-	}
-	CHECKPOINT;
-}
-
 void MovieTexture_Generic::Update(float fDeltaTime)
 {
 	/* We might need to decode more than one frame per update.  However, there
@@ -474,7 +426,6 @@ void MovieTexture_Generic::Update(float fDeltaTime)
 	int iMax = 4;
 	while( --iMax )
 	{
-		if( !m_bThreaded )
 		{
 			/* If we don't have a frame decoded, decode one. */
 			if( m_ImageWaiting == FRAME_NONE )
@@ -499,17 +450,29 @@ void MovieTexture_Generic::Update(float fDeltaTime)
 		CHECKPOINT;
 
 		UpdateFrame();
-		
-		if( m_bThreaded )
-			m_BufferFinished.Post();
 	}
 
 	LOG->MapLog( "movie_looping", "MovieTexture_Generic::Update looping" );
 }
 
+int MovieTexture_Generic::GetFrame( float fTargetTime )
+{
+	/* Just in case we were invalidated: */
+	CreateTexture();
 
-/* Call from the main thread when m_ImageWaiting == FRAME_WAITING to update the
- * texture.  Sets FRAME_NONE.  Does not signal m_BufferFinished. */
+	if( m_pTextureLock != NULL )
+	{
+		int iHandle = m_pTextureIntermediate != NULL? m_pTextureIntermediate->GetTexHandle(): this->GetTexHandle();
+		m_pTextureLock->Lock( iHandle, m_pSurface );
+	}
+
+	int ret = m_pDecoder->GetFrame( m_pSurface, fTargetTime );
+	if( m_pTextureLock != NULL )
+		m_pTextureLock->Unlock( m_pSurface, ret != -1 );
+	return ret;
+}
+
+/* Call when m_ImageWaiting == FRAME_WAITING to update the texture.  Sets FRAME_NONE. */
 void MovieTexture_Generic::UpdateFrame()
 {
 	ASSERT_M( m_ImageWaiting == FRAME_WAITING, ssprintf("%i", m_ImageWaiting) );
@@ -521,11 +484,13 @@ void MovieTexture_Generic::UpdateFrame()
 	{
 		CHECKPOINT;
 
-		DISPLAY->UpdateTexture(
-			m_pTextureIntermediate->GetTexHandle(),
-			m_pSurface,
-			0, 0,
-			m_pSurface->w, m_pSurface->h );
+		/* If we have no m_pTextureLock, we still have to upload the texture. */
+		if( m_pTextureLock == NULL )
+			DISPLAY->UpdateTexture(
+				m_pTextureIntermediate->GetTexHandle(),
+				m_pSurface,
+				0, 0,
+				m_pSurface->w, m_pSurface->h );
 		CHECKPOINT;
 
 		m_pRenderTarget->BeginRenderingTo( false );
@@ -535,11 +500,12 @@ void MovieTexture_Generic::UpdateFrame()
 	else
 	{
 		CHECKPOINT;
-		DISPLAY->UpdateTexture(
-			m_uTexHandle,
-			m_pSurface,
-			0, 0,
-			m_iImageWidth, m_iImageHeight );
+		if( m_pTextureLock == NULL )
+			DISPLAY->UpdateTexture(
+				m_uTexHandle,
+				m_pSurface,
+				0, 0,
+				m_iImageWidth, m_iImageHeight );
 		CHECKPOINT;
 	}
 
@@ -562,43 +528,8 @@ void MovieTexture_Generic::Reload()
 {
 }
 
-void MovieTexture_Generic::StartThread()
-{
-	ASSERT( m_State == DECODER_QUIT );
-	m_State = DECODER_RUNNING;
-	m_DecoderThread.SetName( ssprintf("MovieTexture_Generic(%s)", GetID().filename.c_str()) );
-	
-	if( m_bThreaded )
-		m_DecoderThread.Create( DecoderThread_start, this );
-}
-
-void MovieTexture_Generic::StopThread()
-{
-	if( !m_DecoderThread.IsCreated() )
-		return;
-
-	LOG->Trace("Shutting down decoder thread ...");
-
-	m_State = DECODER_QUIT;
-
-	/* Make sure we don't deadlock waiting for m_BufferFinished. */
-	m_BufferFinished.Post();
-	CHECKPOINT;
-	m_DecoderThread.Wait();
-	CHECKPOINT;
-	
-	m_ImageWaiting = FRAME_NONE;
-
-	/* Clear the above post, if the thread didn't. */
-	m_BufferFinished.TryWait();
-
-	LOG->Trace("Decoder thread shut down.");
-}
-
 void MovieTexture_Generic::SetPosition( float fSeconds )
 {
-	ASSERT( m_State != DECODER_QUIT );
-
 	/* We can reset to 0, but I don't think this API supports fast seeking
 	 * yet.  I don't think we ever actually seek except to 0 right now,
 	 * anyway. XXX */

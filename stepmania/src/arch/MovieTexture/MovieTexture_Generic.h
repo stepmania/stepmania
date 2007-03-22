@@ -2,10 +2,10 @@
 #define RAGE_MOVIE_TEXTURE_GENERIC_H
 
 #include "MovieTexture.h"
-#include "RageThreads.h"
 
 class FFMpeg_Helper;
 struct RageSurface;
+struct RageTextureLock;
 class RageTextureRenderTarget;
 class Sprite;
 
@@ -94,6 +94,8 @@ public:
 	static EffectMode GetEffectMode( MovieDecoderPixelFormatYCbCr fmt );
 
 private:
+	int GetFrame( float fTargetTime );
+
 	MovieDecoder *m_pDecoder;
 
 	float m_fRate;
@@ -104,7 +106,6 @@ private:
 	} m_ImageWaiting;
 	bool m_bLoop;
 	bool m_bWantRewind;
-	bool m_bThreaded;
 
 	/*
 	 * Only the main thread can change m_State.
@@ -126,26 +127,19 @@ private:
 
 	RageSurface *m_pSurface;
 
-	RageSemaphore m_BufferFinished;
+	RageTextureLock *m_pTextureLock;
 
 	/* The time the movie is actually at: */
 	float m_fClock;
 	bool m_bFrameSkipMode;
 
-	static int DecoderThread_start(void *p) { ((MovieTexture_Generic *)(p))->DecoderThread(); return 0; }
-	void DecoderThread();
-	RageThread m_DecoderThread;
-
 	void UpdateFrame();
 
 	void CreateTexture();
 	void DestroyTexture();
-	void StartThread();
-	void StopThread();
 
 	bool DecodeFrame();
 	float CheckFrameTime();
-	void DiscardFrame();
 };
 
 #endif
