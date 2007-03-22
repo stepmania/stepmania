@@ -147,7 +147,7 @@ static const RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 		  0x001F,
 		  0x8000 },
 	}, {
-		/* X1R5G5R5 */
+		/* X1R5G5B5 */
 		16,
 		{ 0x7C00,
 		  0x03E0,
