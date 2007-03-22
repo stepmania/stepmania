@@ -213,7 +213,7 @@ public:
 			}
 		}
 
-		if( m_Def.m_selectType != SELECT_MULTIPLE && m_Def.m_iDefault != -1 )
+		if( m_Def.m_selectType != SELECT_MULTIPLE && m_Def.m_iDefault == -1 )
 		{
 			for( unsigned e = 0; e < m_aListEntries.size(); ++e )
 			{
