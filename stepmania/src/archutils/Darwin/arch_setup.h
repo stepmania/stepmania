@@ -14,9 +14,6 @@ typedef signed long        SInt32;
 typedef signed long long   SInt64;
 typedef unsigned long long UInt64;
 
-#define __STDC_CONSTANT_MACROS
-#include <stdint.h>
-
 // We cannot include MacTypes.h here because it defines Style which conflicts with struct Style.
 #define __MACTYPES__
 #include <libkern/OSByteOrder.h>
