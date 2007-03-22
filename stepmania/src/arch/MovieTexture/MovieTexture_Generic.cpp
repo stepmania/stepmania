@@ -420,20 +420,18 @@ void MovieTexture_Generic::Update(float fDeltaTime)
 	int iMax = 4;
 	while( --iMax )
 	{
-		{
-			/* If we don't have a frame decoded, decode one. */
-			if( m_ImageWaiting == FRAME_NONE )
-				DecodeFrame();
+		/* If we don't have a frame decoded, decode one. */
+		if( m_ImageWaiting == FRAME_NONE )
+			DecodeFrame();
 
-			/* If we have a frame decoded, see if it's time to display it. */
-			if( m_ImageWaiting == FRAME_DECODED )
-			{
-				float fTime = CheckFrameTime();
-				if( fTime > 0 )
-					return;
-				else
-					m_ImageWaiting = FRAME_WAITING;
-			}
+		/* If we have a frame decoded, see if it's time to display it. */
+		if( m_ImageWaiting == FRAME_DECODED )
+		{
+			float fTime = CheckFrameTime();
+			if( fTime > 0 )
+				return;
+			else
+				m_ImageWaiting = FRAME_WAITING;
 		}
 
 		/* Note that if there's an image waiting, we *must* signal m_BufferFinished, or
