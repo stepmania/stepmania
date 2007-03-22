@@ -22,7 +22,7 @@ namespace avcodec
 static struct AVPixelFormat_t
 {
 	int bpp;
-	int masks[4];
+	uint32_t masks[4];
 	avcodec::PixelFormat pf;
 	bool bHighColor;
 	bool bByteSwapOnLittleEndian;
@@ -40,31 +40,50 @@ static struct AVPixelFormat_t
 		PixelFormatYCbCr_YUYV422,
 	},
 	{ 
-		/* This format is really BGRA, and is affected by endianness, unlike PIX_FMT_RGB24
-		 * and PIX_FMT_BGR24. */
 		32,
 		{ 0x0000FF00,
 		  0x00FF0000,
 		  0xFF000000,
 		  0x000000FF },
-		avcodec::PIX_FMT_BGR32_1,
+		avcodec::PIX_FMT_BGRA,
 		true,
-		false,
+		true,
 		PixelFormatYCbCr_Invalid,
 	},
 	{ 
-		/* This format is really ARGB, and is affected by endianness, unlike PIX_FMT_RGB24
-		 * and PIX_FMT_BGR24. */
 		32,
 		{ 0x00FF0000,
 		  0x0000FF00,
 		  0x000000FF,
 		  0xFF000000 },
-		avcodec::PIX_FMT_RGB32,
+		avcodec::PIX_FMT_ARGB,
 		true,
-		false,
+		true,
 		PixelFormatYCbCr_Invalid,
 	},
+	/*
+	{ 
+		32,
+		{ 0x000000FF,
+		  0x0000FF00,
+		  0x00FF0000,
+		  0xFF000000 },
+		avcodec::PIX_FMT_ABGR,
+		true,
+		true,
+		PixelFormatYCbCr_Invalid,
+	},
+	{ 
+		32,
+		{ 0xFF000000,
+		  0x00FF0000,
+		  0x0000FF00,
+		  0x000000FF },
+		avcodec::PIX_FMT_RGBA,
+		true,
+		true,
+		PixelFormatYCbCr_Invalid,
+	}, */
 	{ 
 		24,
 		{ 0xFF0000,
