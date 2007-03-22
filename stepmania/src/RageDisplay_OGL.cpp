@@ -63,7 +63,7 @@ static LowLevelWindow *g_pWind;
 
 static bool g_bInvertY = false;
 
-static void InvalidateAllGeometry();
+static void InvalidateObjects();
 
 static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 	{
@@ -701,7 +701,7 @@ RString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDevic
 	if( err != "" )
 		return err;	// failed to set video mode
 
-	/* Now that we've initialized, we can search for extensions.  Do this before InvalidateAllGeometry,
+	/* Now that we've initialized, we can search for extensions.  Do this before InvalidateObjects,
 	 * since AllocateBuffers needs it. */
 	SetupExtensions();
 
@@ -719,7 +719,7 @@ RString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDevic
 		g_mapRenderTargets.clear();
 
 		/* Recreate all vertex buffers. */
-		InvalidateAllGeometry();
+		InvalidateObjects();
 
 		InitShaders();
 	}
@@ -995,7 +995,23 @@ protected:
 	vector<RageVector2>	m_vTexMatrixScale;
 };
 
-class RageCompiledGeometryHWOGL : public RageCompiledGeometrySWOGL
+class InvalidateObject;
+static set<InvalidateObject *> g_InvalidateList;
+class InvalidateObject
+{
+public:
+	InvalidateObject() { g_InvalidateList.insert( this ); }
+	virtual ~InvalidateObject() { g_InvalidateList.erase( this ); }
+	virtual void Invalidate() = 0;
+};
+
+static void InvalidateObjects()
+{
+	FOREACHS( InvalidateObject*, g_InvalidateList, it )
+		(*it)->Invalidate();
+}
+
+class RageCompiledGeometryHWOGL : public RageCompiledGeometrySWOGL, public InvalidateObject
 {
 protected:
 	// vertex buffer object names
@@ -1020,16 +1036,8 @@ public:
 	void Draw( int iMeshIndex ) const;
 };
 
-static set<RageCompiledGeometryHWOGL *> g_GeometryList;
-static void InvalidateAllGeometry()
-{
-	FOREACHS( RageCompiledGeometryHWOGL*, g_GeometryList, it )
-		(*it)->Invalidate();
-}
-
 RageCompiledGeometryHWOGL::RageCompiledGeometryHWOGL()
 {
-	g_GeometryList.insert( this );
 	m_nPositions = 0;
 	m_nTextureCoords = 0;
 	m_nNormals = 0;
@@ -1041,7 +1049,6 @@ RageCompiledGeometryHWOGL::RageCompiledGeometryHWOGL()
 
 RageCompiledGeometryHWOGL::~RageCompiledGeometryHWOGL()
 {
-	g_GeometryList.erase( this );
 	FlushGLErrors();
 
 	GLExt.glDeleteBuffersARB( 1, &m_nPositions );
