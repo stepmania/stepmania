@@ -9,6 +9,9 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
+#define __STDC_LIMIT_MACROS // for INT8_MIN, etc
+#define __STDC_CONSTANT_MACROS // for INT64_C, etc
+
 /* Platform-specific fixes. */
 #if defined(WIN32)
 #include "archutils/Win32/arch_setup.h"
