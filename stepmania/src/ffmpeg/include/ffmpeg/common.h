@@ -28,9 +28,6 @@
 
 #if 0
 #include <inttypes.h>
-#else
-/* Why does ffmpeg need C99 features? */
-#define INT64_C(i) i##i64
 #endif
 
 #ifdef HAVE_AV_CONFIG_H
