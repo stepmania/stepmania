@@ -60,7 +60,7 @@ static struct AVPixelFormat_t
 		  0x0000FF00,
 		  0x000000FF,
 		  0xFF000000 },
-		avcodec::PIX_FMT_RGBA32,
+		avcodec::PIX_FMT_RGB32,
 		true,
 		false,
 		PixelFormatYCbCr_Invalid,
