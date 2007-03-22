@@ -145,6 +145,19 @@ struct RenderTargetParam
 	bool bFloat;
 };
 
+struct RageTextureLock
+{
+	virtual ~RageTextureLock() { }
+
+	/* Given a surface with a format and no pixel data, lock the texture into the
+	 * surface.  The data is write-only. */
+	virtual void Lock( unsigned iTexHandle, RageSurface *pSurface ) = 0;
+
+	/* Unlock and update the texture.  If bChanged is false, the texture update
+	 * may be omitted. */
+	virtual void Unlock( RageSurface *pSurface, bool bChanged = true ) = 0;
+};
+
 class RageDisplay
 {
 	friend class RageTexture;
@@ -206,6 +219,9 @@ public:
 		int xoffset, int yoffset, int width, int height 
 		) = 0;
 	virtual void DeleteTexture( unsigned iTexHandle ) = 0;
+	/* Return an object to lock pixels for streaming.  If not supported, returns NULL.
+	 * Delete the object normally. */
+	virtual RageTextureLock *CreateTextureLock() { return NULL; }
 	virtual void ClearAllTextures() = 0;
 	virtual int GetNumTextureUnits() = 0;
 	virtual void SetTexture( TextureUnit tu, unsigned iTexture ) = 0;
