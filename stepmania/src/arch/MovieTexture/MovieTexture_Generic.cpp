@@ -412,12 +412,6 @@ float MovieTexture_Generic::CheckFrameTime()
 	return 0;
 }
 
-void MovieTexture_Generic::DiscardFrame()
-{
-	ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting) );
-	m_ImageWaiting = FRAME_NONE;
-}
-
 void MovieTexture_Generic::Update(float fDeltaTime)
 {
 	/* We might need to decode more than one frame per update.  However, there
