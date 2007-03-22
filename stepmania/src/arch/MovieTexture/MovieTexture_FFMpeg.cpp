@@ -40,6 +40,19 @@ static struct AVPixelFormat_t
 		PixelFormatYCbCr_YUYV422,
 	},
 	{ 
+		/* This format is really BGRA, and is affected by endianness, unlike PIX_FMT_RGB24
+		 * and PIX_FMT_BGR24. */
+		32,
+		{ 0x0000FF00,
+		  0x00FF0000,
+		  0xFF000000,
+		  0x000000FF },
+		avcodec::PIX_FMT_BGR32_1,
+		true,
+		false,
+		PixelFormatYCbCr_Invalid,
+	},
+	{ 
 		/* This format is really ARGB, and is affected by endianness, unlike PIX_FMT_RGB24
 		 * and PIX_FMT_BGR24. */
 		32,
