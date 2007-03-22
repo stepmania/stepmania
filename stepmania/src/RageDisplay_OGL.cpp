@@ -2138,6 +2138,83 @@ unsigned RageDisplay_OGL::CreateTexture(
 	return iTexHandle;
 }
 
+struct RageTextureLock_OGL: public RageTextureLock, public InvalidateObject
+{
+public:
+	RageTextureLock_OGL()
+	{
+		m_iTexHandle = 0;
+		m_iBuffer = 0;
+
+		CreateObject();
+	}
+
+	~RageTextureLock_OGL()
+	{
+		ASSERT( m_iTexHandle == 0 ); // locked!
+		GLExt.glDeleteBuffersARB( 1, &m_iBuffer );
+	}
+
+	/* This is called when our OpenGL context is invalidated. */
+	void Invalidate()
+	{
+		m_iTexHandle = 0;
+	}
+
+	void Lock( unsigned iTexHandle, RageSurface *pSurface )
+	{
+		ASSERT( m_iTexHandle == 0 );
+		ASSERT( pSurface->pixels == NULL );
+
+		CreateObject();
+
+		m_iTexHandle = iTexHandle;
+		GLExt.glBindBufferARB( GL_PIXEL_UNPACK_BUFFER_ARB, m_iBuffer );
+
+		int iSize = pSurface->h * pSurface->pitch;
+		GLExt.glBufferDataARB( GL_PIXEL_UNPACK_BUFFER_ARB, iSize, NULL, GL_STREAM_DRAW );
+
+		void *pSurfaceMemory = GLExt.glMapBufferARB( GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY );
+		pSurface->pixels = (uint8_t *) pSurfaceMemory;
+		pSurface->pixels_owned = false;
+	}
+
+	void Unlock( RageSurface *pSurface, bool bChanged )
+	{
+		GLExt.glUnmapBufferARB( GL_PIXEL_UNPACK_BUFFER_ARB );
+
+		pSurface->pixels = (uint8_t *) BUFFER_OFFSET(0);
+
+		if( bChanged )
+			DISPLAY->UpdateTexture( m_iTexHandle, pSurface, 0, 0, pSurface->w, pSurface->h );
+
+		pSurface->pixels = NULL;
+
+		m_iTexHandle = 0;
+		GLExt.glBindBufferARB( GL_PIXEL_UNPACK_BUFFER_ARB, 0 );
+	}
+
+private:
+	void CreateObject()
+	{
+		if( m_iBuffer != 0 )
+			return;
+
+		FlushGLErrors();
+		GLExt.glGenBuffersARB( 1, &m_iBuffer );
+		AssertNoGLError();
+	}
+
+	GLuint m_iBuffer;
+
+	unsigned m_iTexHandle;
+};
+
+RageTextureLock *RageDisplay_OGL::CreateTextureLock()
+{
+	return new RageTextureLock_OGL;
+}
+
 void RageDisplay_OGL::UpdateTexture( 
 	unsigned iTexHandle, 
 	RageSurface* pImg,

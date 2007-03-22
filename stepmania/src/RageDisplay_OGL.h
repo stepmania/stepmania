@@ -41,6 +41,7 @@ public:
 		);
 	void DeleteTexture( unsigned iTexHandle );
 	RageSurface *GetTexture( unsigned iTexture );
+	RageTextureLock *CreateTextureLock();
 
 	void ClearAllTextures();
 	int GetNumTextureUnits();
