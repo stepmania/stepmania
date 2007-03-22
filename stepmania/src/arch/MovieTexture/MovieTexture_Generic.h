@@ -81,7 +81,6 @@ public:
 
 	/* only called by RageTextureManager::InvalidateTextures */
 	void Invalidate();
-	void Update( float fDeltaTime );
 
 	virtual void Reload();
 

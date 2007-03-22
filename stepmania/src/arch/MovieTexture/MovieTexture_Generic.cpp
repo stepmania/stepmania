@@ -412,8 +412,11 @@ float MovieTexture_Generic::CheckFrameTime()
 	return 0;
 }
 
-void MovieTexture_Generic::Update(float fDeltaTime)
+/* Decode data. */
+void MovieTexture_Generic::DecodeSeconds( float fSeconds )
 {
+	m_fClock += fSeconds * m_fRate;
+
 	/* We might need to decode more than one frame per update.  However, there
 	 * have been bugs in ffmpeg that cause it to not handle EOF properly, which
 	 * could make this never return, so let's play it safe. */
@@ -430,13 +433,10 @@ void MovieTexture_Generic::Update(float fDeltaTime)
 			float fTime = CheckFrameTime();
 			if( fTime > 0 )
 				return;
-			else
-				m_ImageWaiting = FRAME_WAITING;
+
+			m_ImageWaiting = FRAME_WAITING;
 		}
 
-		/* Note that if there's an image waiting, we *must* signal m_BufferFinished, or
-		* the decoder thread may sit around waiting for it, even though Pause and Play
-		* calls, causing the clock to keep running. */
 		if( m_ImageWaiting != FRAME_WAITING )
 			return;
 		CHECKPOINT;
@@ -533,17 +533,6 @@ void MovieTexture_Generic::SetPosition( float fSeconds )
 
 	LOG->Trace( "Seek to %f", fSeconds );
 	m_bWantRewind = true;
-}
-
-/* This is used to decode data. */
-void MovieTexture_Generic::DecodeSeconds( float fSeconds )
-{
-	m_fClock += fSeconds * m_fRate;
-
-	/* If we're not threaded, we want to be sure to decode any new frames now,
-	 * and not on the next frame.  Update() may have already been called for this
-	 * frame; call it again to be sure. */
-	Update(0);
 }
 
 unsigned MovieTexture_Generic::GetTexHandle() const
