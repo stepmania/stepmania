@@ -100,6 +100,8 @@ typedef int int32_t;
 typedef unsigned int uint32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
+#define INT64_C(i) i##i64
+#define UINT64_C(i) i##i64
 static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
 #endif
 
