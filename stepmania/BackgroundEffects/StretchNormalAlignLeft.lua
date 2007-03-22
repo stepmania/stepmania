@@ -3,7 +3,7 @@ local Color = color(Var "Color1");
 
 local children = {
 	LoadActor(Var "File1") .. {
-		OnCommand=cmd(horizalign,left;scaletocover,0,0,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color(Color));
+		OnCommand=cmd(horizalign,left;scaletocover,0,0,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color(Color);effectclock,"music");
 		GainFocusCommand=cmd(play);
 		LoseFocusCommand=cmd(pause);
 	};

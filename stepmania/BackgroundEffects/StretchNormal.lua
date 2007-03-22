@@ -2,7 +2,7 @@ local Color = color(Var "Color1");
 
 local children = {
 	LoadActor(Var "File1") .. {
-		OnCommand=cmd(scale_or_crop_background;diffuse,Color);
+		OnCommand=cmd(scale_or_crop_background;diffuse,Color;effectclock,"music");
 		GainFocusCommand=cmd(play);
 		LoseFocusCommand=cmd(pause);
 	};
