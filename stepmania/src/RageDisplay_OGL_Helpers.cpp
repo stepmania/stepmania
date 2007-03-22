@@ -153,6 +153,8 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 			F( glBufferDataARB ),
 			F( glBufferSubDataARB ),
 			F( glDeleteBuffersARB ),
+			F( glMapBufferARB ),
+			F( glUnmapBufferARB ),
 			{ NULL, NULL },
 		};
 
