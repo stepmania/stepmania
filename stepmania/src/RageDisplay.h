@@ -54,6 +54,7 @@ protected:
 enum PixelFormat
 {
 	PixelFormat_RGBA8,
+	PixelFormat_BGRA8,
 	PixelFormat_RGBA4,
 	PixelFormat_RGB5A1,
 	PixelFormat_RGB5,

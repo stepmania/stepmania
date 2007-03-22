@@ -74,6 +74,13 @@ static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 		  0x0000FF00,
 		  0x000000FF }
 	}, {
+		/* B8G8R8A8 */
+		32,
+		{ 0x0000FF00,
+		  0x00FF0000,
+		  0xFF000000,
+		  0x000000FF }
+	}, {
 		/* R4G4B4A4 */
 		16,
 		{ 0xF000,
@@ -148,6 +155,11 @@ struct GLPixFmtInfo_t {
 		/* R8G8B8A8 */
 		GL_RGBA8,
 		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+	}, {
+		/* R8G8B8A8 */
+		GL_RGBA8,
+		GL_BGRA,
 		GL_UNSIGNED_BYTE,
 	}, {
 		/* B4G4R4A4 */

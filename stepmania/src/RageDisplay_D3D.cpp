@@ -131,6 +131,8 @@ static const RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 		  0x000000FF,
 		  0xFF000000 }
 	}, {
+		0, { 0,0,0,0 }
+	}, {
 		/* A4R4G4B4 */
 		16,
 		{ 0x0F00,
@@ -177,6 +179,7 @@ static const RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 static D3DFORMAT D3DFORMATS[NUM_PixelFormat] = 
 {
 	D3DFMT_A8R8G8B8,
+	D3DFMT_UNKNOWN,
 	D3DFMT_A4R4G4B4,
 	D3DFMT_A1R5G5B5,
 	D3DFMT_X1R5G5B5,

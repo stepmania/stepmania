@@ -58,6 +58,7 @@ Preference<float> g_fFrameLimitPercent( "FrameLimitPercent", 0.0f );
 
 static const char *PixelFormatNames[] = {
 	"RGBA8",
+	"BGRA8",
 	"RGBA4",
 	"RGB5A1",
 	"RGB5",
