@@ -84,7 +84,7 @@ RageLog::RageLog()
 	g_fileInfo = new RageFile;
 	g_fileUserLog = new RageFile;
 	
-	g_Mutex = new RageMutex("Log");
+	g_Mutex = new RageMutex( "Log" );
 
 	m_bLogToDisk = false;
 	m_bInfoToDisk = false;
@@ -267,8 +267,8 @@ void RageLog::Write( int where, const RString &sLine )
 		if( sWarning.size() )
 			sStr.insert( 0, sWarning );
 
-		if( m_bShowLogOutput || where != 0 )
-			printf("%s\n", sStr.c_str() );
+		if( m_bShowLogOutput || (where&WRITE_TO_INFO) )
+			puts( sStr );
 		if( where & WRITE_TO_INFO )
 			AddToInfo( sStr );
 		if( m_bLogToDisk && (where&WRITE_TO_INFO) && g_fileInfo->IsOpen() )
