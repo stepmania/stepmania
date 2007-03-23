@@ -116,6 +116,11 @@ void Sprite::LoadFromNode( const XNode* pNode )
 	if( !sPath.empty() && !TEXTUREMAN->IsTextureRegistered( RageTextureID(sPath) ) )
 		ActorUtil::GetAttrPath( pNode, "Texture", sPath );
 
+	// HACK. Let Sprites explicitly disable the dimension warning.
+	bool bDisableDimensionWarning = false;
+	if( pNode->GetAttrValue("DisableDimensionWarning", bDisableDimensionWarning) && bDisableDimensionWarning )
+		TEXTUREMAN->DisableOddDimensionWarning();
+
 	if( !sPath.empty() )
 	{
 		// Load the texture
@@ -207,6 +212,8 @@ void Sprite::LoadFromNode( const XNode* pNode )
 		}
 	}
 
+	if( bDisableDimensionWarning )
+		TEXTUREMAN->EnableOddDimensionWarning();
 
 	Actor::LoadFromNode( pNode );
 }
