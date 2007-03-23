@@ -1,5 +1,5 @@
 local children = {
-	LoadActor(GetSongBackground()) .. {
+	LoadSongBackground() .. {
 		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
 		OnCommand=cmd(diffusealpha,0;sleep,0.5;linear,0.5;diffusealpha,1);
 	};
