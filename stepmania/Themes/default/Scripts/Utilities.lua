@@ -106,6 +106,10 @@ function GetSongBackground()
 	return THEME:GetPathG("Common","fallback background")
 end
 
+function LoadSongBackground()
+	return LoadActor( GetSongBackground() ) .. { DisableDimensionWarning=true; };
+end
+
 -- (c) 2005 Glenn Maynard, Chris Danford
 -- All rights reserved.
 -- 
