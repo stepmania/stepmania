@@ -1601,7 +1601,34 @@ void RageDisplay_OGL::SetTextureMode( TextureUnit tu, TextureMode tm )
 
 void RageDisplay_OGL::SetTextureFiltering( TextureUnit tu, bool b )
 {
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, b? GL_LINEAR: GL_NEAREST );
+	
+	GLint iMinFilter;
+	if( b )
+	{
+		GLint iWidth1 = -1;
+		GLint iWidth2 = -1;
+		glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &iWidth1 );
+		glGetTexLevelParameteriv( GL_TEXTURE_2D, 1, GL_TEXTURE_WIDTH, &iWidth2 );
+		if( iWidth1 > 1 && iWidth2 != 0 )
+		{
+			/* Mipmaps are enabled. */
+			if( g_pWind->GetActualVideoModeParams().bTrilinearFiltering )
+				iMinFilter = GL_LINEAR_MIPMAP_LINEAR;
+			else
+				iMinFilter = GL_LINEAR_MIPMAP_NEAREST;
+		}
+		else
+		{
+			iMinFilter = GL_LINEAR;
+		}
+	}
+	else
+	{
+		iMinFilter = GL_NEAREST;
+	}
 
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, iMinFilter );
 }
 
 void RageDisplay_OGL::SetEffectMode( EffectMode effect )
@@ -2027,20 +2054,6 @@ unsigned RageDisplay_OGL::CreateTexture(
 	ASSERT( iTexHandle );
 	
 	glBindTexture( GL_TEXTURE_2D, iTexHandle );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	GLint iMinFilter;
-	if( bGenerateMipMaps )
-	{
-		if( g_pWind->GetActualVideoModeParams().bTrilinearFiltering )
-			iMinFilter = GL_LINEAR_MIPMAP_LINEAR;
-		else
-			iMinFilter = GL_LINEAR_MIPMAP_NEAREST;
-	}
-	else
-	{
-		iMinFilter = GL_LINEAR;
-	}
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, iMinFilter );
 
 	if( g_pWind->GetActualVideoModeParams().bAnisotropicFiltering &&
 		GLExt.HasExtension("GL_EXT_texture_filter_anisotropic") )
@@ -2050,6 +2063,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargestSupportedAnisotropy );
 	}
 
+	SetTextureFiltering( TextureUnit_1, true );
 	SetTextureWrapping( TextureUnit_1, false );
 
 	glPixelStorei( GL_UNPACK_ROW_LENGTH, pImg->pitch / pImg->format->BytesPerPixel );
