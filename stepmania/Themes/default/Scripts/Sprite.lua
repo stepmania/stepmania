@@ -18,7 +18,6 @@ end
 
 function LoadSongBackground()
 	return Def.Sprite {
-		DisableDimensionWarning=true;
 		BeginCommand=cmd(LoadFromSongBackground,GAMESTATE:GetCurrentSong());
 	};
 end
