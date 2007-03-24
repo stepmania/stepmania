@@ -1,3 +1,4 @@
+#include "global.h"
 #include "RageSoundDriver_AU.h"
 #include "RageLog.h"
 #include "PrefsManager.h"
@@ -46,9 +47,11 @@ RageSoundDriver_AU::RageSoundDriver_AU() : m_OutputUnit(NULL), m_iSampleRate(0),
 void RageSoundDriver_AU::NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *inRefCon )
 {
 	RageSoundDriver_AU *This = (RageSoundDriver_AU *)inRefCon;
-	
-	This->m_pNotificationThread = new RageThreadRegister( "HAL notification thread" );
-	This->m_Semaphore.Post();
+	if( This->m_pNotificationThread == NULL )
+	{
+		This->m_pNotificationThread = new RageThreadRegister( "HAL notification thread" );
+		This->m_Semaphore.Post();
+	}
 }
 
 RString RageSoundDriver_AU::Init()
