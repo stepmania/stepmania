@@ -116,11 +116,6 @@ void Sprite::LoadFromNode( const XNode* pNode )
 	if( !sPath.empty() && !TEXTUREMAN->IsTextureRegistered( RageTextureID(sPath) ) )
 		ActorUtil::GetAttrPath( pNode, "Texture", sPath );
 
-	// HACK. Let Sprites explicitly disable the dimension warning.
-	bool bDisableDimensionWarning = false;
-	if( pNode->GetAttrValue("DisableDimensionWarning", bDisableDimensionWarning) && bDisableDimensionWarning )
-		TEXTUREMAN->DisableOddDimensionWarning();
-
 	if( !sPath.empty() )
 	{
 		// Load the texture
@@ -211,9 +206,6 @@ void Sprite::LoadFromNode( const XNode* pNode )
 			Sprite::m_size.y = aStates[0].rect.GetHeight() / m_pTexture->GetSourceToTexCoordsRatioY();
 		}
 	}
-
-	if( bDisableDimensionWarning )
-		TEXTUREMAN->EnableOddDimensionWarning();
 
 	Actor::LoadFromNode( pNode );
 }
@@ -978,7 +970,9 @@ public:
 	static int LoadBackground( T* p, lua_State *L )
 	{
 		RageTextureID ID( SArg(1) );
+		TEXTUREMAN->DisableOddDimensionWarning();
 		p->Load( Sprite::SongBGTexture(ID) );
+		TEXTUREMAN->EnableOddDimensionWarning();
 		return 1;
 	}
 	static int LoadBanner( T* p, lua_State *L )
