@@ -95,6 +95,8 @@ void Actor::InitState()
 	m_iDrawOrder = 0;
 
 	m_bTextureWrapping = false;
+	m_bTextureFiltering = true;
+
 	m_BlendMode = BLEND_NORMAL;
 	m_fZBias = 0;
 	m_bClearZBuffer = false;
@@ -190,6 +192,7 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_iDrawOrder );
 
 	CPY( m_bTextureWrapping );
+	CPY( m_bTextureFiltering );
 	CPY( m_BlendMode );
 	CPY( m_bClearZBuffer );
 	CPY( m_ZTestMode );
@@ -516,6 +519,7 @@ void Actor::SetGlobalRenderStates()
 void Actor::SetTextureRenderStates()
 {
 	DISPLAY->SetTextureWrapping( TextureUnit_1, m_bTextureWrapping );
+	DISPLAY->SetTextureFiltering( TextureUnit_1, m_bTextureFiltering );
 }
 
 void Actor::EndDraw()
@@ -1307,6 +1311,7 @@ public:
 	static int setstate( T* p, lua_State *L )		{ p->SetState(IArg(1)); return 0; }
 	static int GetNumStates( T* p, lua_State *L )		{ LuaHelpers::Push( L, p->GetNumStates() ); return 1; }
 	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(BIArg(1)); return 0; }
+	static int SetTextureFiltering( T* p, lua_State *L )	{ p->SetTextureFiltering(BArg(1)); return 0; }
 	static int blend( T* p, lua_State *L )			{ p->SetBlendMode( Enum::Check<BlendMode>(L, 1) ); return 0; }
 	static int zbuffer( T* p, lua_State *L )		{ p->SetUseZBuffer(BIArg(1)); return 0; }
 	static int ztest( T* p, lua_State *L )			{ p->SetZTestMode((BIArg(1))?ZTEST_WRITE_ON_PASS:ZTEST_OFF); return 0; }
@@ -1507,6 +1512,7 @@ public:
 		ADD_METHOD( setstate );
 		ADD_METHOD( GetNumStates );
 		ADD_METHOD( texturewrapping );
+		ADD_METHOD( SetTextureFiltering );
 		ADD_METHOD( blend );
 		ADD_METHOD( zbuffer );
 		ADD_METHOD( ztest );

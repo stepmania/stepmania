@@ -334,6 +334,7 @@ public:
 	//
 	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
 	void SetTextureWrapping( bool b ) 		{ m_bTextureWrapping = b; } 
+	void SetTextureFiltering( bool b ) 		{ m_bTextureFiltering = b; } 
 	void SetClearZBuffer( bool b ) 			{ m_bClearZBuffer = b; } 
 	void SetUseZBuffer( bool b ) 			{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); } 
 	virtual void SetZTestMode( ZTestMode mode )	{ m_ZTestMode = mode; } 
@@ -469,6 +470,7 @@ protected:
 	ZTestMode	m_ZTestMode;
 	CullMode	m_CullMode;
 	bool		m_bTextureWrapping;
+	bool		m_bTextureFiltering;
 	bool		m_bClearZBuffer;
 	bool		m_bZWrite;
 	float		m_fZBias; // 0 = no bias; 1 = full bias
