@@ -416,6 +416,21 @@ RageDisplay::RageDisplay()
 	g_ViewStack = MatrixStack();
 	g_WorldStack = MatrixStack();
 	g_TextureStack = MatrixStack();
+
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "DISPLAY" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
+}
+
+RageDisplay::~RageDisplay()
+{
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "DISPLAY" );
 }
 
 const RageMatrix* RageDisplay::GetCentering() const
@@ -954,6 +969,35 @@ void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormal
 
 	Change( vMeshes );
 }
+
+// lua start
+#include "LuaBinding.h"
+class LunaRageDisplay: public Luna<RageDisplay>
+{
+public:
+	static int GetDisplayWidth( T* p, lua_State *L )
+	{
+		VideoModeParams params = p->GetActualVideoModeParams();
+		LuaHelpers::Push( L, params.width );
+		return 1;
+	}
+
+	static int GetDisplayHeight( T* p, lua_State *L )
+	{
+		VideoModeParams params = p->GetActualVideoModeParams();
+		LuaHelpers::Push( L, params.height );
+		return 1;
+	}
+
+	LunaRageDisplay() 
+	{
+		ADD_METHOD( GetDisplayWidth );
+		ADD_METHOD( GetDisplayHeight );
+	}
+};
+
+LUA_REGISTER_CLASS( RageDisplay )
+// lua end
 
 /*
  * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard

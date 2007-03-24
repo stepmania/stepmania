@@ -172,7 +172,7 @@ public:
 	virtual const PixelFormatDesc *GetPixelFormatDesc( PixelFormat pf ) const = 0;
 
 	RageDisplay();
-	virtual ~RageDisplay() { }
+	virtual ~RageDisplay();
 
 	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer ) = 0;
 
@@ -377,6 +377,9 @@ public:
 
 	RageSurface *CreateSurfaceFromPixfmt( PixelFormat pixfmt, void *pixels, int width, int height, int pitch );
 	PixelFormat FindPixelFormat( int bpp, int Rmask, int Gmask, int Bmask, int Amask, bool realtime=false );
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 protected:
 	RageMatrix GetPerspectiveMatrix( float fovy, float aspect, float zNear, float zFar );
