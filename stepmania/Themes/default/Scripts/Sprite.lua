@@ -16,6 +16,14 @@ function Sprite:LoadFromSongBackground(song)
 	self:LoadBackground( Path )
 end
 
+function LoadSongBackground()
+	return Def.Sprite {
+		DisableDimensionWarning=true;
+		OnCommand=cmd(LoadBackground,GetSongBackground());
+	};
+end
+
+
 function Sprite:position( f )
 	self:GetTexture():position( f );
 end
