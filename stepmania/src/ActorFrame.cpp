@@ -27,6 +27,7 @@ ActorFrame::ActorFrame()
 	m_bDeleteChildren = false;
 	m_bDrawByZPosition = false;
 	m_DrawFunction.SetFromNil();
+	m_UpdateFunction.SetFromNil();
 	m_fUpdateRate = 1;
 	m_fFOV = -1;
 	m_fVanishX = SCREEN_CENTER_X;
@@ -49,6 +50,7 @@ ActorFrame::ActorFrame( const ActorFrame &cpy ):
 	CPY( m_bDeleteChildren );
 	CPY( m_bDrawByZPosition );
 	CPY( m_DrawFunction );
+	CPY( m_UpdateFunction );
 	CPY( m_fUpdateRate );
 	CPY( m_fFOV );
 	CPY( m_fVanishX );
@@ -317,6 +319,20 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 		Actor *pActor = *it;
 		pActor->Update(fDeltaTime);
 	}
+
+	if( unlikely(!m_UpdateFunction.IsNil()) )
+	{
+		Lua *L = LUA->Get();
+		m_UpdateFunction.PushSelf( L );
+		ASSERT( !lua_isnil(L, -1) );
+		this->PushSelf( L );
+		lua_pushnumber( L, fDeltaTime );
+		RString sError;
+
+		if( !LuaHelpers::RunScriptOnStack(L, sError, 2, 0) ) // 1 args, 0 results
+			LOG->Warn( "Error running m_UpdateFunction: %s", sError.c_str() );
+		LUA->Release(L);
+	}
 }
 
 #define PropagateActorFrameCommand( cmd ) \
@@ -481,6 +497,16 @@ public:
 		p->GetDrawFunction().PushSelf(L);
 		return 1;
 	}
+	static int SetUpdateFunction( T* p, lua_State *L )
+	{
+		luaL_checktype( L, 1, LUA_TFUNCTION );
+
+		LuaReference ref;
+		lua_pushvalue( L, 1 );
+		ref.SetFromStack( L );
+		p->SetUpdateFunction( ref );
+		return 0;
+	}
 
 	LunaActorFrame()
 	{
@@ -499,6 +525,7 @@ public:
 		ADD_METHOD( SetDrawByZPosition );
 		ADD_METHOD( SetDrawFunction );
 		ADD_METHOD( GetDrawFunction );
+		ADD_METHOD( SetUpdateFunction );
 	}
 };
 
