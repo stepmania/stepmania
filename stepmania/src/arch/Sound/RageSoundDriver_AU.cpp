@@ -99,6 +99,24 @@ RString RageSoundDriver_AU::Init()
 	if( streamFormat.mSampleRate <= 0 )
 		streamFormat.mSampleRate = 44100.0;
 	m_iSampleRate = int( streamFormat.mSampleRate );
+	
+	// Try to set the hardware sample rate.
+	{
+		AudioDeviceID OutputDevice;
+		UInt32 size = sizeof( AudioDeviceID );
+		
+		if( (error = AudioUnitGetProperty(m_OutputUnit, kAudioOutputUnitProperty_CurrentDevice,
+						  kAudioUnitScope_Global, 0, &OutputDevice, &size)) )
+		{
+			LOG->Warn( WERROR("No output device", error) );
+		}
+		else if( (error = AudioDeviceSetProperty(OutputDevice, NULL, 0, false, kAudioDevicePropertyNominalSampleRate,
+							 sizeof(Float64), &streamFormat.mSampleRate)) )
+		{
+			LOG->Warn( WERROR("Couldn't set the device's sample rate", error) );
+		}
+	}
+
 
 	error = AudioUnitSetProperty( m_OutputUnit,
 				      kAudioUnitProperty_StreamFormat,
@@ -118,25 +136,7 @@ RString RageSoundDriver_AU::Init()
 				      sizeof(renderQuality) );
 	if( error != noErr )
 		LOG->Warn( WERROR("Failed to set the maximum render quality", error) );
-	
-	// Try to set the hardware sample rate.
-	{
-		AudioDeviceID OutputDevice;
-		UInt32 size = sizeof( AudioDeviceID );
 		
-		if( (error = AudioUnitGetProperty(m_OutputUnit, kAudioOutputUnitProperty_CurrentDevice,
-						  kAudioUnitScope_Global, 0, &OutputDevice, &size)) )
-		{
-			LOG->Warn( WERROR("No output device", error) );
-		}
-		else if( (error = AudioDeviceSetProperty(OutputDevice, NULL, 0, false, kAudioDevicePropertyNominalSampleRate,
-							 sizeof(Float64), &streamFormat.mSampleRate)) )
-		{
-			LOG->Warn( WERROR("Couldn't set the device's sample rate", error) );
-		}
-	}
-
-	
 	// Initialize the AU.
 	if( (error = AudioUnitInitialize(m_OutputUnit)) )
 		return ERROR( "Could not initialize the AudioUnit", error );
