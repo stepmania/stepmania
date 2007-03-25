@@ -460,7 +460,7 @@ int MovieTexture_Generic::GetFrame( float fTargetTime )
 
 	int ret = m_pDecoder->GetFrame( m_pSurface, fTargetTime );
 	if( m_pTextureLock != NULL )
-		m_pTextureLock->Unlock( m_pSurface, ret != -1 );
+		m_pTextureLock->Unlock( m_pSurface, ret > 0 );
 	return ret;
 }
 
