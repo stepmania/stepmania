@@ -36,7 +36,12 @@ public:
 	 * Otherwise, fTargetTime will be -1, and the next frame should be
 	 * decoded; skip frames only if necessary to recover from errors.
 	 */
-	virtual int GetFrame( RageSurface *pOut, float fTargetTime ) = 0;
+	virtual int DecodeFrame( float fTargetTime ) = 0;
+
+	/*
+	 * Get the currently-decoded frame.
+	 */
+	virtual void GetFrame( RageSurface *pOut ) = 0;
 
 	/* Return the dimensions of the image, in pixels (before aspect ratio
 	 * adjustments). */
@@ -93,30 +98,16 @@ public:
 	static EffectMode GetEffectMode( MovieDecoderPixelFormatYCbCr fmt );
 
 private:
-	int GetFrame( float fTargetTime );
-
 	MovieDecoder *m_pDecoder;
 
 	float m_fRate;
 	enum {
 		FRAME_NONE, /* no frame available; call GetFrame to get one */
-		FRAME_DECODED, /* frame decoded; waiting until it's time to display it */
-		FRAME_WAITING /* frame waiting to be uploaded */
+		FRAME_DECODED /* frame decoded; waiting until it's time to display it */
 	} m_ImageWaiting;
 	bool m_bLoop;
 	bool m_bWantRewind;
 
-	/*
-	 * Only the main thread can change m_State.
-	 *
-	 * DECODER_QUIT: The decoder thread is not running.  We should only
-	 * be in this state internally; when we return after a call, we should
-	 * never be in this state.  Start the thread before returning.
-	 *
-	 * PAUSE_DECODER: The decoder thread is idle.
-	 *
-	 * PLAYING: The decoder thread is running.
-	 */
 	enum State { DECODER_QUIT, DECODER_RUNNING } m_State;
 
 	unsigned m_uTexHandle;

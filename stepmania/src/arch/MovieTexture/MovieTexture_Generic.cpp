@@ -48,7 +48,7 @@ RString MovieTexture_Generic::Init()
 	CreateFrameRects();
 
 	/* Decode one frame, to guarantee that the texture is drawn when this function returns. */
-	int ret = GetFrame( -1 );
+	int ret = m_pDecoder->DecodeFrame( -1 );
 	if( ret == -1 )
 		return ssprintf( "%s: error getting first frame", GetID().filename.c_str() );
 	if( ret == 0 )
@@ -57,7 +57,7 @@ RString MovieTexture_Generic::Init()
 		return ssprintf( "%s: EOF getting first frame", GetID().filename.c_str() );
 	}
 
-	m_ImageWaiting = FRAME_WAITING;
+	m_ImageWaiting = FRAME_DECODED;
 
 	LOG->Trace( "Resolution: %ix%i (%ix%i, %ix%i)",
 			m_iSourceWidth, m_iSourceHeight,
@@ -302,8 +302,6 @@ void MovieTexture_Generic::CreateTexture()
  * (due to quit, error, EOF, etc).  If true is returned, we'll be in FRAME_DECODED. */
 bool MovieTexture_Generic::DecodeFrame()
 {
-	ASSERT_M( m_ImageWaiting == FRAME_NONE, ssprintf("%i", m_ImageWaiting) );
-
 	bool bTriedRewind = false;
 	do
 	{
@@ -334,7 +332,7 @@ bool MovieTexture_Generic::DecodeFrame()
 		if( m_bFrameSkipMode && m_fClock > m_pDecoder->GetTimestamp() )
 			fTargetTime = m_fClock;
 
-		int ret = GetFrame( fTargetTime );
+		int ret = m_pDecoder->DecodeFrame( fTargetTime );
 		if( ret == -1 )
 			return false;
 
@@ -353,22 +351,18 @@ bool MovieTexture_Generic::DecodeFrame()
 		}
 
 		/* We got a frame. */
-		m_ImageWaiting = FRAME_DECODED;
 	} while( m_bWantRewind );
 
 	return true;
 }
 
 /*
- * Call when m_ImageWaiting == FRAME_DECODED.
  * Returns:
  *  == 0 if the currently decoded frame is ready to be displayed
  *   > 0 (seconds) if it's not yet time to display;
  */
 float MovieTexture_Generic::CheckFrameTime()
 {
-	ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting) );
-
 	if( m_fRate == 0 )
 		return 1;	// "a long time until the next frame"
 
@@ -428,29 +422,31 @@ void MovieTexture_Generic::DecodeSeconds( float fSeconds )
 	{
 		/* If we don't have a frame decoded, decode one. */
 		if( m_ImageWaiting == FRAME_NONE )
-			DecodeFrame();
-
-		/* If we have a frame decoded, see if it's time to display it. */
-		if( m_ImageWaiting == FRAME_DECODED )
 		{
-			float fTime = CheckFrameTime();
-			if( fTime > 0 )
-				return;
+			if( !DecodeFrame() )
+				break;
 
-			m_ImageWaiting = FRAME_WAITING;
+			m_ImageWaiting = FRAME_DECODED;
 		}
 
-		if( m_ImageWaiting != FRAME_WAITING )
+		/* If we have a frame decoded, see if it's time to display it. */
+		float fTime = CheckFrameTime();
+		if( fTime > 0 )
 			return;
+
 		CHECKPOINT;
 
 		UpdateFrame();
+
+		m_ImageWaiting = FRAME_NONE;
+
+		return;
 	}
 
 	LOG->MapLog( "movie_looping", "MovieTexture_Generic::Update looping" );
 }
 
-int MovieTexture_Generic::GetFrame( float fTargetTime )
+void MovieTexture_Generic::UpdateFrame()
 {
 	/* Just in case we were invalidated: */
 	CreateTexture();
@@ -461,19 +457,9 @@ int MovieTexture_Generic::GetFrame( float fTargetTime )
 		m_pTextureLock->Lock( iHandle, m_pSurface );
 	}
 
-	int ret = m_pDecoder->GetFrame( m_pSurface, fTargetTime );
+	m_pDecoder->GetFrame( m_pSurface );
 	if( m_pTextureLock != NULL )
-		m_pTextureLock->Unlock( m_pSurface, ret > 0 );
-	return ret;
-}
-
-/* Call when m_ImageWaiting == FRAME_WAITING to update the texture.  Sets FRAME_NONE. */
-void MovieTexture_Generic::UpdateFrame()
-{
-	ASSERT_M( m_ImageWaiting == FRAME_WAITING, ssprintf("%i", m_ImageWaiting) );
-
-	/* Just in case we were invalidated: */
-	CreateTexture();
+		m_pTextureLock->Unlock( m_pSurface, true );
 
 	if( m_pRenderTarget != NULL )
 	{
@@ -503,8 +489,6 @@ void MovieTexture_Generic::UpdateFrame()
 				m_iImageWidth, m_iImageHeight );
 		CHECKPOINT;
 	}
-
-	m_ImageWaiting = FRAME_NONE;
 }
 
 static EffectMode EffectModes[] = 

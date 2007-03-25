@@ -234,7 +234,8 @@ public:
 	void Close();
 	void Rewind();
 
-	int GetFrame( RageSurface *pOut, float fTargetTime );
+	void GetFrame( RageSurface *pOut );
+	int DecodeFrame( float fTargetTime );
 
 	int GetWidth() const { return m_pStream->codec->width; }
 	int GetHeight() const { return m_pStream->codec->height; }
@@ -248,8 +249,7 @@ private:
 	void Init();
 	RString OpenCodec();
 	int ReadPacket();
-	int DecodePacket( RageSurface *pOut, float fTargetTime );
-	void ConvertToSurface( RageSurface *pSurface ) const;
+	int DecodePacket( float fTargetTime );
 
 	avcodec::AVStream *m_pStream;
 	avcodec::AVFrame m_Frame;
@@ -315,11 +315,12 @@ void MovieDecoder_FFMpeg::Init()
 }
 
 /* Read until we get a frame, EOF or error.  Return -1 on error, 0 on EOF, 1 if we have a frame. */
-int MovieDecoder_FFMpeg::GetFrame( RageSurface *pOut, float fTargetTime )
+int MovieDecoder_FFMpeg::DecodeFrame( float fTargetTime )
 {
 	while( 1 )
 	{
-		int ret = DecodePacket( pOut, fTargetTime );
+		int ret = DecodePacket( fTargetTime );
+
 		if( ret == 1 )
 			return 1;
 		if( ret == -1 )
@@ -384,7 +385,7 @@ int MovieDecoder_FFMpeg::ReadPacket()
 
 /* Decode data from the current packet.  Return -1 on error, 0 if the packet is finished,
  * and 1 if we have a frame (we may have more data in the packet). */
-int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
+int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 {
 	if( m_iEOF == 0 && m_iCurrentPacketOffset == -1 )
 		return 0; /* no packet */
@@ -393,7 +394,7 @@ int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
 	{
 		if( m_bGetNextTimestamp )
 		{
-			if (m_Packet.pts != int64_t(AV_NOPTS_VALUE))
+			if (m_Packet.dts != int64_t(AV_NOPTS_VALUE))
 			{
 				m_fPTS = m_Packet.dts * av_q2d(m_pStream->time_base);
 
@@ -488,15 +489,13 @@ int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
 		if( bSkipThisFrame )
 			continue;
 
-		ConvertToSurface( pOut );
-
 		return 1;
 	}
 
 	return 0; /* packet done */
 }
 
-void MovieDecoder_FFMpeg::ConvertToSurface( RageSurface *pSurface ) const
+void MovieDecoder_FFMpeg::GetFrame( RageSurface *pSurface )
 {
 	avcodec::AVPicture pict;
 	pict.data[0] = (unsigned char *) pSurface->pixels;

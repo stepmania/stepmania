@@ -32,7 +32,8 @@ public:
 	void Close();
 	void Rewind() { } // XXX
 
-	int GetFrame( RageSurface *pOut, float fTargetTime );
+	int DecodeFrame( float fTargetTime );
+	void GetFrame( RageSurface *pOut );
 	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr &fmtout );
 
 	int GetWidth() const { return m_TheoraInfo.frame_width; }
@@ -228,7 +229,7 @@ RString MovieDecoder_Theora::Open( RString sFile )
 	return RString();
 }
 
-int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
+int MovieDecoder_Theora::DecodeFrame( float fTargetTime )
 {
 	while(1)
 	{
@@ -245,7 +246,6 @@ int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
 					continue;
 			}
 
-			ConvertToSurface( pOut );
 			m_iGranulepos = m_TheoraState.granulepos;
 			return 1;
 		}
@@ -264,6 +264,11 @@ int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
 		if( ret > 0 )
 			ogg_stream_pagein( &m_OggStream, &OggPage );
 	}
+}
+
+void MovieDecoder_Theora::GetFrame( RageSurface *pOut )
+{
+	ConvertToSurface( pOut );
 }
 
 RageSurface *MovieDecoder_Theora::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, MovieDecoderPixelFormatYCbCr &fmtout )
