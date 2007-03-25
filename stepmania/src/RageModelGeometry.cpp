@@ -185,6 +185,11 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 						v.TextureMatrixScale.x = 0;
 					if( nFlags & 2 )
 						v.TextureMatrixScale.y = 0;
+					if( nFlags & 4 )
+					{
+						v.t[0] = v.p[0] / v.t[0];
+						v.t[1] = v.p[1] / v.t[1];
+					}
 					v.bone = (uint8_t) nIndex;
 					RageVec3AddToBounds( v.p, m_vMins, m_vMaxs );
 				}
