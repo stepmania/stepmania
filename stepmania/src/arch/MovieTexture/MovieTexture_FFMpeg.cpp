@@ -117,7 +117,7 @@ static struct AVPixelFormat_t
 		false,
 		PixelFormatYCbCr_Invalid,
 	},
-	{ 0, { 0,0,0,0 }, avcodec::PIX_FMT_NB, true, false }
+	{ 0, { 0,0,0,0 }, avcodec::PIX_FMT_NB, true, false, PixelFormatYCbCr_Invalid }
 };
 
 static void FixLilEndian()
