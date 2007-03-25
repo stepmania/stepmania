@@ -15,6 +15,8 @@
 #endif
 
 
+static Preference<bool> g_bMovieTextureDirectUpdates( "MovieTextureDirectUpdates", true );
+
 MovieTexture_Generic::MovieTexture_Generic( RageTextureID ID, MovieDecoder *pDecoder ):
 	RageMovieTexture( ID )
 {
@@ -207,7 +209,8 @@ void MovieTexture_Generic::CreateTexture()
 	if( m_pSurface == NULL )
 	{
 		ASSERT( m_pTextureLock == NULL );
-		m_pTextureLock = DISPLAY->CreateTextureLock();
+		if( g_bMovieTextureDirectUpdates )
+			m_pTextureLock = DISPLAY->CreateTextureLock();
 
 		m_pSurface = m_pDecoder->CreateCompatibleSurface( m_iImageWidth, m_iImageHeight,
 			TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32, fmt );
