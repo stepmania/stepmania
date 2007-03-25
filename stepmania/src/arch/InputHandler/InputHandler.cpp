@@ -75,27 +75,27 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 
 			switch( c )
 			{
-			case '`':	c = L'~';	break;
-			case '1':	c = L'!';	break;
-			case '2':	c = L'@';	break;
-			case '3':	c = L'#';	break;
-			case '4':	c = L'$';	break;
-			case '5':	c = L'%';	break;
-			case '6':	c = L'^';	break;
-			case '7':	c = L'&';	break;
-			case '8':	c = L'*';	break;
-			case '9':	c = L'(';	break;
-			case '0':	c = L')';	break;
-			case '-':	c = L'_';	break;
-			case '=':	c = L'+';	break;
-			case '[':	c = L'{';	break;
-			case ']':	c = L'}';	break;
-			case '\'':	c = L'"';	break;
-			case '\\':	c = L'|';	break;
-			case ';':	c = L':';	break;
-			case ',':	c = L'<';	break;
-			case '.':	c = L'>';	break;
-			case '/':	c = L'?';	break;
+			case L'`':	c = L'~';	break;
+			case L'1':	c = L'!';	break;
+			case L'2':	c = L'@';	break;
+			case L'3':	c = L'#';	break;
+			case L'4':	c = L'$';	break;
+			case L'5':	c = L'%';	break;
+			case L'6':	c = L'^';	break;
+			case L'7':	c = L'&';	break;
+			case L'8':	c = L'*';	break;
+			case L'9':	c = L'(';	break;
+			case L'0':	c = L')';	break;
+			case L'-':	c = L'_';	break;
+			case L'=':	c = L'+';	break;
+			case L'[':	c = L'{';	break;
+			case L']':	c = L'}';	break;
+			case L'\'':	c = L'"';	break;
+			case L'\\':	c = L'|';	break;
+			case L';':	c = L':';	break;
+			case L',':	c = L'<';	break;
+			case L'.':	c = L'>';	break;
+			case L'/':	c = L'?';	break;
 			}
 		}
 
