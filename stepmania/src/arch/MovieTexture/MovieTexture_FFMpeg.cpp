@@ -388,7 +388,14 @@ int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
 		if( m_bGetNextTimestamp )
 		{
 			if (m_Packet.pts != int64_t(AV_NOPTS_VALUE))
+			{
 				m_fPTS = m_Packet.dts * av_q2d(m_pStream->time_base);
+
+				/* dts is the timestamp of the first frame in this packet. Only use it once;
+				 * if we get more than one frame from the same packet (eg. f;lushing the last
+				 * frame), extrapolate. */
+				m_Packet.dts = int64_t(AV_NOPTS_VALUE);
+			}
 			else
 				m_fPTS = -1;
 			m_bGetNextTimestamp = false;
