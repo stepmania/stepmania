@@ -304,7 +304,7 @@ void LifeMeterBar::UpdateNonstopLifebar()
 		if( GAMESTATE->IsEventMode() || GAMESTATE->m_bDemonstrationOrJukebox )
 			return;
 
-		iCleared = GAMESTATE->GetStageIndex();
+		iCleared = GAMESTATE->GetSmallestCurrentStageIndexForAnyHumanPlayer();
 		iTotal = PREFSMAN->m_iSongsPerPlay;
 		iProgressiveLifebarDifficulty = PREFSMAN->m_iProgressiveStageLifebar;
 		break;

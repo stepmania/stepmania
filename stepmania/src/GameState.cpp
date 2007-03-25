@@ -249,6 +249,8 @@ void GameState::Reset()
 	m_bDemonstrationOrJukebox = false;
 	m_bJukeboxUsesModifiers = false;
 	m_iCurrentStageIndex = 0;
+	FOREACH_PlayerNumber( p )
+		m_iPlayerCurrentStageIndexForCurrentCredit[p] = 0;
 	m_bGameplayLeadIn.Set( false );
 	m_iNumStagesOfThisSong = 0;
 	m_bLoadingNextSong = false;
@@ -320,6 +322,7 @@ void GameState::Reset()
 void GameState::JoinPlayer( PlayerNumber pn )
 {
 	m_bSideIsJoined[pn] = true;
+	m_iPlayerCurrentStageIndexForCurrentCredit[pn] = 0;
 
 	if( m_MasterPlayerNumber == PLAYER_INVALID )
 		m_MasterPlayerNumber = pn;
@@ -336,6 +339,19 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	}
 
 	Message msg( MessageIDToString(Message_PlayerJoined) );
+	msg.SetParam( "Player", pn );
+	MESSAGEMAN->Broadcast( msg );
+}
+
+void GameState::UnjoinPlayer( PlayerNumber pn )
+{
+	m_bSideIsJoined[pn] = false;
+	m_iPlayerCurrentStageIndexForCurrentCredit[pn] = 0;
+
+	if( m_MasterPlayerNumber == pn )
+		m_MasterPlayerNumber = GAMESTATE->GetFirstHumanPlayer();
+
+	Message msg( MessageIDToString(Message_PlayerUnjoined) );
 	msg.SetParam( "Player", pn );
 	MESSAGEMAN->Broadcast( msg );
 }
@@ -586,7 +602,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse()
 	 * if a long/marathon song is selected explicitly in the theme with a GameCommand,
 	 * and PREFSMAN->m_iNumArcadeStages is less than the number of stages that
 	 * song takes. */
-	int iNumStagesLeft = PREFSMAN->m_iSongsPerPlay - GAMESTATE->m_iCurrentStageIndex;
+	int iNumStagesLeft = GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer();
 	iNumStagesOfThisSong = min( iNumStagesOfThisSong, iNumStagesLeft );
 	iNumStagesOfThisSong = max( iNumStagesOfThisSong, 1 );
 
@@ -653,7 +669,10 @@ void GameState::FinishStage()
 	// Increment the stage counter.
 	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
 	const int iOldStageIndex = m_iCurrentStageIndex;
+	
 	m_iCurrentStageIndex += m_iNumStagesOfThisSong;
+	FOREACH_EnabledPlayer( p )
+		m_iPlayerCurrentStageIndexForCurrentCredit[p] += m_iNumStagesOfThisSong;
 
 	m_iNumStagesOfThisSong = 0;
 
@@ -743,17 +762,15 @@ void GameState::ResetStageStatistics()
 	STATSMAN->m_CurStageStats = StageStats();
 	if( PREFSMAN->m_bComboContinuesBetweenSongs )
 	{
-		if( GetStageIndex() == 0 )
+		FOREACH_PlayerNumber( p )
 		{
-			FOREACH_PlayerNumber( p )
+			bool bFirstSong = m_iPlayerCurrentStageIndexForCurrentCredit[p] == 0;
+			if( bFirstSong )
 			{
 				Profile* pProfile = PROFILEMAN->GetProfile(p);
 				STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = pProfile->m_iCurrentCombo;
 			}
-		}
-		else	// GetStageIndex() > 0
-		{
-			FOREACH_PlayerNumber( p )
+			else
 			{
 				STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = OldStats.m_player[p].m_iCurCombo;
 			}
@@ -818,18 +835,41 @@ float GameState::GetSongPercent( float beat ) const
 	return (beat - m_pCurSong->m_fFirstBeat) / m_pCurSong->m_fLastBeat;
 }
 
-int GameState::GetStageIndex() const
+int GameState::GetSmallestCurrentStageIndexForAnyHumanPlayer() const
 {
-	return m_iCurrentStageIndex;
+	int iSmallest = INT_MAX;
+	FOREACH_HumanPlayer( p )
+		iSmallest = min( iSmallest, m_iPlayerCurrentStageIndexForCurrentCredit[p] );
+	return iSmallest;
 }
 
-int GameState::GetNumStagesLeft() const
+int GameState::GetNumStagesLeft( PlayerNumber pn ) const
+{
+	return PREFSMAN->m_iSongsPerPlay - m_iPlayerCurrentStageIndexForCurrentCredit[pn];
+}
+
+int GameState::GetSmallestNumStagesLeftForAnyHumanPlayer() const
 {
 	if( IsAnExtraStage() )
 		return 1;
 	if( IsEventMode() )
 		return 999;
-	return PREFSMAN->m_iSongsPerPlay - m_iCurrentStageIndex;
+	int iSmallest = INT_MAX;
+	FOREACH_HumanPlayer( p )
+		iSmallest = min( iSmallest, GetNumStagesLeft(p) );
+	return iSmallest;
+}
+
+int GameState::GetLargestNumStagesLeftForAnyHumanPlayer() const
+{
+	if( IsAnExtraStage() )
+		return 1;
+	if( IsEventMode() )
+		return 999;
+	int iLargest = INT_MIN;
+	FOREACH_HumanPlayer( p )
+		iLargest = max( iLargest, GetNumStagesLeft(p) );
+	return iLargest;
 }
 
 bool GameState::IsFinalStage() const
@@ -844,22 +884,22 @@ bool GameState::IsFinalStage() const
 	int iPredictedStageForCurSong = GetNumStagesForCurrentSongAndStepsOrCourse();
 	if( iPredictedStageForCurSong == -1 )
 		iPredictedStageForCurSong = 1;
-	return m_iCurrentStageIndex + iPredictedStageForCurSong == PREFSMAN->m_iSongsPerPlay;
+	return GetSmallestCurrentStageIndexForAnyHumanPlayer() + iPredictedStageForCurSong == PREFSMAN->m_iSongsPerPlay;
 }
 
 bool GameState::IsAnExtraStage() const
 {
-	return !IsEventMode() && !IsCourseMode() && m_iCurrentStageIndex >= PREFSMAN->m_iSongsPerPlay;
+	return !IsEventMode() && !IsCourseMode() && GetSmallestCurrentStageIndexForAnyHumanPlayer() >= PREFSMAN->m_iSongsPerPlay;
 }
 
 bool GameState::IsExtraStage() const
 {
-	return !IsEventMode() && !IsCourseMode() && m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay;
+	return !IsEventMode() && !IsCourseMode() && GetSmallestCurrentStageIndexForAnyHumanPlayer() == PREFSMAN->m_iSongsPerPlay;
 }
 
 bool GameState::IsExtraStage2() const
 {
-	return !IsEventMode() && !IsCourseMode() && m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay+1;
+	return !IsEventMode() && !IsCourseMode() && GetSmallestCurrentStageIndexForAnyHumanPlayer() == PREFSMAN->m_iSongsPerPlay+1;
 }
 
 Stage GameState::GetCurrentStage() const
@@ -873,7 +913,7 @@ Stage GameState::GetCurrentStage() const
 	else if( IsFinalStage() )			return STAGE_FINAL;
 	else if( IsExtraStage() )			return STAGE_EXTRA1;
 	else if( IsExtraStage2() )			return STAGE_EXTRA2;
-	else						return (Stage)(STAGE_1+m_iCurrentStageIndex);
+	else						return (Stage)(STAGE_1+GetSmallestCurrentStageIndexForAnyHumanPlayer());
 }
 
 // Return true if it's possible for GetCurrentStage() to return the given stage.
@@ -1059,7 +1099,6 @@ PlayerNumber GameState::GetFirstHumanPlayer() const
 {
 	FOREACH_HumanPlayer( pn )
 		return pn;
-	ASSERT(0);	// there must be at least 1 human player
 	return PLAYER_INVALID;
 }
 
@@ -1343,7 +1382,7 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 		if( m_pCurSteps[pn] )
 			dc = m_pCurSteps[pn]->GetDifficulty();
 
-		bool bFirstStage = !IsEventMode() && m_iCurrentStageIndex == 0;
+		bool bFirstStage = !IsEventMode() && GetSmallestCurrentStageIndexForAnyHumanPlayer() == 0;
 
 		/* Easy and beginner are never harder than FAIL_IMMEDIATE_CONTINUE. */
 		if( dc <= Difficulty_Easy )
@@ -2102,7 +2141,7 @@ public:
 	DEFINE_METHOD( IsDemonstration,			m_bDemonstrationOrJukebox )
 	DEFINE_METHOD( GetPlayMode,			m_PlayMode )
 	DEFINE_METHOD( GetSortOrder,			m_SortOrder )
-	DEFINE_METHOD( GetStageIndex,			GetStageIndex() )
+	DEFINE_METHOD( GetStageIndex,			m_iCurrentStageIndex )
 	DEFINE_METHOD( IsGoalComplete,			IsGoalComplete(Enum::Check<PlayerNumber>(L, 1)) )
 	DEFINE_METHOD( PlayerIsUsingModifier,		PlayerIsUsingModifier(Enum::Check<PlayerNumber>(L, 1), SArg(2)) )
 	DEFINE_METHOD( GetCourseSongIndex,		GetCourseSongIndex() )
@@ -2232,7 +2271,13 @@ public:
 		return 1;
 	}
 	static int GetNumStagesForCurrentSongAndStepsOrCourse( T* p, lua_State *L ) { lua_pushnumber(L, GameState::GetNumStagesForCurrentSongAndStepsOrCourse() ); return 1; }
-		
+	static int GetNumStagesLeft( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		lua_pushnumber(L, p->GetNumStagesLeft(pn)); 
+		return 1;
+	}
+
 	LunaGameState() 
 	{
 		ADD_METHOD( IsPlayerEnabled );
@@ -2309,6 +2354,7 @@ public:
 		ADD_METHOD( GetCurrentStyle );
 		ADD_METHOD( IsAnyHumanPlayerUsingMemoryCard );
 		ADD_METHOD( GetNumStagesForCurrentSongAndStepsOrCourse );
+		ADD_METHOD( GetNumStagesLeft );
 	}
 };
 

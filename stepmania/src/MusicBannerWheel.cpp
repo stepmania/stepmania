@@ -65,7 +65,7 @@ MusicBannerWheel::MusicBannerWheel()
 	{
 		vector<Song*> vTempSongs;
 		SongCriteria sc;
-		sc.m_iMaxStagesForSong = GAMESTATE->GetNumStagesLeft();
+		sc.m_iMaxStagesForSong = GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer();
 		SongUtil::FilterSongs( sc, arraySongs, vTempSongs );
 		arraySongs = vTempSongs;
 	}

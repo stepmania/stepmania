@@ -51,6 +51,7 @@ enum MessageID
 	Message_CoinInserted,
 	Message_PlayerJoined,
 	Message_PlayersFinalized,
+	Message_PlayerUnjoined,
 	Message_AutosyncChanged,
 	Message_PreferredSongGroupChanged,
 	Message_PreferredCourseGroupChanged,

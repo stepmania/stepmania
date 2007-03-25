@@ -42,6 +42,8 @@ ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
 		GAMESTATE->m_iCurrentStageIndex = 0;
+		FOREACH_ENUM( PlayerNumber, p )
+			GAMESTATE->m_iPlayerCurrentStageIndexForCurrentCredit[p] = 0;
 		PO_GROUP_CALL( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, ChooseRandomModifiers );
 		PO_GROUP_CALL( GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions, ModsLevel_Stage, ChooseRandomModifiers );
 
@@ -83,10 +85,6 @@ ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
 void ScreenEnding::Init()
 {
 	ScreenAttract::Init();
-
-	vector<Song*> arraySongs;
-	SONGMAN->GetSongs( arraySongs );
-	SongUtil::SortSongPointerArrayByTitle( arraySongs );
 
 	FOREACH_HumanPlayer( p )
 	{

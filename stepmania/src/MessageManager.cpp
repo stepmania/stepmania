@@ -54,6 +54,7 @@ static const char *MessageIDNames[] = {
 	"CoinInserted",
 	"PlayerJoined",
 	"PlayersFinalized",
+	"PlayerUnjoined",
 	"AutosyncChanged",
 	"PreferredSongGroupChanged",
 	"PreferredCourseGroupChanged",

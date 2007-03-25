@@ -41,6 +41,7 @@ public:
 	void ApplyGameCommand( const RString &sCommand, PlayerNumber pn=PLAYER_INVALID );
 	void BeginGame();	// called when first player joins
 	void JoinPlayer( PlayerNumber pn );
+	void UnjoinPlayer( PlayerNumber pn );
 	bool JoinInput( PlayerNumber pn );
 	void PlayersFinalized();	// called after a style is chosen, which means the number of players is finalized
 	void EndGame();	// called on ScreenGameOver, ScreenMusicScroll, ScreenCredits
@@ -116,18 +117,23 @@ public:
 	bool				m_bDemonstrationOrJukebox;	// ScreenGameplay does special stuff when this is true
 	bool				m_bJukeboxUsesModifiers;
 	int				m_iNumStagesOfThisSong;
+	// Increases every stage, doesn't reset when player continues.  It's cosmetic and not used in Stage or Screen branching logic.
 	int				m_iCurrentStageIndex;
+	// Num stages played since player joined or conintues by using a credit.  Increases every stage if the player is joined.  Resets when player joins/continues.
+	int				m_iPlayerCurrentStageIndexForCurrentCredit[NUM_PLAYERS];
 
 	static int GetNumStagesMultiplierForSong( const Song* pSong );
 	static int GetNumStagesForSongAndStyleType( const Song* pSong, StyleType st );
 	static int GetNumStagesForCurrentSongAndStepsOrCourse();
 
-	int		GetStageIndex() const;
 	void		BeginStage();
 	void		CancelStage();
 	void		CommitStageStats();
 	void		FinishStage();
-	int		GetNumStagesLeft() const;
+	int		GetSmallestCurrentStageIndexForAnyHumanPlayer() const;
+	int		GetNumStagesLeft( PlayerNumber pn ) const;
+	int		GetSmallestNumStagesLeftForAnyHumanPlayer() const;
+	int		GetLargestNumStagesLeftForAnyHumanPlayer() const;
 	bool		IsFinalStage() const;
 	bool		IsAnExtraStage() const;
 	bool		IsExtraStage() const;

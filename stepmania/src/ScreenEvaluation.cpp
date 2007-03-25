@@ -101,6 +101,8 @@ ScreenEvaluation::ScreenEvaluation()
 		STATSMAN->m_CurStageStats.m_vpPossibleSongs.push_back( GAMESTATE->m_pCurSong );
 		GAMESTATE->m_pCurCourse.Set( SONGMAN->GetRandomCourse() );
 		GAMESTATE->m_iCurrentStageIndex = 0;
+		FOREACH_ENUM( PlayerNumber, p )
+			GAMESTATE->m_iPlayerCurrentStageIndexForCurrentCredit[p] = 0;
 		
 		FOREACH_PlayerNumber( p )
 		{

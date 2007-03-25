@@ -159,7 +159,7 @@ void MusicWheel::BeginScreen()
 	/* Invalidate current Song if it can't be played
 	 * because there are not enough stages remaining. */
 	if( GAMESTATE->m_pCurSong != NULL && 
-		GameState::GetNumStagesMultiplierForSong( GAMESTATE->m_pCurSong ) > GAMESTATE->GetNumStagesLeft() )
+		GameState::GetNumStagesMultiplierForSong( GAMESTATE->m_pCurSong ) > GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() )
 	{
 		GAMESTATE->m_pCurSong.Set( NULL );
 	}
@@ -342,7 +342,7 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 	{
 		vector<Song*> vTempSongs;
 		SongCriteria sc;
-		sc.m_iMaxStagesForSong = GAMESTATE->GetNumStagesLeft();
+		sc.m_iMaxStagesForSong = GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer();
 		SongUtil::FilterSongs( sc, apAllSongs, vTempSongs );
 		apAllSongs = vTempSongs;
 	}
@@ -407,7 +407,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 				case SORT_ONI_COURSES:
 				case SORT_ENDLESS_COURSES:
 					/* Don't display course modes after the first stage. */
-					if( !GAMESTATE->IsEventMode() && GAMESTATE->m_iCurrentStageIndex )
+					if( !GAMESTATE->IsEventMode() && GAMESTATE->GetLargestNumStagesLeftForAnyHumanPlayer() > 0 )
 						continue;
 				}
 
