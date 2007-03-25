@@ -3,6 +3,7 @@
 #include "InputHandler_Carbon.h"
 #include "Foreach.h"
 #include "PrefsManager.h"
+#include "InputFilter.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 #include "archutils/Darwin/KeyboardDevice.h"
 #include "archutils/Darwin/JoystickDevice.h"
@@ -29,7 +30,7 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
 		dev->GetButtonPresses( vPresses, int(event.elementCookie), int(event.value), now );
 	FOREACH_CONST( DeviceInput, vPresses, i )
-		This->ButtonPressed( *i );
+		INPUTFILTER->ButtonPressed( *i );
 }
 
 static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *sem )
