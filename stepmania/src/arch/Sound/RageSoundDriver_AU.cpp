@@ -47,11 +47,10 @@ RageSoundDriver_AU::RageSoundDriver_AU() : m_OutputUnit(NULL), m_iSampleRate(0),
 void RageSoundDriver_AU::NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *inRefCon )
 {
 	RageSoundDriver_AU *This = (RageSoundDriver_AU *)inRefCon;
-	if( This->m_pNotificationThread == NULL )
-	{
-		This->m_pNotificationThread = new RageThreadRegister( "HAL notification thread" );
-		This->m_Semaphore.Post();
-	}
+	CFRunLoopObserverInvalidate( observer );
+	CFRelease( observer );
+	This->m_pNotificationThread = new RageThreadRegister( "HAL notification thread" );
+	This->m_Semaphore.Post();
 }
 
 RString RageSoundDriver_AU::Init()
@@ -160,8 +159,6 @@ RString RageSoundDriver_AU::Init()
 		CFRunLoopAddObserver( runLoopRef, observerRef, kCFRunLoopDefaultMode );
 		CFRunLoopWakeUp( runLoopRef );
 		m_Semaphore.Wait();
-		CFRunLoopObserverInvalidate( observerRef );
-		CFRelease( observerRef );
 	}
 
 	if( (error = AudioOutputUnitStart(m_OutputUnit)) )
