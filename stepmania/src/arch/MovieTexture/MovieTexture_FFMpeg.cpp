@@ -262,6 +262,7 @@ private:
 	float m_fTimestampOffset;
 	float m_fLastFrameDelay;
 	int m_iFrameNumber;
+	bool m_bHadBframes;
 
 	avcodec::AVPacket m_Packet;
 	int m_iCurrentPacketOffset;
@@ -279,6 +280,11 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 	m_fctx = NULL;
 	m_pStream = NULL;
 	m_iCurrentPacketOffset = -1;
+
+	/* Until we play the whole movie once without hitting a B-frame, assume
+	 * they exist. */
+	m_bHadBframes = true;
+
 	Init();
 }
 
@@ -457,6 +463,9 @@ int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
 		m_fLastFrameDelay += m_Frame.repeat_pict * (m_fLastFrameDelay * 0.5f);
 
 		++m_iFrameNumber;
+
+		if( m_Frame.pict_type == FF_B_TYPE )
+			m_bHadBframes = true;
 
 		if( m_iFrameNumber == 1 )
 		{
@@ -660,10 +669,20 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 		return ssprintf( "Couldn't find decoder %i", m_pStream->codec->codec_id );
 
 	LOG->Trace("Opening codec %s", pCodec->name );
+
+	if( !m_bHadBframes )
+	{
+		LOG->Trace("Setting CODEC_FLAG_LOW_DELAY" );
+		m_pStream->codec->flags |= CODEC_FLAG_LOW_DELAY;
+	}
+
 	int ret = avcodec::avcodec_open( m_pStream->codec, pCodec );
 	if( ret < 0 )
 		return ssprintf( averr_ssprintf(ret, "Couldn't open codec \"%s\"", pCodec->name) );
 	ASSERT( m_pStream->codec->codec );
+
+	/* This is set to true when we find a B-frame, to use on the next loop. */
+	m_bHadBframes = false;
 
 	return RString();
 }
