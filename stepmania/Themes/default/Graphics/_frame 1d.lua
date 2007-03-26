@@ -35,6 +35,7 @@ local Widths = { }
 local TextureXPos = 0
 for i = 1,#p do
 	t.children[i] = a .. {
+		Name = tostring(i);
 		InitCommand = function(self)
 			if i < math.ceil(#p/2) then self:horizalign("HorizAlign_Right");
 			elseif i == math.ceil(#p/2) then self:horizalign("HorizAlign_Center");
@@ -62,6 +63,12 @@ for i = 1,#p do
 	TextureXPos = TextureXPos + Width;
 end
 
+t.InitCommand = function(self, params)
+	local Child = self:GetChild("1");
+	local Height = Child:GetHeight();
+	self:SetHeight(Height);
+end
+
 t.SetPartSizeCommand = function(self, params)
 	self:zoomx( params.FrameZoom );
 end
@@ -69,6 +76,8 @@ end
 t.SetSizeCommand = function(self, params)
 	local Width = params.Width;
 	assert( Width );
+
+	self:SetWidth( Width );
 
 	if params.tween then
 		params.tween(self);
