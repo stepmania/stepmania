@@ -32,6 +32,7 @@ public:
 	void	PlayAnimation( const RString &sAniName, float fPlayRate = 1 );
 	void	SetRate( float fRate ) { m_fCurAnimationRate = fRate; }
 	void	SetLoop( bool b ) { m_bLoop = b; }
+	void	SetPosition( float fSeconds );
 
 	virtual void	Update( float fDelta );
 	virtual bool	EarlyAbortDraw() const;

@@ -564,6 +564,12 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 	UpdateTempGeometry();
 }
 
+void Model::SetPosition( float fSeconds )
+{
+	m_fCurFrame = FRAMES_PER_SECOND * fSeconds;
+	m_fCurFrame = clamp( m_fCurFrame, 0, (float) m_pCurAnimation->nTotalFrames );
+}
+
 void Model::AdvanceFrame( float fDeltaTime )
 {
 	if( m_pGeometry == NULL || 
@@ -777,6 +783,7 @@ bool Model::MaterialsNeedNormals() const
 class LunaModel: public Luna<Model>
 {
 public:
+	static int position( T* p, lua_State *L )	{ p->SetPosition( FArg(1) ); return 0; }
 	static int playanimation( T* p, lua_State *L )	{ p->PlayAnimation(SArg(1),FArg(2)); return 0; }
 	static int SetDefaultAnimation( T* p, lua_State *L )	{ p->SetDefaultAnimation(SArg(1),FArg(2)); return 0; }
 	static int loop( T* p, lua_State *L )		{ p->SetLoop(BArg(1)); return 0; }
@@ -784,6 +791,7 @@ public:
 
 	LunaModel()
 	{
+		ADD_METHOD( position );
 		ADD_METHOD( playanimation );
 		ADD_METHOD( SetDefaultAnimation );
 		ADD_METHOD( loop );
