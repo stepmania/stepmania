@@ -1407,21 +1407,16 @@ unsigned RageDisplay_D3D::CreateTexture(
 	RageSurface* img,
 	bool bGenerateMipMaps )
 {
-	// texture must be power of two
-	ASSERT( img->w == power_of_two(img->w) );
-	ASSERT( img->h == power_of_two(img->h) );
-
-
 	HRESULT hr;
 	IDirect3DTexture8* pTex;
-	hr = g_pd3dDevice->CreateTexture( img->w, img->h, 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
+	hr = g_pd3dDevice->CreateTexture( power_of_two(img->w), power_of_two(img->h), 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
 
 #if defined(XBOX)
 	while(hr == E_OUTOFMEMORY)
 	{
 		if(!vmem_Manager.DecommitLRU())
 			break;
-		hr = g_pd3dDevice->CreateTexture( img->w, img->h, 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
+		hr = g_pd3dDevice->CreateTexture( power_of_two(img->w), power_of_two(img->h), 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
 	}
 #endif
 
