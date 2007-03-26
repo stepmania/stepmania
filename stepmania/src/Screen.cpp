@@ -67,6 +67,8 @@ void Screen::Init()
 
 void Screen::BeginScreen()
 {
+	m_bFirstUpdate = true;
+
 	/* Screens set these when they determine their next screen dynamically.  Reset them
 	 * here, so a reused screen doesn't inherit these from the last time it was used. */
 	m_sNextScreen = RString();
