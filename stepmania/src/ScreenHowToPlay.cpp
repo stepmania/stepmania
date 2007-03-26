@@ -109,8 +109,7 @@ void ScreenHowToPlay::Init()
 			ASSERT( !sRestFile.empty() );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "rest",rndchar->GetRestAnimationPath() );
 			m_pmCharacter->SetDefaultAnimation( "rest" );
-			m_pmCharacter->PlayAnimation( "rest" );
-			m_pmCharacter->m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating.
+			m_pmCharacter->PlayAnimation( "rest" );				// Stay bouncing after a step has finished animating.
 			
 			m_pmCharacter->SetRotationX( 40 );
 			m_pmCharacter->SetCullMode( CULL_NONE );	// many of the models floating around have the vertex order flipped

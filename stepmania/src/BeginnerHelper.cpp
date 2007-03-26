@@ -203,14 +203,13 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 		m_pDancer[pl]->LoadMilkshapeAsciiBones( "Step-RIGHT", 	GetAnimPath(ANIM_RIGHT) );
 		m_pDancer[pl]->LoadMilkshapeAsciiBones( "Step-JUMPLR", 	GetAnimPath(ANIM_JUMPLR) );
 		m_pDancer[pl]->LoadMilkshapeAsciiBones(" rest",		Character->GetRestAnimationPath() );
-		m_pDancer[pl]->SetDefaultAnimation( "rest" );
+		m_pDancer[pl]->SetDefaultAnimation( "rest" );		// Stay bouncing after a step has finished animating
 		m_pDancer[pl]->PlayAnimation( "rest" );
 		m_pDancer[pl]->SetRotationX( PLAYER_ANGLE );
 		m_pDancer[pl]->SetX( HELPER_X+PLAYER_X(pl) );
 		m_pDancer[pl]->SetY( HELPER_Y+10 );
 		m_pDancer[pl]->SetZoom( 20 );
 		m_pDancer[pl]->SetCullMode( CULL_NONE );		// many of the models floating around have the vertex order flipped
-		m_pDancer[pl]->m_bRevertToDefaultAnimation = true;	// Stay bouncing after a step has finished animating
 	}
 
 	m_bInitialized = true;

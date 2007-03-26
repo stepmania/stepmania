@@ -30,6 +30,8 @@ public:
 	void LoadFromNode( const XNode* pNode );
 
 	void	PlayAnimation( const RString &sAniName, float fPlayRate = 1 );
+	void	SetRate( float fRate ) { m_fCurAnimationRate = fRate; }
+	void	SetLoop( bool b ) { m_bLoop = b; }
 
 	virtual void	Update( float fDelta );
 	virtual bool	EarlyAbortDraw() const;
@@ -44,7 +46,6 @@ public:
 
 	RString		GetDefaultAnimation() const { return m_sDefaultAnimation; };
 	void		SetDefaultAnimation( RString sAnimation, float fPlayRate = 1 );
-	bool		m_bRevertToDefaultAnimation;
 
 	bool	MaterialsNeedNormals() const;
 
@@ -80,7 +81,7 @@ private:
 	RString				m_sDefaultAnimation;
 	float				m_fDefaultAnimationRate;
 	float				m_fCurAnimationRate;
-
+	bool				m_bLoop;
 };
 
 #endif

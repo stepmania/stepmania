@@ -26,9 +26,9 @@ Model::Model()
 	SetCullMode( CULL_BACK );
 	m_pGeometry = NULL;
 	m_pCurAnimation = NULL;
-	m_bRevertToDefaultAnimation = false;
 	m_fDefaultAnimationRate = 1;
 	m_fCurAnimationRate = 1;
+	m_bLoop = true;
 	m_pTempGeometry = NULL;
 }
 
@@ -108,8 +108,6 @@ void Model::LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPat
 
 void Model::LoadFromNode( const XNode* pNode )
 {
-	Actor::LoadFromNode( pNode );
-
 	RString s1, s2, s3;
 	ActorUtil::GetAttrPath( pNode, "Meshes", s1 );
 	ActorUtil::GetAttrPath( pNode, "Materials", s2 );
@@ -119,6 +117,8 @@ void Model::LoadFromNode( const XNode* pNode )
 		ASSERT( !s1.empty() && !s2.empty() && !s3.empty() );
 		LoadPieces( s1, s2, s3 );
 	}
+
+	Actor::LoadFromNode( pNode );
 }
 
 
@@ -576,16 +576,18 @@ void Model::AdvanceFrame( float fDeltaTime )
 //	LOG->Trace( "m_fCurFrame = %f", m_fCurFrame );
 
 	m_fCurFrame += FRAMES_PER_SECOND * fDeltaTime * m_fCurAnimationRate;
-	if( m_fCurFrame >= m_pCurAnimation->nTotalFrames )
+	if( m_fCurFrame < 0 || m_fCurFrame >= m_pCurAnimation->nTotalFrames )
 	{
-		if( m_bRevertToDefaultAnimation && m_sDefaultAnimation != "" )
+		if( m_sDefaultAnimation != "" )
 		{
 			this->PlayAnimation( m_sDefaultAnimation, m_fDefaultAnimationRate );
 			/* XXX: add to m_fCurFrame the wrapover from the previous
 			 * m_fCurFrame-m_pCurAnimation->nTotalFrames, so it doesn't skip */
 		}
+		else if( m_bLoop )
+			wrap( m_fCurFrame, (float) m_pCurAnimation->nTotalFrames );
 		else
-			m_fCurFrame -= m_pCurAnimation->nTotalFrames;
+			m_fCurFrame = clamp( m_fCurFrame, 0, (float) m_pCurAnimation->nTotalFrames );
 	}
 
 	SetBones( m_pCurAnimation, m_fCurFrame, m_vpBones );
@@ -776,10 +778,16 @@ class LunaModel: public Luna<Model>
 {
 public:
 	static int playanimation( T* p, lua_State *L )	{ p->PlayAnimation(SArg(1),FArg(2)); return 0; }
+	static int SetDefaultAnimation( T* p, lua_State *L )	{ p->SetDefaultAnimation(SArg(1),FArg(2)); return 0; }
+	static int loop( T* p, lua_State *L )		{ p->SetLoop(BArg(1)); return 0; }
+	static int rate( T* p, lua_State *L )		{ p->SetRate(FArg(1)); return 0; }
 
 	LunaModel()
 	{
 		ADD_METHOD( playanimation );
+		ADD_METHOD( SetDefaultAnimation );
+		ADD_METHOD( loop );
+		ADD_METHOD( rate );
 	}
 };
 
