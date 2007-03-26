@@ -26,6 +26,7 @@ my @filelist = qw( Announcers/instructions.txt
 		   Themes/default
 		   Data/Translations.xml
 		   Data/AI.ini
+		   Data/Shaders
 		   Data/splash.png
 		   StepMania.app );
 my @docs = ( "BGAnimation conditionals.txt",
