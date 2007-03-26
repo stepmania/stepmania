@@ -279,7 +279,7 @@ Section "Main Section" SecMain
 
 	CreateDirectory "$INSTDIR\Data"
 	SetOutPath "$INSTDIR\Data"
-	File "Data\*.*"
+	File /r /x CVS /x .svn "Data\*"
 !endif
 
 !ifdef INSTALL_INTERNAL_PCKS
@@ -302,9 +302,10 @@ Section "Main Section" SecMain
 	File "Program\msvcr71.dll"
 	File "Program\msvcp71.dll"
 	File "Program\jpeg.dll"
-	File "Program\avcodec.dll"
-	File "Program\avformat.dll"
+	File "Program\avcodec-51.dll"
+	File "Program\avformat-51.dll"
 	File "Program\dbghelp.dll"
+	File "Program\avutil-49.dll"
 	File "Program\zlib1.dll"
 
 	SetOutPath "$INSTDIR"
