@@ -2226,6 +2226,9 @@ private:
 
 RageTextureLock *RageDisplay_OGL::CreateTextureLock()
 {
+	if( !GLExt.HasExtension("GL_ARB_pixel_buffer_object") )
+		return NULL;
+
 	return new RageTextureLock_OGL;
 }
 
