@@ -130,7 +130,7 @@ public:
 	void		CancelStage();
 	void		CommitStageStats();
 	void		FinishStage();
-	int		GetSmallestCurrentStageIndexForAnyHumanPlayer() const;
+	int		GetLargestCurrentStageIndexForAnyHumanPlayer() const;
 	int		GetNumStagesLeft( PlayerNumber pn ) const;
 	int		GetSmallestNumStagesLeftForAnyHumanPlayer() const;
 	int		GetLargestNumStagesLeftForAnyHumanPlayer() const;

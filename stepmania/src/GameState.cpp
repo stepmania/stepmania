@@ -835,12 +835,12 @@ float GameState::GetSongPercent( float beat ) const
 	return (beat - m_pCurSong->m_fFirstBeat) / m_pCurSong->m_fLastBeat;
 }
 
-int GameState::GetSmallestCurrentStageIndexForAnyHumanPlayer() const
+int GameState::GetLargestCurrentStageIndexForAnyHumanPlayer() const
 {
-	int iSmallest = INT_MAX;
+	int iLargest = INT_MIN;
 	FOREACH_HumanPlayer( p )
-		iSmallest = min( iSmallest, m_iPlayerCurrentStageIndexForCurrentCredit[p] );
-	return iSmallest;
+		iLargest = max( iLargest, m_iPlayerCurrentStageIndexForCurrentCredit[p] );
+	return iLargest;
 }
 
 int GameState::GetNumStagesLeft( PlayerNumber pn ) const
@@ -884,22 +884,22 @@ bool GameState::IsFinalStage() const
 	int iPredictedStageForCurSong = GetNumStagesForCurrentSongAndStepsOrCourse();
 	if( iPredictedStageForCurSong == -1 )
 		iPredictedStageForCurSong = 1;
-	return GetSmallestCurrentStageIndexForAnyHumanPlayer() + iPredictedStageForCurSong == PREFSMAN->m_iSongsPerPlay;
+	return GetLargestCurrentStageIndexForAnyHumanPlayer() + iPredictedStageForCurSong == PREFSMAN->m_iSongsPerPlay;
 }
 
 bool GameState::IsAnExtraStage() const
 {
-	return !IsEventMode() && !IsCourseMode() && GetSmallestCurrentStageIndexForAnyHumanPlayer() >= PREFSMAN->m_iSongsPerPlay;
+	return !IsEventMode() && !IsCourseMode() && GetLargestCurrentStageIndexForAnyHumanPlayer() >= PREFSMAN->m_iSongsPerPlay;
 }
 
 bool GameState::IsExtraStage() const
 {
-	return !IsEventMode() && !IsCourseMode() && GetSmallestCurrentStageIndexForAnyHumanPlayer() == PREFSMAN->m_iSongsPerPlay;
+	return !IsEventMode() && !IsCourseMode() && GetLargestCurrentStageIndexForAnyHumanPlayer() == PREFSMAN->m_iSongsPerPlay;
 }
 
 bool GameState::IsExtraStage2() const
 {
-	return !IsEventMode() && !IsCourseMode() && GetSmallestCurrentStageIndexForAnyHumanPlayer() == PREFSMAN->m_iSongsPerPlay+1;
+	return !IsEventMode() && !IsCourseMode() && GetLargestCurrentStageIndexForAnyHumanPlayer() == PREFSMAN->m_iSongsPerPlay+1;
 }
 
 Stage GameState::GetCurrentStage() const
@@ -913,7 +913,7 @@ Stage GameState::GetCurrentStage() const
 	else if( IsFinalStage() )			return STAGE_FINAL;
 	else if( IsExtraStage() )			return STAGE_EXTRA1;
 	else if( IsExtraStage2() )			return STAGE_EXTRA2;
-	else						return (Stage)(STAGE_1+GetSmallestCurrentStageIndexForAnyHumanPlayer());
+	else						return (Stage)(STAGE_1+GetLargestCurrentStageIndexForAnyHumanPlayer());
 }
 
 // Return true if it's possible for GetCurrentStage() to return the given stage.
@@ -1382,18 +1382,20 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 		if( m_pCurSteps[pn] )
 			dc = m_pCurSteps[pn]->GetDifficulty();
 
-		bool bFirstStage = !IsEventMode() && GetSmallestCurrentStageIndexForAnyHumanPlayer() == 0;
+		bool bFirstStageForAny = !IsEventMode();
+		FOREACH_HumanPlayer( p )
+			bFirstStageForAny |= m_iPlayerCurrentStageIndexForCurrentCredit[p] == 0;
 
 		/* Easy and beginner are never harder than FAIL_IMMEDIATE_CONTINUE. */
 		if( dc <= Difficulty_Easy )
 			setmax( ft, SongOptions::FAIL_IMMEDIATE_CONTINUE );
 
-		if( dc <= Difficulty_Easy && bFirstStage && PREFSMAN->m_bFailOffForFirstStageEasy )
+		if( dc <= Difficulty_Easy && bFirstStageForAny && PREFSMAN->m_bFailOffForFirstStageEasy )
 			setmax( ft, SongOptions::FAIL_OFF );
 
 		/* If beginner's steps were chosen, and this is the first stage,
 		 * turn off failure completely. */
-		if( dc == Difficulty_Beginner && bFirstStage )
+		if( dc == Difficulty_Beginner && bFirstStageForAny )
 			setmax( ft, SongOptions::FAIL_OFF );
 
 		if( dc == Difficulty_Beginner && PREFSMAN->m_bFailOffInBeginner )
