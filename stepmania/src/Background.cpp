@@ -775,13 +775,13 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 			m_pFadingBGA = NULL;
 	}
 
-	/* This is affected by the music rate. */
-	float fDeltaTimeMusicRate = max( fDeltaTime / fRate, 0 );
+	/* This is unaffected by the music rate. */
+	float fDeltaTimeNoMusicRate = max( fDeltaTime / fRate, 0 );
 
 	if( m_pCurrentBGA )
-		m_pCurrentBGA->Update( fDeltaTimeMusicRate );
+		m_pCurrentBGA->Update( fDeltaTimeNoMusicRate );
 	if( m_pFadingBGA )
-		m_pFadingBGA->Update( fDeltaTimeMusicRate );
+		m_pFadingBGA->Update( fDeltaTimeNoMusicRate );
 }
 
 void BackgroundImpl::Update( float fDeltaTime )
