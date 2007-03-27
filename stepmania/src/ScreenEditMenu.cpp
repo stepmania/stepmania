@@ -31,6 +31,9 @@ REGISTER_SCREEN_CLASS( ScreenEditMenu );
 
 void ScreenEditMenu::Init()
 {
+	/* HACK: Disable any style set by the editor. */
+	GAMESTATE->m_pCurStyle.Set( NULL );
+
 	/* Enable all players. */
 	FOREACH_PlayerNumber( pn )
 		GAMESTATE->JoinPlayer( pn );
