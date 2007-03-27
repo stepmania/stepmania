@@ -468,16 +468,12 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 		if( m_Frame.pict_type == FF_B_TYPE )
 			m_bHadBframes = true;
 
-		if( m_iFrameNumber == 1 )
+		if( m_iFrameNumber == 0 )
 		{
 			/* Some videos start with a timestamp other than 0.  I think this is used
 			 * when audio starts before the video.  We don't want to honor that, since
-			 * the DShow renderer doesn't and we don't want to break sync compatibility.
-			 *
-			 * Look at the second frame.  (If we have B-frames, the first frame will be an
-			 * I-frame with the timestamp of the next P-frame, not its own timestamp, and we
-			 * want to ignore that and look at the next B-frame.) */
-			const float expect = m_fLastFrameDelay;
+			 * the DShow renderer doesn't and we don't want to break sync compatibility. */
+			const float expect = 0;
 			const float actual = m_fTimestamp;
 			if( actual - expect > 0 )
 			{
