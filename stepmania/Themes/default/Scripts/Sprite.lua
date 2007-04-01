@@ -18,7 +18,8 @@ end
 
 function LoadSongBackground()
 	return Def.Sprite {
-		BeginCommand=cmd(LoadFromSongBackground,GAMESTATE:GetCurrentSong());
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
+		BeginCommand=cmd(LoadFromSongBackground,GAMESTATE:GetCurrentSong();scale_or_crop_background);
 	};
 end
 

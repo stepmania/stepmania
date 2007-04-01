@@ -1,7 +1,6 @@
 local children = {
 	LoadSongBackground() .. {
 		Condition=not GAMESTATE:IsCourseMode();
-		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;diffusealpha,0);
 		OnCommand=cmd(zoom,0;rotationz,0;linear,.5;diffusealpha,1;zoom,1;rotationz,1080);
 	};
 };

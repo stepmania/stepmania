@@ -5,7 +5,6 @@ local children = {
 	Def.Actor { OnCommand=cmd(sleep,2); };
 	LoadSongBackground() .. {
 		Condition=not STATSMAN:GetCurStageStats():AllFailed();
-		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
 		OnCommand=cmd(diffusealpha,1;linear,0.4;diffusealpha,0);
 	};
 	LoadActor( "_black.png" ) .. {
