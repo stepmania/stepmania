@@ -803,17 +803,18 @@ void MusicWheel::UpdateSwitch()
 		}
 		else
 		{
-			m_iSwitchesLeftInSpinDown--;
+			--m_iSwitchesLeftInSpinDown;
 			const float SwitchTimes[] = { 0.5f, 1.3f, 0.8f, 0.4f, 0.2f };
-			ASSERT(m_iSwitchesLeftInSpinDown >= 0 && m_iSwitchesLeftInSpinDown <= 4);
+			ASSERT( m_iSwitchesLeftInSpinDown >= 0 && m_iSwitchesLeftInSpinDown <= 4 );
 			m_fTimeLeftInState = SwitchTimes[m_iSwitchesLeftInSpinDown];
+			m_Moving = 0;
 
 			LOG->Trace( "m_iSwitchesLeftInSpinDown id %d, m_fTimeLeftInState is %f", m_iSwitchesLeftInSpinDown, m_fTimeLeftInState );
 
-			if( m_iSwitchesLeftInSpinDown < 2 )
-				ChangeMusic(randomf(0,1) >= 0.5f? 1:-1);
+			if( m_iSwitchesLeftInSpinDown == 0 )
+				ChangeMusic( randomf(0,1) >= 0.5f? 1:-1 );
 			else
-				ChangeMusic(1);
+				ChangeMusic( 1 );
 		}
 		break;
 	default:
@@ -918,8 +919,10 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		m_WheelState = STATE_LOCKED;
 		SCREENMAN->PlayStartSound();
 		m_fLockedWheelVelocity = 0;
+		// Set m_Moving to zero to stop the sounds from playing.
+		m_Moving = 0;
 		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
-		return false;
+		return true;
 	}
 
 	if( !WheelBase::Select() )
@@ -929,10 +932,10 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 	{
 	case TYPE_ROULETTE:  
 		StartRoulette();
-		break;
+		return false;
 	case TYPE_RANDOM:
 		StartRandom();
-		break;
+		return false;
 	case TYPE_SONG:
 	case TYPE_COURSE:
 	case TYPE_PORTAL:
@@ -959,6 +962,7 @@ void MusicWheel::StartRoulette()
 	m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
 	GAMESTATE->m_SortOrder.Set( SORT_ROULETTE );
 	SetOpenGroup( "" );
+	RebuildWheelItems();
 }
 
 void MusicWheel::StartRandom()
@@ -987,7 +991,6 @@ void MusicWheel::StartRandom()
 
 	SelectSong( GetPreferredSelectionForRandomOrPortal() );
 
-	this->Select();
 	RebuildWheelItems();
 }
 
