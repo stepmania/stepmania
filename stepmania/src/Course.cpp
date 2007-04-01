@@ -307,7 +307,7 @@ Trail* Course::GetTrailForceRegenCache( StepsType st, CourseDifficulty cd ) cons
 	//
 	CacheData &cache = m_TrailCache[ CacheEntry(st, cd) ];
 	Trail &trail = cache.trail;
-	trail = Trail();
+	trail.Init();
 	if( !GetTrailSorted( st, cd, trail ) || trail.m_vEntries.empty() )
 	{
 		/* This course difficulty doesn't exist. */
