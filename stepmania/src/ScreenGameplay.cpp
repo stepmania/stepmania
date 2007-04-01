@@ -1138,9 +1138,9 @@ void ScreenGameplay::LoadNextSong()
 	{
 		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 		{
-			Steps *pSteps = GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ];
-			if( pSteps->GetDifficulty() == Difficulty_Beginner )
-				m_BeginnerHelper.AddPlayer( pi->GetStepsAndTrailIndex(), pi->m_pPlayer->GetNoteData() );
+			PlayerNumber pn = pi->GetStepsAndTrailIndex();
+			if( GAMESTATE->IsHumanPlayer(pn) && GAMESTATE->m_pCurSteps[pn]->GetDifficulty() == Difficulty_Beginner )
+				m_BeginnerHelper.AddPlayer( pn, pi->m_pPlayer->GetNoteData() );
 		}
 	}
 
