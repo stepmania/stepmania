@@ -14,6 +14,7 @@ function AreStageSongModsForced()
 end
 
 function ScreenSelectMusic:setupmusicstagemods()
+	Trace( "setupmusicstagemods" )
 	local pm = GAMESTATE:GetPlayMode()
 
 	if pm == "PlayMode_Battle" or pm == "PlayMode_Rave" then
@@ -52,7 +53,7 @@ function ScreenSelectMusic:setupcoursestagemods()
 	local mode = GAMESTATE:GetPlayMode()
 	
 	if mode == "PlayMode_Oni" then
-		local po = "clearall," .. NOTESKIN:GetGameBaseNoteSkinName()
+		local po = "clearall,default"
 		-- Let SSMusic set battery.
 		-- local so = "failimmediate,battery"
 		local so = "failimmediate"
