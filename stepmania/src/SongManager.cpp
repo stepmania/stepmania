@@ -110,8 +110,8 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 	// save scores before unloading songs, of the scores will be lost
 	PROFILEMAN->SaveMachineProfile();
 
-	FreeSongs();
 	FreeCourses();
+	FreeSongs();
 
 	const bool OldVal = PREFSMAN->m_bFastLoad;
 	if( !bAllowFastLoad )
