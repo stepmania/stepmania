@@ -631,7 +631,7 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 	}
 
 	vector<PlayerNumber> vpns;
-	FOREACH_ENUM( PlayerNumber,  p )
+	FOREACH_HumanPlayer( p )
 	{
 		if( pn == p || GAMESTATE->DifficultiesLocked() )
 		{
