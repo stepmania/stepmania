@@ -65,7 +65,7 @@ const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_
 
 	// iMax+1 is "Invalid".  iMax+0 is the NUM_ size value, which can not be converted
 	// to a string.
-	ASSERT_M( iVal >= 0 && (iVal < iMax || iVal == iMax+1), ssprintf("%i, %i", iVal, iMax)  );
+	ASSERT_M( iVal >= 0 && (iVal < iMax || iVal == iMax+1), ssprintf("%i, %i, (%s)", iVal, iMax, szNameArray[0])  );
 	return *pNameCache[iVal];
 }
 
