@@ -2379,7 +2379,8 @@ const Style *GameManager::GetFirstCompatibleStyle( const Game *pGame, int iNumPl
 	FOREACH_CONST( const Style*, vpStyles, s )
 		if( (*s)->m_StepsType == st )
 			return *s;
-	FAIL_M("");
+	FAIL_M( ssprintf("No compatible styles for %s - %s with %d player%s.",  pGame->m_szName,
+			 StepsTypeToString(st).c_str(), iNumPlayers, iNumPlayers==1?"":"s") );
 	return NULL;
 }
 
