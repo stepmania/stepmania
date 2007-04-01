@@ -585,7 +585,9 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse()
 			const Style *pStyle = vpStyles[0];
 			st = pStyle->m_StepsType;
 		}
-		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), st );
+		const Style *pStyle = GAMESTATE->m_pCurStyle;
+		if( pStyle == NULL )
+			pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), st );
 		iNumStagesOfThisSong = GameState::GetNumStagesForSongAndStyleType( GAMESTATE->m_pCurSong, pStyle->m_StyleType );
 	}
 	else if( GAMESTATE->m_pCurCourse )
