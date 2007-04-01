@@ -179,7 +179,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( style )
 			m_pStyle = style;
 		else
-			m_bInvalid |= true;
+			m_bInvalid = true;
 	}
 
 	else if( sName == "playmode" )
@@ -188,7 +188,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( pm != PlayMode_Invalid )
 			m_pm = pm;
 		else
-			m_bInvalid |= true;
+			m_bInvalid = true;
 	}
 
 	else if( sName == "difficulty" )
@@ -197,7 +197,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( dc != Difficulty_Invalid )
 			m_dc = dc;
 		else
-			m_bInvalid |= true;
+			m_bInvalid = true;
 	}
 
 	else if( sName == "announcer" )
