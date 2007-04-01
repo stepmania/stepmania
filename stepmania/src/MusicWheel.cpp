@@ -902,19 +902,12 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 	case STATE_ROULETTE_SLOWING_DOWN:
 		return false;
-	}
-
-	if( m_WheelState == STATE_ROULETTE_SPINNING )
-	{
+	case STATE_ROULETTE_SPINNING:
 		m_WheelState = STATE_ROULETTE_SLOWING_DOWN;
 		m_iSwitchesLeftInSpinDown = ROULETTE_SLOW_DOWN_SWITCHES/2+1 + RandomInt( ROULETTE_SLOW_DOWN_SWITCHES/2 );
 		m_fTimeLeftInState = 0.1f;
 		return false;
-	}
-
-
-	if( m_WheelState == STATE_RANDOM_SPINNING )
-	{
+	case STATE_RANDOM_SPINNING:
 		m_fPositionOffsetFromSelection = max(m_fPositionOffsetFromSelection, 0.3f);
 		m_WheelState = STATE_LOCKED;
 		SCREENMAN->PlayStartSound();
@@ -947,9 +940,7 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		GetCurWheelItemData(m_iSelection)->m_pAction->ApplyToAllPlayers();
 		ChangeSort( GAMESTATE->m_PreferredSortOrder );
 		m_sLastModeMenuItem = GetCurWheelItemData(m_iSelection)->m_pAction->m_sName;
-		break;
-	default:
-		break;
+		return false;
 	}
 	return true;
 }
