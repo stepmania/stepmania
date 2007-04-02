@@ -64,6 +64,7 @@ void ScreenSelectStyle::Init()
 			m_sprPicture[i].Load( sPicturePath );
 			m_sprPicture[i].SetDiffuse( RageColor(1,1,1,0) );
 			this->AddChild( &m_sprPicture[i] );
+			LOAD_ALL_COMMANDS( m_sprPicture[i] );
 		}
 
 
@@ -77,6 +78,7 @@ void ScreenSelectStyle::Init()
 			m_sprInfo[i].Load( sInfoPath );
 			m_sprInfo[i].SetDiffuse( RageColor(1,1,1,0) );
 			this->AddChild( &m_sprInfo[i] );
+			LOAD_ALL_COMMANDS( m_sprInfo[i] );
 		}
 	}
 
@@ -293,8 +295,8 @@ void ScreenSelectStyle::AfterChange()
 	m_sprInfo[m_iSelection].SetDiffuse( RageColor(1,1,1,1) );
 	m_sprPicture[m_iSelection].SetZoom( 1 );
 	m_sprInfo[m_iSelection].SetZoom( 1 );
-	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprPicture[m_iSelection] );
-	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprInfo[m_iSelection] );
+	SET_XY_AND_ON_COMMAND( m_sprPicture[m_iSelection] );
+	SET_XY_AND_ON_COMMAND( m_sprInfo[m_iSelection] );
 }
 
 /*
