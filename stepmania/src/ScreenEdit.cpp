@@ -627,12 +627,13 @@ static void SetDefaultEditorNoteSkin( size_t num, RString &sNameOut, RString &de
 {
 	sNameOut = ssprintf( "EditorNoteSkinP%d", int(num + 1) );
 
+	// XXX: We need more supported note skins.
 	switch( num )
 	{
-	case 0: defaultValueOut = "note"; return;
-	case 1: defaultValueOut = "solo"; return;
+	case 0: defaultValueOut = "default"; return;
+	case 1: defaultValueOut = "default"; return;
 	}
-	defaultValueOut = "note";
+	defaultValueOut = "default";
 }
 
 static Preference1D<RString> EDITOR_NOTE_SKINS( SetDefaultEditorNoteSkin, NUM_PLAYERS );
