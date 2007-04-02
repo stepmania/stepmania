@@ -1,3 +1,4 @@
 return LoadActor( "bg.png" ) .. {
-	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomtowidth,SCREEN_WIDTH;zoomtoheight,SCREEN_HEIGHT);
+	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
+	OnCommand=cmd(scale_or_crop_background);
 }
