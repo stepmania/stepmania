@@ -109,7 +109,7 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 
 		if( ret == NULL )
 		{
-			LOG->Info( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
+			LOG->Trace( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
 			SAFE_DELETE( ret );
 			continue;
 		}
