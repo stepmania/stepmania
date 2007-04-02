@@ -15,6 +15,10 @@ local children = {
 			self:settext( text )
 		end;
 	};
+	LoadFont("Common", "normal") .. {
+		Text="Current Gametype: "..GAMESTATE:GetCurrentGame():GetName();
+		OnCommand=cmd(x,SCREEN_LEFT+20;y,SCREEN_TOP+36;horizalign,left;diffuse,0.6,0.6,0.6,1;zoom,0.5;shadowlength,2);
+	};
 }
 
 return Def.ActorFrame { children = children };
