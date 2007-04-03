@@ -77,6 +77,7 @@ protected:
 	ThemeMetric<RString>		MODE_MENU_CHOICE_NAMES;
 	ThemeMetricMap<RString>		CHOICE;
 	ThemeMetric1D<RageColor>	SECTION_COLORS;
+	ThemeMetric<LuaReference>	SORT_ORDERS;
 };
 
 #endif

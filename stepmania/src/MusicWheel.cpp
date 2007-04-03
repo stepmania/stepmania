@@ -32,18 +32,6 @@ AutoScreenMessage( SM_SongChanged )          // TODO: Replace this with a Messag
 AutoScreenMessage( SM_SortOrderChanging );
 AutoScreenMessage( SM_SortOrderChanged );
 
-static const SortOrder g_SongSortOrders[] =
-{
-	SORT_PREFERRED,
-	SORT_GROUP, 
-	SORT_TITLE, 
-	SORT_BPM, 
-	SORT_POPULARITY, 
-	SORT_ARTIST,
-	SORT_GENRE,
-};
-const vector<SortOrder> SONG_SORT_ORDERS( g_SongSortOrders, g_SongSortOrders + ARRAYLEN(g_SongSortOrders) );
-	
 static SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
 {
 	switch( pm )
@@ -85,6 +73,7 @@ void MusicWheel::Load( RString sType )
 	RANDOM_PICKS_LOCKED_SONGS	.Load(sType,"RandomPicksLockedSongs");
 	MOST_PLAYED_SONGS_TO_SHOW	.Load(sType,"MostPlayedSongsToShow");
 	MODE_MENU_CHOICE_NAMES		.Load(sType,"ModeMenuChoiceNames");
+	SORT_ORDERS			.Load(sType,"SortOrders");
 	vector<RString> vsModeChoiceNames;
 	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
 	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
@@ -773,8 +762,6 @@ void MusicWheel::UpdateSwitch()
 			SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 			RebuildWheelItems();
 			TweenOnScreenForSort();
-
-			SCREENMAN->ZeroNextUpdate();
 		}
 		break;
 
@@ -875,21 +862,34 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 
 bool MusicWheel::NextSort()		// return true if change successful
 {
-	// don't allow NextSort when on the sort menu or mode menu
+	// don't allow NextSort when on the mode menu
 	if( GAMESTATE->m_SortOrder == SORT_MODE_MENU )
 		return false;
 
+	vector<SortOrder> aSortOrders;
+	{
+		Lua *L = LUA->Get();
+		SORT_ORDERS.PushSelf( L );
+		FOREACH_LUATABLEI( L, -1, i )
+		{
+			SortOrder so = Enum::Check<SortOrder>( L, -1, true );
+			aSortOrders.push_back( so );
+		}
+		lua_pop( L, 1 );
+		LUA->Release(L);
+	}
+
 	// find the index of the current sort
 	int cur = 0;
-	while( cur < int(SONG_SORT_ORDERS.size()) && SONG_SORT_ORDERS[cur] != GAMESTATE->m_SortOrder )
+	while( cur < int(aSortOrders.size()) && aSortOrders[cur] != GAMESTATE->m_SortOrder )
 		++cur;
 
 	// move to the next sort with wrapping
 	++cur;
-	wrap( cur, SONG_SORT_ORDERS.size() );
+	wrap( cur, aSortOrders.size() );
 
 	// apply new sort
-	SortOrder soNew = SONG_SORT_ORDERS[cur];
+	SortOrder soNew = aSortOrders[cur];
 	return ChangeSort( soNew );
 }
 
