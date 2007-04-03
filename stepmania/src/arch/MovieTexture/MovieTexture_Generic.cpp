@@ -282,8 +282,8 @@ void MovieTexture_Generic::CreateTexture()
 			*m_pSurface->format, pixfmt );
 
 		/* Configure the sprite.  This blits the intermediate onto the ifnal render target. */
-		m_pSprite->SetHorizAlign( 0 );
-		m_pSprite->SetVertAlign( 0 );
+		m_pSprite->SetHorizAlign( align_left );
+		m_pSprite->SetVertAlign( align_top );
 
 		/* Hack: Sprite wants to take ownership of the texture, and will decrement the refcount
 		 * when it unloads the texture.  Normally we'd make a "copy", but we can't access
