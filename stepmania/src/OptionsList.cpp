@@ -194,8 +194,8 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 	FOREACH( RString, asDirectLines, s )
 		m_setDirectRows.insert( *s );
 
-	set<RString> setToLoad;
-	setToLoad.insert( "Main" );
+	vector<RString> setToLoad;
+	setToLoad.push_back( "Main" );
 
 	while( !setToLoad.empty() )
 	{
@@ -220,7 +220,7 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 		{
 			RString sScreen = pHand->GetScreen(i);
 			if( !sScreen.empty() )
-				setToLoad.insert( sScreen );
+				setToLoad.push_back( sScreen );
 		}
 	}
 
