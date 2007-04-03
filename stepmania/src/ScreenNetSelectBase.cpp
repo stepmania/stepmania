@@ -205,7 +205,10 @@ void ScreenNetSelectBase::UpdateUsers()
 		m_textUsers[i].SetXY( tX, tY );
 
 		if ( i > oldUsers )
+		{
+			LOAD_ALL_COMMANDS( m_textUsers[i] );
 			ON_COMMAND( m_textUsers[i] );
+		}
 	
 		m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] );
 		m_textUsers[i].RunCommands( THEME->GetMetricA( m_sName,

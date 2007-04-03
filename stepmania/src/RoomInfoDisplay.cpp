@@ -58,6 +58,7 @@ void RoomInfoDisplay::Load( RString sType )
 	m_Title.SetName( "RoomTitle" );
 	m_Title.SetShadowLength( 0 );
 	m_Title.SetHorizAlign( align_left );
+	LOAD_ALL_COMMANDS( m_Title );
 	ON_COMMAND( m_Title );
 	this->AddChild( &m_Title );
 
@@ -65,6 +66,7 @@ void RoomInfoDisplay::Load( RString sType )
 	m_Desc.SetName( "RoomDesc" );
 	m_Desc.SetShadowLength( 0 );
 	m_Desc.SetHorizAlign( align_left );
+	LOAD_ALL_COMMANDS( m_Desc );
 	ON_COMMAND( m_Desc );
 	this->AddChild( &m_Desc );
 
@@ -73,6 +75,7 @@ void RoomInfoDisplay::Load( RString sType )
 	m_lastRound.SetText( LAST_ROUND_INFO.GetValue() );
 	m_lastRound.SetShadowLength( 0 );
 	m_lastRound.SetHorizAlign( align_left );
+	LOAD_ALL_COMMANDS( m_lastRound );
 	ON_COMMAND( m_lastRound );
 	this->AddChild( &m_lastRound );
 
@@ -80,6 +83,7 @@ void RoomInfoDisplay::Load( RString sType )
 	m_songTitle.SetName( "SongTitle" );
 	m_songTitle.SetShadowLength( 0 );
 	m_songTitle.SetHorizAlign( align_left );
+	LOAD_ALL_COMMANDS( m_songTitle );
 	ON_COMMAND( m_songTitle );
 	this->AddChild( &m_songTitle );
 
@@ -87,6 +91,7 @@ void RoomInfoDisplay::Load( RString sType )
 	m_songSub.SetName( "SongSubTitle" );
 	m_songSub.SetShadowLength( 0 );
 	m_songSub.SetHorizAlign( align_left );
+	LOAD_ALL_COMMANDS( m_songSub );
 	ON_COMMAND( m_songSub );
 	this->AddChild( &m_songSub );
 
@@ -94,6 +99,7 @@ void RoomInfoDisplay::Load( RString sType )
 	m_songArtist.SetName( "SongArtist" );
 	m_songArtist.SetShadowLength( 0 );
 	m_songArtist.SetHorizAlign( align_left );
+	LOAD_ALL_COMMANDS( m_songArtist );
 	ON_COMMAND( m_songArtist );
 	this->AddChild( &m_songArtist );
 
@@ -101,10 +107,13 @@ void RoomInfoDisplay::Load( RString sType )
 	m_players.SetName( "Players" );
 	m_players.SetShadowLength( 0 );
 	m_players.SetHorizAlign( align_left );
+	LOAD_ALL_COMMANDS( m_players );
 	ON_COMMAND( m_players );
 	this->AddChild( &m_players );
 
-	OFF_COMMAND( this );
+	LOAD_ALL_COMMANDS( this );
+
+	this->PlayCommand("Off");
 	FinishTweening();
 
 	m_state = LOCKED;
@@ -167,6 +176,7 @@ void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 			m_playerList[i]->SetHorizAlign( align_left );
 			m_playerList[i]->SetX(PLAYERLISTX + (i * PLAYERLISTOFFSETX));
 			m_playerList[i]->SetY(PLAYERLISTY + (i * PLAYERLISTOFFSETY));
+			LOAD_ALL_COMMANDS(m_playerList[i]);
 			ON_COMMAND(m_playerList[i]);
 			this->AddChild(m_playerList[i]);
 		}
