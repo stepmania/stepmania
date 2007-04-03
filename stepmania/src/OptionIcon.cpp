@@ -8,9 +8,9 @@
 #define TEXT_OFFSET_Y	THEME->GetMetricF("OptionIcon","TextOffsetY")
 #define TEXT_H_ALIGN	THEME->GetMetricI("OptionIcon","TextHAlign")
 #define TEXT_V_ALIGN	THEME->GetMetricI("OptionIcon","TextVAlign")
-#define TEXT_WIDTH		THEME->GetMetricI("OptionIcon","TextWidth")
-#define TEXT_ZOOM		THEME->GetMetricF("OptionIcon","TextZoom")
-#define UPPERCASE		THEME->GetMetricB("OptionIcon","Uppercase")
+#define TEXT_WIDTH	THEME->GetMetricI("OptionIcon","TextWidth")
+#define TEXT_ZOOM	THEME->GetMetricF("OptionIcon","TextZoom")
+#define UPPERCASE	THEME->GetMetricB("OptionIcon","Uppercase")
 
 
 OptionIcon::OptionIcon()
@@ -37,8 +37,9 @@ void OptionIcon::Load( RString sType )
 	m_text.SetShadowLength( 0 );
 	m_text.SetZoom( TEXT_ZOOM );
 	m_text.SetXY( TEXT_OFFSET_X, TEXT_OFFSET_Y );
-	m_text.SetHorizAlign( (HorizAlign)TEXT_H_ALIGN );
-	m_text.SetVertAlign( (VertAlign)TEXT_V_ALIGN );
+	// XXX: Hack to make this call the correct function.
+	((Actor&)m_text).SetHorizAlign( (HorizAlign)TEXT_H_ALIGN );
+	((Actor&)m_text).SetVertAlign( (VertAlign)TEXT_V_ALIGN );
 	this->AddChild( &m_text );
 }
 
