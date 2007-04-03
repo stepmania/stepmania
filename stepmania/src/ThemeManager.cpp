@@ -82,7 +82,7 @@ public:
 		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
 		{
 			THEME->GetString( m_sGroup, m_sName, m_currentValue );
-			m_bIsLoaded = true;
+			m_Value.SetFromNil();
 		}
 	}
 

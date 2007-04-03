@@ -17,14 +17,24 @@ public:
 	virtual void Clear() = 0;
 };
 
+template<class T>
+struct ThemeMetricTypeTraits
+{
+        enum { Callable = 1 };
+};
+
+/* LuaReference and apActorCommands return the function directly without calling it. */
+template<> struct ThemeMetricTypeTraits<LuaReference> { enum { Callable = 0 }; };
+template<> struct ThemeMetricTypeTraits<apActorCommands> { enum { Callable = 0 }; };
+
 template <class T>
 class ThemeMetric : public IThemeMetric
 {
 protected:
 	RString		m_sGroup;
 	RString		m_sName;
-	T		m_currentValue;
-	bool		m_bIsLoaded;
+	LuaReference	m_Value;
+	mutable T	m_currentValue;
 
 public:
 	/* Initializing with no group and name is allowed; if you do this, you must
@@ -33,8 +43,7 @@ public:
 	 * (everything except screens). */
 	ThemeMetric( const RString& sGroup = "", const RString& sName = "" ):
 		m_sGroup( sGroup ),
-		m_sName( sName ),
-		m_bIsLoaded( false )
+		m_sName( sName )
 	{
 		m_currentValue = T();
 		ThemeManager::Subscribe( this );
@@ -44,8 +53,7 @@ public:
 		IThemeMetric( cpy ),
 		m_sGroup( cpy.m_sGroup ),
 		m_sName( cpy.m_sName ),
-		m_currentValue( cpy.m_currentValue ),
-		m_bIsLoaded( cpy.m_bIsLoaded )
+		m_Value( cpy.m_Value )
 	{
 		ThemeManager::Subscribe( this );
 	}
@@ -73,29 +81,52 @@ public:
 		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
 		{
 			Lua *L = LUA->Get();
-			THEME->PushMetric( L, m_sGroup, m_sName );
+			THEME->GetMetric( m_sGroup, m_sName, m_Value );
+			m_Value.PushSelf(L);
 			if( !LuaHelpers::FromStack(L, m_currentValue, -1) )
 				m_currentValue = T();
 			lua_pop( L, 1 );
 			LUA->Release(L);
-
-			m_bIsLoaded = true;
 		}
+		else
+		{
+			m_Value.Unset();
+		}
+	}
+
+	void PushSelf( Lua *L )
+	{
+		ASSERT( m_Value.IsSet() );
+		m_Value.PushSelf(L);
 	}
 
 	void Clear()
 	{
-		m_currentValue = T();
-		m_bIsLoaded = false;
+		m_Value.Unset();
 	}
 
 
-	const T& GetName() const { return m_sName; }
-	const T& GetGroup() const { return m_sGroup; }
+	const RString &GetName() const { return m_sName; }
+	const RString &GetGroup() const { return m_sGroup; }
+	
 	const T& GetValue() const
 	{
 		ASSERT( m_sName != "" );
-		ASSERT_M( m_bIsLoaded, m_sGroup + " " + m_sName );
+		ASSERT_M( m_Value.IsSet(), m_sGroup + " " + m_sName );
+
+		/* If the value is a function, evaluate it every time. */
+		if( ThemeMetricTypeTraits<T>::Callable && m_Value.GetLuaType() == LUA_TFUNCTION )
+		{
+			Lua *L = LUA->Get();
+
+			// call function with 0 arguments and 1 result
+			m_Value.PushSelf( L );
+			lua_call(L, 0, 1); 
+			ASSERT( !lua_isnil(L, -1) );
+			LuaHelpers::Pop( L, m_currentValue );
+			LUA->Release(L);
+		}
+
 		return m_currentValue;
 	}
 	
@@ -104,7 +135,7 @@ public:
 		return GetValue();
 	}
 
-	bool IsLoaded() const	{ return m_bIsLoaded; }
+	bool IsLoaded() const	{ return m_Value.IsSet(); }
 
 	//Hacks for VC6 for all boolean operators.
 	bool operator ! () const { return !GetValue(); }
