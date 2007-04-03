@@ -43,12 +43,12 @@ enum VertAlign
 };
 LuaDeclareType( VertAlign );
 
-#define align_left HorizAlign_Left
-#define align_center HorizAlign_Center
-#define align_right HorizAlign_Right
-#define align_top VertAlign_Top
-#define align_middle VertAlign_Middle
-#define align_bottom VertAlign_Bottom
+#define align_left 0.0f
+#define align_center 0.5f
+#define align_right 1.0f
+#define align_top 0.0f
+#define align_middle 0.5f
+#define align_bottom 1.0f
 
 class Actor : public MessageSubscriber
 {
