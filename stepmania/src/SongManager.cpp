@@ -222,6 +222,8 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 				   (sDir+sGroupDirName).c_str() );
 		int loaded = 0;
 
+		SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupDirName];
+
 		for( unsigned j=0; j< arraySongDirs.size(); ++j )	// for each song dir
 		{
 			RString sSongDirName = arraySongDirs[j];
@@ -243,6 +245,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 			}
 			
 			m_pSongs.push_back( pNewSong );
+			index_entry.push_back( pNewSong );
 			loaded++;
 		}
 
@@ -270,6 +273,7 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 	vector<RString> arraySymLinks;
 	GetDirListing( sDir+sGroupFolder+"/*.include", arraySymLinks, false );
 	SortRStringArray( arraySymLinks );
+	SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupFolder];
 	for( unsigned s=0; s< arraySymLinks.size(); s++ )	// for each symlink in this dir, add it in as a song.
 	{
 		MsdFile		msdF;
@@ -293,6 +297,7 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 			pNewSong->m_bIsSymLink = true;	// Very important so we don't double-parse later
 			pNewSong->m_sGroupName = sGroupFolder;
 			m_pSongs.push_back( pNewSong );
+			index_entry.push_back( pNewSong );
 		}
 	}
 }
@@ -338,6 +343,7 @@ void SongManager::FreeSongs()
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 		SAFE_DELETE( m_pSongs[i] );
 	m_pSongs.clear();
+	m_mapSongGroupIndex.clear();
 
 	m_sSongGroupBannerPaths.clear();
 
@@ -525,7 +531,20 @@ static void GetSongsFromVector( const vector<Song*> &Songs, vector<Song*> &vOut,
 
 void SongManager::GetSongs( vector<Song*> &AddTo, RString sGroupName ) const
 {
-	GetSongsFromVector( m_pSongs, AddTo, sGroupName );
+	if( sGroupName==GROUP_ALL)
+		GetSongsFromVector( m_pSongs, AddTo, sGroupName );
+	else
+		GetSongsFromVector( GetSongsInGroup(sGroupName), AddTo, GROUP_ALL );
+}
+
+const vector<Song*> &SongManager::GetSongsInGroup( RString sGroupName ) const
+{
+	static vector<Song*> empty;
+
+	map<RString, SongPointerVector>::const_iterator iter = m_mapSongGroupIndex.find( sGroupName );
+	if ( iter != m_mapSongGroupIndex.end() )
+		return iter->second;
+	return empty;
 }
 
 void SongManager::GetPopularSongs( vector<Song*> &AddTo, RString sGroupName, ProfileSlot slot ) const

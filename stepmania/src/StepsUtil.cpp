@@ -41,7 +41,11 @@ bool StepsCriteria::Matches( const Song *pSong, const Steps *pSteps ) const
 
 void StepsUtil::GetAllMatching( const SongCriteria &soc, const StepsCriteria &stc, vector<SongAndSteps> &out )
 {
-	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), so )
+        const vector<Song*> &songs = soc.m_sGroupName.empty() ?
+	        SONGMAN->GetAllSongs() :
+	        SONGMAN->GetSongsInGroup(soc.m_sGroupName);
+
+	FOREACH_CONST( Song*, songs, so )
 	{
 		if( !soc.Matches(*so) )
 			continue;
@@ -59,6 +63,29 @@ void StepsUtil::GetAllMatching( Song *pSong, const StepsCriteria &stc, vector<So
 			out.push_back( SongAndSteps(pSong, *st) );
 }
 
+bool StepsUtil::HasMatching( const SongCriteria &soc, const StepsCriteria &stc )
+{
+        const vector<Song*> &songs = soc.m_sGroupName.empty()? SONGMAN->GetAllSongs():SONGMAN->GetSongsInGroup( soc.m_sGroupName );
+
+	FOREACH_CONST( Song*, songs, so )
+	{
+		if( soc.Matches(*so) && HasMatching(*so, stc) )
+		        return true;
+	}
+	return false;
+}
+
+bool StepsUtil::HasMatching( const Song *pSong, const StepsCriteria &stc )
+{
+	const vector<Steps*> &vSteps = stc.m_st == StepsType_Invalid? pSong->GetAllSteps():pSong->GetStepsByStepsType( stc.m_st );
+	
+	FOREACH_CONST( Steps*, vSteps, st )
+	{
+		if( stc.Matches(pSong, *st) )
+	  	        return true;
+	}
+	return false;
+}
 
 //
 // Sorting stuff

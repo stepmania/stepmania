@@ -73,6 +73,7 @@ public:
 
 	// Lookup
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
+	const vector<Song*> &GetSongsInGroup( RString sGroupName ) const;
 	void GetPopularSongs( vector<Song*> &AddTo, RString sGroupName, ProfileSlot slot=ProfileSlot_Machine ) const;
 	void GetPreferredSortSongs( vector<Song*> &AddTo ) const;
 	const vector<Song*> &GetPopularSongs( ProfileSlot slot=ProfileSlot_Machine ) const { return m_pPopularSongs[slot]; }
@@ -140,6 +141,7 @@ protected:
 	vector<SongPointerVector> m_vPreferredSongSort;
 	vector<RString>		m_sSongGroupNames;
 	vector<RString>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
+	map<RString,SongPointerVector> m_mapSongGroupIndex;
 
 	vector<Course*>		m_pCourses;
 	vector<Course*>		m_pPopularCourses[NUM_ProfileSlot][NUM_CourseType];

@@ -53,6 +53,8 @@ namespace StepsUtil
 {
 	void GetAllMatching( const SongCriteria &soc, const StepsCriteria &stc, vector<SongAndSteps> &out );	// look up in SONGMAN
 	void GetAllMatching( Song *pSong, const StepsCriteria &stc, vector<SongAndSteps> &out );
+	bool HasMatching( const SongCriteria &soc, const StepsCriteria &stc );
+	bool HasMatching( const Song *pSong, const StepsCriteria &stc );
 
 	bool CompareNotesPointersByRadarValues(const Steps* pSteps1, const Steps* pSteps2);
 	bool CompareNotesPointersByMeter(const Steps *pSteps1, const Steps* pSteps2);

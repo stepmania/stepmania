@@ -223,7 +223,42 @@ void Course::Init()
 
 bool Course::IsPlayableIn( StepsType st ) const
 {
-	return GetTrail( st ) != NULL;
+	// Stripped down version of GetTrailUnsorted
+	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	{
+		SongCriteria soc = e->songCriteria;
+		
+		if( e->pSong )
+		{
+			soc.m_bUseSongAllowedList = true;
+			soc.m_vpSongAllowedList.push_back( e->pSong );
+		}
+		soc.m_Tutorial = SongCriteria::Tutorial_No;
+		soc.m_Locked = SongCriteria::Locked_Unlocked;
+		if( !soc.m_bUseSongAllowedList )
+			soc.m_iMaxStagesForSong = 1;
+		
+		StepsCriteria stc = e->stepsCriteria;
+		stc.m_st = st;
+		stc.m_Locked = StepsCriteria::Locked_Unlocked;
+		
+		const bool bSameSongCriteria  = e != m_vEntries.begin() && (e-1)->songCriteria == soc;
+		const bool bSameStepsCriteria = e != m_vEntries.begin() && (e-1)->stepsCriteria == stc;
+		
+		if( e->pSong )
+		{
+		        if ( StepsUtil::HasMatching(e->pSong, stc) )
+				return true;
+		}
+		else if( !(bSameSongCriteria && bSameStepsCriteria) )
+		{
+			if ( StepsUtil::HasMatching(soc, stc) )
+			        return true;
+		}
+		
+	}
+	
+	return false;
 }
 
 
