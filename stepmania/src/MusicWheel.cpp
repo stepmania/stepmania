@@ -93,7 +93,10 @@ void MusicWheel::Load( RString sType )
 	 * stable_sort) from its output, and title will be the secondary sort, without having
 	 * to re-sort by title each time. */
 	SONGMAN->SortSongs();
+}
 
+void MusicWheel::BeginScreen()
+{
 	RageTimer timer;
 	RString times;
 	/* Build all of the wheel item data.  Do this after selecting
@@ -119,10 +122,8 @@ void MusicWheel::Load( RString sType )
 			}
 		}
 	}
-}
 
-void MusicWheel::BeginScreen()
-{
+
 	WheelBase::BeginScreen();
 
 	if( (GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage) || GAMESTATE->IsExtraStage2() )
