@@ -2315,9 +2315,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			float fFadeOutSeconds = MUSIC_FADE_OUT_SECONDS;
 			RageSoundParams p = m_pSoundMusic->GetParams();
 			p.m_fFadeOutSeconds = fFadeOutSeconds;
-			p.m_LengthSeconds = GAMESTATE->m_fMusicSeconds + fFadeLengthSeconds;			
+			p.m_LengthSeconds = GAMESTATE->m_fMusicSeconds + fFadeOutSeconds;			
 			m_pSoundMusic->SetParams(p);
-			SCREENMAN->PostMessageToTopScreen( SM_StartLoadingNextSong, fFadeLengthSeconds );
+			SCREENMAN->PostMessageToTopScreen( SM_StartLoadingNextSong, fFadeOutSeconds );
 			return;
 		}
 	}
