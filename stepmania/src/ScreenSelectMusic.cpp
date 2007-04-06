@@ -64,6 +64,7 @@ void ScreenSelectMusic::Init()
 {
 	SAMPLE_MUSIC_DELAY.Load( m_sName, "SampleMusicDelay" );
 	SAMPLE_MUSIC_LOOPS.Load( m_sName, "SampleMusicLoops" );
+	SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS.Load( m_sName, "SampleMusicFallbackFadeInSeconds" );
 	DO_ROULETTE_ON_MENU_TIMER.Load( m_sName, "DoRouletteOnMenuTimer" );
 	ALIGN_MUSIC_BEATS.Load( m_sName, "AlignMusicBeat" );
 	CODES.Load( m_sName, "Codes" );
@@ -300,7 +301,7 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 
 		GameSoundManager::PlayMusicParams FallbackMusic;
 		FallbackMusic.sFile = m_sLoopMusicPath;
-		FallbackMusic.fFadeInLengthSeconds = 1.5f;
+		FallbackMusic.fFadeInLengthSeconds = SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS;
 		FallbackMusic.bAlignBeat = ALIGN_MUSIC_BEATS;
 
 		SOUND->PlayMusic( PlayParams, FallbackMusic );
