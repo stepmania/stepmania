@@ -85,7 +85,7 @@ struct MusicToPlay
 	TimingData m_TimingData;
 	NoteData m_LightsData;
 	bool bForceLoop;
-	float fStartSecond, fLengthSeconds, fFadeLengthSeconds;
+	float fStartSecond, fLengthSeconds, fFadeOutLengthSeconds;
 	bool bAlignBeat;
 	MusicToPlay()
 	{
@@ -173,8 +173,8 @@ static void StartMusic( MusicToPlay &ToPlay )
 		const float fRealEndSec = NewMusic->m_NewTiming.GetElapsedTimeFromBeatNoOffset( fEndBeat );
 		const float fNewLengthSec = fRealEndSec - ToPlay.fStartSecond;
 
-		/* Extend fFadeLengthSeconds, so the added time is faded out. */
-		ToPlay.fFadeLengthSeconds += fNewLengthSec - ToPlay.fLengthSeconds;
+		/* Extend fFadeOutLengthSeconds, so the added time is faded out. */
+		ToPlay.fFadeOutLengthSeconds += fNewLengthSec - ToPlay.fLengthSeconds;
 		ToPlay.fLengthSeconds = fNewLengthSec;
 	}
 
@@ -235,7 +235,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		RageSoundParams p;
 		p.m_StartSecond = ToPlay.fStartSecond;
 		p.m_LengthSeconds = ToPlay.fLengthSeconds;
-		p.m_FadeLength = ToPlay.fFadeLengthSeconds;
+		p.m_FadeLength = ToPlay.fFadeOutLengthSeconds;
 		p.m_StartTime = when;
 		if( ToPlay.bForceLoop )
 			p.StopMode = RageSoundParams::M_LOOP;
@@ -635,7 +635,7 @@ void GameSoundManager::PlayMusic(
 	bool bForceLoop,
 	float fStartSecond, 
 	float fLengthSeconds, 
-	float sFadeLengthSeconds, 
+	float fFadeOutLengthSeconds, 
 	bool bAlignBeat )
 {
 	//	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music->GetLoadedFilePath().c_str());
@@ -657,7 +657,7 @@ void GameSoundManager::PlayMusic(
 	ToPlay.bForceLoop = bForceLoop;
 	ToPlay.fStartSecond = fStartSecond;
 	ToPlay.fLengthSeconds = fLengthSeconds;
-	ToPlay.fFadeLengthSeconds = sFadeLengthSeconds;
+	ToPlay.fFadeOutLengthSeconds = fFadeOutLengthSeconds;
 	ToPlay.bAlignBeat = bAlignBeat;
 
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
