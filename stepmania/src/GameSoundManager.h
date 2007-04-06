@@ -17,13 +17,15 @@ public:
 	void Update( float fDeltaTime );
 
 	void PlayMusic( 
-		const RString &file, 
+		RString sFile, 
 		const TimingData *pTiming = NULL, 
 		bool force_loop = false, 
 		float start_sec = 0, 
 		float length_sec = -1, 
+		float fFadeInLengthSeconds = 0,
 		float fade_len = 0, 
-		bool align_beat = true );
+		bool align_beat = true,
+		RString sFallback = "" );
 	void StopMusic() { PlayMusic(""); }
 	void DimMusic( float fVolume, float fDurationSeconds );
 	RString GetMusicPath() const;

@@ -63,6 +63,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 void ScreenSelectMusic::Init()
 {
 	SAMPLE_MUSIC_DELAY.Load( m_sName, "SampleMusicDelay" );
+	SAMPLE_MUSIC_LOOPS.Load( m_sName, "SampleMusicLoops" );
 	DO_ROULETTE_ON_MENU_TIMER.Load( m_sName, "DoRouletteOnMenuTimer" );
 	ALIGN_MUSIC_BEATS.Load( m_sName, "AlignMusicBeat" );
 	CODES.Load( m_sName, "Codes" );
@@ -89,6 +90,7 @@ void ScreenSelectMusic::Init()
 	m_sRouletteMusicPath =		THEME->GetPathS(m_sName,"roulette music");
 	m_sRandomMusicPath =		THEME->GetPathS(m_sName,"random music");
 	m_sCourseMusicPath =		THEME->GetPathS(m_sName,"course music");
+	m_sLoopMusicPath =		THEME->GetPathS(m_sName,"loop music");
 	m_sFallbackCDTitlePath =	THEME->GetPathG(m_sName,"fallback cdtitle");
 
 
@@ -289,9 +291,11 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 
 		SOUND->PlayMusic(
 			m_sSampleMusicToPlay, m_pSampleMusicTimingData,
-			true, m_fSampleStartSeconds, m_fSampleLengthSeconds,
+			SAMPLE_MUSIC_LOOPS, m_fSampleStartSeconds, m_fSampleLengthSeconds,
+			0.0f,
 			1.5f, /* fade out for 1.5 seconds */
-			ALIGN_MUSIC_BEATS );
+			ALIGN_MUSIC_BEATS,
+			m_sLoopMusicPath );
 	}
 }
 

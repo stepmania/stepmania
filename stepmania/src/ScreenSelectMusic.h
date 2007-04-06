@@ -61,6 +61,7 @@ protected:
 	int				m_iSelection[NUM_PLAYERS];
 
 	ThemeMetric<float> SAMPLE_MUSIC_DELAY;
+	ThemeMetric<bool> SAMPLE_MUSIC_LOOPS;
 	ThemeMetric<bool> DO_ROULETTE_ON_MENU_TIMER;
 	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
 	ThemeMetric<RString> CODES;
@@ -99,6 +100,7 @@ protected:
 	RString m_sRouletteMusicPath;
 	RString m_sRandomMusicPath;
 	RString m_sCourseMusicPath;
+	RString m_sLoopMusicPath;
 	RString m_sFallbackCDTitlePath;
 
 	FadingBanner		m_Banner;

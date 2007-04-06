@@ -825,6 +825,7 @@ void ScreenEdit::PlayPreviewMusic()
 		false,
 		m_pSong->m_fMusicSampleStartSeconds,
 		m_pSong->m_fMusicSampleLengthSeconds,
+		0.0f,
 		1.5f );
 }
 

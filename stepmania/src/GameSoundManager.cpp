@@ -42,6 +42,8 @@ static FadeState g_FadeState = FADE_NONE;
 static float g_fDimVolume = 1.0f;
 static float g_fOriginalVolume = 1.0f;
 static float g_fDimDurationRemaining = 0.0f;
+static bool g_bWasPlayingOnLastUpdate = false;
+static RString g_sFallbackMusicPath;
 
 struct MusicPlaying
 {
@@ -85,7 +87,7 @@ struct MusicToPlay
 	TimingData m_TimingData;
 	NoteData m_LightsData;
 	bool bForceLoop;
-	float fStartSecond, fLengthSeconds, fFadeOutLengthSeconds;
+	float fStartSecond, fLengthSeconds, fFadeInLengthSeconds, fFadeOutLengthSeconds;
 	bool bAlignBeat;
 	MusicToPlay()
 	{
@@ -235,6 +237,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		RageSoundParams p;
 		p.m_StartSecond = ToPlay.fStartSecond;
 		p.m_LengthSeconds = ToPlay.fLengthSeconds;
+		p.m_fFadeInSeconds = ToPlay.fFadeInLengthSeconds;
 		p.m_fFadeOutSeconds = ToPlay.fFadeOutLengthSeconds;
 		p.m_StartTime = when;
 		if( ToPlay.bForceLoop )
@@ -463,6 +466,18 @@ float GameSoundManager::GetFrameTimingAdjustment( float fDeltaTime )
 
 void GameSoundManager::Update( float fDeltaTime )
 {
+	{
+		g_Mutex->Lock();
+		bool bIsPlaying = g_Playing->m_Music->IsPlaying();
+		g_Mutex->Unlock();
+		if( !bIsPlaying && g_bWasPlayingOnLastUpdate && !g_sFallbackMusicPath.empty() )
+		{
+			PlayMusic( g_sFallbackMusicPath, NULL, false, 0, -1, 1.5f );
+			g_sFallbackMusicPath = "";
+		}
+		g_bWasPlayingOnLastUpdate = bIsPlaying;
+	}
+
 	LockMut( *g_Mutex );
 
 	{
@@ -502,7 +517,6 @@ void GameSoundManager::Update( float fDeltaTime )
 		return;
 
 	const float fAdjust = GetFrameTimingAdjustment( fDeltaTime );
-
 	if( !g_Playing->m_Music->IsPlaying() )
 	{
 		/* There's no song playing.  Fake it. */
@@ -630,14 +644,19 @@ RString GameSoundManager::GetMusicPath() const
 }
 
 void GameSoundManager::PlayMusic( 
-	const RString &sFile, 
+	RString sFile, 
 	const TimingData *pTiming, 
 	bool bForceLoop,
 	float fStartSecond, 
 	float fLengthSeconds, 
+	float fFadeInLengthSeconds, 
 	float fFadeOutLengthSeconds, 
-	bool bAlignBeat )
+	bool bAlignBeat,
+	RString sFallback
+	)
 {
+	g_sFallbackMusicPath = sFallback;
+
 	//	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music->GetLoadedFilePath().c_str());
 
 	MusicToPlay ToPlay;
@@ -657,6 +676,7 @@ void GameSoundManager::PlayMusic(
 	ToPlay.bForceLoop = bForceLoop;
 	ToPlay.fStartSecond = fStartSecond;
 	ToPlay.fLengthSeconds = fLengthSeconds;
+	ToPlay.fFadeInLengthSeconds = fFadeInLengthSeconds;
 	ToPlay.fFadeOutLengthSeconds = fFadeOutLengthSeconds;
 	ToPlay.bAlignBeat = bAlignBeat;
 
