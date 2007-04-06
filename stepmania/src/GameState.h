@@ -224,6 +224,7 @@ public:
 
 	void GetDefaultPlayerOptions( PlayerOptions &po );
 	void GetDefaultSongOptions( SongOptions &so );
+	void ResetToDefaultSongOptions( ModsLevel l );
 	void ApplyPreferredModifiers( PlayerNumber pn, RString sModifiers );
 	void ApplyStageModifiers( PlayerNumber pn, RString sModifiers );
 	void ResetOptions();

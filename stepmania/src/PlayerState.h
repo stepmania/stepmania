@@ -25,6 +25,7 @@ public:
 	MultiPlayer		m_mp;
 	
 
+	void ResetToDefaultPlayerOptions( ModsLevel l );
 	ModsGroup<PlayerOptions>	m_PlayerOptions;
 
 	//

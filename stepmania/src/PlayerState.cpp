@@ -89,6 +89,13 @@ void PlayerState::Update( float fDelta )
 		m_fSecondsUntilAttacksPhasedOut = max( 0, m_fSecondsUntilAttacksPhasedOut - fDelta );
 }
 
+void PlayerState::ResetToDefaultPlayerOptions( ModsLevel l )
+{
+	PlayerOptions po;
+	GAMESTATE->GetDefaultPlayerOptions( po );
+	m_PlayerOptions.Assign( l, po );
+}
+
 /* This is called to launch an attack, or to queue an attack if a.fStartSecond
  * is set.  This is also called by GameState::Update when activating a queued attack. */
 void PlayerState::LaunchAttack( const Attack& a )

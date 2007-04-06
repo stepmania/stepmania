@@ -76,9 +76,7 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 	if( GAMESTATE->IsHumanPlayer(pn) && CodeDetector::EnteredCode(input.GameI.controller,CODE_CANCEL_ALL_PLAYER_OPTIONS) )
 	{
 		// apply the game default mods, but not the Profile saved mods
-		PlayerOptions po;
-		GAMESTATE->GetDefaultPlayerOptions( po );
-		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
+		GAMESTATE->m_pPlayerState[pn]->ResetToDefaultPlayerOptions( ModsLevel_Preferred );
 		
 		MESSAGEMAN->Broadcast( ssprintf("CancelAllP%i", pn+1) );
 

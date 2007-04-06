@@ -1259,6 +1259,13 @@ void GameState::GetDefaultSongOptions( SongOptions &so )
 	so.FromString( CommonMetrics::DEFAULT_MODIFIERS );
 }
 
+void GameState::ResetToDefaultSongOptions( ModsLevel l )
+{
+	SongOptions so;
+	GetDefaultSongOptions( so );
+	m_SongOptions.Assign( l, so );
+}
+
 void GameState::ApplyPreferredModifiers( PlayerNumber pn, RString sModifiers )
 {
 	m_pPlayerState[pn]->m_PlayerOptions.FromString( ModsLevel_Preferred, sModifiers );
