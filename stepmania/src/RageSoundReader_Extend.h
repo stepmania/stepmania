@@ -27,7 +27,7 @@ private:
 	StopMode m_StopMode;
 	int m_iStartFrames;
 	int m_iLengthFrames;
-	int m_iFadeFrames;
+	int m_iFadeOutFrames;
 };
 
 #endif

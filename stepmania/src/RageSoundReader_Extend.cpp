@@ -20,7 +20,7 @@ RageSoundReader_Extend::RageSoundReader_Extend( RageSoundReader *pSource ):
 	m_StopMode = M_STOP;
 	m_iStartFrames = 0;
 	m_iLengthFrames = -1;
-	m_iFadeFrames = 0;
+	m_iFadeOutFrames = 0;
 }
 
 int RageSoundReader_Extend::SetPosition( int iFrame )
@@ -99,10 +99,10 @@ int RageSoundReader_Extend::Read( float *pBuffer, int iFrames )
 		 * m_LengthFrames is -1, we don't know the length we're playing.
 		 * (m_LengthFrames is the length to play, not the length of the
 		 * source.)  If we don't know the length, don't fade. */
-		if( m_iFadeFrames != 0 && m_iLengthFrames != -1 )
+		if( m_iFadeOutFrames != 0 && m_iLengthFrames != -1 )
 		{
 			const int iFinishFadingOutAt = GetEndFrame();
-			const int iStartFadingOutAt = iFinishFadingOutAt - m_iFadeFrames;
+			const int iStartFadingOutAt = iFinishFadingOutAt - m_iFadeOutFrames;
 			const int iStartSecond = m_iPositionFrames;
 			const int iEndSecond = m_iPositionFrames + iFramesRead;
 			const float fStartVolume = SCALE( iStartSecond, iStartFadingOutAt, iFinishFadingOutAt, 1.0f, 0.0f );
@@ -164,7 +164,7 @@ bool RageSoundReader_Extend::SetProperty( const RString &sProperty, float fValue
 
 	if( sProperty == "FadeSeconds" )
 	{
-		m_iFadeFrames = lrintf( fValue * this->GetSampleRate() );
+		m_iFadeOutFrames = lrintf( fValue * this->GetSampleRate() );
 		return true;
 	}
 
