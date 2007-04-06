@@ -166,7 +166,12 @@ void StageStats::CommitScores( bool bSummary )
 		hs.SetScore( m_player[p].m_iScore );
 		hs.SetPercentDP( m_player[p].GetPercentDancePoints() );
 		hs.SetSurviveSeconds( m_player[p].m_fAliveSeconds );
-		hs.SetModifiers( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetStage().GetString() );
+
+		vector<RString> asModifiers;
+		asModifiers.push_back( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetStage().GetString() );
+		asModifiers.push_back( GAMESTATE->m_SongOptions.GetStage().GetString() );
+		hs.SetModifiers( join(", ", asModifiers) );
+
 		hs.SetDateTime( DateTime::GetNowDateTime() );
 		hs.SetPlayerGuid( PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : RString("") );
 		hs.SetMachineGuid( PROFILEMAN->GetMachineProfile()->m_sGuid );
