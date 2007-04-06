@@ -192,7 +192,6 @@ void ScreenSelectMusic::BeginScreen()
 		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before loading ScreenSelectMusic." );
 
 	OPTIONS_MENU_AVAILABLE.Load( m_sName, "OptionsMenuAvailable" );
-	ActorUtil::LoadCommandFromName( *this, m_sName, "Mods", "" );
 	PlayCommand( "Mods" );
 	m_MusicWheel.BeginScreen();
 	
