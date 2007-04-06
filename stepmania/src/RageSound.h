@@ -32,6 +32,9 @@ struct RageSoundParams
 	float m_StartSecond;
 	float m_LengthSeconds;
 
+	/* Number of seconds to spend fading in. */
+	float m_fFadeInSeconds;
+
 	/* Number of seconds to spend fading out. */
 	float m_fFadeOutSeconds;
 
