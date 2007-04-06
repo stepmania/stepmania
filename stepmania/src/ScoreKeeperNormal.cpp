@@ -33,6 +33,8 @@ void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &de
 	case SE_W5:		defaultValueOut = 0;	break;
 	case SE_Miss:		defaultValueOut = 0;	break;
 	case SE_HitMine:	defaultValueOut = -2;	break;
+	case SE_CheckpointHit:	defaultValueOut = 0;	break;
+	case SE_CheckpointMiss:	defaultValueOut = 0;	break;
 	case SE_Held:		defaultValueOut = 3;	break;
 	case SE_LetGo:		defaultValueOut = 0;	break;
 	}
@@ -51,6 +53,8 @@ void GradeWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultVa
 	case SE_W5:		defaultValueOut = -4;	break;
 	case SE_Miss:		defaultValueOut = -8;	break;
 	case SE_HitMine:	defaultValueOut = -8;	break;
+	case SE_CheckpointHit:	defaultValueOut = 0;	break;
+	case SE_CheckpointMiss:	defaultValueOut = 0;	break;
 	case SE_Held:		defaultValueOut = 6;	break;
 	case SE_LetGo:		defaultValueOut = 0;	break;
 	}
@@ -432,6 +436,41 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 	AddTapScore( tns );
 }
 
+void ScoreKeeperNormal::HandleHoldCheckpointScore( const NoteData &nd, int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow )
+{
+	HandleTapNoteScoreInternal( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss, TNS_CheckpointHit, iNumHoldsHeldThisRow+iNumHoldsMissedThisRow );
+}
+
+void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteScore maximum, int iNumTapsInRow )
+{
+	// Update dance points.
+	if( !m_pPlayerStageStats->m_bFailed )
+		m_pPlayerStageStats->m_iActualDancePoints += TapNoteScoreToDancePoints( tns );
+
+	// update judged row totals
+	m_pPlayerStageStats->m_iTapNoteScores[tns] += 1;
+
+	// increment the current total possible dance score
+	m_pPlayerStageStats->m_iCurPossibleDancePoints += TapNoteScoreToDancePoints( maximum );
+
+	//
+	// Regular combo
+	//
+	const int iComboCountIfHit = m_ComboIsPerRow? 1: iNumTapsInRow;
+	if( tns >= m_MinScoreToMaintainCombo )
+	{
+		m_pPlayerStageStats->m_iCurMissCombo = 0;
+		if( tns >= m_MinScoreToContinueCombo )
+			m_pPlayerStageStats->m_iCurCombo += iComboCountIfHit;
+	}
+	else
+	{
+		m_pPlayerStageStats->m_iCurCombo = 0;
+		if( tns == TNS_Miss || tns == TNS_CheckpointMiss )
+			m_pPlayerStageStats->m_iCurMissCombo += iComboCountIfHit;
+	}
+}
+
 void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 {
 	TapNoteScore scoreOfLastTap;
@@ -442,33 +481,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	if( iNumTapsInRow <= 0 )
 		return;
 
-	// Update dance points.
-	if( !m_pPlayerStageStats->m_bFailed )
-		m_pPlayerStageStats->m_iActualDancePoints += TapNoteScoreToDancePoints( scoreOfLastTap );
-
-	// update judged row totals
-	m_pPlayerStageStats->m_iTapNoteScores[scoreOfLastTap] += 1;
-
-	// increment the current total possible dance score
-	m_pPlayerStageStats->m_iCurPossibleDancePoints += TapNoteScoreToDancePoints( TNS_W1 );
-	
-
-	//
-	// Regular combo
-	//
-	const int iComboCountIfHit = m_ComboIsPerRow? 1: iNumTapsInRow;
-	if( scoreOfLastTap >= m_MinScoreToMaintainCombo )
-	{
-		m_pPlayerStageStats->m_iCurMissCombo = 0;
-		if( scoreOfLastTap >= m_MinScoreToContinueCombo )
-			m_pPlayerStageStats->m_iCurCombo += iComboCountIfHit;
-	}
-	else
-	{
-		m_pPlayerStageStats->m_iCurCombo = 0;
-		if( scoreOfLastTap == TNS_Miss )
-			m_pPlayerStageStats->m_iCurMissCombo += iComboCountIfHit;
-	}
+	HandleTapNoteScoreInternal( scoreOfLastTap, TNS_W1, iNumTapsInRow );
 
 	if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
 		MESSAGEMAN->Broadcast( enum_add2(Message_CurrentComboChangedP1,m_pPlayerState->m_PlayerNumber) );
@@ -635,6 +648,8 @@ int ScoreKeeperNormal::TapNoteScoreToDancePoints( TapNoteScore tns, bool bBeginn
 	case TNS_W3:		iWeight = g_iPercentScoreWeight[SE_W3];	break;
 	case TNS_W2:		iWeight = g_iPercentScoreWeight[SE_W2];	break;
 	case TNS_W1:		iWeight = g_iPercentScoreWeight[SE_W1];	break;
+	case TNS_CheckpointHit:	iWeight = g_iPercentScoreWeight[SE_CheckpointHit];	break;
+	case TNS_CheckpointMiss:iWeight = g_iPercentScoreWeight[SE_CheckpointMiss];	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -676,6 +691,8 @@ int ScoreKeeperNormal::TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginn
 	case TNS_W3:		iWeight = g_iGradeWeight[SE_W3];	break;
 	case TNS_W2:		iWeight = g_iGradeWeight[SE_W2];	break;
 	case TNS_W1:		iWeight = g_iGradeWeight[SE_W1];	break;
+	case TNS_CheckpointHit:	iWeight = g_iGradeWeight[SE_CheckpointHit];	break;
+	case TNS_CheckpointMiss:iWeight = g_iGradeWeight[SE_CheckpointMiss];	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );

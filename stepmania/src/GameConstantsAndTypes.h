@@ -135,12 +135,14 @@ enum TapNoteScore {
 	TNS_None, 
 	TNS_HitMine,
 	TNS_AvoidMine,
+	TNS_CheckpointMiss,
 	TNS_Miss,
 	TNS_W5,
 	TNS_W4,
 	TNS_W3,
 	TNS_W2,
 	TNS_W1,
+	TNS_CheckpointHit,
 	NUM_TapNoteScore,
 	TapNoteScore_Invalid,
 };
@@ -181,6 +183,7 @@ const RString& TimingWindowToString( TimingWindow tw );
 
 enum ScoreEvent
 {
+	SE_CheckpointHit,
 	SE_W1,
 	SE_W2,
 	SE_W3,
@@ -188,6 +191,7 @@ enum ScoreEvent
 	SE_W5,
 	SE_Miss,
 	SE_HitMine,
+	SE_CheckpointMiss,
 	SE_Held,
 	SE_LetGo,
 	NUM_ScoreEvent

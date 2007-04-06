@@ -20,22 +20,26 @@ static ThemeMetric<int> NUM_CHAMBERS		("LifeMeterTime","NumChambers");
 static ThemeMetric<int> NUM_STRIPS			("LifeMeterTime","NumStrips");
 static ThemeMetric<float> INITIAL_VALUE		("LifeMeterTime","InitialValue");
 
+static const float g_fTimeMeterSecondsChangeInit[] =
+{
+	+0.0f, // SE_CheckpointHit
+	+0.1f, // SE_W1
+	+0.0f, // SE_W2
+	-0.5f, // SE_W3
+	-1.0f, // SE_W4
+	-2.0f, // SE_W5
+	-4.0f, // SE_Miss
+	-2.0f, // SE_HitMine
+	-0.0f, // SE_CheckpointMiss
+	-0.0f, // SE_Held
+	-4.0f, // SE_LetGo
+};
+COMPILE_ASSERT( ARRAYSIZE(g_fTimeMeterSecondsChangeInit) == NUM_ScoreEvent );
+
 static void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
 {
 	sNameOut = "TimeMeterSecondsChange" + ScoreEventToString( (ScoreEvent)i );
-	switch( i )
-	{
-	default:		ASSERT(0);
-	case SE_W1:		defaultValueOut = +0.1f;	break;
-	case SE_W2:		defaultValueOut = +0.0f;	break;
-	case SE_W3:		defaultValueOut = -0.5f;	break;
-	case SE_W4:		defaultValueOut = -1.0f;	break;
-	case SE_W5:		defaultValueOut = -2.0f;	break;
-	case SE_Miss:		defaultValueOut = -4.0f;	break;
-	case SE_HitMine:	defaultValueOut = -2.0f;	break;
-	case SE_Held:		defaultValueOut = -0.0f;	break;
-	case SE_LetGo:		defaultValueOut = -4.0f;	break;
-	}
+	defaultValueOut = g_fTimeMeterSecondsChangeInit[i];
 }
 
 static Preference1D<float>	g_fTimeMeterSecondsChange( TimeMeterSecondsChangeInit, NUM_ScoreEvent );
@@ -125,6 +129,8 @@ void LifeMeterTime::ChangeLife( TapNoteScore tns )
 	case TNS_W5:		fMeterChange = g_fTimeMeterSecondsChange[SE_W5];	break;
 	case TNS_Miss:		fMeterChange = g_fTimeMeterSecondsChange[SE_Miss];	break;
 	case TNS_HitMine:	fMeterChange = g_fTimeMeterSecondsChange[SE_HitMine];	break;
+	case TNS_CheckpointHit:	fMeterChange = g_fTimeMeterSecondsChange[SE_CheckpointHit];	break;
+	case TNS_CheckpointMiss:fMeterChange = g_fTimeMeterSecondsChange[SE_CheckpointMiss];	break;
 	}
 
 	float fOldLife = m_fLifeTotalLostSeconds;

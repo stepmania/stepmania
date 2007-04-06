@@ -156,12 +156,14 @@ static const char *TapNoteScoreNames[] = {
 	"None",
 	"HitMine",
 	"AvoidMine",
+	"CheckpointMiss",
 	"Miss",
 	"W5",
 	"W4",
 	"W3",
 	"W2",
 	"W1",
+	"CheckpointHit",
 };
 XToString( TapNoteScore );
 LuaXType( TapNoteScore );
@@ -171,6 +173,8 @@ TapNoteScore StringToTapNoteScore( const RString &s )
 	if	   ( s == "None" )		return TNS_None;
 	else if( s == "HitMine" )	return TNS_HitMine;
 	else if( s == "AvoidMine" )	return TNS_AvoidMine;
+	else if( s == "CheckpointHit" )	return TNS_CheckpointHit;
+	else if( s == "CheckpointMiss" )return TNS_CheckpointMiss;
 	else if( s == "Miss" )		return TNS_Miss;
 	else if( s == "W5" )		return TNS_W5;
 	else if( s == "W4" )		return TNS_W4;
@@ -227,6 +231,7 @@ static const char *TimingWindowNames[] = {
 XToString( TimingWindow );
 
 static const char *ScoreEventNames[] = {
+	"CheckpointHit",
 	"W1",
 	"W2",
 	"W3",
@@ -234,6 +239,7 @@ static const char *ScoreEventNames[] = {
 	"W5",
 	"Miss",
 	"HitMine",
+	"CheckpointMiss",
 	"Held",
 	"LetGo",
 };

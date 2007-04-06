@@ -135,9 +135,11 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case TNS_Miss:		fDeltaLife = m_fLifePercentChange.GetValue(SE_Miss);	break;
 	case TNS_HitMine:	fDeltaLife = m_fLifePercentChange.GetValue(SE_HitMine);	break;
 	case TNS_None:		fDeltaLife = m_fLifePercentChange.GetValue(SE_Miss);	break;
+	case TNS_CheckpointHit:	fDeltaLife = m_fLifePercentChange.GetValue(SE_CheckpointHit);	break;
+	case TNS_CheckpointMiss:fDeltaLife = m_fLifePercentChange.GetValue(SE_CheckpointMiss);	break;
 	}
-	if( IsHot()  &&  score < TNS_W4 )
-		fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
+	if( IsHot()  &&  fDeltaLife < 0 )
+		fDeltaLife = min( fDeltaLife, -0.10f );		// make it take a while to get back to "hot"
 
 	switch( GAMESTATE->m_SongOptions.GetSong().m_DrainType )
 	{

@@ -2261,7 +2261,8 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 		{
 			//LOG->Trace( "%d...", r );
 			vector<int> viColsWithHold;
-			bool bAllHoldsHeldThisRow = true;
+			int iNumHoldsHeldThisRow = 0;
+			int iNumHoldsMissedThisRow = 0;
 
 			// start at r-1 so that we consider holds whose end rows are equal to the checkpoint row
 			NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( r-1, r, NULL, true );
@@ -2289,7 +2290,10 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 					continue;
 
 				viColsWithHold.push_back( iTrack );
-				bAllHoldsHeldThisRow &= tn.HoldResult.fLife > 0;
+				if( tn.HoldResult.fLife > 0 )
+					++iNumHoldsHeldThisRow;
+				else
+					++iNumHoldsMissedThisRow;
 			}
 
 			if( !viColsWithHold.empty() )
@@ -2298,21 +2302,14 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 				const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
 				const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
-				if( m_pPlayerStageStats )
-				{
-					if( bAllHoldsHeldThisRow )
-					{
-						m_pPlayerStageStats->m_iCurCombo++;
-						m_pPlayerStageStats->m_iCurMissCombo = 0;
-					}
-					else
-					{
-						m_pPlayerStageStats->m_iCurCombo = 0;
-						m_pPlayerStageStats->m_iCurMissCombo++;
-					}
-				}
+				if( m_pPrimaryScoreKeeper )
+					m_pPrimaryScoreKeeper->HandleHoldCheckpointScore( m_NoteData, r, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow );
+				if( m_pSecondaryScoreKeeper )
+					m_pSecondaryScoreKeeper->HandleHoldCheckpointScore( m_NoteData, r, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow );
 
-				if( bAllHoldsHeldThisRow )
+				ChangeLife( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss );
+
+				if( iNumHoldsMissedThisRow == 0 )
 				{
 					FOREACH( int, viColsWithHold, i )
 					{

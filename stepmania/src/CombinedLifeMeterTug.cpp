@@ -21,6 +21,8 @@ static void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOu
 	case SE_W5:			defaultValueOut = -0.010f;	break;
 	case SE_Miss:		defaultValueOut = -0.020f;	break;
 	case SE_HitMine:	defaultValueOut = -0.040f;	break;
+	case SE_CheckpointHit:	defaultValueOut = +0.002f;	break;
+	case SE_CheckpointMiss:	defaultValueOut = -0.002f;	break;
 	case SE_Held:		defaultValueOut = +0.008f;	break;
 	case SE_LetGo:		defaultValueOut = -0.020f;	break;
 	}
@@ -73,6 +75,8 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 	case TNS_W5:		fPercentToMove = g_fTugMeterPercentChange[SE_W5];		break;
 	case TNS_Miss:		fPercentToMove = g_fTugMeterPercentChange[SE_Miss];	break;
 	case TNS_HitMine:	fPercentToMove = g_fTugMeterPercentChange[SE_HitMine]; break;
+	case TNS_CheckpointHit:	fPercentToMove = g_fTugMeterPercentChange[SE_CheckpointHit];	break;
+	case TNS_CheckpointMiss:fPercentToMove = g_fTugMeterPercentChange[SE_CheckpointMiss]; break;
 	default:	ASSERT(0);	break;
 	}
 
