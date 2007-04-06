@@ -16,6 +16,29 @@ public:
 	~GameSoundManager();
 	void Update( float fDeltaTime );
 
+	struct PlayMusicParams
+	{
+		PlayMusicParams()
+		{
+			pTiming = NULL;
+			bForceLoop = false;
+			fStartSecond = 0;
+			fLengthSeconds = -1;
+			fFadeInLengthSeconds = 0;
+			fFadeOutLengthSeconds = 0;
+			bAlignBeat = true;
+		}
+
+		RString sFile;
+		const TimingData *pTiming;
+		bool bForceLoop;
+		float fStartSecond;
+		float fLengthSeconds;
+		float fFadeInLengthSeconds;
+		float fFadeOutLengthSeconds;
+		bool bAlignBeat;
+	};
+	void PlayMusic( PlayMusicParams params, PlayMusicParams FallbackMusic = PlayMusicParams() );
 	void PlayMusic( 
 		RString sFile, 
 		const TimingData *pTiming = NULL, 
@@ -24,8 +47,7 @@ public:
 		float length_sec = -1, 
 		float fFadeInLengthSeconds = 0,
 		float fade_len = 0, 
-		bool align_beat = true,
-		RString sFallback = "" );
+		bool align_beat = true );
 	void StopMusic() { PlayMusic(""); }
 	void DimMusic( float fVolume, float fDurationSeconds );
 	RString GetMusicPath() const;

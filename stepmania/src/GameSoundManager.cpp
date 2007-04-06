@@ -43,7 +43,6 @@ static float g_fDimVolume = 1.0f;
 static float g_fOriginalVolume = 1.0f;
 static float g_fDimDurationRemaining = 0.0f;
 static bool g_bWasPlayingOnLastUpdate = false;
-static RString g_sFallbackMusicPath;
 
 struct MusicPlaying
 {
@@ -95,6 +94,7 @@ struct MusicToPlay
 	}
 };
 vector<MusicToPlay> g_MusicsToPlay;
+static GameSoundManager::PlayMusicParams g_FallbackMusic;
 
 static void StartMusic( MusicToPlay &ToPlay )
 {
@@ -470,10 +470,11 @@ void GameSoundManager::Update( float fDeltaTime )
 		g_Mutex->Lock();
 		bool bIsPlaying = g_Playing->m_Music->IsPlaying();
 		g_Mutex->Unlock();
-		if( !bIsPlaying && g_bWasPlayingOnLastUpdate && !g_sFallbackMusicPath.empty() )
+		if( !bIsPlaying && g_bWasPlayingOnLastUpdate && !g_FallbackMusic.sFile.empty() )
 		{
-			PlayMusic( g_sFallbackMusicPath, NULL, false, 0, -1, 1.5f );
-			g_sFallbackMusicPath = "";
+			PlayMusic( g_FallbackMusic );
+
+			g_FallbackMusic.sFile = "";
 		}
 		g_bWasPlayingOnLastUpdate = bIsPlaying;
 	}
@@ -651,34 +652,47 @@ void GameSoundManager::PlayMusic(
 	float fLengthSeconds, 
 	float fFadeInLengthSeconds, 
 	float fFadeOutLengthSeconds, 
-	bool bAlignBeat,
-	RString sFallback
+	bool bAlignBeat
 	)
 {
-	g_sFallbackMusicPath = sFallback;
+	PlayMusicParams params;
+	params.sFile = sFile;
+	params.pTiming = pTiming;
+	params.bForceLoop = bForceLoop;
+	params.fStartSecond = fStartSecond;
+	params.fLengthSeconds = fLengthSeconds;
+	params.fFadeInLengthSeconds = fFadeInLengthSeconds;
+	params.fFadeOutLengthSeconds = fFadeOutLengthSeconds;
+	params.bAlignBeat = bAlignBeat;
+	PlayMusic( params );
+}
+
+void GameSoundManager::PlayMusic( PlayMusicParams params, PlayMusicParams FallbackMusic )
+{
+	g_FallbackMusic = FallbackMusic;
 
 	//	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music->GetLoadedFilePath().c_str());
 
 	MusicToPlay ToPlay;
 
-	ToPlay.m_sFile = sFile;
-	if( pTiming )
+	ToPlay.m_sFile = params.sFile;
+	if( params.pTiming )
 	{
 		ToPlay.HasTiming = true;
-		ToPlay.m_TimingData = *pTiming;
+		ToPlay.m_TimingData = *params.pTiming;
 	}
 	else
 	{
 		/* If no timing data was provided, look for it in the same place as the music file. */
-		ToPlay.m_sTimingFile = SetExtension( sFile, "sm" );
+		ToPlay.m_sTimingFile = SetExtension( params.sFile, "sm" );
 	}
 
-	ToPlay.bForceLoop = bForceLoop;
-	ToPlay.fStartSecond = fStartSecond;
-	ToPlay.fLengthSeconds = fLengthSeconds;
-	ToPlay.fFadeInLengthSeconds = fFadeInLengthSeconds;
-	ToPlay.fFadeOutLengthSeconds = fFadeOutLengthSeconds;
-	ToPlay.bAlignBeat = bAlignBeat;
+	ToPlay.bForceLoop = params.bForceLoop;
+	ToPlay.fStartSecond = params.fStartSecond;
+	ToPlay.fLengthSeconds = params.fLengthSeconds;
+	ToPlay.fFadeInLengthSeconds = params.fFadeInLengthSeconds;
+	ToPlay.fFadeOutLengthSeconds = params.fFadeOutLengthSeconds;
+	ToPlay.bAlignBeat = params.bAlignBeat;
 
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
 	g_Mutex->Lock();

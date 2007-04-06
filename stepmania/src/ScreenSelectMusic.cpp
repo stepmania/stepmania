@@ -289,13 +289,21 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 
 		g_bSampleMusicWaiting = false;
 
-		SOUND->PlayMusic(
-			m_sSampleMusicToPlay, m_pSampleMusicTimingData,
-			SAMPLE_MUSIC_LOOPS, m_fSampleStartSeconds, m_fSampleLengthSeconds,
-			0.0f,
-			1.5f, /* fade out for 1.5 seconds */
-			ALIGN_MUSIC_BEATS,
-			m_sLoopMusicPath );
+		GameSoundManager::PlayMusicParams PlayParams;
+		PlayParams.sFile = m_sSampleMusicToPlay;
+		PlayParams.pTiming = m_pSampleMusicTimingData;
+		PlayParams.bForceLoop = SAMPLE_MUSIC_LOOPS;
+		PlayParams.fStartSecond = m_fSampleStartSeconds;
+		PlayParams.fLengthSeconds = m_fSampleLengthSeconds;
+		PlayParams.fFadeOutLengthSeconds = 1.5f;
+		PlayParams.bAlignBeat = ALIGN_MUSIC_BEATS;
+
+		GameSoundManager::PlayMusicParams FallbackMusic;
+		FallbackMusic.sFile = m_sLoopMusicPath;
+		FallbackMusic.fFadeInLengthSeconds = 1.5f;
+		FallbackMusic.bAlignBeat = ALIGN_MUSIC_BEATS;
+
+		SOUND->PlayMusic( PlayParams, FallbackMusic );
 	}
 }
 
