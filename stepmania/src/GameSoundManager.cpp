@@ -235,7 +235,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		RageSoundParams p;
 		p.m_StartSecond = ToPlay.fStartSecond;
 		p.m_LengthSeconds = ToPlay.fLengthSeconds;
-		p.m_FadeLength = ToPlay.fFadeOutLengthSeconds;
+		p.m_fFadeOutSeconds = ToPlay.fFadeOutLengthSeconds;
 		p.m_StartTime = when;
 		if( ToPlay.bForceLoop )
 			p.StopMode = RageSoundParams::M_LOOP;

@@ -2312,9 +2312,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		else
 		{
 			/* Load the next song in the course.  First, fade out and stop the music. */
-			float fFadeLengthSeconds = MUSIC_FADE_OUT_SECONDS;
+			float fFadeOutSeconds = MUSIC_FADE_OUT_SECONDS;
 			RageSoundParams p = m_pSoundMusic->GetParams();
-			p.m_FadeLength = fFadeLengthSeconds;
+			p.m_fFadeOutSeconds = fFadeOutSeconds;
 			p.m_LengthSeconds = GAMESTATE->m_fMusicSeconds + fFadeLengthSeconds;			
 			m_pSoundMusic->SetParams(p);
 			SCREENMAN->PostMessageToTopScreen( SM_StartLoadingNextSong, fFadeLengthSeconds );

@@ -95,7 +95,7 @@ int RageSoundReader_Extend::Read( float *pBuffer, int iFrames )
 
 	if( iFramesRead > 0 )
 	{
-		/* We want to fade when there's m_FadeLength seconds left, but if
+		/* We want to fade when there's m_iFadeFrames frames left, but if
 		 * m_LengthFrames is -1, we don't know the length we're playing.
 		 * (m_LengthFrames is the length to play, not the length of the
 		 * source.)  If we don't know the length, don't fade. */

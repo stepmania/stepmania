@@ -33,7 +33,7 @@ struct RageSoundParams
 	float m_LengthSeconds;
 
 	/* Number of seconds to spend fading out. */
-	float m_FadeLength;
+	float m_fFadeOutSeconds;
 
 	float m_Volume;	// multiplies with SOUNDMAN->GetMixVolume()
 

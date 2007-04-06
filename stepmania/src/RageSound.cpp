@@ -44,7 +44,7 @@ RageSoundParams::RageSoundParams():
 {
 	m_StartSecond = 0;
 	m_LengthSeconds = -1;
-	m_FadeLength = 0;
+	m_fFadeOutSeconds = 0;
 	m_Volume = 1.0f;
 	m_fPitch = 1.0f;
 	m_fSpeed = 1.0f;
@@ -581,7 +581,7 @@ void RageSound::ApplyParams()
 	m_pSource->SetProperty( "Speed", m_Param.m_fSpeed );
 	m_pSource->SetProperty( "StartSecond", m_Param.m_StartSecond );
 	m_pSource->SetProperty( "LengthSeconds", m_Param.m_LengthSeconds );
-	m_pSource->SetProperty( "FadeSeconds", m_Param.m_FadeLength );
+	m_pSource->SetProperty( "FadeSeconds", m_Param.m_fFadeOutSeconds );
 
 	float fVolume = m_Param.m_Volume * SOUNDMAN->GetMixVolume();
 	m_pSource->SetProperty( "Volume", fVolume );
