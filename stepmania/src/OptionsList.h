@@ -74,7 +74,6 @@ private:
 	void Pop();
 	void ImportRow( RString sRow );
 	void ExportRow( RString sRow );
-	bool RowIsMenusOnly( RString sRow ) const;
 
 	InputQueueCodeSet	m_Codes;
 

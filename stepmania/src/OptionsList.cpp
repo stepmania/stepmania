@@ -9,12 +9,14 @@
 #include "InputEventPlus.h"
 #include "CodeDetector.h"
 #include "InputMapper.h"
+#include "PlayerState.h"
 
 #define LINE(sLineName)				THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
 #define MAX_ITEMS_BEFORE_SPLIT			THEME->GetMetricI(m_sName,"MaxItemsBeforeSplit")
 #define ITEMS_SPLIT_WIDTH			THEME->GetMetricF(m_sName,"ItemsSplitWidth")
 #define DIRECT_LINES				THEME->GetMetric (m_sName,"DirectLines")
 
+static const RString RESET_ROW = "ResetOptions";
 
 void OptionListRow::Load( OptionsList *pOptions, const RString &sType )
 {
@@ -293,21 +295,6 @@ void OptionsList::PositionCursor()
 	m_Row[m_iCurrentRow].PositionCursor( m_Cursor, m_iMenuStackSelection );
 }
 
-bool OptionsList::RowIsMenusOnly( RString sRow ) const
-{
-	map<RString, OptionRowHandler *>::const_iterator it = m_Rows.find( sRow );
-	ASSERT( it != m_Rows.end() );
-	const OptionRowHandler *pHandler = it->second;
-
-	for( size_t i = 0; i < pHandler->m_Def.m_vsChoices.size(); ++i )
-	{
-		if( pHandler->GetScreen(i).empty() )
-			return false;
-	}
-
-	return true;
-}
-
 /* Toggle to the next menu.  This is used to switch quickly through option submenus,
  * to choose many options or to find the one you're looking for.  For that goal,
  * it's not helpful to switch only through the options listed in the current parent
@@ -328,7 +315,7 @@ void OptionsList::SwitchMenu( int iDir )
 		wrap( iCurrentRow, m_asLoadedRows.size() );
 		sDest = m_asLoadedRows[iCurrentRow];
 	}
-	while( RowIsMenusOnly(sDest) && iCurrentRow != iCurrentRowStart );
+	while( sDest == "Main" && iCurrentRow != iCurrentRowStart );
 
 	ASSERT( !sDest.empty() );
 	if( m_asMenuStack.size() == 1 )
@@ -508,13 +495,13 @@ void OptionsList::ImportRow( RString sRow )
 	pHandler->ImportOption( vpns, aSelections );
 	m_bSelections[sRow] = aSelections[ m_pn ];
 
-	if( RowIsMenusOnly(sRow) )
+	if( sRow == "Main" )
 		fill( m_bSelections[sRow].begin(), m_bSelections[sRow].end(), false );
 }
 
 void OptionsList::ExportRow( RString sRow )
 {
-	if( RowIsMenusOnly(sRow) )
+	if( sRow == "Main" )
 		return;
 
 	vector<bool> aSelections[NUM_PLAYERS];
@@ -636,6 +623,29 @@ bool OptionsList::Start()
 		MESSAGEMAN->Broadcast( msg );
 
 		return m_asMenuStack.empty();
+	}
+
+	{
+		RString sIconText;
+		GameCommand gc;
+		pHandler->GetIconTextAndGameCommand( m_iMenuStackSelection, sIconText, gc );
+		if( gc.m_sName == RESET_ROW )
+		{
+			GAMESTATE->m_pPlayerState[m_pn]->ResetToDefaultPlayerOptions( ModsLevel_Preferred );
+			GAMESTATE->ResetToDefaultSongOptions( ModsLevel_Preferred );
+
+			/* Import options. */
+			FOREACHM( RString, OptionRowHandler *, m_Rows, hand )
+				ImportRow( hand->first );
+
+			UpdateMenuFromSelections();
+
+			Message msg("OptionsListReset");
+			msg.SetParam( "Player", m_pn );
+			MESSAGEMAN->Broadcast( msg );
+
+			return false;
+		}
 	}
 
 	RString sDest = pHandler->GetScreen( m_iMenuStackSelection );
