@@ -520,36 +520,37 @@ RageColor SongManager::GetCourseColor( const Course* pCourse )
 	}
 }
 
-static void GetSongsFromVector( const vector<Song*> &Songs, vector<Song*> &vOut, RString sGroupName )
+void SongManager::GetSongs( vector<Song*> &AddTo, const RString &sGroupName ) const
 {
-	vOut.clear();
-
-	for( unsigned i=0; i<Songs.size(); i++ )
-		if( sGroupName==GROUP_ALL || sGroupName==Songs[i]->m_sGroupName )
-			vOut.push_back( Songs[i] );
+	const vector<Song *> &vSongs = GetSongsInGroup( sGroupName );
+	
+	AddTo.insert( AddTo.end(), vSongs.begin(), vSongs.end() );
 }
 
-void SongManager::GetSongs( vector<Song*> &AddTo, RString sGroupName ) const
+const vector<Song*> &SongManager::GetSongsInGroup( const RString &sGroupName ) const
 {
-	if( sGroupName==GROUP_ALL)
-		GetSongsFromVector( m_pSongs, AddTo, sGroupName );
-	else
-		GetSongsFromVector( GetSongsInGroup(sGroupName), AddTo, GROUP_ALL );
-}
-
-const vector<Song*> &SongManager::GetSongsInGroup( RString sGroupName ) const
-{
-	static vector<Song*> empty;
-
+	static const vector<Song*> vEmpty;
+	
+	if( sGroupName == GROUP_ALL )
+		return m_pSongs;
 	map<RString, SongPointerVector>::const_iterator iter = m_mapSongGroupIndex.find( sGroupName );
 	if ( iter != m_mapSongGroupIndex.end() )
 		return iter->second;
-	return empty;
+	return vEmpty;
 }
 
-void SongManager::GetPopularSongs( vector<Song*> &AddTo, RString sGroupName, ProfileSlot slot ) const
+void SongManager::GetPopularSongs( vector<Song*> &AddTo, const RString &sGroupName, ProfileSlot slot ) const
 {
-	GetSongsFromVector( m_pPopularSongs[slot], AddTo, sGroupName );
+	if( sGroupName == GROUP_ALL )
+	{
+		AddTo.insert( AddTo.end(), m_pPopularSongs[slot].begin(), m_pPopularSongs[slot].end() );
+		return;
+	}
+	FOREACH_CONST( Song*, m_pPopularSongs[slot], song )
+	{
+		if( (*song)->m_sGroupName == sGroupName )
+			AddTo.push_back( *song );
+	}
 }
 
 void SongManager::GetPreferredSortSongs( vector<Song*> &AddTo ) const
