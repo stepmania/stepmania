@@ -916,7 +916,19 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	// score hold notes that have passed
 	if( iSongRow >= iMaxEndRow )
 	{
-		if( bInitiatedNote  &&  fLife > 0 )
+		bool bLetGoOfHoldNote = false;
+
+		if( HOLD_CHECKPOINTS )
+		{
+			int iCheckpointsMissed = 0;
+			FOREACH( TrackRowTapNote, vTN, v )
+				iCheckpointsMissed += v->pTN->HoldResult.iCheckpointsMissed;
+			bLetGoOfHoldNote = iCheckpointsMissed > 0;
+		}
+		else
+			bLetGoOfHoldNote = fLife == 0;
+
+		if( bInitiatedNote  &&  !bLetGoOfHoldNote )
 		{
 			fLife = 1;
 			hns = HNS_Held;
@@ -2291,9 +2303,15 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 
 				viColsWithHold.push_back( iTrack );
 				if( tn.HoldResult.fLife > 0 )
+				{
 					++iNumHoldsHeldThisRow;
+					++tn.HoldResult.iCheckpointsHit;
+				}
 				else
+				{
 					++iNumHoldsMissedThisRow;
+					++tn.HoldResult.iCheckpointsMissed;
+				}
 			}
 
 			if( !viColsWithHold.empty() )

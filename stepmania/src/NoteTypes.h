@@ -27,7 +27,7 @@ struct TapNoteResult
 
 struct HoldNoteResult
 {
-	HoldNoteResult() : hns(HNS_None), fLife(1.f), fOverlappedTime(0), iLastHeldRow(0), bHeld(false), bActive(false) { }
+	HoldNoteResult() : hns(HNS_None), fLife(1.f), fOverlappedTime(0), iLastHeldRow(0), iCheckpointsHit(0), iCheckpointsMissed(0), bHeld(false), bActive(false) { }
 	float GetLastHeldBeat() const;
 	
 	HoldNoteScore	hns;
@@ -45,6 +45,11 @@ struct HoldNoteResult
 	/* Last index where fLife was greater than 0.  If the tap was missed, this will
 	 * be the first index of the hold. */
 	int		iLastHeldRow;
+
+	/* If checkpoint holds are enabled, the number of checkpoints hit and missed. */
+	int		iCheckpointsHit;
+	int		iCheckpointsMissed;
+
 	bool		bHeld;		// Was button held during last update?
 	bool		bActive;	// Is life > 0  &&  overlaps current beat
 
