@@ -13,6 +13,10 @@
 
 #define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 #define GRADE_TIER02_IS_ALL_W2S	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllW2s")
+#define GRADE_TIER01_IS_ALL_W2S THEME->GetMetricB("PlayerStageStats","GradeTier01IsAllW2s")
+#define GRADE_TIER02_IS_FULL_COMBO THEME->GetMetricB("PlayerStageStats","GradeTier02IsFullCombo")
+
+static ThemeMetric<TapNoteScore> g_MinScoreToMaintainCombo( "Gameplay", "MinScoreToMaintainCombo" );
 
 const float LESSON_PASS_THRESHOLD = 0.8f;
 
@@ -199,6 +203,20 @@ Grade PlayerStageStats::GetGrade() const
 		if( FullComboOfScore(TNS_W2) )
 			return Grade_Tier02;
 
+		grade = max( grade, Grade_Tier03 );
+	}
+
+	if( GRADE_TIER01_IS_ALL_W2S )
+	{
+		if( FullComboOfScore(TNS_W2) )
+			return Grade_Tier01;
+		grade = max( grade, Grade_Tier02 );
+	}
+
+	if( GRADE_TIER02_IS_FULL_COMBO )
+	{
+		if( FullComboOfScore(g_MinScoreToMaintainCombo) )
+			return Grade_Tier02;
 		grade = max( grade, Grade_Tier03 );
 	}
 
