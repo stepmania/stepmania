@@ -20,13 +20,13 @@ public:
 	virtual const RString &GetBaseClassName() const = 0;
 
 	static void ApplyDerivedType( Lua *L, const RString &sClassname, void *pSelf );
+	static bool CheckLuaObjectType( lua_State *L, int narg, const char *szType );
 
 protected:
 	virtual void Register( Lua *L, int iMethods, int iMetatable ) = 0;
 
 	static void CreateMethodsTable( lua_State *L, const RString &szName );
 	static void *GetPointerFromStack( Lua *L, const RString &sType, int iArg );
-	static bool CheckLuaObjectType( lua_State *L, int narg, const char *szType );
 
 	static bool Equal( lua_State *L );
 	static int PushEqual( lua_State *L );
