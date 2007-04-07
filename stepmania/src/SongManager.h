@@ -139,7 +139,9 @@ protected:
 	vector<SongPointerVector> m_vPreferredSongSort;
 	vector<RString>		m_sSongGroupNames;
 	vector<RString>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
-	map<istring,SongPointerVector> m_mapSongGroupIndex;
+	
+	struct Comp { bool operator()(const RString& s, const RString &t) const { return CompareRStringsAsc(s,t); } };
+	map<RString,SongPointerVector,Comp> m_mapSongGroupIndex;
 
 	vector<Course*>		m_pCourses;
 	vector<Course*>		m_pPopularCourses[NUM_ProfileSlot][NUM_CourseType];

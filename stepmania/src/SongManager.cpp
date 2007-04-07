@@ -222,7 +222,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 				   (sDir+sGroupDirName).c_str() );
 		int loaded = 0;
 
-		SongPointerVector& index_entry = m_mapSongGroupIndex[istring(sGroupDirName)];
+		SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupDirName];
 
 		for( unsigned j=0; j< arraySongDirs.size(); ++j )	// for each song dir
 		{
@@ -273,7 +273,7 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 	vector<RString> arraySymLinks;
 	GetDirListing( sDir+sGroupFolder+"/*.include", arraySymLinks, false );
 	SortRStringArray( arraySymLinks );
-	SongPointerVector& index_entry = m_mapSongGroupIndex[istring(sGroupFolder)];
+	SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupFolder];
 	for( unsigned s=0; s< arraySymLinks.size(); s++ )	// for each symlink in this dir, add it in as a song.
 	{
 		MsdFile		msdF;
@@ -526,7 +526,7 @@ const vector<Song*> &SongManager::GetSongs( const RString &sGroupName ) const
 	
 	if( sGroupName == GROUP_ALL )
 		return m_pSongs;
-	map<istring, SongPointerVector>::const_iterator iter = m_mapSongGroupIndex.find( istring(sGroupName) );
+	map<RString, SongPointerVector, Comp>::const_iterator iter = m_mapSongGroupIndex.find( sGroupName );
 	if ( iter != m_mapSongGroupIndex.end() )
 		return iter->second;
 	return vEmpty;
