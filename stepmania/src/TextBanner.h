@@ -13,16 +13,22 @@ class TextBanner : public ActorFrame
 public:
 	TextBanner();
 	TextBanner( const TextBanner &cpy );
+	virtual TextBanner *Copy() const;
+
+	void LoadFromNode( const XNode* pNode );
 	void Load( RString sType );	// load metrics
-	void LoadFromSong( Song* pSong );
+	void LoadFromSong( Song *pSong );
 	void LoadFromString( 
 		const RString &sDisplayTitle, const RString &sTranslitTitle, 
 		const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
 		const RString &sDisplayArtist, const RString &sTranslitArtist );
 
+	// Lua
+	void PushSelf( lua_State *L );
+
 private:
 	void LoadInternal( 
-		Song* pSong,
+		Song *pSong,
 		const RString &sDisplayTitle, const RString &sTranslitTitle, 
 		const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
 		const RString &sDisplayArtist, const RString &sTranslitArtist );
@@ -31,7 +37,7 @@ private:
 
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
 
-	ThemeMetric<RString>		ARTIST_PREPEND_STRING;
+	RString		m_sArtistPrependString;
 };
 
 #endif

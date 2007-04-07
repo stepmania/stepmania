@@ -7,7 +7,42 @@
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
 #include "ThemeMetric.h"
+#include "XmlFile.h"
 
+REGISTER_ACTOR_CLASS( TextBanner )
+
+void TextBanner::LoadFromNode( const XNode* pNode )
+{
+	m_bInitted = true;
+
+	{
+		const XNode *pTitleNode = pNode->GetChild( "Title" );
+		if( pTitleNode == NULL )
+			RageException::Throw( "%s: TextBanner: missing the Title child", ActorUtil::GetWhere(pNode).c_str() );
+		m_textTitle.LoadFromNode( pTitleNode );
+		this->AddChild( &m_textTitle );
+	}
+
+	{
+		const XNode *pSubtitleNode = pNode->GetChild( "Subtitle" );
+		if( pSubtitleNode == NULL )
+			RageException::Throw( "%s: TextBanner: missing the Subtitle child", ActorUtil::GetWhere(pNode).c_str() );
+		m_textSubTitle.LoadFromNode( pSubtitleNode );
+		this->AddChild( &m_textSubTitle );
+	}
+
+	{
+		const XNode *pArtistNode = pNode->GetChild( "Artist" );
+		if( pArtistNode == NULL )
+			RageException::Throw( "%s: TextBanner: missing the Artist child", ActorUtil::GetWhere(pNode).c_str() );
+		m_textArtist.LoadFromNode( pArtistNode );
+		this->AddChild( &m_textArtist );
+	}
+
+	pNode->GetAttrValue( "ArtistPrependString", m_sArtistPrependString );
+
+	ActorFrame::LoadFromNode( pNode );
+}
 
 void TextBanner::Load( RString sType )
 {
@@ -26,7 +61,7 @@ void TextBanner::Load( RString sType )
 	this->AddChild( &m_textArtist );
 
 	AddCommand( "Set", THEME->GetMetricA(sType,"SetCommand") );
-	ARTIST_PREPEND_STRING			.Load(sType,"ArtistPrependString");
+	m_sArtistPrependString = THEME->GetMetricB(sType,"ArtistPrependString");
 
 	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTitle, sType );
 	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textSubTitle, sType );
@@ -44,7 +79,7 @@ TextBanner::TextBanner( const TextBanner &cpy ):
 	m_textTitle( cpy.m_textTitle ),
 	m_textSubTitle( cpy.m_textSubTitle ),
 	m_textArtist( cpy.m_textArtist ),
-	ARTIST_PREPEND_STRING( cpy.ARTIST_PREPEND_STRING )
+	m_sArtistPrependString( cpy.m_sArtistPrependString )
 {
 	this->AddChild( &m_textTitle );
 	this->AddChild( &m_textSubTitle );
@@ -80,7 +115,7 @@ void TextBanner::LoadInternal(
 	this->HandleMessage( msg );
 }
 
-void TextBanner::LoadFromSong( Song* pSong )
+void TextBanner::LoadFromSong( Song *pSong )
 {
 	ASSERT( m_bInitted );
 
@@ -88,8 +123,8 @@ void TextBanner::LoadFromSong( Song* pSong )
 	RString sTranslitTitle		= pSong ? pSong->GetTranslitMainTitle() : RString("");
 	RString sDisplaySubTitle	= pSong ? pSong->GetDisplaySubTitle() : RString("");
 	RString sTranslitSubTitle	= pSong ? pSong->GetTranslitSubTitle() : RString("");
-	RString sDisplayArtist		= pSong ? (RString)ARTIST_PREPEND_STRING + pSong->GetDisplayArtist() : RString("");
-	RString sTranslitArtist		= pSong ? (RString)ARTIST_PREPEND_STRING + pSong->GetTranslitArtist() : RString("");
+	RString sDisplayArtist		= pSong ? m_sArtistPrependString + pSong->GetDisplayArtist() : RString("");
+	RString sTranslitArtist		= pSong ? m_sArtistPrependString + pSong->GetTranslitArtist() : RString("");
 
 	LoadInternal(
 		pSong,
@@ -97,6 +132,41 @@ void TextBanner::LoadFromSong( Song* pSong )
 		sDisplaySubTitle, sTranslitSubTitle, 
 		sDisplayArtist, sTranslitArtist );
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaTextBanner: public Luna<TextBanner>
+{
+public:
+	static int LoadFromSong( T* p, lua_State *L )
+	{
+		Song *pSong = Luna<Song>::check(L,1);
+  		p->LoadFromSong( pSong );
+		return 0;
+	}
+
+	static int LoadFromString( T* p, lua_State *L )
+	{
+		RString sDisplayTitle = SArg(1);
+		RString sTranslitTitle = SArg(2);
+		RString sDisplaySubTitle = SArg(3);
+		RString sTranslitSubTitle = SArg(4);
+		RString sDisplayArtist = SArg(5);
+		RString sTranslitArtist = SArg(6);
+  		p->LoadFromString( sDisplayTitle, sTranslitTitle, sDisplaySubTitle, sTranslitSubTitle, sDisplayArtist, sTranslitArtist );
+		return 0;
+	}
+
+	LunaTextBanner()
+	{
+		ADD_METHOD( LoadFromSong );
+		ADD_METHOD( LoadFromString );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( TextBanner, ActorFrame )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford
