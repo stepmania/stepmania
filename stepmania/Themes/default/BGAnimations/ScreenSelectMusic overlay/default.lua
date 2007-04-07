@@ -207,6 +207,8 @@ local children =
 		OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
 	};
 	Def.CourseContentsList {
+		VisibleItems = 5;
+
 		InitCommand=cmd(x,SCREEN_CENTER_X-160;y,SCREEN_CENTER_Y+96);
 		OnCommand=cmd(zoomy,0;bounceend,0.3;zoom,1);
 		OffCommand=cmd(zoomy,1;bouncebegin,0.3;zoomy,0);
@@ -215,6 +217,66 @@ local children =
 		SetCommand=function(self) self:SetFromGameState() end;
 		CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
+
+		Display = Def.ActorFrame { 
+			InitCommand=cmd(setsize,270,44);
+
+			LoadActor("_CourseEntryDisplay bar");
+
+			Def.TextBanner {
+				ArtistPrependString="/";
+				SetCommand=TextBannerSet;
+				InitCommand=cmd(LoadFromString,"", "", "", "", "", "");
+				Title = LoadFont("TextBannerCourseEntry","text") .. {
+					Name="Title";
+					OnCommand=cmd(shadowlength,0);
+				};
+				Subtitle = LoadFont("TextBannerCourseEntry","text") .. {
+					Name="Subtitle";
+					OnCommand=cmd(shadowlength,0);
+				};
+				Artist = LoadFont("TextBannerCourseEntry","text") .. {
+					Name="Artist";
+					OnCommand=cmd(shadowlength,0);
+				};
+				SetSongCommand=function(self, params)
+					if params.Song then
+						self:LoadFromSong( params.Song );
+						self:diffuse( SONGMAN:GetSongColor(params.Song) );
+					else
+						self:LoadFromString( "??????????", "??????????", "", "", "", "" );
+						self:diffuse( color("#FFFFFF") );
+					end
+				end;
+			};
+
+			LoadFont("CourseEntryDisplay","number") .. {
+				OnCommand=cmd(x,-118;shadowlength,0);
+				SetSongCommand=function(self, params) self:settext(string.format("%i", params.Number)); end;
+			};
+
+			LoadFont("Common","normal") .. {
+				OnCommand=cmd(x,SCREEN_CENTER_X-200;y,-8;zoom,0.7;shadowlength,0);
+				DifficultyChangedCommand=function(self, params)
+					if params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber() then return end
+					self:settext( params.Meter );
+					self:diffuse( DifficultyColor(params.Difficulty) );
+				end;
+			};
+
+			LoadFont("Common","normal") .. {
+				OnCommand=cmd(x,SCREEN_CENTER_X-192;y,SCREEN_CENTER_Y-230;horizalign,right;zoom,0.5;shadowlength,0);
+				SetSongCommand=function(self, params) self:settext(params.Modifiers); end;
+			};
+
+			LoadFont("CourseEntryDisplay","difficulty") .. {
+				OnCommand=cmd(x,SCREEN_CENTER_X-222;y,-8;shadowlength,0;settext,"1");
+				DifficultyChangedCommand=function(self, params)
+					if params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber() then return end
+					self:diffuse( DifficultyColor(params.Difficulty) );
+				end;
+			};
+		};
 	};
 
 	Autogen(PLAYER_1) .. {

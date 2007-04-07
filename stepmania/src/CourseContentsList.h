@@ -13,7 +13,6 @@ public:
 	~CourseContentsList();
 	virtual CourseContentsList *Copy() const;
 	
-	void Load();
 	void LoadFromNode( const XNode* pNode );
 
 	void SetFromGameState();
@@ -22,7 +21,10 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	vector<CourseEntryDisplay*>		m_vpDisplay;
+	void SetItemFromGameState( Actor *pActor, int iCourseEntryIndex );
+
+	int m_iVisibleItems;
+	vector<Actor *>		m_vpDisplay;
 };
 
 #endif

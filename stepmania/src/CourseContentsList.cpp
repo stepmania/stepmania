@@ -1,52 +1,47 @@
 #include "global.h"
 #include "CourseContentsList.h"
-#include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "Course.h"
-#include "SongManager.h"
-#include "ThemeManager.h"
-#include "Steps.h"
+#include "Trail.h"
 #include "GameState.h"
-#include "Style.h"
-#include "RageTexture.h"
-#include "CourseEntryDisplay.h"
+#include "XmlFile.h"
 #include "ActorUtil.h"
-
-const int MAX_VISIBLE_ITEMS = 5;
-const int MAX_ITEMS = MAX_VISIBLE_ITEMS+2;
+#include "RageUtil.h"
+#include "Steps.h"
 
 REGISTER_ACTOR_CLASS( CourseContentsList )
 
 CourseContentsList::CourseContentsList()
 {
-	for( int i=0; i<MAX_ITEMS; i++ )
-		m_vpDisplay.push_back( new CourseEntryDisplay );
-	this->SetNumItemsToDraw( (float)MAX_VISIBLE_ITEMS );
+	m_iVisibleItems = 5;
 }
 
 CourseContentsList::~CourseContentsList()
 {
-	FOREACH( CourseEntryDisplay*, m_vpDisplay, d )
+	FOREACH( Actor *, m_vpDisplay, d )
 		delete *d;
 	m_vpDisplay.clear();
 }
 
-void CourseContentsList::Load()
-{
-	FOREACH( CourseEntryDisplay*, m_vpDisplay, d )
-	{
-		(*d)->SetName( "CourseEntryDisplay" );
-		(*d)->Load();
-		(*d)->SetUseZBuffer( true );
-	}
-}
-
 void CourseContentsList::LoadFromNode( const XNode* pNode )
 {
+	pNode->GetAttrValue( "VisibleItems", m_iVisibleItems );
+
 	ActorScroller::LoadFromNode( pNode );
 
-	Load();
+	const XNode *pDisplayNode = pNode->GetChild( "Display" );
+	if( pDisplayNode == NULL )
+		RageException::Throw( "%s: CourseContentsList: missing the Display child", ActorUtil::GetWhere(pNode).c_str() );
+
+	for( int i=0; i<m_iVisibleItems+2; i++ )
+	{
+		Actor *pDisplay = ActorUtil::LoadFromNode( pDisplayNode, this );
+		pDisplay->SetUseZBuffer( true );
+		m_vpDisplay.push_back( pDisplay );
+	}
+
+	this->SetNumItemsToDraw( (float)m_iVisibleItems );
 }
 
 void CourseContentsList::SetFromGameState()
@@ -57,18 +52,16 @@ void CourseContentsList::SetFromGameState()
 	// the same number of TrailEntries?
 	// They have to have the same number, and of the same songs, or gameplay
 	// isn't going to line up.
-	Trail* pMasterTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
+	const Trail *pMasterTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
 	if( pMasterTrail == NULL )
 		return;
 	unsigned uNumEntriesToShow = min( pMasterTrail->m_vEntries.size(), m_vpDisplay.size() );
 
 	for( int i=0; i<(int)uNumEntriesToShow; i++ )
 	{
-		CourseEntryDisplay &d = *m_vpDisplay[i];
-
-		this->AddChild( &d );
-
-		d.SetFromGameState( i );
+		Actor *pDisplay = m_vpDisplay[i];
+		SetItemFromGameState( pDisplay, i );
+		this->AddChild( pDisplay );
 	}
 
 	bool bLoop = pMasterTrail->m_vEntries.size() > uNumEntriesToShow;
@@ -81,11 +74,99 @@ void CourseContentsList::SetFromGameState()
 	this->SetSecondsPauseBetweenItems( 0.7f );
 	this->ScrollThroughAllItems();
 
-	this->SetCurrentAndDestinationItem( (MAX_VISIBLE_ITEMS-1)/2 );
+	this->SetCurrentAndDestinationItem( (m_iVisibleItems-1)/2 );
 	if( bLoop )
 	{
 		SetPauseCountdownSeconds( 1.5f );
-		this->SetDestinationItem( MAX_ITEMS+1 );	// loop forever
+		this->SetDestinationItem( m_vpDisplay.size()+1 );	// loop forever
+	}
+}
+
+void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIndex )
+{
+	const Course *pCourse = GAMESTATE->m_pCurCourse;
+
+	const TrailEntry *tes[NUM_PLAYERS];
+	const CourseEntry *ces[NUM_PLAYERS];
+	FOREACH_PlayerNumber( p )
+	{
+		const Trail *pTrail = GAMESTATE->m_pCurTrail[p];
+		if( pTrail  &&  iCourseEntryIndex < (int) pTrail->m_vEntries.size() )
+		{
+			tes[p] = &pTrail->m_vEntries[iCourseEntryIndex];
+			ces[p] = &pCourse->m_vEntries[iCourseEntryIndex];
+		}
+		else
+		{
+			tes[p] = NULL;
+			ces[p] = NULL;
+		}
+	}
+
+
+	const TrailEntry *te = tes[GAMESTATE->m_MasterPlayerNumber];
+	if( te == NULL )
+		return;
+
+	FOREACH_HumanPlayer(pn)
+	{
+		const TrailEntry *te = tes[pn];
+		if( te == NULL )
+			continue;
+
+		RString s;
+		Difficulty dc;
+		if( te->bSecret )
+		{
+			const CourseEntry *ce = ces[pn];
+			if( ce == NULL )
+				continue;
+
+			int iLow = ce->stepsCriteria.m_iLowMeter;
+			int iHigh = ce->stepsCriteria.m_iHighMeter;
+
+			bool bLowIsSet = iLow != -1;
+			bool bHighIsSet = iHigh != -1;
+
+			if( !bLowIsSet  &&  !bHighIsSet )
+			{
+				s = "?";
+			}
+			if( !bLowIsSet  &&  bHighIsSet )
+			{
+				s = ssprintf( ">=%d", iHigh );
+			}
+			else if( bLowIsSet  &&  !bHighIsSet )
+			{
+				s = ssprintf( "<=%d", iLow );
+			}
+			else if( bLowIsSet  &&  bHighIsSet )
+			{
+				if( iLow == iHigh )
+					s = ssprintf( "%d", iLow );
+				else
+					s = ssprintf( "%d-%d", iLow, iHigh );
+			}
+
+			dc = te->dc;
+			if( dc == Difficulty_Invalid )
+				dc = Difficulty_Edit;
+		}
+		else
+		{
+			s = ssprintf("%d", te->pSteps->GetMeter());
+			dc = te->pSteps->GetDifficulty();
+		}
+			
+		Message msg("SetSong");
+		msg.SetParam( "PlayerNumber", pn );
+		msg.SetParam( "Difficulty", dc );
+		msg.SetParam( "Meter", s );
+		msg.SetParam( "Number", iCourseEntryIndex+1 );
+		msg.SetParam( "Modifiers", te->Modifiers );
+		if( !te->bSecret )
+			msg.SetParam( "Song", te->pSong );
+		pActor->HandleMessage( msg );
 	}
 }
 
