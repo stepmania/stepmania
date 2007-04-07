@@ -39,6 +39,7 @@ return Def.ActorFrame {
 
 		local iNumStates = c.Judgment:GetNumStates();
 		local iFrame = TNSFrames[param.TapNoteScore];
+		if not iFrame then return end
 		if iNumStates == 12 then
 			iFrame = iFrame * 2;
 			if not param.Early then
