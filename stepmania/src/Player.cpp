@@ -2316,32 +2316,7 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 
 			if( !viColsWithHold.empty() )
 			{
-				// increment combo
-				const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-				const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
-
-				if( m_pPrimaryScoreKeeper )
-					m_pPrimaryScoreKeeper->HandleHoldCheckpointScore( m_NoteData, r, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow );
-				if( m_pSecondaryScoreKeeper )
-					m_pSecondaryScoreKeeper->HandleHoldCheckpointScore( m_NoteData, r, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow );
-
-				ChangeLife( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss );
-
-				if( iNumHoldsMissedThisRow == 0 )
-				{
-					FOREACH( int, viColsWithHold, i )
-					{
-						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-						if( m_pNoteField )
-							m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
-					}
-				}
-
-				SendComboMessages( iOldCombo, iOldMissCombo );
-				if( m_pPlayerStageStats )
-				{
-					SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
-				}
+				HandleHoldCheckpoint( r, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow, viColsWithHold );
 			}
 		}
 	}
@@ -2511,6 +2486,38 @@ void Player::HandleTapRowScore( unsigned row )
 	ChangeLife( scoreOfLastTap );
 }
 
+void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const vector<int> &viColsWithHold )
+{
+	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+
+	if( m_pPrimaryScoreKeeper )
+		m_pPrimaryScoreKeeper->HandleHoldCheckpointScore( m_NoteData, iRow, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow );
+	if( m_pSecondaryScoreKeeper )
+		m_pSecondaryScoreKeeper->HandleHoldCheckpointScore( m_NoteData, iRow, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow );
+
+	if( iNumHoldsMissedThisRow == 0 )
+	{
+		FOREACH_CONST( int, viColsWithHold, i )
+		{
+			bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+			if( m_pNoteField )
+				m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
+		}
+	}
+
+	SendComboMessages( iOldCombo, iOldMissCombo );
+
+	if( m_pPlayerStageStats )
+	{
+		SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+	}
+
+	if( m_pPlayerStageStats )
+		m_pPlayerStageStats->UpdateComboList( STATSMAN->m_CurStageStats.m_fStepsSeconds, false );
+
+	ChangeLife( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss );
+}
 
 void Player::HandleHoldScore( const TapNote &tn )
 {

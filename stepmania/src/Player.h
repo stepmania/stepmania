@@ -113,6 +113,7 @@ protected:
 	void FlashGhostRow( int iRow, PlayerNumber pn );
 	void HandleTapRowScore( unsigned row );
 	void HandleHoldScore( const TapNote &tn );
+	void HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const vector<int> &viColsWithHold );
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
 	void SendComboMessages( int iOldCombo, int iOldMissCombo );
