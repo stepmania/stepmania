@@ -352,7 +352,7 @@ void SongManager::FreeSongs()
 	m_pShuffledSongs.clear();
 }
 
-RString SongManager::GetSongGroupBannerPath( RString sSongGroup )
+RString SongManager::GetSongGroupBannerPath( RString sSongGroup ) const
 {
 	for( unsigned i = 0; i < m_sSongGroupNames.size(); ++i )
 	{
@@ -363,17 +363,17 @@ RString SongManager::GetSongGroupBannerPath( RString sSongGroup )
 	return RString();
 }
 
-void SongManager::GetSongGroupNames( vector<RString> &AddTo )
+void SongManager::GetSongGroupNames( vector<RString> &AddTo ) const
 {
 	AddTo.insert(AddTo.end(), m_sSongGroupNames.begin(), m_sSongGroupNames.end() );
 }
 
-bool SongManager::DoesSongGroupExist( RString sSongGroup )
+bool SongManager::DoesSongGroupExist( RString sSongGroup ) const
 {
 	return find( m_sSongGroupNames.begin(), m_sSongGroupNames.end(), sSongGroup ) != m_sSongGroupNames.end();
 }
 
-RageColor SongManager::GetSongGroupColor( const RString &sSongGroup )
+RageColor SongManager::GetSongGroupColor( const RString &sSongGroup ) const
 {
 	for( unsigned i=0; i<m_sSongGroupNames.size(); i++ )
 	{
@@ -385,7 +385,7 @@ RageColor SongManager::GetSongGroupColor( const RString &sSongGroup )
 	return RageColor(1,1,1,1);
 }
 
-RageColor SongManager::GetSongColor( const Song* pSong )
+RageColor SongManager::GetSongColor( const Song* pSong ) const
 {
 	ASSERT( pSong );
 
@@ -450,7 +450,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	}
 }
 
-RString SongManager::GetCourseGroupBannerPath( const RString &sCourseGroup )
+RString SongManager::GetCourseGroupBannerPath( const RString &sCourseGroup ) const
 {
 	map<RString, CourseGroupInfo>::const_iterator iter = m_mapCourseGroupToInfo.find( sCourseGroup );
 	if( iter == m_mapCourseGroupToInfo.end() )
@@ -464,18 +464,18 @@ RString SongManager::GetCourseGroupBannerPath( const RString &sCourseGroup )
 	}
 }
 
-void SongManager::GetCourseGroupNames( vector<RString> &AddTo )
+void SongManager::GetCourseGroupNames( vector<RString> &AddTo ) const
 {
 	FOREACHM_CONST( RString, CourseGroupInfo, m_mapCourseGroupToInfo, iter )
 		AddTo.push_back( iter->first );
 }
 
-bool SongManager::DoesCourseGroupExist( const RString &sCourseGroup )
+bool SongManager::DoesCourseGroupExist( const RString &sCourseGroup ) const
 {
 	return m_mapCourseGroupToInfo.find( sCourseGroup ) != m_mapCourseGroupToInfo.end();
 }
 
-RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup )
+RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup ) const
 {
 	int iIndex = 0;
 	FOREACHM_CONST( RString, CourseGroupInfo, m_mapCourseGroupToInfo, iter )
@@ -489,7 +489,7 @@ RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup )
 	return RageColor(1,1,1,1);
 }
 
-RageColor SongManager::GetCourseColor( const Course* pCourse )
+RageColor SongManager::GetCourseColor( const Course* pCourse ) const
 {
 	// Use unlock color if applicable
 	const UnlockEntry *pUE = UNLOCKMAN->FindCourse( pCourse );
@@ -915,7 +915,7 @@ void SongManager::SetPreferences()
 	}
 }
 
-void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot )
+void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot ) const
 {
 	const vector<Song*> &vSongs = SONGMAN->GetSongs();
 	FOREACH_CONST( Song*, vSongs, song )
@@ -924,7 +924,7 @@ void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot 
 	}
 }
 
-Song *SongManager::GetSongFromSteps( Steps *pSteps )
+Song *SongManager::GetSongFromSteps( Steps *pSteps ) const
 {
 	ASSERT( pSteps );
 	const vector<Song*> &vSongs = SONGMAN->GetSongs();
@@ -963,7 +963,7 @@ bool SongManager::WasLoadedFromAdditionalCourses( const Course *pCourse ) const
 	return BeginsWith( sDir, ADDITIONAL_COURSES_DIR );
 }
 
-void SongManager::GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
+void SongManager::GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen ) const
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
 		if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
@@ -978,7 +978,7 @@ void SongManager::GetCourses( CourseType ct, vector<Course*> &AddTo, bool bInclu
 				AddTo.push_back( m_pCourses[i] );
 }
 
-void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCourseGroup, bool bIncludeAutogen )
+void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCourseGroup, bool bIncludeAutogen ) const
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
 		if( m_pCourses[i]->m_sGroupName == sCourseGroup )
@@ -1175,7 +1175,7 @@ Course* SongManager::GetRandomCourse()
 	return NULL;
 }
 
-Song* SongManager::GetSongFromDir( RString sDir )
+Song* SongManager::GetSongFromDir( RString sDir ) const
 {
 	if( sDir.Right(1) != "/" )
 		sDir += "/";
@@ -1189,7 +1189,7 @@ Song* SongManager::GetSongFromDir( RString sDir )
 	return NULL;
 }
 
-Course* SongManager::GetCourseFromPath( RString sPath )
+Course* SongManager::GetCourseFromPath( RString sPath ) const
 {
 	if( sPath == "" )
 		return NULL;
@@ -1203,7 +1203,7 @@ Course* SongManager::GetCourseFromPath( RString sPath )
 	return NULL;
 }
 
-Course* SongManager::GetCourseFromName( RString sName )
+Course* SongManager::GetCourseFromName( RString sName ) const
 {
 	if( sName == "" )
 		return NULL;
@@ -1233,7 +1233,7 @@ Course* SongManager::GetCourseFromName( RString sName )
  * songs in "Songs"; we don't want that.
  */
 
-Song *SongManager::FindSong( RString sPath )
+Song *SongManager::FindSong( RString sPath ) const
 {
 	sPath.Replace( '\\', '/' );
 	vector<RString> bits;
@@ -1247,7 +1247,7 @@ Song *SongManager::FindSong( RString sPath )
 	return NULL;	
 }
 
-Song *SongManager::FindSong( RString sGroup, RString sSong )
+Song *SongManager::FindSong( RString sGroup, RString sSong ) const
 {
 	// foreach song
 	const vector<Song *> &vSongs = GetSongs( sGroup.empty()? GROUP_ALL:sGroup );
@@ -1260,7 +1260,7 @@ Song *SongManager::FindSong( RString sGroup, RString sSong )
 	return NULL;	
 }
 
-Course *SongManager::FindCourse( RString sPath )
+Course *SongManager::FindCourse( RString sPath ) const
 {
 	sPath.Replace( '\\', '/' );
 	vector<RString> bits;
@@ -1274,7 +1274,7 @@ Course *SongManager::FindCourse( RString sPath )
 	return NULL;	
 }
 
-Course *SongManager::FindCourse( RString sGroup, RString sName )
+Course *SongManager::FindCourse( RString sGroup, RString sName ) const
 {
 	FOREACH_CONST( Course*, m_pCourses, c )
 	{

@@ -57,17 +57,17 @@ public:
 	void Reload( bool bAllowFastLoad, LoadingWindow *ld=NULL );	// songs, courses, groups - everything.
 	void PreloadSongImages();
 
-	RString GetSongGroupBannerPath( RString sSongGroup );
-	void GetSongGroupNames( vector<RString> &AddTo );
-	bool DoesSongGroupExist( RString sSongGroup );
-	RageColor GetSongGroupColor( const RString &sSongGroupName );
-	RageColor GetSongColor( const Song* pSong );
+	RString GetSongGroupBannerPath( RString sSongGroup ) const;
+	void GetSongGroupNames( vector<RString> &AddTo ) const;
+	bool DoesSongGroupExist( RString sSongGroup ) const;
+	RageColor GetSongGroupColor( const RString &sSongGroupName ) const;
+	RageColor GetSongColor( const Song* pSong ) const;
 
-	RString GetCourseGroupBannerPath( const RString &sCourseGroup );
-	void GetCourseGroupNames( vector<RString> &AddTo );
-	bool DoesCourseGroupExist( const RString &sCourseGroup );
-	RageColor GetCourseGroupColor( const RString &sCourseGroupName );
-	RageColor GetCourseColor( const Course* pCourse );
+	RString GetCourseGroupBannerPath( const RString &sCourseGroup ) const;
+	void GetCourseGroupNames( vector<RString> &AddTo ) const;
+	bool DoesCourseGroupExist( const RString &sCourseGroup ) const;
+	RageColor GetCourseGroupColor( const RString &sCourseGroupName ) const;
+	RageColor GetCourseColor( const Course* pCourse ) const;
 	
 	static RString ShortenGroupName( RString sLongGroupName );
 
@@ -78,10 +78,10 @@ public:
 	void GetPreferredSortSongs( vector<Song*> &AddTo ) const;
 	const vector<Song*> &GetPopularSongs( ProfileSlot slot=ProfileSlot_Machine ) const { return m_pPopularSongs[slot]; }
 	const vector<Course*> &GetPopularCourses( CourseType ct, ProfileSlot slot=ProfileSlot_Machine ) const { return m_pPopularCourses[slot][ct]; }
-	Song *FindSong( RString sPath );
-	Song *FindSong( RString sGroup, RString sSong );
-	Course *FindCourse( RString sPath );
-	Course *FindCourse( RString sGroup, RString sName );
+	Song *FindSong( RString sPath ) const;
+	Song *FindSong( RString sGroup, RString sSong ) const;
+	Course *FindCourse( RString sPath ) const;
+	Course *FindCourse( RString sGroup, RString sName ) const;
 	int GetNumSongs() const;
 	int GetNumUnlockedSongs() const;
 	int GetNumSelectableAndUnlockedSongs() const;
@@ -94,22 +94,22 @@ public:
 	Song* GetRandomSong();
 	Course* GetRandomCourse();
 
-	void GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot );
-	Song *GetSongFromSteps( Steps *pSteps );
+	void GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot ) const;
+	Song *GetSongFromSteps( Steps *pSteps ) const;
 	void DeleteSteps( Steps *pSteps );	// transfers ownership of pSteps
 	bool WasLoadedFromAdditionalSongs( const Song *pSong ) const;
 	bool WasLoadedFromAdditionalCourses( const Course *pCourse ) const;
 
-	void GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen );
+	void GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen ) const;
 	void GetCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen ) const;
-	void GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCourseGroup, bool bIncludeAutogen );
+	void GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCourseGroup, bool bIncludeAutogen ) const;
 	void GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen ) const;
 
 	void GetExtraStageInfo( bool bExtra2, const Style *s, 
 		Song*& pSongOut, Steps*& pStepsOut, PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut );
-	Song* GetSongFromDir( RString sDir );
-	Course* GetCourseFromPath( RString sPath );	// path to .crs file, or path to song group dir
-	Course* GetCourseFromName( RString sName );
+	Song* GetSongFromDir( RString sDir ) const;
+	Course* GetCourseFromPath( RString sPath ) const;	// path to .crs file, or path to song group dir
+	Course* GetCourseFromName( RString sName ) const;
 
 
 	void UpdatePopular();
