@@ -56,10 +56,7 @@ MusicBannerWheel::MusicBannerWheel()
 	m_ScrollingList.SetSpacing( BANNERSPACING );
 	this->AddChild( &m_ScrollingList );
 
-	if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL )
-		SONGMAN->GetSongs( arraySongs );
-	else // Get the Group They Want
-		SONGMAN->GetSongs( arraySongs, GAMESTATE->m_sPreferredSongGroup );
+	SONGMAN->GetSongs( arraySongs, GAMESTATE->m_sPreferredSongGroup );
 
 	// filter songs that we don't have enough stages to play
 	{
