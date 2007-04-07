@@ -124,7 +124,7 @@ void PaneDisplay::LoadFromNode( const XNode *pNode )
 
 void PaneDisplay::SetContent( PaneContents c )
 {
-	RString str = "?";	// fill this in
+	RString str = "";	// fill this in
 	float val = 0;	// fill this in
 
 	const Song *pSong = GAMESTATE->m_pCurSong;
