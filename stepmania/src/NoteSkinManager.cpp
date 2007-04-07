@@ -143,7 +143,7 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 
 		XmlFileUtil::MergeIniUnder( &ini, &data_out.metrics );
 
-		data_out.vsDirSearchOrder.insert( data_out.vsDirSearchOrder.end(), sDir );
+		data_out.vsDirSearchOrder.push_back( sDir );
 
 		if( sFallback.empty() )
 			break;
