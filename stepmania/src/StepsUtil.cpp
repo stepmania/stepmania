@@ -41,9 +41,8 @@ bool StepsCriteria::Matches( const Song *pSong, const Steps *pSteps ) const
 
 void StepsUtil::GetAllMatching( const SongCriteria &soc, const StepsCriteria &stc, vector<SongAndSteps> &out )
 {
-        const vector<Song*> &songs = soc.m_sGroupName.empty() ?
-	        SONGMAN->GetAllSongs() :
-	        SONGMAN->GetSongsInGroup(soc.m_sGroupName);
+	const RString &sGroupName = soc.m_sGroupName.empty()? GROUP_ALL:soc.m_sGroupName;
+        const vector<Song*> &songs = SONGMAN->GetSongs( sGroupName );
 
 	FOREACH_CONST( Song*, songs, so )
 	{
@@ -65,7 +64,8 @@ void StepsUtil::GetAllMatching( Song *pSong, const StepsCriteria &stc, vector<So
 
 bool StepsUtil::HasMatching( const SongCriteria &soc, const StepsCriteria &stc )
 {
-        const vector<Song*> &songs = soc.m_sGroupName.empty()? SONGMAN->GetAllSongs():SONGMAN->GetSongsInGroup( soc.m_sGroupName );
+	const RString &sGroupName = soc.m_sGroupName.empty()? GROUP_ALL:soc.m_sGroupName;
+        const vector<Song*> &songs = SONGMAN->GetSongs( sGroupName );
 
 	FOREACH_CONST( Song*, songs, so )
 	{

@@ -57,7 +57,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 	ASSERT( GAMESTATE->m_pCurCourse );
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	m_Original = *pCourse;
-	SONGMAN->GetSongs( m_vpDisplayedSongs );
+	m_vpDisplayedSongs = SONGMAN->GetSongs();
 
 	vector<OptionRowHandler*> vHands;
 

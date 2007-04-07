@@ -54,11 +54,7 @@ void EditMenu::StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v )
 
 void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpSongsOut )
 {
-	vpSongsOut.clear();
-	if( !SHOW_GROUPS.GetValue() )
-		SONGMAN->GetSongs( vpSongsOut );
-	else
-		SONGMAN->GetSongs( vpSongsOut, sGroup );
+	vpSongsOut = SONGMAN->GetSongs( SHOW_GROUPS.GetValue()? sGroup:GROUP_ALL );
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:

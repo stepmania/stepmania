@@ -35,11 +35,9 @@ static void FillSongsAndChoices( const RString &sSongGroup, vector<Song*> &vpSon
 	vpSongsOut.clear();
 	vsChoicesOut.clear();
 
-	if( sSongGroup.empty() )
-		SONGMAN->GetSongs( vpSongsOut );
-	else
-		SONGMAN->GetSongs( vpSongsOut, sSongGroup );
-	vpSongsOut.insert( vpSongsOut.begin(), NULL );
+	vpSongsOut.push_back( NULL );
+	const vector<Song *> vSongs = SONGMAN->GetSongs( sSongGroup.empty()? GROUP_ALL:sSongGroup );
+	vpSongsOut.insert( vpSongsOut.end(), vSongs.begin(), vSongs.end() );
 
 	FOREACH_CONST( Song*, vpSongsOut, s )
 	{
@@ -250,13 +248,10 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				if( pSong == NULL )
 				{
 					// Find the longest non-tutorial song.
-					vector<Song *> vSongs;
-					
-					SONGMAN->GetSongs( vSongs );
-					
+					const vector<Song *> &vSongs = SONGMAN->GetSongs();					
 					float fLen = -1.f;
 					
-					FOREACH( Song*, vSongs, i )
+					FOREACH_CONST( Song*, vSongs, i )
 					{
 						if( !(*i)->IsTutorial() && (*i)->m_fMusicLengthSeconds > fLen )
 						{

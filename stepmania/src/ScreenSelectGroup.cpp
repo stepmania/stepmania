@@ -32,8 +32,7 @@ void ScreenSelectGroup::Init()
 
 	ASSERT( PREFSMAN->m_bShowSelectGroup );
 
-	vector<Song*> aAllSongs;
-	SONGMAN->GetSongs( aAllSongs );
+	vector<Song*> aAllSongs = SONGMAN->GetSongs();
 
 	// Filter out Songs that can't be played by the current Style
 	for( int j=aAllSongs.size()-1; j>=0; j-- )		// foreach Song, back to front

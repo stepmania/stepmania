@@ -718,8 +718,7 @@ class OptionRowHandlerListSongsInCurrentSongGroup: public OptionRowHandlerList
 {
 	virtual void LoadInternal( const Commands &cmds )
 	{
-		vector<Song*> vpSongs;
-		SONGMAN->GetSongs( vpSongs, GAMESTATE->m_sPreferredSongGroup );
+		const vector<Song*> &vpSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
 
 		if( GAMESTATE->m_pCurSong == NULL )
 			GAMESTATE->m_pCurSong.Set( vpSongs[0] );

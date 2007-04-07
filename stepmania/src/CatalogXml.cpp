@@ -74,8 +74,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			p2->AppendAttr( "Name", *sGroup );
 
 			int iNumSongsInGroup = 0;
-			vector<Song*> vpSongsInGroup;
-			SONGMAN->GetSongs( vpSongsInGroup, *sGroup );
+			const vector<Song*> &vpSongsInGroup = SONGMAN->GetSongs( *sGroup );
 			FOREACH_CONST( StepsType, vStepsTypesToShow, st )
 			{
 				XNode* p3 = p2->AppendChild( "StepsType" );

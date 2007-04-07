@@ -324,7 +324,7 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 		SONGMAN->GetPopularSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup );
 		break;
 	default:
-		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup );
+		apAllSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
 		break;
 	}
 

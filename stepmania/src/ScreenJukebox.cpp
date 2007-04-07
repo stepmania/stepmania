@@ -42,7 +42,7 @@ void ScreenJukebox::SetSong()
 				vSongs.push_back( pCourse->m_vEntries[i].pSong );
 
 	if ( vSongs.size() == 0 )
-		SONGMAN->GetSongs( vSongs, GAMESTATE->m_sPreferredSongGroup );
+		vSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
 
 
 	//

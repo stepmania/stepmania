@@ -27,8 +27,7 @@ void ScreenMusicScroll::Init()
 {
 	ScreenAttract::Init();
 
-	vector<Song*> arraySongs;
-	SONGMAN->GetSongs( arraySongs );
+	vector<Song*> arraySongs = SONGMAN->GetSongs();
 	SongUtil::SortSongPointerArrayByTitle( arraySongs );
 	
 	for( unsigned i=0; i < arraySongs.size(); i++ )

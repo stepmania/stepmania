@@ -228,10 +228,8 @@ void CourseUtil::AutogenEndlessFromGroup( const RString &sGroupName, Difficulty 
 	e.stepsCriteria.m_difficulty = diff;
 	e.bSecret = true;
 
-	vector<Song*> vSongs;
-	SONGMAN->GetSongs( vSongs, e.songCriteria.m_sGroupName );
-	for( unsigned i = 0; i < vSongs.size(); ++i)
-		out.m_vEntries.push_back( e );
+	// Insert a copy of e for each song in the group.
+	out.m_vEntries.insert( out.m_vEntries.end(), SONGMAN->GetSongs(sGroupName).size(), e );
 }
 
 void CourseUtil::AutogenNonstopFromGroup( const RString &sGroupName, Difficulty diff, Course &out )
