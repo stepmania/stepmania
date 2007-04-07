@@ -33,7 +33,6 @@ void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
 	DO_COPY( m_iBatteryLives );
 	APPROACH( fMusicRate );
 	APPROACH( fHaste );
-	APPROACH( fMusicRate );
 	DO_COPY( m_bAssistClap );
 	DO_COPY( m_bAssistMetronome );
 	DO_COPY( m_AutosyncType );
