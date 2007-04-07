@@ -222,7 +222,6 @@
 		AA29CCBA0558741A00961A51 /* ScreenMapControllers.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0042047711F3005F316C /* ScreenMapControllers.h */; };
 		AA29CCBC0558741A00961A51 /* ScreenMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0044047711F3005F316C /* ScreenMessage.h */; };
 		AA29CCBD0558741A00961A51 /* ScreenMiniMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0046047711F3005F316C /* ScreenMiniMenu.h */; };
-		AA29CCBE0558741A00961A51 /* ScreenMusicScroll.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0048047711F3005F316C /* ScreenMusicScroll.h */; };
 		AA29CCBF0558741A00961A51 /* ScreenNameEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E004A047711F3005F316C /* ScreenNameEntry.h */; };
 		AA29CCC00558741A00961A51 /* ScreenOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E004C047711F3005F316C /* ScreenOptions.h */; };
 		AA29CCC10558741A00961A51 /* ScreenPlayerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0050047711F3005F316C /* ScreenPlayerOptions.h */; };
@@ -425,7 +424,6 @@
 		AA29CDC90558741A00961A51 /* ScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E003F047711F3005F316C /* ScreenManager.cpp */; };
 		AA29CDCA0558741A00961A51 /* ScreenMapControllers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0041047711F3005F316C /* ScreenMapControllers.cpp */; };
 		AA29CDCB0558741A00961A51 /* ScreenMiniMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0045047711F3005F316C /* ScreenMiniMenu.cpp */; };
-		AA29CDCC0558741A00961A51 /* ScreenMusicScroll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0047047711F3005F316C /* ScreenMusicScroll.cpp */; };
 		AA29CDCD0558741A00961A51 /* ScreenNameEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0049047711F3005F316C /* ScreenNameEntry.cpp */; };
 		AA29CDCE0558741A00961A51 /* ScreenOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E004B047711F3005F316C /* ScreenOptions.cpp */; };
 		AA29CDCF0558741A00961A51 /* ScreenPlayerOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E004F047711F3005F316C /* ScreenPlayerOptions.cpp */; };
@@ -677,7 +675,6 @@
 		AA40D23709A08D650068C0D5 /* ScreenMapControllers.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0042047711F3005F316C /* ScreenMapControllers.h */; };
 		AA40D23809A08D650068C0D5 /* ScreenMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0044047711F3005F316C /* ScreenMessage.h */; };
 		AA40D23909A08D650068C0D5 /* ScreenMiniMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0046047711F3005F316C /* ScreenMiniMenu.h */; };
-		AA40D23A09A08D650068C0D5 /* ScreenMusicScroll.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0048047711F3005F316C /* ScreenMusicScroll.h */; };
 		AA40D23B09A08D650068C0D5 /* ScreenNameEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E004A047711F3005F316C /* ScreenNameEntry.h */; };
 		AA40D23C09A08D650068C0D5 /* ScreenOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E004C047711F3005F316C /* ScreenOptions.h */; };
 		AA40D23D09A08D650068C0D5 /* ScreenPlayerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0050047711F3005F316C /* ScreenPlayerOptions.h */; };
@@ -1041,7 +1038,6 @@
 		AA40D3F409A08D650068C0D5 /* ScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E003F047711F3005F316C /* ScreenManager.cpp */; };
 		AA40D3F509A08D650068C0D5 /* ScreenMapControllers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0041047711F3005F316C /* ScreenMapControllers.cpp */; };
 		AA40D3F609A08D650068C0D5 /* ScreenMiniMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0045047711F3005F316C /* ScreenMiniMenu.cpp */; };
-		AA40D3F709A08D650068C0D5 /* ScreenMusicScroll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0047047711F3005F316C /* ScreenMusicScroll.cpp */; };
 		AA40D3F809A08D650068C0D5 /* ScreenNameEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0049047711F3005F316C /* ScreenNameEntry.cpp */; };
 		AA40D3F909A08D650068C0D5 /* ScreenOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E004B047711F3005F316C /* ScreenOptions.cpp */; };
 		AA40D3FA09A08D650068C0D5 /* ScreenPlayerOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E004F047711F3005F316C /* ScreenPlayerOptions.cpp */; };
@@ -2361,8 +2357,6 @@
 		AA6E0044047711F3005F316C /* ScreenMessage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenMessage.h; path = ../src/ScreenMessage.h; sourceTree = "<group>"; };
 		AA6E0045047711F3005F316C /* ScreenMiniMenu.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenMiniMenu.cpp; path = ../src/ScreenMiniMenu.cpp; sourceTree = "<group>"; };
 		AA6E0046047711F3005F316C /* ScreenMiniMenu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenMiniMenu.h; path = ../src/ScreenMiniMenu.h; sourceTree = "<group>"; };
-		AA6E0047047711F3005F316C /* ScreenMusicScroll.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenMusicScroll.cpp; path = ../src/ScreenMusicScroll.cpp; sourceTree = "<group>"; };
-		AA6E0048047711F3005F316C /* ScreenMusicScroll.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenMusicScroll.h; path = ../src/ScreenMusicScroll.h; sourceTree = "<group>"; };
 		AA6E0049047711F3005F316C /* ScreenNameEntry.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenNameEntry.cpp; path = ../src/ScreenNameEntry.cpp; sourceTree = "<group>"; };
 		AA6E004A047711F3005F316C /* ScreenNameEntry.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenNameEntry.h; path = ../src/ScreenNameEntry.h; sourceTree = "<group>"; };
 		AA6E004B047711F3005F316C /* ScreenOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenOptions.cpp; path = ../src/ScreenOptions.cpp; sourceTree = "<group>"; };
@@ -3633,8 +3627,6 @@
 				AA6E0044047711F3005F316C /* ScreenMessage.h */,
 				AA6E0045047711F3005F316C /* ScreenMiniMenu.cpp */,
 				AA6E0046047711F3005F316C /* ScreenMiniMenu.h */,
-				AA6E0047047711F3005F316C /* ScreenMusicScroll.cpp */,
-				AA6E0048047711F3005F316C /* ScreenMusicScroll.h */,
 				AA6E0049047711F3005F316C /* ScreenNameEntry.cpp */,
 				AA6E004A047711F3005F316C /* ScreenNameEntry.h */,
 				AADBE362053D5F8A00D02EE9 /* ScreenNameEntryTraditional.cpp */,
@@ -5374,7 +5366,6 @@
 				AA29CCBA0558741A00961A51 /* ScreenMapControllers.h in Headers */,
 				AA29CCBC0558741A00961A51 /* ScreenMessage.h in Headers */,
 				AA29CCBD0558741A00961A51 /* ScreenMiniMenu.h in Headers */,
-				AA29CCBE0558741A00961A51 /* ScreenMusicScroll.h in Headers */,
 				AA29CCBF0558741A00961A51 /* ScreenNameEntry.h in Headers */,
 				AA29CCC00558741A00961A51 /* ScreenOptions.h in Headers */,
 				AA29CCC10558741A00961A51 /* ScreenPlayerOptions.h in Headers */,
@@ -5800,7 +5791,6 @@
 				AA40D23709A08D650068C0D5 /* ScreenMapControllers.h in Headers */,
 				AA40D23809A08D650068C0D5 /* ScreenMessage.h in Headers */,
 				AA40D23909A08D650068C0D5 /* ScreenMiniMenu.h in Headers */,
-				AA40D23A09A08D650068C0D5 /* ScreenMusicScroll.h in Headers */,
 				AA40D23B09A08D650068C0D5 /* ScreenNameEntry.h in Headers */,
 				AA40D23C09A08D650068C0D5 /* ScreenOptions.h in Headers */,
 				AA40D23D09A08D650068C0D5 /* ScreenPlayerOptions.h in Headers */,
@@ -6547,7 +6537,6 @@
 				AA29CDC90558741A00961A51 /* ScreenManager.cpp in Sources */,
 				AA29CDCA0558741A00961A51 /* ScreenMapControllers.cpp in Sources */,
 				AA29CDCB0558741A00961A51 /* ScreenMiniMenu.cpp in Sources */,
-				AA29CDCC0558741A00961A51 /* ScreenMusicScroll.cpp in Sources */,
 				AA29CDCD0558741A00961A51 /* ScreenNameEntry.cpp in Sources */,
 				AA29CDCE0558741A00961A51 /* ScreenOptions.cpp in Sources */,
 				AA29CDCF0558741A00961A51 /* ScreenPlayerOptions.cpp in Sources */,
@@ -6963,7 +6952,6 @@
 				AA40D3F409A08D650068C0D5 /* ScreenManager.cpp in Sources */,
 				AA40D3F509A08D650068C0D5 /* ScreenMapControllers.cpp in Sources */,
 				AA40D3F609A08D650068C0D5 /* ScreenMiniMenu.cpp in Sources */,
-				AA40D3F709A08D650068C0D5 /* ScreenMusicScroll.cpp in Sources */,
 				AA40D3F809A08D650068C0D5 /* ScreenNameEntry.cpp in Sources */,
 				AA40D3F909A08D650068C0D5 /* ScreenOptions.cpp in Sources */,
 				AA40D3FA09A08D650068C0D5 /* ScreenPlayerOptions.cpp in Sources */,
