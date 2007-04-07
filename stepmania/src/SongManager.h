@@ -73,7 +73,6 @@ public:
 
 
 	// Lookup
-	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
 	const vector<Song*> &GetSongs( const RString &sGroupName = GROUP_ALL ) const;
 	void GetPopularSongs( vector<Song*> &AddTo, const RString &sGroupName, ProfileSlot slot=ProfileSlot_Machine ) const;
 	void GetPreferredSortSongs( vector<Song*> &AddTo ) const;
