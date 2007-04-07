@@ -2,7 +2,9 @@
 #include "ScreenCredits.h"
 #include "GameSoundManager.h"
 #include "AnnouncerManager.h"
+#include "ThemeManager.h"
 
+#define ANNOUNCE	THEME->GetMetric( m_sName,"Announce" )
 
 REGISTER_SCREEN_CLASS( ScreenCredits );
 
@@ -10,7 +12,7 @@ void ScreenCredits::BeginScreen()
 {
 	ScreenAttract::BeginScreen();
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("credits") );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ANNOUNCE) );
 }
 
 /*
