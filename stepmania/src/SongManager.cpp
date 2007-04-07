@@ -1750,6 +1750,7 @@ public:
 		
 		return 4;
 	}
+	DEFINE_METHOD( GetSongColor, GetSongColor( Luna<Song>::check(L,1) ) )
 
 	LunaSongManager()
 	{
@@ -1771,6 +1772,7 @@ public:
 		ADD_METHOD( GetSongRank );
 		ADD_METHOD( GetCourseRank );
 		ADD_METHOD( GetExtraStageInfo );
+		ADD_METHOD( GetSongColor );
 	}
 };
 
