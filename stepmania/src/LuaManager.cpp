@@ -891,6 +891,13 @@ namespace
 		LOG->Warn( "%s", sString.c_str() );
 		return 0;
 	}
+	static int CheckType( lua_State *L )
+	{
+		RString sType = SArg(1);
+		bool bRet = LuaBinding::CheckLuaObjectType( L, 2, sType );
+		LuaHelpers::Push( L, bRet );
+		return 1;
+	}
 	static int ReadFile( lua_State *L )
 	{
 		RString sPath = SArg(1);
@@ -958,6 +965,7 @@ namespace
 	{
 		LIST_METHOD( Trace ),
 		LIST_METHOD( Warn ),
+		LIST_METHOD( CheckType ),
 		LIST_METHOD( ReadFile ),
 		LIST_METHOD( RunWithThreadVariables ),
 		LIST_METHOD( GetThreadVariable ),
