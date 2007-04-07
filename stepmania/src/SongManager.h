@@ -73,12 +73,11 @@ public:
 
 	// Lookup
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
-	const vector<Song*> &GetSongsInGroup( const RString &sGroupName ) const;
+	const vector<Song*> &GetSongs( const RString &sGroupName = GROUP_ALL ) const;
 	void GetPopularSongs( vector<Song*> &AddTo, const RString &sGroupName, ProfileSlot slot=ProfileSlot_Machine ) const;
 	void GetPreferredSortSongs( vector<Song*> &AddTo ) const;
 	const vector<Song*> &GetPopularSongs( ProfileSlot slot=ProfileSlot_Machine ) const { return m_pPopularSongs[slot]; }
 	const vector<Course*> &GetPopularCourses( CourseType ct, ProfileSlot slot=ProfileSlot_Machine ) const { return m_pPopularCourses[slot][ct]; }
-	void GetSongs( vector<Song*> &AddTo, const RString &sGroupName = GROUP_ALL ) const;
 	Song *FindSong( RString sPath );
 	Song *FindSong( RString sGroup, RString sSong );
 	Course *FindCourse( RString sPath );

@@ -520,14 +520,7 @@ RageColor SongManager::GetCourseColor( const Course* pCourse )
 	}
 }
 
-void SongManager::GetSongs( vector<Song*> &AddTo, const RString &sGroupName ) const
-{
-	const vector<Song *> &vSongs = GetSongsInGroup( sGroupName );
-	
-	AddTo.insert( AddTo.end(), vSongs.begin(), vSongs.end() );
-}
-
-const vector<Song*> &SongManager::GetSongsInGroup( const RString &sGroupName ) const
+const vector<Song*> &SongManager::GetSongs( const RString &sGroupName ) const
 {
 	static const vector<Song*> vEmpty;
 	
@@ -557,7 +550,7 @@ void SongManager::GetPreferredSortSongs( vector<Song*> &AddTo ) const
 {
 	if( m_vPreferredSongSort.empty() )
 	{
-		GetSongs( AddTo );
+		AddTo.insert( AddTo.end(), m_pSongs.begin(), m_pSongs.end() );
 		return;
 	}
 
@@ -738,8 +731,6 @@ void SongManager::InitAutogenCourses()
 	for( unsigned g=0; g<saGroupNames.size(); g++ )	// foreach Group
 	{
 		RString sGroupName = saGroupNames[g];
-		vector<Song*> apGroupSongs;
-		GetSongs( apGroupSongs, sGroupName );
 
 		// Generate random courses from each group.
 		pCourse = new Course;
@@ -1081,8 +1072,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 	Song*	pExtra2Song = NULL;		// a medium-hard Song and Steps.  Use this for extra stage 2.
 	Steps*	pExtra2Notes = NULL;
 	
-	vector<Song*> apSongs;
-	SONGMAN->GetSongs( apSongs, sGroup );
+	const vector<Song*> &apSongs = GetSongs( sGroup );
 	for( unsigned s=0; s<apSongs.size(); s++ )	// foreach song
 	{
 		Song* pSong = apSongs[s];
