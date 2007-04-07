@@ -164,7 +164,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 	{
 		XNode* pNode = xml.AppendChild( "Songs" );
 
-		const vector<Song*>& vpSongs = SONGMAN->GetAllSongs();
+		const vector<Song*>& vpSongs = SONGMAN->GetSongs();
 
 		for( unsigned i=0; i<vpSongs.size(); i++ )
 		{

@@ -428,7 +428,7 @@ void UnlockManager::Load()
 
 	if( AUTO_LOCK_CHALLENGE_STEPS )
 	{
-		FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
+		FOREACH_CONST( Song*, SONGMAN->GetSongs(), s )
 		{
 			// If no hard steps to play to unlock, skip
 			if( SongUtil::GetOneSteps(*s, StepsType_Invalid, Difficulty_Hard) == NULL )

@@ -703,7 +703,7 @@ static void FillProfileStats( Profile *pProfile )
 		PREFSMAN->m_iMaxHighScoresPerListForMachine.Get():
 		PREFSMAN->m_iMaxHighScoresPerListForPlayer.Get();
 
-	vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
+	vector<Song*> vpAllSongs = SONGMAN->GetSongs();
 	FOREACH( Song*, vpAllSongs, pSong )
 	{
 		vector<Steps*> vpAllSteps = (*pSong)->GetAllSteps();

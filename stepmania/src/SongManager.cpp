@@ -311,7 +311,7 @@ void SongManager::PreloadSongImages()
 	 * that we don't need to. */
 	RageTexturePreloader preload;
 
-	const vector<Song*> &songs = SONGMAN->GetAllSongs();
+	const vector<Song*> &songs = SONGMAN->GetSongs();
 	for( unsigned i = 0; i < songs.size(); ++i )
 	{
 		if( !songs[i]->HasBanner() )
@@ -742,7 +742,7 @@ void SongManager::InitAutogenCourses()
 		m_pCourses.push_back( pCourse );
 	}
 	
-	vector<Song*> apCourseSongs = GetAllSongs();
+	vector<Song*> apCourseSongs = GetSongs();
 
 	// Generate "All Songs" endless course.
 	pCourse = new Course;
@@ -755,7 +755,7 @@ void SongManager::InitAutogenCourses()
 		/* We normally sort by translit artist.  However, display artist is more
 		 * consistent.  For example, transliterated Japanese names are alternately
 		 * spelled given- and family-name first, but display titles are more consistent. */
-		vector<Song*> apSongs = this->GetAllSongs();
+		vector<Song*> apSongs = this->GetSongs();
 		SongUtil::SortSongPointerArrayByDisplayArtist( apSongs );
 
 		RString sCurArtist = "";
@@ -917,7 +917,7 @@ void SongManager::SetPreferences()
 
 void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot )
 {
-	const vector<Song*> &vSongs = SONGMAN->GetAllSongs();
+	const vector<Song*> &vSongs = SONGMAN->GetSongs();
 	FOREACH_CONST( Song*, vSongs, song )
 	{
 		(*song)->GetStepsLoadedFromProfile( slot, AddTo );
@@ -927,7 +927,7 @@ void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot 
 Song *SongManager::GetSongFromSteps( Steps *pSteps )
 {
 	ASSERT( pSteps );
-	const vector<Song*> &vSongs = SONGMAN->GetAllSongs();
+	const vector<Song*> &vSongs = SONGMAN->GetSongs();
 	FOREACH_CONST( Song*, vSongs, song )
 	{
 		vector<Steps*> vSteps;
@@ -1683,7 +1683,7 @@ class LunaSongManager: public Luna<SongManager>
 public:
 	static int GetAllSongs( T* p, lua_State *L )
 	{
-		const vector<Song*> &v = p->GetAllSongs();
+		const vector<Song*> &v = p->GetSongs();
 		LuaHelpers::CreateTableFromArray<Song*>( v, L );
 		return 1;
 	}

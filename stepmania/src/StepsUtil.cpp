@@ -113,7 +113,7 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers, const Profile* pProfile, bool bDecending )
 {
 	// ugly...
-	vector<Song*> vpSongs = SONGMAN->GetAllSongs();
+	vector<Song*> vpSongs = SONGMAN->GetSongs();
 	vector<Steps*> vpAllSteps;
 	map<Steps*,Song*> mapStepsToSong;
 	{

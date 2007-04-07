@@ -41,7 +41,7 @@ AutoScreenMessage( SM_HidePage )
 static void GetAllSongsToShow( vector<Song*> &vpOut, bool bShowOnlyMostRecentScores, int iNumMostRecentScoresToShow )
 {
 	vpOut.clear();
-	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
+	FOREACH_CONST( Song*, SONGMAN->GetSongs(), s )
 	{
 		if( UNLOCKMAN->SongIsLocked(*s) )
 			continue;	// skip

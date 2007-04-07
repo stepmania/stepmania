@@ -789,7 +789,7 @@ bool SongUtil::ValidateCurrentStepsDescription( const RString &sAnswer, RString 
 void SongUtil::GetAllSongGenres( vector<RString> &vsOut )
 {
 	set<RString> genres;
-	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), song )
+	FOREACH_CONST( Song*, SONGMAN->GetSongs(), song )
 	{
 		if( !(*song)->m_sGenre.empty() )
 			genres.insert( (*song)->m_sGenre );

@@ -131,7 +131,7 @@ void WorkoutManager::GetWorkoutSongsForGenres( const vector<RString> &vsSongGenr
 	soc.m_Selectable = SongCriteria::Selectable_Yes;
 	soc.m_bUseSongGenreAllowedList = true;
 	soc.m_vsSongGenreAllowedList = vsSongGenres;
-	SongUtil::FilterSongs( soc, SONGMAN->GetAllSongs(), vpSongsOut );
+	SongUtil::FilterSongs( soc, SONGMAN->GetSongs(), vpSongsOut );
 }
 
 static LocalizedString SONGS_ENABLED( "WorkoutManager", "%d/%d songs enabled" );

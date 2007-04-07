@@ -27,7 +27,7 @@ void ScreenNameEntryTraditional::Init()
 		for( int z = 0; z < 3; ++z )
 		{
 			StageStats ss;
-			const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
+			const vector<Song*> &apSongs = SONGMAN->GetSongs();
 			ss.m_vpPlayedSongs.push_back( apSongs[rand()%apSongs.size()] );
 			ss.m_vpPossibleSongs = ss.m_vpPlayedSongs;
 			ss.m_pStyle = GAMESTATE->GetCurrentStyle();
