@@ -1752,6 +1752,15 @@ public:
 	}
 	DEFINE_METHOD( GetSongColor, GetSongColor( Luna<Song>::check(L,1) ) )
 
+	static int GetSongColor( T* p, lua_State *L )
+	{
+		Song *pSong = Luna<Song>::check(L,1);
+		RageColor c = p->GetSongColor( pSong );
+		LuaHelpers::Push( L, c );
+		return 1;
+	}
+
+
 	LunaSongManager()
 	{
 		ADD_METHOD( GetAllSongs );
