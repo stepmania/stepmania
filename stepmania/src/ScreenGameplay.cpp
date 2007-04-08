@@ -2495,7 +2495,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			FOREACH_EnabledPlayer(p)
 				fMaxSurviveSeconds = max( fMaxSurviveSeconds, STATSMAN->m_CurStageStats.m_player[p].m_fAliveSeconds );
 			m_textSurviveTime.SetText( "TIME: " + SecondsToMMSSMsMs(fMaxSurviveSeconds) );
-			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textSurviveTime );
+			ON_COMMAND( m_textSurviveTime );
 		}
 		
 		if( GAMESTATE->IsCourseMode() )
