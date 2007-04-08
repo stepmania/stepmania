@@ -1881,7 +1881,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 	CourseDifficulty cd = m_PreferredCourseDifficulty[pn];
 	while( 1 )
 	{
-		cd = (CourseDifficulty)(cd+dir);
+		cd = enum_add2( cd, dir );
 		if( cd < 0 || cd >= NUM_Difficulty )
 			return false;
 		if( find(v.begin(),v.end(),cd) == v.end() )
