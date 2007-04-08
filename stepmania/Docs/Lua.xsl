@@ -4,9 +4,14 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:sm="http://www.stepmania.com"
 	exclude-result-prefixes="sm"> <!-- keep xslt from spittingout namespace info. -->
+<!-- This could be xhtml 1.0 strict, but firefox is failing at xml -> xhtml, or something
  <xsl:output method="xml" encoding="UTF-8" version="1.0" standalone="yes"
 	doctype-system="http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd"
 	doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" />
+-->
+<xsl:output method="html" encoding="UTF-8" version="4.01" standalone="yes"
+	doctype-system="http://www.w3.org/TR/html4/strict.dtd"
+	doctype-public="-//W3C//DTD HTML 4.01//EN" />
 
 <xsl:template match="/">
 	<html>
