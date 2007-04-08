@@ -91,7 +91,7 @@
 			<xsl:for-each select="sm:Singleton">
 				<xsl:sort select="@name" />
 				<li>
-					<a href="#{@class}">
+					<a href="#{@class}" onClick="Toggle('{@class}')">
 						<xsl:value-of select="@name" />
 					</a>
 				</li>
@@ -120,7 +120,7 @@
 		</a>
 		<xsl:if test="@base != ''">
 			<xsl:text> : </xsl:text>
-			<a href="#{@base}">
+			<a href="#{@base}" onClick="Toggle('{@base}')">
 				<xsl:value-of select="@base" />
 			</a>
 		</xsl:if>
