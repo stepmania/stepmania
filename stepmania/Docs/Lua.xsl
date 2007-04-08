@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xsl:stylesheet version="1.0"
- xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
- xmlns:sm="http://www.stepmania.com">
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:sm="http://www.stepmania.com"
+	exclude-result-prefixes="sm"> <!-- keep xslt from spittingout namespace info. -->
+<!-- I'd like to get this to output xhtml 1.0 strict, but I'm not there yet.
+ <xsl:output method="xml" encoding="UTF-8" version="1.0" standalone="yes"
+	doctype-system="http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd"
+	doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" />
+-->
+<xsl:output method="html" encoding="UTF-8" version="4.01" standalone="yes"
+	doctype-system="http://www.w3.org/TR/html4/strict.dtd"
+	doctype-public="-//W3C//DTD HTML 4.01//EN" />
 
 <xsl:template match="/">
 	<html>
@@ -111,11 +120,13 @@
 	</div>
 </xsl:template>
 
+<xsl:variable name="docs" select="document('LuaDocumentation.xml')/sm:Documentation" />
 
 <xsl:template match="sm:Class">
+	<xsl:variable name="name" select="@name" />
 	<div>
 		<a name="{@name}" class="trigger" onClick="Toggle('{@name}')">
-			<img src="closed.gif" id="img_{@name}" />
+			<img src="closed.gif" id="img_{@name}" alt="" />
 			Class <xsl:value-of select="@name" />
 		</a>
 		<xsl:if test="@base != ''">
@@ -124,11 +135,15 @@
 				<xsl:value-of select="@base" />
 			</a>
 		</xsl:if>
-		<ul style="display: none" id="list_{@name}">
+		<div style="display: none" id="list_{@name}">
+		<table>
+			<tr><th>Function</th><th>Description</th></tr>
 			<xsl:apply-templates select="sm:Function">
 				<xsl:sort select="@name" />
+				<xsl:with-param name="path" select="$docs/sm:Classes/sm:Class[@name=$name]" />
 			</xsl:apply-templates>
-		</ul>
+		</table>
+		</div>
 	</div>
 </xsl:template>
 
@@ -137,16 +152,34 @@
 	<div>
 		<a name="GlobalFunctions" />
 		<h3>Global Functions</h3>
-		<ul>
+		<table>
+			<tr><th>Function</th><th>Description</th></tr>
 			<xsl:apply-templates select="sm:Function">
 				<xsl:sort select="@name" />
+				<xsl:with-param name="path" select="$docs/sm:GlobalFunctions" />
 			</xsl:apply-templates>
-		</ul>
+		</table>
 	</div>
 </xsl:template>
 
+
 <xsl:template match="sm:Function">
-	<li><xsl:value-of select="@name" /></li>
+	<xsl:param name="path" />
+	<xsl:variable name="name" select="@name" />
+	<xsl:variable name="elmt" select="$path/sm:Function[@name=$name]" />
+	<tr>
+		<xsl:choose>
+			<xsl:when test="string($elmt/@name)=$name"><td> <!-- The name must exist. -->
+				<xsl:value-of select="$elmt/@return" />
+				<xsl:text> </xsl:text>
+				<xsl:value-of select="@name" />( <xsl:value-of select="$elmt/@arguments" /> )
+			</td><td><xsl:value-of select="$elmt" /></td>
+			</xsl:when>
+			<xsl:otherwise>
+				<td><xsl:value-of select="@name" /></td>
+			</xsl:otherwise>
+		</xsl:choose>
+	</tr>
 </xsl:template>
 
 <xsl:template match="sm:Enums">
@@ -163,7 +196,7 @@
 <xsl:template match="sm:Enum">
 	<div>
 		<a class="trigger" onClick="Toggle('{@name}')">
-		<img src="closed.gif" id="img_{@name}" />
+		<img src="closed.gif" id="img_{@name}" alt="" />
 		Enum <xsl:value-of select="@name" /></a>
 		<table style="display: none" id="list_{@name}">
 			<tr>
