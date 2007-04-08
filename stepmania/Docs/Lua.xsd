@@ -19,6 +19,16 @@
 </xs:element>
 
 
+<xs:element name="Documentation">
+	<xs:complexType>
+		<xs:all>
+			<xs:element name="Classes" type="Classes" />
+			<xs:element name="GlobalFunctions" type="GlobalFunctions" />
+		</xs:all>
+	</xs:complexType>
+</xs:element>
+
+
 <xs:complexType name="Singletons">
 	<xs:sequence>
 		<xs:element name="Singleton" minOccurs="0" maxOccurs="unbounded">
@@ -54,9 +64,13 @@
 	</xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="Function">
+
+<xs:complexType name="Function" mixed="true">
 	<xs:attribute name="name" type="xs:string" use="required" />
+	<xs:attribute name="return" type="xs:string" use="optional" />
+	<xs:attribute name="arguments" type="xs:string" use="optional" />
 </xs:complexType>
+
 
 <xs:complexType name="Enums">
 	<xs:sequence>
