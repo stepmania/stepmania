@@ -8,7 +8,6 @@
 #include "RageLog.h"
 #include "BitmapText.h"
 #include "SongManager.h"
-#include "ThemeManager.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
 #include "Foreach.h"
