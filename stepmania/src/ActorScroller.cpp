@@ -77,7 +77,7 @@ void ActorScroller::SetTransformFromHeight( float fItemHeight )
 
 void ActorScroller::EnableMask( float fWidth, float fHeight )
 {
-	m_quadMask.SetVisible( true );
+	m_quadMask.SetVisible( fWidth != 0 && fHeight != 0 );
 	m_quadMask.SetWidth( fWidth );
 	m_quadMask.SetHeight( fHeight );
 }
@@ -310,12 +310,17 @@ public:
 	}
 	static int SetTransformFromHeight( T* p, lua_State *L )		{ p->SetTransformFromHeight(FArg(1)); return 0; }
 	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
+	static int SetDestinationItem( T* p, lua_State *L )		{ p->SetDestinationItem( FArg(1) ); return 0; }
 	static int getsecondtodestination( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetSecondsToDestination() ); return 1; }
 	static int setsecondsperitem( T* p, lua_State *L )		{ p->SetSecondsPerItem(FArg(1)); return 0; }
+	static int SetSecondsPauseBetweenItems( T* p, lua_State *L )	{ p->SetSecondsPauseBetweenItems(FArg(1)); return 0; }
+	static int SetPauseCountdownSeconds( T* p, lua_State *L )	{ p->SetPauseCountdownSeconds(FArg(1)); return 0; }
 	static int setnumsubdivisions( T* p, lua_State *L )		{ p->SetNumSubdivisions(IArg(1)); return 0; }
 	static int scrollthroughallitems( T* p, lua_State *L )		{ p->ScrollThroughAllItems(); return 0; }
 	static int scrollwithpadding( T* p, lua_State *L )		{ p->ScrollWithPadding(FArg(1),FArg(2)); return 0; }
 	static int setfastcatchup( T* p, lua_State *L )			{ p->SetFastCatchup(BArg(1)); return 0; }
+	static int SetLoop( T* p, lua_State *L )			{ p->SetLoop(BArg(1)); return 0; }
+	static int SetMask( T* p, lua_State *L )			{ p->EnableMask(FArg(1), FArg(2)); return 0; }
 
 	LunaActorScroller()
 	{
@@ -323,12 +328,17 @@ public:
 		ADD_METHOD( SetTransformFromFunction );
 		ADD_METHOD( SetTransformFromHeight );
 		ADD_METHOD( SetCurrentAndDestinationItem );
+		ADD_METHOD( SetDestinationItem );
 		ADD_METHOD( getsecondtodestination );
 		ADD_METHOD( setsecondsperitem );
+		ADD_METHOD( SetSecondsPauseBetweenItems );
+		ADD_METHOD( SetPauseCountdownSeconds );
 		ADD_METHOD( setnumsubdivisions );
 		ADD_METHOD( scrollthroughallitems );
 		ADD_METHOD( scrollwithpadding );
 		ADD_METHOD( setfastcatchup );
+		ADD_METHOD( SetLoop );
+		ADD_METHOD( SetMask );
 	}
 };
 
