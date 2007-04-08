@@ -538,14 +538,14 @@ XNode *LuaHelpers::GetLuaInformation()
 				lua_pop( L, 1 ); // pop name
 				
 				// Get base class.
-				if( luaL_getmetafield( L, -1, "base" ) )
-				{
-					name = lua_tostring( L, -1 );
-					
-					if( name )
-						c.m_sBaseName = name;
-					lua_pop( L, 1 ); // pop name
-				}
+				luaL_getmetatable( L, name );
+				ASSERT( !lua_isnil(L, -1) );
+				lua_getfield( L, -1, "base" );
+				name = lua_tostring( L, -1 );
+
+				if( name )
+					c.m_sBaseName = name;
+				lua_pop( L, 2 ); // pop name and metatable
 				
 				// Get methods.
 				FOREACH_LUATABLE( L, -1 )
