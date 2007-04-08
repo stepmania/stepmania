@@ -9,7 +9,6 @@ class CourseEntryDisplay;
 class CourseContentsList : public ActorScroller
 {
 public:
-	CourseContentsList();
 	~CourseContentsList();
 	virtual CourseContentsList *Copy() const;
 	
@@ -23,7 +22,6 @@ public:
 protected:
 	void SetItemFromGameState( Actor *pActor, int iCourseEntryIndex );
 
-	int m_iVisibleItems;
 	vector<Actor *>		m_vpDisplay;
 };
 

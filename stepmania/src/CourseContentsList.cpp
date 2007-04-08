@@ -12,11 +12,6 @@
 
 REGISTER_ACTOR_CLASS( CourseContentsList )
 
-CourseContentsList::CourseContentsList()
-{
-	m_iVisibleItems = 5;
-}
-
 CourseContentsList::~CourseContentsList()
 {
 	FOREACH( Actor *, m_vpDisplay, d )
@@ -26,22 +21,21 @@ CourseContentsList::~CourseContentsList()
 
 void CourseContentsList::LoadFromNode( const XNode* pNode )
 {
-	pNode->GetAttrValue( "VisibleItems", m_iVisibleItems );
-
-	ActorScroller::LoadFromNode( pNode );
+	int iMaxSongs = 5;
+	pNode->GetAttrValue( "MaxSongs", iMaxSongs );
 
 	const XNode *pDisplayNode = pNode->GetChild( "Display" );
 	if( pDisplayNode == NULL )
 		RageException::Throw( "%s: CourseContentsList: missing the Display child", ActorUtil::GetWhere(pNode).c_str() );
 
-	for( int i=0; i<m_iVisibleItems+2; i++ )
+	for( int i=0; i<iMaxSongs; i++ )
 	{
 		Actor *pDisplay = ActorUtil::LoadFromNode( pDisplayNode, this );
 		pDisplay->SetUseZBuffer( true );
 		m_vpDisplay.push_back( pDisplay );
 	}
 
-	this->SetNumItemsToDraw( (float)m_iVisibleItems );
+	ActorScroller::LoadFromNode( pNode );
 }
 
 void CourseContentsList::SetFromGameState()
@@ -69,12 +63,8 @@ void CourseContentsList::SetFromGameState()
 	this->SetLoop( bLoop );
 	this->Load2();
 	this->SetTransformFromHeight( m_vpDisplay[0]->GetUnzoomedHeight() );
-	this->SetSecondsPerItem( 0.7f );
 	this->EnableMask( m_vpDisplay[0]->GetUnzoomedWidth(), m_vpDisplay[0]->GetUnzoomedHeight() );
-	this->SetSecondsPauseBetweenItems( 0.7f );
-	this->ScrollThroughAllItems();
 
-	this->SetCurrentAndDestinationItem( (m_iVisibleItems-1)/2 );
 	if( bLoop )
 	{
 		SetPauseCountdownSeconds( 1.5f );
@@ -86,31 +76,14 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 {
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 
-	const TrailEntry *tes[NUM_PLAYERS];
-	const CourseEntry *ces[NUM_PLAYERS];
-	FOREACH_PlayerNumber( p )
-	{
-		const Trail *pTrail = GAMESTATE->m_pCurTrail[p];
-		if( pTrail  &&  iCourseEntryIndex < (int) pTrail->m_vEntries.size() )
-		{
-			tes[p] = &pTrail->m_vEntries[iCourseEntryIndex];
-			ces[p] = &pCourse->m_vEntries[iCourseEntryIndex];
-		}
-		else
-		{
-			tes[p] = NULL;
-			ces[p] = NULL;
-		}
-	}
-
-
-	const TrailEntry *te = tes[GAMESTATE->m_MasterPlayerNumber];
-	if( te == NULL )
-		return;
-
 	FOREACH_HumanPlayer(pn)
 	{
-		const TrailEntry *te = tes[pn];
+		const Trail *pTrail = GAMESTATE->m_pCurTrail[pn];
+		if( pTrail == NULL ||  iCourseEntryIndex >= (int) pTrail->m_vEntries.size() )
+			continue;
+
+		const TrailEntry *te = &pTrail->m_vEntries[iCourseEntryIndex];
+		const CourseEntry *ce = &pCourse->m_vEntries[iCourseEntryIndex];
 		if( te == NULL )
 			continue;
 
@@ -118,7 +91,6 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 		Difficulty dc;
 		if( te->bSecret )
 		{
-			const CourseEntry *ce = ces[pn];
 			if( ce == NULL )
 				continue;
 
