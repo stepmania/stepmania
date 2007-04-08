@@ -4,14 +4,9 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:sm="http://www.stepmania.com"
 	exclude-result-prefixes="sm"> <!-- keep xslt from spittingout namespace info. -->
-<!-- I'd like to get this to output xhtml 1.0 strict, but I'm not there yet.
  <xsl:output method="xml" encoding="UTF-8" version="1.0" standalone="yes"
 	doctype-system="http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-strict.dtd"
 	doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" />
--->
-<xsl:output method="html" encoding="UTF-8" version="4.01" standalone="yes"
-	doctype-system="http://www.w3.org/TR/html4/strict.dtd"
-	doctype-public="-//W3C//DTD HTML 4.01//EN" />
 
 <xsl:template match="/">
 	<html>
@@ -100,7 +95,7 @@
 			<xsl:for-each select="sm:Singleton">
 				<xsl:sort select="@name" />
 				<li>
-					<a href="#{@class}" onClick="Toggle('{@class}')">
+					<a href="#{@class}" onclick="Toggle('{@class}')">
 						<xsl:value-of select="@name" />
 					</a>
 				</li>
@@ -125,13 +120,13 @@
 <xsl:template match="sm:Class">
 	<xsl:variable name="name" select="@name" />
 	<div>
-		<a name="{@name}" class="trigger" onClick="Toggle('{@name}')">
+		<a name="{@name}" class="trigger" onclick="Toggle('{@name}')">
 			<img src="closed.gif" id="img_{@name}" alt="" />
 			Class <xsl:value-of select="@name" />
 		</a>
 		<xsl:if test="@base != ''">
 			<xsl:text> : </xsl:text>
-			<a href="#{@base}" onClick="Toggle('{@base}')">
+			<a href="#{@base}" onclick="Toggle('{@base}')">
 				<xsl:value-of select="@base" />
 			</a>
 		</xsl:if>
@@ -195,7 +190,7 @@
 
 <xsl:template match="sm:Enum">
 	<div>
-		<a class="trigger" onClick="Toggle('{@name}')">
+		<a class="trigger" onclick="Toggle('{@name}')">
 		<img src="closed.gif" id="img_{@name}" alt="" />
 		Enum <xsl:value-of select="@name" /></a>
 		<table style="display: none" id="list_{@name}">
