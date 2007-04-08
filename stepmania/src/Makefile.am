@@ -282,7 +282,6 @@ Transition.cpp Transition.h
 ActorsInMenus = \
 ActiveAttackList.cpp ActiveAttackList.h BPMDisplay.cpp BPMDisplay.h ComboGraph.cpp ComboGraph.h \
 CourseContentsList.cpp CourseContentsList.h \
-CourseEntryDisplay.cpp CourseEntryDisplay.h \
 DifficultyList.cpp DifficultyList.h \
 DifficultyMeter.cpp DifficultyMeter.h DifficultyRating.cpp DifficultyRating.h \
 DualScrollBar.cpp DualScrollBar.h \

@@ -153,7 +153,6 @@
 		AA29CC650558741A00961A51 /* Banner.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE6F04770D61005F316C /* Banner.h */; };
 		AA29CC660558741A00961A51 /* BPMDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE7704770E7C005F316C /* BPMDisplay.h */; };
 		AA29CC670558741A00961A51 /* CourseContentsList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE7904770E7C005F316C /* CourseContentsList.h */; };
-		AA29CC680558741A00961A51 /* CourseEntryDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE7B04770E7C005F316C /* CourseEntryDisplay.h */; };
 		AA29CC690558741A00961A51 /* DifficultyIcon.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE7F04770E7C005F316C /* DifficultyIcon.h */; };
 		AA29CC6A0558741A00961A51 /* DifficultyMeter.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE8104770E7C005F316C /* DifficultyMeter.h */; };
 		AA29CC6B0558741A00961A51 /* DifficultyRating.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE8304770E7C005F316C /* DifficultyRating.h */; };
@@ -360,7 +359,6 @@
 		AA29CD790558741A00961A51 /* Banner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE6E04770D61005F316C /* Banner.cpp */; };
 		AA29CD7A0558741A00961A51 /* BPMDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE7604770E7C005F316C /* BPMDisplay.cpp */; };
 		AA29CD7B0558741A00961A51 /* CourseContentsList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE7804770E7C005F316C /* CourseContentsList.cpp */; };
-		AA29CD7C0558741A00961A51 /* CourseEntryDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE7A04770E7C005F316C /* CourseEntryDisplay.cpp */; };
 		AA29CD7D0558741A00961A51 /* DifficultyIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE7E04770E7C005F316C /* DifficultyIcon.cpp */; };
 		AA29CD7E0558741A00961A51 /* DifficultyMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8004770E7C005F316C /* DifficultyMeter.cpp */; };
 		AA29CD7F0558741A00961A51 /* DifficultyRating.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8204770E7C005F316C /* DifficultyRating.cpp */; };
@@ -606,7 +604,6 @@
 		AA40D1F009A08D650068C0D5 /* Banner.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE6F04770D61005F316C /* Banner.h */; };
 		AA40D1F109A08D650068C0D5 /* BPMDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE7704770E7C005F316C /* BPMDisplay.h */; };
 		AA40D1F209A08D650068C0D5 /* CourseContentsList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE7904770E7C005F316C /* CourseContentsList.h */; };
-		AA40D1F309A08D650068C0D5 /* CourseEntryDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE7B04770E7C005F316C /* CourseEntryDisplay.h */; };
 		AA40D1F409A08D650068C0D5 /* DifficultyIcon.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE7F04770E7C005F316C /* DifficultyIcon.h */; };
 		AA40D1F509A08D650068C0D5 /* DifficultyMeter.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE8104770E7C005F316C /* DifficultyMeter.h */; };
 		AA40D1F609A08D650068C0D5 /* DifficultyRating.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE8304770E7C005F316C /* DifficultyRating.h */; };
@@ -974,7 +971,6 @@
 		AA40D3B209A08D650068C0D5 /* Banner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE6E04770D61005F316C /* Banner.cpp */; };
 		AA40D3B309A08D650068C0D5 /* BPMDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE7604770E7C005F316C /* BPMDisplay.cpp */; };
 		AA40D3B409A08D650068C0D5 /* CourseContentsList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE7804770E7C005F316C /* CourseContentsList.cpp */; };
-		AA40D3B509A08D650068C0D5 /* CourseEntryDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE7A04770E7C005F316C /* CourseEntryDisplay.cpp */; };
 		AA40D3B609A08D650068C0D5 /* DifficultyIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE7E04770E7C005F316C /* DifficultyIcon.cpp */; };
 		AA40D3B709A08D650068C0D5 /* DifficultyMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8004770E7C005F316C /* DifficultyMeter.cpp */; };
 		AA40D3B809A08D650068C0D5 /* DifficultyRating.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8204770E7C005F316C /* DifficultyRating.cpp */; };
@@ -2531,8 +2527,6 @@
 		AA6EFE7704770E7C005F316C /* BPMDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = BPMDisplay.h; path = ../src/BPMDisplay.h; sourceTree = "<group>"; };
 		AA6EFE7804770E7C005F316C /* CourseContentsList.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CourseContentsList.cpp; path = ../src/CourseContentsList.cpp; sourceTree = "<group>"; };
 		AA6EFE7904770E7C005F316C /* CourseContentsList.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CourseContentsList.h; path = ../src/CourseContentsList.h; sourceTree = "<group>"; };
-		AA6EFE7A04770E7C005F316C /* CourseEntryDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CourseEntryDisplay.cpp; path = ../src/CourseEntryDisplay.cpp; sourceTree = "<group>"; };
-		AA6EFE7B04770E7C005F316C /* CourseEntryDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CourseEntryDisplay.h; path = ../src/CourseEntryDisplay.h; sourceTree = "<group>"; };
 		AA6EFE7E04770E7C005F316C /* DifficultyIcon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = DifficultyIcon.cpp; path = ../src/DifficultyIcon.cpp; sourceTree = "<group>"; };
 		AA6EFE7F04770E7C005F316C /* DifficultyIcon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DifficultyIcon.h; path = ../src/DifficultyIcon.h; sourceTree = "<group>"; };
 		AA6EFE8004770E7C005F316C /* DifficultyMeter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = DifficultyMeter.cpp; path = ../src/DifficultyMeter.cpp; sourceTree = "<group>"; };
@@ -4262,8 +4256,6 @@
 				AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */,
 				AA6EFE7804770E7C005F316C /* CourseContentsList.cpp */,
 				AA6EFE7904770E7C005F316C /* CourseContentsList.h */,
-				AA6EFE7A04770E7C005F316C /* CourseEntryDisplay.cpp */,
-				AA6EFE7B04770E7C005F316C /* CourseEntryDisplay.h */,
 				AA6EFE7E04770E7C005F316C /* DifficultyIcon.cpp */,
 				AA6EFE7F04770E7C005F316C /* DifficultyIcon.h */,
 				AAC6DDE60569C80900B5D56F /* DifficultyList.cpp */,
@@ -5297,7 +5289,6 @@
 				AA29CC650558741A00961A51 /* Banner.h in Headers */,
 				AA29CC660558741A00961A51 /* BPMDisplay.h in Headers */,
 				AA29CC670558741A00961A51 /* CourseContentsList.h in Headers */,
-				AA29CC680558741A00961A51 /* CourseEntryDisplay.h in Headers */,
 				AA29CC690558741A00961A51 /* DifficultyIcon.h in Headers */,
 				AA29CC6A0558741A00961A51 /* DifficultyMeter.h in Headers */,
 				AA29CC6B0558741A00961A51 /* DifficultyRating.h in Headers */,
@@ -5722,7 +5713,6 @@
 				AA40D1F009A08D650068C0D5 /* Banner.h in Headers */,
 				AA40D1F109A08D650068C0D5 /* BPMDisplay.h in Headers */,
 				AA40D1F209A08D650068C0D5 /* CourseContentsList.h in Headers */,
-				AA40D1F309A08D650068C0D5 /* CourseEntryDisplay.h in Headers */,
 				AA40D1F409A08D650068C0D5 /* DifficultyIcon.h in Headers */,
 				AA40D1F509A08D650068C0D5 /* DifficultyMeter.h in Headers */,
 				AA40D1F609A08D650068C0D5 /* DifficultyRating.h in Headers */,
@@ -6473,7 +6463,6 @@
 				AA29CD790558741A00961A51 /* Banner.cpp in Sources */,
 				AA29CD7A0558741A00961A51 /* BPMDisplay.cpp in Sources */,
 				AA29CD7B0558741A00961A51 /* CourseContentsList.cpp in Sources */,
-				AA29CD7C0558741A00961A51 /* CourseEntryDisplay.cpp in Sources */,
 				AA29CD7D0558741A00961A51 /* DifficultyIcon.cpp in Sources */,
 				AA29CD7E0558741A00961A51 /* DifficultyMeter.cpp in Sources */,
 				AA29CD7F0558741A00961A51 /* DifficultyRating.cpp in Sources */,
@@ -6888,7 +6877,6 @@
 				AA40D3B209A08D650068C0D5 /* Banner.cpp in Sources */,
 				AA40D3B309A08D650068C0D5 /* BPMDisplay.cpp in Sources */,
 				AA40D3B409A08D650068C0D5 /* CourseContentsList.cpp in Sources */,
-				AA40D3B509A08D650068C0D5 /* CourseEntryDisplay.cpp in Sources */,
 				AA40D3B609A08D650068C0D5 /* DifficultyIcon.cpp in Sources */,
 				AA40D3B709A08D650068C0D5 /* DifficultyMeter.cpp in Sources */,
 				AA40D3B809A08D650068C0D5 /* DifficultyRating.cpp in Sources */,
