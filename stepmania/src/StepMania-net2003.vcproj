@@ -413,12 +413,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenMiniMenu.h">
 			</File>
 			<File
-				RelativePath="ScreenMusicScroll.cpp">
-			</File>
-			<File
-				RelativePath="ScreenMusicScroll.h">
-			</File>
-			<File
 				RelativePath="ScreenNameEntry.cpp">
 			</File>
 			<File
@@ -1345,12 +1339,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="CourseContentsList.h">
-			</File>
-			<File
-				RelativePath="CourseEntryDisplay.cpp">
-			</File>
-			<File
-				RelativePath="CourseEntryDisplay.h">
 			</File>
 			<File
 				RelativePath="DifficultyList.cpp">
