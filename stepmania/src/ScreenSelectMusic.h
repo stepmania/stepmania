@@ -68,8 +68,8 @@ protected:
 	ThemeMetric<RString> CODES;
 	ThemeMetric<RString> MUSIC_WHEEL_TYPE;
 	ThemeMetric<bool> OPTIONS_MENU_AVAILABLE;
-	DynamicThemeMetric<bool> SELECT_MENU_AVAILABLE;
-	DynamicThemeMetric<bool> MODE_MENU_AVAILABLE;
+	ThemeMetric<bool> SELECT_MENU_AVAILABLE;
+	ThemeMetric<bool> MODE_MENU_AVAILABLE;
 	ThemeMetric<bool> USE_OPTIONS_LIST;
 	ThemeMetric<bool> TWO_PART_SELECTION;
 
