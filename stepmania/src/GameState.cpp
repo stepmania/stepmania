@@ -1827,7 +1827,7 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 	Difficulty d = GetClosestShownDifficulty(pn);
 	while( 1 )
 	{
-		d = (Difficulty)(d+dir);
+		d = enum_add2( d, dir );
 		if( d < 0 || d >= NUM_Difficulty )
 			return false;
 		if( find(v.begin(), v.end(), d) != v.end() )
