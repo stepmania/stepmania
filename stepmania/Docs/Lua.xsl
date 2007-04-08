@@ -91,8 +91,7 @@
 			<xsl:for-each select="sm:Singleton">
 				<xsl:sort select="@name" />
 				<li>
-					<a>
-						<xsl:attribute name="href">#<xsl:value-of select="@class" /></xsl:attribute>
+					<a href="#{@class}">
 						<xsl:value-of select="@name" />
 					</a>
 				</li>
@@ -115,25 +114,17 @@
 
 <xsl:template match="sm:Class">
 	<div>
-		<a>
-			<xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute>
-		</a>
-		<a class="trigger">
-			<xsl:attribute name="onClick">Toggle('<xsl:value-of select="@name" />')</xsl:attribute>
-			<img src="closed.gif">
-				<xsl:attribute name="id">img_<xsl:value-of select="@name" /></xsl:attribute>
-			</img>
+		<a name="{@name}" class="trigger" onClick="Toggle('{@name}')">
+			<img src="closed.gif" id="img_{@name}" />
 			Class <xsl:value-of select="@name" />
 		</a>
 		<xsl:if test="@base != ''">
 			<xsl:text> : </xsl:text>
-			<a>
-				<xsl:attribute name="href">#<xsl:value-of select="@base" /></xsl:attribute>
+			<a href="#{@base}">
 				<xsl:value-of select="@base" />
 			</a>
 		</xsl:if>
-		<ul style="display: none">
-			<xsl:attribute name="id">list_<xsl:value-of select="@name" /></xsl:attribute>
+		<ul style="display: none" id="list_{@name}">
 			<xsl:apply-templates select="sm:Function">
 				<xsl:sort select="@name" />
 			</xsl:apply-templates>
@@ -171,14 +162,10 @@
 
 <xsl:template match="sm:Enum">
 	<div>
-		<a class="trigger">
-		<xsl:attribute name="onClick">Toggle('<xsl:value-of select="@name" />')</xsl:attribute>
-		<img src="closed.gif">
-			<xsl:attribute name="id">img_<xsl:value-of select="@name" /></xsl:attribute>
-		</img>
+		<a class="trigger" onClick="Toggle('{@name}')">
+		<img src="closed.gif" id="img_{@name}" />
 		Enum <xsl:value-of select="@name" /></a>
-		<table style="display: none">
-			<xsl:attribute name="id">list_<xsl:value-of select="@name" /></xsl:attribute>
+		<table style="display: none" id="list_{@name}">
 			<tr>
 				<th>Enum</th>
 				<th>Value</th>
