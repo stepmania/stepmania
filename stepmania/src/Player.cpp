@@ -2382,7 +2382,7 @@ void Player::RandomizeNotes( int iNoteRow )
 
 void Player::HandleTapRowScore( unsigned row )
 {
-	bool bNoCheating = 0;//true;
+	bool bNoCheating = true;
 #ifdef DEBUG
 	bNoCheating = false;
 #endif
@@ -2525,15 +2525,15 @@ void Player::HandleHoldScore( const TapNote &tn )
 {
 	HoldNoteScore holdScore = tn.HoldResult.hns;
 	TapNoteScore tapScore = tn.result.tns;
-	bool NoCheating = 0;//true;
+	bool bNoCheating = true;
 #ifdef DEBUG
-	NoCheating = false;
+	bNoCheating = false;
 #endif
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
-		NoCheating = false;
+		bNoCheating = false;
 	// don't accumulate points if AutoPlay is on.
-	if( NoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+	if( bNoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 		return;
 
 	if( m_pPrimaryScoreKeeper )
