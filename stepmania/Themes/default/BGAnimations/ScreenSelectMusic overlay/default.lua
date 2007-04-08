@@ -214,7 +214,12 @@ local children =
 		OffCommand=cmd(zoomy,1;bouncebegin,0.3;zoomy,0);
 		ShowCommand=cmd(bouncebegin,0.3;zoomy,1);
 		HideCommand=cmd(linear,0.3;zoomy,0);
-		SetCommand=function(self) self:SetFromGameState() end;
+		SetCommand=function(self)
+			self:SetFromGameState();
+			self:setsecondsperitem(0.7);
+			self:SetSecondsPauseBetweenItems(0.7);
+			self:scrollwithpadding(0, 0);
+		end;
 		CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
 
