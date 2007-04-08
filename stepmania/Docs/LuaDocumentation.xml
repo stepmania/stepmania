@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- Before checking the documentation in, make sure that it validates by
+     going to http://tools.decisionsoft.com/schemaValidate/ and using
+     Lua.xsd for the XML Schema and this file for the XML Instanace. -->
+
+<Documentation xmlns='http://www.stepmania.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.stepmania.com Lua.xsd'>
+<!-- Global functions -->
+<GlobalFunctions>
+<Function name='Basename' return='string' arguments='path'>
+	Returns the base name of file path.
+</Function>
+</GlobalFunctions>
+
+<!-- Classes -->
+<Classes>
+<Class name='Actor'>
+	<Function name='x' return='void' arguments='xPos'>
+		Set the x position of the Actor.
+	</Function>
+	<Function name='y' return='void' arguments='yPos'>
+		Set the y position of the Actor.
+	</Function>
+	<Function name='z' return='void' arguments='zPos'>
+		Set the z position of the Actor.
+	</Function>
+</Class>
+</Classes>
+</Documentation>
