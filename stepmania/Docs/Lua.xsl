@@ -143,6 +143,7 @@
 				<xsl:with-param name="path" select="$docs/sm:Classes/sm:Class[@name=$name]" />
 			</xsl:apply-templates>
 		</table>
+		<br />
 		</div>
 	</div>
 </xsl:template>
@@ -198,7 +199,8 @@
 		<a class="trigger" onclick="Toggle('{@name}')">
 		<img src="closed.gif" id="img_{@name}" alt="" />
 		Enum <xsl:value-of select="@name" /></a>
-		<table style="display: none" id="list_{@name}">
+		<div style="display: none" id="list_{@name}">
+		<table>
 			<tr>
 				<th>Enum</th>
 				<th>Value</th>
@@ -212,6 +214,7 @@
 			</xsl:for-each>
 		</table>
 		<br />
+		</div>
 	</div>
 </xsl:template>
 
