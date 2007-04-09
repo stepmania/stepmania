@@ -17,6 +17,7 @@ public:
 	~GameManager();
 
 	void GetStylesForGame( const Game* pGame, vector<const Style*>& aStylesAddTo, bool editor=false ) const;
+	const Game *GetGameForStyle( const Style *pStyle ) const;
 	void GetStepsTypesForGame( const Game* pGame, vector<StepsType>& aStepsTypeAddTo ) const;
 	const Style *GetEditorStyleForStepsType( StepsType st ) const;
 	void GetDemonstrationStylesForGame( const Game *pGame, vector<const Style*> &vpStylesOut ) const;

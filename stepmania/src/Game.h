@@ -7,6 +7,7 @@
 #include "GameConstantsAndTypes.h"
 
 struct lua_State;
+class Style;
 
 //
 // PrimaryMenuButton and SecondaryMenuButton are used to support using DeviceInputs that only 
@@ -31,6 +32,7 @@ class Game
 {
 public:
 	const char *		m_szName;
+	const Style * const*	m_apStyles;
 
 	bool			m_bCountNotesSeparately;	// Count multiple notes in a row as separate notes or as one note
 	bool			m_bAllowHopos;		// allow Hammer-ons and Pull-offs?  Only useful for guitar type input.

@@ -19,7 +19,6 @@ struct lua_State;
 class Style
 {
 public:
-	const Game *		m_pGame;			// Which Game is this Style used with?
 	bool			m_bUsedForGameplay;		// Can be used only for gameplay?
 	bool			m_bUsedForEdit;			// Can be used for editing?
 	bool			m_bUsedForDemonstration;	// Can be used for demonstration?
