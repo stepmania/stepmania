@@ -30,7 +30,15 @@ function ScreenSelectMusic:setupmusicstagemods()
 
 		local bExtra2 = GAMESTATE:IsExtraStage2()
 		local style = GAMESTATE:GetCurrentStyle()
-		local song, steps, po, so = SONGMAN:GetExtraStageInfo( bExtra2, style )
+		local song, steps = SONGMAN:GetExtraStageInfo( bExtra2, style )
+		local po, so
+		if bExtra2 then
+			po = "1.5x,reverse";
+			so = "norecover";
+		else
+			po = "sudden,shuffle,flat";
+			so = "suddendeath";
+		end
 		local difficulty = steps:GetDifficulty()
 		local Reverse = PlayerNumber:Reverse()
 
