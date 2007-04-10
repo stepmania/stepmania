@@ -341,18 +341,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenExit.h">
 			</File>
 			<File
-				RelativePath="ScreenEz2SelectMusic.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEz2SelectMusic.h">
-			</File>
-			<File
-				RelativePath="ScreenEz2SelectPlayer.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEz2SelectPlayer.h">
-			</File>
-			<File
 				RelativePath="ScreenGameplay.cpp">
 			</File>
 			<File
@@ -1417,12 +1405,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="MenuTimer.h">
-			</File>
-			<File
-				RelativePath="ModeSwitcher.cpp">
-			</File>
-			<File
-				RelativePath="ModeSwitcher.h">
 			</File>
 			<File
 				RelativePath="MusicBannerWheel.cpp">

@@ -34,7 +34,6 @@ ScreenEditMenu.cpp ScreenEditMenu.h ScreenEnding.cpp ScreenEnding.h \
 ScreenEvaluation.cpp ScreenEvaluation.h \
 ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
 ScreenNetSelectMusic.cpp ScreenNetSelectMusic.h ScreenNetSelectBase.cpp ScreenNetSelectBase.h ScreenNetRoom.cpp ScreenNetRoom.h \
-ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h \
 ScreenGameplay.cpp ScreenGameplay.h \
 ScreenGameplayLesson.cpp ScreenGameplayLesson.h \
 ScreenGameplayNormal.cpp ScreenGameplayNormal.h \
@@ -289,7 +288,7 @@ EditMenu.cpp EditMenu.h FadingBanner.cpp FadingBanner.h \
 GradeDisplay.cpp GradeDisplay.h GraphDisplay.cpp GraphDisplay.h \
 GrooveRadar.cpp GrooveRadar.h GroupList.cpp GroupList.h HelpDisplay.cpp HelpDisplay.h \
 MemoryCardDisplay.cpp MemoryCardDisplay.h \
-MenuTimer.cpp MenuTimer.h ModeSwitcher.cpp ModeSwitcher.h MusicBannerWheel.cpp MusicBannerWheel.h \
+MenuTimer.cpp MenuTimer.h MusicBannerWheel.cpp MusicBannerWheel.h \
 MusicList.cpp MusicList.h MusicSortDisplay.cpp MusicSortDisplay.h MusicWheel.cpp MusicWheel.h \
 MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h OptionIconRow.cpp OptionIconRow.h \
 OptionRow.cpp OptionRow.h OptionsCursor.cpp OptionsCursor.h \
