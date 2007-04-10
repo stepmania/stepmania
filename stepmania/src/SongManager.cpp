@@ -1712,7 +1712,7 @@ public:
 		pSong->PushSelf( L );
 		pSteps->PushSelf( L );
 		
-		return 4;
+		return 2;
 	}
 	DEFINE_METHOD( GetSongColor, GetSongColor( Luna<Song>::check(L,1) ) )
 
