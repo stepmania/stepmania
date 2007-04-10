@@ -97,8 +97,8 @@ Song* GameState::GetDefaultSong() const
 static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_1 ("GameState","GradeTierForExtra1");
 static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_2 ("GameState","GradeTierForExtra2");
 
-static DynamicThemeMetric<bool> ARE_STAGE_PLAYER_MODS_FORCED( "GameState","AreStagePlayerModsForced" );
-static DynamicThemeMetric<bool> ARE_STAGE_SONG_MODS_FORCED( "GameState","AreStageSongModsForced" );
+static ThemeMetric<bool> ARE_STAGE_PLAYER_MODS_FORCED( "GameState","AreStagePlayerModsForced" );
+static ThemeMetric<bool> ARE_STAGE_SONG_MODS_FORCED( "GameState","AreStageSongModsForced" );
 
 static Preference<Premium> g_Premium( "Premium", Premium_Off );
 
