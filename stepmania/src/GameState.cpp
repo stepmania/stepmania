@@ -1190,7 +1190,7 @@ bool GameState::HasEarnedExtraStage() const
 	{
 		Song* pSong;
 		Steps* pSteps;
-		SONGMAN->GetExtraStageInfo( false, GetCurrentStyle(), pSong, pSteps, NULL, NULL );
+		SONGMAN->GetExtraStageInfo( false, GetCurrentStyle(), pSong, pSteps );
 		ASSERT(pSong);
 
 		const StageStats &stats = STATSMAN->m_CurStageStats;
