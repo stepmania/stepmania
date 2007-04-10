@@ -390,17 +390,6 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 			split( MODE_MENU_CHOICE_NAMES, ",", vsNames );
 			for( unsigned i=0; i<vsNames.size(); ++i )
 			{
-				switch( so )
-				{
-				case SORT_ALL_COURSES:
-				case SORT_NONSTOP_COURSES:
-				case SORT_ONI_COURSES:
-				case SORT_ENDLESS_COURSES:
-					/* Don't display course modes after the first stage. */
-					if( !GAMESTATE->IsEventMode() && GAMESTATE->GetLargestNumStagesLeftForAnyHumanPlayer() > 0 )
-						continue;
-				}
-
 				WheelItemData wid( TYPE_SORT, NULL, "", NULL, SORT_MENU_COLOR );
 				wid.m_pAction = HiddenPtr<GameCommand>( new GameCommand );
 				wid.m_pAction->m_sName = vsNames[i];
