@@ -36,19 +36,6 @@ enum
 };
 
 
-const int DANCE_COL_SPACING = 64;
-const int PUMP_COL_SPACING = 50;
-const int EZ2_COL_SPACING = 46; 
-const int EZ2_REAL_COL_SPACING = 40;
-const int PARA_COL_SPACING = 54;
-const int DS3DDX_COL_SPACING = 46;
-const int BEAT_COL_SPACING = 34;
-const int MANIAX_COL_SPACING = 36;
-const int TECHNO_COL_SPACING = 56;
-const int TECHNO_VERSUS_COL_SPACING = 33;
-const int POPN5_COL_SPACING = 32; 
-const int POPN9_COL_SPACING = 32; 
-
 static struct
 {
 	char *szName;
@@ -113,6 +100,8 @@ const InputMapping g_AutoKeyMappings_Dance[] =
 	{ 0, KEY_KP_C9,		DANCE_BUTTON_UPRIGHT,		true },
 	InputMapping_END
 };
+
+static const int DANCE_COL_SPACING = 64;
 
 static const Style g_Style_Dance_Single =
 {	// STYLE_DANCE_SINGLE
@@ -444,6 +433,7 @@ static const Style *g_apGame_Dance_Styles[] =
 	NULL
 };
 
+static const int PARA_COL_SPACING = 54;
 static const Game g_Game_Dance = 
 {
 	"dance",					// m_szName
@@ -500,6 +490,7 @@ const InputMapping g_AutoKeyMappings_Pump[] =
 	InputMapping_END
 };
 
+static const int PUMP_COL_SPACING = 50;
 static const Style g_Style_Pump_Single =
 {	// STYLE_PUMP_SINGLE
 	true,				// m_bUsedForGameplay
@@ -788,6 +779,8 @@ static const Game g_Game_Pump =
 	TNS_W5,	// m_mapW5To
 };
 
+static const int EZ2_COL_SPACING = 46; 
+static const int EZ2_REAL_COL_SPACING = 40;
 static const Style g_Style_Ez2_Single =
 {	// STYLE_EZ2_SINGLE
 	true,				// m_bUsedForGameplay
@@ -1191,6 +1184,7 @@ static const Game g_Game_Para =
 	TNS_W5,	// m_mapW5To
 };
 
+static const int DS3DDX_COL_SPACING = 46;
 static const Style g_Style_DS3DDX_Single =
 {	// STYLE_DS3DDX_SINGLE
 	true,				// m_bUsedForGameplay
@@ -1292,6 +1286,7 @@ static const Game g_Game_DS3DDX =
 	TNS_W5,	// m_mapW5To
 };
 
+static const int BEAT_COL_SPACING = 34;
 static const Style g_Style_Beat_Single5 =
 {	// STYLE_BEAT_SINGLE5
 	true,				// m_bUsedForGameplay
@@ -1550,6 +1545,7 @@ static const Game g_Game_Beat =
 	TNS_W5,	// m_mapW5To
 };
 
+static const int MANIAX_COL_SPACING = 36;
 static const Style g_Style_Maniax_Single =
 {	// STYLE_MANIAX_SINGLE
 	true,				// m_bUsedForGameplay
@@ -1717,6 +1713,8 @@ static const Game g_Game_Maniax =
 	TNS_W5,	// m_mapW5To
 };
 
+static const int TECHNO_COL_SPACING = 56;
+static const int TECHNO_VERSUS_COL_SPACING = 33;
 static const Style g_Style_Techno_Single4 =
 {	// STYLE_TECHNO_SINGLE4
 	true,				// m_bUsedForGameplay
@@ -2129,6 +2127,8 @@ static const Game g_Game_Techno =
 	TNS_W5,	// m_mapW5To
 };
 
+static const int POPN5_COL_SPACING = 32; 
+static const int POPN9_COL_SPACING = 32; 
 static const Style g_Style_Popn_Five =
 {	// STYLE_POPN_FIVE
 	true,				// m_bUsedForGameplay
