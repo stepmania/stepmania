@@ -543,23 +543,15 @@ void Actor::UpdateTweening( float fDeltaTime )
 		TweenState &TS = m_Tweens[0]->state;	
 		TweenInfo  &TI = m_Tweens[0]->info;
 
-		if( TI.m_fTimeLeftInTween == TI.m_fTweenTime )	// we are just beginning this tween
-		{
-			m_start = m_current;		// set the start position
-
-			// Execute the command in this tween (if any).
-			if( !TI.m_sCommandName.empty() )
-			{
-				if( TI.m_sCommandName.Left(1) == "!" )
-					MESSAGEMAN->Broadcast( TI.m_sCommandName.substr(1) );
-				else
-					this->PlayCommand( TI.m_sCommandName );
-			}
-		}
+		bool bBeginning = TI.m_fTimeLeftInTween == TI.m_fTweenTime;
 
 		float fSecsToSubtract = min( TI.m_fTimeLeftInTween, fDeltaTime );
 		TI.m_fTimeLeftInTween -= fSecsToSubtract;
 		fDeltaTime -= fSecsToSubtract;
+
+		RString sCommand = TI.m_sCommandName;
+		if( bBeginning )			// we are just beginning this tween
+			m_start = m_current;		// set the start position
 	
 		if( TI.m_fTimeLeftInTween == 0 )	// Current tween is over.  Stop.
 		{
@@ -576,6 +568,19 @@ void Actor::UpdateTweening( float fDeltaTime )
 			// distort the percentage if appropriate
 			float fPercentAlongPath = TI.m_pTween->Tween( fPercentThroughTween );
 			TweenState::MakeWeightedAverage( m_current, m_start, TS, fPercentAlongPath );
+		}
+
+		if( bBeginning )
+		{
+			// Execute the command in this tween (if any).  Do this last, and don't access
+			// TI or TS after, since this may modify the tweening queue.
+			if( !sCommand.empty() )
+			{
+				if( sCommand.Left(1) == "!" )
+					MESSAGEMAN->Broadcast( sCommand.substr(1) );
+				else
+					this->PlayCommand( sCommand );
+			}
 		}
 	}
 }
