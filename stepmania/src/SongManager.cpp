@@ -50,10 +50,6 @@ static const ThemeMetric<bool>		USE_PREFERRED_SORT_COLOR	( "SongManager", "UsePr
 static const ThemeMetric<bool>		USE_UNLOCK_COLOR		( "SongManager", "UseUnlockColor" );
 static const ThemeMetric<RageColor>	UNLOCK_COLOR			( "SongManager", "UnlockColor" );
 static const ThemeMetric<bool>		MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT	( "SongManager", "MoveUnlocksToBottomOfPreferredSort" );
-static const ThemeMetric<RString>	EXTRA_STAGE_PLAYER_OPTIONS	( "SongManager", "ExtraStagePlayerOptions" );
-static const ThemeMetric<RString>	EXTRA_STAGE_SONG_OPTIONS	( "SongManager", "ExtraStageSongOptions" );
-static const ThemeMetric<RString>	EXTRA_STAGE2_PLAYER_OPTIONS	( "SongManager", "ExtraStage2PlayerOptions" );
-static const ThemeMetric<RString>	EXTRA_STAGE2_SONG_OPTIONS	( "SongManager", "ExtraStage2SongOptions" );
 static const ThemeMetric<int>		EXTRA_STAGE2_DIFFICULTY_MAX	( "SongManager", "ExtraStage2DifficultyMax" );
 
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf( "SongGroupColor%i", (int) i+1 ); }
@@ -986,8 +982,7 @@ void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCou
 				AddTo.push_back( m_pCourses[i] );
 }
 
-bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut,
-					       PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut )
+bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut )
 {
 	const RString sCourseSuffix = sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
 	RString sCoursePath = SONGS_DIR + sCourseSuffix;
@@ -1007,18 +1002,6 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredG
 	Trail *pTrail = course.GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
 	if( pTrail->m_vEntries.empty() )
 		return false;
-
-	if( pPlayerOptionsOut != NULL )
-	{
-		pPlayerOptionsOut->Init();
-		pPlayerOptionsOut->m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
-		pPlayerOptionsOut->FromString( pTrail->m_vEntries[0].Modifiers );
-	}
-	if( pSongOptionsOut != NULL )
-	{
-		pSongOptionsOut->Init();
-		pSongOptionsOut->FromString( pTrail->m_vEntries[0].Modifiers );
-	}
 
 	pSongOut = pTrail->m_vEntries[0].pSong;
 	pStepsOut = pTrail->m_vEntries[0].pSteps;
@@ -1043,8 +1026,7 @@ bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 	return StepsUtil::CompareNotesPointersByRadarValues(n1,n2);
 }
 
-void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSongOut, Steps*& pStepsOut,
-				     PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut )
+void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSongOut, Steps*& pStepsOut )
 {
 	RString sGroup = GAMESTATE->m_sPreferredSongGroup;
 	if( sGroup == GROUP_ALL )
@@ -1063,7 +1045,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->GetSongDir().c_str():"",
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"") );
 
-	if( GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pStepsOut, pPlayerOptionsOut, pSongOptionsOut) )
+	if( GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pStepsOut) )
 		return;
 	
 	// Choose a hard song for the extra stage
@@ -1113,20 +1095,6 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 
 	pSongOut = (bExtra2 ? pExtra2Song : pExtra1Song);
 	pStepsOut = (bExtra2 ? pExtra2Notes : pExtra1Notes);
-
-
-	if( pPlayerOptionsOut != NULL )
-	{
-		pPlayerOptionsOut->Init();
-		pPlayerOptionsOut->m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
-		pPlayerOptionsOut->FromString( bExtra2 ? EXTRA_STAGE2_PLAYER_OPTIONS : EXTRA_STAGE_PLAYER_OPTIONS, true );
-	}
-
-	if( pSongOptionsOut != NULL )
-	{
-		pSongOptionsOut->Init();
-		pSongOptionsOut->FromString( bExtra2 ? EXTRA_STAGE2_SONG_OPTIONS : EXTRA_STAGE_SONG_OPTIONS );
-	}
 }
 
 Song* SongManager::GetRandomSong()
@@ -1739,14 +1707,10 @@ public:
 		const Style *pStyle = Luna<Style>::check( L, 2 );
 		Song *pSong;
 		Steps *pSteps;
-		PlayerOptions po;
-		SongOptions so;
 		
-		p->GetExtraStageInfo( bExtra2, pStyle, pSong, pSteps, &po, &so );
+		p->GetExtraStageInfo( bExtra2, pStyle, pSong, pSteps );
 		pSong->PushSelf( L );
 		pSteps->PushSelf( L );
-		LuaHelpers::Push( L, po.GetString(true) );
-		LuaHelpers::Push( L, so.GetString() );
 		
 		return 4;
 	}
