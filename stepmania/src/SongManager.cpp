@@ -343,8 +343,7 @@ void SongManager::FreeSongs()
 
 	m_sSongGroupBannerPaths.clear();
 
-	for( int i = 0; i < NUM_ProfileSlot; ++i )
-		m_pPopularSongs[i].clear();
+	m_pPopularSongs.clear();
 	m_pShuffledSongs.clear();
 }
 
@@ -528,14 +527,14 @@ const vector<Song*> &SongManager::GetSongs( const RString &sGroupName ) const
 	return vEmpty;
 }
 
-void SongManager::GetPopularSongs( vector<Song*> &AddTo, const RString &sGroupName, ProfileSlot slot ) const
+void SongManager::GetPopularSongs( vector<Song*> &AddTo, const RString &sGroupName ) const
 {
 	if( sGroupName == GROUP_ALL )
 	{
-		AddTo.insert( AddTo.end(), m_pPopularSongs[slot].begin(), m_pPopularSongs[slot].end() );
+		AddTo.insert( AddTo.end(), m_pPopularSongs.begin(), m_pPopularSongs.end() );
 		return;
 	}
-	FOREACH_CONST( Song*, m_pPopularSongs[slot], song )
+	FOREACH_CONST( Song*, m_pPopularSongs, song )
 	{
 		if( (*song)->m_sGroupName == sGroupName )
 			AddTo.push_back( *song );
@@ -800,9 +799,8 @@ void SongManager::FreeCourses()
 		delete m_pCourses[i];
 	m_pCourses.clear();
 
-	for( int i = 0; i < NUM_ProfileSlot; ++i )
-		FOREACH_CourseType( ct )
-			m_pPopularCourses[i][ct].clear();
+	FOREACH_CourseType( ct )
+		m_pPopularCourses[ct].clear();
 	m_pShuffledCourses.clear();
 
 	m_mapCourseGroupToInfo.clear();
@@ -1285,18 +1283,14 @@ void SongManager::UpdatePopular()
 		CourseUtil::SortCoursePointerArrayByTitle( apBestCourses[ct] );
 	}
 
-	FOREACH_ENUM( ProfileSlot, i )
+	m_pPopularSongs = apBestSongs;
+	SongUtil::SortSongPointerArrayByNumPlays( m_pPopularSongs, ProfileSlot_Machine, true );
+
+	FOREACH_CourseType( ct )
 	{
-		m_pPopularSongs[i] = apBestSongs;
-
-		SongUtil::SortSongPointerArrayByNumPlays( m_pPopularSongs[i], i, true );
-
-		FOREACH_CourseType( ct )
-		{
-			vector<Course*> &vpCourses = m_pPopularCourses[i][ct];
-			vpCourses = apBestCourses[ct];
-			CourseUtil::SortCoursePointerArrayByNumPlays( vpCourses, i, true );
-		}
+		vector<Course*> &vpCourses = m_pPopularCourses[ct];
+		vpCourses = apBestCourses[ct];
+		CourseUtil::SortCoursePointerArrayByNumPlays( vpCourses, ProfileSlot_Machine, true );
 	}
 }
 

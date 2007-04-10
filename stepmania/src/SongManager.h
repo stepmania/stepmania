@@ -74,10 +74,10 @@ public:
 
 	// Lookup
 	const vector<Song*> &GetSongs( const RString &sGroupName = GROUP_ALL ) const;
-	void GetPopularSongs( vector<Song*> &AddTo, const RString &sGroupName, ProfileSlot slot=ProfileSlot_Machine ) const;
+	void GetPopularSongs( vector<Song*> &AddTo, const RString &sGroupName ) const;
 	void GetPreferredSortSongs( vector<Song*> &AddTo ) const;
-	const vector<Song*> &GetPopularSongs( ProfileSlot slot=ProfileSlot_Machine ) const { return m_pPopularSongs[slot]; }
-	const vector<Course*> &GetPopularCourses( CourseType ct, ProfileSlot slot=ProfileSlot_Machine ) const { return m_pPopularCourses[slot][ct]; }
+	const vector<Song*> &GetPopularSongs() const { return m_pPopularSongs; }
+	const vector<Course*> &GetPopularCourses( CourseType ct ) const { return m_pPopularCourses[ct]; }
 	Song *FindSong( RString sPath ) const;
 	Song *FindSong( RString sGroup, RString sSong ) const;
 	Course *FindCourse( RString sPath ) const;
@@ -131,7 +131,7 @@ protected:
 	int GetNumEditsLoadedFromProfile( ProfileSlot slot ) const;
 
 	vector<Song*>		m_pSongs;	// all songs that can be played
-	vector<Song*>		m_pPopularSongs[NUM_ProfileSlot];
+	vector<Song*>		m_pPopularSongs;
 	vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong
 	typedef vector<Song*> SongPointerVector;
 	vector<SongPointerVector> m_vPreferredSongSort;
@@ -142,7 +142,7 @@ protected:
 	map<RString,SongPointerVector,Comp> m_mapSongGroupIndex;
 
 	vector<Course*>		m_pCourses;
-	vector<Course*>		m_pPopularCourses[NUM_ProfileSlot][NUM_CourseType];
+	vector<Course*>		m_pPopularCourses[NUM_CourseType];
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
 	struct CourseGroupInfo
 	{
