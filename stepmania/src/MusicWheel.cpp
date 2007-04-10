@@ -347,12 +347,9 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 			(!GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2()) )
 		{
 			/* Hide songs that asked to be hidden via #SELECTABLE. */
-			if( so!=SORT_ROULETTE && !pSong->NormallyDisplayed() )
+			if( !pSong->NormallyDisplayed() )
 				continue;
 			if( so!=SORT_ROULETTE && UNLOCKMAN->SongIsRouletteOnly( pSong ) )
-				continue;
-			/* Don't show in roulette if #SELECTABLE:NO. */
-			if( so==SORT_ROULETTE && !pSong->RouletteDisplayed() )
 				continue;
 		}
 
