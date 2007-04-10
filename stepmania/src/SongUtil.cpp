@@ -803,6 +803,7 @@ void SongUtil::GetAllSongGenres( vector<RString> &vsOut )
 
 void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out )
 {
+	out.reserve( in.size() );
 	FOREACH_CONST( Song*, in, s )
 	{
 		if( sc.Matches( *s ) )
