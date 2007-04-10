@@ -16,6 +16,8 @@
 #include "Steps.h"
 #include "ThemeManager.h"
 #include "UnlockManager.h"
+#include "Game.h"
+#include "Style.h"
 
 static Preference<int> MAX_SONGS_IN_EDIT_COURSE( "MaxSongsInEditCourse", -1 );
 
@@ -709,6 +711,20 @@ bool Course::AllSongsAreFixed() const
 			return false;
 	}
 	return true;
+}
+
+const Style *Course::GetCourseStyle( const Game *pGame ) const
+{
+	for( int s=0; pGame->m_apStyles[s]; ++s ) 
+	{
+		const Style *pStyle = pGame->m_apStyles[s];
+		FOREACHS_CONST( RString, m_setStyles, style )
+		{
+			if( !style->CompareNoCase(pStyle->m_szName) )
+				return pStyle;
+		}
+	}
+	return NULL;
 }
 
 void Course::Invalidate( const Song *pStaleSong )

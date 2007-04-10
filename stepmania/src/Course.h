@@ -14,6 +14,8 @@
 #include <set>
 
 struct lua_State;
+class Style;
+class Game;
 
 const int MAX_EDIT_COURSE_TITLE_LENGTH = 12;
 
@@ -122,6 +124,7 @@ public:
 	int GetMeter( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
 	bool HasMods() const;
 	bool AllSongsAreFixed() const;
+	const Style *GetCourseStyle( const Game *pGame ) const;
 
 	int GetEstimatedNumStages() const { return m_vEntries.size(); }
 	bool IsPlayableIn( StepsType st ) const;
@@ -208,6 +211,9 @@ public:
 
 	typedef map<CacheEntry, RadarValues> RadarCache_t;
 	RadarCache_t m_RadarCache;
+
+	/* Preferred styles: */
+	set<RString> m_setStyles;
 };
 
 #endif

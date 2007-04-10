@@ -282,6 +282,15 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			rv.FromString( sParams[3] );
 			out.m_RadarCache[Course::CacheEntry(st, cd)] = rv;
 		}
+		else if( 0 == stricmp(sValueName, "STYLE") )
+		{
+			RString sStyles = sParams[1];
+			vector<RString> asStyles;
+			split( sStyles, ",", asStyles );
+			FOREACH( RString, asStyles, s )
+				out.m_setStyles.insert( *s );
+
+		}
 		else
 		{
 			LOG->UserLog( "Course file", sPath, "contains an unexpected value named \"%s\"", sValueName.c_str() );

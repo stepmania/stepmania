@@ -106,14 +106,6 @@ void ScreenSelectMusic::Init()
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","mode")) );
 	}
 
-	if( CommonMetrics::AUTO_SET_STYLE )
-	{
-		vector<StepsType> vst;
-		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
-		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
-		GAMESTATE->SetCurrentStyle( pStyle );
-	}
-
 	/* Load low-res banners, if needed. */
 	BANNERCACHE->Demand();
 
@@ -187,6 +179,14 @@ void ScreenSelectMusic::BeginScreen()
 	GAMESTATE->FinishStage();
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
+
+	if( CommonMetrics::AUTO_SET_STYLE )
+	{
+		vector<StepsType> vst;
+		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
+		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
+		GAMESTATE->SetCurrentStyle( pStyle );
+	}
 
 	if( GAMESTATE->GetCurrentStyle() == NULL )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
@@ -346,6 +346,10 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber].SetWithoutBroadcast( NULL );
 		FOREACH_ENUM( PlayerNumber, p )
 			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
+
+		/* If a course is selected, it may no longer be playable.  Let MusicWheel know
+		 * about the late join. */
+		m_MusicWheel.PlayerJoined();
 
 		AfterMusicChange();
 
@@ -888,14 +892,20 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		if( CommonMetrics::AUTO_SET_STYLE )
 		{
 			/* Now that Steps have been chosen, set a Style that can play them. */
-			StepsType stCurrent;
-			PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+			const Style *pStyle = NULL;
 			if( GAMESTATE->IsCourseMode() )
-				stCurrent = GAMESTATE->m_pCurTrail[pn]->m_StepsType;
-			else
-				stCurrent = GAMESTATE->m_pCurSteps[pn]->m_StepsType;
-			vector<StepsType> vst;
-			const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), stCurrent );
+				pStyle = GAMESTATE->m_pCurCourse->GetCourseStyle( GAMESTATE->m_pCurGame );
+			if( pStyle == NULL )
+			{
+				StepsType stCurrent;
+				PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+				if( GAMESTATE->IsCourseMode() )
+					stCurrent = GAMESTATE->m_pCurTrail[pn]->m_StepsType;
+				else
+					stCurrent = GAMESTATE->m_pCurSteps[pn]->m_StepsType;
+				vector<StepsType> vst;
+				pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), stCurrent );
+			}
 			GAMESTATE->SetCurrentStyle( pStyle );
 		}
 
@@ -1160,12 +1170,13 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	case TYPE_COURSE:
 	{
-		Course* pCourse = m_MusicWheel.GetSelectedCourse();
-		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-		Trail *pTrail = pCourse->GetTrail( st );
-		ASSERT( pTrail );
-
-		pCourse->GetTrails( m_vpTrails, GAMESTATE->GetCurrentStyle()->m_StepsType );
+		const Course *pCourse = m_MusicWheel.GetSelectedCourse();
+		const Style *pStyle = NULL;
+		if( CommonMetrics::AUTO_SET_STYLE )
+			pStyle = pCourse->GetCourseStyle( GAMESTATE->m_pCurGame );
+		if( pStyle == NULL )
+			pStyle = GAMESTATE->GetCurrentStyle();
+		pCourse->GetTrails( m_vpTrails, pStyle->m_StepsType );
 
 		m_sSampleMusicToPlay = m_sCourseMusicPath;
 		m_fSampleStartSeconds = 0;

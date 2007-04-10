@@ -44,6 +44,12 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		f.PutLine( "#REPEAT:YES;" );
 	if( course.m_iLives != -1 )
 		f.PutLine( ssprintf("#LIVES:%i;", course.m_iLives) );
+	if( !course.m_setStyles.empty() )
+	{
+		vector<RString> asStyles;
+		asStyles.insert( asStyles.begin(), course.m_setStyles.begin(), course.m_setStyles.end() );
+		f.PutLine( ssprintf("#STYLE:%i;", join( ",", asStyles ).c_str()) );
+	}
 
 	FOREACH_ENUM( CourseDifficulty,cd )
 	{

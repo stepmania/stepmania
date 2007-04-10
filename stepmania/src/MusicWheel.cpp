@@ -19,6 +19,7 @@
 #include "Foreach.h"
 #include "Style.h"
 #include "PlayerState.h"
+#include "CommonMetrics.h"
 
 static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );
 
@@ -981,14 +982,30 @@ void MusicWheel::SetOpenGroup( RString group )
 	if( !m_CurWheelItemData.empty() )
 		old = GetCurWheelItemData(m_iSelection);
 
+	vector<const Style*> vpPossibleStyles;
+	if( CommonMetrics::AUTO_SET_STYLE )
+		GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
+
 	m_CurWheelItemData.clear();
 	vector<WheelItemData *> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];
+	m_CurWheelItemData.reserve( from.size() );
 	for( unsigned i = 0; i < from.size(); ++i )
 	{
 		WheelItemData &d = *from[i];
 		if( (d.m_Type == TYPE_SONG || d.m_Type == TYPE_COURSE) && !d.m_sText.empty() &&
 			 d.m_sText != group )
 			 continue;
+
+		/* If AUTO_SET_STYLE, hide courses that prefer a style that isn't available. */
+		if( d.m_Type == TYPE_COURSE && CommonMetrics::AUTO_SET_STYLE )
+		{
+			const Style *pStyle = d.m_pCourse->GetCourseStyle( GAMESTATE->m_pCurGame );
+			if( pStyle )
+			{
+				if( find( vpPossibleStyles.begin(), vpPossibleStyles.end(), pStyle ) == vpPossibleStyles.end() )
+					continue;
+			}
+		}
 
 		/* Only show tutorial songs in arcade */
 		if( GAMESTATE->m_PlayMode!=PLAY_MODE_REGULAR && 
@@ -1015,6 +1032,12 @@ void MusicWheel::SetOpenGroup( RString group )
 	}
 
 	RebuildWheelItems();
+}
+
+/* Called on late join.  Selectable courses may have changed; reopen the section. */
+void MusicWheel::PlayerJoined()
+{
+	SetOpenGroup( m_sExpandedSectionName );
 }
 
 bool MusicWheel::IsRouletting() const
