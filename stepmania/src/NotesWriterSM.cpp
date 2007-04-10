@@ -63,7 +63,6 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	default: ASSERT(0);  /* fallthrough */
 	case Song::SHOW_ALWAYS:		f.Write( "YES" );		break;
 	case Song::SHOW_NEVER:		f.Write( "NO" );		break;
-	case Song::SHOW_ROULETTE:	f.Write( "ROULETTE" );	break;
 	}
 	f.PutLine( ";" );
 

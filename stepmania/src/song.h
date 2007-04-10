@@ -45,9 +45,8 @@ public:
 	/* Set when this song should be displayed in the music wheel: */
 	enum SelectionDisplay
 	{ 
-		SHOW_ALWAYS,	/* all the time */
-		SHOW_ROULETTE,	/* only when rouletting */
-		SHOW_NEVER		/* never (unless song hiding is turned off) */
+		SHOW_ALWAYS,	/* always */
+		SHOW_NEVER	/* never (unless song hiding is turned off) */
 	} m_SelectionDisplay;
 
 	Song();
@@ -193,7 +192,6 @@ public:
 	SelectionDisplay GetDisplayed() const;
 	bool NormallyDisplayed() const;
 	bool NeverDisplayed() const;
-	bool RouletteDisplayed() const;
 	bool ShowInDemonstrationAndRanking() const;
 
 	void AddSteps( Steps* pSteps );		// we are responsible for deleting the memory pointed to by pSteps!

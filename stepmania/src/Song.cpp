@@ -1027,7 +1027,6 @@ Song::SelectionDisplay Song::GetDisplayed() const
 }
 bool Song::NormallyDisplayed() const { return GetDisplayed() == SHOW_ALWAYS; }
 bool Song::NeverDisplayed() const { return GetDisplayed() == SHOW_NEVER; }
-bool Song::RouletteDisplayed() const { if(IsTutorial()) return false; return GetDisplayed() != SHOW_NEVER; }
 bool Song::ShowInDemonstrationAndRanking() const { return !IsTutorial() && NormallyDisplayed(); }
 
 

@@ -355,8 +355,6 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else if(!stricmp(sParams[1],"NO"))
 				out.m_SelectionDisplay = out.SHOW_NEVER;
-			else if(!stricmp(sParams[1],"ROULETTE"))
-				out.m_SelectionDisplay = out.SHOW_ROULETTE;
 			else
 				LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
 		}
