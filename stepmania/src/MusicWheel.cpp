@@ -372,7 +372,7 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 	{
 		Song* pSong;
 		Steps* pSteps;
-		SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, NULL, NULL );
+		SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps );
 
 		if( find( arraySongs.begin(), arraySongs.end(), pSong ) == arraySongs.end() )
 			arraySongs.push_back( pSong );
@@ -563,7 +563,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 			{
 				Song* pSong;
 				Steps* pSteps;
-				SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, NULL, NULL );
+				SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps );
 				
 				for( unsigned i=0; i<arrayWheelItemDatas.size(); i++ )
 				{

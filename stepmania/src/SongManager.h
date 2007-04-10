@@ -106,7 +106,7 @@ public:
 	void GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen ) const;
 
 	void GetExtraStageInfo( bool bExtra2, const Style *s, 
-		Song*& pSongOut, Steps*& pStepsOut, PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut );
+		Song*& pSongOut, Steps*& pStepsOut, PlayerOptions *pPlayerOptionsOut = NULL, SongOptions *pSongOptionsOut = NULL );
 	Song* GetSongFromDir( RString sDir ) const;
 	Course* GetCourseFromPath( RString sPath ) const;	// path to .crs file, or path to song group dir
 	Course* GetCourseFromName( RString sName ) const;
