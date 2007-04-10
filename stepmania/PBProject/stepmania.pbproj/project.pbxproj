@@ -212,8 +212,6 @@
 		AA29CCAE0558741A00961A51 /* ScreenEdit.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E001E047711F3005F316C /* ScreenEdit.h */; };
 		AA29CCAF0558741A00961A51 /* ScreenEditMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0020047711F3005F316C /* ScreenEditMenu.h */; };
 		AA29CCB00558741A00961A51 /* ScreenEvaluation.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0022047711F3005F316C /* ScreenEvaluation.h */; };
-		AA29CCB10558741A00961A51 /* ScreenEz2SelectMusic.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0024047711F3005F316C /* ScreenEz2SelectMusic.h */; };
-		AA29CCB20558741A00961A51 /* ScreenEz2SelectPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0026047711F3005F316C /* ScreenEz2SelectPlayer.h */; };
 		AA29CCB40558741A00961A51 /* ScreenGameplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E002A047711F3005F316C /* ScreenGameplay.h */; };
 		AA29CCB50558741A00961A51 /* ScreenInstructions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0034047711F3005F316C /* ScreenInstructions.h */; };
 		AA29CCB60558741A00961A51 /* ScreenJukebox.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0038047711F3005F316C /* ScreenJukebox.h */; };
@@ -258,7 +256,6 @@
 		AA29CCEA0558741A00961A51 /* RageDisplay_OGL.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC23F7D0485E68D005F316C /* RageDisplay_OGL.h */; };
 		AA29CCEB0558741A00961A51 /* RageUtil_CharConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC23F7F0485E68D005F316C /* RageUtil_CharConversions.h */; };
 		AA29CCEC0558741A00961A51 /* BannerCache.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE35EC04967E26005F316C /* BannerCache.h */; };
-		AA29CCED0558741A00961A51 /* ModeSwitcher.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE35F004967E6F005F316C /* ModeSwitcher.h */; };
 		AA29CCEE0558741A00961A51 /* arch_default.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE36F60497CE16005F316C /* arch_default.h */; };
 		AA29CCF10558741A00961A51 /* ArchHooks.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE36FC0497CE44005F316C /* ArchHooks.h */; };
 		AA29CCF30558741A00961A51 /* RageSoundDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE37030497CF85005F316C /* RageSoundDriver.h */; };
@@ -415,8 +412,6 @@
 		AA29CDBF0558741A00961A51 /* ScreenEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001D047711F3005F316C /* ScreenEdit.cpp */; settings = {COMPILER_FLAGS = "-finline-limit=300"; }; };
 		AA29CDC00558741A00961A51 /* ScreenEditMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001F047711F3005F316C /* ScreenEditMenu.cpp */; };
 		AA29CDC10558741A00961A51 /* ScreenEvaluation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0021047711F3005F316C /* ScreenEvaluation.cpp */; };
-		AA29CDC20558741A00961A51 /* ScreenEz2SelectMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0023047711F3005F316C /* ScreenEz2SelectMusic.cpp */; };
-		AA29CDC30558741A00961A51 /* ScreenEz2SelectPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0025047711F3005F316C /* ScreenEz2SelectPlayer.cpp */; };
 		AA29CDC50558741A00961A51 /* ScreenGameplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0029047711F3005F316C /* ScreenGameplay.cpp */; };
 		AA29CDC60558741A00961A51 /* ScreenJukebox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0037047711F3005F316C /* ScreenJukebox.cpp */; };
 		AA29CDC90558741A00961A51 /* ScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E003F047711F3005F316C /* ScreenManager.cpp */; };
@@ -459,7 +454,6 @@
 		AA29CDF90558741A00961A51 /* RageDisplay_OGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC23F7C0485E68D005F316C /* RageDisplay_OGL.cpp */; };
 		AA29CDFA0558741A00961A51 /* RageUtil_CharConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC23F7E0485E68D005F316C /* RageUtil_CharConversions.cpp */; };
 		AA29CDFB0558741A00961A51 /* BannerCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE35EB04967E25005F316C /* BannerCache.cpp */; };
-		AA29CDFC0558741A00961A51 /* ModeSwitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE35EF04967E6F005F316C /* ModeSwitcher.cpp */; };
 		AA29CDFE0558741A00961A51 /* ScreenSelectMaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1DC47404A4861700D02EE9 /* ScreenSelectMaster.cpp */; };
 		AA29CE000558741A00961A51 /* CombinedLifeMeterTug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE443EB04B0F9F600D02EE9 /* CombinedLifeMeterTug.cpp */; };
 		AA29CE010558741A00961A51 /* ScoreKeeperRave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE443F304B0FEB700D02EE9 /* ScoreKeeperRave.cpp */; };
@@ -663,8 +657,6 @@
 		AA40D22E09A08D650068C0D5 /* ScreenEdit.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E001E047711F3005F316C /* ScreenEdit.h */; };
 		AA40D22F09A08D650068C0D5 /* ScreenEditMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0020047711F3005F316C /* ScreenEditMenu.h */; };
 		AA40D23009A08D650068C0D5 /* ScreenEvaluation.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0022047711F3005F316C /* ScreenEvaluation.h */; };
-		AA40D23109A08D650068C0D5 /* ScreenEz2SelectMusic.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0024047711F3005F316C /* ScreenEz2SelectMusic.h */; };
-		AA40D23209A08D650068C0D5 /* ScreenEz2SelectPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0026047711F3005F316C /* ScreenEz2SelectPlayer.h */; };
 		AA40D23309A08D650068C0D5 /* ScreenGameplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E002A047711F3005F316C /* ScreenGameplay.h */; };
 		AA40D23409A08D650068C0D5 /* ScreenInstructions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0034047711F3005F316C /* ScreenInstructions.h */; };
 		AA40D23509A08D650068C0D5 /* ScreenJukebox.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0038047711F3005F316C /* ScreenJukebox.h */; };
@@ -709,7 +701,6 @@
 		AA40D25D09A08D650068C0D5 /* RageDisplay_OGL.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC23F7D0485E68D005F316C /* RageDisplay_OGL.h */; };
 		AA40D25E09A08D650068C0D5 /* RageUtil_CharConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC23F7F0485E68D005F316C /* RageUtil_CharConversions.h */; };
 		AA40D25F09A08D650068C0D5 /* BannerCache.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE35EC04967E26005F316C /* BannerCache.h */; };
-		AA40D26009A08D650068C0D5 /* ModeSwitcher.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE35F004967E6F005F316C /* ModeSwitcher.h */; };
 		AA40D26109A08D650068C0D5 /* arch_default.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE36F60497CE16005F316C /* arch_default.h */; };
 		AA40D26309A08D650068C0D5 /* ArchHooks.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE36FC0497CE44005F316C /* ArchHooks.h */; };
 		AA40D26409A08D650068C0D5 /* RageSoundDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE37030497CF85005F316C /* RageSoundDriver.h */; };
@@ -1027,8 +1018,6 @@
 		AA40D3ED09A08D650068C0D5 /* ScreenEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001D047711F3005F316C /* ScreenEdit.cpp */; settings = {COMPILER_FLAGS = "-finline-limit=300"; }; };
 		AA40D3EE09A08D650068C0D5 /* ScreenEditMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001F047711F3005F316C /* ScreenEditMenu.cpp */; };
 		AA40D3EF09A08D650068C0D5 /* ScreenEvaluation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0021047711F3005F316C /* ScreenEvaluation.cpp */; };
-		AA40D3F009A08D650068C0D5 /* ScreenEz2SelectMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0023047711F3005F316C /* ScreenEz2SelectMusic.cpp */; };
-		AA40D3F109A08D650068C0D5 /* ScreenEz2SelectPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0025047711F3005F316C /* ScreenEz2SelectPlayer.cpp */; };
 		AA40D3F209A08D650068C0D5 /* ScreenGameplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0029047711F3005F316C /* ScreenGameplay.cpp */; };
 		AA40D3F309A08D650068C0D5 /* ScreenJukebox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0037047711F3005F316C /* ScreenJukebox.cpp */; };
 		AA40D3F409A08D650068C0D5 /* ScreenManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E003F047711F3005F316C /* ScreenManager.cpp */; };
@@ -1071,7 +1060,6 @@
 		AA40D41B09A08D650068C0D5 /* RageDisplay_OGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC23F7C0485E68D005F316C /* RageDisplay_OGL.cpp */; };
 		AA40D41C09A08D650068C0D5 /* RageUtil_CharConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC23F7E0485E68D005F316C /* RageUtil_CharConversions.cpp */; };
 		AA40D41D09A08D650068C0D5 /* BannerCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE35EB04967E25005F316C /* BannerCache.cpp */; };
-		AA40D41E09A08D650068C0D5 /* ModeSwitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE35EF04967E6F005F316C /* ModeSwitcher.cpp */; };
 		AA40D42009A08D650068C0D5 /* ScreenSelectMaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1DC47404A4861700D02EE9 /* ScreenSelectMaster.cpp */; };
 		AA40D42109A08D650068C0D5 /* CombinedLifeMeterTug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE443EB04B0F9F600D02EE9 /* CombinedLifeMeterTug.cpp */; };
 		AA40D42209A08D650068C0D5 /* ScoreKeeperRave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE443F304B0FEB700D02EE9 /* ScoreKeeperRave.cpp */; };
@@ -2334,10 +2322,6 @@
 		AA6E0020047711F3005F316C /* ScreenEditMenu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenEditMenu.h; path = ../src/ScreenEditMenu.h; sourceTree = "<group>"; };
 		AA6E0021047711F3005F316C /* ScreenEvaluation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenEvaluation.cpp; path = ../src/ScreenEvaluation.cpp; sourceTree = "<group>"; };
 		AA6E0022047711F3005F316C /* ScreenEvaluation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenEvaluation.h; path = ../src/ScreenEvaluation.h; sourceTree = "<group>"; };
-		AA6E0023047711F3005F316C /* ScreenEz2SelectMusic.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenEz2SelectMusic.cpp; path = ../src/ScreenEz2SelectMusic.cpp; sourceTree = "<group>"; };
-		AA6E0024047711F3005F316C /* ScreenEz2SelectMusic.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenEz2SelectMusic.h; path = ../src/ScreenEz2SelectMusic.h; sourceTree = "<group>"; };
-		AA6E0025047711F3005F316C /* ScreenEz2SelectPlayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenEz2SelectPlayer.cpp; path = ../src/ScreenEz2SelectPlayer.cpp; sourceTree = "<group>"; };
-		AA6E0026047711F3005F316C /* ScreenEz2SelectPlayer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenEz2SelectPlayer.h; path = ../src/ScreenEz2SelectPlayer.h; sourceTree = "<group>"; };
 		AA6E0029047711F3005F316C /* ScreenGameplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenGameplay.cpp; path = ../src/ScreenGameplay.cpp; sourceTree = "<group>"; };
 		AA6E002A047711F3005F316C /* ScreenGameplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenGameplay.h; path = ../src/ScreenGameplay.h; sourceTree = "<group>"; };
 		AA6E002F047711F3005F316C /* ScreenHowToPlay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenHowToPlay.cpp; path = ../src/ScreenHowToPlay.cpp; sourceTree = "<group>"; };
@@ -3109,8 +3093,6 @@
 		AABE322305ACDA52001A0E84 /* RageFileDriverDirectHelpers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageFileDriverDirectHelpers.h; path = ../src/RageFileDriverDirectHelpers.h; sourceTree = "<group>"; };
 		AABE35EB04967E25005F316C /* BannerCache.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = BannerCache.cpp; path = ../src/BannerCache.cpp; sourceTree = "<group>"; };
 		AABE35EC04967E26005F316C /* BannerCache.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = BannerCache.h; path = ../src/BannerCache.h; sourceTree = "<group>"; };
-		AABE35EF04967E6F005F316C /* ModeSwitcher.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ModeSwitcher.cpp; path = ../src/ModeSwitcher.cpp; sourceTree = "<group>"; };
-		AABE35F004967E6F005F316C /* ModeSwitcher.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ModeSwitcher.h; path = ../src/ModeSwitcher.h; sourceTree = "<group>"; };
 		AABE36F60497CE16005F316C /* arch_default.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = arch_default.h; sourceTree = "<group>"; };
 		AABE36FC0497CE44005F316C /* ArchHooks.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ArchHooks.h; path = ArchHooks/ArchHooks.h; sourceTree = "<group>"; };
 		AABE37030497CF85005F316C /* RageSoundDriver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = RageSoundDriver.h; sourceTree = "<group>"; };
@@ -3595,10 +3577,6 @@
 				AA6E0022047711F3005F316C /* ScreenEvaluation.h */,
 				AAECF8BF05265DB600D02EE9 /* ScreenExit.cpp */,
 				AAECF8C005265DB600D02EE9 /* ScreenExit.h */,
-				AA6E0023047711F3005F316C /* ScreenEz2SelectMusic.cpp */,
-				AA6E0024047711F3005F316C /* ScreenEz2SelectMusic.h */,
-				AA6E0025047711F3005F316C /* ScreenEz2SelectPlayer.cpp */,
-				AA6E0026047711F3005F316C /* ScreenEz2SelectPlayer.h */,
 				AA6E0029047711F3005F316C /* ScreenGameplay.cpp */,
 				AA6E002A047711F3005F316C /* ScreenGameplay.h */,
 				AACFBE4908E7D893005087FC /* ScreenGameplayLesson.cpp */,
@@ -4286,8 +4264,6 @@
 				AA6EFE9B04770E7C005F316C /* MenuTimer.h */,
 				AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */,
 				AA6EFE9D04770E7C005F316C /* MeterDisplay.h */,
-				AABE35EF04967E6F005F316C /* ModeSwitcher.cpp */,
-				AABE35F004967E6F005F316C /* ModeSwitcher.h */,
 				AA6EFE9E04770E7C005F316C /* MusicBannerWheel.cpp */,
 				AA6EFE9F04770E7C005F316C /* MusicBannerWheel.h */,
 				AA6EFEA004770E7C005F316C /* MusicList.cpp */,
@@ -5348,8 +5324,6 @@
 				AA29CCAE0558741A00961A51 /* ScreenEdit.h in Headers */,
 				AA29CCAF0558741A00961A51 /* ScreenEditMenu.h in Headers */,
 				AA29CCB00558741A00961A51 /* ScreenEvaluation.h in Headers */,
-				AA29CCB10558741A00961A51 /* ScreenEz2SelectMusic.h in Headers */,
-				AA29CCB20558741A00961A51 /* ScreenEz2SelectPlayer.h in Headers */,
 				AA29CCB40558741A00961A51 /* ScreenGameplay.h in Headers */,
 				AA29CCB50558741A00961A51 /* ScreenInstructions.h in Headers */,
 				AA29CCB60558741A00961A51 /* ScreenJukebox.h in Headers */,
@@ -5394,7 +5368,6 @@
 				AA29CCEA0558741A00961A51 /* RageDisplay_OGL.h in Headers */,
 				AA29CCEB0558741A00961A51 /* RageUtil_CharConversions.h in Headers */,
 				AA29CCEC0558741A00961A51 /* BannerCache.h in Headers */,
-				AA29CCED0558741A00961A51 /* ModeSwitcher.h in Headers */,
 				AA29CCEE0558741A00961A51 /* arch_default.h in Headers */,
 				AA29CCF10558741A00961A51 /* ArchHooks.h in Headers */,
 				AA29CCF30558741A00961A51 /* RageSoundDriver.h in Headers */,
@@ -5772,8 +5745,6 @@
 				AA40D22E09A08D650068C0D5 /* ScreenEdit.h in Headers */,
 				AA40D22F09A08D650068C0D5 /* ScreenEditMenu.h in Headers */,
 				AA40D23009A08D650068C0D5 /* ScreenEvaluation.h in Headers */,
-				AA40D23109A08D650068C0D5 /* ScreenEz2SelectMusic.h in Headers */,
-				AA40D23209A08D650068C0D5 /* ScreenEz2SelectPlayer.h in Headers */,
 				AA40D23309A08D650068C0D5 /* ScreenGameplay.h in Headers */,
 				AA40D23409A08D650068C0D5 /* ScreenInstructions.h in Headers */,
 				AA40D23509A08D650068C0D5 /* ScreenJukebox.h in Headers */,
@@ -5818,7 +5789,6 @@
 				AA40D25D09A08D650068C0D5 /* RageDisplay_OGL.h in Headers */,
 				AA40D25E09A08D650068C0D5 /* RageUtil_CharConversions.h in Headers */,
 				AA40D25F09A08D650068C0D5 /* BannerCache.h in Headers */,
-				AA40D26009A08D650068C0D5 /* ModeSwitcher.h in Headers */,
 				AA40D26109A08D650068C0D5 /* arch_default.h in Headers */,
 				AA40D26309A08D650068C0D5 /* ArchHooks.h in Headers */,
 				AA40D26409A08D650068C0D5 /* RageSoundDriver.h in Headers */,
@@ -6519,8 +6489,6 @@
 				AA29CDBF0558741A00961A51 /* ScreenEdit.cpp in Sources */,
 				AA29CDC00558741A00961A51 /* ScreenEditMenu.cpp in Sources */,
 				AA29CDC10558741A00961A51 /* ScreenEvaluation.cpp in Sources */,
-				AA29CDC20558741A00961A51 /* ScreenEz2SelectMusic.cpp in Sources */,
-				AA29CDC30558741A00961A51 /* ScreenEz2SelectPlayer.cpp in Sources */,
 				AA29CDC50558741A00961A51 /* ScreenGameplay.cpp in Sources */,
 				AA29CDC60558741A00961A51 /* ScreenJukebox.cpp in Sources */,
 				AA29CDC90558741A00961A51 /* ScreenManager.cpp in Sources */,
@@ -6563,7 +6531,6 @@
 				AA29CDF90558741A00961A51 /* RageDisplay_OGL.cpp in Sources */,
 				AA29CDFA0558741A00961A51 /* RageUtil_CharConversions.cpp in Sources */,
 				AA29CDFB0558741A00961A51 /* BannerCache.cpp in Sources */,
-				AA29CDFC0558741A00961A51 /* ModeSwitcher.cpp in Sources */,
 				AA29CDFE0558741A00961A51 /* ScreenSelectMaster.cpp in Sources */,
 				AA29CE000558741A00961A51 /* CombinedLifeMeterTug.cpp in Sources */,
 				AA29CE010558741A00961A51 /* ScoreKeeperRave.cpp in Sources */,
@@ -6933,8 +6900,6 @@
 				AA40D3ED09A08D650068C0D5 /* ScreenEdit.cpp in Sources */,
 				AA40D3EE09A08D650068C0D5 /* ScreenEditMenu.cpp in Sources */,
 				AA40D3EF09A08D650068C0D5 /* ScreenEvaluation.cpp in Sources */,
-				AA40D3F009A08D650068C0D5 /* ScreenEz2SelectMusic.cpp in Sources */,
-				AA40D3F109A08D650068C0D5 /* ScreenEz2SelectPlayer.cpp in Sources */,
 				AA40D3F209A08D650068C0D5 /* ScreenGameplay.cpp in Sources */,
 				AA40D3F309A08D650068C0D5 /* ScreenJukebox.cpp in Sources */,
 				AA40D3F409A08D650068C0D5 /* ScreenManager.cpp in Sources */,
@@ -6977,7 +6942,6 @@
 				AA40D41B09A08D650068C0D5 /* RageDisplay_OGL.cpp in Sources */,
 				AA40D41C09A08D650068C0D5 /* RageUtil_CharConversions.cpp in Sources */,
 				AA40D41D09A08D650068C0D5 /* BannerCache.cpp in Sources */,
-				AA40D41E09A08D650068C0D5 /* ModeSwitcher.cpp in Sources */,
 				AA40D42009A08D650068C0D5 /* ScreenSelectMaster.cpp in Sources */,
 				AA40D42109A08D650068C0D5 /* CombinedLifeMeterTug.cpp in Sources */,
 				AA40D42209A08D650068C0D5 /* ScoreKeeperRave.cpp in Sources */,
