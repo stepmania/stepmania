@@ -1683,23 +1683,6 @@ public:
 		else lua_pushnil(L);
 		return 1;
 	}
-	static int GetSongRank( T* p, lua_State *L )
-	{
-		Song *pSong = Luna<Song>::check(L,1);
-		const vector<Song*> apBest = p->GetPopularSongs( ProfileSlot_Machine );
-		int iIndex = FindIndex( apBest.begin(), apBest.end(), pSong );
-		lua_pushnumber( L, iIndex );
-		return 1;
-	}
-	static int GetCourseRank( T* p, lua_State *L )
-	{
-		Course *pCourse = Luna<Course>::check(L,1);
-		CourseType ct = PlayModeToCourseType( GAMESTATE->m_PlayMode );
-		const vector<Course*> best = SONGMAN->GetPopularCourses( ct, ProfileSlot_Machine );
-		int iIndex = FindCourseIndexOfSameMode( best.begin(), best.end(), pCourse );
-		lua_pushnumber( L, iIndex );
-		return 1;
-	}
 	
 	static int GetExtraStageInfo( T* p, lua_State *L )
 	{
@@ -1734,8 +1717,6 @@ public:
 		ADD_METHOD( GetNumAdditionalCourses );
 		ADD_METHOD( GetNumCourseGroups );
 		ADD_METHOD( GetSongFromSteps );
-		ADD_METHOD( GetSongRank );
-		ADD_METHOD( GetCourseRank );
 		ADD_METHOD( GetExtraStageInfo );
 		ADD_METHOD( GetSongColor );
 	}
