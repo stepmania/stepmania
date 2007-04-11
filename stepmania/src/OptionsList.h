@@ -63,6 +63,7 @@ private:
 	void MoveItem( const RString &sRowName, int iMove );
 	void SwitchMenu( int iDir );
 	void PositionCursor();
+	void SelectionsChanged( const RString &sRowName );
 	void UpdateMenuFromSelections();
 	RString GetCurrentRow() const;
 	const OptionRowHandler *GetCurrentHandler();

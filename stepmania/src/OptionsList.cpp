@@ -588,9 +588,14 @@ void OptionsList::SelectItem( const RString &sRowName, int iMenuItem )
 		bSelections[iMenuItem] = true;
 	}
 
-	ExportRow( sRowName );
-
+	SelectionsChanged( sRowName );
 	UpdateMenuFromSelections();
+}
+
+void OptionsList::SelectionsChanged( const RString &sRowName )
+{
+	const OptionRowHandler *pHandler = m_Rows[sRowName];
+	vector<bool> &bSelections = m_bSelections[sRowName];
 
 	if( pHandler->m_Def.m_bOneChoiceForAllPlayers && m_pLinked != NULL )
 	{
@@ -599,7 +604,11 @@ void OptionsList::SelectItem( const RString &sRowName, int iMenuItem )
 
 		if( m_pLinked->IsOpened() )
 			m_pLinked->UpdateMenuFromSelections();
+
+		m_pLinked->ExportRow( sRowName );
 	}
+
+	ExportRow( sRowName );
 }
 
 void OptionsList::UpdateMenuFromSelections()
@@ -636,7 +645,10 @@ bool OptionsList::Start()
 
 			/* Import options. */
 			FOREACHM( RString, OptionRowHandler *, m_Rows, hand )
+			{
 				ImportRow( hand->first );
+				SelectionsChanged( hand->first );
+			}
 
 			UpdateMenuFromSelections();
 
