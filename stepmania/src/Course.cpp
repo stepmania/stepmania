@@ -975,6 +975,7 @@ public:
 		LuaHelpers::CreateTableFromArray<Trail*>( v, L );
 		return 1;
 	}
+	static int GetBannerPath( T* p, lua_State *L )		{ if( p->m_sBannerPath.empty() ) return 0; lua_pushstring(L, p->m_sBannerPath ); return 1; }
 	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName ); return 1; }
 	static int IsAutogen( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bIsAutogen ); return 1; }
 	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }
@@ -998,6 +999,7 @@ public:
 		ADD_METHOD( GetCourseType );
 		ADD_METHOD( GetCourseEntry );
 		ADD_METHOD( GetAllTrails );
+		ADD_METHOD( GetBannerPath );
 		ADD_METHOD( GetGroupName );
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( GetEstimatedNumStages );
