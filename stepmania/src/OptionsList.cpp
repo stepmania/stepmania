@@ -675,6 +675,7 @@ bool OptionsList::Start()
 
 	SelectItem( GetCurrentRow(), m_iMenuStackSelection );
 
+#if 0
 	if( pHandler->m_Def.m_selectType == SELECT_ONE )
 	{
 		/* Move to the exit row.  Don't exit, so different entries don't have widely
@@ -683,6 +684,7 @@ bool OptionsList::Start()
 		m_iMenuStackSelection = (int)bSelections.size();
 		PositionCursor();
 	}
+#endif
 
 	Message msg("OptionsListStart");
 	msg.SetParam( "Player", m_pn );
