@@ -75,6 +75,7 @@ private:
 	void Pop();
 	void ImportRow( RString sRow );
 	void ExportRow( RString sRow );
+	static int FindScreenInHandler( const OptionRowHandler *pHandler, RString sScreen );
 
 	InputQueueCodeSet	m_Codes;
 
@@ -87,6 +88,7 @@ private:
 	map<RString, OptionRowHandler *> m_Rows;
 	map<RString, vector<bool> > m_bSelections;
 	set<RString> m_setDirectRows;
+	set<RString> m_setTopMenus; /* list of top-level menus, pointing to submenus */
 
 	PlayerNumber m_pn;
 	AutoActor m_Cursor;

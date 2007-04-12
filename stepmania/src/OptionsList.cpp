@@ -43,6 +43,7 @@ void OptionListRow::Load( OptionsList *pOptions, const RString &sType )
 
 void OptionListRow::SetFromHandler( const OptionRowHandler *pHandler )
 {
+	this->FinishTweening();
 	this->RemoveAllChildren();
 
 	if( pHandler == NULL )
@@ -196,8 +197,9 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 	FOREACH( RString, asDirectLines, s )
 		m_setDirectRows.insert( *s );
 
+	m_setTopMenus.insert( "Main" );
 	vector<RString> setToLoad;
-	setToLoad.push_back( "Main" );
+	setToLoad.insert( setToLoad.begin(), m_setTopMenus.begin(), m_setTopMenus.end() );
 
 	while( !setToLoad.empty() )
 	{
@@ -302,26 +304,39 @@ void OptionsList::PositionCursor()
  * menus. */
 void OptionsList::SwitchMenu( int iDir )
 {
+	/* Consider the menu as a list, where the main menu is the first item and the
+	 * submenus follow.  This allows consistent navigation; moving right from the
+	 * main menu walks through the menus, moving left goes back as far as the main
+	 * menu.  Don't loop, so it's harder to lose track of menus. */
+	RString sTopRow = m_asMenuStack.front();
+	const OptionRowHandler *pHandler = m_Rows[sTopRow];
 	int iCurrentRow = 0;
-	for( size_t i = 0; i < m_asLoadedRows.size(); ++i )
-		if( m_asLoadedRows[i] == m_asMenuStack.back() )
-			iCurrentRow = i;
-
-	const int iCurrentRowStart = iCurrentRow;
-	RString sDest;
-	do
-	{
-		iCurrentRow += iDir;
-		wrap( iCurrentRow, m_asLoadedRows.size() );
-		sDest = m_asLoadedRows[iCurrentRow];
-	}
-	while( sDest == "Main" && iCurrentRow != iCurrentRowStart );
-
-	ASSERT( !sDest.empty() );
 	if( m_asMenuStack.size() == 1 )
-		m_asMenuStack.push_back( sDest );
+		iCurrentRow = -1;
 	else
-		m_asMenuStack.back() = sDest;
+		iCurrentRow = FindScreenInHandler( pHandler, m_asMenuStack.back() );
+
+	iCurrentRow += iDir;
+	if( iCurrentRow >= 0 )
+	{
+		if( iCurrentRow >= (int) pHandler->m_Def.m_vsChoices.size() )
+			return;
+		RString sDest = pHandler->GetScreen( iCurrentRow );
+		if( sDest.empty() )
+			return;
+
+		if( m_asMenuStack.size() == 1 )
+			m_asMenuStack.push_back( sDest );
+		else
+			m_asMenuStack.back() = sDest;
+	}
+	else
+	{
+		if( m_asMenuStack.size() == 1 )
+			return;
+
+		m_asMenuStack.pop_back();
+	}
 
 	SetDefaultCurrentRow();
 	SwitchToCurrentRow();
@@ -495,13 +510,13 @@ void OptionsList::ImportRow( RString sRow )
 	pHandler->ImportOption( vpns, aSelections );
 	m_bSelections[sRow] = aSelections[ m_pn ];
 
-	if( sRow == "Main" )
+	if( m_setTopMenus.find(sRow) != m_setTopMenus.end() )
 		fill( m_bSelections[sRow].begin(), m_bSelections[sRow].end(), false );
 }
 
 void OptionsList::ExportRow( RString sRow )
 {
-	if( sRow == "Main" )
+	if( m_setTopMenus.find(sRow) != m_setTopMenus.end() )
 		return;
 
 	vector<bool> aSelections[NUM_PLAYERS];
@@ -529,6 +544,16 @@ void OptionsList::SetDefaultCurrentRow()
 	}
 }
 
+int OptionsList::FindScreenInHandler( const OptionRowHandler *pHandler, RString sScreen )
+{
+	for( size_t i = 0; i < pHandler->m_Def.m_vsChoices.size(); ++i )
+	{
+		if( pHandler->GetScreen(i) == sScreen )
+			return i;
+	}
+	return -1;
+}
+
 void OptionsList::Pop()
 {
 	if( m_asMenuStack.size() == 1 )
@@ -546,15 +571,9 @@ void OptionsList::Pop()
 
 	/* If the old menu exists as a target from the new menu, switch to it. */
 	const OptionRowHandler *pHandler = GetCurrentHandler();
-	RString sDest;
-	for( size_t i = 0; i < pHandler->m_Def.m_vsChoices.size(); ++i )
-	{
-		if( pHandler->GetScreen(i) == sLastMenu )
-		{
-			m_iMenuStackSelection = i;
-			break;
-		}
-	}
+	int iIndex = FindScreenInHandler( pHandler, sLastMenu );
+	if( iIndex != -1 )
+		m_iMenuStackSelection = iIndex;
 
 	SwitchToCurrentRow();
 	TweenOnCurrentRow( false );
