@@ -15,6 +15,7 @@
 #define MAX_ITEMS_BEFORE_SPLIT			THEME->GetMetricI(m_sName,"MaxItemsBeforeSplit")
 #define ITEMS_SPLIT_WIDTH			THEME->GetMetricF(m_sName,"ItemsSplitWidth")
 #define DIRECT_LINES				THEME->GetMetric (m_sName,"DirectLines")
+#define TOP_MENUS				THEME->GetMetric (m_sName,"TopMenus")
 
 static const RString RESET_ROW = "ResetOptions";
 
@@ -182,6 +183,8 @@ OptionsList::~OptionsList()
 
 void OptionsList::Load( RString sType, PlayerNumber pn )
 {
+	TOP_MENU.Load( sType, "TopMenu" );
+
 	m_pn = pn;
 	m_bStartIsDown = false;
 
@@ -197,9 +200,9 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 	FOREACH( RString, asDirectLines, s )
 		m_setDirectRows.insert( *s );
 
-	m_setTopMenus.insert( "Main" );
 	vector<RString> setToLoad;
-	setToLoad.insert( setToLoad.begin(), m_setTopMenus.begin(), m_setTopMenus.end() );
+	split( TOP_MENUS, ",", setToLoad );
+	m_setTopMenus.insert( setToLoad.begin(), setToLoad.end() );
 
 	while( !setToLoad.empty() )
 	{
@@ -253,7 +256,7 @@ void OptionsList::Open()
 
 	/* Push the initial menu. */
 	ASSERT( m_asMenuStack.size() == 0 );
-	Push( "Main" );
+	Push( TOP_MENU );
 
 	this->FinishTweening();
 	m_Row[!m_iCurrentRow].SetFromHandler( NULL );

@@ -9,6 +9,7 @@
 #include "BitmapText.h"
 #include "OptionsCursor.h"
 #include "CodeSet.h"
+#include "ThemeMetric.h"
 
 class OptionsList;
 class OptionListRow: public ActorFrame
@@ -59,6 +60,8 @@ public:
 	bool Start();	/* return true if the last menu was popped in response to this press */
 
 private:
+	ThemeMetric<RString> TOP_MENU;
+
 	void SelectItem( const RString &sRowName, int iMenuItem );
 	void MoveItem( const RString &sRowName, int iMove );
 	void SwitchMenu( int iDir );
