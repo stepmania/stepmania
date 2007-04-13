@@ -900,9 +900,15 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 				StepsType stCurrent;
 				PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
 				if( GAMESTATE->IsCourseMode() )
+				{
+					ASSERT( GAMESTATE->m_pCurTrail[pn] );
 					stCurrent = GAMESTATE->m_pCurTrail[pn]->m_StepsType;
+				}
 				else
+				{
+					ASSERT( GAMESTATE->m_pCurSteps[pn] );
 					stCurrent = GAMESTATE->m_pCurSteps[pn]->m_StepsType;
+				}
 				vector<StepsType> vst;
 				pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), stCurrent );
 			}
