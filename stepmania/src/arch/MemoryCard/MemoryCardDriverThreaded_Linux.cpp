@@ -131,7 +131,11 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				continue;
 
 
-			usbd.sDevice = "/dev/" + sDevice + "1";
+			/* If the first partition device exists, eg. /sys/block/uba/uba1, use it. */
+			if( access(usbd.sSysPath + sDevice + "1", F_OK) != -1 )
+				usbd.sDevice = "/dev/" + sDevice + "1";
+			else
+				usbd.sDevice = "/dev/" + sDevice;
 
 			/*
 			 * sPath/device should be a symlink to the actual device.  For USB
