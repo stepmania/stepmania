@@ -553,7 +553,7 @@ void KSFLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 
 bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 {
-	LOG->Trace( "Song::LoadFromKSFDir(%s)", sDir.c_str() );
+	LOG->Trace( "KSFLoader::LoadFromDir(%s)", sDir.c_str() );
 
 	vector<RString> arrayKSFFileNames;
 	GetDirListing( sDir + RString("*.ksf"), arrayKSFFileNames );
