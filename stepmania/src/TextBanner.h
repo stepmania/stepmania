@@ -28,7 +28,6 @@ public:
 
 private:
 	void LoadInternal( 
-		Song *pSong,
 		const RString &sDisplayTitle, const RString &sTranslitTitle, 
 		const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
 		const RString &sDisplayArtist, const RString &sTranslitArtist );

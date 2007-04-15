@@ -92,14 +92,12 @@ void TextBanner::LoadFromString(
 	const RString &sDisplayArtist, const RString &sTranslitArtist )
 {
 	LoadInternal( 
-		NULL,
 		sDisplayTitle, sTranslitTitle, 
 		sDisplaySubTitle, sTranslitSubTitle, 
 		sDisplayArtist, sTranslitArtist );
 }
 
 void TextBanner::LoadInternal( 
-	Song *pSong,
 	const RString &sDisplayTitle, const RString &sTranslitTitle, 
 	const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
 	const RString &sDisplayArtist, const RString &sTranslitArtist )
@@ -110,9 +108,7 @@ void TextBanner::LoadInternal(
 	m_textSubTitle.SetText( sDisplaySubTitle, sTranslitSubTitle );
 	m_textArtist.SetText( sDisplayArtist, sTranslitArtist );
 
-	Message msg( "Set" );
-	msg.SetParam( "Song", pSong );
-	this->HandleMessage( msg );
+	// Set command is called by parent on the whole music wheel item
 }
 
 void TextBanner::LoadFromSong( Song *pSong )
@@ -127,7 +123,6 @@ void TextBanner::LoadFromSong( Song *pSong )
 	RString sTranslitArtist		= pSong ? m_sArtistPrependString + pSong->GetTranslitArtist() : RString("");
 
 	LoadInternal(
-		pSong,
 		sDisplayTitle, sTranslitTitle, 
 		sDisplaySubTitle, sTranslitSubTitle, 
 		sDisplayArtist, sTranslitArtist );

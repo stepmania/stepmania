@@ -173,6 +173,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 	// init and unhide type specific stuff
 	switch( pWID->m_Type )
 	{
+	DEFAULT_FAIL( pWID->m_Type );
 	case TYPE_SECTION:
 	case TYPE_COURSE:
 	case TYPE_SORT:
@@ -228,8 +229,13 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 		m_textRoulette.SetText( THEME->GetString("MusicWheel","Portal") );
 		m_textRoulette.SetVisible( true );
 		break;
+	}
 
-	DEFAULT_FAIL( pWID->m_Type );	// invalid type
+	// Call "Set" so that elements can react to the change in song.
+	{
+		Message msg( "Set" );
+		msg.SetParam( "Song", data->m_pSong );
+		this->HandleMessage( msg );
 	}
 
 	Actor *pBars[] = { m_sprBar, m_sprExpandedBar, m_sprSectionBar, m_sprModeBar, m_sprSortBar, m_sprSongBar, NULL };
@@ -324,7 +330,7 @@ void MusicWheelItem::HandleMessage( const Message &msg )
 		RefreshGrades();
 	}
 
-	Actor::HandleMessage( msg );
+	WheelItemBase::HandleMessage( msg );
 }
 
 /*
