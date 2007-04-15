@@ -62,6 +62,8 @@ bool IniFile::ReadFile( RageFileBasic &f )
 			{
 				RString valuename = line.Left( (int) iEqualIndex );
 				RString value = line.Right( line.size()-valuename.size()-1 );
+				TrimLeft( valuename );		TrimRight( valuename );
+				TrimLeft( value );		TrimRight( value );
 				if( keyname.size() && valuename.size() )
 					SetValue( keyname, valuename, value );
 			}
