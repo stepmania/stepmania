@@ -119,7 +119,7 @@ ModsGroup.cpp ModsGroup.h \
 NoteData.cpp NoteData.h NoteDataUtil.cpp NoteDataUtil.h NoteDataWithScoring.cpp NoteDataWithScoring.h \
 NoteTypes.cpp NoteTypes.h NotesLoader.cpp NotesLoader.h \
 NotesLoaderBMS.cpp NotesLoaderBMS.h NotesLoaderDWI.cpp NotesLoaderDWI.h NotesLoaderKSF.cpp NotesLoaderKSF.h \
-NotesLoaderSM.cpp NotesLoaderSM.h NotesWriterDWI.cpp NotesWriterDWI.h NotesWriterSM.cpp NotesWriterSM.h \
+NotesLoaderMidi.cpp NotesLoaderMidi.h NotesLoaderSM.cpp NotesLoaderSM.h NotesWriterDWI.cpp NotesWriterDWI.h NotesWriterSM.cpp NotesWriterSM.h \
 OptionRowHandler.cpp OptionRowHandler.h OptionsList.cpp OptionsList.h \
 PlayerAI.cpp PlayerAI.h PlayerNumber.cpp PlayerNumber.h PlayerOptions.cpp PlayerOptions.h \
 PlayerStageStats.cpp PlayerStageStats.h \

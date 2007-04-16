@@ -24,6 +24,8 @@
 /* Begin PBXBuildFile section */
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
 		1215D7A308C6559A00B87D8B /* ScreenGameplayNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */; };
+		3688B8530BD42DAA004186AD /* NotesLoaderMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */; };
+		3688B8540BD42DAA004186AD /* NotesLoaderMidi.h in Headers */ = {isa = PBXBuildFile; fileRef = 3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */; };
 		AA059ABC0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
 		AA059ABD0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */; };
 		AA059ABE0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
@@ -2150,6 +2152,8 @@
 		1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenGameplayNormal.h; path = ../src/ScreenGameplayNormal.h; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderMidi.cpp; path = ../src/NotesLoaderMidi.cpp; sourceTree = SOURCE_ROOT; };
+		3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = NotesLoaderMidi.h; path = ../src/NotesLoaderMidi.h; sourceTree = SOURCE_ROOT; };
 		AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorMultiTexture.cpp; path = ../src/ActorMultiTexture.cpp; sourceTree = "<group>"; };
 		AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorMultiTexture.h; path = ../src/ActorMultiTexture.h; sourceTree = "<group>"; };
 		AA059E2A0B8F0C66006F8139 /* libz_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libz_link.a; sourceTree = "<group>"; };
@@ -4113,6 +4117,8 @@
 				AA6EFDF204770C79005F316C /* NotesLoaderDWI.h */,
 				AA6EFDF304770C79005F316C /* NotesLoaderKSF.cpp */,
 				AA6EFDF404770C79005F316C /* NotesLoaderKSF.h */,
+				3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */,
+				3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */,
 				AA6EFDF504770C79005F316C /* NotesLoaderSM.cpp */,
 				AA6EFDF604770C79005F316C /* NotesLoaderSM.h */,
 				AA6EFDF704770C79005F316C /* NotesWriterDWI.cpp */,
@@ -5624,6 +5630,7 @@
 				AA05A0B30BA2EFF3006F8139 /* OptionsList.h in Headers */,
 				AA2C9CA40BAD6F55002441E9 /* CodeSet.h in Headers */,
 				AA2CA8A20BB745BD002441E9 /* ScreenContinue.h in Headers */,
+				3688B8540BD42DAA004186AD /* NotesLoaderMidi.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6787,6 +6794,7 @@
 				AA05A0B20BA2EFF3006F8139 /* OptionsList.cpp in Sources */,
 				AA2C9CA30BAD6F55002441E9 /* CodeSet.cpp in Sources */,
 				AA2CA8A10BB745BD002441E9 /* ScreenContinue.cpp in Sources */,
+				3688B8530BD42DAA004186AD /* NotesLoaderMidi.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
