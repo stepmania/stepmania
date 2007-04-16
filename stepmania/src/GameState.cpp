@@ -434,8 +434,6 @@ void GameState::PlayersFinalized()
 	if( MEMCARDMAN->GetCardsLocked() )
 		return;
 
-	MESSAGEMAN->Broadcast( Message_PlayersFinalized );
-
 	MEMCARDMAN->LockCards();
 
 	// apply saved default modifiers if any
