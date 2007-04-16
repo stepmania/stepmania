@@ -445,32 +445,7 @@ void GameState::PlayersFinalized()
 
 		MEMCARDMAN->UnmountCard( pn );
 
-		if( !PROFILEMAN->IsPersistentProfile(pn) )
-			continue;	// skip
-
-		Profile* pProfile = PROFILEMAN->GetProfile(pn);
-
-		RString sModifiers;
-		if( pProfile->GetDefaultModifiers( m_pCurGame, sModifiers ) )
-		{
-			/* We don't save negative preferences (eg. "no reverse").  If the theme
-			 * sets a default of "reverse", and the player turns it off, we should
-			 * set it off.  However, don't reset modifiers that aren't saved by the
-			 * profile, so we don't ignore unsaved modifiers when a profile is in use. */
-			PO_GROUP_CALL( m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, ResetSavedPrefs );
-			ApplyPreferredModifiers( pn, sModifiers );
-		}
-		// Only set the sort order if it wasn't already set by a GameCommand (or by an earlier profile)
-		if( m_PreferredSortOrder == SortOrder_Invalid && pProfile->m_SortOrder != SortOrder_Invalid )
-			m_PreferredSortOrder = pProfile->m_SortOrder;
-		if( pProfile->m_LastDifficulty != Difficulty_Invalid )
-			m_PreferredDifficulty[pn].Set( pProfile->m_LastDifficulty );
-		if( pProfile->m_LastCourseDifficulty != Difficulty_Invalid )
-			m_PreferredCourseDifficulty[pn].Set( pProfile->m_LastCourseDifficulty );
-		if( m_pPreferredSong == NULL )
-			m_pPreferredSong = pProfile->m_lastSong.ToSong();
-		if( m_pPreferredCourse == NULL )
-			m_pPreferredCourse = pProfile->m_lastCourse.ToCourse();
+		LoadCurrentSettingsFromProfile( pn );
 	}
 
 	FOREACH_PotentialCpuPlayer( pn )
@@ -691,6 +666,36 @@ void GameState::FinishStage()
 			PROFILEMAN->SaveAllProfiles();
 		}
 	}
+}
+
+void GameState::LoadCurrentSettingsFromProfile( PlayerNumber pn )
+{
+	if( !PROFILEMAN->IsPersistentProfile(pn) )
+		return;
+
+	const Profile *pProfile = PROFILEMAN->GetProfile(pn);
+
+	RString sModifiers;
+	if( pProfile->GetDefaultModifiers( m_pCurGame, sModifiers ) )
+	{
+		/* We don't save negative preferences (eg. "no reverse").  If the theme
+		 * sets a default of "reverse", and the player turns it off, we should
+		 * set it off.  However, don't reset modifiers that aren't saved by the
+		 * profile, so we don't ignore unsaved modifiers when a profile is in use. */
+		PO_GROUP_CALL( m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, ResetSavedPrefs );
+		ApplyPreferredModifiers( pn, sModifiers );
+	}
+	// Only set the sort order if it wasn't already set by a GameCommand (or by an earlier profile)
+	if( m_PreferredSortOrder == SortOrder_Invalid && pProfile->m_SortOrder != SortOrder_Invalid )
+		m_PreferredSortOrder = pProfile->m_SortOrder;
+	if( pProfile->m_LastDifficulty != Difficulty_Invalid )
+		m_PreferredDifficulty[pn].Set( pProfile->m_LastDifficulty );
+	if( pProfile->m_LastCourseDifficulty != Difficulty_Invalid )
+		m_PreferredCourseDifficulty[pn].Set( pProfile->m_LastCourseDifficulty );
+	if( m_pPreferredSong == NULL )
+		m_pPreferredSong = pProfile->m_lastSong.ToSong();
+	if( m_pPreferredCourse == NULL )
+		m_pPreferredCourse = pProfile->m_lastCourse.ToCourse();
 }
 
 void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
