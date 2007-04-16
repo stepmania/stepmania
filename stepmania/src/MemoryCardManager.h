@@ -16,7 +16,7 @@ public:
 	MemoryCardManager();
 	~MemoryCardManager();
 
-	void Update( float fDelta );
+	void Update();
 
 	MemoryCardState GetCardState( PlayerNumber pn ) const { return m_State[pn]; }
 	RString GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }

@@ -308,7 +308,7 @@ MemoryCardManager::~MemoryCardManager()
 	}
 }
 
-void MemoryCardManager::Update( float fDelta )
+void MemoryCardManager::Update()
 {
 	vector<UsbStorageDevice> vOld;
 	
@@ -513,7 +513,7 @@ void MemoryCardManager::LockCards()
 	while( !g_pWorker->IsTimedOut() )
 	{
 		/* Check for changes. */
-		Update(0);
+		Update();
 
 		bool bEitherPlayerIsChecking = false;
 		FOREACH_PlayerNumber( p )

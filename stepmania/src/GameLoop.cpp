@@ -188,7 +188,7 @@ void GameLoop::RunGameLoop()
 		TEXTUREMAN->Update( fDeltaTime );
 		GAMESTATE->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
-		MEMCARDMAN->Update( fDeltaTime );
+		MEMCARDMAN->Update();
 		NSMAN->Update( fDeltaTime );
 
 		/* Important:  Process input AFTER updating game logic, or input will be acting on song beat from last frame */
