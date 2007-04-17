@@ -53,7 +53,6 @@ namespace CommonMetrics
 	extern ThemeMetric<RString>			INITIAL_SCREEN;
 	extern ThemeMetric<RString>			FIRST_ATTRACT_SCREEN;
 	extern ThemeMetric<RString>			DEFAULT_MODIFIERS;
-	extern ThemeMetric<RString>			DEFAULT_CPU_MODIFIERS;
 	extern ThemeMetric1D<apActorCommands>		PLAYER_COLOR;
 	extern LocalizedString				WINDOW_TITLE;
 	extern ThemeMetric<int>				MAX_COURSE_ENTRIES_BEFORE_VARIOUS;

@@ -447,9 +447,6 @@ void GameState::PlayersFinalized()
 
 		LoadCurrentSettingsFromProfile( pn );
 	}
-
-	FOREACH_PotentialCpuPlayer( pn )
-		ApplyPreferredModifiers( pn, CommonMetrics::DEFAULT_CPU_MODIFIERS );
 }
 
 void GameState::EndGame()
