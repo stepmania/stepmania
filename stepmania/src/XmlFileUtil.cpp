@@ -184,9 +184,9 @@ unsigned LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, u
 
 			RString sValue;
 			SetString( xml, iOffset, iEnd, &sValue, true );
+			ReplaceEntityText( sValue, g_mapEntitiesToChars );
 			pAttr->SetValue( sValue );
 			iOffset = iEnd;
-			ReplaceEntityText( sValue, g_mapEntitiesToChars );
 
 			if( quote == '"' || quote == '\'' )
 				++iOffset;
