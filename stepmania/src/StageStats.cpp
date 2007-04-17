@@ -168,8 +168,14 @@ void StageStats::CommitScores( bool bSummary )
 		hs.SetSurviveSeconds( m_player[p].m_fAliveSeconds );
 
 		vector<RString> asModifiers;
-		asModifiers.push_back( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetStage().GetString() );
-		asModifiers.push_back( GAMESTATE->m_SongOptions.GetStage().GetString() );
+		{
+			RString sPlayerOptions = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetStage().GetString();
+			if( !sPlayerOptions.empty() )
+				asModifiers.push_back( sPlayerOptions );
+			RString sSongOptions = GAMESTATE->m_SongOptions.GetStage().GetString();
+			if( !sSongOptions.empty() )
+				asModifiers.push_back( sSongOptions );
+		}
 		hs.SetModifiers( join(", ", asModifiers) );
 
 		hs.SetDateTime( DateTime::GetNowDateTime() );
