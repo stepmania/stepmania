@@ -219,6 +219,7 @@ void GameState::ApplyCmdline()
 
 void GameState::Reset()
 {
+	FinishStage();
 	EndGame();
 	
 	ASSERT( THEME );
@@ -457,10 +458,6 @@ void GameState::EndGame()
 		return;
 	if( m_timeGameStarted.IsZero() || !STATSMAN->m_vPlayedStageStats.size() )	// we were in the middle of a game and played at least one song
 		return;
-
-	/* Finish the final stage. */
-	FinishStage();
-
 
 	// Update totalPlaySeconds stat
 	int iPlaySeconds = max( 0, (int) m_timeGameStarted.PeekDeltaTime() );
