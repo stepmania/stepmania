@@ -83,6 +83,11 @@ void Screen::BeginScreen()
 	this->PlayCommand( "Begin" );
 }
 
+void Screen::EndScreen()
+{
+	this->PlayCommand( "End" );
+}
+
 void Screen::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
