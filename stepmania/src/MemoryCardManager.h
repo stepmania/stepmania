@@ -21,8 +21,10 @@ public:
 	MemoryCardState GetCardState( PlayerNumber pn ) const { return m_State[pn]; }
 	RString GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }
 	
-	void LockCards();	// prevent removing or changing of memory cards
-	void UnlockCards();
+	void WaitForCheckingToComplete();
+	bool CardInserted( PlayerNumber pn );
+	void LockCard( PlayerNumber pn );	// prevent removing or changing of memory card
+	void UnlockCard( PlayerNumber pn );
 	bool MountCard( PlayerNumber pn, int iTimeout = 10 );
 	bool MountCard( PlayerNumber pn, const UsbStorageDevice &d, int iTimeout = 10 );
 	void UnmountCard( PlayerNumber pn );
@@ -33,7 +35,7 @@ public:
 	void PauseMountingThread( int iTimeout = 20 );
 	void UnPauseMountingThread();
 	
-	bool GetCardsLocked() const { return m_bCardsLocked; }
+	bool GetCardLocked( PlayerNumber pn ) const { return m_bCardLocked[pn]; }
 
 	bool PathIsMemCard( RString sDir ) const;
 
@@ -58,7 +60,7 @@ protected:
 
 	vector<UsbStorageDevice> m_vStorageDevices;	// all currently connected
 
-	bool	m_bCardsLocked;
+	bool	m_bCardLocked[NUM_PLAYERS];
 	bool	m_bMounted[NUM_PLAYERS];	// card is currently mounted
 
 	UsbStorageDevice m_Device[NUM_PLAYERS];	// device in the memory card slot, blank if none

@@ -43,7 +43,10 @@ public:
 	void JoinPlayer( PlayerNumber pn );
 	void UnjoinPlayer( PlayerNumber pn );
 	bool JoinInput( PlayerNumber pn );
-	void PlayersFinalized();	// called after a style is chosen, which means the number of players is finalized
+	void LoadProfiles();
+	void SaveProfiles();
+	bool HaveProfileToLoad();
+	bool HaveProfileToSave();
 	void EndGame();	// called on ScreenGameOver, ScreenMusicScroll, ScreenCredits
 	void LoadCurrentSettingsFromProfile( PlayerNumber pn );
 	void SaveCurrentSettingsToProfile( PlayerNumber pn ); // called at the beginning of each stage

@@ -270,9 +270,9 @@ MemoryCardManager::MemoryCardManager()
 
 	g_pWorker = new ThreadedMemoryCardWorker;
 
-	m_bCardsLocked = false;
 	FOREACH_PlayerNumber( p )
 	{
+		m_bCardLocked[p] = false;
 		m_bMounted[p] = false;
 		m_State[p] = MemoryCardState_NoCard;
 	}
@@ -414,7 +414,7 @@ void MemoryCardManager::CheckStateChanges()
 		MemoryCardState state = MemoryCardState_Invalid;
 		RString sError;
 
-		if( m_bCardsLocked )
+		if( m_bCardLocked[p] )
 		{
 			if( m_FinalDevice[p].m_State == UsbStorageDevice::STATE_NONE )
 			{
@@ -500,11 +500,8 @@ void MemoryCardManager::CheckStateChanges()
 	SCREENMAN->RefreshCreditsMessages();
 }
 
-void MemoryCardManager::LockCards()
+void MemoryCardManager::WaitForCheckingToComplete()
 {
-	if( m_bCardsLocked )
-		return;
-
 	g_pWorker->SetTimeout( 5 );
 
 	/* If either player's card is in STATE_CHECKING, we need to give it a chance
@@ -538,27 +535,36 @@ void MemoryCardManager::LockCards()
 	}
 
 	g_pWorker->SetTimeout( -1 );
+}
+
+bool MemoryCardManager::CardInserted( PlayerNumber pn )
+{
+	return m_Device[pn].m_State == UsbStorageDevice::STATE_CHECKING ||
+		m_Device[pn].m_State == UsbStorageDevice::STATE_READY;
+}
+
+void MemoryCardManager::LockCard( PlayerNumber pn )
+{
+	if( m_bCardLocked[pn] )
+		return;
 
 	/* Set the final state. */
 	CheckStateChanges();
 
-	FOREACH_PlayerNumber( p )
-	{
-		/* If the card in this player's slot is ready, then use it.  If there is
-		 * no card ready when we finalize, clear m_FinalDevice. */
-		if( m_Device[p].m_State == UsbStorageDevice::STATE_READY )
-			m_FinalDevice[p] = m_Device[p];
-		else
-			m_FinalDevice[p] = UsbStorageDevice();
-	}
+	/* If the card in this player's slot is ready, then use it.  If there is
+	 * no card ready when we finalize, clear m_FinalDevice. */
+	if( m_Device[pn].m_State == UsbStorageDevice::STATE_READY )
+		m_FinalDevice[pn] = m_Device[pn];
+	else
+		m_FinalDevice[pn] = UsbStorageDevice();
 
 	/* Set this last, since it changes the behavior of CheckStateChanges. */
-	m_bCardsLocked = true;
+	m_bCardLocked[pn] = true;
 }
 
-void MemoryCardManager::UnlockCards()
+void MemoryCardManager::UnlockCard( PlayerNumber pn )
 {
-	m_bCardsLocked = false;
+	m_bCardLocked[pn] = false;
 	
 	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::detect_and_mount );
 

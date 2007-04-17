@@ -229,7 +229,8 @@ void GameState::Reset()
 		m_bSideIsJoined[p] = false;
 	FOREACH_MultiPlayer( p )
 		m_MultiPlayerStatus[p] = MultiPlayerStatus_NotJoined;
-	MEMCARDMAN->UnlockCards();
+	FOREACH_PlayerNumber( pn )
+		MEMCARDMAN->UnlockCard( pn );
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_bMultiplayer = false;
@@ -331,6 +332,12 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	if( GetNumSidesJoined() == 1 )
 		BeginGame();
 
+	/* Count each player join as a play. */
+	{
+		Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
+		pMachineProfile->m_iTotalPlays++;
+	}
+
 	// Set the current style to something appropriate for the new number of joined players.
 	if( ALLOW_LATE_JOIN  &&  GAMESTATE->m_pCurStyle != NULL )
 	{
@@ -345,6 +352,8 @@ void GameState::JoinPlayer( PlayerNumber pn )
 
 void GameState::UnjoinPlayer( PlayerNumber pn )
 {
+	PROFILEMAN->UnloadProfile( pn );
+
 	m_bSideIsJoined[pn] = false;
 	m_iPlayerCurrentStageIndexForCurrentCredit[pn] = 0;
 
@@ -399,7 +408,7 @@ int GameState::GetCoinsNeededToJoin() const
  *
  * BeginGame() - the first player has joined; the game is starting.
  *
- * PlayersFinalized() - no more players may join (because the style is set)
+ * PlayersFinalized() - player memory cards are loaded; later joins won't have memory cards this stage
  *
  * BeginStage() - gameplay is beginning
  *
@@ -425,28 +434,80 @@ void GameState::BeginGame()
 	// even if attract sounds are set to off.
 	m_iNumTimesThroughAttract = -1;
 
-	MEMCARDMAN->UnlockCards();
+	FOREACH_PlayerNumber( pn )
+		MEMCARDMAN->UnlockCard( pn );
 }
 
-void GameState::PlayersFinalized()
+void GameState::LoadProfiles()
 {
-	// If cards are already locked, this was already called.
-	if( MEMCARDMAN->GetCardsLocked() )
-		return;
+	/* Unlock any cards that we might want to load. */
+	FOREACH_HumanPlayer( pn )
+		if( !PROFILEMAN->IsPersistentProfile(pn) )
+			MEMCARDMAN->UnlockCard( pn );
 
-	MEMCARDMAN->LockCards();
+	MEMCARDMAN->WaitForCheckingToComplete();
 
-	// apply saved default modifiers if any
+	FOREACH_PlayerNumber( pn )
+		MEMCARDMAN->LockCard( pn );
+
 	FOREACH_HumanPlayer( pn )
 	{
+		// If a profile is already loaded, this was already called.
+		if( PROFILEMAN->IsPersistentProfile(pn) )
+			continue;
+
 		MEMCARDMAN->MountCard( pn );
-
 		PROFILEMAN->LoadFirstAvailableProfile( pn );	// load full profile
-
 		MEMCARDMAN->UnmountCard( pn );
 
 		LoadCurrentSettingsFromProfile( pn );
+
+		Profile* pPlayerProfile = PROFILEMAN->GetProfile( pn );
+		if( pPlayerProfile )
+			pPlayerProfile->m_iTotalPlays++;
 	}
+}
+
+void GameState::SaveProfiles()
+{
+	FOREACH_HumanPlayer( pn )
+	{
+		if( !PROFILEMAN->IsPersistentProfile(pn) )
+			continue;
+
+		bool bWasMemoryCard = PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn);
+		if( bWasMemoryCard )
+			MEMCARDMAN->MountCard( pn );
+		PROFILEMAN->SaveProfile( pn );
+		if( bWasMemoryCard )
+			MEMCARDMAN->UnmountCard( pn );
+	}
+}
+
+bool GameState::HaveProfileToLoad()
+{
+	FOREACH_HumanPlayer( pn )
+	{
+		/* We won't load this profile if it's already loaded. */
+		if( PROFILEMAN->IsPersistentProfile(pn) )
+			continue;
+
+		/* If a memory card is inserted, we'l try to load it. */
+		if( MEMCARDMAN->CardInserted(pn) )
+			return true;
+		if( !PROFILEMAN->m_sDefaultLocalProfileID[pn].Get().empty() )
+			return true;
+	}
+
+	return false;
+}
+
+bool GameState::HaveProfileToSave()
+{
+	FOREACH_HumanPlayer( pn )
+		if( PROFILEMAN->IsPersistentProfile(pn) )
+			return true;
+	return false;
 }
 
 void GameState::EndGame()
@@ -463,34 +524,21 @@ void GameState::EndGame()
 
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 	pMachineProfile->m_iTotalPlaySeconds += iPlaySeconds;
-	pMachineProfile->m_iTotalPlays++;
 
 	FOREACH_HumanPlayer( p )
 	{
 		Profile* pPlayerProfile = PROFILEMAN->GetProfile( p );
 		if( pPlayerProfile )
-		{
 			pPlayerProfile->m_iTotalPlaySeconds += iPlaySeconds;
-			pPlayerProfile->m_iTotalPlays++;
-		}
 	}
+
 
 	BOOKKEEPER->WriteToDisk();
 
+	SaveProfiles();
+
 	FOREACH_HumanPlayer( pn )
-	{
-		if( !PROFILEMAN->IsPersistentProfile(pn) )
-			continue;
-
-		bool bWasMemoryCard = PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn);
-		if( bWasMemoryCard )
-			MEMCARDMAN->MountCard( pn );
-		PROFILEMAN->SaveProfile( pn );
-		if( bWasMemoryCard )
-			MEMCARDMAN->UnmountCard( pn );
-
-		PROFILEMAN->UnloadProfile( pn );
-	}
+		UnjoinPlayer( pn );
 
 	PROFILEMAN->SaveMachineProfile();
 
@@ -668,6 +716,7 @@ void GameState::LoadCurrentSettingsFromProfile( PlayerNumber pn )
 
 	const Profile *pProfile = PROFILEMAN->GetProfile(pn);
 
+	// apply saved default modifiers if any
 	RString sModifiers;
 	if( pProfile->GetDefaultModifiers( m_pCurGame, sModifiers ) )
 	{
