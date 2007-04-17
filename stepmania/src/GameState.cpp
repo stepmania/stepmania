@@ -219,7 +219,6 @@ void GameState::ApplyCmdline()
 
 void GameState::Reset()
 {
-	FinishStage();
 	EndGame();
 	
 	ASSERT( THEME );
