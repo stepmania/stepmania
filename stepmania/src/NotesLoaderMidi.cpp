@@ -481,7 +481,7 @@ unsigned long MidiFileIn :: getNextMidiEvent( std::vector<unsigned char> *midiEv
 	// ticks.  Meta-Events preceeding this event are skipped and ignored.
 	if( track >= nTracks_ ) 
 	{
-		FAIL_M( ssprintf("MidiFileIn::getNextMidiEvent: invalid track argument ().", track) );
+		FAIL_M( ssprintf("MidiFileIn::getNextMidiEvent: invalid track argument (%u).", track) );
 	}
 
 	unsigned long ticks = getNextEvent( midiEvent, track );
@@ -737,7 +737,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 
 				if( !bNoteHandled )
 				{
-					LOG->Trace( "Unexpected MIDI event type %X at count %u", midiEventType, iter->first );
+					LOG->Trace( "Unexpected MIDI event type %X at count %ld", midiEventType, iter->first );
 				}
 			}
 		}
