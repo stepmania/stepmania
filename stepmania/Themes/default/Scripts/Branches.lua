@@ -91,7 +91,7 @@ function GetTopScreenMetric( sElement )
 	return THEME:GetMetric( sClass, sElement )
 end
 
-function GetEvaluationNextScreen( sNextScreen, sFailedScreen, sEndScreen )
+local function GetEvaluationNextScreenInternal( sNextScreen, sFailedScreen, sEndScreen )
 	Trace( "GetEvaluationNextScreen: " .. sNextScreen .. ", " .. sFailedScreen .. ", " .. sEndScreen )
 
 	if GAMESTATE:IsEventMode() then
@@ -121,10 +121,33 @@ function GetEvaluationNextScreen( sNextScreen, sFailedScreen, sEndScreen )
 	return sEndScreen
 end
 
-function ScreenEvaluationExitBranch()
-	if( IsNetSMOnline() ) then return "ScreenNetRoom" end
-	if( IsNetConnected() ) then return "ScreenNetSelectMusic" end
-	return "ScreenSelectMusic"
+function GetEvaluationSummaryNextScreen()
+	return GetEvaluationNextScreenInternal( "ScreenNameEntry", "ScreenGameOver", "ScreenNameEntry" );
+end
+
+function GetEvaluationNextScreen()
+	local sFailedScreen;
+	local sEndScreen;
+	local pm = GAMESTATE:GetPlayMode();
+	if pm == "PlayMode_Regular" or
+		pm == "PlayMode_Rave" then
+		sFailedScreen = "ScreenGameOver";
+		sEndScreen = "ScreenEvaluationSummary";
+	elseif pm == "PlayMode_Nonstop" or
+		pm == "PlayMode_Oni" or
+		pm == "PlayMode_Endless" then
+		sFailedScreen = "ScreenNameEntry";
+		sEndScreen = "ScreenNameEntry";
+	else
+		assert(false);
+	end
+
+	local sNextScreen;
+	if IsNetSMOnline() then sNextScreen = "ScreenNetRoom"
+	elseif( IsNetConnected() ) then sNextScreen = "ScreenNetSelectMusic"
+	else sNextScreen = SongSelectionScreen(); end
+	
+	return GetEvaluationNextScreenInternal( sNextScreen, sFailedScreen, sEndScreen );
 end
 
 function ScreenBranchNetAfterEval()
