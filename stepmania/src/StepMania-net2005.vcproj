@@ -371,6 +371,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScreenContinue.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenContinue.h"
+				>
+			</File>
+			<File
 				RelativePath="ScreenCredits.cpp"
 				>
 			</File>
@@ -516,14 +524,6 @@
 			</File>
 			<File
 				RelativePath="ScreenMiniMenu.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenMusicScroll.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenMusicScroll.h"
 				>
 			</File>
 			<File
@@ -708,6 +708,22 @@
 			</File>
 			<File
 				RelativePath="ScreenPlayerOptions.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenProfileLoad.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenProfileLoad.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenProfileSave.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenProfileSave.h"
 				>
 			</File>
 			<File
@@ -1336,6 +1352,14 @@
 			</File>
 			<File
 				RelativePath="NotesLoaderKSF.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NotesLoaderMidi.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NotesLoaderMidi.h"
 				>
 			</File>
 			<File
@@ -2384,14 +2408,6 @@
 			</File>
 			<File
 				RelativePath="CourseContentsList.h"
-				>
-			</File>
-			<File
-				RelativePath="CourseEntryDisplay.cpp"
-				>
-			</File>
-			<File
-				RelativePath="CourseEntryDisplay.h"
 				>
 			</File>
 			<File
