@@ -56,7 +56,6 @@ function GetSelectMusicNext()
 end
 
 function SelectFirstOptionsScreen()
-Trace( "gar " .. GAMESTATE:GetPlayMode() );
 	if GAMESTATE:GetPlayMode() == "PlayMode_Rave" then return "ScreenRaveOptions" end
 	return "ScreenPlayerOptions"
 end
