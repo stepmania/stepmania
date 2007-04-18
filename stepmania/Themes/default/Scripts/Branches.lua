@@ -122,7 +122,7 @@ local function GetEvaluationNextScreenInternal( sNextScreen, sFailedScreen, sEnd
 end
 
 function GetEvaluationSummaryNextScreen()
-	return GetEvaluationNextScreenInternal( "ScreenNameEntry", "ScreenGameOver", "ScreenNameEntry" );
+	return GetEvaluationNextScreenInternal( "ScreenNameEntry", "ScreenProfileSave", "ScreenNameEntry" );
 end
 
 function GetEvaluationNextScreen()
@@ -131,7 +131,7 @@ function GetEvaluationNextScreen()
 	local pm = GAMESTATE:GetPlayMode();
 	if pm == "PlayMode_Regular" or
 		pm == "PlayMode_Rave" then
-		sFailedScreen = "ScreenGameOver";
+		sFailedScreen = "ScreenProfileSave";
 		sEndScreen = "ScreenEvaluationSummary";
 	elseif pm == "PlayMode_Nonstop" or
 		pm == "PlayMode_Oni" or
@@ -157,6 +157,11 @@ function ScreenBranchNetAfterEval()
 end	
 
 function SelectEndingScreen()
+	local bIsExtraStage = GAMESTATE:IsAnExtraStage()
+	if STATSMAN:GetCurStageStats():AllFailed() and not bIsExtraStage then
+		return "ScreenGameOver"
+	end
+
 	local grade = STATSMAN:GetBestFinalGrade()
 	if Grade:Compare( grade, "Grade_Tier03" ) >= 0 then return "ScreenMusicScroll" end
 	return "ScreenCredits"
