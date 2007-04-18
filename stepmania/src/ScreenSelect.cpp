@@ -62,8 +62,6 @@ void ScreenSelect::BeginScreen()
 {
 	ScreenWithMenuElements::BeginScreen();
 
-	m_bTimeToFinalizePlayers = false;
-
 	m_timerIdleComment.GetDeltaTime();
 	m_timerIdleTimeout.GetDeltaTime();
 
@@ -185,28 +183,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 
 		SCREENMAN->RefreshCreditsMessages();
 
-		//
-		// Finalize players if we set a style on this screen.
-		//
-		FOREACH_HumanPlayer( p )
-		{
-			const int sel = GetSelectionIndex( p );
-			if( m_aGameCommands[sel].m_pStyle )
-			{
-				m_bTimeToFinalizePlayers = true;
-				break;
-			}
-		}
-
 		if( !IsTransitioning() )
 			StartTransitioningScreen( SM_GoToNextScreen );
-	}
-	else if( SM == SM_GoToNextScreen )
-	{
-		/* Finalizing players can take a long time, since it reads profile data.  Do it
-		 * here.(XXX: this should be done in a separate screen.) */
-		if( m_bTimeToFinalizePlayers )
-			GAMESTATE->PlayersFinalized();
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );
