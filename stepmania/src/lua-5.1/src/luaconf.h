@@ -10,6 +10,7 @@
 
 #include <limits.h>
 #include <stddef.h>
+#include <inttypes.h>
 
 #if defined(HAVE_CONFIG_H)
 #include <config.h>
@@ -413,20 +414,11 @@
 ** part always works, but may waste space on machines with 64-bit
 ** longs.) Probably you do not need to change this.
 */
-#if LUAI_BITSINT >= 32
-#define LUAI_UINT32	unsigned int
-#define LUAI_INT32	int
+#define LUAI_UINT32	uint32_t
+#define LUAI_INT32	int32_t
 #define LUAI_MAXINT32	INT_MAX
 #define LUAI_UMEM	size_t
 #define LUAI_MEM	ptrdiff_t
-#else
-/* 16-bit ints */
-#define LUAI_UINT32	unsigned long
-#define LUAI_INT32	long
-#define LUAI_MAXINT32	LONG_MAX
-#define LUAI_UMEM	unsigned long
-#define LUAI_MEM	long
-#endif
 
 
 /*
