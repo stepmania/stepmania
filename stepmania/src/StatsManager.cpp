@@ -210,6 +210,32 @@ void StatsManager::CommitStatsToProfiles()
 	}
 }
 
+void StatsManager::UnjoinPlayer( PlayerNumber pn )
+{
+	/* A player has been unjoined.  Clear his data from m_vPlayedStageStats, and
+	 * purge any m_vPlayedStageStats that no longer have any player data because
+	 * all of the players that were playing at the time have been unjoined. */
+	FOREACH( StageStats, m_vPlayedStageStats, ss )
+		ss->m_player[pn] = PlayerStageStats();
+
+	for( int i = 0; i < (int) m_vPlayedStageStats.size(); ++i )
+	{
+		StageStats &ss = m_vPlayedStageStats[i];
+		bool bIsActive = false;
+		FOREACH_PlayerNumber( p )
+			if( ss.m_player[p].m_bJoined )
+				bIsActive = true;
+		FOREACH_MultiPlayer( mp )
+			if( ss.m_multiPlayer[mp].m_bJoined )
+				bIsActive = true;
+		if( bIsActive )
+			continue;
+
+		m_vPlayedStageStats.erase( m_vPlayedStageStats.begin()+i );
+		--i;
+	}
+
+}
 
 // lua start
 #include "LuaBinding.h"

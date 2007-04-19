@@ -26,6 +26,8 @@ public:
 
 	void CommitStatsToProfiles();
 
+	void UnjoinPlayer( PlayerNumber pn );
+
 	// Lua
 	void PushSelf( lua_State *L );
 

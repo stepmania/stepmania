@@ -26,6 +26,7 @@ public:
 	int GetLessonScoreNeeded() const;
 	void ResetScoreForLesson();
 
+	bool		m_bJoined;
 	vector<Steps*>  m_vpPlayedSteps;
 	vector<Steps*>  m_vpPossibleSteps;
 	float		m_fAliveSeconds; // how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.

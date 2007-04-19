@@ -361,6 +361,8 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 	if( m_MasterPlayerNumber == pn )
 		m_MasterPlayerNumber = GAMESTATE->GetFirstHumanPlayer();
 
+	STATSMAN->UnjoinPlayer( pn );
+
 	Message msg( MessageIDToString(Message_PlayerUnjoined) );
 	msg.SetParam( "Player", pn );
 	MESSAGEMAN->Broadcast( msg );

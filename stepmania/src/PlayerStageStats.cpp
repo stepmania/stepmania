@@ -24,6 +24,7 @@ Grade GetGradeFromPercent( float fPercent, bool bMerciful );
 
 void PlayerStageStats::Init()
 {
+	m_bJoined = false;
 	m_vpPlayedSteps.clear();
 	m_vpPossibleSteps.clear();
 	m_fAliveSeconds = 0;
@@ -63,6 +64,7 @@ void PlayerStageStats::Init()
 
 void PlayerStageStats::AddStats( const PlayerStageStats& other )
 {
+	m_bJoined = other.m_bJoined;
 	FOREACH_CONST( Steps*, other.m_vpPlayedSteps, s )
 		m_vpPlayedSteps.push_back( *s );
 	FOREACH_CONST( Steps*, other.m_vpPossibleSteps, s )

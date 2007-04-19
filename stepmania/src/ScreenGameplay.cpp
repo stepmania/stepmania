@@ -846,6 +846,12 @@ void ScreenGameplay::InitSongQueues()
 		if( pi->GetPlayerStageStats() )
 			pi->GetPlayerStageStats()->m_vpPossibleSteps = pi->m_vpStepsQueue;
 	}
+
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	{
+		if( pi->GetPlayerStageStats() )
+			pi->GetPlayerStageStats()->m_bJoined = true;
+	}
 }
 
 ScreenGameplay::~ScreenGameplay()
