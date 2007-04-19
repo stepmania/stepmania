@@ -1047,18 +1047,6 @@ static const Game g_Game_Ez2 =
 	TNS_Miss,	// m_mapW5To
 };
 
-static const Style *g_apGame_EZ2_Styles[] =
-{
-	&g_Style_Dance_Single,
-	&g_Style_Dance_Versus,
-	&g_Style_Dance_Double,
-	&g_Style_Dance_Couple,
-	&g_Style_Dance_Solo,
-	&g_Style_Dance_Couple_Edit,
-	&g_Style_Dance_Routine,
-	NULL
-};
-
 static const Style g_Style_Para_Single =
 {	// STYLE_PARA_SINGLE
 	true,				// m_bUsedForGameplay
