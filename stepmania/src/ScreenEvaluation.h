@@ -54,6 +54,7 @@ protected:
 	void HandleMenuStart();
 
 	bool			m_bSummary;
+	StageStats		*m_pStageStats;
 
 	// banner area
 	Banner			m_LargeBanner;
