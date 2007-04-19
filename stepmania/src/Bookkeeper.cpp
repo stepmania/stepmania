@@ -135,9 +135,8 @@ void Bookkeeper::WriteToDisk()
 		return;
 	}
 
-	XNode *xml = CreateNode();
-	XmlFileUtil::SaveToFile( xml, f );
-	delete xml;
+	auto_ptr<XNode> xml( CreateNode() );
+	XmlFileUtil::SaveToFile( xml.get(), f );
 }
 
 void Bookkeeper::CoinInserted()
