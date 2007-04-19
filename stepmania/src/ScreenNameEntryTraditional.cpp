@@ -73,12 +73,16 @@ void ScreenNameEntryTraditional::Init()
 
 void ScreenNameEntryTraditional::BeginScreen()
 {
+	GAMESTATE->FinishStage();
+
 	/* Find out if players are entering their name. */
 	FOREACH_PlayerNumber( pn )
 	{
 		vector<GameState::RankingFeat> aFeats;
 		GAMESTATE->GetRankingFeats( pn, aFeats );
-		m_bEnteringName[pn] = aFeats.size()>0;
+
+		bool bNoStagesLeft = GAMESTATE->m_iPlayerCurrentStageIndexForCurrentCredit[pn] >= PREFSMAN->m_iSongsPerPlay;
+		m_bEnteringName[pn] = aFeats.size() > 0 && bNoStagesLeft;
 		m_bFinalized[pn] = !m_bEnteringName[pn];
 	}
 
