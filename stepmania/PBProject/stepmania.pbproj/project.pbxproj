@@ -68,6 +68,14 @@
 		AA147F1B0A0F78D8006EADF6 /* VectorHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA147F190A0F78D8006EADF6 /* VectorHelper.cpp */; };
 		AA147F1C0A0F78D8006EADF6 /* VectorHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AA147F180A0F78D8006EADF6 /* VectorHelper.h */; };
 		AA147F1D0A0F78D8006EADF6 /* VectorHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA147F190A0F78D8006EADF6 /* VectorHelper.cpp */; };
+		AA1893600BD777C500AEC0BF /* ScreenProfileLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA18935C0BD777C400AEC0BF /* ScreenProfileLoad.cpp */; };
+		AA1893610BD777C500AEC0BF /* ScreenProfileLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = AA18935D0BD777C400AEC0BF /* ScreenProfileLoad.h */; };
+		AA1893620BD777C500AEC0BF /* ScreenProfileSave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA18935E0BD777C400AEC0BF /* ScreenProfileSave.cpp */; };
+		AA1893630BD777C500AEC0BF /* ScreenProfileSave.h in Headers */ = {isa = PBXBuildFile; fileRef = AA18935F0BD777C400AEC0BF /* ScreenProfileSave.h */; };
+		AA1893640BD777C500AEC0BF /* ScreenProfileLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA18935C0BD777C400AEC0BF /* ScreenProfileLoad.cpp */; };
+		AA1893650BD777C500AEC0BF /* ScreenProfileLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = AA18935D0BD777C400AEC0BF /* ScreenProfileLoad.h */; };
+		AA1893660BD777C500AEC0BF /* ScreenProfileSave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA18935E0BD777C400AEC0BF /* ScreenProfileSave.cpp */; };
+		AA1893670BD777C500AEC0BF /* ScreenProfileSave.h in Headers */ = {isa = PBXBuildFile; fileRef = AA18935F0BD777C400AEC0BF /* ScreenProfileSave.h */; };
 		AA1B083C0762532800835464 /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1B08370762532800835464 /* Command.cpp */; };
 		AA1B083D0762532800835464 /* Command.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1B08380762532800835464 /* Command.h */; };
 		AA1B083E0762532800835464 /* GameCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1B08390762532800835464 /* GameCommand.cpp */; };
@@ -2189,6 +2197,10 @@
 		AA147F190A0F78D8006EADF6 /* VectorHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VectorHelper.cpp; sourceTree = "<group>"; };
 		AA14ED0F0509F40000E3FAD7 /* MovieTexture_FFMpeg.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MovieTexture_FFMpeg.cpp; path = MovieTexture/MovieTexture_FFMpeg.cpp; sourceTree = "<group>"; };
 		AA14ED100509F40000E3FAD7 /* MovieTexture_FFMpeg.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_FFMpeg.h; path = MovieTexture/MovieTexture_FFMpeg.h; sourceTree = "<group>"; };
+		AA18935C0BD777C400AEC0BF /* ScreenProfileLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenProfileLoad.cpp; path = ../src/ScreenProfileLoad.cpp; sourceTree = "<group>"; };
+		AA18935D0BD777C400AEC0BF /* ScreenProfileLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenProfileLoad.h; path = ../src/ScreenProfileLoad.h; sourceTree = "<group>"; };
+		AA18935E0BD777C400AEC0BF /* ScreenProfileSave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenProfileSave.cpp; path = ../src/ScreenProfileSave.cpp; sourceTree = "<group>"; };
+		AA18935F0BD777C400AEC0BF /* ScreenProfileSave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenProfileSave.h; path = ../src/ScreenProfileSave.h; sourceTree = "<group>"; };
 		AA1B08370762532800835464 /* Command.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Command.cpp; path = ../src/Command.cpp; sourceTree = "<group>"; };
 		AA1B08380762532800835464 /* Command.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Command.h; path = ../src/Command.h; sourceTree = "<group>"; };
 		AA1B08390762532800835464 /* GameCommand.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = GameCommand.cpp; path = ../src/GameCommand.cpp; sourceTree = "<group>"; };
@@ -3649,6 +3661,10 @@
 				AA1145DA075DFADF0050A3D1 /* ScreenPackages.h */,
 				AA6E004F047711F3005F316C /* ScreenPlayerOptions.cpp */,
 				AA6E0050047711F3005F316C /* ScreenPlayerOptions.h */,
+				AA18935C0BD777C400AEC0BF /* ScreenProfileLoad.cpp */,
+				AA18935D0BD777C400AEC0BF /* ScreenProfileLoad.h */,
+				AA18935E0BD777C400AEC0BF /* ScreenProfileSave.cpp */,
+				AA18935F0BD777C400AEC0BF /* ScreenProfileSave.h */,
 				AA6E0051047711F3005F316C /* ScreenPrompt.cpp */,
 				AA6E0052047711F3005F316C /* ScreenPrompt.h */,
 				AA6E0053047711F3005F316C /* ScreenRanking.cpp */,
@@ -5631,6 +5647,8 @@
 				AA2C9CA40BAD6F55002441E9 /* CodeSet.h in Headers */,
 				AA2CA8A20BB745BD002441E9 /* ScreenContinue.h in Headers */,
 				3688B8540BD42DAA004186AD /* NotesLoaderMidi.h in Headers */,
+				AA1893650BD777C500AEC0BF /* ScreenProfileLoad.h in Headers */,
+				AA1893670BD777C500AEC0BF /* ScreenProfileSave.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6047,6 +6065,8 @@
 				AA05A0B10BA2EFF3006F8139 /* OptionsList.h in Headers */,
 				AA2C9CA20BAD6F55002441E9 /* CodeSet.h in Headers */,
 				AA2CA8A00BB745BD002441E9 /* ScreenContinue.h in Headers */,
+				AA1893610BD777C500AEC0BF /* ScreenProfileLoad.h in Headers */,
+				AA1893630BD777C500AEC0BF /* ScreenProfileSave.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6795,6 +6815,8 @@
 				AA2C9CA30BAD6F55002441E9 /* CodeSet.cpp in Sources */,
 				AA2CA8A10BB745BD002441E9 /* ScreenContinue.cpp in Sources */,
 				3688B8530BD42DAA004186AD /* NotesLoaderMidi.cpp in Sources */,
+				AA1893640BD777C500AEC0BF /* ScreenProfileLoad.cpp in Sources */,
+				AA1893660BD777C500AEC0BF /* ScreenProfileSave.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7201,6 +7223,8 @@
 				AA05A0B00BA2EFF3006F8139 /* OptionsList.cpp in Sources */,
 				AA2C9CA10BAD6F54002441E9 /* CodeSet.cpp in Sources */,
 				AA2CA89F0BB745BD002441E9 /* ScreenContinue.cpp in Sources */,
+				AA1893600BD777C500AEC0BF /* ScreenProfileLoad.cpp in Sources */,
+				AA1893620BD777C500AEC0BF /* ScreenProfileSave.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
