@@ -47,7 +47,7 @@ public:
 	void SaveProfiles();
 	bool HaveProfileToLoad();
 	bool HaveProfileToSave();
-	void EndGame();	// called on ScreenGameOver, ScreenMusicScroll, ScreenCredits
+	void SaveLocalData();
 	void LoadCurrentSettingsFromProfile( PlayerNumber pn );
 	void SaveCurrentSettingsToProfile( PlayerNumber pn ); // called at the beginning of each stage
 	Song* GetDefaultSong() const;

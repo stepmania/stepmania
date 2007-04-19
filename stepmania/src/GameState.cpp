@@ -219,8 +219,9 @@ void GameState::ApplyCmdline()
 
 void GameState::Reset()
 {
-	EndGame();
-	
+	FOREACH_HumanPlayer( pn )
+		UnjoinPlayer( pn );
+
 	ASSERT( THEME );
 
 	m_timeGameStarted.SetZero();
@@ -420,9 +421,6 @@ int GameState::GetCoinsNeededToJoin() const
  *
  * FinishStage() - gameplay and evaluation is finished
  *   Clears data which was stored by CommitStageStats.
- *
- * EndGame() - the game is finished
- * 
  */
 void GameState::BeginGame()
 {
@@ -510,40 +508,10 @@ bool GameState::HaveProfileToSave()
 	return false;
 }
 
-void GameState::EndGame()
+void GameState::SaveLocalData()
 {
-	LOG->Trace( "GameState::EndGame" );
-
-	if( m_bDemonstrationOrJukebox )
-		return;
-	if( m_timeGameStarted.IsZero() || !STATSMAN->m_vPlayedStageStats.size() )	// we were in the middle of a game and played at least one song
-		return;
-
-	// Update totalPlaySeconds stat
-	int iPlaySeconds = max( 0, (int) m_timeGameStarted.PeekDeltaTime() );
-
-	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
-	pMachineProfile->m_iTotalPlaySeconds += iPlaySeconds;
-
-	FOREACH_HumanPlayer( p )
-	{
-		Profile* pPlayerProfile = PROFILEMAN->GetProfile( p );
-		if( pPlayerProfile )
-			pPlayerProfile->m_iTotalPlaySeconds += iPlaySeconds;
-	}
-
-
 	BOOKKEEPER->WriteToDisk();
-
-	SaveProfiles();
-
-	FOREACH_HumanPlayer( pn )
-		UnjoinPlayer( pn );
-
 	PROFILEMAN->SaveMachineProfile();
-
-	// make sure we don't execute EndGame twice.
-	m_timeGameStarted.SetZero();
 }
 
 int GameState::GetNumStagesMultiplierForSong( const Song* pSong )
@@ -665,6 +633,19 @@ void GameState::CommitStageStats()
 	m_bStatsCommitted = true;
 
 	STATSMAN->CommitStatsToProfiles();
+
+	// Update TotalPlaySeconds.
+	int iPlaySeconds = max( 0, (int) m_timeGameStarted.GetDeltaTime() );
+
+	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
+	pMachineProfile->m_iTotalPlaySeconds += iPlaySeconds;
+
+	FOREACH_HumanPlayer( p )
+	{
+		Profile* pPlayerProfile = PROFILEMAN->GetProfile( p );
+		if( pPlayerProfile )
+			pPlayerProfile->m_iTotalPlaySeconds += iPlaySeconds;
+	}
 }
 
 /* Called by ScreenSelectMusic (etc).  Increment the stage counter if we just played a

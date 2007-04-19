@@ -213,7 +213,7 @@ void GameLoop::RunGameLoop()
 
 	/* If we ended mid-game, finish up. */
 	GAMESTATE->FinishStage();
-	GAMESTATE->EndGame();
+	GAMESTATE->SaveLocalData();
 
 	if( ChangeAppPri() )
 		HOOKS->UnBoostPriority();
