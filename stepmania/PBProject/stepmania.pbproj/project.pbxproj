@@ -76,6 +76,8 @@
 		AA1893650BD777C500AEC0BF /* ScreenProfileLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = AA18935D0BD777C400AEC0BF /* ScreenProfileLoad.h */; };
 		AA1893660BD777C500AEC0BF /* ScreenProfileSave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA18935E0BD777C400AEC0BF /* ScreenProfileSave.cpp */; };
 		AA1893670BD777C500AEC0BF /* ScreenProfileSave.h in Headers */ = {isa = PBXBuildFile; fileRef = AA18935F0BD777C400AEC0BF /* ScreenProfileSave.h */; };
+		AA18937D0BD77ECE00AEC0BF /* NotesLoaderMidi.h in Headers */ = {isa = PBXBuildFile; fileRef = 3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */; };
+		AA18937E0BD77ECF00AEC0BF /* NotesLoaderMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */; };
 		AA1B083C0762532800835464 /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1B08370762532800835464 /* Command.cpp */; };
 		AA1B083D0762532800835464 /* Command.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1B08380762532800835464 /* Command.h */; };
 		AA1B083E0762532800835464 /* GameCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1B08390762532800835464 /* GameCommand.cpp */; };
@@ -6067,6 +6069,7 @@
 				AA2CA8A00BB745BD002441E9 /* ScreenContinue.h in Headers */,
 				AA1893610BD777C500AEC0BF /* ScreenProfileLoad.h in Headers */,
 				AA1893630BD777C500AEC0BF /* ScreenProfileSave.h in Headers */,
+				AA18937D0BD77ECE00AEC0BF /* NotesLoaderMidi.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7225,6 +7228,7 @@
 				AA2CA89F0BB745BD002441E9 /* ScreenContinue.cpp in Sources */,
 				AA1893600BD777C500AEC0BF /* ScreenProfileLoad.cpp in Sources */,
 				AA1893620BD777C500AEC0BF /* ScreenProfileSave.cpp in Sources */,
+				AA18937E0BD77ECF00AEC0BF /* NotesLoaderMidi.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
