@@ -48,7 +48,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 	{
 		vector<RString> asStyles;
 		asStyles.insert( asStyles.begin(), course.m_setStyles.begin(), course.m_setStyles.end() );
-		f.PutLine( ssprintf("#STYLE:%i;", join( ",", asStyles ).c_str()) );
+		f.PutLine( ssprintf("#STYLE:%s;", join( ",", asStyles ).c_str()) );
 	}
 
 	FOREACH_ENUM( CourseDifficulty,cd )
