@@ -1,1 +1,1 @@
-Place BGAnimation folders in here.  See the readme for details.
+Place BGAnimation folders in here.
