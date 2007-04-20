@@ -543,6 +543,16 @@ main_LDADD = \
 stepmania_SOURCES = $(main_SOURCES)
 stepmania_LDADD = $(main_LDADD)
 
+if BUILD_LUA_BINARIES
+bin_PROGRAMS += lua luac
+lua_SOURCES = $(Lua) lua-5.1/src/lua.c
+lua_LDADD = -lreadline
+
+luac_SOURCES = $(Lua) lua-5.1/src/luac.c lua-5.1/src/print.c
+luac_LDADD =
+endif
+
+
 if HAVE_GTK
 bin_PROGRAMS += GtkModule.so
 GtkModule_so_LDFLAGS = -rdynamic -shared

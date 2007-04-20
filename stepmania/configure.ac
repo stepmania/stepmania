@@ -228,6 +228,9 @@ AC_CHECK_DECLS([SIGPWR, SIGUSR1],,,[#include <signal.h>])
 AC_ARG_ENABLE(tests, AS_HELP_STRING([--enable-tests],[Build test programs]), enable_tests=$enableval, enable_tests=no)
 AM_CONDITIONAL(BUILD_TESTS, test "$enable_tests" = "yes" )
 
+AC_ARG_ENABLE(lua-binaries, AS_HELP_STRING([--enable-lua-binaries],[Build lua and luac]), enable_lua_binaries=$enableval, enable_lua_binaries=no)
+AM_CONDITIONAL(BUILD_LUA_BINARIES, test "$enable_lua_binaries" = "yes" )
+
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(src/Makefile)
 AC_OUTPUT
