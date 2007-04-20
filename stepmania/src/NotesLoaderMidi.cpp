@@ -21,7 +21,7 @@
 
 #include "global.h"
 #include "NotesLoaderMidi.h"
-#include "Song.h"
+#include "song.h"
 #include "Steps.h"
 #include "RageLog.h"
 #include "NoteData.h"
