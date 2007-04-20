@@ -254,7 +254,7 @@ static void ChangeToDirOfExecutable( const RString &argv0 )
 	/* If the basename is not MacOS, then we've likely been launched via the command line
 	 * through a symlink. Assume this is the case and change to the dir of the symlink. */
 	if( Basename(RageFileManagerUtil::sDirOfExecutable) == "MacOS" )
-		CollapsePath( RageFileManagerUtil::sDirOfExecutable += "/../../.." );
+		CollapsePath( RageFileManagerUtil::sDirOfExecutable += "/../../../" );
 	chdir( RageFileManagerUtil::sDirOfExecutable );
 #endif
 }
