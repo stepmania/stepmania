@@ -37,7 +37,7 @@ my @docs = ( "BGAnimation conditionals.txt",
 	     "Licenses.txt" );
 
 # Passing a date for a CVS release gives StepMania-CVS-date.
-# Otherwise you get Stepmania-ver.
+# Otherwise you get StepMania-ver.
 die "usage: $0 [date]\n" if @ARGV > 1;
 my $root = getcwd;
 my $scripts = dirname $0;
