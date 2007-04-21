@@ -10,7 +10,9 @@
 
 #include <limits.h>
 #include <stddef.h>
-#if !defined(_WIN32)
+#if defined(_WIN32)
+typedef unsigned int uint32_t;
+#else
 #include <inttypes.h>
 #endif
 
