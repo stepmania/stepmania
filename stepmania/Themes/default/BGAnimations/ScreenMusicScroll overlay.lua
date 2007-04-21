@@ -1,4 +1,5 @@
-local num = THEME:GetMetric( "ScreenMusicScroll", "TimerSeconds" )
+local time = THEME:GetMetric( "ScreenMusicScroll", "TimerSeconds" )
+local num = time * 2
 local fontPath = THEME:GetPathF( "ScreenMusicScroll", "titles" )
 local children = {}
 for i=1,num do
@@ -16,7 +17,7 @@ end
 
 return Def.ActorScroller {
 	NumItemsToDraw = 6;
-	SecondsPerItem = 1;
+	SecondsPerItem = time / num;
 	TransformFunction = function( self, offset, itemIndex, numItems )
 		self:y( offset*80 )
 	end;
