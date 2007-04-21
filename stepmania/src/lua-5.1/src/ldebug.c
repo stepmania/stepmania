@@ -180,7 +180,7 @@ static void collectvalidlines (lua_State *L, Closure *f) {
   }
   else {
     Table *t = luaH_new(L, 0, 0);
-    int *lineinfo = f->l.p->lineinfo;
+    uint32_t *lineinfo = f->l.p->lineinfo;
     int i;
     for (i=0; i<f->l.p->sizelineinfo; i++)
       setbvalue(luaH_setnum(L, t, lineinfo[i]), 1);

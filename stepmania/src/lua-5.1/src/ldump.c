@@ -42,7 +42,7 @@ static void DumpChar(int y, DumpState* D)
  DumpVar(x,D);
 }
 
-static void DumpInt(int x, DumpState* D)
+static void DumpInt(uint32_t x, DumpState* D)
 {
  DumpVar(x,D);
 }
@@ -62,13 +62,12 @@ static void DumpString(const TString* s, DumpState* D)
 {
  if (s==NULL || getstr(s)==NULL)
  {
-  size_t size=0;
-  DumpVar(size,D);
+  DumpInt(0,D);
  }
  else
  {
-  size_t size=s->tsv.len+1;		/* include trailing '\0' */
-  DumpVar(size,D);
+  lu_int32 size=s->tsv.len+1;		/* include trailing '\0' */
+  DumpInt(size,D);
   DumpBlock(getstr(s),size,D);
  }
 }
@@ -112,7 +111,7 @@ static void DumpDebug(const Proto* f, DumpState* D)
 {
  int i,n;
  n= (D->strip) ? 0 : f->sizelineinfo;
- DumpVector(f->lineinfo,n,sizeof(int),D);
+ DumpVector(f->lineinfo,n,sizeof(uint32_t),D);
  n= (D->strip) ? 0 : f->sizelocvars;
  DumpInt(n,D);
  for (i=0; i<n; i++)

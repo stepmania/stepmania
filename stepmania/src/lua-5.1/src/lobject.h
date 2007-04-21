@@ -233,7 +233,7 @@ typedef struct Proto {
   TValue *k;  /* constants used by the function */
   Instruction *code;
   struct Proto **p;  /* functions defined inside the function */
-  int *lineinfo;  /* map from opcodes to source lines */
+  uint32_t *lineinfo;  /* map from opcodes to source lines */
   struct LocVar *locvars;  /* information about local variables */
   TString **upvalues;  /* upvalue names */
   TString  *source;

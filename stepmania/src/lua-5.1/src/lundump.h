@@ -27,8 +27,8 @@ LUAI_FUNC void luaU_print (const Proto* f, int full);
 /* for header of binary files -- this is Lua 5.1 */
 #define LUAC_VERSION		0x51
 
-/* for header of binary files -- this is the official format */
-#define LUAC_FORMAT		0
+/* for header of binary files -- this is StepMania's own format */
+#define LUAC_FORMAT		'S'
 
 /* size of header of binary files */
 #define LUAC_HEADERSIZE		12

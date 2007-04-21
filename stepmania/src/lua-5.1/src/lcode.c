@@ -786,7 +786,7 @@ static int luaK_code (FuncState *fs, Instruction i, int line) {
                   MAX_INT, "code size overflow");
   f->code[fs->pc] = i;
   /* save corresponding line information */
-  luaM_growvector(fs->L, f->lineinfo, fs->pc, f->sizelineinfo, int,
+  luaM_growvector(fs->L, f->lineinfo, fs->pc, f->sizelineinfo, uint32_t,
                   MAX_INT, "code size overflow");
   f->lineinfo[fs->pc] = line;
   return fs->pc++;

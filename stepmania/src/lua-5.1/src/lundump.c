@@ -25,6 +25,7 @@ typedef struct {
  ZIO* Z;
  Mbuffer* b;
  const char* name;
+ int flip;
 } LoadState;
 
 #ifdef LUAC_TRUST_BINARIES
@@ -44,6 +45,9 @@ static void error(LoadState* S, const char* why)
 #define LoadVar(S,x)		LoadMem(S,&x,1,sizeof(x))
 #define LoadVector(S,b,n,size)	LoadMem(S,b,n,size)
 
+/* XXX: Use optimized versions if they exist. */
+#define Swap32(n) ( ((n)>>24) | (((n)>>8) & 0x0000FF00) | (((n)<<8) & 0x00FF0000) | ((n)<<24) )
+
 static void LoadBlock(LoadState* S, void* b, size_t size)
 {
  size_t r=luaZ_read(S->Z,b,size);
@@ -59,8 +63,10 @@ static int LoadChar(LoadState* S)
 
 static int LoadInt(LoadState* S)
 {
- int x;
+ uint32_t x;
  LoadVar(S,x);
+ if (S->flip)
+  x = Swap32(x);
  IF (x<0, "bad integer");
  return x;
 }
@@ -69,13 +75,26 @@ static lua_Number LoadNumber(LoadState* S)
 {
  lua_Number x;
  LoadVar(S,x);
- return x;
+ if (!S->flip)
+  return x;
+#ifdef LUA_NUMBER_DOUBLE
+ union { double d; struct { uint32_t l; uint32_t h; } i; } u;
+ u.d = x;
+ uint32_t temp = Swap32(u.i.l);
+ u.i.l = Swap32(u.i.h);
+ u.i.h = temp;
+ return u.d;
+#else
+ union { float f; uint32_t i } u;
+ u.f = x;
+ u.i = Swap32(u.i);
+ return u.f;
+#endif
 }
 
 static TString* LoadString(LoadState* S)
 {
- size_t size;
- LoadVar(S,size);
+ int size=LoadInt(S);
  if (size==0)
   return NULL;
  else
@@ -92,6 +111,11 @@ static void LoadCode(LoadState* S, Proto* f)
  f->code=luaM_newvector(S->L,n,Instruction);
  f->sizecode=n;
  LoadVector(S,f->code,n,sizeof(Instruction));
+ if (!S->flip)
+  return;
+ int i;
+ for (i=0; i<n; i++)
+  f->code[i] = Swap32(f->code[i]);
 }
 
 static Proto* LoadFunction(LoadState* S, TString* p);
@@ -137,9 +161,12 @@ static void LoadDebug(LoadState* S, Proto* f)
 {
  int i,n;
  n=LoadInt(S);
- f->lineinfo=luaM_newvector(S->L,n,int);
+ f->lineinfo=luaM_newvector(S->L,n,uint32_t);
  f->sizelineinfo=n;
- LoadVector(S,f->lineinfo,n,sizeof(int));
+ LoadVector(S,f->lineinfo,n,sizeof(uint32_t));
+ if (S->flip)
+  for (i=0; i<n; i++)
+   f->lineinfo[i] = Swap32(f->lineinfo[i]);
  n=LoadInt(S);
  f->locvars=luaM_newvector(S->L,n,LocVar);
  f->sizelocvars=n;
@@ -176,12 +203,20 @@ static Proto* LoadFunction(LoadState* S, TString* p)
  return f;
 }
 
+/* LUA_SIGNATURE = sizeof(LUA_SIGnATURE)-1
+ * LUAC_VERSION  = 1
+ * LUAC_FORMAT   = 1
+ * endian        = 1 */
+#define ENDIAN_OFFSET (sizeof(LUA_SIGNATURE)-1+2)
+
 static void LoadHeader(LoadState* S)
 {
  char h[LUAC_HEADERSIZE];
  char s[LUAC_HEADERSIZE];
  luaU_header(h);
  LoadBlock(S,s,LUAC_HEADERSIZE);
+ S->flip = h[ENDIAN_OFFSET] != s[ENDIAN_OFFSET];
+ s[ENDIAN_OFFSET] = h[ENDIAN_OFFSET];
  IF (memcmp(h,s,LUAC_HEADERSIZE)!=0, "bad header");
 }
 
@@ -200,6 +235,7 @@ Proto* luaU_undump (lua_State* L, ZIO* Z, Mbuffer* buff, const char* name)
  S.L=L;
  S.Z=Z;
  S.b=buff;
+ S.flip=0;
  LoadHeader(&S);
  return LoadFunction(&S,luaS_newliteral(L,"=?"));
 }
