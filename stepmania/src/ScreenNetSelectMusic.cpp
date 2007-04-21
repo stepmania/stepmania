@@ -80,8 +80,6 @@ void ScreenNetSelectMusic::Init()
 	ON_COMMAND( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
 	this->MoveToHead( &m_MusicWheel );
-
-	ON_COMMAND( m_MusicWheel );	
 	
 	m_BPMDisplay.SetName( "BPMDisplay" );
 	m_BPMDisplay.LoadFromFont( THEME->GetPathF("BPMDisplay","bpm") );
