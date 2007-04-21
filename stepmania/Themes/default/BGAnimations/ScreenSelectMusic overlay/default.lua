@@ -207,7 +207,7 @@ local children =
 		OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
 	};
 	Def.CourseContentsList {
-		VisibleItems = 5;
+		MaxSongs = 5;
 
 		InitCommand=cmd(x,SCREEN_CENTER_X-160;y,SCREEN_CENTER_Y+96);
 		OnCommand=cmd(zoomy,0;bounceend,0.3;zoom,1);
