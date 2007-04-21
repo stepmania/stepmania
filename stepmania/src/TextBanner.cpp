@@ -111,7 +111,7 @@ void TextBanner::LoadInternal(
 	// Set command is called by parent on the whole music wheel item
 }
 
-void TextBanner::LoadFromSong( Song *pSong )
+void TextBanner::LoadFromSong( const Song *pSong )
 {
 	ASSERT( m_bInitted );
 
