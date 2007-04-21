@@ -57,7 +57,7 @@ void TextBanner::Load( RString sType )
 	this->AddChild( &m_textArtist );
 
 	AddCommand( "Set", THEME->GetMetricA(sType,"SetCommand") );
-	m_sArtistPrependString = THEME->GetMetricB(sType,"ArtistPrependString");
+	m_sArtistPrependString = THEME->GetMetric(sType,"ArtistPrependString");
 
 	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTitle, sType );
 	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textSubTitle, sType );
