@@ -1,12 +1,8 @@
 #include "global.h"
 #include "TextBanner.h"
-#include "RageUtil.h"
 #include "song.h"
-#include "ThemeManager.h"
-#include "SongManager.h"
-#include "RageTextureManager.h"
 #include "ActorUtil.h"
-#include "ThemeMetric.h"
+#include "ThemeManager.h"
 #include "XmlFile.h"
 
 REGISTER_ACTOR_CLASS( TextBanner )

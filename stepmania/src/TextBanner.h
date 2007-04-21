@@ -5,7 +5,6 @@
 
 #include "ActorFrame.h"
 #include "BitmapText.h"
-#include "ThemeMetric.h"
 class Song;
 
 class TextBanner : public ActorFrame
