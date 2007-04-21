@@ -10,7 +10,9 @@
 
 #include <limits.h>
 #include <stddef.h>
+#if !defined(_WIN32)
 #include <inttypes.h>
+#endif
 
 #if defined(HAVE_CONFIG_H)
 #include <config.h>
