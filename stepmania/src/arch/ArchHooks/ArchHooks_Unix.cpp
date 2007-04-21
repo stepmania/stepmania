@@ -134,11 +134,6 @@ clockid_t ArchHooks_Unix::GetClock()
 	return g_Clock;
 }
 
-RString ArchHooks::GetPreferredLanguage()
-{
-	return "en";
-}
-
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	OpenGetTime();
@@ -162,6 +157,11 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 	return iRet;
 }
 #endif
+
+RString ArchHooks::GetPreferredLanguage()
+{
+	return "en";
+}
 
 void ArchHooks_Unix::Init()
 {
