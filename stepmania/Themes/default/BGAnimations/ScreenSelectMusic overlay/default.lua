@@ -229,18 +229,18 @@ local children =
 			LoadActor("_CourseEntryDisplay bar");
 
 			Def.TextBanner {
-				ArtistPrependString="/";
+				ArtistPrependString="";
 				SetCommand=TextBannerSet;
 				InitCommand=cmd(LoadFromString,"", "", "", "", "", "");
-				Title = LoadFont("TextBannerCourseEntry","text") .. {
+				Title = LoadFont("TextBanner","text") .. {
 					Name="Title";
 					OnCommand=cmd(shadowlength,0);
 				};
-				Subtitle = LoadFont("TextBannerCourseEntry","text") .. {
+				Subtitle = LoadFont("TextBanner","text") .. {
 					Name="Subtitle";
 					OnCommand=cmd(shadowlength,0);
 				};
-				Artist = LoadFont("TextBannerCourseEntry","text") .. {
+				Artist = LoadFont("TextBanner","text") .. {
 					Name="Artist";
 					OnCommand=cmd(shadowlength,0);
 				};
