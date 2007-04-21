@@ -229,7 +229,7 @@ local children =
 			LoadActor("_CourseEntryDisplay bar");
 
 			Def.TextBanner {
-				ArtistPrependString="";
+				ArtistPrependString="/";
 				SetCommand=TextBannerSet;
 				InitCommand=cmd(LoadFromString,"", "", "", "", "", "");
 				Title = LoadFont("TextBanner","text") .. {
