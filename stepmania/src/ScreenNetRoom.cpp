@@ -69,6 +69,7 @@ void ScreenNetRoom::Init()
 	m_roomInfo.SetName( "RoomInfoDisplay" );
 	m_roomInfo.Load( "RoomInfoDisplay" );
 	m_roomInfo.SetDrawOrder( 1 );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_roomInfo );
 	this->AddChild( &m_roomInfo );
 
 	this->SortByDrawOrder();
