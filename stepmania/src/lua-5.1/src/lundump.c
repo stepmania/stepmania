@@ -78,11 +78,11 @@ static lua_Number LoadNumber(LoadState* S)
  if (!S->flip)
   return x;
 #ifdef LUA_NUMBER_DOUBLE
- union { double d; struct { uint32_t l; uint32_t h; } i; } u;
+ union { double d; uint32_t i[2]; } u;
  u.d = x;
- uint32_t temp = Swap32(u.i.l);
- u.i.l = Swap32(u.i.h);
- u.i.h = temp;
+ uint32_t temp = Swap32(u.i[0]);
+ u.i[0] = Swap32(u.i[1]);
+ u.i[1] = temp;
  return u.d;
 #else
  union { float f; uint32_t i } u;
