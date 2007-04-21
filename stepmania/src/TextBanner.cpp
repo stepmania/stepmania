@@ -98,19 +98,14 @@ void TextBanner::LoadFromString(
 
 void TextBanner::LoadFromSong( const Song *pSong )
 {
-	ASSERT( m_bInitted );
-
-	RString sDisplayTitle		= pSong ? pSong->GetDisplayMainTitle() : RString("");
-	RString sTranslitTitle		= pSong ? pSong->GetTranslitMainTitle() : RString("");
-	RString sDisplaySubTitle	= pSong ? pSong->GetDisplaySubTitle() : RString("");
-	RString sTranslitSubTitle	= pSong ? pSong->GetTranslitSubTitle() : RString("");
-	RString sDisplayArtist		= pSong ? m_sArtistPrependString + pSong->GetDisplayArtist() : RString("");
-	RString sTranslitArtist		= pSong ? m_sArtistPrependString + pSong->GetTranslitArtist() : RString("");
-
-	LoadFromString(
-		sDisplayTitle, sTranslitTitle, 
-		sDisplaySubTitle, sTranslitSubTitle, 
-		sDisplayArtist, sTranslitArtist );
+	if( pSong == NULL )
+	{
+		LoadFromString( "", "", "", "", "", "" );
+		return;
+	}
+	LoadFromString( pSong->GetDisplayMainTitle(),				pSong->GetTranslitMainTitle(),
+			pSong->GetDisplaySubTitle(),				pSong->GetTranslitSubTitle(),
+			m_sArtistPrependString + pSong->GetDisplayArtist(),	m_sArtistPrependString + pSong->GetTranslitArtist() );
 }
 
 // lua start
