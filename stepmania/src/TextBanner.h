@@ -26,15 +26,8 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	void LoadInternal( 
-		const RString &sDisplayTitle, const RString &sTranslitTitle, 
-		const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
-		const RString &sDisplayArtist, const RString &sTranslitArtist );
-
 	bool m_bInitted;
-
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
-
 	RString		m_sArtistPrependString;
 };
 

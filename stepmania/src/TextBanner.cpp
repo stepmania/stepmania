@@ -87,17 +87,6 @@ void TextBanner::LoadFromString(
 	const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
 	const RString &sDisplayArtist, const RString &sTranslitArtist )
 {
-	LoadInternal( 
-		sDisplayTitle, sTranslitTitle, 
-		sDisplaySubTitle, sTranslitSubTitle, 
-		sDisplayArtist, sTranslitArtist );
-}
-
-void TextBanner::LoadInternal( 
-	const RString &sDisplayTitle, const RString &sTranslitTitle, 
-	const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
-	const RString &sDisplayArtist, const RString &sTranslitArtist )
-{
 	ASSERT( m_bInitted );
 
 	m_textTitle.SetText( sDisplayTitle, sTranslitTitle );
@@ -118,7 +107,7 @@ void TextBanner::LoadFromSong( const Song *pSong )
 	RString sDisplayArtist		= pSong ? m_sArtistPrependString + pSong->GetDisplayArtist() : RString("");
 	RString sTranslitArtist		= pSong ? m_sArtistPrependString + pSong->GetTranslitArtist() : RString("");
 
-	LoadInternal(
+	LoadFromString(
 		sDisplayTitle, sTranslitTitle, 
 		sDisplaySubTitle, sTranslitSubTitle, 
 		sDisplayArtist, sTranslitArtist );
