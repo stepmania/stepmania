@@ -33,11 +33,11 @@ function ScreenSelectMusic:setupmusicstagemods()
 		local song, steps = SONGMAN:GetExtraStageInfo( bExtra2, style )
 		local po, so
 		if bExtra2 then
-			po = "1.5x,reverse";
-			so = "norecover";
-		else
 			po = "sudden,shuffle,flat";
 			so = "suddendeath";
+		else
+			po = "1.5x,reverse";
+			so = "norecover";
 		end
 		local difficulty = steps:GetDifficulty()
 		local Reverse = PlayerNumber:Reverse()
