@@ -28,11 +28,11 @@ void ScreenNetEvaluation::Init()
 	m_bHasStats = false;
 	m_iCurrentPlayer = 0;
 
-	FOREACH_PlayerNumber (pn)
-		if ( GAMESTATE->IsPlayerEnabled( pn ) )
+	FOREACH_ENUM( PlayerNumber, pn )
+		if( GAMESTATE->IsPlayerEnabled(pn) )
 			m_pActivePlayer = pn;
 
-	if (m_pActivePlayer == PLAYER_1)
+	if( m_pActivePlayer == PLAYER_1 )
 		m_iShowSide = 2;
 	else
 		m_iShowSide = 1;
@@ -93,7 +93,7 @@ void ScreenNetEvaluation::MenuLeft( const InputEventPlus &input )
 
 void ScreenNetEvaluation::MenuUp( const InputEventPlus &input )
 {
-	if ( (m_iActivePlayers == 0) || !m_bHasStats )
+	if( m_iActivePlayers == 0 || !m_bHasStats )
 		return;
 
 	COMMAND( m_textUsers[m_iCurrentPlayer], "DeSel" );
@@ -109,7 +109,7 @@ void ScreenNetEvaluation::MenuRight( const InputEventPlus &input )
 
 void ScreenNetEvaluation::MenuDown( const InputEventPlus &input )
 {
-	if ( (m_iActivePlayers == 0) || !m_bHasStats )
+	if ( m_iActivePlayers == 0 || !m_bHasStats )
 		return;
 
 	COMMAND( m_textUsers[m_iCurrentPlayer], "DeSel" );
@@ -124,11 +124,11 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	{
 		m_bHasStats = true;
 
-		LOG->Trace("SMNETDebug:%d,%d",m_iActivePlayers,NSMAN->m_ActivePlayers);
+		LOG->Trace( "SMNETDebug:%d,%d",m_iActivePlayers,NSMAN->m_ActivePlayers );
 
 		RedoUserTexts();
 
-		LOG->Trace("SMNETCheckpoint");
+		LOG->Trace( "SMNETCheckpoint" );
 		for( int i=0; i<m_iActivePlayers; ++i )
 		{
 			//Strange occourances because of timing
@@ -153,7 +153,7 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 			else
 				m_textUsers[i].SetRainbowScroll( false );
 			ON_COMMAND( m_textUsers[i] );
-			LOG->Trace("SMNETCheckpoint%d",i);
+			LOG->Trace( "SMNETCheckpoint%d", i );
 		}
 		return;	//no need to let ScreenEvaluation get ahold of this.
 	}
@@ -188,11 +188,11 @@ void ScreenNetEvaluation::UpdateStats()
 		m_DifficultyIcon[m_pActivePlayer].SetFromDifficulty( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
 	}
 
-	for (int j=0; j<NETNUMTAPSCORES; ++j)
+	for( int j=0; j<NETNUMTAPSCORES; ++j )
 	{
-		int iNumDigits = (j==JudgeLine_MaxCombo) ? MAX_COMBO_NUM_DIGITS : 4;
-		if (m_textJudgeNumbers[j][m_pActivePlayer].m_pFont != NULL)
-			m_textJudgeNumbers[j][m_pActivePlayer].SetText( ssprintf( "%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] ) );
+		int iNumDigits = (j==JudgeLine_MaxCombo)? MAX_COMBO_NUM_DIGITS:4;
+		if( m_textJudgeNumbers[j][m_pActivePlayer].m_pFont != NULL )
+			m_textJudgeNumbers[j][m_pActivePlayer].SetText( ssprintf("%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j]) );
 	}
 
 	m_textPlayerOptions[m_pActivePlayer].SetText( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].playerOptions );
