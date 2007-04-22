@@ -17,7 +17,7 @@ static const int NUM_SCORE_DIGITS = 9;
 
 #define MAX_COMBO_NUM_DIGITS	THEME->GetMetricI("ScreenEvaluation","MaxComboNumDigits")
 
-AutoScreenMessage( SM_GotEval ) 
+static AutoScreenMessage( SM_GotEval ) 
 
 REGISTER_SCREEN_CLASS( ScreenNetEvaluation );
 
