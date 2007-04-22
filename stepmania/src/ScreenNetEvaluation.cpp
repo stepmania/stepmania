@@ -6,16 +6,16 @@
 #include "GameState.h"
 #include "RageLog.h"
 
-const int NUM_SCORE_DIGITS	=	9;
+static const int NUM_SCORE_DIGITS = 9;
 
-#define USERSBG_WIDTH				THEME->GetMetricF("ScreenNetEvaluation","UsersBGWidth")
-#define USERSBG_HEIGHT				THEME->GetMetricF("ScreenNetEvaluation","UsersBGHeight")
-#define USERSBG_COMMAND				THEME->GetMetricA("ScreenNetEvaluation","UsersBGCommand")
+#define USERSBG_WIDTH		THEME->GetMetricF("ScreenNetEvaluation","UsersBGWidth")
+#define USERSBG_HEIGHT		THEME->GetMetricF("ScreenNetEvaluation","UsersBGHeight")
+#define USERSBG_COMMAND		THEME->GetMetricA("ScreenNetEvaluation","UsersBGCommand")
 
-#define USERDX						THEME->GetMetricF("ScreenNetEvaluation","UserDX")
-#define USERDY						THEME->GetMetricF("ScreenNetEvaluation","UserDY")
+#define USERDX			THEME->GetMetricF("ScreenNetEvaluation","UserDX")
+#define USERDY			THEME->GetMetricF("ScreenNetEvaluation","UserDY")
 
-#define MAX_COMBO_NUM_DIGITS		THEME->GetMetricI("ScreenEvaluation","MaxComboNumDigits")
+#define MAX_COMBO_NUM_DIGITS	THEME->GetMetricI("ScreenEvaluation","MaxComboNumDigits")
 
 AutoScreenMessage( SM_GotEval ) 
 
