@@ -1,14 +1,17 @@
 bin_PROGRAMS = stepmania
 TESTS = 
 tests: $(TESTS)
+noinst_PROGRAMS =
 if BUILD_TESTS
-noinst_PROGRAMS = $(TESTS)
+noinst_PROGRAMS += $(TESTS)
 endif
 
 AM_LDFLAGS =
 AM_CXXFLAGS = 
 AM_CFLAGS = 
 noinst_LIBRARIES =
+EXTRA_DIST =
+
 
 AM_CXXFLAGS += -fno-exceptions
 
@@ -152,7 +155,7 @@ XmlFile.cpp XmlFile.h \
 XmlFileUtil.cpp XmlFileUtil.h
 
 StepMania = ExportStrings.h ExportStrings.cpp \
-StdString.h \
+StdString.h Foreach.h \
 StepMania.cpp StepMania.h \
 GameLoop.cpp GameLoop.h \
 global.cpp global.h \
@@ -235,12 +238,13 @@ Lights += arch/Lights/LightsDriver_LinuxParallel.cpp arch/Lights/LightsDriver_Li
 endif
 endif
 
-ArchUtils +=    archutils/Unix/AssertionHandler.cpp \
+ArchUtils +=    archutils/Unix/AssertionHandler.cpp archutils/Unix/arch_setup.h \
 		archutils/Unix/GetSysInfo.cpp archutils/Unix/GetSysInfo.h \
 		archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h \
 		archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h \
 		archutils/Unix/RunningUnderValgrind.cpp archutils/Unix/RunningUnderValgrind.h \
-		archutils/Unix/EmergencyShutdown.cpp archutils/Unix/EmergencyShutdown.h
+		archutils/Unix/EmergencyShutdown.cpp archutils/Unix/EmergencyShutdown.h \
+		archutils/Common/gcc_byte_swaps.h
 
 if USE_CRASH_HANDLER
 ArchUtils +=    archutils/Unix/Backtrace.cpp archutils/Unix/Backtrace.h \
@@ -259,8 +263,7 @@ endif
 
 Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) \
 	   $(Lights) $(MemoryCard) $(LowLevelWindow) $(ArchUtils) $(Dialog) $(Threads) \
-	   arch/arch.h arch/arch_default.h arch/arch_platform.h \
-	   arch/RageDriver.cpp arch/RageDriver.h
+	   arch/arch_default.h arch/RageDriver.cpp arch/RageDriver.h
 
 RageSoundFileReaders = RageSoundReader_WAV.cpp RageSoundReader_WAV.h 
 
@@ -304,7 +307,7 @@ endif
 
 ActorsInGameplay = \
 ArrowEffects.cpp ArrowEffects.h AttackDisplay.cpp AttackDisplay.h \
-Background.cpp Background.h BeginnerHelper.cpp BeginnerHelper.h CombinedLifeMeterTug.cpp CombinedLifeMeterTug.h \
+Background.cpp Background.h BeginnerHelper.cpp BeginnerHelper.h CombinedLifeMeter.h CombinedLifeMeterTug.cpp CombinedLifeMeterTug.h \
 DancingCharacters.cpp DancingCharacters.h Foreground.cpp Foreground.h \
 GhostArrowRow.cpp GhostArrowRow.h HoldJudgment.cpp HoldJudgment.h \
 LifeMeter.cpp LifeMeter.h \
@@ -320,7 +323,8 @@ ScoreDisplayLifeTime.cpp ScoreDisplayLifeTime.h \
 ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp ScoreDisplayOni.h \
 ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDisplayRave.h
 
-PCRE = pcre/chartables.c pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.c pcre/pcre.h pcre/study.c
+PCRE = pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.c pcre/pcre.h pcre/study.c
+EXTRA_DIST += pcre/chartables.c
 
 Lua = lua-5.1/src/lapi.c lua-5.1/src/lauxlib.c lua-5.1/src/lbaselib.c lua-5.1/src/lcode.c lua-5.1/src/ldblib.c \
 lua-5.1/src/ldebug.c lua-5.1/src/ldo.c lua-5.1/src/ldump.c lua-5.1/src/lfunc.c lua-5.1/src/lgc.c lua-5.1/src/linit.c \
@@ -448,7 +452,9 @@ libtommath/bn_mp_fread.c libtommath/bn_mp_fwrite.c libtommath/bn_mp_cnt_lsb.c li
 libtommath/bn_mp_init_multi.c libtommath/bn_mp_clear_multi.c libtommath/bn_mp_exteuclid.c libtommath/bn_mp_toradix_n.c \
 libtommath/bn_mp_prime_random_ex.c libtommath/bn_mp_get_int.c libtommath/bn_mp_sqrt.c libtommath/bn_mp_is_square.c libtommath/bn_mp_init_set.c \
 libtommath/bn_mp_init_set_int.c libtommath/bn_mp_invmod_slow.c libtommath/bn_mp_prime_rabin_miller_trials.c \
-libtommath/bn_mp_to_signed_bin_n.c libtommath/bn_mp_to_unsigned_bin_n.c
+libtommath/bn_mp_to_signed_bin_n.c libtommath/bn_mp_to_unsigned_bin_n.c \
+libtommath/tommath_class.h libtommath/tommath.h libtommath/tommath_superclass.h
+EXTRA_DIST += libtommath/bn_prime_tab.c
 
 libtommath_a_CPPFLAGS = -I$(srcdir)/libtommath $(AM_CPPFLAGS)
 noinst_LIBRARIES += libtommath.a
@@ -517,7 +523,13 @@ libtomcrypt/src/pk/pkcs1/pkcs_1_v1_5_encode.c libtomcrypt/src/pk/rsa/rsa_decrypt
 libtomcrypt/src/pk/rsa/rsa_export.c libtomcrypt/src/pk/rsa/rsa_exptmod.c libtomcrypt/src/pk/rsa/rsa_free.c libtomcrypt/src/pk/rsa/rsa_import.c \
 libtomcrypt/src/pk/rsa/rsa_make_key.c libtomcrypt/src/pk/rsa/rsa_sign_hash.c libtomcrypt/src/pk/rsa/rsa_verify_hash.c libtomcrypt/src/prngs/fortuna.c \
 libtomcrypt/src/prngs/rng_get_bytes.c libtomcrypt/src/prngs/rng_make_prng.c \
-libtomcrypt/src/prngs/sprng.c libtomcrypt/src/prngs/yarrow.c 
+libtomcrypt/src/prngs/sprng.c libtomcrypt/src/prngs/yarrow.c \
+libtomcrypt/src/headers/tomcrypt_argchk.h libtomcrypt/src/headers/tomcrypt_cfg.h libtomcrypt/src/headers/tomcrypt_cipher.h \
+libtomcrypt/src/headers/tomcrypt_custom.h libtomcrypt/src/headers/tomcrypt.h libtomcrypt/src/headers/tomcrypt_hash.h \
+libtomcrypt/src/headers/tomcrypt_mac.h libtomcrypt/src/headers/tomcrypt_macros.h libtomcrypt/src/headers/tomcrypt_math.h \
+libtomcrypt/src/headers/tomcrypt_misc.h libtomcrypt/src/headers/tomcrypt_pkcs.h libtomcrypt/src/headers/tomcrypt_pk.h \
+libtomcrypt/src/headers/tomcrypt_prng.h
+EXTRA_DIST += libtomcrypt/src/ciphers/aes/aes_tab.c libtomcrypt/src/prngs/sober128tab.c
 
 libtomcrypt_a_CPPFLAGS = -I$(srcdir)/libtomcrypt/src/headers $(AM_CPPFLAGS)
 
@@ -544,7 +556,7 @@ stepmania_SOURCES = $(main_SOURCES)
 stepmania_LDADD = $(main_LDADD)
 
 if BUILD_LUA_BINARIES
-bin_PROGRAMS += lua luac
+noinst_PROGRAMS += lua luac
 lua_SOURCES = $(Lua) lua-5.1/src/lua.c
 lua_LDADD = -lreadline
 
@@ -579,7 +591,6 @@ all_test_SOURCES = \
 		Preference.cpp Preference.h \
 		LocalizedString.cpp LocalizedString.h \
 		LuaBinding.cpp LuaBinding.h \
-		LuaFunctions.h \
 		LuaManager.cpp LuaManager.h \
 		LuaReference.cpp LuaReference.h \
 		SpecialFiles.cpp SpecialFiles.h \
