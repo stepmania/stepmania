@@ -40,12 +40,14 @@ void ScreenNetEvaluation::Init()
 	m_rectUsersBG.SetWidth( USERSBG_WIDTH );
 	m_rectUsersBG.SetHeight( USERSBG_HEIGHT );
 	m_rectUsersBG.RunCommands( USERSBG_COMMAND );
+	// XXX: The name should be ssprintf( "UsersBG%d", m_iShowSide ) and then
+	// then LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND should be used.
 	m_rectUsersBG.SetName( "UsersBG" );
-	ON_COMMAND( m_rectUsersBG );
 	
 	m_rectUsersBG.SetXY(
 		THEME->GetMetricF("ScreenNetEvaluation",ssprintf("UsersBG%dX",m_iShowSide)),
 		THEME->GetMetricF("ScreenNetEvaluation",ssprintf("UsersBG%dY",m_iShowSide)) );
+	LOAD_ALL_COMMANDS_AND_ON_COMMAND( m_rectUsersBG );
 
 	this->AddChild( &m_rectUsersBG );
 
