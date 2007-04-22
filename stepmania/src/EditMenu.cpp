@@ -250,7 +250,7 @@ bool EditMenu::CanGoDown()
 
 bool EditMenu::CanGoLeft()
 {
-	if( m_SelectedRow == ROW_SONG )
+	if( m_SelectedRow == ROW_SONG || m_SelectedRow == ROW_GROUP )
 		return true; /* wraps */
 	return m_iSelection[m_SelectedRow] != 0;
 }
@@ -273,7 +273,7 @@ int EditMenu::GetRowSize( EditMenuRow er ) const
 
 bool EditMenu::CanGoRight()
 {
-	if( m_SelectedRow == ROW_SONG )
+	if( m_SelectedRow == ROW_SONG || m_SelectedRow == ROW_GROUP )
 		return true; /* wraps */
 	return m_iSelection[m_SelectedRow] != GetRowSize(m_SelectedRow)-1;
 }
