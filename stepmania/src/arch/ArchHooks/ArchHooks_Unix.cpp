@@ -251,6 +251,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	/* Mount /proc, so Alsa9Buf::GetSoundCardDebugInfo() and others can access it.
 	 * (Deprecated; use rootfs.) */
 	FILEMAN->Mount( "dir", "/proc", "/proc" );
+#endif
 	
 	/*
 	 * Next: path to write general mutable user data.
@@ -279,10 +280,6 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 		RageException::Throw( COULDNT_FIND_SONGS.GetValue() );
 			
 	FILEMAN->Mount( "dir", Root, "/" );
-#else
-	/* Paths relative to the CWD: */
-	FILEMAN->Mount( "dir", ".", "/" );
-#endif
 }
 
 /*
