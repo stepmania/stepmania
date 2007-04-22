@@ -103,6 +103,7 @@ CourseUtil.cpp CourseUtil.h \
 CourseWriterCRS.cpp CourseWriterCRS.h \
 DateTime.cpp DateTime.h \
 Difficulty.cpp Difficulty.h \
+DisplayResolutions.h \
 EnumHelper.cpp EnumHelper.h \
 Font.cpp Font.h \
 FontCharAliases.cpp FontCharAliases.h \
@@ -159,15 +160,18 @@ StdString.h Foreach.h \
 StepMania.cpp StepMania.h \
 GameLoop.cpp GameLoop.h \
 global.cpp global.h \
-SpecialFiles.cpp SpecialFiles.h
+SpecialFiles.cpp SpecialFiles.h \
+ProductInfo.h
 
 LoadingWindow = arch/LoadingWindow/LoadingWindow.cpp \
 		arch/LoadingWindow/LoadingWindow.h \
 		arch/LoadingWindow/LoadingWindow_Null.h
 
 if HAVE_GTK
-LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h
+LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h \
+arch/LoadingWindow/LoadingWindow_GtkModule.h
 endif
+EXTRA_DIST += arch/LoadingWindow/loading.xpm
 
 Sound = arch/Sound/RageSoundDriver.h arch/Sound/RageSoundDriver.cpp \
 	arch/Sound/RageSoundDriver_Null.cpp arch/Sound/RageSoundDriver_Null.h \
@@ -210,7 +214,7 @@ Lights = arch/Lights/LightsDriver.cpp arch/Lights/LightsDriver.h \
 		arch/Lights/LightsDriver_Export.cpp arch/Lights/LightsDriver_Export.h \
 		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
 
-MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h
+MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h arch/MemoryCard/MemoryCardDriver_Null.h
 LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.cpp arch/LowLevelWindow/LowLevelWindow.h
 
 ArchUtils =
@@ -238,7 +242,8 @@ Lights += arch/Lights/LightsDriver_LinuxParallel.cpp arch/Lights/LightsDriver_Li
 endif
 endif
 
-ArchUtils +=    archutils/Unix/AssertionHandler.cpp archutils/Unix/arch_setup.h \
+ArchUtils +=    archutils/Unix/AssertionHandler.cpp archutils/Unix/AssertionHandler.h \
+		archutils/Unix/arch_setup.h \
 		archutils/Unix/GetSysInfo.cpp archutils/Unix/GetSysInfo.h \
 		archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h \
 		archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h \
@@ -348,7 +353,7 @@ RageFileDriverTimeout.cpp RageFileDriverTimeout.h
 
 Rage = $(PCRE) $(Lua) $(RageFile) $(RageSoundFileReaders) \
 RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h \
-RageDisplay_OGL_Helpers.cpp RageDisplay_OGL_Helpers.h \
+RageDisplay_OGL_Helpers.cpp RageDisplay_OGL_Helpers.h glext.h \
 RageDisplay_Null.cpp RageDisplay_Null.h RageException.cpp RageException.h RageInput.cpp RageInput.h \
 RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h \
 RageModelGeometry.cpp RageModelGeometry.h RageSound.cpp RageSound.h RageSoundManager.cpp RageSoundManager.h \
