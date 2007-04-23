@@ -78,17 +78,22 @@ static lua_Number LoadNumber(LoadState* S)
  if (!S->flip)
   return x;
 #ifdef LUA_NUMBER_DOUBLE
- union { double d; uint32_t i[2]; } u;
- u.d = x;
- uint32_t temp = Swap32(u.i[0]);
- u.i[0] = Swap32(u.i[1]);
- u.i[1] = temp;
- return u.d;
+ {
+	 union { double d; uint32_t i[2]; } u;
+	 uint32_t temp;
+	 u.d = x;
+	 temp = Swap32(u.i[0]);
+	 u.i[0] = Swap32(u.i[1]);
+	 u.i[1] = temp;
+	 return u.d;
+ }
 #else
- union { float f; uint32_t i } u;
- u.f = x;
- u.i = Swap32(u.i);
- return u.f;
+ {
+	 union { float f; uint32_t i } u;
+	 u.f = x;
+	 u.i = Swap32(u.i);
+	 return u.f;
+ }
 #endif
 }
 
@@ -108,13 +113,13 @@ static TString* LoadString(LoadState* S)
 static void LoadCode(LoadState* S, Proto* f)
 {
  int n=LoadInt(S);
+ int i=0;
  f->code=luaM_newvector(S->L,n,Instruction);
  f->sizecode=n;
  LoadVector(S,f->code,n,sizeof(Instruction));
  if (!S->flip)
   return;
- int i;
- for (i=0; i<n; i++)
+ for (i=0; i<n; ++i)
   f->code[i] = Swap32(f->code[i]);
 }
 
