@@ -49,7 +49,7 @@
 #include "RageLog.h"
 #include <errno.h>
 
-#define Warn(args...) if( LOG ) LOG->Warn( args ); else fprintf( stderr, args )
+#define WARN(...) if( LOG ) LOG->Warn( __VA_ARGS__ ); else fprintf( stderr, __VA_ARGS__ )
 
 enum ThreadRequest
 {
@@ -159,7 +159,7 @@ ThreadedFileWorker::ThreadedFileWorker( RString sPath ):
 	/* Grab a reference to the child driver.  We'll operate on it directly. */
 	m_pChildDriver = FILEMAN->GetFileDriver( sPath );
 	if( m_pChildDriver == NULL )
-		Warn( "ThreadedFileWorker: Mountpoint \"%s\" not found", sPath.c_str() );
+		WARN( "ThreadedFileWorker: Mountpoint \"%s\" not found", sPath.c_str() );
 
 	m_pResultFile = NULL;
 	m_pRequestFile = NULL;
@@ -864,7 +864,7 @@ bool RageFileDriverTimeout::Move( const RString &sOldPath, const RString &sNewPa
 	int iRet = m_pWorker->Move( sOldPath, sNewPath );
 	if( iRet == -1 )
 	{
-		Warn( "RageFileDriverTimeout::Move(%s,%s) failed", sOldPath.c_str(), sNewPath.c_str() );
+		WARN( "RageFileDriverTimeout::Move(%s,%s) failed", sOldPath.c_str(), sNewPath.c_str() );
 		return false;
 	}
 
@@ -876,7 +876,7 @@ bool RageFileDriverTimeout::Remove( const RString &sPath )
 	int iRet = m_pWorker->Remove( sPath );
 	if( iRet == -1 )
 	{
-		Warn( "RageFileDriverTimeout::Remove(%s) failed", sPath.c_str() );
+		WARN( "RageFileDriverTimeout::Remove(%s) failed", sPath.c_str() );
 		return false;
 	}
 

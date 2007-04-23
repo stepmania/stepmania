@@ -12,7 +12,7 @@
 #include "RageUtil_FileDB.h"
 #include <cerrno>
 
-#define Warn(args...) if( LOG ) LOG->Warn( args ); else fprintf( stderr, args )
+#define WARN(...) if( LOG ) LOG->Warn( __VA_ARGS__ ); else fprintf( stderr, __VA_ARGS__ )
 
 static struct FileDriverEntry_ZIP: public FileDriverEntry
 {
@@ -50,7 +50,7 @@ bool RageFileDriverZip::Load( const RString &sPath )
 
 	if( !pFile->Open(sPath) )
 	{
-		Warn( "Couldn't open %s: %s", sPath.c_str(), pFile->GetError().c_str() );
+		WARN( "Couldn't open %s: %s", sPath.c_str(), pFile->GetError().c_str() );
 		delete pFile;
 		return false;
 	}
@@ -87,7 +87,7 @@ bool RageFileDriverZip::ReadEndCentralRecord( int &iTotalEntries, int &iCentralD
 
 	if( sError != "" )
 	{
-		Warn( "%s: %s", m_sPath.c_str(), sError.c_str() );
+		WARN( "%s: %s", m_sPath.c_str(), sError.c_str() );
 		return false;
 	}
 
@@ -112,7 +112,7 @@ bool RageFileDriverZip::SeekToEndCentralRecord()
 		int iGot = m_pZip->Read( buf, sizeof(buf) );
 		if( iGot == -1 )
 		{
-			Warn( "%s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
+			WARN( "%s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
 			return false;
 		}
 
@@ -133,7 +133,7 @@ bool RageFileDriverZip::ParseZipfile()
 {
 	if( !SeekToEndCentralRecord() )
 	{
-		Warn( "Couldn't open %s: couldn't find end of central directory record", m_sPath.c_str() );
+		WARN( "Couldn't open %s: couldn't find end of central directory record", m_sPath.c_str() );
 		return false;
 	}
 
@@ -162,7 +162,7 @@ bool RageFileDriverZip::ParseZipfile()
 	}
 
 	if( m_pFiles.size() == 0 )
-		Warn( "%s: no files found in central file header", m_sPath.c_str() );
+		WARN( "%s: no files found in central file header", m_sPath.c_str() );
 
 	return true;
 }
@@ -173,7 +173,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( FileInfo &info )
 	RString sSig = FileReading::ReadString( *m_pZip, 4, sError );
 	if( sSig != "\x50\x4B\x01\x02" )
 	{
-		Warn( "%s: central directory record signature not found", m_sPath.c_str() );
+		WARN( "%s: central directory record signature not found", m_sPath.c_str() );
 		return -1;
 	}
 
@@ -198,7 +198,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( FileInfo &info )
 	/* Check for errors before reading variable-length fields. */
 	if( sError != "" )
 	{
-		Warn( "%s: %s", m_sPath.c_str(), sError.c_str() );
+		WARN( "%s: %s", m_sPath.c_str(), sError.c_str() );
 		return -1;
 	}
 
@@ -208,7 +208,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( FileInfo &info )
 
 	if( sError != "" )
 	{
-		Warn( "%s: %s", m_sPath.c_str(), sError.c_str() );
+		WARN( "%s: %s", m_sPath.c_str(), sError.c_str() );
 		return -1;
 	}
 
@@ -216,7 +216,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( FileInfo &info )
 	 * file pointer in the middle of a record. */
 	if( iGeneralPurpose & 1 )
 	{
-		Warn( "Skipped encrypted \"%s\" in \"%s\"", info.m_sName.c_str(), m_sPath.c_str() );
+		WARN( "Skipped encrypted \"%s\" in \"%s\"", info.m_sName.c_str(), m_sPath.c_str() );
 		return 0;
 	}
 
@@ -235,7 +235,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( FileInfo &info )
 
 	if( info.m_iCompressionMethod != STORED && info.m_iCompressionMethod != DEFLATED )
 	{
-		Warn( "File \"%s\" in \"%s\" uses unsupported compression method %i",
+		WARN( "File \"%s\" in \"%s\" uses unsupported compression method %i",
 			info.m_sName.c_str(), m_sPath.c_str(), info.m_iCompressionMethod );
 
 		return 0;
@@ -254,13 +254,13 @@ bool RageFileDriverZip::ReadLocalFileHeader( FileInfo &info )
 
 	if( sError != "" )
 	{
-		Warn( "%s: error opening \"%s\": %s", m_sPath.c_str(), info.m_sName.c_str(), sError.c_str() );
+		WARN( "%s: error opening \"%s\": %s", m_sPath.c_str(), info.m_sName.c_str(), sError.c_str() );
 		return false;
 	}
 
 	if( sSig != "\x50\x4B\x03\x04" )
 	{
-		Warn( "%s: local file header not found for \"%s\"", m_sPath.c_str(), info.m_sName.c_str() );
+		WARN( "%s: local file header not found for \"%s\"", m_sPath.c_str(), info.m_sName.c_str() );
 		return false;
 	}
 
@@ -272,7 +272,7 @@ bool RageFileDriverZip::ReadLocalFileHeader( FileInfo &info )
 
 	if( sError != "" )
 	{
-		Warn( "%s: %s", m_sPath.c_str(), sError.c_str() );
+		WARN( "%s: %s", m_sPath.c_str(), sError.c_str() );
 		return false;
 	}
 	
