@@ -18,6 +18,8 @@
 #include <io.h>
 #endif
 
+#define Warn(args...) if( LOG ) LOG->Warn( args ); else fprintf( stderr, args )
+
 #if defined(_XBOX)
 /* Wrappers for low-level file functions, to work around Xbox issues: */
 int DoMkdir( const RString &sPath, int perm )
@@ -150,14 +152,15 @@ bool CreateDirectories( RString Path )
 		 * returning ENOENT instead of EEXIST. */
 		/* I can't reproduce this anymore.  If we get ENOENT, log it but keep
 		 * going. */
-		if( errno == ENOENT && LOG )
-			LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
+		if( errno == ENOENT )
+			Warn( "Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
 		if( errno == EEXIST || errno == ENOENT )
 			continue;		// we expect to see these errors
 
+		// XXX: This doesn't make sense. Why do we return if LOG is present here?
 		if( LOG )
 		{
-			LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
+			Warn( "Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
 			return false;
 		}
 
@@ -166,8 +169,7 @@ bool CreateDirectories( RString Path )
 		DoStat( curpath, &st );
 		if( !(st.st_mode & S_IFDIR) )
 		{
-			if( LOG )
-				LOG->Warn("Couldn't create %s: path exists and is not a directory", curpath.c_str() );
+			Warn( "Couldn't create %s: path exists and is not a directory", curpath.c_str() );
 			
 			return false;
 		}
@@ -268,9 +270,8 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 				continue;
 			
 			/* Huh? */
-			if( LOG )
-				LOG->Warn( "Got file '%s' in '%s' from list, but can't stat? (%s)",
-					pEnt->d_name, sPath.c_str(), strerror(errno) );
+			Warn( "Got file '%s' in '%s' from list, but can't stat? (%s)",
+			      pEnt->d_name, sPath.c_str(), strerror(errno) );
 			continue;
 		}
 		else
