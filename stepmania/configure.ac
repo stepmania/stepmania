@@ -1,11 +1,10 @@
-# only tested with autoconf 2.57
-AC_PREREQ(2.60)
-AC_INIT
+AC_PREREQ(2.59)
+AC_INIT(StepMania, CVS, [stepmania-devs@lists.sf.net], StepMania)
 AC_CONFIG_SRCDIR([src/StepMania.cpp])
 AC_CONFIG_AUX_DIR(autoconf)
 AC_CANONICAL_TARGET
 
-AM_INIT_AUTOMAKE(StepMania, 3.001)
+AM_INIT_AUTOMAKE([no-define])
 AC_CONFIG_HEADERS([src/config.h])
 AM_MAINTAINER_MODE
 
@@ -22,6 +21,7 @@ AM_PROG_CC_C_O
 test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused -Wno-switch"
 test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused -Wno-switch"
 test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
+CPPFLAGS="$CPPFLAGS -DDATADIR=\"${datadir}\""
 
 compile=release
 AC_ARG_WITH(debug, AS_HELP_STRING([--with-debug],[Enable debug mode]), with_debug=$withval, with_debug=no)
