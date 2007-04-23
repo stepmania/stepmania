@@ -48,6 +48,10 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #define _SCL_SECURE_NO_DEPRECATE 
 
+#if defined(_MSC_VER) && _MSC_VER >= 1400 // this is needed in VC8 but breaks VC7
+#define _HAS_EXCEPTIONS 0
+#endif
+
 /* Don't include windows.h everywhere; when we do eventually include it, use these: */
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
