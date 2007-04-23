@@ -362,8 +362,20 @@ static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	char dir[PATH_MAX];
-	
+	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("SMData"), CFSTR("smzip"), NULL );
+
 	FILEMAN->Mount( "dir", sDirOfExecutable, "/" );
+	
+	if( dataUrl )
+	{
+		CFStringRef dataPath = CFURLCopyFileSystemPath( dataUrl, kCFURLPOSIXPathStyle );
+		CFStringGetCString( dataPath, dir, PATH_MAX, kCFStringEncodingUTF8 );
+
+		if( strncmp(sDirOfExecutable, dir, sDirOfExecutable.length()) == 0 )
+			FILEMAN->Mount( "zip", dir + sDirOfExecutable.length(), "/" );
+		CFRelease( dataPath );
+		CFRelease( dataUrl );
+	}
 	
 	// /Save -> ~/Library/Application Support/PRODUCT_ID
 	PathForFolderType( dir, kPreferencesFolderType );
