@@ -366,6 +366,8 @@ static void CheckSettings()
 
 #include "RageDisplay_Null.h"
 
+#include "archutils/Win32/VideoDriverInfo.h"
+
 struct VideoCardDefaults
 {
 	RString sDriverRegex;
