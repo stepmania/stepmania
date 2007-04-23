@@ -358,6 +358,7 @@ static void CheckSettings()
 
 #if defined(WIN32)
 #include "RageDisplay_D3D.h"
+#include "archutils/Win32/VideoDriverInfo.h"
 #endif
 
 #if defined(SUPPORT_OPENGL)
@@ -366,7 +367,6 @@ static void CheckSettings()
 
 #include "RageDisplay_Null.h"
 
-#include "archutils/Win32/VideoDriverInfo.h"
 
 struct VideoCardDefaults
 {
