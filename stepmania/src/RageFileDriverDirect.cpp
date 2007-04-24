@@ -248,14 +248,14 @@ bool RageFileObjDirect::FinalFlush()
 	int dirfd = open( Dirname(m_sPath), O_RDONLY );
 	if( dirfd == -1 )
 	{
-		WARN( "Error synchronizing open(%s dir): %s", this->m_sPath.c_str(), strerror(errno) );
+		WARN( ssprintf("Error synchronizing open(%s dir): %s", this->m_sPath.c_str(), strerror(errno)) );
 		SetError( strerror(errno) );
 		return false;
 	}
 
 	if( fsync( dirfd ) == -1 )
 	{
-		WARN( "Error synchronizing fsync(%s dir): %s", this->m_sPath.c_str(), strerror(errno) );
+		WARN( ssprintf("Error synchronizing fsync(%s dir): %s", this->m_sPath.c_str(), strerror(errno)) );
 		SetError( strerror(errno) );
 		close( dirfd );
 		return false;
@@ -316,8 +316,8 @@ RageFileObjDirect::~RageFileObjDirect()
 #else
 		if( rename( sOldPath, sNewPath ) == -1 )
 		{
-			WARN( "Error renaming \"%s\" to \"%s\": %s", 
-				sOldPath.c_str(), sNewPath.c_str(), strerror(errno) );
+			WARN( ssprintf("Error renaming \"%s\" to \"%s\": %s", 
+					sOldPath.c_str(), sNewPath.c_str(), strerror(errno)) );
 			SetError( strerror(errno) );
 			break;
 		}

@@ -268,8 +268,8 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 				continue;
 			
 			/* Huh? */
-			WARN( "Got file '%s' in '%s' from list, but can't stat? (%s)",
-			      pEnt->d_name, sPath.c_str(), strerror(errno) );
+			WARN( ssprintf("Got file '%s' in '%s' from list, but can't stat? (%s)",
+					pEnt->d_name, sPath.c_str(), strerror(errno)) );
 			continue;
 		}
 		else
