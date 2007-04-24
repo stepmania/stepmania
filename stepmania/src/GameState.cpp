@@ -669,10 +669,7 @@ void GameState::FinishStage()
 	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
 	const int iOldStageIndex = m_iCurrentStageIndex;
 
-	if( IsCourseMode() )
-		m_iCurrentStageIndex += 1;
-	else
-		m_iCurrentStageIndex += m_iNumStagesOfThisSong;
+	++m_iCurrentStageIndex;
 	FOREACH_EnabledPlayer( p )
 		m_iPlayerCurrentStageIndexForCurrentCredit[p] += m_iNumStagesOfThisSong;
 
