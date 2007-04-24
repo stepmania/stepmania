@@ -820,20 +820,8 @@ class DebugLineWriteProfiles : public IDebugLine
 	{
 		// Also save bookkeeping and profile info for debugging
 		// so we don't have to play through a whole song to get new output.
-		BOOKKEEPER->WriteToDisk();
-		PROFILEMAN->SaveMachineProfile();
-		FOREACH_PlayerNumber( p )
-		{
-			if( !PROFILEMAN->IsPersistentProfile(p) )
-				continue;
-
-			bool bWasMemoryCard = PROFILEMAN->ProfileWasLoadedFromMemoryCard(p);
-			if( bWasMemoryCard )
-				MEMCARDMAN->MountCard( p );
-			PROFILEMAN->SaveProfile( p );
-			if( bWasMemoryCard )
-				MEMCARDMAN->UnmountCard( p );
-		}
+		GAMESTATE->SaveLocalData();
+		GAMESTATE->SaveProfiles();
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
