@@ -1005,6 +1005,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="NotesLoaderKSF.h">
 			</File>
 			<File
+				RelativePath=".\NotesLoaderMidi.cpp">
+			</File>
+			<File
+				RelativePath=".\NotesLoaderMidi.h">
+			</File>
+			<File
 				RelativePath="NotesLoaderSM.cpp">
 			</File>
 			<File
@@ -1898,6 +1904,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSoundReader_Chain.h">
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_ChannelSplit.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_ChannelSplit.h">
+			</File>
+			<File
 				RelativePath=".\RageSoundReader_Extend.cpp">
 			</File>
 			<File
@@ -1911,6 +1923,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\RageSoundReader_Filter.h">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_Merge.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_Merge.h">
 			</File>
 			<File
 				RelativePath="RageSoundReader_MP3.cpp">
