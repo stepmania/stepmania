@@ -946,6 +946,32 @@ Stage GameState::GetCurrentStage() const
 	else						return (Stage)(STAGE_1+GetLargestCurrentStageIndexForAnyHumanPlayer());
 }
 
+// Return true if it's possible for GetCurrentStage() to return the given stage.
+bool GameState::IsStagePossible( Stage s ) const
+{
+	/* HACK: Find out what the stage would be without long or marathon.
+	 * This should never change during a screen. */
+	Song *pSong = m_pCurSong;
+	// XXX: Using GAMESTATE to get around const is potentially dangerous.
+	GAMESTATE->m_pCurSong.SetWithoutBroadcast( NULL );
+	Stage actual = GAMESTATE->GetCurrentStage();
+	GAMESTATE->m_pCurSong.SetWithoutBroadcast( pSong );
+
+	/* Check long/marathon, which can change the stage to FINAL. */
+	if( s == STAGE_FINAL && actual >= STAGE_1 && actual <= STAGE_FINAL )
+	{
+		Stage max_actual = actual;
+
+		// For long/marathon songs:
+		enum_add( max_actual, +2 );
+
+		if( max_actual >= STAGE_FINAL )
+			return true;
+	}
+
+	return s == actual;
+}
+
 int GameState::GetCourseSongIndex() const
 {
 	int iSongIndex = 0;
@@ -2164,6 +2190,7 @@ public:
 	DEFINE_METHOD( IsExtraStage,			IsExtraStage() )
 	DEFINE_METHOD( IsExtraStage2,			IsExtraStage2() )
 	DEFINE_METHOD( GetCurrentStage,			GetCurrentStage() )
+	DEFINE_METHOD( IsStagePossible,			IsStagePossible( Enum::Check<Stage>(L, 1)) )
 	DEFINE_METHOD( HasEarnedExtraStage,		HasEarnedExtraStage() )
 	DEFINE_METHOD( GetEasiestStepsDifficulty,	GetEasiestStepsDifficulty() )
 	DEFINE_METHOD( IsEventMode,			IsEventMode() )
@@ -2332,6 +2359,7 @@ public:
 		ADD_METHOD( IsExtraStage );
 		ADD_METHOD( IsExtraStage2 );
 		ADD_METHOD( GetCurrentStage );
+		ADD_METHOD( IsStagePossible );
 		ADD_METHOD( HasEarnedExtraStage );
 		ADD_METHOD( GetEasiestStepsDifficulty );
 		ADD_METHOD( IsEventMode );

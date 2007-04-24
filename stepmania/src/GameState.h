@@ -143,6 +143,7 @@ public:
 	bool		IsExtraStage() const;
 	bool		IsExtraStage2() const;
 	Stage		GetCurrentStage() const;
+	bool		IsStagePossible( Stage s ) const;
 	int		GetCourseSongIndex() const;
 	RString		GetPlayerDisplayName( PlayerNumber pn ) const;
 
