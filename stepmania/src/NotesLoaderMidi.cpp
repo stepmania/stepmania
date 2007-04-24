@@ -8,15 +8,24 @@
 
  * Guitar track mappings are explained here: http://www.scorehero.com/forum/viewtopic.php?t=1179
 
- STK license documentation:
-  DISCLAIMER:
-  You probably already guessed this, but just to be sure, we don't guarantee anything works.  :-)  It's free ... what do you expect?  If you find a bug, please let us know and we'll try to correct it.  You can also make suggestions, but again, no guarantees.  Send email to the mail list.
-
-  LEGAL AND ETHICAL:
-  This software was designed and created to be made publicly available for free, primarily for academic purposes, so if you use it, pass it on with this documentation, and for free.  
-  If you make a million dollars with it, give us some.  If you make compositions with it, put us in the program notes.
-  Some of the concepts are covered by various patents, some known to us and likely others which are unknown.  Many of the ones known to us are administered by the Stanford Office of Technology and Licensing.  
-  The good news is that large hunks of the techniques used here are public domain.  To avoid subtle legal issues, we'll not state what's freely useable here, but we'll try to note within the various classes where certain things are likely to be protected by patents.
+ * STK license documentation:
+ * 
+ *  On April 19 2007, StepMania was granted an MIT license by Gary Scavone for any STK code on the condition that all of the the STK credits/disclaimers/copyrights from the README are retained in the source code and in the project documentation.
+ *
+ *  CREDITS:
+ *  By Perry R. Cook and Gary P. Scavone, 1995-2005.
+ *
+ *  DISCLAIMER:
+ *  You probably already guessed this, but just to be sure, we don't guarantee anything works.  :-)  It's free ... what do you expect?  If you find a bug, please let us know and we'll try to correct it.  You can also make suggestions, but again, no guarantees.  Send email to the mail list.
+ *
+ *  LEGAL AND ETHICAL:
+ *  This software was designed and created to be made publicly available for free, primarily for academic purposes, so if you use it, pass it on with this documentation, and for free.  
+ *  If you make a million dollars with it, give us some.  If you make compositions with it, put us in the program notes.
+ *  Some of the concepts are covered by various patents, some known to us and likely others which are unknown.  Many of the ones known to us are administered by the Stanford Office of Technology and Licensing.  
+ *  The good news is that large hunks of the techniques used here are public domain.  To avoid subtle legal issues, we'll not state what's freely useable here, but we'll try to note within the various classes where certain things are likely to be protected by patents.
+ *
+ *  FURTHER READING:
+ *  For complete documentation on this ToolKit, the classes, etc., see the doc directory of the distribution or surf to http://ccrma.stanford.edu/software/stk/.  Also check the platform specific README's for specific system requirements.
  */
 
 #include "global.h"
@@ -549,6 +558,11 @@ namespace Guitar
 		channel_aftertouch = 0xD,
 		pitch_bend = 0xE,
 	};
+	struct MidiEvent
+	{
+		long count;
+		MidiEventType midiEventType;
+	};
 };
 
 using namespace Guitar;
@@ -622,11 +636,11 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 	}
 
 
-	/* Read the MIDI events into per-NoteNumber maps.  The guitar processing rules for 
-	 * MIDI events often need to look at the next or previous event with the same 
-	 * NoteNumber.  This is difficult using MidiFileIn, so this intermediate processing 
+	/* Read the MIDI events into per-difficulty, pre-NoteNumber vector.  The guitar processing 
+	 * rules for MIDI events often need to look at the next or previous event with the same 
+	 * NoteNumber.  This is difficult using MidiFileIn interfaces, so this intermediate processing 
 	 * step is helpful. */
-	map<long,MidiEventType> mapCountToMidiEventType[NUM_GuitarDifficulty][NUM_NoteNumberType];
+	vector<MidiEvent> vMidiEvent[NUM_GuitarDifficulty][NUM_NoteNumberType];
 
 	{
 		std::vector<unsigned char> event;
@@ -651,7 +665,11 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 					GuitarDifficulty gd;
 					NoteNumberType nnt;
 					if( NoteNumberToDifficultyAndNoteNumberType( uNoteNumber, gd, nnt ) )
-						mapCountToMidiEventType[gd][nnt] [count] = midiEventType;
+					{
+						MidiEvent event = { count, midiEventType };
+						float fBeat = NoteRowToBeat( MidiCountToNoteRow(count) );
+						vMidiEvent[gd][nnt].push_back( event );
+					}
 				}
 				break;
 			default:
@@ -672,12 +690,12 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 
 		FOREACH_ENUM( NoteNumberType, nnt )
 		{
-			if( nnt > NUM_FRETS )
+			if( nnt >= NUM_FRETS )
 				continue;	// data other than the frets is not handled yet
 
 			bool bTrackIsOn = false;
 			long countOfLastNote = 0;
-			FOREACHM( long, MidiEventType, mapCountToMidiEventType[gd][nnt], iter )
+			FOREACH_CONST( MidiEvent, vMidiEvent[gd][nnt], iter )
 			{				 
 				/*
 				1) Note-on events indicate the start of a guitar note 
@@ -700,20 +718,25 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 				   note endpoints. In this case, the term "duplicate" means a situation where a note-on or 
 				   note-off event specifies the same note-number as a prior event occuring at the same timestamp.
 				*/
-				MidiEventType midiEventType = iter->second;
+				MidiEventType midiEventType = iter->midiEventType;
+				long count = iter->count;
+				float fBeat = NoteRowToBeat( MidiCountToNoteRow(count) );
 				bool bNoteHandled = false;
 				if( bTrackIsOn )
 				{
 					if( midiEventType == note_off  ||  midiEventType == note_on )
 					{
 						// end this track
-						long length = iter->first - countOfLastNote;
+						long length = count - countOfLastNote;
 
 						if( length >= 240 )
 						{
 							TapNote tn = TAP_ORIGINAL_HOLD_HEAD;
 							tn.iDuration = MidiCountToNoteRow( length );
 							noteData.SetTapNote( nnt, MidiCountToNoteRow(countOfLastNote), tn );
+
+							if( gd == expert  &&  fBeat >= 9*4-2  &&  nnt == yellow )
+								LOG->Trace( "Added hold at %f", fBeat );
 						}
 
 						bTrackIsOn = false;
@@ -727,17 +750,38 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 					{
 						// start this track
 						TapNote tn = TAP_ORIGINAL_TAP;
-						noteData.SetTapNote( nnt, MidiCountToNoteRow(iter->first), tn );
-						
+
+						// We're about to add a tap note.  If the previous note was a sustain note that ended 
+						// on this row, then make the sustain note one row shorter so that it doesn't end on 
+						// the same row as the tap note we're about to add.  NoteData cannot handle a 
+						// hold note ending on the same row as a tap note.
+						NoteData::iterator begin, end;
+						noteData.GetTapNoteRangeInclusive( nnt, MidiCountToNoteRow(count), MidiCountToNoteRow(count), begin, end, true );
+						for( NoteData::iterator iter = begin; iter != end; iter++ )
+						{
+							if( gd == expert  &&  fBeat >= 9*4-2  &&  nnt == yellow )
+								LOG->Trace( "shortening hold at %f", fBeat );
+
+							ASSERT( iter->second.type == TapNote::hold_head );
+							ASSERT( iter->first + iter->second.iDuration == MidiCountToNoteRow(count) );
+							iter->second.iDuration -= 2;
+						}
+
+						noteData.SetTapNote( nnt, MidiCountToNoteRow(count), tn );
+
+
+						if( gd == expert  &&  fBeat >= 9*4-2  &&  nnt == yellow )
+							LOG->Trace( "Added tap at %f", fBeat );
+		
 						bTrackIsOn = true;
-						countOfLastNote = iter->first;
+						countOfLastNote = count;
 						bNoteHandled = true;
 					}
 				}
 
 				if( !bNoteHandled )
 				{
-					LOG->Trace( "Unexpected MIDI event type %X at count %ld", midiEventType, iter->first );
+					LOG->Trace( "Unexpected MIDI event type %X at count %ld", midiEventType, count );
 				}
 			}
 		}
@@ -770,6 +814,24 @@ bool MidiLoader::LoadFromDir( const RString &sDir, Song &out )
 			ini.GetValue("song","artist",out.m_sArtist);
 			ini.GetValue("song","name",out.m_sMainTitle);
 		}
+	}
+	
+	{
+		vector<RString> vsFiles;
+		GetDirListing( sDir + RString("*song.ogg"), vsFiles );
+		GetDirListing( sDir + RString("*song.mp3"), vsFiles );
+		GetDirListing( sDir + RString("*song.wav"), vsFiles );
+		if( vsFiles.size() > 0 )
+			out.m_sMusicFile = vsFiles[0];
+	}
+
+	{
+		vector<RString> vsFiles;
+		GetDirListing( sDir + RString("*guitar.ogg"), vsFiles );
+		GetDirListing( sDir + RString("*guitar.mp3"), vsFiles );
+		GetDirListing( sDir + RString("*guitar.wav"), vsFiles );
+		if( vsFiles.size() > 0 )
+			out.m_sLeadTrackFile = vsFiles[0];
 	}
 
 	vector<RString> vsFiles;
