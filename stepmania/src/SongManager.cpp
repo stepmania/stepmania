@@ -550,14 +550,7 @@ void SongManager::GetPreferredSortSongs( vector<Song*> &AddTo ) const
 	}
 
 	FOREACH_CONST( SongPointerVector, m_vPreferredSongSort, v )
-	{
-		FOREACH_CONST( Song*, *v, s )
-		{
-			Song* pSong = *s;
-			ASSERT( pSong );
-			AddTo.push_back( pSong );
-		}
-	}
+		AddTo.insert( AddTo.end(), v->begin(), v->end() );
 }
 
 void SongManager::GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen ) const
