@@ -3187,6 +3187,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_Merge.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_Merge.h"
+				>
+			</File>
+			<File
 				RelativePath="RageSoundReader_MP3.cpp"
 				>
 			</File>
