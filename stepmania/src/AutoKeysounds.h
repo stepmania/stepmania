@@ -7,7 +7,9 @@
 #include "PlayerNumber.h"
 #include "RageSound.h"
 
+class RageSoundReader;
 class RageSoundReader_Chain;
+class Song;
 class AutoKeysounds
 {
 public:
@@ -15,13 +17,19 @@ public:
 	void Update( float fDelta );
 	void FinishLoading();
 	RageSound *GetSound() { return &m_sSound; }
+	RageSoundReader *GetSharedSound() { return m_pSharedSound; }
+	RageSoundReader *GetPlayerSound( PlayerNumber pn ) { if( pn == PLAYER_INVALID ) return NULL; return m_pPlayerSounds[pn]; }
 
 protected:	
 	void LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain );
+	static void LoadTracks( const Song *pSong, RageSoundReader *&pGlobal, RageSoundReader *&pPlayer1, RageSoundReader *&pPlayer2 );
 
 	NoteData		m_ndAutoKeysoundsOnly[NUM_PLAYERS];
 	vector<RageSound>	m_vKeysounds;
 	RageSound		m_sSound;
+	RageSoundReader		*m_pChain; // owned by m_sSound
+	RageSoundReader		*m_pPlayerSounds[NUM_PLAYERS]; // owned by m_sSound
+	RageSoundReader		*m_pSharedSound; // owned by m_sSound
 };
 
 #endif

@@ -20,11 +20,17 @@
 #include "GameState.h"
 #include "song.h"
 #include "RageSoundReader_Chain.h"
+#include "RageSoundReader_ChannelSplit.h"
 #include "RageSoundReader_Extend.h"
+#include "RageSoundReader_Merge.h"
+#include "RageSoundReader_Pan.h"
 #include "RageSoundReader_PitchChange.h"
 #include "RageSoundReader_PostBuffering.h"
+#include "RageSoundReader_ThreadedBuffer.h"
 #include "RageSoundManager.h"
 #include "RageLog.h"
+#include "RageSoundReader_FileReader.h"
+#include "Foreach.h"
 
 void AutoKeysounds::Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly )
 {
@@ -38,18 +44,6 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 	//
 	Song* pSong = GAMESTATE->m_pCurSong;
 	RString sSongDir = pSong->GetSongDir();
-/*
-	m_vKeysounds.clear();
-	m_vKeysounds.resize( pSong->m_vsKeysoundFile.size() );
-	for( unsigned i=0; i<m_vKeysounds.size(); i++ )
-	{
-		 RString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[i];
-		 RageSound& sound = m_vKeysounds[i];
-		 sound.Load( sKeysoundFilePath );
-
-
-	}
-*/
 
 	/*
 	 * Add all current autoplay sounds in both players to the chain.  If a sound is
@@ -118,30 +112,169 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 	}
 }
 
+void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, RageSoundReader *&pPlayer1, RageSoundReader *&pPlayer2 )
+{
+	/* If we have two players, prefer a three-track sound; otherwise prefer a two-track sound. */
+	bool bTwoPlayers = GAMESTATE->GetNumPlayersEnabled() == 2;
+
+	pPlayer1 = NULL;
+	pPlayer2 = NULL;
+	pShared = NULL;
+
+	RString sError;
+	RageSoundReader *pSongReader = RageSoundReader_FileReader::OpenFile( pSong->GetMusicPath(), sError );
+
+	/* Load the buffering filter before the effects filters, so effects aren't delayed. */
+	pSongReader = new RageSoundReader_Extend( pSongReader );
+	pSongReader = new RageSoundReader_ThreadedBuffer( pSongReader );
+	pShared = pSongReader;
+
+
+	if( pSong->HasLeadTrack() )
+	{
+		RageSoundReader *pLeadTrackReader = RageSoundReader_FileReader::OpenFile( pSong->GetLeadTrackPath(), sError );
+		/* Load the buffering filter before the effects filters, so effects aren't delayed. */
+		pLeadTrackReader = new RageSoundReader_Extend( pLeadTrackReader );
+		pLeadTrackReader = new RageSoundReader_ThreadedBuffer( pLeadTrackReader );
+		pPlayer1 = pLeadTrackReader;	
+	}
+
+	return;
+
+	if( pSongReader->GetNumChannels() <= 2 )
+	{
+		/* If we only have one track, return it as the shared track. */
+		pShared = pSongReader;
+		return;
+	}
+
+	// TODO: Make this work for player 2, and for 2 players
+
+
+	/* The code below is used to split the main sound stream into per-player sounds.
+	* The results of this method doesn't seem interesting enough to bother supporting this.
+	*/
+
+	//RageSoundSplitter Splitter( pSongReader );
+
+	//RageSoundReader_Split *pMainSound = Splitter.CreateSound();
+	//pMainSound->AddSourceChannelToSound( 0, 0 );
+	//if( pSongReader->GetNumChannels() >= 2 ) // stereo
+	//	pMainSound->AddSourceChannelToSound( 1, 1 );
+	//pShared = pMainSound;
+
+	//
+	//RageSoundReader_Split *pLeadSound = Splitter.CreateSound();
+	//pLeadSound->AddSourceChannelToSound( 2, 0 );
+	//if( pSongReader->GetNumChannels() >= 4 ) // stereo
+	//	pLeadSound->AddSourceChannelToSound( 3, 1 );
+	//pPlayer1 = pLeadSound;
+
+	//if( pSongReader->GetNumChannels() >= 5 )
+	//{
+	//	if( bTwoPlayers )
+	//	{
+	//		RageSoundReader_Split *pSecondarySound = Splitter.CreateSound();
+	//		pSecondarySound->AddSourceChannelToSound( 4, 0 );
+	//		if( pSongReader->GetNumChannels() >= 6 )
+	//			pSecondarySound->AddSourceChannelToSound( 5, 1 ); // stereo
+	//		else
+	//			pSecondarySound->AddSourceChannelToSound( 4, 1 ); // mono
+	//		pPlayer2 = pSecondarySound;
+	//	}
+	//	else
+	//	{
+	//		/* We have a secondary track, but we only have one player.  Mix it into
+	//		 * the background track. */
+	//		pMainSound->AddSourceChannelToSound( 4, 0 );
+	//		if( pSongReader->GetNumChannels() >= 6 )
+	//			pMainSound->AddSourceChannelToSound( 5, 1 ); // stereo
+	//		else
+	//			pMainSound->AddSourceChannelToSound( 4, 1 ); // mono
+	//	}
+
+	//}
+	//else if( bTwoPlayers )
+	//{
+	//	/* We have two players, but only two tracks.  Use the same track for both
+	//	 * players. */
+	//	pPlayer2 = pPlayer1->Copy();
+	//	pPlayer1->SetProperty( "Balance", -1.0f );
+	//	pPlayer2->SetProperty( "Balance", +1.0f );
+	//}
+}
+
 void AutoKeysounds::FinishLoading()
 {
 	m_sSound.Unload();
 
-	/* Load the BGM. */
-	RageSoundReader_Chain *pChain = new RageSoundReader_Chain;
-	pChain->SetPreferredSampleRate( SOUNDMAN->GetDriverSampleRate() );
-
 	Song* pSong = GAMESTATE->m_pCurSong;
-	pChain->AddSound( pChain->LoadSound(pSong->GetMusicPath()), 0, 0 );
 
-	LoadAutoplaySoundsInto( pChain );
+	vector<RageSoundReader *> apSounds;
+	LoadTracks( pSong, m_pSharedSound, m_pPlayerSounds[0], m_pPlayerSounds[1] );
+
+	/* Load autoplay sounds, if any. */
+	{
+		RageSoundReader_Chain *pChain = new RageSoundReader_Chain;
+		pChain->SetPreferredSampleRate( SOUNDMAN->GetDriverSampleRate() );
+		LoadAutoplaySoundsInto( pChain );
+
+		if( pChain->GetNumSounds() > 0 )
+		{
+			int iIndex = pChain->LoadSound( m_pSharedSound );
+			pChain->AddSound( iIndex, 0.0f, 0 );
+			pChain->Finish();
+
+			m_pSharedSound = pChain;
+		}
+		else
+		{
+			delete pChain;
+		}
+	}
+
+	m_pSharedSound = new RageSoundReader_PitchChange( m_pSharedSound );
+	m_pSharedSound = new RageSoundReader_PostBuffering( m_pSharedSound );
+	m_pSharedSound = new RageSoundReader_Pan( m_pSharedSound );
+	apSounds.push_back( m_pSharedSound );
+
+	if( m_pPlayerSounds[0] != NULL )
+	{
+		m_pPlayerSounds[0] = new RageSoundReader_PitchChange( m_pPlayerSounds[0] );
+		m_pPlayerSounds[0] = new RageSoundReader_PostBuffering( m_pPlayerSounds[0] );
+		m_pPlayerSounds[0] = new RageSoundReader_Pan( m_pPlayerSounds[0] );
+		apSounds.push_back( m_pPlayerSounds[0] );
+	}
 	
-	pChain->Finish();
+	if( m_pPlayerSounds[1] != NULL )
+	{
+		m_pPlayerSounds[1] = new RageSoundReader_PitchChange( m_pPlayerSounds[1] );
+		m_pPlayerSounds[1] = new RageSoundReader_PostBuffering( m_pPlayerSounds[1] );
+		m_pPlayerSounds[1] = new RageSoundReader_Pan( m_pPlayerSounds[1] );
+		apSounds.push_back( m_pPlayerSounds[1] );
+	}
 
-	RageSoundReader *pReader = pChain;
+	if( GAMESTATE->GetNumPlayersEnabled() == 1 && GAMESTATE->m_MasterPlayerNumber == PLAYER_2 )
+		swap( m_pPlayerSounds[PLAYER_1], m_pPlayerSounds[PLAYER_2] );
 
-	pReader = new RageSoundReader_Extend( pReader );
+	if( apSounds.size() > 1 )
+	{
+		RageSoundReader_Merge *pMerge = new RageSoundReader_Merge;
 
-	/* Load a pitch shifter for the whole sound. */
-	pReader = new RageSoundReader_PitchChange( pReader );
-	pReader = new RageSoundReader_PostBuffering( pReader );
+		FOREACH( RageSoundReader *, apSounds, ps )
+			pMerge->AddSound( *ps );
 
-	m_sSound.LoadSoundReader( pReader );
+		pMerge->Finish( SOUNDMAN->GetDriverSampleRate() );
+
+		m_pChain = pMerge;
+	}
+	else
+	{
+		ASSERT( !apSounds.empty() );
+		m_pChain = apSounds[0];
+	}
+
+	m_sSound.LoadSoundReader( m_pChain );
 }
 
 void AutoKeysounds::Update( float fDelta )
