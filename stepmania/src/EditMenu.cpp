@@ -170,6 +170,7 @@ void EditMenu::Load( const RString &sType )
 	m_SongTextBanner.SetName( "SongTextBanner" );
 	m_SongTextBanner.Load( "TextBanner" );
 	ActorUtil::SetXY( m_SongTextBanner, sType );
+	ActorUtil::LoadAllCommands( m_SongTextBanner, sType );
 	this->AddChild( &m_SongTextBanner );
 	
 	m_Meter.SetName( "Meter" );
@@ -383,6 +384,12 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		m_SongBanner.LoadFromSong( GetSelectedSong() );
 		m_SongBanner.ScaleToClipped( SONG_BANNER_WIDTH, SONG_BANNER_HEIGHT );
 		m_SongTextBanner.LoadFromSong( GetSelectedSong() );
+
+		{
+			Message msg( "Set" );
+			msg.SetParam( "Song", GetSelectedSong() );
+			m_SongTextBanner.HandleMessage( msg );
+		}
 		// fall through
 	case ROW_STEPS_TYPE:
 		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToLocalizedString(GetSelectedStepsType()) );
