@@ -943,7 +943,7 @@ Stage GameState::GetCurrentStage() const
 	else if( IsFinalStage() )			return STAGE_FINAL;
 	else if( IsExtraStage() )			return STAGE_EXTRA1;
 	else if( IsExtraStage2() )			return STAGE_EXTRA2;
-	else						return (Stage)(STAGE_1+GetLargestCurrentStageIndexForAnyHumanPlayer());
+	else						return enum_add2( STAGE_1, GetLargestCurrentStageIndexForAnyHumanPlayer() );
 }
 
 // Return true if it's possible for GetCurrentStage() to return the given stage.
