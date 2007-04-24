@@ -575,7 +575,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse()
 		iNumStagesOfThisSong = GameState::GetNumStagesForSongAndStyleType( GAMESTATE->m_pCurSong, pStyle->m_StyleType );
 	}
 	else if( GAMESTATE->m_pCurCourse )
-		iNumStagesOfThisSong = 1;
+		iNumStagesOfThisSong = PREFSMAN->m_iSongsPerPlay;
 	else
 		return -1;
 
@@ -668,8 +668,11 @@ void GameState::FinishStage()
 	// Increment the stage counter.
 	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
 	const int iOldStageIndex = m_iCurrentStageIndex;
-	
-	m_iCurrentStageIndex += m_iNumStagesOfThisSong;
+
+	if( IsCourseMode() )
+		m_iCurrentStageIndex += 1;
+	else
+		m_iCurrentStageIndex += m_iNumStagesOfThisSong;
 	FOREACH_EnabledPlayer( p )
 		m_iPlayerCurrentStageIndexForCurrentCredit[p] += m_iNumStagesOfThisSong;
 
