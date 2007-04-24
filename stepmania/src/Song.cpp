@@ -33,7 +33,7 @@
 #include <set>
 #include <float.h>
 
-const int FILE_CACHE_VERSION = 151;	// increment this to invalidate cache
+const int FILE_CACHE_VERSION = 154;	// increment this to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
@@ -360,6 +360,7 @@ void Song::TidyUpData()
 	ASSERT_M( m_sSongDir.Left(3) != "../", m_sSongDir ); /* meaningless */
 	FixupPath( m_sSongDir, "" );
 	FixupPath( m_sMusicFile, m_sSongDir );
+	FixupPath( m_sLeadTrackFile, m_sSongDir );
 	FixupPath( m_sBannerFile, m_sSongDir );
 	FixupPath( m_sLyricsFile, m_sSongDir );
 	FixupPath( m_sBackgroundFile, m_sSongDir );
@@ -1039,10 +1040,11 @@ bool Song::HasMusic() const
 
 	return m_sMusicFile != "" && IsAFile(GetMusicPath());
 }
-bool Song::HasBanner() const 		{return m_sBannerFile != ""			&&  IsAFile(GetBannerPath()); }
-bool Song::HasLyrics() const		{return m_sLyricsFile != ""			&&	IsAFile(GetLyricsPath()); }
-bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(GetBackgroundPath()); }
-bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); }
+bool Song::HasBanner() const 		{return m_sBannerFile != ""		&& IsAFile(GetBannerPath()); }
+bool Song::HasLeadTrack() const 	{return m_sLeadTrackFile != ""		&& IsAFile(GetLeadTrackPath()); }
+bool Song::HasLyrics() const		{return m_sLyricsFile != ""		&& IsAFile(GetLyricsPath()); }
+bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&& IsAFile(GetBackgroundPath()); }
+bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&& IsAFile(GetCDTitlePath()); }
 bool Song::HasBGChanges() const
 {
 	FOREACH_BackgroundLayer( i )
@@ -1105,6 +1107,11 @@ RString GetSongAssetPath( RString sPath, const RString &sSongPath )
 RString Song::GetMusicPath() const
 {
 	return GetSongAssetPath( m_sMusicFile, m_sSongDir );
+}
+
+RString Song::GetLeadTrackPath() const
+{
+	return GetSongAssetPath( m_sLeadTrackFile, m_sSongDir );
 }
 
 RString Song::GetBannerPath() const

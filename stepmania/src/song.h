@@ -113,6 +113,7 @@ public:
 	RString	m_sCredit;
 
 	RString	m_sMusicFile;
+	RString	m_sLeadTrackFile;
 	float	m_fMusicLengthSeconds;
 	float	m_fFirstBeat;	// beat of first note
 	float	m_fLastBeat;	// beat of last note
@@ -129,6 +130,7 @@ public:
 	RString	m_sCDTitleFile;
 
 	RString GetMusicPath() const;
+	RString GetLeadTrackPath() const;
 	RString GetBannerPath() const;
 	RString	GetLyricsPath() const;
 	RString GetBackgroundPath() const;
@@ -138,6 +140,7 @@ public:
 	bool m_bHasMusic, m_bHasBanner;
 
 	bool HasMusic() const;
+	bool HasLeadTrack() const;
 	bool HasBanner() const;
 	bool HasBackground() const;
 	bool HasCDTitle() const;
