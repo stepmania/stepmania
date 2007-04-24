@@ -404,6 +404,7 @@ void ScreenGameplay::Init()
 		FOREACH_EnabledPlayer(p)
 			PROFILEMAN->IncrementCoursePlayCount( GAMESTATE->m_pCurCourse, GAMESTATE->m_pCurTrail[p], p );
 
+	STATSMAN->m_CurStageStats.m_Stage = GAMESTATE->GetCurrentStage();
 	STATSMAN->m_CurStageStats.m_playMode = GAMESTATE->m_PlayMode;
 	STATSMAN->m_CurStageStats.m_pStyle = GAMESTATE->GetCurrentStyle();
 

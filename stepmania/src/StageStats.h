@@ -26,6 +26,7 @@ public:
 
 	int		GetAverageMeter( PlayerNumber pn ) const;
 
+	Stage		m_Stage;
 	PlayMode	m_playMode;
 	const Style*	m_pStyle;
 	vector<Song*>	m_vpPlayedSongs;

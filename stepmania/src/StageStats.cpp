@@ -19,6 +19,7 @@
 StageStats::StageStats()
 {
 	m_playMode = PlayMode_Invalid;
+	m_Stage = Stage_Invalid;
 	m_pStyle = NULL;
 	m_vpPlayedSongs.clear();
 	m_vpPossibleSongs.clear();
@@ -90,6 +91,7 @@ void StageStats::AddStats( const StageStats& other )
 		m_vpPlayedSongs.push_back( *s );
 	FOREACH_CONST( Song*, other.m_vpPossibleSongs, s )
 		m_vpPossibleSongs.push_back( *s );
+	m_Stage = Stage_Invalid; // meaningless
 	m_StageType = StageType_Invalid; // meaningless
 
 	m_bGaveUp |= other.m_bGaveUp;
@@ -341,6 +343,7 @@ public:
 	static int GetGameplaySeconds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_fGameplaySeconds); return 1; }
 	static int OnePassed( T* p, lua_State *L )			{ lua_pushboolean(L, p->OnePassed()); return 1; }
 	static int AllFailed( T* p, lua_State *L )			{ lua_pushboolean(L, p->AllFailed()); return 1; }
+	static int GetStage( T* p, lua_State *L )			{ LuaHelpers::Push( L, p->m_Stage ); return 1; }
 	static int PlayerHasHighScore( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->PlayerHasHighScore(Enum::Check<PlayerNumber>(L, 1)));
@@ -356,6 +359,7 @@ public:
 		ADD_METHOD( GetGameplaySeconds );
 		ADD_METHOD( OnePassed );
 		ADD_METHOD( AllFailed );
+		ADD_METHOD( GetStage );
 		ADD_METHOD( PlayerHasHighScore );
 	}
 };
