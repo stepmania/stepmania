@@ -191,6 +191,8 @@ void PercentageDisplay::Refresh()
 
 RString PercentageDisplay::FormatPercentScore( float fPercentDancePoints )
 {
+	CLAMP( fPercentDancePoints, 0.f, 1.f );
+
 	// TRICKY: printf will round, but we want to truncate.  Otherwise, we may display a percent
 	// score that's too high and doesn't match up with the calculated grade.
 	float fTruncInterval = powf( 0.1f, (float)PERCENT_TOTAL_SIZE-1 );
