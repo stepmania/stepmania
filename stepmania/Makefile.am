@@ -8,21 +8,30 @@ ACLOCAL_AMFLAGS = -I autoconf/m4
 ## including the escapes. Make it lowercase to match ArchHooks::MountInitialFileSystems().
 productID := $(shell sed -nr /define\\s+PRODUCT_ID_BARE/\{s/.*define\\s+PRODUCT_ID_BARE\\s+\(.+\)/\\1/\;y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/\;p\;q\} $(srcdir)/src/ProductInfo.h)
 
+installFiles = src/stepmania
+if HAVE_GTK
+installFiles += src/GtkModule.so
+endif
+
 .PHONY: SMData
 SMData:
 	$(srcdir)/Utils/mksmdata.pl $(srcdir) .
 
 dist-hook: SMData
-	cp SMData.smzip $(distdir)
+	mkdir -p $(distdir)/Packages
+	cp SMData.smzip $(distdir)/Packages
 	mkdir -p $(distdir)/Docs
 	cp $(srcdir)/Docs/BGAnimation\ conditionals.txt $(srcdir)/Docs/BMA-fmt.txt \
 		$(srcdir)/Docs/ConditionalBGA\ Info.txt $(srcdir)/Docs/Copying.MAD \
 		$(srcdir)/Docs/Licenses.txt $(distdir)/Docs
 	cp $(srcdir)/Utils/build.sh $(distdir)
 
-install-data-hook: $(top_srcdir)/SMData.smzip
-	mkdir -p "$(DESTDIR)$(datadir)/$(productID)"
-	$(INSTALL_DATA) $(top_srcdir)/SMData.smzip "$(DESTDIR)$(datadir)/$(productID)"
+install-data-hook: $(top_srcdir)/Packages/SMData.smzip
+	mkdir -p "$(DESTDIR)$(bindir)/$(productID)/Packages"
+	$(INSTALL) $(installFiles) "$(DESTDIR)$(bindir)/$(productID)"
+	$(INSTALL_DATA) $(top_srcdir)/Packages/SMData.smzip "$(DESTDIR)$(bindir)/$(productID)/Packages"
 
 uninstall-hook:
-	rm -f "$(DESTDIR)$(datadir)/$(productID)/SMData.smzip"
+	rm -f "$(DESTDIR)$(bindir)/$(productID)/stepmania"
+	rm -f "$(DESTDIR)$(bindir)/$(productID)/GtkModule.so"
+	rm -f "$(DESTDIR)$(bindir)/$(productID)/Packages/SMData.smzip"
