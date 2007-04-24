@@ -40,6 +40,7 @@ const RString EDIT_COURSES_SUBDIR  = "EditCourses/";
 
 ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
 static Preference<bool> g_bProfileDataCompress( "ProfileDataCompress", false );
+static Preference<bool> g_bCopyCatalogToProfiles( "CopyCatalogToProfiles", true );
 
 #define GUID_SIZE_BYTES 8
 
@@ -1606,9 +1607,12 @@ void Profile::SaveStatsWebPageToDir( RString sDir ) const
 	ASSERT( PROFILEMAN );
 
 	FileCopy( THEME->GetPathO("Profile",STATS_XSL), sDir+STATS_XSL );
-	FileCopy( THEME->GetPathO("Profile",CATALOG_XSL), sDir+CATALOG_XSL );
 	FileCopy( THEME->GetPathO("Profile",COMMON_XSL), sDir+COMMON_XSL );
-	FileCopy( CATALOG_XML_FILE, sDir+CATALOG_XML );
+	if( g_bCopyCatalogToProfiles )
+	{
+		FileCopy( CATALOG_XML_FILE, sDir+CATALOG_XML );
+		FileCopy( THEME->GetPathO("Profile",CATALOG_XSL), sDir+CATALOG_XSL );
+	}
 }
 
 void Profile::SaveMachinePublicKeyToDir( RString sDir ) const
