@@ -95,7 +95,7 @@ void StatsManager::GetFinalEvalStageStats( StageStats& statsOut ) const
 		if( !ss.OnePassed() )
 			continue;
 
-		if( ss.m_StageType == StageStats::STAGE_NORMAL )
+		if( ss.m_Stage != STAGE_EXTRA1 && ss.m_Stage != STAGE_EXTRA2 )
 		{
 			if( PassedRegularSongsLeft == 0 )
 				break;
