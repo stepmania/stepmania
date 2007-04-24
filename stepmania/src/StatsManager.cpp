@@ -139,7 +139,7 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 	
 	pProfile->m_iTotalDancePoints += ss.m_player[pn].m_iActualDancePoints;
 
-	if( ss.m_StageType == StageStats::STAGE_EXTRA || ss.m_StageType == StageStats::STAGE_EXTRA2 )
+	if( ss.m_Stage == STAGE_EXTRA1 || ss.m_Stage == STAGE_EXTRA2 )
 	{
 		if( ss.m_player[pn].m_bFailed )
 			++pProfile->m_iNumExtraStagesFailed;
