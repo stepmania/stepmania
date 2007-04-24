@@ -14,10 +14,7 @@ my @data = qw(  BackgroundTransitions
 		NoteSkins/common/common
 		NoteSkins/dance/default
 		Themes/default
-		Data/Translations.xml
-		Data/AI.ini
-		Data/Shaders
-		Data/splash.png );
+		Data );
 
 die "usage: $0 [input_dir output_dir]\n" if @ARGV > 2;
 
