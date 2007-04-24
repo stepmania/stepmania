@@ -910,7 +910,11 @@ bool GameState::IsFinalStage() const
 	if( IsCourseMode() )
 		return true;
 
-	return GetLargestCurrentStageIndexForAnyHumanPlayer() == PREFSMAN->m_iSongsPerPlay - 1;
+	/* This changes dynamically on ScreenSelectMusic as the wheel turns. */
+	int iPredictedStageForCurSong = GetNumStagesForCurrentSongAndStepsOrCourse();
+	if( iPredictedStageForCurSong == -1 )
+		iPredictedStageForCurSong = 1;
+	return GetLargestCurrentStageIndexForAnyHumanPlayer() + iPredictedStageForCurSong == PREFSMAN->m_iSongsPerPlay;
 }
 
 bool GameState::IsAnExtraStage() const
