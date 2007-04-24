@@ -1,16 +1,8 @@
-local stages = { }
-for _, s in ipairs(Stage) do
-	if GAMESTATE:IsStagePossible(s) then
-		local t = LoadActor("_stage " .. s) .. {
-			InitCommand = cmd(playcommand,"Update"),
-			CurrentSongChangedMessageCommand=cmd(playcommand,"Update"),
+local t = LoadActor("stage" ) .. {
+	BeginCommand=cmd(playcommand,"Update");
+	CurrentSongChangedMessageCommand=cmd(playcommand,"Update");
+	UpdateCommand=cmd(playcommand,"Set", { StageToShow = GAMESTATE:GetCurrentStage(); } );
+};
 
-			UpdateCommand=cmd(visible, GAMESTATE:GetCurrentStage() == s)
-		}
-		table.insert( stages, t )
-	end
-end
+return t;
 
-return Def.ActorFrame {
-	children = stages
-}
