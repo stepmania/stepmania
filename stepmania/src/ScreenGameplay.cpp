@@ -1206,7 +1206,10 @@ void ScreenGameplay::LoadNextSong()
 	/* Give SoundEffectControls the new RageSoundReaders. */
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		pi->m_SoundEffectControl.SetSoundReader( m_pSoundMusic->GetSoundReader() );
+		RageSoundReader *pPlayerSound = m_AutoKeysounds.GetPlayerSound(pi->m_pn);
+		if( pPlayerSound == NULL && pi->m_pn == GAMESTATE->m_MasterPlayerNumber )
+			pPlayerSound = m_AutoKeysounds.GetSharedSound();
+		pi->m_SoundEffectControl.SetSoundReader( pPlayerSound );
 	}
 }
 
@@ -2538,7 +2541,9 @@ void ScreenGameplay::HandleMessage( const Message &msg )
 			if( !pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_bMuteOnError )
 				continue;
 
-			RageSoundReader *pSoundReader = m_pSoundMusic->GetSoundReader();
+			RageSoundReader *pSoundReader = m_AutoKeysounds.GetPlayerSound( pn );
+			if( pSoundReader == NULL )
+				pSoundReader = m_AutoKeysounds.GetSharedSound();
 
 			HoldNoteScore hns;
 			msg.GetParam( "HoldNoteScore", hns );
