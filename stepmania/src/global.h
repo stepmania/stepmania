@@ -111,8 +111,9 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
 /* Use this to catch switching on invalid values */
 #define DEFAULT_FAIL(i) 	default: FAIL_M( ssprintf("%s = %i", #i, (i)) )
 
-void ShowWarning( const char *file, int line, const char *message ); // don't pull in LOG here
-#define WARN(MESSAGE) (ShowWarning(__FILE__, __LINE__, MESSAGE))
+void ShowWarningOrTrace( const char *file, int line, const char *message, bool bWarning ); // don't pull in LOG here
+#define WARN(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, true))
+#define TRACE(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, false))
 
 #ifdef DEBUG
 #define DEBUG_ASSERT(x)		ASSERT(x)

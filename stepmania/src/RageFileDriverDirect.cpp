@@ -22,8 +22,6 @@
 #include <io.h>
 #endif
 
-#define TRACE(...) if( LOG ) LOG->Trace( __VA_ARGS__ ); else fprintf( stderr, __VA_ARGS__ )
-#define WARN(...) if( LOG ) LOG->Warn( __VA_ARGS__ ); else fprintf( stderr, __VA_ARGS__ )
 
 static struct FileDriverEntry_DIR: public FileDriverEntry
 {
@@ -146,10 +144,10 @@ bool RageFileDriverDirect::Move( const RString &sOldPath_, const RString &sNewPa
 		CreateDirectories( m_sRoot + sDir );
 	}
 
-	TRACE("rename \"%s\" -> \"%s\"", (m_sRoot + sOldPath).c_str(), (m_sRoot + sNewPath).c_str() );
+	TRACE( ssprintf("rename \"%s\" -> \"%s\"", (m_sRoot + sOldPath).c_str(), (m_sRoot + sNewPath).c_str()) );
 	if( DoRename(m_sRoot + sOldPath, m_sRoot + sNewPath) == -1 )
 	{
-		WARN( "rename(%s,%s) failed: %s", (m_sRoot + sOldPath).c_str(), (m_sRoot + sNewPath).c_str(), strerror(errno) );
+		WARN( ssprintf("rename(%s,%s) failed: %s", (m_sRoot + sOldPath).c_str(), (m_sRoot + sNewPath).c_str(), strerror(errno)) );
 		return false;
 	}
 
@@ -163,20 +161,20 @@ bool RageFileDriverDirect::Remove( const RString &sPath_ )
 	switch( this->GetFileType(sPath) )
 	{
 	case RageFileManager::TYPE_FILE:
-		TRACE("remove '%s'", (m_sRoot + sPath).c_str());
+		TRACE( ssprintf("remove '%s'", (m_sRoot + sPath).c_str()) );
 		if( DoRemove(m_sRoot + sPath) == -1 )
 		{
-			WARN( "remove(%s) failed: %s", (m_sRoot + sPath).c_str(), strerror(errno) );
+			WARN( ssprintf("remove(%s) failed: %s", (m_sRoot + sPath).c_str(), strerror(errno)) );
 			return false;
 		}
 		FDB->DelFile( sPath );
 		return true;
 
 	case RageFileManager::TYPE_DIR:
-		TRACE("rmdir '%s'", (m_sRoot + sPath).c_str());
+		TRACE( ssprintf("rmdir '%s'", (m_sRoot + sPath).c_str()) );
 		if( DoRmdir(m_sRoot + sPath) == -1 )
 		{
-			WARN( "rmdir(%s) failed: %s", (m_sRoot + sPath).c_str(), strerror(errno) );
+			WARN( ssprintf("rmdir(%s) failed: %s", (m_sRoot + sPath).c_str(), strerror(errno)) );
 			return false;
 		}
 		FDB->DelFile( sPath );
@@ -240,7 +238,7 @@ bool RageFileObjDirect::FinalFlush()
 	/* Force a kernel buffer flush. */
 	if( fsync( m_iFD ) == -1 )
 	{
-		WARN( "Error synchronizing %s: %s", this->m_sPath.c_str(), strerror(errno) );
+		WARN( ssprintf("Error synchronizing %s: %s", this->m_sPath.c_str(), strerror(errno)) );
 		SetError( strerror(errno) );
 		return false;
 	}
@@ -277,7 +275,7 @@ RageFileObjDirect::~RageFileObjDirect()
 	{
 		if( close( m_iFD ) == -1 )
 		{
-			WARN( "Error closing %s: %s", this->m_sPath.c_str(), strerror(errno) );
+			WARN( ssprintf("Error closing %s: %s", this->m_sPath.c_str(), strerror(errno)) );
 			SetError( strerror(errno) );
 			bFailed = true;
 		}
@@ -312,7 +310,7 @@ RageFileObjDirect::~RageFileObjDirect()
 		/* We failed. */
 		int err = GetLastError();
 		const RString error = werr_ssprintf( err, "Error renaming \"%s\" to \"%s\"", sOldPath.c_str(), sNewPath.c_str() );
-		WARN( "%s", error.c_str() );
+		WARN( ssprintf("%s", error.c_str()) );
 		SetError( error );
 		break;
 #else

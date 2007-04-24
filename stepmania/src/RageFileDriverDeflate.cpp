@@ -23,8 +23,6 @@
         #include <zlib.h>
 #endif
 
-#define TRACE(...) if( LOG ) LOG->Trace( __VA_ARGS__ ); else fprintf( stderr, __VA_ARGS__ ) 
-
 RageFileObjInflate::RageFileObjInflate( RageFileBasic *pFile, int iUncompressedSize )
 {
 	m_bFileOwned = false;
@@ -39,7 +37,7 @@ RageFileObjInflate::RageFileObjInflate( RageFileBasic *pFile, int iUncompressedS
 	if( err == Z_MEM_ERROR )
 		RageException::Throw( "inflateInit2( %i ): out of memory.", -MAX_WBITS );
 	if( err != Z_OK )
-		TRACE( "Huh? inflateInit2() err = %i", err );
+		WARN( ssprintf("Huh? inflateInit2() err = %i", err) );
 
 	decomp_buf_ptr = decomp_buf;
 	m_iFilePos = 0;
@@ -75,7 +73,7 @@ RageFileObjInflate::~RageFileObjInflate()
 
 	int err = inflateEnd( m_pInflate );
 	if( err != Z_OK )
-		TRACE( "Huh? inflateEnd() err = %i", err );
+		WARN( ssprintf("Huh? inflateEnd() err = %i", err) );
 
 	delete m_pInflate;
 }
@@ -130,7 +128,7 @@ int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 		case Z_OK:
 			break;
 		default:
-			TRACE( "Huh? inflate err %i", err );
+			WARN( ssprintf("Huh? inflate err %i", err) );
 		}
 
 		const int used = (char *)m_pInflate->next_in - decomp_buf_ptr;
@@ -207,7 +205,7 @@ RageFileObjDeflate::RageFileObjDeflate( RageFileBasic *pFile )
 	if( err == Z_MEM_ERROR )
 		RageException::Throw( "inflateInit2( %i ): out of memory.", -MAX_WBITS );
 	if( err != Z_OK )
-		TRACE( "Huh? inflateInit2() err = %i", err );
+		WARN( ssprintf("Huh? inflateInit2() err = %i", err) );
 
 }
 
@@ -220,7 +218,7 @@ RageFileObjDeflate::~RageFileObjDeflate()
 
 	int err = deflateEnd( m_pDeflate );
 	if( err != Z_OK )
-		TRACE( "Huh? deflateEnd() err = %i", err );
+		WARN( ssprintf("Huh? deflateEnd() err = %i", err) );
 
 	delete m_pDeflate;
 }

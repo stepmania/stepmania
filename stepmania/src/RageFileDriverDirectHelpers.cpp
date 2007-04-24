@@ -18,8 +18,6 @@
 #include <io.h>
 #endif
 
-#define WARN(...) if( LOG ) LOG->Warn( __VA_ARGS__ ); else fprintf( stderr, __VA_ARGS__ )
-
 #if defined(_XBOX)
 /* Wrappers for low-level file functions, to work around Xbox issues: */
 int DoMkdir( const RString &sPath, int perm )
@@ -153,14 +151,14 @@ bool CreateDirectories( RString Path )
 		/* I can't reproduce this anymore.  If we get ENOENT, log it but keep
 		 * going. */
 		if( errno == ENOENT )
-			WARN( "Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
+			WARN( ssprintf("Couldn't create %s: %s", curpath.c_str(), strerror(errno)) );
 		if( errno == EEXIST || errno == ENOENT )
 			continue;		// we expect to see these errors
 
 		// XXX: This doesn't make sense. Why do we return if LOG is present here?
 		if( LOG )
 		{
-			WARN( "Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
+			WARN( ssprintf("Couldn't create %s: %s", curpath.c_str(), strerror(errno)) );
 			return false;
 		}
 
@@ -169,7 +167,7 @@ bool CreateDirectories( RString Path )
 		DoStat( curpath, &st );
 		if( !(st.st_mode & S_IFDIR) )
 		{
-			WARN( "Couldn't create %s: path exists and is not a directory", curpath.c_str() );
+			WARN( ssprintf("Couldn't create %s: path exists and is not a directory", curpath.c_str()) );
 			
 			return false;
 		}
