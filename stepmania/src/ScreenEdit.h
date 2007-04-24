@@ -17,6 +17,7 @@
 #include "PlayerState.h"
 #include "GameInput.h"
 #include "GameplayAssist.h"
+#include "AutoKeysounds.h"
 
 #include <map>
 
@@ -276,7 +277,8 @@ protected:
 	int			m_iStartPlayingAt, m_iStopPlayingAt;
 	float			m_fBeatToReturnTo;
 
-	RageSound		m_soundMusic;
+	AutoKeysounds		m_AutoKeysounds;
+	RageSound		*m_pSoundMusic;
 	GameplayAssist		m_GameplayAssist;
 
 	ThemeMetric<EditMode> EDIT_MODE;

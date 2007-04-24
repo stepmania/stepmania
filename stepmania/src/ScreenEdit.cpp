@@ -33,6 +33,8 @@
 #include "Style.h"
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
+#include "Game.h"
+#include "RageSoundReader.h"
 
 static Preference<float> g_iDefaultRecordLength( "DefaultRecordLength", 4 );
 static Preference<bool> g_bEditorShowBGChangesPlay( "EditorShowBGChangesPlay", false );
@@ -638,10 +640,16 @@ static void SetDefaultEditorNoteSkin( size_t num, RString &sNameOut, RString &de
 
 static Preference1D<RString> EDITOR_NOTE_SKINS( SetDefaultEditorNoteSkin, NUM_PLAYERS );
 
+static ThemeMetric<RString> EDIT_MODIFIERS		("ScreenEdit","EditModifiers");
+
 REGISTER_SCREEN_CLASS( ScreenEdit );
 
 void ScreenEdit::Init()
 {
+	m_pSoundMusic = NULL;
+
+	SubscribeToMessage( "Judgment" );
+
 	ASSERT( GAMESTATE->m_pCurSong );
 	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] );
 
@@ -707,9 +715,9 @@ void ScreenEdit::Init()
 	}
 	else
 	{
-		PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin,
-		                 GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage().m_sNoteSkin );
+		PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage().m_sNoteSkin );
 	}
+	m_PlayerStateEdit.m_PlayerOptions.FromString( ModsLevel_Stage, EDIT_MODIFIERS );
 
 	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
@@ -773,9 +781,11 @@ void ScreenEdit::Init()
 	m_soundSave.Load(		THEME->GetPathS("ScreenEdit","save") );
 	m_GameplayAssist.Init();
 
-	RageSoundLoadParams params;
-	params.m_bSupportRateChanging = true;
-	m_soundMusic.Load( m_pSong->GetMusicPath(), false, &params );
+
+
+	m_AutoKeysounds.FinishLoading();
+	m_pSoundMusic = m_AutoKeysounds.GetSound();
+	
 
 	this->HandleScreenMessage( SM_UpdateTextInfo );
 	m_bTextInfoNeedsUpdate = true;
@@ -789,7 +799,7 @@ ScreenEdit::~ScreenEdit()
 	m_SongLastSave.DetachSteps();
 
 	LOG->Trace( "ScreenEdit::~ScreenEdit()" );
-	m_soundMusic.StopPlaying();
+	m_pSoundMusic->StopPlaying();
 }
 
 void ScreenEdit::BeginScreen()
@@ -855,10 +865,10 @@ void ScreenEdit::Update( float fDeltaTime )
 {
 	m_PlayerStateEdit.Update( fDeltaTime );
 
-	if( m_soundMusic.IsPlaying() )
+	if( m_pSoundMusic->IsPlaying() )
 	{
 		RageTimer tm;
-		const float fSeconds = m_soundMusic.GetPositionSeconds( NULL, &tm );
+		const float fSeconds = m_pSoundMusic->GetPositionSeconds( NULL, &tm );
 		GAMESTATE->UpdateSongPosition( fSeconds, GAMESTATE->m_pCurSong->m_Timing, tm );
 	}
 
@@ -876,7 +886,7 @@ void ScreenEdit::Update( float fDeltaTime )
 			if( GAMESTATE->m_fSongBeat <= fStartPlayingAtBeat )
 				continue;
 
-			float fStartedHoldingSeconds = m_soundMusic.GetPositionSeconds() - fSecsHeld;
+			float fStartedHoldingSeconds = m_pSoundMusic->GetPositionSeconds() - fSecsHeld;
 			float fStartBeat = max( fStartPlayingAtBeat, m_pSong->GetBeatFromElapsedTime(fStartedHoldingSeconds) );
 			float fEndBeat = max( fStartBeat, GAMESTATE->m_fSongBeat );
 			fEndBeat = min( fEndBeat, NoteRowToBeat(m_iStopPlayingAt) );
@@ -1055,7 +1065,7 @@ void ScreenEdit::DrawPrimitives()
 	float fSongBeatNoOffset = GAMESTATE->m_fSongBeatNoOffset;
 	float fSongBeatVisible = GAMESTATE->m_fSongBeatVisible;
 
-	if( !m_soundMusic.IsPlaying() )
+	if( !m_pSoundMusic->IsPlaying() )
 	{
 		GAMESTATE->m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
 		GAMESTATE->m_fSongBeatNoOffset = m_fTrailingBeat;	// put trailing beat in effect
@@ -1064,7 +1074,7 @@ void ScreenEdit::DrawPrimitives()
 
 	ScreenWithMenuElements::DrawPrimitives();
 
-	if( !m_soundMusic.IsPlaying() )
+	if( !m_pSoundMusic->IsPlaying() )
 	{
 		GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
 		GAMESTATE->m_fSongBeatNoOffset = fSongBeatNoOffset;
@@ -1237,7 +1247,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
 			PlayerState *pPlayerState = const_cast<PlayerState *> (m_NoteFieldEdit.GetPlayerState());
-			float fScrollSpeed = pPlayerState->m_PlayerOptions.GetStage().m_fScrollSpeed;
+			float fScrollSpeed = pPlayerState->m_PlayerOptions.GetSong().m_fScrollSpeed;
 
 			const float fSpeeds[] = { 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f };
 			int iSpeed = 0;
@@ -1250,10 +1260,16 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				}
 			}
 
-			if( EditB == EDIT_BUTTON_SCROLL_SPEED_DOWN )
+			switch( EditB )
+			{
+			DEFAULT_FAIL(EditB);
+			case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 				--iSpeed;
-			else if( EditB == EDIT_BUTTON_SCROLL_SPEED_UP )
+				break;
+			case EDIT_BUTTON_SCROLL_SPEED_UP:
 				++iSpeed;
+				break;
+			}
 			iSpeed = clamp( iSpeed, 0, (int) ARRAYLEN(fSpeeds)-1 );
 			
 			if( fSpeeds[iSpeed] != fScrollSpeed )
@@ -1262,7 +1278,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				fScrollSpeed = fSpeeds[iSpeed];
 			}
 
-			PO_GROUP_ASSIGN( pPlayerState->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, fScrollSpeed );
+			PO_GROUP_ASSIGN( pPlayerState->m_PlayerOptions, ModsLevel_Song, m_fScrollSpeed, fScrollSpeed );
 			break;
 		}
 
@@ -1295,6 +1311,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					fBeatsToMove *= -1;
 				break;
 			}
+
+			if( m_PlayerStateEdit.m_PlayerOptions.GetSong().m_fScrolls[PlayerOptions::SCROLL_REVERSE] > 0.5 )
+				fBeatsToMove *= -1;
 
 			float fDestinationBeat = GAMESTATE->m_fSongBeat + fBeatsToMove;
 			fDestinationBeat = Quantize( fDestinationBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
@@ -2023,7 +2042,50 @@ void ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton Edit
 
 void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 {
-	if( input.type == IET_FIRST_PRESS )
+	switch( input.type )
+	{
+	case IET_RELEASE:
+	case IET_FIRST_PRESS:
+		break;
+	default:
+		return;
+	}
+
+	GameButtonType gbt = GAMESTATE->m_pCurGame->GetPerButtonInfo(input.GameI.button)->m_gbt;
+
+	if( GamePreferences::m_AutoPlay == PC_HUMAN )
+	{
+		const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
+		bool bRelease = input.type == IET_RELEASE;
+		switch( input.pn )
+		{
+		case PLAYER_1:
+			{
+				switch( gbt )
+				{
+				case GameButtonType_INVALID:
+					break;
+				case GameButtonType_Step:
+					if( iCol != -1 )
+						m_Player->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+					break;
+				case GameButtonType_Fret:
+					if( iCol != -1 )
+						m_Player->Fret( iCol, -1, input.DeviceI.ts, false, bRelease );
+					break;
+				case GameButtonType_Strum:
+					m_Player->Strum( iCol, -1, input.DeviceI.ts, false, bRelease );
+					break;
+				}
+			}
+			break;
+		case PLAYER_2:
+			if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_TwoPlayersSharedSides )
+				m_Player->Step( iCol, -1, input.DeviceI.ts, false, input.type == IET_RELEASE );
+		}
+	}
+
+	if( gbt == GameButtonType_INVALID  &&  input.type == IET_FIRST_PRESS )
 	{
 		switch( EditB )
 		{
@@ -2060,25 +2122,6 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			break;
 		}
 	}
-	else if( input.type != IET_RELEASE )
-	{
-		return;
-	}
-	
-	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
-
-	if( GamePreferences::m_AutoPlay != PC_HUMAN || iCol == -1 )
-		return;
-	
-	switch( input.pn )
-	{
-	case PLAYER_1:	
-		m_Player->Step( iCol, -1, input.DeviceI.ts, false, input.type == IET_RELEASE ); 
-		break;
-	case PLAYER_2:
-		if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_TwoPlayersSharedSides )
-			m_Player->Step( iCol, -1, input.DeviceI.ts, false, input.type == IET_RELEASE );
-	}
 }
 
 void ScreenEdit::TransitionEditState( EditState em )
@@ -2110,7 +2153,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 	/* If we're playing music, sample music or assist ticks when changing modes, stop. */
 	SOUND->StopMusic();
-	m_soundMusic.StopPlaying();
+	if( m_pSoundMusic )
+m_pSoundMusic->StopPlaying();
 	m_GameplayAssist.StopPlaying();
 	GAMESTATE->m_bGameplayLeadIn.Set( true );
 
@@ -2281,8 +2325,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 		p.m_fSpeed = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 		p.m_StartSecond = fStartSeconds;
 		p.StopMode = RageSoundParams::M_CONTINUE;
-		m_soundMusic.SetProperty( "AccurateSync", true );
-		m_soundMusic.Play( &p );
+		m_pSoundMusic->SetProperty( "AccurateSync", true );
+		m_pSoundMusic->Play( &p );
 		break;
 	}
 
@@ -2358,6 +2402,32 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 
 void ScreenEdit::HandleMessage( const Message &msg )
 {
+	if( msg == "Judgment" )
+	{
+		PlayerNumber pn;
+		msg.GetParam( "Player", pn );
+
+		if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent().m_bMuteOnError )
+		{
+			RageSoundReader *pSoundReader = m_AutoKeysounds.GetPlayerSound( pn );
+			if( pSoundReader == NULL )
+				pSoundReader = m_AutoKeysounds.GetSharedSound();
+
+			HoldNoteScore hns;
+			msg.GetParam( "HoldNoteScore", hns );
+			TapNoteScore tns;
+			msg.GetParam( "TapNoteScore", tns );
+
+			bool bOn = false;
+			if( hns != HoldNoteScore_Invalid )
+				bOn = hns != HNS_LetGo;
+			else
+				bOn = tns != TNS_Miss;
+
+			if( pSoundReader )
+				pSoundReader->SetProperty( "Volume", bOn? 1.0f:0.0f );
+		}
+	}
 	if( msg == Message_SongModified )
 	{
 		SetDirty( true );
@@ -2780,7 +2850,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				/* XXX: If the difficulty is changed from EDIT, and pSteps->WasLoadedFromProfile()
 				 * is true, we should warn that the steps will no longer be saved to the profile. */
 				Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-				float fMusicSeconds = m_soundMusic.GetLengthSeconds();
+				float fMusicSeconds = m_pSoundMusic->GetLengthSeconds();
 
 				g_StepsInformation.rows[difficulty].choices.clear();
 				FOREACH_ENUM( Difficulty, dc )
