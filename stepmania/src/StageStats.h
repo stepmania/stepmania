@@ -31,7 +31,6 @@ public:
 	const Style*	m_pStyle;
 	vector<Song*>	m_vpPlayedSongs;
 	vector<Song*>	m_vpPossibleSongs;
-	enum { STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2, StageType_Invalid } m_StageType;
 
 	bool	m_bGaveUp;	// exited gameplay by giving up
 	bool	m_bUsedAutoplay;	// used autoplay at any point during gameplay

@@ -412,14 +412,6 @@ void ScreenGameplay::Init()
 	FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
 		pi->GetPlayerStageStats()->UpdateComboList( 0, true );
 
-	if( GAMESTATE->IsExtraStage() )
-		STATSMAN->m_CurStageStats.m_StageType = StageStats::STAGE_EXTRA;
-	else if( GAMESTATE->IsExtraStage2() )
-		STATSMAN->m_CurStageStats.m_StageType = StageStats::STAGE_EXTRA2;
-	else
-		STATSMAN->m_CurStageStats.m_StageType = StageStats::STAGE_NORMAL;
-	
-
 	m_DancingState = STATE_INTRO;
 
 	// Set this in LoadNextSong()
