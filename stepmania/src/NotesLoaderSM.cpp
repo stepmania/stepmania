@@ -286,6 +286,9 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 		else if( sValueName=="MUSIC" )
 			out.m_sMusicFile = sParams[1];
 
+		else if( sValueName=="LEADTRACK" )
+			out.m_sLeadTrackFile = sParams[1];
+
 		else if( sValueName=="MUSICLENGTH" )
 		{
 			if( !bFromCache )
