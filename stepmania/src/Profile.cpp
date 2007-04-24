@@ -91,7 +91,7 @@ RString Profile::MakeGuid()
 {
 	RString s;
 	s.reserve( GUID_SIZE_BYTES*2 );
-	char buf[GUID_SIZE_BYTES];
+	unsigned char buf[GUID_SIZE_BYTES];
 	CryptManager::GetRandomBytes( buf, GUID_SIZE_BYTES );
 	for( unsigned i=0; i<GUID_SIZE_BYTES; i++ )
 		s += ssprintf( "%02x", buf[i] );
