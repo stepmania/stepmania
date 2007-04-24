@@ -420,7 +420,7 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 	if( temp )
 		file = temp + 4;
 
-	void (RageLog::*method)(const char *fmt, ...) = bWarning ? RageLog::Warn : RageLog::Trace;
+	void (RageLog::*method)(const char *fmt, ...) = bWarning ? &RageLog::Warn : &RageLog::Trace;
 
 	if( LOG )
 		(LOG->*method)( "%s:%i: %s", file, line, message );
