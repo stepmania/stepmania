@@ -50,7 +50,6 @@ public:
 	bool LoadLocalProfileFromMachine( PlayerNumber pn );
 	bool LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits = true );
 	bool FastLoadProfileNameFromMemoryCard( RString sRootDir, RString &sName ) const;
-	void SaveAllProfiles() const;
 	bool SaveProfile( PlayerNumber pn ) const;
 	bool SaveLocalProfile( RString sProfileID );
 	void UnloadProfile( PlayerNumber pn );

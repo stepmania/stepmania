@@ -303,19 +303,6 @@ bool ProfileManager::FastLoadProfileNameFromMemoryCard( RString sRootDir, RStrin
 	return false;
 }
 
-void ProfileManager::SaveAllProfiles() const
-{
-	this->SaveMachineProfile();
-
-	FOREACH_HumanPlayer( pn )
-	{
-		if( !IsPersistentProfile(pn) )
-			continue;
-
-		this->SaveProfile( pn );
-	}
-}
-
 bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 {
 	if( m_sProfileDir[pn].empty() )

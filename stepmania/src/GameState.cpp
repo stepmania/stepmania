@@ -690,7 +690,8 @@ void GameState::FinishStage()
 		if( iOldStageIndex/iSaveProfileEvery < m_iCurrentStageIndex/iSaveProfileEvery )
 		{
 			LOG->Trace( "Played %i stages; saving profiles ...", iSaveProfileEvery );
-			PROFILEMAN->SaveAllProfiles();
+			PROFILEMAN->SaveMachineProfile();
+			this->SaveProfiles();
 		}
 	}
 }
