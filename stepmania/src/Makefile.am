@@ -1,7 +1,7 @@
-bin_PROGRAMS = stepmania
+## Do not install stepmania in the traditional way.
+noinst_PROGRAMS = stepmania
 TESTS = 
 tests: $(TESTS)
-noinst_PROGRAMS =
 if BUILD_TESTS
 noinst_PROGRAMS += $(TESTS)
 endif
@@ -362,6 +362,7 @@ RageSoundPosMap.cpp RageSoundPosMap.h RageSoundReader.cpp RageSoundReader.h Rage
 RageSoundReader_Filter.h \
 RageSoundReader_ChannelSplit.cpp RageSoundReader_ChannelSplit.h \
 RageSoundReader_Extend.cpp RageSoundReader_Extend.h \
+RageSoundReader_Merge.cpp RageSoundReader_Merge.h \
 RageSoundReader_PitchChange.cpp RageSoundReader_PitchChange.h \
 RageSoundReader_PostBuffering.cpp RageSoundReader_PostBuffering.h \
 RageSoundReader_Pan.cpp RageSoundReader_Pan.h \
@@ -571,7 +572,7 @@ endif
 
 
 if HAVE_GTK
-bin_PROGRAMS += GtkModule.so
+noinst_PROGRAMS += GtkModule.so
 GtkModule_so_LDFLAGS = -rdynamic -shared
 GtkModule_so_CPPFLAGS = $(GTK_CFLAGS) -fPIC
 GtkModule_so_LDADD = $(GTK_LIBS)
