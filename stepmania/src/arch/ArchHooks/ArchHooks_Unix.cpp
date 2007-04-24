@@ -267,40 +267,15 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", sUserDataPath + "/Save", "/Save" );
 	FILEMAN->Mount( "dir", sUserDataPath + "/Screenshots", "/Screenshots" );
 
-	/* Search for SMData.smzip in the directory of the executable
-	 * first in case some one has an older version installed in
-	 * the datadir. Then search the datadir. Lastly look for
-	 * Songs, using cwd last.
-	 * XXX: Songs seems like a bad choice. The game will still run
-	 * without Songs and they might have AdditionalSongFolders
-	 * pointing to their songs. Themes seems like the one to look
-	 * for since the game will not run without that. */
-	RString Root = "";
+	RString Root;
 	struct stat st;
-	if( !access(sDirOfExecutable + "/SMData.smzip", R_OK) )
-	{
-		FILEMAN->Mount( "dir", sDirOfExecutable, "/" );
-		FILEMAN->Mount( "zip", "/SMData.smzip", "/" );
-		return;
-	}
-#ifdef DATADIR
-#define XSTR(x) #x
-#define STR(x) XSTR(x)
-	RString datadir = XSTR(DATADIR) "/" + sProductId;
-	if( !access(datadir + "/SMData.smzip", R_OK) )
-	{
-		FILEMAN->Mount( "dir", datadir, "/" );
-		FILEMAN->Mount( "zip", "/SMData.smzip", "/" );
-		return;
-	}
-#undef STR
-#undef XSTR
-#endif
-	if( Root == "" && !stat( sDirOfExecutable + "/Songs", &st ) && st.st_mode&S_IFDIR )
+	if( !stat(sDirOfExecutable + "/Packages", &st) && st.st_mode&S_IFDIR )
 		Root = sDirOfExecutable;
-	if( Root == "" && !stat( RageFileManagerUtil::sInitialWorkingDirectory + "/Songs", &st ) && st.st_mode&S_IFDIR )
+	else if( !stat(sDirOfExecutable + "/Songs", &st) && st.st_mode&S_IFDIR )
+		Root = sDirOfExecutable;
+	else if( !stat(RageFileManagerUtil::sInitialWorkingDirectory + "/Songs", &st) && st.st_mode&S_IFDIR )
 		Root = RageFileManagerUtil::sInitialWorkingDirectory;
-	if( Root == "" )
+	else
 		RageException::Throw( COULDNT_FIND_SONGS.GetValue() );
 			
 	FILEMAN->Mount( "dir", Root, "/" );
