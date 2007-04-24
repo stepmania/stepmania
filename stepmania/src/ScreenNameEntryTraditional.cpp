@@ -73,8 +73,6 @@ void ScreenNameEntryTraditional::Init()
 
 void ScreenNameEntryTraditional::BeginScreen()
 {
-	GAMESTATE->FinishStage();
-
 	/* Find out if players are entering their name. */
 	FOREACH_PlayerNumber( pn )
 	{

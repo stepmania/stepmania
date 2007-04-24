@@ -180,11 +180,7 @@ void ScreenEvaluation::Init()
 {
 	LOG->Trace( "ScreenEvaluation::Init()" );
 
-	/* Commit stats to the profile, so any profile stats displayed on this screen
-	 * include the last game. */
-	GAMESTATE->CommitStageStats();
-
-	m_pStageStats = &STATSMAN->m_CurStageStats;
+	m_pStageStats = &STATSMAN->m_vPlayedStageStats.back();
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
 	ZERO( m_bSavedScreenshot );
@@ -195,10 +191,12 @@ void ScreenEvaluation::Init()
 	//
 	// Figure out which statistics and songs we're going to display
 	//
-	STATSMAN->CalcAccumPlayedStageStats();
 
 	if( SUMMARY )
-		STATSMAN->GetFinalEvalStageStats( STATSMAN->m_CurStageStats );
+	{
+		STATSMAN->GetFinalEvalStageStats( m_FinalEvalStageStats );
+		m_pStageStats = &m_FinalEvalStageStats;
+	}
 
 	m_bFailed = m_pStageStats->AllFailed();
 
@@ -234,11 +232,8 @@ void ScreenEvaluation::Init()
 	//
 	// update persistent statistics
 	//
-	// XXX
-	m_pStageStats->CommitScores( SUMMARY );
-
-	FOREACH_HumanPlayer( p )
-		m_pStageStats->m_player[p].CalcAwards( p, m_pStageStats->m_bGaveUp, m_pStageStats->m_bUsedAutoplay );
+	if( SUMMARY )
+		m_pStageStats->CommitScores( true );
 
 	// Run this here, so STATSMAN->m_CurStageStats is available to overlays.
 	ScreenWithMenuElements::Init();
@@ -819,6 +814,23 @@ void ScreenEvaluation::HandleMenuStart()
 
 	StartTransitioningScreen( SM_GoToNextScreen );
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaScreenEvaluation: public Luna<ScreenEvaluation>
+{
+public:
+	static int GetStageStats( T* p, lua_State *L ) { LuaHelpers::Push( L, p->GetStageStats() ); return 1; }
+	LunaScreenEvaluation()
+	{
+		ADD_METHOD( GetStageStats );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScreenEvaluation, ScreenWithMenuElements )
+
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford

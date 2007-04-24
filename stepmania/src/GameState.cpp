@@ -910,11 +910,7 @@ bool GameState::IsFinalStage() const
 	if( IsCourseMode() )
 		return true;
 
-	/* This changes dynamically on ScreenSelectMusic as the wheel turns. */
-	int iPredictedStageForCurSong = GetNumStagesForCurrentSongAndStepsOrCourse();
-	if( iPredictedStageForCurSong == -1 )
-		iPredictedStageForCurSong = 1;
-	return GetLargestCurrentStageIndexForAnyHumanPlayer() + iPredictedStageForCurSong == PREFSMAN->m_iSongsPerPlay;
+	return GetLargestCurrentStageIndexForAnyHumanPlayer() == PREFSMAN->m_iSongsPerPlay - 1;
 }
 
 bool GameState::IsAnExtraStage() const
@@ -1202,8 +1198,8 @@ bool GameState::HasEarnedExtraStage() const
 		    m_pCurSteps[pn]->GetDifficulty() != Difficulty_Challenge )
 			continue; /* not hard enough! */
 
-		if( (IsFinalStage() && STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_1) || 
-		    (IsExtraStage() && STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_2) )
+		if( (IsExtraStage() && STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_1) || 
+		    (IsExtraStage2() && STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_2) )
 		{
 			bOnePassed = true;
 			break;
@@ -1214,7 +1210,7 @@ bool GameState::HasEarnedExtraStage() const
 		return false;
 
 	/* If PickExtraStage, allow EX2 if the chosen song was correct. */
-	if( PREFSMAN->m_bPickExtraStage && IsExtraStage() )
+	if( PREFSMAN->m_bPickExtraStage && IsExtraStage2() )
 	{
 		Song* pSong;
 		Steps* pSteps;

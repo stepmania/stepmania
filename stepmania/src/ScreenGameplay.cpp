@@ -385,10 +385,6 @@ void ScreenGameplay::Init()
 			GAMESTATE->SaveCurrentSettingsToProfile(pn);
 	}
 
-	/* Finish the last stage, if we havn't already.  (For example, we might have
-	 * gone from gameplay to evaluation back to gameplay.) */
-	GAMESTATE->FinishStage();
-
 	/* Called once per stage (single song or single course). */
 	GAMESTATE->BeginStage();
 
@@ -2240,9 +2236,22 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 		}
 	}
 
+	if( bBackedOut )
+	{
+		GAMESTATE->CancelStage();
+		return;
+	}
+
 	// save current stage stats
-	if( !bBackedOut )
-		STATSMAN->m_vPlayedStageStats.push_back( STATSMAN->m_CurStageStats );
+	STATSMAN->m_vPlayedStageStats.push_back( STATSMAN->m_CurStageStats );
+
+	GAMESTATE->CommitStageStats();
+	STATSMAN->m_CurStageStats.CommitScores( false );
+	FOREACH_HumanPlayer( pn )
+		STATSMAN->m_CurStageStats.m_player[pn].CalcAwards( pn, STATSMAN->m_CurStageStats.m_bGaveUp, STATSMAN->m_CurStageStats.m_bUsedAutoplay );
+
+	STATSMAN->CalcAccumPlayedStageStats();
+	GAMESTATE->FinishStage();
 }
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
@@ -2441,8 +2450,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	{
 		SongFinished();
 		StageFinished( true );
-
-		GAMESTATE->CancelStage();
 
 		m_sNextScreen = GetPrevScreen();
 

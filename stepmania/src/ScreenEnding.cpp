@@ -76,10 +76,6 @@ ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
 
 		STATSMAN->m_vPlayedStageStats.clear();
 	}
-
-
-	// Update final profile stats before we load them for display.
-	GAMESTATE->FinishStage();
 }
 
 void ScreenEnding::Init()

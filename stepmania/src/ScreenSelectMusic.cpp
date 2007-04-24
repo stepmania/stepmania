@@ -174,10 +174,6 @@ void ScreenSelectMusic::Init()
 
 void ScreenSelectMusic::BeginScreen()
 {
-	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 
-	 * Do this before anything that might look at GAMESTATE->m_iCurrentStageIndex or GAMESTATE->m_iPlayerCurrentStageIndexForCurrentCredit. */
-	GAMESTATE->FinishStage();
-
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
 	if( CommonMetrics::AUTO_SET_STYLE )

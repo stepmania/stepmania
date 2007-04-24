@@ -34,8 +34,6 @@ void ScreenContinue::Init()
 
 void ScreenContinue::BeginScreen()
 {
-	GAMESTATE->FinishStage();
-
 	GAMESTATE->SetCurrentStyle( NULL );
 
 	// unjoin all players with 0 stages left

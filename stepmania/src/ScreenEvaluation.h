@@ -46,6 +46,8 @@ public:
 
 	virtual void MenuBack( const InputEventPlus &input );
 	virtual void MenuStart( const InputEventPlus &input );
+	virtual void PushSelf( lua_State *L );
+	StageStats *GetStageStats() { return m_pStageStats; }
 
 protected:
 	virtual bool GenericTweenOn() const { return true; }
@@ -55,6 +57,7 @@ protected:
 
 	bool			m_bSummary;
 	StageStats		*m_pStageStats;
+	StageStats		m_FinalEvalStageStats;
 
 	// banner area
 	Banner			m_LargeBanner;
