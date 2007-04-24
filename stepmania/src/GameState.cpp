@@ -438,7 +438,7 @@ void GameState::BeginGame()
 		MEMCARDMAN->UnlockCard( pn );
 }
 
-void GameState::LoadProfiles()
+void GameState::LoadProfiles( bool bLoadEdits )
 {
 	/* Unlock any cards that we might want to load. */
 	FOREACH_HumanPlayer( pn )
@@ -457,7 +457,7 @@ void GameState::LoadProfiles()
 			continue;
 
 		MEMCARDMAN->MountCard( pn );
-		PROFILEMAN->LoadFirstAvailableProfile( pn );	// load full profile
+		PROFILEMAN->LoadFirstAvailableProfile( pn, bLoadEdits );	// load full profile
 		MEMCARDMAN->UnmountCard( pn );
 
 		LoadCurrentSettingsFromProfile( pn );

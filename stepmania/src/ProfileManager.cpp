@@ -210,7 +210,7 @@ void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<RString> &asDi
 	split( g_sMemoryCardProfileImportSubdirs, ";", asDirsToTry, true );
 }
 
-bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
+bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits )
 {
 	UnloadProfile( pn );
 
@@ -253,20 +253,23 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	m_sProfileDir[pn] = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
 
 	/* Load edits from all fallback directories, newest first. */
-	for( unsigned i = 0; i < asDirsToTry.size(); ++i )
+	if( bLoadEdits )
 	{
-		const RString &sSubdir = asDirsToTry[i];
-		RString sDir = MEM_CARD_MOUNT_POINT[pn] + sSubdir + "/";
+		for( unsigned i = 0; i < asDirsToTry.size(); ++i )
+		{
+			const RString &sSubdir = asDirsToTry[i];
+			RString sDir = MEM_CARD_MOUNT_POINT[pn] + sSubdir + "/";
 
-		SONGMAN->LoadAllFromProfileDir( sDir, (ProfileSlot) pn );
+			SONGMAN->LoadAllFromProfileDir( sDir, (ProfileSlot) pn );
+		}
 	}
 
 	return true; // If a card is inserted, we want to use the memory card to save - even if the Profile load failed.
 }
 			
-bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
+bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn, bool bLoadEdits )
 {
-	if( LoadProfileFromMemoryCard(pn) )
+	if( LoadProfileFromMemoryCard(pn, bLoadEdits) )
 		return true;
 
 	if( LoadLocalProfileFromMachine(pn) )

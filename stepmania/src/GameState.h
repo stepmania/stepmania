@@ -43,7 +43,7 @@ public:
 	void JoinPlayer( PlayerNumber pn );
 	void UnjoinPlayer( PlayerNumber pn );
 	bool JoinInput( PlayerNumber pn );
-	void LoadProfiles();
+	void LoadProfiles( bool bLoadEdits = true );
 	void SaveProfiles();
 	bool HaveProfileToLoad();
 	bool HaveProfileToSave();

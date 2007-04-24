@@ -6,6 +6,13 @@
 
 REGISTER_SCREEN_CLASS( ScreenProfileLoad );
 
+void ScreenProfileLoad::Init()
+{
+	LOAD_EDITS.Load( m_sName, "LoadEdits" );
+
+	ScreenWithMenuElements::Init();
+}
+
 void ScreenProfileLoad::BeginScreen()
 {
 	m_bHaveProfileToLoad = GAMESTATE->HaveProfileToLoad();
@@ -27,7 +34,7 @@ void ScreenProfileLoad::Continue()
 {
 	if( m_bHaveProfileToLoad )
 	{
-		GAMESTATE->LoadProfiles();
+		GAMESTATE->LoadProfiles( LOAD_EDITS );
 		SCREENMAN->ZeroNextUpdate();
 	}
 

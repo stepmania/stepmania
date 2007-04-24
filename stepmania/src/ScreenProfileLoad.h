@@ -6,6 +6,7 @@
 class ScreenProfileLoad: public ScreenWithMenuElements
 {
 public:
+	virtual void Init();
 	virtual void BeginScreen();
 	virtual void Input( const InputEventPlus &input );
 	void Continue();
@@ -13,6 +14,8 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 	bool m_bHaveProfileToLoad;
+
+	ThemeMetric<bool>	LOAD_EDITS;
 };
 
 #endif
