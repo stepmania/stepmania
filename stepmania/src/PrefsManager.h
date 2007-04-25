@@ -151,7 +151,6 @@ public:
 	Preference<int>		m_iCoinsPerCredit;
 	Preference<int>		m_iSongsPerPlay;
 	Preference<bool>	m_bDelayedCreditsReconcile;
-	Preference<bool>	m_bPickExtraStage;
 	Preference<bool>	m_bComboContinuesBetweenSongs;
 	Preference<Maybe>		m_ShowSongOptions;
 	Preference<bool>	m_bDancePointsForOni;

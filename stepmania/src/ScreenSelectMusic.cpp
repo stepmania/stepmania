@@ -581,7 +581,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 	}
 	else if( CodeDetector::EnteredNextSort(input.GameI.controller) )
 	{
-		if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
+		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			m_soundLocked.Play();
 		else
 			m_MusicWheel.NextSort();
@@ -781,7 +781,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 					bIsRepeat = true;
 
 			/* Don't complain about repeats if the user didn't get to pick. */
-			if( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage )
+			if( GAMESTATE->IsAnExtraStage() )
 				bIsRepeat = false;
 
 			if( bIsRepeat )

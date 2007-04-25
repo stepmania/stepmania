@@ -127,7 +127,7 @@ void MusicWheel::BeginScreen()
 
 	WheelBase::BeginScreen();
 
-	if( (GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage) || GAMESTATE->IsExtraStage2() )
+	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 	{
 		m_WheelState = STATE_LOCKED;
 		SCREENMAN->PlayStartSound();
