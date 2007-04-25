@@ -946,12 +946,6 @@ Stage GameState::GetCurrentStage() const
 	else						return STAGE_NORMAL;
 }
 
-// Return true if it's possible for GetCurrentStage() to return the given stage.
-bool GameState::IsStagePossible( Stage s ) const
-{
-	return s == GAMESTATE->GetCurrentStage();
-}
-
 int GameState::GetCourseSongIndex() const
 {
 	int iSongIndex = 0;
@@ -2152,7 +2146,6 @@ public:
 	DEFINE_METHOD( IsExtraStage,			IsExtraStage() )
 	DEFINE_METHOD( IsExtraStage2,			IsExtraStage2() )
 	DEFINE_METHOD( GetCurrentStage,			GetCurrentStage() )
-	DEFINE_METHOD( IsStagePossible,			IsStagePossible( Enum::Check<Stage>(L, 1)) )
 	DEFINE_METHOD( HasEarnedExtraStage,		HasEarnedExtraStage() )
 	DEFINE_METHOD( GetEasiestStepsDifficulty,	GetEasiestStepsDifficulty() )
 	DEFINE_METHOD( IsEventMode,			IsEventMode() )
@@ -2321,7 +2314,6 @@ public:
 		ADD_METHOD( IsExtraStage );
 		ADD_METHOD( IsExtraStage2 );
 		ADD_METHOD( GetCurrentStage );
-		ADD_METHOD( IsStagePossible );
 		ADD_METHOD( HasEarnedExtraStage );
 		ADD_METHOD( GetEasiestStepsDifficulty );
 		ADD_METHOD( IsEventMode );
