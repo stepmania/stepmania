@@ -17,13 +17,13 @@ local children = {
 		Condition=GAMESTATE:GetPlayMode() ~= PLAY_MODE_BATTLE and GAMESTATE:GetPlayMode() ~= PLAY_MODE_RAVE;
 		children = {
 			LoadActor( "ScreenGameplay out/_extra1.png" ) .. {
-				Condition=GAMESTATE:IsFinalStage();
+				Condition=GAMESTATE:IsExtraStage();
 				InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
 				StartTransitioningCommand=cmd(hide_if,not GAMESTATE:HasEarnedExtraStage());
 				OnCommand=cmd(diffusealpha,0.4;linear,0.2;diffusealpha,0);
 			};
 			LoadActor( "ScreenGameplay out/_extra2.png" ) .. {
-				Condition=GAMESTATE:IsExtraStage();
+				Condition=GAMESTATE:IsExtraStage2();
 				InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
 				StartTransitioningCommand=cmd(hide_if,not GAMESTATE:HasEarnedExtraStage());
 				OnCommand=cmd(diffusealpha,0.4;linear,0.2;diffusealpha,0);
