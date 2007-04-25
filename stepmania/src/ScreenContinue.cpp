@@ -78,7 +78,7 @@ void ScreenContinue::Input( const InputEventPlus &input )
 
 	if( input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->IsHumanPlayer(input.pn) )
 	{
-		m_MenuTimer->SetSeconds( m_MenuTimer->GetSeconds() - 1 );		
+		m_MenuTimer->SetSeconds( floorf(m_MenuTimer->GetSeconds()) - 0.0001f );
 		return;	// handled
 	}
 
