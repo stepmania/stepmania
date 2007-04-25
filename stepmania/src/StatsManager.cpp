@@ -194,10 +194,7 @@ void StatsManager::CommitStatsToProfiles()
 		if( pPlayerProfile )
 		{
 			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
-			pPlayerProfile->m_iCurrentCombo = 
-				PREFSMAN->m_bComboContinuesBetweenSongs ? 
-				m_CurStageStats.m_player[pn].m_iCurCombo : 
-				0;
+			pPlayerProfile->m_iCurrentCombo = 0;
 			pPlayerProfile->m_iNumTotalSongsPlayed += m_CurStageStats.m_vpPlayedSongs.size();
 		}
 

@@ -789,24 +789,7 @@ void GameState::ResetMusicStatistics()
 
 void GameState::ResetStageStatistics()
 {
-	StageStats OldStats = STATSMAN->m_CurStageStats;
 	STATSMAN->m_CurStageStats = StageStats();
-	if( PREFSMAN->m_bComboContinuesBetweenSongs )
-	{
-		FOREACH_PlayerNumber( p )
-		{
-			bool bFirstSong = m_iPlayerCurrentStageIndexForCurrentCredit[p] == 0;
-			if( bFirstSong )
-			{
-				Profile* pProfile = PROFILEMAN->GetProfile(p);
-				STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = pProfile->m_iCurrentCombo;
-			}
-			else
-			{
-				STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = OldStats.m_player[p].m_iCurCombo;
-			}
-		}
-	}
 
 	RemoveAllActiveAttacks();
 	FOREACH_PlayerNumber( p )
