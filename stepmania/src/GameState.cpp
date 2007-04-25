@@ -655,11 +655,6 @@ void GameState::CommitStageStats()
  * song.  Might be called more than once. */
 void GameState::FinishStage()
 {
-	/* If m_iNumStagesOfThisSong is 0, we've been called more than once before calling
-	 * BeginStage.  This can happen when backing out of the player options screen. */
-	if( m_iNumStagesOfThisSong == 0 )
-		return;
-
 	m_bStatsCommitted = false;
 
 	// Increment the stage counter.
