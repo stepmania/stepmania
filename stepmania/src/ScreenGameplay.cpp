@@ -2253,13 +2253,13 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 			GAMESTATE->m_iPlayerStageTokens[p] = 0;
 	}
 
-	// save current stage stats
-	STATSMAN->m_vPlayedStageStats.push_back( STATSMAN->m_CurStageStats );
-
-	GAMESTATE->CommitStageStats();
-	STATSMAN->m_CurStageStats.CommitScores( false );
 	FOREACH_HumanPlayer( pn )
 		STATSMAN->m_CurStageStats.m_player[pn].CalcAwards( pn, STATSMAN->m_CurStageStats.m_bGaveUp, STATSMAN->m_CurStageStats.m_bUsedAutoplay );
+	STATSMAN->m_CurStageStats.CommitScores( false );
+	GAMESTATE->CommitStageStats();
+
+	// save current stage stats
+	STATSMAN->m_vPlayedStageStats.push_back( STATSMAN->m_CurStageStats );
 
 	STATSMAN->CalcAccumPlayedStageStats();
 	GAMESTATE->FinishStage();
