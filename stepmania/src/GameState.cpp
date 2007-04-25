@@ -949,15 +949,7 @@ Stage GameState::GetCurrentStage() const
 // Return true if it's possible for GetCurrentStage() to return the given stage.
 bool GameState::IsStagePossible( Stage s ) const
 {
-	/* HACK: Find out what the stage would be without long or marathon.
-	 * This should never change during a screen. */
-	Song *pSong = m_pCurSong;
-	// XXX: Using GAMESTATE to get around const is potentially dangerous.
-	GAMESTATE->m_pCurSong.SetWithoutBroadcast( NULL );
-	Stage actual = GAMESTATE->GetCurrentStage();
-	GAMESTATE->m_pCurSong.SetWithoutBroadcast( pSong );
-
-	return s == actual;
+	return s == GAMESTATE->GetCurrentStage();
 }
 
 int GameState::GetCourseSongIndex() const
