@@ -94,7 +94,7 @@ ScreenEvaluation::ScreenEvaluation()
 		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
 		STATSMAN->m_CurStageStats.m_playMode = GAMESTATE->m_PlayMode;
 		STATSMAN->m_CurStageStats.m_pStyle = GAMESTATE->GetCurrentStyle();
-		STATSMAN->m_CurStageStats.m_Stage = STAGE_1;
+		STATSMAN->m_CurStageStats.m_Stage = STAGE_NORMAL;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
 		STATSMAN->m_CurStageStats.m_vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
@@ -660,13 +660,13 @@ void ScreenEvaluation::Init()
 		!GAMESTATE->IsCourseMode() &&
 		!SUMMARY )
 	{
-		m_sprTryExtraStage.Load( THEME->GetPathG(m_sName,GAMESTATE->IsExtraStage()?"try extra2":"try extra1") );
+		m_sprTryExtraStage.Load( THEME->GetPathG(m_sName,GAMESTATE->IsExtraStage2()?"try extra2":"try extra1") );
 		m_sprTryExtraStage->SetName( "TryExtraStage" );
 		ActorUtil::LoadAllCommands( *m_sprTryExtraStage, m_sName );
 		SET_XY( m_sprTryExtraStage );
 		this->AddChild( m_sprTryExtraStage );
 
-		if( GAMESTATE->IsExtraStage() )
+		if( GAMESTATE->IsExtraStage2() )
 			SOUND->PlayOnce( THEME->GetPathS(m_sName,"try extra2") );
 		else
 			SOUND->PlayOnce( THEME->GetPathS(m_sName,"try extra1") );

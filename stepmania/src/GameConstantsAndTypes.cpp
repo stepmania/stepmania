@@ -372,13 +372,7 @@ StringToX( EditMode );
 LuaXType( EditMode );
 
 static const char *StageNames[] = {
-	"1",
-	"2",
-	"3",
-	"4",
-	"5",
-	"6",
-	"Final",
+	"Normal",
 	"Extra1",
 	"Extra2",
 	"Nonstop",

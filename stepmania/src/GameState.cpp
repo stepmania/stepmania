@@ -941,10 +941,9 @@ Stage GameState::GetCurrentStage() const
 	else if( m_PlayMode == PLAY_MODE_ONI )		return STAGE_ONI;
 	else if( m_PlayMode == PLAY_MODE_NONSTOP )	return STAGE_NONSTOP;
 	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return STAGE_ENDLESS;
-	else if( IsFinalStage() )			return STAGE_FINAL;
 	else if( IsExtraStage() )			return STAGE_EXTRA1;
 	else if( IsExtraStage2() )			return STAGE_EXTRA2;
-	else						return enum_add2( STAGE_1, GetLargestCurrentStageIndexForAnyHumanPlayer() );
+	else						return STAGE_NORMAL;
 }
 
 // Return true if it's possible for GetCurrentStage() to return the given stage.
@@ -957,18 +956,6 @@ bool GameState::IsStagePossible( Stage s ) const
 	GAMESTATE->m_pCurSong.SetWithoutBroadcast( NULL );
 	Stage actual = GAMESTATE->GetCurrentStage();
 	GAMESTATE->m_pCurSong.SetWithoutBroadcast( pSong );
-
-	/* Check long/marathon, which can change the stage to FINAL. */
-	if( s == STAGE_FINAL && actual >= STAGE_1 && actual <= STAGE_FINAL )
-	{
-		Stage max_actual = actual;
-
-		// For long/marathon songs:
-		enum_add( max_actual, +2 );
-
-		if( max_actual >= STAGE_FINAL )
-			return true;
-	}
 
 	return s == actual;
 }

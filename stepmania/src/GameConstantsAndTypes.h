@@ -441,13 +441,7 @@ LuaDeclareType( EditMode );
 
 enum Stage
 {
-	STAGE_1,
-	STAGE_2,
-	STAGE_3,
-	STAGE_4,
-	STAGE_5,
-	STAGE_6,
-	STAGE_FINAL,
+	STAGE_NORMAL,
 	STAGE_EXTRA1,
 	STAGE_EXTRA2,
 	STAGE_NONSTOP,
