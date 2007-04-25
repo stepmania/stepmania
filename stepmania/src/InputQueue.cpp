@@ -63,7 +63,7 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 		return false;
 
 	RageTimer OldestTimeAllowed;
-	OldestTimeAllowed += -fMaxSecondsBack;
+	OldestTimeAllowed += -m_fMaxSecondsBack;
 
 	// iterate newest to oldest
 	int iSequenceIndex = m_aPresses.size()-1;	// count down
@@ -221,9 +221,9 @@ bool InputQueueCode::Load( RString sButtonsNames )
 	}
 
 	if( m_aPresses.size() == 1 )
-		fMaxSecondsBack = 0.55f;
+		m_fMaxSecondsBack = 0.55f;
 	else
-		fMaxSecondsBack = (m_aPresses.size()-1)*0.6f;
+		m_fMaxSecondsBack = (m_aPresses.size()-1)*0.6f;
 
 	// if we make it here, we found all the buttons in the code
 	return true;

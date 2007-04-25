@@ -41,7 +41,7 @@ private:
 	};
 	vector<ButtonPress> m_aPresses;
 
-	float fMaxSecondsBack;
+	float m_fMaxSecondsBack;
 };	
 
 extern InputQueue*	INPUTQUEUE;	// global and accessable from anywhere in our program
