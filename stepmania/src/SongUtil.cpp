@@ -855,7 +855,6 @@ void SongUtil::GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut )
 
 bool SongUtil::IsStepsTypePlayable( Song *pSong, StepsType st )
 {
-	void GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut );
 	set<StepsType> vStepsType;
 	GetPlayableStepsTypes( pSong, vStepsType );
 	return vStepsType.find( st ) != vStepsType.end();
