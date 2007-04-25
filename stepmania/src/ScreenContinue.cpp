@@ -76,10 +76,18 @@ void ScreenContinue::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	if( input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->IsHumanPlayer(input.pn) )
+	if( input.type == IET_FIRST_PRESS  &&  GAMESTATE->IsHumanPlayer(input.pn) )
 	{
-		m_MenuTimer->SetSeconds( floorf(m_MenuTimer->GetSeconds()) - 0.0001f );
-		return;	// handled
+		switch( input.MenuI )
+		{
+		case GAME_BUTTON_START:
+		case MENU_BUTTON_UP:
+		case MENU_BUTTON_DOWN:
+		case MENU_BUTTON_LEFT:
+		case MENU_BUTTON_RIGHT:
+			m_MenuTimer->SetSeconds( floorf(m_MenuTimer->GetSeconds()) - 0.0001f );
+			return;	// handled
+		}
 	}
 
 	ScreenWithMenuElements::Input( input );
