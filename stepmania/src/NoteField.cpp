@@ -591,10 +591,10 @@ void NoteField::DrawPrimitives()
 		const vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments;
 		for( unsigned i=0; i<aBPMSegments.size(); i++ )
 		{
-			if( aBPMSegments[i].m_iStartIndex >= iFirstIndexToDraw &&
-			    aBPMSegments[i].m_iStartIndex <= iLastIndexToDraw)
+			if( aBPMSegments[i].m_iStartRow >= iFirstIndexToDraw &&
+			    aBPMSegments[i].m_iStartRow <= iLastIndexToDraw)
 			{
-				float fBeat = NoteRowToBeat(aBPMSegments[i].m_iStartIndex);
+				float fBeat = NoteRowToBeat(aBPMSegments[i].m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
 					DrawBPMText( fBeat, aBPMSegments[i].GetBPM() );
 			}

@@ -899,7 +899,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 				{
 					BPMSegment newSeg( iStepIndex, fBPM );
 					out.AddBPMSegment( newSeg );
-					LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartIndex), newSeg.GetBPM() );
+					LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
 			
 				}
 				else

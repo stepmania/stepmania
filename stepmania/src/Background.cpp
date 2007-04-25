@@ -450,17 +450,17 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 	}
 
 	// change BG every BPM change that is at the beginning of a measure
-	int iStartIndex = BeatToNoteRow(fFirstBeat);
-	int iEndIndex = BeatToNoteRow(fEndBeat);
+	int iStartRow = BeatToNoteRow(fFirstBeat);
+	int iEndRow = BeatToNoteRow(fEndBeat);
 	for( unsigned i=0; i<timing.m_BPMSegments.size(); i++ )
 	{
 		const BPMSegment& bpmseg = timing.m_BPMSegments[i];
 
-		if( bpmseg.m_iStartIndex % BeatToNoteRow((float) BEATS_PER_MEASURE) != 0 )
+		if( bpmseg.m_iStartRow % BeatToNoteRow((float) BEATS_PER_MEASURE) != 0 )
 			continue;	// skip
 		
 		// start so that we don't create a BGChange right on top of fEndBeat
-		bool bInRange = bpmseg.m_iStartIndex >= iStartIndex && bpmseg.m_iStartIndex < iEndIndex;
+		bool bInRange = bpmseg.m_iStartRow >= iStartRow && bpmseg.m_iStartRow < iEndRow;
 		if( !bInRange )
 			continue;	// skip
 
@@ -470,7 +470,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 			BackgroundChange c = change;
 			c.m_def.m_sFile1 = bd.m_sFile1;
 			c.m_def.m_sFile2 = bd.m_sFile2;
-			c.m_fStartBeat = NoteRowToBeat(bpmseg.m_iStartIndex);
+			c.m_fStartBeat = NoteRowToBeat(bpmseg.m_iStartRow);
 			m_Layer[0].m_aBGChanges.push_back( c );
 		}
 	}

@@ -9,9 +9,9 @@
 
 struct BPMSegment 
 {
-	BPMSegment() : m_iStartIndex(-1), m_fBPS(-1.0f) { }
-	BPMSegment( int s, float b ) { m_iStartIndex = max( 0, s ); SetBPM( b ); }
-	int m_iStartIndex;
+	BPMSegment() : m_iStartRow(-1), m_fBPS(-1.0f) { }
+	BPMSegment( int s, float b ) { m_iStartRow = max( 0, s ); SetBPM( b ); }
+	int m_iStartRow;
 	float m_fBPS;
 
 	void SetBPM( float f ) { m_fBPS = f / 60.0f; }
@@ -19,12 +19,12 @@ struct BPMSegment
 
 	bool operator==( const BPMSegment &other ) const
 	{
-		COMPARE( m_iStartIndex );
+		COMPARE( m_iStartRow );
 		COMPARE( m_fBPS );
 		return true;
 	}
 	bool operator!=( const BPMSegment &other ) const { return !operator==(other); }
-	bool operator<( const BPMSegment &other ) const { return m_iStartIndex < other.m_iStartIndex; }
+	bool operator<( const BPMSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
 };
 
 struct StopSegment 
