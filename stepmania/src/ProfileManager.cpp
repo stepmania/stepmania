@@ -672,11 +672,6 @@ void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pS
 
 Grade ProfileManager::GetHighGradeForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc ) const
 {
-	// return max grade of notes in difficulty class
-	vector<Steps*> aNotes;
-	SongUtil::GetSteps( s, aNotes, st->m_StepsType );
-	StepsUtil::SortNotesArrayByDifficulty( aNotes );
-
 	const Steps* pSteps = SongUtil::GetStepsByDifficulty( s, st->m_StepsType, dc );
 
 	if( pSteps && PROFILEMAN->IsPersistentProfile(slot) )
