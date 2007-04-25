@@ -2256,7 +2256,8 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 	FOREACH_HumanPlayer( pn )
 		STATSMAN->m_CurStageStats.m_player[pn].CalcAwards( pn, STATSMAN->m_CurStageStats.m_bGaveUp, STATSMAN->m_CurStageStats.m_bUsedAutoplay );
 	STATSMAN->m_CurStageStats.CommitScores( false );
-	GAMESTATE->CommitStageStats();
+	if( GAMESTATE->m_bMultiplayer )	// no saved stats in multiplayer
+		GAMESTATE->CommitStageStats();
 
 	// save current stage stats
 	STATSMAN->m_vPlayedStageStats.push_back( STATSMAN->m_CurStageStats );
