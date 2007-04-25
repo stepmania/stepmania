@@ -2,7 +2,6 @@ local stages = Def.ActorFrame {
 };
 
 for _, s in ipairs(Stage) do
---	if GAMESTATE:IsStagePossible(s) then
 	if s == "Stage_Normal" then
 		stages[#stages+1] = LoadFont("_shared2") .. {
 			InitCommand=cmd(shadowlength,0);
