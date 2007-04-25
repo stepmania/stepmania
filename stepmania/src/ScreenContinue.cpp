@@ -85,7 +85,9 @@ void ScreenContinue::Input( const InputEventPlus &input )
 		case MENU_BUTTON_DOWN:
 		case MENU_BUTTON_LEFT:
 		case MENU_BUTTON_RIGHT:
-			m_MenuTimer->SetSeconds( floorf(m_MenuTimer->GetSeconds()) - 0.0001f );
+			float fSeconds = floorf(m_MenuTimer->GetSeconds()) - 0.0001f;
+			fSeconds = max( fSeconds, 0.0001f ); // don't set to 0
+			m_MenuTimer->SetSeconds( fSeconds );
 			return;	// handled
 		}
 	}
