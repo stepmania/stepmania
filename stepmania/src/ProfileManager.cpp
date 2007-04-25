@@ -670,12 +670,12 @@ void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pS
 	PROFILEMAN->GetMachineProfile()->IncrementStepsPlayCount( pSong, pSteps );
 }
 
-Grade ProfileManager::GetHighGradeForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc ) const
+Grade ProfileManager::GetHighGradeForDifficulty( const Song *pSong, const Style *st, ProfileSlot slot, Difficulty dc ) const
 {
-	const Steps* pSteps = SongUtil::GetStepsByDifficulty( s, st->m_StepsType, dc );
+	const Steps* pSteps = SongUtil::GetStepsByDifficulty( pSong, st->m_StepsType, dc );
 
 	if( pSteps && PROFILEMAN->IsPersistentProfile(slot) )
-		return PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(s,pSteps).HighGrade;
+		return PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(pSong, pSteps).HighGrade;
 	return Grade_NoData;
 }
 
