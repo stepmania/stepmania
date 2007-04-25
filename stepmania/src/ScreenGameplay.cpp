@@ -1999,7 +1999,7 @@ void ScreenGameplay::BeginBackingOutFromGameplay()
 	this->ClearMessageQueue();
 	
 	// If this is the final stage, don't allow extra stage
-	if( GAMESTATE->IsFinalStage() )
+	if( GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 )
 		GAMESTATE->m_bBackedOutOfFinalStage = true;
 	// Disallow backing out of extra stage
 	if( GAMESTATE->IsAnExtraStage() )
@@ -2270,7 +2270,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( GAMESTATE->IsAnExtraStage() )
 			SOUND->PlayOnceFromAnnouncer( "gameplay here we go extra" );
-		else if( GAMESTATE->IsFinalStage() )
+		else if( GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() == 0 )
 			SOUND->PlayOnceFromAnnouncer( "gameplay here we go final" );
 		else
 			SOUND->PlayOnceFromAnnouncer( "gameplay here we go normal" );

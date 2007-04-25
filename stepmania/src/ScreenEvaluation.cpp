@@ -102,7 +102,7 @@ ScreenEvaluation::ScreenEvaluation()
 		GAMESTATE->m_pCurCourse.Set( SONGMAN->GetRandomCourse() );
 		GAMESTATE->m_iCurrentStageIndex = 0;
 		FOREACH_ENUM( PlayerNumber, p )
-			GAMESTATE->m_iPlayerCurrentStageIndexForCurrentCredit[p] = 0;
+			GAMESTATE->m_iPlayerStageTokens[p] = 1;
 		
 		FOREACH_PlayerNumber( p )
 		{
@@ -656,7 +656,7 @@ void ScreenEvaluation::Init()
 		best_grade = min( best_grade, grade[p] ); 
 	
 	if( PREFSMAN->m_bAllowExtraStage &&
-		GAMESTATE->HasEarnedExtraStage()  && 
+		GAMESTATE->IsAnExtraStage()  && 
 		!GAMESTATE->IsCourseMode() &&
 		!SUMMARY )
 	{

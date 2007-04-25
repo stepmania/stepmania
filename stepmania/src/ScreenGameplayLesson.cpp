@@ -58,7 +58,7 @@ void ScreenGameplayLesson::Init()
 	// Reset stage number (not relevant in lessons)
 	GAMESTATE->m_iCurrentStageIndex = 0;
 	FOREACH_ENUM( PlayerNumber, p )
-		GAMESTATE->m_iPlayerCurrentStageIndexForCurrentCredit[p] = 0;
+		GAMESTATE->m_iPlayerStageTokens[p] = 1;
 
 	// Autoplay during demonstration
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )

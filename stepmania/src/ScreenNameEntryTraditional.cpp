@@ -79,7 +79,7 @@ void ScreenNameEntryTraditional::BeginScreen()
 		vector<GameState::RankingFeat> aFeats;
 		GAMESTATE->GetRankingFeats( pn, aFeats );
 
-		bool bNoStagesLeft = GAMESTATE->m_iPlayerCurrentStageIndexForCurrentCredit[pn] >= PREFSMAN->m_iSongsPerPlay;
+		bool bNoStagesLeft = GAMESTATE->m_iPlayerStageTokens[pn] <= 0;
 		m_bEnteringName[pn] = aFeats.size() > 0 && bNoStagesLeft;
 		m_bFinalized[pn] = !m_bEnteringName[pn];
 	}

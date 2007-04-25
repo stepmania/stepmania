@@ -123,8 +123,9 @@ public:
 	int				m_iNumStagesOfThisSong;
 	// Increases every stage, doesn't reset when player continues.  It's cosmetic and not used in Stage or Screen branching logic.
 	int				m_iCurrentStageIndex;
-	// Num stages played since player joined or conintues by using a credit.  Increases every stage if the player is joined.  Resets when player joins/continues.
-	int				m_iPlayerCurrentStageIndexForCurrentCredit[NUM_PLAYERS];
+	// Num stages available for player.  Resets when player joins/continues.
+	int				m_iPlayerStageTokens[NUM_PLAYERS];
+	int				m_iAwardedExtraStages[NUM_PLAYERS];
 
 	static int GetNumStagesMultiplierForSong( const Song* pSong );
 	static int GetNumStagesForSongAndStyleType( const Song* pSong, StyleType st );
@@ -134,11 +135,8 @@ public:
 	void		CancelStage();
 	void		CommitStageStats();
 	void		FinishStage();
-	int		GetLargestCurrentStageIndexForAnyHumanPlayer() const;
 	int		GetNumStagesLeft( PlayerNumber pn ) const;
 	int		GetSmallestNumStagesLeftForAnyHumanPlayer() const;
-	int		GetLargestNumStagesLeftForAnyHumanPlayer() const;
-	bool		IsFinalStage() const;
 	bool		IsAnExtraStage() const;
 	bool		IsExtraStage() const;
 	bool		IsExtraStage2() const;

@@ -43,7 +43,7 @@ ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
 		GAMESTATE->m_iCurrentStageIndex = 0;
 		FOREACH_ENUM( PlayerNumber, p )
-			GAMESTATE->m_iPlayerCurrentStageIndexForCurrentCredit[p] = 0;
+			GAMESTATE->m_iPlayerStageTokens[p] = 1;
 		PO_GROUP_CALL( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, ChooseRandomModifiers );
 		PO_GROUP_CALL( GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions, ModsLevel_Stage, ChooseRandomModifiers );
 

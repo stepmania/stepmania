@@ -39,7 +39,7 @@ void ScreenContinue::BeginScreen()
 	// unjoin all players with 0 stages left
 	FOREACH_HumanPlayer( p )
 	{
-		bool bPlayerDone = GAMESTATE->m_iPlayerCurrentStageIndexForCurrentCredit[p] >= PREFSMAN->m_iSongsPerPlay;
+		bool bPlayerDone = GAMESTATE->m_iPlayerStageTokens[p] <= 0;
 		if( !STATSMAN->m_vPlayedStageStats.empty() )
 		{
 			const StageStats &ss = STATSMAN->m_vPlayedStageStats.back();
