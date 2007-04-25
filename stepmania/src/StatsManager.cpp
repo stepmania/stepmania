@@ -157,7 +157,7 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 }
 
 
-void StatsManager::CommitStatsToProfiles()
+void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 {
 	//
 	// Add step totals.  Use radarActual, since the player might have failed part way
@@ -166,23 +166,23 @@ void StatsManager::CommitStatsToProfiles()
 	//
 	FOREACH_HumanPlayer( pn )
 	{
-		int iNumTapsAndHolds	= (int) m_CurStageStats.m_player[pn].m_radarActual[RadarCategory_TapsAndHolds];
-		int iNumJumps		= (int) m_CurStageStats.m_player[pn].m_radarActual[RadarCategory_Jumps];
-		int iNumHolds		= (int) m_CurStageStats.m_player[pn].m_radarActual[RadarCategory_Holds];
-		int iNumRolls		= (int) m_CurStageStats.m_player[pn].m_radarActual[RadarCategory_Rolls];
-		int iNumMines		= (int) m_CurStageStats.m_player[pn].m_radarActual[RadarCategory_Mines];
-		int iNumHands		= (int) m_CurStageStats.m_player[pn].m_radarActual[RadarCategory_Hands];
-		float fCaloriesBurned	= m_CurStageStats.m_player[pn].m_fCaloriesBurned;
+		int iNumTapsAndHolds	= (int) pSS->m_player[pn].m_radarActual[RadarCategory_TapsAndHolds];
+		int iNumJumps		= (int) pSS->m_player[pn].m_radarActual[RadarCategory_Jumps];
+		int iNumHolds		= (int) pSS->m_player[pn].m_radarActual[RadarCategory_Holds];
+		int iNumRolls		= (int) pSS->m_player[pn].m_radarActual[RadarCategory_Rolls];
+		int iNumMines		= (int) pSS->m_player[pn].m_radarActual[RadarCategory_Mines];
+		int iNumHands		= (int) pSS->m_player[pn].m_radarActual[RadarCategory_Hands];
+		float fCaloriesBurned	= pSS->m_player[pn].m_fCaloriesBurned;
 		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumRolls, iNumMines, iNumHands, fCaloriesBurned );
 	}
 
 	// Update profile stats
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 
-	int iGameplaySeconds = (int)truncf(m_CurStageStats.m_fGameplaySeconds);
+	int iGameplaySeconds = (int)truncf(pSS->m_fGameplaySeconds);
 
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
-	pMachineProfile->m_iNumTotalSongsPlayed += m_CurStageStats.m_vpPlayedSongs.size();
+	pMachineProfile->m_iNumTotalSongsPlayed += pSS->m_vpPlayedSongs.size();
 
 	CHECKPOINT;
 	FOREACH_HumanPlayer( pn )
@@ -193,13 +193,13 @@ void StatsManager::CommitStatsToProfiles()
 		if( pPlayerProfile )
 		{
 			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
-			pPlayerProfile->m_iNumTotalSongsPlayed += m_CurStageStats.m_vpPlayedSongs.size();
+			pPlayerProfile->m_iNumTotalSongsPlayed += pSS->m_vpPlayedSongs.size();
 		}
 
-		AddPlayerStatsToProfile( pMachineProfile, m_CurStageStats, pn );
+		AddPlayerStatsToProfile( pMachineProfile, *pSS, pn );
 
 		if( pPlayerProfile )
-			AddPlayerStatsToProfile( pPlayerProfile, m_CurStageStats, pn );
+			AddPlayerStatsToProfile( pPlayerProfile, *pSS, pn );
 
 		CHECKPOINT;
 	}

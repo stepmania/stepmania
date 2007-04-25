@@ -24,7 +24,7 @@ public:
 	void CalcAccumPlayedStageStats();
 	StageStats& GetAccumPlayedStageStats() { return m_AccumPlayedStageStats; }
 
-	void CommitStatsToProfiles();
+	static void CommitStatsToProfiles( const StageStats *pSS );
 
 	void UnjoinPlayer( PlayerNumber pn );
 

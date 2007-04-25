@@ -635,7 +635,7 @@ void GameState::CommitStageStats()
 		return;
 	m_bStatsCommitted = true;
 
-	STATSMAN->CommitStatsToProfiles();
+	STATSMAN->CommitStatsToProfiles( &STATSMAN->m_CurStageStats );
 
 	// Update TotalPlaySeconds.
 	int iPlaySeconds = max( 0, (int) m_timeGameStarted.GetDeltaTime() );
