@@ -4,7 +4,7 @@
 
  * MIDI event info is explained here: http://www.sonicspot.com/guide/midifiles.html
 
- * Explanation of MIDI "running status" here: http://www.borg.com/~jglatt/tech/midispec/run.htm
+ * Explanation of MIDI "running status" and note-on velocity==0 meaning: http://www.borg.com/~jglatt/tech/midispec/run.htm
 
  * Guitar track mappings are explained here: http://www.scorehero.com/forum/viewtopic.php?t=1179
 
@@ -650,9 +650,9 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 		while( event.size() ) 
 		{
 			MidiEventType midiEventType = (MidiEventType)(event[0] >> 4);
-			//uint8_t uMidiChannel = event[0] & 0xF;	// currently unused
+			uint8_t uMidiChannel = event[0] & 0xF;	// currently unused
 			uint8_t uParam1 = event[1];	// meaning is MidiEventType-specific
-			//uint8_t uParam2 = event[2];	// currently unused, meaning is MidiEventType-specific
+			uint8_t uParam2 = event[2];	// currently unused, meaning is MidiEventType-specific
 			
 			switch( midiEventType )
 			{
@@ -660,7 +660,11 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 			case note_on:
 				{
 					const uint8_t &uNoteNumber = uParam1;
-					//const uint8_t &uVelocity = uParam2;	// currently unused
+					const uint8_t &uVelocity = uParam2;
+
+					// velocity == 0, by convention, means note-off
+					if( uVelocity == 0 )
+						midiEventType = note_off;
 
 					GuitarDifficulty gd;
 					NoteNumberType nnt;
@@ -693,7 +697,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 			if( nnt >= NUM_FRETS )
 				continue;	// data other than the frets is not handled yet
 
-			bool bTrackIsOn = false;
+			bool bNonTerminatedNote = false;
 			long countOfLastNote = 0;
 			FOREACH_CONST( MidiEvent, vMidiEvent[gd][nnt], iter )
 			{				 
@@ -722,67 +726,69 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 				long count = iter->count;
 				float fBeat = NoteRowToBeat( MidiCountToNoteRow(count) );
 				bool bNoteHandled = false;
-				if( bTrackIsOn )
-				{
-					if( midiEventType == note_off  ||  midiEventType == note_on )
-					{
-						// end this track
-						long length = count - countOfLastNote;
+				long length = count - countOfLastNote;
 
+
+				// Check for termination of a sustain note
+				switch( midiEventType )
+				{
+				case note_off:
+				case note_on:
+					if( bNonTerminatedNote )
+					{
 						if( length >= 240 )
 						{
 							TapNote tn = TAP_ORIGINAL_HOLD_HEAD;
 							tn.iDuration = MidiCountToNoteRow( length );
 							noteData.SetTapNote( nnt, MidiCountToNoteRow(countOfLastNote), tn );
 
-							if( gd == expert  &&  fBeat >= 9*4-2  &&  nnt == yellow )
-								LOG->Trace( "Added hold at %f", fBeat );
+//							if( gd == expert  &&  fBeat >= 27*4-2  &&  nnt == green )
+//								LOG->Trace( "Added hold at %f, length %d", fBeat, length );
 						}
 
-						bTrackIsOn = false;
-						countOfLastNote = 0;
+						bNonTerminatedNote = false;
 						bNoteHandled = true;
 					}
+					break;
 				}
-				else
+
+
+				switch( midiEventType )
 				{
-					if( midiEventType == note_on )
+				case note_on:
 					{
-						// start this track
 						TapNote tn = TAP_ORIGINAL_TAP;
 
 						// We're about to add a tap note.  If the previous note was a sustain note that ended 
-						// on this row, then make the sustain note one row shorter so that it doesn't end on 
+						// on this row, then make the sustain note shorter so that it doesn't end on 
 						// the same row as the tap note we're about to add.  NoteData cannot handle a 
 						// hold note ending on the same row as a tap note.
 						NoteData::iterator begin, end;
 						noteData.GetTapNoteRangeInclusive( nnt, MidiCountToNoteRow(count), MidiCountToNoteRow(count), begin, end, true );
 						for( NoteData::iterator iter = begin; iter != end; iter++ )
 						{
-							if( gd == expert  &&  fBeat >= 9*4-2  &&  nnt == yellow )
-								LOG->Trace( "shortening hold at %f", fBeat );
+//							if( gd == expert  &&  fBeat >= 27*4-2  &&  nnt == green )
+//								LOG->Trace( "shortening hold at %f, length %d", fBeat, length );
 
 							ASSERT( iter->second.type == TapNote::hold_head );
-							ASSERT( iter->first + iter->second.iDuration == MidiCountToNoteRow(count) );
-							iter->second.iDuration -= 2;
+							iter->second.iDuration = MidiCountToNoteRow(count) - iter->first - 2;
 						}
 
 						noteData.SetTapNote( nnt, MidiCountToNoteRow(count), tn );
 
 
-						if( gd == expert  &&  fBeat >= 9*4-2  &&  nnt == yellow )
-							LOG->Trace( "Added tap at %f", fBeat );
+//						if( gd == expert  &&  fBeat >= 27*4-2  &&  nnt == green )
+//							LOG->Trace( "Added tap at %f, length %d", fBeat, length );
 		
-						bTrackIsOn = true;
-						countOfLastNote = count;
+						bNonTerminatedNote = true;
 						bNoteHandled = true;
 					}
 				}
 
+				countOfLastNote = count;
+
 				if( !bNoteHandled )
-				{
-					LOG->Trace( "Unexpected MIDI event type %X at count %ld", midiEventType, count );
-				}
+					LOG->Warn( "Unexpected MIDI event type %X at count %ld", midiEventType, count );
 			}
 		}
 
