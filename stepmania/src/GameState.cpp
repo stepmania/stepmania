@@ -310,7 +310,6 @@ void GameState::Reset()
 	}
 
 	m_bTemporaryEventMode = false;
-	m_bStatsCommitted = false;
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
 	
@@ -630,10 +629,8 @@ void GameState::CancelStage()
 
 void GameState::CommitStageStats()
 {
-	/* Don't commit stats twice. */
-	if( m_bStatsCommitted || m_bDemonstrationOrJukebox )
+	if( m_bDemonstrationOrJukebox )
 		return;
-	m_bStatsCommitted = true;
 
 	STATSMAN->CommitStatsToProfiles( &STATSMAN->m_CurStageStats );
 
@@ -655,8 +652,6 @@ void GameState::CommitStageStats()
  * song.  Might be called more than once. */
 void GameState::FinishStage()
 {
-	m_bStatsCommitted = false;
-
 	// Increment the stage counter.
 	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
 	const int iOldStageIndex = m_iCurrentStageIndex;

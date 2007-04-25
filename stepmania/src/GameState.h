@@ -209,10 +209,6 @@ public:
 
 	void ResetStageStatistics();	// Call this when it's time to play a new stage.
 
-	// True if CommitStageStats() has been called and FinishStage() hasn't.
-	bool			m_bStatsCommitted;
-
-
 	//
 	// Options stuff
 	//
