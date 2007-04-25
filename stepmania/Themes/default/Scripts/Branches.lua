@@ -108,8 +108,8 @@ local function GetEvaluationNextScreenInternal( sNextScreen, sFailedScreen, sEnd
 
 	local sIsStage = not GetTopScreenMetric( "Summary" ) and not GAMESTATE:IsCourseMode()
 	if sIsStage then
-		local bHasAnotherStage = not bIsExtraStage or GAMESTATE:HasEarnedExtraStage()
-		if bHasAnotherStage then
+		local bLastStage = GAMESTATE:GetSmallestNumStagesLeftForAnyHumanPlayer() <= 0
+		if not bLastStage then
 			Trace( "Another" )
 			return sNextScreen
 		end
