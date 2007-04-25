@@ -251,12 +251,6 @@ void ScreenEvaluation::Init()
 			grade[p] = Grade_Failed;
 	}
 	
-	m_bTryExtraStage = 
-		GAMESTATE->HasEarnedExtraStage()  && 
-		!GAMESTATE->IsCourseMode() &&
-		!SUMMARY;
- 
-
 	//
 	// load sounds
 	//
@@ -661,7 +655,10 @@ void ScreenEvaluation::Init()
 	FOREACH_PlayerNumber( p )
 		best_grade = min( best_grade, grade[p] ); 
 	
-	if( PREFSMAN->m_bAllowExtraStage && m_bTryExtraStage )
+	if( PREFSMAN->m_bAllowExtraStage &&
+		GAMESTATE->HasEarnedExtraStage()  && 
+		!GAMESTATE->IsCourseMode() &&
+		!SUMMARY )
 	{
 		m_sprTryExtraStage.Load( THEME->GetPathG(m_sName,GAMESTATE->IsExtraStage()?"try extra2":"try extra1") );
 		m_sprTryExtraStage->SetName( "TryExtraStage" );

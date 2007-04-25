@@ -581,12 +581,12 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 	}
 	else if( CodeDetector::EnteredNextSort(input.GameI.controller) )
 	{
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+		if( GAMESTATE->IsAnExtraStage() )
 			m_soundLocked.Play();
 		else
 			m_MusicWheel.NextSort();
 	}
-	else if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
+	else if( !GAMESTATE->IsExtraAnStage() && CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
 	{
 		m_soundOptionsChange.Play();
 		MESSAGEMAN->Broadcast( ssprintf("PlayerOptionsChangedP%i", input.pn+1) );

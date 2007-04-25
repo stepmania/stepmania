@@ -111,7 +111,6 @@ protected:
 	// extra area
 	AutoActor		m_sprMachineRecord[NUM_PLAYERS];
 	AutoActor		m_sprPersonalRecord[NUM_PLAYERS];
-	bool			m_bTryExtraStage;
 	AutoActor		m_sprTryExtraStage;
 	bool m_bFailed;
 

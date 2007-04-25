@@ -379,7 +379,7 @@ void ScreenGameplay::Init()
 	 * user doesn't have full control; saving would force profiles to Difficulty_Hard
 	 * and save over their default modifiers every time someone got an extra stage.
 	 * Do this before course modifiers are set up. */
-	if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
+	if( !GAMESTATE->IsAnExtraStage() )
 	{
 		FOREACH_HumanPlayer( pn )
 			GAMESTATE->SaveCurrentSettingsToProfile(pn);

@@ -127,7 +127,7 @@ void MusicWheel::BeginScreen()
 
 	WheelBase::BeginScreen();
 
-	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+	if( GAMESTATE->IsAnExtraStage() )
 	{
 		m_WheelState = STATE_LOCKED;
 		SCREENMAN->PlayStartSound();
@@ -344,8 +344,7 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 		Song* pSong = apAllSongs[i];
 
 		/* If we're on an extra stage, and this song is selected, ignore #SELECTABLE. */
-		if( pSong != GAMESTATE->m_pCurSong || 
-			(!GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2()) )
+		if( pSong != GAMESTATE->m_pCurSong || !GAMESTATE->IsAnExtraStage() )
 		{
 			/* Hide songs that asked to be hidden via #SELECTABLE. */
 			if( !pSong->NormallyDisplayed() )
