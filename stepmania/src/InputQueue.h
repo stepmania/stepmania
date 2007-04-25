@@ -34,6 +34,7 @@ private:
 	{
 		ButtonPress() { m_bAllowIntermediatePresses = false; memset( m_InputTypes, 0, sizeof(m_InputTypes) ); m_InputTypes[IET_FIRST_PRESS] = true; }
 		vector<GameButton> m_aButtonsToHold;
+		vector<GameButton> m_aButtonsToNotHold;
 		vector<GameButton> m_aButtonsToPress;
 
 		bool m_InputTypes[NUM_InputEventType];

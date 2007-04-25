@@ -63,7 +63,10 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 		return false;
 
 	RageTimer OldestTimeAllowed;
-	OldestTimeAllowed += -m_fMaxSecondsBack;
+	if( m_fMaxSecondsBack == -1 )
+		OldestTimeAllowed.SetZero();
+	else
+		OldestTimeAllowed += -m_fMaxSecondsBack;
 
 	// iterate newest to oldest
 	int iSequenceIndex = m_aPresses.size()-1;	// count down
@@ -72,7 +75,7 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 	while( iQueueIndex >= 0 )
 	{
 		/* If the buttons are too old, stop searching because we're not going to find a match. */
-		if( aQueue[iQueueIndex].DeviceI.ts < OldestTimeAllowed )
+		if( !OldestTimeAllowed.IsZero() && aQueue[iQueueIndex].DeviceI.ts < OldestTimeAllowed )
 			return false;
 
 		/* If the last press is an input type we're not interested in, skip it
@@ -114,14 +117,20 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 				break;	// didn't find the button
 
 			// Check that m_aButtonsToHold were being held when the buttons were pressed.
-			bool bAllButtonsPressed = true;
+			bool bAllHeldButtonsOK = true;
 			for( unsigned i=0; i<Press.m_aButtonsToHold.size(); i++ )
 			{
 				GameInput gi( controller, Press.m_aButtonsToHold[i] );
 				if( !INPUTMAPPER->IsBeingPressed(gi, MultiPlayer_Invalid, &pIEP->InputList) )
-					bAllButtonsPressed = false;
+					bAllHeldButtonsOK = false;
 			}
-			if( !bAllButtonsPressed )
+			for( unsigned i=0; i<Press.m_aButtonsToNotHold.size(); i++ )
+			{
+				GameInput gi( controller, Press.m_aButtonsToNotHold[i] );
+				if( INPUTMAPPER->IsBeingPressed(gi, MultiPlayer_Invalid, &pIEP->InputList) )
+					bAllHeldButtonsOK = false;
+			}
+			if( !bAllHeldButtonsOK )
 				continue;
 			if( b == (int) Press.m_aButtonsToPress.size()-1 )
 			{
@@ -180,6 +189,7 @@ bool InputQueueCode::Load( RString sButtonsNames )
 			RString sButtonName = asButtonNames[i];
 
 			bool bHold = false;
+			bool bNotHold = false;
 			while(1)
 			{
 				if( sButtonName.Left(1) == "+" )
@@ -198,6 +208,11 @@ bool InputQueueCode::Load( RString sButtonsNames )
 					sButtonName.erase(0, 1);
 					bHold = true;
 				}
+				else if( sButtonName.Left(1) == "!" )
+				{
+					sButtonName.erase(0, 1);
+					bNotHold = true;
+				}
 				else
 				{
 					break;
@@ -215,6 +230,8 @@ bool InputQueueCode::Load( RString sButtonsNames )
 
 			if( bHold )
 				m_aPresses.back().m_aButtonsToHold.push_back( gb );
+			else if( bNotHold )
+				m_aPresses.back().m_aButtonsToNotHold.push_back( gb );
 			else
 				m_aPresses.back().m_aButtonsToPress.push_back( gb );
 		}
