@@ -22,8 +22,7 @@ function ScreenSelectMusic:setupmusicstagemods()
 		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
 		MESSAGEMAN:Broadcast( "SongOptionsChanged" )
 	elseif GAMESTATE:IsAnExtraStage() then
-		if GAMESTATE:GetPreferredSongGroup() == "---Group All---" and
-		   not PREFSMAN:GetPreference("PickExtraStage") then
+		if GAMESTATE:GetPreferredSongGroup() == "---Group All---" then
 			local song = GAMESTATE:GetCurrentSong()
 			GAMESTATE:SetPreferredSongGroup( song:GetGroupName() )
 		end

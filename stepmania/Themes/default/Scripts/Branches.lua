@@ -237,8 +237,7 @@ function OptionsMenuAvailable()
 end
 
 function ModeMenuAvailable()
-	local PickExtraStage = PREFSMAN:GetPreference( "PickExtraStage" )
-	if (GAMESTATE:IsExtraStage() and not PickExtraStage) or GAMESTATE:IsExtraStage2() then
+	if GAMESTATE:IsAnExtraStage() then
 		return false
 	end
 	return true
