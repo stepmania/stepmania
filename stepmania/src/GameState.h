@@ -225,7 +225,7 @@ public:
 	void ApplyStageModifiers( PlayerNumber pn, RString sModifiers );
 	void ResetOptions();
 
-	bool IsDisqualified( PlayerNumber pn );
+	bool CurrentOptionsDisqualifyPlayer( PlayerNumber pn );
 	bool PlayerIsUsingModifier( PlayerNumber pn, const RString &sModifier );
 
 	SongOptions::FailType GetPlayerFailType( const PlayerState *pPlayerState ) const;

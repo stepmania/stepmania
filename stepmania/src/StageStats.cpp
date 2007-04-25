@@ -155,7 +155,7 @@ void StageStats::CommitScores( bool bSummary )
 	FOREACH_HumanPlayer( p )
 	{
 		// don't save scores if the player is disqualified
-		if( GAMESTATE->IsDisqualified(p) )
+		if( this->m_player[p].IsDisqualified() )
 			continue;
 
 		// whether or not to save scores when the stage was failed

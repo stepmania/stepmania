@@ -109,6 +109,9 @@ public:
 
 	int		m_iPersonalHighScoreIndex;
 	int		m_iMachineHighScoreIndex;
+	bool		m_bDisqualified;
+	bool IsDisqualified() const;
+
 	RankingCategory	m_rc;
 	HighScore	m_HighScore;
 

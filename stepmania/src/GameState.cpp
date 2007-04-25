@@ -613,10 +613,12 @@ void GameState::BeginStage()
 	STATSMAN->m_CurStageStats.m_fMusicRate = m_SongOptions.GetSong().m_fMusicRate;
 	m_iNumStagesOfThisSong = GetNumStagesForCurrentSongAndStepsOrCourse();
 	ASSERT( m_iNumStagesOfThisSong != -1 );
-	LOG->Trace( "BeginStage: sub %i (%i) (ex %i)",
-		m_iNumStagesOfThisSong, m_iPlayerStageTokens[0], m_iAwardedExtraStages[0] );
 	FOREACH_EnabledPlayer( p )
 		m_iPlayerStageTokens[p] -= m_iNumStagesOfThisSong;
+
+	FOREACH_HumanPlayer( pn )
+		if( CurrentOptionsDisqualifyPlayer(pn) )
+			STATSMAN->m_CurStageStats.m_player[pn].m_bDisqualified = true;
 }
 
 void GameState::CancelStage()
@@ -1231,21 +1233,13 @@ void GameState::ResetOptions()
 	m_bDidModeChangeNoteSkin = false;
 }
 
-bool GameState::IsDisqualified( PlayerNumber pn )
+bool GameState::CurrentOptionsDisqualifyPlayer( PlayerNumber pn )
 {
 	if( !PREFSMAN->m_bDisqualification )
 		return false;
 
 	if( !IsHumanPlayer(pn) )
 		return false;
-
-	if( STATSMAN->m_CurStageStats.m_bGaveUp )
-		return true;
-
-#ifndef DEBUG
-	if( STATSMAN->m_CurStageStats.m_bUsedAutoplay )
-		return true;
-#endif //DEBUG
 
 	const PlayerOptions &po = m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
 
@@ -2118,11 +2112,6 @@ public:
 	{
 		lua_pushboolean(L, p->GetStageResult(PLAYER_1)==RESULT_DRAW); return 1;
 	}
-	static int IsDisqualified( T* p, lua_State *L )
-	{
-		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		lua_pushboolean(L, p->IsDisqualified(pn)); return 1;
-	}
 	static int GetCurrentGame( T* p, lua_State *L )			{ const_cast<Game*>(p->GetCurrentGame())->PushSelf( L ); return 1; }
 	DEFINE_METHOD( GetEditCourseEntryIndex,		m_iEditCourseEntryIndex )
 	DEFINE_METHOD( GetEditLocalProfileID,		m_sEditLocalProfileID.Get() )
@@ -2272,7 +2261,6 @@ public:
 		ADD_METHOD( GetSongOptionsString );
 		ADD_METHOD( IsWinner );
 		ADD_METHOD( IsDraw );
-		ADD_METHOD( IsDisqualified );
 		ADD_METHOD( GetCurrentGame );
 		ADD_METHOD( GetEditCourseEntryIndex );
 		ADD_METHOD( GetEditLocalProfileID );

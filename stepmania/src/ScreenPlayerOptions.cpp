@@ -122,13 +122,13 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 	// save original player options 
 	PlayerOptions poOrig = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
 
-	// Find out if the current row when exprorted causes disqualification.
+	// Find out if the current row when exported causes disqualification.
 	// Exporting the row will fill GAMESTATE->m_PlayerOptions.
 	PO_GROUP_CALL( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, Init );
 	vector<PlayerNumber> v;
 	v.push_back( pn );
 	ExportOptions( row, v );
-	bool bRowCausesDisqualified = GAMESTATE->IsDisqualified( pn );
+	bool bRowCausesDisqualified = GAMESTATE->CurrentOptionsDisqualifyPlayer( pn );
 	m_bRowCausesDisqualified[pn][row] = bRowCausesDisqualified;
 
 	// Update disqualified graphic

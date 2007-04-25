@@ -58,6 +58,7 @@ void PlayerStageStats::Init()
 	m_pcaToShow = PeakComboAward_Invalid;
 	m_iPersonalHighScoreIndex = -1;
 	m_iMachineHighScoreIndex = -1;
+	m_bDisqualified = false;
 	m_rc = RankingCategory_Invalid;
 	m_HighScore = HighScore();
 }
@@ -92,6 +93,7 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	m_iSongsPlayed += other.m_iSongsPlayed;
 	m_fCaloriesBurned += other.m_fCaloriesBurned;
 	m_fLifeRemainingSeconds = other.m_fLifeRemainingSeconds;	// don't accumulate
+	m_bDisqualified |= other.m_bDisqualified;
 
 	const float fOtherFirstSecond = other.m_fFirstSecond + m_fLastSecond;
 	const float fOtherLastSecond = other.m_fLastSecond + m_fLastSecond;
@@ -563,7 +565,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 
 	// per-difficulty awards
 	// don't give per-difficutly awards if using easy mods
-	if( !GAMESTATE->IsDisqualified(p) )
+	if( !IsDisqualified() )
 	{
 		if( FullComboOfScore( TNS_W3 ) )
 			vPdas.push_back( AWARD_FULL_COMBO_W3 );
@@ -623,6 +625,12 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 
 }
 
+bool PlayerStageStats::IsDisqualified() const
+{
+	if( !PREFSMAN->m_bDisqualification )
+		return false;
+	return m_bDisqualified;
+}
 
 LuaFunction( GetGradeFromPercent,	GetGradeFromPercent( FArg(1), false ) )
 
@@ -654,6 +662,7 @@ public:
 	DEFINE_METHOD( GetMachineHighScoreIndex,	m_iMachineHighScoreIndex )
 	DEFINE_METHOD( GetPerDifficultyAward,		m_pdaToShow )
 	DEFINE_METHOD( GetPeakComboAward,		m_pcaToShow )
+	DEFINE_METHOD( IsDisqualified,			IsDisqualified() )
 
 	static int GetPlayedSteps( T* p, lua_State *L )
 	{
@@ -699,6 +708,7 @@ public:
 		ADD_METHOD( GetMachineHighScoreIndex );
 		ADD_METHOD( GetPerDifficultyAward );
 		ADD_METHOD( GetPeakComboAward );
+		ADD_METHOD( IsDisqualified );
 		ADD_METHOD( GetPlayedSteps );
 		ADD_METHOD( GetPossibleSteps );
 	}
