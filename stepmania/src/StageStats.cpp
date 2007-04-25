@@ -311,6 +311,14 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 	return false;
 }
 
+bool StageStats::AllHumanHaveComboOf30OrMoreMisses() const
+{
+	FOREACH_HumanPlayer( p )
+		if( m_player[p].m_iCurMissCombo < 30 )
+			return false;
+	return true;
+}
+
 // lua start
 #include "LuaBinding.h"
 

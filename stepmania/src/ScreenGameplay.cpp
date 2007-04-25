@@ -1723,14 +1723,15 @@ void ScreenGameplay::Update( float fDeltaTime )
 	// update give up
 	//
 	bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
-	if( bGiveUpTimerFired || (FAIL_AFTER_30_MISSES && GAMESTATE->AllHumanHaveComboOf30OrMoreMisses()) )
+	bool bAllHumanHaveComboOf30OrMoreMisses = STATSMAN->m_CurStageStats.AllHumanHaveComboOf30OrMoreMisses();
+	if( bGiveUpTimerFired || (FAIL_AFTER_30_MISSES && bAllHumanHaveComboOf30OrMoreMisses) )
 	{
 		// Give up
 
 		STATSMAN->m_CurStageStats.m_bGaveUp = true;
 		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 		{
-			pi->GetPlayerStageStats()->m_bFailed |= GAMESTATE->AllHumanHaveComboOf30OrMoreMisses();
+			pi->GetPlayerStageStats()->m_bFailed |= bAllHumanHaveComboOf30OrMoreMisses;
 		}
 
 		AbortGiveUp( false );

@@ -52,6 +52,7 @@ public:
 
 	void CommitScores( bool bSummary );
 	bool PlayerHasHighScore( PlayerNumber pn ) const;
+	bool AllHumanHaveComboOf30OrMoreMisses() const;
 
 	// Lua
 	void PushSelf( lua_State *L );

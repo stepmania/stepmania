@@ -1684,14 +1684,6 @@ bool GameState::AllAreInDangerOrWorse() const
 	return true;
 }
 
-bool GameState::AllHumanHaveComboOf30OrMoreMisses() const
-{
-	FOREACH_HumanPlayer( p )
-		if( STATSMAN->m_CurStageStats.m_player[p].m_iCurMissCombo < 30 )
-			return false;
-	return true;
-}
-
 bool GameState::OneIsHot() const
 {
 	FOREACH_EnabledPlayer( p )

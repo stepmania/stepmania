@@ -191,7 +191,6 @@ public:
 	float GetSongPercent( float beat ) const;
 
 	bool AllAreInDangerOrWorse() const;
-	bool AllHumanHaveComboOf30OrMoreMisses() const;
 	bool OneIsHot() const;
 
 	// used in PLAY_MODE_BATTLE
