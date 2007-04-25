@@ -313,7 +313,7 @@ void MusicWheelItem::RefreshGrades()
 		if( PROFILEMAN->IsPersistentProfile(p) )
 			ps = (ProfileSlot)p;
 
-		Grade g = PROFILEMAN->GetHighGradeForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle(), ps, dc );
+		Grade g = PROFILEMAN->GetGradeForSteps( data->m_pSong, GAMESTATE->GetCurrentStyle(), ps, dc );
 		m_pGradeDisplay[p]->SetGrade( p, g );
 	}
 }

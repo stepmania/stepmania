@@ -670,7 +670,7 @@ void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pS
 	PROFILEMAN->GetMachineProfile()->IncrementStepsPlayCount( pSong, pSteps );
 }
 
-Grade ProfileManager::GetHighGradeForDifficulty( const Song *pSong, const Style *st, ProfileSlot slot, Difficulty dc ) const
+Grade ProfileManager::GetGradeForSteps( const Song *pSong, const Style *st, ProfileSlot slot, Difficulty dc ) const
 {
 	const Steps* pSteps = SongUtil::GetStepsByDifficulty( pSong, st->m_StepsType, dc );
 
