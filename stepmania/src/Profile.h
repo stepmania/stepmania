@@ -116,7 +116,6 @@ public:
 	int m_iTotalPlays;
 	int m_iTotalPlaySeconds;
 	int m_iTotalGameplaySeconds;
-	int m_iCurrentCombo;
 	float m_fTotalCaloriesBurned;
 	GoalType m_GoalType;
 	int m_iGoalCalories;

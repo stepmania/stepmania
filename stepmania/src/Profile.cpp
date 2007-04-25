@@ -110,7 +110,6 @@ void Profile::InitGeneralData()
 	m_iTotalPlays = 0;
 	m_iTotalPlaySeconds = 0;
 	m_iTotalGameplaySeconds = 0;
-	m_iCurrentCombo = 0;
 	m_fTotalCaloriesBurned = 0;
 	m_GoalType = (GoalType)0;
 	m_iGoalCalories = 0;
@@ -1059,7 +1058,6 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "TotalPlays",			m_iTotalPlays );
 	pGeneralDataNode->AppendChild( "TotalPlaySeconds",		m_iTotalPlaySeconds );
 	pGeneralDataNode->AppendChild( "TotalGameplaySeconds",		m_iTotalGameplaySeconds );
-	pGeneralDataNode->AppendChild( "CurrentCombo",			m_iCurrentCombo );
 	pGeneralDataNode->AppendChild( "TotalCaloriesBurned",		m_fTotalCaloriesBurned );
 	pGeneralDataNode->AppendChild( "GoalType",			m_GoalType );
 	pGeneralDataNode->AppendChild( "GoalCalories",			m_iGoalCalories );
@@ -1221,7 +1219,6 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "TotalPlays",				m_iTotalPlays );
 	pNode->GetChildValue( "TotalPlaySeconds",			m_iTotalPlaySeconds );
 	pNode->GetChildValue( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
-	pNode->GetChildValue( "CurrentCombo",				m_iCurrentCombo );
 	pNode->GetChildValue( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
 	pNode->GetChildValue( "GoalType",				*ConvertValue<int>(&m_GoalType) );
 	pNode->GetChildValue( "GoalCalories",				m_iGoalCalories );
