@@ -40,12 +40,6 @@ void ScreenContinue::BeginScreen()
 	FOREACH_HumanPlayer( p )
 	{
 		bool bPlayerDone = GAMESTATE->m_iPlayerStageTokens[p] <= 0;
-		if( !STATSMAN->m_vPlayedStageStats.empty() )
-		{
-			const StageStats &ss = STATSMAN->m_vPlayedStageStats.back();
-			if( ss.m_player[p].m_bFailed )
-				bPlayerDone = true;
-		}
 		if( bPlayerDone )
 			GAMESTATE->UnjoinPlayer( p );
 	}

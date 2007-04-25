@@ -2246,6 +2246,13 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 		return;
 	}
 
+	/* If all players failed, kill. */
+	if( STATSMAN->m_CurStageStats.AllFailed() )
+	{
+		FOREACH_HumanPlayer( p )
+			GAMESTATE->m_iPlayerStageTokens[p] = 0;
+	}
+
 	// save current stage stats
 	STATSMAN->m_vPlayedStageStats.push_back( STATSMAN->m_CurStageStats );
 
