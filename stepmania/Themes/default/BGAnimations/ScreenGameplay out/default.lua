@@ -8,11 +8,11 @@ local children = {
 		Condition=GAMESTATE:GetPlayMode() ~= PLAY_MODE_BATTLE and GAMESTATE:GetPlayMode() ~= PLAY_MODE_RAVE and not GAMESTATE:IsDemonstration();
 		children = {
 			LoadActor("extra1") .. {
-				Condition=GAMESTATE:IsFinalStage();
+				Condition=GAMESTATE:IsExtraStage();
 				StartTransitioningCommand=cmd(hide_if,not GAMESTATE:HasEarnedExtraStage());
 			};
 			LoadActor("extra2") .. {
-				Condition=GAMESTATE:IsExtraStage();
+				Condition=GAMESTATE:IsExtraStage2();
 				StartTransitioningCommand=cmd(hide_if,not GAMESTATE:HasEarnedExtraStage());
 			};
 			LoadActor("cleared") .. {
