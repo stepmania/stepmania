@@ -390,6 +390,12 @@ static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption 
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
+static void JointPremium( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	const Premium mapping[] = { Premium_DoubleFor1Credit, Premium_2PlayersFor1Credit };
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
+}
+
 static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2,3,4,5 };
@@ -663,6 +669,8 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "DefaultFailType",		DefaultFailType,	"Immediate","ImmediateContinue","End of Song","Off" ) );	
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
 	ADD( ConfOption( "Premium",			MovePref<Premium>,	"Off","Double for 1 Credit","2 Players for 1 Credit" ) );
+	ADD( ConfOption( "JointPremium",		JointPremium,		"Off","2 Players for 1 Credit" ) );
+	g_ConfOptions.back().m_sPrefName = "Premium";
 	ADD( ConfOption( "ShowSongOptions",		MovePref<Maybe>,	"Ask", "Hide","Show" ) );
 	ADD( ConfOption( "GetRankingName",		MovePref<GetRankingName>, "Off", "On", "Ranking Songs" ) );
 
