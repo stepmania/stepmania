@@ -751,6 +751,10 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	if( input.pn != PLAYER_INVALID && INPUTMAPPER->IsBeingPressed(MENU_BUTTON_SELECT, input.pn) )
 		return;
 
+	// Honor locked input for start presses.
+	if( m_fLockInputSecs > 0 )
+		return;
+
 	switch( m_SelectionState )
 	{
 	DEFAULT_FAIL( m_SelectionState );
