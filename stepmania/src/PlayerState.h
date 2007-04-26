@@ -69,6 +69,12 @@ public:
 	vector<Attack>		m_ModsToApply;
 
 	//
+	// Haste
+	//
+	int			m_iTapsHitSinceLastHasteUpdate;
+	int			m_iTapsMissedSinceLastHasteUpdate;
+
+	//
 	// Used in Rave
 	//
 	float			m_fSuperMeter;	// between 0 and NUM_ATTACK_LEVELS

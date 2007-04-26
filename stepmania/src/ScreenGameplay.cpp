@@ -1613,7 +1613,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			if( GAMESTATE->m_SongOptions.GetCurrent().m_fHaste != 0.0f )
 			{
 				float fHasteRate = GetHasteRate();
-				STATSMAN->m_CurStageStats.m_fAccumulatedHaste += (fUnscaledDeltaTime * fHasteRate) - fUnscaledDeltaTime;
+				GAMESTATE->m_fAccumulatedHasteSeconds += (fUnscaledDeltaTime * fHasteRate) - fUnscaledDeltaTime;
 			}
 		}
 
@@ -1775,33 +1775,57 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 float ScreenGameplay::GetHasteRate()
 {
-	float fLife = 0;
+	if( GAMESTATE->m_fMusicSeconds < GAMESTATE->m_fLastHasteUpdateMusicSeconds || // new song
+		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_fLastHasteUpdateMusicSeconds + 4 )
+	{
+		bool bAnyPlayerHitAllNotes = false;
+		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+		{
+			if( !GAMESTATE->IsHumanPlayer(pi->m_pn) )
+				continue;
+
+			PlayerState *pPS = pi->GetPlayerState();
+			if( pPS->m_iTapsHitSinceLastHasteUpdate > 0 &&
+				pPS->m_iTapsMissedSinceLastHasteUpdate == 0 )
+				bAnyPlayerHitAllNotes = true;
+
+			pPS->m_iTapsHitSinceLastHasteUpdate = 0;
+			pPS->m_iTapsMissedSinceLastHasteUpdate = 0;
+		}
+
+		if( bAnyPlayerHitAllNotes )
+			GAMESTATE->m_fHasteRate += 0.05f;
+		CLAMP( GAMESTATE->m_fHasteRate, -1.0f, +2.0f );
+
+		GAMESTATE->m_fLastHasteUpdateMusicSeconds = GAMESTATE->m_fMusicSeconds;
+	}
+
+	/* If the life meter is less than half full, push the haste rate down to let
+	 * the player use his accumulated haste time. */
+	float fMaxLife = 0;
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		if( !GAMESTATE->IsHumanPlayer(pi->m_pn) )
 			continue;
-		fLife = max( fLife, pi->m_pLifeMeter->GetLife() );
+                fMaxLife = max( fMaxLife, pi->m_pLifeMeter->GetLife() );
 	}
+	if( fMaxLife < 0.5f )
+		GAMESTATE->m_fHasteRate = SCALE( fMaxLife, 0.0f, 0.5f, -1.0f, 0.0f );
 
-	/* Scale the music nonlinearly.  Stick at 1x up to 0.5, so we start at 1x
-	 * if the life meter defaults to 0.5.  Increase gradually up to 0.9.
-	 * Accelerate sharply above 0.9. */
 	float fSpeed = 1.0f;
-	if( fLife < 0.50f )
-		fSpeed = SCALE( fLife, 0.0f, 0.50f, 0.5f, 1.0f );
-	else if( fLife > 0.5f && fLife < 0.9f )
-		fSpeed = SCALE( fLife, 0.5f, 0.9f, 1.0f, 1.25f );
-	else if( fLife >= 0.9f )
-		fSpeed = SCALE( fLife, 0.9f, 1.0f, 1.25f, 2.0f );
+	if( GAMESTATE->m_fHasteRate < 0 )
+		fSpeed = SCALE( GAMESTATE->m_fHasteRate, -1.0f, 0.0f, 0.5f, 1.0f );
+	else
+		fSpeed = SCALE( GAMESTATE->m_fHasteRate, 0.0f, 1.0f, 1.0f, 1.6f );
 	fSpeed *= GAMESTATE->m_SongOptions.GetCurrent().m_fHaste;
 
-	if( STATSMAN->m_CurStageStats.m_fAccumulatedHaste <= 1 )
+	if( GAMESTATE->m_fAccumulatedHasteSeconds <= 1 )
 	{
 		/* Only allow slowing down the song while the players have accumulated
 		 * haste.  This prevents dragging on the song by keeping the life meter
 		 * nearly empty. */
 		float fClamped = max( 1.0f, fSpeed );
-		fSpeed = lerp( STATSMAN->m_CurStageStats.m_fAccumulatedHaste, fClamped, fSpeed );
+		fSpeed = lerp( GAMESTATE->m_fAccumulatedHasteSeconds, fClamped, fSpeed );
 	}
 	return fSpeed;
 }

@@ -33,6 +33,9 @@ void PlayerState::Reset()
 	m_ActiveAttacks.clear();
 	m_ModsToApply.clear();
 
+	m_iTapsHitSinceLastHasteUpdate = 0;
+	m_iTapsMissedSinceLastHasteUpdate = 0;
+
 	m_fSuperMeter = 0;	// between 0 and NUM_ATTACK_LEVELS
 	m_fSuperMeterGrowthScale = 1;
 

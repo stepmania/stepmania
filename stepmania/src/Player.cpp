@@ -1091,6 +1091,19 @@ void Player::ChangeLife( TapNoteScore tns )
 		m_pCombinedLifeMeter->ChangeLife( pn, tns );
 
 	ChangeLifeRecord();
+
+	switch( tns )
+	{
+	case TNS_None:
+	case TNS_Miss:
+	case TNS_CheckpointMiss:
+	case TNS_HitMine:
+		++m_pPlayerState->m_iTapsMissedSinceLastHasteUpdate;
+		break;
+	default:
+		++m_pPlayerState->m_iTapsHitSinceLastHasteUpdate;
+		break;
+	}
 }
 
 void Player::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
