@@ -85,11 +85,11 @@ protected:
 	{
 		switch( m_SelectionState )
 		{
-			DEFAULT_FAIL( m_SelectionState );
 		case SelectionState_SelectingSong:
 			return TWO_PART_SELECTION ? SelectionState_SelectingSteps : SelectionState_Finalized;
 		case SelectionState_SelectingSteps:
 			return SelectionState_Finalized;
+		DEFAULT_FAIL( m_SelectionState );
 		}
 	}
 
