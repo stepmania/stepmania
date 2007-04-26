@@ -58,6 +58,8 @@ ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
 ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h ScreenPackages.cpp ScreenPackages.h \
 ScreenPlayerOptions.cpp ScreenPlayerOptions.h \
 ScreenNetworkOptions.h ScreenNetworkOptions.cpp \
+ScreenProfileLoad.cpp ScreenProfileLoad.h \
+ScreenProfileSave.cpp ScreenProfileSave.h \
 ScreenPrompt.cpp ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h \
 ScreenReloadSongs.cpp ScreenReloadSongs.h \
 ScreenSandbox.cpp ScreenSandbox.h \
