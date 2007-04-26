@@ -1732,6 +1732,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 		{
 			pi->GetPlayerStageStats()->m_bFailed |= bAllHumanHaveComboOf30OrMoreMisses;
+			pi->GetPlayerStageStats()->m_bDisqualified = true;
 		}
 
 		AbortGiveUp( false );

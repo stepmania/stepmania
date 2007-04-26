@@ -646,7 +646,10 @@ void Player::Update( float fDeltaTime )
 
 			Step( iTrack, iHeadRow, now, false, false );
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+			{
 				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
+				m_pPlayerStageStats->m_bDisqualified = true;
+			}
 		}
 	}
 
@@ -828,7 +831,10 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			// TODO: Make the CPU miss sometimes.
 			bIsHoldingButton &= true;
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+			{
 				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
+				m_pPlayerStageStats->m_bDisqualified = true;
+			}
 		}
 		else
 		{
@@ -2250,7 +2256,10 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 				{
 					Step( t, r, now, false, false );
 					if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+					{
 						STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
+						m_pPlayerStageStats->m_bDisqualified = true;
+					}
 				}
 			}
 		}
