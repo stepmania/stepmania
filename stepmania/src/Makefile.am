@@ -56,8 +56,8 @@ ScreenOptionsManageEditSteps.cpp ScreenOptionsManageEditSteps.h \
 ScreenOptionsManageProfiles.cpp ScreenOptionsManageProfiles.h \
 ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
 ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h ScreenPackages.cpp ScreenPackages.h \
-ScreenPlayerOptions.cpp ScreenPlayerOptions.h \
 ScreenNetworkOptions.h ScreenNetworkOptions.cpp \
+ScreenPlayerOptions.cpp ScreenPlayerOptions.h \
 ScreenProfileLoad.cpp ScreenProfileLoad.h \
 ScreenProfileSave.cpp ScreenProfileSave.h \
 ScreenPrompt.cpp ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h \
