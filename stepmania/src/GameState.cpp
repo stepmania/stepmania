@@ -582,8 +582,6 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse()
 	else
 		return -1;
 
-	ASSERT( iNumStagesOfThisSong >= 1 && iNumStagesOfThisSong <= 3 );
-
 	iNumStagesOfThisSong = max( iNumStagesOfThisSong, 1 );
 
 	return iNumStagesOfThisSong;
