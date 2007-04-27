@@ -653,7 +653,6 @@ void GameState::CommitStageStats()
 void GameState::FinishStage()
 {
 	// Increment the stage counter.
-	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
 	const int iOldStageIndex = m_iCurrentStageIndex;
 
 	++m_iCurrentStageIndex;
