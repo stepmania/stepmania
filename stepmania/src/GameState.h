@@ -37,6 +37,7 @@ public:
 	GameState();
 	~GameState();
 	void Reset();
+	void ResetPlayer( PlayerNumber pn );
 	void ApplyCmdline(); // called by Reset
 	void ApplyGameCommand( const RString &sCommand, PlayerNumber pn=PLAYER_INVALID );
 	void BeginGame();	// called when first player joins

@@ -217,17 +217,31 @@ void GameState::ApplyCmdline()
 	}
 }
 
+void GameState::ResetPlayer( PlayerNumber pn )
+{
+	m_PreferredDifficulty[pn].Set( Difficulty_Invalid );
+	m_PreferredCourseDifficulty[pn].Set( Difficulty_Medium );
+	m_iPlayerStageTokens[pn] = 0;
+	m_iAwardedExtraStages[pn] = 0;
+	m_pCurSteps[pn].Set( NULL );
+	m_pCurTrail[pn].Set( NULL );
+	m_pPlayerState[pn]->Reset();
+	PROFILEMAN->UnloadProfile( pn );
+
+	PlayerOptions po;
+	GetDefaultPlayerOptions( po );
+	m_pPlayerState[pn]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
+}
+
 void GameState::Reset()
 {
-	FOREACH_HumanPlayer( pn )
+	FOREACH_PlayerNumber( pn )
 		UnjoinPlayer( pn );
 
 	ASSERT( THEME );
 
 	m_timeGameStarted.SetZero();
 	SetCurrentStyle( NULL );
-	FOREACH_PlayerNumber( p )
-		m_bSideIsJoined[p] = false;
 	FOREACH_MultiPlayer( p )
 		m_MultiPlayerStatus[p] = MultiPlayerStatus_NotJoined;
 	FOREACH_PlayerNumber( pn )
@@ -239,11 +253,6 @@ void GameState::Reset()
 	m_sPreferredSongGroup.Set( GROUP_ALL );
 	m_sPreferredCourseGroup.Set( GROUP_ALL );
 	m_bChangedFailTypeOnScreenSongOptions = false;
-	FOREACH_PlayerNumber( p )
-	{
-		m_PreferredDifficulty[p].Set( Difficulty_Invalid );
-		m_PreferredCourseDifficulty[p].Set( Difficulty_Medium );
-	}
 	m_SortOrder.Set( SortOrder_Invalid );
 	m_PreferredSortOrder = GetDefaultSort();
 	m_PlayMode.Set( PlayMode_Invalid );
@@ -251,11 +260,6 @@ void GameState::Reset()
 	m_bDemonstrationOrJukebox = false;
 	m_bJukeboxUsesModifiers = false;
 	m_iCurrentStageIndex = 0;
-	FOREACH_PlayerNumber( p )
-	{
-		m_iPlayerStageTokens[p] = 0;
-		m_iAwardedExtraStages[p] = 0;
-	}
 
 	m_bGameplayLeadIn.Set( false );
 	m_iNumStagesOfThisSong = 0;
@@ -268,15 +272,9 @@ void GameState::Reset()
 
 	m_pCurSong.Set( GetDefaultSong() );
 	m_pPreferredSong = NULL;
-	FOREACH_PlayerNumber( p )
-		m_pCurSteps[p].Set( NULL );
 	m_pCurCourse.Set( NULL );
 	m_pPreferredCourse = NULL;
-	FOREACH_PlayerNumber( p )
-		m_pCurTrail[p].Set( NULL );
 
-	FOREACH_PlayerNumber( p )
-		m_pPlayerState[p]->Reset();
 	FOREACH_MultiPlayer( p )
 		m_pMultiPlayerState[p]->Reset();
 
@@ -286,9 +284,6 @@ void GameState::Reset()
 	ResetStageStatistics();
 	AdjustSync::ResetOriginalSyncData();
 
-	FOREACH_PlayerNumber( pn )
-		PROFILEMAN->UnloadProfile( pn );
-
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdateShuffled();
 
@@ -297,8 +292,6 @@ void GameState::Reset()
 	SONGMAN->RegenerateNonFixedCourses();
 
 	STATSMAN->Reset();
-
-	ResetOptions();
 
 	FOREACH_PlayerNumber(p)
 	{
@@ -361,14 +354,26 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 	m_bSideIsJoined[pn] = false;
 	m_iPlayerStageTokens[pn] = 0;
 
+	ResetPlayer( pn );
+
 	if( m_MasterPlayerNumber == pn )
 		m_MasterPlayerNumber = GAMESTATE->GetFirstHumanPlayer();
+
 
 	STATSMAN->UnjoinPlayer( pn );
 
 	Message msg( MessageIDToString(Message_PlayerUnjoined) );
 	msg.SetParam( "Player", pn );
 	MESSAGEMAN->Broadcast( msg );
+
+	/* If there are no players left, reset some non-player-specific stuff, too. */
+	if( m_MasterPlayerNumber == PLAYER_INVALID )
+	{
+		SongOptions so;
+		GetDefaultSongOptions( so );
+		m_SongOptions.Assign( ModsLevel_Preferred, so );
+		m_bDidModeChangeNoteSkin = false;
+	}
 }
 
 /* Handle an input that can join a player.  Return true if the player joined. */
@@ -1209,28 +1214,6 @@ void GameState::ApplyStageModifiers( PlayerNumber pn, RString sModifiers )
 {
 	m_pPlayerState[pn]->m_PlayerOptions.FromString( ModsLevel_Stage, sModifiers );
 	m_SongOptions.FromString( ModsLevel_Stage, sModifiers );
-}
-
-void GameState::ResetOptions()
-{
-	// I can't think of a good reason to have both game-specific
-	// default mods and theme specific default mods.  We should choose 
-	// one or the other. -Chris
-	// Having default modifiers in prefs is needed for several things.
-	// The theme setting is for eg. BM being reverse by default.  (This
-	// could be done in the title menu GameCommand, but then it wouldn't
-	// affect demo, and other non-gameplay things ...) -glenn
-	FOREACH_PlayerNumber( p )
-	{
-		PlayerOptions po;
-		GetDefaultPlayerOptions( po );
-		m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
-	}
-	SongOptions so;
-	GetDefaultSongOptions( so );
-	m_SongOptions.Assign( ModsLevel_Preferred, so );
-
-	m_bDidModeChangeNoteSkin = false;
 }
 
 bool GameState::CurrentOptionsDisqualifyPlayer( PlayerNumber pn )
