@@ -259,7 +259,7 @@ public:
 				}
 				else
 				{
-					if( mc.DescribesCurrentMode( p) )
+					if( mc.DescribesCurrentMode(p) )
 					{
 						bUseFallbackOption = false;
 						if( m_Def.m_selectType != SELECT_MULTIPLE )
