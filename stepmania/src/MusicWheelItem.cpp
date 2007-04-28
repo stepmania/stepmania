@@ -231,13 +231,6 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 		break;
 	}
 
-	// Call "Set" so that elements can react to the change in song.
-	{
-		Message msg( "Set" );
-		msg.SetParam( "Song", data->m_pSong );
-		this->HandleMessage( msg );
-	}
-
 	Actor *pBars[] = { m_sprBar, m_sprExpandedBar, m_sprSectionBar, m_sprModeBar, m_sprSortBar, m_sprSongBar, NULL };
 	for( unsigned i = 0; pBars[i] != NULL; ++i )
 		pBars[i]->SetVisible( false );
@@ -286,7 +279,12 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 	lua_setglobal( L, "ThisGameCommand" );
 	LUA->Release( L );
 
-	this->PlayCommand( "Set" );
+	// Call "Set" so that elements can react to the change in song.
+	{
+		Message msg( "Set" );
+		msg.SetParam( "Song", data->m_pSong );
+		this->HandleMessage( msg );
+	}
 
 	LUA->UnsetGlobal( "ThisGameCommand" );
 }
