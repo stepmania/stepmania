@@ -35,6 +35,7 @@ protected:
 	RString		m_sName;
 	LuaReference	m_Value;
 	mutable T	m_currentValue;
+	bool		m_bCallEachTime;
 
 public:
 	/* Initializing with no group and name is allowed; if you do this, you must
@@ -87,10 +88,14 @@ public:
 				m_currentValue = T();
 			lua_pop( L, 1 );
 			LUA->Release(L);
+
+			/* If the value is a function, evaluate it every time. */
+			m_bCallEachTime = ThemeMetricTypeTraits<T>::Callable && m_Value.GetLuaType() == LUA_TFUNCTION;
 		}
 		else
 		{
 			m_Value.Unset();
+			m_bCallEachTime = false;
 		}
 	}
 
@@ -114,8 +119,7 @@ public:
 		ASSERT( m_sName != "" );
 		ASSERT_M( m_Value.IsSet(), m_sGroup + " " + m_sName );
 
-		/* If the value is a function, evaluate it every time. */
-		if( ThemeMetricTypeTraits<T>::Callable && m_Value.GetLuaType() == LUA_TFUNCTION )
+		if( m_bCallEachTime )
 		{
 			Lua *L = LUA->Get();
 
