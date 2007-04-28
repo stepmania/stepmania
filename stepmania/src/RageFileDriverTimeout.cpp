@@ -671,13 +671,11 @@ public:
 		m_iFileSize = iSize;
 		m_iMode = iMode;
 		/* We have a lot of overhead per read and write operation, since we send
-		* commands to the worker thread.  Buffer these operations. */
-		if( iMode & RageFile::WRITE ){
+		 * commands to the worker thread.  Buffer these operations. */
+		if( iMode & RageFile::WRITE )
 			EnableWriteBuffering();
-		}
-		if( iMode & RageFile::READ ){
+		if( iMode & RageFile::READ )
 			EnableReadBuffering();
-		}		
 	}
 
 	~RageFileObjTimeout()
