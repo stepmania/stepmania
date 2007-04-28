@@ -217,8 +217,6 @@ void Player::Init(
 		//
 		// Init judgment positions
 		//
-		LuaReference expr = THEME->GetMetricR( sType,"JudgmentTransformCommand" );
-
 		bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==StyleType_OnePlayerTwoSides;
 		Actor TempJudgment;
 		TempJudgment.SetName( "Judgment" );
