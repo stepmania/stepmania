@@ -334,12 +334,12 @@ void Player::Init(
 
 		m_Combo.Load( THEME->GetPathG(sType,"combo") );
 		m_Combo->SetName( "Combo" );
-		m_pActorWithJudgmentPosition = &*m_pJudgment;
+		m_pActorWithComboPosition = &*m_Combo;
 		this->AddChild( m_Combo );
 
 		m_pJudgment.Load( THEME->GetPathG(sType,"judgment") );
 		m_pJudgment->SetName( "Judgment" );
-		m_pActorWithComboPosition = &*m_Combo;
+		m_pActorWithJudgmentPosition = &*m_pJudgment;
 		this->AddChild( m_pJudgment );
 	}
 
@@ -581,7 +581,8 @@ void Player::Update( float fDeltaTime )
 	float fNoteFieldZoom = 1 - fTinyPercent*0.5f;
 	if( m_pNoteField )
 		m_pNoteField->SetZoom( fNoteFieldZoom );
-	m_pActorWithJudgmentPosition->SetZoom( m_pActorWithJudgmentPosition->GetZoom() * fJudgmentZoom );
+	if( m_pActorWithJudgmentPosition != NULL )
+		m_pActorWithJudgmentPosition->SetZoom( m_pActorWithJudgmentPosition->GetZoom() * fJudgmentZoom );
 
 	// If we're paused, don't update tap or hold note logic, so hold notes can be released
 	// during pause.
