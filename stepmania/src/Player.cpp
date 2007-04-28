@@ -581,7 +581,7 @@ void Player::Update( float fDeltaTime )
 	float fNoteFieldZoom = 1 - fTinyPercent*0.5f;
 	if( m_pNoteField )
 		m_pNoteField->SetZoom( fNoteFieldZoom );
-	m_pJudgment->SetZoom( m_pJudgment->GetZoom() * fJudgmentZoom );
+	m_pActorWithJudgmentPosition->SetZoom( m_pActorWithJudgmentPosition->GetZoom() * fJudgmentZoom );
 
 	// If we're paused, don't update tap or hold note logic, so hold notes can be released
 	// during pause.
