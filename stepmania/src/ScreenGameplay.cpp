@@ -1795,7 +1795,7 @@ float ScreenGameplay::GetHasteRate()
 
 		if( bAnyPlayerHitAllNotes )
 			GAMESTATE->m_fHasteRate += 0.05f;
-		CLAMP( GAMESTATE->m_fHasteRate, -1.0f, +2.0f );
+		CLAMP( GAMESTATE->m_fHasteRate, -1.0f, +1.0f );
 
 		GAMESTATE->m_fLastHasteUpdateMusicSeconds = GAMESTATE->m_fMusicSeconds;
 	}
