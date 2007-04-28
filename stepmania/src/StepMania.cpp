@@ -1115,15 +1115,6 @@ int main(int argc, char* argv[])
 
 RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex )
 {
-	//
-	// Find a file name for the screenshot
-	//
-	FILEMAN->FlushDirCache( sDir );
-
-	vector<RString> files;
-	GetDirListing( sDir + "screen*", files, false, false );
-	sort( files.begin(), files.end() );
-
 	/* Files should be of the form "screen#####.xxx".  Ignore the extension; find
 	 * the last file of this form, and use the next number.  This way, we don't
 	 * write the same screenshot number for different formats (screen00011.bmp,
@@ -1131,6 +1122,15 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	 * is deleted, we won't fill in the hole (which makes screenshots hard to find). */
 	if( iIndex == -1 ) 
 	{
+		//
+		// Find a file name for the screenshot
+		//
+		FILEMAN->FlushDirCache( sDir );
+
+		vector<RString> files;
+		GetDirListing( sDir + "screen*", files, false, false );
+		sort( files.begin(), files.end() );
+
 		iIndex = 0;
 
 		for( int i = files.size()-1; i >= 0; --i )
