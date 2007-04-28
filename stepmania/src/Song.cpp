@@ -199,7 +199,9 @@ bool Song::LoadFromSongDir( RString sDir )
 	//
 	unsigned uCacheHash = SONGINDEX->GetCacheHash(m_sSongDir);
 	bool bUseCache = true;
-	if( !DoesFileExist(GetCacheFilePath()) )
+	const RString sCacheFilePath = GetCacheFilePath();
+
+	if( !DoesFileExist(sCacheFilePath) )
 		bUseCache = false;
 	if( !PREFSMAN->m_bFastLoad && GetHashForDirectory(m_sSongDir) != uCacheHash )
 		bUseCache = false; // this cache is out of date 
@@ -207,7 +209,7 @@ bool Song::LoadFromSongDir( RString sDir )
 	if( bUseCache )
 	{
 //		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
-		SMLoader::LoadFromSMFile( GetCacheFilePath(), *this, true );
+		SMLoader::LoadFromSMFile( sCacheFilePath, *this, true );
 		SMLoader::TidyUpData( *this, true );
 	}
 	else
@@ -243,7 +245,7 @@ bool Song::LoadFromSongDir( RString sDir )
 	
 	FOREACH( Steps*, m_vpSteps, s )
 	{
-		(*s)->SetFilename( GetCacheFilePath() );
+		(*s)->SetFilename( sCacheFilePath );
 
 		/* Compress all Steps.  During initial caching, this will remove cached NoteData;
 		 * during cached loads, this will just remove cached SMData. */
