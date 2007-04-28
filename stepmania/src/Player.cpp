@@ -583,6 +583,8 @@ void Player::Update( float fDeltaTime )
 		m_pNoteField->SetZoom( fNoteFieldZoom );
 	if( m_pActorWithJudgmentPosition != NULL )
 		m_pActorWithJudgmentPosition->SetZoom( m_pActorWithJudgmentPosition->GetZoom() * fJudgmentZoom );
+	if( m_pActorWithComboPosition != NULL )
+		m_pActorWithComboPosition->SetZoom( m_pActorWithComboPosition->GetZoom() * fJudgmentZoom );
 
 	// If we're paused, don't update tap or hold note logic, so hold notes can be released
 	// during pause.
