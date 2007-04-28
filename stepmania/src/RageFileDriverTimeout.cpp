@@ -683,7 +683,10 @@ public:
 	~RageFileObjTimeout()
 	{
 		if( m_pFile != NULL )
+		{
+			Flush();
 			m_pWorker->Close( m_pFile );
+		}
 	}
 
 	int GetFileSize() const
