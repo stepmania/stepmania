@@ -1,36 +1,13 @@
 #include "global.h"
 #include "ScreenContinue.h"
-#include "ScreenManager.h"
-#include "SongManager.h"
-#include "GameSoundManager.h"
-#include "ThemeManager.h"
-#include "AnnouncerManager.h"
-#include "song.h"
-#include "ProfileManager.h"
-#include "Profile.h"
 #include "ActorUtil.h"
 #include "GameState.h"
-#include "MemoryCardManager.h"
 #include "RageLog.h"
-#include "Style.h"
-#include "GameManager.h"
-#include "PrefsManager.h"
-#include "StatsManager.h"
-#include "PlayerState.h"
-#include "CommonMetrics.h"
 #include "InputEventPlus.h"
 #include "MenuTimer.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenContinue );
-ScreenContinue::ScreenContinue() : ScreenWithMenuElements()
-{
-}
-
-void ScreenContinue::Init()
-{
-	ScreenWithMenuElements::Init();
-}
 
 void ScreenContinue::BeginScreen()
 {

@@ -8,8 +8,6 @@
 class ScreenContinue : public ScreenWithMenuElements
 {
 public:
-	ScreenContinue();
-	virtual void Init();
 	virtual void BeginScreen();
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
