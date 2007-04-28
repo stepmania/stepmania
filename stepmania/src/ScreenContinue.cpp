@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenContinue.h"
+#include "ScreenManager.h"
 #include "ActorUtil.h"
 #include "GameState.h"
 #include "RageLog.h"
@@ -31,6 +32,8 @@ void ScreenContinue::Input( const InputEventPlus &input )
 
 	if( input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
 	{
+		SCREENMAN->PlayStartSound();
+
 		bool bAllPlayersAreEnabled = true;
 		FOREACH_ENUM( PlayerNumber, p )
 		{
