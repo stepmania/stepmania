@@ -115,7 +115,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, RageSoundReader *&pPlayer1, RageSoundReader *&pPlayer2 )
 {
 	/* If we have two players, prefer a three-track sound; otherwise prefer a two-track sound. */
-	bool bTwoPlayers = GAMESTATE->GetNumPlayersEnabled() == 2;
+	//bool bTwoPlayers = GAMESTATE->GetNumPlayersEnabled() == 2;
 
 	pPlayer1 = NULL;
 	pPlayer2 = NULL;
