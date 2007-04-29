@@ -126,16 +126,7 @@ void ArrowEffects::Update()
 		//
 		{
 			float fAccelTime = 0.2f, fTotalTime = 0.5f;
-			
-			/* If the song is really fast, slow down the rate, but speed up the
-			 * acceleration to compensate or it'll look weird. */
-			const float fBPM = GAMESTATE->m_fCurBPS * 60;
-			const float fDiv = max(1.0f, truncf( fBPM / 150.0f ));
-			fAccelTime /= fDiv;
-			fTotalTime /= fDiv;
-
 			float fBeat = GAMESTATE->m_fSongBeatVisible + fAccelTime;
-			fBeat /= fDiv;
 
 			const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
 
