@@ -205,6 +205,9 @@ void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const Rage
 	bs.m_LastInputTime = bs.m_BeingHeldTime;
 
 	di.ts = bs.m_BeingHeldTime;
+	if( !bs.m_bLastReportedHeld )
+		di.level = 0;
+
 	MakeButtonStateList( g_CurrentState );
 	ReportButtonChange( di, bs.m_bLastReportedHeld? IET_FIRST_PRESS:IET_RELEASE );
 
