@@ -650,7 +650,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 		while( event.size() ) 
 		{
 			MidiEventType midiEventType = (MidiEventType)(event[0] >> 4);
-			uint8_t uMidiChannel = event[0] & 0xF;	// currently unused
+			//uint8_t uMidiChannel = event[0] & 0xF;	// currently unused
 			uint8_t uParam1 = event[1];	// meaning is MidiEventType-specific
 			uint8_t uParam2 = event[2];	// currently unused, meaning is MidiEventType-specific
 			
@@ -671,7 +671,6 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 					if( NoteNumberToDifficultyAndNoteNumberType( uNoteNumber, gd, nnt ) )
 					{
 						MidiEvent event = { count, midiEventType };
-						float fBeat = NoteRowToBeat( MidiCountToNoteRow(count) );
 						vMidiEvent[gd][nnt].push_back( event );
 					}
 				}
@@ -724,7 +723,6 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 				*/
 				MidiEventType midiEventType = iter->midiEventType;
 				long count = iter->count;
-				float fBeat = NoteRowToBeat( MidiCountToNoteRow(count) );
 				bool bNoteHandled = false;
 				long length = count - countOfLastNote;
 
