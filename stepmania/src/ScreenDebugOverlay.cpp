@@ -428,6 +428,8 @@ static LocalizedString FILL_MACHINE_STATS	( "ScreenDebugOverlay", "Fill Machine 
 static LocalizedString SEND_NOTES_ENDED		( "ScreenDebugOverlay", "Send Notes Ended" );
 static LocalizedString RELOAD			( "ScreenDebugOverlay", "Reload" );
 static LocalizedString RESTART			( "ScreenDebugOverlay", "Restart" );
+static LocalizedString SCREEN_ON		( "ScreenDebugOverlay", "Send On To Screen" );
+static LocalizedString SCREEN_OFF		( "ScreenDebugOverlay", "Send Off To Screen" );
 static LocalizedString RELOAD_THEME_AND_TEXTURES( "ScreenDebugOverlay", "Reload Theme and Textures" );
 static LocalizedString WRITE_PROFILES		( "ScreenDebugOverlay", "Write Profiles" );
 static LocalizedString WRITE_PREFERENCES	( "ScreenDebugOverlay", "Write Preferences" );
@@ -743,7 +745,7 @@ class DebugLineFillMachineStats : public IDebugLine
 	virtual bool IsEnabled() { return true; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
-		Profile* pProfile = PROFILEMAN->GetMachineProfile();
+		Profile* pProfile = PROFILEMAN->GetProfile(PLAYER_1);
 		FillProfileStats( pProfile );
 		PROFILEMAN->SaveMachineProfile();
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
@@ -789,6 +791,32 @@ class DebugLineRestartCurrentScreen : public IDebugLine
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		SCREENMAN->GetTopScreen()->BeginScreen();
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
+		sMessageOut = "";
+	}
+};
+
+class DebugLineCurrentScreenOn : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return SCREEN_ON.GetValue(); }
+	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
+	virtual bool IsEnabled() { return true; }
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
+	{
+		SCREENMAN->GetTopScreen()->PlayCommand("On");
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
+		sMessageOut = "";
+	}
+};
+
+class DebugLineCurrentScreenOff : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return SCREEN_OFF.GetValue(); }
+	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
+	virtual bool IsEnabled() { return true; }
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
+	{
+		SCREENMAN->GetTopScreen()->PlayCommand("Off");
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 		sMessageOut = "";
 	}
@@ -940,6 +968,8 @@ DECLARE_ONE( DebugLineFillMachineStats );
 DECLARE_ONE( DebugLineSendNotesEnded );
 DECLARE_ONE( DebugLineReloadCurrentScreen );
 DECLARE_ONE( DebugLineRestartCurrentScreen );
+DECLARE_ONE( DebugLineCurrentScreenOn );
+DECLARE_ONE( DebugLineCurrentScreenOff );
 DECLARE_ONE( DebugLineReloadTheme );
 DECLARE_ONE( DebugLineWriteProfiles );
 DECLARE_ONE( DebugLineWritePreferences );
