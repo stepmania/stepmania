@@ -563,23 +563,27 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse()
 	int iNumStagesOfThisSong = 1;
 	if( GAMESTATE->m_pCurSong )
 	{
-		const Steps *pSteps = GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber];
-		StepsType st;
-		if( pSteps )
-		{
-			st = pSteps->m_StepsType;
-		}
-		else
-		{
-			vector<const Style*> vpStyles;
-			GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vpStyles );
-			ASSERT( !vpStyles.empty() );
-			const Style *pStyle = vpStyles[0];
-			st = pStyle->m_StepsType;
-		}
 		const Style *pStyle = GAMESTATE->m_pCurStyle;
 		if( pStyle == NULL )
-			pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), st );
+		{
+			const Steps *pSteps = GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber];
+			if( pSteps )
+			{
+				/* If a style isn't set, use the style of the selected steps. */
+				StepsType st = pSteps->m_StepsType;
+				pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), st );
+			}
+			else
+			{
+				/* If steps aren't set either, pick any style for the number of
+				 * joined players, or one player if no players are joined. */
+				vector<const Style*> vpStyles;
+				int iJoined = max( GAMESTATE->GetNumSidesJoined(), 1 );
+				GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, iJoined, vpStyles );
+				ASSERT( !vpStyles.empty() );
+				pStyle = vpStyles[0];
+			}
+		}
 		iNumStagesOfThisSong = GameState::GetNumStagesForSongAndStyleType( GAMESTATE->m_pCurSong, pStyle->m_StyleType );
 	}
 	else if( GAMESTATE->m_pCurCourse )
