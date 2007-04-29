@@ -894,7 +894,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			/* Now that Steps have been chosen, set a Style that can play them. */
 			const Style *pStyle = NULL;
 			if( GAMESTATE->IsCourseMode() )
-				pStyle = GAMESTATE->m_pCurCourse->GetCourseStyle( GAMESTATE->m_pCurGame );
+				pStyle = GAMESTATE->m_pCurCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
 			if( pStyle == NULL )
 			{
 				StepsType stCurrent;
@@ -1179,7 +1179,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		const Course *pCourse = m_MusicWheel.GetSelectedCourse();
 		const Style *pStyle = NULL;
 		if( CommonMetrics::AUTO_SET_STYLE )
-			pStyle = pCourse->GetCourseStyle( GAMESTATE->m_pCurGame );
+			pStyle = pCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
 		if( pStyle == NULL )
 			pStyle = GAMESTATE->GetCurrentStyle();
 		pCourse->GetTrails( m_vpTrails, pStyle->m_StepsType );

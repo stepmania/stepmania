@@ -998,7 +998,7 @@ void MusicWheel::SetOpenGroup( RString group )
 		/* If AUTO_SET_STYLE, hide courses that prefer a style that isn't available. */
 		if( d.m_Type == TYPE_COURSE && CommonMetrics::AUTO_SET_STYLE )
 		{
-			const Style *pStyle = d.m_pCourse->GetCourseStyle( GAMESTATE->m_pCurGame );
+			const Style *pStyle = d.m_pCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
 			if( pStyle )
 			{
 				if( find( vpPossibleStyles.begin(), vpPossibleStyles.end(), pStyle ) == vpPossibleStyles.end() )

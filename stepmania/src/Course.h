@@ -124,7 +124,7 @@ public:
 	int GetMeter( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
 	bool HasMods() const;
 	bool AllSongsAreFixed() const;
-	const Style *GetCourseStyle( const Game *pGame ) const;
+	const Style *GetCourseStyle( const Game *pGame, int iNumPlayers ) const;
 
 	int GetEstimatedNumStages() const { return m_vEntries.size(); }
 	bool IsPlayableIn( StepsType st ) const;

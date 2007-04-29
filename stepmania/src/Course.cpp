@@ -713,11 +713,14 @@ bool Course::AllSongsAreFixed() const
 	return true;
 }
 
-const Style *Course::GetCourseStyle( const Game *pGame ) const
+const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
 {
-	for( int s=0; pGame->m_apStyles[s]; ++s ) 
+	vector<const Style*> vpStyles;
+	GAMEMAN->GetCompatibleStyles( pGame, iNumPlayers, vpStyles );
+
+	for( int s=0; s < (int) vpStyles.size(); ++s ) 
 	{
-		const Style *pStyle = pGame->m_apStyles[s];
+		const Style *pStyle = vpStyles[s];
 		FOREACHS_CONST( RString, m_setStyles, style )
 		{
 			if( !style->CompareNoCase(pStyle->m_szName) )
