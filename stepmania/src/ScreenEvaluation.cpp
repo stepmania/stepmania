@@ -736,10 +736,11 @@ void ScreenEvaluation::Input( const InputEventPlus &input )
 				RString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
 				int iScreenshotIndex = pProfile->GetNextScreenshotIndex();
 				RString sFileName = StepMania::SaveScreenshot( sDir, true, true, iScreenshotIndex );
-				RString sPath = sDir+sFileName;
 				
 				if( !sFileName.empty() )
 				{
+					RString sPath = sDir+sFileName;
+
 					const HighScore &hs = m_pStageStats->m_player[pn].m_HighScore;
 					Screenshot screenshot;
 					screenshot.sFileName = sFileName;
