@@ -307,7 +307,7 @@ void MidiFileIn :: Load( RString fileName )
 				TimeSignatureChange timeSignatureEvent;
 				timeSignatureEvent.count = count;
 				timeSignatureEvent.numerator = event[3];
-				timeSignatureEvent.denominator = (int)pow( 2, (int)event[4] );
+				timeSignatureEvent.denominator = (int)pow( 2.0f, (int)event[4] );
 				//unsigned long metronome = event[5];	// not currently used
 				//unsigned long u32nds = event[6];	// not currently used
 				if( count > timeSignatureEvents_.back().count )
