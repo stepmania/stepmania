@@ -30,8 +30,8 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 	ASSERT( pPlayerState );
 	ASSERT( pSong );
 
-	/* If reasonable, push the attack forward so notes on screen don't change suddenly. */
-	fStartBeat = min( GAMESTATE->m_fSongBeat+BEATS_PER_MEASURE*2, pPlayerState->m_fLastDrawnBeat );
+	/* If reasonable, push the attack forward 8 beats so that notes on screen don't change suddenly. */
+	fStartBeat = min( GAMESTATE->m_fSongBeat+8, pPlayerState->m_fLastDrawnBeat );
 	fStartBeat = truncf(fStartBeat)+1;
 
 	const float fStartSecond = pSong->GetElapsedTimeFromBeat( fStartBeat );

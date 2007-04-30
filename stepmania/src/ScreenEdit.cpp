@@ -58,6 +58,10 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 #define PLAY_RECORD_HELP_TEXT	THEME->GetString(m_sName,"PlayRecordHelpText")
 #define EDIT_HELP_TEXT		THEME->GetString(m_sName,"EditHelpText")
 
+// FIXME: Remove hard-coded beat values and instead look at the time signature in the song.
+static const int BEATS_PER_MEASURE = 4;
+static const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
+
 AutoScreenMessage( SM_UpdateTextInfo )
 AutoScreenMessage( SM_BackFromMainMenu )
 AutoScreenMessage( SM_BackFromAreaMenu )

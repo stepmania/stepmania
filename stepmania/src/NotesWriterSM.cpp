@@ -106,6 +106,18 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 	f.PutLine( ";" );
 
+	ASSERT( !out.m_Timing.m_vTimeSignatureSegments.empty() );
+	f.Write( "#TIMESIGNATURES:" );
+	FOREACH_CONST( TimeSignatureSegment, out.m_Timing.m_vTimeSignatureSegments, iter )
+	{
+		f.PutLine( ssprintf( "%.3f=%d=%d", NoteRowToBeat(iter->m_iStartRow), iter->m_iNumerator, iter->m_iDenominator ) );
+		vector<TimeSignatureSegment>::const_iterator iter2 = iter;
+		iter2++;
+		if( iter2 != out.m_Timing.m_vTimeSignatureSegments.end() )
+			f.Write( "," );
+	}
+	f.PutLine( ";" );
+
 	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )

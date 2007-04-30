@@ -18,7 +18,8 @@ struct AttackArray;
  * the future. */
 namespace NoteDataUtil
 {
-	NoteType GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex );
+	NoteType GetSmallestNoteTypeForMeasure( const NoteData &nd, int iMeasureIndex );
+	NoteType GetSmallestNoteTypeInRange( const NoteData &nd, int iStartIndex, int iEndIndex );
 	void LoadFromSMNoteDataString( NoteData &out, const RString &sSMNoteData, bool bComposite );
 	void GetSMNoteDataString( const NoteData &in, RString &notes_out );
 	void SplitCompositeNoteData( const NoteData &in, vector<NoteData> &out );

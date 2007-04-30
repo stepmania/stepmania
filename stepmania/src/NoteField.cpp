@@ -243,13 +243,9 @@ float NoteField::GetWidth() const
 	return (fMaxX - fMinX + ARROW_SIZE) * fYZoom;
 }
 
-void NoteField::DrawBeatBar( const float fBeat )
+void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIndex )
 {
-	bool bIsMeasure = fmodf( fBeat, (float)BEATS_PER_MEASURE ) == 0;
-	int iMeasureIndex = (int)fBeat / BEATS_PER_MEASURE;
-	int iMeasureNoDisplay = iMeasureIndex+1;
-
-	NoteType nt = BeatToNoteType( fBeat );
+	bool bIsMeasure = type == measure;
 
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
@@ -267,12 +263,13 @@ void NoteField::DrawBeatBar( const float fBeat )
 		float fScrollSpeed = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
 		if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing > 0 )
 			fScrollSpeed = 4;
-		switch( nt )
+		switch( type )
 		{
-		default:	ASSERT(0);
-		case NOTE_TYPE_4TH:	fAlpha = BAR_4TH_ALPHA;						iState = 1;	break;
-		case NOTE_TYPE_8TH:	fAlpha = SCALE(fScrollSpeed,1.0f,2.0f,0.0f,BAR_8TH_ALPHA);	iState = 2;	break;
-		case NOTE_TYPE_16TH:	fAlpha = SCALE(fScrollSpeed,2.0f,4.0f,0.0f,BAR_16TH_ALPHA);	iState = 3;	break;
+		DEFAULT_FAIL( type );
+		case measure:
+		case beat:		fAlpha = BAR_4TH_ALPHA;						iState = 1;	break;
+		case half_beat:		fAlpha = SCALE(fScrollSpeed,1.0f,2.0f,0.0f,BAR_8TH_ALPHA);	iState = 2;	break;
+		case quarter_beat:	fAlpha = SCALE(fScrollSpeed,2.0f,4.0f,0.0f,BAR_16TH_ALPHA);	iState = 3;	break;
 		}
 		CLAMP( fAlpha, 0, 1 );
 	}
@@ -291,6 +288,8 @@ void NoteField::DrawBeatBar( const float fBeat )
 
 	if( GAMESTATE->IsEditing()  &&  bIsMeasure )
 	{
+		int iMeasureNoDisplay = iMeasureIndex+1;
+
 		m_textMeasureNumber.SetDiffuse( RageColor(1,1,1,1) );
 		m_textMeasureNumber.SetGlow( RageColor(1,1,1,0) );
 		m_textMeasureNumber.SetHorizAlign( align_right );
@@ -389,6 +388,21 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
 	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 10*fZoom, fYPos );
+	m_textMeasureNumber.Draw();
+}
+
+void NoteField::DrawTimeSignatureText( const float fBeat, int iNumerator, int iDenominator )
+{
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+ 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
+
+	m_textMeasureNumber.SetZoom( fZoom );
+	m_textMeasureNumber.SetHorizAlign( align_right );
+	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
+	m_textMeasureNumber.SetText( ssprintf("%d\n--\n%d", iNumerator, iDenominator) );
+	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 30*fZoom, fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -495,7 +509,7 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 bool NoteField::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const
 {
 	// TRICKY: If boomerang is on, then ones in the range 
-	// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
+	// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
 	// Test to see if this beat is visible before drawing.
 	float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fBeat );
 	if( fYOffset > iDrawDistanceBeforeTargetsPixels )	// off screen
@@ -545,11 +559,11 @@ void NoteField::DrawPrimitives()
 
 	m_pPlayerState->m_fLastDrawnBeat = fLastBeatToDraw;
 
-	const int iFirstIndexToDraw  = BeatToNoteRow(fFirstBeatToDraw);
-	const int iLastIndexToDraw   = BeatToNoteRow(fLastBeatToDraw);
+	const int iFirstRowToDraw  = BeatToNoteRow(fFirstBeatToDraw);
+	const int iLastRowToDraw   = BeatToNoteRow(fLastBeatToDraw);
 
 //	LOG->Trace( "start = %f.1, end = %f.1", fFirstBeatToDraw-fSongBeat, fLastBeatToDraw-fSongBeat );
-//	LOG->Trace( "Drawing elements %d through %d", iFirstIndexToDraw, iLastIndexToDraw );
+//	LOG->Trace( "Drawing elements %d through %d", iFirstRowToDraw, iLastRowToDraw );
 
 #define IS_ON_SCREEN( fBeat )  IsOnScreen( fBeat, 0, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels )
 
@@ -573,11 +587,42 @@ void NoteField::DrawPrimitives()
 	//
 	if( GAMESTATE->IsEditing() || SHOW_BEAT_BARS )
 	{
-		float fStartDrawingMeasureBars = max( 0, Quantize(fFirstBeatToDraw-0.25f,0.25f) );
-		for( float f=fStartDrawingMeasureBars; f<fLastBeatToDraw; f+=0.25f )
+		const vector<TimeSignatureSegment> &vTimeSignatureSegments = GAMESTATE->m_pCurSong->m_Timing.m_vTimeSignatureSegments;
+		int iMeasureIndex = 0;
+		FOREACH_CONST( TimeSignatureSegment, vTimeSignatureSegments, iter )
 		{
-			if( IS_ON_SCREEN(f) )
-				DrawBeatBar( f );
+			vector<TimeSignatureSegment>::const_iterator next = iter;
+			next++;
+			int iSegmentEndRow = (next == vTimeSignatureSegments.end()) ? iLastRowToDraw : next->m_iStartRow;
+
+			// beat bars every 16th note
+			int iDrawBeatBarsEveryRows = BeatToNoteRow( ((float)iter->m_iDenominator) / 4 ) / 4;
+
+			// In 4/4, every 16th beat bar is a measure
+			int iMeasureBarFrequency =  iter->m_iNumerator * 4;
+			int iBeatBarsDrawn = 0;
+
+			for( int i=iter->m_iStartRow; i < iSegmentEndRow; i += iDrawBeatBarsEveryRows )
+			{
+				bool bMeasureBar = iBeatBarsDrawn % iMeasureBarFrequency == 0;
+				BeatBarType type = quarter_beat;
+				if( bMeasureBar )
+					type = measure;
+				else if( iBeatBarsDrawn % 4 == 0 )
+					type = beat;
+				else if( iBeatBarsDrawn % 2 == 0 )
+					type = half_beat;
+				float fBeat = NoteRowToBeat(i);
+
+				if( IS_ON_SCREEN(fBeat) )
+				{
+					DrawBeatBar( fBeat, type, iMeasureIndex );
+				}
+
+				iBeatBarsDrawn++;
+				if( bMeasureBar )
+					iMeasureIndex++;
+			}
 		}
 	}
 
@@ -591,8 +636,8 @@ void NoteField::DrawPrimitives()
 		const vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments;
 		for( unsigned i=0; i<aBPMSegments.size(); i++ )
 		{
-			if( aBPMSegments[i].m_iStartRow >= iFirstIndexToDraw &&
-			    aBPMSegments[i].m_iStartRow <= iLastIndexToDraw)
+			if( aBPMSegments[i].m_iStartRow >= iFirstRowToDraw &&
+			    aBPMSegments[i].m_iStartRow <= iLastRowToDraw)
 			{
 				float fBeat = NoteRowToBeat(aBPMSegments[i].m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
@@ -606,12 +651,27 @@ void NoteField::DrawPrimitives()
 		const vector<StopSegment> &aStopSegments = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments;
 		for( unsigned i=0; i<aStopSegments.size(); i++ )
 		{
-			if( aStopSegments[i].m_iStartRow >= iFirstIndexToDraw &&
-			    aStopSegments[i].m_iStartRow <= iLastIndexToDraw)
+			if( aStopSegments[i].m_iStartRow >= iFirstRowToDraw &&
+			    aStopSegments[i].m_iStartRow <= iLastRowToDraw)
 			{
 				float fBeat = NoteRowToBeat(aStopSegments[i].m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
 					DrawFreezeText( fBeat, aStopSegments[i].m_fStopSeconds );
+			}
+		}
+
+		//
+		// Time Signature text
+		//
+		const vector<TimeSignatureSegment> &vTimeSignatureSegments = GAMESTATE->m_pCurSong->m_Timing.m_vTimeSignatureSegments;
+		for( unsigned i=0; i<vTimeSignatureSegments.size(); i++ )
+		{
+			if( vTimeSignatureSegments[i].m_iStartRow >= iFirstRowToDraw &&
+			    vTimeSignatureSegments[i].m_iStartRow <= iLastRowToDraw)
+			{
+				float fBeat = NoteRowToBeat(vTimeSignatureSegments[i].m_iStartRow);
+				if( IS_ON_SCREEN(fBeat) )
+					DrawTimeSignatureText( fBeat, vTimeSignatureSegments[i].m_iNumerator, vTimeSignatureSegments[i].m_iDenominator );
 			}
 		}
 
@@ -629,8 +689,8 @@ void NoteField::DrawPrimitives()
 				float fSecond = a->fStartSecond;
 				float fBeat = GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTime( fSecond );
 
-				if( BeatToNoteRow(fBeat) >= iFirstIndexToDraw &&
-					BeatToNoteRow(fBeat) <= iLastIndexToDraw)
+				if( BeatToNoteRow(fBeat) >= iFirstRowToDraw &&
+					BeatToNoteRow(fBeat) <= iLastRowToDraw)
 				{
 					if( IS_ON_SCREEN(fBeat) )
 						DrawAttackText( fBeat, *a );
@@ -713,20 +773,20 @@ void NoteField::DrawPrimitives()
 		{
 			int iBegin = m_iBeginMarker;
 			int iEnd = m_iEndMarker;
-			CLAMP( iBegin, iFirstIndexToDraw, iLastIndexToDraw );
-			CLAMP( iEnd, iFirstIndexToDraw, iLastIndexToDraw );
+			CLAMP( iBegin, iFirstRowToDraw, iLastRowToDraw );
+			CLAMP( iEnd, iFirstRowToDraw, iLastRowToDraw );
 			DrawAreaHighlight( iBegin, iEnd );
 		}
 		else if( m_iBeginMarker != -1 )
 		{
-			if( m_iBeginMarker >= iFirstIndexToDraw &&
-				m_iBeginMarker <= iLastIndexToDraw )
+			if( m_iBeginMarker >= iFirstRowToDraw &&
+				m_iBeginMarker <= iLastRowToDraw )
 				DrawMarkerBar( m_iBeginMarker );
 		}
 		else if( m_iEndMarker != -1 )
 		{
-			if( m_iEndMarker >= iFirstIndexToDraw &&
-				m_iEndMarker <= iLastIndexToDraw )
+			if( m_iEndMarker >= iFirstRowToDraw &&
+				m_iEndMarker <= iLastRowToDraw )
 			DrawMarkerBar( m_iEndMarker );
 		}
 	}
@@ -752,7 +812,7 @@ void NoteField::DrawPrimitives()
 		//	
 		{
 			NoteData::TrackMap::const_iterator begin, end;
-			m_pNoteData->GetTapNoteRangeInclusive( c, iFirstIndexToDraw, iLastIndexToDraw+1, begin, end );
+			m_pNoteData->GetTapNoteRangeInclusive( c, iFirstRowToDraw, iLastRowToDraw+1, begin, end );
 
 			for( ; begin != end; ++begin )
 			{	
@@ -768,7 +828,7 @@ void NoteField::DrawPrimitives()
 				int iEndRow = iStartRow + tn.iDuration;
 
 				// TRICKY: If boomerang is on, then all notes in the range 
-				// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
+				// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
 				// Test every note to make sure it's on screen before drawing
 				float fThrowAway;
 				bool bStartIsPastPeak = false;
@@ -815,7 +875,7 @@ void NoteField::DrawPrimitives()
 		// draw notes from furthest to closest
 
 		NoteData::TrackMap::const_iterator begin, end;
-		m_pNoteData->GetTapNoteRange( c, iFirstIndexToDraw, iLastIndexToDraw+1, begin, end );
+		m_pNoteData->GetTapNoteRange( c, iFirstRowToDraw, iLastRowToDraw+1, begin, end );
 		for( ; begin != end; ++begin )
 		{	
 			int i = begin->first;
@@ -833,12 +893,12 @@ void NoteField::DrawPrimitives()
 
 
 			// TRICKY: If boomerang is on, then all notes in the range 
-			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
+			// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
 			// Test every note to make sure it's on screen before drawing
 			if( !IsOnScreen( NoteRowToBeat(i), c, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels ) )
 				continue;	// skip
 
-			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastIndexToDraw, iFirstIndexToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
+			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastRowToDraw, iFirstRowToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
 
 			// See if there is a hold step that begins on this index.  Only do this
 			// if the note skin cares.

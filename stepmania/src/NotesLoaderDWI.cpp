@@ -113,6 +113,8 @@ static bool Is192( const RString &sStepData, size_t pos )
 	return false;
 }
 
+const int BEATS_PER_MEASURE = 4;
+
 static bool LoadFromDWITokens( 
 	RString sMode, 
 	RString sDescription,

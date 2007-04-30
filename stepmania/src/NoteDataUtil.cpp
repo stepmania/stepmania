@@ -10,11 +10,20 @@
 #include "Foreach.h"
 #include <utility>
 
-NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex )
+// TODO: Remove these constants that aren't time signature-aware
+static const int BEATS_PER_MEASURE = 4;
+static const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
+
+NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &nd, int iMeasureIndex )
 {
 	const int iMeasureStartIndex = iMeasureIndex * ROWS_PER_MEASURE;
-	const int iMeasureLastIndex = (iMeasureIndex+1) * ROWS_PER_MEASURE - 1;
+	const int iMeasureEndIndex = (iMeasureIndex+1) * ROWS_PER_MEASURE;
 
+	return NoteDataUtil::GetSmallestNoteTypeInRange( nd, iMeasureStartIndex, iMeasureEndIndex );
+}
+
+NoteType NoteDataUtil::GetSmallestNoteTypeInRange( const NoteData &n, int iStartIndex, int iEndIndex )
+{
 	// probe to find the smallest note type
 	NoteType nt;
 	for( nt=(NoteType)0; nt<NUM_NoteType; nt=NoteType(nt+1) )		// for each NoteType, largest to largest
@@ -24,7 +33,7 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMe
 
 		bool bFoundSmallerNote = false;
 		// for each index in this measure
-		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( n, i, iMeasureStartIndex, iMeasureLastIndex )
+		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( n, i, iStartIndex, iEndIndex )
 		{
 			if( i % iRowSpacing == 0 )
 				continue;	// skip

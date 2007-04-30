@@ -27,7 +27,8 @@ void GameplayAssist::PlayTicks( const NoteData &nd )
 	 * come out on time; the actual precise timing is handled by SetStartTime. */
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
 	fPositionSeconds += SOUNDMAN->GetPlayLatency() + (float)CommonMetrics::TICK_EARLY_SECONDS + 0.250f;
-	const float fSongBeat = GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
+	const TimingData &timing = GAMESTATE->m_pCurSong->m_Timing;
+	const float fSongBeat = timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
 
 	const int iSongRow = max( 0, BeatToNoteRowNotRounded( fSongBeat ) );
 	static int iRowLastCrossed = -1;
@@ -45,7 +46,7 @@ void GameplayAssist::PlayTicks( const NoteData &nd )
 		if( iClapRow != -1 )
 		{
 			const float fTickBeat = NoteRowToBeat( iClapRow );
-			const float fTickSecond = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeatNoOffset( fTickBeat );
+			const float fTickSecond = timing.GetElapsedTimeFromBeatNoOffset( fTickBeat );
 			float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
 			fSecondsUntil /= GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate; /* 2x music rate means the time until the tick is halved */
 
@@ -59,22 +60,29 @@ void GameplayAssist::PlayTicks( const NoteData &nd )
 	{
 		//iRowLastCrossed+1, iSongRow+1
 
-		int iLastCrossedBeat = iRowLastCrossed / ROWS_PER_BEAT;
-		int iCurrentBeat = iSongRow / ROWS_PER_BEAT;
+		int iLastCrossedMeasureIndex;
+		int iLastCrossedBeatIndex;
+		int iLastCrossedRowsRemainder;
+		timing.NoteRowToMeasureAndBeat( iRowLastCrossed, iLastCrossedMeasureIndex, iLastCrossedBeatIndex, iLastCrossedRowsRemainder );
+		
+		int iCurrentMeasureIndex;
+		int iCurrentBeatIndex;
+		int iCurrentRowsRemainder;
+		timing.NoteRowToMeasureAndBeat( iSongRow, iCurrentMeasureIndex, iCurrentBeatIndex, iCurrentRowsRemainder );
 		
 		int iMetronomeRow = -1;
 		bool bIsMeasure = false;
 
-		if( iLastCrossedBeat != iCurrentBeat )
+		if( iLastCrossedMeasureIndex != iCurrentMeasureIndex  ||  iLastCrossedBeatIndex != iCurrentBeatIndex )
 		{
-			iMetronomeRow = iCurrentBeat * ROWS_PER_BEAT;
-			bIsMeasure = (iCurrentBeat % BEATS_PER_MEASURE) == 0;
+			iMetronomeRow = iSongRow - iCurrentRowsRemainder;
+			bIsMeasure = iCurrentBeatIndex == 0  &&  iCurrentRowsRemainder == 0;
 		}
 
 		if( iMetronomeRow != -1 )
 		{
 			const float fTickBeat = NoteRowToBeat( iMetronomeRow );
-			const float fTickSecond = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeatNoOffset( fTickBeat );
+			const float fTickSecond = timing.GetElapsedTimeFromBeatNoOffset( fTickBeat );
 			float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
 			fSecondsUntil /= GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate; /* 2x music rate means the time until the tick is halved */
 

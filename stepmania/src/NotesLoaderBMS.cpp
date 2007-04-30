@@ -422,6 +422,9 @@ static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t 
 	}
 }
 
+static const int BEATS_PER_MEASURE = 4;
+static const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
+
 static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out,
 			     const MeasureToTimeSig_t &sigAdjustments, const map<RString,int> &idToKeySoundIndex )
 {

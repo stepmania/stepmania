@@ -33,7 +33,7 @@
 #include <set>
 #include <float.h>
 
-const int FILE_CACHE_VERSION = 154;	// increment this to invalidate cache
+const int FILE_CACHE_VERSION = 156;	// increment this to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
@@ -688,6 +688,16 @@ void Song::TidyUpData()
 				m_sSongFileName += ".sm";
 			}
 		}
+	}
+
+	/* If no time signature specified, assume 4/4 time for the whole song. */
+	if( m_Timing.m_vTimeSignatureSegments.empty() )
+	{
+		TimeSignatureSegment seg;
+		seg.m_iStartRow = 0;
+		seg.m_iNumerator = 4;
+		seg.m_iDenominator = 4;
+		m_Timing.m_vTimeSignatureSegments.push_back( seg );
 	}
 }
 

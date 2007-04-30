@@ -151,6 +151,52 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
 			}
 		}
+
+		else if( sValueName=="TIMESIGNATURES" )
+		{
+			vector<RString> vs1;
+			split( sParams[1], ",", vs1 );
+
+			FOREACH_CONST( RString, vs1, s1 )
+			{
+				vector<RString> vs2;
+				split( *s1, "=", vs2 );
+
+				if( vs2.size() < 3 )
+				{
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with %i values.", (int)vs2.size() );
+					continue;
+				}
+
+				const float fBeat = StringToFloat( vs2[0] );
+
+				TimeSignatureSegment seg;
+				seg.m_iStartRow = BeatToNoteRow(fBeat);
+				seg.m_iNumerator = atoi( vs2[1] ); 
+				seg.m_iDenominator = atoi( vs2[2] ); 
+				
+				if( fBeat < 0 )
+				{
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f.", fBeat );
+					continue;
+				}
+				
+				if( seg.m_iNumerator < 1 )
+				{
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iNumerator %i.", fBeat, seg.m_iNumerator );
+					continue;
+				}
+
+				if( seg.m_iDenominator < 1 )
+				{
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iDenominator %i.", fBeat, seg.m_iDenominator );
+					continue;
+				}
+
+				out.AddTimeSignatureSegment( seg );
+			}
+		}
+
 	}
 }
 

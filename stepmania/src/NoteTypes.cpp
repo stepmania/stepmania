@@ -49,6 +49,10 @@ float NoteTypeToBeat( NoteType nt )
 	}
 }
 
+// FIXME: Remove hard-coded beat values and instead look at the time signature in the song.
+static const int BEATS_PER_MEASURE = 4;
+static const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
+
 NoteType GetNoteType( int row )
 { 
 	if(      row % (ROWS_PER_MEASURE/4) == 0)	return NOTE_TYPE_4TH;

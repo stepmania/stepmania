@@ -44,6 +44,26 @@ struct StopSegment
 	bool operator<( const StopSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
 };
 
+struct TimeSignatureSegment 
+{
+	TimeSignatureSegment() : m_iStartRow(-1), m_iNumerator(4), m_iDenominator(4)  { }
+	int m_iStartRow;
+	int m_iNumerator;
+	int m_iDenominator;
+
+	int GetNoteRowsPerMeasure() const { return (BeatToNoteRow(1) * 4) / m_iDenominator; }
+
+	bool operator==( const TimeSignatureSegment &other ) const
+	{
+		COMPARE( m_iStartRow );
+		COMPARE( m_iNumerator );
+		COMPARE( m_iDenominator );
+		return true;
+	}
+	bool operator!=( const TimeSignatureSegment &other ) const { return !operator==(other); }
+	bool operator<( const TimeSignatureSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+};
+
 class TimingData
 {
 public:
@@ -59,8 +79,10 @@ public:
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	void AddBPMSegment( const BPMSegment &seg );
 	void AddStopSegment( const StopSegment &seg );
+	void AddTimeSignatureSegment( const TimeSignatureSegment &seg );
 	int GetBPMSegmentIndexAtBeat( float fBeat );
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat );
+	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
 
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const;
 	float GetBeatFromElapsedTime( float fElapsedTime ) const	// shortcut for places that care only about the beat
@@ -102,9 +124,10 @@ public:
 	void InsertRows( int iStartRow, int iRowsToAdd );
 	void DeleteRows( int iStartRow, int iRowsToDelete );
 
-	RString						m_sFile;		// informational only
-	vector<BPMSegment>			m_BPMSegments;	// this must be sorted before gameplay
-	vector<StopSegment>			m_StopSegments;	// this must be sorted before gameplay
+	RString				m_sFile;		// informational only
+	vector<BPMSegment>		m_BPMSegments;	// this must be sorted before gameplay
+	vector<StopSegment>		m_StopSegments;	// this must be sorted before gameplay
+	vector<TimeSignatureSegment>	m_vTimeSignatureSegments;	// this must be sorted before gameplay
 	float	m_fBeat0OffsetInSeconds;
 };
 

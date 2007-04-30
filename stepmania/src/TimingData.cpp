@@ -7,6 +7,7 @@
 #include "Foreach.h"
 #include <float.h>
 
+
 TimingData::TimingData()
 {
 	m_fBeat0OffsetInSeconds = 0;
@@ -33,6 +34,11 @@ void TimingData::AddBPMSegment( const BPMSegment &seg )
 void TimingData::AddStopSegment( const StopSegment &seg )
 {
 	m_StopSegments.insert( upper_bound(m_StopSegments.begin(), m_StopSegments.end(), seg), seg );
+}
+
+void TimingData::AddTimeSignatureSegment( const TimeSignatureSegment &seg )
+{
+	m_vTimeSignatureSegments.insert( upper_bound(m_vTimeSignatureSegments.begin(), m_vTimeSignatureSegments.end(), seg), seg );
 }
 
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
@@ -390,6 +396,41 @@ bool TimingData::HasBpmChanges() const
 bool TimingData::HasStops() const
 {
 	return m_StopSegments.size()>0;
+}
+
+void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const
+{
+	iMeasureIndexOut = 0;
+
+	FOREACH_CONST( TimeSignatureSegment, m_vTimeSignatureSegments, iter )
+	{
+		vector<TimeSignatureSegment>::const_iterator next = iter;
+		next++;
+		int iSegmentEndRow = (next == m_vTimeSignatureSegments.end()) ? INT_MAX : next->m_iStartRow;
+	
+		int iRowsPerMeasureThisSegment = iter->GetNoteRowsPerMeasure();
+
+		if( iNoteRow >= iter->m_iStartRow )
+		{
+			// iNoteRow lands in this segment
+			int iNumRowsThisSegment = iNoteRow - iter->m_iStartRow;
+			int iNumMeasuresThisSegment = (iNumRowsThisSegment) / iRowsPerMeasureThisSegment;	// don't round up
+			iMeasureIndexOut += iNumMeasuresThisSegment;
+			iBeatIndexOut = iNumRowsThisSegment / iRowsPerMeasureThisSegment;
+			iRowsRemainder = iNumRowsThisSegment % iRowsPerMeasureThisSegment;
+			return;
+		}
+		else
+		{
+			// iNoteRow lands after this segment
+			int iNumRowsThisSegment = iSegmentEndRow - iter->m_iStartRow;
+			int iNumMeasuresThisSegment = (iNumRowsThisSegment + iRowsPerMeasureThisSegment - 1) / iRowsPerMeasureThisSegment;	// round up
+			iMeasureIndexOut += iNumMeasuresThisSegment;
+		}
+	}
+
+	ASSERT(0);
+	return;
 }
 
 /*

@@ -433,30 +433,48 @@ BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const R
 
 void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const BackgroundChange &change )
 {
+	int iStartRow = BeatToNoteRow(fFirstBeat);
+	int iEndRow = BeatToNoteRow(fEndBeat);
+
 	const TimingData &timing = m_pSong->m_Timing;
 
-	// change BG every 4 bars
-	for( float f=fFirstBeat; f<fEndBeat; f+=BEATS_PER_MEASURE*4 )
+	// change BG every time signature change or 4 measures
+	FOREACH_CONST( TimeSignatureSegment, timing.m_vTimeSignatureSegments, iter )
 	{
-		// Don't fade.  It causes frame rate dip, especially on slower machines.
-		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations, this );
-		if( !bd.IsEmpty() )
+		vector<TimeSignatureSegment>::const_iterator next = iter;
+		next++;
+		int iSegmentEndRow = (next == timing.m_vTimeSignatureSegments.end()) ? iEndRow : next->m_iStartRow;
+
+		for( int i=max(iter->m_iStartRow,iStartRow); i<min(iEndRow,iSegmentEndRow); i+=iter->GetNoteRowsPerMeasure() )
 		{
-			BackgroundChange c = change;
-			c.m_def = bd;
-			c.m_fStartBeat = f;
-			m_Layer[0].m_aBGChanges.push_back( c );
+			// Don't fade.  It causes frame rate dip, especially on slower machines.
+			BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations, this );
+			if( !bd.IsEmpty() )
+			{
+				BackgroundChange c = change;
+				c.m_def = bd;
+				c.m_fStartBeat = NoteRowToBeat(i);
+				m_Layer[0].m_aBGChanges.push_back( c );
+			}
 		}
 	}
 
 	// change BG every BPM change that is at the beginning of a measure
-	int iStartRow = BeatToNoteRow(fFirstBeat);
-	int iEndRow = BeatToNoteRow(fEndBeat);
 	for( unsigned i=0; i<timing.m_BPMSegments.size(); i++ )
 	{
 		const BPMSegment& bpmseg = timing.m_BPMSegments[i];
 
-		if( bpmseg.m_iStartRow % BeatToNoteRow((float) BEATS_PER_MEASURE) != 0 )
+		bool bAtBeginningOfMeasure = false;
+		FOREACH_CONST( TimeSignatureSegment, timing.m_vTimeSignatureSegments, iter )
+		{
+			if( (bpmseg.m_iStartRow - iter->m_iStartRow) % iter->GetNoteRowsPerMeasure() == 0 )
+			{
+				bAtBeginningOfMeasure = true;
+				break;
+			}
+		}
+
+		if( !bAtBeginningOfMeasure )
 			continue;	// skip
 		
 		// start so that we don't create a BGChange right on top of fEndBeat

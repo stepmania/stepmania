@@ -191,6 +191,8 @@ RString OptimizeDWIString( RString holds, RString taps )
 		return ssprintf( "<%s>", ret.c_str() );
 }
 
+static const int BEATS_PER_MEASURE = 4;
+
 static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 {
 	NoteData notedata;
