@@ -527,8 +527,8 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		fYTail += cache->m_iStopDrawingHoldBodyOffsetFromTail;
 	}
 
-	const float fFrameHeightTop	= pSpriteTop->GetZoomedHeight();
-	const float fFrameHeightBottom	= pSpriteBottom->GetZoomedHeight();
+	const float fFrameHeightTop	= pSpriteTop->GetUnzoomedHeight();
+	const float fFrameHeightBottom	= pSpriteBottom->GetUnzoomedHeight();
 
 	float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fDrawDistanceAfterTargetsPixels, m_fYReverseOffsetPixels );
 	float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fDrawDistanceBeforeTargetsPixels, m_fYReverseOffsetPixels );
