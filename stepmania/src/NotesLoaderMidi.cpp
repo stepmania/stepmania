@@ -137,6 +137,12 @@ public:
 		double tickSeconds;
 	};
 	std::vector<TempoChange> tempoEvents_;
+	struct TimeSignatureChange { 
+		unsigned long count;
+		unsigned long numerator;
+		unsigned long denominator;
+	};
+	std::vector<TimeSignatureChange> timeSignatureEvents_;
 	std::vector<unsigned long> trackCounters_;
 	std::vector<unsigned int> trackTempoIndex_;
 
@@ -176,9 +182,9 @@ void MidiFileIn :: Load( RString fileName )
 	char chunkType[4];
 	int32_t length;
 	if( !file_.Read( chunkType, 4 ) ) 
-		goto error;
+		FAIL_M( "NotesLoaderMidi" );
 	if( !file_.Read( &length, 4 ) ) 
-		goto error;
+		FAIL_M( "NotesLoaderMidi" );
 	length = Swap32BE( length );
 	if( strncmp( chunkType, "MThd", 4 ) || ( length != 6 ) ) 
 	{
@@ -188,7 +194,7 @@ void MidiFileIn :: Load( RString fileName )
 	// Read the MIDI file format.
 	int16_t data;
 	if( !file_.Read( &data, 2 ) ) 
-		goto error;
+		FAIL_M( "NotesLoaderMidi" );
 	data = Swap16BE( data );
 	if( data < 0 || data > 2 ) 
 	{
@@ -198,7 +204,7 @@ void MidiFileIn :: Load( RString fileName )
 
 	// Read the number of tracks.
 	if( !file_.Read( &data, 2 ) ) 
-		goto error;
+		FAIL_M( "NotesLoaderMidi" );
 	data = Swap16BE( data );
 	if( format_ == 0 && data != 1 )
 	{
@@ -208,7 +214,7 @@ void MidiFileIn :: Load( RString fileName )
 
 	// Read the beat division.
 	if( !file_.Read( &data, 2 ) ) 
-		goto error;
+		FAIL_M( "NotesLoaderMidi" );
 	data = Swap16BE( data );
 	division_ = (int)data;
 	double tickrate;
@@ -235,11 +241,11 @@ void MidiFileIn :: Load( RString fileName )
 	for( unsigned int i=0; i<nTracks_; i++ ) 
 	{
 		if( !file_.Read( chunkType, 4 ) ) 
-			goto error;
+			FAIL_M( "NotesLoaderMidi" );
 		if( strncmp( chunkType, "MTrk", 4 ) ) 
-			goto error;
+			FAIL_M( "NotesLoaderMidi" );
 		if( !file_.Read( &length, 4 ) ) 
-			goto error;
+			FAIL_M( "NotesLoaderMidi" );
 		length = Swap32BE( length );
 		trackLengths_.push_back( length );
 		trackOffsets_.push_back( (long) file_.Tell() );
@@ -253,10 +259,21 @@ void MidiFileIn :: Load( RString fileName )
 	}
 
 	// Save the initial tickSeconds parameter.
-	TempoChange tempoEvent;
-	tempoEvent.count = 0;
-	tempoEvent.tickSeconds = tickSeconds_[0];
-	tempoEvents_.push_back( tempoEvent );
+	{
+		TempoChange tempoEvent;
+		tempoEvent.count = 0;
+		tempoEvent.tickSeconds = tickSeconds_[0];
+		tempoEvents_.push_back( tempoEvent );
+	}
+
+	// Save the initial tickSeconds parameter.
+	{
+		TimeSignatureChange timeSignatureEvent;
+		timeSignatureEvent.count = 0;
+		timeSignatureEvent.numerator = 4;
+		timeSignatureEvent.denominator = 4;
+		timeSignatureEvents_.push_back( timeSignatureEvent );
+	}
 
 	// If format 1 and not using time code, parse and save the tempo map
 	// on track 0.
@@ -274,15 +291,32 @@ void MidiFileIn :: Load( RString fileName )
 			if( ( event.size() == 6 ) && ( event[0] == 0xff ) &&
 				( event[1] == 0x51 ) && ( event[2] == 0x03 ) )
 			{
-					tempoEvent.count = count;
-					unsigned long value = ( event[3] << 16 ) + ( event[4] << 8 ) + event[5];
-					tempoEvent.tickSeconds = (double) (0.000001 * value / tickrate);
-					if( count > tempoEvents_.back().count )
-						tempoEvents_.push_back( tempoEvent );
-					else
-						tempoEvents_.back() = tempoEvent;
-				}
-				count += getNextEvent( &event, 0 );
+				TempoChange tempoEvent;
+				tempoEvent.count = count;
+				unsigned long value = ( event[3] << 16 ) + ( event[4] << 8 ) + event[5];
+				tempoEvent.tickSeconds = (double) (0.000001 * value / tickrate);
+				if( count > tempoEvents_.back().count )
+					tempoEvents_.push_back( tempoEvent );
+				else
+					tempoEvents_.back() = tempoEvent;
+			}
+
+			if( ( event.size() == 7 ) && ( event[0] == 0xff ) &&
+				( event[1] == 0x58 ) && ( event[2] == 0x04 ) )
+			{
+				TimeSignatureChange timeSignatureEvent;
+				timeSignatureEvent.count = count;
+				timeSignatureEvent.numerator = event[3];
+				timeSignatureEvent.denominator = (int)pow( 2, (int)event[4] );
+				//unsigned long metronome = event[5];	// not currently used
+				//unsigned long u32nds = event[6];	// not currently used
+				if( count > timeSignatureEvents_.back().count )
+					timeSignatureEvents_.push_back( timeSignatureEvent );
+				else
+					timeSignatureEvents_.back() = timeSignatureEvent;
+			}
+
+			count += getNextEvent( &event, 0 );
 		}
 		rewindTrack( 0 );
 		for( unsigned int i=0; i<nTracks_; i++ )
@@ -295,9 +329,6 @@ void MidiFileIn :: Load( RString fileName )
 	}
 
 	return;
-
-error:
-	FAIL_M( "MidiFileIn: error reading from file (" + fileName + ")." );
 }
 
 MidiFileIn :: ~MidiFileIn()
@@ -378,26 +409,28 @@ unsigned long MidiFileIn :: getNextEvent( std::vector<unsigned char> *event, uns
 	// Read the event delta time.
 	file_.Seek( trackPointers_[track] );
 	if( !readVariableLength( &ticks ) ) 
-		goto error;
+		FAIL_M( "NotesLoaderMidi" );
 
 	// Parse the event stream to determine the event length.
 	unsigned char c;
 	if( !file_.Read( (char *)&c, 1 ) ) 
-		goto error;
+		FAIL_M( "NotesLoaderMidi" );
 	switch( c ) 
 	{
 		case 0xFF: // A Meta-Event
 			unsigned long position;
-			trackStatus_[track] = 0;
+			
+			// RealTime Category messages (ie, Status of 0xF8 to 0xFF) do not affect running status
+			
 			event->push_back( c );
 			if( !file_.Read( (char *)&c, 1 ) ) 
-				goto error;
+				FAIL_M( "NotesLoaderMidi" );
 			event->push_back( c );
 			if( format_ != 1 && ( c == 0x51 ) ) 
 				isTempoEvent = true;
 			position = file_.Tell();
 			if( !readVariableLength( &bytes ) ) 
-				goto error;
+				FAIL_M( "NotesLoaderMidi" );
 			bytes += ( (unsigned long)file_.Tell() - position );
 			file_.Seek( position );
 			break;
@@ -408,7 +441,7 @@ unsigned long MidiFileIn :: getNextEvent( std::vector<unsigned char> *event, uns
 			event->push_back( c );
 			position = file_.Tell();
 			if( !readVariableLength( &bytes ) ) 
-				goto error;
+				FAIL_M( "NotesLoaderMidi" );
 			bytes += ( (unsigned long)file_.Tell() - position );
 			file_.Seek( position );
 			break;
@@ -417,7 +450,7 @@ unsigned long MidiFileIn :: getNextEvent( std::vector<unsigned char> *event, uns
 			if( c & 0x80 )  // MIDI status byte
 			{
 				if( c > 0xF0 ) 
-					goto error;
+					FAIL_M( "NotesLoaderMidi" );
 				trackStatus_[track] = c;
 				event->push_back( c );
 				c &= 0xF0;
@@ -436,7 +469,7 @@ unsigned long MidiFileIn :: getNextEvent( std::vector<unsigned char> *event, uns
 			}
 			else 
 			{
-				goto error;
+				FAIL_M( "NotesLoaderMidi" );
 			}
 			break;
 
@@ -446,7 +479,7 @@ unsigned long MidiFileIn :: getNextEvent( std::vector<unsigned char> *event, uns
 	for( unsigned long i=0; i<bytes; i++ ) 
 	{
 		if( !file_.Read( (char *)&c, 1 ) ) 
-			goto error;
+			FAIL_M( "NotesLoaderMidi" );
 		event->push_back( c );
 	}
 
@@ -477,10 +510,6 @@ unsigned long MidiFileIn :: getNextEvent( std::vector<unsigned char> *event, uns
 	trackPointers_[track] = file_.Tell();
 
 	return ticks;
-
-error:
-	FAIL_M( "MidiFileIn::getNextEvent: file read error!" );
-	return 0;
 }
 
 unsigned long MidiFileIn :: getNextMidiEvent( std::vector<unsigned char> *midiEvent, unsigned int track )
@@ -632,7 +661,17 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 		double fSecondsPerBeat = (iter->tickSeconds * GUITAR_MIDI_COUNTS_PER_BEAT);
 		bpmSeg.m_fBPS = 1 / fSecondsPerBeat;
 
-		songOut.AddBPMSegment( bpmSeg );
+		songOut.m_Timing.AddBPMSegment( bpmSeg );
+	}
+
+	FOREACH_CONST( MidiFileIn::TimeSignatureChange, midi.timeSignatureEvents_, iter )
+	{
+		TimeSignatureSegment seg;
+		seg.m_iStartRow = MidiCountToNoteRow( iter->count );
+		seg.m_iNumerator = iter->numerator;
+		seg.m_iDenominator = iter->denominator;
+
+		songOut.m_Timing.AddTimeSignatureSegment( seg );
 	}
 
 
@@ -644,7 +683,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 
 	{
 		std::vector<unsigned char> event;
-		int iTrack = 1;	// this track should be named "T1 GEMS"
+		int iTrack = 1;	// this track should be named "T1 GEMS" or "PART GUITAR"
 		unsigned long count = midi.getNextEvent( &event, iTrack );
 		double fSeconds = midi.getTickSeconds( iTrack );
 		while( event.size() ) 
@@ -671,6 +710,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 					if( NoteNumberToDifficultyAndNoteNumberType( uNoteNumber, gd, nnt ) )
 					{
 						MidiEvent event = { count, midiEventType };
+						//float fBeat = NoteRowToBeat( MidiCountToNoteRow(count) );
 						vMidiEvent[gd][nnt].push_back( event );
 					}
 				}
@@ -723,6 +763,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 				*/
 				MidiEventType midiEventType = iter->midiEventType;
 				long count = iter->count;
+				//float fBeat = NoteRowToBeat( MidiCountToNoteRow(count) );
 				bool bNoteHandled = false;
 				long length = count - countOfLastNote;
 
