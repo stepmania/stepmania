@@ -2272,7 +2272,8 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 					if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 					{
 						STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
-						m_pPlayerStageStats->m_bDisqualified = true;
+						if( m_pPlayerStageStats )
+							m_pPlayerStageStats->m_bDisqualified = true;
 					}
 				}
 			}
