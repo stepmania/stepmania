@@ -468,9 +468,7 @@ void ScreenRankingScroller::BeginScreen()
 void ScoreScroller::SetScoreFromHighScoreList( BitmapText *pTextStepsScore, const HighScoreList &hsl )
 {
 	HighScore hs = hsl.GetTopScore();
-	if( !hsl.vHighScores.empty() )
-		hs = hsl.GetTopScore();
-	else
+	if( hsl.vHighScores.empty() )
 		hs.SetName( NO_SCORE_NAME );
 
 	RString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.GetPercentDP() );
