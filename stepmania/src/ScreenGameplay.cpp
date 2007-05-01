@@ -338,6 +338,7 @@ void ScreenGameplay::Init()
 	MUSIC_FADE_OUT_SECONDS.Load(		m_sName, "MusicFadeOutSeconds" );
 	OUT_TRANSITION_LENGTH.Load(		m_sName, "OutTransitionLength" );
 	COURSE_TRANSITION_LENGTH.Load(		m_sName, "CourseTransitionLength" );
+	BEGIN_FAILED_DELAY.Load(		m_sName, "BeginFailedDelay" );
 	MIN_SECONDS_TO_STEP.Load(		m_sName, "MinSecondsToStep" );
 	MIN_SECONDS_TO_MUSIC.Load(		m_sName, "MinSecondsToMusic" );
 	MIN_SECONDS_TO_STEP_NEXT_SONG.Load(	m_sName, "MinSecondsToStepNextSong" );
@@ -477,11 +478,6 @@ void ScreenGameplay::Init()
 	m_NextSong.Load( THEME->GetPathB(m_sName,"next course song") );
 	m_NextSong.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
 	this->AddChild( &m_NextSong );
-
-	m_SongFinished.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
-	m_SongFinished.Load( THEME->GetPathB(m_sName,"song finished") );
-	this->AddChild( &m_SongFinished );
-
 
 	bool bBattery = GAMESTATE->m_SongOptions.GetStage().m_LifeType==SongOptions::LIFE_BATTERY;
 
@@ -1092,8 +1088,6 @@ void ScreenGameplay::LoadNextSong()
 
 	m_LyricDisplay.PlayCommand( bAllReverse? "SetReverse": bAtLeastOneReverse? "SetOneReverse": "SetNoReverse" );
 
-	m_SongFinished.Reset();
-
 	// Load lyrics
 	// XXX: don't load this here
 	LyricsLoader LL;
@@ -1612,7 +1606,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 		
 		if( bAllFailed )
-			SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
+		{
+			m_pSoundMusic->StopPlaying();
+			SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
+		}
 
 		//
 		// Update living players' alive time
@@ -1644,8 +1641,13 @@ void ScreenGameplay::Update( float fDeltaTime )
 		{
 			float fSecondsToStartFadingOutMusic, fSecondsToStartTransitioningOut;
 			GetMusicEndTiming( fSecondsToStartFadingOutMusic, fSecondsToStartTransitioningOut );
-			if( GAMESTATE->m_fMusicSeconds >= fSecondsToStartTransitioningOut && !m_SongFinished.IsTransitioning() && !m_NextSong.IsTransitioning() )
-				m_SongFinished.StartTransitioning( SM_NotesEnded );
+
+			bool bAllReallyFailed = STATSMAN->m_CurStageStats.AllFailed();
+			if( bAllReallyFailed )
+				fSecondsToStartTransitioningOut += BEGIN_FAILED_DELAY;
+
+			if( GAMESTATE->m_fMusicSeconds >= fSecondsToStartTransitioningOut && !m_NextSong.IsTransitioning() )
+				this->PostScreenMessage( SM_NotesEnded, 0 );
 		}
 
 		//
@@ -1713,6 +1715,34 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 
 		//
+		// update give up
+		//
+		bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
+		bool bAllHumanHaveComboOf30OrMoreMisses = STATSMAN->m_CurStageStats.AllHumanHaveComboOf30OrMoreMisses();
+		if( bGiveUpTimerFired || (FAIL_AFTER_30_MISSES && bAllHumanHaveComboOf30OrMoreMisses) )
+		{
+			STATSMAN->m_CurStageStats.m_bGaveUp = true;
+			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
+			{
+				pi->GetPlayerStageStats()->m_bFailed |= bAllHumanHaveComboOf30OrMoreMisses;
+				pi->GetPlayerStageStats()->m_bDisqualified = true;
+			}
+
+			AbortGiveUp( false );
+
+			if( GIVING_UP_GOES_TO_PREV_SCREEN )
+			{
+				BeginBackingOutFromGameplay();
+			}
+			else
+			{
+				m_pSoundMusic->StopPlaying();
+				this->PostScreenMessage( SM_NotesEnded, 0 );
+			}
+			return;
+		}
+
+		//
 		// Check to see if it's time to play a ScreenGameplay comment
 		//
 		m_fTimeSinceLastDancingComment += fDeltaTime;
@@ -1737,35 +1767,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 		default:
 			ASSERT(0);
 		}
-	}
-
-	//
-	// update give up
-	//
-	bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
-	bool bAllHumanHaveComboOf30OrMoreMisses = STATSMAN->m_CurStageStats.AllHumanHaveComboOf30OrMoreMisses();
-	if( bGiveUpTimerFired || (FAIL_AFTER_30_MISSES && bAllHumanHaveComboOf30OrMoreMisses) )
-	{
-		// Give up
-
-		STATSMAN->m_CurStageStats.m_bGaveUp = true;
-		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
-		{
-			pi->GetPlayerStageStats()->m_bFailed |= bAllHumanHaveComboOf30OrMoreMisses;
-			pi->GetPlayerStageStats()->m_bDisqualified = true;
-		}
-
-		AbortGiveUp( false );
-
-		if( GIVING_UP_GOES_TO_PREV_SCREEN )
-		{
-			BeginBackingOutFromGameplay();
-		}
-		else
-		{
-			this->PostScreenMessage( SM_NotesEnded, 0 );
-		}
-		return;
 	}
 
 	PlayTicks();
@@ -2526,7 +2527,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	{
 		m_DancingState = STATE_OUTRO;
 		AbortGiveUp( false );
-		m_pSoundMusic->StopPlaying();
 		m_GameplayAssist.StopPlaying(); /* Stop any queued assist ticks. */
 		TweenOffScreen();
 		m_Failed.StartTransitioning( SM_DoNextScreen );

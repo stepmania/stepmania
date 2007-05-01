@@ -139,6 +139,7 @@ protected:
 	ThemeMetric<float> MUSIC_FADE_OUT_SECONDS;
 	ThemeMetric<float> OUT_TRANSITION_LENGTH;
 	ThemeMetric<float> COURSE_TRANSITION_LENGTH;
+	ThemeMetric<float> BEGIN_FAILED_DELAY;
 	ThemeMetric<float> MIN_SECONDS_TO_STEP;
 	ThemeMetric<float> MIN_SECONDS_TO_MUSIC;
 	ThemeMetric<float> MIN_SECONDS_TO_STEP_NEXT_SONG;
@@ -192,7 +193,6 @@ protected:
 	Foreground		*m_pSongForeground;
 
 	Transition		m_NextSong;	// shows between songs in a course
-	Transition		m_SongFinished;	// shows after each song, course or not
 
 	AutoActor		m_sprLifeFrame;
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
