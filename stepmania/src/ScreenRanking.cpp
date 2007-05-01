@@ -468,17 +468,10 @@ void ScreenRankingScroller::BeginScreen()
 void ScoreScroller::SetScoreFromHighScoreList( BitmapText *pTextStepsScore, const HighScoreList &hsl )
 {
 	HighScore hs = hsl.GetTopScore();
-	bool bRecentHighScore = false;
 	if( !hsl.vHighScores.empty() )
-	{
 		hs = hsl.GetTopScore();
-		const RString *psName = hsl.GetTopScore().GetNameMutable();
-		bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
-	}
 	else
-	{
 		hs.SetName( NO_SCORE_NAME );
-	}
 
 	RString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.GetPercentDP() );
 	if( SHOW_SURVIVAL_TIME )
