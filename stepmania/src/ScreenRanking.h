@@ -158,8 +158,6 @@ private:
 
 	ThemeMetricDifficultiesToShow	DIFFICULTIES_TO_SHOW;
 	ThemeMetric<float>		COL_SPACING_X;
-	ThemeMetric<float>		COL_SPACING_Y;
-
 	ThemeMetric<float>		DIFFICULTY_START_X;
 	ThemeMetric<float>		DIFFICULTY_Y;
 	ThemeMetric<int>		NUM_MOST_RECENT_SCORES_TO_SHOW;

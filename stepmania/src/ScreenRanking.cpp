@@ -404,8 +404,6 @@ void ScreenRankingScroller::Init()
 	DIFFICULTIES_TO_SHOW.Load( m_sName, "DifficultiesToShow" );
 
 	COL_SPACING_X.Load( m_sName, "ColSpacingX" );
-	COL_SPACING_Y.Load( m_sName, "ColSpacingY" );
-	
 	DIFFICULTY_START_X.Load( m_sName, "DifficultyStartX" );
 	DIFFICULTY_Y.Load( m_sName, "DifficultyY" );
 	NUM_MOST_RECENT_SCORES_TO_SHOW.Load( m_sName, "NumMostRecentScoresToShow" );
