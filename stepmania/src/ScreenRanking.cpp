@@ -492,14 +492,14 @@ float ScreenRankingScroller::SetPage( const PageToShow &pts )
 // PageType_Trail:
 #define BULLET_X(row)				(BULLET_START_X+ROW_SPACING_X*row)
 #define BULLET_Y(row)				(BULLET_START_Y+ROW_SPACING_Y*row)
-#define NAME_X(row)					(NAME_START_X+ROW_SPACING_X*row)
-#define NAME_Y(row)					(NAME_START_Y+ROW_SPACING_Y*row)
+#define NAME_X(row)				(NAME_START_X+ROW_SPACING_X*row)
+#define NAME_Y(row)				(NAME_START_Y+ROW_SPACING_Y*row)
 #define SCORE_X(row)				(SCORE_START_X+ROW_SPACING_X*row)
 #define SCORE_Y(row)				(SCORE_START_Y+ROW_SPACING_Y*row)
 #define POINTS_X(row)				(POINTS_START_X+ROW_SPACING_X*row)
 #define POINTS_Y(row)				(POINTS_START_Y+ROW_SPACING_Y*row)
-#define TIME_X(row)					(TIME_START_X+ROW_SPACING_X*row)
-#define TIME_Y(row)					(TIME_START_Y+ROW_SPACING_Y*row)
+#define TIME_X(row)				(TIME_START_X+ROW_SPACING_X*row)
+#define TIME_Y(row)				(TIME_START_Y+ROW_SPACING_Y*row)
 
 void ScreenRankingLines::Init()
 {
