@@ -137,6 +137,8 @@ protected:
 	LocalizedString GIVE_UP_BACK_TEXT;
 	LocalizedString GIVE_UP_ABORTED_TEXT;
 	ThemeMetric<float> MUSIC_FADE_OUT_SECONDS;
+	ThemeMetric<float> OUT_TRANSITION_LENGTH;
+	ThemeMetric<float> COURSE_TRANSITION_LENGTH;
 	ThemeMetric<float> MIN_SECONDS_TO_STEP;
 	ThemeMetric<float> MIN_SECONDS_TO_MUSIC;
 	ThemeMetric<float> MIN_SECONDS_TO_STEP_NEXT_SONG;
@@ -153,6 +155,7 @@ protected:
 	virtual void LoadNextSong();
 	void LoadCourseSongNumber( int iSongNumber );
 	void StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMusic );
+	void GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, float &fSecondsToStartTransitioningOut );
 	void LoadLights();
 	void PauseGame( bool bPause, GameController gc = GameController_Invalid );
 	void PlayAnnouncer( RString type, float fSeconds );

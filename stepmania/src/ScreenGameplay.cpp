@@ -336,6 +336,8 @@ void ScreenGameplay::Init()
 	GIVE_UP_BACK_TEXT.Load(			m_sName, "GiveUpBackText" );
 	GIVE_UP_ABORTED_TEXT.Load(		m_sName, "GiveUpAbortedText" );
 	MUSIC_FADE_OUT_SECONDS.Load(		m_sName, "MusicFadeOutSeconds" );
+	OUT_TRANSITION_LENGTH.Load(		m_sName, "OutTransitionLength" );
+	COURSE_TRANSITION_LENGTH.Load(		m_sName, "CourseTransitionLength" );
 	MIN_SECONDS_TO_STEP.Load(		m_sName, "MinSecondsToStep" );
 	MIN_SECONDS_TO_MUSIC.Load(		m_sName, "MinSecondsToMusic" );
 	MIN_SECONDS_TO_STEP_NEXT_SONG.Load(	m_sName, "MinSecondsToStepNextSong" );
@@ -1288,6 +1290,16 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 	}
 
 	ASSERT( !m_pSoundMusic->IsPlaying() );
+	{
+		float fSecondsToStartFadingOutMusic, fSecondsToStartTransitioningOut;
+		GetMusicEndTiming( fSecondsToStartFadingOutMusic, fSecondsToStartTransitioningOut );
+
+		if( fSecondsToStartFadingOutMusic < GAMESTATE->m_pCurSong->m_fMusicLengthSeconds )
+		{
+			p.m_fFadeOutSeconds = MUSIC_FADE_OUT_SECONDS;
+			p.m_LengthSeconds = fSecondsToStartFadingOutMusic + MUSIC_FADE_OUT_SECONDS - p.m_StartSecond;
+		}
+	}
 	m_pSoundMusic->Play( &p );
 	if( m_bPaused )
 		m_pSoundMusic->Pause( true );
@@ -1425,6 +1437,35 @@ bool ScreenGameplay::AllAreFailing()
 			return false;
 	}
 	return true;
+}
+
+void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, float &fSecondsToStartTransitioningOut )
+{
+	float fLastStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
+	fLastStepSeconds += Player::GetMaxStepDistanceSeconds();
+
+	float fTransitionLength;
+	if( !GAMESTATE->IsCourseMode() || IsLastSong() )
+		fTransitionLength = OUT_TRANSITION_LENGTH;
+	else
+		fTransitionLength = COURSE_TRANSITION_LENGTH;
+
+	fSecondsToStartTransitioningOut = fLastStepSeconds;
+
+	// Align the end of the music fade to the end of the transition.
+	float fSecondsToFinishFadingOutMusic = fSecondsToStartTransitioningOut + fTransitionLength;
+	if( fSecondsToFinishFadingOutMusic < GAMESTATE->m_pCurSong->m_fMusicLengthSeconds )
+		fSecondsToStartFadingOutMusic = fSecondsToFinishFadingOutMusic - MUSIC_FADE_OUT_SECONDS;
+	else
+		fSecondsToStartFadingOutMusic = GAMESTATE->m_pCurSong->m_fMusicLengthSeconds; // don't fade
+
+	/* Make sure we keep going long enough to register a miss for the last note, and
+	 * never start fading before the last note. */
+	fSecondsToStartFadingOutMusic = max( fSecondsToStartFadingOutMusic, fLastStepSeconds );
+	fSecondsToStartTransitioningOut = max( fSecondsToStartTransitioningOut, fLastStepSeconds );
+
+	/* Make sure the fade finishes before the transition finishes. */
+	fSecondsToStartTransitioningOut = max( fSecondsToStartTransitioningOut, fSecondsToStartFadingOutMusic + MUSIC_FADE_OUT_SECONDS - fTransitionLength );
 }
 
 void ScreenGameplay::Update( float fDeltaTime )
@@ -1620,14 +1661,13 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		// Check for end of song
 		//
-		float fSecondsToStop = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
+		{
+			float fSecondsToStartFadingOutMusic, fSecondsToStartTransitioningOut;
+			GetMusicEndTiming( fSecondsToStartFadingOutMusic, fSecondsToStartTransitioningOut );
+			if( GAMESTATE->m_fMusicSeconds >= fSecondsToStartTransitioningOut && !m_SongFinished.IsTransitioning() && !m_NextSong.IsTransitioning() )
+				m_SongFinished.StartTransitioning( SM_NotesEnded );
+		}
 
-		/* Make sure we keep going long enough to register a miss for the last note. */
-		fSecondsToStop += Player::GetMaxStepDistanceSeconds();
-
-		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop && !m_SongFinished.IsTransitioning() && !m_NextSong.IsTransitioning() )
-			m_SongFinished.StartTransitioning( SM_NotesEnded );
-	
 		//
 		// update 2d dancing characters
 		//
@@ -2351,13 +2391,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			/* Load the next song in the course.  First, fade out and stop the music. */
-			float fFadeOutSeconds = MUSIC_FADE_OUT_SECONDS;
-			RageSoundParams p = m_pSoundMusic->GetParams();
-			p.m_fFadeOutSeconds = fFadeOutSeconds;
-			p.m_LengthSeconds = GAMESTATE->m_fMusicSeconds + fFadeOutSeconds;			
-			m_pSoundMusic->SetParams(p);
-			SCREENMAN->PostMessageToTopScreen( SM_StartLoadingNextSong, fFadeOutSeconds );
+			/* Load the next song in the course. */
+			HandleScreenMessage( SM_StartLoadingNextSong );
 			return;
 		}
 	}
@@ -2416,8 +2451,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_StartLoadingNextSong )
 	{	
-		m_pSoundMusic->Stop();
-
 		/* Next song. */
 
 		// give a little life back between stages
@@ -2438,6 +2471,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_LoadNextSong )
 	{
+		m_pSoundMusic->Stop();
 		SongFinished();
 
 		MESSAGEMAN->Broadcast( "ChangeCourseSongOut" );
