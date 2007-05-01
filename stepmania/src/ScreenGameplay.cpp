@@ -344,7 +344,6 @@ void ScreenGameplay::Init()
 	START_GIVES_UP.Load(			m_sName, "StartGivesUp" );
 	BACK_GIVES_UP.Load(			m_sName, "BackGivesUp" );
 	GIVING_UP_GOES_TO_PREV_SCREEN.Load(	m_sName, "GivingUpGoesToPrevScreen" );
-	GIVING_UP_GOES_TO_NEXT_SCREEN.Load(	m_sName, "GivingUpGoesToNextScreen" );
 	FAIL_AFTER_30_MISSES.Load(		m_sName, "FailAfter30Misses" );
 	ALLOW_CENTER_1_PLAYER.Load(		m_sName, "AllowCenter1Player" );
 	
@@ -1761,12 +1760,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 		if( GIVING_UP_GOES_TO_PREV_SCREEN )
 		{
 			BeginBackingOutFromGameplay();
-
-		}
-		else if( GIVING_UP_GOES_TO_NEXT_SCREEN )
-		{
-			HandleScreenMessage( SM_LeaveGameplay );
-			return;
 		}
 		else
 		{
