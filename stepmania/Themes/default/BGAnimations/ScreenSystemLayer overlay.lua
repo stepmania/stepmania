@@ -1,4 +1,4 @@
-function CreditsText( pn )
+local function CreditsText( pn )
 	function update(self)
 		local str = ScreenSystemLayerHelpers.GetCreditsMessage(pn);
 		self:settext(str);
