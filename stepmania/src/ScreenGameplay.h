@@ -153,7 +153,6 @@ protected:
 	void SetupSong( int iSongIndex );
 	void ReloadCurrentSong();
 	virtual void LoadNextSong();
-	void LoadCourseSongNumber( int iSongNumber );
 	void StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMusic );
 	void GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, float &fSecondsToStartTransitioningOut );
 	void LoadLights();
@@ -198,7 +197,6 @@ protected:
 
 	AutoActor		m_sprLifeFrame;
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
-	Sprite			m_sprCourseSongNumber;
 
 	BitmapText		m_textSongOptions;
 	BitmapText		m_Scoreboard[NUM_NSScoreBoardColumn];	// for NSMAN, so we can have a scoreboard

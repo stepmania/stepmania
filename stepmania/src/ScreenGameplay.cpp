@@ -592,11 +592,6 @@ void ScreenGameplay::Init()
 	//
 	// Add stage / SongNumber
 	//
-	m_sprCourseSongNumber.SetName( "CourseSongNumber" );
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprCourseSongNumber );
-	if( GAMESTATE->IsCourseMode() )
-		this->AddChild( &m_sprCourseSongNumber );
-
 	FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 	{
 		if( GAMESTATE->IsCourseMode() )
@@ -972,18 +967,6 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 	}
 }
 
-void ScreenGameplay::LoadCourseSongNumber( int iSongNumber )
-{
-	if( !GAMESTATE->IsCourseMode() )
-		return;
-	const RString path = THEME->GetPathG( m_sName, ssprintf("course song %i",iSongNumber+1), true );
-	if( path != "" )
-		m_sprCourseSongNumber.Load( path );
-	else
-		m_sprCourseSongNumber.UnloadTexture();
-	SCREENMAN->ZeroNextUpdate();
-}
-
 void ScreenGameplay::ReloadCurrentSong()
 {
 	FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
@@ -1006,8 +989,6 @@ void ScreenGameplay::LoadNextSong()
 	// super hack
 	if( GAMESTATE->m_bMultiplayer )
 		STATSMAN->m_CurStageStats.m_player[GAMESTATE->m_MasterPlayerNumber].m_iSongsPlayed++;
-
-	LoadCourseSongNumber( GAMESTATE->GetCourseSongIndex() );
 
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_apSongsQueue.size();
@@ -2465,9 +2446,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_NextSong.Reset();
 		m_NextSong.PlayCommand( "Start" );
 		m_NextSong.StartTransitioning( SM_LoadNextSong );
-		LoadCourseSongNumber( GAMESTATE->GetCourseSongIndex()+1 );
 		MESSAGEMAN->Broadcast( "ChangeCourseSongIn" );
-		COMMAND( m_sprCourseSongNumber, "ChangeIn" );
 	}
 	else if( SM == SM_LoadNextSong )
 	{
@@ -2475,7 +2454,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SongFinished();
 
 		MESSAGEMAN->Broadcast( "ChangeCourseSongOut" );
-		COMMAND( m_sprCourseSongNumber, "ChangeOut" );
 
 		GAMESTATE->m_bLoadingNextSong = false;
 		LoadNextSong();
