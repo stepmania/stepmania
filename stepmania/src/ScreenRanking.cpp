@@ -119,16 +119,11 @@ void ScreenRanking::Init()
 	m_textStepsType.LoadFromFont( THEME->GetPathF(m_sName,"steps type") );
 	m_textStepsType.SetShadowLength( 0 );
 	this->AddChild( &m_textStepsType );
-
-	m_sprPageType.Load( THEME->GetPathG(m_sName, "PageType "+PageTypeToString(m_PageType)) );
-	m_sprPageType->SetName( "PageType" );
-	this->AddChild( m_sprPageType );
 }
 
 void ScreenRanking::BeginScreen()
 {
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_textStepsType );
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprPageType );
 
 	m_iNextPageToShow = 0;
 

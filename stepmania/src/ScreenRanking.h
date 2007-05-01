@@ -71,7 +71,6 @@ protected:
 	PageType m_PageType;
 
 	BitmapText m_textStepsType;	// for category, course, all_steps
-	AutoActor  m_sprPageType;
 
 	vector<PageToShow>		m_vPagesToShow;
 	unsigned			m_iNextPageToShow;
