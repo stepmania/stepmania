@@ -352,7 +352,6 @@ void ScoreScroller::Load(
 {
 	SCORE_OFFSET_START_X.Load       (sClassName, "ScoreOffsetStartX");
 	SCORE_OFFSET_Y.Load             (sClassName, "ScoreOffsetY");
-	SHOW_SURVIVAL_TIME.Load         (sClassName, "ShowSurvivalTime");
 	NO_SCORE_NAME.Load              (sClassName, "NoScoreName");
 	COL_SPACING_X.Load              (sClassName, "ColSpacingX");
 	SONG_SCORE_SECONDS_PER_ROW.Load (sClassName, "SongScoreSecondsPerRow");
@@ -472,8 +471,6 @@ void ScoreScroller::SetScoreFromHighScoreList( BitmapText *pTextStepsScore, cons
 		hs.SetName( NO_SCORE_NAME );
 
 	RString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.GetPercentDP() );
-	if( SHOW_SURVIVAL_TIME )
-		s += "   " + SecondsToMSSMsMs(hs.GetSurvivalSeconds());
 	pTextStepsScore->SetText( s );
 }
 

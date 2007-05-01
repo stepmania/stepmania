@@ -129,7 +129,6 @@ protected:
 
 	ThemeMetric<float>	SCORE_OFFSET_START_X;
 	ThemeMetric<float>	SCORE_OFFSET_Y;
-	ThemeMetric<bool>	SHOW_SURVIVAL_TIME;
 	LocalizedString		NO_SCORE_NAME;
 	ThemeMetric<float>	COL_SPACING_X;
 	ThemeMetric<float>	SONG_SCORE_SECONDS_PER_ROW;
