@@ -241,7 +241,10 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 
 	this->PlayCommand( "TweenOff" );
 	this->FinishTweening();
+}
 
+void OptionsList::Reset()
+{
 	/* Import options. */
 	FOREACHM( RString, OptionRowHandler *, m_Rows, hand )
 	{

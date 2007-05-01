@@ -200,6 +200,10 @@ void ScreenSelectMusic::BeginScreen()
 	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;
 	ZERO( m_iSelection );
 
+	if( USE_OPTIONS_LIST )
+		FOREACH_HumanPlayer( pn )
+			m_OptionsList[pn].Reset();
+
 	AfterMusicChange();
 
 	SOUND->PlayOnceFromAnnouncer( "select music intro" );

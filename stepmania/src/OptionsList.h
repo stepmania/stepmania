@@ -45,6 +45,7 @@ public:
 	~OptionsList();
 
 	void Load( RString sType, PlayerNumber pn );
+	void Reset();
 
 	void Link( OptionsList *pLink ) { m_pLinked = pLink; }
 
