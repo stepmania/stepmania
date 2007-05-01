@@ -417,6 +417,7 @@ void ScreenRankingScroller::Init()
 	}
 
 	m_ListScoreRowItems.SetName( "ListScoreRowItems" );
+	LOAD_ALL_COMMANDS( m_ListScoreRowItems );
 	switch( m_PageType )
 	{
 	default:	ASSERT(0);
@@ -461,7 +462,7 @@ void ScreenRankingScroller::BeginScreen()
 {
 	ScreenRanking::BeginScreen();
 
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_ListScoreRowItems );
+	SET_XY( m_ListScoreRowItems );
 }
 
 void ScoreScroller::SetScoreFromHighScoreList( BitmapText *pTextStepsScore, const HighScoreList &hsl )
@@ -533,6 +534,7 @@ void ScreenRankingLines::Init()
 		m_textCategory.LoadFromFont( THEME->GetPathF(m_sName,"category") );
 		m_textCategory.SetShadowLength( 0 );
 		this->AddChild( &m_textCategory );
+		LOAD_ALL_COMMANDS( m_textCategory );
 
 		for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
 		{
@@ -551,11 +553,13 @@ void ScreenRankingLines::Init()
 	{
 		m_Banner.SetName( "Banner" );
 		this->AddChild( &m_Banner );
+		LOAD_ALL_COMMANDS( m_Banner );
 
 		m_textCourseTitle.SetName( "CourseTitle" );
 		m_textCourseTitle.LoadFromFont( THEME->GetPathF(m_sName,"course title") );
 		m_textCourseTitle.SetShadowLength( 0 );
 		this->AddChild( &m_textCourseTitle );
+		LOAD_ALL_COMMANDS( m_textCourseTitle );
 
 		vector<RString> asCoursePaths;
 		split( COURSES_TO_SHOW, ",", asCoursePaths, true );
@@ -750,12 +754,12 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 void ScreenRankingLines::BeginScreen()
 {
 	if( m_PageType == PageType_Category )
-		LOAD_ALL_COMMANDS_AND_SET_XY( m_textCategory );
+		SET_XY( m_textCategory );
 
 	if( m_PageType == PageType_Trail )
 	{
-		LOAD_ALL_COMMANDS_AND_SET_XY( m_Banner );
-		LOAD_ALL_COMMANDS_AND_SET_XY( m_textCourseTitle );
+		SET_XY( m_Banner );
+		SET_XY( m_textCourseTitle );
 	}
 
 	ScreenRanking::BeginScreen();
