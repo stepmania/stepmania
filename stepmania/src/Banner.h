@@ -19,6 +19,7 @@ public:
 
 	void Load( RageTextureID ID, bool bIsBanner );
 	virtual void Load( RageTextureID ID ) { Load( ID, true ); }
+	void LoadFromCachedBanner( const RString &sPath );
 
 	virtual void Update( float fDeltaTime );
 

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "Banner.h"
+#include "BannerCache.h"
 #include "SongManager.h"
 #include "RageUtil.h"
 #include "song.h"
@@ -10,6 +11,7 @@
 #include "CharacterManager.h"
 #include "ActorUtil.h"
 #include "UnlockManager.h"
+#include "PrefsManager.h"
 
 REGISTER_ACTOR_CLASS( Banner )
 
@@ -42,6 +44,34 @@ void Banner::Load( RageTextureID ID, bool bIsBanner )
 	Sprite::Load( ID );
 	TEXTUREMAN->EnableOddDimensionWarning();
 };
+
+void Banner::LoadFromCachedBanner( const RString &sPath )
+{
+	if( sPath.empty() )
+	{
+		LoadFallback();
+		return;
+	}
+
+	RageTextureID ID;
+	bool bLowRes = (PREFSMAN->m_BannerCache != BNCACHE_FULL);
+	if( !bLowRes )
+	{
+		ID = Sprite::SongBannerTexture( sPath );
+	}
+	else
+	{
+		/* Try to load the low quality version. */
+		ID = BANNERCACHE->LoadCachedBanner( sPath );
+	}
+
+	if( TEXTUREMAN->IsTextureRegistered(ID) )
+		Load( ID );
+	else if( IsAFile(sPath) )
+		Load( sPath );
+	else
+		LoadFallback();
+}
 
 void Banner::Update( float fDeltaTime )
 {
@@ -205,6 +235,11 @@ public:
 		else { Course *pC = Luna<Course>::check(L,1); p->LoadFromCourse( pC ); }
 		return 0;
 	}
+	static int LoadFromCachedBanner( T* p, lua_State *L )
+	{ 
+		p->LoadFromCachedBanner( SArg(1) );
+		return 0;
+	}
 	static int LoadIconFromCharacter( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
@@ -236,6 +271,7 @@ public:
 		ADD_METHOD( ScaleToClipped );
 		ADD_METHOD( LoadFromSong );
 		ADD_METHOD( LoadFromCourse );
+		ADD_METHOD( LoadFromCachedBanner );
 		ADD_METHOD( LoadIconFromCharacter );
 		ADD_METHOD( LoadCardFromCharacter );
 		ADD_METHOD( LoadBannerFromUnlockEntry );
