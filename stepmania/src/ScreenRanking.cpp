@@ -124,8 +124,6 @@ void ScreenRanking::Init()
 
 void ScreenRanking::BeginScreen()
 {
-	SET_XY( m_textStepsType );
-
 	m_iNextPageToShow = 0;
 
 	ScreenAttract::BeginScreen();
