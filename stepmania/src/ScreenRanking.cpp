@@ -739,15 +739,6 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 
 void ScreenRankingLines::BeginScreen()
 {
-	if( m_PageType == PageType_Category )
-		SET_XY( m_textCategory );
-
-	if( m_PageType == PageType_Trail )
-	{
-		SET_XY( m_Banner );
-		SET_XY( m_textCourseTitle );
-	}
-
 	ScreenRanking::BeginScreen();
 }
 
