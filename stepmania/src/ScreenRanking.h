@@ -12,12 +12,12 @@
 #include "Difficulty.h"
 #include "ThemeMetric.h"
 #include "CommonMetrics.h"
-#include "RageSound.h"
 
 class Course;
 class Song;
 class Trail;
 struct HighScoreList;
+typedef pair<Difficulty, StepsType> DifficultyAndStepsType;
 
 enum PageType
 {
@@ -31,8 +31,6 @@ enum PageType
 	NUM_PageType,
 	PageType_Invalid
 };
-#define FOREACH_PageType( pt ) FOREACH_ENUM( PageType, pt )
-const RString& PageTypeToString( PageType pt );
 PageType StringToPageType( const RString& s );
 
 class ScreenRanking : public ScreenAttract
@@ -60,7 +58,7 @@ protected:
 		}
 
 		int		colorIndex;
-		StepsType	st;
+		vector<DifficultyAndStepsType> aTypes;
 		RankingCategory	category;
 		Course*		pCourse;
 		Trail*		pTrail;
@@ -78,14 +76,8 @@ protected:
 	// Don't use the version in CommonMetrics because we may have multiple 
 	// ranking screens that want to show different types and difficulties.
 	ThemeMetricStepsTypesToShow	STEPS_TYPES_TO_SHOW;
-	ThemeMetric<float>		ROW_SPACING_X;
-	ThemeMetric<float>		ROW_SPACING_Y;
-	ThemeMetric1D<RageColor>	STEPS_TYPE_COLOR;
-
-	ThemeMetric<bool>		SHOW_ONLY_MOST_RECENT_SCORES;
 	ThemeMetric<float>		SECONDS_PER_PAGE;
 	ThemeMetric<float>		PAGE_FADE_SECONDS;
-	LocalizedString			NO_SCORE_NAME;
 	ThemeMetric<bool>		MANUAL_SCROLLING;
 };
 
@@ -95,28 +87,14 @@ public:
 	ScoreScroller();
 	void LoadSongs( bool bOnlyRecentScores, int iNumRecentScores );
 	void LoadCourses( CourseType ct, bool bOnlyRecentScores, int iNumRecentScores );
-	void Load(
-		RString sClassName,
-		const vector<Difficulty> &DifficultiesToShow,
-		float fItemHeight );
-	void SetStepsType( StepsType st, RageColor color );
+	void Load( RString sClassName );
+	void SetDisplay( const vector<DifficultyAndStepsType> &DifficultiesToShow );
 	bool Scroll( int iDir );
 	void ScrollTop();
 
 protected:
 	virtual void ConfigureActor( Actor *pActor, int iItem );
-	void SetScoreFromHighScoreList( BitmapText *pTextStepsScore, const HighScoreList &hsl );
-	StepsType m_StepsType;
-	vector<Difficulty> m_DifficultiesToShow;
-
-	struct ScoreRowItem: public ActorFrame
-	{
-		ScoreRowItem();
-		ScoreRowItem( const ScoreRowItem &cpy );
-		AutoActor	m_sprFrame;
-		BitmapText	m_textTitle;
-		vector<BitmapText> m_textScore;
-	};
+	vector<DifficultyAndStepsType> m_DifficultiesToShow;
 
 	struct ScoreRowItemData // for all_steps and all_courses
 	{
@@ -127,19 +105,13 @@ protected:
 	};
 	vector<ScoreRowItemData> m_vScoreRowItemData;
 
-	ThemeMetric<float>	SCORE_OFFSET_START_X;
-	ThemeMetric<float>	SCORE_OFFSET_Y;
-	LocalizedString		NO_SCORE_NAME;
-	ThemeMetric<float>	COL_SPACING_X;
-	ThemeMetric<float>	SONG_SCORE_SECONDS_PER_ROW;
-	ThemeMetric<int>	m_metricSongScoreRowsToDraw;
+	ThemeMetric<int>	SONG_SCORE_ROWS_TO_DRAW;
 };
 
 class ScreenRankingScroller: public ScreenRanking 
 {
 public:
 	virtual void Init();
-	virtual void BeginScreen();
 
 	virtual void MenuLeft( const InputEventPlus &input )	{ DoScroll(-1); }
 	virtual void MenuRight( const InputEventPlus &input )	{ DoScroll(+1); }
@@ -151,16 +123,6 @@ private:
 	virtual float SetPage( const PageToShow &pts );
 
 	ScoreScroller m_ListScoreRowItems;
-
-	AutoActor  m_sprDifficulty[NUM_Difficulty];	// for all_steps
-
-	ThemeMetricDifficultiesToShow	DIFFICULTIES_TO_SHOW;
-	ThemeMetric<float>		COL_SPACING_X;
-	ThemeMetric<float>		DIFFICULTY_START_X;
-	ThemeMetric<float>		DIFFICULTY_Y;
-	ThemeMetric<int>		NUM_MOST_RECENT_SCORES_TO_SHOW;
-
-	RageSound			m_soundChange;
 };
 
 static const int NUM_RANKING_LINES = 5;
@@ -183,7 +145,11 @@ private:
 	BitmapText m_textScores[NUM_RANKING_LINES];	// for category and course
 	BitmapText m_textPoints[NUM_RANKING_LINES];	// for course
 	BitmapText m_textTime[NUM_RANKING_LINES];	// for course
+	ThemeMetric1D<RageColor>	STEPS_TYPE_COLOR;
 
+	LocalizedString		NO_SCORE_NAME;
+	ThemeMetric<float>	ROW_SPACING_X;
+	ThemeMetric<float>	ROW_SPACING_Y;
 	ThemeMetric<float>	BULLET_START_X;
 	ThemeMetric<float>	BULLET_START_Y;
 	ThemeMetric<float>	NAME_START_X;
@@ -199,7 +165,7 @@ private:
 #endif
 
 /*
- * (c) 2001-2005 Chris Danford, Ben Nordstrom, Glenn Maynard
+ * (c) 2001-2007 Chris Danford, Ben Nordstrom, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
