@@ -86,26 +86,31 @@ void ScreenWithMenuElements::Init()
 	m_sprUnderlay->SetName("Underlay");
 	m_sprUnderlay->SetDrawOrder( DRAW_ORDER_UNDERLAY );
 	this->AddChild( m_sprUnderlay );
+	LOAD_ALL_COMMANDS( m_sprUnderlay );
 	
 	m_sprOverlay.Load( THEME->GetPathB(m_sName,"overlay") );
 	m_sprOverlay->SetName("Overlay");
 	m_sprOverlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
 	this->AddChild( m_sprOverlay );
+	LOAD_ALL_COMMANDS( m_sprOverlay );
 
 	m_In.SetName( "In" );
 	m_In.Load( THEME->GetPathB(m_sName,"in") );
 	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_In );
+	LOAD_ALL_COMMANDS( m_In );
 
 	m_Out.SetName( "Out" );
 	m_Out.Load( THEME->GetPathB(m_sName,"out") );
 	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
+	LOAD_ALL_COMMANDS( m_Out );
 
 	m_Cancel.SetName( "Cancel" );
 	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
 	m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Cancel );
+	LOAD_ALL_COMMANDS( m_Cancel );
 
 	/* Grab the music path here; don't GetPath during BeginScreen. */
 	if( PLAY_MUSIC )
