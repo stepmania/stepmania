@@ -963,8 +963,15 @@ class LunaSprite: public Luna<Sprite>
 public:
 	static int Load( T* p, lua_State *L )
 	{
-		RageTextureID ID( SArg(1) );
-		p->Load( ID );
+		if( lua_isnil(L, 1) )
+		{
+			p->UnloadTexture();
+		}
+		else
+		{
+			RageTextureID ID( SArg(1) );
+			p->Load( ID );
+		}
 		return 0;
 	}
 	static int LoadBackground( T* p, lua_State *L )
