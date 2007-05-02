@@ -460,8 +460,6 @@ void ScreenRankingScroller::Init()
 void ScreenRankingScroller::BeginScreen()
 {
 	ScreenRanking::BeginScreen();
-
-	SET_XY( m_ListScoreRowItems );
 }
 
 void ScoreScroller::SetScoreFromHighScoreList( BitmapText *pTextStepsScore, const HighScoreList &hsl )
