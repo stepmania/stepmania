@@ -13,7 +13,7 @@
 #include <map>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <float.h>
+#include <math.h>
 
 RandomGen g_RandomNumberGenerator;
 
