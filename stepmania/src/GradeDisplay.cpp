@@ -45,8 +45,8 @@ int GradeDisplay::GetFrameIndex( PlayerNumber pn, Grade g )
 	case Grade_Tier05:	iFrame = 4;	break;
 	case Grade_Tier06:	iFrame = 5;	break;
 	case Grade_Tier07:	iFrame = 6;	break;
+	default:		iFrame = 6;	break;
 	case Grade_Failed:	iFrame = 7;	break;
-	default:		iFrame = 7;	break;
 	}
 	iFrame *= iNumCols;
 	if( iNumCols==2 )
