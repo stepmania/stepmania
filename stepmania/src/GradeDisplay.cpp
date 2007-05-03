@@ -1,9 +1,6 @@
 #include "global.h"
 #include "GradeDisplay.h"
 #include "RageUtil.h"
-#include "GameConstantsAndTypes.h"
-#include "ThemeManager.h"
-#include "RageTexture.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageLog.h"
 
