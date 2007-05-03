@@ -305,6 +305,8 @@ void MusicWheelItem::RefreshGrades()
 		Difficulty dc;
 		if( GAMESTATE->m_pCurSteps[p] )
 			dc = GAMESTATE->m_pCurSteps[p]->GetDifficulty();
+		else if( GAMESTATE->m_pCurTrail[p] )
+			dc = GAMESTATE->m_pCurTrail[p]->m_CourseDifficulty;
 		else
 			dc = GAMESTATE->m_PreferredDifficulty[p];
 
