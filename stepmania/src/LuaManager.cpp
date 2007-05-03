@@ -766,8 +766,6 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 		{
 			const Command& cmd = (*c);
 			RString sName = cmd.GetName();
-			TrimLeft( sName );
-			TrimRight( sName );
 			s << "\tself:" << sName << "(";
 
 			for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
