@@ -40,7 +40,7 @@ RageSoundManager *SOUNDMAN = NULL;
 RageSoundManager::RageSoundManager()
 {
 	m_fMixVolume = 1.0f;
-	m_bPlayOnlyCriticalSounds = false;
+	m_fVolumeOfNonCriticalSounds = 1.0f;
 }
 
 static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
@@ -187,11 +187,11 @@ void RageSoundManager::SetMixVolume( float fMixVol )
 	g_SoundManMutex.Unlock(); /* finished with m_fMixVolume */
 }
 
-void RageSoundManager::SetPlayOnlyCriticalSounds( bool bPlayOnlyCriticalSounds )
+void RageSoundManager::SetVolumeOfNonCriticalSounds( float fVolumeOfNonCriticalSounds )
 {
-	g_SoundManMutex.Lock(); /* lock for access to m_bPlayOnlyCriticalSounds */
-	m_bPlayOnlyCriticalSounds = bPlayOnlyCriticalSounds;
-	g_SoundManMutex.Unlock(); /* finished with m_bPlayOnlyCriticalSounds */
+	g_SoundManMutex.Lock(); /* lock for access to m_fVolumeOfNonCriticalSounds */
+	m_fVolumeOfNonCriticalSounds = fVolumeOfNonCriticalSounds;
+	g_SoundManMutex.Unlock(); /* finished with m_fVolumeOfNonCriticalSounds */
 }
 
 /*

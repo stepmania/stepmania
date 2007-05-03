@@ -31,8 +31,8 @@ public:
 
 	float GetMixVolume() const { return m_fMixVolume; }
 	void SetMixVolume( float fMixVol );
-	bool GetPlayOnlyCriticalSounds() const { return m_bPlayOnlyCriticalSounds; }
-	void SetPlayOnlyCriticalSounds( bool bPlayOnlyCriticalSounds );
+	float GetVolumeOfNonCriticalSounds() const { return m_fVolumeOfNonCriticalSounds; }
+	void SetVolumeOfNonCriticalSounds( float fVolumeOfNonCriticalSounds );
 
 	void Update();
 	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
@@ -52,7 +52,7 @@ private:
 
 	/* Prefs: */
 	float m_fMixVolume;
-	bool m_bPlayOnlyCriticalSounds;
+	float m_fVolumeOfNonCriticalSounds;
 };
 
 extern RageSoundManager *SOUNDMAN;

@@ -350,8 +350,6 @@ void RageSound::StartPlaying()
 
 	m_bPlaying = true;
 
-	if( !m_Param.m_bIsCriticalSound && SOUNDMAN->GetPlayOnlyCriticalSounds() )
-		m_Param.m_Volume = 0;
 	ApplyParams();
 
 	/* Don't lock while calling SOUNDMAN driver calls. */
@@ -586,6 +584,8 @@ void RageSound::ApplyParams()
 	m_pSource->SetProperty( "FadeSeconds", m_Param.m_fFadeOutSeconds );
 
 	float fVolume = m_Param.m_Volume * SOUNDMAN->GetMixVolume();
+	if( !m_Param.m_bIsCriticalSound )
+		fVolume *= SOUNDMAN->GetVolumeOfNonCriticalSounds();
 	m_pSource->SetProperty( "Volume", fVolume );
 
 	switch( GetStopMode() )

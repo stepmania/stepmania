@@ -26,7 +26,10 @@ ScreenAttract::ScreenAttract( bool bResetGameState )
 
 void ScreenAttract::Init()
 {
-	SOUNDMAN->SetPlayOnlyCriticalSounds( !GAMESTATE->IsTimeToPlayAttractSounds() );	// mute attract sounds
+	if( GAMESTATE->IsTimeToPlayAttractSounds() )
+		SOUNDMAN->SetVolumeOfNonCriticalSounds( 1.0f );  // unmute attract sounds
+	else
+		SOUNDMAN->SetVolumeOfNonCriticalSounds( 0.0f );  // mute attract sounds
 
 	GAMESTATE->VisitAttractScreen( m_sName );
 
@@ -71,7 +74,7 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 			if( input.MenuI != MENU_BUTTON_COIN )
 				SCREENMAN->PlayCoinSound();
 			
-			SOUNDMAN->SetPlayOnlyCriticalSounds( false );	// unmute attract sounds
+			SOUNDMAN->SetVolumeOfNonCriticalSounds( 1.0f );	// unmute attract sounds
 			pScreen->Cancel( SM_GoToStartScreen );
 			break;
 		default:
