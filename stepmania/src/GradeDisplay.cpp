@@ -50,7 +50,7 @@ void GradeDisplay::Update( float fDeltaTime )
 		m_fTimeLeftInScroll = max( 0, m_fTimeLeftInScroll );
 
 		float fPercentIntoScrolling;
-		if( m_bDoScrolling == 1)
+		if( m_bDoScrolling == 1 )
 		{
 			fPercentIntoScrolling = 1 - (m_fTimeLeftInScroll/SCROLL_TIME);
 			if( fPercentIntoScrolling < 0.75 )
