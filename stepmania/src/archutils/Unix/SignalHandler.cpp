@@ -4,7 +4,7 @@
 #include "SignalHandler.h"
 #include "GetSysInfo.h"
 
-#if defined(LINUX)
+#if defined(UNIX)
 #include "archutils/Unix/LinuxThreadHelpers.h"
 #endif
 
