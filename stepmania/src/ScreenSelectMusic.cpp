@@ -201,7 +201,7 @@ void ScreenSelectMusic::BeginScreen()
 	ZERO( m_iSelection );
 
 	if( USE_OPTIONS_LIST )
-		FOREACH_HumanPlayer( pn )
+		FOREACH_PlayerNumber( pn )
 			m_OptionsList[pn].Reset();
 
 	AfterMusicChange();
