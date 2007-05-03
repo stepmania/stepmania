@@ -20,6 +20,8 @@ AutoActor::AutoActor( const AutoActor &cpy )
 
 AutoActor &AutoActor::operator=( const AutoActor &cpy )
 {
+	Unload();
+
 	if( cpy.m_pActor == NULL )
 		m_pActor = NULL;
 	else
