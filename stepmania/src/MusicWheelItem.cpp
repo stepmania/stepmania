@@ -15,13 +15,6 @@
 #include "ThemeMetric.h"
 #include "HighScore.h"
 
-static RString GRADE_X_NAME( size_t p ) { return ssprintf("GradeP%dX",int(p+1)); }
-static RString GRADE_Y_NAME( size_t p ) { return ssprintf("GradeP%dY",int(p+1)); }
-
-static ThemeMetric1D<float>		GRADE_X			("MusicWheelItem",GRADE_X_NAME,NUM_PLAYERS);
-static ThemeMetric1D<float>		GRADE_Y			("MusicWheelItem",GRADE_Y_NAME,NUM_PLAYERS);
-
-
 WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, RString sSectionName, Course* pCourse, RageColor color ):
 	WheelItemBaseData(wit, sSectionName, color)
 {
@@ -92,10 +85,11 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	FOREACH_PlayerNumber( p )
 	{
 		m_pGradeDisplay[p] = new GradeDisplay;
+		m_pGradeDisplay[p]->SetName( ssprintf("GradeP%d",int(p+1)) );
 		m_pGradeDisplay[p]->Load( THEME->GetPathG(sType,"grades") );
 		m_pGradeDisplay[p]->SetZoom( 1.0f );
-		m_pGradeDisplay[p]->SetXY( GRADE_X.GetValue(p), 0 );
 		this->AddChild( m_pGradeDisplay[p] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_pGradeDisplay[p] );
 	}
 
 	this->SubscribeToMessage( Message_CurrentStepsP1Changed );
