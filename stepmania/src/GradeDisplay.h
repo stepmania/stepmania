@@ -16,9 +16,6 @@ public:
 
 protected:
 	int GetFrameIndex( PlayerNumber pn, Grade g );
-
-	PlayerNumber m_PlayerNumber;
-	Grade m_Grade;
 };
 
 #endif

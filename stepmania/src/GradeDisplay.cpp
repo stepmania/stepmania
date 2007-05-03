@@ -56,9 +56,6 @@ int GradeDisplay::GetFrameIndex( PlayerNumber pn, Grade g )
 
 void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 {
-	m_PlayerNumber = pn;
-	m_Grade = g;
-
 	if( g != Grade_NoData )
 	{
 		SetState( GetFrameIndex(pn,g) );
