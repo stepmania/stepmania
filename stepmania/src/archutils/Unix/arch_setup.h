@@ -1,6 +1,10 @@
 #ifndef ARCH_SETUP_UNIX_H
 #define ARCH_SETUP_UNIX_H
 
+#if !defined(_STDC_C99) && !defined(__C99FEATURES__)
+#define __C99FEATURES__
+#endif
+
 #if !defined(MISSING_STDINT_H) /* need to define int64_t if so */
 #include <stdint.h>
 #endif
