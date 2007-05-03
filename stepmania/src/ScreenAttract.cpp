@@ -27,6 +27,7 @@ ScreenAttract::ScreenAttract( bool bResetGameState )
 void ScreenAttract::BeginScreen()
 {
 	GAMESTATE->VisitAttractScreen( m_sName );
+	ScreenAttract::SetAttractVolume( !GAMESTATE->IsTimeToPlayAttractSounds() );
 
 	ScreenWithMenuElements::BeginScreen();
 }
@@ -128,10 +129,6 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 
 		if( bMusicChanging )
 			SOUND->StopMusic();
-	}
-	else if( SM == SM_GainFocus )
-	{
-		ScreenAttract::SetAttractVolume( !GAMESTATE->IsTimeToPlayAttractSounds() );
 	}
 	else if( SM == SM_LoseFocus )
 	{

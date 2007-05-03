@@ -19,13 +19,13 @@ REGISTER_SCREEN_CLASS( ScreenDemonstration );
 ScreenDemonstration::ScreenDemonstration()
 {
 	m_bDemonstration = true;
-	ScreenAttract::SetAttractVolume( !GAMESTATE->IsTimeToPlayAttractSounds() );
 }
 
 void ScreenDemonstration::Init()
 {
 	GAMESTATE->Reset();
 	GAMESTATE->VisitAttractScreen( m_sName );
+	ScreenAttract::SetAttractVolume( !GAMESTATE->IsTimeToPlayAttractSounds() );
 
 	// Choose a Style
 	{
@@ -79,6 +79,10 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 		if(!m_Out.IsTransitioning())
 			m_Out.StartTransitioning( SM_GoToNextScreen );
 		return;
+	}
+	else if( SM == SM_LoseFocus )
+	{
+		ScreenAttract::SetAttractVolume( false );
 	}
 	ScreenJukebox::HandleScreenMessage( SM );
 }
