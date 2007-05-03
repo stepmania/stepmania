@@ -246,7 +246,7 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 }
 #endif
 
-#elif defined(BSD)
+#elif defined(UNIX)
 #include <pthread.h>
 #include <signal.h>
 
