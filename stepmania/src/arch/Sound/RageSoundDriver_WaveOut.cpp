@@ -73,8 +73,8 @@ bool RageSoundDriver_WaveOut::GetData()
 	this->Mix( (int16_t *) m_aBuffers[b].lpData, chunksize_frames, m_iLastCursorPos, GetPosition() );
 
 	MMRESULT ret = waveOutWrite( m_hWaveOut, &m_aBuffers[b], sizeof(m_aBuffers[b]) );
-  	if(ret != MMSYSERR_NOERROR)
-		RageException::Throw(wo_ssprintf(ret, "waveOutWrite failed"));
+  	if( ret != MMSYSERR_NOERROR )
+		FAIL_M( wo_ssprintf(ret, "waveOutWrite failed") );
 
 	/* Increment m_iLastCursorPos. */
 	m_iLastCursorPos += chunksize_frames;
@@ -94,7 +94,7 @@ int64_t RageSoundDriver_WaveOut::GetPosition() const
 	tm.wType = TIME_SAMPLES;
 	MMRESULT ret = waveOutGetPosition( m_hWaveOut, &tm, sizeof(tm) );
   	if( ret != MMSYSERR_NOERROR )
-		RageException::Throw( wo_ssprintf(ret, "waveOutGetPosition failed") );
+		FAIL_M( wo_ssprintf(ret, "waveOutGetPosition failed") );
 
 	return tm.u.sample;
 }

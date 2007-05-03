@@ -62,7 +62,7 @@ bool RageSoundDriver_OSS::GetData()
 	/* Look for a free buffer. */
 	audio_buf_info ab;
 	if( ioctl(fd, SNDCTL_DSP_GETOSPACE, &ab) == -1 )
-		RageException::Throw("ioctl(SNDCTL_DSP_GETOSPACE): %s", strerror(errno) );
+		FAIL_M( ssprintf("ioctl(SNDCTL_DSP_GETOSPACE): %s", strerror(errno)) );
 
 	if( !ab.fragments )
 		return false;
@@ -77,7 +77,7 @@ bool RageSoundDriver_OSS::GetData()
 
 	int wrote = write( fd, buf, chunksize );
   	if( wrote != chunksize )
-		RageException::Throw( "write didn't: %i (%s)", wrote, wrote == -1? strerror(errno): "" );
+		FAIL_M( ssprintf("write didn't: %i (%s)", wrote, wrote == -1? strerror(errno): "") );
 
 	/* Increment last_cursor_pos. */
 	last_cursor_pos += chunksize / bytes_per_frame;
@@ -93,7 +93,7 @@ int64_t RageSoundDriver_OSS::GetPosition() const
 	
 	int delay;
 	if(ioctl(fd, SNDCTL_DSP_GETODELAY, &delay) == -1)
-		RageException::Throw("RageSoundDriver_OSS: ioctl(SNDCTL_DSP_GETODELAY): %s", strerror(errno));
+		FAIL_M( ssprintf("RageSoundDriver_OSS: ioctl(SNDCTL_DSP_GETODELAY): %s", strerror(errno)) );
 
 	return last_cursor_pos - (delay / bytes_per_frame);
 }
