@@ -16,6 +16,10 @@
 
 REGISTER_SOUND_DRIVER_CLASS( OSS );
 
+#if !defined(SNDCTL_DSP_SPEED)
+#define SNDCTL_DSP_SPEED SOUND_PCM_WRITE_RATE
+#endif
+
 /* samples */
 const int channels = 2;
 const int bytes_per_frame = channels*2;		/* 16-bit */
