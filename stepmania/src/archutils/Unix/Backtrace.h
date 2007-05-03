@@ -13,7 +13,7 @@ struct BacktraceContext
 	const void *ip, *bp, *sp;
 #endif
 
-#if defined(LINUX)
+#if defined(UNIX)
 	pid_t pid;
 #endif
 
