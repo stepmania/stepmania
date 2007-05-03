@@ -121,7 +121,7 @@ void BacktraceNames::FromAddr( const void *p )
      * between one function and the next, because the first lookup will succeed.
      */
     Dl_info di;
-    if( !dladdr(p, &di) || di.dli_sname == NULL )
+    if( !dladdr((void *) p, &di) || di.dli_sname == NULL )
     {
 		if( !dladdr( ((char *) p) - 8, &di) )
 			return;
