@@ -23,8 +23,6 @@
 #if defined(_XBOX)
 #  include <malloc.h>	// for alloca
 #  include "archutils/Xbox/VirtualMemory.h"
-#elif defined(LINUX)
-#  include <alloca.h>
 #endif
 
 namespace
