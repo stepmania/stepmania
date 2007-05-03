@@ -95,7 +95,7 @@ void *LowLevelWindow_X11::GetProcAddress( RString s )
 
 RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
-#if defined(LINUX)
+#if defined(UNIX)
 	/*
 	 * nVidia cards:
 	 *
