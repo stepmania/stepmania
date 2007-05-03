@@ -47,6 +47,7 @@ RageSoundParams::RageSoundParams():
 	m_fFadeInSeconds = 0;
 	m_fFadeOutSeconds = 0;
 	m_Volume = 1.0f;
+	m_fAttractVolume = 1.0f;
 	m_fPitch = 1.0f;
 	m_fSpeed = 1.0f;
 	StopMode = M_AUTO;
@@ -350,6 +351,9 @@ void RageSound::StartPlaying()
 
 	m_bPlaying = true;
 
+	/* Save the attract volume, so changes don't affect previously played
+	 * sounds. */
+	m_Param.m_fAttractVolume = SOUNDMAN->GetVolumeOfNonCriticalSounds();
 	ApplyParams();
 
 	/* Don't lock while calling SOUNDMAN driver calls. */
@@ -585,7 +589,7 @@ void RageSound::ApplyParams()
 
 	float fVolume = m_Param.m_Volume * SOUNDMAN->GetMixVolume();
 	if( !m_Param.m_bIsCriticalSound )
-		fVolume *= SOUNDMAN->GetVolumeOfNonCriticalSounds();
+		fVolume *= m_Param.m_fAttractVolume;
 	m_pSource->SetProperty( "Volume", fVolume );
 
 	switch( GetStopMode() )

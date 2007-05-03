@@ -39,6 +39,7 @@ struct RageSoundParams
 	float m_fFadeOutSeconds;
 
 	float m_Volume;	// multiplies with SOUNDMAN->GetMixVolume()
+	float m_fAttractVolume;	// multiplies with m_Volume
 
 	/* Number of samples input and output when changing speed.  Currently,
 	 * this is either 1/1, 5/4 or 4/5. */
