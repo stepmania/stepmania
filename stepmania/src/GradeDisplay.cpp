@@ -114,16 +114,14 @@ void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 	m_bDoScrolling = false;
 	StopUsingCustomCoords();
 
-	if(g != Grade_NoData)
+	if( g != Grade_NoData )
 	{
 		SetState( GetFrameIndex(pn,g) );
 		SetVisible( true );
-		SetDiffuseAlpha(1);
 	}
 	else
 	{
 		SetVisible( false );
-		SetDiffuseAlpha(0);
 	}
 }
 
