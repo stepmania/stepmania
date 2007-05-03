@@ -15,6 +15,7 @@
 #define START_SCREEN(sScreenName)	THEME->GetMetric (sScreenName,"StartScreen")
 
 ThemeMetric<bool>	BACK_GOES_TO_START_SCREEN( "ScreenAttract", "BackGoesToStartScreen" );
+Preference<float>	g_fSoundVolumeAttract( "SoundVolumeAttract", 1.0f );
 
 REGISTER_SCREEN_CLASS( ScreenAttract );
 ScreenAttract::ScreenAttract( bool bResetGameState )
@@ -44,7 +45,7 @@ void ScreenAttract::SetAttractVolume( bool bInAttract )
 	if( bInAttract )
 		SOUNDMAN->SetVolumeOfNonCriticalSounds( 0.0f );  // mute attract sounds
 	else
-		SOUNDMAN->SetVolumeOfNonCriticalSounds( 1.0f );  // unmute attract sounds
+		SOUNDMAN->SetVolumeOfNonCriticalSounds( g_fSoundVolumeAttract );  // unmute attract sounds
 }
 
 void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen )
