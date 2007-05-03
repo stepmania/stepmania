@@ -809,9 +809,6 @@ void ScreenEvaluation::MenuStart( const InputEventPlus &input )
 
 void ScreenEvaluation::HandleMenuStart()
 {
-	FOREACH_PlayerNumber( p )
-		m_Grades[p].SettleImmediately();
-
 	StartTransitioningScreen( SM_GoToNextScreen );
 }
 

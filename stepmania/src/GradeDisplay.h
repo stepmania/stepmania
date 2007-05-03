@@ -11,35 +11,14 @@
 class GradeDisplay : public Sprite
 {
 public:
-	GradeDisplay();
 	virtual void Load( RageTextureID ID );
-
-	virtual void Update( float fDeltaTime );
-
 	void SetGrade( PlayerNumber pn, Grade g );
-	void Scroll();
-	void SettleImmediately();
-	void SettleQuickly();
-
-	Grade GetGrade () const { return m_Grade; }
-
-	//
-	// Lua
-	//
-	virtual void PushSelf( lua_State *L );
 
 protected:
 	int GetFrameIndex( PlayerNumber pn, Grade g );
 
 	PlayerNumber m_PlayerNumber;
 	Grade m_Grade;
-
-	// for scrolling; 0 = no, 1 = normal, 2 = quick
-	int  m_bDoScrolling;
-	RectF m_frectStartTexCoords;
-	RectF m_frectDestTexCoords;
-	RectF m_frectCurTexCoords;
-	float m_fTimeLeftInScroll;
 };
 
 #endif
