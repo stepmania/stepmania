@@ -98,7 +98,7 @@ int GradeDisplay::GetFrameIndex( PlayerNumber pn, Grade g )
 	case Grade_Tier06:	iFrame = 5;	break;
 	case Grade_Tier07:	iFrame = 6;	break;
 	case Grade_Failed:	iFrame = 7;	break;
-	default:			iFrame = 7;	break;
+	default:		iFrame = 7;	break;
 	}
 	iFrame *= iNumCols;
 	if( iNumCols==2 )
@@ -149,7 +149,7 @@ void GradeDisplay::SettleImmediately()
 
 void GradeDisplay::SettleQuickly()
 {
-	if(m_bDoScrolling != 1)
+	if( m_bDoScrolling != 1 )
 		return;
 
 	/* If we're in the last phase of scrolling, don't do this. */
@@ -160,7 +160,7 @@ void GradeDisplay::SettleQuickly()
 	 * is somewhere above that.  Shift m_frectCurTexCoords downwards so it's pointing
 	 * at the same physical place (remember, the grade texture is tiled) but no more
 	 * than one rotation away from the destination. */
-	while(m_frectCurTexCoords.top > m_frectDestTexCoords.top + 1.0f)
+	while( m_frectCurTexCoords.top > m_frectDestTexCoords.top + 1.0f )
 	{
 		m_frectCurTexCoords.top -= 1.0f;
 		m_frectCurTexCoords.bottom -= 1.0f;
