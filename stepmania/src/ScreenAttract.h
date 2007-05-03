@@ -15,6 +15,7 @@ public:
 
 	static void AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen );
 	static void GoToStartScreen( RString sScreenName );
+	static void SetAttractVolume( bool bInAttract );
 	
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );

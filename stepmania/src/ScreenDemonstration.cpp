@@ -10,7 +10,7 @@
 #include "GameSoundManager.h"
 #include "GameManager.h"
 #include "Style.h"
-
+#include "ScreenAttract.h"
 
 #define SECONDS_TO_SHOW			THEME->GetMetricF(m_sName,"SecondsToShow")
 #define ALLOW_STYLE_TYPES		THEME->GetMetric (m_sName,"AllowStyleTypes")
@@ -19,15 +19,13 @@ REGISTER_SCREEN_CLASS( ScreenDemonstration );
 ScreenDemonstration::ScreenDemonstration()
 {
 	m_bDemonstration = true;
-	if( GAMESTATE->IsTimeToPlayAttractSounds() )
-		SOUNDMAN->SetVolumeOfNonCriticalSounds( 1.0f );  // unmute attract sounds
-	else
-		SOUNDMAN->SetVolumeOfNonCriticalSounds( 0.0f );  // mute attract sounds
+	ScreenAttract::SetAttractVolume( !GAMESTATE->IsTimeToPlayAttractSounds() );
 }
 
 void ScreenDemonstration::Init()
 {
 	GAMESTATE->Reset();
+	GAMESTATE->VisitAttractScreen( m_sName );
 
 	// Choose a Style
 	{
