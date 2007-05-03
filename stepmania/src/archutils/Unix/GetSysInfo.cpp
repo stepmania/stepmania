@@ -1,30 +1,19 @@
 #include "global.h"
 #include "GetSysInfo.h"
-#include "RageUtil.h"
 
 #include <sys/utsname.h>
 
-void GetKernel( RString &sys, int &vers )
+void GetKernel( RString &sys, int &iVersion )
 {
-	utsname uts;
+	struct utsname uts;
 	uname( &uts );
 
 	sys = uts.sysname;
-	vers = 0;
+	iVersion = 0;
 
-	if( sys == "Linux" )
-	{
-		static Regex ver( "([0-9]+)\\.([0-9]+)\\.([0-9]+)" );
-		vector<RString> matches;
-		if( ver.Compare(uts.release, matches) )
-		{
-			ASSERT( matches.size() >= 2 );
-			int major = atoi(matches[0]);
-			int minor = atoi(matches[1]);
-			int revision = atoi(matches[2]);
-			vers = (major * 10000) + (minor * 100) + (revision);
-		}
-	}
+	int iMajor = 0, iMinor = 0, iRevision = 0;
+	if( sscanf( uts.release, "%d.%d.%d", &iMajor, &iMinor, &iRevision ) >= 2 )
+		iVersion = (iMajor * 10000) + (iMinor * 100) + (iRevision);
 }
 
 /*
