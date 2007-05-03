@@ -74,7 +74,7 @@ void GradeDisplay::Update( float fDeltaTime )
 
 int GradeDisplay::GetFrameIndex( PlayerNumber pn, Grade g )
 {
-	if( this->GetTexture()->GetID().filename.find("_blank") != string::npos )
+	if( Sprite::GetNumStates() == 1 )
 		return 0;
 
 	// either 8, or 16 states
