@@ -292,7 +292,7 @@ void MusicWheelItem::RefreshGrades()
 	{
 		if( data->m_pSong == NULL )
 		{
-			m_pGradeDisplay[p]->SetDiffuse( RageColor(1,1,1,0) );
+			m_pGradeDisplay[p]->SetVisible( false );
 			continue;
 		}
 
