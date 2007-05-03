@@ -6,7 +6,6 @@ WheelItemBaseData::WheelItemBaseData( WheelItemType wit, RString sText, RageColo
 	m_Type = wit;
 	m_sText = sText;
 	m_color = color;
-	m_Flags = WheelNotifyIcon::Flags();
 }
 
 WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):

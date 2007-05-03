@@ -54,6 +54,7 @@ struct WheelItemData : public WheelItemBaseData
 
 	Course*			m_pCourse;
 	Song*			m_pSong;
+	WheelNotifyIcon::Flags  m_Flags;
 
 	// for TYPE_SORT
 	RString			m_sLabel;

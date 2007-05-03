@@ -5,7 +5,6 @@
 
 #include "ActorFrame.h"
 #include "BitmapText.h"
-#include "WheelNotifyIcon.h"
 #include "ThemeMetric.h"
 #include "GameConstantsAndTypes.h"
 #include "AutoActor.h"
@@ -66,7 +65,6 @@ struct WheelItemBaseData
 	WheelItemType		m_Type;
 	RString			m_sText;
 	RageColor		m_color;	// either text color or section background color
-	WheelNotifyIcon::Flags  m_Flags;
 };
 
 #endif

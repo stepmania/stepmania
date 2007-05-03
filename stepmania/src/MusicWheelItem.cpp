@@ -27,6 +27,7 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, RString sSectionNa
 {
 	m_pSong = pSong;
 	m_pCourse = pCourse;
+	m_Flags = WheelNotifyIcon::Flags();
 }
 
 MusicWheelItem::MusicWheelItem( RString sType ):
