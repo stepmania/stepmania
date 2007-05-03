@@ -790,6 +790,7 @@ void ThemeManager::ReloadMetrics()
 
 	// force a reload of the metrics cache
 	LoadThemeMetrics( m_sCurThemeName, m_sCurLanguage );
+	ReloadSubscribers();
 
 #if !defined(SMPACKAGE)
 	if( SCREENMAN )
