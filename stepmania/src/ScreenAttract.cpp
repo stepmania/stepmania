@@ -24,13 +24,13 @@ ScreenAttract::ScreenAttract( bool bResetGameState )
 }
 
 
-void ScreenAttract::Init()
+void ScreenAttract::BeginScreen()
 {
 	ScreenAttract::SetAttractVolume( !GAMESTATE->IsTimeToPlayAttractSounds() );
 
 	GAMESTATE->VisitAttractScreen( m_sName );
 
-	ScreenWithMenuElements::Init();
+	ScreenWithMenuElements::BeginScreen();
 }
 
 void ScreenAttract::Input( const InputEventPlus &input )

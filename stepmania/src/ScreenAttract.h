@@ -11,7 +11,7 @@ class ScreenAttract : public ScreenWithMenuElements
 {
 public:
 	ScreenAttract( bool bResetGameState=true );
-	virtual void Init();
+	virtual void BeginScreen();
 
 	static void AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen );
 	static void GoToStartScreen( RString sScreenName );
