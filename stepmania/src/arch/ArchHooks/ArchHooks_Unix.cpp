@@ -243,7 +243,7 @@ void ArchHooks_Unix::SetTime( tm newtime )
 static LocalizedString COULDNT_FIND_SONGS( "ArchHooks_Unix", "Couldn't find 'Songs'" );
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
-#if defined(LINUX)
+#if defined(UNIX)
 	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
 	 * This is /rootfs, not /root, to avoid confusion with root's home directory. */
 	FILEMAN->Mount( "dir", "/", "/rootfs" );

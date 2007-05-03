@@ -15,7 +15,7 @@ using CrashHandler::DebugBreak;
 #  include <unistd.h>
 #endif
 
-#if defined(CRASH_HANDLER) && (defined(LINUX) || defined(MACOSX))
+#if defined(CRASH_HANDLER) && (defined(UNIX) || defined(MACOSX))
 #include "archutils/Unix/CrashHandler.h"
 #endif
 
