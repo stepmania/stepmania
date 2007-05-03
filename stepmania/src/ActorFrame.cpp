@@ -507,6 +507,7 @@ public:
 		p->SetUpdateFunction( ref );
 		return 0;
 	}
+	static int SortByDrawOrder( T* p, lua_State *L )		{ p->SortByDrawOrder(); return 0; }
 
 	LunaActorFrame()
 	{
@@ -526,6 +527,7 @@ public:
 		ADD_METHOD( SetDrawFunction );
 		ADD_METHOD( GetDrawFunction );
 		ADD_METHOD( SetUpdateFunction );
+		ADD_METHOD( SortByDrawOrder );
 	}
 };
 
