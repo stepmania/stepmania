@@ -4,7 +4,6 @@
 #define MUSIC_WHEEL_ITEM_H
 
 #include "ActorFrame.h"
-#include "GradeDisplay.h"
 #include "BitmapText.h"
 #include "WheelNotifyIcon.h"
 #include "TextBanner.h"
@@ -44,7 +43,7 @@ private:
 	BitmapText		m_textRoulette;
 	BitmapText		m_textCourse;
 	BitmapText		m_textSort;
-	GradeDisplay		*m_pGradeDisplay[NUM_PLAYERS];
+	AutoActor		m_pGradeDisplay[NUM_PLAYERS];
 };
 
 struct WheelItemData : public WheelItemBaseData

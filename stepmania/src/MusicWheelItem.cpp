@@ -84,10 +84,8 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_pGradeDisplay[p] = new GradeDisplay;
+		m_pGradeDisplay[p].Load( THEME->GetPathG(sType,"grades") );
 		m_pGradeDisplay[p]->SetName( ssprintf("GradeP%d",int(p+1)) );
-		m_pGradeDisplay[p]->Load( THEME->GetPathG(sType,"grades") );
-		m_pGradeDisplay[p]->SetZoom( 1.0f );
 		this->AddChild( m_pGradeDisplay[p] );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_pGradeDisplay[p] );
 	}
@@ -130,15 +128,13 @@ MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_pGradeDisplay[p] = new GradeDisplay( *cpy.m_pGradeDisplay[p] );
+		m_pGradeDisplay[p] = cpy.m_pGradeDisplay[p];
 		this->AddChild( m_pGradeDisplay[p] );
 	}
 }
 
 MusicWheelItem::~MusicWheelItem()
 {
-	FOREACH_PlayerNumber( p )
-		delete m_pGradeDisplay[p];
 }
 
 void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int iIndex, bool bHasFocus )
@@ -295,6 +291,7 @@ void MusicWheelItem::RefreshGrades()
 			m_pGradeDisplay[p]->SetVisible( false );
 			continue;
 		}
+		m_pGradeDisplay[p]->SetVisible( true );
 
 		Difficulty dc;
 		if( GAMESTATE->m_pCurSteps[p] )
@@ -309,7 +306,10 @@ void MusicWheelItem::RefreshGrades()
 			ps = (ProfileSlot)p;
 
 		Grade g = PROFILEMAN->GetGradeForSteps( data->m_pSong, GAMESTATE->GetCurrentStyle(), ps, dc );
-		m_pGradeDisplay[p]->SetGrade( p, g );
+		Message msg("SetGrade");
+		msg.SetParam( "PlayerNumber", p );
+		msg.SetParam( "Grade", g );
+		m_pGradeDisplay[p]->HandleMessage( msg );
 	}
 }
 
