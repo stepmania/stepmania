@@ -6,7 +6,6 @@
 
 void GradeDisplay::Load( RageTextureID ID )
 {
-	ID.bStretch = true;
 	Sprite::Load( ID );
 	Sprite::StopAnimating();
 
