@@ -626,6 +626,14 @@ void Actor::UpdateInternal( float fDeltaTime )
 			m_fSecsIntoEffect -= GetEffectPeriod();
 		break;
 
+	case CLOCK_TIMER_GLOBAL:
+	{
+		float fTime = RageTimer::GetTimeSinceStartFast();
+		m_fEffectDelta = fTime - m_fSecsIntoEffect;
+		m_fSecsIntoEffect = fTime;
+		break;
+	}
+
 	case CLOCK_BGM_BEAT:
 		m_fEffectDelta = g_fCurrentBGMBeat - m_fSecsIntoEffect;
 		m_fSecsIntoEffect = g_fCurrentBGMBeat;
@@ -760,6 +768,7 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 void Actor::SetEffectClockString( const RString &s )
 {
 	if     (s.EqualsNoCase("timer"))	this->SetEffectClock( CLOCK_TIMER );
+	if     (s.EqualsNoCase("timerglobal"))	this->SetEffectClock( CLOCK_TIMER_GLOBAL );
 	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT );
 	else if(s.EqualsNoCase("music"))	this->SetEffectClock( CLOCK_BGM_TIME );
 	else if(s.EqualsNoCase("bgm"))		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated

@@ -94,6 +94,7 @@ public:
 	enum EffectClock
 	{
 		CLOCK_TIMER,
+		CLOCK_TIMER_GLOBAL,
 		CLOCK_BGM_TIME,
 		CLOCK_BGM_BEAT,
 		CLOCK_LIGHT_1 = 1000,
