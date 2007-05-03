@@ -26,6 +26,8 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, RString sSectionNa
 MusicWheelItem::MusicWheelItem( RString sType ):
 	WheelItemBase( sType )
 {
+	GRADES_SHOW_MACHINE.Load( sType, "GradesShowMachine" );
+
 	data = NULL;
 
 	m_sprSongBar.Load( THEME->GetPathG(sType,"song") );
@@ -100,6 +102,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 
 MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 	WheelItemBase( cpy ),
+	GRADES_SHOW_MACHINE( cpy.GRADES_SHOW_MACHINE ),
 	m_sprSongBar( cpy.m_sprSongBar ),
 	m_sprSectionBar( cpy.m_sprSectionBar ),
 	m_sprExpandedBar( cpy.m_sprExpandedBar ),
@@ -286,12 +289,10 @@ void MusicWheelItem::RefreshGrades()
 		return; // LoadFromWheelItemData() hasn't been called yet.
 	FOREACH_HumanPlayer( p )
 	{
-		if( data->m_pSong == NULL )
-		{
-			m_pGradeDisplay[p]->SetVisible( false );
+		m_pGradeDisplay[p]->SetVisible( false );
+
+		if( data->m_pSong == NULL && data->m_pCourse == NULL )
 			continue;
-		}
-		m_pGradeDisplay[p]->SetVisible( true );
 
 		Difficulty dc;
 		if( GAMESTATE->m_pCurSteps[p] )
@@ -301,10 +302,15 @@ void MusicWheelItem::RefreshGrades()
 		else
 			dc = GAMESTATE->m_PreferredDifficulty[p];
 
-		ProfileSlot ps = ProfileSlot_Machine;
+		ProfileSlot ps;
 		if( PROFILEMAN->IsPersistentProfile(p) )
 			ps = (ProfileSlot)p;
+		else if( GRADES_SHOW_MACHINE )
+			ps = ProfileSlot_Machine;
+		else
+			continue;
 
+		m_pGradeDisplay[p]->SetVisible( true );
 		Grade g = PROFILEMAN->GetGradeForSteps( data->m_pSong, GAMESTATE->GetCurrentStyle(), ps, dc );
 		Message msg("SetGrade");
 		msg.SetParam( "PlayerNumber", p );

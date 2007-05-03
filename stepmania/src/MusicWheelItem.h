@@ -11,6 +11,7 @@
 #include "GameCommand.h"
 #include "WheelItemBase.h"
 #include "AutoActor.h"
+#include "ThemeMetric.h"
 
 class Course;
 class Song;
@@ -32,6 +33,8 @@ public:
 	const WheelItemData *data;
 
 private:
+	ThemeMetric<bool>	GRADES_SHOW_MACHINE;
+
 	AutoActor		m_sprSongBar;
 	AutoActor		m_sprSectionBar;
 	AutoActor		m_sprExpandedBar;
