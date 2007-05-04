@@ -79,7 +79,7 @@ void ScreenBookkeeping::MenuStart( const InputEventPlus &input )
 
 void ScreenBookkeeping::MenuBack( const InputEventPlus &input )
 {
-	if(!IsTransitioning())
+	if( !IsTransitioning() )
 	{
 		SCREENMAN->PlayStartSound();
 		StartTransitioningScreen( SM_GoToPrevScreen );		
