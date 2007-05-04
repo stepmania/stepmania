@@ -45,7 +45,8 @@ RString GetPrimaryVideoName()
 
 RString GetPrimaryVideoDriverName()
 {
-	const RString sPrimaryDeviceName = GetPrimaryVideoName();
+	RString sPrimaryDeviceName = GetPrimaryVideoName();
+	TrimRight( sPrimaryDeviceName );
 	if( sPrimaryDeviceName != "" )
 		return sPrimaryDeviceName;
 	
@@ -107,6 +108,7 @@ bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 			lst.erase( lst.begin()+iCardno );
 			continue;
 		}
+		TrimRight( info.sDescription );
 
 		RegistryAccess::GetRegValue( sKey, "DriverDate", info.sDate );
 		RegistryAccess::GetRegValue( sKey, "MatchingDeviceId", info.sDeviceID );
