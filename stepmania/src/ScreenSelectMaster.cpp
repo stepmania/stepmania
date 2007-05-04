@@ -695,7 +695,8 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 	{
 		for( int page=0; page<NUM_PAGES; page++ )
 		{
-			m_sprMore[page]->PlayCommand( "Off" );
+			if( m_sprMore[page].IsLoaded() )
+				m_sprMore[page]->PlayCommand( "Off" );
 			fSecs = max( fSecs, m_sprMore[page]->GetTweenTimeLeft() );
 		}
 
@@ -703,7 +704,8 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 
 		if( SHOW_CURSOR )
 		{
-			m_sprCursor[pn]->PlayCommand( "Choose" );
+			if( m_sprCursor[pn].IsLoaded() )
+				m_sprCursor[pn]->PlayCommand( "Choose" );
 			fSecs = max( fSecs, m_sprCursor[iIndex]->GetTweenTimeLeft() );
 		}
 	}
