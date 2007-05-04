@@ -84,7 +84,7 @@ void ScreenSelectMaster::Init()
 	{
 		FOREACH( PlayerNumber, vpns, p )
 		{
-			RString sElement = "Cursor " + PLAYER_APPEND_NO_SPACE(*p);
+			RString sElement = "Cursor" + PLAYER_APPEND_NO_SPACE(*p);
 			m_sprCursor[*p].Load( THEME->GetPathG(m_sName,sElement) );
 			sElement.Replace( " ", "" );
 			m_sprCursor[*p]->SetName( sElement );
