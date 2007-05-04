@@ -306,7 +306,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 			FOREACH( PlayerNumber, vpns, p )
 			{
 				m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
-				COMMAND( m_sprCursor[*p], "PostSwitchPage" );
+				m_sprCursor[*p]->PlayCommand( "PostSwitchPage" );
 			}
 		}
 
@@ -315,7 +315,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 			FOREACH( PlayerNumber, vpns, p )
 			{
 				int iChoice = m_iChoice[*p];
-				COMMAND( m_vsprScroll[*p][iChoice], "PostSwitchPage" );
+				m_vsprScroll[*p][iChoice]->PlayCommand( "PostSwitchPage" );
 			}
 		}
 
@@ -516,7 +516,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	{
 		FOREACH( PlayerNumber, vpns, p )
 			if( GAMESTATE->IsHumanPlayer(*p) )
-				COMMAND( m_sprCursor[*p], "PreSwitchPage" );
+				m_sprCursor[*p]->PlayCommand( "PreSwitchPage" );
 	}
 
 	const RString sIconAndExplanationCommand = ssprintf( "SwitchToPage%d", newPage+1 );
@@ -524,7 +524,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	if( SHOW_ICON )
 	{
 		for( unsigned c=0; c<m_aGameCommands.size(); c++ )
-			COMMAND( m_vsprIcon[c], sIconAndExplanationCommand );
+			m_vsprIcon[c]->PlayCommand( sIconAndExplanationCommand );
 	}
 
 	if( SHOW_SCROLLER )
@@ -532,22 +532,22 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 		if( SHARED_SELECTION )
 		{
 			int iChoice = m_iChoice[GetSharedPlayer()];
-			COMMAND( m_vsprScroll[0][iChoice], "PreSwitchPage" );
+			m_vsprScroll[0][iChoice]->PlayCommand( "PreSwitchPage" );
 		}
 		else
 		{
 			FOREACH_HumanPlayer( p )
 			{
 				int iChoice = m_iChoice[p];
-				COMMAND( m_vsprScroll[p][iChoice], "PreSwitchPage" );
+				m_vsprScroll[p][iChoice]->PlayCommand( "PreSwitchPage" );
 			}
 		}
 	}
 
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
-		COMMAND( m_sprExplanation[page], sIconAndExplanationCommand );
-		COMMAND( m_sprMore[page], sIconAndExplanationCommand );
+		m_sprExplanation[page]->PlayCommand( sIconAndExplanationCommand );
+		m_sprMore[page]->PlayCommand( sIconAndExplanationCommand );
 	}
 
 
@@ -602,12 +602,12 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 		{
 			if( SHARED_SELECTION )
 			{
-				COMMAND( m_sprCursor[0], "Change" );
+				m_sprCursor[0]->PlayCommand( "Change" );
 				m_sprCursor[0]->SetXY( GetCursorX(PLAYER_1), GetCursorY(PLAYER_1) );
 			}
 			else
 			{
-				COMMAND( m_sprCursor[p], "Change" );
+				m_sprCursor[p]->PlayCommand( "Change" );
 				m_sprCursor[p]->SetXY( GetCursorX(p), GetCursorY(p) );
 			}
 		}
@@ -702,7 +702,7 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 
 		if( SHOW_CURSOR )
 		{
-			COMMAND( m_sprCursor[pn], "Choose");
+			m_sprCursor[pn]->PlayCommand( "Choose" );
 			fSecs = max( fSecs, m_sprCursor[iIndex]->GetTweenTimeLeft() );
 		}
 	}
