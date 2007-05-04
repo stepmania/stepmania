@@ -1190,7 +1190,10 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 	GAMESTATE->m_iCoins += iNum;
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
 	SCREENMAN->PlayCoinSound();
-	MESSAGEMAN->Broadcast( Message_CoinInserted );
+	Message msg( "CoinInserted" );
+	msg.SetParam( "Coins", GAMESTATE->m_iCoins );
+	msg.SetParam( "Inserted", iNum );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 void StepMania::InsertCredit()
@@ -1203,7 +1206,10 @@ void StepMania::ClearCredits()
 	LOG->Trace("%i coins cleared", GAMESTATE->m_iCoins );
 	GAMESTATE->m_iCoins = 0;
 	SCREENMAN->PlayInvalidSound();
-	MESSAGEMAN->Broadcast( Message_CoinInserted );
+	Message msg( "CoinInserted" );
+	msg.SetParam( "Coins", GAMESTATE->m_iCoins );
+	msg.SetParam( "Clear", true );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 /* Returns true if the key has been handled and should be discarded, false if

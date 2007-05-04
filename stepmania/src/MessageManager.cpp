@@ -51,7 +51,6 @@ static const char *MessageIDNames[] = {
 	"MenuRightP1",
 	"MenuRightP2",
 	"MenuSelectionChanged",
-	"CoinInserted",
 	"PlayerJoined",
 	"PlayerUnjoined",
 	"AutosyncChanged",

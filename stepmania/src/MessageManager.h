@@ -48,7 +48,6 @@ enum MessageID
 	Message_MenuRightP1,
 	Message_MenuRightP2,
 	Message_MenuSelectionChanged,
-	Message_CoinInserted,
 	Message_PlayerJoined,
 	Message_PlayerUnjoined,
 	Message_AutosyncChanged,
