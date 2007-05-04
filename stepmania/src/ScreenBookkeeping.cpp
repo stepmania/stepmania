@@ -18,30 +18,25 @@ void ScreenBookkeeping::Init()
 
 	m_textAllTime.LoadFromFont( THEME->GetPathF(m_sName,"AllTime") );
 	m_textAllTime.SetName( "AllTime" );
-	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textAllTime );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_textAllTime );
 	this->AddChild( &m_textAllTime );
 
 	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"title") );
 	m_textTitle.SetName( "Title" );
-	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textTitle );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_textTitle );
 	this->AddChild( &m_textTitle );
 
 	for( int i=0; i<NUM_BOOKKEEPING_COLS; i++ )
 	{
 		m_textData[i].LoadFromFont( THEME->GetPathF(m_sName,"data") );
 		m_textData[i].SetName( "Data" );
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textData[i] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_textData[i] );
 		float fX = SCALE( i, 0.f, NUM_BOOKKEEPING_COLS-1, SCREEN_LEFT+50, SCREEN_RIGHT-160 );
 		m_textData[i].SetX( fX );
 		this->AddChild( &m_textData[i] );
 	}
 
 	ChangeView( (View)0 );
-}
-
-ScreenBookkeeping::~ScreenBookkeeping()
-{
-	LOG->Trace( "ScreenBookkeeping::~ScreenBookkeeping()" );
 }
 
 void ScreenBookkeeping::Update( float fDelta )
@@ -61,14 +56,14 @@ void ScreenBookkeeping::Input( const InputEventPlus &input )
 
 void ScreenBookkeeping::MenuLeft( const InputEventPlus &input )
 {
-	m_View = (View)(m_View-1);
+	m_View = enum_add2( m_View, -1 );
 	ENUM_CLAMP( m_View, View(0), View(NUM_VIEWS-1) );
 	ChangeView( m_View );
 }
 
 void ScreenBookkeeping::MenuRight( const InputEventPlus &input )
 {
-	m_View = (View)(m_View+1);
+	m_View = enum_add2( m_View, +1 );
 	ENUM_CLAMP( m_View, View(0), View(NUM_VIEWS-1) );
 	ChangeView( m_View );
 }

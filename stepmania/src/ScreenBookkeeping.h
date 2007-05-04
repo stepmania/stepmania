@@ -12,7 +12,6 @@ class ScreenBookkeeping : public ScreenWithMenuElements
 {
 public:
 	virtual void Init();
-	virtual ~ScreenBookkeeping();
 
 	virtual void Update( float fDelta );
 	virtual void Input( const InputEventPlus &input );
@@ -24,6 +23,8 @@ public:
 	virtual void MenuCoin( const InputEventPlus &input );
 
 private:
+	virtual bool GenericTweenOn() const { return true; }
+	virtual bool GenericTweenOff() const { return true; }
 	enum View { VIEW_LAST_DAYS, VIEW_LAST_WEEKS, VIEW_DAY_OF_WEEK, VIEW_HOUR_OF_DAY, NUM_VIEWS };
 	
 	void ChangeView( View newView );
