@@ -89,6 +89,7 @@ void ScreenSelectMaster::Init()
 			sElement.Replace( " ", "" );
 			m_sprCursor[*p]->SetName( sElement );
 			this->AddChild( m_sprCursor[*p] );
+			LOAD_ALL_COMMANDS( m_sprCursor[*p] );
 		}
 	}
 
