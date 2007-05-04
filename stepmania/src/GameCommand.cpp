@@ -62,6 +62,7 @@ void GameCommand::Init()
 	m_sUrl = "";
 
 	m_bInsertCredit = false;
+	m_bClearCredits = false;
 	m_bStopMusic = false;
 	m_bApplyDefaultOptions = false;
 }
@@ -372,6 +373,11 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "insertcredit" )
 	{
 		m_bInsertCredit = true;
+	}
+
+	else if( sName == "clearcredits" )
+	{
+		m_bClearCredits = true;
 	}
 
 	else if( sName == "stopmusic" )
@@ -754,6 +760,10 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	{
 		StepMania::InsertCredit();
 	}
+
+	if( m_bClearCredits )
+		StepMania::ClearCredits();
+
 	if( m_bApplyDefaultOptions )
 	{
 		// applying options affects only the current stage

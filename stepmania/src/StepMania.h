@@ -19,6 +19,7 @@ namespace StepMania
 
 	void InsertCoin( int iNum = 1, bool bCountInBookkeeping = true );
 	void InsertCredit();
+	void ClearCredits();
 
 	void GetPreferredVideoModeParams( VideoModeParams &paramsOut );
 }

@@ -1198,6 +1198,14 @@ void StepMania::InsertCredit()
 	InsertCoin( PREFSMAN->m_iCoinsPerCredit, false );
 }
 
+void StepMania::ClearCredits()
+{
+	LOG->Trace("%i coins cleared", GAMESTATE->m_iCoins );
+	GAMESTATE->m_iCoins = 0;
+	SCREENMAN->PlayInvalidSound();
+	MESSAGEMAN->Broadcast( Message_CoinInserted );
+}
+
 /* Returns true if the key has been handled and should be discarded, false if
  * the key should be sent on to screens. */
 static LocalizedString SERVICE_SWITCH_PRESSED ( "StepMania", "Service switch pressed" );

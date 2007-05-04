@@ -82,6 +82,7 @@ public:
 	RString		m_sUrl;
 
 	bool m_bInsertCredit;
+	bool m_bClearCredits;
 	bool m_bStopMusic;
 	bool m_bApplyDefaultOptions;
 
