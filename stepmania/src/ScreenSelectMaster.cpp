@@ -694,7 +694,7 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 	{
 		for( int page=0; page<NUM_PAGES; page++ )
 		{
-			OFF_COMMAND( m_sprMore[page] );
+			m_sprMore[page]->PlayCommand( "Off" );
 			fSecs = max( fSecs, m_sprMore[page]->GetTweenTimeLeft() );
 		}
 
@@ -824,7 +824,7 @@ void ScreenSelectMaster::TweenOnScreen()
 		FOREACH( PlayerNumber, vpns, p )
 		{
 			m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
-			ON_COMMAND( m_sprCursor[*p] );
+			m_sprCursor[*p]->PlayCommand( "On" );
 		}
 	}
 
@@ -837,8 +837,10 @@ void ScreenSelectMaster::TweenOnScreen()
 		m_sprExplanation[page]->SetXY(999,999);
 	}
 
-	SET_XY_AND_ON_COMMAND( m_sprExplanation[GetCurrentPage()] );
-	SET_XY_AND_ON_COMMAND( m_sprMore[GetCurrentPage()] );
+	SET_XY( m_sprExplanation[GetCurrentPage()] );
+	SET_XY( m_sprMore[GetCurrentPage()] );
+	m_sprExplanation[GetCurrentPage()]->PlayCommand( "On" );
+	m_sprMore[GetCurrentPage()]->PlayCommand( "On" );
 
 	ScreenSelect::TweenOnScreen();
 }
