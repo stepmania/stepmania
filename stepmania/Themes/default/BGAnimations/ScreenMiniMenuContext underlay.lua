@@ -1,4 +1,4 @@
-local children = {
+local t = Def.ActorFrame {
 	Def.ActorFrame {
 		OnCommand=function(self)
 			local width=136
@@ -21,30 +21,28 @@ local children = {
 			self:GetChild("right"):zoomtoheight(height+thickness)
 		end;
 
-		children = {
-			Def.Quad {
-				Name="middle";
-				InitCommand=cmd(diffuse,0,0,0,1;shadowlength,6);
-				OnCommand=cmd();
-			};
-			Def.Quad {
-				Name="top";
-				InitCommand=cmd(zoomtoheight,3);
-			};
-			Def.Quad {
-				Name="bottom";
-				InitCommand=cmd(zoomtoheight,3;diffuse,0.2,0.2,1,1);
-			};
-			Def.Quad {
-				Name="left";
-				InitCommand=cmd(zoomtowidth,3;diffusebottomedge,0.2,0.2,1,1);
-			};
-			Def.Quad {
-				Name="right";
-				InitCommand=cmd(zoomtowidth,3;diffusebottomedge,0.2,0.2,1,1);
-			};
+		Def.Quad {
+			Name="middle";
+			InitCommand=cmd(diffuse,0,0,0,1;shadowlength,6);
+			OnCommand=cmd();
+		};
+		Def.Quad {
+			Name="top";
+			InitCommand=cmd(zoomtoheight,3);
+		};
+		Def.Quad {
+			Name="bottom";
+			InitCommand=cmd(zoomtoheight,3;diffuse,0.2,0.2,1,1);
+		};
+		Def.Quad {
+			Name="left";
+			InitCommand=cmd(zoomtowidth,3;diffusebottomedge,0.2,0.2,1,1);
+		};
+		Def.Quad {
+			Name="right";
+			InitCommand=cmd(zoomtowidth,3;diffusebottomedge,0.2,0.2,1,1);
 		};
 	};
 }
 
-return Def.ActorFrame { children = children };
+return t;

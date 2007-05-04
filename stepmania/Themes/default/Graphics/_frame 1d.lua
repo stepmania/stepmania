@@ -28,13 +28,12 @@ local p, a = ...
 assert( (#p%2) == 1 );
 
 local t = Def.ActorFrame {
-	children = { }
 };
 local Widths = { }
 
 local TextureXPos = 0
 for i = 1,#p do
-	t.children[i] = a .. {
+	t[i] = a .. {
 		Name = tostring(i);
 		InitCommand = function(self)
 			if i < math.ceil(#p/2) then self:horizalign("HorizAlign_Right");
@@ -52,7 +51,7 @@ for i = 1,#p do
 	};
 
 	local Width = p[i];
-	t.children[i].Frames =
+	t[i].Frames =
 	{
 		{ -- state 0
 			{ x=TextureXPos, y=0 },		-- top-left
