@@ -490,7 +490,7 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 				g_vLocalProfile.erase( i );
 
 				// Delete all references to this profileID
-				FOREACH_CONST( Preference<RString>*, PROFILEMAN->m_sDefaultLocalProfileID.m_v, i )
+				FOREACH_CONST( Preference<RString>*, m_sDefaultLocalProfileID.m_v, i )
 				{
 					if( (*i)->Get() == sProfileID )
 						(*i)->Set( "" );
@@ -599,16 +599,16 @@ const Profile* ProfileManager::GetProfile( ProfileSlot slot ) const
 //
 void ProfileManager::IncrementToastiesCount( PlayerNumber pn )
 {
-	if( PROFILEMAN->IsPersistentProfile(pn) )
-		++PROFILEMAN->GetProfile(pn)->m_iNumToasties;
-	++PROFILEMAN->GetMachineProfile()->m_iNumToasties;
+	if( IsPersistentProfile(pn) )
+		++GetProfile(pn)->m_iNumToasties;
+	++GetMachineProfile()->m_iNumToasties;
 }
 
 void ProfileManager::AddStepTotals( PlayerNumber pn, int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, int iNumHands, float fCaloriesBurned )
 {
-	if( PROFILEMAN->IsPersistentProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddStepTotals( iNumTapsAndHolds, iNumJumps, iNumHolds, iNumRolls, iNumMines, iNumHands, fCaloriesBurned );
-	PROFILEMAN->GetMachineProfile()->AddStepTotals( iNumTapsAndHolds, iNumJumps, iNumHolds, iNumRolls, iNumMines, iNumHands, fCaloriesBurned );
+	if( IsPersistentProfile(pn) )
+		GetProfile(pn)->AddStepTotals( iNumTapsAndHolds, iNumJumps, iNumHolds, iNumRolls, iNumMines, iNumHands, fCaloriesBurned );
+	GetMachineProfile()->AddStepTotals( iNumTapsAndHolds, iNumJumps, iNumHolds, iNumRolls, iNumMines, iNumHands, fCaloriesBurned );
 }
 
 //
@@ -631,7 +631,7 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 	// used name.  If no profile last used name exists, use "EVNT".
 	if( GAMESTATE->IsEventMode() )
 	{
-		Profile* pProfile = PROFILEMAN->GetProfile(pn);
+		Profile* pProfile = GetProfile(pn);
 		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
 			hs.SetName( pProfile->m_sLastUsedHighScoreName );
 		else
@@ -645,37 +645,37 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 	//
 	// save high score	
 	//
-	if( PROFILEMAN->IsPersistentProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
+	if( IsPersistentProfile(pn) )
+		GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
 
 	if( hs.GetPercentDP() >= PREFSMAN->m_fMinPercentageForMachineSongHighScore )
 	{
 		// don't leave machine high scores for edits loaded from the player's card
 		if( !pSteps->IsAPlayerEdit() )
-			PROFILEMAN->GetMachineProfile()->AddStepsHighScore( pSong, pSteps, hs, iMachineIndexOut );
+			GetMachineProfile()->AddStepsHighScore( pSong, pSteps, hs, iMachineIndexOut );
 	}
 
 	//
 	// save recent score	
 	//
-	if( PROFILEMAN->IsPersistentProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddStepsRecentScore( pSong, pSteps, hs );
-	PROFILEMAN->GetMachineProfile()->AddStepsRecentScore( pSong, pSteps, hs );
+	if( IsPersistentProfile(pn) )
+		GetProfile(pn)->AddStepsRecentScore( pSong, pSteps, hs );
+	GetMachineProfile()->AddStepsRecentScore( pSong, pSteps, hs );
 }
 
 void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn )
 {
-	if( PROFILEMAN->IsPersistentProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->IncrementStepsPlayCount( pSong, pSteps );
-	PROFILEMAN->GetMachineProfile()->IncrementStepsPlayCount( pSong, pSteps );
+	if( IsPersistentProfile(pn) )
+		GetProfile(pn)->IncrementStepsPlayCount( pSong, pSteps );
+	GetMachineProfile()->IncrementStepsPlayCount( pSong, pSteps );
 }
 
 Grade ProfileManager::GetGradeForSteps( const Song *pSong, const Style *st, ProfileSlot slot, Difficulty dc ) const
 {
 	const Steps* pSteps = SongUtil::GetStepsByDifficulty( pSong, st->m_StepsType, dc );
 
-	if( pSteps && PROFILEMAN->IsPersistentProfile(slot) )
-		return PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(pSong, pSteps).HighGrade;
+	if( pSteps && IsPersistentProfile(slot) )
+		return GetProfile(slot)->GetStepsHighScoreList(pSong, pSteps).HighGrade;
 	return Grade_NoData;
 }
 
@@ -695,7 +695,7 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 	// used name.  If no profile last used name exists, use "EVNT".
 	if( GAMESTATE->IsEventMode() )
 	{
-		Profile* pProfile = PROFILEMAN->GetProfile(pn);
+		Profile* pProfile = GetProfile(pn);
 		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
 			hs.SetName(  pProfile->m_sLastUsedHighScoreName );
 		else
@@ -710,24 +710,24 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 	//
 	// save high score	
 	//
-	if( PROFILEMAN->IsPersistentProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddCourseHighScore( pCourse, pTrail, hs, iPersonalIndexOut );
+	if( IsPersistentProfile(pn) )
+		GetProfile(pn)->AddCourseHighScore( pCourse, pTrail, hs, iPersonalIndexOut );
 	if( hs.GetPercentDP() >= PREFSMAN->m_fMinPercentageForMachineCourseHighScore )
-		PROFILEMAN->GetMachineProfile()->AddCourseHighScore( pCourse, pTrail, hs, iMachineIndexOut );
+		GetMachineProfile()->AddCourseHighScore( pCourse, pTrail, hs, iMachineIndexOut );
 
 	//
 	// save recent score	
 	//
-	if( PROFILEMAN->IsPersistentProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddCourseRecentScore( pCourse, pTrail, hs );
-	PROFILEMAN->GetMachineProfile()->AddCourseRecentScore( pCourse, pTrail, hs );
+	if( IsPersistentProfile(pn) )
+		GetProfile(pn)->AddCourseRecentScore( pCourse, pTrail, hs );
+	GetMachineProfile()->AddCourseRecentScore( pCourse, pTrail, hs );
 }
 
 void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail, PlayerNumber pn )
 {
-	if( PROFILEMAN->IsPersistentProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->IncrementCoursePlayCount( pCourse, pTrail );
-	PROFILEMAN->GetMachineProfile()->IncrementCoursePlayCount( pCourse, pTrail );
+	if( IsPersistentProfile(pn) )
+		GetProfile(pn)->IncrementCoursePlayCount( pCourse, pTrail );
+	GetMachineProfile()->IncrementCoursePlayCount( pCourse, pTrail );
 }
 
 
@@ -738,17 +738,17 @@ void ProfileManager::AddCategoryScore( StepsType st, RankingCategory rc, PlayerN
 {
 	HighScore hs = hs_;
 	hs.SetName( RANKING_TO_FILL_IN_MARKER[pn] );
-	if( PROFILEMAN->IsPersistentProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddCategoryHighScore( st, rc, hs, iPersonalIndexOut );
+	if( IsPersistentProfile(pn) )
+		GetProfile(pn)->AddCategoryHighScore( st, rc, hs, iPersonalIndexOut );
 	if( hs.GetPercentDP() > PREFSMAN->m_fMinPercentageForMachineSongHighScore )
-		PROFILEMAN->GetMachineProfile()->AddCategoryHighScore( st, rc, hs, iMachineIndexOut );
+		GetMachineProfile()->AddCategoryHighScore( st, rc, hs, iMachineIndexOut );
 }
 
 void ProfileManager::IncrementCategoryPlayCount( StepsType st, RankingCategory rc, PlayerNumber pn )
 {
-	if( PROFILEMAN->IsPersistentProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->IncrementCategoryPlayCount( st, rc );
-	PROFILEMAN->GetMachineProfile()->IncrementCategoryPlayCount( st, rc );
+	if( IsPersistentProfile(pn) )
+		GetProfile(pn)->IncrementCategoryPlayCount( st, rc );
+	GetMachineProfile()->IncrementCategoryPlayCount( st, rc );
 }
 
 bool ProfileManager::IsPersistentProfile( ProfileSlot slot ) const
