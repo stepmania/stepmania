@@ -48,26 +48,26 @@ namespace LuaHelpers
 
 void LuaManager::SetGlobal( const RString &sName, int val )
 {
-	Lua *L = LUA->Get();
+	Lua *L = Get();
 	LuaHelpers::Push( L, val );
 	lua_setglobal( L, sName );
-	LUA->Release( L );
+	Release( L );
 }
 
 void LuaManager::SetGlobal( const RString &sName, const RString &val )
 {
-	Lua *L = LUA->Get();
+	Lua *L = Get();
 	LuaHelpers::Push( L, val );
 	lua_setglobal( L, sName );
-	LUA->Release( L );
+	Release( L );
 }
 
 void LuaManager::UnsetGlobal( const RString &sName )
 {
-	Lua *L = LUA->Get();
+	Lua *L = Get();
 	lua_pushnil( L );
 	lua_setglobal( L, sName );
-	LUA->Release( L );
+	Release( L );
 }
 
 namespace LuaHelpers
@@ -312,7 +312,7 @@ void LuaManager::UnyieldLua()
 
 void LuaManager::RegisterTypes()
 {
-	Lua *L = LUA->Get();
+	Lua *L = Get();
 
 	if( g_vRegisterActorTypes )
 	{
@@ -323,7 +323,7 @@ void LuaManager::RegisterTypes()
 		}
 	}
 
-	LUA->Release( L );
+	Release( L );
 }
 
 LuaThreadVariable::LuaThreadVariable( const RString &sName, const RString &sValue )
