@@ -679,6 +679,14 @@ Grade ProfileManager::GetGradeForSteps( const Song *pSong, const Style *st, Prof
 	return Grade_NoData;
 }
 
+Grade ProfileManager::GetGradeForTrail( const Course *pCourse, const Style *st, ProfileSlot slot, Difficulty dc ) const
+{
+	const Trail *pTrail = pCourse->GetTrail( st->m_StepsType, dc );
+
+	if( pTrail && IsPersistentProfile(slot) )
+		return GetProfile( slot )->GetCourseHighScoreList( pCourse, pTrail ).HighGrade;
+	return Grade_NoData;
+}
 
 //
 // Course stats

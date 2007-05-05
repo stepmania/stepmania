@@ -101,7 +101,7 @@ public:
 	//
 	void AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, const HighScore &hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail, PlayerNumber pn );
-
+	Grade GetGradeForTrail( const Course *pCourse, const Style *st, ProfileSlot slot, Difficulty dc ) const;
 	//
 	// Category stats
 	//
