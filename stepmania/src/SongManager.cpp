@@ -307,7 +307,7 @@ void SongManager::PreloadSongImages()
 	 * that we don't need to. */
 	RageTexturePreloader preload;
 
-	const vector<Song*> &songs = SONGMAN->GetSongs();
+	const vector<Song*> &songs = GetSongs();
 	for( unsigned i = 0; i < songs.size(); ++i )
 	{
 		if( !songs[i]->HasBanner() )
@@ -318,7 +318,7 @@ void SongManager::PreloadSongImages()
 	}
 
 	vector<Course*> courses;
-	SONGMAN->GetAllCourses( courses, false );
+	GetAllCourses( courses, false );
 	for( unsigned i = 0; i < courses.size(); ++i )
 	{
 		if( !courses[i]->HasBanner() )
@@ -608,7 +608,7 @@ int SongManager::GetNumAdditionalSongs() const
 	int num = 0;
 	FOREACH_CONST( Song*, m_pSongs, i )
 	{
-		if( SONGMAN->WasLoadedFromAdditionalSongs( *i ) )
+		if( WasLoadedFromAdditionalSongs( *i ) )
 			num++;
 	}
 	return num;
@@ -629,7 +629,7 @@ int SongManager::GetNumAdditionalCourses() const
 	int num = 0;
 	FOREACH_CONST( Course*, m_pCourses, i )
 	{
-		if( SONGMAN->WasLoadedFromAdditionalCourses( *i ) )
+		if( WasLoadedFromAdditionalCourses( *i ) )
 			num++;
 	}
 	return num;
@@ -904,7 +904,7 @@ void SongManager::SetPreferences()
 
 void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot ) const
 {
-	const vector<Song*> &vSongs = SONGMAN->GetSongs();
+	const vector<Song*> &vSongs = GetSongs();
 	FOREACH_CONST( Song*, vSongs, song )
 	{
 		(*song)->GetStepsLoadedFromProfile( slot, AddTo );
@@ -914,7 +914,7 @@ void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot 
 Song *SongManager::GetSongFromSteps( Steps *pSteps ) const
 {
 	ASSERT( pSteps );
-	const vector<Song*> &vSongs = SONGMAN->GetSongs();
+	const vector<Song*> &vSongs = GetSongs();
 	FOREACH_CONST( Song*, vSongs, song )
 	{
 		vector<Steps*> vSteps;
@@ -1026,7 +1026,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		{
 			/* This normally shouldn't happen, but it's helpful to permit it for testing. */
 			LOG->Warn( "GetExtraStageInfo() called in GROUP_ALL, but GAMESTATE->m_pCurSong == NULL" );
-			GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
+			GAMESTATE->m_pCurSong.Set( GetRandomSong() );
 		}
 		sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
 	}
