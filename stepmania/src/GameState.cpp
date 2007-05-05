@@ -336,10 +336,10 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	}
 
 	// Set the current style to something appropriate for the new number of joined players.
-	if( ALLOW_LATE_JOIN  &&  GAMESTATE->m_pCurStyle != NULL )
+	if( ALLOW_LATE_JOIN  &&  m_pCurStyle != NULL )
 	{
 		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), m_pCurStyle->m_StepsType );
-		GAMESTATE->m_pCurStyle.Set( pStyle );
+		m_pCurStyle.Set( pStyle );
 	}
 
 	Message msg( MessageIDToString(Message_PlayerJoined) );
@@ -357,7 +357,7 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 	ResetPlayer( pn );
 
 	if( m_MasterPlayerNumber == pn )
-		m_MasterPlayerNumber = GAMESTATE->GetFirstHumanPlayer();
+		m_MasterPlayerNumber = GetFirstHumanPlayer();
 
 
 	STATSMAN->UnjoinPlayer( pn );
@@ -558,35 +558,35 @@ int GameState::GetNumStagesForSongAndStyleType( const Song* pSong, StyleType st 
 	return iNumStages;
 }
 
-int GameState::GetNumStagesForCurrentSongAndStepsOrCourse()
+int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 {
 	int iNumStagesOfThisSong = 1;
-	if( GAMESTATE->m_pCurSong )
+	if( m_pCurSong )
 	{
-		const Style *pStyle = GAMESTATE->m_pCurStyle;
+		const Style *pStyle = m_pCurStyle;
 		if( pStyle == NULL )
 		{
-			const Steps *pSteps = GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber];
+			const Steps *pSteps = m_pCurSteps[m_MasterPlayerNumber];
 			if( pSteps )
 			{
 				/* If a style isn't set, use the style of the selected steps. */
 				StepsType st = pSteps->m_StepsType;
-				pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), st );
+				pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), st );
 			}
 			else
 			{
 				/* If steps aren't set either, pick any style for the number of
 				 * joined players, or one player if no players are joined. */
 				vector<const Style*> vpStyles;
-				int iJoined = max( GAMESTATE->GetNumSidesJoined(), 1 );
-				GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, iJoined, vpStyles );
+				int iJoined = max( GetNumSidesJoined(), 1 );
+				GAMEMAN->GetCompatibleStyles( m_pCurGame, iJoined, vpStyles );
 				ASSERT( !vpStyles.empty() );
 				pStyle = vpStyles[0];
 			}
 		}
-		iNumStagesOfThisSong = GameState::GetNumStagesForSongAndStyleType( GAMESTATE->m_pCurSong, pStyle->m_StyleType );
+		iNumStagesOfThisSong = GameState::GetNumStagesForSongAndStyleType( m_pCurSong, pStyle->m_StyleType );
 	}
-	else if( GAMESTATE->m_pCurCourse )
+	else if( m_pCurCourse )
 		iNumStagesOfThisSong = PREFSMAN->m_iSongsPerPlay;
 	else
 		return -1;
@@ -2179,7 +2179,7 @@ public:
 		lua_pushboolean(L, bUsingMemoryCard );
 		return 1;
 	}
-	static int GetNumStagesForCurrentSongAndStepsOrCourse( T* p, lua_State *L ) { lua_pushnumber(L, GameState::GetNumStagesForCurrentSongAndStepsOrCourse() ); return 1; }
+	static int GetNumStagesForCurrentSongAndStepsOrCourse( T* p, lua_State *L ) { lua_pushnumber(L, GAMESTATE->GetNumStagesForCurrentSongAndStepsOrCourse() ); return 1; }
 	static int GetNumStagesLeft( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);

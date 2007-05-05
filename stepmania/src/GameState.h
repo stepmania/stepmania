@@ -130,7 +130,7 @@ public:
 
 	static int GetNumStagesMultiplierForSong( const Song* pSong );
 	static int GetNumStagesForSongAndStyleType( const Song* pSong, StyleType st );
-	static int GetNumStagesForCurrentSongAndStepsOrCourse();
+	int GetNumStagesForCurrentSongAndStepsOrCourse() const;
 
 	void		BeginStage();
 	void		CancelStage();
