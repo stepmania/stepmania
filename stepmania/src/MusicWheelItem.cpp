@@ -311,8 +311,12 @@ void MusicWheelItem::RefreshGrades()
 			continue;
 
 		m_pGradeDisplay[p]->SetVisible( true );
-		Grade g = PROFILEMAN->GetGradeForSteps( data->m_pSong, GAMESTATE->GetCurrentStyle(), ps, dc );
-		Message msg("SetGrade");
+		Grade g;
+		if( data->m_pSong )
+			g = PROFILEMAN->GetGradeForSteps( data->m_pSong, GAMESTATE->GetCurrentStyle(), ps, dc );
+		else
+			g = PROFILEMAN->GetGradeForTrail( data->m_pCourse, GAMESTATE->GetCurrentStyle(), ps, dc );
+		Message msg( "SetGrade" );
 		msg.SetParam( "PlayerNumber", p );
 		msg.SetParam( "Grade", g );
 		m_pGradeDisplay[p]->HandleMessage( msg );
