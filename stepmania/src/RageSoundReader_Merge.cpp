@@ -247,11 +247,9 @@ int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 //			if( i == 0 )
 //LOG->Trace( "*** %i", Difference(aNextSourceFrames[i], m_iNextSourceFrame + lrintf(iFramesRead * aRatios[i])) );
 
-			if( i == 1 && Difference(aNextSourceFrames[i], m_iNextSourceFrame + lrintf(iFramesRead * aRatios[i])) > ERROR_CORRECTION_THRESHOLD )
-				int q = 1;
 			if( Difference(aNextSourceFrames[i], m_iNextSourceFrame + lrintf(iFramesRead * aRatios[i])) > ERROR_CORRECTION_THRESHOLD )
 			{
-LOG->Trace( "*** hurk %i", Difference(aNextSourceFrames[i], m_iNextSourceFrame + lrintf(iFramesRead * aRatios[i])) );
+				LOG->Trace( "*** hurk %i", Difference(aNextSourceFrames[i], m_iNextSourceFrame + lrintf(iFramesRead * aRatios[i])) );
 				break;
 			}
 
@@ -263,7 +261,6 @@ LOG->Trace( "*** hurk %i", Difference(aNextSourceFrames[i], m_iNextSourceFrame +
 					LOG->Trace( "%i: at %i, expected %i",
 					i, iAt, m_aSounds[i]->GetNextSourceFrame() );
 			}
-	int oldf = aNextSourceFrames[i];
 			aNextSourceFrames[i] = m_aSounds[i]->GetNextSourceFrame();
 			aRatios[i] = m_aSounds[i]->GetStreamToSourceRatio();
 //	LOG->Trace( "read %i from %i; %i -> %i", iGotFrames, i, oldf, aNextSourceFrames[i] );
