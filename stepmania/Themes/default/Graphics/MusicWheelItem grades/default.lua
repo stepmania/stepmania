@@ -9,12 +9,13 @@ local grades = {
 	Grade_Tier06 = 5;
 	Grade_Tier07 = 6;
 	Grade_Failed = 7;
+	Grade_None = 8;
 };
 
 local t = LoadActor( "grades" ) .. {
 	InitCommand=cmd(pause);
 	SetGradeCommand=function(self, params)
-		local state = grades[params.Grade] or grades.Grade_Tier07;
+		local state = grades[params.Grade] or grades.Grade_None;
 		state = state*2;
 
 		if params.PlayerNumber == PLAYER_2 then
