@@ -272,7 +272,7 @@ void RageTextureManager::GarbageCollect( GCType type )
 
 void RageTextureManager::ReloadAll()
 {
-	TEXTUREMAN->DisableOddDimensionWarning();
+	DisableOddDimensionWarning();
 
 	/* Let's get rid of all unreferenced textures, so we don't reload a
 	 * ton of cached data that we're not necessarily going to use. */
@@ -283,7 +283,7 @@ void RageTextureManager::ReloadAll()
 		i->second->Reload();
 	}
 
-	TEXTUREMAN->EnableOddDimensionWarning();
+	EnableOddDimensionWarning();
 }
 
 /* In some cases, changing the display mode will reset the rendering context,
