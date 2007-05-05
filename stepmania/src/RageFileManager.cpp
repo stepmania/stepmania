@@ -441,9 +441,9 @@ void RageFileManager::CreateDir( const RString &sDir )
 
 	// YUCK: The dir cache doesn't have this new file we just created,
 	// so the delete will fail unless we flush.
-	FILEMAN->FlushDirCache( sDir );
+	FlushDirCache( sDir );
 
-	FILEMAN->Remove( sTempFile );
+	Remove( sTempFile );
 }
 
 static void AdjustMountpoint( RString &sMountPoint )
@@ -581,7 +581,7 @@ void RageFileManager::Unmount( const RString &sType, const RString &sRoot_, cons
 
 void RageFileManager::Remount( RString sMountpoint, RString sPath )
 {
-	RageFileDriver *pDriver = FILEMAN->GetFileDriver( sMountpoint );
+	RageFileDriver *pDriver = GetFileDriver( sMountpoint );
 	if( pDriver == NULL )
 	{
 		if( LOG )
@@ -594,7 +594,7 @@ void RageFileManager::Remount( RString sMountpoint, RString sPath )
 	else
 		pDriver->FlushDirCache( "" );
 
-	FILEMAN->ReleaseFileDriver( pDriver );
+	ReleaseFileDriver( pDriver );
 }
 
 bool RageFileManager::IsMounted( RString MountPoint )
