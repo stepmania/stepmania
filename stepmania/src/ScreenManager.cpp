@@ -785,7 +785,6 @@ void ScreenManager::RefreshCreditsMessages()
 
 void ScreenManager::ZeroNextUpdate()
 {
-	LOG->Trace("ScreenManager::ZeroNextUpdate");
 	m_bZeroNextUpdate = true;
 
 	/* Loading probably took a little while.  Let's reset stats.  This prevents us
