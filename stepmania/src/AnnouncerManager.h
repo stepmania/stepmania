@@ -4,8 +4,6 @@
 class AnnouncerManager
 {
 public:
-	AnnouncerManager();
-
 	void GetAnnouncerNames( vector<RString>& AddTo );
 	bool DoesAnnouncerExist( RString sAnnouncerName );
 	void SwitchAnnouncer( RString sNewAnnouncerName );

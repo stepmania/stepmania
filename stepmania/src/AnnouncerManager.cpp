@@ -10,11 +10,6 @@ AnnouncerManager*	ANNOUNCER = NULL;	// global object accessable from anywhere in
 const RString EMPTY_ANNOUNCER_NAME = "Empty";
 const RString ANNOUNCERS_DIR  = "Announcers/";
 
-AnnouncerManager::AnnouncerManager()
-{
-	LOG->Trace("AnnouncerManager::AnnouncerManager()");
-}
-
 void AnnouncerManager::GetAnnouncerNames( vector<RString>& AddTo )
 {
 	GetDirListing( ANNOUNCERS_DIR+"*", AddTo, true );
