@@ -54,7 +54,8 @@ void RageException::Throw( const char *sFmt, ... )
 		DebugBreak();
 #endif
 
-	ASSERT( g_HandlerThreadID == RageThread::GetInvalidThreadID() || g_HandlerThreadID == RageThread::GetCurrentThreadID() );
+	ASSERT_M( g_HandlerThreadID == RageThread::GetInvalidThreadID() || g_HandlerThreadID == RageThread::GetCurrentThreadID(),
+		  ssprintf("RageException::Throw() on another thread: %s", error.c_str()) );
 	if( g_CleanupHandler != NULL )
 		g_CleanupHandler( error );
 
