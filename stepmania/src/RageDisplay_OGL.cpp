@@ -21,7 +21,6 @@ using namespace RageDisplay_OGL_Helpers;
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
 #include <set>
-#include <sstream>
 
 #if defined(_MSC_VER)
 #pragma comment(lib, "opengl32.lib")
@@ -2092,21 +2091,12 @@ unsigned RageDisplay_OGL::CreateTexture(
 		ASSERT( iRealFormat == GL_RGBA8 );
 	}
 
-
-	
-	{
-		ostringstream s;
-		
-		s << (bGenerateMipMaps? "gluBuild2DMipmaps":"glTexImage2D");
-		s << "(format " << GLToString(glTexFormat) <<
-				", " << pImg->w << "x" <<  pImg->h <<
-				", format " << GLToString(glImageFormat) <<
-				", type " << GLToString(glImageType) <<
-				", pixfmt " << pixfmt <<
-				", imgpixfmt " << SurfacePixFmt <<
-				")";
-		LOG->Trace( "%s", s.str().c_str() );
-	}
+	LOG->Trace( "%s (format %s, %ix%i, format %s, type %s, pixfmt %i, imgpixfmt %i)",
+		bGenerateMipMaps? "gluBuild2DMipmaps":"glTexImage2D",
+		GLToString(glTexFormat).c_str(),
+		pImg->w, pImg->h,
+		GLToString(glImageFormat).c_str(),
+		GLToString(glImageType).c_str(), pixfmt, SurfacePixFmt );
 
 	FlushGLErrors();
 
@@ -2493,8 +2483,36 @@ void RageDisplay_OGL::SetLineWidth( float fWidth )
 	glLineWidth( fWidth );
 }
 
-RString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
+RString RageDisplay_OGL::GetTextureDiagnostics( unsigned iTexture ) const
 {
+	/*
+		s << (bGenerateMipMaps? "gluBuild2DMipmaps":"glTexImage2D");
+		s << "(format " << GLToString(glTexFormat) <<
+				", " << pImg->w << "x" <<  pImg->h <<
+				", format " << GLToString(iFormat) <<
+				", type " << GLToString(glImageType) <<
+				", pixfmt " << pixfmt <<
+				", imgpixfmt " << SurfacePixFmt <<
+				")";
+		LOG->Trace( "%s", s.str().c_str() );
+
+	glBindTexture( GL_TEXTURE_2D, iTexture );
+
+		GLint iWidth;
+		glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GLenum(GL_TEXTURE_WIDTH), (GLint *) &iWidth );
+		GLint iHeight;
+		glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GLenum(GL_TEXTURE_HEIGHT), (GLint *) &iHeight );
+		GLint iFormat;
+		glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INTERNAL_FORMAT), (GLint *) &iFormat );
+
+		GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INTERNAL_FORMAT)" );
+		if( iFormat != glTexFormat )
+		{
+			sError = ssprintf( "Expected format %s, got %s instead",
+					GLToString(glTexFormat).c_str(), GLToString(iFormat).c_str() );
+			break;
+		}
+*/
 	return RString();
 }
 
