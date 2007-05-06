@@ -296,7 +296,7 @@ MemoryCardManager::MemoryCardManager()
 MemoryCardManager::~MemoryCardManager()
 {
 	// Unregister with Lua.
-	LUA->UnsetGlobal( "MESSAGEMAN" );
+	LUA->UnsetGlobal( "MEMCARDMAN" );
 
 	ASSERT( g_pWorker != NULL );
 	SAFE_DELETE(g_pWorker);
