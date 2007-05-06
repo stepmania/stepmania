@@ -45,7 +45,7 @@ void RageException::Throw( const char *sFmt, ... )
 	}
 	else
 	{
-		printf( "%s\n", msg.c_str() );
+		puts( msg );
 		fflush( stdout );
 	}
 
