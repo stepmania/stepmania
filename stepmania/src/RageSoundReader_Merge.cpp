@@ -23,7 +23,8 @@ RageSoundReader_Merge::~RageSoundReader_Merge()
 		delete *it;
 }
 
-RageSoundReader_Merge::RageSoundReader_Merge( const RageSoundReader_Merge &cpy )
+RageSoundReader_Merge::RageSoundReader_Merge( const RageSoundReader_Merge &cpy ):
+	RageSoundReader(cpy)
 {
 	m_iSampleRate = cpy.m_iSampleRate;
 	m_iChannels = cpy.m_iChannels;
