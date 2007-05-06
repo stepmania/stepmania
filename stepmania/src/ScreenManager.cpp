@@ -115,6 +115,8 @@ namespace ScreenManagerUtil
 	/* Add a screen to g_ScreenStack.  This is the only function that adds to g_ScreenStack. */
 	void PushLoadedScreen( const LoadedScreen &ls )
 	{
+		LOG->Trace( "PushScreen: \"%s\"", ls.m_pScreen->GetName().c_str() );
+
 		// Be sure to push the screen first, so GetTopScreen returns the screen
 		// during BeginScreen.
 		g_ScreenStack.push_back( ls );
@@ -597,7 +599,6 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 		}
 		else
 		{
-			LOG->Trace("... PushScreen");
 			PushLoadedScreen( ls );
 		}
 	}

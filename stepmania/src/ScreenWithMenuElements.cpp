@@ -28,8 +28,6 @@ ScreenWithMenuElements::ScreenWithMenuElements()
 
 void ScreenWithMenuElements::Init()
 {
-	LOG->Trace( "ScreenWithMenuElements::Init()" );
-
 	PLAY_MUSIC.Load( m_sName, "PlayMusic" );
 	CANCEL_TRANSITIONS_OUT.Load( m_sName, "CancelTransitionsOut" );
 	TIMER_SECONDS.Load( m_sName, "TimerSeconds" );
