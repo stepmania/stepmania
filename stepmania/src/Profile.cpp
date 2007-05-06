@@ -87,6 +87,14 @@ void Profile::InitEditableData()
 	m_iWeightPounds = 0;
 }
 
+void Profile::ClearStats()
+{
+	// don't reset the Guid
+	RString sGuid = m_sGuid;
+	InitAll();
+	m_sGuid = sGuid;
+}
+
 RString Profile::MakeGuid()
 {
 	RString s;

@@ -25,7 +25,6 @@
 #include "Profile.h"
 #include "SongManager.h"
 #include "GameLoop.h"
-#include "ScreenServiceAction.h"
 #include "song.h"
 
 static bool g_bIsDisplayed = false;
@@ -711,8 +710,8 @@ class DebugLineClearMachineStats : public IDebugLine
 	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
-		GameCommand gc;
-		ClearMachineStats();
+		Profile* pProfile = PROFILEMAN->GetMachineProfile();
+		pProfile->ClearStats();
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };

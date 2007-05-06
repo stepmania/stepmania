@@ -29,10 +29,7 @@ static LocalizedString MACHINE_STATS_CLEARED( "ScreenServiceAction", "Machine st
 RString ClearMachineStats()
 {
 	Profile* pProfile = PROFILEMAN->GetMachineProfile();
-	// don't reset the Guid
-	RString sGuid = pProfile->m_sGuid;
-	pProfile->InitAll();
-	pProfile->m_sGuid = sGuid;
+	pProfile->ClearStats();
 	PROFILEMAN->SaveMachineProfile();
 	return MACHINE_STATS_CLEARED.GetValue();
 }

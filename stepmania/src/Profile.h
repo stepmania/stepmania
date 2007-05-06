@@ -296,6 +296,7 @@ public:
 	void InitCalorieData(); 
 	void InitRecentSongScores(); 
 	void InitRecentCourseScores(); 
+	void ClearStats();
 
 	//
 	// Loading and saving
