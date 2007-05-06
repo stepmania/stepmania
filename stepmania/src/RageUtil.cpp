@@ -318,9 +318,9 @@ RString vssprintf( const char *szFormat, va_list argList )
 		/* Some systems return the actual size required when snprintf
 		 * doesn't have enough space.  This lets us avoid wasting time
 		 * iterating, and wasting memory. */
-		bInitialized = true;
 		char ignore;
 		bExactSizeSupported = ( snprintf( &ignore, 0, "Hello World" ) == 11 );
+		bInitialized = true;
 	}
 
 	if( bExactSizeSupported )
