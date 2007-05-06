@@ -319,8 +319,15 @@ void GameState::Reset()
 
 void GameState::JoinPlayer( PlayerNumber pn )
 {
+	/* If joint premium and we're not taking away a credit for the 2nd join,
+	 * give the new player the same number of stage tokens that the old player
+	 * has. */
+	if( GetCoinMode() == CoinMode_Pay && GetPremium() == Premium_2PlayersFor1Credit && GetNumSidesJoined() == 1 )
+		m_iPlayerStageTokens[pn] = m_iPlayerStageTokens[m_MasterPlayerNumber];
+	else
+		m_iPlayerStageTokens[pn] = PREFSMAN->m_iSongsPerPlay;
+
 	m_bSideIsJoined[pn] = true;
-	m_iPlayerStageTokens[pn] = PREFSMAN->m_iSongsPerPlay;
 
 	if( m_MasterPlayerNumber == PLAYER_INVALID )
 		m_MasterPlayerNumber = pn;
