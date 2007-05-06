@@ -855,7 +855,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 		RString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
 		RString sDontShareFile = sDir + DONT_SHARE_SIG;
 
-		LOG->Trace( "Verifying don't share signature" );
+		LOG->Trace( "Verifying don't share signature \"%s\" against \"%s\"", sDontShareFile.c_str(), sStatsXmlSigFile.c_str() );
 		// verify the stats.xml signature with the "don't share" file
 		if( !CryptManager::VerifyFileWithFile(sStatsXmlSigFile, sDontShareFile) )
 		{
