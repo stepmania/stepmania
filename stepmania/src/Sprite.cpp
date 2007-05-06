@@ -280,7 +280,7 @@ void Sprite::SetTexture( RageTexture *pTexture )
 
 void Sprite::LoadFromTexture( RageTextureID ID )
 {
-	LOG->Trace( "Sprite::LoadFromTexture( %s )", ID.filename.c_str() );
+	// LOG->Trace( "Sprite::LoadFromTexture( %s )", ID.filename.c_str() );
 
 	RageTexture *pTexture = NULL;
 	if( m_pTexture && m_pTexture->GetID() == ID )
