@@ -182,8 +182,8 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, KEY_F8)] = 3;
 	}
 
-	map<RString,int> iNextGameplayButton;
-	int iNextDebugButton = 0;
+	map<RString,int> iNextDebugButton;
+	int iNextGameplayButton = 0;
 	FOREACH( IDebugLine*, *g_pvpSubscribers, p )
 	{
 		RString sPageName = (*p)->GetPageName();
@@ -192,10 +192,10 @@ void ScreenDebugOverlay::Init()
 		switch( (*p)->GetType() )
 		{
 		case IDebugLine::all_screens:
-			di = g_Mappings.debugButton[iNextDebugButton++];
+			di = g_Mappings.debugButton[iNextDebugButton[sPageName]++];
 			break;
 		case IDebugLine::gameplay_only:
-			di = g_Mappings.gameplayButton[iNextGameplayButton[sPageName]++];
+			di = g_Mappings.gameplayButton[iNextGameplayButton++];
 			break;
 		}
 		(*p)->m_Button = di;
