@@ -42,8 +42,7 @@ int ThreadImpl_Pthreads::Wait()
 {
 	int *val;
 	int ret = pthread_join( thread, (void **) &val );
-	if( ret )
-		RageException::Throw( "pthread_join: %s", strerror(ret) );
+	ASSERT_M( ret == 0, ssprintf("pthread_join: %s", strerror(ret)) );
 
 	int iRet = *val;
 	delete val;
@@ -85,8 +84,7 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 	thread->m_StartFinishedSem = new SemaImpl_Pthreads( 0 );
 
 	int ret = pthread_create( &thread->thread, NULL, StartThread, thread );
-	if( ret )
-		FAIL_M( ssprintf( "MakeThread: pthread_create: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, ssprintf( "MakeThread: pthread_create: %s", strerror(errno)) );
 
 	/* Don't return until StartThread sets m_piThreadID. */
 	thread->m_StartFinishedSem->Wait();
@@ -104,8 +102,7 @@ MutexImpl_Pthreads::MutexImpl_Pthreads( RageMutex *pParent ):
 MutexImpl_Pthreads::~MutexImpl_Pthreads()
 {
 	int ret = pthread_mutex_destroy( &mutex ) == -1;
-	if( ret )
-		RageException::Throw( "Error deleting mutex: %s", strerror(errno) );
+	ASSERT_M( ret == 0, ssprintf("Error deleting mutex: %s", strerror(errno)) );
 }
 
 
@@ -184,8 +181,7 @@ bool MutexImpl_Pthreads::TryLock()
 	int ret = pthread_mutex_trylock( &mutex );
 	if( ret == EBUSY )
 		return false;
-	if( ret )
-		RageException::Throw( "pthread_mutex_trylock failed: %s", strerror(errno) );
+	ASSERT_M( ret == 0, ssprintf("pthread_mutex_trylock failed: %s", strerror(errno)) );
 	return true;
 }
 
@@ -431,7 +427,7 @@ bool SemaImpl_Pthreads::TryWait()
 	return true;
 }
 #else
-/* Use conditions, to work around OSX "forgetting" to implement semaphores. */
+/* Use conditions, to work around OS X "forgetting" to implement semaphores. */
 SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 {
 	int ret = pthread_cond_init( &m_Cond, NULL );
