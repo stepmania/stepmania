@@ -58,6 +58,7 @@ public:
 	virtual Type GetType() const { return all_screens; }
 	virtual RString GetDisplayTitle() = 0;
 	virtual RString GetDisplayValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
+	virtual RString GetPageName() const { return "Main"; }
 	virtual bool IsEnabled() = 0;
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
@@ -100,6 +101,7 @@ struct MapDebugToDI
 	DeviceInput holdForFast;
 	DeviceInput debugButton[MAX_DEBUG_LINES];
 	DeviceInput gameplayButton[MAX_DEBUG_LINES];
+	map<DeviceInput, int> pageButton;
 	void Clear()
 	{
 		holdForDebug1.MakeInvalid();
@@ -175,23 +177,36 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_BACK);
+		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, KEY_F5)] = 0;
+		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, KEY_F6)] = 1;
+		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, KEY_F7)] = 2;
+		g_Mappings.pageButton[DeviceInput(DEVICE_KEYBOARD, KEY_F8)] = 3;
 	}
 
-
-	int iNextGameplayButton = 0;
+	map<RString,int> iNextGameplayButton;
 	int iNextDebugButton = 0;
 	FOREACH( IDebugLine*, *g_pvpSubscribers, p )
 	{
+		RString sPageName = (*p)->GetPageName();
+		
+		DeviceInput di;
 		switch( (*p)->GetType() )
 		{
 		case IDebugLine::all_screens:
-			(*p)->m_Button = g_Mappings.debugButton[iNextDebugButton++];
+			di = g_Mappings.debugButton[iNextDebugButton++];
 			break;
 		case IDebugLine::gameplay_only:
-			(*p)->m_Button = g_Mappings.gameplayButton[iNextGameplayButton++];
+			di = g_Mappings.gameplayButton[iNextGameplayButton[sPageName]++];
 			break;
 		}
+		(*p)->m_Button = di;
+
+		if( find(m_asPages.begin(), m_asPages.end(), sPageName) == m_asPages.end() )
+			m_asPages.push_back( sPageName );
 	}
+
+	m_iCurrentPage = 0;
+
 
 	m_Quad.StretchTo( RectF( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
 	m_Quad.SetDiffuse( RageColor(0, 0, 0, 0.5f) );
@@ -276,23 +291,37 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 
 void ScreenDebugOverlay::UpdateText()
 {
+	m_textHeader.SetText( ssprintf("%s: %s", DEBUG_MENU.GetValue().c_str(), GetCurrentPageName().c_str()) );
+
 	/* Highlight options that aren't the default. */
 	const RageColor off(0.6f, 0.6f, 0.6f, 1.0f);
 	const RageColor on(1, 1, 1, 1);
 	
-	const unsigned NUM_DEBUG_LINES = g_pvpSubscribers->size();
+	int iOffset = 0;
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
 	{
+		RString sPageName = (*p)->GetPageName();
+
 		int i = p-g_pvpSubscribers->begin();
-		float fOffsetFromCenterIndex = i - (NUM_DEBUG_LINES-1)/2.0f; 
-		float fY = SCREEN_CENTER_Y+10 + fOffsetFromCenterIndex * 16;
+
+		float fY = SCREEN_TOP+50 + iOffset * 16;
 
 		BitmapText &txt1 = *m_vptextButton[i];
+		BitmapText &txt2 = *m_vptextFunction[i];
+		if( sPageName != GetCurrentPageName() )
+		{
+			txt1.SetVisible( false );
+			txt2.SetVisible( false );
+			continue;
+		}
+		txt1.SetVisible( true );
+		txt2.SetVisible( true );
+		++iOffset;
+
 		txt1.SetX( SCREEN_CENTER_X-50 );
 		txt1.SetY( fY );
 		txt1.SetZoom( 0.7f );
 
-		BitmapText &txt2 = *m_vptextFunction[i];
 		txt2.SetX( SCREEN_CENTER_X-30 );
 		txt2.SetY( fY );
 		txt2.SetZoom( 0.7f );
@@ -326,6 +355,16 @@ void ScreenDebugOverlay::UpdateText()
 	}
 }
 
+template<typename U, typename V>
+bool GetValueFromMap( const map<U, V> &m, const U &key, V &val )
+{
+	map<U, V>::const_iterator it = m.find(key);
+	if( it == m.end() )
+		return false;
+	val = it->second;
+	return true;
+}
+
 bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 {
 	if( input.DeviceI == g_Mappings.holdForDebug1 || 
@@ -341,8 +380,22 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			g_bIsDisplayed = false;
 	}
 
+	int iPage;
+	if( g_bIsDisplayed && GetValueFromMap(g_Mappings.pageButton, input.DeviceI, iPage) )
+	{
+		if( input.type != IET_FIRST_PRESS )
+			return true; /* eat the input but do nothing */
+		m_iCurrentPage = iPage;
+		CLAMP( m_iCurrentPage, 0, (int) m_asPages.size()-1 );
+		return true;
+	}
+
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
 	{
+		RString sPageName = (*p)->GetPageName();
+		if( sPageName != GetCurrentPageName() )
+			continue;
+
 		int i = p-g_pvpSubscribers->begin();
 
 		// Gameplay buttons are available only in gameplay.  Non-gameplay buttons are
@@ -642,6 +695,7 @@ class DebugLineScreenTestMode : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return SCREEN_TEST_MODE.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bScreenTestMode.Get(); }
+	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		PREFSMAN->m_bScreenTestMode.Set( !PREFSMAN->m_bScreenTestMode );
@@ -654,6 +708,7 @@ class DebugLineClearMachineStats : public IDebugLine
 	virtual RString GetDisplayTitle() { return CLEAR_MACHINE_STATS.GetValue(); }
 	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		GameCommand gc;
@@ -743,9 +798,10 @@ class DebugLineFillMachineStats : public IDebugLine
 	virtual RString GetDisplayTitle() { return FILL_MACHINE_STATS.GetValue(); }
 	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
-		Profile* pProfile = PROFILEMAN->GetProfile(PLAYER_1);
+		Profile* pProfile = PROFILEMAN->GetMachineProfile();
 		FillProfileStats( pProfile );
 		PROFILEMAN->SaveMachineProfile();
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
@@ -769,6 +825,7 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 	virtual RString GetDisplayTitle() { return RELOAD.GetValue(); }
 	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
 	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		RString sScreenName = SCREENMAN->GetScreen(0)->GetName();
@@ -788,6 +845,7 @@ class DebugLineRestartCurrentScreen : public IDebugLine
 	virtual RString GetDisplayTitle() { return RESTART.GetValue(); }
 	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
 	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		SCREENMAN->GetTopScreen()->BeginScreen();
@@ -801,6 +859,7 @@ class DebugLineCurrentScreenOn : public IDebugLine
 	virtual RString GetDisplayTitle() { return SCREEN_ON.GetValue(); }
 	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
 	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		SCREENMAN->GetTopScreen()->PlayCommand("On");
@@ -814,6 +873,7 @@ class DebugLineCurrentScreenOff : public IDebugLine
 	virtual RString GetDisplayTitle() { return SCREEN_OFF.GetValue(); }
 	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
 	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		SCREENMAN->GetTopScreen()->PlayCommand("Off");
@@ -827,6 +887,7 @@ class DebugLineReloadTheme : public IDebugLine
 	virtual RString GetDisplayTitle() { return RELOAD_THEME_AND_TEXTURES.GetValue(); }
 	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		THEME->ReloadMetrics();
@@ -844,6 +905,7 @@ class DebugLineWriteProfiles : public IDebugLine
 	virtual RString GetDisplayTitle() { return WRITE_PROFILES.GetValue(); }
 	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
+	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		// Also save bookkeeping and profile info for debugging

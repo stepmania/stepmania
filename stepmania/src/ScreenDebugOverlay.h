@@ -20,6 +20,10 @@ public:
 private:
 	void UpdateText();
 
+	RString GetCurrentPageName() const { return m_asPages[m_iCurrentPage]; }
+	vector<RString> m_asPages;
+	int m_iCurrentPage;
+
 	Quad m_Quad;
 	BitmapText m_textHeader;
 	vector<BitmapText*> m_vptextButton;
