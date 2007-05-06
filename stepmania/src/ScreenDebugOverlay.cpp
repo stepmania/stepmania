@@ -746,7 +746,7 @@ class DebugLineClearProfileStats : public IDebugLine
 	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
-		Profile* pProfile = PROFILEMAN->GetMachineProfile();
+		Profile *pProfile = PROFILEMAN->GetProfile( g_ProfileSlot );
 		pProfile->ClearStats();
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
