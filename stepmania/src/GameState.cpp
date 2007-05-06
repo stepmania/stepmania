@@ -486,17 +486,20 @@ void GameState::LoadProfiles( bool bLoadEdits )
 void GameState::SaveProfiles()
 {
 	FOREACH_HumanPlayer( pn )
-	{
-		if( !PROFILEMAN->IsPersistentProfile(pn) )
-			continue;
+		SaveProfile( pn );
+}
 
-		bool bWasMemoryCard = PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn);
-		if( bWasMemoryCard )
-			MEMCARDMAN->MountCard( pn );
-		PROFILEMAN->SaveProfile( pn );
-		if( bWasMemoryCard )
-			MEMCARDMAN->UnmountCard( pn );
-	}
+void GameState::SaveProfile( PlayerNumber pn )
+{
+	if( !PROFILEMAN->IsPersistentProfile(pn) )
+		return;
+
+	bool bWasMemoryCard = PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn);
+	if( bWasMemoryCard )
+		MEMCARDMAN->MountCard( pn );
+	PROFILEMAN->SaveProfile( pn );
+	if( bWasMemoryCard )
+		MEMCARDMAN->UnmountCard( pn );
 }
 
 bool GameState::HaveProfileToLoad()

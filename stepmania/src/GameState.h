@@ -46,6 +46,7 @@ public:
 	bool JoinInput( PlayerNumber pn );
 	void LoadProfiles( bool bLoadEdits = true );
 	void SaveProfiles();
+	void SaveProfile( PlayerNumber pn );
 	bool HaveProfileToLoad();
 	bool HaveProfileToSave();
 	void SaveLocalData();
