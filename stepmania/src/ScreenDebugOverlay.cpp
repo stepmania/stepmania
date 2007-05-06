@@ -475,8 +475,9 @@ static LocalizedString RENDERING_STATS		( "ScreenDebugOverlay", "Rendering Stats
 static LocalizedString VSYNC			( "ScreenDebugOverlay", "Vsync" );
 static LocalizedString MULTITEXTURE		( "ScreenDebugOverlay", "Multitexture" );
 static LocalizedString SCREEN_TEST_MODE		( "ScreenDebugOverlay", "Screen Test Mode" );
-static LocalizedString CLEAR_MACHINE_STATS	( "ScreenDebugOverlay", "Clear Machine Stats" );
-static LocalizedString FILL_MACHINE_STATS	( "ScreenDebugOverlay", "Fill Machine Stats" );
+static LocalizedString PROFILE			( "ScreenDebugOverlay", "Profile" );
+static LocalizedString CLEAR_PROFILE_STATS	( "ScreenDebugOverlay", "Clear Profile Stats" );
+static LocalizedString FILL_PROFILE_STATS	( "ScreenDebugOverlay", "Fill Profile Stats" );
 static LocalizedString SEND_NOTES_ENDED		( "ScreenDebugOverlay", "Send Notes Ended" );
 static LocalizedString RELOAD			( "ScreenDebugOverlay", "Reload" );
 static LocalizedString RESTART			( "ScreenDebugOverlay", "Restart" );
@@ -702,11 +703,46 @@ class DebugLineScreenTestMode : public IDebugLine
 	}
 };
 
-class DebugLineClearMachineStats : public IDebugLine
+static ProfileSlot g_ProfileSlot = ProfileSlot_Machine;
+static bool IsSelectProfilePersistent()
 {
-	virtual RString GetDisplayTitle() { return CLEAR_MACHINE_STATS.GetValue(); }
+	if( g_ProfileSlot == ProfileSlot_Machine )
+		return true;
+	return PROFILEMAN->IsPersistentProfile( (PlayerNumber) g_ProfileSlot );
+}
+
+class DebugLineProfileSlot : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return PROFILE.GetValue(); }
+	virtual RString GetDisplayValue()
+	{
+		switch( g_ProfileSlot )
+		{
+		case ProfileSlot_Machine: return "Machine";
+		case ProfileSlot_Player1: return "Player 1";
+		case ProfileSlot_Player2: return "Player 2";
+		}
+
+		return RString();
+	}
+	virtual bool IsEnabled() { return IsSelectProfilePersistent(); }
+	virtual RString GetPageName() const { return "Profiles"; }
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
+	{
+		enum_add( g_ProfileSlot, +1 );
+		if( g_ProfileSlot == NUM_ProfileSlot )
+			g_ProfileSlot = ProfileSlot_Player1;
+
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
+	}
+};
+
+
+class DebugLineClearProfileStats : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return CLEAR_PROFILE_STATS.GetValue(); }
 	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual bool IsEnabled() { return IsSelectProfilePersistent(); }
 	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
@@ -792,17 +828,16 @@ static void FillProfileStats( Profile *pProfile )
 	}
 }
 
-class DebugLineFillMachineStats : public IDebugLine
+class DebugLineFillProfileStats : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return FILL_MACHINE_STATS.GetValue(); }
+	virtual RString GetDisplayTitle() { return FILL_PROFILE_STATS.GetValue(); }
 	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual bool IsEnabled() { return IsSelectProfilePersistent(); }
 	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
-		Profile* pProfile = PROFILEMAN->GetMachineProfile();
+		Profile* pProfile = PROFILEMAN->GetProfile( g_ProfileSlot );
 		FillProfileStats( pProfile );
-		PROFILEMAN->SaveMachineProfile();
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
@@ -903,14 +938,16 @@ class DebugLineWriteProfiles : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return WRITE_PROFILES.GetValue(); }
 	virtual RString GetDisplayValue() { return RString(); }
-	virtual bool IsEnabled() { return true; }
+	virtual bool IsEnabled() { return IsSelectProfilePersistent(); }
 	virtual RString GetPageName() const { return "Profiles"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		// Also save bookkeeping and profile info for debugging
 		// so we don't have to play through a whole song to get new output.
-		GAMESTATE->SaveLocalData();
-		GAMESTATE->SaveProfiles();
+		if( g_ProfileSlot == ProfileSlot_Machine )
+			GAMESTATE->SaveLocalData();
+		else
+			GAMESTATE->SaveProfile( (PlayerNumber) g_ProfileSlot );
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
@@ -1024,8 +1061,9 @@ DECLARE_ONE( DebugLineStats );
 DECLARE_ONE( DebugLineVsync );
 DECLARE_ONE( DebugLineAllowMultitexture );
 DECLARE_ONE( DebugLineScreenTestMode );
-DECLARE_ONE( DebugLineClearMachineStats );
-DECLARE_ONE( DebugLineFillMachineStats );
+DECLARE_ONE( DebugLineProfileSlot );
+DECLARE_ONE( DebugLineClearProfileStats );
+DECLARE_ONE( DebugLineFillProfileStats );
 DECLARE_ONE( DebugLineSendNotesEnded );
 DECLARE_ONE( DebugLineReloadCurrentScreen );
 DECLARE_ONE( DebugLineRestartCurrentScreen );
