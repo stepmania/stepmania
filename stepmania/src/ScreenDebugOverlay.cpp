@@ -357,7 +357,7 @@ void ScreenDebugOverlay::UpdateText()
 template<typename U, typename V>
 bool GetValueFromMap( const map<U, V> &m, const U &key, V &val )
 {
-	map<U, V>::const_iterator it = m.find(key);
+	typename map<U, V>::const_iterator it = m.find(key);
 	if( it == m.end() )
 		return false;
 	val = it->second;
