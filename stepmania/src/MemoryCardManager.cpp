@@ -54,14 +54,14 @@ Preference<RString>		MemoryCardManager::m_sEditorMemoryCardOsMountPoint( "Editor
 
 const RString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
 {
-	/* @ is importast; see RageFileManager LoadedDriver::GetPath */
+	/* @ is important; see RageFileManager LoadedDriver::GetPath */
 	"/@mc1/",
 	"/@mc2/",
 };
 
 static const RString MEM_CARD_MOUNT_POINT_INTERNAL[NUM_PLAYERS] =
 {
-	/* @ is importast; see RageFileManager LoadedDriver::GetPath */
+	/* @ is important; see RageFileManager LoadedDriver::GetPath */
 	"/@mc1int/",
 	"/@mc2int/",
 };
