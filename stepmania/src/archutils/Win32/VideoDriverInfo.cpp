@@ -40,13 +40,13 @@ RString GetPrimaryVideoName()
 	}
 
 	FreeLibrary( hInstUser32 );
+	TrimRight( sPrimaryDeviceName );
 	return sPrimaryDeviceName;
 }
 
 RString GetPrimaryVideoDriverName()
 {
 	RString sPrimaryDeviceName = GetPrimaryVideoName();
-	TrimRight( sPrimaryDeviceName );
 	if( sPrimaryDeviceName != "" )
 		return sPrimaryDeviceName;
 	
