@@ -499,7 +499,7 @@ void ScreenManager::Input( const InputEventPlus &input )
 Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 {
 	RageTimer t;
-	LOG->Trace( "Loading screen name '%s'", sScreenName.c_str() );
+	LOG->Trace( "Loading screen: \"%s\"", sScreenName.c_str() );
 
 	RString sClassName = THEME->GetMetric( sScreenName,"Class" );
 	
@@ -512,7 +512,7 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 	CreateScreenFn pfn = iter->second;
 	Screen *ret = pfn( sScreenName );
 
-	LOG->Trace( "Loaded '%s' ('%s') in %f", sScreenName.c_str(), sClassName.c_str(), t.GetDeltaTime() );
+	LOG->Trace( "Loaded \"%s\" (\"%s\") in %f", sScreenName.c_str(), sClassName.c_str(), t.GetDeltaTime() );
 
 	return ret;
 }
