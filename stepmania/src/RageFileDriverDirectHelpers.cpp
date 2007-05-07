@@ -164,8 +164,7 @@ bool CreateDirectories( RString Path )
 
 		/* Make sure it's a directory. */
 		struct stat st;
-		DoStat( curpath, &st );
-		if( !(st.st_mode & S_IFDIR) )
+		if( DoStat(curpath, &st) != -1 && !(st.st_mode & S_IFDIR) )
 		{
 			WARN( ssprintf("Couldn't create %s: path exists and is not a directory", curpath.c_str()) );
 			
