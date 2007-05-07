@@ -48,7 +48,7 @@ static const char *LightsModeNames[] = {
 	"TestManualCycle",
 };
 XToString( LightsMode );
-#include "RageLog.h"
+
 static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 {
 	vGameInputsOut.clear();
