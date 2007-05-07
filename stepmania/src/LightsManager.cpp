@@ -21,6 +21,8 @@ Preference<float>	g_fLightsFalloffSeconds( "LightsFalloffSeconds", 0.1f );
 Preference<float>	g_fLightsAheadSeconds( "LightsAheadSeconds", 0.05f );
 static Preference<bool>	g_bBlinkGameplayButtonLightsOnNote( "BlinkGameplayButtonLightsOnNote", false );
 
+static ThemeMetric<RString> GAME_BUTTONS_TO_SHOW( "LightsManager", "GameButtonsToShow" );
+
 static const char *CabinetLightNames[] = {
 	"MarqueeUpLeft",
 	"MarqueeUpRight",
@@ -46,10 +48,25 @@ static const char *LightsModeNames[] = {
 	"TestManualCycle",
 };
 XToString( LightsMode );
-
+#include "RageLog.h"
 static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 {
 	vGameInputsOut.clear();
+
+	vector<RString> asGameButtons;
+	split( GAME_BUTTONS_TO_SHOW.GetValue(), ",", asGameButtons );
+	FOREACH_GameController( gc )
+	{
+		FOREACH_CONST( RString, asGameButtons, button )
+		{
+			GameButton gb = StringToGameButton( INPUTMAPPER->GetInputScheme(), *button );
+			if( gb != GameButton_Invalid )
+			{
+				GameInput gi = GameInput( gc, gb );
+				vGameInputsOut.push_back( gi );
+			}
+		}
+	}
 
 	set<GameInput> vGIs;
 	vector<const Style*> vStyles;
@@ -71,6 +88,7 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 			}
 		}
 	}
+
 	FOREACHS_CONST( GameInput, vGIs, gi )
 		vGameInputsOut.push_back( *gi );
 }
