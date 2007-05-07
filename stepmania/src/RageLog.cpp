@@ -425,7 +425,7 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 	if( LOG )
 		(LOG->*method)( "%s:%i: %s", file, line, message );
 	else
-		fprintf( stderr, "%s:%i: %s", file, line, message );
+		fprintf( stderr, "%s:%i: %s\n", file, line, message );
 }
 
 
