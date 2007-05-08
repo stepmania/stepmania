@@ -80,7 +80,7 @@ public:
 	void NextTestGameButtonLight()	{ ChangeTestGameButtonLight(+1); }
 
 	CabinetLight	GetFirstLitCabinetLight();
-	void			GetFirstLitGameButtonLight( GameController &gcOut, GameButton &gbOut );
+	GameInput	GetFirstLitGameButtonLight();
 
 private:
 	void ChangeTestCabinetLight( int iDir );

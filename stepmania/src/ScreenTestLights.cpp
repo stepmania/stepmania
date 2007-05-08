@@ -50,9 +50,7 @@ void ScreenTestLights::Update( float fDeltaTime )
 
 
 	CabinetLight cl = LIGHTSMAN->GetFirstLitCabinetLight();
-	GameController gc;
-	GameButton gb;
-	LIGHTSMAN->GetFirstLitGameButtonLight( gc, gb );
+	GameInput gi = LIGHTSMAN->GetFirstLitGameButtonLight();
 
 	RString s;
 
@@ -71,15 +69,15 @@ void ScreenTestLights::Update( float fDeltaTime )
 	else
 		s += ssprintf( CABINET_LIGHT.GetValue()+": %d %s\n", cl, CabinetLightToString(cl).c_str() );
 
-	if( gc == GameController_Invalid )
+	if( !gi.IsValid() )
 	{
 		s += ssprintf( CONTROLLER_LIGHT.GetValue()+": -----\n" );
 	}
 	else
 	{
-		RString sGameButton = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), gb );
-		PlayerNumber pn = (PlayerNumber)(gc);
-		s += ssprintf( CONTROLLER_LIGHT.GetValue()+": %s %d %s\n", PlayerNumberToString(pn).c_str(), gb, sGameButton.c_str() );
+		RString sGameButton = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), gi.button );
+		PlayerNumber pn = (PlayerNumber)(gi.controller);
+		s += ssprintf( CONTROLLER_LIGHT.GetValue()+": %s %d %s\n", PlayerNumberToString(pn).c_str(), gi.button, sGameButton.c_str() );
 	}
 
 	m_textInputs.SetText( s );

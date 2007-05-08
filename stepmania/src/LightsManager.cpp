@@ -486,22 +486,17 @@ CabinetLight LightsManager::GetFirstLitCabinetLight()
 	return CabinetLight_Invalid;
 }
 
-void LightsManager::GetFirstLitGameButtonLight( GameController &gcOut, GameButton &gbOut )
+GameInput LightsManager::GetFirstLitGameButtonLight()
 {
 	FOREACH_GameController( gc )
 	{
 		FOREACH_GameButton( gb )
 		{
 			if( m_LightsState.m_bGameButtonLights[gc][gb] )
-			{
-				gcOut = gc;
-				gbOut = gb;
-				return;
-			}
+				return GameInput( gc, gb );
 		}
 	}
-	gcOut = GameController_Invalid;
-	gbOut = GameButton_Invalid;
+	return GameInput();
 }
 
 bool LightsManager::IsEnabled() const
