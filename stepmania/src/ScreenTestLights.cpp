@@ -36,11 +36,6 @@ void ScreenTestLights::EndScreen()
 	ScreenWithMenuElements::EndScreen();
 }
 
-ScreenTestLights::~ScreenTestLights()
-{
-	LOG->Trace( "ScreenTestLights::~ScreenTestLights()" );
-}
-
 static LocalizedString AUTO_CYCLE	( "ScreenTestLights", "Auto Cycle" );
 static LocalizedString MANUAL_CYCLE	( "ScreenTestLights", "Manual Cycle" );
 static LocalizedString CABINET_LIGHT( "ScreenTestLights", "cabinet light" );

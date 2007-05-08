@@ -11,7 +11,6 @@ public:
 	virtual void Init();
 	virtual void BeginScreen();
 	virtual void EndScreen();
-	virtual ~ScreenTestLights();
 
 	virtual void Update( float fDelta );
 	virtual void Input( const InputEventPlus &input );
