@@ -109,9 +109,8 @@ LightsManager::LightsManager()
 	if( sDriver.empty() )
 		sDriver = DEFAULT_LIGHTS_DRIVER;
 	LightsDriver::Create( sDriver, m_vpDrivers );
-	m_fTestAutoCycleCurrentIndex = 0;
-	m_clTestManualCycleCurrent = CabinetLight_Invalid;
-	m_iControllerTestManualCycleCurrent = -1;
+
+	SetLightsMode( LIGHTSMODE_ATTRACT );
 }
 
 LightsManager::~LightsManager()
@@ -450,6 +449,9 @@ void LightsManager::BlinkGameButton( GameInput gi )
 void LightsManager::SetLightsMode( LightsMode lm )
 {
 	m_LightsMode = lm;
+	m_fTestAutoCycleCurrentIndex = 0;
+	m_clTestManualCycleCurrent = CabinetLight_Invalid;
+	m_iControllerTestManualCycleCurrent = -1;
 }
 
 LightsMode LightsManager::GetLightsMode()
