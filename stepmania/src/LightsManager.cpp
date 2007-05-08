@@ -218,8 +218,8 @@ void LightsManager::Update( float fDeltaTime )
 				{
 					m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT+pn] = true;
 					m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT+pn] = true;
-					m_LightsState.m_bCabinetLights[LIGHT_BUTTONS_LEFT+pn] = true;
 					m_LightsState.m_bCabinetLights[LIGHT_BASS_LEFT+pn] = true;
+					m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = true;
 				}
 			}
 		}
@@ -266,7 +266,7 @@ void LightsManager::Update( float fDeltaTime )
 			{
 				if( GAMESTATE->m_bSideIsJoined[pn] )
 				{
-					m_LightsState.m_bCabinetLights[LIGHT_BUTTONS_LEFT+pn] = bBlinkOn;
+					m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = bBlinkOn;
 				}
 			}
 		}
