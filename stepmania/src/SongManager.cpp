@@ -1252,7 +1252,7 @@ void SongManager::UpdatePopular()
 	{
 		bool bFiltered = false;
 		/* Filter out hidden songs. */
-		if( !apBestSongs[j]->GetDisplayed() )
+		if( apBestSongs[j]->GetDisplayed() != Song::SHOW_ALWAYS )
 			bFiltered = true;
 		/* Filter out locked songs. */
 		// XXX Hack, this depends on UNLOCKMAN being around.
