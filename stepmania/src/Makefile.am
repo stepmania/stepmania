@@ -166,7 +166,8 @@ SpecialFiles.cpp SpecialFiles.h \
 ProductInfo.h
 
 LoadingWindow = arch/LoadingWindow/LoadingWindow.cpp \
-		arch/LoadingWindow/LoadingWindow.h
+		arch/LoadingWindow/LoadingWindow.h \
+		arch/LoadingWindow/LoadingWindow_Null.h
 
 if HAVE_GTK
 LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h \

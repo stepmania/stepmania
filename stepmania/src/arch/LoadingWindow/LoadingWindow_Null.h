@@ -1,26 +1,19 @@
-/* LoadingWindow - opens and displays the loading banner. */
+#ifndef LOADING_WINDOW_NULL_H
+#define LOADING_WINDOW_NULL_H
 
-#ifndef LOADING_WINDOW_H
-#define LOADING_WINDOW_H
+#include "LoadingWindow.h"
 
-struct RageSurface;
-class LoadingWindow
+class LoadingWindow_Null: public LoadingWindow
 {
 public:
-	static LoadingWindow *Create();
-
-	virtual RString Init() { return RString(); }
-	virtual ~LoadingWindow() { }
-
-	virtual void Paint() { }
-	virtual void SetText( RString str ) = 0;
-	virtual void SetIcon( const RageSurface *pIcon ) { }
+	void SetText( RString str ) { }
 };
+#define USE_LOADING_WINDOW_NULL
 
 #endif
 
 /*
- * (c) 2002-2004 Glenn Maynard
+ * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -43,3 +36,4 @@ public:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+

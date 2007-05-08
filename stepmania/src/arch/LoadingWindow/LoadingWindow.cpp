@@ -7,9 +7,9 @@
 LoadingWindow *LoadingWindow::Create()
 {
 	if( !PREFSMAN->m_bShowLoadingWindow )
-		return new LoadingWindow;
+		return new LoadingWindow_Null;
 #if defined(UNIX) && !defined(HAVE_GTK)
-	return new LoadingWindow;
+	return new LoadingWindow_Null;
 #endif
 	/* Don't load NULL by default. */
 	const RString drivers = "xbox,win32,cocoa,gtk";
@@ -37,7 +37,7 @@ LoadingWindow *LoadingWindow::Create()
 #ifdef USE_LOADING_WINDOW_XBOX
 		if( !DriversToTry[i].CompareNoCase("Xbox") )	ret = new LoadingWindow_Xbox;
 #endif
-		if( !DriversToTry[i].CompareNoCase("Null") )	ret = new LoadingWindow;
+		if( !DriversToTry[i].CompareNoCase("Null") )	ret = new LoadingWindow_Null;
 
 			
 		if( ret == NULL )
