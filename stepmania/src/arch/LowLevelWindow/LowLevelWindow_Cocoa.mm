@@ -3,6 +3,7 @@
 #import "DisplayResolutions.h"
 #import "RageUtil.h"
 #import "RageThreads.h"
+#import "RageDisplay_OGL_Helpers.h"
 #import "arch/ArchHooks/ArchHooks.h"
 #import "archutils/Darwin/SMMainThread.h"
 
@@ -74,8 +75,104 @@ public:
 	g_iWidth = int( size.width );
 	g_iHeight = int( size.height );
 }
-	
 @end
+
+#if 0
+class RenderTarget_Cocoa : public RenderTarget
+{
+public:
+	RenderTarget_Cocoa( id shareContext );
+	~RenderTarget_Cocoa();
+	void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
+	unsigned GetTexture() const { return m_iTexHandle; }
+	void StartRenderingTo();
+	void FinishRenderingTo();
+	
+private:
+	int m_iWidth, m_iHeight;
+	id m_ShareContext, m_OldContext, m_PBufferContext;
+	id m_PBuffer;
+	GLuint m_iTexHandle;
+};
+
+RenderTarget_Cocoa::RenderTarget_Cocoa( id shareContext )
+{
+	m_iWidth = 0;
+	m_iHeight = 0;
+	m_ShareContext = shareContext;
+	m_OldContext = nil;
+	m_PBufferContext = nil;
+	m_PBuffer = nil;
+	m_iTexHandle = 0;
+}
+
+RenderTarget_Cocoa::~RenderTarget_Cocoa()
+{
+	POOL;
+	[m_PBufferContext release];
+	[m_PBuffer release ];
+	if( m_iTexHandle )
+		glDeleteTextures( 1, &m_iTexHandle );
+}
+
+void RenderTarget_Cocoa::Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
+{
+	m_iWidth = param.iWidth;
+	m_iHeight = param.iHeight;
+	
+	// XXX: Create the PBuffer.
+	
+	// XXX: Create an OGL context.
+	
+	glGenTextures( 1, &m_iTexHandle );
+	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
+	
+	while( glGetError() != GL_NO_ERROR )
+		;
+	
+	int iTextureWidth = power_of_two( param.iWidth );
+	int iTextureHeight = power_of_two( param.iHeight );
+	iTextureWidthOut = iTextureWidth;
+	iTextureHeightOut = iTextureHeight;
+	
+	glTexImage2D( GL_TEXTURE_2D, 0, param.bWithAlpha? GL_RGBA8:GL_RGB8,
+		      iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB,
+		      GL_UNSIGNED_BYTE, NULL );
+	GLenum error = glGetError();
+	ASSERT_M( error == GL_NO_ERROR, RageDisplay_OGL_Helpers::GLToString(error) );
+	
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+}
+
+void RenderTarget_Cocoa::StartRenderingTo()
+{
+	m_OldContext = [NSOpenGLContext currentContext];
+	[m_PBufferContext makeCurrentContext];
+	glViewport( 0, 0, m_iWidth, m_iHeight );
+}
+
+void RenderTarget_Cocoa::FinishRenderingTo()
+{
+	glFlush();
+	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
+	
+	while( glGetError() != GL_NO_ERROR )
+		;
+	
+	glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_iWidth, m_iHeight );
+	
+	GLenum error = glGetError();
+	ASSERT_M( error == GL_NO_ERROR, RageDisplay_OGL_Helpers::GLToString(error) );
+	
+	glBindTexture( GL_TEXTURE_2D, 0 );
+	
+	[m_OldContext makeCurrentContext];
+	m_OldContext = nil;
+}
+#endif
 
 LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(NULL)
 {
