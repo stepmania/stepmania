@@ -544,6 +544,8 @@
 		AA3396B90BDE195E00E1475F /* RageSoundReader_Merge.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3396B70BDE195E00E1475F /* RageSoundReader_Merge.h */; };
 		AA3396BA0BDE195E00E1475F /* RageSoundReader_Merge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3396B60BDE195E00E1475F /* RageSoundReader_Merge.cpp */; };
 		AA3396BB0BDE195E00E1475F /* RageSoundReader_Merge.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3396B70BDE195E00E1475F /* RageSoundReader_Merge.h */; };
+		AA339A7E0BF0FA6400E1475F /* LoadingWindow_Null.h in Headers */ = {isa = PBXBuildFile; fileRef = AA339A7D0BF0FA6300E1475F /* LoadingWindow_Null.h */; };
+		AA339A7F0BF0FA6400E1475F /* LoadingWindow_Null.h in Headers */ = {isa = PBXBuildFile; fileRef = AA339A7D0BF0FA6300E1475F /* LoadingWindow_Null.h */; };
 		AA3A705F06AA144C006F755E /* CommonMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3A705E06AA144C006F755E /* CommonMetrics.h */; };
 		AA3A706206AA1645006F755E /* StyleUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3A706006AA1645006F755E /* StyleUtil.cpp */; };
 		AA3A706306AA1645006F755E /* StyleUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3A706106AA1645006F755E /* StyleUtil.h */; };
@@ -2260,6 +2262,7 @@
 		AA31D51F0B1EC6540016AB6B /* RageSoundReader_SpeedChange.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageSoundReader_SpeedChange.h; path = ../src/RageSoundReader_SpeedChange.h; sourceTree = "<group>"; };
 		AA3396B60BDE195E00E1475F /* RageSoundReader_Merge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageSoundReader_Merge.cpp; path = ../src/RageSoundReader_Merge.cpp; sourceTree = "<group>"; };
 		AA3396B70BDE195E00E1475F /* RageSoundReader_Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageSoundReader_Merge.h; path = ../src/RageSoundReader_Merge.h; sourceTree = "<group>"; };
+		AA339A7D0BF0FA6300E1475F /* LoadingWindow_Null.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingWindow_Null.h; sourceTree = "<group>"; };
 		AA3A705E06AA144C006F755E /* CommonMetrics.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CommonMetrics.h; path = ../src/CommonMetrics.h; sourceTree = "<group>"; };
 		AA3A706006AA1645006F755E /* StyleUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = StyleUtil.cpp; path = ../src/StyleUtil.cpp; sourceTree = "<group>"; };
 		AA3A706106AA1645006F755E /* StyleUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = StyleUtil.h; path = ../src/StyleUtil.h; sourceTree = "<group>"; };
@@ -3872,6 +3875,7 @@
 				AAEF3D1004B53E2900D02EE9 /* LoadingWindow.h */,
 				AAEF3D0C04B533CC00D02EE9 /* LoadingWindow_Cocoa.h */,
 				AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.m */,
+				AA339A7D0BF0FA6300E1475F /* LoadingWindow_Null.h */,
 			);
 			path = LoadingWindow;
 			sourceTree = "<group>";
@@ -5660,6 +5664,7 @@
 				AA1893650BD777C500AEC0BF /* ScreenProfileLoad.h in Headers */,
 				AA1893670BD777C500AEC0BF /* ScreenProfileSave.h in Headers */,
 				AA3396BB0BDE195E00E1475F /* RageSoundReader_Merge.h in Headers */,
+				AA339A7F0BF0FA6400E1475F /* LoadingWindow_Null.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6080,6 +6085,7 @@
 				AA1893630BD777C500AEC0BF /* ScreenProfileSave.h in Headers */,
 				AA18937D0BD77ECE00AEC0BF /* NotesLoaderMidi.h in Headers */,
 				AA3396B90BDE195E00E1475F /* RageSoundReader_Merge.h in Headers */,
+				AA339A7E0BF0FA6400E1475F /* LoadingWindow_Null.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
