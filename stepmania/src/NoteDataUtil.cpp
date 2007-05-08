@@ -671,7 +671,7 @@ void NoteDataUtil::LoadTransformedLightsFromTwo( const NoteData &marquee, const 
 		transformed_marquee.CopyAll( marquee );
 		Wide( transformed_marquee );
 
-		const int iOriginalTrackToTakeFrom[NUM_CabinetLight] = { 0, 1, 2, 3, -1, -1, -1, -1 };
+		const int iOriginalTrackToTakeFrom[NUM_CabinetLight] = { 0, 1, 2, 3, -1, -1 };
 		out.LoadTransformed( transformed_marquee, NUM_CabinetLight, iOriginalTrackToTakeFrom );
 	}
 

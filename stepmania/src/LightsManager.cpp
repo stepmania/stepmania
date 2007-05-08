@@ -28,8 +28,6 @@ static const char *CabinetLightNames[] = {
 	"MarqueeUpRight",
 	"MarqueeLrLeft",
 	"MarqueeLrRight",
-	"ButtonsLeft",
-	"ButtonsRight",
 	"BassLeft",
 	"BassRight",
 };
