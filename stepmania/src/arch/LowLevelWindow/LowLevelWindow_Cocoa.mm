@@ -1,7 +1,6 @@
 #import "global.h"
 #import "LowLevelWindow_Cocoa.h"
 #import "DisplayResolutions.h"
-#import "RageLog.h"
 #import "RageUtil.h"
 #import "RageThreads.h"
 #import "arch/ArchHooks/ArchHooks.h"
