@@ -15,8 +15,6 @@ REGISTER_SCREEN_CLASS( ScreenTestLights );
 
 void ScreenTestLights::Init()
 {
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_AUTO_CYCLE );
-
 	ScreenWithMenuElements::Init();
 
 	m_textInputs.SetName( "Text" );
@@ -26,7 +24,17 @@ void ScreenTestLights::Init()
 	this->AddChild( &m_textInputs );
 }
 
+void ScreenTestLights::BeginScreen()
+{
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_AUTO_CYCLE );
+	ScreenWithMenuElements::BeginScreen();
+}
 
+void ScreenTestLights::EndScreen()
+{
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
+	ScreenWithMenuElements::EndScreen();
+}
 
 ScreenTestLights::~ScreenTestLights()
 {
@@ -90,14 +98,6 @@ void ScreenTestLights::Input( const InputEventPlus &input )
 		return;	// ignore
 
 	ScreenWithMenuElements::Input( input );	// default handler
-}
-
-void ScreenTestLights::HandleScreenMessage( const ScreenMessage SM )
-{
-	if( SM == SM_LoseFocus )
-		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
-
-	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenTestLights::MenuLeft( const InputEventPlus &input )

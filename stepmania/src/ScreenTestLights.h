@@ -9,11 +9,12 @@ class ScreenTestLights : public ScreenWithMenuElements
 {
 public:
 	virtual void Init();
+	virtual void BeginScreen();
+	virtual void EndScreen();
 	virtual ~ScreenTestLights();
 
 	virtual void Update( float fDelta );
 	virtual void Input( const InputEventPlus &input );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	virtual void MenuLeft( const InputEventPlus &input );
 	virtual void MenuRight( const InputEventPlus &input );
