@@ -3,7 +3,6 @@
 
 #include <csignal>
 #include <ucontext.h>
-struct BacktraceContext;
 
 namespace CrashHandler
 {
