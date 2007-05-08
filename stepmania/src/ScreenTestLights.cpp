@@ -97,7 +97,8 @@ void ScreenTestLights::Input( const InputEventPlus &input )
 
 void ScreenTestLights::MenuLeft( const InputEventPlus &input )
 {
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_MANUAL_CYCLE );
+	if( LIGHTSMAN->GetLightsMode() != LIGHTSMODE_TEST_MANUAL_CYCLE )
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_MANUAL_CYCLE );
 	if( input.pn == PLAYER_1 )
 		LIGHTSMAN->PrevTestCabinetLight();
 	else
@@ -107,7 +108,8 @@ void ScreenTestLights::MenuLeft( const InputEventPlus &input )
 
 void ScreenTestLights::MenuRight( const InputEventPlus &input )
 {
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_MANUAL_CYCLE );
+	if( LIGHTSMAN->GetLightsMode() != LIGHTSMODE_TEST_MANUAL_CYCLE )
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_MANUAL_CYCLE );
 	if( input.pn == PLAYER_1 )
 		LIGHTSMAN->NextTestCabinetLight();
 	else
