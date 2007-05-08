@@ -328,9 +328,7 @@ void LightsManager::Update( float fDeltaTime )
 		FOREACH_PlayerNumber( pn )
 		{
 			if( !GAMESTATE->m_bSideIsJoined[pn] && GAMESTATE->PlayersCanJoin() && GAMESTATE->EnoughCreditsToJoin() )
-			{
-				m_LightsState.m_bCabinetLights[LIGHT_BUTTONS_LEFT+pn] = bBlinkOn;
-			}
+				m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENULEFT] = bBlinkOn;
 		}
 	}
 
