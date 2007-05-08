@@ -1915,18 +1915,7 @@ void ScreenGameplay::UpdateLights()
 	// Before the first beat of the song, all cabinet lights solid on (except for menu buttons).
 	bool bOverrideCabinetBlink = (GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat);
 	FOREACH_CabinetLight( cl )
-	{
-		switch( cl )
-		{
-		case LIGHT_BUTTONS_LEFT:
-		case LIGHT_BUTTONS_RIGHT:
-			// don't blink
-			break;
-		default:
-			bBlinkCabinetLight[cl] |= bOverrideCabinetBlink;
-			break;
-		}
-	}
+		bBlinkCabinetLight[cl] |= bOverrideCabinetBlink;
 
 	// Send blink data.
 	FOREACH_CabinetLight( cl )
