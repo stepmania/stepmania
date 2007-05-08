@@ -2088,6 +2088,7 @@ public:
 	DEFINE_METHOD( GetCoins,			m_iCoins )
 	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[Enum::Check<PlayerNumber>(L, 1)] )
 	DEFINE_METHOD( GetCoinsNeededToJoin,		GetCoinsNeededToJoin() )
+	DEFINE_METHOD( EnoughCreditsToJoin,		EnoughCreditsToJoin() )
 	DEFINE_METHOD( PlayersCanJoin,			PlayersCanJoin() )
 	DEFINE_METHOD( GetNumSidesJoined,		GetNumSidesJoined() )
 	DEFINE_METHOD( GetCoinMode,			GetCoinMode() )
@@ -2251,6 +2252,7 @@ public:
 		ADD_METHOD( GetCoins );
 		ADD_METHOD( IsSideJoined );
 		ADD_METHOD( GetCoinsNeededToJoin );
+		ADD_METHOD( EnoughCreditsToJoin );
 		ADD_METHOD( PlayersCanJoin );
 		ADD_METHOD( GetNumSidesJoined );
 		ADD_METHOD( GetCoinMode );

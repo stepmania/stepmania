@@ -85,7 +85,7 @@ public:
 
 	bool		PlayersCanJoin() const;	// true if it's not too late for a player to join
 	int 		GetCoinsNeededToJoin() const;
-	bool		EnoughCreditsToJoin() const { return GetCoinsNeededToJoin() <= 0; }
+	bool		EnoughCreditsToJoin() const { return m_iCoins >= GetCoinsNeededToJoin(); }
 	int		GetNumSidesJoined() const;
 
 	const Game*	GetCurrentGame();
