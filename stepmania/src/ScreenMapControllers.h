@@ -19,8 +19,6 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const InputEventPlus &input );
 
-	virtual void TweenOffScreen();
-
 private:
 	virtual void HandleMessage( const Message &msg );
 
@@ -28,6 +26,7 @@ private:
 	void BeforeChangeFocus();
 	void AfterChangeFocus();
 	virtual bool GenericTweenOn() const { return true; }
+	virtual bool GenericTweenOff() const { return true; }
 	void Refresh();
 	
 	int m_iCurController;

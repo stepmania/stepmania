@@ -412,14 +412,6 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 	Refresh();
 }
 
-void ScreenMapControllers::TweenOffScreen()
-{
-	ScreenWithMenuElements::TweenOffScreen();
-
-	OFF_COMMAND( m_LineScroller );
-	OFF_COMMAND( m_textDevices );
-}
-
 Actor *ScreenMapControllers::GetActorWithFocus()
 {
 	if( m_iCurButton == (int) m_KeysToMap.size() )
