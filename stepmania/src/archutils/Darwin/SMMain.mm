@@ -46,11 +46,16 @@
 - (id) initWithArgc:(int)argc argv:(char **)argv
 {
 	[super init];
-	if( argc == 2 && !strncmp(argv[1], "-psn_", 4) )
+	if( argc == 2 && !strncmp(argv[1], "-psn_", 5) )
+	{
 		m_iArgc = 1;
+		m_pArgv = argv + 1;
+	}
 	else
+	{
 		m_iArgc = argc;
-	m_pArgv = argv;
+		m_pArgv = argv;
+	}
 	return self;
 }
 
@@ -148,7 +153,7 @@ int main( int argc, char **argv )
 	// Set up the menubar.
 	SetupMenus();
 	
-	// Create SDLMain and make it the app delegate.
+	// Create SMMain and make it the app delegate.
 	sm = [[SMMain alloc] initWithArgc:argc argv:argv];
 	[NSApp setDelegate:sm];
 	
