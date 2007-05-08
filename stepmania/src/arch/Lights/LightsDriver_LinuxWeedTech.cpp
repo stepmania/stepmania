@@ -150,8 +150,6 @@ void LightsDriver_LinuxWeedTech::Set(const LightsState *ls)
 				else if(cl == LIGHT_MARQUEE_UP_RIGHT)	{str[0] = 'A'; str[2] = 'B';}
 				else if(cl == LIGHT_MARQUEE_LR_LEFT)	{str[0] = 'A'; str[2] = 'C';}
 				else if(cl == LIGHT_MARQUEE_LR_RIGHT)	{str[0] = 'A'; str[2] = 'D';}
-				else if(cl == LIGHT_BUTTONS_LEFT)	{str[0] = 'A'; str[2] = 'E';}
-				else if(cl == LIGHT_BUTTONS_RIGHT)	{str[0] = 'A'; str[2] = 'F';}
 				else if(cl == LIGHT_BASS_LEFT)		{str[0] = 'A'; str[2] = 'G';}
 				else if(cl == LIGHT_BASS_RIGHT)		{str[0] = 'A'; str[2] = 'H';}
 				
@@ -180,12 +178,14 @@ void LightsDriver_LinuxWeedTech::Set(const LightsState *ls)
 					if(gb == DANCE_BUTTON_RIGHT)		{str[0] = 'A'; str[2] = 'J';}
 					if(gb == DANCE_BUTTON_UP)		{str[0] = 'A'; str[2] = 'K';}
 					if(gb == DANCE_BUTTON_DOWN)		{str[0] = 'A'; str[2] = 'L';}
+					if(gb == GAME_BUTTON_START)		{str[0] = 'A'; str[2] = 'E';}
 				}
 				else if(gc == GAME_CONTROLLER_2) {
 					if(gb == DANCE_BUTTON_LEFT)		{str[0] = 'A'; str[2] = 'M';}
 					if(gb == DANCE_BUTTON_RIGHT)		{str[0] = 'A'; str[2] = 'N';}
 					if(gb == DANCE_BUTTON_UP)		{str[0] = 'B'; str[2] = 'A';}
 					if(gb == DANCE_BUTTON_DOWN)		{str[0] = 'B'; str[2] = 'B';}					
+					if(gb == GAME_BUTTON_START)		{str[0] = 'A'; str[2] = 'F';}
 				}
 				
 				if(bOn) {str[1]='L';}
