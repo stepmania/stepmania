@@ -146,12 +146,15 @@ bool CreateDirectories( RString Path )
 		if( DoMkdir(curpath, 0777) == 0 )
 			continue;
 
+#if defined(WIN32)
 		/* When creating a directory that already exists over Samba, Windows is
 		 * returning ENOENT instead of EEXIST. */
 		/* I can't reproduce this anymore.  If we get ENOENT, log it but keep
 		 * going. */
 		if( errno == ENOENT )
 			WARN( ssprintf("Couldn't create %s: %s", curpath.c_str(), strerror(errno)) );
+#endif
+
 		if( errno == EEXIST || errno == ENOENT )
 			continue;		// we expect to see these errors
 
