@@ -12,8 +12,7 @@ public:
 	RString Init();
 	~LoadingWindow_Gtk();
 
-	void SetText(RString str);
-	void Paint() { }
+	void SetText( RString str );
 };
 #define USE_LOADING_WINDOW_GTK
 

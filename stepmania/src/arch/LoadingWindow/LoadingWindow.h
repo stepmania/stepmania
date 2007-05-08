@@ -12,8 +12,8 @@ public:
 	virtual RString Init() { return RString(); }
 	virtual ~LoadingWindow() { }
 
-	virtual void Paint() = 0;
-	virtual void SetText(RString str) { }
+	virtual void Paint() { };
+	virtual void SetText( RString str ) = 0;
 	virtual void SetIcon( const RageSurface *pIcon ) { }
 };
 

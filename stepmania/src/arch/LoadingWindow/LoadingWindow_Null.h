@@ -3,13 +3,10 @@
 
 #include "LoadingWindow.h"
 
-class LoadingWindow_Null: public LoadingWindow {
+class LoadingWindow_Null: public LoadingWindow
+{
 public:
-	LoadingWindow_Null() { }
-	~LoadingWindow_Null() { }
-
-	void SetText(RString str) { }
-	void Paint() { }
+	void SetText( RString str ) { }
 };
 #define USE_LOADING_WINDOW_NULL
 

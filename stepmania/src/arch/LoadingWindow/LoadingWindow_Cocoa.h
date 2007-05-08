@@ -30,7 +30,6 @@ public:
 	}
 	~LoadingWindow_Cocoa() { DisposeOfCocoaWindow(); }
 
-	void Paint() { } /* Not needed but pure virtual*/
 	void SetText( RString str ) { SetCocoaWindowText( str ); }
 };
 #define USE_LOADING_WINDOW_COCOA
