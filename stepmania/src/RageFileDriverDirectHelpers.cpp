@@ -159,23 +159,20 @@ bool CreateDirectories( RString Path )
 #endif
 
 		if( errno == EEXIST )
+		{
+			/* Make sure it's a directory. */
+			struct stat st;
+			if( DoStat(curpath, &st) != -1 && !(st.st_mode & S_IFDIR) )
+			{
+				WARN( ssprintf("Couldn't create %s: path exists and is not a directory", curpath.c_str()) );
+				return false;
+			}
+
 			continue;		// we expect to see this error
-
-		// XXX: This doesn't make sense. Why do we return if LOG is present here?
-		if( LOG )
-		{
-			WARN( ssprintf("Couldn't create %s: %s", curpath.c_str(), strerror(errno)) );
-			return false;
 		}
 
-		/* Make sure it's a directory. */
-		struct stat st;
-		if( DoStat(curpath, &st) != -1 && !(st.st_mode & S_IFDIR) )
-		{
-			WARN( ssprintf("Couldn't create %s: path exists and is not a directory", curpath.c_str()) );
-			
-			return false;
-		}
+		WARN( ssprintf("Couldn't create %s: %s", curpath.c_str(), strerror(errno)) );
+		return false;
 	}
 	
 	return true;
