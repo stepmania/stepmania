@@ -461,7 +461,7 @@ void LightsManager::ChangeTestCabinetLight( int iDir )
 {
 	m_iControllerTestManualCycleCurrent = -1;
 
-	m_clTestManualCycleCurrent = (CabinetLight)(m_clTestManualCycleCurrent+iDir);
+	enum_add( m_clTestManualCycleCurrent, iDir );
 	wrap( *ConvertValue<int>(&m_clTestManualCycleCurrent), NUM_CabinetLight );
 }
 
