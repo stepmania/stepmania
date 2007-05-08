@@ -28,6 +28,8 @@ static RageMutex g_ResizeLock( "Window resize lock." );
 // Simple helper class
 class AutoreleasePool
 {
+	AutoreleasePool( const AutoreleasePool& );
+	AutoreleasePool &operator=( const AutoreleasePool& );
 	NSAutoreleasePool *m_Pool;
 	
 public:
@@ -35,10 +37,7 @@ public:
 	~AutoreleasePool() { [m_Pool release]; }
 };
 
-// These can nest.
-#define POOL2(x) AutoreleasePool pool ## x
-#define POOL1(x) POOL2(x)
-#define POOL POOL1(__LINE__)
+#define POOL AutoreleasePool UNIQUE_NAME(pool)
 
 // Window delegate class
 @interface SMWindowDelegate : NSObject
@@ -434,7 +433,7 @@ void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 		DisplayResolution res = { width, height, stretched };
 		dr.insert( res );
 	}
-	// Do not release modes! We don't own it here.
+	// Do not release modes! We don't own them here.
 }
 
 float LowLevelWindow_Cocoa::GetMonitorAspectRatio() const
