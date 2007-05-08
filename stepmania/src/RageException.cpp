@@ -29,14 +29,13 @@ void RageException::Throw( const char *sFmt, ... )
 	va_list	va;
 	va_start( va, sFmt );
 	RString error = vssprintf( sFmt, va );
-	va_end(va);
+	va_end( va );
 
 	RString msg = ssprintf(
 		"\n"
 		"//////////////////////////////////////////////////////\n"
 		"Exception: %s\n"
-		"//////////////////////////////////////////////////////\n"
-		"",
+		"//////////////////////////////////////////////////////\n",
 		error.c_str() );
 	if( LOG )
 	{
