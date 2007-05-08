@@ -1328,7 +1328,7 @@ void SongManager::UpdatePreferredSort()
 				Song *pSong = NULL;
 				if( !sLine.empty() )
 					pSong = FindSong( sLine );
-				if( pSong && pSong->GetDisplayed() )
+				if( pSong && pSong->GetDisplayed() != Song::SHOW_NEVER )
 					vpSongs.push_back( pSong );
 			}
 		}
