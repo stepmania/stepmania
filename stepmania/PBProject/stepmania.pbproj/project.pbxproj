@@ -3048,7 +3048,7 @@
 		AAAB2CDE072BD2EC00CD9FC9 /* AutoKeysounds.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = AutoKeysounds.h; path = ../src/AutoKeysounds.h; sourceTree = "<group>"; };
 		AAAB2CE1072BD2FA00CD9FC9 /* RageSoundMixBuffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundMixBuffer.cpp; path = ../src/RageSoundMixBuffer.cpp; sourceTree = "<group>"; };
 		AAAB2CE2072BD2FA00CD9FC9 /* RageSoundMixBuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSoundMixBuffer.h; path = ../src/RageSoundMixBuffer.h; sourceTree = "<group>"; };
-		AAABB2D90979DB5B006C9F25 /* SMMainThread.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = SMMainThread.h; sourceTree = "<group>"; };
+		AAABB2D90979DB5B006C9F25 /* SMMainThread.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = SMMainThread.h; sourceTree = "<group>"; };
 		AAABB2DA0979DB5B006C9F25 /* SMMainThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMMainThread.m; sourceTree = "<group>"; };
 		AAADA4AE04E5F3DE00D02EE9 /* ProductInfo.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = ProductInfo.h; sourceTree = "<group>"; };
 		AAAE28F4052254A900D02EE9 /* RageSoundReader_Resample_Good.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundReader_Resample_Good.cpp; path = ../src/RageSoundReader_Resample_Good.cpp; sourceTree = "<group>"; };
