@@ -152,11 +152,14 @@ bool CreateDirectories( RString Path )
 		/* I can't reproduce this anymore.  If we get ENOENT, log it but keep
 		 * going. */
 		if( errno == ENOENT )
+		{
 			WARN( ssprintf("Couldn't create %s: %s", curpath.c_str(), strerror(errno)) );
+			errno = EEXIST;
+		}
 #endif
 
-		if( errno == EEXIST || errno == ENOENT )
-			continue;		// we expect to see these errors
+		if( errno == EEXIST )
+			continue;		// we expect to see this error
 
 		// XXX: This doesn't make sense. Why do we return if LOG is present here?
 		if( LOG )
