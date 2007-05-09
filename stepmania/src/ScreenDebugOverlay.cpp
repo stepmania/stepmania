@@ -392,8 +392,6 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
 	{
 		RString sPageName = (*p)->GetPageName();
-		if( sPageName != GetCurrentPageName() )
-			continue;
 
 		int i = p-g_pvpSubscribers->begin();
 
@@ -403,6 +401,8 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 		{
 		case IDebugLine::all_screens:
 			if( !g_bIsDisplayed )
+				continue;
+			if( sPageName != GetCurrentPageName() )
 				continue;
 			break;
 		case IDebugLine::gameplay_only:
