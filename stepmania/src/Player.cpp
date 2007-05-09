@@ -834,7 +834,8 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 			{
 				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
-				m_pPlayerStageStats->m_bDisqualified = true;
+				if( m_pPlayerStageStats != NULL )
+					m_pPlayerStageStats->m_bDisqualified = true;
 			}
 		}
 		else
