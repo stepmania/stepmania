@@ -290,6 +290,8 @@ void ScreenManager::ThemeChanged()
 	for( unsigned i=0; i<asOverlays.size(); i++ )
 	{
 		Screen *pScreen = MakeNewScreen( asOverlays[i] );
+		LuaThreadVariable var2( "LoadingScreen", pScreen->GetName() );
+		pScreen->BeginScreen();
 		g_OverlayScreens.push_back( pScreen );
 	}
 	
