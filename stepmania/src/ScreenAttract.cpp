@@ -55,12 +55,12 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 
 	switch( input.MenuI )
 	{
-	case MENU_BUTTON_BACK:
+	case GAME_BUTTON_BACK:
 		if( !(bool)BACK_GOES_TO_START_SCREEN )
 			break;
 		// fall through
-	case MENU_BUTTON_START:
-	case MENU_BUTTON_COIN:
+	case GAME_BUTTON_START:
+	case GAME_BUTTON_COIN:
 		switch( GAMESTATE->GetCoinMode() )
 		{
 		case CoinMode_Pay:
@@ -76,7 +76,7 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 			LOG->Trace("ScreenAttract::AttractInput: begin fading to START_SCREEN" );
 
 			/* HandleGlobalInputs() already played the coin sound.  Don't play it again. */
-			if( input.MenuI != MENU_BUTTON_COIN )
+			if( input.MenuI != GAME_BUTTON_COIN )
 				SCREENMAN->PlayStartSound();
 			
 			SetAttractVolume( false ); // unmute attract sounds

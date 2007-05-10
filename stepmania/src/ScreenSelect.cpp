@@ -111,7 +111,7 @@ void ScreenSelect::Input( const InputEventPlus &input )
 	m_timerIdleTimeout.GetDeltaTime();
 
 	/* Choices may change when more coins are inserted. */
-	if( input.MenuI == MENU_BUTTON_COIN && input.type == IET_FIRST_PRESS )
+	if( input.MenuI == GAME_BUTTON_COIN && input.type == IET_FIRST_PRESS )
 		this->UpdateSelectableChoices();
 
 	if( input.MenuI == MENU_BUTTON_START && input.type == IET_FIRST_PRESS && GAMESTATE->JoinInput(input.pn) )

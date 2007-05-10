@@ -1223,7 +1223,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 
 	switch( input.MenuI )
 	{
-	case MENU_BUTTON_OPERATOR:
+	case GAME_BUTTON_OPERATOR:
 
 		/* Global operator key, to get quick access to the options menu. Don't
 		 * do this if we're on a "system menu", which includes the editor
@@ -1237,7 +1237,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		}
 		return true;
 
-	case MENU_BUTTON_COIN:
+	case GAME_BUTTON_COIN:
 		/* Handle a coin insertion. */
 		if( GAMESTATE->IsEditing() )	// no coins while editing
 		{
