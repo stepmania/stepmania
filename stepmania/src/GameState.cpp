@@ -235,6 +235,8 @@ void GameState::ResetPlayer( PlayerNumber pn )
 
 void GameState::Reset()
 {
+	m_MasterPlayerNumber = PLAYER_INVALID; // must initialize for UnjoinPlayer
+
 	FOREACH_PlayerNumber( pn )
 		UnjoinPlayer( pn );
 
@@ -247,7 +249,6 @@ void GameState::Reset()
 	FOREACH_PlayerNumber( pn )
 		MEMCARDMAN->UnlockCard( pn );
 //	m_iCoins = 0;	// don't reset coin count!
-	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_bMultiplayer = false;
 	*m_Environment = LuaTable();
 	m_sPreferredSongGroup.Set( GROUP_ALL );
