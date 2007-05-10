@@ -241,7 +241,7 @@ void ScreenDebugOverlay::Init()
 		}
 	}
 
-	Update( 0 );
+	this->SetVisible( false );
 }
 
 void ScreenDebugOverlay::Update( float fDeltaTime )
