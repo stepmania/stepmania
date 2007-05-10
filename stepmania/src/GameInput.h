@@ -158,8 +158,6 @@ GameButton StringToGameButton( const InputScheme* pInputs, const RString& s );
 #define MENU_BUTTON_START GAME_BUTTON_START
 #define MENU_BUTTON_SELECT GAME_BUTTON_SELECT
 #define MENU_BUTTON_BACK GAME_BUTTON_BACK
-#define MENU_BUTTON_COIN GAME_BUTTON_COIN
-#define MENU_BUTTON_OPERATOR GAME_BUTTON_OPERATOR
 
 struct GameInput
 {
