@@ -156,7 +156,6 @@ GameButton StringToGameButton( const InputScheme* pInputs, const RString& s );
 #define MENU_BUTTON_UP GAME_BUTTON_MENUUP
 #define MENU_BUTTON_DOWN GAME_BUTTON_MENUDOWN
 #define MENU_BUTTON_START GAME_BUTTON_START
-#define MENU_BUTTON_SELECT GAME_BUTTON_SELECT
 #define MENU_BUTTON_BACK GAME_BUTTON_BACK
 
 struct GameInput
