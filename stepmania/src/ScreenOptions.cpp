@@ -502,10 +502,10 @@ void ScreenOptions::Input( const InputEventPlus &input )
 	{
 		switch( input.MenuI )
 		{
-		case MENU_BUTTON_START:
-		case MENU_BUTTON_SELECT:
-		case MENU_BUTTON_RIGHT:
-		case MENU_BUTTON_LEFT:
+		case GAME_BUTTON_START:
+		case GAME_BUTTON_SELECT:
+		case GAME_BUTTON_MENURIGHT:
+		case GAME_BUTTON_MENULEFT:
 			INPUTMAPPER->ResetKeyRepeat( MENU_BUTTON_START, input.pn );
 			INPUTMAPPER->ResetKeyRepeat( MENU_BUTTON_RIGHT, input.pn );
 			INPUTMAPPER->ResetKeyRepeat( MENU_BUTTON_LEFT, input.pn );
@@ -1218,14 +1218,14 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 		 * holding both up and down from toggling repeatedly in-place. */
 		if( iDir == +1 )
 		{
-			if( INPUTMAPPER->IsBeingPressed(MENU_BUTTON_UP, pn) ||
-				INPUTMAPPER->IsBeingPressed(MENU_BUTTON_SELECT, pn) )
+			if( INPUTMAPPER->IsBeingPressed(GAME_BUTTON_MENUUP, pn) ||
+				INPUTMAPPER->IsBeingPressed(GAME_BUTTON_SELECT, pn) )
 				return;
 		}
 		else
 		{
-			if( INPUTMAPPER->IsBeingPressed(MENU_BUTTON_DOWN, pn) ||
-				INPUTMAPPER->IsBeingPressed(MENU_BUTTON_START, pn) )
+			if( INPUTMAPPER->IsBeingPressed(GAME_BUTTON_MENUDOWN, pn) ||
+				INPUTMAPPER->IsBeingPressed(GAME_BUTTON_START, pn) )
 				return;
 		}
 	}

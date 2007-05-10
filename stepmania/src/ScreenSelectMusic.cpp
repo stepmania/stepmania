@@ -432,10 +432,10 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 	}
 
-	if( input.MenuI == MENU_BUTTON_SELECT && input.type != IET_REPEAT )
+	if( input.MenuI == GAME_BUTTON_SELECT && input.type != IET_REPEAT )
 		m_bAcceptSelectRelease[input.pn] = (input.type == IET_FIRST_PRESS);
 
-	if( SELECT_MENU_AVAILABLE && input.MenuI == MENU_BUTTON_SELECT && input.type != IET_REPEAT )
+	if( SELECT_MENU_AVAILABLE && input.MenuI == GAME_BUTTON_SELECT && input.type != IET_REPEAT )
 		UpdateSelectButton( input.pn, input.type == IET_FIRST_PRESS );
 
 
@@ -467,7 +467,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	}
 
 	if( m_SelectionState == SelectionState_SelectingSong  &&
-		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong || input.MenuI == MENU_BUTTON_SELECT) )
+		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong || input.MenuI == GAME_BUTTON_SELECT) )
 	{
 		{
 			/* If we're rouletting, hands off. */
@@ -480,7 +480,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			{
 				if( m_OptionsList[p].IsOpened() )
 					continue;
-				if( SELECT_MENU_AVAILABLE && INPUTMAPPER->IsBeingPressed(MENU_BUTTON_SELECT, p) )
+				if( SELECT_MENU_AVAILABLE && INPUTMAPPER->IsBeingPressed(GAME_BUTTON_SELECT, p) )
 					continue;
 
 				bLeftIsDown |= INPUTMAPPER->IsBeingPressed( m_GameButtonPreviousSong, p );
@@ -752,7 +752,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	/* If select is being pressed, this is probably an attempt to change the sort, not
 	 * to pick a song or difficulty.  If it gets here, the actual select press was probably
 	 * hit during a tween and ignored.  Ignore it. */
-	if( input.pn != PLAYER_INVALID && INPUTMAPPER->IsBeingPressed(MENU_BUTTON_SELECT, input.pn) )
+	if( input.pn != PLAYER_INVALID && INPUTMAPPER->IsBeingPressed(GAME_BUTTON_SELECT, input.pn) )
 		return;
 
 	// Honor locked input for start presses.

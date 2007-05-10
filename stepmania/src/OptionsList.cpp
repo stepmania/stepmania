@@ -444,7 +444,7 @@ void OptionsList::Input( const InputEventPlus &input )
 		MESSAGEMAN->Broadcast( msg );
 		return;
 	}
-	else if( input.MenuI == MENU_BUTTON_START )
+	else if( input.MenuI == GAME_BUTTON_START )
 	{
 		if( input.type == IET_FIRST_PRESS )
 		{
@@ -461,7 +461,7 @@ void OptionsList::Input( const InputEventPlus &input )
 
 		return;
 	}
-	else if( input.MenuI == MENU_BUTTON_SELECT )
+	else if( input.MenuI == GAME_BUTTON_SELECT )
 	{
 		if( input.type != IET_FIRST_PRESS )
 			return;
