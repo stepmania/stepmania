@@ -195,10 +195,18 @@ public:
 		p->m_PlayerOptions.FromString( m, SArg(2) );
 		return 0;
 	}
+	static int GetPlayerOptions( T* p, lua_State *L )
+	{
+		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
+		RString s = p->m_PlayerOptions.Get(m).GetString();
+		LuaHelpers::Push( L, s );
+		return 1;
+	}
 
 	LunaPlayerState()
 	{
 		ADD_METHOD( SetPlayerOptions );
+		ADD_METHOD( GetPlayerOptions );
 	}
 };
 

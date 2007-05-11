@@ -2095,6 +2095,13 @@ public:
 	DEFINE_METHOD( GetCoinMode,			GetCoinMode() )
 	DEFINE_METHOD( GetPremium,			GetPremium() )
 	DEFINE_METHOD( GetSongOptionsString,		m_SongOptions.GetCurrent().GetString() )
+	static int GetSongOptions( T* p, lua_State *L )
+	{
+		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
+		RString s = p->m_SongOptions.Get(m).GetString();
+		LuaHelpers::Push( L, s );
+		return 1;
+	}
 	static int GetDefaultSongOptions( T* p, lua_State *L )
 	{
 		SongOptions so;
@@ -2261,6 +2268,7 @@ public:
 		ADD_METHOD( GetCoinMode );
 		ADD_METHOD( GetPremium );
 		ADD_METHOD( GetSongOptionsString );
+		ADD_METHOD( GetSongOptions );
 		ADD_METHOD( GetDefaultSongOptions );
 		ADD_METHOD( SetSongOptions );
 		ADD_METHOD( IsWinner );
