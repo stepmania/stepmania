@@ -2102,6 +2102,16 @@ public:
 		lua_pushstring(L, so.GetString());
 		return 1;
 	}
+	static int SetSongOptions( T* p, lua_State *L )
+	{
+		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
+
+		SongOptions so;
+		
+		so.FromString( SArg(2) );
+		p->m_SongOptions.Assign( m, so );
+		return 0;
+	}
 	static int IsWinner( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
@@ -2163,16 +2173,6 @@ public:
 			vHP.push_back( pn );
 		LuaHelpers::CreateTableFromArray( vHP, L );
 		return 1;
-	}
-	static int SetSongOptions( T* p, lua_State *L )
-	{
-		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
-
-		SongOptions so;
-		
-		so.FromString( SArg(2) );
-		p->m_SongOptions.Assign( m, so );
-		return 0;
 	}
 	static int GetCurrentStyle( T* p, lua_State *L )
 	{
@@ -2261,6 +2261,8 @@ public:
 		ADD_METHOD( GetCoinMode );
 		ADD_METHOD( GetPremium );
 		ADD_METHOD( GetSongOptionsString );
+		ADD_METHOD( GetDefaultSongOptions );
+		ADD_METHOD( SetSongOptions );
 		ADD_METHOD( IsWinner );
 		ADD_METHOD( IsDraw );
 		ADD_METHOD( GetCurrentGame );
@@ -2271,8 +2273,6 @@ public:
 		ADD_METHOD( SetPreferredSongGroup );
 		ADD_METHOD( GetPreferredSongGroup );
 		ADD_METHOD( GetHumanPlayers );
-		ADD_METHOD( SetSongOptions );
-		ADD_METHOD( GetDefaultSongOptions );
 		ADD_METHOD( GetCurrentStyle );
 		ADD_METHOD( IsAnyHumanPlayerUsingMemoryCard );
 		ADD_METHOD( GetNumStagesForCurrentSongAndStepsOrCourse );
