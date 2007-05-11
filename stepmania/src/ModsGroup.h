@@ -94,6 +94,7 @@ public:
 		m_Current = m_[level];
 	}
 
+	const T &Get( ModsLevel l ) const { return m_[l]; }
 	const T &GetPreferred() const	{ return m_[ModsLevel_Preferred]; }
 	const T &GetStage() const	{ return m_[ModsLevel_Stage]; }
 	const T &GetSong() const	{ return m_[ModsLevel_Song]; }
