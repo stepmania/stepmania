@@ -1314,23 +1314,20 @@ PlayerOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayer
 		if( m_pCurSteps[pn] )
 			dc = m_pCurSteps[pn]->GetDifficulty();
 
-		bool bFirstStageForAny = false;
+		bool bFirstStage = false;
 		if( !IsEventMode() )
-		{
-			FOREACH_HumanPlayer( p )
-				bFirstStageForAny |= m_iPlayerStageTokens[p] == PREFSMAN->m_iSongsPerPlay-1; // HACK; -1 because this is called during gameplay
-		}
+			bFirstStage |= m_iPlayerStageTokens[pPlayerState->m_PlayerNumber] == PREFSMAN->m_iSongsPerPlay-1; // HACK; -1 because this is called during gameplay
 
 		/* Easy and beginner are never harder than FAIL_IMMEDIATE_CONTINUE. */
 		if( dc <= Difficulty_Easy )
 			setmax( ft, PlayerOptions::FAIL_IMMEDIATE_CONTINUE );
 
-		if( dc <= Difficulty_Easy && bFirstStageForAny && PREFSMAN->m_bFailOffForFirstStageEasy )
+		if( dc <= Difficulty_Easy && bFirstStage && PREFSMAN->m_bFailOffForFirstStageEasy )
 			setmax( ft, PlayerOptions::FAIL_OFF );
 
 		/* If beginner's steps were chosen, and this is the first stage,
 		 * turn off failure completely. */
-		if( dc == Difficulty_Beginner && bFirstStageForAny )
+		if( dc == Difficulty_Beginner && bFirstStage )
 			setmax( ft, PlayerOptions::FAIL_OFF );
 
 		if( dc == Difficulty_Beginner && PREFSMAN->m_bFailOffInBeginner )
