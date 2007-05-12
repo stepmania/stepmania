@@ -3,7 +3,7 @@ local stages = Def.ActorFrame {
 
 for _, s in ipairs(Stage) do
 	if s == "Stage_Normal" then
-		stages[#stages+1] = LoadFont("_shared2") .. {
+		stages[#stages+1] = LoadFont("_zeroesthree") .. {
 			InitCommand=cmd(shadowlength,0);
 			SetCommand=function(self, params)
 				self:visible( params.StageToShow == s );
