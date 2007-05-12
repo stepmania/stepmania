@@ -47,15 +47,9 @@
 {
 	[super init];
 	if( argc == 2 && !strncmp(argv[1], "-psn_", 5) )
-	{
-		m_iArgc = 1;
-		m_pArgv = argv + 1;
-	}
-	else
-	{
-		m_iArgc = argc;
-		m_pArgv = argv;
-	}
+		argc = 1;
+	m_iArgc = argc;
+	m_pArgv = argv;
 	return self;
 }
 
