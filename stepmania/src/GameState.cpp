@@ -1318,7 +1318,7 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 		if( !IsEventMode() )
 		{
 			FOREACH_HumanPlayer( p )
-				bFirstStageForAny |= m_iPlayerStageTokens[p] == PREFSMAN->m_iSongsPerPlay; // HACK
+				bFirstStageForAny |= m_iPlayerStageTokens[p] == PREFSMAN->m_iSongsPerPlay-1; // HACK; -1 because this is called during gameplay
 		}
 
 		/* Easy and beginner are never harder than FAIL_IMMEDIATE_CONTINUE. */
