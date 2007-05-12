@@ -38,7 +38,7 @@ enum
 
 static struct
 {
-	char *szName;
+	const char *szName;
 	int iNumTracks;
 	bool bAllowAutogen;
 } const g_StepsTypes[NUM_StepsType] = {
