@@ -1314,9 +1314,12 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 		if( m_pCurSteps[pn] )
 			dc = m_pCurSteps[pn]->GetDifficulty();
 
-		bool bFirstStageForAny = !IsEventMode();
-		FOREACH_HumanPlayer( p )
-			bFirstStageForAny |= m_iPlayerStageTokens[p] == PREFSMAN->m_iSongsPerPlay; // HACK
+		bool bFirstStageForAny = false;
+		if( !IsEventMode() )
+		{
+			FOREACH_HumanPlayer( p )
+				bFirstStageForAny |= m_iPlayerStageTokens[p] == PREFSMAN->m_iSongsPerPlay; // HACK
+		}
 
 		/* Easy and beginner are never harder than FAIL_IMMEDIATE_CONTINUE. */
 		if( dc <= Difficulty_Easy )
