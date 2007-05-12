@@ -135,6 +135,13 @@ public:
 	bool		m_bTransforms[NUM_TRANSFORMS];
 	bool		m_bMuteOnError;
 	ScoreDisplay m_ScoreDisplay;
+	enum FailType { 
+		FAIL_IMMEDIATE=0,			// fail immediately when life touches 0
+		FAIL_IMMEDIATE_CONTINUE,		// fail immediately when life touches 0, but allow playing the rest of the song
+		FAIL_AT_END,				// fail if life is at 0 when the song ends
+		FAIL_OFF				// never fail
+	};
+	FailType m_FailType;
 
 	RString		m_sNoteSkin;	// "" means "no change"
 

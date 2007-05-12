@@ -10,6 +10,7 @@
 #include "MessageManager.h"
 #include "ModsGroup.h"
 #include "RageTimer.h"
+#include "PlayerOptions.h"
 #include "SongOptions.h"
 
 #include <map>
@@ -237,7 +238,7 @@ public:
 	bool CurrentOptionsDisqualifyPlayer( PlayerNumber pn );
 	bool PlayerIsUsingModifier( PlayerNumber pn, const RString &sModifier );
 
-	SongOptions::FailType GetPlayerFailType( const PlayerState *pPlayerState ) const;
+	PlayerOptions::FailType GetPlayerFailType( const PlayerState *pPlayerState ) const;
 
 	// character stuff
 	Character* m_pCurCharacters[NUM_PLAYERS];

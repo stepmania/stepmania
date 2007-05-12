@@ -207,7 +207,6 @@ void ScreenJukebox::Init()
 			PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fEffects, PlayerOptions::EFFECT_MINI, 1.0f );
 		}
 		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
-		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_FailType, SongOptions::FAIL_OFF );
 	}
 
 	FOREACH_EnabledPlayer( p )
@@ -228,7 +227,8 @@ void ScreenJukebox::Init()
 	GAMESTATE->GetDefaultSongOptions( so );
 	GAMESTATE->m_SongOptions.Assign( ModsLevel_Stage, so );
 
-	SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_FailType, SongOptions::FAIL_OFF );
+	FOREACH_EnabledPlayer( p )
+		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_FailType, PlayerOptions::FAIL_OFF );
 
 	GAMESTATE->m_bDemonstrationOrJukebox = true;
 

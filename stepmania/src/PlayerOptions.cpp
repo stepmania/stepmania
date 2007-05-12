@@ -37,6 +37,7 @@ void PlayerOptions::Init()
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
+	m_FailType = FAIL_IMMEDIATE;
 	m_ScoreDisplay = SCORING_ADD;
 	m_sNoteSkin = "";
 }
@@ -179,6 +180,15 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	if( m_bTransforms[TRANSFORM_NOQUADS] )	AddTo.push_back( "NoQuads" );
 	if( m_bTransforms[TRANSFORM_NOSTRETCH] )AddTo.push_back( "NoStretch" );
 	if( m_bMuteOnError )			AddTo.push_back( "MuteOnError" );
+
+	switch( m_FailType )
+	{
+	case FAIL_IMMEDIATE:							break;
+	case FAIL_IMMEDIATE_CONTINUE:		AddTo.push_back("FailImmediateContinue");	break;
+	case FAIL_AT_END:			AddTo.push_back("FailAtEnd");	break;
+	case FAIL_OFF:				AddTo.push_back("FailOff");	break;
+	default:		ASSERT(0);
+	}
 
 	if( m_fSkew==0 && m_fPerspectiveTilt==0 )		{ if( m_bSetTiltOrSkew ) AddTo.push_back( "Overhead" ); }
 	else if( m_fSkew == 0 )
@@ -354,6 +364,18 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 		else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )	m_sNoteSkin = sBit;
 		else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
 		else if( sBit == "randomspeed" ) 			SET_FLOAT( fRandomSpeed )
+		else if( sBit == "failarcade" || 
+			 sBit == "failimmediate" )			m_FailType = FAIL_IMMEDIATE;
+		else if( sBit == "failendofsong" ||
+			 sBit == "failimmediatecontinue" )		m_FailType = FAIL_IMMEDIATE_CONTINUE;
+		else if( sBit == "failatend" )				m_FailType = FAIL_AT_END;
+		else if( sBit == "failoff" )				m_FailType = FAIL_OFF;
+		else if( sBit == "faildefault" )
+		{
+			PlayerOptions po;
+			GAMESTATE->GetDefaultPlayerOptions( po );
+			m_FailType = po.m_FailType;
+		}
 		else if( sBit == "addscore" )				m_ScoreDisplay = SCORING_ADD;
 		else if( sBit == "subtractscore" )			m_ScoreDisplay = SCORING_SUBTRACT;
 		else if( sBit == "averagescore" )			m_ScoreDisplay = SCORING_AVERAGE;
@@ -570,6 +592,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fScrollBPM);
 	COMPARE(m_fRandomSpeed);
 	COMPARE(m_ScoreDisplay);
+	COMPARE(m_FailType);
 	COMPARE(m_bMuteOnError);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);

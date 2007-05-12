@@ -1294,10 +1294,10 @@ void setmax( T &a, const T &b )
 	a = max(a, b);
 }
 
-SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerState ) const
+PlayerOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerState ) const
 {
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
-	SongOptions::FailType ft = m_SongOptions.GetCurrent().m_FailType;
+	PlayerOptions::FailType ft = pPlayerState->m_PlayerOptions.GetCurrent().m_FailType;
 
 	/* If the player changed the fail mode explicitly, leave it alone. */
 	if( m_bChangedFailTypeOnScreenSongOptions )
@@ -1306,7 +1306,7 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 	if( IsCourseMode() )
 	{
 		if( PREFSMAN->m_bMinimum1FullSongInCourses && GetCourseSongIndex()==0 )
-			ft = max( ft, SongOptions::FAIL_IMMEDIATE_CONTINUE );	// take the least harsh of the two FailTypes
+			ft = max( ft, PlayerOptions::FAIL_IMMEDIATE_CONTINUE );	// take the least harsh of the two FailTypes
 	}
 	else
 	{
@@ -1323,18 +1323,18 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 
 		/* Easy and beginner are never harder than FAIL_IMMEDIATE_CONTINUE. */
 		if( dc <= Difficulty_Easy )
-			setmax( ft, SongOptions::FAIL_IMMEDIATE_CONTINUE );
+			setmax( ft, PlayerOptions::FAIL_IMMEDIATE_CONTINUE );
 
 		if( dc <= Difficulty_Easy && bFirstStageForAny && PREFSMAN->m_bFailOffForFirstStageEasy )
-			setmax( ft, SongOptions::FAIL_OFF );
+			setmax( ft, PlayerOptions::FAIL_OFF );
 
 		/* If beginner's steps were chosen, and this is the first stage,
 		 * turn off failure completely. */
 		if( dc == Difficulty_Beginner && bFirstStageForAny )
-			setmax( ft, SongOptions::FAIL_OFF );
+			setmax( ft, PlayerOptions::FAIL_OFF );
 
 		if( dc == Difficulty_Beginner && PREFSMAN->m_bFailOffInBeginner )
-			setmax( ft, SongOptions::FAIL_OFF );
+			setmax( ft, PlayerOptions::FAIL_OFF );
 	}
 
 	return ft;

@@ -9,7 +9,6 @@ void SongOptions::Init()
 	m_LifeType = LIFE_BAR;
 	m_DrainType = DRAIN_NORMAL;
 	m_iBatteryLives = 4;
-	m_FailType = FAIL_IMMEDIATE;
 	m_bAssistClap = false;
 	m_bAssistMetronome = false;
 	m_fMusicRate = 1.0f;
@@ -73,15 +72,6 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	default:	ASSERT(0);
 	}
 
-
-	switch( m_FailType )
-	{
-	case FAIL_IMMEDIATE:						break;
-	case FAIL_IMMEDIATE_CONTINUE:	AddTo.push_back("FailImmediateContinue");	break;
-	case FAIL_AT_END:	AddTo.push_back("FailAtEnd");	break;
-	case FAIL_OFF:		AddTo.push_back("FailOff");		break;
-	default:		ASSERT(0);
-	}
 
 	if( m_fMusicRate != 1 )
 	{
@@ -182,19 +172,6 @@ void SongOptions::FromString( const RString &sOptions )
 			 sBit == "death" )		m_DrainType = DRAIN_SUDDEN_DEATH;
 		else if( sBit == "power-drop" )		m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "normal-drain" )	m_DrainType = DRAIN_NORMAL;
-		else if( sBit == "failarcade" || 
-			 sBit == "failimmediate" )	m_FailType = FAIL_IMMEDIATE;
-		else if( sBit == "failendofsong" ||
-			sBit == "failimmediatecontinue" ) m_FailType = FAIL_IMMEDIATE_CONTINUE;
-		else if( sBit == "failatend" )		m_FailType = FAIL_AT_END;
-		else if( sBit == "failoff" )		m_FailType = FAIL_OFF;
-		
-		else if( sBit == "faildefault" )
-		{
-			SongOptions so;
-			GAMESTATE->GetDefaultSongOptions( so );
-			m_FailType = so.m_FailType;
-		}
 
 		else if( sBit == "clap" )		m_bAssistClap = on;
 		else if( sBit == "metronome" )		m_bAssistMetronome = on;
@@ -224,7 +201,6 @@ bool SongOptions::operator==( const SongOptions &other ) const
 	COMPARE( m_LifeType );
 	COMPARE( m_DrainType );
 	COMPARE( m_iBatteryLives );
-	COMPARE( m_FailType );
 	COMPARE( m_fMusicRate );
 	COMPARE( m_fHaste );
 	COMPARE( m_bAssistClap );

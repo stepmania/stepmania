@@ -441,9 +441,9 @@ static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption
 {
 	if( ToSel )
 	{
-		SongOptions so;
-		so.FromString( PREFSMAN->m_sDefaultModifiers );
-		sel = so.m_FailType;
+		PlayerOptions po;
+		po.FromString( PREFSMAN->m_sDefaultModifiers );
+		sel = po.m_FailType;
 	}
 	else
 	{
@@ -453,10 +453,10 @@ static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption
 
 		switch( sel )
 		{
-		case 0:	so.m_FailType = SongOptions::FAIL_IMMEDIATE;	break;
-		case 1:	so.m_FailType = SongOptions::FAIL_IMMEDIATE_CONTINUE;	break;
-		case 2:	so.m_FailType = SongOptions::FAIL_AT_END;	break;
-		case 3:	so.m_FailType = SongOptions::FAIL_OFF;		break;
+		case 0:	po.m_FailType = PlayerOptions::FAIL_IMMEDIATE;		break;
+		case 1:	po.m_FailType = PlayerOptions::FAIL_IMMEDIATE_CONTINUE;	break;
+		case 2:	po.m_FailType = PlayerOptions::FAIL_AT_END;		break;
+		case 3:	po.m_FailType = PlayerOptions::FAIL_OFF;		break;
 		default:
 			ASSERT(0);
 		}

@@ -4,6 +4,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
+#include "PlayerState.h"
 
 REGISTER_SCREEN_CLASS( ScreenSongOptions );
 
@@ -22,11 +23,13 @@ void ScreenSongOptions::Init()
 
 void ScreenSongOptions::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	const SongOptions::FailType ft = GAMESTATE->m_SongOptions.GetPreferred().m_FailType;
+	PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+	PlayerState *pPS = GAMESTATE->m_pPlayerState[pn];
+	const PlayerOptions::FailType ft = pPS->m_PlayerOptions.GetPreferred().m_FailType;
 
 	ScreenOptionsMaster::ExportOptions( iRow, vpns );
 
-	if( ft != GAMESTATE->m_SongOptions.GetPreferred().m_FailType )
+	if( ft != pPS->m_PlayerOptions.GetPreferred().m_FailType )
 		GAMESTATE->m_bChangedFailTypeOnScreenSongOptions = true;
 }
 

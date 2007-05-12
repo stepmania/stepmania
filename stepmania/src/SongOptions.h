@@ -22,12 +22,6 @@ public:
 	};
 	DrainType m_DrainType;	// only used with LifeBar
 	int m_iBatteryLives;
-	enum FailType { 
-		FAIL_IMMEDIATE=0,			// fail immediately when life touches 0
-		FAIL_IMMEDIATE_CONTINUE,		// fail immediately when life touches 0, but allow playing the rest of the song
-		FAIL_AT_END,				// fail if life is at 0 when the song ends
-		FAIL_OFF };					// never fail
-	FailType m_FailType;
 	float m_fMusicRate,	m_SpeedfMusicRate;
 	float m_fHaste, m_SpeedfHaste;
 	bool m_bAssistClap;
