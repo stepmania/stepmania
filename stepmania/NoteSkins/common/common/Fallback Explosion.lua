@@ -4,6 +4,11 @@ local t = Def.ActorFrame {
 		HoldingOffCommand=NOTESKIN:GetMetricA("HoldGhostArrow", "HoldingOffCommand");
 		InitCommand=cmd(playcommand,"HoldingOff";finishtweening);
 	};
+	NOTESKIN:LoadActor( Var "Button", "Roll Explosion" ) .. {
+		RollOnCommand=NOTESKIN:GetMetricA("HoldGhostArrow", "RollOnCommand");
+		RollOffCommand=NOTESKIN:GetMetricA("HoldGhostArrow", "RollOffCommand");
+		InitCommand=cmd(playcommand,"RollOff";finishtweening);
+	};
 	NOTESKIN:LoadActor( Var "Button", "Tap Explosion Dim" ) .. {
 		InitCommand=cmd(diffusealpha,0);
 		W5Command=NOTESKIN:GetMetricA("GhostArrowDim", "W5Command");

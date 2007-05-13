@@ -47,6 +47,7 @@ function ret.Load()
 	-- The main "Explosion" part just loads other actors; don't rotate
 	-- it.  The "Hold Explosion" part should not be rotated.
 	if Var "Element" == "Explosion" or
+	   Var "Element" == "Roll Explosion" or
 	   Var "Element" == "Hold Explosion" then
 		t.BaseRotationZ = nil;
 	end
