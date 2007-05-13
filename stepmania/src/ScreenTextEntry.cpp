@@ -116,10 +116,12 @@ void ScreenTextEntry::Init()
 
 	m_textQuestion.LoadFromFont( THEME->GetPathF(m_sName,"question") );
 	m_textQuestion.SetName( "Question" );
+	LOAD_ALL_COMMANDS( m_textQuestion );
 	this->AddChild( &m_textQuestion );
 
 	m_textAnswer.LoadFromFont( THEME->GetPathF(m_sName,"answer") );
 	m_textAnswer.SetName( "Answer" );
+	LOAD_ALL_COMMANDS( m_textAnswer );
 	this->AddChild( &m_textAnswer );
 
 	m_bShowAnswerCaret = false;
@@ -135,8 +137,8 @@ void ScreenTextEntry::BeginScreen()
 	ScreenWithMenuElements::BeginScreen();
 
 	m_textQuestion.SetText( g_sQuestion );
-	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textQuestion );
-	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textAnswer );
+	SET_XY( m_textQuestion );
+	SET_XY( m_textAnswer );
 
 	UpdateAnswerText();
 }
@@ -245,14 +247,6 @@ void ScreenTextEntry::MenuStart( const InputEventPlus &input )
 		End( false );
 }
 
-void ScreenTextEntry::TweenOffScreen()
-{
-	ScreenWithMenuElements::TweenOffScreen();
-
-	OFF_COMMAND( m_textQuestion );
-	OFF_COMMAND( m_textAnswer );
-}
-
 void ScreenTextEntry::End( bool bCancelled )
 {
 	if( bCancelled )
@@ -261,7 +255,7 @@ void ScreenTextEntry::End( bool bCancelled )
 			g_pOnCancel();
 		
 		Cancel( SM_GoToNextScreen );
-		TweenOffScreen();
+		//TweenOffScreen();
 	}
 	else
 	{
@@ -309,6 +303,7 @@ void ScreenTextEntryVisual::Init()
 
 	m_sprCursor.Load( THEME->GetPathG(m_sName,"cursor") );
 	m_sprCursor->SetName( "Cursor" );
+	LOAD_ALL_COMMANDS( m_sprCursor );
 	this->AddChild( m_sprCursor );
 
 	// Init keyboard
@@ -349,7 +344,6 @@ void ScreenTextEntryVisual::BeginScreen()
 {
 	ScreenTextEntry::BeginScreen();
 
-	ON_COMMAND( m_sprCursor );
 	m_iFocusX = 0;
 	m_iFocusY = (KeyboardRow)0;
 
@@ -459,13 +453,6 @@ void ScreenTextEntryVisual::MenuStart( const InputEventPlus &input )
 	{
 		TryAppendToAnswer( g_szKeys[m_iFocusY][m_iFocusX] );
 	}
-}
-
-void ScreenTextEntryVisual::TweenOffScreen()
-{
-	ScreenTextEntry::TweenOffScreen();
-
-	OFF_COMMAND( m_sprCursor );
 }
 
 /*

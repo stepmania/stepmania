@@ -65,7 +65,6 @@ public:
 
 	virtual void Update( float fDelta );
 	virtual void Input( const InputEventPlus &input );
-	virtual void TweenOffScreen();
 
 	static RString s_sLastAnswer;
 	static bool s_bCancelledLast;
@@ -76,6 +75,8 @@ protected:
 	virtual void TextEnteredDirectly() { }
 
 	virtual void End( bool bCancelled );
+	virtual bool GenericTweenOn() const { return true; }
+	virtual bool GenericTweenOff() const { return true; }
 
 private:
 	virtual void MenuStart( const InputEventPlus &input );
@@ -101,7 +102,6 @@ public:
 	~ScreenTextEntryVisual();
 	void Init();
 	void BeginScreen();
-	virtual void TweenOffScreen();
 
 protected:
 	void MoveX( int iDir );
