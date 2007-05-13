@@ -27,8 +27,8 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	{
 		const RString &sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( c );
 
-		m_bIsHoldShowing.push_back( false );
-		m_bWasHoldShowing.push_back( false );
+		m_bHoldShowing.push_back( TapNote::SubType_Invalid );
+		m_bLastHoldShowing.push_back( TapNote::SubType_Invalid );
 
 		m_Ghost.push_back( NOTESKIN->LoadActor(sButton, "Explosion", this) );
 		m_Ghost[c]->SetName( "GhostArrow" );
@@ -60,14 +60,22 @@ void GhostArrowRow::Update( float fDeltaTime )
 		m_Ghost[c]->SetZoom( fZoom );
 	}
 
-	for( unsigned i = 0; i < m_bIsHoldShowing.size(); ++i )
+	for( unsigned i = 0; i < m_bHoldShowing.size(); ++i )
 	{
-		if( !m_bWasHoldShowing[i] && m_bIsHoldShowing[i] )
-			m_Ghost[i]->PlayCommand( "HoldingOn" );
-		else if( m_bWasHoldShowing[i] && !m_bIsHoldShowing[i] )
-			m_Ghost[i]->PlayCommand( "HoldingOff" );
-		m_bWasHoldShowing[i] = m_bIsHoldShowing[i];
-		m_bIsHoldShowing[i] = false;
+		if( m_bLastHoldShowing[i] != m_bHoldShowing[i] )
+		{
+			if( m_bLastHoldShowing[i] == TapNote::hold_head_hold )
+				m_Ghost[i]->PlayCommand( "HoldingOff" );
+			else if( m_bLastHoldShowing[i] == TapNote::hold_head_roll )
+				m_Ghost[i]->PlayCommand( "RollOff" );
+
+			if( m_bHoldShowing[i] == TapNote::hold_head_hold )
+				m_Ghost[i]->PlayCommand( "HoldingOn" );
+			else if( m_bHoldShowing[i] == TapNote::hold_head_roll )
+				m_Ghost[i]->PlayCommand( "RollOn" );
+			m_bLastHoldShowing[i] = m_bHoldShowing[i];
+		}
+		m_bHoldShowing[i] = TapNote::SubType_Invalid;
 	}
 }
 
@@ -118,7 +126,7 @@ void GhostArrowRow::DidHoldNote( int iCol, HoldNoteScore hns, bool bBright )
 void GhostArrowRow::SetHoldShowing( int iCol, const TapNote &tn )
 {
 	ASSERT( iCol >= 0  &&  iCol < (int) m_Ghost.size() );
-	m_bIsHoldShowing[iCol] = true;
+	m_bHoldShowing[iCol] = tn.subType;
 }
 
 /*

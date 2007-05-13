@@ -28,8 +28,8 @@ protected:
 	const PlayerState* m_pPlayerState;
 
 	vector<Actor *> 	m_Ghost;
-	vector<bool> m_bIsHoldShowing;
-	vector<bool> m_bWasHoldShowing;
+	vector<TapNote::SubType> m_bHoldShowing;
+	vector<TapNote::SubType> m_bLastHoldShowing;
 };
 
 
