@@ -1,4 +1,4 @@
-; NSIS Install Script
+; NSIS Install Script 
 ; created by 
 ;     BBF, GlennMaynard, ChrisDanford
 ; I use the following command to create the installer:
