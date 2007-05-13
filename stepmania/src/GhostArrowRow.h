@@ -5,6 +5,7 @@
 
 #include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
+#include "NoteTypes.h"
 
 class PlayerState;
 
@@ -20,7 +21,7 @@ public:
 	
 	void DidTapNote( int iCol, TapNoteScore tns, bool bBright );
 	void DidHoldNote( int iCol, HoldNoteScore hns, bool bBright );
-	void SetHoldShowing( int iCol );
+	void SetHoldShowing( int iCol, const TapNote &tn );
 	
 protected:
 	float m_fYReverseOffsetPixels;

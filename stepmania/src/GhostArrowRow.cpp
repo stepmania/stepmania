@@ -115,7 +115,7 @@ void GhostArrowRow::DidHoldNote( int iCol, HoldNoteScore hns, bool bBright )
 	m_Ghost[iCol]->PlayCommand( Capitalize(sJudge) );
 }
 
-void GhostArrowRow::SetHoldShowing( int iCol )
+void GhostArrowRow::SetHoldShowing( int iCol, const TapNote &tn )
 {
 	ASSERT( iCol >= 0  &&  iCol < (int) m_Ghost.size() );
 	m_bIsHoldShowing[iCol] = true;

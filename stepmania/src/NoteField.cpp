@@ -852,7 +852,7 @@ void NoteField::DrawPrimitives()
 				const bool bHoldGhostShowing = tn.HoldResult.bActive  &&  tn.HoldResult.fLife > 0;
 				const bool bIsHoldingNote = tn.HoldResult.bHeld;
 				if( bHoldGhostShowing )
-					m_pCurDisplay->m_GhostArrowRow.SetHoldShowing( c );
+					m_pCurDisplay->m_GhostArrowRow.SetHoldShowing( c, tn );
 				
 				ASSERT_M( NoteRowToBeat(iStartRow) > -2000, ssprintf("%i %i %i", iStartRow, iEndRow, c) );
 
