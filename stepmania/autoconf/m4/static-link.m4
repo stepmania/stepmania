@@ -1,0 +1,19 @@
+# public domain
+
+AC_DEFUN([SM_STATIC], [
+	OLD_LDFLAGS=$LDFLAGS
+
+	START_STATIC="-Wl,-static"
+	END_STATIC="-Wl,-dy"
+
+	LDFLAGS="$LDFLAGS $START_STATIC $END_STATIC"
+	AC_MSG_CHECKING(for selective static linking)
+	AC_TRY_LINK([], [], [AC_MSG_RESULT([$START_STATIC ... $END_STATIC])], [
+		START_STATIC=""
+		END_STATIC=""
+		AC_MSG_RESULT(no)
+	])
+
+	LDFLAGS=$OLD_LDFLAGS
+])
+
