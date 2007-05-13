@@ -121,7 +121,6 @@ public:
 	Preference<bool>	m_bDelayedTextureDelete;
 	Preference<bool>	m_bDelayedModelDelete;
 	Preference<BannerCacheMode>		m_BannerCache;
-	Preference<bool>	m_bPalettedBannerCache;
 	Preference<bool>	m_bFastLoad;
 	Preference<bool>        m_bFastLoadAdditionalSongs;
 

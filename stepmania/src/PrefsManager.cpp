@@ -159,7 +159,6 @@ PrefsManager::PrefsManager() :
 	m_bDelayedTextureDelete	( "DelayedTextureDelete",	true ),
 	m_bDelayedModelDelete	( "DelayedModelDelete",		false ),
 	m_BannerCache		( "BannerCache",		BNCACHE_LOW_RES_PRELOAD ),
-	m_bPalettedBannerCache	( "PalettedBannerCache",	false ),
 	m_bFastLoad		( "FastLoad",			false ),
 	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    false ),
 

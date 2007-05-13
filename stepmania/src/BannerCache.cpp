@@ -21,6 +21,8 @@
 
 #include "Banner.h"
 
+static Preference<bool> g_bPalettedBannerCache( "PalettedBannerCache", false );
+
 /* Neither a global or a file scope static can be used for this because
  * the order of initialization of nonlocal objects is unspecified. */
 //const RString BANNER_CACHE_INDEX = SpecialFiles::CACHE_DIR + "banners.cache";
@@ -458,7 +460,7 @@ void BannerCache::CacheBannerInternal( RString sBannerPath )
 	 * one cached banner into a texture at once, and the speed hit may not matter on
 	 * newer ATI cards.  RGBA is safer, though.
 	 */
-	if( PREFSMAN->m_bPalettedBannerCache )
+	if( g_bPalettedBannerCache )
 	{
 		if( pImage->fmt.BytesPerPixel != 1 )
 			RageSurfaceUtils::Palettize( pImage );
