@@ -75,14 +75,14 @@ void BannerCache::Demand()
 		if( g_BannerPathToImage.find(sBannerPath) != g_BannerPathToImage.end() )
 			continue; /* already loaded */
 
-		const RString CachePath = GetBannerCachePath(sBannerPath);
-		RageSurface *img = RageSurfaceUtils::LoadSurface( CachePath );
-		if( img == NULL )
+		const RString sCachePath = GetBannerCachePath(sBannerPath);
+		RageSurface *pImage = RageSurfaceUtils::LoadSurface( sCachePath );
+		if( pImage == NULL )
 		{
 			continue; /* doesn't exist */
 		}
 
-		g_BannerPathToImage[sBannerPath] = img;
+		g_BannerPathToImage[sBannerPath] = pImage;
 	}
 }
 
@@ -112,22 +112,22 @@ void BannerCache::LoadBanner( RString sBannerPath )
 		return;
 
 	/* Load it. */
-	const RString CachePath = GetBannerCachePath(sBannerPath);
+	const RString sCachePath = GetBannerCachePath(sBannerPath);
 
 	for( int tries = 0; tries < 2; ++tries )
 	{
 		if( g_BannerPathToImage.find(sBannerPath) != g_BannerPathToImage.end() )
 			return; /* already loaded */
 
-		CHECKPOINT_M( ssprintf( "BannerCache::LoadBanner: %s", CachePath.c_str() ) );
-		RageSurface *img = RageSurfaceUtils::LoadSurface( CachePath );
-		if( img == NULL )
+		CHECKPOINT_M( ssprintf( "BannerCache::LoadBanner: %s", sCachePath.c_str() ) );
+		RageSurface *pImage = RageSurfaceUtils::LoadSurface( sCachePath );
+		if( pImage == NULL )
 		{
 			if( tries == 0 )
 			{
 				/* The file doesn't exist.  It's possible that the banner cache file is
 				 * missing, so try to create it.  Don't do this first, for efficiency. */
-				LOG->Trace( "Cached banner load of '%s' ('%s') failed, trying to cache ...", sBannerPath.c_str(), CachePath.c_str() );
+				LOG->Trace( "Cached banner load of '%s' ('%s') failed, trying to cache ...", sBannerPath.c_str(), sCachePath.c_str() );
 
 				/* Skip the up-to-date check; it failed to load, so it can't be up
 				 * to date. */
@@ -136,12 +136,12 @@ void BannerCache::LoadBanner( RString sBannerPath )
 			}
 			else
 			{
-				LOG->Trace( "Cached banner load of '%s' ('%s') failed", sBannerPath.c_str(), CachePath.c_str() );
+				LOG->Trace( "Cached banner load of '%s' ('%s') failed", sBannerPath.c_str(), sCachePath.c_str() );
 				return;
 			}
 		}
 
-		g_BannerPathToImage[sBannerPath] = img;
+		g_BannerPathToImage[sBannerPath] = pImage;
 	}
 }
 
@@ -185,11 +185,11 @@ struct BannerTexture: public RageTexture
 	unsigned m_uTexHandle;
 	unsigned GetTexHandle() const { return m_uTexHandle; };	// accessed by RageDisplay
 	/* This is a reference to a pointer in g_BannerPathToImage. */
-	RageSurface *&img;
-	int width, height;
+	RageSurface *&m_pImage;
+	int m_iWidth, m_iHeight;
 
-	BannerTexture( RageTextureID name, RageSurface *&img_, int width_, int height_ ):
-		RageTexture(name), img(img_), width(width_), height(height_)
+	BannerTexture( RageTextureID id, RageSurface *&pImage, int iWidth, int iHeight ):
+		RageTexture(id), m_pImage(pImage), m_iWidth(iWidth), m_iHeight(iHeight)
 	{
 		Create();
 	}
@@ -201,43 +201,43 @@ struct BannerTexture: public RageTexture
 	
 	void Create()
 	{
-		ASSERT( img );
+		ASSERT( m_pImage );
 
 		/* The image is preprocessed; do as little work as possible. */
 
 		/* The source width is the width of the original file. */
-		m_iSourceWidth = width;
-		m_iSourceHeight = height;
+		m_iSourceWidth = m_iWidth;
+		m_iSourceHeight = m_iHeight;
 
 		/* The image width (within the texture) is always the entire texture. 
 		 * Only resize if the max texture size requires it; since these images
 		 * are already scaled down, this shouldn't happen often. */
-		if( img->w > DISPLAY->GetMaxTextureSize() || 
-			img->h > DISPLAY->GetMaxTextureSize() )
+		if( m_pImage->w > DISPLAY->GetMaxTextureSize() || 
+			m_pImage->h > DISPLAY->GetMaxTextureSize() )
 		{
 			LOG->Warn( "Converted %s at runtime", GetID().filename.c_str() );
-			int width = min( img->w, DISPLAY->GetMaxTextureSize() );
-			int height = min( img->h, DISPLAY->GetMaxTextureSize() );
-			RageSurfaceUtils::Zoom( img, width, height );
+			int iWidth = min( m_pImage->w, DISPLAY->GetMaxTextureSize() );
+			int iHeight = min( m_pImage->h, DISPLAY->GetMaxTextureSize() );
+			RageSurfaceUtils::Zoom( m_pImage, iWidth, iHeight );
 		}
 
 		/* We did this when we cached it. */
-		ASSERT( img->w == power_of_two(img->w) );
-		ASSERT( img->h == power_of_two(img->h) );
+		ASSERT( m_pImage->w == power_of_two(m_pImage->w) );
+		ASSERT( m_pImage->h == power_of_two(m_pImage->h) );
 
-		m_iTextureWidth = m_iImageWidth = img->w;
-		m_iTextureHeight = m_iImageHeight = img->h;
+		m_iTextureWidth = m_iImageWidth = m_pImage->w;
+		m_iTextureHeight = m_iImageHeight = m_pImage->h;
 
 		/* Find a supported texture format.  If it happens to match the stored
 		 * file, we won't have to do any conversion here, and that'll happen often
 		 * with paletted images. */
-		PixelFormat pf = img->format->BitsPerPixel == 8? PixelFormat_PAL: PixelFormat_RGB5A1;
+		PixelFormat pf = m_pImage->format->BitsPerPixel == 8? PixelFormat_PAL: PixelFormat_RGB5A1;
 		if( !DISPLAY->SupportsTextureFormat(pf) )
 			pf = PixelFormat_RGBA4;
 		ASSERT( DISPLAY->SupportsTextureFormat(pf) );
 
-		ASSERT(img);
-		m_uTexHandle = DISPLAY->CreateTexture( pf, img, false );
+		ASSERT(m_pImage);
+		m_uTexHandle = DISPLAY->CreateTexture( pf, m_pImage, false );
 
 		CreateFrameRects();
 	}
@@ -286,21 +286,21 @@ RageTextureID BannerCache::LoadCachedBanner( RString sBannerPath )
 	/* This is a reference to a pointer.  BannerTexture's ctor may change it
 	 * when converting; this way, the conversion will end up in the map so we
 	 * only have to convert once. */
-	RageSurface *&img = g_BannerPathToImage[sBannerPath];
-	ASSERT( img );
+	RageSurface *&pImage = g_BannerPathToImage[sBannerPath];
+	ASSERT( pImage );
 
 	int iSourceWidth = 0, iSourceHeight = 0;
-	bool WasRotatedBanner = false;
+	bool bWasRotatedBanner = false;
 	BannerData.GetValue( sBannerPath, "Width", iSourceWidth );
 	BannerData.GetValue( sBannerPath, "Height", iSourceHeight );
-	BannerData.GetValue( sBannerPath, "Rotated", WasRotatedBanner );
+	BannerData.GetValue( sBannerPath, "Rotated", bWasRotatedBanner );
 	if( iSourceWidth == 0 || iSourceHeight == 0 )
 	{
 		LOG->UserLog( "Cache file", sBannerPath, "couldn't be loaded." );
 		return ID;
 	}
 
-	if( WasRotatedBanner )
+	if( bWasRotatedBanner )
 	{
 		/* We need to tell Sprite that this was originally a rotated
 		 * sprite. */
@@ -312,8 +312,8 @@ RageTextureID BannerCache::LoadCachedBanner( RString sBannerPath )
 		return ID; /* It's all set. */
 
 	LOG->Trace( "Loading banner texture %s; src %ix%i; image %ix%i",
-		    ID.filename.c_str(), iSourceWidth, iSourceHeight, img->w, img->h );
-	RageTexture *pTexture = new BannerTexture( ID, img, iSourceWidth, iSourceHeight );
+		    ID.filename.c_str(), iSourceWidth, iSourceHeight, pImage->w, pImage->h );
+	RageTexture *pTexture = new BannerTexture( ID, pImage, iSourceWidth, iSourceHeight );
 
 	ID.Policy = RageTextureID::TEX_VOLATILE;
 	TEXTUREMAN->RegisterTexture( ID, pTexture );
@@ -341,10 +341,10 @@ void BannerCache::CacheBanner( RString sBannerPath )
 	if( !DoesFileExist(sBannerPath) )
 		return;
 
-	const RString CachePath = GetBannerCachePath(sBannerPath);
+	const RString sCachePath = GetBannerCachePath(sBannerPath);
 
 	/* Check the full file hash.  If it's the loaded and identical, don't recache. */
-	if( DoesFileExist(CachePath) )
+	if( DoesFileExist(sCachePath) )
 	{
 		bool bCacheUpToDate = PREFSMAN->m_bFastLoad;
 		if( !bCacheUpToDate )
@@ -372,17 +372,17 @@ void BannerCache::CacheBanner( RString sBannerPath )
 
 void BannerCache::CacheBannerInternal( RString sBannerPath )
 {
-	RString error;
-	RageSurface *img = RageSurfaceUtils::LoadFile( sBannerPath, error );
-	if( img == NULL )
+	RString sError;
+	RageSurface *pImage = RageSurfaceUtils::LoadFile( sBannerPath, sError );
+	if( pImage == NULL )
 	{
-		LOG->UserLog( "Cache file", sBannerPath, "couldn't be loaded: %s", error.c_str() );
+		LOG->UserLog( "Cache file", sBannerPath, "couldn't be loaded: %s", sError.c_str() );
 		return;
 	}
 
-	bool WasRotatedBanner = false;
+	bool bWasRotatedBanner = false;
 
-	if( Sprite::IsDiagonalBanner(img->w , img->h) )
+	if( Sprite::IsDiagonalBanner(pImage->w , pImage->h) )
 	{
 		/* Ack.  It's a diagonal banner.  Problem: if we resize a diagonal banner, we
 		 * get ugly checker patterns.  We need to un-rotate it.
@@ -395,18 +395,18 @@ void BannerCache::CacheBannerInternal( RString sBannerPath )
 		 * This also makes the banner take less memory, though that could also be
 		 * done by RLEing the surface.
 		 */
-		RageSurfaceUtils::ApplyHotPinkColorKey( img );
+		RageSurfaceUtils::ApplyHotPinkColorKey( pImage );
 
-		RageSurfaceUtils::ConvertSurface(img, img->w, img->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+		RageSurfaceUtils::ConvertSurface(pImage, pImage->w, pImage->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 		
 		RageSurface *dst = CreateSurface(
-			256, 64, img->format->BitsPerPixel, 
-			img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
+			256, 64, pImage->format->BitsPerPixel, 
+			pImage->format->Rmask, pImage->format->Gmask, pImage->format->Bmask, pImage->format->Amask );
 
-		if( img->format->BitsPerPixel == 8 ) 
+		if( pImage->format->BitsPerPixel == 8 ) 
 		{
-			ASSERT( img->format->palette );
-			dst->fmt.palette = img->fmt.palette;
+			ASSERT( pImage->format->palette );
+			dst->fmt.palette = pImage->fmt.palette;
 		}
 
 		const float fCustomImageCoords[8] = {
@@ -416,33 +416,31 @@ void BannerCache::CacheBannerInternal( RString sBannerPath )
 			0.78f,	0.02f,	// top right
 		};
 
-		RageSurfaceUtils::BlitTransform( img, dst, fCustomImageCoords );
+		RageSurfaceUtils::BlitTransform( pImage, dst, fCustomImageCoords );
 
-		delete img;
-		img = dst;
+		delete pImage;
+		pImage = dst;
 
-		WasRotatedBanner = true;
+		bWasRotatedBanner = true;
 	}
 
+	const int iSourceWidth = pImage->w, iSourceHeight = pImage->h;
 
-
-	const int iSourceWidth = img->w, iSourceHeight = img->h;
-
-	int width = img->w / 2, height = img->h / 2;
-//	int width = img->w, height = img->h;
+	int iWidth = pImage->w / 2, iHeight = pImage->h / 2;
+//	int iWidth = pImage->w, iHeight = pImage->h;
 
 	/* Round to the nearest power of two.  This simplifies the actual texture load. */
-	width = closest(width, power_of_two(width), power_of_two(width) / 2);
-	height = closest(height, power_of_two(height), power_of_two(height) / 2);
+	iWidth = closest( iWidth, power_of_two(iWidth), power_of_two(iWidth) / 2 );
+	iHeight = closest( iHeight, power_of_two(iHeight), power_of_two(iHeight) / 2 );
 
 	/* Don't resize the image to less than 32 pixels in either dimension or the next
 	 * power of two of the source (whichever is smaller); it's already very low res. */
-	width = max( width, min(32, power_of_two(iSourceWidth)) );
-	height = max( height, min(32, power_of_two(iSourceHeight)) );
+	iWidth = max( iWidth, min(32, power_of_two(iSourceWidth)) );
+	iHeight = max( iHeight, min(32, power_of_two(iSourceHeight)) );
 
-	RageSurfaceUtils::ApplyHotPinkColorKey( img );
+	RageSurfaceUtils::ApplyHotPinkColorKey( pImage );
 
-	RageSurfaceUtils::Zoom( img, width, height );
+	RageSurfaceUtils::Zoom( pImage, iWidth, iHeight );
 
 	/*
 	 * When paletted banner cache is enabled, cached banners are paletted.  Cached
@@ -462,25 +460,25 @@ void BannerCache::CacheBannerInternal( RString sBannerPath )
 	 */
 	if( PREFSMAN->m_bPalettedBannerCache )
 	{
-		if( img->fmt.BytesPerPixel != 1 )
-			RageSurfaceUtils::Palettize( img );
+		if( pImage->fmt.BytesPerPixel != 1 )
+			RageSurfaceUtils::Palettize( pImage );
 	}
 	else
 	{
 		/* Dither to the final format.  We use A1RGB5, since that's usually supported
 		 * natively by both OpenGL and D3D. */
-		RageSurface *dst = CreateSurface( img->w, img->h, 16,
+		RageSurface *dst = CreateSurface( pImage->w, pImage->h, 16,
 			0x7C00, 0x03E0, 0x001F, 0x8000 );
 
 		/* OrderedDither is still faster than ErrorDiffusionDither, and
 		 * these images are very small and only displayed briefly. */
-		RageSurfaceUtils::OrderedDither( img, dst );
-		delete img;
-		img = dst;
+		RageSurfaceUtils::OrderedDither( pImage, dst );
+		delete pImage;
+		pImage = dst;
 	}
 
-	const RString CachePath = GetBannerCachePath(sBannerPath);
-	RageSurfaceUtils::SaveSurface( img, CachePath );
+	const RString sCachePath = GetBannerCachePath(sBannerPath);
+	RageSurfaceUtils::SaveSurface( pImage, sCachePath );
 
 	/* If an old image is loaded, free it. */
 	if( g_BannerPathToImage.find(sBannerPath) != g_BannerPathToImage.end() )
@@ -493,18 +491,18 @@ void BannerCache::CacheBannerInternal( RString sBannerPath )
 	if( PREFSMAN->m_BannerCache == BNCACHE_LOW_RES_PRELOAD )
 	{
 		/* Keep it; we're just going to load it anyway. */
-		g_BannerPathToImage[sBannerPath] = img;
+		g_BannerPathToImage[sBannerPath] = pImage;
 	}
 	else
-		delete img;
+		delete pImage;
 
 	/* Remember the original size. */
-	BannerData.SetValue( sBannerPath, "Path", CachePath );
+	BannerData.SetValue( sBannerPath, "Path", sCachePath );
 	BannerData.SetValue( sBannerPath, "Width", iSourceWidth );
 	BannerData.SetValue( sBannerPath, "Height", iSourceHeight );
 	BannerData.SetValue( sBannerPath, "FullHash", GetHashForFile( sBannerPath ) );
 	/* Remember this, so we can hint Sprite. */
-	BannerData.SetValue( sBannerPath, "Rotated", WasRotatedBanner );
+	BannerData.SetValue( sBannerPath, "Rotated", bWasRotatedBanner );
 	BannerData.WriteFile( BANNER_CACHE_INDEX );
 }
 
