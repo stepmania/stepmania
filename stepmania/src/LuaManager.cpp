@@ -889,6 +889,11 @@ namespace
 		LOG->Warn( "%s", sString.c_str() );
 		return 0;
 	}
+	static int Flush( lua_State *L )
+	{
+		LOG->Flush();
+		return 0;
+	}
 	static int CheckType( lua_State *L )
 	{
 		RString sType = SArg(1);
@@ -963,6 +968,7 @@ namespace
 	{
 		LIST_METHOD( Trace ),
 		LIST_METHOD( Warn ),
+		LIST_METHOD( Flush ),
 		LIST_METHOD( CheckType ),
 		LIST_METHOD( ReadFile ),
 		LIST_METHOD( RunWithThreadVariables ),
