@@ -51,9 +51,9 @@ BannerCache *BANNERCACHE;
 static map<RString,RageSurface *> g_BannerPathToImage;
 static int g_iDemandRefcount = 0;
 
-RString BannerCache::GetBannerCachePath( RString BannerPath )
+RString BannerCache::GetBannerCachePath( RString sBannerPath )
 {
-	return SongCacheIndex::GetCacheFilePath( "Banners", BannerPath );
+	return SongCacheIndex::GetCacheFilePath( "Banners", sBannerPath );
 }
 
 /* If in on-demand mode, load all cached banners.  This must be fast, so
@@ -103,20 +103,20 @@ void BannerCache::Undemand()
  * the cache file if necessary.  Unlike CacheBanner(), the original file will
  * not be examined unless the cached banner doesn't exist, so the banner will
  * not be updated if the original file changes, for efficiency. */
-void BannerCache::LoadBanner( RString BannerPath )
+void BannerCache::LoadBanner( RString sBannerPath )
 {
-	if( BannerPath == "" )
+	if( sBannerPath == "" )
 		return; // nothing to do
 	if( PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_PRELOAD &&
 	    PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
 	/* Load it. */
-	const RString CachePath = GetBannerCachePath(BannerPath);
+	const RString CachePath = GetBannerCachePath(sBannerPath);
 
 	for( int tries = 0; tries < 2; ++tries )
 	{
-		if( g_BannerPathToImage.find(BannerPath) != g_BannerPathToImage.end() )
+		if( g_BannerPathToImage.find(sBannerPath) != g_BannerPathToImage.end() )
 			return; /* already loaded */
 
 		CHECKPOINT_M( ssprintf( "BannerCache::LoadBanner: %s", CachePath.c_str() ) );
@@ -127,40 +127,39 @@ void BannerCache::LoadBanner( RString BannerPath )
 			{
 				/* The file doesn't exist.  It's possible that the banner cache file is
 				 * missing, so try to create it.  Don't do this first, for efficiency. */
-				LOG->Trace( "Cached banner load of '%s' ('%s') failed, trying to cache ...", BannerPath.c_str(), CachePath.c_str() );
+				LOG->Trace( "Cached banner load of '%s' ('%s') failed, trying to cache ...", sBannerPath.c_str(), CachePath.c_str() );
+
 				/* Skip the up-to-date check; it failed to load, so it can't be up
 				 * to date. */
-				CacheBannerInternal( BannerPath );
+				CacheBannerInternal( sBannerPath );
 				continue;
 			}
 			else
 			{
-				LOG->Trace( "Cached banner load of '%s' ('%s') failed", BannerPath.c_str(), CachePath.c_str() );
+				LOG->Trace( "Cached banner load of '%s' ('%s') failed", sBannerPath.c_str(), CachePath.c_str() );
 				return;
 			}
 		}
 
-		g_BannerPathToImage[BannerPath] = img;
+		g_BannerPathToImage[sBannerPath] = img;
 	}
 }
 
 void BannerCache::OutputStats() const
 {
-	map<RString,RageSurface *>::const_iterator ban;
-	int total_size = 0;
-	for( ban = g_BannerPathToImage.begin(); ban != g_BannerPathToImage.end(); ++ban )
+	int iTotalSize = 0;
+	FOREACHM_CONST( RString, RageSurface *, g_BannerPathToImage, it )
 	{
-		RageSurface * const &img = ban->second;
-		const int size = img->pitch * img->h;
-		total_size += size;
+		const RageSurface *pImage = it->second;
+		const int iSize = pImage->pitch * pImage->h;
+		iTotalSize += iSize;
 	}
-	LOG->Info( "%i bytes of banners loaded", total_size );
+	LOG->Info( "%i bytes of banners loaded", iTotalSize );
 }
 
 void BannerCache::UnloadAllBanners()
 {
-	map<RString,RageSurface *>::iterator it;
-	for( it = g_BannerPathToImage.begin(); it != g_BannerPathToImage.end(); ++it )
+	FOREACHM( RString, RageSurface *, g_BannerPathToImage, it )
 		delete it->second;
 
 	g_BannerPathToImage.clear();
@@ -263,41 +262,41 @@ struct BannerTexture: public RageTexture
 };
 
 /* If a banner is cached, get its ID for use. */
-RageTextureID BannerCache::LoadCachedBanner( RString BannerPath )
+RageTextureID BannerCache::LoadCachedBanner( RString sBannerPath )
 {
-	RageTextureID ID( GetBannerCachePath(BannerPath) );
+	RageTextureID ID( GetBannerCachePath(sBannerPath) );
 
-	if( BannerPath == "" )
+	if( sBannerPath == "" )
 		return ID;
 
-	LOG->Trace( "BannerCache::LoadCachedBanner(%s): %s", BannerPath.c_str(), ID.filename.c_str() );
+	LOG->Trace( "BannerCache::LoadCachedBanner(%s): %s", sBannerPath.c_str(), ID.filename.c_str() );
 
 	/* Hack: make sure Banner::Load doesn't change our return value and end up
 	 * reloading. */
 	ID = Sprite::SongBannerTexture(ID);
 
 	/* It's not in a texture.  Do we have it loaded? */
-	if( g_BannerPathToImage.find(BannerPath) == g_BannerPathToImage.end() )
+	if( g_BannerPathToImage.find(sBannerPath) == g_BannerPathToImage.end() )
 	{
 		/* Oops, the image is missing.  Warn and continue. */
-		LOG->Warn( "Banner cache for '%s' wasn't loaded", BannerPath.c_str() );
+		LOG->Warn( "Banner cache for '%s' wasn't loaded", sBannerPath.c_str() );
 		return ID;
 	}
 
 	/* This is a reference to a pointer.  BannerTexture's ctor may change it
 	 * when converting; this way, the conversion will end up in the map so we
 	 * only have to convert once. */
-	RageSurface *&img = g_BannerPathToImage[BannerPath];
+	RageSurface *&img = g_BannerPathToImage[sBannerPath];
 	ASSERT( img );
 
-	int src_width = 0, src_height = 0;
+	int iSourceWidth = 0, iSourceHeight = 0;
 	bool WasRotatedBanner = false;
-	BannerData.GetValue( BannerPath, "Width", src_width );
-	BannerData.GetValue( BannerPath, "Height", src_height );
-	BannerData.GetValue( BannerPath, "Rotated", WasRotatedBanner );
-	if(src_width == 0 || src_height == 0)
+	BannerData.GetValue( sBannerPath, "Width", iSourceWidth );
+	BannerData.GetValue( sBannerPath, "Height", iSourceHeight );
+	BannerData.GetValue( sBannerPath, "Rotated", WasRotatedBanner );
+	if( iSourceWidth == 0 || iSourceHeight == 0 )
 	{
-		LOG->UserLog( "Cache file", BannerPath, "couldn't be loaded." );
+		LOG->UserLog( "Cache file", sBannerPath, "couldn't be loaded." );
 		return ID;
 	}
 
@@ -313,8 +312,8 @@ RageTextureID BannerCache::LoadCachedBanner( RString BannerPath )
 		return ID; /* It's all set. */
 
 	LOG->Trace( "Loading banner texture %s; src %ix%i; image %ix%i",
-		    ID.filename.c_str(), src_width, src_height, img->w, img->h );
-	RageTexture *pTexture = new BannerTexture( ID, img, src_width, src_height );
+		    ID.filename.c_str(), iSourceWidth, iSourceHeight, img->w, img->h );
+	RageTexture *pTexture = new BannerTexture( ID, img, iSourceWidth, iSourceHeight );
 
 	ID.Policy = RageTextureID::TEX_VOLATILE;
 	TEXTUREMAN->RegisterTexture( ID, pTexture );
@@ -332,17 +331,17 @@ static inline int closest( int num, int n1, int n2 )
 
 /* Create or update the banner cache file as necessary.  If in preload mode,
  * load the cache file, too.  (This is done at startup.) */
-void BannerCache::CacheBanner( RString BannerPath )
+void BannerCache::CacheBanner( RString sBannerPath )
 {
 	if( PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_PRELOAD &&
 	    PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
-	CHECKPOINT_M( BannerPath );
-	if( !DoesFileExist(BannerPath) )
+	CHECKPOINT_M( sBannerPath );
+	if( !DoesFileExist(sBannerPath) )
 		return;
 
-	const RString CachePath = GetBannerCachePath(BannerPath);
+	const RString CachePath = GetBannerCachePath(sBannerPath);
 
 	/* Check the full file hash.  If it's the loaded and identical, don't recache. */
 	if( DoesFileExist(CachePath) )
@@ -351,8 +350,8 @@ void BannerCache::CacheBanner( RString BannerPath )
 		if( !bCacheUpToDate )
 		{
 			unsigned CurFullHash;
-			const unsigned FullHash = GetHashForFile( BannerPath );
-			if( BannerData.GetValue( BannerPath, "FullHash", CurFullHash ) && CurFullHash == FullHash )
+			const unsigned FullHash = GetHashForFile( sBannerPath );
+			if( BannerData.GetValue( sBannerPath, "FullHash", CurFullHash ) && CurFullHash == FullHash )
 				bCacheUpToDate = true;
 		}
 
@@ -360,7 +359,7 @@ void BannerCache::CacheBanner( RString BannerPath )
 		{
 			/* It's identical.  Just load it, if in preload. */
 			if( PREFSMAN->m_BannerCache == BNCACHE_LOW_RES_PRELOAD )
-				LoadBanner( BannerPath );
+				LoadBanner( sBannerPath );
 
 			return;
 		}
@@ -368,16 +367,16 @@ void BannerCache::CacheBanner( RString BannerPath )
 
 	/* The cache file doesn't exist, or is out of date.  Cache it.  This
 	 * will also load the cache into memory if in PRELOAD. */
-	CacheBannerInternal( BannerPath );
+	CacheBannerInternal( sBannerPath );
 }
 
-void BannerCache::CacheBannerInternal( RString BannerPath )
+void BannerCache::CacheBannerInternal( RString sBannerPath )
 {
 	RString error;
-	RageSurface *img = RageSurfaceUtils::LoadFile( BannerPath, error );
+	RageSurface *img = RageSurfaceUtils::LoadFile( sBannerPath, error );
 	if( img == NULL )
 	{
-		LOG->UserLog( "Cache file", BannerPath, "couldn't be loaded: %s", error.c_str() );
+		LOG->UserLog( "Cache file", sBannerPath, "couldn't be loaded: %s", error.c_str() );
 		return;
 	}
 
@@ -427,7 +426,7 @@ void BannerCache::CacheBannerInternal( RString BannerPath )
 
 
 
-	const int src_width = img->w, src_height = img->h;
+	const int iSourceWidth = img->w, iSourceHeight = img->h;
 
 	int width = img->w / 2, height = img->h / 2;
 //	int width = img->w, height = img->h;
@@ -438,8 +437,8 @@ void BannerCache::CacheBannerInternal( RString BannerPath )
 
 	/* Don't resize the image to less than 32 pixels in either dimension or the next
 	 * power of two of the source (whichever is smaller); it's already very low res. */
-	width = max( width, min(32, power_of_two(src_width)) );
-	height = max( height, min(32, power_of_two(src_height)) );
+	width = max( width, min(32, power_of_two(iSourceWidth)) );
+	height = max( height, min(32, power_of_two(iSourceHeight)) );
 
 	RageSurfaceUtils::ApplyHotPinkColorKey( img );
 
@@ -480,32 +479,32 @@ void BannerCache::CacheBannerInternal( RString BannerPath )
 		img = dst;
 	}
 
-	const RString CachePath = GetBannerCachePath(BannerPath);
+	const RString CachePath = GetBannerCachePath(sBannerPath);
 	RageSurfaceUtils::SaveSurface( img, CachePath );
 
 	/* If an old image is loaded, free it. */
-	if( g_BannerPathToImage.find(BannerPath) != g_BannerPathToImage.end() )
+	if( g_BannerPathToImage.find(sBannerPath) != g_BannerPathToImage.end() )
 	{
-		RageSurface *oldimg = g_BannerPathToImage[BannerPath];
+		RageSurface *oldimg = g_BannerPathToImage[sBannerPath];
 		delete oldimg;
-		g_BannerPathToImage.erase(BannerPath);
+		g_BannerPathToImage.erase(sBannerPath);
 	}
 
 	if( PREFSMAN->m_BannerCache == BNCACHE_LOW_RES_PRELOAD )
 	{
 		/* Keep it; we're just going to load it anyway. */
-		g_BannerPathToImage[BannerPath] = img;
+		g_BannerPathToImage[sBannerPath] = img;
 	}
 	else
 		delete img;
 
 	/* Remember the original size. */
-	BannerData.SetValue( BannerPath, "Path", CachePath );
-	BannerData.SetValue( BannerPath, "Width", src_width );
-	BannerData.SetValue( BannerPath, "Height", src_height );
-	BannerData.SetValue( BannerPath, "FullHash", GetHashForFile( BannerPath ) );
+	BannerData.SetValue( sBannerPath, "Path", CachePath );
+	BannerData.SetValue( sBannerPath, "Width", iSourceWidth );
+	BannerData.SetValue( sBannerPath, "Height", iSourceHeight );
+	BannerData.SetValue( sBannerPath, "FullHash", GetHashForFile( sBannerPath ) );
 	/* Remember this, so we can hint Sprite. */
-	BannerData.SetValue( BannerPath, "Rotated", WasRotatedBanner );
+	BannerData.SetValue( sBannerPath, "Rotated", WasRotatedBanner );
 	BannerData.WriteFile( BANNER_CACHE_INDEX );
 }
 

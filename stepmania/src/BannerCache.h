@@ -11,25 +11,26 @@ class LoadingWindow;
 
 class BannerCache
 {
-	IniFile BannerData;
-
-	static RString GetBannerCachePath( RString BannerPath );
-	void UnloadAllBanners();
-	void CacheBannerInternal( RString BannerPath );
-
 public:
 	BannerCache();
 	~BannerCache();
 	void ReadFromDisk();
 
-	RageTextureID LoadCachedBanner( RString BannerPath );
-	void CacheBanner( RString BannerPath );
-	void LoadBanner( RString BannerPath );
+	RageTextureID LoadCachedBanner( RString sBannerPath );
+	void CacheBanner( RString sBannerPath );
+	void LoadBanner( RString sBannerPath );
 
 	void Demand();
 	void Undemand();
 
 	void OutputStats() const;
+
+private:
+	static RString GetBannerCachePath( RString sBannerPath );
+	void UnloadAllBanners();
+	void CacheBannerInternal( RString sBannerPath );
+
+	IniFile BannerData;
 };
 
 extern BannerCache *BANNERCACHE; // global and accessable from anywhere in our program
