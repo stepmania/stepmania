@@ -124,18 +124,31 @@ fi
 SM_X_WITH_OPENGL
 
 have_libpng=yes
+SM_STATIC
 AC_CHECK_LIB(png, png_create_read_struct, [x=y], have_libpng=no, [-lz -lm]) # x=y to stop autoconf from messing with LIBS
 AC_CHECK_HEADER(png.h, , have_libpng=no)
+AC_ARG_WITH(static-png, AS_HELP_STRING([--with-static-png],[Statically link libpng]), with_static_png=$withval, with_static_png=no)
+if test "$with_static_png" = "yes"; then
+	LIB_PRE=$START_STATIC
+	LIB_POST=$END_STATIC
+fi
 if test "$have_libpng" = "no"; then
   echo
   echo "*** libpng is required to build StepMania; please make sure that"
   echo "*** it is installed to continue the build process."
   exit 1
 fi
-LIBS="$LIBS -lpng -lz -lm"
+LIBS="$LIBS $LIB_PRE -lpng -lz -lm $LIB_POST"
+LIB_PRE=
+LIB_POST=
 
 AC_ARG_WITH(jpeg, AS_HELP_STRING([--without-jpeg],[Disable JPEG support]), with_jpeg=$withval, with_jpeg=yes)
+AC_ARG_WITH(static-jpeg, AS_HELP_STRING([--with-static-jpeg],[Statically link libjpeg]), with_static_jpeg=$withval, with_static_jpeg=no)
 
+if test "$with_static_png" = "yes"; then
+	LIB_PRE=$START_STATIC
+	LIB_POST=$END_STATIC
+fi
 if test "$with_jpeg" = "yes"; then
 	have_libjpeg=yes
 	AC_CHECK_LIB(jpeg, jpeg_read_scanlines, [x=y], have_libjpeg=no) # x=y to stop autoconf from messing with LIBS
@@ -151,10 +164,12 @@ support, pass the "--without-jpeg" flag to configure.])
 	fi
 	have_libjpeg=
 
-	LIBS="$LIBS -ljpeg"
+	LIBS="$LIBS $LIB_PRE -ljpeg $LIB_POST"
 else
 	AC_DEFINE(NO_JPEG_SUPPORT, 1, [JPEG support not available])
 fi
+LIB_PRE=
+LIB_POST=
 
 AC_ARG_WITH(network, AS_HELP_STRING([--without-network],[Disable networking]), with_network=$withval, with_network=yes)
 if test "$with_network" = "no"; then

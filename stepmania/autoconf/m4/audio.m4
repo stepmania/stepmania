@@ -1,9 +1,16 @@
 AC_DEFUN([SM_AUDIO], [
 
+AC_REQUIRE([SM_STATIC])
 AC_ARG_WITH(vorbis, AS_HELP_STRING([--without-vorbis],[Disable Vorbis support]), with_vorbis=$withval, with_vorbis=yes)
 
 # This is used to force the integer decoder, on systems that prefer it.
 AC_ARG_WITH(integer-vorbis, AS_HELP_STRING([--with-integer-vorbis],[Integer vorbis decoding only]), with_int_vorbis=$withval, with_int_vorbis=no)
+AC_ARG_WITH(static-vorbis, AS_HELP_STRING([--with-static-vorbis],[Statically link vorbis libraries]), with_static_vorbis=$withval, with_static_vorbis=no)
+
+if test "$with_static_vorbis" = "yes"; then
+	LIB_PRE=$START_STATIC
+	LIB_POST=$END_STATIC
+fi
 
 have_vorbis=no
 if test "$with_vorbis" = "yes" -a "$with_int_vorbis" = "no"; then
@@ -12,7 +19,7 @@ if test "$with_vorbis" = "yes" -a "$with_int_vorbis" = "no"; then
 	AC_CHECK_LIB(vorbisfile, ov_open, have_libvorbisfile=yes, have_libvorbisfile=no, [-lvorbis -logg])
 	if test "$have_libvorbis" = "yes" -a "$have_libogg" = "yes" -a "$have_libvorbisfile" = "yes"; then
 		have_vorbis=yes
-		AUDIO_LIBS="$AUDIO_LIBS -lvorbisfile -lvorbis -logg"
+		AUDIO_LIBS="$AUDIO_LIBS $LIB_PRE -lvorbisfile -lvorbis -logg $LIB_POST"
 	else
 		echo Not all vorbis libraries found.
 	fi
@@ -24,7 +31,7 @@ if test "$with_vorbis" = "yes" -a "$have_vorbis" = "no"; then
 	AC_CHECK_LIB(ivorbisfile, ov_open, have_libivorbisfile=yes,  have_libivorbisfile=no)
 	if test "$have_libivorbisfile" = "yes"; then
 		have_vorbis=yes
-		AUDIO_LIBS="$AUDIO_LIBS -livorbisfile"
+		AUDIO_LIBS="$AUDIO_LIBS $LIB_PRE -livorbisfile $LIB_POST"
 		AC_DEFINE(INTEGER_VORBIS, 1, [Integer Vorbis decoding])
 	fi
 fi
@@ -40,6 +47,8 @@ the "--without-vorbis" flag to configure.])
 	AC_DEFINE(NO_VORBIS_SUPPORT, 1, [Vorbis support not available])
 fi
 
+LIB_PRE=
+LIB_POST=
 
 AM_CONDITIONAL(HAVE_VORBIS, test "$have_vorbis" = "yes" )
 
