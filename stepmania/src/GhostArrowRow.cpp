@@ -11,10 +11,6 @@
 #include "ActorUtil.h"
 
 
-GhostArrowRow::GhostArrowRow()
-{
-}
-
 void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset )
 {
 	m_pPlayerState = pPlayerState;

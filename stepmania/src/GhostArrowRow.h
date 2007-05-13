@@ -12,7 +12,6 @@ class PlayerState;
 class GhostArrowRow : public ActorFrame
 {
 public:
-	GhostArrowRow();
 	virtual ~GhostArrowRow();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
