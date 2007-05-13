@@ -679,9 +679,6 @@ void GameState::FinishStage()
 
 	m_iNumStagesOfThisSong = 0;
 
-	// necessary so that bGaveUp is reset
-	ResetStageStatistics();
-
 	if( HasEarnedExtraStage() )
 	{
 		LOG->Trace( "awarded extra stage" );
