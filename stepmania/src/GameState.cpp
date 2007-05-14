@@ -911,11 +911,8 @@ Stage GameState::GetCurrentStage() const
 
 int GameState::GetCourseSongIndex() const
 {
-	int iSongIndex = 0;
 	/* iSongsPlayed includes the current song, so it's 1-based; subtract one. */
-	FOREACH_EnabledPlayer( pn )
-		iSongIndex = max( iSongIndex, STATSMAN->m_CurStageStats.m_player[pn].m_iSongsPlayed-1 );
-	return iSongIndex;
+	return STATSMAN->m_CurStageStats.m_player[m_MasterPlayerNumber].m_iSongsPlayed-1;
 }
 
 /* Hack: when we're loading a new course song, we want to display the new song number, even
