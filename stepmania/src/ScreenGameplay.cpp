@@ -120,6 +120,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 {
 	m_pn = pn;
 	m_mp = mp;
+	m_bPlayerEnabled = IsEnabled();
 	m_bIsDummy = false;
 	m_pLifeMeter = NULL;
 	m_ptextCourseSongNumber = NULL;
@@ -256,7 +257,7 @@ GetNextEnabledPlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> 
 {
 	for( ; iter != v.end(); ++iter )
 	{
-		if( !iter->IsEnabled() )
+		if( !iter->m_bPlayerEnabled )
 			continue;
 		return iter;
 	}
@@ -270,7 +271,7 @@ GetNextEnabledPlayerInfoNotDummy( vector<PlayerInfo>::iterator iter, vector<Play
 	{
 		if( iter->m_bIsDummy )
 			continue;
-		if( !iter->IsEnabled() )
+		if( !iter->m_bPlayerEnabled )
 			continue;
 		return iter;
 	}
@@ -284,7 +285,7 @@ GetNextEnabledPlayerNumberInfo( vector<PlayerInfo>::iterator iter, vector<Player
 	{
 		if( iter->m_bIsDummy )
 			continue;
-		if( !iter->IsEnabled() )
+		if( !iter->m_bPlayerEnabled )
 			continue;
 		if( iter->m_mp != MultiPlayer_Invalid )
 			continue;

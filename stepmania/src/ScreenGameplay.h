@@ -71,6 +71,7 @@ public:
 	PlayerNumber		m_pn;
 	MultiPlayer		m_mp;
 	bool			m_bIsDummy;
+	bool			m_bPlayerEnabled; // IsEnabled cache for iterators
 	PlayerState		m_PlayerStateDummy;
 	PlayerStageStats	m_PlayerStageStatsDummy;
 	SoundEffectControl	m_SoundEffectControl;
