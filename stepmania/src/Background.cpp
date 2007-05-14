@@ -29,6 +29,8 @@ static ThemeMetric<float> RIGHT_EDGE				("Background","RightEdge");
 static ThemeMetric<float> BOTTOM_EDGE				("Background","BottomEdge");
 #define RECT_BACKGROUND RectF					(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 static ThemeMetric<float> CLAMP_OUTPUT_PERCENT			("Background","ClampOutputPercent");
+static ThemeMetric<bool> SHOW_DANCING_CHARACTERS		("Background","ShowDancingCharacters");
+
 
 static Preference<bool>	g_bShowDanger( "ShowDanger", true );
 static Preference<float> g_fBGBrightness( "BGBrightness", 0.7f );
@@ -205,7 +207,7 @@ void BackgroundImpl::Init()
 			bShowingBeginnerHelper = true;
 	}
 
-	if( bOneOrMoreChars && !bShowingBeginnerHelper )
+	if( bOneOrMoreChars && !bShowingBeginnerHelper && SHOW_DANCING_CHARACTERS )
 		m_pDancingCharacters = new DancingCharacters;
 
 	RageColor c = GetBrightnessColor(0);
