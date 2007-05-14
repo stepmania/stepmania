@@ -230,7 +230,7 @@ protected:
 
 	NoteData		m_CabinetLightsNoteData;
 
-	vector<PlayerInfo>	m_vPlayerInfo;	// filled by SGameplay derivatives in Init
+	vector<PlayerInfo>	m_vPlayerInfo;	// filled by SGameplay derivatives in FillPlayerInfo
 	virtual void FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut ) = 0;
 	virtual PlayerInfo &GetPlayerInfoForInput( const InputEventPlus& iep )  { return m_vPlayerInfo[iep.pn]; }
 
