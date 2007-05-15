@@ -132,12 +132,13 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 			
 		Message msg("SetSong");
 		msg.SetParam( "PlayerNumber", pn );
+		msg.SetParam( "Song", te->pSong );
+		msg.SetParam( "Steps", te->pSteps );
 		msg.SetParam( "Difficulty", dc );
 		msg.SetParam( "Meter", s );
 		msg.SetParam( "Number", iCourseEntryIndex+1 );
 		msg.SetParam( "Modifiers", te->Modifiers );
-		if( !te->bSecret )
-			msg.SetParam( "Song", te->pSong );
+		msg.SetParam( "Secret", te->bSecret );
 		pActor->HandleMessage( msg );
 	}
 }
