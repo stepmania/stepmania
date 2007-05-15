@@ -23,11 +23,11 @@ private:
 	Quad			m_rectUsersBG;
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 
-	vector<BitmapText>		m_textUsers;
-	int				m_iCurrentPlayer;
-	int				m_iActivePlayers;
+	vector<BitmapText>	m_textUsers;
+	int			m_iCurrentPlayer;
+	int			m_iActivePlayers;
 	
-	PlayerNumber	m_pActivePlayer;
+	PlayerNumber		m_pActivePlayer;
 
 	bool			m_bHasStats;
 
