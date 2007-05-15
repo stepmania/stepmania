@@ -27,6 +27,7 @@ static const char *MessageIDNames[] = {
 	"EditCourseDifficultyChanged",
 	"EditSourceStepsChanged",
 	"EditSourceStepsTypeChanged",
+	"PreferredStepsTypeChanged",
 	"PreferredDifficultyP1Changed",
 	"PreferredDifficultyP2Changed",
 	"PreferredCourseDifficultyP1Changed",

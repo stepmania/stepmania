@@ -108,6 +108,7 @@ GameState::GameState() :
 	m_PlayMode(			Message_PlayModeChanged ),
 	m_sPreferredSongGroup(		Message_PreferredSongGroupChanged ),
 	m_sPreferredCourseGroup(	Message_PreferredCourseGroupChanged ),
+	m_PreferredStepsType(		Message_PreferredStepsTypeChanged ),
 	m_PreferredDifficulty(		Message_PreferredDifficultyP1Changed ),
 	m_PreferredCourseDifficulty(	Message_PreferredCourseDifficultyP1Changed ),
 	m_SortOrder(			Message_SortOrderChanged ),
@@ -219,6 +220,7 @@ void GameState::ApplyCmdline()
 
 void GameState::ResetPlayer( PlayerNumber pn )
 {
+	m_PreferredStepsType.Set( StepsType_Invalid );
 	m_PreferredDifficulty[pn].Set( Difficulty_Invalid );
 	m_PreferredCourseDifficulty[pn].Set( Difficulty_Medium );
 	m_iPlayerStageTokens[pn] = 0;
@@ -726,7 +728,7 @@ void GameState::LoadCurrentSettingsFromProfile( PlayerNumber pn )
 		ApplyPreferredModifiers( pn, sModifiers );
 	}
 	// Only set the sort order if it wasn't already set by a GameCommand (or by an earlier profile)
-	if( m_PreferredSortOrder == SortOrder_Invalid && pProfile->m_SortOrder != SortOrder_Invalid )
+	if( m_PreferredSortOrder == SortOrder_Invalid  &&  pProfile->m_SortOrder != SortOrder_Invalid )
 		m_PreferredSortOrder = pProfile->m_SortOrder;
 	if( pProfile->m_LastDifficulty != Difficulty_Invalid )
 		m_PreferredDifficulty[pn].Set( pProfile->m_LastDifficulty );
@@ -1715,9 +1717,10 @@ bool GameState::DifficultiesLocked() const
 	return false;
 }
 
-bool GameState::ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc )
+bool GameState::ChangePreferredDifficultyAndStepsType( PlayerNumber pn, Difficulty dc, StepsType st )
 {
 	m_PreferredDifficulty[pn].Set( dc );
+	m_PreferredStepsType.Set( st );
 	if( DifficultiesLocked() )
 		FOREACH_PlayerNumber( p )
 			if( p != pn )
@@ -1768,10 +1771,10 @@ Difficulty GameState::GetClosestShownDifficulty( PlayerNumber pn ) const
 	return iClosest;
 }
 
-bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, CourseDifficulty cd )
+bool GameState::ChangePreferredCourseDifficultyAndStepsType( PlayerNumber pn, CourseDifficulty cd, StepsType st )
 {
 	m_PreferredCourseDifficulty[pn].Set( cd );
-
+	m_PreferredStepsType.Set( st );
 	if( PREFSMAN->m_bLockCourseDifficulties )
 		FOREACH_PlayerNumber( p )
 			if( p != pn )

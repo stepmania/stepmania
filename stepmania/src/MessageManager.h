@@ -24,6 +24,7 @@ enum MessageID
 	Message_EditCourseDifficultyChanged,
 	Message_EditSourceStepsChanged,
 	Message_EditSourceStepsTypeChanged,
+	Message_PreferredStepsTypeChanged,
 	Message_PreferredDifficultyP1Changed,
 	Message_PreferredDifficultyP2Changed,
 	Message_PreferredCourseDifficultyP1Changed,

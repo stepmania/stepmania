@@ -71,9 +71,9 @@ public:
 	PlayerNumber				m_MasterPlayerNumber;		// used in Styles where one player controls both sides
 	bool					m_bMultiplayer;
 	bool DifficultiesLocked() const;
-	bool ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc );
+	bool ChangePreferredDifficultyAndStepsType( PlayerNumber pn, Difficulty dc, StepsType st );
 	bool ChangePreferredDifficulty( PlayerNumber pn, int dir );
-	bool ChangePreferredCourseDifficulty( PlayerNumber pn, CourseDifficulty cd );
+	bool ChangePreferredCourseDifficultyAndStepsType( PlayerNumber pn, CourseDifficulty cd, StepsType st );
 	bool ChangePreferredCourseDifficulty( PlayerNumber pn, int dir );
 	bool IsCourseDifficultyShown( CourseDifficulty cd );
 	Difficulty GetClosestShownDifficulty( PlayerNumber pn ) const;
@@ -115,6 +115,7 @@ public:
 	BroadcastOnChange<RString>	m_sPreferredSongGroup;		// GROUP_ALL denotes no preferred group
 	BroadcastOnChange<RString>	m_sPreferredCourseGroup;	// GROUP_ALL denotes no preferred group
 	bool				m_bChangedFailTypeOnScreenSongOptions;	// true if FailType was changed in the song options screen
+	BroadcastOnChange<StepsType>				m_PreferredStepsType;
 	BroadcastOnChange1D<Difficulty,NUM_PLAYERS>		m_PreferredDifficulty;
 	BroadcastOnChange1D<CourseDifficulty,NUM_PLAYERS>	m_PreferredCourseDifficulty;// used in nonstop
 	BroadcastOnChange<SortOrder>	m_SortOrder;			// set by MusicWheel
