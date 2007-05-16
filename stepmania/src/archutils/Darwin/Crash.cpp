@@ -1,6 +1,7 @@
 #include "global.h"
 #include "Crash.h"
 #include "ProductInfo.h"
+#include "arch/ArchHooks/ArchHooks.h"
 #include <Carbon/Carbon.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -17,16 +18,6 @@ RString CrashHandler::GetLogsDirectory()
 		return "/tmp";
 	}
 	return RString( dir ) + "/Logs/" PRODUCT_ID;
-}
-
-// More or less copied from ArchHooks_darwin::GoToURL(), hmm.
-static void OpenURL( const RString sURL )
-{
-	CFURLRef url = CFURLCreateWithBytes( kCFAllocatorDefault, (const UInt8*)sURL.data(),
-					     sURL.length(), kCFStringEncodingUTF8, NULL );
-	
-	LSOpenCFURLRef( url, NULL );
-	CFRelease( url );
 }
 
 // XXX Can we use LocalizedString here instead?
@@ -58,11 +49,11 @@ void CrashHandler::InformUserOfCrash( const RString& sPath )
 	switch( response )
 	{
 	case kCFUserNotificationDefaultResponse:
-		OpenURL( REPORT_BUG_URL );
+		HOOKS->GoToURL( REPORT_BUG_URL );
 		// Fall through.
 	case kCFUserNotificationOtherResponse:
 		// Open the file with the default application (probably TextEdit).
-		OpenURL( "file://" + sPath );
+		HOOKS->GoToURL( "file://" + sPath );
 		break;
 	}
 	CFRelease( sBody );
