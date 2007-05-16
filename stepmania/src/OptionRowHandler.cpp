@@ -607,6 +607,7 @@ class OptionRowHandlerListCharacters: public OptionRowHandlerList
 		m_Def.m_bOneChoiceForAllPlayers = false;
 		m_Def.m_bAllowThemeItems = false;
 		m_Def.m_sName = "Characters";
+		m_Def.m_iDefault = 0;
 		m_Default.m_pCharacter = CHARMAN->GetDefaultCharacter();
 
 		{
