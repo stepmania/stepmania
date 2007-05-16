@@ -37,7 +37,6 @@ static bool DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 	return true;
 }
 
-#if defined(CRASH_HANDLER)
 static bool DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
 	/* Don't dump a debug file if the user just hit ^C. */
@@ -47,17 +46,22 @@ static bool DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *u
 	CrashHandler::CrashSignalHandler( signal, si, uc );
 	return true; // Unreached
 }
-#endif
+
+static bool DoEmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *us )
+{
+	if( IsFatalSignal(signal) )
+		_exit( 1 ); // We ran the crash handler already
+	return false;
+}
 
 void ArchHooks_darwin::Init()
 {
 	/* First, handle non-fatal termination signals. */
 	SignalHandler::OnClose( DoCleanShutdown );
-	
-#if defined(CRASH_HANDLER)
 	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
+	CrashHandler::InitializeCrashHandler();
 	SignalHandler::OnClose( DoCrashSignalHandler );
-#endif
+	SignalHandler::OnClose( DoEmergencyShutdown );
 
 	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
 	CFStringRef key = CFSTR( "ApplicationBundlePath" );
