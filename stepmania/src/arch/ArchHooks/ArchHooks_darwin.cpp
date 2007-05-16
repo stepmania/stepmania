@@ -42,7 +42,7 @@ static bool DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *u
 {
 	/* Don't dump a debug file if the user just hit ^C. */
 	if( !IsFatalSignal(signal) )
-		return false;
+		return true;
 
 	CrashHandler::CrashSignalHandler( signal, si, uc );
 	return true; // Unreached
