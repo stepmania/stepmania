@@ -587,6 +587,24 @@ namespace Guitar
 		channel_aftertouch = 0xD,
 		pitch_bend = 0xE,
 	};
+	enum MetaEventType 
+	{
+		sequence_number = 0x00,
+		text_event = 0x01,
+		copyright_notice = 0x02,
+		track_name = 0x03,
+		instrument_name = 0x04,
+		lyrics = 0x05,
+		marker = 0x06,
+		cue_point = 0x07,
+		midi_channel_prefix = 0x20,
+		end_of_track = 0x2F,
+		set_tempo = 0x51,
+		smpte_offset = 0x54,
+		time_signature = 0x58,
+		key_signature = 0x59,
+		sequencer_specific = 0x7F,
+	};
 	struct MidiEvent
 	{
 		long count;
@@ -681,48 +699,74 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 	 * step is helpful. */
 	vector<MidiEvent> vMidiEvent[NUM_GuitarDifficulty][NUM_NoteNumberType];
 
+	/* Iterate through each track looking for the track that contains notes by checking the track name.
+	 * This is usually track 1, but sometimes is track 2. */
+	for( int iTrack = 1; iTrack<(int)midi.getNumberOfTracks(); iTrack++ )
 	{
 		std::vector<unsigned char> event;
-		int iTrack = 1;	// this track should be named "T1 GEMS" or "PART GUITAR"
 		unsigned long count = midi.getNextEvent( &event, iTrack );
 		double fSeconds = midi.getTickSeconds( iTrack );
 		while( event.size() ) 
 		{
-			MidiEventType midiEventType = (MidiEventType)(event[0] >> 4);
-			//uint8_t uMidiChannel = event[0] & 0xF;	// currently unused
-			uint8_t uParam1 = event[1];	// meaning is MidiEventType-specific
-			uint8_t uParam2 = event[2];	// currently unused, meaning is MidiEventType-specific
-			
-			switch( midiEventType )
+			if( event[0] == 0xFF )	// meta event
 			{
-			case note_off:
-			case note_on:
+				uint8_t uMetaEventType = event[1];
+				switch( uMetaEventType )
 				{
-					const uint8_t &uNoteNumber = uParam1;
-					const uint8_t &uVelocity = uParam2;
-
-					// velocity == 0, by convention, means note-off
-					if( uVelocity == 0 )
-						midiEventType = note_off;
-
-					GuitarDifficulty gd;
-					NoteNumberType nnt;
-					if( NoteNumberToDifficultyAndNoteNumberType( uNoteNumber, gd, nnt ) )
+				case track_name:
 					{
-						MidiEvent event = { count, midiEventType };
-						//float fBeat = NoteRowToBeat( MidiCountToNoteRow(count) );
-						vMidiEvent[gd][nnt].push_back( event );
+						uint8_t uStringLength = event[2];
+						RString s;
+						for( int i=3; i<3 + uStringLength; i++ )
+							s += event[i];
+						if( s != "T1 GEMS"  &&  s != "PART GUITAR" )
+							goto skip_track;
 					}
+					break;
+				default:
+					LOG->Trace( "Unhandled MIDI meta event type %X", uMetaEventType );
 				}
-				break;
-			default:
-				LOG->Trace( "Unhandled MIDI event type %X", midiEventType );
-				break;
+			}
+			else
+			{
+				MidiEventType midiEventType = (MidiEventType)(event[0] >> 4);
+				//uint8_t uMidiChannel = event[0] & 0xF;	// currently unused
+				uint8_t uParam1 = event[1];	// meaning is MidiEventType-specific
+				uint8_t uParam2 = event[2];	// currently unused, meaning is MidiEventType-specific
+				
+				switch( midiEventType )
+				{
+				case note_off:
+				case note_on:
+					{
+						const uint8_t &uNoteNumber = uParam1;
+						const uint8_t &uVelocity = uParam2;
+
+						// velocity == 0, by convention, means note-off
+						if( uVelocity == 0 )
+							midiEventType = note_off;
+
+						GuitarDifficulty gd;
+						NoteNumberType nnt;
+						if( NoteNumberToDifficultyAndNoteNumberType( uNoteNumber, gd, nnt ) )
+						{
+							MidiEvent event = { count, midiEventType };
+							//float fBeat = NoteRowToBeat( MidiCountToNoteRow(count) );
+							vMidiEvent[gd][nnt].push_back( event );
+						}
+					}
+					break;
+				default:
+					LOG->Trace( "Unhandled MIDI event type %X", midiEventType );
+					break;
+				}
 			}
 
 			count += midi.getNextEvent( &event, iTrack );
 			fSeconds = midi.getTickSeconds( iTrack );
 		}
+skip_track:
+		;
 	}
 
 		
