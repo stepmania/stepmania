@@ -58,6 +58,7 @@ public:
 	virtual RString GetDisplayTitle() = 0;
 	virtual RString GetDisplayValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual RString GetPageName() const { return "Main"; }
+	virtual bool ForceOffAfterUse() const { return false; }
 	virtual bool IsEnabled() = 0;
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
@@ -205,7 +206,7 @@ void ScreenDebugOverlay::Init()
 	}
 
 	m_iCurrentPage = 0;
-
+	m_bForcedHidden = false;
 
 	m_Quad.StretchTo( RectF( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
 	m_Quad.SetDiffuse( RageColor(0, 0, 0, 0.5f) );
@@ -281,7 +282,7 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 
 	Screen::Update(fDeltaTime);
 
-	this->SetVisible( g_bIsDisplayed );
+	this->SetVisible( g_bIsDisplayed && !m_bForcedHidden );
 	if( !g_bIsDisplayed )
 		return;
 
@@ -369,9 +370,14 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 	if( input.DeviceI == g_Mappings.holdForDebug1 || 
 		input.DeviceI == g_Mappings.holdForDebug2 )
 	{
+		bool bHoldingNeither =
+			(!g_Mappings.holdForDebug1.IsValid() || !INPUTFILTER->IsBeingPressed(g_Mappings.holdForDebug1)) &&
+			(!g_Mappings.holdForDebug2.IsValid() || !INPUTFILTER->IsBeingPressed(g_Mappings.holdForDebug2));
 		bool bHoldingBoth =
 			(!g_Mappings.holdForDebug1.IsValid() || INPUTFILTER->IsBeingPressed(g_Mappings.holdForDebug1)) &&
 			(!g_Mappings.holdForDebug2.IsValid() || INPUTFILTER->IsBeingPressed(g_Mappings.holdForDebug2));
+		if( bHoldingNeither )
+			m_bForcedHidden = false;
 			
 		if( bHoldingBoth )
 			g_bIsDisplayed = true;
@@ -429,6 +435,8 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			(*p)->DoAndMakeSystemMessage( sMessage );
 			if( !sMessage.empty() )
 				SCREENMAN->SystemMessage( sMessage );
+			if( (*p)->ForceOffAfterUse() )
+				m_bForcedHidden = true;
 
 			UpdateText();
 			return true;
@@ -879,6 +887,7 @@ class DebugLineRestartCurrentScreen : public IDebugLine
 	virtual RString GetDisplayTitle() { return RESTART.GetValue(); }
 	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
 	virtual bool IsEnabled() { return true; }
+	virtual bool ForceOffAfterUse() const { return true; }
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
@@ -893,6 +902,7 @@ class DebugLineCurrentScreenOn : public IDebugLine
 	virtual RString GetDisplayTitle() { return SCREEN_ON.GetValue(); }
 	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
 	virtual bool IsEnabled() { return true; }
+	virtual bool ForceOffAfterUse() const { return true; }
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
@@ -907,6 +917,7 @@ class DebugLineCurrentScreenOff : public IDebugLine
 	virtual RString GetDisplayTitle() { return SCREEN_OFF.GetValue(); }
 	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
 	virtual bool IsEnabled() { return true; }
+	virtual bool ForceOffAfterUse() const { return true; }
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{

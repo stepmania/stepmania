@@ -23,6 +23,7 @@ private:
 	RString GetCurrentPageName() const { return m_asPages[m_iCurrentPage]; }
 	vector<RString> m_asPages;
 	int m_iCurrentPage;
+	bool m_bForcedHidden;
 
 	Quad m_Quad;
 	BitmapText m_textHeader;
