@@ -1,7 +1,7 @@
-/* ThemeManager - Managed non-persisted statistics. */
+/* CharacterManager - Manage characters... */
 
-#ifndef CharacterManager_H
-#define CharacterManager_H
+#ifndef CHARACTER_MANAGER_H
+#define CHARACTER_MANAGER_H
 
 class Character;
 struct lua_State;
