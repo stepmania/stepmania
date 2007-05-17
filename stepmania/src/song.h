@@ -29,6 +29,17 @@ enum BackgroundLayer
 };
 #define FOREACH_BackgroundLayer( bl ) FOREACH_ENUM( BackgroundLayer, bl )
 
+enum InstrumentTrack
+{
+	InstrumentTrack_Guitar,
+	InstrumentTrack_Rhythm,
+	InstrumentTrack_Bass,
+	NUM_InstrumentTrack,
+	InstrumentTrack_Invalid
+};
+const RString& InstrumentTrackToString( InstrumentTrack it );
+InstrumentTrack StringToInstrumentTrack( const RString& s );
+
 struct LyricSegment
 {
 	float	m_fStartTime;
@@ -113,7 +124,8 @@ public:
 	RString	m_sCredit;
 
 	RString	m_sMusicFile;
-	RString	m_sLeadTrackFile;
+	RString	m_sInstrumentTrackFile[NUM_InstrumentTrack];
+
 	float	m_fMusicLengthSeconds;
 	float	m_fFirstBeat;	// beat of first note
 	float	m_fLastBeat;	// beat of last note
@@ -130,7 +142,7 @@ public:
 	RString	m_sCDTitleFile;
 
 	RString GetMusicPath() const;
-	RString GetLeadTrackPath() const;
+	RString GetInstrumentTrackPath( InstrumentTrack it ) const;
 	RString GetBannerPath() const;
 	RString	GetLyricsPath() const;
 	RString GetBackgroundPath() const;
@@ -140,7 +152,7 @@ public:
 	bool m_bHasMusic, m_bHasBanner;
 
 	bool HasMusic() const;
-	bool HasLeadTrack() const;
+	bool HasInstrumentTrack( InstrumentTrack it ) const;
 	bool HasBanner() const;
 	bool HasBackground() const;
 	bool HasCDTitle() const;

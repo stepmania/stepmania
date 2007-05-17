@@ -121,32 +121,72 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	pPlayer2 = NULL;
 	pShared = NULL;
 
-	RString sError;
-	RageSoundReader *pSongReader = RageSoundReader_FileReader::OpenFile( pSong->GetMusicPath(), sError );
+	vector<RString> vsMusicFile;
 
-	/* Load the buffering filter before the effects filters, so effects aren't delayed. */
-	pSongReader = new RageSoundReader_Extend( pSongReader );
-	pSongReader = new RageSoundReader_ThreadedBuffer( pSongReader );
-	pShared = pSongReader;
-
-
-	if( pSong->HasLeadTrack() )
+	vsMusicFile.push_back( pSong->GetMusicPath() );
+	FOREACH_ENUM( InstrumentTrack, it )
 	{
-		RageSoundReader *pLeadTrackReader = RageSoundReader_FileReader::OpenFile( pSong->GetLeadTrackPath(), sError );
+		if( it == InstrumentTrack_Guitar )
+			continue;
+		if( pSong->HasInstrumentTrack(it) )
+			vsMusicFile.push_back( pSong->GetInstrumentTrackPath(it) );
+	}
+
+
+	vector<RageSoundReader *> vpSounds;
+	FOREACH( RString, vsMusicFile, s )
+	{
+		RString sError;
+		RageSoundReader *pSongReader = RageSoundReader_FileReader::OpenFile( *s, sError );
+		vpSounds.push_back( pSongReader );
+	}
+
+	if( vpSounds.size() == 1 )
+	{
+		RageSoundReader *pSongReader = vpSounds[0];
+
 		/* Load the buffering filter before the effects filters, so effects aren't delayed. */
-		pLeadTrackReader = new RageSoundReader_Extend( pLeadTrackReader );
-		pLeadTrackReader = new RageSoundReader_ThreadedBuffer( pLeadTrackReader );
-		pPlayer1 = pLeadTrackReader;	
+		pSongReader = new RageSoundReader_Extend( pSongReader );
+		pSongReader = new RageSoundReader_ThreadedBuffer( pSongReader );
+		pShared = pSongReader;
+	}
+	else
+	{
+		RageSoundReader_Merge *pMerge = new RageSoundReader_Merge;
+
+		FOREACH( RageSoundReader *, vpSounds, so )
+			pMerge->AddSound( *so );
+		pMerge->Finish( SOUNDMAN->GetDriverSampleRate() );
+
+		RageSoundReader *pSongReader = pMerge;
+
+		/* Load the buffering filter before the effects filters, so effects aren't delayed. */
+		pSongReader = new RageSoundReader_Extend( pSongReader );
+		pSongReader = new RageSoundReader_ThreadedBuffer( pSongReader );
+		pShared = pSongReader;
+	}
+
+
+
+
+	if( pSong->HasInstrumentTrack(InstrumentTrack_Guitar) )
+	{
+		RString sError;
+		RageSoundReader *pGuitarTrackReader = RageSoundReader_FileReader::OpenFile( pSong->GetInstrumentTrackPath(InstrumentTrack_Guitar), sError );
+		/* Load the buffering filter before the effects filters, so effects aren't delayed. */
+		pGuitarTrackReader = new RageSoundReader_Extend( pGuitarTrackReader );
+		pGuitarTrackReader = new RageSoundReader_ThreadedBuffer( pGuitarTrackReader );
+		pPlayer1 = pGuitarTrackReader;	
 	}
 
 	return;
 
-	if( pSongReader->GetNumChannels() <= 2 )
-	{
-		/* If we only have one track, return it as the shared track. */
-		pShared = pSongReader;
-		return;
-	}
+	//if( pSongReader->GetNumChannels() <= 2 )
+	//{
+	//	/* If we only have one track, return it as the shared track. */
+	//	pShared = pSongReader;
+	//	return;
+	//}
 
 	// TODO: Make this work for player 2, and for 2 players
 

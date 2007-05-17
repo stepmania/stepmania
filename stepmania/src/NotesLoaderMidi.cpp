@@ -920,7 +920,25 @@ bool MidiLoader::LoadFromDir( const RString &sDir, Song &out )
 		GetDirListing( sDir + RString("*guitar.mp3"), vsFiles );
 		GetDirListing( sDir + RString("*guitar.wav"), vsFiles );
 		if( vsFiles.size() > 0 )
-			out.m_sLeadTrackFile = vsFiles[0];
+			out.m_sInstrumentTrackFile[InstrumentTrack_Guitar] = vsFiles[0];
+	}
+
+	{
+		vector<RString> vsFiles;
+		GetDirListing( sDir + RString("*rhythm.ogg"), vsFiles );
+		GetDirListing( sDir + RString("*rhythm.mp3"), vsFiles );
+		GetDirListing( sDir + RString("*rhythm.wav"), vsFiles );
+		if( vsFiles.size() > 0 )
+			out.m_sInstrumentTrackFile[InstrumentTrack_Rhythm] = vsFiles[0];
+	}
+
+	{
+		vector<RString> vsFiles;
+		GetDirListing( sDir + RString("*bass.ogg"), vsFiles );
+		GetDirListing( sDir + RString("*bass.mp3"), vsFiles );
+		GetDirListing( sDir + RString("*bass.wav"), vsFiles );
+		if( vsFiles.size() > 0 )
+			out.m_sInstrumentTrackFile[InstrumentTrack_Bass] = vsFiles[0];
 	}
 
 	vector<RString> vsFiles;
