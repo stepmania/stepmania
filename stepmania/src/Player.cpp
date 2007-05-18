@@ -649,7 +649,8 @@ void Player::Update( float fDeltaTime )
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 			{
 				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
-				m_pPlayerStageStats->m_bDisqualified = true;
+				if( m_pPlayerStageStats )
+					m_pPlayerStageStats->m_bDisqualified = true;
 			}
 		}
 	}
