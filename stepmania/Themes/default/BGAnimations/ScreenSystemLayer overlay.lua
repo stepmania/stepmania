@@ -26,34 +26,31 @@ local function CreditsText( pn )
 end
 
 local t = Def.ActorFrame {
-	children = {
-		LoadFont(Var "LoadingScreen","message") .. {
-			InitCommand=cmd(maxwidth,750;
-			horizalign,left;vertalign,top;
-			zoom,0.8;shadowlength,2;
-			y,SCREEN_TOP+20;
-			diffusealpha,0
-			);
+	LoadFont(Var "LoadingScreen","message") .. {
+		InitCommand=cmd(maxwidth,750;
+		horizalign,left;vertalign,top;
+		zoom,0.8;shadowlength,2;
+		y,SCREEN_TOP+20;
+		diffusealpha,0
+		);
 
-			SystemMessageMessageCommand = function(self, params)
-				self:settext( params.Message );
-				local f = cmd(finishtweening;x,SCREEN_LEFT+20;diffusealpha,1;addx,-SCREEN_WIDTH;linear,0.5;addx,SCREEN_WIDTH); f(self);
-				self:playcommand( "On" );
-				if params.NoAnimate then
-					self:finishtweening();
-				end
-				f = cmd(sleep,5;linear,0.5;diffusealpha,0); f(self);
-				self:playcommand( "Off" );
-			end;
-			HideSystemMessageMessageCommand = cmd(finishtweening);
-		};
-		CreditsText( PLAYER_1 ) .. {
-			InitCommand=cmd(x,THEME:GetMetric(Var "LoadingScreen","CreditsP1X");y,THEME:GetMetric(Var "LoadingScreen","CreditsP1Y"););
-		};
-		CreditsText( PLAYER_2 ) .. {
-			InitCommand=cmd(x,THEME:GetMetric(Var "LoadingScreen","CreditsP2X");y,THEME:GetMetric(Var "LoadingScreen","CreditsP2Y"););
-		};
-
+		SystemMessageMessageCommand = function(self, params)
+			self:settext( params.Message );
+			local f = cmd(finishtweening;x,SCREEN_LEFT+20;diffusealpha,1;addx,-SCREEN_WIDTH;linear,0.5;addx,SCREEN_WIDTH); f(self);
+			self:playcommand( "On" );
+			if params.NoAnimate then
+				self:finishtweening();
+			end
+			f = cmd(sleep,5;linear,0.5;diffusealpha,0); f(self);
+			self:playcommand( "Off" );
+		end;
+		HideSystemMessageMessageCommand = cmd(finishtweening);
+	};
+	CreditsText( PLAYER_1 ) .. {
+		InitCommand=cmd(x,THEME:GetMetric(Var "LoadingScreen","CreditsP1X");y,THEME:GetMetric(Var "LoadingScreen","CreditsP1Y"););
+	};
+	CreditsText( PLAYER_2 ) .. {
+		InitCommand=cmd(x,THEME:GetMetric(Var "LoadingScreen","CreditsP2X");y,THEME:GetMetric(Var "LoadingScreen","CreditsP2Y"););
 	};
 };
 return t;
