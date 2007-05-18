@@ -1,4 +1,4 @@
-local Def.ActorFrame {
+local t = Def.ActorFrame {
 };
 for idx, diff in pairs(Difficulty) do -- 0, Difficulty_Beginner
 	t[#t+1] = LoadActor( "_DifficultyDisplay 6x1" ) .. {
