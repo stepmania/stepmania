@@ -2,7 +2,6 @@ local Player = ...
 assert( Player );
 
 local t = Def.ActorFrame {
-children = {
 	Def.GraphDisplay {
 		OnCommand=function(self)
 			local Stats = STATSMAN:GetCurStageStats();
@@ -18,6 +17,5 @@ children = {
 		SongBoundary = Def.Actor { InitCommand=cmd(hidden,1) },
 		Barely = Def.Actor { InitCommand=cmd(hidden,1) },
 	}
-}
 }
 return t

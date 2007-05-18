@@ -1,4 +1,4 @@
-local children = {
+local t = Def.ActorFrame {
 	LoadSongBackground() .. {
 		Condition=not GAMESTATE:IsCourseMode();
 		OnCommand=cmd(zoom,0;rotationz,0;linear,.5;diffusealpha,1;zoom,1;rotationz,1080);
@@ -6,7 +6,7 @@ local children = {
 };
 local OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+180;diffusealpha,0;linear,0.3;diffusealpha,0.75);
 local function AddChild( name )
-	children[#children+1] = LoadActor( name .. ".png" ) .. {
+	t[#t+1] = LoadActor( name .. ".png" ) .. {
 		OnCommand=OnCommand;
 		Condition=GAMESTATE:GetCurrentStage() == "Stage_" .. name;
 	};
@@ -21,4 +21,4 @@ AddChild( "Event" );
 AddChild( "Nonstop" );
 AddChild( "Oni" );
 AddChild( "Endless" );
-return Def.ActorFrame { children=children };
+return t;
