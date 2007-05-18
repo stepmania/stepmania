@@ -118,7 +118,14 @@ local fontPath = THEME:GetPathF( "ScreenCredits", "titles" )
 local lineOn = cmd(zoom,0.5)
 local sectionOn = cmd(zoom,0.5;diffuse,1,.5,.5,1)
 local otherOn = cmd(zoom,0.5;diffuse,.5,.5,1,1)
-local children = {}
+local t = Def.ActorScroller {
+	SecondsPerItem = 0.40;
+	NumItemsToDraw = 40;
+	TransformFunction = function( self, offset, itemIndex, numItems)
+		self:y(30*offset)
+	end;
+	OnCommand = cmd(zoom,0.64;scrollwithpadding,12,0);
+}
 
 local function AddLine( text, command )
 	local t = Def.BitmapText {
@@ -128,7 +135,7 @@ local function AddLine( text, command )
 		OnCommand = command or lineOn;
 	}
 	-- XXX: Hack. Wrap in an ActorFrame so OnCommand works
-	table.insert( children, WrapInActorFrame({t}) )
+	table.insert( t, WrapInActorFrame({t}) )
 end
 
 -- Add header and padding
@@ -155,13 +162,4 @@ for i=1,13 do AddLine() end
 AddLine( "Join the StepMania team", otherOn )
 AddLine( "and help us out!" )
 
--- Wrap everything up in an ActorScroller
-return Def.ActorScroller {
-	SecondsPerItem = 0.40;
-	NumItemsToDraw = 40;
-	TransformFunction = function( self, offset, itemIndex, numItems)
-		self:y(30*offset)
-	end;
-	OnCommand = cmd(zoom,0.64;scrollwithpadding,12,0);
-	children = children;
-}
+return t;

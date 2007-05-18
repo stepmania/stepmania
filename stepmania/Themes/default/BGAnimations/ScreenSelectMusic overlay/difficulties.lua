@@ -1,6 +1,7 @@
-local children = {};
+local Def.ActorFrame {
+};
 for idx, diff in pairs(Difficulty) do -- 0, Difficulty_Beginner
-	children[#children+1] = LoadActor( "_DifficultyDisplay 6x1" ) .. {
+	t[#t+1] = LoadActor( "_DifficultyDisplay 6x1" ) .. {
 		InitCommand=cmd(pause;setstate,Difficulty:Reverse()[diff]);
 		ShowCommand=cmd(stoptweening;linear,0.1;diffusealpha,1);
 		HideCommand=cmd(stoptweening;linear,0.1;diffusealpha,0);
@@ -18,6 +19,4 @@ for idx, diff in pairs(Difficulty) do -- 0, Difficulty_Beginner
 	};
 end
 
-return Def.ActorFrame {
-	children = children
-};
+return t;

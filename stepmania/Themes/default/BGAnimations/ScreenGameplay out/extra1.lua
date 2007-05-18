@@ -1,4 +1,4 @@
-local children = {
+local t = Def.ActorFrame {
 	LoadActor(THEME:GetPathS("", "_extra1")) .. {
 		StartTransitioningCommand=function(self)
 			if GAMESTATE:HasEarnedExtraStage() then self:play() end
@@ -23,4 +23,4 @@ local children = {
 	};
 };
 
-return Def.ActorFrame { children = children };
+return t;

@@ -1,4 +1,4 @@
-local children = {
+local t = Def.ActorFrame {
 	Def.Quad {
 		InitCommand=cmd(diffuse,color("#000000");stretchto,SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM);
 		StartCommand=cmd(diffusealpha,0;sleep,1;linear,0.5;diffusealpha,1);
@@ -11,4 +11,4 @@ local children = {
 		FinishCommand=cmd(sleep,1;linear,0.5;diffusealpha,0);
 	};
 };
-return Def.ActorFrame { children = children };
+return t;

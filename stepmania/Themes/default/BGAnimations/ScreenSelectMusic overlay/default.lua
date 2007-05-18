@@ -88,8 +88,7 @@ local function Radar()
 	return t;
 end
 
-local children = 
-{
+local t = Def.ActorFrame {
 	LoadActor( "_banner mask" ) .. {
 		InitCommand=cmd(y,SCREEN_CENTER_Y-84;blend,"BlendMode_NoEffect";zwrite,1);
 		OnCommand=cmd(x,SCREEN_CENTER_X-180-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
@@ -391,4 +390,4 @@ local children =
 		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 	};
 };
-return Def.ActorFrame { children=children };
+return t;

@@ -1,5 +1,4 @@
-local children =
-{
+local t = Def.ActorFrame {
 	LoadActor("../_black.png") .. {
 		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomtowidth,SCREEN_WIDTH;zoomtoheight,120;diffusealpha,0.7);
 	};
@@ -8,4 +7,4 @@ local children =
 	};
 };
 
-return Def.ActorFrame{ children=children };
+return t;

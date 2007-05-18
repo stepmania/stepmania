@@ -1,4 +1,4 @@
-local children = {
+local t = Def.ActorFrame {
 	LoadActor("_warning") .. {
 		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;
 			vertalign,top;
@@ -10,4 +10,4 @@ local children = {
 	};
 };
 
-return Def.ActorFrame { children = children };
+return t;
