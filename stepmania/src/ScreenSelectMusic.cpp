@@ -145,7 +145,7 @@ void ScreenSelectMusic::Init()
 	COMMAND( m_sprCDTitleBack, "Back" );
 	this->AddChild( &m_sprCDTitleBack );
 
-	FOREACH_ENUM( PlayerNumber, p )
+	FOREACH_EnabledPlayer( p )
 	{
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
 		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("score frame p%d",p+1)) );
