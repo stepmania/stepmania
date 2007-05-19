@@ -190,6 +190,14 @@ void ScreenSelectMusic::BeginScreen()
 	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
 		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before loading ScreenSelectMusic." );
 
+	FOREACH_ENUM( PlayerNumber, pn )
+	{
+		if( GAMESTATE->IsHumanPlayer(pn) )
+			continue;
+		m_sprHighScoreFrame[pn].SetVisible( false );
+		m_textHighScore[pn].SetVisible( false );
+	}
+	
 	OPTIONS_MENU_AVAILABLE.Load( m_sName, "OptionsMenuAvailable" );
 	PlayCommand( "Mods" );
 	m_MusicWheel.BeginScreen();
