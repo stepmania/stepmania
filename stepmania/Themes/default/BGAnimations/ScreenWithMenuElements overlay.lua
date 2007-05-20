@@ -1,5 +1,3 @@
-local children = { };
-
 local function MakeHelpDisplay()
 	local X = ScreenMetric("HelpX");
 	local Y = ScreenMetric("HelpY");
@@ -27,8 +25,7 @@ local function MakeHelpDisplay()
 	return t;
 end
 
-children[#children+1] = MakeHelpDisplay();
-return Def.ActorFrame {
-	children = children;
-};
+local t = Def.ActorFrame { };
+t[#t+1] = MakeHelpDisplay();
+return t;
 

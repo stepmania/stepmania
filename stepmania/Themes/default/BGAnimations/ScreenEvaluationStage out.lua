@@ -1,4 +1,4 @@
-local children = {
+local t = Def.ActorFrame {
 	LoadActor( THEME:GetPathS("", "_swoosh") ) .. { StartTransitioningCommand=cmd(play); };
 	LoadActor("_moveon") .. {
 		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
@@ -6,5 +6,5 @@ local children = {
 	};
 };
 
-return Def.ActorFrame { children=children };
+return t;
 

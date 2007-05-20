@@ -1,4 +1,4 @@
-local children = {
+local t = Def.ActorFrame {
 	LoadFont("Common", "normal") .. {
 		Text=ProductVersion();
 		OnCommand=cmd(x,SCREEN_RIGHT-20;y,SCREEN_TOP+20;horizalign,right;diffuse,0.6,0.6,0.6,1;zoom,0.5;shadowlength,2);
@@ -21,4 +21,4 @@ local children = {
 	};
 }
 
-return Def.ActorFrame { children = children };
+return t;
