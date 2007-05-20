@@ -1,14 +1,6 @@
 local c;
 local player = Var "Player";
 
-local t = {
-	LoadActor("_judgments") .. {
-		Name="Judgment";
-		InitCommand=cmd(pause;visible,false);
-		ResetCommand=cmd(finishtweening;x,0;y,0;stopeffect;visible,false);
-	};
-};
-
 local JudgeCmds = {
 	TapNoteScore_W1 = THEME:GetMetric( "Judgment", "JudgmentW1Command" );
 	TapNoteScore_W2 = THEME:GetMetric( "Judgment", "JudgmentW2Command" );
@@ -28,6 +20,11 @@ local TNSFrames = {
 };
 
 local t = Def.ActorFrame {
+	LoadActor("_judgments") .. {
+		Name="Judgment";
+		InitCommand=cmd(pause;visible,false);
+		ResetCommand=cmd(finishtweening;x,0;y,0;stopeffect;visible,false);
+	};
 	InitCommand = function(self)
 		c = self:GetChildren();
 	end;
