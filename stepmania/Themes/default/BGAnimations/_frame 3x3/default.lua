@@ -5,7 +5,7 @@ assert( Height );
 
 local FullFile = THEME:GetPathB('','_frame files 3x3/'..File )
 local Frame = LoadActor( FullFile )
-return WrapInActorFrame {
+return Def.ActorFrame {
 	Frame .. { InitCommand=cmd(setstate,0;pause;horizalign,right;vertalign,bottom;x,-Width/2;y,-Height/2) };
 	Frame .. { InitCommand=cmd(setstate,1;pause;zoomtowidth,Width;vertalign,bottom;zoomtowidth,Width;y,-Height/2) };
 	Frame .. { InitCommand=cmd(setstate,2;pause;horizalign,left;vertalign,bottom;x,Width/2;y,-Height/2) };

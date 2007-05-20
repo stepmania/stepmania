@@ -135,7 +135,7 @@ local function AddLine( text, command )
 		OnCommand = command or lineOn;
 	}
 	-- XXX: Hack. Wrap in an ActorFrame so OnCommand works
-	table.insert( t, WrapInActorFrame({t}) )
+	table.insert( t, Def.ActorFrame { t } )
 end
 
 -- Add header and padding

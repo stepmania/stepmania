@@ -21,7 +21,7 @@ for i=1,num do
 		OnCommand = cmd(zoom,0.7;diffuse,color);
 	}
 		
-	table.insert( t, WrapInActorFrame({text}) )
+	table.insert( t, Def.ActorFrame { text } )
 end
 
 return t;
