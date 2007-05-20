@@ -1,4 +1,4 @@
-local Def.ActorFrame {
+local t = Def.ActorFrame {
 };
 
 if GAMESTATE:IsExtraStage() then
