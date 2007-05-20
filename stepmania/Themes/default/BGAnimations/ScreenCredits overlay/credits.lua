@@ -124,18 +124,18 @@ local t = Def.ActorScroller {
 	TransformFunction = function( self, offset, itemIndex, numItems)
 		self:y(30*offset)
 	end;
-	OnCommand = cmd(zoom,0.64;scrollwithpadding,12,0);
+	OnCommand = cmd(scrollwithpadding,12,0);
 }
 
 local function AddLine( text, command )
-	local t = Def.BitmapText {
+	local text = Def.BitmapText {
 		_Level = 2;
 		File = fontPath;
 		Text = text or "";
 		OnCommand = command or lineOn;
 	}
 	-- XXX: Hack. Wrap in an ActorFrame so OnCommand works
-	table.insert( t, Def.ActorFrame { t } )
+	table.insert( t, Def.ActorFrame { text } )
 end
 
 -- Add header and padding
