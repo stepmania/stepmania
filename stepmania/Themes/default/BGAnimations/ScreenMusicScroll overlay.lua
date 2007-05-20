@@ -14,14 +14,14 @@ local t = Def.ActorScroller {
 for i=1,num do
 	local song = SONGMAN:GetRandomSong()
 	local color = SONGMAN:GetSongColor( song )
-	local t = Def.BitmapText {
+	local text = Def.BitmapText {
 		_Level = 1;
 		File = fontPath;
 		Text = song:GetDisplayFullTitle();
 		OnCommand = cmd(zoom,0.7;diffuse,color);
 	}
 		
-	table.insert( t, WrapInActorFrame({t}) )
+	table.insert( t, WrapInActorFrame({text}) )
 end
 
 return t;
