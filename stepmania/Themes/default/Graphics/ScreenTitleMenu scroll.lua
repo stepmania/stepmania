@@ -1,4 +1,4 @@
-local children = {
+local t = Def.ActorFrame {
 	LoadFont("", "blaster") ..{
 		Text=THEME:GetString( 'ScreenTitleMenu', ThisGameCommand:GetText() );
 		InitCommand=cmd(horizalign,center;shadowlength,0);
@@ -8,4 +8,4 @@ local children = {
 	};
 };
 
-return Def.ActorFrame { children = children };
+return t;

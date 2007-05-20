@@ -5,11 +5,8 @@ return Def.ActorFrame {
         OffFocusedCommand=cmd();
         OffUnfocusedCommand=cmd();
 
-	children =
-	{
-		LoadFont( "Common", "normal" ) .. {
-			Text=THEME:GetString("PaneDisplay", text);
-			OnCommand=cmd(shadowlength,0;horizalign,left;zoom,0.5);
-		};
+	LoadFont( "Common", "normal" ) .. {
+		Text=THEME:GetString("PaneDisplay", text);
+		OnCommand=cmd(shadowlength,0;horizalign,left;zoom,0.5);
 	};
 };

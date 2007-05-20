@@ -7,7 +7,7 @@ local NumberMinZoom = THEME:GetMetric("Combo", "NumberMinZoom");
 local NumberMaxZoom = THEME:GetMetric("Combo", "NumberMaxZoom");
 local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt");
 
-local t = {
+local t = Def.ActorFrame {
 	LoadFont( "Combo", "numbers" ) .. {
 		Name="Number";
 		OnCommand = THEME:GetMetric("Combo", "NumberOnCommand");
@@ -20,10 +20,7 @@ local t = {
 		Name="MissesLabel";
 		OnCommand = THEME:GetMetric("Combo", "LabelOnCommand");
 	};
-};
 
-return Def.ActorFrame {
-	children = t;
 	InitCommand = function(self)
 		c = self:GetChildren();
 		c.Number:visible(false);
@@ -59,3 +56,5 @@ return Def.ActorFrame {
 		Pulse( Label, param );
 	end;
 };
+
+return t;

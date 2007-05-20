@@ -27,8 +27,7 @@ local TNSFrames = {
 	TapNoteScore_Miss = 5;
 };
 
-return Def.ActorFrame {
-	children = t;
+local t = Def.ActorFrame {
 	InitCommand = function(self)
 		c = self:GetChildren();
 	end;
@@ -53,3 +52,5 @@ return Def.ActorFrame {
 		JudgeCmds[param.TapNoteScore](c.Judgment);
 	end;
 };
+
+return t;
