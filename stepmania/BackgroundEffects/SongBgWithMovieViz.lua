@@ -1,7 +1,7 @@
 local Color1 = color(Var "Color1");
 local Color2 = color(Var "Color2");
 
-local children = {
+local t = Def.ActorFrame {
 	Def.Sprite {
 		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;ZoomToWidth,SCREEN_WIDTH;ZoomToHeight,SCREEN_HEIGHT;diffuse,Color1;effectclock,"music");
 	};
@@ -13,4 +13,4 @@ local children = {
 	};
 };
 
-return Def.ActorFrame { children = children };
+return t;

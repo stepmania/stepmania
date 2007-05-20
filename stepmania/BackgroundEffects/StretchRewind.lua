@@ -1,6 +1,6 @@
 local Color = color(Var "Color1");
 
-local children = {
+local t = Def.ActorFrame {
 	LoadActor(Var "File1") .. {
 		OnCommand=cmd(scale_or_crop_background;diffuse,Color;position,0;effectclock,"music");
 		GainFocusCommand=cmd(play);
@@ -8,5 +8,5 @@ local children = {
 	};
 };
 
-return Def.ActorFrame { children = children };
+return t;
 

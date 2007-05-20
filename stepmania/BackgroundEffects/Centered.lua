@@ -1,5 +1,5 @@
 local Color = color(Var "Color1");
-local children = {
+local t = Def.ActorFrame {
 	LoadActor(Var "File1") .. {
 		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;diffuse,Color;effectclock,"music");
 		GainFocusCommand=cmd(play);
@@ -7,4 +7,4 @@ local children = {
 	};
 };
 
-return Def.ActorFrame { children = children };
+return t;
