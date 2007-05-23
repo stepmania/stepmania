@@ -76,7 +76,7 @@ setmetatable( Def, {
 	end,
 });
 
-local function ResolvePath( path, level )
+function ResolveRelativePath( path, level )
 	if path:sub(1,1) ~= "/" then
 		-- "Working directory":
 		local sDir = DebugPathToRealPath( debug.getinfo(level+1,"S").source )
@@ -93,7 +93,7 @@ end
 function LoadActorFunc( path, level )
 	level = level or 1
 
-	local ResolvedPath = ResolvePath( path, level+1 );
+	local ResolvedPath = ResolveRelativePath( path, level+1 );
 	if not ResolvedPath then
 		error( path .. ": not found", level+1 );
 	end
