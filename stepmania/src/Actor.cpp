@@ -13,6 +13,9 @@
 #include "MessageManager.h"
 #include "LightsManager.h" // for NUM_CabinetLight
 #include "ActorUtil.h"
+#include "Preference.h"
+
+static Preference<bool> g_bShowMasks("ShowMasks", false);
 
 /* It's useful to be able to construct a basic Actor in XML, in
  * order to simply delay a Transition, or receive and send broadcasts.
@@ -500,7 +503,8 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 void Actor::SetGlobalRenderStates()
 {
 	// set Actor-defined render states
-	DISPLAY->SetBlendMode( m_BlendMode );
+	if( !g_bShowMasks.Get() || m_BlendMode != BLEND_NO_EFFECT )
+		DISPLAY->SetBlendMode( m_BlendMode );
 	DISPLAY->SetZWrite( m_bZWrite );
 	DISPLAY->SetZTestMode( m_ZTestMode );
 	

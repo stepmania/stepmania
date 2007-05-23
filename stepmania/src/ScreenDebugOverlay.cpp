@@ -483,6 +483,7 @@ static LocalizedString RENDERING_STATS		( "ScreenDebugOverlay", "Rendering Stats
 static LocalizedString VSYNC			( "ScreenDebugOverlay", "Vsync" );
 static LocalizedString MULTITEXTURE		( "ScreenDebugOverlay", "Multitexture" );
 static LocalizedString SCREEN_TEST_MODE		( "ScreenDebugOverlay", "Screen Test Mode" );
+static LocalizedString SCREEN_SHOW_MASKS	( "ScreenDebugOverlay", "Show Masks" );
 static LocalizedString PROFILE			( "ScreenDebugOverlay", "Profile" );
 static LocalizedString CLEAR_PROFILE_STATS	( "ScreenDebugOverlay", "Clear Profile Stats" );
 static LocalizedString FILL_PROFILE_STATS	( "ScreenDebugOverlay", "Fill Profile Stats" );
@@ -708,6 +709,27 @@ class DebugLineScreenTestMode : public IDebugLine
 	{
 		PREFSMAN->m_bScreenTestMode.Set( !PREFSMAN->m_bScreenTestMode );
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
+	}
+};
+
+class DebugLineShowMasks : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return SCREEN_SHOW_MASKS.GetValue(); }
+	virtual bool IsEnabled() { return GetPref()->Get(); }
+	virtual RString GetPageName() const { return "Theme"; }
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
+	{
+		GetPref()->Set( !GetPref()->Get() );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
+	}
+
+	Preference<bool> *GetPref()
+	{
+		IPreference *pPref = IPreference::GetPreferenceByName("ShowMasks");
+		ASSERT( pPref );
+		Preference<bool> *pRet = dynamic_cast<Preference<bool> *>(pPref);
+		ASSERT( pRet );
+		return pRet;
 	}
 };
 
@@ -1072,6 +1094,7 @@ DECLARE_ONE( DebugLineStats );
 DECLARE_ONE( DebugLineVsync );
 DECLARE_ONE( DebugLineAllowMultitexture );
 DECLARE_ONE( DebugLineScreenTestMode );
+DECLARE_ONE( DebugLineShowMasks );
 DECLARE_ONE( DebugLineProfileSlot );
 DECLARE_ONE( DebugLineClearProfileStats );
 DECLARE_ONE( DebugLineFillProfileStats );
