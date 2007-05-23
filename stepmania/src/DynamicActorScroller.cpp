@@ -31,9 +31,12 @@ void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 		this->AddChild( pCopy );
 	}
 
-	RString sLoadFunction;
-	pNode->GetAttrValue( "LoadFunction", sLoadFunction );
-	m_LoadFunction.SetFromExpression( sLoadFunction );
+	{
+		Lua *L = LUA->Get();
+		pNode->PushAttrValue( L, "LoadFunction" );
+		m_LoadFunction.SetFromStack( L );
+		LUA->Release(L);
+	}
 
 	/* Call the expression with line = nil to find out the number of lines. */
 	{
