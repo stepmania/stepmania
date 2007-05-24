@@ -108,6 +108,13 @@ public:
 		BroadcastPreferenceChanged( GetName() );
 	}
 
+	static Preference<T> *GetPreferenceByName( const RString &sName )
+	{
+		IPreference *pPreference = IPreference::GetPreferenceByName( sName );
+		Preference<T> *pRet = dynamic_cast<Preference<T> *>(pPreference);
+		return pRet;
+	}
+
 private:
 	T m_currentValue;
 	T m_defaultValue;
