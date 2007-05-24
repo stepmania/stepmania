@@ -461,7 +461,7 @@ void ChangeVolume( float fDelta )
 	fVol += fDelta;
 	CLAMP( fVol, 0.0f, 1.0f );
 	PREFSMAN->m_fSoundVolume.Set( fVol );
-	SOUNDMAN->SetMixVolume( PREFSMAN->m_fSoundVolume );
+	SOUNDMAN->SetMixVolume( PREFSMAN->GetSoundVolume() );
 }
 
 
