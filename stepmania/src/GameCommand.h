@@ -72,7 +72,6 @@ public:
 	std::map<RString,RString> m_SetEnv;
 	RString		m_sSongGroup;
 	SortOrder	m_SortOrder;
-	RString		m_sUnlockEntryID;	// "" for no unlock
 	RString		m_sSoundPath;	// "" for no sound
 	vector<RString>	m_vsScreensToPrepare;
 	int		m_iWeightPounds;	// -1 == none specified

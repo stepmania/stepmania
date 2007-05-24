@@ -52,7 +52,6 @@ void GameCommand::Init()
 	m_pTrail = NULL;
 	m_pCharacter = NULL;
 	m_SortOrder = SortOrder_Invalid;
-	m_sUnlockEntryID = "";
 	m_sSoundPath = "";
 	m_vsScreensToPrepare.clear();
 	m_iWeightPounds = -1;
@@ -354,10 +353,6 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "url" )
 	{
 		m_sUrl = sValue;
-	}
-	else if( sName == "unlock" )
-	{
-		m_sUnlockEntryID = sValue;
 	}
 	
 	else if( sName == "sound" )
@@ -690,6 +685,9 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		SCREENMAN->SetNewScreen( m_sScreen );
 	if( m_pSong )
 	{
+		LOG->Trace( "set %p, %s",
+			m_pSong, m_pSong->GetTranslitFullTitle().c_str() );
+
 		GAMESTATE->m_pCurSong.Set( m_pSong );
 		GAMESTATE->m_pPreferredSong = m_pSong;
 	}
@@ -724,8 +722,6 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		GAMESTATE->m_sPreferredSongGroup.Set( m_sSongGroup );
 	if( m_SortOrder != SortOrder_Invalid )
 		GAMESTATE->m_PreferredSortOrder = m_SortOrder;
-	if( !m_sUnlockEntryID.empty() )
-		UNLOCKMAN->UnlockEntryID( m_sUnlockEntryID );
 	if( m_sSoundPath != "" )
 		SOUND->PlayOnce( THEME->GetPathS( "", m_sSoundPath ) );
 	if( m_iWeightPounds != -1 )
