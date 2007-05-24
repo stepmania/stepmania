@@ -521,20 +521,20 @@ void UnlockManager::UpdateCachedPointers()
 		case UnlockRewardType_Song:
 			e->m_pSong = SONGMAN->FindSong( e->m_cmd.GetArg(0).s );
 			if( e->m_pSong == NULL )
-				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
+				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
 			break;
 		case UnlockRewardType_Steps:
 			e->m_pSong = SONGMAN->FindSong( e->m_cmd.GetArg(0).s );
 			if( e->m_pSong == NULL )
 			{
-				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
+				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
 				break;
 			}
 
 			e->m_dc = StringToDifficulty( e->m_cmd.GetArg(1).s );
 			if( e->m_dc == Difficulty_Invalid )
 			{
-				LOG->Warn( "Unlock: Invalid difficulty \"%s\"", e->m_cmd.GetArg(2).s.c_str() );
+				LOG->Warn( "Unlock: Invalid difficulty \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
 				break;
 			}
 
@@ -542,7 +542,7 @@ void UnlockManager::UpdateCachedPointers()
 		case UnlockRewardType_Course:
 			e->m_pCourse = SONGMAN->FindCourse( e->m_cmd.GetArg(0).s );
 			if( e->m_pCourse == NULL )
-				LOG->Warn( "Unlock: Cannot find course matching \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
+				LOG->Warn( "Unlock: Cannot find course matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
 			break;
 		case UnlockRewardType_Modifier:
 			// nothing to cache
