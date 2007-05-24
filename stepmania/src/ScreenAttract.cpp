@@ -28,7 +28,7 @@ ScreenAttract::ScreenAttract( bool bResetGameState )
 void ScreenAttract::BeginScreen()
 {
 	GAMESTATE->VisitAttractScreen( m_sName );
-	ScreenAttract::SetAttractVolume( !GAMESTATE->IsTimeToPlayAttractSounds() );
+	ScreenAttract::SetAttractVolume( true );
 
 	ScreenWithMenuElements::BeginScreen();
 }
@@ -43,9 +43,16 @@ void ScreenAttract::Input( const InputEventPlus &input )
 void ScreenAttract::SetAttractVolume( bool bInAttract )
 {
 	if( bInAttract )
-		SOUNDMAN->SetVolumeOfNonCriticalSounds( 0.0f );  // mute attract sounds
+	{
+		if( GAMESTATE->IsTimeToPlayAttractSounds() )
+			SOUNDMAN->SetVolumeOfNonCriticalSounds( g_fSoundVolumeAttract );  // unmute attract sounds
+		else
+			SOUNDMAN->SetVolumeOfNonCriticalSounds( 0.0f );  // mute attract sounds
+	}
 	else
-		SOUNDMAN->SetVolumeOfNonCriticalSounds( g_fSoundVolumeAttract );  // unmute attract sounds
+	{
+		SOUNDMAN->SetVolumeOfNonCriticalSounds( 1.0f );  // unmute all sounds
+	}
 }
 
 void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen )

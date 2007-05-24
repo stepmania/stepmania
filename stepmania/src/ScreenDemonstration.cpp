@@ -25,7 +25,7 @@ void ScreenDemonstration::Init()
 {
 	GAMESTATE->Reset();
 	GAMESTATE->VisitAttractScreen( m_sName );
-	ScreenAttract::SetAttractVolume( !GAMESTATE->IsTimeToPlayAttractSounds() );
+	ScreenAttract::SetAttractVolume( true );
 
 	// Choose a Style
 	{
