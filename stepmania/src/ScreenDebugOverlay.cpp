@@ -457,11 +457,13 @@ static void SetSpeed()
 
 void ChangeVolume( float fDelta )
 {
-	float fVol = PREFSMAN->m_fSoundVolume;
+	Preference<float> *pRet = Preference<float>::GetPreferenceByName("SoundVolume");
+
+	float fVol = pRet->Get();
 	fVol += fDelta;
 	CLAMP( fVol, 0.0f, 1.0f );
-	PREFSMAN->m_fSoundVolume.Set( fVol );
-	SOUNDMAN->SetMixVolume( PREFSMAN->GetSoundVolume() );
+	pRet->Set( fVol );
+	SOUNDMAN->SetMixVolume();
 }
 
 
@@ -725,11 +727,7 @@ class DebugLineShowMasks : public IDebugLine
 
 	Preference<bool> *GetPref()
 	{
-		IPreference *pPref = IPreference::GetPreferenceByName("ShowMasks");
-		ASSERT( pPref );
-		Preference<bool> *pRet = dynamic_cast<Preference<bool> *>(pPref);
-		ASSERT( pRet );
-		return pRet;
+		return Preference<bool>::GetPreferenceByName("ShowMasks");
 	}
 };
 
@@ -1039,12 +1037,16 @@ class DebugLinePullBackCamera : public IDebugLine
 class DebugLineVolumeUp : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return VOLUME_UP.GetValue(); }
-	virtual RString GetDisplayValue() { return ssprintf("%.0f%%",PREFSMAN->m_fSoundVolume.Get()*100); }
+	virtual RString GetDisplayValue() { return ssprintf("%.0f%%", GetPref()->Get()*100); }
 	virtual bool IsEnabled() { return true; }
 	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		ChangeVolume( +0.1f );
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
+	}
+	Preference<float> *GetPref()
+	{
+		return Preference<float>::GetPreferenceByName("SoundVolume");
 	}
 };
 
@@ -1057,7 +1059,11 @@ class DebugLineVolumeDown : public IDebugLine
 	{
 		ChangeVolume( -0.1f );
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
-		sMessageOut += " - " + ssprintf("%.0f%%",PREFSMAN->m_fSoundVolume.Get()*100);
+		sMessageOut += " - " + ssprintf("%.0f%%",GetPref()->Get()*100);
+	}
+	Preference<float> *GetPref()
+	{
+		return Preference<float>::GetPreferenceByName("SoundVolume");
 	}
 };
 

@@ -178,12 +178,12 @@ void RageSoundManager::AddLoadedSound( const RString &sPath_, RageSoundReader_Pr
 	m_mapPreloadedSounds[sPath] = pSound->Copy();
 }
 
-void RageSoundManager::SetMixVolume( float fMixVol )
-{
-	ASSERT_M( fMixVol >= 0 && fMixVol <= 1, ssprintf("%f",fMixVol) );
+static Preference<float> g_fSoundVolume( "SoundVolume", 1.0f );
 
+void RageSoundManager::SetMixVolume()
+{
 	g_SoundManMutex.Lock(); /* lock for access to m_fMixVolume */
-	m_fMixVolume = fMixVol;
+	m_fMixVolume = clamp( g_fSoundVolume.Get(), 0.0f, 1.0f );
 	g_SoundManMutex.Unlock(); /* finished with m_fMixVolume */
 }
 

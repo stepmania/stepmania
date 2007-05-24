@@ -216,7 +216,6 @@ public:
 	Preference<RString>	m_sLastSeenVideoDriver;
 	Preference<RString>	m_sVideoRenderers;		// StepMania.cpp sets these on first run based on the card
 	Preference<bool>	m_bSmoothLines;
-	Preference<float>	m_fSoundVolume;
 	Preference<int>		m_iSoundWriteAhead;
 	Preference<RString>	m_iSoundDevice;	
 	Preference<int>		m_iSoundPreferredSampleRate;
@@ -242,10 +241,6 @@ public:
 #if !defined(WITHOUT_NETWORKING)
 	Preference<bool>	m_bEnableScoreboard;  //Alows disabling of scoreboard in network play
 #endif
-
-
-	// wrappers
-	float GetSoundVolume();
 
 
 	void ReadPrefsFromIni( const IniFile &ini, const RString &sSection, bool bIsStatic );

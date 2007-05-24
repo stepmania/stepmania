@@ -240,7 +240,6 @@ PrefsManager::PrefsManager() :
 	m_sLastSeenVideoDriver		( "LastSeenVideoDriver",		"" ),
 	m_sVideoRenderers		( "VideoRenderers",			"" ),	// StepMania.cpp sets these on first run:
 	m_bSmoothLines			( "SmoothLines",			false ),
-	m_fSoundVolume			( "SoundVolume",			1.0f ),
 	m_iSoundWriteAhead		( "SoundWriteAhead",			0 ),
 	m_iSoundDevice			( "SoundDevice",			"" ),
 	m_iSoundPreferredSampleRate	( "SoundPreferredSampleRate",		0 ),
@@ -481,13 +480,6 @@ RString PrefsManager::GetPreferencesSection() const
 	return sSection;
 }
 
-
-// wrappers
-float PrefsManager::GetSoundVolume()
-{
-	// return a resonable volume to that users of this method don't have to handle invalid values
-	return clamp(m_fSoundVolume.Get(),0.0f,1.0f);
-}
 
 // lua start
 #include "LuaBinding.h"

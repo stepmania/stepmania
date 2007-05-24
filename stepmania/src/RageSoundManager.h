@@ -30,7 +30,7 @@ public:
 	void Init();
 
 	float GetMixVolume() const { return m_fMixVolume; }
-	void SetMixVolume( float fMixVol );
+	void SetMixVolume();
 	float GetVolumeOfNonCriticalSounds() const { return m_fVolumeOfNonCriticalSounds; }
 	void SetVolumeOfNonCriticalSounds( float fVolumeOfNonCriticalSounds );
 
