@@ -44,6 +44,9 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		f.PutLine( "#REPEAT:YES;" );
 	if( course.m_iLives != -1 )
 		f.PutLine( ssprintf("#LIVES:%i;", course.m_iLives) );
+	if( !course.m_sBannerPath.empty() )
+		f.PutLine( ssprintf("#BANNER:%s;", course.m_sBannerPath.c_str()) );
+
 	if( !course.m_setStyles.empty() )
 	{
 		vector<RString> asStyles;

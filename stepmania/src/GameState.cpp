@@ -1547,7 +1547,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.iScore = hs.GetScore();
 					feat.fPercentDP = hs.GetPercentDP();
 					if( pCourse->HasBanner() )
-						feat.Banner = pCourse->m_sBannerPath;
+						feat.Banner = pCourse->GetBannerPath();
 					asFeatsOut.push_back( feat );
 				}
 			}
@@ -1571,7 +1571,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.iScore = hs.GetScore();
 					feat.fPercentDP = hs.GetPercentDP();
 					if( pCourse->HasBanner() )
-						feat.Banner = pCourse->m_sBannerPath;
+						feat.Banner = pCourse->GetBannerPath();
 					asFeatsOut.push_back( feat );
 				}
 			}

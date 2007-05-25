@@ -834,9 +834,18 @@ bool Course::CourseHasBestOrWorst() const
 	return false;
 }
 
+RString Course::GetBannerPath() const
+{
+	if( m_sBannerPath.empty() )
+		return RString();
+	if( m_sBannerPath[0] == '/' )
+		return m_sBannerPath;
+	return Dirname(m_sPath) + m_sBannerPath;
+}
+
 bool Course::HasBanner() const
 {
-	return m_sBannerPath != ""  &&  IsAFile(m_sBannerPath);
+	return GetBannerPath() != ""  &&  IsAFile(GetBannerPath());
 }
 
 void Course::UpdateCourseStats( StepsType st )
@@ -978,7 +987,7 @@ public:
 		LuaHelpers::CreateTableFromArray<Trail*>( v, L );
 		return 1;
 	}
-	static int GetBannerPath( T* p, lua_State *L )		{ if( p->m_sBannerPath.empty() ) return 0; lua_pushstring(L, p->m_sBannerPath ); return 1; }
+	static int GetBannerPath( T* p, lua_State *L )		{ RString s = p->GetBannerPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
 	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName ); return 1; }
 	static int IsAutogen( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bIsAutogen ); return 1; }
 	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }

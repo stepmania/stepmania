@@ -101,6 +101,7 @@ class Course
 public:
 	Course();
 
+	RString GetBannerPath() const;
 	bool HasBanner() const;
 
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit* below.

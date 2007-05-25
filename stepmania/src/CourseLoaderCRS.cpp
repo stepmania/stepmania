@@ -45,16 +45,6 @@ bool CourseLoaderCRS::LoadFromBuffer( const RString &sPath, const RString &sBuff
 
 bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Course &out, bool bFromCache )
 {
-	const RString sFName = SetExtension( out.m_sPath, "" );
-
-	vector<RString> arrayPossibleBanners;
-	GetDirListing( sFName + "*.png", arrayPossibleBanners, false, true );
-	GetDirListing( sFName + "*.jpg", arrayPossibleBanners, false, true );
-	GetDirListing( sFName + "*.bmp", arrayPossibleBanners, false, true );
-	GetDirListing( sFName + "*.gif", arrayPossibleBanners, false, true );
-	if( !arrayPossibleBanners.empty() )
-		out.m_sBannerPath = arrayPossibleBanners[0];
-
 	AttackArray attacks;
 	float fGainSeconds = 0;
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
@@ -75,6 +65,10 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				out.m_bRepeat = true;
 		}
 
+		else if( 0 == stricmp(sValueName, "BANNER") )
+		{
+			out.m_sBannerPath = sParams[1];
+		}
 		else if( 0 == stricmp(sValueName, "LIVES") )
 		{
 			out.m_iLives = max( atoi(sParams[1]), 0 );
@@ -296,6 +290,20 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			LOG->UserLog( "Course file", sPath, "contains an unexpected value named \"%s\"", sValueName.c_str() );
 		}
 	}
+
+	if( out.m_sBannerPath.empty() )
+	{
+		const RString sFName = SetExtension( out.m_sPath, "" );
+
+		vector<RString> arrayPossibleBanners;
+		GetDirListing( sFName + "*.png", arrayPossibleBanners, false, false );
+		GetDirListing( sFName + "*.jpg", arrayPossibleBanners, false, false );
+		GetDirListing( sFName + "*.bmp", arrayPossibleBanners, false, false );
+		GetDirListing( sFName + "*.gif", arrayPossibleBanners, false, false );
+		if( !arrayPossibleBanners.empty() )
+			out.m_sBannerPath = arrayPossibleBanners[0];
+	}
+
 	static TitleSubst tsub("Courses");
 
 	TitleFields title;
@@ -308,7 +316,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 	/* Cache and load the course banner.  Only bother doing this if at least one
 	 * song was found in the course. */
 	if( out.m_sBannerPath != "" && !out.m_vEntries.empty() )
-		BANNERCACHE->CacheBanner( out.m_sBannerPath );
+		BANNERCACHE->CacheBanner( out.GetBannerPath() );
 
 	/* Cache each trail RadarValues that's slow to load, so we
 	 * don't have to do it at runtime. */

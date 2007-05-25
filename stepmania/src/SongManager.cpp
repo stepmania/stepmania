@@ -324,7 +324,7 @@ void SongManager::PreloadSongImages()
 		if( !courses[i]->HasBanner() )
 			continue;
 
-		const RageTextureID ID = Sprite::SongBannerTexture( courses[i]->m_sBannerPath );
+		const RageTextureID ID = Sprite::SongBannerTexture( courses[i]->GetBannerPath() );
 		preload.Load( ID );
 	}
 

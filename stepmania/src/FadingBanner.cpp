@@ -195,7 +195,7 @@ void FadingBanner::LoadFromCourse( const Course* pCourse )
 
 	/* Don't call HasBanner.  That'll do disk access and cause the music wheel
 	 * to skip. */
-	RString sPath = pCourse->m_sBannerPath;
+	RString sPath = pCourse->GetBannerPath();
 	if( sPath.empty() )
 		LoadCourseFallback();
 	else

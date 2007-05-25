@@ -136,7 +136,7 @@ void Banner::LoadFromSongGroup( RString sSongGroup )
 void Banner::LoadFromCourse( const Course *pCourse )		// NULL means no course
 {
 	if( pCourse == NULL )				LoadFallback();
-	else if( pCourse->m_sBannerPath != "" )		Load( pCourse->m_sBannerPath );
+	else if( pCourse->GetBannerPath() != "" )	Load( pCourse->GetBannerPath() );
 	else						LoadCourseFallback();
 
 	m_bScrolling = false;

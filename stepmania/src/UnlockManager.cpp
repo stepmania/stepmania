@@ -367,7 +367,7 @@ RString	UnlockEntry::GetBannerFile() const
 	case UnlockRewardType_Steps:
 		return m_pSong ? m_pSong->GetBannerPath() : "";
 	case UnlockRewardType_Course:
-		return m_pCourse ? m_pCourse->m_sBannerPath : "";
+		return m_pCourse ? m_pCourse->GetBannerPath() : "";
 	case UnlockRewardType_Modifier:
 		return "";
 	}	

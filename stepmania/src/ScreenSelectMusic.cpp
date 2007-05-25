@@ -1218,7 +1218,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
 
-		g_sBannerPath = pCourse->m_sBannerPath;
+		g_sBannerPath = pCourse->GetBannerPath();
 		if( g_sBannerPath.empty() )
 			m_Banner.LoadFallback();
 
