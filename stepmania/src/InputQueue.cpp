@@ -132,11 +132,9 @@ bool InputQueueCode::EnteredCode( GameController controller ) const
 			}
 			if( !bAllHeldButtonsOK )
 				continue;
+			iMinSearchIndexUsed = min( iMinSearchIndexUsed, iQueueSearchIndex );
 			if( b == (int) Press.m_aButtonsToPress.size()-1 )
-			{
 				bMatched = true;
-				iMinSearchIndexUsed = min( iMinSearchIndexUsed, iQueueSearchIndex );
-			}
 		}
 
 		if( !bMatched )
