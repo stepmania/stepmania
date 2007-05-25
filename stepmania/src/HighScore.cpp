@@ -84,11 +84,11 @@ XNode *HighScoreImpl::CreateNode() const
 	const bool bWriteComplexValues = RadarValues::WRITE_COMPLEX_VALIES;
 
 	// TRICKY:  Don't write "name to fill in" markers.
-	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? RString("") : sName );
+	pNode->AppendChild( "Name",			IsRankingToFillIn(sName) ? RString("") : sName );
 	pNode->AppendChild( "Grade",			GradeToString(grade) );
 	pNode->AppendChild( "Score",			iScore );
 	pNode->AppendChild( "PercentDP",		fPercentDP );
-	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
+	pNode->AppendChild( "SurviveSeconds",		fSurviveSeconds );
 	pNode->AppendChild( "Modifiers",		sModifiers );
 	pNode->AppendChild( "DateTime",			dateTime.GetString() );
 	pNode->AppendChild( "PlayerGuid",		sPlayerGuid );
@@ -103,7 +103,7 @@ XNode *HighScoreImpl::CreateNode() const
 		if( hns != HNS_None )	// HACK: don't save meaningless "none" count
 			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 	pNode->AppendChild( radarValues.CreateNode(bWriteSimpleValues, bWriteComplexValues) );
-	pNode->AppendChild( "LifeRemainingSeconds",		fLifeRemainingSeconds );
+	pNode->AppendChild( "LifeRemainingSeconds",	fLifeRemainingSeconds );
 
 	return pNode;
 }
@@ -119,11 +119,11 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	grade = StringToGrade( s );
 	pNode->GetChildValue( "Score",			iScore );
 	pNode->GetChildValue( "PercentDP",		fPercentDP );
-	pNode->GetChildValue( "SurviveSeconds", fSurviveSeconds );
+	pNode->GetChildValue( "SurviveSeconds",		fSurviveSeconds );
 	pNode->GetChildValue( "Modifiers",		sModifiers );
 	pNode->GetChildValue( "DateTime",		s ); dateTime.FromString( s );
 	pNode->GetChildValue( "PlayerGuid",		sPlayerGuid );
-	pNode->GetChildValue( "MachineGuid",	sMachineGuid );
+	pNode->GetChildValue( "MachineGuid",		sMachineGuid );
 	pNode->GetChildValue( "ProductID",		iProductID );
 	const XNode* pTapNoteScores = pNode->GetChild( "TapNoteScores" );
 	if( pTapNoteScores )
@@ -136,7 +136,7 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	const XNode* pRadarValues = pNode->GetChild( "RadarValues" );
 	if( pRadarValues )
 		radarValues.LoadFromNode( pRadarValues );
-	pNode->GetChildValue( "LifeRemainingSeconds",		fLifeRemainingSeconds );
+	pNode->GetChildValue( "LifeRemainingSeconds",	fLifeRemainingSeconds );
 
 	/* Validate input. */
 	grade = clamp( grade, Grade_Tier01, Grade_Failed );
