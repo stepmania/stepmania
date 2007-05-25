@@ -341,12 +341,12 @@ bool Song::ReloadFromSongDir( RString sDir )
 	return true;
 }
 
-static void GetImageDirListing( RString sPath, vector<RString> &AddTo, bool bReturnPathToo=false )
+static void GetImageDirListing( RString sPath, vector<RString> &AddTo )
 {
-	GetDirListing( sPath + ".png", AddTo, false, bReturnPathToo ); 
-	GetDirListing( sPath + ".jpg", AddTo, false, bReturnPathToo ); 
-	GetDirListing( sPath + ".bmp", AddTo, false, bReturnPathToo ); 
-	GetDirListing( sPath + ".gif", AddTo, false, bReturnPathToo ); 
+	GetDirListing( sPath + ".png", AddTo, false, false );
+	GetDirListing( sPath + ".jpg", AddTo, false, false );
+	GetDirListing( sPath + ".bmp", AddTo, false, false );
+	GetDirListing( sPath + ".gif", AddTo, false, false );
 }
 
 /* Fix up song paths.  If there's a leading "./", be sure to keep it: it's
