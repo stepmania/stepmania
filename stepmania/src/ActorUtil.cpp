@@ -135,14 +135,6 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 	if( !bHasClass )
 		bHasClass = pNode->GetAttrValue( "Type", sClass );	// for backward compatibility
 
-	// backward compat hack
-	if( !bHasClass )
-	{
-		RString sText;
-		if( pNode->GetAttrValue( "Text", sText ) )
-			sClass = "BitmapText";
-	}
-
 	if( !IsRegistered(sClass) )
 	{
 		// sClass is invalid
