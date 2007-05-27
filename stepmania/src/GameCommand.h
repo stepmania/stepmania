@@ -53,7 +53,6 @@ public:
 	bool		m_bInvalid;
 	RString		m_sInvalidReason;
 	int		m_iIndex;
-	bool		m_bHasFocus;
 	MultiPlayer	m_MultiPlayer;
 	const Style*	m_pStyle;
 	PlayMode	m_pm;
