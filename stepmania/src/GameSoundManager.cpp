@@ -48,6 +48,7 @@ struct MusicPlaying
 {
 	bool m_bTimingDelayed;
 	bool m_bHasTiming;
+	bool m_bApplyMusicRate;
 	/* The timing data that we're currently using. */
 	TimingData m_Timing;
 	NoteData m_Lights;
@@ -62,6 +63,7 @@ struct MusicPlaying
 		m_NewTiming.AddBPMSegment( BPMSegment(0,120) );
 		m_bHasTiming = false;
 		m_bTimingDelayed = false;
+		m_bApplyMusicRate = false;
 		m_Music = Music;
 	}
 
@@ -87,7 +89,7 @@ struct MusicToPlay
 	NoteData m_LightsData;
 	bool bForceLoop;
 	float fStartSecond, fLengthSeconds, fFadeInLengthSeconds, fFadeOutLengthSeconds;
-	bool bAlignBeat;
+	bool bAlignBeat, bApplyMusicRate;
 	MusicToPlay()
 	{
 		HasTiming = false;
@@ -123,7 +125,9 @@ static void StartMusic( MusicToPlay &ToPlay )
 	{
 		g_Mutex->Unlock();
 		RageSound *pSound = new RageSound;
-		pSound->Load( ToPlay.m_sFile, false );
+		RageSoundLoadParams params;
+		params.m_bSupportRateChanging = ToPlay.bApplyMusicRate;
+		pSound->Load( ToPlay.m_sFile, false, &params );
 		g_Mutex->Lock();
 
 		NewMusic = new MusicPlaying( pSound );
@@ -232,6 +236,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		if( ToPlay.HasTiming )
 			NewMusic->m_NewTiming = ToPlay.m_TimingData;
 		NewMusic->m_bTimingDelayed = true;
+		NewMusic->m_bApplyMusicRate = ToPlay.bApplyMusicRate;
 //		NewMusic->m_Music->Load( ToPlay.m_sFile, false );
 
 		RageSoundParams p;
@@ -468,6 +473,17 @@ void GameSoundManager::Update( float fDeltaTime )
 {
 	{
 		g_Mutex->Lock();
+		if( g_Playing->m_bApplyMusicRate )
+		{
+			RageSoundParams p = g_Playing->m_Music->GetParams();
+			float fRate = GAMESTATE->m_SongOptions.GetPreferred().m_fMusicRate;
+			if( p.m_fSpeed != fRate )
+			{
+				p.m_fSpeed = fRate;
+				g_Playing->m_Music->SetParams( p );
+			}
+		}
+
 		bool bIsPlaying = g_Playing->m_Music->IsPlaying();
 		g_Mutex->Unlock();
 		if( !bIsPlaying && g_bWasPlayingOnLastUpdate && !g_FallbackMusic.sFile.empty() )
@@ -664,6 +680,7 @@ void GameSoundManager::PlayMusic(
 	params.fFadeInLengthSeconds = fFadeInLengthSeconds;
 	params.fFadeOutLengthSeconds = fFadeOutLengthSeconds;
 	params.bAlignBeat = bAlignBeat;
+	params.bApplyMusicRate = false;
 	PlayMusic( params );
 }
 
@@ -693,6 +710,7 @@ void GameSoundManager::PlayMusic( PlayMusicParams params, PlayMusicParams Fallba
 	ToPlay.fFadeInLengthSeconds = params.fFadeInLengthSeconds;
 	ToPlay.fFadeOutLengthSeconds = params.fFadeOutLengthSeconds;
 	ToPlay.bAlignBeat = params.bAlignBeat;
+	ToPlay.bApplyMusicRate = params.bApplyMusicRate;
 
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
 	g_Mutex->Lock();

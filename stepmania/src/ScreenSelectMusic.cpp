@@ -306,6 +306,7 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 		PlayParams.fLengthSeconds = m_fSampleLengthSeconds;
 		PlayParams.fFadeOutLengthSeconds = 1.5f;
 		PlayParams.bAlignBeat = ALIGN_MUSIC_BEATS;
+		PlayParams.bApplyMusicRate = true;
 
 		GameSoundManager::PlayMusicParams FallbackMusic;
 		FallbackMusic.sFile = m_sLoopMusicPath;
