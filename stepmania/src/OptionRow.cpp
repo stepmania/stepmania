@@ -665,16 +665,11 @@ void OptionRow::Update( float fDeltaTime )
 void OptionRow::SetOptionIcon( PlayerNumber pn, const RString &sText, GameCommand &gc )
 {
 	// update bullet
-	Lua *L = LUA->Get();
-	gc.PushSelf( L );
-	lua_setglobal( L, "ThisGameCommand" );
-	LUA->Release( L );
-
-	m_sprBullet->PlayCommand( "Refresh" );
+	Message msg( "Refresh" );
+	msg.SetParam( "GameCommand", gc );
+	m_sprBullet->HandleMessage( msg );
 	if( m_OptionIcons[pn] != NULL )
 		m_OptionIcons[pn]->Set( pn, sText, false );
-
-	LUA->UnsetGlobal( "ThisGameCommand" );
 }
 
 const BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow ) const
