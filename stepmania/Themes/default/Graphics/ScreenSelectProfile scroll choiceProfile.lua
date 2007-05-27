@@ -1,11 +1,11 @@
 return Def.ActorFrame {
 	GainFocusCommand=cmd();
 	LoseFocusCommand=cmd();
-	LoadActor( PROFILEMAN:GetLocalProfile( GAMESTATE:Env().ThisGameCommand:GetProfileID() ):GetCharacter():GetIconPath() ) .. {
+	LoadActor( PROFILEMAN:GetLocalProfile( Var("GameCommand"):GetProfileID() ):GetCharacter():GetIconPath() ) .. {
 		InitCommand=cmd(x,20);
 	};
 	LoadFont( "Common normal" ) .. {
-		Text=PROFILEMAN:GetLocalProfile( GAMESTATE:Env().ThisGameCommand:GetProfileID() ):GetDisplayName();
+		Text=PROFILEMAN:GetLocalProfile( Var("GameCommand"):GetProfileID() ):GetDisplayName();
 		OnCommand=cmd(diffusealpha,0;linear,0.3;diffusealpha,1):
 		OffCommand=cmd(linear,0.3;diffusealpha,0);
 		InitCommand=cmd(halign,0;shadowlength,2;x,50);
@@ -15,7 +15,7 @@ return Def.ActorFrame {
 		DisabledCommand="diffuse,0.5,0.5,0.5,1"
 	};
 	LoadFont( "Common normal" ) .. {
-		Text="PROFILEMAN:GetLocalProfile( GAMESTATE:Env().ThisGameCommand:GetProfileID() ):GetNumTotalSongsPlayed() .. ' song(s) played'"
+		Text=PROFILEMAN:GetLocalProfile( Var("GameCommand"):GetProfileID() ):GetNumTotalSongsPlayed() .. " song(s) played";
 		OnCommand=cmd(diffusealpha,0;linear,0.3;diffusealpha,1);
 		OffCommand=cmd(linear,0.3;diffusealpha,0);
 		InitCommand=cmd(halign,0;shadowlength,2;x,280);

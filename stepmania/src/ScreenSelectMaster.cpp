@@ -103,6 +103,7 @@ void ScreenSelectMaster::Init()
 	{
 		GameCommand& mc = m_aGameCommands[c];
 
+		LuaThreadVariable var( "GameCommand", LuaReference::Create(&mc) );
 		Lua *L = LUA->Get();
 		mc.PushSelf( L );
 		lua_setglobal( L, "ThisGameCommand" );
