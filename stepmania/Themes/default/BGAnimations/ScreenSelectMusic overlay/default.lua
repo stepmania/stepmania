@@ -22,7 +22,6 @@ local function DifficultyMeter(pn)
 	end
 
 	local t = Def.DifficultyMeter {
-		Type="DifficultyMeter";
 	};
 
 	if pn == PLAYER_1 then
@@ -179,7 +178,6 @@ local t = Def.ActorFrame {
 	};
 
 	Def.PaneDisplay {
-		Type="PaneDisplay";
 		MetricsGroup="PaneDisplay";
 		PlayerNumber=PLAYER_2;
 		InitCommand=cmd(player,PLAYER_2;playcommand,"Set";x,SCREEN_CENTER_X-47;y,SCREEN_CENTER_Y+36);
