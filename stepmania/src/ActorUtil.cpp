@@ -222,10 +222,6 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 	return true;
 }
 
-/*
- * If pParent is non-NULL, it's the parent node when nesting XML, which is
- * used only by ActorUtil::LoadFromNode.
- */
 Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 {
 	RString sPath( sPath_ );
