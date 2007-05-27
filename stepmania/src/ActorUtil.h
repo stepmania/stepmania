@@ -40,7 +40,6 @@ namespace ActorUtil
 {
 	// Every screen should register its class at program initialization.
 	void Register( const RString& sClassName, CreateActorFn pfn );
-	Actor* Create( const RString& sClassName, const XNode* pNode, Actor *pParentActor );
 
 	apActorCommands ParseActorCommands( const RString &sCommands, const RString &sName = "" );
 	void SetXY( Actor& actor, const RString &sType );

@@ -32,21 +32,6 @@ void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 	(*g_pmapRegistrees)[sClassName] = pfn;
 }
 
-Actor* ActorUtil::Create( const RString& sClassName, const XNode* pNode, Actor *pParentActor )
-{
-	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
-	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Actor '%s' is not registered.",sClassName.c_str()) );
-
-	const CreateActorFn &pfn = iter->second;
-	Actor *pRet = pfn();
-
-	if( pParentActor )
-		pRet->SetParent( pParentActor );
-
-	pRet->LoadFromNode( pNode );
-	return pRet;
-}
-
 bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 {
 retry:
@@ -130,7 +115,8 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 	RString sClass;
 	pNode->GetAttrValue( "Class", sClass );
 
-	if( !IsRegistered(sClass) )
+	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClass );
+	if( iter == g_pmapRegistrees->end() )
 	{
 		// sClass is invalid
 		RString sError = ssprintf( "%s: invalid Class \"%s\"",
@@ -139,7 +125,14 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 		return new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
 	}
 
-	return ActorUtil::Create( sClass, pNode, pParentActor );
+	const CreateActorFn &pfn = iter->second;
+	Actor *pRet = pfn();
+
+	if( pParentActor )
+		pRet->SetParent( pParentActor );
+
+	pRet->LoadFromNode( pNode );
+	return pRet;
 }
 
 namespace
