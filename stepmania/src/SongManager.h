@@ -39,7 +39,8 @@ public:
 	void RegenerateNonFixedCourses();
 	void SetPreferences();
 
-	void LoadAllFromProfileDir( const RString &sProfileDir, ProfileSlot slot );
+	void LoadStepEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot );
+	void LoadCourseEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot );
 	int GetNumStepsLoadedFromProfile();
 	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid );
 

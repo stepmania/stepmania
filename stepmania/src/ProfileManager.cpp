@@ -33,6 +33,8 @@ static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, RString &sName
 	defaultValueOut = "";
 }
 
+Preference<bool> ProfileManager::m_bProfileStepEdits( "ProfileStepEdits", true );
+Preference<bool> ProfileManager::m_bProfileCourseEdits( "ProfileCourseEdits", true );
 Preference1D<RString> ProfileManager::m_sDefaultLocalProfileID( DefaultLocalProfileIDInit, NUM_PLAYERS );
 
 const RString NEW_MEM_CARD_NAME	=	"";
@@ -260,7 +262,10 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits
 			const RString &sSubdir = asDirsToTry[i];
 			RString sDir = MEM_CARD_MOUNT_POINT[pn] + sSubdir + "/";
 
-			SONGMAN->LoadAllFromProfileDir( sDir, (ProfileSlot) pn );
+			if( m_bProfileStepEdits )
+				SONGMAN->LoadStepEditsFromProfileDir( sDir, (ProfileSlot) pn );
+			if( m_bProfileCourseEdits )
+				SONGMAN->LoadCourseEditsFromProfileDir( sDir, (ProfileSlot) pn );
 		}
 	}
 
@@ -329,7 +334,7 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 
 bool ProfileManager::SaveLocalProfile( RString sProfileID )
 {
-	Profile *pProfile = GetLocalProfile( sProfileID );
+	const Profile *pProfile = GetLocalProfile( sProfileID );
 	ASSERT( pProfile != NULL );
 	RString sDir = LocalProfileIDToDir( sProfileID );
 	bool b = pProfile->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
@@ -534,7 +539,8 @@ void ProfileManager::LoadMachineProfile()
 	m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName;
 
 	SONGMAN->FreeAllLoadedFromProfile( ProfileSlot_Machine );
-	SONGMAN->LoadAllFromProfileDir( MACHINE_PROFILE_DIR, ProfileSlot_Machine );
+	SONGMAN->LoadStepEditsFromProfileDir( MACHINE_PROFILE_DIR, ProfileSlot_Machine );
+	SONGMAN->LoadCourseEditsFromProfileDir( MACHINE_PROFILE_DIR, ProfileSlot_Machine );
 }
 
 bool ProfileManager::ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const

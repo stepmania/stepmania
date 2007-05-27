@@ -58,7 +58,8 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 {
 	// Reload so that we're consistent with the disk in case the user has been dinking around with their edits.
 	SONGMAN->FreeAllLoadedFromProfile( ProfileSlot_Machine );
-	SONGMAN->LoadAllFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
+	SONGMAN->LoadStepEditsFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
+	SONGMAN->LoadCourseEditsFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
 	GAMESTATE->m_pCurSong.Set( NULL );
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
 

@@ -944,8 +944,10 @@ bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 	SaveStatsWebPageToDir( sDir );
 
 	// Empty directories if none exist.
-	FILEMAN->CreateDir( sDir + EDIT_STEPS_SUBDIR );
-	FILEMAN->CreateDir( sDir + EDIT_COURSES_SUBDIR );
+	if( ProfileManager::m_bProfileStepEdits )
+		FILEMAN->CreateDir( sDir + EDIT_STEPS_SUBDIR );
+	if( ProfileManager::m_bProfileCourseEdits )
+		FILEMAN->CreateDir( sDir + EDIT_COURSES_SUBDIR );
 	FILEMAN->CreateDir( sDir + SCREENSHOTS_SUBDIR );
 
 	FILEMAN->FlushDirCache( sDir );

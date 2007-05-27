@@ -1490,7 +1490,7 @@ void SongManager::RefreshCourseGroupInfo()
 	}
 }
 
-void SongManager::LoadAllFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
+void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
 {
 	{
 		//
@@ -1511,7 +1511,10 @@ void SongManager::LoadAllFromProfileDir( const RString &sProfileDir, ProfileSlot
 			SMLoader::LoadEditFromFile( fn, slot, true );
 		}
 	}
+}
 
+void SongManager::LoadCourseEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
+{
 	{
 		//
 		// Load all edit courses
