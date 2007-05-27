@@ -262,12 +262,12 @@ uint64_t GetCurrentThreadId()
 
 int SuspendThread( uint64_t id )
 {
-	return pthread_kill( id, SIGSTOP );
+	return pthread_kill( pthread_t(id), SIGSTOP );
 }
 
 int ResumeThread( uint64_t id )
 {
-	return pthread_kill( id, SIGCONT );
+	return pthread_kill( pthread_t(id), SIGCONT );
 }
 #endif
 
