@@ -5,11 +5,13 @@
 #define __C99FEATURES__
 #endif
 
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
+
 #if !defined(MISSING_STDINT_H) /* need to define int64_t if so */
 #include <stdint.h>
 #endif
-
-#include <alloca.h>
 
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>

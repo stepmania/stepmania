@@ -198,7 +198,7 @@ AC_CHECK_HEADER(sys/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support available]
 AC_CHECK_DECL(OSS_GETVERSION, AC_DEFINE([HAVE_OSS_GETVERSION],1,[OSS_GETVERSION is defined]), , [#include <sys/soundcard.h>])
 AC_ARG_ENABLE(force-oss, AS_HELP_STRING([--enable-force-oss],[Force OSS]), force_oss=$enableval, force_oss=no)
 AC_CHECK_HEADER(stdint.h, , [AC_DEFINE(MISSING_STDINT_H, 1, [stdint.h is missing])])
-AC_CHECK_HEADERS([inttypes.h endian.h machine/endian.h])
+AC_CHECK_HEADERS([inttypes.h endian.h machine/endian.h alloca.h])
 
 AC_MSG_CHECKING(if cstdlib breaks llabs)
 AC_LANG_PUSH(C++)
