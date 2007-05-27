@@ -261,26 +261,16 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 		break;
 	}
 
-	GameCommand gc;
-	gc.m_pSong = pWID->m_pSong;
-	gc.m_sSongGroup = pWID->m_sText;
-	gc.m_bHasFocus = true;
-	gc.m_iIndex = iIndex;
-	gc.m_bHasFocus = bHasFocus;
-
-	Lua *L = LUA->Get();
-	gc.PushSelf( L );
-	lua_setglobal( L, "ThisGameCommand" );
-	LUA->Release( L );
-
 	// Call "Set" so that elements can react to the change in song.
 	{
 		Message msg( "Set" );
 		msg.SetParam( "Song", data->m_pSong );
+		msg.SetParam( "Course", data->m_pCourse );
+		msg.SetParam( "Index", iIndex );
+		msg.SetParam( "HasFocus", bHasFocus );
+		msg.SetParam( "SongGroup", pWID->m_sText );
 		this->HandleMessage( msg );
 	}
-
-	LUA->UnsetGlobal( "ThisGameCommand" );
 }
 
 void MusicWheelItem::RefreshGrades()
