@@ -354,7 +354,6 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 			sEffect = SBE_StretchNormal;
 			break;
 		case FT_Directory:
-		case FT_Xml:
 		case FT_Lua:
 		case FT_Model:
 			sEffect = SBE_UpperLeft;

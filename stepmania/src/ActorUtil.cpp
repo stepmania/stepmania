@@ -105,13 +105,6 @@ retry:
 
 	if( ft == RageFileManager::TYPE_DIR )
 	{
-		RString sXMLPath = sPath + "/default.xml";
-		if( DoesFileExist(sXMLPath) )
-		{
-			sPath = sXMLPath;
-			return true;
-		}
-
 		RString sLuaPath = sPath + "/default.lua";
 		if( DoesFileExist(sLuaPath) )
 		{
@@ -222,26 +215,6 @@ static void MergeActorXML( XNode *pChild, const XNode *pParent )
 
 namespace
 {
-	void AnnotateXMLTree( XNode *pNode, const RString &sFile )
-	{
-		RString sDir = Dirname( sFile );
-
-		vector<XNode *> queue;
-		queue.push_back( pNode );
-		while( !queue.empty() )
-		{
-			pNode = queue.back();
-			queue.pop_back();
-			queue.insert( queue.end(), pNode->m_childs.begin(), pNode->m_childs.end() );
-
-			/* Source file, for error messages: */
-			pNode->AppendAttr( "_Source", sFile );
-
-			/* Directory of caller, for relative paths: */
-			pNode->AppendAttr( "_Dir", sDir );
-		}
-	}
-
 	XNode *LoadXNodeFromLuaShowErrors( const RString &sFile )
 	{
 		RString sScript;
@@ -320,20 +293,6 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor, const X
 
 	switch( ft )
 	{
-	case FT_Xml:
-		{
-			XNode xml;
-			if( !XmlFileUtil::LoadFromFileShowErrors(xml, sPath) )
-			{
-				// XNode will warn about the error
-				return new Actor;
-			}
-
-			XmlFileUtil::CompileXNodeTree( &xml, sPath );
-			AnnotateXMLTree( &xml, sPath );
-			MergeActorXML( &xml, pParent );
-			return ActorUtil::LoadFromNode( &xml, pParentActor );
-		}
 	case FT_Lua:
 		{
 			auto_ptr<XNode> pNode( LoadXNodeFromLuaShowErrors(sPath) );
@@ -495,7 +454,6 @@ static const char *FileTypeNames[] = {
 	"Sound", 
 	"Movie", 
 	"Directory", 
-	"Xml", 
 	"Lua", 
 	"Model", 
 };
@@ -507,8 +465,7 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 	RString sExt = GetExtension( sPath );
 	sExt.MakeLower();
 	
-	if( sExt=="xml" )		return FT_Xml;
-	else if( sExt=="lua" )		return FT_Lua;
+	if( sExt=="lua" )		return FT_Lua;
 	else if( 
 		sExt=="png" ||
 		sExt=="jpg" || 
