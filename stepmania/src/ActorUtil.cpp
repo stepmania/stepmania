@@ -143,21 +143,16 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 			sClass = "BitmapText";
 	}
 
-	Actor *pReturn = NULL;
-
-	if( IsRegistered(sClass) )
+	if( !IsRegistered(sClass) )
 	{
-		pReturn = ActorUtil::Create( sClass, pNode, pParentActor );
-	}
-	else // sClass is invalid
-	{
+		// sClass is invalid
 		RString sError = ssprintf( "%s: invalid Class \"%s\"",
 			ActorUtil::GetWhere(pNode).c_str(), sClass.c_str() );
 		Dialog::OK( sError );
-		pReturn = new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
+		return new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
 	}
 
-	return pReturn;
+	return ActorUtil::Create( sClass, pNode, pParentActor );
 }
 
 namespace
