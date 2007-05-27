@@ -127,13 +127,8 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 			return NULL;
 	}
 
-	// Element name is the type in XML.
-	// Type= is the name in INI.
-	// TODO: Remove the backward compat fallback
-	RString sClass = pNode->GetName();
-	bool bHasClass = pNode->GetAttrValue( "Class", sClass );
-	if( !bHasClass )
-		bHasClass = pNode->GetAttrValue( "Type", sClass );	// for backward compatibility
+	RString sClass;
+	pNode->GetAttrValue( "Class", sClass );
 
 	if( !IsRegistered(sClass) )
 	{
