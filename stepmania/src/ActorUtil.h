@@ -104,7 +104,7 @@ namespace ActorUtil
 
 	// Return a Sprite, BitmapText, or Model depending on the file type
 	Actor* LoadFromNode( const XNode* pNode, Actor *pParentActor = NULL );
-	Actor* MakeActor( const RString &sPath, Actor *pParentActor = NULL, const XNode *pParent = NULL );
+	Actor* MakeActor( const RString &sPath, Actor *pParentActor = NULL );
 	RString GetSourcePath( const XNode *pNode );
 	RString GetWhere( const XNode *pNode );
 	bool GetAttrPath( const XNode *pNode, const RString &sName, RString &sOut );

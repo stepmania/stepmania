@@ -160,43 +160,6 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 	return pReturn;
 }
 
-/*
- * Merge commands from a parent into a child.  For example,
- *
- * parent.xml: <Layer File="child" OnCommand="x,10" />
- * child.xml:  <Layer1 File="image" OffCommand="y,10" />
- *
- * results in:
- *
- * <Layer1 File="image" OnCommand="x,10" OffCommand="y,10" />
- *
- * Warn about duplicate commands.
- */
-static void MergeActorXML( XNode *pChild, const XNode *pParent )
-{
-	FOREACH_CONST_Child( pParent, p )
-		pChild->AppendChild( new XNode(*p) );
-
-	FOREACH_CONST_Attr( pParent, p )
-	{
-		const RString &sName = p->first;
-		if( !EndsWith(sName, "Command") )
-			continue;
-
-		if( pChild->GetAttr(p->first) != NULL )
-		{
-			RString sWarning = 
-				ssprintf( "%s: overriding \"%s\" in %s node \"%s\"",
-				ActorUtil::GetWhere(pParent).c_str(),
-				sName.c_str(),
-				ActorUtil::GetWhere(pChild).c_str(),
-				pParent->GetName().c_str() );
-			Dialog::OK( sWarning, "XML_ATTRIB_OVERRIDE" );
-		}
-		pChild->AppendAttrFrom( p->first, p->second->Copy() );
-	}
-}
-
 namespace
 {
 	XNode *LoadXNodeFromLuaShowErrors( const RString &sFile )
@@ -263,12 +226,8 @@ bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
  * If pParent is non-NULL, it's the parent node when nesting XML, which is
  * used only by ActorUtil::LoadFromNode.
  */
-Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor, const XNode *pParent )
+Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 {
-	static const XNode dummy;
-	if( pParent == NULL )
-		pParent = &dummy;
-
 	RString sPath( sPath_ );
 
 	FileType ft = GetFileType( sPath );
@@ -286,13 +245,12 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor, const X
 				return new Actor;
 			}
 
-			MergeActorXML( pNode.get(), pParent );
 			Actor *pRet = ActorUtil::LoadFromNode( pNode.get(), pParentActor );
 			return pRet;
 		}
 	case FT_Directory:
 		{
-			XNode xml( *pParent );
+			XNode xml;
 			xml.AppendAttr( "AniDir", sPath );
 
 			return ActorUtil::Create( "BGAnimation", &xml, pParentActor );
@@ -300,14 +258,14 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor, const X
 	case FT_Bitmap:
 	case FT_Movie:
 		{
-			XNode xml( *pParent );
+			XNode xml;
 			xml.AppendAttr( "Texture", sPath );
 
 			return ActorUtil::Create( "Sprite", &xml, pParentActor );
 		}
 	case FT_Model:
 		{
-			XNode xml( *pParent );
+			XNode xml;
 			xml.AppendAttr( "Meshes", sPath );
 			xml.AppendAttr( "Materials", sPath );
 			xml.AppendAttr( "Bones", sPath );
@@ -318,7 +276,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor, const X
 		{
 			LOG->Warn( "File \"%s\" has unknown type, \"%s\".", sPath.c_str(), FileTypeToString(ft).c_str() );
 
-			XNode xml( *pParent );
+			XNode xml;
 			return ActorUtil::Create( "Actor", &xml, pParentActor );
 		}
 	}
