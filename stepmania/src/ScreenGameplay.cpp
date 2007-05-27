@@ -1834,8 +1834,10 @@ float ScreenGameplay::GetHasteRate()
 	float fSpeed = 1.0f;
 	if( GAMESTATE->m_fHasteRate < 0 )
 		fSpeed = SCALE( GAMESTATE->m_fHasteRate, -1.0f, 0.0f, 0.5f, 1.0f );
+	else if( GAMESTATE->m_fHasteRate < 0.3f )
+		fSpeed = SCALE( GAMESTATE->m_fHasteRate, 0.0f, 0.3f, 1.0f, 1.2f );
 	else
-		fSpeed = SCALE( GAMESTATE->m_fHasteRate, 0.0f, 1.0f, 1.0f, 1.5f );
+		fSpeed = SCALE( GAMESTATE->m_fHasteRate, 0.3f, 1.0f, 1.2f, 1.5f );
 	fSpeed *= GAMESTATE->m_SongOptions.GetCurrent().m_fHaste;
 
 	if( GAMESTATE->m_fAccumulatedHasteSeconds <= 1 )
