@@ -2187,6 +2187,7 @@ public:
 	}
 	static int GetGameSeed( T* p, lua_State *L )			{ LuaHelpers::Push( L, p->m_iGameSeed ); return 1; }
 	static int GetStageSeed( T* p, lua_State *L )			{ LuaHelpers::Push( L, p->m_iStageSeed ); return 1; }
+	static int SaveLocalData( T* p, lua_State *L )			{ p->SaveLocalData(); return 0; }
 
 	LunaGameState() 
 	{
@@ -2265,6 +2266,7 @@ public:
 		ADD_METHOD( GetNumStagesLeft );
 		ADD_METHOD( GetGameSeed );
 		ADD_METHOD( GetStageSeed );
+		ADD_METHOD( SaveLocalData );
 	}
 };
 
