@@ -684,9 +684,6 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		SCREENMAN->SetNewScreen( m_sScreen );
 	if( m_pSong )
 	{
-		LOG->Trace( "set %p, %s",
-			m_pSong, m_pSong->GetTranslitFullTitle().c_str() );
-
 		GAMESTATE->m_pCurSong.Set( m_pSong );
 		GAMESTATE->m_pPreferredSong = m_pSong;
 	}
