@@ -666,7 +666,7 @@ void OptionRow::SetOptionIcon( PlayerNumber pn, const RString &sText, GameComman
 {
 	// update bullet
 	Message msg( "Refresh" );
-	msg.SetParam( "GameCommand", gc );
+	msg.SetParam( "GameCommand", &gc );
 	m_sprBullet->HandleMessage( msg );
 	if( m_OptionIcons[pn] != NULL )
 		m_OptionIcons[pn]->Set( pn, sText, false );
