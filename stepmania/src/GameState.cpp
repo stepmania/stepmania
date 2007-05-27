@@ -2027,23 +2027,6 @@ public:
 	}
 	static int SetTemporaryEventMode( T* p, lua_State *L )	{ p->m_bTemporaryEventMode = BArg(1); return 0; }
 	static int Env( T* p, lua_State *L )	{ p->m_Environment->PushSelf(L); return 1; }
-	static int SetEnv( T* p, lua_State *L )
-	{
-		int iTop = lua_gettop(L);
-		p->m_Environment->PushSelf(L);
-		lua_pushvalue( L, iTop-1 );
-		lua_pushvalue( L, iTop );
-		lua_settable( L, -3 );
-		return 0;
-	}
-	static int GetEnv( T* p, lua_State *L )
-	{
-		int iTop = lua_gettop(L);
-		p->m_Environment->PushSelf(L);
-		lua_pushvalue( L, iTop );
-		lua_gettable( L, -2 );
-		return 1;
-	}
 	static int GetEditSourceSteps( T* p, lua_State *L )
 	{
 		Steps *pSteps = p->m_pEditSourceSteps;  
@@ -2227,8 +2210,6 @@ public:
 		ADD_METHOD( GetPreferredSong );
 		ADD_METHOD( SetTemporaryEventMode );
 		ADD_METHOD( Env );
-		ADD_METHOD( SetEnv );
-		ADD_METHOD( GetEnv );
 		ADD_METHOD( GetEditSourceSteps );
 		ADD_METHOD( SetPreferredDifficulty );
 		ADD_METHOD( GetPreferredDifficulty );
