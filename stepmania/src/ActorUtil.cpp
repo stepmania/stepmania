@@ -228,33 +228,37 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 			if( sPath.Right(1) != "/" )
 				sPath += '/';
 			XNode xml;
+			xml.AppendAttr( "Class", "BGAnimation" );
 			xml.AppendAttr( "AniDir", sPath );
 
-			return ActorUtil::Create( "BGAnimation", &xml, pParentActor );
+			return ActorUtil::LoadFromNode( &xml, pParentActor );
 		}
 	case FT_Bitmap:
 	case FT_Movie:
 		{
 			XNode xml;
+			xml.AppendAttr( "Class", "Sprite" );
 			xml.AppendAttr( "Texture", sPath );
 
-			return ActorUtil::Create( "Sprite", &xml, pParentActor );
+			return ActorUtil::LoadFromNode( &xml, pParentActor );
 		}
 	case FT_Model:
 		{
 			XNode xml;
+			xml.AppendAttr( "Class", "Model" );
 			xml.AppendAttr( "Meshes", sPath );
 			xml.AppendAttr( "Materials", sPath );
 			xml.AppendAttr( "Bones", sPath );
 
-			return ActorUtil::Create( "Model", &xml, pParentActor );
+			return ActorUtil::LoadFromNode( &xml, pParentActor );
 		}
 	default:
 		{
 			LOG->Warn( "File \"%s\" has unknown type, \"%s\".", sPath.c_str(), FileTypeToString(ft).c_str() );
 
 			XNode xml;
-			return ActorUtil::Create( "Actor", &xml, pParentActor );
+			xml.AppendAttr( "Class", "Actor" );
+			return ActorUtil::LoadFromNode( &xml, pParentActor );
 		}
 	}
 }
