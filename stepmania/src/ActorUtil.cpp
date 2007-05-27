@@ -149,29 +149,13 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 	{
 		pReturn = ActorUtil::Create( sClass, pNode, pParentActor );
 	}
-	else // sClass is empty or garbage (e.g. "1" or "0 // 0==Sprite")
+	else // sClass is invalid
 	{
-		// automatically figure out the type
-		RString sFile;
-		ActorUtil::GetAttrPath( pNode, "File", sFile );
-
-		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
-		 * loading the layer we're in. */
-		if( sFile == "" )
-		{
-			RString sError = ssprintf( "%s: missing the File attribute or has an invalid Class \"%s\"",
-				ActorUtil::GetWhere(pNode).c_str(), sClass.c_str() );
-			Dialog::OK( sError );
-			pReturn = new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
-			goto all_done;
-		}
-
-		pReturn = ActorUtil::MakeActor( sFile, pParentActor, pNode );
-		if( pReturn == NULL )
-			goto all_done;
+		RString sError = ssprintf( "%s: invalid Class \"%s\"",
+			ActorUtil::GetWhere(pNode).c_str(), sClass.c_str() );
+		Dialog::OK( sError );
+		pReturn = new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
 	}
-
-all_done:
 
 	return pReturn;
 }
@@ -191,7 +175,12 @@ all_done:
 static void MergeActorXML( XNode *pChild, const XNode *pParent )
 {
 	FOREACH_CONST_Child( pParent, p )
+	{
+		LOG->Trace( "append 1: \"%s\"",
+			XmlFileUtil::GetXML(p).c_str() );
+
 		pChild->AppendChild( new XNode(*p) );
+	}
 
 	FOREACH_CONST_Attr( pParent, p )
 	{
@@ -199,7 +188,7 @@ static void MergeActorXML( XNode *pChild, const XNode *pParent )
 		if( !EndsWith(sName, "Command") )
 			continue;
 
-		if( pChild->GetAttr(p->first) != NULL )
+//		if( pChild->GetAttr(p->first) != NULL )
 		{
 			RString sWarning = 
 				ssprintf( "%s: overriding \"%s\" in %s node \"%s\"",
