@@ -175,12 +175,7 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 static void MergeActorXML( XNode *pChild, const XNode *pParent )
 {
 	FOREACH_CONST_Child( pParent, p )
-	{
-		LOG->Trace( "append 1: \"%s\"",
-			XmlFileUtil::GetXML(p).c_str() );
-
 		pChild->AppendChild( new XNode(*p) );
-	}
 
 	FOREACH_CONST_Attr( pParent, p )
 	{
@@ -188,7 +183,7 @@ static void MergeActorXML( XNode *pChild, const XNode *pParent )
 		if( !EndsWith(sName, "Command") )
 			continue;
 
-//		if( pChild->GetAttr(p->first) != NULL )
+		if( pChild->GetAttr(p->first) != NULL )
 		{
 			RString sWarning = 
 				ssprintf( "%s: overriding \"%s\" in %s node \"%s\"",
