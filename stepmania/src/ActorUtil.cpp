@@ -231,9 +231,6 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 	RString sPath( sPath_ );
 
 	FileType ft = GetFileType( sPath );
-	if( ft == FT_Directory && sPath.Right(1) != "/" )
-		sPath += '/';
-
 	switch( ft )
 	{
 	case FT_Lua:
@@ -250,6 +247,8 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 		}
 	case FT_Directory:
 		{
+			if( sPath.Right(1) != "/" )
+				sPath += '/';
 			XNode xml;
 			xml.AppendAttr( "AniDir", sPath );
 
