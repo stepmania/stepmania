@@ -97,7 +97,7 @@ void DifficultyMeter::LoadFromNode( const XNode* pNode )
 	ActorFrame::LoadFromNode( pNode );
 
 	RString s;
-	pNode->GetAttrValue( "Type", s );
+	pNode->GetAttrValue( "Class", s );
 	ASSERT( s.size() );
 	Load( s );
 }
