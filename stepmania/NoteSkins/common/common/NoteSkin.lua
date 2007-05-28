@@ -57,4 +57,7 @@ end
 -- This is the only required function.
 ret.Load = func;
 
+-- Use this to override the game types' default Load() functions.
+ret.CommonLoad = func;
+
 return ret;
