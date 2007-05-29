@@ -151,6 +151,22 @@ void ScreenAttract::GoToStartScreen( RString sScreenName )
 	SCREENMAN->SetNewScreen( START_SCREEN(sScreenName) );
 }
 
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaScreenAttract: public Luna<ScreenAttract>
+{
+public:
+
+	LunaScreenAttract()
+	{
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScreenAttract, ScreenWithMenuElements )
+// lua end
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.

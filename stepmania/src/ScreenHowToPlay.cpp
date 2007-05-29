@@ -325,6 +325,30 @@ void ScreenHowToPlay::DrawPrimitives()
 	}
 }
 
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaScreenHowToPlay: public Luna<ScreenHowToPlay>
+{
+public:
+	static int GetLifeMeter( T* p, lua_State *L )
+	{
+		//PlayerNumber pn = Enum::Check<PlayerNumber>( L, 1 );
+
+		p->m_pLifeMeterBar->PushSelf( L );
+		return 1;
+	}
+
+	LunaScreenHowToPlay()
+	{
+  		ADD_METHOD( GetLifeMeter );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScreenHowToPlay, ScreenAttract )
+// lua end
+
 /*
  * (c) 2001-2004 Chris Danford, Thad Ward
  * All rights reserved.

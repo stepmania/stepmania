@@ -19,9 +19,15 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void DrawPrimitives();
 
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+
+
+	LifeMeterBar	*m_pLifeMeterBar;
 protected:
 	virtual void Step();
-	LifeMeterBar	*m_pLifeMeterBar;
 	PlayerPlus	m_Player;
 	Model		*m_pmCharacter;
 	Model		*m_pmDancePad;

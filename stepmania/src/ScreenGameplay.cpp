@@ -2675,15 +2675,15 @@ class LunaScreenGameplay: public Luna<ScreenGameplay>
 public:
 	static int GetNextCourseSong( T* p, lua_State *L ) { p->GetNextCourseSong()->PushSelf(L); return 1; }
 	static int Center1Player( T* p, lua_State *L ) { lua_pushboolean( L, p->Center1Player() ); return 1; }
-	static int GetPlayerInfo( T* p, lua_State *L )
+	static int GetLifeMeter( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>( L, 1 );
 
-		PlayerInfo *pInfo = p->GetPlayerInfo(pn);
-		if( pInfo == NULL )
+		LifeMeter *pLM = p->GetPlayerInfo(pn)->m_pLifeMeter;
+		if( pLM == NULL )
 			return 0;
 
-		pInfo->PushSelf( L );
+		pLM->PushSelf( L );
 		return 1;
 	}
 
@@ -2691,7 +2691,7 @@ public:
 	{
   		ADD_METHOD( GetNextCourseSong );
   		ADD_METHOD( Center1Player );
-  		ADD_METHOD( GetPlayerInfo );
+  		ADD_METHOD( GetLifeMeter );
 	}
 };
 

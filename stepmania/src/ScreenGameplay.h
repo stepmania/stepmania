@@ -124,6 +124,7 @@ public:
 	//
 	virtual void PushSelf( lua_State *L );
 	Song *GetNextCourseSong() const;
+	LifeMeter *GetLifeMeter( PlayerNumber pn );
 	PlayerInfo *GetPlayerInfo( PlayerNumber pn );
 
 protected:

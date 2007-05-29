@@ -22,6 +22,11 @@ public:
 
 	virtual ScreenType GetScreenType() const { return attract; }
 
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+
 protected:
 	virtual void StartPlayingMusic();
 };
