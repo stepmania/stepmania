@@ -97,8 +97,8 @@ void DifficultyMeter::LoadFromNode( const XNode* pNode )
 	ActorFrame::LoadFromNode( pNode );
 
 	RString s;
-	pNode->GetAttrValue( "Class", s );
-	ASSERT( s.size() );
+	if( !pNode->GetAttrValue("Type", s) )
+		RageException::Throw( "%s: DifficultyMeter: missing the \"Type\" attribute", ActorUtil::GetWhere(pNode).c_str() );
 	Load( s );
 }
 
