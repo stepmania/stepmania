@@ -22,6 +22,7 @@ local function DifficultyMeter(pn)
 	end
 
 	local t = Def.DifficultyMeter {
+		Type="DifficultyMeter"; -- metrics section
 	};
 
 	if pn == PLAYER_1 then
