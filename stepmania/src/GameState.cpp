@@ -885,16 +885,22 @@ int GameState::GetSmallestNumStagesLeftForAnyHumanPlayer() const
 
 bool GameState::IsAnExtraStage() const
 {
+	if( m_MasterPlayerNumber == PlayerNumber_Invalid )
+		return false;
 	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[m_MasterPlayerNumber] > 0;
 }
 
 bool GameState::IsExtraStage() const
 {
+	if( m_MasterPlayerNumber == PlayerNumber_Invalid )
+		return false;
 	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[m_MasterPlayerNumber] == 1;
 }
 
 bool GameState::IsExtraStage2() const
 {
+	if( m_MasterPlayerNumber == PlayerNumber_Invalid )
+		return false;
 	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[m_MasterPlayerNumber] == 2;
 }
 
