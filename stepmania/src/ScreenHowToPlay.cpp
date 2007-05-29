@@ -20,10 +20,10 @@
 
 static const ThemeMetric<int>		NUM_W2S		("ScreenHowToPlay","NumW2s");
 static const ThemeMetric<int>		NUM_MISSES	("ScreenHowToPlay","NumMisses");
-static const ThemeMetric<bool>		USELIFEBAR	("ScreenHowToPlay","UseLifeMeterBar");
-static const ThemeMetric<bool>		USECHARACTER	("ScreenHowToPlay","UseCharacter");
-static const ThemeMetric<bool>		USEPAD		("ScreenHowToPlay","UsePad");
-static const ThemeMetric<bool>		USEPLAYER	("ScreenHowToPlay","UseNotefield");
+static const ThemeMetric<bool>		USE_LIFEBAR	("ScreenHowToPlay","UseLifeMeterBar");
+static const ThemeMetric<bool>		USE_CHARACTER	("ScreenHowToPlay","UseCharacter");
+static const ThemeMetric<bool>		USE_PAD		("ScreenHowToPlay","UsePad");
+static const ThemeMetric<bool>		USE_PLAYER	("ScreenHowToPlay","UsePlayer");
 
 enum Animation
 {
@@ -78,7 +78,7 @@ void ScreenHowToPlay::Init()
 {
 	ScreenAttract::Init();
 
-	if( (bool)USEPAD && DoesFileExist( GetAnimPath(ANIM_DANCE_PAD) ) )
+	if( (bool)USE_PAD && DoesFileExist( GetAnimPath(ANIM_DANCE_PAD) ) )
 	{
 		m_pmDancePad = new Model;
 		m_pmDancePad->SetName( "Pad" );
@@ -90,7 +90,7 @@ void ScreenHowToPlay::Init()
 	// Display random character
 	vector<Character*> vpCharacters;
 	CHARMAN->GetCharacters( vpCharacters );
-	if( (bool)USECHARACTER && vpCharacters.size() && HaveAllCharAnimations() )
+	if( (bool)USE_CHARACTER && vpCharacters.size() && HaveAllCharAnimations() )
 	{
 		Character* rndchar = CHARMAN->GetRandomCharacter();
 
@@ -118,7 +118,7 @@ void ScreenHowToPlay::Init()
 	}
 	
 	// silly to use the lifebar without a player, since the player updates the lifebar
-	if( USELIFEBAR )
+	if( USE_LIFEBAR )
 	{
 		m_pLifeMeterBar = new LifeMeterBar;
 		m_pLifeMeterBar->SetName("LifeMeterBar");
@@ -129,7 +129,7 @@ void ScreenHowToPlay::Init()
 
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
 
-	if( USEPLAYER )
+	if( USE_PLAYER )
 	{
 		SMLoader::LoadFromSMFile( THEME->GetPathO(m_sName, "steps"), m_Song, false );
 		m_Song.AddAutoGenNotes();
