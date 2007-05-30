@@ -1722,7 +1722,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		// update give up
 		//
 		bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
-		bool bAllHumanHaveComboOf30OrMoreMisses = STATSMAN->m_CurStageStats.AllHumanHaveComboOf30OrMoreMisses();
+		bool bAllHumanHaveComboOf30OrMoreMisses = STATSMAN->m_CurStageStats.GetMinimumMissCombo() >= 30;
 		if( bGiveUpTimerFired || (FAIL_AFTER_30_MISSES && bAllHumanHaveComboOf30OrMoreMisses) )
 		{
 			STATSMAN->m_CurStageStats.m_bGaveUp = true;

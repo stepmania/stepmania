@@ -310,12 +310,12 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 	return false;
 }
 
-bool StageStats::AllHumanHaveComboOf30OrMoreMisses() const
+int StageStats::GetMinimumMissCombo() const
 {
+	int iMin = INT_MAX;
 	FOREACH_HumanPlayer( p )
-		if( m_player[p].m_iCurMissCombo < 30 )
-			return false;
-	return true;
+		iMin = min( iMin, m_player[p].m_iCurMissCombo );
+	return iMin;
 }
 
 // lua start
