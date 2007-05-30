@@ -6,6 +6,7 @@
 #include "RageLog.h"
 #include "InputEventPlus.h"
 #include "MenuTimer.h"
+#include "MemoryCardManager.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenContinue );
@@ -19,7 +20,10 @@ void ScreenContinue::BeginScreen()
 	{
 		bool bPlayerDone = GAMESTATE->m_iPlayerStageTokens[p] <= 0;
 		if( bPlayerDone )
+		{
 			GAMESTATE->UnjoinPlayer( p );
+			MEMCARDMAN->UnlockCard( p );
+		}
 	}
 
 	ScreenWithMenuElements::BeginScreen();

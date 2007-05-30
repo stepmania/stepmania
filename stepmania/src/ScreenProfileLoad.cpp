@@ -16,13 +16,6 @@ void ScreenProfileLoad::Init()
 void ScreenProfileLoad::BeginScreen()
 {
 	m_bHaveProfileToLoad = GAMESTATE->HaveProfileToLoad();
-	if( !m_bHaveProfileToLoad )
-	{
-		/* We have nothing to load, so just lock the cards. */
-		FOREACH_PlayerNumber( pn )
-			MEMCARDMAN->LockCard( pn );
-	}
-
 	ScreenWithMenuElements::BeginScreen();
 }
 

@@ -465,9 +465,6 @@ void GameState::LoadProfiles( bool bLoadEdits )
 
 	MEMCARDMAN->WaitForCheckingToComplete();
 
-	FOREACH_PlayerNumber( pn )
-		MEMCARDMAN->LockCard( pn );
-
 	FOREACH_HumanPlayer( pn )
 	{
 		// If a profile is already loaded, this was already called.
@@ -475,8 +472,14 @@ void GameState::LoadProfiles( bool bLoadEdits )
 			continue;
 
 		MEMCARDMAN->MountCard( pn );
-		PROFILEMAN->LoadFirstAvailableProfile( pn, bLoadEdits );	// load full profile
+		bool bSuccess = PROFILEMAN->LoadFirstAvailableProfile( pn, bLoadEdits );	// load full profile
 		MEMCARDMAN->UnmountCard( pn );
+
+		if( !bSuccess )
+			continue;
+
+		/* Lock the card on successful load, so we won't allow it to be changed. */
+		MEMCARDMAN->LockCard( pn );
 
 		LoadCurrentSettingsFromProfile( pn );
 
