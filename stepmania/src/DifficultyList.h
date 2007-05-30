@@ -2,9 +2,7 @@
 #define DIFFICULTY_LIST_H
 
 #include "ActorFrame.h"
-#include "ActorUtil.h"
 #include "PlayerNumber.h"
-#include "BitmapText.h"
 #include "DifficultyMeter.h"
 #include "ThemeMetric.h"
 
