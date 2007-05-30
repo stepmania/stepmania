@@ -346,7 +346,7 @@ void ScreenGameplay::Init()
 	START_GIVES_UP.Load(			m_sName, "StartGivesUp" );
 	BACK_GIVES_UP.Load(			m_sName, "BackGivesUp" );
 	GIVING_UP_GOES_TO_PREV_SCREEN.Load(	m_sName, "GivingUpGoesToPrevScreen" );
-	FAIL_AFTER_30_MISSES.Load(		m_sName, "FailAfter30Misses" );
+	FAIL_ON_MISS_COMBO.Load(		m_sName, "FailOnMissCombo" );
 	ALLOW_CENTER_1_PLAYER.Load(		m_sName, "AllowCenter1Player" );
 	
 	if( UseSongBackgroundAndForeground() )
@@ -1722,13 +1722,13 @@ void ScreenGameplay::Update( float fDeltaTime )
 		// update give up
 		//
 		bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
-		bool bAllHumanHaveComboOf30OrMoreMisses = STATSMAN->m_CurStageStats.GetMinimumMissCombo() >= 30;
-		if( bGiveUpTimerFired || (FAIL_AFTER_30_MISSES && bAllHumanHaveComboOf30OrMoreMisses) )
+		bool bAllHumanHaveBigMissCombo = FAIL_ON_MISS_COMBO.GetValue() != -1 && STATSMAN->m_CurStageStats.GetMinimumMissCombo() >= FAIL_ON_MISS_COMBO;
+		if( bGiveUpTimerFired || bAllHumanHaveBigMissCombo )
 		{
 			STATSMAN->m_CurStageStats.m_bGaveUp = true;
 			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 			{
-				pi->GetPlayerStageStats()->m_bFailed |= bAllHumanHaveComboOf30OrMoreMisses;
+				pi->GetPlayerStageStats()->m_bFailed |= bAllHumanHaveBigMissCombo;
 				pi->GetPlayerStageStats()->m_bDisqualified = true;
 			}
 
