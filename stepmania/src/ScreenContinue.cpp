@@ -72,6 +72,7 @@ void ScreenContinue::Input( const InputEventPlus &input )
 			m_MenuTimer->SetSeconds( fSeconds );
 			Message msg("HurryTimer");
 			msg.SetParam( "PlayerNumber", input.pn );
+			this->HandleMessage( msg );
 			return;	// handled
 		}
 	}
