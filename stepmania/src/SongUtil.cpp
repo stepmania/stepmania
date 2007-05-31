@@ -647,9 +647,6 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &vpSongsInOut, Difficu
 		RString &s = g_mapSongSortVal[vpSongsInOut[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 
-		/* Hack: always put tutorial songs first. */
-		s += ssprintf( "%c", vpSongsInOut[i]->IsTutorial()? '0':'1' );
-
 		/* 
 		 * pSteps may not be exactly the difficulty we want; for example, we may
 		 * be sorting by Hard difficulty and a song may have no Hard steps.
