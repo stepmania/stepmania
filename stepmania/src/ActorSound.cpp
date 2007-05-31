@@ -23,11 +23,14 @@ void ActorSound::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue("SupportPan", params.m_bSupportPan);
 	pNode->GetAttrValue("SupportRateChanging", params.m_bSupportRateChanging);
 	
+	bool bPrecache = true;
+	pNode->GetAttrValue( "Precache", bPrecache );
+
 	Actor::LoadFromNode( pNode );
 
 	RString sFile;
 	if( ActorUtil::GetAttrPath(pNode, "File", sFile) )
-		m_Sound.Load( sFile, true, &params );
+		m_Sound.Load( sFile, bPrecache, &params );
 }
 
 // lua start
