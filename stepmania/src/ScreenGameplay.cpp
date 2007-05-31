@@ -732,9 +732,20 @@ void ScreenGameplay::Init()
 	// fill in m_apSongsQueue, m_vpStepsQueue, m_asModifiersQueue
 	//
 	InitSongQueues();
+
+	// Fill StageStats
+	STATSMAN->m_CurStageStats.m_vpPossibleSongs = m_apSongsQueue;
+	FOREACH( PlayerInfo, m_vPlayerInfo, pi )
+	{
+		if( pi->GetPlayerStageStats() )
+			pi->GetPlayerStageStats()->m_vpPossibleSteps = pi->m_vpStepsQueue;
+	}
+
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		ASSERT( !pi->m_vpStepsQueue.empty() );
+		if( pi->GetPlayerStageStats() )
+			pi->GetPlayerStageStats()->m_bJoined = true;
 		if( pi->m_pPrimaryScoreKeeper )
 			pi->m_pPrimaryScoreKeeper->Load( m_apSongsQueue, pi->m_vpStepsQueue, pi->m_asModifiersQueue );
 		if( pi->m_pSecondaryScoreKeeper )
@@ -820,20 +831,6 @@ void ScreenGameplay::InitSongQueues()
 			AttackArray aa;
 			pi->m_asModifiersQueue.push_back( aa );
 		}
-	}
-
-	// Fill StageStats
-	STATSMAN->m_CurStageStats.m_vpPossibleSongs = m_apSongsQueue;
-	FOREACH( PlayerInfo, m_vPlayerInfo, pi )
-	{
-		if( pi->GetPlayerStageStats() )
-			pi->GetPlayerStageStats()->m_vpPossibleSteps = pi->m_vpStepsQueue;
-	}
-
-	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
-	{
-		if( pi->GetPlayerStageStats() )
-			pi->GetPlayerStageStats()->m_bJoined = true;
 	}
 }
 
