@@ -702,8 +702,9 @@ void Sprite::SetState( int iNewState )
 	// Never warn about setting state 0.
 	if( iNewState != 0 && (iNewState < 0  ||  iNewState >= (int)m_States.size()) )
 	{
-		// Don't warn about number of states in "_blank".
-		if( !m_pTexture || m_pTexture->GetID().filename.find("_blank") == string::npos )
+		// Don't warn about number of states in "_blank" or "_missing".
+		if( !m_pTexture || (m_pTexture->GetID().filename.find("_blank") == string::npos &&
+		    m_pTexture->GetID().filename.find("_missing") == string::npos) )
 		{
 			RString sError;
 			if( m_pTexture )
