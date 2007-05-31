@@ -36,8 +36,6 @@ void ScreenContinue::Input( const InputEventPlus &input )
 
 	if( input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
 	{
-		SCREENMAN->PlayStartSound();
-
 		bool bAllPlayersAreEnabled = true;
 		FOREACH_ENUM( PlayerNumber, p )
 		{
