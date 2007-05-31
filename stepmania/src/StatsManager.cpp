@@ -124,10 +124,10 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 	StyleID sID;
 	sID.FromStyle( ss.m_pStyle );
 
-	ASSERT( ss.m_vpPlayedSongs.size() == ss.m_player[pn].m_vpPlayedSteps.size() );
-	for( unsigned i=0; i<ss.m_vpPlayedSongs.size(); i++ )
+	ASSERT( (int) ss.m_vpPlayedSongs.size() == ss.m_player[pn].m_iStepsPlayed );
+	for( int i=0; i<ss.m_player[pn].m_iStepsPlayed; i++ )
 	{
-		Steps *pSteps = ss.m_player[pn].m_vpPlayedSteps[i];
+		Steps *pSteps = ss.m_player[pn].m_vpPossibleSteps[i];
 
 		pProfile->m_iNumSongsPlayedByPlayMode[ss.m_playMode]++;
 		pProfile->m_iNumSongsPlayedByStyle[sID] ++;

@@ -25,8 +25,8 @@ Grade GetGradeFromPercent( float fPercent, bool bMerciful );
 void PlayerStageStats::Init()
 {
 	m_bJoined = false;
-	m_vpPlayedSteps.clear();
 	m_vpPossibleSteps.clear();
+	m_iStepsPlayed = 0;
 	m_fAliveSeconds = 0;
 	m_bFailed = false;
 	m_iPossibleDancePoints = 0;
@@ -66,10 +66,9 @@ void PlayerStageStats::Init()
 void PlayerStageStats::AddStats( const PlayerStageStats& other )
 {
 	m_bJoined = other.m_bJoined;
-	FOREACH_CONST( Steps*, other.m_vpPlayedSteps, s )
-		m_vpPlayedSteps.push_back( *s );
 	FOREACH_CONST( Steps*, other.m_vpPossibleSteps, s )
 		m_vpPossibleSteps.push_back( *s );
+	m_iStepsPlayed += other.m_iStepsPlayed;
 	m_fAliveSeconds += other.m_fAliveSeconds;
 	m_bFailed |= other.m_bFailed;
 	m_iPossibleDancePoints += other.m_iPossibleDancePoints;
@@ -163,8 +162,8 @@ Grade PlayerStageStats::GetGrade() const
 	float fActual = 0;
 
 	bool bIsBeginner = false;
-	if( m_vpPlayedSteps.size() && !GAMESTATE->IsCourseMode() )
-		bIsBeginner = m_vpPlayedSteps[0]->GetDifficulty() == Difficulty_Beginner;
+	if( m_iStepsPlayed > 0 && !GAMESTATE->IsCourseMode() )
+		bIsBeginner = m_vpPossibleSteps[0]->GetDifficulty() == Difficulty_Beginner;
 
 	FOREACH_ENUM( TapNoteScore, tns )
 	{
@@ -187,12 +186,12 @@ Grade PlayerStageStats::GetGrade() const
 
 
 	bool bMerciful = 
-		m_vpPlayedSteps.size() > 0  &&
+		m_iStepsPlayed > 0  &&
 		GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR &&
 		PREFSMAN->m_bMercifulBeginner;
-	FOREACH_CONST( Steps*, m_vpPlayedSteps, s )
+	for( int i = 0; i < m_iStepsPlayed; ++i )
 	{
-		if( (*s)->GetDifficulty() != Difficulty_Beginner )
+		if( m_vpPossibleSteps[i]->GetDifficulty() != Difficulty_Beginner )
 			bMerciful = false;
 	}
 
@@ -667,9 +666,9 @@ public:
 	static int GetPlayedSteps( T* p, lua_State *L )
 	{
 		lua_newtable(L);
-		for( int i = 0; i < (int) p->m_vpPlayedSteps.size(); ++i )
+		for( int i = 0; i < (int) min(p->m_iStepsPlayed, (int) p->m_vpPossibleSteps.size()); ++i )
 		{
-			p->m_vpPlayedSteps[i]->PushSelf(L);
+			p->m_vpPossibleSteps[i]->PushSelf(L);
 			lua_rawseti( L, -2, i+1 );
 		}
 		return 1;

@@ -123,8 +123,8 @@ ScreenEvaluation::ScreenEvaluation()
 				if( apTrails.size() )
 					GAMESTATE->m_pCurTrail[p].Set( apTrails[0] );
 			}
-			ss.m_player[p].m_vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			ss.m_player[p].m_vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
+			ss.m_player[p].m_iStepsPlayed = 1;
 			
 			
 			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );

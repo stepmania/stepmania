@@ -37,8 +37,10 @@ ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
 		GAMESTATE->m_pCurCourse.Set( SONGMAN->GetRandomCourse() );
 		GAMESTATE->m_pCurSteps[PLAYER_1].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
 		GAMESTATE->m_pCurSteps[PLAYER_2].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iStepsPlayed = 1;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iStepsPlayed = 1;
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
 		GAMESTATE->m_iCurrentStageIndex = 0;

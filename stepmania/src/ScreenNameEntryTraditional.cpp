@@ -38,7 +38,7 @@ void ScreenNameEntryTraditional::Init()
 			FOREACH_PlayerNumber( p )
 			{
 				Steps *pSteps = ss.m_vpPlayedSongs[0]->GetAllSteps()[0];
-				ss.m_player[p].m_vpPlayedSteps.push_back( pSteps );
+				ss.m_player[p].m_iStepsPlayed = 1;
 				GAMESTATE->m_pCurSteps[p].Set( pSteps );
 				ss.m_player[p].m_iPossibleDancePoints = 100;
 				ss.m_player[p].m_iActualDancePoints = 100;

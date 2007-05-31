@@ -27,8 +27,8 @@ public:
 	void ResetScoreForLesson();
 
 	bool		m_bJoined;
-	vector<Steps*>  m_vpPlayedSteps;
 	vector<Steps*>  m_vpPossibleSteps;
+	int		m_iStepsPlayed; // how many of m_vpPossibleStepshow many of m_vpPossibleSteps were played
 	float		m_fAliveSeconds; // how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.
 
 	/* Set if the player actually failed at any point during the song.  This is always

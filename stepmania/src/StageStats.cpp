@@ -42,12 +42,13 @@ void StageStats::AssertValid( PlayerNumber pn ) const
 	ASSERT( m_vpPossibleSongs.size() != 0 );
 	if( m_vpPlayedSongs[0] )
 		CHECKPOINT_M( m_vpPlayedSongs[0]->GetTranslitFullTitle() );
-	ASSERT( m_player[pn].m_vpPlayedSteps.size() != 0 );
-	ASSERT( m_player[pn].m_vpPlayedSteps[0] );
+	ASSERT( m_player[pn].m_iStepsPlayed > 0 );
+	ASSERT( m_player[pn].m_vpPossibleSteps.size() );
+	ASSERT( m_player[pn].m_vpPossibleSteps[0] );
 	ASSERT_M( m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode) );
 	ASSERT( m_pStyle != NULL );
-	ASSERT_M( m_player[pn].m_vpPlayedSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("difficulty %i", m_player[pn].m_vpPlayedSteps[0]->GetDifficulty()) );
-	ASSERT_M( m_vpPlayedSongs.size() == m_player[pn].m_vpPlayedSteps.size(), ssprintf("%i, %i, %i", (int)m_vpPlayedSongs.size(), (int)m_player[pn].m_vpPlayedSteps.size(), pn) );
+	ASSERT_M( m_player[pn].m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("difficulty %i", m_player[pn].m_vpPossibleSteps[0]->GetDifficulty()) );
+	ASSERT_M( (int) m_vpPlayedSongs.size() == m_player[pn].m_iStepsPlayed, ssprintf("%i, %i, %i", (int)m_vpPlayedSongs.size(), (int)m_player[pn].m_iStepsPlayed, pn) );
 	ASSERT_M( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size(), ssprintf("%i, %i, %i", (int)m_vpPossibleSongs.size(), (int)m_player[pn].m_vpPossibleSteps.size(), pn) );
 }
 
@@ -57,12 +58,12 @@ void StageStats::AssertValid( MultiPlayer pn ) const
 	ASSERT( m_vpPossibleSongs.size() != 0 );
 	if( m_vpPlayedSongs[0] )
 		CHECKPOINT_M( m_vpPlayedSongs[0]->GetTranslitFullTitle() );
-	ASSERT( m_multiPlayer[pn].m_vpPlayedSteps.size() != 0 );
-	ASSERT( m_multiPlayer[pn].m_vpPlayedSteps[0] );
+	ASSERT( m_multiPlayer[pn].m_vpPossibleSteps.size() );
+	ASSERT( m_multiPlayer[pn].m_vpPossibleSteps[0] );
 	ASSERT_M( m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode) );
 	ASSERT( m_pStyle != NULL );
-	ASSERT_M( m_player[pn].m_vpPlayedSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("difficulty %i", m_player[pn].m_vpPlayedSteps[0]->GetDifficulty()) );
-	ASSERT( m_vpPlayedSongs.size() == m_player[pn].m_vpPlayedSteps.size() );
+	ASSERT_M( m_player[pn].m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("difficulty %i", m_player[pn].m_vpPossibleSteps[0]->GetDifficulty()) );
+	ASSERT( (int) m_vpPlayedSongs.size() == m_player[pn].m_iStepsPlayed );
 	ASSERT( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size() );
 }
 
@@ -77,7 +78,7 @@ int StageStats::GetAverageMeter( PlayerNumber pn ) const
 
 	for( unsigned i=0; i<m_vpPlayedSongs.size(); i++ )
 	{
-		const Steps* pSteps = m_player[pn].m_vpPlayedSteps[i];
+		const Steps* pSteps = m_player[pn].m_vpPossibleSteps[i];
 		iTotalMeter += pSteps->GetMeter();
 	}
 	return iTotalMeter / m_vpPlayedSongs.size();	// round down
@@ -280,7 +281,7 @@ void StageStats::CommitScores( bool bSummary )
 bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 {
 	const Song *pSong = m_vpPlayedSongs[0];
-	const Steps *pSteps = m_player[pn].m_vpPlayedSteps[0];
+	const Steps *pSteps = m_player[pn].m_vpPossibleSteps[0];
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[pn];
 

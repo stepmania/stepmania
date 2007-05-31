@@ -1007,7 +1007,7 @@ void ScreenGameplay::LoadNextSong()
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		Steps* pSteps = GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ];
-		pi->GetPlayerStageStats()->m_vpPlayedSteps.push_back( pSteps );
+		++pi->GetPlayerStageStats()->m_iStepsPlayed;
 
 		ASSERT( GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ] );
 		if( pi->m_ptextStepsDescription )
