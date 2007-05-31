@@ -82,8 +82,6 @@ void ScreenContinue::Input( const InputEventPlus &input )
 
 void ScreenContinue::HandleScreenMessage( const ScreenMessage SM )
 {
-	RString s = ScreenMessageHelpers::NumberToString( SM );
-
 	if( SM == SM_MenuTimer )
 	{
 		if( !IsTransitioning() )
