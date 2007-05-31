@@ -131,7 +131,6 @@ protected:
 	int GetClosestNonEmptyRowDirectional( int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const;
 	int GetClosestNonEmptyRow( int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const;
 
-	bool IsPlayingBeginner() const;
 	inline void HideNote( int col, int row )
 	{
 		NoteData::iterator iter = m_NoteData.FindTapNote( col, row );
