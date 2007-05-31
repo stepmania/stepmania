@@ -8,6 +8,7 @@
 #include "EnumHelper.h"
 #include "RageUtil_AutoPtr.h"
 #include "RageTypes.h"
+#include <set>
 
 class Steps;
 class Style;
@@ -212,7 +213,7 @@ public:
 	void AddSteps( Steps* pSteps );		// we are responsible for deleting the memory pointed to by pSteps!
 	void DeleteSteps( const Steps* pSteps, bool bReAutoGen = true );
 
-	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid );
+	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid, const set<Steps*> *setInUse = NULL );
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != ProfileSlot_Invalid; }
 	void GetStepsLoadedFromProfile( ProfileSlot slot, vector<Steps*> &vpStepsOut ) const;
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;

@@ -27,6 +27,7 @@ public:
 	static void CommitStatsToProfiles( const StageStats *pSS );
 
 	void UnjoinPlayer( PlayerNumber pn );
+	void GetStepsInUse( set<Steps*> &apInUseOut ) const;
 
 	// Lua
 	void PushSelf( lua_State *L );

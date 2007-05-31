@@ -229,7 +229,24 @@ void StatsManager::UnjoinPlayer( PlayerNumber pn )
 		m_vPlayedStageStats.erase( m_vPlayedStageStats.begin()+i );
 		--i;
 	}
+}
 
+void StatsManager::GetStepsInUse( set<Steps*> &apInUseOut ) const
+{
+	for( int i = 0; i < (int) m_vPlayedStageStats.size(); ++i )
+	{
+		FOREACH_PlayerNumber( pn )
+		{
+			const PlayerStageStats &pss = m_vPlayedStageStats[i].m_player[pn];
+			apInUseOut.insert( pss.m_vpPossibleSteps.begin(), pss.m_vpPossibleSteps.end() );
+		}
+
+		FOREACH_MultiPlayer( mp )
+		{
+			const PlayerStageStats &pss = m_vPlayedStageStats[i].m_multiPlayer[mp];
+			apInUseOut.insert( pss.m_vpPossibleSteps.begin(), pss.m_vpPossibleSteps.end() );
+		}
+	}
 }
 
 // lua start

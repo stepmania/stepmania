@@ -359,8 +359,6 @@ void GameState::JoinPlayer( PlayerNumber pn )
 
 void GameState::UnjoinPlayer( PlayerNumber pn )
 {
-	PROFILEMAN->UnloadProfile( pn );
-
 	m_bSideIsJoined[pn] = false;
 	m_iPlayerStageTokens[pn] = 0;
 
@@ -369,8 +367,10 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 	if( m_MasterPlayerNumber == pn )
 		m_MasterPlayerNumber = GetFirstHumanPlayer();
 
-
+	/* Unjoin STATSMAN first, so steps used by this player are released
+	 * and can be released by PROFILEMAN. */
 	STATSMAN->UnjoinPlayer( pn );
+	PROFILEMAN->UnloadProfile( pn );
 
 	Message msg( MessageIDToString(Message_PlayerUnjoined) );
 	msg.SetParam( "Player", pn );

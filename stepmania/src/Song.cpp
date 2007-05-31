@@ -1263,7 +1263,9 @@ bool Song::Matches(RString sGroup, RString sSong) const
 	return false;
 }
 
-void Song::FreeAllLoadedFromProfile( ProfileSlot slot )
+/* If apInUse is set, it contains a list of steps which are in use elsewhere, and
+ * should not be deleted. */
+void Song::FreeAllLoadedFromProfile( ProfileSlot slot, const set<Steps*> *setInUse )
 {
 	/* DeleteSteps will remove and recreate autogen notes, which may reorder
 	 * m_vpSteps, so be careful not to skip over entries. */
@@ -1273,8 +1275,11 @@ void Song::FreeAllLoadedFromProfile( ProfileSlot slot )
 		Steps* pSteps = m_vpSteps[s];
 		if( !pSteps->WasLoadedFromProfile() )
 			continue;
-		if( slot == ProfileSlot_Invalid || pSteps->GetLoadedFromProfileSlot() == slot )
-			apToRemove.push_back( pSteps );
+		if( slot != ProfileSlot_Invalid && pSteps->GetLoadedFromProfileSlot() != slot )
+			continue;
+		if( setInUse != NULL && setInUse->find(pSteps) != setInUse->end() )
+			continue;
+		apToRemove.push_back( pSteps );
 	}
 
 	for( unsigned i = 0; i < apToRemove.size(); ++i )

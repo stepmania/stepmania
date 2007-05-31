@@ -1585,8 +1585,11 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 	RefreshCourseGroupInfo();
 
 	/* Free profile steps. */
+	set<Steps*> setInUse;
+	if( STATSMAN )
+		STATSMAN->GetStepsInUse( setInUse );
 	FOREACH( Song*, m_pSongs, s )
-		(*s)->FreeAllLoadedFromProfile( slot );
+		(*s)->FreeAllLoadedFromProfile( slot, &setInUse );
 
 	// After freeing some Steps pointers, the cache will be invalid.
 	StepsID::ClearCache();
