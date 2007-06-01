@@ -2614,9 +2614,7 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 		if( g_StepsTypes[i].szName == sStepsType )
 			return StepsType(i);
 	
-	// invalid StepsType
-	LOG->Warn( "Invalid StepsType string '%s' encountered.  Assuming this is 'dance-single'.", sStepsType.c_str() );
-	return STEPS_TYPE_DANCE_SINGLE;
+	return StepsType_Invalid;
 }
 
 RString GameManager::StepsTypeToString( StepsType st )
