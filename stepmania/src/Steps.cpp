@@ -148,6 +148,9 @@ float Steps::PredictMeter() const
 
 void Steps::TidyUpData()
 {
+	if( m_StepsType == StepsType_Invalid )
+		m_StepsType = STEPS_TYPE_DANCE_SINGLE;
+
 	if( GetDifficulty() == Difficulty_Invalid )
 		SetDifficulty( StringToDifficulty(GetDescription()) );
 	
