@@ -312,16 +312,16 @@ void StepsID::LoadFromNode( const XNode* pNode )
 
 	RString sTemp;
 
-	pNode->GetAttrValue("StepsType", sTemp);
+	pNode->GetAttrValue( "StepsType", sTemp );
 	st = GameManager::StringToStepsType( sTemp );
 
-	pNode->GetAttrValue("Difficulty", sTemp);
+	pNode->GetAttrValue( "Difficulty", sTemp );
 	dc = StringToDifficulty( sTemp );
 
 	if( dc == Difficulty_Edit )
 	{
-		pNode->GetAttrValue("Description", sDescription);
-		pNode->GetAttrValue("Hash", uHash);
+		pNode->GetAttrValue( "Description", sDescription );
+		pNode->GetAttrValue( "Hash", uHash );
 	}
 	else
 	{
@@ -332,8 +332,8 @@ void StepsID::LoadFromNode( const XNode* pNode )
 
 RString StepsID::ToString() const
 {
-	RString s = GameManager::StepsTypeToString(st);
-	s += " " + DifficultyToString(dc);
+	RString s = GameManager::StepsTypeToString( st );
+	s += " " + DifficultyToString( dc );
 	if( dc == Difficulty_Edit )
 	{
 		s += " " + sDescription;

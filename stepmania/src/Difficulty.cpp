@@ -43,11 +43,11 @@ Difficulty StringToDifficulty( const RString& sDC )
 	else if( s2 == "maniac" )	return Difficulty_Hard;
 	else if( s2 == "heavy" )	return Difficulty_Hard;
 	else if( s2 == "smaniac" )	return Difficulty_Challenge;
-	else if( s2 == "challenge" )return Difficulty_Challenge;
+	else if( s2 == "challenge" )	return Difficulty_Challenge;
 	else if( s2 == "expert" )	return Difficulty_Challenge;
 	else if( s2 == "oni" )		return Difficulty_Challenge;
 	else if( s2 == "edit" )		return Difficulty_Edit;
-	else						return Difficulty_Invalid;
+	else				return Difficulty_Invalid;
 }
 
 
