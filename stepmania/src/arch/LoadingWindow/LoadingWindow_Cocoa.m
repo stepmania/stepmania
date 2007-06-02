@@ -2,6 +2,10 @@
 #import "ProductInfo.h"
 #import "archutils/Darwin/SMMainThread.h"
 
+void MakeNewCocoaWindow( const void *data, unsigned length );
+void DisposeOfCocoaWindow( void );
+void SetCocoaWindowText( const char *s );
+
 static NSWindow *g_window = nil;
 static NSTextView *g_text = nil;
 
