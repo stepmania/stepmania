@@ -77,7 +77,65 @@ public:
 }
 @end
 
-#if 0
+enum GLContextType
+{
+	WINDOWED,
+	FULL_SCREEN,
+	PIXEL_BUFFER
+};
+
+static NSOpenGLContext *CreateOGLContext( GLContextType type, int iColorSize, int iAlphaSize, int iDepthSize, NSOpenGLContext *share, bool &bShared )
+{
+	NSOpenGLPixelFormatAttribute attrs[] = {
+		NSOpenGLPFANoRecovery, // so we can share with the full screen context
+		NSOpenGLPFAAccelerated,
+		NSOpenGLPFAMinimumPolicy,
+		NSOpenGLPFAColorSize, NSOpenGLPixelFormatAttribute(iColorSize),
+		NSOpenGLPFAAlphaSize, NSOpenGLPixelFormatAttribute(iAlphaSize),
+		NSOpenGLPFADepthSize, NSOpenGLPixelFormatAttribute(iDepthSize),
+		NSOpenGLPixelFormatAttribute(0), // 9
+		NSOpenGLPixelFormatAttribute(0), // 10
+		NSOpenGLPixelFormatAttribute(0), // 11
+		NSOpenGLPixelFormatAttribute(0), // 12
+		NSOpenGLPixelFormatAttribute(0)  // Must be at the end.
+	};
+	const int n = 9; // The first noncommon index.
+	
+	switch( type )
+	{
+	case WINDOWED:
+		attrs[n+0] = NSOpenGLPFAWindow;
+		attrs[n+1] = NSOpenGLPFADoubleBuffer;
+		break;
+	case FULL_SCREEN:
+		attrs[n+0] = NSOpenGLPFAFullScreen;
+		attrs[n+1] = NSOpenGLPFADoubleBuffer;
+		attrs[n+2] = NSOpenGLPFAScreenMask;
+		attrs[n+3] = NSOpenGLPixelFormatAttribute( CGDisplayIDToOpenGLDisplayMask(kCGDirectMainDisplay) );
+		break;
+	case PIXEL_BUFFER:
+		attrs[n+0] = NSOpenGLPFAOffScreen;
+		attrs[n+1] = NSOpenGLPFAPixelBuffer;
+		break;
+	}
+	
+	NSOpenGLPixelFormat *pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+	
+	if( !pixelFormat )
+		return nil;
+	
+	NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:share];
+	
+	bShared = share && context;
+	if( !context )
+		context = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
+	
+	[pixelFormat release];
+	
+	return context;
+}		
+
+
 class RenderTarget_Cocoa : public RenderTarget
 {
 public:
@@ -89,40 +147,56 @@ public:
 	void FinishRenderingTo();
 	
 private:
-	int m_iWidth, m_iHeight;
-	id m_ShareContext, m_OldContext, m_PBufferContext;
-	id m_PBuffer;
+	NSOpenGLContext *m_ShareContext, *m_OldContext, *m_PBufferContext;
 	GLuint m_iTexHandle;
+	int m_iWidth, m_iHeight;
 };
 
 RenderTarget_Cocoa::RenderTarget_Cocoa( id shareContext )
 {
-	m_iWidth = 0;
-	m_iHeight = 0;
 	m_ShareContext = shareContext;
 	m_OldContext = nil;
 	m_PBufferContext = nil;
-	m_PBuffer = nil;
 	m_iTexHandle = 0;
+	m_iWidth = 0;
+	m_iHeight = 0;
 }
 
 RenderTarget_Cocoa::~RenderTarget_Cocoa()
 {
 	POOL;
 	[m_PBufferContext release];
-	[m_PBuffer release ];
 	if( m_iTexHandle )
 		glDeleteTextures( 1, &m_iTexHandle );
 }
 
 void RenderTarget_Cocoa::Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
 {
+	POOL;
 	m_iWidth = param.iWidth;
 	m_iHeight = param.iHeight;
 	
-	// XXX: Create the PBuffer.
+	// PBuffer needs to be a power of 2.
+	int iTextureWidth = power_of_two( param.iWidth );
+	int iTextureHeight = power_of_two( param.iHeight );
+
+	// Create the PBuffer.
+	unsigned long format = param.bWithAlpha? GL_RGBA:GL_RGB;
+	NSOpenGLPixelBuffer *PBuffer = [[NSOpenGLPixelBuffer alloc] initWithTextureTarget:GL_TEXTURE_2D
+								    textureInternalFormat:format
+								    textureMaxMipMapLevel:0 // No idea.
+									       pixelsWide:iTextureWidth
+									       pixelsHigh:iTextureHeight];
+	DEBUG_ASSERT( PBuffer );
 	
-	// XXX: Create an OGL context.
+	// Create an OGL context.
+	bool bShared = false;
+	m_PBufferContext = CreateOGLContext( PIXEL_BUFFER, 24, param.bWithAlpha? 8:0, param.bWithDepthBuffer? 16:0, m_ShareContext, bShared );
+	DEBUG_ASSERT( m_PBufferContext );
+	DEBUG_ASSERT( bShared );
+	[m_PBufferContext setPixelBuffer:PBuffer cubeMapFace:0 mipMapLevel:0
+		    currentVirtualScreen:[m_ShareContext currentVirtualScreen]];
+	[PBuffer release]; // XXX: Hopefully this is retained by the PBufferContext.
 	
 	glGenTextures( 1, &m_iTexHandle );
 	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
@@ -130,8 +204,6 @@ void RenderTarget_Cocoa::Create( const RenderTargetParam &param, int &iTextureWi
 	while( glGetError() != GL_NO_ERROR )
 		;
 	
-	int iTextureWidth = power_of_two( param.iWidth );
-	int iTextureHeight = power_of_two( param.iHeight );
 	iTextureWidthOut = iTextureWidth;
 	iTextureHeightOut = iTextureHeight;
 	
@@ -149,6 +221,7 @@ void RenderTarget_Cocoa::Create( const RenderTargetParam &param, int &iTextureWi
 
 void RenderTarget_Cocoa::StartRenderingTo()
 {
+	DEBUG_ASSERT( !m_OldContext );
 	m_OldContext = [NSOpenGLContext currentContext];
 	[m_PBufferContext makeCurrentContext];
 	glViewport( 0, 0, m_iWidth, m_iHeight );
@@ -156,6 +229,7 @@ void RenderTarget_Cocoa::StartRenderingTo()
 
 void RenderTarget_Cocoa::FinishRenderingTo()
 {
+	DEBUG_ASSERT( m_OldContext );
 	glFlush();
 	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
 	
@@ -172,7 +246,6 @@ void RenderTarget_Cocoa::FinishRenderingTo()
 	[m_OldContext makeCurrentContext];
 	m_OldContext = nil;
 }
-#endif
 
 LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(NULL)
 {
@@ -235,54 +308,6 @@ void *LowLevelWindow_Cocoa::GetProcAddress( RString s )
 	return symbol ? NSAddressOfSymbol( symbol ) : NULL;
 }
 
-static NSOpenGLContext *CreateOGLContext( int iColorDepth, bool bWindowed, NSOpenGLContext *share, bool &bShared )
-{
-	NSOpenGLPixelFormat *pixelFormat;
-	
-	if( bWindowed )
-	{
-		NSOpenGLPixelFormatAttribute attrs[] = {
-			NSOpenGLPFANoRecovery, // so we can share with the full screen context
-			NSOpenGLPFADoubleBuffer,
-			NSOpenGLPFAAccelerated,
-			NSOpenGLPFADepthSize, NSOpenGLPixelFormatAttribute(16),
-			NSOpenGLPFAColorSize, NSOpenGLPixelFormatAttribute(iColorDepth == 16 ? 16 : 24),
-			NSOpenGLPixelFormatAttribute(0)
-		};
-		
-		pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
-	}
-	else
-	{
-		NSOpenGLPixelFormatAttribute attrs[] = {
-			NSOpenGLPFAFullScreen,
-			// Choose which screen to use: the main one.
-			NSOpenGLPFAScreenMask,
-			NSOpenGLPixelFormatAttribute( CGDisplayIDToOpenGLDisplayMask(kCGDirectMainDisplay) ),
-			
-			NSOpenGLPFADoubleBuffer,
-			NSOpenGLPFAAccelerated,
-			NSOpenGLPFADepthSize, NSOpenGLPixelFormatAttribute(16),
-			NSOpenGLPFAColorSize, NSOpenGLPixelFormatAttribute(iColorDepth == 16 ? 16 : 24),
-			NSOpenGLPixelFormatAttribute(0)
-		};
-		pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
-	}
-	
-	if( !pixelFormat )
-		return nil;
-	
-	NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:share];
-	
-	bShared = share && context;
-	if( !context )
-		context = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
-	
-	[pixelFormat release];
-	
-	return context;
-}		
-
 RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
 {
 	// Always set these params.
@@ -315,7 +340,7 @@ RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		if( bRebuildContext )
 		{
 			bool bShared;
-			NSOpenGLContext *newContext = CreateOGLContext( p.bpp, true, m_Context, bShared );
+			NSOpenGLContext *newContext = CreateOGLContext( WINDOWED, p.bpp == 16? 16:24, p.bpp == 16? 1:8, 16, m_Context, bShared );
 			
 			if( !newContext )
 				return "Failed to create OGL context.";
@@ -326,7 +351,7 @@ RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 			m_CurrentParams.bpp = p.bpp;
 			[m_BGContext release];
 			m_BGContext = nil;
-			m_BGContext = CreateOGLContext( p.bpp, true, m_Context, bShared );
+			m_BGContext = CreateOGLContext( WINDOWED, p.bpp == 16? 16:24, p.bpp == 16? 1:8, 16, m_Context, bShared );
 			
 			if( m_BGContext && !bShared )
 			{
@@ -365,7 +390,7 @@ RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 	if( bRebuildContext )
 	{
 		bool bShared;
-		NSOpenGLContext *newContext = CreateOGLContext( p.bpp, false, m_Context, bShared );
+		NSOpenGLContext *newContext = CreateOGLContext( FULL_SCREEN, p.bpp == 16? 16:24, p.bpp == 16? 1:8, 16, m_Context, bShared );
 		
 		if( !newContext )
 			return "Failed to create full screen OGL context.";
@@ -375,7 +400,7 @@ RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		newDeviceOut = !bShared;
 		m_CurrentParams.bpp = p.bpp;
 		[m_BGContext release];
-		m_BGContext = CreateOGLContext( p.bpp, false, m_Context, bShared );
+		m_BGContext = CreateOGLContext( FULL_SCREEN, p.bpp == 16? 16:24, p.bpp == 16? 1:8, 16, m_Context, bShared );
 		
 		if( m_BGContext && !bShared )
 		{
@@ -567,6 +592,11 @@ void LowLevelWindow_Cocoa::Update()
 	lock.Unlock(); // Unlock before calling ResolutionChanged().
 	[m_Context update];
 	DISPLAY->ResolutionChanged();
+}
+
+RenderTarget *LowLevelWindow_Cocoa::CreateRenderTarget()
+{
+	return new RenderTarget_Cocoa( m_Context );
 }
 
 void LowLevelWindow_Cocoa::BeginConcurrentRendering()

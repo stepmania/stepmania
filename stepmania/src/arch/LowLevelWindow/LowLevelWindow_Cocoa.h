@@ -28,6 +28,9 @@ public:
 	
 	const VideoModeParams &GetActualVideoModeParams() const { return m_CurrentParams; }
 	
+	bool SupportsRenderToTexture() const { return true; }
+	RenderTarget *CreateRenderTarget();
+	
 	bool SupportsThreadedRendering() { return m_BGContext; }
 	void BeginConcurrentRendering();
 	
