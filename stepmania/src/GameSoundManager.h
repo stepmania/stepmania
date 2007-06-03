@@ -40,7 +40,7 @@ public:
 		bool bAlignBeat;
 		bool bApplyMusicRate;
 	};
-	void PlayMusic( PlayMusicParams params, PlayMusicParams FallbackMusic = PlayMusicParams() );
+	void PlayMusic( PlayMusicParams params, PlayMusicParams FallbackMusicParams = PlayMusicParams() );
 	void PlayMusic( 
 		RString sFile, 
 		const TimingData *pTiming = NULL, 

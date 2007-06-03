@@ -96,7 +96,7 @@ struct MusicToPlay
 	}
 };
 vector<MusicToPlay> g_MusicsToPlay;
-static GameSoundManager::PlayMusicParams g_FallbackMusic;
+static GameSoundManager::PlayMusicParams g_FallbackMusicParams;
 
 static void StartMusic( MusicToPlay &ToPlay )
 {
@@ -486,11 +486,11 @@ void GameSoundManager::Update( float fDeltaTime )
 
 		bool bIsPlaying = g_Playing->m_Music->IsPlaying();
 		g_Mutex->Unlock();
-		if( !bIsPlaying && g_bWasPlayingOnLastUpdate && !g_FallbackMusic.sFile.empty() )
+		if( !bIsPlaying && g_bWasPlayingOnLastUpdate && !g_FallbackMusicParams.sFile.empty() )
 		{
-			PlayMusic( g_FallbackMusic );
+			PlayMusic( g_FallbackMusicParams );
 
-			g_FallbackMusic.sFile = "";
+			g_FallbackMusicParams.sFile = "";
 		}
 		g_bWasPlayingOnLastUpdate = bIsPlaying;
 	}
@@ -684,9 +684,9 @@ void GameSoundManager::PlayMusic(
 	PlayMusic( params );
 }
 
-void GameSoundManager::PlayMusic( PlayMusicParams params, PlayMusicParams FallbackMusic )
+void GameSoundManager::PlayMusic( PlayMusicParams params, PlayMusicParams FallbackMusicParams )
 {
-	g_FallbackMusic = FallbackMusic;
+	g_FallbackMusicParams = FallbackMusicParams;
 
 	//	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music->GetLoadedFilePath().c_str());
 
