@@ -21,7 +21,6 @@
 				AA3AE889097B738D00575EA1 /* PBXTargetDependency */,
 				AA3AE88B097B738D00575EA1 /* PBXTargetDependency */,
 				AA3AE88D097B738D00575EA1 /* PBXTargetDependency */,
-				AA3AE88F097B738D00575EA1 /* PBXTargetDependency */,
 				AA059E280B8F0BF5006F8139 /* PBXTargetDependency */,
 			);
 			name = All;
@@ -1093,13 +1092,6 @@
 			remoteGlobalIDString = AA3AE72C097B705A00575EA1;
 			remoteInfo = theora;
 		};
-		AA3AE88E097B738D00575EA1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AA3AE784097B723000575EA1;
-			remoteInfo = lua;
-		};
 		AA3AE8B4097B7A5300575EA1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1721,7 +1713,6 @@
 		AA3AE75A097B70E800575EA1 /* toplevel.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = toplevel.c; sourceTree = "<group>"; };
 		AA3AE75B097B70E800575EA1 /* toplevel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = toplevel.h; sourceTree = "<group>"; };
 		AA3AE75C097B70E800575EA1 /* toplevel_lookup.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = toplevel_lookup.h; sourceTree = "<group>"; };
-		AA3AE785097B723000575EA1 /* liblua.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblua.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA3AE8D9097B7EB800575EA1 /* block.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = block.c; sourceTree = "<group>"; };
 		AA3AE8DE097B7F3D00575EA1 /* barkmel.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = barkmel.c; sourceTree = "<group>"; };
 		AA3AE8DF097B7F3D00575EA1 /* envelope.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = envelope.c; sourceTree = "<group>"; };
@@ -1813,13 +1804,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AA3AE783097B723000575EA1 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		AA4B430D0573703D005FB5DB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1849,7 +1833,6 @@
 				AA3AE510097B699500575EA1 /* libpng.a */,
 				AA3AE623097B6B7800575EA1 /* libvorbis.a */,
 				AA3AE72D097B705A00575EA1 /* libtheora.a */,
-				AA3AE785097B723000575EA1 /* liblua.a */,
 				AA059CC90B8F09DB006F8139 /* libz.a */,
 			);
 			name = Products;
@@ -2926,13 +2909,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AA3AE781097B723000575EA1 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		AA4B43090573703D005FB5DB /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3204,23 +3180,6 @@
 			productReference = AA3AE72D097B705A00575EA1 /* libtheora.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		AA3AE784097B723000575EA1 /* lua */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AA3AE786097B725700575EA1 /* Build configuration list for PBXNativeTarget "lua" */;
-			buildPhases = (
-				AA3AE781097B723000575EA1 /* Headers */,
-				AA3AE782097B723000575EA1 /* Sources */,
-				AA3AE783097B723000575EA1 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = lua;
-			productName = lua;
-			productReference = AA3AE785097B723000575EA1 /* liblua.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 		AA4B430E0573703D005FB5DB /* ffmpeg */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AACCABF4086B140B00876352 /* Build configuration list for PBXNativeTarget "ffmpeg" */;
@@ -3286,7 +3245,6 @@
 				AA3AE50F097B699500575EA1 /* png */,
 				AA3AE622097B6B7800575EA1 /* vorbis */,
 				AA3AE72C097B705A00575EA1 /* theora */,
-				AA3AE784097B723000575EA1 /* lua */,
 				AA059CC80B8F09DB006F8139 /* z */,
 			);
 		};
@@ -3853,13 +3811,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AA3AE782097B723000575EA1 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		AA4B430B0573703D005FB5DB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4171,11 +4122,6 @@
 			target = AA3AE72C097B705A00575EA1 /* theora */;
 			targetProxy = AA3AE88C097B738D00575EA1 /* PBXContainerItemProxy */;
 		};
-		AA3AE88F097B738D00575EA1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = AA3AE784097B723000575EA1 /* lua */;
-			targetProxy = AA3AE88E097B738D00575EA1 /* PBXContainerItemProxy */;
-		};
 		AA3AE8B5097B7A5300575EA1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AA4B430E0573703D005FB5DB /* ffmpeg */;
@@ -4212,22 +4158,9 @@
 					ppc,
 					i386,
 				);
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = NO;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 3.3;
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_STYLE = STATIC;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				PREBINDING = NO;
 				PRODUCT_NAME = z;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
-				ZERO_LINK = NO;
 			};
 			name = .;
 		};
@@ -4239,28 +4172,9 @@
 					ppc,
 				);
 				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_AUTO_VECTORIZATION = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_FAST_MATH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = NO;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 3.3;
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_STYLE = STATIC;
-				LINK_WITH_STANDARD_LIBRARIES = NO;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				PREBINDING = NO;
 				PRODUCT_NAME = jpeg;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
-				ZERO_LINK = NO;
 			};
 			name = .;
 		};
@@ -4273,24 +4187,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "$(BUILD_DIR)";
 				FRAMEWORK_VERSION = A;
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_AUTO_VECTORIZATION = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_FAST_MATH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = NO;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 3.3;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = "attribute_deprecated=";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/ffmpeg-r8448/libavutil",
@@ -4300,11 +4197,7 @@
 				);
 				INFOPLIST_FILE = "/Users/steve/programming/stepmania/PBProject/Libraries/ffmpeg-Info copy.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				LIBRARY_STYLE = DYNAMIC;
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
 				OTHER_CFLAGS = (
 					"-DHAVE_AV_CONFIG_H",
 					"-D_FILE_OFFSET_BITS=64",
@@ -4320,16 +4213,9 @@
 					"-Wl,-search_paths_first",
 					"-Wl,-read_only_relocs,suppress",
 				);
-				OTHER_REZFLAGS = "";
-				PER_ARCH_CFLAGS_i386 = "-mmmx -msse3";
-				PER_ARCH_CFLAGS_ppc = "-faltivec -maltivec";
 				PRODUCT_NAME = "ffmpeg-i386";
-				REZ_EXECUTABLE = NO;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
-				ZERO_LINK = NO;
 			};
 			name = .;
 		};
@@ -4340,29 +4226,10 @@
 					ppc,
 					i386,
 				);
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_AUTO_VECTORIZATION = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_FAST_MATH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = NO;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 3.3;
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_STYLE = STATIC;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				PREBINDING = NO;
 				PRODUCT_NAME = ogg;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/libogg-1.1.2/include";
-				ZERO_LINK = NO;
 			};
 			name = .;
 		};
@@ -4373,28 +4240,9 @@
 					ppc,
 					i386,
 				);
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_AUTO_VECTORIZATION = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_FAST_MATH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = NO;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 3.3;
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_STYLE = STATIC;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				PREBINDING = NO;
 				PRODUCT_NAME = png;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
-				ZERO_LINK = NO;
 			};
 			name = .;
 		};
@@ -4405,19 +4253,6 @@
 					ppc,
 					i386,
 				);
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_AUTO_VECTORIZATION = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_FAST_MATH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = NO;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 3.3;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/libvorbis-1.1.1/include",
 					"$(SRCROOT)/libogg-1.1.2/include",
@@ -4425,13 +4260,7 @@
 				);
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_STYLE = STATIC;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				PREBINDING = NO;
 				PRODUCT_NAME = vorbis;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
-				ZERO_LINK = NO;
 			};
 			name = .;
 		};
@@ -4442,65 +4271,13 @@
 					ppc,
 					i386,
 				);
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_AUTO_VECTORIZATION = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_FAST_MATH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = NO;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 3.3;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/libtheora-1.0alpha5/include",
 					"$(SRCROOT)/libogg-1.1.2/include",
 				);
 				INSTALL_PATH = /usr/local/lib;
 				LIBRARY_STYLE = STATIC;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				PREBINDING = NO;
 				PRODUCT_NAME = theora;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
-				ZERO_LINK = NO;
-			};
-			name = .;
-		};
-		AA3AE787097B725700575EA1 /* . */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_AUTO_VECTORIZATION = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_FAST_MATH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = NO;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 3.3;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/lua-5.0.2/include";
-				INSTALL_PATH = /usr/local/lib;
-				LIBRARY_STYLE = STATIC;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				PREBINDING = NO;
-				PRODUCT_NAME = lua;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
-				ZERO_LINK = NO;
 			};
 			name = .;
 		};
@@ -4515,39 +4292,20 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_AUTO_VECTORIZATION = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_FAST_MATH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = NO;
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 3.3;
 				INFOPLIST_FILE = "mad-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
 					0x30400000,
 				);
-				OTHER_REZFLAGS = "";
-				PREBINDING = YES;
 				PRODUCT_NAME = mad;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -4562,28 +4320,12 @@
 			buildSettings = {
 				ARCHS = ppc;
 				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "$(BUILD_DIR)";
 				FRAMEWORK_VERSION = A;
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_AUTO_VECTORIZATION = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_FAST_MATH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = NO;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 3.3;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = "attribute_deprecated=";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/ffmpeg-r8448/libavutil",
@@ -4595,9 +4337,6 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
 				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
 				OTHER_CFLAGS = (
 					"-DHAVE_AV_CONFIG_H",
 					"-D_FILE_OFFSET_BITS=64",
@@ -4612,16 +4351,9 @@
 					0x2F600000,
 					"-Wl,-search_paths_first",
 				);
-				OTHER_REZFLAGS = "";
-				PER_ARCH_CFLAGS_i386 = "-mmmx -msse3";
-				PER_ARCH_CFLAGS_ppc = "-faltivec -maltivec";
 				PRODUCT_NAME = ffmpeg;
-				REZ_EXECUTABLE = NO;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
-				ZERO_LINK = NO;
 			};
 			name = .;
 		};
@@ -4652,10 +4384,24 @@
 		AACCAC06086B140B00876352 /* . */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_SYMBOL_SEPARATION = NO;
+				GCC_FAST_MATH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_STRICT_ALIASING = YES;
+				GCC_VERSION = 4.0;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
+				MACOSX_DEPLOYMENT_TARGET = 10.3;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
+				PREBINDING = NO;
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
 			};
 			name = .;
 		};
@@ -4714,14 +4460,6 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AA3AE72F097B706D00575EA1 /* . */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = .;
-		};
-		AA3AE786097B725700575EA1 /* Build configuration list for PBXNativeTarget "lua" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AA3AE787097B725700575EA1 /* . */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
