@@ -18,15 +18,17 @@ ThemeMetric<bool>	BACK_GOES_TO_START_SCREEN( "ScreenAttract", "BackGoesToStartSc
 Preference<float>	g_fSoundVolumeAttract( "SoundVolumeAttract", 1.0f );
 
 REGISTER_SCREEN_CLASS( ScreenAttract );
-ScreenAttract::ScreenAttract( bool bResetGameState )
+void ScreenAttract::Init()
 {
-	if( bResetGameState )
-		GAMESTATE->Reset();
+	RESET_GAME_STATE.Load( m_sName, "ResetGameState" );
+	ScreenWithMenuElements::Init();
 }
-
 
 void ScreenAttract::BeginScreen()
 {
+	if( RESET_GAME_STATE )
+		GAMESTATE->Reset();
+
 	GAMESTATE->VisitAttractScreen( m_sName );
 	ScreenAttract::SetAttractVolume( true );
 

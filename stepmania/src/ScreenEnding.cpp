@@ -22,7 +22,7 @@
 
 
 REGISTER_SCREEN_CLASS( ScreenEnding );
-ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
+ScreenEnding::ScreenEnding()
 {
 	if( PREFSMAN->m_bScreenTestMode )
 	{

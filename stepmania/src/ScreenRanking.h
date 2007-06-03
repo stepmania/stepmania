@@ -36,7 +36,6 @@ PageType StringToPageType( const RString& s );
 class ScreenRanking : public ScreenAttract
 {
 public:
-	ScreenRanking();
 	virtual void Init();
 	virtual void BeginScreen();
 

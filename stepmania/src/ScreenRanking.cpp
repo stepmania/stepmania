@@ -87,11 +87,6 @@ REGISTER_SCREEN_CLASS( ScreenRanking );
 REGISTER_SCREEN_CLASS( ScreenRankingScroller );
 REGISTER_SCREEN_CLASS( ScreenRankingLines );
 
-ScreenRanking::ScreenRanking():
-	ScreenAttract( false /*dont reset GAMESTATE*/ )
-{
-}
-
 void ScreenRanking::Init()
 {
 	// watch out: ThemeMetricStepsTypesToShow inverts the results
