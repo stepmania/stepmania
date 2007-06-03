@@ -46,6 +46,8 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 {
 #define APPROACH( opt ) \
 	fapproach( m_ ## opt, other.m_ ## opt, fDeltaSeconds * other.m_Speed ## opt );
+#define DO_COPY( x ) \
+	x = other.x;
 
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
@@ -65,7 +67,19 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fSkew );
 	APPROACH( fPassmark );
 	APPROACH( fRandomSpeed );
+
+	DO_COPY( m_bSetScrollSpeed );
+	DO_COPY( m_bSetTiltOrSkew );
+	for( int i=0; i<NUM_TURNS; i++ )
+		DO_COPY( m_bTurns[i] );
+	for( int i=0; i<NUM_TRANSFORMS; i++ )
+		DO_COPY( m_bTransforms[i] );
+	DO_COPY( m_bMuteOnError );
+	DO_COPY( m_ScoreDisplay );
+	DO_COPY( m_FailType );
+	DO_COPY( m_sNoteSkin );
 #undef APPROACH
+#undef DO_COPY
 }
 
 static void AddPart( vector<RString> &AddTo, float level, RString name )

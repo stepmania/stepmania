@@ -48,8 +48,6 @@ void PlayerState::Reset()
 
 void PlayerState::Update( float fDelta )
 {
-	m_PlayerOptions.Update( fDelta );
-
 	// TRICKY: GAMESTATE->Update is run before any of the Screen update's,
 	// so we'll clear these flags here and let them get turned on later
 	m_bAttackBeganThisUpdate = false;
@@ -88,6 +86,9 @@ void PlayerState::Update( float fDelta )
 	if( bRebuildPlayerOptions )
 		RebuildPlayerOptionsFromActiveAttacks();
 
+	/* Update after enabling attacks, so we appraoch the new state. */
+	m_PlayerOptions.Update( fDelta );
+
 	if( m_fSecondsUntilAttacksPhasedOut > 0 )
 		m_fSecondsUntilAttacksPhasedOut = max( 0, m_fSecondsUntilAttacksPhasedOut - fDelta );
 }
@@ -103,7 +104,7 @@ void PlayerState::ResetToDefaultPlayerOptions( ModsLevel l )
  * is set.  This is also called by GameState::Update when activating a queued attack. */
 void PlayerState::LaunchAttack( const Attack& a )
 {
-	LOG->Trace( "Launch attack '%s' against P%d at %f", a.sModifiers.c_str(), m_mp+1, a.fStartSecond );
+	LOG->Trace( "Launch attack '%s' against P%d at %f", a.sModifiers.c_str(), m_PlayerNumber+1, a.fStartSecond );
 
 	Attack attack = a;
 
