@@ -24,6 +24,7 @@ namespace
 	LocalizedString CREDITS_CARD_REMOVED("ScreenSystemLayer","CreditsCardRemoved");
 	LocalizedString CREDITS_FREE_PLAY("ScreenSystemLayer","CreditsFreePlay");
 	LocalizedString CREDITS_CREDITS("ScreenSystemLayer","CreditsCredits");
+	LocalizedString CREDITS_MAX("ScreenSystemLayer","CreditsMax");
 	LocalizedString CREDITS_NOT_PRESENT("ScreenSystemLayer","CreditsNotPresent");
 	LocalizedString CREDITS_LOAD_FAILED("ScreenSystemLayer","CreditsLoadFailed");
 	LocalizedString CREDITS_LOADED_FROM_LAST_GOOD_APPEND("ScreenSystemLayer","CreditsLoadedFromLastGoodAppend");
@@ -49,6 +50,7 @@ namespace
 			const Profile* pProfile = PROFILEMAN->GetProfile( pn );
 			switch( mcs )
 			{
+			DEFAULT_FAIL( mcs );
 			case MemoryCardState_NoCard:
 				// this is a local machine profile
 				if( PROFILEMAN->LastLoadWasFromLastGood(pn) )
@@ -90,8 +92,6 @@ namespace
 					else
 						return CREDITS_CARD_NO_NAME.GetValue();
 				}
-			default:
-				FAIL_M( ssprintf("%i",mcs) );
 			}
 		}
 		else // bShowCreditsMessage
@@ -106,13 +106,15 @@ namespace
 
 			case CoinMode_Pay:
 			{
-				int Credits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
-				int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
+				int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
+				int iCoins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
 				RString sCredits = CREDITS_CREDITS;
-				if( Credits > 0 || PREFSMAN->m_iCoinsPerCredit == 1 )
-					sCredits += ssprintf("  %d", Credits);
+				if( iCredits > 0 || PREFSMAN->m_iCoinsPerCredit == 1 )
+					sCredits += ssprintf("  %d", iCredits);
 				if( PREFSMAN->m_iCoinsPerCredit > 1 )
-					sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit.Get() );
+					sCredits += ssprintf("  %d/%d", iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
+				if( iCredits >= MAX_NUM_CREDITS )
+					sCredits += "  " + CREDITS_MAX.GetValue();
 				return sCredits;
 			}
 			case CoinMode_Free:

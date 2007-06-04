@@ -13,6 +13,11 @@
 const int MAX_METER = 13;
 const int MIN_METER = 1;
 
+//
+// Credits
+//
+const int MAX_NUM_CREDITS = 20;
+
 
 /* This is just cached song data.  Not all of it may actually be displayed
  * in the radar. */
