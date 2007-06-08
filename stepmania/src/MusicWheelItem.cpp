@@ -11,6 +11,8 @@
 #include "song.h"
 #include "Course.h"
 #include "ProfileManager.h"
+#include "Profile.h"
+#include "Style.h"
 #include "ActorUtil.h"
 #include "ThemeMetric.h"
 #include "HighScore.h"
@@ -272,8 +274,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 		this->HandleMessage( msg );
 	}
 }
-#include "Style.h"
-#include "Profile.h"
+
 void MusicWheelItem::RefreshGrades()
 {
 	if( data == NULL )
