@@ -678,24 +678,6 @@ void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pS
 	GetMachineProfile()->IncrementStepsPlayCount( pSong, pSteps );
 }
 
-Grade ProfileManager::GetGradeForSteps( const Song *pSong, const Style *st, ProfileSlot slot, Difficulty dc ) const
-{
-	const Steps* pSteps = SongUtil::GetStepsByDifficulty( pSong, st->m_StepsType, dc );
-
-	if( pSteps == NULL || !IsPersistentProfile(slot) )
-		return Grade_NoData;
-	return GetProfile(slot)->GetStepsHighScoreList(pSong, pSteps).HighGrade;
-}
-
-Grade ProfileManager::GetGradeForTrail( const Course *pCourse, const Style *st, ProfileSlot slot, Difficulty dc ) const
-{
-	const Trail *pTrail = pCourse->GetTrail( st->m_StepsType, dc );
-
-	if( pTrail == NULL || !IsPersistentProfile(slot) )
-		return Grade_NoData;
-	return GetProfile( slot )->GetCourseHighScoreList( pCourse, pTrail ).HighGrade;
-}
-
 //
 // Course stats
 //

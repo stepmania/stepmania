@@ -94,14 +94,13 @@ public:
 	bool IsSongNew( const Song* pSong ) const { return GetSongNumTimesPlayed(pSong,ProfileSlot_Machine)==0; }
 	void AddStepsScore( const Song* pSong, const Steps* pSteps , PlayerNumber pn, const HighScore &hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn );
-	Grade GetGradeForSteps( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc ) const;
 
 	//
 	// Course stats
 	//
 	void AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, const HighScore &hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail, PlayerNumber pn );
-	Grade GetGradeForTrail( const Course *pCourse, const Style *st, ProfileSlot slot, Difficulty dc ) const;
+
 	//
 	// Category stats
 	//

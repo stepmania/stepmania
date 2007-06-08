@@ -272,7 +272,8 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 		this->HandleMessage( msg );
 	}
 }
-
+#include "Style.h"
+#include "Profile.h"
 void MusicWheelItem::RefreshGrades()
 {
 	if( data == NULL )
@@ -301,14 +302,34 @@ void MusicWheelItem::RefreshGrades()
 			continue;
 
 		m_pGradeDisplay[p]->SetVisible( true );
-		Grade g;
-		if( data->m_pSong )
-			g = PROFILEMAN->GetGradeForSteps( data->m_pSong, GAMESTATE->GetCurrentStyle(), ps, dc );
-		else
-			g = PROFILEMAN->GetGradeForTrail( data->m_pCourse, GAMESTATE->GetCurrentStyle(), ps, dc );
+
+
+		Profile *pProfile = PROFILEMAN->GetProfile(ps);
+
+		HighScoreList *pHSL = NULL;
+		if( PROFILEMAN->IsPersistentProfile(ps) )
+		{
+			if( data->m_pSong )
+			{
+				const Steps* pSteps = SongUtil::GetStepsByDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
+				if( pSteps != NULL )
+					pHSL = &pProfile->GetStepsHighScoreList(data->m_pSong, pSteps);
+			}
+			else if( data->m_pCourse )
+			{
+				const Trail *pTrail = data->m_pCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
+				if( pTrail != NULL )
+					pHSL = &pProfile->GetCourseHighScoreList( data->m_pCourse, pTrail );
+			}
+		}
+
 		Message msg( "SetGrade" );
 		msg.SetParam( "PlayerNumber", p );
-		msg.SetParam( "Grade", g );
+		if( pHSL )
+		{
+			msg.SetParam( "Grade", pHSL->HighGrade );
+			msg.SetParam( "NumTimesPlayed", pHSL->GetNumTimesPlayed() );
+		}
 		m_pGradeDisplay[p]->HandleMessage( msg );
 	}
 }
