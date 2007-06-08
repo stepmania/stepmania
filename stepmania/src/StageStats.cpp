@@ -224,10 +224,6 @@ void StageStats::CommitScores( bool bSummary )
 		}
 		else
 		{
-			// don't save scores for a failed song
-			if( m_player[p].m_bFailed )
-				continue;
-
 			ASSERT( pSteps );
 
 			PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );

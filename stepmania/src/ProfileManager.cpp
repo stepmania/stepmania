@@ -654,7 +654,9 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 	if( IsPersistentProfile(pn) )
 		GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
 
-	if( hs.GetPercentDP() >= PREFSMAN->m_fMinPercentageForMachineSongHighScore )
+	// don't save machine scores for a failed song
+	if( hs.GetPercentDP() >= PREFSMAN->m_fMinPercentageForMachineSongHighScore &&
+		hs.GetGrade() != Grade_Failed )
 	{
 		// don't leave machine high scores for edits loaded from the player's card
 		if( !pSteps->IsAPlayerEdit() )
