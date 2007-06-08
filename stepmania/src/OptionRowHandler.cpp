@@ -27,6 +27,7 @@
 #define ENTRY(s)		THEME->GetMetric ("ScreenOptionsMaster",s)
 #define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
+#define NOTE_SKIN_SORT_ORDER	THEME->GetMetric ("ScreenOptionsMaster","NoteSkinSortOrder")
 
 static const char *SelectTypeNames[] = {
 	"SelectOne",
@@ -336,6 +337,28 @@ public:
 	}
 };
 
+static void SortNoteSkins( vector<RString> &asSkinNames )
+{
+	set<RString> setSkinNames;
+	setSkinNames.insert( asSkinNames.begin(), asSkinNames.end() );
+
+	vector<RString> asSorted;
+	split( NOTE_SKIN_SORT_ORDER, ",", asSorted );
+
+	set<RString> setUnusedSkinNames( setSkinNames );
+	asSkinNames.clear();
+
+	FOREACH( RString, asSorted, sSkin )
+	{
+		if( setSkinNames.find(*sSkin) == setSkinNames.end() )
+			continue;
+		asSkinNames.push_back( *sSkin );
+		setUnusedSkinNames.erase( *sSkin );
+	}
+
+	asSkinNames.insert( asSkinNames.end(), setUnusedSkinNames.begin(), setUnusedSkinNames.end() );
+}
+
 class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
 {
 	virtual void LoadInternal( const Commands &cmds )
@@ -346,6 +369,8 @@ class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
 
 		vector<RString> arraySkinNames;
 		NOTESKIN->GetNoteSkinNames( arraySkinNames );
+		SortNoteSkins( arraySkinNames );
+
 		for( unsigned skin=0; skin<arraySkinNames.size(); skin++ )
 		{
 			if( arraySkinNames[skin] == CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() )
