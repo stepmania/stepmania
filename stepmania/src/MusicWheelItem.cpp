@@ -308,7 +308,7 @@ void MusicWheelItem::RefreshGrades()
 		Profile *pProfile = PROFILEMAN->GetProfile(ps);
 
 		HighScoreList *pHSL = NULL;
-		if( PROFILEMAN->IsPersistentProfile(ps) )
+		if( PROFILEMAN->IsPersistentProfile(ps) && dc != Difficulty_Invalid )
 		{
 			if( data->m_pSong )
 			{
