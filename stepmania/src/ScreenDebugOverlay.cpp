@@ -471,9 +471,6 @@ void ChangeVolume( float fDelta )
 //
 // DebugLines
 //
-#define DECLARE_ONE( x ) static x g_##x
-
-
 static LocalizedString AUTO_PLAY		( "ScreenDebugOverlay", "AutoPlay" );
 static LocalizedString ASSIST			( "ScreenDebugOverlay", "Assist" );
 static LocalizedString AUTOSYNC			( "ScreenDebugOverlay", "Autosync" );
@@ -1088,6 +1085,7 @@ class DebugLineUptime : public IDebugLine
  * that can span pages.
  */
 
+#define DECLARE_ONE( x ) static x g_##x
 DECLARE_ONE( DebugLineAutoplay );
 DECLARE_ONE( DebugLineAssist );
 DECLARE_ONE( DebugLineAutosync );
