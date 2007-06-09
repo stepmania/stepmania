@@ -21,7 +21,7 @@ public:
 
 	bool LoadFromFont( const RString& sFontName );
 	bool LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars );
-	void SetText( const RString& sText, const RString& sAlternateText = "", int iWrapWidthPixels = -1 );
+	virtual void SetText( const RString& sText, const RString& sAlternateText = "", int iWrapWidthPixels = -1 );
 	void SetVertSpacing( int iSpacing );
 	void SetMaxWidth( float fMaxWidth );
 	void SetMaxHeight( float fMaxHeight );
@@ -69,25 +69,6 @@ protected:
 	void DrawChars();
 	void UpdateBaseZoom();
 };
-
-class ColorBitmapText : public BitmapText
-{
-public:
-	ColorBitmapText();
-	void SetText( const RString &sText, const RString &sAlternateText = "", int iWrapWidthPixels = -1 );
-	void DrawPrimitives();
-	void SetMaxLines( int iLines, bool bCutBottom = true );	//if bCutBottom = false then, it will crop the top
-	void SimpleAddLine( const RString &sAddition, int iWidthPixels );
-	void SetMaxLines( int iNumLines, int iDirection );
-protected:
-	struct ColorChange
-	{
-		RageColor c;	//Color to change to
-		int l;		//Change Location
-	};
-	vector<ColorChange> m_vColors;
-};
-
 
 #endif
 

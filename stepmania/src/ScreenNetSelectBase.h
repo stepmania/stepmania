@@ -8,6 +8,24 @@
 #include "Quad.h"
 #include "BitmapText.h"
 
+class ColorBitmapText : public BitmapText
+{
+public:
+	void SetText( const RString &sText, const RString &sAlternateText = "", int iWrapWidthPixels = -1 );
+	void DrawPrimitives();
+	void SetMaxLines( int iLines, bool bCutBottom = true );	//if bCutBottom = false then, it will crop the top
+	void SimpleAddLine( const RString &sAddition, int iWidthPixels );
+	void SetMaxLines( int iNumLines, int iDirection );
+protected:
+	struct ColorChange
+	{
+		RageColor c;	//Color to change to
+		int l;		//Change Location
+	};
+	vector<ColorChange> m_vColors;
+};
+
+
 class ScreenNetSelectBase : public ScreenWithMenuElements
 {
 public:
@@ -21,8 +39,8 @@ public:
 	void UpdateTextInput();
 private:
 	//Chatting
-	ColorBitmapText	m_textChatInput;
-	ColorBitmapText	m_textChatOutput;
+	ColorBitmapText		m_textChatInput;
+	ColorBitmapText		m_textChatOutput;
 	Sprite			m_sprChatInputBox;
 	Sprite			m_sprChatOutputBox;
 	RString			m_sTextInput;
