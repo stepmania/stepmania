@@ -787,7 +787,7 @@ void ScreenSelectMaster::TweenOnScreen()
 	}
 	else
 	{
-		FOREACH_HumanPlayer( p )
+		FOREACH_ENUM( PlayerNumber, p )
 			vpns.push_back( p );
 	}
 
