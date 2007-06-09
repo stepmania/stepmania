@@ -14,7 +14,6 @@ class RageFileDriver;
 #define COPY(a,b) do { ASSERT(sizeof(a)==sizeof(b)); memcpy(&(a), &(b), sizeof(a)); } while( false )
 
 #define ARRAYLEN(a) (sizeof(a) / sizeof((a)[0]))
-#define ARRAYSIZE(a) (sizeof(a) / sizeof((a)[0])) // deprecated
 
 /* Common harmless mismatches.  All min(T,T) and max(T,T) cases are handled
  * by the generic template we get from <algorithm>. */
