@@ -24,10 +24,10 @@ XToString( MenuDir );
 
 AutoScreenMessage( SM_PlayPostSwitchPage )
 
-RString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetXFromIcon",int(p+1)); }
-RString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetYFromIcon",int(p+1)); }
+static RString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetXFromIcon",int(p+1)); }
+static RString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetYFromIcon",int(p+1)); }
 /* e.g. "OptionOrderLeft=0:1,1:2,2:3,3:4" */
-RString OPTION_ORDER_NAME( size_t dir )							{ return "OptionOrder"+MenuDirToString((MenuDir)dir); }
+static RString OPTION_ORDER_NAME( size_t dir ) { return "OptionOrder"+MenuDirToString((MenuDir)dir); }
 
 REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 
