@@ -644,14 +644,6 @@ void OptionRow::UpdateEnabledDisabled()
 	default:
 		ASSERT(0);
 	}
-
-	if( m_RowType == OptionRow::RowType_Exit )
-	{
-		if( bThisRowHasFocusByAll )
-			m_textItems[0]->SetEffectDiffuseShift( 1.0f, m_pParentType->COLOR_SELECTED, m_pParentType->COLOR_NOT_SELECTED );
-		else
-			m_textItems[0]->StopEffect();
-	}
 }
 
 void OptionRow::Update( float fDeltaTime )
