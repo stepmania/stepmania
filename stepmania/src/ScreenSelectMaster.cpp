@@ -671,21 +671,16 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 
 	if( bIsFirstToChoose )
 	{
-		for( int page=0; page<NUM_Page; page++ )
+		FOREACH_ENUM( Page, page )
 		{
-			if( m_sprMore[page].IsLoaded() )
-				m_sprMore[page]->PlayCommand( "Off" );
+			m_sprMore[page]->PlayCommand( "Off" );
 			fSecs = max( fSecs, m_sprMore[page]->GetTweenTimeLeft() );
 		}
-
-		int iIndex = SHARED_SELECTION ? 0 : pn;
-
-		if( SHOW_CURSOR )
-		{
-			if( m_sprCursor[pn].IsLoaded() )
-				m_sprCursor[pn]->PlayCommand( "Choose" );
-			fSecs = max( fSecs, m_sprCursor[iIndex]->GetTweenTimeLeft() );
-		}
+	}
+	if( SHOW_CURSOR )
+	{
+		m_sprCursor[pn]->PlayCommand( "Choose" );
+		fSecs = max( fSecs, m_sprCursor[pn]->GetTweenTimeLeft() );
 	}
 
 	return fSecs;
