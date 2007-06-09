@@ -41,7 +41,7 @@ public:
 	virtual bool AllowLateJoin() const { return true; }
 
 protected:
-	enum Page { PAGE_1, PAGE_2, NUM_PAGES };	// on PAGE_2, cursors are locked together
+	enum Page { PAGE_1, PAGE_2, NUM_Page };	// on PAGE_2, cursors are locked together
 	static PlayerNumber GetSharedPlayer();
 	Page GetPage( int iChoiceIndex ) const;
 	Page GetCurrentPage() const;
@@ -84,8 +84,8 @@ protected:
 	float GetCursorX( PlayerNumber pn );
 	float GetCursorY( PlayerNumber pn );
 
-	AutoActor	m_sprExplanation[NUM_PAGES];
-	AutoActor	m_sprMore[NUM_PAGES];
+	AutoActor	m_sprExplanation[NUM_Page];
+	AutoActor	m_sprMore[NUM_Page];
 	// icon is the shared, per-choice piece
 	vector<AutoActor> m_vsprIcon;
 	// preview is per-player, per-choice piece

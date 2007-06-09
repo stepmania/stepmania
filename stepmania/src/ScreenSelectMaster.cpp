@@ -167,7 +167,7 @@ void ScreenSelectMaster::Init()
 		}
 	}
 
-	for( int page=0; page<NUM_PAGES; page++ )
+	for( int page=0; page<NUM_Page; page++ )
 	{
 		m_sprMore[page].Load( THEME->GetPathG(m_sName, ssprintf("more page%d",page+1)) );
 		m_sprMore[page]->SetName( ssprintf("MorePage%d",page+1) );
@@ -546,7 +546,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 		}
 	}
 
-	for( int page=0; page<NUM_PAGES; page++ )
+	for( int page=0; page<NUM_Page; page++ )
 	{
 		m_sprExplanation[page]->PlayCommand( sIconAndExplanationCommand );
 		m_sprMore[page]->PlayCommand( sIconAndExplanationCommand );
@@ -694,7 +694,7 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 
 	if( bIsFirstToChoose )
 	{
-		for( int page=0; page<NUM_PAGES; page++ )
+		for( int page=0; page<NUM_Page; page++ )
 		{
 			if( m_sprMore[page].IsLoaded() )
 				m_sprMore[page]->PlayCommand( "Off" );
@@ -835,7 +835,7 @@ void ScreenSelectMaster::TweenOnScreen()
 	//We have to move page two's explanation and more off the screen
 	//so it doesn't just sit there on page one.  (Thanks Zhek)
 	
-	for (int page=0;page<NUM_PAGES;page++)
+	for (int page=0;page<NUM_Page;page++)
 	{
 		m_sprMore[page]->SetXY(999,999);
 		m_sprExplanation[page]->SetXY(999,999);
