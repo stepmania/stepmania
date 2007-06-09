@@ -170,10 +170,10 @@ void ScreenWithMenuElements::TweenOnScreen()
 
 	ON_COMMAND( m_autoFooter );
 	m_sprUnderlay->PlayCommand("On");
-	m_sprOverlay->PlayCommand("On");;
-	m_In.PlayCommand("On");;
-	m_Out.PlayCommand("On");;
-	m_Cancel.PlayCommand("On");;
+	m_sprOverlay->PlayCommand("On");
+	m_In.PlayCommand("On");
+	m_Out.PlayCommand("On");
+	m_Cancel.PlayCommand("On");
 }
 
 ScreenWithMenuElements::~ScreenWithMenuElements()
