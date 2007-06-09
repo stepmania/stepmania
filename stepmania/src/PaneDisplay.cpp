@@ -44,11 +44,6 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
-	m_sprPaneUnder.Load( THEME->GetPathG(sMetricsGroup,ssprintf("under p%i",pn+1)) );
-	m_sprPaneUnder->SetName( "Under" );
-	ActorUtil::LoadAllCommandsAndOnCommand( m_sprPaneUnder, sMetricsGroup );
-	this->AddChild( m_sprPaneUnder );
-
 	EMPTY_MACHINE_HIGH_SCORE_NAME.Load( sMetricsGroup, "EmptyMachineHighScoreName" );
 	NOT_AVAILABLE.Load( sMetricsGroup, "NotAvailable" );
 

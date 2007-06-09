@@ -46,8 +46,6 @@ public:
 private:
 	void SetContent( PaneContents c );
 
-	AutoActor		m_sprPaneUnder;
-
 	BitmapText		m_textContents[NUM_PaneContents];
 	AutoActor		m_Labels[NUM_PaneContents];
 	ActorFrame		m_ContentsFrame;
