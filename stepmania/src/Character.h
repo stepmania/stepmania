@@ -5,6 +5,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "RageTexturePreloader.h"
+#include "LuaReference.h"
 struct lua_State;
 typedef lua_State Lua;
 
