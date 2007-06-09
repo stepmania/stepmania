@@ -3,7 +3,6 @@
 #ifndef GAME_CONSTANTS_AND_TYPES_H
 #define GAME_CONSTANTS_AND_TYPES_H
 
-#include "PlayerNumber.h"	// TODO: Get rid of this dependency.  -Chris
 #include "EnumHelper.h"
 
 
@@ -256,7 +255,7 @@ enum RankingCategory
 const RString& RankingCategoryToString( RankingCategory rc );
 RankingCategory StringToRankingCategory( const RString& rc );
 
-extern const RString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS];
+extern const vector<RString> RANKING_TO_FILL_IN_MARKER;
 inline bool IsRankingToFillIn( const RString& sName ) { return !sName.empty() && sName[0]=='#'; }
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter );

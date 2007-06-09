@@ -8,10 +8,18 @@
 #include "LuaManager.h"
 #include "GameManager.h"
 #include "LocalizedString.h"
+#include "PlayerNumber.h"
 #include <float.h>
 
 
-const RString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};
+static vector<RString> GenerateRankingToFillInMarker()
+{
+	vector<RString> vRankings;
+	FOREACH_ENUM( PlayerNumber, pn )
+		vRankings.push_back( ssprintf("#P%d#", pn+1) );
+	return vRankings;
+}
+extern const vector<RString> RANKING_TO_FILL_IN_MARKER( GenerateRankingToFillInMarker() );
 
 extern const RString GROUP_ALL = "---Group All---";
 
