@@ -13,14 +13,6 @@
 class XNode;
 #include "LocalizedString.h"
 
-enum PaneTypes
-{
-	PANE_SONG_DIFFICULTY,
-	PANE_COURSE_MACHINE_SCORES,
-	NUM_PANES,
-	PANE_INVALID
-};
-
 /* If the same piece of data is in multiple panes, use separate contents entries,
  * so it can be themed differently. */
 enum PaneContents
@@ -34,23 +26,13 @@ enum PaneContents
 	SONG_MACHINE_HIGH_SCORE,
 	SONG_MACHINE_HIGH_NAME,
 	SONG_PROFILE_HIGH_SCORE,
-	COURSE_MACHINE_HIGH_SCORE,
-	COURSE_MACHINE_HIGH_NAME,
-	COURSE_PROFILE_HIGH_SCORE,
-	COURSE_NUM_STEPS,
-	COURSE_JUMPS,
-	COURSE_HOLDS,
-	COURSE_MINES,
-	COURSE_HANDS,
-	COURSE_ROLLS,
-	NUM_PANE_CONTENTS
+	NUM_PaneContents
 };
 #define FOREACH_PaneContents( p ) FOREACH_ENUM( PaneContents, p )
 
 class PaneDisplay: public ActorFrame
 {
 public:
-	PaneDisplay();
 	virtual PaneDisplay *Copy() const;
 
 	void Load( const RString &sMetricsGroup, PlayerNumber pn );
@@ -62,18 +44,14 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	void SetFocus( PaneTypes NewPane );
-	PaneTypes GetPane() const;
 	void SetContent( PaneContents c );
 
-	SortOrder		m_SortOrder;
 	AutoActor		m_sprPaneUnder;
 
-	BitmapText		m_textContents[NUM_PANE_CONTENTS];
-	AutoActor		m_Labels[NUM_PANE_CONTENTS];
+	BitmapText		m_textContents[NUM_PaneContents];
+	AutoActor		m_Labels[NUM_PaneContents];
 	ActorFrame		m_ContentsFrame;
 
-	PaneTypes		m_CurPane;
 	PlayerNumber	m_PlayerNumber;
 
 	LocalizedString EMPTY_MACHINE_HIGH_SCORE_NAME;

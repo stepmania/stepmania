@@ -18,42 +18,27 @@
 #define SHIFT_X(p)	THEME->GetMetricF(sMetricsGroup, ssprintf("ShiftP%iX", p+1))
 #define SHIFT_Y(p)	THEME->GetMetricF(sMetricsGroup, ssprintf("ShiftP%iY", p+1))
 
-enum { NEED_NOTES=1, NEED_COURSE=2, NEED_PROFILE=4 };
+enum { NEED_NOTES=1, NEED_PROFILE=2 };
 struct Content_t
 {
 	const char *name;
-	PaneTypes	type;
 	int req;
 };
 
-static const Content_t g_Contents[NUM_PANE_CONTENTS] =
+static const Content_t g_Contents[NUM_PaneContents] =
 {
-	{ "SongNumSteps",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "SongJumps",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "SongHolds",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "SongRolls",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "SongMines",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "SongHands",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "MachineHighScore",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "MachineHighName",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "ProfileHighScore",		PANE_SONG_DIFFICULTY,		NEED_NOTES|NEED_PROFILE },
-	{ "CourseMachineHighScore",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseMachineHighName",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseProfileHighScore",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE|NEED_PROFILE },
-	{ "CourseNumSteps",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseJumps",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseHolds",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseMines",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseHands",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseRolls",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE }
+	{ "SongNumSteps",		NEED_NOTES },
+	{ "SongJumps",			NEED_NOTES },
+	{ "SongHolds",			NEED_NOTES },
+	{ "SongRolls",			NEED_NOTES },
+	{ "SongMines",			NEED_NOTES },
+	{ "SongHands",			NEED_NOTES },
+	{ "MachineHighScore",		NEED_NOTES },
+	{ "MachineHighName",		NEED_NOTES },
+	{ "ProfileHighScore",		NEED_NOTES|NEED_PROFILE },
 };
 
 REGISTER_ACTOR_CLASS( PaneDisplay )
-
-PaneDisplay::PaneDisplay()
-{
-	m_CurPane = PANE_INVALID;
-}
 
 void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 {
@@ -68,11 +53,8 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 	NOT_AVAILABLE.Load( sMetricsGroup, "NotAvailable" );
 
 
-	for( int p = 0; p < NUM_PANE_CONTENTS; ++p )
+	FOREACH_PaneContents( p )
 	{
-		if( g_Contents[p].type == NUM_PANES )
-			continue; /* skip, disabled */
-
 		m_textContents[p].LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
 		m_textContents[p].SetName( ssprintf("%sText", g_Contents[p].name) );
 		ActorUtil::LoadAllCommands( m_textContents[p], sMetricsGroup );
@@ -90,16 +72,6 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 
 	m_ContentsFrame.SetXY( SHIFT_X(m_PlayerNumber), SHIFT_Y(m_PlayerNumber) );
 	this->AddChild( &m_ContentsFrame );
-
-	for( unsigned i = 0; i < NUM_PANE_CONTENTS; ++i )
-	{
-		m_textContents[i].PlayCommand( "LoseFocus" );
-		m_Labels[i]->PlayCommand( "LoseFocus" );
-		m_textContents[i].FinishTweening();
-		m_Labels[i]->FinishTweening();
-	}
-
-	m_CurPane = PANE_INVALID;
 }
 
 void PaneDisplay::LoadFromNode( const XNode *pNode )
@@ -134,9 +106,7 @@ void PaneDisplay::SetContent( PaneContents c )
 	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
 	bool bIsPlayerEdit = pSteps && pSteps->IsAPlayerEdit();
 
-	if( (g_Contents[c].req&NEED_NOTES) && !pSteps )
-		goto done;
-	if( (g_Contents[c].req&NEED_COURSE) && !pTrail )
+	if( (g_Contents[c].req&NEED_NOTES) && !pSteps && !pTrail )
 		goto done;
 	if( (g_Contents[c].req&NEED_PROFILE) && !pProfile )
 	{
@@ -146,43 +116,38 @@ void PaneDisplay::SetContent( PaneContents c )
 
 	{
 		RadarValues rv;
+		HighScoreList *pHSL = NULL;
+		ProfileSlot slot = ProfileSlot_Machine;
+		switch( c )
+		{
+		case SONG_PROFILE_HIGH_SCORE:
+			slot = (ProfileSlot) m_PlayerNumber;
+		}
 
-		if( g_Contents[c].req&NEED_NOTES )
+		if( pSteps )
+		{
 			rv = pSteps->GetRadarValues( m_PlayerNumber );
-		else if( g_Contents[c].req&NEED_COURSE )
+			pHSL = &PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(pSong, pSteps);
+		}
+		else if( pTrail )
+		{
 			rv = pTrail->GetRadarValues();
+			pHSL = &PROFILEMAN->GetProfile(slot)->GetCourseHighScoreList(pCourse, pTrail);
+		}
 
 		switch( c )
 		{
-		case COURSE_NUM_STEPS:
 		case SONG_NUM_STEPS:	val = rv[RadarCategory_TapsAndHolds]; break;
-		case COURSE_JUMPS:
 		case SONG_JUMPS:	val = rv[RadarCategory_Jumps]; break;
-		case COURSE_HOLDS:
 		case SONG_HOLDS:	val = rv[RadarCategory_Holds]; break;
-		case COURSE_ROLLS:
 		case SONG_ROLLS:	val = rv[RadarCategory_Rolls]; break;
-		case COURSE_MINES:
 		case SONG_MINES:	val = rv[RadarCategory_Mines]; break;
-		case COURSE_HANDS:
 		case SONG_HANDS:	val = rv[RadarCategory_Hands]; break;
 		case SONG_PROFILE_HIGH_SCORE:
-			val = PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSong,pSteps).GetTopScore().GetPercentDP();
-			break;
-
 		case SONG_MACHINE_HIGH_NAME: /* set val for color */
 		case SONG_MACHINE_HIGH_SCORE:
 			CHECKPOINT;
-			val = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().GetPercentDP();
-			break;
-
-		case COURSE_MACHINE_HIGH_NAME: /* set val for color */
-		case COURSE_MACHINE_HIGH_SCORE:
-			val = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().GetPercentDP();
-			break;
-
-		case COURSE_PROFILE_HIGH_SCORE:
-			val = PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().GetPercentDP();
+			val = pHSL->GetTopScore().GetPercentDP();
 			break;
 		};
 
@@ -192,41 +157,24 @@ void PaneDisplay::SetContent( PaneContents c )
 		switch( c )
 		{
 		case SONG_MACHINE_HIGH_NAME:
-			if( PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).vHighScores.empty() )
+			if( pHSL->vHighScores.empty() )
 			{
 				str = EMPTY_MACHINE_HIGH_SCORE_NAME;
 			}
 			else
 			{
-				str = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().GetName();
+				str = pHSL->GetTopScore().GetName();
 				if( str.empty() )
 					str = "????";
 			}
 			break;
-		case COURSE_MACHINE_HIGH_NAME:
-			if( PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).vHighScores.empty() )
-			{
-				str = EMPTY_MACHINE_HIGH_SCORE_NAME;
-			}
-			else
-			{
-				str = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().GetName();
-				if( str.empty() )
-					str = "????";
-			}
-			break;
-
 		case SONG_MACHINE_HIGH_SCORE:
+		case SONG_PROFILE_HIGH_SCORE:
 			// Don't show or save machine high scores for edits loaded from a player profile.
 			if( bIsPlayerEdit )
 				str = NOT_AVAILABLE;
 			else
 				str = PercentageDisplay::FormatPercentScore( val );
-			break;
-		case COURSE_MACHINE_HIGH_SCORE:
-		case SONG_PROFILE_HIGH_SCORE:
-		case COURSE_PROFILE_HIGH_SCORE:
-			str = PercentageDisplay::FormatPercentScore( val );
 			break;
 		case SONG_NUM_STEPS:
 		case SONG_JUMPS:
@@ -234,12 +182,6 @@ void PaneDisplay::SetContent( PaneContents c )
 		case SONG_ROLLS:
 		case SONG_MINES:
 		case SONG_HANDS:
-		case COURSE_NUM_STEPS:
-		case COURSE_JUMPS:
-		case COURSE_HOLDS:
-		case COURSE_ROLLS:
-		case COURSE_MINES:
-		case COURSE_HANDS:
 			str = ssprintf( "%.0f", val );
 		}
 	}
@@ -263,57 +205,10 @@ done:
 
 void PaneDisplay::SetFromGameState()
 {
-	m_SortOrder = GAMESTATE->m_SortOrder;
-	SetFocus( GetPane() );
-
 	/* Don't update text that doesn't apply to the current mode.  It's still tweening off. */
-	for( unsigned i = 0; i < NUM_PANE_CONTENTS; ++i )
-	{
-		if( g_Contents[i].type != m_CurPane )
-			continue;
-		SetContent( (PaneContents) i );
-	}
+	FOREACH_PaneContents( i )
+		SetContent( i );
 }
-
-PaneTypes PaneDisplay::GetPane() const
-{
-	switch( m_SortOrder )
-	{
-	case SORT_ALL_COURSES:
-	case SORT_NONSTOP_COURSES:
-	case SORT_ONI_COURSES:
-	case SORT_ENDLESS_COURSES:
-		return PANE_COURSE_MACHINE_SCORES;
-	case SORT_MODE_MENU:
-		return m_CurPane; // leave it
-	default:
-		return PANE_SONG_DIFFICULTY;
-	}
-}
-
-
-void PaneDisplay::SetFocus( PaneTypes NewPane )
-{
-	if( m_CurPane == NewPane )
-		return;
-
-	for( unsigned i = 0; i < NUM_PANE_CONTENTS; ++i )
-	{
-		if( g_Contents[i].type == m_CurPane )
-		{
-			m_textContents[i].PlayCommand( "LoseFocus" );
-			m_Labels[i]->PlayCommand( "LoseFocus"  );
-		}
-		else if( g_Contents[i].type == NewPane )
-		{
-			m_textContents[i].PlayCommand( "GainFocus" );
-			m_Labels[i]->PlayCommand( "GainFocus" );
-		}
-	}
-
-	m_CurPane = NewPane;
-}
-
 
 // lua start
 #include "LuaBinding.h"
