@@ -167,7 +167,7 @@ void ScreenSelectMaster::Init()
 		}
 	}
 
-	for( int page=0; page<NUM_Page; page++ )
+	FOREACH_ENUM( Page, page )
 	{
 		m_sprMore[page].Load( THEME->GetPathG(m_sName, ssprintf("more page%d",page+1)) );
 		m_sprMore[page]->SetName( ssprintf("MorePage%d",page+1) );
@@ -302,10 +302,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 		if( SHOW_CURSOR )
 		{
 			FOREACH( PlayerNumber, vpns, p )
-			{
-				m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
 				m_sprCursor[*p]->PlayCommand( "PostSwitchPage" );
-			}
 		}
 
 		if( SHOW_SCROLLER )
@@ -488,7 +485,7 @@ void ScreenSelectMaster::MenuDown( const InputEventPlus &input )
 
 bool ScreenSelectMaster::ChangePage( int iNewChoice )
 {
-	Page newPage = GetPage(iNewChoice);
+	Page newPage = GetPage( iNewChoice );
 
 	// If anyone has already chosen, don't allow changing of pages
 	FOREACH_PlayerNumber( p )
@@ -497,6 +494,20 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 			return false;
 	}
 
+	// change both players
+	FOREACH_PlayerNumber( p )
+		m_iChoice[p] = iNewChoice;
+
+	const RString sIconAndExplanationCommand = ssprintf( "SwitchToPage%d", newPage+1 );
+	if( SHOW_ICON )
+		for( unsigned c = 0; c < m_aGameCommands.size(); ++c )
+			m_vsprIcon[c]->PlayCommand( sIconAndExplanationCommand );
+	
+	FOREACH_ENUM( Page, page )
+	{
+		m_sprExplanation[page]->PlayCommand( sIconAndExplanationCommand );
+		m_sprMore[page]->PlayCommand( sIconAndExplanationCommand );
+	}
 
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
@@ -509,46 +520,17 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 			vpns.push_back( p );
 	}
 
-
-	if( SHOW_CURSOR )
+	FOREACH( PlayerNumber, vpns, p )
 	{
-		FOREACH( PlayerNumber, vpns, p )
-			if( GAMESTATE->IsHumanPlayer(*p) )
-				m_sprCursor[*p]->PlayCommand( "PreSwitchPage" );
-	}
-
-	const RString sIconAndExplanationCommand = ssprintf( "SwitchToPage%d", newPage+1 );
-
-	if( SHOW_ICON )
-	{
-		for( unsigned c=0; c<m_aGameCommands.size(); c++ )
-			m_vsprIcon[c]->PlayCommand( sIconAndExplanationCommand );
-	}
-
-	if( SHOW_SCROLLER )
-	{
-		if( SHARED_SELECTION )
+		if( SHOW_CURSOR )
 		{
-			int iChoice = m_iChoice[GetSharedPlayer()];
-			m_vsprScroll[0][iChoice]->PlayCommand( "PreSwitchPage" );
+			m_sprCursor[*p]->PlayCommand( "PreSwitchPage" );
+			m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
 		}
-		else
-		{
-			FOREACH_HumanPlayer( p )
-			{
-				int iChoice = m_iChoice[p];
-				m_vsprScroll[p][iChoice]->PlayCommand( "PreSwitchPage" );
-			}
-		}
+			
+		if( SHOW_SCROLLER )
+			m_vsprScroll[*p][m_iChoice[*p]]->PlayCommand( "PreSwitchPage" );
 	}
-
-	for( int page=0; page<NUM_Page; page++ )
-	{
-		m_sprExplanation[page]->PlayCommand( sIconAndExplanationCommand );
-		m_sprMore[page]->PlayCommand( sIconAndExplanationCommand );
-	}
-
-
 
 	if( newPage == PAGE_2 )
 	{
@@ -560,12 +542,8 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 		m_soundDifficult.PlayRandom();
 	}
 
-	// change both players
-	FOREACH_PlayerNumber( p )
-		m_iChoice[p] = iNewChoice;
-
 	m_fLockInputSecs = PRE_SWITCH_PAGE_SECONDS;
-	this->PostScreenMessage( SM_PlayPostSwitchPage, PRE_SWITCH_PAGE_SECONDS );
+	this->PostScreenMessage( SM_PlayPostSwitchPage, GetTweenTimeLeft() );
 	return true;
 }
 
@@ -574,40 +552,55 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 	if( iNewChoice == m_iChoice[pn] )
 		return false; // already there
 
-	if( GetPage(m_iChoice[pn]) != GetPage(iNewChoice) )
+	Page page = GetPage( iNewChoice );
+	if( GetPage(m_iChoice[pn]) != page )
 		return ChangePage( iNewChoice );
 
-	FOREACH_PlayerNumber( p )
+	vector<PlayerNumber> vpns;
+	if( SHARED_SELECTION )
 	{
+		vpns.push_back( PLAYER_1 );
+	}
+	else if( page == PAGE_1 )
+	{
+		vpns.push_back( pn );
+	}
+	else
+	{
+		FOREACH_HumanPlayer( pn )
+			vpns.push_back( pn );
+	}
+
+	FOREACH( PlayerNumber, vpns, pn )
+	{
+		PlayerNumber p = *pn;
 		const int iOldChoice = m_iChoice[p];
-
-		/* Set the new m_iChoice even for disabled players, since a player might
-		 * join on a SHARED_SELECTION after the cursor has been moved. */
 		m_iChoice[p] = iNewChoice;
-
-		if( p!=pn )
-			continue;	// skip
 
 		if( SHOW_ICON )
 		{
 			/* XXX: If !SharedPreviewAndCursor, this is incorrect.  (Nothing uses
-			 * both icon focus and !SharedPreviewAndCursor right now.) */
-			m_vsprIcon[iOldChoice]->PlayCommand( "LoseFocus" );
-			m_vsprIcon[iNewChoice]->PlayCommand( "GainFocus" );
+			 * both icon focus and !SharedPreviewAndCursor right now.)
+			 * What is SharedPreviewAndCursor? -- Steve */
+			bool bOldStillHasFocus = false;
+			bool bNewAlreadyHadFocus = false;
+			FOREACH_HumanPlayer( pn )
+			{
+				if( pn == p )
+					continue;
+				bOldStillHasFocus = bOldStillHasFocus || m_iChoice[pn] == iOldChoice;
+				bNewAlreadyHadFocus = bNewAlreadyHadFocus || m_iChoice[pn] == iNewChoice;
+			}
+			if( !bOldStillHasFocus )
+				m_vsprIcon[iOldChoice]->PlayCommand( "LoseFocus" );
+			if( !bNewAlreadyHadFocus )
+				m_vsprIcon[iNewChoice]->PlayCommand( "GainFocus" );
 		}
 
 		if( SHOW_CURSOR )
 		{
-			if( SHARED_SELECTION )
-			{
-				m_sprCursor[0]->PlayCommand( "Change" );
-				m_sprCursor[0]->SetXY( GetCursorX(PLAYER_1), GetCursorY(PLAYER_1) );
-			}
-			else
-			{
-				m_sprCursor[p]->PlayCommand( "Change" );
-				m_sprCursor[p]->SetXY( GetCursorX(p), GetCursorY(p) );
-			}
+			m_sprCursor[p]->PlayCommand( "Change" );
+			m_sprCursor[p]->SetXY( GetCursorX(p), GetCursorY(p) );
 		}
 
 		if( SHOW_SCROLLER )
@@ -629,24 +622,12 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 				}
 			}
 
-			if( SHARED_SELECTION )
-				m_Scroller[0].SetDestinationItem( (float)iNewChoice );
-			else
-				m_Scroller[p].SetDestinationItem( (float)iNewChoice );
+			m_Scroller[p].SetDestinationItem( (float)iNewChoice );
 			
-			if( SHARED_SELECTION )
-			{
-				m_vsprScroll[0][iOldChoice]->PlayCommand( "LoseFocus" );
-				m_vsprScroll[0][iNewChoice]->PlayCommand( "GainFocus" );
-			}
-			else
-			{
-				m_vsprScroll[p][iOldChoice]->PlayCommand( "LoseFocus" );
-				m_vsprScroll[p][iNewChoice]->PlayCommand( "GainFocus" );
-			}
+			m_vsprScroll[p][iOldChoice]->PlayCommand( "LoseFocus" );
+			m_vsprScroll[p][iNewChoice]->PlayCommand( "GainFocus" );
 		}
 	}
-
 
 	return true;
 }
@@ -877,19 +858,19 @@ void ScreenSelectMaster::TweenOffScreen()
 	}
 }
 
-
+// Use DestX and DestY so that the cursor can move to where the icon will be rather than where it is.
 float ScreenSelectMaster::GetCursorX( PlayerNumber pn )
 {
 	int iChoice = m_iChoice[pn];
-	AutoActor spr = m_vsprIcon[iChoice];
-	return spr->GetX() + CURSOR_OFFSET_X_FROM_ICON.GetValue(pn);
+	AutoActor &spr = m_vsprIcon[iChoice];
+	return spr->GetDestX() + CURSOR_OFFSET_X_FROM_ICON.GetValue(pn);
 }
 
 float ScreenSelectMaster::GetCursorY( PlayerNumber pn )
 {
 	int iChoice = m_iChoice[pn];
 	AutoActor &spr = m_vsprIcon[iChoice];
-	return spr->GetY() + CURSOR_OFFSET_Y_FROM_ICON.GetValue(pn);
+	return spr->GetDestY() + CURSOR_OFFSET_Y_FROM_ICON.GetValue(pn);
 }
 
 /*
