@@ -34,7 +34,7 @@ static const float g_fTimeMeterSecondsChangeInit[] =
 	-0.0f, // SE_Held
 	-4.0f, // SE_LetGo
 };
-COMPILE_ASSERT( ARRAYSIZE(g_fTimeMeterSecondsChangeInit) == NUM_ScoreEvent );
+COMPILE_ASSERT( ARRAYLEN(g_fTimeMeterSecondsChangeInit) == NUM_ScoreEvent );
 
 static void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
 {

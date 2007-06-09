@@ -27,7 +27,7 @@ static const float g_fSuperMeterPercentChangeInit[] =
 	+0.04f, // SE_Held
 	-0.20f, // SE_LetGo
 };
-COMPILE_ASSERT( ARRAYSIZE(g_fSuperMeterPercentChangeInit) == NUM_ScoreEvent );
+COMPILE_ASSERT( ARRAYLEN(g_fSuperMeterPercentChangeInit) == NUM_ScoreEvent );
 
 static void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
 {

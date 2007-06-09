@@ -495,7 +495,7 @@ static EffectMode EffectModes[] =
 {
 	EffectMode_YUYV422,
 };
-COMPILE_ASSERT( ARRAYSIZE(EffectModes) == NUM_PixelFormatYCbCr );
+COMPILE_ASSERT( ARRAYLEN(EffectModes) == NUM_PixelFormatYCbCr );
 
 EffectMode MovieTexture_Generic::GetEffectMode( MovieDecoderPixelFormatYCbCr fmt )
 {

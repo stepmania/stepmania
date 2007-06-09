@@ -2411,7 +2411,7 @@ void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aSt
 
 const Game *GameManager::GetGameForStyle( const Style *pStyle ) const
 {
-	for( size_t g=0; g<ARRAYSIZE(g_Games); ++g )
+	for( size_t g=0; g<ARRAYLEN(g_Games); ++g )
 	{
 		const Game *pGame = g_Games[g];
 		for( int s=0; pGame->m_apStyles[s]; ++s ) 
@@ -2425,7 +2425,7 @@ const Game *GameManager::GetGameForStyle( const Style *pStyle ) const
 
 const Style* GameManager::GetEditorStyleForStepsType( StepsType st ) const
 {
-	for( size_t g=0; g<ARRAYSIZE(g_Games); ++g )
+	for( size_t g=0; g<ARRAYLEN(g_Games); ++g )
 	{
 		const Game *pGame = g_Games[g];
 		for( int s=0; pGame->m_apStyles[s]; ++s ) 
@@ -2535,7 +2535,7 @@ const Style *GameManager::GetFirstCompatibleStyle( const Game *pGame, int iNumPl
 
 void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut ) const
 {
-	for( size_t g=0; g<ARRAYSIZE(g_Games); ++g )
+	for( size_t g=0; g<ARRAYLEN(g_Games); ++g )
 	{
 		const Game *pGame = g_Games[g];
 		if( IsGameEnabled( pGame ) )
@@ -2548,7 +2548,7 @@ const Game* GameManager::GetDefaultGame() const
 	const Game *pDefault = NULL;
 	if( pDefault == NULL )
 	{
-		for( size_t i=0; pDefault == NULL && i < ARRAYSIZE(g_Games); ++i )
+		for( size_t i=0; pDefault == NULL && i < ARRAYLEN(g_Games); ++i )
 		{
 			if( IsGameEnabled(g_Games[i]) )
 				pDefault = g_Games[i];
@@ -2563,7 +2563,7 @@ const Game* GameManager::GetDefaultGame() const
 
 int GameManager::GetIndexFromGame( const Game* pGame ) const
 {
-	for( size_t g=0; g<ARRAYSIZE(g_Games); ++g )
+	for( size_t g=0; g<ARRAYLEN(g_Games); ++g )
 	{
 		if( g_Games[g] == pGame )
 			return g;
@@ -2575,7 +2575,7 @@ int GameManager::GetIndexFromGame( const Game* pGame ) const
 const Game* GameManager::GetGameFromIndex( int index ) const
 {
 	ASSERT( index >= 0 );
-	ASSERT( index < (int) ARRAYSIZE(g_Games) );
+	ASSERT( index < (int) ARRAYLEN(g_Games) );
 	return g_Games[index];
 }
 
@@ -2644,7 +2644,7 @@ RString GameManager::StyleToLocalizedString( const Style* style )
 
 const Game* GameManager::StringToGameType( RString sGameType )
 {
-	for( size_t i=0; i<ARRAYSIZE(g_Games); ++i )
+	for( size_t i=0; i<ARRAYLEN(g_Games); ++i )
 		if( !sGameType.CompareNoCase(g_Games[i]->m_szName) )
 			return g_Games[i];
 

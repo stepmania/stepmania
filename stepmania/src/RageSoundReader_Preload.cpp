@@ -75,7 +75,7 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 			return false; /* Don't bother trying to preload it. */
 
 		float buffer[1024];
-		int iCnt = pSource->Read( buffer, ARRAYSIZE(buffer) / m_iChannels );
+		int iCnt = pSource->Read( buffer, ARRAYLEN(buffer) / m_iChannels );
 
 		if( iCnt == END_OF_FILE )
 			break;
