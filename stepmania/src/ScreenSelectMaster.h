@@ -27,8 +27,6 @@ public:
 	virtual RString GetDefaultChoice();
 	virtual void BeginScreen();
 
-	virtual void Update( float fDelta );
-
 	virtual void MenuLeft( const InputEventPlus &input );
 	virtual void MenuRight( const InputEventPlus &input );
 	virtual void MenuUp( const InputEventPlus &input );

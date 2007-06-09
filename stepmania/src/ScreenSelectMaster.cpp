@@ -280,11 +280,6 @@ void ScreenSelectMaster::BeginScreen()
 	ScreenSelect::BeginScreen();
 }
 
-void ScreenSelectMaster::Update( float fDelta )
-{
-	ScreenSelect::Update( fDelta );
-}
-
 void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 {
 	ScreenSelect::HandleScreenMessage( SM );
