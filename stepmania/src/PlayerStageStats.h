@@ -6,6 +6,7 @@
 #include "Grade.h"
 #include "RadarValues.h"
 #include "HighScore.h"
+#include "PlayerNumber.h"
 #include <map>
 class Steps;
 struct lua_State;

@@ -9,6 +9,7 @@ class Steps;
 class Trail;
 
 #include "GameConstantsAndTypes.h"
+#include "PlayerNumber.h"
 
 class PlayerOptions
 {

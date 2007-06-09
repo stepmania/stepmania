@@ -2,6 +2,7 @@
 #include "HighScore.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
+#include "PlayerNumber.h"
 #include "ThemeManager.h"
 #include "XmlFile.h"
 #include "Foreach.h"
