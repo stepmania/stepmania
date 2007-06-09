@@ -171,12 +171,12 @@ void ScreenSelectMaster::Init()
 	{
 		m_sprMore[page].Load( THEME->GetPathG(m_sName, ssprintf("more page%d",page+1)) );
 		m_sprMore[page]->SetName( ssprintf("MorePage%d",page+1) );
-		ActorUtil::LoadAllCommands( *m_sprMore[page], m_sName );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprMore[page] );
 		this->AddChild( m_sprMore[page] );
 
 		m_sprExplanation[page].Load( THEME->GetPathG(m_sName, ssprintf("explanation page%d",page+1)) );
 		m_sprExplanation[page]->SetName( ssprintf("ExplanationPage%d",page+1) );
-		ActorUtil::LoadAllCommands( *m_sprExplanation[page], m_sName );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprExplanation[page] );
 		this->AddChild( m_sprExplanation[page] );
 	}
 
@@ -832,19 +832,11 @@ void ScreenSelectMaster::TweenOnScreen()
 		}
 	}
 
-	//We have to move page two's explanation and more off the screen
-	//so it doesn't just sit there on page one.  (Thanks Zhek)
-	
-	for (int page=0;page<NUM_Page;page++)
+	FOREACH_ENUM( Page, page )
 	{
-		m_sprMore[page]->SetXY(999,999);
-		m_sprExplanation[page]->SetXY(999,999);
+		m_sprExplanation[page]->PlayCommand( "On" );
+		m_sprMore[page]->PlayCommand( "On" );
 	}
-
-	SET_XY( m_sprExplanation[GetCurrentPage()] );
-	SET_XY( m_sprMore[GetCurrentPage()] );
-	m_sprExplanation[GetCurrentPage()]->PlayCommand( "On" );
-	m_sprMore[GetCurrentPage()]->PlayCommand( "On" );
 
 	ScreenSelect::TweenOnScreen();
 }
