@@ -413,7 +413,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 	while(1)
 	{
 		float buf[4096];
-		int got = snd->Read( buf, ARRAYSIZE(buf) / snd->GetNumChannels() );
+		int got = snd->Read( buf, ARRAYLEN(buf) / snd->GetNumChannels() );
 		if( got == RageSoundReader::END_OF_FILE )
 			break;
 		ASSERT( got >= 0 );
