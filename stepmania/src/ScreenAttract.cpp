@@ -40,6 +40,8 @@ void ScreenAttract::Input( const InputEventPlus &input )
 //	LOG->Trace( "ScreenAttract::Input()" );
 
 	AttractInput( input, this );
+
+	ScreenWithMenuElements::Input( input );
 }
 
 void ScreenAttract::SetAttractVolume( bool bInAttract )
