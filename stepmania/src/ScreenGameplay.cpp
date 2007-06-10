@@ -908,11 +908,14 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			a.sModifiers = po.m_sNoteSkin;
 
 			pi->GetPlayerState()->LaunchAttack( a );
-
-			/* Update attack bOn flags. */
-			pi->GetPlayerState()->Update( 0 );
 		}
-		
+
+		/* Update attack bOn flags, and rebuild Current-level options
+		 * from Song-level options.  The current NoteSkin could have changed
+		 * because of an attack ending. 
+		 */
+		pi->GetPlayerState()->Update( 0 );
+
 		// load player
 		{
 			pi->m_NoteData = ndTransformed;
