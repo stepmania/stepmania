@@ -121,7 +121,7 @@ void ScreenSelectMaster::Init()
 			RString sName = "Icon" "Choice" + mc.m_sName;
 			m_vsprIcon[c]->SetName( sName );
 			if( USE_ICON_METRICS )
-				LOAD_ALL_COMMANDS( m_vsprIcon[c] );
+				LOAD_ALL_COMMANDS_AND_SET_XY( m_vsprIcon[c] );
 			this->AddChild( m_vsprIcon[c] );
 		}
 
@@ -162,7 +162,7 @@ void ScreenSelectMaster::Init()
 			m_Scroller[*p].SetSecondsPerItem( SCROLLER_SECONDS_PER_ITEM );
 			m_Scroller[*p].SetNumSubdivisions( SCROLLER_SUBDIVISIONS );
 			m_Scroller[*p].SetName( "Scroller"+PLAYER_APPEND_NO_SPACE(*p) );
-			LOAD_ALL_COMMANDS( m_Scroller[*p] );
+			LOAD_ALL_COMMANDS_AND_SET_XY( m_Scroller[*p] );
 			this->AddChild( &m_Scroller[*p] );
 		}
 	}
@@ -171,12 +171,12 @@ void ScreenSelectMaster::Init()
 	{
 		m_sprMore[page].Load( THEME->GetPathG(m_sName, ssprintf("more page%d",page+1)) );
 		m_sprMore[page]->SetName( ssprintf("MorePage%d",page+1) );
-		LOAD_ALL_COMMANDS( m_sprMore[page] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprMore[page] );
 		this->AddChild( m_sprMore[page] );
 
 		m_sprExplanation[page].Load( THEME->GetPathG(m_sName, ssprintf("explanation page%d",page+1)) );
 		m_sprExplanation[page]->SetName( ssprintf("ExplanationPage%d",page+1) );
-		LOAD_ALL_COMMANDS( m_sprExplanation[page] );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprExplanation[page] );
 		this->AddChild( m_sprExplanation[page] );
 	}
 
