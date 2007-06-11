@@ -30,6 +30,7 @@ public:
 protected:
 	virtual void StartPlayingMusic();
 	ThemeMetric<bool> RESET_GAME_STATE;
+	ThemeMetric<bool> ATTRACT_VOLUME;
 };
 
 

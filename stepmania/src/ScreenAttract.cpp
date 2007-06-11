@@ -21,6 +21,7 @@ REGISTER_SCREEN_CLASS( ScreenAttract );
 void ScreenAttract::Init()
 {
 	RESET_GAME_STATE.Load( m_sName, "ResetGameState" );
+	ATTRACT_VOLUME.Load( m_sName, "AttractVolume" );
 	ScreenWithMenuElements::Init();
 }
 
@@ -30,7 +31,7 @@ void ScreenAttract::BeginScreen()
 		GAMESTATE->Reset();
 
 	GAMESTATE->VisitAttractScreen( m_sName );
-	ScreenAttract::SetAttractVolume( true );
+	ScreenAttract::SetAttractVolume( ATTRACT_VOLUME );
 
 	ScreenWithMenuElements::BeginScreen();
 }
@@ -46,6 +47,7 @@ void ScreenAttract::Input( const InputEventPlus &input )
 
 void ScreenAttract::SetAttractVolume( bool bInAttract )
 {
+	LOG->Trace( "SetAttractVolume %i", bInAttract );
 	if( bInAttract )
 	{
 		if( GAMESTATE->IsTimeToPlayAttractSounds() )
