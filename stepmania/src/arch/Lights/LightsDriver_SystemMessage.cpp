@@ -30,14 +30,11 @@ void LightsDriver_SystemMessage::Set( const LightsState *ls )
 	}
 	s += "\n";
 
-	int iNumGameButtonsToShow = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( "Start" );
-	if( iNumGameButtonsToShow == GameButton_Invalid )
-		iNumGameButtonsToShow = INPUTMAPPER->GetInputScheme()->m_iButtonsPerController;
-	
+	int iNumGameButtonsToShow = INPUTMAPPER->GetInputScheme()->m_iButtonsPerController;
 	FOREACH_GameController( gc )
 	{
 		s += ssprintf("Controller%d: ",gc+1);
-		for( int gb=0; gb<iNumGameButtonsToShow; gb++ )
+		for( int gb=GAME_BUTTON_CUSTOM_01; gb<iNumGameButtonsToShow; gb++ )
 		{
 			s += ls->m_bGameButtonLights[gc][gb] ? '1' : '0';
 		}
