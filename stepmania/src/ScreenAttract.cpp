@@ -47,7 +47,6 @@ void ScreenAttract::Input( const InputEventPlus &input )
 
 void ScreenAttract::SetAttractVolume( bool bInAttract )
 {
-	LOG->Trace( "SetAttractVolume %i", bInAttract );
 	if( bInAttract )
 	{
 		if( GAMESTATE->IsTimeToPlayAttractSounds() )
