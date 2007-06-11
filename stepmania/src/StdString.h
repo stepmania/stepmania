@@ -209,7 +209,7 @@ inline void ssasn(std::string& sDst, const int nNull)
 // -----------------------------------------------------------------------------
 inline void	ssadd(std::string& sDst, const std::string& sSrc)
 {
-	sDst.append(sSrc.c_str());
+	sDst += sSrc;
 }
 inline void	ssadd(std::string& sDst, PCSTR pA)
 {
