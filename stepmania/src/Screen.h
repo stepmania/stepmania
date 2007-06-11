@@ -10,6 +10,7 @@
 #include "PlayerNumber.h"
 #include "InputQueue.h"
 #include "CodeSet.h"
+#include "LightsManager.h"
 
 class InputEventPlus;
 class Screen;
@@ -78,6 +79,7 @@ protected:
 	ThemeMetric<bool>	ALLOW_OPERATOR_MENU_BUTTON;
 	ThemeMetric<float>	REPEAT_RATE;
 	ThemeMetric<float>	REPEAT_DELAY;
+	ThemeMetric<LightsMode> LIGHTS_MODE;
 
 	// If left blank, the NextScreen metric will be used.
 	RString m_sNextScreen;

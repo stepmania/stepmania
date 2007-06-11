@@ -35,6 +35,7 @@ void Screen::Init()
 	ALLOW_OPERATOR_MENU_BUTTON.Load( m_sName, "AllowOperatorMenuButton" );
 	REPEAT_RATE.Load( m_sName, "RepeatRate" );
 	REPEAT_DELAY.Load( m_sName, "RepeatDelay" );
+	LIGHTS_MODE.Load( m_sName, "LightsMode" );
 
 	m_Codes.Load( m_sName );
 
@@ -216,6 +217,10 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 			INPUTFILTER->SetRepeatRate( REPEAT_RATE );
 		if( REPEAT_DELAY != -1.0f )
 			INPUTFILTER->SetRepeatDelay( REPEAT_DELAY );
+
+		LightsMode lm = LIGHTS_MODE;
+		if( lm != LightsMode_Invalid ) // leave alone
+			LIGHTSMAN->SetLightsMode( lm );
 	}
 	else if( SM == SM_LoseFocus )
 	{
