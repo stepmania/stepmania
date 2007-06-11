@@ -42,6 +42,7 @@ enum LightsMode
 	LightsMode_Invalid
 };
 const RString& LightsModeToString( LightsMode lm );
+LuaDeclareType( LightsMode );
 
 struct LightsState
 {

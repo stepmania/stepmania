@@ -46,6 +46,7 @@ static const char *LightsModeNames[] = {
 	"TestManualCycle",
 };
 XToString( LightsMode );
+LuaXType( LightsMode );
 
 static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 {
