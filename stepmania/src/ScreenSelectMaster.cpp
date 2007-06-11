@@ -557,25 +557,22 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 		return ChangePage( iNewChoice );
 
 	vector<PlayerNumber> vpns;
-	if( SHARED_SELECTION )
+	if( SHARED_SELECTION  ||  page != PAGE_1 )
 	{
-		vpns.push_back( PLAYER_1 );
-	}
-	else if( page == PAGE_1 )
-	{
-		vpns.push_back( pn );
-	}
-	else
-	{
+		/* Set the new m_iChoice even for disabled players, since a player might
+		 * join on a SHARED_SELECTION after the cursor has been moved. */
 		FOREACH_HumanPlayer( pn )
 			vpns.push_back( pn );
 	}
-
-	FOREACH( PlayerNumber, vpns, pn )
+	else
 	{
-		PlayerNumber p = *pn;
-		const int iOldChoice = m_iChoice[p];
-		m_iChoice[p] = iNewChoice;
+		vpns.push_back( pn );
+	}
+
+	FOREACH( PlayerNumber, vpns, p )
+	{
+		const int iOldChoice = m_iChoice[*p];
+		m_iChoice[*p] = iNewChoice;
 
 		if( SHOW_ICON )
 		{
@@ -584,12 +581,12 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 			 * What is SharedPreviewAndCursor? -- Steve */
 			bool bOldStillHasFocus = false;
 			bool bNewAlreadyHadFocus = false;
-			FOREACH_HumanPlayer( pn )
+			FOREACH_HumanPlayer( p2 )
 			{
-				if( pn == p )
+				if( p2 == *p )
 					continue;
-				bOldStillHasFocus = bOldStillHasFocus || m_iChoice[pn] == iOldChoice;
-				bNewAlreadyHadFocus = bNewAlreadyHadFocus || m_iChoice[pn] == iNewChoice;
+				bOldStillHasFocus |= m_iChoice[p2] == iOldChoice;
+				bNewAlreadyHadFocus |= m_iChoice[p2] == iNewChoice;
 			}
 			if( !bOldStillHasFocus )
 				m_vsprIcon[iOldChoice]->PlayCommand( "LoseFocus" );
@@ -599,8 +596,8 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 
 		if( SHOW_CURSOR )
 		{
-			m_sprCursor[p]->PlayCommand( "Change" );
-			m_sprCursor[p]->SetXY( GetCursorX(p), GetCursorY(p) );
+			m_sprCursor[*p]->PlayCommand( "Change" );
+			m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
 		}
 
 		if( SHOW_SCROLLER )
@@ -614,7 +611,7 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 
 				if( iPressedDir != iActualDir )	// wrapped
 				{
-					ActorScroller &scroller = SHARED_SELECTION ? m_Scroller[0] : m_Scroller[p];
+					ActorScroller &scroller = SHARED_SELECTION ? m_Scroller[0] : m_Scroller[*p];
 					float fItem = scroller.GetCurrentItem();
 					int iNumChoices = m_aGameCommands.size();
 					fItem += iActualDir * iNumChoices;
@@ -622,10 +619,10 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 				}
 			}
 
-			m_Scroller[p].SetDestinationItem( (float)iNewChoice );
+			m_Scroller[*p].SetDestinationItem( (float)iNewChoice );
 			
-			m_vsprScroll[p][iOldChoice]->PlayCommand( "LoseFocus" );
-			m_vsprScroll[p][iNewChoice]->PlayCommand( "GainFocus" );
+			m_vsprScroll[*p][iOldChoice]->PlayCommand( "LoseFocus" );
+			m_vsprScroll[*p][iNewChoice]->PlayCommand( "GainFocus" );
 		}
 	}
 
