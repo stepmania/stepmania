@@ -1524,14 +1524,17 @@ void ScreenGameplay::Update( float fDeltaTime )
 		pi->m_SoundEffectControl.Update( fDeltaTime );
 	}
 
-	if( GAMESTATE->m_SongOptions.GetCurrent().m_fHaste != 0.0f )
 	{
-		float fSpeed = GetHasteRate();
-		fSpeed *= GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+		float fSpeed = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+		if( GAMESTATE->m_SongOptions.GetCurrent().m_fHaste != 0.0f )
+			fSpeed *= GetHasteRate();
 
 		RageSoundParams p = m_pSoundMusic->GetParams();
-		p.m_fSpeed = fSpeed;
-		m_pSoundMusic->SetParams( p );
+		if( fabsf(p.m_fSpeed - fSpeed) > 0.01f )
+		{
+			p.m_fSpeed = fSpeed;
+			m_pSoundMusic->SetParams( p );
+		}
 	}
 
 	switch( m_DancingState )
