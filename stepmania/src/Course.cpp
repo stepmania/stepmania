@@ -696,7 +696,18 @@ bool Course::HasMods() const
 {
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
-		if( !e->sModifiers.empty() || !e->attacks.empty() )
+		if( !e->attacks.empty() )
+			return true;
+	}
+
+	return false;
+}
+
+bool Course::HasTimedMods() const
+{
+	FOREACH_CONST( CourseEntry, m_vEntries, e )
+	{
+		if( !e->attacks.empty() )
 			return true;
 	}
 
@@ -978,6 +989,7 @@ public:
 	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
 	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
 	static int HasMods( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMods() ); return 1; }
+	static int HasTimedMods( T* p, lua_State *L )		{ lua_pushboolean( L, p->HasTimedMods() ); return 1; }
 	static int GetCourseType( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCourseType() ); return 1; }
 	static int GetCourseEntry( T* p, lua_State *L )		{ CourseEntry &ce = p->m_vEntries[IArg(1)]; ce.PushSelf(L); return 1; }
 	static int GetAllTrails( T* p, lua_State *L )
@@ -1008,6 +1020,7 @@ public:
 		ADD_METHOD( GetDisplayFullTitle );
 		ADD_METHOD( GetTranslitFullTitle );
 		ADD_METHOD( HasMods );
+		ADD_METHOD( HasTimedMods );
 		ADD_METHOD( GetCourseType );
 		ADD_METHOD( GetCourseEntry );
 		ADD_METHOD( GetAllTrails );

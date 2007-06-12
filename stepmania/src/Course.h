@@ -124,6 +124,7 @@ public:
 	void GetAllTrails( vector<Trail*> &AddTo ) const;
 	int GetMeter( StepsType st, CourseDifficulty cd=Difficulty_Medium ) const;
 	bool HasMods() const;
+	bool HasTimedMods() const;
 	bool AllSongsAreFixed() const;
 	const Style *GetCourseStyle( const Game *pGame, int iNumPlayers ) const;
 
