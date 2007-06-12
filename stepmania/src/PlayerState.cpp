@@ -151,14 +151,17 @@ void PlayerState::RebuildPlayerOptionsFromActiveAttacks()
 {
 	// rebuild player options
 	PlayerOptions po = m_PlayerOptions.GetStage();
+	SongOptions so = GAMESTATE->m_SongOptions.GetStage();
 	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
 	{
 		if( !m_ActiveAttacks[s].bOn )
 			continue; /* hasn't started yet */
 		po.FromString( m_ActiveAttacks[s].sModifiers );
+		so.FromString( m_ActiveAttacks[s].sModifiers );
 	}
 	m_PlayerOptions.Assign( ModsLevel_Song, po );
-
+	if( m_PlayerNumber == GAMESTATE->m_MasterPlayerNumber )
+		GAMESTATE->m_SongOptions.Assign( ModsLevel_Song, so );
 
 	int iSumOfAttackLevels = GetSumOfActiveAttackLevels();
 	if( iSumOfAttackLevels > 0 )
