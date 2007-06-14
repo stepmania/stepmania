@@ -1798,7 +1798,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 float ScreenGameplay::GetHasteRate()
 {
 	if( GAMESTATE->m_fMusicSeconds < GAMESTATE->m_fLastHasteUpdateMusicSeconds || // new song
-		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_fLastHasteUpdateMusicSeconds + 6 )
+		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_fLastHasteUpdateMusicSeconds + 4 )
 	{
 		bool bAnyPlayerHitAllNotes = false;
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
@@ -1816,7 +1816,7 @@ float ScreenGameplay::GetHasteRate()
 		}
 
 		if( bAnyPlayerHitAllNotes )
-			GAMESTATE->m_fHasteRate += 0.075f;
+			GAMESTATE->m_fHasteRate += 0.1f;
 		CLAMP( GAMESTATE->m_fHasteRate, -1.0f, +1.0f );
 
 		GAMESTATE->m_fLastHasteUpdateMusicSeconds = GAMESTATE->m_fMusicSeconds;
