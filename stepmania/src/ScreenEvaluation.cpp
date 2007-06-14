@@ -183,7 +183,6 @@ void ScreenEvaluation::Init()
 	LOG->Trace( "ScreenEvaluation::Init()" );
 
 	m_pStageStats = &STATSMAN->m_vPlayedStageStats.back();
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
 	ZERO( m_bSavedScreenshot );
 

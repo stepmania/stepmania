@@ -7,7 +7,6 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "GameCommand.h"
-#include "LightsManager.h"
 #include "InputEventPlus.h"
 
 #define CHOICE_NAMES		THEME->GetMetric (m_sName,"ChoiceNames")
@@ -64,9 +63,6 @@ void ScreenSelect::BeginScreen()
 
 	m_timerIdleComment.GetDeltaTime();
 	m_timerIdleTimeout.GetDeltaTime();
-
-	// derived classes can override if they want
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 }
 
 

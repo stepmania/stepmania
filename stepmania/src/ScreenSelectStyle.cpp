@@ -8,7 +8,6 @@
 #include "GameState.h"
 #include "AnnouncerManager.h"
 #include "ActorUtil.h"
-#include "LightsManager.h"
 #include "CommonMetrics.h"
 #include "LocalizedString.h"
 #include "InputEventPlus.h"
@@ -22,8 +21,6 @@ REGISTER_SCREEN_CLASS( ScreenSelectStyle );
 
 void ScreenSelectStyle::Init()
 {
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
-
 	ScreenSelect::Init();
 
 	m_iSelection = 0;

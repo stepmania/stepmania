@@ -9,7 +9,6 @@
 #include "ThemeManager.h"
 #include "GameSoundManager.h"
 #include "CodeDetector.h"
-#include "LightsManager.h"
 #include "Game.h"
 #include "InputMapper.h"
 #include "InputEventPlus.h"
@@ -26,9 +25,6 @@ ScreenTitleMenu::ScreenTitleMenu()
 	 * options.  Having special cases in attract screens and the title menu to reset
 	 * things stinks ... */
 	GAMESTATE->Reset();
-
-	// TRICKY: Do this after GameState::Reset.
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_JOINING );
 
 	this->SubscribeToMessage( GamePreferences::m_CoinMode.GetName()+"Changed" );
 }

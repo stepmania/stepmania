@@ -18,7 +18,6 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "MenuTimer.h"
-#include "LightsManager.h"
 #include "StatsManager.h"
 #include "StepsUtil.h"
 #include "Foreach.h"
@@ -174,8 +173,6 @@ void ScreenSelectMusic::Init()
 
 void ScreenSelectMusic::BeginScreen()
 {
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
-
 	if( CommonMetrics::AUTO_SET_STYLE )
 	{
 		vector<StepsType> vst;

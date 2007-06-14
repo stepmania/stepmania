@@ -218,9 +218,7 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 		if( REPEAT_DELAY != -1.0f )
 			INPUTFILTER->SetRepeatDelay( REPEAT_DELAY );
 
-		LightsMode lm = LIGHTS_MODE;
-		if( lm != LightsMode_Invalid ) // leave alone
-			LIGHTSMAN->SetLightsMode( lm );
+		LIGHTSMAN->SetLightsMode( LIGHTS_MODE );
 	}
 	else if( SM == SM_LoseFocus )
 	{

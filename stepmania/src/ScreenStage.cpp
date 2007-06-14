@@ -8,7 +8,6 @@
 #include "GameState.h"
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
-#include "LightsManager.h"
 
 #define MINIMUM_DELAY			THEME->GetMetricF(m_sName,"MinimumDelay")
 
@@ -23,8 +22,6 @@ void ScreenStage::Init()
 	ALLOW_BACK.Load( m_sName, "AllowBack" );
 
 	SOUND->StopMusic();
-
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_STAGE );
 
 	m_sprOverlay.Load( THEME->GetPathB(m_sName,"overlay") );
 	m_sprOverlay->SetName( "Overlay" );

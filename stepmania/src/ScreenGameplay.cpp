@@ -365,11 +365,6 @@ void ScreenGameplay::Init()
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		MEMCARDMAN->PauseMountingThread();
 
-	if( GAMESTATE->m_bDemonstrationOrJukebox )
-		LIGHTSMAN->SetLightsMode( LIGHTSMODE_DEMONSTRATION );
-	else
-		LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY );
-
 	m_pSoundMusic = NULL;
 	m_bPaused = false;
 
