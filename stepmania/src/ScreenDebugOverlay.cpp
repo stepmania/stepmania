@@ -781,7 +781,10 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 {
 	HighScore hs;
 	hs.SetName( "FAKE" );
-	hs.SetGrade( (Grade)SCALE( RandomInt(5), 0, 4, Grade_Tier01, Grade_Tier05 ) );
+	Grade g = (Grade)SCALE( RandomInt(6), 0, 4, Grade_Tier01, Grade_Tier06 );
+	if( g == Grade_Tier06 )
+		g = Grade_Failed;
+	hs.SetGrade( g );
 	hs.SetScore( RandomInt(100*1000) );
 	hs.SetPercentDP( fPercentDP );
 	hs.SetSurviveSeconds( randomf(30.0f, 100.0f) );
@@ -826,7 +829,8 @@ static void FillProfileStats( Profile *pProfile )
 		vector<Steps*> vpAllSteps = (*pSong)->GetAllSteps();
 		FOREACH( Steps*, vpAllSteps, pSteps )
 		{
-			pProfile->IncrementStepsPlayCount( *pSong, *pSteps );
+			if( rand() % 5 )
+				pProfile->IncrementStepsPlayCount( *pSong, *pSteps );
 			for( int i=0; i<iCount; i++ )
 			{
 				int iIndex = 0;
@@ -843,7 +847,8 @@ static void FillProfileStats( Profile *pProfile )
 		(*pCourse)->GetAllTrails( vpAllTrails );
 		FOREACH( Trail*, vpAllTrails, pTrail )
 		{
-			pProfile->IncrementCoursePlayCount( *pCourse, *pTrail );
+			if( rand() % 5 )
+				pProfile->IncrementCoursePlayCount( *pCourse, *pTrail );
 			for( int i=0; i<iCount; i++ )
 			{
 				int iIndex = 0;
