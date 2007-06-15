@@ -980,7 +980,11 @@ class DebugLineWriteProfiles : public IDebugLine
 		if( g_ProfileSlot == ProfileSlot_Machine )
 			GAMESTATE->SaveLocalData();
 		else
-			GAMESTATE->SaveProfile( (PlayerNumber) g_ProfileSlot );
+		{
+			PlayerNumber pn = (PlayerNumber) g_ProfileSlot;
+			GAMESTATE->SaveCurrentSettingsToProfile(pn);
+			GAMESTATE->SaveProfile( pn );
+		}
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
