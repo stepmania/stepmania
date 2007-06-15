@@ -737,6 +737,9 @@ void GameState::LoadCurrentSettingsFromProfile( PlayerNumber pn )
 		m_PreferredDifficulty[pn].Set( pProfile->m_LastDifficulty );
 	if( pProfile->m_LastCourseDifficulty != Difficulty_Invalid )
 		m_PreferredCourseDifficulty[pn].Set( pProfile->m_LastCourseDifficulty );
+	// Only set the PreferredStepsType if it wasn't already set by a GameCommand (or by an earlier profile)
+	if( m_PreferredStepsType == StepsType_Invalid  &&  pProfile->m_LastStepsType != StepsType_Invalid )
+		m_PreferredStepsType.Set( pProfile->m_LastStepsType );
 	if( m_pPreferredSong == NULL )
 		m_pPreferredSong = pProfile->m_lastSong.ToSong();
 	if( m_pPreferredCourse == NULL )
@@ -759,6 +762,8 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 		pProfile->m_LastDifficulty = m_PreferredDifficulty[pn];
 	if( m_PreferredCourseDifficulty[pn] != Difficulty_Invalid )
 		pProfile->m_LastCourseDifficulty = m_PreferredCourseDifficulty[pn];
+	if( m_PreferredStepsType != StepsType_Invalid )
+		pProfile->m_LastStepsType = m_PreferredStepsType;
 	if( m_pPreferredSong )
 		pProfile->m_lastSong.FromSong( m_pPreferredSong );
 	if( m_pPreferredCourse )

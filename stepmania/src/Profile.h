@@ -111,6 +111,7 @@ public:
 	SortOrder m_SortOrder;
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;
+	StepsType m_LastStepsType;
 	SongID m_lastSong;
 	CourseID m_lastCourse;
 	int m_iTotalPlays;
