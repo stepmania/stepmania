@@ -132,6 +132,8 @@ void ScreenRanking::Input( const InputEventPlus &input )
 
 void ScreenRanking::MenuStart( const InputEventPlus &input )
 {
+	if( !MANUAL_SCROLLING )
+		return;
 	if( !IsTransitioning() )
 		StartTransitioningScreen( SM_GoToNextScreen );
 	SCREENMAN->PlayStartSound();
@@ -139,6 +141,8 @@ void ScreenRanking::MenuStart( const InputEventPlus &input )
 
 void ScreenRanking::MenuBack( const InputEventPlus &input )
 {
+	if( !MANUAL_SCROLLING )
+		return;
 	if( !IsTransitioning() )
 		StartTransitioningScreen( SM_GoToNextScreen );
 	SCREENMAN->PlayStartSound();
