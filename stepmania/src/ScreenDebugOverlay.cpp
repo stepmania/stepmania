@@ -575,9 +575,9 @@ class DebugLineAssist : public IDebugLine
 		else
 			b = !GAMESTATE->m_SongOptions.GetSong().m_bAssistClap;
 		if( bHoldingShift )
-			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_bAssistMetronome, b );
+			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Preferred, m_bAssistMetronome, b );
 		else
-			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_bAssistClap, b );
+			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Preferred, m_bAssistClap, b );
 
 		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
