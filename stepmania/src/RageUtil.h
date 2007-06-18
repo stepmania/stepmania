@@ -82,6 +82,8 @@ inline void wrap( float &x, float n )
 	x = fmodf(x,n);
 }
 
+inline float fracf( float f ) { return f - truncf(f); }
+
 template<class T>
 void CircularShift( vector<T> &v, int dist )
 {
