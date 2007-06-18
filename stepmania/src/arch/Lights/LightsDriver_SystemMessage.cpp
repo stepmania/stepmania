@@ -34,7 +34,7 @@ void LightsDriver_SystemMessage::Set( const LightsState *ls )
 	FOREACH_GameController( gc )
 	{
 		s += ssprintf("Controller%d: ",gc+1);
-		for( int gb=GAME_BUTTON_CUSTOM_01; gb<iNumGameButtonsToShow; gb++ )
+		FOREACH_GameButton( gb )
 		{
 			s += ls->m_bGameButtonLights[gc][gb] ? '1' : '0';
 		}
