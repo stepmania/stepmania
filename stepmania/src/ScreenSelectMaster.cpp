@@ -561,8 +561,8 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 	{
 		/* Set the new m_iChoice even for disabled players, since a player might
 		 * join on a SHARED_SELECTION after the cursor has been moved. */
-		FOREACH_HumanPlayer( pn )
-			vpns.push_back( pn );
+		FOREACH_ENUM( PlayerNumber, p )
+			vpns.push_back( p );
 	}
 	else
 	{
@@ -602,6 +602,8 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 
 		if( SHOW_SCROLLER )
 		{
+			ActorScroller &scroller = SHARED_SELECTION ? m_Scroller[0] : m_Scroller[*p];
+			vector<AutoActor> &vScroll = SHARED_SELECTION ? m_vsprScroll[0] : m_vsprScroll[*p];
 			if( WRAP_SCROLLER )
 			{
 				// HACK: We can't tell from the option orders whether or not we wrapped.
@@ -611,7 +613,6 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 
 				if( iPressedDir != iActualDir )	// wrapped
 				{
-					ActorScroller &scroller = SHARED_SELECTION ? m_Scroller[0] : m_Scroller[*p];
 					float fItem = scroller.GetCurrentItem();
 					int iNumChoices = m_aGameCommands.size();
 					fItem += iActualDir * iNumChoices;
@@ -619,10 +620,10 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 				}
 			}
 
-			m_Scroller[*p].SetDestinationItem( (float)iNewChoice );
+			scroller.SetDestinationItem( (float)iNewChoice );
 			
-			m_vsprScroll[*p][iOldChoice]->PlayCommand( "LoseFocus" );
-			m_vsprScroll[*p][iNewChoice]->PlayCommand( "GainFocus" );
+			vScroll[iOldChoice]->PlayCommand( "LoseFocus" );
+			vScroll[iNewChoice]->PlayCommand( "GainFocus" );
 		}
 	}
 
