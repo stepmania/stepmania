@@ -206,23 +206,6 @@ void LightsManager::Update( float fDeltaTime )
 
 	switch( m_LightsMode )
 	{
-	case LIGHTSMODE_JOINING:
-		{
-//			int iBeat = (int)(GAMESTATE->m_fLightSongBeat);
-//			bool bBlinkOn = (iBeat%2)==0;
-
-			FOREACH_PlayerNumber( pn )
-			{
-				if( GAMESTATE->m_bSideIsJoined[pn] )
-				{
-					m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT+pn] = true;
-					m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT+pn] = true;
-					m_LightsState.m_bCabinetLights[LIGHT_BASS_LEFT+pn] = true;
-					m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = true;
-				}
-			}
-		}
-		break;
 	case LIGHTSMODE_ATTRACT:
 		{
 			int iSec = (int)RageTimer::GetTimeSinceStartFast();
@@ -242,6 +225,7 @@ void LightsManager::Update( float fDeltaTime )
 		}
 		break;
 	case LIGHTSMODE_MENU:
+	case LIGHTSMODE_JOINING:
 		{
 			FOREACH_CabinetLight( cl )
 				m_LightsState.m_bCabinetLights[cl] = false;
@@ -258,14 +242,12 @@ void LightsManager::Update( float fDeltaTime )
 			default:	ASSERT(0);
 			}
 
-			/* Flash the button lights for active players. */
-			bool bBlinkOn = (iBeat%2)==0;
-
+			/* Light the button lights for active players. */
 			FOREACH_PlayerNumber( pn )
 			{
 				if( GAMESTATE->m_bSideIsJoined[pn] )
 				{
-					m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = bBlinkOn;
+					m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = true;
 				}
 			}
 		}
@@ -306,31 +288,13 @@ void LightsManager::Update( float fDeltaTime )
 	}
 
 
-	// If not joined, has enough credits, and not too late to join, then 
-	// blink the menu buttons rapidly so they'll press Start
-	{
-		int iBeat = (int)(GAMESTATE->m_fLightSongBeat*4);
-		bool bBlinkOn = (iBeat%2)==0;
-		FOREACH_PlayerNumber( pn )
-		{
-			if( !GAMESTATE->m_bSideIsJoined[pn] && GAMESTATE->PlayersCanJoin() && GAMESTATE->EnoughCreditsToJoin() )
-				m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = bBlinkOn;
-		}
-	}
-
-
 	//
 	// Update game controller lights
 	//
-	// FIXME:  Works only with Game==dance
-	// FIXME:  lights pads for players who aren't playing
 	switch( m_LightsMode )
 	{
 	case LIGHTSMODE_ATTRACT:
 	case LIGHTSMODE_DEMONSTRATION:
-		{
-			ZERO( m_LightsState.m_bGameButtonLights );
-		}
 		break;
 	case LIGHTSMODE_ALL_CLEARED:
 	case LIGHTSMODE_STAGE:
@@ -364,11 +328,11 @@ void LightsManager::Update( float fDeltaTime )
 			else
 			{
 				//
-				// Blink on button pressess.
+				// Blink on button presses.
 				//
 				FOREACH_GameController( gc )
 				{
-					FOREACH_GameButton( gb )
+					FOREACH_GameButton_Custom( gb )
 					{
 						bool bOn = INPUTMAPPER->IsBeingPressed( GameInput(gc,gb) );
 						m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
@@ -409,6 +373,18 @@ void LightsManager::Update( float fDeltaTime )
 		break;
 	default:
 		ASSERT(0);
+	}
+
+	// If not joined, has enough credits, and not too late to join, then 
+	// blink the menu buttons rapidly so they'll press Start
+	{
+		int iBeat = (int)(GAMESTATE->m_fLightSongBeat*4);
+		bool bBlinkOn = (iBeat%2)==0;
+		FOREACH_PlayerNumber( pn )
+		{
+			if( !GAMESTATE->m_bSideIsJoined[pn] && GAMESTATE->PlayersCanJoin() && GAMESTATE->EnoughCreditsToJoin() )
+				m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = bBlinkOn;
+		}
 	}
 
 	// apply new light values we set above
