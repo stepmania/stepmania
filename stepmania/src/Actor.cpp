@@ -29,6 +29,8 @@ public:
 REGISTER_ACTOR_CLASS_WITH_NAME( HiddenActor, Actor )
 
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
+float Actor::g_fCurrentBGMTimeNoOffset = 0, Actor::g_fCurrentBGMBeatNoOffset = 0;
+
 
 Actor *Actor::Copy() const { return new Actor(*this); }
 
@@ -50,10 +52,16 @@ static const char *VertAlignNames[] = {
 XToString( VertAlign );
 LuaXType( VertAlign );
 
-void Actor::SetBGMTime( float fTime, float fBeat )
+void Actor::SetBGMTime( float fTime, float fBeat, float fTimeNoOffset, float fBeatNoOffset )
 {
 	g_fCurrentBGMTime = fTime;
 	g_fCurrentBGMBeat = fBeat;
+
+	/* This timer is generally only used for effects tied to the background music
+	 * when GameSoundManager is aligning music beats.  Alignment doesn't handle
+	 * g_fVisualDelaySeconds. */
+	g_fCurrentBGMTimeNoOffset = fTimeNoOffset;
+	g_fCurrentBGMBeatNoOffset = fBeatNoOffset;
 }
 
 void Actor::SetBGMLight( int iLightNumber, float fCabinetLights )
@@ -647,6 +655,17 @@ void Actor::UpdateInternal( float fDeltaTime )
 		m_fEffectDelta = g_fCurrentBGMTime - m_fSecsIntoEffect;
 		m_fSecsIntoEffect = g_fCurrentBGMTime;
 		break;
+
+	case CLOCK_BGM_BEAT_NO_OFFSET:
+		m_fEffectDelta = g_fCurrentBGMBeatNoOffset - m_fSecsIntoEffect;
+		m_fSecsIntoEffect = g_fCurrentBGMBeatNoOffset;
+		break;
+
+	case CLOCK_BGM_TIME_NO_OFFSET:
+		m_fEffectDelta = g_fCurrentBGMTimeNoOffset - m_fSecsIntoEffect;
+		m_fSecsIntoEffect = g_fCurrentBGMTimeNoOffset;
+		break;
+
 	default:
 		if( m_EffectClock >= CLOCK_LIGHT_1 && m_EffectClock <= CLOCK_LIGHT_LAST )
 		{
@@ -776,6 +795,8 @@ void Actor::SetEffectClockString( const RString &s )
 	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT );
 	else if(s.EqualsNoCase("music"))	this->SetEffectClock( CLOCK_BGM_TIME );
 	else if(s.EqualsNoCase("bgm"))		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
+	else if(s.EqualsNoCase("musicnooffset"))this->SetEffectClock( CLOCK_BGM_TIME_NO_OFFSET );
+	else if(s.EqualsNoCase("beatnooffset"))	this->SetEffectClock( CLOCK_BGM_BEAT_NO_OFFSET );
 	else
 	{
 		CabinetLight cl = StringToCabinetLight( s );

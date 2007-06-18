@@ -60,7 +60,7 @@ public:
 	virtual void InitState();
 	virtual void LoadFromNode( const XNode* pNode );
 
-	static void SetBGMTime( float fTime, float fBeat );
+	static void SetBGMTime( float fTime, float fBeat, float fTimeNoOffset, float fBeatNoOffset );
 	static void SetBGMLight( int iLightNumber, float fCabinetLights );
 
 	enum Effect { no_effect,
@@ -97,6 +97,8 @@ public:
 		CLOCK_TIMER_GLOBAL,
 		CLOCK_BGM_TIME,
 		CLOCK_BGM_BEAT,
+		CLOCK_BGM_TIME_NO_OFFSET,
+		CLOCK_BGM_BEAT_NO_OFFSET,
 		CLOCK_LIGHT_1 = 1000,
 		CLOCK_LIGHT_LAST = 1100,
 		NUM_CLOCKS
@@ -480,6 +482,7 @@ protected:
 	// global state
 	//
 	static float g_fCurrentBGMTime, g_fCurrentBGMBeat;
+	static float g_fCurrentBGMTimeNoOffset, g_fCurrentBGMBeatNoOffset;
 
 private:
 	//
