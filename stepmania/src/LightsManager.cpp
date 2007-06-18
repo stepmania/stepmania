@@ -230,10 +230,16 @@ void LightsManager::Update( float fDeltaTime )
 			FOREACH_CabinetLight( cl )
 				m_LightsState.m_bCabinetLights[cl] = false;
 
-			int iBeat = (int)(GAMESTATE->m_fLightSongBeat);
-			int iTopIndex = iBeat;
-			wrap( iTopIndex, 4 );
-			switch( iTopIndex )
+			static float fLastBeat;
+			static int iLight;
+
+			if( fracf(GAMESTATE->m_fLightSongBeat) < fracf(fLastBeat) )
+			{
+				++iLight;
+				wrap( iLight, 4 );
+			}
+			fLastBeat = GAMESTATE->m_fLightSongBeat;
+			switch( iLight )
 			{
 			case 0:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]  = true;	break;
 			case 1:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT] = true;	break;
