@@ -30,7 +30,6 @@ void LightsDriver_SystemMessage::Set( const LightsState *ls )
 	}
 	s += "\n";
 
-	int iNumGameButtonsToShow = INPUTMAPPER->GetInputScheme()->m_iButtonsPerController;
 	FOREACH_GameController( gc )
 	{
 		s += ssprintf("Controller%d: ",gc+1);
