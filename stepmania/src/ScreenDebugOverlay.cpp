@@ -458,12 +458,20 @@ static void SetSpeed()
 void ChangeVolume( float fDelta )
 {
 	Preference<float> *pRet = Preference<float>::GetPreferenceByName("SoundVolume");
-
 	float fVol = pRet->Get();
 	fVol += fDelta;
 	CLAMP( fVol, 0.0f, 1.0f );
 	pRet->Set( fVol );
 	SOUNDMAN->SetMixVolume();
+}
+
+void ChangeVisualDelay( float fDelta )
+{
+	Preference<float> *pRet = Preference<float>::GetPreferenceByName("VisualDelaySeconds");
+	float fSecs = pRet->Get();
+	fSecs += fDelta;
+	CLAMP( fSecs, -1.0f, 1.0f );
+	pRet->Set( fSecs );
 }
 
 
@@ -497,6 +505,8 @@ static LocalizedString WRITE_PREFERENCES	( "ScreenDebugOverlay", "Write Preferen
 static LocalizedString MENU_TIMER		( "ScreenDebugOverlay", "Menu Timer" );
 static LocalizedString FLUSH_LOG		( "ScreenDebugOverlay", "Flush Log" );
 static LocalizedString PULL_BACK_CAMERA		( "ScreenDebugOverlay", "Pull Back Camera" );
+static LocalizedString VISUAL_DELAY_UP		( "ScreenDebugOverlay", "Visual Delay Up" );
+static LocalizedString VISUAL_DELAY_DOWN	( "ScreenDebugOverlay", "Visual Delay Down" );
 static LocalizedString VOLUME_UP		( "ScreenDebugOverlay", "Volume Up" );
 static LocalizedString VOLUME_DOWN		( "ScreenDebugOverlay", "Volume Down" );
 static LocalizedString UPTIME			( "ScreenDebugOverlay", "Uptime" );
@@ -1073,6 +1083,39 @@ class DebugLineVolumeDown : public IDebugLine
 	}
 };
 
+class DebugLineVisualDelayUp : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return VISUAL_DELAY_UP.GetValue(); }
+	virtual RString GetDisplayValue() { return ssprintf("%.03f",GetPref()->Get()); }
+	virtual bool IsEnabled() { return true; }
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
+	{
+		ChangeVisualDelay( +0.001f );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
+	}
+	Preference<float> *GetPref()
+	{
+		return Preference<float>::GetPreferenceByName("VisualDelaySeconds");
+	}
+};
+
+class DebugLineVisualDelayDown : public IDebugLine
+{
+	virtual RString GetDisplayTitle() { return VISUAL_DELAY_DOWN.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
+	virtual bool IsEnabled() { return true; }
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
+	{
+		ChangeVisualDelay( -0.001f );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
+		sMessageOut += " - " + ssprintf("%.03f",GetPref()->Get());
+	}
+	Preference<float> *GetPref()
+	{
+		return Preference<float>::GetPreferenceByName("VisualDelaySeconds");
+	}
+};
+
 class DebugLineForceCrash : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return FORCE_CRASH.GetValue(); }
@@ -1124,6 +1167,8 @@ DECLARE_ONE( DebugLineFlushLog );
 DECLARE_ONE( DebugLinePullBackCamera );
 DECLARE_ONE( DebugLineVolumeUp );
 DECLARE_ONE( DebugLineVolumeDown );
+DECLARE_ONE( DebugLineVisualDelayUp );
+DECLARE_ONE( DebugLineVisualDelayDown );
 DECLARE_ONE( DebugLineForceCrash );
 DECLARE_ONE( DebugLineUptime );
 
