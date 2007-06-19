@@ -335,8 +335,11 @@ void ScreenWithMenuElementsSimple::MenuBack( const InputEventPlus &input )
 class LunaScreenWithMenuElements: public Luna<ScreenWithMenuElements>
 {
 public:
+	static int Cancel( T* p, lua_State *L )		{ p->Cancel( SM_GoToPrevScreen ); return 0; }
+
 	LunaScreenWithMenuElements()
 	{
+  		ADD_METHOD( Cancel );
 	}
 };
 
