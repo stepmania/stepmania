@@ -256,29 +256,6 @@ void BackgroundImpl::Layer::Unload()
 	m_iCurBGChangeIndex = -1;
 }
 
-Actor *MakeVisualization( const RString &sVisPath )
-{
-	ActorFrame *pFrame = new ActorFrame;
-	pFrame->DeleteChildrenWhenDone();
-
-	const Song* pSong = GAMESTATE->m_pCurSong;
-	RString sSongBGPath = 
-		(pSong && pSong->HasBackground()) ? pSong->GetBackgroundPath() : THEME->GetPathG("Common","fallback background");
-
-	Sprite* pSprite = new Sprite;
-	pSprite->Load( Sprite::SongBGTexture(sSongBGPath) );
-	pSprite->StretchTo( FullScreenRectF );
-	pFrame->AddChild( pSprite );
-
-	pSprite = new Sprite;
-	pSprite->Load( Sprite::SongBGTexture(sVisPath) );
-	pSprite->StretchTo( FullScreenRectF );
-	pSprite->SetBlendMode( BLEND_ADD );
-	pFrame->AddChild( pSprite );
-
-	return pFrame;
-}
-
 bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const BackgroundDef &bd, Actor *pParent )
 {
 	ASSERT( m_BGAnimations.find(bd) == m_BGAnimations.end() );
