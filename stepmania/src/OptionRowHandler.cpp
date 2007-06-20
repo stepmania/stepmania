@@ -1273,7 +1273,7 @@ public:
 	}
 	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
-		if( vbSelected[PLAYER_1][0] )
+		if( vbSelected[PLAYER_1][0] || vbSelected[PLAYER_2][0] )
 			m_gc.ApplyToAllPlayers();
 		return 0;
 	}
