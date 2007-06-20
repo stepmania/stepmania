@@ -41,7 +41,7 @@ const RString EDIT_COURSES_SUBDIR  = "EditCourses/";
 ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
 static Preference<bool> g_bProfileDataCompress( "ProfileDataCompress", false );
 static Preference<bool> g_bCopyCatalogToProfiles( "CopyCatalogToProfiles", true );
-static Preference<RString> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString" );
+static ThemeMetric<RString> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString" );
 
 #define GUID_SIZE_BYTES 8
 
@@ -1106,9 +1106,9 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 			XNode *pEntry = pUnlocks->AppendChild("UnlockEntry");
 			RString sUnlockEntry = it->c_str();
 			pEntry->AppendAttr( "UnlockEntryID", sUnlockEntry );
-			if( !UNLOCK_AUTH_STRING.Get().empty() )
+			if( !UNLOCK_AUTH_STRING.GetValue().empty() )
 			{
-				RString sUnlockAuth = BinaryToHex( CRYPTMAN->GetMD5ForString(sUnlockEntry + UNLOCK_AUTH_STRING.Get()) );
+				RString sUnlockAuth = BinaryToHex( CRYPTMAN->GetMD5ForString(sUnlockEntry + UNLOCK_AUTH_STRING.GetValue()) );
 				pEntry->AppendAttr( "Auth", sUnlockAuth );
 			}
 		}
@@ -1281,13 +1281,13 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 				if( !unlock->GetAttrValue("UnlockEntryID",sUnlockEntryID) )
 					continue;
 
-				if( !UNLOCK_AUTH_STRING.Get().empty() )
+				if( !UNLOCK_AUTH_STRING.GetValue().empty() )
 				{
 					RString sUnlockAuth;
 					if( !unlock->GetAttrValue("Auth", sUnlockAuth) )
 						continue;
 
-					RString sExpectedUnlockAuth = BinaryToHex( CRYPTMAN->GetMD5ForString(sUnlockEntryID + UNLOCK_AUTH_STRING.Get()) );
+					RString sExpectedUnlockAuth = BinaryToHex( CRYPTMAN->GetMD5ForString(sUnlockEntryID + UNLOCK_AUTH_STRING.GetValue()) );
 					if( sUnlockAuth != sExpectedUnlockAuth )
 						continue;
 				}
