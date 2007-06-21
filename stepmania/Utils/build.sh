@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 verbose=0
 msg=
@@ -30,17 +30,18 @@ failure () {
 	else
 		echo failed$error
 	fi
+	echo "Consider passing --verbose to $0. Pass --help for details."
 	exit 1
 }
 
 call () {
 	if [ $verbose -ge 2 ]; then
-		echo $@
+		echo "$@"
 	fi
 	if [ $verbose -gt 0 ]; then
-		eval $@ || failure
+		eval "$@" || failure
 	else
-		eval $@ &>/dev/null || failure
+		eval "$@" >/dev/null 2>&1 || failure
 	fi
 	success
 }
@@ -68,7 +69,13 @@ version () {
 	exit 0
 }
 
-if which getopt &>/dev/null; then
+if ! test -x configure; then
+	msg='Checking for configure'
+	verbose=1
+	failure 'file not found.'
+fi
+
+if which getopt >/dev/null 2>&1; then
 	set -- `getopt	-l download,ffmpeg,configure,stepmania,help \
 			-l verbose,version -- dfcshv $*`
 fi
@@ -139,7 +146,7 @@ if [ ! -f _build/src/config.h ]; then
 	message 'Configuring StepMania'
 	mkdir -p _build
 	cd _build
-	call ../configure --with-ffmpeg=../$ffmpeg/_inst $@
+	call ../configure --with-ffmpeg=../$ffmpeg/_inst "$@"
 	cd ..
 fi
 if [ -n "$s_configure" ]; then exit 0; fi
