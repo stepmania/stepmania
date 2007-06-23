@@ -209,28 +209,25 @@ RString ArchHooks_darwin::GetMachineId() const
 
 void ArchHooks_darwin::DumpDebugInfo()
 {
-	RString systemVersion;
-	OSErr err;
-	long code;
 	
 	/* Get system version */
-	err = Gestalt( gestaltSystemVersion, &code );
-	if( err == noErr )
+	RString systemVersion;
 	{
-		int major = ( (code >> 12) & 0xF ) * 10 + (code >> 8) & 0xF;
-		int minor = (code >> 4) & 0xF;
-		int revision = code & 0xF;
+		long major = 0, minor = 0, bugFix = 0;
 		
-		systemVersion = ssprintf( "Mac OS X %d.%d.%d", major, minor, revision );
+		Gestalt( gestaltSystemVersionMajor, &major );
+		Gestalt( gestaltSystemVersionMinor, &minor );
+		Gestalt( gestaltSystemVersionBugFix, &bugFix );
+		if( bugFix )
+			systemVersion = ssprintf( "Mac OS X %ld.%ld.%ld", major, minor, bugFix );
+		else
+			systemVersion = ssprintf( "Mac OS X %ld.%ld", major, minor );
 	}
-	else
-		systemVersion = "Unknown system version";
 	
 	/* Get memory */
 	long ram;
 	long vRam;
-	
-	err = Gestalt( gestaltLogicalRAMSize, &vRam );
+	OSErr err = Gestalt( gestaltLogicalRAMSize, &vRam );
 	if (err != noErr)
 		vRam = 0;
 	err = Gestalt( gestaltPhysicalRAMSize, &ram );
@@ -271,6 +268,7 @@ void ArchHooks_darwin::DumpDebugInfo()
 	}
 	
 	/* Get processor speed */
+	long code;
 	err = Gestalt( gestaltProcClkSpeed, &code );
 	if( err != noErr )
 		code = 0;
