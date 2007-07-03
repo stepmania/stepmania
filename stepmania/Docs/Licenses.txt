@@ -135,3 +135,8 @@ LEGAL AND ETHICAL:
 This software was designed and created to be made publicly available for 
 free, primarily for academic purposes, so if you use it, pass it on with 
 this documentation, and for free.
+
+On April 19 2007, StepMania was granted an MIT license by Gary Scavone
+for any STK code on the condition that all of the the STK
+credits/disclaimers/copyrights from the README are retained in the
+source code and in the project documentation.
