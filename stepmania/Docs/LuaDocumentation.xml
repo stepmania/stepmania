@@ -45,10 +45,10 @@
 		Returns the transliterated main title of the song.
 	</Function>
 	<Function name='IsLong' return='bool' arguments='none'>
-		Returns true if the song is meets the criteria for a &quot;Long Version&quot;.
+		Returns true if the song meets the criteria for a &quot;Long Version&quot;.
 	</Function>
 	<Function name='IsMarathon' return='bool' arguments='none'>
-		Returns true if the song is meets the criteria for &quot;Marathon&quot; length.
+		Returns true if the song meets the criteria for &quot;Marathon&quot; length.
 	</Function>
 </Class>
 </Classes>
