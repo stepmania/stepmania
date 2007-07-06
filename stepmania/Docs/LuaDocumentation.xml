@@ -25,5 +25,13 @@
 		Set the z position of the Actor.
 	</Function>
 </Class>
+<Class name='Song'>
+	<Function name='IsLong' return='bool' arguments='none'>
+		Returns true if the song is meets the criteria for a &quot;Long Version&quot;.
+	</Function>
+	<Function name='IsMarathon' return='bool' arguments='none'>
+		Returns true if the song is meets the criteria for &quot;Marathon&quot; length.
+	</Function>
+</Class>
 </Classes>
 </Documentation>
