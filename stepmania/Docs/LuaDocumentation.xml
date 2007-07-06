@@ -26,6 +26,24 @@
 	</Function>
 </Class>
 <Class name='Song'>
+	<Function name='GetDisplayArtist' return='string' arguments='none'>
+		Returns the displayed artist of the song.
+	</Function>
+	<Function name='GetDisplayFullTitle' return='string' arguments='none'>
+		Returns the displayed full title of the song, including subtitle.
+	</Function>
+	<Function name='GetDisplayMainTitle' return='string' arguments='none'>
+		Returns the displayed main title of the song.
+	</Function>
+	<Function name='GetTranslitArtist' return='string' arguments='none'>
+		Returns the transliterated artist of the song.
+	</Function>
+	<Function name='GetTranslitFullTitle' return='string' arguments='none'>
+		Returns the transliterated full title of the song, including subtitle.
+	</Function>
+	<Function name='GetTranslitMainTitle' return='string' arguments='none'>
+		Returns the transliterated main title of the song.
+	</Function>
 	<Function name='IsLong' return='bool' arguments='none'>
 		Returns true if the song is meets the criteria for a &quot;Long Version&quot;.
 	</Function>
