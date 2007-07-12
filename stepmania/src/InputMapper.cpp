@@ -444,6 +444,25 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
+		"pump",
+		"GamePad Pro USB ",	// yes, there is a space at the end
+		"GamePad Pro USB",
+		{
+			{ 0, JOY_BUTTON_7,	PUMP_BUTTON_UPLEFT,	false },
+			{ 0, JOY_BUTTON_8,	PUMP_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_BUTTON_5,	PUMP_BUTTON_DOWNLEFT,	false },
+			{ 0, JOY_BUTTON_6,	PUMP_BUTTON_DOWNRIGHT,	false },
+			{ 0, JOY_LEFT,		GAME_BUTTON_MENULEFT,	false },
+			{ 0, JOY_RIGHT,		GAME_BUTTON_MENURIGHT,	false },
+			{ 0, JOY_UP,		GAME_BUTTON_MENUUP,	false },
+			{ 0, JOY_DOWN,		GAME_BUTTON_MENUDOWN,	false },
+			{ 1, JOY_BUTTON_1,	PUMP_BUTTON_CENTER,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_START,	false },
+			END_MARKER
+		}
+	},
+	{
 		"para",
 		"ParaParaParadise Controller",
 		"ParaParaParadise Controller",
