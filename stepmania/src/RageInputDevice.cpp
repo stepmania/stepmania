@@ -8,6 +8,14 @@
 #include "RageUtil.h"
 #include "Foreach.h"
 
+static const char *InputDeviceStateNames[] = {
+	"Connected",
+	"Disconnected",
+	"MissingMultitap",
+};
+XToString( InputDeviceState );
+
+
 static map<DeviceButton,RString> g_mapNamesToString;
 static map<RString,DeviceButton> g_mapStringToNames;
 static void InitNames()

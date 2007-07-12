@@ -83,6 +83,7 @@ enum InputDeviceState
 	NUM_InputDeviceState,
 	InputDeviceState_Invalid
 };
+const RString& InputDeviceStateToString( InputDeviceState ids );
 
 
 /* Only raw, unshifted keys go in this table; this doesn't include internationalized
