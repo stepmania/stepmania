@@ -44,7 +44,7 @@ public:
 	~PlayerInfo();
 
 	void Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField );
-	void LoadDummyP1();
+	void LoadDummyP1( int iDummyIndex );
 
 	void ShowOniGameOver();
 	MultiPlayer GetPlayerStateAndStageStatsIndex()	{ return m_pn == PLAYER_INVALID ? m_mp : (MultiPlayer)m_pn; }
@@ -56,7 +56,7 @@ public:
 	RString GetName() const
 	{
 		if( m_bIsDummy )
-			return "Dummy";
+			return ssprintf("Dummy%d",m_iDummyIndex);
 		if( IsMultiPlayer() ) 
 			return MultiPlayerToString( m_mp );
 		else
@@ -71,6 +71,7 @@ public:
 	PlayerNumber		m_pn;
 	MultiPlayer		m_mp;
 	bool			m_bIsDummy;
+	int			m_iDummyIndex;
 	bool			m_bPlayerEnabled; // IsEnabled cache for iterators
 	PlayerState		m_PlayerStateDummy;
 	PlayerStageStats	m_PlayerStageStatsDummy;

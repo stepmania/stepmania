@@ -102,6 +102,7 @@ PlayerInfo::PlayerInfo()
 	m_pn = PLAYER_INVALID;
 	m_mp = MultiPlayer_Invalid;
 	m_bIsDummy = false;
+	m_iDummyIndex = 0;
 	m_pLifeMeter = NULL;
 	m_ptextCourseSongNumber = NULL;
 	m_ptextStepsDescription = NULL;
@@ -189,10 +190,12 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 	}
 }
 
-void PlayerInfo::LoadDummyP1()
+void PlayerInfo::LoadDummyP1( int iDummyIndex )
 {
 	m_pn = PLAYER_1;
+	m_bPlayerEnabled = IsEnabled();
 	m_bIsDummy = true;
+	m_iDummyIndex = iDummyIndex;
 
 	// don't init any of the scoring objects
 	m_pPlayer = new Player( m_NoteData, true );
@@ -446,7 +449,8 @@ void ScreenGameplay::Init()
 
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		pi->m_pPlayer->SetName( ssprintf("Player%s", pi->GetName().c_str()) );
+		RString sName = ssprintf("Player%s", pi->GetName().c_str());
+		pi->m_pPlayer->SetName( sName );
 		// If pi->m_pn is set, then the player will be visible.  If not, then it's not 
 		// visible and don't bother setting its position.
 
@@ -870,7 +874,9 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		/* This is the first beat that can be changed without it being visible.  Until
 		 * we draw for the first time, any beat can be changed. */
 		pi->GetPlayerState()->m_fLastDrawnBeat = -100;
-		GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ].Set( pi->m_vpStepsQueue[iSongIndex] );
+
+		Steps *pSteps = pi->m_vpStepsQueue[iSongIndex];
+		GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ].Set( pSteps );
 
 		/* Load new NoteData into Player.  Do this before 
 		 * RebuildPlayerOptionsFromActiveAttacks or else transform mods will get
@@ -880,7 +886,22 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		 * is very bad for transforms like AddMines.
 		 */
 		NoteData originalNoteData;
-		GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ]->GetNoteData( originalNoteData );
+		if( pi->m_bIsDummy )
+		{
+			switch( pi->m_iDummyIndex )
+			{
+			//case 0:
+			//	pSteps = SongUtil::GetOneSteps( GAMESTATE->m_pCurSong, pSteps->m_StepsType, Difficulty_Easy );
+			//	break;
+			case 1:
+				pSteps = SongUtil::GetOneSteps( GAMESTATE->m_pCurSong, pSteps->m_StepsType, Difficulty_Medium );
+				break;
+			case 2:
+				pSteps = SongUtil::GetOneSteps( GAMESTATE->m_pCurSong, pSteps->m_StepsType, Difficulty_Hard );
+				break;
+			}
+		}
+		pSteps->GetNoteData( originalNoteData );
 		
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 		NoteData ndTransformed;
@@ -2677,7 +2698,10 @@ public:
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>( L, 1 );
 
-		LifeMeter *pLM = p->GetPlayerInfo(pn)->m_pLifeMeter;
+		PlayerInfo *pi = p->GetPlayerInfo(pn);
+		if( pi == NULL )
+			return 0;
+		LifeMeter *pLM = pi->m_pLifeMeter;
 		if( pLM == NULL )
 			return 0;
 
