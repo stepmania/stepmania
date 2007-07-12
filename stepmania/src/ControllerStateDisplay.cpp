@@ -10,25 +10,28 @@
 #include "LuaBinding.h"
 
 static const char *ControllerStateButtonNames[] = {
-	"Up",
-	"Down",
-	"Left",
-	"Right",
+	"UpLeft",
+	"UpRight",
+	"Center",
+	"DownLeft",
+	"DownRight",
 };
 XToString( ControllerStateButton );
 
 static const DeviceButton ControllerStateButtonToDeviceButton[] = {
-	JOY_UP,
-	JOY_DOWN,
-	JOY_LEFT,
-	JOY_RIGHT,
+	JOY_BUTTON_1,
+	JOY_BUTTON_2,
+	JOY_BUTTON_3,
+	JOY_BUTTON_4,
+	JOY_BUTTON_5,
 };
 // TODO: Generalize for all game types
 static const GameButton ControllerStateButtonToGameButton[] = {
-	DANCE_BUTTON_UP,
-	DANCE_BUTTON_DOWN,
-	DANCE_BUTTON_LEFT,
-	DANCE_BUTTON_RIGHT,
+	PUMP_BUTTON_UPLEFT,
+	PUMP_BUTTON_UPRIGHT,
+	PUMP_BUTTON_CENTER,
+	PUMP_BUTTON_DOWNLEFT,
+	PUMP_BUTTON_DOWNRIGHT,
 };
 
 REGISTER_ACTOR_CLASS( ControllerStateDisplay )
@@ -37,6 +40,7 @@ ControllerStateDisplay::ControllerStateDisplay()
 {
 	m_bIsLoaded = false;
 	m_mp = MultiPlayer_Invalid;
+	m_idsLast = InputDeviceState_Invalid;
 }
 
 void ControllerStateDisplay::LoadMultiPlayer( MultiPlayer mp )
@@ -53,11 +57,12 @@ void ControllerStateDisplay::LoadInternal( MultiPlayer mp, GameController gc )
 {
 	ASSERT( !m_bIsLoaded );
 	m_bIsLoaded = true;
+	m_mp = mp;
 
+	LuaThreadVariable varElement( "MultiPlayer", LuaReference::Create(m_mp) );
 	m_sprFrame.Load( THEME->GetPathG("ControllerStateDisplay", "frame") );
 	this->AddChild( m_sprFrame );
 
-	m_mp = mp;
 	FOREACH_ENUM( ControllerStateButton, b )
 	{
 		Button &button = m_Buttons[ b ];
@@ -73,6 +78,17 @@ void ControllerStateDisplay::LoadInternal( MultiPlayer mp, GameController gc )
 void ControllerStateDisplay::Update( float fDelta )
 {
 	ActorFrame::Update( fDelta );
+
+	if( m_mp != MultiPlayer_Invalid )
+	{
+		InputDevice id = InputMapper::MultiPlayerToInputDevice( m_mp );
+		InputDeviceState ids = INPUTMAN->GetInputDeviceState(id);
+		if( ids != m_idsLast )
+		{
+			PlayCommand( InputDeviceStateToString(ids) );
+		}
+		m_idsLast = ids;
+	}
 
 	FOREACH_ENUM( ControllerStateButton, b )
 	{
@@ -98,7 +114,7 @@ public:
 	}
 };
 
-LUA_REGISTER_DERIVED_CLASS( ControllerStateDisplay, Actor )
+LUA_REGISTER_DERIVED_CLASS( ControllerStateDisplay, ActorFrame )
 
 /*
  * (c) 2001-2004 Chris Danford

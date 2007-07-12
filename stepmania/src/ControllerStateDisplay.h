@@ -12,10 +12,11 @@
 
 enum ControllerStateButton
 {
-	ControllerStateButton_Up,
-	ControllerStateButton_Down,
-	ControllerStateButton_Left,
-	ControllerStateButton_Right,
+	ControllerStateButton_UpLeft,
+	ControllerStateButton_UpRight,
+	ControllerStateButton_Center,
+	ControllerStateButton_DownLeft,
+	ControllerStateButton_DownRight,
 	NUM_ControllerStateButton
 };
 
@@ -55,6 +56,8 @@ protected:
 		GameInput gi;
 	};
 	Button m_Buttons[NUM_ControllerStateButton];
+
+	InputDeviceState m_idsLast;
 };
 
 #endif
