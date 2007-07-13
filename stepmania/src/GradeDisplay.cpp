@@ -3,6 +3,9 @@
 #include "RageUtil.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageLog.h"
+#include "ActorUtil.h"
+
+REGISTER_ACTOR_CLASS( GradeDisplay )
 
 void GradeDisplay::Load( RageTextureID ID )
 {
@@ -66,6 +69,36 @@ void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 		SetVisible( false );
 	}
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaGradeDisplay: public Luna<GradeDisplay>
+{
+public:
+	static int Load( T* p, lua_State *L )
+	{
+		RageTextureID id = SArg(1);
+		p->Load( id );
+		return 0;
+	}
+	static int SetGrade( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		Grade g = Enum::Check<Grade>(L, 2);
+		p->SetGrade( pn, g );
+		return 0;
+	}
+
+	LunaGradeDisplay()
+	{
+		ADD_METHOD( Load );
+		ADD_METHOD( SetGrade );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( GradeDisplay, Sprite )
+// lua end
 
 /*
  * (c) 2001-2002 Chris Danford

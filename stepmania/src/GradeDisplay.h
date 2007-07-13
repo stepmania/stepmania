@@ -6,7 +6,7 @@
 #include "Sprite.h"
 #include "Grade.h"
 #include "PlayerNumber.h"
-
+struct lua_State;
 
 class GradeDisplay : public Sprite
 {
@@ -16,6 +16,12 @@ public:
 
 protected:
 	int GetFrameIndex( PlayerNumber pn, Grade g );
+
+public:
+	virtual GradeDisplay *Copy() const;
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 #endif
