@@ -25,8 +25,8 @@ class ControllerStateDisplay : public ActorFrame
 {
 public:
 	ControllerStateDisplay();
-	void LoadMultiPlayer( MultiPlayer mp );
-	void LoadGameController( GameController gc );
+	void LoadMultiPlayer( RString sType, MultiPlayer mp );
+	void LoadGameController( RString sType, GameController gc );
 	virtual void Update( float fDelta );
 	bool IsLoaded() const { return m_bIsLoaded; }
 
@@ -38,7 +38,7 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	void LoadInternal( MultiPlayer mp, GameController gc );
+	void LoadInternal( RString sType, MultiPlayer mp, GameController gc );
 	MultiPlayer m_mp;
 
 	bool m_bIsLoaded;

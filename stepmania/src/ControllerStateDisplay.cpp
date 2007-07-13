@@ -43,31 +43,31 @@ ControllerStateDisplay::ControllerStateDisplay()
 	m_idsLast = InputDeviceState_Invalid;
 }
 
-void ControllerStateDisplay::LoadMultiPlayer( MultiPlayer mp )
+void ControllerStateDisplay::LoadMultiPlayer( RString sType, MultiPlayer mp )
 {
-	LoadInternal( mp, GAME_CONTROLLER_1 );
+	LoadInternal( sType, mp, GAME_CONTROLLER_1 );
 }
 
-void ControllerStateDisplay::LoadGameController( GameController gc )
+void ControllerStateDisplay::LoadGameController( RString sType, GameController gc )
 {
-	LoadInternal( MultiPlayer_Invalid, gc );
+	LoadInternal( sType, MultiPlayer_Invalid, gc );
 }
 
-void ControllerStateDisplay::LoadInternal( MultiPlayer mp, GameController gc )
+void ControllerStateDisplay::LoadInternal( RString sType, MultiPlayer mp, GameController gc )
 {
 	ASSERT( !m_bIsLoaded );
 	m_bIsLoaded = true;
 	m_mp = mp;
 
 	LuaThreadVariable varElement( "MultiPlayer", LuaReference::Create(m_mp) );
-	m_sprFrame.Load( THEME->GetPathG("ControllerStateDisplay", "frame") );
+	m_sprFrame.Load( THEME->GetPathG(sType, "frame") );
 	this->AddChild( m_sprFrame );
 
 	FOREACH_ENUM( ControllerStateButton, b )
 	{
 		Button &button = m_Buttons[ b ];
 
-		RString sPath = THEME->GetPathG( "ControllerStateDisplay", ControllerStateButtonToString(b) );
+		RString sPath = THEME->GetPathG( sType, ControllerStateButtonToString(b) );
 		button.spr.Load( sPath );
 		this->AddChild( m_Buttons[b].spr );
 		
@@ -104,8 +104,8 @@ void ControllerStateDisplay::Update( float fDelta )
 class LunaControllerStateDisplay: public Luna<ControllerStateDisplay>
 {
 public:
-	static int LoadGameController( T* p, lua_State *L )	{ p->LoadGameController( (GameController)IArg(1) ); return 0; }
-	static int LoadMultiPlayer( T* p, lua_State *L )	{ p->LoadMultiPlayer( (MultiPlayer)IArg(1) ); return 0; }
+	static int LoadGameController( T* p, lua_State *L )	{ p->LoadGameController( SArg(1), (GameController)IArg(2) ); return 0; }
+	static int LoadMultiPlayer( T* p, lua_State *L )	{ p->LoadMultiPlayer( SArg(1), (MultiPlayer)IArg(2) ); return 0; }
 
 	LunaControllerStateDisplay() 
 	{
