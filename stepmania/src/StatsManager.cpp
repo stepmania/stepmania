@@ -159,6 +159,9 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 
 void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 {
+	if( GAMESTATE->m_bMultiplayer )
+		return;
+
 	//
 	// Add step totals.  Use radarActual, since the player might have failed part way
 	// through the song, in which case we don't want to give credit for the rest of the
