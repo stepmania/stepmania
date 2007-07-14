@@ -114,7 +114,7 @@ bool RageFileDriverZip::SeekToEndCentralRecord()
 			return false;
 		}
 
-		for( int iPos = iGot; iPos >= 0; --iPos )
+		for( int iPos = iGot - 4; iPos >= 0; --iPos )
 		{
 			if( memcmp(buf + iPos, "\x50\x4B\x05\x06", 4) )
 				continue;
