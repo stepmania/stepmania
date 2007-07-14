@@ -78,7 +78,7 @@ class LunaGradeDisplay: public Luna<GradeDisplay>
 public:
 	static int Load( T* p, lua_State *L )
 	{
-		RageTextureID id = SArg(1);
+		RageTextureID id( SArg(1) );
 		p->Load( id );
 		return 0;
 	}
