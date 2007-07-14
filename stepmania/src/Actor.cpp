@@ -745,7 +745,8 @@ void Actor::StopTweening()
 
 void Actor::FinishTweening()
 {
-	m_current = DestTweenState();
+	if( !m_Tweens.empty() )
+		m_current = DestTweenState();
 	StopTweening();
 }
 
