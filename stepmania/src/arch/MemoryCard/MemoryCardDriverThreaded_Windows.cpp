@@ -3,6 +3,8 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "archutils/Win32/ErrorStrings.h"
+#include "PlayerNumber.h"
+#include "MemoryCardManager.h"
 
 MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
 {
@@ -115,14 +117,30 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 			continue;
 		}
 
-		if( GetDriveType(sDrive + "\\") != DRIVE_REMOVABLE )	// is a removable drive
+		// Testing hack:  Allow non-removable drive letters to be used if that 
+		// driver letter is specified as a m_sMemoryCardOsMountPoint.
+
+		bool bIsSpecifiedMountPoint = false;
+		FOREACH_ENUM( PlayerNumber, p )
+			bIsSpecifiedMountPoint |= MEMCARDMAN->m_sMemoryCardOsMountPoint[p].Get().EqualsNoCase(sDrive);
+
+		RString sDrivePath = sDrive + "\\";
+
+		if( bIsSpecifiedMountPoint )
 		{
-			LOG->Trace( "not DRIVE_REMOVABLE" );
-			continue;	
+			LOG->Trace( "'%s' is a specified mount point.  Allowing...", sDrive.c_str() );
+		}
+		else
+		{
+			if( GetDriveType(sDrivePath) != DRIVE_REMOVABLE )
+			{
+				LOG->Trace( "not DRIVE_REMOVABLE" );
+				continue;	
+			}
 		}
 
 		RString sVolumeLabel;
-		if( !TestReady(sDrive + "\\", sVolumeLabel) )
+		if( !TestReady(sDrivePath, sVolumeLabel) )
 		{
 			LOG->Trace( "not TestReady" );
 			continue;	
