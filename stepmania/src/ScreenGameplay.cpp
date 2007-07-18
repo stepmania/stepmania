@@ -200,8 +200,8 @@ void PlayerInfo::LoadDummyP1( int iDummyIndex )
 	// don't init any of the scoring objects
 	m_pPlayer = new Player( m_NoteData, true );
 
+	// PlayerOptions needs to be set now so that we load the correct NoteSkin.
 	m_PlayerStateDummy = *GAMESTATE->m_pPlayerState[PLAYER_1];
-	m_PlayerStateDummy.m_PlayerController = PC_AUTOPLAY;
 }
 
 PlayerInfo::~PlayerInfo()
@@ -2096,7 +2096,6 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 
 	if( m_DancingState != STATE_OUTRO  &&
 		GAMESTATE->IsHumanPlayer(input.pn)  &&
-		(!GAMESTATE->m_bMultiplayer || input.mp == MultiPlayer_1)  &&
 		!m_Cancel.IsTransitioning() )
 	{
 		/*
