@@ -11,6 +11,7 @@ RageSoundReader_SpeedChange::RageSoundReader_SpeedChange( RageSoundReader *pSour
 {
 	m_Channels.resize( pSource->GetNumChannels() );
 	m_fSpeedRatio = m_fTrailingSpeedRatio = 1.0f;
+	m_iDataBufferAvailFrames = 0;
 	SetSpeedRatio( 1.0f );
 	Reset();
 }
