@@ -2263,20 +2263,19 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 			RandomizeNotes( r );
 
 		// check to see if there's a note at the crossed row
-		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
+		if( m_pPlayerState->m_PlayerController == PC_HUMAN )
+			continue;
+		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 		{
-			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
+			const TapNote &tn = m_NoteData.GetTapNote( t, r );
+			if( tn.type != TapNote::empty && tn.result.tns == TNS_None )
 			{
-				const TapNote &tn = m_NoteData.GetTapNote( t, r );
-				if( tn.type != TapNote::empty && tn.result.tns == TNS_None )
+				Step( t, r, now, false, false );
+				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 				{
-					Step( t, r, now, false, false );
-					if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
-					{
-						STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
-						if( m_pPlayerStageStats )
-							m_pPlayerStageStats->m_bDisqualified = true;
-					}
+					STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
+					if( m_pPlayerStageStats )
+						m_pPlayerStageStats->m_bDisqualified = true;
 				}
 			}
 		}
