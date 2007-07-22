@@ -658,7 +658,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	}
 	if( m_dc != Difficulty_Invalid )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->ChangePreferredDifficulty( *pn, m_dc );
+			GAMESTATE->m_PreferredDifficulty[*pn].Set( m_dc );
 	if( m_sAnnouncer != "" )
 		ANNOUNCER->SwitchAnnouncer( m_sAnnouncer );
 	if( m_sPreferredModifiers != "" )
