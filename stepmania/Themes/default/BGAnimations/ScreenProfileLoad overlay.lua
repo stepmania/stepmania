@@ -1,8 +1,6 @@
 return Def.ActorFrame {
-	BeginCommand=function(self)
-		self:queuecommand( "Load" )
-	end;
+	BeginCommand=cmd(queuecommand,"Load");
 	LoadCommand=function()
-		SCREENMAN:GetTopScreen():Continue()
+		SCREENMAN:GetTopScreen():Continue();
 	end;
-}
+};
