@@ -79,8 +79,8 @@ public:
 	
 private:
 	void HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteScore maximum );
-	void HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumBreakCombo, int iNumMissedInRow );
-	void GetRowCounts( const NoteData &nd, int iRow, int &iNumHitContinueCombo, int &iNumHitMaintainCombo, int &iNumBreakCombo, int &iNumMissedInRow );
+	void HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumBreakCombo );
+	void GetRowCounts( const NoteData &nd, int iRow, int &iNumHitContinueCombo, int &iNumHitMaintainCombo, int &iNumBreakCombo );
 	
 };
 
