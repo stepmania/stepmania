@@ -292,9 +292,12 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 		for( unsigned i=1; i<choices.size(); i++ )
 			if( !stricmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
 				sel = i;
-	} else {
+	}
+	else
+	{
 		const RString sNewAnnouncer = sel? choices[sel]:RString("");
 		ANNOUNCER->SwitchAnnouncer( sNewAnnouncer );
+		PREFSMAN->m_sAnnouncer.Set( sNewAnnouncer );
 	}
 }
 
