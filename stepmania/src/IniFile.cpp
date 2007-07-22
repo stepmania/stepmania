@@ -76,7 +76,7 @@ bool IniFile::WriteFile( const RString &sPath ) const
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )
 	{
-		LOG->Trace( "Writing '%s' failed: %s", sPath.c_str(), f.GetError().c_str() );
+		LOG->Warn( "Writing '%s' failed: %s", sPath.c_str(), f.GetError().c_str() );
 		m_sError = f.GetError();
 		return false;
 	}
