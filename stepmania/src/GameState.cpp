@@ -1760,7 +1760,8 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 			break; // found
 	}
 
-	return ChangePreferredDifficulty( pn, d );
+	m_PreferredDifficulty[pn].Set( d );
+	return true;
 }
 
 /* The user may be set to prefer a difficulty that isn't always shown; typically,
