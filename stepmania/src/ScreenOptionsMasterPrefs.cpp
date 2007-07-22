@@ -319,7 +319,9 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 		for( unsigned i=0; i < choices.size(); i++ )
 			if( !stricmp(choices[i], po.m_sNoteSkin) )
 				sel = i;
-	} else {
+	}
+	else
+	{
 		PlayerOptions po;
 		SongOptions so;
 		GetPrefsDefaultModifiers( po, so );
