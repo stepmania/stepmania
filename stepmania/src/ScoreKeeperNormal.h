@@ -61,10 +61,6 @@ public:
 	void HandleHoldActiveSeconds( float fMusicSecondsHeld ) {};
 	void HandleHoldCheckpointScore( const NoteData &nd, int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow );
 
-	void HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteScore maximum );
-	void HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumBreakCombo, int iNumMissedInRow );
-	void GetRowCounts( const NoteData &nd, int iRow, int &iNumHitContinueCombo, int &iNumHitMaintainCombo, int &iNumBreakCombo, int &iNumMissedInRow );
-
 	// This must be calculated using only cached radar values so that we can 
 	// do it quickly.
 	static int GetPossibleDancePoints( const RadarValues& fRadars );
@@ -80,6 +76,12 @@ public:
 	static int HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBeginner );
 	static int TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginner );
 	static int HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBeginner );
+	
+private:
+	void HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteScore maximum );
+	void HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumBreakCombo, int iNumMissedInRow );
+	void GetRowCounts( const NoteData &nd, int iRow, int &iNumHitContinueCombo, int &iNumHitMaintainCombo, int &iNumBreakCombo, int &iNumMissedInRow );
+	
 };
 
 #endif
