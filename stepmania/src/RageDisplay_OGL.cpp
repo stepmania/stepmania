@@ -404,8 +404,21 @@ void InitShaders()
 		}
 		else
 		{
-			GLExt.glVertexAttrib2fARB( g_iAttribTextureMatrixScale, 1, 1 );
 			AssertNoGLError();
+
+			/* Older Catalyst drivers seem to throw GL_INVALID_OPERATION here. */
+			GLExt.glVertexAttrib2fARB( g_iAttribTextureMatrixScale, 1, 1 );
+			GLenum iError = glGetError();
+			if( iError == GL_INVALID_OPERATION )
+			{
+				LOG->Trace( "Scaling shader failed: glVertexAttrib2fARB returned GL_INVALID_OPERATION" );
+				GLExt.glDeleteObjectARB( g_bTextureMatrixShader );
+				g_bTextureMatrixShader = 0;
+			}
+			else
+			{
+				ASSERT_M( iError == GL_NO_ERROR, GLToString(iError) );
+			}
 		}
 	}
 }
