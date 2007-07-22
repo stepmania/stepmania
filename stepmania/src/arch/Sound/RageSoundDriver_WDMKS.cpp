@@ -1256,7 +1256,7 @@ int64_t RageSoundDriver_WDMKS::GetPosition() const
 	RString sError;
 	WdmGetPropertySimple( m_pStream->m_pPlaybackPin->m_hHandle, &KSPROPSETID_Audio, KSPROPERTY_AUDIO_POSITION,
 		&pos, sizeof(pos), NULL, 0, sError );
-	ASSERT( sError == "" );
+	ASSERT_M( sError == "", sError );
 
 	pos.PlayOffset /= m_pStream->m_iBytesPerOutputSample * m_pStream->m_iDeviceOutputChannels;
 	return pos.PlayOffset;
