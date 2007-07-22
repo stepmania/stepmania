@@ -439,7 +439,7 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 void ScoreKeeperNormal::HandleHoldCheckpointScore( const NoteData &nd, int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow )
 {
 	HandleTapNoteScoreInternal( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss, TNS_CheckpointHit );
-	HandleComboInternal( iNumHoldsHeldThisRow, 0, iNumHoldsMissedThisRow );
+	HandleComboInternal( iNumHoldsHeldThisRow, 0, 0, iNumHoldsMissedThisRow );
 }
 
 void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteScore maximum )
@@ -455,7 +455,7 @@ void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteSco
 	m_pPlayerStageStats->m_iCurPossibleDancePoints += TapNoteScoreToDancePoints( maximum );
 }
 
-void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumMissedInRow )
+void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumBreakCombo, int iNumMissedInRow )
 {
 	//
 	// Regular combo
@@ -470,7 +470,7 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 	if( iNumHitContinueCombo > 0 || iNumHitMaintainCombo > 0 )
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
 
-	if( iNumMissedInRow > 0 )
+	if( iNumMissedInRow > 0 || iNumBreakCombo > 0 )
 		m_pPlayerStageStats->m_iCurCombo = 0;
 
 	if( iNumMissedInRow == 0 )
@@ -480,10 +480,11 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 }
 
 void ScoreKeeperNormal::GetRowCounts( const NoteData &nd, int iRow,
-					  int &iNumHitContinueCombo, int &iNumHitMaintainCombo, int &iNumMissedInRow )
+				      int &iNumHitContinueCombo, int &iNumHitMaintainCombo,
+				      int &iNumBreakCombo, int &iNumMissedInRow )
 {
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	iNumHitContinueCombo = iNumHitMaintainCombo = iNumMissedInRow = 0;
+	iNumHitContinueCombo = iNumHitMaintainCombo = iNumBreakCombo = iNumMissedInRow = 0;
 	for( int track = 0; track < nd.GetNumTracks(); ++track )
 	{
 		const TapNote &tn = nd.GetTapNote( track, iRow );
@@ -499,22 +500,24 @@ void ScoreKeeperNormal::GetRowCounts( const NoteData &nd, int iRow,
 			++iNumHitMaintainCombo;
 		else if( tns == TNS_Miss || tns == TNS_None )
 			++iNumMissedInRow;
+		else
+			++iNumBreakCombo;
 	}
 }
 
 void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 {
-	int iNumHitContinueCombo, iNumHitMaintainCombo, iNumMissedInRow;
-	GetRowCounts( nd, iRow, iNumHitContinueCombo, iNumHitMaintainCombo, iNumMissedInRow );
+	int iNumHitContinueCombo, iNumHitMaintainCombo, iNumBreakCombo, iNumMissedInRow;
+	GetRowCounts( nd, iRow, iNumHitContinueCombo, iNumHitMaintainCombo, iNumBreakCombo, iNumMissedInRow );
 
-	int iNumTapsInRow = iNumHitContinueCombo + iNumHitMaintainCombo + iNumMissedInRow;
+	int iNumTapsInRow = iNumHitContinueCombo + iNumHitMaintainCombo + iNumBreakCombo + iNumMissedInRow;
 	if( iNumTapsInRow <= 0 )
 		return;
 
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow, m_pPlayerState->m_PlayerNumber ).result.tns;
 	HandleTapNoteScoreInternal( scoreOfLastTap, TNS_W1 );
 
-	HandleComboInternal( iNumHitContinueCombo, iNumHitMaintainCombo, iNumMissedInRow );
+	HandleComboInternal( iNumHitContinueCombo, iNumHitMaintainCombo, iNumBreakCombo, iNumMissedInRow );
 
 	if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
 		MESSAGEMAN->Broadcast( enum_add2(Message_CurrentComboChangedP1,m_pPlayerState->m_PlayerNumber) );

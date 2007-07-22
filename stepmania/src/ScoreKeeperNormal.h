@@ -62,8 +62,8 @@ public:
 	void HandleHoldCheckpointScore( const NoteData &nd, int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow );
 
 	void HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteScore maximum );
-	void HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumMissedInRow );
-	void GetRowCounts( const NoteData &nd, int iRow, int &iNumHitContinueCombo, int &iNumHitMaintainCombo, int &iNumMissedInRow );
+	void HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumBreakCombo, int iNumMissedInRow );
+	void GetRowCounts( const NoteData &nd, int iRow, int &iNumHitContinueCombo, int &iNumHitMaintainCombo, int &iNumBreakCombo, int &iNumMissedInRow );
 
 	// This must be calculated using only cached radar values so that we can 
 	// do it quickly.
