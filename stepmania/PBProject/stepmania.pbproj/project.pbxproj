@@ -84,6 +84,8 @@
 		AA1B083F0762532800835464 /* GameCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1B083A0762532800835464 /* GameCommand.h */; };
 		AA1B08400762532800835464 /* Preference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1B083B0762532800835464 /* Preference.cpp */; };
 		AA1CD943060AE571003702C4 /* RageSoundDriver_Generic_Software.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD941060AE571003702C4 /* RageSoundDriver_Generic_Software.cpp */; };
+		AA1DE9570C5468CE00D59F20 /* Hardware.plist in Resources */ = {isa = PBXBuildFile; fileRef = AA1DE9560C5468CE00D59F20 /* Hardware.plist */; };
+		AA1DE9580C5468CE00D59F20 /* Hardware.plist in Resources */ = {isa = PBXBuildFile; fileRef = AA1DE9560C5468CE00D59F20 /* Hardware.plist */; };
 		AA1F9C4709AF1BF5002C15A8 /* PumpDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */; };
 		AA1F9C4809AF1BF5002C15A8 /* PumpDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */; };
 		AA1F9C4909AF1BF5002C15A8 /* PumpDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */; };
@@ -2225,6 +2227,8 @@
 		AA1DC47404A4861700D02EE9 /* ScreenSelectMaster.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSelectMaster.cpp; path = ../src/ScreenSelectMaster.cpp; sourceTree = "<group>"; };
 		AA1DC47504A4861700D02EE9 /* ScreenSelectMaster.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSelectMaster.h; path = ../src/ScreenSelectMaster.h; sourceTree = "<group>"; };
 		AA1DCB6104A4872700D02EE9 /* glext.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = glext.h; path = ../src/glext.h; sourceTree = "<group>"; };
+		AA1DE9560C5468CE00D59F20 /* Hardware.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Hardware.plist; sourceTree = "<group>"; };
+		AA1DE9590C5468FE00D59F20 /* Hardware.in.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Hardware.in.plist; sourceTree = "<group>"; };
 		AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PumpDevice.h; sourceTree = "<group>"; };
 		AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PumpDevice.cpp; sourceTree = "<group>"; };
 		AA21D59C0712ADE4008B825F /* ScreenDimensions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenDimensions.cpp; path = ../src/ScreenDimensions.cpp; sourceTree = "<group>"; };
@@ -3548,6 +3552,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				AA1DE9590C5468FE00D59F20 /* Hardware.in.plist */,
+				AA1DE9560C5468CE00D59F20 /* Hardware.plist */,
 				AAF6A2F709B695BA00D5C614 /* Localizable.strings */,
 				AAB895E504A9057100D02EE9 /* smicon.icns */,
 			);
@@ -6173,6 +6179,7 @@
 			buildConfigurationList = AAC8450F0856A19700A9FEAB /* Build configuration list for PBXNativeTarget "stepmania" */;
 			buildPhases = (
 				AAA74CCF090CE268003F9A36 /* ShellScript */,
+				AA1DE8F30C54668900D59F20 /* ShellScript */,
 				AA29CC270558741A00961A51 /* Headers */,
 				AA29CD3C0558741A00961A51 /* Resources */,
 				AA4B428C05733DF2005FB5DB /* CopyFiles */,
@@ -6199,6 +6206,7 @@
 			buildPhases = (
 				AA40D1B709A08D650068C0D5 /* ShellScript */,
 				AA21E4880A98289F00684CEA /* ShellScript */,
+				AA1DE95A0C54693D00D59F20 /* ShellScript */,
 				AA40D1B809A08D650068C0D5 /* Headers */,
 				AA40D37B09A08D650068C0D5 /* Resources */,
 				AA40D37D09A08D650068C0D5 /* CopyFiles */,
@@ -6346,6 +6354,7 @@
 			files = (
 				AA29CD3E0558741A00961A51 /* smicon.icns in Resources */,
 				AAF6A2F909B695BA00D5C614 /* Localizable.strings in Resources */,
+				AA1DE9580C5468CE00D59F20 /* Hardware.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6355,12 +6364,43 @@
 			files = (
 				AA40D37C09A08D650068C0D5 /* smicon.icns in Resources */,
 				AAF6A2FA09B695BA00D5C614 /* Localizable.strings in Resources */,
+				AA1DE9570C5468CE00D59F20 /* Hardware.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		AA1DE8F30C54668900D59F20 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Hardware.in.plist",
+			);
+			outputPaths = (
+				"$(SRCROOT)/Hardware.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "plutil -convert binary1 -o \"$SRCROOT/Hardware.plist\" \"$SRCROOT/Hardware.in.plist\"";
+		};
+		AA1DE95A0C54693D00D59F20 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Hardware.in.plist",
+			);
+			outputPaths = (
+				"$(SRCROOT)/Hardware.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "plutil -convert binary1 -o \"$SRCROOT/Hardware.plist\" \"$SRCROOT/Hardware.in.plist\"";
+		};
 		AA21E4880A98289F00684CEA /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
