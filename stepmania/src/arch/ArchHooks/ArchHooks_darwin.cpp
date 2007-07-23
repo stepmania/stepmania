@@ -6,6 +6,8 @@
 #include "archutils/Unix/SignalHandler.h"
 #include "ProductInfo.h"
 #include <Carbon/Carbon.h>
+#include <sys/types.h>
+#include <sys/sysctl.h>
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #include <IOKit/IOKitLib.h>
@@ -211,7 +213,7 @@ void ArchHooks_darwin::DumpDebugInfo()
 {
 	
 	/* Get system version */
-	RString systemVersion;
+	RString sSystemVersion;
 	{
 		long major = 0, minor = 0, bugFix = 0;
 		
@@ -219,79 +221,96 @@ void ArchHooks_darwin::DumpDebugInfo()
 		Gestalt( gestaltSystemVersionMinor, &minor );
 		Gestalt( gestaltSystemVersionBugFix, &bugFix );
 		if( bugFix )
-			systemVersion = ssprintf( "Mac OS X %ld.%ld.%ld", major, minor, bugFix );
+			sSystemVersion = ssprintf( "Mac OS X %ld.%ld.%ld", major, minor, bugFix );
 		else
-			systemVersion = ssprintf( "Mac OS X %ld.%ld", major, minor );
+			sSystemVersion = ssprintf( "Mac OS X %ld.%ld", major, minor );
 	}
-	
+
+	size_t size;
+#define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, NULL, 0) )
 	/* Get memory */
-	long ram;
-	long vRam;
-	OSErr err = Gestalt( gestaltLogicalRAMSize, &vRam );
-	if (err != noErr)
-		vRam = 0;
-	err = Gestalt( gestaltPhysicalRAMSize, &ram );
-	if( err == noErr )
+	float fRam;
+	char ramPower;
 	{
-		vRam -= ram;
-		if( vRam < 0 )
-			vRam = 0;
-		ram >>= 20;
-		vRam >>= 20;
+		uint64_t iRam = 0;
+		GET_PARAM( "hw.memsize", iRam );
+		if( iRam >= 1073741824 )
+		{
+			fRam = iRam / 1073741824.0f;
+			ramPower = 'G';
+		}
+		else
+		{
+			fRam = iRam / 1048576.0f;
+			ramPower = 'M';
+		}
 	}
-	else
-	{
-		ram = 0;
-		vRam = 0;
-	}
-	
+
 	/* Get processor information */
-	RString processor;
-	int numProcessors;	
-	struct host_basic_info info;
-	mach_port_t host = mach_host_self();
-	mach_msg_type_number_t size = HOST_BASIC_INFO_COUNT;
-	kern_return_t ret = host_info( host, HOST_BASIC_INFO, (host_info_t)&info, &size );
-	
-	if( ret )
-	{
-		numProcessors = -1;
-		LOG->Warn("Couldn't get host info.");
-	}
-	else
-	{
-		char *cpu_type, *cpu_subtype;
+	int iMaxCPUs = 0;
+	int iCPUs = 0;
+	float fFreq;
+	char freqPower;
+	RString sModel;
+	do {
+		char szModel[128];
+		uint64_t iFreq;
+
+		GET_PARAM( "hw.logicalcpu_max", iMaxCPUs );
+		GET_PARAM( "hw.logicalcpu", iCPUs );
+		GET_PARAM( "hw.cpufrequency", iFreq );
 		
-		numProcessors = info.avail_cpus;
-		slot_name( info.cpu_type, info.cpu_subtype, &cpu_type, &cpu_subtype );
-		processor = cpu_subtype;
-	}
-	
-	/* Get processor speed */
-	long code;
-	err = Gestalt( gestaltProcClkSpeed, &code );
-	if( err != noErr )
-		code = 0;
-	
-	float speed;
-	char power;
-	
-	if( code >= 1000000000 )
-	{
-		speed = code / 1000000000.0f;
-		power = 'G';
-	}
-	else
-	{
-		speed = code / 1000000.0f;
-		power = 'M';
-	}
+		if( iFreq >= 1000000000 )
+		{
+			fFreq = iFreq / 1000000000.0f;
+			freqPower = 'G';
+		}
+		else
+		{
+			fFreq = iFreq / 1000000.0f;
+			freqPower = 'M';
+		}
+		
+		if( GET_PARAM("hw.model", szModel) )
+		{
+			sModel = "Unknown";
+			break;
+		}
+		sModel = szModel;
+		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), NULL, NULL );
+
+		if( urlRef == NULL )
+			break;
+		CFDataRef dataRef = NULL;
+		SInt32 error;
+		CFURLCreateDataAndPropertiesFromResource( NULL, urlRef, &dataRef, NULL, NULL, &error );
+		CFRelease( urlRef );
+		if( dataRef == NULL )
+			break;
+		// This also works with binary property lists for some reason.
+		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( NULL, dataRef, kCFPropertyListImmutable, NULL );
+		CFRelease( dataRef );
+		if( plRef == NULL )
+			break;
+		if( CFGetTypeID(plRef) != CFDictionaryGetTypeID() )
+		{
+			CFRelease( plRef );
+			break;
+		}
+		CFStringRef keyRef = CFStringCreateWithCStringNoCopy( NULL, szModel, kCFStringEncodingMacRoman, kCFAllocatorNull );
+		CFStringRef modelRef = (CFStringRef)CFDictionaryGetValue( (CFDictionaryRef)plRef, keyRef );
+		if( modelRef )
+			sModel = CFStringGetCStringPtr( modelRef, kCFStringEncodingMacRoman );
+		CFRelease( keyRef );
+		CFRelease( plRef );
+	} while( false );
+#undef GET_PARAM
 	
 	/* Send all of the information to the log */
-	LOG->Info( "Processor: %s (%d)", processor.c_str(), numProcessors );
-	LOG->Info( "Clock speed %.2f %cHz", speed, power );
-	LOG->Info( "%s", systemVersion.c_str());
-	LOG->Info( "Memory: %ld MB total, %ld MB swap", ram, vRam );
+	LOG->Info( "Model: %s (%d/%d)", sModel.c_str(), iCPUs, iMaxCPUs );
+	LOG->Info( "Clock speed %.2f %cHz", fFreq, freqPower );
+	LOG->Info( "%s", sSystemVersion.c_str());
+	LOG->Info( "Memory: %.2f %cB", fRam, ramPower );
 }
 
 RString ArchHooks::GetPreferredLanguage()
