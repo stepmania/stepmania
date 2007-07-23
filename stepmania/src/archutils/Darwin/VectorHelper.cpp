@@ -22,11 +22,10 @@ typedef vector bool int                 vBool32;
 
 bool Vector::CheckForVector()
 {
-	int selectors[2] = { CTL_HW, HW_VECTORUNIT };
 	int32_t result = 0;
-	size_t length = 4;
+	size_t size = 4;
 	
-	return !sysctl( selectors, 2, &result, &length, NULL, 0 ) && result;
+	return !sysctlbyname( "hw.vectorunit", &result, &size, NULL, 0 ) && result;
 }
 
 /* for( unsigned pos = 0; pos < size; ++pos )
