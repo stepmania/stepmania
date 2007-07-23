@@ -8,17 +8,6 @@ using std::max;
 #if defined(USE_VEC)
 #if defined(__VEC__)
 #include <vecLib/vecLib.h>
-#ifndef __VECLIBTYPES__
-// Copy this from the header since it isn't in the 10.2.8 sdk
-typedef vector unsigned char            vUInt8;
-typedef vector signed char              vSInt8;
-typedef vector unsigned short           vUInt16;
-typedef vector signed short             vSInt16;
-typedef vector unsigned int             vUInt32;
-typedef vector signed int               vSInt32;
-typedef vector float                    vFloat;
-typedef vector bool int                 vBool32;
-#endif
 
 bool Vector::CheckForVector()
 {
