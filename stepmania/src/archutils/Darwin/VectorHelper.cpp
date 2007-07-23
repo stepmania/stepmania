@@ -1,9 +1,5 @@
 #include "VectorHelper.h"
 #include <sys/sysctl.h>
-#include <algorithm>
-
-using std::min;
-using std::max;
 
 #if defined(USE_VEC)
 #if defined(__VEC__)
