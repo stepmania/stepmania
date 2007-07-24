@@ -6,7 +6,9 @@
 #define HAVE_THEORA
 #endif
 
+#if !defined(XBOX)
 #define SUPPORT_OPENGL
+#endif
 #define SUPPORT_D3D
 
 #if defined(__MINGW32__)

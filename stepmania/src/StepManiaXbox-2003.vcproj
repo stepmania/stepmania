@@ -8,86 +8,9 @@
 	Keyword="MFCProj">
 	<Platforms>
 		<Platform
-			Name="Win32"/>
-		<Platform
 			Name="Xbox"/>
 	</Platforms>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory=".\.."
-			IntermediateDirectory=".\../Debug"
-			ConfigurationType="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2"
-			WholeProgramOptimization="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/EHa"
-				Optimization="0"
-				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis"
-				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG"
-				ExceptionHandling="FALSE"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
-				AssemblerListingLocation=".\../Debug/"
-				ObjectFile=".\../Debug/"
-				ProgramDataBaseFileName=".\../Debug/"
-				BrowseInformation="0"
-				WarningLevel="4"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				OutputFile="../StepMania-debug.exe"
-				LinkIncremental="2"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="../Debug/StepMania-debug.pdb"
-				GenerateMapFile="TRUE"
-				MapFileName="$(IntDir)\$(TargetName).map"
-				MapExports="TRUE"
-				SubSystem="2"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\../StepMania.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="disasm\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"
-				CommandLine="disasm\verinc
-cl                                                                                                                                                                                    /Zl                                                                                                                                                                                    /nologo                                                                                                                                                                                    /c                                                                                                                                                                                    verstub.cpp                                                                                                                                                                                    /Fo$(IntDir)\
-"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
-		</Configuration>
 		<Configuration
 			Name="Debug|Xbox"
 			OutputDirectory=".\Debug"
@@ -103,7 +26,7 @@ cl                                                                              
 				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG,_XDBG"
 				RuntimeLibrary="1"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile=".\Debug/StepMania.pch"
 				AssemblerListingLocation=".\Debug/"
@@ -118,11 +41,11 @@ cl                                                                              
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 /FIXED:NO /FORCE:MULTIPLE"
-				AdditionalDependencies="libpng/lib/xboxlibpng.lib xbdm.lib xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib debug\verstub.obj"
+				AdditionalDependencies="zlib/xboxzlib.lib libpng/lib/xboxlibpng.lib xbdm.lib xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib debug\verstub.obj"
 				OutputFile="../StepManiaXbox-debug.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames="libcd,libcmt"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/StepManiaXbox-debug.pdb"
 				OptimizeReferences="0"/>
@@ -158,90 +81,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				SaveGameImage=".\archutils\Xbox\saveblue.XBX"/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="./.."
-			IntermediateDirectory="./../Release"
-			ConfigurationType="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2"
-			WholeProgramOptimization="FALSE">
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/EHa"
-				Optimization="3"
-				GlobalOptimizations="TRUE"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
-				FavorSizeOrSpeed="2"
-				OptimizeForProcessor="2"
-				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis"
-				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,RELEASE"
-				StringPooling="TRUE"
-				MinimalRebuild="FALSE"
-				ExceptionHandling="FALSE"
-				RuntimeLibrary="2"
-				BufferSecurityCheck="FALSE"
-				EnableFunctionLevelLinking="FALSE"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="global.h"
-				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
-				AssemblerListingLocation=".\../Release/"
-				ObjectFile=".\../Release/"
-				ProgramDataBaseFileName=".\../Release/"
-				BrowseInformation="1"
-				WarningLevel="4"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="3"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				OutputFile=".\../StepMania.exe"
-				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories=""
-				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib"
-				ProgramDatabaseFile="../Release/StepMania.pdb"
-				GenerateMapFile="TRUE"
-				MapFileName="$(IntDir)\$(TargetName).map"
-				MapExports="TRUE"
-				SubSystem="2"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\../StepMania.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="disasm\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
-			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="disasm\verinc
-cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
-"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
-		</Configuration>
-		<Configuration
 			Name="Release|Xbox"
 			OutputDirectory="./../Program"
 			IntermediateDirectory="./../ReleaseXbox"
@@ -258,7 +97,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
 				AssemblerListingLocation="./../ReleaseXbox/"
@@ -272,15 +111,17 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 /FIXED:NO /FORCE:MULTIPLE"
-				AdditionalDependencies="$(intdir)\verstub.obj libpng/lib/xboxlibpng.lib xapilib.lib d3d8.lib d3dx8.lib xgraphics.lib dsound.lib dmusic.lib xnet.lib xboxkrnl.lib libcmt.lib"
+				AdditionalDependencies="$(intdir)\verstub.obj zlib/xboxzlib.lib libpng/lib/xboxlibpng.lib xapilib.lib d3d8.lib d3dx8.lib xgraphics.lib dsound.lib dmusic.lib xnet.lib xboxkrnl.lib libcmt.lib"
 				OutputFile="../StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames="libc,libcmtd"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="FALSE"
 				ProgramDatabaseFile="./../ReleaseXbox/StepMania.pdb"
-				GenerateMapFile="FALSE"
+				GenerateMapFile="TRUE"
+				MapFileName=""
 				MapExports="FALSE"
+				MapLines="FALSE"
 				OptimizeReferences="2"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
@@ -478,13 +319,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenMiniMenu.cpp">
 			</File>
 			<File
-				RelativePath="ScreenMiniMenu.h">
-			</File>
-			<File
-				RelativePath="ScreenMusicScroll.cpp">
-			</File>
-			<File
-				RelativePath="ScreenMusicScroll.h">
+				RelativePath=".\ScreenMiniMenu.h">
 			</File>
 			<File
 				RelativePath="ScreenNameEntry.cpp">
@@ -857,6 +692,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="CodeDetector.h">
 			</File>
 			<File
+				RelativePath=".\CodeSet.cpp">
+			</File>
+			<File
+				RelativePath=".\CodeSet.h">
+			</File>
+			<File
 				RelativePath=".\Command.cpp">
 			</File>
 			<File
@@ -962,6 +803,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="GameInput.h">
 			</File>
 			<File
+				RelativePath=".\GameplayAssist.cpp">
+			</File>
+			<File
+				RelativePath=".\GameplayAssist.h">
+			</File>
+			<File
 				RelativePath=".\Grade.cpp">
 			</File>
 			<File
@@ -1010,12 +857,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="LyricsLoader.h">
 			</File>
 			<File
-				RelativePath=".\MenuInput.cpp">
-			</File>
-			<File
-				RelativePath="MenuInput.h">
-			</File>
-			<File
 				RelativePath="ModsGroup.cpp">
 			</File>
 			<File
@@ -1062,6 +903,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="NotesLoaderKSF.h">
+			</File>
+			<File
+				RelativePath=".\NotesLoaderMidi.cpp">
+			</File>
+			<File
+				RelativePath=".\NotesLoaderMidi.h">
 			</File>
 			<File
 				RelativePath="NotesLoaderSM.cpp">
@@ -1148,6 +995,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\RandomSample.h">
 			</File>
 			<File
+				RelativePath=".\SampleHistory.cpp">
+			</File>
+			<File
+				RelativePath=".\SampleHistory.h">
+			</File>
+			<File
 				RelativePath="ScoreKeeper.cpp">
 			</File>
 			<File
@@ -1194,6 +1047,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="SongUtil.h">
+			</File>
+			<File
+				RelativePath=".\SoundEffectControl.cpp">
+			</File>
+			<File
+				RelativePath=".\SoundEffectControl.h">
 			</File>
 			<File
 				RelativePath="StageStats.cpp">
@@ -1327,17 +1186,20 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				Name="arch"
 				Filter="">
 				<File
-					RelativePath="arch\arch.cpp">
-				</File>
-				<File
-					RelativePath="arch\arch.h">
-				</File>
-				<File
 					RelativePath="arch\arch_default.h">
+				</File>
+				<File
+					RelativePath=".\arch\RageDriver.cpp">
+				</File>
+				<File
+					RelativePath=".\arch\RageDriver.h">
 				</File>
 				<Filter
 					Name="LoadingWindow"
 					Filter="">
+					<File
+						RelativePath=".\arch\LoadingWindow\LoadingWindow.cpp">
+					</File>
 					<File
 						RelativePath="arch\LoadingWindow\LoadingWindow.h">
 					</File>
@@ -1367,12 +1229,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 						RelativePath="arch\Sound\RageSoundDriver.h">
 					</File>
 					<File
-						RelativePath="arch\Sound\RageSoundDriver_DSound.cpp">
-					</File>
-					<File
-						RelativePath="arch\Sound\RageSoundDriver_DSound.h">
-					</File>
-					<File
 						RelativePath=".\arch\Sound\RageSoundDriver_DSound_Software.cpp">
 					</File>
 					<File
@@ -1389,9 +1245,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_Null.h">
-					</File>
-					<File
-						RelativePath="arch\Sound\Selector_RageSoundDriver.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1460,6 +1313,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				<Filter
 					Name="Lights"
 					Filter="">
+					<File
+						RelativePath=".\arch\Lights\LightsDriver.cpp">
+					</File>
 					<File
 						RelativePath="arch\Lights\LightsDriver.h">
 					</File>
@@ -1576,19 +1432,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					<File
 						RelativePath=".\archutils\Win32\arch_setup.cpp">
 						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
 							Name="Debug|Xbox">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32">
 							<Tool
 								Name="VCCLCompilerTool"
 								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
@@ -1687,12 +1531,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="CourseContentsList.h">
-			</File>
-			<File
-				RelativePath="CourseEntryDisplay.cpp">
-			</File>
-			<File
-				RelativePath="CourseEntryDisplay.h">
 			</File>
 			<File
 				RelativePath="DifficultyList.cpp">
@@ -1833,6 +1671,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="OptionsCursor.h">
 			</File>
 			<File
+				RelativePath=".\OptionsList.cpp">
+			</File>
+			<File
+				RelativePath=".\OptionsList.h">
+			</File>
+			<File
 				RelativePath="PaneDisplay.cpp">
 			</File>
 			<File
@@ -1942,12 +1786,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="CombinedLifeMeterTug.h">
 			</File>
 			<File
-				RelativePath=".\Combo.cpp">
-			</File>
-			<File
-				RelativePath=".\Combo.h">
-			</File>
-			<File
 				RelativePath="DancingCharacters.cpp">
 			</File>
 			<File
@@ -1970,12 +1808,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="HoldJudgment.h">
-			</File>
-			<File
-				RelativePath="Judgment.cpp">
-			</File>
-			<File
-				RelativePath="Judgment.h">
 			</File>
 			<File
 				RelativePath=".\LifeMeter.cpp">
@@ -2258,10 +2090,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageSoundReader_Chain.h">
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_Extend.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_Extend.h">
+			</File>
+			<File
 				RelativePath="RageSoundReader_FileReader.cpp">
 			</File>
 			<File
 				RelativePath="RageSoundReader_FileReader.h">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_Merge.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_Merge.h">
 			</File>
 			<File
 				RelativePath="RageSoundReader_MP3.cpp">
@@ -2270,10 +2114,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageSoundReader_MP3.h">
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_Pan.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_Pan.h">
+			</File>
+			<File
 				RelativePath=".\RageSoundReader_PitchChange.cpp">
 			</File>
 			<File
 				RelativePath=".\RageSoundReader_PitchChange.h">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_PostBuffering.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_PostBuffering.h">
 			</File>
 			<File
 				RelativePath="RageSoundReader_Preload.cpp">
@@ -2292,6 +2148,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\RageSoundReader_SpeedChange.h">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_ThreadedBuffer.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_ThreadedBuffer.h">
 			</File>
 			<File
 				RelativePath="RageSoundReader_Vorbisfile.cpp">

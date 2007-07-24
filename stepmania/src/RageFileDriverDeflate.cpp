@@ -7,7 +7,7 @@
 
 #if defined(_WINDOWS) || defined(_XBOX)
         #include "zlib/zlib.h"
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(_XBOX)
         #pragma comment(lib, "zlib/zdll.lib")
 #endif
 #elif defined(MACOSX)
