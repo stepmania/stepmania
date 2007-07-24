@@ -1972,7 +1972,7 @@ PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, bool &bFreeIm
 
 		const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
 
-		RageSurface *imgconv = CreateSurface( width, height,
+		RageSurface *imgconv = CreateSurface( img->w, img->h,
 			pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 		RageSurfaceUtils::Blit( img, imgconv, width, height );
 		img = imgconv;
