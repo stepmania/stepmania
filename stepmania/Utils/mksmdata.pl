@@ -13,6 +13,8 @@ my @data = qw(  BackgroundTransitions
 		Courses/Samples
 		NoteSkins/common/common
 		NoteSkins/dance/default
+		NoteSkins/dance/bold
+		NoteSkins/dance/flat
 		Themes/default
 		Data );
 
