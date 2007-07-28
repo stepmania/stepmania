@@ -19,7 +19,7 @@
 ;General
 
 	!system "echo This may take a moment ..." ignore
-	!system "utils\upx Program\*.exe Program\*.dll" ignore
+	!system "utils\upx Program\*.exe" ignore
 
 	Name "${PRODUCT_DISPLAY}"
 	OutFile "${PRODUCT_DISPLAY}.exe"
