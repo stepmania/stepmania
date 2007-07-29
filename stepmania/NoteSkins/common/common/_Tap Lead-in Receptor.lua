@@ -1,7 +1,8 @@
 return Def.ActorFrame {
 	LoadActor( "_Tap Receptor", NOTESKIN:LoadActor(Var "Button", "Ready Receptor") ) .. {
-		Frame0000=2;
-		Delay0000=1;
+		Frames = {
+			{ Frame = 2; Delay = 1; };
+		};
 
 		InitCommand=cmd(playcommand, "Set");
 		GameplayLeadInChangedMessageCommand=cmd(playcommand,"Set");
@@ -9,12 +10,11 @@ return Def.ActorFrame {
 	};
 
 	LoadActor( "_Tap Receptor", NOTESKIN:LoadActor(Var "Button", "Go Receptor") ) .. {
-		Frame0000=0;
-		Delay0000=0.1;
-		Frame0001=1;
-		Delay0001=0.8;
-		Frame0002=0;
-		Delay0002=0.1;
+		Frames = {
+			{ Frame = 0; };
+			{ Frame = 1; Delay = 0.8; };
+			{ Frame = 2; };
+		};
 	
 		InitCommand=cmd(playcommand, "Set");
 		GameplayLeadInChangedMessageCommand=cmd(playcommand,"Set");
