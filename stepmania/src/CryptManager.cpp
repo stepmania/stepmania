@@ -444,6 +444,20 @@ RString CryptManager::GetMD5ForString( RString sData )
 	return RString( (const char *) digest, sizeof(digest) );
 }
 
+RString CryptManager::GetSHA1ForString( RString sData )
+{
+	unsigned char digest[16];
+
+	int iHash = register_hash( &sha1_desc );
+
+	hash_state hash;
+	int iRet = hash_descriptor[iHash].init( &hash );
+	iRet = hash_descriptor[iHash].process( &hash, (const unsigned char *) sData.data(), sData.size() );
+	iRet = hash_descriptor[iHash].done( &hash, digest );
+
+	return RString( (const char *) digest, sizeof(digest) );
+}
+
 RString CryptManager::GetPublicKeyFileName()
 {
 	return PUBLIC_KEY_PATH;
