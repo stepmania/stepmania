@@ -19,11 +19,11 @@ static DeviceButton XSymToDeviceButton( int key )
 	static const DeviceButton ASCIIKeySyms[] =
 	{
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_INV      , /* 0 - 4 */
-		KEY_INV       , KEY_INV     , KEY_INV      , KEY_BACK    , KEY_TAB      , /* 5 - 9 */
-		KEY_INV       , KEY_INV     , KEY_INV      , KEY_ENTER   , KEY_INV      , /* 10 - 14 */
-		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_PAUSE    , /* 15 - 19 */
+		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_INV      , /* 5 - 9 */
+		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_INV      , /* 10 - 14 */
+		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_INV     , /* 15 - 19 */
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_INV      , /* 20 - 24 */
-		KEY_INV       , KEY_INV     , KEY_ESC      , KEY_INV     , KEY_INV      , /* 25 - 29 */
+		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_INV      , /* 25 - 29 */
 		KEY_INV       , KEY_INV     , KEY_SPACE    , KEY_EXCL    , KEY_QUOTE    , /* 30 - 34 */
 		KEY_HASH      , KEY_DOLLAR  , KEY_PERCENT  , KEY_AMPER   , KEY_SQUOTE   , /* 35 - 39 */
 		KEY_LPAREN    , KEY_RPAREN  , KEY_ASTERISK , KEY_PLUS    , KEY_COMMA    , /* 40 - 44 */
@@ -46,10 +46,6 @@ static DeviceButton XSymToDeviceButton( int key )
 		KEY_RBRACE    , KEY_INV     , KEY_DEL                                     /* 125 - 127 */
 	};
 
-	/* 0...31: */
-	if( key >= 0xFF00 && key < 0xFF20 )
-		return ASCIIKeySyms[key & 0xFF];
-
 	/* 32...127: */
 	if( key < int(ARRAYLEN(ASCIIKeySyms)))
 		return ASCIIKeySyms[key];
@@ -61,6 +57,10 @@ static DeviceButton XSymToDeviceButton( int key )
 	switch( key )
 	{
 	/* These are needed because of the way X registers the keypad. */
+	case XK_BackSpace:	return KEY_BACK;
+	case XK_Tab:		return KEY_TAB;
+	case XK_Pause:		return KEY_PAUSE;
+	case XK_Escape:		return KEY_ESC;
 	case XK_KP_Insert:	return KEY_KP_C0;
 	case XK_KP_End:		return KEY_KP_C1;
 	case XK_KP_Down:	return KEY_KP_C2;
