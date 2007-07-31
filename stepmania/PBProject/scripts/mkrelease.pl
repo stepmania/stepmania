@@ -7,12 +7,7 @@ use File::Basename;
 use File::Temp qw/tempfile tempdir/;
 use Cwd;
 
-my @docs = ( "BGAnimation conditionals.txt",
-	     "BMA-fmt.txt",
-	     "ConditionalBGA Info.txt",
-	     "Copying.MAD",
-	     "ChangeLog.txt",
-	     "Licenses.txt" );
+my @docs = ( "Licenses.txt" );
 
 # Passing a date for a CVS release gives StepMania-CVS-date.
 # Otherwise you get StepMania-ver.
