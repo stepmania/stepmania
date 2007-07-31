@@ -15,21 +15,21 @@ endif
 
 .PHONY: SMData
 SMData:
-	$(srcdir)/Utils/mksmdata.pl $(srcdir) .
+	$(srcdir)/Utils/CreatePackage.pl $(srcdir) .
 
 dist-hook: SMData
 	mkdir -p $(distdir)/Packages
-	cp SMData.smzip $(distdir)/Packages
+	cp StepMania.smzip $(distdir)/Packages
 	mkdir -p $(distdir)/Docs
 	cp $(srcdir)/Docs/Licenses.txt $(distdir)/Docs
 	cp $(srcdir)/Utils/build.sh $(distdir)
 
-install-data-hook: $(top_srcdir)/Packages/SMData.smzip
+install-data-hook: $(top_srcdir)/Packages/StepMania.smzip
 	mkdir -p "$(DESTDIR)$(bindir)/$(productID)/Packages"
 	$(INSTALL) $(installFiles) "$(DESTDIR)$(bindir)/$(productID)"
-	$(INSTALL_DATA) $(top_srcdir)/Packages/SMData.smzip "$(DESTDIR)$(bindir)/$(productID)/Packages"
+	$(INSTALL_DATA) $(top_srcdir)/Packages/StepMania.smzip "$(DESTDIR)$(bindir)/$(productID)/Packages"
 
 uninstall-hook:
 	rm -f "$(DESTDIR)$(bindir)/$(productID)/stepmania"
 	rm -f "$(DESTDIR)$(bindir)/$(productID)/GtkModule.so"
-	rm -f "$(DESTDIR)$(bindir)/$(productID)/Packages/SMData.smzip"
+	rm -f "$(DESTDIR)$(bindir)/$(productID)/Packages/StepMania.smzip"
