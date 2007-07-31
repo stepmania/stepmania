@@ -147,7 +147,6 @@ my @files = (
 	"BackgroundEffects",
 	"BackgroundTransitions",
 	"BGAnimations",
-	"Cache",
 	"Characters",
 	"Courses",
 	"Data",
