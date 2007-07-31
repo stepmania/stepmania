@@ -21,8 +21,7 @@ dist-hook: SMData
 	mkdir -p $(distdir)/Packages
 	cp SMData.smzip $(distdir)/Packages
 	mkdir -p $(distdir)/Docs
-	cp $(srcdir)/Docs/BGAnimation\ conditionals.txt $(srcdir)/Docs/BMA-fmt.txt \
-		$(srcdir)/Docs/Licenses.txt $(distdir)/Docs
+	cp $(srcdir)/Docs/Licenses.txt $(distdir)/Docs
 	cp $(srcdir)/Utils/build.sh $(distdir)
 
 install-data-hook: $(top_srcdir)/Packages/SMData.smzip
