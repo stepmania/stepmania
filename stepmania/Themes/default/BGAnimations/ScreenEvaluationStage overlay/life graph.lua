@@ -12,10 +12,10 @@ local t = Def.ActorFrame {
 			OnCommand=cmd(linear,0.5;diffusealpha,1),
 			OffCommand=cmd(linear,0.5;diffusealpha,0),
 		},
-		Line = Def.GraphLine { InitCommand=cmd(hidden,1) },
+		Line = Def.GraphLine { InitCommand=cmd(visible,false) },
 		Body = Def.GraphBody { InitCommand=cmd(zwrite,1;blend,"BlendMode_NoEffect") },
-		SongBoundary = Def.Actor { InitCommand=cmd(hidden,1) },
-		Barely = Def.Actor { InitCommand=cmd(hidden,1) },
+		SongBoundary = Def.Actor { InitCommand=cmd(visible,false) },
+		Barely = Def.Actor { InitCommand=cmd(visible,false) },
 	}
 }
 return t
