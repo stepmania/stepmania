@@ -42,7 +42,7 @@ my $tmp = tempdir;
 # Copy StepMania and make smzip
 system 'cp', '-r', "$srcdir/StepMania.app", $tmp and die "cp -r failed: $!\n";
 system 'strip', '-x', "$tmp/StepMania.app/Contents/MacOS/StepMania";
-system "$srcdir/Utils/mksmdata.pl", $srcdir, "$tmp/StepMania.app/Contents/Resources" and die "mksmdata.pl failed: $!\n";
+system "$srcdir/Utils/CreatePackage.pl", $srcdir, "$tmp/StepMania.app/Contents/Resources" and die "mksmdata.pl failed: $!\n";
 
 # Copy docs
 mkdir "$tmp/Docs";
