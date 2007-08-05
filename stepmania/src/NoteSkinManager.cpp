@@ -464,6 +464,14 @@ public:
 
 		return 1;
 	}
+	static int LoadActorForNoteSkin( T* p, lua_State *L )
+	{
+		const RString sOldNoteSkin = p->GetCurrentNoteSkin();
+		p->SetCurrentNoteSkin( SArg(3) );
+		LoadActor( p, L );
+		p->SetCurrentNoteSkin( sOldNoteSkin );
+		return 1;
+	}
 	
 	LunaNoteSkinManager()
 	{
@@ -471,6 +479,7 @@ public:
 		ADD_METHOD( GetMetricA );
 		ADD_METHOD( GetMetricF );
 		ADD_METHOD( LoadActor );
+		ADD_METHOD( LoadActorForNoteSkin );
 	}
 };
 
