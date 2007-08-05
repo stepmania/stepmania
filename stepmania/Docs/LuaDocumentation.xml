@@ -10,6 +10,9 @@
 <Function name='Basename' return='string' arguments='path'>
 	Returns the base name of file path.
 </Function>
+<Function name='FormatNumberAndSuffix' return='string' arguments='integer'>
+	Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
+</Function>
 </GlobalFunctions>
 
 <!-- Classes -->
