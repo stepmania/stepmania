@@ -8,15 +8,14 @@ no longer works with ProjectBuilder.
 
 BUILD
 1. Download StepMania from sourceforge.
-2. Cd to the PBProject directory enter: $ touch ver.cpp
-3. Cd to Frameworks and unpack Frameworks.tar.bz2 by:
+2. Cd to PBProject/Frameworks and unpack Frameworks.tar.bz2 by:
 $ tar jxf Frameworks.tar.bz2
-4. Build StepMania by running:
+3. Build StepMania by running:
 $ xcodebuild -target stepmania -configuration Native
 in the PBProject directory.
 To build a universal binary instead, use "-configuration Universal"
 instead of "-configuration Native"
-5. (Optional) Run:
+4. (Optional) Run:
 $ strip -x StepMania.app/Contents/MacOS/StepMania
 to reduce the size of the binary.
 
@@ -30,4 +29,4 @@ $ scripts/mkrelease.pl 20060507
 will produce StepMania-CVS-20060507.pkg for CVS releases
 
 Steve Checkoway
-steve@cs.washington.edu
+stevecheckoway@users.sf.net
