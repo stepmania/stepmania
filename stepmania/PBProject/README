@@ -2,7 +2,7 @@ REQUIREMENTS
 Mac OS X 10.4 or higher is required. The Mac OS X 10.2.8 SDK needs to be
 installed.
 
-Xcode 2.2.1 is required to build. Even though the stepmania project
+Xcode 2.4 or higher is required to build. Even though the stepmania project
 appears to be a ProjectBuilder project, it has been updated by XCode and
 no longer works with ProjectBuilder.
 
