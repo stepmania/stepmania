@@ -383,7 +383,7 @@ static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	char dir[PATH_MAX];
-	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("SMData"), CFSTR("smzip"), NULL );
+	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), NULL );
 
 	FILEMAN->Mount( "dir", sDirOfExecutable, "/" );
 	
