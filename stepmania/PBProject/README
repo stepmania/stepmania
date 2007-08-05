@@ -19,14 +19,5 @@ instead of "-configuration Native"
 $ strip -x StepMania.app/Contents/MacOS/StepMania
 to reduce the size of the binary.
 
-INSTALL
-To build an Installer package, run scripts/mkrelease.pl. It takes one
-optional argument which should probably be a date. For example
-$ scripts/mkrelease.pl
-will produce StepMania-4.0-beta4.pkg if ProductInfo.h defines the
-version to be "4.0 beta4".
-$ scripts/mkrelease.pl 20060507
-will produce StepMania-CVS-20060507.pkg for CVS releases
-
 Steve Checkoway
 stevecheckoway@users.sf.net
