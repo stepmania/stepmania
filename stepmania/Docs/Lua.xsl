@@ -39,6 +39,21 @@
 				}
 			</style>
 			<script type="text/javascript">
+				function Open( id )
+				{
+					var imgid = 'img_' + id;
+					var listid = 'list_' + id;
+					var img = document.getElementById( imgid );
+					var list = document.getElementById( listid );
+
+					img.setAttribute( 'src', 'open.gif' );
+					list.style.display = 'block';
+				}
+				function OpenAndMove( classid, functionid )
+				{
+					Open( classid );
+					location.hash = classid + '_' + functionid;
+				}
 				function Toggle( id )
 				{
 					var imgid = 'img_' + id;
@@ -94,8 +109,7 @@
 
 <xsl:template match="sm:Singletons">
 	<div>
-		<a name="Singletons" />
-		<h3>Singletons</h3>
+		<h3 id="Singletons">Singletons</h3>
 		<ul>
 			<xsl:for-each select="sm:Singleton">
 				<xsl:sort select="@name" />
@@ -112,8 +126,7 @@
 
 <xsl:template match="sm:Classes">
 	<div>
-		<a name="Classes" />
-		<h3>Classes</h3>
+		<h3 id="Classes">Classes</h3>
 		<xsl:apply-templates select="sm:Class">
 			<xsl:sort select="@name" />
 		</xsl:apply-templates>
@@ -125,13 +138,13 @@
 <xsl:template match="sm:Class">
 	<xsl:variable name="name" select="@name" />
 	<div>
-		<a name="{@name}" class="trigger" onclick="Toggle('{@name}')">
+		<a id="{@name}" class="trigger" onclick="Toggle('{@name}')">
 			<img src="closed.gif" id="img_{@name}" alt="" />
 			Class <xsl:value-of select="@name" />
 		</a>
 		<xsl:if test="@base != ''">
 			<xsl:text> : </xsl:text>
-			<a href="#{@base}" onclick="Toggle('{@base}')">
+			<a href="#{@base}" onclick="Open('{@base}')">
 				<xsl:value-of select="@base" />
 			</a>
 		</xsl:if>
@@ -141,6 +154,7 @@
 			<xsl:apply-templates select="sm:Function">
 				<xsl:sort select="@name" />
 				<xsl:with-param name="path" select="$docs/sm:Classes/sm:Class[@name=$name]" />
+				<xsl:with-param name="class" select="$name" />
 			</xsl:apply-templates>
 		</table>
 		<br />
@@ -151,13 +165,13 @@
 
 <xsl:template match="sm:GlobalFunctions">
 	<div>
-		<a name="GlobalFunctions" />
-		<h3>Global Functions</h3>
+		<h3 id="GlobalFunctions">Global Functions</h3>
 		<table>
 			<tr><th>Function</th><th>Description</th></tr>
 			<xsl:apply-templates select="sm:Function">
 				<xsl:sort select="@name" />
 				<xsl:with-param name="path" select="$docs/sm:GlobalFunctions" />
+				<xsl:with-param name="class" select="'GLOBAL'" />
 			</xsl:apply-templates>
 		</table>
 	</div>
@@ -166,15 +180,18 @@
 
 <xsl:template match="sm:Function">
 	<xsl:param name="path" />
+	<xsl:param name="class" />
 	<xsl:variable name="name" select="@name" />
 	<xsl:variable name="elmt" select="$path/sm:Function[@name=$name]" />
-	<tr>
+	<tr id="{$class}_{$name}">
 		<xsl:choose>
 			<xsl:when test="string($elmt/@name)=$name"><td> <!-- The name must exist. -->
 				<xsl:value-of select="$elmt/@return" />
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="@name" />( <xsl:value-of select="$elmt/@arguments" /> )
-			</td><td><xsl:value-of select="$elmt" /></td>
+			</td><td><xsl:apply-templates select="$elmt" mode="print">
+				<xsl:with-param name="class" select="$class" />
+				</xsl:apply-templates></td>
 			</xsl:when>
 			<xsl:otherwise>
 				<td><xsl:value-of select="@name" /></td>
@@ -182,11 +199,37 @@
 		</xsl:choose>
 	</tr>
 </xsl:template>
+<xsl:template match="sm:Function" mode="print">
+	<xsl:param name="class" />
+	<xsl:apply-templates>
+		<xsl:with-param name="curclass" select="$class" />
+	</xsl:apply-templates>
+</xsl:template>
+
+<xsl:template match="sm:Link">
+	<xsl:param name="curclass" />
+	<xsl:choose>
+		<xsl:when test="string(@class)='' and string(@function)!=''">
+			<a href="#{$curclass}_{@function}"><xsl:apply-templates /></a>
+		</xsl:when>
+		<xsl:when test="string(@class)!='' and string(@function)=''">
+			<a href="#{@class}" onclick="Open('{@class}')"><xsl:apply-templates /></a>
+		</xsl:when>
+		<xsl:when test="(string(@class)='GLOBAL' or string(@class)='ENUM') and string(@function)!=''">
+			<a href="#{@class}_{@function}" onclick="Open('{@function}')"><xsl:apply-templates /></a>
+		</xsl:when>
+		<xsl:when test="string(@class)!='' and string(@function)!=''">
+			<a href="#{@class}_{@function}" onclick="OpenAndMove('{@class}','{@function}')"><xsl:apply-templates /></a>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:apply-templates /> <!-- Ignore this Link. -->
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
 
 <xsl:template match="sm:Enums">
 	<div>
-		<a name="Enums" />
-		<h3>Enums</h3>
+		<h3 id="Enums">Enums</h3>
 		<xsl:apply-templates select="sm:Enum">
 			<xsl:sort select="@name" />
 		</xsl:apply-templates>
@@ -195,7 +238,7 @@
 
 
 <xsl:template match="sm:Enum">
-	<div>
+	<div id="ENUM_{@name}">
 		<a class="trigger" onclick="Toggle('{@name}')">
 		<img src="closed.gif" id="img_{@name}" alt="" />
 		Enum <xsl:value-of select="@name" /></a>
@@ -221,8 +264,7 @@
 
 <xsl:template match="sm:Constants">
 	<div>
-		<a name="Constants" />
-		<h3>Constants</h3>
+		<h3 id="Constants">Constants</h3>
 		<table>
 			<tr>
 				<th>Constant</th>

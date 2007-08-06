@@ -66,11 +66,18 @@
 
 
 <xs:complexType name="Function" mixed="true">
+	<xs:sequence>
+		<xs:element name="Link" minOccurs="0" maxOccurs="unbounded" />
+	</xs:sequence>
 	<xs:attribute name="name" type="xs:string" use="required" />
 	<xs:attribute name="return" type="xs:string" use="optional" />
 	<xs:attribute name="arguments" type="xs:string" use="optional" />
 </xs:complexType>
 
+<xs:complexType name="Link" mixed="true">
+	<xs:attribute name="function" type="xs:string" use="optional" />
+	<xs:attribute name="class" type="xs:string" use="optional" />
+</xs:complexType>
 
 <xs:complexType name="Enums">
 	<xs:sequence>
