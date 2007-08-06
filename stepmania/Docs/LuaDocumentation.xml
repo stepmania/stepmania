@@ -32,50 +32,61 @@
 <Classes>
 <Class name='Actor'>
 	<Function name='halign' return='void' arguments='fAlign'>
-		Set the fractional horizontal alignment of the Actor according to fAlign which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign'>horizalign()</Link> for the common case.
+		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign'>horizalign()</Link> for the common case.
 	</Function>
 	<Function name='horizalign' return='void' arguments='align'>
-		Set the horizontal alignment of the Actor according to align which should be one of <Link class='ENUM' function='HorizAlign'>HorizAlign</Link>. See <Link function='halign'>halign()</Link> for fractional alignment.
+		Set the horizontal alignment of the Actor according to <code>align</code> which should be one of <Link class='ENUM' function='HorizAlign'>HorizAlign</Link>. See <Link function='halign'>halign()</Link> for fractional alignment.
 	</Function>
 	<Function name='valign' return='void' arguments='fAlign'>
-		Set the fractional vertical alignment of the Actor according to fAlign which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign">vertalign</Link> for the common case.
+		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign">vertalign</Link> for the common case.
 	</Function>
 	<Function name='vertalign' return='void' arguments='align'>
-		Set the vertical alignment of the Actor according to align which should be one of <Link class="ENUM" function="VertAlign">VertAlign</Link>. See <Link function="valign">valign()</Link> for fractional alignment.
+		Set the vertical alignment of the Actor according to <code>align</code> which should be one of <Link class="ENUM" function="VertAlign">VertAlign</Link>. See <Link function="valign">valign()</Link> for fractional alignment.
 	</Function>
 	<Function name='x' return='void' arguments='xPos'>
-		Set the x position of the Actor to xPos.
+		Set the x position of the Actor to <code>xPos</code>.
 	</Function>
 	<Function name='y' return='void' arguments='yPos'>
-		Set the y position of the Actor to yPos.
+		Set the y position of the Actor to <code>yPos</code>.
 	</Function>
 	<Function name='z' return='void' arguments='zPos'>
-		Set the z position of the Actor to zPos.
+		Set the z position of the Actor to <code>zPos</code>.
+	</Function>
+</Class>
+<Class name='ScreenGameplay'>
+	<Function name='Center1Player' return='bool' arguments=''>
+		Returns <code>true</code> if a single <Link class='Player'>Player</Link> has its NoteField centered.
+	</Function>
+	<Function name='GetLifeMeter' return='LifeMeter' arguments='pn'>
+		Returns the <Link class='LifeMeter'>LifeMeter</Link> for the specified <Link class='ENUM' function='PlayerNumber'>PlayerNumber</Link> <code>pn</code>.
+	</Function>
+	<Function name='GetNextCourseSong' return='Song' arguments=''>
+		Returns the next <Link class='Song'>Song</Link> is the current <Link class='Course'>Course</Link>.
 	</Function>
 </Class>
 <Class name='Song'>
-	<Function name='GetDisplayArtist' return='string' arguments='none'>
+	<Function name='GetDisplayArtist' return='string' arguments=''>
 		Returns the displayed artist of the song.
 	</Function>
-	<Function name='GetDisplayFullTitle' return='string' arguments='none'>
+	<Function name='GetDisplayFullTitle' return='string' arguments=''>
 		Returns the displayed full title of the song, including subtitle.
 	</Function>
-	<Function name='GetDisplayMainTitle' return='string' arguments='none'>
+	<Function name='GetDisplayMainTitle' return='string' arguments=''>
 		Returns the displayed main title of the song.
 	</Function>
-	<Function name='GetTranslitArtist' return='string' arguments='none'>
+	<Function name='GetTranslitArtist' return='string' arguments=''>
 		Returns the transliterated artist of the song.
 	</Function>
-	<Function name='GetTranslitFullTitle' return='string' arguments='none'>
+	<Function name='GetTranslitFullTitle' return='string' arguments=''>
 		Returns the transliterated full title of the song, including subtitle.
 	</Function>
-	<Function name='GetTranslitMainTitle' return='string' arguments='none'>
+	<Function name='GetTranslitMainTitle' return='string' arguments=''>
 		Returns the transliterated main title of the song.
 	</Function>
-	<Function name='IsLong' return='bool' arguments='none'>
+	<Function name='IsLong' return='bool' arguments=''>
 		Returns true if the song meets the criteria for a &quot;Long Version&quot;.
 	</Function>
-	<Function name='IsMarathon' return='bool' arguments='none'>
+	<Function name='IsMarathon' return='bool' arguments=''>
 		Returns true if the song meets the criteria for &quot;Marathon&quot; length.
 	</Function>
 </Class>
