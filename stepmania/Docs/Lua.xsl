@@ -34,6 +34,9 @@
 				code {
 					font-family: monospace
 				}
+				.code {
+					font-family: monospace
+				}
 				.trigger {
 					cursor: pointer
 				}
@@ -117,7 +120,7 @@
 			<xsl:for-each select="sm:Singleton">
 				<xsl:sort select="@name" />
 				<li>
-					<a href="#{@class}" onclick="Open('{@class}')">
+					<a class="code" href="#{@class}" onclick="Open('{@class}')">
 						<xsl:value-of select="@name" />
 					</a>
 				</li>
@@ -143,11 +146,11 @@
 	<div>
 		<a id="{@name}" class="trigger" onclick="Toggle('{@name}')">
 			<img src="closed.gif" id="img_{@name}" alt="" />
-			Class <xsl:value-of select="@name" />
+			Class <text class="code"><xsl:value-of select="@name" /></text>
 		</a>
 		<xsl:if test="@base != ''">
-			<xsl:text> : </xsl:text>
-			<a href="#{@base}" onclick="Open('{@base}')">
+			<text class="code"><xsl:text> : </xsl:text></text>
+			<a class="code" href="#{@base}" onclick="Open('{@base}')">
 				<xsl:value-of select="@base" />
 			</a>
 		</xsl:if>
@@ -188,7 +191,7 @@
 	<xsl:variable name="elmt" select="$path/sm:Function[@name=$name]" />
 	<tr id="{$class}_{$name}">
 		<xsl:choose>
-			<xsl:when test="string($elmt/@name)=$name"><td> <!-- The name must exist. -->
+			<xsl:when test="string($elmt/@name)=$name"><td class="code"> <!-- The name must exist. -->
 				<xsl:choose>
 					<!-- XXX: /Lua/Classes/sm:Class[@name=$elmt/@return] does not work and I have no idea why. -->
 					<xsl:when test="boolean(//sm:Class[@name=$elmt/@return])">
@@ -205,7 +208,7 @@
 				</xsl:apply-templates></td>
 			</xsl:when>
 			<xsl:otherwise>
-				<td><xsl:value-of select="@name" /></td>
+				<td class="code"><xsl:value-of select="@name" /></td>
 			</xsl:otherwise>
 		</xsl:choose>
 	</tr>
@@ -221,16 +224,16 @@
 	<xsl:param name="curclass" />
 	<xsl:choose>
 		<xsl:when test="string(@class)='' and string(@function)!=''">
-			<a href="#{$curclass}_{@function}"><xsl:apply-templates /></a>
+			<a class="code" href="#{$curclass}_{@function}"><xsl:apply-templates /></a>
 		</xsl:when>
 		<xsl:when test="string(@class)!='' and string(@function)=''">
-			<a href="#{@class}" onclick="Open('{@class}')"><xsl:apply-templates /></a>
+			<a class="code" href="#{@class}" onclick="Open('{@class}')"><xsl:apply-templates /></a>
 		</xsl:when>
 		<xsl:when test="(string(@class)='GLOBAL' or string(@class)='ENUM') and string(@function)!=''">
-			<a href="#{@class}_{@function}" onclick="Open('{@function}')"><xsl:apply-templates /></a>
+			<a class="code" href="#{@class}_{@function}" onclick="Open('{@function}')"><xsl:apply-templates /></a>
 		</xsl:when>
 		<xsl:when test="string(@class)!='' and string(@function)!=''">
-			<a href="#{@class}_{@function}" onclick="OpenAndMove('{@class}','{@function}')"><xsl:apply-templates /></a>
+			<a class="code" href="#{@class}_{@function}" onclick="OpenAndMove('{@class}','{@function}')"><xsl:apply-templates /></a>
 		</xsl:when>
 		<xsl:otherwise>
 			<xsl:apply-templates /> <!-- Ignore this Link. -->
@@ -252,7 +255,7 @@
 	<div id="ENUM_{@name}">
 		<a class="trigger" onclick="Toggle('{@name}')">
 		<img src="closed.gif" id="img_{@name}" alt="" />
-		Enum <xsl:value-of select="@name" /></a>
+		Enum <text class="code"><xsl:value-of select="@name" /></text></a>
 		<div style="display: none" id="list_{@name}">
 		<table>
 			<tr>
@@ -261,7 +264,7 @@
 			</tr>
 			<xsl:for-each select="sm:EnumValue">
 				<xsl:sort data-type="number" select="@value" />
-				<tr>
+				<tr class="code">
 					<td><xsl:value-of select="@name" /></td>
 					<td><xsl:value-of select="@value" /></td>
 				</tr>
@@ -283,7 +286,7 @@
 			</tr>
 			<xsl:for-each select="sm:Constant">
 				<xsl:sort select="@name" />
-				<tr>
+				<tr class="code">
 					<td><xsl:value-of select="@name" /></td>
 					<td><xsl:value-of select="@value" /></td>
 				</tr>
