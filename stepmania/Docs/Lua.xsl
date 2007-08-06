@@ -31,6 +31,9 @@
 				hr {
 					width: 90%
 				}
+				code {
+					font-family: monospace
+				}
 				.trigger {
 					cursor: pointer
 				}
@@ -288,5 +291,10 @@
 		</table>
 		<br />
 	</div>
+</xsl:template>
+
+<!-- XXX: This is annoying, how can we tell xsl to just pass the html through? -->
+<xsl:template match="sm:code">
+	<xsl:copy><xsl:apply-templates /></xsl:copy>
 </xsl:template>
 </xsl:stylesheet>

@@ -66,8 +66,12 @@
 
 
 <xs:complexType name="Function" mixed="true">
-	<xs:sequence>
-		<xs:element name="Link" minOccurs="0" maxOccurs="unbounded" />
+	<xs:sequence minOccurs="0" maxOccurs="unbounded">
+		<xs:choice>
+			<xs:element name="Link" />
+			<!-- HTML elements we want to let through. -->
+			<xs:element name="code" />
+		</xs:choice>
 	</xs:sequence>
 	<xs:attribute name="name" type="xs:string" use="required" />
 	<xs:attribute name="return" type="xs:string" use="optional" />
