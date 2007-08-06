@@ -114,7 +114,7 @@
 			<xsl:for-each select="sm:Singleton">
 				<xsl:sort select="@name" />
 				<li>
-					<a href="#{@class}" onclick="Toggle('{@class}')">
+					<a href="#{@class}" onclick="Open('{@class}')">
 						<xsl:value-of select="@name" />
 					</a>
 				</li>
@@ -186,7 +186,15 @@
 	<tr id="{$class}_{$name}">
 		<xsl:choose>
 			<xsl:when test="string($elmt/@name)=$name"><td> <!-- The name must exist. -->
-				<xsl:value-of select="$elmt/@return" />
+				<xsl:choose>
+					<!-- XXX: /Lua/Classes/sm:Class[@name=$elmt/@return] does not work and I have no idea why. -->
+					<xsl:when test="boolean(//sm:Class[@name=$elmt/@return])">
+						<a href="#{$elmt/@return}" onclick="Open('{$elmt/@return}')"><xsl:value-of select="$elmt/@return" /></a>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$elmt/@return" />
+					</xsl:otherwise>
+				</xsl:choose>
 				<xsl:text> </xsl:text>
 				<xsl:value-of select="@name" />( <xsl:value-of select="$elmt/@arguments" /> )
 			</td><td><xsl:apply-templates select="$elmt" mode="print">
