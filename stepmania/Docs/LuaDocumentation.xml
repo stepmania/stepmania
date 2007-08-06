@@ -61,7 +61,7 @@
 		Returns the <Link class='LifeMeter'>LifeMeter</Link> for the specified <Link class='ENUM' function='PlayerNumber'>PlayerNumber</Link> <code>pn</code>.
 	</Function>
 	<Function name='GetNextCourseSong' return='Song' arguments=''>
-		Returns the next <Link class='Song'>Song</Link> is the current <Link class='Course'>Course</Link>.
+		Returns the next <Link class='Song'>Song</Link> in the current <Link class='Course'>Course</Link>.
 	</Function>
 </Class>
 <Class name='Song'>
