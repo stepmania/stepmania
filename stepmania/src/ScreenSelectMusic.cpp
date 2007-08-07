@@ -84,6 +84,13 @@ void ScreenSelectMusic::Init()
 
 	ScreenWithMenuElements::Init();
 
+	//clear cached trails if any - cached trails points to already freed data if returning to select course after course played
+	SONGMAN->InvalidateCachedTrails();
+	FOREACH_ENUM( PlayerNumber, p )
+	{
+		GAMESTATE->m_pCurTrail[p].Set( NULL );
+	}
+
 	/* Cache: */
 	m_sSectionMusicPath =		THEME->GetPathS(m_sName,"section music");
 	m_sSortMusicPath =		THEME->GetPathS(m_sName,"sort music");
