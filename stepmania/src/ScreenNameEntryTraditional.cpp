@@ -144,22 +144,19 @@ void ScreenNameEntryTraditional::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;
-	if(
-		( input.MenuI != GameButton_Invalid ) &&
-		( input.pn != PlayerNumber_Invalid )
-		)
+	if( input.MenuI != GameButton_Invalid && input.pn != PlayerNumber_Invalid )
 	{
 		switch( input.type )
 		{
 		case IET_FIRST_PRESS:
 		case IET_REPEAT:
-			{
-				Message msg( "Input" );
-				msg.SetParam( "PlayerNumber", input.pn );
-				msg.SetParam( "MenuItem", GameButtonToString( INPUTMAPPER->GetInputScheme(), input.MenuI ) );
-				this->HandleMessage( msg );
-			}
+		{
+			Message msg( "Input" );
+			msg.SetParam( "PlayerNumber", input.pn );
+			msg.SetParam( "MenuItem", GameButtonToString( INPUTMAPPER->GetInputScheme(), input.MenuI ) );
+			this->HandleMessage( msg );
 			break;
+		}
 		}
 	}
 	ScreenWithMenuElements::Input( input );
