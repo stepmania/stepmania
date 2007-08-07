@@ -20,10 +20,10 @@
 <Documentation xmlns='http://www.stepmania.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.stepmania.com Lua.xsd'>
 <!-- Global functions -->
 <GlobalFunctions>
-<Function name='Basename' return='string' arguments='path'>
+<Function name='Basename' return='string' arguments='string path'>
 	Returns the base name of file path.
 </Function>
-<Function name='FormatNumberAndSuffix' return='string' arguments='integer'>
+<Function name='FormatNumberAndSuffix' return='string' arguments='int num'>
 	Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
 </Function>
 </GlobalFunctions>
@@ -31,25 +31,25 @@
 <!-- Classes -->
 <Classes>
 <Class name='Actor'>
-	<Function name='halign' return='void' arguments='fAlign'>
+	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign'>horizalign()</Link> for the common case.
 	</Function>
-	<Function name='horizalign' return='void' arguments='align'>
-		Set the horizontal alignment of the Actor according to <code>align</code> which should be one of <Link class='ENUM' function='HorizAlign'>HorizAlign</Link>. See <Link function='halign'>halign()</Link> for fractional alignment.
+	<Function name='horizalign' return='void' arguments='HorizAlign align'>
+		Set the horizontal alignment of the Actor according to <code>align</code>. See <Link function='halign'>halign()</Link> for fractional alignment.
 	</Function>
-	<Function name='valign' return='void' arguments='fAlign'>
+	<Function name='valign' return='void' arguments='float fAlign'>
 		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign">vertalign</Link> for the common case.
 	</Function>
-	<Function name='vertalign' return='void' arguments='align'>
-		Set the vertical alignment of the Actor according to <code>align</code> which should be one of <Link class="ENUM" function="VertAlign">VertAlign</Link>. See <Link function="valign">valign()</Link> for fractional alignment.
+	<Function name='vertalign' return='void' arguments='VertAlign align'>
+		Set the vertical alignment of the Actor according to <code>align</code>. See <Link function="valign">valign()</Link> for fractional alignment.
 	</Function>
-	<Function name='x' return='void' arguments='xPos'>
+	<Function name='x' return='void' arguments='float xPos'>
 		Set the x position of the Actor to <code>xPos</code>.
 	</Function>
-	<Function name='y' return='void' arguments='yPos'>
+	<Function name='y' return='void' arguments='float yPos'>
 		Set the y position of the Actor to <code>yPos</code>.
 	</Function>
-	<Function name='z' return='void' arguments='zPos'>
+	<Function name='z' return='void' arguments='float zPos'>
 		Set the z position of the Actor to <code>zPos</code>.
 	</Function>
 </Class>
@@ -57,7 +57,7 @@
 	<Function name='Center1Player' return='bool' arguments=''>
 		Returns <code>true</code> if a single <Link class='Player'>Player</Link> has its NoteField centered.
 	</Function>
-	<Function name='GetLifeMeter' return='LifeMeter' arguments='pn'>
+	<Function name='GetLifeMeter' return='LifeMeter' arguments='PlayerNumber pn'>
 		Returns the <Link class='LifeMeter'>LifeMeter</Link> for the specified <Link class='ENUM' function='PlayerNumber'>PlayerNumber</Link> <code>pn</code>.
 	</Function>
 	<Function name='GetNextCourseSong' return='Song' arguments=''>
