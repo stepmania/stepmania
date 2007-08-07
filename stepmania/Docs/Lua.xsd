@@ -28,13 +28,47 @@
 	</xs:complexType>
 </xs:element>
 
+<xs:simpleType name="Identifier">
+	<xs:restriction base="xs:string">
+	<!-- Not totally valid since the following are not valid
+	     identifiers in Lua.
+		and	break	do	else		elseif
+		end	false	for	function	if
+		in	local	nil	not		or
+		repeat	return	then	true		until
+		while
+	-->
+		<xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*" />
+	</xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="IdentifierOrNonemptyString">
+	<xs:restriction base="xs:string">
+	<!-- XXX: Doesn't support double quoted strings. -->
+		<xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*|'[^']+'" />
+	</xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="IdentifierStringOrNumber">
+	<xs:restriction base="xs:string">
+		<xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*|'[^']+'|[0-9]+" />
+	</xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="ArgumentList">
+	<xs:restriction base="xs:string">
+		<xs:whiteSpace value="collapse" />
+		<xs:pattern value="([a-zA-Z_][a-zA-Z0-9_]* [a-zA-Z_][a-zA-Z0-9_]*( ?, ?[a-zA-Z_][a-zA-Z0-9_]* [a-zA-Z_][a-zA-Z0-9_]*)*)?" />
+	</xs:restriction>
+</xs:simpleType>
+
 
 <xs:complexType name="Singletons">
 	<xs:sequence>
 		<xs:element name="Singleton" minOccurs="0" maxOccurs="unbounded">
 			<xs:complexType>
-				<xs:attribute name="name" type="xs:string" use="required" />
-				<xs:attribute name="class" type="xs:string" use="required" />
+				<xs:attribute name="name" type="Identifier" use="required" />
+				<xs:attribute name="class" type="Identifier" use="required" />
 			</xs:complexType>
 		</xs:element>
 	</xs:sequence>
@@ -49,8 +83,8 @@
 					<xs:element name="Function" type="Function"
 					 minOccurs="0" maxOccurs="unbounded" />
 				</xs:sequence>
-				<xs:attribute name="name" type="xs:string" use="required" />
-				<xs:attribute name="base" type="xs:string" use="optional" />
+				<xs:attribute name="name" type="Identifier" use="required" />
+				<xs:attribute name="base" type="Identifier" use="optional" />
 			</xs:complexType>
 		</xs:element>
 	</xs:sequence>
@@ -68,19 +102,19 @@
 <xs:complexType name="Function" mixed="true">
 	<xs:sequence minOccurs="0" maxOccurs="unbounded">
 		<xs:choice>
-			<xs:element name="Link" />
+			<xs:element name="Link" type="Link" />
 			<!-- HTML elements we want to let through. -->
 			<xs:element name="code" />
 		</xs:choice>
 	</xs:sequence>
-	<xs:attribute name="name" type="xs:string" use="required" />
-	<xs:attribute name="return" type="xs:string" use="optional" />
-	<xs:attribute name="arguments" type="xs:string" use="optional" />
+	<xs:attribute name="name" type="Identifier" use="required" />
+	<xs:attribute name="return" type="Identifier" use="optional" />
+	<xs:attribute name="arguments" type="ArgumentList" use="optional" />
 </xs:complexType>
 
 <xs:complexType name="Link" mixed="true">
-	<xs:attribute name="function" type="xs:string" use="optional" />
-	<xs:attribute name="class" type="xs:string" use="optional" />
+	<xs:attribute name="function" type="Identifier" use="optional" />
+	<xs:attribute name="class" type="Identifier" use="optional" />
 </xs:complexType>
 
 <xs:complexType name="Enums">
@@ -91,7 +125,7 @@
 					<xs:element name="EnumValue" type="Constant"
 					 minOccurs="0" maxOccurs="unbounded" />
 				</xs:sequence>
-				<xs:attribute name="name" type="xs:string" use="required" />
+				<xs:attribute name="name" type="Identifier" use="required" />
 			</xs:complexType>
 		</xs:element>
 	</xs:sequence>
@@ -107,7 +141,7 @@
 
 
 <xs:complexType name="Constant">
-	<xs:attribute name="name" type="xs:string" use="required" />
-	<xs:attribute name="value" type="xs:string" use="required" />
+	<xs:attribute name="name" type="IdentifierOrNonemptyString" use="required" />
+	<xs:attribute name="value" type="IdentifierStringOrNumber" use="required" />
 </xs:complexType>
 </xs:schema>
