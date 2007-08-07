@@ -97,8 +97,10 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 
 void LifeMeterTime::OnLoadSong()
 {
-	if( GetLifeSeconds() <= 0 )
+	if( ( GetLifeSeconds() <= 0 ) && ( GAMESTATE->GetCourseSongIndex() > 0 ) )
+	{
 		return;
+	}
 
 	Course* pCourse = GAMESTATE->m_pCurCourse;
 	ASSERT( pCourse );
@@ -109,7 +111,7 @@ void LifeMeterTime::OnLoadSong()
 
 	m_soundGainLife.Play();
 
-	SendLifeChangedMessage( fOldLife, TapNoteScore_Invalid, HoldNoteScore_Invalid );
+	SendLifeChangedMessage( fOldLife, TapNoteScore_Invalid, HoldNoteScore_Invalid, pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].fGainSeconds );
 }
 
 
@@ -137,7 +139,7 @@ void LifeMeterTime::ChangeLife( TapNoteScore tns )
 
 	m_fLifeTotalLostSeconds -= fMeterChange;
 
-	SendLifeChangedMessage( fOldLife, tns, HoldNoteScore_Invalid );
+	SendLifeChangedMessage( fOldLife, tns, HoldNoteScore_Invalid, fMeterChange );
 }
 
 void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
@@ -157,7 +159,7 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 
 	m_fLifeTotalLostSeconds -= fMeterChange;
 
-	SendLifeChangedMessage( fOldLife, tns, hns );
+	SendLifeChangedMessage( fOldLife, tns, hns, fMeterChange );
 }
 
 void LifeMeterTime::HandleTapScoreNone()
@@ -165,13 +167,14 @@ void LifeMeterTime::HandleTapScoreNone()
 	
 }
 
-void LifeMeterTime::SendLifeChangedMessage( float fOldLife, TapNoteScore tns, HoldNoteScore hns )
+void LifeMeterTime::SendLifeChangedMessage( float fOldLife, TapNoteScore tns, HoldNoteScore hns, float fDifference )
 {
 	Message msg( "LifeChanged" );
 	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "TapNoteScore", LuaReference::Create(tns) );
 	msg.SetParam( "HoldNoteScore", LuaReference::Create(hns) );
 	msg.SetParam( "OldLife", fOldLife );
+	msg.SetParam( "Difference", fDifference );
 	msg.SetParam( "LifeMeter", LuaReference::CreateFromPush(*this) );
 	MESSAGEMAN->Broadcast( msg );
 }
