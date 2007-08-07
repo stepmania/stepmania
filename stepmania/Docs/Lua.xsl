@@ -3,7 +3,7 @@
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:sm="http://www.stepmania.com"
-	exclude-result-prefixes="sm"> <!-- keep xslt from spittingout namespace info. -->
+	exclude-result-prefixes="sm">
 <!-- This could be xhtml 1.0 strict, but firefox is failing at displaying the
      resultant document even though it seems to parse it just fine. -->
 <xsl:output method="html"
@@ -11,6 +11,7 @@
 	encoding="UTF-8"
 	doctype-system="http://www.w3.org/TR/html4/strict.dtd"
 	doctype-public="-//W3C//DTD HTML 4.01//EN"
+	indent="no"
 	media-type="text/html" />
 <!--
 <xsl:output method="xml"
@@ -58,7 +59,6 @@
 				width: 10em
 			}
 			.descriptionCell {
-				font-family: monospace;
 				text-align: justify;
 				vertical-align: text-top
 			}
@@ -66,10 +66,33 @@
 				font-family: monospace;
 				font-weight: bold
 			}
+			.descriptionArguments {
+				font-family: monospace
+			}
 			.descriptionText {
 				text-indent: 2em;
 				margin-top: 0;
 				margin-bottom: 0
+			}
+			.primitiveType {
+				font-family: monospace;
+				color: #0000ff
+			}
+			a.classType:link {
+				font-family: monospace;
+				color: #cc0000
+			}
+			a.classType:visited {
+				font-family: monospace;
+				color: #440000
+			}
+			a.enumType:link {
+				font-family: monospace;
+				color: #cc0000
+			}
+			a.enumType:visited {
+				font-family: monospace;
+				color: #440000
 			}
 			.trigger {
 				cursor: pointer
@@ -154,7 +177,7 @@
 			<xsl:for-each select="sm:Singleton">
 				<xsl:sort select="@name" />
 				<li>
-					<a class="code" href="#{@class}" onclick="Open('{@class}')">
+					<a class="classType" href="#{@class}" onclick="Open('{@class}')">
 						<xsl:value-of select="@name" />
 					</a>
 				</li>
@@ -184,7 +207,7 @@
 		</a>
 		<xsl:if test="@base != ''">
 			<span class="code"><xsl:text> : </xsl:text></span>
-			<a class="code" href="#{@base}" onclick="Open('{@base}')">
+			<a class="classType" href="#{@base}" onclick="Open('{@base}')">
 				<xsl:value-of select="@base" />
 			</a>
 		</xsl:if>
@@ -217,6 +240,64 @@
 	</div>
 </xsl:template>
 
+<xsl:template name="processType">
+	<xsl:param name="type" />
+	<xsl:choose>
+		<xsl:when test="$type='void' or
+				$type='int' or
+				$type='float' or
+				$type='string'">
+			<span class="primitiveType">
+				<xsl:value-of select="$type" />
+			</span>
+		</xsl:when>
+		<!-- XXX: /Lua/Classes/sm:Class[@name=$type]
+		          does not work and I have no idea why. -->
+		<xsl:when test="boolean(//sm:Class[@name=$type])">
+			<a class="classType" href="#{$type}" onclick="Open('{$type}')">
+				<xsl:value-of select="$type" />
+			</a>
+		</xsl:when>
+		<xsl:when test="boolean(//sm:Enum[@name=$type])">
+			<a class="enumType" href="#ENUM_{$type}" onclick="Open('{$type}')">
+				<xsl:value-of select="$type" />
+			</a>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:value-of select="$type" />
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
+<xsl:template name="processArguments">
+	<xsl:param name="argumentList" />
+	<xsl:choose>
+		<!-- Base case. -->
+		<xsl:when test="not(contains($argumentList, ','))">
+			<xsl:call-template name="processType">
+				<xsl:with-param name="type"
+				                select="substring-before($argumentList, ' ')" />
+			</xsl:call-template>
+			<xsl:text> </xsl:text>
+			<xsl:value-of select="substring-after($argumentList, ' ')" />
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:variable name="before"
+				      select="substring-before($argumentList, ',')" />
+			<xsl:variable name="after"
+			              select="substring-after($argumentList, ',')" />
+			<xsl:call-template name="processType">
+				<xsl:with-param name="type"
+						select="substring-before($before, ' ')" />
+			</xsl:call-template>
+			<xsl:value-of select="substring-after($before, ',')" /><xsl:text>, </xsl:text>
+			<!-- Recursive call. -->
+			<xsl:call-template name="processArguments">
+				<xsl:with-param name="argumentList" select="$after" />
+			</xsl:call-template>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
 
 <xsl:template match="sm:Function">
 	<xsl:param name="path" />
@@ -228,22 +309,20 @@
 		<!-- Check for documentation. -->
 		<xsl:when test="string($elmt/@name)=$name">
 			<td class="returnTypeCell">
-			<xsl:choose>
-				<!-- XXX: /Lua/Classes/sm:Class[@name=$elmt/@return]
-				          does not work and I have no idea why. -->
-				<xsl:when test="boolean(//sm:Class[@name=$elmt/@return])">
-					<a href="#{$elmt/@return}"
-					   onclick="Open('{$elmt/@return}')">
-						<xsl:value-of select="$elmt/@return" />
-					</a>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="$elmt/@return" />
-				</xsl:otherwise>
-			</xsl:choose>
+			<xsl:call-template name="processType">
+				<xsl:with-param name="type" select="$elmt/@return" />
+			</xsl:call-template>
 			</td>
 			<td class="descriptionCell">
-			<span class="descriptionName"><xsl:value-of select="@name" /></span>( <xsl:value-of select="$elmt/@arguments" /> )
+			<span class="descriptionName">
+				<xsl:value-of select="@name" />
+			</span>
+			<span class="descriptionArguments">(
+				<xsl:call-template name="processArguments">
+					<xsl:with-param name="argumentList"
+					                select="$elmt/@arguments" />
+				</xsl:call-template>
+				)</span>
 			<p class="descriptionText">
 				<xsl:apply-templates select="$elmt" mode="print">
 					<xsl:with-param name="class" select="$class" />
@@ -271,16 +350,16 @@
 	<xsl:param name="curclass" />
 	<xsl:choose>
 		<xsl:when test="string(@class)='' and string(@function)!=''">
-			<a class="code" href="#{$curclass}_{@function}"><xsl:apply-templates /></a>
+			<a class="classType" href="#{$curclass}_{@function}"><xsl:apply-templates /></a>
 		</xsl:when>
 		<xsl:when test="string(@class)!='' and string(@function)=''">
-			<a class="code" href="#{@class}" onclick="Open('{@class}')"><xsl:apply-templates /></a>
+			<a class="classType" href="#{@class}" onclick="Open('{@class}')"><xsl:apply-templates /></a>
 		</xsl:when>
 		<xsl:when test="(string(@class)='GLOBAL' or string(@class)='ENUM') and string(@function)!=''">
-			<a class="code" href="#{@class}_{@function}" onclick="Open('{@function}')"><xsl:apply-templates /></a>
+			<a class="classType" href="#{@class}_{@function}" onclick="Open('{@function}')"><xsl:apply-templates /></a>
 		</xsl:when>
 		<xsl:when test="string(@class)!='' and string(@function)!=''">
-			<a class="code" href="#{@class}_{@function}" onclick="OpenAndMove('{@class}','{@function}')"><xsl:apply-templates /></a>
+			<a class="classType" href="#{@class}_{@function}" onclick="OpenAndMove('{@class}','{@function}')"><xsl:apply-templates /></a>
 		</xsl:when>
 		<xsl:otherwise>
 			<xsl:apply-templates /> <!-- Ignore this Link. -->
