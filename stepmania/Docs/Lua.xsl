@@ -213,7 +213,7 @@
 		</xsl:if>
 		<div style="display: none" id="list_{@name}">
 		<table>
-			<tr><th colspan="2">Member Functions</th></tr>
+			<tr><th colspan="2"><xsl:value-of select="$name" /> Member Functions</th></tr>
 			<xsl:apply-templates select="sm:Function">
 				<xsl:sort select="@name" />
 				<xsl:with-param name="path" select="$docs/sm:Classes/sm:Class[@name=$name]" />
