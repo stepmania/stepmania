@@ -33,7 +33,7 @@ public:
 
 private:
 	float GetLifeSeconds() const;
-	void SendLifeChangedMessage( float fOldLife, TapNoteScore tns, HoldNoteScore hns, float fDifference );
+	void SendLifeChangedMessage( float fOldLife, TapNoteScore tns, HoldNoteScore hns );
 
 	AutoActor			m_sprBackground;
 	Quad				m_quadDangerGlow;
