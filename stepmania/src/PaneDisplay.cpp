@@ -126,10 +126,6 @@ void PaneDisplay::SetContent( PaneContents c )
 		}
 		else if( pTrail )
 		{
-			//little hack to force update m_bRadarValuesCached - someone needs to find out why m_bRadarValuesCached is set to true but in fact m_bRadarValuesCached values are invalid
-			//this doesnt occur on all courses
-			if( pTrail->m_bRadarValuesCached && ( pTrail->m_CachedRadarValues[RadarCategory_TapsAndHolds]==-1 ) )
-				pTrail->m_bRadarValuesCached = false;
 			rv = pTrail->GetRadarValues();
 			pHSL = &PROFILEMAN->GetProfile(slot)->GetCourseHighScoreList(pCourse, pTrail);
 		}
