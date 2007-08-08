@@ -238,7 +238,7 @@ enum MemoryCardState
 };
 
 const RString& MemoryCardStateToString( MemoryCardState mcs );
-
+LuaDeclareType( MemoryCardState );
 
 //
 // Ranking stuff

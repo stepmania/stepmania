@@ -262,7 +262,7 @@ static const char *MemoryCardStateNames[] = {
 	"none",
 };
 XToString( MemoryCardState );
-
+LuaXType( MemoryCardState );
 
 static const char *PerDifficultyAwardNames[] = {
 	"FullComboW3",

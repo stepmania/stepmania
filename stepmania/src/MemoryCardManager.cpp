@@ -715,8 +715,16 @@ void MemoryCardManager::UnPauseMountingThread()
 class LunaMemoryCardManager: public Luna<MemoryCardManager>
 {
 public:
+	static int GetCardState( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		LuaHelpers::Push( L, p->GetCardState( pn ) );
+		return 1;
+	}
+
 	LunaMemoryCardManager()
 	{
+		ADD_METHOD( GetCardState );
 	}
 };
 
