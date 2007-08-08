@@ -2662,12 +2662,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="crypto\CryptBn.h">
 			</File>
 			<File
-				RelativePath="CryptHelpers.cpp">
-			</File>
-			<File
-				RelativePath="CryptHelpers.h">
-			</File>
-			<File
 				RelativePath="crypto\CryptMD5.cpp">
 			</File>
 			<File
