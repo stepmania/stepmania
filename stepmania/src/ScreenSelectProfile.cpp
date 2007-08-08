@@ -1,26 +1,9 @@
 #include "global.h"
 #include "ScreenSelectProfile.h"
 #include "ScreenManager.h"
-#include "SongManager.h"
-#include "GameSoundManager.h"
-#include "ThemeManager.h"
-#include "AnnouncerManager.h"
-#include "song.h"
 #include "ProfileManager.h"
-#include "Profile.h"
-#include "ActorUtil.h"
 #include "GameState.h"
 #include "MemoryCardManager.h"
-#include "RageLog.h"
-#include "Style.h"
-#include "GameManager.h"
-#include "PrefsManager.h"
-#include "StatsManager.h"
-#include "PlayerState.h"
-#include "CommonMetrics.h"
-#include "InputEventPlus.h"
-#include "ScreenDimensions.h"
-#include "InputMapper.h"
 
 REGISTER_SCREEN_CLASS( ScreenSelectProfile );
 
@@ -83,7 +66,7 @@ bool ScreenSelectProfile::Finish(){
 		return false;
 
 	// if profile indexes are the same for both players
-	if( ( GAMESTATE->GetNumPlayersEnabled() == 2 ) && ( m_iSelectedProfiles[0] == m_iSelectedProfiles[1] ) && ( m_iSelectedProfiles[0] > 0 ) )
+	if( GAMESTATE->GetNumPlayersEnabled() == 2 && m_iSelectedProfiles[0] == m_iSelectedProfiles[1] && m_iSelectedProfiles[0] > 0 )
 	{
 		return false;
 	}
@@ -95,7 +78,7 @@ bool ScreenSelectProfile::Finish(){
 			return false;
 
 		// card not ready
-		if( ( m_iSelectedProfiles[p] == 0 ) && (MEMCARDMAN->GetCardState( p ) != MemoryCardState_Ready ) )
+		if( m_iSelectedProfiles[p] == 0 && MEMCARDMAN->GetCardState( p ) != MemoryCardState_Ready )
 			return false;
 
 		// profile index too big

@@ -3,17 +3,13 @@
 #ifndef SCREEN_Select_PROFILE_H
 #define SCREEN_Select_PROFILE_H
 
-#include "BitmapText.h"
 #include "ScreenWithMenuElements.h"
-#include "Sprite.h"
-#include "ActorScroller.h"
 
 class ScreenSelectProfile : public ScreenWithMenuElements
 {
 public:
 	virtual void Init();
 	virtual void Input( const InputEventPlus &input );
-	//virtual void MenuStart( const InputEventPlus &input );
 
 	// Lua
 	void PushSelf( lua_State *L );
