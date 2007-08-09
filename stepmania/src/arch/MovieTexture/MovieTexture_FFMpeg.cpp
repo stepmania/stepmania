@@ -19,6 +19,20 @@ namespace avcodec
 	#pragma comment(lib, "ffmpeg/lib/avformat.lib")
 #endif
 
+#if defined(XBOX)
+	/* NOTES: ffmpeg static libraries arent included in cvs - you have to build them yourself 
+	 * or remove this file to produce xbox build
+	 * 
+	 * build ffmpeg with mingw32 ( howto http://arrozcru.no-ip.org/ffmpeg_wiki/tiki-index.php )
+     * ./configure --enable-memalign-hack --enable-static --disable-mmx --target-os=mingw32 --arch=x86
+     * you can use various switches to enable/disable codecs/muxers/etc. */
+	#pragma comment(lib, "ffmpeg/lib/libavcodec.a")
+	#pragma comment(lib, "ffmpeg/lib/libavformat.a")
+	#pragma comment(lib, "ffmpeg/lib/libavutil.a")
+	#pragma comment(lib, "ffmpeg/lib/libgcc.a")
+	#pragma comment(lib, "ffmpeg/lib/libmingwex.a")
+#endif
+
 static struct AVPixelFormat_t
 {
 	int bpp;
