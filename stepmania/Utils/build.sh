@@ -121,7 +121,7 @@ args='--disable-shared --enable-static --disable-debug --disable-vhook
 --enable-demuxer=mpegps --enable-demuxer=mpegts
 --enable-demuxer=mpegvideo --enable-demuxer=ogg
 --enable-demuxer=rawvideo --enable-demuxer=yuv4mpegpipe
---disable-decoders   --enable-decoder=h261 --enable-decoder=h263
+--disable-decoders --enable-decoder=h261 --enable-decoder=h263
 --enable-decoder=h263i --enable-decoder=h264 --enable-decoder=huffyuv
 --enable-decoder=mjpeg --enable-decoder=mjpegb
 --enable-decoder=mpeg_xvmc --enable-decoder=mpeg1video
