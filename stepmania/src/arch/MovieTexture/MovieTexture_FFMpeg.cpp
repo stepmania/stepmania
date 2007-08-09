@@ -25,7 +25,11 @@ namespace avcodec
 	 * 
 	 * build ffmpeg with mingw32 ( howto http://arrozcru.no-ip.org/ffmpeg_wiki/tiki-index.php )
      * ./configure --enable-memalign-hack --enable-static --disable-mmx --target-os=mingw32 --arch=x86
-     * you can use various switches to enable/disable codecs/muxers/etc. */
+     * you can use various switches to enable/disable codecs/muxers/etc. 
+	 * 
+	 * libgcc.a and libmingwex.a comes from mingw installation
+	 * msys\mingw\lib\gcc\mingw32\3.4.5\libgcc.a
+	 * msys\mingw\lib\libmingwex.a */
 	#pragma comment(lib, "ffmpeg/lib/libavcodec.a")
 	#pragma comment(lib, "ffmpeg/lib/libavformat.a")
 	#pragma comment(lib, "ffmpeg/lib/libavutil.a")
