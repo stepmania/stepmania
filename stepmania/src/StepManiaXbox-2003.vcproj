@@ -90,12 +90,14 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
+				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0/include&quot;"
+				FavorSizeOrSpeed="2"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0/include&quot;;ffmpeg/include"
 				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="TRUE"
+				EnableEnhancedInstructionSet="1"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="global.h"
@@ -115,6 +117,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				OutputFile="../StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="FALSE"
 				ProgramDatabaseFile="./../ReleaseXbox/StepMania.pdb"
@@ -141,7 +144,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<Tool
 				Name="XboxImageTool"
 				FileName="../default.xbe"
-				StackSize="0x10000"
+				StackSize="0x20000"
 				IncludeDebugInfo="FALSE"
 				SuppressStartupBanner="TRUE"
 				TitleID="0x33342530"
@@ -188,6 +191,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenCenterImage.h">
+			</File>
+			<File
+				RelativePath=".\ScreenContinue.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenContinue.h">
 			</File>
 			<File
 				RelativePath="ScreenCredits.cpp">
@@ -460,6 +469,18 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenPlayerOptions.h">
 			</File>
 			<File
+				RelativePath=".\ScreenProfileLoad.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenProfileLoad.h">
+			</File>
+			<File
+				RelativePath=".\ScreenProfileSave.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenProfileSave.h">
+			</File>
+			<File
 				RelativePath="ScreenPrompt.cpp">
 			</File>
 			<File
@@ -638,6 +659,24 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenTitleMenu.h">
+			</File>
+			<File
+				RelativePath=".\ScreenUnlockBrowse.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenUnlockBrowse.h">
+			</File>
+			<File
+				RelativePath=".\ScreenUnlockCelebrate.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenUnlockCelebrate.h">
+			</File>
+			<File
+				RelativePath=".\ScreenUnlockStatus.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenUnlockStatus.h">
 			</File>
 			<File
 				RelativePath="ScreenWithMenuElements.cpp">
@@ -825,6 +864,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="HighScore.h">
+			</File>
+			<File
+				RelativePath=".\InputEventPlus.h">
 			</File>
 			<File
 				RelativePath="Inventory.cpp">
@@ -1215,9 +1257,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					<File
 						RelativePath=".\arch\LoadingWindow\LoadingWindow_Xbox.h">
 					</File>
-					<File
-						RelativePath="arch\LoadingWindow\Selector_LoadingWindow.h">
-					</File>
 				</Filter>
 				<Filter
 					Name="Sound"
@@ -1242,9 +1281,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_Generic_Software.cpp">
-					</File>
-					<File
-						RelativePath="arch\Sound\RageSoundDriver_Generic_Software.h">
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_Null.cpp">
@@ -1293,9 +1329,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					<File
 						RelativePath="arch\InputHandler\InputHandler_Xbox.h">
 					</File>
-					<File
-						RelativePath=".\arch\InputHandler\Selector_InputHandler.h">
-					</File>
 				</Filter>
 				<Filter
 					Name="MovieTexture"
@@ -1307,13 +1340,32 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 						RelativePath="arch\MovieTexture\MovieTexture.h">
 					</File>
 					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_FFMpeg.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_FFMpeg.h">
+						<FileConfiguration
+							Name="Release|Xbox">
+							<Tool
+								Name="VCCustomBuildTool"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_Generic.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_Generic.h">
+						<FileConfiguration
+							Name="Release|Xbox">
+							<Tool
+								Name="VCCustomBuildTool"/>
+						</FileConfiguration>
+					</File>
+					<File
 						RelativePath="arch\MovieTexture\MovieTexture_Null.cpp">
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_Null.h">
-					</File>
-					<File
-						RelativePath=".\arch\MovieTexture\Selector_MovieTexture.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1324,9 +1376,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 					<File
 						RelativePath="arch\Lights\LightsDriver.h">
-					</File>
-					<File
-						RelativePath="arch\Lights\LightsDriver_Null.h">
 					</File>
 					<File
 						RelativePath="arch\Lights\LightsDriver_SystemMessage.cpp">
@@ -1368,9 +1417,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 					<File
 						RelativePath="arch\Dialog\DialogDriver.h">
-					</File>
-					<File
-						RelativePath=".\arch\Dialog\Selector_Dialog.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1888,6 +1934,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScoreDisplay.h">
 			</File>
 			<File
+				RelativePath=".\ScoreDisplayAliveTime.cpp">
+			</File>
+			<File
+				RelativePath=".\ScoreDisplayAliveTime.h">
+			</File>
+			<File
 				RelativePath="ScoreDisplayBattle.cpp">
 			</File>
 			<File
@@ -2096,6 +2148,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageSoundReader_Chain.h">
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_ChannelSplit.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_ChannelSplit.h">
+			</File>
+			<File
 				RelativePath=".\RageSoundReader_Extend.cpp">
 			</File>
 			<File
@@ -2106,6 +2164,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="RageSoundReader_FileReader.h">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_Filter.h">
 			</File>
 			<File
 				RelativePath=".\RageSoundReader_Merge.cpp">
@@ -2408,6 +2469,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ActorFrameTexture.h">
 			</File>
 			<File
+				RelativePath=".\ActorMultiTexture.cpp">
+			</File>
+			<File
+				RelativePath=".\ActorMultiTexture.h">
+			</File>
+			<File
 				RelativePath="ActorProxy.cpp">
 			</File>
 			<File
@@ -2653,194 +2720,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 		</Filter>
 		<Filter
-			Name="Crypto"
-			Filter="">
-			<File
-				RelativePath="crypto\CryptBn.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptBn.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptMD5.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptMD5.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptNoise.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptPrime.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptPrime.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptRand.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptRand.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptRSA.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptRSA.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptSH512.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptSH512.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptSHA.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptSHA.h">
-			</File>
-			<Filter
-				Name="crypto++"
-				Filter="">
-				<File
-					RelativePath=".\crypto51\algebra.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\algebra.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\algparam.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\algparam.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\argnames.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\asn.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\asn.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\config.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\cryptlib.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\cryptlib.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\files.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\files.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\filters.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\filters.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\fltrimpl.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\integer.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\integer.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\iterhash.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\iterhash.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\misc.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\misc.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\modarith.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\mqueue.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\mqueue.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\nbtheory.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\nbtheory.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\oids.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\osrng.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\osrng.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\pch.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\pkcspad.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\pkcspad.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\pubkey.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\pubkey.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\queue.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\queue.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\rsa.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\rsa.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\secblock.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\seckey.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\sha.cpp">
-				</File>
-				<File
-					RelativePath=".\crypto51\sha.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\simple.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\smartptr.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\words.h">
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
 			Name="LUA"
 			Filter="">
 			<File
@@ -2998,9 +2877,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\lua-5.1\src\lzio.h">
-			</File>
-			<File
-				RelativePath=".\lua-5.1\src\print.c">
 			</File>
 		</Filter>
 		<File
