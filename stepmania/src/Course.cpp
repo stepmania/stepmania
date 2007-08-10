@@ -287,20 +287,22 @@ RString Course::GetDisplaySubTitle() const
 
 RString Course::GetDisplayFullTitle() const
 {
-	RString Title = GetDisplayMainTitle();
-	RString SubTitle = GetDisplaySubTitle();
+	RString sTitle = GetDisplayMainTitle();
+	RString sSubTitle = GetDisplaySubTitle();
 
-	if(!SubTitle.empty()) Title += " " + SubTitle;
-	return Title;
+	if( !sSubTitle.empty() )
+		sTitle += " " + sSubTitle;
+	return sTitle;
 }
 
 RString Course::GetTranslitFullTitle() const
 {
-	RString Title = GetTranslitMainTitle();
-	RString SubTitle = GetTranslitSubTitle();
+	RString sTitle = GetTranslitMainTitle();
+	RString sSubTitle = GetTranslitSubTitle();
 
-	if(!SubTitle.empty()) Title += " " + SubTitle;
-	return Title;
+	if( !sSubTitle.empty() )
+		sTitle += " " + sSubTitle;
+	return sTitle;
 }
 
 /* This is called by many simple functions, like Course::GetTotalSeconds, and may
