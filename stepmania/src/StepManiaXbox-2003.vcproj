@@ -68,7 +68,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<Tool
 				Name="XboxImageTool"
 				FileName="../default-debug.xbe"
-				StackSize="0x10000"
+				StackSize="0x20000"
 				IncludeDebugInfo="TRUE"
 				LimitAvailableMemoryTo64MB="TRUE"
 				SuppressStartupBanner="TRUE"
