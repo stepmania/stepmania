@@ -1013,9 +1013,9 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
-
-			GAMESTATE->m_pCurTrail[pn].Set( pTrail );
+			
 			GAMESTATE->m_pCurSteps[pn].Set( NULL );			
+			GAMESTATE->m_pCurTrail[pn].Set( pTrail );
 
 			int iScore = 0;
 			if( pTrail )
