@@ -779,8 +779,14 @@ void Course::RegenerateNonFixedTrails() const
 	// We can create these Trails on demand because we don't 
 	// calculate RadarValues for Trails with one or more non-fixed 
 	// entry.
-	if( !AllSongsAreFixed() )
-		m_TrailCache.clear();
+	if( AllSongsAreFixed() )
+		return;
+
+	FOREACHM( CacheEntry, CacheData, m_TrailCache, e )
+	{
+		const CacheEntry &ce = e->first;
+		GetTrailForceRegenCache( ce.first, ce.second );
+	}
 }
 
 RageColor Course::GetColor() const
