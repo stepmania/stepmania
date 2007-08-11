@@ -41,8 +41,8 @@ const RString EDIT_COURSES_SUBDIR  = "EditCourses/";
 ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
 static Preference<bool> g_bProfileDataCompress( "ProfileDataCompress", false );
 static Preference<bool> g_bCopyCatalogToProfiles( "CopyCatalogToProfiles", true );
+extern Preference<bool> g_bWriteCatalog;
 static ThemeMetric<RString> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString" );
-
 #define GUID_SIZE_BYTES 8
 
 #define MAX_EDITABLE_INI_SIZE_BYTES			2*1024		// 2KB
@@ -1642,7 +1642,7 @@ void Profile::SaveStatsWebPageToDir( RString sDir ) const
 
 	FileCopy( THEME->GetPathO("Profile",STATS_XSL), sDir+STATS_XSL );
 	FileCopy( THEME->GetPathO("Profile",COMMON_XSL), sDir+COMMON_XSL );
-	if( g_bCopyCatalogToProfiles )
+	if( g_bCopyCatalogToProfiles && g_bWriteCatalog )
 	{
 		FileCopy( CATALOG_XML_FILE, sDir+CATALOG_XML );
 		FileCopy( THEME->GetPathO("Profile",CATALOG_XSL), sDir+CATALOG_XSL );

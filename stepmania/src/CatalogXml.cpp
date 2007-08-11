@@ -22,6 +22,7 @@
 #include "UnlockManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "LocalizedString.h"
+#include "Preference.h"
 
 #define SHOW_PLAY_MODE(pm)		THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
 #define SHOW_STYLE(ps)			THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
@@ -38,11 +39,15 @@ const RString CATALOG_XSL       = "Catalog.xsl";
 const RString CATALOG_XML_FILE  = "Save/" + CATALOG_XML;
 
 static LocalizedString SAVING_CATALOG_XML( "CatalogXml", "Saving %s ..." );
+Preference<bool> g_bWriteCatalog( "WriteCatalog", true );
+
 void CatalogXml::Save( LoadingWindow *loading_window )
 {
 	ASSERT( SONGMAN );
 	ASSERT( UNLOCKMAN );
 
+	if( !g_bWriteCatalog )
+		return;
 	if( loading_window )
 		loading_window->SetText( ssprintf(SAVING_CATALOG_XML.GetValue(),CATALOG_XML.c_str()) );
 
