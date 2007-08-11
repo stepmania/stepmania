@@ -656,10 +656,7 @@ void ScreenEvaluation::Init()
 	FOREACH_PlayerNumber( p )
 		best_grade = min( best_grade, grade[p] ); 
 	
-	if( PREFSMAN->m_bAllowExtraStage &&
-		GAMESTATE->IsAnExtraStage()  && 
-		!GAMESTATE->IsCourseMode() &&
-		!SUMMARY )
+	if( !SUMMARY && GAMESTATE->HasEarnedExtraStage() )
 	{
 		m_sprTryExtraStage.Load( THEME->GetPathG(m_sName,GAMESTATE->IsExtraStage2()?"try extra2":"try extra1") );
 		m_sprTryExtraStage->SetName( "TryExtraStage" );

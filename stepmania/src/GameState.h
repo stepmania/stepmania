@@ -129,7 +129,6 @@ public:
 	int				m_iCurrentStageIndex;
 	// Num stages available for player.  Resets when player joins/continues.
 	int				m_iPlayerStageTokens[NUM_PLAYERS];
-	int				m_iAwardedExtraStages[NUM_PLAYERS];
 
 	static int GetNumStagesMultiplierForSong( const Song* pSong );
 	static int GetNumStagesForSongAndStyleType( const Song* pSong, StyleType st );
@@ -245,7 +244,7 @@ public:
 	Character* m_pCurCharacters[NUM_PLAYERS];
 
 
-	bool HasEarnedExtraStage() const;
+	bool HasEarnedExtraStage() const { return m_bEarnedExtraStage; }
 
 
 	//
@@ -319,6 +318,13 @@ public:
 
 	// Lua
 	void PushSelf( lua_State *L );
+	
+	// Keep extra stage logic internal to GameState.
+private:
+	bool	HasEarnedExtraStageInternal() const;
+	int	m_iAwardedExtraStages[NUM_PLAYERS];
+	bool	m_bEarnedExtraStage;
+
 };
 
 PlayerNumber GetNextHumanPlayer( PlayerNumber pn );

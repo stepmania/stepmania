@@ -316,7 +316,7 @@ void GameState::Reset()
 	m_sEditLocalProfileID.Set( "" );
 	
 	m_bBackedOutOfFinalStage = false;
-
+	m_bEarnedExtraStage = false;
 	ApplyCmdline();
 }
 
@@ -642,6 +642,7 @@ void GameState::BeginStage()
 	FOREACH_HumanPlayer( pn )
 		if( CurrentOptionsDisqualifyPlayer(pn) )
 			STATSMAN->m_CurStageStats.m_player[pn].m_bDisqualified = true;
+	m_bEarnedExtraStage = false;
 }
 
 void GameState::CancelStage()
@@ -684,7 +685,7 @@ void GameState::FinishStage()
 
 	m_iNumStagesOfThisSong = 0;
 
-	if( HasEarnedExtraStage() )
+	if( HasEarnedExtraStageInternal() )
 	{
 		LOG->Trace( "awarded extra stage" );
 		FOREACH_HumanPlayer( p )
@@ -693,6 +694,7 @@ void GameState::FinishStage()
 			{
 				++m_iAwardedExtraStages[p];
 				++m_iPlayerStageTokens[p];
+				m_bEarnedExtraStage = true;
 			}
 		}
 	}
@@ -1125,9 +1127,9 @@ bool GameState::IsBattleMode() const
 	default:
 		return false;
 	}
-}
+}	
 
-bool GameState::HasEarnedExtraStage() const
+bool GameState::HasEarnedExtraStageInternal() const
 {
 	if( IsEventMode() )
 		return false;
@@ -1153,8 +1155,12 @@ bool GameState::HasEarnedExtraStage() const
 		    m_pCurSteps[pn]->GetDifficulty() != Difficulty_Challenge )
 			continue; /* not hard enough! */
 
-		if( (IsExtraStage() && STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_1) || 
-		    (IsExtraStage2() && STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_2) )
+		if( IsExtraStage() )
+		{
+			if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_2 )
+				return true;
+		}
+		else if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_1 )
 		{
 			return true;
 		}
