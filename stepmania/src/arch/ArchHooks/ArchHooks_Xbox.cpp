@@ -160,6 +160,12 @@ ArchHooks_Xbox::~ArchHooks_Xbox()
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	FILEMAN->Mount( "dir", "D:\\", "/" );
+
+	// Mount everything game-writable (not counting the editor) to the game title persistent data region ( /E/TDATA/33342530/ )
+	FILEMAN->Mount( "dir", "T:/Cache", "/Cache" );
+	FILEMAN->Mount( "dir", "T:/Logs", "/Logs" );
+	FILEMAN->Mount( "dir", "T:/Save", "/Save" );
+	FILEMAN->Mount( "dir", "T:/Screenshots", "/Screenshots" );
 }
 
 /*
