@@ -688,6 +688,9 @@ RString ThemeManager::GetPathToAndFallback( ElementCategory category, const RStr
 
 	RageException::Throw( "Infinite recursion looking up theme element \"%s\"",
 		ClassAndElementToFileName(sClassName, sElement).c_str() );
+	/* Not really reached, but Appple's gcc 4 can't figure that out without optimization
+	 * even though RE:Throw() is correctly annotated. */
+	while( true ) {}
 }
 
 RString ThemeManager::GetPath( ElementCategory category, const RString &sClassName_, const RString &sElement_, bool bOptional ) 
