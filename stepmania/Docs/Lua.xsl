@@ -212,6 +212,7 @@
 			</a>
 		</xsl:if>
 		<div style="display: none" id="list_{@name}">
+		<xsl:apply-templates select="$docs/sm:Classes/sm:Class[@name=$name]/sm:Description" />
 		<table>
 			<tr><th colspan="2"><xsl:value-of select="$name" /> Member Functions</th></tr>
 			<xsl:apply-templates select="sm:Function">
@@ -252,14 +253,12 @@
 				<xsl:value-of select="$type" />
 			</span>
 		</xsl:when>
-		<!-- XXX: /Lua/Classes/sm:Class[@name=$type]
-		          does not work and I have no idea why. -->
-		<xsl:when test="boolean(//sm:Class[@name=$type])">
+		<xsl:when test="boolean(/sm:Lua/sm:Classes/sm:Class[@name=$type])">
 			<a class="classType" href="#{$type}" onclick="Open('{$type}')">
 				<xsl:value-of select="$type" />
 			</a>
 		</xsl:when>
-		<xsl:when test="boolean(//sm:Enum[@name=$type])">
+		<xsl:when test="boolean(/sm:Lua/sm:Enums/sm:Enum[@name=$type])">
 			<a class="enumType" href="#ENUM_{$type}" onclick="Open('{$type}')">
 				<xsl:value-of select="$type" />
 			</a>
@@ -379,11 +378,13 @@
 
 
 <xsl:template match="sm:Enum">
+	<xsl:variable name="name" select="@name" />
 	<div id="ENUM_{@name}">
 		<a class="trigger" onclick="Toggle('{@name}')">
 		<img src="closed.gif" id="img_{@name}" alt="" />
 		Enum <span class="descriptionName"><xsl:value-of select="@name" /></span></a>
 		<div style="display: none" id="list_{@name}">
+		<xsl:apply-templates select="$docs/sm:Enums/sm:Enum[@name=$name]/sm:Description" />
 		<table>
 			<tr>
 				<th>Enum</th>
@@ -402,6 +403,9 @@
 	</div>
 </xsl:template>
 
+<xsl:template match="sm:Description">
+	<p><xsl:apply-templates /></p>
+</xsl:template>
 
 <xsl:template match="sm:Constants">
 	<div>
@@ -424,7 +428,9 @@
 </xsl:template>
 
 <!-- XXX: This is annoying, how can we tell xsl to just pass the html through? -->
-<xsl:template match="sm:code">
-	<code><xsl:apply-templates /></code>
-</xsl:template>
+<xsl:template match="sm:code"><code><xsl:apply-templates /></code></xsl:template>
+<xsl:template match="sm:br"><br /></xsl:template>
+<xsl:template match="sm:ul"><ul><xsl:apply-templates /></ul></xsl:template>
+<xsl:template match="sm:ol"><ol><xsl:apply-templates /></ol></xsl:template>
+<xsl:template match="sm:li"><li><xsl:apply-templates /></li></xsl:template>
 </xsl:stylesheet>
