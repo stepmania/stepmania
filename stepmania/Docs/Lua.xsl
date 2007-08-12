@@ -366,18 +366,43 @@
 
 <xsl:template match="sm:Link">
 	<xsl:param name="curclass" />
+	<xsl:variable name="empty" select="string(current())=''" />
 	<xsl:choose>
 		<xsl:when test="string(@class)='' and string(@function)!=''">
-			<a class="classType" href="#{$curclass}_{@function}"><xsl:apply-templates /></a>
+			<a class="classType" href="#{$curclass}_{@function}">
+			<xsl:if test="$empty">
+				<xsl:value-of select="@function" /><xsl:text>()</xsl:text>
+			</xsl:if>
+			<xsl:apply-templates />
+			</a>
 		</xsl:when>
 		<xsl:when test="string(@class)!='' and string(@function)=''">
-			<a class="classType" href="#{@class}" onclick="Open('{@class}')"><xsl:apply-templates /></a>
+			<a class="classType" href="#{@class}" onclick="Open('{@class}')">
+			<xsl:if test="$empty">
+				<xsl:value-of select="@class" />
+			</xsl:if>
+			<xsl:apply-templates />
+			</a>
 		</xsl:when>
 		<xsl:when test="(string(@class)='GLOBAL' or string(@class)='ENUM') and string(@function)!=''">
-			<a class="classType" href="#{@class}_{@function}" onclick="Open('{@function}')"><xsl:apply-templates /></a>
+			<a class="classType" href="#{@class}_{@function}" onclick="Open('{@function}')">
+			<xsl:if test="$empty">
+				<xsl:value-of select="@function" />
+				<xsl:if test="string(@class)='GLOBAL'">
+					<xsl:text>()</xsl:text>
+				</xsl:if>
+			</xsl:if>
+			<xsl:apply-templates />
+			</a>
 		</xsl:when>
 		<xsl:when test="string(@class)!='' and string(@function)!=''">
-			<a class="classType" href="#{@class}_{@function}" onclick="OpenAndMove('{@class}','{@function}')"><xsl:apply-templates /></a>
+			<a class="classType" href="#{@class}_{@function}" onclick="OpenAndMove('{@class}','{@function}')">
+			<xsl:if test="$empty">
+				<xsl:value-of select="@class" /><xsl:text>:</xsl:text>
+				<xsl:value-of select="@function" /><xsl:text>()</xsl:text>
+			</xsl:if>
+			<xsl:apply-templates />
+			</a>
 		</xsl:when>
 		<xsl:otherwise>
 			<xsl:apply-templates /> <!-- Ignore this Link. -->
