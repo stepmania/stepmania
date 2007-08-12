@@ -5,6 +5,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "Difficulty.h"
+#include "RageUtil_CachedObject.h"
 
 class Song;
 class Steps;
@@ -118,6 +119,7 @@ namespace SongUtil
 class SongID
 {
 	RString sDir;
+	mutable CachedObjectPointer<Song> m_Cache;
 
 public:
 	SongID() { Unset(); }

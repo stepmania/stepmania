@@ -7,6 +7,7 @@
 #include "Difficulty.h"
 #include "EnumHelper.h"
 #include "RageUtil_AutoPtr.h"
+#include "RageUtil_CachedObject.h"
 #include "RageTypes.h"
 #include <set>
 
@@ -225,6 +226,8 @@ public:
 	// Any note that doesn't have a value in the range of this array
 	// means "this note doens't have a keysound".
 	vector<RString> m_vsKeysoundFile;
+
+	CachedObject<Song> m_CachedObject;
 
 	// Lua
 	void PushSelf( lua_State *L );

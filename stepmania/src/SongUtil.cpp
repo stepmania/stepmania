@@ -879,17 +879,25 @@ void SongID::FromSong( const Song *p )
 	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
 	if( sDir.Left(1) == "/" )
 		sDir.erase( sDir.begin() );
+
+	m_Cache.Unset();
 }
 
 Song *SongID::ToSong() const
 {
-	// HACK for backwards compatibility:
-	// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
-	RString sDir2 = sDir;
-	if( sDir2.Left(1) != "/" )
-		sDir2 = "/" + sDir2;
+	Song *pRet;
+	if( !m_Cache.Get(&pRet) )
+	{
+		// HACK for backwards compatibility:
+		// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
+		RString sDir2 = sDir;
+		if( sDir2.Left(1) != "/" )
+			sDir2 = "/" + sDir2;
 
-	return SONGMAN->GetSongFromDir( sDir2 );
+		pRet = SONGMAN->GetSongFromDir( sDir2 );
+		m_Cache.Set( pRet );
+	}
+	return pRet;
 }
 
 XNode* SongID::CreateNode() const
@@ -905,6 +913,7 @@ void SongID::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->GetName() == "Song" );
 	pNode->GetAttrValue("Dir", sDir);
+	m_Cache.Unset();
 }
 
 RString SongID::ToString() const
