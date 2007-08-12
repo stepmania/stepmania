@@ -26,6 +26,9 @@
 <Function name='FormatNumberAndSuffix' return='string' arguments='int num'>
 	Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
 </Function>
+<Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
+	Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
+</Function>
 </GlobalFunctions>
 
 <!-- Classes -->
@@ -101,6 +104,11 @@
 <Class name='Game'>
 	<Function name='GetName' return='string' arguments=''>
 		Returns the name of the game such as &quot;dance&quot; or &quot;pump&quot;.
+	</Function>
+</Class>
+<Class name='GameState'>
+	<Function name='GetHumanPlayers' return='{PlayerNumber}' arguments=''>
+		Returns an array of <Link class='PlayerNumber'>PlayerNumber</Link>s corresponding to Human players.
 	</Function>
 </Class>
 <Class name='RageSound'>
