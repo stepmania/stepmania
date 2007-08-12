@@ -213,7 +213,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
 				AdditionalDependencies="libjpeg/jpeg.lib libpng/lib/libpng.lib"
 				OutputFile="../Program/StepMania-fastdebug.exe"
-
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
@@ -2161,6 +2160,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="RageUtil_BackgroundLoader.h">
+			</File>
+			<File
+				RelativePath=".\RageUtil_CachedObject.cpp">
+			</File>
+			<File
+				RelativePath=".\RageUtil_CachedObject.h">
 			</File>
 			<File
 				RelativePath="RageUtil_CharConversions.cpp">
