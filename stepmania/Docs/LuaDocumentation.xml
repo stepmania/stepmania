@@ -53,6 +53,20 @@
 		Set the z position of the Actor to <code>zPos</code>.
 	</Function>
 </Class>
+<Class name='ActorSound'>
+	<Function name='get' return='RageSound' arguments=''>
+		Returns the <Link class='RageSound'>RageSound</Link> that can be played by this Actor.
+	</Function>
+	<Function name='load' return='void' arguments='string sPath'>
+		Loads the sound at <code>sPath</code>.
+	</Function>
+	<Function name='play' return='void' arguments=''>
+		Play the sound.
+	</Function>
+	<Function name='playforplayer' return='void' arguments='PlayerNumber pn'>
+		Play the sound on the given player's side. You must set <code>SupportPan = true</code> on load.
+	</Function>
+</Class>
 <Class name='BitmapText'>
 	<Function name='GetText' return='string' arguments=''>
 		Returns the text.
@@ -77,6 +91,22 @@
 	</Function>
 	<Function name='wrapwidthpixels' return='void' arguments='int iWidth'>
 		Wrap the unzoomed text at <code>iWidth</code> pixels. If you <Link class='Actor' function='zoom'>zoom</Link> or <Link class='Actor' function='zoomx'>zoomx</Link> by <code>x</code> and you want the text wrapped at <code>width</code>, then you should use <code>wrapwidthpixels(width/x)</code>.
+	</Function>
+</Class>
+<Class name='Game'>
+	<Function name='GetName' return='string' arguments=''>
+		Returns the name of the game such as &quot;dance&quot; or &quot;pump&quot;.
+	</Function>
+</Class>
+<Class name='RageSound'>
+	<Function name='SetProperty' return='void' arguments='string sProperty, float fVal'>
+		Set the value of <code>sProperty</code> to <code>fVal</code>. The supported properties depend on how the associated <Link class='ActorSound'>ActorSound</Link> was loaded.
+	</Function>
+	<Function name='pitch' return='void' arguments='float fPitch'>
+		Set the pitch to <code>fPitch</code>. The associated <Link class='ActorSound'>ActorSound</Link> have <code>SupportsRateChanging = true</code> on load.
+	</Function>
+	<Function name='speed' return='void' arguments='float sSpeed'>
+		Set the speed (that is, the rate at which the sound plays) to <code>fSpeed</code>. The associated <Link class='ActorSound'>ActorSound</Link> must have <code>SupportsRateChanging = true</code> on load.
 	</Function>
 </Class>
 <Class name='ScreenGameplay'>
