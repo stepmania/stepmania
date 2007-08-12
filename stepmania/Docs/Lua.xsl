@@ -244,6 +244,14 @@
 <xsl:template name="processType">
 	<xsl:param name="type" />
 	<xsl:choose>
+		<xsl:when test="starts-with($type, '{')">
+			<xsl:text>{</xsl:text>
+			<xsl:call-template name="processType">
+				<xsl:with-param name="type" select="substring-before(
+								     substring-after($type, '{'), '}')" />
+			</xsl:call-template>
+			<xsl:text>}</xsl:text>
+		</xsl:when>
 		<xsl:when test="$type='void' or
 				$type='int' or
 				$type='float' or
@@ -272,7 +280,16 @@
 <xsl:template name="processArguments">
 	<xsl:param name="argumentList" />
 	<xsl:choose>
-		<!-- Base case. -->
+		<xsl:when test="starts-with($argumentList, ' ')">
+			<xsl:call-template name="processArguments">
+				<xsl:with-param name="argumentList"
+						select="substring-after($argumentList, ' ')" />
+			</xsl:call-template>
+		</xsl:when>
+		<!-- Base cases. -->
+		<xsl:when test="$argumentList = '...'">
+			<xsl:text>...</xsl:text>
+		</xsl:when>
 		<xsl:when test="not(contains($argumentList, ','))">
 			<xsl:call-template name="processType">
 				<xsl:with-param name="type"
@@ -282,18 +299,19 @@
 			<xsl:value-of select="substring-after($argumentList, ' ')" />
 		</xsl:when>
 		<xsl:otherwise>
-			<xsl:variable name="before"
+			<xsl:variable name="firstParam"
 				      select="substring-before($argumentList, ',')" />
-			<xsl:variable name="after"
+			<xsl:variable name="restParams"
 			              select="substring-after($argumentList, ',')" />
 			<xsl:call-template name="processType">
 				<xsl:with-param name="type"
-						select="substring-before($before, ' ')" />
+						select="substring-before($firstParam, ' ')" />
 			</xsl:call-template>
-			<xsl:value-of select="substring-after($before, ',')" /><xsl:text>, </xsl:text>
+			<xsl:text> </xsl:text>
+			<xsl:value-of select="substring-after($firstParam, ' ')" /><xsl:text>, </xsl:text>
 			<!-- Recursive call. -->
 			<xsl:call-template name="processArguments">
-				<xsl:with-param name="argumentList" select="$after" />
+				<xsl:with-param name="argumentList" select="$restParams" />
 			</xsl:call-template>
 		</xsl:otherwise>
 	</xsl:choose>
