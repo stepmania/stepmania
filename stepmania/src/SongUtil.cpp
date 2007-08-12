@@ -885,7 +885,7 @@ void SongID::FromSong( const Song *p )
 
 Song *SongID::ToSong() const
 {
-	Song *pRet;
+	Song *pRet = NULL;
 	if( !m_Cache.Get(&pRet) )
 	{
 		// HACK for backwards compatibility:
@@ -894,7 +894,8 @@ Song *SongID::ToSong() const
 		if( sDir2.Left(1) != "/" )
 			sDir2 = "/" + sDir2;
 
-		pRet = SONGMAN->GetSongFromDir( sDir2 );
+		if( !sDir2.empty() )
+			pRet = SONGMAN->GetSongFromDir( sDir2 );
 		m_Cache.Set( pRet );
 	}
 	return pRet;
