@@ -54,6 +54,13 @@
 	</Function>
 </Class>
 <Class name='ActorSound'>
+	<Description>
+		This Actor represents a playable sound. There are two attributes that can be set on load.
+		<ul>
+			<li><code>SupportPan</code> - Let the sound pan from side to side.</li>
+			<li><code>SupportRateChanging</code> - Let the sound change rate and pitch.</li>
+		</ul>
+	</Description>
 	<Function name='get' return='RageSound' arguments=''>
 		Returns the <Link class='RageSound'>RageSound</Link> that can be played by this Actor.
 	</Function>
@@ -99,6 +106,9 @@
 	</Function>
 </Class>
 <Class name='RageSound'>
+	<Description>
+		See <Link class='ActorSound'>ActorSound</Link> for loading a sound.
+	</Description>
 	<Function name='SetProperty' return='void' arguments='string sProperty, float fVal'>
 		Set the value of <code>sProperty</code> to <code>fVal</code>. The supported properties depend on how the associated <Link class='ActorSound'>ActorSound</Link> was loaded.
 	</Function>
@@ -147,4 +157,17 @@
 	</Function>
 </Class>
 </Classes>
+<!-- Enums -->
+<Enums>
+<Enum name='HorizAlign'>
+	<Description>
+		Horizontal alignment. See <Link class='Actor' function='horizalign'>Actor:horizalign()</Link>.
+	</Description>
+</Enum>
+<Enum name='VertAlign'>
+	<Description>
+		Vertical alignment. See <Link class='Actor' function='vertalign'>Actor:vertalign()</Link>.
+	</Description>
+</Enum>
+</Enums>
 </Documentation>
