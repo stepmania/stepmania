@@ -5,8 +5,11 @@
      Lua.xsd for the XML Schema and this file for the XML Instanace. -->
 
 <!-- Using Link:
+     If you leave out the text (i.e., <Link ... />), it tries to output what
+     you would want.
+
      To add a link to a function in the current class:
-     <Link function='addx'>See addx()</Link>
+     <Link function='addx'>addx()</Link>
      To add a link to a function in another class:
      <Link class='ActorFrame' function='propogate'>ActorFrame:propogate()</Link>
      To add a link to a class:
@@ -35,16 +38,16 @@
 <Classes>
 <Class name='Actor'>
 	<Function name='halign' return='void' arguments='float fAlign'>
-		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign'>horizalign()</Link> for the common case.
+		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
 	</Function>
 	<Function name='horizalign' return='void' arguments='HorizAlign align'>
-		Set the horizontal alignment of the Actor according to <code>align</code>. See <Link function='halign'>halign()</Link> for fractional alignment.
+		Set the horizontal alignment of the Actor according to <code>align</code>. See <Link function='halign' /> for fractional alignment.
 	</Function>
 	<Function name='valign' return='void' arguments='float fAlign'>
-		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign">vertalign</Link> for the common case.
+		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign" /> for the common case.
 	</Function>
 	<Function name='vertalign' return='void' arguments='VertAlign align'>
-		Set the vertical alignment of the Actor according to <code>align</code>. See <Link function="valign">valign()</Link> for fractional alignment.
+		Set the vertical alignment of the Actor according to <code>align</code>. See <Link function="valign" /> for fractional alignment.
 	</Function>
 	<Function name='x' return='void' arguments='float xPos'>
 		Set the x position of the Actor to <code>xPos</code>.
@@ -63,7 +66,7 @@
 		* <code>SupportRateChanging</code> - Let the sound change rate and pitch.
 	</Description>
 	<Function name='get' return='RageSound' arguments=''>
-		Returns the <Link class='RageSound'>RageSound</Link> that can be played by this Actor.
+		Returns the <Link class='RageSound' /> that can be played by this Actor.
 	</Function>
 	<Function name='load' return='void' arguments='string sPath'>
 		Loads the sound at <code>sPath</code>.
@@ -98,7 +101,7 @@
 		Add <code>iSpacing</code> pixels of padding between lines of text.
 	</Function>
 	<Function name='wrapwidthpixels' return='void' arguments='int iWidth'>
-		Wrap the unzoomed text at <code>iWidth</code> pixels. If you <Link class='Actor' function='zoom'>zoom</Link> or <Link class='Actor' function='zoomx'>zoomx</Link> by <code>x</code> and you want the text wrapped at <code>width</code>, then you should use <code>wrapwidthpixels(width/x)</code>.
+		Wrap the unzoomed text at <code>iWidth</code> pixels. If you <Link class='Actor' function='zoom' /> or <Link class='Actor' function='zoomx' /> by <code>x</code> and you want the text wrapped at <code>width</code>, then you should use <code>wrapwidthpixels(width/x)</code>.
 	</Function>
 </Class>
 <Class name='Game'>
@@ -108,32 +111,32 @@
 </Class>
 <Class name='GameState'>
 	<Function name='GetHumanPlayers' return='{PlayerNumber}' arguments=''>
-		Returns an array of <Link class='PlayerNumber'>PlayerNumber</Link>s corresponding to Human players.
+		Returns an array of <Link class='PlayerNumber' />s corresponding to Human players.
 	</Function>
 </Class>
 <Class name='RageSound'>
 	<Description>
-		See <Link class='ActorSound'>ActorSound</Link> for loading a sound.
+		See <Link class='ActorSound' /> for loading a sound.
 	</Description>
 	<Function name='SetProperty' return='void' arguments='string sProperty, float fVal'>
-		Set the value of <code>sProperty</code> to <code>fVal</code>. The supported properties depend on how the associated <Link class='ActorSound'>ActorSound</Link> was loaded.
+		Set the value of <code>sProperty</code> to <code>fVal</code>. The supported properties depend on how the associated <Link class='ActorSound' /> was loaded.
 	</Function>
 	<Function name='pitch' return='void' arguments='float fPitch'>
-		Set the pitch to <code>fPitch</code>. The associated <Link class='ActorSound'>ActorSound</Link> have <code>SupportsRateChanging = true</code> on load.
+		Set the pitch to <code>fPitch</code>. The associated <Link class='ActorSound' /> have <code>SupportsRateChanging = true</code> on load.
 	</Function>
 	<Function name='speed' return='void' arguments='float fSpeed'>
-		Set the speed (that is, the rate at which the sound plays) to <code>fSpeed</code>. The associated <Link class='ActorSound'>ActorSound</Link> must have <code>SupportsRateChanging = true</code> on load.
+		Set the speed (that is, the rate at which the sound plays) to <code>fSpeed</code>. The associated <Link class='ActorSound' /> must have <code>SupportsRateChanging = true</code> on load.
 	</Function>
 </Class>
 <Class name='ScreenGameplay'>
 	<Function name='Center1Player' return='bool' arguments=''>
-		Returns <code>true</code> if a single <Link class='Player'>Player</Link> has its NoteField centered.
+		Returns <code>true</code> if a single <Link class='Player' /> has its NoteField centered.
 	</Function>
 	<Function name='GetLifeMeter' return='LifeMeter' arguments='PlayerNumber pn'>
-		Returns the <Link class='LifeMeter'>LifeMeter</Link> for the specified <Link class='ENUM' function='PlayerNumber'>PlayerNumber</Link> <code>pn</code>.
+		Returns the <Link class='LifeMeter' /> for the specified <Link class='ENUM' function='PlayerNumber' /> <code>pn</code>.
 	</Function>
 	<Function name='GetNextCourseSong' return='Song' arguments=''>
-		Returns the next <Link class='Song'>Song</Link> in the current <Link class='Course'>Course</Link>.
+		Returns the next <Link class='Song' /> in the current <Link class='Course' />.
 	</Function>
 </Class>
 <Class name='Song'>
@@ -167,12 +170,12 @@
 <Enums>
 <Enum name='HorizAlign'>
 	<Description>
-		Horizontal alignment. See <Link class='Actor' function='horizalign'>Actor:horizalign()</Link>.
+		Horizontal alignment. See <Link class='Actor' function='horizalign' />.
 	</Description>
 </Enum>
 <Enum name='VertAlign'>
 	<Description>
-		Vertical alignment. See <Link class='Actor' function='vertalign'>Actor:vertalign()</Link>.
+		Vertical alignment. See <Link class='Actor' function='vertalign' />.
 	</Description>
 </Enum>
 </Enums>
