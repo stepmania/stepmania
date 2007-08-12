@@ -24,6 +24,7 @@
 		<xs:all>
 			<xs:element name="Classes" type="Classes" />
 			<xs:element name="GlobalFunctions" type="GlobalFunctions" />
+			<xs:element name="Enums" type="Enums" />
 		</xs:all>
 	</xs:complexType>
 </xs:element>
@@ -74,12 +75,31 @@
 	</xs:sequence>
 </xs:complexType>
 
+<xs:group name="DocumentationGroup">
+	<xs:sequence>
+		<xs:choice>
+			<xs:element name="Link" type="Link" />
+			<!-- HTML elements we want to let through. -->
+			<xs:element name="code" />
+			<xs:element name="br" />
+			<xs:element name="ul" />
+			<xs:element name="ol" />
+			<xs:element name="li" />
+		</xs:choice>
+	</xs:sequence>
+</xs:group>
+
+<xs:complexType name="Description" mixed="true">
+	<xs:group ref="DocumentationGroup" minOccurs="0" maxOccurs="unbounded"/>
+</xs:complexType>
 
 <xs:complexType name="Classes">
 	<xs:sequence>
 		<xs:element name="Class" minOccurs="0" maxOccurs="unbounded">
 			<xs:complexType>
 				<xs:sequence>
+					<xs:element name="Description" type="Description"
+					 minOccurs="0" maxOccurs="1" />
 					<xs:element name="Function" type="Function"
 					 minOccurs="0" maxOccurs="unbounded" />
 				</xs:sequence>
@@ -98,15 +118,8 @@
 	</xs:sequence>
 </xs:complexType>
 
-
 <xs:complexType name="Function" mixed="true">
-	<xs:sequence minOccurs="0" maxOccurs="unbounded">
-		<xs:choice>
-			<xs:element name="Link" type="Link" />
-			<!-- HTML elements we want to let through. -->
-			<xs:element name="code" />
-		</xs:choice>
-	</xs:sequence>
+	<xs:group ref="DocumentationGroup" minOccurs="0" maxOccurs="unbounded" />
 	<xs:attribute name="name" type="Identifier" use="required" />
 	<xs:attribute name="return" type="Identifier" use="optional" />
 	<xs:attribute name="arguments" type="ArgumentList" use="optional" />
@@ -122,6 +135,8 @@
 		<xs:element name="Enum" minOccurs="0" maxOccurs="unbounded">
 			<xs:complexType>
 				<xs:sequence>
+					<xs:element name="Description" type="Description"
+					 minOccurs="0" maxOccurs="1" />
 					<xs:element name="EnumValue" type="Constant"
 					 minOccurs="0" maxOccurs="unbounded" />
 				</xs:sequence>
