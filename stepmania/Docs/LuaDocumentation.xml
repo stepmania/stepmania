@@ -105,7 +105,7 @@
 	<Function name='pitch' return='void' arguments='float fPitch'>
 		Set the pitch to <code>fPitch</code>. The associated <Link class='ActorSound'>ActorSound</Link> have <code>SupportsRateChanging = true</code> on load.
 	</Function>
-	<Function name='speed' return='void' arguments='float sSpeed'>
+	<Function name='speed' return='void' arguments='float fSpeed'>
 		Set the speed (that is, the rate at which the sound plays) to <code>fSpeed</code>. The associated <Link class='ActorSound'>ActorSound</Link> must have <code>SupportsRateChanging = true</code> on load.
 	</Function>
 </Class>
