@@ -246,7 +246,8 @@
 		<xsl:when test="$type='void' or
 				$type='int' or
 				$type='float' or
-				$type='string'">
+				$type='string' or
+				$type='bool'">
 			<span class="primitiveType">
 				<xsl:value-of select="$type" />
 			</span>
