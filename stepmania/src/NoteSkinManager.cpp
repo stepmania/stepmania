@@ -452,9 +452,11 @@ RString NoteSkinManager::GetPathFromDirAndFile( const RString &sDir, const RStri
 class LunaNoteSkinManager: public Luna<NoteSkinManager>
 {
 public:
-	static int GetPath( T* p, lua_State *L )		{ lua_pushstring(L, p->GetPath(SArg(1),SArg(2)) ); return 1; }
+	DEFINE_METHOD( GetPath, GetPath(SArg(1), SArg(2)) );
+	DEFINE_METHOD( GetMetricI, GetMetricI(SArg(1), SArg(2)) );
+	DEFINE_METHOD( GetMetricF, GetMetricF(SArg(1), SArg(2)) );
+	DEFINE_METHOD( GetMetricB, GetMetricB(SArg(1), SArg(2)) );
 	static int GetMetricA( T* p, lua_State *L )		{ p->GetMetricA(SArg(1),SArg(2))->PushSelf(L); return 1; }
-	static int GetMetricF( T* p, lua_State *L )		{ float f = p->GetMetricF(SArg(1),SArg(2)); LuaHelpers::Push(L, f); return 1; }
 	static int LoadActor( T* p, lua_State *L )
 	{
 		RString sButton = SArg(1);
@@ -464,21 +466,36 @@ public:
 
 		return 1;
 	}
-	static int LoadActorForNoteSkin( T* p, lua_State *L )
-	{
-		const RString sOldNoteSkin = p->GetCurrentNoteSkin();
-		p->SetCurrentNoteSkin( SArg(3) );
-		LoadActor( p, L );
-		p->SetCurrentNoteSkin( sOldNoteSkin );
-		return 1;
+#define FOR_NOTESKIN(x,n) \
+	static int x ## ForNoteSkin( T* p, lua_State *L ) \
+	{ \
+		const RString sOldNoteSkin = p->GetCurrentNoteSkin(); \
+		p->SetCurrentNoteSkin( SArg(n+1) ); \
+		x( p, L ); \
+		p->SetCurrentNoteSkin( sOldNoteSkin ); \
+		return 1; \
 	}
-	
+	FOR_NOTESKIN( GetPath, 2 );
+	FOR_NOTESKIN( GetMetricI, 2 );
+	FOR_NOTESKIN( GetMetricF, 2 );
+	FOR_NOTESKIN( GetMetricB, 2 );
+	FOR_NOTESKIN( GetMetricA, 2 );
+	FOR_NOTESKIN( LoadActor, 2 );
+#undef FOR_NOTESKIN
+
 	LunaNoteSkinManager()
 	{
 		ADD_METHOD( GetPath );
-		ADD_METHOD( GetMetricA );
+		ADD_METHOD( GetMetricI );
 		ADD_METHOD( GetMetricF );
+		ADD_METHOD( GetMetricB );
+		ADD_METHOD( GetMetricA );
 		ADD_METHOD( LoadActor );
+		ADD_METHOD( GetPathForNoteSkin );
+		ADD_METHOD( GetMetricIForNoteSkin );
+		ADD_METHOD( GetMetricFForNoteSkin );
+		ADD_METHOD( GetMetricBForNoteSkin );
+		ADD_METHOD( GetMetricAForNoteSkin );
 		ADD_METHOD( LoadActorForNoteSkin );
 	}
 };
