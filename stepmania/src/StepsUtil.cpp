@@ -266,23 +266,23 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 			return it->second;
 	}
 
-	Steps *ret = NULL;
+	Steps *pRet = NULL;
 	if( dc == Difficulty_Edit )
 	{
-		ret = SongUtil::GetOneSteps( p, st, dc, -1, -1, sDescription, uHash, true );
+		pRet = SongUtil::GetOneSteps( p, st, dc, -1, -1, sDescription, uHash, true );
 	}
 	else
 	{
-		ret = SongUtil::GetOneSteps( p, st, dc, -1, -1, "", 0, true );
+		pRet = SongUtil::GetOneSteps( p, st, dc, -1, -1, "", 0, true );
 	}
 	
-	if( !bAllowNull && ret == NULL )
+	if( !bAllowNull && pRet == NULL )
 		FAIL_M( ssprintf("%i, %i, \"%s\"", st, dc, sDescription.c_str()) );
 
 	if( bUseCache )
-		g_Cache[sas] = ret;
+		g_Cache[sas] = pRet;
 	
-	return ret;
+	return pRet;
 }
 
 XNode* StepsID::CreateNode() const
