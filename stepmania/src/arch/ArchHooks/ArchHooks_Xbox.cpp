@@ -111,6 +111,12 @@ void EnableExtraRAM()
 	WRITEMSRREG( 0x02FF, regVal );
 }
 
+void InitDevices()
+{
+	XDEVICE_PREALLOC_TYPE xdpt[] = {{XDEVICE_TYPE_GAMEPAD, 4}, {XDEVICE_TYPE_MEMORY_UNIT, 2}};
+	XInitDevices( sizeof(xdpt) / sizeof(XDEVICE_PREALLOC_TYPE), xdpt );
+}
+
 ArchHooks_Xbox::ArchHooks_Xbox()
 {
 	_set_new_handler(NoMemory);
@@ -125,6 +131,8 @@ ArchHooks_Xbox::ArchHooks_Xbox()
 	SetupNetwork();
 
 	EnableExtraRAM();
+
+	InitDevices();
 }
 
 static RString XLangID( DWORD Lang )
