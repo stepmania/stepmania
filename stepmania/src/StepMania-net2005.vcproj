@@ -3591,6 +3591,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RageUtil_CachedObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RageUtil_CachedObject.h"
+				>
+			</File>
+			<File
 				RelativePath="RageUtil_CharConversions.cpp"
 				>
 			</File>
