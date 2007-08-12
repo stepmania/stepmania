@@ -42,6 +42,7 @@
 #pragma warning (disable : 4786) /* VC6: identifier was truncated to '255' characters in the debug information */
 #pragma warning (disable : 4505) // removed unferenced local function from integer.cpp & algebra.h
 #pragma warning (disable : 4244) // converting of data = possible data loss.  (This pragma should eventually go away)
+#pragma warning (disable : 4355) // 'this' : used in base member initializer list
 
 /* Fix VC breakage. */
 #define PATH_MAX _MAX_PATH
