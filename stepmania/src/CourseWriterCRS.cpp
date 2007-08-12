@@ -115,9 +115,10 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		{
 			f.Write( ssprintf( "#SONG:WORST%d", entry.iChooseIndex+1 ) );
 		}
-		else if( entry.pSong )
+		else if( entry.songID.ToSong() )
 		{
-			const RString &sSong = Basename( entry.pSong->GetSongDir() );
+			Song *pSong = entry.songID.ToSong();
+			const RString &sSong = Basename( pSong->GetSongDir() );
 			
 			f.Write( "#SONG:" );
 			if( !entry.songCriteria.m_sGroupName.empty() )

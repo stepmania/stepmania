@@ -192,7 +192,7 @@ void CourseUtil::SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesI
 
 void CourseUtil::MakeDefaultEditCourseEntry( CourseEntry& out )
 {
-	out.pSong = GAMESTATE->GetDefaultSong();
+	out.songID.FromSong( GAMESTATE->GetDefaultSong() );
 	out.stepsCriteria.m_difficulty = Difficulty_Medium;
 }
 
@@ -286,7 +286,7 @@ void CourseUtil::AutogenOniFromArtist( const RString &sArtistName, RString sArti
 
 	for( unsigned i = 0; i < aSongs.size(); ++i )
 	{
-		e.pSong = aSongs[i];
+		e.songID.FromSong( aSongs[i] );
 		out.m_vEntries.push_back( e );
 	}
 }

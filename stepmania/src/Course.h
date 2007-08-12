@@ -57,8 +57,7 @@ public:
 	bool bSecret;			// show "??????" instead of an exact song
 
 	// filter criteria, applied from top to bottom
-	// TODO: change this to be a SongID
-	Song* pSong;			// don't filter if NULL
+	SongID songID;			// don't filter if unset
 	SongCriteria songCriteria;
 	StepsCriteria stepsCriteria;
 	bool bNoDifficult;		// if true, CourseDifficulty doesn't affect this entry
@@ -74,8 +73,6 @@ public:
 	CourseEntry()
 	{
 		bSecret = false;
-
-		pSong = NULL;
 		bNoDifficult = false;
 
 		songSort = SongSort_Randomize;
@@ -86,7 +83,7 @@ public:
 		iGainLives = -1;
 	}
 
-	bool IsFixedSong() const { return pSong != NULL; }
+	bool IsFixedSong() const { return songID.IsValid(); }
 
 	RString GetTextDescription() const;
 	int GetNumModChanges() const;

@@ -237,7 +237,7 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				/* We can't rely on the trail here since it depends on what steps are available.
 				 * Use the course entry directly instead. */
 				CourseEntry& ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
-				Song *pSong = ce.pSong;
+				Song *pSong = ce.songID.ToSong();
 				Steps *pSteps;
 				StepsType st = GAMESTATE->m_stEdit;
 				CourseDifficulty cd = ( ce.stepsCriteria.m_difficulty == Difficulty_Invalid ?
@@ -378,7 +378,7 @@ void ScreenOptionsEditCourseEntry::ImportOptions( int iRow, const vector<PlayerN
 		break;
 	case ROW_SONG:
 	{
-		GAMESTATE->m_pCurSong.Set( ce.pSong );
+		GAMESTATE->m_pCurSong.Set( ce.songID.ToSong() );
 
 		// XXX: copy and pasted from ScreenOptionsMaster
 		FOREACH_CONST( PlayerNumber, vpns, pn )
@@ -466,7 +466,7 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 		}
 		row.ExportOptions( vpns, bRowHasFocus );
 		
-		ce.pSong = GAMESTATE->m_pCurSong;
+		ce.songID.FromSong( GAMESTATE->m_pCurSong );
 		break;
 	}
 	case ROW_BASE_DIFFICULTY:

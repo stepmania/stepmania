@@ -1736,7 +1736,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				bool bUsesThisSong = false;
 				for( unsigned e = 0; e < crs->m_vEntries.size(); ++e )
 				{
-					if( crs->m_vEntries[e].pSong != m_pSong )
+					if( crs->m_vEntries[e].songID.ToSong() != m_pSong )
 						continue;
 					bUsesThisSong = true;
 				}
@@ -2502,7 +2502,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			int iCourseEntryIndex = -1;
 			FOREACH_CONST( CourseEntry, pCourse->m_vEntries, i )
 			{
-				if( i->pSong == GAMESTATE->m_pCurSong.Get() )
+				if( i->songID.ToSong() == GAMESTATE->m_pCurSong.Get() )
 					iCourseEntryIndex = i - pCourse->m_vEntries.begin();
 			}
 
@@ -3487,7 +3487,7 @@ void ScreenEdit::SetupCourseAttacks()
 
 			for( unsigned e = 0; e < GAMESTATE->m_pCurCourse->m_vEntries.size(); ++e )
 			{
-				if( GAMESTATE->m_pCurCourse->m_vEntries[e].pSong != m_pSong )
+				if( GAMESTATE->m_pCurCourse->m_vEntries[e].songID.ToSong() != m_pSong )
 					continue;
 
 				Attacks = GAMESTATE->m_pCurCourse->m_vEntries[e].attacks;

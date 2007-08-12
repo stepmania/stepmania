@@ -39,7 +39,7 @@ void ScreenJukebox::SetSong()
 	if( pCourse != NULL )
 		for ( unsigned i = 0; i < pCourse->m_vEntries.size(); i++ )
 			if( pCourse->m_vEntries[i].IsFixedSong() )
-				vSongs.push_back( pCourse->m_vEntries[i].pSong );
+				vSongs.push_back( pCourse->m_vEntries[i].songID.ToSong() );
 
 	if ( vSongs.size() == 0 )
 		vSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );

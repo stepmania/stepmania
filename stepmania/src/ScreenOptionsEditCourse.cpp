@@ -246,7 +246,8 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 	}
 	else
 	{
-		vector<Song *>::const_iterator iter = find( m_vpDisplayedSongs.begin(), m_vpDisplayedSongs.end(), ce.pSong );
+		Song *pSong = ce.songID.ToSong();
+		vector<Song *>::const_iterator iter = find( m_vpDisplayedSongs.begin(), m_vpDisplayedSongs.end(), pSong );
 		
 		if( iter == m_vpDisplayedSongs.end() ) // This song isn't being displayed, set to "RANDOM"
 			row.SetOneSharedSelection( 0 );
@@ -288,9 +289,9 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 	CourseEntry& ce = pCourse->m_vEntries[iRow - NUM_EditCourseRow];
 
 	if( iSel == 0 )
-		ce.pSong = NULL;
+		ce.songID.FromSong( NULL );
 	else
-		ce.pSong = m_vpDisplayedSongs[iSel - 1];
+		ce.songID.FromSong( m_vpDisplayedSongs[iSel - 1] );
 }
 
 void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )

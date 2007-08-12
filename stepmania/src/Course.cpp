@@ -60,6 +60,7 @@ const int MAX_BOTTOM_RANGE = 10;
 RString CourseEntry::GetTextDescription() const
 {
 	vector<RString> vsEntryDescription;
+	Song *pSong = songID.ToSong();
 	if( pSong )
 		vsEntryDescription.push_back( pSong->GetTranslitFullTitle() ); 
 	else
@@ -105,8 +106,8 @@ class LunaCourseEntry: public Luna<CourseEntry>
 public:
 	static int GetSong( T* p, lua_State *L )
 	{
-		if( p->pSong )
-			p->pSong->PushSelf(L);
+		if( p->songID.ToSong() )
+			p->songID.ToSong()->PushSelf(L);
 		else
 			lua_pushnil(L);
 		return 1;
@@ -232,10 +233,11 @@ bool Course::IsPlayableIn( StepsType st ) const
 	{
 		SongCriteria soc = e->songCriteria;
 		
-		if( e->pSong )
+		Song *pSong = e->songID.ToSong();
+		if( pSong )
 		{
 			soc.m_bUseSongAllowedList = true;
-			soc.m_vpSongAllowedList.push_back( e->pSong );
+			soc.m_vpSongAllowedList.push_back( pSong );
 		}
 		soc.m_Tutorial = SongCriteria::Tutorial_No;
 		soc.m_Locked = SongCriteria::Locked_Unlocked;
@@ -249,14 +251,14 @@ bool Course::IsPlayableIn( StepsType st ) const
 		const bool bSameSongCriteria  = e != m_vEntries.begin() && (e-1)->songCriteria == soc;
 		const bool bSameStepsCriteria = e != m_vEntries.begin() && (e-1)->stepsCriteria == stc;
 		
-		if( e->pSong )
+		if( pSong )
 		{
-		        if ( StepsUtil::HasMatching(e->pSong, stc) )
+		        if( StepsUtil::HasMatching(pSong, stc) )
 				return true;
 		}
 		else if( !(bSameSongCriteria && bSameStepsCriteria) )
 		{
-			if ( StepsUtil::HasMatching(soc, stc) )
+			if( StepsUtil::HasMatching(soc, stc) )
 			        return true;
 		}
 		
@@ -495,10 +497,11 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		SongAndSteps resolved;	// fill this in
 		SongCriteria soc = e->songCriteria;
 		
-		if( e->pSong )
+		Song *pSong = e->songID.ToSong();
+		if( pSong )
 		{
 			soc.m_bUseSongAllowedList = true;
-			soc.m_vpSongAllowedList.push_back( e->pSong );
+			soc.m_vpSongAllowedList.push_back( pSong );
 		}
 		soc.m_Tutorial = SongCriteria::Tutorial_No;
 		soc.m_Locked = SongCriteria::Locked_Unlocked;
@@ -512,9 +515,9 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		const bool bSameSongCriteria  = e != entries.begin() && (e-1)->songCriteria == soc;
 		const bool bSameStepsCriteria = e != entries.begin() && (e-1)->stepsCriteria == stc;
 
-		if( e->pSong )
+		if( pSong )
 		{
-			StepsUtil::GetAllMatching( e->pSong, stc, vSongAndSteps );
+			StepsUtil::GetAllMatching( pSong, stc, vSongAndSteps );
 		}
 		else if( vSongAndSteps.empty() || !(bSameSongCriteria && bSameStepsCriteria) )
 		{
@@ -749,7 +752,8 @@ void Course::Invalidate( const Song *pStaleSong )
 {
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
-		if( e->pSong == pStaleSong )	// a fixed entry that references the stale Song
+		Song *pSong = e->songID.ToSong();
+		if( pSong == pStaleSong )	// a fixed entry that references the stale Song
 		{
 			RevertFromDisk();
 			return;
@@ -876,7 +880,8 @@ void Course::UpdateCourseStats( StepsType st )
 	// courses with random/players best-worst songs should go at the end
 	for(unsigned i = 0; i < m_vEntries.size(); i++)
 	{
-		if ( m_vEntries[i].pSong != NULL )
+		Song *pSong = m_vEntries[i].songID.ToSong();
+		if( pSong != NULL )
 			continue;
 
 		if ( m_SortOrder_Ranking == 2 )
@@ -916,7 +921,8 @@ const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
 		const CourseEntry &entry = *e;
-		if( entry.pSong == pSong )
+		Song *pSong = entry.songID.ToSong();
+		if( pSong == pSong )
 			return &entry;
 	}
 
