@@ -237,6 +237,8 @@ void StepsID::FromSteps( const Steps *p )
 			uHash = 0;
 		}
 	}
+
+	m_Cache.Unset();
 }
 
 /* XXX: Don't allow duplicate edit descriptions, and don't allow edit descriptions
@@ -247,24 +249,14 @@ void StepsID::FromSteps( const Steps *p )
  * them back out (which we don't do except in the editor), it won't be permanent. 
  * We could do this during the actual Steps::GetID() call, instead, but then it'd have
  * to have access to Song::m_LoadedFromProfile. */
-typedef pair<SongID,StepsID> SongIDAndStepsID;
-static map<SongIDAndStepsID,Steps *> g_Cache;
 
-Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
+Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 {
 	if( st == StepsType_Invalid || dc == Difficulty_Invalid )
 		return NULL;
 
 	SongID songID;
 	songID.FromSong( p );
-	SongIDAndStepsID sas = SongIDAndStepsID(songID,*this);
-	
-	if( bUseCache )
-	{
-		map<SongIDAndStepsID,Steps *>::iterator it = g_Cache.find( sas );
-		if( it != g_Cache.end() )
-			return it->second;
-	}
 
 	Steps *pRet = NULL;
 	if( dc == Difficulty_Edit )
@@ -279,8 +271,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 	if( !bAllowNull && pRet == NULL )
 		FAIL_M( ssprintf("%i, %i, \"%s\"", st, dc, sDescription.c_str()) );
 
-	if( bUseCache )
-		g_Cache[sas] = pRet;
+	m_Cache.Set( pRet );
 	
 	return pRet;
 }
@@ -298,12 +289,6 @@ XNode* StepsID::CreateNode() const
 	}
 
 	return pNode;
-}
-
-
-void StepsID::ClearCache()
-{
-	g_Cache.clear();
 }
 
 void StepsID::LoadFromNode( const XNode* pNode ) 
@@ -328,6 +313,8 @@ void StepsID::LoadFromNode( const XNode* pNode )
 		sDescription = "";
 		uHash = 0;
 	}
+
+	m_Cache.Unset();
 }
 
 RString StepsID::ToString() const

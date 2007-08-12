@@ -26,6 +26,8 @@
 
 #include <algorithm>
 
+CACHED_REGISTER_CLASS(Steps);
+
 Steps::Steps()
 {
 	m_bSavedToDisk = false;
@@ -243,7 +245,12 @@ void Steps::Decompress() const
 		StepsID ID;
 		ID.FromSteps( this );
 
-		Steps *pSteps = ID.ToSteps( &s, true, false );	// don't use cache
+		/* We're using a StepsID to search in a different copy of a Song than
+		 * the one it was created with.  Clear the cache before doing this,
+		 * or search results will come from cache and point to the original
+		 * copy. */
+		CachedObject<Steps>::ClearCacheAll();
+		Steps *pSteps = ID.ToSteps( &s, true );
 		if( pSteps == NULL )
 		{
 			LOG->Warn( "Couldn't find %s in \"%s\"", ID.ToString().c_str(), m_sFilename.c_str() );

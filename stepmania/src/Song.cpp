@@ -319,8 +319,6 @@ bool Song::ReloadFromSongDir( RString sDir )
 		{
 			// This stepchart didn't exist in the file we reverted from
 			delete *itOld;
-			// TODO: We should move the cache from StepsUtil to Song
-			StepsID::ClearCache();
 		}
 		else
 		{
@@ -1233,8 +1231,6 @@ void Song::DeleteSteps( const Steps* pSteps, bool bReAutoGen )
 		{
 			delete m_vpSteps[j];
 			m_vpSteps.erase( m_vpSteps.begin()+j );
-			// TODO: We should move the cache from StepsUtil to Song
-			StepsID::ClearCache();
 			break;
 		}
 	}

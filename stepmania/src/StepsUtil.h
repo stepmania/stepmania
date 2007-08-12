@@ -3,6 +3,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "Difficulty.h"
+#include "RageUtil_CachedObject.h"
 
 class Steps;
 class Song;
@@ -75,12 +76,13 @@ class StepsID
 	Difficulty dc;
 	RString sDescription;
 	unsigned uHash;
+	mutable CachedObjectPointer<Steps> m_Cache;
 
 public:
 	StepsID() { Unset(); }
 	void Unset() { FromSteps(NULL); }
 	void FromSteps( const Steps *p );
-	Steps *ToSteps( const Song *p, bool bAllowNull, bool bUseCache = true ) const;
+	Steps *ToSteps( const Song *p, bool bAllowNull ) const;
 	bool operator<( const StepsID &rhs ) const;
 	bool MatchesStepsType( StepsType s ) const { return st == s; }
 
@@ -88,7 +90,6 @@ public:
 	void LoadFromNode( const XNode* pNode );
 	RString ToString() const;
 	bool IsValid() const;
-	static void ClearCache();
 	
 	StepsType GetStepsType() const { return st; }
 	Difficulty GetDifficulty() const { return dc; }
