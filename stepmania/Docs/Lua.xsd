@@ -82,9 +82,6 @@
 			<!-- HTML elements we want to let through. -->
 			<xs:element name="code" />
 			<xs:element name="br" />
-			<xs:element name="ul" />
-			<xs:element name="ol" />
-			<xs:element name="li" />
 		</xs:choice>
 	</xs:sequence>
 </xs:group>

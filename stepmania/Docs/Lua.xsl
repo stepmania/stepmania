@@ -430,7 +430,4 @@
 <!-- XXX: This is annoying, how can we tell xsl to just pass the html through? -->
 <xsl:template match="sm:code"><code><xsl:apply-templates /></code></xsl:template>
 <xsl:template match="sm:br"><br /></xsl:template>
-<xsl:template match="sm:ul"><ul><xsl:apply-templates /></ul></xsl:template>
-<xsl:template match="sm:ol"><ol><xsl:apply-templates /></ol></xsl:template>
-<xsl:template match="sm:li"><li><xsl:apply-templates /></li></xsl:template>
 </xsl:stylesheet>

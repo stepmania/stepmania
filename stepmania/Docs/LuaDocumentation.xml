@@ -55,11 +55,9 @@
 </Class>
 <Class name='ActorSound'>
 	<Description>
-		This Actor represents a playable sound. There are two attributes that can be set on load.
-		<ul>
-			<li><code>SupportPan</code> - Let the sound pan from side to side.</li>
-			<li><code>SupportRateChanging</code> - Let the sound change rate and pitch.</li>
-		</ul>
+		This Actor represents a playable sound. There are two attributes that can be set on load.<br />
+		* <code>SupportPan</code> - Let the sound pan from side to side.<br />
+		* <code>SupportRateChanging</code> - Let the sound change rate and pitch.
 	</Description>
 	<Function name='get' return='RageSound' arguments=''>
 		Returns the <Link class='RageSound'>RageSound</Link> that can be played by this Actor.
