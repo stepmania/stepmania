@@ -5,6 +5,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "Difficulty.h"
+#include "RageUtil_CachedObject.h"
 
 class Course;
 class Profile;
@@ -58,6 +59,7 @@ public:
 private:
 	RString sPath;
 	RString sFullTitle;
+	mutable CachedObjectPointer<Course> m_Cache;
 };
 
 #endif

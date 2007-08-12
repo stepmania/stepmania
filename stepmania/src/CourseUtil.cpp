@@ -345,6 +345,8 @@ void CourseID::FromCourse( const Course *p )
 	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
 	if( sPath.Left(1) == "/" )
 		sPath.erase( sPath.begin() );
+
+	m_Cache.Unset();
 }
 
 Course *CourseID::ToCourse() const
@@ -355,21 +357,17 @@ Course *CourseID::ToCourse() const
 	if( sPath2.Left(1) != "/" )
 		sPath2 = "/" + sPath2;
 
-	if( !sPath2.empty() )
-	{
-		Course *pCourse = SONGMAN->GetCourseFromPath( sPath2 );
-		if( pCourse ) 
-			return pCourse;
-	}
+	Course *pCourse = NULL;
+	if( m_Cache.Get(&pCourse) )
+		return pCourse;
+	if( pCourse == NULL && !sPath2.empty() )
+		pCourse = SONGMAN->GetCourseFromPath( sPath2 );
 
-	if( !sFullTitle.empty() )
-	{
-		Course *pCourse = SONGMAN->GetCourseFromName( sFullTitle );
-		if( pCourse ) 
-			return pCourse;
-	}
+	if( pCourse == NULL && !sFullTitle.empty() )
+		pCourse = SONGMAN->GetCourseFromName( sFullTitle );
+	m_Cache.Set( pCourse );
 
-	return NULL;
+	return pCourse;
 }
 
 XNode* CourseID::CreateNode() const
@@ -391,6 +389,7 @@ void CourseID::LoadFromNode( const XNode* pNode )
 	sPath = RString();
 	if( !pNode->GetAttrValue("Path", sPath) )
 		pNode->GetAttrValue( "FullTitle", sFullTitle );
+	m_Cache.Unset();
 }
 
 RString CourseID::ToString() const

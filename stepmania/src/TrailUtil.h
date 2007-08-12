@@ -3,6 +3,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "Difficulty.h"
+#include "RageUtil_CachedObject.h"
 
 class Song;
 class Trail;
@@ -13,6 +14,7 @@ class TrailID
 {
 	StepsType st;
 	CourseDifficulty cd;
+	mutable CachedObjectPointer<Trail> m_Cache;
 
 public:
 	TrailID() { Unset(); }

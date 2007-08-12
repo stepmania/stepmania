@@ -6,6 +6,7 @@
 #include "Attack.h"
 #include "RadarValues.h"
 #include "Difficulty.h"
+#include "RageUtil_CachedObject.h"
 
 class Song;
 class Steps;
@@ -71,6 +72,8 @@ public:
 	void GetDisplayBpms( DisplayBpms &AddTo ) const;
 	bool IsSecret() const;
 	bool ContainsSong( const Song *pSong ) const;
+
+	CachedObject<Trail> m_CachedObject;
 
 	// Lua
 	void PushSelf( lua_State *L );

@@ -18,6 +18,7 @@ void TrailID::FromTrail( const Trail *p )
 		st = p->m_StepsType;
 		cd = p->m_CourseDifficulty;
 	}
+	m_Cache.Unset();
 }
 
 Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
@@ -25,8 +26,13 @@ Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 	ASSERT( p );
 
 	Trail *pRet = NULL;
-	if( st != StepsType_Invalid && cd != Difficulty_Invalid )
-		pRet = p->GetTrail( st, cd );
+	if( !m_Cache.Get(&pRet) )
+	{
+		if( st != StepsType_Invalid && cd != Difficulty_Invalid )
+			pRet = p->GetTrail( st, cd );
+		m_Cache.Set( pRet );
+	}
+
 	if( !bAllowNull && pRet == NULL )
 		RageException::Throw( "%i, %i, \"%s\"", st, cd, p->GetDisplayFullTitle().c_str() );	
 
@@ -54,6 +60,7 @@ void TrailID::LoadFromNode( const XNode* pNode )
 
 	pNode->GetAttrValue( "CourseDifficulty", sTemp );
 	cd = StringToDifficulty( sTemp );
+	m_Cache.Unset();
 }
 
 RString TrailID::ToString() const
