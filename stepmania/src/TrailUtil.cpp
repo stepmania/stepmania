@@ -24,10 +24,9 @@ Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 {
 	ASSERT( p );
 
-	if( st == StepsType_Invalid || cd == Difficulty_Invalid )
-		return NULL;
-
-	Trail *pRet = p->GetTrail( st, cd );
+	Trail *pRet = NULL;
+	if( st != StepsType_Invalid && cd != Difficulty_Invalid )
+		pRet = p->GetTrail( st, cd );
 	if( !bAllowNull && pRet == NULL )
 		RageException::Throw( "%i, %i, \"%s\"", st, cd, p->GetDisplayFullTitle().c_str() );	
 
