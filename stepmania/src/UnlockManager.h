@@ -100,13 +100,7 @@ public:
 	~UnlockManager();
 	void Reload();
 
-	// returns # of points till next unlock - used for ScreenUnlock
 	float PointsUntilNextUnlock( UnlockRequirement t ) const;
-	float ArcadePointsUntilNextUnlock() const { return PointsUntilNextUnlock(UnlockRequirement_ArcadePoints); }
-	float DancePointsUntilNextUnlock() const { return PointsUntilNextUnlock(UnlockRequirement_DancePoints); }
-	float SongPointsUntilNextUnlock() const { return PointsUntilNextUnlock(UnlockRequirement_SongPoints); }
-
-	// Used on select screens:
 	bool SongIsLocked( const Song *song ) const;
 	bool SongIsRouletteOnly( const Song *song ) const;
 	bool StepsIsLocked( const Song *pSong, const Steps *pSteps ) const;

@@ -288,17 +288,17 @@ void ScreenUnlockStatus::Init()
 	RString PointDisplay = TYPE_TO_DISPLAY;
 	if (PointDisplay == "DP" || PointDisplay == "Dance")
 	{
-		RString sDP = ssprintf( "%d", (int)UNLOCKMAN->DancePointsUntilNextUnlock() );
+		RString sDP = ssprintf( "%d", (int)UNLOCKMAN->PointsUntilNextUnlock(UnlockRequirement_DancePoints) );
 		PointsUntilNextUnlock.SetText( sDP );
 	}
 	else if (PointDisplay == "AP" || PointDisplay == "Arcade") 
 	{
-		RString sAP = ssprintf( "%d", (int)UNLOCKMAN->ArcadePointsUntilNextUnlock() );
+		RString sAP = ssprintf( "%d", (int)UNLOCKMAN->PointsUntilNextUnlock(UnlockRequirement_ArcadePoints) );
 		PointsUntilNextUnlock.SetText( sAP );
 	}
 	else if (PointDisplay == "SP" || PointDisplay == "Song") 
 	{
-		RString sSP = ssprintf( "%d", (int)UNLOCKMAN->SongPointsUntilNextUnlock() );
+		RString sSP = ssprintf( "%d", (int)UNLOCKMAN->PointsUntilNextUnlock(UnlockRequirement_SongPoints) );
 		PointsUntilNextUnlock.SetText( sSP );
 	}
 
