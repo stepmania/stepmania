@@ -510,7 +510,6 @@ XNode *LuaHelpers::GetLuaInformation()
 	XNode *pEnumsNode = pLuaNode->AppendChild( "Enums" );
 	XNode *pConstantsNode = pLuaNode->AppendChild( "Constants" );
 	
-	// Tricky. We have to get the classes from lua.
 	vector<RString> vFunctions;
 	map<RString, LClass> mClasses;
 	map<RString, RString> mSingletons;
@@ -583,6 +582,32 @@ XNode *LuaHelpers::GetLuaInformation()
 			break;
 		}
 	}
+	
+	// Find namespaces
+	lua_pushcfunction( L, luaopen_package ); lua_call( L, 0, 0 );
+	lua_getglobal( L, "package" );
+	ASSERT( lua_istable(L, -1) );
+	lua_getfield( L, -1, "loaded" );
+	ASSERT( lua_istable(L, -1) );
+
+	const RString BuiltInPackages[] = { "_G", "coroutine", "debug", "math", "package", "string", "table" };
+	const RString *const end = BuiltInPackages+ARRAYLEN(BuiltInPackages);
+	FOREACH_LUATABLE( L, -1 )
+	{
+		RString sNamespace;
+		LuaHelpers::Pop( L, sNamespace );
+		if( find(BuiltInPackages, end, sNamespace) != end )
+			continue;
+
+		FOREACH_LUATABLE( L, -1 )
+		{
+			RString sFunction;
+			LuaHelpers::Pop( L, sFunction );
+			vFunctions.push_back( ssprintf("%s.%s", sNamespace.c_str(), sFunction.c_str()) );
+		}
+	}
+	lua_pop( L, 2 );
+	
 	LUA->Release( L );
 
 	sort( vFunctions.begin(), vFunctions.end() );
