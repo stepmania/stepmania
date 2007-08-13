@@ -281,10 +281,9 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[pn];
 
-	// If this is a SHOW_NEVER song, then it's probably a training.
-	// Don't show a high score
-	//if( pSong->GetDisplayed() == Song::SHOW_NEVER )
-	//	return false;
+	// Don't show high scores for tutorial songs.
+	if( pSong->IsTutorial() == Song::SHOW_NEVER )
+		return false;
 
 	const HighScoreList &hsl = 
 		GAMESTATE->IsCourseMode() ?
