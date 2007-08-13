@@ -32,6 +32,21 @@
 <Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
 	Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
 </Function>
+<Function name='Trace' return='void' arguments='string sString'>
+	Alias for <Link function='lua.Trace' />.
+</Function>
+<Function name='Warn' return='void' arguments='string sString'>
+	Alias for <Link function='lua.Warn' />.
+</Function>
+<Function name='lua.Trace' return='void' arguments='string sString'>
+	Writes <code>sString</code> to log.txt. Aliased by <Link function='Trace' />.
+</Function>
+<Function name='lua.Warn' return='void' arguments='string sString'>
+	Writes <code>sString</code> to info.txt and log.txt as a warning. Aliased by <Link function='Warn' />.
+</Function>
+<Function name='lua.Flush' return='void' arguments='' >
+	Flushes log files to disk.
+</Function>
 </GlobalFunctions>
 
 <!-- Classes -->
