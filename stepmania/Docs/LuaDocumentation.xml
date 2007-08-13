@@ -38,6 +38,9 @@
 <Function name='Hour' return='int' arguments=''>
 	Returns the current hour.
 </Function>
+<Function name='IsEventMode' return='bool' arguments=''>
+	Returns <code>true</code> if Event Mode is turned on.
+</Function>
 <Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
 	Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
 </Function>
@@ -49,6 +52,9 @@
 </Function>
 <Function name='Second' return='int' arguments=''>
 	Returns the current second.
+</Function>
+<Function name='SecondsToMSSMsMs' return='string' arguments='float fSecs'>
+	Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format.
 </Function>
 <Function name='Trace' return='void' arguments='string sString'>
 	Alias for <Link function='lua.Trace' />.
@@ -192,10 +198,10 @@
 		Returns the transliterated main title of the song.
 	</Function>
 	<Function name='IsLong' return='bool' arguments=''>
-		Returns true if the song meets the criteria for a &quot;Long Version&quot;.
+		Returns <code>true</code> if the song meets the criteria for a &quot;Long Version&quot;.
 	</Function>
 	<Function name='IsMarathon' return='bool' arguments=''>
-		Returns true if the song meets the criteria for &quot;Marathon&quot; length.
+		Returns <code>true</code> if the song meets the criteria for &quot;Marathon&quot; length.
 	</Function>
 </Class>
 </Classes>
