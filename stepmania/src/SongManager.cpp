@@ -579,14 +579,14 @@ int SongManager::GetNumSongs() const
 
 int SongManager::GetNumUnlockedSongs() const
 {
-	int num = 0;
+	int iNum = 0;
 	FOREACH_CONST( Song*, m_pSongs, i )
 	{
 		if( UNLOCKMAN->SongIsLocked( *i ) )
 			continue;
-		num++;
+		++iNum;
 	}
-	return num;
+	return iNum;
 }
 
 int SongManager::GetNumSelectableAndUnlockedSongs() const
@@ -598,7 +598,7 @@ int SongManager::GetNumSelectableAndUnlockedSongs() const
 			continue;
 		if( (*i)->GetDisplayed() != Song::SHOW_ALWAYS )
 			continue;
-		iNum++;
+		++iNum;
 	}
 	return iNum;
 }
@@ -609,7 +609,7 @@ int SongManager::GetNumAdditionalSongs() const
 	FOREACH_CONST( Song*, m_pSongs, i )
 	{
 		if( WasLoadedFromAdditionalSongs( *i ) )
-			iNum++;
+			++iNum;
 	}
 	return iNum;
 }
@@ -626,13 +626,13 @@ int SongManager::GetNumCourses() const
 
 int SongManager::GetNumAdditionalCourses() const
 {
-	int num = 0;
+	int iNum = 0;
 	FOREACH_CONST( Course*, m_pCourses, i )
 	{
 		if( WasLoadedFromAdditionalCourses( *i ) )
-			num++;
+			++iNum;
 	}
-	return num;
+	return iNum;
 }
 
 int SongManager::GetNumCourseGroups() const
@@ -646,7 +646,7 @@ int SongManager::GetNumEditCourses( ProfileSlot slot ) const
 	FOREACH_CONST( Course*, m_pCourses, p )
 	{
 		if( (*p)->GetLoadedFromProfileSlot() == slot )
-			iNum++;
+			++iNum;
 	}
 	return iNum;
 }
