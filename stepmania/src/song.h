@@ -208,7 +208,6 @@ public:
 	bool HasEdits( StepsType st ) const;
 	SelectionDisplay GetDisplayed() const;
 	bool NormallyDisplayed() const;
-	bool NeverDisplayed() const;
 	bool ShowInDemonstrationAndRanking() const;
 
 	void AddSteps( Steps* pSteps );		// we are responsible for deleting the memory pointed to by pSteps!
