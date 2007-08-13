@@ -591,27 +591,27 @@ int SongManager::GetNumUnlockedSongs() const
 
 int SongManager::GetNumSelectableAndUnlockedSongs() const
 {
-	int num = 0;
+	int iNum = 0;
 	FOREACH_CONST( Song*, m_pSongs, i )
 	{
 		if( UNLOCKMAN->SongIsLocked( *i ) )
 			continue;
 		if( (*i)->GetDisplayed() != Song::SHOW_ALWAYS )
 			continue;
-		num++;
+		iNum++;
 	}
-	return num;
+	return iNum;
 }
 
 int SongManager::GetNumAdditionalSongs() const
 {
-	int num = 0;
+	int iNum = 0;
 	FOREACH_CONST( Song*, m_pSongs, i )
 	{
 		if( WasLoadedFromAdditionalSongs( *i ) )
-			num++;
+			iNum++;
 	}
-	return num;
+	return iNum;
 }
 
 int SongManager::GetNumSongGroups() const
