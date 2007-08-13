@@ -80,7 +80,6 @@ public:
 
 	bool	IsValid() const;
 	bool	IsLocked() const	{ return GetUnlockEntryStatus() != UnlockEntryStatus_Unlocked; }
-	//bool	IsUnlocked() const { return !IsLocked(); }
 	UnlockEntryStatus GetUnlockEntryStatus() const;
 	RString	GetModifier() const { return m_cmd.GetArg(1).s; }
 	RString	GetDescription() const;
