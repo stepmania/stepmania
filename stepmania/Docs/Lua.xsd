@@ -135,7 +135,7 @@
 </xs:complexType>
 
 <xs:complexType name="Link" mixed="true">
-	<xs:attribute name="function" type="Identifier" use="optional" />
+	<xs:attribute name="function" type="FunctionIdentifier" use="optional" />
 	<xs:attribute name="class" type="Identifier" use="optional" />
 </xs:complexType>
 
