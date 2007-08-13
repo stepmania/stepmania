@@ -26,11 +26,29 @@
 <Function name='Basename' return='string' arguments='string path'>
 	Returns the base name of file path.
 </Function>
+<Function name='DayOfMonth' return='int' arguments=''>
+	Returns the current day of the month.
+</Function>
+<Function name='DayOfYear' return='int' arguments=''>
+	Returns the current day of the year.
+</Function>
 <Function name='FormatNumberAndSuffix' return='string' arguments='int num'>
 	Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
 </Function>
+<Function name='Hour' return='int' arguments=''>
+	Returns the current hour.
+</Function>
 <Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
 	Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
+</Function>
+<Function name='Minute' return='int' arguments=''>
+	Returns the current Minute.
+</Function>
+<Function name='MonthOfYear' return='int' arguments=''>
+	Returns the current month of the year.
+</Function>
+<Function name='Second' return='int' arguments=''>
+	Returns the current second.
 </Function>
 <Function name='Trace' return='void' arguments='string sString'>
 	Alias for <Link function='lua.Trace' />.
