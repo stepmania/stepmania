@@ -283,7 +283,7 @@ bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
 
 	// If this is a SHOW_NEVER song, then it's probably a training.
 	// Don't show a high score
-	if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
+	if( pSong->GetDisplayed() == Song::SHOW_NEVER )
 		return false;
 
 	const HighScoreList &hsl = 

@@ -596,7 +596,7 @@ int SongManager::GetNumSelectableAndUnlockedSongs() const
 	{
 		if( UNLOCKMAN->SongIsLocked( *i ) )
 			continue;
-		if( (*i)->m_SelectionDisplay != Song::SHOW_ALWAYS )
+		if( (*i)->GetDisplayed() != Song::SHOW_ALWAYS )
 			continue;
 		num++;
 	}
