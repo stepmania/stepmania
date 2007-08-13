@@ -310,7 +310,7 @@ float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 	int iTotalSteps = 0;
 
 	// add steps high scores
-	const vector<Song*> vSongs = SONGMAN->GetSongs();
+	const vector<Song*> &vSongs = SONGMAN->GetSongs();
 	for( unsigned i=0; i<vSongs.size(); i++ )
 	{
 		Song* pSong = vSongs[i];
