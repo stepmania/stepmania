@@ -253,7 +253,7 @@ int Profile::GetTotalStepsWithTopGrade( StepsType st, Difficulty d, Grade g ) co
 
 	FOREACH_CONST( Song*, SONGMAN->GetSongs(), pSong )
 	{
-		if( (*pSong)->GetDisplayed() == Song::SHOW_NEVER )
+		if( !(*pSong)->NormallyDisplayed() )
 			continue;	// skip
 
 		FOREACH_CONST( Steps*, (*pSong)->GetAllSteps(), pSteps )
@@ -315,7 +315,7 @@ float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 	{
 		Song* pSong = vSongs[i];
 		
-		if( pSong->GetDisplayed() == Song::SHOW_NEVER )
+		if( !pSong->NormallyDisplayed() )
 			continue;	// skip
 
 		vector<Steps*> vSteps = pSong->GetAllSteps();
@@ -355,7 +355,7 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 		if( pSong == NULL )
 			continue;
 		
-		if( pSong->GetDisplayed() == Song::SHOW_NEVER )
+		if( !pSong->NormallyDisplayed() )
 			continue;	// skip
 		
 		CHECKPOINT_M( ssprintf("Profile::GetSongsActual: song %s", pSong->GetSongDir().c_str()) );

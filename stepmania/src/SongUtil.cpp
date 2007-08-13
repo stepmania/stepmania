@@ -24,6 +24,9 @@ bool SongCriteria::Matches( const Song *pSong ) const
 	if( !m_sGroupName.empty()  &&  m_sGroupName != pSong->m_sGroupName )
 		return false;
 
+	if( UNLOCKMAN->SongIsLocked(pSong) & LOCKED_DISABLED )
+		return false;
+
 	if( m_bUseSongGenreAllowedList )
 	{
 		if( find(m_vsSongGenreAllowedList.begin(),m_vsSongGenreAllowedList.end(),pSong->m_sGenre) == m_vsSongGenreAllowedList.end() )
@@ -34,11 +37,11 @@ bool SongCriteria::Matches( const Song *pSong ) const
 	{
 	DEFAULT_FAIL(m_Selectable);
 	case Selectable_Yes:
-		if( pSong->GetDisplayed() != Song::SHOW_ALWAYS )
+		if( UNLOCKMAN  &&  !(UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE) )
 			return false;
 		break;
 	case Selectable_No:
-		if( pSong->GetDisplayed() != Song::SHOW_NEVER )
+		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
 			return false;
 		break;
 	case Selectable_DontCare:
@@ -73,11 +76,11 @@ bool SongCriteria::Matches( const Song *pSong ) const
 	{
 	DEFAULT_FAIL(m_Locked);
 	case Locked_Locked:
-		if( UNLOCKMAN  &&  !UNLOCKMAN->SongIsLocked(pSong) )
+		if( UNLOCKMAN  &&  !(UNLOCKMAN->SongIsLocked(pSong) & LOCKED_LOCK) )
 			return false;
 		break;
 	case Locked_Unlocked:
-		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(pSong) )
+		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(pSong) & LOCKED_LOCK )
 			return false;
 		break;
 	case Locked_DontCare:

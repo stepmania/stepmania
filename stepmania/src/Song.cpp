@@ -26,7 +26,7 @@
 #include "NotesLoaderSM.h"
 #include "NotesWriterDWI.h"
 #include "NotesWriterSM.h"
-
+#include "UnlockManager.h"
 #include "LyricsLoader.h"
 
 #include <time.h>
@@ -66,6 +66,7 @@ Song::Song()
 	m_fLastBeat = -1;
 	m_fSpecifiedLastBeat = -1;
 	m_SelectionDisplay = SHOW_ALWAYS;
+	m_bEnabled = true;
 	m_DisplayBPMType = DISPLAY_ACTUAL;
 	m_fSpecifiedBPMMin = 0;
 	m_fSpecifiedBPMMax = 0;
@@ -1042,13 +1043,14 @@ bool Song::HasEdits( StepsType st ) const
 	return false;
 }
 
-Song::SelectionDisplay Song::GetDisplayed() const
+/* Return false if the song should not be displayed for selection in normal
+ * gameplay (but may still be available in random selection, during extra
+ * stages, or in other special conditions). */
+bool Song::NormallyDisplayed() const
 {
-	if( !PREFSMAN->m_bHiddenSongs )
-		return SHOW_ALWAYS;
-	return m_SelectionDisplay;
+	return UNLOCKMAN == NULL || !UNLOCKMAN->SongIsLocked(this);
 }
-bool Song::NormallyDisplayed() const { return GetDisplayed() == SHOW_ALWAYS; }
+
 bool Song::ShowInDemonstrationAndRanking() const { return !IsTutorial() && NormallyDisplayed(); }
 
 

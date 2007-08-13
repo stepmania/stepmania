@@ -83,7 +83,7 @@ void ScreenJukebox::SetSong()
 		ASSERT( pSong != NULL );
 		if( !pSong->HasMusic() )
 			continue;	// skip
-		if( UNLOCKMAN->SongIsLocked(pSong) )
+		if( !pSong->NormallyDisplayed() )
 			continue;
 		if( !pSong->ShowInDemonstrationAndRanking() )
 			continue;	// skip

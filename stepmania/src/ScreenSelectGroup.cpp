@@ -39,7 +39,7 @@ void ScreenSelectGroup::Init()
 	{
 		bool DisplaySong = aAllSongs[j]->NormallyDisplayed();
 		
-		if( UNLOCKMAN->SongIsLocked( aAllSongs[j] ) )
+		if( !aAllSongs[j]->NormallyDisplayed() )
 			DisplaySong = false;
 		
 		if( aAllSongs[j]->SongCompleteForStyle(GAMESTATE->GetCurrentStyle()) && 

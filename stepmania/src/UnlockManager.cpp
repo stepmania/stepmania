@@ -118,16 +118,20 @@ bool UnlockManager::CourseIsLocked( const Course *course ) const
 	return p->IsLocked();
 }
 
-bool UnlockManager::SongIsLocked( const Song *song ) const
+int UnlockManager::SongIsLocked( const Song *pSong ) const
 {
-	if( !PREFSMAN->m_bUseUnlockSystem )
-		return false;
-
-	const UnlockEntry *p = FindSong( song );
-	if( p == NULL )
-		return false;
-
-	return p->IsLocked();
+	int iRet = 0;
+	if( PREFSMAN->m_bUseUnlockSystem )
+	{
+		const UnlockEntry *p = FindSong( pSong );
+		if( p != NULL && p->IsLocked() )
+			iRet |= LOCKED_LOCK;
+	}
+	if( PREFSMAN->m_bHiddenSongs && pSong->m_SelectionDisplay == Song::SHOW_NEVER )
+		iRet |= LOCKED_SELECTABLE;
+	if( !pSong->m_bEnabled )
+		iRet |= LOCKED_DISABLED;
+	return iRet;
 }
 
 /* Return true if the song is *only* available in roulette. */

@@ -582,7 +582,8 @@ int SongManager::GetNumUnlockedSongs() const
 	int iNum = 0;
 	FOREACH_CONST( Song*, m_pSongs, i )
 	{
-		if( UNLOCKMAN->SongIsLocked( *i ) )
+		// If locked for any reason other than LOCKED_LOCK:
+		if( UNLOCKMAN->SongIsLocked(*i) & ~LOCKED_LOCK )
 			continue;
 		++iNum;
 	}
@@ -594,9 +595,8 @@ int SongManager::GetNumSelectableAndUnlockedSongs() const
 	int iNum = 0;
 	FOREACH_CONST( Song*, m_pSongs, i )
 	{
-		if( UNLOCKMAN->SongIsLocked( *i ) )
-			continue;
-		if( (*i)->GetDisplayed() != Song::SHOW_ALWAYS )
+		// If locked for any reason other than LOCKED_LOCK or LOCKED_SELECTABLE:
+		if( UNLOCKMAN->SongIsLocked(*i) & ~(LOCKED_LOCK|LOCKED_SELECTABLE) )
 			continue;
 		++iNum;
 	}
@@ -1102,7 +1102,7 @@ Song* SongManager::GetRandomSong()
 		Song *pSong = m_pShuffledSongs[ i ];
 		if( pSong->IsTutorial() )
 			continue;
-		if( UNLOCKMAN->SongIsLocked(pSong) )
+		if( !pSong->NormallyDisplayed() )
 			continue;
 		return pSong;
 	}
@@ -1251,12 +1251,8 @@ void SongManager::UpdatePopular()
 	for ( unsigned j=0; j < apBestSongs.size() ; ++j )
 	{
 		bool bFiltered = false;
-		/* Filter out hidden songs. */
-		if( apBestSongs[j]->GetDisplayed() != Song::SHOW_ALWAYS )
-			bFiltered = true;
 		/* Filter out locked songs. */
-		// XXX Hack, this depends on UNLOCKMAN being around.
-		if( UNLOCKMAN && UNLOCKMAN->SongIsLocked(apBestSongs[j]) )
+		if( !apBestSongs[j]->NormallyDisplayed() )
 			bFiltered = true;
 		if( !bFiltered )
 			continue;
@@ -1328,7 +1324,7 @@ void SongManager::UpdatePreferredSort()
 				Song *pSong = NULL;
 				if( !sLine.empty() )
 					pSong = FindSong( sLine );
-				if( pSong && pSong->GetDisplayed() != Song::SHOW_NEVER )
+				if( pSong && UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
 					vpSongs.push_back( pSong );
 			}
 		}

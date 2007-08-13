@@ -343,11 +343,15 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 	{
 		Song* pSong = apAllSongs[i];
 
+		int iLocked = UNLOCKMAN->SongIsLocked( pSong );
+		if( iLocked & LOCKED_DISABLED )
+			continue;
+
 		/* If we're on an extra stage, and this song is selected, ignore #SELECTABLE. */
 		if( pSong != GAMESTATE->m_pCurSong || !GAMESTATE->IsAnExtraStage() )
 		{
 			/* Hide songs that asked to be hidden via #SELECTABLE. */
-			if( !pSong->NormallyDisplayed() )
+			if( iLocked & LOCKED_SELECTABLE )
 				continue;
 			if( so!=SORT_ROULETTE && UNLOCKMAN->SongIsRouletteOnly( pSong ) )
 				continue;
@@ -355,7 +359,7 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 
 		/* Hide locked songs.  If RANDOM_PICKS_LOCKED_SONGS, hide in Roulette and Random,
 		 * too. */
-		if( (so!=SORT_ROULETTE || !RANDOM_PICKS_LOCKED_SONGS) && UNLOCKMAN->SongIsLocked(pSong) )
+		if( (so!=SORT_ROULETTE || !RANDOM_PICKS_LOCKED_SONGS) && iLocked )
 			continue;
 
 		// If the song has at least one steps, add it.

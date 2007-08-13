@@ -101,6 +101,7 @@ public:
 
 	ProfileSlot	m_LoadedFromProfile;	// ProfileSlot_Invalid if wasn't loaded from a profile
 	bool	m_bIsSymLink;
+	bool	m_bEnabled;
 
 	RString	m_sMainTitle, m_sSubTitle, m_sArtist;
 	RString m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit;
@@ -206,7 +207,8 @@ public:
 	bool IsEasy( StepsType st ) const;
 	bool IsTutorial() const;
 	bool HasEdits( StepsType st ) const;
-	SelectionDisplay GetDisplayed() const;
+
+	bool SetEnabled( bool b ) { m_bEnabled = b; }
 	bool NormallyDisplayed() const;
 	bool ShowInDemonstrationAndRanking() const;
 
@@ -232,7 +234,6 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-
 	vector<Steps*> m_vpSteps;
 	vector<Steps*> m_vpStepsByType[NUM_StepsType];
 };

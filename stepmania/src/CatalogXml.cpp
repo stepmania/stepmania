@@ -100,7 +100,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 				
 					if( pSong->IsTutorial() )
 						continue;	// skip: Tutorial song.
-					if( UNLOCKMAN->SongIsLocked(pSong) )
+					if( !pSong->NormallyDisplayed() )
 						continue;	// skip: Locked song.
 					iTotalSongs++;
 					iNumSongsInGroup++;
@@ -184,7 +184,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			
 			if( pSong->IsTutorial() )
 				continue;	// skip: Tutorial song.
-			if( UNLOCKMAN->SongIsLocked(pSong) )
+			if( !pSong->NormallyDisplayed() )
 				continue;	// skip: Locked song.
 
 			SongID songID;

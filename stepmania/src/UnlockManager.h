@@ -90,6 +90,16 @@ public:
 	void PushSelf( lua_State *L );
 };
 
+// Option is locked due to an unsatisfied unlock entry.
+#define LOCKED_LOCK          0x1
+
+// Option is locked due to a #SELECTABLE tag.
+#define LOCKED_SELECTABLE    0x2
+
+// Option is disabled by the operator.  (For courses, this means that a song in the
+// course is disabled.)
+#define LOCKED_DISABLED      0x4
+
 class UnlockManager
 {
 	friend class UnlockEntry;
@@ -100,7 +110,7 @@ public:
 	void Reload();
 
 	float PointsUntilNextUnlock( UnlockRequirement t ) const;
-	bool SongIsLocked( const Song *song ) const;
+	int SongIsLocked( const Song *pSong ) const;
 	bool SongIsRouletteOnly( const Song *song ) const;
 	bool StepsIsLocked( const Song *pSong, const Steps *pSteps ) const;
 	bool CourseIsLocked( const Course *course ) const;

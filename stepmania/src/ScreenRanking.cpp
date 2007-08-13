@@ -39,7 +39,7 @@ static void GetAllSongsToShow( vector<Song*> &vpOut, bool bShowOnlyMostRecentSco
 	vpOut.clear();
 	FOREACH_CONST( Song*, SONGMAN->GetSongs(), s )
 	{
-		if( UNLOCKMAN->SongIsLocked(*s) )
+		if( !(*s)->NormallyDisplayed() )
 			continue;	// skip
 		if( !(*s)->ShowInDemonstrationAndRanking() )
 			continue;	// skip
