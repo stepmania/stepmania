@@ -143,14 +143,166 @@
 		Wrap the unzoomed text at <code>iWidth</code> pixels. If you <Link class='Actor' function='zoom' /> or <Link class='Actor' function='zoomx' /> by <code>x</code> and you want the text wrapped at <code>width</code>, then you should use <code>wrapwidthpixels(width/x)</code>.
 	</Function>
 </Class>
+<Class name='CharacterManager'>
+	<Function name='GetCharacter' return='Character' arguments='string sID'>
+		Return the <Link class='Character' /> corresponding to <code>sID</code>.
+	</Function>
+</Class>
 <Class name='Game'>
 	<Function name='GetName' return='string' arguments=''>
 		Returns the name of the game such as &quot;dance&quot; or &quot;pump&quot;.
 	</Function>
 </Class>
+<Class name='GameManager'>
+	<Function name='GetFirstStepsTypeForGame' return='StepsType' arguments='Game game'>
+		Return the first of the <Link class='StepsType' /> corresponding to <code>game</code>.
+	</Function>
+	<Function name='StepsTypeToLocalizedString' return='string' arguments='StepsType st'>
+		Return the localized string representation of <code>st</code>.
+	</Function>
+</Class>
+<Class name='GameSoundManager'>
+	<Function name='DimMusic' return='void' arguments='float fVolume, float fDuration'>
+		Set the music volume to <code>fVolume</code> for <code>fDuration</code> seconds.
+	</Function>
+	<Function name='GetPlayerBalance' return='float' arguments='PlayerNumber pn'>
+		<!-- XXX: Presumably, 0 is all the way to the left, and 1 is all the way
+		          to the right. -->
+		Return the sound balance for <code>pn</code>.
+	</Function>
+	<Function name='PlayOnce' return='void' arguments='string sPath'>
+		Play the sound at <code>sPath</code> one time.
+	</Function>
+</Class>
 <Class name='GameState'>
+	<Function name='AnyPlayerHasRankingFeats' return='bool' arguments=''>
+		Returns <code>true</code> if any player has performed a feat worthy of ranking.
+	</Function>
+	<Function name='ApplyGameCommand' return='void' arguments='string sCommand, PlayerNumber pn'>
+		The second argument is optional. Apply the GameCommand represented by <code>sCommand</code>
+		for <code>pn</code>, if given. See <Link class='GameCommand' />.
+	</Function>
+	<Function name='EnoughCreditsToJoin' return='bool' arguments=''>
+		Returns <code>true</code> if enough credits have been inserted to join.
+	</Function>
+	<Function name='Env' return='table' arguments=''>
+		Returns the environment table. See <Link class='GameCommand' />.
+	</Function>
+	<Function name='GetCoinMode' return='CoinMode'>
+		Returns the current <Link class='ENUM' function='CoinMode' />.
+	</Function>
+	<Function name='GetCoins' return='int' arguments=''>
+		Return the number of inserted but unused coins. This number is
+		decremented when players join.
+	</Function>
+	<Function name='GetCoinsNeededToJoin' return='int' arguments=''>
+		Return the number of coins needed to join based on the current coin and premium modes
+		as well as the number of people joined, if that matters for the premium mode. See
+		<Link function='GetCoinMode' /> and <Link function='GetPremium' />.
+	</Function>
+	<Function name='GetCourseSongIndex' return='int' arguments=''>
+		The <Link class='Song' />s in a <Link class='Course' /> are numbered sequentially
+		starting from 0. Return the number of the current <Link class='Song' />.
+	</Function>
+	<Function name='GetCurrentCourse' return='Course' arguments=''>
+		Return the current <Link class='Course' />.
+	</Function>
+	<Function name='GetCurrentGame' return='Game' arguments=''>
+		Return the current <Link class='Game' />.
+	</Function>
+	<Function name='GetCurrentSong' return='Song' arguments=''>
+		Return the current <Link class='Song' />.
+	</Function>
+	<Function name='GetCurrentStage' return='Stage' arguments=''>
+		Return the current <Link class='Stage' />.
+	</Function>
+	<Function name='GetCurrentSteps' return='Steps' arguments=''>
+		Return the current <Link class='Steps' />.
+	</Function>
+	<Function name='GetCurrentStepsCredits' return='multiple' arguments=''>
+		Return a variable number of arguments based on the <Link class='Steps' /> being
+		played by all players. For each distinct <Link class='Steps' /> being played by
+		the players, in increasing <Link class='ENUM' function='PlayerNumber' /> order,
+		the difficulty and description of the <Link class='Steps' /> is returned as strings.
+		<br />For example,<br />
+		<code>local credits = {GAMESTATE:GetCurrentStepsCredits()};</code><br />
+		will make a table of the difficulties and descriptions.
+	</Function>
+	<Function name='GetCurrentStyle' return='Style' arguments=''>
+		Return the current <Link class='Style' />.
+	</Function>
+	<Function name='GetCurrentTrail' return='Trail' arguments=''>
+		Return the current <Link class='Trail' />.
+	</Function>
+	<Function name='GetDefaultSongOptions' return='string' arguments=''>
+		Return a string representation of the default song options.
+	</Function>
+	<Function name='GetEasiestStepsDifficulty' return='Difficulty' arguments=''>
+		Return the easiest <Link class='ENUM' function='Difficulty' /> of the
+		currently selected steps by all players. For example, if player 1 has
+		selected Hard steps and player 2 has selected Medium steps, Medium will
+		be returned.
+	</Function>
+	<Function name='GetEditCourseEntryIndex' return='int' arguments=''>
+		<!-- XXX: What is the edit course entry index? -->
+	</Function>
+	<Function name='GetEditLocalProfile' return='Profile' arguments=''>
+		<!-- XXX: What is the EditLocalProfile? -->
+		Return the Edit Local <Link class='Profile' /> or <code>nil</code> if
+		it does not exist.
+	</Function>
+	<Function name='GetEditLocalProfileID' return='string' arguments=''>
+		<!-- XXX: What is the EditLocalProfileID? -->
+	</Function>
+	<Function name='GetEditSourceSteps' return='Steps' arguments=''>
+		Return the source <Link class='Steps' /> for the editor or <code>nil</code>
+		if it does not exist.
+	</Function>
+	<Function name='GetGameSeed' return='int' arguments=''>
+		Return the current random seed for the game.
+	</Function>
+	<Function name='GetGameplayLeadIn' return='bool' arguments=''>
+		Return <code>true</code> if the gameplay lead in is enabled. If
+		<code>false</code>, gameplay begin immediately. <!-- XXX: I think. -->
+	</Function>
 	<Function name='GetHumanPlayers' return='{PlayerNumber}' arguments=''>
 		Returns an array of <Link class='PlayerNumber' />s corresponding to Human players.
+	</Function>
+</Class>
+<Class name='MemoryCardManager'>
+	<Function name='GetCardState' return='MemoryCardState' arguments='PlayerNumber pn'>
+		Return the state for <code>pn</code>.
+	</Function>
+</Class>
+<Class name='MessageManager'>
+	<Function name='Broadcast' return='void' arguments='string sMessage, table paramTable'>
+		Broadcast the message to all listeners subscribed to <code>sMessage</code>. The
+		second argument is an optional table of parameters. It may be omitted or explicitly
+		set to <code>nil</code>.
+	</Function>
+</Class>
+<Class name='PrefsManager'>
+	<Function name='GetPreference' return='various' arguments='string sPreference'>
+		Return the value of the preference <code>sPreference</code>.
+	</Function>
+	<Function name='SetPreference' return='void' arguments='string sPreference, various value'>
+		Set the value of the preference <code>sPreference</code> to <code>value</code>.
+	</Function>
+	<Function name='SetPreferenceToDefault' return='void' arguments='string sPreference'>
+		Reset preference <code>sPreference</code> to the default value.
+	</Function>
+</Class>
+<Class name='RageDisplay'>
+	<Function name='GetDisplayHeight' return='int' arguments=''>
+		Return the height of the display.
+	</Function>
+	<Function name='GetDisplayWidth' return='int' arguments=''>
+		Return the width of the display.
+	</Function>
+</Class>
+<Class name='RageInput'>
+	<Function name='GetDescriptions' return='{string}' arguments=''>
+		Return an array of connected input device descriptions.
 	</Function>
 </Class>
 <Class name='RageSound'>
