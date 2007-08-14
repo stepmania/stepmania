@@ -208,7 +208,7 @@ public:
 	bool IsTutorial() const;
 	bool HasEdits( StepsType st ) const;
 
-	bool SetEnabled( bool b ) { m_bEnabled = b; }
+	void SetEnabled( bool b ) { m_bEnabled = b; }
 	bool NormallyDisplayed() const;
 	bool ShowInDemonstrationAndRanking() const;
 
