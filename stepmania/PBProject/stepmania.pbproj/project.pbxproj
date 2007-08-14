@@ -1788,6 +1788,10 @@
 		AAB3B7DD0C6C582E001BF487 /* ScreenSelectProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB3B7DB0C6C582D001BF487 /* ScreenSelectProfile.h */; };
 		AAB3B7DE0C6C582E001BF487 /* ScreenSelectProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B7DA0C6C582D001BF487 /* ScreenSelectProfile.cpp */; };
 		AAB3B7DF0C6C582E001BF487 /* ScreenSelectProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB3B7DB0C6C582D001BF487 /* ScreenSelectProfile.h */; };
+		AAB3BB590C718F2D001BF487 /* RageUtil_CachedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3BB570C718F2C001BF487 /* RageUtil_CachedObject.cpp */; };
+		AAB3BB5A0C718F2D001BF487 /* RageUtil_CachedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB3BB580C718F2C001BF487 /* RageUtil_CachedObject.h */; };
+		AAB3BB5B0C718F2D001BF487 /* RageUtil_CachedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3BB570C718F2C001BF487 /* RageUtil_CachedObject.cpp */; };
+		AAB3BB5C0C718F2D001BF487 /* RageUtil_CachedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB3BB580C718F2C001BF487 /* RageUtil_CachedObject.h */; };
 		AAB55EBB09A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */; };
 		AAB55EBC09A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */; };
 		AAB55EBD09A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB709A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp */; };
@@ -3087,6 +3091,8 @@
 		AAB3B39104C5921800D02EE9 /* MovieTexture_Null.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_Null.h; path = MovieTexture/MovieTexture_Null.h; sourceTree = "<group>"; };
 		AAB3B7DA0C6C582D001BF487 /* ScreenSelectProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenSelectProfile.cpp; path = ../src/ScreenSelectProfile.cpp; sourceTree = "<group>"; };
 		AAB3B7DB0C6C582D001BF487 /* ScreenSelectProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenSelectProfile.h; path = ../src/ScreenSelectProfile.h; sourceTree = "<group>"; };
+		AAB3BB570C718F2C001BF487 /* RageUtil_CachedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageUtil_CachedObject.cpp; path = ../src/RageUtil_CachedObject.cpp; sourceTree = "<group>"; };
+		AAB3BB580C718F2C001BF487 /* RageUtil_CachedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageUtil_CachedObject.h; path = ../src/RageUtil_CachedObject.h; sourceTree = "<group>"; };
 		AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenGameplaySyncMachine.cpp; path = ../src/ScreenGameplaySyncMachine.cpp; sourceTree = "<group>"; };
 		AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenGameplaySyncMachine.h; path = ../src/ScreenGameplaySyncMachine.h; sourceTree = "<group>"; };
 		AAB55EB709A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenUnlockBrowse.cpp; path = ../src/ScreenUnlockBrowse.cpp; sourceTree = "<group>"; };
@@ -4062,6 +4068,8 @@
 				AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */,
 				AA8A404F06EEFF72002F25AB /* RageUtil_BackgroundLoader.cpp */,
 				AA8A405006EEFF72002F25AB /* RageUtil_BackgroundLoader.h */,
+				AAB3BB570C718F2C001BF487 /* RageUtil_CachedObject.cpp */,
+				AAB3BB580C718F2C001BF487 /* RageUtil_CachedObject.h */,
 				AAC23F7E0485E68D005F316C /* RageUtil_CharConversions.cpp */,
 				AAC23F7F0485E68D005F316C /* RageUtil_CharConversions.h */,
 				AAD3D5AB05B5AB4E00014FAC /* RageUtil_CircularBuffer.h */,
@@ -5680,6 +5688,7 @@
 				AA3396BB0BDE195E00E1475F /* RageSoundReader_Merge.h in Headers */,
 				AA339A7F0BF0FA6400E1475F /* LoadingWindow_Null.h in Headers */,
 				AAB3B7DD0C6C582E001BF487 /* ScreenSelectProfile.h in Headers */,
+				AAB3BB5A0C718F2D001BF487 /* RageUtil_CachedObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6102,6 +6111,7 @@
 				AA3396B90BDE195E00E1475F /* RageSoundReader_Merge.h in Headers */,
 				AA339A7E0BF0FA6400E1475F /* LoadingWindow_Null.h in Headers */,
 				AAB3B7DF0C6C582E001BF487 /* ScreenSelectProfile.h in Headers */,
+				AAB3BB5C0C718F2D001BF487 /* RageUtil_CachedObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6888,6 +6898,7 @@
 				AA1893660BD777C500AEC0BF /* ScreenProfileSave.cpp in Sources */,
 				AA3396BA0BDE195E00E1475F /* RageSoundReader_Merge.cpp in Sources */,
 				AAB3B7DC0C6C582E001BF487 /* ScreenSelectProfile.cpp in Sources */,
+				AAB3BB590C718F2D001BF487 /* RageUtil_CachedObject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7299,6 +7310,7 @@
 				AA18937E0BD77ECF00AEC0BF /* NotesLoaderMidi.cpp in Sources */,
 				AA3396B80BDE195E00E1475F /* RageSoundReader_Merge.cpp in Sources */,
 				AAB3B7DE0C6C582E001BF487 /* ScreenSelectProfile.cpp in Sources */,
+				AAB3BB5B0C718F2D001BF487 /* RageUtil_CachedObject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
