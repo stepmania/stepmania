@@ -44,7 +44,7 @@ public:
 	static void ClearCacheAll()
 	{
 		CachedObjectHelpers::Lock();
-		FOREACH( ObjectPointer *, m_apObjectPointers, p )
+		for( typename vector<ObjectPointer *>::iterator p = m_apObjectPointers.begin(); p != m_apObjectPointers.end(); ++p )
 		{
 			(*p)->m_pCache = NULL;
 			(*p)->m_bCacheIsSet = false;
@@ -56,7 +56,7 @@ public:
 	static void ClearCacheSpecific( const T *pObject )
 	{
 		CachedObjectHelpers::Lock();
-		FOREACH( ObjectPointer *, m_apObjectPointers, p )
+		for( typename vector<ObjectPointer *>::iterator p = m_apObjectPointers.begin(); p != m_apObjectPointers.end(); ++p )
 		{
 			if( (*p)->m_pCache == pObject )
 			{
@@ -71,7 +71,7 @@ public:
 	static void ClearCacheNegative()
 	{
 		CachedObjectHelpers::Lock();
-		FOREACH( ObjectPointer *, m_apObjectPointers, p )
+		for( typename vector<ObjectPointer *>::iterator p = m_apObjectPointers.begin(); p != m_apObjectPointers.end(); ++p )
 		{
 			if( (*p)->m_pCache == NULL )
 				(*p)->m_bCacheIsSet = false;
@@ -81,7 +81,7 @@ public:
 
 private:
 	typedef CachedObjectPointer<T> ObjectPointer;
-	friend class ObjectPointer;
+	friend class CachedObjectPointer<T>;
 
 	static void Register( ObjectPointer *p )
 	{
@@ -90,7 +90,7 @@ private:
 
 	static void Unregister( ObjectPointer *p )
 	{
-		vector<ObjectPointer *>::iterator it = find( m_apObjectPointers.begin(), m_apObjectPointers.end(), p );
+		typename vector<ObjectPointer *>::iterator it = find( m_apObjectPointers.begin(), m_apObjectPointers.end(), p );
 		ASSERT( it != m_apObjectPointers.end() );
 		m_apObjectPointers.erase( it );
 	}
@@ -104,6 +104,7 @@ private:
 	const T *m_pObject;
 	static vector<ObjectPointer *> m_apObjectPointers;
 };
+template<typename T> vector<CachedObjectPointer<T> *> CachedObject<T>::m_apObjectPointers = vector<CachedObjectPointer<T> *>();
 
 template<typename T>
 class CachedObjectPointer
@@ -163,13 +164,13 @@ public:
 	}
 
 private:
-	friend class Object;
+	friend class CachedObject<T>;
 
 	T *m_pCache;
 	bool m_bCacheIsSet;
 };
 
-#define CACHED_REGISTER_CLASS(T) template<> vector<CachedObject<T>::ObjectPointer *> CachedObject<T>::m_apObjectPointers;
+#define CACHED_REGISTER_CLASS(T)
 
 #endif
 
