@@ -2,7 +2,6 @@
 #include "ScreenReloadSongs.h"
 #include "ScreenManager.h"
 #include "SongManager.h"
-#include "UnlockManager.h"
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
@@ -76,7 +75,6 @@ void ScreenReloadSongs::Update( float fDeltaTime )
 	ASSERT( !IsFirstUpdate() );
 
 	SONGMAN->Reload( false, m_LoadingWindow );
-	UNLOCKMAN->UpdateCachedPointers();
 
 	SCREENMAN->PostMessageToTopScreen( SM_GoToNextScreen, 0 );
 }
