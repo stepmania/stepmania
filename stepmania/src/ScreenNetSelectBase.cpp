@@ -267,7 +267,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			continue;
 		}
 
-		char curChar = m_sText[0];
+		char curChar = m_sText[i];
 		int iCharLen = m_pFont->GetLineWidthInSourcePixels( wstring(1, curChar) );
 
 		switch( curChar )
@@ -287,7 +287,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 				SimpleAddLine( sCurrentLine, iLineWidth );
 				if( iWordWidth > 0 )
 					iLineWidth = iWordWidth +	//Add the width of a space
-						m_pFont->GetLineWidthInSourcePixels( RStringToWstring( " " ) );
+						m_pFont->GetLineWidthInSourcePixels( L" " );
 				sCurrentLine = sCurrentWord + " ";
 				iWordWidth = 0;
 				sCurrentWord = "";
