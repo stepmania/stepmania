@@ -210,7 +210,7 @@ const UnlockEntry *UnlockManager::FindSteps( const Song *pSong, const Steps *pSt
 const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
 {
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
-		if( e->m_pCourse == pCourse )
+		if( e->m_Course.ToCourse() == pCourse )
 			return &(*e);
 	return NULL;
 }
@@ -316,7 +316,7 @@ bool UnlockEntry::IsValid() const
 		return m_Song.IsValid() && m_dc != Difficulty_Invalid;
 
 	case UnlockRewardType_Course:
-		return m_pCourse != NULL;
+		return m_Course.IsValid();
 
 	case UnlockRewardType_Modifier:
 		return true;
@@ -371,7 +371,7 @@ RString UnlockEntry::GetDescription() const
 	case UnlockRewardType_Steps:
 		return (pSong ? pSong->GetDisplayFullTitle() : "") + ", " + DifficultyToLocalizedString( m_dc );
 	case UnlockRewardType_Course:
-		return m_pCourse ? m_pCourse->GetDisplayFullTitle() : "";
+		return m_Course.IsValid() ? m_Course.ToCourse()->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Modifier:
 		return CommonMetrics::LocalizeOptionItem( GetModifier(), false );
 	}
@@ -389,7 +389,7 @@ RString	UnlockEntry::GetBannerFile() const
 	case UnlockRewardType_Steps:
 		return pSong ? pSong->GetBannerPath() : "";
 	case UnlockRewardType_Course:
-		return m_pCourse ? m_pCourse->GetBannerPath() : "";
+		return m_Course.ToCourse() ? m_Course.ToCourse()->GetBannerPath() : "";
 	case UnlockRewardType_Modifier:
 		return "";
 	}	
@@ -499,7 +499,7 @@ void UnlockManager::Load()
 		str += e->IsLocked()? "locked":"unlocked";
 		if( e->m_Song.IsValid() )
 			str += ( " (found song)" );
-		if( e->m_pCourse )
+		if( e->m_Course.IsValid() )
 			str += ( " (found course)" );
 		LOG->Trace( "%s", str.c_str() );
 	}
@@ -563,8 +563,8 @@ void UnlockManager::UpdateCachedPointers()
 
 			break;
 		case UnlockRewardType_Course:
-			e->m_pCourse = SONGMAN->FindCourse( e->m_cmd.GetArg(0).s );
-			if( e->m_pCourse == NULL )
+			e->m_Course.FromCourse( SONGMAN->FindCourse(e->m_cmd.GetArg(0).s) );
+			if( !e->m_Course.IsValid() )
 				LOG->Warn( "Unlock: Cannot find course matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
 			break;
 		case UnlockRewardType_Modifier:
@@ -600,8 +600,8 @@ void UnlockManager::PreferUnlockEntryID( RString sUnlockEntryID )
 
 		if( pEntry.m_Song.ToSong() != NULL )
 			GAMESTATE->m_pPreferredSong = pEntry.m_Song.ToSong();
-		if( pEntry.m_pCourse != NULL )
-			GAMESTATE->m_pPreferredCourse = pEntry.m_pCourse;
+		if( pEntry.m_Course.ToCourse() )
+			GAMESTATE->m_pPreferredCourse = pEntry.m_Course.ToCourse();
 	}
 }
 

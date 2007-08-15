@@ -8,6 +8,7 @@
 #include <set>
 #include "Difficulty.h"
 #include "SongUtil.h"
+#include "CourseUtil.h"
 
 class Song;
 class Course;
@@ -56,7 +57,6 @@ public:
 		m_Type = UnlockRewardType_Invalid;
 
 		m_dc = Difficulty_Invalid;
-		m_pCourse = NULL;
 
 		ZERO( m_fRequirement );
 		m_bRequirePassHardSteps = false;
@@ -71,7 +71,7 @@ public:
 	 * these will be non-NULL. */
 	SongID	m_Song;
 	Difficulty m_dc;
-	Course	*m_pCourse;
+	CourseID m_Course;
 
 	float	m_fRequirement[NUM_UnlockRequirement];	// unlocked if any of of these are met
 	bool	m_bRequirePassHardSteps;

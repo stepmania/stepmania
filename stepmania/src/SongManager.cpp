@@ -1452,8 +1452,8 @@ void SongManager::UpdatePreferredSort()
 			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
 			{
 				if( ue->m_Type == UnlockRewardType_Course )
-					if( ue->m_pCourse )
-						vpUnlockCourses.push_back( ue->m_pCourse );
+					if( ue->m_Course.IsValid() )
+						vpUnlockCourses.push_back( ue->m_Course.ToCourse() );
 			}
 
 			FOREACH( CoursePointerVector, m_vPreferredCourseSort, v )

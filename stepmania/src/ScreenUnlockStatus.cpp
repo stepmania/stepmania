@@ -117,7 +117,7 @@ void ScreenUnlockStatus::Init()
 				break;
 			case UnlockRewardType_Course:
 				{
-					const Course *pCourse = entry.m_pCourse;
+					const Course *pCourse = entry.m_Course.ToCourse();
 					ASSERT( pCourse );
 
 					text->SetMaxWidth( MaxWidth );
