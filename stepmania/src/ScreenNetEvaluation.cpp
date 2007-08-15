@@ -71,6 +71,7 @@ void ScreenNetEvaluation::RedoUserTexts()
 	float cy = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dY",m_iShowSide));
 	
 	m_iCurrentPlayer = 0;
+	m_textUsers.clear();
 	m_textUsers.resize(m_iActivePlayers);
 
 	for( int i=0; i<m_iActivePlayers; ++i )
@@ -81,6 +82,7 @@ void ScreenNetEvaluation::RedoUserTexts()
 		m_textUsers[i].SetXY( cx, cy );
 
 		this->AddChild( &m_textUsers[i] );
+		ActorUtil::LoadAllCommands( m_textUsers[i], m_sName );
 		cx+=USERDX;
 		cy+=USERDY;
 	}
