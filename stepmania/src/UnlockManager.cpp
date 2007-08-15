@@ -481,7 +481,43 @@ void UnlockManager::Load()
 			if( ue != ue2 )
 				ASSERT_M( ue->m_sEntryID != ue2->m_sEntryID, ssprintf("duplicate unlock entry id %s",ue->m_sEntryID.c_str()) );
 
-	UpdateCachedPointers();
+	FOREACH( UnlockEntry, m_UnlockEntries, e )
+	{
+		switch( e->m_Type )
+		{
+		case UnlockRewardType_Song:
+			e->m_Song.FromSong( SONGMAN->FindSong( e->m_cmd.GetArg(0).s ) );
+			if( !e->m_Song.IsValid() )
+				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
+			break;
+		case UnlockRewardType_Steps:
+			e->m_Song.FromSong( SONGMAN->FindSong( e->m_cmd.GetArg(0).s ) );
+			if( !e->m_Song.IsValid() )
+			{
+				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
+				break;
+			}
+
+			e->m_dc = StringToDifficulty( e->m_cmd.GetArg(1).s );
+			if( e->m_dc == Difficulty_Invalid )
+			{
+				LOG->Warn( "Unlock: Invalid difficulty \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
+				break;
+			}
+
+			break;
+		case UnlockRewardType_Course:
+			e->m_Course.FromCourse( SONGMAN->FindCourse(e->m_cmd.GetArg(0).s) );
+			if( !e->m_Course.IsValid() )
+				LOG->Warn( "Unlock: Cannot find course matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
+			break;
+		case UnlockRewardType_Modifier:
+			// nothing to cache
+			break;
+		default:
+			ASSERT(0);
+		}
+	}
 
 	//
 	// Log unlocks
@@ -532,51 +568,6 @@ float UnlockManager::PointsUntilNextUnlock( UnlockRequirement t ) const
 		return 0;  // no match found
 	return fSmallestPoints - fScores[t];
 }
-
-/* Update the cached pointers.  Only call this when it's likely to have changed,
- * such as on load, or when a song title changes in the editor. */
-void UnlockManager::UpdateCachedPointers()
-{
-	FOREACH( UnlockEntry, m_UnlockEntries, e )
-	{
-		switch( e->m_Type )
-		{
-		case UnlockRewardType_Song:
-			e->m_Song.FromSong( SONGMAN->FindSong( e->m_cmd.GetArg(0).s ) );
-			if( !e->m_Song.IsValid() )
-				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
-			break;
-		case UnlockRewardType_Steps:
-			e->m_Song.FromSong( SONGMAN->FindSong( e->m_cmd.GetArg(0).s ) );
-			if( !e->m_Song.IsValid() )
-			{
-				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
-				break;
-			}
-
-			e->m_dc = StringToDifficulty( e->m_cmd.GetArg(1).s );
-			if( e->m_dc == Difficulty_Invalid )
-			{
-				LOG->Warn( "Unlock: Invalid difficulty \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
-				break;
-			}
-
-			break;
-		case UnlockRewardType_Course:
-			e->m_Course.FromCourse( SONGMAN->FindCourse(e->m_cmd.GetArg(0).s) );
-			if( !e->m_Course.IsValid() )
-				LOG->Warn( "Unlock: Cannot find course matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
-			break;
-		case UnlockRewardType_Modifier:
-			// nothing to cache
-			break;
-		default:
-			ASSERT(0);
-		}
-	}
-}
-
-
 
 void UnlockManager::UnlockEntryID( RString sEntryID )
 {

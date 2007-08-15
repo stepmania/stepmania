@@ -143,9 +143,6 @@ public:
 	// All locked songs are stored here
 	vector<UnlockEntry>	m_UnlockEntries;
 
-	// If global song or course points change, call to update
-	void UpdateCachedPointers();
-
 	void GetUnlocksByType( UnlockRewardType t, vector<UnlockEntry *> &apEntries );
 	void GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, RString sEntryID );
 	void GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apStepsOut, RString sEntryID );
