@@ -70,6 +70,8 @@ local programming = {
 	"Charles Lohr",
 	"Josh “Axlecrusher” Allen",
 	"Jason “Wolfman2000” Felds",
+	"Eric “Subwire” Gustafson",
+
 }
 
 local thanks = {
