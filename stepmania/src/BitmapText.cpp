@@ -26,10 +26,10 @@ REGISTER_ACTOR_CLASS( BitmapText )
  * Better, we could go all the way, drop all of the actor-specific font aliases,
  * and do "font=header2;valign=top;...".
  */
+#define NUM_RAINBOW_COLORS	THEME->GetMetricI("BitmapText","NumRainbowColors")
 #define RAINBOW_COLOR(n)	THEME->GetMetricC("BitmapText",ssprintf("RainbowColor%i", n+1))
 
-static const int NUM_RAINBOW_COLORS = 7;
-static RageColor RAINBOW_COLORS[NUM_RAINBOW_COLORS];
+static vector<RageColor> RAINBOW_COLORS;
 
 BitmapText::BitmapText()
 {
@@ -37,7 +37,8 @@ BitmapText::BitmapText()
 	static int iReloadCounter = 0;
 	if( iReloadCounter%20==0 )
 	{
-		for( int i = 0; i < NUM_RAINBOW_COLORS; ++i )
+		RAINBOW_COLORS.resize( NUM_RAINBOW_COLORS );
+		for( unsigned i = 0; i < RAINBOW_COLORS.size(); ++i )
 			RAINBOW_COLORS[i] = RAINBOW_COLOR(i);
 	}
 	iReloadCounter++;
@@ -533,14 +534,14 @@ void BitmapText::DrawPrimitives()
 		//
 		if( m_bRainbowScroll )
 		{
-			int color_index = int(RageTimer::GetTimeSinceStartFast() / 0.200) % NUM_RAINBOW_COLORS;
+			int color_index = int(RageTimer::GetTimeSinceStartFast() / 0.200) % RAINBOW_COLORS.size();
 			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
 			{
 				const RageColor color = RAINBOW_COLORS[color_index];
 				for( unsigned j=i; j<i+4; j++ )
 					m_aVertices[j].c = color;
 
-				color_index = (color_index+1)%NUM_RAINBOW_COLORS;
+				color_index = (color_index+1) % RAINBOW_COLORS.size();
 			}
 		}
 		else
