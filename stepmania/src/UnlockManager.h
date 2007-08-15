@@ -113,7 +113,7 @@ public:
 	int SongIsLocked( const Song *pSong ) const;
 	bool SongIsRouletteOnly( const Song *song ) const;
 	bool StepsIsLocked( const Song *pSong, const Steps *pSteps ) const;
-	bool CourseIsLocked( const Course *course ) const;
+	int CourseIsLocked( const Course *course ) const;
 	bool ModifierIsLocked( const RString &sOneMod ) const;
 
 	// Gets number of unlocks for title screen

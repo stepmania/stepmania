@@ -106,16 +106,19 @@ RString UnlockManager::FindEntryID( const RString &sName ) const
 	return pEntry->m_sEntryID;
 }
 
-bool UnlockManager::CourseIsLocked( const Course *course ) const
+int UnlockManager::CourseIsLocked( const Course *pCourse ) const
 {
-	if( !PREFSMAN->m_bUseUnlockSystem )
-		return false;
+	int iRet = 0;
+	if( PREFSMAN->m_bUseUnlockSystem )
+	{
+		const UnlockEntry *p = FindCourse( pCourse );
+		if( p == NULL )
+			return false;
+		if( p->IsLocked() )
+			iRet |= LOCKED_LOCK;
+	}
 
-	const UnlockEntry *p = FindCourse( course );
-	if( p == NULL )
-		return false;
-
-	return p->IsLocked();
+	return iRet;
 }
 
 int UnlockManager::SongIsLocked( const Song *pSong ) const
