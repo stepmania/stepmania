@@ -52,6 +52,8 @@ static const ThemeMetric<RageColor>	UNLOCK_COLOR			( "SongManager", "UnlockColor
 static const ThemeMetric<bool>		MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT	( "SongManager", "MoveUnlocksToBottomOfPreferredSort" );
 static const ThemeMetric<int>		EXTRA_STAGE2_DIFFICULTY_MAX	( "SongManager", "ExtraStage2DifficultyMax" );
 
+static Preference<RString> g_sDisabledSongs( "DisabledSongs", "" );
+
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf( "SongGroupColor%i", (int) i+1 ); }
 RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf( "CourseGroupColor%i", (int) i+1 ); }
 
@@ -259,6 +261,8 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		/* Load the group sym links (if any)*/
 		LoadGroupSymLinks(sDir, sGroupDirName);
 	}
+
+	SetEnabledSongs();
 }
 
 // Instead of "symlinks", songs should have membership in multiple groups.
@@ -899,6 +903,38 @@ void SongManager::SetPreferences()
 		/* PREFSMAN->m_bAutogenSteps may have changed. */
 		m_pSongs[i]->RemoveAutoGenNotes();
 		m_pSongs[i]->AddAutoGenNotes();
+	}
+}
+
+void SongManager::EnableSong( Song *pSong, bool bEnable )
+{
+	vector<RString> asDisabledSongs;
+	split( g_sDisabledSongs, ";", asDisabledSongs, true );
+
+	vector<RString>::iterator it = find( asDisabledSongs.begin(), asDisabledSongs.end(), pSong->GetSongDir() );
+	if( bEnable && it == asDisabledSongs.end() )
+		asDisabledSongs.push_back( pSong->GetSongDir() );
+	else if( !bEnable && it != asDisabledSongs.end() )
+		asDisabledSongs.erase( it );
+
+	g_sDisabledSongs.Set( join(";", asDisabledSongs) );
+
+	pSong->SetEnabled( bEnable );
+}
+
+void SongManager::SetEnabledSongs()
+{
+	FOREACH( Song *, m_pSongs, s )
+		(*s)->SetEnabled( true );
+
+	vector<RString> asDisabledSongs;
+	split( g_sDisabledSongs, ";", asDisabledSongs, true );
+
+	FOREACH_CONST( RString, asDisabledSongs, s )
+	{
+		Song *pSong = this->FindSong( *s );
+		if( pSong )
+			pSong->SetEnabled( false );
 	}
 }
 

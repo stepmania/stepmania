@@ -38,6 +38,8 @@ public:
 
 	void RegenerateNonFixedCourses();
 	void SetPreferences();
+	void EnableSong( Song *pSong, bool bEnable );
+	void SetEnabledSongs();
 
 	void LoadStepEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot );
 	void LoadCourseEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot );
