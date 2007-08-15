@@ -102,7 +102,7 @@ void fapproach( float& val, float other_val, float to_move )
 float fmodfp(float x, float y)
 {
 	x = fmodf(x, y);	/* x is [-y,y] */
-	x += y;				/* x is [0,y*2] */
+	x += y;			/* x is [0,y*2] */
 	x = fmodf(x, y);	/* x is [0,y] */
 	return x;
 }
@@ -111,7 +111,7 @@ int power_of_two( int iInput )
 {
 	int iValue = 1;
 
-	while ( iValue < iInput )
+	while( iValue < iInput )
 		iValue <<= 1;
 
 	return iValue;
