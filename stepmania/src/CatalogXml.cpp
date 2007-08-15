@@ -138,7 +138,8 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			// the title.
 			if( !pCourse->AllSongsAreFixed() )
 				continue;
-			if( UNLOCKMAN->CourseIsLocked(pCourse) )
+			/* Don't write locked songs to the catalog, but do write disabled songs. */
+			if( UNLOCKMAN->CourseIsLocked(pCourse) & ~LOCKED_DISABLED )
 				continue;
 			iTotalCourses++;
 		}
@@ -233,7 +234,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			// the title.
 			if( !pCourse->AllSongsAreFixed() )
 				continue;
-			if( UNLOCKMAN->CourseIsLocked(pCourse) )
+			if( UNLOCKMAN->CourseIsLocked(pCourse) & ~LOCKED_DISABLED )
 				continue;
 
 			CourseID courseID;
