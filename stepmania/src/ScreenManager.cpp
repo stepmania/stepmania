@@ -874,6 +874,11 @@ public:
 LUA_REGISTER_CLASS( ScreenManager )
 // lua end
 
+RString StepMania::GetTopScreenName()
+{
+	return SCREENMAN->GetTopScreen()->GetName();
+}
+
 /*
  * (c) 2001-2003 Chris Danford, Glenn Maynard
  * All rights reserved.
