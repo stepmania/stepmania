@@ -193,7 +193,7 @@ bool UnlockManager::ModifierIsLocked( const RString &sOneMod ) const
 const UnlockEntry *UnlockManager::FindSong( const Song *pSong ) const
 {
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
-		if( e->m_pSong == pSong  &&  e->m_dc == Difficulty_Invalid )
+		if( e->m_Song.ToSong() == pSong  &&  e->m_dc == Difficulty_Invalid )
 			return &(*e);
 	return NULL;
 }
@@ -202,7 +202,7 @@ const UnlockEntry *UnlockManager::FindSteps( const Song *pSong, const Steps *pSt
 {
 	ASSERT( pSong && pSteps );
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
-		if( e->m_pSong == pSong  &&  e->m_dc == pSteps->GetDifficulty() )
+		if( e->m_Song.ToSong() == pSong  &&  e->m_dc == pSteps->GetDifficulty() )
 			return &(*e);
 	return NULL;
 }
@@ -310,10 +310,10 @@ bool UnlockEntry::IsValid() const
 	switch( m_Type )
 	{
 	case UnlockRewardType_Song:
-		return m_pSong != NULL;
+		return m_Song.IsValid();
 
 	case UnlockRewardType_Steps:
-		return m_pSong != NULL && m_dc != Difficulty_Invalid;
+		return m_Song.IsValid() && m_dc != Difficulty_Invalid;
 
 	case UnlockRewardType_Course:
 		return m_pCourse != NULL;
@@ -339,17 +339,18 @@ UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 		if( m_fRequirement[i] && fScores[i] >= m_fRequirement[i] )
 			return UnlockEntryStatus_RequirementsMet;
 
-	if( m_bRequirePassHardSteps && m_pSong )
+	if( m_bRequirePassHardSteps && m_Song.IsValid() )
 	{
+		Song *pSong = m_Song.ToSong();
 		vector<Steps*> vp;
 		SongUtil::GetSteps(
-			m_pSong,
+			pSong,
 			vp, 
 			StepsType_Invalid, 
 			Difficulty_Hard
 			);
 		FOREACH_CONST( Steps*, vp, s )
-			if( PROFILEMAN->GetMachineProfile()->HasPassedSteps( m_pSong, *s ) )
+			if( PROFILEMAN->GetMachineProfile()->HasPassedSteps(pSong, *s) )
 				return UnlockEntryStatus_RequirementsMet;
 	}
 
@@ -359,15 +360,16 @@ UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 
 RString UnlockEntry::GetDescription() const
 {
+	Song *pSong = m_Song.ToSong();
 	switch( m_Type )
 	{
 	default:
 		ASSERT(0);
 		return "";
 	case UnlockRewardType_Song:
-		return m_pSong ? m_pSong->GetDisplayFullTitle() : "";
+		return pSong ? pSong->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Steps:
-		return (m_pSong ? m_pSong->GetDisplayFullTitle() : "") + ", " + DifficultyToLocalizedString( m_dc );
+		return (pSong ? pSong->GetDisplayFullTitle() : "") + ", " + DifficultyToLocalizedString( m_dc );
 	case UnlockRewardType_Course:
 		return m_pCourse ? m_pCourse->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Modifier:
@@ -377,6 +379,7 @@ RString UnlockEntry::GetDescription() const
 
 RString	UnlockEntry::GetBannerFile() const
 {
+	Song *pSong = m_Song.ToSong();
 	switch( m_Type )
 	{
 	default:
@@ -384,7 +387,7 @@ RString	UnlockEntry::GetBannerFile() const
 		return "";
 	case UnlockRewardType_Song:
 	case UnlockRewardType_Steps:
-		return m_pSong ? m_pSong->GetBannerPath() : "";
+		return pSong ? pSong->GetBannerPath() : "";
 	case UnlockRewardType_Course:
 		return m_pCourse ? m_pCourse->GetBannerPath() : "";
 	case UnlockRewardType_Modifier:
@@ -394,6 +397,7 @@ RString	UnlockEntry::GetBannerFile() const
 
 RString	UnlockEntry::GetBackgroundFile() const
 {
+	Song *pSong = m_Song.ToSong();
 	switch( m_Type )
 	{
 	default:
@@ -401,7 +405,7 @@ RString	UnlockEntry::GetBackgroundFile() const
 		return "";
 	case UnlockRewardType_Song:
 	case UnlockRewardType_Steps:
-		return m_pSong ? m_pSong->GetBackgroundPath() : "";
+		return pSong ? pSong->GetBackgroundPath() : "";
 	case UnlockRewardType_Course:
 		return "";
 	case UnlockRewardType_Modifier:
@@ -493,7 +497,7 @@ void UnlockManager::Load()
 
 		str += ssprintf( "entryID = %s ", e->m_sEntryID.c_str() );
 		str += e->IsLocked()? "locked":"unlocked";
-		if( e->m_pSong )
+		if( e->m_Song.IsValid() )
 			str += ( " (found song)" );
 		if( e->m_pCourse )
 			str += ( " (found course)" );
@@ -538,13 +542,13 @@ void UnlockManager::UpdateCachedPointers()
 		switch( e->m_Type )
 		{
 		case UnlockRewardType_Song:
-			e->m_pSong = SONGMAN->FindSong( e->m_cmd.GetArg(0).s );
-			if( e->m_pSong == NULL )
+			e->m_Song.FromSong( SONGMAN->FindSong( e->m_cmd.GetArg(0).s ) );
+			if( !e->m_Song.IsValid() )
 				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
 			break;
 		case UnlockRewardType_Steps:
-			e->m_pSong = SONGMAN->FindSong( e->m_cmd.GetArg(0).s );
-			if( e->m_pSong == NULL )
+			e->m_Song.FromSong( SONGMAN->FindSong( e->m_cmd.GetArg(0).s ) );
+			if( !e->m_Song.IsValid() )
 			{
 				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(0).s.c_str() );
 				break;
@@ -594,8 +598,8 @@ void UnlockManager::PreferUnlockEntryID( RString sUnlockEntryID )
 		if( pEntry.m_sEntryID != sUnlockEntryID )
 			continue;
 
-		if( pEntry.m_pSong != NULL )
-			GAMESTATE->m_pPreferredSong = pEntry.m_pSong;
+		if( pEntry.m_Song.ToSong() != NULL )
+			GAMESTATE->m_pPreferredSong = pEntry.m_Song.ToSong();
 		if( pEntry.m_pCourse != NULL )
 			GAMESTATE->m_pPreferredCourse = pEntry.m_pCourse;
 	}
@@ -646,7 +650,7 @@ void UnlockManager::GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, RStri
 
 	for( unsigned i = 0; i < apEntries.size(); ++i )
 		if( apEntries[i]->m_sEntryID == sUnlockEntryID )
-			apSongsOut.push_back( apEntries[i]->m_pSong );
+			apSongsOut.push_back( apEntries[i]->m_Song.ToSong() );
 }
 
 void UnlockManager::GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apDifficultyOut, RString sUnlockEntryID )
@@ -658,7 +662,7 @@ void UnlockManager::GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vecto
 	{
 		if( apEntries[i]->m_sEntryID == sUnlockEntryID )
 		{
-			apSongsOut.push_back( apEntries[i]->m_pSong );
+			apSongsOut.push_back( apEntries[i]->m_Song.ToSong() );
 			apDifficultyOut.push_back( apEntries[i]->m_dc );
 		}
 	}

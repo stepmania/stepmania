@@ -7,6 +7,7 @@
 #include "Command.h"
 #include <set>
 #include "Difficulty.h"
+#include "SongUtil.h"
 
 class Song;
 class Course;
@@ -54,7 +55,6 @@ public:
 	{
 		m_Type = UnlockRewardType_Invalid;
 
-		m_pSong = NULL;
 		m_dc = Difficulty_Invalid;
 		m_pCourse = NULL;
 
@@ -69,7 +69,7 @@ public:
 
 	/* A cached pointer to the song or course this entry refers to.  Only one of
 	 * these will be non-NULL. */
-	Song	*m_pSong;
+	SongID	m_Song;
 	Difficulty m_dc;
 	Course	*m_pCourse;
 

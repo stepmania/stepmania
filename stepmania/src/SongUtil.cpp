@@ -927,7 +927,7 @@ RString SongID::ToString() const
 
 bool SongID::IsValid() const
 {
-	return !sDir.empty();
+	return ToSong() != NULL;
 }
 
 // lua start

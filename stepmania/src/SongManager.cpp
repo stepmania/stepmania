@@ -1378,8 +1378,8 @@ void SongManager::UpdatePreferredSort()
 			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
 			{
 				if( ue->m_Type == UnlockRewardType_Song )
-					if( ue->m_pSong )
-						vpUnlockSongs.push_back( ue->m_pSong );
+					if( ue->m_Song.ToSong() )
+						vpUnlockSongs.push_back( ue->m_Song.ToSong() );
 			}
 
 			FOREACH( SongPointerVector, m_vPreferredSongSort, v )

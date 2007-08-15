@@ -48,7 +48,7 @@ void ScreenUnlockStatus::Init()
 	{
 		// get pertaining UnlockEntry
 		const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[i-1];
-		const Song *pSong = entry.m_pSong;
+		const Song *pSong = entry.m_Song.ToSong();
 
 		if( pSong == NULL)
 			continue;
@@ -104,7 +104,7 @@ void ScreenUnlockStatus::Init()
 			{
 			case UnlockRewardType_Song:
 				{
-					const Song *pSong = entry.m_pSong;
+					const Song *pSong = entry.m_Song.ToSong();
 					ASSERT( pSong );
 		
 					RString title = pSong->GetDisplayMainTitle();
@@ -139,7 +139,7 @@ void ScreenUnlockStatus::Init()
 			else
 			{
 				// unlocked. change color
-				const Song *pSong = entry.m_pSong;
+				const Song *pSong = entry.m_Song.ToSong();
 				RageColor color = RageColor(1,1,1,1);
 				if( pSong )
 					color = SONGMAN->GetSongGroupColor(pSong->m_sGroupName);
@@ -228,7 +228,7 @@ void ScreenUnlockStatus::Init()
 			unsigned NextIcon = LastUnlocks[LastUnlocks.size() - i];
 
 			const UnlockEntry &entry = UNLOCKMAN->m_UnlockEntries[NextIcon-1];
-			const Song *pSong = entry.m_pSong;
+			const Song *pSong = entry.m_Song.ToSong();
 			if( pSong == NULL )
 				continue;
 
