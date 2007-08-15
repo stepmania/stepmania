@@ -6,6 +6,11 @@
 #include "Actor.h"
 #include "RageTexture.h"
 
+namespace StepMania
+{
+	RString GetTopScreenName();
+}
+
 class XNode;
 
 typedef Actor* (*CreateActorFn)();
@@ -46,7 +51,8 @@ namespace ActorUtil
 	inline void PlayCommand( Actor& actor, const RString &sCommandName ) { actor.PlayCommand( sCommandName ); }
 	inline void OnCommand( Actor& actor )
 	{
-		ASSERT( actor.HasCommand("On") );
+		ASSERT_M( actor.HasCommand("On"), ssprintf("%s is missing an OnCommand. Top Screen is %s.",
+							   actor.GetName().c_str(), StepMania::GetTopScreenName().c_str()) );
 		actor.PlayCommand("On");
 	}
 	inline void OffCommand( Actor& actor )
@@ -57,7 +63,8 @@ namespace ActorUtil
 		// (Do "playcommand" anyway; BGAs often have no name.)
 		if( actor.GetName().empty() )
 			return;
-		ASSERT( actor.HasCommand("Off") );
+		ASSERT_M( actor.HasCommand("Off"), ssprintf("Actor %s is missing an OffCommand. Top Screen is %s.",
+							    actor.GetName().c_str(), StepMania::GetTopScreenName().c_str()) );
 		actor.PlayCommand("Off");
 	}
 
