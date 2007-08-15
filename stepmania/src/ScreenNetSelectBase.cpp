@@ -184,8 +184,6 @@ void ScreenNetSelectBase::UpdateUsers()
 	for( unsigned i=0; i< m_textUsers.size(); i++)
 		this->RemoveChild( &m_textUsers[i] );
 
-	unsigned oldUsers = m_textUsers.size();
-
 	m_textUsers.clear();
 
 	m_textUsers.resize( NSMAN->m_ActivePlayer.size() );
@@ -206,11 +204,8 @@ void ScreenNetSelectBase::UpdateUsers()
 			tY = USERS_Y;
 		m_textUsers[i].SetXY( tX, tY );
 
-		if ( i > oldUsers )
-		{
-			LOAD_ALL_COMMANDS( m_textUsers[i] );
-			ON_COMMAND( m_textUsers[i] );
-		}
+		ActorUtil::LoadAllCommands( m_textUsers[i], m_sName );
+		ActorUtil::OnCommand( m_textUsers[i] );
 	
 		m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] );
 		m_textUsers[i].RunCommands( THEME->GetMetricA( m_sName,
