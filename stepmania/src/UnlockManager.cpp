@@ -140,30 +140,17 @@ int UnlockManager::SongIsLocked( const Song *pSong ) const
 	{
 		const UnlockEntry *p = FindSong( pSong );
 		if( p != NULL && p->IsLocked() )
+		{
 			iRet |= LOCKED_LOCK;
+			if( !p->m_sEntryID.empty() && m_RouletteCodes.find( p->m_sEntryID ) != m_RouletteCodes.end() )
+				iRet |= LOCKED_ROULETTE;
+		}
 	}
 	if( PREFSMAN->m_bHiddenSongs && pSong->m_SelectionDisplay == Song::SHOW_NEVER )
 		iRet |= LOCKED_SELECTABLE;
 	if( !pSong->m_bEnabled )
 		iRet |= LOCKED_DISABLED;
 	return iRet;
-}
-
-/* Return true if the song is *only* available in roulette. */
-bool UnlockManager::SongIsRouletteOnly( const Song *song ) const
-{
-	if( !PREFSMAN->m_bUseUnlockSystem )
-		return false;
-
-	const UnlockEntry *p = FindSong( song );
-	if( p == NULL )
-		return false;
-
-	/* If the song is locked by a code, and it's a roulette code, honor IsLocked. */
-	if( p->m_sEntryID.empty() || m_RouletteCodes.find( p->m_sEntryID ) == m_RouletteCodes.end() )
-		return false;
-
-	return p->IsLocked();
 }
 
 bool UnlockManager::StepsIsLocked( const Song *pSong, const Steps *pSteps ) const

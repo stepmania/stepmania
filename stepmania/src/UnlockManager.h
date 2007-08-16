@@ -93,12 +93,15 @@ public:
 // Option is locked due to an unsatisfied unlock entry.
 #define LOCKED_LOCK          0x1
 
+// Option is only available in random selections.
+#define LOCKED_ROULETTE      0x2
+
 // Option is locked due to a #SELECTABLE tag.
-#define LOCKED_SELECTABLE    0x2
+#define LOCKED_SELECTABLE    0x4
 
 // Option is disabled by the operator.  (For courses, this means that a song in the
 // course is disabled.)
-#define LOCKED_DISABLED      0x4
+#define LOCKED_DISABLED      0x8
 
 class UnlockManager
 {
@@ -111,7 +114,6 @@ public:
 
 	float PointsUntilNextUnlock( UnlockRequirement t ) const;
 	int SongIsLocked( const Song *pSong ) const;
-	bool SongIsRouletteOnly( const Song *song ) const;
 	bool StepsIsLocked( const Song *pSong, const Steps *pSteps ) const;
 	int CourseIsLocked( const Course *course ) const;
 	bool ModifierIsLocked( const RString &sOneMod ) const;

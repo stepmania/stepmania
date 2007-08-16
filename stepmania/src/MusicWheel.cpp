@@ -353,7 +353,7 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 			/* Hide songs that asked to be hidden via #SELECTABLE. */
 			if( iLocked & LOCKED_SELECTABLE )
 				continue;
-			if( so!=SORT_ROULETTE && UNLOCKMAN->SongIsRouletteOnly( pSong ) )
+			if( so != SORT_ROULETTE && iLocked & LOCKED_ROULETTE )
 				continue;
 		}
 
