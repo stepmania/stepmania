@@ -262,7 +262,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		LoadGroupSymLinks(sDir, sGroupDirName);
 	}
 
-	SetEnabledSongs();
+	LoadEnabledSongsFromPref();
 }
 
 // Instead of "symlinks", songs should have membership in multiple groups.
@@ -906,23 +906,26 @@ void SongManager::SetPreferences()
 	}
 }
 
-void SongManager::EnableSong( Song *pSong, bool bEnable )
+void SongManager::SaveEnabledSongsToPref()
 {
 	vector<RString> asDisabledSongs;
 	split( g_sDisabledSongs, ";", asDisabledSongs, true );
 
-	vector<RString>::iterator it = find( asDisabledSongs.begin(), asDisabledSongs.end(), pSong->GetSongDir() );
-	if( bEnable && it == asDisabledSongs.end() )
-		asDisabledSongs.push_back( pSong->GetSongDir() );
-	else if( !bEnable && it != asDisabledSongs.end() )
-		asDisabledSongs.erase( it );
-
+	const vector<Song*> &apSongs = SONGMAN->GetSongs();
+	FOREACH_CONST( Song *, apSongs, s )
+	{
+		Song *pSong = (*s);
+		bool bEnabled = pSong->GetEnabled();
+		vector<RString>::iterator it = find( asDisabledSongs.begin(), asDisabledSongs.end(), pSong->GetSongDir() );
+		if( bEnabled && it == asDisabledSongs.end() )
+			asDisabledSongs.push_back( pSong->GetSongDir() );
+		else if( !bEnabled && it != asDisabledSongs.end() )
+			asDisabledSongs.erase( it );
+	}
 	g_sDisabledSongs.Set( join(";", asDisabledSongs) );
-
-	pSong->SetEnabled( bEnable );
 }
 
-void SongManager::SetEnabledSongs()
+void SongManager::LoadEnabledSongsFromPref()
 {
 	FOREACH( Song *, m_pSongs, s )
 		(*s)->SetEnabled( true );

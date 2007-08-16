@@ -209,6 +209,7 @@ public:
 	bool HasEdits( StepsType st ) const;
 
 	void SetEnabled( bool b ) { m_bEnabled = b; }
+	bool GetEnabled() const { return m_bEnabled; }
 	bool NormallyDisplayed() const;
 	bool ShowInDemonstrationAndRanking() const;
 
