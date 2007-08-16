@@ -21,8 +21,6 @@
 
 static Preference<int> MAX_SONGS_IN_EDIT_COURSE( "MaxSongsInEditCourse", -1 );
 
-CACHED_REGISTER_CLASS(Course);
-
 static const char *CourseTypeNames[] = {
 	"Nonstop",
 	"Oni",

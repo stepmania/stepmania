@@ -170,8 +170,6 @@ private:
 	bool m_bCacheIsSet;
 };
 
-#define CACHED_REGISTER_CLASS(T)
-
 #endif
 
 /*

@@ -26,8 +26,6 @@
 
 #include <algorithm>
 
-CACHED_REGISTER_CLASS(Steps);
-
 Steps::Steps()
 {
 	m_bSavedToDisk = false;

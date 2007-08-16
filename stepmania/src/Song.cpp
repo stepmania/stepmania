@@ -49,8 +49,6 @@ static const char *InstrumentTrackNames[] = {
 XToString( InstrumentTrack );
 StringToX( InstrumentTrack );
 
-CACHED_REGISTER_CLASS(Song);
-
 Song::Song()
 {
 	FOREACH_BackgroundLayer( i )

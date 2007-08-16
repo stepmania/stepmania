@@ -27,8 +27,6 @@ struct User
 	}
 };
 
-CACHED_REGISTER_CLASS(Object);
-
 void test()
 {
 	Object p;

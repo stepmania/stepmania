@@ -8,8 +8,6 @@
 #include "NoteDataUtil.h"
 #include "CommonMetrics.h"
 
-CACHED_REGISTER_CLASS(Trail);
-
 void TrailEntry::GetAttackArray( AttackArray &out ) const
 {
 	if( !Modifiers.empty() )
