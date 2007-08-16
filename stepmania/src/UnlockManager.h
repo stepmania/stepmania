@@ -1,7 +1,7 @@
 /* UnlockManager - Unlocks handling. */
 
-#ifndef UNLOCK_SYSTEM_H
-#define UNLOCK_SYSTEM_H
+#ifndef UNLOCK_MANAGER_H
+#define UNLOCK_MANAGER_H
 
 #include "Grade.h"
 #include "Command.h"
