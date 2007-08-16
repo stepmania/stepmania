@@ -116,6 +116,7 @@ namespace ScreenManagerUtil
 	void PushLoadedScreen( const LoadedScreen &ls )
 	{
 		LOG->Trace( "PushScreen: \"%s\"", ls.m_pScreen->GetName().c_str() );
+		LOG->MapLog( "ScreenManager::TopScreen", "Top Screen: %s", ls.m_pScreen->GetName().c_str() );
 
 		// Be sure to push the screen first, so GetTopScreen returns the screen
 		// during BeginScreen.
@@ -249,6 +250,7 @@ ScreenManager::ScreenManager()
 ScreenManager::~ScreenManager()
 {
 	LOG->Trace( "ScreenManager::~ScreenManager()" );
+	LOG->UnmapLog( "ScreenManager::TopScreen" );
 
 	SAFE_DELETE( g_pSharedBGA );
 	for( unsigned i=0; i<g_ScreenStack.size(); i++ )
@@ -365,6 +367,11 @@ ScreenMessage ScreenManager::PopTopScreenInternal( bool bSendLoseFocus )
 			AfterDeleteScreen();
 		}
 	}
+
+	if( g_ScreenStack.size() )
+		LOG->MapLog( "ScreenManager::TopScreen", "Top Screen: %s", g_ScreenStack.back().m_pScreen->GetName().c_str() );
+	else
+		LOG->UnmapLog( "ScreenManager::TopScreen" );
 
 	return ls.m_SendOnPop;
 }
@@ -873,11 +880,6 @@ public:
 
 LUA_REGISTER_CLASS( ScreenManager )
 // lua end
-
-RString StepMania::GetTopScreenName()
-{
-	return SCREENMAN->GetTopScreen()->GetName();
-}
 
 /*
  * (c) 2001-2003 Chris Danford, Glenn Maynard

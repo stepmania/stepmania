@@ -12,12 +12,6 @@ struct Menu;
 struct lua_State;
 class InputEventPlus;
 
-// For debugging where you don't want to pull in ScreenManager.h.
-namespace StepMania
-{
-	RString GetTopScreenName();
-}
-
 class ScreenManager
 {
 public:
