@@ -6,7 +6,7 @@ local Title = LoadFont( "Common", "normal" ) .. {
 local InstructionsZoom = .5;
 local Instructions = LoadFont( "Common", "normal" ) .. {
 	Text = THEME:GetString( "ScreenInstructions", pm .. " instructions" );
-	InitCommand = cmd(zoom,InstructionsZoom;addx,-240;addy,80;horizalign,'HorizAlign_Left';vertalign,'VertAlign_Bottom';wrapwidthpixels,480/InstructionsZoom;diffusetopedge,color("#FFF096");diffusebottomedge,color("#005E96"));
+	InitCommand = cmd(zoom,InstructionsZoom;addy,80;vertalign,'VertAlign_Bottom';wrapwidthpixels,480/InstructionsZoom;shadowlength,1);
 };
 
 local Background = {
