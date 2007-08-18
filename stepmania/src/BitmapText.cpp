@@ -52,6 +52,7 @@ BitmapText::BitmapText()
 	m_fMaxWidth = 0;
 	m_fMaxHeight = 0;
 	m_iVertSpacing = 0;
+	m_bHasGlowAttribute = false;
 
 	SetShadowLength( 4 );
 }
@@ -83,6 +84,8 @@ BitmapText &BitmapText::operator =( const BitmapText &cpy )
 	CPY( m_iVertSpacing );
 	CPY( m_aVertices );
 	CPY( m_pTextures );
+	CPY( m_bHasGlowAttribute );
+	CPY( m_mAttributes );
 #undef CPY
 
 	if( m_pFont )
@@ -118,7 +121,6 @@ void BitmapText::LoadFromNode( const XNode* pNode )
 	LoadFromFont( sFont );
 
 	SetText( sText, sAltText );
-
 	Actor::LoadFromNode( pNode );
 }
 
@@ -345,15 +347,21 @@ void BitmapText::SetText( const RString& _sText, const RString& _sAlternateText,
 
 	if( m_sText == sNewText && iWrapWidthPixels==m_iWrapWidthPixels )
 		return;
+
 	m_sText = sNewText;
 	m_iWrapWidthPixels = iWrapWidthPixels;
+	ClearAttributes();
+	SetTextInternal();
+}
 
+void BitmapText::SetTextInternal()
+{
 	// Break the string into lines.
 	//
 
 	m_wTextLines.clear();
 
-	if( iWrapWidthPixels == -1 )
+	if( m_iWrapWidthPixels == -1 )
 	{
 		split( RStringToWstring(m_sText), L"\n", m_wTextLines, false );
 	}
@@ -392,7 +400,7 @@ void BitmapText::SetText( const RString& _sText, const RString& _sAlternateText,
 
 				RString sToAdd = " " + sWord;
 				int iWidthToAdd = m_pFont->GetLineWidthInSourcePixels(L" ") + iWidthWord;
-				if( iCurLineWidth + iWidthToAdd <= iWrapWidthPixels )	// will fit on current line
+				if( iCurLineWidth + iWidthToAdd <= m_iWrapWidthPixels )	// will fit on current line
 				{
 					sCurLine += sToAdd;
 					iCurLineWidth += iWidthToAdd;
@@ -546,12 +554,37 @@ void BitmapText::DrawPrimitives()
 		}
 		else
 		{
-			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
+			size_t i = 0;
+			map<size_t,Attribute>::const_iterator iter = m_mAttributes.begin();
+			while( i < m_aVertices.size() )
 			{
-				m_aVertices[i+0].c = m_pTempState->diffuse[0];	// top left
-				m_aVertices[i+1].c = m_pTempState->diffuse[2];	// bottom left
-				m_aVertices[i+2].c = m_pTempState->diffuse[3];	// bottom right
-				m_aVertices[i+3].c = m_pTempState->diffuse[1];	// top right
+				// Set the colors up to the next attribute.
+				size_t iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
+				iEnd = min( iEnd, m_aVertices.size() );
+				for( ; i < iEnd; i += 4 )
+				{
+					m_aVertices[i+0].c = m_pTempState->diffuse[0];	// top left
+					m_aVertices[i+1].c = m_pTempState->diffuse[2];	// bottom left
+					m_aVertices[i+2].c = m_pTempState->diffuse[3];	// bottom right
+					m_aVertices[i+3].c = m_pTempState->diffuse[1];	// top right
+				}
+				if( iter == m_mAttributes.end() )
+					break;
+				// Set the colors according to this attribute.
+				const Attribute &attr = iter->second;
+				++iter;
+				if( attr.length < 0 )
+					iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
+				else
+					iEnd = i + attr.length*4;
+				iEnd = min( iEnd, m_aVertices.size() );
+				for( ; i < iEnd; i += 4 )
+				{
+					m_aVertices[i+0].c = attr.diffuse[0];	// top left
+					m_aVertices[i+1].c = attr.diffuse[2];	// bottom left
+					m_aVertices[i+2].c = attr.diffuse[3];	// bottom right
+					m_aVertices[i+3].c = attr.diffuse[1];	// top right
+				}
 			}
 		}
 
@@ -593,12 +626,32 @@ void BitmapText::DrawPrimitives()
 	}
 
 	/* render the glow pass */
-	if( m_pTempState->glow.a > 0.0001f )
+	if( m_pTempState->glow.a > 0.0001f || m_bHasGlowAttribute )
 	{
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 
-		for( unsigned i=0; i<m_aVertices.size(); i++ )
-			m_aVertices[i].c = m_pTempState->glow;
+		size_t i = 0;
+		map<size_t,Attribute>::const_iterator iter = m_mAttributes.begin();
+		while( i < m_aVertices.size() )
+		{
+			// Set the glow up to the next attribute.
+			size_t iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
+			iEnd = min( iEnd, m_aVertices.size() );
+			for( ; i < iEnd; ++i )
+				m_aVertices[i].c = m_pTempState->glow;
+			if( iter == m_mAttributes.end() )
+				break;
+			// Set the glow according to this attribute.
+			const Attribute &attr = iter->second;
+			++iter;
+			if( attr.length < 0 )
+				iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
+			else
+				iEnd = i + attr.length*4;
+			iEnd = min( iEnd, m_aVertices.size() );
+			for( ; i < iEnd; ++i )
+				m_aVertices[i].c = attr.glow;
+		}
 		DrawChars();
 	}
 }
@@ -618,7 +671,70 @@ void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )
 	ASSERT( m_pFont ); // always load a font first
 	if( m_iWrapWidthPixels == iWrapWidthPixels )
 		return;
-	SetText( m_sText, "", iWrapWidthPixels );
+	m_iWrapWidthPixels = iWrapWidthPixels;
+	SetTextInternal();
+}
+
+BitmapText::Attribute BitmapText::GetDefaultAttribute() const
+{
+	Attribute attr;
+	for( int i = 0; i < 4; ++i )
+		attr.diffuse[i] = GetDiffuses( i );
+	attr.glow = GetGlow();
+	return attr;
+}
+
+void BitmapText::AddAttribute( size_t iPos, const Attribute &attr )
+{
+	m_mAttributes[iPos] = attr;
+	m_bHasGlowAttribute = m_bHasGlowAttribute || attr.glow.a > 0.0001f;
+}
+
+void BitmapText::ClearAttributes()
+{
+	m_mAttributes.clear();
+	m_bHasGlowAttribute = false;
+}
+
+void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
+{
+	if( lua_type(L, iPos) != LUA_TTABLE )
+		return;
+	
+	lua_pushvalue( L, iPos );
+	const int iTab = lua_gettop( L );
+
+	// Get the length.
+	lua_getfield( L, iTab, "Length" );
+	length = lua_tonumber( L, -1 );
+	lua_settop( L, iTab );
+	
+	// Get the diffuse colors.
+	lua_getfield( L, iTab, "Diffuses" );
+	if( !lua_isnil(L, -1) )
+	{
+		for( int i = 1; i <= 4; ++i )
+		{
+			lua_rawgeti( L, -i, i );
+			diffuse[i-1].FromStack( L, -1 );
+		}
+	}
+	lua_settop( L, iTab );
+	
+	// Get a single diffuse color.
+	lua_getfield( L, iTab, "Diffuse" );
+	if( !lua_isnil(L, -1) )
+	{
+		diffuse[0].FromStack( L, -1 );
+		diffuse[1] = diffuse[2] = diffuse[3] = diffuse[0];
+	}
+	lua_settop( L, iTab );
+	
+	// Get the glow color.
+	lua_getfield( L, iTab, "Glow" );
+	glow.FromStack( L, -1 );
+	
+	lua_settop( L, iTab - 1 );
 }
 
 // lua start
@@ -646,6 +762,46 @@ public:
 	static int rainbowscroll( T* p, lua_State *L )		{ p->SetRainbowScroll( BArg(1) ); return 0; }
 	static int jitter( T* p, lua_State *L )			{ p->SetJitter( BArg(1) ); return 0; }
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
+	static int AddAttribute( T* p, lua_State *L )
+	{
+		size_t iPos = IArg(1);
+		BitmapText::Attribute attr = p->GetDefaultAttribute();
+		
+		attr.FromStack( L, 2 );
+		p->AddAttribute( iPos, attr );
+		return 0;
+	}
+	static int FindText( T* p, lua_State *L )
+	{
+		const vector<wstring> &wTextLines = p->GetLines();
+		const wstring wText = RStringToWstring( SArg(1) );
+		wstring::size_type iStartPos = IArg(2);
+		wstring::size_type iAdditionalPos = 0;
+		
+		FOREACH_CONST( wstring, wTextLines, line )
+		{
+			wstring::size_type length = line->length();
+			if( length < iStartPos )
+			{
+				iStartPos -= length;
+				iAdditionalPos += length;
+				continue;
+			}
+			wstring::size_type iPos = line->find( wText, iStartPos );
+			if( iPos != wstring::npos )
+			{
+				lua_pushnumber( L, iAdditionalPos + iPos );
+				lua_pushnumber( L, wText.length() );
+				return 2;
+			}
+			iAdditionalPos += length;
+			iStartPos = 0;
+		}
+
+		lua_pushnil( L );
+		lua_pushnil( L );
+		return 2;
+	}
 
 	LunaBitmapText()
 	{
@@ -657,6 +813,8 @@ public:
 		ADD_METHOD( rainbowscroll );
 		ADD_METHOD( jitter );
 		ADD_METHOD( GetText );
+		ADD_METHOD( AddAttribute );
+		ADD_METHOD( FindText );
 	}
 };
 
@@ -665,7 +823,7 @@ LUA_REGISTER_DERIVED_CLASS( BitmapText, Actor )
 // lua end
 
 /*
- * (c) 2003-2004 Chris Danford, Charles Lohr
+ * (c) 2003-2007 Chris Danford, Charles Lohr, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

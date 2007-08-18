@@ -1,11 +1,12 @@
 /* BitmapText - An actor that holds a Font and draws text to the screen. */
 
-#ifndef BITMAPTEXT_H
-#define BITMAPTEXT_H
+#ifndef BITMAP_TEXT_H
+#define BITMAP_TEXT_H
 
 #include "Actor.h"
-class RageTexture;
+#include <map>
 
+class RageTexture;
 class Font;
 
 class BitmapText : public Actor
@@ -36,11 +37,26 @@ public:
 
 	void SetHorizAlign( float f );
 
-	void GetLines( vector<wstring> &wTextLines ) { wTextLines = m_wTextLines; }
+	void GetLines( vector<wstring> &wTextLines ) const { wTextLines = m_wTextLines; }
+	const vector<wstring> &GetLines() const { return m_wTextLines; }
 
 	RString GetText() const { return m_sText; }
 	/* Return true if the string 's' will use an alternate string, if available. */
 	bool StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const;
+
+	struct Attribute
+	{
+		Attribute() : length(-1) { }
+		int		length;
+		RageColor	diffuse[4];
+		RageColor	glow;
+		
+		void FromStack( lua_State *L, int iPos );
+	};
+	
+	Attribute GetDefaultAttribute() const;
+	void AddAttribute( size_t iPos, const Attribute &attr );
+	void ClearAttributes();
 
 	//
 	// Commands
@@ -61,17 +77,22 @@ protected:
 
 	vector<RageSpriteVertex>	m_aVertices;
 	vector<RageTexture *>		m_pTextures;
+	map<size_t, Attribute>		m_mAttributes;
+	bool			m_bHasGlowAttribute;
 	
 	// recalculate the items in SetText()
 	void BuildChars();
 	void DrawChars();
 	void UpdateBaseZoom();
+
+private:
+	void SetTextInternal();
 };
 
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford, Charles Lohr
+ * (c) 2001-2007 Chris Danford, Charles Lohr, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
