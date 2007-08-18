@@ -686,7 +686,19 @@ BitmapText::Attribute BitmapText::GetDefaultAttribute() const
 
 void BitmapText::AddAttribute( size_t iPos, const Attribute &attr )
 {
-	m_mAttributes[iPos] = attr;
+	// Fixup position for new lines.
+	int iLines = 0;
+	size_t iAdjustedPos = iPos;
+	
+	FOREACH_CONST( wstring, m_wTextLines, line )
+	{
+		size_t length = line->length();
+		if( length >= iAdjustedPos )
+			break;
+		iAdjustedPos -= length;
+		++iLines;
+	}
+	m_mAttributes[iPos-iLines] = attr;
 	m_bHasGlowAttribute = m_bHasGlowAttribute || attr.glow.a > 0.0001f;
 }
 
@@ -771,37 +783,6 @@ public:
 		p->AddAttribute( iPos, attr );
 		return 0;
 	}
-	static int FindText( T* p, lua_State *L )
-	{
-		const vector<wstring> &wTextLines = p->GetLines();
-		const wstring wText = RStringToWstring( SArg(1) );
-		wstring::size_type iStartPos = IArg(2);
-		wstring::size_type iAdditionalPos = 0;
-		
-		FOREACH_CONST( wstring, wTextLines, line )
-		{
-			wstring::size_type length = line->length();
-			if( length < iStartPos )
-			{
-				iStartPos -= length;
-				iAdditionalPos += length;
-				continue;
-			}
-			wstring::size_type iPos = line->find( wText, iStartPos );
-			if( iPos != wstring::npos )
-			{
-				lua_pushnumber( L, iAdditionalPos + iPos );
-				lua_pushnumber( L, wText.length() );
-				return 2;
-			}
-			iAdditionalPos += length;
-			iStartPos = 0;
-		}
-
-		lua_pushnil( L );
-		lua_pushnil( L );
-		return 2;
-	}
 
 	LunaBitmapText()
 	{
@@ -814,7 +795,6 @@ public:
 		ADD_METHOD( jitter );
 		ADD_METHOD( GetText );
 		ADD_METHOD( AddAttribute );
-		ADD_METHOD( FindText );
 	}
 };
 
