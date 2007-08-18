@@ -47,10 +47,8 @@ public:
 	//
 	virtual void PushSelf( lua_State *L );
 
-public:
-	Font* m_pFont;
-
 protected:
+	Font			*m_pFont;
 	RString			m_sText;
 	vector<wstring>		m_wTextLines;
 	vector<int>		m_iLineWidths;		// in source pixels
