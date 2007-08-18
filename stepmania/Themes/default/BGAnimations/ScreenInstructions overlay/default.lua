@@ -79,21 +79,26 @@ elseif pm == 'PlayMode_Oni' then
 	-- Merge the tables.
 	t[3] = t[3] .. {
 		InitCommand = function( self )
-			local iStart, iLen = self:FindText( "Great", 0 );
+			local sText = self:GetText();
+			local iStart, iEnd = sText:find( "Great", 1, true );
 			if( iStart ~= nil ) then
+				iStart = iStart - 1;
 				local attr = {
-					Length = iLen;
+					Length = iEnd - iStart;
 					Diffuse = color( "#00F000" );
 				};
+				iStart = mbstrlen( sText:sub(1, iStart) );
 				self:AddAttribute( iStart, attr );
 			end
 	
-			iStart, iLen = self:FindText( "NG", 0 );
+			iStart, iEnd = sText:find( "NG", 0 );
 			if( iStart ~= nil ) then
+				iStart = iStart - 1;
 				local attr = {
-					Length = iLen;
+					Length = iEnd - iStart;
 					Diffuse = color( "#F00000" );
 				};
+				iStart = mbstrlen( sText:sub(1, iStart) );
 				self:AddAttribute( iStart, attr );
 			end
 		end;
