@@ -19,6 +19,7 @@ local graphics = {
 	"Xelf",
 	"James “SPDS” Sanders",
 	"k0ldx",
+	"Daisuke Master",
 }
 
 local theme = {
