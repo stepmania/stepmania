@@ -21,7 +21,7 @@ local Background = {
 local t = Def.ActorFrame {
 	LoadActor( Background[pm] );
 	Title;
-	Instructions;
+	Instructions; -- Keep this at index 3 or change below.
 	InitCommand = cmd(x,SCREEN_LEFT-SCREEN_WIDTH;y,SCREEN_CENTER_Y);
 	OnCommand = cmd(sleep,0.4;decelerate,0.6;x,SCREEN_CENTER_X);
 	OffCommand = cmd(stoptweening;accelerate,0.3;x,SCREEN_RIGHT+SCREEN_WIDTH);
@@ -74,6 +74,29 @@ if pm == 'PlayMode_Regular' then
 	t[#t+1] = InstructionFont .. {
 		InitCommand = cmd(addx,80);
 		Text = THEME:GetString( "ScreenInstructions", "Mine instructions" );
+	};
+elseif pm == 'PlayMode_Oni' then
+	-- Merge the tables.
+	t[3] = t[3] .. {
+		InitCommand = function( self )
+			local iStart, iLen = self:FindText( "Great", 0 );
+			if( iStart ~= nil ) then
+				local attr = {
+					Length = iLen;
+					Diffuse = color( "#00F000" );
+				};
+				self:AddAttribute( iStart, attr );
+			end
+	
+			iStart, iLen = self:FindText( "NG", 0 );
+			if( iStart ~= nil ) then
+				local attr = {
+					Length = iLen;
+					Diffuse = color( "#F00000" );
+				};
+				self:AddAttribute( iStart, attr );
+			end
+		end;
 	};
 end
 return t;
