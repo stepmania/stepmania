@@ -2182,6 +2182,7 @@ static RString MakeLower( RString s ) { s.MakeLower(); return s; }
 LuaFunction( Lowercase, MakeLower( SArg(1) ) )
 static RString MakeUpper( RString s ) { s.MakeUpper(); return s; }
 LuaFunction( Uppercase, MakeUpper( SArg(1) ) )
+LuaFunction( mbstrlen, (int)RStringToWstring(SArg(1)).length() );
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard
