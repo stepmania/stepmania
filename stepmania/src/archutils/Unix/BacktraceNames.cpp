@@ -33,9 +33,7 @@ void BacktraceNames::Demangle()
     free(f);
 }
 #elif defined(HAVE_CXA_DEMANGLE)
-namespace abi {
-	extern "C" char *__cxa_demangle( const char *mangled_name, char *buf, size_t *n, int *status);
-}
+#include <cxxabi.h>
 
 void BacktraceNames::Demangle()
 {
