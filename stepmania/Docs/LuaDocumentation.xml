@@ -71,6 +71,9 @@
 <Function name='lua.Flush' return='void' arguments='' >
 	Flushes log files to disk.
 </Function>
+<Function name='mbstrlen' return='int' arguments='string sString'>
+	Returns the length of the multi-byte character string <code>sString</code>.
+</Function>
 </GlobalFunctions>
 
 <!-- Classes -->
@@ -118,6 +121,26 @@
 	</Function>
 </Class>
 <Class name='BitmapText'>
+	<Function name='AddAttribute' return='void' arguments='int iPos, Attribute attr'>
+		Add the attribute <code>attr</code> to the string at position
+		<code>iPos</code>.<br />
+		The attribute is a table that must contain <code>Length</code>
+		which specifies how many (multi-byte) characters the attribute
+		is to apply. If <code>Length=-1</code>, then the attribute applies
+		until another attribute overrides it.<br />
+		If the table contains <code>Diffuse</code>, then the color value
+		is applied to the range of text.<br />
+		If the table contains <code>Diffuses</code>, then it should be
+		an array of 4 colors which specify the diffuse color for the
+		top left, top right, bottom left, and bottom right.<br />
+		If the table contains <code>Glow</code>, then the color value
+		is applied as a glow to the range of text.<br />
+		Example:<br />
+		<code>attr = { Length = 10; Diffuse = color("#AABBCC"); }</code>
+	</Function>
+	<Function name='ClearAttributes' return='void' arguments=''>
+		Clear all attributes associated with the BitmapText.
+	</Function>
 	<Function name='GetText' return='string' arguments=''>
 		Returns the text.
 	</Function>
@@ -134,7 +157,7 @@
 		If <code>true</code>, set each character of the text in turn to the rainbow colors in the metrics <code>BitmapText::RainbowColor#</code>.
 	</Function>
 	<Function name='settext' return='void' arguments='string sText'>
-		Set the text to <code>sText</code>.
+		Set the text to <code>sText</code>. This clears all attributes.
 	</Function>
 	<Function name='vertspacing' return='void' arguments='int iSpacing'>
 		Add <code>iSpacing</code> pixels of padding between lines of text.
