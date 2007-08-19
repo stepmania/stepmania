@@ -38,14 +38,14 @@ enum SMOStepType
 	SMOST_UNUSED = 0,
 	SMOST_HITMINE,
 	SMOST_AVOIDMINE,
-	SMOST_MISS,		//Miss
-	SMOST_W5,		//Boo
-	SMOST_W4,		//Good
-	SMOST_W3,		//Great
-	SMOST_W2,		//Perfect
-	SMOST_W1,		//Marvelous
-	SMOST_LETGO,		//Let Go
-	SMOST_HELD		//OK
+	SMOST_MISS,
+	SMOST_W5,
+	SMOST_W4,
+	SMOST_W3,
+	SMOST_W2,
+	SMOST_W1,
+	SMOST_LETGO,
+	SMOST_HELD
 };
 
 const NSCommand NSServerOffset = (NSCommand)128;
