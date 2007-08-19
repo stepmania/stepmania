@@ -783,6 +783,7 @@ public:
 		p->AddAttribute( iPos, attr );
 		return 0;
 	}
+	static int ClearAttributes( T* p, lua_State *L )	{ p->ClearAttributes(); return 0; }
 
 	LunaBitmapText()
 	{
@@ -795,6 +796,7 @@ public:
 		ADD_METHOD( jitter );
 		ADD_METHOD( GetText );
 		ADD_METHOD( AddAttribute );
+		ADD_METHOD( ClearAttributes );
 	}
 };
 
