@@ -589,7 +589,7 @@ void ScoreKeeperNormal::HandleHoldScore( const TapNote &tn )
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	NSMAN->ReportScore(
 		pn, 
-		holdScore+TNS_W1, 
+		holdScore+TapNoteScore_Invalid, 
 		m_pPlayerStageStats->m_iScore,
 		m_pPlayerStageStats->m_iCurCombo,
 		tn.result.fTapNoteOffset );

@@ -33,6 +33,21 @@ enum NSCommand
 	NUM_NS_COMMANDS
 };
 
+enum SMOStepType
+{
+	SMOST_UNUSED = 0,
+	SMOST_HITMINE, //1
+	SMOST_AVOIDMINE,  //2
+	SMOST_MISS,	//Miss
+	SMOST_W5,		//Boo
+	SMOST_W4,		//Good
+	SMOST_W3,		//Great
+	SMOST_W2,		//Perfect
+	SMOST_W1,		//Marvelous
+	SMOST_LETGO,	//Let Go
+	SMOST_HELD	//OK
+};
+
 const NSCommand NSServerOffset = (NSCommand)128;
 
 struct EndOfGame_PlayerData
@@ -160,7 +175,7 @@ private:
 #if !defined(WITHOUT_NETWORKING)
 
 	void ProcessInput();
-
+	SMOStepType TranslateStepType(int score);
 	void StartUp();
 
 	int m_playerID;  //these are currently unused, but need to stay

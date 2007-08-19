@@ -270,6 +270,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	m_packet.ClearPacket();
 
 	m_packet.Write1( NSCGSU );
+	step = TranslateStepType(step);
 	uint8_t ctr = (uint8_t) (playerID * 16 + step - ( TNS_HitMine - 1 ) );
 	m_packet.Write1( ctr );
 
@@ -738,6 +739,37 @@ void NetworkSyncManager::SendSMOnline( )
 	memcpy( (m_packet.Data + 1), m_SMOnlinePacket.Data, m_SMOnlinePacket.Position );
 	m_packet.Data[0] = NSCSMOnline;
 	NetPlayerClient->SendPack( (char*)&m_packet.Data , m_packet.Position );
+}
+
+SMOStepType NetworkSyncManager::TranslateStepType(int score)
+{
+	/* Translate from Stepmania's constantly changing TapNoteScore to SMO's
+	note scores */
+	switch(score)
+	{
+	case TNS_HitMine:
+		return SMOST_HITMINE;
+	case TNS_AvoidMine:
+		return SMOST_AVOIDMINE;
+	case TNS_Miss:
+		return SMOST_MISS;
+	case TNS_W5:
+		return SMOST_W5;
+	case TNS_W4:
+		return SMOST_W4;
+	case TNS_W3:
+		return SMOST_W3;
+	case TNS_W2:
+		return SMOST_W2;
+	case TNS_W1:
+		return SMOST_W1;
+	case HNS_LetGo+TapNoteScore_Invalid:
+		return SMOST_LETGO;
+	case HNS_Held+TapNoteScore_Invalid:
+		return SMOST_HELD;
+	default:
+		return SMOST_UNUSED;
+	}
 }
 
 //Packet functions
