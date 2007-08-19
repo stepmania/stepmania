@@ -169,6 +169,7 @@ unsigned LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, u
 			}
 			else
 			{
+				// XXX: This is invalid XML, should we be accepting it? -- Steve
 				//attr= value> 
 				// none quote mode
 				iEnd = xml.find_first_of( " >", iOffset );
@@ -248,7 +249,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 	pNode->SetName( sName );
 	iOffset = iTagEnd;
 
-	// Generate XML Attributte List
+	// Generate XML Attribute List
 	iOffset = LoadAttributes( pNode, xml, sErrorOut, iOffset );
 	if( iOffset == string::npos )
 		return string::npos;
