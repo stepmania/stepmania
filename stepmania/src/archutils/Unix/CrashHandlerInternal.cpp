@@ -173,6 +173,9 @@ const char *SignalCodeName( int signo, int code )
 		}
 		break;
 #endif
+#if defined(HAVE_DECL_SIGUSR1) && HAVE_DECL_SIGUSR1
+	case SIGUSR1: return "";
+#endif
 	}
 	
 	static char buf[128];
