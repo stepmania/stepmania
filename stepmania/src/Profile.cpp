@@ -1430,7 +1430,7 @@ void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 		SongID songID;
 		songID.LoadFromNode( pSong );
 		if( !songID.IsValid() )
-			WARN_AND_CONTINUE;
+			continue;
 
 		FOREACH_CONST_Child( pSong, pSteps )
 		{
