@@ -103,6 +103,7 @@ PlayerInfo::PlayerInfo()
 	m_mp = MultiPlayer_Invalid;
 	m_bIsDummy = false;
 	m_iDummyIndex = 0;
+	m_difficultyForced = Difficulty_Invalid;
 	m_pLifeMeter = NULL;
 	m_ptextCourseSongNumber = NULL;
 	m_ptextStepsDescription = NULL;
@@ -117,7 +118,7 @@ PlayerInfo::PlayerInfo()
 	m_pDifficultyIcon = NULL;
 }
 
-void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
+void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, Difficulty dcForced )
 {
 	m_pn = pn;
 	m_mp = mp;
@@ -190,12 +191,13 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 	}
 }
 
-void PlayerInfo::LoadDummyP1( int iDummyIndex )
+void PlayerInfo::LoadDummyP1( int iDummyIndex, Difficulty dcForced )
 {
 	m_pn = PLAYER_1;
 	m_bPlayerEnabled = IsEnabled();
 	m_bIsDummy = true;
 	m_iDummyIndex = iDummyIndex;
+	m_difficultyForced = dcForced;
 
 	// don't init any of the scoring objects
 	m_pPlayer = new Player( m_NoteData, true );
@@ -236,11 +238,10 @@ PlayerState *PlayerInfo::GetPlayerState()
 
 PlayerStageStats *PlayerInfo::GetPlayerStageStats()
 {
-	if( m_bIsDummy )
+	// multiplayer chooses the PlayerStageStats with the highest score on StageFinalized
+	if( m_bIsDummy  ||  IsMultiPlayer() )
 		return &m_PlayerStageStatsDummy;
-	return IsMultiPlayer() ?
-		&STATSMAN->m_CurStageStats.m_multiPlayer[ GetPlayerStateAndStageStatsIndex() ] :
-		&STATSMAN->m_CurStageStats.m_player[ GetPlayerStateAndStageStatsIndex() ];
+	return &STATSMAN->m_CurStageStats.m_player[ GetPlayerStateAndStageStatsIndex() ];
 }
 				
 bool PlayerInfo::IsEnabled()
@@ -885,22 +886,9 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		 * once in Player::Load, then again in Player::ApplyActiveAttacks.  This 
 		 * is very bad for transforms like AddMines.
 		 */
+		if( pi->m_difficultyForced != Difficulty_Invalid )
+			pSteps = SongUtil::GetOneSteps( GAMESTATE->m_pCurSong, pSteps->m_StepsType, pi->m_difficultyForced );
 		NoteData originalNoteData;
-		if( pi->m_bIsDummy )
-		{
-			switch( pi->m_iDummyIndex )
-			{
-			//case 0:
-			//	pSteps = SongUtil::GetOneSteps( GAMESTATE->m_pCurSong, pSteps->m_StepsType, Difficulty_Easy );
-			//	break;
-			case 1:
-				pSteps = SongUtil::GetOneSteps( GAMESTATE->m_pCurSong, pSteps->m_StepsType, Difficulty_Medium );
-				break;
-			case 2:
-				pSteps = SongUtil::GetOneSteps( GAMESTATE->m_pCurSong, pSteps->m_StepsType, Difficulty_Hard );
-				break;
-			}
-		}
 		pSteps->GetNoteData( originalNoteData );
 		
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
@@ -2185,8 +2173,14 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 
 	if( GAMESTATE->m_bMultiplayer )
 	{
-		if( input.mp != MultiPlayer_Invalid  && GAMESTATE->IsMultiPlayerEnabled(input.mp) )
-			m_vPlayerInfo[input.mp].m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+		if( input.mp != MultiPlayer_Invalid  &&  GAMESTATE->IsMultiPlayerEnabled(input.mp)  &&  iCol != -1 )
+		{
+			FOREACH( PlayerInfo, m_vPlayerInfo, pi )
+			{
+				if( input.mp == pi->m_mp )
+					pi->m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+			}
+		}
 	}
 	else
 	{	
@@ -2506,7 +2500,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_DoPrevScreen )
 	{
 		SongFinished();
-		StageFinished( true );
+		this->StageFinished( true );
 
 		m_sNextScreen = GetPrevScreen();
 
@@ -2518,7 +2512,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_DoNextScreen )
 	{
 		SongFinished();
-		StageFinished( false );
+		this->StageFinished( false );
 		//SaveReplay();
 
 		if( AdjustSync::IsSyncDataChanged() )

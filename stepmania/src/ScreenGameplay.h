@@ -43,8 +43,8 @@ public:
 	PlayerInfo();
 	~PlayerInfo();
 
-	void Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField );
-	void LoadDummyP1( int iDummyIndex );
+	void Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, Difficulty dcForced );
+	void LoadDummyP1( int iDummyIndex, Difficulty dcForced );
 
 	void ShowOniGameOver();
 	MultiPlayer GetPlayerStateAndStageStatsIndex()	{ return m_pn == PLAYER_INVALID ? m_mp : (MultiPlayer)m_pn; }
@@ -72,6 +72,7 @@ public:
 	MultiPlayer		m_mp;
 	bool			m_bIsDummy;
 	int			m_iDummyIndex;
+	Difficulty		m_difficultyForced;	// force use of Steps with this Difficulty
 	bool			m_bPlayerEnabled; // IsEnabled cache for iterators
 	PlayerState		m_PlayerStateDummy;
 	PlayerStageStats	m_PlayerStageStatsDummy;
@@ -171,7 +172,7 @@ protected:
 	void UpdateLyrics( float fDeltaTime );
 	void SongFinished();
 	virtual void SaveStats();
-	void StageFinished( bool bBackedOut );
+	virtual void StageFinished( bool bBackedOut );
 	void SaveReplay();
 	bool AllAreFailing();
 
