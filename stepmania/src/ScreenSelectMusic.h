@@ -16,6 +16,16 @@
 #include "GameInput.h"
 #include "OptionsList.h"
 
+enum SelectionState
+{
+	SelectionState_SelectingSong,
+	SelectionState_SelectingSteps,
+	SelectionState_Finalized,
+	NUM_SelectionState,
+};
+const RString& SelectionStateToString( SelectionState ss );
+
+
 class ScreenSelectMusic : public ScreenWithMenuElements
 {
 public:
@@ -73,12 +83,6 @@ protected:
 	ThemeMetric<bool> USE_OPTIONS_LIST;
 	ThemeMetric<bool> TWO_PART_SELECTION;
 
-	enum SelectionState
-	{
-		SelectionState_SelectingSong,
-		SelectionState_SelectingSteps,
-		SelectionState_Finalized
-	};
 	bool CanChangeSong() const { return m_SelectionState == SelectionState_SelectingSong; }
 	bool CanChangeSteps() const { return TWO_PART_SELECTION ? m_SelectionState == SelectionState_SelectingSteps : m_SelectionState == SelectionState_SelectingSong; }
 	SelectionState GetNextSelectionState() const
@@ -114,7 +118,7 @@ protected:
 	void CloseOptionsList( PlayerNumber pn );
 
 	SelectionState		m_SelectionState;
-	bool			m_bStepsSelected[NUM_PLAYERS];	// only used in SelectionState_SelectingSteps
+	bool			m_bStepsChosen[NUM_PLAYERS];	// only used in SelectionState_SelectingSteps
 	bool			m_bGoToOptions;
 	RString			m_sSampleMusicToPlay;
 	TimingData		*m_pSampleMusicTimingData;

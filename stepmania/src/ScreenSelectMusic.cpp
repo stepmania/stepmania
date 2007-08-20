@@ -29,6 +29,14 @@
 #include "InputEventPlus.h"
 #include "OptionsList.h"
 
+static const char *SelectionStateNames[] = {
+	"SelectingSong",
+	"SelectingSteps",
+	"Finalized"
+};
+XToString( SelectionState );
+
+
 const int NUM_SCORE_DIGITS	=	9;
 
 #define SHOW_OPTIONS_MESSAGE_SECONDS		THEME->GetMetricF( m_sName, "ShowOptionsMessageSeconds" )
@@ -200,7 +208,7 @@ void ScreenSelectMusic::BeginScreen()
 	m_MusicWheel.BeginScreen();
 	
 	m_SelectionState = SelectionState_SelectingSong;
-	ZERO( m_bStepsSelected );
+	ZERO( m_bStepsChosen );
 	m_bGoToOptions = false;
 	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;
 	ZERO( m_iSelection );
@@ -411,7 +419,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;		// ignore
 
 	if( m_SelectionState == SelectionState_Finalized  ||
-		m_bStepsSelected[input.pn] )
+		m_bStepsChosen[input.pn] )
 		return;		// ignore
 
 
@@ -842,8 +850,6 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			return;
 		}
 
-		MESSAGEMAN->Broadcast("SongChosen");
-
 		break;
 
 	case SelectionState_SelectingSteps:
@@ -855,16 +861,16 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			{
 				if( p == pn )
 					continue;
-				bAllOtherHumanPlayersDone &= m_bStepsSelected[p];
+				bAllOtherHumanPlayersDone &= m_bStepsChosen[p];
 			}
 
 			bool bAllPlayersDoneSelectingSteps = bInitiatedByMenuTimer || bAllOtherHumanPlayersDone;
 			if( !bAllPlayersDoneSelectingSteps )
 			{
-				m_bStepsSelected[pn] = true;
+				m_bStepsChosen[pn] = true;
 				m_soundStart.Play();
 
-				Message msg("StepsSelected");
+				Message msg("StepsChosen");
 				msg.SetParam( "Player", pn );
 				MESSAGEMAN->Broadcast( msg );
 				return;
@@ -884,6 +890,9 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	}
 
 	m_SelectionState = GetNextSelectionState();
+	Message msg( "Start" + SelectionStateToString(m_SelectionState) );
+	MESSAGEMAN->Broadcast( msg );
+
 	m_soundStart.Play();
 
 
@@ -894,13 +903,13 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 
 		FOREACH_HumanPlayer( p )
 		{
-			if( !m_bStepsSelected[p] )
+			if( !m_bStepsChosen[p] )
 			{
-				m_bStepsSelected[p] = true;
+				m_bStepsChosen[p] = true;
 				/* Don't play start sound.  We play it again below on finalized */
 				//m_soundStart.Play();
 
-				Message msg("StepsSelected");
+				Message msg("StepsChosen");
 				msg.SetParam( "Player", p );
 				MESSAGEMAN->Broadcast( msg );
 			}
