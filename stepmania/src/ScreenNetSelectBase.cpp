@@ -251,20 +251,23 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 
 		// First: Check for the special (color) case.
 
-		RString FirstThree = m_sText.substr( i, 3 );
-		if( FirstThree.CompareNoCase("|c0") == 0 && iCharsLeft > 8 )
+		if( m_sText.length() > 8 && i < m_sText.length() - 9 )
 		{
-			ColorChange change;
-			int r, g, b;
-			sscanf( m_sText, "|%*c0%2x%2x%2x", &r, &g, &b );
-			change.c = RageColor( r/255.f, g/255.f, b/255.f, 1.f );
-			change.l = iGlyphsSoFar;
-			if( iGlyphsSoFar == 0 )
-				m_vColors[0] = change;
-			else
-				m_vColors.push_back( change );
-			i+=8;
-			continue;
+			RString FirstThree = m_sText.substr( i, 3 );
+			if( FirstThree.CompareNoCase("|c0") == 0 && iCharsLeft > 8 )
+			{
+				ColorChange change;
+				unsigned int r, g, b;
+				sscanf( m_sText.substr( i, 9 ).c_str(), "|%*c0%2x%2x%2x", &r, &g, &b );
+				change.c = RageColor( r/255.f, g/255.f, b/255.f, 1.f );
+				change.l = iGlyphsSoFar;
+				if( iGlyphsSoFar == 0 )
+					m_vColors[0] = change;
+				else
+					m_vColors.push_back( change );
+				i+=8;
+				continue;
+			}
 		}
 
 		char curChar = m_sText[i];
