@@ -132,67 +132,80 @@ RString SongOptions::GetLocalizedString() const
 
 /* Options are added to the current settings; call Init() beforehand if
  * you don't want this. */
-void SongOptions::FromString( const RString &sOptions )
+void SongOptions::FromString( const RString &sMultipleMods )
 {
-//	Init();
-	RString sTemp = sOptions;
-	sTemp.MakeLower();
-	vector<RString> asBits;
-	split( sTemp, ",", asBits, true );
-
-	for( unsigned i=0; i<asBits.size(); i++ )
+	RString sTemp = sMultipleMods;
+	vector<RString> vs;
+	split( sTemp, ",", vs, true );
+	RString sThrowAway;
+	FOREACH( RString, vs, s )
 	{
-		RString& sBit = asBits[i];
-		TrimLeft(sBit);
-		TrimRight(sBit);
-		
-		Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
-		vector<RString> matches;
-		if( mult.Compare(sBit, matches) )
-			m_fMusicRate = StringToFloat( matches[0] );
-
-		matches.clear();
-		Regex lives("^([0-9]+) ?(lives|life)$");
-		if( lives.Compare(sBit, matches) )
-			m_iBatteryLives = atoi( matches[0] );
-
-		vector<RString> asParts;
-		split( sBit, " ", asParts, true );
-		bool on = true;
-		if( asParts.size() > 1 )
-		{
-			sBit = asParts[1];
-
-			if( asParts[0] == "no" )
-				on = false;
-		}
-
-		if(	 sBit == "norecover" )		m_DrainType = DRAIN_NO_RECOVER;
-		else if( sBit == "suddendeath" ||
-			 sBit == "death" )		m_DrainType = DRAIN_SUDDEN_DEATH;
-		else if( sBit == "power-drop" )		m_DrainType = DRAIN_NO_RECOVER;
-		else if( sBit == "normal-drain" )	m_DrainType = DRAIN_NORMAL;
-
-		else if( sBit == "clap" )		m_bAssistClap = on;
-		else if( sBit == "metronome" )		m_bAssistMetronome = on;
-		else if( sBit == "autosync" || sBit == "autosyncsong" )
-			m_AutosyncType = on ? AUTOSYNC_SONG : AUTOSYNC_OFF;
-		else if( sBit == "autosyncmachine" )	
-			m_AutosyncType = on ? AUTOSYNC_MACHINE : AUTOSYNC_OFF; 
-		else if( sBit == "autosynctempo" )
-			m_AutosyncType = on ? AUTOSYNC_TEMPO : AUTOSYNC_OFF;
-		else if( sBit == "effect" && !on )
-			m_SoundEffectType = SOUNDEFFECT_OFF;
-		else if( sBit == "effectspeed" )
-			m_SoundEffectType = on ? SOUNDEFFECT_SPEED : SOUNDEFFECT_OFF;
-		else if( sBit == "effectpitch" )
-			m_SoundEffectType = on ? SOUNDEFFECT_PITCH : SOUNDEFFECT_OFF;
-		else if( sBit == "savescore" )		m_bSaveScore = on;
-		else if( sBit == "bar" )		m_LifeType = LIFE_BAR;
-		else if( sBit == "battery" )		m_LifeType = LIFE_BATTERY;
-		else if( sBit == "lifetime" )		m_LifeType = LIFE_TIME;
-		else if( sBit == "haste" )		m_fHaste = on? 1.0f:0.0f;
+		FromOneModString( *s, sThrowAway );
 	}
+}
+
+bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
+{
+	RString sBit = sOneMod;
+	sBit.MakeLower();
+	TrimLeft(sBit);
+	TrimRight(sBit);
+	
+	Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
+	vector<RString> matches;
+	if( mult.Compare(sBit, matches) )
+	{
+		m_fMusicRate = StringToFloat( matches[0] );
+		return true;
+	}
+
+	matches.clear();
+	Regex lives("^([0-9]+) ?(lives|life)$");
+	if( lives.Compare(sBit, matches) )
+	{
+		m_iBatteryLives = atoi( matches[0] );
+		return true;
+	}
+
+	vector<RString> asParts;
+	split( sBit, " ", asParts, true );
+	bool on = true;
+	if( asParts.size() > 1 )
+	{
+		sBit = asParts[1];
+		if( asParts[0] == "no" )
+			on = false;
+	}
+
+	if(	 sBit == "norecover" )		m_DrainType = DRAIN_NO_RECOVER;
+	else if( sBit == "suddendeath" ||
+		 sBit == "death" )		m_DrainType = DRAIN_SUDDEN_DEATH;
+	else if( sBit == "power-drop" )		m_DrainType = DRAIN_NO_RECOVER;
+	else if( sBit == "normal-drain" )	m_DrainType = DRAIN_NORMAL;
+
+	else if( sBit == "clap" )		m_bAssistClap = on;
+	else if( sBit == "metronome" )		m_bAssistMetronome = on;
+	else if( sBit == "autosync" || sBit == "autosyncsong" )
+		m_AutosyncType = on ? AUTOSYNC_SONG : AUTOSYNC_OFF;
+	else if( sBit == "autosyncmachine" )	
+		m_AutosyncType = on ? AUTOSYNC_MACHINE : AUTOSYNC_OFF; 
+	else if( sBit == "autosynctempo" )
+		m_AutosyncType = on ? AUTOSYNC_TEMPO : AUTOSYNC_OFF;
+	else if( sBit == "effect" && !on )
+		m_SoundEffectType = SOUNDEFFECT_OFF;
+	else if( sBit == "effectspeed" )
+		m_SoundEffectType = on ? SOUNDEFFECT_SPEED : SOUNDEFFECT_OFF;
+	else if( sBit == "effectpitch" )
+		m_SoundEffectType = on ? SOUNDEFFECT_PITCH : SOUNDEFFECT_OFF;
+	else if( sBit == "savescore" )		m_bSaveScore = on;
+	else if( sBit == "bar" )		m_LifeType = LIFE_BAR;
+	else if( sBit == "battery" )		m_LifeType = LIFE_BATTERY;
+	else if( sBit == "lifetime" )		m_LifeType = LIFE_TIME;
+	else if( sBit == "haste" )		m_fHaste = on? 1.0f:0.0f;
+	else
+		return false;
+
+	return true;
 }
 
 bool SongOptions::operator==( const SongOptions &other ) const

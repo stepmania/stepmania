@@ -22,7 +22,8 @@ public:
 	void ResetSavedPrefs();
 	void GetMods( vector<RString> &AddTo, bool bForceNoteSkin = false ) const;
 	void GetLocalizedMods( vector<RString> &AddTo ) const;
-	void FromString( const RString &sOptions, bool bWarnOnInvalid = false );
+	void FromString( const RString &sMultipleMods );
+	bool FromOneModString( const RString &sOneMod, RString &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
 	void ChooseRandomModifiers();
 	bool ContainsTransformOrTurn() const;
 

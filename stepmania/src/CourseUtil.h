@@ -34,6 +34,8 @@ namespace CourseUtil
 	void AutogenOniFromArtist( const RString &sArtistName, RString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc, Course &out );
 
 	bool ValidateEditCourseName( const RString &sAnswer, RString &sErrorOut );
+
+	void WarnOnInvalidMods( RString sMods );
 };
 
 class CourseID

@@ -381,7 +381,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			{
 				PlayerOptions po;
 				RString s = *iter;
-				po.FromString( s, false );
+				po.FromString( s );
 				vector<RString> v;
 				po.GetLocalizedMods( v );
 				if( v.empty() )

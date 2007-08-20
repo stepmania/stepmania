@@ -13,6 +13,7 @@
 #include "RageFileManager.h"
 #include "CourseWriterCRS.h"
 #include "RageUtil.h"
+#include "CourseUtil.h"
 #include <float.h>
 
 const int MAX_EDIT_COURSE_SIZE_BYTES	= 30*1024;	// 30KB
@@ -130,9 +131,8 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 						attack.fSecsRemaining = 0.0f;
 					}
 					
-					// warn on invalid so we catch bogus mods on load
-					PlayerOptions po;
-					po.FromString( attack.sModifiers, true );
+					// warn on invalid so we catch typos on load
+					CourseUtil::WarnOnInvalidMods( attack.sModifiers );
 
 					attacks.push_back( attack );
 				}

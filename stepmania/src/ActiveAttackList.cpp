@@ -45,7 +45,7 @@ void ActiveAttackList::Refresh()
 			continue;
 
 		PlayerOptions po;
-		po.FromString( attack.sModifiers, true );
+		po.FromString( attack.sModifiers );
 		po.GetLocalizedMods( vsThemedMods );
 	}
 

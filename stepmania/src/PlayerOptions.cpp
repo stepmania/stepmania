@@ -1,7 +1,6 @@
 #include "global.h"
 #include "PlayerOptions.h"
 #include "RageUtil.h"
-#include "RageLog.h"
 #include "GameState.h"
 #include "NoteSkinManager.h"
 #include "song.h"
@@ -11,7 +10,6 @@
 #include "Foreach.h"
 #include "Style.h"
 #include "CommonMetrics.h"
-#include "arch/Dialog/Dialog.h"
 #include <float.h>
 
 #define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYLEN(arr); ++Z ) arr[Z]=1.0f; }
@@ -232,179 +230,178 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 
 /* Options are added to the current settings; call Init() beforehand if
  * you don't want this. */
-void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
+void PlayerOptions::FromString( const RString &sMultipleMods )
+{
+	RString sTemp = sMultipleMods;
+	vector<RString> vs;
+	split( sTemp, ",", vs, true );
+	RString sThrowAway;
+	FOREACH( RString, vs, s )
+	{
+		FromOneModString( *s, sThrowAway );
+	}
+}
+
+bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 {
 	ASSERT( NOTESKIN );
-//	Init();
-	RString sTemp = sOptions;
-	sTemp.MakeLower();
-	vector<RString> asBits;
-	split( sTemp, ",", asBits, true );
 
-	FOREACH( RString, asBits, bit )
+	RString sBit = sOneMod;
+	sBit.MakeLower();
+	TrimLeft(sBit);
+	TrimRight(sBit);
+
+	/* "drunk"
+	 * "no drunk"
+	 * "150% drunk"
+	 * "*2 100% drunk": approach at 2x normal speed */
+
+	float level = 1;
+	float speed = 1;
+	vector<RString> asParts;
+	split( sBit, " ", asParts, true );
+
+	FOREACH_CONST( RString, asParts, s )
 	{
-		RString& sBit = *bit;
-		TrimLeft(sBit);
-		TrimRight(sBit);
-
-		/* "drunk"
-		 * "no drunk"
-		 * "150% drunk"
-		 * "*2 100% drunk": approach at 2x normal speed */
-
-		float level = 1;
-		float speed = 1;
-		vector<RString> asParts;
-		split( sBit, " ", asParts, true );
-
-		FOREACH_CONST( RString, asParts, s )
+		if( *s == "no" )
 		{
-			if( *s == "no" )
+			level = 0;
+		}
+		else if( isdigit((*s)[0]) || (*s)[0] == '-' )
+		{
+			/* If the last character is a *, they probably said "123*" when
+			 * they meant "*123". */
+			if( s->Right(1) == "*" )
 			{
-				level = 0;
+				/* XXX We know what they want, is there any reason not to handle it? */
+				/* Yes.  We should be strict in handling the format. -Chris */
+				sErrorOut = ssprintf("Invalid player options \"%s\"; did you mean '*%d'?", s->c_str(), atoi(*s) );
+				return false;
 			}
-			else if( isdigit((*s)[0]) || (*s)[0] == '-' )
+			else
 			{
-				/* If the last character is a *, they probably said "123*" when
-				 * they meant "*123". */
-				if( s->Right(1) == "*" )
-				{
-					if( bWarnOnInvalid )
-					{
-						LOG->UserLog( "", "", "Invalid player options \"%s\"; did you mean '*%d'?",
-							      s->c_str(), atoi(*s) );
-					}
-					// XXX We know what they want, is there any reason not to handle it?
-					speed = StringToFloat( *s );
-				}
-				else
-				{
-					level = StringToFloat( *s ) / 100.0f;
-				}
-			}
-			else if( *s[0]=='*' )
-			{
-				sscanf( *s, "*%f", &speed );
-				if( !isfinite(speed) )
-					speed = 1.0f;
+				level = StringToFloat( *s ) / 100.0f;
 			}
 		}
-
-		
-		sBit = asParts.back();
-
-#define SET_FLOAT( opt ) { m_ ## opt = level; m_Speed ## opt = speed; }
-		const bool on = (level > 0.5f);
-
-		static Regex mult("^([0-9]+(\\.[0-9]+)?)x$");
-		vector<RString> matches;
-		if( mult.Compare(sBit, matches) )
+		else if( *s[0]=='*' )
 		{
-			StringConversion::FromString( matches[0], level );
-			SET_FLOAT( fScrollSpeed )
-			SET_FLOAT( fTimeSpacing )
-			m_fTimeSpacing = 0;
-		}
-		else if( sscanf( sBit, "c%f", &level ) == 1 )
-		{
-			if( !isfinite(level) || level <= 0.0f )
-				level = 200.0f; // Just pick some value.
-			SET_FLOAT( fScrollBPM )
-			SET_FLOAT( fTimeSpacing )
-			m_fTimeSpacing = 1;
-		}
-		else if( sBit == "clearall" )				Init();
-		else if( sBit == "boost" )				SET_FLOAT( fAccels[ACCEL_BOOST] )
-		else if( sBit == "brake" || sBit == "land" )		SET_FLOAT( fAccels[ACCEL_BRAKE] )
-		else if( sBit == "wave" )				SET_FLOAT( fAccels[ACCEL_WAVE] )
-		else if( sBit == "expand" || sBit == "dwiwave" )	SET_FLOAT( fAccels[ACCEL_EXPAND] )
-		else if( sBit == "boomerang" )				SET_FLOAT( fAccels[ACCEL_BOOMERANG] )
-		else if( sBit == "drunk" )				SET_FLOAT( fEffects[EFFECT_DRUNK] )
-		else if( sBit == "dizzy" )				SET_FLOAT( fEffects[EFFECT_DIZZY] )
-		else if( sBit == "mini" )				SET_FLOAT( fEffects[EFFECT_MINI] )
-		else if( sBit == "tiny" )				SET_FLOAT( fEffects[EFFECT_TINY] )
-		else if( sBit == "flip" )				SET_FLOAT( fEffects[EFFECT_FLIP] )
-		else if( sBit == "invert" )				SET_FLOAT( fEffects[EFFECT_INVERT] )
-		else if( sBit == "tornado" )				SET_FLOAT( fEffects[EFFECT_TORNADO] )
-		else if( sBit == "tipsy" )				SET_FLOAT( fEffects[EFFECT_TIPSY] )
-		else if( sBit == "bumpy" )				SET_FLOAT( fEffects[EFFECT_BUMPY] )
-		else if( sBit == "beat" )				SET_FLOAT( fEffects[EFFECT_BEAT] )
-		else if( sBit == "hidden" )				SET_FLOAT( fAppearances[APPEARANCE_HIDDEN] )
-		else if( sBit == "hiddenoffset" )			SET_FLOAT( fAppearances[APPEARANCE_HIDDEN_OFFSET] )
-		else if( sBit == "sudden" )				SET_FLOAT( fAppearances[APPEARANCE_SUDDEN] )
-		else if( sBit == "suddenoffset" )			SET_FLOAT( fAppearances[APPEARANCE_SUDDEN_OFFSET] )
-		else if( sBit == "stealth" )				SET_FLOAT( fAppearances[APPEARANCE_STEALTH] )
-		else if( sBit == "blink" )				SET_FLOAT( fAppearances[APPEARANCE_BLINK] )
-		else if( sBit == "randomvanish" )			SET_FLOAT( fAppearances[APPEARANCE_RANDOMVANISH] )
-		else if( sBit == "turn" && !on )			ZERO( m_bTurns ); /* "no turn" */
-		else if( sBit == "mirror" )				m_bTurns[TURN_MIRROR] = on;
-		else if( sBit == "left" )				m_bTurns[TURN_LEFT] = on;
-		else if( sBit == "right" )				m_bTurns[TURN_RIGHT] = on;
-		else if( sBit == "shuffle" )				m_bTurns[TURN_SHUFFLE] = on;
-		else if( sBit == "supershuffle" )			m_bTurns[TURN_SUPER_SHUFFLE] = on;
-		else if( sBit == "little" )				m_bTransforms[TRANSFORM_LITTLE] = on;
-		else if( sBit == "wide" )				m_bTransforms[TRANSFORM_WIDE] = on;
-		else if( sBit == "big" )				m_bTransforms[TRANSFORM_BIG] = on;
-		else if( sBit == "quick" )				m_bTransforms[TRANSFORM_QUICK] = on;
-		else if( sBit == "bmrize" )				m_bTransforms[TRANSFORM_BMRIZE] = on;
-		else if( sBit == "skippy" )				m_bTransforms[TRANSFORM_SKIPPY] = on;
-		else if( sBit == "mines" )				m_bTransforms[TRANSFORM_MINES] = on;
-		else if( sBit == "echo" )				m_bTransforms[TRANSFORM_ECHO] = on;
-		else if( sBit == "stomp" )				m_bTransforms[TRANSFORM_STOMP] = on;
-		else if( sBit == "planted" )				m_bTransforms[TRANSFORM_PLANTED] = on;
-		else if( sBit == "floored" )				m_bTransforms[TRANSFORM_FLOORED] = on;
-		else if( sBit == "twister" )				m_bTransforms[TRANSFORM_TWISTER] = on;
-		else if( sBit == "nojumps" )				m_bTransforms[TRANSFORM_NOJUMPS] = on;
-		else if( sBit == "nohands" )				m_bTransforms[TRANSFORM_NOHANDS] = on;
-		else if( sBit == "noquads" )				m_bTransforms[TRANSFORM_NOQUADS] = on;
-		else if( sBit == "reverse" )				SET_FLOAT( fScrolls[SCROLL_REVERSE] )
-		else if( sBit == "split" )				SET_FLOAT( fScrolls[SCROLL_SPLIT] )
-		else if( sBit == "alternate" )				SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
-		else if( sBit == "cross" )				SET_FLOAT( fScrolls[SCROLL_CROSS] )
-		else if( sBit == "centered" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
-		else if( sBit == "noholds" )				m_bTransforms[TRANSFORM_NOHOLDS] = on;
-		else if( sBit == "norolls" )				m_bTransforms[TRANSFORM_NOROLLS] = on;
-		else if( sBit == "nomines" )				m_bTransforms[TRANSFORM_NOMINES] = on;
-		else if( sBit == "nostretch" )				m_bTransforms[TRANSFORM_NOSTRETCH] = on;
-		else if( sBit == "dark" )				SET_FLOAT( fDark )
-		else if( sBit == "blind" )				SET_FLOAT( fBlind )
-		else if( sBit == "cover" )				SET_FLOAT( fCover )
-		else if( sBit == "passmark" )				SET_FLOAT( fPassmark )
-		else if( sBit == "overhead" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = 0;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( sBit == "incoming" )				{ m_bSetTiltOrSkew = true; m_fSkew = level;	m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( sBit == "space" )				{ m_bSetTiltOrSkew = true; m_fSkew = level;	m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( sBit == "hallway" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( sBit == "distant" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )	m_sNoteSkin = sBit;
-		else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
-		else if( sBit == "randomspeed" ) 			SET_FLOAT( fRandomSpeed )
-		else if( sBit == "failarcade" || 
-			 sBit == "failimmediate" )			m_FailType = FAIL_IMMEDIATE;
-		else if( sBit == "failendofsong" ||
-			 sBit == "failimmediatecontinue" )		m_FailType = FAIL_IMMEDIATE_CONTINUE;
-		else if( sBit == "failatend" )				m_FailType = FAIL_AT_END;
-		else if( sBit == "failoff" )				m_FailType = FAIL_OFF;
-		else if( sBit == "faildefault" )
-		{
-			PlayerOptions po;
-			GAMESTATE->GetDefaultPlayerOptions( po );
-			m_FailType = po.m_FailType;
-		}
-		else if( sBit == "addscore" )				m_ScoreDisplay = SCORING_ADD;
-		else if( sBit == "subtractscore" )			m_ScoreDisplay = SCORING_SUBTRACT;
-		else if( sBit == "averagescore" )			m_ScoreDisplay = SCORING_AVERAGE;
-		else if( sBit == "muteonerror" )			m_bMuteOnError = on;
-		else if( sBit == "random" )				ChooseRandomModifiers();
-		else
-		{
-			if( bWarnOnInvalid )
-			{
-				RString sWarning = ssprintf( "The options string \"%s\" contains an invalid mod name \"%s\".", sOptions.c_str(), sBit.c_str() );
-				LOG->UserLog( "", "", "%s", sWarning.c_str() );
-				Dialog::OK( sWarning, "INVALID_PLAYER_OPTION_WARNING" );
-			}
+			sscanf( *s, "*%f", &speed );
+			if( !isfinite(speed) )
+				speed = 1.0f;
 		}
 	}
+
+	
+	sBit = asParts.back();
+
+#define SET_FLOAT( opt ) { m_ ## opt = level; m_Speed ## opt = speed; }
+	const bool on = (level > 0.5f);
+
+	static Regex mult("^([0-9]+(\\.[0-9]+)?)x$");
+	vector<RString> matches;
+	if( mult.Compare(sBit, matches) )
+	{
+		StringConversion::FromString( matches[0], level );
+		SET_FLOAT( fScrollSpeed )
+		SET_FLOAT( fTimeSpacing )
+		m_fTimeSpacing = 0;
+	}
+	else if( sscanf( sBit, "c%f", &level ) == 1 )
+	{
+		if( !isfinite(level) || level <= 0.0f )
+			level = 200.0f; // Just pick some value.
+		SET_FLOAT( fScrollBPM )
+		SET_FLOAT( fTimeSpacing )
+		m_fTimeSpacing = 1;
+	}
+	else if( sBit == "clearall" )				Init();
+	else if( sBit == "boost" )				SET_FLOAT( fAccels[ACCEL_BOOST] )
+	else if( sBit == "brake" || sBit == "land" )		SET_FLOAT( fAccels[ACCEL_BRAKE] )
+	else if( sBit == "wave" )				SET_FLOAT( fAccels[ACCEL_WAVE] )
+	else if( sBit == "expand" || sBit == "dwiwave" )	SET_FLOAT( fAccels[ACCEL_EXPAND] )
+	else if( sBit == "boomerang" )				SET_FLOAT( fAccels[ACCEL_BOOMERANG] )
+	else if( sBit == "drunk" )				SET_FLOAT( fEffects[EFFECT_DRUNK] )
+	else if( sBit == "dizzy" )				SET_FLOAT( fEffects[EFFECT_DIZZY] )
+	else if( sBit == "mini" )				SET_FLOAT( fEffects[EFFECT_MINI] )
+	else if( sBit == "tiny" )				SET_FLOAT( fEffects[EFFECT_TINY] )
+	else if( sBit == "flip" )				SET_FLOAT( fEffects[EFFECT_FLIP] )
+	else if( sBit == "invert" )				SET_FLOAT( fEffects[EFFECT_INVERT] )
+	else if( sBit == "tornado" )				SET_FLOAT( fEffects[EFFECT_TORNADO] )
+	else if( sBit == "tipsy" )				SET_FLOAT( fEffects[EFFECT_TIPSY] )
+	else if( sBit == "bumpy" )				SET_FLOAT( fEffects[EFFECT_BUMPY] )
+	else if( sBit == "beat" )				SET_FLOAT( fEffects[EFFECT_BEAT] )
+	else if( sBit == "hidden" )				SET_FLOAT( fAppearances[APPEARANCE_HIDDEN] )
+	else if( sBit == "hiddenoffset" )			SET_FLOAT( fAppearances[APPEARANCE_HIDDEN_OFFSET] )
+	else if( sBit == "sudden" )				SET_FLOAT( fAppearances[APPEARANCE_SUDDEN] )
+	else if( sBit == "suddenoffset" )			SET_FLOAT( fAppearances[APPEARANCE_SUDDEN_OFFSET] )
+	else if( sBit == "stealth" )				SET_FLOAT( fAppearances[APPEARANCE_STEALTH] )
+	else if( sBit == "blink" )				SET_FLOAT( fAppearances[APPEARANCE_BLINK] )
+	else if( sBit == "randomvanish" )			SET_FLOAT( fAppearances[APPEARANCE_RANDOMVANISH] )
+	else if( sBit == "turn" && !on )			ZERO( m_bTurns ); /* "no turn" */
+	else if( sBit == "mirror" )				m_bTurns[TURN_MIRROR] = on;
+	else if( sBit == "left" )				m_bTurns[TURN_LEFT] = on;
+	else if( sBit == "right" )				m_bTurns[TURN_RIGHT] = on;
+	else if( sBit == "shuffle" )				m_bTurns[TURN_SHUFFLE] = on;
+	else if( sBit == "supershuffle" )			m_bTurns[TURN_SUPER_SHUFFLE] = on;
+	else if( sBit == "little" )				m_bTransforms[TRANSFORM_LITTLE] = on;
+	else if( sBit == "wide" )				m_bTransforms[TRANSFORM_WIDE] = on;
+	else if( sBit == "big" )				m_bTransforms[TRANSFORM_BIG] = on;
+	else if( sBit == "quick" )				m_bTransforms[TRANSFORM_QUICK] = on;
+	else if( sBit == "bmrize" )				m_bTransforms[TRANSFORM_BMRIZE] = on;
+	else if( sBit == "skippy" )				m_bTransforms[TRANSFORM_SKIPPY] = on;
+	else if( sBit == "mines" )				m_bTransforms[TRANSFORM_MINES] = on;
+	else if( sBit == "echo" )				m_bTransforms[TRANSFORM_ECHO] = on;
+	else if( sBit == "stomp" )				m_bTransforms[TRANSFORM_STOMP] = on;
+	else if( sBit == "planted" )				m_bTransforms[TRANSFORM_PLANTED] = on;
+	else if( sBit == "floored" )				m_bTransforms[TRANSFORM_FLOORED] = on;
+	else if( sBit == "twister" )				m_bTransforms[TRANSFORM_TWISTER] = on;
+	else if( sBit == "nojumps" )				m_bTransforms[TRANSFORM_NOJUMPS] = on;
+	else if( sBit == "nohands" )				m_bTransforms[TRANSFORM_NOHANDS] = on;
+	else if( sBit == "noquads" )				m_bTransforms[TRANSFORM_NOQUADS] = on;
+	else if( sBit == "reverse" )				SET_FLOAT( fScrolls[SCROLL_REVERSE] )
+	else if( sBit == "split" )				SET_FLOAT( fScrolls[SCROLL_SPLIT] )
+	else if( sBit == "alternate" )				SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
+	else if( sBit == "cross" )				SET_FLOAT( fScrolls[SCROLL_CROSS] )
+	else if( sBit == "centered" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
+	else if( sBit == "noholds" )				m_bTransforms[TRANSFORM_NOHOLDS] = on;
+	else if( sBit == "norolls" )				m_bTransforms[TRANSFORM_NOROLLS] = on;
+	else if( sBit == "nomines" )				m_bTransforms[TRANSFORM_NOMINES] = on;
+	else if( sBit == "nostretch" )				m_bTransforms[TRANSFORM_NOSTRETCH] = on;
+	else if( sBit == "dark" )				SET_FLOAT( fDark )
+	else if( sBit == "blind" )				SET_FLOAT( fBlind )
+	else if( sBit == "cover" )				SET_FLOAT( fCover )
+	else if( sBit == "passmark" )				SET_FLOAT( fPassmark )
+	else if( sBit == "overhead" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = 0;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+	else if( sBit == "incoming" )				{ m_bSetTiltOrSkew = true; m_fSkew = level;	m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+	else if( sBit == "space" )				{ m_bSetTiltOrSkew = true; m_fSkew = level;	m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+	else if( sBit == "hallway" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+	else if( sBit == "distant" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+	else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )	m_sNoteSkin = sBit;
+	else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
+	else if( sBit == "randomspeed" ) 			SET_FLOAT( fRandomSpeed )
+	else if( sBit == "failarcade" || 
+		 sBit == "failimmediate" )			m_FailType = FAIL_IMMEDIATE;
+	else if( sBit == "failendofsong" ||
+		 sBit == "failimmediatecontinue" )		m_FailType = FAIL_IMMEDIATE_CONTINUE;
+	else if( sBit == "failatend" )				m_FailType = FAIL_AT_END;
+	else if( sBit == "failoff" )				m_FailType = FAIL_OFF;
+	else if( sBit == "faildefault" )
+	{
+		PlayerOptions po;
+		GAMESTATE->GetDefaultPlayerOptions( po );
+		m_FailType = po.m_FailType;
+	}
+	else if( sBit == "addscore" )				m_ScoreDisplay = SCORING_ADD;
+	else if( sBit == "subtractscore" )			m_ScoreDisplay = SCORING_SUBTRACT;
+	else if( sBit == "averagescore" )			m_ScoreDisplay = SCORING_AVERAGE;
+	else if( sBit == "muteonerror" )			m_bMuteOnError = on;
+	else if( sBit == "random" )				ChooseRandomModifiers();
+	else
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void NextFloat( float fValues[], int size )

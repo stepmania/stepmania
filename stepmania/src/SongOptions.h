@@ -52,6 +52,7 @@ public:
 	RString GetString() const;
 	RString GetLocalizedString() const;
 	void FromString( const RString &sOptions );
+	bool FromOneModString( const RString &sOneMod, RString &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
 
 	bool operator==( const SongOptions &other ) const;
 	bool operator!=( const SongOptions &other ) const { return !operator==(other); }

@@ -11,6 +11,8 @@
 #include "Foreach.h"
 #include "GameState.h"
 #include "LocalizedString.h"
+#include "RageLog.h"
+#include "arch/Dialog/Dialog.h"
 
 
 //
@@ -313,6 +315,29 @@ bool CourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sError
 	}
 
 	return true;
+}
+
+void CourseUtil::WarnOnInvalidMods( RString sMods )
+{
+	PlayerOptions po;
+	SongOptions so;
+	vector<RString> vs;
+	split( sMods, ",", vs, true );
+	FOREACH_CONST( RString, vs, s )
+	{
+		bool bValid = false;
+		RString sErrorDetail;
+		bValid |= po.FromOneModString( *s, sErrorDetail );
+		bValid |= so.FromOneModString( *s, sErrorDetail );
+		if( !bValid )
+		{
+			RString sFullError = ssprintf("Error processing '%s' in '%s'", (*s).c_str(), sMods.c_str() );
+			if( !sErrorDetail.empty() )
+				sFullError += ": " + sErrorDetail;
+			LOG->UserLog( "", "", "%s", sFullError.c_str() );
+			Dialog::OK( sFullError, "INVALID_PLAYER_OPTION_WARNING" );
+		}
+	}
 }
 
 
