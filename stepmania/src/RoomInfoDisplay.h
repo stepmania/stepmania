@@ -7,6 +7,7 @@
 class RoomInfoDisplay : public ActorFrame
 {
 public:
+	RoomInfoDisplay();
 	~RoomInfoDisplay();
 	virtual void Load( RString sType );
 	virtual void Update( float fDeltaTime );

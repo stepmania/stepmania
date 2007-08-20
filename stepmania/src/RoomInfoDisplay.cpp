@@ -15,6 +15,12 @@ static LocalizedString SONG_SUB_TITLE( "RoomInfoDisplay", "Song Subtitle:" );
 static LocalizedString SONG_ARTIST( "RoomInfoDisplay", "Song Artist:" );
 static LocalizedString PLAYERS( "RoomInfoDisplay", "Players" );
 
+RoomInfoDisplay::RoomInfoDisplay() :
+	m_state( OPEN )
+{
+	//No code
+}
+
 RoomInfoDisplay::~RoomInfoDisplay()
 {
 	for (size_t i = 0; i < m_playerList.size(); i++)
