@@ -1,10 +1,12 @@
 -- This file is always executed first.
 
 -- Override Lua's upper and lower functions with our own, which is always UTF-8.
-string.upper = Uppercase
-string.lower = Lowercase
-Uppercase = nil -- don't use directly
-Lowercase = nil -- don't use directly
+if Uppercase then
+	string.upper = Uppercase
+	string.lower = Lowercase
+	Uppercase = nil -- don't use directly
+	Lowercase = nil -- don't use directly
+end
 
 Trace = lua.Trace
 Warn = lua.Warn
