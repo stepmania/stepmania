@@ -761,6 +761,7 @@ public:
 	static int settext( T* p, lua_State *L )
 	{
 		RString s = SArg(1);
+		RString sAlt;
 		// XXX: Lua strings should simply use "\n" natively.  However, some
 		// settext calls may be made from GetMetric() calls to other strings,
 		// and it's confusing for :: to work in some strings and not others.
@@ -769,7 +770,15 @@ public:
 		s.Replace("::","\n");
 		FontCharAliases::ReplaceMarkers( s );
 
-		p->SetText( s ); return 0;
+		if( lua_gettop(L) > 1 )
+		{
+			sAlt = SArg(2);
+			sAlt.Replace("::","\n");
+			FontCharAliases::ReplaceMarkers( sAlt );
+		}
+
+		p->SetText( s, sAlt );
+		return 0;
 	}
 	static int rainbowscroll( T* p, lua_State *L )		{ p->SetRainbowScroll( BArg(1) ); return 0; }
 	static int jitter( T* p, lua_State *L )			{ p->SetJitter( BArg(1) ); return 0; }
