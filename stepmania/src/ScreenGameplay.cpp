@@ -124,6 +124,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, Dif
 	m_mp = mp;
 	m_bPlayerEnabled = IsEnabled();
 	m_bIsDummy = false;
+	m_difficultyForced = dcForced;
 	m_pLifeMeter = NULL;
 	m_ptextCourseSongNumber = NULL;
 	m_ptextStepsDescription = NULL;
@@ -832,6 +833,21 @@ void ScreenGameplay::InitSongQueues()
 			pi->m_asModifiersQueue.push_back( aa );
 		}
 	}
+
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	{
+		if( pi->m_difficultyForced != Difficulty_Invalid )
+		{
+			for( int i=0; i<(int)m_apSongsQueue.size(); i++ )
+			{
+				Song *pSong = m_apSongsQueue[i];
+				Steps *pOldSteps = pi->m_vpStepsQueue[i];
+				Steps *pSteps = SongUtil::GetOneSteps( pSong, pOldSteps->m_StepsType, pi->m_difficultyForced );
+				ASSERT( pSteps );
+				pi->m_vpStepsQueue[i] = pSteps;
+			}
+		}
+	}
 }
 
 ScreenGameplay::~ScreenGameplay()
@@ -886,8 +902,6 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		 * once in Player::Load, then again in Player::ApplyActiveAttacks.  This 
 		 * is very bad for transforms like AddMines.
 		 */
-		if( pi->m_difficultyForced != Difficulty_Invalid )
-			pSteps = SongUtil::GetOneSteps( GAMESTATE->m_pCurSong, pSteps->m_StepsType, pi->m_difficultyForced );
 		NoteData originalNoteData;
 		pSteps->GetNoteData( originalNoteData );
 		
