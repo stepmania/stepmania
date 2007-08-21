@@ -527,6 +527,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\ScreenOptionsReviewWorkout.h">
 			</File>
 			<File
+				RelativePath=".\ScreenOptionsToggleSongs.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsToggleSongs.h">
+			</File>
+			<File
 				RelativePath="ScreenPackages.cpp">
 			</File>
 			<File
