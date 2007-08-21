@@ -27,7 +27,14 @@ local t = Def.ActorFrame {
 	OffCommand = cmd(stoptweening;accelerate,0.3;x,SCREEN_RIGHT+SCREEN_WIDTH);
 };
 
-if pm == 'PlayMode_Regular' then
+
+local sGame = GAMESTATE:GetCurrentGame():GetName();
+local sButton = '';
+if sGame == 'dance' then sButton = 'Down'
+elseif sGame == 'pump' then sButton = 'Center'
+end
+
+if pm == 'PlayMode_Regular' and sButton ~= '' then
 	local noteOffsetY = -30;
 	local noteOffsetX = 160;
 	local NameFont = LoadFont( "Common", "normal" ) .. {
@@ -40,10 +47,10 @@ if pm == 'PlayMode_Regular' then
 
 	-- Add Hold.
 	local holdDelta = NOTESKIN:GetMetricIForNoteSkin( "NoteDisplay", "StartDrawingHoldBodyOffsetFromHead", "default" ) + NOTESKIN:GetMetricIForNoteSkin( "NoteDisplay", "StopDrawingHoldBodyOffsetFromTail", "default" );
-	local top = NOTESKIN:LoadActorForNoteSkin( "Down", "Hold Head Inactive", "default" ) .. {
+	local top = NOTESKIN:LoadActorForNoteSkin( sButton, "Hold Head Inactive", "default" ) .. {
 		InitCommand = cmd(addx,-noteOffsetX;addy,noteOffsetY+holdDelta/2);
 	}
-	local bottom = NOTESKIN:LoadActorForNoteSkin( "Down", "Hold BottomCap Inactive", "default" ) .. {
+	local bottom = NOTESKIN:LoadActorForNoteSkin( sButton, "Hold BottomCap Inactive", "default" ) .. {
 		InitCommand = cmd(addx,-noteOffsetX;addy,noteOffsetY-holdDelta/2);
 	};
 
@@ -64,7 +71,7 @@ if pm == 'PlayMode_Regular' then
 	};
 
 	-- Add Mine.
-	t[#t+1] = NOTESKIN:LoadActorForNoteSkin( "Down", "Tap Mine", "default" ) .. {
+	t[#t+1] = NOTESKIN:LoadActorForNoteSkin( sButton, "Tap Mine", "default" ) .. {
 		InitCommand = cmd(addx,noteOffsetX;addy,noteOffsetY);
 	};
 	t[#t+1] = NameFont .. {
