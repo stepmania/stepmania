@@ -78,7 +78,7 @@ protected:
 	vector<RageSpriteVertex>	m_aVertices;
 	vector<RageTexture *>		m_pTextures;
 	map<size_t, Attribute>		m_mAttributes;
-	bool			m_bHasGlowAttribute;
+	bool				m_bHasGlowAttribute;
 	
 	// recalculate the items in SetText()
 	void BuildChars();
