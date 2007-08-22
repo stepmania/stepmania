@@ -34,9 +34,7 @@ void ScoreDisplayCalories::LoadFromNode( const XNode* pNode )
 		LUA->Release( L );
 	}
 	
-	m_sMessageOnStep = ssprintf("StepP%d",m_PlayerNumber+1);
-	
-	MESSAGEMAN->Subscribe( this, m_sMessageOnStep );
+	MESSAGEMAN->Subscribe( this, "Step" );
 }
 
 void ScoreDisplayCalories::Update( float fDelta )
@@ -51,9 +49,12 @@ void ScoreDisplayCalories::Update( float fDelta )
 
 void ScoreDisplayCalories::HandleMessage( const Message &msg )
 {
-	if( msg.GetName() == m_sMessageOnStep )
+	if( msg.GetName() == "Step" )
 	{
-		UpdateNumber();
+		PlayerNumber pn;
+		msg.GetParam( "PlayerNumber", pn );
+		if( pn == m_PlayerNumber )
+			UpdateNumber();
 	}
 	
 	RollingNumbers::HandleMessage( msg );

@@ -182,8 +182,6 @@ protected:
 
 	vector<RageSound>	m_vKeysounds;
 
-	RString			m_sMessageToSendOnStep;
-
 	ThemeMetric<float>	GRAY_ARROWS_Y_STANDARD;
 	ThemeMetric<float>	GRAY_ARROWS_Y_REVERSE;
 	ThemeMetric2D<float>	ATTACK_DISPLAY_X;

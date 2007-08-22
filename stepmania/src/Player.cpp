@@ -300,8 +300,6 @@ void Player::Init(
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	m_sMessageToSendOnStep = ssprintf("StepP%d",pn+1);
-
 
 	RageSoundLoadParams SoundParams;
 	SoundParams.m_bSupportPan = true;
@@ -2051,7 +2049,10 @@ done_checking_hopo:
 				break;
 			}
 		}
-		MESSAGEMAN->Broadcast( m_sMessageToSendOnStep );
+		Message msg( "Step" );
+		msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
+		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+		MESSAGEMAN->Broadcast( msg );
 	}
 }
 
