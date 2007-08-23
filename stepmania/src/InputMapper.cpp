@@ -1074,6 +1074,8 @@ const InputScheme::GameButtonInfo *InputScheme::GetGameButtonInfo( GameButton gb
 
 const char *InputScheme::GetGameButtonName( GameButton gb ) const
 {
+	if( gb == GameButton_Invalid )
+		return "";
 	return GetGameButtonInfo(gb)->m_szName;
 }
 
