@@ -9,7 +9,9 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <mach/mach.h>
+extern "C" {
 #include <mach/mach_time.h>
+}
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOKitKeys.h>
 #include <IOKit/network/IOEthernetInterface.h>
