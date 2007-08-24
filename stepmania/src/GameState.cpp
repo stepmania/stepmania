@@ -931,7 +931,7 @@ int GameState::GetCourseSongIndex() const
 {
 	/* iSongsPlayed includes the current song, so it's 1-based; subtract one. */
 	if( GAMESTATE->m_bMultiplayer )
-		return STATSMAN->m_CurStageStats.m_multiPlayer[MultiPlayer_1].m_iSongsPlayed-1;
+		return STATSMAN->m_CurStageStats.m_multiPlayer[MultiPlayer_P1].m_iSongsPlayed-1;
 	else
 		return STATSMAN->m_CurStageStats.m_player[m_MasterPlayerNumber].m_iSongsPlayed-1;
 }

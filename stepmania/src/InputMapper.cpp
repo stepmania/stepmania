@@ -988,7 +988,7 @@ MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 {
 	if( id == InputDevice_Invalid )
 		return MultiPlayer_Invalid;
-	return enum_add2( MultiPlayer_1, id - DEVICE_JOY1 );
+	return enum_add2( MultiPlayer_P1, id - DEVICE_JOY1 );
 }
 
 GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
