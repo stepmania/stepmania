@@ -137,6 +137,11 @@ void ScoreKeeperNormal::Load(
 	m_iNumTapsAndHolds = 0;
 	m_bIsLastSongInCourse = false;
 
+	Message msg( "ScoreChanged" );
+	msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+	MESSAGEMAN->Broadcast( msg );
+
 	memset( m_ComboBonusFactor, 0, sizeof(m_ComboBonusFactor) );
 	switch( PREFSMAN->m_ScoringType )
 	{
@@ -431,6 +436,11 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 			m_pPlayerStageStats->m_iCurCombo,
 			tn.result.fTapNoteOffset 
 		);
+		Message msg( "ScoreChanged" );
+		msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
+		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+		MESSAGEMAN->Broadcast( msg );
+
 	}
 
 	AddTapScore( tns );
@@ -566,6 +576,10 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	NSMAN->ReportScore( pn, scoreOfLastTap,
 			m_pPlayerStageStats->m_iScore,
 			m_pPlayerStageStats->m_iCurCombo, offset );
+	Message msg( "ScoreChanged" );
+	msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 
@@ -593,6 +607,10 @@ void ScoreKeeperNormal::HandleHoldScore( const TapNote &tn )
 		m_pPlayerStageStats->m_iScore,
 		m_pPlayerStageStats->m_iCurCombo,
 		tn.result.fTapNoteOffset );
+	Message msg( "ScoreChanged" );
+	msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 

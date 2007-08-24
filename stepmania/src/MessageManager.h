@@ -74,8 +74,6 @@ enum MessageID
 	Message_StarMeterChangedP2,
 	Message_LifeMeterChangedP1,
 	Message_LifeMeterChangedP2,
-	Message_ScoreChangedP1,
-	Message_ScoreChangedP2,
 	NUM_MessageID,	// leave this at the end
 	MessageID_Invalid
 };

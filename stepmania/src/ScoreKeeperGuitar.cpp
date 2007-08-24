@@ -2,6 +2,7 @@
 #include "ScoreKeeperGuitar.h"
 #include "PlayerStageStats.h"
 #include "MessageManager.h"
+#include "PlayerState.h"
 
 
 ScoreKeeperGuitar::ScoreKeeperGuitar( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats ) : 
@@ -34,7 +35,10 @@ void ScoreKeeperGuitar::HandleHoldActiveSeconds( float fMusicSecondsHeld )
 	{
 		iScore += iPoints;
 		iCurMaxScore += iPoints;
-		MESSAGEMAN->Broadcast( Message_ScoreChangedP1 );
+		Message msg( "ScoreChanged" );
+		msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
+		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+		MESSAGEMAN->Broadcast( msg );
 	}
 }
 
@@ -62,7 +66,10 @@ void ScoreKeeperGuitar::AddTapRowScore( TapNoteScore tns, const NoteData &nd, in
 		ASSERT( iNumTapsInRow > 0 );
 
 		iScore += 50 * iNumTapsInRow * iNewCurScoreMultiplier;
-		MESSAGEMAN->Broadcast( Message_ScoreChangedP1 );
+		Message msg( "ScoreChanged" );
+		msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
+		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+		MESSAGEMAN->Broadcast( msg );
 	}
 }
 
