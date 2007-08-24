@@ -1759,6 +1759,10 @@
 		AAA6BFEC0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */; };
 		AAA6BFED0644AB3700AFBBC8 /* ScreenWithMenuElements.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA6BFEB0644AB3700AFBBC8 /* ScreenWithMenuElements.h */; };
 		AAA71EA105EE154E00D2E8FF /* global.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA71EA005EE154E00D2E8FF /* global.cpp */; };
+		AAA7D4C90C7E872600FB8F78 /* ScreenOptionsToggleSongs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA7D4C70C7E872500FB8F78 /* ScreenOptionsToggleSongs.cpp */; };
+		AAA7D4CA0C7E872600FB8F78 /* ScreenOptionsToggleSongs.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA7D4C80C7E872500FB8F78 /* ScreenOptionsToggleSongs.h */; };
+		AAA7D4CB0C7E872600FB8F78 /* ScreenOptionsToggleSongs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA7D4C70C7E872500FB8F78 /* ScreenOptionsToggleSongs.cpp */; };
+		AAA7D4CC0C7E872600FB8F78 /* ScreenOptionsToggleSongs.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA7D4C80C7E872500FB8F78 /* ScreenOptionsToggleSongs.h */; };
 		AAA8E0030696984300FCE1F9 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA8E0020696984300FCE1F9 /* CoreAudio.framework */; };
 		AAAA11C60A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAA11C40A662F9C00B2BD88 /* ScoreKeeperShared.h */; };
 		AAAA11C70A662F9D00B2BD88 /* ScoreKeeperShared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAA11C50A662F9C00B2BD88 /* ScoreKeeperShared.cpp */; };
@@ -3055,6 +3059,8 @@
 		AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenWithMenuElements.cpp; path = ../src/ScreenWithMenuElements.cpp; sourceTree = "<group>"; };
 		AAA6BFEB0644AB3700AFBBC8 /* ScreenWithMenuElements.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenWithMenuElements.h; path = ../src/ScreenWithMenuElements.h; sourceTree = "<group>"; };
 		AAA71EA005EE154E00D2E8FF /* global.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = global.cpp; sourceTree = "<group>"; };
+		AAA7D4C70C7E872500FB8F78 /* ScreenOptionsToggleSongs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsToggleSongs.cpp; path = ../src/ScreenOptionsToggleSongs.cpp; sourceTree = SOURCE_ROOT; };
+		AAA7D4C80C7E872500FB8F78 /* ScreenOptionsToggleSongs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsToggleSongs.h; path = ../src/ScreenOptionsToggleSongs.h; sourceTree = SOURCE_ROOT; };
 		AAA8E0020696984300FCE1F9 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		AAA983CA04B9060A00D02EE9 /* ActorUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ActorUtil.cpp; path = ../src/ActorUtil.cpp; sourceTree = "<group>"; };
 		AAAA11C40A662F9C00B2BD88 /* ScoreKeeperShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScoreKeeperShared.h; path = ../src/ScoreKeeperShared.h; sourceTree = "<group>"; };
@@ -3686,6 +3692,8 @@
 				AAFBEEE8094D807E000029DE /* ScreenOptionsMemoryCard.h */,
 				AAE7801E0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.cpp */,
 				AAE7801F0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.h */,
+				AAA7D4C70C7E872500FB8F78 /* ScreenOptionsToggleSongs.cpp */,
+				AAA7D4C80C7E872500FB8F78 /* ScreenOptionsToggleSongs.h */,
 				AA1145D9075DFADF0050A3D1 /* ScreenPackages.cpp */,
 				AA1145DA075DFADF0050A3D1 /* ScreenPackages.h */,
 				AA6E004F047711F3005F316C /* ScreenPlayerOptions.cpp */,
@@ -5689,6 +5697,7 @@
 				AA339A7F0BF0FA6400E1475F /* LoadingWindow_Null.h in Headers */,
 				AAB3B7DD0C6C582E001BF487 /* ScreenSelectProfile.h in Headers */,
 				AAB3BB5A0C718F2D001BF487 /* RageUtil_CachedObject.h in Headers */,
+				AAA7D4CA0C7E872600FB8F78 /* ScreenOptionsToggleSongs.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6112,6 +6121,7 @@
 				AA339A7E0BF0FA6400E1475F /* LoadingWindow_Null.h in Headers */,
 				AAB3B7DF0C6C582E001BF487 /* ScreenSelectProfile.h in Headers */,
 				AAB3BB5C0C718F2D001BF487 /* RageUtil_CachedObject.h in Headers */,
+				AAA7D4CC0C7E872600FB8F78 /* ScreenOptionsToggleSongs.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6338,6 +6348,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = AAC845130856A19700A9FEAB /* Build configuration list for PBXProject "stepmania" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -6353,6 +6364,7 @@
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* SDL App */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				AA29CC240558741A00961A51 /* stepmania */,
 				AA30C60F07F5E24A0066F398 /* version */,
@@ -6899,6 +6911,7 @@
 				AA3396BA0BDE195E00E1475F /* RageSoundReader_Merge.cpp in Sources */,
 				AAB3B7DC0C6C582E001BF487 /* ScreenSelectProfile.cpp in Sources */,
 				AAB3BB590C718F2D001BF487 /* RageUtil_CachedObject.cpp in Sources */,
+				AAA7D4C90C7E872600FB8F78 /* ScreenOptionsToggleSongs.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7311,6 +7324,7 @@
 				AA3396B80BDE195E00E1475F /* RageSoundReader_Merge.cpp in Sources */,
 				AAB3B7DE0C6C582E001BF487 /* ScreenSelectProfile.cpp in Sources */,
 				AAB3BB5B0C718F2D001BF487 /* RageUtil_CachedObject.cpp in Sources */,
+				AAA7D4CB0C7E872600FB8F78 /* ScreenOptionsToggleSongs.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
