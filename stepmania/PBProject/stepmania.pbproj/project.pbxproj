@@ -3059,8 +3059,8 @@
 		AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenWithMenuElements.cpp; path = ../src/ScreenWithMenuElements.cpp; sourceTree = "<group>"; };
 		AAA6BFEB0644AB3700AFBBC8 /* ScreenWithMenuElements.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenWithMenuElements.h; path = ../src/ScreenWithMenuElements.h; sourceTree = "<group>"; };
 		AAA71EA005EE154E00D2E8FF /* global.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = global.cpp; sourceTree = "<group>"; };
-		AAA7D4C70C7E872500FB8F78 /* ScreenOptionsToggleSongs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsToggleSongs.cpp; path = ../src/ScreenOptionsToggleSongs.cpp; sourceTree = SOURCE_ROOT; };
-		AAA7D4C80C7E872500FB8F78 /* ScreenOptionsToggleSongs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsToggleSongs.h; path = ../src/ScreenOptionsToggleSongs.h; sourceTree = SOURCE_ROOT; };
+		AAA7D4C70C7E872500FB8F78 /* ScreenOptionsToggleSongs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsToggleSongs.cpp; path = ../src/ScreenOptionsToggleSongs.cpp; sourceTree = "<group>"; };
+		AAA7D4C80C7E872500FB8F78 /* ScreenOptionsToggleSongs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsToggleSongs.h; path = ../src/ScreenOptionsToggleSongs.h; sourceTree = "<group>"; };
 		AAA8E0020696984300FCE1F9 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		AAA983CA04B9060A00D02EE9 /* ActorUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ActorUtil.cpp; path = ../src/ActorUtil.cpp; sourceTree = "<group>"; };
 		AAAA11C40A662F9C00B2BD88 /* ScoreKeeperShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScoreKeeperShared.h; path = ../src/ScoreKeeperShared.h; sourceTree = "<group>"; };
@@ -6364,7 +6364,7 @@
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* SDL App */;
 			projectDirPath = "";
-			projectRoot = "";
+			projectRoot = ..;
 			targets = (
 				AA29CC240558741A00961A51 /* stepmania */,
 				AA30C60F07F5E24A0066F398 /* version */,
