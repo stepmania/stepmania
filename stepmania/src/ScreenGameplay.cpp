@@ -993,16 +993,18 @@ void ScreenGameplay::LoadNextSong()
 {
 	GAMESTATE->ResetMusicStatistics();
 
-	FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		pi->GetPlayerStageStats()->m_iSongsPlayed++;
 		if( pi->m_ptextCourseSongNumber )
 			pi->m_ptextCourseSongNumber->SetText( ssprintf("%d", pi->GetPlayerStageStats()->m_iSongsPassed+1) );
 	}
 
-	// super hack
 	if( GAMESTATE->m_bMultiplayer )
-		STATSMAN->m_CurStageStats.m_player[GAMESTATE->m_MasterPlayerNumber].m_iSongsPlayed++;
+	{
+		FOREACH_ENUM( MultiPlayer, mp )
+			this->UpdateStageStats( mp );
+	}
 
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_apSongsQueue.size();
@@ -1615,7 +1617,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			switch( ft )
 			{
 			case PlayerOptions::FAIL_IMMEDIATE:
-				if( pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing() )
+				if( pi->m_pLifeMeter == NULL  ||  (pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing()) )
 					bAllFailed = false;
 				break;
 			case PlayerOptions::FAIL_IMMEDIATE_CONTINUE:

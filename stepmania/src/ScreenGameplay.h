@@ -130,6 +130,8 @@ public:
 	PlayerInfo *GetPlayerInfo( PlayerNumber pn );
 
 protected:
+	virtual void UpdateStageStats( MultiPlayer mp ) {};	// overridden for multiplayer
+
 	virtual bool GenericTweenOn() const { return true; }
 	virtual bool GenericTweenOff() const { return true; }
 
