@@ -86,6 +86,8 @@ void ControllerStateDisplay::Update( float fDelta )
 	FOREACH_ENUM( ControllerStateButton, b )
 	{
 		Button &button = m_Buttons[ b ];
+		if( !button.spr.IsLoaded() )
+			continue;
 
 		bool bVisible = INPUTMAPPER->IsBeingPressed( button.gi, m_mp );
 
