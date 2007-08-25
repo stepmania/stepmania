@@ -1058,10 +1058,12 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 					break;
 				}
 
-				if( GAMESTATE->m_PreferredDifficulty[pn] != Difficulty_Invalid  &&  GAMESTATE->m_PreferredStepsType != StepsType_Invalid  )
+				if( GAMESTATE->m_PreferredDifficulty[pn] != Difficulty_Invalid  )
 				{
 					int iDifficultyDifference = abs( (*s)->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn] );
-					int iStepsTypeDifference = abs( (*s)->m_StepsType - GAMESTATE->m_PreferredStepsType );
+					int iStepsTypeDifference = 0;
+					if( GAMESTATE->m_PreferredStepsType != StepsType_Invalid )
+						iStepsTypeDifference = abs( (*s)->m_StepsType - GAMESTATE->m_PreferredStepsType );
 					int iTotalDifference = iStepsTypeDifference * NUM_Difficulty + iDifficultyDifference;
 
 					if( iCurDifference == -1 || iTotalDifference < iCurDifference )
