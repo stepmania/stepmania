@@ -98,7 +98,7 @@ class LunaControllerStateDisplay: public Luna<ControllerStateDisplay>
 {
 public:
 	static int LoadGameController( T* p, lua_State *L )	{ p->LoadGameController( SArg(1), (GameController)IArg(2) ); return 0; }
-	static int LoadMultiPlayer( T* p, lua_State *L )	{ p->LoadMultiPlayer( SArg(1), (MultiPlayer)IArg(2) ); return 0; }
+	static int LoadMultiPlayer( T* p, lua_State *L )	{ p->LoadMultiPlayer( SArg(1), Enum::Check<MultiPlayer>(L, 2) ); return 0; }
 
 	LunaControllerStateDisplay() 
 	{
