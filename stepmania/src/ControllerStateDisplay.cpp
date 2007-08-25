@@ -18,13 +18,6 @@ static const char *ControllerStateButtonNames[] = {
 };
 XToString( ControllerStateButton );
 
-static const DeviceButton ControllerStateButtonToDeviceButton[] = {
-	JOY_BUTTON_1,
-	JOY_BUTTON_2,
-	JOY_BUTTON_3,
-	JOY_BUTTON_4,
-	JOY_BUTTON_5,
-};
 // TODO: Generalize for all game types
 static const GameButton ControllerStateButtonToGameButton[] = {
 	PUMP_BUTTON_UPLEFT,
