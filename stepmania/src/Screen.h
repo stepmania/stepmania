@@ -88,7 +88,7 @@ protected:
 	float                           m_fLockInputSecs;
 
 public:
-	RString GetNextScreen() const;
+	RString GetNextScreenName() const;
 	RString GetPrevScreen() const;
 
 	// let subclass override if they want

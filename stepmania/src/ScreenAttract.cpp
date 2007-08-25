@@ -138,7 +138,7 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 		 * going to interrupt it when we fade in, stop the old music before we fade out. */
 		bool bMusicChanging = false;
 		if( PLAY_MUSIC )
-			bMusicChanging = THEME->GetPathS(m_sName,"music") != THEME->GetPathS(GetNextScreen(),"music",true);	// GetPath optional on the next screen because it may not have music.
+			bMusicChanging = THEME->GetPathS(m_sName,"music") != THEME->GetPathS(GetNextScreenName(),"music",true);	// GetPath optional on the next screen because it may not have music.
 
 		if( bMusicChanging )
 			SOUND->StopMusic();

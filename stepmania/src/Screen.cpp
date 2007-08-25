@@ -209,7 +209,7 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 		if( SCREENMAN->IsStackedScreen(this) )
 			SCREENMAN->PopTopScreen( m_smSendOnPop );
 		else
-			SCREENMAN->SetNewScreen( SM == SM_GoToNextScreen? GetNextScreen():GetPrevScreen() );
+			SCREENMAN->SetNewScreen( SM == SM_GoToNextScreen? GetNextScreenName():GetPrevScreen() );
 	}
 	else if( SM == SM_GainFocus )
 	{
@@ -226,7 +226,7 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-RString Screen::GetNextScreen() const
+RString Screen::GetNextScreenName() const
 {
 	if( !m_sNextScreen.empty() )
 		return m_sNextScreen;
@@ -266,7 +266,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 class LunaScreen: public Luna<Screen>
 {
 public:
-	static int GetNextScreen( T* p, lua_State *L ) { lua_pushstring(L, p->GetNextScreen() ); return 1; }
+	static int GetNextScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetNextScreenName() ); return 1; }
 	static int lockinput( T* p, lua_State *L ) { p->SetLockInputSecs(FArg(1)); return 0; }
 
 	static int PostScreenMessage( T* p, lua_State *L )
@@ -279,7 +279,7 @@ public:
 
 	LunaScreen()
 	{
-		ADD_METHOD( GetNextScreen );
+		ADD_METHOD( GetNextScreenName );
 		ADD_METHOD( PostScreenMessage );
 		ADD_METHOD( lockinput );
 	}

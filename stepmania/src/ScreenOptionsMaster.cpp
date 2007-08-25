@@ -127,7 +127,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			 * only reload it if it changed. */
 			RString sNewTheme = PREFSMAN->m_sTheme.Get();
 			bool bForceThemeReload = !!(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) || !!(m_iChangeMask & OPT_APPLY_GRAPHICS);
-			GameLoop::ChangeTheme( sNewTheme, this->GetNextScreen(), bForceThemeReload );
+			GameLoop::ChangeTheme( sNewTheme, this->GetNextScreenName(), bForceThemeReload );
 			StepMania::ApplyGraphicOptions();
 		}
 

@@ -27,7 +27,7 @@ void ScreenSplash::HandleScreenMessage( const ScreenMessage SM )
 	{
 		RageTimer length;
 		if( PREPARE_SCREEN )
-			SCREENMAN->PrepareScreen( GetNextScreen() );
+			SCREENMAN->PrepareScreen( GetNextScreenName() );
 		float fScreenLoadSeconds = length.GetDeltaTime();
 
 		/* The screen load took fScreenLoadSeconds.  Move on to the next screen after

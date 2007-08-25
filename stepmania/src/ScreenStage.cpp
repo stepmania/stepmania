@@ -55,7 +55,7 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_PrepScreen )
 	{
 		RageTimer length;
-		SCREENMAN->PrepareScreen( GetNextScreen() );
+		SCREENMAN->PrepareScreen( GetNextScreenName() );
 		float fScreenLoadSeconds = length.GetDeltaTime();
 
 		/* The screen load took fScreenLoadSeconds.  Move on to the next screen after
