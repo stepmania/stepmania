@@ -183,6 +183,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, Dif
 	m_ptextPlayerOptions = NULL;
 	m_pActiveAttackList = NULL;
 	m_pPlayer = new Player( m_NoteData, bShowNoteField );
+	m_pPlayer->SetVisible( bShowNoteField );
 	m_pInventory = NULL;
 	m_pDifficultyIcon = NULL;
 
@@ -456,9 +457,17 @@ void ScreenGameplay::Init()
 		// If pi->m_pn is set, then the player will be visible.  If not, then it's not 
 		// visible and don't bother setting its position.
 
-		float fPlayerX = PLAYER_X( pi->GetName(), GAMESTATE->GetCurrentStyle()->m_StyleType );
-		if( Center1Player() )
+		float fPlayerX;
+		if( GAMESTATE->m_bMultiplayer && !pi->m_bIsDummy )
+		{
 			fPlayerX = SCREEN_CENTER_X;
+		}
+		else
+		{
+			fPlayerX = PLAYER_X( pi->GetName(), GAMESTATE->GetCurrentStyle()->m_StyleType );
+			if( Center1Player() )
+				fPlayerX = SCREEN_CENTER_X;
+		}
 
 		pi->m_pPlayer->SetX( fPlayerX );
 		pi->m_pPlayer->RunCommands( PLAYER_INIT_COMMAND );
