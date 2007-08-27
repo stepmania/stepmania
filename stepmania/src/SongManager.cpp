@@ -1437,7 +1437,7 @@ void SongManager::UpdatePreferredSort()
 				Course *pCourse = NULL;
 				if( !sLine.empty() )
 					pCourse = FindCourse( sLine );
-				if( pCourse )
+				if( pCourse && !(UNLOCKMAN->CourseIsLocked(pCourse) & LOCKED_SELECTABLE) )
 					vpCourses.push_back( pCourse );
 			}
 		}
