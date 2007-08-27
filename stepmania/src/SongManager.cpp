@@ -1363,7 +1363,7 @@ void SongManager::UpdatePreferredSort()
 				Song *pSong = NULL;
 				if( !sLine.empty() )
 					pSong = FindSong( sLine );
-				if( pSong && UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
+				if( pSong && !(UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE) )
 					vpSongs.push_back( pSong );
 			}
 		}
