@@ -931,9 +931,15 @@ int GameState::GetCourseSongIndex() const
 {
 	/* iSongsPlayed includes the current song, so it's 1-based; subtract one. */
 	if( GAMESTATE->m_bMultiplayer )
-		return STATSMAN->m_CurStageStats.m_multiPlayer[MultiPlayer_P1].m_iSongsPlayed-1;
+	{
+		FOREACH_EnabledMultiPlayer(mp)
+			return STATSMAN->m_CurStageStats.m_multiPlayer[mp].m_iSongsPlayed-1;
+		FAIL_M("At least one MultiPlayer must be joined.");
+	}
 	else
+	{
 		return STATSMAN->m_CurStageStats.m_player[m_MasterPlayerNumber].m_iSongsPlayed-1;
+	}
 }
 
 /* Hack: when we're loading a new course song, we want to display the new song number, even
