@@ -211,8 +211,8 @@ void ScreenJukebox::Init()
 
 	FOREACH_EnabledPlayer( p )
 	{
-		/* Reset the combo, in case ComboContinuesBetweenSongs is enabled. */
-		STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = 0;
+		/* Reset score between songs. */
+		STATSMAN->m_CurStageStats.m_player[p].ResetScoreForLesson();
 
 		if( GAMESTATE->m_bJukeboxUsesModifiers )
 		{
