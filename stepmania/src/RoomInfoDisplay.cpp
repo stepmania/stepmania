@@ -1,4 +1,5 @@
 #include "global.h"
+#if !defined(WITHOUT_NETWORKING)
 #include "RoomInfoDisplay.h"
 #include "ActorUtil.h"
 #include "NetworkSyncManager.h"
@@ -195,6 +196,7 @@ void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 	m_state = CLOSED;
 	m_deployDelay.Touch();
 }
+#endif
 
 /*
  * (c) 2006 Josh Allen
