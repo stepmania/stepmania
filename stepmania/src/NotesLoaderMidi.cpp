@@ -649,13 +649,12 @@ using namespace Guitar;
 106: player 2 section, expert (A#) 
 108: vocal track (C)
 */
-static bool NoteNumberToDifficultyAndNoteNumberType( uint8_t uNoteNumber, GuitarDifficulty &gdOut, NoteNumberType &nntOut )
+static void DifficultyAndNoteNumberTypeToNoteNumber( GuitarDifficulty gd, NoteNumberType nnt, uint8_t &uNoteNumberOut )
 {
-	gdOut = (GuitarDifficulty)((uNoteNumber-60) / 12);
-	nntOut = (NoteNumberType)((uNoteNumber-60) % 12);
+	ASSERT( gd >= 0  &&  gd < NUM_GuitarDifficulty );
+	ASSERT( nnt >= 0  &&  nnt < NUM_NoteNumberType );
 
-	return  gdOut >= 0  &&  gdOut < NUM_GuitarDifficulty   &&
-		nntOut >= 0  &&  nntOut < NUM_NoteNumberType;
+	uNoteNumberOut = 60 + gd*12 + nnt;
 }
 
 // TODO: Generalize these.  These values are specific to guitar midi files.
@@ -693,11 +692,12 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 	}
 
 
-	/* Read the MIDI events into per-difficulty, pre-NoteNumber vector.  The guitar processing 
+	/* Read the MIDI events into per-difficulty, pre-NoteNumber vector.  The processing 
 	 * rules for MIDI events often need to look at the next or previous event with the same 
 	 * NoteNumber.  This is difficult using MidiFileIn interfaces, so this intermediate processing 
 	 * step is helpful. */
-	vector<MidiEvent> vMidiEvent[NUM_GuitarDifficulty][NUM_NoteNumberType];
+	const int MAX_MIDI_NOTE_NUMBERS = 256;
+	vector<MidiEvent> vMidiEvent[MAX_MIDI_NOTE_NUMBERS];
 
 	/* Iterate through each track looking for the track that contains notes by checking the track name.
 	 * This is usually track 1, but sometimes is track 2. */
@@ -746,14 +746,9 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 						if( uVelocity == 0 )
 							midiEventType = note_off;
 
-						GuitarDifficulty gd;
-						NoteNumberType nnt;
-						if( NoteNumberToDifficultyAndNoteNumberType( uNoteNumber, gd, nnt ) )
-						{
-							MidiEvent event = { count, midiEventType };
-							//float fBeat = NoteRowToBeat( MidiCountToNoteRow(count) );
-							vMidiEvent[gd][nnt].push_back( event );
-						}
+						MidiEvent event = { count, midiEventType };
+						//float fBeat = NoteRowToBeat( MidiCountToNoteRow(count) );
+						vMidiEvent[uNoteNumber].push_back( event );
 					}
 					break;
 				default:
@@ -780,9 +775,12 @@ skip_track:
 			if( nnt >= NUM_FRETS )
 				continue;	// data other than the frets is not handled yet
 
+			uint8_t uNoteNumber;
+			DifficultyAndNoteNumberTypeToNoteNumber( gd, nnt, uNoteNumber );
+
 			bool bNonTerminatedNote = false;
 			long countOfLastNote = 0;
-			FOREACH_CONST( MidiEvent, vMidiEvent[gd][nnt], iter )
+			FOREACH_CONST( MidiEvent, vMidiEvent[uNoteNumber], iter )
 			{				 
 				/*
 				1) Note-on events indicate the start of a guitar note 
