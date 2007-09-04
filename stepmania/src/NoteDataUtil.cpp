@@ -2083,20 +2083,12 @@ void NoteDataUtil::RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type 
 	}
 }
 
-int NoteDataUtil::GetNumUsedTracks( const NoteData& in )
+int NoteDataUtil::GetMaxNonEmptyTrack( const NoteData& in )
 {
-	for( int t=0; t<in.GetNumTracks(); t++ )
-	{
-		bool bHasAnyTapsInTrack = false;
-		FOREACH_NONEMPTY_ROW_IN_TRACK( in, t, row )
-		{
-			bHasAnyTapsInTrack = true;
-			break;
-		}
-		if( !bHasAnyTapsInTrack )
+	for( int t=in.GetNumTracks()-1; t>=0; t-- )
+		if( !in.IsTrackEmpty( t ) )
 			return t;
-	}
-	return in.GetNumTracks();
+	return -1;
 }
 
 bool NoteDataUtil::AnyTapsAndHoldsInTrackRange( const NoteData& in, int iTrack, int iStart, int iEnd )

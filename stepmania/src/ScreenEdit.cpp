@@ -3163,10 +3163,10 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				case autogen_to_fill_width:	
 					{
 						NoteData temp( m_Clipboard );
-						int iNumUsedTracks = NoteDataUtil::GetNumUsedTracks( temp );
-						if( iNumUsedTracks == 0 )
+						int iMaxNonEmptyTrack = NoteDataUtil::GetMaxNonEmptyTrack( temp );
+						if( iMaxNonEmptyTrack == -1 )
 							break;
-						temp.SetNumTracks( iNumUsedTracks );
+						temp.SetNumTracks( iMaxNonEmptyTrack+1 );
 						NoteDataUtil::LoadTransformedSlidingWindow( temp, m_Clipboard, m_Clipboard.GetNumTracks() );
 						NoteDataUtil::RemoveStretch( m_Clipboard, GAMESTATE->m_pCurSteps[0]->m_StepsType );
 					}

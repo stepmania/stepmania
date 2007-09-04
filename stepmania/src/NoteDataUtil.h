@@ -112,7 +112,7 @@ namespace NoteDataUtil
 	void RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToRemove );
 	void RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type typeToKeep );
 
-	int GetNumUsedTracks( const NoteData& in );
+	int GetMaxNonEmptyTrack( const NoteData& in );
 	bool AnyTapsAndHoldsInTrackRange( const NoteData& in, int iTrack, int iStart, int iEnd );
 
 	bool GetNextEditorPosition( const NoteData& in, int &rowInOut );
