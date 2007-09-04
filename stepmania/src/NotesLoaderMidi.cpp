@@ -500,7 +500,8 @@ unsigned long MidiFileIn :: getNextEvent( std::vector<unsigned char> *event, uns
 			TempoChange tempoEvent = tempoEvents_[ trackTempoIndex_[track] ];
 			if( trackCounters_[track] >= tempoEvent.count ) 
 			{
-				trackTempoIndex_[track]++;
+				if( trackTempoIndex_[track] < tempoEvents_.size()-1 )
+					trackTempoIndex_[track]++;
 				tickSeconds_[track] = tempoEvent.tickSeconds;
 			}
 		}
