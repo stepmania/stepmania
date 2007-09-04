@@ -182,6 +182,7 @@ public:
 	// statistics
 	//
 	bool IsEmpty() const;
+	bool IsTrackEmpty( int iTrack ) const { return m_TapNotes[iTrack].empty(); }
 	int GetFirstRow() const; // return the beat number of the first note
 	int GetLastRow() const;	 // return the beat number of the last note
 	float GetFirstBeat() const					{ return NoteRowToBeat( GetFirstRow() ); }
