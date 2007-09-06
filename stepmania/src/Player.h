@@ -39,7 +39,7 @@ class Player: public ActorFrame
 {
 public:
 	// The passed in NoteData isn't touched until Load() is called.
-	Player( NoteData &nd, bool bShowNoteField = true );
+	Player( NoteData &nd, bool bVisible = true );
 	~Player();
 
 	virtual void Update( float fDeltaTime );
@@ -149,10 +149,10 @@ protected:
 	NoteData		&m_NoteData;
 	NoteField		*m_pNoteField;
 
-	vector<HoldJudgment*>	m_vHoldJudgment;
+	vector<HoldJudgment*>	m_vpHoldJudgment;
 
-	AutoActor		m_pJudgment;
-	AutoActor		m_Combo;
+	AutoActor		m_sprJudgment;
+	AutoActor		m_sprCombo;
 	Actor			*m_pActorWithJudgmentPosition;
 	Actor			*m_pActorWithComboPosition;
 
