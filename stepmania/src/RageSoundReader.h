@@ -8,7 +8,7 @@ class RageSoundReader
 public:
 	virtual int GetLength() const = 0; /* ms */
 	virtual int GetLength_Fast() const { return GetLength(); } /* ms */
-	virtual int SetPosition( int iSample ) = 0;
+	virtual int SetPosition( int iFrame ) = 0;
 	virtual int Read( float *pBuf, int iFrames ) = 0;
 	virtual ~RageSoundReader() { }
 	virtual RageSoundReader *Copy() const = 0;
