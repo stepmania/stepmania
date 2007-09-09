@@ -10,8 +10,9 @@
 
 static const char *InputDeviceStateNames[] = {
 	"Connected",
-	"Disconnected",
-	"MissingMultitap",
+	"Unplugged",
+	"NeedsMultitap",
+	"NoInputHandler",
 };
 XToString( InputDeviceState );
 
