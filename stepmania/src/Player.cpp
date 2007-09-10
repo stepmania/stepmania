@@ -157,7 +157,8 @@ Player::Player( NoteData &nd, bool bVisible ) : m_NoteData(nd)
 	m_pPrimaryScoreKeeper = NULL;
 	m_pSecondaryScoreKeeper = NULL;
 	m_pInventory = NULL;
-	
+	m_pIterNotJudged = NULL;
+
 	m_bPaused = false;
 
 	m_pAttackDisplay = NULL;
@@ -187,6 +188,7 @@ Player::~Player()
 	for( unsigned i = 0; i < m_vpHoldJudgment.size(); ++i )
 		SAFE_DELETE( m_vpHoldJudgment[i] );
 	SAFE_DELETE( m_pJudgedRows );
+	SAFE_DELETE( m_pIterNotJudged );
 }
 
 /* Init() does the expensive stuff: load sounds and note skins.  Load() just loads a NoteData. */
@@ -373,6 +375,21 @@ void Player::Init(
 		*b = false;
 }
 
+static bool Unjudged( const TapNote &tn )
+{
+	if( tn.result.tns != TNS_None )
+		return false;
+	switch( tn.type )
+	{
+	case TapNote::tap:
+	case TapNote::hold_head:
+	case TapNote::mine:
+	case TapNote::lift:
+		return true;
+	}
+	return false;
+}
+
 void Player::Load()
 {
 	m_bLoaded = true;
@@ -495,6 +512,8 @@ void Player::Load()
 
 	if( m_pPlayerStageStats )
 		SendComboMessages( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+
+	m_pIterNotJudged = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW, Unjudged) );
 }
 
 void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
@@ -617,6 +636,7 @@ void Player::Update( float fDeltaTime )
 	// Check for TapNote misses
 	//
 	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
+
 
 	//
 	// update pressed flag
@@ -753,7 +773,7 @@ void Player::Update( float fDeltaTime )
 			m_iFirstUncrossedMineRow = iRowNow+1;
 		}
 	}
-	
+
 	// Check for completely judged rows.
 	UpdateJudgedRows();
 
@@ -2074,21 +2094,6 @@ done_checking_hopo:
 	}
 }
 
-static bool Unjudged( const TapNote &tn )
-{
-	if( tn.result.tns != TNS_None )
-		return false;
-	switch( tn.type )
-	{
-	case TapNote::tap:
-	case TapNote::hold_head:
-	case TapNote::mine:
-	case TapNote::lift:
-		return true;
-	}
-	return false;
-}
-
 void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
 	//LOG->Trace( "Steps::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
@@ -2110,13 +2115,9 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		}
 	}
 
+	NoteData::all_tracks_iterator &iter = *m_pIterNotJudged;
 
-	// m_iRowLastJudged and m_iMineRowLastJudged have already been judged.
-	const int iStartIndex = min( m_iRowLastJudged, m_iMineRowLastJudged ) + 1;
-	
-	NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( iStartIndex, iMissIfOlderThanThisIndex-1, Unjudged );
-	
-	for( ; !iter.IsAtEnd(); ++iter )
+	for( ; iter.Row() < iMissIfOlderThanThisIndex; ++iter )
 	{
 		TapNote &tn = *iter;
 		
