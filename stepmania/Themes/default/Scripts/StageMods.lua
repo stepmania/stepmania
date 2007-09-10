@@ -35,7 +35,7 @@ function ScreenSelectMusic:setupmusicstagemods()
 			po = "sudden,shuffle,flat";
 			so = "suddendeath";
 		else
-			po = "1.5x,reverse";
+			po = "default,1.5x,reverse";
 			so = "norecover";
 		end
 		local difficulty = steps:GetDifficulty()
