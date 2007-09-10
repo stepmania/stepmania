@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 verbose=0
 msg=
