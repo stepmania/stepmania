@@ -157,7 +157,6 @@ Player::Player( NoteData &nd, bool bVisible ) : m_NoteData(nd)
 	m_pPrimaryScoreKeeper = NULL;
 	m_pSecondaryScoreKeeper = NULL;
 	m_pInventory = NULL;
-	m_pIterNotJudged = NULL;
 
 	m_bPaused = false;
 
@@ -375,7 +374,7 @@ void Player::Init(
 		*b = false;
 }
 
-static bool Unjudged( const TapNote &tn )
+static bool NotJudged( const TapNote &tn )
 {
 	if( tn.result.tns != TNS_None )
 		return false;
@@ -513,7 +512,8 @@ void Player::Load()
 	if( m_pPlayerStageStats )
 		SendComboMessages( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
 
-	m_pIterNotJudged = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW, Unjudged) );
+	SAFE_DELETE( m_pIterNotJudged );
+	m_pIterNotJudged = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW, NotJudged) );
 }
 
 void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
@@ -2097,7 +2097,7 @@ done_checking_hopo:
 void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
 	//LOG->Trace( "Steps::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
-	int iMissIfOlderThanThisIndex;
+	int iMissIfOlderThanThisRow;
 	{
 		const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
 		bool bFreeze;
@@ -2105,19 +2105,19 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		float fThrowAway;
 		GAMESTATE->m_pCurSong->m_Timing.GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze );
 
-		iMissIfOlderThanThisIndex = BeatToNoteRow( fMissIfOlderThanThisBeat );
+		iMissIfOlderThanThisRow = BeatToNoteRow( fMissIfOlderThanThisBeat );
 		if( bFreeze )
 		{
 			/* If there is a freeze on iMissIfOlderThanThisIndex, include this index too.
 			 * Otherwise we won't show misses for tap notes on freezes until the
 			 * freeze finishes. */
-			iMissIfOlderThanThisIndex++;
+			iMissIfOlderThanThisRow++;
 		}
 	}
 
 	NoteData::all_tracks_iterator &iter = *m_pIterNotJudged;
 
-	for( ; iter.Row() < iMissIfOlderThanThisIndex; ++iter )
+	for( ; iter.Row() < iMissIfOlderThanThisRow; ++iter )
 	{
 		TapNote &tn = *iter;
 		
