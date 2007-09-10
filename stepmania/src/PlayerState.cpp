@@ -196,7 +196,9 @@ public:
 	static int SetPlayerOptions( T* p, lua_State *L )
 	{
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
-		p->m_PlayerOptions.FromString( m, SArg(2) );
+		PlayerOptions po;
+		po.FromString( SArg(2) );
+		p->m_PlayerOptions.Assign( m, po );
 		return 0;
 	}
 	static int GetPlayerOptions( T* p, lua_State *L )
