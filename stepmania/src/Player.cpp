@@ -157,6 +157,7 @@ Player::Player( NoteData &nd, bool bVisible ) : m_NoteData(nd)
 	m_pPrimaryScoreKeeper = NULL;
 	m_pSecondaryScoreKeeper = NULL;
 	m_pInventory = NULL;
+	m_pIterNotJudged = NULL;
 
 	m_bPaused = false;
 
@@ -637,6 +638,7 @@ void Player::Update( float fDeltaTime )
 	//
 	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
 
+	return;
 
 	//
 	// update pressed flag
