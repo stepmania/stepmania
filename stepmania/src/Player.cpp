@@ -633,12 +633,13 @@ void Player::Update( float fDeltaTime )
 		DoStrumMiss();
 	}
 
+
 	//
 	// Check for TapNote misses
 	//
 	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
 
-	return;
+
 
 	//
 	// update pressed flag
@@ -658,7 +659,7 @@ void Player::Update( float fDeltaTime )
 			if( m_pNoteField )
 				m_pNoteField->SetPressed( col );
 	}
-	
+
 
 	//
 	// handle Autoplay for rolls
@@ -689,7 +690,6 @@ void Player::Update( float fDeltaTime )
 			}
 		}
 	}
-
 
 	//
 	// update HoldNotes logic
@@ -2119,7 +2119,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 	NoteData::all_tracks_iterator &iter = *m_pIterNotJudged;
 
-	for( ; iter.Row() < iMissIfOlderThanThisRow; ++iter )
+	for( ; !iter.IsAtEnd() && iter.Row() < iMissIfOlderThanThisRow; ++iter )
 	{
 		TapNote &tn = *iter;
 		
