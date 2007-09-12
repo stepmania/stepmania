@@ -158,6 +158,7 @@ Player::Player( NoteData &nd, bool bVisible ) : m_NoteData(nd)
 	m_pSecondaryScoreKeeper = NULL;
 	m_pInventory = NULL;
 	m_pIterNotJudged = NULL;
+	m_pIterUncrossedRows = NULL;
 
 	m_bPaused = false;
 
@@ -189,6 +190,7 @@ Player::~Player()
 		SAFE_DELETE( m_vpHoldJudgment[i] );
 	SAFE_DELETE( m_pJudgedRows );
 	SAFE_DELETE( m_pIterNotJudged );
+	SAFE_DELETE( m_pIterUncrossedRows );
 }
 
 /* Init() does the expensive stuff: load sounds and note skins.  Load() just loads a NoteData. */
@@ -515,6 +517,9 @@ void Player::Load()
 
 	SAFE_DELETE( m_pIterNotJudged );
 	m_pIterNotJudged = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW, NotJudged) );
+
+	SAFE_DELETE( m_pIterUncrossedRows );
+	m_pIterUncrossedRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW, NotJudged) );
 }
 
 void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
@@ -691,6 +696,7 @@ void Player::Update( float fDeltaTime )
 		}
 	}
 
+
 	//
 	// update HoldNotes logic
 	//
@@ -745,7 +751,7 @@ void Player::Update( float fDeltaTime )
 			vHoldNotesToGradeTogether.clear();
  		}
 	}
-	
+
 	{
 		// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
 		/* We want to send the crossed row message exactly when we cross the row--not
@@ -759,7 +765,7 @@ void Player::Update( float fDeltaTime )
 			m_iFirstUncrossedRow = iRowNow+1;
 		}
 	}
-	
+
 	{
 		// TRICKY: 
 		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
@@ -2266,38 +2272,37 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 {
 	//LOG->Trace( "Player::CrossedRows   %d    %d", iFirstRowCrossed, iLastRowCrossed );
 
-	/* Apply InitialHoldLife. */
+	NoteData::all_tracks_iterator &iter = *m_pIterUncrossedRows;
+	int iLastSeenRow = -1;
+	for( ; !iter.IsAtEnd()  &&  iter.Row() <= iLastRowCrossed; iter++ )
 	{
-		NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( iFirstRowCrossed, iLastRowCrossed+1, NULL, false );
-		for( ; !iter.IsAtEnd(); ++iter )
-		{
-			TapNote &tn = *iter;
-			if( tn.type == TapNote::hold_head )
-				tn.HoldResult.fLife = INITIAL_HOLD_LIFE;
-		}
-	}
+		/* Apply InitialHoldLife. */
+		TapNote &tn = *iter;
+		int iRow = iter.Row();
+		int iTrack = iter.Track();
+		if( tn.type == TapNote::hold_head )
+			tn.HoldResult.fLife = INITIAL_HOLD_LIFE;
 
-	// for each index we crossed since the last update
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iFirstUncrossedRow, iLastRowCrossed+1 )
-	{
-		// If we're doing random vanish, randomise notes on the fly.
-		if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1 )
-			RandomizeNotes( r );
-
-		// check to see if there's a note at the crossed row
-		if( m_pPlayerState->m_PlayerController == PC_HUMAN )
-			continue;
-		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
+		if( iRow != iLastSeenRow )
 		{
-			const TapNote &tn = m_NoteData.GetTapNote( t, r );
-			if( tn.type != TapNote::empty && tn.result.tns == TNS_None )
+			// crossed a not-empty row
+
+			// If we're doing random vanish, randomise notes on the fly.
+			if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1 )
+				RandomizeNotes( iRow );
+
+			// check to see if there's a note at the crossed row
+			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			{
-				Step( t, r, now, false, false );
-				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+				if( tn.type != TapNote::empty && tn.result.tns == TNS_None )
 				{
-					STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
-					if( m_pPlayerStageStats )
-						m_pPlayerStageStats->m_bDisqualified = true;
+					Step( iTrack, iRow, now, false, false );
+					if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+					{
+						STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
+						if( m_pPlayerStageStats )
+							m_pPlayerStageStats->m_bDisqualified = true;
+					}
 				}
 			}
 		}
@@ -2307,7 +2312,6 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 	//
 	// Update hold checkpoints
 	//
-
 	if( HOLD_CHECKPOINTS )
 	{
 		const int CHECKPOINT_FREQUENCY_ROWS = ROWS_PER_BEAT/2;
