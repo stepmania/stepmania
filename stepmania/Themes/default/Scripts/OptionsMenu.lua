@@ -60,6 +60,41 @@ OptionRowTable =
 	end
 }
 
+function OptionsRandomJukebox()	
+	local function AllChoices()
+		Trace('all choices');
+		local ret = { }
+		ret[1] = 'Off';
+		ret[2] = 'Random';
+		return ret
+	end
+
+	local t = 
+	{
+		-- Name is used to retrieve the header and explanation text.
+		Name = "OptionsRandomJukebox";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = AllChoices();
+		LoadSelections = function(self, list, pn)
+			list[1] = true
+		end;
+		SaveSelections = function(self, list, pn)
+			local val;
+			if list[1] then
+				val = false;
+			else
+				val = true;
+			end
+			GAMESTATE:SetJukeboxUsesModifiers(val);
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end
+
 -- (c) 2005 Glenn Maynard
 -- All rights reserved.
 -- 
