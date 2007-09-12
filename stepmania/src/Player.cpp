@@ -803,21 +803,6 @@ void Player::Update( float fDeltaTime )
 		}
 	}
 
-	{
-		// TRICKY: 
-		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-		fPositionSeconds -= PREFSMAN->m_fPadStickSeconds;
-		const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds ) : 0;
-		const int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
-		if( iRowNow >= 0 )
-		{
-			// for each index we crossed since the last update
-			if( GAMESTATE->IsPlayerEnabled(m_pPlayerState) )
-				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iFirstUncrossedMineRow, iRowNow+1 )
-					CrossedMineRow( r, now );
-			m_iFirstUncrossedMineRow = iRowNow+1;
-		}
-	}
 
 	// Check for completely judged rows.
 	UpdateJudgedRows();
@@ -2343,6 +2328,15 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		case TapNote::hold_head:
 			tn.HoldResult.fLife = INITIAL_HOLD_LIFE;
 			break;
+		case TapNote::mine:
+			// Hold the panel while crossing a mine will cause the mine to explode
+			// TODO: Remove use of PlayerNumber.
+			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
+			float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
+			if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
+				Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+			break;
 		}
 
 
@@ -2438,33 +2432,6 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	}
 
 	m_iFirstUncrossedRow = iLastRowCrossed+1;
-}
-
-void Player::CrossedMineRow( int iNoteRow, const RageTimer &now )
-{
-	// Hold the panel while crossing a mine will cause the mine to explode
-	for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
-	{
-		if( m_NoteData.GetTapNote(t,iNoteRow).type == TapNote::mine )
-		{
-			// TODO: Remove use of PlayerNumber.
-			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, pn );
-			if( PREFSMAN->m_fPadStickSeconds > 0 )
-			{
-				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
-				if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-					Step( t, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
-			}
-			else
-			{
-				bool bIsDown = INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
-				if( bIsDown )
-					Step( t, iNoteRow, now, true, false );
-			}
-		}
-	}
 }
 
 void Player::RandomizeNotes( int iNoteRow )
