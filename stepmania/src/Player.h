@@ -65,8 +65,7 @@ public:
 		ScoreKeeper* pPrimaryScoreKeeper, 
 		ScoreKeeper* pSecondaryScoreKeeper );
 	void Load();
-	void CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageTimer &now );
-	void CrossedMineRow( int iNoteRow, const RageTimer &now );
+	void CrossedRows( int iLastRowCrossed, const RageTimer &now );
 	bool IsOniDead() const;
 
 	// Called when a fret, step, or strum type button changes
@@ -167,13 +166,12 @@ protected:
 	ScoreKeeper		*m_pSecondaryScoreKeeper;
 	Inventory		*m_pInventory;
 
-	int			m_iFirstUncrossedRow;
-	int			m_iFirstUncrossedMineRow;
+	int			m_iFirstUncrossedRow;	// used by hold checkpoints logic
 	NoteData::all_tracks_iterator *m_pIterNotJudged;
 	NoteData::all_tracks_iterator *m_pIterCurrentOrUpcoming;
 	NoteData::all_tracks_iterator *m_pIterUncrossedRows;
-	int			m_iRowLastJudged; // Everything up to and including this row has been judged.
-	int			m_iMineRowLastJudged;
+	NoteData::all_tracks_iterator *m_pIterUnjudgedRows;
+	NoteData::all_tracks_iterator *m_pIterUnjudgedMineRows;
 	int			m_iLastSeenCombo;
 	JudgedRows		*m_pJudgedRows;
 

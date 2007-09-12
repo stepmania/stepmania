@@ -160,6 +160,8 @@ Player::Player( NoteData &nd, bool bVisible ) : m_NoteData(nd)
 	m_pIterNotJudged = NULL;
 	m_pIterCurrentOrUpcoming = NULL;
 	m_pIterUncrossedRows = NULL;
+	m_pIterUnjudgedRows = NULL;
+	m_pIterUnjudgedMineRows = NULL;
 
 	m_bPaused = false;
 
@@ -193,6 +195,8 @@ Player::~Player()
 	SAFE_DELETE( m_pIterNotJudged );
 	SAFE_DELETE( m_pIterCurrentOrUpcoming );
 	SAFE_DELETE( m_pIterUncrossedRows );
+	SAFE_DELETE( m_pIterUnjudgedRows );
+	SAFE_DELETE( m_pIterUnjudgedMineRows );
 }
 
 /* Init() does the expensive stuff: load sounds and note skins.  Load() just loads a NoteData. */
@@ -402,9 +406,6 @@ void Player::Load()
 	// The editor can start playing in the middle of the song.
 	const int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
 	m_iFirstUncrossedRow     = iNoteRow - 1;
-	m_iFirstUncrossedMineRow = iNoteRow - 1;
-	m_iRowLastJudged      = iNoteRow - 1;
-	m_iMineRowLastJudged  = iNoteRow - 1;
 	m_pJudgedRows->Reset( iNoteRow );
 
 	// TODO: Remove use of PlayerNumber.
@@ -521,10 +522,16 @@ void Player::Load()
 	m_pIterNotJudged = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW, NotJudged) );
 
 	SAFE_DELETE( m_pIterCurrentOrUpcoming );
-	m_pIterCurrentOrUpcoming = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW, NotJudged) );
+	m_pIterCurrentOrUpcoming = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 
 	SAFE_DELETE( m_pIterUncrossedRows );
-	m_pIterUncrossedRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW, NotJudged) );
+	m_pIterUncrossedRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
+
+	SAFE_DELETE( m_pIterUnjudgedRows );
+	m_pIterUnjudgedRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
+
+	SAFE_DELETE( m_pIterUnjudgedMineRows );
+	m_pIterUnjudgedMineRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 }
 
 void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
@@ -792,11 +799,9 @@ void Player::Update( float fDeltaTime )
 		if( iRowNow >= 0 )
 		{
 			if( GAMESTATE->IsPlayerEnabled(m_pPlayerState) )
-				CrossedRows( m_iFirstUncrossedRow, iRowNow, now );
-			m_iFirstUncrossedRow = iRowNow+1;
+				CrossedRows( iRowNow, now );
 		}
 	}
-
 
 	{
 		// TRICKY: 
@@ -2192,90 +2197,111 @@ void Player::UpdateJudgedRows()
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	bool bAllJudged = true;
 	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
-	
-	for( int iRow = m_iRowLastJudged+1; iRow <= iEndRow; ++iRow )
+
+	NoteData::all_tracks_iterator &iter = *m_pIterUnjudgedRows;
+	int iLastSeenRow = -1;
+	for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; iter++ )
 	{
-		if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow, pn) )
+		int iRow = iter.Row();
+
+		if( iLastSeenRow != iRow )
 		{
-			bAllJudged = false;
-			continue;
-		}
-		if( bAllJudged )
-			++m_iRowLastJudged;
-		if( m_pJudgedRows->JudgeRow(iRow) )
-			continue;
-		const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow, pn ).result;
-		
-		if( lastTNR.tns < TNS_Miss )
-			continue;
-		if( bSeparately )
-		{
-			for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+			// crossed a not-empty row
+			if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow, pn) )
 			{
-				const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
-				if( tn.type == TapNote::empty || tn.type == TapNote::mine ) continue;
-				if( tn.pn != PLAYER_INVALID && tn.pn != pn ) continue;
-				SetJudgment( tn.result.tns, tn.result.fTapNoteOffset );
+				bAllJudged = false;
+				continue;
 			}
+			if( m_pJudgedRows->JudgeRow(iRow) )
+				continue;
+			const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow, pn ).result;
+			
+			if( lastTNR.tns < TNS_Miss )
+				continue;
+			if( bSeparately )
+			{
+				for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+				{
+					const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
+					if( tn.type == TapNote::empty || tn.type == TapNote::mine ) continue;
+					if( tn.pn != PLAYER_INVALID && tn.pn != pn ) continue;
+					SetJudgment( tn.result.tns, tn.result.fTapNoteOffset );
+				}
+			}
+			else
+			{
+				SetJudgment( lastTNR.tns, lastTNR.fTapNoteOffset );
+			}
+			HandleTapRowScore( iRow );
 		}
-		else
-		{
-			SetJudgment( lastTNR.tns, lastTNR.fTapNoteOffset );
-		}
-		HandleTapRowScore( iRow );
-	}
-	
-	NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( m_iMineRowLastJudged+1, iEndRow+1, MinesNotHidden );
-	
-	bAllJudged = true;
-	set<RageSound *> setSounds;
-	for( ; !iter.IsAtEnd(); ++iter )
-	{
-		TapNote &tn = *iter;
-		
-		switch( tn.result.tns )
-		{
-		case TNS_None:		bAllJudged = false;
-		case TNS_AvoidMine:	continue;
-		case TNS_HitMine:	break;
-		DEFAULT_FAIL( tn.result.tns );
-		}
-		if( m_pNoteField )
-			m_pNoteField->DidTapNote( iter.Track(), tn.result.tns, false );
-		
-		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
-			continue;
-		if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
-			setSounds.insert( &m_vKeysounds[tn.iKeysoundIndex] );
-		else
-			setSounds.insert( &m_soundMine );
-		
-		ChangeLife( tn.result.tns );
-		if( m_pScoreDisplay )
-			m_pScoreDisplay->OnJudgment( tn.result.tns );
-		if( m_pSecondaryScoreDisplay )
-			m_pSecondaryScoreDisplay->OnJudgment( tn.result.tns );
-		
-		// Make sure hit mines affect the dance points.
-		if( m_pPrimaryScoreKeeper )
-			m_pPrimaryScoreKeeper->HandleTapScore( tn );
-		if( m_pSecondaryScoreKeeper )
-			m_pSecondaryScoreKeeper->HandleTapScore( tn );
-		tn.result.bHidden = true;
-		// Subtract one to ensure that we have actually completed the row.
-		if( bAllJudged && iter.Row() - 1 > m_iMineRowLastJudged )
-			m_iMineRowLastJudged = iter.Row() - 1;
 	}
 
-	FOREACHS( RageSound *, setSounds, s )
-	{
-		/* Only play one copy of each mine sound at a time per player. */
-		(*s)->Stop();
-		(*s)->Play();
-	}
 
-	if( bAllJudged )
-		m_iMineRowLastJudged = iEndRow;
+	{
+		bAllJudged = true;
+		set<RageSound *> setSounds;
+		NoteData::all_tracks_iterator iter = *m_pIterUnjudgedMineRows;	// copy
+		int iLastSeenRow = -1;
+		for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; iter++ )
+		{
+			int iRow = iter.Row();
+			TapNote &tn = *iter;
+
+			if( iRow != iLastSeenRow )
+			{
+				if( bAllJudged )
+				{
+					SAFE_DELETE( m_pIterUnjudgedMineRows );
+					m_pIterUnjudgedMineRows = new NoteData::all_tracks_iterator(iter);
+				}
+			}
+
+			bool bMineNotHidden = tn.type == TapNote::mine && !tn.result.bHidden;
+			if( !bMineNotHidden )
+				continue;
+
+			switch( tn.result.tns )
+			{
+			DEFAULT_FAIL( tn.result.tns );
+			case TNS_None:		
+				bAllJudged = false;
+				continue;
+			case TNS_AvoidMine:
+				continue;
+			case TNS_HitMine:
+				break;
+			}
+			if( m_pNoteField )
+				m_pNoteField->DidTapNote( iter.Track(), tn.result.tns, false );
+			
+			if( tn.pn != PLAYER_INVALID && tn.pn != pn )
+				continue;
+			if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
+				setSounds.insert( &m_vKeysounds[tn.iKeysoundIndex] );
+			else
+				setSounds.insert( &m_soundMine );
+			
+			ChangeLife( tn.result.tns );
+			if( m_pScoreDisplay )
+				m_pScoreDisplay->OnJudgment( tn.result.tns );
+			if( m_pSecondaryScoreDisplay )
+				m_pSecondaryScoreDisplay->OnJudgment( tn.result.tns );
+			
+			// Make sure hit mines affect the dance points.
+			if( m_pPrimaryScoreKeeper )
+				m_pPrimaryScoreKeeper->HandleTapScore( tn );
+			if( m_pSecondaryScoreKeeper )
+				m_pSecondaryScoreKeeper->HandleTapScore( tn );
+			tn.result.bHidden = true;
+		}
+
+		FOREACHS( RageSound *, setSounds, s )
+		{
+			/* Only play one copy of each mine sound at a time per player. */
+			(*s)->Stop();
+			(*s)->Play();
+		}
+	}
 }
 
 void Player::FlashGhostRow( int iRow, PlayerNumber pn )
@@ -2300,7 +2326,7 @@ void Player::FlashGhostRow( int iRow, PlayerNumber pn )
 	}
 }
 
-void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageTimer &now )
+void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 {
 	//LOG->Trace( "Player::CrossedRows   %d    %d", iFirstRowCrossed, iLastRowCrossed );
 
@@ -2312,8 +2338,13 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 		TapNote &tn = *iter;
 		int iRow = iter.Row();
 		int iTrack = iter.Track();
-		if( tn.type == TapNote::hold_head )
+		switch( tn.type )
+		{
+		case TapNote::hold_head:
 			tn.HoldResult.fLife = INITIAL_HOLD_LIFE;
+			break;
+		}
+
 
 		if( iRow != iLastSeenRow )
 		{
@@ -2349,7 +2380,7 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 		const int CHECKPOINT_FREQUENCY_ROWS = ROWS_PER_BEAT/2;
 
 		// "the first row after the start of the range that lands on a beat"
-		int iFirstCheckpointInRange = ((iFirstRowCrossed+CHECKPOINT_FREQUENCY_ROWS-1)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;
+		int iFirstCheckpointInRange = ((m_iFirstUncrossedRow+CHECKPOINT_FREQUENCY_ROWS-1)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;
 		
 		// "the last row or first row earlier that lands on a beat"
 		int iLastCheckpointInRange = ((iLastRowCrossed)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;
@@ -2405,6 +2436,8 @@ void Player::CrossedRows( int iFirstRowCrossed, int iLastRowCrossed, const RageT
 			}
 		}
 	}
+
+	m_iFirstUncrossedRow = iLastRowCrossed+1;
 }
 
 void Player::CrossedMineRow( int iNoteRow, const RageTimer &now )
