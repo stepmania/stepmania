@@ -40,13 +40,14 @@ ReceptorArrowRow::~ReceptorArrowRow()
 void ReceptorArrowRow::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
+	ArrowEffects::Update();
 
 	for( unsigned c=0; c<m_ReceptorArrow.size(); c++ )
 	{
 		// m_fDark==1 or m_fFadeToFailPercent==1 should make fBaseAlpha==0
 		float fBaseAlpha = (1 - m_pPlayerState->m_PlayerOptions.GetCurrent().m_fDark) * (1 - m_fFadeToFailPercent);
 		CLAMP( fBaseAlpha, 0.0f, 1.0f );
-		m_ReceptorArrow[c]->SetBaseAlpha( fBaseAlpha );
+		m_ReceptorArrow[c]->SetBaseAlpha( fBaseAlpha );		
 
 		// set arrow XYZ
 		const float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
