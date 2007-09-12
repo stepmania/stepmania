@@ -158,6 +158,7 @@ Player::Player( NoteData &nd, bool bVisible ) : m_NoteData(nd)
 	m_pSecondaryScoreKeeper = NULL;
 	m_pInventory = NULL;
 	m_pIterNotJudged = NULL;
+	m_pIterCurrentOrUpcoming = NULL;
 	m_pIterUncrossedRows = NULL;
 
 	m_bPaused = false;
@@ -190,6 +191,7 @@ Player::~Player()
 		SAFE_DELETE( m_vpHoldJudgment[i] );
 	SAFE_DELETE( m_pJudgedRows );
 	SAFE_DELETE( m_pIterNotJudged );
+	SAFE_DELETE( m_pIterCurrentOrUpcoming );
 	SAFE_DELETE( m_pIterUncrossedRows );
 }
 
@@ -518,6 +520,9 @@ void Player::Load()
 	SAFE_DELETE( m_pIterNotJudged );
 	m_pIterNotJudged = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW, NotJudged) );
 
+	SAFE_DELETE( m_pIterCurrentOrUpcoming );
+	m_pIterCurrentOrUpcoming = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW, NotJudged) );
+
 	SAFE_DELETE( m_pIterUncrossedRows );
 	m_pIterUncrossedRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW, NotJudged) );
 }
@@ -701,20 +706,45 @@ void Player::Update( float fDeltaTime )
 	// update HoldNotes logic
 	//
 	{
-		// Check only 1 beat back for holds.  Even 1 beat is overkill.
-		const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
-		vector<TrackRowTapNote> vHoldNotesToGradeTogether;
-		int iRowOfLastHoldNote = -1;
-		NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( iStartCheckingAt, iSongRow+1, NULL, true );
-		for( ; !iter.IsAtEnd(); ++iter )
+		// Update CurrentOrUpcomingNote pointers to point to the note 
+		// at or after iSongRow.
+		NoteData::all_tracks_iterator &iter = *m_pIterCurrentOrUpcoming;
+		while( !iter.IsAtEnd()  &&  iter.Row() < iSongRow )
 		{
-			TapNote &tn = *iter;
+			iter++;
+		}
+
+		map<int,TrackRowTapNote> mapRowToTap;
+		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
+		{
+			// If there is a hold on this track that overlaps the current row
+			// (overlaps because head has passed the current row), 
+			// it will be the the TapNote one before the TapNote pointed to
+			// by CurrentOrUpcoming.
+			NoteData::iterator iter = m_pIterCurrentOrUpcoming->GetIter(t);
+			if( iter == m_NoteData.begin(t) )
+				continue;	// no previous note available
+			iter--;
+			TapNote &tn = iter->second;
+			int iRow = iter->first;
+			ASSERT( iRow < iSongRow );
 			if( tn.type != TapNote::hold_head )
 				continue;
+			bool bInRange = iSongRow < iRow + tn.iDuration;
+			if( !bInRange )
+				continue;
+			TrackRowTapNote trtn = { t, iRow, &tn };
+			mapRowToTap[iRow] = trtn;
+		}
 
-			int iTrack = iter.Track();
-			int iRow = iter.Row();
-			TrackRowTapNote trtn = { iTrack, iRow, &tn };
+		// mapRowToTap now contains all overlapping holds sored by row
+		int iRowOfLastHoldNote = -1;
+		vector<TrackRowTapNote> vHoldNotesToGradeTogether;
+		FOREACHM( int, TrackRowTapNote, mapRowToTap, iter )
+		{
+			TrackRowTapNote &trtn = iter->second;
+			TapNote &tn = *trtn.pTN;
+			int iRow = iter->first;
 
 			/* All holds must be of the same subType because fLife is handled 
 			* in different ways depending on the SubType.  Handle Rolls one at a time 
@@ -752,6 +782,7 @@ void Player::Update( float fDeltaTime )
  		}
 	}
 
+
 	{
 		// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
 		/* We want to send the crossed row message exactly when we cross the row--not
@@ -765,6 +796,7 @@ void Player::Update( float fDeltaTime )
 			m_iFirstUncrossedRow = iRowNow+1;
 		}
 	}
+
 
 	{
 		// TRICKY: 

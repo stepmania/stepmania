@@ -170,6 +170,7 @@ protected:
 	int			m_iFirstUncrossedRow;
 	int			m_iFirstUncrossedMineRow;
 	NoteData::all_tracks_iterator *m_pIterNotJudged;
+	NoteData::all_tracks_iterator *m_pIterCurrentOrUpcoming;
 	NoteData::all_tracks_iterator *m_pIterUncrossedRows;
 	int			m_iRowLastJudged; // Everything up to and including this row has been judged.
 	int			m_iMineRowLastJudged;
