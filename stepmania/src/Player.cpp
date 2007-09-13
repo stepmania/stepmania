@@ -2183,7 +2183,8 @@ void Player::UpdateJudgedRows()
 	bool bAllJudged = true;
 	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
 
-	NoteData::all_tracks_iterator &iter = *m_pIterUnjudgedRows;
+	{
+	NoteData::all_tracks_iterator iter = *m_pIterUnjudgedRows;
 	int iLastSeenRow = -1;
 	for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; iter++ )
 	{
@@ -2191,12 +2192,16 @@ void Player::UpdateJudgedRows()
 
 		if( iLastSeenRow != iRow )
 		{
+			iLastSeenRow = iRow;
+
 			// crossed a not-empty row
 			if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow, pn) )
 			{
 				bAllJudged = false;
 				continue;
 			}
+			if( bAllJudged )
+				*m_pIterUnjudgedRows = iter;
 			if( m_pJudgedRows->JudgeRow(iRow) )
 				continue;
 			const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow, pn ).result;
@@ -2220,7 +2225,7 @@ void Player::UpdateJudgedRows()
 			HandleTapRowScore( iRow );
 		}
 	}
-
+	}
 
 	{
 		bAllJudged = true;
@@ -2234,11 +2239,9 @@ void Player::UpdateJudgedRows()
 
 			if( iRow != iLastSeenRow )
 			{
+				iLastSeenRow = iRow;
 				if( bAllJudged )
-				{
-					SAFE_DELETE( m_pIterUnjudgedMineRows );
-					m_pIterUnjudgedMineRows = new NoteData::all_tracks_iterator(iter);
-				}
+					*m_pIterUnjudgedMineRows = iter;
 			}
 
 			bool bMineNotHidden = tn.type == TapNote::mine && !tn.result.bHidden;
