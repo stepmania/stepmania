@@ -922,7 +922,7 @@ void NoteData::_all_tracks_iterator<ND, iter, TN>::Find( bool bReverse )
 	if( bReverse )
 	{
 		int iMaxRow = INT_MIN;
-		for( int iTrack = m_NoteData.GetNumTracks() - 1; iTrack >= 0; --iTrack )
+		for( int iTrack = m_pNoteData->GetNumTracks() - 1; iTrack >= 0; --iTrack )
 		{
 			iter &i( m_vCurrentIters[iTrack] );
 			const iter &begin = m_vBeginIters[iTrack];
@@ -948,7 +948,7 @@ void NoteData::_all_tracks_iterator<ND, iter, TN>::Find( bool bReverse )
 	{
 
 		int iMinRow = INT_MAX;
-		for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+		for( int iTrack = 0; iTrack < m_pNoteData->GetNumTracks(); ++iTrack )
 		{
 			iter &i = m_vCurrentIters[iTrack];
 			const iter &end = m_vEndIters[iTrack];
@@ -968,17 +968,17 @@ void NoteData::_all_tracks_iterator<ND, iter, TN>::Find( bool bReverse )
 
 template<typename ND, typename iter, typename TN>
 NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, NoteData::IteratorCond cond, bool bInclusive ) :
-	m_NoteData(nd), m_iTrack(0), m_bReverse(bReverse), m_Cond(cond)
+	m_pNoteData(&nd), m_iTrack(0), m_bReverse(bReverse), m_Cond(cond)
 {
-	ASSERT( m_NoteData.GetNumTracks() > 0 );
+	ASSERT( m_pNoteData->GetNumTracks() > 0 );
 
-	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+	for( int iTrack = 0; iTrack < m_pNoteData->GetNumTracks(); ++iTrack )
 	{
 		iter begin, end;
 		if( bInclusive )
-			m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartRow, iEndRow, begin, end );
+			m_pNoteData->GetTapNoteRangeInclusive( iTrack, iStartRow, iEndRow, begin, end );
 		else
-			m_NoteData.GetTapNoteRange( iTrack, iStartRow, iEndRow, begin, end );
+			m_pNoteData->GetTapNoteRange( iTrack, iStartRow, iEndRow, begin, end );
 
 		m_vBeginIters.push_back( begin );
 		m_vEndIters.push_back( end );
@@ -998,6 +998,35 @@ NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int 
 	}
 
 	Find( bReverse );
+}
+
+template<typename ND, typename iter, typename TN>
+NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( const _all_tracks_iterator &other ) :
+#define COPY_OTHER( x ) x( other.x )
+	COPY_OTHER( m_pNoteData ),
+	COPY_OTHER( m_iTrack ),
+	COPY_OTHER( m_bReverse ),
+	COPY_OTHER( m_Cond ),
+	COPY_OTHER( m_vBeginIters ),
+	COPY_OTHER( m_vEndIters ),
+	COPY_OTHER( m_vCurrentIters )
+#undef COPY_OTHER
+{
+}
+
+template<typename ND, typename iter, typename TN>
+NoteData::_all_tracks_iterator<ND, iter, TN> &NoteData::_all_tracks_iterator<ND, iter, TN>::operator=( const _all_tracks_iterator &other )
+{
+#define COPY_OTHER( x ) x = other.x
+	COPY_OTHER( m_pNoteData );
+	COPY_OTHER( m_iTrack );
+	COPY_OTHER( m_bReverse );
+	COPY_OTHER( m_Cond );
+	COPY_OTHER( m_vBeginIters );
+	COPY_OTHER( m_vEndIters );
+	COPY_OTHER( m_vCurrentIters );
+#undef COPY_OTHER
+	return *this;
 }
 
 template<typename ND, typename iter, typename TN>

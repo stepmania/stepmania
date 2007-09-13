@@ -48,7 +48,7 @@ public:
 	template<typename ND, typename iter, typename TN>
 	class _all_tracks_iterator
 	{
-		ND		&m_NoteData;
+		ND		*m_pNoteData;
 		vector<iter>	m_vBeginIters;
 
 		/* There isn't a "past the beginning" iterator so this is hard to make a true bidirectional iterator. 
@@ -57,12 +57,14 @@ public:
 		
 		vector<iter>	m_vEndIters;
 		int		m_iTrack;
-		const bool	m_bReverse;
+		bool		m_bReverse;
 		IteratorCond	m_Cond;
 		
 		void Find( bool bReverse );
 	public:
 		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, IteratorCond cond, bool bInclusive );
+		_all_tracks_iterator( const _all_tracks_iterator &other );
+		_all_tracks_iterator &operator=( const _all_tracks_iterator &other );
 		_all_tracks_iterator &operator++();		// preincrement
 		_all_tracks_iterator operator++( int dummy );	// postincrement
 		//_all_tracks_iterator &operator--();		// predecrement
@@ -70,6 +72,7 @@ public:
 		inline int Track() const		{ return m_iTrack; }
 		inline int Row() const			{ return m_vCurrentIters[m_iTrack]->first; }
 		inline bool IsAtEnd() const		{ return m_iTrack == -1; }
+		inline iter GetIter( int iTrack ) const	{ return m_vCurrentIters[iTrack]; }
 		inline TN &operator*()			{ DEBUG_ASSERT( !IsAtEnd() ); return m_vCurrentIters[m_iTrack]->second; }
 		inline TN *operator->()			{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vCurrentIters[m_iTrack]->second; }
 		inline const TN &operator*() const	{ DEBUG_ASSERT( !IsAtEnd() ); return m_vCurrentIters[m_iTrack]->second; }
