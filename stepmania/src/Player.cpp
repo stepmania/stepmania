@@ -721,7 +721,7 @@ void Player::Update( float fDeltaTime )
 			iter++;
 		}
 
-		map<int,TrackRowTapNote> mapRowToTap;
+		multimap<int,TrackRowTapNote> mapRowToTap;
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 		{
 			// If there is a hold on this track that overlaps the current row
@@ -741,13 +741,13 @@ void Player::Update( float fDeltaTime )
 			if( !bInRange )
 				continue;
 			TrackRowTapNote trtn = { t, iRow, &tn };
-			mapRowToTap[iRow] = trtn;
+			mapRowToTap.insert( pair<int,TrackRowTapNote>(iRow,trtn) );
 		}
 
 		// mapRowToTap now contains all overlapping holds sored by row
 		int iRowOfLastHoldNote = -1;
 		vector<TrackRowTapNote> vHoldNotesToGradeTogether;
-		FOREACHM( int, TrackRowTapNote, mapRowToTap, iter )
+		FOREACHMM( int, TrackRowTapNote, mapRowToTap, iter )
 		{
 			TrackRowTapNote &trtn = iter->second;
 			TapNote &tn = *trtn.pTN;
