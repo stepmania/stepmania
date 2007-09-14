@@ -21,8 +21,6 @@ public:
 	virtual void LoadFromNode( const XNode* pNode );
 	virtual PercentageDisplay *Copy() const;
 
-	static RString FormatPercentScore( float fPercentDancePoints );
-
 	//
 	// Lua
 	//

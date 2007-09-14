@@ -20,6 +20,8 @@ public:
 	void AddStats( const PlayerStageStats& other );		// accumulate
 
 	Grade GetGrade() const;
+	static float MakePercentScore( int iActual, int iPossible );
+	static RString FormatPercentScore( float fPercentScore );
 	float GetPercentDancePoints() const;
 	float GetCurMaxPercentDancePoints() const;
 

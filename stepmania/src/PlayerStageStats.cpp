@@ -10,6 +10,7 @@
 #include "Steps.h"
 #include "ScoreKeeperNormal.h"
 #include "PrefsManager.h"
+#include "CommonMetrics.h"
 
 #define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 #define GRADE_TIER02_IS_ALL_W2S	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllW2s")
@@ -228,20 +229,47 @@ Grade PlayerStageStats::GetGrade() const
 	return grade;
 }
 
-float PlayerStageStats::GetPercentDancePoints() const
+float PlayerStageStats::MakePercentScore( int iActual, int iPossible )
 {
-	if( m_iPossibleDancePoints == 0 )
+	if( iPossible == 0 )
 		return 0; // div/0
 
-	if( m_iActualDancePoints == m_iPossibleDancePoints )
+	if( iActual == iPossible )
 		return 1;	// correct for rounding error
 
 	/* This can happen in battle, with transform attacks. */
-	//ASSERT_M( iActualDancePoints <= iPossibleDancePoints, ssprintf("%i/%i", iActualDancePoints, iPossibleDancePoints) );
+	//ASSERT_M( iActual <= iPossible, ssprintf("%i/%i", iActual, iPossible) );
 
-	float fPercentDancePoints =  m_iActualDancePoints / (float)m_iPossibleDancePoints;
+	float fPercent =  iActual / (float)iPossible;
+
+	// don't allow negative
+	fPercent = max( 0, fPercent );
+
+	int iPercentTotalDigits = 3 + CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES;	// "100" + "." + "00"
+
+	// TRICKY: printf will round, but we want to truncate.  Otherwise, we may display a percent
+	// score that's too high and doesn't match up with the calculated grade.
+	float fTruncInterval = powf( 0.1f, (float)iPercentTotalDigits-1 );
 	
-	return fPercentDancePoints;
+	// TRICKY: ftruncf is rounding 1.0000000 to 0.99990004.  Give a little boost to 
+	// fPercentDancePoints to correct for this.
+	fPercent += 0.000001f;
+
+	fPercent = ftruncf( fPercent, fTruncInterval );
+	return fPercent;
+}
+
+RString PlayerStageStats::FormatPercentScore( float fPercentDancePoints )
+{
+	int iPercentTotalDigits = 3 + CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES;	// "100" + "." + "00"
+	
+	RString s = ssprintf( "%*.*f%%", iPercentTotalDigits, (int)CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES, fPercentDancePoints*100 );
+	return s;
+}
+
+float PlayerStageStats::GetPercentDancePoints() const
+{
+	return MakePercentScore( m_iActualDancePoints, m_iPossibleDancePoints );
 }
 
 float PlayerStageStats::GetCurMaxPercentDancePoints() const
@@ -634,7 +662,7 @@ bool PlayerStageStats::IsDisqualified() const
 }
 
 LuaFunction( GetGradeFromPercent,	GetGradeFromPercent( FArg(1), false ) )
-
+LuaFunction( FormatPercentScore,	PlayerStageStats::FormatPercentScore( FArg(1) ) )
 
 
 // lua start

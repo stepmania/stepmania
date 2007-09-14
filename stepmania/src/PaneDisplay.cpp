@@ -11,9 +11,9 @@
 #include "Style.h"
 #include "ActorUtil.h"
 #include "Foreach.h"
-#include "PercentageDisplay.h"
 #include "LuaManager.h"
 #include "XmlFile.h"
+#include "PlayerStageStats.h"
 
 #define SHIFT_X(p)	THEME->GetMetricF(sMetricsGroup, ssprintf("ShiftP%iX", p+1))
 #define SHIFT_Y(p)	THEME->GetMetricF(sMetricsGroup, ssprintf("ShiftP%iY", p+1))
@@ -169,7 +169,7 @@ void PaneDisplay::SetContent( PaneContents c )
 			if( bIsPlayerEdit )
 				str = NOT_AVAILABLE;
 			else
-				str = PercentageDisplay::FormatPercentScore( val );
+				str = PlayerStageStats::FormatPercentScore( val );
 			break;
 		case SONG_NUM_STEPS:
 		case SONG_JUMPS:

@@ -62,6 +62,7 @@ namespace CommonMetrics
 	extern ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
 	extern ThemeMetricStepsTypesToShow		STEPS_TYPES_TO_SHOW;
 	extern ThemeMetric<bool>			AUTO_SET_STYLE;
+	extern ThemeMetric<int>				PERCENT_SCORE_DECIMAL_PLACES;
 
 	RString LocalizeOptionItem( const RString &s, bool bOptional );
 };

@@ -23,7 +23,7 @@ ThemeMetricDifficultiesToShow		CommonMetrics::DIFFICULTIES_TO_SHOW		("Common","D
 ThemeMetricCourseDifficultiesToShow	CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW	("Common","CourseDifficultiesToShow");
 ThemeMetricStepsTypesToShow		CommonMetrics::STEPS_TYPES_TO_SHOW		("Common","StepsTypesToHide");	// This metric takes a list of StepsTypes to hide and returns a list of StepsTypes to show
 ThemeMetric<bool>			CommonMetrics::AUTO_SET_STYLE			("Common","AutoSetStyle");
-
+ThemeMetric<int>			CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES	("Common","PercentScoreDecimalPlaces");
 
 ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const RString& sGroup, const RString& sName ) : 
 	ThemeMetric<RString>(sGroup,sName)
