@@ -1016,7 +1016,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 
 			m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		}
-		else
+		else if( GAMESTATE->m_pCurCourse )
 		{
 			CLAMP( m_iSelection[pn], 0, m_vpTrails.size()-1 );
 
