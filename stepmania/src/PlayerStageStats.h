@@ -59,6 +59,7 @@ public:
 	float		m_fLifeRemainingSeconds;	// used in survival
 
 	// workout
+	float		m_iNumControllerSteps;
 	float		m_fCaloriesBurned;
 
 	map<float,float> m_fLifeRecord;

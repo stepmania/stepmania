@@ -44,6 +44,7 @@ void PlayerStageStats::Init()
 	m_iSongsPassed = 0;
 	m_iSongsPlayed = 0;
 	m_fLifeRemainingSeconds = 0;
+	m_iNumControllerSteps = 0;
 	m_fCaloriesBurned = 0;
 
 	ZERO( m_iTapNoteScores );
@@ -90,6 +91,7 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	m_radarActual += other.m_radarActual;
 	m_iSongsPassed += other.m_iSongsPassed;
 	m_iSongsPlayed += other.m_iSongsPlayed;
+	m_iNumControllerSteps += other.m_iNumControllerSteps;
 	m_fCaloriesBurned += other.m_fCaloriesBurned;
 	m_fLifeRemainingSeconds = other.m_fLifeRemainingSeconds;	// don't accumulate
 	m_bDisqualified |= other.m_bDisqualified;
@@ -632,6 +634,7 @@ bool PlayerStageStats::IsDisqualified() const
 }
 
 LuaFunction( GetGradeFromPercent,	GetGradeFromPercent( FArg(1), false ) )
+
 
 
 // lua start
