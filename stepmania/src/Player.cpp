@@ -2173,11 +2173,6 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	}
 }
 
-static bool MinesNotHidden( const TapNote &tn )
-{
-	return tn.type == TapNote::mine && !tn.result.bHidden;
-}
-
 void Player::UpdateJudgedRows()
 {
 	const int iEndRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
@@ -2338,9 +2333,17 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 			// TODO: Remove use of PlayerNumber.
 			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
-			float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
-			if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-				Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+			if( PREFSMAN->m_fPadStickSeconds > 0 )
+			{
+				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
+				if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
+					Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+			}
+			else
+			{
+				if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
+					Step( iTrack, iRow, now, true, false );
+			}
 			break;
 		}
 
