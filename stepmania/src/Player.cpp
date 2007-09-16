@@ -718,7 +718,7 @@ void Player::Update( float fDeltaTime )
 		NoteData::all_tracks_iterator &iter = *m_pIterCurrentOrUpcoming;
 		while( !iter.IsAtEnd()  &&  iter.Row() < iSongRow )
 		{
-			iter++;
+			++iter;
 		}
 
 		multimap<int,TrackRowTapNote> mapRowToTap;
@@ -731,7 +731,7 @@ void Player::Update( float fDeltaTime )
 			NoteData::iterator iter = m_pIterCurrentOrUpcoming->GetIter(t);
 			if( iter == m_NoteData.begin(t) )
 				continue;	// no previous note available
-			iter--;
+			--iter;
 			TapNote &tn = iter->second;
 			int iRow = iter->first;
 			ASSERT( iRow < iSongRow );
@@ -741,7 +741,7 @@ void Player::Update( float fDeltaTime )
 			if( !bInRange )
 				continue;
 			TrackRowTapNote trtn = { t, iRow, &tn };
-			mapRowToTap.insert( pair<int,TrackRowTapNote>(iRow,trtn) );
+			mapRowToTap.insert( make_pair(iRow,trtn) );
 		}
 
 		// mapRowToTap now contains all overlapping holds sored by row
@@ -912,8 +912,8 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	if( bInitiatedNote && fLife != 0 )
 	{
 		/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
-			* Do this even if we're a little beyond the end of the hold note, to make sure
-			* iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
+		 * Do this even if we're a little beyond the end of the hold note, to make sure
+		 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
 		FOREACH( TrackRowTapNote, vTN, trtn )
 		{
 			TapNote &tn = *trtn->pTN;
@@ -2183,7 +2183,7 @@ void Player::UpdateJudgedRows()
 	{
 	NoteData::all_tracks_iterator iter = *m_pIterUnjudgedRows;
 	int iLastSeenRow = -1;
-	for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; iter++ )
+	for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; ++iter )
 	{
 		int iRow = iter.Row();
 
@@ -2229,7 +2229,7 @@ void Player::UpdateJudgedRows()
 		set<RageSound *> setSounds;
 		NoteData::all_tracks_iterator iter = *m_pIterUnjudgedMineRows;	// copy
 		int iLastSeenRow = -1;
-		for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; iter++ )
+		for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; ++iter )
 		{
 			int iRow = iter.Row();
 			TapNote &tn = *iter;
@@ -2317,7 +2317,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 
 	NoteData::all_tracks_iterator &iter = *m_pIterUncrossedRows;
 	int iLastSeenRow = -1;
-	for( ; !iter.IsAtEnd()  &&  iter.Row() <= iLastRowCrossed; iter++ )
+	for( ; !iter.IsAtEnd()  &&  iter.Row() <= iLastRowCrossed; ++iter )
 	{
 		/* Apply InitialHoldLife. */
 		TapNote &tn = *iter;
