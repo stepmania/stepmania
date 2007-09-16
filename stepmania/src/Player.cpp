@@ -878,10 +878,6 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			bInitiatedNote &= tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start of this hold?
 		}
 	}
-	else
-	{
-		bInitiatedNote = true;
-	}
 
 	bool bIsHoldingButton = true;
 	FOREACH( TrackRowTapNote, vTN, trtn )
@@ -894,7 +890,6 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 		{
 			// TODO: Make the CPU miss sometimes.
-			bIsHoldingButton &= true;
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 			{
 				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
