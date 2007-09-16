@@ -79,6 +79,30 @@
 <!-- Classes -->
 <Classes>
 <Class name='Actor'>
+	<Function name='GetVisible' return='bool' arguments=''>
+		Returns the current Actor's visibility.
+	</Function>
+	<Function name='GetX' return='float' arguments=''>
+		Returns the current Actor's x position.
+	</Function>
+	<Function name='GetY' return='float' arguments=''>
+		Returns the current Actor's y position.
+	</Function>
+	<Function name='GetZ' return='float' arguments=''>
+		Returns the current Actor's z position.
+	</Function>
+	<Function name='SetTextureFiltering' return='void' arguments='bool b'>
+		Sets Texture Filtering for an actor to <code>b</code>.
+	</Function>
+	<Function name='addx' return='void' arguments='float xPos'>
+		Adds <code>xPos</code> to the Actor's current x position.
+	</Function>
+	<Function name='addy' return='void' arguments='float yPos'>
+		Adds <code>yPos</code> to the Actor's current y position.
+	</Function>
+	<Function name='addz' return='void' arguments='float zPos'>
+		Adds <code>zPos</code> to the Actor's current z position.
+	</Function>
 	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
 	</Function>
