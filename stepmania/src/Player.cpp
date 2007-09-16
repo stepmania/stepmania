@@ -142,7 +142,7 @@ float Player::GetWindowSeconds( TimingWindow tw )
 	return fSecs;
 }
 
-Player::Player( NoteData &nd, bool bVisible ) : m_NoteData(nd)
+Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 {
 	m_bLoaded = false;
 
@@ -166,7 +166,7 @@ Player::Player( NoteData &nd, bool bVisible ) : m_NoteData(nd)
 	m_bPaused = false;
 
 	m_pAttackDisplay = NULL;
-	if( bVisible )
+	if( bVisibleParts )
 	{
 		m_pAttackDisplay = new AttackDisplay;
 		this->AddChild( m_pAttackDisplay );
@@ -175,14 +175,12 @@ Player::Player( NoteData &nd, bool bVisible ) : m_NoteData(nd)
 	PlayerAI::InitFromDisk();
 
 	m_pNoteField = NULL;
-	if( bVisible )
+	if( bVisibleParts )
 	{
 		m_pNoteField = new NoteField;
 		m_pNoteField->SetName( "NoteField" );
 	}
 	m_pJudgedRows = new JudgedRows;
-
-	this->SetVisible( bVisible );
 }
 
 Player::~Player()
@@ -339,7 +337,7 @@ void Player::Init(
 	m_soundAttackEnding.SetProperty( "Pan", fBalance );
 
 
-	if( this->GetVisible() )
+	if( HasVisibleParts() )
 	{
 		LuaThreadVariable var( "Player", LuaReference::Create(m_pPlayerState->m_PlayerNumber) );
 		LuaThreadVariable var2( "MultiPlayer", LuaReference::Create(m_pPlayerState->m_mp) );
@@ -360,7 +358,7 @@ void Player::Init(
 	for( int i = 0; i < GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; ++i )
 		m_vpHoldJudgment[i] = NULL;
 
-	if( this->GetVisible() )
+	if( HasVisibleParts() )
 	{
 		for( int i = 0; i < GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; ++i )
 		{
@@ -571,7 +569,9 @@ void Player::Update( float fDeltaTime )
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 	const int iSongRow = BeatToNoteRow( fSongBeat );
 
-	if( this->GetVisible() )
+	// Optimization: Don't spend time processing the things below that won't show 
+	// if the Player doesn't show anything on the screen.
+	if( HasVisibleParts() )
 	{
 		if( m_pPlayerState->m_bAttackBeganThisUpdate )
 			m_soundAttackLaunch.Play();

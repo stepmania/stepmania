@@ -39,7 +39,7 @@ class Player: public ActorFrame
 {
 public:
 	// The passed in NoteData isn't touched until Load() is called.
-	Player( NoteData &nd, bool bVisible = true );
+	Player( NoteData &nd, bool bVisibleParts = true );
 	~Player();
 
 	virtual void Update( float fDeltaTime );
@@ -96,7 +96,7 @@ public:
 	static float GetMaxStepDistanceSeconds();
 	static float GetWindowSeconds( TimingWindow tw );
 	const NoteData &GetNoteData() const { return m_NoteData; }
-	bool HasNoteField() const { return m_pNoteField != NULL; }
+	bool HasVisibleParts() const { return m_pNoteField != NULL; }
 
 	void SetActorWithJudgmentPosition( Actor *pActor ) { m_pActorWithJudgmentPosition = pActor; }
 	void SetActorWithComboPosition( Actor *pActor ) { m_pActorWithComboPosition = pActor; }

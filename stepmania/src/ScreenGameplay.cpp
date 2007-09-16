@@ -318,7 +318,7 @@ GetNextVisiblePlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> 
 {
 	for( ; iter != v.end(); ++iter )
 	{
-		if( !iter->m_pPlayer->HasNoteField() )
+		if( !iter->m_pPlayer->HasVisibleParts() )
 			continue;
 		return iter;
 	}
@@ -476,7 +476,7 @@ void ScreenGameplay::Init()
 	
 	FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
 	{
-		if( pi->m_pPlayer->HasNoteField() )
+		if( pi->m_pPlayer->HasVisibleParts() )
 		{
 			pi->m_sprOniGameOver.Load( THEME->GetPathG(m_sName,"oni gameover") );
 			pi->m_sprOniGameOver->SetName( ssprintf("OniGameOver%s",pi->GetName().c_str()) );
