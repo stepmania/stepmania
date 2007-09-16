@@ -851,6 +851,8 @@ void ScreenGameplay::InitSongQueues()
 				Song *pSong = m_apSongsQueue[i];
 				Steps *pOldSteps = pi->m_vpStepsQueue[i];
 				Steps *pSteps = SongUtil::GetOneSteps( pSong, pOldSteps->m_StepsType, pi->m_difficultyForced );
+				if( pSteps == NULL )
+					pSteps = SongUtil::GetClosestNotes( pSong, pOldSteps->m_StepsType, pi->m_difficultyForced );
 				ASSERT( pSteps );
 				pi->m_vpStepsQueue[i] = pSteps;
 			}
