@@ -2397,7 +2397,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 			int iNumHoldsMissedThisRow = 0;
 
 			// start at r-1 so that we consider holds whose end rows are equal to the checkpoint row
-			NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( r-1, r, NULL, true );
+			NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( r-1, r, true );
 			for( ; !iter.IsAtEnd(); ++iter )
 			{
 				TapNote &tn = *iter;

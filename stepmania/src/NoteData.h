@@ -43,7 +43,6 @@ public:
 	void swap( NoteData &nd )					{ m_TapNotes.swap( nd.m_TapNotes ); }
 
 
-	typedef bool (*IteratorCond)( const TapNote& );
 	// This is ugly to make it templated but I don't want to have to write the same class twice.
 	template<typename ND, typename iter, typename TN>
 	class _all_tracks_iterator
@@ -58,11 +57,10 @@ public:
 		vector<iter>	m_vEndIters;
 		int		m_iTrack;
 		bool		m_bReverse;
-		IteratorCond	m_Cond;
 		
 		void Find( bool bReverse );
 	public:
-		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, IteratorCond cond, bool bInclusive );
+		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, bool bInclusive );
 		_all_tracks_iterator( const _all_tracks_iterator &other );
 		_all_tracks_iterator &operator++();		// preincrement
 		_all_tracks_iterator operator++( int dummy );	// postincrement
@@ -115,21 +113,21 @@ public:
 	/* Return an iterator range including exactly iStartRow to iEndRow. */
 	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, const_iterator &begin, const_iterator &end ) const;
 	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end );
-	all_tracks_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow, IteratorCond cond = NULL, bool bInclusive = false )
+	all_tracks_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow, bool bInclusive = false )
 	{
-		return all_tracks_iterator( *this, iStartRow, iEndRow, false, cond, bInclusive );
+		return all_tracks_iterator( *this, iStartRow, iEndRow, false, bInclusive );
 	}
-	all_tracks_const_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow, IteratorCond cond = NULL, bool bInclusive = false ) const
+	all_tracks_const_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow, bool bInclusive = false ) const
 	{
-		return all_tracks_const_iterator( *this, iStartRow, iEndRow, false, cond, bInclusive );
+		return all_tracks_const_iterator( *this, iStartRow, iEndRow, false, bInclusive );
 	}
-	all_tracks_reverse_iterator GetTapNoteRangeAllTracksReverse( int iStartRow, int iEndRow, IteratorCond cond = NULL, bool bInclusive = false )
+	all_tracks_reverse_iterator GetTapNoteRangeAllTracksReverse( int iStartRow, int iEndRow, bool bInclusive = false )
 	{
-		return all_tracks_iterator(*this, iStartRow, iEndRow, true, cond, bInclusive );
+		return all_tracks_iterator(*this, iStartRow, iEndRow, true, bInclusive );
 	}
-	all_tracks_const_reverse_iterator GetTapNoteRangeAllTracksReverse( int iStartRow, int iEndRow, IteratorCond cond = NULL, bool bInclusive = false ) const
+	all_tracks_const_reverse_iterator GetTapNoteRangeAllTracksReverse( int iStartRow, int iEndRow, bool bInclusive = false ) const
 	{
-		return all_tracks_const_iterator(*this, iStartRow, iEndRow, true, cond, bInclusive );
+		return all_tracks_const_iterator(*this, iStartRow, iEndRow, true, bInclusive );
 	}
 
 	/* Return an iterator range include iStartRow to iEndRow.  Extend the range to include
