@@ -167,8 +167,8 @@ protected:
 	Inventory		*m_pInventory;
 
 	int			m_iFirstUncrossedRow;	// used by hold checkpoints logic
-	NoteData::all_tracks_iterator *m_pIterNotJudged;
-	NoteData::all_tracks_iterator *m_pIterCurrentOrUpcoming;
+	NoteData::all_tracks_iterator *m_pIterNeedsTapJudging;
+	NoteData::all_tracks_iterator *m_pIterNeedsHoldJudging;
 	NoteData::all_tracks_iterator *m_pIterUncrossedRows;
 	NoteData::all_tracks_iterator *m_pIterUnjudgedRows;
 	NoteData::all_tracks_iterator *m_pIterUnjudgedMineRows;

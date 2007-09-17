@@ -157,8 +157,8 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 	m_pPrimaryScoreKeeper = NULL;
 	m_pSecondaryScoreKeeper = NULL;
 	m_pInventory = NULL;
-	m_pIterNotJudged = NULL;
-	m_pIterCurrentOrUpcoming = NULL;
+	m_pIterNeedsTapJudging = NULL;
+	m_pIterNeedsHoldJudging = NULL;
 	m_pIterUncrossedRows = NULL;
 	m_pIterUnjudgedRows = NULL;
 	m_pIterUnjudgedMineRows = NULL;
@@ -190,8 +190,8 @@ Player::~Player()
 	for( unsigned i = 0; i < m_vpHoldJudgment.size(); ++i )
 		SAFE_DELETE( m_vpHoldJudgment[i] );
 	SAFE_DELETE( m_pJudgedRows );
-	SAFE_DELETE( m_pIterNotJudged );
-	SAFE_DELETE( m_pIterCurrentOrUpcoming );
+	SAFE_DELETE( m_pIterNeedsTapJudging );
+	SAFE_DELETE( m_pIterNeedsHoldJudging );
 	SAFE_DELETE( m_pIterUncrossedRows );
 	SAFE_DELETE( m_pIterUnjudgedRows );
 	SAFE_DELETE( m_pIterUnjudgedMineRows );
@@ -381,19 +381,42 @@ void Player::Init(
 		*b = false;
 }
 
-static bool NotJudged( const TapNote &tn )
+static bool NeedsTapJudging( const TapNote &tn )
 {
-	if( tn.result.tns != TNS_None )
-		return false;
 	switch( tn.type )
 	{
+	DEFAULT_FAIL( tn.type );
 	case TapNote::tap:
 	case TapNote::hold_head:
 	case TapNote::mine:
 	case TapNote::lift:
-		return true;
+		if( tn.result.tns == TNS_None )
+			return true;
+		else
+			return false;
+	case TapNote::hold_tail:
+	case TapNote::attack:
+		return false;
 	}
-	return false;
+}
+
+static bool NeedsHoldJudging( const TapNote &tn )
+{
+	switch( tn.type )
+	{
+	DEFAULT_FAIL( tn.type );
+	case TapNote::hold_head:
+		if( tn.HoldResult.hns == HNS_None )
+			return true;
+		else
+			return false;
+	case TapNote::tap:
+	case TapNote::hold_tail:
+	case TapNote::mine:
+	case TapNote::lift:
+	case TapNote::attack:
+		return false;
+	}
 }
 
 void Player::Load()
@@ -516,11 +539,11 @@ void Player::Load()
 	if( m_pPlayerStageStats )
 		SendComboMessages( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
 
-	SAFE_DELETE( m_pIterNotJudged );
-	m_pIterNotJudged = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW, NotJudged) );
+	SAFE_DELETE( m_pIterNeedsTapJudging );
+	m_pIterNeedsTapJudging = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW) );
 
-	SAFE_DELETE( m_pIterCurrentOrUpcoming );
-	m_pIterCurrentOrUpcoming = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
+	SAFE_DELETE( m_pIterNeedsHoldJudging );
+	m_pIterNeedsHoldJudging = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
 
 	SAFE_DELETE( m_pIterUncrossedRows );
 	m_pIterUncrossedRows = new NoteData::all_tracks_iterator( m_NoteData.GetTapNoteRangeAllTracks(iNoteRow, MAX_NOTE_ROW ) );
@@ -713,45 +736,27 @@ void Player::Update( float fDeltaTime )
 	// update HoldNotes logic
 	//
 	{
-		// Update CurrentOrUpcomingNote pointers to point to the note 
-		// at or after iSongRow.
-		NoteData::all_tracks_iterator &iter = *m_pIterCurrentOrUpcoming;
-		while( !iter.IsAtEnd()  &&  iter.Row() < iSongRow )
+
+		// Fast forward to the first that needs hold judging.
 		{
-			++iter;
+			NoteData::all_tracks_iterator &iter = *m_pIterNeedsHoldJudging;
+			while( !iter.IsAtEnd()  &&  iter.Row() <= iSongRow  &&  !NeedsHoldJudging(*iter) )
+				++iter;
 		}
 
-		multimap<int,TrackRowTapNote> mapRowToTap;
-		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
+
+		vector<TrackRowTapNote> vHoldNotesToGradeTogether;
+		int iRowOfLastHoldNote = -1;
+		NoteData::all_tracks_iterator iter = *m_pIterNeedsHoldJudging;	// copy
+		for( ; !iter.IsAtEnd() &&  iter.Row() <= iSongRow; ++iter )
 		{
-			// If there is a hold on this track that overlaps the current row
-			// (overlaps because head has passed the current row), 
-			// it will be the the TapNote one before the TapNote pointed to
-			// by CurrentOrUpcoming.
-			NoteData::iterator iter = m_pIterCurrentOrUpcoming->GetIter(t);
-			if( iter == m_NoteData.begin(t) )
-				continue;	// no previous note available
-			--iter;
-			TapNote &tn = iter->second;
-			int iRow = iter->first;
-			ASSERT( iRow < iSongRow );
+			TapNote &tn = *iter;
 			if( tn.type != TapNote::hold_head )
 				continue;
-			bool bInRange = iSongRow < iRow + tn.iDuration;
-			if( !bInRange )
-				continue;
-			TrackRowTapNote trtn = { t, iRow, &tn };
-			mapRowToTap.insert( make_pair(iRow,trtn) );
-		}
 
-		// mapRowToTap now contains all overlapping holds sored by row
-		int iRowOfLastHoldNote = -1;
-		vector<TrackRowTapNote> vHoldNotesToGradeTogether;
-		FOREACHMM( int, TrackRowTapNote, mapRowToTap, iter )
-		{
-			TrackRowTapNote &trtn = iter->second;
-			TapNote &tn = *trtn.pTN;
-			int iRow = iter->first;
+			int iTrack = iter.Track();
+			int iRow = iter.Row();
+			TrackRowTapNote trtn = { iTrack, iRow, &tn };
 
 			/* All holds must be of the same subType because fLife is handled 
 			* in different ways depending on the SubType.  Handle Rolls one at a time 
@@ -788,7 +793,6 @@ void Player::Update( float fDeltaTime )
 			vHoldNotesToGradeTogether.clear();
  		}
 	}
-
 
 	{
 		// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
@@ -2142,11 +2146,14 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		}
 	}
 
-	NoteData::all_tracks_iterator &iter = *m_pIterNotJudged;
+	NoteData::all_tracks_iterator &iter = *m_pIterNeedsTapJudging;
 
 	for( ; !iter.IsAtEnd() && iter.Row() < iMissIfOlderThanThisRow; ++iter )
 	{
 		TapNote &tn = *iter;
+
+		if( !NeedsTapJudging(tn) )
+			continue;
 		
 		if( tn.pn != PLAYER_INVALID && tn.pn != m_pPlayerState->m_PlayerNumber )
 			continue;

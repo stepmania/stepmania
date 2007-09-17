@@ -64,7 +64,6 @@ public:
 	public:
 		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, IteratorCond cond, bool bInclusive );
 		_all_tracks_iterator( const _all_tracks_iterator &other );
-		_all_tracks_iterator &operator=( const _all_tracks_iterator &other );
 		_all_tracks_iterator &operator++();		// preincrement
 		_all_tracks_iterator operator++( int dummy );	// postincrement
 		//_all_tracks_iterator &operator--();		// predecrement
