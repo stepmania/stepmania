@@ -15,6 +15,7 @@ public:
 
 	void SetTransformFromReference( const LuaReference &ref );
 	void SetTransformFromExpression( const RString &sTransformFunction );
+	void SetTransformFromWidth( float fItemWidth );
 	void SetTransformFromHeight( float fItemHeight );
 
 	void Load2();

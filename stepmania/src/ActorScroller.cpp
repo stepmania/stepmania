@@ -70,6 +70,11 @@ void ActorScroller::SetTransformFromExpression( const RString &sTransformFunctio
 	SetTransformFromReference( ref );
 }
 
+void ActorScroller::SetTransformFromWidth( float fItemWidth )
+{
+	SetTransformFromExpression( ssprintf("function(self,offset,itemIndex,numItems) self:x(%f*offset) end",fItemWidth) );
+}
+
 void ActorScroller::SetTransformFromHeight( float fItemHeight )
 {
 	SetTransformFromExpression( ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight) );
@@ -309,6 +314,7 @@ public:
 		return 0;
 	}
 	static int SetTransformFromHeight( T* p, lua_State *L )		{ p->SetTransformFromHeight(FArg(1)); return 0; }
+	static int SetTransformFromWidth( T* p, lua_State *L )		{ p->SetTransformFromWidth(FArg(1)); return 0; }
 	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
 	static int SetDestinationItem( T* p, lua_State *L )		{ p->SetDestinationItem( FArg(1) ); return 0; }
 	static int getsecondtodestination( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetSecondsToDestination() ); return 1; }
@@ -327,6 +333,7 @@ public:
 		ADD_METHOD( PositionItems );
 		ADD_METHOD( SetTransformFromFunction );
 		ADD_METHOD( SetTransformFromHeight );
+		ADD_METHOD( SetTransformFromWidth );
 		ADD_METHOD( SetCurrentAndDestinationItem );
 		ADD_METHOD( SetDestinationItem );
 		ADD_METHOD( getsecondtodestination );
