@@ -2085,6 +2085,13 @@ public:
 		lua_pushboolean( L, p->HasPassedAnyStepsInSong(pS) );
 		return 1;
 	}
+	static int GetNumToasties( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iNumToasties ); return 1; }
+	static int GetTotalTapsAndHolds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalTapsAndHolds ); return 1; }
+	static int GetTotalJumps( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalJumps ); return 1; }
+	static int GetTotalHolds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalHolds ); return 1; }
+	static int GetTotalRolls( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalRolls ); return 1; }
+	static int GetTotalMines( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalMines ); return 1; }
+	static int GetTotalHands( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalHands ); return 1; }
 
 	LunaProfile()
 	{
@@ -2119,6 +2126,13 @@ public:
 		ADD_METHOD( GetMostPopularCourse );
 		ADD_METHOD( GetSongNumTimesPlayed );
 		ADD_METHOD( HasPassedAnyStepsInSong );
+		ADD_METHOD( GetNumToasties );
+		ADD_METHOD( GetTotalTapsAndHolds );
+		ADD_METHOD( GetTotalJumps );
+		ADD_METHOD( GetTotalHolds );
+		ADD_METHOD( GetTotalRolls );
+		ADD_METHOD( GetTotalMines );
+		ADD_METHOD( GetTotalHands );
 	}
 };
 
