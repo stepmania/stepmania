@@ -1,7 +1,7 @@
-/* ScreenEnding - Ending screen that shows stats. */
+/* ScreenSelectProfile - Screen that allows to select and load profile to use. */
 
-#ifndef SCREEN_Select_PROFILE_H
-#define SCREEN_Select_PROFILE_H
+#ifndef SCREEN_SELECT_PROFILE_H
+#define SCREEN_SELECT_PROFILE_H
 
 #include "ScreenWithMenuElements.h"
 
@@ -24,7 +24,7 @@ private:
 #endif
 
 /*
-* (c) 2004 Chris Danford
+* (c) 2007 vdl
 * All rights reserved.
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a

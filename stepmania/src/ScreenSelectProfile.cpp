@@ -71,11 +71,14 @@ bool ScreenSelectProfile::Finish(){
 		return false;
 	}
 
+	int iUsedLocalProfiles = 0;
+	int iUnselectedProfiles = 0;
+
 	FOREACH_PlayerNumber( p )
 	{
 		// not all players has made their choices
 		if( GAMESTATE->IsHumanPlayer( p ) && ( m_iSelectedProfiles[p] == -1 ) )
-			return false;
+			iUnselectedProfiles++;
 
 		// card not ready
 		if( m_iSelectedProfiles[p] == 0 && MEMCARDMAN->GetCardState( p ) != MemoryCardState_Ready )
@@ -84,7 +87,15 @@ bool ScreenSelectProfile::Finish(){
 		// profile index too big
 		if( m_iSelectedProfiles[p] > PROFILEMAN->GetNumLocalProfiles() )
 			return false;
+
+		//inc used profile count
+		if( m_iSelectedProfiles[p] > 0 )
+			iUsedLocalProfiles++;
 	}
+
+	//this allows to continue if there is less local profiles than number of human players
+	if( iUnselectedProfiles && iUsedLocalProfiles < PROFILEMAN->GetNumLocalProfiles() )
+		return false;
 
 	// all ok - load profiles and go to next screen
 	FOREACH_PlayerNumber( p )
@@ -162,7 +173,7 @@ public:
 LUA_REGISTER_DERIVED_CLASS( ScreenSelectProfile, ScreenWithMenuElements )
 
 /*
-* (c) 2004 Chris Danford
+* (c) 2007 vdl
 * All rights reserved.
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a
