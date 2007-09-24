@@ -92,7 +92,7 @@
 		Returns the current Actor's z position.
 	</Function>
 	<Function name='SetTextureFiltering' return='void' arguments='bool b'>
-		Sets Texture Filtering for an actor to <code>b</code>.
+		Sets Texture Filtering for an Actor to <code>b</code>.
 	</Function>
 	<Function name='addx' return='void' arguments='float xPos'>
 		Adds <code>xPos</code> to the Actor's current x position.
@@ -102,6 +102,18 @@
 	</Function>
 	<Function name='addz' return='void' arguments='float zPos'>
 		Adds <code>zPos</code> to the Actor's current z position.
+	</Function>
+	<Function name='animate' return='void' arguments='bool b'>
+		Sets whether or not the Actor should animate.
+	</Function>
+	<Function name='blend' return='void' arguments='BlendMode mode'>
+		Sets the Actor to use the specified blend mode.
+	</Function>
+	<Function name='cullmode' return='void' arguments='CullMode mode'>
+		Sets the Actor's cull mode to <code>mode</code>.
+	</Function>
+	<Function name='diffusealpha' return='void' arguments='float f'>
+		Set's the Actor's alpha level to <code>f</code>, which should be a float in the range 0..1.
 	</Function>
 	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
@@ -321,11 +333,36 @@
 		Return the state for <code>pn</code>.
 	</Function>
 </Class>
+<Class name='MenuTimer'>
+	<Function name='pause' return='void' arguments=''>
+		Pauses the MenuTimer, stopping it from counting down.
+	</Function>
+	<Function name='setseconds' return='void' arguments='float fSeconds'>
+		Sets the MenuTimer's value to <code>fSeconds</code>.
+	</Function>
+	<Function name='stop' return='void'>
+		Stops the MenuTimer by setting it to 0 and pausing.
+	</Function>
+</Class>
 <Class name='MessageManager'>
 	<Function name='Broadcast' return='void' arguments='string sMessage, table paramTable'>
 		Broadcast the message to all listeners subscribed to <code>sMessage</code>. The
 		second argument is an optional table of parameters. It may be omitted or explicitly
 		set to <code>nil</code>.
+	</Function>
+</Class>
+<Class name='PlayerStageStats'>
+	<Function name='FullCombo' return='bool' arguments=''>
+		Returns <code>true</code> if a full combo (TNS_W3 and up) was obtained.
+	</Function>
+	<Function name='GetActualDancePoints' return='int' arguments=''>
+		Returns the number of Dance Points obtained by the player.
+	</Function>
+	<Function name='GetPossibleDancePoints' return='int' arguments=''>
+		Returns the number of possible Dance Points.
+	</Function>
+	<Function name='GetScore' return='int' arguments=''>
+		Returns the score.
 	</Function>
 </Class>
 <Class name='PrefsManager'>
@@ -337,6 +374,19 @@
 	</Function>
 	<Function name='SetPreferenceToDefault' return='void' arguments='string sPreference'>
 		Reset preference <code>sPreference</code> to the default value.
+	</Function>
+</Class>
+<Class name='Profile'>
+	<Function name='GetCaloriesBurnedToday' return='float' arguments=''>
+		Returns the number of calories burned during the current day.
+	</Function>
+	<Function name='GetDisplayName' return='string' arguments=''>
+		Returns the profile's display name.
+	</Function>
+</Class>
+<Class name='RadarValues'>
+	<Function name='GetValue' return='int' arguments='RadarCategory rc'>
+		Returns the value of <code>rc</code> from <Link class='Steps' function='GetRadarValues' />.
 	</Function>
 </Class>
 <Class name='RageDisplay'>
@@ -401,6 +451,28 @@
 	</Function>
 	<Function name='IsMarathon' return='bool' arguments=''>
 		Returns <code>true</code> if the song meets the criteria for &quot;Marathon&quot; length.
+	</Function>
+</Class>
+<Class name='Steps'>
+	<Function name='GetRadarValues' return='RadarValues' arguments='PlayerNumber pn'>
+		Returns the complete list of RadarValues for player <code>pn</code>. Use <Link class='RadarValues' function='GetValue' /> to grab a specific value.
+	</Function>
+</Class>
+<Class name='ThemeManager'>
+	<Function name='GetNumSelectableThemes' return='int' arguments=''>
+		Returns the number of selectable themes.
+	</Function>
+	<Function name='GetPathB' return='string' arguments='string ClassName, string Element'>
+		Returns the path of <code>ClassName Element</code> in the BGAnimations folder.
+	</Function>
+	<Function name='GetPathF' return='string' arguments='string ClassName, string Element'>
+		Returns the path of an element in the Fonts folder.
+	</Function>
+	<Function name='GetPathG' return='string' arguments='string ClassName, string Element'>
+		Returns the path of an element in the Graphics folder.
+	</Function>
+	<Function name='GetPathS' return='string' arguments='string ClassName, string Element'>
+		Returns the path of an element in the Sounds folder.
 	</Function>
 </Class>
 </Classes>
