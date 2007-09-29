@@ -16,10 +16,11 @@ REGISTER_ACTOR_CLASS(GrooveRadar)
 #define		LABEL_OFFSET_X( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
 #define 	LABEL_OFFSET_Y( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
 static const ThemeMetric<float>			LABEL_ON_DELAY				("GrooveRadar","LabelOnDelay");
+static const ThemeMetric<float>			RADAR_EDGE_WIDTH			("GrooveRadar","EdgeWidth");
 
 static float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
 
-static const float RADAR_EDGE_WIDTH	= 2;
+//static const float RADAR_EDGE_WIDTH	= 2;
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
 GrooveRadar::GrooveRadar()
