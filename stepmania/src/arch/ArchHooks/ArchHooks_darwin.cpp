@@ -66,6 +66,10 @@ void ArchHooks_darwin::Init()
 	CrashHandler::InitializeCrashHandler();
 	SignalHandler::OnClose( DoCrashSignalHandler );
 	SignalHandler::OnClose( DoEmergencyShutdown );
+	
+	/* Now that the crash handler is set up, disable crash reporter. */
+	task_set_exception_ports( mach_task_self(), EXC_MASK_ALL, MACH_PORT_NULL, EXCEPTION_DEFAULT, 0 );
+	
 
 	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
 	CFStringRef key = CFSTR( "ApplicationBundlePath" );
