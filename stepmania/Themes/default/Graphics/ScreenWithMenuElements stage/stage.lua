@@ -8,7 +8,7 @@ for _, s in ipairs(Stage) do
 			SetCommand=function(self, params)
 				self:visible( params.StageToShow == s );
 				if params.StageNumber then
-					self:settext( tostring(params.StageNumber+1) );
+					self:settext( FormatNumberAndSuffix(params.StageNumber+1) );
 				end
 			end;
 		}
