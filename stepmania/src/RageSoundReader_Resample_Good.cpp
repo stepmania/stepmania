@@ -674,7 +674,7 @@ int RageSoundReader_Resample_Good::Read( float *pBuf, int iFrames )
 
 		for( int iChannel = 0; iChannel < iChannels; ++iChannel )
 		{
-			int iGotFrames = m_apResamplers[iChannel]->Run( pTmpBuf, iFramesIn + iChannel, pBuf + iChannel, iFrames, iChannels );
+			int iGotFrames = m_apResamplers[iChannel]->Run( pTmpBuf + iChannel, iFramesIn + iChannel, pBuf + iChannel, iFrames, iChannels );
 			ASSERT( iGotFrames <= iFrames );
 
 			if( iChannel == 0 )
