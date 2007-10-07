@@ -417,6 +417,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 	case SORT_MEDIUM_METER:
 	case SORT_HARD_METER:
 	case SORT_CHALLENGE_METER:
+	case SORT_LENGTH:
 		{
 			///////////////////////////////////
 			// Make an array of Song*, then sort them
@@ -462,6 +463,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 				break;
 			case SORT_GENRE:
 				SongUtil::SortSongPointerArrayByGenre( arraySongs );
+				break;
+			case SORT_LENGTH:
+				SongUtil::SortSongPointerArrayByLength( arraySongs );
 				break;
 			case SORT_EASY_METER:
 				SongUtil::SortSongPointerArrayByMeter( arraySongs, Difficulty_Easy );

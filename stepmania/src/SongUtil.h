@@ -100,6 +100,7 @@ namespace SongUtil
 	RString GetSectionNameFromSongAndSort( const Song *pSong, SortOrder so );
 	void SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, SortOrder so );
 	void SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByLength( vector<Song*> &vpSongsInOut );
 
 	int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2);
 

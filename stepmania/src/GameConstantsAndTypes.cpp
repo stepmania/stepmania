@@ -151,6 +151,7 @@ static const char *SortOrderNames[] = {
 	"Nonstop",
 	"Oni",
 	"Endless",
+	"Length",
 	"Roulette",
 };
 XToString( SortOrder );

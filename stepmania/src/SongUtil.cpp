@@ -400,6 +400,25 @@ void SongUtil::SortSongPointerArrayByBPM( vector<Song*> &vpSongsInOut )
 	sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByBPM );
 }
 
+static bool CompareSongPointersByLength( const Song *pSong1, const Song *pSong2 )
+{
+	float length1, length2;
+	length1 = pSong1->m_fMusicLengthSeconds;
+	length2 = pSong2->m_fMusicLengthSeconds;
+	
+	if( length1 < length2 )
+		return true;
+	if( length1 > length2 )
+		return false;
+
+	return CompareRStringsAsc( pSong1->GetSongFilePath(), pSong2->GetSongFilePath() );
+}
+
+void SongUtil::SortSongPointerArrayByLength( vector<Song*> &vpSongsInOut )
+{
+	sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByLength );
+}
+
 void AppendOctal( int n, int digits, RString &out )
 {
 	for( int p = digits-1; p >= 0; --p )
@@ -566,6 +585,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			iMaxBPM += iBPMGroupSize - (iMaxBPM%iBPMGroupSize) - 1;
 			return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
 		}
+	case SORT_LENGTH:
 	case SORT_POPULARITY:
 		return RString();
 	case SORT_TOP_GRADES:
