@@ -358,6 +358,9 @@
 	<Function name='GetActualDancePoints' return='int' arguments=''>
 		Returns the number of Dance Points obtained by the player.
 	</Function>
+	<Function name='GetGrade' return='Grade' arguments=''>
+		Returns the player's grade.
+	</Function>
 	<Function name='GetPossibleDancePoints' return='int' arguments=''>
 		Returns the number of possible Dance Points.
 	</Function>
@@ -416,6 +419,19 @@
 		Set the speed (that is, the rate at which the sound plays) to <code>fSpeed</code>. The associated <Link class='ActorSound' /> must have <code>SupportsRateChanging = true</code> on load.
 	</Function>
 </Class>
+<Class name='RollingNumbers'>
+	<Function name='targetnumber' return='void' arguments='float f'>
+		Sets the target number to <code>f</code>.
+	</Function>
+</Class>
+<Class name='Screen'>
+	<Function name='GetNextScreenName' return='string' arguments=''>
+		Returns the name of the next Screen.
+	</Function>
+	<Function name='lockinput' return='void' arguments='float f'>
+		Locks input for <code>f</code> seconds.
+	</Function>
+</Class>
 <Class name='ScreenGameplay'>
 	<Function name='Center1Player' return='bool' arguments=''>
 		Returns <code>true</code> if a single <Link class='Player' /> has its NoteField centered.
@@ -427,7 +443,21 @@
 		Returns the next <Link class='Song' /> in the current <Link class='Course' />.
 	</Function>
 </Class>
+<Class name='ScreenManager'>
+	<Function name='GetTopScreen' return='Screen' arguments=''>
+		Gets the screen at the top of the screen stack.
+	</Function>
+	<Function name='SystemMessage' return='void' arguments='string s'>
+		Broadcasts a system message.
+	</Function>
+</Class>
 <Class name='Song'>
+	<Function name='GetBackgroundPath' return='string' arguments=''>
+		Returns the path to the song's background image.
+	</Function>
+	<Function name='GetBannerPath' return='string' arguments=''>
+		Returns the path to the song's banner.
+	</Function>
 	<Function name='GetDisplayArtist' return='string' arguments=''>
 		Returns the displayed artist of the song.
 	</Function>
@@ -436,6 +466,15 @@
 	</Function>
 	<Function name='GetDisplayMainTitle' return='string' arguments=''>
 		Returns the displayed main title of the song.
+	</Function>
+	<Function name='GetGenre' return='string' arguments=''>
+		Returns the genre of the song.
+	</Function>
+	<Function name='GetGroupName' return='string' arguments=''>
+		Returns the group name that the song is in.
+	</Function>
+	<Function name='GetSongDir' return='string' arguments=''>
+		Returns the song's directory.
 	</Function>
 	<Function name='GetTranslitArtist' return='string' arguments=''>
 		Returns the transliterated artist of the song.
@@ -446,11 +485,20 @@
 	<Function name='GetTranslitMainTitle' return='string' arguments=''>
 		Returns the transliterated main title of the song.
 	</Function>
+	<Function name='HasStepsTypeAndDifficulty' return='bool' arguments='StepsType st, Difficulty d'>
+		Returns <code>true</code> if the song has steps for the specified difficulty in <code>st</code>.
+	</Function>
 	<Function name='IsLong' return='bool' arguments=''>
 		Returns <code>true</code> if the song meets the criteria for a &quot;Long Version&quot;.
 	</Function>
 	<Function name='IsMarathon' return='bool' arguments=''>
 		Returns <code>true</code> if the song meets the criteria for &quot;Marathon&quot; length.
+	</Function>
+	<Function name='IsTutorial' return='bool' arguments=''>
+		Returns <code>true</code> if the song only has Beginner steps.
+	</Function>
+	<Function name='MusicLengthSeconds' return='float' arguments=''>
+		Returns the length of the song in seconds.
 	</Function>
 </Class>
 <Class name='Steps'>
