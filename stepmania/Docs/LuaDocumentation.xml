@@ -137,6 +137,17 @@
 		Set the z position of the Actor to <code>zPos</code>.
 	</Function>
 </Class>
+<Class name='ActorScroller'>
+	<Function name='SetLoop' return='void' arguments='bool bLoop'>
+		Specifies if the scroller should loop or not.
+	</Function>
+	<Function name='SetTransformFromHeight' return='void' arguments='float fItemHeight'>
+		Sets the scroller's transform function from <code>fItemHeight</code>.
+	</Function>
+	<Function name='SetTransformFromWidth' return='void' arguments='float fItemWidth'>
+		Sets the scroller's transform function from <code>fItemWidth</code>.
+	</Function>
+</Class>
 <Class name='ActorSound'>
 	<Description>
 		This Actor represents a playable sound. There are two attributes that can be set on load.<br />
@@ -327,6 +338,15 @@
 	<Function name='GetHumanPlayers' return='{PlayerNumber}' arguments=''>
 		Returns an array of <Link class='PlayerNumber' />s corresponding to Human players.
 	</Function>
+	<Function name='GetNumPlayersEnabled' return='int' arguments=''>
+		Returns the number of players enabled.
+	</Function>
+	<Function name='GetNumSidesJoined' return='int' arguments=''>
+		Returns the number of sides joined.
+	</Function>
+	<Function name='GetNumStagesLeft' return='int' arguments='PlayerNumber pn'>
+		Returns the number of stages left for player <code>pn</code>.
+	</Function>
 </Class>
 <Class name='MemoryCardManager'>
 	<Function name='GetCardState' return='MemoryCardState' arguments='PlayerNumber pn'>
@@ -506,6 +526,14 @@
 		Returns the complete list of RadarValues for player <code>pn</code>. Use <Link class='RadarValues' function='GetValue' /> to grab a specific value.
 	</Function>
 </Class>
+<Class name='TextBanner'>
+	<Function name='LoadFromSong' return='void' arguments='Song s'>
+		Loads the TextBanner's child elements from a <Link class='Song' />.
+	</Function>
+	<Function name='LoadFromString' return='void' arguments='string sDisplayTitle, string sTranslitTitle, string sDisplaySubTitle, string sTranslitSubTitle, string sDisplayArtist, string sTranslitArtist'>
+		Loads the TextBanner's child elements from strings.
+	</Function>
+</Class>
 <Class name='ThemeManager'>
 	<Function name='GetNumSelectableThemes' return='int' arguments=''>
 		Returns the number of selectable themes.
@@ -526,6 +554,11 @@
 </Classes>
 <!-- Enums -->
 <Enums>
+<Enum name='BlendMode'>
+	<Description>
+		Blending modes. See <Link class='Actor' function='blend' />.
+	</Description>
+</Enum>
 <Enum name='HorizAlign'>
 	<Description>
 		Horizontal alignment. See <Link class='Actor' function='horizalign' />.
