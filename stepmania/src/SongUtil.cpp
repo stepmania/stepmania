@@ -37,11 +37,11 @@ bool SongCriteria::Matches( const Song *pSong ) const
 	{
 	DEFAULT_FAIL(m_Selectable);
 	case Selectable_Yes:
-		if( UNLOCKMAN  &&  !(UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE) )
+		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
 			return false;
 		break;
 	case Selectable_No:
-		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
+		if( UNLOCKMAN  &&  !(UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE) )
 			return false;
 		break;
 	case Selectable_DontCare:
