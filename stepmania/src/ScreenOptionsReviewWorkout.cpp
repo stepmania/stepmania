@@ -17,6 +17,7 @@
 #include "Profile.h"
 #include "ScreenPrompt.h"
 #include "PlayerState.h"
+#include "Style.h"
 
 enum ReviewWorkoutRow
 {
@@ -96,8 +97,14 @@ void ScreenOptionsReviewWorkout::HandleScreenMessage( const ScreenMessage SM )
 			{
 				Workout *pWorkout = WORKOUTMAN->m_pCurWorkout;
 				pWorkout->GenerateCourse( *WORKOUTMAN->m_pTempCourse );
+				GAMESTATE->m_pCurSong.Set( NULL );	// CurSong will be set if we back out.  Set it back to NULL so that ScreenStage won't show the last song.
 				GAMESTATE->m_pCurCourse.Set( WORKOUTMAN->m_pTempCourse );
-				GAMESTATE->m_pCurTrail[PLAYER_1].Set( GAMESTATE->m_pCurCourse->GetTrail(STEPS_TYPE_DANCE_SINGLE) );
+				const Style *pStyle = GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame,"single");
+				StepsType st = pStyle->m_StepsType;
+				Trail *pTrail = GAMESTATE->m_pCurCourse->GetTrail( st );
+				ASSERT( pTrail );
+				GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
+
 				switch( pWorkout->m_WorkoutStepsType )
 				{
 				DEFAULT_FAIL(pWorkout->m_WorkoutStepsType);
@@ -113,7 +120,7 @@ void ScreenOptionsReviewWorkout::HandleScreenMessage( const ScreenMessage SM )
 
 				GAMESTATE->m_PlayMode.Set( PLAY_MODE_ENDLESS );
 				GAMESTATE->m_bSideIsJoined[0] = true;
-				GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame,"single") );
+				GAMESTATE->SetCurrentStyle( pStyle );
 
 				PROFILEMAN->GetProfile(ProfileSlot_Player1)->m_GoalType = GoalType_Time;
 				PROFILEMAN->GetProfile(ProfileSlot_Player1)->m_iGoalSeconds = pWorkout->m_iMinutes * 60;
