@@ -48,6 +48,8 @@ void WorkoutGraph::SetFromGameState()
 
 void WorkoutGraph::SetFromGameStateInternal( int iNumSongsToShowForCurrentStage )
 {
+	ASSERT( WORKOUTMAN->m_pCurWorkout );
+
 	FOREACH( Sprite*, m_vpBars, p )
 	{
 		this->RemoveChild( *p );
