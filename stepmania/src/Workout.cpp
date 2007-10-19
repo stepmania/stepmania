@@ -226,10 +226,10 @@ bool Workout::SaveToFile( RString sFile )
 class LunaWorkout: public Luna<Workout>
 {
 public:
-	static int GetName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sName ); return 1; }
-	static int GetMinutes( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iMinutes ); return 1; }
-	static int GetEstimatedNumSongs( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumSongs() ); return 1; }
-	static int GetWorkoutStepsType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_WorkoutStepsType ); return 1; }
+	DEFINE_METHOD( GetName,			m_sName )
+	DEFINE_METHOD( GetMinutes,		m_iMinutes )
+	DEFINE_METHOD( GetEstimatedNumSongs,	GetEstimatedNumSongs() )
+	DEFINE_METHOD( GetWorkoutStepsType,	m_WorkoutStepsType )
 
 	LunaWorkout()
 	{
