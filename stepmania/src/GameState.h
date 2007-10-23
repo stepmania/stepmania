@@ -70,6 +70,7 @@ public:
 	int					m_iCoins;			// not "credits"
 	PlayerNumber				m_MasterPlayerNumber;		// used in Styles where one player controls both sides
 	bool					m_bMultiplayer;
+	int					m_iNumMultiplayerNoteFields;
 	bool DifficultiesLocked() const;
 	bool ChangePreferredDifficultyAndStepsType( PlayerNumber pn, Difficulty dc, StepsType st );
 	bool ChangePreferredDifficulty( PlayerNumber pn, int dir );

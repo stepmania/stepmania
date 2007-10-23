@@ -252,6 +252,7 @@ void GameState::Reset()
 		MEMCARDMAN->UnlockCard( pn );
 //	m_iCoins = 0;	// don't reset coin count!
 	m_bMultiplayer = false;
+	m_iNumMultiplayerNoteFields = 1;
 	*m_Environment = LuaTable();
 	m_sPreferredSongGroup.Set( GROUP_ALL );
 	m_sPreferredCourseGroup.Set( GROUP_ALL );
@@ -1980,6 +1981,12 @@ public:
 	DEFINE_METHOD( GetPlayerDisplayName,		GetPlayerDisplayName(Enum::Check<PlayerNumber>(L, 1)) )
 	DEFINE_METHOD( GetMasterPlayerNumber,		m_MasterPlayerNumber )
 	DEFINE_METHOD( GetMultiplayer,			m_bMultiplayer )
+	DEFINE_METHOD( GetNumMultiplayerNoteFields,	m_iNumMultiplayerNoteFields )
+	static int SetNumMultiplayerNoteFields( T* p, lua_State *L )
+	{
+		p->m_iNumMultiplayerNoteFields = IArg(1);
+		return 0;
+	}
 	static int GetPlayerState( T* p, lua_State *L )
 	{ 
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
@@ -2231,6 +2238,8 @@ public:
 		ADD_METHOD( GetPlayerDisplayName );
 		ADD_METHOD( GetMasterPlayerNumber );
 		ADD_METHOD( GetMultiplayer );
+		ADD_METHOD( GetNumMultiplayerNoteFields );
+		ADD_METHOD( SetNumMultiplayerNoteFields );
 		ADD_METHOD( GetPlayerState );
 		ADD_METHOD( GetMultiPlayerState );
 		ADD_METHOD( ApplyGameCommand );
