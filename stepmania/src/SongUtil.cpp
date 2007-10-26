@@ -841,6 +841,26 @@ static void GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 	else
 		vpPossibleStyles.push_back( GAMESTATE->m_pCurStyle );
 
+	// Only allow OneSide Styles in Workout
+	if( GAMESTATE->m_bMultiplayer )
+	{
+		for( int i=vpPossibleStyles.size()-1; i>=0; i-- )
+		{
+			const Style *pStyle = vpPossibleStyles[i];
+			switch( pStyle->m_StyleType )
+			{
+			DEFAULT_FAIL( pStyle->m_StyleType );
+			case StyleType_OnePlayerOneSide:
+				continue;
+			case StyleType_TwoPlayersTwoSides:
+			case StyleType_OnePlayerTwoSides:
+			case StyleType_TwoPlayersSharedSides:
+				vpPossibleStyles.erase( vpPossibleStyles.begin() + i );
+				break;
+			}
+		}
+	}
+
 	set<StepsType> vStepsTypes;
 	FOREACH( const Style*, vpPossibleStyles, s )
 		vStepsTypes.insert( (*s)->m_StepsType );
