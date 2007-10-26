@@ -103,7 +103,7 @@ PlayerInfo::PlayerInfo()
 	m_mp = MultiPlayer_Invalid;
 	m_bIsDummy = false;
 	m_iDummyIndex = 0;
-	m_difficultyForced = Difficulty_Invalid;
+	m_iAddToDifficulty = 0;
 	m_pLifeMeter = NULL;
 	m_ptextCourseSongNumber = NULL;
 	m_ptextStepsDescription = NULL;
@@ -118,13 +118,13 @@ PlayerInfo::PlayerInfo()
 	m_pDifficultyIcon = NULL;
 }
 
-void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, Difficulty dcForced )
+void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty )
 {
 	m_pn = pn;
 	m_mp = mp;
 	m_bPlayerEnabled = IsEnabled();
 	m_bIsDummy = false;
-	m_difficultyForced = dcForced;
+	m_iAddToDifficulty = iAddToDifficulty;
 	m_pLifeMeter = NULL;
 	m_ptextCourseSongNumber = NULL;
 	m_ptextStepsDescription = NULL;
@@ -192,13 +192,13 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, Dif
 	}
 }
 
-void PlayerInfo::LoadDummyP1( int iDummyIndex, Difficulty dcForced )
+void PlayerInfo::LoadDummyP1( int iDummyIndex, int iAddToDifficulty )
 {
 	m_pn = PLAYER_1;
 	m_bPlayerEnabled = IsEnabled();
 	m_bIsDummy = true;
 	m_iDummyIndex = iDummyIndex;
-	m_difficultyForced = dcForced;
+	m_iAddToDifficulty = iAddToDifficulty;
 
 	// don't init any of the scoring objects
 	m_pPlayer = new Player( m_NoteData, true );
@@ -842,18 +842,32 @@ void ScreenGameplay::InitSongQueues()
 		}
 	}
 
-	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	for( int i=0; i<(int)m_apSongsQueue.size(); i++ )
 	{
-		if( pi->m_difficultyForced != Difficulty_Invalid )
+		Song *pSong = m_apSongsQueue[i];
+
+		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
-			for( int i=0; i<(int)m_apSongsQueue.size(); i++ )
+			Steps *pOldSteps = pi->m_vpStepsQueue[i];
+
+			vector<Steps*> vpSteps;
+			SongUtil::GetSteps( pSong, vpSteps, pOldSteps->m_StepsType );
+			StepsUtil::SortNotesArrayByDifficulty( vpSteps );
+			vector<Steps*>::iterator iter = find( vpSteps.begin(), vpSteps.end(), pOldSteps );
+			int iIndexBase = 0;
+			if( iter != vpSteps.end() )
 			{
-				Song *pSong = m_apSongsQueue[i];
-				Steps *pOldSteps = pi->m_vpStepsQueue[i];
-				Steps *pSteps = SongUtil::GetOneSteps( pSong, pOldSteps->m_StepsType, pi->m_difficultyForced );
-				if( pSteps == NULL )
-					pSteps = SongUtil::GetClosestNotes( pSong, pOldSteps->m_StepsType, pi->m_difficultyForced );
-				ASSERT( pSteps );
+				iIndexBase = iter - vpSteps.begin();
+				CLAMP( iIndexBase, 0, vpSteps.size() - GAMESTATE->m_iNumMultiplayerNoteFields );
+			}
+
+			if( pi->m_iAddToDifficulty > 0 )
+			{
+				int iIndexToUse = iIndexBase + pi->m_iAddToDifficulty;
+				CLAMP( iIndexToUse, 0, vpSteps.size()-1 );
+				LOG->Trace( "pi->m_iAddToDifficulty %d, iIndexToUse %d", pi->m_iAddToDifficulty, iIndexToUse );
+
+				Steps *pSteps = vpSteps[iIndexToUse];
 				pi->m_vpStepsQueue[i] = pSteps;
 			}
 		}
