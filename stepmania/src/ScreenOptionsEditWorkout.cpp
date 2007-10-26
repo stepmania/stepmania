@@ -18,18 +18,14 @@ enum WorkoutDetailsRow
 	WorkoutDetailsRow_WorkoutProgram,
 	WorkoutDetailsRow_Minutes,
 	WorkoutDetailsRow_Meter,
-	//WorkoutDetailsRow_SongGenre,
-	WorkoutDetailsRow_WorkoutStepsType,
 	NUM_WorkoutDetailsRow
 };
 
 const MenuRowDef g_MenuRows[] = 
 {
-	MenuRowDef( -1,	"Workout Program",		true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Minutes",			true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Difficulty",			true, EditMode_Practice, true, false, 0, NULL ),
-	//MenuRowDef( -1,	"Song Genre",		true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Workout Steps Type",		true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Workout Program",	true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Workout Minutes",	true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Workout Difficulty",	true, EditMode_Practice, true, false, 0, NULL ),
 };
 
 REGISTER_SCREEN_CLASS( ScreenOptionsEditWorkout );
@@ -75,18 +71,6 @@ void ScreenOptionsEditWorkout::BeginScreen()
 			for( int i=MIN_METER; i<=MAX_METER; i++ )
 				pHand->m_Def.m_vsChoices.push_back( MakeMeterString(i) );
 			break;
-		//case WorkoutDetailsRow_SongGenre:
-		//	{
-		//		vector<RString> vs;
-		//		SongUtil::GetAllSongGenres( vs );
-		//		FOREACH_CONST( RString, vs, s )
-		//			pHand->m_Def.m_vsChoices.push_back( *s );
-		//	}
-		//	break;
-		case WorkoutDetailsRow_WorkoutStepsType:
-			FOREACH_ENUM( WorkoutStepsType, i )
-				pHand->m_Def.m_vsChoices.push_back( WorkoutStepsTypeToLocalizedString(i) ); 
-			break;
 		}
 
 		pHand->m_Def.m_bExportOnChange = true;
@@ -118,12 +102,6 @@ void ScreenOptionsEditWorkout::ImportOptions( int iRow, const vector<PlayerNumbe
 	case WorkoutDetailsRow_Meter:
 		row.SetOneSharedSelectionIfPresent( MakeMeterString(WORKOUTMAN->m_pCurWorkout->m_iAverageMeter) );
 		break;
-	//case WorkoutDetailsRow_SongGenre:
-	//	row.SetOneSharedSelectionIfPresent( g_Workout.m_sSongGenre );
-	//	break;
-	case WorkoutDetailsRow_WorkoutStepsType:
-		row.SetOneSharedSelection( WORKOUTMAN->m_pCurWorkout->m_WorkoutStepsType );
-		break;
 	}
 }
 
@@ -149,12 +127,6 @@ void ScreenOptionsEditWorkout::ExportOptions( int iRow, const vector<PlayerNumbe
 			break;
 		case WorkoutDetailsRow_Meter:
 			WORKOUTMAN->m_pCurWorkout->m_iAverageMeter = iIndex + MIN_METER;
-			break;
-		//case WorkoutDetailsRow_SongGenre:
-		//	g_Workout.m_sSongGenre = sValue;
-		//	break;
-		case WorkoutDetailsRow_WorkoutStepsType:
-			WORKOUTMAN->m_pCurWorkout->m_WorkoutStepsType = (WorkoutStepsType)iIndex;
 			break;
 		}
 	}

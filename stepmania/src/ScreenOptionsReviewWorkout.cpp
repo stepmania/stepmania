@@ -105,19 +105,6 @@ void ScreenOptionsReviewWorkout::HandleScreenMessage( const ScreenMessage SM )
 				ASSERT( pTrail );
 				GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 
-				switch( pWorkout->m_WorkoutStepsType )
-				{
-				DEFAULT_FAIL(pWorkout->m_WorkoutStepsType);
-				case WorkoutStepsType_NormalSteps:
-					PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_bTransforms, PlayerOptions::TRANSFORM_LITTLE, false );
-					PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_bTransforms, PlayerOptions::TRANSFORM_NOHANDS, false );
-					break;
-				case WorkoutStepsType_WorkoutSteps:
-					PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_bTransforms, PlayerOptions::TRANSFORM_LITTLE, true );
-					PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_bTransforms, PlayerOptions::TRANSFORM_NOHANDS, true );
-					break;
-				}
-
 				GAMESTATE->m_PlayMode.Set( PLAY_MODE_ENDLESS );
 				GAMESTATE->m_bSideIsJoined[0] = true;
 				GAMESTATE->SetCurrentStyle( pStyle );

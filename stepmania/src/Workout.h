@@ -18,17 +18,6 @@ const RString& WorkoutProgramToLocalizedString( WorkoutProgram i );
 const RString& WorkoutProgramToLocalizedString( WorkoutProgram i );
 WorkoutProgram StringToWorkoutProgram( const RString& str );
 
-enum WorkoutStepsType
-{
-	WorkoutStepsType_NormalSteps,
-	WorkoutStepsType_WorkoutSteps,
-	NUM_WorkoutStepsType,
-	WorkoutStepsType_Invalid
-};
-const RString& WorkoutStepsTypeToLocalizedString( WorkoutStepsType i );
-WorkoutStepsType StringToWorkoutStepsType( const RString& str );
-LuaDeclareType( WorkoutStepsType );
-
 
 const int MIN_WORKOUT_MINUTES = 4;
 const int MAX_WORKOUT_MINUTES = 90;
@@ -49,7 +38,6 @@ public:
 	WorkoutProgram m_WorkoutProgram;
 	int m_iMinutes;
 	int m_iAverageMeter;
-	WorkoutStepsType m_WorkoutStepsType;
 	vector<RString> m_vsSongGenres;
 
 	int GetEstimatedNumSongs() const;

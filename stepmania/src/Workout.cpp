@@ -22,23 +22,11 @@ StringToX( WorkoutProgram );
 XToLocalizedString( WorkoutProgram );
 
 
-static const char *WorkoutStepsTypeNames[] = {
-	"NormalSteps",
-	"WorkoutSteps"
-};
-XToString( WorkoutStepsType );
-StringToX( WorkoutStepsType );
-XToLocalizedString( WorkoutStepsType );
-LuaXType( WorkoutStepsType );
-LuaFunction( WorkoutStepsTypeToLocalizedString, WorkoutStepsTypeToLocalizedString(Enum::Check<WorkoutStepsType>(L, 1)) );
-
-
 Workout::Workout()
 {
 	m_WorkoutProgram = (WorkoutProgram)0;
 	m_iMinutes = 10;
 	m_iAverageMeter = 3;
-	m_WorkoutStepsType = (WorkoutStepsType)0;
 }
 
 int Workout::GetEstimatedNumSongs() const
@@ -178,11 +166,6 @@ bool Workout::LoadFromFile( RString sFile )
 	xml.GetChildValue("AverageMeter",m_iAverageMeter);
 	CLAMP( m_iAverageMeter, MIN_METER, MAX_METER );
 
-	xml.GetChildValue("WorkoutStepsType",s);
-	m_WorkoutStepsType = StringToWorkoutStepsType( s );
-	if( m_WorkoutStepsType == WorkoutStepsType_Invalid )
-		m_WorkoutStepsType = (WorkoutStepsType)0;
-
 	XNode *songGenres = xml.GetChild("SongGenres");
 	if( songGenres )
 	{
@@ -209,7 +192,6 @@ bool Workout::SaveToFile( RString sFile )
 	xml.AppendChild( "WorkoutProgram", WorkoutProgramToString(m_WorkoutProgram) );
 	xml.AppendChild( "Minutes", m_iMinutes );
 	xml.AppendChild( "AverageMeter", m_iAverageMeter );
-	xml.AppendChild( "WorkoutStepsType", WorkoutStepsTypeToString(m_WorkoutStepsType) );
 	
 	XNode *songGenres = xml.AppendChild("SongGenres");
 	FOREACH_CONST( RString, m_vsSongGenres, s )
@@ -229,14 +211,12 @@ public:
 	DEFINE_METHOD( GetName,			m_sName )
 	DEFINE_METHOD( GetMinutes,		m_iMinutes )
 	DEFINE_METHOD( GetEstimatedNumSongs,	GetEstimatedNumSongs() )
-	DEFINE_METHOD( GetWorkoutStepsType,	m_WorkoutStepsType )
 
 	LunaWorkout()
 	{
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetMinutes );
 		ADD_METHOD( GetEstimatedNumSongs );
-		ADD_METHOD( GetWorkoutStepsType );
 	}
 };
 

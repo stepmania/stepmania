@@ -155,14 +155,14 @@ void ScreenOptionsEditPlaylist::ProcessMenuStart( const InputEventPlus &input )
 	ScreenOptions::ProcessMenuStart( input );
 }
 
-RString GetEditPlaylistSelectedSongGenreText( int iColumnIndex )
+RString GetEditPlaylistSelectedSongGenreText( int iColumnIndex, int iMaxPerCol )
 {
 	vector<RString> vsSongGenres;
 	vsSongGenres.push_back( g_sSongGenre );
 	vector<Song*> vpSongGenreSongs;
 	WORKOUTMAN->GetWorkoutSongsForGenres( vsSongGenres, vpSongGenreSongs );
 
-	const int iSongPerCoumn = 20;
+	const int iSongPerCoumn = iMaxPerCol;
 	vector<RString> vs;
 	for( int i=iColumnIndex*iSongPerCoumn; i<(iColumnIndex+1)*iSongPerCoumn && i<(int)vpSongGenreSongs.size(); i++ )
 	{
@@ -179,7 +179,7 @@ RString GetEditPlaylistSelectedSongGenreText( int iColumnIndex )
 
 #include "LuaManager.h"
 LuaFunction( GetEditPlaylistSelectedSongGenre, g_sSongGenre );
-LuaFunction( GetEditPlaylistSelectedSongGenreText, GetEditPlaylistSelectedSongGenreText(IArg(1)) );
+LuaFunction( GetEditPlaylistSelectedSongGenreText, GetEditPlaylistSelectedSongGenreText(IArg(1),IArg(2)) );
 
 
 /*
