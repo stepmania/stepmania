@@ -1221,6 +1221,8 @@ void ScreenGameplay::LoadNextSong()
 			pPlayerSound = m_AutoKeysounds.GetSharedSound();
 		pi->m_SoundEffectControl.SetSoundReader( pPlayerSound );
 	}
+
+	MESSAGEMAN->Broadcast("DoneLoadingNextSong");
 }
 
 void ScreenGameplay::LoadLights()
@@ -2663,6 +2665,16 @@ PlayerInfo *ScreenGameplay::GetPlayerInfo( PlayerNumber pn )
 	return NULL;
 }
 
+PlayerInfo *ScreenGameplay::GetDummyPlayerInfo( int iDummyIndex )
+{
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	{
+		if( pi->m_bIsDummy  &&  pi->m_iDummyIndex == iDummyIndex )
+			return &*pi;
+	}
+	return NULL;
+}
+
 void ScreenGameplay::SaveReplay()
 {
 	FOREACH_HumanPlayer( pn )
@@ -2727,12 +2739,22 @@ public:
 		pLM->PushSelf( L );
 		return 1;
 	}
+	static int GetDummyPlayerInfo( T* p, lua_State *L )
+	{
+		int iDummyIndex = IArg(1);
+		PlayerInfo *pi = p->GetDummyPlayerInfo(iDummyIndex);
+		if( pi == NULL )
+			return 0;
+		pi->PushSelf( L );
+		return 1;
+	}
 
 	LunaScreenGameplay()
 	{
   		ADD_METHOD( GetNextCourseSong );
   		ADD_METHOD( Center1Player );
   		ADD_METHOD( GetLifeMeter );
+  		ADD_METHOD( GetDummyPlayerInfo );
 	}
 };
 
@@ -2743,10 +2765,17 @@ class LunaPlayerInfo: public Luna<PlayerInfo>
 {
 public:
 	static int GetLifeMeter( T* p, lua_State *L ) { p->m_pLifeMeter->PushSelf(L); return 1; }
+	static int GetStepsQueue( T* p, lua_State *L )
+	{
+		Steps *pSteps = p->m_vpStepsQueue[ IArg(1) ];
+		pSteps->PushSelf(L);
+		return 1;
+	}
 
 	LunaPlayerInfo()
 	{
   		ADD_METHOD( GetLifeMeter );
+  		ADD_METHOD( GetStepsQueue );
 	}
 };
 

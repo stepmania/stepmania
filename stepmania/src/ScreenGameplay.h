@@ -128,6 +128,7 @@ public:
 	Song *GetNextCourseSong() const;
 	LifeMeter *GetLifeMeter( PlayerNumber pn );
 	PlayerInfo *GetPlayerInfo( PlayerNumber pn );
+	PlayerInfo *GetDummyPlayerInfo( int iDummyIndex );
 
 protected:
 	virtual void UpdateStageStats( MultiPlayer mp ) {};	// overridden for multiplayer
