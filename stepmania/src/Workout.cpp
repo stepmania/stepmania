@@ -24,6 +24,7 @@ XToLocalizedString( WorkoutProgram );
 
 Workout::Workout()
 {
+	m_bNameWasSetByUser = false;
 	m_WorkoutProgram = (WorkoutProgram)0;
 	m_iMinutes = 10;
 	m_iAverageMeter = 3;
@@ -152,7 +153,8 @@ bool Workout::LoadFromFile( RString sFile )
 	m_sFile = sFile;
 
 	xml.GetChildValue("Name",m_sName);
-	// ValidateWorkoutName
+	m_bNameWasSetByUser = true;
+	// XXX: ValidateWorkoutName
 
 	RString s;
 	xml.GetChildValue("WorkoutProgram",s);

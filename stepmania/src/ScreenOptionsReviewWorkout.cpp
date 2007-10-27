@@ -161,27 +161,30 @@ void ScreenOptionsReviewWorkout::ProcessMenuStart( const InputEventPlus &input )
 		this->BeginFadingOut();
 		return;	// handled
 	case ReviewWorkoutRow_Save:
-		if( WORKOUTMAN->m_pCurWorkout->m_sName.empty() )
 		{
-			ScreenTextEntry::TextEntry( 
-				SM_BackFromEnterName, 
-				ENTER_WORKOUT_NAME, 
-				WORKOUTMAN->m_pCurWorkout->m_sName, 
-				MAX_WORKOUT_NAME_LENGTH, 
-				WorkoutManager::ValidateWorkoutName );
-		}
-		else
-		{
-			if( WORKOUTMAN->Save( WORKOUTMAN->m_pCurWorkout ) )
+			bool bPromptForName = !WORKOUTMAN->m_pCurWorkout->m_bNameWasSetByUser;
+			if( bPromptForName )
 			{
-				m_soundSave.Play();
-				SCREENMAN->SystemMessage( WORKOUT_SAVED );
-				MESSAGEMAN->Broadcast( "WorkoutChanged" );
+				ScreenTextEntry::TextEntry( 
+					SM_BackFromEnterName, 
+					ENTER_WORKOUT_NAME, 
+					WORKOUTMAN->m_pCurWorkout->m_sName, 
+					MAX_WORKOUT_NAME_LENGTH, 
+					WorkoutManager::ValidateWorkoutName );
 			}
 			else
 			{
-				SCREENMAN->PlayInvalidSound();
-				SCREENMAN->SystemMessage( ERROR_SAVING_WORKOUT );
+				if( WORKOUTMAN->Save( WORKOUTMAN->m_pCurWorkout ) )
+				{
+					m_soundSave.Play();
+					SCREENMAN->SystemMessage( WORKOUT_SAVED );
+					MESSAGEMAN->Broadcast( "WorkoutChanged" );
+				}
+				else
+				{
+					SCREENMAN->PlayInvalidSound();
+					SCREENMAN->SystemMessage( ERROR_SAVING_WORKOUT );
+				}
 			}
 		}
 		return;	// handled

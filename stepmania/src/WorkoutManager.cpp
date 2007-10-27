@@ -56,11 +56,31 @@ void WorkoutManager::LoadAllFromDisk()
 void WorkoutManager::LoadDefaults( Workout &out )
 {
 	out = Workout();
+
+	// pick a default name
+	// XXX: Make this localizable
+	for( int i=0; i<10000; i++ )
+	{
+		out.m_sName = ssprintf("Workout %d", i+1);
+		bool bNameInUse = true;
+		FOREACH_CONST( Workout*, m_vpAllWorkouts, p )
+		{
+			if( out.m_sName != (*p)->m_sName )
+			{
+				bNameInUse = false;
+				break;
+			}
+		}
+
+		if( !bNameInUse )
+			break;
+	}
 	SongUtil::GetAllSongGenres( out.m_vsSongGenres );
 }
 
 bool WorkoutManager::RenameAndSave( Workout *pWorkout, RString sNewName )
 {
+	pWorkout->m_bNameWasSetByUser = true;
 	ASSERT( !sNewName.empty() );
 	vector<Workout*>::iterator iter = find( m_vpAllWorkouts.begin(), m_vpAllWorkouts.end(), pWorkout );
 	if( iter == m_vpAllWorkouts.end() )

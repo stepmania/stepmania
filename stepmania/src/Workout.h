@@ -35,6 +35,7 @@ public:
 
 	RString m_sFile;
 	RString m_sName;
+	bool m_bNameWasSetByUser;
 	WorkoutProgram m_WorkoutProgram;
 	int m_iMinutes;
 	int m_iAverageMeter;
