@@ -18,6 +18,7 @@
 #include "ScreenPrompt.h"
 #include "PlayerState.h"
 #include "Style.h"
+#include "PrefsManager.h"
 
 enum ReviewWorkoutRow
 {
@@ -42,6 +43,9 @@ AutoScreenMessage( SM_BackFromEnterName )
 
 void ScreenOptionsReviewWorkout::Init()
 {
+	if( PREFSMAN->m_bArcadeOptionsNavigation )
+		SetNavigation( NAV_THREE_KEY_MENU );
+
 	ScreenOptions::Init();
 
 	m_soundSave.Load( THEME->GetPathS(m_sName,"Save") );

@@ -91,6 +91,7 @@ class ScreenMiniMenu : public ScreenOptions
 public:
 	static void MiniMenu( const MenuDef* pDef, ScreenMessage smSendOnOK, ScreenMessage smSendOnCancel = SM_None, float fX = 0, float fY = 0 );
 
+	void Init();
 	void BeginScreen();
 	void HandleScreenMessage( const ScreenMessage SM );
 
@@ -98,6 +99,8 @@ protected:
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
+
+	virtual bool FocusedItemEndsScreen( PlayerNumber pn ) const;
 
 	void LoadMenu( const MenuDef* pDef );
 	

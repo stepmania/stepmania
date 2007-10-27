@@ -528,7 +528,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 			return; /* already transitioning */
 
 		/* If the selected option sets a screen, honor it. */
-		RString sThisScreen = GetNextScreenForSelection( GAMESTATE->m_MasterPlayerNumber );
+		RString sThisScreen = GetNextScreenForFocusedItem( GAMESTATE->m_MasterPlayerNumber );
 		if( sThisScreen != "" )
 			m_sNextScreen = sThisScreen;
 
@@ -813,8 +813,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 	{
 		/* In NAV_THREE_KEY_MENU mode, if a row doesn't set a screen, it does
 		 * something.  Apply it now, and don't go to the next screen. */
-		RString sScreen = GetNextScreenForSelection( input.pn );
-		if( sScreen.empty() )
+		if( !FocusedItemEndsScreen(input.pn) )
 		{
 			vector<PlayerNumber> vpns;
 			vpns.push_back( input.pn );
@@ -938,7 +937,13 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 		m_iCurrentRow[pn], row.GetChoiceInRowWithFocus(pn), m_iFocusX[pn]);
 }
 
-RString ScreenOptions::GetNextScreenForSelection( PlayerNumber pn ) const
+bool ScreenOptions::FocusedItemEndsScreen( PlayerNumber pn ) const
+{
+	RString sScreen = GetNextScreenForFocusedItem( pn );
+	return !sScreen.empty();
+}
+
+RString ScreenOptions::GetNextScreenForFocusedItem( PlayerNumber pn ) const
 {
 	int iCurRow = this->GetCurrentRow( pn );
 
@@ -1190,6 +1195,16 @@ bool ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow )
 	}
 
 	return bChanged;
+}
+
+void ScreenOptions::MenuLeft( const InputEventPlus &input )
+{
+	ChangeValueInRowRelative(m_iCurrentRow[input.pn],input.pn,-1, input.type != IET_FIRST_PRESS);
+}
+
+void ScreenOptions::MenuRight( const InputEventPlus &input )
+{
+	ChangeValueInRowRelative(m_iCurrentRow[input.pn], input.pn,+1, input.type != IET_FIRST_PRESS);
 }
 
 void ScreenOptions::MenuUp( const InputEventPlus &input )

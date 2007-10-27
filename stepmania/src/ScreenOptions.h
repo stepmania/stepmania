@@ -64,7 +64,8 @@ protected:
 	void StoreFocus( PlayerNumber pn );
 
 	void BeginFadingOut();
-	RString GetNextScreenForSelection( PlayerNumber pn ) const;
+	virtual bool FocusedItemEndsScreen( PlayerNumber pn ) const;
+	RString GetNextScreenForFocusedItem( PlayerNumber pn ) const;
 
 	void ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDelta, bool bRepeat );
 	void ChangeValueInRowAbsolute( int iRow, PlayerNumber pn, int iChoiceIndex, bool bRepeat );
@@ -77,8 +78,8 @@ protected:
 	virtual void MenuBack( const InputEventPlus &input );
 	virtual void MenuStart( const InputEventPlus &input );
 	virtual void ProcessMenuStart( const InputEventPlus &input );
-	virtual void MenuLeft( const InputEventPlus &input )		{ ChangeValueInRowRelative(m_iCurrentRow[input.pn],input.pn,-1, input.type != IET_FIRST_PRESS); }
-	virtual void MenuRight( const InputEventPlus &input )	{ ChangeValueInRowRelative(m_iCurrentRow[input.pn], input.pn,+1, input.type != IET_FIRST_PRESS); }
+	virtual void MenuLeft( const InputEventPlus &input );
+	virtual void MenuRight( const InputEventPlus &input );
 	virtual void MenuUp( const InputEventPlus &input );
 	virtual void MenuDown( const InputEventPlus &input );
 	virtual void MenuSelect( const InputEventPlus &input );

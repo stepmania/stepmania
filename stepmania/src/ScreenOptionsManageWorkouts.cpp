@@ -10,6 +10,7 @@
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
 #include "StatsManager.h"
+#include "PrefsManager.h"
 
 AutoScreenMessage( SM_BackFromRename )
 AutoScreenMessage( SM_BackFromDelete )
@@ -40,6 +41,9 @@ REGISTER_SCREEN_CLASS( ScreenOptionsManageWorkouts );
 
 void ScreenOptionsManageWorkouts::Init()
 {
+	if( PREFSMAN->m_bArcadeOptionsNavigation )
+		SetNavigation( NAV_THREE_KEY_MENU );
+
 	ScreenOptions::Init();
 
 	CREATE_NEW_SCREEN.Load( m_sName, "CreateNewScreen" );

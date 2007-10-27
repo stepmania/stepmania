@@ -8,6 +8,7 @@
 #include "GameState.h"
 #include "FontCharAliases.h"
 #include "OptionRowHandler.h"
+#include "PrefsManager.h"
 
 AutoScreenMessage( SM_GoToOK )
 AutoScreenMessage( SM_GoToCancel )
@@ -44,6 +45,14 @@ void ScreenMiniMenu::MiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, S
 }
 
 REGISTER_SCREEN_CLASS( ScreenMiniMenu );
+
+void ScreenMiniMenu::Init()
+{
+	if( PREFSMAN->m_bArcadeOptionsNavigation )
+		SetNavigation( NAV_THREE_KEY_MENU );
+
+	ScreenOptions::Init();
+}
 
 void ScreenMiniMenu::BeginScreen()
 {
@@ -136,6 +145,11 @@ void ScreenMiniMenu::HandleScreenMessage( const ScreenMessage SM )
 	}
 
 	ScreenOptions::HandleScreenMessage( SM );
+}
+
+bool ScreenMiniMenu::FocusedItemEndsScreen( PlayerNumber pn ) const
+{
+	return true;
 }
 
 
