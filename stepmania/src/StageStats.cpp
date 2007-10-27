@@ -167,7 +167,7 @@ void StageStats::CommitScores( bool bSummary )
 		hs.SetGrade( m_player[p].GetGrade() );
 		hs.SetScore( m_player[p].m_iScore );
 		hs.SetPercentDP( m_player[p].GetPercentDancePoints() );
-		hs.SetSurviveSeconds( m_player[p].m_fAliveSeconds );
+		hs.SetAliveSeconds( m_player[p].m_fAliveSeconds );
 
 		vector<RString> asModifiers;
 		{

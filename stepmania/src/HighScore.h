@@ -37,7 +37,7 @@ struct HighScore
 	void SetGrade( Grade g );
 	void SetScore( int iScore );
 	void SetPercentDP( float f );
-	void SetSurviveSeconds( float f );
+	void SetAliveSeconds( float f );
 	void SetModifiers( RString s );
 	void SetDateTime( DateTime d );
 	void SetPlayerGuid( RString s );

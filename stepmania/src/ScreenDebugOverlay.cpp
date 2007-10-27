@@ -797,7 +797,7 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 	hs.SetGrade( g );
 	hs.SetScore( RandomInt(100*1000) );
 	hs.SetPercentDP( fPercentDP );
-	hs.SetSurviveSeconds( randomf(30.0f, 100.0f) );
+	hs.SetAliveSeconds( randomf(30.0f, 100.0f) );
 	PlayerOptions po;
 	po.ChooseRandomModifiers();
 	hs.SetModifiers( po.GetString() );

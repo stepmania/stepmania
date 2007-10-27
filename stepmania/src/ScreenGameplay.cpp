@@ -2583,10 +2583,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		// show the survive time if extra stage
 		if( GAMESTATE->IsAnExtraStage() )
 		{
-			float fMaxSurviveSeconds = 0;
+			float fMaxAliveSeconds = 0;
 			FOREACH_EnabledPlayer(p)
-				fMaxSurviveSeconds = max( fMaxSurviveSeconds, STATSMAN->m_CurStageStats.m_player[p].m_fAliveSeconds );
-			m_textSurviveTime.SetText( "TIME: " + SecondsToMMSSMsMs(fMaxSurviveSeconds) );
+				fMaxAliveSeconds = max( fMaxAliveSeconds, STATSMAN->m_CurStageStats.m_player[p].m_fAliveSeconds );
+			m_textSurviveTime.SetText( "TIME: " + SecondsToMMSSMsMs(fMaxAliveSeconds) );
 			ON_COMMAND( m_textSurviveTime );
 		}
 		
