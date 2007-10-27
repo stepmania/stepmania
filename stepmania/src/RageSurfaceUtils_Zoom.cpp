@@ -16,7 +16,7 @@ using namespace std;
  * lines.)
  */
 
-static void InitVectors( vector<int> &s0, vector<int> &s1, vector<float> &percent, int src, int dst )
+static void InitVectors( vector<int> &s0, vector<int> &s1, vector<uint32_t> &percent, int src, int dst )
 {
 	if( src >= dst )
 	{
@@ -28,12 +28,12 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<float> &percen
 			 * going 512->256, then dst[0] should come from the pixels from 0..1 and
 			 * 1..2, so sax[0] is 1. sx is the total number of pixels, so sx/2 is the
 			 * distance from the start of the sample to its center. */
-			const float sax = sx*x + sx/2;
+			const float sax = sx*x + sx/2.0f;
 
 			/* sx/2 is the distance from the start of the sample to the center;
 			 * sx/4 is the distance from the center of the sample to the center of
 			 * either pixel. */
-			const float xstep = sx/4;
+			const float xstep = sx/4.0f;
 
 			/* source x coordinates of left and right pixels to sample */
 			s0.push_back(int(sax-xstep));
@@ -43,7 +43,7 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<float> &percen
 			{
 				/* If the sampled pixels happen to be the same, the distance
 				 * will be 0.  Avoid division by zero. */
-				percent.push_back( 1.f );
+				percent.push_back( 1<<24 );
 			} else {
 				const int xdist = s1[x] - s0[x];
 
@@ -52,8 +52,8 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<float> &percen
 
 				/* sax is somewhere between the centers of both sampled
 				 * pixels; find the percentage: */
-				const float p = (sax - fleft) / xdist;
-				percent.push_back(1-p);
+				const float p = (1.0f - (sax - fleft) / xdist) * 16777216.0f;
+				percent.push_back( uint32_t(p) );
 			}
 		}
 	}
@@ -77,8 +77,8 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<float> &percen
 			s0.push_back( clamp(int(sax), 0, src-1));
 			s1.push_back( clamp(int(sax+1), 0, src-1) );
 
-			const float p = 1 - (sax - floorf(sax));
-			percent.push_back( p );
+			const float p = (1.0f - (sax - floorf(sax))) * 16777216.0f;
+			percent.push_back( uint32_t(p) );
 		}
 	}
 }
@@ -88,7 +88,7 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 	/* For each destination coordinate, two source rows, two source columns
 	 * and the percentage of the first row and first column: */
 	vector<int> esx0, esx1, esy0, esy1;
-	vector<float> ex0, ey0;
+	vector<uint32_t> ex0, ey0;
 
 	InitVectors( esx0, esx1, ex0, src->w, dst->w );
 	InitVectors( esy0, esy1, ey0, src->h, dst->h );
@@ -114,13 +114,14 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 			uint8_t color[4];
 			for( int c = 0; c < 4; ++c )
 			{
-				float x0, x1;
-				x0 = c00[c] * ex0[x];
-				x0 += c01[c] * (1-ex0[x]);
-				x1 = c10[c] * ex0[x];
-				x1 += c11[c] * (1-ex0[x]);
-
-				const float res = (x0 * ey0[y]) + (x1 * (1-ey0[y])) + 0.5f;
+				uint32_t x0 = uint32_t(c00[c]) * ex0[x];
+				x0 += uint32_t(c01[c]) * (16777216 - ex0[x]);
+				x0 >>= 24;
+				uint32_t x1 = uint32_t(c10[c]) * ex0[x];
+				x1 += uint32_t(c11[c]) * (16777216 - ex0[x]);
+				x1 >>= 24;
+				
+				const uint32_t res = ((x0 * ey0[y]) + (x1 * (16777216-ey0[y])) + 8388608) >> 24;
 				color[c] = uint8_t(res);
 			}
 			*dp = *(uint32_t *) color;
