@@ -30,6 +30,7 @@ public:
 
 private:
 	PlayerNumber m_PlayerNumber;
+	MultiPlayer m_MultiPlayer;
 };
 
 #endif
