@@ -842,30 +842,29 @@ void ScreenGameplay::InitSongQueues()
 		}
 	}
 
-	for( int i=0; i<(int)m_apSongsQueue.size(); i++ )
+	if( GAMESTATE->m_bMultiplayer )
 	{
-		Song *pSong = m_apSongsQueue[i];
-
-		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+		for( int i=0; i<(int)m_apSongsQueue.size(); i++ )
 		{
-			Steps *pOldSteps = pi->m_vpStepsQueue[i];
+			Song *pSong = m_apSongsQueue[i];
 
-			vector<Steps*> vpSteps;
-			SongUtil::GetSteps( pSong, vpSteps, pOldSteps->m_StepsType );
-			StepsUtil::SortNotesArrayByDifficulty( vpSteps );
-			vector<Steps*>::iterator iter = find( vpSteps.begin(), vpSteps.end(), pOldSteps );
-			int iIndexBase = 0;
-			if( iter != vpSteps.end() )
+			FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 			{
-				iIndexBase = iter - vpSteps.begin();
-				CLAMP( iIndexBase, 0, vpSteps.size() - GAMESTATE->m_iNumMultiplayerNoteFields );
-			}
+				Steps *pOldSteps = pi->m_vpStepsQueue[i];
 
-			if( pi->m_iAddToDifficulty > 0 )
-			{
+				vector<Steps*> vpSteps;
+				SongUtil::GetSteps( pSong, vpSteps, pOldSteps->m_StepsType );
+				StepsUtil::SortNotesArrayByDifficulty( vpSteps );
+				vector<Steps*>::iterator iter = find( vpSteps.begin(), vpSteps.end(), pOldSteps );
+				int iIndexBase = 0;
+				if( iter != vpSteps.end() )
+				{
+					iIndexBase = iter - vpSteps.begin();
+					CLAMP( iIndexBase, 0, vpSteps.size() - GAMESTATE->m_iNumMultiplayerNoteFields );
+				}
+
 				int iIndexToUse = iIndexBase + pi->m_iAddToDifficulty;
 				CLAMP( iIndexToUse, 0, vpSteps.size()-1 );
-				LOG->Trace( "pi->m_iAddToDifficulty %d, iIndexToUse %d", pi->m_iAddToDifficulty, iIndexToUse );
 
 				Steps *pSteps = vpSteps[iIndexToUse];
 				pi->m_vpStepsQueue[i] = pSteps;
