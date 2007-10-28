@@ -37,6 +37,8 @@
 #include "UnlockManager.h"
 #include "ScreenManager.h"
 #include "Screen.h"
+#include "WorkoutManager.h"
+#include "Workout.h"
 
 #include <ctime>
 #include <set>
@@ -787,6 +789,18 @@ void GameState::Update( float fDelta )
 			MESSAGEMAN->Broadcast( (MessageID)(Message_GoalCompleteP1+p) );
 		}
 	}
+
+	if( WORKOUTMAN->m_pCurWorkout != NULL  &&  !m_bWorkoutGoalComplete )
+	{
+		const StageStats &ssAccum = STATSMAN->GetAccumPlayedStageStats();
+		const StageStats &ssCurrent = STATSMAN->m_CurStageStats;
+		bool bGoalComplete = ssAccum.m_fGameplaySeconds + ssCurrent.m_fGameplaySeconds > WORKOUTMAN->m_pCurWorkout->m_iMinutes*60;
+		if( bGoalComplete )
+		{
+			MESSAGEMAN->Broadcast( "WorkoutGoalComplete" );
+			m_bWorkoutGoalComplete = true;
+		}
+	}
 }
 
 void GameState::SetCurGame( const Game *pGame )
@@ -836,6 +850,7 @@ void GameState::ResetStageStatistics()
 
 		m_bGoalComplete[p] = false;
 	}
+	m_bWorkoutGoalComplete = false;
 
 
 	FOREACH_PlayerNumber( p )

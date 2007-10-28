@@ -212,6 +212,7 @@ public:
 
 	// used in workout
 	bool	m_bGoalComplete[NUM_PLAYERS];
+	bool	m_bWorkoutGoalComplete;
 	
 	void RemoveAllActiveAttacks();	// called on end of song
 	PlayerNumber GetBestPlayer() const;
