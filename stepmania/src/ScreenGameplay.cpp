@@ -2778,9 +2778,11 @@ class LunaPlayerInfo: public Luna<PlayerInfo>
 {
 public:
 	static int GetLifeMeter( T* p, lua_State *L ) { p->m_pLifeMeter->PushSelf(L); return 1; }
-	static int GetStepsQueue( T* p, lua_State *L )
+	static int GetStepsQueueWrapped( T* p, lua_State *L )
 	{
-		Steps *pSteps = p->m_vpStepsQueue[ IArg(1) ];
+		int iIndex = IArg(1);
+		iIndex %= p->m_vpStepsQueue.size();
+		Steps *pSteps = p->m_vpStepsQueue[iIndex];
 		pSteps->PushSelf(L);
 		return 1;
 	}
@@ -2788,7 +2790,7 @@ public:
 	LunaPlayerInfo()
 	{
   		ADD_METHOD( GetLifeMeter );
-  		ADD_METHOD( GetStepsQueue );
+  		ADD_METHOD( GetStepsQueueWrapped );
 	}
 };
 
