@@ -22,7 +22,12 @@ RString OptionRow::GetThemedItemText( int iChoice ) const
 	if( m_bFirstItemGoesDown && iChoice == 0 )
 		s = CommonMetrics::LocalizeOptionItem( NEXT_ROW_NAME, false ); 
 	else if( m_RowType == OptionRow::RowType_Exit )
-		s = CommonMetrics::LocalizeOptionItem( EXIT_NAME, false ); 
+	{
+		if( m_pParentType->EXIT_HIDE_ITEM )
+			s = RString();
+		else
+			s = CommonMetrics::LocalizeOptionItem( EXIT_NAME, false ); 
+	}
 
 	if( m_pParentType->CAPITALIZE_ALL_OPTION_NAMES )
 		s.MakeUpper(); 
@@ -94,6 +99,7 @@ void OptionRowType::Load( const RString &sType, Actor *pParent )
 	ITEMS_ON_COMMAND		.Load(sType,"ItemsOnCommand");
 	ITEM_GAIN_FOCUS_COMMAND		.Load(sType,"ItemGainFocusCommand");
 	ITEM_LOSE_FOCUS_COMMAND		.Load(sType,"ItemLoseFocusCommand");
+	EXIT_HIDE_ITEM			.Load(sType,"ExitHideItem");
 	ICONS_X				.Load(sType,ICONS_X_NAME,NUM_PLAYERS);
 	ICONS_ON_COMMAND		.Load(sType,"IconsOnCommand");
 	COLOR_SELECTED			.Load(sType,"ColorSelected");
@@ -279,7 +285,7 @@ void OptionRow::InitText()
 		{
 			RString sText = GetThemedItemText( c );
 			bt.SetText( sText );
-			
+
 			fWidth += bt.GetZoomedWidth();
 			
 			if( c != m_pHand->m_Def.m_vsChoices.size()-1 )

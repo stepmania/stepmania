@@ -44,6 +44,7 @@ private:
 	ThemeMetric<apActorCommands>	ITEMS_ON_COMMAND;
 	ThemeMetric<apActorCommands>	ITEM_GAIN_FOCUS_COMMAND;
 	ThemeMetric<apActorCommands>	ITEM_LOSE_FOCUS_COMMAND;
+	ThemeMetric<bool>		EXIT_HIDE_ITEM;
 	ThemeMetric1D<float>		ICONS_X;
 	ThemeMetric<apActorCommands>	ICONS_ON_COMMAND;
 	ThemeMetric<RageColor>		COLOR_SELECTED;
