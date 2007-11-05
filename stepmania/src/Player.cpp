@@ -465,7 +465,9 @@ void Player::Load()
 	case PLAY_MODE_BATTLE:
 		{
 			// ugly, ugly, ugly.  Works only w/ dance.
-			NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle()->m_StepsType );
+			// Why does this work only with dance? - Steve
+			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+			NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), st );
 			
 			// shuffle either p1 or p2
 			static int count = 0;
@@ -473,11 +475,11 @@ void Player::Load()
 			{
 			case 0:
 			case 3:
-				NoteDataUtil::Turn( m_NoteData, STEPS_TYPE_DANCE_SINGLE, NoteDataUtil::left);
+				NoteDataUtil::Turn( m_NoteData, st, NoteDataUtil::left);
 				break;
 			case 1:
 			case 2:
-				NoteDataUtil::Turn( m_NoteData, STEPS_TYPE_DANCE_SINGLE, NoteDataUtil::right);
+				NoteDataUtil::Turn( m_NoteData, st, NoteDataUtil::right);
 				break;
 			default:
 				ASSERT(0);
