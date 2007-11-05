@@ -1416,7 +1416,8 @@ bool TrackIterator::Next()
 {
 	if( m_bFast )
 	{
-		if( m_Iterator == 
+		if( m_Iterator == XXX )
+			;
 
 	}
 
@@ -1821,6 +1822,8 @@ const ValidRow g_ValidRows[] =
 	{ STEPS_TYPE_DANCE_DOUBLE, { f,f,f,T,T,T,T,f } },
 	{ STEPS_TYPE_DANCE_DOUBLE, { f,f,f,f,T,T,T,T } },
 };
+#undef T
+#undef f
 
 void NoteDataUtil::RemoveStretch( NoteData &inout, StepsType st, int iStartIndex, int iEndIndex )
 {
