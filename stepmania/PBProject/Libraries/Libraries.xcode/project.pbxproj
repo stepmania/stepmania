@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 44;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -3231,10 +3231,12 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = AACCAC04086B140B00876352 /* Build configuration list for PBXProject "Libraries" */;
+			compatibilityVersion = "Xcode 3.0";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* Libraries */;
 			productRefGroup = 034768DDFF38A45A11DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				AA4B41EA05733B47005FB5DB /* All */,
 				AA4B430E0573703D005FB5DB /* ffmpeg */,
@@ -4325,6 +4327,8 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "$(BUILD_DIR)";
 				FRAMEWORK_VERSION = A;
+				GCC_DEBUGGING_SYMBOLS = full;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "attribute_deprecated=";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
