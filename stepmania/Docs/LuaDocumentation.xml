@@ -521,6 +521,32 @@
 		Returns the length of the song in seconds.
 	</Function>
 </Class>
+<Class name='SongManager'>
+	<Function name='GetAllCourses' return='{Course}' arguments=''>
+		Returns an array of all the installed courses.
+	</Function>
+	<Function name='GetAllSongs' return='{Song}' arguments=''>
+		Returns an array of all the installed songs.
+	</Function>
+	<Function name='GetNumCourseGroups' return='int' arguments=''>
+		Returns the number of course groups.
+	</Function>
+	<Function name='GetNumCourses' return='int' arguments=''>
+		Returns the number of courses.
+	</Function>
+	<Function name='GetNumSongGroups' return='int' arguments=''>
+		Returns the number of song groups.
+	</Function>
+	<Function name='GetNumSongs' return='int' arguments=''>
+		Returns the number of songs.
+	</Function>
+	<Function name='GetRandomCourse' return='Course' arguments=''>
+		Returns a random course.
+	</Function>
+	<Function name='GetRandomSong' return='Song' arguments=''>
+		Returns a random song.
+	</Function>
+</Class>
 <Class name='Steps'>
 	<Function name='GetRadarValues' return='RadarValues' arguments='PlayerNumber pn'>
 		Returns the complete list of RadarValues for player <code>pn</code>. Use <Link class='RadarValues' function='GetValue' /> to grab a specific value.
