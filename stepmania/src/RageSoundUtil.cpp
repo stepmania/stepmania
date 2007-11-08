@@ -2,9 +2,6 @@
 #include "RageSoundUtil.h"
 #include "RageUtil.h"
 
-/* Some of these functions assume a channel count: */
-static const int channels = 2;
-
 void RageSoundUtil::Attenuate( float *pBuf, int iSamples, float fVolume )
 {
 	while( iSamples-- )
@@ -37,7 +34,6 @@ void RageSoundUtil::Pan( float *buffer, int frames, float fPos )
 		swap( fLeftFactors[1], fRightFactors[1] );
 	}
 
-	ASSERT_M( channels == 2, ssprintf("%i", channels) );
 	for( int samp = 0; samp < frames; ++samp )
 	{
 		float l = buffer[0]*fLeftFactors[0] + buffer[1]*fLeftFactors[1];
