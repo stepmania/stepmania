@@ -48,7 +48,7 @@ void RageSoundUtil::Pan( float *buffer, int frames, float fPos )
 	}
 }
 
-void RageSoundUtil::Fade( float *pBuffer, int iFrames, float fStartVolume, float fEndVolume  )
+void RageSoundUtil::Fade( float *pBuffer, int iFrames, int iChannels, float fStartVolume, float fEndVolume )
 {
 	/* If the whole buffer is full volume, skip. */
 	if( fStartVolume > .9999f && fEndVolume > .9999f )
@@ -59,7 +59,7 @@ void RageSoundUtil::Fade( float *pBuffer, int iFrames, float fStartVolume, float
 		float fVolPercent = SCALE( iFrame, 0, iFrames, fStartVolume, fEndVolume );
 
 		fVolPercent = clamp( fVolPercent, 0.f, 1.f );
-		for( int i = 0; i < channels; ++i )
+		for( int i = 0; i < iChannels; ++i )
 		{
 			*pBuffer *= fVolPercent;
 			pBuffer++;
