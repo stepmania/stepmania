@@ -722,7 +722,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 #endif
 
 /*
- * (c) 2003-2007 Glenn Maynard, Steve Checkoway
+ * (c) 2003-2007 Glenn Maynard, Steve Checkoway, Avery Lee
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
