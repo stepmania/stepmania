@@ -1,5 +1,4 @@
 Frameworks:
-ffmpeg-r8448
 libmad-0.1.5.1b
 
 Static Libraries:
@@ -9,12 +8,15 @@ libpng-1.2.8
 libvorbis-1.1.1
 libtheora-1.0alpha5
 zlib-1.2.3
+ffmpeg-r8448
 
 Directions:
 1. Decompress all of those in the Libraries directory.
-2. Get ffmpeg via
-svn co -r 8448 svn://svn.mplayerhq.hu/ffmpeg/trunk/ ffmpeg-r8448
+2a. Get ffmpeg via
+svn co -r 8448 svn://svn.mplayerhq.hu/ffmpeg/trunk/ ffmpeg
+2b. Run guard-ffmpeg.sh
+2c. Copy ffmpeg-config.h to ffmpeg/config.h
+2d. Run version.sh in ffmpeg
 3. Open Libraries.xcode and build target all.
-4. Copy the frameworks (except for ffmpeg-i386.framework) to
-stepmania/PBProject/Frameworks and the static libraries to
-stepmania/PBProject/Libraries
+4. Copy mad.frameworks to stepmania/PBProject/Frameworks and the
+static libraries to stepmania/PBProject/Libraries
