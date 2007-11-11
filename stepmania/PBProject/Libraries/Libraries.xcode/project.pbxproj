@@ -13,7 +13,6 @@
 			buildPhases = (
 			);
 			dependencies = (
-				AAA373B00909996E00141131 /* PBXTargetDependency */,
 				AA3AE1A9097B473600575EA1 /* PBXTargetDependency */,
 				AA3AE887097B738D00575EA1 /* PBXTargetDependency */,
 				AA3AE889097B738D00575EA1 /* PBXTargetDependency */,
@@ -131,7 +130,6 @@
 		AA3AE0A7097B250800575EA1 /* wrppm.c in Sources */ = {isa = PBXBuildFile; fileRef = AA3AE051097B250700575EA1 /* wrppm.c */; };
 		AA3AE0A8097B250800575EA1 /* wrrle.c in Sources */ = {isa = PBXBuildFile; fileRef = AA3AE052097B250700575EA1 /* wrrle.c */; };
 		AA3AE0A9097B250800575EA1 /* wrtarga.c in Sources */ = {isa = PBXBuildFile; fileRef = AA3AE053097B250700575EA1 /* wrtarga.c */; };
-		AA3AE142097B3C8100575EA1 /* mad.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3AE141097B3C8100575EA1 /* mad.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AA3AE4DC097B673300575EA1 /* ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3AE4B0097B673300575EA1 /* ogg.h */; };
 		AA3AE4DD097B673300575EA1 /* os_types.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3AE4B1097B673300575EA1 /* os_types.h */; };
 		AA3AE4E1097B673300575EA1 /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = AA3AE4CD097B673300575EA1 /* bitwise.c */; };
@@ -400,49 +398,7 @@
 		AAA070940CE7A449005A3060 /* ogg2.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070920CE7A449005A3060 /* ogg2.h */; };
 		AAA070960CE7A45E005A3060 /* rm.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070950CE7A45E005A3060 /* rm.c */; };
 		AAA0709A0CE7A4E0005A3060 /* mpegvideo_ppc.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070990CE7A4E0005A3060 /* mpegvideo_ppc.c */; };
-		AAA3731C090995E400141131 /* version.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71DBE05EDD1EE00D2E8FF /* version.h */; };
-		AAA3731D090995E500141131 /* version.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71DBD05EDD1EE00D2E8FF /* version.c */; };
-		AAA3731E090995E600141131 /* timer.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71DBA05EDD1EE00D2E8FF /* timer.h */; };
-		AAA3731F090995E600141131 /* synth.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71DB805EDD1EE00D2E8FF /* synth.h */; };
-		AAA37320090995E700141131 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71DB905EDD1EE00D2E8FF /* timer.c */; };
-		AAA37321090995E800141131 /* synth.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71DB705EDD1EE00D2E8FF /* synth.c */; };
-		AAA37322090995E800141131 /* stream.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71DB605EDD1EE00D2E8FF /* stream.h */; };
-		AAA37324090995EA00141131 /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71DB505EDD1EE00D2E8FF /* stream.c */; };
-		AAA37325090995EA00141131 /* layer3.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71DA105EDD1EE00D2E8FF /* layer3.h */; };
-		AAA37326090995EB00141131 /* layer3.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71DA005EDD1EE00D2E8FF /* layer3.c */; };
-		AAA37327090995EB00141131 /* layer12.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71D9F05EDD1EE00D2E8FF /* layer12.h */; };
-		AAA37328090995EC00141131 /* layer12.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71D9E05EDD1EE00D2E8FF /* layer12.c */; };
-		AAA37329090995ED00141131 /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71D9905EDD1EE00D2E8FF /* huffman.h */; };
-		AAA3732A090995ED00141131 /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71D9805EDD1EE00D2E8FF /* huffman.c */; };
-		AAA3732B090995EE00141131 /* global.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71D9705EDD1EE00D2E8FF /* global.h */; };
-		AAA3732C090995EE00141131 /* frame.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71D9605EDD1EE00D2E8FF /* frame.h */; };
-		AAA3732D090995EF00141131 /* frame.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71D9505EDD1EE00D2E8FF /* frame.c */; };
-		AAA3732E090995EF00141131 /* fixed.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71D9405EDD1EE00D2E8FF /* fixed.h */; settings = {ATTRIBUTES = (); }; };
-		AAA3732F090995F000141131 /* fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71D9305EDD1EE00D2E8FF /* fixed.c */; };
-		AAA37330090995F100141131 /* decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71D9105EDD1EE00D2E8FF /* decoder.h */; };
-		AAA37331090995F200141131 /* decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71D9005EDD1EE00D2E8FF /* decoder.c */; };
-		AAA37332090995F200141131 /* bit.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71D8505EDD1EE00D2E8FF /* bit.h */; };
-		AAA37333090995F300141131 /* bit.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71D8405EDD1EE00D2E8FF /* bit.c */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXBuildRule section */
-		AAD521660954FBA600073D86 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.3_3;
-			fileType = sourcecode.c;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		AAD521670954FBAC00073D86 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.3_3;
-			fileType = sourcecode.asm;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-/* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
 		AA059E270B8F0BF5006F8139 /* PBXContainerItemProxy */ = {
@@ -500,13 +456,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = AAA06EDD0CE4F465005A3060 /* ffmpeg */;
 			remoteInfo = ffmpeg;
-		};
-		AAA373AF0909996E00141131 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AAA3730D090994F500141131;
-			remoteInfo = mad;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -838,7 +787,6 @@
 		AA3AE051097B250700575EA1 /* wrppm.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = wrppm.c; sourceTree = "<group>"; };
 		AA3AE052097B250700575EA1 /* wrrle.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = wrrle.c; sourceTree = "<group>"; };
 		AA3AE053097B250700575EA1 /* wrtarga.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = wrtarga.c; sourceTree = "<group>"; };
-		AA3AE141097B3C8100575EA1 /* mad.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = mad.h; sourceTree = "<group>"; };
 		AA3AE277097B475400575EA1 /* ffmpeg-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "ffmpeg-Info copy.plist"; sourceTree = "<group>"; };
 		AA3AE366097B668900575EA1 /* libogg.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libogg.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA3AE4B0097B673300575EA1 /* ogg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ogg.h; sourceTree = "<group>"; };
@@ -966,31 +914,7 @@
 		AAA070950CE7A45E005A3060 /* rm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rm.c; sourceTree = "<group>"; };
 		AAA070990CE7A4E0005A3060 /* mpegvideo_ppc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegvideo_ppc.c; sourceTree = "<group>"; };
 		AAA070A00CE7AD75005A3060 /* imgresample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = imgresample.c; sourceTree = "<group>"; };
-		AAA3730E090994F500141131 /* mad.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = mad.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAA3730F090994F500141131 /* mad-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "mad-Info.plist"; sourceTree = "<group>"; };
-		AAA71D8405EDD1EE00D2E8FF /* bit.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = bit.c; sourceTree = "<group>"; };
-		AAA71D8505EDD1EE00D2E8FF /* bit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = bit.h; sourceTree = "<group>"; };
-		AAA71D9005EDD1EE00D2E8FF /* decoder.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = decoder.c; sourceTree = "<group>"; };
-		AAA71D9105EDD1EE00D2E8FF /* decoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = decoder.h; sourceTree = "<group>"; };
-		AAA71D9305EDD1EE00D2E8FF /* fixed.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = fixed.c; sourceTree = "<group>"; };
-		AAA71D9405EDD1EE00D2E8FF /* fixed.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = fixed.h; sourceTree = "<group>"; };
-		AAA71D9505EDD1EE00D2E8FF /* frame.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = frame.c; sourceTree = "<group>"; };
-		AAA71D9605EDD1EE00D2E8FF /* frame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = frame.h; sourceTree = "<group>"; };
-		AAA71D9705EDD1EE00D2E8FF /* global.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = global.h; sourceTree = "<group>"; };
-		AAA71D9805EDD1EE00D2E8FF /* huffman.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = huffman.c; sourceTree = "<group>"; };
-		AAA71D9905EDD1EE00D2E8FF /* huffman.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = huffman.h; sourceTree = "<group>"; };
-		AAA71D9E05EDD1EE00D2E8FF /* layer12.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = layer12.c; sourceTree = "<group>"; };
-		AAA71D9F05EDD1EE00D2E8FF /* layer12.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = layer12.h; sourceTree = "<group>"; };
-		AAA71DA005EDD1EE00D2E8FF /* layer3.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = layer3.c; sourceTree = "<group>"; };
-		AAA71DA105EDD1EE00D2E8FF /* layer3.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = layer3.h; sourceTree = "<group>"; };
-		AAA71DB505EDD1EE00D2E8FF /* stream.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = stream.c; sourceTree = "<group>"; };
-		AAA71DB605EDD1EE00D2E8FF /* stream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = stream.h; sourceTree = "<group>"; };
-		AAA71DB705EDD1EE00D2E8FF /* synth.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = synth.c; sourceTree = "<group>"; };
-		AAA71DB805EDD1EE00D2E8FF /* synth.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = synth.h; sourceTree = "<group>"; };
-		AAA71DB905EDD1EE00D2E8FF /* timer.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = timer.c; sourceTree = "<group>"; };
-		AAA71DBA05EDD1EE00D2E8FF /* timer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
-		AAA71DBD05EDD1EE00D2E8FF /* version.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = version.c; sourceTree = "<group>"; };
-		AAA71DBE05EDD1EE00D2E8FF /* version.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1044,20 +968,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AAA3730C090994F500141131 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		034768DDFF38A45A11DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AAA3730E090994F500141131 /* mad.framework */,
 				AA3ADFBA097B23BE00575EA1 /* libjpeg.a */,
 				AA3AE366097B668900575EA1 /* libogg.a */,
 				AA3AE510097B699500575EA1 /* libpng.a */,
@@ -1076,7 +992,6 @@
 				AA059CCA0B8F0A30006F8139 /* zlib-1.2.3 */,
 				AA3AE277097B475400575EA1 /* ffmpeg-Info copy.plist */,
 				AA3ADFC2097B250700575EA1 /* jpeg-6b */,
-				AAA71D8205EDD1ED00D2E8FF /* libmad-0.15.1b */,
 				AA3AE444097B673200575EA1 /* libogg-1.1.2 */,
 				AA3AE513097B69EB00575EA1 /* libpng-1.2.8 */,
 				AA3AE732097B70B200575EA1 /* libtheora-1.0alpha5 */,
@@ -1710,37 +1625,6 @@
 			path = lib;
 			sourceTree = "<group>";
 		};
-		AAA71D8205EDD1ED00D2E8FF /* libmad-0.15.1b */ = {
-			isa = PBXGroup;
-			children = (
-				AAA71D8405EDD1EE00D2E8FF /* bit.c */,
-				AAA71D8505EDD1EE00D2E8FF /* bit.h */,
-				AAA71D9005EDD1EE00D2E8FF /* decoder.c */,
-				AAA71D9105EDD1EE00D2E8FF /* decoder.h */,
-				AAA71D9305EDD1EE00D2E8FF /* fixed.c */,
-				AAA71D9405EDD1EE00D2E8FF /* fixed.h */,
-				AAA71D9505EDD1EE00D2E8FF /* frame.c */,
-				AAA71D9605EDD1EE00D2E8FF /* frame.h */,
-				AAA71D9705EDD1EE00D2E8FF /* global.h */,
-				AAA71D9805EDD1EE00D2E8FF /* huffman.c */,
-				AAA71D9905EDD1EE00D2E8FF /* huffman.h */,
-				AAA71D9E05EDD1EE00D2E8FF /* layer12.c */,
-				AAA71D9F05EDD1EE00D2E8FF /* layer12.h */,
-				AAA71DA005EDD1EE00D2E8FF /* layer3.c */,
-				AAA71DA105EDD1EE00D2E8FF /* layer3.h */,
-				AA3AE141097B3C8100575EA1 /* mad.h */,
-				AAA71DB505EDD1EE00D2E8FF /* stream.c */,
-				AAA71DB605EDD1EE00D2E8FF /* stream.h */,
-				AAA71DB705EDD1EE00D2E8FF /* synth.c */,
-				AAA71DB805EDD1EE00D2E8FF /* synth.h */,
-				AAA71DB905EDD1EE00D2E8FF /* timer.c */,
-				AAA71DBA05EDD1EE00D2E8FF /* timer.h */,
-				AAA71DBD05EDD1EE00D2E8FF /* version.c */,
-				AAA71DBE05EDD1EE00D2E8FF /* version.h */,
-			);
-			path = "libmad-0.15.1b";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1875,26 +1759,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AAA37309090994F500141131 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AAA3731C090995E400141131 /* version.h in Headers */,
-				AAA3731E090995E600141131 /* timer.h in Headers */,
-				AAA3731F090995E600141131 /* synth.h in Headers */,
-				AAA37322090995E800141131 /* stream.h in Headers */,
-				AAA37325090995EA00141131 /* layer3.h in Headers */,
-				AAA37327090995EB00141131 /* layer12.h in Headers */,
-				AAA37329090995ED00141131 /* huffman.h in Headers */,
-				AAA3732B090995EE00141131 /* global.h in Headers */,
-				AAA3732C090995EE00141131 /* frame.h in Headers */,
-				AAA3732E090995EF00141131 /* fixed.h in Headers */,
-				AAA37330090995F100141131 /* decoder.h in Headers */,
-				AAA37332090995F200141131 /* bit.h in Headers */,
-				AA3AE142097B3C8100575EA1 /* mad.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -2020,28 +1884,6 @@
 			productReference = AAA06EDE0CE4F465005A3060 /* libffmpeg.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		AAA3730D090994F500141131 /* mad */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AAA37316090994F600141131 /* Build configuration list for PBXNativeTarget "mad" */;
-			buildPhases = (
-				AA3AE110097B368600575EA1 /* ShellScript */,
-				AA3AE11D097B396E00575EA1 /* ShellScript */,
-				AAA37309090994F500141131 /* Headers */,
-				AAA3730A090994F500141131 /* Resources */,
-				AAA3730B090994F500141131 /* Sources */,
-				AAA3730C090994F500141131 /* Frameworks */,
-			);
-			buildRules = (
-				AAD521670954FBAC00073D86 /* PBXBuildRule */,
-				AAD521660954FBA600073D86 /* PBXBuildRule */,
-			);
-			dependencies = (
-			);
-			name = mad;
-			productName = mad;
-			productReference = AAA3730E090994F500141131 /* mad.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2056,7 +1898,6 @@
 			projectRoot = "";
 			targets = (
 				AA4B41EA05733B47005FB5DB /* All */,
-				AAA3730D090994F500141131 /* mad */,
 				AA3ADFB9097B23BE00575EA1 /* jpeg */,
 				AA3AE365097B668900575EA1 /* ogg */,
 				AA3AE50F097B699500575EA1 /* png */,
@@ -2067,16 +1908,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		AAA3730A090994F500141131 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		AA3AE0AC097B259700575EA1 /* ShellScript */ = {
@@ -2092,34 +1923,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cat <<EOF > $SRCROOT/jpeg-6b/jconfig.h\n/* jconfig.h.  Generated automatically by configure.  */\n/* jconfig.cfg --- source file edited by configure script */\n/* see jconfig.doc for explanations */\n\n#define HAVE_PROTOTYPES \n#define HAVE_UNSIGNED_CHAR \n#define HAVE_UNSIGNED_SHORT \n#undef void\n#undef const\n#undef CHAR_IS_UNSIGNED\n#define HAVE_STDDEF_H \n#define HAVE_STDLIB_H \n#undef NEED_BSD_STRINGS\n#undef NEED_SYS_TYPES_H\n#undef NEED_FAR_POINTERS\n#undef NEED_SHORT_EXTERNAL_NAMES\n/* Define this if you get warnings about undefined structures. */\n#undef INCOMPLETE_TYPES_BROKEN\n\n#ifdef JPEG_INTERNALS\n\n#undef RIGHT_SHIFT_IS_UNSIGNED\n#define INLINE __inline__\n/* These are for configuring the JPEG memory manager. */\n#undef DEFAULT_MAX_MEM\n#undef NO_MKTEMP\n\n#endif /* JPEG_INTERNALS */\n\n#ifdef JPEG_CJPEG_DJPEG\n\n#define BMP_SUPPORTED\t\t/* BMP image file format */\n#define GIF_SUPPORTED\t\t/* GIF image file format */\n#define PPM_SUPPORTED\t\t/* PBMPLUS PPM/PGM image file format */\n#undef RLE_SUPPORTED\t\t/* Utah RLE image file format */\n#define TARGA_SUPPORTED\t\t/* Targa image file format */\n\n#undef TWO_FILE_COMMANDLINE\n#undef NEED_SIGNAL_CATCHER\n#undef DONT_USE_B_MODE\n\n/* Define this if you want percent-done progress reports from cjpeg/djpeg. */\n#undef PROGRESS_REPORT\n\n#endif /* JPEG_CJPEG_DJPEG */\nEOF\n";
-		};
-		AA3AE110097B368600575EA1 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-				"$(SRCROOT)/libmad-0.15.1b/config.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cat <<EOF > $SRCROOT/libmad-0.15.1b/config.h\n/* config.h.  Generated by configure.  */\n/* config.h.in.  Generated from configure.ac by autoheader.  */\n\n#if defined(__ppc__) || defined(__ppc64__)\n#define FPM_PPC\n#elif defined(__i386__)\n#define FPM_INTEL\n#else\n#error unknown arch\n#endif\n\n/* Define to enable diagnostic debugging support. */\n/* #undef DEBUG */\n\n/* Define to enable experimental code. */\n/* #undef EXPERIMENTAL */\n\n/* Define to 1 if you have the <assert.h> header file. */\n#define HAVE_ASSERT_H 1\n\n/* Define to 1 if you have the <dlfcn.h> header file. */\n#define HAVE_DLFCN_H 1\n\n/* Define to 1 if you have the <errno.h> header file. */\n#define HAVE_ERRNO_H 1\n\n/* Define to 1 if you have the `fcntl' function. */\n#define HAVE_FCNTL 1\n\n/* Define to 1 if you have the <fcntl.h> header file. */\n#define HAVE_FCNTL_H 1\n\n/* Define to 1 if you have the `fork' function. */\n#define HAVE_FORK 1\n\n/* Define to 1 if you have the <inttypes.h> header file. */\n#define HAVE_INTTYPES_H 1\n\n/* Define to 1 if you have the <limits.h> header file. */\n#define HAVE_LIMITS_H 1\n\n/* Define if your MIPS CPU supports a 2-operand MADD16 instruction. */\n/* #undef HAVE_MADD16_ASM */\n\n/* Define if your MIPS CPU supports a 2-operand MADD instruction. */\n/* #undef HAVE_MADD_ASM */\n\n/* Define to 1 if you have the <memory.h> header file. */\n#define HAVE_MEMORY_H 1\n\n/* Define to 1 if you have the `pipe' function. */\n#define HAVE_PIPE 1\n\n/* Define to 1 if you have the <stdint.h> header file. */\n#define HAVE_STDINT_H 1\n\n/* Define to 1 if you have the <stdlib.h> header file. */\n#define HAVE_STDLIB_H 1\n\n/* Define to 1 if you have the <strings.h> header file. */\n#define HAVE_STRINGS_H 1\n\n/* Define to 1 if you have the <string.h> header file. */\n#define HAVE_STRING_H 1\n\n/* Define to 1 if you have the <sys/stat.h> header file. */\n#define HAVE_SYS_STAT_H 1\n\n/* Define to 1 if you have the <sys/types.h> header file. */\n#define HAVE_SYS_TYPES_H 1\n\n/* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */\n#define HAVE_SYS_WAIT_H 1\n\n/* Define to 1 if you have the <unistd.h> header file. */\n#define HAVE_UNISTD_H 1\n\n/* Define to 1 if you have the `waitpid' function. */\n#define HAVE_WAITPID 1\n\n/* Define to disable debugging assertions. */\n/* #undef NDEBUG */\n\n/* Define to optimize for accuracy over speed. */\n/* #undef OPT_ACCURACY */\n\n/* Define to optimize for speed over accuracy. */\n/* #undef OPT_SPEED */\n\n/* Define to enable a fast subband synthesis approximation optimization. */\n/* #undef OPT_SSO */\n\n/* Define to influence a strict interpretation of the ISO/IEC standards, even\n   if this is in opposition with best accepted practices. */\n/* #undef OPT_STRICT */\n\n/* Name of package */\n#define PACKAGE \"libmad\"\n\n/* Define to the address where bug reports for this package should be sent. */\n#define PACKAGE_BUGREPORT \"support@underbit.com\"\n\n/* Define to the full name of this package. */\n#define PACKAGE_NAME \"MPEG Audio Decoder\"\n\n/* Define to the full name and version of this package. */\n#define PACKAGE_STRING \"MPEG Audio Decoder 0.15.1b\"\n/* Define to the one symbol short name of this package. */\n#define PACKAGE_TARNAME \"libmad\"\n\n/* Define to the version of this package. */\n#define PACKAGE_VERSION \"0.15.1b\"\n\n/* The size of a `int', as computed by sizeof. */\n#define SIZEOF_INT 4\n\n/* The size of a `long', as computed by sizeof. */\n#define SIZEOF_LONG 4\n\n/* The size of a `long long', as computed by sizeof. */\n#define SIZEOF_LONG_LONG 8\n\n/* Define to 1 if you have the ANSI C header files. */\n#define STDC_HEADERS 1\n\n/* Version number of package */\n#define VERSION \"0.15.1b\"\n\n/* Define to 1 if your processor stores words with the most significant byte\n   first (like Motorola and SPARC, unlike Intel and VAX). */\n#if defined(__ppc__) || defined(__ppc64__)\n#define WORDS_BIGENDIAN 1\n#endif\n\n/* Define to empty if `const' does not conform to ANSI C. */\n/* #undef const */\n\n/* Define to `__inline__' or `__inline' if that's what the C compiler\n   calls it, or to nothing if 'inline' is not supported under any name.  */\n#ifndef __cplusplus\n/* #undef inline */\n#endif\nEOF\n";
-		};
-		AA3AE11D097B396E00575EA1 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-				"$(SRCROOT)/libmad-0.15.1b/mad.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cat <<EOF > $SRCROOT/libmad-0.15.1b/mad.h\n/*\n * libmad - MPEG audio decoder library\n * Copyright (C) 2000-2004 Underbit Technologies, Inc.\n *\n * This program is free software; you can redistribute it and/or modify\n * it under the terms of the GNU General Public License as published by\n * the Free Software Foundation; either version 2 of the License, or\n * (at your option) any later version.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n * GNU General Public License for more details.\n *\n * You should have received a copy of the GNU General Public License\n * along with this program; if not, write to the Free Software\n * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n *\n * If you would like to negotiate alternate licensing terms, you may do\n * so by contacting: Underbit Technologies, Inc. <info@underbit.com>\n */\n\n# ifdef __cplusplus\nextern \"C\" {\n# endif\n\n#if defined(__ppc__) || defined(__ppc64__)\n#define FPM_PPC\n#elif defined(__i386__)\n#define FPM_INTEL\n#else\n#error unknown arch\n#endif\n\n# define SIZEOF_INT 4\n# define SIZEOF_LONG 4\n# define SIZEOF_LONG_LONG 8\n\n\n/* Id: version.h,v 1.26 2004/01/23 09:41:33 rob Exp */\n\n# ifndef LIBMAD_VERSION_H\n# define LIBMAD_VERSION_H\n\n# define MAD_VERSION_MAJOR\t0\n# define MAD_VERSION_MINOR\t15\n# define MAD_VERSION_PATCH\t1\n# define MAD_VERSION_EXTRA\t\" (beta)\"\n\n# define MAD_VERSION_STRINGIZE(str)\t#str\n# define MAD_VERSION_STRING(num)\tMAD_VERSION_STRINGIZE(num)\n\n# define MAD_VERSION\t\tMAD_VERSION_STRING(MAD_VERSION_MAJOR) \".\"  \\\n\t\t\t\tMAD_VERSION_STRING(MAD_VERSION_MINOR) \".\"  \\\n\t\t\t\tMAD_VERSION_STRING(MAD_VERSION_PATCH)  \\\n\t\t\t\tMAD_VERSION_EXTRA\n\n# define MAD_PUBLISHYEAR\t\"2000-2004\"\n# define MAD_AUTHOR\t\t\"Underbit Technologies, Inc.\"\n# define MAD_EMAIL\t\t\"info@underbit.com\"\n\nextern char const mad_version[];\nextern char const mad_copyright[];\nextern char const mad_author[];\nextern char const mad_build[];\n\n# endif\n\n/* Id: fixed.h,v 1.38 2004/02/17 02:02:03 rob Exp */\n\n# ifndef LIBMAD_FIXED_H\n# define LIBMAD_FIXED_H\n\n# if SIZEOF_INT >= 4\ntypedef   signed int mad_fixed_t;\n\ntypedef   signed int mad_fixed64hi_t;\ntypedef unsigned int mad_fixed64lo_t;\n# else\ntypedef   signed long mad_fixed_t;\n\ntypedef   signed long mad_fixed64hi_t;\ntypedef unsigned long mad_fixed64lo_t;\n# endif\n\n# if defined(_MSC_VER)\n#  define mad_fixed64_t  signed __int64\n# elif 1 || defined(__GNUC__)\n#  define mad_fixed64_t  signed long long\n# endif\n\n# if defined(FPM_FLOAT)\ntypedef double mad_sample_t;\n# else\ntypedef mad_fixed_t mad_sample_t;\n# endif\n\n/*\n * Fixed-point format: 0xABBBBBBB\n * A == whole part      (sign + 3 bits)\n * B == fractional part (28 bits)\n *\n * Values are signed two's complement, so the effective range is:\n * 0x80000000 to 0x7fffffff\n *       -8.0 to +7.9999999962747097015380859375\n *\n * The smallest representable value is:\n * 0x00000001 == 0.0000000037252902984619140625 (i.e. about 3.725e-9)\n *\n * 28 bits of fractional accuracy represent about\n * 8.6 digits of decimal accuracy.\n *\n * Fixed-point numbers can be added or subtracted as normal\n * integers, but multiplication requires shifting the 64-bit result\n * from 56 fractional bits back to 28 (and rounding.)\n *\n * Changing the definition of MAD_F_FRACBITS is only partially\n * supported, and must be done with care.\n */\n\n# define MAD_F_FRACBITS\t\t28\n\n# if MAD_F_FRACBITS == 28\n#  define MAD_F(x)\t\t((mad_fixed_t) (x##L))\n# else\n#  if MAD_F_FRACBITS < 28\n#   warning \"MAD_F_FRACBITS < 28\"\n#   define MAD_F(x)\t\t((mad_fixed_t)  \\\n\t\t\t\t (((x##L) +  \\\n\t\t\t\t   (1L << (28 - MAD_F_FRACBITS - 1))) >>  \\\n\t\t\t\t  (28 - MAD_F_FRACBITS)))\n#  elif MAD_F_FRACBITS > 28\n#   error \"MAD_F_FRACBITS > 28 not currently supported\"\n#   define MAD_F(x)\t\t((mad_fixed_t)  \\\n\t\t\t\t ((x##L) << (MAD_F_FRACBITS - 28)))\n#  endif\n# endif\n\n# define MAD_F_MIN\t\t((mad_fixed_t) -0x80000000L)\n# define MAD_F_MAX\t\t((mad_fixed_t) +0x7fffffffL)\n\n# define MAD_F_ONE\t\tMAD_F(0x10000000)\n\n# define mad_f_tofixed(x)\t((mad_fixed_t)  \\\n\t\t\t\t ((x) * (double) (1L << MAD_F_FRACBITS) + 0.5))\n# define mad_f_todouble(x)\t((double)  \\\n\t\t\t\t ((x) / (double) (1L << MAD_F_FRACBITS)))\n\n# define mad_f_intpart(x)\t((x) >> MAD_F_FRACBITS)\n# define mad_f_fracpart(x)\t((x) & ((1L << MAD_F_FRACBITS) - 1))\n\t\t\t\t/* (x should be positive) */\n\n# define mad_f_fromint(x)\t((x) << MAD_F_FRACBITS)\n\n# define mad_f_add(x, y)\t((x) + (y))\n# define mad_f_sub(x, y)\t((x) - (y))\n\n# if defined(FPM_FLOAT)\n#  error \"FPM_FLOAT not yet supported\"\n\n#  undef MAD_F\n#  define MAD_F(x)\t\tmad_f_todouble(x)\n\n#  define mad_f_mul(x, y)\t((x) * (y))\n#  define mad_f_scale64\n\n#  undef ASO_ZEROCHECK\n\n# elif defined(FPM_64BIT)\n\n/*\n * This version should be the most accurate if 64-bit types are supported by\n * the compiler, although it may not be the most efficient.\n */\n#  if defined(OPT_ACCURACY)\n#   define mad_f_mul(x, y)  \\\n    ((mad_fixed_t)  \\\n     ((((mad_fixed64_t) (x) * (y)) +  \\\n       (1L << (MAD_F_SCALEBITS - 1))) >> MAD_F_SCALEBITS))\n#  else\n#   define mad_f_mul(x, y)  \\\n    ((mad_fixed_t) (((mad_fixed64_t) (x) * (y)) >> MAD_F_SCALEBITS))\n#  endif\n\n#  define MAD_F_SCALEBITS  MAD_F_FRACBITS\n\n/* --- Intel --------------------------------------------------------------- */\n\n# elif defined(FPM_INTEL)\n\n#  if defined(_MSC_VER)\n#   pragma warning(push)\n#   pragma warning(disable: 4035)  /* no return value */\nstatic __forceinline\nmad_fixed_t mad_f_mul_inline(mad_fixed_t x, mad_fixed_t y)\n{\n  enum {\n    fracbits = MAD_F_FRACBITS\n  };\n\n  __asm {\n    mov eax, x\n    imul y\n    shrd eax, edx, fracbits\n  }\n\n  /* implicit return of eax */\n}\n#   pragma warning(pop)\n\n#   define mad_f_mul\t\tmad_f_mul_inline\n#   define mad_f_scale64\n#  else\n/*\n * This Intel version is fast and accurate; the disposition of the least\n * significant bit depends on OPT_ACCURACY via mad_f_scale64().\n */\n#   define MAD_F_MLX(hi, lo, x, y)  \\\n    asm (\"imull %3\"  \\\n\t : \"=a\" (lo), \"=d\" (hi)  \\\n\t : \"%a\" (x), \"rm\" (y)  \\\n\t : \"cc\")\n\n#   if defined(OPT_ACCURACY)\n/*\n * This gives best accuracy but is not very fast.\n */\n#    define MAD_F_MLA(hi, lo, x, y)  \\\n    ({ mad_fixed64hi_t __hi;  \\\n       mad_fixed64lo_t __lo;  \\\n       MAD_F_MLX(__hi, __lo, (x), (y));  \\\n       asm (\"addl %2,%0\\n\\t\"  \\\n\t    \"adcl %3,%1\"  \\\n\t    : \"=rm\" (lo), \"=rm\" (hi)  \\\n\t    : \"r\" (__lo), \"r\" (__hi), \"0\" (lo), \"1\" (hi)  \\\n\t    : \"cc\");  \\\n    })\n#   endif  /* OPT_ACCURACY */\n\n#   if defined(OPT_ACCURACY)\n/*\n * Surprisingly, this is faster than SHRD followed by ADC.\n */\n#    define mad_f_scale64(hi, lo)  \\\n    ({ mad_fixed64hi_t __hi_;  \\\n       mad_fixed64lo_t __lo_;  \\\n       mad_fixed_t __result;  \\\n       asm (\"addl %4,%2\\n\\t\"  \\\n\t    \"adcl %5,%3\"  \\\n\t    : \"=rm\" (__lo_), \"=rm\" (__hi_)  \\\n\t    : \"0\" (lo), \"1\" (hi),  \\\n\t      \"ir\" (1L << (MAD_F_SCALEBITS - 1)), \"ir\" (0)  \\\n\t    : \"cc\");  \\\n       asm (\"shrdl %3,%2,%1\"  \\\n\t    : \"=rm\" (__result)  \\\n\t    : \"0\" (__lo_), \"r\" (__hi_), \"I\" (MAD_F_SCALEBITS)  \\\n\t    : \"cc\");  \\\n       __result;  \\\n    })\n#   elif defined(OPT_INTEL)\n/*\n * Alternate Intel scaling that may or may not perform better.\n */\n#    define mad_f_scale64(hi, lo)  \\\n    ({ mad_fixed_t __result;  \\\n       asm (\"shrl %3,%1\\n\\t\"  \\\n\t    \"shll %4,%2\\n\\t\"  \\\n\t    \"orl %2,%1\"  \\\n\t    : \"=rm\" (__result)  \\\n\t    : \"0\" (lo), \"r\" (hi),  \\\n\t      \"I\" (MAD_F_SCALEBITS), \"I\" (32 - MAD_F_SCALEBITS)  \\\n\t    : \"cc\");  \\\n       __result;  \\\n    })\n#   else\n#    define mad_f_scale64(hi, lo)  \\\n    ({ mad_fixed_t __result;  \\\n       asm (\"shrdl %3,%2,%1\"  \\\n\t    : \"=rm\" (__result)  \\\n\t    : \"0\" (lo), \"r\" (hi), \"I\" (MAD_F_SCALEBITS)  \\\n\t    : \"cc\");  \\\n       __result;  \\\n    })\n#   endif  /* OPT_ACCURACY */\n\n#   define MAD_F_SCALEBITS  MAD_F_FRACBITS\n#  endif\n\n/* --- ARM ----------------------------------------------------------------- */\n\n# elif defined(FPM_ARM)\n\n/* \n * This ARM V4 version is as accurate as FPM_64BIT but much faster. The\n * least significant bit is properly rounded at no CPU cycle cost!\n */\n# if 1\n/*\n * This is faster than the default implementation via MAD_F_MLX() and\n * mad_f_scale64().\n */\n#  define mad_f_mul(x, y)  \\\n    ({ mad_fixed64hi_t __hi;  \\\n       mad_fixed64lo_t __lo;  \\\n       mad_fixed_t __result;  \\\n       asm (\"smull\t%0, %1, %3, %4\\n\\t\"  \\\n\t    \"movs\t%0, %0, lsr %5\\n\\t\"  \\\n\t    \"adc\t%2, %0, %1, lsl %6\"  \\\n\t    : \"=&r\" (__lo), \"=&r\" (__hi), \"=r\" (__result)  \\\n\t    : \"%r\" (x), \"r\" (y),  \\\n\t      \"M\" (MAD_F_SCALEBITS), \"M\" (32 - MAD_F_SCALEBITS)  \\\n\t    : \"cc\");  \\\n       __result;  \\\n    })\n# endif\n\n#  define MAD_F_MLX(hi, lo, x, y)  \\\n    asm (\"smull\t%0, %1, %2, %3\"  \\\n\t : \"=&r\" (lo), \"=&r\" (hi)  \\\n\t : \"%r\" (x), \"r\" (y))\n\n#  define MAD_F_MLA(hi, lo, x, y)  \\\n    asm (\"smlal\t%0, %1, %2, %3\"  \\\n\t : \"+r\" (lo), \"+r\" (hi)  \\\n\t : \"%r\" (x), \"r\" (y))\n\n#  define MAD_F_MLN(hi, lo)  \\\n    asm (\"rsbs\t%0, %2, #0\\n\\t\"  \\\n\t \"rsc\t%1, %3, #0\"  \\\n\t : \"=r\" (lo), \"=r\" (hi)  \\\n\t : \"0\" (lo), \"1\" (hi)  \\\n\t : \"cc\")\n\n#  define mad_f_scale64(hi, lo)  \\\n    ({ mad_fixed_t __result;  \\\n       asm (\"movs\t%0, %1, lsr %3\\n\\t\"  \\\n\t    \"adc\t%0, %0, %2, lsl %4\"  \\\n\t    : \"=&r\" (__result)  \\\n\t    : \"r\" (lo), \"r\" (hi),  \\\n\t      \"M\" (MAD_F_SCALEBITS), \"M\" (32 - MAD_F_SCALEBITS)  \\\n\t    : \"cc\");  \\\n       __result;  \\\n    })\n\n#  define MAD_F_SCALEBITS  MAD_F_FRACBITS\n\n/* --- MIPS ---------------------------------------------------------------- */\n\n# elif defined(FPM_MIPS)\n\n/*\n * This MIPS version is fast and accurate; the disposition of the least\n * significant bit depends on OPT_ACCURACY via mad_f_scale64().\n */\n#  define MAD_F_MLX(hi, lo, x, y)  \\\n    asm (\"mult\t%2,%3\"  \\\n\t : \"=l\" (lo), \"=h\" (hi)  \\\n\t : \"%r\" (x), \"r\" (y))\n\n# if defined(HAVE_MADD_ASM)\n#  define MAD_F_MLA(hi, lo, x, y)  \\\n    asm (\"madd\t%2,%3\"  \\\n\t : \"+l\" (lo), \"+h\" (hi)  \\\n\t : \"%r\" (x), \"r\" (y))\n# elif defined(HAVE_MADD16_ASM)\n/*\n * This loses significant accuracy due to the 16-bit integer limit in the\n * multiply/accumulate instruction.\n */\n#  define MAD_F_ML0(hi, lo, x, y)  \\\n    asm (\"mult\t%2,%3\"  \\\n\t : \"=l\" (lo), \"=h\" (hi)  \\\n\t : \"%r\" ((x) >> 12), \"r\" ((y) >> 16))\n#  define MAD_F_MLA(hi, lo, x, y)  \\\n    asm (\"madd16\t%2,%3\"  \\\n\t : \"+l\" (lo), \"+h\" (hi)  \\\n\t : \"%r\" ((x) >> 12), \"r\" ((y) >> 16))\n#  define MAD_F_MLZ(hi, lo)  ((mad_fixed_t) (lo))\n# endif\n\n# if defined(OPT_SPEED)\n#  define mad_f_scale64(hi, lo)  \\\n    ((mad_fixed_t) ((hi) << (32 - MAD_F_SCALEBITS)))\n#  define MAD_F_SCALEBITS  MAD_F_FRACBITS\n# endif\n\n/* --- SPARC --------------------------------------------------------------- */\n\n# elif defined(FPM_SPARC)\n\n/*\n * This SPARC V8 version is fast and accurate; the disposition of the least\n * significant bit depends on OPT_ACCURACY via mad_f_scale64().\n */\n#  define MAD_F_MLX(hi, lo, x, y)  \\\n    asm (\"smul %2, %3, %0\\n\\t\"  \\\n\t \"rd %%y, %1\"  \\\n\t : \"=r\" (lo), \"=r\" (hi)  \\\n\t : \"%r\" (x), \"rI\" (y))\n\n/* --- PowerPC ------------------------------------------------------------- */\n\n# elif defined(FPM_PPC)\n\n/*\n * This PowerPC version is fast and accurate; the disposition of the least\n * significant bit depends on OPT_ACCURACY via mad_f_scale64().\n */\n#  define MAD_F_MLX(hi, lo, x, y)  \\\n    do {  \\\n      asm (\"mullw %0,%1,%2\"  \\\n\t   : \"=r\" (lo)  \\\n\t   : \"%r\" (x), \"r\" (y));  \\\n      asm (\"mulhw %0,%1,%2\"  \\\n\t   : \"=r\" (hi)  \\\n\t   : \"%r\" (x), \"r\" (y));  \\\n    }  \\\n    while (0)\n\n#  if defined(OPT_ACCURACY)\n/*\n * This gives best accuracy but is not very fast.\n */\n#   define MAD_F_MLA(hi, lo, x, y)  \\\n    ({ mad_fixed64hi_t __hi;  \\\n       mad_fixed64lo_t __lo;  \\\n       MAD_F_MLX(__hi, __lo, (x), (y));  \\\n       asm (\"addc %0,%2,%3\\n\\t\"  \\\n\t    \"adde %1,%4,%5\"  \\\n\t    : \"=r\" (lo), \"=r\" (hi)  \\\n\t    : \"%r\" (lo), \"r\" (__lo),  \\\n\t      \"%r\" (hi), \"r\" (__hi)  \\\n\t    : \"xer\");  \\\n    })\n#  endif\n\n#  if defined(OPT_ACCURACY)\n/*\n * This is slower than the truncating version below it.\n */\n#   define mad_f_scale64(hi, lo)  \\\n    ({ mad_fixed_t __result, __round;  \\\n       asm (\"rotrwi %0,%1,%2\"  \\\n\t    : \"=r\" (__result)  \\\n\t    : \"r\" (lo), \"i\" (MAD_F_SCALEBITS));  \\\n       asm (\"extrwi %0,%1,1,0\"  \\\n\t    : \"=r\" (__round)  \\\n\t    : \"r\" (__result));  \\\n       asm (\"insrwi %0,%1,%2,0\"  \\\n\t    : \"+r\" (__result)  \\\n\t    : \"r\" (hi), \"i\" (MAD_F_SCALEBITS));  \\\n       asm (\"add %0,%1,%2\"  \\\n\t    : \"=r\" (__result)  \\\n\t    : \"%r\" (__result), \"r\" (__round));  \\\n       __result;  \\\n    })\n#  else\n#   define mad_f_scale64(hi, lo)  \\\n    ({ mad_fixed_t __result;  \\\n       asm (\"rotrwi %0,%1,%2\"  \\\n\t    : \"=r\" (__result)  \\\n\t    : \"r\" (lo), \"i\" (MAD_F_SCALEBITS));  \\\n       asm (\"insrwi %0,%1,%2,0\"  \\\n\t    : \"+r\" (__result)  \\\n\t    : \"r\" (hi), \"i\" (MAD_F_SCALEBITS));  \\\n       __result;  \\\n    })\n#  endif\n\n#  define MAD_F_SCALEBITS  MAD_F_FRACBITS\n\n/* --- Default ------------------------------------------------------------- */\n\n# elif defined(FPM_DEFAULT)\n\n/*\n * This version is the most portable but it loses significant accuracy.\n * Furthermore, accuracy is biased against the second argument, so care\n * should be taken when ordering operands.\n *\n * The scale factors are constant as this is not used with SSO.\n *\n * Pre-rounding is required to stay within the limits of compliance.\n */\n#  if defined(OPT_SPEED)\n#   define mad_f_mul(x, y)\t(((x) >> 12) * ((y) >> 16))\n#  else\n#   define mad_f_mul(x, y)\t((((x) + (1L << 11)) >> 12) *  \\\n\t\t\t\t (((y) + (1L << 15)) >> 16))\n#  endif\n\n/* ------------------------------------------------------------------------- */\n\n# else\n#  error \"no FPM selected\"\n# endif\n\n/* default implementations */\n\n# if !defined(mad_f_mul)\n#  define mad_f_mul(x, y)  \\\n    ({ register mad_fixed64hi_t __hi;  \\\n       register mad_fixed64lo_t __lo;  \\\n       MAD_F_MLX(__hi, __lo, (x), (y));  \\\n       mad_f_scale64(__hi, __lo);  \\\n    })\n# endif\n\n# if !defined(MAD_F_MLA)\n#  define MAD_F_ML0(hi, lo, x, y)\t((lo)  = mad_f_mul((x), (y)))\n#  define MAD_F_MLA(hi, lo, x, y)\t((lo) += mad_f_mul((x), (y)))\n#  define MAD_F_MLN(hi, lo)\t\t((lo)  = -(lo))\n#  define MAD_F_MLZ(hi, lo)\t\t((void) (hi), (mad_fixed_t) (lo))\n# endif\n\n# if !defined(MAD_F_ML0)\n#  define MAD_F_ML0(hi, lo, x, y)\tMAD_F_MLX((hi), (lo), (x), (y))\n# endif\n\n# if !defined(MAD_F_MLN)\n#  define MAD_F_MLN(hi, lo)\t\t((hi) = ((lo) = -(lo)) ? ~(hi) : -(hi))\n# endif\n\n# if !defined(MAD_F_MLZ)\n#  define MAD_F_MLZ(hi, lo)\t\tmad_f_scale64((hi), (lo))\n# endif\n\n# if !defined(mad_f_scale64)\n#  if defined(OPT_ACCURACY)\n#   define mad_f_scale64(hi, lo)  \\\n    ((((mad_fixed_t)  \\\n       (((hi) << (32 - (MAD_F_SCALEBITS - 1))) |  \\\n\t((lo) >> (MAD_F_SCALEBITS - 1)))) + 1) >> 1)\n#  else\n#   define mad_f_scale64(hi, lo)  \\\n    ((mad_fixed_t)  \\\n     (((hi) << (32 - MAD_F_SCALEBITS)) |  \\\n      ((lo) >> MAD_F_SCALEBITS)))\n#  endif\n#  define MAD_F_SCALEBITS  MAD_F_FRACBITS\n# endif\n\n/* C routines */\n\nmad_fixed_t mad_f_abs(mad_fixed_t);\nmad_fixed_t mad_f_div(mad_fixed_t, mad_fixed_t);\n\n# endif\n\n/* Id: bit.h,v 1.12 2004/01/23 09:41:32 rob Exp */\n\n# ifndef LIBMAD_BIT_H\n# define LIBMAD_BIT_H\n\nstruct mad_bitptr {\n  unsigned char const *byte;\n  unsigned short cache;\n  unsigned short left;\n};\n\nvoid mad_bit_init(struct mad_bitptr *, unsigned char const *);\n\n# define mad_bit_finish(bitptr)\t\t/* nothing */\n\nunsigned int mad_bit_length(struct mad_bitptr const *,\n\t\t\t    struct mad_bitptr const *);\n\n# define mad_bit_bitsleft(bitptr)  ((bitptr)->left)\nunsigned char const *mad_bit_nextbyte(struct mad_bitptr const *);\n\nvoid mad_bit_skip(struct mad_bitptr *, unsigned int);\nunsigned long mad_bit_read(struct mad_bitptr *, unsigned int);\nvoid mad_bit_write(struct mad_bitptr *, unsigned int, unsigned long);\n\nunsigned short mad_bit_crc(struct mad_bitptr, unsigned int, unsigned short);\n\n# endif\n\n/* Id: timer.h,v 1.16 2004/01/23 09:41:33 rob Exp */\n\n# ifndef LIBMAD_TIMER_H\n# define LIBMAD_TIMER_H\n\ntypedef struct {\n  signed long seconds;\t\t/* whole seconds */\n  unsigned long fraction;\t/* 1/MAD_TIMER_RESOLUTION seconds */\n} mad_timer_t;\n\nextern mad_timer_t const mad_timer_zero;\n\n# define MAD_TIMER_RESOLUTION\t352800000UL\n\nenum mad_units {\n  MAD_UNITS_HOURS\t =    -2,\n  MAD_UNITS_MINUTES\t =    -1,\n  MAD_UNITS_SECONDS\t =     0,\n\n  /* metric units */\n\n  MAD_UNITS_DECISECONDS\t =    10,\n  MAD_UNITS_CENTISECONDS =   100,\n  MAD_UNITS_MILLISECONDS =  1000,\n\n  /* audio sample units */\n\n  MAD_UNITS_8000_HZ\t =  8000,\n  MAD_UNITS_11025_HZ\t = 11025,\n  MAD_UNITS_12000_HZ\t = 12000,\n\n  MAD_UNITS_16000_HZ\t = 16000,\n  MAD_UNITS_22050_HZ\t = 22050,\n  MAD_UNITS_24000_HZ\t = 24000,\n\n  MAD_UNITS_32000_HZ\t = 32000,\n  MAD_UNITS_44100_HZ\t = 44100,\n  MAD_UNITS_48000_HZ\t = 48000,\n\n  /* video frame/field units */\n\n  MAD_UNITS_24_FPS\t =    24,\n  MAD_UNITS_25_FPS\t =    25,\n  MAD_UNITS_30_FPS\t =    30,\n  MAD_UNITS_48_FPS\t =    48,\n  MAD_UNITS_50_FPS\t =    50,\n  MAD_UNITS_60_FPS\t =    60,\n\n  /* CD audio frames */\n\n  MAD_UNITS_75_FPS\t =    75,\n\n  /* video drop-frame units */\n\n  MAD_UNITS_23_976_FPS\t =   -24,\n  MAD_UNITS_24_975_FPS\t =   -25,\n  MAD_UNITS_29_97_FPS\t =   -30,\n  MAD_UNITS_47_952_FPS\t =   -48,\n  MAD_UNITS_49_95_FPS\t =   -50,\n  MAD_UNITS_59_94_FPS\t =   -60\n};\n\n# define mad_timer_reset(timer)\t((void) (*(timer) = mad_timer_zero))\n\nint mad_timer_compare(mad_timer_t, mad_timer_t);\n\n# define mad_timer_sign(timer)\tmad_timer_compare((timer), mad_timer_zero)\n\nvoid mad_timer_negate(mad_timer_t *);\nmad_timer_t mad_timer_abs(mad_timer_t);\n\nvoid mad_timer_set(mad_timer_t *, unsigned long, unsigned long, unsigned long);\nvoid mad_timer_add(mad_timer_t *, mad_timer_t);\nvoid mad_timer_multiply(mad_timer_t *, signed long);\n\nsigned long mad_timer_count(mad_timer_t, enum mad_units);\nunsigned long mad_timer_fraction(mad_timer_t, unsigned long);\nvoid mad_timer_string(mad_timer_t, char *, char const *,\n\t\t      enum mad_units, enum mad_units, unsigned long);\n\n# endif\n\n/* Id: stream.h,v 1.20 2004/02/05 09:02:39 rob Exp */\n\n# ifndef LIBMAD_STREAM_H\n# define LIBMAD_STREAM_H\n\n\n# define MAD_BUFFER_GUARD\t8\n# define MAD_BUFFER_MDLEN\t(511 + 2048 + MAD_BUFFER_GUARD)\n\nenum mad_error {\n  MAD_ERROR_NONE\t   = 0x0000,\t/* no error */\n\n  MAD_ERROR_BUFLEN\t   = 0x0001,\t/* input buffer too small (or EOF) */\n  MAD_ERROR_BUFPTR\t   = 0x0002,\t/* invalid (null) buffer pointer */\n\n  MAD_ERROR_NOMEM\t   = 0x0031,\t/* not enough memory */\n\n  MAD_ERROR_LOSTSYNC\t   = 0x0101,\t/* lost synchronization */\n  MAD_ERROR_BADLAYER\t   = 0x0102,\t/* reserved header layer value */\n  MAD_ERROR_BADBITRATE\t   = 0x0103,\t/* forbidden bitrate value */\n  MAD_ERROR_BADSAMPLERATE  = 0x0104,\t/* reserved sample frequency value */\n  MAD_ERROR_BADEMPHASIS\t   = 0x0105,\t/* reserved emphasis value */\n\n  MAD_ERROR_BADCRC\t   = 0x0201,\t/* CRC check failed */\n  MAD_ERROR_BADBITALLOC\t   = 0x0211,\t/* forbidden bit allocation value */\n  MAD_ERROR_BADSCALEFACTOR = 0x0221,\t/* bad scalefactor index */\n  MAD_ERROR_BADMODE        = 0x0222,\t/* bad bitrate/mode combination */\n  MAD_ERROR_BADFRAMELEN\t   = 0x0231,\t/* bad frame length */\n  MAD_ERROR_BADBIGVALUES   = 0x0232,\t/* bad big_values count */\n  MAD_ERROR_BADBLOCKTYPE   = 0x0233,\t/* reserved block_type */\n  MAD_ERROR_BADSCFSI\t   = 0x0234,\t/* bad scalefactor selection info */\n  MAD_ERROR_BADDATAPTR\t   = 0x0235,\t/* bad main_data_begin pointer */\n  MAD_ERROR_BADPART3LEN\t   = 0x0236,\t/* bad audio data length */\n  MAD_ERROR_BADHUFFTABLE   = 0x0237,\t/* bad Huffman table select */\n  MAD_ERROR_BADHUFFDATA\t   = 0x0238,\t/* Huffman data overrun */\n  MAD_ERROR_BADSTEREO\t   = 0x0239\t/* incompatible block_type for JS */\n};\n\n# define MAD_RECOVERABLE(error)\t((error) & 0xff00)\n\nstruct mad_stream {\n  unsigned char const *buffer;\t\t/* input bitstream buffer */\n  unsigned char const *bufend;\t\t/* end of buffer */\n  unsigned long skiplen;\t\t/* bytes to skip before next frame */\n\n  int sync;\t\t\t\t/* stream sync found */\n  unsigned long freerate;\t\t/* free bitrate (fixed) */\n\n  unsigned char const *this_frame;\t/* start of current frame */\n  unsigned char const *next_frame;\t/* start of next frame */\n  struct mad_bitptr ptr;\t\t/* current processing bit pointer */\n\n  struct mad_bitptr anc_ptr;\t\t/* ancillary bits pointer */\n  unsigned int anc_bitlen;\t\t/* number of ancillary bits */\n\n  unsigned char (*main_data)[MAD_BUFFER_MDLEN];\n\t\t\t\t\t/* Layer III main_data() */\n  unsigned int md_len;\t\t\t/* bytes in main_data */\n\n  int options;\t\t\t\t/* decoding options (see below) */\n  enum mad_error error;\t\t\t/* error code (see above) */\n};\n\nenum {\n  MAD_OPTION_IGNORECRC      = 0x0001,\t/* ignore CRC errors */\n  MAD_OPTION_HALFSAMPLERATE = 0x0002\t/* generate PCM at 1/2 sample rate */\n# if 0  /* not yet implemented */\n  MAD_OPTION_LEFTCHANNEL    = 0x0010,\t/* decode left channel only */\n  MAD_OPTION_RIGHTCHANNEL   = 0x0020,\t/* decode right channel only */\n  MAD_OPTION_SINGLECHANNEL  = 0x0030\t/* combine channels */\n# endif\n};\n\nvoid mad_stream_init(struct mad_stream *);\nvoid mad_stream_finish(struct mad_stream *);\n\n# define mad_stream_options(stream, opts)  \\\n    ((void) ((stream)->options = (opts)))\n\nvoid mad_stream_buffer(struct mad_stream *,\n\t\t       unsigned char const *, unsigned long);\nvoid mad_stream_skip(struct mad_stream *, unsigned long);\n\nint mad_stream_sync(struct mad_stream *);\n\nchar const *mad_stream_errorstr(struct mad_stream const *);\n\n# endif\n\n/* Id: frame.h,v 1.20 2004/01/23 09:41:32 rob Exp */\n\n# ifndef LIBMAD_FRAME_H\n# define LIBMAD_FRAME_H\n\n\nenum mad_layer {\n  MAD_LAYER_I   = 1,\t\t\t/* Layer I */\n  MAD_LAYER_II  = 2,\t\t\t/* Layer II */\n  MAD_LAYER_III = 3\t\t\t/* Layer III */\n};\n\nenum mad_mode {\n  MAD_MODE_SINGLE_CHANNEL = 0,\t\t/* single channel */\n  MAD_MODE_DUAL_CHANNEL\t  = 1,\t\t/* dual channel */\n  MAD_MODE_JOINT_STEREO\t  = 2,\t\t/* joint (MS/intensity) stereo */\n  MAD_MODE_STEREO\t  = 3\t\t/* normal LR stereo */\n};\n\nenum mad_emphasis {\n  MAD_EMPHASIS_NONE\t  = 0,\t\t/* no emphasis */\n  MAD_EMPHASIS_50_15_US\t  = 1,\t\t/* 50/15 microseconds emphasis */\n  MAD_EMPHASIS_CCITT_J_17 = 3,\t\t/* CCITT J.17 emphasis */\n  MAD_EMPHASIS_RESERVED   = 2\t\t/* unknown emphasis */\n};\n\nstruct mad_header {\n  enum mad_layer layer;\t\t\t/* audio layer (1, 2, or 3) */\n  enum mad_mode mode;\t\t\t/* channel mode (see above) */\n  int mode_extension;\t\t\t/* additional mode info */\n  enum mad_emphasis emphasis;\t\t/* de-emphasis to use (see above) */\n\n  unsigned long bitrate;\t\t/* stream bitrate (bps) */\n  unsigned int samplerate;\t\t/* sampling frequency (Hz) */\n\n  unsigned short crc_check;\t\t/* frame CRC accumulator */\n  unsigned short crc_target;\t\t/* final target CRC checksum */\n\n  int flags;\t\t\t\t/* flags (see below) */\n  int private_bits;\t\t\t/* private bits (see below) */\n\n  mad_timer_t duration;\t\t\t/* audio playing time of frame */\n};\n\nstruct mad_frame {\n  struct mad_header header;\t\t/* MPEG audio header */\n\n  int options;\t\t\t\t/* decoding options (from stream) */\n\n  mad_fixed_t sbsample[2][36][32];\t/* synthesis subband filter samples */\n  mad_fixed_t (*overlap)[2][32][18];\t/* Layer III block overlap data */\n};\n\n# define MAD_NCHANNELS(header)\t\t((header)->mode ? 2 : 1)\n# define MAD_NSBSAMPLES(header)  \\\n  ((header)->layer == MAD_LAYER_I ? 12 :  \\\n   (((header)->layer == MAD_LAYER_III &&  \\\n     ((header)->flags & MAD_FLAG_LSF_EXT)) ? 18 : 36))\n\nenum {\n  MAD_FLAG_NPRIVATE_III\t= 0x0007,\t/* number of Layer III private bits */\n  MAD_FLAG_INCOMPLETE\t= 0x0008,\t/* header but not data is decoded */\n\n  MAD_FLAG_PROTECTION\t= 0x0010,\t/* frame has CRC protection */\n  MAD_FLAG_COPYRIGHT\t= 0x0020,\t/* frame is copyright */\n  MAD_FLAG_ORIGINAL\t= 0x0040,\t/* frame is original (else copy) */\n  MAD_FLAG_PADDING\t= 0x0080,\t/* frame has additional slot */\n\n  MAD_FLAG_I_STEREO\t= 0x0100,\t/* uses intensity joint stereo */\n  MAD_FLAG_MS_STEREO\t= 0x0200,\t/* uses middle/side joint stereo */\n  MAD_FLAG_FREEFORMAT\t= 0x0400,\t/* uses free format bitrate */\n\n  MAD_FLAG_LSF_EXT\t= 0x1000,\t/* lower sampling freq. extension */\n  MAD_FLAG_MC_EXT\t= 0x2000,\t/* multichannel audio extension */\n  MAD_FLAG_MPEG_2_5_EXT\t= 0x4000\t/* MPEG 2.5 (unofficial) extension */\n};\n\nenum {\n  MAD_PRIVATE_HEADER\t= 0x0100,\t/* header private bit */\n  MAD_PRIVATE_III\t= 0x001f\t/* Layer III private bits (up to 5) */\n};\n\nvoid mad_header_init(struct mad_header *);\n\n# define mad_header_finish(header)  /* nothing */\n\nint mad_header_decode(struct mad_header *, struct mad_stream *);\n\nvoid mad_frame_init(struct mad_frame *);\nvoid mad_frame_finish(struct mad_frame *);\n\nint mad_frame_decode(struct mad_frame *, struct mad_stream *);\n\nvoid mad_frame_mute(struct mad_frame *);\n\n# endif\n\n/* Id: synth.h,v 1.15 2004/01/23 09:41:33 rob Exp */\n\n# ifndef LIBMAD_SYNTH_H\n# define LIBMAD_SYNTH_H\n\n\nstruct mad_pcm {\n  unsigned int samplerate;\t\t/* sampling frequency (Hz) */\n  unsigned short channels;\t\t/* number of channels */\n  unsigned short length;\t\t/* number of samples per channel */\n  mad_fixed_t samples[2][1152];\t\t/* PCM output samples [ch][sample] */\n};\n\nstruct mad_synth {\n  mad_fixed_t filter[2][2][2][16][8];\t/* polyphase filterbank outputs */\n  \t\t\t\t\t/* [ch][eo][peo][s][v] */\n\n  unsigned int phase;\t\t\t/* current processing phase */\n\n  struct mad_pcm pcm;\t\t\t/* PCM output */\n};\n\n/* single channel PCM selector */\nenum {\n  MAD_PCM_CHANNEL_SINGLE = 0\n};\n\n/* dual channel PCM selector */\nenum {\n  MAD_PCM_CHANNEL_DUAL_1 = 0,\n  MAD_PCM_CHANNEL_DUAL_2 = 1\n};\n\n/* stereo PCM selector */\nenum {\n  MAD_PCM_CHANNEL_STEREO_LEFT  = 0,\n  MAD_PCM_CHANNEL_STEREO_RIGHT = 1\n};\n\nvoid mad_synth_init(struct mad_synth *);\n\n# define mad_synth_finish(synth)  /* nothing */\n\nvoid mad_synth_mute(struct mad_synth *);\n\nvoid mad_synth_frame(struct mad_synth *, struct mad_frame const *);\n\n# endif\n\n/* Id: decoder.h,v 1.17 2004/01/23 09:41:32 rob Exp */\n\n# ifndef LIBMAD_DECODER_H\n# define LIBMAD_DECODER_H\n\n\nenum mad_decoder_mode {\n  MAD_DECODER_MODE_SYNC  = 0,\n  MAD_DECODER_MODE_ASYNC\n};\n\nenum mad_flow {\n  MAD_FLOW_CONTINUE = 0x0000,\t/* continue normally */\n  MAD_FLOW_STOP     = 0x0010,\t/* stop decoding normally */\n  MAD_FLOW_BREAK    = 0x0011,\t/* stop decoding and signal an error */\n  MAD_FLOW_IGNORE   = 0x0020\t/* ignore the current frame */\n};\n\nstruct mad_decoder {\n  enum mad_decoder_mode mode;\n\n  int options;\n\n  struct {\n    long pid;\n    int in;\n    int out;\n  } async;\n\n  struct {\n    struct mad_stream stream;\n    struct mad_frame frame;\n    struct mad_synth synth;\n  } *sync;\n\n  void *cb_data;\n\n  enum mad_flow (*input_func)(void *, struct mad_stream *);\n  enum mad_flow (*header_func)(void *, struct mad_header const *);\n  enum mad_flow (*filter_func)(void *,\n\t\t\t       struct mad_stream const *, struct mad_frame *);\n  enum mad_flow (*output_func)(void *,\n\t\t\t       struct mad_header const *, struct mad_pcm *);\n  enum mad_flow (*error_func)(void *, struct mad_stream *, struct mad_frame *);\n  enum mad_flow (*message_func)(void *, void *, unsigned int *);\n};\n\nvoid mad_decoder_init(struct mad_decoder *, void *,\n\t\t      enum mad_flow (*)(void *, struct mad_stream *),\n\t\t      enum mad_flow (*)(void *, struct mad_header const *),\n\t\t      enum mad_flow (*)(void *,\n\t\t\t\t\tstruct mad_stream const *,\n\t\t\t\t\tstruct mad_frame *),\n\t\t      enum mad_flow (*)(void *,\n\t\t\t\t\tstruct mad_header const *,\n\t\t\t\t\tstruct mad_pcm *),\n\t\t      enum mad_flow (*)(void *,\n\t\t\t\t\tstruct mad_stream *,\n\t\t\t\t\tstruct mad_frame *),\n\t\t      enum mad_flow (*)(void *, void *, unsigned int *));\nint mad_decoder_finish(struct mad_decoder *);\n\n# define mad_decoder_options(decoder, opts)  \\\n    ((void) ((decoder)->options = (opts)))\n\nint mad_decoder_run(struct mad_decoder *, enum mad_decoder_mode);\nint mad_decoder_message(struct mad_decoder *, void *, unsigned int *);\n\n# endif\n\n# ifdef __cplusplus\n}\n# endif\nEOF\n";
 		};
 		AA3AE504097B687C00575EA1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2475,24 +2278,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AAA3730B090994F500141131 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AAA3731D090995E500141131 /* version.c in Sources */,
-				AAA37320090995E700141131 /* timer.c in Sources */,
-				AAA37321090995E800141131 /* synth.c in Sources */,
-				AAA37324090995EA00141131 /* stream.c in Sources */,
-				AAA37326090995EB00141131 /* layer3.c in Sources */,
-				AAA37328090995EC00141131 /* layer12.c in Sources */,
-				AAA3732A090995ED00141131 /* huffman.c in Sources */,
-				AAA3732D090995EF00141131 /* frame.c in Sources */,
-				AAA3732F090995F000141131 /* fixed.c in Sources */,
-				AAA37331090995F200141131 /* decoder.c in Sources */,
-				AAA37333090995F300141131 /* bit.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -2535,11 +2320,6 @@
 			isa = PBXTargetDependency;
 			target = AAA06EDD0CE4F465005A3060 /* ffmpeg */;
 			targetProxy = AAA0705E0CE511C1005A3060 /* PBXContainerItemProxy */;
-		};
-		AAA373B00909996E00141131 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = AAA3730D090994F500141131 /* mad */;
-			targetProxy = AAA373AF0909996E00141131 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2677,40 +2457,6 @@
 			};
 			name = .;
 		};
-		AAA37317090994F600141131 /* . */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
-				GCC_USE_GCC3_PFE_SUPPORT = YES;
-				INFOPLIST_FILE = "mad-Info.plist";
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				LIBRARY_STYLE = DYNAMIC;
-				MACH_O_TYPE = mh_dylib;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-seg1addr",
-					0x30400000,
-				);
-				PRODUCT_NAME = mad;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-			};
-			name = .;
-		};
 		AACCAC02086B140B00876352 /* . */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2814,14 +2560,6 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAA06EDF0CE4F467005A3060 /* . */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = .;
-		};
-		AAA37316090994F600141131 /* Build configuration list for PBXNativeTarget "mad" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AAA37317090994F600141131 /* . */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
