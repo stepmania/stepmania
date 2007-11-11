@@ -1338,7 +1338,6 @@
 		AA60E0C1067992D7008ADC41 /* Threads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BC067992D7008ADC41 /* Threads.h */; };
 		AA60E0C2067992D7008ADC41 /* Threads_Pthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */; };
 		AA60E0C3067992D7008ADC41 /* Threads_Pthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */; };
-		AA61665F097CB1770007E532 /* mad.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = AABAAE95097A82C1009D1ED3 /* mad.framework */; };
 		AA64218806EC606F00C21584 /* RageFileDriverMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA64218606EC606F00C21584 /* RageFileDriverMemory.cpp */; };
 		AA64218906EC606F00C21584 /* RageFileDriverMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = AA64218706EC606F00C21584 /* RageFileDriverMemory.h */; };
 		AA65877B098C322800CE55CC /* ScreenUnlockStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA658779098C322800CE55CC /* ScreenUnlockStatus.cpp */; };
@@ -1750,6 +1749,55 @@
 		AA9EC2F3055F5126007E5098 /* RageTextureID.h in Headers */ = {isa = PBXBuildFile; fileRef = AA9EC2F1055F5126007E5098 /* RageTextureID.h */; };
 		AAA0704E0CE5082E005A3060 /* libffmpeg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA0704D0CE5082D005A3060 /* libffmpeg_link.a */; };
 		AAA0704F0CE5082E005A3060 /* libffmpeg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA0704D0CE5082D005A3060 /* libffmpeg_link.a */; };
+		AAA0713D0CE7B3BB005A3060 /* bit.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070B40CE7B3AD005A3060 /* bit.c */; };
+		AAA0713E0CE7B3BB005A3060 /* bit.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070B50CE7B3AD005A3060 /* bit.h */; };
+		AAA071490CE7B3BB005A3060 /* decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070C00CE7B3AD005A3060 /* decoder.c */; };
+		AAA0714A0CE7B3BB005A3060 /* decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070C10CE7B3AD005A3060 /* decoder.h */; };
+		AAA0714C0CE7B3BB005A3060 /* fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070C30CE7B3AD005A3060 /* fixed.c */; };
+		AAA0714D0CE7B3BB005A3060 /* fixed.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070C40CE7B3AD005A3060 /* fixed.h */; };
+		AAA0714E0CE7B3BB005A3060 /* frame.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070C50CE7B3AD005A3060 /* frame.c */; };
+		AAA0714F0CE7B3BB005A3060 /* frame.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070C60CE7B3AD005A3060 /* frame.h */; };
+		AAA071500CE7B3BB005A3060 /* global.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070C70CE7B3AD005A3060 /* global.h */; };
+		AAA071510CE7B3BB005A3060 /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070C80CE7B3AD005A3060 /* huffman.c */; };
+		AAA071520CE7B3BB005A3060 /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070C90CE7B3AD005A3060 /* huffman.h */; };
+		AAA071570CE7B3BB005A3060 /* layer12.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070CE0CE7B3AD005A3060 /* layer12.c */; };
+		AAA071580CE7B3BB005A3060 /* layer12.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070CF0CE7B3AD005A3060 /* layer12.h */; };
+		AAA071590CE7B3BB005A3060 /* layer3.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070D00CE7B3AD005A3060 /* layer3.c */; };
+		AAA0715A0CE7B3BB005A3060 /* layer3.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070D10CE7B3AD005A3060 /* layer3.h */; };
+		AAA0715D0CE7B3BB005A3060 /* mad.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070D40CE7B3AD005A3060 /* mad.h */; };
+		AAA0716F0CE7B3BB005A3060 /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070E80CE7B3AD005A3060 /* stream.c */; };
+		AAA071700CE7B3BB005A3060 /* stream.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070E90CE7B3AD005A3060 /* stream.h */; };
+		AAA071710CE7B3BB005A3060 /* synth.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070EA0CE7B3AD005A3060 /* synth.c */; };
+		AAA071720CE7B3BB005A3060 /* synth.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070EB0CE7B3AD005A3060 /* synth.h */; };
+		AAA071730CE7B3BB005A3060 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070EC0CE7B3AD005A3060 /* timer.c */; };
+		AAA071740CE7B3BB005A3060 /* timer.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070ED0CE7B3AD005A3060 /* timer.h */; };
+		AAA071770CE7B3BB005A3060 /* version.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070F00CE7B3AE005A3060 /* version.c */; };
+		AAA071780CE7B3BB005A3060 /* version.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070F10CE7B3AE005A3060 /* version.h */; };
+		AAA0717F0CE7B4FB005A3060 /* version.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070F10CE7B3AE005A3060 /* version.h */; };
+		AAA071800CE7B4FB005A3060 /* version.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070F00CE7B3AE005A3060 /* version.c */; };
+		AAA071810CE7B4FC005A3060 /* timer.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070ED0CE7B3AD005A3060 /* timer.h */; };
+		AAA071820CE7B4FD005A3060 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070EC0CE7B3AD005A3060 /* timer.c */; };
+		AAA071830CE7B4FE005A3060 /* synth.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070EB0CE7B3AD005A3060 /* synth.h */; };
+		AAA071840CE7B4FE005A3060 /* synth.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070EA0CE7B3AD005A3060 /* synth.c */; };
+		AAA071850CE7B4FF005A3060 /* stream.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070E90CE7B3AD005A3060 /* stream.h */; };
+		AAA071860CE7B501005A3060 /* stream.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070E80CE7B3AD005A3060 /* stream.c */; };
+		AAA071870CE7B502005A3060 /* mad.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070D40CE7B3AD005A3060 /* mad.h */; };
+		AAA071880CE7B502005A3060 /* layer3.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070D10CE7B3AD005A3060 /* layer3.h */; };
+		AAA071890CE7B503005A3060 /* layer3.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070D00CE7B3AD005A3060 /* layer3.c */; };
+		AAA0718A0CE7B503005A3060 /* layer12.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070CF0CE7B3AD005A3060 /* layer12.h */; };
+		AAA0718B0CE7B505005A3060 /* layer12.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070CE0CE7B3AD005A3060 /* layer12.c */; };
+		AAA0718C0CE7B505005A3060 /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070C90CE7B3AD005A3060 /* huffman.h */; };
+		AAA0718D0CE7B506005A3060 /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070C80CE7B3AD005A3060 /* huffman.c */; };
+		AAA0718E0CE7B508005A3060 /* global.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070C70CE7B3AD005A3060 /* global.h */; };
+		AAA0718F0CE7B508005A3060 /* frame.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070C60CE7B3AD005A3060 /* frame.h */; };
+		AAA071900CE7B509005A3060 /* frame.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070C50CE7B3AD005A3060 /* frame.c */; };
+		AAA071910CE7B509005A3060 /* fixed.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070C40CE7B3AD005A3060 /* fixed.h */; };
+		AAA071920CE7B50A005A3060 /* fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070C30CE7B3AD005A3060 /* fixed.c */; };
+		AAA071930CE7B50B005A3060 /* decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070C10CE7B3AD005A3060 /* decoder.h */; };
+		AAA071940CE7B50B005A3060 /* decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070C00CE7B3AD005A3060 /* decoder.c */; };
+		AAA071950CE7B50C005A3060 /* bit.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA070B50CE7B3AD005A3060 /* bit.h */; };
+		AAA071960CE7B50D005A3060 /* bit.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA070B40CE7B3AD005A3060 /* bit.c */; };
+		AAA071B40CE7C9C9005A3060 /* libmad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA070A90CE7B0DF005A3060 /* libmad.a */; };
 		AAA372D40909934500141131 /* MovieTexture_Generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D00909934500141131 /* MovieTexture_Generic.cpp */; };
 		AAA372D50909934500141131 /* MovieTexture_Generic.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA372D10909934500141131 /* MovieTexture_Generic.h */; };
 		AAA372D60909934500141131 /* MovieTexture_Theora.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D20909934500141131 /* MovieTexture_Theora.cpp */; };
@@ -1818,7 +1866,6 @@
 		AAB9C8B206EAF64400AD97CD /* RageSurfaceUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB9C8AE06EAF64400AD97CD /* RageSurfaceUtils.h */; };
 		AAB9C8B506EAF66C00AD97CD /* ScreenNetEvaluation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB9C8B306EAF66C00AD97CD /* ScreenNetEvaluation.cpp */; };
 		AAB9C8B606EAF66C00AD97CD /* ScreenNetEvaluation.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB9C8B406EAF66C00AD97CD /* ScreenNetEvaluation.h */; };
-		AABAAE96097A82C1009D1ED3 /* mad.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AABAAE95097A82C1009D1ED3 /* mad.framework */; };
 		AABBD80805D8E9FC00B44FC2 /* HighScore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABBD80605D8E9FC00B44FC2 /* HighScore.cpp */; };
 		AABBD80905D8E9FC00B44FC2 /* HighScore.h in Headers */ = {isa = PBXBuildFile; fileRef = AABBD80705D8E9FC00B44FC2 /* HighScore.h */; };
 		AABBF6760659E78D00738526 /* RageSurface_Load_GIF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABBF66C0659E78D00738526 /* RageSurface_Load_GIF.cpp */; };
@@ -2134,6 +2181,13 @@
 			remoteGlobalIDString = AA7C8B8A0B67460600FD9940;
 			remoteInfo = tomcrypt;
 		};
+		AAA071A90CE7B879005A3060 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AAA070A80CE7B0DF005A3060 /* mad */;
+			remoteInfo = mad;
+		};
 		AAE781FD0AC7E61900AEFC64 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -2166,7 +2220,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				AA61665F097CB1770007E532 /* mad.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3045,6 +3098,31 @@
 		AA9EC2F0055F5126007E5098 /* RageTextureID.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageTextureID.cpp; path = ../src/RageTextureID.cpp; sourceTree = "<group>"; };
 		AA9EC2F1055F5126007E5098 /* RageTextureID.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageTextureID.h; path = ../src/RageTextureID.h; sourceTree = "<group>"; };
 		AAA0704D0CE5082D005A3060 /* libffmpeg_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libffmpeg_link.a; sourceTree = "<group>"; };
+		AAA070A90CE7B0DF005A3060 /* libmad.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmad.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		AAA070B40CE7B3AD005A3060 /* bit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bit.c; sourceTree = "<group>"; };
+		AAA070B50CE7B3AD005A3060 /* bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bit.h; sourceTree = "<group>"; };
+		AAA070C00CE7B3AD005A3060 /* decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decoder.c; sourceTree = "<group>"; };
+		AAA070C10CE7B3AD005A3060 /* decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decoder.h; sourceTree = "<group>"; };
+		AAA070C30CE7B3AD005A3060 /* fixed.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fixed.c; sourceTree = "<group>"; };
+		AAA070C40CE7B3AD005A3060 /* fixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixed.h; sourceTree = "<group>"; };
+		AAA070C50CE7B3AD005A3060 /* frame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = frame.c; sourceTree = "<group>"; };
+		AAA070C60CE7B3AD005A3060 /* frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = frame.h; sourceTree = "<group>"; };
+		AAA070C70CE7B3AD005A3060 /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global.h; sourceTree = "<group>"; };
+		AAA070C80CE7B3AD005A3060 /* huffman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = huffman.c; sourceTree = "<group>"; };
+		AAA070C90CE7B3AD005A3060 /* huffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = huffman.h; sourceTree = "<group>"; };
+		AAA070CE0CE7B3AD005A3060 /* layer12.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = layer12.c; sourceTree = "<group>"; };
+		AAA070CF0CE7B3AD005A3060 /* layer12.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = layer12.h; sourceTree = "<group>"; };
+		AAA070D00CE7B3AD005A3060 /* layer3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = layer3.c; sourceTree = "<group>"; };
+		AAA070D10CE7B3AD005A3060 /* layer3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = layer3.h; sourceTree = "<group>"; };
+		AAA070D40CE7B3AD005A3060 /* mad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mad.h; sourceTree = "<group>"; };
+		AAA070E80CE7B3AD005A3060 /* stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stream.c; sourceTree = "<group>"; };
+		AAA070E90CE7B3AD005A3060 /* stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stream.h; sourceTree = "<group>"; };
+		AAA070EA0CE7B3AD005A3060 /* synth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = synth.c; sourceTree = "<group>"; };
+		AAA070EB0CE7B3AD005A3060 /* synth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synth.h; sourceTree = "<group>"; };
+		AAA070EC0CE7B3AD005A3060 /* timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timer.c; sourceTree = "<group>"; };
+		AAA070ED0CE7B3AD005A3060 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
+		AAA070F00CE7B3AE005A3060 /* version.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = version.c; sourceTree = "<group>"; };
+		AAA070F10CE7B3AE005A3060 /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 		AAA0F7CE047AC7BF005F316C /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		AAA0F7D0047AC7EA005F316C /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		AAA0F7D2047ACBC9005F316C /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
@@ -3114,7 +3192,6 @@
 		AAB9C8AE06EAF64400AD97CD /* RageSurfaceUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSurfaceUtils.h; path = ../src/RageSurfaceUtils.h; sourceTree = "<group>"; };
 		AAB9C8B306EAF66C00AD97CD /* ScreenNetEvaluation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenNetEvaluation.cpp; path = ../src/ScreenNetEvaluation.cpp; sourceTree = "<group>"; };
 		AAB9C8B406EAF66C00AD97CD /* ScreenNetEvaluation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenNetEvaluation.h; path = ../src/ScreenNetEvaluation.h; sourceTree = "<group>"; };
-		AABAAE95097A82C1009D1ED3 /* mad.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = mad.framework; path = Frameworks/mad.framework; sourceTree = "<group>"; };
 		AABBD80605D8E9FC00B44FC2 /* HighScore.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = HighScore.cpp; path = ../src/HighScore.cpp; sourceTree = "<group>"; };
 		AABBD80705D8E9FC00B44FC2 /* HighScore.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = HighScore.h; path = ../src/HighScore.h; sourceTree = "<group>"; };
 		AABBF66C0659E78D00738526 /* RageSurface_Load_GIF.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSurface_Load_GIF.cpp; path = ../src/RageSurface_Load_GIF.cpp; sourceTree = "<group>"; };
@@ -3398,7 +3475,6 @@
 				AA230EB106043704002672F3 /* AudioUnit.framework in Frameworks */,
 				AAA8E0030696984300FCE1F9 /* CoreAudio.framework in Frameworks */,
 				AA77E8B108B6ABD500FA24CA /* vecLib.framework in Frameworks */,
-				AABAAE96097A82C1009D1ED3 /* mad.framework in Frameworks */,
 				AA21E4790A9826CD00684CEA /* libjpeg_link.a in Frameworks */,
 				AA21E47B0A9826CD00684CEA /* libogg_link.a in Frameworks */,
 				AA21E47C0A9826CD00684CEA /* libpng_link.a in Frameworks */,
@@ -3409,6 +3485,7 @@
 				AA7C8D1F0B6748E300FD9940 /* libtommath.a in Frameworks */,
 				AA059E2C0B8F0C67006F8139 /* libz_link.a in Frameworks */,
 				AAA0704E0CE5082E005A3060 /* libffmpeg_link.a in Frameworks */,
+				AAA071B40CE7C9C9005A3060 /* libmad.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3469,6 +3546,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AAA070A70CE7B0DF005A3060 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AAE7817C0AC7E37B00AEFC64 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3490,7 +3574,6 @@
 				AAF33F2A04FF213100F93C24 /* CoreFoundation.framework */,
 				AA230ECF06043EFD002672F3 /* CoreServices.framework */,
 				AAA0F7D0047AC7EA005F316C /* IOKit.framework */,
-				AABAAE95097A82C1009D1ED3 /* mad.framework */,
 				AA8DD84904A2E51400D02EE9 /* OpenGL.framework */,
 				AAA0F7D2047ACBC9005F316C /* QuickTime.framework */,
 				AA77E8A108B6ABD500FA24CA /* vecLib.framework */,
@@ -3517,6 +3600,7 @@
 				AA7A2BAB0AE09CD50054C5BA /* luac */,
 				AA7C895F0B67444700FD9940 /* libtommath.a */,
 				AA7C8B8B0B67460600FD9940 /* libtomcrypt.a */,
+				AAA070A90CE7B0DF005A3060 /* libmad.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3524,6 +3608,7 @@
 		29B97314FDCFA39411CA2CEA /* SDL App */ = {
 			isa = PBXGroup;
 			children = (
+				AAA070B20CE7B3AD005A3060 /* mad-0.15.1b */,
 				AA7C8B920B67467C00FD9940 /* libtomcrypt */,
 				AA7C8A7F0B6744F600FD9940 /* libtommath */,
 				AAE781870AC7E46E00AEFC64 /* lua-5.1 */,
@@ -5096,6 +5181,38 @@
 			path = ../src/pcre;
 			sourceTree = "<group>";
 		};
+		AAA070B20CE7B3AD005A3060 /* mad-0.15.1b */ = {
+			isa = PBXGroup;
+			children = (
+				AAA070B40CE7B3AD005A3060 /* bit.c */,
+				AAA070B50CE7B3AD005A3060 /* bit.h */,
+				AAA070C00CE7B3AD005A3060 /* decoder.c */,
+				AAA070C10CE7B3AD005A3060 /* decoder.h */,
+				AAA070C30CE7B3AD005A3060 /* fixed.c */,
+				AAA070C40CE7B3AD005A3060 /* fixed.h */,
+				AAA070C50CE7B3AD005A3060 /* frame.c */,
+				AAA070C60CE7B3AD005A3060 /* frame.h */,
+				AAA070C70CE7B3AD005A3060 /* global.h */,
+				AAA070C80CE7B3AD005A3060 /* huffman.c */,
+				AAA070C90CE7B3AD005A3060 /* huffman.h */,
+				AAA070CE0CE7B3AD005A3060 /* layer12.c */,
+				AAA070CF0CE7B3AD005A3060 /* layer12.h */,
+				AAA070D00CE7B3AD005A3060 /* layer3.c */,
+				AAA070D10CE7B3AD005A3060 /* layer3.h */,
+				AAA070D40CE7B3AD005A3060 /* mad.h */,
+				AAA070E80CE7B3AD005A3060 /* stream.c */,
+				AAA070E90CE7B3AD005A3060 /* stream.h */,
+				AAA070EA0CE7B3AD005A3060 /* synth.c */,
+				AAA070EB0CE7B3AD005A3060 /* synth.h */,
+				AAA070EC0CE7B3AD005A3060 /* timer.c */,
+				AAA070ED0CE7B3AD005A3060 /* timer.h */,
+				AAA070F00CE7B3AE005A3060 /* version.c */,
+				AAA070F10CE7B3AE005A3060 /* version.h */,
+			);
+			name = "mad-0.15.1b";
+			path = "../src/mad-0.15.1b";
+			sourceTree = "<group>";
+		};
 		AAA3741C09099ADA00141131 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -6118,6 +6235,19 @@
 				AAB3B7DF0C6C582E001BF487 /* ScreenSelectProfile.h in Headers */,
 				AAB3BB5C0C718F2D001BF487 /* RageUtil_CachedObject.h in Headers */,
 				AAA7D4CC0C7E872600FB8F78 /* ScreenOptionsToggleSongs.h in Headers */,
+				AAA0713E0CE7B3BB005A3060 /* bit.h in Headers */,
+				AAA0714A0CE7B3BB005A3060 /* decoder.h in Headers */,
+				AAA0714D0CE7B3BB005A3060 /* fixed.h in Headers */,
+				AAA0714F0CE7B3BB005A3060 /* frame.h in Headers */,
+				AAA071500CE7B3BB005A3060 /* global.h in Headers */,
+				AAA071520CE7B3BB005A3060 /* huffman.h in Headers */,
+				AAA071580CE7B3BB005A3060 /* layer12.h in Headers */,
+				AAA0715A0CE7B3BB005A3060 /* layer3.h in Headers */,
+				AAA0715D0CE7B3BB005A3060 /* mad.h in Headers */,
+				AAA071700CE7B3BB005A3060 /* stream.h in Headers */,
+				AAA071720CE7B3BB005A3060 /* synth.h in Headers */,
+				AAA071740CE7B3BB005A3060 /* timer.h in Headers */,
+				AAA071780CE7B3BB005A3060 /* version.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6148,6 +6278,26 @@
 				AA7C8C650B67467D00FD9940 /* tomcrypt_pk.h in Headers */,
 				AA7C8C660B67467D00FD9940 /* tomcrypt_pkcs.h in Headers */,
 				AA7C8C670B67467D00FD9940 /* tomcrypt_prng.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AAA070A50CE7B0DF005A3060 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AAA0717F0CE7B4FB005A3060 /* version.h in Headers */,
+				AAA071810CE7B4FC005A3060 /* timer.h in Headers */,
+				AAA071830CE7B4FE005A3060 /* synth.h in Headers */,
+				AAA071850CE7B4FF005A3060 /* stream.h in Headers */,
+				AAA071870CE7B502005A3060 /* mad.h in Headers */,
+				AAA071880CE7B502005A3060 /* layer3.h in Headers */,
+				AAA0718A0CE7B503005A3060 /* layer12.h in Headers */,
+				AAA0718C0CE7B505005A3060 /* huffman.h in Headers */,
+				AAA0718E0CE7B508005A3060 /* global.h in Headers */,
+				AAA0718F0CE7B508005A3060 /* frame.h in Headers */,
+				AAA071910CE7B509005A3060 /* fixed.h in Headers */,
+				AAA071930CE7B50B005A3060 /* decoder.h in Headers */,
+				AAA071950CE7B50C005A3060 /* bit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6218,6 +6368,7 @@
 				AAE781FE0AC7E61900AEFC64 /* PBXTargetDependency */,
 				AA7C8D180B6748B800FD9940 /* PBXTargetDependency */,
 				AA7C8D160B6748B800FD9940 /* PBXTargetDependency */,
+				AAA071AA0CE7B879005A3060 /* PBXTargetDependency */,
 				AA30C61A07F5E2EF0066F398 /* PBXTargetDependency */,
 			);
 			name = stepmania;
@@ -6321,6 +6472,23 @@
 			productReference = AA7C8B8B0B67460600FD9940 /* libtomcrypt.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		AAA070A80CE7B0DF005A3060 /* mad */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AAA070AE0CE7B138005A3060 /* Build configuration list for PBXNativeTarget "mad" */;
+			buildPhases = (
+				AAA070A50CE7B0DF005A3060 /* Headers */,
+				AAA070A60CE7B0DF005A3060 /* Sources */,
+				AAA070A70CE7B0DF005A3060 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mad;
+			productName = mad;
+			productReference = AAA070A90CE7B0DF005A3060 /* libmad.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AAE7817F0AC7E3BF00AEFC64 /* Build configuration list for PBXNativeTarget "lua-5.1" */;
@@ -6371,6 +6539,7 @@
 				AA7A2BB30AE09D0F0054C5BA /* all lua */,
 				AA7C895E0B67444700FD9940 /* tommath */,
 				AA7C8B8A0B67460600FD9940 /* tomcrypt */,
+				AAA070A80CE7B0DF005A3060 /* mad */,
 			);
 		};
 /* End PBXProject section */
@@ -7325,6 +7494,17 @@
 				AAB3B7DE0C6C582E001BF487 /* ScreenSelectProfile.cpp in Sources */,
 				AAB3BB5B0C718F2D001BF487 /* RageUtil_CachedObject.cpp in Sources */,
 				AAA7D4CB0C7E872600FB8F78 /* ScreenOptionsToggleSongs.cpp in Sources */,
+				AAA0713D0CE7B3BB005A3060 /* bit.c in Sources */,
+				AAA071490CE7B3BB005A3060 /* decoder.c in Sources */,
+				AAA0714C0CE7B3BB005A3060 /* fixed.c in Sources */,
+				AAA0714E0CE7B3BB005A3060 /* frame.c in Sources */,
+				AAA071510CE7B3BB005A3060 /* huffman.c in Sources */,
+				AAA071570CE7B3BB005A3060 /* layer12.c in Sources */,
+				AAA071590CE7B3BB005A3060 /* layer3.c in Sources */,
+				AAA0716F0CE7B3BB005A3060 /* stream.c in Sources */,
+				AAA071710CE7B3BB005A3060 /* synth.c in Sources */,
+				AAA071730CE7B3BB005A3060 /* timer.c in Sources */,
+				AAA071770CE7B3BB005A3060 /* version.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7621,6 +7801,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AAA070A60CE7B0DF005A3060 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AAA071800CE7B4FB005A3060 /* version.c in Sources */,
+				AAA071820CE7B4FD005A3060 /* timer.c in Sources */,
+				AAA071840CE7B4FE005A3060 /* synth.c in Sources */,
+				AAA071860CE7B501005A3060 /* stream.c in Sources */,
+				AAA071890CE7B503005A3060 /* layer3.c in Sources */,
+				AAA0718B0CE7B505005A3060 /* layer12.c in Sources */,
+				AAA0718D0CE7B506005A3060 /* huffman.c in Sources */,
+				AAA071900CE7B509005A3060 /* frame.c in Sources */,
+				AAA071920CE7B50A005A3060 /* fixed.c in Sources */,
+				AAA071940CE7B50B005A3060 /* decoder.c in Sources */,
+				AAA071960CE7B50D005A3060 /* bit.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AAE7817B0AC7E37B00AEFC64 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7710,6 +7908,11 @@
 			target = AA7C8B8A0B67460600FD9940 /* tomcrypt */;
 			targetProxy = AA7C8D1D0B6748CD00FD9940 /* PBXContainerItemProxy */;
 		};
+		AAA071AA0CE7B879005A3060 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AAA070A80CE7B0DF005A3060 /* mad */;
+			targetProxy = AAA071A90CE7B879005A3060 /* PBXContainerItemProxy */;
+		};
 		AAE781FE0AC7E61900AEFC64 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */;
@@ -7770,11 +7973,6 @@
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
 				GCC_ENABLE_SSE3_EXTENSIONS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -7782,21 +7980,19 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
-					"$(SRCROOT)/Frameworks/mad.framework/Headers",
+					"$(SRCROOT)/../src/ffmpeg/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
 					"$(SRCROOT)/../src/libpng/include",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
 				);
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
 				INFOPLIST_PREPROCESS = YES;
 				INFOPLIST_PREPROCESSOR_DEFINITIONS = "EXECUTABLE_NAME=\"$(PRODUCT_NAME)\"";
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"$(SRCROOT)/Libraries",
+					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -7902,6 +8098,7 @@
 					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -7949,6 +8146,7 @@
 					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -7998,6 +8196,7 @@
 					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -8220,6 +8419,129 @@
 			};
 			name = Debug;
 		};
+		AAA070AA0CE7B0E2005A3060 /* Native */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				FPM = "";
+				"FPM[arch=i386]" = FPM_INTEL;
+				"FPM[arch=ppc]" = FPM_PPC;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HAVE_ASSERT_H=1",
+					"HAVE_DLFCN_H=1",
+					"HAVE_ERRNO_H=1",
+					"HAVE_FORK=1",
+					"HAVE_INTTYPES_H=1",
+					"HAVE_LIMITS_H=1",
+					"HAVE_MEMORY_H=1",
+					"HAVE_WAITPID=1",
+					"SIZEOF_LONG=4",
+					"$(FPM)",
+				);
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = mad;
+			};
+			name = Native;
+		};
+		AAA070AB0CE7B0E2005A3060 /* PerformanceDebug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				FPM = "";
+				"FPM[arch=i386]" = FPM_INTEL;
+				"FPM[arch=ppc]" = FPM_PPC;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HAVE_ASSERT_H=1",
+					"HAVE_DLFCN_H=1",
+					"HAVE_ERRNO_H=1",
+					"HAVE_FORK=1",
+					"HAVE_INTTYPES_H=1",
+					"HAVE_LIMITS_H=1",
+					"HAVE_MEMORY_H=1",
+					"HAVE_WAITPID=1",
+					"SIZEOF_LONG=4",
+					"$(FPM)",
+				);
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = mad;
+			};
+			name = PerformanceDebug;
+		};
+		AAA070AC0CE7B0E2005A3060 /* Universal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				FPM = "";
+				"FPM[arch=i386]" = FPM_INTEL;
+				"FPM[arch=ppc]" = FPM_PPC;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HAVE_ASSERT_H=1",
+					"HAVE_DLFCN_H=1",
+					"HAVE_ERRNO_H=1",
+					"HAVE_FORK=1",
+					"HAVE_INTTYPES_H=1",
+					"HAVE_LIMITS_H=1",
+					"HAVE_MEMORY_H=1",
+					"HAVE_WAITPID=1",
+					"SIZEOF_LONG=4",
+					"$(FPM)",
+				);
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = mad;
+			};
+			name = Universal;
+		};
+		AAA070AD0CE7B0E2005A3060 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				COPY_PHASE_STRIP = NO;
+				FPM = "";
+				"FPM[arch=i386]" = FPM_INTEL;
+				"FPM[arch=ppc]" = FPM_PPC;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HAVE_ASSERT_H=1",
+					"HAVE_DLFCN_H=1",
+					"HAVE_ERRNO_H=1",
+					"HAVE_FORK=1",
+					"HAVE_INTTYPES_H=1",
+					"HAVE_LIMITS_H=1",
+					"HAVE_MEMORY_H=1",
+					"HAVE_WAITPID=1",
+					"SIZEOF_LONG=4",
+					"$(FPM)",
+				);
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../src/mad-0.15.1b";
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = mad;
+			};
+			name = Debug;
+		};
 		AABF4DBA0CD37960005A3060 /* PerformanceDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8280,11 +8602,6 @@
 			buildSettings = {
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
 				GCC_ENABLE_SSE3_EXTENSIONS = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -8292,21 +8609,19 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
-					"$(SRCROOT)/Frameworks/mad.framework/Headers",
+					"$(SRCROOT)/../src/ffmpeg/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
 					"$(SRCROOT)/../src/libpng/include",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
 				);
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
 				INFOPLIST_PREPROCESS = YES;
 				INFOPLIST_PREPROCESSOR_DEFINITIONS = "EXECUTABLE_NAME=\"$(PRODUCT_NAME)\"";
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"$(SRCROOT)/Libraries",
+					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -8383,6 +8698,7 @@
 					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				OBJROOT = "$(SRCROOT)/build";
@@ -8516,32 +8832,25 @@
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
 				GCC_ENABLE_SSE3_EXTENSIONS = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
-					"$(SRCROOT)/Frameworks/mad.framework/Headers",
+					"$(SRCROOT)/../src/ffmpeg/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
 					"$(SRCROOT)/../src/libpng/include",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
 				);
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
 				INFOPLIST_PREPROCESS = YES;
 				INFOPLIST_PREPROCESSOR_DEFINITIONS = "EXECUTABLE_NAME=\"$(PRODUCT_NAME)\"";
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"$(SRCROOT)/Libraries",
+					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -8644,31 +8953,24 @@
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
 				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
 					"$(SRCROOT)/../src/ffmpeg/include",
-					"$(SRCROOT)/Frameworks/mad.framework/Headers",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
 					"$(SRCROOT)/../src/libpng/include",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
 				);
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
 				INFOPLIST_PREPROCESS = YES;
 				INFOPLIST_PREPROCESSOR_DEFINITIONS = "EXECUTABLE_NAME=\"$(PRODUCT_NAME)\"";
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/Libraries",
 					"$(SRCROOT)/build/$(CONFIGURATION)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"$(SRCROOT)/Libraries",
+					"\"$(SRCROOT)/../src/mad-0.15.1b/msvc++/Release\"",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build\"";
 				LINKER_DISPLAYS_MANGLED_NAMES = NO;
@@ -8869,6 +9171,17 @@
 				AABF4DC30CD37960005A3060 /* PerformanceDebug */,
 				AA7C8B900B67464300FD9940 /* Universal */,
 				AA7C8B910B67464300FD9940 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Native;
+		};
+		AAA070AE0CE7B138005A3060 /* Build configuration list for PBXNativeTarget "mad" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAA070AA0CE7B0E2005A3060 /* Native */,
+				AAA070AB0CE7B0E2005A3060 /* PerformanceDebug */,
+				AAA070AC0CE7B0E2005A3060 /* Universal */,
+				AAA070AD0CE7B0E2005A3060 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Native;
