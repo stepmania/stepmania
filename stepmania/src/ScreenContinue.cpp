@@ -15,14 +15,24 @@ void ScreenContinue::BeginScreen()
 {
 	GAMESTATE->SetCurrentStyle( NULL );
 
-	// unjoin all players with 0 stages left
-	FOREACH_HumanPlayer( p )
+	// Unjoin human players with 0 stages left and reset non-human players.
+	// We need to reset non-human players because data in non-human (CPU) 
+	// players will be filled, and there may be stale pointers to things like
+	// edit Steps.
+	FOREACH_ENUM( PlayerNumber, p )
 	{
-		bool bPlayerDone = GAMESTATE->m_iPlayerStageTokens[p] <= 0;
-		if( bPlayerDone )
+		if( GAMESTATE->IsHumanPlayer(p) )
 		{
-			GAMESTATE->UnjoinPlayer( p );
-			MEMCARDMAN->UnlockCard( p );
+			bool bPlayerDone = GAMESTATE->m_iPlayerStageTokens[p] <= 0;
+			if( bPlayerDone )
+			{
+				GAMESTATE->UnjoinPlayer( p );
+				MEMCARDMAN->UnlockCard( p );
+			}
+		}
+		else
+		{
+			GAMESTATE->ResetPlayer( p );
 		}
 	}
 
