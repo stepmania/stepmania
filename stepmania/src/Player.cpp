@@ -2409,16 +2409,6 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				if( tn.type != TapNote::hold_head )
 					continue;
 
-				switch( tn.subType )
-				{
-				DEFAULT_FAIL( tn.subType );
-				case TapNote::hold_head_hold:
-					break;
-				case TapNote::hold_head_roll:
-					// checkpoints don't apply to rolls
-					continue;
-				}
-
 				int iStartRow = iter.Row();
 				int iEndRow = iStartRow + tn.iDuration;
 				int iTrack = iter.Track();
