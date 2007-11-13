@@ -1001,7 +1001,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			bLetGoOfHoldNote = iCheckpointsMissed > 0;
 		}
 		else
+		{
 			bLetGoOfHoldNote = fLife == 0;
+		}
 
 		if( bInitiatedNote  &&  !bLetGoOfHoldNote )
 		{
@@ -1549,6 +1551,16 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			TapNote &tn = begin->second;
 			if( tn.type != TapNote::hold_head )
 				continue;
+
+			switch( tn.subType )
+			{
+			DEFAULT_FAIL( tn.subType );
+			case TapNote::hold_head_hold:
+				continue;
+			case TapNote::hold_head_roll:
+				break;
+			}
+
 			const int iRow = begin->first;
 
 			HoldNoteScore hns = tn.HoldResult.hns;
@@ -1575,39 +1587,30 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			// If the song beat is in the range of this hold:
 			if( iRow <= iSongRow && iRow <= iEndRow )
 			{
-				switch( tn.subType )
+				if( bInitiatedNote )
 				{
-				case TapNote::hold_head_hold:
-					// this is handled in Update
-					break;
-				case TapNote::hold_head_roll:
-					if( bInitiatedNote )
+					// Increase life
+					tn.HoldResult.fLife = 1;
+
+					// increment combo
+					const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+					const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+
+					if( m_pPlayerStageStats )
 					{
-						// Increase life
-						tn.HoldResult.fLife = 1;
-
-						// increment combo
-						const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-						const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
-
-						if( m_pPlayerStageStats )
-						{
-							m_pPlayerStageStats->m_iCurCombo++;
-							m_pPlayerStageStats->m_iCurMissCombo = 0;
-						}
-
-						SendComboMessages( iOldCombo, iOldMissCombo );
-						if( m_pPlayerStageStats )
-							SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
-
-						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-						if( m_pNoteField )
-							m_pNoteField->DidHoldNote( col, HNS_Held, bBright );
+						m_pPlayerStageStats->m_iCurCombo++;
+						m_pPlayerStageStats->m_iCurMissCombo = 0;
 					}
-					break;
-				default:
-					ASSERT(0);
+
+					SendComboMessages( iOldCombo, iOldMissCombo );
+					if( m_pPlayerStageStats )
+						SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+
+					bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+					if( m_pNoteField )
+						m_pNoteField->DidHoldNote( col, HNS_Held, bBright );
 				}
+				break;
 			}
 		}
 	}
@@ -2405,8 +2408,16 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				TapNote &tn = *iter;
 				if( tn.type != TapNote::hold_head )
 					continue;
-				if( tn.subType != TapNote::hold_head_hold )
+
+				switch( tn.subType )
+				{
+				DEFAULT_FAIL( tn.subType );
+				case TapNote::hold_head_hold:
+					break;
+				case TapNote::hold_head_roll:
+					// checkpoints don't apply to rolls
 					continue;
+				}
 
 				int iStartRow = iter.Row();
 				int iEndRow = iStartRow + tn.iDuration;
