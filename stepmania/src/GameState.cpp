@@ -660,7 +660,7 @@ void GameState::CommitStageStats()
 {
 	if( m_bDemonstrationOrJukebox )
 		return;
-	if( GAMESTATE->m_bMultiplayer )
+	if( m_bMultiplayer )
 		return;
 
 	STATSMAN->CommitStatsToProfiles( &STATSMAN->m_CurStageStats );
