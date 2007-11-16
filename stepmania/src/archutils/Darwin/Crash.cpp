@@ -35,7 +35,7 @@ void CrashHandler::InformUserOfCrash( const RString& sPath )
 	CFStringRef sDefault = LSTRING( bundle, "File Bug Report" );
 	CFStringRef sOther = LSTRING( bundle, "Open crashinfo.txt" );
 	CFStringRef sTitle = LSTRING( bundle, PRODUCT_FAMILY " has crashed" );
-	CFStringRef sFormat = LSTRING( bundle, PRODUCT_FAMILY " hash crashed. "
+	CFStringRef sFormat = LSTRING( bundle, PRODUCT_FAMILY " has crashed. "
 				       "Debugging information has been output to\n\n%s\n\n"
 				       "Please file a bug report at\n\n%s" );
 	CFStringRef sBody = CFStringCreateWithFormat( kCFAllocatorDefault, NULL, sFormat,
