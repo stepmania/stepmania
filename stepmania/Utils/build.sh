@@ -100,8 +100,8 @@ while [ $# -gt 0 ]; do
 	esac
 done
 revision=8448
-ffmpeg=ffmpeg-r$revision
 repository=svn://svn.mplayerhq.hu/ffmpeg/trunk/
+ffmpeg=ffmpeg-r$revision
 if [ ! -d $ffmpeg ]; then
 	message 'Downloading ffmpeg'
 	if which svn &>/dev/null; then
@@ -109,6 +109,17 @@ if [ ! -d $ffmpeg ]; then
 	else
 		failure 'Install subversion.'
 	fi
+	if which curl &>/dev/null; then
+		get='curl -O'
+	elif which wget &>/dev/null; then
+		get=wget
+	else
+		failure 'Neither curl nor wget installed.'
+	fi
+	cd $ffmpeg
+	call $get http://stepmania.sourceforge.net/ffmpeg-r8448-avi.patch
+	call 'patch -p1 < ffmpeg-r8448-avi.patch'
+	cd ..
 fi
 
 if [ -n "$s_download" ]; then exit 0; fi
