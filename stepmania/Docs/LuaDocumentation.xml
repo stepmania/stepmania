@@ -11,7 +11,7 @@
      To add a link to a function in the current class:
      <Link function='addx'>addx()</Link>
      To add a link to a function in another class:
-     <Link class='ActorFrame' function='propogate'>ActorFrame:propogate()</Link>
+     <Link class='ActorFrame' function='propagate'>ActorFrame:propagate()</Link>
      To add a link to a class:
      <Link class='ActorFrame'>ActorFrame</Link>
      To add a link to a global function:
@@ -23,57 +23,63 @@
 <Documentation xmlns='http://www.stepmania.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.stepmania.com Lua.xsd'>
 <!-- Global functions -->
 <GlobalFunctions>
-<Function name='Basename' return='string' arguments='string path'>
-	Returns the base name of file path.
-</Function>
-<Function name='DayOfMonth' return='int' arguments=''>
-	Returns the current day of the month.
-</Function>
-<Function name='DayOfYear' return='int' arguments=''>
-	Returns the current day of the year.
-</Function>
-<Function name='FormatNumberAndSuffix' return='string' arguments='int num'>
-	Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
-</Function>
-<Function name='Hour' return='int' arguments=''>
-	Returns the current hour.
-</Function>
-<Function name='IsEventMode' return='bool' arguments=''>
-	Returns <code>true</code> if Event Mode is turned on.
-</Function>
-<Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
-	Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
-</Function>
-<Function name='Minute' return='int' arguments=''>
-	Returns the current Minute.
-</Function>
-<Function name='MonthOfYear' return='int' arguments=''>
-	Returns the current month of the year.
-</Function>
-<Function name='Second' return='int' arguments=''>
-	Returns the current second.
-</Function>
-<Function name='SecondsToMSSMsMs' return='string' arguments='float fSecs'>
-	Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format.
-</Function>
-<Function name='Trace' return='void' arguments='string sString'>
-	Alias for <Link function='lua.Trace' />.
-</Function>
-<Function name='Warn' return='void' arguments='string sString'>
-	Alias for <Link function='lua.Warn' />.
-</Function>
-<Function name='lua.Trace' return='void' arguments='string sString'>
-	Writes <code>sString</code> to log.txt. Aliased by <Link function='Trace' />.
-</Function>
-<Function name='lua.Warn' return='void' arguments='string sString'>
-	Writes <code>sString</code> to info.txt and log.txt as a warning. Aliased by <Link function='Warn' />.
-</Function>
-<Function name='lua.Flush' return='void' arguments='' >
-	Flushes log files to disk.
-</Function>
-<Function name='mbstrlen' return='int' arguments='string sString'>
-	Returns the length of the multi-byte character string <code>sString</code>.
-</Function>
+	<Function name='Basename' return='string' arguments='string path'>
+		Returns the base name of file path.
+	</Function>
+	<Function name='DayOfMonth' return='int' arguments=''>
+		Returns the current day of the month.
+	</Function>
+	<Function name='DayOfYear' return='int' arguments=''>
+		Returns the current day of the year.
+	</Function>
+	<Function name='FormatNumberAndSuffix' return='string' arguments='int num'>
+		Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
+	</Function>
+	<Function name='FormatPercentScore' return='string' arguments='float fPercentDancePoints'>
+		Returns <code>fPercentDancePoints</code> formatted as a percentage.
+	</Function>
+	<Function name='GetThemeAspectRatio' return='float' arguments=''>
+		Return's the theme's aspect ratio.
+	</Function>
+	<Function name='Hour' return='int' arguments=''>
+		Returns the current hour.
+	</Function>
+	<Function name='IsEventMode' return='bool' arguments=''>
+		Returns <code>true</code> if Event Mode is turned on.
+	</Function>
+	<Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
+		Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
+	</Function>
+	<Function name='Minute' return='int' arguments=''>
+		Returns the current Minute.
+	</Function>
+	<Function name='MonthOfYear' return='int' arguments=''>
+		Returns the current month of the year.
+	</Function>
+	<Function name='Second' return='int' arguments=''>
+		Returns the current second.
+	</Function>
+	<Function name='SecondsToMSSMsMs' return='string' arguments='float fSecs'>
+		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format.
+	</Function>
+	<Function name='Trace' return='void' arguments='string sString'>
+		Alias for <Link function='lua.Trace' />.
+	</Function>
+	<Function name='Warn' return='void' arguments='string sString'>
+		Alias for <Link function='lua.Warn' />.
+	</Function>
+	<Function name='lua.Trace' return='void' arguments='string sString'>
+		Writes <code>sString</code> to log.txt. Aliased by <Link function='Trace' />.
+	</Function>
+	<Function name='lua.Warn' return='void' arguments='string sString'>
+		Writes <code>sString</code> to info.txt and log.txt as a warning. Aliased by <Link function='Warn' />.
+	</Function>
+	<Function name='lua.Flush' return='void' arguments='' >
+		Flushes log files to disk.
+	</Function>
+	<Function name='mbstrlen' return='int' arguments='string sString'>
+		Returns the length of the multi-byte character string <code>sString</code>.
+	</Function>
 </GlobalFunctions>
 
 <!-- Classes -->
@@ -118,6 +124,9 @@
 	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
 	</Function>
+	<Function name='hidden' return='void' arguments='bool b'>
+		Sets an Actor's hidden value to b. Deprecated, use <Link function='visible' /> instead.
+	</Function>
 	<Function name='horizalign' return='void' arguments='HorizAlign align'>
 		Set the horizontal alignment of the Actor according to <code>align</code>. See <Link function='halign' /> for fractional alignment.
 	</Function>
@@ -126,6 +135,9 @@
 	</Function>
 	<Function name='vertalign' return='void' arguments='VertAlign align'>
 		Set the vertical alignment of the Actor according to <code>align</code>. See <Link function="valign" /> for fractional alignment.
+	</Function>
+	<Function name='visible' return='void' arguments='bool b'>
+		Sets an Actor's visibility to b.
 	</Function>
 	<Function name='x' return='void' arguments='float xPos'>
 		Set the x position of the Actor to <code>xPos</code>.
@@ -211,6 +223,26 @@
 	</Function>
 	<Function name='wrapwidthpixels' return='void' arguments='int iWidth'>
 		Wrap the unzoomed text at <code>iWidth</code> pixels. If you <Link class='Actor' function='zoom' /> or <Link class='Actor' function='zoomx' /> by <code>x</code> and you want the text wrapped at <code>width</code>, then you should use <code>wrapwidthpixels(width/x)</code>.
+	</Function>
+</Class>
+<Class name='Course'>
+	<Function name='GetBannerPath' return='int' arguments=''>
+		Returns the path to the course's banner.
+	</Function>
+	<Function name='GetCourseType' return='CourseType' arguments=''>
+		Returns the course's <Link class='CourseType' />.
+	</Function>
+	<Function name='GetDisplayFullTitle' return='string' arguments=''>
+		Returns the full display title of the course.
+	</Function>
+	<Function name='GetGroupName' return='string' arguments=''>
+		Returns the course's group name.
+	</Function>
+	<Function name='GetTranslitFullTitle' return='string' arguments=''>
+		Returns the full transliterated title of the course.
+	</Function>
+	<Function name='IsAutogen' return='bool' arguments=''>
+		Returns <code>true</code> if the course was automatically generated.
 	</Function>
 </Class>
 <Class name='CharacterManager'>
@@ -348,9 +380,20 @@
 		Returns the number of stages left for player <code>pn</code>.
 	</Function>
 </Class>
+<Class name='LifeMeter'>
+	<Function name='IsFailing' return='bool' arguments=''>
+		Returns <code>true</code> if failing.
+	</Function>
+	<Function name='IsHot' return='bool' arguments=''>
+		Returns <code>true</code> if the LifeMeter is "hot".
+	</Function>
+	<Function name='IsInDanger' return='bool' arguments=''>
+		Returns <code>true</code> if in danger.
+	</Function>
+</Class>
 <Class name='MemoryCardManager'>
 	<Function name='GetCardState' return='MemoryCardState' arguments='PlayerNumber pn'>
-		Return the state for <code>pn</code>.
+		Return the state for player <code>pn</code>.
 	</Function>
 </Class>
 <Class name='MenuTimer'>
@@ -369,6 +412,11 @@
 		Broadcast the message to all listeners subscribed to <code>sMessage</code>. The
 		second argument is an optional table of parameters. It may be omitted or explicitly
 		set to <code>nil</code>.
+	</Function>
+</Class>
+<Class name='PlayerInfo'>
+	<Function name='GetLifeMeter' return='LifeMeter' arguments='PlayerNumber pn'>
+		Returns the <Link class='LifeMeter' /> of player <code>pn</code>.
 	</Function>
 </Class>
 <Class name='PlayerStageStats'>
@@ -548,8 +596,20 @@
 	</Function>
 </Class>
 <Class name='Steps'>
+	<Function name='GetDescription' return='string' arguments=''>
+		Returns the Steps description.
+	</Function>
+	<Function name='GetFilename' return='string' arguments=''>
+		Returns the Steps filename.
+	</Function>
+	<Function name='GetMeter' return='int' arguments=''>
+		Returns the numerical difficulty of the Steps.
+	</Function>
 	<Function name='GetRadarValues' return='RadarValues' arguments='PlayerNumber pn'>
 		Returns the complete list of RadarValues for player <code>pn</code>. Use <Link class='RadarValues' function='GetValue' /> to grab a specific value.
+	</Function>
+	<Function name='IsAutogen' return='bool' arguments=''>
+		Returns <code>true</code> if the steps were automatically generated.
 	</Function>
 </Class>
 <Class name='TextBanner'>
@@ -561,6 +621,9 @@
 	</Function>
 </Class>
 <Class name='ThemeManager'>
+	<Function name='GetMetric' return='string' arguments='string ClassName, string Element'>
+		Returns the value of <code>Element</code> in <code>Class</code> from metrics.ini.
+	</Function>
 	<Function name='GetNumSelectableThemes' return='int' arguments=''>
 		Returns the number of selectable themes.
 	</Function>
@@ -575,6 +638,9 @@
 	</Function>
 	<Function name='GetPathS' return='string' arguments='string ClassName, string Element'>
 		Returns the path of an element in the Sounds folder.
+	</Function>
+	<Function name='GetString' return='string' arguments='string ClassName, string Element'>
+		Returns the value of <code>Element</code> in <code>Class</code> for the currently loaded language.
 	</Function>
 </Class>
 </Classes>
