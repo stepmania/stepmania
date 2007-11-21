@@ -299,10 +299,16 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 	
 	if( SM == SM_PlayPostSwitchPage )
 	{
+		int iNewChoice = m_iChoice[ GAMESTATE->m_MasterPlayerNumber ];
+		Page newPage = GetPage( iNewChoice );
+
+		Message msg("PostSwitchPage");
+		msg.SetParam( "NewPageIndex", (int)newPage );
+
 		if( SHOW_CURSOR )
 		{
 			FOREACH( PlayerNumber, vpns, p )
-				m_sprCursor[*p]->PlayCommand( "PostSwitchPage" );
+				m_sprCursor[*p]->HandleMessage( msg );
 		}
 
 		if( SHOW_SCROLLER )
@@ -310,7 +316,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 			FOREACH( PlayerNumber, vpns, p )
 			{
 				int iChoice = m_iChoice[*p];
-				m_vsprScroll[*p][iChoice]->PlayCommand( "PostSwitchPage" );
+				m_vsprScroll[*p][iChoice]->HandleMessage( msg );
 			}
 		}
 
@@ -485,6 +491,7 @@ void ScreenSelectMaster::MenuDown( const InputEventPlus &input )
 
 bool ScreenSelectMaster::ChangePage( int iNewChoice )
 {
+	Page oldPage = GetPage( m_iChoice[GAMESTATE->m_MasterPlayerNumber] );
 	Page newPage = GetPage( iNewChoice );
 
 	// If anyone has already chosen, don't allow changing of pages
@@ -520,16 +527,20 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 			vpns.push_back( p );
 	}
 
+	Message msg("PreSwitchPage");
+	msg.SetParam( "OldPageIndex", (int)oldPage );
+	msg.SetParam( "NewPageIndex", (int)newPage );
+
 	FOREACH( PlayerNumber, vpns, p )
 	{
 		if( SHOW_CURSOR )
 		{
-			m_sprCursor[*p]->PlayCommand( "PreSwitchPage" );
+			m_sprCursor[*p]->HandleMessage( msg );
 			m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
 		}
 			
 		if( SHOW_SCROLLER )
-			m_vsprScroll[*p][m_iChoice[*p]]->PlayCommand( "PreSwitchPage" );
+			m_vsprScroll[*p][m_iChoice[*p]]->HandleMessage( msg );
 	}
 
 	if( newPage == PAGE_2 )
