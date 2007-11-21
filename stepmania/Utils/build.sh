@@ -109,6 +109,7 @@ if [ ! -d $ffmpeg ]; then
 	else
 		failure 'Install subversion.'
 	fi
+	message 'Downloading ffmpeg patch'
 	if which curl &>/dev/null; then
 		get='curl -O'
 	elif which wget &>/dev/null; then
@@ -118,6 +119,7 @@ if [ ! -d $ffmpeg ]; then
 	fi
 	cd $ffmpeg
 	call $get http://stepmania.sourceforge.net/ffmpeg-r8448-avi.patch
+	message 'Patching ffmpeg'
 	call 'patch -p1 < ffmpeg-r8448-avi.patch'
 	cd ..
 fi
