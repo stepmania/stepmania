@@ -73,6 +73,7 @@ ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h ScreenSelectGroup.cpp Screen
 ScreenSelectLanguage.cpp  ScreenSelectLanguage.h \
 ScreenSelectMaster.cpp ScreenSelectMaster.h ScreenSelectMode.cpp ScreenSelectMode.h \
 ScreenSelectMusic.cpp ScreenSelectMusic.h \
+ScreenSelectProfile.cpp ScreenSelectProfile.h \
 ScreenSelectStyle.cpp ScreenSelectStyle.h \
 ScreenSyncOverlay.cpp ScreenSyncOverlay.h \
 ScreenSystemLayer.cpp ScreenSystemLayer.h ScreenSetTime.cpp ScreenSetTime.h \
