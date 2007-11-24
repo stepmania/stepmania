@@ -56,7 +56,7 @@ void GameplayAssist::PlayTicks( const NoteData &nd )
 		}
 	}
 
-	if( bMetronome )
+	if( bMetronome && iRowLastCrossed != -1 )
 	{
 		//iRowLastCrossed+1, iSongRow+1
 
