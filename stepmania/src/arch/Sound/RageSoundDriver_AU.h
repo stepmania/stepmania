@@ -27,6 +27,7 @@ private:
 				AudioBufferList *ioData );
 	static void NameHALThread( CFRunLoopObserverRef, CFRunLoopActivity activity, void *inRefCon );
 
+	double m_TimeScale;
 	AudioUnit m_OutputUnit;
 	int m_iSampleRate;
 	bool m_bDone;

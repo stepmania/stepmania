@@ -98,9 +98,10 @@ RString RageSoundDriver_AU::Init()
 	streamFormat.mChannelsPerFrame = kChannelsPerFrame;
 	streamFormat.mBitsPerChannel = kBitsPerChannel;
 	
-	if( streamFormat.mSampleRate <= 0 )
+	if( streamFormat.mSampleRate <= 0.0 )
 		streamFormat.mSampleRate = 44100.0;
 	m_iSampleRate = int( streamFormat.mSampleRate );
+	m_TimeScale = streamFormat.mSampleRate / AudioGetHostClockFrequency();
 	
 	// Try to set the hardware sample rate.
 	{
@@ -184,8 +185,7 @@ RageSoundDriver_AU::~RageSoundDriver_AU()
 
 int64_t RageSoundDriver_AU::GetPosition() const
 {
-	double scale = m_iSampleRate / AudioGetHostClockFrequency();
-	return int64_t( scale * AudioGetCurrentHostTime() );
+	return int64_t( m_TimeScale * AudioGetCurrentHostTime() );
 }
 
 
@@ -291,9 +291,8 @@ OSStatus RageSoundDriver_AU::Render( void *inRefCon,
 		This->m_pIOThread = new RageThreadRegister( "HAL I/O thread" );
 
 	AudioBuffer &buf = ioData->mBuffers[0];
-	double scale = This->m_iSampleRate / AudioGetHostClockFrequency();
-	int64_t now = int64_t( scale * AudioGetCurrentHostTime() );
-	int64_t next = int64_t( scale * inTimeStamp->mHostTime );
+	int64_t now = int64_t( This->m_TimeScale * AudioGetCurrentHostTime() );
+	int64_t next = int64_t( This->m_TimeScale * inTimeStamp->mHostTime );
 	
 	This->Mix( (float *)buf.mData, inNumberFrames, next, now );
 	if( unlikely(This->m_bDone) )
