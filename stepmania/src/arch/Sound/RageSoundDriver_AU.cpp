@@ -113,10 +113,23 @@ RString RageSoundDriver_AU::Init()
 		{
 			LOG->Warn( WERROR("No output device", error) );
 		}
-		else if( (error = AudioDeviceSetProperty(OutputDevice, NULL, 0, false, kAudioDevicePropertyNominalSampleRate,
-							 sizeof(Float64), &streamFormat.mSampleRate)) )
+		else
 		{
-			LOG->Warn( WERROR("Couldn't set the device's sample rate", error) );
+			Float64 rate = 0.0;
+			size = sizeof( Float64 );
+			if( (error = AudioDeviceGetProperty(OutputDevice, 0, false, kAudioDevicePropertyNominalSampleRate,
+							    &size, &rate)) )
+			{
+				LOG->Warn( WERROR("Couldn't get the device's sample rate", error) );
+			}
+			else if( rate != streamFormat.mSampleRate )
+			{
+				if( (error = AudioDeviceSetProperty(OutputDevice, NULL, 0, false, kAudioDevicePropertyNominalSampleRate,
+								    sizeof(Float64), &streamFormat.mSampleRate)) )
+				{
+					LOG->Warn( WERROR("Couldn't set the device's sample rate", error) );
+				}
+			}
 		}
 	}
 
