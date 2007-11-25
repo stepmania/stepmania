@@ -53,6 +53,72 @@ void RageSoundDriver_AU::NameHALThread( CFRunLoopObserverRef observer, CFRunLoop
 	This->m_Semaphore.Post();
 }
 
+static void SetSampleRate( AudioUnit au, Float64 desiredRate )
+{
+	AudioDeviceID OutputDevice;
+	OSStatus error;
+	UInt32 size = sizeof( AudioDeviceID );
+	
+	if( (error = AudioUnitGetProperty(au, kAudioOutputUnitProperty_CurrentDevice,
+					  kAudioUnitScope_Global, 0, &OutputDevice, &size)) )
+	{
+		LOG->Warn( WERROR("No output device", error) );
+		return;
+	}
+	
+	Float64 rate = 0.0;
+	size = sizeof( Float64 );
+	if( (error = AudioDeviceGetProperty(OutputDevice, 0, false, kAudioDevicePropertyNominalSampleRate,
+					    &size, &rate)) )
+	{
+		LOG->Warn( WERROR("Couldn't get the device's sample rate", error) );
+		return;
+	}
+	if( rate == desiredRate )
+		return;
+	
+	if( (error = AudioDeviceGetPropertyInfo(OutputDevice, 0, false, kAudioDevicePropertyAvailableNominalSampleRates,
+						&size, NULL)) )
+	{
+		LOG->Warn( WERROR("Couldn't get available nominal sample rates info", error) );
+		return;
+	}
+	
+	const int num = size/sizeof(AudioValueRange);
+	AudioValueRange *ranges = new AudioValueRange[num];
+	
+	if( (error = AudioDeviceGetProperty(OutputDevice, 0, false, kAudioDevicePropertyAvailableNominalSampleRates,
+					    &size, ranges)) )
+	{
+		LOG->Warn( WERROR("Couldn't get available nominal sample rates", error) );
+		delete[] ranges;
+		return;
+	}
+	
+	Float64 bestRate = 0.0;
+	for( int i = 0; i < num; ++i )
+	{
+		if( desiredRate >= ranges[i].mMinimum && desiredRate <= ranges[i].mMaximum )
+		{
+			bestRate = desiredRate;
+			break;
+		}
+		/* XXX: If the desired rate is supported by the device, then change it, if not
+		 * then we should select the "best" rate. I don't really know what such a best
+		 * rate would be. The rate closest to the desired value? A multiple of 2?
+		 * For now give up if the desired sample rate isn't available. */		
+	}
+	delete[] ranges;
+	if( bestRate == 0.0 )
+		return;
+		
+	if( (error = AudioDeviceSetProperty(OutputDevice, NULL, 0, false, kAudioDevicePropertyNominalSampleRate,
+					    sizeof(Float64), &bestRate)) )
+	{
+		LOG->Warn( WERROR("Couldn't set the device's sample rate", error) );
+	}
+}
+
 RString RageSoundDriver_AU::Init()
 {
 	ComponentDescription desc;
@@ -104,34 +170,7 @@ RString RageSoundDriver_AU::Init()
 	m_TimeScale = streamFormat.mSampleRate / AudioGetHostClockFrequency();
 	
 	// Try to set the hardware sample rate.
-	{
-		AudioDeviceID OutputDevice;
-		UInt32 size = sizeof( AudioDeviceID );
-		
-		if( (error = AudioUnitGetProperty(m_OutputUnit, kAudioOutputUnitProperty_CurrentDevice,
-						  kAudioUnitScope_Global, 0, &OutputDevice, &size)) )
-		{
-			LOG->Warn( WERROR("No output device", error) );
-		}
-		else
-		{
-			Float64 rate = 0.0;
-			size = sizeof( Float64 );
-			if( (error = AudioDeviceGetProperty(OutputDevice, 0, false, kAudioDevicePropertyNominalSampleRate,
-							    &size, &rate)) )
-			{
-				LOG->Warn( WERROR("Couldn't get the device's sample rate", error) );
-			}
-			else if( rate != streamFormat.mSampleRate )
-			{
-				if( (error = AudioDeviceSetProperty(OutputDevice, NULL, 0, false, kAudioDevicePropertyNominalSampleRate,
-								    sizeof(Float64), &streamFormat.mSampleRate)) )
-				{
-					LOG->Warn( WERROR("Couldn't set the device's sample rate", error) );
-				}
-			}
-		}
-	}
+	SetSampleRate( m_OutputUnit, streamFormat.mSampleRate );
 
 
 	error = AudioUnitSetProperty( m_OutputUnit,
@@ -317,7 +356,7 @@ OSStatus RageSoundDriver_AU::Render( void *inRefCon,
 }
 
 /*
- * (c) 2004-2006 Steve Checkoway
+ * (c) 2004-2007 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
