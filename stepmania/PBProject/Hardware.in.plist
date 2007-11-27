@@ -12,8 +12,7 @@
 	"MacBookPro1,2" = "MacBook Pro (17-inch Core Duo)";
 	"MacBookPro2,1" = "MacBook Pro (17-inch Core 2 Duo)";
 	"MacBookPro2,2" = "MacBook Pro (15-inch Core 2 Duo)";
-	"MacBookPro3,1" = "MacBook Pro (15-inch LED, Core 2 Duo)";
-	"MacBookPro3,2" = "MacBook Pro (17-inch HD, Core 2 Duo)";
+	"MacBookPro3,1" = "MacBook Pro (15-inch or 17-inch LED, Core 2 Duo)";
 	"Macmini1,1" = "Mac mini (Core Duo/Solo)";
 	"MacPro1,1" = "Mac Pro (Quad Xeon)";
 	"MacPro1,2" = "Mac Pro (Octal Xeon)";
