@@ -115,11 +115,62 @@
 	<Function name='blend' return='void' arguments='BlendMode mode'>
 		Sets the Actor to use the specified blend mode.
 	</Function>
+	<Function name='cropbottom' return='void' arguments='float percent'>
+		Crops <code>percent</code> of the Actor from the bottom where <code>percent</code> is in the range 0..1.
+	</Function>
+	<Function name='cropleft' return='void' arguments='float percent'>
+		Crops <code>percent</code> of the Actor from the left where <code>percent</code> is in the range 0..1.
+	</Function>
+	<Function name='cropright' return='void' arguments='float percent'>
+		Crops <code>percent</code> of the Actor from the right where <code>percent</code> is in the range 0..1.
+	</Function>
+	<Function name='croptop' return='void' arguments='float percent'>
+		Crops <code>percent</code> of the Actor from the top where <code>percent</code> is in the range 0..1.
+	</Function>
 	<Function name='cullmode' return='void' arguments='CullMode mode'>
 		Sets the Actor's cull mode to <code>mode</code>.
 	</Function>
 	<Function name='diffusealpha' return='void' arguments='float f'>
 		Set's the Actor's alpha level to <code>f</code>, which should be a float in the range 0..1.
+	</Function>
+	<Function name='draworder' return='void' arguments='int iOrder'>
+		Set's the Actor's draworder to <code>iOrder</code>, where larger values display first.
+	</Function>
+	<Function name='effectclock' return='void' arguments='string s'>
+		Set the Actor's effect clock to <code>s</code>.
+	</Function>
+	<Function name='effectmagnitude' return='void' arguments='float fX, float fY, float fZ'>
+		Set the Actor's effect magnitude in each direction to the given values.
+	</Function>
+	<Function name='effectoffset' return='void' arguments='float fTime'>
+		Set the Actor's effect offset to <code>fTime</code>.
+	</Function>
+	<Function name='effectperiod' return='void' arguments='float fTime'>
+		Set the Actor's effect period to <code>fTime</code>.
+	</Function>
+	<Function name='fadebottom' return='void' arguments='float percent'>
+		Fades <code>percent</code> of the Actor from the bottom where <code>percent</code> is in the range 0..1.
+	</Function>
+	<Function name='fadeleft' return='void' arguments='float percent'>
+		Fades <code>percent</code> of the Actor from the left where <code>percent</code> is in the range 0..1.
+	</Function>
+	<Function name='faderight' return='void' arguments='float percent'>
+		Fades <code>percent</code> of the Actor from the right where <code>percent</code> is in the range 0..1.
+	</Function>
+	<Function name='fadetop' return='void' arguments='float percent'>
+		Fades <code>percent</code> of the Actor from the top where <code>percent</code> is in the range 0..1.
+	</Function>
+	<Function name='GetCommand' return='bool' arguments='string sCmdName'>
+		Returns <code>true</code> if the Actor has a command named <code>sCmdName</code>.
+	</Function>
+	<Function name='GetDiffuseAlpha' return='float' arguments=''>
+		Returns the Actor's current diffusealpha.
+	</Function>
+	<Function name='GetHeight' return='float' arguments=''>
+		Returns the Actor's current height.
+	</Function>
+	<Function name='GetWidth' return='float' arguments=''>
+		Returns the Actor's current width.
 	</Function>
 	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
@@ -129,6 +180,18 @@
 	</Function>
 	<Function name='horizalign' return='void' arguments='HorizAlign align'>
 		Set the horizontal alignment of the Actor according to <code>align</code>. See <Link function='halign' /> for fractional alignment.
+	</Function>
+	<Function name='rotationx' return='void' arguments='float fRotation'>
+		Set the Actor's rotation on the X axis to <code>fAlign</code>.
+	</Function>
+	<Function name='rotationy' return='void' arguments='float fRotation'>
+		Set the Actor's rotation on the Y axis to <code>fAlign</code>.
+	</Function>
+	<Function name='rotationz' return='void' arguments='float fRotation'>
+		Set the Actor's rotation on the Z axis to <code>fAlign</code>.
+	</Function>
+	<Function name='stopeffect' return='void' arguments=''>
+		Stops any effect the Actor has.
 	</Function>
 	<Function name='valign' return='void' arguments='float fAlign'>
 		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign" /> for the common case.
