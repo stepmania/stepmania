@@ -11,8 +11,7 @@ RString Command::GetName() const
 	if( m_vsArgs.empty() )
 		return RString();
 	RString s = m_vsArgs[0];
-	TrimLeft( s );
-	TrimRight( s );
+	Trim( s );
 
 	/* Transition hack: if a command begins with !, don't force it to lowercase. */
 	if( s.Left(1) == "!" )

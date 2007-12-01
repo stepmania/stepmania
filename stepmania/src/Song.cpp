@@ -358,8 +358,7 @@ void FixupPath( RString &path, const RString &sSongPath )
 	/* Many imported files contain erroneous whitespace before or after
 	 * filenames.  Paths usually don't actually start or end with spaces,
 	 * so let's just remove it. */
-	TrimLeft( path );
-	TrimRight( path );
+	Trim( path );
 }
 
 /* Songs in BlacklistImages will never be autodetected as song images. */
@@ -444,12 +443,9 @@ void Song::TidyUpData()
 	 * their source's values. */
 	ReCalculateRadarValuesAndLastBeat();
 
-	TrimLeft( m_sMainTitle );
-	TrimRight( m_sMainTitle );
-	TrimLeft( m_sSubTitle );
-	TrimRight( m_sSubTitle );
-	TrimLeft( m_sArtist );
-	TrimRight( m_sArtist );
+	Trim( m_sMainTitle );
+	Trim( m_sSubTitle );
+	Trim( m_sArtist );
 
 	/* Fall back on the song directory name. */
 	if( m_sMainTitle == "" )

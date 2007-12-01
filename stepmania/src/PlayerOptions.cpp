@@ -248,8 +248,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 
 	RString sBit = sOneMod;
 	sBit.MakeLower();
-	TrimLeft(sBit);
-	TrimRight(sBit);
+	Trim( sBit );
 
 	/* "drunk"
 	 * "no drunk"

@@ -148,8 +148,7 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 {
 	RString sBit = sOneMod;
 	sBit.MakeLower();
-	TrimLeft(sBit);
-	TrimRight(sBit);
+	Trim( sBit );
 	
 	Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
 	vector<RString> matches;

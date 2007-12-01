@@ -101,8 +101,7 @@ RageLog::~RageLog()
 	split( AdditionalLog, "\n", AdditionalLogLines );
 	for( unsigned i = 0; i < AdditionalLogLines.size(); ++i )
 	{
-		TrimLeft( AdditionalLogLines[i] );
-		TrimRight( AdditionalLogLines[i] );
+		Trim( AdditionalLogLines[i] );
 		this->Info( "%s", AdditionalLogLines[i].c_str() );
 	}
 

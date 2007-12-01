@@ -396,8 +396,7 @@ void ScreenNameEntry::MenuStart( const InputEventPlus &input )
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 	pProfile->m_sLastUsedHighScoreName = m_sSelectedName[pn];
 
-	TrimRight( m_sSelectedName[pn], " " );
-	TrimLeft( m_sSelectedName[pn], " " );
+	Trim( m_sSelectedName[pn], " " );
 
 	GAMESTATE->StoreRankingName( pn, m_sSelectedName[pn] );
 

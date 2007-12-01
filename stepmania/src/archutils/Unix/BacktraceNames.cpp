@@ -311,8 +311,7 @@ void BacktraceNames::FromString( RString s )
     unsigned pos = 0;
     while( pos < s.size() && s[pos] != '(' && s[pos] != '[' )
         File += s[pos++];
-    TrimRight( File );
-    TrimLeft( File );
+    Trim( File );
 
     if( pos < s.size() && s[pos] == '(' )
     {

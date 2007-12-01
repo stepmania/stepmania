@@ -107,8 +107,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				if( sBits.size() < 2 )
 					continue;
 
-				TrimLeft( sBits[0] );
-				TrimRight( sBits[0] );
+				Trim( sBits[0] );
 				if( !sBits[0].CompareNoCase("TIME") )
 					attack.fStartSecond = max( StringToFloat(sBits[1]), 0.0f );
 				else if( !sBits[0].CompareNoCase("LEN") )

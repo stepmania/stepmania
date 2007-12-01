@@ -166,8 +166,7 @@ bool ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 	pProfile->m_sLastUsedHighScoreName = sSelection;
 
-	TrimRight( sSelection, " " );
-	TrimLeft( sSelection, " " );
+	Trim( sSelection, " " );
 
 	GAMESTATE->StoreRankingName( pn, sSelection );
 

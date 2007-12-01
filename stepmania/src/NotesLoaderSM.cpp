@@ -25,10 +25,10 @@ static void LoadFromSMTokens(
 {
 	out.SetSavedToDisk( true );	// we're loading from disk, so this is by definintion already saved
 
-	TrimLeft( sStepsType ); 	TrimRight( sStepsType ); 
-	TrimLeft( sDescription );	TrimRight( sDescription ); 
-	TrimLeft( sDifficulty ); 	TrimRight( sDifficulty ); 
-	TrimLeft( sNoteData );		TrimRight( sNoteData ); 
+	Trim( sStepsType );
+	Trim( sDescription );
+	Trim( sDifficulty );
+	Trim( sNoteData );
 
 //	LOG->Trace( "Steps::LoadFromSMTokens()" );
 
