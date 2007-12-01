@@ -38,14 +38,26 @@
 	<Function name='FormatPercentScore' return='string' arguments='float fPercentDancePoints'>
 		Returns <code>fPercentDancePoints</code> formatted as a percentage.
 	</Function>
+	<Function name='GetGradeFromPercent' return='Grade' arguments='float fPercent, bool bMerciful'>
+		Returns a corresponding <Link class='ENUM' function='Grade' /> for the given percentage.
+	</Function>
+	<Function name='GetLifeDifficulty' return='int' arguments=''>
+		Returns the current Life Difficulty.
+	</Function>
 	<Function name='GetThemeAspectRatio' return='float' arguments=''>
-		Return's the theme's aspect ratio.
+		Returns the theme's aspect ratio.
 	</Function>
 	<Function name='Hour' return='int' arguments=''>
 		Returns the current hour.
 	</Function>
 	<Function name='IsEventMode' return='bool' arguments=''>
 		Returns <code>true</code> if Event Mode is turned on.
+	</Function>
+	<Function name='IsNetConnected' return='bool' arguments=''>
+		Returns <code>true</code> if connected to the Internet.
+	</Function>
+	<Function name='IsNetSMOnline' return='bool' arguments=''>
+		Returns <code>true</code> if connected to StepMania Online.
 	</Function>
 	<Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
 		Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
@@ -67,6 +79,9 @@
 	</Function>
 	<Function name='Warn' return='void' arguments='string sString'>
 		Alias for <Link function='lua.Warn' />.
+	</Function>
+	<Function name='Year' return='int' arguments=''>
+		Returns the current year.
 	</Function>
 	<Function name='lua.Trace' return='void' arguments='string sString'>
 		Writes <code>sString</code> to log.txt. Aliased by <Link function='Trace' />.
