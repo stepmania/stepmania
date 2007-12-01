@@ -479,6 +479,7 @@ inline T Decrement( T a ) { --a; return a; }
 
 void TrimLeft( RString &sStr, const char *szTrim = "\r\n\t " );
 void TrimRight( RString &sStr, const char *szTrim = "\r\n\t " );
+void Trim( RString &sStr, const char *szTrim = "\r\n\t " );
 void StripCrnl( RString &sStr );
 bool BeginsWith( const RString &sTestThis, const RString &sBeginning );
 bool EndsWith( const RString &sTestThis, const RString &sEnding );

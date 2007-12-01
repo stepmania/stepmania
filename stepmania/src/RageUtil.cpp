@@ -1110,6 +1110,16 @@ void TrimRight( RString &sStr, const char *s )
 	sStr.erase( sStr.begin()+n, sStr.end() );
 }
 
+void Trim( RString &sStr, const char *s )
+{
+	RString::size_type b = 0, e = sStr.size();
+	while( b < e && strchr(s, sStr[b]) )
+		++b;
+	while( b < e && strchr(s, sStr[e-1]) )
+		--e;
+	sStr.assign( sStr.substr(b, e-b) );
+}
+
 void StripCrnl( RString &s )
 {
 	while( s.size() && (s[s.size()-1] == '\r' || s[s.size()-1] == '\n') )
