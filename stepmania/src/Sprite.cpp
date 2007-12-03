@@ -836,7 +836,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 	int iSourceWidth	= m_pTexture->GetSourceWidth();
 	int iSourceHeight	= m_pTexture->GetSourceHeight();
 
-	// save the original X&Y.  We're going to resore them later.
+	// save the original X&Y.  We're going to restore them later.
 	float fOriginalX = GetX();
 	float fOriginalY = GetY();
 
