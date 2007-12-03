@@ -22,7 +22,7 @@ public:
 	virtual void DecodeSeconds( float fSeconds ) {} // decode
 	virtual void SetPlaybackRate( float fRate ) {}
 	virtual bool IsAMovie() const { return false; }
-	void SetLooping(bool looping) { }
+	virtual void SetLooping(bool looping) { }
 
 	int GetSourceWidth() const	{return m_iSourceWidth;}
 	int GetSourceHeight() const {return m_iSourceHeight;}
