@@ -565,6 +565,20 @@
 		Set the speed (that is, the rate at which the sound plays) to <code>fSpeed</code>. The associated <Link class='ActorSound' /> must have <code>SupportsRateChanging = true</code> on load.
 	</Function>
 </Class>
+<Class name='RageTexture'>
+	<Function name='GetTextureCoordRect' return='{float}' arguments=''>
+		Return the texture coordinate rectangle as <code>{left, top, right, bottom}</code>.
+	</Function>
+	<Function name='loop' return='void' arguments='bool bLoop'>
+		Sets the animation or movie looping to <code>bLoop</code>.
+	</Function>
+	<Function name='position' return='void' arguments='float fPos'>
+		Sets the animation or movie position to <code>fPos</code>.
+	</Function>
+	<Function name='rate' return='void' arguments='float fRate'>
+		Sets the animation or movie playback rate to <code>fRate</code>.
+	</Function>
+</Class>
 <Class name='RollingNumbers'>
 	<Function name='targetnumber' return='void' arguments='float f'>
 		Sets the target number to <code>f</code>.
@@ -671,6 +685,68 @@
 	</Function>
 	<Function name='GetRandomSong' return='Song' arguments=''>
 		Returns a random song.
+	</Function>
+</Class>
+<Class name='Sprite'>
+	<Function name='GetAnimationLengthSeconds' return='float' arguments=''>
+		Returns the length of the animation in seconds.
+	</Function>
+	<Function name='GetTexture' return='RageTexture' arguments=''>
+		Returns the Sprite's texture.
+	</Function>
+	<Function name='LinearFrames' return='{Frame}' arguments='int iNumFrames, float fSeconds'>
+		Returns a <code>Frames</code> table consisting of <code>iNumFrames</code> frames lasting for a total of <code>fSeconds</code> seconds. This function is not a member function and should be used as <code>Frames = Sprite.LinearFrames( 5, 2.6 )</code>.
+	</Function>
+	<Function name='Load' return='void' arguments='string sPath'>
+		If <code>sPath</code> is <code>nil</code>, then unload the texture. Otherwise, load the texture at path <code>sPath</code>.
+	</Function>
+	<Function name='LoadBackground' return='void' arguments='string sPath'>
+		Load the song background texture at <code>sPath</code>.
+	</Function>
+	<Function name='LoadBanner' return='void' arguments='string sPath'>
+		Load the song banner texture at <code>sPath</code>.
+	</Function>
+	<Function name='LoadFromSongBackground' return='void' arguments='Song song'>
+		Load the texture for <code>song</code>'s background.
+	</Function>
+	<Function name='LoadFromSongBanner' return='void' arguments='Song song'>
+		Load the texture for <code>song</code>'s banner.
+	</Function>
+	<Function name='SetCustomImageRect' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
+		<!-- XXX: What does this do? -->
+	</Function>
+	<Function name='SetEffectMode' return='void' arguments='EffectMode mode'>
+		Set the <Link class='ENUM' function='EffectMode' /> to <code>mode</code>.
+	</Function>
+	<Function name='SetTexture' return='void' arguments='RageTexture texture'>
+		Set the texture to <code>texture</code>.
+	</Function>
+	<Function name='addimagecoords' return='void' arguments='float fX, float fY'>
+		<!-- XXX: What does this do? -->
+	</Function>
+	<Function name='customtexturerect' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
+		<!-- XXX: What does this do? -->
+	</Function>
+	<Function name='loop' return='void' arguments='bool bLoop'>
+		Call <Link class='RageTexture' function='loop'><code>RageTexture:loop</code></Link><code>( bLoop )</code> on the texture.
+	</Function>
+	<Function name='position' return='void' arguments='float fPos'>
+		Call <Link class='RageTexture' function='position'><code>RageTexture:position</code></Link><code>( fPos )</code> on the texture.
+	</Function>
+	<Function name='rate' return='void' arguments='float fRate'>
+		Call <Link class='RageTexture' function='rate'><code>RageTexture:rate</code></Link><code>( fRate )</code> on the texture.
+	</Function>
+	<Function name='scaletoclipped' return='void' arguments='float fWidth, float fHeight'>
+		Scale the Sprite to width <code>fWidth</code> and height <code>fHeight</code> clipping if the dimensions do not match.
+	</Function>
+	<Function name='setstate' return='void' arguments='int iNewState'>
+		Set the Sprite's state to <code>iNewState</code>.
+	</Function>
+	<Function name='stretchtexcoords' return='void' arguments='float fX, float fY'>
+		<!-- XXX: What does this do? -->
+	</Function>
+	<Function name='texcoordvelocity' return='void' arguments='float fVelX, float fVelY'>
+		Set the texture coordinate velocity which controls how the Sprite changes as it animates. <!-- XXX: Can we be more specific? -->
 	</Function>
 </Class>
 <Class name='Steps'>
