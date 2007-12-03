@@ -135,6 +135,7 @@
 </xs:complexType>
 
 <xs:complexType name="Link" mixed="true">
+	<xs:group ref="DocumentationGroup" minOccurs="0" maxOccurs="unbounded"/>
 	<xs:attribute name="function" type="FunctionIdentifier" use="optional" />
 	<xs:attribute name="class" type="Identifier" use="optional" />
 </xs:complexType>
