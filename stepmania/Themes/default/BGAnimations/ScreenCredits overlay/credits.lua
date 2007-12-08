@@ -149,7 +149,6 @@ AddLine()
 
 -- Add sections with padding.
 for section in ivalues(sections) do
-	Trace( "steve: " .. section[1] )
 	AddLine( section[1], sectionOn )
 	for name in ivalues(section[2]) do
 		AddLine( name )
