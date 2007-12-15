@@ -122,8 +122,11 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	pShared = NULL;
 
 	vector<RString> vsMusicFile;
+	const RString sMusicPath = pSong->GetMusicPath();
 
-	vsMusicFile.push_back( pSong->GetMusicPath() );
+	if( !sMusicPath.empty() )
+		vsMusicFile.push_back( sMusicPath );
+
 	FOREACH_ENUM( InstrumentTrack, it )
 	{
 		if( it == InstrumentTrack_Guitar )
@@ -150,7 +153,7 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 		pSongReader = new RageSoundReader_ThreadedBuffer( pSongReader );
 		pShared = pSongReader;
 	}
-	else
+	else if( !vpSounds.empty() )
 	{
 		RageSoundReader_Merge *pMerge = new RageSoundReader_Merge;
 
@@ -261,10 +264,12 @@ void AutoKeysounds::FinishLoading()
 
 		if( pChain->GetNumSounds() > 0 )
 		{
-			int iIndex = pChain->LoadSound( m_pSharedSound );
-			pChain->AddSound( iIndex, 0.0f, 0 );
+			if( m_pSharedSound )
+			{
+				int iIndex = pChain->LoadSound( m_pSharedSound );
+				pChain->AddSound( iIndex, 0.0f, 0 );
+			}
 			pChain->Finish();
-
 			m_pSharedSound = pChain;
 		}
 		else
@@ -272,6 +277,7 @@ void AutoKeysounds::FinishLoading()
 			delete pChain;
 		}
 	}
+	ASSERT( m_pSharedSound );
 
 	m_pSharedSound = new RageSoundReader_PitchChange( m_pSharedSound );
 	m_pSharedSound = new RageSoundReader_PostBuffering( m_pSharedSound );
