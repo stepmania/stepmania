@@ -2059,10 +2059,8 @@ done_checking_hopo:
 
 	}
 
-	if( score != TNS_None )
 	{
-		/* Search for keyed sounds separately.  If we can't find a nearby note, search
-		 * backwards indefinitely, and ignore grading. */
+		/* Search for keyed sounds separately.  Play the nearest note. */
 		/* XXX: This isn't quite right. As per the above XXX for iRowOfOverlappingNote, if iRowOfOverlappingNote
 		 * is set to a previous note, the keysound could have changed and this would cause the wrong one to play,
 		 * in essence playing two sounds in the opposite order. Maybe this should always perform the search. Still,
@@ -2071,7 +2069,7 @@ done_checking_hopo:
 		 * fix this one as well. */
 		if( iRowOfOverlappingNoteOrRow == -1 )
 			iRowOfOverlappingNoteOrRow = GetClosestNote( col, BeatToNoteRow(fSongBeat),
-								iStepSearchRows, MAX_NOTE_ROW, true );
+								MAX_NOTE_ROW, MAX_NOTE_ROW, true );
 		if( iRowOfOverlappingNoteOrRow != -1 )
 		{
 			switch( pbt )
