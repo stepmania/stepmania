@@ -1682,11 +1682,11 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		{
 		DEFAULT_FAIL(pbt);
 		case ButtonType_StrumFretsChanged:
-			iRowOfOverlappingNoteOrRow = GetClosestNonEmptyRow( BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false );
+			iRowOfOverlappingNoteOrRow = GetClosestNonEmptyRow( iSongRow, iStepSearchRows, iStepSearchRows, false );
 			break;
 		case ButtonType_Hopo:
 		case ButtonType_Step:
-			iRowOfOverlappingNoteOrRow = GetClosestNote( col, BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false );
+			iRowOfOverlappingNoteOrRow = GetClosestNote( col, iSongRow, iStepSearchRows, iStepSearchRows, false );
 			break;
 		}
 	}
@@ -2068,8 +2068,7 @@ done_checking_hopo:
 		 * sound wrong even though the notes were judged as being correct, above. Fixing the above problem would
 		 * fix this one as well. */
 		if( iRowOfOverlappingNoteOrRow == -1 )
-			iRowOfOverlappingNoteOrRow = GetClosestNote( col, BeatToNoteRow(fSongBeat),
-								MAX_NOTE_ROW, MAX_NOTE_ROW, true );
+			iRowOfOverlappingNoteOrRow = GetClosestNote( col, iSongRow, MAX_NOTE_ROW, MAX_NOTE_ROW, true );
 		if( iRowOfOverlappingNoteOrRow != -1 )
 		{
 			switch( pbt )
