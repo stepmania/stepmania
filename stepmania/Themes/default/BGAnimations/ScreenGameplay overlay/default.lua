@@ -11,7 +11,7 @@ return Def.ActorFrame {
 		InitCommand = cmd(x,SCREEN_LEFT-100;y,SCREEN_CENTER_Y+202);
 		OnCommand = cmd(linear,1;x,SCREEN_CENTER_X-208);
 		OffCommand = cmd(linear,1;x,SCREEN_LEFT-100);
-		Condition=GAMESTATE:IsSideJoined(PLAYER_1) == true;
+		Condition=GAMESTATE:IsSideJoined(PLAYER_1) == true or GAMESTATE:GetPlayMode() == 'PlayMode_Rave';
 	};
 	Def.ActorFrame {
 		frame;
@@ -22,6 +22,6 @@ return Def.ActorFrame {
 		InitCommand = cmd(x,SCREEN_RIGHT+100;y,SCREEN_CENTER_Y+202);
 		OnCommand = cmd(linear,1;x,SCREEN_CENTER_X+210);
 		OffCommand = cmd(linear,1;x,SCREEN_RIGHT+100);
-		Condition=GAMESTATE:IsSideJoined(PLAYER_2) == true;
+		Condition=GAMESTATE:IsSideJoined(PLAYER_2) == true or GAMESTATE:GetPlayMode() == 'PlayMode_Rave';
 	}
 };
