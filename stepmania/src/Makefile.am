@@ -327,6 +327,7 @@ LyricDisplay.cpp LyricDisplay.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp Note
 PercentageDisplay.cpp PercentageDisplay.h Player.cpp Player.h \
 ReceptorArrow.cpp ReceptorArrow.h ReceptorArrowRow.cpp ReceptorArrowRow.h \
 ScoreDisplay.cpp ScoreDisplay.h \
+ScoreDisplayAliveTime.cpp ScoreDisplayAliveTime.h \
 ScoreDisplayBattle.cpp ScoreDisplayBattle.h \
 ScoreDisplayCalories.cpp ScoreDisplayCalories.h \
 ScoreDisplayLifeTime.cpp ScoreDisplayLifeTime.h \
