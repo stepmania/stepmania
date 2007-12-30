@@ -532,6 +532,35 @@
 	<Function name='GetDisplayName' return='string' arguments=''>
 		Returns the profile's display name.
 	</Function>
+	<Function name='GetNumToasties' return='int' arguments=''>
+		Returns the number of Toasties gotten using the specified profile.
+	</Function>
+	<Function name='GetMostPopularCourse' return='Course' arguments=''>
+		Returns the profile's most popular course.
+	</Function>
+	<Function name='GetMostPopularSong' return='Song' arguments=''>
+		Returns the profile's most popular song.
+	</Function>
+	<Function name='GetNumTotalSongsPlayed' return='int' arguments=''>
+		Returns the total number of songs played with the profile.
+	</Function>
+	<Function name='GetSongNumTimesPlayed' return='int' arguments='Song s'>
+		Returns the number of times song <code>s</code> has been played with the profile.
+	</Function>
+	<Function name='GetTotalNumSongsPlayed' return='int' arguments=''>
+		Returns the total number of songs played with the profile.
+	</Function>
+</Class>
+<Class name='ProfileManager'>
+	<Function name='GetMachineProfile' return='Profile' arguments=''>
+		Retuns the machine profile.
+	</Function>
+	<Function name='GetNumLocalProfiles' return='int' arguments=''>
+		Retuns the amount of local profiles.
+	</Function>
+	<Function name='SaveMachineProfile' return='void' arguments=''>
+		Saves the machine profile.
+	</Function>
 </Class>
 <Class name='RadarValues'>
 	<Function name='GetValue' return='int' arguments='RadarCategory rc'>
@@ -544,6 +573,11 @@
 	</Function>
 	<Function name='GetDisplayWidth' return='int' arguments=''>
 		Return the width of the display.
+	</Function>
+</Class>
+<Class name='RageFile'>
+	<Function name='Close' return='void' arguments=''>
+		Closes the file and releases it from memory.
 	</Function>
 </Class>
 <Class name='RageInput'>
@@ -599,6 +633,9 @@
 	<Function name='GetLifeMeter' return='LifeMeter' arguments='PlayerNumber pn'>
 		Returns the <Link class='LifeMeter' /> for the specified <Link class='ENUM' function='PlayerNumber' /> <code>pn</code>.
 	</Function>
+	<Function name='SetNewScreen' return='void' arguments='string s'>
+		Sets the next Screen to be loaded.
+	</Function>
 	<Function name='GetNextCourseSong' return='Song' arguments=''>
 		Returns the next <Link class='Song' /> in the current <Link class='Course' />.
 	</Function>
@@ -611,7 +648,15 @@
 		Broadcasts a system message.
 	</Function>
 </Class>
+<Class name='ScreenProfileLoad'>
+	<Function name='HaveProfileToLoad' return='bool' arguments=''>
+		Returns <code>true</code> if there is a profile that can be loaded.
+	</Function>
+</Class>
 <Class name='Song'>
+	<Function name='GetAllSteps' return='{Steps}' arguments=''>
+		Returns an array of all the available <Link class='Steps' /> objects for a <Link class='Song' />.
+	</Function>
 	<Function name='GetBackgroundPath' return='string' arguments=''>
 		Returns the path to the song's background image.
 	</Function>
@@ -753,6 +798,9 @@
 	<Function name='GetDescription' return='string' arguments=''>
 		Returns the Steps description.
 	</Function>
+	<Function name='GetDifficulty' return='Difficulty' arguments=''>
+		Returns the Steps difficulty.
+	</Function>
 	<Function name='GetFilename' return='string' arguments=''>
 		Returns the Steps filename.
 	</Function>
@@ -761,6 +809,9 @@
 	</Function>
 	<Function name='GetRadarValues' return='RadarValues' arguments='PlayerNumber pn'>
 		Returns the complete list of RadarValues for player <code>pn</code>. Use <Link class='RadarValues' function='GetValue' /> to grab a specific value.
+	</Function>
+	<Function name='GetStepsType' return='StepsType' arguments=''>
+		Returns the Steps type.
 	</Function>
 	<Function name='IsAutogen' return='bool' arguments=''>
 		Returns <code>true</code> if the steps were automatically generated.
