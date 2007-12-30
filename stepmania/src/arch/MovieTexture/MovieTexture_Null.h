@@ -1,13 +1,5 @@
 #ifndef MOVIE_TEXTURE_NULL_H
 #define MOVIE_TEXTURE_NULL_H
-/*
- *  MovieTexture_null.h
- *  stepmania
- *
- *  Created by Steve Checkoway on Wed Jul 16 2003.
- *  Copyright (c) 2003 Steve Checkoway. All rights reserved.
- *
- */
 
 #include "MovieTexture.h"
 
