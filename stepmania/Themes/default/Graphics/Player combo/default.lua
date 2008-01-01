@@ -43,6 +43,8 @@ local t = Def.ActorFrame {
 		else
 			Label = c.MissesLabel;
 		end
+		-- reset the label's visibility so we don't accidentally draw both labels
+		Label:visible(false);
 
 		param.Zoom = scale( iCombo, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom );
 		param.Zoom = clamp( param.Zoom, NumberMinZoom, NumberMaxZoom );
