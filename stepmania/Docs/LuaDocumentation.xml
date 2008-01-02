@@ -707,7 +707,7 @@
 	</Function>
 </Class>
 <Class name='SongManager'>
-	<Function name='GetAllCourses' return='{Course}' arguments=''>
+	<Function name='GetAllCourses' return='{Course}' arguments='bool bIncludeAutogen'>
 		Returns an array of all the installed courses.
 	</Function>
 	<Function name='GetAllSongs' return='{Song}' arguments=''>
