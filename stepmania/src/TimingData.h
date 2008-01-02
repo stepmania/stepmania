@@ -44,14 +44,22 @@ struct StopSegment
 	bool operator<( const StopSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
 };
 
+/* This only supports simple time signatures. The upper number (called the numerator here, though this isn't
+ * properly a fraction) is the number of beats per measure. The lower number (denominator here)
+ * the the note value representing one beat. */
 struct TimeSignatureSegment 
 {
 	TimeSignatureSegment() : m_iStartRow(-1), m_iNumerator(4), m_iDenominator(4)  { }
 	int m_iStartRow;
 	int m_iNumerator;
 	int m_iDenominator;
-
-	int GetNoteRowsPerMeasure() const { return (BeatToNoteRow(1) * 4) / m_iDenominator; }
+	
+	/* With BeatToNoteRow(1) rows per beat, then we should have BeatToNoteRow(1)*m_iNumerator
+	 * beats per measure. But if we assume that every BeatToNoteRow(1) rows is a quarter note,
+	 * and we want the beats to be 1/m_iDenominator notes, then we should have
+	 * BeatToNoteRow(1)*4 is rows per whole note and thus BeatToNoteRow(1)*4/m_iDenominator is
+	 * rows per beat. Multiplying by m_iNumerator gives rows per measure. */
+	int GetNoteRowsPerMeasure() const { return BeatToNoteRow(1) * 4 * m_iNumerator / m_iDenominator; }
 
 	bool operator==( const TimeSignatureSegment &other ) const
 	{
