@@ -2196,7 +2196,7 @@ void Player::UpdateJudgedRows()
 		{
 			iLastSeenRow = iRow;
 
-			// crossed a not-empty row
+			// crossed a nonempty row
 			if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow, pn) )
 			{
 				bAllJudged = false;
