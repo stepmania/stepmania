@@ -31,7 +31,7 @@ local t = Def.ActorFrame {
 
 	JudgmentMessageCommand=function(self, param)
 		if param.Player ~= player then return end;
-		if not param.TapNoteScore then return end;
+		if param.HoldNoteScore then return end;
 
 		local iNumStates = c.Judgment:GetNumStates();
 		local iFrame = TNSFrames[param.TapNoteScore];
