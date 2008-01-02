@@ -2059,6 +2059,7 @@ done_checking_hopo:
 
 	}
 
+	if( !bRelease )
 	{
 		/* Search for keyed sounds separately.  Play the nearest note. */
 		/* XXX: This isn't quite right. As per the above XXX for iRowOfOverlappingNote, if iRowOfOverlappingNote
