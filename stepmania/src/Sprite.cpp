@@ -23,7 +23,7 @@ Sprite::Sprite()
 	m_iCurState = 0;
 	m_fSecsIntoState = 0.0f;
 	m_bUsingCustomTexCoords = false;
-	m_bSkipNextUpdate = false;
+	m_bSkipNextUpdate = true;
 	m_EffectMode = EffectMode_Normal;
 	
 	m_fRememberedClipWidth = -1;
@@ -60,6 +60,14 @@ Sprite::Sprite( const Sprite &cpy ):
 		m_pTexture = TEXTUREMAN->CopyTexture( cpy.m_pTexture );
 	else
 		m_pTexture = NULL;
+}
+
+void Sprite::InitState()
+{
+	Actor::InitState();
+	m_iCurState = 0;
+	m_fSecsIntoState = 0.0f;
+	m_bSkipNextUpdate = true;
 }
 
 RageTextureID Sprite::SongBGTexture( RageTextureID ID )
