@@ -237,20 +237,23 @@ static void FixLittleEndian()
 }
 
 
-static void FlushGLErrors()
-{
-	/* Making an OpenGL call doesn't also flush the error state; if we happen
-	 * to have an error from a previous call, then the assert below will fail. 
-	 * Flush it. */
-	while( glGetError() != GL_NO_ERROR )
-		;
-}
-
+/* Making an OpenGL call doesn't also flush the error state; if we happen
+ * to have an error from a previous call, then the assert below will fail. 
+ * Flush it. */
+#define FlushGLErrors() do { } while( glGetError() != GL_NO_ERROR )
 #define AssertNoGLError() \
 { \
 	GLenum error = glGetError(); \
 	ASSERT_M( error == GL_NO_ERROR, GLToString(error) ); \
 }
+
+#ifdef DEBUG
+#define DebugFlushGLErrors() FlushGLErrors()
+#define DebugAssertNoGLError() AssertNoGLError()
+#else
+#define DebugFlushGLErrors()
+#define DebugAssertNoGLError()
+#endif
 
 static void TurnOffHardwareVBO()
 {
@@ -791,14 +794,14 @@ RageSurface* RageDisplay_OGL::CreateScreenshot()
 	RageSurface *image = CreateSurface( width, height, desc.bpp,
 		desc.masks[0], desc.masks[1], desc.masks[2], 0 );
 
-	FlushGLErrors();
+	DebugFlushGLErrors();
 
 	glReadBuffer( GL_FRONT );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	
 	glReadPixels( 0, 0, g_pWind->GetActualVideoModeParams().width, g_pWind->GetActualVideoModeParams().height, GL_RGBA,
 			GL_UNSIGNED_BYTE, image->pixels );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	RageSurfaceUtils::FlipVertically( image );
 
@@ -1061,106 +1064,106 @@ RageCompiledGeometryHWOGL::RageCompiledGeometryHWOGL()
 
 RageCompiledGeometryHWOGL::~RageCompiledGeometryHWOGL()
 {
-	FlushGLErrors();
+	DebugFlushGLErrors();
 
 	GLExt.glDeleteBuffersARB( 1, &m_nPositions );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glDeleteBuffersARB( 1, &m_nTextureCoords );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glDeleteBuffersARB( 1, &m_nNormals );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glDeleteBuffersARB( 1, &m_nTriangles );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glDeleteBuffersARB( 1, &m_nTextureMatrixScale );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 }
 
 void RageCompiledGeometryHWOGL::AllocateBuffers()
 {
-	FlushGLErrors();
+	DebugFlushGLErrors();
 
 	if( !m_nPositions )
 	{
 		GLExt.glGenBuffersARB( 1, &m_nPositions );
-		AssertNoGLError();
+		DebugAssertNoGLError();
 	}
 
 	if( !m_nTextureCoords )
 	{
 		GLExt.glGenBuffersARB( 1, &m_nTextureCoords );
-		AssertNoGLError();
+		DebugAssertNoGLError();
 	}
 
 	if( !m_nNormals )
 	{
 		GLExt.glGenBuffersARB( 1, &m_nNormals );
-		AssertNoGLError();
+		DebugAssertNoGLError();
 	}
 
 	if( !m_nTriangles )
 	{
 		GLExt.glGenBuffersARB( 1, &m_nTriangles );
-		AssertNoGLError();
+		DebugAssertNoGLError();
 	}
 
 	if( !m_nTextureMatrixScale )
 	{
 		GLExt.glGenBuffersARB( 1, &m_nTextureMatrixScale );
-		AssertNoGLError();
+		DebugAssertNoGLError();
 	}
 }
 
 void RageCompiledGeometryHWOGL::UploadData()
 {
-	FlushGLErrors();
+	DebugFlushGLErrors();
 
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector3), 
 		&m_vPosition[0], 
 		GL_STATIC_DRAW_ARB );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector2), 
 		&m_vTexture[0], 
 		GL_STATIC_DRAW_ARB );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector3), 
 		&m_vNormal[0], 
 		GL_STATIC_DRAW_ARB );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ELEMENT_ARRAY_BUFFER_ARB, 
 		GetTotalTriangles()*sizeof(msTriangle), 
 		&m_vTriangles[0], 
 		GL_STATIC_DRAW_ARB );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 
 	if( m_bAnyNeedsTextureMatrixScale )
 	{
 		GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
-		AssertNoGLError();
+		DebugAssertNoGLError();
 		GLExt.glBufferDataARB( 
 			GL_ARRAY_BUFFER_ARB, 
 			GetTotalVertices()*sizeof(RageVector2),
 			&m_vTexMatrixScale[0],
 			GL_STATIC_DRAW_ARB );
-		AssertNoGLError();
+		DebugAssertNoGLError();
 	}
 }
 
@@ -1178,47 +1181,47 @@ void RageCompiledGeometryHWOGL::Invalidate()
 
 void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 {
-	FlushGLErrors();
+	DebugFlushGLErrors();
 
 	RageCompiledGeometrySWOGL::Allocate( vMeshes );
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector3), 
 		NULL, 
 		GL_STATIC_DRAW_ARB );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector2), 
 		NULL, 
 		GL_STATIC_DRAW_ARB );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector3), 
 		NULL, 
 		GL_STATIC_DRAW_ARB );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ELEMENT_ARRAY_BUFFER_ARB, 
 		GetTotalTriangles()*sizeof(msTriangle), 
 		NULL, 
 		GL_STATIC_DRAW_ARB );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector2), 
@@ -1235,31 +1238,32 @@ void RageCompiledGeometryHWOGL::Change( const vector<msMesh> &vMeshes )
 
 void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 {
-	FlushGLErrors();
+	DebugFlushGLErrors();
 
 	const MeshInfo& meshInfo = m_vMeshInfo[iMeshIndex];
 	if( !meshInfo.iVertexCount || !meshInfo.iTriangleCount )
 		return;
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	glVertexPointer(3, GL_FLOAT, 0, NULL );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	glDisableClientState(GL_COLOR_ARRAY);
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	// TRICKY:  Don't bind and send normals if lighting is disabled.  This 
 	// will save some effort transforming these values.
+	// XXX: We should keep track of these ourself and avoid glGet*()
 	GLboolean bLighting;
 	glGetBooleanv( GL_LIGHTING, &bLighting );
 	GLboolean bTextureGenS;
@@ -1269,16 +1273,16 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	if( bLighting || bTextureGenS || bTextureGenT )
 	{
 		glEnableClientState(GL_NORMAL_ARRAY);
-		AssertNoGLError();
+		DebugAssertNoGLError();
 		GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
-		AssertNoGLError();
+		DebugAssertNoGLError();
 		glNormalPointer(GL_FLOAT, 0, NULL);
-		AssertNoGLError();
+		DebugAssertNoGLError();
 	}
 	else
 	{
 		glDisableClientState(GL_NORMAL_ARRAY);
-		AssertNoGLError();
+		DebugAssertNoGLError();
 	}
 
 	if( meshInfo.m_bNeedsTextureMatrixScale )
@@ -1289,14 +1293,14 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 			 * vertex shader.  This shader doesn't support all OpenGL state, so only enable it
 			 * if we're using it. */
 			GLExt.glEnableVertexAttribArrayARB( g_iAttribTextureMatrixScale );
-			AssertNoGLError();
+			DebugAssertNoGLError();
 			GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
-			AssertNoGLError();
+			DebugAssertNoGLError();
 			GLExt.glVertexAttribPointerARB( g_iAttribTextureMatrixScale, 2, GL_FLOAT, false, 0, NULL );
-			AssertNoGLError();
+			DebugAssertNoGLError();
 
 			GLExt.glUseProgramObjectARB( g_bTextureMatrixShader );
-			AssertNoGLError();
+			DebugAssertNoGLError();
 		}
 		else
 		{
@@ -1321,12 +1325,12 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 
 			glMatrixMode( GL_TEXTURE );
 			glLoadMatrixf( (const float*)mat );
-			AssertNoGLError();
+			DebugAssertNoGLError();
 		}
 	}
 
 	GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 #define BUFFER_OFFSET(o) ((char*)(o))
 
@@ -1339,7 +1343,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		meshInfo.iTriangleCount*3,	// number of elements to be rendered
 		GL_UNSIGNED_SHORT,
 		BUFFER_OFFSET(meshInfo.iTriangleStart*sizeof(msTriangle)) );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	if( meshInfo.m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != 0 )
 	{
@@ -1660,7 +1664,7 @@ void RageDisplay_OGL::SetEffectMode( EffectMode effect )
 	case EffectMode_YUYV422:	hShader = g_hYUYV422Shader; break;
 	}
 
-	FlushGLErrors();
+	DebugFlushGLErrors();
 	GLExt.glUseProgramObjectARB( hShader );
 	if( hShader == 0 )
 		return;
@@ -1677,7 +1681,7 @@ void RageDisplay_OGL::SetEffectMode( EffectMode effect )
 		GLExt.glUniform1iARB( iTextureWidthUniform, iWidth );
 	}
 
-	AssertNoGLError();
+	DebugAssertNoGLError();
 }
 
 bool RageDisplay_OGL::IsEffectModeSupported( EffectMode effect )
@@ -1942,9 +1946,9 @@ void RageDisplay_OGL::DeleteTexture( unsigned iTexture )
 		return;
 	}
 
-	FlushGLErrors();
+	DebugFlushGLErrors();
 	glDeleteTextures( 1, reinterpret_cast<GLuint*>(&iTexture) );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 }
 
 
@@ -2006,14 +2010,13 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 		buf[3][i] = SCALE( palette->colors[i].a, 0, 255, 0, 65535 );
 	}
 
-	FlushGLErrors();
+	DebugFlushGLErrors();
 	glPixelMapusv( GL_PIXEL_MAP_I_TO_R, 256, buf[0] );
 	glPixelMapusv( GL_PIXEL_MAP_I_TO_G, 256, buf[1] );
 	glPixelMapusv( GL_PIXEL_MAP_I_TO_B, 256, buf[2] );
 	glPixelMapusv( GL_PIXEL_MAP_I_TO_A, 256, buf[3] );
 	glPixelTransferi( GL_MAP_COLOR, true );
-	GLenum error = glGetError();
-	ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
+	DebugAssertNoGLError();
 }
 
 unsigned RageDisplay_OGL::CreateTexture( 
@@ -2111,7 +2114,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 		GLToString(glImageFormat).c_str(),
 		GLToString(glImageType).c_str(), pixfmt, SurfacePixFmt );
 
-	FlushGLErrors();
+	DebugFlushGLErrors();
 
 	if( bGenerateMipMaps )
 	{
@@ -2133,8 +2136,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 				pImg->w, pImg->h,
 				glImageFormat, glImageType, pImg->pixels );
 		
-		GLenum error = glGetError();
-		ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
+		DebugAssertNoGLError();
 	}
 
 
@@ -2217,9 +2219,9 @@ private:
 		if( m_iBuffer != 0 )
 			return;
 
-		FlushGLErrors();
+		DebugFlushGLErrors();
 		GLExt.glGenBuffersARB( 1, &m_iBuffer );
-		AssertNoGLError();
+		DebugAssertNoGLError();
 	}
 
 	GLuint m_iBuffer;
@@ -2311,7 +2313,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 {
 	m_Param = param;
 
-	FlushGLErrors();
+	DebugFlushGLErrors();
 	
 	// Allocate OpenGL texture resource
 	glGenTextures( 1, reinterpret_cast<GLuint*>(&m_iTexHandle) );
@@ -2333,7 +2335,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 	
 	glTexImage2D( GL_TEXTURE_2D, 0, internalformat,
 			iTextureWidth, iTextureHeight, 0, type, GL_UNSIGNED_BYTE, NULL );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
@@ -2347,7 +2349,7 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 	/* Attach the texture to it. */
 	GLExt.glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, m_iFrameBufferHandle );
         GLExt.glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_iTexHandle, 0 );
-	AssertNoGLError();
+	DebugAssertNoGLError();
 
 	/* Attach a depth buffer, if requested. */
 	if( param.bWithDepthBuffer )
