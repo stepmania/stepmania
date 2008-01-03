@@ -247,7 +247,7 @@ static void FixLittleEndian()
 	ASSERT_M( error == GL_NO_ERROR, GLToString(error) ); \
 }
 
-#ifdef DEBUG
+#if defined(DEBUG) || !defined(GL_GET_ERROR_IS_SLOW)
 #define DebugFlushGLErrors() FlushGLErrors()
 #define DebugAssertNoGLError() AssertNoGLError()
 #else

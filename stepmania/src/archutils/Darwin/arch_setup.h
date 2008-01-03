@@ -34,6 +34,8 @@ typedef unsigned long long UInt64;
 #define HAVE_MACHINE_ENDIAN_H
 #define CRASH_HANDLER
 
+#define GL_GET_ERROR_IS_SLOW
+
 #if defined(__ppc__)
 # define CPU_PPC
 # define ENDIAN_BIG
