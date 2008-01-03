@@ -148,10 +148,17 @@ my @files = (
 	"BackgroundTransitions",
 	"BGAnimations",
 	"Characters",
-	"Courses",
+	"Courses/Samples",
 	"Data",
-	"NoteSkins",
-	"Themes",
+	"NoteSkins/common/common",
+	"NoteSkins/dance/default",
+	"NoteSkins/dance/bold",
+	"NoteSkins/dance/flat",
+	"NoteSkins/pump/Classic",
+	"NoteSkins/pump/default",
+	"Themes/default",
+	"Themes/pump",
+	"Themes/beat"
 );
 
 ZipFiles( ".", "StepMania", \@files );
