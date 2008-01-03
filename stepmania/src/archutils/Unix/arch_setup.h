@@ -24,6 +24,9 @@
 #endif
 #endif
 
+/* For RageLog */
+#define HAVE_VERSION_INFO
+
 #include "archutils/Common/gcc_byte_swaps.h"
 
 #endif

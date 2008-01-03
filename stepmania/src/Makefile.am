@@ -24,6 +24,23 @@ AM_CXXFLAGS += $(XCFLAGS)
 LIBS += 
 LIBS += -lpthread -lrt
 
+.PHONY: increment_version
+
+all: increment_version
+
+increment_version:
+	if test -e ver.cpp; then \
+		build=`sed -rs 's/.*version_num = ([[:digit:]]+);/\1/;q' ver.cpp`; \
+		build=`expr $$build + 1`; \
+	else \
+		build=0; \
+	fi; \
+	echo "extern const unsigned long version_num = $$build;" > ver.cpp; \
+	echo "extern const char *const version_time = \"`date`\";" >> ver.cpp;
+
+ver.cpp:
+	$(MAKE) increment_version
+
 Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
 ScreenBookkeeping.cpp ScreenBookkeeping.h \
@@ -566,6 +583,7 @@ main_LDADD = \
 		  $(XLIBS) \
 		  libtomcrypt.a libtommath.a
 
+nodist_stepmania_SOURCES = ver.cpp
 stepmania_SOURCES = $(main_SOURCES)
 stepmania_LDADD = $(main_LDADD)
 
