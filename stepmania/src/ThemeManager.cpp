@@ -297,7 +297,7 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		if( bIsBaseTheme )
 			bLoadedBase = true;
 
-		/* Read the fallback theme.  If no fallback theme is specified, and we havn't
+		/* Read the fallback theme.  If no fallback theme is specified, and we haven't
 		 * already loaded it, fall back on SpecialFiles::BASE_THEME_NAME.  That way, default theme
 		 * fallbacks can be disabled with "FallbackTheme=". */
 		RString sFallback;
@@ -358,7 +358,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	
 	ASSERT( IsThemeSelectable(sThemeName) );
 
-	/* We havn't actually loaded the theme yet, so we can't check whether sLanguage
+	/* We haven't actually loaded the theme yet, so we can't check whether sLanguage
 	 * exists.  Just check for empty. */
 	if( sLanguage.empty() )
 		sLanguage = GetDefaultLanguage();
