@@ -127,6 +127,9 @@
 	<Function name='animate' return='void' arguments='bool b'>
 		Sets whether or not the Actor should animate.
 	</Function>
+	<Function name='basealpha' return='void' arguments='float fAlpha'>
+		Sets the Actor's base alpha to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
+	</Function>
 	<Function name='blend' return='void' arguments='BlendMode mode'>
 		Sets the Actor to use the specified blend mode.
 	</Function>
@@ -145,14 +148,20 @@
 	<Function name='cullmode' return='void' arguments='CullMode mode'>
 		Sets the Actor's cull mode to <code>mode</code>.
 	</Function>
-	<Function name='diffusealpha' return='void' arguments='float f'>
-		Set's the Actor's alpha level to <code>f</code>, which should be a float in the range 0..1.
+	<Function name='diffusealpha' return='void' arguments='float fAlpha'>
+		Set's the Actor's alpha level to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
 	</Function>
 	<Function name='draworder' return='void' arguments='int iOrder'>
 		Set's the Actor's draworder to <code>iOrder</code>, where larger values display first.
 	</Function>
 	<Function name='effectclock' return='void' arguments='string s'>
 		Set the Actor's effect clock to <code>s</code>.
+	</Function>
+	<Function name='effectcolor1' return='void' arguments='RageColor c'>
+		Sets the first effect color to <code>c</code>.
+	</Function>
+	<Function name='effectcolor2' return='void' arguments='RageColor c'>
+		Sets the second effect color to <code>c</code>.
 	</Function>
 	<Function name='effectmagnitude' return='void' arguments='float fX, float fY, float fZ'>
 		Set the Actor's effect magnitude in each direction to the given values.
@@ -181,6 +190,9 @@
 	<Function name='GetDiffuseAlpha' return='float' arguments=''>
 		Returns the Actor's current diffusealpha.
 	</Function>
+	<Function name='GetNumStates' return='int' arguments=''>
+		Returns the number of states the Actor has.
+	</Function>
 	<Function name='GetHeight' return='float' arguments=''>
 		Returns the Actor's current height.
 	</Function>
@@ -196,6 +208,15 @@
 	<Function name='horizalign' return='void' arguments='HorizAlign align'>
 		Set the horizontal alignment of the Actor according to <code>align</code>. See <Link function='halign' /> for fractional alignment.
 	</Function>
+	<Function name='playcommand' return='void' arguments='string sCommandName'>
+		Plays a command named <code>sCommandName</code>.
+	</Function>
+	<Function name='pulse' return='void' arguments=''>
+		Makes the Actor grow and shrink. Can use <Link function='effectmagnitude' /> to define different pulsing behavior.
+	</Function>
+	<Function name='queuecommand' return='void' arguments='string sCommandName'>
+		Queues a command named <code>sCommandName</code> to be played.
+	</Function>
 	<Function name='rotationx' return='void' arguments='float fRotation'>
 		Set the Actor's rotation on the X axis to <code>fAlign</code>.
 	</Function>
@@ -204,6 +225,15 @@
 	</Function>
 	<Function name='rotationz' return='void' arguments='float fRotation'>
 		Set the Actor's rotation on the Z axis to <code>fAlign</code>.
+	</Function>
+	<Function name='shadowlength' return='void' arguments='float fLength'>
+		Sets the Actor's shadow length to <code>fLength</code>.
+	</Function>
+	<Function name='skewx' return='void' arguments='float fAmount'>
+		Skews the Actor on the x axis by <code>fAmount</code>.
+	</Function>
+	<Function name='spin' return='void' arguments=''>
+		Tells the Actor to spin. Can use <Link function='effectmagnitude' /> to define different spinning behavior.
 	</Function>
 	<Function name='stopeffect' return='void' arguments=''>
 		Stops any effect the Actor has.
@@ -279,7 +309,7 @@
 		Clear all attributes associated with the BitmapText.
 	</Function>
 	<Function name='GetText' return='string' arguments=''>
-		Returns the text.
+		Returns the text that is currently set.
 	</Function>
 	<Function name='jitter' return='void' arguments='bool bJitter'>
 		If <code>bJitter</code> is <code>true</code>, move each character of the string around by a small random amount.
@@ -305,22 +335,31 @@
 </Class>
 <Class name='Course'>
 	<Function name='GetBannerPath' return='int' arguments=''>
-		Returns the path to the course's banner.
+		Returns the path to the Course's banner.
 	</Function>
 	<Function name='GetCourseType' return='CourseType' arguments=''>
-		Returns the course's <Link class='CourseType' />.
+		Returns the Course's <Link class='ENUM' function='CourseType' />.
 	</Function>
 	<Function name='GetDisplayFullTitle' return='string' arguments=''>
-		Returns the full display title of the course.
+		Returns the full display title of the Course.
 	</Function>
 	<Function name='GetGroupName' return='string' arguments=''>
-		Returns the course's group name.
+		Returns the Course's group name.
+	</Function>
+	<Function name='GetPlayMode' return='PlayMode' arguments=''>
+		Returns the Course's <Link class='ENUM' function='PlayMode' />.
 	</Function>
 	<Function name='GetTranslitFullTitle' return='string' arguments=''>
-		Returns the full transliterated title of the course.
+		Returns the full transliterated title of the Course.
+	</Function>
+	<Function name='HasMods' return='bool' arguments=''>
+		Returns <code>true</code> if the Course has modifiers.
+	</Function>
+	<Function name='HasTimedMods' return='bool' arguments=''>
+		Returns <code>true</code> if the Course has timed modifiers.
 	</Function>
 	<Function name='IsAutogen' return='bool' arguments=''>
-		Returns <code>true</code> if the course was automatically generated.
+		Returns <code>true</code> if the Course was automatically generated.
 	</Function>
 </Class>
 <Class name='CharacterManager'>
@@ -439,7 +478,7 @@
 		if it does not exist.
 	</Function>
 	<Function name='GetGameSeed' return='int' arguments=''>
-		Return the current random seed for the game.
+		Return the random seed for the game.
 	</Function>
 	<Function name='GetGameplayLeadIn' return='bool' arguments=''>
 		Return <code>true</code> if the gameplay lead in is enabled. If
@@ -457,8 +496,40 @@
 	<Function name='GetNumStagesLeft' return='int' arguments='PlayerNumber pn'>
 		Returns the number of stages left for player <code>pn</code>.
 	</Function>
+	<Function name='GetStageSeed' return='int' arguments=''>
+		Return the random seed for the current stage.
+	</Function>
+	<Function name='IsCourseMode' return='bool' arguments=''>
+		Returns <code>true</code> if playing in a Course mode.
+	</Function>
+	<Function name='IsDemonstration' return='bool' arguments=''>
+		Returns <code>true</code> if in Demonstration mode.
+	</Function>
+	<Function name='IsEventMode' return='bool' arguments=''>
+		Returns <code>true</code> if Event Mode is on, <Link class='GameState' function='SetTemporaryEventMode'>temporary</Link> or otherwise.
+	</Function>
+</Class>
+<Class name='HighScore'>
+	<Function name='GetDate' return='DateTime' arguments=''>
+		Returns the date and time the high score was achieved.
+	</Function>
+	<Function name='GetName' return='string' arguments=''>
+		Returns the name associated with the high score.
+	</Function>
+	<Function name='GetPercentDP' return='float' arguments=''>
+		Returns the percentage of dance points associated with the high score.
+	</Function>
+	<Function name='GetScore' return='int' arguments=''>
+		Returns the score associated with the high score.
+	</Function>
+	<Function name='GetSurvivalSeconds' return='float' arguments=''>
+		Returns the number of seconds survived associated with the high score.
+	</Function>
 </Class>
 <Class name='LifeMeter'>
+	<Function name='GetLife' return='float' arguments=''>
+		Returns the amount of life left in the LifeMeter as a float in the range 0..1.
+	</Function>
 	<Function name='IsFailing' return='bool' arguments=''>
 		Returns <code>true</code> if failing.
 	</Function>
@@ -480,6 +551,13 @@
 	</Function>
 	<Function name='setseconds' return='void' arguments='float fSeconds'>
 		Sets the MenuTimer's value to <code>fSeconds</code>.
+	</Function>
+	<Function name='silent' return='void' arguments='bool bSilent'>
+		Sets the MenuTimer's silent setting to <code>bSilent</code>.
+	</Function>
+	<Function name='stealth' return='void' arguments='bool bStealth'>
+		Sets the MenuTimer's stealth setting to <code>bStealth</code>. If
+		<code>true</code>, the timer will be invisible and silent.
 	</Function>
 	<Function name='stop' return='void'>
 		Stops the MenuTimer by setting it to 0 and pausing.
@@ -624,6 +702,9 @@
 	</Function>
 	<Function name='lockinput' return='void' arguments='float f'>
 		Locks input for <code>f</code> seconds.
+	</Function>
+	<Function name='PostScreenMessage' return='void' arguments='string sScreenMsg'>
+		Posts a message with the text <code>sScreenMsg</code> to the Screen.
 	</Function>
 </Class>
 <Class name='ScreenGameplay'>
