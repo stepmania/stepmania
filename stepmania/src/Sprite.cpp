@@ -741,6 +741,8 @@ float Sprite::GetAnimationLengthSeconds() const
 void Sprite::SetSecondsIntoAnimation( float fSeconds )
 {
 	SetState( 0 );	// rewind to the first state
+	if( m_pTexture )
+		m_pTexture->SetPosition( fSeconds );
 	m_fSecsIntoState = fSeconds;
 	UpdateAnimationState();
 }
