@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -80,7 +80,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
 				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib"
-				OutputFile="../Program/StepMania-debug.exe"
+				OutputFile="../../piu/Program/StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
@@ -190,7 +190,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
 				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib"
-				OutputFile="../Program/StepMania.exe"
+				OutputFile="../../piu/Program/StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
@@ -292,7 +292,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
 				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib"
-				OutputFile="../Program/StepMania-fastdebug.exe"
+				OutputFile="../../piu/Program/StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
@@ -304,6 +304,7 @@
 				MapFileName="$(IntDir)\$(TargetName).map"
 				MapExports="true"
 				SubSystem="2"
+				FixedBaseAddress="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -435,6 +436,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScreenEvaluationMultiplayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenEvaluationMultiplayer.h"
+				>
+			</File>
+			<File
 				RelativePath="ScreenExit.cpp"
 				>
 			</File>
@@ -452,6 +461,14 @@
 			</File>
 			<File
 				RelativePath=".\ScreenGameplayLesson.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenGameplayMultiplayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenGameplayMultiplayer.h"
 				>
 			</File>
 			<File
@@ -492,6 +509,14 @@
 			</File>
 			<File
 				RelativePath="ScreenInstructions.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenJoinMultiplayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenJoinMultiplayer.h"
 				>
 			</File>
 			<File
@@ -1096,14 +1121,6 @@
 			</File>
 			<File
 				RelativePath="CommonMetrics.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ControllerStateDisplay.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ControllerStateDisplay.h"
 				>
 			</File>
 			<File
@@ -2523,6 +2540,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ControllerStateDisplay.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ControllerStateDisplay.h"
+				>
+			</File>
+			<File
 				RelativePath="CourseContentsList.cpp"
 				>
 			</File>
@@ -3284,6 +3309,14 @@
 			</File>
 			<File
 				RelativePath=".\RageSoundReader_ChannelSplit.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_DetectPitch.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_DetectPitch.h"
 				>
 			</File>
 			<File
@@ -6932,6 +6965,22 @@
 		</File>
 		<File
 			RelativePath="archutils\Win32\DialogErrorHeader.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\PitchDetectionTest.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\PitchDetectionTest.h"
+			>
+		</File>
+		<File
+			RelativePath=".\PitchDetectionTestUtil.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\PitchDetectionTestUtil.h"
 			>
 		</File>
 		<File
