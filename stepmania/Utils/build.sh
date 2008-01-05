@@ -145,7 +145,8 @@ args='--disable-shared --enable-static --disable-debug --disable-vhook
 --enable-parser=h261 --enable-parser=h263 --enable-parser=h264
 --enable-parser=mjpeg --enable-parser=mpeg4video
 --enable-parser=mpegaudio --enable-parser=mpegvideo
---enable-parser=ac3'
+--enable-parser=ac3
+--extra-cflags=-Dattribute_deprecated='
 if [ ! -f $ffmpeg/_inst/lib/libavcodec.a ]; then
 	cd $ffmpeg
 	message 'Configuring ffmpeg'
