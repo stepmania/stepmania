@@ -48,36 +48,8 @@ extern "C" int SM_main( int argc, char *argv[] );
 #define ArchSwap16(n) OSSwapInt16((n))
 #define HAVE_BYTE_SWAPS
 
-#include <bits/c++config.h>
-#if ! _GLIBCXX_HAVE_POWF
-# define NEED_POWF
-#endif
-
-#if ! _GLIBCXX_HAVE_SQRTF
-# define NEED_SQRTF
-#endif
-
-#if ! _GLIBCXX_HAVE_SINF
-# define NEED_SINF
-#endif
-
-#if ! _GLIBCXX_HAVE_TANF
-# define NEED_TANF
-#endif
-
-#if ! _GLIBCXX_HAVE_COSF
-# define NEED_COSF
-#endif
-
-#if ! _GLIBCXX_HAVE_ACOSF
-# define NEED_ACOSF
-#endif
-
-#if ! _GLIBCXX_HAVE_STRTOF
-# define NEED_STRTOF
-#endif
-
 // Define the work around if needed.
+#include <bits/c++config.h>
 #include <stdint.h>
 #if _GLIBCXX_USE_C99
 # define NEED_CSTDLIB_WORKAROUND
@@ -85,10 +57,6 @@ extern "C" int SM_main( int argc, char *argv[] );
 inline int64_t llabs( int64_t x ) { return x < 0LL ? -x : x; }
 #endif
 
-#include <sys/errno.h>
-#ifndef EILSEQ
-#define EILSEQ      92
-#endif
 #define attribute_deprecated // Shut ffmpeg up!
 
 #endif
