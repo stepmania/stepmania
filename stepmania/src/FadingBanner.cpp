@@ -73,6 +73,23 @@ void FadingBanner::Load( RageTextureID ID, bool bLowResToHighRes )
 {
 	BeforeChange( bLowResToHighRes );
 	m_Banner[m_iIndexLatest].Load(ID);
+	
+	/* XXX: Hack to keep movies from updating multiple times.
+	 * We need to either completely disallow movies in banners or support
+	 * them. There are a number of files that use them currently in the
+	 * wild. If we wanted to support them, then perhaps we should use an
+	 * all-black texture for the low quality texture. */
+	RageTexture *pTexture = m_Banner[m_iIndexLatest].GetTexture();
+	if( !pTexture || !pTexture->IsAMovie() )
+		return;
+	m_Banner[m_iIndexLatest].SetSecondsIntoAnimation( 0.f );
+	for( int i = 1; i < NUM_BANNERS; ++i )
+	{
+		int index = m_iIndexLatest - i;
+		wrap( index, NUM_BANNERS );
+		if( m_Banner[index].GetTexturePath() == ID.filename )
+			m_Banner[index].UnloadTexture();
+	}	
 }
 
 /* If bLowResToHighRes is true, we're fading from a low-res banner to the
