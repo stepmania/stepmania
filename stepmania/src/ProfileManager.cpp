@@ -317,7 +317,7 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 	 * If the profile we're writing was loaded from the primary (non-backup)
 	 * data, then we've validated it and know it's good.  Before writing our
 	 * new data, move the old, good data to the backup.  (Only do this once;
-	 * if we save the profile more than once, we havn't re-validated the
+	 * if we save the profile more than once, we haven't re-validated the
 	 * newly written data.)
 	 */
 	if( m_bNeedToBackUpLastLoad[pn] )

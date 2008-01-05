@@ -308,7 +308,7 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 
 	m_Mutex.Lock();
 
-	/* If we havn't figured out the offset to the real data yet, do so now. */
+	/* If we haven't figured out the offset to the real data yet, do so now. */
 	if( info->m_iDataOffset == -1 )
 	{
 		if( !ReadLocalFileHeader(*info) )

@@ -145,7 +145,7 @@ void ScreenOptionsMemoryCard::HandleMessage( const Message &msg )
 				sOldMountPoint = dev.sOsMountDir;
 			}
 
-			/* If the devices that we'd actually show havn't changed, don't recreate the menu. */
+			/* If the devices that we'd actually show haven't changed, don't recreate the menu. */
 			if( !UpdateCurrentUsbStorageDevices() )
 				return;
 

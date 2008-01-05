@@ -20,7 +20,7 @@ void RageSoundReader_SpeedChange::SetSpeedRatio( float fRatio )
 {
 	m_fSpeedRatio = fRatio;
 
-	/* If we havn't read any data yet, put the new delta into effect immediately. */
+	/* If we haven't read any data yet, put the new delta into effect immediately. */
 	if( m_iDataBufferAvailFrames == 0 )
 		m_fTrailingSpeedRatio = m_fSpeedRatio;
 }

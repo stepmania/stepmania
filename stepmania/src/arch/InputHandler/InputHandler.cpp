@@ -27,7 +27,7 @@ void InputHandler::ButtonPressed( DeviceInput di )
 	if( m_iInputsSinceUpdate >= 1000 )
 	{
 		/*
-		 * We havn't received an update in a long time, so warn about it.  We expect to receive
+		 * We haven't received an update in a long time, so warn about it.  We expect to receive
 		 * input events before the first UpdateTimer call only on the first update.  Leave
 		 * m_iInputsSinceUpdate where it is, so we only warn once.  Only updates that didn't provide
 		 * a timestamp are counted; if the driver provides its own timestamps, UpdateTimer is

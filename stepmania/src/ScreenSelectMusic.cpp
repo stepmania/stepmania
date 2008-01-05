@@ -294,7 +294,7 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 			m_BackgroundLoader.FinishedWithCachedFile( g_sBannerPath );
 	}
 
-	/* Nothing else is going.  Start the music, if we havn't yet. */
+	/* Nothing else is going.  Start the music, if we haven't yet. */
 	if( g_bSampleMusicWaiting )
 	{
 		/* Don't start the music sample when moving fast. */
@@ -846,7 +846,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		}
 		else
 		{
-			/* We havn't made a selection yet. */
+			/* We haven't made a selection yet. */
 			return;
 		}
 

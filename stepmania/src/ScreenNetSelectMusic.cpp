@@ -43,7 +43,7 @@ REGISTER_SCREEN_CLASS( ScreenNetSelectMusic );
 
 void ScreenNetSelectMusic::Init()
 {
-	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
+	/* Finish any previous stage.  It's OK to call this when we haven't played a stage yet. */
 	GAMESTATE->FinishStage();
 
 	ScreenNetSelectBase::Init();

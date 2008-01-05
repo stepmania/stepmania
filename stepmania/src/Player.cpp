@@ -580,7 +580,7 @@ void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
 void Player::Update( float fDeltaTime )
 {
 	const RageTimer now;
-	// Don't update if we havn't been loaded yet.
+	// Don't update if we haven't been loaded yet.
 	if( !m_bLoaded )
 		return;
 

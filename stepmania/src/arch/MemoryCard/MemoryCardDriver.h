@@ -36,7 +36,7 @@ struct UsbStorageDevice
 		/* Empty device.  This is used only by MemoryCardManager. */
 		STATE_NONE,
 
-		/* The card has been detected, but we havn't finished write tests, loading
+		/* The card has been detected, but we haven't finished write tests, loading
 		 * the quick profile information, etc. yet.  We can display something on
 		 * screen, in order to appear responsive, show that something's happening and
 		 * aid diagnostics, though. */

@@ -121,7 +121,7 @@ int RageSoundReader_Split::SetPosition( int iFrame )
 	m_iPositionFrame = iFrame;
 
 	/* We can't tell whether we're past EOF.  We can't ReadBuffer here, because the
-	 * other sounds using this same source probably havn't seeked yet, so seeking
+	 * other sounds using this same source probably haven't seeked yet, so seeking
 	 * to the beginning of the file would buffer between there and the position
 	 * of those sounds.  Just return success, and we'll return EOF in Read if needed. */
 	return 1;

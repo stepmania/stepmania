@@ -281,7 +281,7 @@ void Sprite::SetTexture( RageTexture *pTexture )
 	if( m_fRememberedClipWidth != -1 && m_fRememberedClipHeight != -1 )
 		ScaleToClipped( m_fRememberedClipWidth, m_fRememberedClipHeight );
 
-	/* Load default states if we havn't before. */
+	/* Load default states if we haven't before. */
 	if( m_States.empty() )
 		LoadStatesFromTexture();
 }

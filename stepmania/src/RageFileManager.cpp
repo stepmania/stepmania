@@ -728,7 +728,7 @@ static bool SortBySecond( const pair<int,int> &a, const pair<int,int> &b )
 /*
  * Return true if the given path should use slow, reliable writes.
  *
- * I havn't decided if it's better to do this here, or to specify SLOW_FLUSH
+ * I haven't decided if it's better to do this here, or to specify SLOW_FLUSH
  * manually each place we want it.  This seems more reliable (we might forget
  * somewhere and not notice), and easier (don't have to pass flags down to IniFile::Write,
  * etc).

@@ -961,7 +961,7 @@ int GameState::GetCourseSongIndex() const
 }
 
 /* Hack: when we're loading a new course song, we want to display the new song number, even
- * though we havn't started that song yet. */
+ * though we haven't started that song yet. */
 int GameState::GetLoadingCourseSongIndex() const
 {
 	int iIndex = GetCourseSongIndex();
