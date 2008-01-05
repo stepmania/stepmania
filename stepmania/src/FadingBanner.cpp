@@ -40,11 +40,11 @@ void FadingBanner::ScaleToClipped( float fWidth, float fHeight )
 		m_Banner[i].ScaleToClipped( fWidth, fHeight );
 }
 
-void FadingBanner::Update( float fDeltaTime )
+void FadingBanner::UpdateInternal( float fDeltaTime )
 {
 	// update children manually
-	// ActorFrame::Update( fDeltaTime );
-	Actor::Update( fDeltaTime );
+	// ActorFrame::UpdateInternal( fDeltaTime );
+	Actor::UpdateInternal( fDeltaTime );
 
 	if( !m_bSkipNextBannerUpdate )
 	{
@@ -144,8 +144,7 @@ bool FadingBanner::LoadFromCachedBanner( const RString &path )
 		return false;
 	}
 
-	BeforeChange();
-	m_Banner[m_iIndexLatest].Load( ID );
+	Load( ID );
 
 	return bLowRes;
 }

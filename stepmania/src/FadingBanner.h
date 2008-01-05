@@ -33,7 +33,7 @@ public:
 	bool LoadFromCachedBanner( const RString &path );
 
 	void SetMovingFast( bool fast ) { m_bMovingFast=fast; }
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal( float fDeltaTime );
 	virtual void DrawPrimitives();
 
 	// Lua
