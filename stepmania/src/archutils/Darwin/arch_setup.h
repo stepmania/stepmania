@@ -39,9 +39,6 @@ extern "C" int SM_main( int argc, char *argv[] );
 #ifndef MACOSX
 # define MACOSX
 #endif
-#ifndef __MACOSX__
-# define __MACOSX__
-#endif
 
 #define ArchSwap32(n) OSSwapInt32((n))
 #define ArchSwap24(n) (ArchSwap32((n)) >> 8)
