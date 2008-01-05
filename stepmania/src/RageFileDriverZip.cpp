@@ -349,7 +349,7 @@ void RageFileDriverZip::FlushDirCache( const RString &sPath )
 }
 
 /*
- * Copyright (c) 2003-2005 Glenn Maynard.
+ * Copyright (c) 2003-2005 Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
