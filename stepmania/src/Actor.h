@@ -271,7 +271,7 @@ public:
 	void SetEffectColor1( RageColor c )		{ m_effectColor1 = c; }
 	void SetEffectColor2( RageColor c )		{ m_effectColor2 = c; }
 	void SetEffectPeriod( float fTime );
-	float GetEffectPeriod();
+	float GetEffectPeriod() const;
 	void SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, float fAtZero );
 	void SetEffectOffset( float fTime )		{ m_fEffectOffset = fTime; }
 	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
@@ -355,7 +355,7 @@ public:
 	// Named commands
 	//
 	void AddCommand( const RString &sCmdName, apActorCommands apac );
-	bool HasCommand( const RString &sCmdName );
+	bool HasCommand( const RString &sCmdName ) const;
 	const apActorCommands *GetCommand( const RString &sCommandName ) const;
 	void PlayCommand( const RString &sCommandName ) { HandleMessage( Message(sCommandName) ); } // convenience
 	void PlayCommandNoRecurse( const Message &msg );

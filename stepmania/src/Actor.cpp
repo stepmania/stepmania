@@ -840,7 +840,7 @@ void Actor::SetEffectPeriod( float fTime )
 	m_fEffectHoldAtZero = 0;
 }
 
-float Actor::GetEffectPeriod()
+float Actor::GetEffectPeriod() const
 {
 	return m_fEffectRampUp + m_fEffectHoldAtHalf + m_fEffectRampDown + m_fEffectHoldAtZero;
 }
@@ -1168,7 +1168,7 @@ void Actor::AddCommand( const RString &sCmdName, apActorCommands apac )
 	}
 }
 
-bool Actor::HasCommand( const RString &sCmdName )
+bool Actor::HasCommand( const RString &sCmdName ) const
 {
 	return GetCommand(sCmdName) != NULL;
 }
