@@ -817,6 +817,7 @@ public:
 	static int GetText( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sText ); return 1; }
 	static int GetIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iIndex ); return 1; }
 	static int GetMultiPlayer( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MultiPlayer); return 1; }
+	static int GetStyle( T* p, lua_State *L )	{ if(p->m_pStyle==NULL) lua_pushnil(L); else {Style *pStyle = (Style*)p->m_pStyle; pStyle->PushSelf(L);} return 1; }
 	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID ); return 1; }
 	static int GetSong( T* p, lua_State *L )	{ if(p->m_pSong==NULL) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
 	static int GetSongGroup( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sSongGroup ); return 1; }
@@ -827,6 +828,7 @@ public:
 		ADD_METHOD( GetText );
 		ADD_METHOD( GetIndex );
 		ADD_METHOD( GetMultiPlayer );
+		ADD_METHOD( GetStyle );
 		ADD_METHOD( GetProfileID );
 		ADD_METHOD( GetSong );
 		ADD_METHOD( GetSongGroup );
