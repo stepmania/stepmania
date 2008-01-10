@@ -239,50 +239,65 @@ void RageBitmapTexture::Create()
 	CreateFrameRects();
 
 
-	//
-	// Enforce frames in the image have even dimensions.  Otherwise, 
-	// pixel/texel alignment will be off.
-	//
-	bool bRunCheck = true;
-	
-	// Don't check if the artist intentionally blanked the image by making it very tiny.
-	if( this->GetSourceWidth()<=2 || this->GetSourceHeight()<=2 )
-		 bRunCheck = false;
-	
-	// HACK: Don't check song graphics.  Many of them are weird dimensions.
-	if( !TEXTUREMAN->GetOddDimensionWarning() )
-		 bRunCheck = false;
-
-	if( bRunCheck  )
 	{
-		float fFrameWidth = this->GetSourceWidth() / (float)this->GetFramesWide();
-		float fFrameHeight = this->GetSourceHeight() / (float)this->GetFramesHigh();
-		float fBetterFrameWidth = roundf((fFrameWidth+0.99f)/2)*2;
-		float fBetterFrameHeight = roundf((fFrameHeight+0.99f)/2)*2;
-		float fBetterSourceWidth = this->GetFramesWide() * fBetterFrameWidth;
-		float fBetterSourceHeight = this->GetFramesHigh() * fBetterFrameHeight;
-		if( fFrameWidth!=fBetterFrameWidth || fFrameHeight!=fBetterFrameHeight )
+		//
+		// Enforce frames in the image have even dimensions.  Otherwise, 
+		// pixel/texel alignment will be off.
+		//
+		int iDimensionMultiple = 2;
+
+		if( sHintString.find("doubleres") != string::npos )
 		{
-			RString sWarning = ssprintf(
-				"The graphic '%s' has frame dimensions that aren't even numbers.\n"
-				"The entire image is %dx%d and frame size is %.1fx%.1f.\n"
-				"Image quality will be much improved if you resize the graphic to %.0fx%.0f, which is a frame size of %.0fx%.0f.", 
-				actualID.filename.c_str(), 
-				this->GetSourceWidth(), this->GetSourceHeight(), 
-				fFrameWidth, fFrameHeight,
-				fBetterSourceWidth, fBetterSourceHeight,
-				fBetterFrameWidth, fBetterFrameHeight );
-			LOG->Warn( sWarning );
-			Dialog::OK( sWarning, "FRAME_DIMENSIONS_WARNING" );
+			iDimensionMultiple = 4;
+		}
+
+		bool bRunCheck = true;
+		
+		// Don't check if the artist intentionally blanked the image by making it very tiny.
+		if( this->GetSourceWidth()<=iDimensionMultiple || this->GetSourceHeight()<=iDimensionMultiple )
+			bRunCheck = false;
+		
+		// HACK: Don't check song graphics.  Many of them are weird dimensions.
+		if( !TEXTUREMAN->GetOddDimensionWarning() )
+			bRunCheck = false;
+
+		if( bRunCheck  )
+		{
+			float fFrameWidth = this->GetSourceWidth() / (float)this->GetFramesWide();
+			float fFrameHeight = this->GetSourceHeight() / (float)this->GetFramesHigh();
+			float fBetterFrameWidth = ceilf(fFrameWidth/iDimensionMultiple) * iDimensionMultiple;
+			float fBetterFrameHeight = ceilf(fFrameHeight/iDimensionMultiple) * iDimensionMultiple;
+			float fBetterSourceWidth = this->GetFramesWide() * fBetterFrameWidth;
+			float fBetterSourceHeight = this->GetFramesHigh() * fBetterFrameHeight;
+			if( fFrameWidth!=fBetterFrameWidth || fFrameHeight!=fBetterFrameHeight )
+			{
+				RString sWarning = ssprintf(
+					"The graphic '%s' has frame dimensions that aren't a multiple of %d.\n"
+					"The entire image is %dx%d and frame size is %.1fx%.1f.\n"
+					"Image quality will be much improved if you resize the graphic to %.0fx%.0f, which is a frame size of %.0fx%.0f.", 
+					actualID.filename.c_str(), 
+					iDimensionMultiple,
+					this->GetSourceWidth(), this->GetSourceHeight(), 
+					fFrameWidth, fFrameHeight,
+					fBetterSourceWidth, fBetterSourceHeight,
+					fBetterFrameWidth, fBetterFrameHeight );
+				LOG->Warn( sWarning );
+				Dialog::OK( sWarning, "FRAME_DIMENSIONS_WARNING" );
+			}
 		}
 	}
 
 
-
 	delete pImg;
 
-	/* See if the apparent "size" is being overridden. */
+	/* Check for hints that override the apparent "size". */
 	GetResolutionFromFileName( actualID.filename, m_iSourceWidth, m_iSourceHeight );
+
+	if( sHintString.find("doubleres") != string::npos )
+	{
+		m_iSourceWidth = m_iSourceWidth / 2;
+		m_iSourceHeight = m_iSourceHeight / 2;
+	}
 
 
 	RString sProperties;
