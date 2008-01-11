@@ -321,7 +321,10 @@ public:
 	//
 	bool GetVisible() const				{ return m_bVisible; }
 	void SetVisible( bool b )			{ m_bVisible = b; }
-	void SetShadowLength( float fLength )		{ m_fShadowLength = fLength; }
+	void SetShadowLength( float fLength )		{ m_fShadowLengthX = fLength; m_fShadowLengthY = fLength; }
+	void SetShadowLengthX( float fLengthX )		{ m_fShadowLengthX = fLengthX; }
+	void SetShadowLengthY( float fLengthY )		{ m_fShadowLengthY = fLengthY; }
+	void SetShadowColor( RageColor c )		{ m_ShadowColor = c; }
 	// TODO: Implement hibernate as a tween type?
 	void SetHibernate( float fSecs )		{ m_fHibernateSecondsLeft = fSecs; }
 	void SetDrawOrder( int iOrder )			{ m_iDrawOrder = iOrder; }
@@ -463,7 +466,9 @@ protected:
 	bool		m_bVisible;
 	bool		m_bIsAnimating;
 	float		m_fHibernateSecondsLeft;
-	float		m_fShadowLength;	// 0 == no shadow
+	float		m_fShadowLengthX;
+	float		m_fShadowLengthY;
+	RageColor	m_ShadowColor;
 	int		m_iDrawOrder;		// lower first
 
 	//

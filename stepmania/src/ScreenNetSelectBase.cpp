@@ -357,15 +357,14 @@ void ColorBitmapText::DrawPrimitives( )
 		//
 		// render the shadow
 		//
-		if( m_fShadowLength != 0 )
+		if( m_fShadowLengthX != 0  ||  m_fShadowLengthY != 0 )
 		{
 			DISPLAY->PushMatrix();
-			DISPLAY->TranslateWorld( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
-
-			RageColor dim(0,0,0,0.5f*m_pTempState->diffuse[0].a);	// semi-transparent black
-
+			DISPLAY->TranslateWorld( m_fShadowLengthX, m_fShadowLengthY, 0 );	// shift by 5 units
+			RageColor c = m_ShadowColor;
+			c.a *= m_pTempState->diffuse[0].a;
 			for( unsigned i=0; i<m_aVertices.size(); i++ )
-				m_aVertices[i].c = dim;
+				m_aVertices[i].c = c;
 			DrawChars();
 
 			DISPLAY->PopMatrix();

@@ -100,7 +100,9 @@ void Actor::InitState()
 	m_effectColor2 = RageColor(1,1,1,1);
 
 	m_bVisible = true;
-	m_fShadowLength = 0;
+	m_fShadowLengthX = 0;
+	m_fShadowLengthY = 0;
+	m_ShadowColor = RageColor(0,0,0,0.5);
 	m_bIsAnimating = true;
 	m_fHibernateSecondsLeft = 0;
 	m_iDrawOrder = 0;
@@ -198,7 +200,8 @@ Actor::Actor( const Actor &cpy ):
 
 	CPY( m_bVisible );
 	CPY( m_fHibernateSecondsLeft );
-	CPY( m_fShadowLength );
+	CPY( m_fShadowLengthX );
+	CPY( m_fShadowLengthY );
 	CPY( m_bIsAnimating );
 	CPY( m_iDrawOrder );
 
@@ -1318,6 +1321,9 @@ public:
 	static int pitch( T* p, lua_State *L )			{ p->AddRotationP(FArg(1)); return 0; }
 	static int roll( T* p, lua_State *L )			{ p->AddRotationR(FArg(1)); return 0; }
 	static int shadowlength( T* p, lua_State *L )		{ p->SetShadowLength(FArg(1)); return 0; }
+	static int shadowlengthx( T* p, lua_State *L )		{ p->SetShadowLengthX(FArg(1)); return 0; }
+	static int shadowlengthy( T* p, lua_State *L )		{ p->SetShadowLengthY(FArg(1)); return 0; }
+	static int shadowcolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetShadowColor( c ); return 0; }
 	static int horizalign( T* p, lua_State *L )		{ p->SetHorizAlign(Enum::Check<HorizAlign>(L, 1)); return 0; }
 	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlign(Enum::Check<VertAlign>(L, 1)); return 0; }
 	static int halign( T* p, lua_State *L )			{ p->SetHorizAlign(FArg(1)); return 0; }
@@ -1519,6 +1525,9 @@ public:
 		ADD_METHOD( pitch );
 		ADD_METHOD( roll );
 		ADD_METHOD( shadowlength );
+		ADD_METHOD( shadowlengthx );
+		ADD_METHOD( shadowlengthy );
+		ADD_METHOD( shadowcolor );
 		ADD_METHOD( horizalign );
 		ADD_METHOD( vertalign );
 		ADD_METHOD( halign );

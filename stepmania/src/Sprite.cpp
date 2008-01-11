@@ -529,11 +529,13 @@ void Sprite::DrawTexture( const TweenState *state )
 		//////////////////////
 		// render the shadow
 		//////////////////////
-		if( m_fShadowLength != 0 )
+		if( m_fShadowLengthX != 0  ||  m_fShadowLengthY != 0 )
 		{
 			DISPLAY->PushMatrix();
-			DISPLAY->TranslateWorld( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
-			v[0].c = v[1].c = v[2].c = v[3].c = RageColor( 0, 0, 0, 0.5f*state->diffuse[0].a );	// semi-transparent black
+			DISPLAY->TranslateWorld( m_fShadowLengthX, m_fShadowLengthY, 0 );	// shift by 5 units
+			RageColor c = m_ShadowColor;
+			c.a *= state->diffuse[0].a;
+			v[0].c = v[1].c = v[2].c = v[3].c = c;	// semi-transparent black
 			DISPLAY->DrawQuad( v );
 			DISPLAY->PopMatrix();
 		}
