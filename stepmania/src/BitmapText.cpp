@@ -323,8 +323,13 @@ void BitmapText::DrawChars()
 			end++;
 		DISPLAY->ClearAllTextures();
 		DISPLAY->SetTexture( TextureUnit_1, m_pTextures[start]->GetTexHandle() );
-		// don't bother setting texture render states for text.  We never go outside of 0..1.
-		//Actor::SetTextureRenderStates();
+		
+		/* Don't bother setting texture render states for text.  We never go outside of 0..1. /*
+		/* We should call SetTextureRenderStates because it does more than just setting 
+		 * the texture wrapping state. If setting the wrapping state is found to be slow, 
+		 * there should probably be a "don't care" texture wrapping mode set in Actor. -Chris */
+		Actor::SetTextureRenderStates();
+		
 		RageSpriteVertex &start_vertex = m_aVertices[start*4];
 		int iNumVertsToDraw = (end-start)*4;
 		DISPLAY->DrawQuads( &start_vertex, iNumVertsToDraw );
