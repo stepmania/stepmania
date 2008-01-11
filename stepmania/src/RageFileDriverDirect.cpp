@@ -106,6 +106,16 @@ RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iError )
 		return NULL;
 	}
 
+#if defined(UNIX)
+	struct stat st;
+	if( fstat(iFD, &st) != -1 && (st.st_mode & S_IFDIR) )
+	{
+		iError = EISDIR;
+		close( iFD );
+		return NULL;
+	}
+#endif
+
 	return new RageFileObjDirect( sPath, iFD, iMode );
 }
 
