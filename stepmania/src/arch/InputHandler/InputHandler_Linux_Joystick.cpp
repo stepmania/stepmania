@@ -1,5 +1,6 @@
 #include "global.h"
 #include "InputHandler_Linux_Joystick.h"
+#include "InputHandler_Linux_Event.h" // for m_bFoundAnyJoysticks
 #include "RageLog.h"
 #include "RageUtil.h"
 
@@ -26,10 +27,15 @@ static const char *Paths[InputHandler_Linux_Joystick::NUM_JOYSTICKS] =
 InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
 {
 	LOG->Trace( "InputHandler_Linux_Joystick::InputHandler_Linux_Joystick" );
-	
 	for(int i = 0; i < NUM_JOYSTICKS; ++i)
 		fds[i] = -1;
 
+	if( InputHandler_Linux_Event::m_bFoundAnyJoysticks )
+	{
+		LOG->Trace( "InputHandler_Linux_Joystick disabled (joystick driver already loaded)" );
+		return;
+	}
+	
 	/* We check both eg. /dev/js0 and /dev/input/js0.  If both exist, they're probably
 	 * the same device; keep track of device IDs so we don't open the same joystick
 	 * twice. */
@@ -79,6 +85,7 @@ InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
 	{
 		m_InputThread.SetName( "Joystick thread" );
 		m_InputThread.Create( InputThread_Start, this );
+		InputHandler_Linux_Event::m_bFoundAnyJoysticks = true;
 	}
 }
 	
