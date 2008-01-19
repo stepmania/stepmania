@@ -3506,12 +3506,10 @@ void ScreenEdit::CopyToLastSave()
 	ASSERT( GAMESTATE->m_pCurSong );
 	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] );
 	m_SongLastSave = *GAMESTATE->m_pCurSong;
-	m_mStepsLastSave.clear();
+	m_vStepsLastSave.clear();
 	const vector<Steps*> &vSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType );
-	for( vector<Steps*>::const_iterator it = vSteps.begin(); it != vSteps.end(); ++it )
-	{
-		m_mStepsLastSave[(*it)->GetDifficulty()] = **it;
-	}
+	FOREACH_CONST( Steps*, vSteps, it )
+		m_vStepsLastSave.push_back( **it );
 }
 
 void ScreenEdit::CopyFromLastSave()
@@ -3521,13 +3519,9 @@ void ScreenEdit::CopyFromLastSave()
 	// 2) No steps can be deleted by ScreenEdit (except possibly when we exit)
 	*GAMESTATE->m_pCurSong = m_SongLastSave;
 	const vector<Steps*> &vSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType );
-	ASSERT( vSteps.size() == m_mStepsLastSave.size() );
-	for( vector<Steps*>::const_iterator it = vSteps.begin(); it != vSteps.end(); ++it )
-	{
-		map< Difficulty, Steps >::const_iterator itOldSteps = m_mStepsLastSave.find( (*it)->GetDifficulty() );
-		ASSERT( itOldSteps != m_mStepsLastSave.end() );
-		**it = itOldSteps->second;
-	}
+	ASSERT_M( vSteps.size() == m_vStepsLastSave.size(), ssprintf("Step sizes don't match: %d, %d", int(vSteps.size()), int(m_vStepsLastSave.size())) );
+	for( unsigned i = 0; i < vSteps.size(); ++i )
+		*vSteps[i] = m_vStepsLastSave[i];
 }
 
 void ScreenEdit::RevertFromDisk()

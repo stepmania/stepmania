@@ -256,7 +256,7 @@ protected:
 	void RevertFromDisk();
 
 	Song m_SongLastSave;
-	map< Difficulty, Steps > m_mStepsLastSave;
+	vector<Steps> m_vStepsLastSave;
 
 
 // for MODE_RECORD
