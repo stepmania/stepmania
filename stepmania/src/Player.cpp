@@ -383,10 +383,7 @@ static bool NeedsTapJudging( const TapNote &tn )
 	case TapNote::hold_head:
 	case TapNote::mine:
 	case TapNote::lift:
-		if( tn.result.tns == TNS_None )
-			return true;
-		else
-			return false;
+		return tn.result.tns == TNS_None;
 	case TapNote::hold_tail:
 	case TapNote::attack:
 		return false;
