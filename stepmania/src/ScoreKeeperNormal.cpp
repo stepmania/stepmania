@@ -503,7 +503,7 @@ void ScoreKeeperNormal::GetRowCounts( const NoteData &nd, int iRow,
 	
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
 			continue;
-		if( tn.type != TapNote::tap && tn.type != TapNote::hold_head )
+		if( tn.type != TapNote::tap && tn.type != TapNote::hold_head && tn.type != TapNote::lift )
 			continue;
 		TapNoteScore tns = tn.result.tns;
 		if( tns >= m_MinScoreToContinueCombo )
