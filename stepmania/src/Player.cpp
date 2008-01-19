@@ -45,45 +45,38 @@
 // Helper class to ensure that each row is only judged once without taking too much memory.
 class JudgedRows
 {
-	char	*m_pRows;
-	int 	m_iStart;
-	int	m_iOffset;
-	int	m_iLen;
+	vector<bool> m_vRows;
+	int m_iStart;
+	int m_iOffset;
 	
-	void Resize( int iMin )
+	void Resize( size_t iMin )
 	{
-		char *p = m_pRows;
-		int newSize = max( m_iLen*2, iMin );
-		m_pRows = new char[newSize];
-		int i = 0;
-		if( p )
-		{
-			for( ; i < m_iLen; ++i )
-				m_pRows[i] = p[(i+m_iOffset)%m_iLen];
-			delete[] p;
-		}
+		size_t iNewSize = max( 2*m_vRows.size(), iMin );
+		vector<bool> vNewRows( m_vRows.begin() + m_iOffset, m_vRows.end() );
+		vNewRows.reserve( iNewSize );
+		vNewRows.insert( vNewRows.end(), m_vRows.begin(), m_vRows.begin() + m_iOffset );
+		vNewRows.resize( iNewSize, false );
+		m_vRows.swap( vNewRows );
 		m_iOffset = 0;
-		m_iLen = newSize;
-		memset( m_pRows + i, 0, newSize - i );
 	}
 public:
-	JudgedRows() : m_pRows(NULL), m_iStart(0), m_iOffset(0), m_iLen(0) { Resize( 32 ); }
-	~JudgedRows() { delete[] m_pRows; }
+	JudgedRows() : m_iStart(0), m_iOffset(0) { Resize( 32 ); }
 	// Returns true if the row has already been judged.
 	bool JudgeRow( int iRow )
 	{
 		if( iRow < m_iStart )
 			return true;
-		if( iRow >= m_iStart+m_iLen )
+		if( iRow >= m_iStart+int(m_vRows.size()) )
 			Resize( iRow+1-m_iStart );
-		const bool ret = m_pRows[(iRow-m_iStart+m_iOffset)%m_iLen] != 0;
-		m_pRows[(iRow-m_iStart+m_iOffset)%m_iLen] = 1;
-		while( m_pRows[m_iOffset] )
+		const int iIndex = (iRow - m_iStart + m_iOffset) % m_vRows.size();
+		const bool ret = m_vRows[iIndex];
+		m_vRows[iIndex] = true;
+		while( m_vRows[m_iOffset] )
 		{
-			m_pRows[m_iOffset] = 0;
+			m_vRows[m_iOffset] = false;
 			++m_iStart;
-			if( ++m_iOffset >= m_iLen )
-				m_iOffset -= m_iLen;
+			if( ++m_iOffset >= int(m_vRows.size()) )
+				m_iOffset -= m_vRows.size();
 		}
 		return ret;
 	}
@@ -91,7 +84,7 @@ public:
 	{
 		m_iStart = iStart;
 		m_iOffset = 0;
-		memset( m_pRows, 0, m_iLen );
+		m_vRows.assign( m_vRows.size(), false );
 	}
 };
 
