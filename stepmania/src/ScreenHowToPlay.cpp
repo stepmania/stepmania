@@ -261,15 +261,8 @@ void ScreenHowToPlay::Update( float fDelta )
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 
 		if ( m_pmCharacter )
-		{
 			Step();
-			if( !GAMESTATE->m_bFreeze )
-				m_pmCharacter->Update( fDelta );
-		}
 	}
-
-	if( m_pmDancePad )
-		m_pmDancePad->Update( fDelta );
 
 	ScreenAttract::Update( fDelta );
 }
@@ -290,39 +283,6 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->Reset();
 	}
 	ScreenAttract::HandleScreenMessage( SM );
-}
-
-void ScreenHowToPlay::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-
-	if( m_pmDancePad || m_pmCharacter )
-	{
-		if(PREFSMAN->m_bCelShadeModels)
-		{
-			if( m_pmDancePad ) m_pmDancePad->DrawCelShaded();
-			if( m_pmCharacter ) m_pmCharacter->DrawCelShaded();
-		}
-		else
-		{
-			DISPLAY->SetLighting( true );
-			DISPLAY->SetLightDirectional( 
-				0, 
-				RageColor(0.5,0.5,0.5,1), 
-				RageColor(1,1,1,1),
-				RageColor(0,0,0,1),
-				RageVector3(0, 0, 1) );
-			
-			if( m_pmCharacter ) m_pmCharacter->Draw();
-			if( m_pmDancePad ) m_pmDancePad->Draw();
-
-			DISPLAY->SetLightOff( 0 );
-			DISPLAY->SetLighting( false );
-		}
-		
-		m_In.DrawPrimitives();
-		m_Out.DrawPrimitives();
-	}
 }
 
 
