@@ -33,3 +33,4 @@ uninstall-hook:
 	rm -f "$(DESTDIR)$(bindir)/$(productID)/stepmania"
 	rm -f "$(DESTDIR)$(bindir)/$(productID)/GtkModule.so"
 	rm -f "$(DESTDIR)$(bindir)/$(productID)/Packages/StepMania.smzip"
+
