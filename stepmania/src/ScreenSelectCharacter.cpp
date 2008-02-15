@@ -243,7 +243,7 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 					for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
 					{
 						m_AttackIcons[pnAffected][i][j].Load( "ScreenSelectCharacter" );
-						m_AttackIcons[pnAffected][i][j].Set( pnAffected, pChar->m_sAttacks[i][j] );
+						m_AttackIcons[pnAffected][i][j].Set( pChar->m_sAttacks[i][j] );
 					}
 
 			int c = m_iSelectedCharacter[pnAffected] - MAX_CHAR_ICONS_TO_SHOW/2;
