@@ -15,20 +15,20 @@ class XNode;
 
 /* If the same piece of data is in multiple panes, use separate contents entries,
  * so it can be themed differently. */
-enum PaneContents
+enum PaneCategory
 {
-	SONG_NUM_STEPS,
-	SONG_JUMPS,
-	SONG_HOLDS,
-	SONG_ROLLS,
-	SONG_MINES,
-	SONG_HANDS,
-	SONG_MACHINE_HIGH_SCORE,
-	SONG_MACHINE_HIGH_NAME,
-	SONG_PROFILE_HIGH_SCORE,
-	NUM_PaneContents
+	PaneCategory_NumSteps,
+	PaneCategory_Jumps,
+	PaneCategory_Holds,
+	PaneCategory_Rolls,
+	PaneCategory_Mines,
+	PaneCategory_Hands,
+	PaneCategory_MachineHighScore,
+	PaneCategory_MachineHighName,
+	PaneCategory_ProfileHighScore,
+	NUM_PaneCategory,
+	PaneCategory_Invalid,
 };
-#define FOREACH_PaneContents( p ) FOREACH_ENUM( PaneContents, p )
 
 class PaneDisplay: public ActorFrame
 {
@@ -44,16 +44,17 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	void SetContent( PaneContents c );
+	void SetContent( PaneCategory c );
 
-	BitmapText		m_textContents[NUM_PaneContents];
-	AutoActor		m_Labels[NUM_PaneContents];
+	BitmapText		m_textContents[NUM_PaneCategory];
+	AutoActor		m_Labels[NUM_PaneCategory];
 	ActorFrame		m_ContentsFrame;
 
 	PlayerNumber	m_PlayerNumber;
 
 	LocalizedString EMPTY_MACHINE_HIGH_SCORE_NAME;
 	LocalizedString NOT_AVAILABLE;
+	ThemeMetric<RString> COUNT_FORMAT;
 };
 
 #endif
