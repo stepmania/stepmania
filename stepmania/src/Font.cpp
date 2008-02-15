@@ -13,7 +13,6 @@
 
 FontPage::FontPage()
 {
-	m_pTexture = NULL;
 	m_iDrawExtraPixelsLeft = m_iDrawExtraPixelsRight = 0;
 }
 
@@ -22,24 +21,40 @@ void FontPage::Load( const FontPageSettings &cfg )
 	m_sTexturePath = cfg.m_sTexturePath;
 
 	// load texture
-	RageTextureID ID( m_sTexturePath );
+	RageTextureID ID1( m_sTexturePath );
 	if( cfg.m_sTextureHints != "default" )
-		ID.AdditionalTextureHints = cfg.m_sTextureHints;
-	else
-		ID.AdditionalTextureHints = "16bpp";
+		ID1.AdditionalTextureHints = cfg.m_sTextureHints;
 
-	m_pTexture = TEXTUREMAN->LoadTexture( ID );
-	ASSERT( m_pTexture != NULL );
+	m_FontPageTextures.m_pTextureMain = TEXTUREMAN->LoadTexture( ID1 );
+	ASSERT( m_FontPageTextures.m_pTextureMain != NULL );
+
+	RageTextureID ID2 = ID1;
+	{
+		/* "arial 20 16x16.png" => "arial 20 16x16 (stroke).png" */
+		size_t pos = ID2.filename.find_last_of( '.' );
+		if( pos == RString::npos )
+			ID2.filename += " (stroke)";
+		else
+			ID2.filename.insert( pos, " (stroke)" );
+	}
+
+	if( IsAFile(ID2.filename) )
+	{
+		m_FontPageTextures.m_pTextureStroke = TEXTUREMAN->LoadTexture( ID2 );
+		ASSERT( m_FontPageTextures.m_pTextureStroke != NULL );
+		ASSERT_M( m_FontPageTextures.m_pTextureMain->GetSourceFrameWidth() == m_FontPageTextures.m_pTextureStroke->GetSourceFrameWidth(), ssprintf("'%s' and '%s' must have the same frame widths", ID1.filename.c_str(), ID2.filename.c_str()) );
+		ASSERT_M( m_FontPageTextures.m_pTextureMain->GetNumFrames() == m_FontPageTextures.m_pTextureStroke->GetNumFrames(), ssprintf("'%s' and '%s' must have the same frame dimensions", ID1.filename.c_str(), ID2.filename.c_str()) );
+	}
 
 	// load character widths
 	vector<int> aiFrameWidths;
 
-	int default_width = m_pTexture->GetSourceFrameWidth();
+	int default_width = m_FontPageTextures.m_pTextureMain->GetSourceFrameWidth();
 	if( cfg.m_iDefaultWidth != -1 )
 		default_width = cfg.m_iDefaultWidth;
 
 	// Assume each character is the width of the frame by default.
-	for( int i=0; i<m_pTexture->GetNumFrames(); i++ )
+	for( int i=0; i<m_FontPageTextures.m_pTextureMain->GetNumFrames(); i++ )
 	{
 		map<int,int>::const_iterator it = cfg.m_mapGlyphWidths.find(i);
 		if( it != cfg.m_mapGlyphWidths.end() )
@@ -50,13 +65,13 @@ void FontPage::Load( const FontPageSettings &cfg )
 
 	if( cfg.m_iAddToAllWidths )
 	{
-		for( int i=0; i<m_pTexture->GetNumFrames(); i++ )
+		for( int i=0; i<m_FontPageTextures.m_pTextureMain->GetNumFrames(); i++ )
 			aiFrameWidths[i] += cfg.m_iAddToAllWidths;
 	}
 
 	if( cfg.m_fScaleAllWidthsBy != 1 )
 	{
-		for( int i=0; i<m_pTexture->GetNumFrames(); i++ )
+		for( int i=0; i<m_FontPageTextures.m_pTextureMain->GetNumFrames(); i++ )
 			aiFrameWidths[i] = lrintf( aiFrameWidths[i] * cfg.m_fScaleAllWidthsBy );
 	}
 
@@ -64,7 +79,7 @@ void FontPage::Load( const FontPageSettings &cfg )
 
 	m_iLineSpacing = cfg.m_iLineSpacing;
 	if( m_iLineSpacing == -1 )
-		m_iLineSpacing = m_pTexture->GetSourceFrameHeight();
+		m_iLineSpacing = m_FontPageTextures.m_pTextureMain->GetSourceFrameHeight();
 
 	int iBaseline=0;
 	/* If we don't have a top and/or baseline, assume we're centered in the
@@ -72,14 +87,14 @@ void FontPage::Load( const FontPageSettings &cfg )
 	iBaseline = cfg.m_iBaseline;
 	if( iBaseline == -1 )
 	{
-		float center = m_pTexture->GetSourceFrameHeight()/2.0f;
+		float center = m_FontPageTextures.m_pTextureMain->GetSourceFrameHeight()/2.0f;
 		iBaseline = int( center + m_iLineSpacing/2 );
 	}
 
 	int iTop = cfg.m_iTop;
 	if( iTop == -1 )
 	{
-		float center = m_pTexture->GetSourceFrameHeight()/2.0f;
+		float center = m_FontPageTextures.m_pTextureMain->GetSourceFrameHeight()/2.0f;
 		iTop = int( center - m_iLineSpacing/2 );
 	}
 	m_iHeight = iBaseline - iTop;
@@ -98,7 +113,7 @@ void FontPage::Load( const FontPageSettings &cfg )
 
 void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPixels )
 {
-	for(int i = 0; i < m_pTexture->GetNumFrames(); ++i)
+	for(int i = 0; i < m_FontPageTextures.m_pTextureMain->GetNumFrames(); ++i)
 	{
 		glyph g;
 
@@ -106,11 +121,11 @@ void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPix
 
 		/* Make a copy of each texture rect, reducing each to the actual dimensions
 		 * of the character (most characters don't take a full block). */
-		g.m_TexRect = *m_pTexture->GetTextureCoordRect(i);
+		g.m_TexRect = *m_FontPageTextures.m_pTextureMain->GetTextureCoordRect(i);
 
 		/* Set the width and height to the width and line spacing, respectively. */
 		g.m_fWidth = float( widths[i] );
-		g.m_fHeight = float(m_pTexture->GetSourceFrameHeight());
+		g.m_fHeight = float(m_FontPageTextures.m_pTextureMain->GetSourceFrameHeight());
 
 		g.m_iHadvance = int(g.m_fWidth) + iAdvanceExtraPixels;
 
@@ -119,7 +134,7 @@ void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPix
 		 * need to. */
 		g.m_fHshift = 0;
 		{
-			int iSourcePixelsToChopOff = m_pTexture->GetSourceFrameWidth() - widths[i];
+			int iSourcePixelsToChopOff = m_FontPageTextures.m_pTextureMain->GetSourceFrameWidth() - widths[i];
 			if( (iSourcePixelsToChopOff % 2) == 1 )
 			{
 				/* We don't want to chop off an odd number of pixels, since that'll
@@ -132,13 +147,13 @@ void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPix
 				++g.m_fWidth;
 			}
 
-			const float fTexCoordsToChopOff = iSourcePixelsToChopOff * m_pTexture->GetSourceToTexCoordsRatioX();
+			const float fTexCoordsToChopOff = iSourcePixelsToChopOff * m_FontPageTextures.m_pTextureMain->GetSourceToTexCoordsRatioX();
 
 			g.m_TexRect.left  += fTexCoordsToChopOff/2;
 			g.m_TexRect.right -= fTexCoordsToChopOff/2;
 		}
 
-		g.m_pTexture = m_pTexture;
+		g.m_FontPageTextures = m_FontPageTextures;
 
 		m_aGlyphs.push_back(g);
 	}
@@ -157,7 +172,7 @@ void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRig
 	/* Adjust for iDrawExtraPixelsLeft and iDrawExtraPixelsRight. */
 	for( unsigned i = 0; i < m_aGlyphs.size(); ++i )
 	{
-		int iFrameWidth = m_pTexture->GetSourceFrameWidth();
+		int iFrameWidth = m_FontPageTextures.m_pTextureMain->GetSourceFrameWidth();
 		float fCharWidth = m_aGlyphs[i].m_fWidth;
 
 		/* Extra pixels to draw to the left and right.  We don't have to
@@ -167,8 +182,8 @@ void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRig
 		float fExtraRight = min( float(iDrawExtraPixelsRight), (iFrameWidth-fCharWidth)/2.0f );
 
 		/* Move left and expand right. */
-		m_aGlyphs[i].m_TexRect.left -= fExtraLeft * m_pTexture->GetSourceToTexCoordsRatioX();
-		m_aGlyphs[i].m_TexRect.right += fExtraRight * m_pTexture->GetSourceToTexCoordsRatioX();
+		m_aGlyphs[i].m_TexRect.left -= fExtraLeft * m_FontPageTextures.m_pTextureMain->GetSourceToTexCoordsRatioX();
+		m_aGlyphs[i].m_TexRect.right += fExtraRight * m_FontPageTextures.m_pTextureMain->GetSourceToTexCoordsRatioX();
 		m_aGlyphs[i].m_fHshift -= fExtraLeft;
 		m_aGlyphs[i].m_fWidth += fExtraLeft + fExtraRight;
 	}
@@ -176,8 +191,16 @@ void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRig
 
 FontPage::~FontPage()
 {
-	if( m_pTexture != NULL )
-		TEXTUREMAN->UnloadTexture( m_pTexture );
+	if( m_FontPageTextures.m_pTextureMain != NULL )
+	{
+		TEXTUREMAN->UnloadTexture( m_FontPageTextures.m_pTextureMain );
+		m_FontPageTextures.m_pTextureMain = NULL;
+	}
+	if( m_FontPageTextures.m_pTextureStroke != NULL )
+	{
+		TEXTUREMAN->UnloadTexture( m_FontPageTextures.m_pTextureStroke );
+		m_FontPageTextures.m_pTextureStroke = NULL;
+	}
 }
 
 int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
@@ -505,9 +528,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				 * This lets us assign characters very compactly and readably. */
 
 				RString sRowStr = sName.substr(5);
-				TrimLeft( sRowStr );
 				ASSERT( IsAnInt(sRowStr) );
-
 				const int iRow = atoi( sRowStr.c_str() );
 				const int iFirstFrame = iRow * iNumFramesWide;
 
@@ -534,14 +555,21 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 	 * it itself). */
 	if( sPageName != "common" && cfg.CharToGlyphNo.empty() )
 	{
-		if( iNumFrames == 128 )
+		switch( iNumFrames )
+		{
+		case 128:
 			cfg.MapRange( "ascii", 0, 0, -1 );
-		else if( iNumFrames == 256 )
+			break;
+		case 256:
 			cfg.MapRange( "cp1252", 0, 0, -1 );
-		else if( iNumFrames == 15 )
+			break;
+		case 15:
+		case 16:
 			cfg.MapRange( "numbers", 0, 0, -1 );
-		else
+			break;
+		default:
 			LOG->Trace( "Font page \"%s\" has no characters", sTexturePath.c_str() );
+		}
 	}
 
 	/* If ' ' is set and nbsp is not, set nbsp. */
@@ -727,10 +755,10 @@ void Font::Load( const RString &sIniPath, RString sChars )
 		for( map<wchar_t,int>::const_iterator it = pPage->m_iCharToGlyphNo.begin();
 			it != pPage->m_iCharToGlyphNo.end(); ++it )
 		{
-			if( it->second < pPage->m_pTexture->GetNumFrames() )
+			if( it->second < pPage->m_FontPageTextures.m_pTextureMain->GetNumFrames() )
 				continue; /* OK */
 			RageException::Throw( "The font \"%s\" maps \"%s\" to frame %i, but the font only has %i frames.",
-					      sTexturePath.c_str(), WcharDisplayText(wchar_t(it->first)).c_str(), it->second, pPage->m_pTexture->GetNumFrames() );
+					      sTexturePath.c_str(), WcharDisplayText(wchar_t(it->first)).c_str(), it->second, pPage->m_FontPageTextures.m_pTextureMain->GetNumFrames() );
 		}
 
 //		LOG->Trace( "Adding page %s (%s) to %s; %i glyphs",

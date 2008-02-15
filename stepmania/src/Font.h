@@ -12,11 +12,23 @@ class FontPage;
 class RageTexture;
 class IniFile;
 
+struct FontPageTextures
+{
+	RageTexture *m_pTextureMain;
+	RageTexture *m_pTextureStroke;	/* an optional texture drawn underneath Main that can help to acheive complicated layer styles */
+
+	FontPageTextures()
+	{
+		m_pTextureMain = NULL;
+		m_pTextureStroke = NULL;
+	}
+};
+
 struct glyph
 {
 	FontPage *m_pPage;
-	RageTexture *m_pTexture;
-	RageTexture *GetTexture() const { return const_cast<RageTexture *>(m_pTexture); }
+	FontPageTextures m_FontPageTextures;
+	FontPageTextures *GetFontPageTextures() const { return const_cast<FontPageTextures *>(&m_FontPageTextures); }
 
 	/* Number of pixels to advance horizontally after drawing this character. */
 	int m_iHadvance;
@@ -84,7 +96,7 @@ public:
 	/* Remember these only for GetLineWidthInSourcePixels. */
 	int m_iDrawExtraPixelsLeft, m_iDrawExtraPixelsRight;
 
-	RageTexture* m_pTexture;
+	FontPageTextures m_FontPageTextures;
 
 	// XXX remove?
 	RString m_sTexturePath;
