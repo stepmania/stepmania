@@ -16,8 +16,8 @@ public:
 
 	void LoadFromNode( const XNode* pNode );
 	void Load( RString sType );	// load metrics
-	void LoadFromSong( const Song *pSong );
-	void LoadFromString( 
+	void SetFromSong( const Song *pSong );
+	void SetFromString( 
 		const RString &sDisplayTitle, const RString &sTranslitTitle, 
 		const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
 		const RString &sDisplayArtist, const RString &sTranslitArtist );

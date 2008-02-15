@@ -56,12 +56,12 @@ void TextBanner::Load( RString sType )
 	m_textArtist.LoadFromFont( THEME->GetPathF(sType,"text") );
 	this->AddChild( &m_textArtist );
 
-	AddCommand( "Set", THEME->GetMetricA(sType,"SetCommand") );
+	AddCommand( "AfterSet", THEME->GetMetricA(sType,"AfterSetCommand") );
 	m_sArtistPrependString = THEME->GetMetric(sType,"ArtistPrependString");
 
-	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTitle, sType );
-	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textSubTitle, sType );
-	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textArtist, sType );
+	ActorUtil::LoadAllCommandsAndOnCommand( m_textTitle, sType );
+	ActorUtil::LoadAllCommandsAndOnCommand( m_textSubTitle, sType );
+	ActorUtil::LoadAllCommandsAndOnCommand( m_textArtist, sType );
 }
 
 TextBanner::TextBanner()
@@ -82,7 +82,7 @@ TextBanner::TextBanner( const TextBanner &cpy ):
 	this->AddChild( &m_textArtist );
 }
 
-void TextBanner::LoadFromString( 
+void TextBanner::SetFromString( 
 	const RString &sDisplayTitle, const RString &sTranslitTitle, 
 	const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
 	const RString &sDisplayArtist, const RString &sTranslitArtist )
@@ -93,17 +93,18 @@ void TextBanner::LoadFromString(
 	m_textSubTitle.SetText( sDisplaySubTitle, sTranslitSubTitle );
 	m_textArtist.SetText( sDisplayArtist, sTranslitArtist );
 
-	// Set command is called by parent on the whole music wheel item
+	Message msg("AfterSet");
+	this->PlayCommandNoRecurse( msg );
 }
 
-void TextBanner::LoadFromSong( const Song *pSong )
+void TextBanner::SetFromSong( const Song *pSong )
 {
 	if( pSong == NULL )
 	{
-		LoadFromString( "", "", "", "", "", "" );
+		SetFromString( "", "", "", "", "", "" );
 		return;
 	}
-	LoadFromString( pSong->GetDisplayMainTitle(),				pSong->GetTranslitMainTitle(),
+	SetFromString( pSong->GetDisplayMainTitle(),				pSong->GetTranslitMainTitle(),
 			pSong->GetDisplaySubTitle(),				pSong->GetTranslitSubTitle(),
 			m_sArtistPrependString + pSong->GetDisplayArtist(),	m_sArtistPrependString + pSong->GetTranslitArtist() );
 }
@@ -114,14 +115,14 @@ void TextBanner::LoadFromSong( const Song *pSong )
 class LunaTextBanner: public Luna<TextBanner>
 {
 public:
-	static int LoadFromSong( T* p, lua_State *L )
+	static int SetFromSong( T* p, lua_State *L )
 	{
 		Song *pSong = Luna<Song>::check(L,1);
-  		p->LoadFromSong( pSong );
+  		p->SetFromSong( pSong );
 		return 0;
 	}
 
-	static int LoadFromString( T* p, lua_State *L )
+	static int SetFromString( T* p, lua_State *L )
 	{
 		RString sDisplayTitle = SArg(1);
 		RString sTranslitTitle = SArg(2);
@@ -129,14 +130,14 @@ public:
 		RString sTranslitSubTitle = SArg(4);
 		RString sDisplayArtist = SArg(5);
 		RString sTranslitArtist = SArg(6);
-  		p->LoadFromString( sDisplayTitle, sTranslitTitle, sDisplaySubTitle, sTranslitSubTitle, sDisplayArtist, sTranslitArtist );
+  		p->SetFromString( sDisplayTitle, sTranslitTitle, sDisplaySubTitle, sTranslitSubTitle, sDisplayArtist, sTranslitArtist );
 		return 0;
 	}
 
 	LunaTextBanner()
 	{
-		ADD_METHOD( LoadFromSong );
-		ADD_METHOD( LoadFromString );
+		ADD_METHOD( SetFromSong );
+		ADD_METHOD( SetFromString );
 	}
 };
 
