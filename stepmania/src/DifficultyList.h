@@ -17,6 +17,8 @@ public:
 	virtual DifficultyList *Copy() const;
 	virtual void LoadFromNode( const XNode* pNode );
 
+	void HandleMessage( const Message &msg );
+
 	void SetFromGameState();
 	void TweenOnScreen();
 	void TweenOffScreen();

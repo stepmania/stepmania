@@ -18,6 +18,12 @@ REGISTER_ACTOR_CLASS( DifficultyList )
 DifficultyList::DifficultyList()
 {
 	m_bShown = true;
+
+	FOREACH_ENUM( PlayerNumber, pn )
+	{
+		SubscribeToMessage( (MessageID)(Message_CurrentStepsP1Changed+pn) );
+		SubscribeToMessage( (MessageID)(Message_CurrentTrailP1Changed+pn) );
+	}
 }
 
 DifficultyList::~DifficultyList()
@@ -355,6 +361,19 @@ void DifficultyList::Hide()
 	FOREACH_HumanPlayer( pn )
 		COMMAND( m_Cursors[pn], "Hide" );
 }
+
+void DifficultyList::HandleMessage( const Message &msg )
+{
+	FOREACH_ENUM( PlayerNumber, pn )
+	{
+		if( msg.GetName() == MessageIDToString((MessageID)(Message_CurrentStepsP1Changed+pn))  ||
+			msg.GetName() == MessageIDToString((MessageID)(Message_CurrentTrailP1Changed+pn)) ) 
+		SetFromGameState();
+	}
+
+	ActorFrame::HandleMessage(msg);
+}
+
 
 // lua start
 #include "LuaBinding.h"
