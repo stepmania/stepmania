@@ -162,7 +162,7 @@ void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, const RString& 
 	SubscribersSet& subs = g_MessageToSubscribers[sMessage];
 #if _DEBUG
 	SubscribersSet::iterator iter = subs.find(pSubscriber);
-	ASSERT_M( iter == subs.end(), "already subscribed" );
+	ASSERT_M( iter == subs.end(), ssprintf("already subscribed to '%s'",sMessage.c_str()) );
 #endif
 	subs.insert( pSubscriber );
 }
