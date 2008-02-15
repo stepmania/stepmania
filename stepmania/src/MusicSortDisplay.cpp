@@ -11,20 +11,26 @@ MusicSortDisplay::MusicSortDisplay()
 {
 	this->SubscribeToMessage( Message_SortOrderChanged );
 
+	m_spr.Load( THEME->GetPathG("MusicSortDisplay",SortOrderToString(so))
+
 	Set( GAMESTATE->m_SortOrder );
 }
 
 void MusicSortDisplay::Set( SortOrder so ) 
 { 
+	Message msg("Set");
+	msg.SetParam( "SortOrder", pn );
+	m_spr->PlayCommand( msg );
+
 	if( so == SortOrder_Invalid )
 		this->UnloadTexture();
 	else
-		Load( THEME->GetPathG("MusicSortDisplay",SortOrderToString(so)) );
+		Load(  );
 }
 
 void MusicSortDisplay::HandleMessage( const Message &msg )
 {
-	if( msg == "SortOrderChanged" )
+	if( msg.GetName() == "SortOrderChanged" )
 		Set( GAMESTATE->m_SortOrder );
 
 	Sprite::HandleMessage( msg );
