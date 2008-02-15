@@ -24,14 +24,15 @@ BPMDisplay::BPMDisplay()
 
 void BPMDisplay::Load()
 {
-	NORMAL_COLOR.Load( m_sName, "NormalColor");
-	CHANGE_COLOR.Load( m_sName, "ChangeColor" );
-	EXTRA_COLOR.Load( m_sName, "ExtraColor" );
+	SET_NO_BPM_COMMAND.Load( m_sName, "SetNoBpmCommand");
+	SET_NORMAL_COMMAND.Load( m_sName, "SetNormalCommand");
+	SET_CHANGING_COMMAND.Load( m_sName, "SetChangeCommand" );
+	SET_EXTRA_COMMAND.Load( m_sName, "SetExtraCommand" );
 	CYCLE.Load( m_sName, "Cycle" );
 	SEPARATOR.Load( m_sName, "Separator" );
-	NO_BPM_TEXT.Load( m_sName, "NoBPMText" );
+	NO_BPM_TEXT.Load( m_sName, "NoBpmText" );
 
-	SetDiffuse( NORMAL_COLOR );
+	RunCommands( SET_NORMAL_COMMAND );
 }
 
 void BPMDisplay::LoadFromNode( const XNode *pNode )
@@ -135,11 +136,11 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 	}
 
 	if( GAMESTATE->IsAnExtraStage() )
-		SetDiffuse( EXTRA_COLOR );
+		RunCommands( SET_EXTRA_COMMAND );
 	else if( !AllIdentical )
-		SetDiffuse( CHANGE_COLOR );
+		RunCommands( SET_CHANGING_COMMAND );
 	else
-		SetDiffuse( NORMAL_COLOR );
+		RunCommands( SET_NORMAL_COMMAND );
 }
 
 void BPMDisplay::CycleRandomly()
@@ -155,7 +156,7 @@ void BPMDisplay::NoBPM()
 {
 	m_BPMS.clear();
 	SetText( NO_BPM_TEXT ); 
-	SetDiffuse( NORMAL_COLOR );
+	RunCommands( SET_NO_BPM_COMMAND );
 }
 
 void BPMDisplay::SetBpmFromSong( const Song* pSong )

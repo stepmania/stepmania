@@ -35,9 +35,10 @@ protected:
 	float GetActiveBPM() const;
 	void SetBPMRange( const DisplayBpms &bpms );
 
-	ThemeMetric<RageColor> NORMAL_COLOR;
-	ThemeMetric<RageColor> CHANGE_COLOR;
-	ThemeMetric<RageColor> EXTRA_COLOR;
+	ThemeMetric<apActorCommands> SET_NO_BPM_COMMAND;
+	ThemeMetric<apActorCommands> SET_NORMAL_COMMAND;
+	ThemeMetric<apActorCommands> SET_CHANGING_COMMAND;
+	ThemeMetric<apActorCommands> SET_EXTRA_COMMAND;
 	ThemeMetric<bool> CYCLE;
 	ThemeMetric<RString> SEPARATOR;
 	ThemeMetric<RString> NO_BPM_TEXT;
