@@ -104,10 +104,6 @@ void ScreenSelectMaster::Init()
 		GameCommand& mc = m_aGameCommands[c];
 
 		LuaThreadVariable var( "GameCommand", LuaReference::Create(&mc) );
-		Lua *L = LUA->Get();
-		mc.PushSelf( L );
-		lua_setglobal( L, "ThisGameCommand" );
-		LUA->Release( L );
 
 		// init icon
 		if( SHOW_ICON )
@@ -146,8 +142,6 @@ void ScreenSelectMaster::Init()
 			}
 
 		}
-
-		LUA->UnsetGlobal( "ThisGameCommand" );
 	}
 
 	// init scroll
