@@ -1406,6 +1406,11 @@ public:
 			lua_pushnil(L);
 		return 1;
 	}
+	static int GetTimingData( T* p, lua_State *L )
+	{
+		p->m_Timing.PushSelf(L);
+		return 1;
+	}
 
 	LunaSong()
 	{
@@ -1428,6 +1433,7 @@ public:
 		ADD_METHOD( IsMarathon );
 		ADD_METHOD( HasStepsTypeAndDifficulty );
 		ADD_METHOD( GetOneSteps );
+		ADD_METHOD( GetTimingData );
 	}
 };
 
