@@ -11,7 +11,7 @@ public:
 	~RoomInfoDisplay();
 	virtual void Load( RString sType );
 	virtual void Update( float fDeltaTime );
-	void SetRoom( const RoomWheelData* roomData );
+	void SetRoom( const RoomWheelItemData* roomData );
 	void SetRoomInfo( const RoomInfo& info);
 	void DeployInfoBox();
 	void RetractInfoBox();

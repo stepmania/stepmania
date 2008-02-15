@@ -126,7 +126,7 @@ void RoomInfoDisplay::Load( RString sType )
 	m_state = LOCKED;
 }
 
-void RoomInfoDisplay::SetRoom( const RoomWheelData* roomData )
+void RoomInfoDisplay::SetRoom( const RoomWheelItemData* roomData )
 {
 	RequestRoomInfo(roomData->m_sText);
 

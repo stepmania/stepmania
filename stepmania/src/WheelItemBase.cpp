@@ -1,9 +1,9 @@
 #include "global.h"
 #include "WheelItemBase.h"
 
-WheelItemBaseData::WheelItemBaseData( WheelItemType wit, RString sText, RageColor color )
+WheelItemBaseData::WheelItemBaseData( WheelItemDataType type, RString sText, RageColor color )
 {
-	m_Type = wit;
+	m_Type = type;
 	m_sText = sText;
 	m_color = color;
 }
@@ -11,69 +11,31 @@ WheelItemBaseData::WheelItemBaseData( WheelItemType wit, RString sText, RageColo
 WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):
 	ActorFrame( cpy ),
 	m_bExpanded( cpy.m_bExpanded ),
-	m_sprBar( cpy.m_sprBar ),
-	m_text( cpy.m_text ),
-	m_Type( cpy.m_Type ),
-	m_color( cpy.m_color )
+	m_pData( cpy.m_pData )
 {
-	if( cpy.m_pBar == cpy.m_sprBar )
-		m_pBar = m_sprBar;
-
-	if( cpy.GetNumChildren() != 0 )
-	{
-		this->AddChild( m_sprBar );
-		this->AddChild( &m_text );
-	}
+	// FIXME
+	//if( cpy.m_pGrayBar == cpy.m_sprBar )
+	//	m_pGrayBar = m_sprBar;
 }
 
 WheelItemBase::WheelItemBase(RString sType)
 {
-	m_bExpanded = false;
 	SetName( sType );
-	m_pBar = NULL;
+	m_pData = NULL;
+	m_bExpanded = false;
+	m_pGrayBar = NULL;
 	Load(sType);
 }
 
 void WheelItemBase::Load( RString sType )
 {
-	TEXT_X			.Load(sType,"TextX");
-	TEXT_Y			.Load(sType,"TextY");
-	TEXT_ON_COMMAND	.Load(sType,"TextOnCommand");
-
 	m_colorLocked = RageColor(0,0,0,0);
-
-	m_sprBar.Load( THEME->GetPathG(sType,"bar") );
-	m_sprBar->SetXY( 0, 0 );
-	this->AddChild( m_sprBar );
-	m_pBar = m_sprBar;
-
-	m_text.LoadFromFont( THEME->GetPathF(sType,"text") );
-	m_text.SetShadowLength( 0 );
-	m_text.SetXY( TEXT_X, TEXT_Y );
-	m_text.RunCommands( TEXT_ON_COMMAND );
-	this->AddChild( &m_text );
 }
 
 void WheelItemBase::LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus )
 {
 	ASSERT( pWID != NULL );
-	
-	data = pWID;
-
-	m_text.SetText(pWID->m_sText);
-	m_Type = pWID->m_Type;
-	m_color	= pWID->m_color;
-
-	// init type specific stuff
-	switch( pWID->m_Type )
-	{
-	case TYPE_GENERIC:
-		m_text.SetText( data->m_sText );
-		m_text.SetDiffuse( data->m_color );
-		break;
-	default:
-		ASSERT( 0 );	// invalid type
-	}
+	m_pData = pWID;
 }
 
 void WheelItemBase::DrawGrayBar( Actor& bar )
@@ -97,8 +59,8 @@ void WheelItemBase::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
 
-	if( m_pBar != NULL )
-		DrawGrayBar( *m_pBar );
+	if( m_pGrayBar != NULL )
+		DrawGrayBar( *m_pGrayBar );
 }
   
 /*

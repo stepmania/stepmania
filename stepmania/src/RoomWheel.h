@@ -7,11 +7,11 @@
 #include "WheelItemBase.h"
 #include "ThemeMetric.h"
 
-struct RoomWheelData : public WheelItemBaseData
+struct RoomWheelItemData : public WheelItemBaseData
 {
-	RoomWheelData() : m_iFlags(0) { }
-	RoomWheelData( WheelItemType wit, const RString& sTitle, const RString& sDesc, RageColor color ):
-		WheelItemBaseData( wit, sTitle, color ), m_sDesc(sDesc), m_iFlags(0) { };
+	RoomWheelItemData() : m_iFlags(0) { }
+	RoomWheelItemData( WheelItemDataType type, const RString& sTitle, const RString& sDesc, RageColor color ):
+		WheelItemBaseData( type, sTitle, color ), m_sDesc(sDesc), m_iFlags(0) { };
 
 	RString		m_sDesc;
 	unsigned int	m_iFlags;
@@ -28,7 +28,9 @@ public:
 	virtual RoomWheelItem *Copy() const { return new RoomWheelItem(*this); }
 
 private:
-	BitmapText m_Desc;
+	AutoActor	m_sprBar;
+	BitmapText	m_text;
+	BitmapText	m_Desc;
 };
 
 struct RoomInfo
@@ -51,8 +53,8 @@ public:
 	virtual bool Select();
 	virtual void Move( int n );
 
-	inline RoomWheelData *GetItem( unsigned int i ) { return dynamic_cast<RoomWheelData*>( WheelBase::GetItem(i + m_offset) ); }
-	void AddPerminateItem( RoomWheelData *itemdata );
+	inline RoomWheelItemData *GetItem( unsigned int i ) { return dynamic_cast<RoomWheelItemData*>( WheelBase::GetItem(i + m_offset) ); }
+	void AddPerminateItem( RoomWheelItemData *itemdata );
 	int GetCurrentIndex() const { return m_iSelection; }
 	int GetPerminateOffset() const { return m_offset; }
 	void AddItem( WheelItemBaseData *itemdata );

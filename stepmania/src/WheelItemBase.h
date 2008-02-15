@@ -11,7 +11,7 @@
 
 struct WheelItemBaseData;
 
-enum WheelItemType 
+enum WheelItemDataType 
 {
 	TYPE_GENERIC,
 	TYPE_SECTION, 
@@ -23,10 +23,20 @@ enum WheelItemType
 	TYPE_SORT 
 };
 
+struct WheelItemBaseData
+{
+	WheelItemBaseData() {}
+	WheelItemBaseData( WheelItemDataType type, RString sText, RageColor color );
+	virtual ~WheelItemBaseData() {}
+	WheelItemDataType	m_Type;
+	RString			m_sText;
+	RageColor		m_color;	// either text color or section background color
+};
+
 class WheelItemBase : public ActorFrame
 {
 public:
-	WheelItemBase( RString sType = "WheelItemBase" );
+	WheelItemBase( RString sType );
 	WheelItemBase( const WheelItemBase &cpy );
 	virtual void DrawPrimitives();
 	virtual WheelItemBase *Copy() const { return new WheelItemBase(*this); }
@@ -37,34 +47,15 @@ public:
 
 	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus );
 
-	RageColor			m_colorLocked;
+	RageColor	m_colorLocked;
 
 protected:
-	void SetGrayBar( Actor *pBar ) { m_pBar = pBar; }
+	void SetGrayBar( Actor *pBar ) { m_pGrayBar = pBar; }
 
-	const WheelItemBaseData* data;
+	const WheelItemBaseData* m_pData;
 	bool m_bExpanded;	// if TYPE_SECTION, whether this section is expanded
 
-	Actor*		m_pBar;
-	AutoActor	m_sprBar;
-	BitmapText	m_text;
-	WheelItemType	m_Type;
-	RageColor	m_color;
-
-	ThemeMetric<float>		TEXT_X;
-	ThemeMetric<float>		TEXT_Y;
-	ThemeMetric<float>		TEXT_WIDTH;
-	ThemeMetric<apActorCommands>	TEXT_ON_COMMAND;
-};
-
-struct WheelItemBaseData
-{
-	WheelItemBaseData() {}
-	WheelItemBaseData( WheelItemType wit, RString sText, RageColor color );
-	virtual ~WheelItemBaseData() {}
-	WheelItemType		m_Type;
-	RString			m_sText;
-	RageColor		m_color;	// either text color or section background color
+	Actor*		m_pGrayBar;
 };
 
 #endif

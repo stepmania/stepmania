@@ -11,6 +11,11 @@ AutoScreenMessage( SM_BackFromRoomName )
 AutoScreenMessage( SM_RoomInfoRetract )
 AutoScreenMessage( SM_RoomInfoDeploy )
 
+ThemeMetric<float>		TEXT_X;
+ThemeMetric<float>		TEXT_Y;
+ThemeMetric<float>		TEXT_WIDTH;
+ThemeMetric<apActorCommands>	TEXT_ON_COMMAND;
+
 ThemeMetric<float>	DESC_X;
 ThemeMetric<float>	DESC_Y;
 ThemeMetric<float>	DESC_WIDTH;
@@ -29,7 +34,7 @@ void RoomWheel::Load( RString sType )
 	m_offset = 0;
 	LOG->Trace( "RoomWheel::Load('%s')", sType.c_str() );
 
-	AddPerminateItem( new RoomWheelData(TYPE_GENERIC, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
+	AddPerminateItem( new RoomWheelItemData(TYPE_GENERIC, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
 
 	BuildWheelItemsData( m_CurWheelItemData );
 	RebuildWheelItems();
@@ -48,13 +53,36 @@ RoomWheelItem::RoomWheelItem( RString sType ):
 
 RoomWheelItem::RoomWheelItem( const RoomWheelItem &cpy ):
 	WheelItemBase( cpy ),
+	m_sprBar( cpy.m_sprBar ),
+	m_text( cpy.m_text ),
 	m_Desc( cpy.m_Desc )
 {
-	this->AddChild( &m_Desc );
+	if( cpy.GetNumChildren() != 0 )
+	{
+		this->AddChild( m_sprBar );
+		this->AddChild( &m_text );
+		this->AddChild( &m_Desc );
+	}
 }
 
 void RoomWheelItem::Load( RString sType )
 {
+	TEXT_X			.Load(sType,"TextX");
+	TEXT_Y			.Load(sType,"TextY");
+	TEXT_ON_COMMAND	.Load(sType,"TextOnCommand");
+
+	m_sprBar.Load( THEME->GetPathG(sType,"bar") );
+	m_sprBar->SetXY( 0, 0 );
+	this->AddChild( m_sprBar );
+	m_sprBar->SetVisible(false);
+
+	m_text.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_text.SetShadowLength( 0 );
+	m_text.SetXY( TEXT_X, TEXT_Y );
+	m_text.RunCommands( TEXT_ON_COMMAND );
+	this->AddChild( &m_text );
+
+
 	DESC_X		.Load(sType,"DescX");
 	DESC_Y		.Load(sType,"DescY");
 	DESC_WIDTH	.Load(sType,"DescWidth");
@@ -77,10 +105,10 @@ void RoomWheelItem::Load( RString sType )
 void RoomWheel::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas )
 {
 	if( arrayWheelItemDatas.empty() )
-		arrayWheelItemDatas.push_back( new RoomWheelData(TYPE_GENERIC, "- EMPTY -", "", RageColor(1,0,0,1)) );
+		arrayWheelItemDatas.push_back( new RoomWheelItemData(TYPE_GENERIC, "- EMPTY -", "", RageColor(1,0,0,1)) );
 }
 
-void RoomWheel::AddPerminateItem( RoomWheelData *itemdata  )
+void RoomWheel::AddPerminateItem( RoomWheelItemData *itemdata  )
 {
 	++m_offset;
 	AddItem( itemdata );
@@ -149,18 +177,22 @@ bool RoomWheel::Select()
 
 void RoomWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWID, int iIndex, bool bHasFocus )
 {
-	const RoomWheelData *tmpdata = dynamic_cast<const RoomWheelData*>( pWID );
+	WheelItemBase::LoadFromWheelItemData( pWID, iIndex, bHasFocus );
+
+	m_text.SetText( pWID->m_sText );
+	m_text.SetDiffuseColor( pWID->m_color );
+	
+	const RoomWheelItemData *tmpdata = dynamic_cast<const RoomWheelItemData*>( pWID );
 	WheelItemBase::LoadFromWheelItemData( pWID, iIndex, bHasFocus );
 	m_Desc.SetText( tmpdata->m_sDesc );
 	m_Desc.SetDiffuseColor( pWID->m_color );
-	m_text.SetDiffuseColor( pWID->m_color );
 }
 
 void RoomWheel::Move( int n )
 {
 	if( n == 0 && m_iSelection >= m_offset )
 	{
-		const RoomWheelData* data = GetItem( m_iSelection-m_offset );
+		const RoomWheelItemData* data = GetItem( m_iSelection-m_offset );
 		if( data != NULL )
 			SCREENMAN->PostMessageToTopScreen( SM_RoomInfoDeploy, 0 );
 	}
