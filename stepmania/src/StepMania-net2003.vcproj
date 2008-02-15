@@ -1449,12 +1449,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="MusicList.h">
 			</File>
 			<File
-				RelativePath=".\MusicSortDisplay.cpp">
-			</File>
-			<File
-				RelativePath=".\MusicSortDisplay.h">
-			</File>
-			<File
 				RelativePath=".\MusicWheel.cpp">
 			</File>
 			<File
