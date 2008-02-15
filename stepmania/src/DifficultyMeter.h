@@ -49,7 +49,7 @@ private:
 	void SetInternal( const SetParams &params );
 
 	AutoActor		m_sprFrame;
-	BitmapText		m_textTicks;	/* XXXX000000 */
+	BitmapText		m_textTicks;	/* 111100000 */
 	BitmapText		m_textMeter;	/* 3, 9 */
 	BitmapText		m_textEditDescription;
 

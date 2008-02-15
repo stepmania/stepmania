@@ -60,11 +60,8 @@ void DifficultyMeter::Load( const RString &sType )
 
 	if( m_bShowTicks )
 	{
+		RString sChars = "10";	// on, off
 		m_textTicks.SetName( "Ticks" );
-		RString sChars;
-		for( unsigned i = 0; i < NUM_Difficulty; ++i )
-			sChars += char(i + '0'); // 01234
-		sChars += 'X'; // Off
 		m_textTicks.LoadFromTextureAndChars( THEME->GetPathF(sType,"ticks"), sChars );
 		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTicks, sType );
 		this->AddChild( &m_textTicks );
@@ -181,8 +178,8 @@ void DifficultyMeter::SetInternal( const SetParams &params )
 
 	if( m_bShowTicks )
 	{
-		char on = char(params.dc + '0');
-		char off = 'X';
+		char on = char('1');
+		char off = '0';
 
 		RString sNewText;
 		int iNumOn = min( (int)m_iMaxTicks, params.iMeter );
