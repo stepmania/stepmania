@@ -30,16 +30,16 @@ public:
 	bool IsRouletting() const;
 
 	virtual bool Select();				// return true if this selection ends the screen
-	WheelItemType	GetSelectedType()	{ return GetCurWheelItemData(m_iSelection)->m_Type; }
-	Song		*GetSelectedSong();
-	Course		*GetSelectedCourse()	{ return GetCurWheelItemData(m_iSelection)->m_pCourse; }
-	RString		GetSelectedSection()	{ return GetCurWheelItemData(m_iSelection)->m_sText; }
+	WheelItemDataType	GetSelectedType()	{ return GetCurWheelItemData(m_iSelection)->m_Type; }
+	Song			*GetSelectedSong();
+	Course			*GetSelectedCourse()	{ return GetCurWheelItemData(m_iSelection)->m_pCourse; }
+	RString			GetSelectedSection()	{ return GetCurWheelItemData(m_iSelection)->m_sText; }
 
 	Song *GetPreferredSelectionForRandomOrPortal();
 
 	bool SelectSong( const Song *p );
 	bool SelectSection( const RString & SectionName );
-	void SetOpenGroup( RString group );
+	void SetOpenSection( RString group );
 	SortOrder GetSortOrder() const { return m_SortOrder; }
 	virtual void ChangeMusic( int dist ); /* +1 or -1 */ //CHECK THIS
 	void FinishChangingSorts();
@@ -49,15 +49,15 @@ protected:
 	MusicWheelItem *MakeItem();
 
 	void GetSongList( vector<Song*> &arraySongs, SortOrder so, const RString &sPreferredGroup );
-	void BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItems, SortOrder so );
+	void BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelItems, SortOrder so );
 	bool SelectSongOrCourse();
 	bool SelectCourse( const Course *p );
 	bool SelectModeMenuItem();
 
 	virtual void UpdateSwitch();
 
-	vector<WheelItemData *>		m_WheelItemDatas[NUM_SortOrder];
-	const WheelItemData *GetCurWheelItemData( int i ) { return (const WheelItemData *) m_CurWheelItemData[i]; }
+	vector<MusicWheelItemData *>		m_WheelItemDatas[NUM_SortOrder];
+	const MusicWheelItemData *GetCurWheelItemData( int i ) { return (const MusicWheelItemData *) m_CurWheelItemData[i]; }
 	
 	RString				m_sLastModeMenuItem;
 	SortOrder			m_SortOrder;
