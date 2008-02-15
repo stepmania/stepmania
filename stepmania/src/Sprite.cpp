@@ -845,6 +845,8 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 	if( !m_pTexture )
 		return;
 
+	float fScaleFudgePercent = 0.15f;	// scale up to this amount in one dimension to avoid clipping.
+
 	int iSourceWidth	= m_pTexture->GetSourceWidth();
 	int iSourceHeight	= m_pTexture->GetSourceHeight();
 
@@ -902,6 +904,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		if( bXDimNeedsToBeCropped )	// crop X
 		{
 			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
+			fPercentageToCutOff = max( fPercentageToCutOff-fScaleFudgePercent, 0 );
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 			
 			// generate a rectangle with new texture coordinates
@@ -915,6 +918,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		else		// crop Y
 		{
 			float fPercentageToCutOff = (this->GetZoomedHeight() - fHeight) / this->GetZoomedHeight();
+			fPercentageToCutOff = max( fPercentageToCutOff-fScaleFudgePercent, 0 );
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 			
 			// generate a rectangle with new texture coordinates
