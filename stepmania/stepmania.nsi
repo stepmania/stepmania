@@ -1,4 +1,4 @@
-sdsdsdsdsdsdsdsdsdsd
+sdsdsdsdsdsdsdsdsdsdsd
 ; NSIS Install Script 
 ; created by 
 ;     BBF, GlennMaynard, ChrisDanford
