@@ -8,20 +8,33 @@
 #include "ActorUtil.h"
 #include "XmlFile.h"
 #include "LuaManager.h"
+#include "Foreach.h"
 
 REGISTER_ACTOR_CLASS( OptionIconRow )
 
-#define SPACING_X	THEME->GetMetricF("OptionIconRow","SpacingX")
-#define SPACING_Y	THEME->GetMetricF("OptionIconRow","SpacingY")
+#define SPACING_X		THEME->GetMetricF("OptionIconRow","SpacingX")
+#define SPACING_Y		THEME->GetMetricF("OptionIconRow","SpacingY")
+#define NUM_OPTION_ICONS	THEME->GetMetricF("OptionIconRow","NumOptionIcons")
 
 
 OptionIconRow::OptionIconRow()
 {
-	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
+	for( unsigned i=0; i<NUM_OPTION_ICONS; i++ )
 	{
-		m_OptionIcon[i].SetXY( i*SPACING_X, i*SPACING_Y );
-		this->AddChild( &m_OptionIcon[i] );
+		OptionIcon *p = new OptionIcon;
+		p->SetXY( i*SPACING_X, i*SPACING_Y );
+		m_vpOptionIcon.push_back( p );
+		this->AddChild( p );
 	}
+}
+
+OptionIconRow::~OptionIconRow()
+{
+	FOREACH( OptionIcon*, m_vpOptionIcon, p )
+	{
+		SAFE_DELETE( *p );
+	}
+	this->RemoveAllChildren();
 }
 
 void OptionIconRow::LoadFromNode( const XNode* pNode )
@@ -95,8 +108,8 @@ int OptionToPreferredColumn( RString sOptionText )
 
 void OptionIconRow::Load()
 {
-	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
-		m_OptionIcon[i].Load( "OptionIconRow" );		
+	FOREACH( OptionIcon*, m_vpOptionIcon, p )
+		(*p)->Load( "OptionIconRow" );		
 }
 
 void OptionIconRow::SetFromGameState( PlayerNumber pn )
@@ -104,39 +117,39 @@ void OptionIconRow::SetFromGameState( PlayerNumber pn )
 	// init
 
 	RString sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage().GetString();
-	vector<RString> asOptions;
-	split( sOptions, ", ", asOptions, true );
+	vector<RString> vsOptions;
+	split( sOptions, ", ", vsOptions, true );
 
-
-	RString asTabs[NUM_OPTION_COLS-1];	// fill these with what will be displayed on the tabs
+	vector<RString> vsText;	// fill these with what will be displayed on the tabs
+	vsText.resize( m_vpOptionIcon.size() );
 	
 	// for each option, look for the best column to place it in
-	for( unsigned i=0; i<asOptions.size(); i++ )
+	for( unsigned i=0; i<vsOptions.size(); i++ )
 	{
-		RString sOption = asOptions[i];
+		RString sOption = vsOptions[i];
 		int iPerferredCol = OptionToPreferredColumn( sOption );
+		clamp( iPerferredCol, 0, (int)m_vpOptionIcon.size()-1 );
 
 		if( iPerferredCol == -1 )
 			continue;	// skip
 
 		// search for a vacant spot
-		for( unsigned i=iPerferredCol; i<NUM_OPTION_COLS-1; i++ )
+		for( unsigned i=iPerferredCol; i<NUM_OPTION_ICONS; i++ )
 		{
-			if( asTabs[i] != "" )
+			if( vsText[i] != "" )
+			{
 				continue;
+			}
 			else
 			{
-				asTabs[i] = sOption;
+				vsText[i] = sOption;
 				break;
 			}
 		}
 	}
 
-	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
-		if( i == 0 )
-			m_OptionIcon[i].Set( pn, "", true );
-		else
-			m_OptionIcon[i].Set( pn, asTabs[i-1], false );		
+	for( unsigned i=0; i<vsOptions.size(); i++ )
+		m_vpOptionIcon[i]->Set( vsText[i] );
 }
 
 // lua start

@@ -667,7 +667,7 @@ void OptionRow::SetOptionIcon( PlayerNumber pn, const RString &sText, GameComman
 	msg.SetParam( "GameCommand", &gc );
 	m_sprBullet->HandleMessage( msg );
 	if( m_OptionIcons[pn] != NULL )
-		m_OptionIcons[pn]->Set( pn, sText, false );
+		m_OptionIcons[pn]->Set( sText );
 }
 
 const BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow ) const

@@ -4,7 +4,7 @@
 #define OPTION_ICON_H
 
 #include "ActorFrame.h"
-#include "Sprite.h"
+#include "AutoActor.h"
 #include "BitmapText.h"
 #include "PlayerNumber.h"
 
@@ -15,11 +15,12 @@ public:
 	OptionIcon();
 	OptionIcon( const OptionIcon &cpy );
 	void Load( RString sType );
-	void Set( PlayerNumber pn, const RString &sText, bool bHeader = false );
+	void Set( const RString &sText );
 
 protected:
 	BitmapText	m_text;
-	Sprite		m_spr;
+	AutoActor	m_sprFilled;
+	AutoActor	m_sprEmpty;
 };
 
 #endif

@@ -9,13 +9,11 @@
 class PlayerOptions;
 struct lua_State;
 
-const unsigned NUM_OPTION_COLS = 8;
-
-
 class OptionIconRow : public ActorFrame
 {
 public:
 	OptionIconRow();
+	~OptionIconRow();
 
 	void Load();
 	virtual void LoadFromNode( const XNode* pNode );
@@ -28,7 +26,7 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	OptionIcon		m_OptionIcon[NUM_OPTION_COLS];
+	vector<OptionIcon*> m_vpOptionIcon;
 };
 
 #endif

@@ -19,19 +19,23 @@ OptionIcon::OptionIcon()
 
 OptionIcon::OptionIcon( const OptionIcon &cpy ):
 	ActorFrame(cpy),
-	m_text(cpy.m_text),
-	m_spr(cpy.m_spr)
+	m_sprFilled(cpy.m_sprFilled),
+	m_sprEmpty(cpy.m_sprEmpty),
+	m_text(cpy.m_text)
 {
 	this->RemoveAllChildren();
-	this->AddChild( &m_spr );
+	this->AddChild( m_sprFilled );
+	this->AddChild( m_sprEmpty );
 	this->AddChild( &m_text );
 }
 
 void OptionIcon::Load( RString sType )
 {
-	m_spr.Load( THEME->GetPathG(sType,"icon 3x2") );
-	m_spr.StopAnimating();
-	this->AddChild( &m_spr );
+	m_sprFilled.Load( THEME->GetPathG(sType,"icon filled") );
+	this->AddChild( m_sprFilled );
+
+	m_sprEmpty.Load( THEME->GetPathG(sType,"icon empty") );
+	this->AddChild( m_sprEmpty );
 
 	m_text.LoadFromFont( THEME->GetPathF(sType,"icon") );
 	m_text.SetShadowLength( 0 );
@@ -41,9 +45,11 @@ void OptionIcon::Load( RString sType )
 	((Actor&)m_text).SetHorizAlign( (HorizAlign)TEXT_H_ALIGN );
 	((Actor&)m_text).SetVertAlign( (VertAlign)TEXT_V_ALIGN );
 	this->AddChild( &m_text );
+
+	Set("");
 }
 
-void OptionIcon::Set( PlayerNumber pn, const RString &_sText, bool bHeader )
+void OptionIcon::Set( const RString &_sText )
 {
 	RString sText = _sText;
 
@@ -65,10 +71,10 @@ void OptionIcon::Set( PlayerNumber pn, const RString &_sText, bool bHeader )
 	sText.Replace( " ", "\n" );
 
 	bool bVacant = (sText=="");
-	int iState = pn*3 + (bHeader?0:(bVacant?1:2));
-	m_spr.SetState( iState );
+	m_sprFilled->SetVisible( !bVacant );
+	m_sprEmpty->SetVisible( bVacant );
 
-	m_text.SetText( bHeader ? RString("") : sText );
+	m_text.SetText( sText );
 	m_text.SetZoom( TEXT_ZOOM );
 	m_text.CropToWidth( TEXT_WIDTH );
 }
