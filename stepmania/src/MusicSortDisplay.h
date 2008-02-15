@@ -1,12 +1,12 @@
 #ifndef MUSIC_SORT_DISPLAY_H
 #define MUSIC_SORT_DISPLAY_H
 
-#include "Sprite.h"
+#include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
 
 
 
-class MusicSortDisplay : public Sprite
+class MusicSortDisplay : public ActorFrame
 {
 public:
 	MusicSortDisplay();
@@ -15,7 +15,7 @@ public:
 	virtual void HandleMessage( const Message &msg );
 
 protected:
-
+	AutoActor m_spr;
 };
 
 #endif
