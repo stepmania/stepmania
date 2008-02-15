@@ -138,13 +138,13 @@ void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 
 			GAMESTATE->m_PreferredSortOrder = so;
 			GAMESTATE->m_SortOrder.Set( so );
-			//Odd, changing the sort order requires us to call SetOpenGroup more than once
+			//Odd, changing the sort order requires us to call SetOpenSection more than once
 			m_MusicWheel.ChangeSort( so );
-			m_MusicWheel.SetOpenGroup( ssprintf("%c", c ) );
+			m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
 		}
 		m_MusicWheel.SelectSection( ssprintf("%c", c ) );
 		m_MusicWheel.ChangeSort( so );
-		m_MusicWheel.SetOpenGroup( ssprintf("%c", c ) );
+		m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
 		m_MusicWheel.Move(+1);
 	}
 
@@ -240,7 +240,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 					//m_MusicWheel.FinishTweening();
 					//SCREENMAN->PostMessageToTopScreen( SM_SetWheelSong, 0.710f );
 					m_MusicWheel.ChangeSort( SORT_GROUP );
-					m_MusicWheel.SetOpenGroup( "" );
+					m_MusicWheel.SetOpenSection( "" );
 				}
 				m_MusicWheel.SelectSong( m_cSong );
 				m_MusicWheel.Select();
