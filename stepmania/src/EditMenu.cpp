@@ -383,13 +383,8 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		m_textValue[ROW_SONG].SetText( "" );
 		m_SongBanner.LoadFromSong( GetSelectedSong() );
 		m_SongBanner.ScaleToClipped( SONG_BANNER_WIDTH, SONG_BANNER_HEIGHT );
-		m_SongTextBanner.LoadFromSong( GetSelectedSong() );
+		m_SongTextBanner.SetFromSong( GetSelectedSong() );
 
-		{
-			Message msg( "Set" );
-			msg.SetParam( "Song", GetSelectedSong() );
-			m_SongTextBanner.HandleMessage( msg );
-		}
 		// fall through
 	case ROW_STEPS_TYPE:
 		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToLocalizedString(GetSelectedStepsType()) );
