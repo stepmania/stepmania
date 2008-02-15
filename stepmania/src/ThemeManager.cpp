@@ -1059,24 +1059,9 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 
 	RString s = GetMetricRaw( g_pLoadedThemeData->iniStrings, sClassName, sValueName );
 	FontCharAliases::ReplaceMarkers( s );
-
+	
 	// Don't EvalulateString.  Strings are raw and shouldn't allow Lua.
 	//EvaluateString( s );
-
-	// Write stubs for missing strings into every language file.
-	/*
-	if( !ThemeManager::GetMetricRawRecursive( sClassName, sValueName, s ) )
-	{
-		RString sFile = GetLanguageIniPath( SpecialFiles::BASE_THEME_NAME, m_sCurLanguage );
-		IniFile ini;
-		ini.ReadFile( sFile );
-		s = sValueName;
-		ini.SetValue( sClassName, sValueName, s );
-		ini.WriteFile( sFile );
-
-		LoadThemeMetrics( m_sCurThemeName, m_sCurLanguage );
-	}
-	*/
 
 	s.Replace( "\\n", "\n" );
 
