@@ -8,13 +8,13 @@
 
 class RageTexture;
 class Font;
+struct FontPageTextures;
 
 class BitmapText : public Actor
 {
 public:
 	BitmapText();
 	BitmapText( const BitmapText &cpy );
-	BitmapText &operator =( const BitmapText &cpy );
 	virtual ~BitmapText();
 
 	virtual void LoadFromNode( const XNode* pNode );
@@ -36,6 +36,8 @@ public:
 	void SetJitter( bool b )	{ m_bJitter = b; }
 
 	void SetHorizAlign( float f );
+
+	void SetStrokeColor( RageColor c )	{ m_StrokeColor = c; }
 
 	void GetLines( vector<wstring> &wTextLines ) const { wTextLines = m_wTextLines; }
 	const vector<wstring> &GetLines() const { return m_wTextLines; }
@@ -76,13 +78,16 @@ protected:
 	int			m_iVertSpacing;
 
 	vector<RageSpriteVertex>	m_aVertices;
-	vector<RageTexture *>		m_pTextures;
+	
+	vector<FontPageTextures*>	m_vpFontPageTextures;
 	map<size_t, Attribute>		m_mAttributes;
 	bool				m_bHasGlowAttribute;
+
+	RageColor		m_StrokeColor;
 	
 	// recalculate the items in SetText()
 	void BuildChars();
-	void DrawChars();
+	void DrawChars( bool bUseStrokeTexture );
 	void UpdateBaseZoom();
 
 private:

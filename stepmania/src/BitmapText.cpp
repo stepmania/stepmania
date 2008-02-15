@@ -54,6 +54,8 @@ BitmapText::BitmapText()
 	m_iVertSpacing = 0;
 	m_bHasGlowAttribute = false;
 
+	m_StrokeColor = RageColor(1,1,1,1);
+
 	SetShadowLength( 4 );
 }
 
@@ -67,11 +69,7 @@ BitmapText::BitmapText( const BitmapText &cpy ):
 	Actor( cpy )
 {
 	m_pFont = NULL;
-	*this = cpy;
-}
 
-BitmapText &BitmapText::operator =( const BitmapText &cpy )
-{
 #define CPY(a) a = cpy.a
 	CPY( m_sText );
 	CPY( m_wTextLines );
@@ -83,9 +81,10 @@ BitmapText &BitmapText::operator =( const BitmapText &cpy )
 	CPY( m_bJitter );
 	CPY( m_iVertSpacing );
 	CPY( m_aVertices );
-	CPY( m_pTextures );
-	CPY( m_bHasGlowAttribute );
+	CPY( m_vpFontPageTextures );
 	CPY( m_mAttributes );
+	CPY( m_bHasGlowAttribute );
+	CPY( m_StrokeColor );
 #undef CPY
 
 	if( m_pFont )
@@ -95,8 +94,6 @@ BitmapText &BitmapText::operator =( const BitmapText &cpy )
 		m_pFont = FONT->CopyFont( cpy.m_pFont );
 	else
 		m_pFont = NULL;
-
-	return *this;
 }
 
 void BitmapText::LoadFromNode( const XNode* pNode )
@@ -181,7 +178,7 @@ void BitmapText::BuildChars()
 	m_size.x = QuantizeUp( m_size.x, 2.0f );
 
 	m_aVertices.clear();
-	m_pTextures.clear();
+	m_vpFontPageTextures.clear();
 	
 	if( m_wTextLines.empty() )
 		return;
@@ -234,7 +231,7 @@ void BitmapText::BuildChars()
 			v[3].t = RageVector2( g.m_TexRect.right,	g.m_TexRect.top );
 
 			m_aVertices.insert( m_aVertices.end(), &v[0], &v[4] );
-			m_pTextures.push_back( g.GetTexture() );
+			m_vpFontPageTextures.push_back( g.GetFontPageTextures() );
 		}
 
 		/* The amount of padding a line needs: */
@@ -242,14 +239,14 @@ void BitmapText::BuildChars()
 	}
 }
 
-void BitmapText::DrawChars()
+void BitmapText::DrawChars( bool bUseStrokeTexture )
 {
 	// bail if cropped all the way 
 	if( m_pTempState->crop.left + m_pTempState->crop.right >= 1  || 
 		m_pTempState->crop.top + m_pTempState->crop.bottom >= 1 ) 
 		return; 
 
-	const int iNumGlyphs = m_pTextures.size();
+	const int iNumGlyphs = m_vpFontPageTextures.size();
 	int iStartGlyph = lrintf( SCALE( m_pTempState->crop.left, 0.f, 1.f, 0, (float) iNumGlyphs ) );
 	int iEndGlyph = lrintf( SCALE( m_pTempState->crop.right, 0.f, 1.f, (float) iNumGlyphs, 0 ) );
 	iStartGlyph = clamp( iStartGlyph, 0, iNumGlyphs );
@@ -319,10 +316,13 @@ void BitmapText::DrawChars()
 	for( int start = iStartGlyph; start < iEndGlyph; )
 	{
 		int end = start;
-		while( end < iEndGlyph && m_pTextures[end] == m_pTextures[start] )
+		while( end < iEndGlyph  &&  m_vpFontPageTextures[end] == m_vpFontPageTextures[start] )
 			end++;
 		DISPLAY->ClearAllTextures();
-		DISPLAY->SetTexture( TextureUnit_1, m_pTextures[start]->GetTexHandle() );
+		if( bUseStrokeTexture  &&  m_vpFontPageTextures[start]->m_pTextureStroke )
+			DISPLAY->SetTexture( TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureStroke->GetTexHandle() );
+		else
+			DISPLAY->SetTexture( TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureMain->GetTexHandle() );
 		
 		/* Don't bother setting texture render states for text.  We never go outside of 0..1. /*
 		/* We should call SetTextureRenderStates because it does more than just setting 
@@ -531,15 +531,28 @@ void BitmapText::DrawPrimitives()
 		if( m_fShadowLengthX != 0  ||  m_fShadowLengthY != 0 )
 		{
 			DISPLAY->PushMatrix();
-			DISPLAY->TranslateWorld( m_fShadowLengthX, m_fShadowLengthY, 0 );	// shift by 5 units
+			DISPLAY->TranslateWorld( m_fShadowLengthX, m_fShadowLengthY, 0 );
 
 			RageColor c = m_ShadowColor;
 			c.a *= m_pTempState->diffuse[0].a;
 			for( unsigned i=0; i<m_aVertices.size(); i++ )
 				m_aVertices[i].c = c;
-			DrawChars();
+			DrawChars( false );
 
 			DISPLAY->PopMatrix();
+		}
+
+		//
+		// render the stroke
+		//
+		bool bUsingStrokeTexture = !!m_vpFontPageTextures[0]->m_pTextureStroke;
+		if( bUsingStrokeTexture  &&  m_StrokeColor.a > 0 )
+		{
+			RageColor c = m_StrokeColor;
+			c.a *= m_pTempState->diffuse[0].a;
+			for( unsigned i=0; i<m_aVertices.size(); i++ )
+				m_aVertices[i].c = c;
+			DrawChars( true );
 		}
 
 		//
@@ -612,7 +625,7 @@ void BitmapText::DrawPrimitives()
 			}
 		}
 
-		DrawChars();
+		DrawChars( false );
 
 		// undo jitter to verts
 		if( m_bJitter )
@@ -657,7 +670,7 @@ void BitmapText::DrawPrimitives()
 			for( ; i < iEnd; ++i )
 				m_aVertices[i].c = attr.glow;
 		}
-		DrawChars();
+		DrawChars( false );
 	}
 }
 
@@ -798,6 +811,7 @@ public:
 		return 0;
 	}
 	static int ClearAttributes( T* p, lua_State *L )	{ p->ClearAttributes(); return 0; }
+	static int strokecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetStrokeColor( c ); return 0; }
 
 	LunaBitmapText()
 	{
@@ -811,6 +825,7 @@ public:
 		ADD_METHOD( GetText );
 		ADD_METHOD( AddAttribute );
 		ADD_METHOD( ClearAttributes );
+		ADD_METHOD( strokecolor );
 	}
 };
 
