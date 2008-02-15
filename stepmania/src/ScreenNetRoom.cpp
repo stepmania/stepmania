@@ -68,8 +68,7 @@ void ScreenNetRoom::Init()
 
 	//Since the room info meter does not start active, and it
 	//is activated by code elsewhere, it should not be put on
-	//screen to begin with.
-	m_roomInfo.SetName( "RoomInfoDisplay" );
+	//screen to begin with.	m_roomInfo.SetName( "RoomInfoDisplay" );
 	m_roomInfo.Load( "RoomInfoDisplay" );
 	m_roomInfo.SetDrawOrder( 1 );
 	this->AddChild( &m_roomInfo );
@@ -199,7 +198,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 	else if ( SM == SM_RoomInfoDeploy )
 	{
 		int i = m_RoomWheel.GetCurrentIndex() - m_RoomWheel.GetPerminateOffset();
-		const RoomWheelData* data = m_RoomWheel.GetItem(i);
+		const RoomWheelItemData* data = m_RoomWheel.GetItem(i);
 		if( data != NULL )
 			m_roomInfo.SetRoom( data );
 	}
@@ -218,7 +217,7 @@ void ScreenNetRoom::TweenOffScreen()
 void ScreenNetRoom::MenuStart( const InputEventPlus &input )
 {
 	m_RoomWheel.Select();
-	RoomWheelData* rwd = dynamic_cast<RoomWheelData*>( m_RoomWheel.LastSelected() ); 
+	RoomWheelItemData* rwd = dynamic_cast<RoomWheelItemData*>( m_RoomWheel.LastSelected() ); 
 	if( rwd )
 	{
 		if ( rwd->m_iFlags % 2 )
@@ -266,7 +265,7 @@ void ScreenNetRoom::MenuRight( const InputEventPlus &input )
 void ScreenNetRoom::UpdateRoomsList()
 {
 	int difference = 0;
-	RoomWheelData* itemData = NULL;
+	RoomWheelItemData* itemData = NULL;
 
 	difference = m_RoomWheel.GetNumItems() - m_Rooms.size();
 
@@ -279,13 +278,13 @@ void ScreenNetRoom::UpdateRoomsList()
 		{
 			difference = abs( difference );
 			for( int x = 0; x < difference; ++x )
-				m_RoomWheel.AddItem( new RoomWheelData(TYPE_GENERIC, "", "", RageColor(1,1,1,1)) );
+				m_RoomWheel.AddItem( new RoomWheelItemData(TYPE_GENERIC, "", "", RageColor(1,1,1,1)) );
 		}
 	}
 	else
 	{
 		for ( unsigned int x = 0; x < m_Rooms.size(); ++x)
-				m_RoomWheel.AddItem( new RoomWheelData(TYPE_GENERIC, "", "", RageColor(1,1,1,1)) );
+				m_RoomWheel.AddItem( new RoomWheelItemData(TYPE_GENERIC, "", "", RageColor(1,1,1,1)) );
 	}
 
 	for( unsigned int i = 0; i < m_Rooms.size(); ++i )
