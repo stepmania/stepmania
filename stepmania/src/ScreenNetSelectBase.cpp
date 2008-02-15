@@ -365,7 +365,7 @@ void ColorBitmapText::DrawPrimitives( )
 			c.a *= m_pTempState->diffuse[0].a;
 			for( unsigned i=0; i<m_aVertices.size(); i++ )
 				m_aVertices[i].c = c;
-			DrawChars();
+			DrawChars( true );
 
 			DISPLAY->PopMatrix();
 		}
@@ -391,7 +391,7 @@ void ColorBitmapText::DrawPrimitives( )
 				m_aVertices[i+j].c = c;
 		}
 
-		DrawChars();
+		DrawChars( false );
 	}
 
 	/* render the glow pass */
@@ -401,7 +401,7 @@ void ColorBitmapText::DrawPrimitives( )
 
 		for( unsigned i=0; i<m_aVertices.size(); i++ )
 			m_aVertices[i].c = m_pTempState->glow;
-		DrawChars();
+		DrawChars( false );
 	}
 }
 
