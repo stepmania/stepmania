@@ -4,6 +4,7 @@
 #define TIMING_DATA_H
 
 #include "NoteTypes.h"
+struct lua_State;
 
 #define COMPARE(x) if(x!=other.x) return false;
 
@@ -131,6 +132,9 @@ public:
 	void ScaleRegion( float fScale = 1, int iStartRow = 0, int iEndRow = MAX_NOTE_ROW );
 	void InsertRows( int iStartRow, int iRowsToAdd );
 	void DeleteRows( int iStartRow, int iRowsToDelete );
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 	RString				m_sFile;		// informational only
 	vector<BPMSegment>		m_BPMSegments;	// this must be sorted before gameplay

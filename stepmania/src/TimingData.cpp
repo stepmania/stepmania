@@ -433,6 +433,24 @@ void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, i
 	return;
 }
 
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaTimingData: public Luna<TimingData>
+{
+public:
+	static int HasStops( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasStops()); return 1; }
+
+	LunaTimingData()
+	{
+		ADD_METHOD( HasStops );
+	}
+};
+
+LUA_REGISTER_CLASS( TimingData )
+// lua end
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
