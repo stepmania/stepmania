@@ -46,6 +46,7 @@ public:
 	virtual void StartPlayingMusic() { }
 		
 	bool GetGoToOptions() const { return m_bGoToOptions; }
+	MusicWheel *GetMusicWheel() { return &m_MusicWheel; }
 
 	//
 	// Lua
