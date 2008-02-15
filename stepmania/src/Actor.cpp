@@ -202,6 +202,7 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_fHibernateSecondsLeft );
 	CPY( m_fShadowLengthX );
 	CPY( m_fShadowLengthY );
+	CPY( m_ShadowColor );
 	CPY( m_bIsAnimating );
 	CPY( m_iDrawOrder );
 
