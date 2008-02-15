@@ -6,28 +6,27 @@
 
 ScrollBar::ScrollBar()
 {
-	m_sprBackground.Load( THEME->GetPathG("ScrollBar","parts 1x3") );
-	m_sprBackground->StopAnimating();
-	m_sprBackground->SetState( 1 );
-	this->AddChild( m_sprBackground );
+	RString sMetricsGroup = "ScrollBar";
 
-	m_sprScrollThumbPart1.Load( THEME->GetPathG("ScrollBar","thumb") );
-	m_sprScrollThumbPart1->StopAnimating();
-	this->AddChild( m_sprScrollThumbPart1 );
+	m_sprMiddle.Load( THEME->GetPathG(sMetricsGroup,"middle") );
+	this->AddChild( m_sprMiddle );
 
-	m_sprScrollThumbPart2.Load( THEME->GetPathG("ScrollBar","thumb") );
-	m_sprScrollThumbPart2->StopAnimating();
-	this->AddChild( m_sprScrollThumbPart2 );
+	m_sprTop.Load( THEME->GetPathG(sMetricsGroup,"top") );
+	m_sprTop->SetVertAlign( VertAlign_Bottom );
+	this->AddChild( m_sprTop );
 
-	m_sprTopButton.Load( THEME->GetPathG("ScrollBar","parts 1x3") );
-	m_sprTopButton->StopAnimating();
-	m_sprTopButton->SetState( 0 );
-	this->AddChild( m_sprTopButton );
+	m_sprBottom.Load( THEME->GetPathG(sMetricsGroup,"bottom") );
+	m_sprBottom->SetVertAlign( VertAlign_Top );
+	this->AddChild( m_sprBottom );
 
-	m_sprBottomButton.Load( THEME->GetPathG("ScrollBar","parts 1x3") );
-	m_sprBottomButton->StopAnimating();
-	m_sprBottomButton->SetState( 2 );
-	this->AddChild( m_sprBottomButton );
+	m_sprScrollTickThumb.Load( THEME->GetPathG(sMetricsGroup,"TickThumb") );
+	this->AddChild( m_sprScrollTickThumb );
+
+	for( int i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
+	{
+		m_sprScrollStretchThumb[i].Load( THEME->GetPathG(sMetricsGroup,"StretchThumb") );
+		this->AddChild( m_sprScrollStretchThumb[i] );
+	}
 
 	SetBarHeight( 100 );
 }
@@ -35,58 +34,66 @@ ScrollBar::ScrollBar()
 void ScrollBar::SetBarHeight( int iHeight )
 {
 	m_iBarHeight = iHeight;
-	m_sprBackground->SetZoomY( m_iBarHeight/m_sprBackground->GetUnzoomedHeight() );
-	m_sprTopButton->SetY( -m_iBarHeight/2.0f );
-	m_sprBottomButton->SetY( +m_iBarHeight/2.0f );
-	m_sprScrollThumbPart1->SetY( 0 );
-	m_sprScrollThumbPart2->SetY( 0 );
+	m_sprMiddle->SetZoomY( m_iBarHeight/m_sprMiddle->GetUnzoomedHeight() );
+	m_sprTop->SetY( -m_iBarHeight/2.0f );
+	m_sprBottom->SetY( +m_iBarHeight/2.0f );
+	m_sprScrollTickThumb->SetY( 0 );
+	for( int i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
+		m_sprScrollStretchThumb[i]->SetY( 0 );
 }
 
-void ScrollBar::SetPercentage( float fStartPercent, float fEndPercent )
+void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 {
-	CHECKPOINT;
-	const int iBarContentHeight = m_iBarHeight - int( m_sprTopButton->GetUnzoomedHeight()/2 + m_sprBottomButton->GetUnzoomedHeight()/2 );
+	wrap( fCenterPercent, 1.0f );
+
+	const int iBarContentHeight = m_sprMiddle->GetZoomedHeight();
 	ASSERT( iBarContentHeight != 0 );
-	CHECKPOINT;
+
+	/* Set tick thumb */
+	{
+		float fY = SCALE( fCenterPercent, 0.0f, 1.0f, -iBarContentHeight/2.0f, iBarContentHeight/2.0f );
+		fY = roundf( fY );
+		m_sprScrollTickThumb->SetY( fY );
+	}	
+
+	/* Set stretch thumb */
+	float fStartPercent = fCenterPercent - fSizePercent;
+	float fEndPercent = fCenterPercent + fSizePercent;
 
 	// make sure the percent numbers are between 0 and 1
 	fStartPercent	= fmodf( fStartPercent+1, 1 );
-	fEndPercent		= fmodf( fEndPercent+1, 1 );
+	fEndPercent	= fmodf( fEndPercent+1, 1 );
 
 	CHECKPOINT;
-	float fPart1TopY, fPart1BottomY, fPart2TopY, fPart2BottomY;
+	float fPartTopY[2], fPartBottomY[2];
 
-	if( fStartPercent < fEndPercent )	// we only need to one 1 thumb part
+	if( fStartPercent < fEndPercent )	// we only need to one 1 stretch thumb part
 	{
-		fPart1TopY		= SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPart1BottomY	= SCALE( fEndPercent,  0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPart2TopY		= 0; 
-		fPart2BottomY	= 0; 
+		fPartTopY[0]	= SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPartBottomY[0]	= SCALE( fEndPercent,  0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPartTopY[1]	= 0; 
+		fPartBottomY[1]	= 0; 
 	}
-	else	// we need two thumb parts
+	else	// we need two stretch thumb parts
 	{
-		fPart1TopY		= SCALE( 0.0f,			0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPart1BottomY	= SCALE( fEndPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPart2TopY		= SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		fPart2BottomY	= SCALE( 1.0f,			0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPartTopY[0]	= SCALE( 0.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPartBottomY[0]	= SCALE( fEndPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPartTopY[1]	= SCALE( fStartPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPartBottomY[1]	= SCALE( 1.0f,		0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
 	}
 
 	CHECKPOINT;
-		
-	m_sprScrollThumbPart1->StretchTo( RectF(
-		-m_sprScrollThumbPart1->GetUnzoomedWidth()/2,
-		fPart1TopY,
-		+m_sprScrollThumbPart1->GetUnzoomedWidth()/2,
-		fPart1BottomY
-		) );
 
-	CHECKPOINT;
-	m_sprScrollThumbPart2->StretchTo( RectF(
-		-m_sprScrollThumbPart2->GetUnzoomedWidth()/2,
-		fPart2TopY,
-		+m_sprScrollThumbPart2->GetUnzoomedWidth()/2,
-		fPart2BottomY
-		) );
+	for( int i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
+	{
+		RectF rect(
+			-m_sprScrollStretchThumb[i]->GetUnzoomedWidth()/2,
+			fPartTopY[i],
+			+m_sprScrollStretchThumb[i]->GetUnzoomedWidth()/2,
+			fPartBottomY[i]
+			);
+		m_sprScrollStretchThumb[i]->StretchTo( rect );
+	}
 	CHECKPOINT;
 }
 

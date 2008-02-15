@@ -13,17 +13,17 @@ public:
 	ScrollBar();
 	
 	void SetBarHeight( int iHeight );
-	void SetPercentage( float fStartPercent, float fEndPercent);
+	void SetPercentage( float fCenterPercent, float fSizePercent );
 
 protected:
 
 	int		m_iBarHeight;
 
-	AutoActor	m_sprTopButton;
-	AutoActor	m_sprBottomButton;
-	AutoActor	m_sprBackground;
-	AutoActor	m_sprScrollThumbPart1;
-	AutoActor	m_sprScrollThumbPart2;
+	AutoActor	m_sprMiddle;
+	AutoActor	m_sprTop;
+	AutoActor	m_sprBottom;
+	AutoActor	m_sprScrollTickThumb;
+	AutoActor	m_sprScrollStretchThumb[2];
 };
 
 #endif
