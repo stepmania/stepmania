@@ -16,7 +16,21 @@
 class Course;
 class Song;
 
-struct WheelItemData;
+struct MusicWheelItemData;
+
+enum MusicWheelItemType
+{
+	MusicWheelItemType_Song,
+	MusicWheelItemType_SectionExpanded,
+	MusicWheelItemType_SectionCollapsed,
+	MusicWheelItemType_Roulette,
+	MusicWheelItemType_Course,
+	MusicWheelItemType_Sort,
+	MusicWheelItemType_Mode,
+	NUM_MusicWheelItemType,
+	MusicWheelItemType_Invalid,
+};
+const RString& MusicWheelItemTypeToString( MusicWheelItemType i );
 
 class MusicWheelItem : public WheelItemBase
 {
@@ -30,33 +44,31 @@ public:
 	virtual void HandleMessage( const Message &msg );
 	void RefreshGrades();
 
-	const WheelItemData *data;
-
 private:
 	ThemeMetric<bool>	GRADES_SHOW_MACHINE;
 
-	AutoActor		m_sprSongBar;
-	AutoActor		m_sprSectionBar;
-	AutoActor		m_sprExpandedBar;
-	AutoActor		m_sprModeBar;
-	AutoActor		m_sprSortBar;
+	AutoActor		m_sprColorPart[NUM_MusicWheelItemType];
+	AutoActor		m_sprNormalPart[NUM_MusicWheelItemType];
+	
+	TextBanner		m_TextBanner;	// used by Type_Song instead of m_pText
+	BitmapText		*m_pText[NUM_MusicWheelItemType];
+	BitmapText		*m_pTextSectionCount;
+
 	WheelNotifyIcon		m_WheelNotifyIcon;
-	TextBanner		m_TextBanner;
-	BitmapText		m_textSection;
-	BitmapText		m_textRoulette;
-	BitmapText		m_textCourse;
-	BitmapText		m_textSort;
 	AutoActor		m_pGradeDisplay[NUM_PLAYERS];
 };
 
-struct WheelItemData : public WheelItemBaseData
+struct MusicWheelItemData : public WheelItemBaseData
 {
-	WheelItemData() {}
-	WheelItemData( WheelItemType wit, Song* pSong, RString sSectionName, Course* pCourse, RageColor color );
+	MusicWheelItemData() : m_iSectionCount(0) { }
+	MusicWheelItemData( WheelItemDataType type, Song* pSong, RString sSectionName, Course* pCourse, RageColor color, int iSectionCount );
 
 	Course*			m_pCourse;
 	Song*			m_pSong;
 	WheelNotifyIcon::Flags  m_Flags;
+
+	// for TYPE_SORT
+	int			m_iSectionCount;
 
 	// for TYPE_SORT
 	RString			m_sLabel;

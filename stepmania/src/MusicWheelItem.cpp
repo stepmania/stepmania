@@ -16,13 +16,27 @@
 #include "ActorUtil.h"
 #include "ThemeMetric.h"
 #include "HighScore.h"
+#include "ScreenSelectMusic.h"
+#include "ScreenManager.h"
 
-WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, RString sSectionName, Course* pCourse, RageColor color ):
-	WheelItemBaseData(wit, sSectionName, color)
+static const char *MusicWheelItemTypeNames[] = {
+	"Song",
+	"SectionExpanded",
+	"SectionCollapsed",
+	"Roulette",
+	"Course",
+	"Sort",
+	"Mode",
+};
+XToString( MusicWheelItemType );
+
+MusicWheelItemData::MusicWheelItemData( WheelItemDataType type, Song* pSong, RString sSectionName, Course* pCourse, RageColor color, int iSectionCount ):
+	WheelItemBaseData(type, sSectionName, color)
 {
 	m_pSong = pSong;
 	m_pCourse = pCourse;
 	m_Flags = WheelNotifyIcon::Flags();
+	m_iSectionCount = iSectionCount;
 }
 
 MusicWheelItem::MusicWheelItem( RString sType ):
@@ -30,22 +44,46 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 {
 	GRADES_SHOW_MACHINE.Load( sType, "GradesShowMachine" );
 
-	data = NULL;
+	FOREACH_ENUM( MusicWheelItemType, i )
+	{
+		m_sprColorPart[i].Load( THEME->GetPathG(sType,MusicWheelItemTypeToString(i)+" ColorPart") );
+		this->AddChild( m_sprColorPart[i] );
 
-	m_sprSongBar.Load( THEME->GetPathG(sType,"song") );
-	this->AddChild( m_sprSongBar );
+		m_sprNormalPart[i].Load( THEME->GetPathG(sType,MusicWheelItemTypeToString(i)+" NormalPart") );
+		this->AddChild( m_sprNormalPart[i] );
+	}
 
-	m_sprSectionBar.Load( THEME->GetPathG(sType,"section") );
-	this->AddChild( m_sprSectionBar );
+	m_TextBanner.SetName( "SongName" );
+	ActorUtil::LoadAllCommands( m_TextBanner, "MusicWheelItem" );
+	m_TextBanner.Load( "TextBanner" );
+	ActorUtil::SetXY( m_TextBanner, "MusicWheelItem" );
+	m_TextBanner.PlayCommand( "On" );
+	this->AddChild( &m_TextBanner );
 
-	m_sprExpandedBar.Load( THEME->GetPathG(sType,"expanded") );
-	this->AddChild( m_sprExpandedBar );
+	FOREACH_ENUM( MusicWheelItemType, i )
+	{
+		m_pText[i] = NULL;
 
-	m_sprModeBar.Load( THEME->GetPathG(sType,"mode") );
-	this->AddChild( m_sprModeBar );
+		// Don't init text for Type_Song.  It uses a TextBanner.
+		if( i == MusicWheelItemType_Song )
+			continue;
 
-	m_sprSortBar.Load( THEME->GetPathG(sType,"sort") );
-	this->AddChild( m_sprSortBar );
+		m_pText[i] = new BitmapText;
+		m_pText[i]->SetName( MusicWheelItemTypeToString(i) );
+		ActorUtil::LoadAllCommands( m_pText[i], "MusicWheelItem" );
+		m_pText[i]->LoadFromFont( THEME->GetPathF(sType,MusicWheelItemTypeToString(i)) );
+		ActorUtil::SetXY( m_pText[i], "MusicWheelItem" );
+		m_pText[i]->PlayCommand( "On" );
+		this->AddChild( m_pText[i] );
+	}
+
+	m_pTextSectionCount = new BitmapText;
+	m_pTextSectionCount->SetName( "SectionCount" );
+	ActorUtil::LoadAllCommands( m_pTextSectionCount, "MusicWheelItem" );
+	m_pTextSectionCount->LoadFromFont( THEME->GetPathF(sType,"SectionCount") );
+	ActorUtil::SetXY( m_pTextSectionCount, "MusicWheelItem" );
+	m_pTextSectionCount->PlayCommand( "On" );
+	this->AddChild( m_pTextSectionCount );
 
 	m_WheelNotifyIcon.SetName( "Icon" );
 	ActorUtil::LoadAllCommands( m_WheelNotifyIcon, "MusicWheelItem" );
@@ -53,39 +91,6 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	m_WheelNotifyIcon.PlayCommand( "On" );
 	this->AddChild( &m_WheelNotifyIcon );
 	
-	m_TextBanner.SetName( "SongName" );
-	ActorUtil::LoadAllCommands( m_TextBanner, "MusicWheelItem" );
-	m_TextBanner.Load( "TextBanner" );
-	ActorUtil::SetXY( m_WheelNotifyIcon, "MusicWheelItem" );
-	m_TextBanner.PlayCommand( "On" );
-	this->AddChild( &m_TextBanner );
-
-	m_textSection.SetName( "Section" );
-	ActorUtil::LoadAllCommands( m_textSection, "MusicWheelItem" );
-	m_textSection.LoadFromFont( THEME->GetPathF(sType,"section") );
-	ActorUtil::SetXY( m_textSection, "MusicWheelItem" );
-	m_textSection.SetShadowLength( 0 );
-	m_textSection.PlayCommand( "On" );
-	this->AddChild( &m_textSection );
-
-	m_textRoulette.SetName( "Roulette" );
-	ActorUtil::LoadAllCommands( m_textRoulette, "MusicWheelItem" );
-	m_textRoulette.LoadFromFont( THEME->GetPathF(sType,"roulette") );
-	ActorUtil::SetXY( m_textRoulette, "MusicWheelItem" );
-	m_textRoulette.SetShadowLength( 0 );
-	m_textRoulette.PlayCommand( "On" );
-	this->AddChild( &m_textRoulette );
-
-	m_textCourse.SetName( "CourseName" );
-	m_textCourse.LoadFromFont( THEME->GetPathF(sType,"course") );
-	LOAD_ALL_COMMANDS_AND_SET_XY( &m_textCourse );
-	this->AddChild( &m_textCourse );
-
-	m_textSort.SetName( "Sort" );
-	m_textSort.LoadFromFont( THEME->GetPathF(sType,"sort") );
-	LOAD_ALL_COMMANDS_AND_SET_XY( &m_textSort );
-	this->AddChild( &m_textSort );
-
 	FOREACH_PlayerNumber( p )
 	{
 		m_pGradeDisplay[p].Load( THEME->GetPathG(sType,"grades") );
@@ -105,31 +110,37 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 	WheelItemBase( cpy ),
 	GRADES_SHOW_MACHINE( cpy.GRADES_SHOW_MACHINE ),
-	m_sprSongBar( cpy.m_sprSongBar ),
-	m_sprSectionBar( cpy.m_sprSectionBar ),
-	m_sprExpandedBar( cpy.m_sprExpandedBar ),
-	m_sprModeBar( cpy.m_sprModeBar ),
-	m_sprSortBar( cpy.m_sprSortBar ),
-	m_WheelNotifyIcon( cpy.m_WheelNotifyIcon ),
 	m_TextBanner( cpy.m_TextBanner ),
-	m_textSection( cpy.m_textSection ),
-	m_textRoulette( cpy.m_textRoulette ),
-	m_textCourse( cpy.m_textCourse ),
-	m_textSort( cpy.m_textSort )
+	m_WheelNotifyIcon( cpy.m_WheelNotifyIcon )
 {
-	data = NULL;
+	FOREACH_ENUM( MusicWheelItemType, i )
+	{
+		m_sprColorPart[i] = cpy.m_sprColorPart[i];
+		this->AddChild( m_sprColorPart[i] );
 
-	this->AddChild( m_sprSongBar );
-	this->AddChild( m_sprSectionBar );
-	this->AddChild( m_sprExpandedBar );
-	this->AddChild( m_sprModeBar );
-	this->AddChild( m_sprSortBar );
-	this->AddChild( &m_WheelNotifyIcon );
+		m_sprNormalPart[i] = cpy.m_sprNormalPart[i];
+		this->AddChild( m_sprNormalPart[i] );
+	}
+
 	this->AddChild( &m_TextBanner );
-	this->AddChild( &m_textSection );
-	this->AddChild( &m_textRoulette );
-	this->AddChild( &m_textCourse );
-	this->AddChild( &m_textSort );
+
+	FOREACH_ENUM( MusicWheelItemType, i )
+	{
+		if( cpy.m_pText[i] == NULL )
+		{
+			m_pText[i] = NULL;
+		}
+		else
+		{
+			m_pText[i] = new BitmapText( *cpy.m_pText[i] );
+			this->AddChild( m_pText[i] );
+		}
+	}
+
+	m_pTextSectionCount = new BitmapText( *cpy.m_pTextSectionCount );
+	this->AddChild( m_pTextSectionCount );
+
+	this->AddChild( &m_WheelNotifyIcon );
 
 	FOREACH_PlayerNumber( p )
 	{
@@ -142,132 +153,114 @@ MusicWheelItem::~MusicWheelItem()
 {
 }
 
-void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int iIndex, bool bHasFocus )
+void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int iIndex, bool bHasFocus )
 {
-	const WheelItemData *pWID = dynamic_cast<const WheelItemData*>( pWIBD );
+	WheelItemBase::LoadFromWheelItemData( pData, iIndex, bHasFocus );
+
+	const MusicWheelItemData *pWID = dynamic_cast<const MusicWheelItemData*>( pData );
 	
-	ASSERT( pWID != NULL );
-	data = pWID;
-
-
 	// hide all
-	m_WheelNotifyIcon.SetVisible( false );
+	FOREACH_ENUM( MusicWheelItemType, i )
+	{
+		m_sprColorPart[i]->SetVisible( false );
+		m_sprNormalPart[i]->SetVisible( false );
+	}
 	m_TextBanner.SetVisible( false );
-	m_sprSongBar->SetVisible( false );
-	m_sprSectionBar->SetVisible( false );
-	m_sprExpandedBar->SetVisible( false );
-	m_sprModeBar->SetVisible( false );
-	m_sprSortBar->SetVisible( false );
-	m_textSection.SetVisible( false );
-	m_textRoulette.SetVisible( false );
+	FOREACH_ENUM( MusicWheelItemType, i )
+		if( m_pText[i] )
+			m_pText[i]->SetVisible( false );
+	m_pTextSectionCount->SetVisible( false );
+	m_WheelNotifyIcon.SetVisible( false );
 	FOREACH_PlayerNumber( p )
 		m_pGradeDisplay[p]->SetVisible( false );
-	m_textCourse.SetVisible( false );
-	m_textSort.SetVisible( false );
 
 
-	// init and unhide type specific stuff
+	// Fill these in below
+	RString sDisplayName, sTranslitName;
+	MusicWheelItemType type = MusicWheelItemType_Invalid;
+
 	switch( pWID->m_Type )
 	{
 	DEFAULT_FAIL( pWID->m_Type );
-	case TYPE_SECTION:
-	case TYPE_COURSE:
-	case TYPE_SORT:
-	{
-		RString sDisplayName, sTranslitName;
-		BitmapText *bt = NULL;
-		switch( pWID->m_Type )
-		{
-		case TYPE_SECTION:
-			sDisplayName = SONGMAN->ShortenGroupName(data->m_sText);
-			bt = &m_textSection;
-			break;
-		case TYPE_COURSE:
-			sDisplayName = data->m_pCourse->GetDisplayFullTitle();
-			sTranslitName = data->m_pCourse->GetTranslitFullTitle();
-			bt = &m_textCourse;
-			m_WheelNotifyIcon.SetFlags( data->m_Flags );
-			m_WheelNotifyIcon.SetVisible( true );
-			break;
-		case TYPE_SORT:
-			sDisplayName = data->m_sLabel;
-			bt = &m_textSort;
-			break;
-		DEFAULT_FAIL( pWID->m_Type );
-		}
-
-		bt->SetText( sDisplayName, sTranslitName );
-		bt->SetDiffuse( data->m_color );
-		bt->SetRainbowScroll( false );
-		bt->SetVisible( true );
-		break;
-	}
 	case TYPE_SONG:
-		m_TextBanner.LoadFromSong( data->m_pSong );
-		m_TextBanner.SetDiffuse( data->m_color );
+		type = MusicWheelItemType_Song;
+
+		m_TextBanner.SetFromSong( pWID->m_pSong );
+		m_TextBanner.SetDiffuse( pWID->m_color );
 		m_TextBanner.SetVisible( true );
 
-		m_WheelNotifyIcon.SetFlags( data->m_Flags );
+		m_WheelNotifyIcon.SetFlags( pWID->m_Flags );
 		m_WheelNotifyIcon.SetVisible( true );
 		RefreshGrades();
 		break;
-	case TYPE_ROULETTE:
-		m_textRoulette.SetText( THEME->GetString("MusicWheel","Roulette") );
-		m_textRoulette.SetVisible( true );
+	case TYPE_SECTION:
+		{
+			sDisplayName = SONGMAN->ShortenGroupName(pWID->m_sText);
+			RString sExpandedSectionName;
+
+			// TODO: Move the expaneded section name into GameState?
+			ScreenSelectMusic *pScreen = dynamic_cast<ScreenSelectMusic*>(SCREENMAN->GetTopScreen() );
+			if( pScreen )
+				sExpandedSectionName = pScreen->GetMusicWheel()->GetExpandedSectionName();
+			if( sExpandedSectionName == pWID->m_sText )
+				type = MusicWheelItemType_SectionExpanded;
+			else
+				type = MusicWheelItemType_SectionCollapsed;
+
+			m_pTextSectionCount->SetText( ssprintf("%d",pWID->m_iSectionCount) );
+			m_pTextSectionCount->SetVisible( true );
+		}
 		break;
-
-	case TYPE_RANDOM:
-		m_textRoulette.SetText( THEME->GetString("MusicWheel","Random") );
-		m_textRoulette.SetVisible( true );
-		break;
-
-	case TYPE_PORTAL:
-		m_textRoulette.SetText( THEME->GetString("MusicWheel","Portal") );
-		m_textRoulette.SetVisible( true );
-		break;
-	}
-
-	Actor *pBars[] = { m_sprBar, m_sprExpandedBar, m_sprSectionBar, m_sprModeBar, m_sprSortBar, m_sprSongBar, NULL };
-	for( unsigned i = 0; pBars[i] != NULL; ++i )
-		pBars[i]->SetVisible( false );
-
-	switch( data->m_Type )
-	{
-	case TYPE_SECTION: 
-	case TYPE_ROULETTE:
-	case TYPE_RANDOM:
-	case TYPE_PORTAL:
-		if( m_bExpanded )
-			m_sprExpandedBar->SetVisible( true );
-		else
-			m_sprSectionBar->SetVisible( true );
+	case TYPE_COURSE:
+		sDisplayName = pWID->m_pCourse->GetDisplayFullTitle();
+		sTranslitName = pWID->m_pCourse->GetTranslitFullTitle();
+		type = MusicWheelItemType_Course;
+		m_WheelNotifyIcon.SetFlags( pWID->m_Flags );
+		m_WheelNotifyIcon.SetVisible( true );
 		break;
 	case TYPE_SORT:
-		if( pWID->m_pAction->m_pm != PlayMode_Invalid )
-			m_sprModeBar->SetVisible( true );
-		else
-			m_sprSortBar->SetVisible( true );
+		sDisplayName = pWID->m_sLabel;
+		type = MusicWheelItemType_Sort;
 		break;
-	case TYPE_SONG:		
-	case TYPE_COURSE:
-		m_sprSongBar->SetVisible( true );
+	case TYPE_ROULETTE:
+		sDisplayName = THEME->GetString("MusicWheel","Roulette");
+		type = MusicWheelItemType_Roulette;
 		break;
-	DEFAULT_FAIL( data->m_Type );
+	case TYPE_RANDOM:
+		sDisplayName = THEME->GetString("MusicWheel","Random");
+		type = MusicWheelItemType_Roulette;
+		break;
+	case TYPE_PORTAL:
+		sDisplayName = THEME->GetString("MusicWheel","Portal");
+		type = MusicWheelItemType_Roulette;
+		break;
 	}
 
-	for( unsigned i = 0; pBars[i] != NULL; ++i )
+	m_sprColorPart[type]->SetVisible( true );
+	m_sprColorPart[type]->SetDiffuse( pWID->m_color );
+	m_sprNormalPart[type]->SetVisible( true );
+	BitmapText *bt = m_pText[type];
+	if( bt )
 	{
-		if( !pBars[i]->GetVisible() )
-			continue;
-		SetGrayBar( pBars[i] );
-		break;
+		bt->SetText( sDisplayName, sTranslitName );
+		bt->SetDiffuse( pWID->m_color );
+		bt->SetVisible( true );
 	}
 
-	// Call "Set" so that elements can react to the change in song.
+	FOREACH_ENUM( MusicWheelItemType, i )
+	{
+		if( m_sprColorPart[i]->GetVisible() )
+		{
+			SetGrayBar( m_sprColorPart[i] );
+			break;
+		}
+	}
+
+	// Call "Set" so that elements like TextBanner react to the change in song.
 	{
 		Message msg( "Set" );
-		msg.SetParam( "Song", data->m_pSong );
-		msg.SetParam( "Course", data->m_pCourse );
+		msg.SetParam( "Song", pWID->m_pSong );
+		msg.SetParam( "Course", pWID->m_pCourse );
 		msg.SetParam( "Index", iIndex );
 		msg.SetParam( "HasFocus", bHasFocus );
 		msg.SetParam( "SongGroup", pWID->m_sText );
@@ -277,13 +270,15 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 
 void MusicWheelItem::RefreshGrades()
 {
-	if( data == NULL )
+	const MusicWheelItemData *pWID = dynamic_cast<const MusicWheelItemData*>( m_pData );
+
+	if( pWID == NULL )
 		return; // LoadFromWheelItemData() hasn't been called yet.
 	FOREACH_HumanPlayer( p )
 	{
 		m_pGradeDisplay[p]->SetVisible( false );
 
-		if( data->m_pSong == NULL && data->m_pCourse == NULL )
+		if( pWID->m_pSong == NULL && pWID->m_pCourse == NULL )
 			continue;
 
 		Difficulty dc;
@@ -310,17 +305,17 @@ void MusicWheelItem::RefreshGrades()
 		HighScoreList *pHSL = NULL;
 		if( PROFILEMAN->IsPersistentProfile(ps) && dc != Difficulty_Invalid )
 		{
-			if( data->m_pSong )
+			if( pWID->m_pSong )
 			{
-				const Steps* pSteps = SongUtil::GetStepsByDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
+				const Steps* pSteps = SongUtil::GetStepsByDifficulty( pWID->m_pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
 				if( pSteps != NULL )
-					pHSL = &pProfile->GetStepsHighScoreList(data->m_pSong, pSteps);
+					pHSL = &pProfile->GetStepsHighScoreList(pWID->m_pSong, pSteps);
 			}
-			else if( data->m_pCourse )
+			else if( pWID->m_pCourse )
 			{
-				const Trail *pTrail = data->m_pCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
+				const Trail *pTrail = pWID->m_pCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
 				if( pTrail != NULL )
-					pHSL = &pProfile->GetCourseHighScoreList( data->m_pCourse, pTrail );
+					pHSL = &pProfile->GetCourseHighScoreList( pWID->m_pCourse, pTrail );
 			}
 		}
 
