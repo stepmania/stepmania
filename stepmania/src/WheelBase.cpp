@@ -44,12 +44,7 @@ void WheelBase::Load( RString sType )
 	SWITCH_SECONDS			.Load(sType,"SwitchSeconds");
 	LOCKED_INITIAL_VELOCITY		.Load(sType,"LockedInitialVelocity");
 	SCROLL_BAR_HEIGHT		.Load(sType,"ScrollBarHeight");
-	ITEM_CURVE_X			.Load(sType,"ItemCurveX");
-	USE_LINEAR_WHEEL		.Load(sType,"NoCurving");
-	ITEM_SPACING_Y			.Load(sType,"ItemSpacingY");
-	WHEEL_3D_RADIUS			.Load(sType,"Wheel3DRadius");
-	CIRCLE_PERCENT			.Load(sType,"CirclePercent");
-	USE_3D				.Load(sType,"Use3D");
+	m_exprItemTransformFunction.SetFromReference( THEME->GetMetricR(sType,"ItemTransformFunction") );
 	NUM_WHEEL_ITEMS_TO_DRAW		.Load(sType,"NumWheelItems");
 	WHEEL_ITEM_LOCKED_COLOR		.Load(sType,"WheelItemLockedColor");
 
@@ -91,50 +86,21 @@ void WheelBase::BeginScreen()
 	m_WheelState = STATE_SELECTING;
 }
 
-void WheelBase::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, float& fY_out, float& fZ_out, float& fRotationX_out )
-{
-	if( USE_3D )
-	{
-		const float curve = CIRCLE_PERCENT*2*PI;
-		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-NUM_WHEEL_ITEMS/2.0f,+NUM_WHEEL_ITEMS/2.0f,-curve/2.f,+curve/2.f);
-		fX_out = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
-		fY_out = WHEEL_3D_RADIUS*sinf(fRotationX_out);
-		fZ_out = -100+WHEEL_3D_RADIUS*cosf(fRotationX_out);
-		fRotationX_out *= 180.f/PI;	// to degrees
-
-//		printf( "fRotationX_out = %f\n", fRotationX_out );
-	}
-	else if(!USE_LINEAR_WHEEL.GetValue())
-	{
-		fX_out = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
-		fY_out = fPosOffsetsFromMiddle*ITEM_SPACING_Y;
-		fZ_out = 0;
-		fRotationX_out = 0;
-
-		fX_out = roundf( fX_out );
-		fY_out = roundf( fY_out );
-		fZ_out = roundf( fZ_out );
-	}
-	else
-	{
-		fX_out = fPosOffsetsFromMiddle*ITEM_CURVE_X;
-		fY_out = fPosOffsetsFromMiddle*ITEM_SPACING_Y;
-		fZ_out = 0;
-		fRotationX_out = 0;
-
-		fX_out = roundf( fX_out );
-		fY_out = roundf( fY_out );
-		fZ_out = roundf( fZ_out );
-	}
-}
-
 void WheelBase::SetItemPosition( Actor &item, float fPosOffsetsFromMiddle )
 {
-	float fX, fY, fZ, fRotationX;
-	GetItemPosition( fPosOffsetsFromMiddle, fX, fY, fZ, fRotationX );
-	item.SetXY( fX, fY );
-	item.SetZ( fZ );
-	item.SetRotationX( fRotationX );
+	/* Don't supply and item index or num items.  The number of items can be so 
+	 * large that transforms that depend on such large numbers are likely to break. */
+	int iItemIndex = 0; // dummy
+	int iNumItems = 1; // dummy
+
+	Actor::TweenState ts = m_exprItemTransformFunction.GetPosition( fPosOffsetsFromMiddle, iItemIndex, iNumItems );
+	
+	/* Round to achieve pixel alignment.  Any benefit to moving this to Lua? -Chris */
+	ts.pos.x = roundf( ts.pos.x );
+	ts.pos.y = roundf( ts.pos.y );
+	ts.pos.z = roundf( ts.pos.z );
+	
+	item.DestTweenState() = ts;
 }
 
 void WheelBase::UpdateScrollbar()
@@ -142,17 +108,12 @@ void WheelBase::UpdateScrollbar()
 	int iTotalNumItems = m_CurWheelItemData.size();
 	float fItemAt = m_iSelection - m_fPositionOffsetFromSelection;
 
-	if( NUM_WHEEL_ITEMS >= iTotalNumItems )
-	{
-		m_ScrollBar.SetPercentage( 0, 1 );
-	}
-	else
 	{
 		float fSize = float(NUM_WHEEL_ITEMS) / iTotalNumItems;
 		float fCenter = fItemAt / iTotalNumItems;
 		fSize *= 0.5f;
 
-		m_ScrollBar.SetPercentage( fCenter - fSize, fCenter + fSize );
+		m_ScrollBar.SetPercentage( fCenter, fSize );
 	}
 }
 
@@ -325,9 +286,9 @@ bool WheelBase::Select()	// return true if this selection can end the screen
 		{
 			RString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sText;
 			if( m_sExpandedSectionName == sThisItemSectionName )	// already expanded
-				SetOpenGroup( "" );				// collapse it
+				SetOpenSection( "" );				// collapse it
 			else							// already collapsed
-				SetOpenGroup( sThisItemSectionName );		// expand it
+				SetOpenSection( sThisItemSectionName );		// expand it
 
 			m_soundExpand.Play();
 		}

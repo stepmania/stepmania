@@ -12,6 +12,7 @@
 #include "RageTimer.h"
 #include "WheelItemBase.h"
 #include "ThemeMetric.h"
+#include "LuaExpressionTransform.h"
 
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
 
@@ -27,7 +28,7 @@ public:
 	virtual void Move(int n);
 	void ChangeMusicUnlessLocked( int n ); /* +1 or -1 */
 	virtual void ChangeMusic(int dist); /* +1 or -1 */
-	virtual void SetOpenGroup( RString group ) { }
+	virtual void SetOpenSection( RString group ) { }
 
 	/* Return true if we're moving fast automatically. */
 	int IsMoving() const;
@@ -46,6 +47,7 @@ public:
 	WheelItemBaseData* GetItem(unsigned int index);
 	WheelItemBaseData* LastSelected();
 	WheelItemBase *GetWheelItem( int i ) { if( i < 0 || i >= (int) m_WheelBaseItems.size() ) return NULL; return m_WheelBaseItems[i]; }
+	RString GetExpandedSectionName() { return m_sExpandedSectionName; }
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -103,12 +105,7 @@ protected:
 	ThemeMetric<float>	SWITCH_SECONDS;
 	ThemeMetric<float>	LOCKED_INITIAL_VELOCITY;
 	ThemeMetric<int>	SCROLL_BAR_HEIGHT;
-	ThemeMetric<float>	ITEM_CURVE_X;
-	ThemeMetric<bool>	USE_LINEAR_WHEEL;
-	ThemeMetric<float>	ITEM_SPACING_Y;
-	ThemeMetric<float>	WHEEL_3D_RADIUS;
-	ThemeMetric<float>	CIRCLE_PERCENT;
-	ThemeMetric<bool>	USE_3D;
+	LuaExpressionTransform	m_exprItemTransformFunction;	// params: self,positionIndex,itemIndex,numItems
 	ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW;
 	ThemeMetric<RageColor>	WHEEL_ITEM_LOCKED_COLOR;
 };
