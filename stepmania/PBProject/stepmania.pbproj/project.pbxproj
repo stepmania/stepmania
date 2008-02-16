@@ -180,7 +180,6 @@
 		AA29CC760558741A00961A51 /* MeterDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9D04770E7C005F316C /* MeterDisplay.h */; };
 		AA29CC770558741A00961A51 /* MusicBannerWheel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9F04770E7C005F316C /* MusicBannerWheel.h */; };
 		AA29CC780558741A00961A51 /* MusicList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA104770E7C005F316C /* MusicList.h */; };
-		AA29CC790558741A00961A51 /* MusicSortDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA304770E7C005F316C /* MusicSortDisplay.h */; };
 		AA29CC7A0558741A00961A51 /* MusicWheel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA504770E7C005F316C /* MusicWheel.h */; };
 		AA29CC7B0558741A00961A51 /* MusicWheelItem.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA704770E7C005F316C /* MusicWheelItem.h */; };
 		AA29CC7C0558741A00961A51 /* OptionIcon.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA904770E7C005F316C /* OptionIcon.h */; };
@@ -383,7 +382,6 @@
 		AA29CD8A0558741A00961A51 /* MeterDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */; };
 		AA29CD8B0558741A00961A51 /* MusicBannerWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9E04770E7C005F316C /* MusicBannerWheel.cpp */; };
 		AA29CD8C0558741A00961A51 /* MusicList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA004770E7C005F316C /* MusicList.cpp */; };
-		AA29CD8D0558741A00961A51 /* MusicSortDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA204770E7C005F316C /* MusicSortDisplay.cpp */; };
 		AA29CD8E0558741A00961A51 /* MusicWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA404770E7C005F316C /* MusicWheel.cpp */; };
 		AA29CD8F0558741A00961A51 /* MusicWheelItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */; };
 		AA29CD900558741A00961A51 /* OptionIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA804770E7C005F316C /* OptionIcon.cpp */; };
@@ -631,7 +629,6 @@
 		AA40D1FE09A08D650068C0D5 /* MeterDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9D04770E7C005F316C /* MeterDisplay.h */; };
 		AA40D1FF09A08D650068C0D5 /* MusicBannerWheel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9F04770E7C005F316C /* MusicBannerWheel.h */; };
 		AA40D20009A08D650068C0D5 /* MusicList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA104770E7C005F316C /* MusicList.h */; };
-		AA40D20109A08D650068C0D5 /* MusicSortDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA304770E7C005F316C /* MusicSortDisplay.h */; };
 		AA40D20209A08D650068C0D5 /* MusicWheel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA504770E7C005F316C /* MusicWheel.h */; };
 		AA40D20309A08D650068C0D5 /* MusicWheelItem.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA704770E7C005F316C /* MusicWheelItem.h */; };
 		AA40D20409A08D650068C0D5 /* OptionIcon.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA904770E7C005F316C /* OptionIcon.h */; };
@@ -994,7 +991,6 @@
 		AA40D3C009A08D650068C0D5 /* MeterDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */; };
 		AA40D3C109A08D650068C0D5 /* MusicBannerWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9E04770E7C005F316C /* MusicBannerWheel.cpp */; };
 		AA40D3C209A08D650068C0D5 /* MusicList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA004770E7C005F316C /* MusicList.cpp */; };
-		AA40D3C309A08D650068C0D5 /* MusicSortDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA204770E7C005F316C /* MusicSortDisplay.cpp */; };
 		AA40D3C409A08D650068C0D5 /* MusicWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA404770E7C005F316C /* MusicWheel.cpp */; };
 		AA40D3C509A08D650068C0D5 /* MusicWheelItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */; };
 		AA40D3C609A08D650068C0D5 /* OptionIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA804770E7C005F316C /* OptionIcon.cpp */; };
@@ -2185,7 +2181,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AAA070A80CE7B0DF005A3060 /* mad */;
+			remoteGlobalIDString = AAA070A80CE7B0DF005A3060;
 			remoteInfo = mad;
 		};
 		AAE781FD0AC7E61900AEFC64 /* PBXContainerItemProxy */ = {
@@ -2628,8 +2624,6 @@
 		AA6EFE9F04770E7C005F316C /* MusicBannerWheel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MusicBannerWheel.h; path = ../src/MusicBannerWheel.h; sourceTree = "<group>"; };
 		AA6EFEA004770E7C005F316C /* MusicList.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicList.cpp; path = ../src/MusicList.cpp; sourceTree = "<group>"; };
 		AA6EFEA104770E7C005F316C /* MusicList.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MusicList.h; path = ../src/MusicList.h; sourceTree = "<group>"; };
-		AA6EFEA204770E7C005F316C /* MusicSortDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicSortDisplay.cpp; path = ../src/MusicSortDisplay.cpp; sourceTree = "<group>"; };
-		AA6EFEA304770E7C005F316C /* MusicSortDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MusicSortDisplay.h; path = ../src/MusicSortDisplay.h; sourceTree = "<group>"; };
 		AA6EFEA404770E7C005F316C /* MusicWheel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicWheel.cpp; path = ../src/MusicWheel.cpp; sourceTree = "<group>"; };
 		AA6EFEA504770E7C005F316C /* MusicWheel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MusicWheel.h; path = ../src/MusicWheel.h; sourceTree = "<group>"; };
 		AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicWheelItem.cpp; path = ../src/MusicWheelItem.cpp; sourceTree = "<group>"; };
@@ -4414,8 +4408,6 @@
 				AA6EFE9F04770E7C005F316C /* MusicBannerWheel.h */,
 				AA6EFEA004770E7C005F316C /* MusicList.cpp */,
 				AA6EFEA104770E7C005F316C /* MusicList.h */,
-				AA6EFEA204770E7C005F316C /* MusicSortDisplay.cpp */,
-				AA6EFEA304770E7C005F316C /* MusicSortDisplay.h */,
 				AA6EFEA404770E7C005F316C /* MusicWheel.cpp */,
 				AA6EFEA504770E7C005F316C /* MusicWheel.h */,
 				AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */,
@@ -5457,7 +5449,6 @@
 				AA29CC760558741A00961A51 /* MeterDisplay.h in Headers */,
 				AA29CC770558741A00961A51 /* MusicBannerWheel.h in Headers */,
 				AA29CC780558741A00961A51 /* MusicList.h in Headers */,
-				AA29CC790558741A00961A51 /* MusicSortDisplay.h in Headers */,
 				AA29CC7A0558741A00961A51 /* MusicWheel.h in Headers */,
 				AA29CC7B0558741A00961A51 /* MusicWheelItem.h in Headers */,
 				AA29CC7C0558741A00961A51 /* OptionIcon.h in Headers */,
@@ -5886,7 +5877,6 @@
 				AA40D1FE09A08D650068C0D5 /* MeterDisplay.h in Headers */,
 				AA40D1FF09A08D650068C0D5 /* MusicBannerWheel.h in Headers */,
 				AA40D20009A08D650068C0D5 /* MusicList.h in Headers */,
-				AA40D20109A08D650068C0D5 /* MusicSortDisplay.h in Headers */,
 				AA40D20209A08D650068C0D5 /* MusicWheel.h in Headers */,
 				AA40D20309A08D650068C0D5 /* MusicWheelItem.h in Headers */,
 				AA40D20409A08D650068C0D5 /* OptionIcon.h in Headers */,
@@ -6733,7 +6723,6 @@
 				AA29CD8A0558741A00961A51 /* MeterDisplay.cpp in Sources */,
 				AA29CD8B0558741A00961A51 /* MusicBannerWheel.cpp in Sources */,
 				AA29CD8C0558741A00961A51 /* MusicList.cpp in Sources */,
-				AA29CD8D0558741A00961A51 /* MusicSortDisplay.cpp in Sources */,
 				AA29CD8E0558741A00961A51 /* MusicWheel.cpp in Sources */,
 				AA29CD8F0558741A00961A51 /* MusicWheelItem.cpp in Sources */,
 				AA29CD900558741A00961A51 /* OptionIcon.cpp in Sources */,
@@ -7151,7 +7140,6 @@
 				AA40D3C009A08D650068C0D5 /* MeterDisplay.cpp in Sources */,
 				AA40D3C109A08D650068C0D5 /* MusicBannerWheel.cpp in Sources */,
 				AA40D3C209A08D650068C0D5 /* MusicList.cpp in Sources */,
-				AA40D3C309A08D650068C0D5 /* MusicSortDisplay.cpp in Sources */,
 				AA40D3C409A08D650068C0D5 /* MusicWheel.cpp in Sources */,
 				AA40D3C509A08D650068C0D5 /* MusicWheelItem.cpp in Sources */,
 				AA40D3C609A08D650068C0D5 /* OptionIcon.cpp in Sources */,
