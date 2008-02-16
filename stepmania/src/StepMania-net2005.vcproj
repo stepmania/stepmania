@@ -2651,14 +2651,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MusicSortDisplay.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MusicSortDisplay.h"
-				>
-			</File>
-			<File
 				RelativePath=".\MusicWheel.cpp"
 				>
 			</File>
