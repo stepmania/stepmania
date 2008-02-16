@@ -264,6 +264,11 @@ public:
 		else { UnlockEntry *pUE = Luna<UnlockEntry>::check(L,1); p->LoadBackgroundFromUnlockEntry( pUE ); }
 		return 0;
 	}
+	static int LoadFromSongGroup( T* p, lua_State *L )
+	{ 
+		p->LoadFromSongGroup( SArg(1) );
+		return 0;
+	}
 
 	LunaBanner()
 	{
@@ -276,6 +281,7 @@ public:
 		ADD_METHOD( LoadCardFromCharacter );
 		ADD_METHOD( LoadBannerFromUnlockEntry );
 		ADD_METHOD( LoadBackgroundFromUnlockEntry );
+		ADD_METHOD( LoadFromSongGroup );
 	}
 };
 
