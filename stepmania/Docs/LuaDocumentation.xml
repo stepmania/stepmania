@@ -257,6 +257,20 @@
 		Set the z position of the Actor to <code>zPos</code>.
 	</Function>
 </Class>
+<Class name='ActorFrame'>
+	<Function name='fov' return='void' arguments='float fFOV'>
+		Sets the field of view for the ActorFrame.
+	</Function>
+	<Function name='GetNumChildren' return='int' arguments=''>
+		Returns the number of children in the ActorFrame.
+	</Function>
+	<Function name='SetFOV' return='void' arguments='float fFOV'>
+		Sets the field of view for the ActorFrame.
+	</Function>
+	<Function name='vanishpoint' return='void' arguments='float fX, float fY'>
+		Sets the vanishing point for the ActorFrame.
+	</Function>
+</Class>
 <Class name='ActorScroller'>
 	<Function name='SetLoop' return='void' arguments='bool bLoop'>
 		Specifies if the scroller should loop or not.
@@ -285,6 +299,17 @@
 	</Function>
 	<Function name='playforplayer' return='void' arguments='PlayerNumber pn'>
 		Play the sound on the given player's side. You must set <code>SupportPan = true</code> on load.
+	</Function>
+</Class>
+<Class name='Banner'>
+	<Function name='LoadFromCourse' return='void' arguments='Course c'>
+		Loads a Banner from a specified Course.
+	</Function>
+	<Function name='LoadFromSong' return='void' arguments='Song s'>
+		Loads a Banner from a specified Song.
+	</Function>
+	<Function name='LoadFromSongGroup' return='void' arguments='string s'>
+		Loads a Banner from a specified Song Group.
 	</Function>
 </Class>
 <Class name='BitmapText'>
@@ -343,11 +368,17 @@
 	<Function name='GetDisplayFullTitle' return='string' arguments=''>
 		Returns the full display title of the Course.
 	</Function>
+	<Function name='GetEstimatedNumStages' return='int' arguments=''>
+		Returns the estimated number of stages for the Course.
+	</Function>
 	<Function name='GetGroupName' return='string' arguments=''>
 		Returns the Course's group name.
 	</Function>
 	<Function name='GetPlayMode' return='PlayMode' arguments=''>
 		Returns the Course's <Link class='ENUM' function='PlayMode' />.
+	</Function>
+	<Function name='GetTotalSeconds' return='float' arguments=''>
+		Returns the total length of the Course in seconds.
 	</Function>
 	<Function name='GetTranslitFullTitle' return='string' arguments=''>
 		Returns the full transliterated title of the Course.
@@ -477,12 +508,15 @@
 		Return the source <Link class='Steps' /> for the editor or <code>nil</code>
 		if it does not exist.
 	</Function>
+	<Function name='GetFreeze' return='bool' arguments=''>
+		Returns <code>true</code> if a freeze/stop is active in the song.
+	</Function>
 	<Function name='GetGameSeed' return='int' arguments=''>
 		Return the random seed for the game.
 	</Function>
 	<Function name='GetGameplayLeadIn' return='bool' arguments=''>
 		Return <code>true</code> if the gameplay lead in is enabled. If
-		<code>false</code>, gameplay begin immediately. <!-- XXX: I think. -->
+		<code>false</code>, gameplay begins immediately. <!-- XXX: I think. -->
 	</Function>
 	<Function name='GetHumanPlayers' return='{PlayerNumber}' arguments=''>
 		Returns an array of <Link class='PlayerNumber' />s corresponding to Human players.
@@ -495,6 +529,29 @@
 	</Function>
 	<Function name='GetNumStagesLeft' return='int' arguments='PlayerNumber pn'>
 		Returns the number of stages left for player <code>pn</code>.
+	</Function>
+	<Function name='GetPlayerDisplayName' return='string' arguments='PlayerNumber pn'>
+		Returns the display name for player <code>pn</code>.
+	</Function>
+	<Function name='GetPlayerState' return='PlayerState' arguments='PlayerNumber pn'>
+		Returns the PlayerState for player <code>pn</code>.
+	</Function>
+	<Function name='GetPremium' return='Premium' arguments=''>
+		Returns the current Premium.
+	</Function>
+	<Function name='GetSongBeat' return='float' arguments=''>
+		<!-- XXX: Not exactly sure on this. -->
+		Returns the current beat of the song.
+	</Function>
+	<Function name='GetSongBeatVisible' return='float' arguments=''>
+		<!-- XXX: Not exactly sure on this. -->
+		Returns the current visible beat of the song.
+	</Function>
+	<Function name='GetSongBPS' return='float' arguments=''>
+		Returns the song's current beats per second.
+	</Function>
+	<Function name='GetSortOrder' return='SortOrder' arguments=''>
+		Returns the current SortOrder.
 	</Function>
 	<Function name='GetStageSeed' return='int' arguments=''>
 		Return the random seed for the current stage.
@@ -927,6 +984,28 @@
 	</Function>
 	<Function name='GetString' return='string' arguments='string ClassName, string Element'>
 		Returns the value of <code>Element</code> in <code>Class</code> for the currently loaded language.
+	</Function>
+</Class>
+<Class name='Trail'>
+	<Function name='GetArtists' return='{string}' arguments=''>
+		Returns an array with all the artists in the Trail.
+	</Function>
+	<Function name='GetDifficulty' return='Difficulty' arguments=''>
+		Returns the Trail's difficulty.
+	</Function>
+	<Function name='GetMeter' return='int' arguments=''>
+		Returns the Trail's difficulty rating.
+	</Function>
+	<Function name='GetRadarValues' return='RadarValues' arguments=''>
+		Returns the Trail's RadarValues.
+	</Function>
+	<Function name='GetStepsType' return='StepsType' arguments=''>
+		Returns the Trail's StepsType.
+	</Function>
+</Class>
+<Class name='WheelBase'>
+	<Function name='GetWheelItem' return='WheelItemBaseData' arguments='int iIndex'>
+		Returns the WheelItem at index <code>iIndex</code>.
 	</Function>
 </Class>
 </Classes>
