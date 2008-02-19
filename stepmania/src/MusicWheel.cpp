@@ -529,7 +529,8 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 						int iSectionCount = 0;
 
 						// Count songs in this section
-						for( unsigned j=i; j < arraySongs.size(); j++ )
+						unsigned j;
+						for( j=i; j < arraySongs.size(); j++ )
 						{
 							if( SongUtil::GetSectionNameFromSongAndSort( arraySongs[j], so ) != sThisSection )
 								break;
