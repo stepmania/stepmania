@@ -9,6 +9,7 @@ elseif st == "StyleType_TwoPlayersTwoSides" then
 else
 	assert(0);
 end
+local max_stages = PREFSMAN:GetPreference( "SongsPerPlay" );
 
 local t = Def.ActorFrame {
 	LoadActor( "preview " .. st ) .. {
@@ -32,7 +33,7 @@ local t = Def.ActorFrame {
 			InitCommand=cmd(horizalign,right;x,98;y,42;settext,"MAX STAGE/";maxwidth,300;shadowlength,0;diffuse,color("#32d545");zoom,0.5);
 		};
 		LoadFont( "_sf square head 32" ) .. {
-			InitCommand=cmd(horizalign,right;x,128;y,40;settext,"3";maxwidth,100;shadowlength,0;zoom,0.5);
+			InitCommand=cmd(horizalign,right;x,128;y,40;settext,max_stages;maxwidth,100;shadowlength,0;zoom,0.5);
 		};
 		LoadActor( "card " .. pad_file ) .. {
 			InitCommand=cmd(x,-82;y,8;);
@@ -50,11 +51,11 @@ local t = Def.ActorFrame {
 		};
 		LoadActor( "icon glow" ) .. {
 			InitCommand=cmd(blend,"BlendMode_Add");
-			GainFocusCommand=cmd(visible,true);
-			LoseFocusCommand=cmd(visible,false);
+			GainFocusCommand=cmd(diffuseshift;visible,true);
+			LoseFocusCommand=cmd(stopeffect;visible,false);
 		};
 		LoadFont( "_terminator two 36" ) .. {
-			InitCommand=cmd(y,-30;settext,string.upper(gc:GetText());shadowlength,0;zoom,0.5;maxwidth,160);
+			InitCommand=cmd(y,-30;settext,string.upper(gc:GetText());shadowlength,0;zoom,0.5;maxwidth,160;strokecolor,color("#000000FF"));
 		};
 		Def.ActorFrame {
 			InitCommand=cmd(y,10;);
