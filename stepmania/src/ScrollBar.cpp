@@ -22,7 +22,7 @@ ScrollBar::ScrollBar()
 	m_sprScrollTickThumb.Load( THEME->GetPathG(sMetricsGroup,"TickThumb") );
 	this->AddChild( m_sprScrollTickThumb );
 
-	for( int i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
+	for( unsigned i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
 	{
 		m_sprScrollStretchThumb[i].Load( THEME->GetPathG(sMetricsGroup,"StretchThumb") );
 		this->AddChild( m_sprScrollStretchThumb[i] );
@@ -38,7 +38,7 @@ void ScrollBar::SetBarHeight( int iHeight )
 	m_sprTop->SetY( -m_iBarHeight/2.0f );
 	m_sprBottom->SetY( +m_iBarHeight/2.0f );
 	m_sprScrollTickThumb->SetY( 0 );
-	for( int i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
+	for( unsigned i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
 		m_sprScrollStretchThumb[i]->SetY( 0 );
 }
 
@@ -84,7 +84,7 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 
 	CHECKPOINT;
 
-	for( int i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
+	for( unsigned i=0; i<ARRAYLEN(m_sprScrollStretchThumb); i++ )
 	{
 		RectF rect(
 			-m_sprScrollStretchThumb[i]->GetUnzoomedWidth()/2,
