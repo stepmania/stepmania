@@ -75,18 +75,33 @@ function ScreenString( sName )
         return THEME:GetString( sClass, sName )
 end
 
-function TextBannerSet(self,param) 
+function TextBannerAfterSet(self,param) 
 	local Title=self:GetChild("Title"); 
 	local Subtitle=self:GetChild("Subtitle"); 
-	local Artist=self:GetChild("Artist"); 
+	--local Artist=self:GetChild("Artist"); 
+	local edge_x = 120;
 	if Subtitle:GetText() == "" then 
-		(cmd(zoom,1;maxwidth,180;y,-8))(Title); 
-		(cmd(visible,false))(Subtitle); 
-		(cmd(zoom,0.6;maxwidth,266;y,8))(Artist); 
+		(cmd(zoom,0.5;maxwidth,300;x,edge_x;y,0))(Title);
+		(cmd(visible,false))(Subtitle);
+		--(cmd(zoom,0.3333;maxwidth,300;x,edge_x;y,7))(Artist);
 	else
-		(cmd(zoom,1;maxwidth,180;y,-10))(Title);
-		(cmd(visible,true;zoom,.5;maxwidth,360))(Subtitle); 
-		(cmd(zoom,0.6;maxwidth,266;y,10))(Artist); 
+		local one_line_title_zoom = 0.5;
+		local one_line_sub_zoom = 0.3;
+		local title_width = Title:GetWidth() * one_line_title_zoom;
+		local sub_width = Subtitle:GetWidth() * one_line_sub_zoom;
+		local spacing = 4;
+		local max_one_line_width = 200;
+		if title_width + spacing + sub_width < max_one_line_width then
+			-- subtitle to the side
+			(cmd(zoom,0.5;x,edge_x-sub_width-spacing;y,0))(Title);
+			(cmd(visible,true;zoom,one_line_sub_zoom;x,edge_x;y,2))(Subtitle); 
+			--(cmd(zoom,0.3333;maxwidth,300;x,edge_x;y,7))(Artist); 
+		else
+			-- subtitle below
+			(cmd(zoom,0.5;x,edge_x;y,-6;))(Title);
+			(cmd(visible,true;zoom,0.3;x,edge_x;y,7))(Subtitle); 
+			--(cmd(zoom,0.3333;maxwidth,300;x,edge_x;y,9))(Artist); 
+		end
 	end
 end
 

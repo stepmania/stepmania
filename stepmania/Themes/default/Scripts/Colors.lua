@@ -13,7 +13,76 @@ local DifficultyColors = {
 	Difficulty_Edit		= color("0.8,0.8,0.8,1"),	-- gray
 }
 
-function DifficultyColor( dc ) return DifficultyColors[dc] end
+function DifficultyToColor( dc ) 
+	local c = DifficultyColors[dc]
+	if c then return c end
+	return color("#000000");
+end
+
+
+
+function StepsOrTrailToLocalizedString(StepsOrTrail)
+	if not StepsOrTrail then
+		return "";
+	end
+	if lua.CheckType("Trail", StepsOrTrail) then
+		local s = THEME:GetString("DifficultyAndStepsType", "Course");
+		return s;
+	end
+
+	local dc = StepsOrTrail:GetDifficulty();
+	local st = StepsOrTrail.GetStepsType and StepsOrTrail:GetStepsType();
+	return DifficultyAndStepsTypeToLocalizedString( dc, st );
+end
+
+function StepsOrTrailToIndex(StepsOrTrail)
+	if not StepsOrTrail then return 1; end
+	if lua.CheckType("Trail", StepsOrTrail) then
+		return 8
+	end
+	local dc = StepsOrTrail:GetDifficulty();
+	local st = StepsOrTrail.GetStepsType and StepsOrTrail:GetStepsType();
+	return DifficultyAndStepsTypeToIndex( dc, st );
+end;
+function TrailColor()
+	return color("#30f0c8");
+end;
+
+function StepsOrTrailToColor(StepsOrTrail)
+	if not StepsOrTrail then return color("#000000"); end
+	if lua.CheckType("Trail", StepsOrTrail) then return TrailColor() end
+
+	local dc = StepsOrTrail:GetDifficulty();
+	local st = StepsOrTrail.GetStepsType and StepsOrTrail:GetStepsType();
+	return DifficultyAndStepsTypeToColor( dc, st );
+end
+
+function DifficultyAndStepsTypeToLocalizedString( difficulty, stepsType )
+	if( not difficulty or not stepsType ) then
+		return "";
+	end
+	return THEME:GetString( "DifficultyAndStepsType", difficulty .. "-" .. stepsType );
+end
+
+function DifficultyAndStepsTypeToIndex( difficulty, stepsType )
+	for idx, entry in ipairs(DifficultyAndStepsTypeInfo) do
+		if entry.difficulty == difficulty and entry.stepsType == stepsType then 
+			return idx;
+		end
+	end
+
+	if difficulty == "Difficulty_Edit" then
+		return 7
+	end;
+	return nil;
+end
+
+function DifficultyAndStepsTypeToColor( difficulty, stepsType )
+	return DifficultyToColor( difficulty );
+end
+
+
+
 
 -- (c) 2005 Chris Danford
 -- All rights reserved.
