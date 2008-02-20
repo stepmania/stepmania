@@ -62,7 +62,7 @@ const InputMapping g_DefaultKeyMappings[] =
 	{ 0, KEY_UP,		GAME_BUTTON_MENUUP,	false },
 	{ 0, KEY_DOWN,		GAME_BUTTON_MENUDOWN,	false },
 	{ 0, KEY_ENTER,		GAME_BUTTON_START,	false },
-	{ 0, KEY_BACKSLASH,	GAME_BUTTON_SELECT,	false },
+	{ 0, KEY_QUESTION,	GAME_BUTTON_SELECT,	false },
 	{ 0, KEY_ESC,		GAME_BUTTON_BACK,	false },
 	{ 0, KEY_KP_C4,		GAME_BUTTON_MENULEFT,	true },
 	{ 0, KEY_KP_C6,		GAME_BUTTON_MENURIGHT,	true },
