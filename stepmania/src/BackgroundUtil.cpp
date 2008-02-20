@@ -92,7 +92,7 @@ static void StripCvs( vector<RString> &vsPathsToStrip, vector<RString> &vsNamesT
 	ASSERT( vsPathsToStrip.size() == vsNamesToStrip.size() );
 	for( unsigned i=0; i<vsNamesToStrip.size(); i++ )
 	{
-		if( vsNamesToStrip[i].Right(3).CompareNoCase("CVS") == 0 )
+		if( vsNamesToStrip[i].Right(3).CompareNoCase("CVS") == 0 || vsNamesToStrip[i] == ".svn" )
 		{
 			vsPathsToStrip.erase( vsPathsToStrip.begin()+i );
 			vsNamesToStrip.erase( vsNamesToStrip.begin()+i );

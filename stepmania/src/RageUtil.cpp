@@ -1154,13 +1154,14 @@ RString URLEncode( const RString &sStr )
 	return sOutput;
 }
 
+static bool CVSOrSVN( const RString& s )
+{
+	return s.Right(3).CompareNoCase("CVS") == 0 || s == ".svn";
+}
+
 void StripCvs( vector<RString> &vs )
 {
-	for( unsigned i=0; i<vs.size(); i++ )
-	{
-		if( vs[i].Right(3).CompareNoCase("CVS") == 0 )
-			vs.erase( vs.begin()+i );
-	}
+	RemoveIf( vs, CVSOrSVN );
 }
 
 /* path is a .redir pathname.  Read it and return the real one. */
