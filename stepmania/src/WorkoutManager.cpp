@@ -62,12 +62,12 @@ void WorkoutManager::LoadDefaults( Workout &out )
 	for( int i=0; i<10000; i++ )
 	{
 		out.m_sName = ssprintf("Workout %d", i+1);
-		bool bNameInUse = true;
+		bool bNameInUse = false;
 		FOREACH_CONST( Workout*, m_vpAllWorkouts, p )
 		{
-			if( out.m_sName != (*p)->m_sName )
+			if( out.m_sName == (*p)->m_sName )
 			{
-				bNameInUse = false;
+				bNameInUse = true;
 				break;
 			}
 		}
