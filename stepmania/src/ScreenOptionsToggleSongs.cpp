@@ -6,6 +6,7 @@
 #include "song.h"
 #include "SongManager.h"
 #include "UnlockManager.h"
+#include "PrefsManager.h"
 
 REGISTER_SCREEN_CLASS( ScreenOptionsToggleSongs );
 
@@ -63,6 +64,7 @@ void ScreenOptionsToggleSongs::ExportOptions( int iRow, const vector<PlayerNumbe
 	}
 
 	SONGMAN->SaveEnabledSongsToPref();
+	PREFSMAN->SavePrefsToDisk();
 }
 
 /*
