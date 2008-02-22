@@ -92,7 +92,7 @@ ThemeMetric<RString> DEFAULT_SONG	("GameState","DefaultSong");
 Song* GameState::GetDefaultSong() const
 {
 	SongID sid;
-	sid.LoadFromDir( DEFAULT_SONG );
+	sid.FromString( DEFAULT_SONG );
 	return sid.ToSong();
 }
 

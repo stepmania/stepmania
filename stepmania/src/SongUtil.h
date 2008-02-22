@@ -138,7 +138,7 @@ public:
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
-	void LoadFromDir( RString _sDir ) { sDir = _sDir; }
+	void FromString( RString _sDir ) { sDir = _sDir; }
 	RString ToString() const;
 	bool IsValid() const;
 };

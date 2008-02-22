@@ -908,21 +908,20 @@ void SongManager::SetPreferences()
 
 void SongManager::SaveEnabledSongsToPref()
 {
-	vector<RString> asDisabledSongs;
-	split( g_sDisabledSongs, ";", asDisabledSongs, true );
+	vector<RString> vsDisabledSongs;
+
+	// Intentionally drop disabled song entries for songs that aren't currently loaded.
 
 	const vector<Song*> &apSongs = SONGMAN->GetSongs();
 	FOREACH_CONST( Song *, apSongs, s )
 	{
 		Song *pSong = (*s);
-		bool bEnabled = pSong->GetEnabled();
-		vector<RString>::iterator it = find( asDisabledSongs.begin(), asDisabledSongs.end(), pSong->GetSongDir() );
-		if( bEnabled && it == asDisabledSongs.end() )
-			asDisabledSongs.push_back( pSong->GetSongDir() );
-		else if( !bEnabled && it != asDisabledSongs.end() )
-			asDisabledSongs.erase( it );
+		SongID sid;
+		sid.FromSong( pSong );
+		if( !pSong->GetEnabled() )
+			vsDisabledSongs.push_back( sid.ToString() );
 	}
-	g_sDisabledSongs.Set( join(";", asDisabledSongs) );
+	g_sDisabledSongs.Set( join(";", vsDisabledSongs) );
 }
 
 void SongManager::LoadEnabledSongsFromPref()
@@ -935,7 +934,9 @@ void SongManager::LoadEnabledSongsFromPref()
 
 	FOREACH_CONST( RString, asDisabledSongs, s )
 	{
-		Song *pSong = this->FindSong( *s );
+		SongID sid;
+		sid.FromString( *s );
+		Song *pSong = sid.ToSong();
 		if( pSong )
 			pSong->SetEnabled( false );
 	}
