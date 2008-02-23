@@ -425,7 +425,7 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 		else if( 0==stricmp(sValueName,"GENRE") )
 		{
 			out.m_sGenre = sParams[1];
-			ConvertString( out.m_sArtist, "utf-8,english" );
+			ConvertString( out.m_sGenre, "utf-8,english" );
 		}
 
 		else if( 0==stricmp(sValueName,"CDTITLE") )
