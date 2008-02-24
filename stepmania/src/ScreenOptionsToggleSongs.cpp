@@ -44,24 +44,24 @@ void ScreenOptionsToggleSongs::BeginScreen()
 
 void ScreenOptionsToggleSongs::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	for( int i = 0; i < (int) m_apSongs.size(); ++i )
-	{
-		OptionRow &row = *m_pRows[i];
-		bool bEnable = m_apSongs[i]->GetEnabled();
-		int iSelection = bEnable? 0:1;
-		row.SetOneSharedSelection( iSelection );
-	}
+	if( iRow >= (int)m_apSongs.size() )	// exit row
+		return;
+
+	OptionRow &row = *m_pRows[iRow];
+	bool bEnable = m_apSongs[iRow]->GetEnabled();
+	int iSelection = bEnable? 0:1;
+	row.SetOneSharedSelection( iSelection );
 }
 
 void ScreenOptionsToggleSongs::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	for( int i = 0; i < (int) m_apSongs.size(); ++i )
-	{
-		const OptionRow &row = *m_pRows[i];
-		int iSelection = row.GetOneSharedSelection();
-		bool bEnable = (iSelection == 0);
-		m_apSongs[i]->SetEnabled( bEnable );
-	}
+	if( iRow >= (int)m_apSongs.size() )	// exit row
+		return;
+
+	const OptionRow &row = *m_pRows[iRow];
+	int iSelection = row.GetOneSharedSelection();
+	bool bEnable = (iSelection == 0);
+	m_apSongs[iRow]->SetEnabled( bEnable );
 
 	SONGMAN->SaveEnabledSongsToPref();
 	PREFSMAN->SavePrefsToDisk();
