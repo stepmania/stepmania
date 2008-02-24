@@ -794,9 +794,8 @@ void GameState::Update( float fDelta )
 
 	if( WORKOUTMAN->m_pCurWorkout != NULL  &&  !m_bWorkoutGoalComplete )
 	{
-		const StageStats &ssAccum = STATSMAN->GetAccumPlayedStageStats();
 		const StageStats &ssCurrent = STATSMAN->m_CurStageStats;
-		bool bGoalComplete = ssAccum.m_fGameplaySeconds + ssCurrent.m_fGameplaySeconds > WORKOUTMAN->m_pCurWorkout->m_iMinutes*60;
+		bool bGoalComplete = ssCurrent.m_fGameplaySeconds > WORKOUTMAN->m_pCurWorkout->m_iMinutes*60;
 		if( bGoalComplete )
 		{
 			MESSAGEMAN->Broadcast( "WorkoutGoalComplete" );
@@ -1898,9 +1897,7 @@ Premium	GameState::GetPremium() const
 float GameState::GetGoalPercentComplete( PlayerNumber pn )
 {
 	const Profile *pProfile = PROFILEMAN->GetProfile(pn);
-	const StageStats &ssAccum = STATSMAN->GetAccumPlayedStageStats();
 	const StageStats &ssCurrent = STATSMAN->m_CurStageStats;
-	const PlayerStageStats &pssAccum = ssAccum.m_player[pn];
 	const PlayerStageStats &pssCurrent = ssCurrent.m_player[pn];
 
 	float fActual = 0;
@@ -1908,11 +1905,11 @@ float GameState::GetGoalPercentComplete( PlayerNumber pn )
 	switch( pProfile->m_GoalType )
 	{
 	case GoalType_Calories:
-		fActual = pssAccum.m_fCaloriesBurned + pssCurrent.m_fCaloriesBurned;
+		fActual = pssCurrent.m_fCaloriesBurned;
 		fGoal = (float)pProfile->m_iGoalCalories;
 		break;
 	case GoalType_Time:
-		fActual = ssAccum.m_fGameplaySeconds + ssCurrent.m_fGameplaySeconds;
+		fActual = ssCurrent.m_fGameplaySeconds;
 		fGoal = (float)pProfile->m_iGoalSeconds;
 		break;
 	case GoalType_None:
@@ -2247,6 +2244,7 @@ public:
 	{
 		p->m_bJukeboxUsesModifiers = BArg(1); return 0;
 	}
+	DEFINE_METHOD( GetWorkoutGoalComplete,		m_bWorkoutGoalComplete )
 
 	LunaGameState() 
 	{
@@ -2329,6 +2327,7 @@ public:
 		ADD_METHOD( GetStageSeed );
 		ADD_METHOD( SaveLocalData );
 		ADD_METHOD( SetJukeboxUsesModifiers );
+		ADD_METHOD( GetWorkoutGoalComplete );
 	}
 };
 

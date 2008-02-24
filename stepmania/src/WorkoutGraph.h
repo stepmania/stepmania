@@ -16,14 +16,14 @@ public:
 	
 	void Load();
 	void LoadFromNode( const XNode* pNode );
-	void SetFromGameState();
+	void SetFromCurrentWorkout();
 	void SetFromGameStateAndHighlightSong( int iSongIndex );
 
 	// Lua
 	void PushSelf( lua_State *L );
 
 protected:
-	void SetFromGameStateInternal( int iNumSongsToShowForCurrentStage );
+	void SetInternal( int iNumSongsToShowForCurrentStage );
 	void HighlightSong( int iSongIndex );
 
 	Sprite m_sprEmpty;

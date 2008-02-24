@@ -41,12 +41,12 @@ void WorkoutGraph::LoadFromNode( const XNode* pNode )
 	Load();
 }
 
-void WorkoutGraph::SetFromGameState()
+void WorkoutGraph::SetFromCurrentWorkout()
 {
-	SetFromGameStateInternal( STATSMAN->m_CurStageStats.m_vpPlayedSongs.size() );
+	SetInternal( 0 );
 }
 
-void WorkoutGraph::SetFromGameStateInternal( int iNumSongsToShowForCurrentStage )
+void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 {
 	ASSERT( WORKOUTMAN->m_pCurWorkout );
 
@@ -57,11 +57,8 @@ void WorkoutGraph::SetFromGameStateInternal( int iNumSongsToShowForCurrentStage 
 	}
 	m_vpBars.clear();
 
-	int iTotalSongsPlayed = 
-		STATSMAN->GetAccumPlayedStageStats().m_vpPlayedSongs.size() + 
-		iNumSongsToShowForCurrentStage;
 	int iWorkoutEstimatedSongs = WORKOUTMAN->m_pCurWorkout->GetEstimatedNumSongs();
-	int iNumSongsToShow = max( iTotalSongsPlayed, iWorkoutEstimatedSongs );
+	int iNumSongsToShow = max( iMinSongsPlayed, iWorkoutEstimatedSongs );
 	vector<int> viMeters;
 	WORKOUTMAN->m_pCurWorkout->GetEstimatedMeters( iNumSongsToShow, viMeters );
 
@@ -105,7 +102,7 @@ void WorkoutGraph::SetFromGameStateInternal( int iNumSongsToShowForCurrentStage 
 
 void WorkoutGraph::SetFromGameStateAndHighlightSong( int iSongIndex )
 {
-	SetFromGameStateInternal( iSongIndex+1 );
+	SetInternal( iSongIndex+1 );
 
 	FOREACH( Sprite*, m_vpBars, spr )
 		(*spr)->StopEffect();
@@ -123,12 +120,12 @@ void WorkoutGraph::SetFromGameStateAndHighlightSong( int iSongIndex )
 class LunaWorkoutGraph: public Luna<WorkoutGraph>
 {
 public:
-	static int SetFromGameState( T* p, lua_State *L )			{ p->SetFromGameState(); return 0; }
+	static int SetFromCurrentWorkout( T* p, lua_State *L )			{ p->SetFromCurrentWorkout(); return 0; }
 	static int SetFromGameStateAndHighlightSong( T* p, lua_State *L )	{ p->SetFromGameStateAndHighlightSong(IArg(1)); return 0; }
 
 	LunaWorkoutGraph()
 	{
-		ADD_METHOD( SetFromGameState );
+		ADD_METHOD( SetFromCurrentWorkout );
 		ADD_METHOD( SetFromGameStateAndHighlightSong );
 	}
 };
