@@ -6,8 +6,6 @@
 enum WorkoutProgram
 {
 	WorkoutProgram_FatBurn,
-	WorkoutProgram_FitnessTest,
-	WorkoutProgram_Intermediate,
 	WorkoutProgram_Interval,
 	WorkoutProgram_Runner,
 	WorkoutProgram_Flat,

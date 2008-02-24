@@ -11,8 +11,6 @@
 
 static const char *WorkoutProgramNames[] = {
 	"FatBurn",
-	"FitnessTest",
-	"Intermediate",
 	"Interval",
 	"Runner",
 	"Flat",
@@ -44,8 +42,8 @@ int Workout::GetEstimatedNumSongsFromSeconds( float fSeconds )
 const float fAverageSongLengthSeconds = 105;
 static int CalculateWorkoutProgramMeter( WorkoutProgram wp, int iAverageMeter, int iSongInBodyIndex, int iNumSongsInBody )
 {
-	int iMaxMeter = iAverageMeter + 2;
-	int iMinMeter = iAverageMeter - 2;
+	const int iMaxMeter = iAverageMeter + 1;
+	const int iMinMeter = iAverageMeter - 1;
 
 	float fPercentThroughBody = SCALE( iSongInBodyIndex, 0.0f, (float)iNumSongsInBody-1, 0.0f, 1.0f );
 	CLAMP( fPercentThroughBody, 0.0f, 1.0f );
@@ -57,33 +55,9 @@ static int CalculateWorkoutProgramMeter( WorkoutProgram wp, int iAverageMeter, i
 	DEFAULT_FAIL( wp );
 	case WorkoutProgram_FatBurn:
 		{
-			float fMeter = SCALE( iSongInBodyIndex % 4, 0.0f, 3.0f, (float)iMinMeter, (float)iMaxMeter );
+			const int iSongInterval = 3;
+			float fMeter = SCALE( iSongInBodyIndex % iSongInterval, 0.0f, (float)(iSongInterval-1), (float)iMinMeter, (float)iMaxMeter );
 			iMeter = lrintf( fMeter );
-		}
-		break;
-	case WorkoutProgram_FitnessTest:
-		{
-			iMeter = (int)floorf( SCALE( fPercentThroughBody, 0.0f, 1.0f, (float)iMinMeter, (float)iMaxMeter+0.95f ) );
-		}
-		break;
-	case WorkoutProgram_Intermediate:
-		{
-			switch( iSongInBodyIndex % 6 )
-			{
-			DEFAULT_FAIL(iSongInBodyIndex % 6);
-			case 0:
-			case 3:
-				iMeter = iMinMeter;
-				break;
-			case 1:
-			case 2:
-				iMeter = iMaxMeter;
-				break;
-			case 4:
-			case 5:
-				iMeter = lrintf( SCALE( 0.5f, 0.0f, 1.0f, (float)iMinMeter, (float)iMaxMeter ) );
-				break;
-			}
 		}
 		break;
 	case WorkoutProgram_Interval:
@@ -93,8 +67,9 @@ static int CalculateWorkoutProgramMeter( WorkoutProgram wp, int iAverageMeter, i
 		break;
 	case WorkoutProgram_Runner:
 		{
-			float fMeter = SCALE( iSongInBodyIndex % 4, 0.0f, 3.0f, (float)iMinMeter, (float)iMaxMeter );
-			if( (iSongInBodyIndex % 8) >= 4 )
+			const int iSongInterval = 6;
+			float fMeter = SCALE( iSongInBodyIndex % (iSongInterval/2), 0.0f, (iSongInterval/2)-1.0f, (float)iMinMeter, (float)iMaxMeter );
+			if( (iSongInBodyIndex % iSongInterval) >= iSongInterval/2 )
 				fMeter = SCALE( fMeter, (float)iMinMeter, (float)iMaxMeter, (float)iMaxMeter, (float)iMinMeter );
 			iMeter = lrintf( fMeter );
 		}
@@ -123,10 +98,15 @@ void Workout::GetEstimatedMeters( int iNumSongs, vector<int> &viMetersOut )
 
 void Workout::GenerateCourse( Course &out )
 {
+	out = Course();
+
 	out.m_sMainTitle = "temp";
 	out.m_bRepeat = true;
 
-	const int iNumCourseEntries = 10;
+	// Choose a large number of course entries.  We may loop if the goal 
+	// is not yet reached, and it would be bad to play the same sequence 
+	// of songs over again.
+	const int iNumCourseEntries = 60;	// choose a multiple of the intervals above, or else the WorkoutGraph will get out of sync with the actual songs.
 
 	vector<int> viMeter;
 	GetEstimatedMeters( iNumCourseEntries, viMeter );
