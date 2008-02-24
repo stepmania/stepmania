@@ -638,6 +638,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			te.dc = dc;
 		}
 		trail.m_vEntries.push_back( te );
+
+		LOG->Trace( "Chose: %s, %d", te.pSong->GetSongDir().c_str(), te.pSteps->GetMeter() );
 		
 		if( IsAnEdit() && MAX_SONGS_IN_EDIT_COURSE > 0 &&
 		    int(trail.m_vEntries.size()) >= MAX_SONGS_IN_EDIT_COURSE )
