@@ -106,7 +106,7 @@ void Workout::GenerateCourse( Course &out )
 	// Choose a large number of course entries.  We may loop if the goal 
 	// is not yet reached, and it would be bad to play the same sequence 
 	// of songs over again.
-	const int iNumCourseEntries = 60;	// choose a multiple of the intervals above, or else the WorkoutGraph will get out of sync with the actual songs.
+	const int iNumCourseEntries = 6*5;	// choose a multiple of the intervals above, or else the WorkoutGraph will get out of sync with the actual songs.
 
 	vector<int> viMeter;
 	GetEstimatedMeters( iNumCourseEntries, viMeter );
