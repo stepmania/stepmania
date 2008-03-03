@@ -320,7 +320,7 @@ GradeDisplay.cpp GradeDisplay.h GraphDisplay.cpp GraphDisplay.h \
 GrooveRadar.cpp GrooveRadar.h GroupList.cpp GroupList.h HelpDisplay.cpp HelpDisplay.h \
 MemoryCardDisplay.cpp MemoryCardDisplay.h \
 MenuTimer.cpp MenuTimer.h MusicBannerWheel.cpp MusicBannerWheel.h \
-MusicList.cpp MusicList.h MusicSortDisplay.cpp MusicSortDisplay.h MusicWheel.cpp MusicWheel.h \
+MusicList.cpp MusicList.h MusicWheel.cpp MusicWheel.h \
 MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h OptionIconRow.cpp OptionIconRow.h \
 OptionRow.cpp OptionRow.h OptionsCursor.cpp OptionsCursor.h \
 PaneDisplay.cpp PaneDisplay.h ScrollBar.cpp ScrollBar.h \
