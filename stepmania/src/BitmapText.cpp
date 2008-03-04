@@ -736,7 +736,7 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 
 	// Get the length.
 	lua_getfield( L, iTab, "Length" );
-	length = lua_tonumber( L, -1 );
+	length = lua_tointeger( L, -1 );
 	lua_settop( L, iTab );
 	
 	// Get the diffuse colors.
