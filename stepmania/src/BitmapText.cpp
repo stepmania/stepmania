@@ -324,7 +324,7 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 		else
 			DISPLAY->SetTexture( TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureMain->GetTexHandle() );
 		
-		/* Don't bother setting texture render states for text.  We never go outside of 0..1. /*
+		/* Don't bother setting texture render states for text.  We never go outside of 0..1. */
 		/* We should call SetTextureRenderStates because it does more than just setting 
 		 * the texture wrapping state. If setting the wrapping state is found to be slow, 
 		 * there should probably be a "don't care" texture wrapping mode set in Actor. -Chris */
