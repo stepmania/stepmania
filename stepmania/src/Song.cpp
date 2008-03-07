@@ -208,7 +208,7 @@ bool Song::LoadFromSongDir( RString sDir )
 	//
 	unsigned uCacheHash = SONGINDEX->GetCacheHash(m_sSongDir);
 	bool bUseCache = true;
-	const RString sCacheFilePath = GetCacheFilePath();
+	RString sCacheFilePath = GetCacheFilePath();
 
 	if( !DoesFileExist(sCacheFilePath) )
 		bUseCache = false;
@@ -246,8 +246,10 @@ bool Song::LoadFromSongDir( RString sDir )
 			// Continue on with a blank Song so that people can make adjustments using the editor.
 		}
 		TidyUpData();
+
 		// save a cache file so we don't have to parse it all over again next time
-		SaveToCacheFile();
+		if( !SaveToCacheFile() )
+			sCacheFilePath = RString();
 	}
 
 
