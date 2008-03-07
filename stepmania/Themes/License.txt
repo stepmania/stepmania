@@ -1,0 +1,5 @@
+The StepMania default theme GRAPHICS FILES are licensed under the Creative Commons Attribution-Noncommercial license.  http://creativecommons.org/licenses/by-nc/3.0/.  For questions about how this license applies to the theme graphics, please contact stepmania-devs@lists.sourceforge.net.
+
+The StepMania default theme SOUND AND MUSIC are separately owned by the respective authors.  Permission to distribute these sound files has been obtained from the authors.
+
+All other StepMania default theme elements, including METRICS, LUA SCRIPTS, and TEXT FILES are licensed under the StepMania permissive open-source license.
