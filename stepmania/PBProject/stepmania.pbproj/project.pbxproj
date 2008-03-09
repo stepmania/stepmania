@@ -264,7 +264,6 @@
 		AA29CCE30558741A00961A51 /* RageSoundDriver_Null.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E012F047712BE005F316C /* RageSoundDriver_Null.h */; };
 		AA29CCE50558741A00961A51 /* LowLevelWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01630477136A005F316C /* LowLevelWindow.h */; };
 		AA29CCE70558741A00961A51 /* SongCacheIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01DF04772005005F316C /* SongCacheIndex.h */; };
-		AA29CCE80558741A00961A51 /* song.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01E30477205A005F316C /* song.h */; };
 		AA29CCE90558741A00961A51 /* RandomSample.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01E7047720A3005F316C /* RandomSample.h */; };
 		AA29CCEA0558741A00961A51 /* RageDisplay_OGL.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC23F7D0485E68D005F316C /* RageDisplay_OGL.h */; };
 		AA29CCEB0558741A00961A51 /* RageUtil_CharConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC23F7F0485E68D005F316C /* RageUtil_CharConversions.h */; };
@@ -713,7 +712,6 @@
 		AA40D25809A08D650068C0D5 /* RageSoundDriver_Null.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E012F047712BE005F316C /* RageSoundDriver_Null.h */; };
 		AA40D25909A08D650068C0D5 /* LowLevelWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01630477136A005F316C /* LowLevelWindow.h */; };
 		AA40D25A09A08D650068C0D5 /* SongCacheIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01DF04772005005F316C /* SongCacheIndex.h */; };
-		AA40D25B09A08D650068C0D5 /* song.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01E30477205A005F316C /* song.h */; };
 		AA40D25C09A08D650068C0D5 /* RandomSample.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01E7047720A3005F316C /* RandomSample.h */; };
 		AA40D25D09A08D650068C0D5 /* RageDisplay_OGL.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC23F7D0485E68D005F316C /* RageDisplay_OGL.h */; };
 		AA40D25E09A08D650068C0D5 /* RageUtil_CharConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC23F7F0485E68D005F316C /* RageUtil_CharConversions.h */; };
@@ -1669,6 +1667,8 @@
 		AA7C8DAF0B68CB2200FD9940 /* GameplayAssist.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7C8DAD0B68CB2200FD9940 /* GameplayAssist.h */; };
 		AA7C8DB00B68CB2200FD9940 /* GameplayAssist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7C8DAC0B68CB2200FD9940 /* GameplayAssist.cpp */; };
 		AA7C8DB10B68CB2200FD9940 /* GameplayAssist.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7C8DAD0B68CB2200FD9940 /* GameplayAssist.h */; };
+		AA7CDD940D8395F90001DAFC /* Song.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7CDD930D8395F90001DAFC /* Song.h */; };
+		AA7CDD950D8395F90001DAFC /* Song.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7CDD930D8395F90001DAFC /* Song.h */; };
 		AA7DA2F1085760E90057F1EA /* BackgroundUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7DA2EF085760E90057F1EA /* BackgroundUtil.cpp */; };
 		AA7DA2F2085760EA0057F1EA /* BackgroundUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7DA2F0085760E90057F1EA /* BackgroundUtil.h */; };
 		AA80C75407F20D0D00C99272 /* UnlockManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA80C75207F20D0D00C99272 /* UnlockManager.cpp */; };
@@ -2489,7 +2489,6 @@
 		AA6E01DE04772005005F316C /* SongCacheIndex.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = SongCacheIndex.cpp; path = ../src/SongCacheIndex.cpp; sourceTree = "<group>"; };
 		AA6E01DF04772005005F316C /* SongCacheIndex.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = SongCacheIndex.h; path = ../src/SongCacheIndex.h; sourceTree = "<group>"; };
 		AA6E01E20477205A005F316C /* Song.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Song.cpp; path = ../src/Song.cpp; sourceTree = "<group>"; };
-		AA6E01E30477205A005F316C /* song.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = song.h; path = ../src/song.h; sourceTree = "<group>"; };
 		AA6E01E6047720A3005F316C /* RandomSample.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RandomSample.cpp; path = ../src/RandomSample.cpp; sourceTree = "<group>"; };
 		AA6E01E7047720A3005F316C /* RandomSample.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RandomSample.h; path = ../src/RandomSample.h; sourceTree = "<group>"; };
 		AA6E6E0907F518E800C3EBB4 /* Quad.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Quad.cpp; path = ../src/Quad.cpp; sourceTree = "<group>"; };
@@ -3022,6 +3021,7 @@
 		AA7C8C550B67467D00FD9940 /* yarrow.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yarrow.c; sourceTree = "<group>"; };
 		AA7C8DAC0B68CB2200FD9940 /* GameplayAssist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameplayAssist.cpp; path = ../src/GameplayAssist.cpp; sourceTree = "<group>"; };
 		AA7C8DAD0B68CB2200FD9940 /* GameplayAssist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameplayAssist.h; path = ../src/GameplayAssist.h; sourceTree = "<group>"; };
+		AA7CDD930D8395F90001DAFC /* Song.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Song.h; path = ../src/Song.h; sourceTree = SOURCE_ROOT; };
 		AA7DA2EF085760E90057F1EA /* BackgroundUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = BackgroundUtil.cpp; path = ../src/BackgroundUtil.cpp; sourceTree = "<group>"; };
 		AA7DA2F0085760E90057F1EA /* BackgroundUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = BackgroundUtil.h; path = ../src/BackgroundUtil.h; sourceTree = "<group>"; };
 		AA80C75207F20D0D00C99272 /* UnlockManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = UnlockManager.cpp; path = ../src/UnlockManager.cpp; sourceTree = "<group>"; };
@@ -4296,7 +4296,7 @@
 				AAAA11C50A662F9C00B2BD88 /* ScoreKeeperShared.cpp */,
 				AAAA11C40A662F9C00B2BD88 /* ScoreKeeperShared.h */,
 				AA6E01E20477205A005F316C /* Song.cpp */,
-				AA6E01E30477205A005F316C /* song.h */,
+				AA7CDD930D8395F90001DAFC /* Song.h */,
 				AA6EFE0704770C79005F316C /* SongOptions.cpp */,
 				AA6EFE0804770C79005F316C /* SongOptions.h */,
 				AA5C73F90637A5F000AFB891 /* SongUtil.cpp */,
@@ -5533,7 +5533,6 @@
 				AA29CCE30558741A00961A51 /* RageSoundDriver_Null.h in Headers */,
 				AA29CCE50558741A00961A51 /* LowLevelWindow.h in Headers */,
 				AA29CCE70558741A00961A51 /* SongCacheIndex.h in Headers */,
-				AA29CCE80558741A00961A51 /* song.h in Headers */,
 				AA29CCE90558741A00961A51 /* RandomSample.h in Headers */,
 				AA29CCEA0558741A00961A51 /* RageDisplay_OGL.h in Headers */,
 				AA29CCEB0558741A00961A51 /* RageUtil_CharConversions.h in Headers */,
@@ -5802,6 +5801,7 @@
 				AAB3B7DD0C6C582E001BF487 /* ScreenSelectProfile.h in Headers */,
 				AAB3BB5A0C718F2D001BF487 /* RageUtil_CachedObject.h in Headers */,
 				AAA7D4CA0C7E872600FB8F78 /* ScreenOptionsToggleSongs.h in Headers */,
+				AA7CDD940D8395F90001DAFC /* Song.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5961,7 +5961,6 @@
 				AA40D25809A08D650068C0D5 /* RageSoundDriver_Null.h in Headers */,
 				AA40D25909A08D650068C0D5 /* LowLevelWindow.h in Headers */,
 				AA40D25A09A08D650068C0D5 /* SongCacheIndex.h in Headers */,
-				AA40D25B09A08D650068C0D5 /* song.h in Headers */,
 				AA40D25C09A08D650068C0D5 /* RandomSample.h in Headers */,
 				AA40D25D09A08D650068C0D5 /* RageDisplay_OGL.h in Headers */,
 				AA40D25E09A08D650068C0D5 /* RageUtil_CharConversions.h in Headers */,
@@ -6238,6 +6237,7 @@
 				AAA071720CE7B3BB005A3060 /* synth.h in Headers */,
 				AAA071740CE7B3BB005A3060 /* timer.h in Headers */,
 				AAA071780CE7B3BB005A3060 /* version.h in Headers */,
+				AA7CDD950D8395F90001DAFC /* Song.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
