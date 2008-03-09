@@ -1,6 +1,6 @@
 #include "global.h"
 #include "SongUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "GameState.h"
 #include "Style.h"

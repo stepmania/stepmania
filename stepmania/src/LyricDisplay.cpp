@@ -3,7 +3,7 @@
 #include "ScreenDimensions.h"
 #include "GameState.h"
 #include "ThemeMetric.h"
-#include "song.h"
+#include "Song.h"
 #include "ActorUtil.h"
 
 static ThemeMetric<float>		IN_LENGTH	("LyricDisplay","InLength");

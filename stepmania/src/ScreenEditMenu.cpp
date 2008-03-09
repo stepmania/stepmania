@@ -13,7 +13,7 @@
 #include "ScreenManager.h"
 #include "ScreenPrompt.h"
 #include "ScreenTextEntry.h"
-#include "song.h"
+#include "Song.h"
 #include "SongManager.h"
 #include "SongUtil.h"
 #include "Steps.h"

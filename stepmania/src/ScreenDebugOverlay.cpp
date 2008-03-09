@@ -25,7 +25,7 @@
 #include "Profile.h"
 #include "SongManager.h"
 #include "GameLoop.h"
-#include "song.h"
+#include "Song.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;

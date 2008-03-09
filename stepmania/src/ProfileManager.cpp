@@ -9,7 +9,7 @@
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
 #include "GameState.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "Course.h"
 #include "GameManager.h"

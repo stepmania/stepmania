@@ -20,7 +20,7 @@
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
 #include "BackgroundUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "AutoActor.h"
 
 static ThemeMetric<float> LEFT_EDGE				("Background","LeftEdge");

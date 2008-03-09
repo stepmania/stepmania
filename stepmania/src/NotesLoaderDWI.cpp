@@ -5,7 +5,7 @@
 #include "RageUtil.h"
 #include "RageUtil_CharConversions.h"
 #include "NoteData.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "GameInput.h"
 #include "NotesLoader.h"

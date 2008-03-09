@@ -16,7 +16,7 @@
 #include "global.h"
 #include "Steps.h"
 #include "StepsUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "NoteData.h"

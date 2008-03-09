@@ -9,7 +9,7 @@
 #include "Course.h"
 #include "Steps.h"
 #include "Style.h"
-#include "song.h"
+#include "Song.h"
 #include "SongManager.h"
 #include "Character.h"
 #include "PrefsManager.h"

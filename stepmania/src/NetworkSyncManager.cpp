@@ -30,7 +30,7 @@ void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers 
 #include "ProfileManager.h"
 #include "RageLog.h"
 #include "ScreenManager.h"
-#include "song.h"
+#include "Song.h"
 #include "Course.h"
 #include "GameState.h"
 #include "StatsManager.h"

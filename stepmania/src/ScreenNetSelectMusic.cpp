@@ -19,7 +19,7 @@
 #include "MusicWheel.h"
 #include "InputMapper.h"
 #include "RageLog.h"
-#include "song.h"
+#include "Song.h"
 #include "InputEventPlus.h"
 #include "SongUtil.h"
 #include "RageInput.h"

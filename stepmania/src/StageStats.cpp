@@ -3,7 +3,7 @@
 #include "GameState.h"
 #include "Foreach.h"
 #include "Steps.h"
-#include "song.h"
+#include "Song.h"
 #include "RageLog.h"
 #include "PrefsManager.h"
 #include "PlayerState.h"

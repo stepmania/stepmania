@@ -36,7 +36,7 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "StatsManager.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "GameCommand.h"
 #include "LocalizedString.h"

@@ -17,7 +17,7 @@
 #include "MenuTimer.h"
 #include "SongUtil.h"
 #include "LocalizedString.h"
-#include "song.h"
+#include "Song.h"
 
 #define BANNER_WIDTH					THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
 #define BANNER_HEIGHT					THEME->GetMetricF("ScreenSelectGroup","BannerHeight")

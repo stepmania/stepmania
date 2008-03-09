@@ -3,7 +3,7 @@
 #include "OptionRowHandler.h"
 #include "RageUtil.h"
 #include "ScreenManager.h"
-#include "song.h"
+#include "Song.h"
 #include "SongManager.h"
 #include "UnlockManager.h"
 #include "PrefsManager.h"

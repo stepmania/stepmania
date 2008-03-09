@@ -7,7 +7,7 @@
 #include "Style.h"
 #include "ActorUtil.h"
 #include "CommonMetrics.h"
-#include "song.h"
+#include "Song.h"
 
 #include <limits.h>
 

@@ -9,7 +9,7 @@
 #include "RageLog.h"
 #include "PrefsManager.h"
 #include "SongManager.h"
-#include "song.h"
+#include "Song.h"
 #include "MemoryCardManager.h"
 #include "GameState.h"
 #include "PlayerState.h"

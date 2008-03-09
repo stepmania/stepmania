@@ -6,7 +6,7 @@
 #include "ThemeManager.h"
 #include "GameManager.h"
 #include "Steps.h"
-#include "song.h"
+#include "Song.h"
 #include "StepsUtil.h"
 #include "Foreach.h"
 #include "CommonMetrics.h"

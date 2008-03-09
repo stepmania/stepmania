@@ -10,7 +10,7 @@
 #include "RageMath.h"
 #include "ThemeManager.h"
 #include "NoteSkinManager.h"
-#include "song.h"
+#include "Song.h"
 #include "ScreenDimensions.h"
 #include "PlayerState.h"
 #include "Style.h"

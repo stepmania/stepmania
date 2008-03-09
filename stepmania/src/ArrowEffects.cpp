@@ -5,7 +5,7 @@
 #include "GameManager.h"
 #include "RageTimer.h"
 #include "NoteDisplay.h"
-#include "song.h"
+#include "Song.h"
 #include "RageMath.h"
 #include "ScreenDimensions.h"
 #include "PlayerState.h"

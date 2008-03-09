@@ -4,7 +4,7 @@
 #include "GameState.h"
 #include "RageSoundManager.h"
 #include "CommonMetrics.h"
-#include "song.h"
+#include "Song.h"
 #include "NoteData.h"
 
 void GameplayAssist::Init()

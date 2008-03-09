@@ -3,7 +3,7 @@
 
 #include "ScreenAttract.h"
 #include "Player.h"
-#include "song.h"
+#include "Song.h"
 
 class LifeMeterBar;
 class Model;

@@ -7,7 +7,7 @@
 #include "RageFile.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "RageUtil_CharConversions.h"
 #include "NoteTypes.h"

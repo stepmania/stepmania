@@ -5,13 +5,12 @@
 #include "SongUtil.h"
 #include "SongManager.h"
 #include "OptionRowHandler.h"
-#include "song.h"
+#include "Song.h"
 #include "Workout.h"
 #include "GameState.h"
 #include "ScreenPrompt.h"
 #include "LocalizedString.h"
 #include "WorkoutManager.h"
-#include "song.h"
 
 static const MenuRowDef g_MenuSong =	MenuRowDef( -1,	"Song",	true, EditMode_Practice, false, true, 0, "Off", "On" );
 

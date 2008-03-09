@@ -2,7 +2,7 @@
 #include "FadingBanner.h"
 #include "RageTextureManager.h"
 #include "BannerCache.h"
-#include "song.h"
+#include "Song.h"
 #include "RageLog.h"
 #include "Course.h"
 #include "PrefsManager.h"

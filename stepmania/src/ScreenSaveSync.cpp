@@ -1,7 +1,7 @@
 #include "global.h"
 #include "ScreenSaveSync.h"
 #include "GameState.h"
-#include "song.h"
+#include "Song.h"
 #include "PrefsManager.h"
 #include "LocalizedString.h"
 #include "AdjustSync.h"

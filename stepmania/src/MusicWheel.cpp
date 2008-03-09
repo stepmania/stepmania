@@ -8,7 +8,7 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "ThemeManager.h"
-#include "song.h"
+#include "Song.h"
 #include "Course.h"
 #include "Steps.h"
 #include "UnlockManager.h"

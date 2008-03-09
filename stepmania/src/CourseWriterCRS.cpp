@@ -4,7 +4,7 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "RageFileDriverMemory.h"
 
 extern const char *g_CRSDifficultyNames[]; // in CourseLoaderCRS

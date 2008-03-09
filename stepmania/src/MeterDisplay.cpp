@@ -2,7 +2,7 @@
 #include "MeterDisplay.h"
 #include "RageUtil.h"
 #include "GameState.h"
-#include "song.h"
+#include "Song.h"
 #include "ActorUtil.h"
 #include "XmlFile.h"
 #include "RageLog.h"

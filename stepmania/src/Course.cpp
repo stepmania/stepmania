@@ -11,7 +11,7 @@
 #include "PrefsManager.h"
 #include "ProfileManager.h"
 #include "RageLog.h"
-#include "song.h"
+#include "Song.h"
 #include "SongCacheIndex.h"
 #include "Steps.h"
 #include "ThemeManager.h"

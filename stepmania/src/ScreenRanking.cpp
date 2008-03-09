@@ -6,7 +6,7 @@
 #include "GameState.h"
 #include "GameManager.h"
 #include "Course.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "ActorUtil.h"
 #include "ProfileManager.h"

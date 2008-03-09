@@ -4,7 +4,7 @@
 #include "XmlFile.h"
 #include "RageMath.h"
 #include "RageLog.h"
-#include "song.h"
+#include "Song.h"
 #include "ScreenDimensions.h"
 #include "Sprite.h"
 #include "RageDisplay.h"

@@ -17,7 +17,7 @@
 #include "LightsManager.h"
 #include "ProfileManager.h"
 #include "Profile.h"
-#include "song.h"
+#include "Song.h"
 #include "StatsManager.h"
 #include "Grade.h"
 #include "CodeDetector.h"

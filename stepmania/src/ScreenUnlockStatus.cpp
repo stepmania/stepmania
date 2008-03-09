@@ -7,7 +7,7 @@
 #include "UnlockManager.h"
 #include "SongManager.h"
 #include "ActorUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "Course.h"
 
 #define UNLOCK_TEXT_SCROLL_X		THEME->GetMetricF("ScreenUnlockStatus","UnlockTextScrollX");

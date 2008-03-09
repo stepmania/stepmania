@@ -4,7 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "PlayerOptions.h"
-#include "song.h"
+#include "Song.h"
 #include "GameState.h"
 #include "RadarValues.h"
 #include "Foreach.h"

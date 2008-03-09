@@ -2,7 +2,7 @@
 #include "PaneDisplay.h"
 #include "ThemeManager.h"
 #include "GameState.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "RageLog.h"
 #include "ProfileManager.h"

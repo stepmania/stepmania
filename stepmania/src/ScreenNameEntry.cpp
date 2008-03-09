@@ -22,7 +22,7 @@
 
 // used in ScreenTestMode section
 #include "SongManager.h"
-#include "song.h"
+#include "Song.h"
 #include "StatsManager.h"
 
 

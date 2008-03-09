@@ -25,7 +25,7 @@
 #include "PlayerState.h"
 #include "CommonMetrics.h"
 #include "BannerCache.h"
-#include "song.h"
+#include "Song.h"
 #include "InputEventPlus.h"
 #include "OptionsList.h"
 

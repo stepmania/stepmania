@@ -6,7 +6,7 @@
 #include "RageUtil.h"
 #include "NoteData.h"
 #include "NoteTypes.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 
 #if 0

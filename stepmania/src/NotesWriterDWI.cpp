@@ -8,7 +8,7 @@
 #include "RageFile.h"
 #include "NoteDataUtil.h"
 #include "RageFile.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 
 static RString OptimizeDWIString( RString holds, RString taps );

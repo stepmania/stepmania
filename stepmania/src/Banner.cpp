@@ -3,7 +3,7 @@
 #include "BannerCache.h"
 #include "SongManager.h"
 #include "RageUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "RageTextureManager.h"
 #include "Course.h"
 #include "Character.h"

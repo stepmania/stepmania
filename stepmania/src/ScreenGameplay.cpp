@@ -57,7 +57,7 @@
 #include "ScreenSaveSync.h"
 #include "AdjustSync.h"
 #include "SongUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "XmlFileUtil.h"
 #include "WorkoutManager.h"
 

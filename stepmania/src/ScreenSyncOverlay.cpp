@@ -3,7 +3,7 @@
 #include "ScreenDimensions.h"
 #include "ScreenManager.h"
 #include "GameState.h"
-#include "song.h"
+#include "Song.h"
 #include "PrefsManager.h"
 #include "GamePreferences.h"
 #include "InputEventPlus.h"

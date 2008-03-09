@@ -16,7 +16,7 @@
 #include "NetworkSyncManager.h"
 #include "PlayerState.h"
 #include "Style.h"
-#include "song.h"
+#include "Song.h"
 #include "NoteDataWithScoring.h"
 
 

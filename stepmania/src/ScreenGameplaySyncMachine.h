@@ -4,7 +4,7 @@
 #define ScreenGameplaySyncMachine_H
 
 #include "ScreenGameplayNormal.h"
-#include "song.h"
+#include "Song.h"
 
 class ScreenGameplaySyncMachine : public ScreenGameplayNormal
 {

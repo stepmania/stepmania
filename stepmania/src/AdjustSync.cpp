@@ -34,7 +34,7 @@
  */
 
 #include "global.h"
-#include "song.h"
+#include "Song.h"
 #include "AdjustSync.h"
 #include "GameState.h"
 #include "LocalizedString.h"

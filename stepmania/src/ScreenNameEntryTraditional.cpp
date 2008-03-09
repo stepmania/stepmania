@@ -5,7 +5,7 @@
 #include "GameManager.h"
 #include "StatsManager.h"
 #include "SongManager.h"
-#include "song.h"
+#include "Song.h"
 #include "Style.h"
 #include "ProfileManager.h"
 #include "Profile.h"

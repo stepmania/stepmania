@@ -18,7 +18,7 @@
 #include "GameSoundManager.h"
 #include "PlayerState.h"
 #include "SongManager.h"
-#include "song.h"
+#include "Song.h"
 #include "UnlockManager.h"
 #include "LocalizedString.h"
 #include "arch/ArchHooks/ArchHooks.h"

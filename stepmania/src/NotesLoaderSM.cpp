@@ -7,7 +7,7 @@
 #include "RageFileManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "SongManager.h"
 #include "Steps.h"
 

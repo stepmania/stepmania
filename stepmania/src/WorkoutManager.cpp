@@ -4,7 +4,7 @@
 #include "SongManager.h"
 #include "RageFileManager.h"
 #include "Workout.h"
-#include "song.h"
+#include "Song.h"
 #include "FontCharAliases.h"
 #include "ProfileManager.h"
 #include "LocalizedString.h"

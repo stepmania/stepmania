@@ -6,7 +6,7 @@
 #include "GameState.h"
 #include "RageMath.h"
 #include "ThemeManager.h"
-#include "song.h"
+#include "Song.h"
 #include "StatsManager.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"

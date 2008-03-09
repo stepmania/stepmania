@@ -18,7 +18,7 @@ TODO:
 #include "ThemeManager.h"
 #include "GameSoundManager.h"
 #include "Style.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "ActorUtil.h"
 #include "SongUtil.h"

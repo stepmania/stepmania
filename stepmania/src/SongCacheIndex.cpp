@@ -4,7 +4,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageFileManager.h"
-#include "song.h"
+#include "Song.h"
 #include "SpecialFiles.h"
 
 /*

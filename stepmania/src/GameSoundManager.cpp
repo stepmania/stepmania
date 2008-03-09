@@ -11,7 +11,7 @@
 #include "RageDisplay.h"
 #include "AnnouncerManager.h"
 #include "NoteData.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "LightsManager.h"
 #include "SongUtil.h"

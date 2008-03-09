@@ -6,7 +6,7 @@
 #include "SongManager.h"
 #include "CommonMetrics.h"
 #include "GameManager.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "OptionRowHandler.h"
 #include "PlayerState.h"

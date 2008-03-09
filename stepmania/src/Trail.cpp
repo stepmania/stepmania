@@ -2,7 +2,7 @@
 #include "Trail.h"
 #include "Foreach.h"
 #include "Steps.h"
-#include "song.h"
+#include "Song.h"
 #include "PlayerOptions.h"
 #include "NoteData.h"
 #include "NoteDataUtil.h"

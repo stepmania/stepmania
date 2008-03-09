@@ -11,7 +11,7 @@
 #include "Background.h"
 #include "Foreground.h"
 #include "NoteField.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"

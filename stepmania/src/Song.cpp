@@ -1,5 +1,5 @@
 #include "global.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "RageUtil.h"
 #include "RageLog.h"

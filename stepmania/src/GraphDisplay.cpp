@@ -9,7 +9,7 @@
 #include "RageMath.h"
 #include "StageStats.h"
 #include "Foreach.h"
-#include "song.h"
+#include "Song.h"
 #include "XmlFile.h"
 
 //#define DIVIDE_LINE_WIDTH			THEME->GetMetricI(m_sName,"TexturedBottomHalf")

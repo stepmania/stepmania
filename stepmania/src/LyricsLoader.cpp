@@ -4,7 +4,7 @@
 #include "LyricsLoader.h"
 #include "ThemeManager.h"
 #include "RageFile.h"
-#include "song.h"
+#include "Song.h"
 
 #include <map>
 

@@ -18,7 +18,7 @@
 #include "global.h"
 #include "AutoKeysounds.h"
 #include "GameState.h"
-#include "song.h"
+#include "Song.h"
 #include "RageSoundReader_Chain.h"
 #include "RageSoundReader_ChannelSplit.h"
 #include "RageSoundReader_Extend.h"

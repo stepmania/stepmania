@@ -2,7 +2,7 @@
 #include "CatalogXml.h"
 #include "SongManager.h"
 #include "RageLog.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"

@@ -6,7 +6,7 @@
 #include "OptionRowHandler.h"
 #include "CommonMetrics.h"
 #include "GameState.h"
-#include "song.h"
+#include "Song.h"
 #include "Course.h"
 #include "Style.h"
 #include "ActorUtil.h"

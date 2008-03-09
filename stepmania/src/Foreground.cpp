@@ -4,7 +4,7 @@
 #include "GameState.h"
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "BackgroundUtil.h"
 #include "Foreach.h"
 

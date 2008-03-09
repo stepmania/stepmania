@@ -5,7 +5,7 @@
 #include "RageUtil.h"
 #include "RageMath.h"
 #include "GameState.h"
-#include "song.h"
+#include "Song.h"
 #include "Character.h"
 #include "StatsManager.h"
 #include "PrefsManager.h"

@@ -5,7 +5,7 @@
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
-#include "song.h"
+#include "Song.h"
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "ActorUtil.h"

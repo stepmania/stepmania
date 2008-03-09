@@ -1,6 +1,6 @@
 #include "global.h"
 #include "TextBanner.h"
-#include "song.h"
+#include "Song.h"
 #include "ActorUtil.h"
 #include "ThemeManager.h"
 #include "XmlFile.h"

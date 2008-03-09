@@ -13,7 +13,7 @@
 #include "RageFileManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 
 static RString BackgroundChangeToString( const BackgroundChange &bgc )

@@ -5,7 +5,7 @@
 #include "GameState.h"
 #include "RageTimer.h"
 #include "PrefsManager.h"
-#include "song.h"
+#include "Song.h"
 #include "ScreenManager.h"
 #include "StatsManager.h"
 #include "ThemeMetric.h"

@@ -14,7 +14,7 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 #include "SongUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "SpecialFiles.h"

@@ -3,7 +3,7 @@
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 #include "RageUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "ActorUtil.h"
 
 /* If this actor is used anywhere other than SelectGroup, we

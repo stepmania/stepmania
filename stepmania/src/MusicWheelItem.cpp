@@ -8,7 +8,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "Steps.h"
-#include "song.h"
+#include "Song.h"
 #include "Course.h"
 #include "ProfileManager.h"
 #include "Profile.h"

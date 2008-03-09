@@ -30,7 +30,7 @@
 
 #include "global.h"
 #include "NotesLoaderMidi.h"
-#include "song.h"
+#include "Song.h"
 #include "Steps.h"
 #include "RageLog.h"
 #include "NoteData.h"

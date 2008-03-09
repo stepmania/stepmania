@@ -2,7 +2,7 @@
 #define SCREEN_OPTIONS_TOGGLE_SONGS_H
 
 #include "ScreenOptions.h"
-#include "song.h"
+#include "Song.h"
 
 class ScreenOptionsToggleSongs: public ScreenOptions
 {

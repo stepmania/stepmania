@@ -4,7 +4,7 @@
 #include "GameState.h"
 #include "GamePreferences.h"
 #include "StatsManager.h"
-#include "song.h"
+#include "Song.h"
 
 REGISTER_SCREEN_CLASS( ScreenGameplayLesson );
 ScreenGameplayLesson::ScreenGameplayLesson()

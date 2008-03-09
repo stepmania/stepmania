@@ -2,7 +2,7 @@
 #include "UnlockManager.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
-#include "song.h"
+#include "Song.h"
 #include "Course.h"
 #include "RageUtil.h"
 #include "SongManager.h"
