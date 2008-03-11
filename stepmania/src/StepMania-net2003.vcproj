@@ -1371,12 +1371,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="DifficultyMeter.h">
 			</File>
 			<File
-				RelativePath="DifficultyRating.cpp">
-			</File>
-			<File
-				RelativePath="DifficultyRating.h">
-			</File>
-			<File
 				RelativePath="DualScrollBar.cpp">
 			</File>
 			<File
