@@ -1,4 +1,4 @@
-/* DifficultyMeter - A meter represention of how hard a Steps is. */
+/* DifficultyMeter - A graphical representation of a Steps or a Trail - has a difficulty number, meter, text, edit description. */
 
 #ifndef DIFFICULTY_METER_H
 #define DIFFICULTY_METER_H
@@ -15,7 +15,7 @@
 class Steps;
 class Trail;
 
-class DifficultyMeter: public ActorFrame
+class DifficultyMeter : public ActorFrame
 {
 public:
 	DifficultyMeter();
