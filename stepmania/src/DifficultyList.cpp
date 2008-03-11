@@ -4,7 +4,7 @@
 #include "Song.h"
 #include "Steps.h"
 #include "Style.h"
-#include "DifficultyMeter.h"
+#include "DifficultyDisplay.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
 #include "Foreach.h"

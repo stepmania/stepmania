@@ -174,12 +174,12 @@ void EditMenu::Load( const RString &sType )
 	this->AddChild( &m_SongTextBanner );
 	
 	m_Meter.SetName( "Meter" );
-	m_Meter.Load( "DifficultyMeterEdit" );
+	m_Meter.Load( "DifficultyDisplayEdit" );
 	ActorUtil::SetXY( m_Meter, sType );
 	this->AddChild( &m_Meter );
 	
 	m_SourceMeter.SetName( "SourceMeter" );
-	m_SourceMeter.Load( "DifficultyMeterEdit" );
+	m_SourceMeter.Load( "DifficultyDisplayEdit" );
 	ActorUtil::SetXY( m_SourceMeter, sType );
 	this->AddChild( &m_SourceMeter );
 

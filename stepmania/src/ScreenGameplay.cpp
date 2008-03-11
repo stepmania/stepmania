@@ -50,7 +50,7 @@
 #include "ActiveAttackList.h"
 #include "Player.h"
 #include "DifficultyIcon.h"
-#include "DifficultyMeter.h"
+#include "DifficultyDisplay.h"
 #include "XmlFile.h"
 #include "Background.h"
 #include "Foreground.h"

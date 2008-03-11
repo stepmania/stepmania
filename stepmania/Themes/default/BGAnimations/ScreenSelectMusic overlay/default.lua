@@ -16,13 +16,13 @@ local function Autogen(pn)
 	return t;
 end
 
-local function DifficultyMeter(pn)
+local function DifficultyDisplay(pn)
 	local function set(self, player)
 		self:SetFromGameState( player );
 	end
 
-	local t = Def.DifficultyMeter {
-		Type="DifficultyMeter"; -- metrics section
+	local t = Def.DifficultyDisplay {
+		Type="DifficultyDisplay"; -- metrics section
 	};
 
 	if pn == PLAYER_1 then
@@ -412,12 +412,12 @@ local t = Def.ActorFrame {
 	--	OffCommand=cmd(linear,0.5;zoomy,0);
 	--};
 
-	--DifficultyMeter(PLAYER_1) .. {
+	--DifficultyDisplay(PLAYER_1) .. {
 	--	BeginCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-254;y,SCREEN_CENTER_Y-20);
 	--	OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
 	--	OffCommand=cmd(linear,0.5;zoomy,0);
 	--};
-	--DifficultyMeter(PLAYER_2) .. {
+	--DifficultyDisplay(PLAYER_2) .. {
 	--	BeginCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X-121;y,SCREEN_CENTER_Y-20);
 	--	OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
 	--	OffCommand=cmd(linear,0.5;zoomy,0);

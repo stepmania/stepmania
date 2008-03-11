@@ -3,7 +3,7 @@
 
 #include "ActorFrame.h"
 #include "PlayerNumber.h"
-#include "DifficultyMeter.h"
+#include "DifficultyDisplay.h"
 #include "ThemeMetric.h"
 
 class Song;
@@ -44,7 +44,7 @@ private:
 
 	struct Line
 	{
-		DifficultyMeter m_Meter;
+		DifficultyDisplay m_Meter;
 	};
 	vector<Line>	m_Lines;
 
