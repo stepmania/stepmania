@@ -1,4 +1,4 @@
-/* DifficultyMeter - A graphical representation of a Steps or a Trail - has a difficulty number, meter, text, edit description. */
+/* DifficultyDisplay - A graphical representation of a Steps or a Trail - has a difficulty number, meter, text, edit description. */
 
 #ifndef DIFFICULTY_METER_H
 #define DIFFICULTY_METER_H
@@ -15,15 +15,15 @@
 class Steps;
 class Trail;
 
-class DifficultyMeter : public ActorFrame
+class DifficultyDisplay : public ActorFrame
 {
 public:
-	DifficultyMeter();
+	DifficultyDisplay();
 
 	void Load( const RString &sType );
 
 	void LoadFromNode( const XNode* pNode );
-	virtual DifficultyMeter *Copy() const;
+	virtual DifficultyDisplay *Copy() const;
 
 	void SetFromGameState( PlayerNumber pn );
 	void SetFromStepsTypeAndMeterAndDifficulty( StepsType st, int iMeter, Difficulty dc );

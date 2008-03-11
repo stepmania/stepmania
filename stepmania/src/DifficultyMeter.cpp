@@ -1,5 +1,5 @@
 #include "global.h"
-#include "DifficultyMeter.h"
+#include "DifficultyDisplay.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
@@ -12,10 +12,10 @@
 #include "XmlFile.h"
 #include "LuaBinding.h"
 
-REGISTER_ACTOR_CLASS( DifficultyMeter );
+REGISTER_ACTOR_CLASS( DifficultyDisplay );
 
 
-DifficultyMeter::DifficultyMeter()
+DifficultyDisplay::DifficultyDisplay()
 {
 }
 
@@ -41,10 +41,10 @@ DifficultyMeter::DifficultyMeter()
  * so I'm trying it first in only this object.
  */
 
-void DifficultyMeter::Load( const RString &sType )
+void DifficultyDisplay::Load( const RString &sType )
 {
 	/* We can't use global ThemeMetric<RString>s, because we can have multiple
-	 * DifficultyMeters on screen at once, with different names. */
+	 * DifficultyDisplays on screen at once, with different names. */
 	m_iNumTicks.Load(sType,"NumTicks");
 	m_iMaxTicks.Load(sType,"MaxTicks");
 	m_bShowTicks.Load(sType,"ShowTicks");
@@ -89,17 +89,17 @@ void DifficultyMeter::Load( const RString &sType )
 	Unset();
 }
 
-void DifficultyMeter::LoadFromNode( const XNode* pNode )
+void DifficultyDisplay::LoadFromNode( const XNode* pNode )
 {
 	ActorFrame::LoadFromNode( pNode );
 
 	RString s;
 	if( !pNode->GetAttrValue("Type", s) )
-		RageException::Throw( "%s: DifficultyMeter: missing the \"Type\" attribute", ActorUtil::GetWhere(pNode).c_str() );
+		RageException::Throw( "%s: DifficultyDisplay: missing the \"Type\" attribute", ActorUtil::GetWhere(pNode).c_str() );
 	Load( s );
 }
 
-void DifficultyMeter::SetFromGameState( PlayerNumber pn )
+void DifficultyDisplay::SetFromGameState( PlayerNumber pn )
 {
 	if( GAMESTATE->IsCourseMode() )
 	{
@@ -119,7 +119,7 @@ void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 	}
 }
 
-void DifficultyMeter::SetFromSteps( const Steps* pSteps )
+void DifficultyDisplay::SetFromSteps( const Steps* pSteps )
 {
 	if( pSteps == NULL )
 	{
@@ -131,7 +131,7 @@ void DifficultyMeter::SetFromSteps( const Steps* pSteps )
 	SetInternal( params );
 }
 
-void DifficultyMeter::SetFromTrail( const Trail* pTrail )
+void DifficultyDisplay::SetFromTrail( const Trail* pTrail )
 {
 	if( pTrail == NULL )
 	{
@@ -143,25 +143,25 @@ void DifficultyMeter::SetFromTrail( const Trail* pTrail )
 	SetInternal( params );
 }
 
-void DifficultyMeter::Unset()
+void DifficultyDisplay::Unset()
 {
 	SetParams params = { NULL, NULL, 0, StepsType_Invalid, Difficulty_Invalid, false, RString() };
 	SetInternal( params );
 }
 
-void DifficultyMeter::SetFromStepsTypeAndMeterAndDifficulty( StepsType st, int iMeter, Difficulty dc )
+void DifficultyDisplay::SetFromStepsTypeAndMeterAndDifficulty( StepsType st, int iMeter, Difficulty dc )
 {
 	SetParams params = { NULL, NULL, iMeter, st, dc, false, RString() };
 	SetInternal( params );
 }
 
-void DifficultyMeter::SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType st, int iMeter, CourseDifficulty cd )
+void DifficultyDisplay::SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType st, int iMeter, CourseDifficulty cd )
 {
 	SetParams params = { NULL, NULL, 0, st, cd, true, RString() };
 	SetInternal( params );
 }
 
-void DifficultyMeter::SetInternal( const SetParams &params )
+void DifficultyDisplay::SetInternal( const SetParams &params )
 {
 	Message msg( "Set" );
 	if( params.pSteps )
@@ -221,7 +221,7 @@ void DifficultyMeter::SetInternal( const SetParams &params )
 // lua start
 #include "LuaBinding.h"
 
-class LunaDifficultyMeter: public Luna<DifficultyMeter>
+class LunaDifficultyDisplay: public Luna<DifficultyDisplay>
 {
 public:
 	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1) ); return 0; }
@@ -259,7 +259,7 @@ public:
 		return 0;
 	}
 
-	LunaDifficultyMeter()
+	LunaDifficultyDisplay()
 	{
 		ADD_METHOD( Load );
 		ADD_METHOD( SetFromStepsTypeAndMeterAndDifficulty );
@@ -269,7 +269,7 @@ public:
 	}
 };
 
-LUA_REGISTER_DERIVED_CLASS( DifficultyMeter, ActorFrame )
+LUA_REGISTER_DERIVED_CLASS( DifficultyDisplay, ActorFrame )
 // lua end
 
 /*
