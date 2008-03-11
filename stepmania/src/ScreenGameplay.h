@@ -202,6 +202,7 @@ protected:
 	Transition		m_NextSong;	// shows between songs in a course
 
 	AutoActor		m_sprLifeFrame;
+	AutoActor		m_sprStageFrame;
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 
 	BitmapText		m_textSongOptions;
