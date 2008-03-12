@@ -891,6 +891,9 @@ void LuaHelpers::PushValueFunc( lua_State *L, int iArgs )
 LuaFunction( ProductVersion, (RString) PRODUCT_VER );
 LuaFunction( ProductID, (RString) PRODUCT_ID );
 
+extern const char *const version_time;
+LuaFunction( VersionTime, (RString) version_time );
+
 static float scale( float x, float l1, float h1, float l2, float h2 )
 {
 	return SCALE( x, l1, h1, l2, h2 );
