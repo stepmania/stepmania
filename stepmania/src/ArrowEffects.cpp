@@ -113,7 +113,11 @@ void ArrowEffects::Update()
 			}
 
 			// mirror
-			const int iNewColOnSide = SCALE( iColOnSide, iFirstColOnSide, iLastColOnSide, iLastColOnSide, iFirstColOnSide );
+			int iNewColOnSide;
+			if( iFirstColOnSide == iLastColOnSide )
+				iNewColOnSide = 0;
+			else
+				iNewColOnSide = SCALE( iColOnSide, iFirstColOnSide, iLastColOnSide, iLastColOnSide, iFirstColOnSide );
 			const int iNewCol = iSideIndex*iNumColsPerSide + iNewColOnSide;
 
 			const float fOldPixelOffset = pCols[iColNum].fXOffset;
@@ -383,6 +387,21 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	}
 
 	return fPixelOffsetFromCenter;
+}
+
+float ArrowEffects::GetXOffset( const PlayerState* pPlayerState, float fMidiNote ) 
+{
+	if( fMidiNote == MIDI_NOTE_INVALID )
+		return 0;
+	Steps *pSteps = GAMESTATE->m_pCurSteps[ pPlayerState->m_PlayerNumber ];
+	const RadarValues &rv = pSteps->GetRadarValues( pPlayerState->m_PlayerNumber );
+	float fMinMidiNote = rv.m_Values.v.fMinMidiNote;
+	float fMaxMidiNote = rv.m_Values.v.fMaxMidiNote;
+	if( fMinMidiNote == -1 || fMaxMidiNote == -1 )
+		return 0;
+	float fXOffset = SCALE( fMidiNote, fMinMidiNote, fMaxMidiNote, -200.0f, 200.0f );
+	fXOffset = roundf( fXOffset );
+	return fXOffset;
 }
 
 float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBeat ) 

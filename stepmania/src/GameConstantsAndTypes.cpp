@@ -34,7 +34,9 @@ static const char *RadarCategoryNames[] = {
 	"Holds",
 	"Mines",
 	"Hands",
-	"Rolls"
+	"Rolls",
+	"MinMidiNote",
+	"MaxMidiNote",
 };
 XToString( RadarCategory );
 XToLocalizedString( RadarCategory );

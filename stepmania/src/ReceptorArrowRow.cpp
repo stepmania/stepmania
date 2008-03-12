@@ -6,6 +6,9 @@
 #include "GameState.h"
 #include "PlayerState.h"
 #include "Style.h"
+/* XXX
+#include "PitchDetectionTest.h"
+*/
 
 
 ReceptorArrowRow::ReceptorArrowRow()
@@ -50,12 +53,20 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 		m_ReceptorArrow[c]->SetBaseAlpha( fBaseAlpha );		
 
 		// set arrow XYZ
-		const float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
+		float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
+		/* XXX
+		if( PitchDetectionTest::s_ms.bVoiced )
+			fX += ArrowEffects::GetXOffset( m_pPlayerState, m_pPlayerState->m_fWrappedMidiNote );
+		*/
 		const float fY = ArrowEffects::GetYPos( m_pPlayerState, c, 0, m_fYReverseOffsetPixels );
 		const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
 		m_ReceptorArrow[c]->SetX( fX );
 		m_ReceptorArrow[c]->SetY( fY );
 		m_ReceptorArrow[c]->SetZ( fZ );
+
+		/* XXX
+		m_ReceptorArrow[c]->SetVisible( PitchDetectionTest::s_ms.bVoiced );
+		*/
 
 		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );
 		m_ReceptorArrow[c]->SetZoom( fZoom );

@@ -21,6 +21,9 @@
 #include "NetworkSyncManager.h"
 #include "RageTimer.h"
 #include "RageInput.h"
+/* XXX
+#include "PitchDetectionTest.h"
+*/
 
 static RageTimer g_GameplayTimer;
 
@@ -175,6 +178,10 @@ void GameLoop::RunGameLoop()
 		CheckGameLoopTimerSkips( fDeltaTime );
 
 		fDeltaTime *= g_fUpdateRate;
+
+		/* XXX
+		PitchDetectionTest::Update();
+		*/
 
 		CheckFocus();
 

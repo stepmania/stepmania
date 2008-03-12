@@ -354,7 +354,7 @@ struct StripBuffer
 	int Free() const { return size - Used(); }
 };
 
-void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow,
+void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, float fXOffset, float fPercentFadeToFail, float fColorScale, bool bGlow,
 				float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar,
 				float fOverlappedTime,
 				float fYTop, float fYBottom,
@@ -429,7 +429,9 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		const float fFrameWidthScale	= ArrowEffects::GetFrameWidthScale( m_pPlayerState, fYOffset, fOverlappedTime );
 		const float fScaledFrameWidth	= fFrameWidth * fFrameWidthScale;
 
-		const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
+		float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
+		fX += fXOffset;
+
 		const float fXLeft		= fX - fScaledFrameWidth/2;
 		const float fXCenter		= fX;
 		const float fXRight		= fX + fScaledFrameWidth/2;
@@ -535,12 +537,14 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	if( bReverse )
 		swap( fYStartPos, fYEndPos );
 
+	float fXOffset = ArrowEffects::GetXOffset( m_pPlayerState, tn.iMidiNote );
+
 	bool bTopAnchor = bReverse && cache->m_bTopHoldAnchorWhenReverse;
 
 	// Draw the top cap
 	DrawHoldPart(
 		vpSprTop,
-		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
+		iCol, fYStep, fXOffset, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		tn.HoldResult.fOverlappedTime,
 		fYHead-fFrameHeightTop, fYHead,
@@ -550,7 +554,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	// Draw the body
 	DrawHoldPart(
 		vpSprBody,
-		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
+		iCol, fYStep, fXOffset, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		tn.HoldResult.fOverlappedTime,
 		fYHead, fYTail,
@@ -560,7 +564,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	// Draw the bottom cap
 	DrawHoldPart(
 		vpSprBottom,
-		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
+		iCol, fYStep, fXOffset, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		tn.HoldResult.fOverlappedTime,
 		fYTail, fYTail+fFrameHeightBottom,
@@ -644,7 +648,9 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	if( fYOffset < fDrawDistanceAfterTargetsPixels || fYOffset > fDrawDistanceBeforeTargetsPixels )
 		return;
 	const float fY			= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
-	const float fX			= ArrowEffects::GetXPos(	m_pPlayerState, iCol, fYOffset );
+	float fX			= ArrowEffects::GetXPos(	m_pPlayerState, iCol, fYOffset );
+	if( tn.iMidiNote )
+		fX += ArrowEffects::GetXOffset( m_pPlayerState, tn.iMidiNote );
 	const float fZ			= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset );
 	const float fAlpha		= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const float fGlow		= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );

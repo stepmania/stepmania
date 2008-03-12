@@ -36,6 +36,7 @@ namespace NoteDataUtil
 	float GetAirRadarValue( const NoteData &in, float fSongSeconds );
 	float GetFreezeRadarValue( const NoteData &in, float fSongSeconds );
 	float GetChaosRadarValue( const NoteData &in, float fSongSeconds );
+	bool GetMinAndMaxMidiNote( const NoteData &in, uint8_t &uMinMidiNoteOut, uint8_t &uMaxMidiNoteOut );
 
 	void CalculateRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out );
 

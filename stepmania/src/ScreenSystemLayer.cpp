@@ -12,6 +12,7 @@
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
 #include "LocalizedString.h"
+#include "PlayerState.h"
 
 namespace
 {
@@ -160,6 +161,36 @@ void ScreenSystemLayer::Init()
 
 	m_sprOverlay.Load( THEME->GetPathB("ScreenSystemLayer", "overlay") );
 	this->AddChild( m_sprOverlay );
+
+	/* XXX
+	m_quadMicBar.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
+	m_quadMicBar.ZoomToWidth( 4 );
+	m_quadMicBar.ZoomToHeight( 400 );
+	this->AddChild( &m_quadMicBar );
+
+	m_quadMicPos.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
+	m_quadMicPos.ZoomToWidth( 12 );
+	m_quadMicPos.ZoomToHeight( 12 );
+	this->AddChild( &m_quadMicPos );
+	
+	m_textFreq.LoadFromFont( THEME->GetPathF("Common","Normal") );
+	m_textFreq.SetXY( SCREEN_CENTER_X+100, SCREEN_CENTER_Y );
+	this->AddChild( &m_textFreq );
+	*/
+}
+
+void ScreenSystemLayer::Update( float fDelta )
+{
+	Screen::Update( fDelta );
+	
+	/* XXX
+	const MicrophoneStatus &ms = PitchDetectionTest::s_ms;
+	float fYOffset = SCALE( ms.fFreq, 0.0, ms.fMaxFreq, 200, -200 );
+	m_quadMicPos.SetY( SCREEN_CENTER_Y + fYOffset );
+	m_quadMicPos.SetVisible( ms.bVoiced );
+	PlayerState *pPS = GAMESTATE->m_pPlayerState[PLAYER_1];
+	m_textFreq.SetText( ssprintf("%.3f\n%.3f\n%.3f (wrapped)\n%s", ms.fFreq, ms.fMidiNote, pPS->m_fWrappedMidiNote, ms.sMidiNote.c_str() ) );
+	*/
 }
 
 /*

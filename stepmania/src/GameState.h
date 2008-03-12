@@ -313,6 +313,7 @@ public:
 	BroadcastOnChange<int> m_iEditCourseEntryIndex;
 	BroadcastOnChange<RString> m_sEditLocalProfileID;
 	Profile* GetEditLocalProfile();
+	int8_t		m_iEditMidiNote;
 
 	// Workout stuff
 	float GetGoalPercentComplete( PlayerNumber pn );

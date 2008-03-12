@@ -60,6 +60,9 @@ struct HoldNoteResult
 	void LoadFromNode( const XNode* pNode );
 };
 
+const int8_t MIDI_NOTE_INVALID = -1;
+const int NUM_MIDI_NOTES = 128;
+const int MIDI_NOTES_PER_OCTAVE = 12;
 
 struct TapNote
 {
@@ -91,26 +94,38 @@ struct TapNote
 	SubType		subType; // Only used if type is hold_head.
 	Source		source;
 	TapNoteResult	result;
-	PlayerNumber	pn;
-	bool		bHopoPossible;
+	int8_t		iMidiNote;	// ignored by all game types but Karaoke
+	PlayerNumber	pn;	// used in routine mode
+	bool		bHopoPossible;	// set just before gameplay begins
 	
-	// attack only
-	RString		sAttackModifiers;
-	float		fAttackDurationSeconds;
+	RString		sAttackModifiers;	// used only if Type == attack
+	float		fAttackDurationSeconds;	// used only if Type == attack
 
-	// Index into Song's vector of keysound files if nonnegative.
-	int		iKeysoundIndex;
+	int		iKeysoundIndex;		// Index into Song's vector of keysound files if nonnegative.
 
-	// hold_head only
-	int		iDuration;
-	HoldNoteResult	HoldResult;
+	int		iDuration;	// used if hold_head only
+	HoldNoteResult	HoldResult;	// used if hold_head only
 	
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 
-	TapNote() : type(empty), subType(SubType_Invalid), source(original), pn(PLAYER_INVALID), bHopoPossible(false),
-		fAttackDurationSeconds(0.f), iKeysoundIndex(-1), iDuration(0)  { }
+	TapNote()
+	{
+		Init();	
+	}
+	void Init()
+	{
+		type = empty;
+		subType = SubType_Invalid; 
+		source = original; 
+		iMidiNote = MIDI_NOTE_INVALID;
+		pn = PLAYER_INVALID, 
+		bHopoPossible = false;
+		fAttackDurationSeconds = 0.f; 
+		iKeysoundIndex = -1;
+		iDuration = 0;
+	}
 	TapNote( 
 		Type type_,
 		SubType subType_,
@@ -119,6 +134,7 @@ struct TapNote
 		float fAttackDurationSeconds_,
 		int iKeysoundIndex_ )
 	{
+		Init();
 		type = type_;
 		subType = subType_;
 		source = source_;
@@ -138,6 +154,7 @@ struct TapNote
 		COMPARE(fAttackDurationSeconds);
 		COMPARE(iKeysoundIndex);
 		COMPARE(iDuration);
+		COMPARE(iMidiNote);
 		COMPARE(pn);
 #undef COMPARE
 		return true;

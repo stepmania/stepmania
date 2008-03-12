@@ -317,6 +317,7 @@ void GameState::Reset()
 	m_stEditSource.Set( StepsType_Invalid );
 	m_iEditCourseEntryIndex.Set( -1 );
 	m_sEditLocalProfileID.Set( "" );
+	m_iEditMidiNote = MIDI_NOTE_INVALID;
 	
 	m_bBackedOutOfFinalStage = false;
 	m_bEarnedExtraStage = false;

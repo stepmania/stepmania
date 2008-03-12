@@ -39,6 +39,9 @@ public:
 	float			m_fLastHopoNoteMusicSeconds;	// Set to the MusicSeconds of the last note successfully strummed or hammered in a hopochain, -1, then there is no current hopo chain
 	int			m_iLastHopoNoteCol;	// if -1, then there is no current hopo chain
 
+	float		m_fUpcomingMidiNote;
+	float		m_fWrappedMidiNote;
+
 	void ClearHopoState()
 	{
 		m_fLastHopoNoteMusicSeconds = -1;
