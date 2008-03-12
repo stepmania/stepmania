@@ -432,6 +432,16 @@ static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption 
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
+
+#include "LuaManager.h"
+static int GetTimingDifficulty()
+{
+	int iTimingDifficulty = 0;
+	TimingWindowScale( iTimingDifficulty, true, ConfOption::Find("TimingWindowScale") );	
+	iTimingDifficulty++;	// TimingDifficulty returns an index
+	return iTimingDifficulty;
+}
+LuaFunction( GetTimingDifficulty, GetTimingDifficulty() );
 static int GetLifeDifficulty()
 {
 	int iLifeDifficulty = 0;
@@ -439,8 +449,8 @@ static int GetLifeDifficulty()
 	iLifeDifficulty++;	// LifeDifficulty returns an index
 	return iLifeDifficulty;
 }
-#include "LuaManager.h"
 LuaFunction( GetLifeDifficulty, GetLifeDifficulty() );
+
 
 static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
