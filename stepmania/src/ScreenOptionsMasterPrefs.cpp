@@ -422,13 +422,13 @@ static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pCo
 
 static void TimingWindowScale( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const float mapping[] = { 1.50f,1.33f,1.16f,1.00f,0.84f,0.66f,0.50f,0.33f,0.20f };
+	const float mapping[] = { 2.0f,1.66f,1.33f,1.00f,0.75f,0.50f,0.25f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const float mapping[] = { 1.40f,1.20f,1.00f,0.80f,0.60f };
+	const float mapping[] = { 2.0f,1.50f,1.00f,0.66f,0.33f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
@@ -681,7 +681,7 @@ static void InitializeConfOptions()
 
 	ADD( ConfOption( "EventMode",			MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "ScoringType",			MovePref<ScoringType>,	"New","Old" ) );
-	ADD( ConfOption( "TimingWindowScale",		TimingWindowScale,	"|1","|2","|3","|4","|5","|6","|7","|8","Justice" ) );
+	ADD( ConfOption( "TimingWindowScale",		TimingWindowScale,	"|1","|2","|3","|4","|5","|6","|7" ) );
 	ADD( ConfOption( "LifeDifficulty",		LifeDifficulty,		"|1","|2","|3","|4","|5" ) );
 	g_ConfOptions.back().m_sPrefName = "LifeDifficultyScale";
 	ADD( ConfOption( "ProgressiveLifebar",		MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8") );
