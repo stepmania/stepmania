@@ -500,7 +500,7 @@ void ScreenGameplay::Init()
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprLifeFrame );
 	this->AddChild( m_sprLifeFrame );
 
-	m_sprStageFrame.Load( THEME->GetPathG(m_sName,bBattery?"oni stage frame":"stage frame") );
+	m_sprStageFrame.Load( THEME->GetPathG(m_sName,bBattery?"oni StageFrame":"StageFrame") );
 	m_sprStageFrame->SetName( "StageFrame" );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprStageFrame );
 	this->AddChild( m_sprStageFrame );

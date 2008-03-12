@@ -1,3 +1,3 @@
-return LoadActor( THEME:GetPathG('ScreenTitleMenu',GAMESTATE:GetCurrentGame():GetName()) ) .. {
-	OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomy,0;sleep,0.5;bounceend,0.5;zoomy,1;glowshift;effectperiod,2.5;effectcolor1,1,1,1,0.1;effectcolor2,1,1,1,0.3);
+return Def.ActorFrame {
+	LoadActor( THEME:GetPathB('','_standard decoration'), "Logo", GAMESTATE:GetCurrentGame():GetName() );
 };
