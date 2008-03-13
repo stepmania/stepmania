@@ -272,6 +272,8 @@ void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, const Player
 		case RadarCategory_Mines:		out[rc] = (float) GetSuccessfulMines( in );						break;
 		case RadarCategory_Hands:		out[rc] = (float) GetSuccessfulHands( in );						break;
 		case RadarCategory_Rolls:		out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_Held );	break;
+		case RadarCategory_MinMidiNote:		out[rc] = 0;	break;	// no meaning
+		case RadarCategory_MaxMidiNote:		out[rc] = 0;	break;	// no meaning
 		DEFAULT_FAIL( rc );
 		}
 	}
