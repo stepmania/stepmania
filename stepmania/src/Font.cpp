@@ -528,6 +528,8 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				 * This lets us assign characters very compactly and readably. */
 
 				RString sRowStr = sName.substr(5);
+				TrimLeft( sRowStr );
+
 				ASSERT( IsAnInt(sRowStr) );
 				const int iRow = atoi( sRowStr.c_str() );
 				const int iFirstFrame = iRow * iNumFramesWide;
