@@ -54,7 +54,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 
 			line += s;
 
-			if( line[line.size()-1] != '\\' )
+			if( line.empty() || line[line.size()-1] != '\\' )
 				break;
 
 			line.erase( line.end()-1 );
