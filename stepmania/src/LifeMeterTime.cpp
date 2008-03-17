@@ -16,8 +16,6 @@ const float FULL_LIFE_SECONDS = 1.5f*60;
 static ThemeMetric<float> METER_WIDTH		("LifeMeterTime","MeterWidth");
 static ThemeMetric<float> METER_HEIGHT		("LifeMeterTime","MeterHeight");
 static ThemeMetric<float> DANGER_THRESHOLD	("LifeMeterTime","DangerThreshold");
-static ThemeMetric<int> NUM_CHAMBERS		("LifeMeterTime","NumChambers");
-static ThemeMetric<int> NUM_STRIPS			("LifeMeterTime","NumStrips");
 static ThemeMetric<float> INITIAL_VALUE		("LifeMeterTime","InitialValue");
 
 static const float g_fTimeMeterSecondsChangeInit[] =
@@ -73,21 +71,10 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 
 	m_pStream = new StreamDisplay;
 	bool bExtra = GAMESTATE->IsAnExtraStage();
-	RString sExtra = bExtra ? "extra " : "";
-	m_pStream->Load(
-		METER_WIDTH,
-		METER_HEIGHT,
-		NUM_STRIPS,
-		NUM_CHAMBERS,		
-		THEME->GetPathG(sType,sExtra+"normal"),
-		THEME->GetPathG(sType,sExtra+"hot"),
-		THEME->GetPathG(sType,sExtra+"passing"),
-		THEME->GetMetricA(sType,"StreamNormalOnCommand"),
-		THEME->GetMetricA(sType,"StreamHotOnCommand"),
-		THEME->GetMetricA(sType,"StreamPassingOnCommand")
-		);
+	m_pStream->Load( bExtra ? "StreamDisplayExtra" : "StreamDisplay" );
 	this->AddChild( m_pStream );
 
+	RString sExtra = bExtra ? "extra " : "";
 	m_sprFrame.Load( THEME->GetPathG(sType,sExtra+"frame") );
 	m_sprFrame->SetName( "Frame" );
 	this->AddChild( m_sprFrame );
@@ -181,7 +168,7 @@ void LifeMeterTime::SendLifeChangedMessage( float fOldLife, TapNoteScore tns, Ho
 
 bool LifeMeterTime::IsInDanger() const
 {
-	return m_pStream->GetTrailingLifePercent() < DANGER_THRESHOLD;
+	return m_pStream->GetPercent() < DANGER_THRESHOLD;
 }
 
 bool LifeMeterTime::IsHot() const
@@ -203,7 +190,6 @@ void LifeMeterTime::Update( float fDeltaTime )
 	
 	LifeMeter::Update( fDeltaTime );
 
-	// TODO
 	m_pStream->SetPercent( GetLife() );
 	m_pStream->SetPassingAlpha( 0 );
 	m_pStream->SetHotAlpha( 0 );

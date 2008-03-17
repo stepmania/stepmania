@@ -1,57 +1,47 @@
 #ifndef StreamDisplay_H
 #define StreamDisplay_H
 
+#include "ActorFrame.h"
 #include "Sprite.h"
 #include "Quad.h"
+#include "LuaExpressionTransform.h"
 
-class StreamDisplay : public Actor
+enum StreamType
+{
+	StreamType_Normal,
+	StreamType_Passing,
+	StreamType_Hot,
+	NUM_StreamType,
+};
+
+
+class StreamDisplay : public ActorFrame
 {
 public:
 	StreamDisplay();
 
 	virtual void Update( float fDeltaSecs );
 
-	void Load( 
-		float fMeterWidth, 
-		float fMeterHeight,
-		int iNumStrips,
-		int iNumChambers, 
-		const RString &sNormalPath, 
-		const RString &sHotPath, 
-		const RString &sPassingPath,
-		const apActorCommands &acNormalOnCommand,
-		const apActorCommands &acHotOnCommand,
-		const apActorCommands &acPassingOnCommand
-		);
+	void Load( const RString &sMetricsGroup );
 
-	void DrawPrimitives();
 	void SetPercent( float fPercent );
-	void SetPassingAlpha( float fPassingAlpha );
-	void SetHotAlpha( float fHotAlpha );
+	void SetPassingAlpha( float fPassingAlpha ) { m_fPassingAlpha = fPassingAlpha; }
+	void SetHotAlpha( float fHotAlpha ) { m_fHotAlpha = fHotAlpha; }
 
-	float GetTrailingLifePercent() { return m_fTrailingPercent; }
+	float GetPercent() { return m_fPercent; }
 
 private:
-	Sprite		m_sprStreamNormal;
-	Sprite		m_sprStreamHot;
-	Sprite		m_sprStreamPassing;
-	Quad		m_quadMask;
+	vector<Sprite*>	m_vpSprPill[NUM_StreamType];
 
-	int m_iNumStrips;
-	int m_iNumChambers;
-	float m_fPercent;
-	float m_fTrailingPercent;	// this approaches m_fPercent
-	float m_fVelocity;	// of m_fTrailingPercent
+	LuaExpressionTransform		m_transformPill;	// params: self,positionIndex,itemIndex,numItems
+
+	float m_fPercent;	// percent filled
+	float m_fTrailingPercent;	// this approaches m_fPercent, use this value to draw
+	float m_fVelocity;	// velocity of m_fTrailingPercent
+	
 	float m_fPassingAlpha;
 	float m_fHotAlpha;
 
-	void GetChamberIndexAndOverflow( float fPercent, int& iChamberOut, float& fChamberOverflowPercentOut );
-	float GetChamberLeftPercent( int iChamber );
-	float GetChamberRightPercent( int iChamber );
-	float GetRightEdgePercent( int iChamber, float fChamberOverflowPercent );
-	float GetHeightPercent( int iChamber, float fChamberOverflowPercent );
-	void DrawStrip( float fRightEdgePercent );
-	void DrawMask( float fPercent );
 };
 
 #endif

@@ -23,8 +23,6 @@ LifeMeterBar::LifeMeterBar()
 	METER_WIDTH.Load	("LifeMeterBar","MeterWidth");
 	METER_HEIGHT.Load	("LifeMeterBar","MeterHeight");
 	DANGER_THRESHOLD.Load	("LifeMeterBar","DangerThreshold");
-	NUM_CHAMBERS.Load	("LifeMeterBar","NumChambers");
-	NUM_STRIPS.Load		("LifeMeterBar","NumStrips");
 	INITIAL_VALUE.Load	("LifeMeterBar","InitialValue");
 	MIN_STAY_ALIVE.Load	("LifeMeterBar","MinStayAlive");
 	m_fLifePercentChange.Load( "LifeMeterBar", LIFE_PERCENT_CHANGE_NAME, NUM_ScoreEvent );
@@ -76,18 +74,7 @@ LifeMeterBar::LifeMeterBar()
 	m_pStream = new StreamDisplay;
 	bool bExtra = GAMESTATE->IsAnExtraStage();
 	RString sExtra = bExtra ? "extra " : "";
-	m_pStream->Load(
-		METER_WIDTH,
-		METER_HEIGHT,
-		NUM_STRIPS,
-		NUM_CHAMBERS,		
-		THEME->GetPathG(sType,sExtra+"normal"),
-		THEME->GetPathG(sType,sExtra+"hot"),
-		THEME->GetPathG(sType,sExtra+"passing"),
-		THEME->GetMetricA(sType,"StreamNormalOnCommand"),
-		THEME->GetMetricA(sType,"StreamHotOnCommand"),
-		THEME->GetMetricA(sType,"StreamPassingOnCommand")
-		);
+	m_pStream->Load( bExtra ? "StreamDisplayExtra" : "StreamDisplay" );
 	this->AddChild( m_pStream );
 
 	m_sprFrame.Load( THEME->GetPathG(sType,sExtra+"frame") );

@@ -37,8 +37,6 @@ private:
 	ThemeMetric<float> METER_WIDTH;
 	ThemeMetric<float> METER_HEIGHT;
 	ThemeMetric<float> DANGER_THRESHOLD;
-	ThemeMetric<int>   NUM_CHAMBERS;
-	ThemeMetric<int>   NUM_STRIPS;
 	ThemeMetric<float> INITIAL_VALUE;
 	ThemeMetric<TapNoteScore>   MIN_STAY_ALIVE;
 
