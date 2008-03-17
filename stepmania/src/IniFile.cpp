@@ -1,3 +1,9 @@
+/* 
+http://en.wikipedia.org/wiki/INI_file
+ - names and values are trimmed on both sides
+ - semicolons start a comment line
+ - backslash followed by a newline doesn't break the line
+*/
 #include "global.h"
 #include "IniFile.h"
 #include "RageUtil.h"
@@ -31,16 +37,29 @@ bool IniFile::ReadFile( RageFileBasic &f )
 	while( 1 )
 	{
 		RString line;
-		switch( f.GetLine(line) )
+		/* Read lines until we reach a line that doesn't end in a backslash */
+		while( true )
 		{
-		case -1:
-			m_sError = f.GetError();
-			return false;
-		case 0:
-			return true; /* eof */
+			RString s;
+			switch( f.GetLine(s) )
+			{
+			case -1:
+				m_sError = f.GetError();
+				return false;
+			case 0:
+				return true; /* eof */
+			}
+
+			utf8_remove_bom( s );
+
+			line += s;
+
+			if( line[line.size()-1] != '\\' )
+				break;
+
+			line.erase( line.end()-1 );
 		}
 
-		utf8_remove_bom( line );
 
 		if( line.size() == 0 )
 			continue;
