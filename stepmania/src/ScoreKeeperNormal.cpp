@@ -380,7 +380,7 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 	{
 		iScore += GetScore(p, Z, sum, m_iTapNotesHit);
 		const int &iCurrentCombo = m_pPlayerStageStats->m_iCurCombo;
-		m_pPlayerStageStats->m_iBonus += m_ComboBonusFactor[score] * iCurrentCombo;
+		iScore += m_ComboBonusFactor[score] * iCurrentCombo;
 	}
 
 	/* Subtract the maximum this step could have been worth from the bonus. */

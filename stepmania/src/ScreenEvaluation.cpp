@@ -76,7 +76,6 @@ XToString( StatLine );
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
 AutoScreenMessage( SM_PlayCheer )
-AutoScreenMessage( SM_AddBonus )
 
 REGISTER_SCREEN_CLASS( ScreenEvaluation );
 ScreenEvaluation::ScreenEvaluation()
@@ -214,21 +213,6 @@ void ScreenEvaluation::Init()
 			}
 	}
 */
-
-	if( PREFSMAN->m_ScoringType == SCORING_OLD )
-	{
-		FOREACH_PlayerNumber( p )
-		{
-			const int ScoreBonuses[] = { 10000000, 10000000, 1000000, 100000, 10000, 1000, 100 };
-			Grade g = m_pStageStats->m_player[p].GetGrade();
-			if( g < (int) ARRAYLEN(ScoreBonuses) )
-			{
-				m_pStageStats->m_player[p].m_iBonus += ScoreBonuses[(int)g];
-				m_pStageStats->m_player[p].m_iBonus += ScoreBonuses[(int)g];
-			}
-		}
-	}
-
 
 	//
 	// update persistent statistics
@@ -707,8 +691,6 @@ void ScreenEvaluation::Init()
 		this->PostScreenMessage( SM_PlayCheer, CHEER_DELAY_SECONDS );	
 		break;
 	}
-
-	this->PostScreenMessage( SM_AddBonus, 1.5f );
 }
 
 void ScreenEvaluation::Input( const InputEventPlus &input )
@@ -762,27 +744,6 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_PlayCheer )
 	{
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
-	}
-	else if( SM == SM_AddBonus )
-	{
-		FOREACH_EnabledPlayer( p ) 
-		{
-			if( m_pStageStats->m_player[p].m_iBonus == 0 )
-				continue;
-
-			if( GAMESTATE->IsCourseMode() )
-				continue;
-
-			int increment = m_pStageStats->m_player[p].m_iBonus/10;
-			if( increment < 1 )
-				increment = min( 1024, m_pStageStats->m_player[p].m_iBonus );
-
-			m_pStageStats->m_player[p].m_iBonus -= increment;
-			m_pStageStats->m_player[p].m_iScore += increment;
-
-			if( SHOW_SCORE_AREA )
-				m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, m_pStageStats->m_player[p].m_iScore) );
-		}
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );

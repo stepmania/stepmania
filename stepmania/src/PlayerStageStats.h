@@ -52,7 +52,6 @@ public:
 	int		m_iScore;
 	int		m_iCurMaxScore;
 	int		m_iMaxScore;
-	int		m_iBonus;  // bonus to be added on screeneval
 	RadarValues	m_radarPossible;	// filled in by ScreenGameplay on start of notes
 	RadarValues	m_radarActual;
 	/* The number of songs played and passed, respectively. */

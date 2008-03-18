@@ -39,7 +39,6 @@ void PlayerStageStats::Init()
 	m_iCurMissCombo = 0;
 	m_iCurScoreMultiplier = 1;
 	m_iScore = 0;
-	m_iBonus = 0;
 	m_iMaxScore = 0;
 	m_iCurMaxScore = 0;
 	m_iSongsPassed = 0;
