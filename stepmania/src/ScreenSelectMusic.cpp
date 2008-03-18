@@ -55,20 +55,16 @@ static bool g_bSampleMusicWaiting = false;
 static RageTimer g_StartedLoadingAt(RageZeroTimer);
 
 REGISTER_SCREEN_CLASS( ScreenSelectMusic );
-ScreenSelectMusic::ScreenSelectMusic()
+void ScreenSelectMusic::Init()
 {
-	if( PREFSMAN->m_bScreenTestMode )
+	if( PREFSMAN->m_bScreenTestMode && CommonMetrics::INITIAL_SCREEN == m_sName )
 	{
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
 		GAMESTATE->JoinPlayer( PLAYER_1 );
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	}
-}
 
-
-void ScreenSelectMusic::Init()
-{
 	SAMPLE_MUSIC_DELAY.Load( m_sName, "SampleMusicDelay" );
 	SAMPLE_MUSIC_LOOPS.Load( m_sName, "SampleMusicLoops" );
 	SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS.Load( m_sName, "SampleMusicFallbackFadeInSeconds" );

@@ -78,13 +78,15 @@ static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 AutoScreenMessage( SM_PlayCheer )
 
 REGISTER_SCREEN_CLASS( ScreenEvaluation );
-ScreenEvaluation::ScreenEvaluation()
+void ScreenEvaluation::Init()
 {
+	LOG->Trace( "ScreenEvaluation::Init()" );
+
 	//
 	// debugging
 	//
 	
-	if( PREFSMAN->m_bScreenTestMode )
+	if( PREFSMAN->m_bScreenTestMode && CommonMetrics::INITIAL_SCREEN == m_sName )
 	{
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1);
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);
@@ -124,7 +126,6 @@ ScreenEvaluation::ScreenEvaluation()
 			}
 			ss.m_player[p].m_vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			ss.m_player[p].m_iStepsPlayed = 1;
-			
 			
 			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
 			PO_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, ChooseRandomModifiers );
@@ -174,12 +175,6 @@ ScreenEvaluation::ScreenEvaluation()
 			ss.m_player[p].m_fLifeRemainingSeconds = randomf( 90, 580 );
 		}
 	}
-}
-
-
-void ScreenEvaluation::Init()
-{
-	LOG->Trace( "ScreenEvaluation::Init()" );
 
 	m_pStageStats = &STATSMAN->m_vPlayedStageStats.back();
 

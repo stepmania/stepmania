@@ -12,12 +12,13 @@
 #include "InputEventPlus.h"
 #include "RageInput.h"
 #include "RageLog.h"
+#include "CommonMetrics.h"
 
 REGISTER_SCREEN_CLASS( ScreenNameEntryTraditional );
 
 void ScreenNameEntryTraditional::Init()
 {
-	if( PREFSMAN->m_bScreenTestMode )
+	if( PREFSMAN->m_bScreenTestMode && CommonMetrics::INITIAL_SCREEN == m_sName )
 	{
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;

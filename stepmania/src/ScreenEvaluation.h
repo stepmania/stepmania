@@ -39,7 +39,6 @@ enum StatLine
 class ScreenEvaluation : public ScreenWithMenuElements
 {
 public:
-	ScreenEvaluation();
 	virtual void Init();
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );

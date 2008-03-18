@@ -29,7 +29,6 @@ const RString& SelectionStateToString( SelectionState ss );
 class ScreenSelectMusic : public ScreenWithMenuElements
 {
 public:
-	ScreenSelectMusic();
 	virtual ~ScreenSelectMusic();
 	virtual void Init();
 	virtual void BeginScreen();
