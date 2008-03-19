@@ -20,8 +20,6 @@ static RString LIFE_PERCENT_CHANGE_NAME( size_t i )   { return "LifePercentChang
 
 LifeMeterBar::LifeMeterBar()
 {
-	METER_WIDTH.Load	("LifeMeterBar","MeterWidth");
-	METER_HEIGHT.Load	("LifeMeterBar","MeterHeight");
 	DANGER_THRESHOLD.Load	("LifeMeterBar","DangerThreshold");
 	INITIAL_VALUE.Load	("LifeMeterBar","InitialValue");
 	MIN_STAY_ALIVE.Load	("LifeMeterBar","MinStayAlive");
@@ -57,29 +55,29 @@ LifeMeterBar::LifeMeterBar()
 	// set up combotoregainlife
 	m_iComboToRegainLife = 0;
 
-	m_sprBackground.Load( THEME->GetPathG(sType,"background") );
-	m_sprBackground->SetName( "Background" );
-	m_sprBackground->ZoomToWidth( METER_WIDTH );
-	m_sprBackground->ZoomToHeight( METER_HEIGHT );
-	this->AddChild( m_sprBackground );
-
-	m_quadDangerGlow.ZoomToWidth( METER_WIDTH );
-	m_quadDangerGlow.ZoomToHeight( METER_HEIGHT );
-	m_quadDangerGlow.SetEffectDiffuseShift();
-	m_quadDangerGlow.SetEffectColor1( RageColor(1,0,0,0.8f) );
-	m_quadDangerGlow.SetEffectColor2( RageColor(1,0,0,0) );
-	m_quadDangerGlow.SetEffectClock( Actor::CLOCK_BGM_BEAT );
-	this->AddChild( &m_quadDangerGlow );
-
-	m_pStream = new StreamDisplay;
 	bool bExtra = GAMESTATE->IsAnExtraStage();
 	RString sExtra = bExtra ? "extra " : "";
+
+	m_sprUnder.Load( THEME->GetPathG(sType,sExtra+"Under") );
+	m_sprUnder->SetName( "Under" );
+	ActorUtil::LoadAllCommandsAndSetXY( m_sprUnder, sType );
+	this->AddChild( m_sprUnder );
+
+	m_sprDanger.Load( THEME->GetPathG(sType,sExtra+"Danger") );
+	m_sprDanger->SetName( "Danger" );
+	ActorUtil::LoadAllCommandsAndSetXY( m_sprDanger, sType );
+	this->AddChild( m_sprDanger );
+
+	m_pStream = new StreamDisplay;
 	m_pStream->Load( bExtra ? "StreamDisplayExtra" : "StreamDisplay" );
+	m_pStream->SetName( "Stream" );
+	ActorUtil::LoadAllCommandsAndSetXY( m_pStream, sType );
 	this->AddChild( m_pStream );
 
-	m_sprFrame.Load( THEME->GetPathG(sType,sExtra+"frame") );
-	m_sprFrame->SetName( "Frame" );
-	this->AddChild( m_sprFrame );
+	m_sprOver.Load( THEME->GetPathG(sType,sExtra+"Over") );
+	m_sprOver->SetName( "Over" );
+	ActorUtil::LoadAllCommandsAndSetXY( m_sprOver, sType );
+	this->AddChild( m_sprOver );
 }
 
 LifeMeterBar::~LifeMeterBar()
@@ -277,9 +275,9 @@ void LifeMeterBar::Update( float fDeltaTime )
 	m_pStream->SetHotAlpha( m_fHotAlpha );
 
 	if( m_pPlayerState->m_HealthState == HealthState_Danger )
-		m_quadDangerGlow.SetDiffuseAlpha( 1 );
+		m_sprDanger->SetVisible( true );
 	else
-		m_quadDangerGlow.SetDiffuseAlpha( 0 );
+		m_sprDanger->SetVisible( false );
 }
 
 

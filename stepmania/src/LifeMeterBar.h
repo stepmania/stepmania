@@ -34,18 +34,16 @@ public:
 	// this function is solely for HowToPlay
 
 private:
-	ThemeMetric<float> METER_WIDTH;
-	ThemeMetric<float> METER_HEIGHT;
 	ThemeMetric<float> DANGER_THRESHOLD;
 	ThemeMetric<float> INITIAL_VALUE;
 	ThemeMetric<TapNoteScore>   MIN_STAY_ALIVE;
 
 	ThemeMetric1D<float> m_fLifePercentChange;
 
-	AutoActor		m_sprBackground;
-	Quad			m_quadDangerGlow;
+	AutoActor		m_sprUnder;
+	AutoActor		m_sprDanger;
 	StreamDisplay*		m_pStream;
-	AutoActor		m_sprFrame;
+	AutoActor		m_sprOver;
 
 	float			m_fLifePercentage;
 

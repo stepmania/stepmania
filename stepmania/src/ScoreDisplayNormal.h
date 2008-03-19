@@ -5,7 +5,7 @@
 
 #include "ScoreDisplay.h"
 #include "RollingNumbers.h"
-#include "Sprite.h"
+#include "AutoActor.h"
 
 class ScoreDisplayNormal : public ScoreDisplay
 {
@@ -18,7 +18,7 @@ public:
 	virtual void SetText( RString s ) { m_text.SetText(s); }
 
 protected:
-	Sprite		m_sprFrame;
+	AutoActor	m_sprFrame;
 	RollingNumbers	m_text;
 };
 

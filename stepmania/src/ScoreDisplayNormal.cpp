@@ -7,19 +7,27 @@
 #include "PlayerState.h"
 #include "StatsManager.h"
 #include "CommonMetrics.h"
+#include "ActorUtil.h"
 
 
 ScoreDisplayNormal::ScoreDisplayNormal()
 {
 	LOG->Trace( "ScoreDisplayNormal::ScoreDisplayNormal()" );
 
-	m_sprFrame.Load( THEME->GetPathG("ScoreDisplayNormal","frame") );
-	this->AddChild( &m_sprFrame );
+	RString sType = "ScoreDisplayNormal";
+
+	m_sprFrame.Load( THEME->GetPathG(sType,"Frame") );
+	m_sprFrame->SetName( "Frame" );
+	ActorUtil::LoadAllCommandsAndSetXY( m_sprFrame, sType );
+	this->AddChild( m_sprFrame );
+
 
 	// init the text
-	m_text.LoadFromFont( THEME->GetPathF("ScoreDisplayNormal","numbers") );
+	m_text.LoadFromFont( THEME->GetPathF("ScoreDisplayNormal","Text") );
+	m_text.SetName( "Text" );
 	m_text.SetShadowLength( 0 );
 	m_text.UpdateText();
+	ActorUtil::LoadAllCommandsAndSetXY( m_text, sType );
 	this->AddChild( &m_text );
 }
 
@@ -28,9 +36,9 @@ void ScoreDisplayNormal::Init( const PlayerState* pPlayerState, const PlayerStag
 	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
 
 	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = pPlayerState->m_PlayerNumber;
+	//PlayerNumber pn = pPlayerState->m_PlayerNumber;
 	
-	m_text.RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(pn) );
+	//m_text.RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(pn) );
 }
 
 void ScoreDisplayNormal::SetScore( int iNewScore ) 
