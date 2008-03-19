@@ -8,6 +8,10 @@ local t = Def.ActorFrame {
 		ShowDangerAllMessageCommand=cmd(stoptweening;accelerate,0.3;diffusealpha,1);
 		HideDangerAllMessageCommand=cmd(stoptweening;accelerate,0.3;diffusealpha,0);
 	};
+	LoadActor( THEME:GetPathB('','_standard decoration'), "LifeFrame", "LifeFrame" );
+	LoadActor( THEME:GetPathB('','_standard decoration'), "ScoreFrame", "ScoreFrame" );
+	LoadActor( THEME:GetPathB('','_standard decoration'), "StageFrame", "StageFrame" );
+
 };
 
 return t;
