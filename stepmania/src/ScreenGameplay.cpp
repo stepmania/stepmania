@@ -490,21 +490,6 @@ void ScreenGameplay::Init()
 	m_NextSong.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
 	this->AddChild( &m_NextSong );
 
-	bool bBattery = GAMESTATE->m_SongOptions.GetStage().m_LifeType==SongOptions::LIFE_BATTERY;
-
-	//
-	// Add LifeFrame
-	//
-	m_sprLifeFrame.Load( THEME->GetPathG(m_sName,bBattery?"oni life frame":"life frame") );
-	m_sprLifeFrame->SetName( "LifeFrame" );
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprLifeFrame );
-	this->AddChild( m_sprLifeFrame );
-
-	m_sprStageFrame.Load( THEME->GetPathG(m_sName,bBattery?"oni StageFrame":"StageFrame") );
-	m_sprStageFrame->SetName( "StageFrame" );
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprStageFrame );
-	this->AddChild( m_sprStageFrame );
-
 	//
 	// Add combined life meter
 	//
