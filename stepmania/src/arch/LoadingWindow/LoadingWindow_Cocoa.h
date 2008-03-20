@@ -4,40 +4,20 @@
 #define LOADING_WINDOW_COCOA_H
 
 #include "LoadingWindow.h"
-#include "RageFile.h"
-#include "RageUtil.h"
-
-extern "C"
-{
-	extern void MakeNewCocoaWindow( const void *data, unsigned length );
-	extern void DisposeOfCocoaWindow();
-	extern void SetCocoaWindowText( const char *s );
-}
 
 class LoadingWindow_Cocoa : public LoadingWindow
 {
 public:
-	LoadingWindow_Cocoa()
-	{
-		RageFile f;
-		RString data;
-		
-		vector<RString> vs;
-		GetDirListing( "Data/splash*.png", vs, false, true );
-		if( !vs.empty() && f.Open(vs[0]) )
-			f.Read( data );
-		MakeNewCocoaWindow( data.data(), data.length() );
-	}
-	~LoadingWindow_Cocoa() { DisposeOfCocoaWindow(); }
-
-	void SetText( RString str ) { SetCocoaWindowText( str ); }
+	LoadingWindow_Cocoa();
+	~LoadingWindow_Cocoa();
+	void SetText( RString str );
 };
 #define USE_LOADING_WINDOW_COCOA
 
 #endif
 
 /*
- * (c) 2003-2005 Steve Checkoway
+ * (c) 2003-2005, 2008 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
