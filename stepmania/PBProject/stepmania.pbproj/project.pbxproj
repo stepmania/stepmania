@@ -469,7 +469,7 @@
 		AA29CE050558741A00961A51 /* pcre.c in Sources */ = {isa = PBXBuildFile; fileRef = AA8B6C7D04AFD87300D02EE9 /* pcre.c */; };
 		AA29CE060558741A00961A51 /* study.c in Sources */ = {isa = PBXBuildFile; fileRef = AA8B6C7F04AFD87300D02EE9 /* study.c */; };
 		AA29CE070558741A00961A51 /* RageUtil_FileDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF580A704B3E2DC00D02EE9 /* RageUtil_FileDB.cpp */; };
-		AA29CE080558741A00961A51 /* LoadingWindow_Cocoa.m in Sources */ = {isa = PBXBuildFile; fileRef = AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.m */; };
+		AA29CE080558741A00961A51 /* LoadingWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.mm */; };
 		AA29CE090558741A00961A51 /* ActorUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA983CA04B9060A00D02EE9 /* ActorUtil.cpp */; };
 		AA29CE0B0558741A00961A51 /* ArchHooks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3F283B04BE6DDC00D02EE9 /* ArchHooks.cpp */; };
 		AA29CE0C0558741A00961A51 /* InputHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B36B04C38B4600D02EE9 /* InputHandler.cpp */; };
@@ -1073,7 +1073,7 @@
 		AA40D42509A08D650068C0D5 /* pcre.c in Sources */ = {isa = PBXBuildFile; fileRef = AA8B6C7D04AFD87300D02EE9 /* pcre.c */; };
 		AA40D42609A08D650068C0D5 /* study.c in Sources */ = {isa = PBXBuildFile; fileRef = AA8B6C7F04AFD87300D02EE9 /* study.c */; };
 		AA40D42709A08D650068C0D5 /* RageUtil_FileDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF580A704B3E2DC00D02EE9 /* RageUtil_FileDB.cpp */; };
-		AA40D42809A08D650068C0D5 /* LoadingWindow_Cocoa.m in Sources */ = {isa = PBXBuildFile; fileRef = AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.m */; };
+		AA40D42809A08D650068C0D5 /* LoadingWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.mm */; };
 		AA40D42909A08D650068C0D5 /* ActorUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA983CA04B9060A00D02EE9 /* ActorUtil.cpp */; };
 		AA40D42A09A08D650068C0D5 /* ArchHooks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3F283B04BE6DDC00D02EE9 /* ArchHooks.cpp */; };
 		AA40D42B09A08D650068C0D5 /* InputHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B36B04C38B4600D02EE9 /* InputHandler.cpp */; };
@@ -1811,7 +1811,6 @@
 		AAAB2CE3072BD2FA00CD9FC9 /* RageSoundMixBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAB2CE1072BD2FA00CD9FC9 /* RageSoundMixBuffer.cpp */; };
 		AAAB2CE4072BD2FA00CD9FC9 /* RageSoundMixBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAB2CE2072BD2FA00CD9FC9 /* RageSoundMixBuffer.h */; };
 		AAABB2DB0979DB5B006C9F25 /* SMMainThread.h in Headers */ = {isa = PBXBuildFile; fileRef = AAABB2D90979DB5B006C9F25 /* SMMainThread.h */; };
-		AAABB2DC0979DB5B006C9F25 /* SMMainThread.m in Sources */ = {isa = PBXBuildFile; fileRef = AAABB2DA0979DB5B006C9F25 /* SMMainThread.m */; };
 		AAAFE8200835E7FF00FC43E0 /* WheelBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAFE81C0835E7FF00FC43E0 /* WheelBase.cpp */; };
 		AAAFE8210835E7FF00FC43E0 /* WheelBase.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAFE81D0835E7FF00FC43E0 /* WheelBase.h */; };
 		AAAFE8220835E7FF00FC43E0 /* WheelItemBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAFE81E0835E7FF00FC43E0 /* WheelItemBase.cpp */; };
@@ -2048,6 +2047,7 @@
 		AAEDFD490A036C8B00590617 /* ArchHooks_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B38004C3F48700D02EE9 /* ArchHooks_darwin.cpp */; };
 		AAEDFD690A03762B00590617 /* Crash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEDFD680A03762B00590617 /* Crash.cpp */; };
 		AAEDFD6A0A03762B00590617 /* Crash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEDFD680A03762B00590617 /* Crash.cpp */; };
+		AAF1E91C0D9281C80036AD73 /* SMMainThread.m in Sources */ = {isa = PBXBuildFile; fileRef = AAABB2DA0979DB5B006C9F25 /* SMMainThread.m */; };
 		AAF3442B08F1C36A0006EDB7 /* DynamicActorScroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */; };
 		AAF3442C08F1C36A0006EDB7 /* DynamicActorScroller.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */; };
 		AAF34ADE0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */; };
@@ -3382,7 +3382,7 @@
 		AAED6F2B0601C528002D2DEE /* BacktraceNames.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = BacktraceNames.h; sourceTree = "<group>"; };
 		AAEDFD680A03762B00590617 /* Crash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Crash.cpp; sourceTree = "<group>"; };
 		AAEF3D0C04B533CC00D02EE9 /* LoadingWindow_Cocoa.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LoadingWindow_Cocoa.h; sourceTree = "<group>"; };
-		AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; path = LoadingWindow_Cocoa.m; sourceTree = "<group>"; };
+		AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = LoadingWindow_Cocoa.mm; sourceTree = "<group>"; };
 		AAEF3D1004B53E2900D02EE9 /* LoadingWindow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LoadingWindow.h; sourceTree = "<group>"; };
 		AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LowLevelWindow_Cocoa.h; sourceTree = "<group>"; };
 		AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LowLevelWindow_Cocoa.mm; sourceTree = "<group>"; };
@@ -3970,7 +3970,7 @@
 				AA909E260B45B6AB002852D3 /* LoadingWindow.cpp */,
 				AAEF3D1004B53E2900D02EE9 /* LoadingWindow.h */,
 				AAEF3D0C04B533CC00D02EE9 /* LoadingWindow_Cocoa.h */,
-				AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.m */,
+				AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.mm */,
 				AA339A7D0BF0FA6300E1475F /* LoadingWindow_Null.h */,
 			);
 			path = LoadingWindow;
@@ -6803,7 +6803,7 @@
 				AA29CE050558741A00961A51 /* pcre.c in Sources */,
 				AA29CE060558741A00961A51 /* study.c in Sources */,
 				AA29CE070558741A00961A51 /* RageUtil_FileDB.cpp in Sources */,
-				AA29CE080558741A00961A51 /* LoadingWindow_Cocoa.m in Sources */,
+				AA29CE080558741A00961A51 /* LoadingWindow_Cocoa.mm in Sources */,
 				AA29CE090558741A00961A51 /* ActorUtil.cpp in Sources */,
 				AA29CE0B0558741A00961A51 /* ArchHooks.cpp in Sources */,
 				AA29CE0C0558741A00961A51 /* InputHandler.cpp in Sources */,
@@ -6989,7 +6989,6 @@
 				AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */,
 				AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */,
 				AA32F97F096A255C00F45B24 /* LowLevelWindow_Cocoa.mm in Sources */,
-				AAABB2DC0979DB5B006C9F25 /* SMMainThread.m in Sources */,
 				AABBFCD309838C3A00F077E2 /* SMMain.mm in Sources */,
 				AA44705509846B0800983E82 /* HIDDevice.cpp in Sources */,
 				AA44708F0984720900983E82 /* JoystickDevice.cpp in Sources */,
@@ -7059,6 +7058,7 @@
 				AAB3BB590C718F2D001BF487 /* RageUtil_CachedObject.cpp in Sources */,
 				AAA7D4C90C7E872600FB8F78 /* ScreenOptionsToggleSongs.cpp in Sources */,
 				AA4FE4420D869E330051D523 /* DifficultyDisplay.cpp in Sources */,
+				AAF1E91C0D9281C80036AD73 /* SMMainThread.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7219,7 +7219,7 @@
 				AA40D42509A08D650068C0D5 /* pcre.c in Sources */,
 				AA40D42609A08D650068C0D5 /* study.c in Sources */,
 				AA40D42709A08D650068C0D5 /* RageUtil_FileDB.cpp in Sources */,
-				AA40D42809A08D650068C0D5 /* LoadingWindow_Cocoa.m in Sources */,
+				AA40D42809A08D650068C0D5 /* LoadingWindow_Cocoa.mm in Sources */,
 				AA40D42909A08D650068C0D5 /* ActorUtil.cpp in Sources */,
 				AA40D42A09A08D650068C0D5 /* ArchHooks.cpp in Sources */,
 				AA40D42B09A08D650068C0D5 /* InputHandler.cpp in Sources */,
