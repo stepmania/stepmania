@@ -7,8 +7,8 @@
 @interface LoadingWindowHelper : NSObject
 {
 	@public
-	NSWindow *m_window;
-	NSTextView *m_text;
+	NSWindow *m_Window;
+	NSTextView *m_Text;
 	NSAutoreleasePool *m_Pool;
 }
 - (void) setupWindow:(NSImage *)image;
@@ -25,20 +25,20 @@
 	NSRect textRect;
 	// Just give it a size until it is created.
 	textRect = NSMakeRect( 0, 0, size.width, size.height );
-	m_text = [[NSTextView alloc] initWithFrame:textRect];
-	[m_text setFont:font];
-	height = [[m_text layoutManager] defaultLineHeightForFont:font]*3 + 4;
+	m_Text = [[NSTextView alloc] initWithFrame:textRect];
+	[m_Text setFont:font];
+	height = [[m_Text layoutManager] defaultLineHeightForFont:font]*3 + 4;
 	textRect = NSMakeRect( 0, 0, size.width, height );
 	
-	[m_text setFrame:textRect];
-	[m_text setEditable:NO];
-	[m_text setSelectable:NO];
-	[m_text setDrawsBackground:YES];
-	[m_text setBackgroundColor:[NSColor lightGrayColor]];
-	[m_text setAlignment:NSCenterTextAlignment];
-	[m_text setHorizontallyResizable:NO];
-	[m_text setVerticallyResizable:NO];
-	[m_text setString:@"Initializing Hardware..."];
+	[m_Text setFrame:textRect];
+	[m_Text setEditable:NO];
+	[m_Text setSelectable:NO];
+	[m_Text setDrawsBackground:YES];
+	[m_Text setBackgroundColor:[NSColor lightGrayColor]];
+	[m_Text setAlignment:NSCenterTextAlignment];
+	[m_Text setHorizontallyResizable:NO];
+	[m_Text setVerticallyResizable:NO];
+	[m_Text setString:@"Initializing Hardware..."];
 	
 	viewRect = NSMakeRect( 0, height, size.width, size.height );
 	NSImageView *iView = [[NSImageView alloc] initWithFrame:viewRect];
@@ -46,33 +46,33 @@
 	[iView setImageFrameStyle:NSImageFrameNone];
 	
 	windowRect = NSMakeRect( 0, 0, size.width, size.height + height );
-	m_window = [[NSWindow alloc] initWithContentRect:windowRect
+	m_Window = [[NSWindow alloc] initWithContentRect:windowRect
 					       styleMask:NSTitledWindowMask
 						 backing:NSBackingStoreBuffered
 						   defer:YES];
 	
-	NSView *view = [m_window contentView];
+	NSView *view = [m_Window contentView];
 	
 	// Set some properties.
-	[m_window setOneShot:YES];
-	[m_window setReleasedWhenClosed:YES];
-	[m_window setExcludedFromWindowsMenu:YES];
-	[m_window useOptimizedDrawing:YES];
-	[m_window setTitle:@PRODUCT_FAMILY];
-	[m_window center];
+	[m_Window setOneShot:YES];
+	[m_Window setReleasedWhenClosed:YES];
+	[m_Window setExcludedFromWindowsMenu:YES];
+	[m_Window useOptimizedDrawing:YES];
+	[m_Window setTitle:@PRODUCT_FAMILY];
+	[m_Window center];
 
 	// Set subviews.
-	[view addSubview:m_text];
+	[view addSubview:m_Text];
 	[view addSubview:iView];
-	[m_text release];
+	[m_Text release];
 	[iView release];
 
 	// Display the window.
-	[m_window makeKeyAndOrderFront:nil];
+	[m_Window makeKeyAndOrderFront:nil];
 }	
 @end
 
-static LoadingWindowHelper *g_helper = nil;
+static LoadingWindowHelper *g_Helper = nil;
 
 LoadingWindow_Cocoa::LoadingWindow_Cocoa()
 {
@@ -98,29 +98,29 @@ LoadingWindow_Cocoa::LoadingWindow_Cocoa()
 		return;
 	}
 	
-	g_helper = [[LoadingWindowHelper alloc] init];
-	g_helper->m_Pool = pool;
-	[g_helper performSelectorOnMainThread:@selector(setupWindow:) withObject:image waitUntilDone:YES];
+	g_Helper = [[LoadingWindowHelper alloc] init];
+	g_Helper->m_Pool = pool;
+	[g_Helper performSelectorOnMainThread:@selector(setupWindow:) withObject:image waitUntilDone:YES];
 	[image release];
 }
 
 LoadingWindow_Cocoa::~LoadingWindow_Cocoa()
 {
-	if( !g_helper )
+	if( !g_Helper )
 		return;
-	NSAutoreleasePool *pool = g_helper->m_Pool;
-	[g_helper->m_window performSelectorOnMainThread:@selector(close) withObject:nil waitUntilDone:YES];
-	[g_helper release];
-	g_helper = nil;
+	NSAutoreleasePool *pool = g_Helper->m_Pool;
+	[g_Helper->m_Window performSelectorOnMainThread:@selector(close) withObject:nil waitUntilDone:YES];
+	[g_Helper release];
+	g_Helper = nil;
 	[pool release];
 }
 
 void LoadingWindow_Cocoa::SetText( RString str )
 {
-	if( !g_helper )
+	if( !g_Helper )
 		return;
 	NSString *s = [[NSString alloc] initWithUTF8String:str];
-	[g_helper->m_text performSelectorOnMainThread:@selector(setString:) withObject:(s ? s : @"") waitUntilDone:NO];
+	[g_Helper->m_Text performSelectorOnMainThread:@selector(setString:) withObject:(s ? s : @"") waitUntilDone:NO];
 	[s release];
 }
 
