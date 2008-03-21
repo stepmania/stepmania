@@ -912,7 +912,6 @@
 		AA40D37009A08D650068C0D5 /* XmlFileUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07328D0954381800F396C5 /* XmlFileUtil.h */; };
 		AA40D37109A08D650068C0D5 /* LocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = AADD1CC3095C233F0088C9DF /* LocalizedString.h */; };
 		AA40D37209A08D650068C0D5 /* LowLevelWindow_Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */; };
-		AA40D37409A08D650068C0D5 /* SMMainThread.h in Headers */ = {isa = PBXBuildFile; fileRef = AAABB2D90979DB5B006C9F25 /* SMMainThread.h */; };
 		AA40D37509A08D650068C0D5 /* HIDDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA44705209846B0800983E82 /* HIDDevice.h */; };
 		AA40D37609A08D650068C0D5 /* JoystickDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA44708C0984720900983E82 /* JoystickDevice.h */; };
 		AA40D37709A08D650068C0D5 /* KeyboardDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4470BA098476F600983E82 /* KeyboardDevice.h */; };
@@ -1256,7 +1255,6 @@
 		AA40D50709A08D650068C0D5 /* XmlFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC6889905D7F3C800964E6D /* XmlFile.cpp */; };
 		AA40D50809A08D650068C0D5 /* LocalizedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */; };
 		AA40D50909A08D650068C0D5 /* LowLevelWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */; };
-		AA40D50C09A08D650068C0D5 /* SMMainThread.m in Sources */ = {isa = PBXBuildFile; fileRef = AAABB2DA0979DB5B006C9F25 /* SMMainThread.m */; };
 		AA40D50D09A08D650068C0D5 /* SMMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = AABBFCD209838C3A00F077E2 /* SMMain.mm */; };
 		AA40D50E09A08D650068C0D5 /* HIDDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA44705309846B0800983E82 /* HIDDevice.cpp */; };
 		AA40D50F09A08D650068C0D5 /* JoystickDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA44708D0984720900983E82 /* JoystickDevice.cpp */; };
@@ -1810,7 +1808,6 @@
 		AAAB2CE0072BD2EC00CD9FC9 /* AutoKeysounds.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAB2CDE072BD2EC00CD9FC9 /* AutoKeysounds.h */; };
 		AAAB2CE3072BD2FA00CD9FC9 /* RageSoundMixBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAB2CE1072BD2FA00CD9FC9 /* RageSoundMixBuffer.cpp */; };
 		AAAB2CE4072BD2FA00CD9FC9 /* RageSoundMixBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAB2CE2072BD2FA00CD9FC9 /* RageSoundMixBuffer.h */; };
-		AAABB2DB0979DB5B006C9F25 /* SMMainThread.h in Headers */ = {isa = PBXBuildFile; fileRef = AAABB2D90979DB5B006C9F25 /* SMMainThread.h */; };
 		AAAFE8200835E7FF00FC43E0 /* WheelBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAFE81C0835E7FF00FC43E0 /* WheelBase.cpp */; };
 		AAAFE8210835E7FF00FC43E0 /* WheelBase.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAFE81D0835E7FF00FC43E0 /* WheelBase.h */; };
 		AAAFE8220835E7FF00FC43E0 /* WheelItemBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAFE81E0835E7FF00FC43E0 /* WheelItemBase.cpp */; };
@@ -2047,7 +2044,6 @@
 		AAEDFD490A036C8B00590617 /* ArchHooks_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B38004C3F48700D02EE9 /* ArchHooks_darwin.cpp */; };
 		AAEDFD690A03762B00590617 /* Crash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEDFD680A03762B00590617 /* Crash.cpp */; };
 		AAEDFD6A0A03762B00590617 /* Crash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEDFD680A03762B00590617 /* Crash.cpp */; };
-		AAF1E91C0D9281C80036AD73 /* SMMainThread.m in Sources */ = {isa = PBXBuildFile; fileRef = AAABB2DA0979DB5B006C9F25 /* SMMainThread.m */; };
 		AAF3442B08F1C36A0006EDB7 /* DynamicActorScroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */; };
 		AAF3442C08F1C36A0006EDB7 /* DynamicActorScroller.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */; };
 		AAF34ADE0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */; };
@@ -3131,8 +3127,6 @@
 		AAAB2CDE072BD2EC00CD9FC9 /* AutoKeysounds.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = AutoKeysounds.h; path = ../src/AutoKeysounds.h; sourceTree = "<group>"; };
 		AAAB2CE1072BD2FA00CD9FC9 /* RageSoundMixBuffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundMixBuffer.cpp; path = ../src/RageSoundMixBuffer.cpp; sourceTree = "<group>"; };
 		AAAB2CE2072BD2FA00CD9FC9 /* RageSoundMixBuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSoundMixBuffer.h; path = ../src/RageSoundMixBuffer.h; sourceTree = "<group>"; };
-		AAABB2D90979DB5B006C9F25 /* SMMainThread.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = SMMainThread.h; sourceTree = "<group>"; };
-		AAABB2DA0979DB5B006C9F25 /* SMMainThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMMainThread.m; sourceTree = "<group>"; };
 		AAADA4AE04E5F3DE00D02EE9 /* ProductInfo.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = ProductInfo.h; sourceTree = "<group>"; };
 		AAAE28F4052254A900D02EE9 /* RageSoundReader_Resample_Good.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundReader_Resample_Good.cpp; path = ../src/RageSoundReader_Resample_Good.cpp; sourceTree = "<group>"; };
 		AAAE28F5052254A900D02EE9 /* RageSoundReader_Resample_Good.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSoundReader_Resample_Good.h; path = ../src/RageSoundReader_Resample_Good.h; sourceTree = "<group>"; };
@@ -5293,8 +5287,6 @@
 				AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */,
 				AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */,
 				AABBFCD209838C3A00F077E2 /* SMMain.mm */,
-				AAABB2D90979DB5B006C9F25 /* SMMainThread.h */,
-				AAABB2DA0979DB5B006C9F25 /* SMMainThread.m */,
 				AAD64AA10603FE7300EF8CDE /* StepMania.pch */,
 				AA147F190A0F78D8006EADF6 /* VectorHelper.cpp */,
 				AA147F180A0F78D8006EADF6 /* VectorHelper.h */,
@@ -5733,7 +5725,6 @@
 				AA0732910954381800F396C5 /* XmlFileUtil.h in Headers */,
 				AADD1CC6095C233F0088C9DF /* LocalizedString.h in Headers */,
 				AA32F97E096A255500F45B24 /* LowLevelWindow_Cocoa.h in Headers */,
-				AAABB2DB0979DB5B006C9F25 /* SMMainThread.h in Headers */,
 				AA44705409846B0800983E82 /* HIDDevice.h in Headers */,
 				AA44708E0984720900983E82 /* JoystickDevice.h in Headers */,
 				AA4470BC098476F600983E82 /* KeyboardDevice.h in Headers */,
@@ -6156,7 +6147,6 @@
 				AA40D37009A08D650068C0D5 /* XmlFileUtil.h in Headers */,
 				AA40D37109A08D650068C0D5 /* LocalizedString.h in Headers */,
 				AA40D37209A08D650068C0D5 /* LowLevelWindow_Cocoa.h in Headers */,
-				AA40D37409A08D650068C0D5 /* SMMainThread.h in Headers */,
 				AA40D37509A08D650068C0D5 /* HIDDevice.h in Headers */,
 				AA40D37609A08D650068C0D5 /* JoystickDevice.h in Headers */,
 				AA40D37709A08D650068C0D5 /* KeyboardDevice.h in Headers */,
@@ -7058,7 +7048,6 @@
 				AAB3BB590C718F2D001BF487 /* RageUtil_CachedObject.cpp in Sources */,
 				AAA7D4C90C7E872600FB8F78 /* ScreenOptionsToggleSongs.cpp in Sources */,
 				AA4FE4420D869E330051D523 /* DifficultyDisplay.cpp in Sources */,
-				AAF1E91C0D9281C80036AD73 /* SMMainThread.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7402,7 +7391,6 @@
 				AA40D50709A08D650068C0D5 /* XmlFile.cpp in Sources */,
 				AA40D50809A08D650068C0D5 /* LocalizedString.cpp in Sources */,
 				AA40D50909A08D650068C0D5 /* LowLevelWindow_Cocoa.mm in Sources */,
-				AA40D50C09A08D650068C0D5 /* SMMainThread.m in Sources */,
 				AA40D50D09A08D650068C0D5 /* SMMain.mm in Sources */,
 				AA40D50E09A08D650068C0D5 /* HIDDevice.cpp in Sources */,
 				AA40D50F09A08D650068C0D5 /* JoystickDevice.cpp in Sources */,
