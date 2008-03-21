@@ -9,6 +9,7 @@
 	@public
 	NSWindow *m_window;
 	NSTextView *m_text;
+	NSAutoreleasePool *m_Pool;
 }
 - (void) setupWindow:(NSImage *)image;
 @end
@@ -88,8 +89,9 @@ LoadingWindow_Cocoa::LoadingWindow_Cocoa()
 
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSImage *image = nil;
-	NSData *d = [NSData dataWithBytes:data.data() length:data.length()];
+	NSData *d = [[NSData alloc] initWithBytes:data.data() length:data.length()];
 	image = [[NSImage alloc] initWithData:d];
+	[d release];
 	if( !image )
 	{
 		[pool release];
@@ -97,16 +99,16 @@ LoadingWindow_Cocoa::LoadingWindow_Cocoa()
 	}
 	
 	g_helper = [[LoadingWindowHelper alloc] init];
+	g_helper->m_Pool = pool;
 	[g_helper performSelectorOnMainThread:@selector(setupWindow:) withObject:image waitUntilDone:YES];
-	
-	[pool release];
+	[image release];
 }
 
 LoadingWindow_Cocoa::~LoadingWindow_Cocoa()
 {
 	if( !g_helper )
 		return;
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSAutoreleasePool *pool = g_helper->m_Pool;
 	[g_helper->m_window performSelectorOnMainThread:@selector(close) withObject:nil waitUntilDone:YES];
 	[g_helper release];
 	g_helper = nil;
@@ -117,10 +119,9 @@ void LoadingWindow_Cocoa::SetText( RString str )
 {
 	if( !g_helper )
 		return;
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSString *s = [NSString stringWithUTF8String:str];
+	NSString *s = [[NSString alloc] initWithUTF8String:str];
 	[g_helper->m_text performSelectorOnMainThread:@selector(setString:) withObject:(s ? s : @"") waitUntilDone:NO];
-	[pool release];
+	[s release];
 }
 
 /*
