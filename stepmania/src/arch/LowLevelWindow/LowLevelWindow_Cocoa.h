@@ -10,7 +10,7 @@ typedef const struct __CFDictionary *CFDictionaryRef;
 class LowLevelWindow_Cocoa : public LowLevelWindow
 {
 	VideoModeParams m_CurrentParams;
-	id m_Window;
+	id m_WindowDelegate;
 	id m_Context;
 	id m_BGContext;
 	CFDictionaryRef m_CurrentDisplayMode;
@@ -48,7 +48,7 @@ private:
 #endif
 
 /*
- * (c) 2005-2006 Steve Checkoway
+ * (c) 2005-2006, 2008 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -5,7 +5,6 @@
 #import "RageThreads.h"
 #import "RageDisplay_OGL_Helpers.h"
 #import "arch/ArchHooks/ArchHooks.h"
-#import "archutils/Darwin/SMMainThread.h"
 
 #import <Cocoa/Cocoa.h>
 #import <OpenGl/OpenGl.h>
@@ -41,15 +40,25 @@ public:
 
 // Window delegate class
 @interface SMWindowDelegate : NSObject
+{
+	@public
+	NSWindow *m_Window;
+}
 - (void) windowDidBecomeKey:(NSNotification *)aNotification;
 - (void) windowDidResignKey:(NSNotification *)aNotification;
 - (void) windowWillClose:(NSNotification *)aNotification;
 - (void) windowDidResize:(NSNotification *)aNotification;
 // XXX maybe use whichever screen contains the window? Hard for me to test though.
 //- (void) windowDidChangeScreen:(NSNotification *)aNotification;
+
+// Helper methods to perform actions on the main thread.
+- (void) setupWindow;
+- (void) closeWindow;
+- (void) setParams:(NSValue *)params;
 @end
 
 @implementation SMWindowDelegate
+
 - (void) windowDidBecomeKey:(NSNotification *)aNotification
 {
 	HOOKS->SetHasFocus( true );
@@ -74,6 +83,38 @@ public:
 	g_bResized = true;
 	g_iWidth = int( size.width );
 	g_iHeight = int( size.height );
+}
+
+- (void) setupWindow
+{
+	NSRect rect = NSMakeRect( 0, 0, 0, 0 );
+	m_Window = [[NSWindow alloc] initWithContentRect:rect
+					       styleMask:g_iStyleMask
+						 backing:NSBackingStoreBuffered
+						   defer:YES];
+	
+	[m_Window setExcludedFromWindowsMenu:YES];
+	[m_Window useOptimizedDrawing:YES];
+	[m_Window setReleasedWhenClosed:NO];
+	[m_Window setDelegate:self];
+}
+
+- (void) closeWindow
+{
+	[m_Window setDelegate:nil];
+	[m_Window close];
+	[m_Window release];	
+}
+
+- (void) setParams:(NSValue *)params
+{
+	const VideoModeParams &p = *(const VideoModeParams *)[params pointerValue];
+	NSRect contentRect = { { 0, 0 }, { p.width, p.height } };	
+
+	[m_Window setContentSize:contentRect.size];
+	[m_Window setTitle:[NSString stringWithUTF8String:p.sWindowTitle.c_str()]];		
+	[m_Window center];
+	[m_Window makeKeyAndOrderFront:nil];
 }
 @end
 
@@ -250,22 +291,9 @@ void RenderTarget_Cocoa::FinishRenderingTo()
 LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(NULL)
 {
 	POOL;
-	NSRect rect = { {0, 0}, {0, 0} };
-	SMMainThread *mt = [[SMMainThread alloc] init];
+	m_WindowDelegate = [[SMWindowDelegate alloc] init];
+	[m_WindowDelegate performSelectorOnMainThread:@selector(setupWindow) withObject:nil waitUntilDone:YES];
 	
-	m_Window = [[NSWindow alloc] initWithContentRect:rect
-					       styleMask:g_iStyleMask
-						 backing:NSBackingStoreBuffered
-						   defer:YES];
-	
-	ADD_ACTIONb( mt, m_Window, setExcludedFromWindowsMenu:, YES );
-	ADD_ACTIONb( mt, m_Window, useOptimizedDrawing:, YES );
-	ADD_ACTIONb( mt, m_Window, setReleasedWhenClosed:, NO );
-	// setDelegate: does not retain the delegate; however, we don't (auto)release it.
-	ADD_ACTION1( mt, m_Window, setDelegate:, [[SMWindowDelegate alloc] init] );
-	
-	[mt performOnMainThread];
-	[mt release];
 	m_CurrentParams.windowed = true; // We are essentially windowed to begin with.
 	SetActualParamsFromMode( CGDisplayCurrentMode(kCGDirectMainDisplay) );
 	HOOKS->SetHasFocus( [NSApp isActive] );
@@ -275,23 +303,13 @@ LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
 {
 	POOL;
 	ShutDownFullScreen();
-	
-	SMMainThread *mt = [[SMMainThread alloc] init];
-	
-	// We need to release the window's delegate now.
-	id delegate = [m_Window delegate];
-	
-	ADD_ACTION1( mt, m_Window, setDelegate:, nil );
-	ADD_ACTION1( mt, m_Window, orderOut:, nil );
-	ADD_ACTION0( mt, m_Window, release );
-	
+		
 	[m_Context clearDrawable];
 	[m_Context release];
 	[m_BGContext clearDrawable];
 	[m_BGContext release];
-	[mt performOnMainThread];
-	[delegate release];
-	[mt release];
+	[m_WindowDelegate performSelectorOnMainThread:@selector(closeWindow) withObject:nil waitUntilDone:YES];
+	[m_WindowDelegate release];
 }
 
 void *LowLevelWindow_Cocoa::GetProcAddress( RString s )
@@ -330,8 +348,6 @@ RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 	POOL;
 	newDeviceOut = false;
 	
-	NSRect contentRect = { { 0, 0 }, { p.width, p.height } };	
-	
 	ASSERT( p.bpp == 16 || p.bpp == 32 );
 	
 	// If we don't have focus, we cannot be full screen.
@@ -359,17 +375,9 @@ RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 				m_BGContext = nil;
 			}
 		}
-		SMMainThread *mt = [[SMMainThread alloc] init];
 		
-		// Change the window and the title
-		ADD_ACTIONn( mt, m_Window, setContentSize:, 1, &contentRect.size );
-		ADD_ACTION1( mt, m_Window, setTitle:, [NSString stringWithUTF8String:p.sWindowTitle.c_str()] );		
-		ADD_ACTION0( mt, m_Window, center );
-		ADD_ACTION1( mt, m_Window, makeKeyAndOrderFront:, nil );
-		
-		[mt performOnMainThread];
-		[mt release];
-		[m_Context setView:[m_Window contentView]];
+		[m_WindowDelegate performSelectorOnMainThread:@selector(setParams:) withObject:[NSValue valueWithPointer:&p] waitUntilDone:YES];
+		[m_Context setView:[((SMWindowDelegate *)m_WindowDelegate)->m_Window contentView]];
 		[m_Context update];
 		[m_Context makeCurrentContext];
 		m_CurrentParams.windowed = true;
@@ -510,7 +518,7 @@ void LowLevelWindow_Cocoa::SetActualParamsFromMode( CFDictionaryRef mode )
 	}
 	else
 	{
-		NSSize size = [[m_Window contentView] frame].size;
+		NSSize size = [[((SMWindowDelegate *)m_WindowDelegate)->m_Window contentView] frame].size;
 		
 		m_CurrentParams.width = int(size.width);
 		m_CurrentParams.height = int(size.height);
@@ -602,14 +610,14 @@ RenderTarget *LowLevelWindow_Cocoa::CreateRenderTarget()
 void LowLevelWindow_Cocoa::BeginConcurrentRendering()
 {
 	if( m_CurrentParams.windowed )
-		[m_BGContext setView:[m_Window contentView]];
+		[m_BGContext setView:[((SMWindowDelegate *)m_WindowDelegate)->m_Window contentView]];
 	else
 		[m_BGContext setFullScreen];
 	[m_BGContext makeCurrentContext];
 }
 
 /*
- * (c) 2005-2006 Steve Checkoway
+ * (c) 2005-2006, 2008 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
