@@ -1766,6 +1766,13 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 					score = TNS_W2; /* sentinel */
 				break;
 
+			case TapNote::hold_head:
+				if( !REQUIRE_STEP_ON_HOLD_HEADS && fNoteOffset > 0.f )
+				{
+					score = TNS_W1;
+					break;
+				}
+				// Fall through to default.
 			default:
 				if( (pTN->type == TapNote::lift) == bRelease )
 				{
@@ -2343,6 +2350,21 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		{
 		case TapNote::hold_head:
 			tn.HoldResult.fLife = INITIAL_HOLD_LIFE;
+			if( !REQUIRE_STEP_ON_HOLD_HEADS )
+			{
+				PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
+				if( PREFSMAN->m_fPadStickSeconds > 0.f )
+				{
+					float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
+					if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
+						Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
+				}
+				else if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
+				{
+					Step( iTrack, -1, now, true, false );
+				}
+			}
 			break;
 		case TapNote::mine:
 			// Hold the panel while crossing a mine will cause the mine to explode
