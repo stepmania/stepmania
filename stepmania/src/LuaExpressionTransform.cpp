@@ -40,7 +40,7 @@ const Actor::TweenState &LuaExpressionTransform::GetPosition( float fPositionOff
 	return m_mapPositionToTweenStateCache[key] = a.DestTweenState();
 }
 
-void LuaExpressionTransform::PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
+void LuaExpressionTransform::TransformItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
 {
 	float fInterval = 1.0f / m_iNumSubdivisions;
 	float fFloor = QuantizeDown( fPositionOffsetFromCenter, fInterval );

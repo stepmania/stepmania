@@ -40,7 +40,7 @@ void StreamDisplay::Load( const RString &_sMetricsGroup )
 			Sprite *pSpr = new Sprite;
 			pSpr->Load( THEME->GetPathG(sMetricsGroup,StreamTypeToString(st)) );
 			m_vpSprPill[st].push_back( pSpr );
-			m_transformPill.PositionItem( pSpr, -1, i, iNumPills );
+			m_transformPill.TransformItem( pSpr, -1, i, iNumPills );
 
 			float f = 1 / fTextureCoordScaleX;
 			pSpr->SetCustomTextureRect( RectF(f*i,0,f*(i+1),1) );

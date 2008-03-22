@@ -16,7 +16,7 @@ public:
 	void SetFromReference( const LuaReference &ref );
 	void SetNumSubdivisions( int iNumSubdivisions ) { ASSERT( iNumSubdivisions > 0 ); m_iNumSubdivisions = iNumSubdivisions; }
 
-	void PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
+	void TransformItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
 	const Actor::TweenState &GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const;
 	void ClearCache() { m_mapPositionToTweenStateCache.clear(); }
 

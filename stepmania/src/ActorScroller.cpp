@@ -234,10 +234,10 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 		float fPositionFullyOffScreenTop = -(fNumItemsToDraw)/2.f;
 		float fPositionFullyOffScreenBottom = (fNumItemsToDraw)/2.f;
 
-		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenTop, -1, m_iNumItems );
+		m_exprTransformFunction.TransformItem( &m_quadMask, fPositionFullyOffScreenTop, -1, m_iNumItems );
 		if( bDrawPrimitives )	m_quadMask.Draw();
 
-		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenBottom, m_iNumItems, m_iNumItems );
+		m_exprTransformFunction.TransformItem( &m_quadMask, fPositionFullyOffScreenBottom, m_iNumItems, m_iNumItems );
 		if( bDrawPrimitives )	m_quadMask.Draw();
 	}
 
@@ -281,7 +281,7 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 		if( !m_bFunctionDependsOnItemIndex )
 			iItem = 0;
 
-		m_exprTransformFunction.PositionItem( m_SubActors[iIndex], fPosition, iItem, m_iNumItems );
+		m_exprTransformFunction.TransformItem( m_SubActors[iIndex], fPosition, iItem, m_iNumItems );
 		if( bDrawPrimitives )
 		{
 			if( bDelayedDraw )
