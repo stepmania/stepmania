@@ -133,7 +133,7 @@ protected:	// derived classes need access to these
 	ThemeMetric<apActorCommands>	ROW_INIT_COMMAND;
 	ThemeMetric<apActorCommands>	ROW_ON_COMMAND;
 	ThemeMetric<apActorCommands>	ROW_OFF_COMMAND;
-	LuaExpressionTransform		m_exprRowPositionTransformFunction;	// params: self,positionIndex,itemIndex,numItems
+	LuaExpressionTransform		m_exprRowPositionTransformFunction;	// params: self,offsetFromCenter,itemIndex,numItems
 	ThemeMetric<bool>		SHOW_SCROLL_BAR;
 	ThemeMetric<float>		SCROLL_BAR_HEIGHT;
 	ThemeMetric<float>		SCROLL_BAR_TIME;

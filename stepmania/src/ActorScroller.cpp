@@ -57,7 +57,7 @@ void ActorScroller::SetTransformFromReference( const LuaReference &ref )
 	m_exprTransformFunction.SetFromReference( ref );
 
 	// Probe to find which of the parameters are used.
-#define GP(a,b)	m_exprTransformFunction.GetPosition( a, b, 2 )
+#define GP(a,b)	m_exprTransformFunction.GetTransformCached( a, b, 2 )
 	m_bFunctionDependsOnPositionOffset = (GP(0,0) != GP(1,0)) && (GP(0,1) != GP(1,1));
 	m_bFunctionDependsOnItemIndex = (GP(0,0) != GP(0,1)) && (GP(1,0) != GP(1,1));
 	m_exprTransformFunction.ClearCache();
@@ -234,10 +234,10 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 		float fPositionFullyOffScreenTop = -(fNumItemsToDraw)/2.f;
 		float fPositionFullyOffScreenBottom = (fNumItemsToDraw)/2.f;
 
-		m_exprTransformFunction.TransformItem( &m_quadMask, fPositionFullyOffScreenTop, -1, m_iNumItems );
+		m_exprTransformFunction.TransformItemCached( m_quadMask, fPositionFullyOffScreenTop, -1, m_iNumItems );
 		if( bDrawPrimitives )	m_quadMask.Draw();
 
-		m_exprTransformFunction.TransformItem( &m_quadMask, fPositionFullyOffScreenBottom, m_iNumItems, m_iNumItems );
+		m_exprTransformFunction.TransformItemCached( m_quadMask, fPositionFullyOffScreenBottom, m_iNumItems, m_iNumItems );
 		if( bDrawPrimitives )	m_quadMask.Draw();
 	}
 
@@ -281,7 +281,7 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 		if( !m_bFunctionDependsOnItemIndex )
 			iItem = 0;
 
-		m_exprTransformFunction.TransformItem( m_SubActors[iIndex], fPosition, iItem, m_iNumItems );
+		m_exprTransformFunction.TransformItemCached( *m_SubActors[iIndex], fPosition, iItem, m_iNumItems );
 		if( bDrawPrimitives )
 		{
 			if( bDelayedDraw )

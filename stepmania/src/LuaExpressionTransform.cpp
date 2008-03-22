@@ -17,16 +17,8 @@ void LuaExpressionTransform::SetFromReference( const LuaReference &ref )
 	m_exprTransformFunction = ref;
 }
 
-const Actor::TweenState &LuaExpressionTransform::GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const
+void LuaExpressionTransform::TransformItemDirect( Actor &a, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const
 {
-	PositionOffsetAndItemIndex key = { fPositionOffsetFromCenter, iItemIndex };
-
-	map<PositionOffsetAndItemIndex,Actor::TweenState>::const_iterator iter = m_mapPositionToTweenStateCache.find( key );
-	if( iter != m_mapPositionToTweenStateCache.end() )
-		return iter->second;
-
-	Actor a;
-
 	Lua *L = LUA->Get();
 	m_exprTransformFunction.PushSelf( L );
 	ASSERT( !lua_isnil(L, -1) );
@@ -36,11 +28,22 @@ const Actor::TweenState &LuaExpressionTransform::GetPosition( float fPositionOff
 	LuaHelpers::Push( L, iNumItems );
 	lua_call( L, 4, 0 ); // 4 args, 0 results
 	LUA->Release(L);
+}
 
+const Actor::TweenState &LuaExpressionTransform::GetTransformCached( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const
+{
+	PositionOffsetAndItemIndex key = { fPositionOffsetFromCenter, iItemIndex };
+
+	map<PositionOffsetAndItemIndex,Actor::TweenState>::const_iterator iter = m_mapPositionToTweenStateCache.find( key );
+	if( iter != m_mapPositionToTweenStateCache.end() )
+		return iter->second;
+
+	Actor a;
+	TransformItemDirect( a, fPositionOffsetFromCenter, iItemIndex, iNumItems );
 	return m_mapPositionToTweenStateCache[key] = a.DestTweenState();
 }
 
-void LuaExpressionTransform::TransformItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
+void LuaExpressionTransform::TransformItemCached( Actor &a, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
 {
 	float fInterval = 1.0f / m_iNumSubdivisions;
 	float fFloor = QuantizeDown( fPositionOffsetFromCenter, fInterval );
@@ -48,15 +51,15 @@ void LuaExpressionTransform::TransformItem( Actor *pActor, float fPositionOffset
 
 	if( fFloor == fCeil )
 	{
-		pActor->DestTweenState() = GetPosition( fCeil, iItemIndex, iNumItems );
+		a.DestTweenState() = GetTransformCached( fCeil, iItemIndex, iNumItems );
 	}
 	else
 	{
-		const Actor::TweenState &tsFloor = GetPosition( fFloor, iItemIndex, iNumItems );
-		const Actor::TweenState &tsCeil = GetPosition( fCeil, iItemIndex, iNumItems );
+		const Actor::TweenState &tsFloor = GetTransformCached( fFloor, iItemIndex, iNumItems );
+		const Actor::TweenState &tsCeil = GetTransformCached( fCeil, iItemIndex, iNumItems );
 
 		float fPercentTowardCeil = SCALE( fPositionOffsetFromCenter, fFloor, fCeil, 0.0f, 1.0f );
-		Actor::TweenState::MakeWeightedAverage( pActor->DestTweenState(), tsFloor, tsCeil, fPercentTowardCeil );
+		Actor::TweenState::MakeWeightedAverage( a.DestTweenState(), tsFloor, tsCeil, fPercentTowardCeil );
 	}
 }
 

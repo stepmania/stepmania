@@ -1,4 +1,4 @@
-/* LuaExpressionTransform - . */
+/* LuaExpressionTransform - Handle transforming a list of items.  Cache item transforms based on fPositionOffsetFromCenter and iItemIndex for speed. */
 
 #ifndef LuaExpressionTransform_H
 #define LuaExpressionTransform_H
@@ -16,8 +16,9 @@ public:
 	void SetFromReference( const LuaReference &ref );
 	void SetNumSubdivisions( int iNumSubdivisions ) { ASSERT( iNumSubdivisions > 0 ); m_iNumSubdivisions = iNumSubdivisions; }
 
-	void TransformItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
-	const Actor::TweenState &GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const;
+	void TransformItemCached( Actor &a, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
+	void TransformItemDirect( Actor &a, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const;
+	const Actor::TweenState &GetTransformCached( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const;
 	void ClearCache() { m_mapPositionToTweenStateCache.clear(); }
 
 protected:

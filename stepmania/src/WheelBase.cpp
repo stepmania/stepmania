@@ -93,7 +93,7 @@ void WheelBase::SetItemPosition( Actor &item, float fPosOffsetsFromMiddle )
 	int iItemIndex = 0; // dummy
 	int iNumItems = 1; // dummy
 
-	Actor::TweenState ts = m_exprItemTransformFunction.GetPosition( fPosOffsetsFromMiddle, iItemIndex, iNumItems );
+	Actor::TweenState ts = m_exprItemTransformFunction.GetTransformCached( fPosOffsetsFromMiddle, iItemIndex, iNumItems );
 	
 	/* Round to achieve pixel alignment.  Any benefit to moving this to Lua? -Chris */
 	ts.pos.x = roundf( ts.pos.x );

@@ -33,7 +33,7 @@ public:
 private:
 	vector<Sprite*>	m_vpSprPill[NUM_StreamType];
 
-	LuaExpressionTransform		m_transformPill;	// params: self,positionIndex,itemIndex,numItems
+	LuaExpressionTransform		m_transformPill;	// params: self,offsetFromCenter,itemIndex,numItems
 
 	float m_fPercent;	// percent filled
 	float m_fTrailingPercent;	// this approaches m_fPercent, use this value to draw

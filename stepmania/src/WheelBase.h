@@ -105,7 +105,7 @@ protected:
 	ThemeMetric<float>	SWITCH_SECONDS;
 	ThemeMetric<float>	LOCKED_INITIAL_VELOCITY;
 	ThemeMetric<int>	SCROLL_BAR_HEIGHT;
-	LuaExpressionTransform	m_exprItemTransformFunction;	// params: self,positionIndex,itemIndex,numItems
+	LuaExpressionTransform	m_exprItemTransformFunction;
 	ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW;
 	ThemeMetric<RageColor>	WHEEL_ITEM_LOCKED_COLOR;
 };
