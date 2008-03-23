@@ -22,7 +22,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				OptimizeForProcessor="2"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1/include&quot;;baseclasses\"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1/include&quot;;baseclasses\;ffmpeg\include"
 				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG,_XDBG"
 				RuntimeLibrary="1"
 				RuntimeTypeInfo="TRUE"
@@ -251,12 +251,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenExit.h">
-			</File>
-			<File
-				RelativePath="ScreenEz2SelectMusic.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEz2SelectMusic.h">
 			</File>
 			<File
 				RelativePath="ScreenEz2SelectPlayer.cpp">
@@ -1597,12 +1591,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="DifficultyMeter.h">
 			</File>
 			<File
-				RelativePath="DifficultyRating.cpp">
-			</File>
-			<File
-				RelativePath="DifficultyRating.h">
-			</File>
-			<File
 				RelativePath="DualScrollBar.cpp">
 			</File>
 			<File
@@ -1663,12 +1651,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="MenuTimer.h">
 			</File>
 			<File
-				RelativePath="ModeSwitcher.cpp">
-			</File>
-			<File
-				RelativePath="ModeSwitcher.h">
-			</File>
-			<File
 				RelativePath="MusicBannerWheel.cpp">
 			</File>
 			<File
@@ -1679,12 +1661,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="MusicList.h">
-			</File>
-			<File
-				RelativePath=".\MusicSortDisplay.cpp">
-			</File>
-			<File
-				RelativePath=".\MusicSortDisplay.h">
 			</File>
 			<File
 				RelativePath=".\MusicWheel.cpp">
@@ -2386,6 +2362,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="RageUtil_BackgroundLoader.h">
+			</File>
+			<File
+				RelativePath=".\RageUtil_CachedObject.cpp">
+			</File>
+			<File
+				RelativePath=".\RageUtil_CachedObject.h">
 			</File>
 			<File
 				RelativePath="RageUtil_CharConversions.cpp">
