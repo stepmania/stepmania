@@ -19,7 +19,7 @@ XToLocalizedString( Difficulty );
 LuaXType( Difficulty );
 LuaFunction( DifficultyToLocalizedString, DifficultyToLocalizedString( Enum::Check<Difficulty>(L, 1)) );
 
-/* We prefer the above names; recognize a number of others, too.  (They'l
+/* We prefer the above names; recognize a number of others, too.  (They'll
  * get normalized when written to SMs, etc.) */
 /* TODO: Format specific hacks should be moved into the file loader for 
  * that format.  We don't want to carry these hacks forward to file
