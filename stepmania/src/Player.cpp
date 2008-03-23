@@ -2417,7 +2417,11 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	//
 	if( HOLD_CHECKPOINTS )
 	{
-		const int CHECKPOINT_FREQUENCY_ROWS = ROWS_PER_BEAT/2;
+		const float fBeat = NoteRowToBeat( iLastRowCrossed );
+		TimeSignatureSegment tSignature =  GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( fBeat );
+		
+		// Most songs are in 4/4 time.  The frequency for checking tick counts should reflect that.
+		const int CHECKPOINT_FREQUENCY_ROWS = ROWS_PER_BEAT * tSignature.m_iDenominator / (tSignature.m_iNumerator * 4);
 
 		// "the first row after the start of the range that lands on a beat"
 		int iFirstCheckpointInRange = ((m_iFirstUncrossedRow+CHECKPOINT_FREQUENCY_ROWS-1)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;

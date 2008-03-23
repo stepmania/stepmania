@@ -158,6 +158,16 @@ int TimingData::GetBPMSegmentIndexAtBeat( float fBeat )
 	return i;
 }
 
+const TimeSignatureSegment& TimingData::GetTimeSignatureSegmentAtBeat( float fBeat ) const
+{
+	int iIndex = BeatToNoteRow( fBeat );
+	unsigned i;
+	for( i=0; i<m_vTimeSignatureSegments.size()-1; i++ )
+		if( m_vTimeSignatureSegments[i+1].m_iStartRow > iIndex )
+			break;
+	return m_vTimeSignatureSegments[i];
+}
+
 BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )
 {
 	static BPMSegment empty;

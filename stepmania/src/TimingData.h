@@ -47,7 +47,7 @@ struct StopSegment
 
 /* This only supports simple time signatures. The upper number (called the numerator here, though this isn't
  * properly a fraction) is the number of beats per measure. The lower number (denominator here)
- * the the note value representing one beat. */
+ * is the note value representing one beat. */
 struct TimeSignatureSegment 
 {
 	TimeSignatureSegment() : m_iStartRow(-1), m_iNumerator(4), m_iDenominator(4)  { }
@@ -90,6 +90,7 @@ public:
 	void AddStopSegment( const StopSegment &seg );
 	void AddTimeSignatureSegment( const TimeSignatureSegment &seg );
 	int GetBPMSegmentIndexAtBeat( float fBeat );
+	const TimeSignatureSegment& GetTimeSignatureSegmentAtBeat( float fBeat ) const;
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat );
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
 
