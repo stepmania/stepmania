@@ -28,13 +28,11 @@ namespace avcodec
      * you can use various switches to enable/disable codecs/muxers/etc. 
 	 * 
 	 * libgcc.a and libmingwex.a comes from mingw installation
-	 * msys\mingw\lib\gcc\mingw32\3.4.5\libgcc.a
-	 * msys\mingw\lib\libmingwex.a */
+	 * msys\mingw\lib\gcc\mingw32\3.4.5\libgcc.a */
 	#pragma comment(lib, "ffmpeg/lib/libavcodec.a")
 	#pragma comment(lib, "ffmpeg/lib/libavformat.a")
 	#pragma comment(lib, "ffmpeg/lib/libavutil.a")
 	#pragma comment(lib, "ffmpeg/lib/libgcc.a")
-	#pragma comment(lib, "ffmpeg/lib/libmingwex.a")
 #endif
 
 static struct AVPixelFormat_t
