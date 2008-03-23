@@ -2547,14 +2547,6 @@
 				>
 			</File>
 			<File
-				RelativePath="DifficultyRating.cpp"
-				>
-			</File>
-			<File
-				RelativePath="DifficultyRating.h"
-				>
-			</File>
-			<File
 				RelativePath="DualScrollBar.cpp"
 				>
 			</File>
