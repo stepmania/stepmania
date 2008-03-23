@@ -732,6 +732,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		NotesLoader::GetMainAndSubTitlesFromFullTitle( sData, out.m_sMainTitle, out.m_sSubTitle );
 
 	GetTagFromMap( mapNameToData, "#artist", out.m_sArtist );
+	GetTagFromMap( mapNameToData, "#genre", out.m_sGenre );
 	GetTagFromMap( mapNameToData, "#backbmp", out.m_sBackgroundFile );
 	GetTagFromMap( mapNameToData, "#wav", out.m_sMusicFile );
 
@@ -1053,8 +1054,6 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 			RString sTag;
 			if( GetTagFromMap( aBMSData[i], "#title", sTag ) )
 				SearchForDifficulty( sTag, pSteps );
-			if( GetTagFromMap( aBMSData[i], "#genre", sTag ) )
-				SearchForDifficulty( sTag, pSteps );
 		}
 	}
 
@@ -1092,6 +1091,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 
 	ConvertString( out.m_sMainTitle, "utf-8,japanese" );
 	ConvertString( out.m_sArtist, "utf-8,japanese" );
+	ConvertString( out.m_sGenre, "utf-8,japanese" );
 
 
 	return true;
