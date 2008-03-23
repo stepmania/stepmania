@@ -36,6 +36,13 @@ function SongSelectionScreen()
 	return "ScreenSelectMusic"
 end
 
+function ScreenSelectMusicBranch()
+	if IsNetConnected() then ReportStyle() end
+	if IsNetSMOnline() then return SMOnlineScreen() end
+	if IsNetConnected() then return "ScreenNetSelectMusic" end
+	return "ScreenSelectMusic"
+end
+
 function NextNetworkScreen()
 	if IsNetConnected() then return "ScreenCaution" end
 	return "ScreenTitleMenu"
