@@ -68,7 +68,8 @@ void ScreenNetRoom::Init()
 
 	//Since the room info meter does not start active, and it
 	//is activated by code elsewhere, it should not be put on
-	//screen to begin with.	m_roomInfo.SetName( "RoomInfoDisplay" );
+	//screen to begin with
+	m_roomInfo.SetName( "RoomInfoDisplay" );
 	m_roomInfo.Load( "RoomInfoDisplay" );
 	m_roomInfo.SetDrawOrder( 1 );
 	this->AddChild( &m_roomInfo );
