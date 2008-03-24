@@ -4,78 +4,42 @@ function PlayerColor( pn )
 	return color("1,1,1,1")
 end
 
-local DifficultyColors = {
+local DifficultyDisplayTypeColors = {
+	DifficultyDisplayType_Single_Beginner	= color("0.0,0.9,1.0,1"),	-- light blue
+	DifficultyDisplayType_Single_Easy	= color("0.9,0.9,0.0,1"),	-- yellow
+	DifficultyDisplayType_Single_Medium	= color("1.0,0.1,0.1,1"),	-- light red
+	DifficultyDisplayType_Single_Hard	= color("0.2,1.0,0.2,1"),	-- light green
+	DifficultyDisplayType_Single_Challenge	= color("0.2,0.6,1.0,1"),	-- blue
+	DifficultyDisplayType_Double_Beginner	= color("0.0,0.9,1.0,1"),	-- light blue
+	DifficultyDisplayType_Double_Easy	= color("0.9,0.9,0.0,1"),	-- yellow
+	DifficultyDisplayType_Double_Medium	= color("1.0,0.1,0.1,1"),	-- light red
+	DifficultyDisplayType_Double_Hard	= color("0.2,1.0,0.2,1"),	-- light green
+	DifficultyDisplayType_Double_Challenge	= color("0.2,0.6,1.0,1"),	-- blue
+	Difficulty_Edit				= color("0.8,0.8,0.8,1"),	-- gray
+	Difficulty_Couple			= color("#ff9a00"),	-- orange
+	Difficulty_Routine			= color("#ff9a00"),	-- orange
+};
+
+local CourseDifficultyColors = {
 	Difficulty_Beginner	= color("0.0,0.9,1.0,1"),	-- light blue
 	Difficulty_Easy		= color("0.9,0.9,0.0,1"),	-- yellow
 	Difficulty_Medium	= color("1.0,0.1,0.1,1"),	-- light red
 	Difficulty_Hard		= color("0.2,1.0,0.2,1"),	-- light green
 	Difficulty_Challenge	= color("0.2,0.6,1.0,1"),	-- blue
-	Difficulty_Edit		= color("0.8,0.8,0.8,1"),	-- gray
-}
+};
 
-function DifficultyToColor( dc ) 
-	local c = DifficultyColors[dc]
+function DifficultyDisplayTypeToColor( ddt ) 
+	local c = DifficultyDisplayTypeColors[ddt]
 	if c then return c end
 	return color("#000000");
 end
 
-
-
-function StepsOrTrailToLocalizedString(StepsOrTrail)
-	if not StepsOrTrail then
-		return "";
-	end
-	if lua.CheckType("Trail", StepsOrTrail) then
-		local s = THEME:GetString("DifficultyAndStepsType", "Course");
-		return s;
-	end
-
-	local dc = StepsOrTrail:GetDifficulty();
-	local st = StepsOrTrail.GetStepsType and StepsOrTrail:GetStepsType();
-	return DifficultyAndStepsTypeToLocalizedString( dc, st );
+function CourseDifficutlyToColor( cd )
+	local c = CourseDifficultyColors[cd]
+	if c then return c end
+	return color("#000000");
 end
 
-function StepsOrTrailToIndex(StepsOrTrail)
-	if not StepsOrTrail then return 1; end
-	if lua.CheckType("Trail", StepsOrTrail) then
-		return 8
-	end
-	local dc = StepsOrTrail:GetDifficulty();
-	local st = StepsOrTrail.GetStepsType and StepsOrTrail:GetStepsType();
-	return DifficultyAndStepsTypeToIndex( dc, st );
-end;
-function TrailColor()
-	return color("#30f0c8");
-end;
-
-function StepsOrTrailToColor(StepsOrTrail)
-	if not StepsOrTrail then return color("#000000"); end
-	if lua.CheckType("Trail", StepsOrTrail) then return TrailColor() end
-
-	local dc = StepsOrTrail:GetDifficulty();
-	local st = StepsOrTrail.GetStepsType and StepsOrTrail:GetStepsType();
-	return DifficultyAndStepsTypeToColor( dc, st );
-end
-
-function DifficultyAndStepsTypeToLocalizedString( difficulty, stepsType )
-	if( not difficulty or not stepsType ) then
-		return "";
-	end
-	return THEME:GetString( "DifficultyAndStepsType", difficulty .. "-" .. stepsType );
-end
-
-function DifficultyAndStepsTypeToIndex( difficulty, stepsType )
-	for idx, entry in ipairs(DifficultyAndStepsTypeInfo) do
-		if entry.difficulty == difficulty and entry.stepsType == stepsType then 
-			return idx;
-		end
-	end
-
-	if difficulty == "Difficulty_Edit" then
-		return 7
-	end;
-	return nil;
-end
 
 function DifficultyAndStepsTypeToColor( difficulty, stepsType )
 	return DifficultyToColor( difficulty );

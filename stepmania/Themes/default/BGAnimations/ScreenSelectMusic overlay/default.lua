@@ -375,7 +375,7 @@ local t = Def.ActorFrame {
 				DifficultyChangedCommand=function(self, params)
 					if params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber() then return end
 					self:settext( params.Meter );
-					self:diffuse( DifficultyToColor(params.Difficulty) );
+					self:diffuse( CourseDifficutlyToColor(params.Difficulty) );
 				end;
 			};
 
@@ -388,7 +388,7 @@ local t = Def.ActorFrame {
 				OnCommand=cmd(x,SCREEN_CENTER_X-222;y,-8;shadowlength,0;settext,"1");
 				DifficultyChangedCommand=function(self, params)
 					if params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber() then return end
-					self:diffuse( DifficultyToColor(params.Difficulty) );
+					self:diffuse( CourseDifficutlyToColor(params.Difficulty) );
 				end;
 			};
 		};
