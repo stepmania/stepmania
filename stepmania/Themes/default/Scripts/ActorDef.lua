@@ -23,8 +23,8 @@ local function MergeTables( left, right )
 				local f2 = val
 				val = function(...) f1(...); return f2(...) end
 			else
-				Warn( string.format( "%s\n\nOverriding \"%s\"",
-					 debug.traceback(), key) );
+				Warn( string.format( "%s\n\nOverriding \"%s\": %s with %s",
+					 debug.traceback(), key, type(ret[key]), type(val)) );
 			end
 		end
 
