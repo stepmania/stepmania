@@ -27,7 +27,7 @@ class CombinedLifeMeter;
 class Player;
 class LifeMeter;
 class ScoreDisplay;
-class DifficultyIcon;
+class DifficultyDisplay;
 class Inventory;
 class ScoreKeeper;
 class Background;
@@ -98,7 +98,7 @@ public:
 	// used in PLAY_MODE_BATTLE
 	Inventory		*m_pInventory;
 	
-	DifficultyIcon		*m_pDifficultyIcon;
+	DifficultyDisplay	*m_pDifficultyDisplay;
 
 	AutoActor		m_sprOniGameOver;
 };

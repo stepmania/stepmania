@@ -21,8 +21,8 @@ public:
 	DifficultyDisplay();
 
 	void Load( const RString &sType );
-
 	void LoadFromNode( const XNode* pNode );
+
 	virtual DifficultyDisplay *Copy() const;
 
 	void SetFromGameState( PlayerNumber pn );
@@ -44,20 +44,21 @@ private:
 		StepsType st;
 		Difficulty dc;
 		bool bIsCourseDifficulty;
-		RString sEditDescription;
+		RString sDescription;
 	};
 	void SetInternal( const SetParams &params );
 
 	AutoActor		m_sprFrame;
 	BitmapText		m_textTicks;	/* 111100000 */
 	BitmapText		m_textMeter;	/* 3, 9 */
-	BitmapText		m_textEditDescription;
+	BitmapText		m_textDescription; /* Easy, Medium, SuperCoolEdit */
+	AutoActor		m_sprAutogen;	// visible if Steps and is autogen'd
 
 	ThemeMetric<int>	m_iNumTicks;
 	ThemeMetric<int>	m_iMaxTicks;
 	ThemeMetric<bool>	m_bShowTicks;
 	ThemeMetric<bool>	m_bShowMeter;
-	ThemeMetric<bool>	m_bShowEditDescription;
+	ThemeMetric<bool>	m_bShowDescription;
 	ThemeMetric<RString> m_sZeroMeterString;
 };
 

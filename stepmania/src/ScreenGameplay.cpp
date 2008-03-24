@@ -49,7 +49,6 @@
 #include "Game.h"
 #include "ActiveAttackList.h"
 #include "Player.h"
-#include "DifficultyIcon.h"
 #include "DifficultyDisplay.h"
 #include "XmlFile.h"
 #include "Background.h"
@@ -116,7 +115,7 @@ PlayerInfo::PlayerInfo()
 	m_pActiveAttackList = NULL;
 	m_pPlayer = NULL;
 	m_pInventory = NULL;
-	m_pDifficultyIcon = NULL;
+	m_pDifficultyDisplay = NULL;
 }
 
 void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty )
@@ -185,7 +184,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 	m_pActiveAttackList = NULL;
 	m_pPlayer = new Player( m_NoteData, bShowNoteField );
 	m_pInventory = NULL;
-	m_pDifficultyIcon = NULL;
+	m_pDifficultyDisplay = NULL;
 
 	if( IsMultiPlayer() )
 	{
@@ -221,7 +220,7 @@ PlayerInfo::~PlayerInfo()
 	SAFE_DELETE( m_pActiveAttackList );
 	SAFE_DELETE( m_pPlayer );
 	SAFE_DELETE( m_pInventory );
-	SAFE_DELETE( m_pDifficultyIcon );
+	SAFE_DELETE( m_pDifficultyDisplay );
 }
 
 void PlayerInfo::ShowOniGameOver()
@@ -624,12 +623,15 @@ void ScreenGameplay::Init()
 		//
 		// Difficulty icon and meter
 		//
-		ASSERT( pi->m_pDifficultyIcon == NULL );
-		pi->m_pDifficultyIcon = new DifficultyIcon;
-		pi->m_pDifficultyIcon->Load( THEME->GetPathG(m_sName,ssprintf("difficulty icons %dx%d",NUM_PLAYERS,NUM_Difficulty)) );
-		pi->m_pDifficultyIcon->SetName( ssprintf("Difficulty%s",pi->GetName().c_str()) );
-		LOAD_ALL_COMMANDS( pi->m_pDifficultyIcon );
-		this->AddChild( pi->m_pDifficultyIcon );
+		ASSERT( pi->m_pDifficultyDisplay == NULL );
+		pi->m_pDifficultyDisplay = new DifficultyDisplay;
+		pi->m_pDifficultyDisplay->Load("DifficultyDisplayGameplay");
+		pi->m_pDifficultyDisplay->SetName( ssprintf("DifficultyDisplay%s",pi->GetName().c_str()) );
+		PlayerNumber pn = pi->GetStepsAndTrailIndex();
+		if( pn != PlayerNumber_Invalid )
+			pi->m_pDifficultyDisplay->PlayCommand( "Set" + pi->GetName() );
+		LOAD_ALL_COMMANDS( pi->m_pDifficultyDisplay );
+		this->AddChild( pi->m_pDifficultyDisplay );
 
 //		switch( GAMESTATE->m_PlayMode )
 //		{
@@ -1074,8 +1076,8 @@ void ScreenGameplay::LoadNextSong()
 		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==SongOptions::LIFE_BAR && pi->m_pLifeMeter )
 			pi->m_pLifeMeter->UpdateNonstopLifebar();
 
-		if( pi->m_pDifficultyIcon )
-			pi->m_pDifficultyIcon->SetFromSteps( pi->GetStepsAndTrailIndex(), pSteps );
+		if( pi->m_pDifficultyDisplay )
+			pi->m_pDifficultyDisplay->SetFromSteps( pSteps );
 
 		/* The actual note data for scoring is the base class of Player.  This includes
 		 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */
@@ -1122,8 +1124,8 @@ void ScreenGameplay::LoadNextSong()
 	{
 		bool bReverse = pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1;
 
-		if( pi->m_pDifficultyIcon )
-			pi->m_pDifficultyIcon->PlayCommand( bReverse? "SetReverse":"SetNoReverse" );
+		if( pi->m_pDifficultyDisplay )
+			pi->m_pDifficultyDisplay->PlayCommand( bReverse? "SetReverse":"SetNoReverse" );
 	}
 
 	m_LyricDisplay.PlayCommand( bAllReverse? "SetReverse": bAtLeastOneReverse? "SetOneReverse": "SetNoReverse" );
@@ -1283,7 +1285,7 @@ void ScreenGameplay::LoadLights()
 		/* fall through */
 	}
 
-	NoteDataUtil::LoadTransformedLights( TapNoteData1, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
+	NoteDataUtil::LoadTransformedLights( TapNoteData1, m_CabinetLightsNoteData, GAMEMAN->GetStepsTypeInfo(STEPS_TYPE_LIGHTS_CABINET).iNumTracks );
 }
 
 void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMusic )

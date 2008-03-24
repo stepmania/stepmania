@@ -11,6 +11,7 @@
 #include "Style.h"
 #include "XmlFile.h"
 #include "LuaBinding.h"
+#include "GameManager.h"
 
 REGISTER_ACTOR_CLASS( DifficultyDisplay );
 
@@ -49,7 +50,7 @@ void DifficultyDisplay::Load( const RString &sType )
 	m_iMaxTicks.Load(sType,"MaxTicks");
 	m_bShowTicks.Load(sType,"ShowTicks");
 	m_bShowMeter.Load(sType,"ShowMeter");
-	m_bShowEditDescription.Load(sType,"ShowEditDescription");
+	m_bShowDescription.Load(sType,"ShowDescription");
 	m_sZeroMeterString.Load(sType,"ZeroMeterString");
 
 
@@ -78,13 +79,19 @@ void DifficultyDisplay::Load( const RString &sType )
 		ASSERT( m_textMeter.HasCommand("Set") );
 	}
 	
-	if( m_bShowEditDescription )
+	if( m_bShowDescription )
 	{
-		m_textEditDescription.SetName( "EditDescription" );
-		m_textEditDescription.LoadFromFont( THEME->GetPathF(sType,"EditDescription") );
-		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textEditDescription, sType );
-		this->AddChild( &m_textEditDescription );
+		m_textDescription.SetName( "Description" );
+		m_textDescription.LoadFromFont( THEME->GetPathF(sType,"Description") );
+		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textDescription, sType );
+		this->AddChild( &m_textDescription );
 	}
+	
+	m_sprAutogen.Load( THEME->GetPathG(sType,"Autogen") );
+	m_sprAutogen->SetName( "Autogen" );
+	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_sprAutogen, sType );
+	this->AddChild( m_sprAutogen );
+	
 
 	Unset();
 }
@@ -172,7 +179,7 @@ void DifficultyDisplay::SetInternal( const SetParams &params )
 	msg.SetParam( "StepsType", params.st );
 	msg.SetParam( "Difficulty", params.dc );
 	msg.SetParam( "IsCourseDifficulty", params.bIsCourseDifficulty );
-	msg.SetParam( "EditDescription", params.sEditDescription );
+	msg.SetParam( "Description", params.sDescription );
 
 	m_sprFrame->HandleMessage( msg );
 
@@ -202,17 +209,14 @@ void DifficultyDisplay::SetInternal( const SetParams &params )
 		}
 	}
 
-	if( m_bShowEditDescription )
+	if( m_bShowDescription )
 	{
 		if( params.dc == Difficulty_Edit )
-		{
-			m_textEditDescription.SetVisible( true );
-			m_textEditDescription.SetText( params.sEditDescription );
-		}
+			m_textDescription.SetText( params.sDescription );
+		else if( params.bIsCourseDifficulty )
+			m_textDescription.SetText( CourseDifficultyToLocalizedString(params.dc) );
 		else
-		{
-			m_textEditDescription.SetVisible( false );
-		}
+			m_textDescription.SetText( DifficultyToLocalizedString(params.dc) );
 	}
 	
 	this->HandleMessage( msg );
