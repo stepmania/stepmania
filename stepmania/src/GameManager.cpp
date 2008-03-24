@@ -42,7 +42,7 @@ RString StepsTypeInfo::GetLocalizedString() const
 	return szName;
 }
 
-static const StepsTypeInfo g_StepsTypeInfos[NUM_StepsType] = {
+static const StepsTypeInfo g_StepsTypeInfos[] = {
 	{ "dance-single",	4,	true,	StepsTypeCategory_Single },
 	{ "dance-double",	8,	true,	StepsTypeCategory_Double },
 	{ "dance-couple",	8,	true,	StepsTypeCategory_Couple },
@@ -1093,7 +1093,7 @@ static const Style g_Style_Para_Versus =
 	true,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"versus",			// m_szName
-	STEPS_TYPE_PARA_VERSUS,		// m_StepsType
+	STEPS_TYPE_PARA_SINGLE,		// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	5,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2652,8 +2652,10 @@ bool GameManager::IsGameEnabled( const Game *pGame ) const
 	return NOTESKIN->DoNoteSkinsExistForGame( pGame );
 }
 
-const StepsTypeInfo &GameManager::GetStepsTypeInfo( StepsType st ) const
+const StepsTypeInfo &GameManager::GetStepsTypeInfo( StepsType st )
 {
+	ASSERT( ARRAYLEN(g_StepsTypeInfos) == NUM_StepsType );
+	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
 	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
 	return g_StepsTypeInfos[st];
 }
