@@ -19,38 +19,29 @@ struct StepsTypeInfo
 	RString GetLocalizedString() const;
 };
 
-class GameManager
+namespace GameManager
 {
-public:
-	GameManager();
-	~GameManager();
+	void GetStylesForGame( const Game* pGame, vector<const Style*>& aStylesAddTo, bool editor=false );
+	const Game *GetGameForStyle( const Style *pStyle );
+	void GetStepsTypesForGame( const Game* pGame, vector<StepsType>& aStepsTypeAddTo );
+	const Style *GetEditorStyleForStepsType( StepsType st );
+	void GetDemonstrationStylesForGame( const Game *pGame, vector<const Style*> &vpStylesOut );
+	const Style *GetHowToPlayStyleForGame( const Game* pGame );
+	void GetCompatibleStyles( const Game *pGame, int iNumPlayers, vector<const Style*> &vpStylesOut );
+	const Style *GetFirstCompatibleStyle( const Game *pGame, int iNumPlayers, StepsType st );
 
-	void GetStylesForGame( const Game* pGame, vector<const Style*>& aStylesAddTo, bool editor=false ) const;
-	const Game *GetGameForStyle( const Style *pStyle ) const;
-	void GetStepsTypesForGame( const Game* pGame, vector<StepsType>& aStepsTypeAddTo ) const;
-	const Style *GetEditorStyleForStepsType( StepsType st ) const;
-	void GetDemonstrationStylesForGame( const Game *pGame, vector<const Style*> &vpStylesOut ) const;
-	const Style *GetHowToPlayStyleForGame( const Game* pGame ) const;
-	void GetCompatibleStyles( const Game *pGame, int iNumPlayers, vector<const Style*> &vpStylesOut ) const;
-	const Style *GetFirstCompatibleStyle( const Game *pGame, int iNumPlayers, StepsType st ) const;
+	void GetEnabledGames( vector<const Game*>& aGamesOut );
+	const Game* GetDefaultGame();
+	bool IsGameEnabled( const Game* pGame );
+	int GetIndexFromGame( const Game* pGame );
+	const Game* GetGameFromIndex( int index );
 
-	void GetEnabledGames( vector<const Game*>& aGamesOut ) const;
-	const Game* GetDefaultGame() const;
-	bool IsGameEnabled( const Game* pGame ) const;
-	int GetIndexFromGame( const Game* pGame ) const;
-	const Game* GetGameFromIndex( int index ) const;
-
-	static const StepsTypeInfo &GetStepsTypeInfo( StepsType st );
-	static StepsType StringToStepsType( RString sStepsType );
-	static const Game* StringToGameType( RString sGameType );
+	const StepsTypeInfo &GetStepsTypeInfo( StepsType st );
+	StepsType StringToStepsType( RString sStepsType );
+	const Game* StringToGameType( RString sGameType );
 	const Style* GameAndStringToStyle( const Game* pGame, RString sStyle );
-	static RString StyleToLocalizedString( const Style* s );
-
-	// Lua
-	void PushSelf( lua_State *L );
-};
-
-extern GameManager*	GAMEMAN;	// global and accessable from anywhere in our program
+	RString StyleToLocalizedString( const Style* s );
+}
 
 #endif
 

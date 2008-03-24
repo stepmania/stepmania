@@ -12,8 +12,6 @@
 #include "Style.h"
 #include "Foreach.h"
 
-GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
-
 enum 
 {
 	TRACK_1 = 0,
@@ -2445,25 +2443,7 @@ static const Game *g_Games[] =
 	&g_Game_Lights,
 };
 
-GameManager::GameManager()
-{
-	// Register with Lua.
-	{
-		Lua *L = LUA->Get();
-		lua_pushstring( L, "GAMEMAN" );
-		this->PushSelf( L );
-		lua_settable( L, LUA_GLOBALSINDEX );
-		LUA->Release( L );
-	}
-}
-
-GameManager::~GameManager()
-{
-	// Unregister with Lua.
-	LUA->UnsetGlobal( "GAMEMAN" );
-}
-
-void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aStylesAddTo, bool editor ) const
+void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aStylesAddTo, bool editor )
 {
 	for( int s=0; pGame->m_apStyles[s]; ++s ) 
 	{
@@ -2477,7 +2457,7 @@ void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aSt
 	}
 }
 
-const Game *GameManager::GetGameForStyle( const Style *pStyle ) const
+const Game *GameManager::GetGameForStyle( const Style *pStyle )
 {
 	for( size_t g=0; g<ARRAYLEN(g_Games); ++g )
 	{
@@ -2491,7 +2471,7 @@ const Game *GameManager::GetGameForStyle( const Style *pStyle ) const
 	FAIL_M(pStyle->m_szName);
 }
 
-const Style* GameManager::GetEditorStyleForStepsType( StepsType st ) const
+const Style* GameManager::GetEditorStyleForStepsType( StepsType st )
 {
 	for( size_t g=0; g<ARRAYLEN(g_Games); ++g )
 	{
@@ -2509,7 +2489,7 @@ const Style* GameManager::GetEditorStyleForStepsType( StepsType st ) const
 }
 
 
-void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aStepsTypeAddTo ) const
+void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aStepsTypeAddTo )
 {
 	FOREACH_ENUM( StepsType, st )
 	{
@@ -2527,7 +2507,7 @@ void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aS
 	}
 }
 
-void GameManager::GetDemonstrationStylesForGame( const Game *pGame, vector<const Style*> &vpStylesOut ) const
+void GameManager::GetDemonstrationStylesForGame( const Game *pGame, vector<const Style*> &vpStylesOut )
 {
 	vpStylesOut.clear();
 
@@ -2541,7 +2521,7 @@ void GameManager::GetDemonstrationStylesForGame( const Game *pGame, vector<const
 	ASSERT( vpStylesOut.size()>0 );	// this Game is missing a Style that can be used with the demonstration
 }
 
-const Style* GameManager::GetHowToPlayStyleForGame( const Game *pGame ) const
+const Style* GameManager::GetHowToPlayStyleForGame( const Game *pGame )
 {
 	for( int s=0; pGame->m_apStyles[s]; ++s ) 
 	{
@@ -2554,7 +2534,7 @@ const Style* GameManager::GetHowToPlayStyleForGame( const Game *pGame ) const
 	return NULL;
 }
 
-void GameManager::GetCompatibleStyles( const Game *pGame, int iNumPlayers, vector<const Style*> &vpStylesOut ) const
+void GameManager::GetCompatibleStyles( const Game *pGame, int iNumPlayers, vector<const Style*> &vpStylesOut )
 {
 	FOREACH_ENUM( StyleType, styleType )
 	{
@@ -2588,7 +2568,7 @@ void GameManager::GetCompatibleStyles( const Game *pGame, int iNumPlayers, vecto
 	}
 }
 
-const Style *GameManager::GetFirstCompatibleStyle( const Game *pGame, int iNumPlayers, StepsType st ) const
+const Style *GameManager::GetFirstCompatibleStyle( const Game *pGame, int iNumPlayers, StepsType st )
 {
 	vector<const Style*> vpStyles;
 	GetCompatibleStyles( pGame, iNumPlayers, vpStyles );
@@ -2601,7 +2581,7 @@ const Style *GameManager::GetFirstCompatibleStyle( const Game *pGame, int iNumPl
 }
 
 
-void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut ) const
+void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut )
 {
 	for( size_t g=0; g<ARRAYLEN(g_Games); ++g )
 	{
@@ -2611,7 +2591,7 @@ void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut ) const
 	}
 }
 
-const Game* GameManager::GetDefaultGame() const
+const Game* GameManager::GetDefaultGame()
 {
 	const Game *pDefault = NULL;
 	if( pDefault == NULL )
@@ -2629,7 +2609,7 @@ const Game* GameManager::GetDefaultGame() const
 	return pDefault;
 }
 
-int GameManager::GetIndexFromGame( const Game* pGame ) const
+int GameManager::GetIndexFromGame( const Game* pGame )
 {
 	for( size_t g=0; g<ARRAYLEN(g_Games); ++g )
 	{
@@ -2640,14 +2620,14 @@ int GameManager::GetIndexFromGame( const Game* pGame ) const
 	return 0;
 }
 
-const Game* GameManager::GetGameFromIndex( int index ) const
+const Game* GameManager::GetGameFromIndex( int index )
 {
 	ASSERT( index >= 0 );
 	ASSERT( index < (int) ARRAYLEN(g_Games) );
 	return g_Games[index];
 }
 
-bool GameManager::IsGameEnabled( const Game *pGame ) const
+bool GameManager::IsGameEnabled( const Game *pGame )
 {
 	return NOTESKIN->DoNoteSkinsExistForGame( pGame );
 }
@@ -2715,30 +2695,31 @@ const Style* GameManager::GameAndStringToStyle( const Game *game, RString sStyle
 // lua start
 #include "LuaBinding.h"
 
-class LunaGameManager: public Luna<GameManager>
+namespace
 {
-public:
-	static int StepsTypeToLocalizedString( T* p, lua_State *L )	{ lua_pushstring(L, p->GetStepsTypeInfo(Enum::Check<StepsType>(L, 1)).GetLocalizedString() ); return 1; }
-	static int GetFirstStepsTypeForGame( T* p, lua_State *L )
+	
+	int StepsTypeToLocalizedString( lua_State *L )	{ lua_pushstring(L, GameManager::GetStepsTypeInfo(Enum::Check<StepsType>(L, 1)).GetLocalizedString() ); return 1; }
+	int GetFirstStepsTypeForGame( lua_State *L )
 	{
 		Game *pGame = Luna<Game>::check( L, 1 );
 
 		vector<StepsType> vstAddTo;
-		p->GetStepsTypesForGame( pGame, vstAddTo );
+		GameManager::GetStepsTypesForGame( pGame, vstAddTo );
 		ASSERT( !vstAddTo.empty() );
 		StepsType st = vstAddTo[0];
 		lua_pushnumber(L, st);
 		return 1;
 	}
 
-	LunaGameManager()
+	const luaL_Reg GameManagerTable[] =
 	{
-		ADD_METHOD( StepsTypeToLocalizedString );
-		ADD_METHOD( GetFirstStepsTypeForGame );
-	}
+		LIST_METHOD( StepsTypeToLocalizedString ),
+		LIST_METHOD( GetFirstStepsTypeForGame ),
+		{ NULL, NULL }
+	};
 };
 
-LUA_REGISTER_CLASS( GameManager )
+LUA_REGISTER_NAMESPACE( GameManager )
 // lua end
 
 
