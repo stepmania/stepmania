@@ -837,7 +837,7 @@ static void GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 {
 	vector<const Style*> vpPossibleStyles;
 	if( CommonMetrics::AUTO_SET_STYLE )
-		GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
+		GameManager::GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
 	else
 		vpPossibleStyles.push_back( GAMESTATE->m_pCurStyle );
 
@@ -872,7 +872,7 @@ static void GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 	{
 		bool bShowThisStepsType = find( vstToShow.begin(), vstToShow.end(), *st ) != vstToShow.end();
 
-		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), *st );
+		const Style *pStyle = GameManager::GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), *st );
 		bool bEnoughStages = GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() >= GAMESTATE->GetNumStagesForSongAndStyleType(pSong, pStyle->m_StyleType);
 
 		if( bShowThisStepsType && bEnoughStages )

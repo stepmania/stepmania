@@ -317,7 +317,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 		{
 			XNode* pNode2 = pNode->AppendChild( "Style" );
 			vector<const Style*> vpStyle;
-			GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vpStyle );
+			GameManager::GetStylesForGame( GAMESTATE->m_pCurGame, vpStyle );
 			FOREACH( const Style*, vpStyle, pStyle )
 			{
 				if( !SHOW_STYLE(*pStyle) )
@@ -325,7 +325,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 				StyleID sID;
 				sID.FromStyle( (*pStyle) );
 				XNode* pNode3 = pNode2->AppendChild( sID.CreateNode() );
-				pNode3->AppendAttr( "DisplayAs", GAMEMAN->StyleToLocalizedString(*pStyle) );
+				pNode3->AppendAttr( "DisplayAs", GameManager::StyleToLocalizedString(*pStyle) );
 			}
 		}
 

@@ -156,7 +156,7 @@ static void MoveNop( int &iSel, bool bToSel, const ConfOption *pConfOption )
 static void GameChoices( vector<RString> &out )
 {
 	vector<const Game*> aGames;
-	GAMEMAN->GetEnabledGames( aGames );
+	GameManager::GetEnabledGames( aGames );
 	FOREACH( const Game*, aGames, g )
 	{
 		RString sGameName = (*g)->m_szName;
@@ -179,7 +179,7 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 				sel = i;
 	} else {
 		vector<const Game*> aGames;
-		GAMEMAN->GetEnabledGames( aGames );
+		GameManager::GetEnabledGames( aGames );
 		StepMania::ChangeCurrentGame( aGames[sel] );
 	}
 }

@@ -264,7 +264,7 @@ void DifficultyDisplay::SetInternal( const SetParams &params )
 		// TODO: Make this an AutoActor, optimize graphic loading
 		if( params.st != StepsType_Invalid )
 		{
-			RString sStepsType = GAMEMAN->GetStepsTypeInfo(params.st).szName;
+			RString sStepsType = GameManager::GetStepsTypeInfo(params.st).szName;
 			m_sprStepsType.Load( THEME->GetPathG(m_sMetricsGroup,"StepsType "+sStepsType) );
 		}
 	}

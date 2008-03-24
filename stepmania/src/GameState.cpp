@@ -352,7 +352,7 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	// Set the current style to something appropriate for the new number of joined players.
 	if( ALLOW_LATE_JOIN  &&  m_pCurStyle != NULL )
 	{
-		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), m_pCurStyle->m_StepsType );
+		const Style *pStyle = GameManager::GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), m_pCurStyle->m_StepsType );
 		m_pCurStyle.Set( pStyle );
 	}
 
@@ -591,7 +591,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 			{
 				/* If a style isn't set, use the style of the selected steps. */
 				StepsType st = pSteps->m_StepsType;
-				pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), st );
+				pStyle = GameManager::GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), st );
 			}
 			else
 			{
@@ -599,7 +599,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 				 * joined players, or one player if no players are joined. */
 				vector<const Style*> vpStyles;
 				int iJoined = max( GetNumSidesJoined(), 1 );
-				GAMEMAN->GetCompatibleStyles( m_pCurGame, iJoined, vpStyles );
+				GameManager::GetCompatibleStyles( m_pCurGame, iJoined, vpStyles );
 				ASSERT( !vpStyles.empty() );
 				pStyle = vpStyles[0];
 			}

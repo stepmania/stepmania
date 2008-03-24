@@ -174,7 +174,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	if( sName == "style" )
 	{
-		const Style* style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, sValue );
+		const Style* style = GameManager::GameAndStringToStyle( GAMESTATE->m_pCurGame, sValue );
 		if( style )
 			m_pStyle = style;
 		else

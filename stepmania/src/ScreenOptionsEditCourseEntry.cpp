@@ -282,7 +282,7 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				ASSERT( pSteps );
 				
 				// Set up for ScreenEdit
-				const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType(pSteps->m_StepsType);
+				const Style *pStyle = GameManager::GetEditorStyleForStepsType(pSteps->m_StepsType);
 				GAMESTATE->SetCurrentStyle( pStyle );
 				GAMESTATE->m_pCurSong.Set( pSong );
 				GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );

@@ -676,11 +676,11 @@ class OptionRowHandlerListStyles: public OptionRowHandlerList
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		vector<const Style*> vStyles;
-		GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
+		GameManager::GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
 		ASSERT( vStyles.size() );
 		FOREACH_CONST( const Style*, vStyles, s )
 		{
-			m_Def.m_vsChoices.push_back( GAMEMAN->StyleToLocalizedString(*s) ); 
+			m_Def.m_vsChoices.push_back( GameManager::StyleToLocalizedString(*s) ); 
 			GameCommand mc;
 			mc.m_pStyle = *s;
 			m_aListEntries.push_back( mc );

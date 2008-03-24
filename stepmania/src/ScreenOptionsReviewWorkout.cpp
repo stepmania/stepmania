@@ -103,7 +103,7 @@ void ScreenOptionsReviewWorkout::HandleScreenMessage( const ScreenMessage SM )
 				pWorkout->GenerateCourse( *WORKOUTMAN->m_pTempCourse );
 				GAMESTATE->m_pCurSong.Set( NULL );	// CurSong will be set if we back out.  Set it back to NULL so that ScreenStage won't show the last song.
 				GAMESTATE->m_pCurCourse.Set( WORKOUTMAN->m_pTempCourse );
-				const Style *pStyle = GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame,"single");
+				const Style *pStyle = GameManager::GameAndStringToStyle(GAMESTATE->m_pCurGame,"single");
 				StepsType st = pStyle->m_StepsType;
 				Trail *pTrail = GAMESTATE->m_pCurCourse->GetTrail( st );
 				ASSERT( pTrail );

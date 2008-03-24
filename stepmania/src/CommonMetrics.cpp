@@ -120,7 +120,7 @@ void ThemeMetricStepsTypesToShow::Read()
 	ThemeMetric<RString>::Read();
 
 	m_v.clear();
-	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_v );
+	GameManager::GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_v );
 
 	RemoveStepsTypes( m_v, ThemeMetric<RString>::GetValue() );
 }

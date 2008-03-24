@@ -60,7 +60,7 @@ void ScreenSelectMusic::Init()
 	if( PREFSMAN->m_bScreenTestMode && CommonMetrics::INITIAL_SCREEN == m_sName )
 	{
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
+		GAMESTATE->SetCurrentStyle( GameManager::GameAndStringToStyle(GameManager::GetDefaultGame(),"versus") );
 		GAMESTATE->JoinPlayer( PLAYER_1 );
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	}
@@ -180,8 +180,8 @@ void ScreenSelectMusic::BeginScreen()
 	if( CommonMetrics::AUTO_SET_STYLE )
 	{
 		vector<StepsType> vst;
-		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
-		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
+		GameManager::GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
+		const Style *pStyle = GameManager::GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
 		GAMESTATE->SetCurrentStyle( pStyle );
 	}
 
@@ -932,7 +932,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 					stCurrent = GAMESTATE->m_pCurSteps[pn]->m_StepsType;
 				}
 				vector<StepsType> vst;
-				pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), stCurrent );
+				pStyle = GameManager::GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), stCurrent );
 			}
 			GAMESTATE->SetCurrentStyle( pStyle );
 		}

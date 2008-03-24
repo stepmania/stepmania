@@ -125,7 +125,7 @@ ScreenNameEntry::ScreenNameEntry()
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus") );
+		GAMESTATE->SetCurrentStyle( GameManager::GameAndStringToStyle( GameManager::GetDefaultGame(),"versus") );
 		StageStats ss;
 		for( int z = 0; z < 3; ++z )
 		{
@@ -172,8 +172,8 @@ void ScreenNameEntry::Init()
 {
 #if 0
 	// DEBUGGING STUFF
-	GAMESTATE->m_pCurGame.Set( GAMEMAN->GetDefaultGame() );
-	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
+	GAMESTATE->m_pCurGame.Set( GameManager::GetDefaultGame() );
+	GAMESTATE->m_pCurStyle.Set( GameManager::GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;

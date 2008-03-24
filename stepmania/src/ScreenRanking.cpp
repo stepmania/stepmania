@@ -382,7 +382,7 @@ void ScreenRankingScroller::Init()
 
 			StepsType st = STEPS_TYPES_TO_SHOW.GetValue()[i];
 			if( asBits.size() > 1 )
-				st = GAMEMAN->StringToStepsType( asBits[1] );
+				st = GameManager::StringToStepsType( asBits[1] );
 
 			pts.aTypes.push_back( make_pair(dc, st) );
 		}

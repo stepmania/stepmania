@@ -949,7 +949,7 @@ void Song::AddAutoGenNotes()
 
 void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 {
-//	int iNumTracksOfTo = GAMEMAN->StepsTypeToNumTracks(ntTo);
+//	int iNumTracksOfTo = GameManager::StepsTypeToNumTracks(ntTo);
 
 	for( unsigned int j=0; j<m_vpSteps.size(); j++ )
 	{
