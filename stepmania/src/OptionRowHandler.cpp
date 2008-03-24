@@ -1197,7 +1197,7 @@ public:
 		m_Def.m_vsChoices.clear();
 		FOREACH_CONST( StepsType, m_vStepsTypesToShow, st )
 		{
-			RString s = GAMEMAN->StepsTypeToLocalizedString( *st );
+			RString s = GAMEMAN->GetStepsTypeInfo( *st ).GetLocalizedString();
 			m_Def.m_vsChoices.push_back( s );
 		}
 

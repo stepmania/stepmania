@@ -92,7 +92,8 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Select Edit Steps";
 		def.m_vsChoices.clear();
-		RString sType = GAMEMAN->StepsTypeToLocalizedString( (*s)->m_StepsType );
+		StepsType st = (*s)->m_StepsType;
+		RString sType = GAMEMAN->GetStepsTypeInfo(st).GetLocalizedString();
 		def.m_vsChoices.push_back( sType );
 		def.m_bAllowThemeItems = false;	// already themed
 		iIndex++;

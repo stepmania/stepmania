@@ -185,7 +185,8 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 	//
 	// init page
 	//
-	m_textStepsType.SetText( GameManager::StepsTypeToLocalizedString(pts.aTypes.front().second) );
+	StepsType st = pts.aTypes.front().second;
+	m_textStepsType.SetText( GAMEMAN->GetStepsTypeInfo(st).GetLocalizedString() );
 
 	return 0;
 }

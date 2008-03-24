@@ -63,7 +63,7 @@ unsigned Steps::GetHash() const
 
 void Steps::SetNoteData( const NoteData& noteDataNew )
 {
-	ASSERT( noteDataNew.GetNumTracks() == GameManager::StepsTypeToNumTracks(m_StepsType) );
+	ASSERT( noteDataNew.GetNumTracks() == GAMEMAN->GetStepsTypeInfo(m_StepsType).iNumTracks );
 
 	DeAutogen( false );
 
@@ -86,7 +86,7 @@ void Steps::GetNoteData( NoteData& noteDataOut ) const
 	else
 	{
 		noteDataOut.ClearAll();
-		noteDataOut.SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
+		noteDataOut.SetNumTracks( GAMEMAN->GetStepsTypeInfo(m_StepsType).iNumTracks );
 	}
 }
 
@@ -214,7 +214,7 @@ void Steps::Decompress() const
 
 		m_bNoteDataIsFilled = true;
 
-		int iNewTracks = GameManager::StepsTypeToNumTracks( m_StepsType );
+		int iNewTracks = GAMEMAN->GetStepsTypeInfo(m_StepsType).iNumTracks;
 
 		if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
 		{
@@ -267,7 +267,7 @@ void Steps::Decompress() const
 		// load from compressed
 		bool bComposite = m_StepsType == STEPS_TYPE_DANCE_ROUTINE;
 		m_bNoteDataIsFilled = true;
-		m_pNoteData->SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
+		m_pNoteData->SetNumTracks( GAMEMAN->GetStepsTypeInfo(m_StepsType).iNumTracks );
 
 		NoteDataUtil::LoadFromSMNoteDataString( *m_pNoteData, m_sNoteDataCompressed, bComposite );
 	}
@@ -352,7 +352,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds 
 	m_StepsType = ntTo;
 	NoteData noteData;
 	pSource->GetNoteData( noteData );
-	noteData.SetNumTracks( GameManager::StepsTypeToNumTracks(ntTo) );
+	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
 	parent = NULL;
 	this->SetNoteData( noteData );
 	this->SetDescription( pSource->GetDescription() );
@@ -365,7 +365,7 @@ void Steps::CreateBlank( StepsType ntTo )
 {
 	m_StepsType = ntTo;
 	NoteData noteData;
-	noteData.SetNumTracks( GameManager::StepsTypeToNumTracks(ntTo) );
+	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
 	this->SetNoteData( noteData );
 }
 

@@ -35,44 +35,44 @@ enum
 	// BMS reader needs 16 tracks for beat-double7
 };
 
-
-static struct
+RString StepsTypeInfo::GetLocalizedString() const
 {
-	const char *szName;
-	int iNumTracks;
-	bool bAllowAutogen;
-} const g_StepsTypes[NUM_StepsType] = {
-	{ "dance-single",	4,			true },
-	{ "dance-double",	8,			true },
-	{ "dance-couple",	8,			true },
-	{ "dance-solo",		6,			true },
-	{ "dance-routine",	8,			false },
-	{ "pump-single",	5,			true },
-	{ "pump-halfdouble",	6,			true },
-	{ "pump-double",	10,			true },
-	{ "pump-couple",	10,			true },
-	{ "ez2-single",		5,			true },	// Single: TL,LHH,D,RHH,TR
-	{ "ez2-double",		10,			true },	// Double: Single x2
-	{ "ez2-real",		7,			true },	// Real: TL,LHH,LHL,D,RHL,RHH,TR
-	{ "para-single",	5,			true },
-	{ "para-versus",	10,			true },
-	{ "ds3ddx-single",	8,			true },
-	{ "bm-single5",		6,			true },	// called "bm" for backward compat
-	{ "bm-double5",		12,			true },	// called "bm" for backward compat
-	{ "bm-single7",		8,			true },	// called "bm" for backward compat
-	{ "bm-double7",		16,			true },	// called "bm" for backward compat
-	{ "maniax-single",	4,			true },
-	{ "maniax-double",	8,			true },
-	{ "techno-single4",	4,			true },
-	{ "techno-single5",	5,			true },
-	{ "techno-single8",	8,			true },
-	{ "techno-double4",	8,			true },
-	{ "techno-double5",	10,			true },
-	{ "pnm-five",		5,			true },	// called "pnm" for backward compat
-	{ "pnm-nine",		9,			true },	// called "pnm" for backward compat
-	{ "guitar-five",	5,			true },
-	{ "karaoke",		1,			false },
-	{ "lights-cabinet",	NUM_CabinetLight,	false }, // XXX disable lights autogen for now
+	if( THEME->HasString( "StepsType", szName ) )
+		return THEME->GetString( "StepsType", szName );
+	return szName;
+}
+
+static const StepsTypeInfo g_StepsTypeInfos[NUM_StepsType] = {
+	{ "dance-single",	4,	true,	StepsTypeCategory_Single },
+	{ "dance-double",	8,	true,	StepsTypeCategory_Double },
+	{ "dance-couple",	8,	true,	StepsTypeCategory_Couple },
+	{ "dance-solo",		6,	true,	StepsTypeCategory_Single },
+	{ "dance-routine",	8,	false,	StepsTypeCategory_Routine },
+	{ "pump-single",	5,	true,	StepsTypeCategory_Single },
+	{ "pump-halfdouble",	6,	true,	StepsTypeCategory_Double },
+	{ "pump-double",	10,	true,	StepsTypeCategory_Double },
+	{ "pump-couple",	10,	true,	StepsTypeCategory_Couple },
+	{ "ez2-single",		5,	true,	StepsTypeCategory_Single },	// Single: TL,LHH,D,RHH,TR
+	{ "ez2-double",		10,	true,	StepsTypeCategory_Double },	// Double: Single x2
+	{ "ez2-real",		7,	true,	StepsTypeCategory_Single },	// Real: TL,LHH,LHL,D,RHL,RHH,TR
+	{ "para-single",	5,	true,	StepsTypeCategory_Single },
+	{ "ds3ddx-single",	8,	true,	StepsTypeCategory_Single },
+	{ "bm-single5",		6,	true,	StepsTypeCategory_Single },	// called "bm" for backward compat
+	{ "bm-double5",		12,	true,	StepsTypeCategory_Double },	// called "bm" for backward compat
+	{ "bm-single7",		8,	true,	StepsTypeCategory_Single },	// called "bm" for backward compat
+	{ "bm-double7",		16,	true,	StepsTypeCategory_Double },	// called "bm" for backward compat
+	{ "maniax-single",	4,	true,	StepsTypeCategory_Single },
+	{ "maniax-double",	8,	true,	StepsTypeCategory_Double },
+	{ "techno-single4",	4,	true,	StepsTypeCategory_Single },
+	{ "techno-single5",	5,	true,	StepsTypeCategory_Single },
+	{ "techno-single8",	8,	true,	StepsTypeCategory_Single },
+	{ "techno-double4",	8,	true,	StepsTypeCategory_Double },
+	{ "techno-double5",	10,	true,	StepsTypeCategory_Double },
+	{ "pnm-five",		5,	true,	StepsTypeCategory_Single },	// called "pnm" for backward compat
+	{ "pnm-nine",		9,	true,	StepsTypeCategory_Single },	// called "pnm" for backward compat
+	{ "guitar-five",	5,	true,	StepsTypeCategory_Single },	// 5 frets, no wail
+	{ "karaoke",		1,	false,	StepsTypeCategory_Single },
+	{ "lights-cabinet",	NUM_CabinetLight,	false,	StepsTypeCategory_Single }, // XXX disable lights autogen for now
 };
 
 
@@ -2596,7 +2596,7 @@ const Style *GameManager::GetFirstCompatibleStyle( const Game *pGame, int iNumPl
 		if( (*s)->m_StepsType == st )
 			return *s;
 	FAIL_M( ssprintf("No compatible styles for %s - %s with %d player%s.",  pGame->m_szName,
-			 StepsTypeToString(st).c_str(), iNumPlayers, iNumPlayers==1?"":"s") );
+			 GetStepsTypeInfo(st).szName, iNumPlayers, iNumPlayers==1?"":"s") );
 	return NULL;
 }
 
@@ -2652,16 +2652,10 @@ bool GameManager::IsGameEnabled( const Game *pGame ) const
 	return NOTESKIN->DoNoteSkinsExistForGame( pGame );
 }
 
-int GameManager::StepsTypeToNumTracks( StepsType st )
+const StepsTypeInfo &GameManager::GetStepsTypeInfo( StepsType st ) const
 {
 	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
-	return g_StepsTypes[st].iNumTracks;
-}
-
-bool GameManager::CanAutoGenStepsType( StepsType st )
-{
-	ASSERT_M( st < NUM_StepsType, ssprintf("%d", st) );
-	return g_StepsTypes[st].bAllowAutogen;
+	return g_StepsTypeInfos[st];
 }
 
 StepsType GameManager::StringToStepsType( RString sStepsType )
@@ -2679,25 +2673,10 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 		sStepsType = "para-single";
 
 	for( int i=0; i<NUM_StepsType; i++ )
-		if( g_StepsTypes[i].szName == sStepsType )
+		if( g_StepsTypeInfos[i].szName == sStepsType )
 			return StepsType(i);
 	
 	return StepsType_Invalid;
-}
-
-RString GameManager::StepsTypeToString( StepsType st )
-{
-	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
-	return g_StepsTypes[st].szName;
-}
-
-RString GameManager::StepsTypeToLocalizedString( StepsType st )
-{
-	RString s = StepsTypeToString( st );
-	if( THEME->HasString( "StepsType", s ) )
-		return THEME->GetString( "StepsType", s );
-	else
-		return s;
 }
 
 RString GameManager::StyleToLocalizedString( const Style* style )
@@ -2738,7 +2717,7 @@ const Style* GameManager::GameAndStringToStyle( const Game *game, RString sStyle
 class LunaGameManager: public Luna<GameManager>
 {
 public:
-	static int StepsTypeToLocalizedString( T* p, lua_State *L )	{ lua_pushstring(L, p->StepsTypeToLocalizedString(Enum::Check<StepsType>(L, 1)) ); return 1; }
+	static int StepsTypeToLocalizedString( T* p, lua_State *L )	{ lua_pushstring(L, p->GetStepsTypeInfo(Enum::Check<StepsType>(L, 1)).GetLocalizedString() ); return 1; }
 	static int GetFirstStepsTypeForGame( T* p, lua_State *L )
 	{
 		Game *pGame = Luna<Game>::check( L, 1 );

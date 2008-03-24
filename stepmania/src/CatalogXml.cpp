@@ -83,7 +83,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			FOREACH_CONST( StepsType, vStepsTypesToShow, st )
 			{
 				XNode* p3 = p2->AppendChild( "StepsType" );
-				p3->AppendAttr( "StepsType", GAMEMAN->StepsTypeToString(*st) );
+				p3->AppendAttr( "StepsType", GAMEMAN->GetStepsTypeInfo(*st).szName );
 				
 				int iNumStepsInGroupAndStepsType[NUM_Difficulty];
 				ZERO( iNumStepsInGroupAndStepsType );
@@ -297,8 +297,8 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			XNode* pNode2 = pNode->AppendChild( "StepsType" );
 			FOREACH_CONST( StepsType, vStepsTypesToShow, iter )
 			{
-				XNode* pNode3 = pNode2->AppendChild( "StepsType", GAMEMAN->StepsTypeToString(*iter) );
-				pNode3->AppendAttr( "DisplayAs", GAMEMAN->StepsTypeToLocalizedString(*iter) );
+				XNode* pNode3 = pNode2->AppendChild( "StepsType", GAMEMAN->GetStepsTypeInfo(*iter).szName );
+				pNode3->AppendAttr( "DisplayAs", GAMEMAN->GetStepsTypeInfo(*iter).GetLocalizedString() );
 			}
 		}
 

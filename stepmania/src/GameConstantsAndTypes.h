@@ -43,6 +43,15 @@ const RString& RadarCategoryToLocalizedString( RadarCategory cat );
 LuaDeclareType( RadarCategory );
 
 
+enum StepsTypeCategory
+{
+	StepsTypeCategory_Single,
+	StepsTypeCategory_Double,
+	StepsTypeCategory_Couple,
+	StepsTypeCategory_Routine,
+};
+
+
 enum StepsType
 {
 	STEPS_TYPE_DANCE_SINGLE = 0,

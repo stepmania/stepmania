@@ -10,6 +10,15 @@ struct lua_State;
 #include "GameConstantsAndTypes.h"
 #include "GameInput.h"
 
+struct StepsTypeInfo
+{
+	const char *szName;
+	int iNumTracks;
+	bool bAllowAutogen;	// allow this type to be autogen'd to other types
+	StepsTypeCategory m_StepsTypeCategory;	// what is the most basic StyleType this is used with?
+	RString GetLocalizedString() const;
+};
+
 class GameManager
 {
 public:
@@ -31,11 +40,8 @@ public:
 	int GetIndexFromGame( const Game* pGame ) const;
 	const Game* GetGameFromIndex( int index ) const;
 
-	static int StepsTypeToNumTracks( StepsType st );
-	static bool CanAutoGenStepsType( StepsType st );
+	const StepsTypeInfo &GetStepsTypeInfo( StepsType st ) const;
 	static StepsType StringToStepsType( RString sStepsType );
-	static RString StepsTypeToString( StepsType st );
-	static RString StepsTypeToLocalizedString( StepsType st );
 	static const Game* StringToGameType( RString sGameType );
 	const Style* GameAndStringToStyle( const Game* pGame, RString sStyle );
 	static RString StyleToLocalizedString( const Style* s );
