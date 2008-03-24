@@ -93,7 +93,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		def.m_sExplanationName = "Select Edit Steps";
 		def.m_vsChoices.clear();
 		StepsType st = (*s)->m_StepsType;
-		RString sType = GAMEMAN->GetStepsTypeInfo(st).GetLocalizedString();
+		RString sType = GameManager::GetStepsTypeInfo(st).GetLocalizedString();
 		def.m_vsChoices.push_back( sType );
 		def.m_bAllowThemeItems = false;	// already themed
 		iIndex++;

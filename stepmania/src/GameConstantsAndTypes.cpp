@@ -45,7 +45,7 @@ LuaXType( RadarCategory );
 
 RString StepsTypeToString( StepsType st )
 {
-	RString s = GAMEMAN->GetStepsTypeInfo( st ).szName;
+	RString s = GameManager::GetStepsTypeInfo( st ).szName;
 	/* foo-bar -> Foo_Bar */
 	s.Replace('-','_');
 	for( size_t i = 0; i < s.size(); ++i )

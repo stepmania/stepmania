@@ -1285,7 +1285,7 @@ void ScreenGameplay::LoadLights()
 		/* fall through */
 	}
 
-	NoteDataUtil::LoadTransformedLights( TapNoteData1, m_CabinetLightsNoteData, GAMEMAN->GetStepsTypeInfo(STEPS_TYPE_LIGHTS_CABINET).iNumTracks );
+	NoteDataUtil::LoadTransformedLights( TapNoteData1, m_CabinetLightsNoteData, GameManager::GetStepsTypeInfo(STEPS_TYPE_LIGHTS_CABINET).iNumTracks );
 }
 
 void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMusic )

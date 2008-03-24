@@ -40,7 +40,7 @@ public:
 	int GetIndexFromGame( const Game* pGame ) const;
 	const Game* GetGameFromIndex( int index ) const;
 
-	const StepsTypeInfo &GetStepsTypeInfo( StepsType st ) const;
+	static const StepsTypeInfo &GetStepsTypeInfo( StepsType st );
 	static StepsType StringToStepsType( RString sStepsType );
 	static const Game* StringToGameType( RString sGameType );
 	const Style* GameAndStringToStyle( const Game* pGame, RString sStyle );

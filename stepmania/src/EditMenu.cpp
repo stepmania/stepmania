@@ -387,7 +387,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 
 		// fall through
 	case ROW_STEPS_TYPE:
-		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->GetStepsTypeInfo(GetSelectedStepsType()).GetLocalizedString() );
+		m_textValue[ROW_STEPS_TYPE].SetText( GameManager::GetStepsTypeInfo(GetSelectedStepsType()).GetLocalizedString() );
 
 		{
 			Difficulty dcOld = Difficulty_Invalid;
@@ -501,7 +501,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 	case ROW_SOURCE_STEPS_TYPE:
 		m_textLabel[ROW_SOURCE_STEPS_TYPE].SetVisible( GetSelectedSteps() ? false : true );
 		m_textValue[ROW_SOURCE_STEPS_TYPE].SetVisible( GetSelectedSteps() ? false : true );
-		m_textValue[ROW_SOURCE_STEPS_TYPE].SetText( GAMEMAN->GetStepsTypeInfo(GetSelectedSourceStepsType()).GetLocalizedString() );
+		m_textValue[ROW_SOURCE_STEPS_TYPE].SetText( GameManager::GetStepsTypeInfo(GetSelectedSourceStepsType()).GetLocalizedString() );
 
 		m_vpSourceSteps.clear();
 		m_vpSourceSteps.push_back( StepsAndDifficulty(NULL,Difficulty_Invalid) );	// "blank"

@@ -60,7 +60,7 @@ static void SetNextCombination()
 	GAMESTATE->m_stEdit.Set( curVal.st );
 	GAMESTATE->m_cdEdit.Set( curVal.cd );
 	// XXX Testing.
-	SCREENMAN->SystemMessage( ssprintf("%s, %s", GAMEMAN->GetStepsTypeInfo(curVal.st).szName, DifficultyToString(curVal.cd).c_str()) );
+	SCREENMAN->SystemMessage( ssprintf("%s, %s", GameManager::GetStepsTypeInfo(curVal.st).szName, DifficultyToString(curVal.cd).c_str()) );
 
 	RefreshTrail();
 }

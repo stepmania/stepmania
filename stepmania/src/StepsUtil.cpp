@@ -280,7 +280,7 @@ XNode* StepsID::CreateNode() const
 {
 	XNode* pNode = new XNode( "Steps" );
 
-	pNode->AppendAttr( "StepsType", GAMEMAN->GetStepsTypeInfo(st).szName );
+	pNode->AppendAttr( "StepsType", GameManager::GetStepsTypeInfo(st).szName );
 	pNode->AppendAttr( "Difficulty", DifficultyToString(dc) );
 	if( dc == Difficulty_Edit )
 	{
@@ -319,7 +319,7 @@ void StepsID::LoadFromNode( const XNode* pNode )
 
 RString StepsID::ToString() const
 {
-	RString s = GAMEMAN->GetStepsTypeInfo( st ).szName;
+	RString s = GameManager::GetStepsTypeInfo( st ).szName;
 	s += " " + DifficultyToString( dc );
 	if( dc == Difficulty_Edit )
 	{
