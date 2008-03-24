@@ -68,7 +68,7 @@ RString CourseEntry::GetTextDescription() const
 	if( songCriteria.m_bUseSongGenreAllowedList )
 		vsEntryDescription.push_back( join(",",songCriteria.m_vsSongGenreAllowedList) );
 	if( stepsCriteria.m_difficulty != Difficulty_Invalid  &&  stepsCriteria.m_difficulty != Difficulty_Medium )
-		vsEntryDescription.push_back( DifficultyToLocalizedString(stepsCriteria.m_difficulty) );
+		vsEntryDescription.push_back( CourseDifficultyToLocalizedString(stepsCriteria.m_difficulty) );
 	if( stepsCriteria.m_iLowMeter != -1 )
 		vsEntryDescription.push_back( ssprintf("Low meter: %d", stepsCriteria.m_iLowMeter) );
 	if( stepsCriteria.m_iHighMeter != -1 )

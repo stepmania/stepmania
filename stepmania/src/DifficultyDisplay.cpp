@@ -42,37 +42,41 @@ DifficultyDisplay::DifficultyDisplay()
  * so I'm trying it first in only this object.
  */
 
-void DifficultyDisplay::Load( const RString &sType )
+void DifficultyDisplay::Load( const RString &sMetricsGroup )
 {
+	m_sMetricsGroup = sMetricsGroup;
+
 	/* We can't use global ThemeMetric<RString>s, because we can have multiple
 	 * DifficultyDisplays on screen at once, with different names. */
-	m_iNumTicks.Load(sType,"NumTicks");
-	m_iMaxTicks.Load(sType,"MaxTicks");
-	m_bShowTicks.Load(sType,"ShowTicks");
-	m_bShowMeter.Load(sType,"ShowMeter");
-	m_bShowDescription.Load(sType,"ShowDescription");
-	m_sZeroMeterString.Load(sType,"ZeroMeterString");
+	m_iNumTicks.Load(m_sMetricsGroup,"NumTicks");
+	m_iMaxTicks.Load(m_sMetricsGroup,"MaxTicks");
+	m_bShowTicks.Load(m_sMetricsGroup,"ShowTicks");
+	m_bShowMeter.Load(m_sMetricsGroup,"ShowMeter");
+	m_bShowDescription.Load(m_sMetricsGroup,"ShowDescription");
+	m_bShowAutogen.Load(m_sMetricsGroup,"ShowAutogen");
+	m_bShowStepsType.Load(m_sMetricsGroup,"ShowStepsType");
+	m_sZeroMeterString.Load(m_sMetricsGroup,"ZeroMeterString");
 
 
-	m_sprFrame.Load( THEME->GetPathG(sType,"frame") );
+	m_sprFrame.Load( THEME->GetPathG(m_sMetricsGroup,"frame") );
 	m_sprFrame->SetName( "Frame" );
-	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_sprFrame, sType );
+	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_sprFrame, m_sMetricsGroup );
 	this->AddChild( m_sprFrame );
 
 	if( m_bShowTicks )
 	{
 		RString sChars = "10";	// on, off
 		m_textTicks.SetName( "Ticks" );
-		m_textTicks.LoadFromTextureAndChars( THEME->GetPathF(sType,"ticks"), sChars );
-		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTicks, sType );
+		m_textTicks.LoadFromTextureAndChars( THEME->GetPathF(m_sMetricsGroup,"ticks"), sChars );
+		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTicks, m_sMetricsGroup );
 		this->AddChild( &m_textTicks );
 	}
 
 	if( m_bShowMeter )
 	{
 		m_textMeter.SetName( "Meter" );
-		m_textMeter.LoadFromFont( THEME->GetPathF(sType,"meter") );
-		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textMeter, sType );
+		m_textMeter.LoadFromFont( THEME->GetPathF(m_sMetricsGroup,"meter") );
+		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textMeter, m_sMetricsGroup );
 		this->AddChild( &m_textMeter );
 
 		// These commands should have been loaded by SetXYAndOnCommand above.
@@ -82,16 +86,25 @@ void DifficultyDisplay::Load( const RString &sType )
 	if( m_bShowDescription )
 	{
 		m_textDescription.SetName( "Description" );
-		m_textDescription.LoadFromFont( THEME->GetPathF(sType,"Description") );
-		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textDescription, sType );
+		m_textDescription.LoadFromFont( THEME->GetPathF(m_sMetricsGroup,"Description") );
+		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textDescription, m_sMetricsGroup );
 		this->AddChild( &m_textDescription );
 	}
 	
-	m_sprAutogen.Load( THEME->GetPathG(sType,"Autogen") );
-	m_sprAutogen->SetName( "Autogen" );
-	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_sprAutogen, sType );
-	this->AddChild( m_sprAutogen );
-	
+	if( m_bShowAutogen )
+	{
+		m_sprAutogen.Load( THEME->GetPathG(m_sMetricsGroup,"Autogen") );
+		m_sprAutogen->SetName( "Autogen" );
+		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_sprAutogen, m_sMetricsGroup );
+		this->AddChild( m_sprAutogen );
+	}
+
+	if( m_bShowStepsType )
+	{
+		m_sprStepsType.SetName( "StepsType" );
+		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_sprStepsType, m_sMetricsGroup );
+		this->AddChild( &m_sprStepsType );
+	}
 
 	Unset();
 }
@@ -170,6 +183,10 @@ void DifficultyDisplay::SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType s
 
 void DifficultyDisplay::SetInternal( const SetParams &params )
 {
+	DifficultyDisplayType ddt = DifficultyDisplayType_Invalid;
+	if( params.st != StepsType_Invalid )
+		ddt = MakeDifficultyDisplayType( params.dc, GameManager::GetStepsTypeInfo(params.st).m_StepsTypeCategory );
+
 	Message msg( "Set" );
 	if( params.pSteps )
 		msg.SetParam( "Steps", LuaReference::CreateFromPush(*(Steps*)params.pSteps) );
@@ -180,6 +197,7 @@ void DifficultyDisplay::SetInternal( const SetParams &params )
 	msg.SetParam( "Difficulty", params.dc );
 	msg.SetParam( "IsCourseDifficulty", params.bIsCourseDifficulty );
 	msg.SetParam( "Description", params.sDescription );
+	msg.SetParam( "DifficultyDisplayType", ddt );
 
 	m_sprFrame->HandleMessage( msg );
 
@@ -211,14 +229,46 @@ void DifficultyDisplay::SetInternal( const SetParams &params )
 
 	if( m_bShowDescription )
 	{
-		if( params.dc == Difficulty_Edit )
-			m_textDescription.SetText( params.sDescription );
-		else if( params.bIsCourseDifficulty )
-			m_textDescription.SetText( CourseDifficultyToLocalizedString(params.dc) );
+		RString s;
+		if( params.bIsCourseDifficulty )
+		{
+			s = CourseDifficultyToLocalizedString(params.dc);
+		}
 		else
-			m_textDescription.SetText( DifficultyToLocalizedString(params.dc) );
+		{
+			switch( ddt )
+			{
+			case DifficultyDisplayType_Invalid: 
+				// empty string
+				break;
+			case DifficultyDisplayType_Edit:
+				s = params.sDescription;
+				break;
+			default:
+				s = DifficultyDisplayTypeToLocalizedString( ddt );
+				break;
+			}
+		}
+
+		m_textDescription.SetText( s );
 	}
 	
+	if( m_bShowAutogen )
+	{
+		bool b = params.pSteps && params.pSteps->IsAutogen();
+		m_sprAutogen->SetVisible( b );
+	}
+
+	if( m_bShowStepsType )
+	{
+		// TODO: Make this an AutoActor, optimize graphic loading
+		if( params.st != StepsType_Invalid )
+		{
+			RString sStepsType = GAMEMAN->GetStepsTypeInfo(params.st).szName;
+			m_sprStepsType.Load( THEME->GetPathG(m_sMetricsGroup,"StepsType "+sStepsType) );
+		}
+	}
+
 	this->HandleMessage( msg );
 }
 

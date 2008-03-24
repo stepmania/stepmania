@@ -126,7 +126,10 @@ void ScreenOptionsEditCourseEntry::Init()
 	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
-		pHand->m_Def.m_vsChoices.push_back( DifficultyToLocalizedString(*dc) );
+	{
+		DifficultyDisplayType ddt = MakeDifficultyDisplayType( *dc, GameManager::GetStepsTypeInfo( GAMESTATE->m_stEdit ).m_StepsTypeCategory );
+		pHand->m_Def.m_vsChoices.push_back( DifficultyDisplayTypeToLocalizedString(ddt) );
+	}
 	vHands.push_back( pHand );
 
 	pHand = OptionRowHandlerUtil::MakeNull();

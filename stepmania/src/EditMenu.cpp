@@ -476,21 +476,9 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		// fall through
 	case ROW_STEPS:
 		{
-			RString s = DifficultyToLocalizedString( GetSelectedDifficulty() );
+			DifficultyDisplayType ddt = MakeDifficultyDisplayType( GetSelectedDifficulty(), GameManager::GetStepsTypeInfo(GetSelectedStepsType()).m_StepsTypeCategory );
+			RString s = DifficultyDisplayTypeToLocalizedString( ddt );
 
-			// UGLY.  "Edit" -> "New Edit"
-			switch( EDIT_MODE.GetValue() )
-			{
-			case EditMode_Home:
-				s = "New " + s;
-				break;
-			case EditMode_Practice:
-			case EditMode_CourseMods:
-			case EditMode_Full:
-				break;
-			default:
-				ASSERT(0);
-			}
 			m_textValue[ROW_STEPS].SetText( s );
 		}
 		if( GetSelectedSteps() )
@@ -533,9 +521,14 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			{
 				RString s;
 				if( GetSelectedSourceDifficulty() == Difficulty_Invalid )
+				{
 					s = BLANK;
+				}
 				else
-					s = DifficultyToLocalizedString(GetSelectedSourceDifficulty());
+				{
+					DifficultyDisplayType ddt = MakeDifficultyDisplayType( GetSelectedSourceDifficulty(), GameManager::GetStepsTypeInfo(GetSelectedSourceStepsType()).m_StepsTypeCategory );
+					s = DifficultyDisplayTypeToLocalizedString( ddt );
+				}
 				m_textValue[ROW_SOURCE_STEPS].SetText( s );
 			}
 			bool bHideMeter = false;

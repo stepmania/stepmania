@@ -280,7 +280,8 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			FOREACH_CONST( Difficulty, vDifficultiesToShow, iter )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "Difficulty", DifficultyToString(*iter) );
-				pNode3->AppendAttr( "DisplayAs", DifficultyToLocalizedString(*iter) );
+				DifficultyDisplayType ddt = MakeDifficultyDisplayType( *iter, StepsTypeCategory_Single );	// TODO: Fix use of Single
+				pNode3->AppendAttr( "DisplayAs", DifficultyDisplayTypeToLocalizedString(ddt) );
 			}
 		}
 

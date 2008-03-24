@@ -630,7 +630,7 @@ void ScreenGameplay::Init()
 		PlayerNumber pn = pi->GetStepsAndTrailIndex();
 		if( pn != PlayerNumber_Invalid )
 			pi->m_pDifficultyDisplay->PlayCommand( "Set" + pi->GetName() );
-		LOAD_ALL_COMMANDS( pi->m_pDifficultyDisplay );
+		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pDifficultyDisplay );
 		this->AddChild( pi->m_pDifficultyDisplay );
 
 //		switch( GAMESTATE->m_PlayMode )

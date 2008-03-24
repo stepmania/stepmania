@@ -356,7 +356,10 @@ RString UnlockEntry::GetDescription() const
 	case UnlockRewardType_Song:
 		return pSong ? pSong->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Steps:
-		return (pSong ? pSong->GetDisplayFullTitle() : "") + ", " + DifficultyToLocalizedString( m_dc );
+		{
+			DifficultyDisplayType ddt = MakeDifficultyDisplayType( m_dc, StepsTypeCategory_Single );	// TODO: Is using "Single" the best thing we can do here?
+			return (pSong ? pSong->GetDisplayFullTitle() : "") + ", " + DifficultyDisplayTypeToLocalizedString( ddt );
+		}
 	case UnlockRewardType_Course:
 		return m_Course.IsValid() ? m_Course.ToCourse()->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Modifier:

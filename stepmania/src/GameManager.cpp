@@ -2656,7 +2656,6 @@ const StepsTypeInfo &GameManager::GetStepsTypeInfo( StepsType st )
 {
 	ASSERT( ARRAYLEN(g_StepsTypeInfos) == NUM_StepsType );
 	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
-	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
 	return g_StepsTypeInfos[st];
 }
 

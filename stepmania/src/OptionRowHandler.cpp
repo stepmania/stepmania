@@ -439,9 +439,17 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 
 				RString s;
 				if( pSteps->GetDifficulty() == Difficulty_Edit )
+				{
 					s = pSteps->GetDescription();
+				}
 				else
-					s = DifficultyToLocalizedString( pSteps->GetDifficulty() );
+				{
+					DifficultyDisplayType ddt = MakeDifficultyDisplayType( pSteps->GetDifficulty(), GameManager::GetStepsTypeInfo(pSteps->m_StepsType).m_StepsTypeCategory );
+					if( ddt == DifficultyDisplayType_Edit )
+						s = pSteps->GetDescription();
+					else
+						s = DifficultyDisplayTypeToLocalizedString( ddt );
+				}
 				s += ssprintf( " %d", pSteps->GetMeter() );
 				m_Def.m_vsChoices.push_back( s );
 				GameCommand mc;
@@ -553,7 +561,8 @@ public:
 				}
 				else
 				{
-					s = DifficultyToLocalizedString( dc );
+					DifficultyDisplayType ddt = MakeDifficultyDisplayType( dc, GameManager::GetStepsTypeInfo( GAMESTATE->m_stEdit ).m_StepsTypeCategory );
+					s = DifficultyDisplayTypeToLocalizedString( ddt );
 				}
 				m_Def.m_vsChoices.push_back( s );
 			}
@@ -729,7 +738,8 @@ class OptionRowHandlerListDifficulties: public OptionRowHandlerList
 
 		FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), d )
 		{
-			RString s = DifficultyToLocalizedString( *d );
+			DifficultyDisplayType ddt = MakeDifficultyDisplayType( *d, StepsTypeCategory_Single );	// TODO: Fix use of Single
+			RString s = DifficultyDisplayTypeToLocalizedString( ddt );
 
 			m_Def.m_vsChoices.push_back( s ); 
 			GameCommand mc;

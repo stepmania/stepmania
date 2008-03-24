@@ -2,6 +2,7 @@
 #define DIFFICULTY_H
 
 #include "EnumHelper.h"
+#include "GameConstantsAndTypes.h"
 
 //
 // Player number stuff
@@ -18,10 +19,8 @@ enum Difficulty
 	Difficulty_Invalid
 };
 const RString& DifficultyToString( Difficulty dc );
-const RString& DifficultyToLocalizedString( Difficulty dc );
 Difficulty StringToDifficulty( const RString& sDC );
 LuaDeclareType( Difficulty );
-
 
 typedef Difficulty CourseDifficulty;
 const int NUM_CourseDifficulty = NUM_Difficulty;
@@ -30,6 +29,32 @@ const int NUM_CourseDifficulty = NUM_Difficulty;
 const RString& CourseDifficultyToLocalizedString( Difficulty dc );
 
 Difficulty GetNextShownCourseDifficulty( Difficulty pn );
+
+
+enum DifficultyDisplayType	// ID for coloring and localized strings in DifficultyDisplay 
+{
+	DifficultyDisplayType_Single_Beginner,
+	DifficultyDisplayType_Single_Easy,
+	DifficultyDisplayType_Single_Medium,
+	DifficultyDisplayType_Single_Hard,
+	DifficultyDisplayType_Single_Challenge,
+	DifficultyDisplayType_Double_Beginner,
+	DifficultyDisplayType_Double_Easy,
+	DifficultyDisplayType_Double_Medium,
+	DifficultyDisplayType_Double_Hard,
+	DifficultyDisplayType_Double_Challenge,
+	DifficultyDisplayType_Edit,
+	DifficultyDisplayType_Couple,	// color this specially (don't color by difficulty) because there isn't usually more than one per song
+	DifficultyDisplayType_Routine,	// color this specially (don't color by difficulty) because there isn't usually more than one per song
+	NUM_DifficultyDisplayType,
+	DifficultyDisplayType_Invalid
+};
+const RString& DifficultyDisplayTypeToString( DifficultyDisplayType dc );
+const RString& DifficultyDisplayTypeToLocalizedString( DifficultyDisplayType dc );
+DifficultyDisplayType StringToDifficultyDisplayType( const RString& s );
+LuaDeclareType( DifficultyDisplayType );
+
+DifficultyDisplayType MakeDifficultyDisplayType( Difficulty dc, StepsTypeCategory stc );
 
 #endif
 

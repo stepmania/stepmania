@@ -11,6 +11,7 @@
 #include "Difficulty.h"
 #include "ActorFrame.h"
 #include "ThemeMetric.h"
+#include "Sprite.h"
 
 class Steps;
 class Trail;
@@ -20,7 +21,7 @@ class DifficultyDisplay : public ActorFrame
 public:
 	DifficultyDisplay();
 
-	void Load( const RString &sType );
+	void Load( const RString &sMetricsGroup );
 	void LoadFromNode( const XNode* pNode );
 
 	virtual DifficultyDisplay *Copy() const;
@@ -48,18 +49,23 @@ private:
 	};
 	void SetInternal( const SetParams &params );
 
+	RString		m_sMetricsGroup;
+
 	AutoActor		m_sprFrame;
 	BitmapText		m_textTicks;	/* 111100000 */
 	BitmapText		m_textMeter;	/* 3, 9 */
 	BitmapText		m_textDescription; /* Easy, Medium, SuperCoolEdit */
 	AutoActor		m_sprAutogen;	// visible if Steps and is autogen'd
+	Sprite			m_sprStepsType;	// TODO: Make this an AutoActor
 
 	ThemeMetric<int>	m_iNumTicks;
 	ThemeMetric<int>	m_iMaxTicks;
 	ThemeMetric<bool>	m_bShowTicks;
 	ThemeMetric<bool>	m_bShowMeter;
 	ThemeMetric<bool>	m_bShowDescription;
-	ThemeMetric<RString> m_sZeroMeterString;
+	ThemeMetric<bool>	m_bShowAutogen;
+	ThemeMetric<bool>	m_bShowStepsType;
+	ThemeMetric<RString>	m_sZeroMeterString;
 };
 
 #endif

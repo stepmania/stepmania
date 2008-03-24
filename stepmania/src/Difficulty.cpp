@@ -15,9 +15,27 @@ static const char *DifficultyNames[] = {
 	"Edit",
 };
 XToString( Difficulty );
-XToLocalizedString( Difficulty );
 LuaXType( Difficulty );
-LuaFunction( DifficultyToLocalizedString, DifficultyToLocalizedString( Enum::Check<Difficulty>(L, 1)) );
+
+static const char *DifficultyDisplayTypeNames[] = {
+	"Single_Beginner",
+	"Single_Easy",
+	"Single_Medium",
+	"Single_Hard",
+	"Single_Challenge",
+	"Double_Beginner",
+	"Double_Easy",
+	"Double_Medium",
+	"Double_Hard",
+	"Double_Challenge",
+	"Edit",
+	"Couple",
+	"Routine",
+};
+XToString( DifficultyDisplayType );
+XToLocalizedString( DifficultyDisplayType );
+LuaXType( DifficultyDisplayType );
+LuaFunction( DifficultyDisplayTypeToLocalizedString, DifficultyDisplayTypeToLocalizedString( Enum::Check<DifficultyDisplayType>(L, 1)) );
 
 /* We prefer the above names; recognize a number of others, too.  (They'll
  * get normalized when written to SMs, etc.) */
@@ -74,6 +92,26 @@ CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 			return d;
 	}
 	return Difficulty_Invalid;
+}
+
+DifficultyDisplayType MakeDifficultyDisplayType( Difficulty dc, StepsTypeCategory stc )
+{
+	switch( stc )
+	{
+	DEFAULT_FAIL(stc);
+	case StepsTypeCategory_Single:
+		if( dc == Difficulty_Edit )
+			return DifficultyDisplayType_Edit;
+		return (DifficultyDisplayType)(DifficultyDisplayType_Single_Beginner + dc);
+	case StepsTypeCategory_Double:
+		if( dc == Difficulty_Edit )
+			return DifficultyDisplayType_Edit;
+		return (DifficultyDisplayType)(DifficultyDisplayType_Double_Beginner + dc);
+	case StepsTypeCategory_Couple:
+		return DifficultyDisplayType_Couple;
+	case StepsTypeCategory_Routine:
+		return DifficultyDisplayType_Routine;
+	}
 }
 
 /*
