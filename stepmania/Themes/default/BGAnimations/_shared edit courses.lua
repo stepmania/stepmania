@@ -18,7 +18,7 @@ local frame = Def.ActorFrame
 		CurrentTrailP1ChangedMessageCommand=function(self)
 			local t = GAMESTATE:GetCurrentTrail( PLAYER_1 )
 			if t then
-				local st = GAMEMAN:StepsTypeToLocalizedString( t:GetStepsType() )
+				local st = GameManager.StepsTypeToLocalizedString( t:GetStepsType() )
 				local cd = CourseDifficultyToLocalizedString( t:GetDifficulty() )
 				self:settext( st .. ", " .. cd )
 			else
