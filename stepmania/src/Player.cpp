@@ -126,6 +126,7 @@ ThemeMetric<float> INITIAL_HOLD_LIFE		( "Player", "InitialHoldLife" );
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
 ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
+ThemeMetric<bool> CHECKPOINTS_USE_TIME_SIGNATURES ( "Player", "CheckpointsUseTimeSignatures" );
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
 ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads" );
 
@@ -2417,11 +2418,18 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	//
 	if( HOLD_CHECKPOINTS )
 	{
-		const float fBeat = NoteRowToBeat( iLastRowCrossed );
-		TimeSignatureSegment tSignature =  GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( fBeat );
-		
-		// Most songs are in 4/4 time.  The frequency for checking tick counts should reflect that.
-		const int CHECKPOINT_FREQUENCY_ROWS = ROWS_PER_BEAT * tSignature.m_iDenominator / (tSignature.m_iNumerator * 4);
+		int CHECKPOINT_FREQUENCY_ROWS;
+		if( CHECKPOINTS_USE_TIME_SIGNATURES )
+		{
+			TimeSignatureSegment tSignature =  GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iLastRowCrossed ) );
+			
+			// Most songs are in 4/4 time.  The frequency for checking tick counts should reflect that.
+			CHECKPOINT_FREQUENCY_ROWS = ROWS_PER_BEAT * tSignature.m_iDenominator / (tSignature.m_iNumerator * 4);
+		}
+		else
+		{
+			CHECKPOINT_FREQUENCY_ROWS = ROWS_PER_BEAT/2;
+		}
 
 		// "the first row after the start of the range that lands on a beat"
 		int iFirstCheckpointInRange = ((m_iFirstUncrossedRow+CHECKPOINT_FREQUENCY_ROWS-1)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;
