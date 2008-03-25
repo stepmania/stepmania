@@ -539,7 +539,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 	},
 	{
 		"pump",
-		"Controller (Harmonix Drum Kit for Xbox 360)",
+		"Controller \\(Harmonix Drum Kit for Xbox 360\\)",
 		"Rock Band drum controller (Xbox 360, Windows driver)",
 		{
 			{ 0, JOY_BUTTON_5,	PUMP_BUTTON_CENTER,	false },	// bass pedal
