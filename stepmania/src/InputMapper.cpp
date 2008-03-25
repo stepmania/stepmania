@@ -482,6 +482,24 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
+		"dance",
+		"Controller \\(Harmonix Drum Kit for Xbox 360\\)",
+		"Rock Band drum controller (Xbox 360, Windows driver)",
+		{
+			{ 0, JOY_BUTTON_3,	DANCE_BUTTON_UP,	false },	// blue drum
+			{ 0, JOY_BUTTON_4,	DANCE_BUTTON_DOWN,	false },	// yellow drum
+			{ 0, JOY_BUTTON_2,	DANCE_BUTTON_LEFT,	false },	// red drum
+			{ 0, JOY_BUTTON_1,	DANCE_BUTTON_RIGHT,	false },	// green drum
+			{ 0, JOY_HAT_LEFT,	GAME_BUTTON_MENULEFT,	false },	// d-pad left
+			{ 0, JOY_HAT_RIGHT,	GAME_BUTTON_MENURIGHT,	false },	// d-pad right
+			{ 0, JOY_HAT_UP,	GAME_BUTTON_MENUUP,	false },	// d-pad up
+			{ 0, JOY_HAT_DOWN,	GAME_BUTTON_MENUDOWN,	false },	// d-pad down
+			{ 0, JOY_BUTTON_8,	GAME_BUTTON_START,	false },	// start button
+			{ 0, JOY_BUTTON_7,	GAME_BUTTON_BACK,	false },	// back button
+			END_MARKER
+		}
+	},
+	{
 		"pump",
 		"Pump USB",
 		"Pump USB pad",
@@ -516,6 +534,25 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_BUTTON_1,	PUMP_BUTTON_CENTER,	false },
 			{ 0, JOY_BUTTON_9,	GAME_BUTTON_BACK,	false },
 			{ 0, JOY_BUTTON_10,	GAME_BUTTON_START,	false },
+			END_MARKER
+		}
+	},
+	{
+		"pump",
+		"Controller (Harmonix Drum Kit for Xbox 360)",
+		"Rock Band drum controller (Xbox 360, Windows driver)",
+		{
+			{ 0, JOY_BUTTON_5,	PUMP_BUTTON_CENTER,	false },	// bass pedal
+			{ 0, JOY_BUTTON_3,	PUMP_BUTTON_UPRIGHT,	false },	// blue drum
+			{ 0, JOY_BUTTON_4,	PUMP_BUTTON_UPLEFT,	false },	// yellow drum
+			{ 0, JOY_BUTTON_2,	PUMP_BUTTON_DOWNLEFT,	false },	// red drum
+			{ 0, JOY_BUTTON_1,	PUMP_BUTTON_DOWNRIGHT,	false },	// green drum
+			{ 0, JOY_HAT_LEFT,	GAME_BUTTON_MENULEFT,	false },	// d-pad left
+			{ 0, JOY_HAT_RIGHT,	GAME_BUTTON_MENURIGHT,	false },	// d-pad right
+			{ 0, JOY_HAT_UP,	GAME_BUTTON_MENUUP,	false },	// d-pad up
+			{ 0, JOY_HAT_DOWN,	GAME_BUTTON_MENUDOWN,	false },	// d-pad down
+			{ 0, JOY_BUTTON_8,	GAME_BUTTON_START,	false },	// start button
+			{ 0, JOY_BUTTON_7,	GAME_BUTTON_BACK,	false },	// back button
 			END_MARKER
 		}
 	},
