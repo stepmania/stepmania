@@ -11,37 +11,41 @@
 
 RString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("Warning%dCommand",int(i)); }
 
-static const ThemeMetric<int>		WARNING_START		("MenuTimer","WarningStart");
-static const ThemeMetric<int>		WARNING_BEEP_START	("MenuTimer","WarningBeepStart");
-static const ThemeMetric<float>		MAX_STALL_SECONDS	("MenuTimer","MaxStallSeconds");
 
 static const float TIMER_PAUSE_SECONDS = 99.99f;
 
-MenuTimer::MenuTimer() :
-	WARNING_COMMAND("MenuTimer", WARNING_COMMAND_NAME, WARNING_START+1)
+MenuTimer::MenuTimer()
 {
 	m_fStallSeconds = 0;
-	m_fStallSecondsLeft = MAX_STALL_SECONDS;
+	m_fStallSecondsLeft = 0;
 	m_bPaused = false;
 	m_bSilent = false;
+	WARNING_COMMAND = NULL;
 }
 
-void MenuTimer::Load()
+void MenuTimer::Load( RString sMetricsGroup )
 {
 	for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
 	{
-		m_text[i].LoadFromFont( THEME->GetPathF("MenuTimer","numbers") );
+		m_text[i].LoadFromFont( THEME->GetPathF(sMetricsGroup,"numbers") );
 		m_text[i].SetName( ssprintf("Text%d",i+1) );
-		ActorUtil::LoadAllCommandsAndOnCommand( m_text[i], "MenuTimer" );
+		ActorUtil::LoadAllCommandsAndOnCommand( m_text[i], sMetricsGroup );
 		this->AddChild( &m_text[i] );
 	}
 
-	m_exprFormatText[0] = THEME->GetMetricR("MenuTimer", "Text1FormatFunction");
-	m_exprFormatText[1] = THEME->GetMetricR("MenuTimer", "Text2FormatFunction");
+	m_exprFormatText[0] = THEME->GetMetricR(sMetricsGroup, "Text1FormatFunction");
+	m_exprFormatText[1] = THEME->GetMetricR(sMetricsGroup, "Text2FormatFunction");
 
 	SetSeconds( TIMER_PAUSE_SECONDS );
 
-	m_soundBeep.Load( THEME->GetPathS("MenuTimer","tick") );
+	m_soundBeep.Load( THEME->GetPathS(sMetricsGroup,"tick") );
+
+	WARNING_START.Load(sMetricsGroup,"WarningStart");
+	WARNING_BEEP_START.Load(sMetricsGroup,"WarningBeepStart");
+	MAX_STALL_SECONDS.Load(sMetricsGroup,"MaxStallSeconds");
+	WARNING_COMMAND = new ThemeMetric1D<apActorCommands>(sMetricsGroup, WARNING_COMMAND_NAME, WARNING_START+1);
+	
+	m_fStallSecondsLeft = MAX_STALL_SECONDS;
 }
 
 void MenuTimer::EnableStealth( bool bStealth )
@@ -87,7 +91,7 @@ void MenuTimer::Update( float fDeltaTime )
 		if( iCrossed <= WARNING_START )
 		{
 			for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
-				m_text[i].RunCommands( WARNING_COMMAND.GetValue(iCrossed) );
+				m_text[i].RunCommands( WARNING_COMMAND->GetValue(iCrossed) );
 		}
 		
 		if( iCrossed <= WARNING_BEEP_START && m_soundBeep.IsLoaded() && !m_bSilent )

@@ -12,7 +12,7 @@ class MenuTimer : public ActorFrame
 {
 public:
 	MenuTimer();
-	void Load();
+	void Load( RString sMetricsGroup );
 	
 	virtual void Update( float fDeltaTime ); 
 
@@ -42,13 +42,16 @@ protected:
 
 	bool m_bSilent;
 
-	BitmapText		m_text[NUM_MENU_TIMER_TEXTS];
+	BitmapText	m_text[NUM_MENU_TIMER_TEXTS];
 
 	LuaReference	m_exprFormatText[NUM_MENU_TIMER_TEXTS];
 
 	RageSound	m_soundBeep;
 
-	ThemeMetric1D<apActorCommands>	WARNING_COMMAND;
+	ThemeMetric<int>		WARNING_START;
+	ThemeMetric<int>		WARNING_BEEP_START;
+	ThemeMetric<float>		MAX_STALL_SECONDS;
+	ThemeMetric1D<apActorCommands>	*WARNING_COMMAND;
 };
 
 #endif

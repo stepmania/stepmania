@@ -31,6 +31,7 @@ void ScreenWithMenuElements::Init()
 	PLAY_MUSIC.Load( m_sName, "PlayMusic" );
 	CANCEL_TRANSITIONS_OUT.Load( m_sName, "CancelTransitionsOut" );
 	TIMER_SECONDS.Load( m_sName, "TimerSeconds" );
+	TIMER_METRICS_GROUP.Load( m_sName, "TimerMetricsGroup" );
 
 	Screen::Init();
 
@@ -66,7 +67,7 @@ void ScreenWithMenuElements::Init()
 	{
 		ASSERT( m_MenuTimer == NULL );	// don't load twice
 		m_MenuTimer = new MenuTimer;
-		m_MenuTimer->Load();
+		m_MenuTimer->Load( TIMER_METRICS_GROUP.GetValue() );
 		m_MenuTimer->SetName( "Timer" );
 		if( TIMER_STEALTH )
 			m_MenuTimer->EnableStealth( true );

@@ -59,6 +59,7 @@ protected:
 	ThemeMetric<bool>		PLAY_MUSIC;
 	ThemeMetric<bool>		CANCEL_TRANSITIONS_OUT;
 	ThemeMetric<float>		TIMER_SECONDS;
+	ThemeMetric<RString>		TIMER_METRICS_GROUP;
 
 private:
 	RString				m_sPathToMusic;
