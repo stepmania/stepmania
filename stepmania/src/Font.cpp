@@ -29,21 +29,17 @@ void FontPage::Load( const FontPageSettings &cfg )
 	ASSERT( m_FontPageTextures.m_pTextureMain != NULL );
 
 	RageTextureID ID2 = ID1;
+	/* "arial 20 16x16 [main].png" => "arial 20 16x16 [main-stroke].png" */
+	if( ID2.filename.find("]") != string::npos )
 	{
-		/* "arial 20 16x16.png" => "arial 20 16x16 (stroke).png" */
-		size_t pos = ID2.filename.find_last_of( '.' );
-		if( pos == RString::npos )
-			ID2.filename += " (stroke)";
-		else
-			ID2.filename.insert( pos, " (stroke)" );
-	}
-
-	if( IsAFile(ID2.filename) )
-	{
-		m_FontPageTextures.m_pTextureStroke = TEXTUREMAN->LoadTexture( ID2 );
-		ASSERT( m_FontPageTextures.m_pTextureStroke != NULL );
-		ASSERT_M( m_FontPageTextures.m_pTextureMain->GetSourceFrameWidth() == m_FontPageTextures.m_pTextureStroke->GetSourceFrameWidth(), ssprintf("'%s' and '%s' must have the same frame widths", ID1.filename.c_str(), ID2.filename.c_str()) );
-		ASSERT_M( m_FontPageTextures.m_pTextureMain->GetNumFrames() == m_FontPageTextures.m_pTextureStroke->GetNumFrames(), ssprintf("'%s' and '%s' must have the same frame dimensions", ID1.filename.c_str(), ID2.filename.c_str()) );
+		ID2.filename.Replace( "]", "-stroke]" );
+		if( IsAFile(ID2.filename) )
+		{
+			m_FontPageTextures.m_pTextureStroke = TEXTUREMAN->LoadTexture( ID2 );
+			ASSERT( m_FontPageTextures.m_pTextureStroke != NULL );
+			ASSERT_M( m_FontPageTextures.m_pTextureMain->GetSourceFrameWidth() == m_FontPageTextures.m_pTextureStroke->GetSourceFrameWidth(), ssprintf("'%s' and '%s' must have the same frame widths", ID1.filename.c_str(), ID2.filename.c_str()) );
+			ASSERT_M( m_FontPageTextures.m_pTextureMain->GetNumFrames() == m_FontPageTextures.m_pTextureStroke->GetNumFrames(), ssprintf("'%s' and '%s' must have the same frame dimensions", ID1.filename.c_str(), ID2.filename.c_str()) );
+		}
 	}
 
 	// load character widths
@@ -232,6 +228,7 @@ Font::Font()
 	m_iRefCount = 1;
 	m_pDefault = NULL;
 	m_bRightToLeft = false;
+	m_fFontBaseZoom = 1;
 }
 
 Font::~Font()
@@ -693,6 +690,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 		ini.RenameKey("Char Widths", "main");
 		ini.GetValue( "main", "CapitalsOnly", bCapitalsOnly );
 		ini.GetValue( "main", "RightToLeft", m_bRightToLeft );
+		ini.GetValue( "main", "FontBaseZoom", m_fFontBaseZoom );
 	}
 
 	{
@@ -742,6 +740,10 @@ void Font::Load( const RString &sIniPath, RString sChars )
 
 		/* Grab the page name, eg "foo" from "Normal [foo].png". */
 		RString sPagename = GetPageNameFromFileName( sTexturePath );
+		
+		// Ignore stroke textures
+		if( sTexturePath.find("-stroke") != string::npos )
+			continue;
 
 		/* Load settings for this page from the INI. */
 		FontPageSettings cfg;

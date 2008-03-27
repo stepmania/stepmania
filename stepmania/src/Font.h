@@ -147,6 +147,7 @@ public:
 	void SetDefaultGlyph( FontPage *pPage );
 
 	bool IsRightToLeft() const { return m_bRightToLeft; };
+	float GetFontBaseZoom() const { return m_fFontBaseZoom; };
 
 private:
 	/* List of pages and fonts that we use (and are responsible for freeing). */
@@ -164,6 +165,8 @@ private:
 	// This will also change the way glyphs from the default FontPage are rendered. 
 	// There may be a better way to handle this.
 	bool m_bRightToLeft;
+
+	float m_fFontBaseZoom;
 
 	/* We keep this around only for reloading. */
 	RString m_sChars;

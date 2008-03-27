@@ -445,34 +445,28 @@ void BitmapText::SetMaxHeight( float fMaxHeight )
 
 void BitmapText::UpdateBaseZoom()
 {
+	const float fBaseZoom = m_pFont->GetFontBaseZoom();
+
 	if( m_fMaxWidth == 0 )
 	{
-		this->SetBaseZoomX( 1 );
+		this->SetBaseZoomX( fBaseZoom );
 	}
 	else
 	{
 		const float fWidth = GetUnzoomedWidth();
-		if( fWidth != 0 )	// don't divide by 0
-		{
-			/* Never decrease the zoom. */
-			const float fZoom = min( 1, m_fMaxWidth/fWidth );
-			this->SetBaseZoomX( fZoom );
-		}
+		const float fZoom = min( 1, m_fMaxWidth/fWidth );	/* Never increase the zoom. */
+		this->SetBaseZoomX( fBaseZoom * fZoom );
 	}
 
 	if( m_fMaxHeight == 0 )
 	{
-		this->SetBaseZoomY( 1 );
+		this->SetBaseZoomY( fBaseZoom );
 	}
 	else
 	{
 		const float fHeight = GetUnzoomedHeight();
-		if( fHeight != 0 )	// don't divide by 0
-		{
-			/* Never decrease the zoom. */
-			const float fZoom = min( 1, m_fMaxHeight/fHeight );
-			this->SetBaseZoomY( fZoom );
-		}
+		const float fZoom = min( 1, m_fMaxHeight/fHeight );	/* Never increase the zoom. */
+		this->SetBaseZoomY( fBaseZoom * fZoom );
 	}
 }
 
