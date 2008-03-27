@@ -12,6 +12,7 @@
 #include "XmlFile.h"
 #include "LuaBinding.h"
 #include "GameManager.h"
+#include "PlayerState.h"
 
 REGISTER_ACTOR_CLASS( DifficultyDisplay );
 
@@ -42,7 +43,7 @@ DifficultyDisplay::DifficultyDisplay()
  * so I'm trying it first in only this object.
  */
 
-void DifficultyDisplay::Load( const RString &sMetricsGroup )
+void DifficultyDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlayerState )
 {
 	m_sMetricsGroup = sMetricsGroup;
 
@@ -106,17 +107,14 @@ void DifficultyDisplay::Load( const RString &sMetricsGroup )
 		this->AddChild( &m_sprStepsType );
 	}
 
+	// Play Load Command
+	PlayerState* pPlayerState_ = const_cast<PlayerState*>(pPlayerState);
+	Message msg("Load");
+	if( pPlayerState_ )
+		msg.SetParam( "PlayerState", LuaReference::CreateFromPush(*pPlayerState_) );
+	this->HandleMessage( msg );
+
 	Unset();
-}
-
-void DifficultyDisplay::LoadFromNode( const XNode* pNode )
-{
-	ActorFrame::LoadFromNode( pNode );
-
-	RString s;
-	if( !pNode->GetAttrValue("Type", s) )
-		RageException::Throw( "%s: DifficultyDisplay: missing the \"Type\" attribute", ActorUtil::GetWhere(pNode).c_str() );
-	Load( s );
 }
 
 void DifficultyDisplay::SetFromGameState( PlayerNumber pn )
@@ -278,7 +276,7 @@ void DifficultyDisplay::SetInternal( const SetParams &params )
 class LunaDifficultyDisplay: public Luna<DifficultyDisplay>
 {
 public:
-	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1) ); return 0; }
+	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), NULL ); return 0; }
 	static int SetFromStepsTypeAndMeterAndDifficulty( T* p, lua_State *L )		{ p->SetFromStepsTypeAndMeterAndDifficulty( Enum::Check<StepsType>(L, 1), IArg(2), Enum::Check<Difficulty>(L, 3) ); return 0; }
 	static int SetFromSteps( T* p, lua_State *L )
 	{ 

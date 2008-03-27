@@ -15,14 +15,14 @@
 
 class Steps;
 class Trail;
+class PlayerState;
 
 class DifficultyDisplay : public ActorFrame
 {
 public:
 	DifficultyDisplay();
 
-	void Load( const RString &sMetricsGroup );
-	void LoadFromNode( const XNode* pNode );
+	void Load( const RString &sMetricsGroup, const PlayerState *pPlayerState );
 
 	virtual DifficultyDisplay *Copy() const;
 
