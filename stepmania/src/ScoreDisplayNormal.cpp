@@ -37,7 +37,7 @@ void ScoreDisplayNormal::Init( const PlayerState* pPlayerState, const PlayerStag
 	PlayerState* pPlayerState_ = const_cast<PlayerState*>(pPlayerState);
 	PlayerStageStats* pPlayerStageStats_ = const_cast<PlayerStageStats*>(pPlayerStageStats);
 
-	Message msg("Init");
+	Message msg("Load");
 	msg.SetParam( "PlayerState", LuaReference::CreateFromPush(*pPlayerState_) );
 	msg.SetParam( "PlayerStageStats", LuaReference::CreateFromPush(*pPlayerStageStats_) );
 	this->HandleMessage( msg );

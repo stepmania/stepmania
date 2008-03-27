@@ -68,7 +68,7 @@ void ScreenNetSelectMusic::Init()
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 
 		m_DifficultyDisplays[p].SetName( ssprintf("MeterP%d",p+1) );
-		m_DifficultyDisplays[p].Load( "DifficultyDisplay" );
+		m_DifficultyDisplays[p].Load( "DifficultyDisplay", NULL );
 		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_DifficultyDisplays[p] );
 		this->AddChild( &m_DifficultyDisplays[p] );
 	}

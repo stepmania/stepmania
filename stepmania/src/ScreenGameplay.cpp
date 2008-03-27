@@ -625,7 +625,7 @@ void ScreenGameplay::Init()
 		//
 		ASSERT( pi->m_pDifficultyDisplay == NULL );
 		pi->m_pDifficultyDisplay = new DifficultyDisplay;
-		pi->m_pDifficultyDisplay->Load("DifficultyDisplayGameplay");
+		pi->m_pDifficultyDisplay->Load("DifficultyDisplayGameplay", pi->GetPlayerState() );
 		pi->m_pDifficultyDisplay->SetName( ssprintf("DifficultyDisplay%s",pi->GetName().c_str()) );
 		PlayerNumber pn = pi->GetStepsAndTrailIndex();
 		if( pn != PlayerNumber_Invalid )
