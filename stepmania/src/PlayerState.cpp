@@ -220,6 +220,7 @@ int PlayerState::GetSumOfActiveAttackLevels() const
 class LunaPlayerState: public Luna<PlayerState>
 {
 public:
+	DEFINE_METHOD( GetPlayerNumber, m_PlayerNumber );
 	static int SetPlayerOptions( T* p, lua_State *L )
 	{
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
@@ -238,6 +239,7 @@ public:
 
 	LunaPlayerState()
 	{
+		ADD_METHOD( GetPlayerNumber );
 		ADD_METHOD( SetPlayerOptions );
 		ADD_METHOD( GetPlayerOptions );
 	}

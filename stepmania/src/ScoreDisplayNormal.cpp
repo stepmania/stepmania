@@ -25,7 +25,6 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	// init the text
 	m_text.LoadFromFont( THEME->GetPathF("ScoreDisplayNormal","Text") );
 	m_text.SetName( "Text" );
-	m_text.SetShadowLength( 0 );
 	m_text.UpdateText();
 	ActorUtil::LoadAllCommandsAndSetXY( m_text, sType );
 	this->AddChild( &m_text );
@@ -35,10 +34,13 @@ void ScoreDisplayNormal::Init( const PlayerState* pPlayerState, const PlayerStag
 {
 	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
 
-	// TODO: Remove use of PlayerNumber.
-	//PlayerNumber pn = pPlayerState->m_PlayerNumber;
-	
-	//m_text.RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(pn) );
+	PlayerState* pPlayerState_ = const_cast<PlayerState*>(pPlayerState);
+	PlayerStageStats* pPlayerStageStats_ = const_cast<PlayerStageStats*>(pPlayerStageStats);
+
+	Message msg("Init");
+	msg.SetParam( "PlayerState", LuaReference::CreateFromPush(*pPlayerState_) );
+	msg.SetParam( "PlayerStageStats", LuaReference::CreateFromPush(*pPlayerStageStats_) );
+	this->HandleMessage( msg );
 }
 
 void ScoreDisplayNormal::SetScore( int iNewScore ) 
