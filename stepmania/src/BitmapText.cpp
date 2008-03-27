@@ -543,19 +543,6 @@ void BitmapText::DrawPrimitives()
 		}
 
 		//
-		// render the stroke
-		//
-		bool bUsingStrokeTexture = !!m_vpFontPageTextures[0]->m_pTextureStroke;
-		if( bUsingStrokeTexture  &&  m_StrokeColor.a > 0 )
-		{
-			RageColor c = m_StrokeColor;
-			c.a *= m_pTempState->diffuse[0].a;
-			for( unsigned i=0; i<m_aVertices.size(); i++ )
-				m_aVertices[i].c = c;
-			DrawChars( true );
-		}
-
-		//
 		// render the diffuse pass
 		//
 		if( m_bRainbowScroll )
@@ -640,6 +627,19 @@ void BitmapText::DrawPrimitives()
 				m_aVertices[i+2].p -= jitter;	// bottom right
 				m_aVertices[i+3].p -= jitter;	// top right
 			}
+		}
+
+		//
+		// render the stroke
+		//
+		bool bUsingStrokeTexture = !!m_vpFontPageTextures[0]->m_pTextureStroke;
+		if( bUsingStrokeTexture  &&  m_StrokeColor.a > 0 )
+		{
+			RageColor c = m_StrokeColor;
+			c.a *= m_pTempState->diffuse[0].a;
+			for( unsigned i=0; i<m_aVertices.size(); i++ )
+				m_aVertices[i].c = c;
+			DrawChars( true );
 		}
 	}
 
