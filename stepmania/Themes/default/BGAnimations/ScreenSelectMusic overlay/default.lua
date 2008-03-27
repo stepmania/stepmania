@@ -273,7 +273,7 @@ local t = Def.ActorFrame {
 	};
 	
 	LoadFont("_regra 32 bold") .. {
-		InitCommand=cmd(horizalign,left;x,SCREEN_CENTER_X-14;y,SCREEN_CENTER_Y-14;zoom,0.5;settext,"/Senser";shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000"););
+		InitCommand=cmd(horizalign,left;x,SCREEN_CENTER_X-14;y,SCREEN_CENTER_Y-14;zoom,0.5;settext,"/Senser";shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000");maxwidth,360);
 		SetCommand=function(self) 
 				local s = "---";
 				local song = GAMESTATE:GetCurrentSong(); 
@@ -423,29 +423,34 @@ local t = Def.ActorFrame {
 	--	OffCommand=cmd(linear,0.5;zoomy,0);
 	--};
 
-	LoadActor( "_balloon long" ) .. {
-		InitCommand=cmd(x,SCREEN_CENTER_X+58;y,SCREEN_CENTER_Y-33;playcommand,"Set";finishtweening);
-		OnCommand=cmd(playcommand,"Set");
-		OffCommand=cmd(linear,0.2;diffusealpha,0;rotationz,-25);
-		ShowCommand=cmd(stoptweening;diffusealpha,0;linear,0.2;diffusealpha,1;rotationz,0);
-		HideCommand=cmd(stoptweening;linear,0.2;diffusealpha,0;rotationz,-25);
-		SetCommand=function(self)
-			local Song = GAMESTATE:GetCurrentSong()
-			self:playcommand( (Song and Song:IsLong()) and "Show" or "Hide" );
-		end;
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
-	};
-	LoadActor( "_balloon marathon" ) .. {
-		InitCommand=cmd(x,SCREEN_CENTER_X+58;y,SCREEN_CENTER_Y-33;playcommand,"Set";finishtweening);
-		OnCommand=cmd(playcommand,"Set");
-		OffCommand=cmd(linear,0.2;diffusealpha,0;rotationz,-25);
-		ShowCommand=cmd(stoptweening;diffusealpha,0;linear,0.2;diffusealpha,1;rotationz,0);
-		HideCommand=cmd(stoptweening;linear,0.2;diffusealpha,0;rotationz,-25);
-		SetCommand=function(self)
-			local Song = GAMESTATE:GetCurrentSong()
-			self:playcommand( (Song and Song:IsMarathon()) and "Show" or "Hide" );
-		end;
-		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+	Def.ActorFrame{
+		InitCommand=cmd(x,SCREEN_CENTER_X-190;y,SCREEN_CENTER_Y-32);
+		ShowCommand=cmd(linear,0.2;diffusealpha,1);
+		HideCommand=cmd(linear,0.2;diffusealpha,0);
+		
+		LoadActor("long balloon");
+		LoadFont("_terminator two 32")..{
+			Name="SongLength";
+			InitCommand=cmd(x,-56;y,-10;shadowlength,0;diffuse,color("#E2E2E2");diffusebottomedge,color("#CECECE");strokecolor,color("#00000000"));
+			SetCommand=function(self)
+				local Song = GAMESTATE:GetCurrentSong();
+				local time = Song:MusicLengthSeconds();
+				time = SecondsToMSSMsMs(time);
+				time = string.sub(time, 0, string.len(time)-3);
+				self:settext( time );
+			end;
+		};
+		LoadFont("_venacti 24")..{
+			Name="NumStages";
+			InitCommand=cmd(x,32;y,-4;shadowlength,0;zoom,0.5;skewx,-0.2;diffusebottomedge,color("#068EE1FF");strokecolor,color("#FF000000"));
+			SetCommand=function(self)
+				local Song = GAMESTATE:GetCurrentSong();
+				local postfix = " STAGES";
+				if Song:IsLong() then self:settext("2"..postfix);
+				elseif Song:IsMarathon() then self:settext("3"..postfix);
+				end;
+			end;
+		};
 	};
 
 	LoadFont("_numbers2") .. {
