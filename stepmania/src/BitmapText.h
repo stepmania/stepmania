@@ -71,8 +71,8 @@ protected:
 	vector<wstring>		m_wTextLines;
 	vector<int>		m_iLineWidths;		// in source pixels
 	int			m_iWrapWidthPixels;	// -1 = no wrap
-	float			m_fMaxWidth;
-	float			m_fMaxHeight;
+	float			m_fMaxWidth;	// 0 = no max
+	float			m_fMaxHeight;	// 0 = no max
 	bool			m_bRainbowScroll;
 	bool			m_bJitter;
 	int			m_iVertSpacing;
