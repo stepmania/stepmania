@@ -22,7 +22,7 @@ local function DifficultyDisplay(pn)
 	end
 
 	local t = Def.DifficultyDisplay {
-		Type="DifficultyDisplay"; -- metrics section
+		InitCommand=cmd(Load,"DifficultyDisplay",GAMESTATE:GetPlayerState(pn););
 	};
 
 	if pn == PLAYER_1 then
