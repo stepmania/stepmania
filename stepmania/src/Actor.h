@@ -151,7 +151,7 @@ public:
 	void  SetBaseZoomX( float zoom )		{ m_baseScale.x = zoom;	}
 	void  SetBaseZoomY( float zoom )		{ m_baseScale.y = zoom; }
 	void  SetBaseZoomZ( float zoom )		{ m_baseScale.z = zoom; }
-	void  SetBaseZoom( const RageVector3 &zoom )	{ m_baseScale = zoom; }
+	void  SetBaseZoom( float zoom )			{ m_baseScale = RageVector3(zoom,zoom,zoom); }
 	void  SetBaseRotationX( float rot )		{ m_baseRotation.x = rot; }
 	void  SetBaseRotationY( float rot )		{ m_baseRotation.y = rot; }
 	void  SetBaseRotationZ( float rot )		{ m_baseRotation.z = rot; }
