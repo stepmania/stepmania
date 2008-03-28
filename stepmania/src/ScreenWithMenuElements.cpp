@@ -92,6 +92,15 @@ void ScreenWithMenuElements::Init()
 	m_sprOverlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
 	this->AddChild( m_sprOverlay );
 	LOAD_ALL_COMMANDS( m_sprOverlay );
+	
+	/* Experimental: Load "decorations" and make them children of the screen. */
+	{
+		AutoActor decorations;
+		decorations.Load( THEME->GetPathB(m_sName,"decorations") );
+		ActorFrame *pFrame = dynamic_cast<ActorFrame*>((Actor*)decorations);
+		if( pFrame )
+			pFrame->TransferChildren( this );
+	}
 
 	m_In.SetName( "In" );
 	m_In.Load( THEME->GetPathB(m_sName,"in") );

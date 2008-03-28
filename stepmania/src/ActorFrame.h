@@ -16,8 +16,9 @@ public:
 	void LoadFromNode( const XNode* pNode );
 	virtual ActorFrame *Copy() const;
 
-	virtual void AddChild( Actor* pActor );
-	virtual void RemoveChild( Actor* pActor );
+	virtual void AddChild( Actor *pActor );
+	virtual void RemoveChild( Actor *pActor );
+	void TransferChildren( ActorFrame *pTo );
 	Actor* GetChild( const RString &sName );
 	int GetNumChildren() const { return m_SubActors.size(); }
 

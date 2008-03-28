@@ -121,7 +121,7 @@ void ActorFrame::LoadChildrenFromNode( const XNode* pNode )
 	SortByDrawOrder();
 }
 
-void ActorFrame::AddChild( Actor* pActor )
+void ActorFrame::AddChild( Actor *pActor )
 {
 #if _DEBUG
 	// check that this Actor isn't already added.
@@ -137,11 +137,18 @@ void ActorFrame::AddChild( Actor* pActor )
 	pActor->SetParent( this );
 }
 
-void ActorFrame::RemoveChild( Actor* pActor )
+void ActorFrame::RemoveChild( Actor *pActor )
 {
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter != m_SubActors.end() )
 		m_SubActors.erase( iter );
+}
+
+void ActorFrame::TransferChildren( ActorFrame *pTo )
+{
+	FOREACH( Actor*, m_SubActors, i )
+		pTo->AddChild( *i );
+	RemoveAllChildren();
 }
 
 Actor* ActorFrame::GetChild( const RString &sName )
