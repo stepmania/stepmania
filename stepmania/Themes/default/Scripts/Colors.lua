@@ -36,10 +36,7 @@ end
 
 function DifficultyDisplayTypeToDarkColor( ddt ) 
 	local c = DifficultyDisplayTypeToColor(ddt);
-	c[1] = c[1]/2;
-	c[2] = c[2]/2;
-	c[3] = c[3]/2;
-	return c;
+	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
 end
 
 function CourseDifficutlyToColor( cd )
