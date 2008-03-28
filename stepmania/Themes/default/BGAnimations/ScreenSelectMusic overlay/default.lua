@@ -196,15 +196,7 @@ local t = Def.ActorFrame {
 			SortOrderChangedMessageCommand=cmd(playcommand,"Set");
 		};
 	};
-
-	-- Do the fade out here, because we want the options message to
-	-- appear over it.
-	Def.Quad {
-		InitCommand=cmd(stretchto,SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM;diffuse,color("#000000"));
-		OnCommand=cmd(diffusealpha,0);
-		OffCommand=cmd(linear,0.3;diffusealpha,1);
-	};
-
+	
 	LoadActor( THEME:GetPathG(Var 'LoadingScreen','options message 1x2') ) .. {
 		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;pause);
 		OnCommand=cmd(hidden,1);
@@ -546,5 +538,9 @@ if not GAMESTATE:IsCourseMode() then
 		};
 	};
 end
-
+-- fade out
+t[#t+1] = Def.Quad {
+		InitCommand=cmd(FullScreen;diffuse,color("#000000");diffusealpha,0);
+		OffCommand=cmd(linear,0.3;diffusealpha,1);
+};
 return t;
