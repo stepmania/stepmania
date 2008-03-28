@@ -36,34 +36,6 @@ local function DifficultyDisplay(pn)
 	return t;
 end
 
-local function DifficultyIcons(pn)
-	local function set(self, player)
-		if player and player ~= pn then return end
-		local Selection = GAMESTATE:GetCurrentSteps(pn) or GAMESTATE:GetCurrentTrail(pn)
-
-		if not Selection then
-			self:Unset();
-			return
-		end
-		local dc = Selection:GetDifficulty()
-		self:SetFromDifficulty( dc );
-	end
-
-	local t = Def.DifficultyIcon {
-		File="_difficulty icons 1x6";
-		InitCommand=function(self)
-			self:player( pn );
-			self:SetPlayer( pn );
-		end;
-
-		CurrentStepsP1ChangedMessageCommand=function(self) set(self, PLAYER_1); end;
-		CurrentStepsP2ChangedMessageCommand=function(self) set(self, PLAYER_2); end;
-		CurrentTrailP1ChangedMessageCommand=function(self) set(self, PLAYER_1); end;
-		CurrentTrailP2ChangedMessageCommand=function(self) set(self, PLAYER_2); end;
-	};
-	return t;
-end
-
 local function Radar()
 	local function set(self,player)
 		local Selection = GAMESTATE:GetCurrentSteps(player) or GAMESTATE:GetCurrentTrail(player)
@@ -393,27 +365,16 @@ local t = Def.ActorFrame {
 		BeginCommand=cmd(x,SCREEN_CENTER_X-68;y,SCREEN_CENTER_Y-15);
 	};
 	
-	--DifficultyIcons(PLAYER_1) .. {
-	--	BeginCommand=cmd(x,SCREEN_CENTER_X-290;y,SCREEN_CENTER_Y-15);
-	--	OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
-	--	OffCommand=cmd(linear,0.5;zoomy,0);
-	--};
-	--DifficultyIcons(PLAYER_2) .. {
-	--	BeginCommand=cmd(x,SCREEN_CENTER_X-68;y,SCREEN_CENTER_Y-15);
-	--	OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
-	--	OffCommand=cmd(linear,0.5;zoomy,0);
-	--};
-
-	--DifficultyDisplay(PLAYER_1) .. {
-	--	BeginCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-254;y,SCREEN_CENTER_Y-20);
-	--	OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
-	--	OffCommand=cmd(linear,0.5;zoomy,0);
-	--};
-	--DifficultyDisplay(PLAYER_2) .. {
-	--	BeginCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X-121;y,SCREEN_CENTER_Y-20);
-	--	OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
-	--	OffCommand=cmd(linear,0.5;zoomy,0);
-	--};
+	DifficultyDisplay(PLAYER_1) .. {
+		BeginCommand=cmd(player,PLAYER_1;x,SCREEN_CENTER_X-254;y,SCREEN_CENTER_Y-20);
+		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
+		OffCommand=cmd(linear,0.5;zoomy,0);
+	};
+	DifficultyDisplay(PLAYER_2) .. {
+		BeginCommand=cmd(player,PLAYER_2;x,SCREEN_CENTER_X-121;y,SCREEN_CENTER_Y-20);
+		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
+		OffCommand=cmd(linear,0.5;zoomy,0);
+	};
 
 	Def.ActorFrame{
 		InitCommand=cmd(x,SCREEN_CENTER_X-190;y,SCREEN_CENTER_Y-32);
