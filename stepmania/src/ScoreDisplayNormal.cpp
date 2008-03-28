@@ -24,6 +24,7 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 
 	// init the text
 	m_text.LoadFromFont( THEME->GetPathF("ScoreDisplayNormal","Text") );
+	m_text.Load( "RollingNumbers" );
 	m_text.SetName( "Text" );
 	m_text.UpdateText();
 	ActorUtil::LoadAllCommandsAndSetXY( m_text, sType );
