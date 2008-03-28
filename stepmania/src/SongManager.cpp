@@ -1724,6 +1724,8 @@ public:
 		return 2;
 	}
 	DEFINE_METHOD( GetSongColor, GetSongColor( Luna<Song>::check(L,1) ) )
+	DEFINE_METHOD( GetSongGroupColor, GetSongGroupColor( SArg(1) ) )
+	//static int GetSongGroupColor( T* p, lua_State *L )	{ lua_pushstring( L, p->GetSongGroupColor(SArg(1)) ); return 1; }
 
 
 	LunaSongManager()
@@ -1745,6 +1747,7 @@ public:
 		ADD_METHOD( GetSongFromSteps );
 		ADD_METHOD( GetExtraStageInfo );
 		ADD_METHOD( GetSongColor );
+		ADD_METHOD( GetSongGroupColor );
 	}
 };
 
