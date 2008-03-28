@@ -9,25 +9,15 @@ REGISTER_ACTOR_CLASS( RollingNumbers )
 
 RollingNumbers::RollingNumbers()
 {
-	m_sFormat = "%9.0f";
-	m_fApproachSeconds = 0.2f;
-
 	m_fCurrentNumber = 0;
 	m_fTargetNumber = 0;
 	m_fScoreVelocity = 0;
 }
 
-void RollingNumbers::LoadFromNode( const XNode* pNode )
+void RollingNumbers::Load( const RString &sMetricsGroup )
 {
-	BitmapText::LoadFromNode( pNode );
-
-	pNode->GetAttrValue( "Format", m_sFormat );
-	ThemeManager::EvaluateString( m_sFormat );
-	pNode->GetAttrValue( "ApproachSeconds", m_fApproachSeconds );
-	
-	float fTargetNumber;
-	if( pNode->GetAttrValue( "TargetNumber", fTargetNumber ) )
-		SetTargetNumber( fTargetNumber );
+	TEXT_FORMAT.Load(sMetricsGroup, "TextFormat");
+	APPROACH_SECONDS.Load(sMetricsGroup, "ApproachSeconds");
 
 	UpdateText();
 }
@@ -48,12 +38,13 @@ void RollingNumbers::SetTargetNumber( float fTargetNumber )
 	if( fTargetNumber == m_fTargetNumber )	// no change
 		return;
 	m_fTargetNumber = fTargetNumber;
-	m_fScoreVelocity = (m_fTargetNumber-m_fCurrentNumber) / m_fApproachSeconds;
+	m_fScoreVelocity = (m_fTargetNumber-m_fCurrentNumber) / APPROACH_SECONDS.GetValue();
 }
 
 void RollingNumbers::UpdateText()
 {
-	SetText( ssprintf(m_sFormat, m_fCurrentNumber) );
+	RString s = ssprintf( TEXT_FORMAT.GetValue(), m_fCurrentNumber );
+	SetText( s );
 }
 
 // lua start

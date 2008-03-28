@@ -4,13 +4,14 @@
 #define RollingNumbers_H
 
 #include "BitmapText.h"
+#include "ThemeMetric.h"
 
 class RollingNumbers : public BitmapText
 {
 public:
 	RollingNumbers();
 
-	void LoadFromNode( const XNode* pNode );
+	void Load( const RString &sMetricsGroup );
 	virtual RollingNumbers *Copy() const;
 
 	virtual void Update( float fDeltaTime );
@@ -25,16 +26,9 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 private:
-	// Loaded attributes
-	//
-	// Time between the call to SetTargetNumber and m_fCurrentNumber == 
-	// m_fTargetNumber.  Used to calculate m_fScoreVelocity.
-	float	m_fApproachSeconds;
-	RString m_sFormat;
+	ThemeMetric<RString> TEXT_FORMAT;
+	ThemeMetric<float> APPROACH_SECONDS;
 
-	//
-	// Calculated
-	//
 	float	m_fCurrentNumber;	// currently showing this
 	float	m_fTargetNumber;	// approach this
 	float	m_fScoreVelocity;	// approach target at this speed
