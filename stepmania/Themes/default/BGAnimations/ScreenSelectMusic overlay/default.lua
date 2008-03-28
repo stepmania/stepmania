@@ -451,6 +451,12 @@ local t = Def.ActorFrame {
 				end;
 			end;
 		};
+		
+		SetCommand=function(self)
+			local Song = GAMESTATE:GetCurrentSong();
+			self:playcommand( (Song and (Song:IsLong() or Song:IsMarathon())) and "Show" or "Hide" );
+		end;
+		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 	};
 
 	LoadFont("_numbers2") .. {
