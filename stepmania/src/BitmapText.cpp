@@ -134,6 +134,8 @@ bool BitmapText::LoadFromFont( const RString& sFontFilePath )
 
 	m_pFont = FONT->LoadFont( sFontFilePath );
 
+	this->SetStrokeColor( m_pFont->GetDefaultStrokeColor() );
+
 	BuildChars();
 
 	return true;

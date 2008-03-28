@@ -229,6 +229,7 @@ Font::Font()
 	m_pDefault = NULL;
 	m_bRightToLeft = false;
 	m_fFontBaseZoom = 1;
+	m_DefaultStrokeColor = RageColor(1,1,1,1);
 }
 
 Font::~Font()
@@ -691,6 +692,9 @@ void Font::Load( const RString &sIniPath, RString sChars )
 		ini.GetValue( "main", "CapitalsOnly", bCapitalsOnly );
 		ini.GetValue( "main", "RightToLeft", m_bRightToLeft );
 		ini.GetValue( "main", "FontBaseZoom", m_fFontBaseZoom );
+		RString s;
+		if( ini.GetValue( "main", "DefaultStrokeColor", s ) )
+			m_DefaultStrokeColor.FromString( s );
 	}
 
 	{

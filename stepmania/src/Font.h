@@ -148,6 +148,7 @@ public:
 
 	bool IsRightToLeft() const { return m_bRightToLeft; };
 	float GetFontBaseZoom() const { return m_fFontBaseZoom; };
+	const RageColor &GetDefaultStrokeColor() const { return m_DefaultStrokeColor; };
 
 private:
 	/* List of pages and fonts that we use (and are responsible for freeing). */
@@ -167,6 +168,7 @@ private:
 	bool m_bRightToLeft;
 
 	float m_fFontBaseZoom;
+	RageColor m_DefaultStrokeColor;
 
 	/* We keep this around only for reloading. */
 	RString m_sChars;
