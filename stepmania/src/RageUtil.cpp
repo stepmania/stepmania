@@ -237,12 +237,17 @@ RString PrettyPercent( float fNumerator, float fDenominator)
 RString Commify( int iNum ) 
 {
 	RString sNum = ssprintf("%d",iNum);
+	return Commify( sNum );
+}
+
+RString Commify( RString sNum, RString sSeperator ) 
+{
 	RString sReturn;
 	for( unsigned i=0; i<sNum.length(); i++ )
 	{
 		char cDigit = sNum[sNum.length()-1-i];
 		if( i!=0 && i%3 == 0 )
-			sReturn = ',' + sReturn;
+			sReturn = sSeperator + sReturn;
 		sReturn = cDigit + sReturn;
 	}
 	return sReturn;

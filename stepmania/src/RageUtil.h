@@ -345,6 +345,7 @@ RString SecondsToMMSSMsMsMs( float fSecs );
 RString PrettyPercent( float fNumerator, float fDenominator );
 inline RString PrettyPercent( int fNumerator, int fDenominator ) { return PrettyPercent( float(fNumerator), float(fDenominator) ); }
 RString Commify( int iNum );
+RString Commify( RString sNum, RString sSeperator = "," );
 RString FormatNumberAndSuffix( int i );
 
 
