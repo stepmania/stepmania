@@ -32,6 +32,7 @@ public:
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 
+	void SetUppercase( bool b )	{ m_bUppercase = b; }
 	void SetRainbowScroll( bool b )	{ m_bRainbowScroll = b; }
 	void SetJitter( bool b )	{ m_bJitter = b; }
 
@@ -67,6 +68,7 @@ public:
 
 protected:
 	Font			*m_pFont;
+	bool			m_bUppercase;
 	RString			m_sText;
 	vector<wstring>		m_wTextLines;
 	vector<int>		m_iLineWidths;		// in source pixels

@@ -44,6 +44,7 @@ BitmapText::BitmapText()
 	iReloadCounter++;
 
 	m_pFont = NULL;
+	m_bUppercase = false;
 
 	m_bRainbowScroll = false;
 	m_bJitter = false;
@@ -348,6 +349,9 @@ void BitmapText::SetText( const RString& _sText, const RString& _sAlternateText,
 	ASSERT( m_pFont );
 
 	RString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
+
+	if( m_bUppercase )
+		sNewText.MakeUpper();
 
 	if( iWrapWidthPixels == -1 )	// wrap not specified
 		iWrapWidthPixels = m_iWrapWidthPixels;
@@ -808,6 +812,7 @@ public:
 	}
 	static int ClearAttributes( T* p, lua_State *L )	{ p->ClearAttributes(); return 0; }
 	static int strokecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetStrokeColor( c ); return 0; }
+	static int uppercase( T* p, lua_State *L )		{ p->SetUppercase( BArg(1) ); return 0; }
 
 	LunaBitmapText()
 	{
@@ -822,6 +827,7 @@ public:
 		ADD_METHOD( AddAttribute );
 		ADD_METHOD( ClearAttributes );
 		ADD_METHOD( strokecolor );
+		ADD_METHOD( uppercase );
 	}
 };
 
