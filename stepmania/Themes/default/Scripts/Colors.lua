@@ -39,6 +39,11 @@ function DifficultyDisplayTypeToDarkColor( ddt )
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
 end
 
+function DifficultyDisplayTypeToLightColor( ddt ) 
+	local c = DifficultyDisplayTypeToColor(ddt);
+	return { scale(c[1],0,1,0.5,1), scale(c[2],0,1,0.5,1), scale(c[3],0,1,0.5,1), c[4] };
+end
+
 function CourseDifficutlyToColor( cd )
 	local c = CourseDifficultyColors[cd]
 	if c then return c end
