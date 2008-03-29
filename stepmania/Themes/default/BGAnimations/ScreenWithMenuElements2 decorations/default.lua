@@ -1,4 +1,4 @@
-local t = Def.ActorFrame {
+local t = LoadActor( THEME:GetPathB('ScreenWithMenuElements','decorations') ) .. {
 	LoadActor( "bumper" ) .. {
 		OnCommand=cmd(x,SCREEN_CENTER_X-320;y,SCREEN_CENTER_Y);
 	};

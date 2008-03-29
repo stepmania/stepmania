@@ -28,6 +28,25 @@ local CourseDifficultyColors = {
 	Difficulty_Challenge	= color("0.2,0.6,1.0,1"),	-- blue
 };
 
+local StageColors = {
+	Stage_1st	= color("#00ffc7"),
+	Stage_2nd	= color("#58ff00"),
+	Stage_3rd	= color("#f400ff"),
+	Stage_4th	= color("#00ffda"),
+	Stage_5th	= color("#ed00ff"),
+	Stage_6th	= color("#73ff00"),
+	Stage_Next	= color("#73ff00"),
+	Stage_Final	= color("#ff0707"),
+	Stage_Extra1	= color("#fafa00"),
+	Stage_Extra2	= color("#ff0707"),
+	Stage_Nonstop	= color("#FFFFFF"),
+	Stage_Oni	= color("#FFFFFF"),
+	Stage_Endless	= color("#FFFFFF"),
+	Stage_Event	= color("#FFFFFF"),
+	Stage_Demo	= color("#FFFFFF"),
+};
+
+
 function DifficultyDisplayTypeToColor( ddt ) 
 	local c = DifficultyDisplayTypeColors[ddt]
 	if c then return c end
@@ -50,10 +69,17 @@ function CourseDifficutlyToColor( cd )
 	return color("#000000");
 end
 
-
-function DifficultyAndStepsTypeToColor( difficulty, stepsType )
-	return DifficultyToColor( difficulty );
+function StageToColor( stage )
+	local c = StageColors[stage];
+	if c then return c end
+	return color("#000000");
 end
+
+function StageToStrokeColor( stage )
+	local c = StageToColor(ddt);
+	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
+end
+
 
 
 
