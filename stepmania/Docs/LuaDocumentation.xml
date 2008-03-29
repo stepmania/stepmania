@@ -32,6 +32,9 @@
 	<Function name='DayOfYear' return='int' arguments=''>
 		Returns the current day of the year.
 	</Function>
+	<Function name='Enum.Reverse' return='int' arguments=''>
+		Reverses an named enum to its value. Replace <code>Enum</code> with the actual num class.
+	</Function>
 	<Function name='FormatNumberAndSuffix' return='string' arguments='int num'>
 		Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
 	</Function>
@@ -184,11 +187,17 @@
 	<Function name='fadetop' return='void' arguments='float percent'>
 		Fades <code>percent</code> of the Actor from the top where <code>percent</code> is in the range 0..1.
 	</Function>
+	<Function name='finishtweening' return='void' arguments=''>
+		Finishes up an Actor's tween immediately.
+	</Function>
 	<Function name='GetCommand' return='bool' arguments='string sCmdName'>
 		Returns <code>true</code> if the Actor has a command named <code>sCmdName</code>.
 	</Function>
 	<Function name='GetDiffuseAlpha' return='float' arguments=''>
 		Returns the Actor's current diffusealpha.
+	</Function>
+	<Function name='GetName' return='string' arguments=''>
+		Returns the Actor's name.
 	</Function>
 	<Function name='GetNumStates' return='int' arguments=''>
 		Returns the number of states the Actor has.
@@ -208,6 +217,9 @@
 	<Function name='horizalign' return='void' arguments='HorizAlign align'>
 		Set the horizontal alignment of the Actor according to <code>align</code>. See <Link function='halign' /> for fractional alignment.
 	</Function>
+	<Function name='hurrytweening' return='void' arguments='float factor'>
+		Hurries up an Actor's tweening by <code>factor</code>.
+	</Function>
 	<Function name='playcommand' return='void' arguments='string sCommandName'>
 		Plays a command named <code>sCommandName</code>.
 	</Function>
@@ -226,8 +238,17 @@
 	<Function name='rotationz' return='void' arguments='float fRotation'>
 		Set the Actor's rotation on the Z axis to <code>fAlign</code>.
 	</Function>
+	<Function name='setstate' return='void' arguments='int iNewState'>
+		Sets a multi-framed Actor's state to <code>iNewState</code>.
+	</Function>
 	<Function name='shadowlength' return='void' arguments='float fLength'>
 		Sets the Actor's shadow length to <code>fLength</code>.
+	</Function>
+	<Function name='shadowlengthx' return='void' arguments='float fLength'>
+		Sets the Actor's horizontal shadow length to <code>fLength</code>.
+	</Function>
+	<Function name='shadowlengthy' return='void' arguments='float fLength'>
+		Sets the Actor's vertical shadow length to <code>fLength</code>.
 	</Function>
 	<Function name='skewx' return='void' arguments='float fAmount'>
 		Skews the Actor on the x axis by <code>fAmount</code>.
@@ -350,6 +371,9 @@
 	</Function>
 	<Function name='settext' return='void' arguments='string sText'>
 		Set the text to <code>sText</code>. This clears all attributes.
+	</Function>
+	<Function name='uppercase' return='void' arguments='bool b'>
+		If <code>true</code>, make all text uppercase.
 	</Function>
 	<Function name='vertspacing' return='void' arguments='int iSpacing'>
 		Add <code>iSpacing</code> pixels of padding between lines of text.
@@ -521,6 +545,9 @@
 	<Function name='GetHumanPlayers' return='{PlayerNumber}' arguments=''>
 		Returns an array of <Link class='PlayerNumber' />s corresponding to Human players.
 	</Function>
+	<Function name='GetMasterPlayerNumber' return='PlayerNumber' arguments=''>
+		Returns the master player number.
+	</Function>
 	<Function name='GetNumPlayersEnabled' return='int' arguments=''>
 		Returns the number of players enabled.
 	</Function>
@@ -536,6 +563,9 @@
 	<Function name='GetPlayerState' return='PlayerState' arguments='PlayerNumber pn'>
 		Returns the PlayerState for player <code>pn</code>.
 	</Function>
+	<Function name='GetPlayMode' return='PlayMode' arguments=''>
+		Returns the current PlayMode.
+	</Function>
 	<Function name='GetPremium' return='Premium' arguments=''>
 		Returns the current Premium.
 	</Function>
@@ -550,8 +580,17 @@
 	<Function name='GetSongBPS' return='float' arguments=''>
 		Returns the song's current beats per second.
 	</Function>
+	<Function name='GetSongFreeze' return='bool' arguments=''>
+		Returns <code>true</code> if the song is currently in a freeze.
+	</Function>
+	<Function name='GetSongOptionsString' return='string' arguments=''>
+		Returns the song options as a string.
+	</Function>
 	<Function name='GetSortOrder' return='SortOrder' arguments=''>
 		Returns the current SortOrder.
+	</Function>
+	<Function name='GetStageIndex' return='int' arguments=''>
+		Returns the current stage index.
 	</Function>
 	<Function name='GetStageSeed' return='int' arguments=''>
 		Return the random seed for the current stage.
@@ -564,6 +603,21 @@
 	</Function>
 	<Function name='IsEventMode' return='bool' arguments=''>
 		Returns <code>true</code> if Event Mode is on, <Link class='GameState' function='SetTemporaryEventMode'>temporary</Link> or otherwise.
+	</Function>
+	<Function name='IsHumanPlayer' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if player <code>pn</code> is human.
+	</Function>
+	<Function name='IsPlayerEnabled' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if player <code>pn</code> is enabled.
+	</Function>
+	<Function name='IsSideJoined' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if player <code>pn</code> has joined the game.
+	</Function>
+	<Function name='PlayersCanJoin' return='bool' arguments=''>
+		Returns <code>true</code> if players can join the game.
+	</Function>
+	<Function name='SaveLocalData' return='void' arguments=''>
+		Saves the bookkeeping and machine profile data.
 	</Function>
 </Class>
 <Class name='HighScore'>
@@ -639,14 +693,38 @@
 	<Function name='GetActualDancePoints' return='int' arguments=''>
 		Returns the number of Dance Points obtained by the player.
 	</Function>
+	<Function name='GetCaloriesBurned' return='float' arguments=''>
+		Returns the number of calories burned.
+	</Function>
+	<Function name='GetCurrentCombo' return='int' arguments=''>
+		Returns the player's current combo.
+	</Function>
+	<Function name='GetCurrentLife' return='float' arguments=''>
+		Returns the player's current life from 0..1.
+	</Function>
+	<Function name='GetCurrentScoreMultiplier' return='int' arguments=''>
+		Returns the player's current score multiplier.
+	</Function>
 	<Function name='GetGrade' return='Grade' arguments=''>
 		Returns the player's grade.
+	</Function>
+	<Function name='GetHoldNoteScores' return='int' arguments='HoldNoteScore hns'>
+		Returns the number of judgments for a specified HoldNoteScore.
+	</Function>
+	<Function name='GetPercentDancePoints' return='float' arguments=''>
+		Returns the player's Dance Point percentage.
 	</Function>
 	<Function name='GetPossibleDancePoints' return='int' arguments=''>
 		Returns the number of possible Dance Points.
 	</Function>
 	<Function name='GetScore' return='int' arguments=''>
 		Returns the score.
+	</Function>
+	<Function name='GetTapNoteScores' return='int' arguments='TapNoteScore tns'>
+		Returns the number of judgments for a specified TapNoteScore.
+	</Function>
+	<Function name='IsDisqualified' return='bool' arguments=''>
+		Returns <code>true</code> if the player was disqualified from ranking.
 	</Function>
 </Class>
 <Class name='PrefsManager'>
@@ -782,6 +860,12 @@
 	<Function name='GetTopScreen' return='Screen' arguments=''>
 		Gets the screen at the top of the screen stack.
 	</Function>
+	<Function name='ScreenClassExists' return='bool' arguments='string s'>
+		Returns <code>true</code> if screen class <code>s</code> exists.
+	</Function>
+	<Function name='SetNewScreen' return='void' arguments='string s'>
+		Sets the next screen to <code>s</code>.
+	</Function>
 	<Function name='SystemMessage' return='void' arguments='string s'>
 		Broadcasts a system message.
 	</Function>
@@ -789,6 +873,11 @@
 <Class name='ScreenProfileLoad'>
 	<Function name='HaveProfileToLoad' return='bool' arguments=''>
 		Returns <code>true</code> if there is a profile that can be loaded.
+	</Function>
+</Class>
+<Class name='ScreenProfileSave'>
+	<Function name='HaveProfileToSave' return='bool' arguments=''>
+		Returns <code>true</code> if there is a profile that can be saved.
 	</Function>
 </Class>
 <Class name='Song'>
@@ -818,6 +907,9 @@
 	</Function>
 	<Function name='GetSongDir' return='string' arguments=''>
 		Returns the song's directory.
+	</Function>
+	<Function name='GetTimingData' return='TimingData' arguments=''>
+		Returns the song's TimingData.
 	</Function>
 	<Function name='GetTranslitArtist' return='string' arguments=''>
 		Returns the transliterated artist of the song.
@@ -850,6 +942,12 @@
 	</Function>
 	<Function name='GetAllSongs' return='{Song}' arguments=''>
 		Returns an array of all the installed songs.
+	</Function>
+	<Function name='GetNumAdditionalCourses' return='int' arguments=''>
+		Returns the number of courses loaded via Additional folders.
+	</Function>
+	<Function name='GetNumAdditionalSongs' return='int' arguments=''>
+		Returns the number of songs loaded via Additional folders.
 	</Function>
 	<Function name='GetNumCourseGroups' return='int' arguments=''>
 		Returns the number of course groups.
@@ -984,6 +1082,11 @@
 	</Function>
 	<Function name='GetString' return='string' arguments='string ClassName, string Element'>
 		Returns the value of <code>Element</code> in <code>Class</code> for the currently loaded language.
+	</Function>
+</Class>
+<Class name='TimingData'>
+	<Function name='HasStops' return='bool' arguments=''>
+		Returns <code>true</code> if the TimingData contains stops.
 	</Function>
 </Class>
 <Class name='Trail'>
