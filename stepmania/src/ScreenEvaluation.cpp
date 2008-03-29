@@ -399,7 +399,7 @@ void ScreenEvaluation::Init()
 			SET_XY( m_sprSurvivedFrame[p] );
 			this->AddChild( m_sprSurvivedFrame[p] );
 
-			m_textSurvivedNumber[p].LoadFromFont( THEME->GetPathF(m_sName, "stage") );
+			m_textSurvivedNumber[p].LoadFromFont( THEME->GetPathF(m_sName, "SurvivedNumber") );
 			m_textSurvivedNumber[p].SetShadowLength( 0 );
 			// curewater: edited the "# stages cleared" text so it deducts one if you failed.
 			// Should be accurate, but I'm not sure if its "standard" that (bool)true = 1.  (assumption)
