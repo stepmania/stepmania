@@ -934,15 +934,15 @@ bool GameState::IsExtraStage2() const
 
 Stage GameState::GetCurrentStage() const
 {
-	if( m_bDemonstrationOrJukebox )			return STAGE_DEMO;
+	if( m_bDemonstrationOrJukebox )			return Stage_Demo;
 	// "event" has precedence
-	else if( IsEventMode() )			return STAGE_EVENT;
-	else if( m_PlayMode == PLAY_MODE_ONI )		return STAGE_ONI;
-	else if( m_PlayMode == PLAY_MODE_NONSTOP )	return STAGE_NONSTOP;
-	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return STAGE_ENDLESS;
-	else if( IsExtraStage() )			return STAGE_EXTRA1;
-	else if( IsExtraStage2() )			return STAGE_EXTRA2;
-	else						return STAGE_NORMAL;
+	else if( IsEventMode() )			return Stage_Event;
+	else if( m_PlayMode == PLAY_MODE_ONI )		return Stage_Oni;
+	else if( m_PlayMode == PLAY_MODE_NONSTOP )	return Stage_Nonstop;
+	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return Stage_Endless;
+	else if( IsExtraStage() )			return Stage_Extra1;
+	else if( IsExtraStage2() )			return Stage_Extra2;
+	else						return Stage_Normal;
 }
 
 int GameState::GetCourseSongIndex() const

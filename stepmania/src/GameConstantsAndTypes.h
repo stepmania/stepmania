@@ -457,14 +457,14 @@ LuaDeclareType( EditMode );
 
 enum Stage
 {
-	STAGE_NORMAL,
-	STAGE_EXTRA1,
-	STAGE_EXTRA2,
-	STAGE_NONSTOP,
-	STAGE_ONI,
-	STAGE_ENDLESS,
-	STAGE_EVENT,
-	STAGE_DEMO,
+	Stage_Normal,
+	Stage_Extra1,
+	Stage_Extra2,
+	Stage_Nonstop,
+	Stage_Oni,
+	Stage_Endless,
+	Stage_Event,
+	Stage_Demo,
 	NUM_Stage,
 	Stage_Invalid,
 };

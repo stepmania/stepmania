@@ -99,7 +99,7 @@ void ScreenEvaluation::Init()
 		GAMESTATE->SetCurrentStyle( GameManager::GameAndStringToStyle(GameManager::GetDefaultGame(),"versus") );
 		ss.m_playMode = GAMESTATE->m_PlayMode;
 		ss.m_pStyle = GAMESTATE->GetCurrentStyle();
-		ss.m_Stage = STAGE_NORMAL;
+		ss.m_Stage = Stage_Normal;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
 		ss.m_vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
