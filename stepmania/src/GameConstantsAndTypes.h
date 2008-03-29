@@ -455,9 +455,16 @@ const RString& EditModeToString( EditMode em );
 EditMode StringToEditMode( const RString& s );
 LuaDeclareType( EditMode );
 
-enum Stage
+enum Stage	// Shared stage values (not per-player) that are shown in StageDisplay
 {
-	Stage_Normal,
+	Stage_1st,
+	Stage_2nd,
+	Stage_3rd,
+	Stage_4th,
+	Stage_5th,
+	Stage_6th,
+	Stage_Next,	// after Stage_6th but not Final.  This won't normally happen because 7 stages is the max in the UI.
+	Stage_Final,
 	Stage_Extra1,
 	Stage_Extra2,
 	Stage_Nonstop,
@@ -470,6 +477,7 @@ enum Stage
 };
 const RString& StageToString( Stage s );
 LuaDeclareType( Stage );
+const RString& StageToLocalizedString( Stage i );
 
 
 enum ProfileLoadResult

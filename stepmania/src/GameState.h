@@ -141,6 +141,7 @@ public:
 	void		FinishStage();
 	int		GetNumStagesLeft( PlayerNumber pn ) const;
 	int		GetSmallestNumStagesLeftForAnyHumanPlayer() const;
+	bool		IsFinalStageForAnyHumanPlayer() const;
 	bool		IsAnExtraStage() const;
 	bool		IsExtraStage() const;
 	bool		IsExtraStage2() const;

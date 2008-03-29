@@ -911,6 +911,11 @@ int GameState::GetSmallestNumStagesLeftForAnyHumanPlayer() const
 	return iSmallest;
 }
 
+bool GameState::IsFinalStageForAnyHumanPlayer() const
+{
+	return GetSmallestNumStagesLeftForAnyHumanPlayer() == 1;
+}
+
 bool GameState::IsAnExtraStage() const
 {
 	if( m_MasterPlayerNumber == PlayerNumber_Invalid )
@@ -942,7 +947,21 @@ Stage GameState::GetCurrentStage() const
 	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return Stage_Endless;
 	else if( IsExtraStage() )			return Stage_Extra1;
 	else if( IsExtraStage2() )			return Stage_Extra2;
-	else						return Stage_Normal;
+	else if( IsFinalStageForAnyHumanPlayer() )	return Stage_Final;
+	else
+	{
+
+		switch( this->m_iCurrentStageIndex )
+		{
+		case 0:	return Stage_1st;
+		case 1:	return Stage_2nd;
+		case 2:	return Stage_3rd;
+		case 3:	return Stage_4th;
+		case 4:	return Stage_5th;
+		case 5:	return Stage_6th;
+		default: return Stage_Next;
+		}
+	}
 }
 
 int GameState::GetCourseSongIndex() const

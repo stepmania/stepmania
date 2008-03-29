@@ -383,7 +383,14 @@ StringToX( EditMode );
 LuaXType( EditMode );
 
 static const char *StageNames[] = {
-	"Normal",
+	"1st",
+	"2nd",
+	"3rd",
+	"4th",
+	"5th",
+	"6th",
+	"Next",
+	"Final",
 	"Extra1",
 	"Extra2",
 	"Nonstop",
@@ -394,6 +401,8 @@ static const char *StageNames[] = {
 };
 XToString( Stage );
 LuaXType( Stage );
+XToLocalizedString( Stage );
+LuaFunction( StageToLocalizedString, StageToLocalizedString(Enum::Check<Stage>(L, 1)) );
 
 
 static const char *MultiPlayerStatusNames[] = {
