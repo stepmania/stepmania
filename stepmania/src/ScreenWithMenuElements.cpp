@@ -11,7 +11,7 @@
 #include "InputEventPlus.h"
 
 #define TIMER_STEALTH				THEME->GetMetricB(m_sName,"TimerStealth")
-#define SHOW_STAGE				THEME->GetMetricB(m_sName,"ShowStage")
+#define SHOW_STAGE_DISPLAY			THEME->GetMetricB(m_sName,"ShowStageDisplay")
 #define MEMORY_CARD_ICONS			THEME->GetMetricB(m_sName,"MemoryCardIcons")
 #define FORCE_TIMER				THEME->GetMetricB(m_sName,"ForceTimer")
 #define STOP_MUSIC_ON_BACK			THEME->GetMetricB(m_sName,"StopMusicOnBack")
@@ -42,12 +42,12 @@ void ScreenWithMenuElements::Init()
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_autoHeader );
 	this->AddChild( m_autoHeader );
 
-	if( SHOW_STAGE )
+	if( SHOW_STAGE_DISPLAY )
 	{
-		m_sprStage.Load( THEME->GetPathG(m_sName,"stage") );
-		m_sprStage->SetName( "Stage" );
-		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprStage );
-		this->AddChild( m_sprStage );
+		m_sprStageDisplay.Load( THEME->GetPathG(m_sName,"StageDisplay") );
+		m_sprStageDisplay->SetName( "StageDisplay" );
+		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprStageDisplay );
+		this->AddChild( m_sprStageDisplay );
 	}
 	
 	if( MEMORY_CARD_ICONS )
@@ -166,8 +166,8 @@ void ScreenWithMenuElements::TweenOnScreen()
 {
 	ON_COMMAND( m_autoHeader );
 
-	if( SHOW_STAGE && !m_sprStage->GetName().empty() )
-		ON_COMMAND( m_sprStage );
+	if( SHOW_STAGE_DISPLAY && !m_sprStageDisplay->GetName().empty() )
+		ON_COMMAND( m_sprStageDisplay );
 
 	if( MEMORY_CARD_ICONS )
 	{
@@ -269,7 +269,7 @@ void ScreenWithMenuElements::TweenOffScreen()
 	}
 
 	OFF_COMMAND( m_autoHeader );
-	OFF_COMMAND( m_sprStage );
+	OFF_COMMAND( m_sprStageDisplay );
 	FOREACH_PlayerNumber( p )
 		if( m_MemoryCardDisplay[p] )
 			OFF_COMMAND( m_MemoryCardDisplay[p] );
