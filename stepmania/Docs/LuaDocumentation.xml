@@ -92,8 +92,45 @@
 <!-- Namespaces -->
 <Namespaces>
 <Namespace name='Enum'>
-	<Function name='Reverse' return='int' arguments=''>
-		Reverses an named enum to its value. Replace <code>Enum</code> with the actual num class.
+	<Description>
+		Enumerated types are lookup tables associating a string to each numerical
+		value for each <Link class='Enums'>Enum</Link>. For example,
+		<code><Link class='ENUM' function='PlayerNumber' />[1]</code> would be the
+		string <code>'PlayerNumber_P1'</code>.<br />
+		The functions defined in the <code>Enum</code> namespace are valid member
+		functions of every <Link class='Enums'>Enum</Link> where the first argument is
+		omitted and the name of the <Link class='Enums'>Enum</Link> is used in place
+		of <code>Enum</code>. Instead of
+		<code><Link function='GetName'>Enum.GetName</Link>(
+		<Link class='ENUM' function='PlayerNumber' /> )</code> or
+		<code><Link function='Reverse'>Enum.Reverse</Link>( 
+		<Link class='ENUM' function='PlayerNumber' /> )</code>, one can use
+		<code><Link class='ENUM' function='PlayerNumber' />:<!--
+		--><Link function='GetName'>GetName</Link>()</code> or
+		<code><Link class='ENUM' function='PlayerNumber' />:<!--
+		--><Link function='Reverse'>Reverse</Link>()</code>, respectively.
+	</Description>
+	<Function name='Compare' return='int' arguments='Enum e, string x, string y'>
+		Both <code>x</code> and <code>y</code> need to be elements of the enumerated
+		type <code>e</code>. Returns a value less than/greater than/equal to
+		<code>0</code> corresponding to the numerical value of <code>x</code> being
+		less than/greater than/equal to the numerical value of <code>y</code> as
+		determined by
+		<code><Link function='Reverse'>Enum.Reverse</Link>( e )</code>.
+	</Function>
+	<Function name='GetName' return='string' arguments='Enum e'>
+		Returns the type of <code>e</code>. For example,
+		<code>Enum.GetName( <Link class='ENUM' function='PlayerNumber' /> )</code>
+		will return the string <code>'PlayerNumber'</code>.
+	</Function>
+	<Function name='Reverse' return='{int}' arguments='Enum e'>
+		Returns a reverse lookup table for the enumerated type <code>e</code>.  For
+		example: <br /><code>local r =
+		Enum.Reverse( <Link class='ENUM' function='PlayerNumber'/> );<br />
+		local n = r['PlayerNumber_P2'];</code><br />
+		The value of <code>n</code> in this case would be <code>1</code> corresponding
+		to the 0-based indexing using in C++ and not <code>2</code> as might be
+		expected for the 1-based indexing used in Lua.
 	</Function>
 </Namespace>
 <Namespace name='GameManager'>
