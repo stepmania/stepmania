@@ -9,15 +9,16 @@
      you would want.
 
      To add a link to a function in the current class:
-     <Link function='addx'>addx()</Link>
+     <Link function='addx' /> -> Actor.addx()
      To add a link to a function in another class:
-     <Link class='ActorFrame' function='propagate'>ActorFrame:propagate()</Link>
+     <Link class='ActorFrame' function='propagate' /> -> ActorFrame.propagate()
      To add a link to a class:
-     <Link class='ActorFrame'>ActorFrame</Link>
+     <Link class='ActorFrame' /> -> ActorFrame
      To add a link to a global function:
-     <Link class='GLOBAL' function='Basename'>Basename()</Link>
+     <Link class='GLOBAL' function='Basename' /> -> Basename()
      To add a link to an Enum:
-     <Link class='ENUM' function='CoinMode'>CoinMode</Link> -->
+     <Link class='ENUM' function='CoinMode' /> -> CoinMode
+  -->
 
 
 <Documentation xmlns='http://www.stepmania.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.stepmania.com Lua.xsd'>
