@@ -228,7 +228,7 @@
 			<xsl:with-param name="class" select="$name" />
 		</xsl:apply-templates>
 		<table>
-			<tr><th colspan="2"><xsl:value-of select="$name" />Member Functions</th></tr>
+			<tr><th colspan="2"><xsl:value-of select="$name" /> Member Functions</th></tr>
 			<xsl:apply-templates select="sm:Function">
 				<xsl:sort select="@name" />
 				<xsl:with-param name="path" select="$docs/sm:Classes/sm:Class[@name=$name]" />
@@ -253,7 +253,7 @@
 			<xsl:with-param name="class" select="$name" />
 		</xsl:apply-templates>
 		<table>
-			<tr><th colspan="2"><xsl:value-of select="$name" />Functions</th></tr>
+			<tr><th colspan="2"><xsl:value-of select="$name" /> Functions</th></tr>
 			<xsl:apply-templates select="sm:Function">
 				<xsl:sort select="@name" />
 				<xsl:with-param name="path" select="$docs/sm:Namespaces/sm:Namespace[@name=$name]" />
