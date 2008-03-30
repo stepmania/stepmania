@@ -223,7 +223,9 @@
 			</a>
 		</xsl:if>
 		<div style="display: none" id="list_{@name}">
-		<xsl:apply-templates select="$docs/sm:Classes/sm:Class[@name=$name]/sm:Description" />
+		<xsl:apply-templates select="$docs/sm:Classes/sm:Class[@name=$name]/sm:Description">
+			<xsl:with-param name="class" select="$name" />
+		</xsl:apply-templates>
 		<table>
 			<tr><th colspan="2"><xsl:value-of select="$name" /> Member Functions</th></tr>
 			<xsl:apply-templates select="sm:Function">
@@ -245,7 +247,9 @@
 			Namespace <span class="descriptionName"><xsl:value-of select="@name" /></span>
 		</a>
 		<div style="display: none" id="list_{@name}">
-		<xsl:apply-templates select="$docs/sm:Namespaces/sm:Namespace[@name=$name]/sm:Description" />
+		<xsl:apply-templates select="$docs/sm:Namespaces/sm:Namespace[@name=$name]/sm:Description">
+			<xsl:with-param name="class" select="$name" />
+		</xsl:apply-templates>
 		<table>
 			<tr><th colspan="2"><xsl:value-of select="$name" /> Functions</th></tr>
 			<xsl:apply-templates select="sm:Function">
@@ -288,7 +292,9 @@
 				$type='int' or
 				$type='float' or
 				$type='string' or
-				$type='bool'">
+				$type='bool' or
+				$type='table' or
+				$type='Enum'">
 			<span class="primitiveType">
 				<xsl:value-of select="$type" />
 			</span>
@@ -477,7 +483,9 @@
 		<img src="closed.gif" id="img_{@name}" alt="" />
 		Enum <span class="descriptionName"><xsl:value-of select="@name" /></span></a>
 		<div style="display: none" id="list_{@name}">
-		<xsl:apply-templates select="$docs/sm:Enums/sm:Enum[@name=$name]/sm:Description" />
+		<xsl:apply-templates select="$docs/sm:Enums/sm:Enum[@name=$name]/sm:Description">
+			<xsl:with-param name="curclass" select="$name" />
+		</xsl:apply-templates>
 		<table>
 			<tr>
 				<th>Enum</th>
@@ -497,7 +505,12 @@
 </xsl:template>
 
 <xsl:template match="sm:Description">
-	<p><xsl:apply-templates /></p>
+	<xsl:param name="class" />
+	<p>
+		<xsl:apply-templates>
+			<xsl:with-param name="curclass" select="$class" />
+		</xsl:apply-templates>
+	</p>
 </xsl:template>
 
 <xsl:template match="sm:Constants">
@@ -520,8 +533,17 @@
 	</div>
 </xsl:template>
 
-<!-- XXX: This is annoying, how can we tell xsl to just pass the html through? -->
-<xsl:template match="sm:code"><code><xsl:apply-templates /></code></xsl:template>
+<!-- XXX: This is annoying, how can we tell xsl to just pass the html through?
+     Even more annoying is the fact that parameters aren't dynamically scoped
+     so we have to explicitly pass all parameters through <code>. -->
+<xsl:template match="sm:code">
+	<xsl:param name="curclass" />
+	<code>
+		<xsl:apply-templates>
+			<xsl:with-param name="curclass" select="$curclass" />
+		</xsl:apply-templates>
+	</code>
+</xsl:template>
 <xsl:template match="sm:br"><br /></xsl:template>
 </xsl:stylesheet>
 <!-- vim: set tw=0: -->
