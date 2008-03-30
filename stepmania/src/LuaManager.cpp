@@ -506,12 +506,14 @@ XNode *LuaHelpers::GetLuaInformation()
 
 	XNode *pGlobalsNode = pLuaNode->AppendChild( "GlobalFunctions" );
 	XNode *pClassesNode = pLuaNode->AppendChild( "Classes" );
+	XNode *pNamespacesNode = pLuaNode->AppendChild( "Namespaces" );
 	XNode *pSingletonsNode = pLuaNode->AppendChild( "Singletons" );
 	XNode *pEnumsNode = pLuaNode->AppendChild( "Enums" );
 	XNode *pConstantsNode = pLuaNode->AppendChild( "Constants" );
 	
 	vector<RString> vFunctions;
 	map<RString, LClass> mClasses;
+	map<RString, vector<RString> > mNamespaces;
 	map<RString, RString> mSingletons;
 	map<RString, float> mConstants;
 	map<RString, RString> mStringConstants;
@@ -579,6 +581,14 @@ XNode *LuaHelpers::GetLuaInformation()
 			break;
 		case LUA_TFUNCTION:
 			vFunctions.push_back( sKey );
+			/*
+			{
+				lua_Debug ar;
+				lua_getfield( L, LUA_GLOBALSINDEX, sKey );
+				lua_getinfo( L, ">S", &ar ); // Pops the function
+				printf( "%s: %s\n", sKey.c_str(), ar.short_src );
+			}
+			 */
 			break;
 		}
 	}
@@ -598,13 +608,14 @@ XNode *LuaHelpers::GetLuaInformation()
 		LuaHelpers::Pop( L, sNamespace );
 		if( find(BuiltInPackages, end, sNamespace) != end )
 			continue;
-
+		vector<RString> &vNamespaceFunctions = mNamespaces[sNamespace];
 		FOREACH_LUATABLE( L, -1 )
 		{
 			RString sFunction;
 			LuaHelpers::Pop( L, sFunction );
-			vFunctions.push_back( ssprintf("%s.%s", sNamespace.c_str(), sFunction.c_str()) );
+			vNamespaceFunctions.push_back( sFunction );
 		}
+		sort( vNamespaceFunctions.begin(), vNamespaceFunctions.end() );
 	}
 	lua_pop( L, 2 );
 	
@@ -638,6 +649,19 @@ XNode *LuaHelpers::GetLuaInformation()
 		XNode *pSingletonNode = pSingletonsNode->AppendChild( "Singleton" );
 		pSingletonNode->AppendAttr( "name", s->first );
 		pSingletonNode->AppendAttr( "class", s->second );
+	}
+	
+	for( map<RString, vector<RString> >::const_iterator iter = mNamespaces.begin(); iter != mNamespaces.end(); ++iter )
+	{
+		XNode *pNamespaceNode = pNamespacesNode->AppendChild( "Namespace" );
+		const vector<RString> &vNamespace = iter->second;
+		pNamespaceNode->AppendAttr( "name", iter->first );
+		
+		FOREACH_CONST( RString, vNamespace, func )
+		{
+			XNode *pFunctionNode = pNamespaceNode->AppendChild( "Function" );
+			pFunctionNode->AppendAttr( "name", *func );
+		}
 	}
 
 	for( map<RString, vector<RString> >::const_iterator iter = mEnums.begin(); iter != mEnums.end(); ++iter )
