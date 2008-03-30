@@ -9,6 +9,7 @@
 		<xs:all>
 			<xs:element name="Singletons" type="Singletons" />
 			<xs:element name="Classes" type="Classes" />
+			<xs:element name="Namespaces" type="Namespaces" />
 			<xs:element name="GlobalFunctions" type="GlobalFunctions" />
 			<xs:element name="Enums" type="Enums" />
 			<xs:element name="Constants" type="Constants" />
@@ -23,6 +24,7 @@
 	<xs:complexType>
 		<xs:all>
 			<xs:element name="Classes" type="Classes" />
+			<xs:element name="Namespaces" type="Namespaces" />
 			<xs:element name="GlobalFunctions" type="GlobalFunctions" />
 			<xs:element name="Enums" type="Enums" />
 		</xs:all>
@@ -40,12 +42,6 @@
 		while
 	-->
 		<xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*" />
-	</xs:restriction>
-</xs:simpleType>
-
-<xs:simpleType name="FunctionIdentifier">
-	<xs:restriction base="xs:string">
-		<xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)?" />
 	</xs:restriction>
 </xs:simpleType>
 
@@ -119,6 +115,22 @@
 	</xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="Namespaces">
+	<xs:sequence>
+		<xs:element name="Namespace" minOccurs="0" maxOccurs="unbounded">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="Description" type="Description"
+					 minOccurs="0" maxOccurs="1" />
+					<xs:element name="Function" type="Function"
+					 minOccurs="0" maxOccurs="unbounded" />
+			 	</xs:sequence>
+				<xs:attribute name="name" type="Identifier" use="required" />
+			</xs:complexType>
+		</xs:element>
+	</xs:sequence>
+</xs:complexType>
+
 
 <xs:complexType name="GlobalFunctions">
 	<xs:sequence>
@@ -129,14 +141,14 @@
 
 <xs:complexType name="Function" mixed="true">
 	<xs:group ref="DocumentationGroup" minOccurs="0" maxOccurs="unbounded" />
-	<xs:attribute name="name" type="FunctionIdentifier" use="required" />
+	<xs:attribute name="name" type="Identifier" use="required" />
 	<xs:attribute name="return" type="IdentifierOrTable" use="optional" />
 	<xs:attribute name="arguments" type="ArgumentList" use="optional" />
 </xs:complexType>
 
 <xs:complexType name="Link" mixed="true">
 	<xs:group ref="DocumentationGroup" minOccurs="0" maxOccurs="unbounded"/>
-	<xs:attribute name="function" type="FunctionIdentifier" use="optional" />
+	<xs:attribute name="function" type="Identifier" use="optional" />
 	<xs:attribute name="class" type="Identifier" use="optional" />
 </xs:complexType>
 
@@ -170,3 +182,4 @@
 	<xs:attribute name="value" type="IdentifierStringOrNumber" use="required" />
 </xs:complexType>
 </xs:schema>
+<!-- vim: set tw=0: -->

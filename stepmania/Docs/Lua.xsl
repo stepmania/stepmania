@@ -151,6 +151,7 @@
 			<tr>
 				<th><a href="#Singletons">Singletons</a></th>
 				<th><a href="#Classes">Classes</a></th>
+				<th><a href="#Namespaces">Namespaces</a></th>
 				<th><a href="#GlobalFunctions">Global Functions</a></th>
 				<th><a href="#Enums">Enums</a></th>
 				<th><a href="#Constants">Constants</a></th>
@@ -159,6 +160,7 @@
 	</div>
 	<xsl:apply-templates select="sm:Singletons" />
 	<xsl:apply-templates select="sm:Classes" />
+	<xsl:apply-templates select="sm:Namespaces" />
 	<xsl:apply-templates select="sm:GlobalFunctions" />
 	<xsl:apply-templates select="sm:Enums" />
 	<xsl:apply-templates select="sm:Constants" />
@@ -196,6 +198,15 @@
 	</div>
 </xsl:template>
 
+<xsl:template match="sm:Namespaces">
+	<div>
+		<h3 id="Namespaces">Namespaces</h3>
+		<xsl:apply-templates select="sm:Namespace">
+			<xsl:sort select="@name" />
+		</xsl:apply-templates>
+	</div>
+</xsl:template>
+
 <xsl:variable name="docs" select="document('LuaDocumentation.xml')/sm:Documentation" />
 
 <xsl:template match="sm:Class">
@@ -226,6 +237,27 @@
 	</div>
 </xsl:template>
 
+<xsl:template match="sm:Namespace">
+	<xsl:variable name="name" select="@name" />
+	<div>
+		<a id="{@name}" class="trigger" onclick="Toggle('{@name}')">
+			<img src="closed.gif" id="img_{@name}" alt="" />
+			Namespace <span class="descriptionName"><xsl:value-of select="@name" /></span>
+		</a>
+		<div style="display: none" id="list_{@name}">
+		<xsl:apply-templates select="$docs/sm:Namespaces/sm:Namespace[@name=$name]/sm:Description" />
+		<table>
+			<tr><th colspan="2"><xsl:value-of select="$name" /> Functions</th></tr>
+			<xsl:apply-templates select="sm:Function">
+				<xsl:sort select="@name" />
+				<xsl:with-param name="path" select="$docs/sm:Namespaces/sm:Namespace[@name=$name]" />
+				<xsl:with-param name="class" select="$name" />
+			</xsl:apply-templates>
+		</table>
+		<br />
+		</div>
+	</div>
+</xsl:template>
 
 <xsl:template match="sm:GlobalFunctions">
 	<div>
@@ -368,14 +400,19 @@
 	<xsl:param name="curclass" />
 	<xsl:variable name="empty" select="string(current())=''" />
 	<xsl:choose>
+		<!-- Linking to a function in the current class/namespace. -->
 		<xsl:when test="string(@class)='' and string(@function)!=''">
 			<a class="classType" href="#{$curclass}_{@function}">
 			<xsl:if test="$empty">
-				<xsl:value-of select="@function" /><xsl:text>()</xsl:text>
+				<xsl:call-template name="sm:PrintLink">
+					<xsl:with-param name="class" select="$curclass" />
+					<xsl:with-param name="function" select="@function" />
+				</xsl:call-template>
 			</xsl:if>
 			<xsl:apply-templates />
 			</a>
 		</xsl:when>
+		<!-- Linking to a class/namespace. -->
 		<xsl:when test="string(@class)!='' and string(@function)=''">
 			<a class="classType" href="#{@class}" onclick="Open('{@class}')">
 			<xsl:if test="$empty">
@@ -384,6 +421,7 @@
 			<xsl:apply-templates />
 			</a>
 		</xsl:when>
+		<!-- Linking to a global function or an enum. -->
 		<xsl:when test="(string(@class)='GLOBAL' or string(@class)='ENUM') and string(@function)!=''">
 			<a class="classType" href="#{@class}_{@function}" onclick="Open('{@function}')">
 			<xsl:if test="$empty">
@@ -395,11 +433,14 @@
 			<xsl:apply-templates />
 			</a>
 		</xsl:when>
+		<!-- Linking to a function in a class/namespace. -->
 		<xsl:when test="string(@class)!='' and string(@function)!=''">
 			<a class="classType" href="#{@class}_{@function}" onclick="OpenAndMove('{@class}','{@function}')">
 			<xsl:if test="$empty">
-				<xsl:value-of select="@class" /><xsl:text>:</xsl:text>
-				<xsl:value-of select="@function" /><xsl:text>()</xsl:text>
+				<xsl:call-template name="sm:PrintLink">
+					<xsl:with-param name="class" select="@class" />
+					<xsl:with-param name="function" select="@function" />
+				</xsl:call-template>
 			</xsl:if>
 			<xsl:apply-templates />
 			</a>
@@ -408,6 +449,15 @@
 			<xsl:apply-templates /> <!-- Ignore this Link. -->
 		</xsl:otherwise>
 	</xsl:choose>
+</xsl:template>
+
+<xsl:template name="sm:PrintLink">
+	<xsl:param name="class" />
+	<xsl:param name="function" />
+	<xsl:value-of select="$class" />
+	<xsl:text>.</xsl:text>
+	<xsl:value-of select="$function" />
+	<xsl:text>()</xsl:text>
 </xsl:template>
 
 <xsl:template match="sm:Enums">
@@ -474,3 +524,4 @@
 <xsl:template match="sm:code"><code><xsl:apply-templates /></code></xsl:template>
 <xsl:template match="sm:br"><br /></xsl:template>
 </xsl:stylesheet>
+<!-- vim: set tw=0: -->

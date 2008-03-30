@@ -32,9 +32,6 @@
 	<Function name='DayOfYear' return='int' arguments=''>
 		Returns the current day of the year.
 	</Function>
-	<Function name='Enum.Reverse' return='int' arguments=''>
-		Reverses an named enum to its value. Replace <code>Enum</code> with the actual num class.
-	</Function>
 	<Function name='FormatNumberAndSuffix' return='string' arguments='int num'>
 		Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
 	</Function>
@@ -78,27 +75,48 @@
 		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format.
 	</Function>
 	<Function name='Trace' return='void' arguments='string sString'>
-		Alias for <Link function='lua.Trace' />.
+		Alias for <Link class='lua' function='Trace' />.
 	</Function>
 	<Function name='Warn' return='void' arguments='string sString'>
-		Alias for <Link function='lua.Warn' />.
+		Alias for <Link class='lua' function='Warn' />.
 	</Function>
 	<Function name='Year' return='int' arguments=''>
 		Returns the current year.
-	</Function>
-	<Function name='lua.Trace' return='void' arguments='string sString'>
-		Writes <code>sString</code> to log.txt. Aliased by <Link function='Trace' />.
-	</Function>
-	<Function name='lua.Warn' return='void' arguments='string sString'>
-		Writes <code>sString</code> to info.txt and log.txt as a warning. Aliased by <Link function='Warn' />.
-	</Function>
-	<Function name='lua.Flush' return='void' arguments='' >
-		Flushes log files to disk.
 	</Function>
 	<Function name='mbstrlen' return='int' arguments='string sString'>
 		Returns the length of the multi-byte character string <code>sString</code>.
 	</Function>
 </GlobalFunctions>
+
+<!-- Namespaces -->
+<Namespaces>
+<Namespace name='Enum'>
+	<Function name='Reverse' return='int' arguments=''>
+		Reverses an named enum to its value. Replace <code>Enum</code> with the actual num class.
+	</Function>
+</Namespace>
+<Namespace name='GameManager'>
+	<Function name='GetFirstStepsTypeForGame' return='StepsType' arguments='Game game'>
+		Return the first of the <Link class='StepsType' /> corresponding to <code>game</code>.
+	</Function>
+	<Function name='StepsTypeToLocalizedString' return='string' arguments='StepsType st'>
+		Return the localized string representation of <code>st</code>.
+	</Function>
+</Namespace>
+<Namespace name='lua'>
+	<Function name='Trace' return='void' arguments='string sString'>
+		Writes <code>sString</code> to log.txt. Aliased by
+		<Link class='GLOBAL' function='Trace' />.
+	</Function>
+	<Function name='Warn' return='void' arguments='string sString'>
+		Writes <code>sString</code> to info.txt and log.txt as
+		a warning. Aliased by <Link class='GLOBAL' function='Warn' />.
+	</Function>
+	<Function name='Flush' return='void' arguments='' >
+		Flushes log files to disk.
+	</Function>
+</Namespace>
+</Namespaces>
 
 <!-- Classes -->
 <Classes>
@@ -425,14 +443,6 @@
 <Class name='Game'>
 	<Function name='GetName' return='string' arguments=''>
 		Returns the name of the game such as &quot;dance&quot; or &quot;pump&quot;.
-	</Function>
-</Class>
-<Class name='GameManager'>
-	<Function name='GetFirstStepsTypeForGame' return='StepsType' arguments='Game game'>
-		Return the first of the <Link class='StepsType' /> corresponding to <code>game</code>.
-	</Function>
-	<Function name='StepsTypeToLocalizedString' return='string' arguments='StepsType st'>
-		Return the localized string representation of <code>st</code>.
 	</Function>
 </Class>
 <Class name='GameSoundManager'>
