@@ -214,7 +214,8 @@
 	<div>
 		<a id="{@name}" class="trigger" onclick="Toggle('{@name}')">
 			<img src="closed.gif" id="img_{@name}" alt="" />
-			Class <span class="descriptionName"><xsl:value-of select="@name" /></span>
+			<xsl:text> Class </xsl:text>
+			<span class="descriptionName"><xsl:value-of select="@name" /></span>
 		</a>
 		<xsl:if test="@base != ''">
 			<span class="code"><xsl:text> : </xsl:text></span>
@@ -227,7 +228,7 @@
 			<xsl:with-param name="class" select="$name" />
 		</xsl:apply-templates>
 		<table>
-			<tr><th colspan="2"><xsl:value-of select="$name" /> Member Functions</th></tr>
+			<tr><th colspan="2"><xsl:value-of select="$name" />Member Functions</th></tr>
 			<xsl:apply-templates select="sm:Function">
 				<xsl:sort select="@name" />
 				<xsl:with-param name="path" select="$docs/sm:Classes/sm:Class[@name=$name]" />
@@ -244,14 +245,15 @@
 	<div>
 		<a id="{@name}" class="trigger" onclick="Toggle('{@name}')">
 			<img src="closed.gif" id="img_{@name}" alt="" />
-			Namespace <span class="descriptionName"><xsl:value-of select="@name" /></span>
+			<xsl:text> Namespace </xsl:text>
+			<span class="descriptionName"><xsl:value-of select="@name" /></span>
 		</a>
 		<div style="display: none" id="list_{@name}">
 		<xsl:apply-templates select="$docs/sm:Namespaces/sm:Namespace[@name=$name]/sm:Description">
 			<xsl:with-param name="class" select="$name" />
 		</xsl:apply-templates>
 		<table>
-			<tr><th colspan="2"><xsl:value-of select="$name" /> Functions</th></tr>
+			<tr><th colspan="2"><xsl:value-of select="$name" />Functions</th></tr>
 			<xsl:apply-templates select="sm:Function">
 				<xsl:sort select="@name" />
 				<xsl:with-param name="path" select="$docs/sm:Namespaces/sm:Namespace[@name=$name]" />
@@ -373,12 +375,14 @@
 			<span class="descriptionName">
 				<xsl:value-of select="@name" />
 			</span>
-			<span class="descriptionArguments">(
+			<span class="descriptionArguments">
+				<xsl:text>( </xsl:text>
 				<xsl:call-template name="processArguments">
 					<xsl:with-param name="argumentList"
 					                select="$elmt/@arguments" />
 				</xsl:call-template>
-				)</span>
+				<xsl:text> )</xsl:text>
+				</span>
 			<p class="descriptionText">
 				<xsl:apply-templates select="$elmt" mode="print">
 					<xsl:with-param name="class" select="$class" />
@@ -481,7 +485,8 @@
 	<div id="ENUM_{@name}">
 		<a class="trigger" onclick="Toggle('{@name}')">
 		<img src="closed.gif" id="img_{@name}" alt="" />
-		Enum <span class="descriptionName"><xsl:value-of select="@name" /></span></a>
+		<xsl:text> Enum </xsl:text>
+		<span class="descriptionName"><xsl:value-of select="@name" /></span></a>
 		<div style="display: none" id="list_{@name}">
 		<xsl:apply-templates select="$docs/sm:Enums/sm:Enum[@name=$name]/sm:Description">
 			<xsl:with-param name="curclass" select="$name" />
