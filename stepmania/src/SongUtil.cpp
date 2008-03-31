@@ -872,7 +872,10 @@ static void GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 	{
 		bool bShowThisStepsType = find( vstToShow.begin(), vstToShow.end(), *st ) != vstToShow.end();
 
-		const Style *pStyle = GameManager::GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), *st );
+		int iNumPlayers = GAMESTATE->GetNumPlayersEnabled();
+		iNumPlayers = max( iNumPlayers, 1 );
+
+		const Style *pStyle = GameManager::GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, iNumPlayers, *st );
 		bool bEnoughStages = GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer() >= GAMESTATE->GetNumStagesForSongAndStyleType(pSong, pStyle->m_StyleType);
 
 		if( bShowThisStepsType && bEnoughStages )
