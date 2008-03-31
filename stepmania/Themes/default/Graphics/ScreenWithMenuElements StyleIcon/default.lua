@@ -1,12 +1,17 @@
+local t = {};
+
 local style = GAMESTATE:GetCurrentStyle();
-if not style then return Def.Actor {}; end
+if style then
+	local master_pn = GAMESTATE:GetMasterPlayerNumber();
+	local st = style:GetStyleType();
+	local pad_file = "";
+	if st == "StyleType_OnePlayerOneSide"  or  st == "StyleType_OnePlayerTwoSides" then
+		pad_file = st .. " " .. master_pn;
+	elseif st == "StyleType_TwoPlayersTwoSides" then
+		pad_file = st;
+	end
 
-local s = style:GetStyleType();
-local Reverse = PlayerNumber:Reverse();
-s = string.gsub(s, "StyleType_", "");
-
-local t = LoadActor("_icon " .. s) ..  {
-	InitCommand = cmd(pause;setstate,Reverse[GAMESTATE:GetMasterPlayerNumber()]);
-};
-
-return t;
+	return LoadActor( THEME:GetPathG("","_StyleIcon " .. pad_file ) ) .. {};
+else
+	return Def.Actor {};
+end

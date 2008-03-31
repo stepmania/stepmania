@@ -62,12 +62,7 @@ local function OptionsArea(pn)
 end
 
 
-local fallback_screen = THEME:GetMetric(Var 'LoadingScreen','Fallback');
-local element = "decorations";
-local fallback_path = THEME:GetPathB(fallback_screen,element);
---Trace('fallback_path ' .. fallback_path );
-
-local t = LoadActor( fallback_path );
+local t = LoadFallbackB( "decorations" );
 t[#t+1] = Def.ActorFrame { 
 	InitCommand=cmd(x,SCREEN_CENTER_X+140;y,SCREEN_CENTER_Y-10);
 	OnCommand=cmd(addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);

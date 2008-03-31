@@ -1,3 +1,11 @@
+function LoadFallbackB( element )
+	-- TODO: Remove element parameter and make it a LuaThreadVar
+	local fallback_screen = THEME:GetMetric(Var 'LoadingScreen','Fallback');
+	local fallback_path = THEME:GetPathB(fallback_screen,element);
+	--Trace('fallback_path ' .. fallback_path );
+	return LoadActor( fallback_path );
+end
+
 function FormatNumSongsPlayed( num )
 	local s = num
 	if s == 1 then 

@@ -1,6 +1,6 @@
 return LoadActor( THEME:GetPathB("ScreenWithMenuElements2","overlay") ) .. {
 	Def.ActorFrame {
-		InitCommand=cmd(x,SCREEN_CENTER_X-200;y,SCREEN_BOTTOM-34;);
+		InitCommand=cmd(x,-200;);
 		LoadActor( "notify" ) .. {
 			OnCommand=cmd();
 		};
@@ -9,7 +9,7 @@ return LoadActor( THEME:GetPathB("ScreenWithMenuElements2","overlay") ) .. {
 		};
 	};
 	Def.ActorFrame {
-		InitCommand=cmd(x,SCREEN_CENTER_X+200;y,SCREEN_BOTTOM-34;);
+		InitCommand=cmd(x,200;);
 		LoadActor( "notify" ) .. {
 			OnCommand=cmd(zoomx,-1);
 		};
