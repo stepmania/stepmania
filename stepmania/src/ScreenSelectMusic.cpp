@@ -603,7 +603,11 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 	else if( !GAMESTATE->IsAnExtraStage() && CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
 	{
 		m_soundOptionsChange.Play();
-		MESSAGEMAN->Broadcast( ssprintf("PlayerOptionsChangedP%i", input.pn+1) );
+
+		Message msg( "PlayerOptionsChanged" );
+		msg.SetParam( "PlayerNumber", input.pn );
+		MESSAGEMAN->Broadcast( msg );
+
 		MESSAGEMAN->Broadcast( "SongOptionsChanged" );
 	}
 	else
