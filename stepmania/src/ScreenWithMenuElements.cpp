@@ -37,19 +37,6 @@ void ScreenWithMenuElements::Init()
 
 	ASSERT( this->m_SubActors.empty() );	// don't call Init twice!
 
-	m_autoHeader.Load( THEME->GetPathG(m_sName,"header") );
-	m_autoHeader->SetName("Header");
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_autoHeader );
-	this->AddChild( m_autoHeader );
-
-	if( SHOW_STAGE_DISPLAY )
-	{
-		m_sprStageDisplay.Load( THEME->GetPathG(m_sName,"StageDisplay") );
-		m_sprStageDisplay->SetName( "StageDisplay" );
-		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprStageDisplay );
-		this->AddChild( m_sprStageDisplay );
-	}
-	
 	if( MEMORY_CARD_ICONS )
 	{
 		FOREACH_PlayerNumber( p )
@@ -75,11 +62,6 @@ void ScreenWithMenuElements::Init()
 		ResetTimer();
 		this->AddChild( m_MenuTimer );
 	}
-
-	m_autoFooter.Load( THEME->GetPathG(m_sName,"footer") );
-	m_autoFooter->SetName("Footer");
-	LOAD_ALL_COMMANDS_AND_SET_XY( m_autoFooter );
-	this->AddChild( m_autoFooter );
 
 	m_sprUnderlay.Load( THEME->GetPathB(m_sName,"underlay") );
 	m_sprUnderlay->SetName("Underlay");
@@ -164,11 +146,6 @@ void ScreenWithMenuElements::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenWithMenuElements::TweenOnScreen()
 {
-	ON_COMMAND( m_autoHeader );
-
-	if( SHOW_STAGE_DISPLAY && !m_sprStageDisplay->GetName().empty() )
-		ON_COMMAND( m_sprStageDisplay );
-
 	if( MEMORY_CARD_ICONS )
 	{
 		FOREACH_PlayerNumber( p )
@@ -178,7 +155,6 @@ void ScreenWithMenuElements::TweenOnScreen()
 	if( m_MenuTimer )
 		ON_COMMAND( m_MenuTimer );
 
-	ON_COMMAND( m_autoFooter );
 	m_sprUnderlay->PlayCommand("On");
 	m_sprOverlay->PlayCommand("On");
 	m_In.PlayCommand("On");
@@ -268,12 +244,9 @@ void ScreenWithMenuElements::TweenOffScreen()
 		OFF_COMMAND( m_MenuTimer );
 	}
 
-	OFF_COMMAND( m_autoHeader );
-	OFF_COMMAND( m_sprStageDisplay );
 	FOREACH_PlayerNumber( p )
 		if( m_MemoryCardDisplay[p] )
 			OFF_COMMAND( m_MemoryCardDisplay[p] );
-	OFF_COMMAND( m_autoFooter );
 	m_sprUnderlay->PlayCommand("Off");
 	m_sprOverlay->PlayCommand("Off");;
 

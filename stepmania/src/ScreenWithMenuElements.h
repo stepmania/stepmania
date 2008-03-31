@@ -45,11 +45,8 @@ protected:
 	virtual bool GenericTweenOff() const { return false; }
 
 	AutoActor			m_sprUnderlay;
-	AutoActor			m_autoHeader;
-	AutoActor			m_sprStageDisplay;
 	MemoryCardDisplay		*m_MemoryCardDisplay[NUM_PLAYERS];
 	MenuTimer			*m_MenuTimer;
-	AutoActor			m_autoFooter;
 	AutoActor			m_sprOverlay;
 
 	Transition			m_In;

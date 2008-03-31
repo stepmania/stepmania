@@ -2329,7 +2329,6 @@ m_pSoundMusic->StopPlaying();
 	m_sprUnderlay->PlayCommand( EditStateToString(em) );
 
 	m_Background.SetVisible( g_bEditorShowBGChangesPlay  &&  em != STATE_EDITING );
-	m_autoHeader->SetVisible( em == STATE_EDITING );
 	m_textInputTips.SetVisible( em == STATE_EDITING );
 	m_textInfo.SetVisible( em == STATE_EDITING );
 	// Play the OnCommands again so that these will be re-hidden if the OnCommand hides them.
