@@ -6,6 +6,7 @@
 
 #include "ActorFrame.h"
 #include "OptionIcon.h"
+#include "ThemeMetric.h"
 class PlayerOptions;
 struct lua_State;
 
@@ -15,10 +16,12 @@ public:
 	OptionIconRow();
 	~OptionIconRow();
 
-	void Load();
-	virtual void LoadFromNode( const XNode* pNode );
+	void Load( const RString &sMetricsGroup, PlayerNumber pn );
+
 	virtual OptionIconRow *Copy() const;
-	void SetFromGameState( PlayerNumber pn );
+	void SetFromGameState();
+	
+	virtual void HandleMessage( const Message &msg );
 
 	//
 	// Commands
@@ -26,6 +29,13 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
+	RString m_sMetricsGroup;
+	PlayerNumber m_pn;
+
+	ThemeMetric<float>	SPACING_X;
+	ThemeMetric<float>	SPACING_Y;
+	ThemeMetric<int>	NUM_OPTION_ICONS;
+
 	vector<OptionIcon*> m_vpOptionIcon;
 };
 
