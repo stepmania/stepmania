@@ -58,37 +58,37 @@ public:
 	/* I renamed these for two reasons.  The overload conflicts with the ones below:
 	 * GetPathToB( str, str ) was matching the ones below instead of these.  It's also
 	 * easier to search for uses of obsolete functions if they have a different name. */
-	RString GetPath( ElementCategory category, const RString &sClassName, const RString &sElement, bool bOptional=false );
-	RString GetPathB( const RString &sClassName, const RString &sElement, bool bOptional=false ) { return GetPath(EC_BGANIMATIONS,sClassName,sElement,bOptional); };
-	RString GetPathF( const RString &sClassName, const RString &sElement, bool bOptional=false ) { return GetPath(EC_FONTS,sClassName,sElement,bOptional); };
-	RString GetPathG( const RString &sClassName, const RString &sElement, bool bOptional=false ) { return GetPath(EC_GRAPHICS,sClassName,sElement,bOptional); };
-	RString GetPathS( const RString &sClassName, const RString &sElement, bool bOptional=false ) { return GetPath(EC_SOUNDS,sClassName,sElement,bOptional); };
-	RString GetPathO( const RString &sClassName, const RString &sElement, bool bOptional=false ) { return GetPath(EC_OTHER,sClassName,sElement,bOptional); };
+	RString GetPath( ElementCategory category, const RString &sMetricsGroup, const RString &sElement, bool bOptional=false );
+	RString GetPathB( const RString &sMetricsGroup, const RString &sElement, bool bOptional=false ) { return GetPath(EC_BGANIMATIONS,sMetricsGroup,sElement,bOptional); };
+	RString GetPathF( const RString &sMetricsGroup, const RString &sElement, bool bOptional=false ) { return GetPath(EC_FONTS,sMetricsGroup,sElement,bOptional); };
+	RString GetPathG( const RString &sMetricsGroup, const RString &sElement, bool bOptional=false ) { return GetPath(EC_GRAPHICS,sMetricsGroup,sElement,bOptional); };
+	RString GetPathS( const RString &sMetricsGroup, const RString &sElement, bool bOptional=false ) { return GetPath(EC_SOUNDS,sMetricsGroup,sElement,bOptional); };
+	RString GetPathO( const RString &sMetricsGroup, const RString &sElement, bool bOptional=false ) { return GetPath(EC_OTHER,sMetricsGroup,sElement,bOptional); };
 	void ClearThemePathCache();
 
-	bool		HasMetric( const RString &sClassName, const RString &sValueName );
-	void		PushMetric( Lua *L, const RString &sClassName, const RString &sValueName );
-	RString		GetMetric( const RString &sClassName, const RString &sValueName );
-	int		GetMetricI( const RString &sClassName, const RString &sValueName );
-	float		GetMetricF( const RString &sClassName, const RString &sValueName );
-	bool		GetMetricB( const RString &sClassName, const RString &sValueName );
-	RageColor	GetMetricC( const RString &sClassName, const RString &sValueName );
-	LuaReference	GetMetricR( const RString &sClassName, const RString &sValueName );
+	bool		HasMetric( const RString &sMetricsGroup, const RString &sValueName );
+	void		PushMetric( Lua *L, const RString &sMetricsGroup, const RString &sValueName );
+	RString		GetMetric( const RString &sMetricsGroup, const RString &sValueName );
+	int		GetMetricI( const RString &sMetricsGroup, const RString &sValueName );
+	float		GetMetricF( const RString &sMetricsGroup, const RString &sValueName );
+	bool		GetMetricB( const RString &sMetricsGroup, const RString &sValueName );
+	RageColor	GetMetricC( const RString &sMetricsGroup, const RString &sValueName );
+	LuaReference	GetMetricR( const RString &sMetricsGroup, const RString &sValueName );
 #if !defined(SMPACKAGE)
-	apActorCommands	GetMetricA( const RString &sClassName, const RString &sValueName );
+	apActorCommands	GetMetricA( const RString &sMetricsGroup, const RString &sValueName );
 #endif
 
-	void	GetMetric( const RString &sClassName, const RString &sValueName, LuaReference &valueOut );
+	void	GetMetric( const RString &sMetricsGroup, const RString &sValueName, LuaReference &valueOut );
 
 	// Languages
-	bool	HasString( const RString &sClassName, const RString &sValueName );
-	RString	GetString( const RString &sClassName, const RString &sValueName );
-	void	GetString( const RString &sClassName, const RString &sValueName, RString &valueOut )		{ valueOut = GetString( sClassName, sValueName ); }
+	bool	HasString( const RString &sMetricsGroup, const RString &sValueName );
+	RString	GetString( const RString &sMetricsGroup, const RString &sValueName );
+	void	GetString( const RString &sMetricsGroup, const RString &sValueName, RString &valueOut )		{ valueOut = GetString( sMetricsGroup, sValueName ); }
 	void FilterFileLanguages( vector<RString> &asElementPaths );
 
-	void GetMetricsThatBeginWith( const RString &sClassName, const RString &sValueName, set<RString> &vsValueNamesOut );
+	void GetMetricsThatBeginWith( const RString &sMetricsGroup, const RString &sValueName, set<RString> &vsValueNamesOut );
 
-	RString GetClassFallback( const RString &sClassName );
+	RString GetClassFallback( const RString &sMetricsGroup );
 
 	static RString GetBlankGraphicPath();
 
@@ -104,10 +104,10 @@ public:
 protected:
 	void RunLuaScripts( const RString &sMask );
 	void LoadThemeMetrics( const RString &sThemeName, const RString &sLanguage_ );
-	RString GetMetricRaw( const IniFile &ini, const RString &sClassName, const RString &sValueName );
-	bool GetMetricRawRecursive( const IniFile &ini, const RString &sClassName, const RString &sValueName, RString &sRet );
-	RString GetPathToAndFallback( ElementCategory category, const RString &sClassName, const RString &sFile );
-	RString GetPathToRaw( const RString &sThemeName, ElementCategory category, const RString &sClassName, const RString &sFile );
+	RString GetMetricRaw( const IniFile &ini, const RString &sMetricsGroup, const RString &sValueName );
+	bool GetMetricRawRecursive( const IniFile &ini, const RString &sMetricsGroup, const RString &sValueName, RString &sRet );
+	RString GetPathToAndFallback( ElementCategory category, const RString &sMetricsGroup, const RString &sFile );
+	RString GetPathToRaw( const RString &sThemeName, ElementCategory category, const RString &sMetricsGroup, const RString &sFile );
 	static RString GetThemeDirFromName( const RString &sThemeName );
 	RString GetElementDir( const RString &sThemeName );
 	static RString GetMetricsIniPath( const RString &sThemeName );

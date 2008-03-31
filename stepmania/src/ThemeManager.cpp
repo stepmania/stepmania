@@ -121,29 +121,29 @@ void ThemeManager::ClearThemePathCache()
 		g_ThemePathCache[i].clear();
 }
 
-static void FileNameToClassAndElement( const RString &sFileName, RString &sClassNameOut, RString &sElementOut )
+static void FileNameToClassAndElement( const RString &sFileName, RString &sMetricsGroupOut, RString &sElementOut )
 {
 	// split into class name and file name
 	unsigned iIndexOfFirstSpace = sFileName.find(" ");
 	if( iIndexOfFirstSpace == string::npos )	// no space
 	{
-		sClassNameOut = "";
+		sMetricsGroupOut = "";
 		sElementOut = sFileName;
 	}
 	else
 	{
-		sClassNameOut = sFileName.Left( iIndexOfFirstSpace );
+		sMetricsGroupOut = sFileName.Left( iIndexOfFirstSpace );
 		sElementOut = sFileName.Right( sFileName.size() - iIndexOfFirstSpace - 1 );
 	}
 }
 
 
-static RString ClassAndElementToFileName( const RString &sClassName, const RString &sElement )
+static RString ClassAndElementToFileName( const RString &sMetricsGroup, const RString &sElement )
 {
-	if( sClassName.empty() )
+	if( sMetricsGroup.empty() )
 		return sElement;
 	else
-		return sClassName + " " + sElement;
+		return sMetricsGroup + " " + sElement;
 }
 
 ThemeManager::ThemeManager()
@@ -503,12 +503,12 @@ void ThemeManager::FilterFileLanguages( vector<RString> &asPaths )
 		asPaths.erase( it, asPaths.end() );
 }
 
-RString ThemeManager::GetPathToRaw( const RString &sThemeName_, ElementCategory category, const RString &sClassName_, const RString &sElement_ ) 
+RString ThemeManager::GetPathToRaw( const RString &sThemeName_, ElementCategory category, const RString &sMetricsGroup_, const RString &sElement_ ) 
 {
 	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
 	 * else that might suddenly go away when we call ReloadMetrics. */
 	const RString sThemeName = sThemeName_;
-	const RString sClassName = sClassName_;
+	const RString sMetricsGroup = sMetricsGroup_;
 	const RString sElement = sElement_;
 
 try_element_again:
@@ -523,12 +523,12 @@ try_element_again:
 
 	if( bLookingForSpecificFile )
 	{
-		GetDirListing( sThemeDir + sCategory+"/"+ClassAndElementToFileName(sClassName,sElement), asElementPaths, false, true );
+		GetDirListing( sThemeDir + sCategory+"/"+ClassAndElementToFileName(sMetricsGroup,sElement), asElementPaths, false, true );
 	}
 	else	// look for all files starting with sFileName that have types we can use
 	{
 		vector<RString> asPaths;
-		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + "*",
+		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sMetricsGroup,sElement) + "*",
 						asPaths, false, true );
 
 		for( unsigned p = 0; p < asPaths.size(); ++p )
@@ -604,7 +604,7 @@ try_element_again:
 		RString message = ssprintf( 
 			"ThemeManager:  There is more than one theme element that matches "
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
-			sThemeName.c_str(), sCategory.c_str(), ClassAndElementToFileName(sClassName,sElement).c_str() );
+			sThemeName.c_str(), sCategory.c_str(), ClassAndElementToFileName(sMetricsGroup,sElement).c_str() );
 
 		switch( Dialog::AbortRetryIgnore(message) )
 		{
@@ -662,9 +662,9 @@ try_element_again:
 	RageException::Throw( "%s", sMessage.c_str() ); 
 }
 
-RString ThemeManager::GetPathToAndFallback( ElementCategory category, const RString &sClassName_, const RString &sElement ) 
+RString ThemeManager::GetPathToAndFallback( ElementCategory category, const RString &sMetricsGroup_, const RString &sElement ) 
 {
-	RString sClassName( sClassName_ );
+	RString sMetricsGroup( sMetricsGroup_ );
 
 	int n = 100;
 	while( n-- )
@@ -672,35 +672,35 @@ RString ThemeManager::GetPathToAndFallback( ElementCategory category, const RStr
 		FOREACHD_CONST( Theme, g_vThemes, iter )
 		{
 			// search with requested name
-			RString sRet = GetPathToRaw( iter->sThemeName, category, sClassName, sElement );
+			RString sRet = GetPathToRaw( iter->sThemeName, category, sMetricsGroup, sElement );
 			if( !sRet.empty() )
 				return sRet;
 		}
 
-		if( sClassName.empty() )
+		if( sMetricsGroup.empty() )
 			return RString();
 
 		// search fallback name (if any)
-		sClassName = GetClassFallback( sClassName );
-		if( sClassName.empty() )
+		sMetricsGroup = GetClassFallback( sMetricsGroup );
+		if( sMetricsGroup.empty() )
 			return RString();
 	}
 
 	RageException::Throw( "Infinite recursion looking up theme element \"%s\"",
-		ClassAndElementToFileName(sClassName, sElement).c_str() );
+		ClassAndElementToFileName(sMetricsGroup, sElement).c_str() );
 	/* Not really reached, but Appple's gcc 4 can't figure that out without optimization
 	 * even though RE:Throw() is correctly annotated. */
 	while( true ) {}
 }
 
-RString ThemeManager::GetPath( ElementCategory category, const RString &sClassName_, const RString &sElement_, bool bOptional ) 
+RString ThemeManager::GetPath( ElementCategory category, const RString &sMetricsGroup_, const RString &sElement_, bool bOptional ) 
 {
 	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
 	 * else that might suddenly go away when we call ReloadMetrics. */
-	const RString sClassName = sClassName_;
+	const RString sMetricsGroup = sMetricsGroup_;
 	const RString sElement = sElement_;
 
-	RString sFileName = ClassAndElementToFileName( sClassName, sElement );
+	RString sFileName = ClassAndElementToFileName( sMetricsGroup, sElement );
 
 	map<RString, RString> &Cache = g_ThemePathCache[category];
 	{
@@ -714,7 +714,7 @@ RString ThemeManager::GetPath( ElementCategory category, const RString &sClassNa
 try_element_again:
 	
 	// search the current theme
-	RString ret = GetPathToAndFallback( category, sClassName, sElement );
+	RString ret = GetPathToAndFallback( category, sMetricsGroup, sElement );
 	if( !ret.empty() )	// we found something
 	{
 		Cache[sFileName] = ret;
@@ -774,16 +774,16 @@ RString ThemeManager::GetMetricsIniPath( const RString &sThemeName )
 	return GetThemeDirFromName( sThemeName ) + SpecialFiles::METRICS_FILE;
 }
 
-bool ThemeManager::HasMetric( const RString &sClassName, const RString &sValueName )
+bool ThemeManager::HasMetric( const RString &sMetricsGroup, const RString &sValueName )
 {
 	RString sThrowAway;
-	return GetMetricRawRecursive( g_pLoadedThemeData->iniMetrics, sClassName, sValueName, sThrowAway );
+	return GetMetricRawRecursive( g_pLoadedThemeData->iniMetrics, sMetricsGroup, sValueName, sThrowAway );
 }
 
-bool ThemeManager::HasString( const RString &sClassName, const RString &sValueName )
+bool ThemeManager::HasString( const RString &sMetricsGroup, const RString &sValueName )
 {
 	RString sThrowAway;
-	return GetMetricRawRecursive( g_pLoadedThemeData->iniStrings, sClassName, sValueName, sThrowAway );
+	return GetMetricRawRecursive( g_pLoadedThemeData->iniStrings, sMetricsGroup, sValueName, sThrowAway );
 }
 
 static LocalizedString RELOADED_METRICS( "ThemeManager", "Reloaded metrics" );
@@ -804,13 +804,13 @@ void ThemeManager::ReloadMetrics()
 }
 
 
-RString ThemeManager::GetClassFallback( const RString &sClassName )
+RString ThemeManager::GetClassFallback( const RString &sMetricsGroup )
 {
 	ASSERT( g_pLoadedThemeData );
 
 	// always look in iniMetrics for "Fallback"
 	RString sFallback;
-	if( !GetMetricRawRecursive(g_pLoadedThemeData->iniMetrics,sClassName,"Fallback",sFallback) )
+	if( !GetMetricRawRecursive(g_pLoadedThemeData->iniMetrics,sMetricsGroup,"Fallback",sFallback) )
 		return RString();
 
 	Lua *L = LUA->Get();
@@ -822,56 +822,56 @@ RString ThemeManager::GetClassFallback( const RString &sClassName )
 	return sRet;
 }
 
-bool ThemeManager::GetMetricRawRecursive( const IniFile &ini, const RString &sClassName_, const RString &sValueName, RString &sOut )
+bool ThemeManager::GetMetricRawRecursive( const IniFile &ini, const RString &sMetricsGroup_, const RString &sValueName, RString &sOut )
 {
 	ASSERT( sValueName != "" );
-	RString sClassName( sClassName_ );
+	RString sMetricsGroup( sMetricsGroup_ );
 
 	int n = 100;
 	while( n-- )
 	{
-		if( ini.GetValue(sClassName,sValueName,sOut) )
+		if( ini.GetValue(sMetricsGroup,sValueName,sOut) )
 			return true;
 
 		if( !sValueName.compare("Fallback") )
 			return false;
 
-		sClassName = GetClassFallback( sClassName );
-		if( sClassName.empty() )
+		sMetricsGroup = GetClassFallback( sMetricsGroup );
+		if( sMetricsGroup.empty() )
 			return false;
 	}
 
-	RageException::Throw( "Infinite recursion looking up theme metric \"%s::%s\".", sClassName.c_str(), sValueName.c_str() );
+	RageException::Throw( "Infinite recursion looking up theme metric \"%s::%s\".", sMetricsGroup.c_str(), sValueName.c_str() );
 }
 
-RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassName_, const RString &sValueName_ )
+RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sMetricsGroup_, const RString &sValueName_ )
 {
 	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
 	 * else that might suddenly go away when we call ReloadMetrics. */
-	const RString sClassName = sClassName_;
+	const RString sMetricsGroup = sMetricsGroup_;
 	const RString sValueName = sValueName_;
 
 	while( true )
 	{
 		RString ret;
-		if( ThemeManager::GetMetricRawRecursive(ini, sClassName, sValueName, ret) )
+		if( ThemeManager::GetMetricRawRecursive(ini, sMetricsGroup, sValueName, ret) )
 			return ret;
 		
 		RString sCurMetricPath = GetMetricsIniPath( m_sCurThemeName );
 		RString sDefaultMetricPath = GetMetricsIniPath( SpecialFiles::BASE_THEME_NAME );
 		RString sMessage = ssprintf( "The theme metric \"%s::%s\" is missing.  Correct this and click Retry, or Cancel to break.",
-					     sClassName.c_str(), sValueName.c_str() );
+					     sMetricsGroup.c_str(), sValueName.c_str() );
 		switch( Dialog::AbortRetryIgnore(sMessage) )
 		{
 			case Dialog::abort:
 				RageException::Throw( "Theme metric \"%s::%s\" could not be found in \"%s\"' or \"%s\".", 
-						      sClassName.c_str(), sValueName.c_str(), sCurMetricPath.c_str(), 
+						      sMetricsGroup.c_str(), sValueName.c_str(), sCurMetricPath.c_str(), 
 						      sDefaultMetricPath.c_str() );
 			case Dialog::retry:
 				ReloadMetrics();
 				continue;
 			case Dialog::ignore:
-				LOG->UserLog( "Theme metric", sClassName + "::" + sValueName,
+				LOG->UserLog( "Theme metric", sMetricsGroup + "::" + sValueName,
 					      "could not be found in \"%s\" or \"%s\".",
 					      sCurMetricPath.c_str(), sDefaultMetricPath.c_str() );
 				return RString();
@@ -882,11 +882,11 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassNam
 }
 
 template<typename T>
-void GetAndConvertMetric( const RString &sClassName, const RString &sValueName, T &out )
+void GetAndConvertMetric( const RString &sMetricsGroup, const RString &sValueName, T &out )
 {
 	Lua *L = LUA->Get();
 
-	THEME->PushMetric( L, sClassName, sValueName );
+	THEME->PushMetric( L, sMetricsGroup, sValueName );
 	LuaHelpers::FromStack( L, out, -1 );
 	lua_pop( L, 1 );
 
@@ -894,53 +894,53 @@ void GetAndConvertMetric( const RString &sClassName, const RString &sValueName, 
 }
 
 /* Get a string metric. */
-RString ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName )
+RString ThemeManager::GetMetric( const RString &sMetricsGroup, const RString &sValueName )
 {
 	RString sRet;
-	GetAndConvertMetric( sClassName, sValueName, sRet );
+	GetAndConvertMetric( sMetricsGroup, sValueName, sRet );
 	return sRet;
 }
 
-int ThemeManager::GetMetricI( const RString &sClassName, const RString &sValueName )
+int ThemeManager::GetMetricI( const RString &sMetricsGroup, const RString &sValueName )
 {
 	int iRet = 0;
-	GetAndConvertMetric( sClassName, sValueName, iRet );
+	GetAndConvertMetric( sMetricsGroup, sValueName, iRet );
 	return iRet;
 }
 
-float ThemeManager::GetMetricF( const RString &sClassName, const RString &sValueName )
+float ThemeManager::GetMetricF( const RString &sMetricsGroup, const RString &sValueName )
 {
 	float fRet = 0;
-	GetAndConvertMetric( sClassName, sValueName, fRet );
+	GetAndConvertMetric( sMetricsGroup, sValueName, fRet );
 	return fRet;
 }
 
-bool ThemeManager::GetMetricB( const RString &sClassName, const RString &sValueName )
+bool ThemeManager::GetMetricB( const RString &sMetricsGroup, const RString &sValueName )
 {
 	bool bRet = 0;
-	GetAndConvertMetric( sClassName, sValueName, bRet );
+	GetAndConvertMetric( sMetricsGroup, sValueName, bRet );
 	return bRet;
 }
 
-RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sValueName )
+RageColor ThemeManager::GetMetricC( const RString &sMetricsGroup, const RString &sValueName )
 {
 	RageColor ret;
-	GetAndConvertMetric( sClassName, sValueName, ret );
+	GetAndConvertMetric( sMetricsGroup, sValueName, ret );
 	return ret;
 }
 
-LuaReference ThemeManager::GetMetricR( const RString &sClassName, const RString &sValueName )
+LuaReference ThemeManager::GetMetricR( const RString &sMetricsGroup, const RString &sValueName )
 {
 	LuaReference ref;
-	GetMetric( sClassName, sValueName, ref );
+	GetMetric( sMetricsGroup, sValueName, ref );
 	return ref;
 }
 
-void ThemeManager::PushMetric( Lua *L, const RString &sClassName, const RString &sValueName )
+void ThemeManager::PushMetric( Lua *L, const RString &sMetricsGroup, const RString &sValueName )
 {
-	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
+	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sMetricsGroup, sValueName );
 
-	RString sName = ssprintf( "%s::%s", sClassName.c_str(), sValueName.c_str() );
+	RString sName = ssprintf( "%s::%s", sMetricsGroup.c_str(), sValueName.c_str() );
 	if( EndsWith(sValueName, "Command") )
 	{
 		LuaHelpers::ParseCommandList( L, sValue, sName );
@@ -955,19 +955,19 @@ void ThemeManager::PushMetric( Lua *L, const RString &sClassName, const RString 
 	}
 }
 
-void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, LuaReference &valueOut )
+void ThemeManager::GetMetric( const RString &sMetricsGroup, const RString &sValueName, LuaReference &valueOut )
 {
 	Lua *L = LUA->Get();
-	PushMetric( L, sClassName, sValueName );
+	PushMetric( L, sMetricsGroup, sValueName );
 	valueOut.SetFromStack( L );
 	LUA->Release( L );
 }
 
 #if !defined(SMPACKAGE)
-apActorCommands ThemeManager::GetMetricA( const RString &sClassName, const RString &sValueName )
+apActorCommands ThemeManager::GetMetricA( const RString &sMetricsGroup, const RString &sValueName )
 {
 	LuaReference *pRef = new LuaReference;
-	GetMetric( sClassName, sValueName, *pRef );
+	GetMetric( sMetricsGroup, sValueName, *pRef );
 	return apActorCommands( pRef );
 }
 #endif
@@ -1046,7 +1046,7 @@ static RString PseudoLocalize( RString s )
 	return s;
 }
 
-RString ThemeManager::GetString( const RString &sClassName, const RString &sValueName_ )
+RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sValueName_ )
 {
 	RString sValueName = sValueName_;
 
@@ -1057,7 +1057,7 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 	sValueName.Replace( "\r\n", "\\n" );
 	sValueName.Replace( "\n", "\\n" );
 
-	RString s = GetMetricRaw( g_pLoadedThemeData->iniStrings, sClassName, sValueName );
+	RString s = GetMetricRaw( g_pLoadedThemeData->iniStrings, sMetricsGroup, sValueName );
 	FontCharAliases::ReplaceMarkers( s );
 	
 	// Don't EvalulateString.  Strings are raw and shouldn't allow Lua.
@@ -1096,12 +1096,12 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 	return s;
 }
 
-void ThemeManager::GetMetricsThatBeginWith( const RString &sClassName_, const RString &sValueName, set<RString> &vsValueNamesOut )
+void ThemeManager::GetMetricsThatBeginWith( const RString &sMetricsGroup_, const RString &sValueName, set<RString> &vsValueNamesOut )
 {
-	RString sClassName( sClassName_ );
-	while( !sClassName.empty() )
+	RString sMetricsGroup( sMetricsGroup_ );
+	while( !sMetricsGroup.empty() )
 	{
-		const XNode *cur = g_pLoadedThemeData->iniMetrics.GetChild( sClassName );
+		const XNode *cur = g_pLoadedThemeData->iniMetrics.GetChild( sMetricsGroup );
 		if( cur != NULL )
 		{
 			// Iterate over all metrics that match.
@@ -1115,8 +1115,8 @@ void ThemeManager::GetMetricsThatBeginWith( const RString &sClassName_, const RS
 			}
 		}
 
-		// put the fallback (if any) in sClassName
-		sClassName = GetClassFallback( sClassName );
+		// put the fallback (if any) in sMetricsGroup
+		sMetricsGroup = GetClassFallback( sMetricsGroup );
 	}
 }
 
