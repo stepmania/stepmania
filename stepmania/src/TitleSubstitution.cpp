@@ -79,7 +79,7 @@ void TitleSubst::Subst( TitleFields &tf )
 		TitleTrans* tt = *iter;
 
 		TitleFields to;
-		if(!tt->Matches(tf,to))
+		if( !tt->Matches(tf,to) )
 			continue;
 
 		/* The song matches.  Replace whichever strings aren't empty. */
@@ -123,7 +123,8 @@ void TitleSubst::Subst( TitleFields &tf )
 			FontCharAliases::ReplaceMarkers( tf.ArtistTranslit );
 		}
 
-		break;	// Matched once.  Done.
+		// Matched once.  Keep processing to allow multiple matching entries.  For example, allow 
+		// one entry to translate a title, and another entry to translate the artist.
 	}
 }
 
