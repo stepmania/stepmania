@@ -12,20 +12,11 @@
 
 REGISTER_ACTOR_CLASS( OptionIconRow )
 
-#define SPACING_X		THEME->GetMetricF("OptionIconRow","SpacingX")
-#define SPACING_Y		THEME->GetMetricF("OptionIconRow","SpacingY")
-#define NUM_OPTION_ICONS	THEME->GetMetricF("OptionIconRow","NumOptionIcons")
-
-
 OptionIconRow::OptionIconRow()
 {
-	for( unsigned i=0; i<NUM_OPTION_ICONS; i++ )
-	{
-		OptionIcon *p = new OptionIcon;
-		p->SetXY( i*SPACING_X, i*SPACING_Y );
-		m_vpOptionIcon.push_back( p );
-		this->AddChild( p );
-	}
+	m_pn = PlayerNumber_Invalid;
+
+	this->SubscribeToMessage( "PlayerOptionsChanged" );
 }
 
 OptionIconRow::~OptionIconRow()
@@ -37,12 +28,37 @@ OptionIconRow::~OptionIconRow()
 	this->RemoveAllChildren();
 }
 
-void OptionIconRow::LoadFromNode( const XNode* pNode )
+void OptionIconRow::Load( const RString &sMetricsGroup, PlayerNumber pn )
 {
-	Load();
+	ASSERT_M( m_pn == PlayerNumber_Invalid, "Multiple calls to Load" );
 
-	ActorFrame::LoadFromNode( pNode );
+	m_sMetricsGroup = sMetricsGroup;
+	m_pn = pn;
+
+	SPACING_X.Load(sMetricsGroup,"SpacingX");
+	SPACING_Y.Load(sMetricsGroup,"SpacingY");
+	NUM_OPTION_ICONS.Load(sMetricsGroup,"NumOptionIcons");
+
+	for( int i=0; i<NUM_OPTION_ICONS; i++ )
+	{
+		OptionIcon *p = new OptionIcon;
+		p->SetXY( i*SPACING_X, i*SPACING_Y );
+		p->Load( sMetricsGroup );		
+		m_vpOptionIcon.push_back( p );
+		this->AddChild( p );
+	}
+
+	SetFromGameState();
 }
+
+void OptionIconRow::HandleMessage( const Message &msg )
+{
+	if( msg.GetName() == "PlayerOptionsChanged" )
+		SetFromGameState();
+
+	ActorFrame::HandleMessage( msg );
+}
+
 
 struct OptionColumnEntry
 {
@@ -106,15 +122,9 @@ int OptionToPreferredColumn( RString sOptionText )
 	return 0;
 }
 
-void OptionIconRow::Load()
+void OptionIconRow::SetFromGameState()
 {
-	FOREACH( OptionIcon*, m_vpOptionIcon, p )
-		(*p)->Load( "OptionIconRow" );		
-}
-
-void OptionIconRow::SetFromGameState( PlayerNumber pn )
-{
-	// init
+	PlayerNumber pn = m_pn;
 
 	RString sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage().GetString();
 	vector<RString> vsOptions;
@@ -134,7 +144,7 @@ void OptionIconRow::SetFromGameState( PlayerNumber pn )
 			continue;	// skip
 
 		// search for a vacant spot
-		for( unsigned i=iPerferredCol; i<NUM_OPTION_ICONS; i++ )
+		for( int i=iPerferredCol; i<NUM_OPTION_ICONS; i++ )
 		{
 			if( vsText[i] != "" )
 			{
@@ -158,11 +168,11 @@ void OptionIconRow::SetFromGameState( PlayerNumber pn )
 class LunaOptionIconRow: public Luna<OptionIconRow>
 {
 public:
-	static int set( T* p, lua_State *L )		{ p->SetFromGameState( Enum::Check<PlayerNumber>(L, 1) ); return 0; }
+	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), Enum::Check<PlayerNumber>(L, 2) ); return 0; }
 
 	LunaOptionIconRow()
 	{
-		ADD_METHOD( set );
+		ADD_METHOD( Load );
 	}
 };
 
