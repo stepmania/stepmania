@@ -11,6 +11,7 @@ XToString( PlayerNumber );
 XToLocalizedString( PlayerNumber );
 LuaFunction( PlayerNumberToString, PlayerNumberToString(Enum::Check<PlayerNumber>(L, 1)) );
 LuaXType( PlayerNumber );
+LuaFunction( PlayerNumberToLocalizedString, PlayerNumberToLocalizedString(Enum::Check<PlayerNumber>(L, 1)) );
 
 static const char *MultiPlayerNames[] = {
 	"P1",
