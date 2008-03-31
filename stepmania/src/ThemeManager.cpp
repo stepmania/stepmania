@@ -552,17 +552,6 @@ try_element_again:
 					if( !IsADirectory(asPaths[p]) )
 						continue;
 					
-#ifdef DEBUG
-					// Ignore empty directories so that we don't have to wait to test changes until 
-					// CVS is updated and prunes the empties.
-					vector<RString> vs;
-					GetDirListing( asPaths[p]+"/*", vs, false, false );
-					StripCvs( vs );
-					bool bDirIsEmpty = vs.empty();
-					if( bDirIsEmpty )
-						continue;
-#endif
-
 					RString sXMLPath = asPaths[p] + "/default.xml";
 					if( DoesFileExist(sXMLPath) )
 					{
