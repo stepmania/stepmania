@@ -29,11 +29,8 @@ local t = Def.ActorFrame {
 		LoadFont( "_terminator two 92" ) .. {
 			InitCommand=cmd(x,94;settext,string.upper(gc:GetText());shadowlength,0;zoom,0.7;zoomtowidth,300;rotationz,-90;diffuse,c;shadowlengthx,4;shadowlengthy,0;);
 		};
-		LoadFont( "_euromode stroke 44" ) .. {
-			InitCommand=cmd(horizalign,right;vertalign,bottom;x,72;y,150;settext,ScreenString(gc:GetName().."Explanation");shadowlength,0;zoom,0.5;maxwidth,500;diffuse,color("#000000");diffusealpha,0.35);
-		};
 		LoadFont( "_euromode 44" ) .. {
-			InitCommand=cmd(horizalign,right;vertalign,bottom;x,72;y,150;settext,ScreenString(gc:GetName().."Explanation");shadowlengthx,0;shadowlengthy,3;zoom,0.5;maxwidth,500;diffuse,c;);
+			InitCommand=cmd(horizalign,right;vertalign,bottom;x,72;y,150;settext,ScreenString(gc:GetName().."Explanation");shadowlengthx,0;shadowlengthy,3;zoom,0.5;maxwidth,500;diffuse,c;strokecolor,color("#000000"););
 		};
 	};
 	Def.ActorFrame {

@@ -76,7 +76,7 @@ function StageToColor( stage )
 end
 
 function StageToStrokeColor( stage )
-	local c = StageToColor(ddt);
+	local c = StageToColor(stage);
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
 end
 
