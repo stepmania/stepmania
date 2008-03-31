@@ -379,11 +379,6 @@ t[#t+1] = LoadFont("_numbers2") .. {
 
 	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 };
---t[#t+1] = LoadActor( "difficulties" ) .. {
---	InitCommand=cmd(x,SCREEN_CENTER_X-35;y,SCREEN_CENTER_Y-134);
---	OnCommand=cmd(finishtweening;addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
---	OffCommand=cmd(finishtweening;bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
---};
 
 
 if not GAMESTATE:IsCourseMode() then
