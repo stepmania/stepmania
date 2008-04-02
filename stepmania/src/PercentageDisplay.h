@@ -21,6 +21,8 @@ public:
 	virtual void LoadFromNode( const XNode* pNode );
 	virtual PercentageDisplay *Copy() const;
 
+	bool ShowDancePointsNotPercentage() const;
+
 	//
 	// Lua
 	//

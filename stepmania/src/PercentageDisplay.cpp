@@ -9,6 +9,7 @@
 #include "StageStats.h"
 #include "PlayerState.h"
 #include "XmlFile.h"
+#include "WorkoutManager.h"
 
 
 REGISTER_ACTOR_CLASS( PercentageDisplay )
@@ -48,7 +49,7 @@ void PercentageDisplay::LoadFromNode( const XNode* pNode )
 	this->AddChild( &m_textPercent );
 
 	pChild = pNode->GetChild( "PercentRemainder" );
-	if( !PREFSMAN->m_bDancePointsForOni && pChild != NULL )
+	if( !ShowDancePointsNotPercentage()  &&  pChild != NULL )
 	{
 		m_bUseRemainder = true;
 		m_textPercentRemainder.LoadFromNode( pChild );
@@ -84,7 +85,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 		m_Format.SetFromExpression( "FormatPercentScore" );
 	}
 
-	if( PREFSMAN->m_bDancePointsForOni )
+	if( ShowDancePointsNotPercentage() )
 		m_textPercent.SetName( "DancePoints" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
 	else
 		m_textPercent.SetName( "Percent" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
@@ -94,7 +95,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	ActorUtil::LoadAllCommands( m_textPercent, sMetricsGroup );
 	this->AddChild( &m_textPercent );
 
-	if( !PREFSMAN->m_bDancePointsForOni && m_bUseRemainder )
+	if( !ShowDancePointsNotPercentage() && m_bUseRemainder )
 	{
 		m_textPercentRemainder.SetName( "PercentRemainder" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
 		m_textPercentRemainder.LoadFromFont( THEME->GetPathF(sMetricsGroup,"remainder") );
@@ -129,7 +130,7 @@ void PercentageDisplay::Refresh()
 
 	RString sNumToDisplay;
 
-	if( PREFSMAN->m_bDancePointsForOni )
+	if( ShowDancePointsNotPercentage() )
 	{
 		sNumToDisplay = ssprintf( "%*d", m_iDancePointsDigits, max( 0, iActualDancePoints ) );
 	}
@@ -185,6 +186,12 @@ void PercentageDisplay::Refresh()
 	}
 
 	m_textPercent.SetText( sNumToDisplay );
+}
+
+bool PercentageDisplay::ShowDancePointsNotPercentage() const
+{
+	// Use staight dance points in workout because the percentage denominator isn't accurate - we don't know when the players are going to stop.
+	return (WORKOUTMAN->m_pCurWorkout != NULL)  ||  PREFSMAN->m_bDancePointsForOni;
 }
 
 
