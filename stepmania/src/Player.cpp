@@ -120,6 +120,7 @@ static Preference<float> m_fTimingWindowScale	( "TimingWindowScale",		1.0f );
 static Preference<float> m_fTimingWindowAdd	( "TimingWindowAdd",		0 );
 static Preference1D<float> m_fTimingWindowSeconds( TimingWindowSecondsInit, NUM_TimingWindow );
 static Preference<float> m_fTimingWindowJump	( "TimingWindowJump",		0.25 );
+static Preference<float> m_fMaxInputLatencySeconds	( "MaxInputLatencySeconds",	0.0 );
 Preference<float> g_fTimingWindowHopo		( "TimingWindowHopo",		0.25 );		// max time between notes in a hopo chain
 Preference<float> g_fTimingWindowStrum		( "TimingWindowStrum",		0.1f );		// max time between strum and when the frets must match
 ThemeMetric<float> INITIAL_HOLD_LIFE		( "Player", "InitialHoldLife" );
@@ -2718,7 +2719,8 @@ float Player::GetMaxStepDistanceSeconds()
 	fMax = max( fMax, GetWindowSeconds(TW_W3) );
 	fMax = max( fMax, GetWindowSeconds(TW_W2) );
 	fMax = max( fMax, GetWindowSeconds(TW_W1) );
-	return GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * fMax;
+	float f = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * fMax;
+	return f + m_fMaxInputLatencySeconds;
 }
 
 void Player::FadeToFail()
