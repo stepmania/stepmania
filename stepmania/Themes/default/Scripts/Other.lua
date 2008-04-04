@@ -1,4 +1,5 @@
 function LoadFallbackB( element )
+	-- TODO: This should fall back to the current lookup's fallback, and not LoadingScreen's fallback
 	-- TODO: Remove element parameter and make it a LuaThreadVar
 	local fallback_screen = THEME:GetMetric(Var 'LoadingScreen','Fallback');
 	local fallback_path = THEME:GetPathB(fallback_screen,element);
