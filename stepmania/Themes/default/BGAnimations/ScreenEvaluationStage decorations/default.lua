@@ -13,4 +13,10 @@ t[#t+1] = LoadActor("life graph", PLAYER_1) .. {
 t[#t+1] = LoadActor("life graph", PLAYER_2) .. {
 	InitCommand = cmd(x,p2x;y,p2y);
 };
+
+t[#t+1] = LoadActor( THEME:GetPathB('','_standard decoration required'), "TimingDifficultyFrame", "TimingDifficultyFrame" );
+t[#t+1] = LoadFont( Var "LoadingScreen", "TimingDifficulty" ) .. {
+	InitCommand=function(self) self:name("TimingDifficulty"); self:settext(GetTimingDifficulty()); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
+};
+
 return t;
