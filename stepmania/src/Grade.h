@@ -5,6 +5,7 @@
 
 #include "RageUtil.h"
 #include "EnumHelper.h"
+#include "ThemeMetric.h"
 
 #define NUM_Grade_TierS 20
 enum Grade 
@@ -53,7 +54,10 @@ RString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibili
 RString GradeToLocalizedString( Grade g );
 Grade StringToGrade( const RString &s );
 LuaDeclareType( Grade );
-#define FOREACH_UsedGrade( g ) FOREACH_ENUM_N( Grade, THEME->GetMetricI("PlayerStageStats","NumGradeTiersUsed"), g )
+extern ThemeMetric<int> NUM_GRADE_TIERS_USED;
+#define NUM_POSSIBLE_GRADES	(NUM_GRADE_TIERS_USED+1)
+Grade GetNextPossibleGrade( Grade g );
+#define FOREACH_PossibleGrade( g )	for( Grade g = (Grade)(0); g != Grade_Invalid; g = GetNextPossibleGrade(g) )
 
 #endif
 

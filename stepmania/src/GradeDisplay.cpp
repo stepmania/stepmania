@@ -11,18 +11,22 @@ REGISTER_ACTOR_CLASS( GradeDisplay )
 void GradeDisplay::Load( RString sMetricsGroup )
 {
 	ASSERT( m_vSpr.empty() );
-	FOREACH_UsedGrade( g )
+	m_vSpr.resize( NUM_POSSIBLE_GRADES );
+	int i = 0;
+	FOREACH_PossibleGrade( g )
 	{
-		m_vSpr.resize( m_vSpr.size()+1 );
-		m_vSpr.back().Load( THEME->GetPathG(sMetricsGroup,GradeToString(g)) );
-		m_vSpr.back()->SetVisible( false );
+		AutoActor &spr = m_vSpr[i];
+		spr.Load( THEME->GetPathG(sMetricsGroup,GradeToString(g)) );
+		spr->SetVisible( false );
+		this->AddChild( spr ); 
+		i++;
 	}
 }
 
 void GradeDisplay::SetGrade( Grade grade )
 {
 	int i = 0;
-	FOREACH_UsedGrade( g )
+	FOREACH_PossibleGrade( g )
 	{
 		m_vSpr[i]->SetVisible( g == grade );
 		i++;
@@ -54,7 +58,7 @@ public:
 	}
 };
 
-LUA_REGISTER_DERIVED_CLASS( GradeDisplay, Sprite )
+LUA_REGISTER_DERIVED_CLASS( GradeDisplay, ActorFrame )
 // lua end
 
 /*

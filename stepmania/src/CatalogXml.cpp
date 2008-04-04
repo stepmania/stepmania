@@ -340,7 +340,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 
 		{
 			XNode* pNode2 = pNode->AppendChild( "Grade" );
-			FOREACH_UsedGrade( g )
+			FOREACH_PossibleGrade( g )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "Grade", GradeToString(g) );
 				pNode3->AppendAttr( "DisplayAs", GradeToLocalizedString(g) );

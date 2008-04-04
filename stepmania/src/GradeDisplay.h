@@ -3,13 +3,13 @@
 #ifndef GRADE_DISPLAY_H
 #define GRADE_DISPLAY_H
 
-#include "Sprite.h"
+#include "ActorFrame.h"
 #include "Grade.h"
 #include "PlayerNumber.h"
 #include "AutoActor.h"
 struct lua_State;
 
-class GradeDisplay : public Sprite
+class GradeDisplay : public ActorFrame
 {
 public:
 	virtual void Load( RString sMetricsGroup );
