@@ -308,7 +308,7 @@ apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands, const R
 	return apActorCommands( pRet );
 }
 
-void ActorUtil::SetXY( Actor& actor, const RString &sType )
+void ActorUtil::SetXY( Actor& actor, const RString &sMetricsGroup )
 {
 	ASSERT( !actor.GetName().empty() );
 
@@ -317,31 +317,31 @@ void ActorUtil::SetXY( Actor& actor, const RString &sType )
 	 * these are both 0, leave the actor where it is.  If InitCommand doesn't,
 	 * then 0,0 is the default, anyway.
 	 */
-	float fX = THEME->GetMetricF(sType,actor.GetName()+"X");
-	float fY = THEME->GetMetricF(sType,actor.GetName()+"Y");
+	float fX = THEME->GetMetricF(sMetricsGroup,actor.GetName()+"X");
+	float fY = THEME->GetMetricF(sMetricsGroup,actor.GetName()+"Y");
 	if( fX != 0 || fY != 0 )
 		actor.SetXY( fX, fY );
 }
 
-void ActorUtil::LoadCommand( Actor& actor, const RString &sType, const RString &sCommandName )
+void ActorUtil::LoadCommand( Actor& actor, const RString &sMetricsGroup, const RString &sCommandName )
 {
-	ActorUtil::LoadCommandFromName( actor, sType, sCommandName, actor.GetName() );
+	ActorUtil::LoadCommandFromName( actor, sMetricsGroup, sCommandName, actor.GetName() );
 }
 
-void ActorUtil::LoadCommandFromName( Actor& actor, const RString &sType, const RString &sCommandName, const RString &sName )
+void ActorUtil::LoadCommandFromName( Actor& actor, const RString &sMetricsGroup, const RString &sCommandName, const RString &sName )
 {
-	actor.AddCommand( sCommandName, THEME->GetMetricA(sType,sName+sCommandName+"Command") );
+	actor.AddCommand( sCommandName, THEME->GetMetricA(sMetricsGroup,sName+sCommandName+"Command") );
 }
 
-void ActorUtil::LoadAllCommands( Actor& actor, const RString &sType )
+void ActorUtil::LoadAllCommands( Actor& actor, const RString &sMetricsGroup )
 {
-	LoadAllCommandsFromName( actor, sType, actor.GetName() );
+	LoadAllCommandsFromName( actor, sMetricsGroup, actor.GetName() );
 }
 
-void ActorUtil::LoadAllCommandsFromName( Actor& actor, const RString &sType, const RString &sName )
+void ActorUtil::LoadAllCommandsFromName( Actor& actor, const RString &sMetricsGroup, const RString &sName )
 {
 	set<RString> vsValueNames;
-	THEME->GetMetricsThatBeginWith( sType, sName, vsValueNames );
+	THEME->GetMetricsThatBeginWith( sMetricsGroup, sName, vsValueNames );
 
 	FOREACHS_CONST( RString, vsValueNames, v )
 	{
@@ -350,7 +350,7 @@ void ActorUtil::LoadAllCommandsFromName( Actor& actor, const RString &sType, con
 		if( EndsWith(sv,sEnding) )
 		{
 			RString sCommandName( sv.begin()+sName.size(), sv.end()-sEnding.size() );
-			LoadCommandFromName( actor, sType, sCommandName, sName );
+			LoadCommandFromName( actor, sMetricsGroup, sCommandName, sName );
 		}
 	}
 }
@@ -435,12 +435,19 @@ namespace
 		lua_pushboolean( L, IsRegistered(SArg(1)) );
 		return 1;
 	}
+	static int LoadAllCommandsAndSetXY( lua_State *L )
+	{
+		Actor *p = Luna<Actor>::check( L, 1 );
+		ActorUtil::LoadAllCommandsAndSetXY( p, SArg(2) );
+		return 0;
+	}
 
 	const luaL_Reg ActorUtilTable[] =
 	{
 		LIST_METHOD( GetFileType ),
 		LIST_METHOD( ResolvePath ),
 		LIST_METHOD( IsRegisteredClass ),
+		LIST_METHOD( LoadAllCommandsAndSetXY ),
 		{ NULL, NULL }
 	};
 }

@@ -42,7 +42,7 @@ namespace ActorUtil
 	void Register( const RString& sClassName, CreateActorFn pfn );
 
 	apActorCommands ParseActorCommands( const RString &sCommands, const RString &sName = "" );
-	void SetXY( Actor& actor, const RString &sType );
+	void SetXY( Actor& actor, const RString &sMetricsGroup );
 	inline void PlayCommand( Actor& actor, const RString &sCommandName ) { actor.PlayCommand( sCommandName ); }
 	inline void OnCommand( Actor& actor )
 	{
@@ -61,45 +61,45 @@ namespace ActorUtil
 		actor.PlayCommand("Off");
 	}
 
-	void LoadCommand( Actor& actor, const RString &sType, const RString &sCommandName );
-	void LoadCommandFromName( Actor& actor, const RString &sType, const RString &sCommandName, const RString &sName );
-	void LoadAllCommands( Actor& actor, const RString &sType );
-	void LoadAllCommandsFromName( Actor& actor, const RString &sType, const RString &sName );
+	void LoadCommand( Actor& actor, const RString &sMetricsGroup, const RString &sCommandName );
+	void LoadCommandFromName( Actor& actor, const RString &sMetricsGroup, const RString &sCommandName, const RString &sName );
+	void LoadAllCommands( Actor& actor, const RString &sMetricsGroup );
+	void LoadAllCommandsFromName( Actor& actor, const RString &sMetricsGroup, const RString &sName );
 
-	inline void LoadAllCommandsAndSetXY( Actor& actor, const RString &sType )
+	inline void LoadAllCommandsAndSetXY( Actor& actor, const RString &sMetricsGroup )
 	{
-		LoadAllCommands( actor, sType );
-		SetXY( actor, sType );
+		LoadAllCommands( actor, sMetricsGroup );
+		SetXY( actor, sMetricsGroup );
 	}
-	inline void LoadAllCommandsAndOnCommand( Actor& actor, const RString &sType )
+	inline void LoadAllCommandsAndOnCommand( Actor& actor, const RString &sMetricsGroup )
 	{
-		LoadAllCommands( actor, sType );
+		LoadAllCommands( actor, sMetricsGroup );
 		OnCommand( actor );
 	}
-	inline void SetXYAndOnCommand( Actor& actor, const RString &sType )
+	inline void SetXYAndOnCommand( Actor& actor, const RString &sMetricsGroup )
 	{
-		SetXY( actor, sType );
+		SetXY( actor, sMetricsGroup );
 		OnCommand( actor );
 	}
-	inline void LoadAllCommandsAndSetXYAndOnCommand( Actor& actor, const RString &sType )
+	inline void LoadAllCommandsAndSetXYAndOnCommand( Actor& actor, const RString &sMetricsGroup )
 	{
-		LoadAllCommands( actor, sType );
-		SetXY( actor, sType );
+		LoadAllCommands( actor, sMetricsGroup );
+		SetXY( actor, sMetricsGroup );
 		OnCommand( actor );
 	}
 
 	/* convenience */
-	inline void SetXY( Actor* pActor, const RString &sType ) { SetXY( *pActor, sType ); }
+	inline void SetXY( Actor* pActor, const RString &sMetricsGroup ) { SetXY( *pActor, sMetricsGroup ); }
 	inline void PlayCommand( Actor* pActor, const RString &sCommandName ) { if(pActor) pActor->PlayCommand( sCommandName ); }
 	inline void OnCommand( Actor* pActor ) { if(pActor) ActorUtil::OnCommand( *pActor ); }
 	inline void OffCommand( Actor* pActor ) { if(pActor) ActorUtil::OffCommand( *pActor ); }
 
-	inline void LoadAllCommands( Actor* pActor, const RString &sType ) { if(pActor) LoadAllCommands( *pActor, sType ); }
+	inline void LoadAllCommands( Actor* pActor, const RString &sMetricsGroup ) { if(pActor) LoadAllCommands( *pActor, sMetricsGroup ); }
 
-	inline void LoadAllCommandsAndSetXY( Actor* pActor, const RString &sType ) { if(pActor) LoadAllCommandsAndSetXY( *pActor, sType ); }
-	inline void LoadAllCommandsAndOnCommand( Actor* pActor, const RString &sType ) { if(pActor) LoadAllCommandsAndOnCommand( *pActor, sType ); }
-	inline void SetXYAndOnCommand( Actor* pActor, const RString &sType ) { if(pActor) SetXYAndOnCommand( *pActor, sType ); }
-	inline void LoadAllCommandsAndSetXYAndOnCommand( Actor* pActor, const RString &sType ) { if(pActor) LoadAllCommandsAndSetXYAndOnCommand( *pActor, sType ); }
+	inline void LoadAllCommandsAndSetXY( Actor* pActor, const RString &sMetricsGroup ) { if(pActor) LoadAllCommandsAndSetXY( *pActor, sMetricsGroup ); }
+	inline void LoadAllCommandsAndOnCommand( Actor* pActor, const RString &sMetricsGroup ) { if(pActor) LoadAllCommandsAndOnCommand( *pActor, sMetricsGroup ); }
+	inline void SetXYAndOnCommand( Actor* pActor, const RString &sMetricsGroup ) { if(pActor) SetXYAndOnCommand( *pActor, sMetricsGroup ); }
+	inline void LoadAllCommandsAndSetXYAndOnCommand( Actor* pActor, const RString &sMetricsGroup ) { if(pActor) LoadAllCommandsAndSetXYAndOnCommand( *pActor, sMetricsGroup ); }
 
 	// Return a Sprite, BitmapText, or Model depending on the file type
 	Actor* LoadFromNode( const XNode* pNode, Actor *pParentActor = NULL );
