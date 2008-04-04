@@ -88,7 +88,7 @@ protected:
 	Sprite			m_sprWin[NUM_PLAYERS];
 
 	// judgment area
-	Sprite			m_sprJudgeLabels[NUM_JudgeLine];
+	AutoActor		m_sprJudgeLabels[NUM_JudgeLine];
 	BitmapText		m_textJudgeNumbers[NUM_JudgeLine][NUM_PLAYERS];
 
 	// stats area

@@ -4,69 +4,28 @@
 #include "arch/Dialog/Dialog.h"
 #include "RageLog.h"
 #include "ActorUtil.h"
+#include "ThemeManager.h"
 
 REGISTER_ACTOR_CLASS( GradeDisplay )
 
-void GradeDisplay::Load( RageTextureID ID )
+void GradeDisplay::Load( RString sMetricsGroup )
 {
-	Sprite::Load( ID );
-	Sprite::StopAnimating();
-
-	bool bWarn = Sprite::GetNumStates() != 8 && Sprite::GetNumStates() != 16;
-	if( ID.filename.find("_blank") != RString::npos )
-		bWarn = false;
-	if( bWarn )
+	ASSERT( m_vSpr.empty() );
+	FOREACH_UsedGrade( g )
 	{
-		RString sError = ssprintf( "The grade graphic '%s' must have either 8 or 16 frames.", ID.filename.c_str() );
-		LOG->Warn( sError );
-		Dialog::OK( sError );
+		m_vSpr.resize( m_vSpr.size()+1 );
+		m_vSpr.back().Load( THEME->GetPathG(sMetricsGroup,GradeToString(g)) );
+		m_vSpr.back()->SetVisible( false );
 	}
 }
 
-int GradeDisplay::GetFrameIndex( PlayerNumber pn, Grade g )
+void GradeDisplay::SetGrade( Grade grade )
 {
-	if( Sprite::GetNumStates() == 1 )
-		return 0;
-
-	// either 8, or 16 states
-	int iNumCols;
-	switch( Sprite::GetNumStates() )
+	int i = 0;
+	FOREACH_UsedGrade( g )
 	{
-	case 8:		iNumCols=1;	break;
-	case 16:	iNumCols=2;	break;
-	default:
-		ASSERT(0);
-	}
-
-	int iFrame;
-	switch( g )
-	{
-	case Grade_Tier01:	iFrame = 0;	break;
-	case Grade_Tier02:	iFrame = 1;	break;
-	case Grade_Tier03:	iFrame = 2;	break;
-	case Grade_Tier04:	iFrame = 3;	break;
-	case Grade_Tier05:	iFrame = 4;	break;
-	case Grade_Tier06:	iFrame = 5;	break;
-	case Grade_Tier07:	iFrame = 6;	break;
-	default:		iFrame = 6;	break;
-	case Grade_Failed:	iFrame = 7;	break;
-	}
-	iFrame *= iNumCols;
-	if( iNumCols==2 )
-		iFrame += pn;
-	return iFrame;
-}
-
-void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
-{
-	if( g != Grade_NoData )
-	{
-		SetState( GetFrameIndex(pn,g) );
-		SetVisible( true );
-	}
-	else
-	{
-		SetVisible( false );
+		m_vSpr[i]->SetVisible( g == grade );
+		i++;
 	}
 }
 
@@ -78,15 +37,13 @@ class LunaGradeDisplay: public Luna<GradeDisplay>
 public:
 	static int Load( T* p, lua_State *L )
 	{
-		RageTextureID id( SArg(1) );
-		p->Load( id );
+		p->Load( SArg(1) );
 		return 0;
 	}
 	static int SetGrade( T* p, lua_State *L )
 	{
-		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		Grade g = Enum::Check<Grade>(L, 2);
-		p->SetGrade( pn, g );
+		p->SetGrade( g );
 		return 0;
 	}
 

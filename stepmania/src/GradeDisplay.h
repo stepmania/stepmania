@@ -6,22 +6,21 @@
 #include "Sprite.h"
 #include "Grade.h"
 #include "PlayerNumber.h"
+#include "AutoActor.h"
 struct lua_State;
 
 class GradeDisplay : public Sprite
 {
 public:
-	virtual void Load( RageTextureID ID );
-	void SetGrade( PlayerNumber pn, Grade g );
+	virtual void Load( RString sMetricsGroup );
+	void SetGrade( Grade g );
 
-protected:
-	int GetFrameIndex( PlayerNumber pn, Grade g );
-
-public:
 	virtual GradeDisplay *Copy() const;
 
 	// Lua
 	void PushSelf( lua_State *L );
+protected:
+	vector<AutoActor>	m_vSpr;
 };
 
 #endif

@@ -176,6 +176,8 @@ void ScreenEvaluation::Init()
 		}
 	}
 
+
+	ASSERT( !STATSMAN->m_vPlayedStageStats.empty() );
 	m_pStageStats = &STATSMAN->m_vPlayedStageStats.back();
 
 	ZERO( m_bSavedScreenshot );
@@ -255,7 +257,7 @@ void ScreenEvaluation::Init()
 				SET_XY( m_SmallBanner[i] );
 				this->AddChild( &m_SmallBanner[i] );
 
-				m_sprSmallBannerFrame[i].Load( THEME->GetPathG(m_sName,"banner frame") );
+				m_sprSmallBannerFrame[i].Load( THEME->GetPathG(m_sName,"BannerFrame") );
 				m_sprSmallBannerFrame[i]->SetName( ssprintf("SmallBanner%d",i+1) );
 				ActorUtil::LoadAllCommands( *m_sprSmallBannerFrame[i], m_sName );
 				SET_XY( m_sprSmallBannerFrame[i] );
@@ -274,7 +276,7 @@ void ScreenEvaluation::Init()
 			SET_XY( m_LargeBanner );
 			this->AddChild( &m_LargeBanner );
 
-			m_sprLargeBannerFrame.Load( THEME->GetPathG(m_sName,"banner frame") );
+			m_sprLargeBannerFrame.Load( THEME->GetPathG(m_sName,"BannerFrame") );
 			m_sprLargeBannerFrame->SetName( "LargeBannerFrame" );
 			ActorUtil::LoadAllCommands( *m_sprLargeBannerFrame, m_sName );
 			SET_XY( m_sprLargeBannerFrame );
@@ -307,14 +309,15 @@ void ScreenEvaluation::Init()
 	{
 		FOREACH_EnabledPlayer( p )
 		{
-			m_sprGradeFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("grade frame p%d",p+1)) );
+			m_sprGradeFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("GradeFrame p%d",p+1)) );
 			m_sprGradeFrame[p]->SetName( ssprintf("GradeFrameP%d",p+1) );
 			ActorUtil::LoadAllCommands( *m_sprGradeFrame[p], m_sName );
 			SET_XY( m_sprGradeFrame[p] );
 			this->AddChild( m_sprGradeFrame[p] );
 
-			m_Grades[p].Load( THEME->GetPathG(m_sName,"grades") );
-			m_Grades[p].SetGrade( p, grade[p] );
+			// TODO: Re-add scrolling grade functionality
+			m_Grades[p].Load( "GradeDisplayEval" );
+			m_Grades[p].SetGrade( grade[p] );
 			m_Grades[p].SetName( ssprintf("GradeP%d",p+1) );
 			ActorUtil::LoadAllCommands( m_Grades[p], m_sName );
 			SET_XY( m_Grades[p] );
@@ -352,7 +355,7 @@ void ScreenEvaluation::Init()
 	{
 		FOREACH_EnabledPlayer( p )
 		{
-			m_sprBonusFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("bonus frame p%d",p+1)) );
+			m_sprBonusFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("BonusFrame p%d",p+1)) );
 			m_sprBonusFrame[p]->SetName( ssprintf("BonusFrameP%d",p+1) );
 			ActorUtil::LoadAllCommands( *m_sprBonusFrame[p], m_sName );
 			SET_XY( m_sprBonusFrame[p] );
@@ -360,14 +363,14 @@ void ScreenEvaluation::Init()
 
 			for( int r=0; r<NUM_SHOWN_RADAR_CATEGORIES; r++ )	// foreach line
 			{
-				m_sprPossibleBar[p][r].Load( THEME->GetPathG(m_sName,ssprintf("bar possible p%d",p+1)) );
+				m_sprPossibleBar[p][r].Load( THEME->GetPathG(m_sName,ssprintf("BarPossible p%d",p+1)) );
 				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * m_pStageStats->m_player[p].m_radarPossible[r] );
 				m_sprPossibleBar[p][r].SetName( ssprintf("BarPossible%dP%d",r+1,p+1) );
 				ActorUtil::LoadAllCommands( m_sprPossibleBar[p][r], m_sName );
 				SET_XY( m_sprPossibleBar[p][r] );
 				this->AddChild( &m_sprPossibleBar[p][r] );
 
-				m_sprActualBar[p][r].Load( THEME->GetPathG(m_sName,ssprintf("bar actual p%d",p+1)) );
+				m_sprActualBar[p][r].Load( THEME->GetPathG(m_sName,ssprintf("BarActual p%d",p+1)) );
 				// should be out of the possible bar, not actual (whatever value that is at)
 				m_sprActualBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * m_pStageStats->m_player[p].m_radarActual[r] );
 				
@@ -393,7 +396,7 @@ void ScreenEvaluation::Init()
 	{
 		FOREACH_EnabledPlayer( p )
 		{
-			m_sprSurvivedFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("survived frame p%d",p+1)) );
+			m_sprSurvivedFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("SurvivedFrame p%d",p+1)) );
 			m_sprSurvivedFrame[p]->SetName( ssprintf("SurvivedFrameP%d",p+1) );
 			ActorUtil::LoadAllCommands( *m_sprSurvivedFrame[p], m_sName );
 			SET_XY( m_sprSurvivedFrame[p] );
@@ -447,13 +450,11 @@ void ScreenEvaluation::Init()
 		{
 			if( SHOW_JUDGMENT_LABELS )
 			{
-				m_sprJudgeLabels[l].Load( THEME->GetPathG(m_sName,"judge labels") );
-				m_sprJudgeLabels[l].StopAnimating();
-				m_sprJudgeLabels[l].SetState( l );
-				m_sprJudgeLabels[l].SetName( JudgeLineToString(l)+"Label" );
+				m_sprJudgeLabels[l].Load( THEME->GetPathG(m_sName,"JudgeLabel " + JudgeLineToString(l)) );
+				m_sprJudgeLabels[l]->SetName( JudgeLineToString(l)+"Label" );
 				ActorUtil::LoadAllCommands( m_sprJudgeLabels[l], m_sName );
 				SET_XY( m_sprJudgeLabels[l] );
-				this->AddChild( &m_sprJudgeLabels[l] );
+				this->AddChild( m_sprJudgeLabels[l] );
 			}
 
 			FOREACH_EnabledPlayer( p )
@@ -528,7 +529,7 @@ void ScreenEvaluation::Init()
 	//
 	if( SHOW_SCORE_AREA )
 	{
-		m_sprScoreLabel.Load( THEME->GetPathG(m_sName,"score label") );
+		m_sprScoreLabel.Load( THEME->GetPathG(m_sName,"ScoreLabel") );
 		m_sprScoreLabel->SetName( "ScoreLabel" );
 		ActorUtil::LoadAllCommands( *m_sprScoreLabel, m_sName );
 		SET_XY( m_sprScoreLabel );
