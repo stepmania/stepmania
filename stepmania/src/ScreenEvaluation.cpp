@@ -538,7 +538,7 @@ void ScreenEvaluation::Init()
 
 		FOREACH_EnabledPlayer( p )
 		{
-			m_textScore[p].LoadFromFont( THEME->GetPathF(m_sName, "score") );
+			m_textScore[p].LoadFromFont( THEME->GetPathF(m_sName, "Score") );
 			m_textScore[p].SetShadowLength( 0 );
 			m_textScore[p].SetName( ssprintf("ScoreNumberP%d",p+1) );
 			ActorUtil::LoadAllCommands( m_textScore[p], m_sName );
@@ -550,7 +550,7 @@ void ScreenEvaluation::Init()
 
 	if( SHOW_TOTAL_SCORE_AREA )
 	{
-		m_sprTotalScoreLabel.Load( THEME->GetPathG(m_sName,"totalscore label") );
+		m_sprTotalScoreLabel.Load( THEME->GetPathG(m_sName,"TotalScoreLabel") );
 		m_sprTotalScoreLabel->SetName( "TotalScoreLabel" );
 		ActorUtil::LoadAllCommands( *m_sprTotalScoreLabel, m_sName );
 		SET_XY( m_sprTotalScoreLabel );
@@ -564,7 +564,7 @@ void ScreenEvaluation::Init()
 
 			//iTotalScore += m_pStageStats->m_player[p].iScore;
 
-			m_textTotalScore[p].LoadFromFont( THEME->GetPathF(m_sName, "totalscore") );
+			m_textTotalScore[p].LoadFromFont( THEME->GetPathF(m_sName, "TotalScore") );
 			m_textTotalScore[p].SetShadowLength( 0 );
 			m_textTotalScore[p].SetName( ssprintf("TotalScoreNumberP%d",p+1) );
 			m_textTotalScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS+2, iTotalScore) );

@@ -42,8 +42,10 @@ void OptionIconRow::Load( const RString &sMetricsGroup, PlayerNumber pn )
 	for( int i=0; i<NUM_OPTION_ICONS; i++ )
 	{
 		OptionIcon *p = new OptionIcon;
+		p->SetName( "OptionIcon" );
 		p->SetXY( i*SPACING_X, i*SPACING_Y );
-		p->Load( sMetricsGroup );		
+		p->Load( sMetricsGroup );
+		ActorUtil::LoadAllCommands( p, sMetricsGroup );
 		m_vpOptionIcon.push_back( p );
 		this->AddChild( p );
 	}

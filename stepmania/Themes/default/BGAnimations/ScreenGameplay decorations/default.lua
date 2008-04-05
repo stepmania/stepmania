@@ -19,14 +19,12 @@ t[#t+1] = LoadActor( THEME:GetPathB('','_standard decoration required'), "RightF
 
 
 t[#t+1] = Def.OptionIconRow {
-		Condition=GAMESTATE:IsHumanPlayer(PLAYER_1);
-		InitCommand=cmd(x,SCREEN_CENTER_X-300;y,SCREEN_CENTER_Y;Load,"OptionIconRowGameplay",PLAYER_1);
+		InitCommand=cmd(x,SCREEN_CENTER_X-300;y,SCREEN_CENTER_Y;Load,"OptionIconRowGameplay",PLAYER_1;player,PLAYER_1;);
 		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
 		OffCommand=cmd(linear,0.5;zoomy,0);
 	};
 t[#t+1] = Def.OptionIconRow {
-		Condition=GAMESTATE:IsHumanPlayer(PLAYER_2);
-		InitCommand=cmd(x,SCREEN_CENTER_X+300;y,SCREEN_CENTER_Y;Load,"OptionIconRowGameplay",PLAYER_2;);
+		InitCommand=cmd(x,SCREEN_CENTER_X+300;y,SCREEN_CENTER_Y;Load,"OptionIconRowGameplay",PLAYER_2;player,PLAYER_2;);
 		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
 		OffCommand=cmd(linear,0.5;zoomy,0);
 	};
