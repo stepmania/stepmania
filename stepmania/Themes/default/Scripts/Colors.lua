@@ -28,25 +28,6 @@ local CourseDifficultyColors = {
 	Difficulty_Challenge	= color("0.2,0.6,1.0,1"),	-- blue
 };
 
-local StageColors = {
-	Stage_1st	= color("#00ffc7"),
-	Stage_2nd	= color("#58ff00"),
-	Stage_3rd	= color("#f400ff"),
-	Stage_4th	= color("#00ffda"),
-	Stage_5th	= color("#ed00ff"),
-	Stage_6th	= color("#73ff00"),
-	Stage_Next	= color("#73ff00"),
-	Stage_Final	= color("#ff0707"),
-	Stage_Extra1	= color("#fafa00"),
-	Stage_Extra2	= color("#ff0707"),
-	Stage_Nonstop	= color("#FFFFFF"),
-	Stage_Oni	= color("#FFFFFF"),
-	Stage_Endless	= color("#FFFFFF"),
-	Stage_Event	= color("#FFFFFF"),
-	Stage_Demo	= color("#FFFFFF"),
-};
-
-
 function DifficultyDisplayTypeToColor( ddt ) 
 	local c = DifficultyDisplayTypeColors[ddt]
 	if c then return c end
@@ -69,6 +50,25 @@ function CourseDifficutlyToColor( cd )
 	return color("#000000");
 end
 
+
+local StageColors = {
+	Stage_1st	= color("#00ffc7"),
+	Stage_2nd	= color("#58ff00"),
+	Stage_3rd	= color("#f400ff"),
+	Stage_4th	= color("#00ffda"),
+	Stage_5th	= color("#ed00ff"),
+	Stage_6th	= color("#73ff00"),
+	Stage_Next	= color("#73ff00"),
+	Stage_Final	= color("#ff0707"),
+	Stage_Extra1	= color("#fafa00"),
+	Stage_Extra2	= color("#ff0707"),
+	Stage_Nonstop	= color("#FFFFFF"),
+	Stage_Oni	= color("#FFFFFF"),
+	Stage_Endless	= color("#FFFFFF"),
+	Stage_Event	= color("#FFFFFF"),
+	Stage_Demo	= color("#FFFFFF"),
+};
+
 function StageToColor( stage )
 	local c = StageColors[stage];
 	if c then return c end
@@ -79,6 +79,30 @@ function StageToStrokeColor( stage )
 	local c = StageToColor(stage);
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
 end
+
+
+local JudgmentLineColors = {
+	JudgmentLine_W1		= color("#00ffc7"),
+	JudgmentLine_W2		= color("#f6ff00"),
+	JudgmentLine_W3		= color("#00ff78"),
+	JudgmentLine_W4		= color("#34bfff"),
+	JudgmentLine_W5		= color("#e44dff"),
+	JudgmentLine_Held	= color("#FFFFFF"),
+	JudgmentLine_Miss	= color("#ff3c3c"),
+	JudgmentLine_MaxCombo	= color("#ffc600"),
+};
+
+function JudgmentLineToColor( i )
+	local c = JudgmentLineColors[i];
+	if c then return c end
+	return color("#000000");
+end
+
+function JudgmentLineToStrokeColor( i )
+	local c = JudgmentLineToColor(i);
+	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
+end
+
 
 
 

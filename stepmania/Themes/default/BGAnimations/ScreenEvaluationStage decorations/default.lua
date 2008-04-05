@@ -19,4 +19,26 @@ t[#t+1] = LoadFont( Var "LoadingScreen", "TimingDifficulty" ) .. {
 	InitCommand=function(self) self:name("TimingDifficulty"); self:settext(GetTimingDifficulty()); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
 };
 
+t[#t+1] = Def.OptionIconRow {
+		InitCommand=cmd(x,SCREEN_CENTER_X-300;y,SCREEN_CENTER_Y;Load,"OptionIconRowEvaluation",PLAYER_1,player,PLAYER_1);
+		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
+		OffCommand=cmd(linear,0.5;zoomy,0);
+	};
+t[#t+1] = Def.OptionIconRow {
+		InitCommand=cmd(x,SCREEN_CENTER_X+300;y,SCREEN_CENTER_Y;Load,"OptionIconRowEvaluation",PLAYER_2;player,PLAYER_2);
+		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
+		OffCommand=cmd(linear,0.5;zoomy,0);
+	};
+
+t[#t+1] = Def.DifficultyDisplay {
+		InitCommand=cmd(x,SCREEN_CENTER_X-300;y,SCREEN_CENTER_Y;Load,"DifficultyDisplayEvaluation",PLAYER_1;player,PLAYER_1;);
+		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
+		OffCommand=cmd(linear,0.5;zoomy,0);
+	};
+t[#t+1] = Def.DifficultyDisplay {
+		InitCommand=cmd(x,SCREEN_CENTER_X+300;y,SCREEN_CENTER_Y;Load,"DifficultyDisplayEvaluation",PLAYER_2;player,PLAYER_2;);
+		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
+		OffCommand=cmd(linear,0.5;zoomy,0);
+	};
+
 return t;
