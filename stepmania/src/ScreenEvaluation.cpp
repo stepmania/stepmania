@@ -36,41 +36,41 @@ const int NUM_SCORE_DIGITS = 9;
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH			THEME->GetMetricF(m_sName,"BannerWidth")
 #define BANNER_HEIGHT			THEME->GetMetricF(m_sName,"BannerHeight")
-static const char *JudgeLineNames[] =
+static const char *JudgmentLineNames[] =
 {
 	"W1", "W2", "W3", "W4", "W5", "Miss", "Held", "MaxCombo"
 };
-XToString( JudgeLine );
-#define FOREACH_JudgeLine( rc ) FOREACH_ENUM( JudgeLine, rc )
+XToString( JudgmentLine );
+LuaXType( JudgmentLine );
+XToLocalizedString( JudgmentLine );
+LuaFunction( JudgmentLineToLocalizedString, JudgmentLineToLocalizedString(Enum::Check<JudgmentLine>(L, 1)) );
 
-static const char *StatLineNames[NUM_StatLine] =
+static const char *DetailLineNames[NUM_DetailLine] =
 {
 	"Jumps", "Holds", "Mines", "Hands", "Rolls",
 };
-XToString( StatLine );
-#define FOREACH_StatLine( rc ) FOREACH_ENUM( StatLine, rc )
+XToString( DetailLine );
 
-#define CHEER_DELAY_SECONDS		THEME->GetMetricF(m_sName,"CheerDelaySeconds")
-#define BAR_ACTUAL_MAX_COMMAND		THEME->GetMetricA(m_sName,"BarActualMaxCommand")
+#define CHEER_DELAY_SECONDS			THEME->GetMetricF(m_sName,"CheerDelaySeconds")
+#define BAR_ACTUAL_MAX_COMMAND			THEME->GetMetricA(m_sName,"BarActualMaxCommand")
 
 // metrics that are specific to classes derived from ScreenEvaluation
-#define SHOW_BANNER_AREA		THEME->GetMetricB(m_sName,"ShowBannerArea")
-#define SHOW_GRADE_AREA			THEME->GetMetricB(m_sName,"ShowGradeArea")
-#define SHOW_POINTS_AREA		THEME->GetMetricB(m_sName,"ShowPointsArea")
-#define SHOW_BONUS_AREA			THEME->GetMetricB(m_sName,"ShowBonusArea")
-#define SHOW_SURVIVED_AREA		THEME->GetMetricB(m_sName,"ShowSurvivedArea")
-#define SHOW_WIN_AREA			THEME->GetMetricB(m_sName,"ShowWinArea")
-#define SHOW_JUDGMENT_LABELS		THEME->GetMetricB(m_sName,"ShowJudgmentLabels")
-#define SHOW_JUDGMENT( l )		THEME->GetMetricB(m_sName,"Show"+JudgeLineToString(l))
-#define SHOW_STATS_LABELS		THEME->GetMetricB(m_sName,"ShowStatsLabels")
+#define SHOW_BANNER_AREA			THEME->GetMetricB(m_sName,"ShowBannerArea")
+#define SHOW_GRADE_AREA				THEME->GetMetricB(m_sName,"ShowGradeArea")
+#define SHOW_POINTS_AREA			THEME->GetMetricB(m_sName,"ShowPointsArea")
+#define SHOW_BONUS_AREA				THEME->GetMetricB(m_sName,"ShowBonusArea")
+#define SHOW_SURVIVED_AREA			THEME->GetMetricB(m_sName,"ShowSurvivedArea")
+#define SHOW_WIN_AREA				THEME->GetMetricB(m_sName,"ShowWinArea")
+#define SHOW_SHARED_JUDGMENT_LINE_LABELS	THEME->GetMetricB(m_sName,"ShowSharedJudgmentLineLabels")
+#define SHOW_JUDGMENT_LINE( l )			THEME->GetMetricB(m_sName,"ShowJudgmentLine"+JudgmentLineToString(l))
 
-#define SHOW_STAT( s )			THEME->GetMetricB(m_sName,"Show"+StatLineToString(s))
-#define SHOW_SCORE_AREA			THEME->GetMetricB(m_sName,"ShowScoreArea")
-#define SHOW_TOTAL_SCORE_AREA		THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
-#define SHOW_TIME_AREA			THEME->GetMetricB(m_sName,"ShowTimeArea")
-#define SHOW_RECORDS_AREA		THEME->GetMetricB(m_sName,"ShowRecordsArea")
-#define MAX_COMBO_NUM_DIGITS		THEME->GetMetricI(m_sName,"MaxComboNumDigits")
-#define PLAYER_OPTIONS_SEPARATOR	THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
+#define SHOW_DETAIL_AREA			THEME->GetMetricB(m_sName,"ShowDetailArea")
+#define SHOW_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowScoreArea")
+#define SHOW_TOTAL_SCORE_AREA			THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
+#define SHOW_TIME_AREA				THEME->GetMetricB(m_sName,"ShowTimeArea")
+#define SHOW_RECORDS_AREA			THEME->GetMetricB(m_sName,"ShowRecordsArea")
+#define MAX_COMBO_NUM_DIGITS			THEME->GetMetricI(m_sName,"MaxComboNumDigits")
+#define PLAYER_OPTIONS_SEPARATOR		THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
 
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
@@ -441,86 +441,87 @@ void ScreenEvaluation::Init()
 	//
 	// init judgment area
 	//
-	FOREACH_JudgeLine( l )
+	FOREACH_ENUM( JudgmentLine, l )
 	{
-		if( l == 0  && !GAMESTATE->ShowW1() )
+		if( l == JudgmentLine_W1  && !GAMESTATE->ShowW1() )
 			continue;	// skip
 
-		if( SHOW_JUDGMENT(l) )
+		if( SHOW_JUDGMENT_LINE(l) )
 		{
-			if( SHOW_JUDGMENT_LABELS )
+			if( SHOW_SHARED_JUDGMENT_LINE_LABELS )
 			{
-				m_sprJudgeLabels[l].Load( THEME->GetPathG(m_sName,"JudgeLabel " + JudgeLineToString(l)) );
-				m_sprJudgeLabels[l]->SetName( JudgeLineToString(l)+"Label" );
-				ActorUtil::LoadAllCommands( m_sprJudgeLabels[l], m_sName );
-				SET_XY( m_sprJudgeLabels[l] );
-				this->AddChild( m_sprJudgeLabels[l] );
+				LuaThreadVariable var2( "JudgmentLine", LuaReference::Create(l) );
+				m_sprSharedJudgmentLineLabels[l].Load( THEME->GetPathG(m_sName,"JudgmentLabel " + JudgmentLineToString(l)) );
+				m_sprSharedJudgmentLineLabels[l]->SetName( JudgmentLineToString(l)+"Label" );
+				ActorUtil::LoadAllCommands( m_sprSharedJudgmentLineLabels[l], m_sName );
+				SET_XY( m_sprSharedJudgmentLineLabels[l] );
+				this->AddChild( m_sprSharedJudgmentLineLabels[l] );
 			}
 
 			FOREACH_EnabledPlayer( p )
 			{
-				m_textJudgeNumbers[l][p].LoadFromFont( THEME->GetPathF(m_sName, "judge") );
-				m_textJudgeNumbers[l][p].SetShadowLength( 0 );
-				m_textJudgeNumbers[l][p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
-				m_textJudgeNumbers[l][p].SetName( JudgeLineToString(l)+ssprintf("NumberP%d",p+1) );
-				ActorUtil::LoadAllCommands( m_textJudgeNumbers[l][p], m_sName );
-				SET_XY( m_textJudgeNumbers[l][p] );
-				this->AddChild( &m_textJudgeNumbers[l][p] );
+				m_textJudgmentLineNumber[l][p].LoadFromFont( THEME->GetPathF(m_sName, "JudgmentLineNumber") );
+				m_textJudgmentLineNumber[l][p].SetShadowLength( 0 );
+				m_textJudgmentLineNumber[l][p].SetName( JudgmentLineToString(l)+ssprintf("NumberP%d",p+1) );
+				ActorUtil::LoadAllCommands( m_textJudgmentLineNumber[l][p], m_sName );
+				SET_XY( m_textJudgmentLineNumber[l][p] );
+				this->AddChild( &m_textJudgmentLineNumber[l][p] );
 
 				int iValue;
 				switch( l )
 				{
-				case JudgeLine_W1:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W1];	break;
-				case JudgeLine_W2:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W2];	break;
-				case JudgeLine_W3:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W3];	break;
-				case JudgeLine_W4:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W4];	break;
-				case JudgeLine_W5:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W5];	break;
-				case JudgeLine_Miss:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_Miss];	break;
-				case JudgeLine_Held:		iValue = m_pStageStats->m_player[p].m_iHoldNoteScores[HNS_Held];	break;
-				case JudgeLine_MaxCombo:	iValue = m_pStageStats->m_player[p].GetMaxCombo().m_cnt;		break;
+				case JudgmentLine_W1:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W1];	break;
+				case JudgmentLine_W2:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W2];	break;
+				case JudgmentLine_W3:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W3];	break;
+				case JudgmentLine_W4:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W4];	break;
+				case JudgmentLine_W5:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W5];	break;
+				case JudgmentLine_Miss:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_Miss];	break;
+				case JudgmentLine_Held:		iValue = m_pStageStats->m_player[p].m_iHoldNoteScores[HNS_Held];	break;
+				case JudgmentLine_MaxCombo:	iValue = m_pStageStats->m_player[p].GetMaxCombo().m_cnt;		break;
 				DEFAULT_FAIL( l );
 				}
 
 				// UGLY... generalize this
-				int iNumDigits = (l==JudgeLine_MaxCombo) ? MAX_COMBO_NUM_DIGITS : 4;
-				m_textJudgeNumbers[l][p].SetText( ssprintf("%*d",iNumDigits,iValue) );
+				int iNumDigits = (l==JudgmentLine_MaxCombo) ? MAX_COMBO_NUM_DIGITS : 4;
+				m_textJudgmentLineNumber[l][p].SetText( ssprintf("%*d",iNumDigits,iValue) );
 			}
 		}
 	}
 
-	FOREACH_StatLine( l )
+	//
+	// init detail area
+	//
+	if( SHOW_DETAIL_AREA )
 	{
-		if( !SHOW_STAT(l) )
-			continue;
-
-		if( SHOW_STATS_LABELS )
-		{
-			m_sprStatsLabel[l].Load( THEME->GetPathG(m_sName,"label "+StatLineToString(l)) );
-			m_sprStatsLabel[l]->StopAnimating();
-			m_sprStatsLabel[l]->SetName( StatLineToString(l)+"Label" );
-			ActorUtil::LoadAllCommands( *m_sprStatsLabel[l], m_sName );
-			SET_XY( m_sprStatsLabel[l] );
-			this->AddChild( m_sprStatsLabel[l] );
-		}
-
 		FOREACH_EnabledPlayer( p )
 		{
-			m_textStatsText[l][p].LoadFromFont( THEME->GetPathF(m_sName,"stats") );
-			m_textStatsText[l][p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
-			m_textStatsText[l][p].SetName( StatLineToString(l)+ssprintf("TextP%d",p+1) );
-			ActorUtil::LoadAllCommands( m_textStatsText[l][p], m_sName );
-			SET_XY( m_textStatsText[l][p] );
-			this->AddChild( &m_textStatsText[l][p] );
+			m_sprDetailFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("DetailFrame p%d",p+1)) );
+			m_sprDetailFrame[p]->SetName( ssprintf("DetailFrameP%d",p+1) );
+			ActorUtil::LoadAllCommands( *m_sprDetailFrame[p], m_sName );
+			SET_XY( m_sprDetailFrame[p] );
+			this->AddChild( m_sprDetailFrame[p] );
+		}
 
-			static const int indeces[NUM_StatLine] =
+		FOREACH_ENUM( DetailLine, l )
+		{
+			FOREACH_EnabledPlayer( p )
 			{
-				RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines, RadarCategory_Hands, RadarCategory_Rolls
-			};
-			const int ind = indeces[l];
-			const int iActual = lrintf(m_pStageStats->m_player[p].m_radarActual[ind]);
-			const int iPossible = lrintf(m_pStageStats->m_player[p].m_radarPossible[ind]);
+				m_textDetailText[l][p].LoadFromFont( THEME->GetPathF(m_sName,"DetailLineNumber") );
+				m_textDetailText[l][p].SetName( DetailLineToString(l)+ssprintf("NumberP%d",p+1) );
+				ActorUtil::LoadAllCommands( m_textDetailText[l][p], m_sName );
+				SET_XY( m_textDetailText[l][p] );
+				this->AddChild( &m_textDetailText[l][p] );
 
-			m_textStatsText[l][p].SetText( ssprintf("%3d/%3d",iActual,iPossible) );
+				static const int indeces[NUM_DetailLine] =
+				{
+					RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines, RadarCategory_Hands, RadarCategory_Rolls
+				};
+				const int ind = indeces[l];
+				const int iActual = lrintf(m_pStageStats->m_player[p].m_radarActual[ind]);
+				const int iPossible = lrintf(m_pStageStats->m_player[p].m_radarPossible[ind]);
+
+				m_textDetailText[l][p].SetText( ssprintf("%3d/%3d",iActual,iPossible) );
+			}
 		}
 	}
 
@@ -539,7 +540,6 @@ void ScreenEvaluation::Init()
 		{
 			m_textScore[p].LoadFromFont( THEME->GetPathF(m_sName, "score") );
 			m_textScore[p].SetShadowLength( 0 );
-			m_textScore[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
 			m_textScore[p].SetName( ssprintf("ScoreNumberP%d",p+1) );
 			ActorUtil::LoadAllCommands( m_textScore[p], m_sName );
 			SET_XY( m_textScore[p] );
@@ -566,7 +566,6 @@ void ScreenEvaluation::Init()
 
 			m_textTotalScore[p].LoadFromFont( THEME->GetPathF(m_sName, "totalscore") );
 			m_textTotalScore[p].SetShadowLength( 0 );
-			m_textTotalScore[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
 			m_textTotalScore[p].SetName( ssprintf("TotalScoreNumberP%d",p+1) );
 			m_textTotalScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS+2, iTotalScore) );
 			ActorUtil::LoadAllCommands( m_textTotalScore[p], m_sName );
@@ -591,7 +590,6 @@ void ScreenEvaluation::Init()
 		{
 			m_textTime[p].LoadFromFont( THEME->GetPathF(m_sName, "time") );
 			m_textTime[p].SetShadowLength( 0 );
-			m_textTime[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
 			m_textTime[p].SetName( ssprintf("TimeNumberP%d",p+1) );
 			ActorUtil::LoadAllCommands( m_textTime[p], m_sName );
 			SET_XY( m_textTime[p] );
@@ -604,32 +602,29 @@ void ScreenEvaluation::Init()
 	//
 	// init records area
 	//
-	if( SHOW_RECORDS_AREA )
+	FOREACH_EnabledPlayer( p )
 	{
-		FOREACH_EnabledPlayer( p )
+		if( m_pStageStats->m_player[p].m_iMachineHighScoreIndex != -1 )
 		{
-			if( m_pStageStats->m_player[p].m_iMachineHighScoreIndex != -1 )
-			{
-				m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord %02d",m_pStageStats->m_player[p].m_iMachineHighScoreIndex+1) ) );
-				m_sprMachineRecord[p]->SetName( ssprintf("MachineRecordP%d",p+1) );
-				ActorUtil::LoadAllCommands( *m_sprMachineRecord[p], m_sName );
-				SET_XY( m_sprMachineRecord[p] );
-				this->AddChild( m_sprMachineRecord[p] );
-			}
-			if( m_pStageStats->m_player[p].m_iPersonalHighScoreIndex != -1 )
-			{
-				m_sprPersonalRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("PersonalRecord %02d",m_pStageStats->m_player[p].m_iPersonalHighScoreIndex+1) ) );
-				m_sprPersonalRecord[p]->SetName( ssprintf("PersonalRecordP%d",p+1) );
-				ActorUtil::LoadAllCommands( *m_sprPersonalRecord[p], m_sName );
-				SET_XY( m_sprPersonalRecord[p] );
-				this->AddChild( m_sprPersonalRecord[p] );
-			}
+			m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord %02d",m_pStageStats->m_player[p].m_iMachineHighScoreIndex+1) ) );
+			m_sprMachineRecord[p]->SetName( ssprintf("MachineRecordP%d",p+1) );
+			ActorUtil::LoadAllCommands( *m_sprMachineRecord[p], m_sName );
+			SET_XY( m_sprMachineRecord[p] );
+			this->AddChild( m_sprMachineRecord[p] );
+		}
+		if( m_pStageStats->m_player[p].m_iProfileHighScoreIndex != -1 )
+		{
+			m_sprProfileRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("ProfileRecord %02d",m_pStageStats->m_player[p].m_iProfileHighScoreIndex+1) ) );
+			m_sprProfileRecord[p]->SetName( ssprintf("ProfileRecordP%d",p+1) );
+			ActorUtil::LoadAllCommands( *m_sprProfileRecord[p], m_sName );
+			SET_XY( m_sprProfileRecord[p] );
+			this->AddChild( m_sprProfileRecord[p] );
 		}
 	}
 
 	bool bOneHasNewTopRecord = false;
 	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->IsPlayerEnabled(p) && (m_pStageStats->m_player[p].m_iMachineHighScoreIndex != -1 || m_pStageStats->m_player[p].m_iPersonalHighScoreIndex != -1) )
+		if( GAMESTATE->IsPlayerEnabled(p) && (m_pStageStats->m_player[p].m_iMachineHighScoreIndex != -1 || m_pStageStats->m_player[p].m_iProfileHighScoreIndex != -1) )
 			bOneHasNewTopRecord = true;
 
 	Grade best_grade = Grade_NoData;

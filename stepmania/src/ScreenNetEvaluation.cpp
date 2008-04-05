@@ -192,9 +192,9 @@ void ScreenNetEvaluation::UpdateStats()
 
 	for( int j=0; j<NETNUMTAPSCORES; ++j )
 	{
-		int iNumDigits = (j==JudgeLine_MaxCombo)? MAX_COMBO_NUM_DIGITS:4;
+		int iNumDigits = (j==JudgmentLine_MaxCombo)? MAX_COMBO_NUM_DIGITS:4;
 		if( GAMESTATE->IsPlayerEnabled(m_pActivePlayer) ) // XXX: Why would this not be the case? -- Steve
-			m_textJudgeNumbers[j][m_pActivePlayer].SetText( ssprintf("%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j]) );
+			m_textJudgmentLineNumber[j][m_pActivePlayer].SetText( ssprintf("%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j]) );
 	}
 
 	m_textPlayerOptions[m_pActivePlayer].SetText( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].playerOptions );

@@ -14,26 +14,27 @@
 #include "ThemeMetric.h"
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
-enum JudgeLine
+enum JudgmentLine
 {
-	JudgeLine_W1, 
-	JudgeLine_W2, 
-	JudgeLine_W3, 
-	JudgeLine_W4, 
-	JudgeLine_W5, 
-	JudgeLine_Miss, 
-	JudgeLine_Held, 
-	JudgeLine_MaxCombo, 
-	NUM_JudgeLine
+	JudgmentLine_W1, 
+	JudgmentLine_W2, 
+	JudgmentLine_W3, 
+	JudgmentLine_W4, 
+	JudgmentLine_W5, 
+	JudgmentLine_Miss, 
+	JudgmentLine_Held, 
+	JudgmentLine_MaxCombo, 
+	NUM_JudgmentLine,
+	JudgmentLine_Invalid
 };
-enum StatLine
+enum DetailLine
 {
-	StatLine_Jumps, 
-	StatLine_Holds, 
-	StatLine_Mines, 
-	StatLine_Hands, 
-	StatLine_Rolls, 
-	NUM_StatLine 
+	DetailLine_Jumps, 
+	DetailLine_Holds, 
+	DetailLine_Mines, 
+	DetailLine_Hands, 
+	DetailLine_Rolls, 
+	NUM_DetailLine 
 };
 
 class ScreenEvaluation : public ScreenWithMenuElements
@@ -88,12 +89,12 @@ protected:
 	Sprite			m_sprWin[NUM_PLAYERS];
 
 	// judgment area
-	AutoActor		m_sprJudgeLabels[NUM_JudgeLine];
-	BitmapText		m_textJudgeNumbers[NUM_JudgeLine][NUM_PLAYERS];
+	AutoActor		m_sprSharedJudgmentLineLabels[NUM_JudgmentLine];
+	BitmapText		m_textJudgmentLineNumber[NUM_JudgmentLine][NUM_PLAYERS];
 
 	// stats area
-	AutoActor		m_sprStatsLabel[NUM_StatLine];
-	BitmapText		m_textStatsText[NUM_StatLine][NUM_PLAYERS];
+	AutoActor		m_sprDetailFrame[NUM_PLAYERS];
+	BitmapText		m_textDetailText[NUM_DetailLine][NUM_PLAYERS];
 
 	// score area
 	AutoActor		m_sprScoreLabel;
@@ -109,7 +110,7 @@ protected:
 
 	// extra area
 	AutoActor		m_sprMachineRecord[NUM_PLAYERS];
-	AutoActor		m_sprPersonalRecord[NUM_PLAYERS];
+	AutoActor		m_sprProfileRecord[NUM_PLAYERS];
 	AutoActor		m_sprTryExtraStage;
 	bool m_bFailed;
 
