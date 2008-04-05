@@ -538,8 +538,8 @@
 	<Function name='GetCurrentStage' return='Stage' arguments=''>
 		Return the current <Link class='Stage' />.
 	</Function>
-	<Function name='GetCurrentSteps' return='Steps' arguments=''>
-		Return the current <Link class='Steps' />.
+	<Function name='GetCurrentSteps' return='Steps' arguments='PlayerNumber pn'>
+		Return the current <Link class='Steps' /> for the specified Player.
 	</Function>
 	<Function name='GetCurrentStepsCredits' return='multiple' arguments=''>
 		Return a variable number of arguments based on the <Link class='Steps' /> being
