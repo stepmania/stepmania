@@ -141,7 +141,7 @@ void StageStats::CommitScores( bool bSummary )
 	{
 		FOREACH_PlayerNumber( pn )
 		{
-			m_player[pn].m_iPersonalHighScoreIndex = 0;
+			m_player[pn].m_iProfileHighScoreIndex = 0;
 			m_player[pn].m_iMachineHighScoreIndex = 0;
 		}
 	}
@@ -209,7 +209,7 @@ void StageStats::CommitScores( bool bSummary )
 			int iAverageMeter = GetAverageMeter(p);
 			m_player[p].m_rc = AverageMeterToRankingCategory( iAverageMeter );
 
-			PROFILEMAN->AddCategoryScore( st, m_player[p].m_rc, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
+			PROFILEMAN->AddCategoryScore( st, m_player[p].m_rc, p, hs, m_player[p].m_iProfileHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
 			
 			// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
 			PROFILEMAN->IncrementCategoryPlayCount( st, m_player[p].m_rc, p );
@@ -220,13 +220,13 @@ void StageStats::CommitScores( bool bSummary )
 			ASSERT( pCourse );
 			Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 
-			PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
+			PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, m_player[p].m_iProfileHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
 		}
 		else
 		{
 			ASSERT( pSteps );
 
-			PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
+			PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, m_player[p].m_iProfileHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
 		}
 	}
 

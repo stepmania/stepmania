@@ -1411,7 +1411,7 @@ bool GameState::ShowW1() const
 }
 
 
-static ThemeMetric<bool> PERSONAL_RECORD_FEATS("GameState","PersonalRecordFeats");
+static ThemeMetric<bool> PROFILE_RECORD_FEATS("GameState","ProfileRecordFeats");
 static ThemeMetric<bool> CATEGORY_RECORD_FEATS("GameState","CategoryRecordFeats");
 void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOut ) const
 {
@@ -1494,7 +1494,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				}
 		
 				// Find Personal Records
-				if( pProf && PERSONAL_RECORD_FEATS )
+				if( pProf && PROFILE_RECORD_FEATS )
 				{
 					HighScoreList &hsl = pProf->GetStepsHighScoreList(pSong,pSteps);
 					for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
@@ -1559,7 +1559,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				if( !CATEGORY_RECORD_FEATS )
 					continue;
 
-				if( pProf && PERSONAL_RECORD_FEATS )
+				if( pProf && PROFILE_RECORD_FEATS )
 				{
 					HighScoreList &hsl = pProf->GetCategoryHighScoreList( st, rc );
 					for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
@@ -1619,7 +1619,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			}
 
 			// Find Personal Records
-			if( PERSONAL_RECORD_FEATS && PROFILEMAN->IsPersistentProfile(pn) )
+			if( PROFILE_RECORD_FEATS && PROFILEMAN->IsPersistentProfile(pn) )
 			{
 				HighScoreList &hsl = pProf->GetCourseHighScoreList( pCourse, pTrail );
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )

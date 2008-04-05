@@ -110,7 +110,7 @@ public:
 	PerDifficultyAward m_pdaToShow;
 	PeakComboAward m_pcaToShow;
 
-	int		m_iPersonalHighScoreIndex;
+	int		m_iProfileHighScoreIndex;
 	int		m_iMachineHighScoreIndex;
 	bool		m_bDisqualified;
 	bool IsDisqualified() const;
