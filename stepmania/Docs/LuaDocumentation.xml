@@ -91,6 +91,11 @@
 
 <!-- Namespaces -->
 <Namespaces>
+<Namespace name='ActorUtil'>
+	<Function name='IsRegisteredClass' return='bool' arguments='string sClassName'>
+		Returns <code>true</code> if <code>sClassName</code> is a registered Class.
+	</Function>
+</Namespace>
 <Namespace name='Enum'>
 	<Description>
 		Enumerated types are lookup tables associating a string to each numerical
@@ -154,6 +159,19 @@
 		Flushes log files to disk.
 	</Function>
 </Namespace>
+<Namespace name='ScreenSystemLayerHelpers'>
+	<Function name='GetCreditsMessage' return='string' arguments='PlayerNumber pn'>
+		Gets the credits message for Player <code>pn</code>.
+	</Function>
+</Namespace>
+<Namespace name='SongUtil'>
+	<Function name='IsStepsPlayable' return='bool' arguments='Song so, Steps st'>
+		Returns true if <code>so</code> has steps for <code>st</code>.
+	</Function>
+	<Function name='IsStepsTypePlayable' return='bool' arguments='Song so, StepsType st'>
+		Returns true if <code>so</code> has a StepsType matching <code>st</code>.
+	</Function>
+</Namespace>
 </Namespaces>
 
 <!-- Classes -->
@@ -213,16 +231,19 @@
 	<Function name='diffusealpha' return='void' arguments='float fAlpha'>
 		Set's the Actor's alpha level to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
 	</Function>
+	<Function name='diffusecolor' return='void' arguments='color c'>
+		Set the Actor's diffuse color to <code>c</code>, ignoring any alpha value in <code>c</code>.
+	</Function>
 	<Function name='draworder' return='void' arguments='int iOrder'>
 		Set's the Actor's draworder to <code>iOrder</code>, where larger values display first.
 	</Function>
 	<Function name='effectclock' return='void' arguments='string s'>
 		Set the Actor's effect clock to <code>s</code>.
 	</Function>
-	<Function name='effectcolor1' return='void' arguments='RageColor c'>
+	<Function name='effectcolor1' return='void' arguments='color c'>
 		Sets the first effect color to <code>c</code>.
 	</Function>
-	<Function name='effectcolor2' return='void' arguments='RageColor c'>
+	<Function name='effectcolor2' return='void' arguments='color c'>
 		Sets the second effect color to <code>c</code>.
 	</Function>
 	<Function name='effectmagnitude' return='void' arguments='float fX, float fY, float fZ'>
@@ -300,6 +321,9 @@
 	<Function name='setstate' return='void' arguments='int iNewState'>
 		Sets a multi-framed Actor's state to <code>iNewState</code>.
 	</Function>
+	<Function name='shadowcolor' return='void' arguments='color c'>
+		Sets the shadow's color to <code>c</code>.
+	</Function>
 	<Function name='shadowlength' return='void' arguments='float fLength'>
 		Sets the Actor's shadow length to <code>fLength</code>.
 	</Function>
@@ -341,14 +365,45 @@
 	<Function name='fov' return='void' arguments='float fFOV'>
 		Sets the field of view for the ActorFrame.
 	</Function>
+	<Function name='GetChild' return='Actor' arguments='string sName'>
+		Returns the child with a name of <code>sName</code>.
+	</Function>
 	<Function name='GetNumChildren' return='int' arguments=''>
 		Returns the number of children in the ActorFrame.
 	</Function>
 	<Function name='SetFOV' return='void' arguments='float fFOV'>
 		Sets the field of view for the ActorFrame.
 	</Function>
+	<Function name='SetUpdateFunction' return='void' arguments='LuaReference UpdateFunction'>
+		Sets the ActorFrame's update function to the specified Lua function.
+	</Function>
+	<Function name='SetUpdateRate' return='void' arguments='float fRate'>
+		Sets the update function's rate to <code>fRate</code>.
+	</Function>
+	<Function name='SortByDrawOrder' return='void' arguments=''>
+		Tells the ActorFrame to sort by draw order.
+	</Function>
 	<Function name='vanishpoint' return='void' arguments='float fX, float fY'>
 		Sets the vanishing point for the ActorFrame.
+	</Function>
+</Class>
+<Class name='ActorMultiTexture'>
+	<Function name='ClearTextures' return='void' arguments=''>
+		Clears all the textures from the MultiTexture.
+	</Function>
+	<Function name='SetEffectMode' return='void' arguments='EffectMode em'>
+		Sets the EffectMode on the MultiTexture.
+	</Function>
+	<Function name='SetTextureMode' return='void' arguments='int iIndex, TextureMode tm'>
+		Sets a TextureMode on the specified index.
+	</Function>
+</Class>
+<Class name='ActorProxy'>
+	<Function name='GetTarget' return='Actor' arguments=''>
+		Returns the target of the ActorProxy.
+	</Function>
+	<Function name='SetTarget' return='void' arguments='Actor a'>
+		Sets the ActorProxy target to <code>a</code>.
 	</Function>
 </Class>
 <Class name='ActorScroller'>
@@ -431,6 +486,9 @@
 	<Function name='settext' return='void' arguments='string sText'>
 		Set the text to <code>sText</code>. This clears all attributes.
 	</Function>
+	<Function name='strokecolor' return='void' arguments='color c'>
+		Sets the stroke color to <code>c</code>.
+	</Function>
 	<Function name='uppercase' return='void' arguments='bool b'>
 		If <code>true</code>, make all text uppercase.
 	</Function>
@@ -442,8 +500,14 @@
 	</Function>
 </Class>
 <Class name='Course'>
+	<Function name='GetAllTrails' return='{Trail}' arguments=''>
+		Returns a table of all the Trails in the Course.
+	</Function>
 	<Function name='GetBannerPath' return='int' arguments=''>
 		Returns the path to the Course's banner.
+	</Function>
+	<Function name='GetCourseEntry' return='CourseEntry' arguments='int iIndex'>
+		Gets the CourseEntry at <code>iIndex</code> from the Course.
 	</Function>
 	<Function name='GetCourseType' return='CourseType' arguments=''>
 		Returns the Course's <Link class='ENUM' function='CourseType' />.
@@ -474,6 +538,11 @@
 	</Function>
 	<Function name='IsAutogen' return='bool' arguments=''>
 		Returns <code>true</code> if the Course was automatically generated.
+	</Function>
+</Class>
+<Class name='CourseEntry'>
+	<Function name='GetSong' return='Song' arguments=''>
+		Returns the Song that this CourseEntry corresponds to.
 	</Function>
 </Class>
 <Class name='CharacterManager'>
@@ -599,11 +668,17 @@
 	<Function name='GetMasterPlayerNumber' return='PlayerNumber' arguments=''>
 		Returns the master player number.
 	</Function>
+	<Function name='GetMultiplayer' return='bool' arguments=''>
+		Returns <code>true</code> if the game is Multiplayer.
+	</Function>
 	<Function name='GetNumPlayersEnabled' return='int' arguments=''>
 		Returns the number of players enabled.
 	</Function>
 	<Function name='GetNumSidesJoined' return='int' arguments=''>
 		Returns the number of sides joined.
+	</Function>
+	<Function name='GetNumStagesForCurrentSongAndStepsOrCourse' return='int' arguments=''>
+		Returns the number of stages for the current Song and its Steps or the current Course.
 	</Function>
 	<Function name='GetNumStagesLeft' return='int' arguments='PlayerNumber pn'>
 		Returns the number of stages left for player <code>pn</code>.
@@ -617,6 +692,15 @@
 	<Function name='GetPlayMode' return='PlayMode' arguments=''>
 		Returns the current PlayMode.
 	</Function>
+	<Function name='GetPreferredDifficulty' return='Difficulty' arguments=''>
+		Returns the preferred difficulty.
+	</Function>
+	<Function name='GetPreferredSong' return='Song' arguments=''>
+		Returns the preferred song.
+	</Function>
+	<Function name='GetPreferredSongGroup' return='string' arguments=''>
+		Returns the preferred song group.
+	</Function>
 	<Function name='GetPremium' return='Premium' arguments=''>
 		Returns the current Premium.
 	</Function>
@@ -625,7 +709,6 @@
 		Returns the current beat of the song.
 	</Function>
 	<Function name='GetSongBeatVisible' return='float' arguments=''>
-		<!-- XXX: Not exactly sure on this. -->
 		Returns the current visible beat of the song.
 	</Function>
 	<Function name='GetSongBPS' return='float' arguments=''>
@@ -646,14 +729,32 @@
 	<Function name='GetStageSeed' return='int' arguments=''>
 		Return the random seed for the current stage.
 	</Function>
+	<Function name='HasEarnedExtraStage' return='bool' arguments=''>
+		Returns <code>true</code> if an extra stage was earned.
+	</Function>
+	<Function name='IsAnExtraStage' return='bool' arguments=''>
+		Returns <code>true</code> if this is an extra stage.
+	</Function>
+	<Function name='IsAnyHumanPlayerUsingMemoryCard' return='bool' arguments=''>
+		Returns <code>true</code> if any human player is using a memory card.
+	</Function>
 	<Function name='IsCourseMode' return='bool' arguments=''>
 		Returns <code>true</code> if playing in a Course mode.
 	</Function>
 	<Function name='IsDemonstration' return='bool' arguments=''>
 		Returns <code>true</code> if in Demonstration mode.
 	</Function>
+	<Function name='IsDraw' return='bool' arguments=''>
+		Returns <code>true</code> if the match was a draw.
+	</Function>
 	<Function name='IsEventMode' return='bool' arguments=''>
 		Returns <code>true</code> if Event Mode is on, <Link class='GameState' function='SetTemporaryEventMode'>temporary</Link> or otherwise.
+	</Function>
+	<Function name='IsExtraStage' return='bool' arguments=''>
+		Returns <code>true</code> if this is the first extra stage.
+	</Function>
+	<Function name='IsExtraStage2' return='bool' arguments=''>
+		Returns <code>true</code> if this is the second extra stage.
 	</Function>
 	<Function name='IsHumanPlayer' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code> is human.
@@ -762,6 +863,9 @@
 	<Function name='GetHoldNoteScores' return='int' arguments='HoldNoteScore hns'>
 		Returns the number of judgments for a specified HoldNoteScore.
 	</Function>
+	<Function name='GetLifeRemainingSeconds' return='float' arguments=''>
+		Returns the player's life remaining seconds.
+	</Function>
 	<Function name='GetPercentDancePoints' return='float' arguments=''>
 		Returns the player's Dance Point percentage.
 	</Function>
@@ -776,6 +880,17 @@
 	</Function>
 	<Function name='IsDisqualified' return='bool' arguments=''>
 		Returns <code>true</code> if the player was disqualified from ranking.
+	</Function>
+</Class>
+<Class name='PlayerState'>
+	<Function name='GetPlayerNumber' return='PlayerNumber' arguments=''>
+		Returns the player number for this PlayerState.
+	</Function>
+	<Function name='SetPlayerOptions' return='string' arguments='ModsLevel ml, string sPlayerOptions'>
+		Sets the player options to <code>sPlayerOptions</code> for the specified ModsLevel.
+	</Function>
+	<Function name='GetPlayerOptions' return='string' arguments='ModsLevel ml'>
+		Returns a string of player options for the specified ModsLevel.
 	</Function>
 </Class>
 <Class name='PrefsManager'>
@@ -811,8 +926,23 @@
 	<Function name='GetSongNumTimesPlayed' return='int' arguments='Song s'>
 		Returns the number of times song <code>s</code> has been played with the profile.
 	</Function>
+	<Function name='GetTotalHands' return='int' arguments=''>
+		Returns the number of Hands stepped on.
+	</Function>
+	<Function name='GetTotalHolds' return='int' arguments=''>
+		Returns the number of successful Holds.
+	</Function>
+	<Function name='GetTotalJumps' return='int' arguments=''>
+		Returns the number of Jumps stepped on.
+	</Function>
+	<Function name='GetTotalMines' return='int' arguments=''>
+		Returns the number of Mines stepped on.
+	</Function>
 	<Function name='GetTotalNumSongsPlayed' return='int' arguments=''>
 		Returns the total number of songs played with the profile.
+	</Function>
+	<Function name='GetTotalRolls' return='int' arguments=''>
+		Returns the number of successful Rolls.
 	</Function>
 </Class>
 <Class name='ProfileManager'>
@@ -956,6 +1086,9 @@
 	<Function name='GetGroupName' return='string' arguments=''>
 		Returns the group name that the song is in.
 	</Function>
+	<Function name='GetOneSteps' return='Steps' arguments='StepsType st, Difficulty d'>
+		Returns a Step object if the StepType and Difficulty exist.
+	</Function>
 	<Function name='GetSongDir' return='string' arguments=''>
 		Returns the song's directory.
 	</Function>
@@ -1017,6 +1150,12 @@
 	</Function>
 	<Function name='GetRandomSong' return='Song' arguments=''>
 		Returns a random song.
+	</Function>
+	<Function name='GetSongColor' return='color' arguments='Song s'>
+		Returns the song color of <code>s</code>.
+	</Function>
+	<Function name='GetSongGroupColor' return='color' arguments='string sGroupName'>
+		Returns the song group color of <code>sGroupName</code>.
 	</Function>
 </Class>
 <Class name='Sprite'>
@@ -1104,11 +1243,22 @@
 		Returns <code>true</code> if the steps were automatically generated.
 	</Function>
 </Class>
+<Class name='Style'>
+	<Function name='GetName' return='string' arguments=''>
+		Returns the name of the Style.
+	</Function>
+	<Function name='GetStepsType' return='StepsType' arguments=''>
+		Returns the StepsType for this Style.
+	</Function>
+	<Function name='GetStyleType' return='StyleType' arguments=''>
+		Returns the StyleType for this Style.
+	</Function>
+</Class>
 <Class name='TextBanner'>
-	<Function name='LoadFromSong' return='void' arguments='Song s'>
+	<Function name='SetFromSong' return='void' arguments='Song s'>
 		Loads the TextBanner's child elements from a <Link class='Song' />.
 	</Function>
-	<Function name='LoadFromString' return='void' arguments='string sDisplayTitle, string sTranslitTitle, string sDisplaySubTitle, string sTranslitSubTitle, string sDisplayArtist, string sTranslitArtist'>
+	<Function name='SetFromString' return='void' arguments='string sDisplayTitle, string sTranslitTitle, string sDisplaySubTitle, string sTranslitSubTitle, string sDisplayArtist, string sTranslitArtist'>
 		Loads the TextBanner's child elements from strings.
 	</Function>
 </Class>
