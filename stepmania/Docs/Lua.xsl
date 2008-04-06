@@ -310,6 +310,7 @@
 				$type='string' or
 				$type='bool' or
 				$type='table' or
+				$type='color' or
 				$type='Enum'">
 			<span class="primitiveType">
 				<xsl:value-of select="$type" />

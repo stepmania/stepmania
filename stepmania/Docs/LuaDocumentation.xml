@@ -207,6 +207,9 @@
 	<Function name='cullmode' return='void' arguments='CullMode mode'>
 		Sets the Actor's cull mode to <code>mode</code>.
 	</Function>
+	<Function name='diffuse' return='void' arguments='color c'>
+		Set the Actor's diffuse color to <code>c</code>.
+	</Function>
 	<Function name='diffusealpha' return='void' arguments='float fAlpha'>
 		Set's the Actor's alpha level to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
 	</Function>
