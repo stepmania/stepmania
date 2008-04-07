@@ -555,16 +555,7 @@ static const LanguageInfo g_langs[] =
 
 void GetLanguageInfos( vector<const LanguageInfo*> &vAddTo )
 {
-	for( unsigned i=0; i<ARRAYLEN(g_langs); ++i )
-	{
-		// Only use languages in the intersection of Windows languages
-		// and languages that had native forms on the site listed above.
-		// Obscure languages are dropped so that they don't clutter up the 
-		// smtools UI.
-		if( g_langs[i].szNativeName == RString() )
-			continue;
-		vAddTo.push_back( &g_langs[i] );
-	}
+	vAddTo = g_langs;
 }
 
 const LanguageInfo *GetLanguageInfo( const RString &sIsoCode )
