@@ -5,6 +5,7 @@
 #include "global.h"
 #include "stdafx.h"
 #include "smpackage.h"
+#include "Foreach.h"
 #include "LanguagesDlg.h"
 #include "SpecialFiles.h"
 #include "RageUtil.h"
