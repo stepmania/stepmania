@@ -31,6 +31,15 @@ void CreateLanguageDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_LANGUAGES, m_comboLanguages);
 }
 
+static const char *const g_aListedLanguageCodes[] =
+{
+	"ab", "af", "ar", "az", "be", "bg", "ca", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu",
+	"fa", "fi", "fr", "ga", "gl", "ha", "he", "hi", "hr", "hu", "hy", "id", "in", "is", "it", "iw",
+	"ja", "kk", "kn", "ko", "ky", "lt", "lv", "mk", "ms", "mt", "nl", "no", "pl", "ps", "pt", "rn",
+	"ro", "ru", "rw", "sk", "sl", "so", "sq", "sr", "sv", "sw", "te", "th", "tr", "uk", "ur", "uz",
+	"vi", "wo", "xh", "yo", "zh", "zu",
+};
+
 BOOL CreateLanguageDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
@@ -38,15 +47,12 @@ BOOL CreateLanguageDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 	DialogUtil::LocalizeDialogAndContents( *this );
 
-	vector<const LanguageInfo*> v;
-	GetLanguageInfos( v );
-	FOREACH_CONST( const LanguageInfo*, v, i )
+	for( int i = 0; i < ARRAYLEN(g_aListedLanguageCodes); ++i )
 	{
-		RString s = SMPackageUtil::GetLanguageDisplayString((*i)->szIsoCode);
+		RString s = SMPackageUtil::GetLanguageDisplayString(g_aListedLanguageCodes[i]);
 		RString sLanguage = ConvertUTF8ToACP( s );
 		m_comboLanguages.AddString( sLanguage );
 	}
-	ASSERT( !v.empty() );
 	m_comboLanguages.SetCurSel( 0 );
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -55,9 +61,6 @@ BEGIN_MESSAGE_MAP(CreateLanguageDlg, CDialog)
 	ON_BN_CLICKED(IDOK, OnBnClickedOk)
 END_MESSAGE_MAP()
 
-
-// CreateLanguageDlg message handlers
-
 void CreateLanguageDlg::OnBnClickedOk()
 {
 	// TODO: Add your control notification handler code here
@@ -65,9 +68,7 @@ void CreateLanguageDlg::OnBnClickedOk()
 	int iIndex = m_comboLanguages.GetCurSel();
 	ASSERT( iIndex != LB_ERR );
 
-	vector<const LanguageInfo*> v;
-	GetLanguageInfos( v );
-	m_sChosenLanguageCode = v[iIndex]->szIsoCode;
+	m_sChosenLanguageCode = g_aListedLanguageCodes[iIndex];
 
 	OnOK();
 }
