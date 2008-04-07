@@ -8,7 +8,6 @@
 #include "smpackageUtil.h"
 #include "MainMenuDlg.h"
 #include "RageFileManager.h"
-#include "arch/arch.h"
 #include "LuaManager.h"
 #include "ThemeManager.h"
 #include "SpecialFiles.h"
