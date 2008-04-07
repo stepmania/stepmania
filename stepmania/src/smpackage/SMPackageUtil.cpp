@@ -198,7 +198,7 @@ bool SMPackageUtil::LaunchGame()
 RString SMPackageUtil::GetLanguageDisplayString( const RString &sIsoCode )
 {
 	const LanguageInfo *li = GetLanguageInfo( sIsoCode );
-	return ssprintf( "%s (%s)", li ? li->szIsoCode:sIsoCode.c_str(), li ? li->szNativeName:"???" );
+	return ssprintf( "%s (%s)", li ? li->szIsoCode:sIsoCode.c_str(), li->szEnglishName );
 }
 
 RString SMPackageUtil::GetLanguageCodeFromDisplayString( const RString &sDisplayString )
