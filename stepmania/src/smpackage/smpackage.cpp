@@ -33,6 +33,7 @@ CSmpackageApp::CSmpackageApp()
 }
 
 CSmpackageApp theApp;
+extern const char *const version_time = "";
 
 #include "RageLog.h"
 #include "RageFileManager.h"
