@@ -3,6 +3,7 @@
 #include "RageUtil.h"
 #include "RageFile.h"
 #include "RageLog.h"
+#include "Foreach.h"
 
 CsvFile::CsvFile()
 {
