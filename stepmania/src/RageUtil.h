@@ -391,7 +391,6 @@ struct LanguageInfo
 {
 	const char *szIsoCode;
 	const char *szEnglishName;
-	const char *szNativeName;	// empty string if not available
 };
 void GetLanguageInfos( vector<const LanguageInfo*> &vAddTo );
 const LanguageInfo *GetLanguageInfo( const RString &sIsoCode );
