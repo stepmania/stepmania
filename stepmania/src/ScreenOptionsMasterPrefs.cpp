@@ -194,7 +194,7 @@ static void LanguageChoices( vector<RString> &out )
 	{
 		const LanguageInfo *pLI = GetLanguageInfo( *s );
 		if( pLI )
-			out.push_back( pLI->szNativeName );
+			out.push_back( THEME->GetString("NativeLanguageNames", pLI->szEnglishName) );
 		else
 			out.push_back( *s );
 	}
