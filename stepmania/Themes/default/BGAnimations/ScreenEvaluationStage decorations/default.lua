@@ -1,17 +1,46 @@
+function GraphDisplay( pn )
+	local t = Def.ActorFrame {
+		Def.GraphDisplay {
+			InitCommand=cmd(Load,"GraphDisplay";);
+			BeginCommand=function(self)
+				local screen = SCREENMAN:GetTopScreen();
+				local ss = screen:GetStageStats();
+				self:Set( ss, ss:GetPlayerStageStats(pn) );
+			end,
+		};
+	};
+	return t;
+end
+
+function ComboGraph( pn )
+	local t = Def.ActorFrame {
+		Def.ComboGraph {
+			InitCommand=cmd(Load,"ComboGraph";);
+			BeginCommand=function(self)
+				local screen = SCREENMAN:GetTopScreen();
+				local ss = screen:GetStageStats();
+				self:Set( ss, ss:GetPlayerStageStats(pn) );
+			end,
+		};
+	};
+	return t;
+end
+
+
 local t = LoadFallbackB( "decorations" );
 
-local p1x = THEME:GetMetric( 'ScreenEvaluationStage', 'BonusFrameP1X' )
-local p1y = THEME:GetMetric( 'ScreenEvaluationStage', 'BonusFrameP1Y' )
-local p2x = THEME:GetMetric( 'ScreenEvaluationStage', 'BonusFrameP2X' )
-local p2y = THEME:GetMetric( 'ScreenEvaluationStage', 'BonusFrameP2Y' )
-p1y = p1y + 75 -- It starts 75 pixels down from the top of the Bonus frame.
-p2y = p2y + 75
-
-t[#t+1] = LoadActor("life graph", PLAYER_1) .. {
-	InitCommand = cmd(x,p1x;y,p1y);
+t[#t+1] = GraphDisplay(PLAYER_1) .. {
+	InitCommand = cmd(x,SCREEN_CENTER_X-224;y,SCREEN_CENTER_Y-50;draworder,1;);
 };
-t[#t+1] = LoadActor("life graph", PLAYER_2) .. {
-	InitCommand = cmd(x,p2x;y,p2y);
+t[#t+1] = GraphDisplay(PLAYER_2) .. {
+	InitCommand = cmd(x,SCREEN_CENTER_X+224;y,SCREEN_CENTER_Y-50;draworder,1;);
+};
+
+t[#t+1] = ComboGraph(PLAYER_1) .. {
+	InitCommand = cmd(x,SCREEN_CENTER_X-224;y,SCREEN_CENTER_Y-20;draworder,1;);
+};
+t[#t+1] = ComboGraph(PLAYER_2) .. {
+	InitCommand = cmd(x,SCREEN_CENTER_X+224;y,SCREEN_CENTER_Y-20;draworder,1;);
 };
 
 t[#t+1] = LoadActor( THEME:GetPathB('','_standard decoration required'), "TimingDifficultyFrame", "TimingDifficultyFrame" );
