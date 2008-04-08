@@ -3,16 +3,18 @@
 
 #include "ActorFrame.h"
 #include "PlayerNumber.h"
-#include "BitmapText.h"
+#include "ThemeMetric.h"
 
 class StageStats;
 class PlayerStageStats;
+class BitmapText;
+
 class ComboGraph: public ActorFrame
 {
 public:
 	ComboGraph();
-	void Load( const StageStats &s, const PlayerStageStats &pss );
-	virtual void LoadFromNode( const XNode* pNode );
+	void Load( RString sMetricsGroup );
+	void Set( const StageStats &s, const PlayerStageStats &pss );
 	virtual ComboGraph *Copy() const;
 	virtual bool AutoLoadChildren() const { return true; }
 
@@ -22,9 +24,11 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 private:
+	ThemeMetric<float> BODY_WIDTH;
+	Actor *m_pBacking;
 	Actor *m_pNormalCombo;
 	Actor *m_pMaxCombo;
-	BitmapText *m_pMaxComboText;
+	BitmapText *m_pComboNumber;
 };
 
 #endif

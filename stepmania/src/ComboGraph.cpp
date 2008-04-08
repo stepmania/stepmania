@@ -16,30 +16,35 @@ ComboGraph::ComboGraph()
 
 	m_pNormalCombo = NULL;
 	m_pMaxCombo = NULL;
-	m_pMaxComboText = NULL;
+	m_pComboNumber = NULL;
 }
 
-void ComboGraph::LoadFromNode( const XNode* pNode )
+void ComboGraph::Load( RString sMetricsGroup )
 {
-	ActorFrame::LoadFromNode( pNode );
+	BODY_WIDTH.Load( sMetricsGroup, "BodyWidth" );
 
-	Actor *pActor = this->GetChild( "MaxComboText" );
-	if( pActor == NULL )
-		RageException::Throw( "%s: ComboGraph: must have a child named \"MaxComboText\"", ActorUtil::GetWhere(pNode).c_str() );
-	m_pMaxComboText = dynamic_cast<BitmapText *>( pActor );
-	if( m_pMaxComboText == NULL )
-		RageException::Throw( "%s: ComboGraph: \"MaxComboText\" child is not a BitmapText", ActorUtil::GetWhere(pNode).c_str() );
+	Actor *pActor = NULL;
+	
+	m_pBacking = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"Backing") );
+	m_pBacking->ZoomToWidth( BODY_WIDTH );
+	this->AddChild( m_pBacking );
 
-	m_pNormalCombo = this->GetChild( "NormalCombo" );
-	if( m_pNormalCombo == NULL )
-		RageException::Throw( "%s: ComboGraph: must have a child named \"NormalCombo\"", ActorUtil::GetWhere(pNode).c_str() );
+	m_pNormalCombo = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"NormalCombo") );
+	m_pNormalCombo->ZoomToWidth( BODY_WIDTH );
+	this->AddChild( m_pNormalCombo );
 
-	m_pMaxCombo = this->GetChild( "MaxCombo" );
-	if( m_pMaxCombo == NULL )
-		RageException::Throw( "%s: ComboGraph: must have a child named \"MaxCombo\"", ActorUtil::GetWhere(pNode).c_str() );
-}
+	m_pMaxCombo = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"MaxCombo") );
+	m_pMaxCombo->ZoomToWidth( BODY_WIDTH );
+	this->AddChild( m_pMaxCombo );
 
-void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
+	pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"ComboNumber") );
+	m_pComboNumber = dynamic_cast<BitmapText *>( pActor );
+	if( m_pComboNumber == NULL )
+		RageException::Throw( "ComboGraph: \"sMetricsGroup\" \"ComboNumber\" must be a BitmapText" );
+	this->AddChild( m_pComboNumber );
+}	
+
+void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 {
 	const float fFirstSecond = 0;
 	const float fLastSecond = s.GetTotalPossibleStepsSeconds();
@@ -58,7 +63,7 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 		const bool bIsMax = (combo.GetStageCnt() == iMaxComboSize);
 
 		LOG->Trace( "combo %i is %f+%f of %f", i, combo.m_fStartSecond, combo.m_fSizeSeconds, fLastSecond );
-		Actor *pSprite = bIsMax? m_pMaxCombo->Copy():m_pNormalCombo->Copy();
+		Actor *pSprite = bIsMax? m_pMaxCombo->Copy() : m_pNormalCombo->Copy();
 
 		const float fStart = SCALE( combo.m_fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
 		const float fSize = SCALE( combo.m_fSizeSeconds, 0, fLastSecond-fFirstSecond, 0.0f, 1.0f );
@@ -84,14 +89,13 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 		if( !bIsMax )
 			continue;
 
-		BitmapText *pText = m_pMaxComboText->Copy();
+		BitmapText *pText = m_pComboNumber->Copy();
 
 		const float fStart = SCALE( combo.m_fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
 		const float fSize = SCALE( combo.m_fSizeSeconds, 0, fLastSecond-fFirstSecond, 0.0f, 1.0f );
 
-		const float fWidth = m_pNormalCombo->GetUnzoomedWidth();
 		const float fCenterPercent = fStart + fSize/2;
-		const float fCenterXPos = SCALE( fCenterPercent, 0.0f, 1.0f, -fWidth/2.0f, fWidth/2.0f );
+		const float fCenterXPos = SCALE( fCenterPercent, 0.0f, 1.0f, -BODY_WIDTH/2.0f, BODY_WIDTH/2.0f );
 		pText->SetX( fCenterXPos );
 
 		pText->SetText( ssprintf("%i",combo.GetStageCnt()) );
@@ -102,7 +106,7 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 	/* Hide the templates. */
 	m_pNormalCombo->SetVisible( false );
 	m_pMaxCombo->SetVisible( false );
-	m_pMaxComboText->SetVisible( false );
+	m_pComboNumber->SetVisible( false );
 }
 
 // lua start
@@ -111,17 +115,23 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 class LunaComboGraph: public Luna<ComboGraph>
 {
 public:
-	static int LoadFromStats( T* p, lua_State *L )
+	static int Load( T* p, lua_State *L )
+	{
+		p->Load( SArg(1) );
+		return 0;
+	}
+	static int Set( T* p, lua_State *L )
 	{
 		StageStats *pStageStats = Luna<StageStats>::check( L, 1 );
 		PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
-		p->Load( *pStageStats, *pPlayerStageStats );
+		p->Set( *pStageStats, *pPlayerStageStats );
 		return 0;
 	}
 
 	LunaComboGraph()
 	{
-		ADD_METHOD( LoadFromStats );
+		ADD_METHOD( Load );
+		ADD_METHOD( Set );
 	}
 };
 
