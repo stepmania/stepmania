@@ -14,9 +14,9 @@ public:
 	GraphDisplay();
 	~GraphDisplay();
 	virtual GraphDisplay *Copy() const;
-	virtual void LoadFromNode( const XNode* pNode );
 
-	void LoadFromStageStats( const StageStats &ss, const PlayerStageStats &s );
+	void Load( RString sMetricsGroup );
+	void Set( const StageStats &ss, const PlayerStageStats &s );
 
 	//
 	// Lua
@@ -31,8 +31,8 @@ private:
 	RectF m_quadVertices;
 
 	vector<Actor*> m_vpSongBoundaries;
-	AutoActor m_sprJustBarely;
-	AutoActor m_sprTexture;
+	AutoActor m_sprBarely;
+	AutoActor m_sprBacking;
 	AutoActor m_sprSongBoundary;
 
 	GraphLine *m_pGraphLine;

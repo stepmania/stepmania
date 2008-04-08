@@ -113,13 +113,20 @@ REGISTER_ACTOR_CLASS( GraphLine )
 class GraphBody: public Actor
 {
 public:
-	GraphBody()
+	GraphBody( RString sFile )
 	{
+		m_pTexture = TEXTUREMAN->LoadTexture( sFile );
+
 		for( int i = 0; i < 2*VALUE_RESOLUTION; ++i )
 		{
 			m_Slices[i].c = RageColor(1,1,1,1);
 			m_Slices[i].t = RageVector2( 0,0 );
 		}
+	}
+	~GraphBody()
+	{
+		TEXTUREMAN->UnloadTexture( m_pTexture );
+		m_pTexture = NULL;
 	}
 
 	void DrawPrimitives()
@@ -127,6 +134,7 @@ public:
 		Actor::SetGlobalRenderStates();	// set Actor-specified render states
 
 		DISPLAY->ClearAllTextures();
+		DISPLAY->SetTexture( TextureUnit_1, m_pTexture->GetTexHandle() );
 
 		// Must call this after setting the texture or else texture 
 		// parameters have no effect.
@@ -136,11 +144,10 @@ public:
 		DISPLAY->DrawQuadStrip( m_Slices, ARRAYLEN(m_Slices) );
 	}
 
-	virtual GraphBody *Copy() const;
 
+	RageTexture* m_pTexture;
 	RageSpriteVertex m_Slices[2*VALUE_RESOLUTION];
 };
-REGISTER_ACTOR_CLASS( GraphBody )
 
 GraphDisplay::GraphDisplay()
 {
@@ -157,48 +164,7 @@ GraphDisplay::~GraphDisplay()
 	SAFE_DELETE( m_pGraphBody );
 }
 
-void GraphDisplay::LoadFromNode( const XNode* pNode )
-{
-	ActorFrame::LoadFromNode( pNode );
-
-	const XNode *pChild = pNode->GetChild( "Body" );
-	if( pChild == NULL )
-		RageException::Throw( "%s: GraphDisplay: missing the node \"Body\"", ActorUtil::GetWhere(pNode).c_str() );
-	Actor *p = ActorUtil::LoadFromNode( pChild, this );
-	m_pGraphBody = dynamic_cast<GraphBody *>(p);
-	if( m_pGraphBody == NULL )
-		RageException::Throw( "%s: GraphDisplay: \"Body\" child is not a GraphBody", ActorUtil::GetWhere(pNode).c_str() );
-	this->AddChild( m_pGraphBody );
-
-	pChild = pNode->GetChild( "Texture" );
-	if( pChild == NULL )
-		RageException::Throw( "%s: GraphDisplay: missing the node \"Texture\"", ActorUtil::GetWhere(pNode).c_str() );
-	m_sprTexture.LoadActorFromNode( pChild, this );
-	m_size.x = m_sprTexture->GetUnzoomedWidth();
-	m_size.y = m_sprTexture->GetUnzoomedHeight();
-	this->AddChild( m_sprTexture );
-
-	pChild = pNode->GetChild( "Line" );
-	if( pChild == NULL )
-		RageException::Throw( "%s: GraphDisplay: missing the node \"Line\"", ActorUtil::GetWhere(pNode).c_str() );
-	p = ActorUtil::LoadFromNode( pChild, this );
-	m_pGraphLine = dynamic_cast<GraphLine *>(p);
-	if( m_pGraphLine == NULL )
-		RageException::Throw( "%s: GraphDisplay: \"Body\" child is not a GraphLine", ActorUtil::GetWhere(pNode).c_str() );
-	this->AddChild( m_pGraphLine );
-
-	pChild = pNode->GetChild( "SongBoundary" );
-	if( pChild == NULL )
-		RageException::Throw( "%s: GraphDisplay: missing the node \"SongBoundary\"", ActorUtil::GetWhere(pNode).c_str() );
-	m_sprSongBoundary.LoadActorFromNode( pChild, this );
-
-	pChild = pNode->GetChild( "Barely" );
-	if( pChild == NULL )
-		RageException::Throw( "%s: GraphDisplay: missing the node \"Barely\"", ActorUtil::GetWhere(pNode).c_str() );
-	m_sprJustBarely.LoadActorFromNode( pChild, this );
-}
-
-void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageStats &pss )
+void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 {
 	float fTotalStepSeconds = ss.GetTotalPossibleStepsSeconds();
 
@@ -206,6 +172,8 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 	pss.GetLifeRecord( &m_Values[0], VALUE_RESOLUTION, ss.GetTotalPossibleStepsSeconds() );
 	for( unsigned i=0; i<ARRAYLEN(m_Values); i++ )
 		CLAMP( m_Values[i], 0.f, 1.f );
+
+	UpdateVerts();
 
 	//
 	// Show song boundaries
@@ -223,8 +191,6 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 		p->SetX( fX );
 		this->AddChild( p );
 	}
-
-	UpdateVerts();
 
 	if( !pss.m_bFailed )
 	{
@@ -247,14 +213,35 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 		if( fMinLifeSoFar > 0.0f  &&  fMinLifeSoFar < 0.1f )
 		{
 			float fX = SCALE( float(iMinLifeSoFarAt), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
-			m_sprJustBarely->SetX( fX );
+			m_sprBarely->SetX( fX );
 		}
 		else
 		{
-			m_sprJustBarely->SetVisible( false );
+			m_sprBarely->SetVisible( false );
 		}
-		this->AddChild( m_sprJustBarely );
+		this->AddChild( m_sprBarely );
 	}
+}
+
+void GraphDisplay::Load( RString sMetricsGroup )
+{
+	m_size.x = THEME->GetMetricI( sMetricsGroup, "BodyWidth" );
+	m_size.y = THEME->GetMetricI( sMetricsGroup, "BodyHeight" );
+
+	m_sprBacking.Load( THEME->GetPathG(sMetricsGroup,"Backing") );
+	m_sprBacking->ZoomToWidth( m_size.x );
+	m_sprBacking->ZoomToHeight( m_size.y );
+	this->AddChild( m_sprBacking );
+
+	m_pGraphBody = new GraphBody( THEME->GetPathG(sMetricsGroup,"Body") );
+	this->AddChild( m_pGraphBody );
+
+	m_pGraphLine = new GraphLine;
+	this->AddChild( m_pGraphLine );
+
+	m_sprSongBoundary.Load( THEME->GetPathG(sMetricsGroup,"SongBoundary") );
+
+	m_sprBarely.Load( THEME->GetPathG(sMetricsGroup,"Barely") );
 }
 
 void GraphDisplay::UpdateVerts()
@@ -270,8 +257,15 @@ void GraphDisplay::UpdateVerts()
 		const float fX = SCALE( float(i), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
 		const float fY = SCALE( m_Values[i], 0.0f, 1.0f, m_quadVertices.bottom, m_quadVertices.top );
 
-		m_pGraphBody->m_Slices[i*2+0].p = RageVector3( fX, m_quadVertices.top, 0 );
-		m_pGraphBody->m_Slices[i*2+1].p = RageVector3( fX, fY, 0 );
+		m_pGraphBody->m_Slices[i*2+0].p = RageVector3( fX, fY, 0 );
+		m_pGraphBody->m_Slices[i*2+1].p = RageVector3( fX, m_quadVertices.bottom, 0 );
+
+		const RectF *pRect = m_pGraphBody->m_pTexture->GetTextureCoordRect( 0 );
+
+		const float fU = SCALE( fX, m_quadVertices.left, m_quadVertices.right, pRect->left, pRect->right );
+		const float fV = SCALE( fY, m_quadVertices.top, m_quadVertices.bottom, pRect->top, pRect->bottom );
+		m_pGraphBody->m_Slices[i*2+0].t = RageVector2( fU, fV );
+		m_pGraphBody->m_Slices[i*2+1].t = RageVector2( fU, pRect->bottom );
 
 		LineStrip[i].p = RageVector3( fX, fY, 0 );
 		LineStrip[i].c = RageColor( 1,1,1,1 );
@@ -287,17 +281,23 @@ void GraphDisplay::UpdateVerts()
 class LunaGraphDisplay: public Luna<GraphDisplay>
 {
 public:
-	static int LoadFromStats( T* p, lua_State *L )
+	static int Load( T* p, lua_State *L )
+	{
+		p->Load( SArg(1) );
+		return 0;
+	}
+	static int Set( T* p, lua_State *L )
 	{
 		StageStats *pStageStats = Luna<StageStats>::check( L, 1 );
 		PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
-		p->LoadFromStageStats( *pStageStats, *pPlayerStageStats );
+		p->Set( *pStageStats, *pPlayerStageStats );
 		return 0;
 	}
 
 	LunaGraphDisplay()
 	{
-		ADD_METHOD( LoadFromStats );
+		ADD_METHOD( Load );
+		ADD_METHOD( Set );
 	}
 };
 
