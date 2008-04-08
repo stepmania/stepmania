@@ -5,6 +5,6 @@ return Def.ActorFrame {
 	LoadActor( THEME:GetPathB('','_standard decoration required'), "Header", "Header" );
 	LoadActor( THEME:GetPathB('','_standard decoration required'), "Footer", "Footer" );
 	LoadActor( THEME:GetPathB('','_standard decoration optional'), "StyleIcon", "StyleIcon" );
+	LoadActor( THEME:GetPathB('','_standard decoration optional'), "StageFrame", "StageFrame" );
 	LoadActor( THEME:GetPathB('','_standard decoration optional'), "StageDisplay", "StageDisplay" );
-
 };

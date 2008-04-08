@@ -2,21 +2,21 @@ return Def.ActorFrame {
 	LoadActor("frame") .. {
 	};
 	LoadActor( THEME:GetPathG("PaneDisplay","label Hands") ) .. {
-		InitCommand=cmd(x,-50;y,-20+16*0;);
+		InitCommand=cmd(horizalign,right;x,-22;y,-12+16*0;shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000AA"););
 	};
 	LoadActor( THEME:GetPathG("PaneDisplay","label Holds") ) .. {
-		InitCommand=cmd(x,-50;y,-20+16*1;);
+		InitCommand=cmd(horizalign,right;x,-22;y,-12+16*1;shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000AA"););
 	};
 	LoadActor( THEME:GetPathG("PaneDisplay","label Jumps") ) .. {
-		InitCommand=cmd(x,-50;y,-20+16*2;);
+		InitCommand=cmd(horizalign,right;x,-22;y,-12+16*2;shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000AA"););
 	};
 	LoadActor( THEME:GetPathG("PaneDisplay","label Mines") ) .. {
-		InitCommand=cmd(x,-50;y,-20+16*3;);
+		InitCommand=cmd(horizalign,right;x,-22;y,-12+16*3;shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000AA"););
 	};
 	LoadActor( THEME:GetPathG("PaneDisplay","label NumSteps") ) .. {
-		InitCommand=cmd(x,-50;y,-20+16*4;);
+		InitCommand=cmd(horizalign,right;x,-22;y,-12+16*4;shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000AA"););
 	};
 	LoadActor( THEME:GetPathG("PaneDisplay","label Rolls") ) .. {
-		InitCommand=cmd(x,-50;y,-20+16*5;);
+		InitCommand=cmd(horizalign,right;x,-22;y,-12+16*5;shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000AA"););
 	};
 };

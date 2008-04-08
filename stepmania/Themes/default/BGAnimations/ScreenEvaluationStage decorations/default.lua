@@ -30,31 +30,31 @@ end
 local t = LoadFallbackB( "decorations" );
 
 t[#t+1] = GraphDisplay(PLAYER_1) .. {
-	InitCommand = cmd(x,SCREEN_CENTER_X-224;y,SCREEN_CENTER_Y-50;draworder,1;);
+	InitCommand = cmd(x,SCREEN_CENTER_X-222;y,SCREEN_CENTER_Y-16;draworder,1;);
 };
 t[#t+1] = GraphDisplay(PLAYER_2) .. {
-	InitCommand = cmd(x,SCREEN_CENTER_X+224;y,SCREEN_CENTER_Y-50;draworder,1;);
+	InitCommand = cmd(x,SCREEN_CENTER_X+222;y,SCREEN_CENTER_Y-16;draworder,1;);
 };
 
 t[#t+1] = ComboGraph(PLAYER_1) .. {
-	InitCommand = cmd(x,SCREEN_CENTER_X-224;y,SCREEN_CENTER_Y-20;draworder,1;);
+	InitCommand = cmd(x,SCREEN_CENTER_X-222;y,SCREEN_CENTER_Y+10;draworder,1;);
 };
 t[#t+1] = ComboGraph(PLAYER_2) .. {
-	InitCommand = cmd(x,SCREEN_CENTER_X+224;y,SCREEN_CENTER_Y-20;draworder,1;);
+	InitCommand = cmd(x,SCREEN_CENTER_X+222;y,SCREEN_CENTER_Y+10;draworder,1;);
 };
 
 t[#t+1] = LoadActor( THEME:GetPathB('','_standard decoration required'), "TimingDifficultyFrame", "TimingDifficultyFrame" );
-t[#t+1] = LoadFont( Var "LoadingScreen", "TimingDifficulty" ) .. {
-	InitCommand=function(self) self:name("TimingDifficulty"); self:settext(GetTimingDifficulty()); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
+t[#t+1] = LoadFont( Var "LoadingScreen", "TimingDifficultyNumber" ) .. {
+	InitCommand=function(self) self:name("TimingDifficultyNumber"); self:settext(GetTimingDifficulty()); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
 };
 
 t[#t+1] = Def.OptionIconRow {
-		InitCommand=cmd(x,SCREEN_CENTER_X-316;y,SCREEN_CENTER_Y-130;Load,"OptionIconRowEvaluation",PLAYER_1,player,PLAYER_1);
+		InitCommand=cmd(x,SCREEN_CENTER_X-316;y,SCREEN_CENTER_Y-130;draworder,1;Load,"OptionIconRowEvaluationP1",PLAYER_1,player,PLAYER_1);
 		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
 		OffCommand=cmd(linear,0.5;zoomy,0);
 	};
 t[#t+1] = Def.OptionIconRow {
-		InitCommand=cmd(x,SCREEN_CENTER_X+316;y,SCREEN_CENTER_Y-130;Load,"OptionIconRowEvaluation",PLAYER_2;player,PLAYER_2);
+		InitCommand=cmd(x,SCREEN_CENTER_X+316;y,SCREEN_CENTER_Y-130;draworder,1;Load,"OptionIconRowEvaluationP2",PLAYER_2;player,PLAYER_2);
 		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
 		OffCommand=cmd(linear,0.5;zoomy,0);
 	};
