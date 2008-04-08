@@ -173,6 +173,36 @@ void ScreenEvaluation::Init()
 			ss.m_player[p].m_iPossibleGradePoints = 4*ScoreKeeperNormal::TapNoteScoreToGradePoints(TNS_W1, false);
 			ss.m_player[p].m_fLifeRemainingSeconds = randomf( 90, 580 );
 			ss.m_player[p].m_iScore = rand() % (90*1000*1000);
+			FOREACH_ENUM( RadarCategory, rc )
+			{
+				switch( rc )
+				{
+				case RadarCategory_Stream:
+				case RadarCategory_Voltage:
+				case RadarCategory_Air:
+				case RadarCategory_Freeze:
+				case RadarCategory_Chaos:
+					ss.m_player[p].m_radarPossible[rc] = randomf( 0, 1 );
+					ss.m_player[p].m_radarActual[rc] = randomf( 0, ss.m_player[p].m_radarPossible[rc] );
+					break;
+				case RadarCategory_TapsAndHolds:
+				case RadarCategory_Jumps:
+				case RadarCategory_Holds:
+				case RadarCategory_Mines:
+				case RadarCategory_Hands:
+				case RadarCategory_Rolls:
+					ss.m_player[p].m_radarPossible[rc] = 1 + (rand() % 200);
+					ss.m_player[p].m_radarActual[rc] = rand() % (int)(ss.m_player[p].m_radarPossible[rc]);
+					break;
+				case RadarCategory_MinMidiNote:
+				case RadarCategory_MaxMidiNote:
+					ss.m_player[p].m_radarPossible[rc] = 0;
+					ss.m_player[p].m_radarActual[rc] = 0;
+					break;
+				}
+
+				;	// filled in by ScreenGameplay on start of notes
+			}
 		}
 	}
 
