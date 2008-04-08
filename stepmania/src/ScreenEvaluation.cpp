@@ -47,7 +47,7 @@ LuaFunction( JudgmentLineToLocalizedString, JudgmentLineToLocalizedString(Enum::
 
 static const char *DetailLineNames[NUM_DetailLine] =
 {
-	"Jumps", "Holds", "Mines", "Hands", "Rolls",
+	"NumSteps","Jumps", "Holds", "Mines", "Hands", "Rolls",
 };
 XToString( DetailLine );
 
@@ -66,7 +66,6 @@ XToString( DetailLine );
 
 #define SHOW_DETAIL_AREA			THEME->GetMetricB(m_sName,"ShowDetailArea")
 #define SHOW_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowScoreArea")
-#define SHOW_TOTAL_SCORE_AREA			THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
 #define SHOW_TIME_AREA				THEME->GetMetricB(m_sName,"ShowTimeArea")
 #define SHOW_RECORDS_AREA			THEME->GetMetricB(m_sName,"ShowRecordsArea")
 #define MAX_COMBO_NUM_DIGITS			THEME->GetMetricI(m_sName,"MaxComboNumDigits")
@@ -86,7 +85,7 @@ void ScreenEvaluation::Init()
 	// debugging
 	//
 	
-	if( PREFSMAN->m_bScreenTestMode && CommonMetrics::INITIAL_SCREEN == m_sName )
+	if( PREFSMAN->m_bScreenTestMode  &&  CommonMetrics::INITIAL_SCREEN == m_sName )	// Only fill StageStats with fake info if we're the InitialScreen (i.e. StageStats not already filled) 
 	{
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1);
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);
@@ -173,6 +172,7 @@ void ScreenEvaluation::Init()
 			ss.m_player[p].m_iTapNoteScores[TNS_W3] = RandomInt( 3 );
 			ss.m_player[p].m_iPossibleGradePoints = 4*ScoreKeeperNormal::TapNoteScoreToGradePoints(TNS_W1, false);
 			ss.m_player[p].m_fLifeRemainingSeconds = randomf( 90, 580 );
+			ss.m_player[p].m_iScore = rand() % (90*1000*1000);
 		}
 	}
 
@@ -403,7 +403,6 @@ void ScreenEvaluation::Init()
 			this->AddChild( m_sprSurvivedFrame[p] );
 
 			m_textSurvivedNumber[p].LoadFromFont( THEME->GetPathF(m_sName, "SurvivedNumber") );
-			m_textSurvivedNumber[p].SetShadowLength( 0 );
 			// curewater: edited the "# stages cleared" text so it deducts one if you failed.
 			// Should be accurate, but I'm not sure if its "standard" that (bool)true = 1.  (assumption)
 			m_textSurvivedNumber[p].SetText( ssprintf("%02d", m_pStageStats->m_player[p].m_iSongsPassed) );
@@ -461,7 +460,6 @@ void ScreenEvaluation::Init()
 			FOREACH_EnabledPlayer( p )
 			{
 				m_textJudgmentLineNumber[l][p].LoadFromFont( THEME->GetPathF(m_sName, "JudgmentLineNumber") );
-				m_textJudgmentLineNumber[l][p].SetShadowLength( 0 );
 				m_textJudgmentLineNumber[l][p].SetName( JudgmentLineToString(l)+ssprintf("NumberP%d",p+1) );
 				ActorUtil::LoadAllCommands( m_textJudgmentLineNumber[l][p], m_sName );
 				SET_XY( m_textJudgmentLineNumber[l][p] );
@@ -538,40 +536,12 @@ void ScreenEvaluation::Init()
 
 		FOREACH_EnabledPlayer( p )
 		{
-			m_textScore[p].LoadFromFont( THEME->GetPathF(m_sName, "Score") );
-			m_textScore[p].SetShadowLength( 0 );
+			m_textScore[p].LoadFromFont( THEME->GetPathF(m_sName, "ScoreNumber") );
 			m_textScore[p].SetName( ssprintf("ScoreNumberP%d",p+1) );
 			ActorUtil::LoadAllCommands( m_textScore[p], m_sName );
 			SET_XY( m_textScore[p] );
 			m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, m_pStageStats->m_player[p].m_iScore) );
 			this->AddChild( &m_textScore[p] );
-		}
-	}
-
-	if( SHOW_TOTAL_SCORE_AREA )
-	{
-		m_sprTotalScoreLabel.Load( THEME->GetPathG(m_sName,"TotalScoreLabel") );
-		m_sprTotalScoreLabel->SetName( "TotalScoreLabel" );
-		ActorUtil::LoadAllCommands( *m_sprTotalScoreLabel, m_sName );
-		SET_XY( m_sprTotalScoreLabel );
-		this->AddChild( m_sprTotalScoreLabel );
-
-		FOREACH_EnabledPlayer( p )
-		{
-			int iTotalScore=0;
-			for( unsigned i=0; i<STATSMAN->m_vPlayedStageStats.size(); i++ )
-				iTotalScore += STATSMAN->m_vPlayedStageStats[i].m_player[p].m_iScore;
-
-			//iTotalScore += m_pStageStats->m_player[p].iScore;
-
-			m_textTotalScore[p].LoadFromFont( THEME->GetPathF(m_sName, "TotalScore") );
-			m_textTotalScore[p].SetShadowLength( 0 );
-			m_textTotalScore[p].SetName( ssprintf("TotalScoreNumberP%d",p+1) );
-			m_textTotalScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS+2, iTotalScore) );
-			ActorUtil::LoadAllCommands( m_textTotalScore[p], m_sName );
-			SET_XY( m_textTotalScore[p] );
-
-			this->AddChild( &m_textTotalScore[p] );
 		}
 	}
 
@@ -597,7 +567,6 @@ void ScreenEvaluation::Init()
 			this->AddChild( &m_textTime[p] );
 		}
 	}
-
 
 	//
 	// init records area

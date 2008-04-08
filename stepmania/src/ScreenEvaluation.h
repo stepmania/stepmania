@@ -29,6 +29,7 @@ enum JudgmentLine
 };
 enum DetailLine
 {
+	DetailLine_NumSteps,
 	DetailLine_Jumps, 
 	DetailLine_Holds, 
 	DetailLine_Mines, 
@@ -99,10 +100,6 @@ protected:
 	// score area
 	AutoActor		m_sprScoreLabel;
 	BitmapText		m_textScore[NUM_PLAYERS];
-
-	// total score area
-	AutoActor		m_sprTotalScoreLabel;
-	BitmapText		m_textTotalScore[NUM_PLAYERS];
 
 	// time area
 	AutoActor		m_sprTimeLabel;
