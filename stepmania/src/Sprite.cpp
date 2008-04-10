@@ -90,10 +90,11 @@ RageTextureID Sprite::SongBGTexture( RageTextureID ID )
 RageTextureID Sprite::SongBannerTexture( RageTextureID ID )
 {
 	/* Song banners often have HOT PINK color keys. */
-	/* GIF/BMP banners that use a color key are not in use any more, and there are rare 
-	 * cases where this is turning magenta pizels transparent in banenrs that did not intend
-	 * any transparency. -Chris */
-	//ID.bHotPinkColorKey = true;
+
+	/* TODO: Change to use color keying only if the graphic is a diagonal banner.  The color key convention is 
+	 * causing small holes in moderm banners that use magenta, and it's not good to require graphic
+	 * makers to know about archaic color key conventions. -Chris */
+	ID.bHotPinkColorKey = true;
 
 	/* Ignore the texture color depth preference and always use 32-bit textures
 	 * if possible.  Banners are loaded while moving the wheel, so we want it to
