@@ -72,6 +72,7 @@ BitmapText::BitmapText( const BitmapText &cpy ):
 	m_pFont = NULL;
 
 #define CPY(a) a = cpy.a
+	CPY( m_bUppercase );
 	CPY( m_sText );
 	CPY( m_wTextLines );
 	CPY( m_iLineWidths );
