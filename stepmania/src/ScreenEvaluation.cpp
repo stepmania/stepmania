@@ -605,7 +605,7 @@ void ScreenEvaluation::Init()
 	{
 		if( m_pStageStats->m_player[p].m_iMachineHighScoreIndex != -1 )
 		{
-			m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord %02d",m_pStageStats->m_player[p].m_iMachineHighScoreIndex+1) ) );
+			m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord",m_pStageStats->m_player[p].m_iMachineHighScoreIndex+1) ) );
 			m_sprMachineRecord[p]->SetName( ssprintf("MachineRecordP%d",p+1) );
 			ActorUtil::LoadAllCommands( *m_sprMachineRecord[p], m_sName );
 			SET_XY( m_sprMachineRecord[p] );
@@ -613,7 +613,7 @@ void ScreenEvaluation::Init()
 		}
 		if( m_pStageStats->m_player[p].m_iProfileHighScoreIndex != -1 )
 		{
-			m_sprProfileRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("ProfileRecord %02d",m_pStageStats->m_player[p].m_iProfileHighScoreIndex+1) ) );
+			m_sprProfileRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("ProfileRecord",m_pStageStats->m_player[p].m_iProfileHighScoreIndex+1) ) );
 			m_sprProfileRecord[p]->SetName( ssprintf("ProfileRecordP%d",p+1) );
 			ActorUtil::LoadAllCommands( *m_sprProfileRecord[p], m_sName );
 			SET_XY( m_sprProfileRecord[p] );
