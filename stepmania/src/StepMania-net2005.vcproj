@@ -2531,19 +2531,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DifficultyDisplay.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DifficultyDisplay.h"
+				>
+			</File>
+			<File
 				RelativePath="DifficultyList.cpp"
 				>
 			</File>
 			<File
 				RelativePath="DifficultyList.h"
-				>
-			</File>
-			<File
-				RelativePath="DifficultyMeter.cpp"
-				>
-			</File>
-			<File
-				RelativePath="DifficultyMeter.h"
 				>
 			</File>
 			<File
