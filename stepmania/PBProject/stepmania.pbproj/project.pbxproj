@@ -1234,7 +1234,6 @@
 		AA40D4ED09A08D650068C0D5 /* ScreenOptionsEditCourseEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E75908B64B9A00FA24CA /* ScreenOptionsEditCourseEntry.cpp */; };
 		AA40D4EE09A08D650068C0D5 /* ScreenOptionsManageCourses.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E75B08B64B9A00FA24CA /* ScreenOptionsManageCourses.cpp */; };
 		AA40D4EF09A08D650068C0D5 /* ScreenOptionsManageProfiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E75D08B64B9A00FA24CA /* ScreenOptionsManageProfiles.cpp */; };
-		AA40D4F009A08D650068C0D5 /* wchar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4B5CC40573AD81005FB5DB /* wchar.cpp */; };
 		AA40D4F109A08D650068C0D5 /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
 		AA40D4F209A08D650068C0D5 /* ActorSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE2608E7D793005087FC /* ActorSound.cpp */; };
 		AA40D4F409A08D650068C0D5 /* ScreenGameplayLesson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE4908E7D893005087FC /* ScreenGameplayLesson.cpp */; };
@@ -1365,7 +1364,6 @@
 		AA77E76708B64B9A00FA24CA /* ScreenOptionsManageProfiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E75D08B64B9A00FA24CA /* ScreenOptionsManageProfiles.cpp */; };
 		AA77E76808B64B9A00FA24CA /* ScreenOptionsManageProfiles.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E75E08B64B9A00FA24CA /* ScreenOptionsManageProfiles.h */; };
 		AA77E8B108B6ABD500FA24CA /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA77E8A108B6ABD500FA24CA /* vecLib.framework */; };
-		AA77E8B808B6AC0000FA24CA /* wchar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4B5CC40573AD81005FB5DB /* wchar.cpp */; };
 		AA7A2BA00AE09BC90054C5BA /* lua.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7A2B9D0AE09BC80054C5BA /* lua.c */; };
 		AA7A2BAF0AE09CEC0054C5BA /* liblua-5.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE7817E0AC7E37B00AEFC64 /* liblua-5.1.a */; };
 		AA7A2BB00AE09CF10054C5BA /* liblua-5.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE7817E0AC7E37B00AEFC64 /* liblua-5.1.a */; };
@@ -2340,7 +2338,6 @@
 		AA44708D0984720900983E82 /* JoystickDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JoystickDevice.cpp; sourceTree = "<group>"; };
 		AA4470BA098476F600983E82 /* KeyboardDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardDevice.h; sourceTree = "<group>"; };
 		AA4470BB098476F600983E82 /* KeyboardDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyboardDevice.cpp; sourceTree = "<group>"; };
-		AA4B5CC40573AD81005FB5DB /* wchar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = wchar.cpp; sourceTree = "<group>"; };
 		AA4F27AE0B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageSoundReader_ChannelSplit.cpp; path = ../src/RageSoundReader_ChannelSplit.cpp; sourceTree = "<group>"; };
 		AA4F27AF0B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageSoundReader_ChannelSplit.h; path = ../src/RageSoundReader_ChannelSplit.h; sourceTree = "<group>"; };
 		AA4F27B00B2C01B400ADEA79 /* RageSoundReader_Pan.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageSoundReader_Pan.cpp; path = ../src/RageSoundReader_Pan.cpp; sourceTree = "<group>"; };
@@ -5290,7 +5287,6 @@
 				AAD64AA10603FE7300EF8CDE /* StepMania.pch */,
 				AA147F190A0F78D8006EADF6 /* VectorHelper.cpp */,
 				AA147F180A0F78D8006EADF6 /* VectorHelper.h */,
-				AA4B5CC40573AD81005FB5DB /* wchar.cpp */,
 			);
 			path = Darwin;
 			sourceTree = "<group>";
@@ -6958,7 +6954,6 @@
 				AA77E76308B64B9A00FA24CA /* ScreenOptionsEditCourseEntry.cpp in Sources */,
 				AA77E76508B64B9A00FA24CA /* ScreenOptionsManageCourses.cpp in Sources */,
 				AA77E76708B64B9A00FA24CA /* ScreenOptionsManageProfiles.cpp in Sources */,
-				AA77E8B808B6AC0000FA24CA /* wchar.cpp in Sources */,
 				1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */,
 				AACFBE2808E7D793005087FC /* ActorSound.cpp in Sources */,
 				AACFBE4F08E7D893005087FC /* ScreenGameplayLesson.cpp in Sources */,
@@ -7370,7 +7365,6 @@
 				AA40D4ED09A08D650068C0D5 /* ScreenOptionsEditCourseEntry.cpp in Sources */,
 				AA40D4EE09A08D650068C0D5 /* ScreenOptionsManageCourses.cpp in Sources */,
 				AA40D4EF09A08D650068C0D5 /* ScreenOptionsManageProfiles.cpp in Sources */,
-				AA40D4F009A08D650068C0D5 /* wchar.cpp in Sources */,
 				AA40D4F109A08D650068C0D5 /* ScreenGameplayNormal.cpp in Sources */,
 				AA40D4F209A08D650068C0D5 /* ActorSound.cpp in Sources */,
 				AA40D4F409A08D650068C0D5 /* ScreenGameplayLesson.cpp in Sources */,
