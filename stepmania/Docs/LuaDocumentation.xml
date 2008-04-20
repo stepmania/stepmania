@@ -159,6 +159,11 @@
 		Flushes log files to disk.
 	</Function>
 </Namespace>
+<Namespace name='RageFileUtil'>
+	<Function name='CreateRageFile' return='RageFile' arguments=''>
+		Creates a RageFile handle with which one can use the commands in <Link class='RageFile' />.
+	</Function>
+</Namespace>
 <Namespace name='ScreenSystemLayerHelpers'>
 	<Function name='GetCreditsMessage' return='string' arguments='PlayerNumber pn'>
 		Gets the credits message for Player <code>pn</code>.
@@ -970,8 +975,17 @@
 	</Function>
 </Class>
 <Class name='RageFile'>
+	<Description>
+		These commands require a RageFile handle. You can create one using
+		<Link class='RageFileUtil' />.
+	</Description>
 	<Function name='Close' return='void' arguments=''>
 		Closes the file and releases it from memory.
+	</Function>
+	<Function name='Open' return='bool' arguments='string sPath, int iAccessType'>
+		Opens a file at <code>sPath</code> (relative to the StepMania root directory).<br />
+		<code>iAccessType</code> can be set to read (<code>1</code>), write (<code>2</code>), stream (<code>4</code>) or flush to disk on close (<code>8</code>).<br />
+		These can also be combined with addition. For example, to set up read and write, set <code>iAccessType</code> to <code>3</code> (1+2).
 	</Function>
 </Class>
 <Class name='RageInput'>
