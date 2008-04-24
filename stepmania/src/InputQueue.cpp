@@ -13,7 +13,7 @@ const unsigned MAX_INPUT_QUEUE_LENGTH = 32;
 
 InputQueue::InputQueue()
 {
-	FOREACH_GameController ( gc )
+	FOREACH_ENUM( GameController, gc )
 		m_aQueue[gc].resize( MAX_INPUT_QUEUE_LENGTH );
 }
 

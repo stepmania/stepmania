@@ -68,7 +68,7 @@ void ScreenMapControllers::Init()
 
 	// header row
 	{
-		FOREACH_GameController( c )
+		FOREACH_ENUM( GameController,  c )
 		{			
 			BitmapText &text = m_textLabel[c];
 			text.LoadFromFont( THEME->GetPathF("Common","title") );
@@ -111,7 +111,7 @@ void ScreenMapControllers::Init()
 			m_Line[iRow].AddChild( pSecondary );
 		}
 
-		FOREACH_GameController( c )
+		FOREACH_ENUM( GameController,  c )
 		{			
 			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
@@ -435,7 +435,7 @@ void ScreenMapControllers::AfterChangeFocus()
 
 void ScreenMapControllers::Refresh()
 {
-	FOREACH_GameController( p )
+	FOREACH_ENUM( GameController,  p )
 	{			
 		for( unsigned b=0; b<m_KeysToMap.size(); b++ )
 		{

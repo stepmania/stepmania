@@ -22,7 +22,7 @@ void StyleID::FromStyle( const Style *p )
 
 const Style *StyleID::ToStyle() const
 {
-	const Game* pGame = GameManager::StringToGameType( sGame );
+	const Game* pGame = GameManager::StringToGame( sGame );
 	if( pGame == NULL )
 		return NULL;
 

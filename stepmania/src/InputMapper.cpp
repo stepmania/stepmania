@@ -40,8 +40,8 @@ InputMapper::~InputMapper()
 
 void InputMapper::ClearAllMappings()
 {
-	FOREACH_GameController( i )
-		FOREACH_GameButton(j)
+	FOREACH_ENUM( GameController,  i )
+		FOREACH_ENUM( GameButton, j)
 			for( int k=0; k<NUM_GAME_TO_DEVICE_SLOTS; k++ )
 				m_GItoDI[i][j][k].MakeInvalid();
 	UpdateTempDItoGI();
@@ -79,8 +79,8 @@ const InputMapping g_DefaultKeyMappings[] =
 void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 {
 	// Clear default mappings.  Default mappings are in the third slot.
-	FOREACH_GameController( i )
-		FOREACH_GameButton(j)
+	FOREACH_ENUM( GameController,  i )
+		FOREACH_ENUM( GameButton, j)
 			ClearFromInputMap( GameInput(i, j), 2 );
 
 	vector<InputMapping> aMaps;
@@ -595,9 +595,9 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 
 void InputMapper::Unmap( InputDevice id )
 {
-	FOREACH_GameController( i )
+	FOREACH_ENUM( GameController,  i )
 	{
-		FOREACH_GameButton(j)
+		FOREACH_ENUM( GameButton, j)
 		{
 			for( int k=0; k<NUM_USER_GAME_TO_DEVICE_SLOTS; k++ )
 			{
@@ -744,7 +744,7 @@ void InputMapper::SaveMappingsToDisk()
 	pKey = ini.AppendChild( m_pInputScheme->m_szName );
 
 	// iterate over our input map and write all mappings to the ini file
-	FOREACH_GameController( i )
+	FOREACH_ENUM( GameController,  i )
 	{
 		FOREACH_GameButtonInScheme( m_pInputScheme, j )
 		{
@@ -851,9 +851,9 @@ void InputMapper::ClearFromInputMap( const DeviceInput &DeviceI )
 {
 	// search for where this DeviceI maps to
 
-	FOREACH_GameController( p )
+	FOREACH_ENUM( GameController,  p )
 	{
-		FOREACH_GameButton(b)
+		FOREACH_ENUM( GameButton, b)
 		{
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ )
 			{
@@ -889,9 +889,9 @@ void InputMapper::UpdateTempDItoGI()
 {
 	// repopulate g_tempDItoGI
 	g_tempDItoGI.clear();
-	FOREACH_GameController( n )
+	FOREACH_ENUM( GameController,  n )
 	{
-		FOREACH_GameButton( b )
+		FOREACH_ENUM( GameButton,  b )
 		{
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ )
 			{
@@ -1121,7 +1121,7 @@ void InputScheme::MenuButtonToGameButtons( GameButton MenuI, vector<GameButton> 
 	if( MenuI == GameButton_Invalid )
 		return;
 
-	FOREACH_GameButton(gb)
+	FOREACH_ENUM( GameButton, gb)
 	{
 		if( PREFSMAN->m_bOnlyDedicatedMenuButtons && gb >= GAME_BUTTON_NEXT )
 			break;

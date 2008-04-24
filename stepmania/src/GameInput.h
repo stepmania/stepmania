@@ -14,7 +14,6 @@ enum GameController
 	NUM_GameController,	// leave this at the end
 	GameController_Invalid,
 };
-#define FOREACH_GameController( gc ) FOREACH_ENUM( GameController, gc )
 
 enum GameButton
 {
@@ -57,7 +56,6 @@ RString GameButtonToString( const InputScheme* pInputs, GameButton i );
 RString GameButtonToLocalizedString( const InputScheme* pInputs, GameButton i );
 GameButton StringToGameButton( const InputScheme* pInputs, const RString& s );
 
-#define FOREACH_GameButton( gb ) FOREACH_ENUM( GameButton, gb )
 #define FOREACH_GameButton_Custom( gb ) for( GameButton gb=GAME_BUTTON_CUSTOM_01; gb<NUM_GameButton; enum_add(gb, +1) )
 
 #define GAME_BUTTON_NEXT		GAME_BUTTON_CUSTOM_01

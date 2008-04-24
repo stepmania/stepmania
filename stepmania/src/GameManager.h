@@ -38,7 +38,7 @@ namespace GameManager
 
 	const StepsTypeInfo &GetStepsTypeInfo( StepsType st );
 	StepsType StringToStepsType( RString sStepsType );
-	const Game* StringToGameType( RString sGameType );
+	const Game* StringToGame( RString sGame );
 	const Style* GameAndStringToStyle( const Game* pGame, RString sStyle );
 	RString StyleToLocalizedString( const Style* s );
 }

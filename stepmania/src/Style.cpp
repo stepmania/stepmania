@@ -41,7 +41,7 @@ GameInput Style::StyleInputToGameInput( int iCol, PlayerNumber pn ) const
 		ssprintf("P%i C%i", pn, iCol) );
 	bool bUsingOneSide = m_StyleType != StyleType_OnePlayerTwoSides && m_StyleType != StyleType_TwoPlayersSharedSides;
 
-	FOREACH_GameController(gc)
+	FOREACH_ENUM( GameController, gc)
 	{
 		if( bUsingOneSide && gc != (int) pn )
 			continue;

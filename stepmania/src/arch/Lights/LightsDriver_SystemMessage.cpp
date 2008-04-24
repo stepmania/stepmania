@@ -30,10 +30,10 @@ void LightsDriver_SystemMessage::Set( const LightsState *ls )
 	}
 	s += "\n";
 
-	FOREACH_GameController( gc )
+	FOREACH_ENUM( GameController,  gc )
 	{
 		s += ssprintf("Controller%d: ",gc+1);
-		FOREACH_GameButton( gb )
+		FOREACH_ENUM( GameButton,  gb )
 		{
 			s += ls->m_bGameButtonLights[gc][gb] ? '1' : '0';
 		}

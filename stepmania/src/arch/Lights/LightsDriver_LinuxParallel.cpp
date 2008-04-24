@@ -56,7 +56,7 @@ void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 	int iNumGameButtonsToShow = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( "Start" );
 	if( iNumGameButtonsToShow == GameButton_Invalid )
 		iNumGameButtonsToShow = INPUTMAPPER->GetInputScheme()->m_iButtonsPerController;
-	FOREACH_GameController( gc )
+	FOREACH_ENUM( GameController,  gc )
 	{
 		s += ssprintf("Controller%d Bits: ",gc+1);
 		for( int gb=0; gb<iNumGameButtonsToShow; gb++ )

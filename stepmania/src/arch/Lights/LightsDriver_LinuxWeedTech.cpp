@@ -166,9 +166,9 @@ void LightsDriver_LinuxWeedTech::Set(const LightsState *ls)
 		}
 	}
 	
-	FOREACH_GameController( gc )
+	FOREACH_ENUM( GameController,  gc )
 	{
-		FOREACH_GameButton( gb )
+		FOREACH_ENUM( GameButton,  gb )
 		{
 			// Only send the command if the light has changed states (on/off)
 			bool bOn = ls->m_bGameButtonLights[gc][gb];

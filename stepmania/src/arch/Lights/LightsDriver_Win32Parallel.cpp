@@ -84,9 +84,9 @@ void LightsDriver_Win32Parallel::Set( const LightsState *ls )
 		}
 	}
 	
-	FOREACH_GameController( gc )
+	FOREACH_ENUM( GameController,  gc )
 	{
-		FOREACH_GameButton( gb )
+		FOREACH_ENUM( GameButton,  gb )
 		{
 			bool bOn = ls->m_bGameButtonLights[gc][gb];
 			int index = GameControllerAndGameButtonToIndex( gc, gb );

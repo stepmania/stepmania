@@ -2670,10 +2670,10 @@ RString GameManager::StyleToLocalizedString( const Style* style )
 		return s;
 }
 
-const Game* GameManager::StringToGameType( RString sGameType )
+const Game* GameManager::StringToGame( RString sGame )
 {
 	for( size_t i=0; i<ARRAYLEN(g_Games); ++i )
-		if( !sGameType.CompareNoCase(g_Games[i]->m_szName) )
+		if( !sGame.CompareNoCase(g_Games[i]->m_szName) )
 			return g_Games[i];
 
 	return NULL;

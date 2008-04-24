@@ -1973,9 +1973,9 @@ void ScreenGameplay::UpdateLights()
 			LIGHTSMAN->BlinkCabinetLight( cl );
 	}
 
-	FOREACH_GameController( gc )
+	FOREACH_ENUM( GameController,  gc )
 	{
-		FOREACH_GameButton( gb )
+		FOREACH_ENUM( GameButton,  gb )
 		{
 			if( bBlinkGameButton[gc][gb] )
 				LIGHTSMAN->BlinkGameButton( GameInput(gc,gb) );

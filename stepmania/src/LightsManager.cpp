@@ -54,7 +54,7 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 
 	vector<RString> asGameButtons;
 	split( GAME_BUTTONS_TO_SHOW.GetValue(), ",", asGameButtons );
-	FOREACH_GameController( gc )
+	FOREACH_ENUM( GameController,  gc )
 	{
 		FOREACH_CONST( RString, asGameButtons, button )
 		{
@@ -168,8 +168,8 @@ void LightsManager::Update( float fDeltaTime )
 	{
 		FOREACH_CabinetLight( cl )
 			fapproach( m_fSecsLeftInCabinetLightBlink[cl], 0, fDeltaTime );
-		FOREACH_GameController( gc )
-			FOREACH_GameButton( gb )
+		FOREACH_ENUM( GameController,  gc )
+			FOREACH_ENUM( GameButton,  gb )
 				fapproach( m_fSecsLeftInGameButtonBlink[gc][gb], 0, fDeltaTime );
 	}
 
@@ -306,11 +306,11 @@ void LightsManager::Update( float fDeltaTime )
 	case LIGHTSMODE_STAGE:
 	case LIGHTSMODE_JOINING:
 		{
-			FOREACH_GameController( gc )
+			FOREACH_ENUM( GameController,  gc )
 			{
 				bool bOn = GAMESTATE->m_bSideIsJoined[gc];
 
-				FOREACH_GameButton( gb )
+				FOREACH_ENUM( GameButton,  gb )
 					m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
 			}
 		}
@@ -323,9 +323,9 @@ void LightsManager::Update( float fDeltaTime )
 				//
 				// Blink on notes.
 				//
-				FOREACH_GameController( gc )
+				FOREACH_ENUM( GameController,  gc )
 				{
-					FOREACH_GameButton( gb )
+					FOREACH_ENUM( GameButton,  gb )
 					{
 						m_LightsState.m_bGameButtonLights[gc][gb] = m_fSecsLeftInGameButtonBlink[gc][gb] > 0 ;
 					}
@@ -336,7 +336,7 @@ void LightsManager::Update( float fDeltaTime )
 				//
 				// Blink on button presses.
 				//
-				FOREACH_GameController( gc )
+				FOREACH_ENUM( GameController,  gc )
 				{
 					FOREACH_GameButton_Custom( gb )
 					{
@@ -452,9 +452,9 @@ CabinetLight LightsManager::GetFirstLitCabinetLight()
 
 GameInput LightsManager::GetFirstLitGameButtonLight()
 {
-	FOREACH_GameController( gc )
+	FOREACH_ENUM( GameController,  gc )
 	{
-		FOREACH_GameButton( gb )
+		FOREACH_ENUM( GameButton,  gb )
 		{
 			if( m_LightsState.m_bGameButtonLights[gc][gb] )
 				return GameInput( gc, gb );

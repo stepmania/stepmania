@@ -751,7 +751,7 @@ RageDisplay *CreateDisplay()
 
 static void SwitchToLastPlayedGame()
 {
-	const Game *pGame = GameManager::StringToGameType( PREFSMAN->GetCurrentGame() );
+	const Game *pGame = GameManager::StringToGame( PREFSMAN->GetCurrentGame() );
 
 	/* If the active game type isn't actually available, revert to the default. */
 	if( pGame == NULL )
@@ -1408,7 +1408,7 @@ void HandleInputEvents(float fDeltaTime)
 		/* When a GameButton is pressed, stop repeating other keys on the same controller. */
 		if( input.type == IET_FIRST_PRESS && input.MenuI != GameButton_Invalid )
 		{
-			FOREACH_GameButton( m )
+			FOREACH_ENUM( GameButton,  m )
 			{
 				if( input.MenuI != m )
 					INPUTMAPPER->RepeatStopKey( m, input.pn );
