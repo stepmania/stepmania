@@ -6,20 +6,33 @@
 #include "RageInputDevice.h"
 #include "GameInput.h"
 #include "PlayerNumber.h"
+class Game;
 
 const int NUM_GAME_TO_DEVICE_SLOTS	= 5;	// five device inputs may map to one game input
 const int NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3;
 const int NUM_USER_GAME_TO_DEVICE_SLOTS = 2;
 
-#define InputMapping_END {-1, DeviceButton_Invalid, GameButton_Invalid, false },	// end marker
-struct InputMapping
+struct AutoMappingEntry
 {
-	bool IsEndMarker() const { return deviceButton == deviceButton && gb == GameButton_Invalid; }
+	AutoMappingEntry( int i, DeviceButton db, GameButton gb, bool b )
+	{
+		m_iSlotIndex = i;
+		m_deviceButton = db;
+		m_gb = gb;
+		m_bSecondController = b;
+	}
+	AutoMappingEntry()
+	{
+		m_iSlotIndex = -1;
+		m_deviceButton = DeviceButton_Invalid;
+		m_gb = GameButton_Invalid;
+		m_bSecondController = false;
+	}
+	bool IsEmpty() const { return m_deviceButton == DeviceButton_Invalid  &&  m_gb == GameButton_Invalid; }
 
-	int iSlotIndex;
-	DeviceButton deviceButton;
-	GameButton gb; // GameButton_Invalid == end marker
-
+	int m_iSlotIndex;
+	DeviceButton m_deviceButton;
+	GameButton m_gb; // GameButton_Invalid == end marker
 	/*
 	 * If this is true, this is an auxilliary mapping assigned to the second
 	 * player.  If two of the same device are found, and the device has secondary
@@ -28,7 +41,71 @@ struct InputMapping
 	 * (We can't tell if a slave pad is actually there.)  Then, if a second primary
 	 * is found (DEVICE_PUMP2), 2P will be mapped to it. 
 	 */
-	bool SecondController;
+	bool m_bSecondController;
+};
+
+struct AutoMappings
+{
+	AutoMappings( 
+		RString s1, 
+		RString s2, 
+		RString s3, 
+		AutoMappingEntry im0 = AutoMappingEntry(), 
+		AutoMappingEntry im1 = AutoMappingEntry(), 
+		AutoMappingEntry im2 = AutoMappingEntry(), 
+		AutoMappingEntry im3 = AutoMappingEntry(), 
+		AutoMappingEntry im4 = AutoMappingEntry(), 
+		AutoMappingEntry im5 = AutoMappingEntry(), 
+		AutoMappingEntry im6 = AutoMappingEntry(), 
+		AutoMappingEntry im7 = AutoMappingEntry(), 
+		AutoMappingEntry im8 = AutoMappingEntry(), 
+		AutoMappingEntry im9 = AutoMappingEntry(), 
+		AutoMappingEntry im10 = AutoMappingEntry(), 
+		AutoMappingEntry im11 = AutoMappingEntry(), 
+		AutoMappingEntry im12 = AutoMappingEntry(), 
+		AutoMappingEntry im13 = AutoMappingEntry(), 
+		AutoMappingEntry im14 = AutoMappingEntry(), 
+		AutoMappingEntry im15 = AutoMappingEntry(), 
+		AutoMappingEntry im16 = AutoMappingEntry(), 
+		AutoMappingEntry im17 = AutoMappingEntry(), 
+		AutoMappingEntry im18 = AutoMappingEntry(), 
+		AutoMappingEntry im19 = AutoMappingEntry(),
+		AutoMappingEntry im20 = AutoMappingEntry(), 
+		AutoMappingEntry im21 = AutoMappingEntry(), 
+		AutoMappingEntry im22 = AutoMappingEntry(), 
+		AutoMappingEntry im23 = AutoMappingEntry(), 
+		AutoMappingEntry im24 = AutoMappingEntry(), 
+		AutoMappingEntry im25 = AutoMappingEntry(), 
+		AutoMappingEntry im26 = AutoMappingEntry(), 
+		AutoMappingEntry im27 = AutoMappingEntry(), 
+		AutoMappingEntry im28 = AutoMappingEntry(), 
+		AutoMappingEntry im29 = AutoMappingEntry(),
+		AutoMappingEntry im30 = AutoMappingEntry(), 
+		AutoMappingEntry im31 = AutoMappingEntry(), 
+		AutoMappingEntry im32 = AutoMappingEntry(), 
+		AutoMappingEntry im33 = AutoMappingEntry(), 
+		AutoMappingEntry im34 = AutoMappingEntry(), 
+		AutoMappingEntry im35 = AutoMappingEntry(), 
+		AutoMappingEntry im36 = AutoMappingEntry(), 
+		AutoMappingEntry im37 = AutoMappingEntry(), 
+		AutoMappingEntry im38 = AutoMappingEntry(), 
+		AutoMappingEntry im39 = AutoMappingEntry() )
+	{
+		m_sGame = s1;
+		m_sDriverRegex = s2;
+		m_sControllerName = s3;
+#define PUSH( im )	if(!im.IsEmpty()) m_vMaps.push_back(im);
+		PUSH(im0);PUSH(im1);PUSH(im2);PUSH(im3);PUSH(im4);PUSH(im5);PUSH(im6);PUSH(im7);PUSH(im8);PUSH(im9);PUSH(im10);PUSH(im11);PUSH(im12);PUSH(im13);PUSH(im14);PUSH(im15);PUSH(im16);PUSH(im17);PUSH(im18);PUSH(im19);
+		PUSH(im20);PUSH(im21);PUSH(im22);PUSH(im23);PUSH(im24);PUSH(im25);PUSH(im26);PUSH(im27);PUSH(im28);PUSH(im29);PUSH(im30);PUSH(im31);PUSH(im32);PUSH(im33);PUSH(im34);PUSH(im35);PUSH(im36);PUSH(im37);PUSH(im38);PUSH(im39);
+#undef PUSH
+	}
+
+	/* Strings used by automatic joystick mappings. */
+	RString m_sGame;	// only used
+	RString m_sDriverRegex;	// reported by InputHandler
+	RString m_sControllerName;	// the product name of the controller
+
+	vector<AutoMappingEntry> m_vMaps;
 };
 
 class InputScheme
@@ -43,7 +120,7 @@ public:
 	};
 	/* Data for each Game-specific GameButton.  This starts at GAME_BUTTON_NEXT. */
 	GameButtonInfo m_GameButtonInfo[NUM_GameButton];
-	const InputMapping *m_Maps;
+	const AutoMappings *m_pAutoMappings;
 
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
 	GameButton GameButtonToMenuButton( GameButton gb ) const;
@@ -53,6 +130,26 @@ public:
 	const char *GetGameButtonName( GameButton gb ) const;
 };
 #define FOREACH_GameButtonInScheme( s, var )	for( GameButton var=(GameButton)0; var<s->m_iButtonsPerController; enum_add<GameButton>( var, +1 ) )
+
+class InputMappings
+{
+public:
+	// only filled for automappings
+	RString m_sDeviceRegex;
+	RString m_sDescription;
+
+	// map from a GameInput to multiple DeviceInputs
+	DeviceInput m_GItoDI[NUM_GameController][NUM_GameButton][NUM_GAME_TO_DEVICE_SLOTS];
+
+	void Clear();
+	void Unmap( InputDevice id );
+	void WriteMappings( const InputScheme *pInputScheme, RString sFilePath );
+	void ReadMappings( const InputScheme *pInputScheme, RString sFilePath, bool bIsAutoMapping );
+	void SetInputMap( const DeviceInput &DeviceI, const GameInput &GameI, int iSlotIndex );
+
+	void ClearFromInputMap( const DeviceInput &DeviceI );
+	bool ClearFromInputMap( const GameInput &GameI, int iSlotIndex );
+};
 
 class InputMapper
 {
@@ -105,11 +202,10 @@ public:
 	static MultiPlayer InputDeviceToMultiPlayer( InputDevice id );
 
 	void Unmap( InputDevice device );
-	void ApplyMapping( const InputMapping *maps, GameController gc, InputDevice device );
+	void ApplyMapping( const vector<AutoMappingEntry> &vMmaps, GameController gc, InputDevice id );
 
 protected:
-	// all the DeviceInputs that map to a GameInput
-	DeviceInput m_GItoDI[NUM_GameController][NUM_GameButton][NUM_GAME_TO_DEVICE_SLOTS];
+	InputMappings m_mappings;
 
 	void UpdateTempDItoGI();
 	const InputScheme *m_pInputScheme;
