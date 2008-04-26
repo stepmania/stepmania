@@ -1,1 +1,1 @@
-return LoadFont("common normal") .. { InitCommand=cmd(settext,"Personal Record NN";);
+return LoadFont("common normal") .. { InitCommand=cmd(settext,"Profile Record #" .. (Var "ProfileHighScoreNumber"); );

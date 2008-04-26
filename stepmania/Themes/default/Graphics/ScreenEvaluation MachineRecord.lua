@@ -1,1 +1,1 @@
-return LoadFont("common normal") .. { InitCommand=cmd(settext,"Machine Record NN";);
+return LoadFont("common normal") .. { InitCommand=cmd(settext,"Machine Record #" .. (Var "MachineHighScoreNumber"); );
