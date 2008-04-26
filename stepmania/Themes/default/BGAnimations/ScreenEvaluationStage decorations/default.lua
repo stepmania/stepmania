@@ -27,7 +27,7 @@ function ComboGraph( pn )
 end
 
 
-local t = LoadFallbackB( "decorations" );
+local t = THEME:GetPathB("ScreenWithMenuElements2", "decorations" );
 
 t[#t+1] = GraphDisplay(PLAYER_1) .. {
 	InitCommand = cmd(x,SCREEN_CENTER_X-222;y,SCREEN_CENTER_Y-16;draworder,1;);
