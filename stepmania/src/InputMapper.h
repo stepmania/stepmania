@@ -32,7 +32,7 @@ struct AutoMappingEntry
 
 	int m_iSlotIndex;
 	DeviceButton m_deviceButton;
-	GameButton m_gb; // GameButton_Invalid == end marker
+	GameButton m_gb; // GameButton_Invalid means unmap this button
 	/*
 	 * If this is true, this is an auxilliary mapping assigned to the second
 	 * player.  If two of the same device are found, and the device has secondary
