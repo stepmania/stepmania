@@ -28,10 +28,11 @@ void ScreenNetEvaluation::Init()
 	m_bHasStats = false;
 	m_iCurrentPlayer = 0;
 
-	FOREACH_ENUM( PlayerNumber, pn )
-		if( GAMESTATE->IsPlayerEnabled(pn) )
-			m_pActivePlayer = pn;
-
+	FOREACH_EnabledPlayer( pn )
+	{
+		m_pActivePlayer = pn;
+	}
+	
 	if( m_pActivePlayer == PLAYER_1 )
 		m_iShowSide = 2;
 	else
@@ -192,9 +193,13 @@ void ScreenNetEvaluation::UpdateStats()
 
 	for( int j=0; j<NETNUMTAPSCORES; ++j )
 	{
-		int iNumDigits = (j==JudgmentLine_MaxCombo)? MAX_COMBO_NUM_DIGITS:4;
-		if( GAMESTATE->IsPlayerEnabled(m_pActivePlayer) ) // XXX: Why would this not be the case? -- Steve
+		//The name will be blank if ScreenEvaluation determined the
+		//line should not be shown
+		if( !m_textJudgmentLineNumber[j][m_pActivePlayer].GetName().empty() )
+		{
+			int iNumDigits = (j==JudgmentLine_MaxCombo)? MAX_COMBO_NUM_DIGITS:4;
 			m_textJudgmentLineNumber[j][m_pActivePlayer].SetText( ssprintf("%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j]) );
+		}
 	}
 
 	m_textPlayerOptions[m_pActivePlayer].SetText( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].playerOptions );
