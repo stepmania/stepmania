@@ -138,7 +138,7 @@ static void FileNameToClassAndElement( const RString &sFileName, RString &sMetri
 }
 
 
-static RString ClassAndElementToFileName( const RString &sMetricsGroup, const RString &sElement )
+static RString MetricsGroupAndElementToFileName( const RString &sMetricsGroup, const RString &sElement )
 {
 	if( sMetricsGroup.empty() )
 		return sElement;
@@ -523,12 +523,12 @@ try_element_again:
 
 	if( bLookingForSpecificFile )
 	{
-		GetDirListing( sThemeDir + sCategory+"/"+ClassAndElementToFileName(sMetricsGroup,sElement), asElementPaths, false, true );
+		GetDirListing( sThemeDir + sCategory+"/"+MetricsGroupAndElementToFileName(sMetricsGroup,sElement), asElementPaths, false, true );
 	}
 	else	// look for all files starting with sFileName that have types we can use
 	{
 		vector<RString> asPaths;
-		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sMetricsGroup,sElement) + "*",
+		GetDirListing( sThemeDir + sCategory + "/" + MetricsGroupAndElementToFileName(sMetricsGroup,sElement) + "*",
 						asPaths, false, true );
 
 		for( unsigned p = 0; p < asPaths.size(); ++p )
@@ -593,7 +593,7 @@ try_element_again:
 		RString message = ssprintf( 
 			"ThemeManager:  There is more than one theme element that matches "
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
-			sThemeName.c_str(), sCategory.c_str(), ClassAndElementToFileName(sMetricsGroup,sElement).c_str() );
+			sThemeName.c_str(), sCategory.c_str(), MetricsGroupAndElementToFileName(sMetricsGroup,sElement).c_str() );
 
 		switch( Dialog::AbortRetryIgnore(message) )
 		{
@@ -670,13 +670,13 @@ RString ThemeManager::GetPathToAndFallback( ElementCategory category, const RStr
 			return RString();
 
 		// search fallback name (if any)
-		sMetricsGroup = GetClassFallback( sMetricsGroup );
+		sMetricsGroup = GetMetricsGroupFallback( sMetricsGroup );
 		if( sMetricsGroup.empty() )
 			return RString();
 	}
 
 	RageException::Throw( "Infinite recursion looking up theme element \"%s\"",
-		ClassAndElementToFileName(sMetricsGroup, sElement).c_str() );
+		MetricsGroupAndElementToFileName(sMetricsGroup, sElement).c_str() );
 	/* Not really reached, but Appple's gcc 4 can't figure that out without optimization
 	 * even though RE:Throw() is correctly annotated. */
 	while( true ) {}
@@ -689,7 +689,7 @@ RString ThemeManager::GetPath( ElementCategory category, const RString &sMetrics
 	const RString sMetricsGroup = sMetricsGroup_;
 	const RString sElement = sElement_;
 
-	RString sFileName = ClassAndElementToFileName( sMetricsGroup, sElement );
+	RString sFileName = MetricsGroupAndElementToFileName( sMetricsGroup, sElement );
 
 	map<RString, RString> &Cache = g_ThemePathCache[category];
 	{
@@ -793,7 +793,7 @@ void ThemeManager::ReloadMetrics()
 }
 
 
-RString ThemeManager::GetClassFallback( const RString &sMetricsGroup )
+RString ThemeManager::GetMetricsGroupFallback( const RString &sMetricsGroup )
 {
 	ASSERT( g_pLoadedThemeData );
 
@@ -825,7 +825,7 @@ bool ThemeManager::GetMetricRawRecursive( const IniFile &ini, const RString &sMe
 		if( !sValueName.compare("Fallback") )
 			return false;
 
-		sMetricsGroup = GetClassFallback( sMetricsGroup );
+		sMetricsGroup = GetMetricsGroupFallback( sMetricsGroup );
 		if( sMetricsGroup.empty() )
 			return false;
 	}
@@ -1105,7 +1105,7 @@ void ThemeManager::GetMetricsThatBeginWith( const RString &sMetricsGroup_, const
 		}
 
 		// put the fallback (if any) in sMetricsGroup
-		sMetricsGroup = GetClassFallback( sMetricsGroup );
+		sMetricsGroup = GetMetricsGroupFallback( sMetricsGroup );
 	}
 }
 

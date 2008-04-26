@@ -88,7 +88,7 @@ public:
 
 	void GetMetricsThatBeginWith( const RString &sMetricsGroup, const RString &sValueName, set<RString> &vsValueNamesOut );
 
-	RString GetClassFallback( const RString &sMetricsGroup );
+	RString GetMetricsGroupFallback( const RString &sMetricsGroup );
 
 	static RString GetBlankGraphicPath();
 
