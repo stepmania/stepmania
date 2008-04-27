@@ -1,4 +1,4 @@
-local t = LoadFallbackB( "decorations" );
+local t = LoadFallbackB();
 
 t[#t+1] = LoadActor( THEME:GetPathB('','_standard decoration required'), "StageFrame", "StageFrame" );
 

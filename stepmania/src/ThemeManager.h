@@ -55,9 +55,14 @@ public:
 
 	static void EvaluateString( RString &sText );
 
-	/* I renamed these for two reasons.  The overload conflicts with the ones below:
-	 * GetPathToB( str, str ) was matching the ones below instead of these.  It's also
-	 * easier to search for uses of obsolete functions if they have a different name. */
+	struct PathInfo
+	{
+		RString sResolvedPath;
+		RString sMatchingMetricsGroup;
+		RString sMatchingElement;
+	};
+
+	bool GetPathInfo( PathInfo &out, ElementCategory category, const RString &sMetricsGroup, const RString &sElement, bool bOptional=false );
 	RString GetPath( ElementCategory category, const RString &sMetricsGroup, const RString &sElement, bool bOptional=false );
 	RString GetPathB( const RString &sMetricsGroup, const RString &sElement, bool bOptional=false ) { return GetPath(EC_BGANIMATIONS,sMetricsGroup,sElement,bOptional); };
 	RString GetPathF( const RString &sMetricsGroup, const RString &sElement, bool bOptional=false ) { return GetPath(EC_FONTS,sMetricsGroup,sElement,bOptional); };
@@ -106,8 +111,9 @@ protected:
 	void LoadThemeMetrics( const RString &sThemeName, const RString &sLanguage_ );
 	RString GetMetricRaw( const IniFile &ini, const RString &sMetricsGroup, const RString &sValueName );
 	bool GetMetricRawRecursive( const IniFile &ini, const RString &sMetricsGroup, const RString &sValueName, RString &sRet );
-	RString GetPathToAndFallback( ElementCategory category, const RString &sMetricsGroup, const RString &sFile );
-	RString GetPathToRaw( const RString &sThemeName, ElementCategory category, const RString &sMetricsGroup, const RString &sFile );
+	
+	bool GetPathInfoToAndFallback( PathInfo &out, ElementCategory category, const RString &sMetricsGroup, const RString &sFile );
+	bool GetPathInfoToRaw( PathInfo &out, const RString &sThemeName, ElementCategory category, const RString &sMetricsGroup, const RString &sFile );
 	static RString GetThemeDirFromName( const RString &sThemeName );
 	RString GetElementDir( const RString &sThemeName );
 	static RString GetMetricsIniPath( const RString &sThemeName );

@@ -114,7 +114,7 @@ void ThemeManager::Unsubscribe( IThemeMetric *p )
 
 
 /* We spend a lot of time doing redundant theme path lookups.  Cache results. */
-static map<RString, RString> g_ThemePathCache[NUM_ElementCategory];
+static map<RString, ThemeManager::PathInfo> g_ThemePathCache[NUM_ElementCategory];
 void ThemeManager::ClearThemePathCache()
 {
 	for( int i = 0; i < NUM_ElementCategory; ++i )
@@ -503,10 +503,10 @@ void ThemeManager::FilterFileLanguages( vector<RString> &asPaths )
 		asPaths.erase( it, asPaths.end() );
 }
 
-RString ThemeManager::GetPathToRaw( const RString &sThemeName_, ElementCategory category, const RString &sMetricsGroup_, const RString &sElement_ ) 
+bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, ElementCategory category, const RString &sMetricsGroup_, const RString &sElement_ ) 
 {
 	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
-	 * else that might suddenly go away when we call ReloadMetrics. */
+	 * else that might suddenly go away when we call ReloadMetrics, so make a copy. */
 	const RString sThemeName = sThemeName_;
 	const RString sMetricsGroup = sMetricsGroup_;
 	const RString sElement = sElement_;
@@ -578,7 +578,7 @@ try_element_again:
 	
 
 	if( asElementPaths.size() == 0 )
-		return RString();	// This isn't fatal.
+		return false;	// This isn't fatal.
 
 	FilterFileLanguages( asElementPaths );
 
@@ -613,7 +613,12 @@ try_element_again:
 	bool bIsARedirect = GetExtension(sPath).CompareNoCase("redir")==0;
 
 	if( !bIsARedirect )
-		return sPath;
+	{
+		out.sResolvedPath = sPath;
+		out.sMatchingMetricsGroup = sMetricsGroup;
+		out.sMatchingElement = sElement;
+		return true;
+	}
 
 	RString sNewFileName;
 	GetFileContents( sPath, sNewFileName, true );
@@ -629,10 +634,8 @@ try_element_again:
 	 * up resolving to the overridden background. */
 	/* Use GetPathToOptional because we don't want report that there's an element
 	 * missing.  Instead we want to report that the redirect is invalid. */
-	RString sNewPath = GetPath(category, sNewClassName, sNewFile, true);
-
-	if( !sNewPath.empty() )
-		return sNewPath;
+	if( GetPathInfo(out,category,sNewClassName,sNewFile,true) )
+		return true;
 
 	RString sMessage = ssprintf(
 			"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
@@ -645,13 +648,14 @@ try_element_again:
 		ReloadMetrics();
 		goto try_element_again;
 	case Dialog::ignore:
-		return GetPath( category, "", "_missing" );
+		GetPathInfo( out, category, "", "_missing" );
+		return true;
 	}
 
 	RageException::Throw( "%s", sMessage.c_str() ); 
 }
 
-RString ThemeManager::GetPathToAndFallback( ElementCategory category, const RString &sMetricsGroup_, const RString &sElement ) 
+bool ThemeManager::GetPathInfoToAndFallback( PathInfo &out, ElementCategory category, const RString &sMetricsGroup_, const RString &sElement ) 
 {
 	RString sMetricsGroup( sMetricsGroup_ );
 
@@ -661,18 +665,17 @@ RString ThemeManager::GetPathToAndFallback( ElementCategory category, const RStr
 		FOREACHD_CONST( Theme, g_vThemes, iter )
 		{
 			// search with requested name
-			RString sRet = GetPathToRaw( iter->sThemeName, category, sMetricsGroup, sElement );
-			if( !sRet.empty() )
-				return sRet;
+			if( GetPathInfoToRaw( out, iter->sThemeName, category, sMetricsGroup, sElement ) )
+				return true;
 		}
 
 		if( sMetricsGroup.empty() )
-			return RString();
+			return false;
 
 		// search fallback name (if any)
 		sMetricsGroup = GetMetricsGroupFallback( sMetricsGroup );
 		if( sMetricsGroup.empty() )
-			return RString();
+			return false;
 	}
 
 	RageException::Throw( "Infinite recursion looking up theme element \"%s\"",
@@ -682,7 +685,7 @@ RString ThemeManager::GetPathToAndFallback( ElementCategory category, const RStr
 	while( true ) {}
 }
 
-RString ThemeManager::GetPath( ElementCategory category, const RString &sMetricsGroup_, const RString &sElement_, bool bOptional ) 
+bool ThemeManager::GetPathInfo( PathInfo &out, ElementCategory category, const RString &sMetricsGroup_, const RString &sElement_, bool bOptional ) 
 {
 	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
 	 * else that might suddenly go away when we call ReloadMetrics. */
@@ -691,29 +694,31 @@ RString ThemeManager::GetPath( ElementCategory category, const RString &sMetrics
 
 	RString sFileName = MetricsGroupAndElementToFileName( sMetricsGroup, sElement );
 
-	map<RString, RString> &Cache = g_ThemePathCache[category];
+	map<RString, PathInfo> &Cache = g_ThemePathCache[category];
 	{
-		map<RString, RString>::const_iterator i;
+		map<RString, PathInfo>::const_iterator i;
 		
 		i = Cache.find( sFileName );
 		if( i != Cache.end() )
-			return i->second;
+		{
+			out = i->second;
+			return true;
+		}
 	}
 	
 try_element_again:
 	
 	// search the current theme
-	RString ret = GetPathToAndFallback( category, sMetricsGroup, sElement );
-	if( !ret.empty() )	// we found something
+	if( GetPathInfoToAndFallback( out, category, sMetricsGroup, sElement ) )	// we found something
 	{
-		Cache[sFileName] = ret;
-		return ret;
+		Cache[sFileName] = out;
+		return true;
 	}
 
 	if( bOptional )
 	{
-		Cache[sFileName] = "";
-		return RString();
+		Cache[sFileName] = PathInfo();	// clear cache entry
+		return false;
 	}
 
 	const RString &sCategory = ElementCategoryToString(category);
@@ -740,8 +745,9 @@ try_element_again:
 		if( sFileName == "_missing" )
 			RageException::Throw( "\"_missing\" isn't present in \"%s%s\".", GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str(), sCategory.c_str() );
 
-		Cache[sFileName] = GetPath( category, "", "_missing" );
-		return Cache[sFileName];
+		GetPathInfo( out, category, "", "_missing" );
+		Cache[sFileName] = out;
+		return true;
 	case Dialog::abort:
 		LOG->UserLog( "Theme element", sCategory + '/' + sFileName,
 			      "could not be found in \"%s\" or \"%s\".",
@@ -757,6 +763,13 @@ try_element_again:
 	FAIL_M( "" ); // Silence gcc 4.
 }
 
+RString ThemeManager::GetPath( ElementCategory category, const RString &sMetricsGroup, const RString &sElement, bool bOptional )
+{
+	PathInfo pi;
+	GetPathInfo( pi, category, sMetricsGroup, sElement, bOptional );
+	ASSERT( pi.sResolvedPath );
+	return pi.sResolvedPath;
+}
 
 RString ThemeManager::GetMetricsIniPath( const RString &sThemeName )
 {
@@ -1123,6 +1136,15 @@ class LunaThemeManager: public Luna<ThemeManager>
 public:
 	static int GetMetric( T* p, lua_State *L )			{ p->PushMetric( L, SArg(1),SArg(2) ); return 1; }
 	static int GetString( T* p, lua_State *L )			{ lua_pushstring(L, p->GetString(SArg(1),SArg(2)) ); return 1; }
+	static int GetPathInfoB( T* p, lua_State *L )
+	{
+		ThemeManager::PathInfo pi;
+		p->GetPathInfo( pi, EC_BGANIMATIONS, SArg(1), SArg(2) );
+		lua_pushstring(L, pi.sResolvedPath);
+		lua_pushstring(L, pi.sMatchingMetricsGroup);
+		lua_pushstring(L, pi.sMatchingElement);
+		return 3;
+	}
 	static int GetPathF( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathF(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
@@ -1133,6 +1155,7 @@ public:
 	{
 		ADD_METHOD( GetMetric );
 		ADD_METHOD( GetString );
+		ADD_METHOD( GetPathInfoB );
 		ADD_METHOD( GetPathF );
 		ADD_METHOD( GetPathG );
 		ADD_METHOD( GetPathB );

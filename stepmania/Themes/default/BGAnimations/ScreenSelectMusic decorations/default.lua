@@ -62,7 +62,7 @@ local function OptionsArea(pn)
 end
 
 
-local t = LoadFallbackB( "decorations" );
+local t = LoadFallbackB();
 t[#t+1] = Def.ActorFrame { 
 	InitCommand=cmd(x,SCREEN_CENTER_X+140;y,SCREEN_CENTER_Y-10);
 	OnCommand=cmd(addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);

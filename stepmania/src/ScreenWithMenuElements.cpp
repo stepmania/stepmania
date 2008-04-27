@@ -78,7 +78,7 @@ void ScreenWithMenuElements::Init()
 	/* Experimental: Load "decorations" and make them children of the screen. */
 	{
 		AutoActor decorations;
-		decorations.Load( THEME->GetPathB(m_sName,"decorations") );
+		decorations.LoadB( m_sName, "decorations" );
 		ActorFrame *pFrame = dynamic_cast<ActorFrame*>((Actor*)decorations);
 		if( pFrame )
 			pFrame->TransferChildren( this );

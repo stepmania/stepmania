@@ -21,8 +21,9 @@ public:
 	Actor *operator->()		{ return m_pActor; }
 	void Unload();
 	bool IsLoaded() const		{ return m_pActor != NULL; }
-	void Load( Actor *pActor );
+	void Load( Actor *pActor );	// transfer pointer
 	void Load( const RString &sPath );
+	void LoadB( const RString &sMetricsGroup, const RString &sElement );	// load a background and set up LuaThreadVariables for recursive loading
 	void LoadActorFromNode( const XNode *pNode, Actor *pParent );
 	void LoadAndSetName( const RString &sScreenName, const RString &sActorName );
 

@@ -45,6 +45,16 @@ void AutoActor::Load( const RString &sPath )
 		m_pActor = new Actor;
 }
 
+void AutoActor::LoadB( const RString &sMetricsGroup, const RString &sElement )
+{
+	ThemeManager::PathInfo pi;
+	bool b = THEME->GetPathInfo( pi, EC_BGANIMATIONS, sMetricsGroup, sElement );
+	ASSERT( b );
+	LuaThreadVariable var1( "MatchingMetricsGroup", pi.sMatchingMetricsGroup );
+	LuaThreadVariable var2( "MatchingElement", pi.sMatchingElement );
+	Load( pi.sResolvedPath );
+}
+
 void AutoActor::LoadActorFromNode( const XNode* pNode, Actor *pParent )
 {
 	Unload();

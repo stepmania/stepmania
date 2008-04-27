@@ -1,10 +1,32 @@
-function LoadFallbackB( element )
-	-- TODO: This should fall back to the current lookup's fallback, and not LoadingScreen's fallback
-	-- TODO: Remove element parameter and make it a LuaThreadVar
-	local fallback_screen = THEME:GetMetric(Var 'LoadingScreen','Fallback');
-	local fallback_path = THEME:GetPathB(fallback_screen,element);
-	--Trace('fallback_path ' .. fallback_path );
-	return LoadActor( fallback_path );
+local g_metrics_group = nil;
+local g_element = nil;
+
+function LoadFallbackB()
+	-- Load the fallback BGA for the element that is currently being loaded.
+	-- The fallback metrics group and element name will come either from LuaThreadVars
+	-- (loading from C++) or from the Lua globals above (loading from Lua).
+	
+	--Warn( "g_element " .. (g_element or "") );
+	--Warn( "MatchingElement " .. (Var 'MatchingElement' or "") );
+	--Warn( "g_metrics_group " .. (g_metrics_group or "") );
+	--Warn( "MatchingMetricsGroup " .. (Var 'MatchingMetricsGroup' or "") );
+
+	local metrics_group = g_metrics_group or Var 'MatchingMetricsGroup';
+	local element = g_element or Var 'MatchingElement';
+	local fallback = THEME:GetMetric(metrics_group,'Fallback');
+	
+	local old_metrics_group = g_metrics_group;
+	local old_element = g_element;
+	
+	local path;
+	path, g_metrics_group, g_element = THEME:GetPathInfoB(fallback,element);
+	--Trace('path ' .. path );
+	local t = LoadActor( path );
+	
+	g_metrics_group = old_metrics_group;
+	g_element = old_element;
+	
+	return t;
 end
 
 function FormatNumSongsPlayed( num )
