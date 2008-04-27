@@ -7,7 +7,7 @@
 #include "Sprite.h"
 #include "RageSound.h"
 #include "GameConstantsAndTypes.h"
-#include "OptionIcon.h"
+#include "ModIcon.h"
 #include "Banner.h"
 
 
@@ -59,7 +59,7 @@ private:
 	Sprite			m_sprCardArrows[NUM_PLAYERS];
 	
 	Sprite			m_sprAttackFrame[NUM_PLAYERS];
-	OptionIcon		m_AttackIcons[NUM_PLAYERS][NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
+	ModIcon		m_AttackIcons[NUM_PLAYERS][NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
 
 	Sprite			m_sprExplanation;
 

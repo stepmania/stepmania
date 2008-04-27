@@ -6,7 +6,7 @@
 #include "ActorFrame.h"
 #include "BitmapText.h"
 #include "OptionsCursor.h"
-#include "OptionIcon.h"
+#include "ModIcon.h"
 #include "ThemeMetric.h"
 #include "AutoActor.h"
 
@@ -27,7 +27,7 @@ private:
 	AutoActor			m_sprFrameNormal;
 	AutoActor			m_sprFrameExit;
 	BitmapText			m_textTitle;
-	OptionIcon			m_OptionIcon;
+	ModIcon			m_ModIcon;
 
 	// metrics
 	ThemeMetric<float>		FRAME_X;
@@ -46,17 +46,17 @@ private:
 	ThemeMetric<apActorCommands>	ITEM_GAIN_FOCUS_COMMAND;
 	ThemeMetric<apActorCommands>	ITEM_LOSE_FOCUS_COMMAND;
 	ThemeMetric<bool>		EXIT_HIDE_ITEM;
-	ThemeMetric1D<float>		ICONS_X;
-	ThemeMetric<apActorCommands>	ICONS_ON_COMMAND;
+	ThemeMetric1D<float>		MOD_ICON_X;
+	ThemeMetric<apActorCommands>	MOD_ICON_ON_COMMAND;
 	ThemeMetric<RageColor>		COLOR_SELECTED;
 	ThemeMetric<RageColor>		COLOR_NOT_SELECTED;
 	ThemeMetric<RageColor>		COLOR_DISABLED;
 	ThemeMetric<bool>		CAPITALIZE_ALL_OPTION_NAMES;
 	ThemeMetric<float>		TWEEN_SECONDS;
 	ThemeMetric<bool>		SHOW_BPM_IN_SPEED_TITLE;
-	ThemeMetric<bool>		SHOW_OPTION_ICONS;
+	ThemeMetric<bool>		SHOW_MOD_ICONS;
 	ThemeMetric<bool>		SHOW_UNDERLINES;
-	ThemeMetric<RString>		OPTION_ICON_METRICS_GROUP;
+	ThemeMetric<RString>		MOD_ICON_METRICS_GROUP;
 
 	friend class OptionRow;
 };
@@ -72,7 +72,7 @@ public:
 	void LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown );
 	void LoadExit();
 
-	void SetOptionIcon( PlayerNumber pn, const RString &sText, GameCommand &gc );
+	void SetModIcon( PlayerNumber pn, const RString &sText, GameCommand &gc );
 
 	void ImportOptions( const vector<PlayerNumber> &vpns );
 	int ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
@@ -132,26 +132,26 @@ public:
 protected:
 	RString GetRowTitle() const;
 
-	const OptionRowType		*m_pParentType;
-	RowType				m_RowType;
-	OptionRowHandler*		m_pHand;
+	const OptionRowType	*m_pParentType;
+	RowType			m_RowType;
+	OptionRowHandler*	m_pHand;
 
-	ActorFrame			m_Frame;
+	ActorFrame		m_Frame;
 
-	vector<BitmapText *>		m_textItems;			// size depends on m_bRowIsLong and which players are joined
-	vector<OptionsCursor *>		m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
+	vector<BitmapText *>	m_textItems;			// size depends on m_bRowIsLong and which players are joined
+	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 
-	Actor				*m_sprFrame;
-	BitmapText			*m_textTitle;
-	OptionIcon			*m_OptionIcons[NUM_PLAYERS];
+	Actor			*m_sprFrame;
+	BitmapText		*m_textTitle;
+	ModIcon			*m_ModIcons[NUM_PLAYERS];
 
-	bool				m_bFirstItemGoesDown;
-	bool				m_bRowHasFocus[NUM_PLAYERS];
+	bool			m_bFirstItemGoesDown;
+	bool			m_bRowHasFocus[NUM_PLAYERS];
 
-	int				m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
+	int			m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
 	// Only one will true at a time if m_pHand->m_Def.bMultiSelect
-	vector<bool>			m_vbSelected[NUM_PLAYERS];	// size = m_pHand->m_Def.choices.size()
-	Actor::TweenState m_tsDestination;	// this should approach m_tsDestination.
+	vector<bool>		m_vbSelected[NUM_PLAYERS];	// size = m_pHand->m_Def.choices.size()
+	Actor::TweenState	m_tsDestination;	// this should approach m_tsDestination.
 
 public:
 	void SetDestination( Actor::TweenState &ts, bool bTween );

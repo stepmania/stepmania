@@ -37,7 +37,7 @@ static const char *SelectionStateNames[] = {
 XToString( SelectionState );
 
 
-const int NUM_SCORE_DIGITS	=	9;
+const int NUM_SCORE_DIGITS = 9;
 
 #define SHOW_OPTIONS_MESSAGE_SECONDS		THEME->GetMetricF( m_sName, "ShowOptionsMessageSeconds" )
 

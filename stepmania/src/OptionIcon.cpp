@@ -1,15 +1,15 @@
 #include "global.h"
-#include "OptionIcon.h"
+#include "ModIcon.h"
 #include "ThemeManager.h"
 #include "PlayerOptions.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
 
-OptionIcon::OptionIcon()
+ModIcon::ModIcon()
 {
 }
 
-OptionIcon::OptionIcon( const OptionIcon &cpy ):
+ModIcon::ModIcon( const ModIcon &cpy ):
 	ActorFrame(cpy),
 	m_sprFilled(cpy.m_sprFilled),
 	m_sprEmpty(cpy.m_sprEmpty),
@@ -21,7 +21,7 @@ OptionIcon::OptionIcon( const OptionIcon &cpy ):
 	this->AddChild( &m_text );
 }
 
-void OptionIcon::Load( RString sMetricsGroup )
+void ModIcon::Load( RString sMetricsGroup )
 {
 	m_sprFilled.Load( THEME->GetPathG(sMetricsGroup,"Filled") );
 	this->AddChild( m_sprFilled );
@@ -37,7 +37,7 @@ void OptionIcon::Load( RString sMetricsGroup )
 	Set("");
 }
 
-void OptionIcon::Set( const RString &_sText )
+void ModIcon::Set( const RString &_sText )
 {
 	RString sText = _sText;
 

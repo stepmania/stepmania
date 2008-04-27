@@ -89,11 +89,11 @@ void ScreenNetSelectMusic::Init()
 
 	FOREACH_EnabledPlayer( p )
 	{
-		m_OptionIconRow[p].SetName( ssprintf("OptionIconsP%d",p+1) );
-		m_OptionIconRow[p].Load( "OptionIconRowSelectMusic", p );
-		m_OptionIconRow[p].SetFromGameState();
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_OptionIconRow[p] );
-		this->AddChild( &m_OptionIconRow[p] );
+		m_ModIconRow[p].SetName( ssprintf("ModIconsP%d",p+1) );
+		m_ModIconRow[p].Load( "ModIconRowSelectMusic", p );
+		m_ModIconRow[p].SetFromGameState();
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_ModIconRow[p] );
+		this->AddChild( &m_ModIconRow[p] );
 	}
 
 	//Load SFX next
@@ -278,7 +278,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 		//Update changes
 		FOREACH_EnabledPlayer(p)
-			m_OptionIconRow[p].SetFromGameState();
+			m_ModIconRow[p].SetFromGameState();
 	}
 	else if( SM == SM_SongChanged )
 	{
@@ -454,7 +454,7 @@ void ScreenNetSelectMusic::TweenOffScreen()
 	{
 		OFF_COMMAND( m_DifficultyDisplays[pn] );
 		OFF_COMMAND( m_DifficultyIcon[pn] );
-		OFF_COMMAND( m_OptionIconRow[pn] );
+		OFF_COMMAND( m_ModIconRow[pn] );
 	}
 
 	OFF_COMMAND( m_MusicWheel );

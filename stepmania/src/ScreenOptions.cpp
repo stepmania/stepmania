@@ -416,7 +416,7 @@ void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 	if( def.m_bOneChoiceForAllPlayers )
 		sIcon = "";
 
-	m_pRows[iRow]->SetOptionIcon( pn, sIcon, gc );
+	m_pRows[iRow]->SetModIcon( pn, sIcon, gc );
 }
 
 void ScreenOptions::PositionCursor( PlayerNumber pn )

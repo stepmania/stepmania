@@ -10,7 +10,7 @@
 #include "Difficulty.h"
 #include "DifficultyDisplay.h"
 #include "MusicWheel.h"
-#include "OptionIconRow.h"
+#include "ModIconRow.h"
 #include "BPMDisplay.h"
 
 class ScreenNetSelectMusic : public ScreenNetSelectBase
@@ -74,7 +74,7 @@ private:
 	RageSound m_soundChangeSel;
 
 	BPMDisplay			m_BPMDisplay;
-	OptionIconRow		m_OptionIconRow[NUM_PLAYERS];
+	ModIconRow		m_ModIconRow[NUM_PLAYERS];
 
 	Song *				m_cSong;
 

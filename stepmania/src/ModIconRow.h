@@ -1,7 +1,7 @@
 /* ModIconRow - Shows PlayerOptions and SongOptions in icon form. */
 
-#ifndef OPTION_ICON_ROW_H
-#define OPTION_ICON_ROW_H
+#ifndef ModIconRow_H
+#define ModIconRow_H
 
 
 #include "ActorFrame.h"

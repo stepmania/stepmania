@@ -34,8 +34,8 @@ RString OptionRow::GetThemedItemText( int iChoice ) const
 	return s;
 }
 
-RString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }
-RString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",int(p+1)); }
+RString ITEMS_LONG_ROW_X_NAME( size_t p )	{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }
+RString MOD_ICON_X_NAME( size_t p )		{ return ssprintf("ModIconP%dX",int(p+1)); }
 
 OptionRow::OptionRow( const OptionRowType *pSource )
 {
@@ -43,7 +43,7 @@ OptionRow::OptionRow( const OptionRowType *pSource )
 	m_pHand = NULL;
 
 	m_textTitle = NULL;
-	ZERO( m_OptionIcons );
+	ZERO( m_ModIcons );
 
 	Clear();
 	this->AddChild( &m_Frame );
@@ -100,17 +100,17 @@ void OptionRowType::Load( const RString &sType, Actor *pParent )
 	ITEM_GAIN_FOCUS_COMMAND		.Load(sType,"ItemGainFocusCommand");
 	ITEM_LOSE_FOCUS_COMMAND		.Load(sType,"ItemLoseFocusCommand");
 	EXIT_HIDE_ITEM			.Load(sType,"ExitHideItem");
-	ICONS_X				.Load(sType,ICONS_X_NAME,NUM_PLAYERS);
-	ICONS_ON_COMMAND		.Load(sType,"IconsOnCommand");
+	MOD_ICON_X			.Load(sType,MOD_ICON_X_NAME,NUM_PLAYERS);
+	MOD_ICON_ON_COMMAND		.Load(sType,"ModIconOnCommand");
 	COLOR_SELECTED			.Load(sType,"ColorSelected");
 	COLOR_NOT_SELECTED		.Load(sType,"ColorNotSelected");
 	COLOR_DISABLED			.Load(sType,"ColorDisabled");
 	CAPITALIZE_ALL_OPTION_NAMES	.Load(sType,"CapitalizeAllOptionNames");
 	TWEEN_SECONDS			.Load(sType,"TweenSeconds");
 	SHOW_BPM_IN_SPEED_TITLE		.Load(sType,"ShowBpmInSpeedTitle");
-	SHOW_OPTION_ICONS		.Load(sType,"ShowOptionIcons");
+	SHOW_MOD_ICONS			.Load(sType,"ShowModIcons");
 	SHOW_UNDERLINES			.Load(sType,"ShowUnderlines");
-	OPTION_ICON_METRICS_GROUP	.Load(sType,"OptionIconMetricsGroup");
+	MOD_ICON_METRICS_GROUP		.Load(sType,"ModIconMetricsGroup");
 
 	m_textItem.LoadFromFont( THEME->GetPathF(sType,"item") );
 	if( SHOW_UNDERLINES )
@@ -121,8 +121,8 @@ void OptionRowType::Load( const RString &sType, Actor *pParent )
 	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"title") );
 	m_sprFrameNormal.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"FrameNormal"), pParent ) );
 	m_sprFrameExit.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"FrameExit"), pParent ) );
-	if( SHOW_OPTION_ICONS )
-		m_OptionIcon.Load( OPTION_ICON_METRICS_GROUP );
+	if( SHOW_MOD_ICONS )
+		m_ModIcon.Load( MOD_ICON_METRICS_GROUP );
 }
 
 void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
@@ -265,21 +265,21 @@ void OptionRow::InitText( RowType type )
 	m_sprFrame->SetDrawOrder(-1); // under title
 	m_Frame.AddChild( m_sprFrame );
 
-	if( m_pParentType->SHOW_OPTION_ICONS )
+	if( m_pParentType->SHOW_MOD_ICONS )
 	{
 		switch( m_RowType )
 		{
 		case RowType_Normal:
 			FOREACH_PlayerNumber( p )
 			{
-				m_OptionIcons[p] = new OptionIcon( m_pParentType->m_OptionIcon );
-				m_OptionIcons[p]->SetDrawOrder(-1); // under title
-				m_OptionIcons[p]->RunCommands( m_pParentType->ICONS_ON_COMMAND );
+				m_ModIcons[p] = new ModIcon( m_pParentType->m_ModIcon );
+				m_ModIcons[p]->SetDrawOrder(-1); // under title
+				m_ModIcons[p]->RunCommands( m_pParentType->MOD_ICON_ON_COMMAND );
 				
-				m_Frame.AddChild( m_OptionIcons[p] );
+				m_Frame.AddChild( m_ModIcons[p] );
 
 				GameCommand gc;
-				SetOptionIcon( p, "", gc );
+				SetModIcon( p, "", gc );
 			}
 			break;
 		case RowType_Exit:
@@ -520,11 +520,11 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 
 void OptionRow::PositionIcons( PlayerNumber pn )
 {
-	OptionIcon *pIcon = m_OptionIcons[pn];
+	ModIcon *pIcon = m_ModIcons[pn];
 	if( pIcon == NULL )
 		return;
 
-	pIcon->SetX( m_pParentType->ICONS_X.GetValue(pn) );
+	pIcon->SetX( m_pParentType->MOD_ICON_X.GetValue(pn) );
 }
 
 /* This is called when the focus changes, to update "long row" text. */
@@ -672,14 +672,14 @@ void OptionRow::Update( float fDeltaTime )
 	m_Frame.SetBaseAlpha( fAlpha );
 }
 
-void OptionRow::SetOptionIcon( PlayerNumber pn, const RString &sText, GameCommand &gc )
+void OptionRow::SetModIcon( PlayerNumber pn, const RString &sText, GameCommand &gc )
 {
 	// update row frame
 	Message msg( "Refresh" );
 	msg.SetParam( "GameCommand", &gc );
 	m_sprFrame->HandleMessage( msg );
-	if( m_OptionIcons[pn] != NULL )
-		m_OptionIcons[pn]->Set( sText );
+	if( m_ModIcons[pn] != NULL )
+		m_ModIcons[pn]->Set( sText );
 }
 
 const BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow ) const

@@ -1,4 +1,4 @@
-/* OptionIcon - Shows PlayerOptions and SongOptions in icon form. */
+/* ModIcon - Shows PlayerOptions and SongOptions in icon form. */
 
 #ifndef OPTION_ICON_H
 #define OPTION_ICON_H
@@ -8,11 +8,11 @@
 #include "BitmapText.h"
 #include "PlayerNumber.h"
 
-class OptionIcon : public ActorFrame
+class ModIcon : public ActorFrame
 {
 public:
-	OptionIcon();
-	OptionIcon( const OptionIcon &cpy );
+	ModIcon();
+	ModIcon( const ModIcon &cpy );
 	void Load( RString sMetricsGroup );
 	void Set( const RString &sText );
 

@@ -1,46 +1,66 @@
-/* ModIconRow - Shows PlayerOptions and SongOptions in icon form. */
-
-#ifndef OPTION_ICON_ROW_H
-#define OPTION_ICON_ROW_H
-
-
-#include "ActorFrame.h"
+#include "global.h"
 #include "ModIcon.h"
-#include "ThemeMetric.h"
-class PlayerOptions;
-struct lua_State;
+#include "ThemeManager.h"
+#include "PlayerOptions.h"
+#include "RageUtil.h"
+#include "ActorUtil.h"
 
-class ModIconRow : public ActorFrame
+ModIcon::ModIcon()
 {
-public:
-	ModIconRow();
-	~ModIconRow();
+}
 
-	void Load( const RString &sMetricsGroup, PlayerNumber pn );
+ModIcon::ModIcon( const ModIcon &cpy ):
+	ActorFrame(cpy),
+	m_sprFilled(cpy.m_sprFilled),
+	m_sprEmpty(cpy.m_sprEmpty),
+	m_text(cpy.m_text)
+{
+	this->RemoveAllChildren();
+	this->AddChild( m_sprFilled );
+	this->AddChild( m_sprEmpty );
+	this->AddChild( &m_text );
+}
 
-	virtual ModIconRow *Copy() const;
-	void SetFromGameState();
+void ModIcon::Load( RString sMetricsGroup )
+{
+	m_sprFilled.Load( THEME->GetPathG(sMetricsGroup,"Filled") );
+	this->AddChild( m_sprFilled );
+
+	m_sprEmpty.Load( THEME->GetPathG(sMetricsGroup,"Empty") );
+	this->AddChild( m_sprEmpty );
+
+	m_text.LoadFromFont( THEME->GetPathF(sMetricsGroup,"Text") );
+	m_text.SetName( "Text" );
+	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_text, sMetricsGroup );
+	this->AddChild( &m_text );
+
+	Set("");
+}
+
+void ModIcon::Set( const RString &_sText )
+{
+	RString sText = _sText;
+
+	static const RString sStopWords[] = 
+	{
+		"1X",
+		"DEFAULT",
+		"OVERHEAD",
+		"OFF",
+	};
 	
-	virtual void HandleMessage( const Message &msg );
+	for( unsigned i=0; i<ARRAYLEN(sStopWords); i++ )
+		if( 0==stricmp(sText,sStopWords[i]) )
+			sText = "";
 
-	//
-	// Commands
-	//
-	virtual void PushSelf( lua_State *L );
+	sText.Replace( " ", "\n" );
 
-protected:
-	RString m_sMetricsGroup;
-	PlayerNumber m_pn;
+	bool bVacant = (sText=="");
+	m_sprFilled->SetVisible( !bVacant );
+	m_sprEmpty->SetVisible( bVacant );
 
-	ThemeMetric<float>	SPACING_X;
-	ThemeMetric<float>	SPACING_Y;
-	ThemeMetric<int>	NUM_OPTION_ICONS;
-	ThemeMetric<RString>	OPTION_ICON_METRICS_GROUP;
-
-	vector<ModIcon*> m_vpModIcon;
-};
-
-#endif
+	m_text.SetText( sText );
+}
 
 /*
  * (c) 2002-2004 Chris Danford

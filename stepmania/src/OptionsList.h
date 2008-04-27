@@ -1,3 +1,5 @@
+/* OptionsList - A popup options list. */
+
 #ifndef SCREEN_OPTIONS_LIST_H
 #define SCREEN_OPTIONS_LIST_H
 

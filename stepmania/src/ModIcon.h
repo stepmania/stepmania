@@ -1,43 +1,25 @@
-/* ModIconRow - Shows PlayerOptions and SongOptions in icon form. */
+/* ModIcon - Shows PlayerOptions and SongOptions in icon form. */
 
-#ifndef OPTION_ICON_ROW_H
-#define OPTION_ICON_ROW_H
-
+#ifndef ModIcon_H
+#define ModIcon_H
 
 #include "ActorFrame.h"
-#include "ModIcon.h"
-#include "ThemeMetric.h"
-class PlayerOptions;
-struct lua_State;
+#include "AutoActor.h"
+#include "BitmapText.h"
+#include "PlayerNumber.h"
 
-class ModIconRow : public ActorFrame
+class ModIcon : public ActorFrame
 {
 public:
-	ModIconRow();
-	~ModIconRow();
-
-	void Load( const RString &sMetricsGroup, PlayerNumber pn );
-
-	virtual ModIconRow *Copy() const;
-	void SetFromGameState();
-	
-	virtual void HandleMessage( const Message &msg );
-
-	//
-	// Commands
-	//
-	virtual void PushSelf( lua_State *L );
+	ModIcon();
+	ModIcon( const ModIcon &cpy );
+	void Load( RString sMetricsGroup );
+	void Set( const RString &sText );
 
 protected:
-	RString m_sMetricsGroup;
-	PlayerNumber m_pn;
-
-	ThemeMetric<float>	SPACING_X;
-	ThemeMetric<float>	SPACING_Y;
-	ThemeMetric<int>	NUM_OPTION_ICONS;
-	ThemeMetric<RString>	OPTION_ICON_METRICS_GROUP;
-
-	vector<ModIcon*> m_vpModIcon;
+	BitmapText	m_text;
+	AutoActor	m_sprFilled;
+	AutoActor	m_sprEmpty;
 };
 
 #endif
