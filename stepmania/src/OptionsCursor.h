@@ -16,8 +16,7 @@ public:
 	OptionsCursor( const OptionsCursor &cpy );
 
 	enum Element { cursor, underline };
-	void Load( const RString &sType, Element elem );
-	void Set( PlayerNumber pn );
+	void Load( const RString &sType, Element elem, PlayerNumber pn );
 
 	void StopTweening();
 	void BeginTweening( float fSecs );
@@ -37,7 +36,7 @@ public:
 	OptionsCursorPlus();
 	OptionsCursorPlus( const OptionsCursorPlus &cpy );
 
-	void Load( const RString &sType, Element elem );
+	void Load( const RString &sType, Element elem, PlayerNumber pn );
 
 	void StopTweening();
 	void BeginTweening( float fSecs );

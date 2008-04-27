@@ -22,15 +22,16 @@ public:
 private:
 	RString				m_sType;
 
-	BitmapText			m_textItemParent;
-	OptionsCursor			m_UnderlineParent;
-	AutoActor			m_sprBullet;
+	BitmapText			m_textItem;
+	OptionsCursor			m_Underline[NUM_PLAYERS];
+	AutoActor			m_sprRowFrameNormal;
+	AutoActor			m_sprRowFrameExit;
 	BitmapText			m_textTitle;
 	OptionIcon			m_OptionIcon;
 
 	// metrics
-	ThemeMetric<float>		BULLET_X;
-	ThemeMetric<apActorCommands>	BULLET_ON_COMMAND;
+	ThemeMetric<float>		ROWFRAME_X;
+	ThemeMetric<apActorCommands>	ROWFRAME_ON_COMMAND;
 	ThemeMetric<float>		TITLE_X;
 	ThemeMetric<apActorCommands>	TITLE_ON_COMMAND;
 	ThemeMetric<apActorCommands>	TITLE_GAIN_FOCUS_COMMAND;
@@ -75,10 +76,15 @@ public:
 	void ImportOptions( const vector<PlayerNumber> &vpns );
 	int ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
 
-	void InitText();
+	enum RowType
+	{
+		RowType_Normal,
+		RowType_Exit
+	};
+	void InitText( RowType type );
 	void AfterImportOptions( PlayerNumber pn );
 
-	void ChoicesChanged();
+	void ChoicesChanged( RowType type );
 	void PositionUnderlines( PlayerNumber pn );
 	void PositionIcons( PlayerNumber pn );
 	void UpdateText( PlayerNumber pn );
@@ -99,11 +105,6 @@ public:
 	bool GetSelected( PlayerNumber pn, int iChoice ) const;
 	void SetSelected( PlayerNumber pn, int iChoice, bool b );
 
-	enum RowType
-	{
-		RowType_Normal,
-		RowType_Exit
-	};
 	const OptionRowDefinition &GetRowDef() const;
 	OptionRowDefinition &GetRowDef();
 	RowType GetRowType() const { return m_RowType; }
@@ -139,7 +140,7 @@ protected:
 	vector<BitmapText *>		m_textItems;			// size depends on m_bRowIsLong and which players are joined
 	vector<OptionsCursor *>		m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 
-	Actor				*m_sprBullet;
+	Actor				*m_sprRowFrame;
 	BitmapText			*m_textTitle;
 	OptionIcon			*m_OptionIcons[NUM_PLAYERS];
 

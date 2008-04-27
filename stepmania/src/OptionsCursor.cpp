@@ -37,9 +37,10 @@ OptionsCursorPlus::OptionsCursorPlus( const OptionsCursorPlus &cpy ):
 	this->AddChild( m_sprCanGoRight );
 }
 
-void OptionsCursor::Load( const RString &sType, Element elem )
+void OptionsCursor::Load( const RString &sType, Element elem, PlayerNumber pn )
 {
-	RString sPath = THEME->GetPathG( sType, ssprintf("%s 3x2",elem==cursor?"cursor":"underline") );
+	RString sElem = ssprintf( "%s %s 3x1", elem==cursor?"cursor":"underline", PlayerNumberToString(pn).c_str() );
+	RString sPath = THEME->GetPathG( sType, sElem );
 	
 	m_sprMiddle.Load( sPath );
 	m_sprLeft.Load( sPath );
@@ -48,11 +49,15 @@ void OptionsCursor::Load( const RString &sType, Element elem )
 	m_sprMiddle.StopAnimating();
 	m_sprLeft.StopAnimating();
 	m_sprRight.StopAnimating();
+	
+	m_sprLeft.SetState(   0 );
+	m_sprMiddle.SetState( 1 );
+	m_sprRight.SetState(  2 );
 }
 
-void OptionsCursorPlus::Load( const RString &sType, Element elem )
+void OptionsCursorPlus::Load( const RString &sType, Element elem, PlayerNumber pn )
 {
-	OptionsCursor::Load( sType, elem );
+	OptionsCursor::Load( sType, elem, pn );
 
 	m_sprCanGoLeft.Load( THEME->GetPathG(sType,"CanGoLeft") );
 	m_sprCanGoRight.Load( THEME->GetPathG(sType,"CanGoRight") );
@@ -61,20 +66,6 @@ void OptionsCursorPlus::Load( const RString &sType, Element elem )
 	this->AddChild( m_sprCanGoRight );
 
 	SetCanGo( false, false );
-}
-
-void OptionsCursor::Set( PlayerNumber pn )
-{
-	int iBaseFrameNo;
-	switch( pn )
-	{
-	case PLAYER_1:		iBaseFrameNo = 0;	break;
-	case PLAYER_2:		iBaseFrameNo = 3;	break;
-	default:			ASSERT(0);			return;
-	}
-	m_sprLeft.SetState(   iBaseFrameNo+0 );
-	m_sprMiddle.SetState( iBaseFrameNo+1 );
-	m_sprRight.SetState(  iBaseFrameNo+2 );
 }
 
 void OptionsCursorPlus::SetCanGo( bool bCanGoLeft, bool bCanGoRight )

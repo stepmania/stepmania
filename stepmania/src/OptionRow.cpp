@@ -84,8 +84,8 @@ void OptionRowType::Load( const RString &sType, Actor *pParent )
 {
 	m_sType = sType;
 
-	BULLET_X   			.Load(sType,"BulletX");
-	BULLET_ON_COMMAND   		.Load(sType,"BulletOnCommand");
+	ROWFRAME_X   			.Load(sType,"RowFrameX");
+	ROWFRAME_ON_COMMAND   		.Load(sType,"RowFrameOnCommand");
 	TITLE_X				.Load(sType,"TitleX");
 	TITLE_ON_COMMAND		.Load(sType,"TitleOnCommand");
 	TITLE_GAIN_FOCUS_COMMAND	.Load(sType,"TitleGainFocusCommand");
@@ -111,11 +111,15 @@ void OptionRowType::Load( const RString &sType, Actor *pParent )
 	SHOW_OPTION_ICONS		.Load(sType,"ShowOptionIcons");
 	SHOW_UNDERLINES			.Load(sType,"ShowUnderlines");
 
-	m_textItemParent.LoadFromFont( THEME->GetPathF(sType,"item") );
+	m_textItem.LoadFromFont( THEME->GetPathF(sType,"item") );
 	if( SHOW_UNDERLINES )
-		m_UnderlineParent.Load( sType, OptionsCursor::underline );
+	{
+		FOREACH_PlayerNumber( p )
+			m_Underline[p].Load( sType, OptionsCursor::underline, p );
+	}
 	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"title") );
-	m_sprBullet.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"bullet"), pParent ) );
+	m_sprRowFrameNormal.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"RowFrameNormal"), pParent ) );
+	m_sprRowFrameExit.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"RowFrameExit"), pParent ) );
 	if( SHOW_OPTION_ICONS )
 		m_OptionIcon.Load( sType );
 }
@@ -129,7 +133,7 @@ void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
 	FOREACH_CONST( RString, m_pHand->m_vsReloadRowMessages, m )
 		MESSAGEMAN->Subscribe( this, *m );
 
-	ChoicesChanged();
+	ChoicesChanged( RowType_Normal );
 }
 
 void OptionRow::LoadExit()
@@ -143,10 +147,10 @@ void OptionRow::LoadExit()
 	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	m_pHand = pHand;
 
-	ChoicesChanged();
+	ChoicesChanged( RowType_Exit );
 }
 
-void OptionRow::ChoicesChanged()
+void OptionRow::ChoicesChanged( RowType type )
 {
 	ASSERT( !m_pHand->m_Def.m_vsChoices.empty() );
 
@@ -177,7 +181,7 @@ void OptionRow::ChoicesChanged()
 			m_vbSelected[p].insert( m_vbSelected[p].begin(), false );
 	}
 
-	InitText();
+	InitText( type );
 
 	/* When choices change, the old focus position is meaningless; reset it. */
 	FOREACH_PlayerNumber( p )
@@ -235,7 +239,7 @@ RString OptionRow::GetRowTitle() const
 
 /* Set up text, underlines and titles for options.  This can be called
  * as soon as m_pHand->m_Def is available. */
-void OptionRow::InitText()
+void OptionRow::InitText( RowType type )
 {
 	/* If we have elements already, we're being updated from a new set of options.
 	 * Delete the old ones. */
@@ -247,9 +251,18 @@ void OptionRow::InitText()
 	m_textTitle = new BitmapText( m_pParentType->m_textTitle );
 	m_Frame.AddChild( m_textTitle );
 
-	m_sprBullet = m_pParentType->m_sprBullet->Copy();
-	m_sprBullet->SetDrawOrder(-1); // under title
-	m_Frame.AddChild( m_sprBullet );
+	switch( type )
+	{
+	DEFAULT_FAIL( type );
+	case RowType_Normal:
+		m_sprRowFrame = m_pParentType->m_sprRowFrameNormal->Copy();
+		break;
+	case RowType_Exit:
+		m_sprRowFrame = m_pParentType->m_sprRowFrameExit->Copy();
+		break;
+	}
+	m_sprRowFrame->SetDrawOrder(-1); // under title
+	m_Frame.AddChild( m_sprRowFrame );
 
 	if( m_pParentType->SHOW_OPTION_ICONS )
 	{
@@ -276,7 +289,7 @@ void OptionRow::InitText()
 	// If the items will go off the edge of the screen, then force LAYOUT_SHOW_ONE_IN_ROW.
 	float fBaseZoom = 1.0f;
 	{
-		BitmapText bt( m_pParentType->m_textItemParent );
+		BitmapText bt( m_pParentType->m_textItem );
 		bt.RunCommands( m_pParentType->ITEMS_ON_COMMAND );
 
 		/* Figure out the width of the row. */
@@ -313,7 +326,7 @@ void OptionRow::InitText()
 		// init text
 		FOREACH_PlayerNumber( p )
 		{
-			BitmapText *pText = new BitmapText( m_pParentType->m_textItemParent );
+			BitmapText *pText = new BitmapText( m_pParentType->m_textItem );
 			m_textItems.push_back( pText );
 
 			pText->RunCommands( m_pParentType->ITEMS_ON_COMMAND );
@@ -335,10 +348,9 @@ void OptionRow::InitText()
 			// init underlines
 			if( m_pParentType->SHOW_UNDERLINES && GetRowType() != OptionRow::RowType_Exit )
 			{
-				OptionsCursor *pCursor = new OptionsCursor( m_pParentType->m_UnderlineParent );
+				OptionsCursor *pCursor = new OptionsCursor( m_pParentType->m_Underline[p] );
 				m_Underline[p].push_back( pCursor );
 
-				pCursor->Set( p );
 				int iWidth, iX, iY;
 				GetWidthXY( p, 0, iWidth, iX, iY );
 				pCursor->SetX( float(iX) );
@@ -353,7 +365,7 @@ void OptionRow::InitText()
 			for( unsigned c=0; c<m_pHand->m_Def.m_vsChoices.size(); c++ )
 			{
 				// init text
-				BitmapText *bt = new BitmapText( m_pParentType->m_textItemParent );
+				BitmapText *bt = new BitmapText( m_pParentType->m_textItem );
 				m_textItems.push_back( bt );
 				RString sText = GetThemedItemText( c );
 				bt->SetText( sText );
@@ -371,9 +383,8 @@ void OptionRow::InitText()
 				{
 					FOREACH_PlayerNumber( p )
 					{
-						OptionsCursor *ul = new OptionsCursor( m_pParentType->m_UnderlineParent );
+						OptionsCursor *ul = new OptionsCursor( m_pParentType->m_Underline[p] );
 						m_Underline[p].push_back( ul );
-						ul->Set( p );
 						ul->SetX( fX );
 						ul->SetBarWidth( int(fItemWidth) );
 					}
@@ -403,11 +414,11 @@ void OptionRow::InitText()
 	switch( GetRowType() )
 	{
 	case OptionRow::RowType_Normal:
-		m_sprBullet->SetX( m_pParentType->BULLET_X );
-		m_sprBullet->RunCommands( m_pParentType->BULLET_ON_COMMAND );
+		m_sprRowFrame->SetX( m_pParentType->ROWFRAME_X );
+		m_sprRowFrame->RunCommands( m_pParentType->ROWFRAME_ON_COMMAND );
 		break;
 	case OptionRow::RowType_Exit:
-		m_sprBullet->SetVisible( false );
+		m_sprRowFrame->SetVisible( false );
 		break;
 	}
 
@@ -579,9 +590,9 @@ void OptionRow::UpdateEnabledDisabled()
 	else if( bRowEnabled )		color = m_pParentType->COLOR_NOT_SELECTED;
 	else				color = m_pParentType->COLOR_DISABLED;
 
-	if( m_sprBullet != NULL )
-		m_sprBullet->SetGlobalDiffuseColor( color );
-	m_sprBullet->PlayCommand( bThisRowHasFocusByAny ? "GainFocus" : "LoseFocus" );
+	if( m_sprRowFrame != NULL )
+		m_sprRowFrame->SetGlobalDiffuseColor( color );
+	m_sprRowFrame->PlayCommand( bThisRowHasFocusByAny ? "GainFocus" : "LoseFocus" );
 	m_textTitle->SetGlobalDiffuseColor( color );
 
 
@@ -662,10 +673,10 @@ void OptionRow::Update( float fDeltaTime )
 
 void OptionRow::SetOptionIcon( PlayerNumber pn, const RString &sText, GameCommand &gc )
 {
-	// update bullet
+	// update row frame
 	Message msg( "Refresh" );
 	msg.SetParam( "GameCommand", &gc );
-	m_sprBullet->HandleMessage( msg );
+	m_sprRowFrame->HandleMessage( msg );
 	if( m_OptionIcons[pn] != NULL )
 		m_OptionIcons[pn]->Set( sText );
 }
@@ -839,7 +850,7 @@ void OptionRow::Reload()
 
 	case OptionRowHandler::RELOAD_CHANGED_ALL:
 	{
-		ChoicesChanged();
+		ChoicesChanged( m_RowType );
 
 		vector<PlayerNumber> vpns;
 		FOREACH_HumanPlayer( p )
