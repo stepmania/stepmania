@@ -84,8 +84,8 @@ void OptionRowType::Load( const RString &sType, Actor *pParent )
 {
 	m_sType = sType;
 
-	ROWFRAME_X   			.Load(sType,"RowFrameX");
-	ROWFRAME_ON_COMMAND   		.Load(sType,"RowFrameOnCommand");
+	FRAME_X   			.Load(sType,"FrameX");
+	FRAME_ON_COMMAND   		.Load(sType,"FrameOnCommand");
 	TITLE_X				.Load(sType,"TitleX");
 	TITLE_ON_COMMAND		.Load(sType,"TitleOnCommand");
 	TITLE_GAIN_FOCUS_COMMAND	.Load(sType,"TitleGainFocusCommand");
@@ -110,6 +110,7 @@ void OptionRowType::Load( const RString &sType, Actor *pParent )
 	SHOW_BPM_IN_SPEED_TITLE		.Load(sType,"ShowBpmInSpeedTitle");
 	SHOW_OPTION_ICONS		.Load(sType,"ShowOptionIcons");
 	SHOW_UNDERLINES			.Load(sType,"ShowUnderlines");
+	OPTION_ICON_METRICS_GROUP	.Load(sType,"OptionIconMetricsGroup");
 
 	m_textItem.LoadFromFont( THEME->GetPathF(sType,"item") );
 	if( SHOW_UNDERLINES )
@@ -118,10 +119,10 @@ void OptionRowType::Load( const RString &sType, Actor *pParent )
 			m_Underline[p].Load( sType, OptionsCursor::underline, p );
 	}
 	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"title") );
-	m_sprRowFrameNormal.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"RowFrameNormal"), pParent ) );
-	m_sprRowFrameExit.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"RowFrameExit"), pParent ) );
+	m_sprFrameNormal.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"FrameNormal"), pParent ) );
+	m_sprFrameExit.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"FrameExit"), pParent ) );
 	if( SHOW_OPTION_ICONS )
-		m_OptionIcon.Load( sType );
+		m_OptionIcon.Load( OPTION_ICON_METRICS_GROUP );
 }
 
 void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
@@ -255,14 +256,14 @@ void OptionRow::InitText( RowType type )
 	{
 	DEFAULT_FAIL( type );
 	case RowType_Normal:
-		m_sprRowFrame = m_pParentType->m_sprRowFrameNormal->Copy();
+		m_sprFrame = m_pParentType->m_sprFrameNormal->Copy();
 		break;
 	case RowType_Exit:
-		m_sprRowFrame = m_pParentType->m_sprRowFrameExit->Copy();
+		m_sprFrame = m_pParentType->m_sprFrameExit->Copy();
 		break;
 	}
-	m_sprRowFrame->SetDrawOrder(-1); // under title
-	m_Frame.AddChild( m_sprRowFrame );
+	m_sprFrame->SetDrawOrder(-1); // under title
+	m_Frame.AddChild( m_sprFrame );
 
 	if( m_pParentType->SHOW_OPTION_ICONS )
 	{
@@ -414,11 +415,11 @@ void OptionRow::InitText( RowType type )
 	switch( GetRowType() )
 	{
 	case OptionRow::RowType_Normal:
-		m_sprRowFrame->SetX( m_pParentType->ROWFRAME_X );
-		m_sprRowFrame->RunCommands( m_pParentType->ROWFRAME_ON_COMMAND );
+		m_sprFrame->SetX( m_pParentType->FRAME_X );
+		m_sprFrame->RunCommands( m_pParentType->FRAME_ON_COMMAND );
 		break;
 	case OptionRow::RowType_Exit:
-		m_sprRowFrame->SetVisible( false );
+		m_sprFrame->SetVisible( false );
 		break;
 	}
 
@@ -590,9 +591,9 @@ void OptionRow::UpdateEnabledDisabled()
 	else if( bRowEnabled )		color = m_pParentType->COLOR_NOT_SELECTED;
 	else				color = m_pParentType->COLOR_DISABLED;
 
-	if( m_sprRowFrame != NULL )
-		m_sprRowFrame->SetGlobalDiffuseColor( color );
-	m_sprRowFrame->PlayCommand( bThisRowHasFocusByAny ? "GainFocus" : "LoseFocus" );
+	if( m_sprFrame != NULL )
+		m_sprFrame->SetGlobalDiffuseColor( color );
+	m_sprFrame->PlayCommand( bThisRowHasFocusByAny ? "GainFocus" : "LoseFocus" );
 	m_textTitle->SetGlobalDiffuseColor( color );
 
 
@@ -676,7 +677,7 @@ void OptionRow::SetOptionIcon( PlayerNumber pn, const RString &sText, GameComman
 	// update row frame
 	Message msg( "Refresh" );
 	msg.SetParam( "GameCommand", &gc );
-	m_sprRowFrame->HandleMessage( msg );
+	m_sprFrame->HandleMessage( msg );
 	if( m_OptionIcons[pn] != NULL )
 		m_OptionIcons[pn]->Set( sText );
 }

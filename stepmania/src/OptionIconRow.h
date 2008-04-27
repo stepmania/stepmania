@@ -35,6 +35,7 @@ protected:
 	ThemeMetric<float>	SPACING_X;
 	ThemeMetric<float>	SPACING_Y;
 	ThemeMetric<int>	NUM_OPTION_ICONS;
+	ThemeMetric<RString>	OPTION_ICON_METRICS_GROUP;
 
 	vector<OptionIcon*> m_vpOptionIcon;
 };

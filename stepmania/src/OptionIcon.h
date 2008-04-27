@@ -8,13 +8,12 @@
 #include "BitmapText.h"
 #include "PlayerNumber.h"
 
-
 class OptionIcon : public ActorFrame
 {
 public:
 	OptionIcon();
 	OptionIcon( const OptionIcon &cpy );
-	void Load( RString sType );
+	void Load( RString sMetricsGroup );
 	void Set( const RString &sText );
 
 protected:

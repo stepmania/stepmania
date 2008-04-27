@@ -39,7 +39,7 @@ OptionsCursorPlus::OptionsCursorPlus( const OptionsCursorPlus &cpy ):
 
 void OptionsCursor::Load( const RString &sType, Element elem, PlayerNumber pn )
 {
-	RString sElem = ssprintf( "%s %s 3x1", elem==cursor?"cursor":"underline", PlayerNumberToString(pn).c_str() );
+	RString sElem = ssprintf( "%s %s", elem==cursor?"cursor":"underline", PlayerNumberToString(pn).c_str() );
 	RString sPath = THEME->GetPathG( sType, sElem );
 	
 	m_sprMiddle.Load( sPath );

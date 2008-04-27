@@ -3,15 +3,7 @@
 #include "ThemeManager.h"
 #include "PlayerOptions.h"
 #include "RageUtil.h"
-
-#define TEXT_OFFSET_X	THEME->GetMetricF("OptionIcon","TextOffsetX")
-#define TEXT_OFFSET_Y	THEME->GetMetricF("OptionIcon","TextOffsetY")
-#define TEXT_H_ALIGN	THEME->GetMetricI("OptionIcon","TextHAlign")
-#define TEXT_V_ALIGN	THEME->GetMetricI("OptionIcon","TextVAlign")
-#define TEXT_WIDTH	THEME->GetMetricI("OptionIcon","TextWidth")
-#define TEXT_ZOOM	THEME->GetMetricF("OptionIcon","TextZoom")
-#define UPPERCASE	THEME->GetMetricB("OptionIcon","Uppercase")
-
+#include "ActorUtil.h"
 
 OptionIcon::OptionIcon()
 {
@@ -29,21 +21,17 @@ OptionIcon::OptionIcon( const OptionIcon &cpy ):
 	this->AddChild( &m_text );
 }
 
-void OptionIcon::Load( RString sType )
+void OptionIcon::Load( RString sMetricsGroup )
 {
-	m_sprFilled.Load( THEME->GetPathG(sType,"icon filled") );
+	m_sprFilled.Load( THEME->GetPathG(sMetricsGroup,"Filled") );
 	this->AddChild( m_sprFilled );
 
-	m_sprEmpty.Load( THEME->GetPathG(sType,"icon empty") );
+	m_sprEmpty.Load( THEME->GetPathG(sMetricsGroup,"Empty") );
 	this->AddChild( m_sprEmpty );
 
-	m_text.LoadFromFont( THEME->GetPathF(sType,"icon") );
-	m_text.SetShadowLength( 0 );
-	m_text.SetZoom( TEXT_ZOOM );
-	m_text.SetXY( TEXT_OFFSET_X, TEXT_OFFSET_Y );
-	// XXX: Hack to make this call the correct function.
-	((Actor&)m_text).SetHorizAlign( (HorizAlign)TEXT_H_ALIGN );
-	((Actor&)m_text).SetVertAlign( (VertAlign)TEXT_V_ALIGN );
+	m_text.LoadFromFont( THEME->GetPathF(sMetricsGroup,"Text") );
+	m_text.SetName( "Text" );
+	ActorUtil::SetXYAndOnCommand( m_text, sMetricsGroup );
 	this->AddChild( &m_text );
 
 	Set("");
@@ -65,9 +53,6 @@ void OptionIcon::Set( const RString &_sText )
 		if( 0==stricmp(sText,sStopWords[i]) )
 			sText = "";
 
-	if( UPPERCASE )
-		sText.MakeUpper();
-
 	sText.Replace( " ", "\n" );
 
 	bool bVacant = (sText=="");
@@ -75,8 +60,6 @@ void OptionIcon::Set( const RString &_sText )
 	m_sprEmpty->SetVisible( bVacant );
 
 	m_text.SetText( sText );
-	m_text.SetZoom( TEXT_ZOOM );
-	m_text.CropToWidth( TEXT_WIDTH );
 }
 
 /*

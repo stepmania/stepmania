@@ -38,13 +38,14 @@ void OptionIconRow::Load( const RString &sMetricsGroup, PlayerNumber pn )
 	SPACING_X.Load(sMetricsGroup,"SpacingX");
 	SPACING_Y.Load(sMetricsGroup,"SpacingY");
 	NUM_OPTION_ICONS.Load(sMetricsGroup,"NumOptionIcons");
+	OPTION_ICON_METRICS_GROUP.Load(sMetricsGroup,"OptionIconMetricsGroup");
 
 	for( int i=0; i<NUM_OPTION_ICONS; i++ )
 	{
 		OptionIcon *p = new OptionIcon;
 		p->SetName( "OptionIcon" );
 		p->SetXY( i*SPACING_X, i*SPACING_Y );
-		p->Load( sMetricsGroup );
+		p->Load( OPTION_ICON_METRICS_GROUP );
 		ActorUtil::LoadAllCommands( p, sMetricsGroup );
 		m_vpOptionIcon.push_back( p );
 		this->AddChild( p );

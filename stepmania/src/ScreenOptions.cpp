@@ -99,6 +99,7 @@ void ScreenOptions::Init()
 	ALLOW_REPEATING_CHANGE_VALUE_INPUT.Load( m_sName, "AllowRepeatingChangeValueInput" );
 	CURSOR_TWEEN_SECONDS.Load( m_sName, "CursorTweenSeconds" );
 	WRAP_VALUE_IN_ROW.Load( m_sName, "WrapValueInRow" );
+	OPTION_ROW_METRICS_GROUP.Load( m_sName, "OptionRowMetricsGroup" );
 
 	m_exprRowPositionTransformFunction.SetFromReference( THEME->GetMetricR(m_sName,"RowPositionTransformFunction") );
 
@@ -183,7 +184,7 @@ void ScreenOptions::Init()
 	m_sprMore->PlayCommand( "LoseFocus" );
 	m_framePage.AddChild( m_sprMore );
 
-	m_OptionRowType.Load( m_sName, this );
+	m_OptionRowType.Load( OPTION_ROW_METRICS_GROUP, this );
 }
 
 void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )

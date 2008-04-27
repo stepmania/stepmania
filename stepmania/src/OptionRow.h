@@ -24,14 +24,14 @@ private:
 
 	BitmapText			m_textItem;
 	OptionsCursor			m_Underline[NUM_PLAYERS];
-	AutoActor			m_sprRowFrameNormal;
-	AutoActor			m_sprRowFrameExit;
+	AutoActor			m_sprFrameNormal;
+	AutoActor			m_sprFrameExit;
 	BitmapText			m_textTitle;
 	OptionIcon			m_OptionIcon;
 
 	// metrics
-	ThemeMetric<float>		ROWFRAME_X;
-	ThemeMetric<apActorCommands>	ROWFRAME_ON_COMMAND;
+	ThemeMetric<float>		FRAME_X;
+	ThemeMetric<apActorCommands>	FRAME_ON_COMMAND;
 	ThemeMetric<float>		TITLE_X;
 	ThemeMetric<apActorCommands>	TITLE_ON_COMMAND;
 	ThemeMetric<apActorCommands>	TITLE_GAIN_FOCUS_COMMAND;
@@ -56,6 +56,7 @@ private:
 	ThemeMetric<bool>		SHOW_BPM_IN_SPEED_TITLE;
 	ThemeMetric<bool>		SHOW_OPTION_ICONS;
 	ThemeMetric<bool>		SHOW_UNDERLINES;
+	ThemeMetric<RString>		OPTION_ICON_METRICS_GROUP;
 
 	friend class OptionRow;
 };
@@ -140,7 +141,7 @@ protected:
 	vector<BitmapText *>		m_textItems;			// size depends on m_bRowIsLong and which players are joined
 	vector<OptionsCursor *>		m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 
-	Actor				*m_sprRowFrame;
+	Actor				*m_sprFrame;
 	BitmapText			*m_textTitle;
 	OptionIcon			*m_OptionIcons[NUM_PLAYERS];
 
