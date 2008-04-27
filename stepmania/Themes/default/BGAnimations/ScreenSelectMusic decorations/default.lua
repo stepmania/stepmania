@@ -45,7 +45,7 @@ end
 local function OptionsArea(pn)
 	local t = Def.ActorFrame {};
 	t[#t+1] = Def.ActorFrame {
-		InitCommand=cmd(x,-1*THEME:GetMetric("OptionIconRowSelectMusic","SpacingX");y,-1*THEME:GetMetric("OptionIconRowSelectMusic","SpacingY"););
+		InitCommand=cmd(x,-1*THEME:GetMetric("ModIconRowSelectMusic","SpacingX");y,-1*THEME:GetMetric("ModIconRowSelectMusic","SpacingY"););
 		LoadActor( "option icon header" ) .. {
 		
 		};
@@ -53,8 +53,8 @@ local function OptionsArea(pn)
 			InitCommand=cmd(y,-4;settext,PlayerNumberToLocalizedString(pn);zoom,0.5;zoom,0.5;diffuse,color("#baa200");shadowlength,0;strokecolor,color("#00000000"););
 		};
 	};
-	t[#t+1] = Def.OptionIconRow {
-		InitCommand=cmd(Load,"OptionIconRowSelectMusic",pn;);
+	t[#t+1] = Def.ModIconRow {
+		InitCommand=cmd(Load,"ModIconRowSelectMusic",pn;);
 		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1;);
 		OffCommand=cmd(linear,0.5;zoomy,0;);
 	};
