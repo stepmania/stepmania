@@ -121,7 +121,7 @@ void ThemeManager::ClearThemePathCache()
 		g_ThemePathCache[i].clear();
 }
 
-static void FileNameToClassAndElement( const RString &sFileName, RString &sMetricsGroupOut, RString &sElementOut )
+static void FileNameToMetricsGroupAndElement( const RString &sFileName, RString &sMetricsGroupOut, RString &sElementOut )
 {
 	// split into class name and file name
 	unsigned iIndexOfFirstSpace = sFileName.find(" ");
@@ -624,7 +624,7 @@ try_element_again:
 	GetFileContents( sPath, sNewFileName, true );
 
 	RString sNewClassName, sNewFile;
-	FileNameToClassAndElement(sNewFileName, sNewClassName, sNewFile);
+	FileNameToMetricsGroupAndElement(sNewFileName, sNewClassName, sNewFile);
 	
 	/* Search again.  For example, themes/default/Fonts/foo might redir
 	 * to "Hello"; but "Hello" might be overridden in themes/hot pink/Fonts/Hello. */
