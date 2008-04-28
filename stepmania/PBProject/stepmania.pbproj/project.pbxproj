@@ -63,6 +63,14 @@
 		AA1145DE075DFADF0050A3D1 /* ScreenPackages.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1145DA075DFADF0050A3D1 /* ScreenPackages.h */; };
 		AA1145DF075DFADF0050A3D1 /* ScreenSystemLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1145DB075DFADF0050A3D1 /* ScreenSystemLayer.cpp */; };
 		AA1145E0075DFADF0050A3D1 /* ScreenSystemLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1145DC075DFADF0050A3D1 /* ScreenSystemLayer.h */; };
+		AA11A20F0DC5A1B0006BD8AC /* ModIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA11A20B0DC5A1B0006BD8AC /* ModIcon.cpp */; };
+		AA11A2100DC5A1B0006BD8AC /* ModIcon.h in Headers */ = {isa = PBXBuildFile; fileRef = AA11A20C0DC5A1B0006BD8AC /* ModIcon.h */; };
+		AA11A2110DC5A1B0006BD8AC /* ModIconRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA11A20D0DC5A1B0006BD8AC /* ModIconRow.cpp */; };
+		AA11A2120DC5A1B0006BD8AC /* ModIconRow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA11A20E0DC5A1B0006BD8AC /* ModIconRow.h */; };
+		AA11A2130DC5A1B0006BD8AC /* ModIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA11A20B0DC5A1B0006BD8AC /* ModIcon.cpp */; };
+		AA11A2140DC5A1B0006BD8AC /* ModIcon.h in Headers */ = {isa = PBXBuildFile; fileRef = AA11A20C0DC5A1B0006BD8AC /* ModIcon.h */; };
+		AA11A2150DC5A1B0006BD8AC /* ModIconRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA11A20D0DC5A1B0006BD8AC /* ModIconRow.cpp */; };
+		AA11A2160DC5A1B0006BD8AC /* ModIconRow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA11A20E0DC5A1B0006BD8AC /* ModIconRow.h */; };
 		AA139C4706923EBE00C1F6ED /* Style.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA139C4606923EBE00C1F6ED /* Style.cpp */; };
 		AA147F1A0A0F78D8006EADF6 /* VectorHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AA147F180A0F78D8006EADF6 /* VectorHelper.h */; };
 		AA147F1B0A0F78D8006EADF6 /* VectorHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA147F190A0F78D8006EADF6 /* VectorHelper.cpp */; };
@@ -180,8 +188,6 @@
 		AA29CC780558741A00961A51 /* MusicList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA104770E7C005F316C /* MusicList.h */; };
 		AA29CC7A0558741A00961A51 /* MusicWheel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA504770E7C005F316C /* MusicWheel.h */; };
 		AA29CC7B0558741A00961A51 /* MusicWheelItem.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA704770E7C005F316C /* MusicWheelItem.h */; };
-		AA29CC7C0558741A00961A51 /* OptionIcon.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA904770E7C005F316C /* OptionIcon.h */; };
-		AA29CC7D0558741A00961A51 /* OptionIconRow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEAB04770E7C005F316C /* OptionIconRow.h */; };
 		AA29CC7E0558741A00961A51 /* OptionsCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEAD04770E7C005F316C /* OptionsCursor.h */; };
 		AA29CC7F0558741A00961A51 /* ScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEAF04770E7C005F316C /* ScrollBar.h */; };
 		AA29CC800558741A00961A51 /* ScrollingList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEB104770E7C005F316C /* ScrollingList.h */; };
@@ -379,8 +385,6 @@
 		AA29CD8C0558741A00961A51 /* MusicList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA004770E7C005F316C /* MusicList.cpp */; };
 		AA29CD8E0558741A00961A51 /* MusicWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA404770E7C005F316C /* MusicWheel.cpp */; };
 		AA29CD8F0558741A00961A51 /* MusicWheelItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */; };
-		AA29CD900558741A00961A51 /* OptionIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA804770E7C005F316C /* OptionIcon.cpp */; };
-		AA29CD910558741A00961A51 /* OptionIconRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAA04770E7C005F316C /* OptionIconRow.cpp */; };
 		AA29CD920558741A00961A51 /* OptionsCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAC04770E7C005F316C /* OptionsCursor.cpp */; };
 		AA29CD930558741A00961A51 /* ScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAE04770E7C005F316C /* ScrollBar.cpp */; };
 		AA29CD940558741A00961A51 /* ScrollingList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEB004770E7C005F316C /* ScrollingList.cpp */; };
@@ -624,8 +628,6 @@
 		AA40D20009A08D650068C0D5 /* MusicList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA104770E7C005F316C /* MusicList.h */; };
 		AA40D20209A08D650068C0D5 /* MusicWheel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA504770E7C005F316C /* MusicWheel.h */; };
 		AA40D20309A08D650068C0D5 /* MusicWheelItem.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA704770E7C005F316C /* MusicWheelItem.h */; };
-		AA40D20409A08D650068C0D5 /* OptionIcon.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA904770E7C005F316C /* OptionIcon.h */; };
-		AA40D20509A08D650068C0D5 /* OptionIconRow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEAB04770E7C005F316C /* OptionIconRow.h */; };
 		AA40D20609A08D650068C0D5 /* OptionsCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEAD04770E7C005F316C /* OptionsCursor.h */; };
 		AA40D20709A08D650068C0D5 /* ScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEAF04770E7C005F316C /* ScrollBar.h */; };
 		AA40D20809A08D650068C0D5 /* ScrollingList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEB104770E7C005F316C /* ScrollingList.h */; };
@@ -982,8 +984,6 @@
 		AA40D3C209A08D650068C0D5 /* MusicList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA004770E7C005F316C /* MusicList.cpp */; };
 		AA40D3C409A08D650068C0D5 /* MusicWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA404770E7C005F316C /* MusicWheel.cpp */; };
 		AA40D3C509A08D650068C0D5 /* MusicWheelItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */; };
-		AA40D3C609A08D650068C0D5 /* OptionIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA804770E7C005F316C /* OptionIcon.cpp */; };
-		AA40D3C709A08D650068C0D5 /* OptionIconRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAA04770E7C005F316C /* OptionIconRow.cpp */; };
 		AA40D3C809A08D650068C0D5 /* OptionsCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAC04770E7C005F316C /* OptionsCursor.cpp */; };
 		AA40D3C909A08D650068C0D5 /* ScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAE04770E7C005F316C /* ScrollBar.cpp */; };
 		AA40D3CA09A08D650068C0D5 /* ScrollingList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEB004770E7C005F316C /* ScrollingList.cpp */; };
@@ -2249,6 +2249,10 @@
 		AA1145DA075DFADF0050A3D1 /* ScreenPackages.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenPackages.h; path = ../src/ScreenPackages.h; sourceTree = "<group>"; };
 		AA1145DB075DFADF0050A3D1 /* ScreenSystemLayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSystemLayer.cpp; path = ../src/ScreenSystemLayer.cpp; sourceTree = "<group>"; };
 		AA1145DC075DFADF0050A3D1 /* ScreenSystemLayer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSystemLayer.h; path = ../src/ScreenSystemLayer.h; sourceTree = "<group>"; };
+		AA11A20B0DC5A1B0006BD8AC /* ModIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModIcon.cpp; path = ../src/ModIcon.cpp; sourceTree = SOURCE_ROOT; };
+		AA11A20C0DC5A1B0006BD8AC /* ModIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModIcon.h; path = ../src/ModIcon.h; sourceTree = SOURCE_ROOT; };
+		AA11A20D0DC5A1B0006BD8AC /* ModIconRow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModIconRow.cpp; path = ../src/ModIconRow.cpp; sourceTree = SOURCE_ROOT; };
+		AA11A20E0DC5A1B0006BD8AC /* ModIconRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModIconRow.h; path = ../src/ModIconRow.h; sourceTree = SOURCE_ROOT; };
 		AA139C4606923EBE00C1F6ED /* Style.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Style.cpp; path = ../src/Style.cpp; sourceTree = "<group>"; };
 		AA147F180A0F78D8006EADF6 /* VectorHelper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = VectorHelper.h; sourceTree = "<group>"; };
 		AA147F190A0F78D8006EADF6 /* VectorHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VectorHelper.cpp; sourceTree = "<group>"; };
@@ -2614,10 +2618,6 @@
 		AA6EFEA504770E7C005F316C /* MusicWheel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MusicWheel.h; path = ../src/MusicWheel.h; sourceTree = "<group>"; };
 		AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicWheelItem.cpp; path = ../src/MusicWheelItem.cpp; sourceTree = "<group>"; };
 		AA6EFEA704770E7C005F316C /* MusicWheelItem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MusicWheelItem.h; path = ../src/MusicWheelItem.h; sourceTree = "<group>"; };
-		AA6EFEA804770E7C005F316C /* OptionIcon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = OptionIcon.cpp; path = ../src/OptionIcon.cpp; sourceTree = "<group>"; };
-		AA6EFEA904770E7C005F316C /* OptionIcon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = OptionIcon.h; path = ../src/OptionIcon.h; sourceTree = "<group>"; };
-		AA6EFEAA04770E7C005F316C /* OptionIconRow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = OptionIconRow.cpp; path = ../src/OptionIconRow.cpp; sourceTree = "<group>"; };
-		AA6EFEAB04770E7C005F316C /* OptionIconRow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = OptionIconRow.h; path = ../src/OptionIconRow.h; sourceTree = "<group>"; };
 		AA6EFEAC04770E7C005F316C /* OptionsCursor.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = OptionsCursor.cpp; path = ../src/OptionsCursor.cpp; sourceTree = "<group>"; };
 		AA6EFEAD04770E7C005F316C /* OptionsCursor.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = OptionsCursor.h; path = ../src/OptionsCursor.h; sourceTree = "<group>"; };
 		AA6EFEAE04770E7C005F316C /* ScrollBar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScrollBar.cpp; path = ../src/ScrollBar.cpp; sourceTree = "<group>"; };
@@ -4349,6 +4349,10 @@
 		AA6EFE6D04770D3E005F316C /* ActorsInMenus */ = {
 			isa = PBXGroup;
 			children = (
+				AA11A20B0DC5A1B0006BD8AC /* ModIcon.cpp */,
+				AA11A20C0DC5A1B0006BD8AC /* ModIcon.h */,
+				AA11A20D0DC5A1B0006BD8AC /* ModIconRow.cpp */,
+				AA11A20E0DC5A1B0006BD8AC /* ModIconRow.h */,
 				AA6EFE6E04770D61005F316C /* Banner.cpp */,
 				AA6EFE6F04770D61005F316C /* Banner.h */,
 				AA6EFE7604770E7C005F316C /* BPMDisplay.cpp */,
@@ -4395,10 +4399,6 @@
 				AA6EFEA504770E7C005F316C /* MusicWheel.h */,
 				AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */,
 				AA6EFEA704770E7C005F316C /* MusicWheelItem.h */,
-				AA6EFEA804770E7C005F316C /* OptionIcon.cpp */,
-				AA6EFEA904770E7C005F316C /* OptionIcon.h */,
-				AA6EFEAA04770E7C005F316C /* OptionIconRow.cpp */,
-				AA6EFEAB04770E7C005F316C /* OptionIconRow.h */,
 				AA8BD2B407C939A200EA04E1 /* OptionRow.cpp */,
 				AA8BD2B507C939A200EA04E1 /* OptionRow.h */,
 				AA6EFEAC04770E7C005F316C /* OptionsCursor.cpp */,
@@ -5429,8 +5429,6 @@
 				AA29CC780558741A00961A51 /* MusicList.h in Headers */,
 				AA29CC7A0558741A00961A51 /* MusicWheel.h in Headers */,
 				AA29CC7B0558741A00961A51 /* MusicWheelItem.h in Headers */,
-				AA29CC7C0558741A00961A51 /* OptionIcon.h in Headers */,
-				AA29CC7D0558741A00961A51 /* OptionIconRow.h in Headers */,
 				AA29CC7E0558741A00961A51 /* OptionsCursor.h in Headers */,
 				AA29CC7F0558741A00961A51 /* ScrollBar.h in Headers */,
 				AA29CC800558741A00961A51 /* ScrollingList.h in Headers */,
@@ -5780,6 +5778,8 @@
 				AAA7D4CA0C7E872600FB8F78 /* ScreenOptionsToggleSongs.h in Headers */,
 				AA7CDD940D8395F90001DAFC /* Song.h in Headers */,
 				AA4FE4430D869E330051D523 /* DifficultyDisplay.h in Headers */,
+				AA11A2100DC5A1B0006BD8AC /* ModIcon.h in Headers */,
+				AA11A2120DC5A1B0006BD8AC /* ModIconRow.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5855,8 +5855,6 @@
 				AA40D20009A08D650068C0D5 /* MusicList.h in Headers */,
 				AA40D20209A08D650068C0D5 /* MusicWheel.h in Headers */,
 				AA40D20309A08D650068C0D5 /* MusicWheelItem.h in Headers */,
-				AA40D20409A08D650068C0D5 /* OptionIcon.h in Headers */,
-				AA40D20509A08D650068C0D5 /* OptionIconRow.h in Headers */,
 				AA40D20609A08D650068C0D5 /* OptionsCursor.h in Headers */,
 				AA40D20709A08D650068C0D5 /* ScrollBar.h in Headers */,
 				AA40D20809A08D650068C0D5 /* ScrollingList.h in Headers */,
@@ -6214,6 +6212,8 @@
 				AAA071780CE7B3BB005A3060 /* version.h in Headers */,
 				AA7CDD950D8395F90001DAFC /* Song.h in Headers */,
 				AA4FE4450D869E330051D523 /* DifficultyDisplay.h in Headers */,
+				AA11A2140DC5A1B0006BD8AC /* ModIcon.h in Headers */,
+				AA11A2160DC5A1B0006BD8AC /* ModIconRow.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6699,8 +6699,6 @@
 				AA29CD8C0558741A00961A51 /* MusicList.cpp in Sources */,
 				AA29CD8E0558741A00961A51 /* MusicWheel.cpp in Sources */,
 				AA29CD8F0558741A00961A51 /* MusicWheelItem.cpp in Sources */,
-				AA29CD900558741A00961A51 /* OptionIcon.cpp in Sources */,
-				AA29CD910558741A00961A51 /* OptionIconRow.cpp in Sources */,
 				AA29CD920558741A00961A51 /* OptionsCursor.cpp in Sources */,
 				AA29CD930558741A00961A51 /* ScrollBar.cpp in Sources */,
 				AA29CD940558741A00961A51 /* ScrollingList.cpp in Sources */,
@@ -7043,6 +7041,8 @@
 				AAB3BB590C718F2D001BF487 /* RageUtil_CachedObject.cpp in Sources */,
 				AAA7D4C90C7E872600FB8F78 /* ScreenOptionsToggleSongs.cpp in Sources */,
 				AA4FE4420D869E330051D523 /* DifficultyDisplay.cpp in Sources */,
+				AA11A20F0DC5A1B0006BD8AC /* ModIcon.cpp in Sources */,
+				AA11A2110DC5A1B0006BD8AC /* ModIconRow.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7113,8 +7113,6 @@
 				AA40D3C209A08D650068C0D5 /* MusicList.cpp in Sources */,
 				AA40D3C409A08D650068C0D5 /* MusicWheel.cpp in Sources */,
 				AA40D3C509A08D650068C0D5 /* MusicWheelItem.cpp in Sources */,
-				AA40D3C609A08D650068C0D5 /* OptionIcon.cpp in Sources */,
-				AA40D3C709A08D650068C0D5 /* OptionIconRow.cpp in Sources */,
 				AA40D3C809A08D650068C0D5 /* OptionsCursor.cpp in Sources */,
 				AA40D3C909A08D650068C0D5 /* ScrollBar.cpp in Sources */,
 				AA40D3CA09A08D650068C0D5 /* ScrollingList.cpp in Sources */,
@@ -7463,6 +7461,8 @@
 				AAA071730CE7B3BB005A3060 /* timer.c in Sources */,
 				AAA071770CE7B3BB005A3060 /* version.c in Sources */,
 				AA4FE4440D869E330051D523 /* DifficultyDisplay.cpp in Sources */,
+				AA11A2130DC5A1B0006BD8AC /* ModIcon.cpp in Sources */,
+				AA11A2150DC5A1B0006BD8AC /* ModIconRow.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
