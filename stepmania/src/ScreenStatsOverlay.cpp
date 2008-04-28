@@ -48,7 +48,6 @@ void ScreenStatsOverlay::Init()
 		m_textSkips[i].SetY( 
 			SCALE( i, 0, NUM_SKIPS_TO_SHOW-1, rectSkips.top + 10, rectSkips.bottom - 10 ) 
 			);
-		m_textSkips[i].SetZoom( 0.6f );
 		m_textSkips[i].SetDiffuse( RageColor(1,1,1,0) );
 		m_textSkips[i].SetShadowLength( 0 );
 		this->AddChild( &m_textSkips[i] );

@@ -216,7 +216,6 @@ void ScreenDebugOverlay::Init()
 	m_textHeader.SetHorizAlign( align_left );
 	m_textHeader.SetX( SCREEN_LEFT+20 );
 	m_textHeader.SetY( SCREEN_TOP+20 );
-	m_textHeader.SetZoom( 1.0f );
 	m_textHeader.SetText( DEBUG_MENU );
 	this->AddChild( &m_textHeader );
 
@@ -320,11 +319,9 @@ void ScreenDebugOverlay::UpdateText()
 
 		txt1.SetX( SCREEN_CENTER_X-50 );
 		txt1.SetY( fY );
-		txt1.SetZoom( 0.7f );
 
 		txt2.SetX( SCREEN_CENTER_X-30 );
 		txt2.SetY( fY );
-		txt2.SetZoom( 0.7f );
 
 		RString s1 = (*p)->GetDisplayTitle();
 		RString s2 = (*p)->GetDisplayValue();

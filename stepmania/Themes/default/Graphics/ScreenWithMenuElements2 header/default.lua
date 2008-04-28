@@ -8,10 +8,10 @@ return Def.ActorFrame {
 			InitCommand=cmd(horizalign,left;y,4);
 		};
 		LoadFont( "_sf sports night ns upright 52" ) .. {
-			InitCommand=cmd(x,64;y,-7;horizalign,left;shadowlength,0;zoom,0.5;settext,ScreenString("HeaderText");skewx,-0.15);
+			InitCommand=cmd(x,64;y,-7;horizalign,left;shadowlength,0;settext,ScreenString("HeaderText");skewx,-0.15);
 		};
 		LoadFont( "_venacti 24" ) .. {
-			InitCommand=cmd(x,64;y,12;horizalign,left;shadowlength,0;zoom,0.5;settext,ScreenString("HeaderSubText"););
+			InitCommand=cmd(x,64;y,12;horizalign,left;shadowlength,0;settext,ScreenString("HeaderSubText"););
 		};
 		LoadActor( "arrow" ) .. {
 		};

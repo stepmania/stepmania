@@ -118,9 +118,9 @@ local sections = {
 -- To add people or sections modify the above.
 
 local fontPath = THEME:GetPathF( "ScreenCredits", "titles" )
-local lineOn = cmd(zoom,0.5)
-local sectionOn = cmd(zoom,0.5;diffuse,1,.5,.5,1)
-local otherOn = cmd(zoom,0.5;diffuse,.5,.5,1,1)
+local lineOn = cmd()
+local sectionOn = cmd(diffuse,1,.5,.5,1)
+local otherOn = cmd(diffuse,.5,.5,1,1)
 local t = Def.ActorScroller {
 	SecondsPerItem = 0.40;
 	NumItemsToDraw = 40;

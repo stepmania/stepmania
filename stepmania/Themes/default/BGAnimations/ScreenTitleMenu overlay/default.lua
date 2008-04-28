@@ -6,7 +6,7 @@ local t = Def.ActorFrame {
 		InitCommand=cmd(x,SCREEN_CENTER_X-200;y,SCREEN_TOP;vertalign,top;);
 	};
 	LoadFont("Common", "normal") .. {
-		InitCommand=cmd(x,SCREEN_CENTER_X-266;y,SCREEN_TOP+36;horizalign,left;zoom,0.5;shadowlengthx,0;shadowlengthy,2;playcommand,"Set");
+		InitCommand=cmd(x,SCREEN_CENTER_X-266;y,SCREEN_TOP+36;horizalign,left;shadowlengthx,0;shadowlengthy,2;playcommand,"Set");
 		SetCommand=function(self)
 			local s = "";
 			local fmt = THEME:GetString( Var "LoadingScreen", "%d songs in %d groups" );
@@ -37,14 +37,14 @@ local t = Def.ActorFrame {
 		end;
 	};
 	LoadFont("Common", "normal") .. {
-		InitCommand=cmd(x,SCREEN_LEFT+20;y,SCREEN_TOP+36;horizalign,left;diffuse,0.6,0.6,0.6,1;zoom,0.5;shadowlength,2);
+		InitCommand=cmd(x,SCREEN_LEFT+20;y,SCREEN_TOP+36;horizalign,left;diffuse,0.6,0.6,0.6,1;shadowlength,2);
 	};
 	Def.ActorFrame {
 		InitCommand=cmd(x,SCREEN_CENTER_X-250;y,SCREEN_CENTER_Y+200;);
 		LoadActor( "stepmania logo" ) .. {
 		};
 		LoadFont( "_venacti bold 24" ) .. {
-			InitCommand=cmd(y,-25;settext,ProductVersion() .. " " .. VersionTime();zoom,0.5;diffuse,color("#000000");shadowlength,0;);
+			InitCommand=cmd(y,-25;settext,ProductVersion() .. " " .. VersionTime();diffuse,color("#000000");shadowlength,0;);
 		};
 	};
 }

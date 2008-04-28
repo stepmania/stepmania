@@ -50,7 +50,7 @@ local function OptionsArea(pn)
 		
 		};
 		LoadFont("_terminator two 32" ) .. {
-			InitCommand=cmd(y,-4;settext,PlayerNumberToLocalizedString(pn);zoom,0.5;zoom,0.5;diffuse,color("#baa200");shadowlength,0;strokecolor,color("#00000000"););
+			InitCommand=cmd(y,-4;settext,PlayerNumberToLocalizedString(pn);diffuse,color("#baa200");shadowlength,0;strokecolor,color("#00000000"););
 		};
 	};
 	t[#t+1] = Def.ModIconRow {
@@ -80,7 +80,7 @@ t[#t+1] = Def.ActorFrame {
 
 t[#t+1] = LoadFont("Common", "normal") .. {
 	InitCommand=cmd(x,SCREEN_CENTER_X-160;y,SCREEN_CENTER_Y+94;playcommand,"Set");
-	OnCommand=cmd(zoom,0.5;shadowlength,2;diffusealpha,0;linear,0.5;diffusealpha,1);
+	OnCommand=cmd(shadowlength,2;diffusealpha,0;linear,0.5;diffusealpha,1);
 	OffCommand=cmd(linear,0.5;diffusealpha,0);
 
 	SetCommand=function(self)
@@ -119,7 +119,7 @@ t[#t+1] = Def.ActorFrame {
 	
 	};
 	LoadFont( "_sf square head bold 28" ) .. {
-		InitCommand=cmd(zoom,0.5;maxwidth,300;playcommand,"Set";x,10;shadowlength,0;diffuse,color("#fbfb57");strokecolor,color("#696800"););
+		InitCommand=cmd(maxwidth,300;playcommand,"Set";x,10;shadowlength,0;diffuse,color("#fbfb57");strokecolor,color("#696800"););
 		SetCommand=cmd(settext,string.upper( SortOrderToLocalizedString(GAMESTATE:GetSortOrder()) ));
 		SortOrderChangedMessageCommand=cmd(playcommand,"Set");
 	};
@@ -159,7 +159,7 @@ t[#t+1] = Def.PaneDisplay {
 t[#t+1] = Def.BPMDisplay {
 	File=THEME:GetPathF("BPMDisplay", "bpm");
 	Name="BPMDisplay";
-	InitCommand=cmd(horizalign,right;x,SCREEN_CENTER_X+294;y,SCREEN_CENTER_Y+1;shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000");zoom,0.5;);
+	InitCommand=cmd(horizalign,right;x,SCREEN_CENTER_X+294;y,SCREEN_CENTER_Y+1;shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000"););
 	OnCommand=cmd(stoptweening;addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
 	OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
 	SetCommand=function(self) self:SetFromGameState() end;
@@ -193,7 +193,7 @@ t[#t+1] = LoadActor( "stop icon" ) .. {
 };
 	
 t[#t+1] = LoadFont("_regra 32 bold") .. {
-	InitCommand=cmd(horizalign,left;x,SCREEN_CENTER_X-14;y,SCREEN_CENTER_Y-14;zoom,0.5;settext,"/Senser";shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000");maxwidth,360);
+	InitCommand=cmd(horizalign,left;x,SCREEN_CENTER_X-14;y,SCREEN_CENTER_Y-14;settext,"xxxx";shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000");maxwidth,360);
 	SetCommand=function(self) 
 			local s = "---";
 			local song = GAMESTATE:GetCurrentSong(); 
@@ -209,7 +209,7 @@ t[#t+1] = LoadFont("_regra 32 bold") .. {
 	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 };
 t[#t+1] = LoadFont("_regra 32 bold") .. {
-	InitCommand=cmd(horizalign,right;x,SCREEN_CENTER_X+228;y,SCREEN_CENTER_Y+4;zoom,0.5;settext,"_Hardcore Techno";shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000"););
+	InitCommand=cmd(horizalign,right;x,SCREEN_CENTER_X+228;y,SCREEN_CENTER_Y+4;settext,"xxxx";shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000"););
 	SetCommand=function(self) 
 			local s = "---";
 			local song = GAMESTATE:GetCurrentSong(); 
@@ -300,7 +300,7 @@ t[#t+1] = Def.CourseContentsList {
 		};
 
 		LoadFont("Common","normal") .. {
-			OnCommand=cmd(x,SCREEN_CENTER_X-192;y,SCREEN_CENTER_Y-230;horizalign,right;zoom,0.5;shadowlength,0);
+			OnCommand=cmd(x,SCREEN_CENTER_X-192;y,SCREEN_CENTER_Y-230;horizalign,right;shadowlength,0);
 			SetSongCommand=function(self, params) self:settext(params.Modifiers); end;
 		};
 
@@ -344,7 +344,7 @@ t[#t+1] = Def.ActorFrame{
 	};
 	LoadFont("_venacti 24")..{
 		Name="NumStages";
-		InitCommand=cmd(x,32;y,-4;shadowlength,0;zoom,0.5;skewx,-0.2;diffusebottomedge,color("#068EE1FF");strokecolor,color("#FF000000"));
+		InitCommand=cmd(x,32;y,-4;shadowlength,0;skewx,-0.2;diffusebottomedge,color("#068EE1FF");strokecolor,color("#FF000000"));
 		SetCommand=function(self)
 			local Song = GAMESTATE:GetCurrentSong();
 			local postfix = " STAGES";
@@ -401,7 +401,7 @@ if not GAMESTATE:IsCourseMode() then
 					end;
 				};
 				LoadFont( "_terminator two 32" ) .. {
-					InitCommand=cmd(x,-4;y,-3;settext,"P1";zoom,0.5;diffuse,color("#baa200");shadowlength,0;strokecolor,color("#00000000"););
+					InitCommand=cmd(x,-4;y,-3;settext,"P1";diffuse,color("#baa200");shadowlength,0;strokecolor,color("#00000000"););
 					BeginCommand=cmd(player,"PlayerNumber_P1";);
 					PlayerJoinedMessageCommand=function(self,param )
 						if param.Player ~= "PlayerNumber_P1" then return end;
@@ -426,7 +426,7 @@ if not GAMESTATE:IsCourseMode() then
 					end;
 				};
 				LoadFont( "_terminator two 32" ) .. {
-					InitCommand=cmd(x,4;y,-3;settext,"P2";zoom,0.5;diffuse,color("#83b767");shadowlength,0;strokecolor,color("#00000000"););
+					InitCommand=cmd(x,4;y,-3;settext,"P2";diffuse,color("#83b767");shadowlength,0;strokecolor,color("#00000000"););
 					BeginCommand=cmd(player,"PlayerNumber_P2";);
 					PlayerJoinedMessageCommand=function(self,param )
 						if param.Player ~= "PlayerNumber_P2" then return end;
