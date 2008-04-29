@@ -15,6 +15,7 @@ static const int samples_per_block = 512;
 class RageSoundDriver: public RageDriver
 {
 public:
+	/* Pass an empty string to get the default sound driver list. */
 	static RageSoundDriver *Create( const RString &sDrivers );
 	static DriverList m_pDriverList;
 

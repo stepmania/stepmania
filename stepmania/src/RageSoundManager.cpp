@@ -21,8 +21,6 @@
 
 #include "arch/Sound/RageSoundDriver.h"
 
-#include "arch/arch_default.h"
-
 /*
  * The lock ordering requirements are:
  * RageSound::Lock before g_SoundManMutex
@@ -46,11 +44,7 @@ RageSoundManager::RageSoundManager()
 static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
 void RageSoundManager::Init()
 {
-	RString sDrivers = g_sSoundDrivers;
-	if( sDrivers.empty() )
-		sDrivers = DEFAULT_SOUND_DRIVER_LIST;
-
-	m_pDriver = RageSoundDriver::Create( sDrivers );
+	m_pDriver = RageSoundDriver::Create( g_sSoundDrivers );
 	if( m_pDriver == NULL )
 		RageException::Throw( "%s", COULDNT_FIND_SOUND_DRIVER.GetValue().c_str() );
 }

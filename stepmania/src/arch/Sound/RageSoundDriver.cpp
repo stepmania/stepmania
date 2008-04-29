@@ -3,13 +3,14 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "Foreach.h"
+#include "arch/arch_default.h"
 
 DriverList RageSoundDriver::m_pDriverList;
 
-RageSoundDriver *RageSoundDriver::Create( const RString &drivers )
+RageSoundDriver *RageSoundDriver::Create( const RString& sDrivers )
 {
 	vector<RString> DriversToTry;
-	split( drivers, ",", DriversToTry, true );
+	split( sDrivers.empty()? DEFAULT_SOUND_DRIVER_LIST:sDrivers, ",", DriversToTry, true );
 	
 	FOREACH_CONST( RString, DriversToTry, Driver )
 	{
