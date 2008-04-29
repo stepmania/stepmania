@@ -283,11 +283,9 @@
 		AA29CD000558741A00961A51 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8B6C7B04AFD87300D02EE9 /* internal.h */; };
 		AA29CD010558741A00961A51 /* pcre.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8B6C7E04AFD87300D02EE9 /* pcre.h */; };
 		AA29CD020558741A00961A51 /* RageUtil_FileDB.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF580A804B3E2DC00D02EE9 /* RageUtil_FileDB.h */; };
-		AA29CD030558741A00961A51 /* LoadingWindow_Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEF3D0C04B533CC00D02EE9 /* LoadingWindow_Cocoa.h */; };
 		AA29CD040558741A00961A51 /* LoadingWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEF3D1004B53E2900D02EE9 /* LoadingWindow.h */; };
 		AA29CD060558741A00961A51 /* InputHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB3B36C04C38B4600D02EE9 /* InputHandler.h */; };
 		AA29CD070558741A00961A51 /* MovieTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB3B37704C38BF600D02EE9 /* MovieTexture.h */; };
-		AA29CD080558741A00961A51 /* ArchHooks_darwin.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB3B37F04C3F48700D02EE9 /* ArchHooks_darwin.h */; };
 		AA29CD090558741A00961A51 /* MovieTexture_Null.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB3B39104C5921800D02EE9 /* MovieTexture_Null.h */; };
 		AA29CD0A0558741A00961A51 /* RageFile.h in Headers */ = {isa = PBXBuildFile; fileRef = AA272C3104CD757100D02EE9 /* RageFile.h */; };
 		AA29CD0B0558741A00961A51 /* RageInputDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD7704770A7C005F316C /* RageInputDevice.h */; };
@@ -473,7 +471,6 @@
 		AA29CE050558741A00961A51 /* pcre.c in Sources */ = {isa = PBXBuildFile; fileRef = AA8B6C7D04AFD87300D02EE9 /* pcre.c */; };
 		AA29CE060558741A00961A51 /* study.c in Sources */ = {isa = PBXBuildFile; fileRef = AA8B6C7F04AFD87300D02EE9 /* study.c */; };
 		AA29CE070558741A00961A51 /* RageUtil_FileDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF580A704B3E2DC00D02EE9 /* RageUtil_FileDB.cpp */; };
-		AA29CE080558741A00961A51 /* LoadingWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.mm */; };
 		AA29CE090558741A00961A51 /* ActorUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA983CA04B9060A00D02EE9 /* ActorUtil.cpp */; };
 		AA29CE0B0558741A00961A51 /* ArchHooks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3F283B04BE6DDC00D02EE9 /* ArchHooks.cpp */; };
 		AA29CE0C0558741A00961A51 /* InputHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B36B04C38B4600D02EE9 /* InputHandler.cpp */; };
@@ -537,8 +534,6 @@
 		AA31D5270B1EC6550016AB6B /* RageSoundReader_PitchChange.h in Headers */ = {isa = PBXBuildFile; fileRef = AA31D51D0B1EC6540016AB6B /* RageSoundReader_PitchChange.h */; };
 		AA31D5280B1EC6550016AB6B /* RageSoundReader_SpeedChange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA31D51E0B1EC6540016AB6B /* RageSoundReader_SpeedChange.cpp */; };
 		AA31D5290B1EC6550016AB6B /* RageSoundReader_SpeedChange.h in Headers */ = {isa = PBXBuildFile; fileRef = AA31D51F0B1EC6540016AB6B /* RageSoundReader_SpeedChange.h */; };
-		AA32F97E096A255500F45B24 /* LowLevelWindow_Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */; };
-		AA32F97F096A255C00F45B24 /* LowLevelWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */; };
 		AA3396B80BDE195E00E1475F /* RageSoundReader_Merge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3396B60BDE195E00E1475F /* RageSoundReader_Merge.cpp */; };
 		AA3396B90BDE195E00E1475F /* RageSoundReader_Merge.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3396B70BDE195E00E1475F /* RageSoundReader_Merge.h */; };
 		AA3396BA0BDE195E00E1475F /* RageSoundReader_Merge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3396B60BDE195E00E1475F /* RageSoundReader_Merge.cpp */; };
@@ -723,11 +718,9 @@
 		AA40D26D09A08D650068C0D5 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8B6C7B04AFD87300D02EE9 /* internal.h */; };
 		AA40D26E09A08D650068C0D5 /* pcre.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8B6C7E04AFD87300D02EE9 /* pcre.h */; };
 		AA40D26F09A08D650068C0D5 /* RageUtil_FileDB.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF580A804B3E2DC00D02EE9 /* RageUtil_FileDB.h */; };
-		AA40D27009A08D650068C0D5 /* LoadingWindow_Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEF3D0C04B533CC00D02EE9 /* LoadingWindow_Cocoa.h */; };
 		AA40D27109A08D650068C0D5 /* LoadingWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEF3D1004B53E2900D02EE9 /* LoadingWindow.h */; };
 		AA40D27209A08D650068C0D5 /* InputHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB3B36C04C38B4600D02EE9 /* InputHandler.h */; };
 		AA40D27309A08D650068C0D5 /* MovieTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB3B37704C38BF600D02EE9 /* MovieTexture.h */; };
-		AA40D27409A08D650068C0D5 /* ArchHooks_darwin.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB3B37F04C3F48700D02EE9 /* ArchHooks_darwin.h */; };
 		AA40D27509A08D650068C0D5 /* MovieTexture_Null.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB3B39104C5921800D02EE9 /* MovieTexture_Null.h */; };
 		AA40D27609A08D650068C0D5 /* RageFile.h in Headers */ = {isa = PBXBuildFile; fileRef = AA272C3104CD757100D02EE9 /* RageFile.h */; };
 		AA40D27709A08D650068C0D5 /* RageInputDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD7704770A7C005F316C /* RageInputDevice.h */; };
@@ -817,7 +810,6 @@
 		AA40D2FC09A08D650068C0D5 /* ScreenNetworkOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA42F5E7067068D30013509E /* ScreenNetworkOptions.h */; };
 		AA40D2FD09A08D650068C0D5 /* Dialog.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD675F006795175006002B0 /* Dialog.h */; };
 		AA40D2FE09A08D650068C0D5 /* DialogDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD675F106795175006002B0 /* DialogDriver.h */; };
-		AA40D2FF09A08D650068C0D5 /* DialogDriver_Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD675F306795175006002B0 /* DialogDriver_Cocoa.h */; };
 		AA40D30009A08D650068C0D5 /* Threads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BC067992D7008ADC41 /* Threads.h */; };
 		AA40D30109A08D650068C0D5 /* Threads_Pthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */; };
 		AA40D30209A08D650068C0D5 /* RageSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = AA91587A067D2C2C00078E36 /* RageSurface.h */; };
@@ -902,10 +894,8 @@
 		AA40D36309A08D650068C0D5 /* DynamicActorScroller.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */; };
 		AA40D36409A08D650068C0D5 /* ScoreKeeperNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF34ADD0900AEBD0006EDB7 /* ScoreKeeperNormal.h */; };
 		AA40D36509A08D650068C0D5 /* ScreenStatsOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF34AEC0900B00C0006EDB7 /* ScreenStatsOverlay.h */; };
-		AA40D36609A08D650068C0D5 /* InputHandler_Carbon.h in Headers */ = {isa = PBXBuildFile; fileRef = AA69675006840991007802A5 /* InputHandler_Carbon.h */; };
 		AA40D36709A08D650068C0D5 /* MovieTexture_Generic.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA372D10909934500141131 /* MovieTexture_Generic.h */; };
 		AA40D36809A08D650068C0D5 /* MovieTexture_Theora.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA372D30909934500141131 /* MovieTexture_Theora.h */; };
-		AA40D36A09A08D650068C0D5 /* MemoryCardDriverThreaded_OSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */; };
 		AA40D36B09A08D650068C0D5 /* SpecialFiles.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEED0094D7FCB000029DE /* SpecialFiles.h */; };
 		AA40D36C09A08D650068C0D5 /* ScreenOptionsManageEditSteps.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEEE6094D807E000029DE /* ScreenOptionsManageEditSteps.h */; };
 		AA40D36D09A08D650068C0D5 /* ScreenOptionsMemoryCard.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEEE8094D807E000029DE /* ScreenOptionsMemoryCard.h */; };
@@ -913,7 +903,6 @@
 		AA40D36F09A08D650068C0D5 /* DisplayResolutions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07328B0954381800F396C5 /* DisplayResolutions.h */; };
 		AA40D37009A08D650068C0D5 /* XmlFileUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07328D0954381800F396C5 /* XmlFileUtil.h */; };
 		AA40D37109A08D650068C0D5 /* LocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = AADD1CC3095C233F0088C9DF /* LocalizedString.h */; };
-		AA40D37209A08D650068C0D5 /* LowLevelWindow_Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */; };
 		AA40D37509A08D650068C0D5 /* HIDDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA44705209846B0800983E82 /* HIDDevice.h */; };
 		AA40D37609A08D650068C0D5 /* JoystickDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA44708C0984720900983E82 /* JoystickDevice.h */; };
 		AA40D37709A08D650068C0D5 /* KeyboardDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4470BA098476F600983E82 /* KeyboardDevice.h */; };
@@ -1072,11 +1061,9 @@
 		AA40D42509A08D650068C0D5 /* pcre.c in Sources */ = {isa = PBXBuildFile; fileRef = AA8B6C7D04AFD87300D02EE9 /* pcre.c */; };
 		AA40D42609A08D650068C0D5 /* study.c in Sources */ = {isa = PBXBuildFile; fileRef = AA8B6C7F04AFD87300D02EE9 /* study.c */; };
 		AA40D42709A08D650068C0D5 /* RageUtil_FileDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF580A704B3E2DC00D02EE9 /* RageUtil_FileDB.cpp */; };
-		AA40D42809A08D650068C0D5 /* LoadingWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.mm */; };
 		AA40D42909A08D650068C0D5 /* ActorUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA983CA04B9060A00D02EE9 /* ActorUtil.cpp */; };
 		AA40D42A09A08D650068C0D5 /* ArchHooks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3F283B04BE6DDC00D02EE9 /* ArchHooks.cpp */; };
 		AA40D42B09A08D650068C0D5 /* InputHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B36B04C38B4600D02EE9 /* InputHandler.cpp */; };
-		AA40D42C09A08D650068C0D5 /* ArchHooks_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B38004C3F48700D02EE9 /* ArchHooks_darwin.cpp */; };
 		AA40D42D09A08D650068C0D5 /* MovieTexture_Null.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B39004C5921800D02EE9 /* MovieTexture_Null.cpp */; };
 		AA40D42E09A08D650068C0D5 /* RageFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA272C3004CD757100D02EE9 /* RageFile.cpp */; };
 		AA40D42F09A08D650068C0D5 /* CrashHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA76D15404D9D2D200D02EE9 /* CrashHandler.cpp */; };
@@ -1157,7 +1144,6 @@
 		AA40D49809A08D650068C0D5 /* TrailUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA70E3670663112800DAE1FD /* TrailUtil.cpp */; };
 		AA40D49909A08D650068C0D5 /* ScreenNetworkOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA42F5E6067068D30013509E /* ScreenNetworkOptions.cpp */; };
 		AA40D49A09A08D650068C0D5 /* Dialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD675EF06795175006002B0 /* Dialog.cpp */; };
-		AA40D49B09A08D650068C0D5 /* DialogDriver_Cocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD675F206795175006002B0 /* DialogDriver_Cocoa.cpp */; };
 		AA40D49C09A08D650068C0D5 /* Threads_Pthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */; };
 		AA40D49D09A08D650068C0D5 /* RageSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA915879067D2C2C00078E36 /* RageSurface.cpp */; };
 		AA40D49E09A08D650068C0D5 /* RageSurface_Load_BMP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA90919F067ED43000C1FCFF /* RageSurface_Load_BMP.cpp */; };
@@ -1241,11 +1227,9 @@
 		AA40D4F809A08D650068C0D5 /* DynamicActorScroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */; };
 		AA40D4F909A08D650068C0D5 /* ScoreKeeperNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */; };
 		AA40D4FA09A08D650068C0D5 /* ScreenStatsOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34AEB0900B00C0006EDB7 /* ScreenStatsOverlay.cpp */; };
-		AA40D4FB09A08D650068C0D5 /* InputHandler_Carbon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA69675106840991007802A5 /* InputHandler_Carbon.cpp */; };
 		AA40D4FC09A08D650068C0D5 /* MovieTexture_Generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D00909934500141131 /* MovieTexture_Generic.cpp */; };
 		AA40D4FD09A08D650068C0D5 /* MovieTexture_Theora.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D20909934500141131 /* MovieTexture_Theora.cpp */; };
 		AA40D4FF09A08D650068C0D5 /* LifeMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2FB638091212AF000FD574 /* LifeMeter.cpp */; };
-		AA40D50009A08D650068C0D5 /* MemoryCardDriverThreaded_OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */; };
 		AA40D50109A08D650068C0D5 /* SpecialFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */; };
 		AA40D50209A08D650068C0D5 /* ScreenOptionsManageEditSteps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE5094D807E000029DE /* ScreenOptionsManageEditSteps.cpp */; };
 		AA40D50309A08D650068C0D5 /* ScreenOptionsMemoryCard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE7094D807E000029DE /* ScreenOptionsMemoryCard.cpp */; };
@@ -1253,7 +1237,6 @@
 		AA40D50609A08D650068C0D5 /* XmlFileUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07328C0954381800F396C5 /* XmlFileUtil.cpp */; };
 		AA40D50709A08D650068C0D5 /* XmlFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC6889905D7F3C800964E6D /* XmlFile.cpp */; };
 		AA40D50809A08D650068C0D5 /* LocalizedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */; };
-		AA40D50909A08D650068C0D5 /* LowLevelWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */; };
 		AA40D50D09A08D650068C0D5 /* SMMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = AABBFCD209838C3A00F077E2 /* SMMain.mm */; };
 		AA40D50E09A08D650068C0D5 /* HIDDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA44705309846B0800983E82 /* HIDDevice.cpp */; };
 		AA40D50F09A08D650068C0D5 /* JoystickDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA44708D0984720900983E82 /* JoystickDevice.cpp */; };
@@ -1333,6 +1316,30 @@
 		AA6999620ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */; };
 		AA6999630ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */; };
 		AA6999640ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */; };
+		AA6C6AD80DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6AD60DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp */; };
+		AA6C6AD90DC6B17B00E7A13E /* ArchHooks_MacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6AD70DC6B17B00E7A13E /* ArchHooks_MacOSX.h */; };
+		AA6C6ADA0DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6AD60DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp */; };
+		AA6C6ADB0DC6B17B00E7A13E /* ArchHooks_MacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6AD70DC6B17B00E7A13E /* ArchHooks_MacOSX.h */; };
+		AA6C6ADE0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6ADC0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp */; };
+		AA6C6ADF0DC6B1DC00E7A13E /* DialogDriver_MacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6ADD0DC6B1DC00E7A13E /* DialogDriver_MacOSX.h */; };
+		AA6C6AE00DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6ADC0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp */; };
+		AA6C6AE10DC6B1DC00E7A13E /* DialogDriver_MacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6ADD0DC6B1DC00E7A13E /* DialogDriver_MacOSX.h */; };
+		AA6C6AE40DC6B22800E7A13E /* LoadingWindow_MacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6AE20DC6B22800E7A13E /* LoadingWindow_MacOSX.h */; };
+		AA6C6AE50DC6B22800E7A13E /* LoadingWindow_MacOSX.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6AE30DC6B22800E7A13E /* LoadingWindow_MacOSX.mm */; };
+		AA6C6AE60DC6B22800E7A13E /* LoadingWindow_MacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6AE20DC6B22800E7A13E /* LoadingWindow_MacOSX.h */; };
+		AA6C6AE70DC6B22800E7A13E /* LoadingWindow_MacOSX.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6AE30DC6B22800E7A13E /* LoadingWindow_MacOSX.mm */; };
+		AA6C6B020DC6B2B400E7A13E /* LowLevelWindow_MacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6B000DC6B2B400E7A13E /* LowLevelWindow_MacOSX.h */; };
+		AA6C6B030DC6B2B400E7A13E /* LowLevelWindow_MacOSX.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6B010DC6B2B400E7A13E /* LowLevelWindow_MacOSX.mm */; };
+		AA6C6B040DC6B2B400E7A13E /* LowLevelWindow_MacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6B000DC6B2B400E7A13E /* LowLevelWindow_MacOSX.h */; };
+		AA6C6B050DC6B2B400E7A13E /* LowLevelWindow_MacOSX.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6B010DC6B2B400E7A13E /* LowLevelWindow_MacOSX.mm */; };
+		AA6C6B080DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6B060DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.cpp */; };
+		AA6C6B090DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6B070DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.h */; };
+		AA6C6B0A0DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6B060DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.cpp */; };
+		AA6C6B0B0DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6B070DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.h */; };
+		AA6C6B0E0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6B0C0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.cpp */; };
+		AA6C6B0F0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6B0D0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.h */; };
+		AA6C6B100DC6B48C00E7A13E /* InputHandler_MacOSX_HID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6C6B0C0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.cpp */; };
+		AA6C6B110DC6B48C00E7A13E /* InputHandler_MacOSX_HID.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6C6B0D0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.h */; };
 		AA6E6E0A07F518E800C3EBB4 /* Quad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E6E0907F518E800C3EBB4 /* Quad.cpp */; };
 		AA70E3690663112800DAE1FD /* Foreach.h in Headers */ = {isa = PBXBuildFile; fileRef = AA70E3640663112800DAE1FD /* Foreach.h */; };
 		AA70E36A0663112800DAE1FD /* Trail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA70E3650663112800DAE1FD /* Trail.cpp */; };
@@ -1897,8 +1904,6 @@
 		AACA593307B5E23400763545 /* RageUtil_AutoPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */; };
 		AACA593407B5E23400763545 /* RageUtil_WorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592D07B5E23400763545 /* RageUtil_WorkerThread.cpp */; };
 		AACA593507B5E23400763545 /* RageUtil_WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */; };
-		AACF47B9094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */; };
-		AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */; };
 		AACFBE2808E7D793005087FC /* ActorSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE2608E7D793005087FC /* ActorSound.cpp */; };
 		AACFBE2908E7D793005087FC /* ActorSound.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE2708E7D793005087FC /* ActorSound.h */; };
 		AACFBE3A08E7D832005087FC /* InputEventPlus.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE3908E7D832005087FC /* InputEventPlus.h */; };
@@ -1913,8 +1918,6 @@
 		AAD675F606795175006002B0 /* Dialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD675EF06795175006002B0 /* Dialog.cpp */; };
 		AAD675F706795175006002B0 /* Dialog.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD675F006795175006002B0 /* Dialog.h */; };
 		AAD675F806795175006002B0 /* DialogDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD675F106795175006002B0 /* DialogDriver.h */; };
-		AAD675F906795175006002B0 /* DialogDriver_Cocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD675F206795175006002B0 /* DialogDriver_Cocoa.cpp */; };
-		AAD675FA06795175006002B0 /* DialogDriver_Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD675F306795175006002B0 /* DialogDriver_Cocoa.h */; };
 		AAD6A6E0065E0A8D0042165A /* CatalogXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD6A6DE065E0A8D0042165A /* CatalogXml.cpp */; };
 		AAD6A6E1065E0A8D0042165A /* CatalogXml.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD6A6DF065E0A8D0042165A /* CatalogXml.h */; };
 		AAD6A714065E0FDF0042165A /* Difficulty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD6A712065E0FDF0042165A /* Difficulty.cpp */; };
@@ -2039,7 +2042,6 @@
 		AAED6F2D0601C528002D2DEE /* Backtrace.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F290601C528002D2DEE /* Backtrace.h */; };
 		AAED6F2E0601C528002D2DEE /* BacktraceNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAED6F2A0601C528002D2DEE /* BacktraceNames.cpp */; };
 		AAED6F2F0601C528002D2DEE /* BacktraceNames.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F2B0601C528002D2DEE /* BacktraceNames.h */; };
-		AAEDFD490A036C8B00590617 /* ArchHooks_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B38004C3F48700D02EE9 /* ArchHooks_darwin.cpp */; };
 		AAEDFD690A03762B00590617 /* Crash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEDFD680A03762B00590617 /* Crash.cpp */; };
 		AAEDFD6A0A03762B00590617 /* Crash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEDFD680A03762B00590617 /* Crash.cpp */; };
 		AAF3442B08F1C36A0006EDB7 /* DynamicActorScroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */; };
@@ -2048,8 +2050,6 @@
 		AAF34ADF0900AEBD0006EDB7 /* ScoreKeeperNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF34ADD0900AEBD0006EDB7 /* ScoreKeeperNormal.h */; };
 		AAF34AED0900B00C0006EDB7 /* ScreenStatsOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34AEB0900B00C0006EDB7 /* ScreenStatsOverlay.cpp */; };
 		AAF34AEE0900B00C0006EDB7 /* ScreenStatsOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF34AEC0900B00C0006EDB7 /* ScreenStatsOverlay.h */; };
-		AAF34B190900D1A20006EDB7 /* InputHandler_Carbon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA69675106840991007802A5 /* InputHandler_Carbon.cpp */; };
-		AAF34B1A0900D1AA0006EDB7 /* InputHandler_Carbon.h in Headers */ = {isa = PBXBuildFile; fileRef = AA69675006840991007802A5 /* InputHandler_Carbon.h */; };
 		AAF4206705D63FA700056441 /* ModelManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF4206505D63FA700056441 /* ModelManager.cpp */; };
 		AAF4206805D63FA700056441 /* ModelManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF4206605D63FA700056441 /* ModelManager.h */; };
 		AAF4206B05D6400800056441 /* RageModelGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF4206905D6400800056441 /* RageModelGeometry.cpp */; };
@@ -2384,10 +2384,20 @@
 		AA64218706EC606F00C21584 /* RageFileDriverMemory.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageFileDriverMemory.h; path = ../src/RageFileDriverMemory.h; sourceTree = "<group>"; };
 		AA658779098C322800CE55CC /* ScreenUnlockStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenUnlockStatus.cpp; path = ../src/ScreenUnlockStatus.cpp; sourceTree = "<group>"; };
 		AA65877A098C322800CE55CC /* ScreenUnlockStatus.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenUnlockStatus.h; path = ../src/ScreenUnlockStatus.h; sourceTree = "<group>"; };
-		AA69675006840991007802A5 /* InputHandler_Carbon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = InputHandler_Carbon.h; sourceTree = "<group>"; };
-		AA69675106840991007802A5 /* InputHandler_Carbon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = InputHandler_Carbon.cpp; sourceTree = "<group>"; };
 		AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ControllerStateDisplay.cpp; path = ../src/ControllerStateDisplay.cpp; sourceTree = "<group>"; };
 		AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ControllerStateDisplay.h; path = ../src/ControllerStateDisplay.h; sourceTree = "<group>"; };
+		AA6C6AD60DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArchHooks_MacOSX.cpp; path = ArchHooks/ArchHooks_MacOSX.cpp; sourceTree = "<group>"; };
+		AA6C6AD70DC6B17B00E7A13E /* ArchHooks_MacOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArchHooks_MacOSX.h; path = ArchHooks/ArchHooks_MacOSX.h; sourceTree = "<group>"; };
+		AA6C6ADC0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogDriver_MacOSX.cpp; sourceTree = "<group>"; };
+		AA6C6ADD0DC6B1DC00E7A13E /* DialogDriver_MacOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DialogDriver_MacOSX.h; sourceTree = "<group>"; };
+		AA6C6AE20DC6B22800E7A13E /* LoadingWindow_MacOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingWindow_MacOSX.h; sourceTree = "<group>"; };
+		AA6C6AE30DC6B22800E7A13E /* LoadingWindow_MacOSX.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadingWindow_MacOSX.mm; sourceTree = "<group>"; };
+		AA6C6B000DC6B2B400E7A13E /* LowLevelWindow_MacOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LowLevelWindow_MacOSX.h; sourceTree = "<group>"; };
+		AA6C6B010DC6B2B400E7A13E /* LowLevelWindow_MacOSX.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LowLevelWindow_MacOSX.mm; sourceTree = "<group>"; };
+		AA6C6B060DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryCardDriverThreaded_MacOSX.cpp; sourceTree = "<group>"; };
+		AA6C6B070DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryCardDriverThreaded_MacOSX.h; sourceTree = "<group>"; };
+		AA6C6B0C0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputHandler_MacOSX_HID.cpp; sourceTree = "<group>"; };
+		AA6C6B0D0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputHandler_MacOSX_HID.h; sourceTree = "<group>"; };
 		AA6DAF0805300B3D00D02EE9 /* ScoreDisplayPercentage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScoreDisplayPercentage.cpp; path = ../src/ScoreDisplayPercentage.cpp; sourceTree = "<group>"; };
 		AA6DAF0905300B3D00D02EE9 /* ScoreDisplayPercentage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScoreDisplayPercentage.h; path = ../src/ScoreDisplayPercentage.h; sourceTree = "<group>"; };
 		AA6E000A047711F3005F316C /* Screen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Screen.cpp; path = ../src/Screen.cpp; sourceTree = "<group>"; };
@@ -3144,8 +3154,6 @@
 		AAB3B36B04C38B4600D02EE9 /* InputHandler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = InputHandler.cpp; sourceTree = "<group>"; };
 		AAB3B36C04C38B4600D02EE9 /* InputHandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = InputHandler.h; sourceTree = "<group>"; };
 		AAB3B37704C38BF600D02EE9 /* MovieTexture.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture.h; path = MovieTexture/MovieTexture.h; sourceTree = "<group>"; };
-		AAB3B37F04C3F48700D02EE9 /* ArchHooks_darwin.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ArchHooks_darwin.h; path = ArchHooks/ArchHooks_darwin.h; sourceTree = "<group>"; };
-		AAB3B38004C3F48700D02EE9 /* ArchHooks_darwin.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ArchHooks_darwin.cpp; path = ArchHooks/ArchHooks_darwin.cpp; sourceTree = "<group>"; };
 		AAB3B39004C5921800D02EE9 /* MovieTexture_Null.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MovieTexture_Null.cpp; path = MovieTexture/MovieTexture_Null.cpp; sourceTree = "<group>"; };
 		AAB3B39104C5921800D02EE9 /* MovieTexture_Null.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_Null.h; path = MovieTexture/MovieTexture_Null.h; sourceTree = "<group>"; };
 		AAB3B7DA0C6C582D001BF487 /* ScreenSelectProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenSelectProfile.cpp; path = ../src/ScreenSelectProfile.cpp; sourceTree = "<group>"; };
@@ -3231,8 +3239,6 @@
 		AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageUtil_AutoPtr.h; path = ../src/RageUtil_AutoPtr.h; sourceTree = "<group>"; };
 		AACA592D07B5E23400763545 /* RageUtil_WorkerThread.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageUtil_WorkerThread.cpp; path = ../src/RageUtil_WorkerThread.cpp; sourceTree = "<group>"; };
 		AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageUtil_WorkerThread.h; path = ../src/RageUtil_WorkerThread.h; sourceTree = "<group>"; };
-		AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = MemoryCardDriverThreaded_OSX.h; sourceTree = "<group>"; };
-		AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = MemoryCardDriverThreaded_OSX.cpp; sourceTree = "<group>"; };
 		AACFBE2608E7D793005087FC /* ActorSound.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ActorSound.cpp; path = ../src/ActorSound.cpp; sourceTree = "<group>"; };
 		AACFBE2708E7D793005087FC /* ActorSound.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ActorSound.h; path = ../src/ActorSound.h; sourceTree = "<group>"; };
 		AACFBE3908E7D832005087FC /* InputEventPlus.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = InputEventPlus.h; path = ../src/InputEventPlus.h; sourceTree = "<group>"; };
@@ -3249,8 +3255,6 @@
 		AAD675EF06795175006002B0 /* Dialog.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = Dialog.cpp; sourceTree = "<group>"; };
 		AAD675F006795175006002B0 /* Dialog.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Dialog.h; sourceTree = "<group>"; };
 		AAD675F106795175006002B0 /* DialogDriver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = DialogDriver.h; sourceTree = "<group>"; };
-		AAD675F206795175006002B0 /* DialogDriver_Cocoa.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = DialogDriver_Cocoa.cpp; sourceTree = "<group>"; };
-		AAD675F306795175006002B0 /* DialogDriver_Cocoa.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = DialogDriver_Cocoa.h; sourceTree = "<group>"; };
 		AAD6A6DE065E0A8D0042165A /* CatalogXml.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CatalogXml.cpp; path = ../src/CatalogXml.cpp; sourceTree = "<group>"; };
 		AAD6A6DF065E0A8D0042165A /* CatalogXml.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CatalogXml.h; path = ../src/CatalogXml.h; sourceTree = "<group>"; };
 		AAD6A712065E0FDF0042165A /* Difficulty.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Difficulty.cpp; path = ../src/Difficulty.cpp; sourceTree = "<group>"; };
@@ -3372,11 +3376,7 @@
 		AAED6F2A0601C528002D2DEE /* BacktraceNames.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = BacktraceNames.cpp; sourceTree = "<group>"; };
 		AAED6F2B0601C528002D2DEE /* BacktraceNames.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = BacktraceNames.h; sourceTree = "<group>"; };
 		AAEDFD680A03762B00590617 /* Crash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Crash.cpp; sourceTree = "<group>"; };
-		AAEF3D0C04B533CC00D02EE9 /* LoadingWindow_Cocoa.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LoadingWindow_Cocoa.h; sourceTree = "<group>"; };
-		AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = LoadingWindow_Cocoa.mm; sourceTree = "<group>"; };
 		AAEF3D1004B53E2900D02EE9 /* LoadingWindow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LoadingWindow.h; sourceTree = "<group>"; };
-		AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LowLevelWindow_Cocoa.h; sourceTree = "<group>"; };
-		AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LowLevelWindow_Cocoa.mm; sourceTree = "<group>"; };
 		AAF33F2A04FF213100F93C24 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = DynamicActorScroller.cpp; path = ../src/DynamicActorScroller.cpp; sourceTree = "<group>"; };
 		AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DynamicActorScroller.h; path = ../src/DynamicActorScroller.h; sourceTree = "<group>"; };
@@ -3947,8 +3947,8 @@
 			children = (
 				AAB3B36B04C38B4600D02EE9 /* InputHandler.cpp */,
 				AAB3B36C04C38B4600D02EE9 /* InputHandler.h */,
-				AA69675106840991007802A5 /* InputHandler_Carbon.cpp */,
-				AA69675006840991007802A5 /* InputHandler_Carbon.h */,
+				AA6C6B0C0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.cpp */,
+				AA6C6B0D0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.h */,
 				AAFC6CEF072A30440053AAD3 /* InputHandler_MonkeyKeyboard.cpp */,
 				AAFC6CF0072A30440053AAD3 /* InputHandler_MonkeyKeyboard.h */,
 			);
@@ -3960,8 +3960,8 @@
 			children = (
 				AA909E260B45B6AB002852D3 /* LoadingWindow.cpp */,
 				AAEF3D1004B53E2900D02EE9 /* LoadingWindow.h */,
-				AAEF3D0C04B533CC00D02EE9 /* LoadingWindow_Cocoa.h */,
-				AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.mm */,
+				AA6C6AE20DC6B22800E7A13E /* LoadingWindow_MacOSX.h */,
+				AA6C6AE30DC6B22800E7A13E /* LoadingWindow_MacOSX.mm */,
 				AA339A7D0BF0FA6300E1475F /* LoadingWindow_Null.h */,
 			);
 			path = LoadingWindow;
@@ -3972,8 +3972,8 @@
 			children = (
 				AA909E230B45B696002852D3 /* LowLevelWindow.cpp */,
 				AA6E01630477136A005F316C /* LowLevelWindow.h */,
-				AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */,
-				AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */,
+				AA6C6B000DC6B2B400E7A13E /* LowLevelWindow_MacOSX.h */,
+				AA6C6B010DC6B2B400E7A13E /* LowLevelWindow_MacOSX.mm */,
 			);
 			path = LowLevelWindow;
 			sourceTree = "<group>";
@@ -5207,8 +5207,8 @@
 			children = (
 				AA3F283B04BE6DDC00D02EE9 /* ArchHooks.cpp */,
 				AABE36FC0497CE44005F316C /* ArchHooks.h */,
-				AAB3B38004C3F48700D02EE9 /* ArchHooks_darwin.cpp */,
-				AAB3B37F04C3F48700D02EE9 /* ArchHooks_darwin.h */,
+				AA6C6AD60DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp */,
+				AA6C6AD70DC6B17B00E7A13E /* ArchHooks_MacOSX.h */,
 			);
 			name = ArchHooks;
 			sourceTree = "<group>";
@@ -5219,8 +5219,8 @@
 				AAC9F332069E22CF00D53E2C /* MemoryCardDriver.cpp */,
 				AAC9F333069E22CF00D53E2C /* MemoryCardDriver.h */,
 				AABE78760591287100E8BF50 /* MemoryCardDriver_Null.h */,
-				AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */,
-				AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */,
+				AA6C6B060DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.cpp */,
+				AA6C6B070DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.h */,
 			);
 			path = MemoryCard;
 			sourceTree = "<group>";
@@ -5243,8 +5243,8 @@
 				AAD675F006795175006002B0 /* Dialog.h */,
 				AA608EBF0B0F85E400B39AC4 /* DialogDriver.cpp */,
 				AAD675F106795175006002B0 /* DialogDriver.h */,
-				AAD675F206795175006002B0 /* DialogDriver_Cocoa.cpp */,
-				AAD675F306795175006002B0 /* DialogDriver_Cocoa.h */,
+				AA6C6ADC0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp */,
+				AA6C6ADD0DC6B1DC00E7A13E /* DialogDriver_MacOSX.h */,
 			);
 			path = Dialog;
 			sourceTree = "<group>";
@@ -5524,11 +5524,9 @@
 				AA29CD000558741A00961A51 /* internal.h in Headers */,
 				AA29CD010558741A00961A51 /* pcre.h in Headers */,
 				AA29CD020558741A00961A51 /* RageUtil_FileDB.h in Headers */,
-				AA29CD030558741A00961A51 /* LoadingWindow_Cocoa.h in Headers */,
 				AA29CD040558741A00961A51 /* LoadingWindow.h in Headers */,
 				AA29CD060558741A00961A51 /* InputHandler.h in Headers */,
 				AA29CD070558741A00961A51 /* MovieTexture.h in Headers */,
-				AA29CD080558741A00961A51 /* ArchHooks_darwin.h in Headers */,
 				AA29CD090558741A00961A51 /* MovieTexture_Null.h in Headers */,
 				AA29CD0A0558741A00961A51 /* RageFile.h in Headers */,
 				AA29CD0B0558741A00961A51 /* RageInputDevice.h in Headers */,
@@ -5620,7 +5618,6 @@
 				AA42F5E9067068D30013509E /* ScreenNetworkOptions.h in Headers */,
 				AAD675F706795175006002B0 /* Dialog.h in Headers */,
 				AAD675F806795175006002B0 /* DialogDriver.h in Headers */,
-				AAD675FA06795175006002B0 /* DialogDriver_Cocoa.h in Headers */,
 				AA60E0C1067992D7008ADC41 /* Threads.h in Headers */,
 				AA60E0C3067992D7008ADC41 /* Threads_Pthreads.h in Headers */,
 				AA91587E067D2C2C00078E36 /* RageSurface.h in Headers */,
@@ -5707,10 +5704,8 @@
 				AAF3442C08F1C36A0006EDB7 /* DynamicActorScroller.h in Headers */,
 				AAF34ADF0900AEBD0006EDB7 /* ScoreKeeperNormal.h in Headers */,
 				AAF34AEE0900B00C0006EDB7 /* ScreenStatsOverlay.h in Headers */,
-				AAF34B1A0900D1AA0006EDB7 /* InputHandler_Carbon.h in Headers */,
 				AAA372D50909934500141131 /* MovieTexture_Generic.h in Headers */,
 				AAA372D70909934500141131 /* MovieTexture_Theora.h in Headers */,
-				AACF47B9094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h in Headers */,
 				AAFBEED2094D7FCB000029DE /* SpecialFiles.h in Headers */,
 				AAFBEEEC094D807E000029DE /* ScreenOptionsManageEditSteps.h in Headers */,
 				AAFBEEEE094D807E000029DE /* ScreenOptionsMemoryCard.h in Headers */,
@@ -5718,7 +5713,6 @@
 				AA07328F0954381800F396C5 /* DisplayResolutions.h in Headers */,
 				AA0732910954381800F396C5 /* XmlFileUtil.h in Headers */,
 				AADD1CC6095C233F0088C9DF /* LocalizedString.h in Headers */,
-				AA32F97E096A255500F45B24 /* LowLevelWindow_Cocoa.h in Headers */,
 				AA44705409846B0800983E82 /* HIDDevice.h in Headers */,
 				AA44708E0984720900983E82 /* JoystickDevice.h in Headers */,
 				AA4470BC098476F600983E82 /* KeyboardDevice.h in Headers */,
@@ -5780,6 +5774,12 @@
 				AA4FE4430D869E330051D523 /* DifficultyDisplay.h in Headers */,
 				AA11A2100DC5A1B0006BD8AC /* ModIcon.h in Headers */,
 				AA11A2120DC5A1B0006BD8AC /* ModIconRow.h in Headers */,
+				AA6C6AD90DC6B17B00E7A13E /* ArchHooks_MacOSX.h in Headers */,
+				AA6C6ADF0DC6B1DC00E7A13E /* DialogDriver_MacOSX.h in Headers */,
+				AA6C6AE40DC6B22800E7A13E /* LoadingWindow_MacOSX.h in Headers */,
+				AA6C6B020DC6B2B400E7A13E /* LowLevelWindow_MacOSX.h in Headers */,
+				AA6C6B090DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.h in Headers */,
+				AA6C6B0F0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5950,11 +5950,9 @@
 				AA40D26D09A08D650068C0D5 /* internal.h in Headers */,
 				AA40D26E09A08D650068C0D5 /* pcre.h in Headers */,
 				AA40D26F09A08D650068C0D5 /* RageUtil_FileDB.h in Headers */,
-				AA40D27009A08D650068C0D5 /* LoadingWindow_Cocoa.h in Headers */,
 				AA40D27109A08D650068C0D5 /* LoadingWindow.h in Headers */,
 				AA40D27209A08D650068C0D5 /* InputHandler.h in Headers */,
 				AA40D27309A08D650068C0D5 /* MovieTexture.h in Headers */,
-				AA40D27409A08D650068C0D5 /* ArchHooks_darwin.h in Headers */,
 				AA40D27509A08D650068C0D5 /* MovieTexture_Null.h in Headers */,
 				AA40D27609A08D650068C0D5 /* RageFile.h in Headers */,
 				AA40D27709A08D650068C0D5 /* RageInputDevice.h in Headers */,
@@ -6044,7 +6042,6 @@
 				AA40D2FC09A08D650068C0D5 /* ScreenNetworkOptions.h in Headers */,
 				AA40D2FD09A08D650068C0D5 /* Dialog.h in Headers */,
 				AA40D2FE09A08D650068C0D5 /* DialogDriver.h in Headers */,
-				AA40D2FF09A08D650068C0D5 /* DialogDriver_Cocoa.h in Headers */,
 				AA40D30009A08D650068C0D5 /* Threads.h in Headers */,
 				AA40D30109A08D650068C0D5 /* Threads_Pthreads.h in Headers */,
 				AA40D30209A08D650068C0D5 /* RageSurface.h in Headers */,
@@ -6129,10 +6126,8 @@
 				AA40D36309A08D650068C0D5 /* DynamicActorScroller.h in Headers */,
 				AA40D36409A08D650068C0D5 /* ScoreKeeperNormal.h in Headers */,
 				AA40D36509A08D650068C0D5 /* ScreenStatsOverlay.h in Headers */,
-				AA40D36609A08D650068C0D5 /* InputHandler_Carbon.h in Headers */,
 				AA40D36709A08D650068C0D5 /* MovieTexture_Generic.h in Headers */,
 				AA40D36809A08D650068C0D5 /* MovieTexture_Theora.h in Headers */,
-				AA40D36A09A08D650068C0D5 /* MemoryCardDriverThreaded_OSX.h in Headers */,
 				AA40D36B09A08D650068C0D5 /* SpecialFiles.h in Headers */,
 				AA40D36C09A08D650068C0D5 /* ScreenOptionsManageEditSteps.h in Headers */,
 				AA40D36D09A08D650068C0D5 /* ScreenOptionsMemoryCard.h in Headers */,
@@ -6140,7 +6135,6 @@
 				AA40D36F09A08D650068C0D5 /* DisplayResolutions.h in Headers */,
 				AA40D37009A08D650068C0D5 /* XmlFileUtil.h in Headers */,
 				AA40D37109A08D650068C0D5 /* LocalizedString.h in Headers */,
-				AA40D37209A08D650068C0D5 /* LowLevelWindow_Cocoa.h in Headers */,
 				AA40D37509A08D650068C0D5 /* HIDDevice.h in Headers */,
 				AA40D37609A08D650068C0D5 /* JoystickDevice.h in Headers */,
 				AA40D37709A08D650068C0D5 /* KeyboardDevice.h in Headers */,
@@ -6214,6 +6208,12 @@
 				AA4FE4450D869E330051D523 /* DifficultyDisplay.h in Headers */,
 				AA11A2140DC5A1B0006BD8AC /* ModIcon.h in Headers */,
 				AA11A2160DC5A1B0006BD8AC /* ModIconRow.h in Headers */,
+				AA6C6ADB0DC6B17B00E7A13E /* ArchHooks_MacOSX.h in Headers */,
+				AA6C6AE10DC6B1DC00E7A13E /* DialogDriver_MacOSX.h in Headers */,
+				AA6C6AE60DC6B22800E7A13E /* LoadingWindow_MacOSX.h in Headers */,
+				AA6C6B040DC6B2B400E7A13E /* LowLevelWindow_MacOSX.h in Headers */,
+				AA6C6B0B0DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.h in Headers */,
+				AA6C6B110DC6B48C00E7A13E /* InputHandler_MacOSX_HID.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6787,7 +6787,6 @@
 				AA29CE050558741A00961A51 /* pcre.c in Sources */,
 				AA29CE060558741A00961A51 /* study.c in Sources */,
 				AA29CE070558741A00961A51 /* RageUtil_FileDB.cpp in Sources */,
-				AA29CE080558741A00961A51 /* LoadingWindow_Cocoa.mm in Sources */,
 				AA29CE090558741A00961A51 /* ActorUtil.cpp in Sources */,
 				AA29CE0B0558741A00961A51 /* ArchHooks.cpp in Sources */,
 				AA29CE0C0558741A00961A51 /* InputHandler.cpp in Sources */,
@@ -6873,7 +6872,6 @@
 				AA70E36C0663112800DAE1FD /* TrailUtil.cpp in Sources */,
 				AA42F5E8067068D30013509E /* ScreenNetworkOptions.cpp in Sources */,
 				AAD675F606795175006002B0 /* Dialog.cpp in Sources */,
-				AAD675F906795175006002B0 /* DialogDriver_Cocoa.cpp in Sources */,
 				AA60E0C2067992D7008ADC41 /* Threads_Pthreads.cpp in Sources */,
 				AA91587D067D2C2C00078E36 /* RageSurface.cpp in Sources */,
 				AA9091A1067ED43000C1FCFF /* RageSurface_Load_BMP.cpp in Sources */,
@@ -6959,11 +6957,9 @@
 				AAF3442B08F1C36A0006EDB7 /* DynamicActorScroller.cpp in Sources */,
 				AAF34ADE0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp in Sources */,
 				AAF34AED0900B00C0006EDB7 /* ScreenStatsOverlay.cpp in Sources */,
-				AAF34B190900D1A20006EDB7 /* InputHandler_Carbon.cpp in Sources */,
 				AAA372D40909934500141131 /* MovieTexture_Generic.cpp in Sources */,
 				AAA372D60909934500141131 /* MovieTexture_Theora.cpp in Sources */,
 				AA2FB639091212B0000FD574 /* LifeMeter.cpp in Sources */,
-				AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */,
 				AAFBEED1094D7FCB000029DE /* SpecialFiles.cpp in Sources */,
 				AAFBEEEB094D807E000029DE /* ScreenOptionsManageEditSteps.cpp in Sources */,
 				AAFBEEED094D807E000029DE /* ScreenOptionsMemoryCard.cpp in Sources */,
@@ -6971,7 +6967,6 @@
 				AA0732900954381800F396C5 /* XmlFileUtil.cpp in Sources */,
 				AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */,
 				AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */,
-				AA32F97F096A255C00F45B24 /* LowLevelWindow_Cocoa.mm in Sources */,
 				AABBFCD309838C3A00F077E2 /* SMMain.mm in Sources */,
 				AA44705509846B0800983E82 /* HIDDevice.cpp in Sources */,
 				AA44708F0984720900983E82 /* JoystickDevice.cpp in Sources */,
@@ -6984,7 +6979,6 @@
 				AAB55EBF09A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp in Sources */,
 				AA1F9C4809AF1BF5002C15A8 /* PumpDevice.cpp in Sources */,
 				AA3E3DF109D96A1400A259C7 /* CrashHandlerInternal.cpp in Sources */,
-				AAEDFD490A036C8B00590617 /* ArchHooks_darwin.cpp in Sources */,
 				AAEDFD690A03762B00590617 /* Crash.cpp in Sources */,
 				AA147F1B0A0F78D8006EADF6 /* VectorHelper.cpp in Sources */,
 				AA8CF5180A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */,
@@ -7043,6 +7037,12 @@
 				AA4FE4420D869E330051D523 /* DifficultyDisplay.cpp in Sources */,
 				AA11A20F0DC5A1B0006BD8AC /* ModIcon.cpp in Sources */,
 				AA11A2110DC5A1B0006BD8AC /* ModIconRow.cpp in Sources */,
+				AA6C6AD80DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */,
+				AA6C6ADE0DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp in Sources */,
+				AA6C6AE50DC6B22800E7A13E /* LoadingWindow_MacOSX.mm in Sources */,
+				AA6C6B030DC6B2B400E7A13E /* LowLevelWindow_MacOSX.mm in Sources */,
+				AA6C6B080DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.cpp in Sources */,
+				AA6C6B0E0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7201,11 +7201,9 @@
 				AA40D42509A08D650068C0D5 /* pcre.c in Sources */,
 				AA40D42609A08D650068C0D5 /* study.c in Sources */,
 				AA40D42709A08D650068C0D5 /* RageUtil_FileDB.cpp in Sources */,
-				AA40D42809A08D650068C0D5 /* LoadingWindow_Cocoa.mm in Sources */,
 				AA40D42909A08D650068C0D5 /* ActorUtil.cpp in Sources */,
 				AA40D42A09A08D650068C0D5 /* ArchHooks.cpp in Sources */,
 				AA40D42B09A08D650068C0D5 /* InputHandler.cpp in Sources */,
-				AA40D42C09A08D650068C0D5 /* ArchHooks_darwin.cpp in Sources */,
 				AA40D42D09A08D650068C0D5 /* MovieTexture_Null.cpp in Sources */,
 				AA40D42E09A08D650068C0D5 /* RageFile.cpp in Sources */,
 				AA40D42F09A08D650068C0D5 /* CrashHandler.cpp in Sources */,
@@ -7286,7 +7284,6 @@
 				AA40D49809A08D650068C0D5 /* TrailUtil.cpp in Sources */,
 				AA40D49909A08D650068C0D5 /* ScreenNetworkOptions.cpp in Sources */,
 				AA40D49A09A08D650068C0D5 /* Dialog.cpp in Sources */,
-				AA40D49B09A08D650068C0D5 /* DialogDriver_Cocoa.cpp in Sources */,
 				AA40D49C09A08D650068C0D5 /* Threads_Pthreads.cpp in Sources */,
 				AA40D49D09A08D650068C0D5 /* RageSurface.cpp in Sources */,
 				AA40D49E09A08D650068C0D5 /* RageSurface_Load_BMP.cpp in Sources */,
@@ -7370,11 +7367,9 @@
 				AA40D4F809A08D650068C0D5 /* DynamicActorScroller.cpp in Sources */,
 				AA40D4F909A08D650068C0D5 /* ScoreKeeperNormal.cpp in Sources */,
 				AA40D4FA09A08D650068C0D5 /* ScreenStatsOverlay.cpp in Sources */,
-				AA40D4FB09A08D650068C0D5 /* InputHandler_Carbon.cpp in Sources */,
 				AA40D4FC09A08D650068C0D5 /* MovieTexture_Generic.cpp in Sources */,
 				AA40D4FD09A08D650068C0D5 /* MovieTexture_Theora.cpp in Sources */,
 				AA40D4FF09A08D650068C0D5 /* LifeMeter.cpp in Sources */,
-				AA40D50009A08D650068C0D5 /* MemoryCardDriverThreaded_OSX.cpp in Sources */,
 				AA40D50109A08D650068C0D5 /* SpecialFiles.cpp in Sources */,
 				AA40D50209A08D650068C0D5 /* ScreenOptionsManageEditSteps.cpp in Sources */,
 				AA40D50309A08D650068C0D5 /* ScreenOptionsMemoryCard.cpp in Sources */,
@@ -7382,7 +7377,6 @@
 				AA40D50609A08D650068C0D5 /* XmlFileUtil.cpp in Sources */,
 				AA40D50709A08D650068C0D5 /* XmlFile.cpp in Sources */,
 				AA40D50809A08D650068C0D5 /* LocalizedString.cpp in Sources */,
-				AA40D50909A08D650068C0D5 /* LowLevelWindow_Cocoa.mm in Sources */,
 				AA40D50D09A08D650068C0D5 /* SMMain.mm in Sources */,
 				AA40D50E09A08D650068C0D5 /* HIDDevice.cpp in Sources */,
 				AA40D50F09A08D650068C0D5 /* JoystickDevice.cpp in Sources */,
@@ -7463,6 +7457,12 @@
 				AA4FE4440D869E330051D523 /* DifficultyDisplay.cpp in Sources */,
 				AA11A2130DC5A1B0006BD8AC /* ModIcon.cpp in Sources */,
 				AA11A2150DC5A1B0006BD8AC /* ModIconRow.cpp in Sources */,
+				AA6C6ADA0DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */,
+				AA6C6AE00DC6B1DC00E7A13E /* DialogDriver_MacOSX.cpp in Sources */,
+				AA6C6AE70DC6B22800E7A13E /* LoadingWindow_MacOSX.mm in Sources */,
+				AA6C6B050DC6B2B400E7A13E /* LowLevelWindow_MacOSX.mm in Sources */,
+				AA6C6B0A0DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.cpp in Sources */,
+				AA6C6B100DC6B48C00E7A13E /* InputHandler_MacOSX_HID.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
