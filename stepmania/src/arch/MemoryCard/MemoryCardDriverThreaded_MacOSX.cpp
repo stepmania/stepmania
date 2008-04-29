@@ -1,5 +1,5 @@
 #include "global.h"
-#include "MemoryCardDriverThreaded_OSX.h"
+#include "MemoryCardDriverThreaded_MacOSX.h"
 #include "Foreach.h"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -15,16 +15,16 @@
 #include <paths.h>
 #include <unistd.h>
 
-OSStatus MemoryCardDriverThreaded_OSX::VolumeChanged( EventHandlerCallRef ref, EventRef event, void *p )
+OSStatus MemoryCardDriverThreaded_MacOSX::VolumeChanged( EventHandlerCallRef ref, EventRef event, void *p )
 {
-	MemoryCardDriverThreaded_OSX *This = (MemoryCardDriverThreaded_OSX *)p;
+	MemoryCardDriverThreaded_MacOSX *This = (MemoryCardDriverThreaded_MacOSX *)p;
 	LockMut( This->m_ChangedLock );
 	
 	This->m_bChanged = true;
 	return eventNotHandledErr; // let others do something
 }
 
-MemoryCardDriverThreaded_OSX::MemoryCardDriverThreaded_OSX() : m_ChangedLock( "MC changed lock" )
+MemoryCardDriverThreaded_MacOSX::MemoryCardDriverThreaded_MacOSX() : m_ChangedLock( "MC changed lock" )
 {
 	m_bChanged = true;
 	m_HandlerUPP = NewEventHandlerUPP( VolumeChanged );
@@ -37,13 +37,13 @@ MemoryCardDriverThreaded_OSX::MemoryCardDriverThreaded_OSX() : m_ChangedLock( "M
 	ASSERT( ret == noErr );
 }
 
-MemoryCardDriverThreaded_OSX::~MemoryCardDriverThreaded_OSX()
+MemoryCardDriverThreaded_MacOSX::~MemoryCardDriverThreaded_MacOSX()
 {
 	RemoveEventHandler( m_Handler );
 	DisposeEventHandlerUPP( m_HandlerUPP );
 }
 
-void MemoryCardDriverThreaded_OSX::Unmount( UsbStorageDevice *pDevice )
+void MemoryCardDriverThreaded_MacOSX::Unmount( UsbStorageDevice *pDevice )
 {	
 	ParamBlockRec pb;
 	Str255 name; // A pascal string.
@@ -59,7 +59,7 @@ void MemoryCardDriverThreaded_OSX::Unmount( UsbStorageDevice *pDevice )
 		LOG->Warn( "Failed to flush the memory card." );
 }
 
-bool MemoryCardDriverThreaded_OSX::USBStorageDevicesChanged()
+bool MemoryCardDriverThreaded_MacOSX::USBStorageDevicesChanged()
 {
 	LockMut( m_ChangedLock );
 	return m_bChanged;
@@ -108,7 +108,7 @@ static RString GetStringProperty( io_registry_entry_t entry, CFStringRef key )
 	return ret;
 }
 
-void MemoryCardDriverThreaded_OSX::GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
+void MemoryCardDriverThreaded_MacOSX::GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
 	LockMut( m_ChangedLock );
 	// First, get all device paths
@@ -222,7 +222,7 @@ void MemoryCardDriverThreaded_OSX::GetUSBStorageDevices( vector<UsbStorageDevice
 	delete[] fs;
 }
 
-bool MemoryCardDriverThreaded_OSX::TestWrite( UsbStorageDevice *pDevice )
+bool MemoryCardDriverThreaded_MacOSX::TestWrite( UsbStorageDevice *pDevice )
 {
 	if( access(pDevice->sOsMountDir, W_OK) )
 	{

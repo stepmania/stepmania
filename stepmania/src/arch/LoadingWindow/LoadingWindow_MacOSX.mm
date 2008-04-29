@@ -1,6 +1,6 @@
 #import <Cocoa/Cocoa.h>
 #import "ProductInfo.h"
-#import "LoadingWindow_Cocoa.h"
+#import "LoadingWindow_MacOSX.h"
 #import "RageUtil.h"
 #import "RageFile.h"
 
@@ -74,7 +74,7 @@
 
 static LoadingWindowHelper *g_Helper = nil;
 
-LoadingWindow_Cocoa::LoadingWindow_Cocoa()
+LoadingWindow_MacOSX::LoadingWindow_MacOSX()
 {
 	RageFile f;
 	RString data;
@@ -104,7 +104,7 @@ LoadingWindow_Cocoa::LoadingWindow_Cocoa()
 	[image release];
 }
 
-LoadingWindow_Cocoa::~LoadingWindow_Cocoa()
+LoadingWindow_MacOSX::~LoadingWindow_MacOSX()
 {
 	if( !g_Helper )
 		return;
@@ -115,7 +115,7 @@ LoadingWindow_Cocoa::~LoadingWindow_Cocoa()
 	[pool release];
 }
 
-void LoadingWindow_Cocoa::SetText( RString str )
+void LoadingWindow_MacOSX::SetText( RString str )
 {
 	if( !g_Helper )
 		return;

@@ -1,54 +1,28 @@
-#ifndef LOW_LEVEL_WINDOW_COCOA_H
-#define LOW_LEVEL_WINDOW_COCOA_H
+#ifndef ARCH_HOOKS_MACOSX_H
+#define ARCH_HOOKS_MACOSX_H
 
-#include "LowLevelWindow.h"
-#include "RageDisplay.h"
+#include "ArchHooks.h"
 
-typedef struct objc_object *id;
-typedef const struct __CFDictionary *CFDictionaryRef;
-
-class LowLevelWindow_Cocoa : public LowLevelWindow
+class ArchHooks_MacOSX : public ArchHooks
 {
-	VideoModeParams m_CurrentParams;
-	id m_WindowDelegate;
-	id m_Context;
-	id m_BGContext;
-	CFDictionaryRef m_CurrentDisplayMode;
-	
 public:
-	LowLevelWindow_Cocoa();
-	~LowLevelWindow_Cocoa();
-	void *GetProcAddress( RString s );
-	RString TryVideoMode( const VideoModeParams& p, bool& newDeviceOut );	
-	void GetDisplayResolutions( DisplayResolutions &dr ) const;
-	float GetMonitorAspectRatio() const;
-
-	void SwapBuffers();
-	void Update();
-	
-	const VideoModeParams &GetActualVideoModeParams() const { return m_CurrentParams; }
-	
-	bool SupportsRenderToTexture() const { return true; }
-	RenderTarget *CreateRenderTarget();
-	
-	bool SupportsThreadedRendering() { return m_BGContext; }
-	void BeginConcurrentRendering();
-	
-private:
-	void ShutDownFullScreen();
-	int ChangeDisplayMode( const VideoModeParams& p );
-	void SetActualParamsFromMode( CFDictionaryRef mode );
+	void Init();
+	RString GetArchName() const;
+	RString GetMachineId() const;
+	void DumpDebugInfo();
+	RString GetPreferredLanguage();
+	bool GoToURL( RString sUrl );
 };
 
-#ifdef ARCH_LOW_LEVEL_WINDOW
-#error "More than one LowLevelWindow selected!"
+#ifdef ARCH_HOOKS
+#error "More than one ArchHooks selected!"
 #endif
-#define ARCH_LOW_LEVEL_WINDOW LowLevelWindow_Cocoa
-
-#endif
+#define ARCH_HOOKS ArchHooks_MacOSX
+    
+#endif /* ARCH_HOOKS_MACOSX_H */
 
 /*
- * (c) 2005-2006, 2008 Steve Checkoway
+ * (c) 2003-2005 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

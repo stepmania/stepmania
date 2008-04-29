@@ -1,5 +1,5 @@
 #include "global.h"
-#include "ArchHooks_darwin.h"
+#include "ArchHooks_MacOSX.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "archutils/Unix/CrashHandler.h"
@@ -58,7 +58,7 @@ static bool DoEmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *us
 	return false;
 }
 
-void ArchHooks_darwin::Init()
+void ArchHooks_MacOSX::Init()
 {
 	/* First, handle non-fatal termination signals. */
 	SignalHandler::OnClose( DoCleanShutdown );
@@ -125,7 +125,7 @@ void ArchHooks_darwin::Init()
 	CFRelease( path );
 }
 
-RString ArchHooks_darwin::GetArchName() const
+RString ArchHooks_MacOSX::GetArchName() const
 {
 #if defined(__ppc__)
 	return "Mac OS X (ppc)";
@@ -137,7 +137,7 @@ RString ArchHooks_darwin::GetArchName() const
 }
 
 
-RString ArchHooks_darwin::GetMachineId() const
+RString ArchHooks_MacOSX::GetMachineId() const
 {
 	RString ret;
 	CFMutableDictionaryRef dict = IOServiceMatching( "IOPlatformExpertDevice" );
@@ -216,7 +216,7 @@ RString ArchHooks_darwin::GetMachineId() const
 	return ret;
 }
 
-void ArchHooks_darwin::DumpDebugInfo()
+void ArchHooks_MacOSX::DumpDebugInfo()
 {
 	
 	/* Get system version */
@@ -350,7 +350,7 @@ RString ArchHooks::GetPreferredLanguage()
 	return ret;
 }
 
-bool ArchHooks_darwin::GoToURL( RString sUrl )
+bool ArchHooks_MacOSX::GoToURL( RString sUrl )
 {
 	CFURLRef url = CFURLCreateWithBytes( kCFAllocatorDefault, (const UInt8*)sUrl.data(),
 					     sUrl.length(), kCFStringEncodingUTF8, NULL );

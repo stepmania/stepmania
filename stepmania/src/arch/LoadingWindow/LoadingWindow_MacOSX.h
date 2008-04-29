@@ -1,28 +1,23 @@
-#ifndef ARCH_HOOKS_DARWIN_H
-#define ARCH_HOOKS_DARWIN_H
+/* LoadingWindow_MacOSX - Loading window for OSX */
 
-#include "ArchHooks.h"
+#ifndef LOADING_WINDOW_MACOSX_H
+#define LOADING_WINDOW_MACOSX_H
 
-class ArchHooks_darwin : public ArchHooks
+#include "LoadingWindow.h"
+
+class LoadingWindow_MacOSX : public LoadingWindow
 {
 public:
-	void Init();
-	RString GetArchName() const;
-	RString GetMachineId() const;
-	void DumpDebugInfo();
-	RString GetPreferredLanguage();
-	bool GoToURL( RString sUrl );
+	LoadingWindow_MacOSX();
+	~LoadingWindow_MacOSX();
+	void SetText( RString str );
 };
+#define USE_LOADING_WINDOW_MACOSX
 
-#ifdef ARCH_HOOKS
-#error "More than one ArchHooks selected!"
 #endif
-#define ARCH_HOOKS ArchHooks_darwin
-    
-#endif /* ARCH_HOOKS_DARWIN_H */
 
 /*
- * (c) 2003-2005 Steve Checkoway
+ * (c) 2003-2005, 2008 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

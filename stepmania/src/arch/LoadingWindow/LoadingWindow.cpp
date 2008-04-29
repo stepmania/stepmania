@@ -12,7 +12,7 @@ LoadingWindow *LoadingWindow::Create()
 	return new LoadingWindow_Null;
 #endif
 	/* Don't load NULL by default. */
-	const RString drivers = "xbox,win32,cocoa,gtk";
+	const RString drivers = "xbox,win32,macosx,gtk";
 	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
 
@@ -25,8 +25,8 @@ LoadingWindow *LoadingWindow::Create()
 	{
 		Driver = DriversToTry[i];
 
-#ifdef USE_LOADING_WINDOW_COCOA
-		if( !DriversToTry[i].CompareNoCase("Cocoa") )	ret = new LoadingWindow_Cocoa;
+#ifdef USE_LOADING_WINDOW_MACOSX
+		if( !DriversToTry[i].CompareNoCase("MacOSX") )	ret = new LoadingWindow_MacOSX;
 #endif
 #ifdef USE_LOADING_WINDOW_GTK
 		if( !DriversToTry[i].CompareNoCase("Gtk") )	ret = new LoadingWindow_Gtk;

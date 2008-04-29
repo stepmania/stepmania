@@ -1,23 +1,54 @@
-/* LoadingWindow_Cocoa - Loading window for OSX */
+#ifndef LOW_LEVEL_WINDOW_MACOSX_H
+#define LOW_LEVEL_WINDOW_MACOSX_H
 
-#ifndef LOADING_WINDOW_COCOA_H
-#define LOADING_WINDOW_COCOA_H
+#include "LowLevelWindow.h"
+#include "RageDisplay.h"
 
-#include "LoadingWindow.h"
+typedef struct objc_object *id;
+typedef const struct __CFDictionary *CFDictionaryRef;
 
-class LoadingWindow_Cocoa : public LoadingWindow
+class LowLevelWindow_MacOSX : public LowLevelWindow
 {
+	VideoModeParams m_CurrentParams;
+	id m_WindowDelegate;
+	id m_Context;
+	id m_BGContext;
+	CFDictionaryRef m_CurrentDisplayMode;
+	
 public:
-	LoadingWindow_Cocoa();
-	~LoadingWindow_Cocoa();
-	void SetText( RString str );
+	LowLevelWindow_MacOSX();
+	~LowLevelWindow_MacOSX();
+	void *GetProcAddress( RString s );
+	RString TryVideoMode( const VideoModeParams& p, bool& newDeviceOut );	
+	void GetDisplayResolutions( DisplayResolutions &dr ) const;
+	float GetMonitorAspectRatio() const;
+
+	void SwapBuffers();
+	void Update();
+	
+	const VideoModeParams &GetActualVideoModeParams() const { return m_CurrentParams; }
+	
+	bool SupportsRenderToTexture() const { return true; }
+	RenderTarget *CreateRenderTarget();
+	
+	bool SupportsThreadedRendering() { return m_BGContext; }
+	void BeginConcurrentRendering();
+	
+private:
+	void ShutDownFullScreen();
+	int ChangeDisplayMode( const VideoModeParams& p );
+	void SetActualParamsFromMode( CFDictionaryRef mode );
 };
-#define USE_LOADING_WINDOW_COCOA
+
+#ifdef ARCH_LOW_LEVEL_WINDOW
+#error "More than one LowLevelWindow selected!"
+#endif
+#define ARCH_LOW_LEVEL_WINDOW LowLevelWindow_MacOSX
 
 #endif
 
 /*
- * (c) 2003-2005, 2008 Steve Checkoway
+ * (c) 2005-2006, 2008 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -1,9 +1,9 @@
-#ifndef DIALOG_BOX_DRIVER_COCOA_H
-#define DIALOG_BOX_DRIVER_COCOA_H
+#ifndef DIALOG_BOX_DRIVER_MACOSX_H
+#define DIALOG_BOX_DRIVER_MACOSX_H
 
 #include "DialogDriver.h"
 
-class DialogDriver_Cocoa: public DialogDriver
+class DialogDriver_MacOSX: public DialogDriver
 {
 public:
 	void Error( RString sError, RString sID );

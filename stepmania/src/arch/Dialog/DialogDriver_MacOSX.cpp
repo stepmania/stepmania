@@ -1,12 +1,12 @@
 #include "global.h"
 #include "RageUtil.h"
-#include "DialogDriver_Cocoa.h"
+#include "DialogDriver_MacOSX.h"
 #include "RageThreads.h"
 #include "ProductInfo.h"
 #include "InputFilter.h"
 #include <Carbon/Carbon.h>
 
-REGISTER_DIALOG_DRIVER_CLASS( Cocoa );
+REGISTER_DIALOG_DRIVER_CLASS( MacOSX );
 
 static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CFStringRef OK,
 				CFStringRef alt = NULL, CFStringRef other = NULL)
@@ -31,7 +31,7 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 
 #define LSTRING(b,x) CFBundleCopyLocalizedString( (b), CFSTR(x), NULL, CFSTR("Localizable") )
 
-void DialogDriver_Cocoa::OK( RString sMessage, RString sID )
+void DialogDriver_MacOSX::OK( RString sMessage, RString sID )
 {
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef sDSA = LSTRING( bundle, "Don't show again" );
@@ -42,12 +42,12 @@ void DialogDriver_Cocoa::OK( RString sMessage, RString sID )
 		Dialog::IgnoreMessage( sID );
 }
 
-void DialogDriver_Cocoa::Error( RString sError, RString sID )
+void DialogDriver_MacOSX::Error( RString sError, RString sID )
 {
 	ShowAlert( kCFUserNotificationStopAlertLevel, sError, CFSTR("OK") );
 }
 
-Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( RString sMessage, RString sID )
+Dialog::Result DialogDriver_MacOSX::AbortRetryIgnore( RString sMessage, RString sID )
 {
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef sIgnore = LSTRING( bundle, "Ignore" );
@@ -73,7 +73,7 @@ Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( RString sMessage, RString s
 	}
 }
 
-Dialog::Result DialogDriver_Cocoa::AbortRetry( RString sMessage, RString sID )
+Dialog::Result DialogDriver_MacOSX::AbortRetry( RString sMessage, RString sID )
 {
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef sRetry = LSTRING( bundle, "Retry" );

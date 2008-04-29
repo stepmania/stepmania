@@ -1,5 +1,5 @@
 #import "global.h"
-#import "LowLevelWindow_Cocoa.h"
+#import "LowLevelWindow_MacOSX.h"
 #import "DisplayResolutions.h"
 #import "RageUtil.h"
 #import "RageThreads.h"
@@ -177,11 +177,11 @@ static NSOpenGLContext *CreateOGLContext( GLContextType type, int iColorSize, in
 }		
 
 
-class RenderTarget_Cocoa : public RenderTarget
+class RenderTarget_MacOSX : public RenderTarget
 {
 public:
-	RenderTarget_Cocoa( id shareContext );
-	~RenderTarget_Cocoa();
+	RenderTarget_MacOSX( id shareContext );
+	~RenderTarget_MacOSX();
 	void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
 	unsigned GetTexture() const { return m_iTexHandle; }
 	void StartRenderingTo();
@@ -193,7 +193,7 @@ private:
 	int m_iWidth, m_iHeight;
 };
 
-RenderTarget_Cocoa::RenderTarget_Cocoa( id shareContext )
+RenderTarget_MacOSX::RenderTarget_MacOSX( id shareContext )
 {
 	m_ShareContext = shareContext;
 	m_OldContext = nil;
@@ -203,7 +203,7 @@ RenderTarget_Cocoa::RenderTarget_Cocoa( id shareContext )
 	m_iHeight = 0;
 }
 
-RenderTarget_Cocoa::~RenderTarget_Cocoa()
+RenderTarget_MacOSX::~RenderTarget_MacOSX()
 {
 	POOL;
 	[m_PBufferContext release];
@@ -211,7 +211,7 @@ RenderTarget_Cocoa::~RenderTarget_Cocoa()
 		glDeleteTextures( 1, &m_iTexHandle );
 }
 
-void RenderTarget_Cocoa::Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
+void RenderTarget_MacOSX::Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
 {
 	POOL;
 	m_iWidth = param.iWidth;
@@ -260,7 +260,7 @@ void RenderTarget_Cocoa::Create( const RenderTargetParam &param, int &iTextureWi
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 }
 
-void RenderTarget_Cocoa::StartRenderingTo()
+void RenderTarget_MacOSX::StartRenderingTo()
 {
 	DEBUG_ASSERT( !m_OldContext );
 	m_OldContext = [NSOpenGLContext currentContext];
@@ -268,7 +268,7 @@ void RenderTarget_Cocoa::StartRenderingTo()
 	glViewport( 0, 0, m_iWidth, m_iHeight );
 }
 
-void RenderTarget_Cocoa::FinishRenderingTo()
+void RenderTarget_MacOSX::FinishRenderingTo()
 {
 	DEBUG_ASSERT( m_OldContext );
 	glFlush();
@@ -288,7 +288,7 @@ void RenderTarget_Cocoa::FinishRenderingTo()
 	m_OldContext = nil;
 }
 
-LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(NULL)
+LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(NULL)
 {
 	POOL;
 	m_WindowDelegate = [[SMWindowDelegate alloc] init];
@@ -299,7 +299,7 @@ LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : m_Context(nil), m_BGContext(nil),
 	HOOKS->SetHasFocus( [NSApp isActive] );
 }
 
-LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
+LowLevelWindow_MacOSX::~LowLevelWindow_MacOSX()
 {
 	POOL;
 	ShutDownFullScreen();
@@ -312,7 +312,7 @@ LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
 	[m_WindowDelegate release];
 }
 
-void *LowLevelWindow_Cocoa::GetProcAddress( RString s )
+void *LowLevelWindow_MacOSX::GetProcAddress( RString s )
 {
 	// http://developer.apple.com/qa/qa2001/qa1188.html
 	// Both functions mentioned in there are deprecated in 10.4.
@@ -326,7 +326,7 @@ void *LowLevelWindow_Cocoa::GetProcAddress( RString s )
 	return symbol ? NSAddressOfSymbol( symbol ) : NULL;
 }
 
-RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
+RString LowLevelWindow_MacOSX::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
 {
 	// Always set these params.
 	m_CurrentParams.bSmoothLines = p.bSmoothLines;
@@ -432,7 +432,7 @@ RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 	return RString();
 }
 
-void LowLevelWindow_Cocoa::ShutDownFullScreen()
+void LowLevelWindow_MacOSX::ShutDownFullScreen()
 {
 	if( m_CurrentParams.windowed )
 		return;
@@ -462,7 +462,7 @@ void LowLevelWindow_Cocoa::ShutDownFullScreen()
 	m_CurrentParams.windowed = true;
 }
 
-int LowLevelWindow_Cocoa::ChangeDisplayMode( const VideoModeParams& p )
+int LowLevelWindow_MacOSX::ChangeDisplayMode( const VideoModeParams& p )
 {	
 	CFDictionaryRef mode = NULL;
 	CFDictionaryRef newMode;
@@ -497,7 +497,7 @@ int LowLevelWindow_Cocoa::ChangeDisplayMode( const VideoModeParams& p )
 	return 0;
 }
 
-void LowLevelWindow_Cocoa::SetActualParamsFromMode( CFDictionaryRef mode )
+void LowLevelWindow_MacOSX::SetActualParamsFromMode( CFDictionaryRef mode )
 {
 	SInt32 rate;
 	bool ret = CFNumberGetValue( (CFNumberRef)CFDictionaryGetValue(mode, CFSTR("RefreshRate")),
@@ -541,7 +541,7 @@ static bool GetBoolValue( CFTypeRef r )
 	return r && CFGetTypeID( r ) == CFBooleanGetTypeID() && CFBooleanGetValue( CFBooleanRef(r) );
 }
 
-void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
+void LowLevelWindow_MacOSX::GetDisplayResolutions( DisplayResolutions &dr ) const
 {
 	CFArrayRef modes = CGDisplayAvailableModes( kCGDirectMainDisplay );
 	ASSERT( modes );
@@ -565,7 +565,7 @@ void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 	// Do not release modes! We don't own them here.
 }
 
-float LowLevelWindow_Cocoa::GetMonitorAspectRatio() const
+float LowLevelWindow_MacOSX::GetMonitorAspectRatio() const
 {
 	io_connect_t displayPort = CGDisplayIOServicePort( CGMainDisplayID() );
 	CFDictionaryRef dict = IODisplayCreateInfoDictionary( displayPort, 0 );
@@ -579,12 +579,12 @@ float LowLevelWindow_Cocoa::GetMonitorAspectRatio() const
 	return 4/3.f;
 }
 
-void LowLevelWindow_Cocoa::SwapBuffers()
+void LowLevelWindow_MacOSX::SwapBuffers()
 {
 	CGLFlushDrawable( CGLGetCurrentContext() );
 }
 
-void LowLevelWindow_Cocoa::Update()
+void LowLevelWindow_MacOSX::Update()
 {
 	// Keep the system from sleeping or the screen saver from activating.
 	UpdateSystemActivity( IdleActivity );
@@ -602,12 +602,12 @@ void LowLevelWindow_Cocoa::Update()
 	DISPLAY->ResolutionChanged();
 }
 
-RenderTarget *LowLevelWindow_Cocoa::CreateRenderTarget()
+RenderTarget *LowLevelWindow_MacOSX::CreateRenderTarget()
 {
-	return new RenderTarget_Cocoa( m_Context );
+	return new RenderTarget_MacOSX( m_Context );
 }
 
-void LowLevelWindow_Cocoa::BeginConcurrentRendering()
+void LowLevelWindow_MacOSX::BeginConcurrentRendering()
 {
 	if( m_CurrentParams.windowed )
 		[m_BGContext setView:[((SMWindowDelegate *)m_WindowDelegate)->m_Window contentView]];

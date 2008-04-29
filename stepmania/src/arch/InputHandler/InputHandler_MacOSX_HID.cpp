@@ -1,6 +1,6 @@
 #include "global.h"
 #include "RageLog.h"
-#include "InputHandler_Carbon.h"
+#include "InputHandler_MacOSX_HID.h"
 #include "Foreach.h"
 #include "PrefsManager.h"
 #include "InputFilter.h"
@@ -12,15 +12,15 @@
 #include <IOKit/IOMessage.h>
 #include <Carbon/Carbon.h>
 
-REGISTER_INPUT_HANDLER_CLASS( Carbon );
+REGISTER_INPUT_HANDLER_CLASS2( HID, MacOSX_HID );
 
-void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon, void *sender )
+void InputHandler_MacOSX_HID::QueueCallBack( void *target, int result, void *refcon, void *sender )
 {
 	// The result seems useless as you can't actually return anything...
 	// refcon is the Device number
 
 	RageTimer now;
-	InputHandler_Carbon *This = (InputHandler_Carbon *)target;
+	InputHandler_MacOSX_HID *This = (InputHandler_MacOSX_HID *)target;
 	IOHIDQueueInterface **queue = (IOHIDQueueInterface **)sender;
 	IOHIDEventStruct event;
 	AbsoluteTime zeroTime = { 0, 0 };
@@ -40,9 +40,9 @@ static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *s
 	((RageSemaphore *)sem)->Post();
 }
 
-int InputHandler_Carbon::Run( void *data )
+int InputHandler_MacOSX_HID::Run( void *data )
 {
-	InputHandler_Carbon *This = (InputHandler_Carbon *)data;
+	InputHandler_MacOSX_HID *This = (InputHandler_MacOSX_HID *)data;
 	
 	This->m_LoopRef = CFRunLoopGetCurrent();
 	CFRetain( This->m_LoopRef );
@@ -64,7 +64,7 @@ int InputHandler_Carbon::Run( void *data )
 	}
 	
 	/* Add a source for ending the run loop. This serves two purposes:
-	 * 1. it provides a way to terminate the run loop when IH_Carbon exists, and
+	 * 1. it provides a way to terminate the run loop when IH_MacOSX_HID exists, and
 	 * 2. it ensures that CFRunLoopRun() doesn't return immediately if there are no other sources. */
 	{
 		/* Being a little tricky here, the perform callback takes a void* and returns nothing.
@@ -84,19 +84,19 @@ int InputHandler_Carbon::Run( void *data )
 	return 0;
 }
 
-void InputHandler_Carbon::DeviceAdded( void *refCon, io_iterator_t )
+void InputHandler_MacOSX_HID::DeviceAdded( void *refCon, io_iterator_t )
 {
-	InputHandler_Carbon *This = (InputHandler_Carbon *)refCon;
+	InputHandler_MacOSX_HID *This = (InputHandler_MacOSX_HID *)refCon;
 	
 	LockMut( This->m_ChangeLock );
 	This->m_bChanged = true;
 }
 
-void InputHandler_Carbon::DeviceChanged( void *refCon, io_service_t service, natural_t messageType, void *arg )
+void InputHandler_MacOSX_HID::DeviceChanged( void *refCon, io_service_t service, natural_t messageType, void *arg )
 {
 	if( messageType == kIOMessageServiceIsTerminated )
 	{
-		InputHandler_Carbon *This = (InputHandler_Carbon *)refCon;
+		InputHandler_MacOSX_HID *This = (InputHandler_MacOSX_HID *)refCon;
 		
 		LockMut( This->m_ChangeLock );
 		This->m_bChanged = true;
@@ -104,20 +104,20 @@ void InputHandler_Carbon::DeviceChanged( void *refCon, io_service_t service, nat
 }
 
 // m_LoopRef needs to be set before this is called
-void InputHandler_Carbon::StartDevices()
+void InputHandler_MacOSX_HID::StartDevices()
 {
 	int n = 0;
 	
 	ASSERT( m_LoopRef );
 	FOREACH( HIDDevice *, m_vDevices, i )
-		(*i)->StartQueue( m_LoopRef, InputHandler_Carbon::QueueCallBack, this, n++ );
+		(*i)->StartQueue( m_LoopRef, InputHandler_MacOSX_HID::QueueCallBack, this, n++ );
 	
 	CFRunLoopSourceRef runLoopSource = IONotificationPortGetRunLoopSource( m_NotifyPort );
 	
 	CFRunLoopAddSource( m_LoopRef, runLoopSource, kCFRunLoopDefaultMode );
 }
 
-InputHandler_Carbon::~InputHandler_Carbon()
+InputHandler_MacOSX_HID::~InputHandler_MacOSX_HID()
 {
 	FOREACH( HIDDevice *, m_vDevices, i )
 		delete *i;
@@ -169,12 +169,12 @@ static HIDDevice *MakeDevice( InputDevice id )
 	return NULL;
 }
 
-void InputHandler_Carbon::AddDevices( int usagePage, int usage, InputDevice &id )
+void InputHandler_MacOSX_HID::AddDevices( int usagePage, int usage, InputDevice &id )
 {
 	io_iterator_t iter;
 	CFDictionaryRef dict = GetMatchingDictionary( usagePage, usage );
 	kern_return_t ret = IOServiceAddMatchingNotification( m_NotifyPort, kIOFirstMatchNotification, dict,
-							      InputHandler_Carbon::DeviceAdded, this, &iter );
+							      InputHandler_MacOSX_HID::DeviceAdded, this, &iter );
 	io_object_t device;
 
 	if( ret != KERN_SUCCESS )
@@ -206,7 +206,7 @@ void InputHandler_Carbon::AddDevices( int usagePage, int usage, InputDevice &id 
 		m_vDevices.push_back( dev );
 		
 		ret = IOServiceAddInterestNotification( m_NotifyPort, device, kIOGeneralInterest,
-							InputHandler_Carbon::DeviceChanged, this, &i );
+							InputHandler_MacOSX_HID::DeviceChanged, this, &i );
 		
 		if( ret == KERN_SUCCESS )
 			m_vIters.push_back( i );
@@ -214,7 +214,7 @@ void InputHandler_Carbon::AddDevices( int usagePage, int usage, InputDevice &id 
 	}
 }
 
-InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" ), m_ChangeLock( "Input handler change lock" )
+InputHandler_MacOSX_HID::InputHandler_MacOSX_HID() : m_Sem( "Input thread started" ), m_ChangeLock( "Input handler change lock" )
 {
 	InputDevice id = DEVICE_KEYBOARD;
 
@@ -233,7 +233,7 @@ InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" ), m_
 	if( PREFSMAN->m_bThreadedInput )
 	{
 		m_InputThread.SetName( "Input thread" );
-		m_InputThread.Create( InputHandler_Carbon::Run, this );
+		m_InputThread.Create( InputHandler_MacOSX_HID::Run, this );
 		// Wait for the run loop to start before returning.
 		m_Sem.Wait();
 	}
@@ -245,13 +245,13 @@ InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" ), m_
 	}
 }
 
-void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices )
+void InputHandler_MacOSX_HID::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices )
 {
 	FOREACH_CONST( HIDDevice *, m_vDevices, i )
 		(*i)->GetDevicesAndDescriptions( vDevices );
 }
 
-RString InputHandler_Carbon::GetDeviceSpecificInputString( const DeviceInput &di )
+RString InputHandler_MacOSX_HID::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	if( di.device == DEVICE_KEYBOARD )
 	{
@@ -341,7 +341,7 @@ RString InputHandler_Carbon::GetDeviceSpecificInputString( const DeviceInput &di
 	return InputHandler::GetDeviceSpecificInputString( di );
 }
 
-wchar_t InputHandler_Carbon::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
+wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
 {
 	// KeyTranslate maps these keys to a character.  They shouldn't be mapped to any character.
 	switch( button )

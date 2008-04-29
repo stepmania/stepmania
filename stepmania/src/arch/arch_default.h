@@ -13,11 +13,11 @@
 
 
 #elif defined(MACOSX)
-#include "ArchHooks/ArchHooks_darwin.h"
-#include "LoadingWindow/LoadingWindow_Cocoa.h"
-#include "LowLevelWindow/LowLevelWindow_Cocoa.h"
-#include "MemoryCard/MemoryCardDriverThreaded_OSX.h"
-#define DEFAULT_INPUT_DRIVER_LIST "Carbon"
+#include "ArchHooks/ArchHooks_MacOSX.h"
+#include "LoadingWindow/LoadingWindow_MacOSX.h"
+#include "LowLevelWindow/LowLevelWindow_MacOSX.h"
+#include "MemoryCard/MemoryCardDriverThreaded_MacOSX.h"
+#define DEFAULT_INPUT_DRIVER_LIST "HID"
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,Null"
 #define DEFAULT_SOUND_DRIVER_LIST "AudioUnit,Null"
 
