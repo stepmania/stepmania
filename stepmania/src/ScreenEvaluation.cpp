@@ -69,6 +69,7 @@ XToString( DetailLine );
 #define SHOW_TIME_AREA				THEME->GetMetricB(m_sName,"ShowTimeArea")
 #define SHOW_RECORDS_AREA			THEME->GetMetricB(m_sName,"ShowRecordsArea")
 #define MAX_COMBO_NUM_DIGITS			THEME->GetMetricI(m_sName,"MaxComboNumDigits")
+#define PLAYER_OPTIONS_HIDE_FAIL_TYPE		THEME->GetMetricB(m_sName,"PlayerOptionsHideFailType")
 #define PLAYER_OPTIONS_SEPARATOR		THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
 
 
@@ -324,7 +325,10 @@ void ScreenEvaluation::Init()
 				ActorUtil::LoadAllCommands( m_textPlayerOptions[p], m_sName );
 				SET_XY( m_textPlayerOptions[p] );
 				vector<RString> v;
-				GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetStage().GetLocalizedMods( v );
+				PlayerOptions po = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent();
+				if( PLAYER_OPTIONS_HIDE_FAIL_TYPE )
+					po.m_FailType = (PlayerOptions::FailType)0;	// blank out the fail type so that it won't show in the mods list
+				po.GetLocalizedMods( v );
 				RString sPO = join( PLAYER_OPTIONS_SEPARATOR, v );
 				m_textPlayerOptions[p].SetText( sPO );
 				this->AddChild( &m_textPlayerOptions[p] );
