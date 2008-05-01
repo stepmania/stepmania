@@ -334,6 +334,15 @@ void ScreenEvaluation::Init()
 				this->AddChild( &m_textPlayerOptions[p] );
 			}
 		}
+
+		FOREACH_EnabledPlayer( p )
+		{
+			m_sprDisqualified[p].Load( THEME->GetPathG(m_sName,"Disqualified") );
+			m_sprDisqualified[p]->SetName( ssprintf("DisqualifiedP%d",p+1) );
+			LOAD_ALL_COMMANDS_AND_SET_XY( m_sprDisqualified[p] );
+			m_sprDisqualified[p]->SetVisible( m_pStageStats->m_player[p].m_bDisqualified );
+			this->AddChild( m_sprDisqualified[p] );
+		}
 	}
 
 	//
