@@ -1772,7 +1772,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 			{
 				pi->GetPlayerStageStats()->m_bFailed |= bAllHumanHaveBigMissCombo;
-				pi->GetPlayerStageStats()->m_bDisqualified = true;
+				pi->GetPlayerStageStats()->m_bDisqualified |= bGiveUpTimerFired;    // Don't disqualify if failing for miss combo.  The player should still be eligable for a high score on courses.
 			}
 
 			AbortGiveUp( false );
