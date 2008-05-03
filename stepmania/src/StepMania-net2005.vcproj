@@ -2627,6 +2627,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ModIcon.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ModIcon.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ModIconRow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ModIconRow.h"
+				>
+			</File>
+			<File
 				RelativePath="MusicBannerWheel.cpp"
 				>
 			</File>
@@ -2656,22 +2672,6 @@
 			</File>
 			<File
 				RelativePath="MusicWheelItem.h"
-				>
-			</File>
-			<File
-				RelativePath="OptionIcon.cpp"
-				>
-			</File>
-			<File
-				RelativePath="OptionIcon.h"
-				>
-			</File>
-			<File
-				RelativePath="OptionIconRow.cpp"
-				>
-			</File>
-			<File
-				RelativePath="OptionIconRow.h"
 				>
 			</File>
 			<File
