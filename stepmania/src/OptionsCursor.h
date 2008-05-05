@@ -8,15 +8,13 @@
 #include "PlayerNumber.h"
 #include "AutoActor.h"
 
-
 class OptionsCursor : public ActorFrame
 {
 public:
 	OptionsCursor();
 	OptionsCursor( const OptionsCursor &cpy );
 
-	enum Element { cursor, underline };
-	void Load( const RString &sType, Element elem, PlayerNumber pn );
+	void Load( const RString &sMetricsGroup );
 
 	void StopTweening();
 	void BeginTweening( float fSecs );
@@ -24,10 +22,9 @@ public:
 	int GetBarWidth() const;
 
 protected:
-
-	Sprite m_sprMiddle;
-	Sprite m_sprLeft;
-	Sprite m_sprRight;
+	AutoActor m_sprMiddle;
+	AutoActor m_sprLeft;
+	AutoActor m_sprRight;
 };
 
 class OptionsCursorPlus : public OptionsCursor
@@ -36,7 +33,7 @@ public:
 	OptionsCursorPlus();
 	OptionsCursorPlus( const OptionsCursorPlus &cpy );
 
-	void Load( const RString &sType, Element elem, PlayerNumber pn );
+	void Load( const RString &sMetricsGroup );
 
 	void StopTweening();
 	void BeginTweening( float fSecs );

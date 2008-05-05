@@ -2,13 +2,10 @@
 #include "OptionsCursor.h"
 #include "RageUtil.h"
 #include "ThemeManager.h"
-
+#include "ActorUtil.h"
 
 OptionsCursor::OptionsCursor()
 {
-	this->AddChild( &m_sprMiddle );
-	this->AddChild( &m_sprLeft );
-	this->AddChild( &m_sprRight );
 }
 
 OptionsCursorPlus::OptionsCursorPlus()
@@ -23,9 +20,9 @@ OptionsCursor::OptionsCursor( const OptionsCursor &cpy ):
 {
 	/* Re-add children, or m_SubActors will point to cpy's children and not our own. */
 	m_SubActors.clear();
-	this->AddChild( &m_sprMiddle );
-	this->AddChild( &m_sprLeft );
-	this->AddChild( &m_sprRight );
+	this->AddChild( m_sprMiddle );
+	this->AddChild( m_sprLeft );
+	this->AddChild( m_sprRight );
 }
 
 OptionsCursorPlus::OptionsCursorPlus( const OptionsCursorPlus &cpy ):
@@ -37,30 +34,26 @@ OptionsCursorPlus::OptionsCursorPlus( const OptionsCursorPlus &cpy ):
 	this->AddChild( m_sprCanGoRight );
 }
 
-void OptionsCursor::Load( const RString &sType, Element elem, PlayerNumber pn )
+void OptionsCursor::Load( const RString &sMetricsGroup )
 {
-	RString sElem = ssprintf( "%s %s", elem==cursor?"cursor":"underline", PlayerNumberToString(pn).c_str() );
-	RString sPath = THEME->GetPathG( sType, sElem );
-	
-	m_sprMiddle.Load( sPath );
-	m_sprLeft.Load( sPath );
-	m_sprRight.Load( sPath );
+#define LOAD_SPR( spr, name ) \
+	spr.Load( THEME->GetPathG(sMetricsGroup,name) ); \
+	spr->SetName( name ); \
+	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( spr, sMetricsGroup ); \
+	this->AddChild( spr );
 
-	m_sprMiddle.StopAnimating();
-	m_sprLeft.StopAnimating();
-	m_sprRight.StopAnimating();
-	
-	m_sprLeft.SetState(   0 );
-	m_sprMiddle.SetState( 1 );
-	m_sprRight.SetState(  2 );
+	LOAD_SPR( m_sprMiddle, "Middle" );
+	LOAD_SPR( m_sprLeft, "Left" );
+	LOAD_SPR( m_sprRight, "Right" );
+#undef LOAD_SPR
 }
 
-void OptionsCursorPlus::Load( const RString &sType, Element elem, PlayerNumber pn )
+void OptionsCursorPlus::Load( const RString &sMetricsGroup )
 {
-	OptionsCursor::Load( sType, elem, pn );
+	OptionsCursor::Load( sMetricsGroup );
 
-	m_sprCanGoLeft.Load( THEME->GetPathG(sType,"CanGoLeft") );
-	m_sprCanGoRight.Load( THEME->GetPathG(sType,"CanGoRight") );
+	m_sprCanGoLeft.Load( THEME->GetPathG(sMetricsGroup,"CanGoLeft") );
+	m_sprCanGoRight.Load( THEME->GetPathG(sMetricsGroup,"CanGoRight") );
 
 	this->AddChild( m_sprCanGoLeft );
 	this->AddChild( m_sprCanGoRight );
@@ -81,9 +74,9 @@ void OptionsCursor::StopTweening()
 {
 	ActorFrame::StopTweening();
 
-	m_sprMiddle.StopTweening();
-	m_sprLeft.StopTweening();
-	m_sprRight.StopTweening();
+	m_sprMiddle->StopTweening();
+	m_sprLeft->StopTweening();
+	m_sprRight->StopTweening();
 }
 
 void OptionsCursorPlus::StopTweening()
@@ -98,9 +91,9 @@ void OptionsCursor::BeginTweening( float fSecs )
 {
 	ActorFrame::BeginTweening( fSecs );
 
-	m_sprMiddle.BeginTweening( fSecs );
-	m_sprLeft.BeginTweening( fSecs );
-	m_sprRight.BeginTweening( fSecs );
+	m_sprMiddle->BeginTweening( fSecs );
+	m_sprLeft->BeginTweening( fSecs );
+	m_sprRight->BeginTweening( fSecs );
 }
 
 void OptionsCursorPlus::BeginTweening( float fSecs )
@@ -113,27 +106,25 @@ void OptionsCursorPlus::BeginTweening( float fSecs )
 
 void OptionsCursor::SetBarWidth( int iWidth )
 {
-	if( iWidth%2 == 1 )
-		iWidth++;	// round up to nearest even number
-	float fFrameWidth = m_sprLeft.GetUnzoomedWidth();
+	float fWidth = ceilf(iWidth/2.0f)*2.0f; // round up to nearest even number
 
-	m_sprMiddle.SetZoomX( iWidth/(float)fFrameWidth );
+	m_sprMiddle->ZoomToWidth( fWidth );
 
-	m_sprLeft.SetX( -iWidth/2 - fFrameWidth/2 );
-	m_sprRight.SetX( +iWidth/2 + fFrameWidth/2 );
+	m_sprLeft->SetX( -fWidth/2 );
+	m_sprRight->SetX( +fWidth/2 );
 }
 
 void OptionsCursorPlus::SetBarWidth( int iWidth )
 {
 	OptionsCursor::SetBarWidth( iWidth );
 
-	m_sprCanGoLeft->SetX( m_sprLeft.GetDestX() );
-	m_sprCanGoRight->SetX( m_sprRight.GetDestX() );
+	m_sprCanGoLeft->SetX( m_sprLeft->GetDestX() );
+	m_sprCanGoRight->SetX( m_sprRight->GetDestX() );
 }
 
 int OptionsCursor::GetBarWidth() const
 {
-	float fWidth = m_sprLeft.GetZoomX() * m_sprLeft.GetUnzoomedWidth();
+	float fWidth = m_sprMiddle->GetZoomX() * m_sprMiddle->GetUnzoomedWidth();
 	return (int)fWidth;
 }
 

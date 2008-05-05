@@ -134,7 +134,7 @@ void ScreenOptions::Init()
 	// init cursors
 	FOREACH_PlayerNumber( p )
 	{
-		m_Cursor[p].Load( m_sName, OptionsCursorPlus::cursor, p );
+		m_Cursor[p].Load( "OptionsCursor" + PlayerNumberToString(p) );
 		m_Cursor[p].SetName( "Cursor" );
 		LOAD_ALL_COMMANDS( m_Cursor[p] );
 		m_framePage.AddChild( &m_Cursor[p] );
