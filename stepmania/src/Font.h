@@ -149,6 +149,7 @@ public:
 	bool IsRightToLeft() const { return m_bRightToLeft; };
 	float GetFontBaseZoom() const { return m_fFontBaseZoom; };
 	const RageColor &GetDefaultStrokeColor() const { return m_DefaultStrokeColor; };
+	const bool GetStrokeIsUnder() const { return m_bStrokeIsUnder; };
 
 private:
 	/* List of pages and fonts that we use (and are responsible for freeing). */
@@ -169,6 +170,7 @@ private:
 
 	float m_fFontBaseZoom;
 	RageColor m_DefaultStrokeColor;
+	bool m_bStrokeIsUnder;	// draw stroke under if true, over if false
 
 	/* We keep this around only for reloading. */
 	RString m_sChars;

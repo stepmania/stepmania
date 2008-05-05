@@ -517,6 +517,18 @@ bool BitmapText::EarlyAbortDraw() const
 	return m_wTextLines.empty();
 }
 
+#define DRAW_STROKE \
+bool bUsingStrokeTexture = !!m_vpFontPageTextures[0]->m_pTextureStroke; \
+if( bUsingStrokeTexture  &&  m_StrokeColor.a > 0 ) \
+{ \
+	RageColor c = m_StrokeColor; \
+	c.a *= m_pTempState->diffuse[0].a; \
+	for( unsigned i=0; i<m_aVertices.size(); i++ ) \
+		m_aVertices[i].c = c; \
+	DrawChars( true ); \
+}
+
+
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::DrawPrimitives()
 {
@@ -541,6 +553,14 @@ void BitmapText::DrawPrimitives()
 			DrawChars( false );
 
 			DISPLAY->PopMatrix();
+		}
+
+		//
+		// render the stroke
+		//
+		if( m_pFont->GetStrokeIsUnder() )
+		{
+			DRAW_STROKE;
 		}
 
 		//
@@ -633,14 +653,9 @@ void BitmapText::DrawPrimitives()
 		//
 		// render the stroke
 		//
-		bool bUsingStrokeTexture = !!m_vpFontPageTextures[0]->m_pTextureStroke;
-		if( bUsingStrokeTexture  &&  m_StrokeColor.a > 0 )
+		if( !m_pFont->GetStrokeIsUnder() )
 		{
-			RageColor c = m_StrokeColor;
-			c.a *= m_pTempState->diffuse[0].a;
-			for( unsigned i=0; i<m_aVertices.size(); i++ )
-				m_aVertices[i].c = c;
-			DrawChars( true );
+			DRAW_STROKE;
 		}
 	}
 

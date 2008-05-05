@@ -230,6 +230,7 @@ Font::Font()
 	m_bRightToLeft = false;
 	m_fFontBaseZoom = 1;
 	m_DefaultStrokeColor = RageColor(1,1,1,1);
+	m_bStrokeIsUnder = true;
 }
 
 Font::~Font()
@@ -695,6 +696,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 		RString s;
 		if( ini.GetValue( "main", "DefaultStrokeColor", s ) )
 			m_DefaultStrokeColor.FromString( s );
+		ini.GetValue( "main", "StrokeIsUnder", m_bStrokeIsUnder );
 	}
 
 	{
