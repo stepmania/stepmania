@@ -29,8 +29,6 @@ RString OptionRow::GetThemedItemText( int iChoice ) const
 			s = CommonMetrics::LocalizeOptionItem( EXIT_NAME, false ); 
 	}
 
-	if( m_pParentType->CAPITALIZE_ALL_OPTION_NAMES )
-		s.MakeUpper(); 
 	return s;
 }
 
@@ -80,47 +78,52 @@ void OptionRow::Clear()
 	ZERO( m_iChoiceInRowWithFocus );
 }
 
-void OptionRowType::Load( const RString &sType, Actor *pParent )
+void OptionRowType::Load( const RString &sMetricsGroup, Actor *pParent )
 {
-	m_sType = sType;
+	m_sMetricsGroup = sMetricsGroup;
 
-	FRAME_X   			.Load(sType,"FrameX");
-	FRAME_ON_COMMAND   		.Load(sType,"FrameOnCommand");
-	TITLE_X				.Load(sType,"TitleX");
-	TITLE_ON_COMMAND		.Load(sType,"TitleOnCommand");
-	TITLE_GAIN_FOCUS_COMMAND	.Load(sType,"TitleGainFocusCommand");
-	TITLE_LOSE_FOCUS_COMMAND	.Load(sType,"TitleLoseFocusCommand");
-	ITEMS_START_X			.Load(sType,"ItemsStartX");
-	ITEMS_END_X			.Load(sType,"ItemsEndX");
-	ITEMS_GAP_X			.Load(sType,"ItemsGapX");
-	ITEMS_MIN_BASE_ZOOM		.Load(sType,"ItemsMinBaseZoom");
-	ITEMS_LONG_ROW_X		.Load(sType,ITEMS_LONG_ROW_X_NAME,NUM_PLAYERS);
-	ITEMS_LONG_ROW_SHARED_X		.Load(sType,"ItemsLongRowSharedX");
-	ITEMS_ON_COMMAND		.Load(sType,"ItemsOnCommand");
-	ITEM_GAIN_FOCUS_COMMAND		.Load(sType,"ItemGainFocusCommand");
-	ITEM_LOSE_FOCUS_COMMAND		.Load(sType,"ItemLoseFocusCommand");
-	EXIT_HIDE_ITEM			.Load(sType,"ExitHideItem");
-	MOD_ICON_X			.Load(sType,MOD_ICON_X_NAME,NUM_PLAYERS);
-	MOD_ICON_ON_COMMAND		.Load(sType,"ModIconOnCommand");
-	COLOR_SELECTED			.Load(sType,"ColorSelected");
-	COLOR_NOT_SELECTED		.Load(sType,"ColorNotSelected");
-	COLOR_DISABLED			.Load(sType,"ColorDisabled");
-	CAPITALIZE_ALL_OPTION_NAMES	.Load(sType,"CapitalizeAllOptionNames");
-	TWEEN_SECONDS			.Load(sType,"TweenSeconds");
-	SHOW_BPM_IN_SPEED_TITLE		.Load(sType,"ShowBpmInSpeedTitle");
-	SHOW_MOD_ICONS			.Load(sType,"ShowModIcons");
-	SHOW_UNDERLINES			.Load(sType,"ShowUnderlines");
-	MOD_ICON_METRICS_GROUP		.Load(sType,"ModIconMetricsGroup");
+	FRAME_X   			.Load(sMetricsGroup,"FrameX");
+	TITLE_X				.Load(sMetricsGroup,"TitleX");
+	ITEMS_START_X			.Load(sMetricsGroup,"ItemsStartX");
+	ITEMS_END_X			.Load(sMetricsGroup,"ItemsEndX");
+	ITEMS_GAP_X			.Load(sMetricsGroup,"ItemsGapX");
+	ITEMS_MIN_BASE_ZOOM		.Load(sMetricsGroup,"ItemsMinBaseZoom");
+	ITEMS_LONG_ROW_X		.Load(sMetricsGroup,ITEMS_LONG_ROW_X_NAME,NUM_PLAYERS);
+	ITEMS_LONG_ROW_SHARED_X		.Load(sMetricsGroup,"ItemsLongRowSharedX");
+	EXIT_HIDE_ITEM			.Load(sMetricsGroup,"ExitHideItem");
+	MOD_ICON_X			.Load(sMetricsGroup,MOD_ICON_X_NAME,NUM_PLAYERS);
+	MOD_ICON_ON_COMMAND		.Load(sMetricsGroup,"ModIconOnCommand");
+	COLOR_SELECTED			.Load(sMetricsGroup,"ColorSelected");
+	COLOR_NOT_SELECTED		.Load(sMetricsGroup,"ColorNotSelected");
+	COLOR_DISABLED			.Load(sMetricsGroup,"ColorDisabled");
+	TWEEN_SECONDS			.Load(sMetricsGroup,"TweenSeconds");
+	SHOW_BPM_IN_SPEED_TITLE		.Load(sMetricsGroup,"ShowBpmInSpeedTitle");
+	SHOW_MOD_ICONS			.Load(sMetricsGroup,"ShowModIcons");
+	SHOW_UNDERLINES			.Load(sMetricsGroup,"ShowUnderlines");
+	MOD_ICON_METRICS_GROUP		.Load(sMetricsGroup,"ModIconMetricsGroup");
 
-	m_textItem.LoadFromFont( THEME->GetPathF(sType,"item") );
+	m_textItem.LoadFromFont( THEME->GetPathF(sMetricsGroup,"Item") );
+	m_textItem.SetName( "Item" );
+	ActorUtil::LoadAllCommands( m_textItem, sMetricsGroup );
+
 	if( SHOW_UNDERLINES )
 	{
 		FOREACH_PlayerNumber( p )
-			m_Underline[p].Load( sType, OptionsCursor::underline, p );
+			m_Underline[p].Load( "OptionsUnderline" + PlayerNumberToString(p) );
 	}
-	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"title") );
-	m_sprFrameNormal.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"FrameNormal"), pParent ) );
-	m_sprFrameExit.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"FrameExit"), pParent ) );
+
+	m_textTitle.LoadFromFont( THEME->GetPathF(sMetricsGroup,"title") );
+	m_textTitle.SetName( "Title" );
+	ActorUtil::LoadAllCommands( m_textTitle, sMetricsGroup );
+
+	m_sprFrameNormal.Load( ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"FrameNormal"), pParent ) );
+	m_sprFrameNormal->SetName( "Frame" );
+	ActorUtil::LoadAllCommands( m_sprFrameNormal, sMetricsGroup );
+
+	m_sprFrameExit.Load( ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"FrameExit"), pParent ) );
+	m_sprFrameExit->SetName( "Frame" );
+	ActorUtil::LoadAllCommands( m_sprFrameExit, sMetricsGroup );
+
 	if( SHOW_MOD_ICONS )
 		m_ModIcon.Load( MOD_ICON_METRICS_GROUP );
 }
@@ -291,7 +294,7 @@ void OptionRow::InitText( RowType type )
 	float fBaseZoom = 1.0f;
 	{
 		BitmapText bt( m_pParentType->m_textItem );
-		bt.RunCommands( m_pParentType->ITEMS_ON_COMMAND );
+		bt.PlayCommand( "On" );
 
 		/* Figure out the width of the row. */
 		float fWidth = 0;
@@ -330,8 +333,7 @@ void OptionRow::InitText( RowType type )
 			BitmapText *pText = new BitmapText( m_pParentType->m_textItem );
 			m_textItems.push_back( pText );
 
-			pText->RunCommands( m_pParentType->ITEMS_ON_COMMAND );
-			pText->SetShadowLength( 0 );
+			pText->PlayCommand( "On" );
 
 			if( m_pHand->m_Def.m_bOneChoiceForAllPlayers )
 			{
@@ -371,8 +373,7 @@ void OptionRow::InitText( RowType type )
 				RString sText = GetThemedItemText( c );
 				bt->SetText( sText );
 				bt->SetBaseZoomX( fBaseZoom );
-				bt->RunCommands( m_pParentType->ITEMS_ON_COMMAND );
-				bt->SetShadowLength( 0 );
+				bt->PlayCommand( "On" );
 
 				// set the X position of each item in the line
 				float fItemWidth = bt->GetZoomedWidth();
@@ -410,13 +411,13 @@ void OptionRow::InitText( RowType type )
 	// song selected, SHOW_BPM_IN_SPEED_TITLE will show the new BPM.
 	//m_textTitle->SetText( GetRowTitle() );
 	m_textTitle->SetX( m_pParentType->TITLE_X );
-	m_textTitle->RunCommands( m_pParentType->TITLE_ON_COMMAND );
+	m_textTitle->PlayCommand( "On" );
 
 	switch( GetRowType() )
 	{
 	case OptionRow::RowType_Normal:
 		m_sprFrame->SetX( m_pParentType->FRAME_X );
-		m_sprFrame->RunCommands( m_pParentType->FRAME_ON_COMMAND );
+		m_sprFrame->PlayCommand( "On" );
 		break;
 	case OptionRow::RowType_Exit:
 		m_sprFrame->SetVisible( false );
@@ -580,22 +581,19 @@ void OptionRow::UpdateEnabledDisabled()
 	
 	bool bRowEnabled = !m_pHand->m_Def.m_vEnabledForPlayers.empty();
 	
-	if( bThisRowHasFocusByAny )
-		m_textTitle->RunCommands( m_pParentType->TITLE_GAIN_FOCUS_COMMAND );
-	else
-		m_textTitle->RunCommands( m_pParentType->TITLE_LOSE_FOCUS_COMMAND );
-
 	/* Don't tween selection colors at all. */
+	RString sCmdName;
+	if( bThisRowHasFocusByAny )	sCmdName = "GainFocus";
+	else if( bRowEnabled )		sCmdName = "LoseFocus";
+	else				sCmdName = "Disabled";
+
 	RageColor color;
 	if( bThisRowHasFocusByAny )	color = m_pParentType->COLOR_SELECTED;
 	else if( bRowEnabled )		color = m_pParentType->COLOR_NOT_SELECTED;
 	else				color = m_pParentType->COLOR_DISABLED;
 
-	if( m_sprFrame != NULL )
-		m_sprFrame->SetGlobalDiffuseColor( color );
-	m_sprFrame->PlayCommand( bThisRowHasFocusByAny ? "GainFocus" : "LoseFocus" );
-	m_textTitle->SetGlobalDiffuseColor( color );
-
+	m_sprFrame->PlayCommand( sCmdName );
+	m_textTitle->PlayCommand( sCmdName );
 
 	for( unsigned j=0; j<m_textItems.size(); j++ )
 	{
@@ -613,9 +611,9 @@ void OptionRow::UpdateEnabledDisabled()
 		}
 
 		if( bThisItemHasFocusByAny )
-			m_textItems[j]->RunCommands( m_pParentType->ITEM_GAIN_FOCUS_COMMAND );
+			m_textItems[j]->PlayCommand( "GainFocus" );
 		else
-			m_textItems[j]->RunCommands( m_pParentType->ITEM_LOSE_FOCUS_COMMAND );
+			m_textItems[j]->PlayCommand( "LoseFocus" );
 	}
 
 	switch( m_pHand->m_Def.m_layoutType )

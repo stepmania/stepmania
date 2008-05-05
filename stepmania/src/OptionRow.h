@@ -17,10 +17,10 @@ struct OptionRowDefinition;
 class OptionRowType
 {
 public:
-	void Load( const RString &sType, Actor *pParent );
+	void Load( const RString &sMetricsGroup, Actor *pParent );
 
 private:
-	RString				m_sType;
+	RString				m_sMetricsGroup;
 
 	BitmapText			m_textItem;
 	OptionsCursor			m_Underline[NUM_PLAYERS];
@@ -31,27 +31,19 @@ private:
 
 	// metrics
 	ThemeMetric<float>		FRAME_X;
-	ThemeMetric<apActorCommands>	FRAME_ON_COMMAND;
 	ThemeMetric<float>		TITLE_X;
-	ThemeMetric<apActorCommands>	TITLE_ON_COMMAND;
-	ThemeMetric<apActorCommands>	TITLE_GAIN_FOCUS_COMMAND;
-	ThemeMetric<apActorCommands>	TITLE_LOSE_FOCUS_COMMAND;
 	ThemeMetric<float>		ITEMS_START_X;
 	ThemeMetric<float>		ITEMS_END_X;
 	ThemeMetric<float>		ITEMS_GAP_X;
 	ThemeMetric<float>		ITEMS_MIN_BASE_ZOOM;
 	ThemeMetric1D<float>		ITEMS_LONG_ROW_X;
 	ThemeMetric<float>		ITEMS_LONG_ROW_SHARED_X;
-	ThemeMetric<apActorCommands>	ITEMS_ON_COMMAND;
-	ThemeMetric<apActorCommands>	ITEM_GAIN_FOCUS_COMMAND;
-	ThemeMetric<apActorCommands>	ITEM_LOSE_FOCUS_COMMAND;
 	ThemeMetric<bool>		EXIT_HIDE_ITEM;
 	ThemeMetric1D<float>		MOD_ICON_X;
 	ThemeMetric<apActorCommands>	MOD_ICON_ON_COMMAND;
 	ThemeMetric<RageColor>		COLOR_SELECTED;
 	ThemeMetric<RageColor>		COLOR_NOT_SELECTED;
 	ThemeMetric<RageColor>		COLOR_DISABLED;
-	ThemeMetric<bool>		CAPITALIZE_ALL_OPTION_NAMES;
 	ThemeMetric<float>		TWEEN_SECONDS;
 	ThemeMetric<bool>		SHOW_BPM_IN_SPEED_TITLE;
 	ThemeMetric<bool>		SHOW_MOD_ICONS;
