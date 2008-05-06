@@ -670,9 +670,8 @@ void ScreenOptions::PositionRows( bool bTween )
 		tsDestination.Init();
 		tsDestination.pos.y = SEPARATE_EXIT_ROW_Y;
 
-		bool bHidden = (second_end != (int) Rows.size());
 		for( int j=0; j<4; j++ )
-			tsDestination.diffuse[j].a = bHidden? 0.0f:1.0f;
+			tsDestination.diffuse[j].a = 1.0f;
 		pSeparateExitRow->SetDestination( tsDestination, bTween );
 	}
 }
