@@ -25,6 +25,8 @@ protected:
 	AutoActor m_sprMiddle;
 	AutoActor m_sprLeft;
 	AutoActor m_sprRight;
+	int m_iOriginalLeftX;	// save the metrics-set X because it gets oblitterated on a call to SetBarWidth
+	int m_iOriginalRightX;
 };
 
 class OptionsCursorPlus : public OptionsCursor

@@ -16,7 +16,9 @@ OptionsCursor::OptionsCursor( const OptionsCursor &cpy ):
 	ActorFrame( cpy ),
 	m_sprMiddle( cpy.m_sprMiddle ),
 	m_sprLeft( cpy.m_sprLeft ),
-	m_sprRight( cpy.m_sprRight )
+	m_sprRight( cpy.m_sprRight ),
+	m_iOriginalLeftX( cpy.m_iOriginalLeftX ),
+	m_iOriginalRightX( cpy.m_iOriginalRightX )
 {
 	/* Re-add children, or m_SubActors will point to cpy's children and not our own. */
 	m_SubActors.clear();
@@ -46,6 +48,9 @@ void OptionsCursor::Load( const RString &sMetricsGroup )
 	LOAD_SPR( m_sprLeft, "Left" );
 	LOAD_SPR( m_sprRight, "Right" );
 #undef LOAD_SPR
+
+	m_iOriginalLeftX = m_sprLeft->GetX();
+	m_iOriginalRightX = m_sprRight->GetX();
 }
 
 void OptionsCursorPlus::Load( const RString &sMetricsGroup )
@@ -110,8 +115,8 @@ void OptionsCursor::SetBarWidth( int iWidth )
 
 	m_sprMiddle->ZoomToWidth( fWidth );
 
-	m_sprLeft->SetX( -fWidth/2 );
-	m_sprRight->SetX( +fWidth/2 );
+	m_sprLeft->SetX( m_iOriginalLeftX - fWidth/2 );
+	m_sprRight->SetX( m_iOriginalRightX + fWidth/2 );
 }
 
 void OptionsCursorPlus::SetBarWidth( int iWidth )
