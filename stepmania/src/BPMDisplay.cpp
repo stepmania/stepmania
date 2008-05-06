@@ -27,9 +27,12 @@ void BPMDisplay::Load()
 	SET_NO_BPM_COMMAND.Load( m_sName, "SetNoBpmCommand");
 	SET_NORMAL_COMMAND.Load( m_sName, "SetNormalCommand");
 	SET_CHANGING_COMMAND.Load( m_sName, "SetChangeCommand" );
+	SET_RANDOM_COMMAND.Load( m_sName, "SetRandomCommand" );
 	SET_EXTRA_COMMAND.Load( m_sName, "SetExtraCommand" );
 	CYCLE.Load( m_sName, "Cycle" );
+	RANDOM_CYCLE_SPEED.Load( m_sName, "RandomCycleSpeed" );
 	SEPARATOR.Load( m_sName, "Separator" );
+	SHOW_QMARKS.Load( m_sName, "ShowQMarksInRandomCycle" );
 	NO_BPM_TEXT.Load( m_sName, "NoBpmText" );
 
 	RunCommands( SET_NORMAL_COMMAND );
@@ -68,7 +71,11 @@ void BPMDisplay::Update( float fDeltaTime )
 		if(m_fBPMTo == -1)
 		{
 			m_fBPMFrom = -1;
-			SetText( (RandomFloat(0,1)>0.90f) ? RString("xxx") : ssprintf("%03.0f",RandomFloat(0,600)) ); 
+
+			if( (bool)SHOW_QMARKS )
+				SetText( (RandomFloat(0,1)>0.90f) ? RString("xxx") : ssprintf("%03.0f",RandomFloat(0,999)) );
+			else
+				SetText( ssprintf("%03.0f",RandomFloat(0,999)) );
 		}
 		else if(m_fBPMFrom == -1)
 		{
@@ -93,6 +100,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 	const vector<float> &BPMS = bpms.vfBpms;
 
 	bool AllIdentical = true;
+	bool IsRandom = false;
 	for( unsigned i = 0; i < BPMS.size(); ++i )
 	{
 		if( i > 0 && BPMS[i] != BPMS[i-1] )
@@ -111,7 +119,10 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 		if( MinBPM == MaxBPM )
 		{
 			if( MinBPM == -1 )
+			{
 				SetText( "..." ); // random
+				IsRandom = true;
+			}
 			else
 				SetText( ssprintf("%i", MinBPM) );
 		}
@@ -140,7 +151,12 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 	else if( !AllIdentical )
 		RunCommands( SET_CHANGING_COMMAND );
 	else
-		RunCommands( SET_NORMAL_COMMAND );
+	{
+		if( IsRandom )
+			RunCommands( SET_RANDOM_COMMAND );
+		else
+			RunCommands( SET_NORMAL_COMMAND );
+	}
 }
 
 void BPMDisplay::CycleRandomly()
@@ -149,7 +165,21 @@ void BPMDisplay::CycleRandomly()
 	bpms.Add(-1);
 	SetBPMRange( bpms );
 
-	m_fCycleTime = 0.2f;
+	RString sValue = RANDOM_CYCLE_SPEED;
+	sValue.MakeLower();
+
+	if( stricmp(sValue, "vslow") == 0 )
+		m_fCycleTime = 1.0f;
+	else if( stricmp(sValue, "slow") == 0 )
+		m_fCycleTime = 0.5f;
+	else if( stricmp(sValue, "fast") == 0 )
+		m_fCycleTime = 0.1f;
+	else if( stricmp(sValue, "vfast") == 0 )
+		m_fCycleTime = 0.05f;
+	else if( stricmp(sValue, "hyper") == 0 )
+		m_fCycleTime = 0.01f;
+	else
+		m_fCycleTime = 0.2f;
 }
 
 void BPMDisplay::NoBPM()

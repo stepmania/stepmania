@@ -34,6 +34,8 @@ public:
 		NUM_AUTOSYNC_TYPES
 	};
 	AutosyncType m_AutosyncType;
+	bool m_bStaticBackground;
+	bool m_bRandomBGOnly;
 	bool m_bSaveScore;
 	enum SoundEffectType {
 		SOUNDEFFECT_OFF,

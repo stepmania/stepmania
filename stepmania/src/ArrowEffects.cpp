@@ -406,14 +406,50 @@ float ArrowEffects::GetXOffset( const PlayerState* pPlayerState, float fMidiNote
 
 float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBeat ) 
 {
-	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_DIZZY] != 0 )
+	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
+	// Dizzy
+	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && fEffects[PlayerOptions::EFFECT_CONFUSION] == 0 )
 	{
 		const float fSongBeat = GAMESTATE->m_fSongBeatVisible;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
-		fDizzyRotation *= pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_DIZZY];
+		fDizzyRotation *= fEffects[PlayerOptions::EFFECT_DIZZY];
 		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
 		fDizzyRotation *= 180/PI;
 		return fDizzyRotation;
+	}
+	// Confusion
+	else if( fEffects[PlayerOptions::EFFECT_DIZZY] == 0 && fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
+	{
+		float fConfRotation = ReceptorGetRotation( pPlayerState );
+		fConfRotation *= fEffects[PlayerOptions::EFFECT_DIZZY];
+		return fConfRotation;
+	}
+	// Dizzy + Confusion
+	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
+	{
+		float fRotation = ReceptorGetRotation( pPlayerState );
+		float fDizzy = fEffects[PlayerOptions::EFFECT_DIZZY];
+		float fConf = fEffects[PlayerOptions::EFFECT_CONFUSION];
+		fRotation *= (fDizzy + fConf );
+		return fRotation;
+	}
+	else
+		return 0;
+}
+
+float ArrowEffects::ReceptorGetRotation( const PlayerState* pPlayerState ) 
+{
+	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
+	
+	// Confusion
+	if( fEffects[PlayerOptions::EFFECT_DIZZY] == 0 && fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
+	{
+		const float fSongBeat = GAMESTATE->m_fSongBeatVisible;
+		float fConfRotation = fNoteBeat - fSongBeat;
+		fConfRotation *= fEffects[PlayerOptions::EFFECT_CONFUSION];
+		fConfRotation = fmodf( fDizzyRotation, 2*PI );
+		fConfRotation *= -180/PI;
+		return fConfRotation;
 	}
 	else
 		return 0;

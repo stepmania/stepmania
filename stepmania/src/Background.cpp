@@ -386,6 +386,10 @@ BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const R
 	if( g_RandomBackgroundMode == BGMODE_OFF )
 		return BackgroundDef();
 
+	// Set to not show any BGChanges, whether scripted or random
+	if( GAMESTATE->m_SongOptions.GetCurrent().m_bStaticBackground )
+		return BackgroundDef();
+	
 	if( RandomBGAnimations.empty() )
 		return BackgroundDef();
 
@@ -515,8 +519,6 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			m_RandomBGAnimations.push_back( bd );
 		}
 	}
-
-
 		
 	/* Song backgrounds (even just background stills) can get very big; never keep them
 	 * in memory. */
@@ -525,15 +527,17 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 	TEXTUREMAN->DisableOddDimensionWarning();
 
-	if( !g_bSongBackgrounds )
+	// Set to not show any BGChanges, whether scripted or random if m_bStaticBackground is on
+	if( !g_bSongBackgrounds || GAMESTATE->m_SongOptions.GetCurrent().m_bStaticBackground )
 	{
-		/* Backgrounds are disabled; just display the song background. */
+		// Backgrounds are disabled; just display the song background.
 		BackgroundChange change;
 		change.m_def = m_StaticBackgroundDef;
 		change.m_fStartBeat = 0;
 		m_Layer[0].m_aBGChanges.push_back( change );
 	}
-	else if( pSong->HasBGChanges() )
+	// If m_bRandomBGOnly is on, then we want to ignore the scripted BG in favour of randomly loaded BGs
+	else if( pSong->HasBGChanges() && !GAMESTATE->m_SongOptions.GetCurrent().m_bRandomBGOnly )
 	{
 		FOREACH_BackgroundLayer( i )
 		{
@@ -583,7 +587,6 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		layer.m_aBGChanges.push_back( change );
 	}
 
-		
 	// sort segments
 	FOREACH_BackgroundLayer( i )
 	{

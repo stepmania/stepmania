@@ -38,8 +38,11 @@ protected:
 	ThemeMetric<apActorCommands> SET_NO_BPM_COMMAND;
 	ThemeMetric<apActorCommands> SET_NORMAL_COMMAND;
 	ThemeMetric<apActorCommands> SET_CHANGING_COMMAND;
+	ThemeMetric<apActorCommands> SET_RANDOM_COMMAND;
 	ThemeMetric<apActorCommands> SET_EXTRA_COMMAND;
 	ThemeMetric<bool> CYCLE;
+	ThemeMetric<bool> SHOW_QMARKS;
+	ThemeMetric<RString> RANDOM_CYCLE_SPEED;
 	ThemeMetric<RString> SEPARATOR;
 	ThemeMetric<RString> NO_BPM_TEXT;
 	

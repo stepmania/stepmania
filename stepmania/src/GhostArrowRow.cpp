@@ -58,6 +58,9 @@ void GhostArrowRow::Update( float fDeltaTime )
 		m_Ghost[c]->SetY( fY );
 		m_Ghost[c]->SetZ( fZ );
 
+		const float fRotation = ArrowEffects::ReceptorGetRotation( m_pPlayerState );
+		m_Ghost[c]->SetRotationZ( fRotation );
+
 		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );
 		m_Ghost[c]->SetZoom( fZoom );
 	}

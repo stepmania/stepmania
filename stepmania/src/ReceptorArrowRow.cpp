@@ -68,6 +68,9 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 		m_ReceptorArrow[c]->SetVisible( PitchDetectionTest::s_ms.bVoiced );
 		*/
 
+		const float fRotation = ArrowEffects::ReceptorGetRotation( m_pPlayerState );
+		m_ReceptorArrow[c]->SetRotationZ( fRotation );
+
 		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );
 		m_ReceptorArrow[c]->SetZoom( fZoom );
 	}
