@@ -271,6 +271,7 @@ ArchUtils +=    archutils/Unix/AssertionHandler.cpp archutils/Unix/AssertionHand
 		archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h \
 		archutils/Unix/RunningUnderValgrind.cpp archutils/Unix/RunningUnderValgrind.h \
 		archutils/Unix/EmergencyShutdown.cpp archutils/Unix/EmergencyShutdown.h \
+		archutils/Unix/StackCheck.cpp \
 		archutils/Common/gcc_byte_swaps.h
 
 if USE_CRASH_HANDLER
