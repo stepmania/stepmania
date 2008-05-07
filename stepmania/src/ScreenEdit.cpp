@@ -1,6 +1,6 @@
+#include "global.h"
 #include <utility>
 #include <float.h>
-#include "global.h"
 #include "ScreenEdit.h"
 #include "ActorUtil.h"
 #include "AdjustSync.h"
