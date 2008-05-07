@@ -263,6 +263,7 @@ void BackgroundUtil::GetGlobalRandomMovies(
 	// Check for an exact match
 	if( !sMatch.empty() )
 	{
+		GetDirListing( SONG_MOVIES_DIR+pSong->m_sGroupName+"/"+sMatch, vsPathsOut, false, true );	// search in SongMovies/SongGroupName/ first
 		GetDirListing( SONG_MOVIES_DIR+sMatch, vsPathsOut, false, true );
 		GetDirListing( RANDOMMOVIES_DIR+sMatch, vsPathsOut, false, true );
 		if( !vsPathsOut.empty() )
