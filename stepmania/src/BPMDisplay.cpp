@@ -100,7 +100,6 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 	const vector<float> &BPMS = bpms.vfBpms;
 
 	bool AllIdentical = true;
-	bool IsRandom = false;
 	for( unsigned i = 0; i < BPMS.size(); ++i )
 	{
 		if( i > 0 && BPMS[i] != BPMS[i-1] )
@@ -137,10 +136,10 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 		{
 			m_BPMS.push_back(BPMS[i]);
 			if( BPMS[i] != -1 )
-				m_BPMS.push_back(BPMS[i]); /* hold */
+				m_BPMS.push_back(BPMS[i]); // hold
 		}
 
-		m_iCurrentBPM = min(1u, m_BPMS.size()); /* start on the first hold */
+		m_iCurrentBPM = min(1u, m_BPMS.size()); // start on the first hold
 		m_fBPMFrom = BPMS[0];
 		m_fBPMTo = BPMS[0];
 		m_fPercentInState = 1;
@@ -151,12 +150,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 	else if( !AllIdentical )
 		RunCommands( SET_CHANGING_COMMAND );
 	else
-	{
-		if( IsRandom )
-			RunCommands( SET_RANDOM_COMMAND );
-		else
-			RunCommands( SET_NORMAL_COMMAND );
-	}
+		RunCommands( SET_NORMAL_COMMAND );
 }
 
 void BPMDisplay::CycleRandomly()
@@ -164,6 +158,8 @@ void BPMDisplay::CycleRandomly()
 	DisplayBpms bpms;
 	bpms.Add(-1);
 	SetBPMRange( bpms );
+
+	RunCommands( SET_RANDOM_COMMAND );
 
 	RString sValue = RANDOM_CYCLE_SPEED;
 	sValue.MakeLower();
