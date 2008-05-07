@@ -1,6 +1,6 @@
+#include "global.h"
 #include <cerrno>
 #include <cstring>
-#include "global.h"
 #include "NotesWriterSM.h"
 #include "BackgroundUtil.h"
 #include "Foreach.h"
