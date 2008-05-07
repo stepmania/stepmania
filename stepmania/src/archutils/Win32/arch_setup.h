@@ -51,6 +51,9 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #define _SCL_SECURE_NO_DEPRECATE 
 
+/* Disable false deprecation warnings in VC2008. */
+#define _CRT_NONSTDC_NO_WARNINGS
+
 #if defined(_MSC_VER) && _MSC_VER >= 1400 // this is needed in VC8 but breaks VC7
 #define _HAS_EXCEPTIONS 0
 #endif
