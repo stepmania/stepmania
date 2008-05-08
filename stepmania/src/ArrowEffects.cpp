@@ -442,12 +442,11 @@ float ArrowEffects::ReceptorGetRotation( const PlayerState* pPlayerState )
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 	
 	// Confusion
-	if( fEffects[PlayerOptions::EFFECT_DIZZY] == 0 && fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
+	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
 	{
-		const float fSongBeat = GAMESTATE->m_fSongBeatVisible;
-		float fConfRotation = fNoteBeat - fSongBeat;
+		float fConfRotation = GAMESTATE->m_fSongBeatVisible;
 		fConfRotation *= fEffects[PlayerOptions::EFFECT_CONFUSION];
-		fConfRotation = fmodf( fDizzyRotation, 2*PI );
+		fConfRotation = fmodf( fConfRotation, 2*PI );
 		fConfRotation *= -180/PI;
 		return fConfRotation;
 	}

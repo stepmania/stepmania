@@ -118,10 +118,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 		if( MinBPM == MaxBPM )
 		{
 			if( MinBPM == -1 )
-			{
 				SetText( "..." ); // random
-				IsRandom = true;
-			}
 			else
 				SetText( ssprintf("%i", MinBPM) );
 		}
