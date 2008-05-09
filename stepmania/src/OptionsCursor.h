@@ -14,38 +14,27 @@ public:
 	OptionsCursor();
 	OptionsCursor( const OptionsCursor &cpy );
 
-	void Load( const RString &sMetricsGroup );
+	void Load( const RString &sMetricsGroup, bool bLoadCanGos );
 
 	void StopTweening();
 	void BeginTweening( float fSecs );
 	void SetBarWidth( int iWidth );
 	int GetBarWidth() const;
+	void SetCanGo( bool bCanGoLeft, bool bCanGoRight );
 
 protected:
 	AutoActor m_sprMiddle;
 	AutoActor m_sprLeft;
 	AutoActor m_sprRight;
-	int m_iOriginalLeftX;	// save the metrics-set X because it gets oblitterated on a call to SetBarWidth
-	int m_iOriginalRightX;
-};
-
-class OptionsCursorPlus : public OptionsCursor
-{
-public:
-	OptionsCursorPlus();
-	OptionsCursorPlus( const OptionsCursorPlus &cpy );
-
-	void Load( const RString &sMetricsGroup );
-
-	void StopTweening();
-	void BeginTweening( float fSecs );
-	void SetBarWidth( int iWidth );
-	void SetCanGo( bool bCanGoLeft, bool bCanGoRight );
-
-protected:
-
+	
 	AutoActor m_sprCanGoLeft;
 	AutoActor m_sprCanGoRight;
+
+	// save the metrics-set X because it gets oblitterated on a call to SetBarWidth
+	int m_iOriginalLeftX;
+	int m_iOriginalRightX;
+	int m_iOriginalCanGoLeftX;
+	int m_iOriginalCanGoRightX;
 };
 
 #endif

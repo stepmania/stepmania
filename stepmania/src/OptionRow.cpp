@@ -109,7 +109,7 @@ void OptionRowType::Load( const RString &sMetricsGroup, Actor *pParent )
 	if( SHOW_UNDERLINES )
 	{
 		FOREACH_PlayerNumber( p )
-			m_Underline[p].Load( "OptionsUnderline" + PlayerNumberToString(p) );
+			m_Underline[p].Load( "OptionsUnderline" + PlayerNumberToString(p), false );
 	}
 
 	m_textTitle.LoadFromFont( THEME->GetPathF(sMetricsGroup,"title") );

@@ -6,10 +6,10 @@
 
 OptionsCursor::OptionsCursor()
 {
-}
-
-OptionsCursorPlus::OptionsCursorPlus()
-{
+	m_iOriginalLeftX = 0;
+	m_iOriginalRightX = 0;
+	m_iOriginalCanGoLeftX = 0;
+	m_iOriginalCanGoRightX = 0;
 }
 
 OptionsCursor::OptionsCursor( const OptionsCursor &cpy ):
@@ -17,26 +17,25 @@ OptionsCursor::OptionsCursor( const OptionsCursor &cpy ):
 	m_sprMiddle( cpy.m_sprMiddle ),
 	m_sprLeft( cpy.m_sprLeft ),
 	m_sprRight( cpy.m_sprRight ),
+	m_sprCanGoLeft( cpy.m_sprCanGoLeft ),
+	m_sprCanGoRight( cpy.m_sprCanGoRight ),
 	m_iOriginalLeftX( cpy.m_iOriginalLeftX ),
-	m_iOriginalRightX( cpy.m_iOriginalRightX )
+	m_iOriginalRightX( cpy.m_iOriginalRightX ),
+	m_iOriginalCanGoLeftX( cpy.m_iOriginalCanGoLeftX ),
+	m_iOriginalCanGoRightX( cpy.m_iOriginalCanGoRightX )
 {
 	/* Re-add children, or m_SubActors will point to cpy's children and not our own. */
 	m_SubActors.clear();
 	this->AddChild( m_sprMiddle );
 	this->AddChild( m_sprLeft );
 	this->AddChild( m_sprRight );
+	if( m_sprCanGoLeft )
+		this->AddChild( m_sprCanGoLeft );
+	if( m_sprCanGoRight )
+		this->AddChild( m_sprCanGoRight );
 }
 
-OptionsCursorPlus::OptionsCursorPlus( const OptionsCursorPlus &cpy ):
-	OptionsCursor( cpy ),
-	m_sprCanGoLeft( cpy.m_sprCanGoLeft ),
-	m_sprCanGoRight( cpy.m_sprCanGoRight )
-{
-	this->AddChild( m_sprCanGoLeft );
-	this->AddChild( m_sprCanGoRight );
-}
-
-void OptionsCursor::Load( const RString &sMetricsGroup )
+void OptionsCursor::Load( const RString &sMetricsGroup, bool bLoadCanGos )
 {
 #define LOAD_SPR( spr, name ) \
 	spr.Load( THEME->GetPathG(sMetricsGroup,name) ); \
@@ -47,32 +46,34 @@ void OptionsCursor::Load( const RString &sMetricsGroup )
 	LOAD_SPR( m_sprMiddle, "Middle" );
 	LOAD_SPR( m_sprLeft, "Left" );
 	LOAD_SPR( m_sprRight, "Right" );
+	if( bLoadCanGos )
+	{
+		LOAD_SPR( m_sprCanGoLeft, "CanGoLeft" );
+		LOAD_SPR( m_sprCanGoRight, "CanGoRight" );
+	}
 #undef LOAD_SPR
 
 	m_iOriginalLeftX = m_sprLeft->GetX();
 	m_iOriginalRightX = m_sprRight->GetX();
-}
-
-void OptionsCursorPlus::Load( const RString &sMetricsGroup )
-{
-	OptionsCursor::Load( sMetricsGroup );
-
-	m_sprCanGoLeft.Load( THEME->GetPathG(sMetricsGroup,"CanGoLeft") );
-	m_sprCanGoRight.Load( THEME->GetPathG(sMetricsGroup,"CanGoRight") );
-
-	this->AddChild( m_sprCanGoLeft );
-	this->AddChild( m_sprCanGoRight );
+	if( bLoadCanGos )
+	{
+		m_iOriginalCanGoLeftX = m_sprCanGoLeft->GetX();
+		m_iOriginalCanGoRightX = m_sprCanGoRight->GetX();
+	}
 
 	SetCanGo( false, false );
 }
 
-void OptionsCursorPlus::SetCanGo( bool bCanGoLeft, bool bCanGoRight )
+void OptionsCursor::SetCanGo( bool bCanGoLeft, bool bCanGoRight )
 {
-	m_sprCanGoLeft->EnableAnimation( bCanGoLeft );
-	m_sprCanGoRight->EnableAnimation( bCanGoRight );
+	if( m_sprCanGoLeft )
+	{
+		m_sprCanGoLeft->EnableAnimation( bCanGoLeft );
+		m_sprCanGoRight->EnableAnimation( bCanGoRight );
 
-	m_sprCanGoLeft->SetDiffuse( bCanGoLeft ? RageColor(1,1,1,1) : RageColor(1,1,1,0) );
-	m_sprCanGoRight->SetDiffuse( bCanGoRight ? RageColor(1,1,1,1) : RageColor(1,1,1,0) );
+		m_sprCanGoLeft->SetDiffuse( bCanGoLeft ? RageColor(1,1,1,1) : RageColor(1,1,1,0) );
+		m_sprCanGoRight->SetDiffuse( bCanGoRight ? RageColor(1,1,1,1) : RageColor(1,1,1,0) );
+	}
 }
 
 void OptionsCursor::StopTweening()
@@ -82,14 +83,12 @@ void OptionsCursor::StopTweening()
 	m_sprMiddle->StopTweening();
 	m_sprLeft->StopTweening();
 	m_sprRight->StopTweening();
-}
 
-void OptionsCursorPlus::StopTweening()
-{
-	OptionsCursor::StopTweening();
-
-	m_sprCanGoLeft->StopTweening();
-	m_sprCanGoRight->StopTweening();
+	if( m_sprCanGoLeft )
+	{
+		m_sprCanGoLeft->StopTweening();
+		m_sprCanGoRight->StopTweening();
+	}
 }
 
 void OptionsCursor::BeginTweening( float fSecs )
@@ -99,14 +98,12 @@ void OptionsCursor::BeginTweening( float fSecs )
 	m_sprMiddle->BeginTweening( fSecs );
 	m_sprLeft->BeginTweening( fSecs );
 	m_sprRight->BeginTweening( fSecs );
-}
 
-void OptionsCursorPlus::BeginTweening( float fSecs )
-{
-	OptionsCursor::BeginTweening( fSecs );
-
-	m_sprCanGoLeft->BeginTweening( fSecs );
-	m_sprCanGoRight->BeginTweening( fSecs );
+	if( m_sprCanGoLeft )
+	{
+		m_sprCanGoLeft->BeginTweening( fSecs );
+		m_sprCanGoRight->BeginTweening( fSecs );
+	}
 }
 
 void OptionsCursor::SetBarWidth( int iWidth )
@@ -117,14 +114,11 @@ void OptionsCursor::SetBarWidth( int iWidth )
 
 	m_sprLeft->SetX( m_iOriginalLeftX - fWidth/2 );
 	m_sprRight->SetX( m_iOriginalRightX + fWidth/2 );
-}
-
-void OptionsCursorPlus::SetBarWidth( int iWidth )
-{
-	OptionsCursor::SetBarWidth( iWidth );
-
-	m_sprCanGoLeft->SetX( m_sprLeft->GetDestX() );
-	m_sprCanGoRight->SetX( m_sprRight->GetDestX() );
+	if( m_sprCanGoLeft )
+	{
+		m_sprCanGoLeft->SetX( m_iOriginalCanGoLeftX - fWidth/2 );
+		m_sprCanGoRight->SetX( m_iOriginalCanGoRightX + fWidth/2 );
+	}
 }
 
 int OptionsCursor::GetBarWidth() const

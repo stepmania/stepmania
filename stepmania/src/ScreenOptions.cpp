@@ -134,7 +134,7 @@ void ScreenOptions::Init()
 	// init cursors
 	FOREACH_PlayerNumber( p )
 	{
-		m_Cursor[p].Load( "OptionsCursor" + PlayerNumberToString(p) );
+		m_Cursor[p].Load( "OptionsCursor" + PlayerNumberToString(p), true );
 		m_Cursor[p].SetName( "Cursor" );
 		LOAD_ALL_COMMANDS( m_Cursor[p] );
 		m_framePage.AddChild( &m_Cursor[p] );
@@ -436,7 +436,7 @@ void ScreenOptions::PositionCursor( PlayerNumber pn )
 	int iWidth, iX, iY;
 	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 
-	OptionsCursorPlus &cursor = m_Cursor[pn];
+	OptionsCursor &cursor = m_Cursor[pn];
 	cursor.SetBarWidth( iWidth );
 	cursor.SetXY( (float)iX, (float)iY );
 	bool bCanGoLeft = iChoiceWithFocus > 0;
@@ -456,7 +456,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	int iWidth, iX, iY;
 	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 
-	OptionsCursorPlus &cursor = m_Cursor[pn];
+	OptionsCursor &cursor = m_Cursor[pn];
 	if( cursor.GetDestX() != (float) iX  || 
 		cursor.GetDestY() != (float) iY  || 
 		cursor.GetBarWidth() != iWidth )
@@ -468,9 +468,19 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	}
 
 
-	bool bCanGoLeft = iChoiceWithFocus > 0;
-	bool bCanGoRight = iChoiceWithFocus >= 0 && iChoiceWithFocus < (int) row.GetRowDef().m_vsChoices.size()-1;
+	bool bCanGoLeft = false;
+	bool bCanGoRight = false;
+	switch( row.GetRowDef().m_layoutType  )
+	{
+	case LAYOUT_SHOW_ONE_IN_ROW:
+		bCanGoLeft = iChoiceWithFocus > 0;
+		bCanGoRight = iChoiceWithFocus >= 0 && iChoiceWithFocus < (int) row.GetRowDef().m_vsChoices.size()-1;
+		break;
+	case LAYOUT_SHOW_ALL_IN_ROW:
+		break;
+	}
 	cursor.SetCanGo( bCanGoLeft, bCanGoRight );
+
 
 	if( GAMESTATE->IsHumanPlayer(pn) )  
 	{
