@@ -158,20 +158,10 @@ void BPMDisplay::CycleRandomly()
 
 	RunCommands( SET_RANDOM_COMMAND );
 
-	RString sValue = RANDOM_CYCLE_SPEED;
-	sValue.MakeLower();
+	m_fCycleTime = (float)RANDOM_CYCLE_SPEED;
 
-	if( stricmp(sValue, "vslow") == 0 )
-		m_fCycleTime = 1.0f;
-	else if( stricmp(sValue, "slow") == 0 )
-		m_fCycleTime = 0.5f;
-	else if( stricmp(sValue, "fast") == 0 )
-		m_fCycleTime = 0.1f;
-	else if( stricmp(sValue, "vfast") == 0 )
-		m_fCycleTime = 0.05f;
-	else if( stricmp(sValue, "hyper") == 0 )
-		m_fCycleTime = 0.01f;
-	else
+	// Go to default value in event of a negative value in the metrics
+	if( m_fCycleTime < 0 )
 		m_fCycleTime = 0.2f;
 }
 

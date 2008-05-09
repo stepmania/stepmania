@@ -42,7 +42,7 @@ protected:
 	ThemeMetric<apActorCommands> SET_EXTRA_COMMAND;
 	ThemeMetric<bool> CYCLE;
 	ThemeMetric<bool> SHOW_QMARKS;
-	ThemeMetric<RString> RANDOM_CYCLE_SPEED;
+	ThemeMetric<float> RANDOM_CYCLE_SPEED;
 	ThemeMetric<RString> SEPARATOR;
 	ThemeMetric<RString> NO_BPM_TEXT;
 	
