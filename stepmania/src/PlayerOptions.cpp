@@ -322,7 +322,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "boomerang" )				SET_FLOAT( fAccels[ACCEL_BOOMERANG] )
 	else if( sBit == "drunk" )				SET_FLOAT( fEffects[EFFECT_DRUNK] )
 	else if( sBit == "dizzy" )				SET_FLOAT( fEffects[EFFECT_DIZZY] )
-	else if( sBit == "confusion" )			SET_FLOAT( fEffects[EFFECT_CONFUSION] )
+	else if( sBit == "confusion" )				SET_FLOAT( fEffects[EFFECT_CONFUSION] )
 	else if( sBit == "mini" )				SET_FLOAT( fEffects[EFFECT_MINI] )
 	else if( sBit == "tiny" )				SET_FLOAT( fEffects[EFFECT_TINY] )
 	else if( sBit == "flip" )				SET_FLOAT( fEffects[EFFECT_FLIP] )
