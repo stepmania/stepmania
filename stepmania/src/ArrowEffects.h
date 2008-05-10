@@ -32,7 +32,7 @@ public:
 	//	fRotation is Z rotation of an arrow.  This will depend on the column of 
 	//	the arrow and possibly the Arrow effect and the fYOffset (in the case of 
 	//	EFFECT_DIZZY).
-	static float GetRotation(	const PlayerState* pPlayerState, float fNoteBeat );
+	static float GetRotation(	const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead );
 	static float ReceptorGetRotation(	const PlayerState* pPlayerState );
 
 

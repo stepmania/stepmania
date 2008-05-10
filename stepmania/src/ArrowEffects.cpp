@@ -404,11 +404,22 @@ float ArrowEffects::GetXOffset( const PlayerState* pPlayerState, float fMidiNote
 	return fXOffset;
 }
 
-float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBeat ) 
+float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead ) 
 {
+	/* TODO:
+	 * Find a way to make dizzy and confusion work together well. Currently, if both are on,
+	 * dizzy is ignored otherwise the arrows will not line up properly with the receptor */
+
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
+	// Confusion
+	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
+	{
+		float fConfRotation = ReceptorGetRotation( pPlayerState );
+		return fConfRotation;
+	}
 	// Dizzy
-	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && fEffects[PlayerOptions::EFFECT_CONFUSION] == 0 )
+	// Doesn't affect hold heads, unlike confusion
+	else if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && !bIsHoldHead )
 	{
 		const float fSongBeat = GAMESTATE->m_fSongBeatVisible;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
@@ -416,22 +427,6 @@ float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBea
 		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
 		fDizzyRotation *= 180/PI;
 		return fDizzyRotation;
-	}
-	// Confusion
-	else if( fEffects[PlayerOptions::EFFECT_DIZZY] == 0 && fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
-	{
-		float fConfRotation = ReceptorGetRotation( pPlayerState );
-		fConfRotation *= fEffects[PlayerOptions::EFFECT_DIZZY];
-		return fConfRotation;
-	}
-	// Dizzy + Confusion
-	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
-	{
-		float fRotation = ReceptorGetRotation( pPlayerState );
-		float fDizzy = fEffects[PlayerOptions::EFFECT_DIZZY];
-		float fConf = fEffects[PlayerOptions::EFFECT_CONFUSION];
-		fRotation *= (fDizzy + fConf );
-		return fRotation;
 	}
 	else
 		return 0;

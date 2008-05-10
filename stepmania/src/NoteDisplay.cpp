@@ -657,11 +657,10 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	const RageColor diffuse		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor glow		= RageColor(1,1,1,fGlow);
 	float fRotation			= 0;
-	if( tn.type != TapNote::hold_head )
-	{
-		fRotation		= ArrowEffects::GetRotation(	m_pPlayerState, fBeat );
+
+	fRotation		= ArrowEffects::GetRotation(	m_pPlayerState, fBeat, tn.type == tn.hold_head );
+	if( tn.type != tn.hold_head )
 		fColorScale		*= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
-	}
 
 	pActor->SetRotationZ( fRotation );
 	pActor->SetXY( fX, fY );
