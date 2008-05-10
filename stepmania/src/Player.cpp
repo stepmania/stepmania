@@ -593,11 +593,13 @@ void Player::Update( float fDeltaTime )
 	// if the Player doesn't show anything on the screen.
 	if( HasVisibleParts() )
 	{
-		if( m_pPlayerState->m_bAttackBeganThisUpdate )
-			m_soundAttackLaunch.Play();
-		if( m_pPlayerState->m_bAttackEndedThisUpdate )
-			m_soundAttackEnding.Play();
-
+		if( PREFSMAN->m_bEnableAttackSoundPlayback )
+		{
+			if( m_pPlayerState->m_bAttackBeganThisUpdate )
+				m_soundAttackLaunch.Play();
+			if( m_pPlayerState->m_bAttackEndedThisUpdate )
+				m_soundAttackEnding.Play();
+		}
 
 		if( m_pNoteField )
 			m_pNoteField->Update( fDeltaTime );
@@ -2289,7 +2291,10 @@ void Player::UpdateJudgedRows()
 			if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 				setSounds.insert( &m_vKeysounds[tn.iKeysoundIndex] );
 			else
-				setSounds.insert( &m_soundMine );
+			{
+				if( PREFSMAN->m_bEnableMineSoundPlayback )
+					setSounds.insert( &m_soundMine );
+			}
 			
 			ChangeLife( tn.result.tns );
 			if( m_pScoreDisplay )

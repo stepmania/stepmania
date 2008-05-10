@@ -229,6 +229,9 @@ PrefsManager::PrefsManager() :
 	m_bTrilinearFiltering		( "TrilinearFiltering",			false ),
 	m_bAnisotropicFiltering		( "AnisotropicFiltering",		false ),
 
+	m_bEnableAttackSoundPlayback	( "EnableAttackSounds",			true ),
+	m_bEnableMineSoundPlayback	( "EnableMineHitSound",			true ),
+
 	m_bSignProfileData		( "SignProfileData",			false ),
 	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
 	m_bSubSortByNumSteps		( "SubSortByNumSteps",			false ),
