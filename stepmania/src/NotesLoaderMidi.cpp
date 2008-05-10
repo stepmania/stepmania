@@ -677,7 +677,7 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 		BPMSegment bpmSeg;
 		bpmSeg.m_iStartRow = MidiCountToNoteRow( iter->count );
 		double fSecondsPerBeat = (iter->tickSeconds * GUITAR_MIDI_COUNTS_PER_BEAT);
-		bpmSeg.m_fBPS = 1 / fSecondsPerBeat;
+		bpmSeg.m_fBPS = float( 1. / fSecondsPerBeat );
 
 		songOut.m_Timing.AddBPMSegment( bpmSeg );
 	}
