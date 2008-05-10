@@ -243,12 +243,12 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 		GET_PARAM( "hw.memsize", iRam );
 		if( iRam >= 1073741824 )
 		{
-			fRam = iRam / 1073741824.0f;
+			fRam = float( double(iRam) / 1073741824.0 );
 			ramPower = 'G';
 		}
 		else
 		{
-			fRam = iRam / 1048576.0f;
+			fRam = float( double(iRam) / 1048576.0 );
 			ramPower = 'M';
 		}
 	}
@@ -269,12 +269,12 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 		
 		if( iFreq >= 1000000000 )
 		{
-			fFreq = iFreq / 1000000000.0f;
+			fFreq = float( double(iFreq) / 1000000000.0 );
 			freqPower = 'G';
 		}
 		else
 		{
-			fFreq = iFreq / 1000000.0f;
+			fFreq = float( double(iFreq) / 1000000.0 );
 			freqPower = 'M';
 		}
 		
