@@ -20,27 +20,21 @@ public:
 	void Load( const RString &sMetricsGroup, Actor *pParent );
 
 private:
-	RString				m_sMetricsGroup;
+	RString			m_sMetricsGroup;
 
-	BitmapText			m_textItem;
-	OptionsCursor			m_Underline[NUM_PLAYERS];
-	AutoActor			m_sprFrameNormal;
-	AutoActor			m_sprFrameExit;
-	BitmapText			m_textTitle;
+	BitmapText		m_textItem;
+	OptionsCursor		m_Underline[NUM_PLAYERS];
+	AutoActor		m_sprFrame;
+	BitmapText		m_textTitle;
 	ModIcon			m_ModIcon;
 
-	// metrics
-	ThemeMetric<float>		FRAME_X;
-	ThemeMetric<float>		TITLE_X;
 	ThemeMetric<float>		ITEMS_START_X;
 	ThemeMetric<float>		ITEMS_END_X;
 	ThemeMetric<float>		ITEMS_GAP_X;
 	ThemeMetric<float>		ITEMS_MIN_BASE_ZOOM;
 	ThemeMetric1D<float>		ITEMS_LONG_ROW_X;
 	ThemeMetric<float>		ITEMS_LONG_ROW_SHARED_X;
-	ThemeMetric<bool>		EXIT_HIDE_ITEM;
 	ThemeMetric1D<float>		MOD_ICON_X;
-	ThemeMetric<apActorCommands>	MOD_ICON_ON_COMMAND;
 	ThemeMetric<RageColor>		COLOR_SELECTED;
 	ThemeMetric<RageColor>		COLOR_NOT_SELECTED;
 	ThemeMetric<RageColor>		COLOR_DISABLED;

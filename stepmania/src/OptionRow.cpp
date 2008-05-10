@@ -19,15 +19,10 @@ RString OptionRow::GetThemedItemText( int iChoice ) const
 	RString s = m_pHand->GetThemedItemText( iChoice );
 	
 	// HACK: Always theme the NEXT_ROW and EXIT items.
-	if( m_bFirstItemGoesDown && iChoice == 0 )
+	if( m_bFirstItemGoesDown  &&  iChoice == 0 )
 		s = CommonMetrics::LocalizeOptionItem( NEXT_ROW_NAME, false ); 
 	else if( m_RowType == OptionRow::RowType_Exit )
-	{
-		if( m_pParentType->EXIT_HIDE_ITEM )
-			s = RString();
-		else
-			s = CommonMetrics::LocalizeOptionItem( EXIT_NAME, false ); 
-	}
+		s = CommonMetrics::LocalizeOptionItem( EXIT_NAME, false ); 
 
 	return s;
 }
@@ -82,17 +77,13 @@ void OptionRowType::Load( const RString &sMetricsGroup, Actor *pParent )
 {
 	m_sMetricsGroup = sMetricsGroup;
 
-	FRAME_X   			.Load(sMetricsGroup,"FrameX");
-	TITLE_X				.Load(sMetricsGroup,"TitleX");
 	ITEMS_START_X			.Load(sMetricsGroup,"ItemsStartX");
 	ITEMS_END_X			.Load(sMetricsGroup,"ItemsEndX");
 	ITEMS_GAP_X			.Load(sMetricsGroup,"ItemsGapX");
 	ITEMS_MIN_BASE_ZOOM		.Load(sMetricsGroup,"ItemsMinBaseZoom");
 	ITEMS_LONG_ROW_X		.Load(sMetricsGroup,ITEMS_LONG_ROW_X_NAME,NUM_PLAYERS);
 	ITEMS_LONG_ROW_SHARED_X		.Load(sMetricsGroup,"ItemsLongRowSharedX");
-	EXIT_HIDE_ITEM			.Load(sMetricsGroup,"ExitHideItem");
 	MOD_ICON_X			.Load(sMetricsGroup,MOD_ICON_X_NAME,NUM_PLAYERS);
-	MOD_ICON_ON_COMMAND		.Load(sMetricsGroup,"ModIconOnCommand");
 	COLOR_SELECTED			.Load(sMetricsGroup,"ColorSelected");
 	COLOR_NOT_SELECTED		.Load(sMetricsGroup,"ColorNotSelected");
 	COLOR_DISABLED			.Load(sMetricsGroup,"ColorDisabled");
@@ -114,18 +105,18 @@ void OptionRowType::Load( const RString &sMetricsGroup, Actor *pParent )
 
 	m_textTitle.LoadFromFont( THEME->GetPathF(sMetricsGroup,"title") );
 	m_textTitle.SetName( "Title" );
-	ActorUtil::LoadAllCommands( m_textTitle, sMetricsGroup );
+	ActorUtil::LoadAllCommandsAndSetXY( m_textTitle, sMetricsGroup );
 
-	m_sprFrameNormal.Load( ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"FrameNormal"), pParent ) );
-	m_sprFrameNormal->SetName( "Frame" );
-	ActorUtil::LoadAllCommands( m_sprFrameNormal, sMetricsGroup );
-
-	m_sprFrameExit.Load( ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"FrameExit"), pParent ) );
-	m_sprFrameExit->SetName( "Frame" );
-	ActorUtil::LoadAllCommands( m_sprFrameExit, sMetricsGroup );
+	m_sprFrame.Load( ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"Frame"), pParent ) );
+	m_sprFrame->SetName( "Frame" );
+	ActorUtil::LoadAllCommandsAndSetXY( m_sprFrame, sMetricsGroup );
 
 	if( SHOW_MOD_ICONS )
+	{
 		m_ModIcon.Load( MOD_ICON_METRICS_GROUP );
+		m_ModIcon.SetName( "ModIcon" );
+		ActorUtil::LoadAllCommands( m_ModIcon, sMetricsGroup );
+	}
 }
 
 void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
@@ -146,7 +137,7 @@ void OptionRow::LoadExit()
 	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
 	pHand->m_Def.m_selectType  = SELECT_NONE;
 	pHand->m_Def.m_sName = EXIT_NAME;
-	pHand->m_Def.m_vsChoices.push_back( "Exit" );
+	pHand->m_Def.m_vsChoices.push_back( EXIT_NAME );
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	m_pHand = pHand;
@@ -255,16 +246,7 @@ void OptionRow::InitText( RowType type )
 	m_textTitle = new BitmapText( m_pParentType->m_textTitle );
 	m_Frame.AddChild( m_textTitle );
 
-	switch( type )
-	{
-	DEFAULT_FAIL( type );
-	case RowType_Normal:
-		m_sprFrame = m_pParentType->m_sprFrameNormal->Copy();
-		break;
-	case RowType_Exit:
-		m_sprFrame = m_pParentType->m_sprFrameExit->Copy();
-		break;
-	}
+	m_sprFrame = m_pParentType->m_sprFrame->Copy();
 	m_sprFrame->SetDrawOrder(-1); // under title
 	m_Frame.AddChild( m_sprFrame );
 
@@ -277,7 +259,7 @@ void OptionRow::InitText( RowType type )
 			{
 				m_ModIcons[p] = new ModIcon( m_pParentType->m_ModIcon );
 				m_ModIcons[p]->SetDrawOrder(-1); // under title
-				m_ModIcons[p]->RunCommands( m_pParentType->MOD_ICON_ON_COMMAND );
+				m_ModIcons[p]->PlayCommand( "On" );
 				
 				m_Frame.AddChild( m_ModIcons[p] );
 
@@ -349,7 +331,7 @@ void OptionRow::InitText( RowType type )
 			UpdateText( p );
 
 			// init underlines
-			if( m_pParentType->SHOW_UNDERLINES && GetRowType() != OptionRow::RowType_Exit )
+			if( m_pParentType->SHOW_UNDERLINES  &&  GetRowType() != OptionRow::RowType_Exit )
 			{
 				OptionsCursor *pCursor = new OptionsCursor( m_pParentType->m_Underline[p] );
 				m_Underline[p].push_back( pCursor );
@@ -410,19 +392,9 @@ void OptionRow::InitText( RowType type )
 	// This is set in OptionRow::AfterImportOptions, so if we're reused with a different
 	// song selected, SHOW_BPM_IN_SPEED_TITLE will show the new BPM.
 	//m_textTitle->SetText( GetRowTitle() );
-	m_textTitle->SetX( m_pParentType->TITLE_X );
 	m_textTitle->PlayCommand( "On" );
 
-	switch( GetRowType() )
-	{
-	case OptionRow::RowType_Normal:
-		m_sprFrame->SetX( m_pParentType->FRAME_X );
-		m_sprFrame->PlayCommand( "On" );
-		break;
-	case OptionRow::RowType_Exit:
-		m_sprFrame->SetVisible( false );
-		break;
-	}
+	m_sprFrame->PlayCommand( "On" );
 
 	m_Frame.SortByDrawOrder();
 	this->SortByDrawOrder();
