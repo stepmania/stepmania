@@ -97,7 +97,8 @@ protected:	// derived classes need access to these
 	vector<OptionRow*>	m_pRows;
 	int			m_iCurrentRow[NUM_PLAYERS];
 
-	OptionRowType		m_OptionRowType;
+	OptionRowType		m_OptionRowTypeNormal;
+	OptionRowType		m_OptionRowTypeExit;
 
 	Navigation		m_OptionsNavigation;
 	InputMode		m_InputMode;
@@ -111,7 +112,7 @@ protected:	// derived classes need access to these
 	bool			m_bGotAtLeastOneStartPressed[NUM_PLAYERS];
 
 	// actors
-	ActorFrame		m_framePage;
+	ActorFrame		m_frameContainer;
 	AutoActor		m_sprPage;
 
 	OptionsCursor		m_Cursor[NUM_PLAYERS];
@@ -145,7 +146,8 @@ protected:	// derived classes need access to these
 	ThemeMetric<bool>		ALLOW_REPEATING_CHANGE_VALUE_INPUT;
 	ThemeMetric<float>		CURSOR_TWEEN_SECONDS;
 	ThemeMetric<bool>		WRAP_VALUE_IN_ROW;
-	ThemeMetric<RString>		OPTION_ROW_METRICS_GROUP;
+	ThemeMetric<RString>		OPTION_ROW_NORMAL_METRICS_GROUP;
+	ThemeMetric<RString>		OPTION_ROW_EXIT_METRICS_GROUP;
 };
 
 #endif

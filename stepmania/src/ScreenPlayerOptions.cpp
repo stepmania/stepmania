@@ -27,7 +27,7 @@ void ScreenPlayerOptions::Init()
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_sprDisqualify[p] );
 		m_sprDisqualify[p]->SetVisible( false );	// unhide later if handicapping options are discovered
 		m_sprDisqualify[p]->SetDrawOrder( 2 );
-		m_framePage.AddChild( m_sprDisqualify[p] );
+		m_frameContainer.AddChild( m_sprDisqualify[p] );
 	}
 
 	m_bAskOptionsMessage =

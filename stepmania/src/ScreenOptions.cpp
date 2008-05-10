@@ -99,7 +99,8 @@ void ScreenOptions::Init()
 	ALLOW_REPEATING_CHANGE_VALUE_INPUT.Load( m_sName, "AllowRepeatingChangeValueInput" );
 	CURSOR_TWEEN_SECONDS.Load( m_sName, "CursorTweenSeconds" );
 	WRAP_VALUE_IN_ROW.Load( m_sName, "WrapValueInRow" );
-	OPTION_ROW_METRICS_GROUP.Load( m_sName, "OptionRowMetricsGroup" );
+	OPTION_ROW_NORMAL_METRICS_GROUP.Load( m_sName, "OptionRowNormalMetricsGroup" );
+	OPTION_ROW_EXIT_METRICS_GROUP.Load( m_sName, "OptionRowExitMetricsGroup" );
 
 	m_exprRowPositionTransformFunction.SetFromReference( THEME->GetMetricR(m_sName,"RowPositionTransformFunction") );
 
@@ -111,15 +112,15 @@ void ScreenOptions::Init()
 	m_SoundToggleOn.Load( THEME->GetPathS(m_sName,"toggle on"), true );
 	m_SoundToggleOff.Load( THEME->GetPathS(m_sName,"toggle off"), true );
 
-	// add everything to m_framePage so we can animate everything at once
-	m_framePage.SetName( "Frame" );
-	LOAD_ALL_COMMANDS( m_framePage );
-	this->AddChild( &m_framePage );
+	// add everything to m_frameContainer so we can animate everything at once
+	m_frameContainer.SetName( "Container" );
+	LOAD_ALL_COMMANDS( m_frameContainer );
+	this->AddChild( &m_frameContainer );
 
 	m_sprPage.Load( THEME->GetPathG(m_sName,"page") );
 	m_sprPage->SetName( "Page" );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprPage );
-	m_framePage.AddChild( m_sprPage );
+	m_frameContainer.AddChild( m_sprPage );
 
 	// init line line highlights
 	FOREACH_PlayerNumber( p )
@@ -128,7 +129,7 @@ void ScreenOptions::Init()
 		m_sprLineHighlight[p]->SetName( "LineHighlight" );
 		m_sprLineHighlight[p]->SetX( LINE_HIGHLIGHT_X );
 		LOAD_ALL_COMMANDS( m_sprLineHighlight[p] );
-		m_framePage.AddChild( m_sprLineHighlight[p] );
+		m_frameContainer.AddChild( m_sprLineHighlight[p] );
 	}
 
 	// init cursors
@@ -137,7 +138,7 @@ void ScreenOptions::Init()
 		m_Cursor[p].Load( "OptionsCursor" + PlayerNumberToString(p), true );
 		m_Cursor[p].SetName( "Cursor" );
 		LOAD_ALL_COMMANDS( m_Cursor[p] );
-		m_framePage.AddChild( &m_Cursor[p] );
+		m_frameContainer.AddChild( &m_Cursor[p] );
 	}
 	
 	switch( m_InputMode )
@@ -149,7 +150,7 @@ void ScreenOptions::Init()
 			m_textExplanation[p].SetDrawOrder( 2 );
 			m_textExplanation[p].SetName( "Explanation" + PlayerNumberToString(p) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( m_textExplanation[p] );
-			m_framePage.AddChild( &m_textExplanation[p] );
+			m_frameContainer.AddChild( &m_textExplanation[p] );
 
 		}
 		break;
@@ -158,7 +159,7 @@ void ScreenOptions::Init()
 		m_textExplanationTogether.SetDrawOrder( 2 );
 		m_textExplanationTogether.SetName( "ExplanationTogether" );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_textExplanationTogether );
-		m_framePage.AddChild( &m_textExplanationTogether );
+		m_frameContainer.AddChild( &m_textExplanationTogether );
 		break;
 	default:
 		ASSERT(0);
@@ -174,7 +175,7 @@ void ScreenOptions::Init()
 			m_ScrollBar.EnablePlayer( p, GAMESTATE->IsHumanPlayer(p) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_ScrollBar );
 		m_ScrollBar.SetDrawOrder( 2 );
-		m_framePage.AddChild( &m_ScrollBar );
+		m_frameContainer.AddChild( &m_ScrollBar );
 	}
 
 	m_sprMore.Load( THEME->GetPathG( m_sName,"more") );
@@ -182,9 +183,10 @@ void ScreenOptions::Init()
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprMore );
 	m_sprMore->SetDrawOrder( 2 );
 	m_sprMore->PlayCommand( "LoseFocus" );
-	m_framePage.AddChild( m_sprMore );
+	m_frameContainer.AddChild( m_sprMore );
 
-	m_OptionRowType.Load( OPTION_ROW_METRICS_GROUP, this );
+	m_OptionRowTypeNormal.Load( OPTION_ROW_NORMAL_METRICS_GROUP, this );
+	m_OptionRowTypeExit.Load( OPTION_ROW_EXIT_METRICS_GROUP, this );
 }
 
 void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
@@ -193,17 +195,17 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 
 	for( unsigned i=0; i<m_pRows.size(); i++ )
 	{
-		m_framePage.RemoveChild( m_pRows[i] );
+		m_frameContainer.RemoveChild( m_pRows[i] );
 		SAFE_DELETE( m_pRows[i] );
 	}
 	m_pRows.clear();
 
 	for( unsigned r=0; r<vHands.size(); r++ )		// foreach row
 	{
-		m_pRows.push_back( new OptionRow(&m_OptionRowType) );
+		m_pRows.push_back( new OptionRow(&m_OptionRowTypeNormal) );
 		OptionRow &row = *m_pRows.back();
 		row.SetDrawOrder( 1 );
-		m_framePage.AddChild( &row );
+		m_frameContainer.AddChild( &row );
 
 		bool bFirstRowGoesDown = m_OptionsNavigation==NAV_TOGGLE_THREE_KEY;
 
@@ -212,14 +214,14 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 
 	if( SHOW_EXIT_ROW )
 	{
-		m_pRows.push_back( new OptionRow(&m_OptionRowType) );
+		m_pRows.push_back( new OptionRow(&m_OptionRowTypeExit) );
 		OptionRow &row = *m_pRows.back();
 		row.LoadExit();
 		row.SetDrawOrder( 1 );
-		m_framePage.AddChild( &row );
+		m_frameContainer.AddChild( &row );
 	}
 
-	m_framePage.SortByDrawOrder();
+	m_frameContainer.SortByDrawOrder();
 
 	FOREACH( OptionRow*, m_pRows, p )
 	{
@@ -308,10 +310,15 @@ void ScreenOptions::BeginScreen()
 	FOREACH_PlayerNumber( p )
 		m_bGotAtLeastOneStartPressed[p] = false;
 
-	ON_COMMAND( m_framePage );
+	ON_COMMAND( m_frameContainer );
 
 	FOREACH_PlayerNumber( p )
+	{
 		m_Cursor[p].SetVisible( GAMESTATE->IsHumanPlayer(p) );
+		ON_COMMAND( m_Cursor[p] );
+	}
+
+	this->SortByDrawOrder();
 }
 
 void ScreenOptions::TweenOnScreen()
@@ -336,7 +343,7 @@ void ScreenOptions::TweenOnScreen()
 	if( !m_textExplanationTogether.GetName().empty() )
 		ON_COMMAND( m_textExplanationTogether );
 
-	m_framePage.SortByDrawOrder();
+	m_frameContainer.SortByDrawOrder();
 }
 
 void ScreenOptions::TweenOffScreen()
@@ -346,7 +353,7 @@ void ScreenOptions::TweenOffScreen()
 	FOREACH( OptionRow*, m_pRows, p )
 		(*p)->RunCommands( ROW_OFF_COMMAND );
 
-	OFF_COMMAND( m_framePage );
+	OFF_COMMAND( m_frameContainer );
 
 	FOREACH_PlayerNumber( p )
 		OFF_COMMAND( m_textExplanation[p] );
