@@ -311,7 +311,6 @@
 		AA29CD310558741A00961A51 /* ScreenHowToPlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0030047711F3005F316C /* ScreenHowToPlay.h */; };
 		AA29CD320558741A00961A51 /* PercentageDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD620A6052EC78B00D02EE9 /* PercentageDisplay.h */; };
 		AA29CD330558741A00961A51 /* ScoreDisplayPercentage.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6DAF0905300B3D00D02EE9 /* ScoreDisplayPercentage.h */; };
-		AA29CD340558741A00961A51 /* ScreenCenterImage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC622F905389A0500D02EE9 /* ScreenCenterImage.h */; };
 		AA29CD350558741A00961A51 /* ScreenTestInput.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC622FB05389A0500D02EE9 /* ScreenTestInput.h */; };
 		AA29CD360558741A00961A51 /* ScreenBookkeeping.h in Headers */ = {isa = PBXBuildFile; fileRef = AADBE361053D5F8A00D02EE9 /* ScreenBookkeeping.h */; };
 		AA29CD370558741A00961A51 /* ScreenNameEntryTraditional.h in Headers */ = {isa = PBXBuildFile; fileRef = AADBE363053D5F8A00D02EE9 /* ScreenNameEntryTraditional.h */; };
@@ -497,7 +496,6 @@
 		AA29CE300558741A00961A51 /* ScreenHowToPlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E002F047711F3005F316C /* ScreenHowToPlay.cpp */; };
 		AA29CE310558741A00961A51 /* PercentageDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD620A5052EC78B00D02EE9 /* PercentageDisplay.cpp */; };
 		AA29CE320558741A00961A51 /* ScoreDisplayPercentage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6DAF0805300B3D00D02EE9 /* ScoreDisplayPercentage.cpp */; };
-		AA29CE330558741A00961A51 /* ScreenCenterImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC622F805389A0500D02EE9 /* ScreenCenterImage.cpp */; };
 		AA29CE340558741A00961A51 /* ScreenTestInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC622FA05389A0500D02EE9 /* ScreenTestInput.cpp */; };
 		AA29CE350558741A00961A51 /* ScreenBookkeeping.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADBE360053D5F8A00D02EE9 /* ScreenBookkeeping.cpp */; };
 		AA29CE360558741A00961A51 /* ScreenNameEntryTraditional.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADBE362053D5F8A00D02EE9 /* ScreenNameEntryTraditional.cpp */; };
@@ -745,7 +743,6 @@
 		AA40D28D09A08D650068C0D5 /* ScreenHowToPlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0030047711F3005F316C /* ScreenHowToPlay.h */; };
 		AA40D28E09A08D650068C0D5 /* PercentageDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD620A6052EC78B00D02EE9 /* PercentageDisplay.h */; };
 		AA40D28F09A08D650068C0D5 /* ScoreDisplayPercentage.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6DAF0905300B3D00D02EE9 /* ScoreDisplayPercentage.h */; };
-		AA40D29009A08D650068C0D5 /* ScreenCenterImage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC622F905389A0500D02EE9 /* ScreenCenterImage.h */; };
 		AA40D29109A08D650068C0D5 /* ScreenTestInput.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC622FB05389A0500D02EE9 /* ScreenTestInput.h */; };
 		AA40D29209A08D650068C0D5 /* ScreenBookkeeping.h in Headers */ = {isa = PBXBuildFile; fileRef = AADBE361053D5F8A00D02EE9 /* ScreenBookkeeping.h */; };
 		AA40D29309A08D650068C0D5 /* ScreenNameEntryTraditional.h in Headers */ = {isa = PBXBuildFile; fileRef = AADBE363053D5F8A00D02EE9 /* ScreenNameEntryTraditional.h */; };
@@ -1086,7 +1083,6 @@
 		AA40D44309A08D650068C0D5 /* ScreenHowToPlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E002F047711F3005F316C /* ScreenHowToPlay.cpp */; };
 		AA40D44409A08D650068C0D5 /* PercentageDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD620A5052EC78B00D02EE9 /* PercentageDisplay.cpp */; };
 		AA40D44509A08D650068C0D5 /* ScoreDisplayPercentage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6DAF0805300B3D00D02EE9 /* ScoreDisplayPercentage.cpp */; };
-		AA40D44609A08D650068C0D5 /* ScreenCenterImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC622F805389A0500D02EE9 /* ScreenCenterImage.cpp */; };
 		AA40D44709A08D650068C0D5 /* ScreenTestInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC622FA05389A0500D02EE9 /* ScreenTestInput.cpp */; };
 		AA40D44809A08D650068C0D5 /* ScreenBookkeeping.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADBE360053D5F8A00D02EE9 /* ScreenBookkeeping.cpp */; };
 		AA40D44909A08D650068C0D5 /* ScreenNameEntryTraditional.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADBE362053D5F8A00D02EE9 /* ScreenNameEntryTraditional.cpp */; };
@@ -3217,8 +3213,6 @@
 		AAC23F7F0485E68D005F316C /* RageUtil_CharConversions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageUtil_CharConversions.h; path = ../src/RageUtil_CharConversions.h; sourceTree = "<group>"; };
 		AAC28BB904F758E500D02EE9 /* BeginnerHelper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = BeginnerHelper.cpp; path = ../src/BeginnerHelper.cpp; sourceTree = "<group>"; };
 		AAC28BBA04F758E500D02EE9 /* BeginnerHelper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = BeginnerHelper.h; path = ../src/BeginnerHelper.h; sourceTree = "<group>"; };
-		AAC622F805389A0500D02EE9 /* ScreenCenterImage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenCenterImage.cpp; path = ../src/ScreenCenterImage.cpp; sourceTree = "<group>"; };
-		AAC622F905389A0500D02EE9 /* ScreenCenterImage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenCenterImage.h; path = ../src/ScreenCenterImage.h; sourceTree = "<group>"; };
 		AAC622FA05389A0500D02EE9 /* ScreenTestInput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenTestInput.cpp; path = ../src/ScreenTestInput.cpp; sourceTree = "<group>"; };
 		AAC622FB05389A0500D02EE9 /* ScreenTestInput.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenTestInput.h; path = ../src/ScreenTestInput.h; sourceTree = "<group>"; };
 		AAC6889905D7F3C800964E6D /* XmlFile.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = XmlFile.cpp; path = ../src/XmlFile.cpp; sourceTree = "<group>"; };
@@ -3665,8 +3659,6 @@
 				AA6E0011047711F3005F316C /* ScreenAttract.h */,
 				AADBE360053D5F8A00D02EE9 /* ScreenBookkeeping.cpp */,
 				AADBE361053D5F8A00D02EE9 /* ScreenBookkeeping.h */,
-				AAC622F805389A0500D02EE9 /* ScreenCenterImage.cpp */,
-				AAC622F905389A0500D02EE9 /* ScreenCenterImage.h */,
 				AA2CA89D0BB745BD002441E9 /* ScreenContinue.cpp */,
 				AA2CA89E0BB745BD002441E9 /* ScreenContinue.h */,
 				AA6E0019047711F3005F316C /* ScreenCredits.cpp */,
@@ -5552,7 +5544,6 @@
 				AA29CD310558741A00961A51 /* ScreenHowToPlay.h in Headers */,
 				AA29CD320558741A00961A51 /* PercentageDisplay.h in Headers */,
 				AA29CD330558741A00961A51 /* ScoreDisplayPercentage.h in Headers */,
-				AA29CD340558741A00961A51 /* ScreenCenterImage.h in Headers */,
 				AA29CD350558741A00961A51 /* ScreenTestInput.h in Headers */,
 				AA29CD360558741A00961A51 /* ScreenBookkeeping.h in Headers */,
 				AA29CD370558741A00961A51 /* ScreenNameEntryTraditional.h in Headers */,
@@ -5977,7 +5968,6 @@
 				AA40D28D09A08D650068C0D5 /* ScreenHowToPlay.h in Headers */,
 				AA40D28E09A08D650068C0D5 /* PercentageDisplay.h in Headers */,
 				AA40D28F09A08D650068C0D5 /* ScoreDisplayPercentage.h in Headers */,
-				AA40D29009A08D650068C0D5 /* ScreenCenterImage.h in Headers */,
 				AA40D29109A08D650068C0D5 /* ScreenTestInput.h in Headers */,
 				AA40D29209A08D650068C0D5 /* ScreenBookkeeping.h in Headers */,
 				AA40D29309A08D650068C0D5 /* ScreenNameEntryTraditional.h in Headers */,
@@ -6813,7 +6803,6 @@
 				AA29CE300558741A00961A51 /* ScreenHowToPlay.cpp in Sources */,
 				AA29CE310558741A00961A51 /* PercentageDisplay.cpp in Sources */,
 				AA29CE320558741A00961A51 /* ScoreDisplayPercentage.cpp in Sources */,
-				AA29CE330558741A00961A51 /* ScreenCenterImage.cpp in Sources */,
 				AA29CE340558741A00961A51 /* ScreenTestInput.cpp in Sources */,
 				AA29CE350558741A00961A51 /* ScreenBookkeeping.cpp in Sources */,
 				AA29CE360558741A00961A51 /* ScreenNameEntryTraditional.cpp in Sources */,
@@ -7226,7 +7215,6 @@
 				AA40D44309A08D650068C0D5 /* ScreenHowToPlay.cpp in Sources */,
 				AA40D44409A08D650068C0D5 /* PercentageDisplay.cpp in Sources */,
 				AA40D44509A08D650068C0D5 /* ScoreDisplayPercentage.cpp in Sources */,
-				AA40D44609A08D650068C0D5 /* ScreenCenterImage.cpp in Sources */,
 				AA40D44709A08D650068C0D5 /* ScreenTestInput.cpp in Sources */,
 				AA40D44809A08D650068C0D5 /* ScreenBookkeeping.cpp in Sources */,
 				AA40D44909A08D650068C0D5 /* ScreenNameEntryTraditional.cpp in Sources */,
@@ -7993,6 +7981,7 @@
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = 4.0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -8523,6 +8512,7 @@
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = 4.0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -8849,6 +8839,7 @@
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = 4.0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -8973,6 +8964,7 @@
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = 4.0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
