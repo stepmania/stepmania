@@ -51,7 +51,7 @@ void ScreenSMOnlineLogin::Init()
 		vHands.push_back( pHand );
 
 	InitMenu( vHands );
-  	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions", "music"));
+  	SOUND->PlayMusic( THEME->GetPathS("ScreenOptionsServiceChild", "music"));
 	OptionRow &row = *m_pRows.back();
 	row.SetExitText("Login");
 }
