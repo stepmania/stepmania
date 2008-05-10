@@ -1,1 +1,1 @@
-return LoadFont("common normal") .. { InitCommand=cmd(settext,"Disqualified!";);
+return LoadFont("common normal") .. { InitCommand=cmd(settext,"Disqualified!";); };
