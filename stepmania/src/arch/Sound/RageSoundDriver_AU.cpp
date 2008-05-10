@@ -326,7 +326,7 @@ float RageSoundDriver_AU::GetPlayLatency() const
 		bufferSize += frames;
 	} while( false );
 	
-	return bufferSize / sampleRate;
+	return float( bufferSize / sampleRate );
 }
 	
 

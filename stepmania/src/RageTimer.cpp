@@ -49,12 +49,12 @@ static uint64_t GetTime( bool bAccurate )
 
 float RageTimer::GetTimeSinceStart( bool bAccurate )
 {
-	uint64_t usecs = GetTime( bAccurate );
+	int64_t usecs = GetTime( bAccurate );
 	usecs -= g_iStartTime;
 	// HACK: VC6 can't cast u64 to a double, but it can cast a i64 to a double.
 	// We can afford to lose one bit of precision since these numbers will 
 	// never overflow a 64 int.
-	return (int64_t)usecs / 1000000.f;
+	return float( double(usecs) / 1000000. );
 }
 
 void RageTimer::Touch()
