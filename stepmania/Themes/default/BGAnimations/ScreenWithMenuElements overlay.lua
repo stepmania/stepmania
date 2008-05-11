@@ -8,7 +8,7 @@ local function MakeHelpDisplay()
 		File = THEME:GetPathF("HelpDisplay", "text");
 
 		InitCommand=function(self)
-			local s = ScreenString("HelpText");
+			local s = THEME:GetMetric(Var "LoadingScreen","HelpText");
 			self:SetTipsColonSeparated(s);
 		end;
 
