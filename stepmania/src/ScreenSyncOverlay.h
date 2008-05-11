@@ -24,6 +24,7 @@ private:
 	Quad		m_quad;
 	BitmapText	m_textHelp;
 	BitmapText	m_textStatus;
+	BitmapText	m_textSyncInfo;
 };
 
 

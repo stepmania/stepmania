@@ -9,6 +9,7 @@
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 #include "AdjustSync.h"
+#include "ActorUtil.h"
 
 static bool IsGameplay()
 {
@@ -59,6 +60,11 @@ void ScreenSyncOverlay::Init()
 	m_textStatus.SetZoom( 0.8f );
 	m_textStatus.SetShadowLength( 2 );
 	this->AddChild( &m_textStatus );
+
+	m_textSyncInfo.SetName( "SyncInfo" );
+	m_textSyncInfo.LoadFromFont( THEME->GetPathF("Common","normal") );
+	ActorUtil::LoadAllCommands( m_textSyncInfo, m_sName );
+	this->AddChild( &m_textSyncInfo );
 	
 	Update( 0 );
 }
@@ -74,7 +80,6 @@ void ScreenSyncOverlay::Update( float fDeltaTime )
 
 	Screen::Update(fDeltaTime);
 
-	// TODO: Only update when changed.
 	UpdateText();
 }
 
@@ -85,8 +90,15 @@ static LocalizedString AUTO_PLAY_CPU		( "ScreenSyncOverlay", "AutoPlayCPU" );
 static LocalizedString AUTO_SYNC_SONG		( "ScreenSyncOverlay", "AutoSync Song" );
 static LocalizedString AUTO_SYNC_MACHINE	( "ScreenSyncOverlay", "AutoSync Machine" );
 static LocalizedString AUTO_SYNC_TEMPO		( "ScreenSyncOverlay", "AutoSync Tempo" );
+static LocalizedString OLD_OFFSET	( "ScreenSyncOverlay", "Old offset" );
+static LocalizedString NEW_OFFSET	( "ScreenSyncOverlay", "New offset" );
+static LocalizedString COLLECTING_SAMPLE( "ScreenSyncOverlay", "Collecting sample" );
+static LocalizedString STANDARD_DEVIATION( "ScreenSyncOverlay", "Standard deviation" );
 void ScreenSyncOverlay::UpdateText()
 {
+	//
+	// Update Status
+	// 
 	vector<RString> vs;
 
 	if( g_bShowAutoPlayStatus )
@@ -116,6 +128,20 @@ void ScreenSyncOverlay::UpdateText()
 	}	
 
 	m_textStatus.SetText( join("\n",vs) );
+
+
+	//
+	// Update SyncInfo
+	//
+	float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
+	float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
+	float fStdDev = AdjustSync::s_fStandardDeviation;
+	RString s;
+	s += OLD_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fOld );
+	s += NEW_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fNew );
+	s += STANDARD_DEVIATION.GetValue() + ssprintf( ": %0.3f\n", fStdDev );
+	s += COLLECTING_SAMPLE.GetValue() + ssprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, AdjustSync::OFFSET_SAMPLE_COUNT );
+	m_textSyncInfo.SetText( s );
 }
 
 static LocalizedString CANT_SYNC_WHILE_PLAYING_A_COURSE	("ScreenSyncOverlay","Can't sync while playing a course.");
