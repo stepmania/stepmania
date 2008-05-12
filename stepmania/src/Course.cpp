@@ -349,7 +349,7 @@ Trail* Course::GetTrailForceRegenCache( StepsType st, CourseDifficulty cd ) cons
 	CacheData &cache = m_TrailCache[ CacheEntry(st, cd) ];
 	Trail &trail = cache.trail;
 	trail.Init();
-	if( !GetTrailSorted( st, cd, trail ) || trail.m_vEntries.empty() )
+	if( !GetTrailSorted(st, cd, trail) )
 	{
 		/* This course difficulty doesn't exist. */
 		cache.null = true;
@@ -408,6 +408,8 @@ bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 			trail.m_vEntries[i] = entries[i].entry;
 	}
 
+	if( trail.m_vEntries.empty() )
+		return false;
 	return true;
 }
 
