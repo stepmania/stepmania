@@ -407,45 +407,37 @@ float ArrowEffects::GetXOffset( const PlayerState* pPlayerState, float fMidiNote
 float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead ) 
 {
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
-
-	// Confusion, Confusion + Dizzy
+	float fRotation = 0;
 	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
-	{
-		float fRotation = ReceptorGetRotation( pPlayerState );
-		return fRotation;
-	}
-	/* Dizzy
-	 * Doesn't affect hold heads, unlike confusion. */
-	else if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && !bIsHoldHead )
+		fRotation += ReceptorGetRotation( pPlayerState );
+
+	// Doesn't affect hold heads, unlike confusion
+	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && !bIsHoldHead )
 	{
 		const float fSongBeat = GAMESTATE->m_fSongBeatVisible;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
 		fDizzyRotation *= fEffects[PlayerOptions::EFFECT_DIZZY];
 		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
 		fDizzyRotation *= 180/PI;
-		return fDizzyRotation;
+		fRotation += fDizzyRotation;
 	}
-	else
-		return 0;
+	return fRotation;
 }
 
 float ArrowEffects::ReceptorGetRotation( const PlayerState* pPlayerState ) 
 {
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
-
-	/* Confusion, Confusion + Dizzy
-	 * If both confusion and dizzy are on, then the rotation multiplier is the combination of 
-	 * the two otherwise only care about what the confusion percentage is */
+	float fRotation = 0;
+	
 	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
 	{
-		float fRotation = GAMESTATE->m_fSongBeatVisible;
-		fRotation *= (fEffects[PlayerOptions::EFFECT_CONFUSION] + fEffects[PlayerOptions::EFFECT_DIZZY]);
-		fRotation = fmodf( fConfRotation, 2*PI );
-		fRotation *= -180/PI;
-		return fConfRotation;
+		float fConfRotation = GAMESTATE->m_fSongBeatVisible;
+		fConfRotation *= fEffects[PlayerOptions::EFFECT_CONFUSION];
+		fConfRotation = fmodf( fConfRotation, 2*PI );
+		fConfRotation *= -180/PI;
+		fRotation += fConfRotation;
 	}
-	else
-		return 0;
+	return fRotation;
 }
 
 
