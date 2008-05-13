@@ -23,6 +23,7 @@
 
 #include "RageTimer.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 
 #include "arch/ArchHooks/ArchHooks.h"
  
@@ -49,12 +50,12 @@ static uint64_t GetTime( bool bAccurate )
 
 float RageTimer::GetTimeSinceStart( bool bAccurate )
 {
-	int64_t usecs = GetTime( bAccurate );
+	uint64_t usecs = GetTime( bAccurate );
 	usecs -= g_iStartTime;
-	// HACK: VC6 can't cast u64 to a double, but it can cast a i64 to a double.
-	// We can afford to lose one bit of precision since these numbers will 
-	// never overflow a 64 int.
-	return float( double(usecs) / 1000000. );
+	/* Avoid using doubles for hardware that doesn't support them.
+	 * This is writing usecs = high*2^32 + low and doing
+	 * usecs/10^6 = high * (2^32/10^6) + low/10^6. */
+	return uint32_t(usecs>>32) * 4294.967296f + uint32_t(usecs)/1000000.f;
 }
 
 void RageTimer::Touch()
