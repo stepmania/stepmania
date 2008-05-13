@@ -219,6 +219,7 @@ void Course::Init()
 	m_SortOrder_Ranking = 0;
 
 	m_LoadedFromProfile = ProfileSlot_Invalid;
+	m_bIncomplete = false;
 	m_TrailCache.clear();
 	m_iTrailCacheSeed = 0;
 	m_RadarCache.clear();

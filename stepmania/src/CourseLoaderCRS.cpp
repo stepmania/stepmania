@@ -185,6 +185,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				{
 					LOG->UserLog( "Course file", sPath, "random_within_group entry \"%s\" specifies a group that doesn't exist. "
 						      "This entry will be ignored.", sSong.c_str() );
+					out.m_bIncomplete = true;
 					continue; // skip this #SONG
 				}
 			}
@@ -211,6 +212,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				{
 					LOG->UserLog( "Course file", sPath, "contains a fixed song entry \"%s\" that does not exist. "
 						      "This entry will be ignored.", sSong.c_str());
+					out.m_bIncomplete = true;
 					continue; // skip this #SONG
 				}
 			}

@@ -53,6 +53,7 @@ static const ThemeMetric<bool>		MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT	( "Song
 static const ThemeMetric<int>		EXTRA_STAGE2_DIFFICULTY_MAX	( "SongManager", "ExtraStage2DifficultyMax" );
 
 static Preference<RString> g_sDisabledSongs( "DisabledSongs", "" );
+static Preference<bool> g_bHideIncompleteCourses( "HideIncompleteCourses", false );
 
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf( "SongGroupColor%i", (int) i+1 ); }
 RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf( "CourseGroupColor%i", (int) i+1 ); }
@@ -705,6 +706,13 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 
 			Course* pCourse = new Course;
 			CourseLoaderCRS::LoadFromCRSFile( *sCoursePath, *pCourse );
+
+			if( g_bHideIncompleteCourses.Get() && pCourse->m_bIncomplete )
+			{
+				delete pCourse;
+				continue;
+			}
+
 			m_pCourses.push_back( pCourse );
 		}
 	}
