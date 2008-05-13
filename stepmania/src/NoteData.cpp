@@ -368,7 +368,6 @@ bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 	if( pHeadRow == NULL )
 		pHeadRow = &iDummy;
 
-	bool bFoundHead = false;
 	/* Starting at iRow, search upwards.  If we find a TapNote::hold_head, we're within
 	 * a hold.  If we find a tap, mine or attack, we're not--those never lie within hold
 	 * notes.  Ignore autoKeysound. */
@@ -395,12 +394,9 @@ bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 			continue;
 		DEFAULT_FAIL( tn.type );
 		}
-
-		if( bFoundHead )
-			break;
 	}
 
-	return bFoundHead;
+	return false;
 }
 
 bool NoteData::IsEmpty() const
