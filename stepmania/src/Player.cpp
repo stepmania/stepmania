@@ -714,18 +714,7 @@ void Player::Update( float fDeltaTime )
 			// TODO: Make the CPU miss sometimes.
 			int iHeadRow;
 			if( !m_NoteData.IsHoldNoteAtRow(iTrack, iSongRow, &iHeadRow) )
-			{
-				/* Mike:
-				 * Because IsHoldNoteAtRow() returns false if iSongRow == iHeadRow, double check the
-				 * next row to be absolutely sure that we're not in a roll.
-				 * Necessary in the event that we have a freeze occur on the same row as a roll start,
-				 * otherwise we report that there is no roll in that freeze and thus it doesn't get
-				 * updated. */
-				if( !m_NoteData.IsHoldNoteAtRow(iTrack, (iSongRow+1), &iHeadRow) )
-					continue;
-				else
-					iHeadRow = iSongRow;
-			}
+				iHeadRow = iSongRow;
 
 			const TapNote &tn = m_NoteData.GetTapNote( iTrack, iHeadRow );
 			if( tn.type != TapNote::hold_head || tn.subType != TapNote::hold_head_roll )
