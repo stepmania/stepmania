@@ -857,6 +857,22 @@ void NoteDataUtil::ChangeRollsToHolds( NoteData &in, int iStartIndex, int iEndIn
 	}
 }
 
+void NoteDataUtil::ChangeHoldsToRolls( NoteData &in, int iStartIndex, int iEndIndex )
+{
+	for( int t=0; t<in.GetNumTracks(); ++t )
+	{
+		NoteData::iterator begin, end;
+		in.GetTapNoteRangeInclusive( t, iStartIndex, iEndIndex, begin, end );
+		for( ; begin != end; ++begin )
+		{
+			if( begin->second.type != TapNote::hold_head ||
+				begin->second.subType != TapNote::hold_head_hold )
+				continue;
+			begin->second.subType = TapNote::hold_head_roll;
+		}
+	}
+}
+
 void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, int iStartIndex, int iEndIndex )
 {
 	// Remove tap and hold notes so no more than iMaxSimultaneous buttons are being held at any
@@ -1978,6 +1994,9 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )	NoteDataUtil::Planted( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_FLOORED] )	NoteDataUtil::Floored( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )	NoteDataUtil::Twister( nd, iStartIndex, iEndIndex );
+
+	// Do this here to turn any added holds into rolls
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_HOLDROLLS] )	NoteDataUtil::ChangeHoldsToRolls( ns, iStartIndex, iEndIndex );
 
 	// Apply turns and shuffles last so that they affect inserts.
 	if( po.m_bTurns[PlayerOptions::TURN_MIRROR] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::mirror, iStartIndex, iEndIndex );

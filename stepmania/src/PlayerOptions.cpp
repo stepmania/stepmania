@@ -188,6 +188,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	if( m_bTransforms[TRANSFORM_PLANTED] )	AddTo.push_back( "Planted" );
 	if( m_bTransforms[TRANSFORM_FLOORED] )	AddTo.push_back( "Floored" );
 	if( m_bTransforms[TRANSFORM_TWISTER] )	AddTo.push_back( "Twister" );
+	if( m_bTransforms[TRANSFORM_HOLDROLLS] ) AddTo.push_back( "HoldsToRolls" );
 	if( m_bTransforms[TRANSFORM_NOJUMPS] )	AddTo.push_back( "NoJumps" );
 	if( m_bTransforms[TRANSFORM_NOHANDS] )	AddTo.push_back( "NoHands" );
 	if( m_bTransforms[TRANSFORM_NOQUADS] )	AddTo.push_back( "NoQuads" );
@@ -356,6 +357,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "planted" )				m_bTransforms[TRANSFORM_PLANTED] = on;
 	else if( sBit == "floored" )				m_bTransforms[TRANSFORM_FLOORED] = on;
 	else if( sBit == "twister" )				m_bTransforms[TRANSFORM_TWISTER] = on;
+	else if( sBit == "holdrolls" )				m_bTransforms[TRANSFORM_HOLDROLLS] = on;
 	else if( sBit == "nojumps" )				m_bTransforms[TRANSFORM_NOJUMPS] = on;
 	else if( sBit == "nohands" )				m_bTransforms[TRANSFORM_NOHANDS] = on;
 	else if( sBit == "noquads" )				m_bTransforms[TRANSFORM_NOQUADS] = on;
