@@ -121,6 +121,9 @@ static Preference<float> m_fTimingWindowAdd	( "TimingWindowAdd",		0 );
 static Preference1D<float> m_fTimingWindowSeconds( TimingWindowSecondsInit, NUM_TimingWindow );
 static Preference<float> m_fTimingWindowJump	( "TimingWindowJump",		0.25 );
 static Preference<float> m_fMaxInputLatencySeconds	( "MaxInputLatencySeconds",	0.0 );
+static Preference<bool> g_bEnableAttackSoundPlayback	( "EnableAttackSounds", true );
+static Preference<bool> g_bEnableMineSoundPlayback	( "EnableMineHitSound", true );
+
 Preference<float> g_fTimingWindowHopo		( "TimingWindowHopo",		0.25 );		// max time between notes in a hopo chain
 Preference<float> g_fTimingWindowStrum		( "TimingWindowStrum",		0.1f );		// max time between strum and when the frets must match
 ThemeMetric<float> INITIAL_HOLD_LIFE		( "Player", "InitialHoldLife" );
@@ -593,7 +596,7 @@ void Player::Update( float fDeltaTime )
 	// if the Player doesn't show anything on the screen.
 	if( HasVisibleParts() )
 	{
-		if( PREFSMAN->m_bEnableAttackSoundPlayback )
+		if( g_bEnableAttackSoundPlayback )
 		{
 			if( m_pPlayerState->m_bAttackBeganThisUpdate )
 				m_soundAttackLaunch.Play();
@@ -2290,11 +2293,8 @@ void Player::UpdateJudgedRows()
 				continue;
 			if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 				setSounds.insert( &m_vKeysounds[tn.iKeysoundIndex] );
-			else
-			{
-				if( PREFSMAN->m_bEnableMineSoundPlayback )
-					setSounds.insert( &m_soundMine );
-			}
+			else if( g_bEnableMineSoundPlayback )
+				setSounds.insert( &m_soundMine );
 			
 			ChangeLife( tn.result.tns );
 			if( m_pScoreDisplay )

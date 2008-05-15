@@ -186,10 +186,6 @@ public:
 	Preference<bool>	m_bCelShadeModels;
 	Preference<bool>	m_bPreferredSortUsesGroups;
 
-	// Options to enable/disable the playback of attack start/end sounds, and mine hit sounds
-	Preference<bool>	m_bEnableAttackSoundPlayback;
-	Preference<bool>	m_bEnableMineSoundPlayback;
-
 	// Number of seconds it takes for a button on the controller to release
 	// after pressed.
 	Preference<float>	m_fPadStickSeconds;
