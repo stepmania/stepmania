@@ -44,7 +44,6 @@ ver.cpp:
 Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
 ScreenBookkeeping.cpp ScreenBookkeeping.h \
-ScreenCenterImage.cpp ScreenCenterImage.h \
 ScreenContinue.cpp ScreenContinue.h \
 ScreenCredits.cpp ScreenCredits.h \
 ScreenDebugOverlay.cpp ScreenDebugOverlay.h \
