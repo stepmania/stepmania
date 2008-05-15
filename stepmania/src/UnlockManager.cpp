@@ -109,6 +109,7 @@ RString UnlockManager::FindEntryID( const RString &sName ) const
 int UnlockManager::CourseIsLocked( const Course *pCourse ) const
 {
 	int iRet = 0;
+
 	if( PREFSMAN->m_bUseUnlockSystem )
 	{
 		const UnlockEntry *p = FindCourse( pCourse );
@@ -130,6 +131,10 @@ int UnlockManager::CourseIsLocked( const Course *pCourse ) const
 			iRet |= LOCKED_DISABLED;
 	}
 
+	// Show the course if this is true
+	if( PREFSMAN->m_bEventMode && PREFSMAN->m_bEventIgnoresLockStatusCS )
+		iRet = 0;
+
 	return iRet;
 }
 
@@ -148,8 +153,14 @@ int UnlockManager::SongIsLocked( const Song *pSong ) const
 	}
 	if( PREFSMAN->m_bHiddenSongs && pSong->m_SelectionDisplay == Song::SHOW_NEVER )
 		iRet |= LOCKED_SELECTABLE;
+
 	if( !pSong->m_bEnabled )
 		iRet |= LOCKED_DISABLED;
+
+	// Check to see if we should show anyways because of Event Mode.
+	if( PREFSMAN->m_bEventMode && PREFSMAN->m_bEventIgnoresLockStatusCS )
+		iRet = 0;
+
 	return iRet;
 }
 
@@ -162,6 +173,10 @@ bool UnlockManager::StepsIsLocked( const Song *pSong, const Steps *pSteps ) cons
 	if( p == NULL )
 		return false;
 
+	// Show the stepchart if this is true
+	if( PREFSMAN->m_bEventMode && PREFSMAN->m_bEventIgnoresLockStatusSteps )
+		return false;
+
 	return p->IsLocked();
 }
 
@@ -172,6 +187,10 @@ bool UnlockManager::ModifierIsLocked( const RString &sOneMod ) const
 
 	const UnlockEntry *p = FindModifier( sOneMod );
 	if( p == NULL )
+		return false;
+
+	// Show the modifier if this is true
+	if( PREFSMAN->m_bEventMode && PREFSMAN->m_bEventIgnoresLockStatusModifier )
 		return false;
 
 	return p->IsLocked();

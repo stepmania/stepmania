@@ -129,6 +129,11 @@ public:
 
 	Preference<float>	m_fLifeDifficultyScale;
 
+	// Event Mode overrides to show courses/mods/songs/steps without changing their selectable/lock status manually
+	Preference<bool>	m_bEventIgnoresLockStatusCS;
+	Preference<bool>	m_bEventIgnoresLockStatusMod;
+	Preference<bool>	m_bEventIgnoresLockStatusStep;
+
 	// Whoever added these: Please add a comment saying what they do. -Chris
 	Preference<int>		m_iRegenComboAfterMiss;
 	Preference<bool>	m_bMercifulDrain;	// negative life deltas are scaled by the players life percentage

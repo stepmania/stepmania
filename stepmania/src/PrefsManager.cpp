@@ -232,6 +232,10 @@ PrefsManager::PrefsManager() :
 	m_bEnableAttackSoundPlayback	( "EnableAttackSounds",			true ),
 	m_bEnableMineSoundPlayback	( "EnableMineHitSound",			true ),
 
+	m_bEventIgnoredLockStatusCS	( "EventModeShowsHiddenOrLockedCoursesAndSongs", false ),
+	m_bEventIgnoredLockStatusMod	( "EventModeShowsLockedModifiers",	false ),
+	m_bEventIgnoredLockStatusStep	( "EventModeShowsLockedSteps",		false ),
+
 	m_bSignProfileData		( "SignProfileData",			false ),
 	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
 	m_bSubSortByNumSteps		( "SubSortByNumSteps",			false ),
