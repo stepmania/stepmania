@@ -1996,7 +1996,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )	NoteDataUtil::Twister( nd, iStartIndex, iEndIndex );
 
 	// Do this here to turn any added holds into rolls
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_HOLDROLLS] )	NoteDataUtil::ChangeHoldsToRolls( ns, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_HOLDROLLS] )	NoteDataUtil::ChangeHoldsToRolls( nd, iStartIndex, iEndIndex );
 
 	// Apply turns and shuffles last so that they affect inserts.
 	if( po.m_bTurns[PlayerOptions::TURN_MIRROR] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::mirror, iStartIndex, iEndIndex );
