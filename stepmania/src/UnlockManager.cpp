@@ -21,7 +21,11 @@ UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our p
 #define UNLOCK_NAMES		THEME->GetMetric ("UnlockManager","UnlockNames")
 #define UNLOCK(x)		THEME->GetMetricR("UnlockManager", ssprintf("Unlock%sCommand",x.c_str()));
 
-ThemeMetric<bool> AUTO_LOCK_CHALLENGE_STEPS( "UnlockManager", "AutoLockChallengeSteps" );
+static ThemeMetric<bool> AUTO_LOCK_CHALLENGE_STEPS( "UnlockManager", "AutoLockChallengeSteps" );
+
+static Preference<bool> g_bEventIgnoresLockStatusCS	( "EventModeShowsHiddenOrLockedCoursesAndSongs", false );
+static Preference<bool> g_bEventIgnoresLockStatusMod	( "EventModeShowsLockedModifiers",	false );
+static Preference<bool> g_bEventIgnoresLockStatusStep	( "EventModeShowsLockedSteps",		false );
 
 static const char *UnlockRequirementNames[] =
 {
@@ -132,7 +136,7 @@ int UnlockManager::CourseIsLocked( const Course *pCourse ) const
 	}
 
 	// Show the course if this is true
-	if( PREFSMAN->m_bEventMode && PREFSMAN->m_bEventIgnoresLockStatusCS )
+	if( PREFSMAN->m_bEventMode && g_bEventIgnoresLockStatusCS )
 		iRet = 0;
 
 	return iRet;
@@ -158,7 +162,7 @@ int UnlockManager::SongIsLocked( const Song *pSong ) const
 		iRet |= LOCKED_DISABLED;
 
 	// Check to see if we should show anyways because of Event Mode.
-	if( PREFSMAN->m_bEventMode && PREFSMAN->m_bEventIgnoresLockStatusCS )
+	if( PREFSMAN->m_bEventMode && g_bEventIgnoresLockStatusCS )
 		iRet = 0;
 
 	return iRet;
@@ -174,7 +178,7 @@ bool UnlockManager::StepsIsLocked( const Song *pSong, const Steps *pSteps ) cons
 		return false;
 
 	// Show the stepchart if this is true
-	if( PREFSMAN->m_bEventMode && PREFSMAN->m_bEventIgnoresLockStatusSteps )
+	if( PREFSMAN->m_bEventMode && g_bEventIgnoresLockStatusStep )
 		return false;
 
 	return p->IsLocked();
@@ -190,7 +194,7 @@ bool UnlockManager::ModifierIsLocked( const RString &sOneMod ) const
 		return false;
 
 	// Show the modifier if this is true
-	if( PREFSMAN->m_bEventMode && PREFSMAN->m_bEventIgnoresLockStatusModifier )
+	if( PREFSMAN->m_bEventMode && g_bEventIgnoresLockStatusMod )
 		return false;
 
 	return p->IsLocked();
