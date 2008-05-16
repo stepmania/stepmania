@@ -58,11 +58,19 @@ CFLAGS="$CFLAGS $sc_option"
 CXXFLAGS="$CXXFLAGS $sc_option"
 AC_LANG_POP([C])
 
+AC_CHECK_HEADERS([sys/param.h])
+
+if test x$with_debug = xyes; then
+	AC_LANG_PUSH([C++])
+	AC_CHECK_HEADER([debug/debug.h],[
+		AC_DEFINE([_GLIBCXX_DEBUG],1,[STL debug])
+		AC_DEFINE([_GLIBCXX_DEBUG_PEDANTIC],1,[STL pedantic debug])])
+	AC_LANG_POP([C++])
+fi
+
 # Define UNIX for all Unix-like systems.  Don't define it for cross-compiling to
 # non-Unix-like systems.  (-DUNIX selects the archutils and ArchHooks to use; if
 # your platform doesn't use the Unix ones, you probably don't want to define UNIX.)
-
-AC_CHECK_HEADERS([sys/param.h])
 case $host_os in
 *linux*)
 	AC_DEFINE(LINUX, 1, [Linux])
