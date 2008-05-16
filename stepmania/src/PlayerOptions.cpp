@@ -187,6 +187,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	if( m_bTransforms[TRANSFORM_BMRIZE] )	AddTo.push_back( "BMRize" );
 	if( m_bTransforms[TRANSFORM_SKIPPY] )	AddTo.push_back( "Skippy" );
 	if( m_bTransforms[TRANSFORM_MINES] )	AddTo.push_back( "Mines" );
+	if( m_bTransforms[TRANSFORM_ATTACKMINES] ) AddTo.push_back( "AttackMines" );
 	if( m_bTransforms[TRANSFORM_ECHO] )	AddTo.push_back( "Echo" );
 	if( m_bTransforms[TRANSFORM_STOMP] )	AddTo.push_back( "Stomp" );
 	if( m_bTransforms[TRANSFORM_PLANTED] )	AddTo.push_back( "Planted" );
@@ -356,6 +357,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "bmrize" )				m_bTransforms[TRANSFORM_BMRIZE] = on;
 	else if( sBit == "skippy" )				m_bTransforms[TRANSFORM_SKIPPY] = on;
 	else if( sBit == "mines" )				m_bTransforms[TRANSFORM_MINES] = on;
+	else if( sBit == "attackmines" )			m_bTransforms[TRANSFORM_ATTACKMINES] = on;
 	else if( sBit == "echo" )				m_bTransforms[TRANSFORM_ECHO] = on;
 	else if( sBit == "stomp" )				m_bTransforms[TRANSFORM_STOMP] = on;
 	else if( sBit == "planted" )				m_bTransforms[TRANSFORM_PLANTED] = on;

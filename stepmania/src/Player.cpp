@@ -621,7 +621,7 @@ void Player::Update( float fDeltaTime )
 					Attack attRandomAttack;
 					attRandomAttack.sModifiers = ApplyRandomAttack();
 					attRandomAttack.fSecsRemaining = fAttackRunTime;
-					m_pPlayerState->LaunchAttack( attRandomAttack);
+					m_pPlayerState->LaunchAttack( attRandomAttack );
 				}
 			}
 		}
@@ -2326,7 +2326,24 @@ void Player::UpdateJudgedRows()
 			else if( g_bEnableMineSoundPlayback )
 				setSounds.insert( &m_soundMine );
 			
-			ChangeLife( tn.result.tns );
+			/* Attack Mines:
+			 * Only difference is these launch an attack rather than affecting the lifebar. All the
+			 * other mine impacts (score, dance points, etc.) are still applied. */
+			if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_bTransforms[PlayerOptions::TRANSFORM_ATTACKMINES] )
+			{
+				// Should we hardcode this, or make it a preference/theme metric? ~ Mike
+				const float fAttackRunTime = 7.0f;
+
+				Attack attMineAttack;
+				attMineAttack.sModifiers = ApplyRandomAttack();
+				attMineAttack.fStartSecond = -1.0f;
+				attMineAttack.fSecsRemaining = fAttackRunTime;
+
+				m_pPlayerState->LaunchAttack( attMineAttack );
+			}
+			else
+				ChangeLife( tn.result.tns );
+
 			if( m_pScoreDisplay )
 				m_pScoreDisplay->OnJudgment( tn.result.tns );
 			if( m_pSecondaryScoreDisplay )
