@@ -44,6 +44,8 @@ const RString COURSES_DIR		= "/Courses/";
 const RString ADDITIONAL_COURSES_DIR	= "/AdditionalCourses/";
 const RString EDIT_SUBDIR		= "Edits/";
 
+const RString ATTACK_FILE		= "/Data/RandomAttacks.txt";
+
 static const ThemeMetric<RageColor>	EXTRA_COLOR			( "SongManager", "ExtraColor" );
 static const ThemeMetric<int>		EXTRA_COLOR_METER		( "SongManager", "ExtraColorMeter" );
 static const ThemeMetric<bool>		USE_PREFERRED_SORT_COLOR	( "SongManager", "UsePreferredSortColor" );
@@ -92,6 +94,7 @@ void SongManager::InitAll( LoadingWindow *ld )
 	InitSongsFromDisk( ld );
 	InitCoursesFromDisk( ld );
 	InitAutogenCourses();
+	InitRandomAttacks();
 }
 
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
@@ -795,6 +798,56 @@ void SongManager::InitAutogenCourses()
 				aSongs.push_back( apSongs[i] );
 			}
 		} while( i++ < apSongs.size() );
+	}
+}
+
+void SongManager::InitRandomAttacks()
+{
+	GAMESTATE->m_RandomAttacks.clear();
+	
+	if( !IsAFile(ATTACK_FILE) )
+		LOG->Trace( "File Data/RandomAttacks.txt was not found" );
+	else
+	{
+		MsdFile msd;
+
+		if( !msd.ReadFile( ATTACK_FILE, true ) )
+			LOG->Warn( "Error opening file '%s' for reading: %s.", ATTACK_FILE, msd.GetError().c_str() );
+		else
+		{
+			for( unsigned i=0; i<msd.GetNumValues(); i++ )
+			{
+				int iNumParams = msd.GetNumParams(i);
+				const MsdFile::value_t &sParams = msd.GetValue(i);
+				RString sType = sParams[0];
+				RString sAttack = sParams[1];
+
+				if( iNumParams > 2 )
+				{
+					LOG->Warn( "Got \"%s:%s\" tag with too many parameters", sType.c_str(), sAttack.c_str() );
+					continue;
+				}
+
+				if( stricmp(sType,"ATTACK") != 0 )
+				{
+					LOG->Warn( "Got \"%s:%s\" tag with wrong declaration", sType.c_str(), sAttack.c_str() );
+					continue;
+				}
+
+				// Check to make sure only one attack has been specified
+				// TODO: Allow combinations of mods
+				vector<RString> sAttackCheck;
+				split( sAttack, ",", sAttackCheck, false );
+
+				if( sAttackCheck.size() > 1 )
+				{
+					LOG->Warn( "Attack \"%s\" has more than one modifier; must only be one modifier specified", sAttack.c_str() );
+					continue;
+				}
+
+				GAMESTATE->m_RandomAttacks.push_back( sAttack );
+			}
+		}
 	}
 }
 

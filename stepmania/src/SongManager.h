@@ -50,6 +50,7 @@ public:
 
 	void InitCoursesFromDisk( LoadingWindow *ld );
 	void InitAutogenCourses();
+	void InitRandomAttacks();
 	void FreeCourses();
 	void AddCourse( Course *pCourse );	// transfers ownership of pCourse
 	void DeleteCourse( Course *pCourse );	// transfers ownership of pCourse

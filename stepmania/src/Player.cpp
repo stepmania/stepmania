@@ -380,6 +380,8 @@ void Player::Init(
 	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 	FOREACH( bool, m_vbFretIsDown, b )
 		*b = false;
+
+	m_fActiveRandomAttackStart = -1.0f;
 }
 
 static bool NeedsTapJudging( const TapNote &tn )
@@ -596,6 +598,34 @@ void Player::Update( float fDeltaTime )
 	// if the Player doesn't show anything on the screen.
 	if( HasVisibleParts() )
 	{
+		//
+		// Random Attack Mod
+		//
+		if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fRandAttack )
+		{
+			float fCurrentGameTime = STATSMAN->m_CurStageStats.m_fGameplaySeconds;
+
+			// Should we hardcode this, or make it a preference/theme metric? ~ Mike
+			const float fAttackRunTime = 6.0f;
+
+			// Don't start until 1 seconds into game, minimum
+			if( fCurrentGameTime > 1.0f )
+			{
+				/* Update the attack if there are no others currently running.
+				* Note that we have a new one activate a little early; this is to have a bit
+				* of overlap rather than an abrupt change */
+				if( (fCurrentGameTime - m_fActiveRandomAttackStart) > (fAttackRunTime - 0.5f) )
+				{
+					m_fActiveRandomAttackStart = fCurrentGameTime;
+
+					Attack attRandomAttack;
+					attRandomAttack.sModifiers = ApplyRandomAttack();
+					attRandomAttack.fSecsRemaining = fAttackRunTime;
+					m_pPlayerState->LaunchAttack( attRandomAttack);
+				}
+			}
+		}
+
 		if( g_bEnableAttackSoundPlayback )
 		{
 			if( m_pPlayerState->m_bAttackBeganThisUpdate )
@@ -2805,6 +2835,15 @@ void Player::SetCombo( int iCombo, int iMisses )
 	if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W3) )
 		msg.SetParam( "FullComboW3", true );
 	this->HandleMessage( msg );
+}
+
+RString Player::ApplyRandomAttack()
+{
+	if( GAMESTATE->m_RandomAttacks.size() < 1 )
+		return "";
+
+	int iAttackToUse = rand() % GAMESTATE->m_RandomAttacks.size();	
+	return GAMESTATE->m_RandomAttacks[iAttackToUse];
 }
 
 // lua start

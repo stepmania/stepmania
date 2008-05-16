@@ -205,6 +205,11 @@ public:
 	float			m_fLastHasteUpdateMusicSeconds;
 	float			m_fAccumulatedHasteSeconds;
 
+	//
+	// Random Attacks & Attack Mines
+	//
+	vector<RString>		m_RandomAttacks;
+
 	// used in PLAY_MODE_BATTLE
 	float	m_fOpponentHealthPercent;
 

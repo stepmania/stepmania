@@ -27,6 +27,7 @@ void PlayerOptions::Init()
 	m_fDark = 0;			m_SpeedfDark = 1.0f;
 	m_fBlind = 0;			m_SpeedfBlind = 1.0f;
 	m_fCover = 0;			m_SpeedfCover = 1.0f;
+	m_fRandAttack = 0;		m_SpeedfRandAttack = 1.0f;
 	m_bSetTiltOrSkew = false;
 	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
 	m_fSkew = 0;			m_SpeedfSkew = 1.0f;
@@ -61,6 +62,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fDark );
 	APPROACH( fBlind );
 	APPROACH( fCover );
+	APPROACH( fRandAttack );
 	APPROACH( fPerspectiveTilt );
 	APPROACH( fSkew );
 	APPROACH( fPassmark );
@@ -162,6 +164,8 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 
 	AddPart( AddTo, m_fBlind,	"Blind" );
 	AddPart( AddTo, m_fCover,	"Cover" );
+
+	AddPart( AddTo, m_fRandAttack,	"RandomAttacks" );
 
 	AddPart( AddTo, m_fPassmark,	"Passmark" );
 
@@ -373,6 +377,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "dark" )				SET_FLOAT( fDark )
 	else if( sBit == "blind" )				SET_FLOAT( fBlind )
 	else if( sBit == "cover" )				SET_FLOAT( fCover )
+	else if( sBit == "randomattacks" )			SET_FLOAT( fRandAttack )
 	else if( sBit == "passmark" )				SET_FLOAT( fPassmark )
 	else if( sBit == "overhead" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = 0;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 	else if( sBit == "incoming" )				{ m_bSetTiltOrSkew = true; m_fSkew = level;	m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
@@ -611,6 +616,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);
+	COMPARE(m_fRandAttack);
 	COMPARE(m_fPerspectiveTilt);
 	COMPARE(m_fSkew);
 	COMPARE(m_sNoteSkin);
