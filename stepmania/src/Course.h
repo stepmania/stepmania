@@ -191,6 +191,8 @@ public:
 	int		m_iCustomMeter[NUM_Difficulty];	// -1 = no meter specified
 	bool		m_bSortByMeter;
 
+	bool		m_bIncomplete;
+
 	vector<CourseEntry> m_vEntries;
 
 	// sorting values
