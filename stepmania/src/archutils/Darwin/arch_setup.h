@@ -1,6 +1,12 @@
 #ifndef ARCH_SETUP_DARWIN_H
 #define ARCH_SETUP_DARWIN_H
 
+#ifdef DEBUG
+// Enable STL assertions
+#define _GLIBCXX_DEBUG
+#define _GLIBCXX_DEBUG_PEDANTIC
+#endif
+
 // Replace the main function.
 extern "C" int SM_main( int argc, char *argv[] );
 #define main(x,y) SM_main(x,y)
