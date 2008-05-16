@@ -46,6 +46,8 @@ void CourseContentsList::SetFromGameState()
 	// the same number of TrailEntries?
 	// They have to have the same number, and of the same songs, or gameplay
 	// isn't going to line up.
+	if( GAMESTATE->m_MasterPlayerNumber == PlayerNumber_Invalid )
+		return;
 	const Trail *pMasterTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
 	if( pMasterTrail == NULL )
 		return;
