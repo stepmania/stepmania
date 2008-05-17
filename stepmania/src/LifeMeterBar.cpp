@@ -22,6 +22,7 @@ LifeMeterBar::LifeMeterBar()
 {
 	DANGER_THRESHOLD.Load	("LifeMeterBar","DangerThreshold");
 	INITIAL_VALUE.Load	("LifeMeterBar","InitialValue");
+	HOT_VALUE.Load		("LifeMeterBar","HotValue");
 	MIN_STAY_ALIVE.Load	("LifeMeterBar","MinStayAlive");
 	m_fLifePercentChange.Load( "LifeMeterBar", LIFE_PERCENT_CHANGE_NAME, NUM_ScoreEvent );
 
@@ -247,7 +248,7 @@ void LifeMeterBar::AfterLifeChanged()
 
 bool LifeMeterBar::IsHot() const
 { 
-	return m_fLifePercentage >= 1; 
+	return m_fLifePercentage >= HOT_VALUE; 
 }
 
 bool LifeMeterBar::IsInDanger() const
