@@ -82,6 +82,29 @@ void ScoreKeeperNormal::Load(
 	m_MinScoreToContinueCombo.Load( "Gameplay", "MinScoreToContinueCombo" );
 	m_MinScoreToMaintainCombo.Load( "Gameplay", "MinScoreToMaintainCombo" );
 
+	// Custom Scoring
+	m_CustomTNS_W1.Load( "CustomScoring", "PointsW1" );
+	m_CustomTNS_W2.Load( "CustomScoring", "PointsW2" );
+	m_CustomTNS_W3.Load( "CustomScoring", "PointsW3" );
+	m_CustomTNS_W4.Load( "CustomScoring", "PointsW4" );
+	m_CustomTNS_W5.Load( "CustomScoring", "PointsW5" );
+	m_CustomTNS_Miss.Load( "CustomScoring", "PointsMiss" );
+	m_CustomTNS_HitMine.Load( "CustomScoring", "PointsHitMine" );
+	m_CustomTNS_CheckpointHit.Load( "CustomScoring", "PointsCheckpointHit" );
+	m_CustomTNS_CheckpointMiss.Load( "CustomScoring", "PointsCheckpointMiss" );
+	m_CustomTNS_None.Load( "CustomScoring", "PointsNone" );
+
+	m_CustomHNS_Held.Load( "CustomScoring", "PointsHoldHeld" );
+	m_CustomHNS_LetGo.Load( "CustomScoring", "PointsHoldLetGo" );
+
+	m_CustomComboBonus.Load( "CustomScoring", "ComboAboveThresholdAddsToScoreBonus" );
+	m_CustomComboBonusThreshold.Load( "CustomScoring", "ComboScoreBonusThreshold" );
+	m_CustomComboBonusValue.Load( "CustomScoring", "ComboScoreBonusValue" );
+
+	m_DoubleNoteMultiplier.Load( "CustomScoring", "DoubleNoteScoreMultiplier" );
+	m_TripleNoteMultiplier.Load( "CustomScoring", "TripleNoteScoreMultiplier" );
+	m_QuadPlusNoteMultiplier.Load( "CustomScoring", "QuadOrHigherNoteScoreMultiplier" );
+
 	//
 	// Fill in STATSMAN->m_CurStageStats, calculate multiplier
 	//
@@ -135,6 +158,7 @@ void ScoreKeeperNormal::Load(
 	m_iMaxScoreSoFar = 0;
 	m_iPointBonus = 0;
 	m_iNumTapsAndHolds = 0;
+	m_iNumNotesHitThisRow = 0;
 	m_bIsLastSongInCourse = false;
 
 	Message msg( "ScoreChanged" );
@@ -146,6 +170,7 @@ void ScoreKeeperNormal::Load(
 	switch( PREFSMAN->m_ScoringType )
 	{
 	case SCORING_NEW:
+	case SCORING_CUSTOM:
 		m_iRoundTo = 1;
 		break;
 	case SCORING_OLD:
@@ -224,6 +249,11 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 		case SCORING_OLD:
 			m_iMaxPossiblePoints = (iMeter * iLengthMultiplier + 1) * 5000000;
 			break;
+		case SCORING_CUSTOM:
+			/* This is just simple additive/subtractive scoring, but cap the score at the size of the
+			 * score counter */
+			m_iMaxPossiblePoints = 10 * 10000000 * iLengthMultiplier;
+			break;
 		DEFAULT_FAIL( int(PREFSMAN->m_ScoringType) );
 		}
 	}
@@ -277,10 +307,25 @@ void ScoreKeeperNormal::AddTapScore( TapNoteScore tns )
 
 void ScoreKeeperNormal::AddHoldScore( HoldNoteScore hns )
 {
-	if( hns == HNS_Held )
-		AddScoreInternal( TNS_W1 );
-	else if ( hns == HNS_LetGo )
-		AddScoreInternal( TNS_W4 ); // required for subtractive score display to work properly
+	if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
+	{
+		int &iScore = m_pPlayerStageStats->m_iScore;
+		int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
+
+		iCurMaxScore += m_CustomHNS_Held;
+
+		if( hns == HNS_Held )
+			iScore += m_CustomHNS_Held;
+		else if ( hns == HNS_LetGo )
+			iScore += m_CustomHNS_LetGo;
+	}
+	else
+	{
+		if( hns == HNS_Held )
+			AddScoreInternal( TNS_W1 );
+		else if ( hns == HNS_LetGo )
+			AddScoreInternal( TNS_W4 ); // required for subtractive score display to work properly
+	}
 }
 
 void ScoreKeeperNormal::AddTapRowScore( TapNoteScore score, const NoteData &nd, int iRow )
@@ -298,9 +343,14 @@ void ScoreKeeperNormal::HandleTapScoreNone()
 		if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
 			MESSAGEMAN->Broadcast( enum_add2(Message_CurrentComboChangedP1,m_pPlayerState->m_PlayerNumber) );
 
-		AddScoreInternal( TNS_Miss );
+		if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
+		{
+			int &iScore = m_pPlayerStageStats->m_iScore;
+			iScore += m_CustomTNS_None;
+		}
+		else
+			AddScoreInternal( TNS_Miss );
 	}
-
 
 	// TODO: networking code
 }
@@ -349,59 +399,103 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
   Note: if you got all W2s on this song, you would get (p=10)*Z, which is 80,000,000. In fact, the maximum possible 
   score for any song is the number of feet difficulty X 10,000,000. 
 */
-	int p = 0;	// score multiplier 
-
-	switch( score )
+	if( PREFSMAN->m_ScoringType != SCORING_CUSTOM || GAMESTATE->IsCourseMode() )
 	{
-	case TNS_W1:	p = 10;		break;
-	case TNS_W2:	p = GAMESTATE->ShowW1()? 9:10; break;
-	case TNS_W3:	p = 5;		break;
-	default:	p = 0;		break;
+		int p = 0;	// score multiplier 
+
+		switch( score )
+		{
+		case TNS_W1:	p = 10;		break;
+		case TNS_W2:	p = GAMESTATE->ShowW1()? 9:10; break;
+		case TNS_W3:	p = 5;		break;
+		default:	p = 0;		break;
+		}
+
+		m_iTapNotesHit++;
+
+		const int N = m_iNumTapsAndHolds;
+		const int sum = (N * (N + 1)) / 2;
+		const int Z = m_iMaxPossiblePoints/10;
+
+		// Don't use a multiplier if the player has failed
+		if( m_pPlayerStageStats->m_bFailed )
+		{
+			iScore += p;
+			// make score evenly divisible by 5
+			// only update this on the next step, to make it less *obvious*
+			/* Round to the nearest 5, instead of always rounding down, so a base score
+			* of 9 will round to 10, not 5. */
+			if (p > 0)
+				iScore = ((iScore+2) / 5) * 5;
+		}
+		else
+		{
+			iScore += GetScore(p, Z, sum, m_iTapNotesHit);
+			const int &iCurrentCombo = m_pPlayerStageStats->m_iCurCombo;
+			iScore += m_ComboBonusFactor[score] * iCurrentCombo;
+		}
+
+		/* Subtract the maximum this step could have been worth from the bonus. */
+		m_iPointBonus -= GetScore(10, Z, sum, m_iTapNotesHit);
+		/* And add the maximum this step could have been worth to the max score up to now. */
+		iCurMaxScore += GetScore(10, Z, sum, m_iTapNotesHit);
+
+		if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_W2 )
+		{
+			if( !m_pPlayerStageStats->m_bFailed )
+				iScore += m_iPointBonus;
+			if ( m_bIsLastSongInCourse )
+			{
+				iScore += 100000000 - m_iMaxScoreSoFar;
+				iCurMaxScore += 100000000 - m_iMaxScoreSoFar;
+
+				/* If we're in Endless mode, we'll come around here again, so reset
+				* the bonus counter. */
+				m_iMaxScoreSoFar = 0;
+			}
+			iCurMaxScore += m_iPointBonus;
+		}
 	}
-
-	m_iTapNotesHit++;
-
-	const int N = m_iNumTapsAndHolds;
-	const int sum = (N * (N + 1)) / 2;
-	const int Z = m_iMaxPossiblePoints/10;
-
-	// Don't use a multiplier if the player has failed
-	if( m_pPlayerStageStats->m_bFailed )
-	{
-		iScore += p;
-		// make score evenly divisible by 5
-		// only update this on the next step, to make it less *obvious*
-		/* Round to the nearest 5, instead of always rounding down, so a base score
-		 * of 9 will round to 10, not 5. */
-		if (p > 0)
-			iScore = ((iScore+2) / 5) * 5;
-	}
+	// Custom Scoring
 	else
 	{
-		iScore += GetScore(p, Z, sum, m_iTapNotesHit);
-		const int &iCurrentCombo = m_pPlayerStageStats->m_iCurCombo;
-		iScore += m_ComboBonusFactor[score] * iCurrentCombo;
-	}
+		int p = 0;	// score value
 
-	/* Subtract the maximum this step could have been worth from the bonus. */
-	m_iPointBonus -= GetScore(10, Z, sum, m_iTapNotesHit);
-	/* And add the maximum this step could have been worth to the max score up to now. */
-	iCurMaxScore += GetScore(10, Z, sum, m_iTapNotesHit);
-
-	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_W2 )
-	{
-		if( !m_pPlayerStageStats->m_bFailed )
-			iScore += m_iPointBonus;
-		if ( m_bIsLastSongInCourse )
+		switch( score )
 		{
-			iScore += 100000000 - m_iMaxScoreSoFar;
-			iCurMaxScore += 100000000 - m_iMaxScoreSoFar;
-
-			/* If we're in Endless mode, we'll come around here again, so reset
-			 * the bonus counter. */
-			m_iMaxScoreSoFar = 0;
+		case TNS_W1:	p = m_CustomTNS_W1;		break;
+		case TNS_W2:	p = m_CustomTNS_W2;		break;
+		case TNS_W3:	p = m_CustomTNS_W3;		break;
+		case TNS_W4:	p = m_CustomTNS_W4;		break;
+		case TNS_W5:	p = m_CustomTNS_W5;		break;
+		case TNS_Miss:	p = m_CustomTNS_Miss;		break;
+		default:	p = 0;				break;
 		}
-		iCurMaxScore += m_iPointBonus;
+
+		if( m_CustomComboBonus )
+		{
+			if( m_pPlayerStageStats->m_iCurCombo > m_CustomComboBonusThreshold )
+				p += m_CustomComboBonusValue;
+		}
+
+		if( m_iNumNotesHitThisRow == 2 )
+			p = (int)(p * m_DoubleNoteMultiplier);
+		else if( m_iNumNotesHitThisRow == 3 )
+			p = (int)(p * m_TripleNoteMultiplier);
+		else if( m_iNumNotesHitThisRow >= 4 )
+			p = (int)(p * m_QuadPlusNoteMultiplier);
+
+		if( !m_pPlayerStageStats->m_bFailed )
+		{
+			m_iTapNotesHit++;
+
+			iScore += p;
+			iCurMaxScore += m_CustomTNS_W1;
+		}
+
+		// Because the score can drop below 0 if you miss a bunch of notes, cap it off at zero
+		if( iScore <= 0 )
+			iScore = 0;
 	}
 
 	ASSERT( iScore >= 0 );
@@ -427,6 +521,13 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 			if( !m_pPlayerStageStats->m_bFailed )
 				m_pPlayerStageStats->m_iActualDancePoints += TapNoteScoreToDancePoints( TNS_HitMine );
 			m_pPlayerStageStats->m_iTapNoteScores[TNS_HitMine] += 1;
+
+			
+			if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
+			{
+				int &iScore = m_pPlayerStageStats->m_iScore;
+				iScore += m_CustomTNS_HitMine;
+			}
 		}
 
 		NSMAN->ReportScore( 
@@ -448,6 +549,19 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 
 void ScoreKeeperNormal::HandleHoldCheckpointScore( const NoteData &nd, int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow )
 {
+	if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
+	{
+		int &iScore = m_pPlayerStageStats->m_iScore;
+		int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
+
+		iCurMaxScore += m_CustomTNS_CheckpointHit;
+		
+		if( iNumHoldsMissedThisRow == 0 )
+			iScore += m_CustomTNS_CheckpointHit;
+		else
+			iScore += m_CustomTNS_CheckpointMiss;
+	}
+
 	HandleTapNoteScoreInternal( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss, TNS_CheckpointHit );
 	HandleComboInternal( iNumHoldsHeldThisRow, 0, iNumHoldsMissedThisRow );
 }
@@ -523,6 +637,8 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	int iNumTapsInRow = iNumHitContinueCombo + iNumHitMaintainCombo + iNumBreakCombo;
 	if( iNumTapsInRow <= 0 )
 		return;
+
+	m_iNumNotesHitThisRow = iNumTapsInRow;
 
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow, m_pPlayerState->m_PlayerNumber ).result.tns;
 	HandleTapNoteScoreInternal( scoreOfLastTap, TNS_W1 );
@@ -695,13 +811,13 @@ int ScoreKeeperNormal::TapNoteScoreToDancePoints( TapNoteScore tns, bool bBeginn
 	{
 	DEFAULT_FAIL( tns );
 	case TNS_None:		iWeight = 0;						break;
-	case TNS_HitMine:	iWeight = g_iPercentScoreWeight[SE_HitMine];	break;
-	case TNS_Miss:		iWeight = g_iPercentScoreWeight[SE_Miss];	break;
-	case TNS_W5:		iWeight = g_iPercentScoreWeight[SE_W5];	break;
-	case TNS_W4:		iWeight = g_iPercentScoreWeight[SE_W4];	break;
-	case TNS_W3:		iWeight = g_iPercentScoreWeight[SE_W3];	break;
-	case TNS_W2:		iWeight = g_iPercentScoreWeight[SE_W2];	break;
-	case TNS_W1:		iWeight = g_iPercentScoreWeight[SE_W1];	break;
+	case TNS_HitMine:	iWeight = g_iPercentScoreWeight[SE_HitMine];		break;
+	case TNS_Miss:		iWeight = g_iPercentScoreWeight[SE_Miss];		break;
+	case TNS_W5:		iWeight = g_iPercentScoreWeight[SE_W5];			break;
+	case TNS_W4:		iWeight = g_iPercentScoreWeight[SE_W4];			break;
+	case TNS_W3:		iWeight = g_iPercentScoreWeight[SE_W3];			break;
+	case TNS_W2:		iWeight = g_iPercentScoreWeight[SE_W2];			break;
+	case TNS_W1:		iWeight = g_iPercentScoreWeight[SE_W1];			break;
 	case TNS_CheckpointHit:	iWeight = g_iPercentScoreWeight[SE_CheckpointHit];	break;
 	case TNS_CheckpointMiss:iWeight = g_iPercentScoreWeight[SE_CheckpointMiss];	break;
 	}
@@ -717,8 +833,8 @@ int ScoreKeeperNormal::HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBegi
 	{
 	DEFAULT_FAIL( hns );
 	case HNS_None:	iWeight = 0;						break;
-	case HNS_LetGo:	iWeight = g_iPercentScoreWeight[SE_LetGo];	break;
-	case HNS_Held:	iWeight = g_iPercentScoreWeight[SE_Held];	break;
+	case HNS_LetGo:	iWeight = g_iPercentScoreWeight[SE_LetGo];		break;
+	case HNS_Held:	iWeight = g_iPercentScoreWeight[SE_Held];		break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -738,13 +854,13 @@ int ScoreKeeperNormal::TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginn
 	DEFAULT_FAIL( tns );
 	case TNS_None:		iWeight = 0;					break;
 	case TNS_AvoidMine:	iWeight = 0;					break;
-	case TNS_HitMine:	iWeight = g_iGradeWeight[SE_HitMine];	break;
-	case TNS_Miss:		iWeight = g_iGradeWeight[SE_Miss];	break;
-	case TNS_W5:		iWeight = g_iGradeWeight[SE_W5];	break;
-	case TNS_W4:		iWeight = g_iGradeWeight[SE_W4];	break;
-	case TNS_W3:		iWeight = g_iGradeWeight[SE_W3];	break;
-	case TNS_W2:		iWeight = g_iGradeWeight[SE_W2];	break;
-	case TNS_W1:		iWeight = g_iGradeWeight[SE_W1];	break;
+	case TNS_HitMine:	iWeight = g_iGradeWeight[SE_HitMine];		break;
+	case TNS_Miss:		iWeight = g_iGradeWeight[SE_Miss];		break;
+	case TNS_W5:		iWeight = g_iGradeWeight[SE_W5];		break;
+	case TNS_W4:		iWeight = g_iGradeWeight[SE_W4];		break;
+	case TNS_W3:		iWeight = g_iGradeWeight[SE_W3];		break;
+	case TNS_W2:		iWeight = g_iGradeWeight[SE_W2];		break;
+	case TNS_W1:		iWeight = g_iGradeWeight[SE_W1];		break;
 	case TNS_CheckpointHit:	iWeight = g_iGradeWeight[SE_CheckpointHit];	break;
 	case TNS_CheckpointMiss:iWeight = g_iGradeWeight[SE_CheckpointMiss];	break;
 	}
@@ -760,8 +876,8 @@ int ScoreKeeperNormal::HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBegi
 	{
 	DEFAULT_FAIL( hns );
 	case HNS_None:	iWeight = 0;					break;
-	case HNS_LetGo:	iWeight = g_iGradeWeight[SE_LetGo];	break;
-	case HNS_Held:	iWeight = g_iGradeWeight[SE_Held];	break;
+	case HNS_LetGo:	iWeight = g_iGradeWeight[SE_LetGo];		break;
+	case HNS_Held:	iWeight = g_iGradeWeight[SE_Held];		break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );

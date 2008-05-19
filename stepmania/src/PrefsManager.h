@@ -64,6 +64,7 @@ enum ScoringType
 {
 	SCORING_NEW,
 	SCORING_OLD,
+	SCORING_CUSTOM,
 	NUM_ScoringType,
 	ScoringType_Invalid
 };

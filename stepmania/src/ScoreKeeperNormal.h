@@ -28,9 +28,34 @@ class ScoreKeeperNormal: public ScoreKeeper
 	bool	m_bIsLastSongInCourse;
 	bool	m_bIsBeginner;
 
+	int	m_iNumNotesHitThisRow;	// Used by Custom Scoring only
+
 	ThemeMetric<bool>		m_ComboIsPerRow;
 	ThemeMetric<TapNoteScore>	m_MinScoreToContinueCombo;
 	ThemeMetric<TapNoteScore>	m_MinScoreToMaintainCombo;
+
+	// Custom Scoring Theme Metrics
+	ThemeMetric<int>		m_CustomTNS_W1;
+	ThemeMetric<int>		m_CustomTNS_W2;
+	ThemeMetric<int>		m_CustomTNS_W3;
+	ThemeMetric<int>		m_CustomTNS_W4;
+	ThemeMetric<int>		m_CustomTNS_W5;
+	ThemeMetric<int>		m_CustomTNS_Miss;
+	ThemeMetric<int>		m_CustomTNS_HitMine;
+	ThemeMetric<int>		m_CustomTNS_CheckpointHit;
+	ThemeMetric<int>		m_CustomTNS_CheckpointMiss;
+	ThemeMetric<int>		m_CustomTNS_None;
+	
+	ThemeMetric<int>		m_CustomHNS_Held;
+	ThemeMetric<int>		m_CustomHNS_LetGo;
+
+	ThemeMetric<bool>		m_CustomComboBonus;
+	ThemeMetric<int>		m_CustomComboBonusThreshold;
+	ThemeMetric<int>		m_CustomComboBonusValue;
+
+	ThemeMetric<float>		m_DoubleNoteMultiplier;
+	ThemeMetric<float>		m_TripleNoteMultiplier;
+	ThemeMetric<float>		m_QuadPlusNoteMultiplier;
 
 	vector<Steps*>	m_apSteps;
 

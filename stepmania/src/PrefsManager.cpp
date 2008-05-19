@@ -109,6 +109,7 @@ LuaXType( CourseSortOrders );
 static const char *ScoringTypeNames[] = {
 	"New",
 	"Old",
+	"Custom",
 };
 XToString( ScoringType );
 StringToX( ScoringType );
