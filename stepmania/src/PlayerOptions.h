@@ -19,7 +19,14 @@ public:
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
 	RString GetString( bool bForceNoteSkin = false ) const;
 	RString GetSavedPrefsString() const;	// only the basic options that players would want for every song
-	void ResetSavedPrefs();
+	enum ResetPrefsType
+	{ 
+		saved_prefs, 
+		saved_prefs_invalid_for_course
+	};
+	void ResetPrefs( ResetPrefsType type );
+	void ResetSavedPrefs() { ResetPrefs(saved_prefs); };
+	void ResetSavedPrefsInvalidForCourse() { ResetPrefs(saved_prefs_invalid_for_course); }
 	void GetMods( vector<RString> &AddTo, bool bForceNoteSkin = false ) const;
 	void GetLocalizedMods( vector<RString> &AddTo ) const;
 	void FromString( const RString &sMultipleMods );

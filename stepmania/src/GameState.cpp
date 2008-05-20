@@ -1293,6 +1293,12 @@ void GameState::ApplyStageModifiers( PlayerNumber pn, RString sModifiers )
 	m_SongOptions.FromString( ModsLevel_Stage, sModifiers );
 }
 
+void GameState::ClearStageModifiersIllegalForCourse()
+{
+	FOREACH_EnabledPlayer( pn )
+		PO_GROUP_CALL( m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, ResetSavedPrefsInvalidForCourse );
+}
+
 bool GameState::CurrentOptionsDisqualifyPlayer( PlayerNumber pn )
 {
 	if( !PREFSMAN->m_bDisqualification )
@@ -2160,6 +2166,11 @@ public:
 		lua_pushstring(L, so.GetString());
 		return 1;
 	}
+	static int ClearStageModifiersIllegalForCourse( T* p, lua_State *L )
+	{
+		p->ClearStageModifiersIllegalForCourse();
+		return 0;
+	}
 	static int SetSongOptions( T* p, lua_State *L )
 	{
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
@@ -2329,6 +2340,7 @@ public:
 		ADD_METHOD( GetSongOptionsString );
 		ADD_METHOD( GetSongOptions );
 		ADD_METHOD( GetDefaultSongOptions );
+		ADD_METHOD( ClearStageModifiersIllegalForCourse );
 		ADD_METHOD( SetSongOptions );
 		ADD_METHOD( IsWinner );
 		ADD_METHOD( IsDraw );

@@ -241,6 +241,7 @@ public:
 	void ResetToDefaultSongOptions( ModsLevel l );
 	void ApplyPreferredModifiers( PlayerNumber pn, RString sModifiers );
 	void ApplyStageModifiers( PlayerNumber pn, RString sModifiers );
+	void ClearStageModifiersIllegalForCourse();
 	void ResetOptions();
 
 	bool CurrentOptionsDisqualifyPlayer( PlayerNumber pn );

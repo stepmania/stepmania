@@ -755,13 +755,21 @@ RString PlayerOptions::GetSavedPrefsString() const
 	return po_prefs.GetString();
 }
 
-void PlayerOptions::ResetSavedPrefs()
+void PlayerOptions::ResetPrefs( ResetPrefsType type )
 {
 	PlayerOptions defaults;
 #define CPY(x) this->x = defaults.x;
-	CPY( m_fTimeSpacing );
-	CPY( m_fScrollSpeed );
-	CPY( m_fScrollBPM );
+	switch( type )
+	{
+	DEFAULT_FAIL( type );
+	case saved_prefs:
+		CPY( m_fTimeSpacing );
+		CPY( m_fScrollSpeed );
+		CPY( m_fScrollBPM );
+		break;
+	case saved_prefs_invalid_for_course:
+		break;
+	}
 	CPY( m_fScrolls[SCROLL_REVERSE] );
 	CPY( m_fPerspectiveTilt );
 	CPY( m_bTransforms[TRANSFORM_NOHOLDS] );
