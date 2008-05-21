@@ -414,6 +414,16 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;		// ignore
 
+	// Handle unselect steps
+	if( m_SelectionState == SelectionState_SelectingSteps  &&  m_bStepsChosen[input.pn]  &&  input.MenuI == GAME_BUTTON_SELECT  &&  input.type == IET_FIRST_PRESS )
+	{
+		Message msg("StepsUnchosen");
+		msg.SetParam( "Player", input.pn );
+		MESSAGEMAN->Broadcast( msg );
+		m_bStepsChosen[input.pn] = false;
+		return;
+	}
+
 	if( m_SelectionState == SelectionState_Finalized  ||
 		m_bStepsChosen[input.pn] )
 		return;		// ignore
