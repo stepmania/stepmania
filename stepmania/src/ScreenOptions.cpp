@@ -523,9 +523,9 @@ void ScreenOptions::Input( const InputEventPlus &input )
 		case GAME_BUTTON_SELECT:
 		case GAME_BUTTON_MENURIGHT:
 		case GAME_BUTTON_MENULEFT:
-			INPUTMAPPER->ResetKeyRepeat( MENU_BUTTON_START, input.pn );
-			INPUTMAPPER->ResetKeyRepeat( MENU_BUTTON_RIGHT, input.pn );
-			INPUTMAPPER->ResetKeyRepeat( MENU_BUTTON_LEFT, input.pn );
+			INPUTMAPPER->ResetKeyRepeat( GAME_BUTTON_START, input.pn );
+			INPUTMAPPER->ResetKeyRepeat( GAME_BUTTON_RIGHT, input.pn );
+			INPUTMAPPER->ResetKeyRepeat( GAME_BUTTON_LEFT, input.pn );
 		}
 	}
 
@@ -797,16 +797,16 @@ void ScreenOptions::MenuStart( const InputEventPlus &input )
 		break;
 	}
 	
-	/* If we are in a three-button mode, check to see if MENU_BUTTON_LEFT and
-	 * MENU_BUTTON_RIGHT are being held. */
+	/* If we are in a three-button mode, check to see if GAME_BUTTON_LEFT and
+	 * GAME_BUTTON_RIGHT are being held. */
 	switch( m_OptionsNavigation )
 	{
 	case NAV_THREE_KEY:
 	case NAV_TOGGLE_THREE_KEY:
 		{
 			bool bHoldingLeftAndRight = 
-				INPUTMAPPER->IsBeingPressed( MENU_BUTTON_RIGHT, pn ) &&
-				INPUTMAPPER->IsBeingPressed( MENU_BUTTON_LEFT, pn );
+				INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn ) &&
+				INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn );
 			if( bHoldingLeftAndRight )
 			{
 				if( MoveRowRelative(pn, -1, input.type != IET_FIRST_PRESS) )

@@ -44,7 +44,7 @@ void ScreenContinue::Input( const InputEventPlus &input )
 	if( input.MenuI == GAME_BUTTON_COIN &&  input.type == IET_FIRST_PRESS )
 		ResetTimer();
 
-	if( input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
+	if( input.MenuI == GAME_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
 	{
 		bool bAllPlayersAreEnabled = true;
 		FOREACH_ENUM( PlayerNumber, p )
@@ -73,10 +73,10 @@ void ScreenContinue::Input( const InputEventPlus &input )
 		switch( input.MenuI )
 		{
 		case GAME_BUTTON_START:
-		case MENU_BUTTON_UP:
-		case MENU_BUTTON_DOWN:
-		case MENU_BUTTON_LEFT:
-		case MENU_BUTTON_RIGHT:
+		case GAME_BUTTON_UP:
+		case GAME_BUTTON_DOWN:
+		case GAME_BUTTON_LEFT:
+		case GAME_BUTTON_RIGHT:
 			float fSeconds = floorf(m_MenuTimer->GetSeconds()) - 0.0001f;
 			fSeconds = max( fSeconds, 0.0001f ); // don't set to 0
 			m_MenuTimer->SetSeconds( fSeconds );

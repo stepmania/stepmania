@@ -105,8 +105,8 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 
 	switch( input.MenuI )
 	{
-	case MENU_BUTTON_LEFT:
-	case MENU_BUTTON_RIGHT:
+	case GAME_BUTTON_LEFT:
+	case GAME_BUTTON_RIGHT:
 		SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
 		break;
 	}

@@ -366,7 +366,7 @@ void OptionsList::Input( const InputEventPlus &input )
 	PlayerNumber pn = input.pn;
 	if( m_bStartIsDown )
 	{
-		if( input.MenuI == MENU_BUTTON_LEFT || input.MenuI == MENU_BUTTON_RIGHT )
+		if( input.MenuI == GAME_BUTTON_LEFT || input.MenuI == GAME_BUTTON_RIGHT )
 		{
 			if( input.type != IET_FIRST_PRESS )
 				return;
@@ -387,7 +387,7 @@ void OptionsList::Input( const InputEventPlus &input )
 				if( pTarget->m_Def.m_selectType == SELECT_ONE )
 				{
 					int iSelection = GetOneSelection(sDest);
-					int iDir = (input.MenuI == MENU_BUTTON_RIGHT? +1:-1);
+					int iDir = (input.MenuI == GAME_BUTTON_RIGHT? +1:-1);
 					iSelection += iDir;
 					wrap( iSelection, bTargetSelections.size() );
 					SelectItem( sDest, iSelection );
@@ -402,12 +402,12 @@ void OptionsList::Input( const InputEventPlus &input )
 		}
 	}
 
-	if( input.MenuI == MENU_BUTTON_LEFT )
+	if( input.MenuI == GAME_BUTTON_LEFT )
 	{
 		if( input.type == IET_RELEASE )
 			return;
 
-		if( INPUTMAPPER->IsBeingPressed(MENU_BUTTON_RIGHT, pn) )
+		if( INPUTMAPPER->IsBeingPressed(GAME_BUTTON_RIGHT, pn) )
 		{
 			if( input.type == IET_FIRST_PRESS )
 				SwitchMenu( -1 );
@@ -423,12 +423,12 @@ void OptionsList::Input( const InputEventPlus &input )
 		MESSAGEMAN->Broadcast( msg );
 		return;
 	}
-	else if( input.MenuI == MENU_BUTTON_RIGHT )
+	else if( input.MenuI == GAME_BUTTON_RIGHT )
 	{
 		if( input.type == IET_RELEASE )
 			return;
 
-		if( INPUTMAPPER->IsBeingPressed(MENU_BUTTON_LEFT, pn) )
+		if( INPUTMAPPER->IsBeingPressed(GAME_BUTTON_LEFT, pn) )
 		{
 			if( input.type == IET_FIRST_PRESS )
 				SwitchMenu( +1 );

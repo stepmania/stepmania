@@ -114,7 +114,7 @@ void ScreenEnding::Input( const InputEventPlus &input )
 	{
 		switch( input.MenuI )
 		{
-		case MENU_BUTTON_START:
+		case GAME_BUTTON_START:
 			SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
 			break;
 		}

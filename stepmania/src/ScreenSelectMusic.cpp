@@ -346,7 +346,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 
 	// Handle late joining
-	if( m_SelectionState != SelectionState_Finalized  &&  input.MenuI == MENU_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
+	if( m_SelectionState != SelectionState_Finalized  &&  input.MenuI == GAME_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
 	{
 		// The current steps may no longer be playable.  If one player has double steps 
 		// selected, they are no longer playable now that P2 has joined.  
@@ -385,7 +385,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	// Check for "Press START again for options" button press
 	if( m_SelectionState == SelectionState_Finalized  &&
-	    input.MenuI == MENU_BUTTON_START  &&
+	    input.MenuI == GAME_BUTTON_START  &&
 	    input.type != IET_RELEASE  &&
 	    OPTIONS_MENU_AVAILABLE.GetValue() )
 	{
@@ -466,15 +466,15 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		{
 			switch( input.MenuI )
 			{
-			case MENU_BUTTON_LEFT:
+			case GAME_BUTTON_LEFT:
 				ChangeDifficulty( input.pn, -1 );
 				m_bAcceptSelectRelease[input.pn] = false;
 				break;
-			case MENU_BUTTON_RIGHT:
+			case GAME_BUTTON_RIGHT:
 				ChangeDifficulty( input.pn, +1 );
 				m_bAcceptSelectRelease[input.pn] = false;
 				break;
-			case MENU_BUTTON_START:
+			case GAME_BUTTON_START:
 				m_bAcceptSelectRelease[input.pn] = false;
 				if( MODE_MENU_AVAILABLE )
 					m_MusicWheel.NextSort();

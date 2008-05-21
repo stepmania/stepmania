@@ -317,8 +317,8 @@ void ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 	
-	bool bLeftPressed = INPUTMAPPER->IsBeingPressed( MENU_BUTTON_LEFT, pn );
-	bool bRightPressed = INPUTMAPPER->IsBeingPressed( MENU_BUTTON_RIGHT, pn );
+	bool bLeftPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn );
+	bool bRightPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn );
 	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
 
 	if ( bLeftAndRightPressed )
@@ -331,8 +331,8 @@ void ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 	
-	bool bLeftPressed = INPUTMAPPER->IsBeingPressed( MENU_BUTTON_LEFT, pn );
-	bool bRightPressed = INPUTMAPPER->IsBeingPressed( MENU_BUTTON_RIGHT, pn );
+	bool bLeftPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn );
+	bool bRightPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn );
 	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
 
 	if ( bLeftAndRightPressed )

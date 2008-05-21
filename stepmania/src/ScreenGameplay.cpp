@@ -2109,8 +2109,8 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 
 	if( m_bPaused )
 	{
-		/* If we're paused, only accept MENU_BUTTON_START to unpause. */
-		if( GAMESTATE->IsHumanPlayer(input.pn) && input.MenuI == MENU_BUTTON_START && input.type == IET_FIRST_PRESS )
+		/* If we're paused, only accept GAME_BUTTON_START to unpause. */
+		if( GAMESTATE->IsHumanPlayer(input.pn) && input.MenuI == GAME_BUTTON_START && input.type == IET_FIRST_PRESS )
 		{
 			if( m_PauseController == GameController_Invalid || m_PauseController == input.GameI.controller )
 				this->PauseGame( false );
@@ -2131,8 +2131,8 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		bool bHoldingGiveUp = false;
 		if( GAMESTATE->GetCurrentStyle()->GameInputToColumn(input.GameI) == Column_Invalid )
 		{
-			bHoldingGiveUp |= ( START_GIVES_UP && input.MenuI == MENU_BUTTON_START );
-			bHoldingGiveUp |= ( BACK_GIVES_UP && input.MenuI == MENU_BUTTON_BACK );
+			bHoldingGiveUp |= ( START_GIVES_UP && input.MenuI == GAME_BUTTON_START );
+			bHoldingGiveUp |= ( BACK_GIVES_UP && input.MenuI == GAME_BUTTON_BACK );
 		}
 		
 		if( bHoldingGiveUp )
@@ -2155,12 +2155,12 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			return;
 		}
 
-		/* Only handle MENU_BUTTON_BACK as a regular BACK button if BACK_GIVES_UP is
+		/* Only handle GAME_BUTTON_BACK as a regular BACK button if BACK_GIVES_UP is
 		 * disabled. */
 		bool bHoldingBack = false;
 		if( GAMESTATE->GetCurrentStyle()->GameInputToColumn(input.GameI) == Column_Invalid )
 		{
-			bHoldingBack |= input.MenuI == MENU_BUTTON_BACK && !BACK_GIVES_UP;
+			bHoldingBack |= input.MenuI == GAME_BUTTON_BACK && !BACK_GIVES_UP;
 		}
 
 		if( bHoldingBack )

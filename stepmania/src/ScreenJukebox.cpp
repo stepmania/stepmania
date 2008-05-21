@@ -257,8 +257,8 @@ void ScreenJukebox::Input( const InputEventPlus &input )
 
 	switch( input.MenuI )
 	{
-	case MENU_BUTTON_LEFT:
-	case MENU_BUTTON_RIGHT:
+	case GAME_BUTTON_LEFT:
+	case GAME_BUTTON_RIGHT:
 		SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
 		return;
 	}

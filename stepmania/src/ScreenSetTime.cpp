@@ -180,8 +180,8 @@ void ScreenSetTime::MenuRight( const InputEventPlus &input )
 void ScreenSetTime::MenuStart( const InputEventPlus &input )
 {
 	bool bHoldingLeftAndRight = 
-		INPUTMAPPER->IsBeingPressed( MENU_BUTTON_RIGHT, input.pn ) &&
-		INPUTMAPPER->IsBeingPressed( MENU_BUTTON_LEFT, input.pn );
+		INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, input.pn ) &&
+		INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, input.pn );
 
 	if( bHoldingLeftAndRight )
 		ChangeSelection( -1 );
