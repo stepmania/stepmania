@@ -489,6 +489,7 @@ void StripCvs( vector<RString> &vs );	// remove all items that end in "cvs"
 
 RString DerefRedir( const RString &sPath );
 bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine = false );
+bool GetFileContents( const RString &sFile, vector<RString> &asOut );
 
 class Regex
 {

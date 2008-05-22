@@ -1231,6 +1231,21 @@ bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
 	return true;
 }
 
+bool GetFileContents( const RString &sFile, vector<RString> &asOut )
+{
+	RageFile file;
+	if( !file.Open(sFile) )
+	{
+		LOG->Warn( "GetFileContents(%s): %s", sFile.c_str(), file.GetError().c_str() );
+		return false;
+	}
+
+	RString sLine;
+	while( file.GetLine(sLine) )
+		asOut.push_back( sLine );
+	return true;
+}
+
 #include "pcre/pcre.h"
 void Regex::Compile()
 {
