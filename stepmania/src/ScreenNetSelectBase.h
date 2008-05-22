@@ -46,8 +46,6 @@ private:
 	RString			m_sTextInput;
 	RString			m_actualText;
 
-	//Users Rect
-	Quad			m_rectUsersBG;
 	vector <BitmapText>	m_textUsers;
 };
 

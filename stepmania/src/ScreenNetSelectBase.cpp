@@ -77,12 +77,6 @@ void ScreenNetSelectBase::Init()
 	m_textChatOutput.SetText( NSMAN->m_sChatText );
 	m_textChatOutput.SetMaxLines( SHOW_CHAT_LINES, 1 );
 
-	//Users' Background
-	
-	m_rectUsersBG.SetName( "UsersBG" );
-	SET_QUAD_INIT( m_rectUsersBG );
-	this->AddChild( &m_rectUsersBG );
-
 	//Display users list
 	UpdateUsers();
 
@@ -167,8 +161,6 @@ void ScreenNetSelectBase::TweenOffScreen()
 
 	for( unsigned i=0; i<m_textUsers.size(); i++ )
 		OFF_COMMAND( m_textUsers[i] );
-
-	OFF_COMMAND( m_rectUsersBG );
 }
 
 void ScreenNetSelectBase::UpdateTextInput()
