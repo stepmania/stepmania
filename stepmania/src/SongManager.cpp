@@ -1477,17 +1477,17 @@ void SongManager::UpdatePreferredSort()
 	{
 		m_vPreferredCourseSort.clear();
 
+		vector<RString> asLines;
 		RString sFile = THEME->GetPathO( "SongManager", "PreferredCourses.txt" );
-		RageFile file;
-		if( !file.Open( sFile ) )
+		if( !GetFileContents(sFile, asLines) )
 			return;
 
 		vector<Course*> vpCourses;
 
-		RString sLine;
-		while( file.GetLine(sLine) )
+		FOREACH( RString, asLines, s )
 		{
-			bool bSectionDivider = sLine.find("---") != RString::npos;
+			RString sLine = *s;
+			bool bSectionDivider = sLine.find("---") == 0;
 			if( bSectionDivider )
 			{
 				if( !vpCourses.empty() )
@@ -1495,15 +1495,15 @@ void SongManager::UpdatePreferredSort()
 					m_vPreferredCourseSort.push_back( vpCourses );
 					vpCourses.clear();
 				}
+				continue;
 			}
-			else
-			{
-				Course *pCourse = NULL;
-				if( !sLine.empty() )
-					pCourse = FindCourse( sLine );
-				if( pCourse && !(UNLOCKMAN->CourseIsLocked(pCourse) & LOCKED_SELECTABLE) )
-					vpCourses.push_back( pCourse );
-			}
+
+			Course *pCourse = FindCourse( sLine );
+			if( pCourse == NULL )
+				continue;
+			if( UNLOCKMAN->CourseIsLocked(pCourse) & LOCKED_SELECTABLE )
+				continue;
+			vpCourses.push_back( pCourse );
 		}
 
 		if( !vpCourses.empty() )
@@ -1536,16 +1536,16 @@ void SongManager::UpdatePreferredSort()
 			}
 
 			m_vPreferredCourseSort.push_back( vpUnlockCourses );
-
-			// prune empty groups
-			for( int i=m_vPreferredCourseSort.size()-1; i>=0; i-- )
-				if( m_vPreferredCourseSort[i].empty() )
-					m_vPreferredCourseSort.erase( m_vPreferredCourseSort.begin()+i );
-
-			FOREACH( CoursePointerVector, m_vPreferredCourseSort, i )
-				FOREACH( Course*, *i, j )
-					ASSERT( *j );
 		}
+
+		// prune empty groups
+		for( int i=m_vPreferredCourseSort.size()-1; i>=0; i-- )
+			if( m_vPreferredCourseSort[i].empty() )
+				m_vPreferredCourseSort.erase( m_vPreferredCourseSort.begin()+i );
+
+		FOREACH( CoursePointerVector, m_vPreferredCourseSort, i )
+			FOREACH( Course*, *i, j )
+				ASSERT( *j );
 	}
 }
 
