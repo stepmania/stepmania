@@ -1401,17 +1401,18 @@ void SongManager::UpdatePreferredSort()
 	{
 		m_vPreferredSongSort.clear();
 
+		vector<RString> asLines;
 		RString sFile = THEME->GetPathO( "SongManager", "PreferredSongs.txt" );
-		RageFile file;
-		if( !file.Open( sFile ) )
+		GetFileContents( sFile, asLines );
+		if( asLines.empty() )
 			return;
 
 		vector<Song*> vpSongs;
 
-		RString sLine;
-		while( file.GetLine(sLine) )
+		FOREACH( RString, asLines, s )
 		{
-			bool bSectionDivider = sLine.find("---") != RString::npos;
+			RString sLine = *s;
+			bool bSectionDivider = sLine.find("---") == 0;
 			if( bSectionDivider )
 			{
 				if( !vpSongs.empty() )
@@ -1419,15 +1420,16 @@ void SongManager::UpdatePreferredSort()
 					m_vPreferredSongSort.push_back( vpSongs );
 					vpSongs.clear();
 				}
+				continue;
 			}
-			else
-			{
-				Song *pSong = NULL;
-				if( !sLine.empty() )
-					pSong = FindSong( sLine );
-				if( pSong && !(UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE) )
-					vpSongs.push_back( pSong );
-			}
+
+			Song *pSong = FindSong( sLine );
+			if( pSong == NULL )
+				continue;
+			if( UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
+				continue;
+
+			vpSongs.push_back( pSong );
 		}
 
 		if( !vpSongs.empty() )
@@ -1460,16 +1462,16 @@ void SongManager::UpdatePreferredSort()
 			}
 
 			m_vPreferredSongSort.push_back( vpUnlockSongs );
-
-			// prune empty groups
-			for( int i=m_vPreferredSongSort.size()-1; i>=0; i-- )
-				if( m_vPreferredSongSort[i].empty() )
-					m_vPreferredSongSort.erase( m_vPreferredSongSort.begin()+i );
-
-			FOREACH( SongPointerVector, m_vPreferredSongSort, i )
-				FOREACH( Song*, *i, j )
-					ASSERT( *j );
 		}
+
+		// prune empty groups
+		for( int i=m_vPreferredSongSort.size()-1; i>=0; i-- )
+			if( m_vPreferredSongSort[i].empty() )
+				m_vPreferredSongSort.erase( m_vPreferredSongSort.begin()+i );
+
+		FOREACH( SongPointerVector, m_vPreferredSongSort, i )
+			FOREACH( Song*, *i, j )
+				ASSERT( *j );
 	}
 
 	{
