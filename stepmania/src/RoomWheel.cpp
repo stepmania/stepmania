@@ -74,7 +74,6 @@ void RoomWheelItem::Load( RString sType )
 	m_sprBar.Load( THEME->GetPathG(sType,"bar") );
 	m_sprBar->SetXY( 0, 0 );
 	this->AddChild( m_sprBar );
-	m_sprBar->SetVisible(false);
 
 	m_text.LoadFromFont( THEME->GetPathF(sType,"text") );
 	m_text.SetShadowLength( 0 );
