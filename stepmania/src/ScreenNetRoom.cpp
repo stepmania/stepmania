@@ -11,8 +11,6 @@
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 
-#define TITLEBG_WIDTH				THEME->GetMetricF(m_sName,"TitleBGWidth")
-#define TITLEBG_HEIGHT				THEME->GetMetricF(m_sName,"TitleBGHeight")
 #define ROOMSBG_WIDTH				THEME->GetMetricF(m_sName,"RoomsBGWidth")
 #define ROOMSBG_HEIGHT				THEME->GetMetricF(m_sName,"RoomsBGHeight")
 #define SELECTION_WIDTH				THEME->GetMetricF(m_sName,"SelectionWidth")
@@ -45,20 +43,6 @@ void ScreenNetRoom::Init()
 	m_soundChangeSel.Load( THEME->GetPathS("ScreenNetRoom","change sel") );
 
 	m_iRoomPlace = 0;
-
-	m_sprTitleBG.Load( THEME->GetPathG( m_sName, "TitleBG" ) );
-	m_sprTitleBG.SetName( "TitleBG" );
-	m_sprTitleBG.SetWidth( TITLEBG_WIDTH );
-	m_sprTitleBG.SetHeight( TITLEBG_HEIGHT );
-	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprTitleBG );
-	this->AddChild( &m_sprTitleBG);
-
-	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
-	m_textTitle.SetShadowLength( 0 );
-	m_textTitle.SetName( "Title" );
-	m_textTitle.SetMaxWidth( TITLEBG_WIDTH );
-	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textTitle );
-	this->AddChild( &m_textTitle);
 
 	m_RoomWheel.SetName( "RoomWheel" );
 	m_RoomWheel.Load( "RoomWheel" );
@@ -117,10 +101,15 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 			{
 			case 0: //Room title Change
 			{
-				RString titleSub;
-				titleSub = NSMAN->m_SMOnlinePacket.ReadNT() + "\n";
-				titleSub += NSMAN->m_SMOnlinePacket.ReadNT();
-				m_textTitle.SetText( titleSub );
+				RString title, subtitle;
+				title = NSMAN->m_SMOnlinePacket.ReadNT();
+				subtitle = NSMAN->m_SMOnlinePacket.ReadNT();
+				
+				Message msg( MessageIDToString(Message_UpdateScreenHeader) );
+				msg.SetParam( "Header", title );
+				msg.SetParam( "Subheader", subtitle );
+				MESSAGEMAN->Broadcast( msg );
+			
 				if ( NSMAN->m_SMOnlinePacket.Read1() != 0 )
 				{
 					RString SMOnlineSelectScreen = THEME->GetMetric( m_sName, "MusicSelectScreen" );
@@ -209,9 +198,6 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenNetRoom::TweenOffScreen()
 {
-	OFF_COMMAND( m_textTitle );
-	OFF_COMMAND( m_sprTitleBG );
-
 	NSMAN->ReportNSSOnOff( 6 );
 }
 

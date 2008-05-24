@@ -47,9 +47,6 @@ private:
 		
 	RageSound m_soundChangeSel;
 	
-	BitmapText m_textTitle;
-	Sprite m_sprTitleBG;
-
 	vector < BitmapText > m_RoomList;
 	vector < RoomData > m_Rooms;
 	int m_iRoomPlace;

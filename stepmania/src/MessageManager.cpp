@@ -77,6 +77,7 @@ static const char *MessageIDNames[] = {
 	"StarMeterChangedP2",
 	"LifeMeterChangedP1",
 	"LifeMeterChangedP2",
+	"UpdateScreenHeader",
 };
 XToString( MessageID );
 
