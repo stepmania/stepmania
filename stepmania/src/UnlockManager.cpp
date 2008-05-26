@@ -23,10 +23,6 @@ UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our p
 
 static ThemeMetric<bool> AUTO_LOCK_CHALLENGE_STEPS( "UnlockManager", "AutoLockChallengeSteps" );
 
-static Preference<bool> g_bEventIgnoresLockStatusCS	( "EventModeShowsHiddenOrLockedCoursesAndSongs", false );
-static Preference<bool> g_bEventIgnoresLockStatusMod	( "EventModeShowsLockedModifiers",	false );
-static Preference<bool> g_bEventIgnoresLockStatusStep	( "EventModeShowsLockedSteps",		false );
-
 static const char *UnlockRequirementNames[] =
 {
 	"ArcadePoints",
@@ -135,10 +131,6 @@ int UnlockManager::CourseIsLocked( const Course *pCourse ) const
 			iRet |= LOCKED_DISABLED;
 	}
 
-	// Show the course if this is true
-	if( PREFSMAN->m_bEventMode && g_bEventIgnoresLockStatusCS )
-		iRet = 0;
-
 	return iRet;
 }
 
@@ -161,10 +153,6 @@ int UnlockManager::SongIsLocked( const Song *pSong ) const
 	if( !pSong->m_bEnabled )
 		iRet |= LOCKED_DISABLED;
 
-	// Check to see if we should show anyways because of Event Mode.
-	if( PREFSMAN->m_bEventMode && g_bEventIgnoresLockStatusCS )
-		iRet = 0;
-
 	return iRet;
 }
 
@@ -177,10 +165,6 @@ bool UnlockManager::StepsIsLocked( const Song *pSong, const Steps *pSteps ) cons
 	if( p == NULL )
 		return false;
 
-	// Show the stepchart if this is true
-	if( PREFSMAN->m_bEventMode && g_bEventIgnoresLockStatusStep )
-		return false;
-
 	return p->IsLocked();
 }
 
@@ -191,10 +175,6 @@ bool UnlockManager::ModifierIsLocked( const RString &sOneMod ) const
 
 	const UnlockEntry *p = FindModifier( sOneMod );
 	if( p == NULL )
-		return false;
-
-	// Show the modifier if this is true
-	if( PREFSMAN->m_bEventMode && g_bEventIgnoresLockStatusMod )
 		return false;
 
 	return p->IsLocked();
