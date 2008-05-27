@@ -24,7 +24,7 @@ protected:
 	BOOL CanExit();
 
 	bool m_bUpdateFontNeeded;
-	bool m_bUpdateDisplayNeeded;
+	bool m_bUpdateFontViewAndCloseUpNeeded;
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
@@ -37,9 +37,9 @@ protected:
 	virtual BOOL OnMouseWheel( UINT nFlags, short zDelta, CPoint pt );
 	DECLARE_MESSAGE_MAP()
 
-	void UpdateDisplay();
+	void UpdateFontViewAndCloseUp();
 	void UpdateFont();
-	void UpdateSample();
+	void UpdateCloseUp();
 
 public:
 	vector<FontPageDescription> m_PagesToGenerate;

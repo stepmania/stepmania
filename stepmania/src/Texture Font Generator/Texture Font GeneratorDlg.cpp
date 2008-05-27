@@ -111,7 +111,6 @@ void CTextureFontGeneratorDlg::UpdateFont()
 	m_bUpdateFontNeeded = false;
 
 	m_FontView.SetBitmap( NULL );
-	m_CloseUp.SetBitmap( NULL );
 
 	CString sOld;
 	{
@@ -186,7 +185,7 @@ void CTextureFontGeneratorDlg::UpdateFont()
 	m_ShownPage.SetCurSel( iRet );
 }
 
-void CTextureFontGeneratorDlg::UpdateSample()
+void CTextureFontGeneratorDlg::UpdateCloseUp()
 {
 	HBITMAP hBitmap = m_CloseUp.GetBitmap();
 	m_CloseUp.SetBitmap( NULL );
@@ -303,16 +302,15 @@ BOOL CTextureFontGeneratorDlg::OnInitDialog()
 	m_SpinBaseline.SetRange( 64, 0 );
 
 	m_bUpdateFontNeeded = true;
-	m_bUpdateDisplayNeeded = true;
+	m_bUpdateFontViewAndCloseUpNeeded = true;
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CTextureFontGeneratorDlg::UpdateDisplay()
+void CTextureFontGeneratorDlg::UpdateFontViewAndCloseUp()
 {
-	m_bUpdateDisplayNeeded = false;
+	m_bUpdateFontViewAndCloseUpNeeded = false;
 	m_FontView.SetBitmap( NULL );
-	m_CloseUp.SetBitmap( NULL );
 
 	m_SpinTop.EnableWindow( true );
 	m_SpinBaseline.EnableWindow( true );
@@ -339,7 +337,7 @@ void CTextureFontGeneratorDlg::UpdateDisplay()
 	HBITMAP hBitmap = g_pTextureFont->m_apPages[iSelectedPage]->m_hPage;
 	m_FontView.SetBitmap( hBitmap );
 	
-	UpdateSample();
+	UpdateCloseUp();
 
 	CString sStr;
 	sStr.Format("Overlap: %i, %i\nMaximum size: %ix%i", 
@@ -379,12 +377,12 @@ void CTextureFontGeneratorDlg::OnPaint()
 
 	if( m_bUpdateFontNeeded )
 	{
-		m_bUpdateDisplayNeeded = true;
+		m_bUpdateFontViewAndCloseUpNeeded = true;
 		UpdateFont();
 	}
 
-	if( m_bUpdateDisplayNeeded )
-		UpdateDisplay();
+	if( m_bUpdateFontViewAndCloseUpNeeded )
+		UpdateFontViewAndCloseUp();
 
 	CDialog::OnPaint();
 }
@@ -447,7 +445,7 @@ BOOL CTextureFontGeneratorDlg::CanExit()
 
 void CTextureFontGeneratorDlg::OnCbnSelchangeShownPage()
 {
-	m_bUpdateDisplayNeeded = true;
+	m_bUpdateFontViewAndCloseUpNeeded = true;
 	Invalidate( FALSE );
 	UpdateWindow();
 }
@@ -517,7 +515,7 @@ void CTextureFontGeneratorDlg::OnDeltaposSpinTop(NMHDR *pNMHDR, LRESULT *pResult
 	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 	*pResult = 0;
 
-	m_bUpdateDisplayNeeded = true;
+	m_bUpdateFontViewAndCloseUpNeeded = true;
 	Invalidate( FALSE );
 }
 
@@ -526,7 +524,7 @@ void CTextureFontGeneratorDlg::OnDeltaposSpinBaseline(NMHDR *pNMHDR, LRESULT *pR
 	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 	*pResult = 0;
 
-	m_bUpdateDisplayNeeded = true;
+	m_bUpdateFontViewAndCloseUpNeeded = true;
 	Invalidate( FALSE );
 }
 
