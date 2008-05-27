@@ -106,7 +106,7 @@ static const wchar_t map_numbers[] = {
 };
 
 /* Regenerate the font, pulling in settings from widgets. */
-void CTextureFontGeneratorDlg::UpdateFont()
+void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 {
 	m_bUpdateFontNeeded = false;
 
@@ -126,16 +126,18 @@ void CTextureFontGeneratorDlg::UpdateFont()
 	
 	m_FontSize.GetWindowText(sText);
 	g_pTextureFont->m_fFontSizePixels = (float) atof(sText);
+	if( bSavingDoubleRes )
+		g_pTextureFont->m_fFontSizePixels *= 2;
 	
 	m_Padding.GetWindowText(sText);
 	g_pTextureFont->m_iPadding = atoi(sText);
+	if( bSavingDoubleRes )
+		g_pTextureFont->m_iPadding *= 2;
 
 	CMenu *pMenu = GetMenu();
 	g_pTextureFont->m_bBold = !!( pMenu->GetMenuState(ID_STYLE_BOLD, 0) & MF_CHECKED );
 	g_pTextureFont->m_bItalic = !!( pMenu->GetMenuState(ID_STYLE_ITALIC, 0) & MF_CHECKED );
 	g_pTextureFont->m_bAntiAlias = !!( pMenu->GetMenuState(ID_STYLE_ANTIALIASED, 0) & MF_CHECKED );
-	if( !!( pMenu->GetMenuState(ID_OPTIONS_DOUBLERES, 0) & MF_CHECKED ) )
-		g_pTextureFont->m_fFontSizePixels *= 2;
 
 	g_pTextureFont->m_PagesToGenerate.clear();
 	FontPageDescription desc;
@@ -378,7 +380,7 @@ void CTextureFontGeneratorDlg::OnPaint()
 	if( m_bUpdateFontNeeded )
 	{
 		m_bUpdateFontViewAndCloseUpNeeded = true;
-		UpdateFont();
+		UpdateFont( false );
 	}
 
 	if( m_bUpdateFontViewAndCloseUpNeeded )
@@ -581,7 +583,22 @@ void CTextureFontGeneratorDlg::OnFileSave()
 		}
 	}
 */
-	g_pTextureFont->Save( szFile );
+
+	CMenu *pMenu = GetMenu();
+	if( !!( pMenu->GetMenuState(ID_OPTIONS_DOUBLERES, 0) & MF_CHECKED ) )		// DoubleRes checked?
+	{
+		g_pTextureFont->Save( szFile, "", true, false );	// save metrics
+		UpdateFont( true );	// generate DoubleRes bitmaps
+		g_pTextureFont->Save( szFile, " (doubleres)", false, true );	// save bitmaps
+		// reset to normal, non-DoubleRes font
+		m_bUpdateFontNeeded = true;
+		Invalidate( FALSE );
+		UpdateWindow();
+	}
+	else	// normal res
+	{
+		g_pTextureFont->Save( szFile, "", true, true );	// save metrics and bitmaps
+	}
 }
 
 void CTextureFontGeneratorDlg::OnFileExit()

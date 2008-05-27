@@ -38,7 +38,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	void UpdateFontViewAndCloseUp();
-	void UpdateFont();
+	void UpdateFont( bool bSavingDoubleRes );
 	void UpdateCloseUp();
 
 public:

@@ -286,10 +286,9 @@ void TextureFont::FormatFontPage( int iPage, HDC hDC )
 	FontPage *pPage = m_apPages[iPage];
 	pPage->m_iFrameWidth = (m_BoundingRect.right - m_BoundingRect.left) + m_iPadding;
 	pPage->m_iFrameHeight = (m_BoundingRect.bottom - m_BoundingRect.top) + m_iPadding;
-	if( pPage->m_iFrameWidth % 2 )
-		++pPage->m_iFrameWidth;
-	if( pPage->m_iFrameHeight % 2 )
-		++pPage->m_iFrameHeight;
+	int iDimensionMultiple = 4;	// TODO: This only needs to be 4 for doubleres textures.  It could be 2 otherwise and use less space
+	pPage->m_iFrameWidth = (int)ceil( pPage->m_iFrameWidth /(double)iDimensionMultiple ) * iDimensionMultiple;
+	pPage->m_iFrameHeight = (int)ceil( pPage->m_iFrameHeight /(double)iDimensionMultiple ) * iDimensionMultiple;
 
 	pPage->m_iNumFramesX = (int) ceil( powf( (float) Desc.chars.size(), 0.5f ) );
 	pPage->m_iNumFramesY = (int) ceil( (float) Desc.chars.size() / pPage->m_iNumFramesX );
@@ -372,24 +371,29 @@ void wchar_to_utf8( wchar_t ch, string &out )
 
 #include <iomanip>
 
-void TextureFont::Save( CString sBasePath )
+void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension, bool bSaveMetrics, bool bSaveBitmaps )
 {
 	if( m_sError != "" )
 		return;
 
 	const CString inipath = sBasePath + ".ini";
 
-	ofstream f(inipath.GetString());
+	ofstream f;
 
-	/* Write global properties: */
-	f << "[common]\n";
+	if( bSaveMetrics )
+	{
+		f.open(inipath.GetString());
 
-	f << "Baseline=" << m_iCharBaseline + GetTopPadding() << "\n";
-	f << "Top=" << m_iCharTop + GetTopPadding() << "\n";
-	f << "LineSpacing=" << m_iCharVertSpacing << "\n";
-	f << "DrawExtraPixelsLeft=" << m_iCharLeftOverlap << "\n";
-	f << "DrawExtraPixelsRight=" << m_iCharRightOverlap << "\n";
-	f << "AdvanceExtraPixels=0\n";
+		/* Write global properties: */
+		f << "[common]\n";
+
+		f << "Baseline=" << m_iCharBaseline + GetTopPadding() << "\n";
+		f << "Top=" << m_iCharTop + GetTopPadding() << "\n";
+		f << "LineSpacing=" << m_iCharVertSpacing << "\n";
+		f << "DrawExtraPixelsLeft=" << m_iCharLeftOverlap << "\n";
+		f << "DrawExtraPixelsRight=" << m_iCharRightOverlap << "\n";
+		f << "AdvanceExtraPixels=0\n";
+	}
 
 	for( unsigned i = 0; i < m_apPages.size(); ++i )
 	{
@@ -397,58 +401,65 @@ void TextureFont::Save( CString sBasePath )
 		ASSERT( m_apPages[i]->m_hPage );
 		FontPage &page = *m_apPages[i];
 
-		f << "\n" << "[" << desc.name.GetString() << "]\n";
-
+		if( bSaveMetrics )
 		{
-			int iWidth = 1;
-			if( desc.chars.size() / page.m_iNumFramesX > 10 )
-				iWidth = 2;
+			f << "\n" << "[" << desc.name.GetString() << "]\n";
 
-			unsigned iChar = 0;
-			unsigned iLine = 0;
-			while( iChar < desc.chars.size() )
 			{
-				f << "Line "  << setw(iWidth) << iLine << "=";
-				f << setw(1);
-				for( int iX = 0; iX < page.m_iNumFramesX && iChar < desc.chars.size(); ++iX, ++iChar )
+				int iWidth = 1;
+				if( desc.chars.size() / page.m_iNumFramesX > 10 )
+					iWidth = 2;
+
+				unsigned iChar = 0;
+				unsigned iLine = 0;
+				while( iChar < desc.chars.size() )
 				{
-					const wchar_t c = desc.chars[iChar];
-					string sUTF8;
-					wchar_to_utf8( c, sUTF8 );
-					f << sUTF8.c_str();
+					f << "Line "  << setw(iWidth) << iLine << "=";
+					f << setw(1);
+					for( int iX = 0; iX < page.m_iNumFramesX && iChar < desc.chars.size(); ++iX, ++iChar )
+					{
+						const wchar_t c = desc.chars[iChar];
+						string sUTF8;
+						wchar_to_utf8( c, sUTF8 );
+						f << sUTF8.c_str();
+					}
+					f << "\n";
+					++iLine;
 				}
-				f << "\n";
-				++iLine;
+			}
+
+			f << "\n";
+			for( unsigned j = 0; j < desc.chars.size(); ++j )
+			{
+				/* This is the total width to advance for the whole character, which is the
+				 * sum of the ABC widths. */
+				const wchar_t c = desc.chars[j];
+				ABC &abc = m_ABC[c];
+				int iCharWidth = abc.abcA + int(abc.abcB) + int(abc.abcC);
+				f << j << "=" << iCharWidth << "\n";
 			}
 		}
 
-		f << "\n";
-		for( unsigned j = 0; j < desc.chars.size(); ++j )
+		if( bSaveBitmaps )
 		{
-			/* This is the total width to advance for the whole character, which is the
-			 * sum of the ABC widths. */
-			const wchar_t c = desc.chars[j];
-			ABC &abc = m_ABC[c];
-			int iCharWidth = abc.abcA + int(abc.abcB) + int(abc.abcC);
-			f << j << "=" << iCharWidth << "\n";
+			Surface surf;
+			BitmapToSurface( m_apPages[i]->m_hPage, &surf );
+
+			GrayScaleToAlpha( &surf );
+
+			CString sFile;
+			sFile.Format( "%s [%s] %ix%i%s.png",
+				sBasePath.GetString(),
+				m_PagesToGenerate[i].name.GetString(),
+				m_apPages[i]->m_iNumFramesX,
+				m_apPages[i]->m_iNumFramesY,
+				sBitmapAppendBeforeExtension.GetString() );
+
+			FILE *f = fopen( sFile, "w+b" );
+			char szErrorbuf[1024];
+			SavePNG( f, szErrorbuf, &surf );
+			fclose( f );
 		}
-
-		Surface surf;
-		BitmapToSurface( m_apPages[i]->m_hPage, &surf );
-
-		GrayScaleToAlpha( &surf );
-
-		CString sFile;
-		sFile.Format( "%s [%s] %ix%i.png",
-			sBasePath.GetString(),
-			m_PagesToGenerate[i].name.GetString(),
-			m_apPages[i]->m_iNumFramesX,
-			m_apPages[i]->m_iNumFramesY );
-
-		FILE *f = fopen( sFile, "w+b" );
-		char szErrorbuf[1024];
-		SavePNG( f, szErrorbuf, &surf );
-		fclose( f );
 	}
 }
 
