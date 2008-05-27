@@ -102,10 +102,13 @@ done
 revision=8448
 repository=svn://svn.mplayerhq.hu/ffmpeg/trunk/
 ffmpeg=ffmpeg-r$revision
+swscale_rev=26201
+swscale_repo=svn://svn.mplayerhq.hu/mplayer/trunk/libswscale
 if [ ! -d $ffmpeg ]; then
 	message 'Downloading ffmpeg'
 	if which svn &>/dev/null; then
-		call svn co -r $revision $repository $ffmpeg
+		call svn co --ignore-externals -r $revision $repository $ffmpeg
+		call svn co -r $swscale_rev $swscale_repo $ffmpeg/libswscale
 	else
 		failure 'Install subversion.'
 	fi
