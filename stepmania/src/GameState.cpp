@@ -103,6 +103,7 @@ static ThemeMetric<bool> ARE_STAGE_PLAYER_MODS_FORCED( "GameState","AreStagePlay
 static ThemeMetric<bool> ARE_STAGE_SONG_MODS_FORCED( "GameState","AreStageSongModsForced" );
 
 static Preference<Premium> g_Premium( "Premium", Premium_Off );
+Preference<bool> GameState::m_bAutoJoin( "AutoJoin", false );
 
 GameState::GameState() :
 	m_pCurGame(			Message_CurrentGameChanged ),
@@ -411,6 +412,17 @@ bool GameState::JoinInput( PlayerNumber pn )
 	JoinPlayer( pn );
 
 	return true;
+}
+
+bool GameState::JoinPlayers()
+{
+	bool bJoined = false;
+	FOREACH_PlayerNumber( pn )
+	{
+		if( JoinInput(pn) )
+			bJoined = true;
+	}
+	return bJoined;
 }
 
 int GameState::GetCoinsNeededToJoin() const

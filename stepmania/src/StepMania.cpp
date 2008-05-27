@@ -1198,6 +1198,13 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 	else
 		SCREENMAN->PlayInvalidSound();
 
+	/* If AutoJoin and enough coins to join have been inserted, then try to join a player. */
+	if( GAMESTATE->m_bAutoJoin.Get() )
+	{
+		if( GAMESTATE->JoinPlayers() )
+			SCREENMAN->PlayStartSound();
+	}
+
 	Message msg( "CoinInserted" );
 	// below params are unused
 	//msg.SetParam( "Coins", GAMESTATE->m_iCoins );

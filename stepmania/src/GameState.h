@@ -12,6 +12,7 @@
 #include "RageTimer.h"
 #include "PlayerOptions.h"
 #include "SongOptions.h"
+#include "Preference.h"
 
 #include <map>
 #include <deque>
@@ -45,6 +46,7 @@ public:
 	void JoinPlayer( PlayerNumber pn );
 	void UnjoinPlayer( PlayerNumber pn );
 	bool JoinInput( PlayerNumber pn );
+	bool JoinPlayers();
 	void LoadProfiles( bool bLoadEdits = true );
 	void SaveProfiles();
 	void SaveProfile( PlayerNumber pn );
@@ -301,10 +303,14 @@ public:
 	PlayerState* m_pMultiPlayerState[NUM_MultiPlayer];
 
 	//
-	// Preference wrappers
+	// Preferences
+	//
+	static Preference<bool> m_bAutoJoin;
+
 	//
 	// These options have weird interactions depending on m_bEventMode, 
 	// so wrap them
+	//
 	bool		m_bTemporaryEventMode;
 	bool		IsEventMode() const;
 	CoinMode	GetCoinMode() const;
