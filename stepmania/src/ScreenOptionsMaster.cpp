@@ -39,7 +39,7 @@ void ScreenOptionsMaster::Init()
 	}
 
 	if( NAVIGATION_MODE == "toggle" )
-		SetNavigation( PREFSMAN->m_bArcadeOptionsNavigation? NAV_TOGGLE_THREE_KEY:NAV_TOGGLE_FIVE_KEY );
+		SetNavigation( PREFSMAN->m_iArcadeOptionsNavigation? NAV_TOGGLE_THREE_KEY:NAV_TOGGLE_FIVE_KEY );
 	else if( NAVIGATION_MODE == "menu" )
 		SetNavigation( NAV_THREE_KEY_MENU );
 
