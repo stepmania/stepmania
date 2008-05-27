@@ -212,7 +212,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
 				AdditionalDependencies="libjpeg/jpeg.lib libpng/lib/libpng.lib"
-				OutputFile="../Program/StepMania-fastdebug.exe"
+				OutputFile="..\Program\StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""

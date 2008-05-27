@@ -147,7 +147,6 @@ public:
 	void SetDefaultGlyph( FontPage *pPage );
 
 	bool IsRightToLeft() const { return m_bRightToLeft; };
-	float GetFontBaseZoom() const { return m_fFontBaseZoom; };
 	const RageColor &GetDefaultStrokeColor() const { return m_DefaultStrokeColor; };
 	const bool GetStrokeIsUnder() const { return m_bStrokeIsUnder; };
 
@@ -168,7 +167,6 @@ private:
 	// There may be a better way to handle this.
 	bool m_bRightToLeft;
 
-	float m_fFontBaseZoom;
 	RageColor m_DefaultStrokeColor;
 	bool m_bStrokeIsUnder;	// draw stroke under if true, over if false
 
