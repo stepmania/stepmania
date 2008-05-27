@@ -168,6 +168,10 @@ BEGIN
         MENUITEM "&Italic\tCtrl+I",             ID_STYLE_ITALIC
         MENUITEM "&AntiAliased",                ID_STYLE_ANTIALIASED
     END
+    POPUP "Options"
+    BEGIN
+        MENUITEM "Double Resolution",           ID_OPTIONS_DOUBLERES
+    END
 END
 
 

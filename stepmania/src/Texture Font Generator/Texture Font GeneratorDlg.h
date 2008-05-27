@@ -69,6 +69,7 @@ public:
 	CSpinButtonCtrl m_SpinTop;
 	CSpinButtonCtrl m_SpinBaseline;
 	CStatic m_FontType;
+	afx_msg void OnOptionsDoubleres();
 };
 
 /*

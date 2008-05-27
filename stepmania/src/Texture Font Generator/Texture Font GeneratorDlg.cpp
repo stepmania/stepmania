@@ -62,6 +62,7 @@ BEGIN_MESSAGE_MAP(CTextureFontGeneratorDlg, CDialog)
 	ON_COMMAND(ID_FILE_EXIT, OnFileExit)
 	ON_COMMAND(ID_ACCELERATOR_ITALIC, OnStyleItalic)
 	ON_COMMAND(ID_ACCELERATOR_BOLD, OnStyleBold)
+	ON_COMMAND(ID_OPTIONS_DOUBLERES, &CTextureFontGeneratorDlg::OnOptionsDoubleres)
 END_MESSAGE_MAP()
 
 
@@ -126,7 +127,7 @@ void CTextureFontGeneratorDlg::UpdateFont()
 	
 	m_FontSize.GetWindowText(sText);
 	g_pTextureFont->m_fFontSizePixels = (float) atof(sText);
-
+	
 	m_Padding.GetWindowText(sText);
 	g_pTextureFont->m_iPadding = atoi(sText);
 
@@ -134,6 +135,8 @@ void CTextureFontGeneratorDlg::UpdateFont()
 	g_pTextureFont->m_bBold = !!( pMenu->GetMenuState(ID_STYLE_BOLD, 0) & MF_CHECKED );
 	g_pTextureFont->m_bItalic = !!( pMenu->GetMenuState(ID_STYLE_ITALIC, 0) & MF_CHECKED );
 	g_pTextureFont->m_bAntiAlias = !!( pMenu->GetMenuState(ID_STYLE_ANTIALIASED, 0) & MF_CHECKED );
+	if( !!( pMenu->GetMenuState(ID_OPTIONS_DOUBLERES, 0) & MF_CHECKED ) )
+		g_pTextureFont->m_fFontSizePixels *= 2;
 
 	g_pTextureFont->m_PagesToGenerate.clear();
 	FontPageDescription desc;
@@ -499,6 +502,16 @@ void CTextureFontGeneratorDlg::OnStyleItalic()
 	Invalidate( FALSE );
 }
 
+void CTextureFontGeneratorDlg::OnOptionsDoubleres()
+{
+	CMenu *pMenu = GetMenu();
+	int Checked = pMenu->GetMenuState(ID_OPTIONS_DOUBLERES, 0) & MF_CHECKED;
+	Checked ^= MF_CHECKED;
+	pMenu->CheckMenuItem( ID_OPTIONS_DOUBLERES, Checked );
+	m_bUpdateFontNeeded = true;
+	Invalidate( FALSE );
+}
+
 void CTextureFontGeneratorDlg::OnDeltaposSpinTop(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
@@ -531,7 +544,10 @@ void CTextureFontGeneratorDlg::OnFileSave()
 	{
 		CString sName = g_pTextureFont->m_sFamily;
 		sName.MakeLower();
-		_snprintf( szFile, 1023, "_%s %gpx", (const char *) sName, g_pTextureFont->m_fFontSizePixels );
+		_snprintf( szFile, 1023, "_%s%s %gpx", 
+			(const char *) sName, 
+			g_pTextureFont->m_bBold ? " Bold" : "",
+			g_pTextureFont->m_fFontSizePixels );
 	}
 	ofn.nMaxFile = sizeof(szFile);
 
