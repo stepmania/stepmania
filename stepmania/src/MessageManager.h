@@ -151,6 +151,7 @@ class MessageSubscriber : public IMessageSubscriber
 public:
 	MessageSubscriber() {}
 	MessageSubscriber( const MessageSubscriber &cpy );
+	MessageSubscriber &operator=(const MessageSubscriber &cpy);
 
 	//
 	// Messages

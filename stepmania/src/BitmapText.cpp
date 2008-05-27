@@ -66,10 +66,9 @@ BitmapText::~BitmapText()
 		FONT->UnloadFont( m_pFont );
 }
 
-BitmapText::BitmapText( const BitmapText &cpy ):
-	Actor( cpy )
+BitmapText & BitmapText::operator=(const BitmapText &cpy)
 {
-	m_pFont = NULL;
+	Actor::operator=(cpy);
 
 #define CPY(a) a = cpy.a
 	CPY( m_bUppercase );
@@ -96,6 +95,16 @@ BitmapText::BitmapText( const BitmapText &cpy ):
 		m_pFont = FONT->CopyFont( cpy.m_pFont );
 	else
 		m_pFont = NULL;
+
+	return *this;
+}
+
+BitmapText::BitmapText( const BitmapText &cpy ):
+	Actor( cpy )
+{
+	m_pFont = NULL;
+
+	*this = cpy;
 }
 
 void BitmapText::LoadFromNode( const XNode* pNode )

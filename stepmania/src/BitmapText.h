@@ -15,6 +15,7 @@ class BitmapText : public Actor
 public:
 	BitmapText();
 	BitmapText( const BitmapText &cpy );
+	BitmapText &operator=(const BitmapText &cpy);
 	virtual ~BitmapText();
 
 	virtual void LoadFromNode( const XNode* pNode );

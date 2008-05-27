@@ -228,6 +228,19 @@ MessageSubscriber::MessageSubscriber( const MessageSubscriber &cpy ):
 		this->SubscribeToMessage( *msg );
 }
 
+MessageSubscriber &MessageSubscriber::operator=(const MessageSubscriber &cpy)
+{
+	if(&cpy == this)
+		return *this;
+
+	UnsubscribeAll();
+
+	FOREACH_CONST( RString, cpy.m_vsSubscribedTo, msg )
+		this->SubscribeToMessage( *msg );
+
+	return *this;
+}
+
 void MessageSubscriber::SubscribeToMessage( const RString &sMessageName )
 {
 	MESSAGEMAN->Subscribe( this, sMessageName );
