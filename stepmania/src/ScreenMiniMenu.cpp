@@ -48,7 +48,7 @@ REGISTER_SCREEN_CLASS( ScreenMiniMenu );
 
 void ScreenMiniMenu::Init()
 {
-	if( PREFSMAN->m_bArcadeOptionsNavigation )
+	if( PREFSMAN->m_iArcadeOptionsNavigation )
 		SetNavigation( NAV_THREE_KEY_MENU );
 
 	ScreenOptions::Init();

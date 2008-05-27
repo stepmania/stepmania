@@ -89,7 +89,7 @@ protected:
 	bool AllAreOnLastRow() const;
 
 protected:	// derived classes need access to these
-	enum Navigation { NAV_THREE_KEY, NAV_THREE_KEY_MENU, NAV_FIVE_KEY, NAV_TOGGLE_THREE_KEY, NAV_TOGGLE_FIVE_KEY };
+	enum Navigation { NAV_THREE_KEY, NAV_THREE_KEY_MENU, NAV_THREE_KEY_ALT, NAV_FIVE_KEY, NAV_TOGGLE_THREE_KEY, NAV_TOGGLE_FIVE_KEY };
 	void SetNavigation( Navigation nav ) { m_OptionsNavigation = nav; }
 	void SetInputMode( InputMode im ) { m_InputMode = im; }
 

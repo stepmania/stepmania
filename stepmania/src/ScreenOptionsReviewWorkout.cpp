@@ -43,7 +43,7 @@ AutoScreenMessage( SM_BackFromEnterName )
 
 void ScreenOptionsReviewWorkout::Init()
 {
-	if( PREFSMAN->m_bArcadeOptionsNavigation )
+	if( PREFSMAN->m_iArcadeOptionsNavigation )
 		SetNavigation( NAV_THREE_KEY_MENU );
 
 	ScreenOptions::Init();

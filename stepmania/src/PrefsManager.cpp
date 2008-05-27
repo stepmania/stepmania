@@ -181,7 +181,7 @@ PrefsManager::PrefsManager() :
 	m_bShowSelectGroup		( "ShowSelectGroup",		false ),
 	m_bShowCaution			( "ShowCaution",		true ),
 	m_bShowNativeLanguage		( "ShowNativeLanguage",		true ),
-	m_bArcadeOptionsNavigation	( "ArcadeOptionsNavigation",	false ),
+	m_iArcadeOptionsNavigation	( "ArcadeOptionsNavigation",	0 ),
 	m_MusicWheelUsesSections	( "MusicWheelUsesSections",	MusicWheelUsesSections_ALWAYS ),
 	m_iMusicWheelSwitchSpeed	( "MusicWheelSwitchSpeed",	10 ),
 	m_AllowW1			( "AllowW1",			ALLOW_W1_EVERYWHERE ),

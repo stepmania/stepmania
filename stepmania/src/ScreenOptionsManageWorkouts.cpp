@@ -41,7 +41,7 @@ REGISTER_SCREEN_CLASS( ScreenOptionsManageWorkouts );
 
 void ScreenOptionsManageWorkouts::Init()
 {
-	if( PREFSMAN->m_bArcadeOptionsNavigation )
+	if( PREFSMAN->m_iArcadeOptionsNavigation )
 		SetNavigation( NAV_THREE_KEY_MENU );
 
 	ScreenOptions::Init();

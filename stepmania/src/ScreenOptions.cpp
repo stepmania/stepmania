@@ -30,6 +30,10 @@
  *  (next screen via "exit" entry)
  * This is the minimal navigation, for using menus with only three buttons.
  *
+ * NAV_THREE_KEY_ALT:
+ *  left, right -> next, prev row
+ *  start -> change option
+ *
  * NAV_FIVE_KEY:
  *  start -> next screen
  * This is a much more convenient navigation, requiring five keys.
@@ -46,7 +50,7 @@
  * for non-multiselect rows (eg. scroll speed).
  *
  * THREE_KEY modes are navigatable with only MenuLeft, MenuRight and MenuStart, and
- * are used when PREFSMAN->m_bArcadeOptionsNavigation is enabled.  However, they can
+ * are used when PREFSMAN->m_iArcadeOptionsNavigation is enabled.  However, they can
  * still use MenuUp and MenuDown for nonessential behavior.
  *
  * NAV_THREE_KEY_MENU:
@@ -77,7 +81,12 @@ StringToX( InputMode );
 ScreenOptions::ScreenOptions()
 {
 	// These can be overridden in a derived Init().
-	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
+	switch( PREFSMAN->m_iArcadeOptionsNavigation )
+	{
+	case 0: SetNavigation( NAV_FIVE_KEY ); break;
+	case 1: SetNavigation( NAV_THREE_KEY ); break;
+	case 2: SetNavigation( NAV_THREE_KEY_ALT ); break;
+	}
 	m_InputMode = INPUTMODE_SHARE_CURSOR;
 }
 
@@ -910,6 +919,10 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 				return;
 			MenuDown( input );
 			break;
+		case NAV_THREE_KEY_ALT:
+			ChangeValueInRowRelative( m_iCurrentRow[input.pn], input.pn, +1, input.type != IET_FIRST_PRESS );
+			break;
+
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
 		{
@@ -1215,12 +1228,18 @@ bool ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow )
 
 void ScreenOptions::MenuLeft( const InputEventPlus &input )
 {
-	ChangeValueInRowRelative(m_iCurrentRow[input.pn],input.pn,-1, input.type != IET_FIRST_PRESS);
+	if( m_OptionsNavigation == NAV_THREE_KEY_ALT )
+		MenuUpDown( input, -1 );
+	else
+		ChangeValueInRowRelative(m_iCurrentRow[input.pn],input.pn,-1, input.type != IET_FIRST_PRESS);
 }
 
 void ScreenOptions::MenuRight( const InputEventPlus &input )
 {
-	ChangeValueInRowRelative(m_iCurrentRow[input.pn], input.pn,+1, input.type != IET_FIRST_PRESS);
+	if( m_OptionsNavigation == NAV_THREE_KEY_ALT )
+		MenuUpDown( input, +1 );
+	else
+		ChangeValueInRowRelative(m_iCurrentRow[input.pn], input.pn,+1, input.type != IET_FIRST_PRESS);
 }
 
 void ScreenOptions::MenuUp( const InputEventPlus &input )

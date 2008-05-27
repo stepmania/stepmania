@@ -143,7 +143,7 @@ public:
 	Preference<bool>	m_bShowSelectGroup;
 	Preference<bool>	m_bShowCaution;
 	Preference<bool>	m_bShowNativeLanguage;
-	Preference<bool>	m_bArcadeOptionsNavigation;
+	Preference<int>		m_iArcadeOptionsNavigation;
 	Preference<MusicWheelUsesSections>		m_MusicWheelUsesSections;
 	Preference<int>		m_iMusicWheelSwitchSpeed;
 	Preference<AllowW1>	m_AllowW1;
