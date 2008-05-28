@@ -13,7 +13,7 @@ REGISTER_SCREEN_CLASS( ScreenContinue );
 
 void ScreenContinue::Init()
 {
-	ScreenWithMenuElements::Init();
+	ScreenWithMenuElementsSimple::Init();
 
 	this->SubscribeToMessage( Message_PlayerJoined );
 }
@@ -43,7 +43,7 @@ void ScreenContinue::BeginScreen()
 		}
 	}
 
-	ScreenWithMenuElements::BeginScreen();
+	ScreenWithMenuElementsSimple::BeginScreen();
 }
 
 void ScreenContinue::Input( const InputEventPlus &input )
@@ -76,7 +76,7 @@ void ScreenContinue::Input( const InputEventPlus &input )
 		}
 	}
 
-	ScreenWithMenuElements::Input( input );
+	ScreenWithMenuElementsSimple::Input( input );
 }
 
 void ScreenContinue::HandleScreenMessage( const ScreenMessage SM )
@@ -88,7 +88,7 @@ void ScreenContinue::HandleScreenMessage( const ScreenMessage SM )
 		return;
 	}
 
-	ScreenWithMenuElements::HandleScreenMessage( SM );
+	ScreenWithMenuElementsSimple::HandleScreenMessage( SM );
 }
 
 void ScreenContinue::HandleMessage( const Message &msg )
@@ -112,7 +112,7 @@ void ScreenContinue::HandleMessage( const Message &msg )
 		}
 	}
 
-	ScreenWithMenuElements::HandleMessage( msg );
+	ScreenWithMenuElementsSimple::HandleMessage( msg );
 }
 
 /*

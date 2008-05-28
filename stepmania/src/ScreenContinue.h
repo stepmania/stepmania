@@ -5,7 +5,7 @@
 
 #include "ScreenWithMenuElements.h"
 
-class ScreenContinue : public ScreenWithMenuElements
+class ScreenContinue : public ScreenWithMenuElementsSimple
 {
 public:
 	virtual void Init();
