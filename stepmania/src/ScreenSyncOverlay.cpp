@@ -133,15 +133,20 @@ void ScreenSyncOverlay::UpdateText()
 	//
 	// Update SyncInfo
 	//
-	float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
-	float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
-	float fStdDev = AdjustSync::s_fStandardDeviation;
-	RString s;
-	s += OLD_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fOld );
-	s += NEW_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fNew );
-	s += STANDARD_DEVIATION.GetValue() + ssprintf( ": %0.3f\n", fStdDev );
-	s += COLLECTING_SAMPLE.GetValue() + ssprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, AdjustSync::OFFSET_SAMPLE_COUNT );
-	m_textSyncInfo.SetText( s );
+	bool bVisible = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType != SongOptions::AUTOSYNC_OFF;
+	m_textSyncInfo.SetVisible( bVisible );
+	if( bVisible )
+	{
+		float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
+		float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
+		float fStdDev = AdjustSync::s_fStandardDeviation;
+		RString s;
+		s += OLD_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fOld );
+		s += NEW_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fNew );
+		s += STANDARD_DEVIATION.GetValue() + ssprintf( ": %0.3f\n", fStdDev );
+		s += COLLECTING_SAMPLE.GetValue() + ssprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, AdjustSync::OFFSET_SAMPLE_COUNT );
+		m_textSyncInfo.SetText( s );
+	}
 }
 
 static LocalizedString CANT_SYNC_WHILE_PLAYING_A_COURSE	("ScreenSyncOverlay","Can't sync while playing a course.");
