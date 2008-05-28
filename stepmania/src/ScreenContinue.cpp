@@ -11,6 +11,13 @@
 
 REGISTER_SCREEN_CLASS( ScreenContinue );
 
+void ScreenContinue::Init()
+{
+	ScreenWithMenuElements::Init();
+
+	this->SubscribeToMessage( Message_PlayerJoined );
+}
+
 void ScreenContinue::BeginScreen()
 {
 	GAMESTATE->SetCurrentStyle( NULL );
@@ -45,25 +52,7 @@ void ScreenContinue::Input( const InputEventPlus &input )
 		ResetTimer();
 
 	if( input.MenuI == GAME_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
-	{
-		bool bAllPlayersAreEnabled = true;
-		FOREACH_ENUM( PlayerNumber, p )
-		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				bAllPlayersAreEnabled = false;
-		}
-		if( bAllPlayersAreEnabled )
-		{
-			m_MenuTimer->Stop();
-			if( !IsTransitioning() )
-				StartTransitioningScreen( SM_GoToNextScreen );
-		}
-		else
-		{
-			ResetTimer();
-		}
 		return;	// handled
-	}
 
 	if( IsTransitioning() )
 		return;
@@ -100,6 +89,30 @@ void ScreenContinue::HandleScreenMessage( const ScreenMessage SM )
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );
+}
+
+void ScreenContinue::HandleMessage( const Message &msg )
+{
+	if( msg == Message_PlayerJoined )
+	{
+		ResetTimer();
+
+		bool bAllPlayersAreEnabled = true;
+		FOREACH_ENUM( PlayerNumber, p )
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				bAllPlayersAreEnabled = false;
+		}
+
+		if( bAllPlayersAreEnabled )
+		{
+			m_MenuTimer->Stop();
+			if( !IsTransitioning() )
+				StartTransitioningScreen( SM_GoToNextScreen );
+		}
+	}
+
+	ScreenWithMenuElements::HandleMessage( msg );
 }
 
 /*
