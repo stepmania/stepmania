@@ -15,7 +15,9 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void HandleMessage( const Message &msg );
 	virtual bool AllowLateJoin() const { return true; }
+
 private:
+	ThemeMetric<bool> FORCE_TIMER_WAIT;
 };
 
 #endif

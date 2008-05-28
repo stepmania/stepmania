@@ -16,6 +16,8 @@ void ScreenContinue::Init()
 	ScreenWithMenuElementsSimple::Init();
 
 	this->SubscribeToMessage( Message_PlayerJoined );
+
+	FORCE_TIMER_WAIT.Load( m_sName, "ForceTimerWait" );
 }
 
 void ScreenContinue::BeginScreen()
@@ -57,7 +59,7 @@ void ScreenContinue::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	if( input.type == IET_FIRST_PRESS  &&  GAMESTATE->IsHumanPlayer(input.pn) )
+	if( input.type == IET_FIRST_PRESS  &&  GAMESTATE->IsHumanPlayer(input.pn)  &&  FORCE_TIMER_WAIT )
 	{
 		switch( input.MenuI )
 		{
