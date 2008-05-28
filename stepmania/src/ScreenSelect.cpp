@@ -28,6 +28,7 @@ void ScreenSelect::Init()
 	split( UPDATE_ON_MESSAGE, ",", m_asSubscribedMessages );
 	for( unsigned i = 0; i < m_asSubscribedMessages.size(); ++i )
 		MESSAGEMAN->Subscribe( this, m_asSubscribedMessages[i] );
+	this->SubscribeToMessage( Message_PlayerJoined );
 
 	//
 	// Load choices
@@ -118,8 +119,6 @@ void ScreenSelect::Input( const InputEventPlus &input )
 		if( GAMESTATE->GetNumSidesJoined() > 1 )
 			SCREENMAN->PlayStartSound();
 
-		this->UpdateSelectableChoices();
-	
 		if( !ALLOW_DISABLED_PLAYER_INPUT )
 			return;	// don't let the screen handle the MENU_START press
 	}
