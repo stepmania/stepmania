@@ -88,6 +88,8 @@ void ScreenSelectMusic::Init()
 
 	ScreenWithMenuElements::Init();
 
+	this->SubscribeToMessage( Message_PlayerJoined );
+
 	/* Cache: */
 	m_sSectionMusicPath =		THEME->GetPathS(m_sName,"section music");
 	m_sSortMusicPath =		THEME->GetPathS(m_sName,"sort music");
@@ -324,6 +326,45 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 
 	CheckBackgroundRequests( false );
 }
+void ScreenSelectMusic::HandleMessage( const Message &msg )
+{
+	if( msg == Message_PlayerJoined )
+	{
+		// The current steps may no longer be playable.  If one player has double steps 
+		// selected, they are no longer playable now that P2 has joined.  
+		
+		// TODO: Invalidate the CurSteps only if they are no longer playable.  That way, 
+		// after music change will clamp to the nearest in the DifficultyList.
+		GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber].SetWithoutBroadcast( NULL );
+		FOREACH_ENUM( PlayerNumber, p )
+			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
+
+		/* If a course is selected, it may no longer be playable.  Let MusicWheel know
+		 * about the late join. */
+		m_MusicWheel.PlayerJoined();
+
+		AfterMusicChange();
+
+		int iSel = 0;
+		PlayerNumber pn;
+		bool b = msg.GetParam( "Player", pn );
+		ASSERT( b );
+
+		m_iSelection[pn] = iSel;
+		if( GAMESTATE->IsCourseMode() )
+		{
+			Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
+			GAMESTATE->m_pCurTrail[pn].Set( pTrail );
+		}
+		else
+		{
+			Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
+			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
+		}
+	}
+	
+	ScreenWithMenuElements::HandleMessage( msg );
+}
 
 void ScreenSelectMusic::Input( const InputEventPlus &input )
 {
@@ -347,38 +388,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	// Handle late joining
 	if( m_SelectionState != SelectionState_Finalized  &&  input.MenuI == GAME_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
-	{
-		// The current steps may no longer be playable.  If one player has double steps 
-		// selected, they are no longer playable now that P2 has joined.  
-		
-		// TODO: Invalidate the CurSteps only if they are no longer playable.  That way, 
-		// after music change will clamp to the nearest in the DifficultyList.
-		GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber].SetWithoutBroadcast( NULL );
-		FOREACH_ENUM( PlayerNumber, p )
-			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
-
-		/* If a course is selected, it may no longer be playable.  Let MusicWheel know
-		 * about the late join. */
-		m_MusicWheel.PlayerJoined();
-
-		AfterMusicChange();
-
-		int iSel = 0;
-		PlayerNumber pn = input.pn;
-		m_iSelection[pn] = iSel;
-		if( GAMESTATE->IsCourseMode() )
-		{
-			Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
-			GAMESTATE->m_pCurTrail[pn].Set( pTrail );
-		}
-		else
-		{
-			Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
-			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
-		}
-
 		return;	// don't handle this press again below
-	}
 
 	if( !GAMESTATE->IsHumanPlayer(input.pn) )
 		return;
