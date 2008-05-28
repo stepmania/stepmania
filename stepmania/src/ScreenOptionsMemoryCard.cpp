@@ -156,6 +156,8 @@ void ScreenOptionsMemoryCard::HandleMessage( const Message &msg )
 			SelectRowWithMemoryCard( sOldMountPoint );
 		}
 	}
+
+	ScreenOptions::HandleMessage( msg );
 }
 
 void ScreenOptionsMemoryCard::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
