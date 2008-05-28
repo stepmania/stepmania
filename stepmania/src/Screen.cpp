@@ -42,6 +42,7 @@ void Screen::Init()
 	SetFOV( 0 );
 
 	m_smSendOnPop = SM_None;
+	m_bRunning = false;
 
 	ActorUtil::LoadAllCommandsFromName( *this, m_sName, "Screen" );
 
@@ -68,6 +69,7 @@ void Screen::Init()
 
 void Screen::BeginScreen()
 {
+	m_bRunning = true;
 	m_bFirstUpdate = true;
 
 	/* Screens set these when they determine their next screen dynamically.  Reset them
@@ -87,6 +89,7 @@ void Screen::BeginScreen()
 void Screen::EndScreen()
 {
 	this->PlayCommand( "End" );
+	m_bRunning = false;
 }
 
 void Screen::Update( float fDeltaTime )

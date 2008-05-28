@@ -87,6 +87,9 @@ protected:
 
 	float                           m_fLockInputSecs;
 
+	/* If currently between BeginScreen/EndScreen calls: */
+	bool m_bRunning;
+
 public:
 	RString GetNextScreenName() const;
 	RString GetPrevScreen() const;

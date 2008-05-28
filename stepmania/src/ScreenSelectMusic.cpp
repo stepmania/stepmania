@@ -675,7 +675,7 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 
 void ScreenSelectMusic::HandleMessage( const Message &msg )
 {
-	if( msg == Message_PlayerJoined )
+	if( m_bRunning && msg == Message_PlayerJoined )
 	{
 		// The current steps may no longer be playable.  If one player has double steps 
 		// selected, they are no longer playable now that P2 has joined.  
