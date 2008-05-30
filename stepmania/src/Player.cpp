@@ -2066,19 +2066,7 @@ done_checking_hopo:
 				// XXX This is the wrong combo for shared players. STATSMAN->m_CurStageStats.m_Player[pn] might work but could be wrong.
 				const bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD);			
 				if( m_pNoteField )
-<<<<<<< .mine
 					m_pNoteField->DidTapNote( col, bBlind? TNS_W1:score, bBright );
-=======
-				{
-					/* We need to make sure all notes have the same ghost row score if blind is on,
-					 * otherwise you can still tell what the score on the note was if the flash is
-					 * color coded to match the score */
-					if( bBlind)
-						m_pNoteField->DidTapNote( col, TNS_W1, bBright );
-					else
-						m_pNoteField->DidTapNote( col, score, bBright );
-				}
->>>>>>> .r27467
 				if( score >= TNS_W3 || bBlind )
 					HideNote( col, iRowOfOverlappingNoteOrRow );
 			}
