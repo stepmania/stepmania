@@ -168,6 +168,17 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
+
+	f.Write( "#ATTACKS:" );
+	for( unsigned a=0; a < out.m_sAttackString.size(); a++ )
+	{
+		RString sData = out.m_sAttackString[a];
+		f.Write( ssprintf( "%s", sData.c_str() ) );
+
+		if( a != (out.m_sAttackString.size() - 1) )
+			f.Write( ":" );	// Not the end, so write a divider ':'
+	}
+	f.PutLine( ";" );
 }
 
 static RString JoinLineList( vector<RString> &lines )

@@ -3,6 +3,7 @@
 #ifndef SONG_H
 #define SONG_H
 
+#include "Attack.h"
 #include "TimingData.h"
 #include "Difficulty.h"
 #include "EnumHelper.h"
@@ -144,12 +145,16 @@ public:
 	RString	m_sBackgroundFile;
 	RString	m_sCDTitleFile;
 
+	AttackArray m_Attacks;
+	vector<RString>	m_sAttackString;
+
 	RString GetMusicPath() const;
 	RString GetInstrumentTrackPath( InstrumentTrack it ) const;
 	RString GetBannerPath() const;
 	RString	GetLyricsPath() const;
 	RString GetBackgroundPath() const;
 	RString GetCDTitlePath() const;
+
 
 	/* For loading only: */
 	bool m_bHasMusic, m_bHasBanner;

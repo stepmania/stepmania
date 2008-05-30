@@ -14,14 +14,14 @@
 const int MAX_EDIT_STEPS_SIZE_BYTES		= 30*1024;	// 30KB
 
 static void LoadFromSMTokens( 
-	RString sStepsType, 
-	RString sDescription,
-	RString sDifficulty,
-	RString sMeter,
-	RString sRadarValues,
-	RString sNoteData,
-	Steps &out
-)
+			     RString sStepsType, 
+			     RString sDescription,
+			     RString sDifficulty,
+			     RString sMeter,
+			     RString sRadarValues,
+			     RString sNoteData,
+			     Steps &out
+			     )
 {
 	out.SetSavedToDisk( true );	// we're loading from disk, so this is by definintion already saved
 
@@ -30,7 +30,7 @@ static void LoadFromSMTokens(
 	Trim( sDifficulty );
 	Trim( sNoteData );
 
-//	LOG->Trace( "Steps::LoadFromSMTokens()" );
+	//	LOG->Trace( "Steps::LoadFromSMTokens()" );
 
 	out.m_StepsType = GameManager::StringToStepsType( sStepsType );
 	out.SetDescription( sDescription );
@@ -53,10 +53,10 @@ static void LoadFromSMTokens(
 		RadarValues v[NUM_PLAYERS];
 		FOREACH_PlayerNumber( pn )
 			FOREACH_ENUM( RadarCategory, rc )
-				v[pn][rc] = StringToFloat( saValues[pn*NUM_RadarCategory + rc] );
+			v[pn][rc] = StringToFloat( saValues[pn*NUM_RadarCategory + rc] );
 		out.SetCachedRadarValues( v );
 	}
-    
+
 	out.SetSMNoteData( sNoteData );
 
 	out.TidyUpData();
@@ -110,16 +110,16 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				{
 					// XXX: Hard to tell which file caused this.
 					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						      sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
+						sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
 					continue;
 				}
 
 				const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
 				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
-				
+
 				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
 
-//				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
+				//				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 
 				out.AddStopSegment( new_seg );
 			}
@@ -138,13 +138,13 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				if( arrayBPMChangeValues.size() != 2 )
 				{
 					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						      sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
+						sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
 					continue;
 				}
 
 				const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
 				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
-				
+
 				if( fNewBPM > 0.0f )
 					out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
 				else
@@ -174,13 +174,13 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				seg.m_iStartRow = BeatToNoteRow(fBeat);
 				seg.m_iNumerator = atoi( vs2[1] ); 
 				seg.m_iDenominator = atoi( vs2[2] ); 
-				
+
 				if( fBeat < 0 )
 				{
 					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f.", fBeat );
 					continue;
 				}
-				
+
 				if( seg.m_iNumerator < 1 )
 				{
 					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iNumerator %i.", fBeat, seg.m_iNumerator );
@@ -264,7 +264,7 @@ bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChange
 		change.m_fStartBeat = StringToFloat( aBGChangeValues[0] );
 		// fall through
 	}
-	
+
 	return aBGChangeValues.size() >= 2;
 }
 
@@ -291,7 +291,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 
 		// handle the data
 		/* Don't use GetMainAndSubTitlesFromFullTitle; that's only for heuristically
-		 * splitting other formats that *don't* natively support #SUBTITLE. */
+		* splitting other formats that *don't* natively support #SUBTITLE. */
 		if( sValueName=="TITLE" )
 			out.m_sMainTitle = sParams[1];
 
@@ -355,7 +355,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 				continue;
 			out.m_fMusicLengthSeconds = StringToFloat( sParams[1] );
 		}
-		
+
 		else if( sValueName=="LASTBEATHINT" )
 			out.m_fSpecifiedLastBeat = StringToFloat( sParams[1] );
 
@@ -363,7 +363,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 			; /* ignore */
 
 		/* We calculate these.  Some SMs in circulation have bogus values for
-		 * these, so make sure we always calculate it ourself. */
+		* these, so make sure we always calculate it ourself. */
 		else if( sValueName=="FIRSTBEAT" )
 		{
 			if( bFromCache )
@@ -465,6 +465,52 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 			split( sParams[1], ",", out.m_vsKeysoundFile );
 		}
 
+		// Attacks loaded from file
+		else if( sValueName=="ATTACKS" )
+		{
+			// Build the RString vector here so we can write it to file again later
+			for( unsigned s=1; s < sParams.params.size(); ++s )
+				out.m_sAttackString.push_back( sParams[s] );
+
+			Attack attack;
+			float end = -9999;
+
+			for( unsigned j=1; j < sParams.params.size(); ++j )
+			{
+				vector<RString> sBits;
+				split( sParams[j], "=", sBits, false );
+
+				// Need an identifer and a value for this to work
+				if( sBits.size() < 2 )
+					continue;
+
+				TrimLeft( sBits[0] );
+				TrimRight( sBits[0] );
+
+				if( !sBits[0].CompareNoCase("TIME") )
+					attack.fStartSecond = strtof( sBits[1], NULL );
+				else if( !sBits[0].CompareNoCase("LEN") )
+					attack.fSecsRemaining = strtof( sBits[1], NULL );
+				else if( !sBits[0].CompareNoCase("END") )
+					end = strtof( sBits[1], NULL );
+				else if( !sBits[0].CompareNoCase("MODS") )
+				{
+					attack.sModifiers = sBits[1];
+
+					if( end != -9999 )
+					{
+						attack.fSecsRemaining = end - attack.fStartSecond;
+						end = -9999;
+					}
+
+					if( attack.fSecsRemaining < 0.0f )
+						attack.fSecsRemaining = 0.0f;
+
+					out.m_Attacks.push_back( attack );
+				}
+			}
+		}
+
 		else if( sValueName=="NOTES" || sValueName=="NOTES2" )
 		{
 			if( iNumParams < 7 )
@@ -486,7 +532,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 			out.AddSteps( pNewNotes );
 		}
 		else if( sValueName=="OFFSET" || sValueName=="BPMS" || sValueName=="STOPS" || sValueName=="FREEZES" || sValueName=="TIMESIGNATURES" )
-				 ;
+			;
 		else
 			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
 	}
@@ -507,7 +553,7 @@ bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
 	}
 
 	/* We should have exactly one; if we had none, we shouldn't have been
-	 * called to begin with. */
+	* called to begin with. */
 	ASSERT( aFileNames.size() == 1 );
 
 	return LoadFromSMFile( sPath + aFileNames[0], out );
@@ -621,26 +667,26 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 	}
 
 	return true;
-	
+
 }
 
 void SMLoader::TidyUpData( Song &song, bool bFromCache )
 {
 	/*
-	 * Hack: if the song has any changes at all (so it won't use a random BGA)
-	 * and doesn't end with "-nosongbg-", add a song background BGC.  Remove
-	 * "-nosongbg-" if it exists.
-	 *
-	 * This way, songs that were created earlier, when we added the song BG
-	 * at the end by default, will still behave as expected; all new songs will
-	 * have to add an explicit song BG tag if they want it.  This is really a
-	 * formatting hack only; nothing outside of SMLoader ever sees "-nosongbg-".
-	 */
+	* Hack: if the song has any changes at all (so it won't use a random BGA)
+	* and doesn't end with "-nosongbg-", add a song background BGC.  Remove
+	* "-nosongbg-" if it exists.
+	*
+	* This way, songs that were created earlier, when we added the song BG
+	* at the end by default, will still behave as expected; all new songs will
+	* have to add an explicit song BG tag if they want it.  This is really a
+	* formatting hack only; nothing outside of SMLoader ever sees "-nosongbg-".
+	*/
 	vector<BackgroundChange> &bg = song.GetBackgroundChanges(BACKGROUND_LAYER_1);
 	if( !bg.empty() )
 	{
 		/* BGChanges have been sorted.  On the odd chance that a BGChange exists
-		 * with a very high beat, search the whole list. */
+		* with a very high beat, search the whole list. */
 		bool bHasNoSongBgTag = false;
 
 		for( unsigned i = 0; !bHasNoSongBgTag && i < bg.size(); ++i )
@@ -656,12 +702,12 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 		if( !bHasNoSongBgTag ) do
 		{
 			/* If we're loading cache, -nosongbg- should always be in there.  We must
-			 * not call IsAFile(song.GetBackgroundPath()) when loading cache. */
+			* not call IsAFile(song.GetBackgroundPath()) when loading cache. */
 			if( bFromCache )
 				break;
 
 			/* If BGChanges already exist after the last beat, don't add the background
-			 * in the middle. */
+			* in the middle. */
 			if( !bg.empty() && bg.back().m_fStartBeat-0.0001f >= song.m_fLastBeat )
 				break;
 
@@ -678,26 +724,26 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 }
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
- * All rights reserved.
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, and/or sell copies of the Software, and to permit persons to
- * whom the Software is furnished to do so, provided that the above
- * copyright notice(s) and this permission notice appear in all copies of
- * the Software and that both the above copyright notice(s) and this
- * permission notice appear in supporting documentation.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
- * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
- * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
- * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
- * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
- */
+* (c) 2001-2004 Chris Danford, Glenn Maynard
+* All rights reserved.
+* 
+* Permission is hereby granted, free of charge, to any person obtaining a
+* copy of this software and associated documentation files (the
+* "Software"), to deal in the Software without restriction, including
+* without limitation the rights to use, copy, modify, merge, publish,
+* distribute, and/or sell copies of the Software, and to permit persons to
+* whom the Software is furnished to do so, provided that the above
+* copyright notice(s) and this permission notice appear in all copies of
+* the Software and that both the above copyright notice(s) and this
+* permission notice appear in supporting documentation.
+* 
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+* OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+* THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+* INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+* OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+* OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+* OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+* PERFORMANCE OF THIS SOFTWARE.
+*/

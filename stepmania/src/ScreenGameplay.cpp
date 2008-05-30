@@ -830,8 +830,16 @@ void ScreenGameplay::InitSongQueues()
 			Steps *pSteps = GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ];
 			pi->m_vpStepsQueue.push_back( pSteps );
 
-			AttackArray aa;
-			pi->m_asModifiersQueue.push_back( aa );
+			if(	pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fSongAttack != 0 &&
+				GAMESTATE->m_pCurSong->m_Attacks.size() > 0 )
+			{
+				pi->m_asModifiersQueue.push_back( GAMESTATE->m_pCurSong->m_Attacks );
+			}
+			else
+			{
+				AttackArray aa;
+				pi->m_asModifiersQueue.push_back( aa );
+			}
 		}
 	}
 
