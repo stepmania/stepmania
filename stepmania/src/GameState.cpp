@@ -96,11 +96,12 @@ Song* GameState::GetDefaultSong() const
 	return sid.ToSong();
 }
 
-static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_1 ("GameState","GradeTierForExtra1");
-static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_2 ("GameState","GradeTierForExtra2");
+static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_1	("GameState","GradeTierForExtra1");
+static const ThemeMetric<bool> ALLOW_EXTRA_2		("GameState","AllowExtra2");
+static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_2	("GameState","GradeTierForExtra2");
 
-static ThemeMetric<bool> ARE_STAGE_PLAYER_MODS_FORCED( "GameState","AreStagePlayerModsForced" );
-static ThemeMetric<bool> ARE_STAGE_SONG_MODS_FORCED( "GameState","AreStageSongModsForced" );
+static ThemeMetric<bool> ARE_STAGE_PLAYER_MODS_FORCED	("GameState","AreStagePlayerModsForced");
+static ThemeMetric<bool> ARE_STAGE_SONG_MODS_FORCED	("GameState","AreStageSongModsForced");
 
 static Preference<Premium> g_Premium( "Premium", Premium_Off );
 Preference<bool> GameState::m_bAutoJoin( "AutoJoin", false );
@@ -1215,7 +1216,7 @@ bool GameState::HasEarnedExtraStageInternal() const
 
 		if( IsExtraStage() )
 		{
-			if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_2 )
+			if( ALLOW_EXTRA_2  &&  STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_2 )
 				return true;
 		}
 		else if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_1 )
