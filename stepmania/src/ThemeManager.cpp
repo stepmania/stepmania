@@ -859,21 +859,41 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sMetricsG
 		
 		RString sCurMetricPath = GetMetricsIniPath( m_sCurThemeName );
 		RString sDefaultMetricPath = GetMetricsIniPath( SpecialFiles::BASE_THEME_NAME );
-		RString sMessage = ssprintf( "The theme metric \"%s::%s\" is missing.  Correct this and click Retry, or Cancel to break.",
-					     sMetricsGroup.c_str(), sValueName.c_str() );
+		
+		RString sType;
+		if( &ini == &g_pLoadedThemeData->iniStrings )
+			sType = "String";
+		else if( &ini == &g_pLoadedThemeData->iniMetrics )
+			sType = "Metric";
+		else
+			FAIL_M("");
+		
+		RString sMessage = ssprintf( "%s \"%s::%s\" is missing.  Correct this and click Retry, or Cancel to break.",
+			sType.c_str(), 
+			sMetricsGroup.c_str(), 
+			sValueName.c_str() );
+			
 		switch( Dialog::AbortRetryIgnore(sMessage) )
 		{
 			case Dialog::abort:
-				RageException::Throw( "Theme metric \"%s::%s\" could not be found in \"%s\"' or \"%s\".", 
-						      sMetricsGroup.c_str(), sValueName.c_str(), sCurMetricPath.c_str(), 
-						      sDefaultMetricPath.c_str() );
+				{
+					RageException::Throw( "%s \"%s::%s\" could not be found in \"%s\"' or \"%s\".", 
+						sType.c_str(),
+						sMetricsGroup.c_str(), 
+						sValueName.c_str(), 
+						sCurMetricPath.c_str(), 
+						sDefaultMetricPath.c_str() );
+				}
 			case Dialog::retry:
 				ReloadMetrics();
 				continue;
 			case Dialog::ignore:
-				LOG->UserLog( "Theme metric", sMetricsGroup + "::" + sValueName,
-					      "could not be found in \"%s\" or \"%s\".",
-					      sCurMetricPath.c_str(), sDefaultMetricPath.c_str() );
+				LOG->UserLog( 
+					sType, 
+					sMetricsGroup + "::" + sValueName,
+					"could not be found in \"%s\" or \"%s\".",
+					sCurMetricPath.c_str(), 
+					sDefaultMetricPath.c_str() );
 				return RString();
 			default:
 				ASSERT(0);
