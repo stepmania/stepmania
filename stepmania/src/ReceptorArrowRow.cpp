@@ -94,6 +94,12 @@ void ReceptorArrowRow::SetPressed( int iCol )
 	m_ReceptorArrow[iCol]->SetPressed();
 }
 
+void ReceptorArrowRow::SetNoteUpcoming( int iCol, bool b )
+{
+	m_ReceptorArrow[iCol]->PlayCommand(b?"ShowNoteUpcoming":"HideNoteUpcoming");
+}
+
+
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.

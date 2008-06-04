@@ -871,6 +871,7 @@ void NoteField::DrawPrimitives()
 		//
 		// Draw all TapNotes in this column
 		//
+		bool bAnyUpcomingInThisCol = false;
 
 		// draw notes from furthest to closest
 
@@ -924,7 +925,12 @@ void NoteField::DrawPrimitives()
 			bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
 			NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
 			displayCols->display[c].DrawTap( tn, c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, m_fYReverseOffsetPixels, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
+			
+			bool bNoteIsUpcoming = NoteRowToBeat(i) > GAMESTATE->m_fSongBeat;
+			bAnyUpcomingInThisCol |= bNoteIsUpcoming;
 		}
+
+		cur->m_ReceptorArrowRow.SetNoteUpcoming( c, bAnyUpcomingInThisCol );
 	}
 
 	cur->m_GhostArrowRow.Draw();
