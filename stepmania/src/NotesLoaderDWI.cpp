@@ -574,8 +574,9 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
 			}
 		}
 		else
+		{
 			// do nothing.  We don't care about this value name
-			;
+		}
 	}
 
 	return true;
