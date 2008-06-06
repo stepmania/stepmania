@@ -652,6 +652,7 @@ static const RString DEVICE_INPUT_SEPARATOR = ":";	// this isn't used in any key
 void InputMapper::ReadMappingsFromDisk()
 {
 	m_mappings.ReadMappings( m_pInputScheme, SpecialFiles::KEYMAPS_PATH, false );
+	UpdateTempDItoGI();
 
 	AddDefaultMappingsForCurrentGameIfUnmapped();
 }
