@@ -79,6 +79,7 @@ protected:
 	ThemeMetricMap<RString>		CHOICE;
 	ThemeMetric1D<RageColor>	SECTION_COLORS;
 	ThemeMetric<LuaReference>	SORT_ORDERS;
+	ThemeMetric<bool>		SHOW_EASY_FLAG;
 };
 
 #endif

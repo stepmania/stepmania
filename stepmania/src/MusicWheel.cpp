@@ -75,6 +75,7 @@ void MusicWheel::Load( RString sType )
 	MOST_PLAYED_SONGS_TO_SHOW	.Load(sType,"MostPlayedSongsToShow");
 	MODE_MENU_CHOICE_NAMES		.Load(sType,"ModeMenuChoiceNames");
 	SORT_ORDERS			.Load(sType,"SortOrders");
+	SHOW_EASY_FLAG			.Load(sType,"UseEasyMarkerFlag");
 	vector<RString> vsModeChoiceNames;
 	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
 	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
@@ -693,7 +694,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 		MusicWheelItemData& WID = *arrayWheelItemDatas[i];
 		if( WID.m_pSong != NULL )
 		{
-			WID.m_Flags.bHasBeginnerOr1Meter = WID.m_pSong->IsEasy( GAMESTATE->GetCurrentStyle()->m_StepsType );
+			WID.m_Flags.bHasBeginnerOr1Meter = WID.m_pSong->IsEasy( GAMESTATE->GetCurrentStyle()->m_StepsType ) && SHOW_EASY_FLAG;
 			WID.m_Flags.bEdits = WID.m_pSong->HasEdits( GAMESTATE->GetCurrentStyle()->m_StepsType );
 			WID.m_Flags.iStagesForSong = GameState::GetNumStagesMultiplierForSong( WID.m_pSong );
 		}
