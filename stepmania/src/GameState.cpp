@@ -392,35 +392,48 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 	}
 }
 
+namespace
+{
+	bool JoinInputInternal( PlayerNumber pn )
+	{
+		if( !GAMESTATE->PlayersCanJoin() )
+			return false;
+
+		/* If this side is already in, don't re-join. */
+		if( GAMESTATE->m_bSideIsJoined[pn] )
+			return false;
+
+		/* subtract coins */
+		int iCoinsNeededToJoin = GAMESTATE->GetCoinsNeededToJoin();
+
+		if( GAMESTATE->m_iCoins < iCoinsNeededToJoin )
+			return false;	// not enough coins
+
+		GAMESTATE->m_iCoins -= iCoinsNeededToJoin;
+
+		GAMESTATE->JoinPlayer( pn );
+
+		return true;
+	}
+};
+
 /* Handle an input that can join a player.  Return true if the player joined. */
 bool GameState::JoinInput( PlayerNumber pn )
 {
-	if( !PlayersCanJoin() )
-		return false;
-
-	/* If this side is already in, don't re-join. */
-	if( m_bSideIsJoined[pn] )
-		return false;
-
-	/* subtract coins */
-	int iCoinsNeededToJoin = GetCoinsNeededToJoin();
-
-	if( m_iCoins < iCoinsNeededToJoin )
-		return false;	// not enough coins
-
-	m_iCoins -= iCoinsNeededToJoin;
-
-	JoinPlayer( pn );
-
-	return true;
+	/* In free play when AutoJoin is enabled, join all players on a single start press. */
+        if( GAMESTATE->GetCoinMode() != CoinMode_Pay && GAMESTATE->m_bAutoJoin.Get() )
+		return JoinPlayers();
+	else
+		return JoinInputInternal( pn );
 }
 
+/* Attempt to join all players, as if each player pressed Start. */
 bool GameState::JoinPlayers()
 {
 	bool bJoined = false;
 	FOREACH_PlayerNumber( pn )
 	{
-		if( JoinInput(pn) )
+		if( JoinInputInternal(pn) )
 			bJoined = true;
 	}
 	return bJoined;
