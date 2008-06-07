@@ -131,7 +131,7 @@ void ScreenWithMenuElements::BeginScreen()
 	/* If AutoJoin is enabled, we may have a credit that couldn't be used to join when
 	 * the coin was inserted due to AllowLateJoin being disabled at the time.  Try to
 	 * join players when a new screen starts. */
-	if( GAMESTATE->m_bAutoJoin.Get() )
+	if( GAMESTATE->GetCoinMode() == CoinMode_Pay && GAMESTATE->m_bAutoJoin.Get() )
 	{
 		if( GAMESTATE->JoinPlayers() )
 			SCREENMAN->PlayStartSound();
