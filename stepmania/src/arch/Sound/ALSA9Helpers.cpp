@@ -335,7 +335,13 @@ bool Alsa9Buf::WaitUntilFramesCanBeFilled( int timeout_ms )
 void Alsa9Buf::Write( const int16_t *buffer, int frames )
 {
 	/* We should be able to write it all.  If we don't, treat it as an error. */
-	int wrote = dsnd_pcm_mmap_writei( pcm, (const char *) buffer, frames );
+	int wrote;
+	do
+	{
+		wrote = dsnd_pcm_mmap_writei( pcm, (const char *) buffer, frames );
+	}
+	while( wrote == -EAGAIN );
+
 	if( wrote < 0 )
 	{
 		LOG->Trace( "RageSoundDriver_ALSA9::GetData: dsnd_pcm_mmap_writei: %s (%i)", dsnd_strerror(wrote), wrote );
