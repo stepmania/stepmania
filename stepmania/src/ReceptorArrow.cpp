@@ -61,6 +61,11 @@ void ReceptorArrow::Step( TapNoteScore score )
 	m_pReceptor->PlayCommand( Capitalize(sJudge) );
 }
 
+void ReceptorArrow::SetNoteUpcoming( bool b )
+{
+	m_pReceptor->PlayCommand( b ? "ShowNoteUpcoming" : "HideNoteUpcoming" );
+}
+
 /*
  * (c) 2001-2004 Ben Nordstrom, Chris Danford
  * All rights reserved.

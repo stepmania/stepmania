@@ -20,6 +20,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	void Step( TapNoteScore score );
 	void SetPressed() { m_bIsPressed = true; };
+	void SetNoteUpcoming( bool b );
 private:
 
 	const PlayerState* m_pPlayerState;
