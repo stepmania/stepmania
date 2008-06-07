@@ -418,6 +418,12 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else if(!stricmp(sParams[1],"NO"))
 				out.m_SelectionDisplay = out.SHOW_NEVER;
+			/* The following two cases are just fixes to make sure simfiles that used 3.9+ features
+			 * are not excluded here */
+			else if(!stricmp(sParams[1],"ES") || !stricmp(sParams[1],"OMES"))
+				out.m_SelectionDisplay = out.SHOW_ALWAYS;
+			else if( atoi(sParams[1]) > 0 )
+				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else
 				LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
 		}
