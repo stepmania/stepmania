@@ -807,6 +807,9 @@ void NoteField::DrawPrimitives()
 	for( int i=0; i<m_pNoteData->GetNumTracks(); i++ )	// for each arrow column
 	{
 		const int c = pStyle->m_iColumnDrawOrder[i];
+
+		bool bAnyUpcomingInThisCol = false;
+
 		//
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
 		//	
@@ -863,15 +866,16 @@ void NoteField::DrawPrimitives()
 				NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
 				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, Result, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
 					m_fYReverseOffsetPixels, (float) iDrawDistanceAfterTargetsPixels, (float) iDrawDistanceBeforeTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
-			}
 
+				bool bNoteIsUpcoming = NoteRowToBeat(iStartRow) > GAMESTATE->m_fSongBeat;
+				bAnyUpcomingInThisCol |= bNoteIsUpcoming;
+			}
 		}
 		
 
 		//
 		// Draw all TapNotes in this column
 		//
-		bool bAnyUpcomingInThisCol = false;
 
 		// draw notes from furthest to closest
 
