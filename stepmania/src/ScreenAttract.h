@@ -18,6 +18,7 @@ public:
 	static void SetAttractVolume( bool bInAttract );
 	
 	virtual void Input( const InputEventPlus &input );
+	virtual void HandleMessage( const Message &msg );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void Cancel( ScreenMessage smSendWhenDone );
 
