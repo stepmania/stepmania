@@ -1198,10 +1198,11 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 	else
 		SCREENMAN->PlayInvalidSound();
 
-	/* If AutoJoin and enough coins to join have been inserted, then try to join a player. */
-	if( GAMESTATE->m_bAutoJoin.Get() )
+	/* If AutoJoin and a player is already joined, then try to join a player.  (If no players
+	 * are joined, they'll join on the first JoinInput.) */
+	if( GAMESTATE->m_bAutoJoin.Get() && GAMESTATE->GetNumSidesJoined() > 0 )
 	{
-		if( GAMESTATE->JoinPlayers() )
+		if( GAMESTATE->GetNumSidesJoined() > 0 && GAMESTATE->JoinPlayers() )
 			SCREENMAN->PlayStartSound();
 	}
 

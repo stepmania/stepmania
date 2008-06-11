@@ -128,12 +128,11 @@ void ScreenWithMenuElements::BeginScreen()
 	/* Evaluate FirstUpdateCommand. */
 	this->PlayCommand( "FirstUpdate" );
 
-	/* If AutoJoin is enabled, we may have a credit that couldn't be used to join when
-	 * the coin was inserted due to AllowLateJoin being disabled at the time.  Try to
-	 * join players when a new screen starts. */
+	/* If AutoJoin and a player is already joined, then try to join a player.  (If no players
+	 * are joined, they'll join on the first JoinInput.) */
 	if( GAMESTATE->GetCoinMode() == CoinMode_Pay && GAMESTATE->m_bAutoJoin.Get() )
 	{
-		if( GAMESTATE->JoinPlayers() )
+               if( GAMESTATE->GetNumSidesJoined() > 0 && GAMESTATE->JoinPlayers() )
 			SCREENMAN->PlayStartSound();
 	}
 }
