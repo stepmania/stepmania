@@ -22,7 +22,6 @@ void ScreenAttract::Init()
 {
 	RESET_GAME_STATE.Load( m_sName, "ResetGameState" );
 	ATTRACT_VOLUME.Load( m_sName, "AttractVolume" );
-	this->SubscribeToMessage( Message_PlayerJoined );
 	ScreenWithMenuElements::Init();
 }
 
@@ -123,14 +122,6 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 void ScreenAttract::StartPlayingMusic()
 {
 	ScreenWithMenuElements::StartPlayingMusic();
-}
-
-void ScreenAttract::HandleMessage( const Message &msg )
-{
-	if( msg == Message_PlayerJoined )
-		this->Cancel( SM_GoToStartScreen );
-
-	ScreenWithMenuElements::HandleMessage( msg );
 }
 
 void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
