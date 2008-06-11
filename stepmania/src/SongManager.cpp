@@ -812,7 +812,7 @@ void SongManager::InitRandomAttacks()
 		MsdFile msd;
 
 		if( !msd.ReadFile( ATTACK_FILE, true ) )
-			LOG->Warn( "Error opening file '%s' for reading: %s.", ATTACK_FILE, msd.GetError().c_str() );
+			LOG->Warn( "Error opening file '%s' for reading: %s.", ATTACK_FILE.c_str(), msd.GetError().c_str() );
 		else
 		{
 			for( unsigned i=0; i<msd.GetNumValues(); i++ )
