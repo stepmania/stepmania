@@ -420,8 +420,8 @@ namespace
 /* Handle an input that can join a player.  Return true if the player joined. */
 bool GameState::JoinInput( PlayerNumber pn )
 {
-	/* In free play when AutoJoin is enabled, join all players on a single start press. */
-        if( GAMESTATE->GetCoinMode() != CoinMode_Pay && GAMESTATE->m_bAutoJoin.Get() )
+	/* When AutoJoin is enabled, join all players on a single start press. */
+        if( GAMESTATE->m_bAutoJoin.Get() )
 		return JoinPlayers();
 	else
 		return JoinInputInternal( pn );
