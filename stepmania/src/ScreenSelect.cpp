@@ -123,12 +123,18 @@ void ScreenSelect::Input( const InputEventPlus &input )
 			return;	// don't let the screen handle the MENU_START press
 	}
 
-	// block input of disabled players
-	if( !ALLOW_DISABLED_PLAYER_INPUT && !GAMESTATE->IsPlayerEnabled(input.pn) )
-		return;
+	if( !GAMESTATE->IsPlayerEnabled(input.pn) )
+	{
+		// block input of disabled players
+		if( !ALLOW_DISABLED_PLAYER_INPUT )
+			return;
 
-	if( IsTransitioning() )
-		return;
+		/* Never allow a START press by a player that's still not joined, even if ALLOW_DISABLED_PLAYER_INPUT
+		 * would allow other types of input.  If we let a non-joined player start, we might start the
+		 * game with no players joined (eg. if ScreenTitleJoin is started in pay with no credits). */
+		if( input.MenuI == GAME_BUTTON_START )
+			return;
+	}
 
 	ScreenWithMenuElements::Input( input );	// default input handler
 }
@@ -144,6 +150,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		 * if so, call ApplyToAll instead.
 		 * TODO: Think of a better way to handle this.
 		 */
+		ASSERT( GAMESTATE->m_MasterPlayerNumber != PlayerNumber_Invalid );
 		int iMastersIndex = this->GetSelectionIndex( GAMESTATE->m_MasterPlayerNumber );
 		bool bAllPlayersChoseTheSame = true;
 		FOREACH_HumanPlayer( p )
