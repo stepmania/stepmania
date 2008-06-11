@@ -87,6 +87,12 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 	ScreenJukebox::HandleScreenMessage( SM );
 }
 
+void ScreenDemonstration::Cancel( ScreenMessage smSendWhenDone )
+{
+	ScreenAttract::SetAttractVolume( false ); // unmute attract sounds
+	ScreenJukebox::Cancel( smSendWhenDone );
+}
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
