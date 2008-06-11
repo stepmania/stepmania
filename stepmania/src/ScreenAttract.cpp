@@ -60,6 +60,14 @@ void ScreenAttract::SetAttractVolume( bool bInAttract )
 	}
 }
 
+void ScreenAttract::Cancel( ScreenMessage smSendWhenDone )
+{
+	LOG->Trace("ScreenAttract::AttractInput: begin fading to START_SCREEN" );
+
+	SetAttractVolume( false ); // unmute attract sounds
+	ScreenWithMenuElements::Cancel( smSendWhenDone );
+}
+
 void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen )
 {
 	if( input.type != IET_FIRST_PRESS ) 
@@ -85,13 +93,10 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 			if( pScreen->IsTransitioning() )
 				return;
 
-			LOG->Trace("ScreenAttract::AttractInput: begin fading to START_SCREEN" );
-
 			/* HandleGlobalInputs() already played the coin sound.  Don't play it again. */
 			if( input.MenuI != GAME_BUTTON_COIN )
 				SCREENMAN->PlayStartSound();
 			
-			SetAttractVolume( false ); // unmute attract sounds
 			pScreen->Cancel( SM_GoToStartScreen );
 			break;
 		default:

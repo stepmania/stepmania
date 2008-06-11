@@ -19,6 +19,7 @@ public:
 	
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void Cancel( ScreenMessage smSendWhenDone );
 
 	virtual ScreenType GetScreenType() const { return attract; }
 
