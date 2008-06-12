@@ -96,6 +96,7 @@ Song* GameState::GetDefaultSong() const
 	return sid.ToSong();
 }
 
+static const ThemeMetric<Difficulty> MIN_DIFFICULTY_FOR_EXTRA	("GameState","MinDifficultyForExtra");
 static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_1	("GameState","GradeTierForExtra1");
 static const ThemeMetric<bool> ALLOW_EXTRA_2		("GameState","AllowExtra2");
 static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_2	("GameState","GradeTierForExtra2");
@@ -949,6 +950,12 @@ bool GameState::IsAnExtraStage() const
 	return !IsEventMode() && !IsCourseMode() && m_iAwardedExtraStages[m_MasterPlayerNumber] > 0;
 }
 
+static ThemeMetric<bool> LOCK_EXTRA_STAGE_SELECTION("GameState","LockExtraStageSelection");
+bool GameState::IsAnExtraStageAndSelectionLocked() const
+{
+	return IsAnExtraStage() && LOCK_EXTRA_STAGE_SELECTION;
+}
+
 bool GameState::IsExtraStage() const
 {
 	if( m_MasterPlayerNumber == PlayerNumber_Invalid )
@@ -1223,9 +1230,17 @@ bool GameState::HasEarnedExtraStageInternal() const
 	
 	FOREACH_EnabledPlayer( pn )
 	{
-		if( m_pCurSteps[pn]->GetDifficulty() != Difficulty_Hard && 
-		    m_pCurSteps[pn]->GetDifficulty() != Difficulty_Challenge )
+		Difficulty dc = m_pCurSteps[pn]->GetDifficulty();
+		switch( dc )
+		{
+		case Difficulty_Edit:
 			continue; /* not hard enough! */
+			break;
+		default:
+			if( dc < MIN_DIFFICULTY_FOR_EXTRA )
+				continue; /* not hard enough! */
+			break;
+		}
 
 		if( IsExtraStage() )
 		{

@@ -145,6 +145,7 @@ public:
 	int		GetSmallestNumStagesLeftForAnyHumanPlayer() const;
 	bool		IsFinalStageForAnyHumanPlayer() const;
 	bool		IsAnExtraStage() const;
+	bool		IsAnExtraStageAndSelectionLocked() const;
 	bool		IsExtraStage() const;
 	bool		IsExtraStage2() const;
 	Stage		GetCurrentStage() const;

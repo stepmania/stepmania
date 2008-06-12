@@ -142,7 +142,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 		m_fPercentInState = 1;
 	}
 
-	if( GAMESTATE->IsAnExtraStage() )
+	if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 		RunCommands( SET_EXTRA_COMMAND );
 	else if( !AllIdentical )
 		RunCommands( SET_CHANGING_COMMAND );
@@ -233,7 +233,7 @@ void BPMDisplay::SetFromGameState()
 {
 	if( GAMESTATE->m_pCurSong.Get() )
 	{
-		if( GAMESTATE->IsAnExtraStage() )
+		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			CycleRandomly();				
 		else
 			SetBpmFromSong( GAMESTATE->m_pCurSong );

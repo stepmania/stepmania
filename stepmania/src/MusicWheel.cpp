@@ -128,7 +128,7 @@ void MusicWheel::BeginScreen()
 
 	WheelBase::BeginScreen();
 
-	if( GAMESTATE->IsAnExtraStage() )
+	if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 	{
 		m_WheelState = STATE_LOCKED;
 		SCREENMAN->PlayStartSound();
@@ -566,7 +566,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 					arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_PORTAL, NULL, "", NULL, RageColor(1,0,0,1), 0) );
 			}
 
-			if( GAMESTATE->IsAnExtraStage() )
+			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			{
 				Song* pSong;
 				Steps* pSteps;

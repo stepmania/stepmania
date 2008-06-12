@@ -530,14 +530,14 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	{
 		if( input.MenuI == m_GameButtonPreviousSong )
 		{
-			if( GAMESTATE->IsAnExtraStage() )
+			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 				m_soundLocked.Play();
 			else
 				ChangeDifficulty( input.pn, -1 );
 		}
 		else if( input.MenuI == m_GameButtonNextSong )
 		{
-			if( GAMESTATE->IsAnExtraStage() )
+			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 				m_soundLocked.Play();
 			else
 				ChangeDifficulty( input.pn, +1 );
@@ -554,14 +554,14 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 {
 	if( CodeDetector::EnteredEasierDifficulty(input.GameI.controller) )
 	{
-		if( GAMESTATE->IsAnExtraStage() )
+		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			m_soundLocked.Play();
 		else
 			ChangeDifficulty( input.pn, -1 );
 	}
 	else if( CodeDetector::EnteredHarderDifficulty(input.GameI.controller) )
 	{
-		if( GAMESTATE->IsAnExtraStage() )
+		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			m_soundLocked.Play();
 		else
 			ChangeDifficulty( input.pn, +1 );
@@ -575,12 +575,12 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 	}
 	else if( CodeDetector::EnteredNextSort(input.GameI.controller) )
 	{
-		if( GAMESTATE->IsAnExtraStage() )
+		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			m_soundLocked.Play();
 		else
 			m_MusicWheel.NextSort();
 	}
-	else if( !GAMESTATE->IsAnExtraStage() && CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
+	else if( !GAMESTATE->IsAnExtraStageAndSelectionLocked() && CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
 	{
 		m_soundOptionsChange.Play();
 
@@ -830,7 +830,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 					bIsRepeat = true;
 
 			/* Don't complain about repeats if the user didn't get to pick. */
-			if( GAMESTATE->IsAnExtraStage() )
+			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 				bIsRepeat = false;
 
 			if( bIsRepeat )
