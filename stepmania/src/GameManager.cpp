@@ -598,7 +598,7 @@ static const Style g_Style_Pump_HalfDouble =
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ Style::NO_MAPPING, 1, 0, Style::NO_MAPPING, 2, Style::END_MAPPING },
-		{ 3, Style::NO_MAPPING, 5, 4, Style::NO_MAPPING, Style::END_MAPPING }
+		{ 4, Style::NO_MAPPING, 5, 3, Style::NO_MAPPING, Style::END_MAPPING }
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		2,3,1,4,0,5
