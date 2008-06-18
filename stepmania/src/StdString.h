@@ -100,12 +100,11 @@ typedef char*			PSTR;
 #include <malloc.h>			// _alloca
 #endif
 
-#include <cstdarg>
-
 #include <cstdio>
 #include <cctype>
 #include <cstdlib>
 #include <cstdarg>
+#include <cstring>
 
 // a very shorthand way of applying the fix for KB problem Q172398
 // (basic_string assignment bug)

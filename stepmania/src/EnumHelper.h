@@ -3,6 +3,7 @@
 
 #include "LuaReference.h"
 #include "RageUtil.h"
+#include <memory>
 
 extern "C"
 {

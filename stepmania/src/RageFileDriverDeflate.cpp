@@ -4,6 +4,7 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include <memory>
 
 #if defined(_WINDOWS) || defined(_XBOX)
         #include "zlib/zlib.h"

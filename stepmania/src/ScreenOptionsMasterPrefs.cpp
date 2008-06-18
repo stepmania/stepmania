@@ -127,7 +127,7 @@ static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 }
 
 template <>
-static void MovePref<bool>( int &iSel, bool bToSel, const ConfOption *pConfOption )
+void MovePref<bool>( int &iSel, bool bToSel, const ConfOption *pConfOption )
 {
 	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
 	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
