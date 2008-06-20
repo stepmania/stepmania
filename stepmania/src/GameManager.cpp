@@ -902,13 +902,13 @@ static const Game g_Game_KB7 =
 		"kb7",					// m_szName
 		NUM_KB7_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			{ "Key1",		GAME_BUTTON_LEFT },
+			{ "Key1",		GameButton_Invalid },
 			{ "Key2",		GAME_BUTTON_LEFT },
 			{ "Key3",		GAME_BUTTON_DOWN },
 			{ "Key4",		GAME_BUTTON_START },
 			{ "Key5",		GAME_BUTTON_UP },
 			{ "Key6",		GAME_BUTTON_RIGHT },
-			{ "Key7",		GAME_BUTTON_RIGHT },
+			{ "Key7",		GameButton_Invalid },
 		},
 		&g_AutoKeyMappings_KB7
 	},
