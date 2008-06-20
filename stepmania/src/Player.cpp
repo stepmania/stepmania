@@ -905,19 +905,22 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	if( hns != HNS_None )	// if this HoldNote already has a result
 		return;	// we don't need to update the logic for this group
 
-	bool bInitiatedNote = true;
-	if( REQUIRE_STEP_ON_HOLD_HEADS )
+	bool bSteppedOnHead = true;
+	FOREACH( TrackRowTapNote, vTN, trtn )
 	{
-		FOREACH( TrackRowTapNote, vTN, trtn )
-		{
-			TapNote &tn = *trtn->pTN;
-			TapNoteScore tns = tn.result.tns;
+		TapNote &tn = *trtn->pTN;
+		TapNoteScore tns = tn.result.tns;
 
-			// TODO: When using JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER, require that the whole row of 
-			// taps was hit before activating this group of holds.
-			bInitiatedNote &= tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start of this hold?
-		}
+		// TODO: When using JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER, require that the whole row of 
+		// taps was hit before activating this group of holds.
+		bSteppedOnHead &= tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start of this hold?
 	}
+
+	bool bInitiatedNote;
+	if( REQUIRE_STEP_ON_HOLD_HEADS )
+		bInitiatedNote = bSteppedOnHead;
+	else
+		bInitiatedNote = true;
 
 	bool bIsHoldingButton = true;
 	FOREACH( TrackRowTapNote, vTN, trtn )
@@ -1039,21 +1042,43 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	// score hold notes that have passed
 	if( iSongRow >= iMaxEndRow )
 	{
-		bool bLetGoOfHoldNote = false;
-
-		if( HOLD_CHECKPOINTS )
+		/* Score rolls that end with fLife == 0 as LetGo, even if HOLD_CHECKPOINTS is on.  
+		 * Rolls don't have iCheckpointsMissed set, so, unless we check Life == 0, rolls would always be
+		 * scored as Held. */
+		bool bAllowHoldCheckpoints;
+		switch( subType )
 		{
+		DEFAULT_FAIL( subType );
+		case TapNote::hold_head_hold:
+			bAllowHoldCheckpoints = true;
+			break;
+		case TapNote::hold_head_roll:
+			bAllowHoldCheckpoints = false;
+			break;
+		}		
+
+		bool bAllowScoreAsHeld;
+		if( HOLD_CHECKPOINTS  &&  bAllowHoldCheckpoints )
+		{
+			int iCheckpointsHit = 0;
 			int iCheckpointsMissed = 0;
 			FOREACH( TrackRowTapNote, vTN, v )
-				iCheckpointsMissed += v->pTN->HoldResult.iCheckpointsMissed;
-			bLetGoOfHoldNote = iCheckpointsMissed > 0;
+			{
+				iCheckpointsHit &= v->pTN->HoldResult.iCheckpointsHit;
+				iCheckpointsMissed &= v->pTN->HoldResult.iCheckpointsMissed;
+			}
+			// TRICKY: If the hold is so short that it has no checkpoints, then mark it as Held if the head was stepped on.
+			if( iCheckpointsHit == 0  &&  iCheckpointsMissed == 0 )
+				bAllowScoreAsHeld = bSteppedOnHead;
+			else
+				bAllowScoreAsHeld = iCheckpointsMissed == 0;
 		}
 		else
 		{
-			bLetGoOfHoldNote = fLife == 0;
+			bAllowScoreAsHeld = fLife > 0;
 		}
 
-		if( bInitiatedNote  &&  !bLetGoOfHoldNote )
+		if( bInitiatedNote  &&  bAllowScoreAsHeld )
 		{
 			fLife = 1;
 			hns = HNS_Held;
