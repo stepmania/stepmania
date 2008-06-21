@@ -83,16 +83,12 @@ void ScreenSelect::Update( float fDelta )
 			SOUND->PlayOnceFromAnnouncer( m_sName+" IdleComment" );
 			m_timerIdleComment.GetDeltaTime();
 		}
-		// don't time out on this screen is coin mode is pay.  
-		// If we're here, then there's a credit in the machine.
-		if( GAMESTATE->GetCoinMode() != CoinMode_Pay )
+
+		if( IDLE_TIMEOUT_SECONDS > 0 && m_timerIdleTimeout.PeekDeltaTime() >= IDLE_TIMEOUT_SECONDS )
 		{
-			if( IDLE_TIMEOUT_SECONDS > 0 && m_timerIdleTimeout.PeekDeltaTime() >= IDLE_TIMEOUT_SECONDS )
-			{
-				SCREENMAN->SetNewScreen( IDLE_TIMEOUT_SCREEN );
-				m_timerIdleTimeout.GetDeltaTime();
-				return;
-			}
+			SCREENMAN->SetNewScreen( IDLE_TIMEOUT_SCREEN );
+			m_timerIdleTimeout.GetDeltaTime();
+			return;
 		}
 	}
 
