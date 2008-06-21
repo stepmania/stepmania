@@ -45,6 +45,7 @@ AutoScreenMessage( SM_AllowOptionsMenuRepeat )
 AutoScreenMessage( SM_SongChanged )
 AutoScreenMessage( SM_SortOrderChanging )
 AutoScreenMessage( SM_SortOrderChanged )
+AutoScreenMessage( SM_BackFromPlayerOptions )
 
 static RString g_sCDTitlePath;
 static bool g_bWantFallbackCdTitle;
@@ -75,6 +76,7 @@ void ScreenSelectMusic::Init()
 	SELECT_MENU_AVAILABLE.Load( m_sName, "SelectMenuAvailable" );
 	MODE_MENU_AVAILABLE.Load( m_sName, "ModeMenuAvailable" );
 	USE_OPTIONS_LIST.Load( m_sName, "UseOptionsList" );
+	USE_PLAYER_SELECT_MENU.Load( m_sName, "UsePlayerSelectMenu" );
 	TWO_PART_SELECTION.Load( m_sName, "TwoPartSelection" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
@@ -398,6 +400,14 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		m_bStepsChosen[input.pn] )
 		return;		// ignore
 
+	if( USE_PLAYER_SELECT_MENU )
+	{
+		if( input.type == IET_RELEASE  &&  input.MenuI == GAME_BUTTON_SELECT )
+		{
+			GAMESTATE->m_EditMode = EditMode_Full;
+			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
+		}
+	}
 
 	// handle options list input
 	if( USE_OPTIONS_LIST )

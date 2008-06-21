@@ -82,6 +82,7 @@ protected:
 	ThemeMetric<bool> SELECT_MENU_AVAILABLE;
 	ThemeMetric<bool> MODE_MENU_AVAILABLE;
 	ThemeMetric<bool> USE_OPTIONS_LIST;
+	ThemeMetric<bool> USE_PLAYER_SELECT_MENU;
 	ThemeMetric<bool> TWO_PART_SELECTION;
 
 	bool CanChangeSong() const { return m_SelectionState == SelectionState_SelectingSong; }
