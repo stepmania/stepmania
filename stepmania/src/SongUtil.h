@@ -96,7 +96,7 @@ namespace SongUtil
 	void SortSongPointerArrayByGroupAndTitle( vector<Song*> &vpSongsInOut );
 	void SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, ProfileSlot slot, bool bDescending );
 	void SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, const Profile* pProfile, bool bDescending );
-	void SortSongPointerArrayByMeter( vector<Song*> &vpSongsInOut, Difficulty dc );
+	void SortSongPointerArrayByStepsTypeAndMeter( vector<Song*> &vpSongsInOut, StepsType st, Difficulty dc );
 	RString GetSectionNameFromSongAndSort( const Song *pSong, SortOrder so );
 	void SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, SortOrder so );
 	void SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut );
@@ -115,6 +115,8 @@ namespace SongUtil
 	void GetPlayableSteps( const Song *pSong, vector<Steps*> &vOut );
 	bool IsStepsTypePlayable( Song *pSong, StepsType st );
 	bool IsStepsPlayable( Song *pSong, Steps *pSteps );
+
+	bool GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &st, Difficulty &dc );
 }
 
 class SongID

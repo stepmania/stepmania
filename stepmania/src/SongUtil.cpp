@@ -602,29 +602,20 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			return GradeToLocalizedString( Grade_NoData );
 		}
 	case SORT_EASY_METER:
-		{
-			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,Difficulty_Easy);
-			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
-				return ssprintf("%02d", pSteps->GetMeter() );
-			return SORT_NOT_AVAILABLE.GetValue();
-		}
 	case SORT_MEDIUM_METER:
-		{
-			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,Difficulty_Medium);
-			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
-				return ssprintf("%02d", pSteps->GetMeter() );
-			return SORT_NOT_AVAILABLE.GetValue();
-		}
 	case SORT_HARD_METER:
-		{
-			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,Difficulty_Hard);
-			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
-				return ssprintf("%02d", pSteps->GetMeter() );
-			return SORT_NOT_AVAILABLE.GetValue();
-		}
 	case SORT_CHALLENGE_METER:
+	case SORT_DOUBLE_EASY_METER:
+	case SORT_DOUBLE_MEDIUM_METER:
+	case SORT_DOUBLE_HARD_METER:
+	case SORT_DOUBLE_CHALLENGE_METER:
 		{
-			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,Difficulty_Challenge);
+			StepsType st;
+			Difficulty dc;
+			SongUtil::GetStepsTypeAndDifficultyFromSortOrder( so, st, dc );
+
+
+			Steps* pSteps = GetStepsByDifficulty(pSong,st,dc);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return SORT_NOT_AVAILABLE.GetValue();
@@ -660,13 +651,13 @@ void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, S
 	g_mapSongSortVal.clear();
 }
 
-void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &vpSongsInOut, Difficulty dc )
+void SongUtil::SortSongPointerArrayByStepsTypeAndMeter( vector<Song*> &vpSongsInOut, StepsType st, Difficulty dc )
 {
 	g_mapSongSortVal.clear();
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 	{
 		/* Ignore locked steps. */
-		const Steps* pSteps = GetClosestNotes( vpSongsInOut[i], GAMESTATE->GetCurrentStyle()->m_StepsType, dc, true );
+		const Steps* pSteps = GetClosestNotes( vpSongsInOut[i], st, dc, true );
 		RString &s = g_mapSongSortVal[vpSongsInOut[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 
@@ -908,6 +899,66 @@ bool SongUtil::IsStepsPlayable( Song *pSong, Steps *pSteps )
 	vector<Steps*> vpSteps;
 	GetPlayableSteps( pSong, vpSteps );
 	return find( vpSteps.begin(), vpSteps.end(), pSteps ) != vpSteps.end();
+}
+
+bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &stOut, Difficulty &dcOut )
+{
+	switch( so )
+	{
+	default:
+		return false;
+	case SORT_EASY_METER:
+	case SORT_MEDIUM_METER:
+	case SORT_HARD_METER:
+	case SORT_CHALLENGE_METER:
+	case SORT_DOUBLE_EASY_METER:
+	case SORT_DOUBLE_MEDIUM_METER:
+	case SORT_DOUBLE_HARD_METER:
+	case SORT_DOUBLE_CHALLENGE_METER:
+		break;	// fall through
+	}
+
+	switch( so )
+	{
+	DEFAULT_FAIL( so );
+	case SORT_EASY_METER:
+	case SORT_MEDIUM_METER:
+	case SORT_HARD_METER:
+	case SORT_CHALLENGE_METER:
+		stOut = GAMESTATE->GetCurrentStyle()->m_StepsType;
+		break;
+	case SORT_DOUBLE_EASY_METER:
+	case SORT_DOUBLE_MEDIUM_METER:
+	case SORT_DOUBLE_HARD_METER:
+	case SORT_DOUBLE_CHALLENGE_METER:
+		stOut = GAMESTATE->GetCurrentStyle()->m_StepsType;	// in case we don't find any matches below
+		vector<const Style*> vpStyles;
+		GameManager::GetStylesForGame(GAMESTATE->m_pCurGame,vpStyles);
+		FOREACH_CONST( const Style*, vpStyles, i )
+		{
+			if( (*i)->m_StyleType == StyleType_OnePlayerTwoSides )
+			{
+				stOut = (*i)->m_StepsType;
+				break;
+			}
+		}
+		break;
+	}
+
+	switch( so )
+	{
+	DEFAULT_FAIL( so );
+	case SORT_EASY_METER:			dcOut = Difficulty_Easy;		break;
+	case SORT_MEDIUM_METER:			dcOut = Difficulty_Medium;		break;
+	case SORT_HARD_METER:			dcOut = Difficulty_Hard;		break;
+	case SORT_CHALLENGE_METER:		dcOut = Difficulty_Challenge;	break;
+	case SORT_DOUBLE_EASY_METER:		dcOut = Difficulty_Easy;		break;
+	case SORT_DOUBLE_MEDIUM_METER:		dcOut = Difficulty_Medium;		break;
+	case SORT_DOUBLE_HARD_METER:		dcOut = Difficulty_Hard;		break;
+	case SORT_DOUBLE_CHALLENGE_METER:	dcOut = Difficulty_Challenge;	break;
+	}
+
+	return true;
 }
 
 //////////////////////////////////

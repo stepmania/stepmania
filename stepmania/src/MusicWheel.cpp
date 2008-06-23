@@ -436,7 +436,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				// obey order specified by the preferred sort list
 				break;
 			case SORT_ROULETTE:
-				SongUtil::SortSongPointerArrayByMeter( arraySongs, Difficulty_Easy );
+				SongUtil::SortSongPointerArrayByStepsTypeAndMeter( arraySongs, GAMESTATE->m_pCurStyle->m_StepsType, Difficulty_Easy );
 				if( (bool)PREFSMAN->m_bPreferredSortUsesGroups )
 					stable_sort( arraySongs.begin(), arraySongs.end(), SongUtil::CompareSongPointersByGroup );
 				bUseSections = false;
@@ -469,16 +469,17 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				SongUtil::SortSongPointerArrayByLength( arraySongs );
 				break;
 			case SORT_EASY_METER:
-				SongUtil::SortSongPointerArrayByMeter( arraySongs, Difficulty_Easy );
-				break;
 			case SORT_MEDIUM_METER:
-				SongUtil::SortSongPointerArrayByMeter( arraySongs, Difficulty_Medium );
-				break;
 			case SORT_HARD_METER:
-				SongUtil::SortSongPointerArrayByMeter( arraySongs, Difficulty_Hard );
-				break;
 			case SORT_CHALLENGE_METER:
-				SongUtil::SortSongPointerArrayByMeter( arraySongs, Difficulty_Challenge );
+			case SORT_DOUBLE_EASY_METER:
+			case SORT_DOUBLE_MEDIUM_METER:
+			case SORT_DOUBLE_HARD_METER:
+			case SORT_DOUBLE_CHALLENGE_METER:
+				StepsType st;
+				Difficulty dc;
+				SongUtil::GetStepsTypeAndDifficultyFromSortOrder( so, st, dc );
+				SongUtil::SortSongPointerArrayByStepsTypeAndMeter( arraySongs, st, dc );
 				break;
 			default:
 				ASSERT(0);	// unhandled SortOrder
@@ -752,16 +753,11 @@ void MusicWheel::UpdateSwitch()
 			//
 			// Change difficulty for sorts by meter - XXX: do this with GameCommand?
 			//
-			Difficulty dc = Difficulty_Invalid;
-			switch( GAMESTATE->m_SortOrder )
+			StepsType st;
+			Difficulty dc;
+			if( SongUtil::GetStepsTypeAndDifficultyFromSortOrder( GAMESTATE->m_SortOrder, st, dc ) )
 			{
-			case SORT_EASY_METER:		dc = Difficulty_Easy;		break;
-			case SORT_MEDIUM_METER:		dc = Difficulty_Medium;		break;
-			case SORT_HARD_METER:		dc = Difficulty_Hard;		break;
-			case SORT_CHALLENGE_METER:	dc = Difficulty_Challenge;	break;
-			}
-			if( dc != Difficulty_Invalid )
-			{
+				ASSERT( dc != Difficulty_Invalid );
 				FOREACH_PlayerNumber( p )
 					if( GAMESTATE->IsPlayerEnabled(p) )
 						GAMESTATE->m_PreferredDifficulty[p].Set( dc );
