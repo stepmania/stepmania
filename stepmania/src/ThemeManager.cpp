@@ -288,7 +288,14 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		IniFile iniMetrics;
 		IniFile iniStrings;
 		iniMetrics.ReadFile( GetMetricsIniPath(sThemeName) );
-			iniStrings.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
+		// Load optional language inis (probably mounted by a package) first so that they can be overridden by the current theme.
+		{
+			vector<RString> vs;
+			GetOptionalLanguageIniPaths(vs,sThemeName,sLanguage);
+			FOREACH_CONST(RString,vs,s)
+				iniStrings.ReadFile( *s );
+		}
+		iniStrings.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
 		if( sLanguage.CompareNoCase(SpecialFiles::BASE_LANGUAGE) )
 			iniStrings.ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
 
@@ -1015,21 +1022,32 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RStri
 	vector<RString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
 	
-	// strip out metrics.ini
-	for( int i=as.size()-1; i>=0; i-- )
+	FOREACH_CONST( RString, as, s )
 	{
-		if( as[i].CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
-			as.erase( as.begin()+i );
-		// strip ".ini"
-		as[i] = as[i].Left( as[i].size()-4 );
-	}
+		// ignore metrics.ini
+		if( s->CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
+			continue;
 
-	asLanguagesOut.insert( asLanguagesOut.end(), as.begin(), as.end() );
+		// Ignore filenames with a space.  These are optional language inis that probably came from a mounted package.
+		if( s->find(" ") != RString::npos )
+			continue;
+
+		// strip ".ini"
+		RString s2 = s->Left( s->size()-4 );
+
+		asLanguagesOut.push_back( s2 );
+	}
 }
 
 RString ThemeManager::GetLanguageIniPath( const RString &sThemeName, const RString &sLanguage )
 {
 	return GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR + sLanguage + ".ini";
+}
+
+void ThemeManager::GetOptionalLanguageIniPaths( vector<RString> &vsPathsOut, const RString &sThemeName, const RString &sLanguage )
+{
+	// optional ini names look like: "en PackageName.ini"
+	GetDirListing( GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR + sLanguage + " *.ini", vsPathsOut, false, true );
 }
 
 void ThemeManager::GetOptionNames( vector<RString>& AddTo )

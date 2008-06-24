@@ -119,6 +119,7 @@ protected:
 	static RString GetMetricsIniPath( const RString &sThemeName );
 	static void GetLanguagesForTheme( const RString &sThemeName, vector<RString>& asLanguagesOut );
 	static RString GetLanguageIniPath( const RString &sThemeName, const RString &sLanguage );
+	void GetOptionalLanguageIniPaths( vector<RString> &vsPathsOut, const RString &sThemeName, const RString &sLanguage );
 	RString GetDefaultLanguage();
 
 	RString m_sCurThemeName;
