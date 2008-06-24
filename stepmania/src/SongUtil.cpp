@@ -938,6 +938,10 @@ bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &
 		{
 			if( (*i)->m_StyleType == StyleType_OnePlayerTwoSides )
 			{
+				// Ugly hack to ignore pump's half-double.
+				bool bContainsHalf = ((RString)(*i)->m_szName).find("half") != RString::npos;
+				if( bContainsHalf )
+					continue;
 				stOut = (*i)->m_StepsType;
 				break;
 			}
