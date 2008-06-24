@@ -297,6 +297,14 @@ void MusicWheelItem::RefreshGrades()
 		else
 			continue;
 
+		StepsType st;
+		if( GAMESTATE->m_pCurSteps[p] )
+			st = GAMESTATE->m_pCurSteps[p]->m_StepsType;
+		else if( GAMESTATE->m_pCurTrail[p] )
+			st = GAMESTATE->m_pCurTrail[p]->m_StepsType;
+		else
+			st = GAMESTATE->m_pCurStyle->m_StepsType;
+
 		m_pGradeDisplay[p]->SetVisible( true );
 
 
@@ -307,13 +315,13 @@ void MusicWheelItem::RefreshGrades()
 		{
 			if( pWID->m_pSong )
 			{
-				const Steps* pSteps = SongUtil::GetStepsByDifficulty( pWID->m_pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
+				const Steps* pSteps = SongUtil::GetStepsByDifficulty( pWID->m_pSong, st, dc );
 				if( pSteps != NULL )
 					pHSL = &pProfile->GetStepsHighScoreList(pWID->m_pSong, pSteps);
 			}
 			else if( pWID->m_pCourse )
 			{
-				const Trail *pTrail = pWID->m_pCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
+				const Trail *pTrail = pWID->m_pCourse->GetTrail( st, dc );
 				if( pTrail != NULL )
 					pHSL = &pProfile->GetCourseHighScoreList( pWID->m_pCourse, pTrail );
 			}
