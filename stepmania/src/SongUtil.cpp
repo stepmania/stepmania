@@ -824,7 +824,7 @@ void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vec
 	}
 }
 
-static void GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
+void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 {
 	vector<const Style*> vpPossibleStyles;
 	if( CommonMetrics::AUTO_SET_STYLE )

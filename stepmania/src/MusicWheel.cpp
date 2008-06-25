@@ -696,7 +696,11 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 		if( WID.m_pSong != NULL )
 		{
 			WID.m_Flags.bHasBeginnerOr1Meter = WID.m_pSong->IsEasy( GAMESTATE->GetCurrentStyle()->m_StepsType ) && SHOW_EASY_FLAG;
-			WID.m_Flags.bEdits = WID.m_pSong->HasEdits( GAMESTATE->GetCurrentStyle()->m_StepsType );
+			WID.m_Flags.bEdits = false;
+			set<StepsType> vStepsType;
+			SongUtil::GetPlayableStepsTypes( WID.m_pSong, vStepsType );
+			FOREACHS( StepsType, vStepsType, st )
+				WID.m_Flags.bEdits |= WID.m_pSong->HasEdits( *st );
 			WID.m_Flags.iStagesForSong = GameState::GetNumStagesMultiplierForSong( WID.m_pSong );
 		}
 		else if( WID.m_pCourse != NULL )
