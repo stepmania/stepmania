@@ -1266,10 +1266,13 @@ void ScreenGameplay::LoadLights()
 	vector<RString> asDifficulties;
 	split( sDifficulty, ",", asDifficulties );
 
+	// Always use the steps from the primary steps type so that lights are consistent over single and double styles.
+	StepsType st = GAMEMAN->GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;
+
 	Difficulty d1 = Difficulty_Invalid;
 	if( asDifficulties.size() > 0 )
 		d1 = StringToDifficulty( asDifficulties[0] );
-	pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, GAMESTATE->GetCurrentStyle()->m_StepsType, d1 );
+	pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, st, d1 );
 
 	// If we can't find anything at all, stop.
 	if( pSteps == NULL )
@@ -1281,7 +1284,7 @@ void ScreenGameplay::LoadLights()
 	if( asDifficulties.size() > 1 )
 	{
 		Difficulty d2 = StringToDifficulty( asDifficulties[1] );
-		const Steps *pSteps2 = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, GAMESTATE->GetCurrentStyle()->m_StepsType, d2 );
+		const Steps *pSteps2 = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, st, d2 );
 		if( pSteps != NULL && pSteps2 != NULL && pSteps != pSteps2 )
 		{
 			NoteData TapNoteData2;
