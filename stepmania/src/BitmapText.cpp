@@ -331,22 +331,27 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 		int end = start;
 		while( end < iEndGlyph  &&  m_vpFontPageTextures[end] == m_vpFontPageTextures[start] )
 			end++;
-		DISPLAY->ClearAllTextures();
-		if( bUseStrokeTexture  &&  m_vpFontPageTextures[start]->m_pTextureStroke )
-			DISPLAY->SetTexture( TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureStroke->GetTexHandle() );
-		else
-			DISPLAY->SetTexture( TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureMain->GetTexHandle() );
-		
-		/* Don't bother setting texture render states for text.  We never go outside of 0..1. */
-		/* We should call SetTextureRenderStates because it does more than just setting 
-		 * the texture wrapping state. If setting the wrapping state is found to be slow, 
-		 * there should probably be a "don't care" texture wrapping mode set in Actor. -Chris */
-		Actor::SetTextureRenderStates();
-		
-		RageSpriteVertex &start_vertex = m_aVertices[start*4];
-		int iNumVertsToDraw = (end-start)*4;
-		DISPLAY->DrawQuads( &start_vertex, iNumVertsToDraw );
-		
+
+		bool bHaveATexture = !bUseStrokeTexture  ||  (bUseStrokeTexture && m_vpFontPageTextures[start]->m_pTextureStroke);
+		if( bHaveATexture )
+		{
+			DISPLAY->ClearAllTextures();
+			if( bUseStrokeTexture )
+				DISPLAY->SetTexture( TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureStroke->GetTexHandle() );
+			else
+				DISPLAY->SetTexture( TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureMain->GetTexHandle() );
+
+			/* Don't bother setting texture render states for text.  We never go outside of 0..1. */
+			/* We should call SetTextureRenderStates because it does more than just setting 
+			 * the texture wrapping state. If setting the wrapping state is found to be slow, 
+			 * there should probably be a "don't care" texture wrapping mode set in Actor. -Chris */
+			Actor::SetTextureRenderStates();
+			
+			RageSpriteVertex &start_vertex = m_aVertices[start*4];
+			int iNumVertsToDraw = (end-start)*4;
+			DISPLAY->DrawQuads( &start_vertex, iNumVertsToDraw );
+		}
+
 		start = end;
 	}
 }
@@ -533,8 +538,7 @@ bool BitmapText::EarlyAbortDraw() const
 }
 
 #define DRAW_STROKE \
-bool bUsingStrokeTexture = !!m_vpFontPageTextures[0]->m_pTextureStroke; \
-if( bUsingStrokeTexture  &&  m_StrokeColor.a > 0 ) \
+if( m_StrokeColor.a > 0 ) \
 { \
 	RageColor c = m_StrokeColor; \
 	c.a *= m_pTempState->diffuse[0].a; \
