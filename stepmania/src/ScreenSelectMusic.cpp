@@ -535,7 +535,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	if( m_SelectionState == SelectionState_SelectingSteps  &&
 		input.type == IET_FIRST_PRESS  &&
-		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) )
+		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) &&
+		!m_bStepsSelected[input.pn] )
 	{
 		if( input.MenuI == m_GameButtonPreviousSong )
 		{
