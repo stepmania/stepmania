@@ -613,7 +613,9 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 		const Style *pStyle = m_pCurStyle;
 		if( pStyle == NULL )
 		{
-			const Steps *pSteps = m_pCurSteps[m_MasterPlayerNumber];
+			const Steps *pSteps = NULL;
+			if( m_MasterPlayerNumber != PlayerNumber_Invalid )
+				pSteps = m_pCurSteps[m_MasterPlayerNumber];
 			if( pSteps )
 			{
 				/* If a style isn't set, use the style of the selected steps. */
