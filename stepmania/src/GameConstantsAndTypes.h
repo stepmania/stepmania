@@ -146,7 +146,7 @@ const RString& SortOrderToLocalizedString( SortOrder so );
 SortOrder StringToSortOrder( const RString& str );
 LuaDeclareType( SortOrder );
 
-inline bool IsSongSort( SortOrder so ) { return so >= SORT_PREFERRED && so <= SORT_CHALLENGE_METER; }
+inline bool IsSongSort( SortOrder so ) { return so >= SORT_PREFERRED && so <= SORT_DOUBLE_CHALLENGE_METER; }
 
 //
 // Scoring stuff
