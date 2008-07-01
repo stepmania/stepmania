@@ -32,7 +32,7 @@ void ScreenTestLights::BeginScreen()
 
 void ScreenTestLights::EndScreen()
 {
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU_START_AND_DIRECTIONS );
 	ScreenWithMenuElements::EndScreen();
 }
 

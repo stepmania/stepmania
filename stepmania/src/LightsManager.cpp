@@ -37,7 +37,8 @@ StringToX( CabinetLight );
 static const char *LightsModeNames[] = {
 	"Attract",
 	"Joining",
-	"Menu",
+	"MenuStartOnly",
+	"MenuStartAndDirections",
 	"Demonstration",
 	"Gameplay",
 	"Stage",
@@ -224,7 +225,8 @@ void LightsManager::Update( float fDeltaTime )
 			m_LightsState.m_bCabinetLights[LIGHT_BASS_RIGHT]		= bOn;
 		}
 		break;
-	case LIGHTSMODE_MENU:
+	case LIGHTSMODE_MENU_START_ONLY:
+	case LIGHTSMODE_MENU_START_AND_DIRECTIONS:
 	case LIGHTSMODE_JOINING:
 		{
 			FOREACH_CabinetLight( cl )
@@ -248,13 +250,42 @@ void LightsManager::Update( float fDeltaTime )
 			default:	ASSERT(0);
 			}
 
-			/* Light the button lights for active players. */
-			FOREACH_PlayerNumber( pn )
+			/* Light the menu buttons. */
+			switch( m_LightsMode )
 			{
-				if( GAMESTATE->m_bSideIsJoined[pn] )
+			DEFAULT_FAIL(m_LightsMode);
+			case LIGHTSMODE_MENU_START_ONLY:
+			case LIGHTSMODE_MENU_START_AND_DIRECTIONS:
 				{
-					m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = true;
+					float fSec = RageTimer::GetTimeSinceStartFast();
+					float fFractionSec = fSec - truncf(fSec);
+					bool bOn = fFractionSec < 0.5f;
+					FOREACH_PlayerNumber( pn )
+					{
+						if( GAMESTATE->m_bSideIsJoined[pn] )
+						{
+							m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = bOn;
+							switch( m_LightsMode )
+							{
+							DEFAULT_FAIL(m_LightsMode);
+							case LIGHTSMODE_MENU_START_ONLY:
+								break;
+							case LIGHTSMODE_MENU_START_AND_DIRECTIONS:
+								m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENULEFT] = bOn;
+								m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENURIGHT] = bOn;
+								break;
+							}
+						}
+					}					
 				}
+				break;
+			case LIGHTSMODE_JOINING:
+				FOREACH_PlayerNumber( pn )
+				{
+					if( GAMESTATE->m_bSideIsJoined[pn] )
+						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_START] = true;
+				}
+				break;
 			}
 		}
 		break;
@@ -315,7 +346,8 @@ void LightsManager::Update( float fDeltaTime )
 			}
 		}
 		break;
-	case LIGHTSMODE_MENU:
+	case LIGHTSMODE_MENU_START_ONLY:
+	case LIGHTSMODE_MENU_START_AND_DIRECTIONS:
 	case LIGHTSMODE_GAMEPLAY:
 		{
 			if( m_LightsMode == LIGHTSMODE_GAMEPLAY  &&  g_bBlinkGameplayButtonLightsOnNote )
