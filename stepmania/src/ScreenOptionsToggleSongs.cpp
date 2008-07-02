@@ -29,6 +29,7 @@ void ScreenOptionsToggleSongs::BeginScreen()
 		def.m_sName = pSong->GetTranslitFullTitle();
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Toggle Song";
+		def.m_bOneChoiceForAllPlayers = true;
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( "On" );
 		def.m_vsChoices.push_back( "Off" );
