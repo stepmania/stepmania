@@ -80,6 +80,7 @@ public:
 	const vector<Song*> &GetSongs( const RString &sGroupName = GROUP_ALL ) const;
 	void GetPopularSongs( vector<Song*> &AddTo, const RString &sGroupName ) const;
 	void GetPreferredSortSongs( vector<Song*> &AddTo ) const;
+	RString SongToPreferredSortSectionName( const Song *pSong ) const;
 	const vector<Song*> &GetPopularSongs() const { return m_pPopularSongs; }
 	const vector<Course*> &GetPopularCourses( CourseType ct ) const { return m_pPopularCourses[ct]; }
 	Song *FindSong( RString sPath ) const;
@@ -137,12 +138,17 @@ protected:
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	vector<Song*>		m_pPopularSongs;
 	vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong
-	typedef vector<Song*> SongPointerVector;
-	vector<SongPointerVector> m_vPreferredSongSort;
+	struct PreferredSortSection
+	{
+		RString sName;
+		vector<Song*> vpSongs;
+	};
+	vector<PreferredSortSection> m_vPreferredSongSort;
 	vector<RString>		m_sSongGroupNames;
 	vector<RString>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
 	
 	struct Comp { bool operator()(const RString& s, const RString &t) const { return CompareRStringsAsc(s,t); } };
+	typedef vector<Song*> SongPointerVector;
 	map<RString,SongPointerVector,Comp> m_mapSongGroupIndex;
 
 	vector<Course*>		m_pCourses;

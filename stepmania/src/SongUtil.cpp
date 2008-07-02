@@ -547,7 +547,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 	switch( so )
 	{
 	case SORT_PREFERRED:
-		return RString();
+		return SONGMAN->SongToPreferredSortSectionName( pSong );
 	case SORT_GROUP:
 		// guaranteed not empty	
 		return pSong->m_sGroupName;

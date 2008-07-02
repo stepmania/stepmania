@@ -512,8 +512,16 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				 * Grade and BPM sorts in the wrong order, and they're already correct,
 				 * so don't re-sort for them. */
 				/* We're using sections, so use the section name as the top-level sort. */
-				if( so != SORT_TOP_GRADES && so != SORT_BPM )
+				switch( so )
+				{
+				case SORT_PREFERRED:
+				case SORT_TOP_GRADES:
+				case SORT_BPM:
+					break;	// don't sort by section
+				default:
 					SongUtil::SortSongPointerArrayBySectionName(arraySongs, so);
+					break;
+				}
 			}
 
 			// make WheelItemDatas with sections

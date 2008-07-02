@@ -400,9 +400,9 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 
 	if( USE_PREFERRED_SORT_COLOR )
 	{
-		FOREACH_CONST( SongPointerVector, m_vPreferredSongSort, v )
+		FOREACH_CONST( PreferredSortSection, m_vPreferredSongSort, v )
 		{
-			FOREACH_CONST( Song*, *v, s )
+			FOREACH_CONST( Song*, v->vpSongs, s )
 			{
 				if( *s == pSong )
 				{
@@ -557,8 +557,21 @@ void SongManager::GetPreferredSortSongs( vector<Song*> &AddTo ) const
 		return;
 	}
 
-	FOREACH_CONST( SongPointerVector, m_vPreferredSongSort, v )
-		AddTo.insert( AddTo.end(), v->begin(), v->end() );
+	FOREACH_CONST( PreferredSortSection, m_vPreferredSongSort, v )
+		AddTo.insert( AddTo.end(), v->vpSongs.begin(), v->vpSongs.end() );
+}
+
+RString SongManager::SongToPreferredSortSectionName( const Song *pSong ) const
+{
+	FOREACH_CONST( PreferredSortSection, m_vPreferredSongSort, v )
+	{
+		FOREACH_CONST( Song*, v->vpSongs, s )
+		{
+			if( *s == pSong )
+				return v->sName;
+		}
+	}
+	return RString();
 }
 
 void SongManager::GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen ) const
@@ -1242,9 +1255,9 @@ Song* SongManager::GetSongFromDir( RString sDir ) const
 
 	sDir.Replace( '\\', '/' );
 
-	for( unsigned int i=0; i<m_pSongs.size(); i++ )
-		if( sDir.CompareNoCase(m_pSongs[i]->GetSongDir()) == 0 )
-			return m_pSongs[i];
+	FOREACH_CONST( Song*, m_pSongs, s )
+		if( sDir.EqualsNoCase((*s)->GetSongDir()) )
+			return *s;
 
 	return NULL;
 }
@@ -1407,61 +1420,68 @@ void SongManager::UpdatePreferredSort()
 		if( asLines.empty() )
 			return;
 
-		vector<Song*> vpSongs;
+		PreferredSortSection section;
+		map<Song *, float> mapSongToPri;
 
 		FOREACH( RString, asLines, s )
 		{
 			RString sLine = *s;
-			bool bSectionDivider = sLine.find("---") == 0;
+
+			bool bSectionDivider = BeginsWith(sLine, "---");
 			if( bSectionDivider )
 			{
-				if( !vpSongs.empty() )
+				if( !section.vpSongs.empty() )
 				{
-					m_vPreferredSongSort.push_back( vpSongs );
-					vpSongs.clear();
+					m_vPreferredSongSort.push_back( section );
+					section = PreferredSortSection();
 				}
-				continue;
+
+				section.sName = sLine.Right( sLine.length() - RString("---").length() );
+				TrimLeft( section.sName );
+				TrimRight( section.sName );
 			}
-
-			Song *pSong = FindSong( sLine );
-			if( pSong == NULL )
-				continue;
-			if( UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
-				continue;
-
-			vpSongs.push_back( pSong );
+			else
+			{
+				Song *pSong = FindSong( sLine );
+				if( pSong == NULL )
+					continue;
+				if( UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
+					continue;
+				section.vpSongs.push_back( pSong );
+			}
 		}
 
-		if( !vpSongs.empty() )
+		if( !section.vpSongs.empty() )
 		{
-			m_vPreferredSongSort.push_back( vpSongs );
-			vpSongs.clear();
+			m_vPreferredSongSort.push_back( section );
+			section = PreferredSortSection();
 		}
 
 		if( MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT.GetValue() )
 		{
 			// move all unlock songs to a group at the bottom
-			vector<Song*> vpUnlockSongs;
+			PreferredSortSection section;
+			section.sName = "Unlocks";
 			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
 			{
 				if( ue->m_Type == UnlockRewardType_Song )
-					if( ue->m_Song.ToSong() )
-						vpUnlockSongs.push_back( ue->m_Song.ToSong() );
+					if( ue->m_pSong )
+						section.vpSongs.push_back( ue->m_pSong );
 			}
 
-			FOREACH( SongPointerVector, m_vPreferredSongSort, v )
+			FOREACH( PreferredSortSection, m_vPreferredSongSort, v )
 			{
-				for( int i=v->size()-1; i>=0; i-- )
+				for( int i=v->vpSongs.size()-1; i>=0; i-- )
 				{
-					Song *pSong = (*v)[i];
-					if( find(vpUnlockSongs.begin(),vpUnlockSongs.end(),pSong) != vpUnlockSongs.end() )
+					Song *pSong = v->vpSongs[i];
+					if( find(section.vpSongs.begin(),section.vpSongs.end(),pSong) != section.vpSongs.end() )
 					{
-						v->erase( v->begin()+i );
+						v->vpSongs.erase( v->vpSongs.begin()+i );
 					}
 				}
 			}
 
-			m_vPreferredSongSort.push_back( vpUnlockSongs );
+			m_vPreferredSongSort.push_back( section );
 		}
 
 		// prune empty groups
@@ -1470,7 +1490,7 @@ void SongManager::UpdatePreferredSort()
 				m_vPreferredSongSort.erase( m_vPreferredSongSort.begin()+i );
 
 		FOREACH( SongPointerVector, m_vPreferredSongSort, i )
-			FOREACH( Song*, *i, j )
+			FOREACH( Song*, i->vpSongs, j )
 				ASSERT( *j );
 	}
 
@@ -1487,7 +1507,7 @@ void SongManager::UpdatePreferredSort()
 		FOREACH( RString, asLines, s )
 		{
 			RString sLine = *s;
-			bool bSectionDivider = sLine.find("---") == 0;
+			bool bSectionDivider = BeginsWith( sLine, "---" );
 			if( bSectionDivider )
 			{
 				if( !vpCourses.empty() )
