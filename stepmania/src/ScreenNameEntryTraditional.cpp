@@ -99,8 +99,6 @@ void ScreenNameEntryTraditional::BeginScreen()
 			m_sSelection[pn] = RStringToWstring( pProfile->m_sLastUsedHighScoreName );
 			if( (int) m_sSelection[pn].size() > MAX_RANKING_NAME_LENGTH )
 				m_sSelection[pn].erase( MAX_RANKING_NAME_LENGTH );
-			if( m_sSelection[pn].size() )
-				SelectChar( pn, "ENTER" );
 		}
 
 		UpdateSelectionText( pn );
@@ -294,6 +292,13 @@ public:
 		return 1;
 	}
 
+	static int GetSelection( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		LuaHelpers::Push( L, WStringToRString(p->m_sSelection[pn]) );
+		return 1;
+	}
+
 	LunaScreenNameEntryTraditional()
 	{
 		ADD_METHOD( EnterKey );
@@ -303,6 +308,7 @@ public:
 		ADD_METHOD( GetAnyEntering );
 		ADD_METHOD( GetFinalized );
 		ADD_METHOD( GetAnyStillEntering );
+		ADD_METHOD( GetSelection );
 	}
 };
 
