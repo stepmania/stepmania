@@ -371,7 +371,7 @@ void wchar_to_utf8( wchar_t ch, string &out )
 
 #include <iomanip>
 
-void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension, bool bSaveMetrics, bool bSaveBitmaps )
+void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension, bool bSaveMetrics, bool bSaveBitmaps, bool bExportStrokeTemplates )
 {
 	if( m_sError != "" )
 		return;
@@ -447,18 +447,35 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 
 			GrayScaleToAlpha( &surf );
 
-			CString sFile;
-			sFile.Format( "%s [%s] %ix%i%s.png",
-				sBasePath.GetString(),
-				m_PagesToGenerate[i].name.GetString(),
-				m_apPages[i]->m_iNumFramesX,
-				m_apPages[i]->m_iNumFramesY,
-				sBitmapAppendBeforeExtension.GetString() );
+			for( int j=0; j<2; j++ )
+			{
+				CString sPageName = m_PagesToGenerate[i].name.GetString();
+				switch( j )
+				{
+				case 0:
+					break;
+				case 1:
+					if( !bExportStrokeTemplates )
+						continue;
+					sPageName += "-stroke";
+					break;
+				default:
+					ASSERT(0);
+				}
 
-			FILE *f = fopen( sFile, "w+b" );
-			char szErrorbuf[1024];
-			SavePNG( f, szErrorbuf, &surf );
-			fclose( f );
+				CString sFile;
+				sFile.Format( "%s [%s] %ix%i%s.png",
+					sBasePath.GetString(),
+					sPageName.GetString(),
+					m_apPages[i]->m_iNumFramesX,
+					m_apPages[i]->m_iNumFramesY,
+					sBitmapAppendBeforeExtension.GetString() );
+
+				FILE *f = fopen( sFile, "w+b" );
+				char szErrorbuf[1024];
+				SavePNG( f, szErrorbuf, &surf );
+				fclose( f );
+			}
 		}
 	}
 }

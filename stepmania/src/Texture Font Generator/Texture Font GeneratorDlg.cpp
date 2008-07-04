@@ -172,22 +172,6 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 	g_pTextureFont->m_PagesToGenerate.push_back( desc );
 
 
-	//
-	// Save duplicate imnages of each page with "-stroke" appended to the page name.
-	//
-	bool bExportStrokeTemplates = !!( pMenu->GetMenuState(ID_OPTIONS_EXPORTSTROKETEMPLATES, 0) & MF_CHECKED );
-	if( bExportStrokeTemplates )
-	{
-		int iNumPages = (int)g_pTextureFont->m_PagesToGenerate.size();
-		for( int i=0; i<iNumPages; i++ )
-		{
-			FontPageDescription desc = g_pTextureFont->m_PagesToGenerate[i];
-			desc.name += "-stroke";
-			g_pTextureFont->m_PagesToGenerate.push_back( desc );
-		}
-	}
-
-
 	/* Go: */
 	g_pTextureFont->FormatFontPages();
 
@@ -609,12 +593,13 @@ void CTextureFontGeneratorDlg::OnFileSave()
 */
 
 	CMenu *pMenu = GetMenu();
+	bool bExportStrokeTemplates = !!( pMenu->GetMenuState(ID_OPTIONS_EXPORTSTROKETEMPLATES, 0) & MF_CHECKED );
 	bool bDoubleRes = !!( pMenu->GetMenuState(ID_OPTIONS_DOUBLERES, 0) & MF_CHECKED );
 	if( bDoubleRes )
 	{
-		g_pTextureFont->Save( szFile, "", true, false );	// save metrics
+		g_pTextureFont->Save( szFile, "", true, false, bExportStrokeTemplates );	// save metrics
 		UpdateFont( true );	// generate DoubleRes bitmaps
-		g_pTextureFont->Save( szFile, " (doubleres)", false, true );	// save bitmaps
+		g_pTextureFont->Save( szFile, " (doubleres)", false, true, bExportStrokeTemplates );	// save bitmaps
 		// reset to normal, non-DoubleRes font
 		m_bUpdateFontNeeded = true;
 		Invalidate( FALSE );
@@ -622,7 +607,7 @@ void CTextureFontGeneratorDlg::OnFileSave()
 	}
 	else	// normal res
 	{
-		g_pTextureFont->Save( szFile, "", true, true );	// save metrics and bitmaps
+		g_pTextureFont->Save( szFile, "", true, true, bExportStrokeTemplates );	// save metrics and bitmaps
 	}
 }
 
