@@ -70,6 +70,7 @@ public:
 	CSpinButtonCtrl m_SpinBaseline;
 	CStatic m_FontType;
 	afx_msg void OnOptionsDoubleres();
+	afx_msg void OnOptionsExportstroketemplates();
 };
 
 /*

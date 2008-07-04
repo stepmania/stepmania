@@ -63,6 +63,7 @@ BEGIN_MESSAGE_MAP(CTextureFontGeneratorDlg, CDialog)
 	ON_COMMAND(ID_ACCELERATOR_ITALIC, OnStyleItalic)
 	ON_COMMAND(ID_ACCELERATOR_BOLD, OnStyleBold)
 	ON_COMMAND(ID_OPTIONS_DOUBLERES, &CTextureFontGeneratorDlg::OnOptionsDoubleres)
+	ON_COMMAND(ID_OPTIONS_EXPORTSTROKETEMPLATES, &CTextureFontGeneratorDlg::OnOptionsExportstroketemplates)
 END_MESSAGE_MAP()
 
 
@@ -158,7 +159,6 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 		if( wc != 0xFFFF )
 			desc.chars.push_back(wc);
 	}
-
 	g_pTextureFont->m_PagesToGenerate.push_back( desc );
 
 	desc.name = "numbers";
@@ -169,8 +169,24 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 		if( wc != 0xFFFF )
 			desc.chars.push_back(wc);
 	}
-
 	g_pTextureFont->m_PagesToGenerate.push_back( desc );
+
+
+	//
+	// Save duplicate imnages of each page with "-stroke" appended to the page name.
+	//
+	bool bExportStrokeTemplates = !!( pMenu->GetMenuState(ID_OPTIONS_EXPORTSTROKETEMPLATES, 0) & MF_CHECKED );
+	if( bExportStrokeTemplates )
+	{
+		int iNumPages = (int)g_pTextureFont->m_PagesToGenerate.size();
+		for( int i=0; i<iNumPages; i++ )
+		{
+			FontPageDescription desc = g_pTextureFont->m_PagesToGenerate[i];
+			desc.name += "-stroke";
+			g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		}
+	}
+
 
 	/* Go: */
 	g_pTextureFont->FormatFontPages();
@@ -512,6 +528,14 @@ void CTextureFontGeneratorDlg::OnOptionsDoubleres()
 	Invalidate( FALSE );
 }
 
+void CTextureFontGeneratorDlg::OnOptionsExportstroketemplates()
+{
+	CMenu *pMenu = GetMenu();
+	int Checked = pMenu->GetMenuState(ID_OPTIONS_EXPORTSTROKETEMPLATES, 0) & MF_CHECKED;
+	Checked ^= MF_CHECKED;
+	pMenu->CheckMenuItem( ID_OPTIONS_EXPORTSTROKETEMPLATES, Checked );
+}
+
 void CTextureFontGeneratorDlg::OnDeltaposSpinTop(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
@@ -585,7 +609,8 @@ void CTextureFontGeneratorDlg::OnFileSave()
 */
 
 	CMenu *pMenu = GetMenu();
-	if( !!( pMenu->GetMenuState(ID_OPTIONS_DOUBLERES, 0) & MF_CHECKED ) )		// DoubleRes checked?
+	bool bDoubleRes = !!( pMenu->GetMenuState(ID_OPTIONS_DOUBLERES, 0) & MF_CHECKED );
+	if( bDoubleRes )
 	{
 		g_pTextureFont->Save( szFile, "", true, false );	// save metrics
 		UpdateFont( true );	// generate DoubleRes bitmaps

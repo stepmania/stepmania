@@ -171,6 +171,7 @@ BEGIN
     POPUP "Options"
     BEGIN
         MENUITEM "Double Resolution",           ID_OPTIONS_DOUBLERES
+        MENUITEM "Export Stroke Templates",     ID_OPTIONS_EXPORTSTROKETEMPLATES
     END
 END
 
