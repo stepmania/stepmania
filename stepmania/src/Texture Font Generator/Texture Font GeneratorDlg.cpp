@@ -64,6 +64,7 @@ BEGIN_MESSAGE_MAP(CTextureFontGeneratorDlg, CDialog)
 	ON_COMMAND(ID_ACCELERATOR_BOLD, OnStyleBold)
 	ON_COMMAND(ID_OPTIONS_DOUBLERES, &CTextureFontGeneratorDlg::OnOptionsDoubleres)
 	ON_COMMAND(ID_OPTIONS_EXPORTSTROKETEMPLATES, &CTextureFontGeneratorDlg::OnOptionsExportstroketemplates)
+	ON_COMMAND(ID_OPTIONS_NUMBERSONLY, &CTextureFontGeneratorDlg::OnOptionsNumbersonly)
 END_MESSAGE_MAP()
 
 
@@ -142,35 +143,42 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 
 	g_pTextureFont->m_PagesToGenerate.clear();
 	FontPageDescription desc;
-	desc.name = "main";
-	for( int i = 0; map_cp1252[i]; ++i )
-	{
-		wchar_t wc = map_cp1252[i];
-		if( wc != 0xFFFF )
-			desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back( desc );
 
-	desc.name = "alt";
-	desc.chars.clear();
-	for( int i = 0; map_iso_8859_2[i]; ++i )
-	{
-		wchar_t wc = map_iso_8859_2[i];
-		if( wc != 0xFFFF )
-			desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back( desc );
+	bool bNumbersOnly = !!( pMenu->GetMenuState(ID_OPTIONS_NUMBERSONLY, 0) & MF_CHECKED );
 
-	desc.name = "numbers";
-	desc.chars.clear();
-	for( int i = 0; map_numbers[i]; ++i )
+	if( !bNumbersOnly )
 	{
-		wchar_t wc = map_numbers[i];
-		if( wc != 0xFFFF )
-			desc.chars.push_back(wc);
-	}
-	g_pTextureFont->m_PagesToGenerate.push_back( desc );
+		desc.name = "main";
+		for( int i = 0; map_cp1252[i]; ++i )
+		{
+			wchar_t wc = map_cp1252[i];
+			if( wc != 0xFFFF )
+				desc.chars.push_back(wc);
+		}
+		g_pTextureFont->m_PagesToGenerate.push_back( desc );
 
+		desc.name = "alt";
+		desc.chars.clear();
+		for( int i = 0; map_iso_8859_2[i]; ++i )
+		{
+			wchar_t wc = map_iso_8859_2[i];
+			if( wc != 0xFFFF )
+				desc.chars.push_back(wc);
+		}
+		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+	}
+	else
+	{
+		desc.name = "numbers";
+		desc.chars.clear();
+		for( int i = 0; map_numbers[i]; ++i )
+		{
+			wchar_t wc = map_numbers[i];
+			if( wc != 0xFFFF )
+				desc.chars.push_back(wc);
+		}
+		g_pTextureFont->m_PagesToGenerate.push_back( desc );
+	}
 
 	/* Go: */
 	g_pTextureFont->FormatFontPages();
@@ -518,6 +526,16 @@ void CTextureFontGeneratorDlg::OnOptionsExportstroketemplates()
 	int Checked = pMenu->GetMenuState(ID_OPTIONS_EXPORTSTROKETEMPLATES, 0) & MF_CHECKED;
 	Checked ^= MF_CHECKED;
 	pMenu->CheckMenuItem( ID_OPTIONS_EXPORTSTROKETEMPLATES, Checked );
+}
+
+void CTextureFontGeneratorDlg::OnOptionsNumbersonly()
+{
+	CMenu *pMenu = GetMenu();
+	int Checked = pMenu->GetMenuState(ID_OPTIONS_NUMBERSONLY, 0) & MF_CHECKED;
+	Checked ^= MF_CHECKED;
+	pMenu->CheckMenuItem( ID_OPTIONS_NUMBERSONLY, Checked );
+	m_bUpdateFontNeeded = true;
+	Invalidate( FALSE );
 }
 
 void CTextureFontGeneratorDlg::OnDeltaposSpinTop(NMHDR *pNMHDR, LRESULT *pResult)

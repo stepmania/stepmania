@@ -172,6 +172,7 @@ BEGIN
     BEGIN
         MENUITEM "Double Resolution",           ID_OPTIONS_DOUBLERES
         MENUITEM "Export Stroke Templates",     ID_OPTIONS_EXPORTSTROKETEMPLATES
+        MENUITEM "Numbers Only",                ID_OPTIONS_NUMBERSONLY
     END
 END
 

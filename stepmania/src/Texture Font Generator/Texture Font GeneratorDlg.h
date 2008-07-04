@@ -71,6 +71,7 @@ public:
 	CStatic m_FontType;
 	afx_msg void OnOptionsDoubleres();
 	afx_msg void OnOptionsExportstroketemplates();
+	afx_msg void OnOptionsNumbersonly();
 };
 
 /*
