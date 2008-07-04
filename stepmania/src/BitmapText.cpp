@@ -537,17 +537,6 @@ bool BitmapText::EarlyAbortDraw() const
 	return m_wTextLines.empty();
 }
 
-#define DRAW_STROKE \
-if( m_StrokeColor.a > 0 ) \
-{ \
-	RageColor c = m_StrokeColor; \
-	c.a *= m_pTempState->diffuse[0].a; \
-	for( unsigned i=0; i<m_aVertices.size(); i++ ) \
-		m_aVertices[i].c = c; \
-	DrawChars( true ); \
-}
-
-
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::DrawPrimitives()
 {
@@ -577,9 +566,13 @@ void BitmapText::DrawPrimitives()
 		//
 		// render the stroke
 		//
-		if( m_pFont->GetStrokeIsUnder() )
+		if( m_StrokeColor.a > 0 )
 		{
-			DRAW_STROKE;
+			RageColor c = m_StrokeColor;
+			c.a *= m_pTempState->diffuse[0].a;
+			for( unsigned i=0; i<m_aVertices.size(); i++ )
+				m_aVertices[i].c = c;
+			DrawChars( true );
 		}
 
 		//
@@ -667,14 +660,6 @@ void BitmapText::DrawPrimitives()
 				m_aVertices[i+2].p -= jitter;	// bottom right
 				m_aVertices[i+3].p -= jitter;	// top right
 			}
-		}
-
-		//
-		// render the stroke
-		//
-		if( !m_pFont->GetStrokeIsUnder() )
-		{
-			DRAW_STROKE;
 		}
 	}
 
