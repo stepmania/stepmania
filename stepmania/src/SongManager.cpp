@@ -1465,8 +1465,11 @@ void SongManager::UpdatePreferredSort()
 			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
 			{
 				if( ue->m_Type == UnlockRewardType_Song )
-					if( ue->m_pSong )
-						section.vpSongs.push_back( ue->m_pSong );
+				{
+					Song *pSong = ue->m_Song.ToSong();
+					if( pSong )
+						section.vpSongs.push_back( pSong );
+				}
 			}
 
 			FOREACH( PreferredSortSection, m_vPreferredSongSort, v )
@@ -1486,10 +1489,10 @@ void SongManager::UpdatePreferredSort()
 
 		// prune empty groups
 		for( int i=m_vPreferredSongSort.size()-1; i>=0; i-- )
-			if( m_vPreferredSongSort[i].empty() )
+			if( m_vPreferredSongSort[i].vpSongs.empty() )
 				m_vPreferredSongSort.erase( m_vPreferredSongSort.begin()+i );
 
-		FOREACH( SongPointerVector, m_vPreferredSongSort, i )
+		FOREACH( PreferredSortSection, m_vPreferredSongSort, i )
 			FOREACH( Song*, i->vpSongs, j )
 				ASSERT( *j );
 	}

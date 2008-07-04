@@ -536,7 +536,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	if( m_SelectionState == SelectionState_SelectingSteps  &&
 		input.type == IET_FIRST_PRESS  &&
 		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) &&
-		!m_bStepsSelected[input.pn] )
+		!m_bStepsChosen[input.pn] )
 	{
 		if( input.MenuI == m_GameButtonPreviousSong )
 		{
@@ -1006,7 +1006,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		float fSeconds = m_MenuTimer->GetSeconds();
 		if( fSeconds < 10 )
 		{
-			m_MenuTimer->SetSeconds( 10 );
+			m_MenuTimer->SetSeconds( 13 );
 			m_MenuTimer->Start();
 		}
 	}
