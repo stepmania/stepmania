@@ -687,11 +687,11 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	if( !sIniPath.empty() )
 	{
 		ini.ReadFile( sIniPath );
-		ini.RenameKey("Char Widths", "main");
-		ini.GetValue( "main", "CapitalsOnly", bCapitalsOnly );
-		ini.GetValue( "main", "RightToLeft", m_bRightToLeft );
+		ini.RenameKey("Char Widths", "main");	// backward compat
+		ini.GetValue( "common", "CapitalsOnly", bCapitalsOnly );
+		ini.GetValue( "common", "RightToLeft", m_bRightToLeft );
 		RString s;
-		if( ini.GetValue( "main", "DefaultStrokeColor", s ) )
+		if( ini.GetValue( "common", "DefaultStrokeColor", s ) )
 			m_DefaultStrokeColor.FromString( s );
 	}
 
