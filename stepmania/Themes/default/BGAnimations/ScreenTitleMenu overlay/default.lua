@@ -40,10 +40,10 @@ local t = Def.ActorFrame {
 		InitCommand=cmd(x,SCREEN_LEFT+20;y,SCREEN_TOP+36;horizalign,left;diffuse,0.6,0.6,0.6,1;shadowlength,2);
 	};
 	Def.ActorFrame {
-		InitCommand=cmd(x,SCREEN_CENTER_X-250;y,SCREEN_CENTER_Y+200;);
+		InitCommand=cmd(x,SCREEN_CENTER_X-210;y,SCREEN_CENTER_Y+200;);
 		LoadActor( "stepmania logo" ) .. {
 		};
-		LoadFont( "_venacti bold 24" ) .. {
+		LoadFont( "common normal" ) .. {
 			InitCommand=cmd(y,-25;settext,ProductVersion() .. " " .. VersionTime();diffuse,color("#000000");shadowlength,0;);
 		};
 	};
