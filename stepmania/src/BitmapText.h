@@ -33,7 +33,7 @@ public:
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 
-	void SetUppercase( bool b )	{ m_bUppercase = b; }
+	void SetUppercase( bool b );
 	void SetRainbowScroll( bool b )	{ m_bRainbowScroll = b; }
 	void SetJitter( bool b )	{ m_bJitter = b; }
 

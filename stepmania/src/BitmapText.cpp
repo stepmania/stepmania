@@ -464,6 +464,12 @@ void BitmapText::SetMaxHeight( float fMaxHeight )
 	UpdateBaseZoom();
 }
 
+void BitmapText::SetUppercase( bool b )
+{
+	m_bUppercase = b;
+	BuildChars();
+}
+
 void BitmapText::UpdateBaseZoom()
 {
 	if( m_fMaxWidth == 0 )
