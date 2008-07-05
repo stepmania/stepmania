@@ -219,7 +219,7 @@ static bool GetTagFromMap( const NameToData_t &mapNameToData, const RString &sNa
 
 /* Finds the longest common match for the given tag in all files.  If the given tag
  * was found in at least one file, returns true; otherwise returns false. */
-static bool GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const RString &sName, RString &sCommonTag )
+static bool GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const RString &sName, RString &sOut )
 {
 	bool bFoundOne = false;
 	for( unsigned i=0; i < aBMSData.size(); i++ )
@@ -231,11 +231,11 @@ static bool GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const
 		if( !bFoundOne )
 		{
 			bFoundOne = true;
-			sCommonTag = sTag;
+			sOut = sTag;
 		}
 		else
 		{
-			sCommonTag = FindLargestInitialSubstring( sCommonTag, sTag );
+			sOut = FindLargestInitialSubstring( sOut, sTag );
 		}
 	}
 	
