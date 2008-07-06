@@ -24,10 +24,10 @@ local t = Def.ActorFrame {
 			InitCommand=cmd(y,170;vertalign,bottom;);
 		};
 		LoadFont( "_terminator two 40px" ) .. {
-			InitCommand=cmd(x,94;settext,string.upper(gc:GetText());shadowlength,0;zoom,1.2;zoomtowidth,300;rotationz,-90;diffuse,c;strokecolor,color("#00000044");shadowlengthx,4;shadowlengthy,0;);
+			InitCommand=cmd(x,94;settext,string.upper(gc:GetText());shadowlength,0;zoom,1.3;zoomtowidth,300;rotationz,-90;diffuse,c;strokecolor,color("#00000044");shadowlengthx,4;shadowlengthy,0;);
 		};
 		LoadFont( "_venacti Bold 24px" ) .. {
-			InitCommand=cmd(horizalign,right;vertalign,bottom;x,72;y,150;settext,ScreenString(gc:GetName().."Explanation");shadowlengthx,0;shadowlengthy,3;maxwidth,500;diffuse,c;strokecolor,color("#00000044"););
+			InitCommand=cmd(horizalign,right;vertalign,bottom;x,70;y,150;settext,ScreenString(gc:GetName().."Explanation");shadowlengthx,0;shadowlengthy,3;maxwidth,500;diffuse,c;strokecolor,color("#00000044"););
 		};
 	};
 	Def.ActorFrame {
