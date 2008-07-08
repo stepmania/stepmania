@@ -1042,6 +1042,8 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	// score hold notes that have passed
 	if( iSongRow >= iMaxEndRow )
 	{
+		bool bLetGoOfHoldNote = false;
+
 		/* Score rolls that end with fLife == 0 as LetGo, even if HOLD_CHECKPOINTS is on.  
 		 * Rolls don't have iCheckpointsMissed set, so, unless we check Life == 0, rolls would always be
 		 * scored as Held. */
@@ -1057,28 +1059,27 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			break;
 		}		
 
-		bool bAllowScoreAsHeld;
 		if( HOLD_CHECKPOINTS  &&  bAllowHoldCheckpoints )
 		{
 			int iCheckpointsHit = 0;
 			int iCheckpointsMissed = 0;
 			FOREACH( TrackRowTapNote, vTN, v )
 			{
-				iCheckpointsHit &= v->pTN->HoldResult.iCheckpointsHit;
-				iCheckpointsMissed &= v->pTN->HoldResult.iCheckpointsMissed;
+				iCheckpointsHit += v->pTN->HoldResult.iCheckpointsHit;
+				iCheckpointsMissed += v->pTN->HoldResult.iCheckpointsMissed;
 			}
+			bLetGoOfHoldNote = iCheckpointsMissed > 0 || iCheckpointsHit == 0;
+
 			// TRICKY: If the hold is so short that it has no checkpoints, then mark it as Held if the head was stepped on.
 			if( iCheckpointsHit == 0  &&  iCheckpointsMissed == 0 )
-				bAllowScoreAsHeld = bSteppedOnHead;
-			else
-				bAllowScoreAsHeld = iCheckpointsMissed == 0;
+				bLetGoOfHoldNote = !bSteppedOnHead;
 		}
 		else
 		{
-			bAllowScoreAsHeld = fLife > 0;
+			bLetGoOfHoldNote = fLife == 0;
 		}
 
-		if( bInitiatedNote  &&  bAllowScoreAsHeld )
+		if( bInitiatedNote  &&  !bLetGoOfHoldNote )
 		{
 			fLife = 1;
 			hns = HNS_Held;
