@@ -135,6 +135,7 @@ public:
 	float	m_fCover,			m_SpeedfCover;	// hide the background per-player--can't think of a good name
 	float	m_fRandAttack,			m_SpeedfRandAttack;
 	float	m_fSongAttack,			m_SpeedfSongAttack;
+	float	m_fPlayerAutoPlay,		m_SpeedfPlayerAutoPlay;
 	bool	m_bSetTiltOrSkew;				// true if the tilt or skew was set by FromString
 	float	m_fPerspectiveTilt,		m_SpeedfPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
 	float	m_fSkew,			m_SpeedfSkew;		// 0 = vanish point is in center of player, 1 = vanish point is in center of screen

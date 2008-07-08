@@ -654,7 +654,8 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	// handle combo logic
 	//
 #ifndef DEBUG
-	if( GamePreferences::m_AutoPlay != PC_HUMAN && !GAMESTATE->m_bDemonstrationOrJukebox )	// cheaters never prosper
+	if( (GamePreferences::m_AutoPlay != PC_HUMAN || m_pPlayerState->m_PlayerOptions.GetCurrent().m_fPlayerAutoPlay != 0)
+		&& !GAMESTATE->m_bDemonstrationOrJukebox )	// cheaters never prosper
 	{
 		m_iCurToastyCombo = 0;
 		return;

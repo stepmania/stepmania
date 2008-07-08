@@ -29,6 +29,7 @@ void PlayerOptions::Init()
 	m_fCover = 0;			m_SpeedfCover = 1.0f;
 	m_fRandAttack = 0;		m_SpeedfRandAttack = 1.0f;
 	m_fSongAttack = 0;		m_SpeedfSongAttack = 1.0f;
+	m_fPlayerAutoPlay = 0;		m_SpeedfPlayerAutoPlay = 1.0f;
 	m_bSetTiltOrSkew = false;
 	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
 	m_fSkew = 0;			m_SpeedfSkew = 1.0f;
@@ -65,6 +66,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fCover );
 	APPROACH( fRandAttack );
 	APPROACH( fSongAttack );
+	APPROACH( fPlayerAutoPlay );
 	APPROACH( fPerspectiveTilt );
 	APPROACH( fSkew );
 	APPROACH( fPassmark );
@@ -167,8 +169,9 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fBlind,	"Blind" );
 	AddPart( AddTo, m_fCover,	"Cover" );
 
-	AddPart( AddTo, m_fRandAttack,	"RandomAttacks" );
-	AddPart( AddTo, m_fSongAttack,	"SongAttacks" );
+	AddPart( AddTo, m_fRandAttack,		"RandomAttacks" );
+	AddPart( AddTo, m_fSongAttack,		"SongAttacks" );
+	AddPart( AddTo, m_fPlayerAutoPlay,	"PlayerAutoPlay" );
 
 	AddPart( AddTo, m_fPassmark,	"Passmark" );
 
@@ -384,6 +387,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "cover" )				SET_FLOAT( fCover )
 	else if( sBit == "randomattacks" )			SET_FLOAT( fRandAttack )
 	else if( sBit == "songattacks" )			SET_FLOAT( fSongAttack )
+	else if( sBit == "playerautoplay" )			SET_FLOAT( fPlayerAutoPlay )
 	else if( sBit == "passmark" )				SET_FLOAT( fPassmark )
 	else if( sBit == "overhead" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = 0;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 	else if( sBit == "incoming" )				{ m_bSetTiltOrSkew = true; m_fSkew = level;	m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
@@ -624,6 +628,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fCover);
 	COMPARE(m_fRandAttack);
 	COMPARE(m_fSongAttack);
+	COMPARE(m_fPlayerAutoPlay);
 	COMPARE(m_fPerspectiveTilt);
 	COMPARE(m_fSkew);
 	COMPARE(m_sNoteSkin);
@@ -674,6 +679,7 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 	if( m_bTransforms[TRANSFORM_ECHO] )	return true;
 	
 	if( m_fCover )	return true;
+	if( m_fPlayerAutoPlay )	return true;
 	return false;
 }
 

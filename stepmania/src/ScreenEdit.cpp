@@ -2084,7 +2084,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 
 	GameButtonType gbt = GAMESTATE->m_pCurGame->GetPerButtonInfo(input.GameI.button)->m_gbt;
 
-	if( GamePreferences::m_AutoPlay == PC_HUMAN )
+	if( GamePreferences::m_AutoPlay == PC_HUMAN && GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent().m_fPlayerAutoPlay == 0 )
 	{
 		const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
 		bool bRelease = input.type == IET_RELEASE;
@@ -2291,7 +2291,11 @@ m_pSoundMusic->StopPlaying();
 		SetupCourseAttacks();
 		
 		m_Player.Load( m_NoteDataEdit );
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = GamePreferences::m_AutoPlay;
+
+		if( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent().m_fPlayerAutoPlay != 0 )
+			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
+		else
+			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = GamePreferences::m_AutoPlay;
 
 		if( g_bEditorShowBGChangesPlay )
 		{

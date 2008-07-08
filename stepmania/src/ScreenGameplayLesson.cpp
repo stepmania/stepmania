@@ -167,7 +167,15 @@ void ScreenGameplayLesson::ChangeLessonPage( int iDir )
 
 		// Change back to the current autoplay setting (in most cases, human controlled).
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
-			pi->GetPlayerState()->m_PlayerController = GamePreferences::m_AutoPlay;
+		{
+			/* Mike: I'm not sure if you can actually have the player options enabled in this mode,
+			 * but I'm putting the check here anyways to play it safe. If it's unnecessary, then it
+			 * should be removed. */
+			if( pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fPlayerAutoPlay != 0 )
+				pi->GetPlayerState()->m_PlayerController = PC_AUTOPLAY;
+			else
+				pi->GetPlayerState()->m_PlayerController = GamePreferences::m_AutoPlay;
+		}
 	}
 	else
 	{
