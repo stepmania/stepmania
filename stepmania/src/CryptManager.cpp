@@ -4,6 +4,7 @@
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageFileManager.h"
+#include "CryptHelpers.h"
 
 #include "libtomcrypt/src/headers/tomcrypt.h"
 
@@ -74,92 +75,8 @@ static const int KEY_LENGTH = 1024;
  * 
  */
 
-
-class PRNGWrapper
-{
-public:
-	PRNGWrapper( const struct ltc_prng_descriptor *pPRNGDescriptor )
-	{
-		m_iPRNG = register_prng( pPRNGDescriptor );
-		ASSERT( m_iPRNG >= 0 );
-
-		int iRet = rng_make_prng( 128, m_iPRNG, &m_PRNG, NULL );
-		ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
-	}
-
-	~PRNGWrapper()
-	{
-		if( m_iPRNG != -1 )
-			prng_descriptor[m_iPRNG].done( &m_PRNG );
-	}
-
-	void AddEntropy( const void *pData, int iSize )
-	{
-		int iRet = prng_descriptor[m_iPRNG].add_entropy( (const unsigned char *) pData, iSize, &m_PRNG );
-		ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
-
-		iRet = prng_descriptor[m_iPRNG].ready( &m_PRNG );
-		ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
-	}
-
-	void AddRandomEntropy()
-	{
-		unsigned char buf[256];
-		int iRet = rng_get_bytes( buf, sizeof(buf), NULL );
-		ASSERT( iRet == sizeof(buf) );
-
-		AddEntropy( buf, sizeof(buf) );
-	}
-
-	int m_iPRNG;
-	prng_state m_PRNG;
-};
-
 static PRNGWrapper *g_pPRNG = NULL;
 
-class RSAKeyWrapper
-{
-public:
-	RSAKeyWrapper()
-	{
-		memset( &m_Key, 0, sizeof(m_Key) );
-	}
-
-	~RSAKeyWrapper()
-	{
-		Unload();
-	}
-
-	void Unload()
-	{
-		rsa_free( &m_Key );
-	}
-
-	void Generate( PRNGWrapper &prng, int iKeyLenBits )
-	{
-		Unload();
-
-		int iRet = rsa_make_key( &prng.m_PRNG, prng.m_iPRNG, iKeyLenBits / 8, 65537, &m_Key );
-		ASSERT( iRet == CRYPT_OK );
-	}
-
-	bool Load( const RString &sKey )
-	{
-		Unload();
-
-		int iRet = rsa_import( (const unsigned char *) sKey.data(), sKey.size(), &m_Key );
-		if( iRet != CRYPT_OK )
-		{
-			memset( &m_Key, 0, sizeof(m_Key) );
-			LOG->Warn( "Error loading RSA Key: %s", error_to_string(iRet) );
-			return false;
-		}
-
-		return true;
-	}
-	
-	rsa_key m_Key;
-};
 
 CryptManager::CryptManager()
 {
@@ -176,14 +93,21 @@ void CryptManager::GenerateGlobalKeys()
 	bool bGenerate = false;
 	RSAKeyWrapper key;
 	RString sKey;
+	RString sError;
 	if( !DoesFileExist(PRIVATE_KEY_PATH) ||
 	    !GetFileContents(PRIVATE_KEY_PATH, sKey) ||
-	    !key.Load(sKey) )
+	    !key.Load(sKey, sError) )
 		bGenerate = true;
+	if( !sError.empty() )
+		LOG->Warn( "Error loading RSA key: %s", sError.c_str() );
+
+	sError.clear();
 	if( !DoesFileExist(PUBLIC_KEY_PATH) ||
 	    !GetFileContents(PUBLIC_KEY_PATH, sKey) ||
-	    !key.Load(sKey) )
+	    !key.Load(sKey, sError) )
 		bGenerate = true;
+	if( !sError.empty() )
+		LOG->Warn( "Error loading RSA key: %s", sError.c_str() );
 
 	if( bGenerate )
 	{
@@ -300,8 +224,12 @@ bool CryptManager::Sign( RString sPath, RString &sSignatureOut, RString sPrivKey
 	}
 
 	RSAKeyWrapper key;
-	if( !key.Load(sPrivKey) )
+	RString sError;
+	if( !key.Load(sPrivKey, sError) )
+	{
+		LOG->Warn( "Error loading RSA key: %s", sError.c_str() );
 		return false;
+	}
 
 	int iHash = register_hash( &sha1_desc );
 	ASSERT( iHash >= 0 );
@@ -377,8 +305,12 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile, RS
 bool CryptManager::Verify( RageFileBasic &file, RString sSignature, RString sPublicKey )
 {
 	RSAKeyWrapper key;
-	if( !key.Load(sPublicKey) )
+	RString sError;
+	if( !key.Load(sPublicKey, sError) )
+	{
+		LOG->Warn( "Error loading RSA key: %s", sError.c_str() );
 		return false;
+	}
 
 	int iHash = register_hash( &sha1_desc );
 	ASSERT( iHash >= 0 );

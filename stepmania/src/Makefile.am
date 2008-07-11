@@ -122,6 +122,7 @@ Course.cpp Course.h \
 CourseLoaderCRS.cpp CourseLoaderCRS.h \
 CourseUtil.cpp CourseUtil.h \
 CourseWriterCRS.cpp CourseWriterCRS.h \
+CryptHelpers.cpp CryptHelpers.h \
 DateTime.cpp DateTime.h \
 Difficulty.cpp Difficulty.h \
 DisplayResolutions.h \
