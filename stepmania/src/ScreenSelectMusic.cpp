@@ -77,6 +77,7 @@ void ScreenSelectMusic::Init()
 	MODE_MENU_AVAILABLE.Load( m_sName, "ModeMenuAvailable" );
 	USE_OPTIONS_LIST.Load( m_sName, "UseOptionsList" );
 	USE_PLAYER_SELECT_MENU.Load( m_sName, "UsePlayerSelectMenu" );
+	SELECT_MENU_CHANGES_DIFFICULTY.Load( m_sName, "SelectMenuChangesDifficulty" );
 	TWO_PART_SELECTION.Load( m_sName, "TwoPartSelection" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
@@ -193,8 +194,11 @@ void ScreenSelectMusic::BeginScreen()
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
 
 	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
-		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before loading ScreenSelectMusic." );
-
+	{
+	/* Instead of crashing here, let's just set the PlayMode to regular */
+		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
+		LOG->Trace( "PlayMode not set, setting as regular." );
+	}
 	FOREACH_ENUM( PlayerNumber, pn )
 	{
 		if( GAMESTATE->IsHumanPlayer(pn) )
@@ -437,11 +441,9 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	if( SELECT_MENU_AVAILABLE && input.MenuI == GAME_BUTTON_SELECT && input.type != IET_REPEAT )
 		UpdateSelectButton( input.pn, input.type == IET_FIRST_PRESS );
 
-
-
 	if( SELECT_MENU_AVAILABLE  &&  m_bSelectIsDown[input.pn] )
 	{
-		if( input.type == IET_FIRST_PRESS )
+		if( input.type == IET_FIRST_PRESS && SELECT_MENU_CHANGES_DIFFICULTY )
 		{
 			switch( input.MenuI )
 			{
