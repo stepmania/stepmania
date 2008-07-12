@@ -265,13 +265,14 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 		struct stat st;
 		if( DoStat(root+sPath + "/" + pEnt->d_name, &st) == -1 )
 		{
+			int iError = errno;
 			/* If it's a broken symlink, ignore it.  Otherwise, warn. */
-			if( lstat(pEnt->d_name, &st) == 0 )
+			if( lstat(root+sPath + "/" + pEnt->d_name, &st) == 0 )
 				continue;
 			
 			/* Huh? */
 			WARN( ssprintf("Got file '%s' in '%s' from list, but can't stat? (%s)",
-					pEnt->d_name, sPath.c_str(), strerror(errno)) );
+					pEnt->d_name, sPath.c_str(), strerror(iError)) );
 			continue;
 		}
 		else
