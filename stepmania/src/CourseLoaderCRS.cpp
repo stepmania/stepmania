@@ -388,9 +388,8 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 		if( out.m_RadarCache.size() )
 		{
 			RString sCachePath = out.GetCacheFilePath();
-			CourseWriterCRS::Write( out, sCachePath, true );
-
-			SONGINDEX->AddCacheIndex( out.m_sPath, GetHashForFile(out.m_sPath) );
+			if( CourseWriterCRS::Write(out, sCachePath, true) )
+				SONGINDEX->AddCacheIndex( out.m_sPath, GetHashForFile(out.m_sPath) );
 		}
 	}
 
