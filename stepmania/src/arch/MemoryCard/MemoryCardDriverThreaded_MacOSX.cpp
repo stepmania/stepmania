@@ -148,55 +148,31 @@ void MemoryCardDriverThreaded_MacOSX::GetUSBStorageDevices( vector<UsbStorageDev
 		
 		// I'm not quite sure what it means to have two services with this device.
 		// Iterate over them all. If one contains what we want, stop.
-		io_registry_entry_t entry; // This is the same as an io_object_t.
+		io_registry_entry_t device; // This is the same as an io_object_t.
 		
-		while( (entry = IOIteratorNext(iter)) )
+		while( (device = IOIteratorNext(iter)) )
 		{
-			// Get the path in the IOService plane.
-			io_string_t path; // Some c string.
-			
-			ret = IORegistryEntryGetPath( entry, kIOServicePlane, path );
-			IOObjectRelease( entry );
-			
-			if( ret != KERN_SUCCESS )
+			// Look at the parent of the device until we see an IOUSBMassStorageClass
+			while( device != MACH_PORT_NULL && !IOObjectConformsTo(device, "IOUSBMassStorageClass") )
 			{
-				// XXX maybe I should just walk back myself.
-				LOG->Warn( "Device \"%s\" (%s) has an IORegistry path that is too long.",
-						   fs[i].f_mntfromname, fs[i].f_mntonname );
-				continue;
+				io_registry_entry_t entry;
+				ret = IORegistryEntryGetParentEntry( device, kIOServicePlane, &entry );
+				IOObjectRelease( device );
+				device = ret == KERN_SUCCESS? entry:MACH_PORT_NULL;
 			}
-			const RString& sRegistryPath = path;
-			RString::size_type pos = sRegistryPath.rfind( "/IOUSBMassStorageClass" );
-			
-			if( pos == RString::npos )
+			// Now look for the corresponding IOUSBDevice, it's likely 2 up the tree
+			while( device != MACH_PORT_NULL && !IOObjectConformsTo(device, "IOUSBDevice") )
 			{
-				// Probably not a USB device.
-				LOG->Trace( "Device \"%s\" (%s) has IOServicePlane path: %s.",
-					    fs[i].f_mntfromname, fs[i].f_mntonname, path );
-				continue;
+				io_registry_entry_t entry;
+				ret = IORegistryEntryGetParentEntry( device, kIOServicePlane, &entry );
+				IOObjectRelease( device );
+				device = ret == KERN_SUCCESS? entry:MACH_PORT_NULL;
 			}
-			// The path does not start with / so pos - 1 >= 0.
-			pos = sRegistryPath.rfind( '/', pos - 1 );
-			if( pos == RString::npos )
-			{
-				// Something is horribly wrong at this point.
-				LOG->Trace( "Device has unusual IOServicePlane path: %s", path );
-				continue;
-			}
-			path[pos] = '\0';
-			
-			io_registry_entry_t device = IORegistryEntryFromPath( kIOMasterPortDefault, path );
-			
-			// MACH_PORT_NULL?
 			if( device == MACH_PORT_NULL )
-			{
-				LOG->Warn( "Couldn't create IORegistry entry from: %s", path );
 				continue;
-			}
 			
 			// At this point, it is pretty safe to say that we've found a USB device.
 			vDevicesOut.push_back( UsbStorageDevice() );
-			
 			UsbStorageDevice& usbd = vDevicesOut.back();
 			
 			LOG->Trace( "Found memory card at path: %s.", fs[i].f_mntonname );
