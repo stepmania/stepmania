@@ -15,32 +15,47 @@
 #include <paths.h>
 #include <unistd.h>
 
-OSStatus MemoryCardDriverThreaded_MacOSX::VolumeChanged( EventHandlerCallRef ref, EventRef event, void *p )
+class MemoryCardDriverThreaded_MacOSX::Helper
 {
-	MemoryCardDriverThreaded_MacOSX *This = (MemoryCardDriverThreaded_MacOSX *)p;
-	LockMut( This->m_ChangedLock );
-	
-	This->m_bChanged = true;
-	return eventNotHandledErr; // let others do something
-}
+public:
+	Helper( MemoryCardDriverThreaded_MacOSX *driver )
+	{
+		m_HandlerUPP = NewEventHandlerUPP( VolumesChanged );
+		EventTypeSpec types[] = { { kEventClassVolume, kEventVolumeMounted },
+					  { kEventClassVolume, kEventVolumeUnmounted } };
+		UInt32 numTypes = sizeof(types)/sizeof(types[0]);
+		OSStatus ret = InstallApplicationEventHandler( m_HandlerUPP, numTypes, types, driver, &m_Handler );
+		ASSERT( ret == noErr );
+	}
+
+	~Helper()
+	{
+		RemoveEventHandler( m_Handler );
+		DisposeEventHandlerUPP( m_HandlerUPP );
+	}
+
+private:
+	static OSStatus VolumesChanged( EventHandlerCallRef ref, EventRef event, void *p )
+	{
+		MemoryCardDriverThreaded_MacOSX *driver = (MemoryCardDriverThreaded_MacOSX *)p;
+		LockMut( driver->m_ChangedLock );
+		driver->m_bChanged = true;
+		return eventNotHandledErr; // let others do something
+	}
+
+	EventHandlerUPP m_HandlerUPP;
+	EventHandlerRef m_Handler;
+};
 
 MemoryCardDriverThreaded_MacOSX::MemoryCardDriverThreaded_MacOSX() : m_ChangedLock( "MC changed lock" )
 {
 	m_bChanged = true;
-	m_HandlerUPP = NewEventHandlerUPP( VolumeChanged );
-	
-	EventTypeSpec types[] = { { kEventClassVolume, kEventVolumeMounted },
-	{ kEventClassVolume, kEventVolumeUnmounted } };
-	UInt32 numTypes = sizeof(types)/sizeof(types[0]);
-	OSStatus ret = InstallApplicationEventHandler( m_HandlerUPP, numTypes, types, this, &m_Handler );
-	
-	ASSERT( ret == noErr );
+	m_pHelper = new Helper( this );
 }
 
 MemoryCardDriverThreaded_MacOSX::~MemoryCardDriverThreaded_MacOSX()
 {
-	RemoveEventHandler( m_Handler );
-	DisposeEventHandlerUPP( m_HandlerUPP );
+	delete m_pHelper;
 }
 
 void MemoryCardDriverThreaded_MacOSX::Unmount( UsbStorageDevice *pDevice )
@@ -209,7 +224,7 @@ bool MemoryCardDriverThreaded_MacOSX::TestWrite( UsbStorageDevice *pDevice )
 }
 
 /*
- * (c) 2005-2006 Steve Checkoway
+ * (c) 2005-2006, 2008 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

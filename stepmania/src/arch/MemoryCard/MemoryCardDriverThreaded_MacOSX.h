@@ -4,16 +4,6 @@
 #include "MemoryCardDriver.h"
 #include "RageThreads.h"
 
-
-// I can't include <Carbon/Carbon.h> because Style conflicts.
-typedef struct OpaqueEventHandlerRef *EventHandlerRef;
-typedef struct OpaqueEventHandlerCallRef *EventHandlerCallRef;
-typedef struct OpaqueEventRef *EventRef;
-typedef long int OSStatus;
-typedef OSStatus (*EventHandlerProcPtr)( EventHandlerCallRef inHandlerCallRef,
-					 EventRef inEvent, void * inUserData );
-typedef EventHandlerProcPtr EventHandlerUPP;
-
 class MemoryCardDriverThreaded_MacOSX : public MemoryCardDriver
 {
 public:
@@ -28,12 +18,13 @@ protected:
 	bool TestWrite( UsbStorageDevice *pDevice );
 	
 private:
-	static OSStatus VolumeChanged( EventHandlerCallRef ref, EventRef event, void *p );
-	
+	MemoryCardDriverThreaded_MacOSX( const MemoryCardDriverThreaded_MacOSX &m );
+	MemoryCardDriverThreaded_MacOSX &operator=( const MemoryCardDriverThreaded_MacOSX &m );
 	bool m_bChanged;
 	RageMutex m_ChangedLock;
-	EventHandlerUPP m_HandlerUPP;
-	EventHandlerRef m_Handler;
+	class Helper;
+	friend class Helper;
+	Helper *m_pHelper;
 };
 
 #ifdef ARCH_MEMORY_CARD_DRIVER
@@ -45,7 +36,7 @@ private:
 #endif
 
 /*
- * (c) 2005-2006 Steve Checkoway
+ * (c) 2005-2006, 2008 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
