@@ -4854,6 +4854,14 @@
 				>
 			</File>
 			<File
+				RelativePath="CryptHelpers.cpp"
+				>
+			</File>
+			<File
+				RelativePath="CryptHelpers.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ExportStrings.cpp"
 				>
 			</File>
