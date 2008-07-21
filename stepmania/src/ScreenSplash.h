@@ -10,6 +10,7 @@ class ScreenSplash : public ScreenWithMenuElements
 {
 public:
 	virtual void Init();
+	virtual void BeginScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void MenuBack( const InputEventPlus &input );
@@ -17,7 +18,7 @@ public:
 
 protected:
 	ThemeMetric<bool> ALLOW_START_TO_SKIP;
-	ThemeMetric<float> MINIMUM_LOAD_DELAY_SECONDS;
+	ThemeMetric<float> MINIMUM_SCREEN_PREPARE_DELAY_SECONDS;
 	ThemeMetric<bool> PREPARE_SCREEN;
 };
 
