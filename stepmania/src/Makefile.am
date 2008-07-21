@@ -95,7 +95,6 @@ ScreenSyncOverlay.cpp ScreenSyncOverlay.h \
 ScreenSystemLayer.cpp ScreenSystemLayer.h ScreenSetTime.cpp ScreenSetTime.h \
 ScreenSongOptions.cpp ScreenSongOptions.h \
 ScreenSplash.cpp ScreenSplash.h \
-ScreenStage.cpp ScreenStage.h \
 ScreenTestFonts.cpp ScreenTestFonts.h ScreenTestInput.cpp ScreenTestInput.h \
 ScreenTestLights.cpp ScreenTestLights.h ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h \
 ScreenTitleMenu.cpp ScreenTitleMenu.h \
