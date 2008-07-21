@@ -42,14 +42,7 @@ struct Centering
 	int m_iTranslateX, m_iTranslateY, m_iAddWidth, m_iAddHeight;
 };
 
-template<typename T>
-class vector_default: public vector<T>
-{
-public:
-	vector_default( const T &def ) { this->push_back( def ); }
-};
-
-static vector_default<Centering> g_CenteringStack( Centering(0, 0, 0, 0) );
+static vector<Centering> g_CenteringStack( 1, Centering(0, 0, 0, 0) );
 
 RageDisplay*		DISPLAY	= NULL;
 
