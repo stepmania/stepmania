@@ -11,6 +11,7 @@
 #include "RageSurface.h"
 #include "Preference.h"
 #include "LocalizedString.h"
+#include "DisplayResolutions.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
 //
@@ -97,8 +98,18 @@ RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures 
 		return RString();
 	vs.push_back( err );
 
-	p.width = 640;
-	p.height = 480;
+	// Fall back on a known resolution good rather than 640 x 480.
+	DisplayResolutions dr;
+	this->GetDisplayResolutions( dr );
+	if( dr.empty() )
+	{
+		vs.push_back( "No display resolutions" );
+		return SETVIDEOMODE_FAILED.GetValue() + " " + join(";",vs);
+	}
+
+	const DisplayResolution &d = *dr.begin();
+	p.width = d.iWidth;
+	p.height = d.iHeight;
 	if( err = this->TryVideoMode(p,bNeedReloadTextures) == "" )
 		return RString();
 	vs.push_back( err );
