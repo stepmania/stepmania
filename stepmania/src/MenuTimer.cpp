@@ -25,6 +25,11 @@ MenuTimer::MenuTimer()
 
 void MenuTimer::Load( RString sMetricsGroup )
 {
+	m_sprFrame.Load( THEME->GetPathG(sMetricsGroup, "Frame") );
+	m_sprFrame->SetName( "Frame" );
+	ActorUtil::LoadAllCommandsAndSetXY( m_sprFrame, sMetricsGroup );
+	this->AddChild( m_sprFrame );
+
 	for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
 	{
 		m_text[i].LoadFromFont( THEME->GetPathF(sMetricsGroup,"numbers") );

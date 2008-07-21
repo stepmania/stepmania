@@ -7,6 +7,7 @@
 #include "BitmapText.h"
 #include "RageSound.h"
 #include "ThemeMetric.h"
+#include "AutoActor.h"
 
 class MenuTimer : public ActorFrame
 {
@@ -45,6 +46,8 @@ protected:
 	BitmapText	m_text[NUM_MENU_TIMER_TEXTS];
 
 	LuaReference	m_exprFormatText[NUM_MENU_TIMER_TEXTS];
+
+	AutoActor	m_sprFrame;
 
 	RageSound	m_soundBeep;
 
