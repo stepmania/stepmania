@@ -5,19 +5,19 @@ function PlayerColor( pn )
 end
 
 local DifficultyDisplayTypeColors = {
-	DifficultyDisplayType_Single_Beginner	= color("0.0,0.9,1.0,1"),	-- light blue
-	DifficultyDisplayType_Single_Easy	= color("0.9,0.9,0.0,1"),	-- yellow
-	DifficultyDisplayType_Single_Medium	= color("1.0,0.1,0.1,1"),	-- light red
-	DifficultyDisplayType_Single_Hard	= color("0.2,1.0,0.2,1"),	-- light green
-	DifficultyDisplayType_Single_Challenge	= color("0.2,0.6,1.0,1"),	-- blue
+	DifficultyDisplayType_Single_Beginner	= color("#ff32f8"),
+	DifficultyDisplayType_Single_Easy		= color("#2cff00"),
+	DifficultyDisplayType_Single_Medium		= color("#fee600"),
+	DifficultyDisplayType_Single_Hard		= color("#ff2f39"),
+	DifficultyDisplayType_Single_Challenge	= color("#1cd8ff"),
 	DifficultyDisplayType_Double_Beginner	= color("0.0,0.9,1.0,1"),	-- light blue
-	DifficultyDisplayType_Double_Easy	= color("0.9,0.9,0.0,1"),	-- yellow
-	DifficultyDisplayType_Double_Medium	= color("1.0,0.1,0.1,1"),	-- light red
-	DifficultyDisplayType_Double_Hard	= color("0.2,1.0,0.2,1"),	-- light green
+	DifficultyDisplayType_Double_Easy		= color("0.9,0.9,0.0,1"),	-- yellow
+	DifficultyDisplayType_Double_Medium		= color("1.0,0.1,0.1,1"),	-- light red
+	DifficultyDisplayType_Double_Hard		= color("0.2,1.0,0.2,1"),	-- light green
 	DifficultyDisplayType_Double_Challenge	= color("0.2,0.6,1.0,1"),	-- blue
-	Difficulty_Edit				= color("0.8,0.8,0.8,1"),	-- gray
-	Difficulty_Couple			= color("#ff9a00"),	-- orange
-	Difficulty_Routine			= color("#ff9a00"),	-- orange
+	Difficulty_Edit							= color("0.8,0.8,0.8,1"),	-- gray
+	Difficulty_Couple						= color("#ff9a00"),	-- orange
+	Difficulty_Routine						= color("#ff9a00"),	-- orange
 };
 
 local CourseDifficultyColors = {
