@@ -275,7 +275,7 @@ public:
 	static int PostScreenMessage( T* p, lua_State *L )
 	{
 		RString sMessage = SArg(1);
-		ScreenMessage SM = ScreenMessageHelpers::ToMessageNumber( sMessage );
+		ScreenMessage SM = ScreenMessageHelpers::ToScreenMessage( sMessage );
 		p->PostScreenMessage( SM, 0 );
 		return 0;
 	}

@@ -4,7 +4,7 @@
 #include "Foreach.h"
 #include <map>
 
-const ScreenMessage SM_Invalid = 999999;
+const ScreenMessage SM_Invalid = "";
 AutoScreenMessage(SM_None);
 AutoScreenMessage(SM_MenuTimer);
 AutoScreenMessage(SM_DoneFadingIn);
@@ -19,18 +19,18 @@ AutoScreenMessage(SM_Failure);
 
 static map<RString, ScreenMessage> *m_pScreenMessages;
 
-ScreenMessage ScreenMessageHelpers::ToMessageNumber( const RString &sName )
+ScreenMessage ScreenMessageHelpers::ToScreenMessage( const RString &sName )
 {
 	if( m_pScreenMessages == NULL )
 		m_pScreenMessages = new map<RString, ScreenMessage>;
 
 	if( m_pScreenMessages->find( sName ) == m_pScreenMessages->end() )
-		(*m_pScreenMessages)[sName] = (ScreenMessage) m_pScreenMessages->size();
+		(*m_pScreenMessages)[sName] = (ScreenMessage)sName;
 
 	return (*m_pScreenMessages)[sName];
 }
 
-RString	ScreenMessageHelpers::NumberToString( ScreenMessage SM )
+RString	ScreenMessageHelpers::ScreenMessageToString( ScreenMessage SM )
 {
 	FOREACHM( RString, ScreenMessage, *m_pScreenMessages, it )
 		if( SM == it->second )

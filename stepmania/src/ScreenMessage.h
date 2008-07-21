@@ -1,9 +1,9 @@
-/* ScreenMessage - Definition of common ScreenMessages. */
+/* ScreenMessage - Definition of common ScreenMessages and helpers. */
 
-#ifndef SCREEN_MESSAGE_H
-#define SCREEN_MESSAGE_H
+#ifndef ScreenMessage_H
+#define ScreenMessage_H
 
-typedef int ScreenMessage;
+typedef RString ScreenMessage;
 
 extern const ScreenMessage SM_Invalid;
 extern const ScreenMessage SM_None;
@@ -20,13 +20,13 @@ extern const ScreenMessage SM_Failure;
 
 namespace ScreenMessageHelpers
 {
-	ScreenMessage ToMessageNumber( const RString & Name );
-	RString	NumberToString( ScreenMessage SM );
+	ScreenMessage ToScreenMessage( const RString & Name );
+	RString	ScreenMessageToString( ScreenMessage SM );
 };
 
 // Automatically generate a unique ScreenMessage value
 #define AutoScreenMessage( x ) \
-	const ScreenMessage x = ScreenMessageHelpers::ToMessageNumber( #x );
+	const ScreenMessage x = ScreenMessageHelpers::ToScreenMessage( #x );
 
 
 #endif
