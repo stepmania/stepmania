@@ -25,10 +25,10 @@ int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
 int RageDisplay::GetCumFPS() const { return g_iCFPS; }
 
-static int			g_iFramesRenderedSinceLastCheck,
-					g_iFramesRenderedSinceLastReset,
-					g_iVertsRenderedSinceLastCheck,
-					g_iNumChecksSinceLastReset;
+static int g_iFramesRenderedSinceLastCheck,
+	   g_iFramesRenderedSinceLastReset,
+	   g_iVertsRenderedSinceLastCheck,
+	   g_iNumChecksSinceLastReset;
 static RageTimer g_LastFrameEndedAt( RageZeroTimer );
 
 struct Centering
@@ -37,8 +37,7 @@ struct Centering
 		m_iTranslateX( iTranslateX ),
 		m_iTranslateY( iTranslateY ),
 		m_iAddWidth( iAddWidth ),
-		m_iAddHeight( iAddHeight )
-	{ }
+		m_iAddHeight( iAddHeight ) { }
 
 	int m_iTranslateX, m_iTranslateY, m_iAddWidth, m_iAddHeight;
 };
