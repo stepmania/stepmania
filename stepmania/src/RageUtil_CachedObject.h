@@ -3,7 +3,7 @@
 #ifndef RAGE_UTIL_CACHED_OBJECT_H
 #define RAGE_UTIL_CACHED_OBJECT_H
 
-#include "Foreach.h"
+#include <set>
 
 template<typename T>
 class CachedObjectPointer;
@@ -44,7 +44,7 @@ public:
 	static void ClearCacheAll()
 	{
 		CachedObjectHelpers::Lock();
-		for( typename vector<ObjectPointer *>::iterator p = m_apObjectPointers.begin(); p != m_apObjectPointers.end(); ++p )
+		for( typename set<ObjectPointer *>::iterator p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
 		{
 			(*p)->m_pCache = NULL;
 			(*p)->m_bCacheIsSet = false;
@@ -56,7 +56,7 @@ public:
 	static void ClearCacheSpecific( const T *pObject )
 	{
 		CachedObjectHelpers::Lock();
-		for( typename vector<ObjectPointer *>::iterator p = m_apObjectPointers.begin(); p != m_apObjectPointers.end(); ++p )
+		for( typename set<ObjectPointer *>::iterator p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
 		{
 			if( (*p)->m_pCache == pObject )
 			{
@@ -71,7 +71,7 @@ public:
 	static void ClearCacheNegative()
 	{
 		CachedObjectHelpers::Lock();
-		for( typename vector<ObjectPointer *>::iterator p = m_apObjectPointers.begin(); p != m_apObjectPointers.end(); ++p )
+		for( typename set<ObjectPointer *>::iterator p = m_spObjectPointers.begin(); p != m_spObjectPointers.end(); ++p )
 		{
 			if( (*p)->m_pCache == NULL )
 				(*p)->m_bCacheIsSet = false;
@@ -85,14 +85,14 @@ private:
 
 	static void Register( ObjectPointer *p )
 	{
-		m_apObjectPointers.push_back( p );
+		m_spObjectPointers.insert( p );
 	}
 
 	static void Unregister( ObjectPointer *p )
 	{
-		typename vector<ObjectPointer *>::iterator it = find( m_apObjectPointers.begin(), m_apObjectPointers.end(), p );
-		ASSERT( it != m_apObjectPointers.end() );
-		m_apObjectPointers.erase( it );
+		typename set<ObjectPointer *>::iterator it = m_spObjectPointers.find( p );
+		ASSERT( it != m_spObjectPointers.end() );
+		m_spObjectPointers.erase( it );
 	}
 
 	/* This points to the actual T this object is contained in.  This is set
@@ -102,9 +102,9 @@ private:
 	 * need to clear cache for an object before any CachedObjectPointers have
 	 * ever been set for it. */
 	const T *m_pObject;
-	static vector<ObjectPointer *> m_apObjectPointers;
+	static set<ObjectPointer *> m_spObjectPointers;
 };
-template<typename T> vector<CachedObjectPointer<T> *> CachedObject<T>::m_apObjectPointers = vector<CachedObjectPointer<T> *>();
+template<typename T> set<CachedObjectPointer<T> *> CachedObject<T>::m_spObjectPointers = set<CachedObjectPointer<T> *>();
 
 template<typename T>
 class CachedObjectPointer
