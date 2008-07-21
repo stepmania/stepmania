@@ -8,7 +8,7 @@ return Def.ActorFrame {
 			InitCommand=cmd(horizalign,left;y,4);
 		};
 		LoadFont( "_sf sports night ns upright 26px header text" ) .. {
-			InitCommand=cmd(x,64;y,-7;horizalign,left;shadowlength,0;settext,ScreenString("HeaderText");skewx,-0.15;zoomx,1.2;);
+			InitCommand=cmd(x,64;y,-7;horizalign,left;shadowlength,0;settext,ScreenString("HeaderText");skewx,-0.15;zoomx,1.2;maxwidth,250;);
 			Name="HeaderText";
 		};
 		LoadFont( "_venacti 10px header subtext" ) .. {

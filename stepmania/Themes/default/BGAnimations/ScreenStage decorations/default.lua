@@ -1,11 +1,9 @@
-local t = {};
-t[#t+1] = Def.ActorFrame {
-	LoadActor("horizon") .. {
-		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;);
-	};
-	LoadActor("sun") .. {
-		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;);
-	};
+local t = Def.ActorFrame {};
+t[#t+1] = LoadActor("horizon") .. {
+	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;);
+};
+t[#t+1] = LoadActor("sun") .. {
+	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;);
 };
 local InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;);
 local OnCommand=cmd(cropbottom,1;linear,0.5;cropbottom,0;sleep,10;);
