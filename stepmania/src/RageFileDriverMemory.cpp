@@ -51,13 +51,14 @@ RageFileObjMem::~RageFileObjMem()
 
 int RageFileObjMem::ReadInternal( void *buffer, size_t bytes )
 {
-	m_pFile->m_Mutex.Lock();
+	LockMut(m_pFile->m_Mutex);
 
 	m_iFilePos = min( m_iFilePos, GetFileSize() );
 	bytes = min( bytes, (size_t) GetFileSize() - m_iFilePos );
+	if( bytes == 0 )
+		return 0;
 	memcpy( buffer, &m_pFile->m_sBuf[m_iFilePos], bytes );
 	m_iFilePos += bytes;
-	m_pFile->m_Mutex.Unlock();
 
 	return bytes;
 }
