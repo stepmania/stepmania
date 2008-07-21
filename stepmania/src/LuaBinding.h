@@ -114,7 +114,7 @@ private:
 	{
 		char buff[32];
 		const void *pData = check( L, 1 );
-		sprintf( buff, "%p", pData );
+		snprintf( buff, sizeof(buff), "%p", pData );
 		lua_pushfstring( L, "%s (%s)", m_sClassName.c_str(), buff );
 		return 1;
 	}
