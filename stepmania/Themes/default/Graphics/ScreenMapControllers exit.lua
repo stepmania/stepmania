@@ -1,4 +1,4 @@
-return LoadFont("_Arial 14 shadow") .. {
+return LoadFont("Common Normal") .. {
 	Text="Exit";
 	InitCommand=cmd(x,SCREEN_CENTER_X;zoom,0.75;shadowlength,0;diffuse,color("#808080"));
 	OnCommand=cmd(diffusealpha,0;decelerate,0.5;diffusealpha,1);
