@@ -34,7 +34,7 @@ void ScreenMapControllers::Init()
 	m_soundDelete.Load( THEME->GetPathS(m_sName,"delete"), true );
 
 
-	m_textDevices.LoadFromFont( THEME->GetPathF("Common","normal") );
+	m_textDevices.LoadFromFont( THEME->GetPathF(m_sName,"normal") );
 	m_textDevices.SetName( "Devices" );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_textDevices );
 	this->AddChild( &m_textDevices );
@@ -71,7 +71,7 @@ void ScreenMapControllers::Init()
 		FOREACH_ENUM( GameController,  c )
 		{			
 			BitmapText &text = m_textLabel[c];
-			text.LoadFromFont( THEME->GetPathF("Common","title") );
+			text.LoadFromFont( THEME->GetPathF(m_sName,"title") );
 			PlayerNumber pn = (PlayerNumber)c;
 			text.SetName( "Label"+PlayerNumberToString(pn) );
 			RString sText = ssprintf(PLAYER_SLOTS.GetValue(), PlayerNumberToLocalizedString(pn).c_str());
@@ -92,7 +92,7 @@ void ScreenMapControllers::Init()
 		{
 			BitmapText *pName = new BitmapText;
 			pName->SetName( "Primary" );
-			pName->LoadFromFont( THEME->GetPathF("Common","title") );
+			pName->LoadFromFont( THEME->GetPathF(m_sName,"title") );
 			RString sText = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), pKey->m_GameButton );
 			pName->SetText( sText );
 			ActorUtil::LoadAllCommands( *pName, m_sName );
@@ -101,7 +101,7 @@ void ScreenMapControllers::Init()
 		{
 			BitmapText *pSecondary = new BitmapText;
 			pSecondary->SetName( "Secondary" );
-			pSecondary->LoadFromFont( THEME->GetPathF("Common","title") );
+			pSecondary->LoadFromFont( THEME->GetPathF(m_sName,"title") );
 			GameButton mb = INPUTMAPPER->GetInputScheme()->GameButtonToMenuButton( pKey->m_GameButton );
 			RString sText;
 			if( mb != GameButton_Invalid && mb != pKey->m_GameButton )
