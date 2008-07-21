@@ -250,7 +250,6 @@
 		AA29CCCD0558741A00961A51 /* ScreenSelectMusic.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E006A047711F3005F316C /* ScreenSelectMusic.h */; };
 		AA29CCCE0558741A00961A51 /* ScreenSelectStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E006C047711F3005F316C /* ScreenSelectStyle.h */; };
 		AA29CCCF0558741A00961A51 /* ScreenSongOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0070047711F3005F316C /* ScreenSongOptions.h */; };
-		AA29CCD00558741A00961A51 /* ScreenStage.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0074047711F3005F316C /* ScreenStage.h */; };
 		AA29CCD30558741A00961A51 /* ScreenTestFonts.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E007A047711F3005F316C /* ScreenTestFonts.h */; };
 		AA29CCD40558741A00961A51 /* ScreenTestSound.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E007C047711F3005F316C /* ScreenTestSound.h */; };
 		AA29CCD50558741A00961A51 /* ScreenTextEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E007E047711F3005F316C /* ScreenTextEntry.h */; };
@@ -439,7 +438,6 @@
 		AA29CDDB0558741A00961A51 /* ScreenSelectMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0069047711F3005F316C /* ScreenSelectMusic.cpp */; };
 		AA29CDDC0558741A00961A51 /* ScreenSelectStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E006B047711F3005F316C /* ScreenSelectStyle.cpp */; };
 		AA29CDDD0558741A00961A51 /* ScreenSongOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E006F047711F3005F316C /* ScreenSongOptions.cpp */; };
-		AA29CDDE0558741A00961A51 /* ScreenStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0073047711F3005F316C /* ScreenStage.cpp */; };
 		AA29CDE10558741A00961A51 /* ScreenTestFonts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0079047711F3005F316C /* ScreenTestFonts.cpp */; };
 		AA29CDE20558741A00961A51 /* ScreenTestSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E007B047711F3005F316C /* ScreenTestSound.cpp */; };
 		AA29CDE30558741A00961A51 /* ScreenTextEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E007D047711F3005F316C /* ScreenTextEntry.cpp */; };
@@ -683,7 +681,6 @@
 		AA40D24609A08D650068C0D5 /* ScreenSelectMusic.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E006A047711F3005F316C /* ScreenSelectMusic.h */; };
 		AA40D24709A08D650068C0D5 /* ScreenSelectStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E006C047711F3005F316C /* ScreenSelectStyle.h */; };
 		AA40D24809A08D650068C0D5 /* ScreenSongOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0070047711F3005F316C /* ScreenSongOptions.h */; };
-		AA40D24909A08D650068C0D5 /* ScreenStage.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0074047711F3005F316C /* ScreenStage.h */; };
 		AA40D24A09A08D650068C0D5 /* ScreenTestFonts.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E007A047711F3005F316C /* ScreenTestFonts.h */; };
 		AA40D24B09A08D650068C0D5 /* ScreenTestSound.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E007C047711F3005F316C /* ScreenTestSound.h */; };
 		AA40D24C09A08D650068C0D5 /* ScreenTextEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E007E047711F3005F316C /* ScreenTextEntry.h */; };
@@ -1027,7 +1024,6 @@
 		AA40D40309A08D650068C0D5 /* ScreenSelectMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0069047711F3005F316C /* ScreenSelectMusic.cpp */; };
 		AA40D40409A08D650068C0D5 /* ScreenSelectStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E006B047711F3005F316C /* ScreenSelectStyle.cpp */; };
 		AA40D40509A08D650068C0D5 /* ScreenSongOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E006F047711F3005F316C /* ScreenSongOptions.cpp */; };
-		AA40D40609A08D650068C0D5 /* ScreenStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0073047711F3005F316C /* ScreenStage.cpp */; };
 		AA40D40709A08D650068C0D5 /* ScreenTestFonts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0079047711F3005F316C /* ScreenTestFonts.cpp */; };
 		AA40D40809A08D650068C0D5 /* ScreenTestSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E007B047711F3005F316C /* ScreenTestSound.cpp */; };
 		AA40D40909A08D650068C0D5 /* ScreenTextEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E007D047711F3005F316C /* ScreenTextEntry.cpp */; };
@@ -2457,8 +2453,6 @@
 		AA6E006C047711F3005F316C /* ScreenSelectStyle.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSelectStyle.h; path = ../src/ScreenSelectStyle.h; sourceTree = "<group>"; };
 		AA6E006F047711F3005F316C /* ScreenSongOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSongOptions.cpp; path = ../src/ScreenSongOptions.cpp; sourceTree = "<group>"; };
 		AA6E0070047711F3005F316C /* ScreenSongOptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSongOptions.h; path = ../src/ScreenSongOptions.h; sourceTree = "<group>"; };
-		AA6E0073047711F3005F316C /* ScreenStage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenStage.cpp; path = ../src/ScreenStage.cpp; sourceTree = "<group>"; };
-		AA6E0074047711F3005F316C /* ScreenStage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenStage.h; path = ../src/ScreenStage.h; sourceTree = "<group>"; };
 		AA6E0079047711F3005F316C /* ScreenTestFonts.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenTestFonts.cpp; path = ../src/ScreenTestFonts.cpp; sourceTree = "<group>"; };
 		AA6E007A047711F3005F316C /* ScreenTestFonts.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenTestFonts.h; path = ../src/ScreenTestFonts.h; sourceTree = "<group>"; };
 		AA6E007B047711F3005F316C /* ScreenTestSound.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenTestSound.cpp; path = ../src/ScreenTestSound.cpp; sourceTree = "<group>"; };
@@ -3799,8 +3793,6 @@
 				AA6E0070047711F3005F316C /* ScreenSongOptions.h */,
 				AAB6B475085761B700CEE7BA /* ScreenSplash.cpp */,
 				AAB6B476085761B700CEE7BA /* ScreenSplash.h */,
-				AA6E0073047711F3005F316C /* ScreenStage.cpp */,
-				AA6E0074047711F3005F316C /* ScreenStage.h */,
 				AAF34AEB0900B00C0006EDB7 /* ScreenStatsOverlay.cpp */,
 				AAF34AEC0900B00C0006EDB7 /* ScreenStatsOverlay.h */,
 				AA07A55D0843E72B00E33D21 /* ScreenSyncOverlay.cpp */,
@@ -5491,7 +5483,6 @@
 				AA29CCCD0558741A00961A51 /* ScreenSelectMusic.h in Headers */,
 				AA29CCCE0558741A00961A51 /* ScreenSelectStyle.h in Headers */,
 				AA29CCCF0558741A00961A51 /* ScreenSongOptions.h in Headers */,
-				AA29CCD00558741A00961A51 /* ScreenStage.h in Headers */,
 				AA29CCD30558741A00961A51 /* ScreenTestFonts.h in Headers */,
 				AA29CCD40558741A00961A51 /* ScreenTestSound.h in Headers */,
 				AA29CCD50558741A00961A51 /* ScreenTextEntry.h in Headers */,
@@ -5917,7 +5908,6 @@
 				AA40D24609A08D650068C0D5 /* ScreenSelectMusic.h in Headers */,
 				AA40D24709A08D650068C0D5 /* ScreenSelectStyle.h in Headers */,
 				AA40D24809A08D650068C0D5 /* ScreenSongOptions.h in Headers */,
-				AA40D24909A08D650068C0D5 /* ScreenStage.h in Headers */,
 				AA40D24A09A08D650068C0D5 /* ScreenTestFonts.h in Headers */,
 				AA40D24B09A08D650068C0D5 /* ScreenTestSound.h in Headers */,
 				AA40D24C09A08D650068C0D5 /* ScreenTextEntry.h in Headers */,
@@ -6756,7 +6746,6 @@
 				AA29CDDB0558741A00961A51 /* ScreenSelectMusic.cpp in Sources */,
 				AA29CDDC0558741A00961A51 /* ScreenSelectStyle.cpp in Sources */,
 				AA29CDDD0558741A00961A51 /* ScreenSongOptions.cpp in Sources */,
-				AA29CDDE0558741A00961A51 /* ScreenStage.cpp in Sources */,
 				AA29CDE10558741A00961A51 /* ScreenTestFonts.cpp in Sources */,
 				AA29CDE20558741A00961A51 /* ScreenTestSound.cpp in Sources */,
 				AA29CDE30558741A00961A51 /* ScreenTextEntry.cpp in Sources */,
@@ -7170,7 +7159,6 @@
 				AA40D40309A08D650068C0D5 /* ScreenSelectMusic.cpp in Sources */,
 				AA40D40409A08D650068C0D5 /* ScreenSelectStyle.cpp in Sources */,
 				AA40D40509A08D650068C0D5 /* ScreenSongOptions.cpp in Sources */,
-				AA40D40609A08D650068C0D5 /* ScreenStage.cpp in Sources */,
 				AA40D40709A08D650068C0D5 /* ScreenTestFonts.cpp in Sources */,
 				AA40D40809A08D650068C0D5 /* ScreenTestSound.cpp in Sources */,
 				AA40D40909A08D650068C0D5 /* ScreenTextEntry.cpp in Sources */,
@@ -8562,6 +8550,7 @@
 			buildSettings = {
 				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = NO;
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
 				GCC_ENABLE_SSE3_EXTENSIONS = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
