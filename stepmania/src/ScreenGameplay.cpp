@@ -2366,7 +2366,7 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 {
-	CHECKPOINT_M( ssprintf("HandleScreenMessage(%i)", SM) );
+	CHECKPOINT_M( ssprintf("HandleScreenMessage(%s)", ScreenMessageHelpers::ScreenMessageToString(SM).c_str()) );
 	if( SM == SM_DoneFadingIn )
 	{
 		SOUND->PlayOnceFromAnnouncer( "gameplay ready" );
