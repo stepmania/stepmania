@@ -772,7 +772,7 @@ RString ThemeManager::GetPath( ElementCategory category, const RString &sMetrics
 {
 	PathInfo pi;
 	GetPathInfo( pi, category, sMetricsGroup, sElement, bOptional );
-	ASSERT( pi.sResolvedPath );
+	ASSERT( !pi.sResolvedPath.empty() );
 	return pi.sResolvedPath;
 }
 
