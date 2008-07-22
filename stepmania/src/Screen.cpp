@@ -153,7 +153,7 @@ void Screen::Update( float fDeltaTime )
 		unsigned iSize = m_QueuedMessages.size();
 
 		// send this sucker!
-		CHECKPOINT_M( ssprintf("ScreenMessage(%i)", SM) );
+		CHECKPOINT_M( ssprintf("ScreenMessage(%s)", ScreenMessageHelpers::ScreenMessageToString(SM).c_str()) );
 		this->HandleScreenMessage( SM );
 
 		/* If the size changed, start over. */
