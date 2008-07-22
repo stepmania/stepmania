@@ -17,7 +17,7 @@ REGISTER_DIALOG_DRIVER_CLASS( Null );
 
 DialogDriver *DialogDriver::Create()
 {
-	RString sDrivers = "win32,cocoa,null";
+	RString sDrivers = "win32,macosx,null";
 	vector<RString> asDriversToTry;
 	split( sDrivers, ",", asDriversToTry, true );
 	
