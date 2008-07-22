@@ -2,7 +2,7 @@
 #include "Crash.h"
 #include "ProductInfo.h"
 #include "arch/ArchHooks/ArchHooks.h"
-#include <Carbon/Carbon.h>
+#include <CoreServices/CoreServices.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/sysctl.h>

@@ -4,7 +4,7 @@
 #include "RageThreads.h"
 #include "ProductInfo.h"
 #include "InputFilter.h"
-#include <Carbon/Carbon.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 REGISTER_DIALOG_DRIVER_CLASS( MacOSX );
 

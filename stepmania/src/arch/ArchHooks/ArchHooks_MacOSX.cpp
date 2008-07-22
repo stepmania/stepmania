@@ -5,7 +5,8 @@
 #include "archutils/Unix/CrashHandler.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "ProductInfo.h"
-#include <Carbon/Carbon.h>
+#include <CoreServices/CoreServices.h>
+#include <ApplicationServices/ApplicationServices.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <mach/mach.h>
