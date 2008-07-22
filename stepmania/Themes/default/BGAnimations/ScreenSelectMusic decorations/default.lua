@@ -321,10 +321,14 @@ t[#t+1] = Def.ActorFrame{
 		InitCommand=cmd(x,-56;y,-10;shadowlength,0;diffuse,color("#E2E2E2");diffusebottomedge,color("#CECECE");strokecolor,color("#00000000"));
 		SetCommand=function(self)
 			local Song = GAMESTATE:GetCurrentSong();
-			local time = Song:MusicLengthSeconds();
-			time = SecondsToMSSMsMs(time);
-			time = string.sub(time, 0, string.len(time)-3);
-			self:settext( time );
+			if Song then
+				local time = Song:MusicLengthSeconds();
+				time = SecondsToMSSMsMs(time);
+				time = string.sub(time, 0, string.len(time)-3);
+				self:settext( time );
+			else
+				self:settext( "" );
+			end
 		end;
 	};
 	LoadFont("_venacti bold 24px")..{
@@ -332,10 +336,14 @@ t[#t+1] = Def.ActorFrame{
 		InitCommand=cmd(x,32;y,-4;shadowlength,0;skewx,-0.2;diffusebottomedge,color("#068EE1FF");strokecolor,color("#FF000000"));
 		SetCommand=function(self)
 			local Song = GAMESTATE:GetCurrentSong();
-			local postfix = " STAGES";
-			if Song:IsLong() then self:settext("2"..postfix);
-			elseif Song:IsMarathon() then self:settext("3"..postfix);
-			end;
+			if Song then
+				local postfix = " STAGES";
+				if Song:IsLong() then self:settext("2"..postfix);
+				elseif Song:IsMarathon() then self:settext("3"..postfix);
+				end;
+			else
+				self:settext( "" );
+			end
 		end;
 	};
 	
