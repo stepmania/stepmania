@@ -1089,7 +1089,7 @@ void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCou
 
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut )
 {
-	const RString sCourseSuffix = sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
+	const RString sCourseSuffix = sPreferredGroup + (bExtra2 ? "/extra2.crs" : "/extra1.crs");
 	RString sCoursePath = SONGS_DIR + sCourseSuffix;
 
 	/* Couldn't find course in DWI path or alternative song folders */
