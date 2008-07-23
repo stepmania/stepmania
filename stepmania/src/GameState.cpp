@@ -633,7 +633,11 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 				pStyle = vpStyles[0];
 			}
 		}
-		iNumStagesOfThisSong = GameState::GetNumStagesForSongAndStyleType( m_pCurSong, pStyle->m_StyleType );
+		/* Extra stages need to only count as one stage in case a multistage song is chosen. */
+		if( IsAnExtraStage() )
+			iNumStagesOfThisSong = 1;
+		else
+			iNumStagesOfThisSong = GameState::GetNumStagesForSongAndStyleType( m_pCurSong, pStyle->m_StyleType );
 	}
 	else if( m_pCurCourse )
 		iNumStagesOfThisSong = PREFSMAN->m_iSongsPerPlay;
@@ -670,7 +674,10 @@ void GameState::BeginStage()
 	m_iNumStagesOfThisSong = GetNumStagesForCurrentSongAndStepsOrCourse();
 	ASSERT( m_iNumStagesOfThisSong != -1 );
 	FOREACH_EnabledPlayer( p )
+	{
+		ASSERT( m_iPlayerStageTokens[p] >= m_iNumStagesOfThisSong );
 		m_iPlayerStageTokens[p] -= m_iNumStagesOfThisSong;
+	}
 
 	FOREACH_HumanPlayer( pn )
 		if( CurrentOptionsDisqualifyPlayer(pn) )
