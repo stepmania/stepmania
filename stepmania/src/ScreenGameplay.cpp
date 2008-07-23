@@ -397,6 +397,9 @@ void ScreenGameplay::Init()
 	// fill in difficulty of CPU players with that of the first human player
 	FOREACH_PotentialCpuPlayer(p)
 		GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
+	
+	FOREACH_EnabledPlayer(p)
+		ASSERT( GAMESTATE->m_pCurSteps[p].Get() );
 
 	/* Increment the course play count. */
 	if( GAMESTATE->IsCourseMode() && !GAMESTATE->m_bDemonstrationOrJukebox )
