@@ -675,10 +675,10 @@ void GameState::BeginStage()
 	ASSERT( m_iNumStagesOfThisSong != -1 );
 	FOREACH_EnabledPlayer( p )
 	{
-		ASSERT( m_iPlayerStageTokens[p] >= m_iNumStagesOfThisSong );
+		if( !IsEventMode() )
+			ASSERT( m_iPlayerStageTokens[p] >= m_iNumStagesOfThisSong );
 		m_iPlayerStageTokens[p] -= m_iNumStagesOfThisSong;
 	}
-
 	FOREACH_HumanPlayer( pn )
 		if( CurrentOptionsDisqualifyPlayer(pn) )
 			STATSMAN->m_CurStageStats.m_player[pn].m_bDisqualified = true;
