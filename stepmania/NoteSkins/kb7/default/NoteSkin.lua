@@ -2,13 +2,13 @@ local ret = ... or {};
 
 ret.RedirTable =
 {
-	Key1 = "Down",
-	Key2 = "Down",
-	Key3 = "Down",
-	Key4 = "Down",
-	Key5 = "Down",
-	Key6 = "Down",
-	Key7 = "Down",
+	Key1 = "Key",
+	Key2 = "Key",
+	Key3 = "Key",
+	Key4 = "Key",
+	Key5 = "Key",
+	Key6 = "Key",
+	Key7 = "Key",
 };
 
 local OldRedir = ret.Redir;
@@ -69,12 +69,13 @@ ret.PartsToRotate =
 };
 ret.Rotate =
 {
-	Up = 180,
-	Down = 0,
-	Left = 90,
-	Right = -90,
-	UpLeft = 135,
-	UpRight = 225,
+	Key1 = 0,
+	Key2 = 0,
+	Key3 = 0,
+	Key4 = 0,
+	Key5 = 0,
+	Key6 = 0,
+	Key7 = 0,
 };
 
 --
