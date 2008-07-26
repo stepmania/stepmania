@@ -10,7 +10,7 @@ local t = Def.ActorFrame {
 		TilesStartY = 380;
 		TilesSpacingX = 10000;
 		TileVelocityX = -300;
-		OnCommand = cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
+		OnCommand = cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+50);
 		Condition = GAMESTATE:GetPremium() == "Premium_2PlayersFor1Credit";
 	};
 	LoadActor( "free" ) .. {
