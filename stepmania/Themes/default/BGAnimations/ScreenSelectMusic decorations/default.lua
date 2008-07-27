@@ -377,63 +377,107 @@ t[#t+1] = LoadFont("common normal") .. {
 if not GAMESTATE:IsCourseMode() then
 	t[#t+1] = Def.DifficultyList {
 		Name="DifficultyList";
-		InitCommand=cmd(x,SCREEN_CENTER_X+170;y,SCREEN_CENTER_Y+20);
+		InitCommand=cmd(x,SCREEN_CENTER_X+166;y,SCREEN_CENTER_Y+20);
 		CursorP1 = Def.ActorFrame {
-			InitCommand=cmd(x,-150;bounce;effectmagnitude,-5,0,0;effectperiod,1.0;effectoffset,0.0;effectclock,"bgm");
 			BeginCommand=cmd(visible,true);
 			StepsSelectedMessageCommand=function( self, param ) 
 				if param.Player ~= "PlayerNumber_P1" then return end;
 				self:visible(false);
 			end;
 			children={
-				LoadActor( "DifficultyList cursor p1" ) .. {
-					BeginCommand=cmd(player,"PlayerNumber_P1";);
+				LoadActor( "DifficultyList highlight" ) .. {
+					InitCommand=cmd(addx,-10;diffusealpha,0.3);
+					BeginCommand=cmd(player,"PlayerNumber_P1");
+					OnCommand=cmd(playcommand,"UpdateAlpha");
+					CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"UpdateAlpha");
+					CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"UpdateAlpha");
+					UpdateAlphaCommand=function(self)
+						if GAMESTATE:GetCurrentSteps(PLAYER_1):GetDifficulty() == GAMESTATE:GetCurrentSteps(PLAYER_2):GetDifficulty() then
+							self:linear(.08);
+							self:diffusealpha(0.15);
+						else
+							self:linear(.08); --has no effect if alpha is already .3
+							self:diffusealpha(0.3);
+						end;
+					end;
 					PlayerJoinedMessageCommand=function(self,param )
 						if param.Player ~= "PlayerNumber_P1" then return end;
 						self:visible( true );
 					end;
 				};
-				LoadFont( "_terminator two 18px" ) .. {
-					InitCommand=cmd(x,-4;y,-3;settext,"P1";diffuse,PlayerColor("PlayerNumber_P1");shadowlength,0;);
-					BeginCommand=cmd(player,"PlayerNumber_P1";);
-					PlayerJoinedMessageCommand=function(self,param )
-						if param.Player ~= "PlayerNumber_P1" then return end;
-						self:visible( true );
-					end;
+				Def.ActorFrame {
+					InitCommand=cmd(x,-150;bounce;effectmagnitude,-12,0,0;effectperiod,1.0;effectoffset,0.0;effectclock,"bgm");
+					children={
+						LoadActor( "DifficultyList cursor p1" ) .. {
+							BeginCommand=cmd(player,"PlayerNumber_P1";);
+							PlayerJoinedMessageCommand=function(self,param )
+								if param.Player ~= "PlayerNumber_P1" then return end;
+								self:visible( true );
+							end;
+						};
+						LoadFont( "_terminator two 18px" ) .. {
+							InitCommand=cmd(x,-4;y,-3;settext,"P1";diffuse,PlayerColor("PlayerNumber_P1");shadowlength,0;);
+							BeginCommand=cmd(player,"PlayerNumber_P1";);
+							PlayerJoinedMessageCommand=function(self,param )
+								if param.Player ~= "PlayerNumber_P1" then return end;
+								self:visible( true );
+							end;
+						};
+					}
 				};
 			}
 		};
 		CursorP2 = Def.ActorFrame {
-			InitCommand=cmd(x,130;bounce;effectmagnitude,5,0,0;effectperiod,1.0;effectoffset,0.0;effectclock,"bgm");
 			BeginCommand=cmd(visible,true);
 			StepsSelectedMessageCommand=function( self, param ) 
 				if param.Player ~= "PlayerNumber_P2" then return end;
 				self:visible(false);
 			end;
 			children={
-				LoadActor( "DifficultyList cursor p2" ) .. {
-					BeginCommand=cmd(player,"PlayerNumber_P2";);
+				LoadActor( "DifficultyList highlight" ) .. {
+					InitCommand=cmd(addx,-10;zoomx,-1;diffusealpha,0.3);
+					BeginCommand=cmd(player,"PlayerNumber_P2");
+					OnCommand=cmd(playcommand,"UpdateAlpha");
+					CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"UpdateAlpha");
+					CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"UpdateAlpha");
+					UpdateAlphaCommand=function(self)
+						if GAMESTATE:GetCurrentSteps(PLAYER_1):GetDifficulty() == GAMESTATE:GetCurrentSteps(PLAYER_2):GetDifficulty() then
+							self:linear(.08);
+							self:diffusealpha(0.15);
+						else
+							self:linear(.08); --has no effect if alpha is already .3
+							self:diffusealpha(0.3);
+						end;
+					end;
 					PlayerJoinedMessageCommand=function(self,param )
 						if param.Player ~= "PlayerNumber_P2" then return end;
 						self:visible( true );
 					end;
 				};
-				LoadFont( "_terminator two 18px" ) .. {
-					InitCommand=cmd(x,4;y,-3;settext,"P2";diffuse,PlayerColor("PlayerNumber_P2");shadowlength,0;);
-					BeginCommand=cmd(player,"PlayerNumber_P2";);
-					PlayerJoinedMessageCommand=function(self,param )
-						if param.Player ~= "PlayerNumber_P2" then return end;
-						self:visible( true );
-					end;
+				Def.ActorFrame {
+					InitCommand=cmd(x,130;bounce;effectmagnitude,12,0,0;effectperiod,1.0;effectoffset,0.0;effectclock,"bgm");
+					children={
+						LoadActor( "DifficultyList cursor p2" ) .. {
+							BeginCommand=cmd(player,"PlayerNumber_P2";);
+							PlayerJoinedMessageCommand=function(self,param )
+								if param.Player ~= "PlayerNumber_P2" then return end;
+								self:visible( true );
+							end;
+						};
+						LoadFont( "_terminator two 18px" ) .. {
+							InitCommand=cmd(x,4;y,-3;settext,"P2";diffuse,PlayerColor("PlayerNumber_P2");shadowlength,0;);
+							BeginCommand=cmd(player,"PlayerNumber_P2";);
+							PlayerJoinedMessageCommand=function(self,param )
+								if param.Player ~= "PlayerNumber_P2" then return end;
+								self:visible( true );
+							end;
+						};
+					}
 				};
 			}
 		};
-		CursorP1Frame = LoadActor( "DifficultyList frame p1" ) .. {
-			InitCommand=cmd(bounce;effectmagnitude,-10,0,0;effectperiod,1.0;effectoffset,0.0;effectclock,"bgm");
-		};
-		CursorP2Frame = LoadActor( "DifficultyList frame p2" ) .. {
-			InitCommand=cmd(bounce;effectmagnitude,10,0,0;effectperiod,1.0;effectoffset,0.0;effectclock,"bgm");
-		};
+		CursorP1Frame = Def.Actor{ };
+		CursorP2Frame = Def.Actor{ };
 	};
 end
 -- fade out
