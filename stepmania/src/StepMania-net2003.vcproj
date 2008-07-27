@@ -665,12 +665,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenSplash.h">
 			</File>
 			<File
-				RelativePath="ScreenStage.cpp">
-			</File>
-			<File
-				RelativePath="ScreenStage.h">
-			</File>
-			<File
 				RelativePath=".\ScreenStatsOverlay.cpp">
 			</File>
 			<File
@@ -3100,18 +3094,16 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\CharacterManager.h">
 			</File>
 			<File
+				RelativePath="CryptHelpers.cpp">
+			</File>
+			<File
+				RelativePath="CryptHelpers.h">
+			</File>
+			<File
 				RelativePath="CryptManager.cpp">
 			</File>
 			<File
 				RelativePath="CryptManager.h">
-			</File>
-			<File
-				RelativePath="CryptHelpers.cpp"
-				>
-			</File>
-			<File
-				RelativePath="CryptHelpers.h"
-				>
 			</File>
 			<File
 				RelativePath=".\FontManager.cpp">
