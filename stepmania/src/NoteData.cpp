@@ -250,7 +250,7 @@ int NoteData::GetNumTracksWithTap( int row ) const
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		const TapNote &tn = GetTapNote( t, row );
-		if( tn.type == TapNote::tap )
+		if( tn.type == TapNote::tap || tn.type == TapNote::lift )
 			iNum++;
 	}
 	return iNum;
@@ -262,7 +262,7 @@ int NoteData::GetNumTracksWithTapOrHoldHead( int row ) const
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		const TapNote &tn = GetTapNote( t, row );
-		if( tn.type == TapNote::tap || tn.type == TapNote::hold_head )
+		if( tn.type == TapNote::tap || tn.type == TapNote::lift || tn.type == TapNote::hold_head )
 			iNum++;
 	}
 	return iNum;
@@ -273,7 +273,7 @@ int NoteData::GetFirstTrackWithTap( int row ) const
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		const TapNote &tn = GetTapNote( t, row );
-		if( tn.type == TapNote::tap )
+		if( tn.type == TapNote::tap || tn.type == TapNote::lift )
 			return t;
 	}
 	return -1;
@@ -284,7 +284,7 @@ int NoteData::GetFirstTrackWithTapOrHoldHead( int row ) const
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		const TapNote &tn = GetTapNote( t, row );
-		if( tn.type == TapNote::tap || tn.type == TapNote::hold_head )
+		if( tn.type == TapNote::tap || tn.type == TapNote::lift || tn.type == TapNote::hold_head )
 			return t;
 	}
 	return -1;
@@ -295,7 +295,7 @@ int NoteData::GetLastTrackWithTapOrHoldHead( int row ) const
 	for( int t=GetNumTracks()-1; t>=0; t-- )
 	{
 		const TapNote &tn = GetTapNote( t, row );
-		if( tn.type == TapNote::tap || tn.type == TapNote::hold_head )
+		if( tn.type == TapNote::tap || tn.type == TapNote::lift || tn.type == TapNote::hold_head )
 			return t;
 	}
 	return -1;
