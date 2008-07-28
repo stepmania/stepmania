@@ -318,7 +318,9 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 	/* Cache and load the course banner.  Only bother doing this if at least one
 	 * song was found in the course. */
-	if( out.m_sBannerPath != "" && !out.m_vEntries.empty() )
+	if( out.m_vEntries.empty() )
+		return true;
+	if( out.m_sBannerPath != "" )
 		BANNERCACHE->CacheBanner( out.GetBannerPath() );
 
 	/* Cache each trail RadarValues that's slow to load, so we
@@ -356,7 +358,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 		unsigned uHash = SONGINDEX->GetCacheHash( out.m_sPath );
 		if( !DoesFileExist(out.GetCacheFilePath()) )
 			bUseCache = false;
-		if( !PREFSMAN->m_bFastLoad && GetHashForDirectory(out.m_sPath) != uHash )
+		if( !PREFSMAN->m_bFastLoad && GetHashForFile(out.m_sPath) != uHash )
 			bUseCache = false; // this cache is out of date 
 	}
 
@@ -364,7 +366,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 	{
 		RString sCacheFile = out.GetCacheFilePath();
 		LOG->Trace( "CourseLoaderCRS::LoadFromCRSFile(\"%s\") (\"%s\")", sPath.c_str(), sCacheFile.c_str() );
-		sPath = sCacheFile.c_str();
+		sPath = sCacheFile;
 	}
 	else
 	{
