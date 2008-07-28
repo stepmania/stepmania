@@ -188,7 +188,7 @@ void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatO
 void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const
 {
 //	LOG->Trace( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
-
+	const float fTime = fElapsedTime;
 	fElapsedTime += m_fBeat0OffsetInSeconds;
 
 
@@ -244,6 +244,14 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 		// this BPMSegment is NOT the current segment
 		fElapsedTime -= fSecondsInThisSegment;
 	}
+	// If we get here, something has gone wrong. Is everything sorted?
+	vector<BPMSegment> vBPMS = m_BPMSegments;
+	vector<StopSegment> vSS = m_StopSegments;
+	sort( vBPMS.begin(), vBPMS.end() );
+	sort( vSS.begin(), vSS.end() );
+	ASSERT_M( vBPMS == m_BPMSegments, "The BPM segments were not sorted!" );
+	ASSERT_M( vSS == m_StopSegments, "The Stop segments were not sorted!" );
+	FAIL_M( ssprintf("Failed to find the appropriate segment for elapsed time %f.", fTime) );
 }
 
 
