@@ -447,14 +447,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AA059CC80B8F09DB006F8139 /* z */;
+			remoteGlobalIDString = AA059CC80B8F09DB006F8139;
 			remoteInfo = z;
 		};
 		AAA0705E0CE511C1005A3060 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AAA06EDD0CE4F465005A3060 /* ffmpeg */;
+			remoteGlobalIDString = AAA06EDD0CE4F465005A3060;
 			remoteInfo = ffmpeg;
 		};
 /* End PBXContainerItemProxy section */
@@ -787,7 +787,7 @@
 		AA3AE051097B250700575EA1 /* wrppm.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = wrppm.c; sourceTree = "<group>"; };
 		AA3AE052097B250700575EA1 /* wrrle.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = wrrle.c; sourceTree = "<group>"; };
 		AA3AE053097B250700575EA1 /* wrtarga.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = wrtarga.c; sourceTree = "<group>"; };
-		AA3AE277097B475400575EA1 /* ffmpeg-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "ffmpeg-Info copy.plist"; sourceTree = "<group>"; };
+		AA3AE277097B475400575EA1 /* ffmpeg-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ffmpeg-Info copy.plist"; sourceTree = "<group>"; };
 		AA3AE366097B668900575EA1 /* libogg.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libogg.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA3AE4B0097B673300575EA1 /* ogg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ogg.h; sourceTree = "<group>"; };
 		AA3AE4B1097B673300575EA1 /* os_types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = os_types.h; sourceTree = "<group>"; };
@@ -914,7 +914,7 @@
 		AAA070950CE7A45E005A3060 /* rm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rm.c; sourceTree = "<group>"; };
 		AAA070990CE7A4E0005A3060 /* mpegvideo_ppc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpegvideo_ppc.c; sourceTree = "<group>"; };
 		AAA070A00CE7AD75005A3060 /* imgresample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = imgresample.c; sourceTree = "<group>"; };
-		AAA3730F090994F500141131 /* mad-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "mad-Info.plist"; sourceTree = "<group>"; };
+		AAA3730F090994F500141131 /* mad-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "mad-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
