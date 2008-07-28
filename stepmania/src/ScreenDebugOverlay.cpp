@@ -353,7 +353,7 @@ void ScreenDebugOverlay::UpdateText()
 }
 
 template<typename U, typename V>
-bool GetValueFromMap( const map<U, V> &m, const U &key, V &val )
+static bool GetValueFromMap( const map<U, V> &m, const U &key, V &val )
 {
 	typename map<U, V>::const_iterator it = m.find(key);
 	if( it == m.end() )
@@ -382,7 +382,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			g_bIsDisplayed = false;
 	}
 
-	int iPage;
+	int iPage = 0;
 	if( g_bIsDisplayed && GetValueFromMap(g_Mappings.pageButton, input.DeviceI, iPage) )
 	{
 		if( input.type != IET_FIRST_PRESS )
