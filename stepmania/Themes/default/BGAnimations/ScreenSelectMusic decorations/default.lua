@@ -136,7 +136,7 @@ for pn in ivalues(PlayerNumber) do
 	t[#t+1] = Def.PaneDisplay {
 		MetricsGroup="PaneDisplay";
 		PlayerNumber=pn;
-		InitCommand=function(self) self:player(PLAYER_1); self:playcommand("Set"); self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXYAndOnCommand(self,Var "LoadingScreen"); end;
+		InitCommand=function(self) self:player(pn); self:playcommand("Set"); self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXYAndOnCommand(self,Var "LoadingScreen"); end;
 		SetCommand=function(self) self:SetFromGameState() end;
 		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
@@ -159,10 +159,41 @@ t[#t+1] = LoadActor( "_bpm label" ) .. {
 	OnCommand=cmd(addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
 	OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
 };
-t[#t+1] = LoadActor( "bpm meter" ) .. {
+
+t[#t+1] = LoadActor( "temp bpm meter" ) .. {
 	InitCommand=cmd(x,SCREEN_CENTER_X+230;y,SCREEN_CENTER_Y-22);
 	OnCommand=cmd(addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
 	OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
+};
+
+t[#t+1] = Def.ActorFrame {	
+	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
+	OnCommand=cmd(addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
+	OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
+	
+	BeginCommand=cmd(visible,false);
+
+	LoadActor( "bpm meter" ) .. {
+			InitCommand=cmd(setstate,0;pause)
+	};
+	
+	Def.Quad {
+		InitCommand=cmd(diffuse,color("#FFFFFF");setsize,120,16;horizalign,right;addx,60);
+		BeginCommand=cmd(zwrite,1;z,1;blend,"BlendMode_NoEffect");
+		UpdateCommand=function(self)
+			local function CalcZoomX(width)
+				local spacing = 10;
+				local width2 = math.floor( (width + spacing/2)/spacing ) * spacing;
+				return width2/120;
+			end;
+		end;
+	};
+	LoadActor( "bpm meter" ) .. {
+		InitCommand=cmd(setstate,1;pause);
+		BeginCommand=cmd(ztest,1);
+	};
+	
+	
 };
 t[#t+1] = LoadActor( "stop icon" ) .. {
 	InitCommand=cmd(x,SCREEN_CENTER_X+296;y,SCREEN_CENTER_Y-4);
