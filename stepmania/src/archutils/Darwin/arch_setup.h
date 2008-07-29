@@ -23,6 +23,8 @@ extern "C" int SM_main( int argc, char *argv[] );
 #define CRASH_HANDLER
 
 #define GL_GET_ERROR_IS_SLOW
+// CGFlushDrawable() performs a glFlush() and the docs say not to call glFlush()
+#define NO_GL_FLUSH
 
 #if defined(__ppc__)
 # define CPU_PPC

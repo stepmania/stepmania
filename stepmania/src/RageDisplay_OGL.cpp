@@ -27,6 +27,10 @@ using namespace RageDisplay_OGL_Helpers;
 #pragma comment(lib, "glu32.lib")
 #endif
 
+#ifdef NO_GL_FLUSH
+#define glFlush()
+#endif
+
 //
 // Globals
 //

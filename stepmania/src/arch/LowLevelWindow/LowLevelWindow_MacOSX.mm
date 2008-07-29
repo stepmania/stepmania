@@ -271,7 +271,6 @@ void RenderTarget_MacOSX::StartRenderingTo()
 void RenderTarget_MacOSX::FinishRenderingTo()
 {
 	DEBUG_ASSERT( m_OldContext );
-	glFlush();
 	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
 	
 	while( glGetError() != GL_NO_ERROR )
