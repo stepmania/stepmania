@@ -176,20 +176,28 @@ t[#t+1] = Def.ActorFrame {
 	LoadActor( "bpm meter" ) .. {
 			InitCommand=cmd(setstate,0;pause)
 	};
-	
+
 	Def.Quad {
 		InitCommand=cmd(diffuse,color("#FFFFFF");setsize,120,16;horizalign,right;addx,60);
 		BeginCommand=cmd(zwrite,1;z,1;blend,"BlendMode_NoEffect");
 		UpdateCommand=function(self)
-			local function CalcZoomX(width)
-				local spacing = 10;
-				local width2 = math.floor( (width + spacing/2)/spacing ) * spacing;
-				return width2/120;
+			local function CalcZoomX(fBpm)
+				local fWidth;
+				if fBpm > 300 then
+					fWidth=120;
+				elseif fBpm < 60 then
+					fWidth=0;
+				else
+					fWidth=scale(fBpm,60,300,0,120);
+				end;
+				local fSpacing=12;
+				local fWidth2=math.floor((fWidth + fSpacing/2)/fSpacing)*fSpacing;
+				return fWidth2/120;
 			end;
 		end;
 	};
 	LoadActor( "bpm meter" ) .. {
-		InitCommand=cmd(setstate,1;pause);
+		InitCommand=cmd(setstate,1;pause;glowshift;effectcolor1,color("1,1,1,0");effectcolor2,color("1,1,1,.1");effectclock,"bgm");
 		BeginCommand=cmd(ztest,1);
 	};
 	
