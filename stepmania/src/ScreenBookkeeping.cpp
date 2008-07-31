@@ -8,6 +8,11 @@
 #include "InputEventPlus.h"
 #include "RageUtil.h"
 #include "LocalizedString.h"
+#include "Song.h"
+#include "SongManager.h"
+#include "UnlockManager.h"
+#include "ProfileManager.h"
+#include "Profile.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenBookkeeping );
@@ -93,7 +98,8 @@ void ScreenBookkeeping::MenuCoin( const InputEventPlus &input )
 	Screen::MenuCoin( input );
 }
 
-static LocalizedString ALL_TIME		( "ScreenBookkeeping", "All-time Total:" );
+static LocalizedString ALL_TIME		( "ScreenBookkeeping", "All-time Coin Total:" );
+static LocalizedString SONG_PLAYS	( "ScreenBookkeeping", "Total Song Plays: %d" );
 static LocalizedString LAST_DAYS	( "ScreenBookkeeping", "Coin Data of Last %d Days" );
 static LocalizedString LAST_WEEKS	( "ScreenBookkeeping", "Coin Data of Last %d Weeks" );
 static LocalizedString DAY_OF_WEEK	( "ScreenBookkeeping", "Coin Data by Day of Week, All-Time" );
@@ -112,6 +118,43 @@ void ScreenBookkeeping::ChangeView( View newView )
 
 	switch( m_View )
 	{
+	case View_SongsPlays:
+		{
+			Profile *pProfile = PROFILEMAN->GetMachineProfile();
+
+			vector<Song*> vpSongs;
+			int iCount = 0;
+			FOREACH_CONST( Song *, SONGMAN->GetSongs(), s )
+			{
+				Song *pSong = *s;
+				if( UNLOCKMAN->SongIsLocked(pSong) & ~LOCKED_DISABLED )
+					continue;
+				iCount += pProfile->GetSongNumTimesPlayed( pSong );
+				vpSongs.push_back( pSong );
+			}
+			m_textTitle.SetText( ssprintf(SONG_PLAYS.GetValue(), iCount) );
+			SongUtil::SortSongPointerArrayByNumPlays( vpSongs, pProfile, true );
+
+			const int iSongPerCol = 15;
+			
+			for( int i=0; i<NUM_BOOKKEEPING_COLS; i++ )
+			{
+				RString s;
+				for( int j=0; j<iSongPerCol; j++ )
+				{
+					int index = i*NUM_BOOKKEEPING_COLS + j;
+					if( index < (int)vpSongs.size() )
+					{
+						Song *pSong = vpSongs[index];
+						int iCount = pProfile->GetSongNumTimesPlayed( pSong );
+						s += ssprintf("%4d",iCount) + " " + pSong->GetDisplayFullTitle() + "\n";
+					}
+				}
+				m_textData[i].SetText( s );
+				m_textData[i].SetHorizAlign( align_left );
+			}
+		}
+		break;
 	case VIEW_LAST_DAYS:
 		{
 			m_textTitle.SetText( ssprintf(LAST_DAYS.GetValue(), NUM_LAST_DAYS) );

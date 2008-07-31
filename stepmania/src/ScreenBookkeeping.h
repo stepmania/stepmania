@@ -1,7 +1,7 @@
 /* ScreenBookkeeping - Show coin drop stats. */
 
-#ifndef SCREEN_BOOKKEEPING_H
-#define SCREEN_BOOKKEEPING_H
+#ifndef ScreenBookkeeping_H
+#define ScreenBookkeeping_H
 
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
@@ -25,7 +25,7 @@ public:
 private:
 	virtual bool GenericTweenOn() const { return true; }
 	virtual bool GenericTweenOff() const { return true; }
-	enum View { VIEW_LAST_DAYS, VIEW_LAST_WEEKS, VIEW_DAY_OF_WEEK, VIEW_HOUR_OF_DAY, NUM_VIEWS };
+	enum View { View_SongsPlays, VIEW_LAST_DAYS, VIEW_LAST_WEEKS, VIEW_DAY_OF_WEEK, VIEW_HOUR_OF_DAY, NUM_VIEWS };
 	
 	void ChangeView( View newView );
 
