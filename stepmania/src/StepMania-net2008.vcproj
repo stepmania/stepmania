@@ -878,14 +878,6 @@
 				>
 			</File>
 			<File
-				RelativePath="ScreenStage.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenStage.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ScreenStatsOverlay.cpp"
 				>
 			</File>
@@ -1119,6 +1111,14 @@
 			</File>
 			<File
 				RelativePath=".\CourseWriterCRS.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CryptHelpers.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CryptHelpers.h"
 				>
 			</File>
 			<File
