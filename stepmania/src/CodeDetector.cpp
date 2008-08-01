@@ -11,10 +11,10 @@
 #include "InputEventPlus.h"
 
 const char *CodeNames[] = {
-	"Easier1",
-	"Easier2",
-	"Harder1",
-	"Harder2",
+	"PrevSteps1",
+	"PrevSteps2",
+	"NextSteps1",
+	"NextSteps2",
 	"NextSort1",
 	"NextSort2",
 	"NextSort3",
@@ -80,14 +80,14 @@ bool CodeDetector::EnteredNextBannerGroup( GameController controller )
 	return EnteredCode(controller,CODE_BW_NEXT_GROUP) || EnteredCode(controller,CODE_BW_NEXT_GROUP2);
 }
 
-bool CodeDetector::EnteredEasierDifficulty( GameController controller )
+bool CodeDetector::EnteredPrevSteps( GameController controller )
 {
-	return EnteredCode(controller,CODE_EASIER1) || EnteredCode(controller,CODE_EASIER2);
+	return EnteredCode(controller,Code_PrevSteps1) || EnteredCode(controller,Code_PrevSteps2);
 }
 
-bool CodeDetector::EnteredHarderDifficulty( GameController controller )
+bool CodeDetector::EnteredNextSteps( GameController controller )
 {
-	return EnteredCode(controller,CODE_HARDER1) || EnteredCode(controller,CODE_HARDER2);
+	return EnteredCode(controller,Code_NextSteps1) || EnteredCode(controller,Code_NextSteps2);
 }
 
 bool CodeDetector::EnteredNextSort( GameController controller )

@@ -6,10 +6,10 @@
 #include "GameInput.h"
 
 enum Code {
-	CODE_EASIER1,
-	CODE_EASIER2,
-	CODE_HARDER1,
-	CODE_HARDER2,
+	Code_PrevSteps1,
+	Code_PrevSteps2,
+	Code_NextSteps1,
+	Code_NextSteps2,
 	CODE_NEXT_SORT1,
 	CODE_NEXT_SORT2,
 	CODE_NEXT_SORT3,
@@ -52,8 +52,8 @@ class CodeDetector
 {
 public:
 	static void RefreshCacheItems( RString sClass="" );	// call this before checking codes, but call infrequently
-	static bool EnteredEasierDifficulty( GameController controller );
-	static bool EnteredHarderDifficulty( GameController controller );
+	static bool EnteredPrevSteps( GameController controller );
+	static bool EnteredNextSteps( GameController controller );
 	static bool EnteredNextSort( GameController controller );
 	static bool EnteredModeMenu( GameController controller );
 	static bool DetectAndAdjustMusicOptions( GameController controller );
