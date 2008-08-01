@@ -79,6 +79,7 @@ void ScreenSelectMusic::Init()
 	USE_PLAYER_SELECT_MENU.Load( m_sName, "UsePlayerSelectMenu" );
 	SELECT_MENU_CHANGES_DIFFICULTY.Load( m_sName, "SelectMenuChangesDifficulty" );
 	TWO_PART_SELECTION.Load( m_sName, "TwoPartSelection" );
+	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
 	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextSongButton") );
@@ -448,11 +449,11 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			switch( input.MenuI )
 			{
 			case GAME_BUTTON_LEFT:
-				ChangeDifficulty( input.pn, -1 );
+				ChangeSteps( input.pn, -1 );
 				m_bAcceptSelectRelease[input.pn] = false;
 				break;
 			case GAME_BUTTON_RIGHT:
-				ChangeDifficulty( input.pn, +1 );
+				ChangeSteps( input.pn, +1 );
 				m_bAcceptSelectRelease[input.pn] = false;
 				break;
 			case GAME_BUTTON_START:
@@ -545,14 +546,14 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 				m_soundLocked.Play();
 			else
-				ChangeDifficulty( input.pn, -1 );
+				ChangeSteps( input.pn, -1 );
 		}
 		else if( input.MenuI == m_GameButtonNextSong )
 		{
 			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 				m_soundLocked.Play();
 			else
-				ChangeDifficulty( input.pn, +1 );
+				ChangeSteps( input.pn, +1 );
 		}		
 	}
 
@@ -564,19 +565,19 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 {
-	if( CodeDetector::EnteredEasierDifficulty(input.GameI.controller) )
+	if( CodeDetector::EnteredPrevSteps(input.GameI.controller) )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			m_soundLocked.Play();
 		else
-			ChangeDifficulty( input.pn, -1 );
+			ChangeSteps( input.pn, -1 );
 	}
-	else if( CodeDetector::EnteredHarderDifficulty(input.GameI.controller) )
+	else if( CodeDetector::EnteredNextSteps(input.GameI.controller) )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			m_soundLocked.Play();
 		else
-			ChangeDifficulty( input.pn, +1 );
+			ChangeSteps( input.pn, +1 );
 	}
 	else if( CodeDetector::EnteredModeMenu(input.GameI.controller) )
 	{
@@ -623,18 +624,25 @@ void ScreenSelectMusic::UpdateSelectButton( PlayerNumber pn, bool bSelectIsDown 
 	}
 }
 
-void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
+void ScreenSelectMusic::ChangeSteps( PlayerNumber pn, int dir )
 {
-	LOG->Trace( "ScreenSelectMusic::ChangeDifficulty( %d, %d )", pn, dir );
+	LOG->Trace( "ScreenSelectMusic::ChangeSteps( %d, %d )", pn, dir );
 
 	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
 	if( GAMESTATE->m_pCurSong )
 	{
 		m_iSelection[pn] += dir;
-		if( CLAMP(m_iSelection[pn],0,m_vpSteps.size()-1) )
-			return;
-		
+		if( WRAP_CHANGE_STEPS )
+		{
+			wrap( m_iSelection[pn], m_vpSteps.size() );
+		}
+		else
+		{
+			if( CLAMP(m_iSelection[pn],0,m_vpSteps.size()-1) )
+				return;
+		}
+
 		// the user explicity switched difficulties.  Update the preferred Difficulty and StepsType
 		Steps *pSteps = m_vpSteps[ m_iSelection[pn] ];
 		GAMESTATE->ChangePreferredDifficultyAndStepsType( pn, pSteps->GetDifficulty(), pSteps->m_StepsType );
@@ -642,8 +650,15 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 	else if( GAMESTATE->m_pCurCourse )
 	{
 		m_iSelection[pn] += dir;
-		if( CLAMP(m_iSelection[pn],0,m_vpTrails.size()-1) )
-			return;
+		if( WRAP_CHANGE_STEPS )
+		{
+			wrap( m_iSelection[pn], m_vpTrails.size() );
+		}
+		else
+		{
+			if( CLAMP(m_iSelection[pn],0,m_vpTrails.size()-1) )
+				return;
+		}
 
 		// the user explicity switched difficulties.  Update the preferred Difficulty and StepsType
 		Trail *pTrail = m_vpTrails[ m_iSelection[pn] ];

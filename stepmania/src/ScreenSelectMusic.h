@@ -58,7 +58,7 @@ protected:
 	virtual bool GenericTweenOff() const { return true; }
 	void UpdateSelectButton( PlayerNumber pn, bool bBeingPressed );
 
-	void ChangeDifficulty( PlayerNumber pn, int dir );
+	void ChangeSteps( PlayerNumber pn, int dir );
 
 	void AfterStepsOrTrailChange( const vector<PlayerNumber> &vpns );
 	void SwitchToPreferredDifficulty();
@@ -85,6 +85,7 @@ protected:
 	ThemeMetric<bool> USE_PLAYER_SELECT_MENU;
 	ThemeMetric<bool> SELECT_MENU_CHANGES_DIFFICULTY;
 	ThemeMetric<bool> TWO_PART_SELECTION;
+	ThemeMetric<bool> WRAP_CHANGE_STEPS;
 
 	bool CanChangeSong() const { return m_SelectionState == SelectionState_SelectingSong; }
 	bool CanChangeSteps() const { return TWO_PART_SELECTION ? m_SelectionState == SelectionState_SelectingSteps : m_SelectionState == SelectionState_SelectingSong; }
