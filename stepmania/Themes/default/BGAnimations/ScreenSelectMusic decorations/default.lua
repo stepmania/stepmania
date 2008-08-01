@@ -18,31 +18,6 @@ local function DifficultyDisplay(pn)
 	return t;
 end
 
-local function Radar()
-	local function set(self,player)
-		local Selection = GAMESTATE:GetCurrentSteps(player) or GAMESTATE:GetCurrentTrail(player)
-		if not Selection then
-			self:SetEmpty( player );
-			return
-		end
-		self:SetFromRadarValues( player, Selection:GetRadarValues(player) );
-
-	end
-
-	local t = Def.GrooveRadar {
-		OnCommand=cmd(tweenonscreen);
-		OffCommand=cmd(tweenoffscreen);
-
-		CurrentStepsP1ChangedMessageCommand=function(self) set(self, PLAYER_1); end;
-		CurrentStepsP2ChangedMessageCommand=function(self) set(self, PLAYER_2); end;
-		CurrentTrailP1ChangedMessageCommand=function(self) set(self, PLAYER_1); end;
-		CurrentTrailP2ChangedMessageCommand=function(self) set(self, PLAYER_2); end;
-	};
-
-	return t;
-end
-
-
 local t = LoadFallbackB();
 
 t[#t+1] = Def.ActorFrame { 
@@ -351,8 +326,8 @@ end
 
 t[#t+1] = Def.ActorFrame{
 	InitCommand=cmd(x,SCREEN_CENTER_X-190;y,SCREEN_CENTER_Y-32);
-	ShowCommand=cmd(linear,0.2;diffusealpha,1);
-	HideCommand=cmd(linear,0.2;diffusealpha,0);
+	ShowCommand=cmd(stoptweening;linear,0.2;diffusealpha,1);
+	HideCommand=cmd(stoptweening;linear,0.2;diffusealpha,0);
 	
 	LoadActor("long balloon");
 	LoadFont("_terminator two 30px")..{
@@ -401,11 +376,11 @@ t[#t+1] = LoadFont("common normal") .. {
 	SetCommand=function(self)
 		local Course = GAMESTATE:GetCurrentCourse()
 		if not Course then
-			self:hidden(1)
+			self:visible(false)
 			return
 		end
 
-		self:hidden(0)
+		self:visible(true)
 		self:settext( Course:GetEstimatedNumStages() );
 	end;
 
