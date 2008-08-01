@@ -22,7 +22,6 @@ for s in ivalues(Stage) do
 				Stage = ss:GetStage();
 				StageIndex = ss:GetStageIndex();
 			end
-			self:finishtweening();
 			self:visible( Stage == s );
 			self:settext( StageToLocalizedString(Stage) );
 			self:diffuse( StageToColor(s) );
