@@ -1,6 +1,6 @@
 local stages = Def.ActorFrame {
 	BeginCommand=cmd(playcommand,"Set";);
-	CurrentSongChangedMessageCommand=cmd(playcommand,"Set";);
+	CurrentSongChangedMessageCommand=cmd(finishtweening;playcommand,"Set";);
 };
 
 local ScreenName = Var "LoadingScreen";
@@ -22,7 +22,7 @@ for s in ivalues(Stage) do
 				Stage = ss:GetStage();
 				StageIndex = ss:GetStageIndex();
 			end
-
+			self:finishtweening();
 			self:visible( Stage == s );
 			self:settext( StageToLocalizedString(Stage) );
 			self:diffuse( StageToColor(s) );
