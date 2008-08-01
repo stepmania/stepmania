@@ -108,14 +108,14 @@ public:
 
 		return 2;
 	}
-	static int setsecsbetweenswitches( T* p, lua_State *L ) { p->SetSecsBetweenSwitches( FArg(1) ); return 0; }
+	static int SetSecsBetweenSwitches( T* p, lua_State *L ) { p->SetSecsBetweenSwitches( FArg(1) ); return 0; }
 
 	LunaHelpDisplay()
 	{
 		ADD_METHOD( settips );
 		ADD_METHOD( SetTipsColonSeparated );
 		ADD_METHOD( gettips );
-		ADD_METHOD( setsecsbetweenswitches );
+		ADD_METHOD( SetSecsBetweenSwitches );
 	}
 };
 
