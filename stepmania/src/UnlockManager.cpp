@@ -696,7 +696,6 @@ public:
 		ADD_METHOD( GetUnlockRewardType );
 		ADD_METHOD( GetRequirement );
 		ADD_METHOD( GetRequirePassHardSteps );
-		ADD_METHOD( GetRequirePassHardSteps );
 		ADD_METHOD( song );
 		ADD_METHOD( steps );
 		ADD_METHOD( course );
