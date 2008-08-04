@@ -4,9 +4,6 @@
 #include "RageUtil.h"
 #include "ScreenManager.h"
 
-AutoScreenMessage( SM_PrepNextScreen )
-
-
 REGISTER_SCREEN_CLASS( ScreenSplash );
 
 void ScreenSplash::Init()
