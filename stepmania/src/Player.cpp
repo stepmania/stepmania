@@ -1542,7 +1542,7 @@ void Player::DoTapScoreNone()
 
 	if( PENALIZE_TAP_SCORE_NONE )
 	{
-		SetJudgment( TNS_Miss, 0 );
+		SetJudgment( TNS_Miss, -1, 0 );
 		// the ScoreKeeper will subrtract points later.
 	}
 }
@@ -2267,47 +2267,47 @@ void Player::UpdateJudgedRows()
 	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
 
 	{
-	NoteData::all_tracks_iterator iter = *m_pIterUnjudgedRows;
-	int iLastSeenRow = -1;
-	for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; ++iter )
-	{
-		int iRow = iter.Row();
-
-		if( iLastSeenRow != iRow )
+		NoteData::all_tracks_iterator iter = *m_pIterUnjudgedRows;
+		int iLastSeenRow = -1;
+		for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; ++iter )
 		{
-			iLastSeenRow = iRow;
+			int iRow = iter.Row();
 
-			// crossed a nonempty row
-			if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow, pn) )
+			if( iLastSeenRow != iRow )
 			{
-				bAllJudged = false;
-				continue;
-			}
-			if( bAllJudged )
-				*m_pIterUnjudgedRows = iter;
-			if( m_pJudgedRows->JudgeRow(iRow) )
-				continue;
-			const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow, pn ).result;
-			
-			if( lastTNR.tns < TNS_Miss )
-				continue;
-			if( bSeparately )
-			{
-				for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+				iLastSeenRow = iRow;
+
+				// crossed a nonempty row
+				if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow, pn) )
 				{
-					const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
-					if( tn.type == TapNote::empty || tn.type == TapNote::mine ) continue;
-					if( tn.pn != PLAYER_INVALID && tn.pn != pn ) continue;
-					SetJudgment( tn.result.tns, tn.result.fTapNoteOffset );
+					bAllJudged = false;
+					continue;
 				}
+				if( bAllJudged )
+					*m_pIterUnjudgedRows = iter;
+				if( m_pJudgedRows->JudgeRow(iRow) )
+					continue;
+				const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow, pn ).result;
+				
+				if( lastTNR.tns < TNS_Miss )
+					continue;
+				if( bSeparately )
+				{
+					for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+					{
+						const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
+						if( tn.type == TapNote::empty || tn.type == TapNote::mine ) continue;
+						if( tn.pn != PLAYER_INVALID && tn.pn != pn ) continue;
+						SetJudgment( tn.result.tns, iTrack, tn.result.fTapNoteOffset );
+					}
+				}
+				else
+				{
+					SetJudgment( lastTNR.tns, m_NoteData.GetFirstTrackWithTap(iRow), lastTNR.fTapNoteOffset );
+				}
+				HandleTapRowScore( iRow );
 			}
-			else
-			{
-				SetJudgment( lastTNR.tns, lastTNR.fTapNoteOffset );
-			}
-			HandleTapRowScore( iRow );
 		}
-	}
 	}
 
 	{
@@ -2750,7 +2750,7 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 
 	ChangeLife( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss );
 
-	SetJudgment( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss, 0 );
+	SetJudgment( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss, viColsWithHold[0], 0 );
 }
 
 void Player::HandleHoldScore( const TapNote &tn )
@@ -2816,11 +2816,12 @@ void Player::CacheAllUsedNoteSkins()
 		m_pNoteField->CacheAllUsedNoteSkins();
 }
 
-void Player::SetJudgment( TapNoteScore tns, float fTapNoteOffset )
+void Player::SetJudgment( TapNoteScore tns, int iTrack, float fTapNoteOffset )
 {
 	Message msg("Judgment");
 	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+	msg.SetParam( "FirstTrack", iTrack );
 	msg.SetParam( "TapNoteScore", tns );
 	msg.SetParam( "Early", fTapNoteOffset < 0.0f );
 	msg.SetParam( "TapNoteOffset", fTapNoteOffset );
@@ -2836,6 +2837,7 @@ void Player::SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack )
 	Message msg("Judgment");
 	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+	msg.SetParam( "FirstTrack", iTrack );
 	msg.SetParam( "TapNoteScore", tns );
 	msg.SetParam( "HoldNoteScore", hns );
 	MESSAGEMAN->Broadcast( msg );
