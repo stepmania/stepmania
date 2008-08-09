@@ -29,6 +29,7 @@ ScreenWithMenuElements::ScreenWithMenuElements()
 void ScreenWithMenuElements::Init()
 {
 	PLAY_MUSIC.Load( m_sName, "PlayMusic" );
+	MUSIC_ALIGN_BEAT.Load( m_sName, "MusicAlignBeat" );
 	CANCEL_TRANSITIONS_OUT.Load( m_sName, "CancelTransitionsOut" );
 	TIMER_SECONDS.Load( m_sName, "TimerSeconds" );
 	TIMER_METRICS_GROUP.Load( m_sName, "TimerMetricsGroup" );
@@ -195,6 +196,7 @@ void ScreenWithMenuElements::StartPlayingMusic()
 	{
 		GameSoundManager::PlayMusicParams pmp;
 		pmp.sFile = m_sPathToMusic;
+		pmp.bAlignBeat = MUSIC_ALIGN_BEAT;
 		SOUND->PlayMusic( pmp );
 	}
 }
