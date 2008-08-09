@@ -192,7 +192,11 @@ void ScreenWithMenuElements::StartPlayingMusic()
 	/* Some screens should leave the music alone (eg. ScreenPlayerOptions music 
 	 * sample left over from ScreenSelectMusic). */
 	if( PLAY_MUSIC )
-		SOUND->PlayMusic( m_sPathToMusic );
+	{
+		GameSoundManager::PlayMusicParams pmp;
+		pmp.sFile = m_sPathToMusic;
+		SOUND->PlayMusic( pmp );
+	}
 }
 
 void ScreenWithMenuElements::Update( float fDeltaTime )
