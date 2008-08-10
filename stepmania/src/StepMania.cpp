@@ -574,7 +574,7 @@ struct VideoCardDefaults
 		"",
 		"opengl,d3d",
 		640,480,
-		16,16,16,
+		32,32,32,
 		2048,
 		false  // AA is slow on some cards, so let's selectively enable HW accelerated cards.
 	),
