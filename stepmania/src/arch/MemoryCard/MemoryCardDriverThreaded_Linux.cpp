@@ -136,6 +136,11 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				continue;
 
 
+			/* HACK: The kernel isn't exposing all of /sys atomically, so we end up
+			 * missing the partition due to it not being shown yet.  The kernel should
+			 * be exposing all of this atomically. */
+			usleep(50000);
+
 			/* If the first partition device exists, eg. /sys/block/uba/uba1, use it. */
 			if( access(usbd.sSysPath + sDevice + "1", F_OK) != -1 )
 				usbd.sDevice = "/dev/" + sDevice + "1";
