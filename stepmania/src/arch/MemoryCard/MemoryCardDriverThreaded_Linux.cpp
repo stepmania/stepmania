@@ -25,7 +25,12 @@ static bool ExecuteCommand( const RString &sCommand )
 	int ret = system(sCommand);
 	LOG->Trace( "done executing '%s'", sCommand.c_str() );
 	if( ret != 0 )
-		LOG->Warn( "failed to execute '%s' with error %d.", sCommand.c_str(), ret );
+	{
+		RString sError = ssprintf("failed to execute '%s' with error %d", sCommand.c_str(), ret);
+		if( ret == -1 )
+			sError += ssprintf(": %s", sCommand.c_str());
+		LOG->Warn( "%s", sError.c_str() );
+	}
 	return ret == 0;
 }
 
