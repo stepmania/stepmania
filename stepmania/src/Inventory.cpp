@@ -201,7 +201,8 @@ void Inventory::UseItem( int iSlot )
 	CLAMP( GAMESTATE->m_fOpponentHealthPercent, 0.f, 1.f );
 
 	// play announcer sound
-	SCREENMAN->SendMessageToTopScreen( (ScreenMessage)(SM_BattleDamageLevel1+a.level) );
+	// FIXME
+	// SCREENMAN->SendMessageToTopScreen( (ScreenMessage)(SM_BattleDamageLevel1+a.level) );
 }
 
 /*
