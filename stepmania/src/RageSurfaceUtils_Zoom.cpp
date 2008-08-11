@@ -95,7 +95,9 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 
 	/* This is where all of the real work is done. */
 	const uint8_t *sp = (uint8_t *) src->pixels;
-	for( int y = 0; y < dst->h; y++ )
+	const int height = dst->h;
+	const int width = dst->w;
+	for( int y = 0; y < height; y++ )
 	{
 		uint32_t *dp = (uint32_t *) (dst->pixels + dst->pitch*y);
 		/* current source pointer and next source pointer (first and second 
@@ -103,7 +105,7 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 		const uint8_t *csp = sp + esy0[y] * src->pitch;
 		const uint8_t *ncsp = sp + esy1[y] * src->pitch;
 
-		for( int x = 0; x < dst->w; x++ )
+		for( int x = 0; x < width; x++ )
 		{
 			/* Grab pointers to the sampled pixels: */
 			const uint8_t *c00 = csp + esx0[x]*4;
