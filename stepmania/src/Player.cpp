@@ -2303,7 +2303,7 @@ void Player::UpdateJudgedRows()
 				}
 				else
 				{
-					SetJudgment( lastTNR.tns, m_NoteData.GetFirstTrackWithTap(iRow), lastTNR.fTapNoteOffset );
+					SetJudgment( lastTNR.tns, m_NoteData.GetFirstTrackWithTapOrHoldHead(iRow), lastTNR.fTapNoteOffset );
 				}
 				HandleTapRowScore( iRow );
 			}
