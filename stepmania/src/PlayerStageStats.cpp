@@ -21,7 +21,7 @@ static ThemeMetric<TapNoteScore> g_MinScoreToMaintainCombo( "Gameplay", "MinScor
 
 const float LESSON_PASS_THRESHOLD = 0.8f;
 
-Grade GetGradeFromPercent( float fPercent, bool bMerciful );
+Grade GetGradeFromPercent( float fPercent );
 
 void PlayerStageStats::Init()
 {
@@ -136,11 +136,8 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	}
 }
 
-Grade GetGradeFromPercent( float fPercent, bool bMerciful )
+Grade GetGradeFromPercent( float fPercent )
 {
-	if( bMerciful )
-		fPercent = SCALE( fPercent, 0.0f, 1.0f, 0.5f, 1.0f );
-
 	Grade grade = Grade_Failed;
 
 	FOREACH_ENUM( Grade,g)
@@ -186,18 +183,7 @@ Grade PlayerStageStats::GetGrade() const
 
 	float fPercent = (m_iPossibleGradePoints == 0) ? 0 : fActual / m_iPossibleGradePoints;
 
-
-	bool bMerciful = 
-		m_iStepsPlayed > 0  &&
-		GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR &&
-		PREFSMAN->m_bMercifulBeginner;
-	for( int i = 0; i < m_iStepsPlayed; ++i )
-	{
-		if( m_vpPossibleSteps[i]->GetDifficulty() != Difficulty_Beginner )
-			bMerciful = false;
-	}
-
-	Grade grade = GetGradeFromPercent( fPercent, bMerciful );
+	Grade grade = GetGradeFromPercent( fPercent );
 
 	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER02_IS_ALL_W2S );
 	if( GRADE_TIER02_IS_ALL_W2S )
@@ -660,7 +646,7 @@ bool PlayerStageStats::IsDisqualified() const
 	return m_bDisqualified;
 }
 
-LuaFunction( GetGradeFromPercent,	GetGradeFromPercent( FArg(1), false ) )
+LuaFunction( GetGradeFromPercent,	GetGradeFromPercent( FArg(1) ) )
 LuaFunction( FormatPercentScore,	PlayerStageStats::FormatPercentScore( FArg(1) ) )
 
 
