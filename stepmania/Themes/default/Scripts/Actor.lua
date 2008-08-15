@@ -105,6 +105,11 @@ function Actor:scale_or_crop_background()
 	end
 end
 
+function Actor:Center()
+    self:x(SCREEN_CENTER_X);
+    self:y(SCREEN_CENTER_Y);
+end;
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --
