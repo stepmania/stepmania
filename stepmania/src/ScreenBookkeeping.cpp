@@ -137,17 +137,21 @@ void ScreenBookkeeping::ChangeView( View newView )
 
 			const int iSongPerCol = 15;
 			
+			int iSongIndex = 0;
 			for( int i=0; i<NUM_BOOKKEEPING_COLS; i++ )
 			{
 				RString s;
 				for( int j=0; j<iSongPerCol; j++ )
 				{
-					int index = i*NUM_BOOKKEEPING_COLS + j;
-					if( index < (int)vpSongs.size() )
+					if( iSongIndex < (int)vpSongs.size() )
 					{
-						Song *pSong = vpSongs[index];
+						Song *pSong = vpSongs[iSongIndex];
 						int iCount = pProfile->GetSongNumTimesPlayed( pSong );
-						s += ssprintf("%4d",iCount) + " " + pSong->GetDisplayFullTitle() + "\n";
+						RString sTitle = ssprintf("%4d",iCount) + " " + pSong->GetDisplayFullTitle();
+						if( sTitle.length() > 22 )
+							sTitle = sTitle.Left(20) + "...";
+						s += sTitle + "\n";
+						iSongIndex++;
 					}
 				}
 				m_textData[i].SetText( s );
