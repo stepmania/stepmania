@@ -712,6 +712,12 @@ LUA_REGISTER_CLASS( UnlockEntry )
 class LunaUnlockManager: public Luna<UnlockManager>
 {
 public:
+	static int GetPointsUntilNextUnlock( T* p, lua_State *L )
+	{
+		const UnlockRequirement ut = Enum::Check<UnlockRequirement>( L, 1 );
+		lua_pushnumber( L, p->PointsUntilNextUnlock(ut) );
+		return 1;
+	}
 	static int FindEntryID( T* p, lua_State *L )			{ RString sName = SArg(1); RString s = p->FindEntryID(sName); if( s.empty() ) lua_pushnil(L); else lua_pushstring(L, s); return 1; }
 	static int UnlockEntryID( T* p, lua_State *L )			{ RString sUnlockEntryID = SArg(1); p->UnlockEntryID(sUnlockEntryID); return 0; }
 	static int UnlockEntryIndex( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->UnlockEntryIndex(iUnlockEntryID); return 0; }
@@ -742,6 +748,7 @@ public:
 
 	LunaUnlockManager()
 	{
+		ADD_METHOD( GetPointsUntilNextUnlock );
 		ADD_METHOD( FindEntryID );
 		ADD_METHOD( UnlockEntryID );
 		ADD_METHOD( UnlockEntryIndex );
