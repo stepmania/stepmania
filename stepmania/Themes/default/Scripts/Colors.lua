@@ -4,6 +4,12 @@ function PlayerColor( pn )
 	return color("1,1,1,1")
 end
 
+function PlayerScoreColor( pn )
+	if pn == PLAYER_1 then return color("#ff6d00") end	-- orange
+	if pn == PLAYER_2 then return color("#00ff7e") end	-- sea green
+	return color("1,1,1,1")
+end
+
 local DifficultyDisplayTypeColors = {
 	DifficultyDisplayType_Single_Beginner	= color("#ff32f8"),
 	DifficultyDisplayType_Single_Easy		= color("#2cff00"),
