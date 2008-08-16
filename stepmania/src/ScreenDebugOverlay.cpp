@@ -706,18 +706,6 @@ class DebugLineAllowMultitexture : public IDebugLine
 	}
 };
 
-class DebugLineScreenTestMode : public IDebugLine
-{
-	virtual RString GetDisplayTitle() { return SCREEN_TEST_MODE.GetValue(); }
-	virtual bool IsEnabled() { return PREFSMAN->m_bScreenTestMode.Get(); }
-	virtual RString GetPageName() const { return "Theme"; }
-	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
-	{
-		PREFSMAN->m_bScreenTestMode.Set( !PREFSMAN->m_bScreenTestMode );
-		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
-	}
-};
-
 class DebugLineShowMasks : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return SCREEN_SHOW_MASKS.GetValue(); }
@@ -1146,7 +1134,6 @@ DECLARE_ONE( DebugLineMonkeyInput );
 DECLARE_ONE( DebugLineStats );
 DECLARE_ONE( DebugLineVsync );
 DECLARE_ONE( DebugLineAllowMultitexture );
-DECLARE_ONE( DebugLineScreenTestMode );
 DECLARE_ONE( DebugLineShowMasks );
 DECLARE_ONE( DebugLineProfileSlot );
 DECLARE_ONE( DebugLineClearProfileStats );

@@ -86,7 +86,7 @@ void ScreenEvaluation::Init()
 	// debugging
 	//
 	
-	if( PREFSMAN->m_bScreenTestMode  &&  CommonMetrics::INITIAL_SCREEN == m_sName )	// Only fill StageStats with fake info if we're the InitialScreen (i.e. StageStats not already filled) 
+	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )	// Only fill StageStats with fake info if we're the InitialScreen (i.e. StageStats not already filled) 
 	{
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1);
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);

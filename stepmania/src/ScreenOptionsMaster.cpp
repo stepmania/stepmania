@@ -141,7 +141,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		if( m_iChangeMask & OPT_RESET_GAME )
 		{
 			StepMania::ResetGame();
-			m_sNextScreen = CommonMetrics::INITIAL_SCREEN;
+			m_sNextScreen = StepMania::GetInitialScreen();
 		}
 
 		if( m_iChangeMask & OPT_APPLY_SOUND )

@@ -12,6 +12,7 @@ namespace StepMania
 	void ApplyGraphicOptions();
 	void ResetPreferences();
 	void ResetGame();
+	RString GetInitialScreen();
 	void ChangeCurrentGame( const Game* g );
 
 	// If successful, return filename of screenshot in sDir, else return ""

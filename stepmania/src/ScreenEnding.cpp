@@ -24,7 +24,7 @@
 REGISTER_SCREEN_CLASS( ScreenEnding );
 ScreenEnding::ScreenEnding()
 {
-	if( PREFSMAN->m_bScreenTestMode )
+	if( PREFSMAN->m_sTestInitialScreen.Get() != "" )
 	{
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1);
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);

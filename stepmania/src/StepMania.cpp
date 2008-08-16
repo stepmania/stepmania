@@ -313,6 +313,14 @@ void StepMania::ResetGame()
 	PREFSMAN->SavePrefsToDisk();
 }
 
+ThemeMetric<RString>	INITIAL_SCREEN	("Common","InitialScreen");
+RString StepMania::GetInitialScreen()
+{
+	if( PREFSMAN->m_sTestInitialScreen.Get() != "" )
+		return PREFSMAN->m_sTestInitialScreen;
+	return INITIAL_SCREEN;
+}
+
 #if defined(WIN32)
 static Preference<int> g_iLastSeenMemory( "LastSeenMemory", 0 );
 #endif
@@ -1079,7 +1087,7 @@ int main(int argc, char* argv[])
 	/* Now that GAMESTATE is reset, tell SCREENMAN to update the theme (load
 	 * overlay screens and global sounds), and load the initial screen. */
 	SCREENMAN->ThemeChanged();
-	SCREENMAN->SetNewScreen( CommonMetrics::INITIAL_SCREEN );
+	SCREENMAN->SetNewScreen( StepMania::GetInitialScreen() );
 
 	// Do this after ThemeChanged so that we can show a system message
 	RString sMessage;

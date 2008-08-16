@@ -248,7 +248,7 @@ PrefsManager::PrefsManager() :
 	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ),
 	m_bThreadedInput		( "ThreadedInput",			true ),
 	m_bThreadedMovieDecode		( "ThreadedMovieDecode",		true ),
-	m_bScreenTestMode		( "ScreenTestMode",			false ),
+	m_sTestInitialScreen		( "TestInitialScreen",			"" ),
 	m_bDebugLights			( "DebugLights",			false ),
 	m_bMonkeyInput			( "MonkeyInput",			false ),
 	m_sMachineName			( "MachineName",			"" ),

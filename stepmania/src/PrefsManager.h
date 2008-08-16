@@ -224,7 +224,7 @@ public:
 	Preference<bool>	m_bAllowUnacceleratedRenderer;
 	Preference<bool>	m_bThreadedInput;
 	Preference<bool>	m_bThreadedMovieDecode;
-	Preference<bool>	m_bScreenTestMode;
+	Preference<RString>	m_sTestInitialScreen;
 	Preference<bool>	m_bDebugLights;
 	Preference<bool>	m_bMonkeyInput;
 	Preference<RString>	m_sMachineName;

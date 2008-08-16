@@ -137,7 +137,7 @@ void StageStats::CommitScores( bool bSummary )
 		return; /* don't save scores in battle */
 	}
 
-	if( PREFSMAN->m_bScreenTestMode )
+	if( PREFSMAN->m_sTestInitialScreen.Get() != "" )
 	{
 		FOREACH_PlayerNumber( pn )
 		{

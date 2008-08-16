@@ -20,7 +20,7 @@
 #include "InputEventPlus.h"
 #include "InputMapper.h"
 
-// used in ScreenTestMode section
+// used in TestScreen section
 #include "SongManager.h"
 #include "Song.h"
 #include "StatsManager.h"
@@ -119,7 +119,7 @@ float ScreenNameEntry::ScrollingText::GetClosestCharYOffset( float fFakeBeat ) c
 REGISTER_SCREEN_CLASS( ScreenNameEntry );
 ScreenNameEntry::ScreenNameEntry()
 {
-	if( PREFSMAN->m_bScreenTestMode )
+	if( PREFSMAN->m_sTestInitialScreen.Get() != "" )
 	{
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;

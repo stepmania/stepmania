@@ -58,7 +58,7 @@ static RageTimer g_StartedLoadingAt(RageZeroTimer);
 REGISTER_SCREEN_CLASS( ScreenSelectMusic );
 void ScreenSelectMusic::Init()
 {
-	if( PREFSMAN->m_bScreenTestMode && CommonMetrics::INITIAL_SCREEN == m_sName )
+	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )
 	{
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		GAMESTATE->SetCurrentStyle( GameManager::GameAndStringToStyle(GameManager::GetDefaultGame(),"versus") );

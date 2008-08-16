@@ -18,7 +18,7 @@ REGISTER_SCREEN_CLASS( ScreenNameEntryTraditional );
 
 void ScreenNameEntryTraditional::Init()
 {
-	if( PREFSMAN->m_bScreenTestMode && CommonMetrics::INITIAL_SCREEN == m_sName )
+	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )
 	{
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
