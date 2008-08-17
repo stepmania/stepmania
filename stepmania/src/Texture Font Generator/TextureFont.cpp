@@ -281,7 +281,7 @@ void TextureFont::FormatFontPage( int iPage, HDC hDC )
 
 	/* First, generate bitmaps for all characters in this page. */
 	for( unsigned i = 0; i < Desc.chars.size(); ++i )
-		FormatCharacter( Desc.chars[i].glyphAndWidth, hDC );
+		FormatCharacter( Desc.chars[i], hDC );
 
 	FontPage *pPage = m_apPages[iPage];
 	pPage->m_iFrameWidth = (m_BoundingRect.right - m_BoundingRect.left) + m_iPadding;
@@ -302,7 +302,7 @@ void TextureFont::FormatFontPage( int iPage, HDC hDC )
 	int iRow = 0, iCol = 0;
 	for( unsigned CurChar = 0; CurChar < Desc.chars.size(); ++CurChar )
 	{
-		const wchar_t c = Desc.chars[CurChar].glyphAndWidth;
+		const wchar_t c = Desc.chars[CurChar];
 		const ABC &abc = m_ABC[c];
 		
 		/* The current frame is at fOffsetX/fOffsetY.  Center the character
@@ -423,7 +423,7 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 					f << setw(1);
 					for( int iX = 0; iX < page.m_iNumFramesX && iChar < desc.chars.size(); ++iX, ++iChar )
 					{
-						const wchar_t c = desc.chars[iChar].codepoint;
+						const wchar_t c = desc.chars[iChar];
 						string sUTF8;
 						wchar_to_utf8( c, sUTF8 );
 						f << sUTF8.c_str();
@@ -443,7 +443,7 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 			{
 				/* This is the total width to advance for the whole character, which is the
 				 * sum of the ABC widths. */
-				const wchar_t c = desc.chars[j].glyphAndWidth;
+				const wchar_t c = desc.chars[j];
 				ABC &abc = m_ABC[c];
 				int iCharWidth = abc.abcA + int(abc.abcB) + int(abc.abcC);
 				viCharWidth.push_back( iCharWidth );
@@ -453,7 +453,7 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 			}
 			for( unsigned j = 0; j < desc.chars.size(); ++j )
 			{
-				const wchar_t c = desc.chars[j].glyphAndWidth;
+				const wchar_t c = desc.chars[j];
 				int iCharWidth = viCharWidth[j];
 				if( desc.name == "numbers"  &&  IsNumberChar( c ) )
 					iCharWidth = iMaxNumberCharWidth;
