@@ -171,6 +171,27 @@ function WrapInActorFrame( t )
 	return Def.ActorFrame { children = t }
 end
 
+function StandardDecorationFromTable( MetricsName, t )
+	if type(t) == "table" then
+		t = t .. {
+			InitCommand=function(self) self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXYAndOnCommand(self,Var "LoadingScreen"); end;
+		};
+	end
+	return t;
+end
+
+function StandardDecorationFromFile( MetricsName, FileName )
+	local t = LoadActor( THEME:GetPathG(Var "LoadingScreen",FileName) );
+	return StandardDecorationFromTable( MetricsName, t );
+end
+
+function StandardDecorationFromFileOptional( MetricsName, FileName )
+	if THEME:GetMetric(Var "LoadingScreen","Show"..MetricsName) then
+		return StandardDecorationFromFile( MetricsName, FileName );
+	end
+end
+
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --

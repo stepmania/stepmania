@@ -1,6 +1,6 @@
 local t = LoadFallbackB();
 
-t[#t+1] = LoadActor( THEME:GetPathB('','_standard decoration required'), "StageFrame", "StageFrame" );
+t[#t+1] = StandardDecorationFromFile( "StageFrame", "StageFrame" );
 
 t[#t+1] = LoadActor("_warning") .. {
 		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;
@@ -12,10 +12,10 @@ t[#t+1] = LoadActor("_warning") .. {
 		HideDangerAllMessageCommand=cmd(stoptweening;accelerate,0.3;diffusealpha,0);
 	};
 	
-t[#t+1] = LoadActor( THEME:GetPathB('','_standard decoration required'), "LifeFrame", "LifeFrame" );
-t[#t+1] = LoadActor( THEME:GetPathB('','_standard decoration required'), "ScoreFrame", "ScoreFrame" );
-t[#t+1] = LoadActor( THEME:GetPathB('','_standard decoration required'), "LeftFrame", "LeftFrame" );
-t[#t+1] = LoadActor( THEME:GetPathB('','_standard decoration required'), "RightFrame", "RightFrame" );
+t[#t+1] = StandardDecorationFromFile( "LifeFrame", "LifeFrame" );
+t[#t+1] = StandardDecorationFromFile( "ScoreFrame", "ScoreFrame" );
+t[#t+1] = StandardDecorationFromFile( "LeftFrame", "LeftFrame" );
+t[#t+1] = StandardDecorationFromFile( "RightFrame", "RightFrame" );
 
 
 t[#t+1] = Def.ModIconRow {

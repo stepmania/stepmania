@@ -43,7 +43,7 @@ t[#t+1] = ComboGraph(PLAYER_2) .. {
 	InitCommand = cmd(x,SCREEN_CENTER_X+222;y,SCREEN_CENTER_Y+10;draworder,1;);
 };
 
-t[#t+1] = LoadActor( THEME:GetPathB('','_standard decoration required'), "TimingDifficultyFrame", "TimingDifficultyFrame" );
+t[#t+1] = StandardDecorationFromFile( "TimingDifficultyFrame", "TimingDifficultyFrame" );
 t[#t+1] = LoadFont( Var "LoadingScreen", "TimingDifficultyNumber" ) .. {
 	InitCommand=function(self) self:name("TimingDifficultyNumber"); self:settext(GetTimingDifficulty()); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
 };
