@@ -29,12 +29,17 @@ end
 
 local t = LoadFallbackB();
 
-t[#t+1] = GraphDisplay(PLAYER_1) .. {
-	InitCommand = cmd(x,SCREEN_CENTER_X-222;y,SCREEN_CENTER_Y-16;draworder,1;);
-};
-t[#t+1] = GraphDisplay(PLAYER_2) .. {
-	InitCommand = cmd(x,SCREEN_CENTER_X+222;y,SCREEN_CENTER_Y-16;draworder,1;);
-};
+if ShowStandardDecoration("GraphDisplay") then
+	for pn in ivalues(PlayerNumber) do
+		t[#t+1] = StandardDecorationFromTable( "GraphDisplay" .. PlayerNumber:ToString()[pn], GraphDisplay(pn) );
+	end
+end
+
+if ShowStandardDecoration("ComboGraph") then
+	for pn in ivalues(PlayerNumber) do
+		t[#t+1] = StandardDecorationFromTable( "ComboGraph" .. PlayerNumber:ToString()[pn], ComboGraph(pn) );
+	end
+end
 
 t[#t+1] = ComboGraph(PLAYER_1) .. {
 	InitCommand = cmd(x,SCREEN_CENTER_X-222;y,SCREEN_CENTER_Y+10;draworder,1;);

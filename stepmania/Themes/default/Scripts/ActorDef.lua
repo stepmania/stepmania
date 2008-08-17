@@ -186,9 +186,13 @@ function StandardDecorationFromFile( MetricsName, FileName )
 end
 
 function StandardDecorationFromFileOptional( MetricsName, FileName )
-	if THEME:GetMetric(Var "LoadingScreen","Show"..MetricsName) then
+	if ShowStandardDecoration(MetricsName) then
 		return StandardDecorationFromFile( MetricsName, FileName );
 	end
+end
+
+function ShowStandardDecoration( MetricsName )
+	return THEME:GetMetric(Var "LoadingScreen","Show"..MetricsName)
 end
 
 
