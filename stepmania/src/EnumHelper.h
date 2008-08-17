@@ -18,20 +18,22 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 template<typename T>
 struct EnumTraits
 {
-	static LuaReference StringToEnum;
-	static LuaReference EnumToString;
+	static LuaReference IndexToEnumString;
+	static LuaReference EnumStringToZeroIndex;
+	static LuaReference EnumStringToString;
 	static T Invalid;
 	static const char *szName;
 };
-template<typename T> LuaReference EnumTraits<T>::StringToEnum;
-template<typename T> LuaReference EnumTraits<T>::EnumToString;
+template<typename T> LuaReference EnumTraits<T>::IndexToEnumString;
+template<typename T> LuaReference EnumTraits<T>::EnumStringToZeroIndex;
+template<typename T> LuaReference EnumTraits<T>::EnumStringToString;	// same as XToString
 
 namespace Enum
 {
 	template<typename T>
 	static T Check( lua_State *L, int iPos, bool bAllowInvalid = false )
 	{
-		return (T) CheckEnum( L, EnumTraits<T>::StringToEnum, iPos, EnumTraits<T>::Invalid, EnumTraits<T>::szName, bAllowInvalid );
+		return (T) CheckEnum( L, EnumTraits<T>::EnumStringToZeroIndex, iPos, EnumTraits<T>::Invalid, EnumTraits<T>::szName, bAllowInvalid );
 	}
 	template<typename T>
 	static void Push( lua_State *L, T iVal )
@@ -44,12 +46,12 @@ namespace Enum
 		}
 
 		/* Look up the string value. */
-		EnumTraits<T>::EnumToString.PushSelf( L );
+		EnumTraits<T>::IndexToEnumString.PushSelf( L );
 		lua_rawgeti( L, -1, iVal + 1 );
 		lua_remove( L, -2 );
 	}
 
-	void SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &EnumIndexTable, const char *szName );
+	void SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &EnumIndexTable, LuaReference &EnumStringToString, const char *szName );
 };
 
 const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_ptr<RString> *pNameCache ); // XToString helper
@@ -94,7 +96,7 @@ const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_
 template struct EnumTraits<X>; \
 static void Lua##X(lua_State* L) \
 { \
-	/* Create the EnumToString table: { "UnlockEntry_ArcadePoints", "UnlockEntry_DancePoints" } */ \
+	/* Create the IndexToEnumString table: { 1 = "UnlockEntry_ArcadePoints", 2 = "UnlockEntry_DancePoints" } */ \
 	lua_newtable( L ); \
 	FOREACH_ENUM( X, i ) \
 	{ \
@@ -102,10 +104,10 @@ static void Lua##X(lua_State* L) \
 		lua_pushstring( L, (#X "_")+s ); \
 		lua_rawseti( L, -2, i+1 ); /* 1-based */ \
 	} \
-	EnumTraits<X>::EnumToString.SetFromStack( L ); \
-	EnumTraits<X>::EnumToString.PushSelf( L ); \
+	EnumTraits<X>::IndexToEnumString.SetFromStack( L ); \
+	EnumTraits<X>::IndexToEnumString.PushSelf( L ); \
 	lua_setglobal( L, #X ); \
-	/* Create the StringToEnum table: { "UnlockEntry_ArcadePoints" = 0, "UnlockEntry_DancePoints" = 1 } */ \
+	/* Create the EnumStringToZeroIndex table: { "UnlockEntry_ArcadePoints" = 0, "UnlockEntry_DancePoints" = 1 } */ \
 	lua_newtable( L ); \
 	FOREACH_ENUM( X, i ) \
 	{ \
@@ -114,9 +116,18 @@ static void Lua##X(lua_State* L) \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
 	} \
-	EnumTraits<X>::StringToEnum.SetFromStack( L ); \
-	EnumTraits<X>::StringToEnum.PushSelf( L ); \
-	Enum::SetMetatable( L, EnumTraits<X>::EnumToString, EnumTraits<X>::StringToEnum, #X ); \
+	EnumTraits<X>::EnumStringToZeroIndex.SetFromStack( L ); \
+	/* Create the EnumStringToString table: { "UnlockEntry_ArcadePoints" = "ArcadePoints", "UnlockEntry_DancePoints" = "DancePoints" } */ \
+	lua_newtable( L ); \
+	FOREACH_ENUM( X, i ) \
+	{ \
+		RString s = X##ToString( i ); \
+		lua_pushstring( L, (#X "_")+s ); \
+		lua_pushstring( L, s ); \
+		lua_rawset( L, -3 ); \
+	} \
+	EnumTraits<X>::EnumStringToString.SetFromStack( L ); \
+	Enum::SetMetatable( L, EnumTraits<X>::IndexToEnumString, EnumTraits<X>::EnumStringToZeroIndex, EnumTraits<X>::EnumStringToString, #X ); \
 } \
 REGISTER_WITH_LUA_FUNCTION( Lua##X ); \
 template<> X EnumTraits<X>::Invalid = X##_Invalid; \

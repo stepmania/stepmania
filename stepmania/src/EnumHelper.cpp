@@ -99,11 +99,24 @@ namespace
 
 		return 1;
 	}
+
+	int ToString( lua_State *L )
+	{
+		luaL_checktype( L, 1, LUA_TTABLE );
+
+		/* Look up the tostring table.  If there is no metafield, then we were
+		 * called on the wrong type. */
+		if( !luaL_getmetafield(L, 1, "tostring") )
+			luaL_typerror( L, 1, "enum" );
+
+		return 1;
+	}
 }
 
 static const luaL_Reg EnumLib[] = {
 	{ "GetName", GetName },
 	{ "Reverse", Reverse },
+	{ "ToString", ToString },
 	{ NULL, NULL }
 };
 
@@ -113,13 +126,16 @@ static void PushEnumMethodTable( lua_State *L )
 }
 
 /* Set up the enum table on the stack, and pop the table. */
-void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &EnumIndexTable, const char *szName )
+void Enum::SetMetatable( lua_State *L, LuaReference &IndexToEnumString, LuaReference &EnumStringToZeroIndex, LuaReference &EnumStringToString, const char *szName )
 {
-	EnumTable.PushSelf( L );
+	IndexToEnumString.PushSelf( L );
+	lua_newtable( L );
 	{
-		lua_newtable( L );
-		EnumIndexTable.PushSelf( L );
+		EnumStringToZeroIndex.PushSelf( L );
 		lua_setfield( L, -2, "reverse" );
+
+		EnumStringToString.PushSelf( L );
+		lua_setfield( L, -2, "tostring" );
 
 		lua_pushstring( L, szName );
 		lua_setfield( L, -2, "name" );
@@ -132,7 +148,7 @@ void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &En
 		lua_setfield( L, -2, "__type" ); // for luaL_pushtype
 	}
 	lua_setmetatable( L, -2 );
-	lua_pop( L, 2 );
+	lua_pop( L, 1 );
 }
 
 /*

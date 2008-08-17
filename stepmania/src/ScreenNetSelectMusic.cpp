@@ -498,7 +498,9 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 		m_DifficultyIcon[pn].SetFromDifficulty( m_DC[pn] );
 	}
 	else
+	{
 		m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
+	}
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
