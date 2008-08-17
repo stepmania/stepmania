@@ -1341,12 +1341,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CourseContentsList.h">
 			</File>
 			<File
-				RelativePath=".\DifficultyDisplay.cpp">
-			</File>
-			<File
-				RelativePath=".\DifficultyDisplay.h">
-			</File>
-			<File
 				RelativePath="DifficultyList.cpp">
 			</File>
 			<File
@@ -1501,6 +1495,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="SnapDisplay.h">
+			</File>
+			<File
+				RelativePath=".\StepsDisplay.cpp">
+			</File>
+			<File
+				RelativePath=".\StepsDisplay.h">
 			</File>
 			<File
 				RelativePath=".\TextBanner.cpp">
