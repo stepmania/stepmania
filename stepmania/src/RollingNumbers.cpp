@@ -18,8 +18,47 @@ void RollingNumbers::Load( const RString &sMetricsGroup )
 {
 	TEXT_FORMAT.Load(sMetricsGroup, "TextFormat");
 	APPROACH_SECONDS.Load(sMetricsGroup, "ApproachSeconds");
+	COMMIFY.Load(sMetricsGroup, "Commify");
+	LEADING_ZERO_MULTIPLY_COLOR.Load(sMetricsGroup, "LeadingZeroMultiplyColor");
 
 	UpdateText();
+}
+
+void RollingNumbers::DrawPrimitives()
+{
+	RageColor c_orig = this->GetDiffuse();
+	RageColor c2_orig = this->GetStrokeColor();
+
+	RageColor c = this->GetDiffuse();
+	c *= LEADING_ZERO_MULTIPLY_COLOR;
+	RageColor c2 = this->GetStrokeColor();
+	c2 *= LEADING_ZERO_MULTIPLY_COLOR;
+
+	RString s = this->GetText();
+	int i;
+	for( i=0; i<(int)s.length(); i++ )
+	{
+		if( s[i] != '0' && s[i] != ',' )
+			break;
+	}
+	float f = i / (float)s.length();
+
+	// draw leading part
+	SetDiffuse( c );
+	SetStrokeColor( c2 );
+	SetCropLeft( 0 );
+	SetCropRight( 1-f );
+	BitmapText::DrawPrimitives();
+
+	// draw regular color part
+	SetDiffuse( c_orig );
+	SetStrokeColor( c2_orig );
+	SetCropLeft( f );
+	SetCropRight( 0 );
+	BitmapText::DrawPrimitives();
+
+	SetCropLeft( 0 );
+	SetCropRight( 0 );
 }
 
 void RollingNumbers::Update( float fDeltaTime )
@@ -44,6 +83,8 @@ void RollingNumbers::SetTargetNumber( float fTargetNumber )
 void RollingNumbers::UpdateText()
 {
 	RString s = ssprintf( TEXT_FORMAT.GetValue(), m_fCurrentNumber );
+	if( COMMIFY )
+		s = Commify( s );
 	SetText( s );
 }
 

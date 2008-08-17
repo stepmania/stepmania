@@ -40,6 +40,7 @@ public:
 	void SetHorizAlign( float f );
 
 	void SetStrokeColor( RageColor c )	{ m_StrokeColor = c; }
+	RageColor GetStrokeColor()		{ return m_StrokeColor; }
 
 	void GetLines( vector<wstring> &wTextLines ) const { wTextLines = m_wTextLines; }
 	const vector<wstring> &GetLines() const { return m_wTextLines; }

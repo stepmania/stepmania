@@ -12,6 +12,7 @@
 #include "ActorUtil.h"
 #include "RageSound.h"
 #include "ThemeMetric.h"
+#include "RollingNumbers.h"
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
 enum JudgmentLine
@@ -100,7 +101,7 @@ protected:
 
 	// score area
 	AutoActor		m_sprScoreLabel;
-	BitmapText		m_textScore[NUM_PLAYERS];
+	RollingNumbers		m_textScore[NUM_PLAYERS];
 
 	// time area
 	AutoActor		m_sprTimeLabel;
@@ -110,7 +111,7 @@ protected:
 	AutoActor		m_sprMachineRecord[NUM_PLAYERS];
 	AutoActor		m_sprProfileRecord[NUM_PLAYERS];
 	AutoActor		m_sprTryExtraStage;
-	bool m_bFailed;
+	bool			m_bFailed;
 
 	RageSound		m_soundStart;	// sound played if the player passes or fails
 

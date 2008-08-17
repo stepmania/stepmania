@@ -30,8 +30,6 @@
 #include "ScoreKeeperNormal.h"
 #include "InputEventPlus.h"
 
-const int NUM_SCORE_DIGITS = 9;
-
 
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH			THEME->GetMetricF(m_sName,"BannerWidth")
@@ -581,9 +579,10 @@ void ScreenEvaluation::Init()
 		{
 			m_textScore[p].LoadFromFont( THEME->GetPathF(m_sName, "ScoreNumber") );
 			m_textScore[p].SetName( ssprintf("ScoreNumberP%d",p+1) );
+			m_textScore[p].Load( "RollingNumbersEvaluation" );
 			ActorUtil::LoadAllCommands( m_textScore[p], m_sName );
 			SET_XY( m_textScore[p] );
-			m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, m_pStageStats->m_player[p].m_iScore) );
+			m_textScore[p].SetTargetNumber( m_pStageStats->m_player[p].m_iScore );
 			this->AddChild( &m_textScore[p] );
 		}
 	}

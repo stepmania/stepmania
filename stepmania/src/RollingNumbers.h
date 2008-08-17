@@ -14,6 +14,7 @@ public:
 	void Load( const RString &sMetricsGroup );
 	virtual RollingNumbers *Copy() const;
 
+	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
 
 	void SetTargetNumber( float fTargetNumber );
@@ -28,6 +29,8 @@ public:
 private:
 	ThemeMetric<RString> TEXT_FORMAT;
 	ThemeMetric<float> APPROACH_SECONDS;
+	ThemeMetric<bool> COMMIFY;
+	ThemeMetric<RageColor> LEADING_ZERO_MULTIPLY_COLOR;
 
 	float	m_fCurrentNumber;	// currently showing this
 	float	m_fTargetNumber;	// approach this
