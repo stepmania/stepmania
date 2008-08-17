@@ -292,7 +292,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
 				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib"
-				OutputFile="../Program/StepMania-fastdebug.exe"
+				OutputFile="..\Program/StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
@@ -2470,6 +2470,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\StepsDisplay.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StepsDisplay.h"
+				>
+			</File>
+			<File
 				RelativePath="StreamDisplay.cpp"
 				>
 			</File>
@@ -2511,14 +2519,6 @@
 			</File>
 			<File
 				RelativePath="CourseContentsList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DifficultyDisplay.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DifficultyDisplay.h"
 				>
 			</File>
 			<File
@@ -4846,19 +4846,19 @@
 				>
 			</File>
 			<File
-				RelativePath="CryptManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="CryptManager.h"
-				>
-			</File>
-			<File
 				RelativePath="CryptHelpers.cpp"
 				>
 			</File>
 			<File
 				RelativePath="CryptHelpers.h"
+				>
+			</File>
+			<File
+				RelativePath="CryptManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="CryptManager.h"
 				>
 			</File>
 			<File
