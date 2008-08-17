@@ -3427,8 +3427,8 @@
 		AAFF55220549F43A00D02EE9 /* ComboGraph.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ComboGraph.h; path = ../src/ComboGraph.h; sourceTree = "<group>"; };
 		AAFF5541054E736D00D02EE9 /* Attack.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Attack.cpp; path = ../src/Attack.cpp; sourceTree = "<group>"; };
 		AAFF5542054E736D00D02EE9 /* Attack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Attack.h; path = ../src/Attack.h; sourceTree = "<group>"; };
-		EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StepsDisplay.cpp; path = ../src/StepsDisplay.cpp; sourceTree = SOURCE_ROOT; };
-		EEC7863E0E58208B00F559BC /* StepsDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StepsDisplay.h; path = ../src/StepsDisplay.h; sourceTree = SOURCE_ROOT; };
+		EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StepsDisplay.cpp; path = ../src/StepsDisplay.cpp; sourceTree = "<group>"; };
+		EEC7863E0E58208B00F559BC /* StepsDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StepsDisplay.h; path = ../src/StepsDisplay.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -4339,10 +4339,6 @@
 		AA6EFE6D04770D3E005F316C /* ActorsInMenus */ = {
 			isa = PBXGroup;
 			children = (
-				AA11A20B0DC5A1B0006BD8AC /* ModIcon.cpp */,
-				AA11A20C0DC5A1B0006BD8AC /* ModIcon.h */,
-				AA11A20D0DC5A1B0006BD8AC /* ModIconRow.cpp */,
-				AA11A20E0DC5A1B0006BD8AC /* ModIconRow.h */,
 				AA6EFE6E04770D61005F316C /* Banner.cpp */,
 				AA6EFE6F04770D61005F316C /* Banner.h */,
 				AA6EFE7604770E7C005F316C /* BPMDisplay.cpp */,
@@ -4379,6 +4375,10 @@
 				AA6EFE9B04770E7C005F316C /* MenuTimer.h */,
 				AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */,
 				AA6EFE9D04770E7C005F316C /* MeterDisplay.h */,
+				AA11A20B0DC5A1B0006BD8AC /* ModIcon.cpp */,
+				AA11A20C0DC5A1B0006BD8AC /* ModIcon.h */,
+				AA11A20D0DC5A1B0006BD8AC /* ModIconRow.cpp */,
+				AA11A20E0DC5A1B0006BD8AC /* ModIconRow.h */,
 				AA6EFE9E04770E7C005F316C /* MusicBannerWheel.cpp */,
 				AA6EFE9F04770E7C005F316C /* MusicBannerWheel.h */,
 				AA6EFEA004770E7C005F316C /* MusicList.cpp */,
@@ -4404,9 +4404,9 @@
 				AA6EFEB004770E7C005F316C /* ScrollingList.cpp */,
 				AA6EFEB104770E7C005F316C /* ScrollingList.h */,
 				AA6EFEB204770E7C005F316C /* SnapDisplay.cpp */,
+				AA6EFEB304770E7C005F316C /* SnapDisplay.h */,
 				EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */,
 				EEC7863E0E58208B00F559BC /* StepsDisplay.h */,
-				AA6EFEB304770E7C005F316C /* SnapDisplay.h */,
 				AA6EFEB404770E7C005F316C /* TextBanner.cpp */,
 				AA6EFEB504770E7C005F316C /* TextBanner.h */,
 				AA6EFF7004770F86005F316C /* Transition.cpp */,
