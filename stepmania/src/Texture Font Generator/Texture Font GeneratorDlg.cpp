@@ -101,9 +101,10 @@ static const wchar_t map_iso_8859_2[] = {
 };
 
 static const wchar_t map_numbers[] = {
-	0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 
-	0x0035, 0x0036, 0x0037, 0x0038, 0x0039,
-	0x0025, 0x002E, 0x0020, 0x003A, 0x0078,
+	0x0030, 0x0031, 0x0032, 0x0033, 
+	0x0034, 0x0035, 0x0036, 0x0037, 
+	0x0038, 0x0039, 0x0025, 0x002E, 
+	0x0020, 0x003A, 0x0078, 0x002C,
 	0
 };
 
@@ -152,8 +153,9 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 		for( int i = 0; map_cp1252[i]; ++i )
 		{
 			wchar_t wc = map_cp1252[i];
+			FontPageDescription::Char c = { wc, wc };
 			if( wc != 0xFFFF )
-				desc.chars.push_back(wc);
+				desc.chars.push_back(c);
 		}
 		g_pTextureFont->m_PagesToGenerate.push_back( desc );
 
@@ -162,8 +164,9 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 		for( int i = 0; map_iso_8859_2[i]; ++i )
 		{
 			wchar_t wc = map_iso_8859_2[i];
+			FontPageDescription::Char c = { wc, wc };
 			if( wc != 0xFFFF )
-				desc.chars.push_back(wc);
+				desc.chars.push_back(c);
 		}
 		g_pTextureFont->m_PagesToGenerate.push_back( desc );
 	}
@@ -174,8 +177,11 @@ void CTextureFontGeneratorDlg::UpdateFont( bool bSavingDoubleRes )
 		for( int i = 0; map_numbers[i]; ++i )
 		{
 			wchar_t wc = map_numbers[i];
+			FontPageDescription::Char c = { wc, wc };
+			if( wc == 0x0020 )	// space
+				c.glyphAndWidth = 0x0030;	// '0'
 			if( wc != 0xFFFF )
-				desc.chars.push_back(wc);
+				desc.chars.push_back(c);
 		}
 		g_pTextureFont->m_PagesToGenerate.push_back( desc );
 	}

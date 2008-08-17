@@ -8,7 +8,13 @@ using namespace std;
 struct FontPageDescription
 {
 	CString name;
-	vector<wchar_t> chars;
+	struct Char
+	{
+		// Glyph and code point may differ.  For example, we may want to render ' ' as '0' in a numbers font to achieve a leading '0' character that can be styled differently from regular '0'.
+		wchar_t glyphAndWidth;
+		wchar_t codepoint;
+	};
+	vector<Char> chars;
 };
 
 struct FontPage
