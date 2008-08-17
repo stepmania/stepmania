@@ -59,13 +59,13 @@ t[#t+1] = Def.ModIconRow {
 		OffCommand=cmd(linear,0.5;zoomy,0);
 	};
 
-t[#t+1] = Def.DifficultyDisplay {
-		InitCommand=cmd(x,SCREEN_CENTER_X-230;y,SCREEN_CENTER_Y+158;Load,"DifficultyDisplayEvaluation",PLAYER_1;SetFromGameState,PLAYER_1;player,PLAYER_1;);
+t[#t+1] = Def.StepsDisplay {
+		InitCommand=cmd(x,SCREEN_CENTER_X-230;y,SCREEN_CENTER_Y+158;Load,"StepsDisplayEvaluation",PLAYER_1;SetFromGameState,PLAYER_1;player,PLAYER_1;);
 		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
 		OffCommand=cmd(linear,0.5;zoomy,0);
 	};
-t[#t+1] = Def.DifficultyDisplay {
-		InitCommand=cmd(x,SCREEN_CENTER_X+230;y,SCREEN_CENTER_Y+158;Load,"DifficultyDisplayEvaluation",PLAYER_2;SetFromGameState,PLAYER_2;player,PLAYER_2;);
+t[#t+1] = Def.StepsDisplay {
+		InitCommand=cmd(x,SCREEN_CENTER_X+230;y,SCREEN_CENTER_Y+158;Load,"StepsDisplayEvaluation",PLAYER_2;SetFromGameState,PLAYER_2;player,PLAYER_2;);
 		OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
 		OffCommand=cmd(linear,0.5;zoomy,0);
 	};

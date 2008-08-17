@@ -1,10 +1,10 @@
-local function DifficultyDisplay(pn)
+local function StepsDisplay(pn)
 	local function set(self, player)
 		self:SetFromGameState( player );
 	end
 
-	local t = Def.DifficultyDisplay {
-		InitCommand=cmd(Load,"DifficultyDisplay",GAMESTATE:GetPlayerState(pn););
+	local t = Def.StepsDisplay {
+		InitCommand=cmd(Load,"StepsDisplay",GAMESTATE:GetPlayerState(pn););
 	};
 
 	if pn == PLAYER_1 then
@@ -317,8 +317,8 @@ t[#t+1] = Def.CourseContentsList {
 };
 
 for pn in ivalues(PlayerNumber) do
-	local MetricsName = "DifficultyDisplay" .. PlayerNumberToString(pn);
-	t[#t+1] = DifficultyDisplay(pn) .. {
+	local MetricsName = "StepsDisplay" .. PlayerNumberToString(pn);
+	t[#t+1] = StepsDisplay(pn) .. {
 		InitCommand=function(self) self:player(pn); name(MetricsName); ActorUtil.LoadAllCommandsAndSetXYAndOnCommand(self,Var "LoadingScreen"); end;
 	};
 end
