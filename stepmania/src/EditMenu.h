@@ -7,7 +7,7 @@
 #include "FadingBanner.h"
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
-#include "DifficultyDisplay.h"
+#include "StepsDisplay.h"
 #include "RageSound.h"
 #include "EnumHelper.h"
 #include "ThemeMetric.h"
@@ -94,8 +94,8 @@ private:
 	FadingBanner	m_GroupBanner;
 	FadingBanner	m_SongBanner;
 	TextBanner	m_SongTextBanner;
-	DifficultyDisplay	m_Meter;
-	DifficultyDisplay	m_SourceMeter;
+	StepsDisplay	m_Meter;
+	StepsDisplay	m_SourceMeter;
 
 
 	struct StepsAndDifficulty

@@ -49,7 +49,7 @@
 #include "Game.h"
 #include "ActiveAttackList.h"
 #include "Player.h"
-#include "DifficultyDisplay.h"
+#include "StepsDisplay.h"
 #include "XmlFile.h"
 #include "Background.h"
 #include "Foreground.h"
@@ -115,7 +115,7 @@ PlayerInfo::PlayerInfo()
 	m_pActiveAttackList = NULL;
 	m_pPlayer = NULL;
 	m_pInventory = NULL;
-	m_pDifficultyDisplay = NULL;
+	m_pStepsDisplay = NULL;
 }
 
 void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty )
@@ -184,7 +184,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 	m_pActiveAttackList = NULL;
 	m_pPlayer = new Player( m_NoteData, bShowNoteField );
 	m_pInventory = NULL;
-	m_pDifficultyDisplay = NULL;
+	m_pStepsDisplay = NULL;
 
 	if( IsMultiPlayer() )
 	{
@@ -220,7 +220,7 @@ PlayerInfo::~PlayerInfo()
 	SAFE_DELETE( m_pActiveAttackList );
 	SAFE_DELETE( m_pPlayer );
 	SAFE_DELETE( m_pInventory );
-	SAFE_DELETE( m_pDifficultyDisplay );
+	SAFE_DELETE( m_pStepsDisplay );
 }
 
 void PlayerInfo::ShowOniGameOver()
@@ -626,15 +626,15 @@ void ScreenGameplay::Init()
 		//
 		// Difficulty icon and meter
 		//
-		ASSERT( pi->m_pDifficultyDisplay == NULL );
-		pi->m_pDifficultyDisplay = new DifficultyDisplay;
-		pi->m_pDifficultyDisplay->Load("DifficultyDisplayGameplay", pi->GetPlayerState() );
-		pi->m_pDifficultyDisplay->SetName( ssprintf("DifficultyDisplay%s",pi->GetName().c_str()) );
+		ASSERT( pi->m_pStepsDisplay == NULL );
+		pi->m_pStepsDisplay = new StepsDisplay;
+		pi->m_pStepsDisplay->Load("StepsDisplayGameplay", pi->GetPlayerState() );
+		pi->m_pStepsDisplay->SetName( ssprintf("StepsDisplay%s",pi->GetName().c_str()) );
 		PlayerNumber pn = pi->GetStepsAndTrailIndex();
 		if( pn != PlayerNumber_Invalid )
-			pi->m_pDifficultyDisplay->PlayCommand( "Set" + pi->GetName() );
-		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pDifficultyDisplay );
-		this->AddChild( pi->m_pDifficultyDisplay );
+			pi->m_pStepsDisplay->PlayCommand( "Set" + pi->GetName() );
+		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pStepsDisplay );
+		this->AddChild( pi->m_pStepsDisplay );
 
 //		switch( GAMESTATE->m_PlayMode )
 //		{
@@ -1087,8 +1087,8 @@ void ScreenGameplay::LoadNextSong()
 		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==SongOptions::LIFE_BAR && pi->m_pLifeMeter )
 			pi->m_pLifeMeter->UpdateNonstopLifebar();
 
-		if( pi->m_pDifficultyDisplay )
-			pi->m_pDifficultyDisplay->SetFromSteps( pSteps );
+		if( pi->m_pStepsDisplay )
+			pi->m_pStepsDisplay->SetFromSteps( pSteps );
 
 		/* The actual note data for scoring is the base class of Player.  This includes
 		 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */
@@ -1138,8 +1138,8 @@ void ScreenGameplay::LoadNextSong()
 	{
 		bool bReverse = pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1;
 
-		if( pi->m_pDifficultyDisplay )
-			pi->m_pDifficultyDisplay->PlayCommand( bReverse? "SetReverse":"SetNoReverse" );
+		if( pi->m_pStepsDisplay )
+			pi->m_pStepsDisplay->PlayCommand( bReverse? "SetReverse":"SetNoReverse" );
 	}
 
 	m_LyricDisplay.PlayCommand( bAllReverse? "SetReverse": bAtLeastOneReverse? "SetOneReverse": "SetNoReverse" );

@@ -31,7 +31,7 @@ const RString& CourseDifficultyToLocalizedString( Difficulty dc );
 Difficulty GetNextShownCourseDifficulty( Difficulty pn );
 
 
-enum DifficultyDisplayType	// ID for coloring and localized strings in DifficultyDisplay 
+enum DifficultyDisplayType	// ID for coloring and localized strings in StepsDisplay 
 {
 	DifficultyDisplayType_Single_Beginner,
 	DifficultyDisplayType_Single_Easy,

@@ -67,10 +67,10 @@ void ScreenNetSelectMusic::Init()
 		ON_COMMAND( m_DifficultyIcon[p] );
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 
-		m_DifficultyDisplays[p].SetName( ssprintf("MeterP%d",p+1) );
-		m_DifficultyDisplays[p].Load( "DifficultyDisplay", NULL );
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_DifficultyDisplays[p] );
-		this->AddChild( &m_DifficultyDisplays[p] );
+		m_StepsDisplays[p].SetName( ssprintf("MeterP%d",p+1) );
+		m_StepsDisplays[p].Load( "StepsDisplay", NULL );
+		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_StepsDisplays[p] );
+		this->AddChild( &m_StepsDisplays[p] );
 	}
 
 	m_MusicWheel.SetName( "MusicWheel" );
@@ -452,7 +452,7 @@ void ScreenNetSelectMusic::TweenOffScreen()
 
 	FOREACH_EnabledPlayer (pn)
 	{
-		OFF_COMMAND( m_DifficultyDisplays[pn] );
+		OFF_COMMAND( m_StepsDisplays[pn] );
 		OFF_COMMAND( m_DifficultyIcon[pn] );
 		OFF_COMMAND( m_ModIconRow[pn] );
 	}
@@ -488,7 +488,7 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 {
 	if ( GAMESTATE->m_pCurSong == NULL )
 	{
-		m_DifficultyDisplays[pn].SetFromStepsTypeAndMeterAndDifficulty( StepsType_Invalid, 0, Difficulty_Beginner ); 
+		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficulty( StepsType_Invalid, 0, Difficulty_Beginner ); 
 		m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
 		return;
 	}
@@ -506,9 +506,9 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 	GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 
 	if ( ( m_DC[pn] < NUM_Difficulty ) && ( m_DC[pn] >= Difficulty_Beginner ) )
-		m_DifficultyDisplays[pn].SetFromSteps( pSteps );
+		m_StepsDisplays[pn].SetFromSteps( pSteps );
 	else
-		m_DifficultyDisplays[pn].SetFromStepsTypeAndMeterAndDifficulty( StepsType_Invalid, 0, Difficulty_Beginner ); 
+		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficulty( StepsType_Invalid, 0, Difficulty_Beginner ); 
 }
 
 void ScreenNetSelectMusic::MusicChanged()

@@ -4,7 +4,7 @@
 #include "Song.h"
 #include "Steps.h"
 #include "Style.h"
-#include "DifficultyDisplay.h"
+#include "StepsDisplay.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
 #include "Foreach.h"
@@ -68,7 +68,7 @@ void DifficultyList::LoadFromNode( const XNode* pNode )
 	for( unsigned m = 0; m < m_Lines.size(); ++m )
 	{
 		m_Lines[m].m_Meter.SetName( "Row" );
-		m_Lines[m].m_Meter.Load( "DifficultyDisplayListRow", NULL );
+		m_Lines[m].m_Meter.Load( "StepsDisplayListRow", NULL );
 		this->AddChild( &m_Lines[m].m_Meter );
 	}
 

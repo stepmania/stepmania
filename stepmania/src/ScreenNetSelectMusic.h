@@ -8,7 +8,7 @@
 #include "Sprite.h"
 #include "DifficultyIcon.h"
 #include "Difficulty.h"
-#include "DifficultyDisplay.h"
+#include "StepsDisplay.h"
 #include "MusicWheel.h"
 #include "ModIconRow.h"
 #include "BPMDisplay.h"
@@ -68,7 +68,7 @@ private:
 	Difficulty			m_DC[NUM_PLAYERS];
 
 	void UpdateDifficulties( PlayerNumber pn );
-	DifficultyDisplay		m_DifficultyDisplays[NUM_PLAYERS];
+	StepsDisplay		m_StepsDisplays[NUM_PLAYERS];
 
 	RageSound m_soundChangeOpt;
 	RageSound m_soundChangeSel;
