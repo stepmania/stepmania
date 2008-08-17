@@ -371,6 +371,11 @@ void wchar_to_utf8( wchar_t ch, string &out )
 
 #include <iomanip>
 
+static bool IsNumberChar( wchar_t c )
+{
+	return c >= 0x0030  &&  c <= 0x0039;
+}
+
 void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension, bool bSaveMetrics, bool bSaveBitmaps, bool bExportStrokeTemplates )
 {
 	if( m_sError != "" )
@@ -429,6 +434,11 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 			}
 
 			f << "\n";
+
+
+			/* export character widths.  "numbers" page has fixed with for all number characters. */
+			vector<int> viCharWidth;
+			int iMaxNumberCharWidth = 0;
 			for( unsigned j = 0; j < desc.chars.size(); ++j )
 			{
 				/* This is the total width to advance for the whole character, which is the
@@ -436,6 +446,17 @@ void TextureFont::Save( CString sBasePath, CString sBitmapAppendBeforeExtension,
 				const wchar_t c = desc.chars[j].glyphAndWidth;
 				ABC &abc = m_ABC[c];
 				int iCharWidth = abc.abcA + int(abc.abcB) + int(abc.abcC);
+				viCharWidth.push_back( iCharWidth );
+
+				if( IsNumberChar( c ) )
+					iMaxNumberCharWidth = max( iMaxNumberCharWidth, iCharWidth );
+			}
+			for( unsigned j = 0; j < desc.chars.size(); ++j )
+			{
+				const wchar_t c = desc.chars[j].glyphAndWidth;
+				int iCharWidth = viCharWidth[j];
+				if( desc.name == "numbers"  &&  IsNumberChar( c ) )
+					iCharWidth = iMaxNumberCharWidth;
 				f << j << "=" << iCharWidth << "\n";
 			}
 		}
