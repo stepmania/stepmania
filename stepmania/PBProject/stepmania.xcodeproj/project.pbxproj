@@ -1262,10 +1262,6 @@
 		AA4F27B70B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4F27AF0B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.h */; };
 		AA4F27B80B2C01B400ADEA79 /* RageSoundReader_Pan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4F27B00B2C01B400ADEA79 /* RageSoundReader_Pan.cpp */; };
 		AA4F27B90B2C01B400ADEA79 /* RageSoundReader_Pan.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4F27B10B2C01B400ADEA79 /* RageSoundReader_Pan.h */; };
-		AA4FE4420D869E330051D523 /* DifficultyDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4FE4400D869E330051D523 /* DifficultyDisplay.cpp */; };
-		AA4FE4430D869E330051D523 /* DifficultyDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4FE4410D869E330051D523 /* DifficultyDisplay.h */; };
-		AA4FE4440D869E330051D523 /* DifficultyDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4FE4400D869E330051D523 /* DifficultyDisplay.cpp */; };
-		AA4FE4450D869E330051D523 /* DifficultyDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4FE4410D869E330051D523 /* DifficultyDisplay.h */; };
 		AA50201F05D6D7B200ACEFD0 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA50201D05D6D7B200ACEFD0 /* Profile.cpp */; };
 		AA50202005D6D7B200ACEFD0 /* Profile.h in Headers */ = {isa = PBXBuildFile; fileRef = AA50201E05D6D7B200ACEFD0 /* Profile.h */; };
 		AA54709206F559DF008EB9B2 /* Preference.h in Headers */ = {isa = PBXBuildFile; fileRef = AA54709106F559DF008EB9B2 /* Preference.h */; };
@@ -2088,6 +2084,8 @@
 		AAFE71220A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFE711C0A91B551005F2290 /* RageSurface_Save_PNG.cpp */; };
 		AAFE71290A91B58F005F2290 /* RageSurface_Save_PNG.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFE71280A91B58F005F2290 /* RageSurface_Save_PNG.h */; };
 		AAFE712A0A91B58F005F2290 /* RageSurface_Save_PNG.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFE71280A91B58F005F2290 /* RageSurface_Save_PNG.h */; };
+		EEC7863F0E58208B00F559BC /* StepsDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */; };
+		EEC786400E58208B00F559BC /* StepsDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = EEC7863E0E58208B00F559BC /* StepsDisplay.h */; };
 		F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */; };
 		F4BC045509E6B582003F770B /* ScreenGameplaySyncMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */; };
 /* End PBXBuildFile section */
@@ -2344,8 +2342,6 @@
 		AA4F27B10B2C01B400ADEA79 /* RageSoundReader_Pan.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageSoundReader_Pan.h; path = ../src/RageSoundReader_Pan.h; sourceTree = "<group>"; };
 		AA4F38C004E2D0B700D02EE9 /* NoteDataUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NoteDataUtil.cpp; path = ../src/NoteDataUtil.cpp; sourceTree = "<group>"; };
 		AA4F38C104E2D0B700D02EE9 /* NoteDataUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = NoteDataUtil.h; path = ../src/NoteDataUtil.h; sourceTree = "<group>"; };
-		AA4FE4400D869E330051D523 /* DifficultyDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DifficultyDisplay.cpp; path = ../src/DifficultyDisplay.cpp; sourceTree = SOURCE_ROOT; };
-		AA4FE4410D869E330051D523 /* DifficultyDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DifficultyDisplay.h; path = ../src/DifficultyDisplay.h; sourceTree = SOURCE_ROOT; };
 		AA50201D05D6D7B200ACEFD0 /* Profile.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Profile.cpp; path = ../src/Profile.cpp; sourceTree = "<group>"; };
 		AA50201E05D6D7B200ACEFD0 /* Profile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Profile.h; path = ../src/Profile.h; sourceTree = "<group>"; };
 		AA52E9BD04DBBCF400D02EE9 /* ver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = ver.cpp; sourceTree = "<group>"; };
@@ -3431,6 +3427,8 @@
 		AAFF55220549F43A00D02EE9 /* ComboGraph.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ComboGraph.h; path = ../src/ComboGraph.h; sourceTree = "<group>"; };
 		AAFF5541054E736D00D02EE9 /* Attack.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Attack.cpp; path = ../src/Attack.cpp; sourceTree = "<group>"; };
 		AAFF5542054E736D00D02EE9 /* Attack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Attack.h; path = ../src/Attack.h; sourceTree = "<group>"; };
+		EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StepsDisplay.cpp; path = ../src/StepsDisplay.cpp; sourceTree = SOURCE_ROOT; };
+		EEC7863E0E58208B00F559BC /* StepsDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StepsDisplay.h; path = ../src/StepsDisplay.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -4355,8 +4353,6 @@
 				AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */,
 				AA6EFE7804770E7C005F316C /* CourseContentsList.cpp */,
 				AA6EFE7904770E7C005F316C /* CourseContentsList.h */,
-				AA4FE4400D869E330051D523 /* DifficultyDisplay.cpp */,
-				AA4FE4410D869E330051D523 /* DifficultyDisplay.h */,
 				AA6EFE7E04770E7C005F316C /* DifficultyIcon.cpp */,
 				AA6EFE7F04770E7C005F316C /* DifficultyIcon.h */,
 				AAC6DDE60569C80900B5D56F /* DifficultyList.cpp */,
@@ -4408,6 +4404,8 @@
 				AA6EFEB004770E7C005F316C /* ScrollingList.cpp */,
 				AA6EFEB104770E7C005F316C /* ScrollingList.h */,
 				AA6EFEB204770E7C005F316C /* SnapDisplay.cpp */,
+				EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */,
+				EEC7863E0E58208B00F559BC /* StepsDisplay.h */,
 				AA6EFEB304770E7C005F316C /* SnapDisplay.h */,
 				AA6EFEB404770E7C005F316C /* TextBanner.cpp */,
 				AA6EFEB504770E7C005F316C /* TextBanner.h */,
@@ -5761,7 +5759,6 @@
 				AAB3BB5A0C718F2D001BF487 /* RageUtil_CachedObject.h in Headers */,
 				AAA7D4CA0C7E872600FB8F78 /* ScreenOptionsToggleSongs.h in Headers */,
 				AA7CDD940D8395F90001DAFC /* Song.h in Headers */,
-				AA4FE4430D869E330051D523 /* DifficultyDisplay.h in Headers */,
 				AA11A2100DC5A1B0006BD8AC /* ModIcon.h in Headers */,
 				AA11A2120DC5A1B0006BD8AC /* ModIconRow.h in Headers */,
 				AA6C6AD90DC6B17B00E7A13E /* ArchHooks_MacOSX.h in Headers */,
@@ -5771,6 +5768,7 @@
 				AA6C6B090DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.h in Headers */,
 				AA6C6B0F0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.h in Headers */,
 				AAC0BFE20E2951EC00F56EEB /* CryptHelpers.h in Headers */,
+				EEC786400E58208B00F559BC /* StepsDisplay.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6194,7 +6192,6 @@
 				AAA071740CE7B3BB005A3060 /* timer.h in Headers */,
 				AAA071780CE7B3BB005A3060 /* version.h in Headers */,
 				AA7CDD950D8395F90001DAFC /* Song.h in Headers */,
-				AA4FE4450D869E330051D523 /* DifficultyDisplay.h in Headers */,
 				AA11A2140DC5A1B0006BD8AC /* ModIcon.h in Headers */,
 				AA11A2160DC5A1B0006BD8AC /* ModIconRow.h in Headers */,
 				AA6C6ADB0DC6B17B00E7A13E /* ArchHooks_MacOSX.h in Headers */,
@@ -7022,7 +7019,6 @@
 				AAB3B7DC0C6C582E001BF487 /* ScreenSelectProfile.cpp in Sources */,
 				AAB3BB590C718F2D001BF487 /* RageUtil_CachedObject.cpp in Sources */,
 				AAA7D4C90C7E872600FB8F78 /* ScreenOptionsToggleSongs.cpp in Sources */,
-				AA4FE4420D869E330051D523 /* DifficultyDisplay.cpp in Sources */,
 				AA11A20F0DC5A1B0006BD8AC /* ModIcon.cpp in Sources */,
 				AA11A2110DC5A1B0006BD8AC /* ModIconRow.cpp in Sources */,
 				AA6C6AD80DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */,
@@ -7032,6 +7028,7 @@
 				AA6C6B080DC6B30E00E7A13E /* MemoryCardDriverThreaded_MacOSX.cpp in Sources */,
 				AA6C6B0E0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.cpp in Sources */,
 				AAC0BFE10E2951EC00F56EEB /* CryptHelpers.cpp in Sources */,
+				EEC7863F0E58208B00F559BC /* StepsDisplay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7441,7 +7438,6 @@
 				AAA071710CE7B3BB005A3060 /* synth.c in Sources */,
 				AAA071730CE7B3BB005A3060 /* timer.c in Sources */,
 				AAA071770CE7B3BB005A3060 /* version.c in Sources */,
-				AA4FE4440D869E330051D523 /* DifficultyDisplay.cpp in Sources */,
 				AA11A2130DC5A1B0006BD8AC /* ModIcon.cpp in Sources */,
 				AA11A2150DC5A1B0006BD8AC /* ModIconRow.cpp in Sources */,
 				AA6C6ADA0DC6B17B00E7A13E /* ArchHooks_MacOSX.cpp in Sources */,
