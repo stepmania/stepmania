@@ -108,8 +108,6 @@ protected:
 	BitmapText		m_textTime[NUM_PLAYERS];
 
 	// extra area
-	AutoActor		m_sprMachineRecord[NUM_PLAYERS];
-	AutoActor		m_sprProfileRecord[NUM_PLAYERS];
 	AutoActor		m_sprTryExtraStage;
 	bool			m_bFailed;
 

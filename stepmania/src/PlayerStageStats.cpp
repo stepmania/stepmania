@@ -57,7 +57,7 @@ void PlayerStageStats::Init()
 
 	m_pdaToShow = PerDifficultyAward_Invalid;
 	m_pcaToShow = PeakComboAward_Invalid;
-	m_iProfileHighScoreIndex = -1;
+	m_iPersonalHighScoreIndex = -1;
 	m_iMachineHighScoreIndex = -1;
 	m_bDisqualified = false;
 	m_rc = RankingCategory_Invalid;
@@ -673,7 +673,7 @@ public:
 	DEFINE_METHOD( GetPercentDancePoints,		GetPercentDancePoints() )
 	DEFINE_METHOD( GetLessonScoreActual,		GetLessonScoreActual() )
 	DEFINE_METHOD( GetLessonScoreNeeded,		GetLessonScoreNeeded() )
-	DEFINE_METHOD( GetPersonalHighScoreIndex,	m_iProfileHighScoreIndex )
+	DEFINE_METHOD( GetPersonalHighScoreIndex,	m_iPersonalHighScoreIndex )
 	DEFINE_METHOD( GetMachineHighScoreIndex,	m_iMachineHighScoreIndex )
 	DEFINE_METHOD( GetPerDifficultyAward,		m_pdaToShow )
 	DEFINE_METHOD( GetPeakComboAward,		m_pcaToShow )

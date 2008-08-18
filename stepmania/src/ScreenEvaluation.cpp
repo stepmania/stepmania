@@ -171,7 +171,9 @@ void ScreenEvaluation::Init()
 			ss.m_player[p].m_iTapNoteScores[TNS_W3] = RandomInt( 3 );
 			ss.m_player[p].m_iPossibleGradePoints = 4*ScoreKeeperNormal::TapNoteScoreToGradePoints(TNS_W1, false);
 			ss.m_player[p].m_fLifeRemainingSeconds = randomf( 90, 580 );
-			ss.m_player[p].m_iScore = rand() % (90*1000*1000);
+			ss.m_player[p].m_iScore = rand() % (900*1000*1000);
+			ss.m_player[p].m_iPersonalHighScoreIndex = (rand() % 3) - 1;
+			ss.m_player[p].m_iMachineHighScoreIndex = (rand() % 3) - 1;
 			FOREACH_ENUM( RadarCategory, rc )
 			{
 				switch( rc )
@@ -612,31 +614,9 @@ void ScreenEvaluation::Init()
 	//
 	// init records area
 	//
-	FOREACH_EnabledPlayer( p )
-	{
-		if( m_pStageStats->m_player[p].m_iMachineHighScoreIndex != -1 )
-		{
-			LuaThreadVariable var( "MachineHighScoreNumber", LuaReference::Create(m_pStageStats->m_player[p].m_iMachineHighScoreIndex+1) );
-			m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord",m_pStageStats->m_player[p].m_iMachineHighScoreIndex+1) ) );
-			m_sprMachineRecord[p]->SetName( ssprintf("MachineRecordP%d",p+1) );
-			ActorUtil::LoadAllCommands( *m_sprMachineRecord[p], m_sName );
-			SET_XY( m_sprMachineRecord[p] );
-			this->AddChild( m_sprMachineRecord[p] );
-		}
-		if( m_pStageStats->m_player[p].m_iProfileHighScoreIndex != -1 )
-		{
-			LuaThreadVariable var( "ProfileHighScoreNumber", LuaReference::Create(m_pStageStats->m_player[p].m_iProfileHighScoreIndex+1) );
-			m_sprProfileRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("ProfileRecord",m_pStageStats->m_player[p].m_iProfileHighScoreIndex+1) ) );
-			m_sprProfileRecord[p]->SetName( ssprintf("ProfileRecordP%d",p+1) );
-			ActorUtil::LoadAllCommands( *m_sprProfileRecord[p], m_sName );
-			SET_XY( m_sprProfileRecord[p] );
-			this->AddChild( m_sprProfileRecord[p] );
-		}
-	}
-
 	bool bOneHasNewTopRecord = false;
 	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->IsPlayerEnabled(p) && (m_pStageStats->m_player[p].m_iMachineHighScoreIndex != -1 || m_pStageStats->m_player[p].m_iProfileHighScoreIndex != -1) )
+		if( GAMESTATE->IsPlayerEnabled(p) && (m_pStageStats->m_player[p].m_iMachineHighScoreIndex == 0 || m_pStageStats->m_player[p].m_iPersonalHighScoreIndex == 0) )
 			bOneHasNewTopRecord = true;
 
 	Grade best_grade = Grade_NoData;
