@@ -93,7 +93,7 @@ protected:
 
 	// judgment area
 	AutoActor		m_sprSharedJudgmentLineLabels[NUM_JudgmentLine];
-	BitmapText		m_textJudgmentLineNumber[NUM_JudgmentLine][NUM_PLAYERS];
+	RollingNumbers		m_textJudgmentLineNumber[NUM_JudgmentLine][NUM_PLAYERS];
 
 	// stats area
 	AutoActor		m_sprDetailFrame[NUM_PLAYERS];

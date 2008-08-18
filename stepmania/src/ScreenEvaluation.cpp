@@ -502,6 +502,7 @@ void ScreenEvaluation::Init()
 			{
 				m_textJudgmentLineNumber[l][p].LoadFromFont( THEME->GetPathF(m_sName, "JudgmentLineNumber") );
 				m_textJudgmentLineNumber[l][p].SetName( JudgmentLineToString(l)+ssprintf("NumberP%d",p+1) );
+				m_textJudgmentLineNumber[l][p].Load( "RollingNumbersJudgment" );
 				ActorUtil::LoadAllCommands( m_textJudgmentLineNumber[l][p], m_sName );
 				SET_XY( m_textJudgmentLineNumber[l][p] );
 				this->AddChild( &m_textJudgmentLineNumber[l][p] );
@@ -520,9 +521,7 @@ void ScreenEvaluation::Init()
 				DEFAULT_FAIL( l );
 				}
 
-				// UGLY... generalize this
-				int iNumDigits = (l==JudgmentLine_MaxCombo) ? MAX_COMBO_NUM_DIGITS : 4;
-				m_textJudgmentLineNumber[l][p].SetText( ssprintf("%*d",iNumDigits,iValue) );
+				m_textJudgmentLineNumber[l][p].SetTargetNumber( iValue );
 			}
 		}
 	}
