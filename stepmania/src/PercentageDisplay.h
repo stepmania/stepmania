@@ -42,7 +42,7 @@ private:
 	BitmapText	m_textPercent;
 	BitmapText	m_textPercentRemainder;
 
-	LuaReference m_Format;
+	LuaReference m_FormatPercentScore;
 };
 
 #endif

@@ -25,7 +25,7 @@ PercentageDisplay::PercentageDisplay()
 	m_bUseRemainder = false;
 	m_bApplyScoreDisplayOptions = false;
 	m_bAutoRefresh = false;
-	m_Format.SetFromExpression( "FormatPercentScore" );
+	m_FormatPercentScore.SetFromExpression( "FormatPercentScore" );
 }
 
 void PercentageDisplay::LoadFromNode( const XNode* pNode )
@@ -35,8 +35,8 @@ void PercentageDisplay::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue( "AutoRefresh", m_bAutoRefresh );
 	{
 		Lua *L = LUA->Get();
-		if( pNode->PushAttrValue(L, "Format") )
-			m_Format.SetFromStack( L );
+		if( pNode->PushAttrValue(L, "FormatPercentScore") )
+			m_FormatPercentScore.SetFromStack( L );
 		else
 			lua_pop(L, 1);
 		LUA->Release(L);
@@ -77,12 +77,12 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	m_iDancePointsDigits = THEME->GetMetricI( sMetricsGroup, "DancePointsDigits" );
 	m_bUseRemainder = THEME->GetMetricB( sMetricsGroup, "PercentUseRemainder" );
 	m_bApplyScoreDisplayOptions = THEME->GetMetricB( sMetricsGroup, "ApplyScoreDisplayOptions" );
-	m_Format = THEME->GetMetricR( sMetricsGroup, "Format" );
+	m_FormatPercentScore = THEME->GetMetricR( sMetricsGroup, "Format" );
 	
-	if( m_Format.IsNil() )
+	if( m_FormatPercentScore.IsNil() )
 	{
 		LOG->Trace( "Format is nil in [%s]. Defaulting to 'FormatPercentScore'.", sMetricsGroup.c_str() );
-		m_Format.SetFromExpression( "FormatPercentScore" );
+		m_FormatPercentScore.SetFromExpression( "FormatPercentScore" );
 	}
 
 	if( ShowDancePointsNotPercentage() )
@@ -171,7 +171,7 @@ void PercentageDisplay::Refresh()
 		else
 		{		
 			Lua *L = LUA->Get();
-			m_Format.PushSelf( L );
+			m_FormatPercentScore.PushSelf( L );
 			ASSERT( !lua_isnil(L, -1) );
 			LuaHelpers::Push( L, fPercentDancePoints );
 			RString sError;
