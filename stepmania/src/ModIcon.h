@@ -7,6 +7,7 @@
 #include "AutoActor.h"
 #include "BitmapText.h"
 #include "PlayerNumber.h"
+#include "ThemeMetric.h"
 
 class ModIcon : public ActorFrame
 {
@@ -20,6 +21,9 @@ protected:
 	BitmapText	m_text;
 	AutoActor	m_sprFilled;
 	AutoActor	m_sprEmpty;
+
+	ThemeMetric<int> CROP_TEXT_TO_LENGTH;
+	ThemeMetric<int> CROP_IF_LONGER_THAN;
 };
 
 #endif
