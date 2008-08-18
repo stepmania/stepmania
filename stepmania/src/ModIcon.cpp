@@ -34,8 +34,7 @@ void ModIcon::Load( RString sMetricsGroup )
 	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_text, sMetricsGroup );
 	this->AddChild( &m_text );
 
-	CROP_TEXT_TO_LENGTH.Load( sMetricsGroup, "CropTextToLength" );
-	CROP_IF_LONGER_THAN.Load( sMetricsGroup, "CropIfLongerThan" );
+	CROP_TEXT_TO_WIDTH.Load( sMetricsGroup, "CropTextToWidth" );
 
 	Set("");
 }
@@ -62,10 +61,8 @@ void ModIcon::Set( const RString &_sText )
 	m_sprFilled->SetVisible( !bVacant );
 	m_sprEmpty->SetVisible( bVacant );
 
-	if( (int)sText.length() > CROP_IF_LONGER_THAN )
-		sText = sText.Left(CROP_TEXT_TO_LENGTH); 
-
 	m_text.SetText( sText );
+	m_text.CropToWidth( CROP_TEXT_TO_WIDTH );
 }
 
 /*

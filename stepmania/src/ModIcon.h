@@ -22,8 +22,7 @@ protected:
 	AutoActor	m_sprFilled;
 	AutoActor	m_sprEmpty;
 
-	ThemeMetric<int> CROP_TEXT_TO_LENGTH;
-	ThemeMetric<int> CROP_IF_LONGER_THAN;
+	ThemeMetric<int> CROP_TEXT_TO_WIDTH;
 };
 
 #endif
