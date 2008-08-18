@@ -5,6 +5,6 @@ return Def.ActorFrame {
 		InitCommand=cmd(y,4;);
 	};
 	LoadFont("_sf square head 13px") .. {
-		InitCommand=cmd(settext,string.upper(JudgmentLineToLocalizedString(jl));diffuse,JudgmentLineToColor(jl);strokecolor,JudgmentLineToStrokeColor(jl);shadowlength,0;maxwidth,180);
+		InitCommand=cmd(y,2;settext,string.upper(JudgmentLineToLocalizedString(jl));diffuse,JudgmentLineToColor(jl);strokecolor,JudgmentLineToStrokeColor(jl);shadowlength,0;maxwidth,180);
 	};
 };
