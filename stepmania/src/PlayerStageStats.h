@@ -107,8 +107,8 @@ public:
 
 	// Final results:
 	void CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutoplay );
-	PerDifficultyAward m_pdaToShow;
-	PeakComboAward m_pcaToShow;
+	StageAward m_StageAward;
+	PeakComboAward m_PeakComboAward;
 
 	int		m_iPersonalHighScoreIndex;
 	int		m_iMachineHighScoreIndex;

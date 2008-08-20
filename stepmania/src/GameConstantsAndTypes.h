@@ -368,39 +368,39 @@ LuaDeclareType( Premium );
 // Award stuff
 //
 
-enum PerDifficultyAward
+enum StageAward
 {
-	AWARD_FULL_COMBO_W3,
-	AWARD_SINGLE_DIGIT_W3,
-	AWARD_ONE_W3,
-	AWARD_FULL_COMBO_W2,
-	AWARD_SINGLE_DIGIT_W2,
-	AWARD_ONE_W2,
-	AWARD_FULL_COMBO_W1,
-	AWARD_PERCENT_80_W3,
-	AWARD_PERCENT_90_W3,
-	AWARD_PERCENT_100_W3,
-	NUM_PerDifficultyAward,
-	PerDifficultyAward_Invalid,
+	StageAward_FullComboW3,
+	StageAward_SingleDigitW3,
+	StageAward_OneW3,
+	StageAward_FullComboW2,
+	StageAward_SingleDigitW2,
+	StageAward_OneW2,
+	StageAward_FullComboW1,
+	StageAward_80PercentW3,
+	StageAward_90PercentW3,
+	StageAward_100PercentW3,
+	NUM_StageAward,
+	StageAward_Invalid,
 };
-const RString& PerDifficultyAwardToString( PerDifficultyAward pma );
-const RString& PerDifficultyAwardToLocalizedString( PerDifficultyAward pma );
-PerDifficultyAward StringToPerDifficultyAward( const RString& pma );
-LuaDeclareType( PerDifficultyAward );
+const RString& StageAwardToString( StageAward pma );
+const RString& StageAwardToLocalizedString( StageAward pma );
+StageAward StringToStageAward( const RString& pma );
+LuaDeclareType( StageAward );
 
 
 enum PeakComboAward 
 { 
-	AWARD_1000_PEAK_COMBO,
-	AWARD_2000_PEAK_COMBO,
-	AWARD_3000_PEAK_COMBO,
-	AWARD_4000_PEAK_COMBO,
-	AWARD_5000_PEAK_COMBO,
-	AWARD_6000_PEAK_COMBO,
-	AWARD_7000_PEAK_COMBO,
-	AWARD_8000_PEAK_COMBO,
-	AWARD_9000_PEAK_COMBO,
-	AWARD_10000_PEAK_COMBO,
+	PeakComboAward_1000,
+	PeakComboAward_2000,
+	PeakComboAward_3000,
+	PeakComboAward_4000,
+	PeakComboAward_5000,
+	PeakComboAward_6000,
+	PeakComboAward_7000,
+	PeakComboAward_8000,
+	PeakComboAward_9000,
+	PeakComboAward_10000,
 	NUM_PeakComboAward,
 	PeakComboAward_Invalid,
 };

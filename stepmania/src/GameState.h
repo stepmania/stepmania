@@ -286,7 +286,7 @@ public:
 	// Award stuff
 	//
 	// lowest priority in front, highest priority at the back.
-	deque<PerDifficultyAward> m_vLastPerDifficultyAwards[NUM_PLAYERS];
+	deque<StageAward> m_vLastStageAwards[NUM_PLAYERS];
 	deque<PeakComboAward> m_vLastPeakComboAwards[NUM_PLAYERS];
 
 

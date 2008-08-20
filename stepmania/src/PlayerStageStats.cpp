@@ -55,8 +55,8 @@ void PlayerStageStats::Init()
 	m_fFirstSecond = FLT_MAX;
 	m_fLastSecond = 0;
 
-	m_pdaToShow = PerDifficultyAward_Invalid;
-	m_pcaToShow = PeakComboAward_Invalid;
+	m_StageAward = StageAward_Invalid;
+	m_PeakComboAward = PeakComboAward_Invalid;
 	m_iPersonalHighScoreIndex = -1;
 	m_iMachineHighScoreIndex = -1;
 	m_bDisqualified = false;
@@ -568,12 +568,12 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 {
 	LOG->Trace( "hand out awards" );
 	
-	m_pcaToShow = PeakComboAward_Invalid;
+	m_PeakComboAward = PeakComboAward_Invalid;
 
 	if( bGaveUp || bUsedAutoplay )
 		return;
 	
-	deque<PerDifficultyAward> &vPdas = GAMESTATE->m_vLastPerDifficultyAwards[p];
+	deque<StageAward> &vPdas = GAMESTATE->m_vLastStageAwards[p];
 
 	LOG->Trace( "per difficulty awards" );
 
@@ -582,28 +582,28 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	if( !IsDisqualified() )
 	{
 		if( FullComboOfScore( TNS_W3 ) )
-			vPdas.push_back( AWARD_FULL_COMBO_W3 );
+			vPdas.push_back( StageAward_FullComboW3 );
 		if( SingleDigitsOfScore( TNS_W3 ) )
-			vPdas.push_back( AWARD_SINGLE_DIGIT_W3 );
+			vPdas.push_back( StageAward_SingleDigitW3 );
 		if( FullComboOfScore( TNS_W2 ) )
-			vPdas.push_back( AWARD_FULL_COMBO_W2 );
+			vPdas.push_back( StageAward_FullComboW2 );
 		if( SingleDigitsOfScore( TNS_W2 ) )
-			vPdas.push_back( AWARD_SINGLE_DIGIT_W2 );
+			vPdas.push_back( StageAward_SingleDigitW2 );
 		if( FullComboOfScore( TNS_W1 ) )
-			vPdas.push_back( AWARD_FULL_COMBO_W1 );
+			vPdas.push_back( StageAward_FullComboW1 );
 		
 		if( OneOfScore( TNS_W3 ) )
-			vPdas.push_back( AWARD_ONE_W3 );
+			vPdas.push_back( StageAward_OneW3 );
 		if( OneOfScore( TNS_W2 ) )
-			vPdas.push_back( AWARD_ONE_W2 );
+			vPdas.push_back( StageAward_OneW2 );
 
 		float fPercentW3s = GetPercentageOfTaps( TNS_W3 );
 		if( fPercentW3s >= 0.8f )
-			vPdas.push_back( AWARD_PERCENT_80_W3 );
+			vPdas.push_back( StageAward_80PercentW3 );
 		if( fPercentW3s >= 0.9f )
-			vPdas.push_back( AWARD_PERCENT_90_W3 );
+			vPdas.push_back( StageAward_90PercentW3 );
 		if( fPercentW3s >= 1.f )
-			vPdas.push_back( AWARD_PERCENT_100_W3 );
+			vPdas.push_back( StageAward_100PercentW3 );
 	}
 
 	// Max one PDA per stage
@@ -611,9 +611,9 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 		vPdas.erase( vPdas.begin(), vPdas.end()-1 );
 	
 	if( !vPdas.empty() )
-		m_pdaToShow = vPdas.back();
+		m_StageAward = vPdas.back();
 	else
-		m_pdaToShow = PerDifficultyAward_Invalid;
+		m_StageAward = StageAward_Invalid;
 
 	LOG->Trace( "done with per difficulty awards" );
 
@@ -631,9 +631,9 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	}
 
 	if( !GAMESTATE->m_vLastPeakComboAwards[p].empty() )
-		m_pcaToShow = GAMESTATE->m_vLastPeakComboAwards[p].back();
+		m_PeakComboAward = GAMESTATE->m_vLastPeakComboAwards[p].back();
 	else
-		m_pcaToShow = PeakComboAward_Invalid;
+		m_PeakComboAward = PeakComboAward_Invalid;
 
 	LOG->Trace( "done with per combo awards" );
 
@@ -675,8 +675,8 @@ public:
 	DEFINE_METHOD( GetLessonScoreNeeded,		GetLessonScoreNeeded() )
 	DEFINE_METHOD( GetPersonalHighScoreIndex,	m_iPersonalHighScoreIndex )
 	DEFINE_METHOD( GetMachineHighScoreIndex,	m_iMachineHighScoreIndex )
-	DEFINE_METHOD( GetPerDifficultyAward,		m_pdaToShow )
-	DEFINE_METHOD( GetPeakComboAward,		m_pcaToShow )
+	DEFINE_METHOD( GetStageAward,		m_StageAward )
+	DEFINE_METHOD( GetPeakComboAward,		m_PeakComboAward )
 	DEFINE_METHOD( IsDisqualified,			IsDisqualified() )
 
 	static int GetPlayedSteps( T* p, lua_State *L )
@@ -721,7 +721,7 @@ public:
 		ADD_METHOD( GetLessonScoreNeeded );
 		ADD_METHOD( GetPersonalHighScoreIndex );
 		ADD_METHOD( GetMachineHighScoreIndex );
-		ADD_METHOD( GetPerDifficultyAward );
+		ADD_METHOD( GetStageAward );
 		ADD_METHOD( GetPeakComboAward );
 		ADD_METHOD( IsDisqualified );
 		ADD_METHOD( GetPlayedSteps );

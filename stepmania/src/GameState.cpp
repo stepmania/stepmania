@@ -895,7 +895,7 @@ void GameState::ResetStageStatistics()
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_vLastPerDifficultyAwards[p].clear();
+		m_vLastStageAwards[p].clear();
 		m_vLastPeakComboAwards[p].clear();
 	}
 

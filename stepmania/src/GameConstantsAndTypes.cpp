@@ -271,7 +271,7 @@ static const char *MemoryCardStateNames[] = {
 XToString( MemoryCardState );
 LuaXType( MemoryCardState );
 
-static const char *PerDifficultyAwardNames[] = {
+static const char *StageAwardNames[] = {
 	"FullComboW3",
 	"SingleDigitW3",
 	"OneW3",
@@ -279,31 +279,31 @@ static const char *PerDifficultyAwardNames[] = {
 	"SingleDigitW2",
 	"OneW2",
 	"FullComboW1",
-	"Percent80W3",
-	"Percent90W3",
-	"Percent100W3",
+	"80PercentW3",
+	"90PercentW3",
+	"100PercentW3",
 };
-XToString( PerDifficultyAward );
-XToLocalizedString( PerDifficultyAward );
-StringToX( PerDifficultyAward );
-LuaFunction( PerDifficultyAwardToLocalizedString, PerDifficultyAwardToLocalizedString(Enum::Check<PerDifficultyAward>(L, 1)) );
-LuaXType( PerDifficultyAward );
+XToString( StageAward );
+XToLocalizedString( StageAward );
+StringToX( StageAward );
+LuaFunction( StageAwardToLocalizedString, StageAwardToLocalizedString(Enum::Check<StageAward>(L, 1)) );
+LuaXType( StageAward );
 
 // Numbers are intentially not at the front of these strings so that the 
 // strings can be used as XML entity names.
 // Numbers are intentially not at the back so that "1000" and "10000" don't 
 // conflict when searching for theme elements.
 static const char *PeakComboAwardNames[] = {
-	"Peak1000Combo",
-	"Peak2000Combo",
-	"Peak3000Combo",
-	"Peak4000Combo",
-	"Peak5000Combo",
-	"Peak6000Combo",
-	"Peak7000Combo",
-	"Peak8000Combo",
-	"Peak9000Combo",
-	"Peak10000Combo",
+	"1000",
+	"2000",
+	"3000",
+	"4000",
+	"5000",
+	"6000",
+	"7000",
+	"8000",
+	"9000",
+	"10000",
 };
 XToString( PeakComboAward );
 XToLocalizedString( PeakComboAward );

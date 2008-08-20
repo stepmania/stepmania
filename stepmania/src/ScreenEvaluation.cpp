@@ -176,6 +176,9 @@ void ScreenEvaluation::Init()
 			ss.m_player[p].m_iScore = rand() % (900*1000*1000);
 			ss.m_player[p].m_iPersonalHighScoreIndex = (rand() % 3) - 1;
 			ss.m_player[p].m_iMachineHighScoreIndex = (rand() % 3) - 1;
+			ss.m_player[p].m_PeakComboAward = (PeakComboAward)(rand()%NUM_PeakComboAward);
+			ss.m_player[p].m_StageAward = (StageAward)(rand()%NUM_StageAward);
+
 			FOREACH_ENUM( RadarCategory, rc )
 			{
 				switch( rc )
