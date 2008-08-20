@@ -31,13 +31,13 @@ local t = LoadFallbackB();
 
 if ShowStandardDecoration("GraphDisplay") then
 	for pn in ivalues(PlayerNumber) do
-		t[#t+1] = StandardDecorationFromTable( "GraphDisplay" .. PlayerNumber:ToString()[pn], GraphDisplay(pn) );
+		t[#t+1] = StandardDecorationFromTable( "GraphDisplay" .. ToEnumShortString(pn), GraphDisplay(pn) );
 	end
 end
 
 if ShowStandardDecoration("ComboGraph") then
 	for pn in ivalues(PlayerNumber) do
-		t[#t+1] = StandardDecorationFromTable( "ComboGraph" .. PlayerNumber:ToString()[pn], ComboGraph(pn) );
+		t[#t+1] = StandardDecorationFromTable( "ComboGraph" .. ToEnumShortString(pn), ComboGraph(pn) );
 	end
 end
 
@@ -61,7 +61,7 @@ if ShowStandardDecoration("ItsARecord") then
 				InitCommand=cmd(name,"NoRecord";settext,"WWWW:\n82.34%";strokecolor,color("#807e00");shadowlength,0;); 
 			};
 		}
-		t[#t+1] = StandardDecorationFromTable( "ItsARecord" .. PlayerNumber:ToString()[pn], t2 );
+		t[#t+1] = StandardDecorationFromTable( "ItsARecord" .. ToEnumShortString(pn), t2 );
 	end
 end
 
@@ -76,9 +76,9 @@ end
 if ShowStandardDecoration("ModIconRows") then
 	for pn in ivalues(PlayerNumber) do
 		local t2 = Def.ModIconRow {
-				InitCommand=cmd(Load,"ModIconRowEvaluation"..PlayerNumber:ToString()[pn],pn);
+				InitCommand=cmd(Load,"ModIconRowEvaluation"..ToEnumShortString(pn),pn);
 			};	
-		t[#t+1] = StandardDecorationFromTable( "ModIconRow" .. PlayerNumber:ToString()[pn], t2 );
+		t[#t+1] = StandardDecorationFromTable( "ModIconRow" .. ToEnumShortString(pn), t2 );
 	end
 end
 
@@ -87,7 +87,19 @@ if ShowStandardDecoration("StepsDisplay") then
 		local t2 = Def.StepsDisplay {
 				InitCommand=cmd(Load,"StepsDisplayEvaluation",pn;SetFromGameState,pn;);
 			};	
-		t[#t+1] = StandardDecorationFromTable( "StepsDisplay" .. PlayerNumber:ToString()[pn], t2 );
+		t[#t+1] = StandardDecorationFromTable( "StepsDisplay" .. ToEnumShortString(pn), t2 );
+	end
+end
+
+for i in ivalues(EarnedExtraStage) do
+	if i ~= "EarnedExtraStage_No" then
+		t[#t+1] = StandardDecorationFromFile( "TryExtraStage", "Try"..ToEnumShortString(i) ) .. {
+			BeginCommand=function(self)
+				local screen = SCREENMAN:GetTopScreen();
+				local ss = screen:GetStageStats();
+				self:visible( i == ss:GetEarnedExtraStage() );
+			end;
+		};
 	end
 end
 
