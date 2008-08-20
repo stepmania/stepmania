@@ -338,7 +338,7 @@ public:
 	
 	// Keep extra stage logic internal to GameState.
 private:
-	bool	HasEarnedExtraStageInternal() const;
+	EarnedExtraStage	CalculateEarnedExtraStage() const;
 	int	m_iAwardedExtraStages[NUM_PLAYERS];
 	bool	m_bEarnedExtraStage;
 

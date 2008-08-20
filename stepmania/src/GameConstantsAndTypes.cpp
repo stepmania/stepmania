@@ -408,6 +408,14 @@ LuaXType( Stage );
 XToLocalizedString( Stage );
 LuaFunction( StageToLocalizedString, StageToLocalizedString(Enum::Check<Stage>(L, 1)) );
 
+static const char *EarnedExtraStageNames[] = {
+	"No",
+	"Extra1",
+	"Extra2",
+};
+XToString( EarnedExtraStage );
+LuaXType( EarnedExtraStage );
+
 
 static const char *MultiPlayerStatusNames[] = {
 	"Joined",

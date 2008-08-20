@@ -727,7 +727,9 @@ void GameState::FinishStage()
 
 	m_iNumStagesOfThisSong = 0;
 
-	if( HasEarnedExtraStageInternal() )
+	EarnedExtraStage e = CalculateEarnedExtraStage();
+	STATSMAN->m_CurStageStats.m_EarnedExtraStage = e;
+	if( e != EarnedExtraStage_No )
 	{
 		LOG->Trace( "awarded extra stage" );
 		FOREACH_HumanPlayer( p )
@@ -1217,25 +1219,25 @@ bool GameState::IsBattleMode() const
 	}
 }	
 
-bool GameState::HasEarnedExtraStageInternal() const
+EarnedExtraStage GameState::CalculateEarnedExtraStage() const
 {
 	if( IsEventMode() )
-		return false;
+		return EarnedExtraStage_No;
 
 	if( !PREFSMAN->m_bAllowExtraStage )
-		return false;
+		return EarnedExtraStage_No;
 
 	if( m_PlayMode != PLAY_MODE_REGULAR )
-		return false;
+		return EarnedExtraStage_No;
 	
 	if( m_bBackedOutOfFinalStage )
-		return false;
+		return EarnedExtraStage_No;
 	
 	if( GetSmallestNumStagesLeftForAnyHumanPlayer() > 0 )
-		return false;
+		return EarnedExtraStage_No;
 
 	if( m_iAwardedExtraStages[m_MasterPlayerNumber] >= 2 )
-		return false;
+		return EarnedExtraStage_No;
 	
 	FOREACH_EnabledPlayer( pn )
 	{
@@ -1254,15 +1256,15 @@ bool GameState::HasEarnedExtraStageInternal() const
 		if( IsExtraStage() )
 		{
 			if( ALLOW_EXTRA_2  &&  STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_2 )
-				return true;
+				return EarnedExtraStage_Extra2;
 		}
 		else if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_1 )
 		{
-			return true;
+			return EarnedExtraStage_Extra1;
 		}
 	}
 	
-	return false;
+	return EarnedExtraStage_No;
 }
 
 PlayerNumber GameState::GetBestPlayer() const

@@ -33,6 +33,7 @@ public:
 	vector<Song*>	m_vpPlayedSongs;
 	vector<Song*>	m_vpPossibleSongs;
 
+	EarnedExtraStage m_EarnedExtraStage;
 	bool	m_bGaveUp;	// exited gameplay by giving up
 	bool	m_bUsedAutoplay;	// used autoplay at any point during gameplay
 

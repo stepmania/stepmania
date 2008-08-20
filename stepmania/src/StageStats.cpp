@@ -24,6 +24,7 @@ StageStats::StageStats()
 	m_pStyle = NULL;
 	m_vpPlayedSongs.clear();
 	m_vpPossibleSongs.clear();
+	m_EarnedExtraStage = EarnedExtraStage_No;
 	m_bGaveUp = false;
 	m_bUsedAutoplay = false;
 	m_fGameplaySeconds = 0;
@@ -343,16 +344,17 @@ public:
 		return 1;
 	
 	}
-	static int GetGameplaySeconds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_fGameplaySeconds); return 1; }
-	static int OnePassed( T* p, lua_State *L )			{ lua_pushboolean(L, p->OnePassed()); return 1; }
-	static int AllFailed( T* p, lua_State *L )			{ lua_pushboolean(L, p->AllFailed()); return 1; }
-	static int GetStage( T* p, lua_State *L )			{ LuaHelpers::Push( L, p->m_Stage ); return 1; }
-	DEFINE_METHOD( GetStageIndex,					m_iStageIndex )
+	static int GetGameplaySeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fGameplaySeconds); return 1; }
+	static int OnePassed( T* p, lua_State *L )		{ lua_pushboolean(L, p->OnePassed()); return 1; }
+	static int AllFailed( T* p, lua_State *L )		{ lua_pushboolean(L, p->AllFailed()); return 1; }
+	static int GetStage( T* p, lua_State *L )		{ LuaHelpers::Push( L, p->m_Stage ); return 1; }
+	DEFINE_METHOD( GetStageIndex,				m_iStageIndex )
 	static int PlayerHasHighScore( T* p, lua_State *L )
 	{
 		lua_pushboolean(L, p->PlayerHasHighScore(Enum::Check<PlayerNumber>(L, 1)));
 		return 1;
 	}
+	DEFINE_METHOD( GetEarnedExtraStage,			m_EarnedExtraStage )
 
 	LunaStageStats()
 	{
@@ -366,6 +368,7 @@ public:
 		ADD_METHOD( GetStage );
 		ADD_METHOD( GetStageIndex );
 		ADD_METHOD( PlayerHasHighScore );
+		ADD_METHOD( GetEarnedExtraStage );
 	}
 };
 

@@ -107,10 +107,6 @@ protected:
 	AutoActor		m_sprTimeLabel;
 	BitmapText		m_textTime[NUM_PLAYERS];
 
-	// extra area
-	AutoActor		m_sprTryExtraStage;
-	bool			m_bFailed;
-
 	RageSound		m_soundStart;	// sound played if the player passes or fails
 
 	ThemeMetric<bool>	SUMMARY;

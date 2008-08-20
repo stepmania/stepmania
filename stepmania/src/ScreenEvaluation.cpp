@@ -98,6 +98,8 @@ void ScreenEvaluation::Init()
 		ss.m_playMode = GAMESTATE->m_PlayMode;
 		ss.m_pStyle = GAMESTATE->GetCurrentStyle();
 		ss.m_Stage = Stage_1st;
+		enum_add( ss.m_Stage, rand()%3 );
+		ss.m_EarnedExtraStage = (EarnedExtraStage)(rand() % NUM_EarnedExtraStage);
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
 		ss.m_vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
@@ -225,22 +227,6 @@ void ScreenEvaluation::Init()
 		STATSMAN->GetFinalEvalStageStats( m_FinalEvalStageStats );
 		m_pStageStats = &m_FinalEvalStageStats;
 	}
-
-	m_bFailed = m_pStageStats->AllFailed();
-
-/*
-	//
-	// Debugging
-	//
-	{
-		FOREACH_PlayerNumber( p )	// foreach line
-			for( int r=0; r<NUM_RadarCategory; r++ )	// foreach line
-			{
-				m_pStageStats->radarPossible[p][r] = 0.5f + r/10.0f;
-				m_pStageStats->radarActual[p][r] = 0.5f + r/10.0f;
-			}
-	}
-*/
 
 	//
 	// update persistent statistics
@@ -623,18 +609,9 @@ void ScreenEvaluation::Init()
 	FOREACH_PlayerNumber( p )
 		best_grade = min( best_grade, grade[p] ); 
 	
-	if( !SUMMARY && GAMESTATE->HasEarnedExtraStage() )
+	if( m_pStageStats->m_EarnedExtraStage != EarnedExtraStage_No )
 	{
-		m_sprTryExtraStage.Load( THEME->GetPathG(m_sName,GAMESTATE->IsExtraStage2()?"try extra2":"try extra1") );
-		m_sprTryExtraStage->SetName( "TryExtraStage" );
-		ActorUtil::LoadAllCommands( *m_sprTryExtraStage, m_sName );
-		SET_XY( m_sprTryExtraStage );
-		this->AddChild( m_sprTryExtraStage );
-
-		if( GAMESTATE->IsExtraStage2() )
-			SOUND->PlayOnce( THEME->GetPathS(m_sName,"try extra2") );
-		else
-			SOUND->PlayOnce( THEME->GetPathS(m_sName,"try extra1") );
+		SOUND->PlayOnce( THEME->GetPathS(m_sName,"try " + EarnedExtraStageToString(m_pStageStats->m_EarnedExtraStage)) );
 	}
 	else if( bOneHasNewTopRecord  &&  ANNOUNCER->HasSoundsFor("evaluation new record") )
 	{
