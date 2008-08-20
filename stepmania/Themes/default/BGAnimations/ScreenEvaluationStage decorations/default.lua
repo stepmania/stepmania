@@ -3,8 +3,7 @@ function GraphDisplay( pn )
 		Def.GraphDisplay {
 			InitCommand=cmd(Load,"GraphDisplay";);
 			BeginCommand=function(self)
-				local screen = SCREENMAN:GetTopScreen();
-				local ss = screen:GetStageStats();
+				local ss = SCREENMAN:GetTopScreen():GetStageStats();
 				self:Set( ss, ss:GetPlayerStageStats(pn) );
 			end,
 		};
@@ -17,8 +16,7 @@ function ComboGraph( pn )
 		Def.ComboGraph {
 			InitCommand=cmd(Load,"ComboGraph";);
 			BeginCommand=function(self)
-				local screen = SCREENMAN:GetTopScreen();
-				local ss = screen:GetStageStats();
+				local ss = SCREENMAN:GetTopScreen():GetStageStats();
 				self:Set( ss, ss:GetPlayerStageStats(pn) );
 			end,
 		};
@@ -91,12 +89,22 @@ if ShowStandardDecoration("StepsDisplay") then
 	end
 end
 
+if ShowStandardDecoration("StageAward") then
+	for pn in ivalues(PlayerNumber) do
+		t[#t+1] = StandardDecorationFromFile( "StageAward" .. ToEnumShortString(pn), "StageAward"  ) .. {
+			BeginCommand=function(self)
+				local ss = SCREENMAN:GetTopScreen():GetStageStats();
+				self:playcommand( "Set", { StageAward = ss:GetPlayerStageStats(pn):GetStageAward() } );
+			end;
+		}
+	end
+end
+
 for i in ivalues(EarnedExtraStage) do
 	if i ~= "EarnedExtraStage_No" then
 		t[#t+1] = StandardDecorationFromFile( "TryExtraStage", "Try"..ToEnumShortString(i) ) .. {
 			BeginCommand=function(self)
-				local screen = SCREENMAN:GetTopScreen();
-				local ss = screen:GetStageStats();
+				local ss = SCREENMAN:GetTopScreen():GetStageStats();
 				self:visible( i == ss:GetEarnedExtraStage() );
 			end;
 		};
