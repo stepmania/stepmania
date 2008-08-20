@@ -14,6 +14,12 @@ function Enum:Compare( e1, e2 )
 	return Value1 - Value2;
 end
 
+function ToEnumShortString( e )
+	local pos = string.find( e, '_' )
+	assert( pos, "'" .. e .. "' is not an enum value" );
+	return string.sub( e, pos+1 );
+end
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 -- 
