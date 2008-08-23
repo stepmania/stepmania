@@ -8,6 +8,17 @@
 
 const int NUM_BOOKKEEPING_COLS = 4;
 
+enum BookkeepingView
+{
+	BookkeepingView_SongPlays,
+	BookkeepingView_LastDays,
+	BookkeepingView_LastWeeks,
+	BookkeepingView_DayOfWeek,
+	BookkeepingView_HourOfDay,
+	NUM_BookkeepingView,
+	BookkeepingView_Invalid,
+};
+
 class ScreenBookkeeping : public ScreenWithMenuElements
 {
 public:
@@ -25,11 +36,12 @@ public:
 private:
 	virtual bool GenericTweenOn() const { return true; }
 	virtual bool GenericTweenOff() const { return true; }
-	enum View { View_SongsPlays, VIEW_LAST_DAYS, VIEW_LAST_WEEKS, VIEW_DAY_OF_WEEK, VIEW_HOUR_OF_DAY, NUM_VIEWS };
 	
-	void ChangeView( View newView );
+	void UpdateView();
 
-	View m_View;
+	int m_iViewIndex;
+	vector<BookkeepingView> m_vBookkeepingViews;
+
 	BitmapText	m_textAllTime;
 	BitmapText	m_textTitle;
 	BitmapText	m_textData[NUM_BOOKKEEPING_COLS];

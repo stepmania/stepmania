@@ -14,6 +14,15 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 
+static const char *BookkeepingViewNames[] = {
+	"SongPlays",
+	"LastDays",
+	"LastWeeks",
+	"DayOfWeek",
+	"HourOfDay",
+};
+XToString( BookkeepingView );
+
 
 REGISTER_SCREEN_CLASS( ScreenBookkeeping );
 
@@ -41,12 +50,20 @@ void ScreenBookkeeping::Init()
 		this->AddChild( &m_textData[i] );
 	}
 
-	ChangeView( (View)0 );
+	FOREACH_ENUM( BookkeepingView, i )
+	{
+		if( THEME->GetMetricB(m_sName,"Show"+BookkeepingViewToString(i)) )
+			m_vBookkeepingViews.push_back( i );
+	}
+
+	m_iViewIndex = 0;
+
+	UpdateView();
 }
 
 void ScreenBookkeeping::Update( float fDelta )
 {
-	ChangeView( m_View );	// refresh so that counts change in real-time
+	UpdateView();	// refresh so that counts change in real-time
 
 	ScreenWithMenuElements::Update( fDelta );
 }
@@ -61,16 +78,18 @@ void ScreenBookkeeping::Input( const InputEventPlus &input )
 
 void ScreenBookkeeping::MenuLeft( const InputEventPlus &input )
 {
-	m_View = enum_add2( m_View, -1 );
-	ENUM_CLAMP( m_View, View(0), View(NUM_VIEWS-1) );
-	ChangeView( m_View );
+	m_iViewIndex--;
+	CLAMP( m_iViewIndex, 0, m_vBookkeepingViews.size()-1 );
+
+	UpdateView();
 }
 
 void ScreenBookkeeping::MenuRight( const InputEventPlus &input )
 {
-	m_View = enum_add2( m_View, +1 );
-	ENUM_CLAMP( m_View, View(0), View(NUM_VIEWS-1) );
-	ChangeView( m_View );
+	m_iViewIndex++;
+	CLAMP( m_iViewIndex, 0, m_vBookkeepingViews.size()-1 );
+
+	UpdateView();
 }
 
 void ScreenBookkeeping::MenuStart( const InputEventPlus &input )
@@ -93,7 +112,7 @@ void ScreenBookkeeping::MenuBack( const InputEventPlus &input )
 
 void ScreenBookkeeping::MenuCoin( const InputEventPlus &input )
 {
-	ChangeView( m_View );
+	UpdateView();
 
 	Screen::MenuCoin( input );
 }
@@ -104,9 +123,9 @@ static LocalizedString LAST_DAYS	( "ScreenBookkeeping", "Coin Data of Last %d Da
 static LocalizedString LAST_WEEKS	( "ScreenBookkeeping", "Coin Data of Last %d Weeks" );
 static LocalizedString DAY_OF_WEEK	( "ScreenBookkeeping", "Coin Data by Day of Week, All-Time" );
 static LocalizedString HOUR_OF_DAY	( "ScreenBookkeeping", "Coin Data by Hour of Day, All-Time" );
-void ScreenBookkeeping::ChangeView( View newView )
+void ScreenBookkeeping::UpdateView()
 {
-	m_View = newView;
+	BookkeepingView view = m_vBookkeepingViews[m_iViewIndex];
 
 
 	{
@@ -116,9 +135,9 @@ void ScreenBookkeeping::ChangeView( View newView )
 		m_textAllTime.SetText( s );
 	}
 
-	switch( m_View )
+	switch( view )
 	{
-	case View_SongsPlays:
+	case BookkeepingView_SongPlays:
 		{
 			Profile *pProfile = PROFILEMAN->GetMachineProfile();
 
@@ -159,7 +178,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 			}
 		}
 		break;
-	case VIEW_LAST_DAYS:
+	case BookkeepingView_LastDays:
 		{
 			m_textTitle.SetText( ssprintf(LAST_DAYS.GetValue(), NUM_LAST_DAYS) );
 
@@ -186,7 +205,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 			m_textData[3].SetText( sData );
 		}
 		break;
-	case VIEW_LAST_WEEKS:
+	case BookkeepingView_LastWeeks:
 		{
 			m_textTitle.SetText( ssprintf(LAST_WEEKS.GetValue(), NUM_LAST_WEEKS) );
 
@@ -208,7 +227,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 			}
 		}
 		break;
-	case VIEW_DAY_OF_WEEK:
+	case BookkeepingView_DayOfWeek:
 		{
 			m_textTitle.SetText( DAY_OF_WEEK );
 
@@ -230,7 +249,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 			m_textData[3].SetText( sData );
 		}
 		break;
-	case VIEW_HOUR_OF_DAY:
+	case BookkeepingView_HourOfDay:
 		{
 			m_textTitle.SetText( HOUR_OF_DAY );
 
