@@ -345,6 +345,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		if( input.type != IET_FIRST_PRESS ) 
 			return;
 		PREFSMAN->m_bShowNativeLanguage.Set( !PREFSMAN->m_bShowNativeLanguage );
+		MESSAGEMAN->Broadcast( "ChangedLanguageDisplay" );
 		m_MusicWheel.RebuildWheelItems();
 		return;
 	}
@@ -409,7 +410,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	{
 		if( input.type == IET_RELEASE  &&  input.MenuI == GAME_BUTTON_SELECT )
 		{
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
+			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_None );
 		}
 	}
 
