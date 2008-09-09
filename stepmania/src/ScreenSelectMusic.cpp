@@ -27,6 +27,7 @@
 #include "BannerCache.h"
 #include "Song.h"
 #include "InputEventPlus.h"
+#include "RageInput.h"
 #include "OptionsList.h"
 
 static const char *SelectionStateNames[] = {
@@ -337,6 +338,32 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
 
+	bool bHoldingCtrl = 
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
+
+	wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,false);
+	MakeUpper( &c, 1 );
+
+	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
+	{
+		SortOrder so = GAMESTATE->m_SortOrder;
+		if ( ( so != SORT_TITLE ) && ( so != SORT_ARTIST ) )
+		{
+			so = SORT_TITLE;
+
+			GAMESTATE->m_PreferredSortOrder = so;
+			GAMESTATE->m_SortOrder.Set( so );
+			// Odd, changing the sort order requires us to call SetOpenSection more than once
+			m_MusicWheel.ChangeSort( so );
+			m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
+		}
+		m_MusicWheel.SelectSection( ssprintf("%c", c ) );
+		m_MusicWheel.ChangeSort( so );
+		m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
+		AfterMusicChange();
+		return;
+	}
 
 	// debugging?
 	// I just like being able to see untransliterated titles occasionally.
@@ -352,7 +379,6 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	if( !input.GameI.IsValid() )
 		return;		// don't care
-
 
 	// Handle late joining
 	if( m_SelectionState != SelectionState_Finalized  &&  input.MenuI == GAME_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
