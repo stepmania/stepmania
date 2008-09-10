@@ -36,8 +36,6 @@ void ScreenSplash::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSplash::MenuBack( const InputEventPlus &input )
 {
-	if( IsTransitioning() )
-		return;
 	Cancel( SM_GoToPrevScreen );
 }
 
