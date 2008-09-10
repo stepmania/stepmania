@@ -23,10 +23,10 @@ void ScreenStatsOverlay::Init()
 	 * the time in the log. */
 	m_LastSkip = 0;
 
-	const float SKIP_X = SCREEN_RIGHT - 100;
-	const float SKIP_Y = SCREEN_BOTTOM - 100;
-	const float SKIP_WIDTH = 190; 
-	const float SKIP_SPACING_Y = 14;
+	SKIP_X.Load( m_sName, "SkipX" );
+	SKIP_Y.Load( m_sName, "SkipY" );
+	SKIP_SPACING_Y.Load( m_sName, "SkipSpacingY" );
+	SKIP_WIDTH.Load( m_sName, "SkipWidth" );
 
 	RectF rectSkips = RectF(
 		SKIP_X-SKIP_WIDTH/2, 

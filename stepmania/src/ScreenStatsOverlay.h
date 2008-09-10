@@ -25,6 +25,11 @@ private:
 	BitmapText m_textSkips[NUM_SKIPS_TO_SHOW];
 	RageTimer m_timerSkip;
 	int m_LastSkip;
+
+	ThemeMetric<float> SKIP_X;
+	ThemeMetric<float> SKIP_Y;
+	ThemeMetric<float> SKIP_SPACING_Y;
+	ThemeMetric<float> SKIP_WIDTH;
 };
 
 
