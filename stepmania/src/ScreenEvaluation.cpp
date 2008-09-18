@@ -144,7 +144,7 @@ void ScreenEvaluation::Init()
 			ss.m_player[p].m_iActualDancePoints = RandomInt( 3 );
 			ss.m_player[p].m_iPossibleDancePoints = 2;
 			if( RandomInt(2) )
-				ss.m_player[p].m_iCurCombo = 11000;
+				ss.m_player[p].m_iCurCombo = RandomInt(15000);
 			else
 				ss.m_player[p].m_iCurCombo = 0;
 			ss.m_player[p].UpdateComboList( 0, true );
