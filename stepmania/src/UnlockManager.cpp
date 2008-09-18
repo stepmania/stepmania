@@ -664,6 +664,12 @@ public:
 	static int GetUnlockRewardType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_Type ); return 1; }
 	static int GetRequirement( T* p, lua_State *L )		{ UnlockRequirement i = Enum::Check<UnlockRequirement>( L, 1 ); lua_pushnumber(L, p->m_fRequirement[i] ); return 1; }
 	static int GetRequirePassHardSteps( T* p, lua_State *L ){ lua_pushboolean(L, p->m_bRequirePassHardSteps); return 1; }
+	static int GetSong( T* p, lua_State *L )
+	{
+		Song *pSong = p->m_Song.ToSong();
+		if( pSong ) { pSong->PushSelf(L); return 1; }
+		return 0;
+	}
 
 	static int GetArgs( T* p, lua_State *L )
 	{
@@ -696,6 +702,7 @@ public:
 		ADD_METHOD( GetUnlockRewardType );
 		ADD_METHOD( GetRequirement );
 		ADD_METHOD( GetRequirePassHardSteps );
+		ADD_METHOD( GetSong );
 		ADD_METHOD( song );
 		ADD_METHOD( steps );
 		ADD_METHOD( course );
