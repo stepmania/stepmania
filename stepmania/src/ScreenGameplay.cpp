@@ -2041,9 +2041,9 @@ void ScreenGameplay::SendCrossedMessages()
 		static int iRowLastCrossedAll[NUM_MESSAGES_TO_SEND] = { 0, 0, 0, 0 };
 		for( int i=0; i<NUM_MESSAGES_TO_SEND; i++ )
 		{
-			float fOffsetFromCurrentSeconds = MESSAGE_SPACING_SECONDS * i;
+			float fNoteWillCrossInSeconds = MESSAGE_SPACING_SECONDS * i;
 
-			float fPositionSeconds = GAMESTATE->m_fMusicSeconds + fOffsetFromCurrentSeconds;
+			float fPositionSeconds = GAMESTATE->m_fMusicSeconds + fNoteWillCrossInSeconds;
 			float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 			int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
@@ -2060,14 +2060,13 @@ void ScreenGameplay::SendCrossedMessages()
 
 					iNumTracksWithTapOrHoldHead++;
 
-					// Send col-specific crossed
-					if( i == 0 )
-					{
-						const Style *pStyle = GAMESTATE->GetCurrentStyle();
-						RString sButton = pStyle->ColToButtonName( t );
-						RString sMessageName = "NoteCrossed" + sButton;
-						MESSAGEMAN->Broadcast( sMessageName );
-					}
+					// send crossed message
+					const Style *pStyle = GAMESTATE->GetCurrentStyle();
+					RString sButton = pStyle->ColToButtonName( t );
+					Message msg( i == 0 ? "NoteCrossed" : "NoteWillCross" );
+					msg.SetParam( "ButtonName", sButton );
+					msg.SetParam( "NumMessagesFromCrossed", i );
+					MESSAGEMAN->Broadcast( msg );
 				}
 
 				if( iNumTracksWithTapOrHoldHead > 0 )
