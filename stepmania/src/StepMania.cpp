@@ -1193,12 +1193,12 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 		BOOKKEEPER->CoinInserted();
 	}
 	int iNumCoinsOld = GAMESTATE->m_iCoins;
-	GAMESTATE->m_iCoins += iNum;
+	GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins + iNum );
 
 	int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 	bool bMaxCredits = iCredits >= MAX_NUM_CREDITS;
 	if( bMaxCredits )
-		GAMESTATE->m_iCoins = MAX_NUM_CREDITS * PREFSMAN->m_iCoinsPerCredit;
+		GAMESTATE->m_iCoins.Set( MAX_NUM_CREDITS * PREFSMAN->m_iCoinsPerCredit );
 
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
 	if( iNumCoinsOld != GAMESTATE->m_iCoins )
@@ -1214,6 +1214,7 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 			SCREENMAN->PlayStartSound();
 	}
 
+	/* TODO: remove this redundant message and things that depend on it */
 	Message msg( "CoinInserted" );
 	// below params are unused
 	//msg.SetParam( "Coins", GAMESTATE->m_iCoins );
@@ -1230,8 +1231,10 @@ void StepMania::InsertCredit()
 void StepMania::ClearCredits()
 {
 	LOG->Trace("%i coins cleared", GAMESTATE->m_iCoins );
-	GAMESTATE->m_iCoins = 0;
+	GAMESTATE->m_iCoins.Set( 0 );
 	SCREENMAN->PlayInvalidSound();
+	
+	/* TODO: remove this redundant message and things that depend on it */
 	Message msg( "CoinInserted" );
 	// below params are unused
 	//msg.SetParam( "Coins", GAMESTATE->m_iCoins );

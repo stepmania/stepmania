@@ -69,7 +69,7 @@ public:
 	bool					m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
 	MultiPlayerStatus			m_MultiPlayerStatus[NUM_MultiPlayer];
 	BroadcastOnChange<PlayMode>		m_PlayMode;			// many screens display different info depending on this value
-	int					m_iCoins;			// not "credits"
+	BroadcastOnChange<int>			m_iCoins;			// not "credits"
 	PlayerNumber				m_MasterPlayerNumber;		// used in Styles where one player controls both sides
 	bool					m_bMultiplayer;
 	int					m_iNumMultiplayerNoteFields;

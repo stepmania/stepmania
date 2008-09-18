@@ -111,6 +111,7 @@ GameState::GameState() :
 	m_pCurGame(			Message_CurrentGameChanged ),
 	m_pCurStyle(			Message_CurrentStyleChanged ),
 	m_PlayMode(			Message_PlayModeChanged ),
+	m_iCoins(			Message_CoinsChanged ),
 	m_sPreferredSongGroup(		Message_PreferredSongGroupChanged ),
 	m_sPreferredCourseGroup(	Message_PreferredCourseGroupChanged ),
 	m_PreferredStepsType(		Message_PreferredStepsTypeChanged ),
@@ -135,7 +136,7 @@ GameState::GameState() :
 	SetCurrentStyle( NULL );
 
 	m_pCurGame.Set( NULL );
-	m_iCoins = 0;
+	m_iCoins.Set( 0 );
 	m_timeGameStarted.SetZero();
 	m_bDemonstrationOrJukebox = false;
 
@@ -410,7 +411,7 @@ namespace
 		if( GAMESTATE->m_iCoins < iCoinsNeededToJoin )
 			return false;	// not enough coins
 
-		GAMESTATE->m_iCoins -= iCoinsNeededToJoin;
+		GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins - iCoinsNeededToJoin );
 
 		GAMESTATE->JoinPlayer( pn );
 
