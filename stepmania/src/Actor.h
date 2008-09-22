@@ -123,6 +123,7 @@ public:
 	virtual void SetName( const RString &sName )	{ m_sName = sName; }
 	void SetParent( Actor *pParent );
 	Actor *GetParent() { return m_pParent; }
+	RString GetLineage() const;
 
 	float GetX() const				{ return m_current.pos.x; };
 	float GetY() const				{ return m_current.pos.y; };

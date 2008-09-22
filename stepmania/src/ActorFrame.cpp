@@ -127,7 +127,7 @@ void ActorFrame::AddChild( Actor *pActor )
 	// check that this Actor isn't already added.
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter != m_SubActors.end() )
-		Dialog::OK( ssprintf("Actor \"%s\" adds child \"%s\" more than once", GetName().c_str(), pActor->GetName().c_str()) );
+		Dialog::OK( ssprintf("Actor \"%s\" adds child \"%s\" more than once", GetLineage().c_str(), pActor->GetName().c_str()) );
 #endif
 
 	ASSERT( pActor );

@@ -14,6 +14,7 @@
 #include "LightsManager.h" // for NUM_CabinetLight
 #include "ActorUtil.h"
 #include "Preference.h"
+#include <typeinfo>
 
 static Preference<bool> g_bShowMasks("ShowMasks", false);
 
@@ -694,6 +695,16 @@ void Actor::UpdateInternal( float fDeltaTime )
 	UpdateTweening( fDeltaTime );
 }
 
+RString Actor::GetLineage() const
+{
+	RString sPath;
+	
+	if( m_pParent )
+		sPath = m_pParent->GetLineage() + '/';
+	sPath += ssprintf( "<%s> %s", typeid(*this).name(), m_sName.c_str() );
+	return sPath;
+}
+
 void Actor::BeginTweening( float time, ITween *pTween )
 {
 	ASSERT( time >= 0 );
@@ -704,7 +715,8 @@ void Actor::BeginTweening( float time, ITween *pTween )
 	// recursing ActorCommand.
 	if( m_Tweens.size() > 50 )
 	{
-		RString sError = ssprintf( "Tween overflow: name = \"%s\"; infinitely recursing ActorCommand?", this->m_sName.c_str() );
+		RString sError = ssprintf( "Tween overflow: \"%s\"; infinitely recursing ActorCommand?", GetLineage().c_str() );
+				
 		LOG->Warn( sError );
 		Dialog::OK( sError );
 		FinishTweening();
@@ -1156,7 +1168,7 @@ void Actor::AddCommand( const RString &sCmdName, apActorCommands apac )
 {
 	if( HasCommand(sCmdName) )
 	{
-		RString sWarning = m_sName+"'s command '"+sCmdName+"' defined twice";
+		RString sWarning = GetLineage()+"'s command '"+sCmdName+"' defined twice";
 		Dialog::OK( sWarning, "COMMAND_DEFINED_TWICE" );
 	}
 
