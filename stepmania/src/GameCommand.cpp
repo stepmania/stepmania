@@ -634,7 +634,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			int iNumCreditsOwed = iNumCreditsRequired - iNumCreditsPaid;
 			GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins - iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit );
 			LOG->Trace( "Deducted %i coins, %i remaining",
-					iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit, GAMESTATE->m_iCoins );
+					iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit, GAMESTATE->m_iCoins.Get() );
 		}
 
 

@@ -84,7 +84,7 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 		switch( GAMESTATE->GetCoinMode() )
 		{
 		case CoinMode_Pay:
-			LOG->Trace("ScreenAttract::AttractInput: COIN_PAY (%i/%i, %i)", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get(), GAMESTATE->GetNumSidesJoined() );
+			LOG->Trace("ScreenAttract::AttractInput: COIN_PAY (%i/%i, %i)", GAMESTATE->m_iCoins.Get(), PREFSMAN->m_iCoinsPerCredit.Get(), GAMESTATE->GetNumSidesJoined() );
 			if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit && GAMESTATE->GetNumSidesJoined() == 0 )
 				break;	// don't fall through
 			// fall through

@@ -1200,7 +1200,7 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 	if( bMaxCredits )
 		GAMESTATE->m_iCoins.Set( MAX_NUM_CREDITS * PREFSMAN->m_iCoinsPerCredit );
 
-	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
+	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins.Get(), PREFSMAN->m_iCoinsPerCredit.Get() );
 	if( iNumCoinsOld != GAMESTATE->m_iCoins )
 		SCREENMAN->PlayCoinSound();
 	else
@@ -1230,7 +1230,7 @@ void StepMania::InsertCredit()
 
 void StepMania::ClearCredits()
 {
-	LOG->Trace("%i coins cleared", GAMESTATE->m_iCoins );
+	LOG->Trace("%i coins cleared", GAMESTATE->m_iCoins.Get() );
 	GAMESTATE->m_iCoins.Set( 0 );
 	SCREENMAN->PlayInvalidSound();
 	
@@ -1324,7 +1324,9 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	{
 		// If holding LShift save uncompressed, else save compressed
 		bool bSaveCompressed = !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
+		RageTimer timer;
 		StepMania::SaveScreenshot( "Screenshots/", bSaveCompressed, false );
+		LOG->Trace( "Screenshot took %f seconds.", timer.GetDeltaTime() );
 		return true;	// handled
 	}
 	
