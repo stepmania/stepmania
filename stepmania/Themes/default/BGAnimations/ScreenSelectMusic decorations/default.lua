@@ -92,7 +92,12 @@ t[#t+1] = Def.ActorFrame {
 	};
 	LoadFont( "_sf square head 13px" ) .. {
 		InitCommand=cmd(maxwidth,300;playcommand,"Set";x,10;shadowlength,0;diffuse,color("#fbfb57");strokecolor,color("#696800"););
-		SetCommand=cmd(settext,string.upper( SortOrderToLocalizedString(GAMESTATE:GetSortOrder()) ));
+		SetCommand = function(self)
+			local so = GAMESTATE:GetSortOrder();
+			if so ~= nil then
+				self:settext( string.upper(so) )
+			end;
+		end;
 		SortOrderChangedMessageCommand=cmd(playcommand,"Set");
 	};
 };
@@ -319,7 +324,7 @@ t[#t+1] = Def.CourseContentsList {
 for pn in ivalues(PlayerNumber) do
 	local MetricsName = "StepsDisplay" .. PlayerNumberToString(pn);
 	t[#t+1] = StepsDisplay(pn) .. {
-		InitCommand=function(self) self:player(pn); name(MetricsName); ActorUtil.LoadAllCommandsAndSetXYAndOnCommand(self,Var "LoadingScreen"); end;
+		InitCommand=function(self) self:player(pn); self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXYAndOnCommand(self,Var "LoadingScreen"); end;
 	};
 end
 
@@ -406,7 +411,9 @@ if not GAMESTATE:IsCourseMode() then
 					CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"UpdateAlpha");
 					CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"UpdateAlpha");
 					UpdateAlphaCommand=function(self)
-						if GAMESTATE:GetCurrentSteps(PLAYER_1):GetDifficulty() == GAMESTATE:GetCurrentSteps(PLAYER_2):GetDifficulty() then
+						local s1 = GAMESTATE:GetCurrentSteps(PLAYER_1);
+						local s2 = GAMESTATE:GetCurrentSteps(PLAYER_2);
+						if not s1 or not s2 or s1:GetDifficulty() == s2:GetDifficulty() then
 							self:linear(.08);
 							self:diffusealpha(0.15);
 						else
@@ -455,7 +462,9 @@ if not GAMESTATE:IsCourseMode() then
 					CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"UpdateAlpha");
 					CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"UpdateAlpha");
 					UpdateAlphaCommand=function(self)
-						if GAMESTATE:GetCurrentSteps(PLAYER_1):GetDifficulty() == GAMESTATE:GetCurrentSteps(PLAYER_2):GetDifficulty() then
+						local s1 = GAMESTATE:GetCurrentSteps(PLAYER_1);
+						local s2 = GAMESTATE:GetCurrentSteps(PLAYER_2);
+						if not s1 or not s2 or s1:GetDifficulty() == s2:GetDifficulty() then
 							self:linear(.08);
 							self:diffusealpha(0.15);
 						else
