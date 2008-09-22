@@ -46,7 +46,7 @@ namespace ActorUtil
 	inline void PlayCommand( Actor& actor, const RString &sCommandName ) { actor.PlayCommand( sCommandName ); }
 	inline void OnCommand( Actor& actor )
 	{
-		ASSERT_M( actor.HasCommand("On"), ssprintf("%s is missing an OnCommand.", actor.GetName().c_str()) );
+		ASSERT_M( actor.HasCommand("On"), ssprintf("%s is missing an OnCommand.", actor.GetLineage().c_str()) );
 		actor.PlayCommand("On");
 	}
 	inline void OffCommand( Actor& actor )
@@ -57,7 +57,7 @@ namespace ActorUtil
 		// (Do "playcommand" anyway; BGAs often have no name.)
 		if( actor.GetName().empty() )
 			return;
-		ASSERT_M( actor.HasCommand("Off"), ssprintf("Actor %s is missing an OffCommand.", actor.GetName().c_str()) );
+		ASSERT_M( actor.HasCommand("Off"), ssprintf("Actor %s is missing an OffCommand.", actor.GetLineage().c_str()) );
 		actor.PlayCommand("Off");
 	}
 
