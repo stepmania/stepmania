@@ -413,6 +413,7 @@ if not GAMESTATE:IsCourseMode() then
 					UpdateAlphaCommand=function(self)
 						local s1 = GAMESTATE:GetCurrentSteps(PLAYER_1);
 						local s2 = GAMESTATE:GetCurrentSteps(PLAYER_2);
+						self:stoptweening();
 						if not s1 or not s2 or s1:GetDifficulty() == s2:GetDifficulty() then
 							self:linear(.08);
 							self:diffusealpha(0.15);
@@ -464,6 +465,7 @@ if not GAMESTATE:IsCourseMode() then
 					UpdateAlphaCommand=function(self)
 						local s1 = GAMESTATE:GetCurrentSteps(PLAYER_1);
 						local s2 = GAMESTATE:GetCurrentSteps(PLAYER_2);
+						self:stoptweening();
 						if not s1 or not s2 or s1:GetDifficulty() == s2:GetDifficulty() then
 							self:linear(.08);
 							self:diffusealpha(0.15);
