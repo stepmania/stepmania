@@ -104,7 +104,7 @@ t[#t+1] = Def.ActorFrame {
 
 t[#t+1] = LoadActor( THEME:GetPathG(Var 'LoadingScreen','options message 1x2') ) .. {
 	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;pause);
-	OnCommand=cmd(hidden,1);
+	OnCommand=cmd(hidden,1;draworder,111);
 	ShowPressStartForOptionsCommand=cmd(hidden,0;setstate,0;
 		faderight,.3;fadeleft,.3;cropleft,-0.3;cropright,1.3;linear,0.4;cropright,-0.3);
 	ShowEnteringOptionsCommand=cmd(finishtweening;setstate,1;sleep,0.25;playcommand,"HidePressStartForOptions");
@@ -507,7 +507,7 @@ if not GAMESTATE:IsCourseMode() then
 end
 -- fade out
 t[#t+1] = Def.Quad {
-		InitCommand=cmd(FullScreen;diffuse,color("#000000");diffusealpha,0);
+		InitCommand=cmd(FullScreen;draworder,110;diffuse,color("#000000");diffusealpha,0);
 		OffCommand=cmd(linear,0.3;diffusealpha,1);
 };
 return t;
