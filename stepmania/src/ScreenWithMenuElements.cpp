@@ -17,7 +17,7 @@
 #define STOP_MUSIC_ON_BACK			THEME->GetMetricB(m_sName,"StopMusicOnBack")
 #define WAIT_FOR_CHILDREN_BEFORE_TWEENING_OUT	THEME->GetMetricB(m_sName,"WaitForChildrenBeforeTweeningOut")
 
-//REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
+REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
 ScreenWithMenuElements::ScreenWithMenuElements()
 {
 	m_MenuTimer = NULL;
