@@ -58,6 +58,7 @@ protected:
 	ThemeMetric<bool>		CANCEL_TRANSITIONS_OUT;
 	ThemeMetric<float>		TIMER_SECONDS;
 	ThemeMetric<RString>		TIMER_METRICS_GROUP;
+	ThemeMetric<bool>		RESET_GAMESTATE;
 
 private:
 	RString				m_sPathToMusic;
