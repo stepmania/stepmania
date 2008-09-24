@@ -197,6 +197,7 @@ void BPMDisplay::SetBpmFromSong( const Song* pSong )
 void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 {
 	ASSERT( pCourse );
+	ASSERT( GAMESTATE->GetCurrentStyle() );
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 	Trail *pTrail = pCourse->GetTrail( st );
