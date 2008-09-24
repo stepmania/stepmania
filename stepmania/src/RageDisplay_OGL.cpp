@@ -442,6 +442,7 @@ RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 		return sError;
 
 	// Log driver details
+	g_pWind->LogDebugInformation();
 	LOG->Info( "OGL Vendor: %s", glGetString(GL_VENDOR) );
 	LOG->Info( "OGL Renderer: %s", glGetString(GL_RENDERER) );
 	LOG->Info( "OGL Version: %s", glGetString(GL_VERSION) );

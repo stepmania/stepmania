@@ -14,6 +14,7 @@ public:
 
 	void *GetProcAddress(RString s);
 	RString TryVideoMode(const VideoModeParams &p, bool &bNewDeviceOut);
+	void LogDebugInformation() const;
 	bool IsSoftwareRenderer( RString &sError );
 	void SwapBuffers();
 

@@ -38,20 +38,17 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 		RageException::Throw( FAILED_CONNECTION_XSERVER.GetValue() );
 
 	const int iScreen = DefaultScreen( Dpy );
-
-	LOG->Info( "Display: %s (screen %i)", DisplayString(Dpy), iScreen );
-	LOG->Info( "Direct rendering: %s", glXIsDirect( Dpy, glXGetCurrentContext() )? "yes":"no" );
-
 	int iXServerVersion = XVendorRelease( Dpy ); /* eg. 40201001 */
 	int iMajor = iXServerVersion / 10000000; iXServerVersion %= 10000000;
 	int iMinor = iXServerVersion / 100000;   iXServerVersion %= 100000;
 	int iRevision = iXServerVersion / 1000;  iXServerVersion %= 1000;
 	int iPatch = iXServerVersion;
 
+
+	LOG->Info( "Display: %s (screen %i)", DisplayString(Dpy), iScreen );
 	LOG->Info( "X server vendor: %s [%i.%i.%i.%i]", XServerVendor( Dpy ), iMajor, iMinor, iRevision, iPatch );
 	LOG->Info( "Server GLX vendor: %s [%s]", glXQueryServerString( Dpy, iScreen, GLX_VENDOR ), glXQueryServerString( Dpy, iScreen, GLX_VERSION ) );
 	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( Dpy, GLX_VENDOR ), glXGetClientString( Dpy, GLX_VERSION ) );
-	
 	m_bWasWindowed = true;
 	g_pScreenConfig = XRRGetScreenInfo( Dpy, RootWindow(Dpy, DefaultScreen(Dpy)) );
 }
@@ -253,6 +250,11 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	CurrentParams = p;
 	CurrentParams.rate = rate;
 	return ""; // Success
+}
+
+void LowLevelWindow_X11::LogDebugInformation() const
+{
+	LOG->Info( "Direct rendering: %s", glXIsDirect( Dpy, glXGetCurrentContext() )? "yes":"no" );
 }
 
 bool LowLevelWindow_X11::IsSoftwareRenderer( RString &sError )
