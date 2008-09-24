@@ -688,6 +688,17 @@ void GameState::BeginStage()
 
 void GameState::CancelStage()
 {
+	FOREACH_CpuPlayer( p )
+	{
+		switch( m_PlayMode )
+		{
+			case PLAY_MODE_BATTLE:
+			case PLAY_MODE_RAVE:
+			m_iPlayerStageTokens[p] = PREFSMAN->m_iSongsPerPlay;
+		}
+
+	}
+
 	FOREACH_EnabledPlayer( p )
 		m_iPlayerStageTokens[p] += m_iNumStagesOfThisSong;
 	m_iNumStagesOfThisSong = 0;
