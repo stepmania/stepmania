@@ -738,8 +738,9 @@ void RageDisplay::UpdateCentering()
 
 bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 {
+	RageTimer timer;
 	RageSurface *surface = this->CreateScreenshot();
-
+	LOG->Trace( "CreateScreenshot took %f seconds", timer.GetDeltaTime() );
 	/* Unless we're in lossless, resize the image to 640x480.  If we're saving lossy,
 	 * there's no sense in saving 1280x960 screenshots, and we don't want to output
 	 * screenshots in a strange (non-1) sample aspect ratio. */
@@ -749,8 +750,9 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 		ASSERT( GetActualVideoModeParams().fDisplayAspectRatio > 0 );
 		int iHeight = 480;
 		int iWidth = lrintf( iHeight * GetActualVideoModeParams().fDisplayAspectRatio );
-		LOG->Trace( "%ix%i -> %ix%i (%.3f)", surface->w, surface->h, iWidth, iHeight, GetActualVideoModeParams().fDisplayAspectRatio );
+		timer.Touch();
 		RageSurfaceUtils::Zoom( surface, iWidth, iHeight );
+		LOG->Trace( "%ix%i -> %ix%i (%.3f) in %f seconds", surface->w, surface->h, iWidth, iHeight, GetActualVideoModeParams().fDisplayAspectRatio, timer.GetDeltaTime() );
 	}
 
 	RageFile out;
@@ -762,6 +764,7 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 	}
 
 	bool bSuccess = false;
+	timer.Touch();
 	switch( format )
 	{
 	case SAVE_LOSSLESS:
@@ -775,6 +778,7 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 		break;
 	DEFAULT_FAIL( format );
 	}
+	LOG->Trace( "Saving Screenshot file took %f seconds.", timer.GetDeltaTime() );
 
 	SAFE_DELETE( surface );
 
