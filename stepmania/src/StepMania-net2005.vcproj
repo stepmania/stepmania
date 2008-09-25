@@ -363,14 +363,6 @@
 				>
 			</File>
 			<File
-				RelativePath="ScreenCenterImage.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenCenterImage.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ScreenContinue.cpp"
 				>
 			</File>
@@ -892,14 +884,6 @@
 			</File>
 			<File
 				RelativePath="ScreenSplash.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenStage.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenStage.h"
 				>
 			</File>
 			<File
@@ -2531,14 +2515,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DifficultyDisplay.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DifficultyDisplay.h"
-				>
-			</File>
-			<File
 				RelativePath="DifficultyList.cpp"
 				>
 			</File>
@@ -2736,6 +2712,14 @@
 			</File>
 			<File
 				RelativePath="SnapDisplay.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StepsDisplay.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StepsDisplay.h"
 				>
 			</File>
 			<File
@@ -4863,19 +4847,19 @@
 				>
 			</File>
 			<File
-				RelativePath="CryptManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="CryptManager.h"
-				>
-			</File>
-			<File
 				RelativePath="CryptHelpers.cpp"
 				>
 			</File>
 			<File
 				RelativePath="CryptHelpers.h"
+				>
+			</File>
+			<File
+				RelativePath="CryptManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="CryptManager.h"
 				>
 			</File>
 			<File
