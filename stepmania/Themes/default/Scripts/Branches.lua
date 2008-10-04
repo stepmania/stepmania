@@ -131,6 +131,9 @@ function GetEvaluationSummaryNextScreen()
 end
 
 function GetEvaluationNextScreen()
+	if IsEventMode() then
+		return "ScreenProfileSave";
+	end
 	local sFailedScreen;
 	local sEndScreen;
 	local pm = GAMESTATE:GetPlayMode();
@@ -170,7 +173,14 @@ function SelectEndingScreen()
 	local grade = STATSMAN:GetBestFinalGrade()
 	if Grade:Compare( grade, "Grade_Tier03" ) >= 0 then return "ScreenMusicScroll" end
 	return "ScreenCredits"
-end	
+end
+
+function ScreenProfileSaveNextScreen()
+	if IsEventMode() then
+		return SongSelectionScreen();
+	end
+	return SelectEndingScreen();
+end
 
 function IsEventMode()
 	return PREFSMAN:GetPreference( "EventMode" )
