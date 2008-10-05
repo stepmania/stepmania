@@ -147,7 +147,7 @@ bool HIDDevice::Open( io_object_t device )
 void HIDDevice::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, void *target, int refCon )
 {
 	CFRunLoopSourceRef runLoopSource;
-	// This creates a run loop source and a mach port. They are released in the dtor.
+	// This creates a run loop source. It is released in the dtor.
 	IOReturn ret = CALL( m_Queue, createAsyncEventSource, &runLoopSource );
 	
 	if( ret != kIOReturnSuccess )
