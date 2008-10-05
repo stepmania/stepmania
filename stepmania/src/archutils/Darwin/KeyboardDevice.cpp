@@ -157,10 +157,7 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 	
 	DeviceButton button;
 	if( UsbKeyToDeviceButton(usage,button) )
-	{
-		LOG->Trace( "\t\tAdding button %s", DeviceButtonToString(button).c_str() );
 		m_Mapping[cookie] = button;
-	}
 }
 
 void KeyboardDevice::Open()
@@ -174,8 +171,10 @@ void KeyboardDevice::GetButtonPresses( vector<DeviceInput>& vPresses, int cookie
 	hash_map<int, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
 	
 	if( iter != m_Mapping.end() )
+	{
+		LOG->Trace( "Pushed %s", DeviceButtonToString(iter->second).c_str() );
 		vPresses.push_back( DeviceInput(DEVICE_KEYBOARD, iter->second, value, now) );
-	
+	}
 }
 	
 void KeyboardDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
