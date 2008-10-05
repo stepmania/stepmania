@@ -16,7 +16,6 @@ HIDDevice::~HIDDevice()
 		{
 			CALL( m_Queue, stop );
 			runLoopSource = CALL( m_Queue, getAsyncEventSource );
-			mach_port_deallocate( mach_task_self(), CALL(m_Queue, getAsyncPort) );
 			CFRunLoopSourceInvalidate( runLoopSource );
 			CFRelease( runLoopSource );
 		}
@@ -173,7 +172,6 @@ void HIDDevice::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback
 	
 	if( ret != kIOReturnSuccess )
 	{
-		mach_port_deallocate( mach_task_self(), CALL(m_Queue, getAsyncPort) );
 		CFRunLoopSourceInvalidate( runLoopSource );
 		CFRelease( runLoopSource );
 		
