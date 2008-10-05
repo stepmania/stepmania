@@ -220,7 +220,7 @@ static bool CheckPackages( RageFileDriverZip &fileDriver )
 	if( cwd[cwd.size()-1] != '\\' )
 		cwd += "\\";
 
-	for( i = 0; i < (int)vsDirectories.size(); ++i )
+	for( int i = 0; i < (int)vsDirectories.size(); ++i )
 	{
 		RString sDir = vsDirectories[i];
 		sDir += "/";
