@@ -76,7 +76,7 @@ private:
 protected:
 	/*
 	 * Each physical device has zero or more logical devices. If this device allows
-	 * a logical device of type (usagePage, usage), then allocated storage as necessary
+	 * a logical device of type (usagePage, usage), then allocate storage as necessary
 	 * and return true, otherwise, return false.
 	 */
 	virtual bool AddLogicalDevice( int usagePage, int usage ) = 0;
