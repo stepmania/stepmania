@@ -36,7 +36,7 @@ public:
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
 	RString GetDeviceSpecificInputString( const DeviceInput &di );
 	wchar_t DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers );
-	static void QueueCallBack( void *target, int result, void *refcon, void *sender );
+	static void QueueCallback( void *target, int result, void *refcon, void *sender );
 	
 };
 

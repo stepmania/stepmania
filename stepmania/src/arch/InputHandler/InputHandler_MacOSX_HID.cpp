@@ -14,7 +14,7 @@
 
 REGISTER_INPUT_HANDLER_CLASS2( HID, MacOSX_HID );
 
-void InputHandler_MacOSX_HID::QueueCallBack( void *target, int result, void *refcon, void *sender )
+void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *refcon, void *sender )
 {
 	// The result seems useless as you can't actually return anything...
 	// refcon is the Device number
@@ -27,9 +27,11 @@ void InputHandler_MacOSX_HID::QueueCallBack( void *target, int result, void *ref
 	HIDDevice *dev = This->m_vDevices[int( refcon )];
 	vector<DeviceInput> vPresses;
 	
-	LOG->Trace( "Got event with cookie %p, value %d", event.elementCookie, int(event.value) );
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
+	{
+		LOG->Trace( "Got event with cookie %p, value %d", event.elementCookie, int(event.value) );
 		dev->GetButtonPresses( vPresses, event.elementCookie, event.value, now );
+	}
 	FOREACH_CONST( DeviceInput, vPresses, i )
 		INPUTFILTER->ButtonPressed( *i );
 }
@@ -111,7 +113,7 @@ void InputHandler_MacOSX_HID::StartDevices()
 	
 	ASSERT( m_LoopRef );
 	FOREACH( HIDDevice *, m_vDevices, i )
-		(*i)->StartQueue( m_LoopRef, InputHandler_MacOSX_HID::QueueCallBack, this, n++ );
+		(*i)->StartQueue( m_LoopRef, InputHandler_MacOSX_HID::QueueCallback, this, n++ );
 	
 	CFRunLoopSourceRef runLoopSource = IONotificationPortGetRunLoopSource( m_NotifyPort );
 	
