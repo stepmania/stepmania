@@ -36,6 +36,7 @@ class RageFileOsAbsolute : public RageFile
 {
 public:
 	bool Open( const RString& path, int mode = READ );
+	~RageFileOsAbsolute();
 private:
 	RString m_sOsDir;
 };
