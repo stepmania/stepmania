@@ -245,7 +245,6 @@ Section "Main Section" SecMain
 
 	RMDir /r "$INSTDIR\NoteSkins\common\default"
 	RMDir /r "$INSTDIR\NoteSkins\dance\default"
-	RMDir /r "$INSTDIR\NoteSkins\dance\bold"
 	RMDir /r "$INSTDIR\NoteSkins\dance\flat"
 	SetOutPath "$INSTDIR\NoteSkins"
 	File "NoteSkins\instructions.txt"
@@ -255,7 +254,6 @@ Section "Main Section" SecMain
 
 	SetOutPath "$INSTDIR\NoteSkins\dance"
 	File /r /x CVS /x .svn "NoteSkins\dance\default"
-	File /r /x CVS /x .svn "NoteSkins\dance\bold"
 	File /r /x CVS /x .svn "NoteSkins\dance\flat"
 	SetOutPath "$INSTDIR"
 
