@@ -57,6 +57,7 @@ bool HIDDevice::Open( io_object_t device )
 		pid = 0;
 	if( !InitDevice(vid, pid) )
 	{
+		LOG->Warn( "Couldn't initialize device." );
 		CFRelease( properties );
 		return false;
 	}
@@ -68,10 +69,12 @@ bool HIDDevice::Open( io_object_t device )
 	}
 	if( m_sDescription == "" )
 		m_sDescription = ssprintf( "%04x:%04x", vid, pid );
+	LOG->Trace( "\t\tDevice description: %s", m_sDescription.c_str() );
 	
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey) );
 	if ( !object || CFGetTypeID(object) != CFArrayGetTypeID() )
 	{
+		LOG->Warn( "Couldn't get HID elements." );
 		CFRelease( properties );
 		return false;
 	}
