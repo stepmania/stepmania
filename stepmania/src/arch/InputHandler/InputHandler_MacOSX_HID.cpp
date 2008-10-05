@@ -185,17 +185,20 @@ void InputHandler_MacOSX_HID::AddDevices( int usagePage, int usage, InputDevice 
 	// Iterate over the devices and add them
 	while( (device = IOIteratorNext(iter)) )
 	{
+		LOG->Trace( "\tFound device %d", id );
 		HIDDevice *dev = MakeDevice( id );
 		int num;
 		
 		if( !dev )
 		{
+			LOG->Trace( "\t\tInvalid id, deleting device" );
 			IOObjectRelease( device );
 			continue;
 		}
 		
 		if( !dev->Open(device) || (num = dev->AssignIDs(id)) == -1 )
 		{
+			LOG->Trace( "\tFailed top open or assign id, deleting device" );
 			delete dev;
 			IOObjectRelease( device );
 			continue;
@@ -210,6 +213,8 @@ void InputHandler_MacOSX_HID::AddDevices( int usagePage, int usage, InputDevice 
 		
 		if( ret == KERN_SUCCESS )
 			m_vIters.push_back( i );
+		else
+			LOG->Trace( "\t\tFailed to add device changed notification, deleting device" );
 		IOObjectRelease( device );
 	}
 }
@@ -222,10 +227,13 @@ InputHandler_MacOSX_HID::InputHandler_MacOSX_HID() : m_Sem( "Input thread starte
 	m_NotifyPort = IONotificationPortCreate( kIOMasterPortDefault );
 	
 	// Add devices.
+	LOG->Trace( "Finding keyboards" );
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard, id );
+	LOG->Trace( "Finding joysticks" );
 	id = DEVICE_JOY1;
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick, id );
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad, id );
+	LOG->Trace( "Finding pump" );
 	id = DEVICE_PUMP1;
 	AddDevices( kHIDPage_VendorDefinedStart, 0x0001, id ); // Pump pads use the first vendor specific usage page.
 	m_bChanged = false;
