@@ -27,6 +27,7 @@ void InputHandler_MacOSX_HID::QueueCallBack( void *target, int result, void *ref
 	HIDDevice *dev = This->m_vDevices[int( refcon )];
 	vector<DeviceInput> vPresses;
 	
+	LOG->Trace( "Got event with cookie %d, value %d", int(event.elementCookie), int(event.value) );
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
 		dev->GetButtonPresses( vPresses, int(event.elementCookie), int(event.value), now );
 	FOREACH_CONST( DeviceInput, vPresses, i )
