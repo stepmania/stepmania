@@ -141,6 +141,7 @@ bool HIDDevice::Open( io_object_t device )
 	}
 	
 	Open();
+	LOG->Trace( "\t\tDevice open" );
 	return true;
 }
 
