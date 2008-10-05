@@ -29,6 +29,11 @@ void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *ref
 	
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
 	{
+		if( event.longValueSize != 0 && event.longValue != NULL )
+		{
+			free( event.longValue );
+			continue;
+		}
 		LOG->Trace( "Got event with cookie %p, value %d", event.elementCookie, int(event.value) );
 		dev->GetButtonPresses( vPresses, event.elementCookie, event.value, now );
 	}
