@@ -157,7 +157,10 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 	
 	DeviceButton button;
 	if( UsbKeyToDeviceButton(usage,button) )
+	{
+		LOG->Trace( "\t\tAdding button %s", DeviceButtonToString(button).c_str() );
 		m_Mapping[cookie] = button;
+	}
 }
 
 void KeyboardDevice::Open()
