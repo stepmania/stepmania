@@ -2,20 +2,20 @@
 #define JOYSTICK_DEVICE_H
 
 #include "HIDDevice.h"
-#include <ext/hash_map>
 
 struct Joystick
 {
 	InputDevice id;
 	// map cookie to button
-	__gnu_cxx::hash_map<int, DeviceButton> mapping;
-	int x_axis, x_min, x_max;
-	int y_axis, y_min, y_max;
-	int z_axis, z_min, z_max;
-	int x_rot, rx_min, rx_max;
-	int y_rot, ry_min, ry_max;
-	int z_rot, rz_min, rz_max;
-	int hat, hat_min, hat_max;
+	__gnu_cxx::hash_map<IOHIDElementCookie, DeviceButton> mapping;
+	IOHIDElementCookie x_axis, y_axis, z_axis, x_rot, y_rot, z_rot, hat;
+	int x_min, x_max;
+	int y_min, y_max;
+	int z_min, z_max;
+	int rx_min, rx_max;
+	int ry_min, ry_max;
+	int rz_min, rz_max;
+	int hat_min, hat_max;
 	
 	Joystick();
 };
@@ -27,12 +27,12 @@ private:
 	
 protected:
 	bool AddLogicalDevice( int usagePage, int usage );
-	void AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef properties );
+	void AddElement( int usagePage, int usage, IOHIDElementCookie cookie, const CFDictionaryRef properties );
 	void Open();
 	bool InitDevice( int vid, int pid );
 	
 public:
-	void GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const;
+	void GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const;
 	int AssignIDs( InputDevice startID );
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const;
 };

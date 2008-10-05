@@ -3,22 +3,22 @@
 
 void PumpDevice::Open()
 {
-	AddElementToQueue( 2 );
-	AddElementToQueue( 3 );
-	AddElementToQueue( 4 );
-	AddElementToQueue( 6 );
-	AddElementToQueue( 7 );
-	AddElementToQueue( 8 );
+	AddElementToQueue( IOHIDElementCookie(2) );
+	AddElementToQueue( IOHIDElementCookie(3) );
+	AddElementToQueue( IOHIDElementCookie(4) );
+	AddElementToQueue( IOHIDElementCookie(6) );
+	AddElementToQueue( IOHIDElementCookie(7) );
+	AddElementToQueue( IOHIDElementCookie(8) );
 }
 
-void PumpDevice::GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const
+void PumpDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
 	DeviceButton db1 = DeviceButton_Invalid;
 	DeviceButton db2 = DeviceButton_Invalid;
 	bool pressed1 = !(value & 0x1);
 	bool pressed2 = !(value & 0x2);
 	
-	switch( cookie )
+	switch( uintptr_t(cookie) )
 	{
 	case 2:
 		db2 = JOY_BUTTON_1; // bit 9

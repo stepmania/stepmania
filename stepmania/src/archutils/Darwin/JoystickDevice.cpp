@@ -33,7 +33,7 @@ bool JoystickDevice::AddLogicalDevice( int usagePage, int usage )
 	return true;
 }
 
-void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef properties )
+void JoystickDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cookie, const CFDictionaryRef properties )
 {
 	if( usagePage >= kHIDPage_VendorDefinedStart )
 		return;
@@ -137,7 +137,7 @@ void JoystickDevice::Open()
 		ADD( x_rot );	ADD( y_rot );	ADD( z_rot );
 		ADD( hat );
 #undef ADD		
-		for( hash_map<int,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
+		for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
 			AddElementToQueue( j->first );
 	}
 }
@@ -155,7 +155,7 @@ bool JoystickDevice::InitDevice( int vid, int pid )
 	return ret == kIOReturnSuccess;
 }
 
-void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const
+void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
 	FOREACH_CONST( Joystick, m_vSticks, i )
 	{
@@ -236,7 +236,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, int cookie
 		else
 		{
 			// hash_map<T,U>::operator[] is not const
-			hash_map<int, DeviceButton>::const_iterator iter;
+			hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter;
 			
 			iter = js.mapping.find( cookie );
 			if( iter != js.mapping.end() )

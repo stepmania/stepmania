@@ -223,7 +223,8 @@ void HIDDevice::AddElement( const void *value, void *context )
 	CFDictionaryRef properties = CFDictionaryRef( value );
 	HIDDevice *This = (HIDDevice *)context;
 	CFTypeRef object;
-	int cookie, usage, usagePage;
+	int usage, usagePage;
+	long cookie;
 	
 	// Recursively add elements
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey) );
@@ -248,9 +249,9 @@ void HIDDevice::AddElement( const void *value, void *context )
 	
 	// Get cookie
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementCookieKey) );
-	if( !IntValue(object, cookie) )
+	if( !LongValue(object, cookie) )
 		return;
-	This->AddElement( usagePage, usage, cookie, properties );
+	This->AddElement( usagePage, usage, IOHIDElementCookie(cookie), properties );
 }
 
 /*

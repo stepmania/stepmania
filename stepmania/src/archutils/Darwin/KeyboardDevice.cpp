@@ -150,7 +150,7 @@ static bool UsbKeyToDeviceButton( UInt8 iUsbKey, DeviceButton &buttonOut )
 	return false;
 }
 
-void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef properties )
+void KeyboardDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cookie, const CFDictionaryRef properties )
 {
 	if( usagePage != kHIDPage_KeyboardOrKeypad )
 		return;
@@ -162,13 +162,13 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 
 void KeyboardDevice::Open()
 {
-	for( hash_map<int,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
+	for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
 		AddElementToQueue( i->first );
 }
 
-void KeyboardDevice::GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const
+void KeyboardDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
-	hash_map<int, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+	hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
 	
 	if( iter != m_Mapping.end() )
 	{

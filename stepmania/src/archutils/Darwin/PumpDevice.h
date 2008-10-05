@@ -10,13 +10,13 @@ private:
 
 protected:
 	bool AddLogicalDevice( int usagePage, int usage ) { return true; }
-	void AddElement( int usagePage, int usage, int cookie,
+	void AddElement( int usagePage, int usage, IOHIDElementCookie cookie,
 			 const CFDictionaryRef properties ) { }
 	void Open();
 	bool InitDevice( int vid, int pid ) { return vid == 0x0d2f && pid == 0x0001; }
 
 public:
-	void GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const;
+	void GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const;
 	int AssignIDs( InputDevice startID );
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const;
 };

@@ -11,6 +11,7 @@
 #include <mach/mach_error.h>
 #include <vector>
 #include <utility>
+#include <ext/hash_map>
 
 #include "RageLog.h"
 #include "RageInputDevice.h"
@@ -33,6 +34,25 @@ inline Boolean IntValue( CFTypeRef o, int &n )
 	if( !o || CFGetTypeID(o) != CFNumberGetTypeID() )
 		return false;
 	return CFNumberGetValue( CFNumberRef(o), kCFNumberIntType, &n );
+}
+
+inline Boolean LongValue( CFTypeRef o, long &n )
+{
+	if( !o || CFGetTypeID(o) != CFNumberGetTypeID() )
+		return false;
+	return CFNumberGetValue( CFNumberRef(o), kCFNumberLongType, &n );
+}
+
+namespace __gnu_cxx
+{
+	template<>
+	struct hash<IOHIDElementCookie> : private hash<uintptr_t>
+	{
+		size_t operator()( const IOHIDElementCookie& cookie ) const
+		{
+			return hash<unsigned long>::operator()( uintptr_t(cookie) );
+		}
+	};
 }
 
 /*
@@ -65,7 +85,7 @@ protected:
 	 * If the most recently added logical device cares about the state of an element of type
 	 * (usagePage, usage), store the cookie.
 	 */
-	virtual void AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef properties ) = 0;
+	virtual void AddElement( int usagePage, int usage, IOHIDElementCookie cookie, const CFDictionaryRef properties ) = 0;
 	
 	/*
 	 * Add any elements to the queue by calling AddElementToQueue() with the stored cookies.
@@ -78,11 +98,11 @@ protected:
 	virtual bool InitDevice( int vid, int pid ) { return true; }
 	
 	// This adds the element with the given cookie to the queue to be notified of state changes.
-	inline void AddElementToQueue( int cookie )
+	inline void AddElementToQueue( IOHIDElementCookie cookie )
 	{
-		IOReturn ret = CALL( m_Queue, addElement, IOHIDElementCookie(cookie), 0 );
+		IOReturn ret = CALL( m_Queue, addElement, cookie, 0 );
 		if( ret != KERN_SUCCESS )
-			LOG->Warn( "Failed to add HID element with cookie %d to queue: %d", cookie, ret );
+			LOG->Warn( "Failed to add HID element with cookie %p to queue: %u", cookie, ret );
 	}
 	
 	// Perform a synchronous set report on the HID interface.
@@ -105,7 +125,7 @@ public:
 	 * The value of the element is passed to determine if this is a push or a release. The time
 	 * is provided as an optimization.
 	 */
-	virtual void GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const = 0;
+	virtual void GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const = 0;
 	
 	/*
 	 * Returns the number of IDs assigned starting from startID. This is not meaningful for devices like

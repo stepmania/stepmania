@@ -2,20 +2,19 @@
 #define KEYBOARD_DEVICE_H
 
 #include "HIDDevice.h"
-#include <ext/hash_map>
 
 class KeyboardDevice : public HIDDevice
 {
 private:
-	__gnu_cxx::hash_map<int, DeviceButton> m_Mapping;
+	__gnu_cxx::hash_map<IOHIDElementCookie, DeviceButton> m_Mapping;
 	
 protected:
 	bool AddLogicalDevice( int usagePage, int usage );
-	void AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef properties );
+	void AddElement( int usagePage, int usage, IOHIDElementCookie cookie, const CFDictionaryRef properties );
 	void Open();
 
 public:
-	void GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const;
+	void GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const;
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const;
 	
 	static bool DeviceButtonToMacVirtualKey( DeviceButton button, UInt8 &iMacVKOut );
