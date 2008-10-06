@@ -218,6 +218,7 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 
 		bool bFirstRowGoesDown = m_OptionsNavigation==NAV_TOGGLE_THREE_KEY;
 
+		CHECKPOINT_M( ssprintf("Loading row %u: %s", r, vHands[r]->m_Def.m_sName.c_str()) );
 		row.LoadNormal( vHands[r], bFirstRowGoesDown );
 	}
 

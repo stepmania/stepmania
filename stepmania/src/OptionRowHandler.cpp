@@ -78,11 +78,7 @@ RString OptionRowHandler::GetThemedItemText( int iChoice ) const
 	}
 
 	if( bTheme )
-	{
-		LOG->MapLog( "OptionRowHandler::GetThemedItemText", "choice %d: %s", iChoice, s.c_str() );
 		s = CommonMetrics::LocalizeOptionItem( s, false );
-		LOG->UnmapLog( "OptionRowHandler::GetThemedItemText" );
-	}
 	return s;
 }
 
