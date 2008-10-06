@@ -75,6 +75,7 @@ void ScreenNetworkOptions::Init()
 		{
 			OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
 			pHand->m_Def.m_sName = "Servers";
+			pHand->m_Def.m_bAllowThemeItems = false;
 			for( unsigned int j = 0; j < AllServers.size(); j++ )
 				pHand->m_Def.m_vsChoices.push_back( AllServers[j].Name );
 			vHands.push_back( pHand );
