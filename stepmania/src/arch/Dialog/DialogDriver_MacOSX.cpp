@@ -13,7 +13,7 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 {
 	CFOptionFlags result;
 	CFStringRef text = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingUTF8 );
-	
+	ASSERT_M( text != NULL, ssprintf("CFString for dialog string \"%s\" could not be created.", sMessage.c_str()) );
 	CFUserNotificationDisplayAlert( 0.0, flags, NULL, NULL, NULL, CFSTR(PRODUCT_FAMILY),
 					text, OK, alt, other, &result );
 	CFRelease( text );
