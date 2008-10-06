@@ -164,7 +164,7 @@ void KeyboardDevice::Open()
 {
 	for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
 	{
-		LOG->Trace( "Adding %s to queue, cookie %p", DeviceButtonToString(i->second).c_str(), i->first );
+		//LOG->Trace( "Adding %s to queue, cookie %p", DeviceButtonToString(i->second).c_str(), i->first );
 		AddElementToQueue( i->first );
 	}
 }
@@ -175,7 +175,7 @@ void KeyboardDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 	
 	if( iter != m_Mapping.end() )
 	{
-		LOG->Trace( "Pushed %s", DeviceButtonToString(iter->second).c_str() );
+		//LOG->Trace( "Pushed %s", DeviceButtonToString(iter->second).c_str() );
 		vPresses.push_back( DeviceInput(DEVICE_KEYBOARD, iter->second, value, now) );
 	}
 }

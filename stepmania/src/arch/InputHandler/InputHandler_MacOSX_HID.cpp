@@ -34,7 +34,7 @@ void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *ref
 			free( event.longValue );
 			continue;
 		}
-		LOG->Trace( "Got event with cookie %p, value %d", event.elementCookie, int(event.value) );
+		//LOG->Trace( "Got event with cookie %p, value %d", event.elementCookie, int(event.value) );
 		dev->GetButtonPresses( vPresses, event.elementCookie, event.value, now );
 	}
 	FOREACH_CONST( DeviceInput, vPresses, i )
