@@ -13,7 +13,14 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 {
 	CFOptionFlags result;
 	CFStringRef text = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingUTF8 );
-	ASSERT_M( text != NULL, ssprintf("CFString for dialog string \"%s\" could not be created.", sMessage.c_str()) );
+
+	if( text == NULL )
+	{
+		RString error = ssprintf( "CFString for dialog string \"%s\" could not be created.", sMessage.c_str() );
+		WARN( error );
+		DEBUG_ASSERT_M( false, error );
+		return kCFUserNotificationDefaultResponse; // Is this better than displaying an "unknown error" message?
+	}
 	CFUserNotificationDisplayAlert( 0.0, flags, NULL, NULL, NULL, CFSTR(PRODUCT_FAMILY),
 					text, OK, alt, other, &result );
 	CFRelease( text );
