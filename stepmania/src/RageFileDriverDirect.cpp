@@ -232,6 +232,38 @@ RageFileObjDirect::RageFileObjDirect( const RString &sPath, int iFD, int iMode )
 		this->EnableWriteBuffering( BUFSIZE );
 }
 
+namespace
+{
+#if !defined(WIN32)
+	bool FlushDir( RString sPath, RString &sError )
+	{
+		/* Wait for the directory to be flushed. */
+		int dirfd = open( sPath, O_RDONLY );
+		if( dirfd == -1 )
+		{
+			sError = strerror(errno);
+			return false;
+		}
+
+		if( fsync( dirfd ) == -1 )
+		{
+			sError = strerror(errno);
+			close( dirfd );
+			return false;
+		}
+
+		close( dirfd );
+		return true;
+	}
+#else
+	bool FlushDir( RString sPath, RString &sError )
+	{
+		return true;
+	}
+#endif
+}
+
+
 bool RageFileObjDirect::FinalFlush()
 {
 	if( !(m_iMode & RageFile::WRITE) )
@@ -253,26 +285,13 @@ bool RageFileObjDirect::FinalFlush()
 		return false;
 	}
 
-#if !defined(WIN32)
-	/* Wait for the directory to be flushed. */
-	int dirfd = open( Dirname(m_sPath), O_RDONLY );
-	if( dirfd == -1 )
+	RString sError;
+	if( !FlushDir(Dirname(m_sPath), sError) )
 	{
-		WARN( ssprintf("Error synchronizing open(%s dir): %s", this->m_sPath.c_str(), strerror(errno)) );
-		SetError( strerror(errno) );
+		WARN( ssprintf("Error synchronizing fsync(%s dir): %s", this->m_sPath.c_str(), sError.c_str()) );
+		SetError( sError );
 		return false;
 	}
-
-	if( fsync( dirfd ) == -1 )
-	{
-		WARN( ssprintf("Error synchronizing fsync(%s dir): %s", this->m_sPath.c_str(), strerror(errno)) );
-		SetError( strerror(errno) );
-		close( dirfd );
-		return false;
-	}
-
-	close( dirfd );
-#endif
 
 	return true;
 }
@@ -332,6 +351,16 @@ RageFileObjDirect::~RageFileObjDirect()
 			break;
 		}
 #endif
+
+		if( m_iMode & RageFile::SLOW_FLUSH )
+		{
+			RString sError;
+			if( !FlushDir(Dirname(m_sPath), sError) )
+			{
+				WARN( ssprintf("Error synchronizing fsync(%s dir): %s", this->m_sPath.c_str(), sError.c_str()) );
+				SetError( sError );
+			}
+		}
 
 		/* Success. */
 		return;
