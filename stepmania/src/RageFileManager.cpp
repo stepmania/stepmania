@@ -737,6 +737,7 @@ static bool PathUsesSlowFlush( const RString &sPath )
 {
 	static const char *FlushPaths[] =
 	{
+		"/Save/",
 		"Save/"
 	};
 
