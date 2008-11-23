@@ -43,20 +43,28 @@ if ShowStandardDecoration("ItsARecord") then
 	for pn in ivalues(PlayerNumber) do
 		local t2 = Def.ActorFrame {
 		 	BeginCommand=function(self)
-				local index = SCREENMAN:GetTopScreen():GetStageStats():GetPlayerStageStats(pn):GetMachineHighScoreIndex();
+				local pss = SCREENMAN:GetTopScreen():GetStageStats():GetPlayerStageStats(pn);
+				local index = pss:GetMachineHighScoreIndex();
+				local hsl = PROFILEMAN:GetMachineProfile():GetHighScoreList(pSong,pSteps):
+				hsl:GetHighScores()[1]:GetName GetScore GetPercentDP
 				if index == 0 then
 					self:GetChild("Record"):visible( true );
 					self:GetChild("NoRecord"):visible( false );
 				else
 					self:GetChild("Record"):visible( false );
 					self:GetChild("NoRecord"):visible( true );
+					if hsl then
+						self:GetChild("NoRecord"):settext("WWWW:\n82.34%");
+					else
+						self:GetChild("NoRecord"):settext("");
+					end
 				end
 			end;
 			LoadFont("_sf sports night ns upright 16px") .. {
 				InitCommand=cmd(name,"Record";settext,"It's a New\nRecord!!!";diffuse,color("#fffc00");strokecolor,color("#807e00");vertspacing,-2;shadowlength,0;glowshift;); 
 			};
 			LoadFont("common normal") .. {
-				InitCommand=cmd(name,"NoRecord";settext,"WWWW:\n82.34%";strokecolor,color("#807e00");shadowlength,0;); 
+				InitCommand=cmd(name,"NoRecord";strokecolor,color("#706f43");shadowlength,0;); 
 			};
 		}
 		t[#t+1] = StandardDecorationFromTable( "ItsARecord" .. ToEnumShortString(pn), t2 );

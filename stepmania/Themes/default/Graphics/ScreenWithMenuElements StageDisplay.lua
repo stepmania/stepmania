@@ -7,7 +7,7 @@ local ScreenName = Var "LoadingScreen";
 
 function MakeBitmapTest()
 	return LoadFont(ScreenName,"StageDisplay") .. {
-		InitCommand=cmd(shadowlength,0;uppercase,true;);
+		InitCommand=cmd(y,2;shadowlength,0;);
 	};
 end
 
@@ -23,7 +23,7 @@ for s in ivalues(Stage) do
 				StageIndex = ss:GetStageIndex();
 			end
 			self:visible( Stage == s );
-			self:settext( StageToLocalizedString(Stage) );
+			self:settext( "3rd" );
 			self:diffuse( StageToColor(s) );
 			self:strokecolor( StageToStrokeColor(s) );
 		end;
