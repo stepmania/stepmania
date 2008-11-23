@@ -17,7 +17,7 @@ int main(void) {
 	ulong build=0,build_t;
 	char s[25];
 	time_t tm;
-
+	struct tm *ptm;
 	//////////////
 
 	if (f=fopen("version.bin","rb")) {
@@ -29,8 +29,12 @@ int main(void) {
 //	printf("Incrementing to build %d\n",build);
 
 	time(&tm);
-	memcpy(s ,asctime(localtime(&tm)), 24);
-	s[24]=0;
+	
+	//memcpy(version_time, asctime(localtime(&tm)), sizeof(version_time)-1);
+	ptm = localtime(&tm);
+	strftime(s, sizeof(s), "%Y%m%d", ptm);
+	s[sizeof(s)-1]=0;
+	
 
 	if (f=fopen("verstub.cpp","w")) {
 		fprintf(f,

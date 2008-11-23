@@ -1811,8 +1811,6 @@ public:
 	}
 	DEFINE_METHOD( GetSongColor, GetSongColor( Luna<Song>::check(L,1) ) )
 	DEFINE_METHOD( GetSongGroupColor, GetSongGroupColor( SArg(1) ) )
-	//static int GetSongGroupColor( T* p, lua_State *L )	{ lua_pushstring( L, p->GetSongGroupColor(SArg(1)) ); return 1; }
-
 
 	LunaSongManager()
 	{
