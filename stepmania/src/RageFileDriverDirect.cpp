@@ -203,7 +203,7 @@ RageFileObjDirect *RageFileObjDirect::Copy() const
 	if( ret == NULL )
 		RageException::Throw( "Couldn't reopen \"%s\": %s", m_sPath.c_str(), strerror(iErr) );
 
-	ret->Seek( lseek( m_iFD, 0, SEEK_CUR ) );
+	ret->Seek( (int)lseek( m_iFD, 0, SEEK_CUR ) );
 
 	return ret;
 }
