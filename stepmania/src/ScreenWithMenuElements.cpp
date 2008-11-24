@@ -33,13 +33,9 @@ void ScreenWithMenuElements::Init()
 	CANCEL_TRANSITIONS_OUT.Load( m_sName, "CancelTransitionsOut" );
 	TIMER_SECONDS.Load( m_sName, "TimerSeconds" );
 	TIMER_METRICS_GROUP.Load( m_sName, "TimerMetricsGroup" );
-	RESET_GAMESTATE.Load( m_sName, "ResetGameState" );
 	Screen::Init();
 
 	ASSERT( this->m_SubActors.empty() );	// don't call Init twice!
-
-	if( RESET_GAMESTATE )
-		GAMESTATE->Reset();
 
 	if( MEMORY_CARD_ICONS )
 	{
