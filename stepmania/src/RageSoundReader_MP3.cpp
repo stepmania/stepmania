@@ -271,7 +271,7 @@ struct madlib_t
 
 static float scale(mad_fixed_t sample)
 {
-	return (double) sample / (1<<MAD_F_FRACBITS);
+	return float( double(sample) / (1<<MAD_F_FRACBITS) );
 }
 
 static int get_this_frame_byte( const madlib_t *mad )

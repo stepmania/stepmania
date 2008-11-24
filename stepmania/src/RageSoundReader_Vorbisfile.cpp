@@ -273,7 +273,7 @@ int RageSoundReader_Vorbisfile::GetNextSourceFrame() const
 {
 	ASSERT(vf);
 
-	int iFrame = ov_pcm_tell( vf );
+	int iFrame = (int)ov_pcm_tell( vf );
 	return iFrame;
 }
 
