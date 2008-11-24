@@ -429,14 +429,14 @@ int RageFileObjDirect::WriteInternal( const void *pBuf, size_t iBytes )
 
 int RageFileObjDirect::SeekInternal( int iOffset )
 {
-	return lseek( m_iFD, iOffset, SEEK_SET );
+	return (int)lseek( m_iFD, iOffset, SEEK_SET );
 }
 
 int RageFileObjDirect::GetFileSize() const
 {
-	const int iOldPos = lseek( m_iFD, 0, SEEK_CUR );
+	const int iOldPos = (int)lseek( m_iFD, 0, SEEK_CUR );
 	ASSERT_M( iOldPos != -1, ssprintf("\"%s\": %s", m_sPath.c_str(), strerror(errno)) );
-	const int iRet = lseek( m_iFD, 0, SEEK_END );
+	const int iRet = (int)lseek( m_iFD, 0, SEEK_END );
 	ASSERT_M( iRet != -1, ssprintf("\"%s\": %s", m_sPath.c_str(), strerror(errno)) );
 	lseek( m_iFD, iOldPos, SEEK_SET );
 	return iRet;

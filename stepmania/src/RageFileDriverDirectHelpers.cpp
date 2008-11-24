@@ -278,7 +278,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 		else
 		{
 			f.dir = (st.st_mode & S_IFDIR);
-			f.size = st.st_size;
+			f.size = (int)st.st_size;
 			f.hash = st.st_mtime;
 		}
 
