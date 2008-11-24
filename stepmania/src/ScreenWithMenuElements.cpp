@@ -63,6 +63,7 @@ void ScreenWithMenuElements::Init()
 		this->AddChild( m_MenuTimer );
 	}
 
+	/* TODO: Remove overlay and underlay in favor of more flexible decorations */
 	m_sprUnderlay.Load( THEME->GetPathB(m_sName,"underlay") );
 	m_sprUnderlay->SetName("Underlay");
 	m_sprUnderlay->SetDrawOrder( DRAW_ORDER_UNDERLAY );

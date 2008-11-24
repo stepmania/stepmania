@@ -68,7 +68,7 @@ void ScreenDemonstration::Init()
 	GAMESTATE->m_bGameplayLeadIn.Set( false );
 
 	m_DancingState = STATE_DANCING;
-	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );	
+	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );		// TODO: Use MenuTimer instead?
 }
 
 void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
