@@ -31,6 +31,14 @@ static RString OPTION_ORDER_NAME( size_t dir ) { return "OptionOrder"+MenuDirToS
 
 REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 
+#define GetActiveElementPlayerNumbers( vpns ) \
+if( SHARED_SELECTION ) { \
+	vpns.push_back( PLAYER_1 ); \
+} else { \
+	FOREACH_HumanPlayer( p ) \
+		vpns.push_back( p ); \
+}
+
 ScreenSelectMaster::ScreenSelectMaster()
 {
 	ZERO( m_iChoice );
@@ -67,15 +75,7 @@ void ScreenSelectMaster::Init()
 	m_TrackingRepeatingInput = GameButton_Invalid;
 
 	vector<PlayerNumber> vpns;
-	if( SHARED_SELECTION )
-	{
-		vpns.push_back( PLAYER_1 );
-	}
-	else
-	{
-		FOREACH_ENUM( PlayerNumber, p )
-			vpns.push_back( p );
-	}
+	GetActiveElementPlayerNumbers( vpns );
 
 #define PLAYER_APPEND_NO_SPACE(p)	(SHARED_SELECTION ? RString() : ssprintf("P%d",(p)+1))
 	
@@ -280,15 +280,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 
 
 	vector<PlayerNumber> vpns;
-	if( SHARED_SELECTION )
-	{
-		vpns.push_back( PLAYER_1 );
-	}
-	else
-	{
-		FOREACH_HumanPlayer( p )
-			vpns.push_back( p );
-	}
+	GetActiveElementPlayerNumbers( vpns );
 
 	
 	if( SM == SM_PlayPostSwitchPage )
@@ -326,15 +318,7 @@ int ScreenSelectMaster::GetSelectionIndex( PlayerNumber pn )
 void ScreenSelectMaster::UpdateSelectableChoices()
 {
 	vector<PlayerNumber> vpns;
-	if( SHARED_SELECTION )
-	{
-		vpns.push_back( PLAYER_1 );
-	}
-	else
-	{
-		FOREACH_HumanPlayer( p )
-			vpns.push_back( p );
-	}
+	GetActiveElementPlayerNumbers( vpns );
 
 
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
@@ -511,15 +495,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	}
 
 	vector<PlayerNumber> vpns;
-	if( SHARED_SELECTION )
-	{
-		vpns.push_back( PLAYER_1 );
-	}
-	else
-	{
-		FOREACH_HumanPlayer( p )
-			vpns.push_back( p );
-	}
+	GetActiveElementPlayerNumbers( vpns );
 
 	Message msg("PreSwitchPage");
 	msg.SetParam( "OldPageIndex", (int)oldPage );
@@ -760,15 +736,7 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 void ScreenSelectMaster::TweenOnScreen()
 {
 	vector<PlayerNumber> vpns;
-	if( SHARED_SELECTION )
-	{
-		vpns.push_back( PLAYER_1 );
-	}
-	else
-	{
-		FOREACH_ENUM( PlayerNumber, p )
-			vpns.push_back( p );
-	}
+	GetActiveElementPlayerNumbers( vpns );
 
 	if( SHOW_ICON )
 	{
@@ -812,15 +780,7 @@ void ScreenSelectMaster::TweenOffScreen()
 	ScreenSelect::TweenOffScreen();
 
 	vector<PlayerNumber> vpns;
-	if( SHARED_SELECTION )
-	{
-		vpns.push_back( PLAYER_1 );
-	}
-	else
-	{
-		FOREACH_HumanPlayer( p )
-			vpns.push_back( p );
-	}
+	GetActiveElementPlayerNumbers( vpns );
 
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
