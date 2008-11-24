@@ -587,18 +587,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenSelectCharacter.h">
 			</File>
 			<File
-				RelativePath="ScreenSelectDifficulty.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectDifficulty.h">
-			</File>
-			<File
-				RelativePath="ScreenSelectGroup.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectGroup.h">
-			</File>
-			<File
 				RelativePath=".\ScreenSelectLanguage.cpp">
 			</File>
 			<File
@@ -627,12 +615,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\ScreenSelectProfile.h">
-			</File>
-			<File
-				RelativePath="ScreenSelectStyle.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectStyle.h">
 			</File>
 			<File
 				RelativePath=".\ScreenServiceAction.cpp">
