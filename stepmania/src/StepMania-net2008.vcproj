@@ -774,22 +774,6 @@
 				>
 			</File>
 			<File
-				RelativePath="ScreenSelectDifficulty.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenSelectDifficulty.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenSelectGroup.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenSelectGroup.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ScreenSelectLanguage.cpp"
 				>
 			</File>
@@ -827,14 +811,6 @@
 			</File>
 			<File
 				RelativePath=".\ScreenSelectProfile.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenSelectStyle.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenSelectStyle.h"
 				>
 			</File>
 			<File
