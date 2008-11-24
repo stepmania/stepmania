@@ -20,7 +20,6 @@
 
 static const ThemeMetric<int>		NUM_W2S		("ScreenHowToPlay","NumW2s");
 static const ThemeMetric<int>		NUM_MISSES	("ScreenHowToPlay","NumMisses");
-static const ThemeMetric<bool>		USE_LIFEBAR	("ScreenHowToPlay","UseLifeMeterBar");
 static const ThemeMetric<bool>		USE_CHARACTER	("ScreenHowToPlay","UseCharacter");
 static const ThemeMetric<bool>		USE_PAD		("ScreenHowToPlay","UsePad");
 static const ThemeMetric<bool>		USE_PLAYER	("ScreenHowToPlay","UsePlayer");
@@ -117,20 +116,17 @@ void ScreenHowToPlay::Init()
 		}
 	}
 	
-	// silly to use the lifebar without a player, since the player updates the lifebar
-	if( USE_LIFEBAR )
+	GAMESTATE->SetCurrentStyle( GameManager::GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
+
+	if( USE_PLAYER )
 	{
 		m_pLifeMeterBar = new LifeMeterBar;
 		m_pLifeMeterBar->SetName("LifeMeterBar");
 		m_pLifeMeterBar->Load( GAMESTATE->m_pPlayerState[PLAYER_1], &STATSMAN->m_CurStageStats.m_player[PLAYER_1] );
 		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pLifeMeterBar );
 		m_pLifeMeterBar->FillForHowToPlay( NUM_W2S, NUM_MISSES );
-	}
 
-	GAMESTATE->SetCurrentStyle( GameManager::GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
 
-	if( USE_PLAYER )
-	{
 		SMLoader::LoadFromSMFile( THEME->GetPathO(m_sName, "steps"), m_Song, false );
 		m_Song.AddAutoGenNotes();
 
