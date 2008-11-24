@@ -8,13 +8,10 @@ t[#t+1] = LoadFont("Common", "normal") .. {
 	SetCommand=function(self)
 		local s = "";
 
-		local text = ProductVersion() .. " " .. VersionTime();
-		s = s .. "\n" .. text;
-
 		local fmt = THEME:GetString( Var "LoadingScreen", "%d songs in %d groups" );
 		local text = string.format( fmt, SONGMAN:GetNumSongs(), SONGMAN:GetNumSongGroups() )
 
-		s = s .. "\n" .. text;
+		s = s .. text;
 
 		local fmt = THEME:GetString( Var "LoadingScreen", "%d courses in %d groups" );
 		local text = string.format( fmt,  SONGMAN:GetNumCourses(), SONGMAN:GetNumCourseGroups() )
