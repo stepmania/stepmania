@@ -19,19 +19,18 @@ class Trail;
 struct HighScoreList;
 typedef pair<Difficulty, StepsType> DifficultyAndStepsType;
 
-enum PageType
+enum RankingPageType
 {
-	PageType_Category, 
-	PageType_Trail, 
-	PageType_AllSteps, 
-	PageType_NonstopCourses,
-	PageType_OniCourses,
-	PageType_SurvivalCourses,
-	PageType_AllCourses,
-	NUM_PageType,
-	PageType_Invalid
+	RankingPageType_Category,	// Top N for one Category
+	RankingPageType_OneCourse,	// Top N for one Course
+	RankingPageType_AllSteps,	// Top 1 for N Steps in each Song
+	RankingPageType_NonstopCourses,	// Top 1 for N Trails in each Course
+	RankingPageType_OniCourses,
+	RankingPageType_SurvivalCourses,
+	RankingPageType_AllCourses,
+	NUM_RankingPageType,
+	RankingPageType_Invalid
 };
-PageType StringToPageType( const RString& s );
 
 class ScreenRanking : public ScreenAttract
 {
@@ -65,19 +64,20 @@ protected:
 
 	virtual float SetPage( const PageToShow &pts );
 
-	PageType m_PageType;
-
 	BitmapText m_textStepsType;	// for category, course, all_steps
 
 	vector<PageToShow>		m_vPagesToShow;
 	unsigned			m_iNextPageToShow;
 
+	RankingPageType m_RankingPageType;
+	ThemeMetric<RString>	RANKING_PAGE_TYPE;
+	ThemeMetric<RString>	COURSES_TO_SHOW;
 	// Don't use the version in CommonMetrics because we may have multiple 
 	// ranking screens that want to show different types and difficulties.
 	ThemeMetricStepsTypesToShow	STEPS_TYPES_TO_SHOW;
-	ThemeMetric<float>		SECONDS_PER_PAGE;
-	ThemeMetric<float>		PAGE_FADE_SECONDS;
-	ThemeMetric<bool>		MANUAL_SCROLLING;
+	ThemeMetric<float>	SECONDS_PER_PAGE;
+	ThemeMetric<float>	PAGE_FADE_SECONDS;
+	ThemeMetric<bool>	MANUAL_SCROLLING;
 };
 
 class ScoreScroller: public DynamicActorScroller
