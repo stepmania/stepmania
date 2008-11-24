@@ -25,8 +25,6 @@ private:
 	Actor *GetActorWithFocus();
 	void BeforeChangeFocus();
 	void AfterChangeFocus();
-	virtual bool GenericTweenOn() const { return true; }
-	virtual bool GenericTweenOff() const { return true; }
 	void Refresh();
 	
 	int m_iCurController;

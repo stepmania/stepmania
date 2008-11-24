@@ -18,23 +18,10 @@ void ScreenOptionsMemoryCard::Init()
 
 	m_textOsMountDir.SetName( "Mount" );
 	m_textOsMountDir.LoadFromFont( THEME->GetPathF(m_sName,"mount") );
+	ActorUtil::LoadAllCommands( m_textOsMountDir, m_sName );
 	this->AddChild( &m_textOsMountDir );
 
 	this->SubscribeToMessage( Message_StorageDevicesChanged );
-}
-
-void ScreenOptionsMemoryCard::TweenOnScreen()
-{
-	ON_COMMAND( m_textOsMountDir );
-
-	ScreenOptions::TweenOnScreen();
-}
-
-void ScreenOptionsMemoryCard::TweenOffScreen()
-{
-	OFF_COMMAND( m_textOsMountDir );
-
-	ScreenOptions::TweenOffScreen();
 }
 
 bool ScreenOptionsMemoryCard::UpdateCurrentUsbStorageDevices()

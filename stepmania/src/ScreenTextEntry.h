@@ -75,9 +75,6 @@ protected:
 	virtual void TextEnteredDirectly() { }
 
 	virtual void End( bool bCancelled );
-	virtual bool GenericTweenOn() const { return true; }
-	virtual bool GenericTweenOff() const { return true; }
-
 private:
 	virtual void MenuStart( const InputEventPlus &input );
 	virtual void MenuBack( const InputEventPlus &input );

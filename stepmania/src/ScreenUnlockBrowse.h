@@ -11,8 +11,6 @@ public:
 	virtual void BeginScreen();
 	virtual void MenuStart( const InputEventPlus &input );
 
-	virtual void TweenOnScreen();
-	virtual void TweenOffScreen();
 	virtual void HandleMessage( const Message &msg );
 
 protected:

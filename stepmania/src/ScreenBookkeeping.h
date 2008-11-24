@@ -34,9 +34,7 @@ public:
 	virtual void MenuCoin( const InputEventPlus &input );
 
 private:
-	virtual bool GenericTweenOn() const { return true; }
-	virtual bool GenericTweenOff() const { return true; }
-	
+
 	void UpdateView();
 
 	int m_iViewIndex;

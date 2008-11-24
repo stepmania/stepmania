@@ -776,7 +776,6 @@ void ScreenSelectMaster::TweenOnScreen()
 		{
 			m_vsprIcon[c]->PlayCommand( (int(c) == m_iChoice[0])? "GainFocus":"LoseFocus" );
 			m_vsprIcon[c]->FinishTweening();
-			m_vsprIcon[c]->PlayCommand( "On" );
 		}
 	}
 
@@ -793,7 +792,6 @@ void ScreenSelectMaster::TweenOnScreen()
 			}
 
 			m_Scroller[*p].SetCurrentAndDestinationItem( (float)m_iChoice[*p] );
-			m_Scroller[*p].PlayCommand( "On" );
 		}
 	}
 
@@ -803,14 +801,7 @@ void ScreenSelectMaster::TweenOnScreen()
 		FOREACH( PlayerNumber, vpns, p )
 		{
 			m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
-			m_sprCursor[*p]->PlayCommand( "On" );
 		}
-	}
-
-	FOREACH_ENUM( Page, page )
-	{
-		m_sprExplanation[page]->PlayCommand( "On" );
-		m_sprMore[page]->PlayCommand( "On" );
 	}
 
 	ScreenSelect::TweenOnScreen();
@@ -818,9 +809,7 @@ void ScreenSelectMaster::TweenOnScreen()
 
 void ScreenSelectMaster::TweenOffScreen()
 {
-	this->PlayCommand( "Off" );
-
-	// ScreenSelect::TweenOffScreen();
+	ScreenSelect::TweenOffScreen();
 
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )

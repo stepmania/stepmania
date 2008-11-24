@@ -21,9 +21,6 @@ public:
 	virtual void MenuBack( const InputEventPlus &input );
 
 private:
-	virtual bool GenericTweenOn() const { return true; }
-	virtual bool GenericTweenOff() const { return true; }
-
 	BitmapText	m_textInputs;
 
 	RageTimer m_timerBackToAutoCycle;

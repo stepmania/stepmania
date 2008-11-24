@@ -17,9 +17,6 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void Input( const InputEventPlus &input );
 
-	virtual bool GenericTweenOn() const { return true; }
-	virtual bool GenericTweenOff() const { return true; }
-
 	bool EnterKey( PlayerNumber pn, wchar_t sLetter );
 	bool Backspace( PlayerNumber pn );
 

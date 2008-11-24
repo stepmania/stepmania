@@ -32,6 +32,7 @@ void ScreenUnlockBrowse::Init()
 	ScreenSelectMaster::Init();
 
 	m_banner.SetName( "Banner" );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_banner );
 	this->AddChild( &m_banner );
 
 	this->SubscribeToMessage( Message_MenuSelectionChanged );
@@ -48,18 +49,6 @@ void ScreenUnlockBrowse::MenuStart( const InputEventPlus &input )
 {
 	m_soundStart.Play();
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
-}
-
-void ScreenUnlockBrowse::TweenOnScreen()
-{
-	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_banner );
-	ScreenSelectMaster::TweenOnScreen();
-}
-
-void ScreenUnlockBrowse::TweenOffScreen()
-{
-	OFF_COMMAND( m_banner );
-	ScreenSelectMaster::TweenOffScreen();
 }
 
 void ScreenUnlockBrowse::HandleMessage( const Message &msg )

@@ -115,10 +115,8 @@ void ScreenWithMenuElements::BeginScreen()
 	m_Out.Reset();
 	m_Cancel.Reset();
 
-	if( GenericTweenOn() )
-		this->PlayCommand( "On" );
-	else
-		TweenOnScreen(); // deprecated
+	TweenOnScreen();
+
 	this->SortByDrawOrder();
 	m_In.StartTransitioning( SM_DoneFadingIn );
 
@@ -150,24 +148,6 @@ void ScreenWithMenuElements::HandleScreenMessage( const ScreenMessage SM )
 	}
 
 	Screen::HandleScreenMessage( SM );
-}
-
-void ScreenWithMenuElements::TweenOnScreen()
-{
-	if( MEMORY_CARD_ICONS )
-	{
-		FOREACH_PlayerNumber( p )
-			ON_COMMAND( m_MemoryCardDisplay[p] );
-	}
-
-	if( m_MenuTimer )
-		ON_COMMAND( m_MenuTimer );
-
-	m_sprUnderlay->PlayCommand("On");
-	m_sprOverlay->PlayCommand("On");
-	m_In.PlayCommand("On");
-	m_Out.PlayCommand("On");
-	m_Cancel.PlayCommand("On");
 }
 
 ScreenWithMenuElements::~ScreenWithMenuElements()
@@ -223,19 +203,7 @@ void ScreenWithMenuElements::ResetTimer()
 
 void ScreenWithMenuElements::StartTransitioningScreen( ScreenMessage smSendWhenDone )
 {
-	if( GenericTweenOff() )
-	{
-		this->PlayCommand( "Off" );
-
-		// If we're a stacked screen, then there's someone else between us and the
-		// background, so don't tween it off.
-		if( !SCREENMAN->IsStackedScreen(this) )
-			SCREENMAN->PlaySharedBackgroundOffCommand();
-	}
-	else
-	{
-		TweenOffScreen();
-	}
+	TweenOffScreen();
 
 	m_Out.StartTransitioning( smSendWhenDone );
 	if( WAIT_FOR_CHILDREN_BEFORE_TWEENING_OUT )
@@ -248,20 +216,20 @@ void ScreenWithMenuElements::StartTransitioningScreen( ScreenMessage smSendWhenD
 	}
 }
 
+void ScreenWithMenuElements::TweenOnScreen()
+{
+	this->PlayCommand( "On" );
+}
+
 void ScreenWithMenuElements::TweenOffScreen()
 {
 	if( m_MenuTimer )
 	{
 		m_MenuTimer->SetSeconds( 0 );
 		m_MenuTimer->Stop();
-		OFF_COMMAND( m_MenuTimer );
 	}
 
-	FOREACH_PlayerNumber( p )
-		if( m_MemoryCardDisplay[p] )
-			OFF_COMMAND( m_MemoryCardDisplay[p] );
-	m_sprUnderlay->PlayCommand("Off");
-	m_sprOverlay->PlayCommand("Off");;
+	this->PlayCommand( "Off" );
 
 	// If we're a stacked screen, then there's someone else between us and the
 	// background, so don't tween it off.

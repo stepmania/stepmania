@@ -133,9 +133,6 @@ public:
 protected:
 	virtual void UpdateStageStats( MultiPlayer mp ) {};	// overridden for multiplayer
 
-	virtual bool GenericTweenOn() const { return true; }
-	virtual bool GenericTweenOff() const { return true; }
-
 	virtual bool UseSongBackgroundAndForeground() const { return true; }
 
 	ThemeMetric<RString> PLAYER_TYPE;

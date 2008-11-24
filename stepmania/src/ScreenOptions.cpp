@@ -337,21 +337,6 @@ void ScreenOptions::TweenOnScreen()
 	FOREACH( OptionRow*, m_pRows, p )
 		(*p)->RunCommands( ROW_ON_COMMAND );
 
-	ON_COMMAND( m_sprPage );
-	FOREACH_HumanPlayer( p )
-	{
-		ON_COMMAND( m_Cursor[p] );
-		ON_COMMAND( m_sprLineHighlight[p] );
-	}
-
-	ON_COMMAND( m_sprMore );
-
-	FOREACH_PlayerNumber( p )
-		if( !m_textExplanation[p].GetName().empty() )
-			ON_COMMAND( m_textExplanation[p] );
-	if( !m_textExplanationTogether.GetName().empty() )
-		ON_COMMAND( m_textExplanationTogether );
-
 	m_frameContainer.SortByDrawOrder();
 }
 
@@ -361,12 +346,6 @@ void ScreenOptions::TweenOffScreen()
 
 	FOREACH( OptionRow*, m_pRows, p )
 		(*p)->RunCommands( ROW_OFF_COMMAND );
-
-	OFF_COMMAND( m_frameContainer );
-
-	FOREACH_PlayerNumber( p )
-		OFF_COMMAND( m_textExplanation[p] );
-	OFF_COMMAND( m_textExplanationTogether );
 }
 
 ScreenOptions::~ScreenOptions()

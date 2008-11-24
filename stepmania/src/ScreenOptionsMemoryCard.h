@@ -11,8 +11,6 @@ public:
 	void BeginScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	virtual void TweenOnScreen();
-	virtual void TweenOffScreen();
 
 protected:
 	virtual void AfterChangeRow( PlayerNumber pn );

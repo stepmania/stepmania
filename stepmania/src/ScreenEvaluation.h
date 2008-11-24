@@ -52,9 +52,6 @@ public:
 	StageStats *GetStageStats() { return m_pStageStats; }
 
 protected:
-	virtual bool GenericTweenOn() const { return true; }
-	virtual bool GenericTweenOff() const { return true; }
-
 	void HandleMenuStart();
 
 	bool			m_bSummary;

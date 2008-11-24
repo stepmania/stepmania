@@ -26,6 +26,7 @@ public:
 	void StopTimer();
 	void ResetTimer();
 
+	// Sub-classes can hook these and do special actions that won't be triggered automatically by an "On"/"Off" command
 	virtual void TweenOnScreen();
 	virtual void TweenOffScreen();
 
@@ -37,12 +38,6 @@ public:
 protected:
 	virtual void StartPlayingMusic();
 	void SetHelpText( RString s );
-
-	/* If true, BeginScreen() will run OnCommand on the whole screen, and
-	 * TweenOnScreen will not be called.  (Eventually, all screens should
-	 * use this, and this will be removed.) */
-	virtual bool GenericTweenOn() const { return false; }
-	virtual bool GenericTweenOff() const { return false; }
 
 	AutoActor			m_sprUnderlay;
 	MemoryCardDisplay		*m_MemoryCardDisplay[NUM_PLAYERS];
@@ -76,8 +71,6 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	virtual bool GenericTweenOn() const { return true; }
-	virtual bool GenericTweenOff() const { return true; }
 };
 
 #endif
