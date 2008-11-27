@@ -12,12 +12,6 @@ RString Command::GetName() const
 		return RString();
 	RString s = m_vsArgs[0];
 	Trim( s );
-
-	/* Transition hack: if a command begins with !, don't force it to lowercase. */
-	if( s.Left(1) == "!" )
-		s.erase( 0, 1 );
-	else
-		s.MakeLower();
 	return s;
 }
 
