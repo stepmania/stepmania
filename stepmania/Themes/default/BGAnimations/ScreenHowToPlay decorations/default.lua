@@ -32,7 +32,7 @@ end
 
 return Def.ActorFrame {
 	LoadActor("how to play") .. {
-		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;diffusealpha,0;zoom,6;sleep,0.0;linear,0.3;diffusealpha,1;zoom,2;sleep,1.7;linear,0.3;zoom,1;addx,160;addy,-150;draworder,1;);
+		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;diffusealpha,0;zoom,4;sleep,0.0;linear,0.5;diffusealpha,1;zoom,1.5;sleep,1.7;linear,0.5;zoom,1;addx,160;addy,-150;draworder,1;);
 	};
 
 	ExplanationText( "When the arrows rise to this point, step on the matching panels.", 5, 9 );
