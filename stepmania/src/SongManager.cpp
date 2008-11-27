@@ -1809,6 +1809,7 @@ public:
 	}
 	DEFINE_METHOD( GetSongColor, GetSongColor( Luna<Song>::check(L,1) ) )
 	DEFINE_METHOD( GetSongGroupColor, GetSongGroupColor( SArg(1) ) )
+	DEFINE_METHOD( GetCourseColor, GetCourseColor( Luna<Course>::check(L,1) ) )
 
 	LunaSongManager()
 	{
@@ -1830,6 +1831,8 @@ public:
 		ADD_METHOD( GetExtraStageInfo );
 		ADD_METHOD( GetSongColor );
 		ADD_METHOD( GetSongGroupColor );
+		ADD_METHOD( GetCourseColor );
+
 	}
 };
 
