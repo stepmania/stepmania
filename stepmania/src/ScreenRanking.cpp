@@ -1,20 +1,11 @@
 #include "global.h"
 #include "ScreenRanking.h"
 #include "ScreenManager.h"
-//#include "ThemeManager.h"
 #include "SongManager.h"
 #include "GameState.h"
 #include "GameManager.h"
-//#include "Course.h"
-//#include "Song.h"
-//#include "Steps.h"
-//#include "ActorUtil.h"
 #include "ProfileManager.h"
 #include "Profile.h"
-//#include "RageLog.h"
-//#include "UnlockManager.h"
-//#include "ScreenDimensions.h"
-//#include "PercentageDisplay.h"
 
 
 static const char *RankingTypeNames[] = {
