@@ -23,7 +23,7 @@ ActorScroller::ActorScroller()
 	m_iNumItems = 0;
 	m_fCurrentItem = 0;
 	m_fDestinationItem = 0;
-	m_fSecondsPerItem = 0;
+	m_fSecondsPerItem = 1;
 	m_fSecondsPauseBetweenItems = 0;
 	m_fNumItemsToDraw = 7;
 	m_iFirstSubActorIndex = 0;
