@@ -471,6 +471,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScreenHighScores.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenHighScores.h"
+				>
+			</File>
+			<File
 				RelativePath="ScreenHowToPlay.cpp"
 				>
 			</File>
