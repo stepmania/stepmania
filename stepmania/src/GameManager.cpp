@@ -2867,7 +2867,7 @@ namespace
 		GameManager::GetStepsTypesForGame( pGame, vstAddTo );
 		ASSERT( !vstAddTo.empty() );
 		StepsType st = vstAddTo[0];
-		lua_pushnumber(L, st);
+		LuaHelpers::Push( L, st ); 
 		return 1;
 	}
 
