@@ -2,21 +2,13 @@
 #define ScreenRanking_H
 
 #include "ScreenAttract.h"
-//#include "GameConstantsAndTypes.h"	// for NUM_RANKING_LINES
-//#include "Course.h"
 #include "BitmapText.h"
 #include "Banner.h"
-//#include "ActorScroller.h"
-//#include "DynamicActorScroller.h"
-//#include "ActorUtil.h"
 #include "Difficulty.h"
-//#include "ThemeMetric.h"
 #include "CommonMetrics.h"
 
 class Course;
-//class Song;
 class Trail;
-//struct HighScoreList;
 typedef pair<Difficulty, StepsType> DifficultyAndStepsType;
 
 const int NUM_RANKING_LINES = 5;
