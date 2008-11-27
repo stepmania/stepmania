@@ -266,21 +266,7 @@ t[#t+1] = Def.CourseContentsList {
 		LoadActor("_CourseEntryDisplay bar");
 
 		Def.TextBanner {
-			ArtistPrependString="/";
-			SetCommand=TextBannerSet;
-			InitCommand=cmd(SetFromString,"", "", "", "", "", "");
-			Title = LoadFont("TextBanner","text") .. {
-				Name="Title";
-				OnCommand=cmd(shadowlength,0);
-			};
-			Subtitle = LoadFont("TextBanner","text") .. {
-				Name="Subtitle";
-				OnCommand=cmd(shadowlength,0);
-			};
-			Artist = LoadFont("TextBanner","text") .. {
-				Name="Artist";
-				OnCommand=cmd(shadowlength,0);
-			};
+			InitCommand=cmd(Load,"TextBanner";SetFromString,"", "", "", "", "", "");
 			SetSongCommand=function(self, params)
 				if params.Song then
 					self:SetFromSong( params.Song );
@@ -510,4 +496,5 @@ t[#t+1] = Def.Quad {
 		InitCommand=cmd(FullScreen;draworder,110;diffuse,color("#000000");diffusealpha,0);
 		OffCommand=cmd(linear,0.3;diffusealpha,1);
 };
+
 return t;
