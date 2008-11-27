@@ -462,6 +462,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScreenHighScores.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenHighScores.h"
+				>
+			</File>
+			<File
 				RelativePath="ScreenHowToPlay.cpp"
 				>
 			</File>
@@ -726,11 +734,11 @@
 				>
 			</File>
 			<File
-				RelativePath="ScreenRanking.cpp"
+				RelativePath=".\ScreenRanking.cpp"
 				>
 			</File>
 			<File
-				RelativePath="ScreenRanking.h"
+				RelativePath=".\ScreenRanking.h"
 				>
 			</File>
 			<File

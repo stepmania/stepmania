@@ -1,46 +1,40 @@
-#ifndef SCREEN_RANKING_H
-#define SCREEN_RANKING_H
+#ifndef ScreenRanking_H
+#define ScreenRanking_H
 
 #include "ScreenAttract.h"
-#include "GameConstantsAndTypes.h"	// for NUM_RANKING_LINES
-#include "Course.h"
+//#include "GameConstantsAndTypes.h"	// for NUM_RANKING_LINES
+//#include "Course.h"
 #include "BitmapText.h"
 #include "Banner.h"
-#include "ActorScroller.h"
-#include "DynamicActorScroller.h"
-#include "ActorUtil.h"
+//#include "ActorScroller.h"
+//#include "DynamicActorScroller.h"
+//#include "ActorUtil.h"
 #include "Difficulty.h"
-#include "ThemeMetric.h"
+//#include "ThemeMetric.h"
 #include "CommonMetrics.h"
 
 class Course;
-class Song;
+//class Song;
 class Trail;
-struct HighScoreList;
+//struct HighScoreList;
 typedef pair<Difficulty, StepsType> DifficultyAndStepsType;
 
-enum RankingPageType
+const int NUM_RANKING_LINES = 5;
+
+enum RankingType
 {
-	RankingPageType_Category,	// Top N for one Category
-	RankingPageType_OneCourse,	// Top N for one Course
-	RankingPageType_AllSteps,	// Top 1 for N Steps in each Song
-	RankingPageType_NonstopCourses,	// Top 1 for N Trails in each Course
-	RankingPageType_OniCourses,
-	RankingPageType_SurvivalCourses,
-	RankingPageType_AllCourses,
-	NUM_RankingPageType,
-	RankingPageType_Invalid
+	RankingType_Category,	// Top N HighScores for one Category
+	RankingType_SpecificTrail,	// Top N HighScores for one Course and Trail
+	NUM_RankingType,
+	RankingType_Invalid
 };
+LuaDeclareType( RankingType );
 
 class ScreenRanking : public ScreenAttract
 {
 public:
 	virtual void Init();
 	virtual void BeginScreen();
-
-	virtual void Input( const InputEventPlus &input );
-	virtual void MenuStart( const InputEventPlus &input );
-	virtual void MenuBack( const InputEventPlus &input );
 
 	void HandleScreenMessage( const ScreenMessage SM );
 
@@ -55,7 +49,11 @@ protected:
 
 		int		colorIndex;
 		vector<DifficultyAndStepsType> aTypes;
+		
+		// RankingPageType_Category
 		RankingCategory	category;
+
+		// RankingPageType_SpecificCourses
 		Course*		pCourse;
 		Trail*		pTrail;
 	};
@@ -67,71 +65,15 @@ protected:
 	vector<PageToShow>		m_vPagesToShow;
 	unsigned			m_iNextPageToShow;
 
-	RankingPageType m_RankingPageType;
-	ThemeMetric<RString>	RANKING_PAGE_TYPE;
-	ThemeMetric<RString>	COURSES_TO_SHOW;
 	// Don't use the version in CommonMetrics because we may have multiple 
 	// ranking screens that want to show different types and difficulties.
 	ThemeMetricStepsTypesToShow	STEPS_TYPES_TO_SHOW;
-	ThemeMetric<float>	SECONDS_PER_PAGE;
 	ThemeMetric<float>	PAGE_FADE_SECONDS;
-	ThemeMetric<bool>	MANUAL_SCROLLING;
-};
 
-class ScoreScroller: public DynamicActorScroller
-{
-public:
-	ScoreScroller();
-	void LoadSongs( bool bOnlyRecentScores, int iNumRecentScores );
-	void LoadCourses( CourseType ct, bool bOnlyRecentScores, int iNumRecentScores );
-	void Load( RString sClassName );
-	void SetDisplay( const vector<DifficultyAndStepsType> &DifficultiesToShow );
-	bool Scroll( int iDir );
-	void ScrollTop();
 
-protected:
-	virtual void ConfigureActor( Actor *pActor, int iItem );
-	vector<DifficultyAndStepsType> m_DifficultiesToShow;
-
-	struct ScoreRowItemData // for all_steps and all_courses
-	{
-		ScoreRowItemData() { m_pSong = NULL; m_pCourse = NULL; }
-
-		Song *m_pSong;
-		Course *m_pCourse;
-	};
-	vector<ScoreRowItemData> m_vScoreRowItemData;
-
-	ThemeMetric<int>	SONG_SCORE_ROWS_TO_DRAW;
-};
-
-class ScreenRankingScroller: public ScreenRanking 
-{
-public:
-	virtual void Init();
-
-	virtual void MenuLeft( const InputEventPlus &input )	{ DoScroll(-1); }
-	virtual void MenuRight( const InputEventPlus &input )	{ DoScroll(+1); }
-	virtual void MenuUp( const InputEventPlus &input )	{ DoScroll(-1); }
-	virtual void MenuDown( const InputEventPlus &input )	{ DoScroll(+1); }
-
-private:
-	void DoScroll( int iDir );
-	virtual float SetPage( const PageToShow &pts );
-
-	ScoreScroller m_ListScoreRowItems;
-};
-
-static const int NUM_RANKING_LINES = 5;
-
-class ScreenRankingLines: public ScreenRanking 
-{
-public:
-	virtual void Init();
-	virtual void BeginScreen();
-
-private:
-	virtual float SetPage( const PageToShow &pts );
+	ThemeMetric<RankingType>	RANKING_TYPE;
+	ThemeMetric<RString>	COURSES_TO_SHOW;
+	ThemeMetric<float>	SECONDS_PER_PAGE;
 
 	Banner m_Banner;	// for course
 	BitmapText m_textCategory;	// for category

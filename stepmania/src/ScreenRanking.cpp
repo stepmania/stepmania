@@ -1,421 +1,65 @@
 #include "global.h"
 #include "ScreenRanking.h"
 #include "ScreenManager.h"
-#include "ThemeManager.h"
+//#include "ThemeManager.h"
 #include "SongManager.h"
 #include "GameState.h"
 #include "GameManager.h"
-#include "Course.h"
-#include "Song.h"
-#include "Steps.h"
-#include "ActorUtil.h"
+//#include "Course.h"
+//#include "Song.h"
+//#include "Steps.h"
+//#include "ActorUtil.h"
 #include "ProfileManager.h"
 #include "Profile.h"
-#include "RageLog.h"
-#include "UnlockManager.h"
-#include "ScreenDimensions.h"
-#include "PercentageDisplay.h"
+//#include "RageLog.h"
+//#include "UnlockManager.h"
+//#include "ScreenDimensions.h"
+//#include "PercentageDisplay.h"
 
-static const char *RankingPageTypeNames[] = {
+
+static const char *RankingTypeNames[] = {
 	"Category",
 	"Course",
-	"AllSteps",
-	"NonstopCourses",
-	"OniCourses",
-	"SurvivalCourses",
-	"AllCourses",
 };
-StringToX( RankingPageType );
+XToString( RankingType );
+LuaXType( RankingType );
 
 AutoScreenMessage( SM_ShowNextPage )
 AutoScreenMessage( SM_HidePage )
 
+REGISTER_SCREEN_CLASS( ScreenRanking );
 
-static void GetAllSongsToShow( vector<Song*> &vpOut, bool bShowOnlyMostRecentScores, int iNumMostRecentScoresToShow )
-{
-	vpOut.clear();
-	FOREACH_CONST( Song*, SONGMAN->GetSongs(), s )
-	{
-		if( !(*s)->NormallyDisplayed() )
-			continue;	// skip
-		if( !(*s)->ShowInDemonstrationAndRanking() )
-			continue;	// skip
-		vpOut.push_back( *s );
-	}
-
-	if( bShowOnlyMostRecentScores )
-	{
-		SongUtil::SortSongPointerArrayByTitle( vpOut );
-		SongUtil::SortByMostRecentlyPlayedForMachine( vpOut );
-		if( (int) vpOut.size() > iNumMostRecentScoresToShow )
-			vpOut.erase( vpOut.begin()+iNumMostRecentScoresToShow, vpOut.end() );
-	}
-}
-
-static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, bool bShowOnlyMostRecentScores, int iNumMostRecentScoresToShow )
-{
-	vpOut.clear();
-	vector<Course*> vpCourses;
-	if( ct == CourseType_Invalid )
-		SONGMAN->GetAllCourses( vpCourses, false );
-	else
-		SONGMAN->GetCourses( ct, vpCourses, false );
-
-	FOREACH_CONST( Course*, vpCourses, c)
-	{
-		if( UNLOCKMAN->CourseIsLocked(*c) )
-			continue;	// skip
-		if( !(*c)->ShowInDemonstrationAndRanking() )
-			continue;	// skip
-		vpOut.push_back( *c );
-	}
-	if( bShowOnlyMostRecentScores )
-	{
-		CourseUtil::SortCoursePointerArrayByTitle( vpOut );
-		CourseUtil::SortByMostRecentlyPlayedForMachine( vpOut );
-		if( (int) vpOut.size() > iNumMostRecentScoresToShow )
-			vpOut.erase( vpOut.begin()+iNumMostRecentScoresToShow, vpOut.end() );
-	}
-}
+#define BULLET_X(row)	(BULLET_START_X+ROW_SPACING_X*row)
+#define BULLET_Y(row)	(BULLET_START_Y+ROW_SPACING_Y*row)
+#define NAME_X(row)	(NAME_START_X+ROW_SPACING_X*row)
+#define NAME_Y(row)	(NAME_START_Y+ROW_SPACING_Y*row)
+#define SCORE_X(row)	(SCORE_START_X+ROW_SPACING_X*row)
+#define SCORE_Y(row)	(SCORE_START_Y+ROW_SPACING_Y*row)
+#define POINTS_X(row)	(POINTS_START_X+ROW_SPACING_X*row)
+#define POINTS_Y(row)	(POINTS_START_Y+ROW_SPACING_Y*row)
+#define TIME_X(row)	(TIME_START_X+ROW_SPACING_X*row)
+#define TIME_Y(row)	(TIME_START_Y+ROW_SPACING_Y*row)
 
 static RString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
 
-REGISTER_SCREEN_CLASS( ScreenRanking );
-REGISTER_SCREEN_CLASS( ScreenRankingScroller );
-REGISTER_SCREEN_CLASS( ScreenRankingLines );
-
 void ScreenRanking::Init()
 {
-	RANKING_PAGE_TYPE.Load	( m_sName,"RankingPageType");
-	COURSES_TO_SHOW.Load	( m_sName,"CoursesToShow");
 	STEPS_TYPES_TO_SHOW.Load( m_sName,"StepsTypesToHide" );	// tricky: The metric name is "hide" because ThemeMetricStepsTypesToShow takes a list of what to hide and returns what StepsTypes to show
-	SECONDS_PER_PAGE.Load	( m_sName,"SecondsPerPage" );
 	PAGE_FADE_SECONDS.Load	( m_sName,"PageFadeSeconds" );
-	MANUAL_SCROLLING.Load	( m_sName, "ManualScrolling" );
 
 	ScreenAttract::Init();
 
-	m_RankingPageType = StringToRankingPageType( RANKING_PAGE_TYPE );
-
 	m_textStepsType.SetName( "StepsType" );
-	m_textStepsType.LoadFromFont( THEME->GetPathF(m_sName,"steps type") );
+	m_textStepsType.LoadFromFont( THEME->GetPathF(m_sName,"StepsType") );
 	m_textStepsType.SetShadowLength( 0 );
 	this->AddChild( &m_textStepsType );
 	LOAD_ALL_COMMANDS( m_textStepsType );
-}
 
-void ScreenRanking::BeginScreen()
-{
-	m_iNextPageToShow = 0;
 
-	ScreenAttract::BeginScreen();
+	RANKING_TYPE.Load	( m_sName,"RankingType");
+	COURSES_TO_SHOW.Load	( m_sName,"CoursesToShow");
+	SECONDS_PER_PAGE.Load	( m_sName,"SecondsPerPage" );
 
-	this->HandleScreenMessage( SM_ShowNextPage );
-}
-
-void ScreenRanking::Input( const InputEventPlus &input )
-{
-	LOG->Trace( "ScreenRanking::Input()" );
-
-	if( IsTransitioning() )
-		return;
-
-	// If manually scrolling, then pass the input to Scree::Input so it will call Menu*
-	if( (bool)MANUAL_SCROLLING )
-		Screen::Input( input );
-	else
-		ScreenAttract::Input( input );
-}
-
-void ScreenRanking::MenuStart( const InputEventPlus &input )
-{
-	if( !MANUAL_SCROLLING )
-		return;
-	if( !IsTransitioning() )
-		StartTransitioningScreen( SM_GoToNextScreen );
-	SCREENMAN->PlayStartSound();
-}
-
-void ScreenRanking::MenuBack( const InputEventPlus &input )
-{
-	if( !MANUAL_SCROLLING )
-		return;
-	if( !IsTransitioning() )
-		StartTransitioningScreen( SM_GoToNextScreen );
-	SCREENMAN->PlayStartSound();
-}
-
-void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
-{
-	if( SM == SM_ShowNextPage )
-	{
-		if( m_iNextPageToShow < m_vPagesToShow.size() )
-		{
-			float fSecsToShow = SetPage( m_vPagesToShow[m_iNextPageToShow] );
-			++m_iNextPageToShow;
-			this->SortByDrawOrder();
-			
-			// If manually scrolling, don't automatically change pages.
-			if( !(bool)MANUAL_SCROLLING )
-				this->PostScreenMessage( SM_HidePage, fSecsToShow-PAGE_FADE_SECONDS );
-		}
-		else
-		{
-			StartTransitioningScreen(SM_GoToNextScreen);
-		}
-	}
-	else if( SM == SM_HidePage )
-	{
-		this->PlayCommand( "SwitchPage" );
-		this->PostScreenMessage( SM_ShowNextPage, PAGE_FADE_SECONDS );
-	}
-
-	ScreenAttract::HandleScreenMessage( SM );
-}
-
-float ScreenRanking::SetPage( const PageToShow &pts )
-{
-	// This is going to take a while to load.  Possibly longer than one frame.
-	// So, zero the next update so we don't skip.
-	SCREENMAN->ZeroNextUpdate();
-
-	//
-	// init page
-	//
-	StepsType st = pts.aTypes.front().second;
-	m_textStepsType.SetText( GameManager::GetStepsTypeInfo(st).GetLocalizedString() );
-
-	return 0;
-}
-
-void ScreenRankingScroller::DoScroll( int iDir )
-{
-	if( !m_ListScoreRowItems.Scroll(iDir) )
-		iDir = 0;
-	Message msg("Scrolled");
-	msg.SetParam( "Dir", iDir );
-	this->HandleMessage( msg );
-}
-
-/////////////////////////////////////////////
-
-ScoreScroller::ScoreScroller()
-{
-	this->DeleteChildrenWhenDone();
-}
-
-void ScoreScroller::SetDisplay( const vector<DifficultyAndStepsType> &DifficultiesToShow )
-{
-	m_DifficultiesToShow = DifficultiesToShow;
-	ShiftSubActors( INT_MAX );
-}
-
-bool ScoreScroller::Scroll( int iDir )
-{
-	if( (int)m_vScoreRowItemData.size() <= SONG_SCORE_ROWS_TO_DRAW )
-		return false;
-
-	float fDest = GetDestinationItem();
-	float fOldDest = fDest;
-	fDest += iDir;
-	float fLowClamp = (SONG_SCORE_ROWS_TO_DRAW-1)/2.0f;
-	float fHighClamp = m_vScoreRowItemData.size()-(SONG_SCORE_ROWS_TO_DRAW-1)/2.0f-1;
-	CLAMP( fDest, fLowClamp, fHighClamp );
-	if( fOldDest != fDest )
-	{
-		SetDestinationItem( fDest );
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-void ScoreScroller::ScrollTop()
-{
-	SetCurrentAndDestinationItem( (SONG_SCORE_ROWS_TO_DRAW-1)/2.0f );
-}
-
-void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
-{
-	Actor &item = *dynamic_cast<Actor *>(pActor);
-	const ScoreRowItemData &data = m_vScoreRowItemData[iItem];
-
-	Message msg("Set");
-	if( data.m_pSong != NULL )
-		msg.SetParam( "Song", data.m_pSong );
-	if( data.m_pCourse != NULL )
-		msg.SetParam( "Course", data.m_pCourse );
-
-	Lua *L = LUA->Get();
-	lua_newtable( L );
-	lua_pushvalue( L, -1 );
-	msg.SetParamFromStack( L, "Entries" );
-
-	FOREACH( DifficultyAndStepsType, m_DifficultiesToShow, iter )
-	{				
-		Difficulty dc = iter->first;
-		StepsType st = iter->second;
-
-		if( data.m_pSong != NULL )
-		{
-			const Song* pSong = data.m_pSong;
-
-			Steps *pSteps = SongUtil::GetStepsByDifficulty( pSong, st, dc, false );
-			if( pSteps  &&  UNLOCKMAN->StepsIsLocked(pSong, pSteps) )
-				continue;
-
-			LuaHelpers::Push( L, pSteps );
-			lua_rawseti( L, -2, lua_objlen(L, -2)+1 );
-		}
-		else if( data.m_pCourse != NULL )
-		{
-			const Course* pCourse = data.m_pCourse;
-
-			Trail *pTrail = pCourse->GetTrail( st, dc );
-			if( UNLOCKMAN->CourseIsLocked(pCourse) )
-				continue;
-
-			LuaHelpers::Push( L, pTrail );
-			lua_rawseti( L, -2, lua_objlen(L, -2)+1 );
-		}
-	}
-	lua_pop( L, 1 );
-	LUA->Release( L );
-
-	item.HandleMessage( msg );
-}
-
-void ScoreScroller::LoadSongs( bool bOnlyRecentScores, int iNumRecentScores )
-{
-	vector<Song*> vpSongs;
-	GetAllSongsToShow( vpSongs, bOnlyRecentScores, iNumRecentScores );
-	m_vScoreRowItemData.resize( vpSongs.size() );
-	for( unsigned i=0; i<m_vScoreRowItemData.size(); ++i )
-		m_vScoreRowItemData[i].m_pSong = vpSongs[i];
-}
-
-void ScoreScroller::LoadCourses( CourseType ct, bool bOnlyRecentScores, int iNumRecentScores )
-{
-	vector<Course*> vpCourses;
-	GetAllCoursesToShow( vpCourses, ct, bOnlyRecentScores, iNumRecentScores );
-	m_vScoreRowItemData.resize( vpCourses.size() );
-	for( unsigned i=0; i<m_vScoreRowItemData.size(); ++i )
-		m_vScoreRowItemData[i].m_pCourse = vpCourses[i];
-}
-
-void ScoreScroller::Load( RString sClassName )
-{
-	SONG_SCORE_ROWS_TO_DRAW.Load(sClassName, "SongScoreRowsToDraw");
-
-	int iNumCopies = SONG_SCORE_ROWS_TO_DRAW+1;
-	for( int i=0; i<iNumCopies; ++i )
-	{
-		Actor *pActor = ActorUtil::MakeActor( THEME->GetPathG(sClassName,"list item") );
-		this->AddChild( pActor );
-	}
-
-	DynamicActorScroller::SetNumItemsToDraw( (float) SONG_SCORE_ROWS_TO_DRAW );
-	DynamicActorScroller::Load2();
-
-	m_iNumItems = m_vScoreRowItemData.size();
-}
-
-void ScreenRankingScroller::Init()
-{
-	ThemeMetric<bool>		SHOW_ONLY_MOST_RECENT_SCORES;
-	ThemeMetric<RString>		DIFFICULTIES_TO_SHOW;
-	ThemeMetric<int>		NUM_MOST_RECENT_SCORES_TO_SHOW;
-	SHOW_ONLY_MOST_RECENT_SCORES.Load ( m_sName,"ShowOnlyMostRecentScores" );
-	DIFFICULTIES_TO_SHOW.Load( m_sName, "DifficultiesToShow" );
-	NUM_MOST_RECENT_SCORES_TO_SHOW.Load( m_sName, "NumMostRecentScoresToShow" );
-
-	ScreenRanking::Init();
-
-	m_ListScoreRowItems.SetName( "ListScoreRowItems" );
-	LOAD_ALL_COMMANDS( m_ListScoreRowItems );
-	switch( m_RankingPageType )
-	{
-	default:	ASSERT(0);
-	case RankingPageType_AllSteps:
-		m_ListScoreRowItems.LoadSongs( SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );
-		break;
-	case RankingPageType_NonstopCourses:
-	case RankingPageType_OniCourses:
-	case RankingPageType_SurvivalCourses:
-	case RankingPageType_AllCourses:
-		{
-			CourseType ct;
-			switch( m_RankingPageType )
-			{
-			default:	ASSERT(0);
-			case RankingPageType_NonstopCourses:	ct = COURSE_TYPE_NONSTOP;	break;
-			case RankingPageType_OniCourses:	ct = COURSE_TYPE_ONI;		break;
-			case RankingPageType_SurvivalCourses:	ct = COURSE_TYPE_SURVIVAL;	break;
-			case RankingPageType_AllCourses:	ct = CourseType_Invalid;	break;
-			}
-
-			m_ListScoreRowItems.LoadCourses( ct, SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );
-		}
-		break;
-	}
-
-	m_ListScoreRowItems.Load( m_sName );
-	this->AddChild( &m_ListScoreRowItems );
-
-	for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
-	{
-		vector<RString> asDifficulties;
-		split( DIFFICULTIES_TO_SHOW, ",", asDifficulties );
-		
-		PageToShow pts;
-		for( unsigned d=0; d<asDifficulties.size(); ++d )
-		{
-			vector<RString> asBits;
-			split( asDifficulties[d], ":", asBits, false );
-			ASSERT( !asBits.empty() );
-			Difficulty dc = StringToDifficulty(asBits[0]);
-
-			StepsType st = STEPS_TYPES_TO_SHOW.GetValue()[i];
-			if( asBits.size() > 1 )
-				st = GameManager::StringToStepsType( asBits[1] );
-
-			pts.aTypes.push_back( make_pair(dc, st) );
-		}
-		m_vPagesToShow.push_back( pts );
-	}
-}
-
-float ScreenRankingScroller::SetPage( const PageToShow &pts )
-{
-	ScreenRanking::SetPage( pts );
-
-	m_ListScoreRowItems.SetDisplay( pts.aTypes );
-
-	if( (bool)MANUAL_SCROLLING )
-		m_ListScoreRowItems.ScrollTop();
-	else
-		m_ListScoreRowItems.ScrollThroughAllItems();
-
-	return m_ListScoreRowItems.GetSecondsForCompleteScrollThrough();
-}
-
-// RankingPageType_Category:
-// RankingPageType_OneCourse:
-#define BULLET_X(row)				(BULLET_START_X+ROW_SPACING_X*row)
-#define BULLET_Y(row)				(BULLET_START_Y+ROW_SPACING_Y*row)
-#define NAME_X(row)				(NAME_START_X+ROW_SPACING_X*row)
-#define NAME_Y(row)				(NAME_START_Y+ROW_SPACING_Y*row)
-#define SCORE_X(row)				(SCORE_START_X+ROW_SPACING_X*row)
-#define SCORE_Y(row)				(SCORE_START_Y+ROW_SPACING_Y*row)
-#define POINTS_X(row)				(POINTS_START_X+ROW_SPACING_X*row)
-#define POINTS_Y(row)				(POINTS_START_Y+ROW_SPACING_Y*row)
-#define TIME_X(row)				(TIME_START_X+ROW_SPACING_X*row)
-#define TIME_Y(row)				(TIME_START_Y+ROW_SPACING_Y*row)
-
-void ScreenRankingLines::Init()
-{
 	NO_SCORE_NAME.Load( m_sName,"NoScoreName" );
 	ROW_SPACING_X.Load( m_sName,"RowSpacingX" );
 	ROW_SPACING_Y.Load( m_sName,"RowSpacingY" );
@@ -431,9 +75,7 @@ void ScreenRankingLines::Init()
 	TIME_START_Y.Load( m_sName, "TimeStartY" );
 	STEPS_TYPE_COLOR.Load( m_sName,STEPS_TYPE_COLOR_NAME,5 );
 
-	ScreenRanking::Init();
-
-	if( m_RankingPageType == RankingPageType_Category )
+	if( RANKING_TYPE == RankingType_Category )
 	{
 		m_textCategory.SetName( "Category" );
 		m_textCategory.LoadFromFont( THEME->GetPathF(m_sName,"category") );
@@ -455,7 +97,7 @@ void ScreenRankingLines::Init()
 		}
 	}
 
-	if( m_RankingPageType == RankingPageType_OneCourse )
+	if( RANKING_TYPE == RankingType_SpecificTrail )
 	{
 		m_Banner.SetName( "Banner" );
 		this->AddChild( &m_Banner );
@@ -528,19 +170,63 @@ void ScreenRankingLines::Init()
 	}
 }
 
-float ScreenRankingLines::SetPage( const PageToShow &pts )
+void ScreenRanking::BeginScreen()
 {
-	ScreenRanking::SetPage( pts );
+	m_iNextPageToShow = 0;
+
+	ScreenAttract::BeginScreen();
+
+	this->HandleScreenMessage( SM_ShowNextPage );
+}
+
+void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
+{
+	if( SM == SM_ShowNextPage )
+	{
+		if( m_iNextPageToShow < m_vPagesToShow.size() )
+		{
+			float fSecsToShow = SetPage( m_vPagesToShow[m_iNextPageToShow] );
+			++m_iNextPageToShow;
+			this->SortByDrawOrder();
+			
+			this->PostScreenMessage( SM_HidePage, fSecsToShow-PAGE_FADE_SECONDS );
+		}
+		else
+		{
+			StartTransitioningScreen(SM_GoToNextScreen);
+		}
+	}
+	else if( SM == SM_HidePage )
+	{
+		this->PlayCommand( "SwitchPage" );
+		this->PostScreenMessage( SM_ShowNextPage, PAGE_FADE_SECONDS );
+	}
+
+	ScreenAttract::HandleScreenMessage( SM );
+}
+
+float ScreenRanking::SetPage( const PageToShow &pts )
+{
+	// This is going to take a while to load.  Possibly longer than one frame.
+	// So, zero the next update so we don't skip.
+	SCREENMAN->ZeroNextUpdate();
+
+	//
+	// init page
+	//
+	StepsType st = pts.aTypes.front().second;
+	m_textStepsType.SetText( GameManager::GetStepsTypeInfo(st).GetLocalizedString() );
+
 
 	bool bShowScores = false;
 	bool bShowPoints = false;
 	bool bShowTime = false;
-	switch( m_RankingPageType )
+	switch( RANKING_TYPE )
 	{
-	case RankingPageType_Category:
+	case RankingType_Category:
 		bShowScores = true;
 		break;
-	case RankingPageType_OneCourse:
+	case RankingType_SpecificTrail:
 		bShowScores = !pts.pCourse->IsOni();
 		bShowPoints = pts.pCourse->IsOni();
 		bShowTime = pts.pCourse->IsOni();
@@ -561,16 +247,16 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 		m_textTime[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 	}
 
-	switch( m_RankingPageType )
+	switch( RANKING_TYPE )
 	{
-	case RankingPageType_Category:
+	case RankingType_Category:
 		{
 			m_textCategory.SetText( ssprintf("Type %c", 'A'+pts.category) );
 
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				StepsType st = pts.aTypes.front().second;
-				HighScoreList& hsl = PROFILEMAN->GetMachineProfile()->GetCategoryHighScoreList(st, pts.category);
+				HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCategoryHighScoreList(st, pts.category);
 				HighScore hs;
 				bool bRecentHighScore = false;
 				if( l < (int)hsl.vHighScores.size() )
@@ -602,7 +288,7 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 			}
 		}
 		return SECONDS_PER_PAGE;
-	case RankingPageType_OneCourse:
+	case RankingType_SpecificTrail:
 		{
 			m_textCourseTitle.SetText( pts.pCourse->GetDisplayFullTitle() );
 
@@ -657,11 +343,6 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 		ASSERT(0);
 		return 0;
 	}
-}
-
-void ScreenRankingLines::BeginScreen()
-{
-	ScreenRanking::BeginScreen();
 }
 
 /*
