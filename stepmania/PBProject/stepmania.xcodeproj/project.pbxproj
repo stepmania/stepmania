@@ -24,6 +24,8 @@
 /* Begin PBXBuildFile section */
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
 		1215D7A308C6559A00B87D8B /* ScreenGameplayNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */; };
+		367D575B0EDE56F200B46814 /* ScreenHighScores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 367D57590EDE56F200B46814 /* ScreenHighScores.cpp */; };
+		367D575C0EDE56F200B46814 /* ScreenHighScores.h in Headers */ = {isa = PBXBuildFile; fileRef = 367D575A0EDE56F200B46814 /* ScreenHighScores.h */; };
 		3688B8530BD42DAA004186AD /* NotesLoaderMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */; };
 		3688B8540BD42DAA004186AD /* NotesLoaderMidi.h in Headers */ = {isa = PBXBuildFile; fileRef = 3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */; };
 		AA059ABC0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
@@ -2199,6 +2201,8 @@
 		1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenGameplayNormal.h; path = ../src/ScreenGameplayNormal.h; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		367D57590EDE56F200B46814 /* ScreenHighScores.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenHighScores.cpp; path = ../src/ScreenHighScores.cpp; sourceTree = SOURCE_ROOT; };
+		367D575A0EDE56F200B46814 /* ScreenHighScores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenHighScores.h; path = ../src/ScreenHighScores.h; sourceTree = SOURCE_ROOT; };
 		3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderMidi.cpp; path = ../src/NotesLoaderMidi.cpp; sourceTree = "<group>"; };
 		3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = NotesLoaderMidi.h; path = ../src/NotesLoaderMidi.h; sourceTree = "<group>"; };
 		AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorMultiTexture.cpp; path = ../src/ActorMultiTexture.cpp; sourceTree = "<group>"; };
@@ -3645,6 +3649,8 @@
 				AA6E001A047711F3005F316C /* ScreenCredits.h */,
 				AA07A5550843E72B00E33D21 /* ScreenDebugOverlay.cpp */,
 				AA07A5560843E72B00E33D21 /* ScreenDebugOverlay.h */,
+				367D57590EDE56F200B46814 /* ScreenHighScores.cpp */,
+				367D575A0EDE56F200B46814 /* ScreenHighScores.h */,
 				AA6E001B047711F3005F316C /* ScreenDemonstration.cpp */,
 				AA6E001C047711F3005F316C /* ScreenDemonstration.h */,
 				AA21D59C0712ADE4008B825F /* ScreenDimensions.cpp */,
@@ -5742,6 +5748,7 @@
 				AA6C6B0F0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.h in Headers */,
 				AAC0BFE20E2951EC00F56EEB /* CryptHelpers.h in Headers */,
 				EEC786400E58208B00F559BC /* StepsDisplay.h in Headers */,
+				367D575C0EDE56F200B46814 /* ScreenHighScores.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6996,6 +7003,7 @@
 				AA6C6B0E0DC6B48C00E7A13E /* InputHandler_MacOSX_HID.cpp in Sources */,
 				AAC0BFE10E2951EC00F56EEB /* CryptHelpers.cpp in Sources */,
 				EEC7863F0E58208B00F559BC /* StepsDisplay.cpp in Sources */,
+				367D575B0EDE56F200B46814 /* ScreenHighScores.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
