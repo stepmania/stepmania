@@ -1584,16 +1584,14 @@ void SongManager::UpdateRankingCourses()
 	vector<RString> RankingCourses;
 	split( THEME->GetMetric("ScreenRanking","CoursesToShow"),",", RankingCourses);
 
-	for( unsigned i=0; i < m_pCourses.size(); i++ )
+	FOREACH( Course*, m_pCourses, c )
 	{
-		if( m_pCourses[i]->GetEstimatedNumStages() > 7 )
-			m_pCourses[i]->m_SortOrder_Ranking = 3;
-		else
-			m_pCourses[i]->m_SortOrder_Ranking = 2;
-		
+		bool bLotsOfStages = (*c)->GetEstimatedNumStages() > 7;
+		(*c)->m_SortOrder_Ranking = bLotsOfStages? 3 : 2;
+			
 		for( unsigned j = 0; j < RankingCourses.size(); j++ )
-			if( !RankingCourses[j].CompareNoCase(m_pCourses[i]->m_sPath) )
-				m_pCourses[i]->m_SortOrder_Ranking = 1;
+			if( !RankingCourses[j].CompareNoCase((*c)->m_sPath) )
+				(*c)->m_SortOrder_Ranking = 1;
 	}
 }
 
