@@ -15,7 +15,7 @@ public:
 	virtual TextBanner *Copy() const;
 
 	void LoadFromNode( const XNode* pNode );
-	void Load( RString sType );	// load metrics
+	void Load( RString sMetricsGroup );	// load metrics
 	void SetFromSong( const Song *pSong );
 	void SetFromString( 
 		const RString &sDisplayTitle, const RString &sTranslitTitle, 

@@ -11,57 +11,31 @@ void TextBanner::LoadFromNode( const XNode* pNode )
 {
 	m_bInitted = true;
 
-	{
-		const XNode *pTitleNode = pNode->GetChild( "Title" );
-		if( pTitleNode == NULL )
-			RageException::Throw( "%s: TextBanner: missing the Title child", ActorUtil::GetWhere(pNode).c_str() );
-		m_textTitle.LoadFromNode( pTitleNode );
-		this->AddChild( &m_textTitle );
-	}
-
-	{
-		const XNode *pSubtitleNode = pNode->GetChild( "Subtitle" );
-		if( pSubtitleNode == NULL )
-			RageException::Throw( "%s: TextBanner: missing the Subtitle child", ActorUtil::GetWhere(pNode).c_str() );
-		m_textSubTitle.LoadFromNode( pSubtitleNode );
-		this->AddChild( &m_textSubTitle );
-	}
-
-	{
-		const XNode *pArtistNode = pNode->GetChild( "Artist" );
-		if( pArtistNode == NULL )
-			RageException::Throw( "%s: TextBanner: missing the Artist child", ActorUtil::GetWhere(pNode).c_str() );
-		m_textArtist.LoadFromNode( pArtistNode );
-		this->AddChild( &m_textArtist );
-	}
-
-	pNode->GetAttrValue( "ArtistPrependString", m_sArtistPrependString );
-
 	ActorFrame::LoadFromNode( pNode );
 }
 
-void TextBanner::Load( RString sType )
+void TextBanner::Load( RString sMetricsGroup )
 {
 	m_bInitted = true;
 
 	m_textTitle.SetName( "Title" );
-	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_textTitle.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
 	this->AddChild( &m_textTitle );
 
 	m_textSubTitle.SetName( "Subtitle" );
-	m_textSubTitle.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_textSubTitle.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
 	this->AddChild( &m_textSubTitle );
 
 	m_textArtist.SetName( "Artist" );
-	m_textArtist.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_textArtist.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
 	this->AddChild( &m_textArtist );
 
-	AddCommand( "AfterSet", THEME->GetMetricA(sType,"AfterSetCommand") );
-	m_sArtistPrependString = THEME->GetMetric(sType,"ArtistPrependString");
+	AddCommand( "AfterSet", THEME->GetMetricA(sMetricsGroup,"AfterSetCommand") );
+	m_sArtistPrependString = THEME->GetMetric(sMetricsGroup,"ArtistPrependString");
 
-	ActorUtil::LoadAllCommandsAndOnCommand( m_textTitle, sType );
-	ActorUtil::LoadAllCommandsAndOnCommand( m_textSubTitle, sType );
-	ActorUtil::LoadAllCommandsAndOnCommand( m_textArtist, sType );
+	ActorUtil::LoadAllCommandsAndOnCommand( m_textTitle, sMetricsGroup );
+	ActorUtil::LoadAllCommandsAndOnCommand( m_textSubTitle, sMetricsGroup );
+	ActorUtil::LoadAllCommandsAndOnCommand( m_textArtist, sMetricsGroup );
 }
 
 TextBanner::TextBanner()
@@ -115,13 +89,13 @@ void TextBanner::SetFromSong( const Song *pSong )
 class LunaTextBanner: public Luna<TextBanner>
 {
 public:
+	static int Load( T* p, lua_State *L ) { p->Load( SArg(1) ); return 0; }
 	static int SetFromSong( T* p, lua_State *L )
 	{
 		Song *pSong = Luna<Song>::check(L,1);
   		p->SetFromSong( pSong );
 		return 0;
 	}
-
 	static int SetFromString( T* p, lua_State *L )
 	{
 		RString sDisplayTitle = SArg(1);
@@ -136,6 +110,7 @@ public:
 
 	LunaTextBanner()
 	{
+		ADD_METHOD( Load );
 		ADD_METHOD( SetFromSong );
 		ADD_METHOD( SetFromString );
 	}
