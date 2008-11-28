@@ -127,8 +127,7 @@ void ScreenOptionsEditCourseEntry::Init()
 	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
 	{
-		DifficultyDisplayType ddt = MakeDifficultyDisplayType( *dc, GameManager::GetStepsTypeInfo( GAMESTATE->m_stEdit ).m_StepsTypeCategory );
-		pHand->m_Def.m_vsChoices.push_back( DifficultyDisplayTypeToLocalizedString(ddt) );
+		pHand->m_Def.m_vsChoices.push_back( GetLocalizedCustomDifficulty( *dc, GameManager::GetStepsTypeInfo( GAMESTATE->m_stEdit ).m_StepsTypeCategory ) );
 	}
 	vHands.push_back( pHand );
 

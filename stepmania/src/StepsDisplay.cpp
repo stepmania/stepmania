@@ -181,9 +181,9 @@ void StepsDisplay::SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType st, in
 
 void StepsDisplay::SetInternal( const SetParams &params )
 {
-	DifficultyDisplayType ddt = DifficultyDisplayType_Invalid;
+	RString sCustomDifficulty ;
 	if( params.st != StepsType_Invalid )
-		ddt = MakeDifficultyDisplayType( params.dc, GameManager::GetStepsTypeInfo(params.st).m_StepsTypeCategory );
+		sCustomDifficulty = GetCustomDifficulty( params.dc, GameManager::GetStepsTypeInfo(params.st).m_StepsTypeCategory );
 
 	Message msg( "Set" );
 	if( params.pSteps )
@@ -195,7 +195,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 	msg.SetParam( "Difficulty", params.dc );
 	msg.SetParam( "IsCourseDifficulty", params.bIsCourseDifficulty );
 	msg.SetParam( "Description", params.sDescription );
-	msg.SetParam( "DifficultyDisplayType", ddt );
+	msg.SetParam( "CustomDifficulty", sCustomDifficulty );
 
 	m_sprFrame->HandleMessage( msg );
 
@@ -234,18 +234,10 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		}
 		else
 		{
-			switch( ddt )
-			{
-			case DifficultyDisplayType_Invalid: 
-				// empty string
-				break;
-			case DifficultyDisplayType_Edit:
+			if( pSteps && pSteps->IsAnEdit() )
 				s = params.sDescription;
-				break;
-			default:
-				s = DifficultyDisplayTypeToLocalizedString( ddt );
-				break;
-			}
+			else
+				s = GetLocalizedCustomDifficulty( sCustomDifficulty );
 		}
 
 		m_textDescription.SetText( s );

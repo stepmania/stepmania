@@ -33,31 +33,14 @@ const RString& CourseDifficultyToLocalizedString( Difficulty dc );
 Difficulty GetNextShownCourseDifficulty( Difficulty pn );
 
 
+// CustomDifficulty is a themeable difficulty name based on Difficulty, string matching on StepsType, and bCourse.
+// It is used to look up localized strings and look up colors.
+const RString& GetCustomDifficulty( Difficulty dc, StepsTypeCategory stc );
+const RString& GetLocalizedCustomDifficulty( const RString &sCustomDifficultyString );
+RString GetLocalizedCustomDifficulty( Difficulty dc, StepsTypeCategory stc ) { return GetLocalizedCustomDifficulty( GetCustomDifficulty( dc, stc ) ); }
 
-enum DifficultyDisplayType	// ID for coloring and localized strings in StepsDisplay 
-{
-	DifficultyDisplayType_Single_Beginner,
-	DifficultyDisplayType_Single_Easy,
-	DifficultyDisplayType_Single_Medium,
-	DifficultyDisplayType_Single_Hard,
-	DifficultyDisplayType_Single_Challenge,
-	DifficultyDisplayType_Double_Beginner,
-	DifficultyDisplayType_Double_Easy,
-	DifficultyDisplayType_Double_Medium,
-	DifficultyDisplayType_Double_Hard,
-	DifficultyDisplayType_Double_Challenge,
-	DifficultyDisplayType_Edit,
-	DifficultyDisplayType_Couple,	// color this specially (don't color by difficulty) because there isn't usually more than one per song
-	DifficultyDisplayType_Routine,	// color this specially (don't color by difficulty) because there isn't usually more than one per song
-	NUM_DifficultyDisplayType,
-	DifficultyDisplayType_Invalid
-};
-const RString& DifficultyDisplayTypeToString( DifficultyDisplayType dc );
-const RString& DifficultyDisplayTypeToLocalizedString( DifficultyDisplayType dc );
-DifficultyDisplayType StringToDifficultyDisplayType( const RString& s );
-LuaDeclareType( DifficultyDisplayType );
 
-DifficultyDisplayType MakeDifficultyDisplayType( Difficulty dc, StepsTypeCategory stc );
+
 
 #endif
 

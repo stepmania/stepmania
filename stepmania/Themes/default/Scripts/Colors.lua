@@ -10,20 +10,15 @@ function PlayerScoreColor( pn )
 	return color("1,1,1,1")
 end
 
-local DifficultyDisplayTypeColors = {
-	DifficultyDisplayType_Single_Beginner	= color("#ff32f8"),
-	DifficultyDisplayType_Single_Easy	= color("#2cff00"),
-	DifficultyDisplayType_Single_Medium	= color("#fee600"),
-	DifficultyDisplayType_Single_Hard	= color("#ff2f39"),
-	DifficultyDisplayType_Single_Challenge	= color("#1cd8ff"),
-	DifficultyDisplayType_Double_Beginner	= color("0.0,0.9,1.0,1"),	-- light blue
-	DifficultyDisplayType_Double_Easy	= color("0.9,0.9,0.0,1"),	-- yellow
-	DifficultyDisplayType_Double_Medium	= color("1.0,0.1,0.1,1"),	-- light red
-	DifficultyDisplayType_Double_Hard	= color("0.2,1.0,0.2,1"),	-- light green
-	DifficultyDisplayType_Double_Challenge	= color("0.2,0.6,1.0,1"),	-- blue
-	Difficulty_Edit				= color("0.8,0.8,0.8,1"),	-- gray
-	Difficulty_Couple			= color("#ff9a00"),	-- orange
-	Difficulty_Routine			= color("#ff9a00"),	-- orange
+local CustomDifficultyColors = {
+	"Beginner"	= color("#ff32f8"),
+	"Easy"		= color("#2cff00"),
+	"Medium"	= color("#fee600"),
+	"Hard"		= color("#ff2f39"),
+	"Challenge"	= color("#1cd8ff"),
+	"Edit"		= color("0.8,0.8,0.8,1"),	-- gray
+	"Couple"	= color("#ff9a00"),	-- orange
+	"Routine"	= color("#ff9a00"),	-- orange
 };
 
 local CourseDifficultyColors = {
@@ -34,8 +29,8 @@ local CourseDifficultyColors = {
 	Difficulty_Challenge	= color("0.2,0.6,1.0,1"),	-- blue
 };
 
-function DifficultyDisplayTypeToColor( ddt ) 
-	local c = DifficultyDisplayTypeColors[ddt]
+function CustomDifficultyToColor( sCustomDifficulty ) 
+	local c = CustomDifficultyColors[sCustomDifficulty]
 	if c then return c end
 	return color("#000000");
 end

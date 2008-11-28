@@ -2288,8 +2288,7 @@ public:
 		for( unsigned i=0; i<vpStepsToShow.size(); i++ )
 		{
 			const Steps* pSteps = vpStepsToShow[i];
-			DifficultyDisplayType ddt = MakeDifficultyDisplayType( pSteps->GetDifficulty(), GameManager::GetStepsTypeInfo(pSteps->m_StepsType).m_StepsTypeCategory );
-			RString sDifficulty = DifficultyDisplayTypeToLocalizedString( ddt  );
+			RString sDifficulty = GetLocalizedCustomDifficulty( pSteps->GetDifficulty(), GameManager::GetStepsTypeInfo(pSteps->m_StepsType).m_StepsTypeCategory );
 			
 			lua_pushstring( L, sDifficulty );
 			lua_pushstring( L, pSteps->GetDescription() );

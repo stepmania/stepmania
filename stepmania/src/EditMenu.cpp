@@ -476,8 +476,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		// fall through
 	case ROW_STEPS:
 		{
-			DifficultyDisplayType ddt = MakeDifficultyDisplayType( GetSelectedDifficulty(), GameManager::GetStepsTypeInfo(GetSelectedStepsType()).m_StepsTypeCategory );
-			RString s = DifficultyDisplayTypeToLocalizedString( ddt );
+			RString s = GetLocalizedCustomDifficulty( GetSelectedDifficulty(), GameManager::GetStepsTypeInfo(GetSelectedStepsType()).m_StepsTypeCategory );
 
 			m_textValue[ROW_STEPS].SetText( s );
 		}
@@ -526,8 +525,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				}
 				else
 				{
-					DifficultyDisplayType ddt = MakeDifficultyDisplayType( GetSelectedSourceDifficulty(), GameManager::GetStepsTypeInfo(GetSelectedSourceStepsType()).m_StepsTypeCategory );
-					s = DifficultyDisplayTypeToLocalizedString( ddt );
+					s = GetLocalizedCustomDifficulty( GetSelectedSourceDifficulty(), GameManager::GetStepsTypeInfo(GetSelectedSourceStepsType()).m_StepsTypeCategory );
 				}
 				m_textValue[ROW_SOURCE_STEPS].SetText( s );
 			}

@@ -444,11 +444,10 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				}
 				else
 				{
-					DifficultyDisplayType ddt = MakeDifficultyDisplayType( pSteps->GetDifficulty(), GameManager::GetStepsTypeInfo(pSteps->m_StepsType).m_StepsTypeCategory );
 					if( ddt == DifficultyDisplayType_Edit )
 						s = pSteps->GetDescription();
 					else
-						s = DifficultyDisplayTypeToLocalizedString( ddt );
+						s = GetLocalizedCustomDifficulty( pSteps->GetDifficulty(), GameManager::GetStepsTypeInfo(pSteps->m_StepsType).m_StepsTypeCategory ) );
 				}
 				s += ssprintf( " %d", pSteps->GetMeter() );
 				m_Def.m_vsChoices.push_back( s );
@@ -561,8 +560,7 @@ public:
 				}
 				else
 				{
-					DifficultyDisplayType ddt = MakeDifficultyDisplayType( dc, GameManager::GetStepsTypeInfo( GAMESTATE->m_stEdit ).m_StepsTypeCategory );
-					s = DifficultyDisplayTypeToLocalizedString( ddt );
+					s = DifficultyDisplayTypeToLocalizedString( GetLocalizedCustomDifficulty( dc, GameManager::GetStepsTypeInfo( GAMESTATE->m_stEdit ).m_StepsTypeCategory ) );
 				}
 				m_Def.m_vsChoices.push_back( s );
 			}
