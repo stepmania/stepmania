@@ -57,6 +57,7 @@ ScreenGameplay.cpp ScreenGameplay.h \
 ScreenGameplayLesson.cpp ScreenGameplayLesson.h \
 ScreenGameplayNormal.cpp ScreenGameplayNormal.h \
 ScreenGameplaySyncMachine.cpp ScreenGameplaySyncMachine.h \
+ScreenHighScores.cpp ScreenHighScores.h \
 ScreenHowToPlay.cpp ScreenHowToPlay.h \
 ScreenInstructions.cpp ScreenInstructions.h \
 ScreenJukebox.cpp ScreenJukebox.h \
@@ -85,12 +86,10 @@ ScreenSaveSync.cpp ScreenSaveSync.h \
 ScreenServiceAction.cpp ScreenServiceAction.h \
 ScreenStatsOverlay.cpp ScreenStatsOverlay.h \
 ScreenSelect.cpp ScreenSelect.h ScreenSelectCharacter.cpp ScreenSelectCharacter.h \
-ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h ScreenSelectGroup.cpp ScreenSelectGroup.h \
 ScreenSelectLanguage.cpp  ScreenSelectLanguage.h \
 ScreenSelectMaster.cpp ScreenSelectMaster.h ScreenSelectMode.cpp ScreenSelectMode.h \
 ScreenSelectMusic.cpp ScreenSelectMusic.h \
 ScreenSelectProfile.cpp ScreenSelectProfile.h \
-ScreenSelectStyle.cpp ScreenSelectStyle.h \
 ScreenSyncOverlay.cpp ScreenSyncOverlay.h \
 ScreenSystemLayer.cpp ScreenSystemLayer.h ScreenSetTime.cpp ScreenSetTime.h \
 ScreenSongOptions.cpp ScreenSongOptions.h \
