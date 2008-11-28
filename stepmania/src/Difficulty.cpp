@@ -42,7 +42,7 @@ LuaFunction( DifficultyDisplayTypeToLocalizedString, DifficultyDisplayTypeToLoca
 /* TODO: Format specific hacks should be moved into the file loader for 
  * that format.  We don't want to carry these hacks forward to file
  * formats that don't need them. */
-Difficulty StringToDifficulty( const RString& sDC )
+Difficulty BackwardCompatibleStringToDifficulty( const RString& sDC )
 {
 	RString s2 = sDC;
 	s2.MakeLower();
