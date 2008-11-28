@@ -78,7 +78,6 @@ static ThemeMetric<RString> NAMES("CustomDifficulty","Names");
 
 RString GetCustomDifficulty( Difficulty dc, StepsTypeCategory stc )
 {
-
 	RString s;
 	switch( stc )
 	{
@@ -86,7 +85,9 @@ RString GetCustomDifficulty( Difficulty dc, StepsTypeCategory stc )
 	case StepsTypeCategory_Single:
 	case StepsTypeCategory_Double:
 		if( dc == Difficulty_Edit )
+		{
 			return "Edit";
+		}
 		else
 		{
 			/*
@@ -108,9 +109,9 @@ RString GetCustomDifficulty( Difficulty dc, StepsTypeCategory stc )
 	}
 }
 
-const RString& GetLocalizedCustomDifficulty( RString &sCustomDifficulty )
+RString GetLocalizedCustomDifficulty( const RString &sCustomDifficulty )
 {
-	return THEME:GetString( "CustomDifficulty", sCustomDifficultyString );
+	return THEME->GetString( "CustomDifficulty", sCustomDifficulty );
 }
 
 

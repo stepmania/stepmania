@@ -444,10 +444,10 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				}
 				else
 				{
-					if( ddt == DifficultyDisplayType_Edit )
+					if( pSteps->IsAnEdit() )
 						s = pSteps->GetDescription();
 					else
-						s = GetLocalizedCustomDifficulty( pSteps->GetDifficulty(), GameManager::GetStepsTypeInfo(pSteps->m_StepsType).m_StepsTypeCategory ) );
+						s = GetLocalizedCustomDifficulty( pSteps->GetDifficulty(), GameManager::GetStepsTypeInfo(pSteps->m_StepsType).m_StepsTypeCategory );
 				}
 				s += ssprintf( " %d", pSteps->GetMeter() );
 				m_Def.m_vsChoices.push_back( s );
@@ -560,7 +560,7 @@ public:
 				}
 				else
 				{
-					s = DifficultyDisplayTypeToLocalizedString( GetLocalizedCustomDifficulty( dc, GameManager::GetStepsTypeInfo( GAMESTATE->m_stEdit ).m_StepsTypeCategory ) );
+					s = GetLocalizedCustomDifficulty( dc, GameManager::GetStepsTypeInfo( GAMESTATE->m_stEdit ).m_StepsTypeCategory );
 				}
 				m_Def.m_vsChoices.push_back( s );
 			}
@@ -736,8 +736,7 @@ class OptionRowHandlerListDifficulties: public OptionRowHandlerList
 
 		FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), d )
 		{
-			DifficultyDisplayType ddt = MakeDifficultyDisplayType( *d, StepsTypeCategory_Single );	// TODO: Fix use of Single
-			RString s = DifficultyDisplayTypeToLocalizedString( ddt );
+			RString s = GetLocalizedCustomDifficulty( *d, StepsTypeCategory_Single );	// TODO: Fix use of Single
 
 			m_Def.m_vsChoices.push_back( s ); 
 			GameCommand mc;

@@ -318,7 +318,7 @@ RString StepMania::GetInitialScreen()
 {
 	if( PREFSMAN->m_sTestInitialScreen.Get() != "" )
 		return PREFSMAN->m_sTestInitialScreen;
-	return INITIAL_SCREEN;
+	return INITIAL_SCREEN.GetValue();
 }
 
 #if defined(WIN32)

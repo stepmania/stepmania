@@ -234,7 +234,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		}
 		else
 		{
-			if( pSteps && pSteps->IsAnEdit() )
+			if( params.pSteps && params.pSteps->IsAnEdit() )
 				s = params.sDescription;
 			else
 				s = GetLocalizedCustomDifficulty( sCustomDifficulty );
