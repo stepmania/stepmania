@@ -2,8 +2,9 @@ local t = Def.ActorFrame {
 	InitCommand=cmd(runcommandsonleaves,cmd(ztest,true));
 };
 
---t[#t+1] = LoadActor("frame") .. {
---};
+t[#t+1] = LoadActor("frame") .. {
+	InitCommand=cmd(diffusealpha,0.1;);
+};
 
 
 t[#t+1] = Def.TextBanner {
@@ -11,8 +12,10 @@ t[#t+1] = Def.TextBanner {
 	SetCommand=function(self, params)
 		if params.Song then
 			self:SetFromSong( params.Song );
+			self:diffuse( SONGMAN:GetSongColor(params.Song) );
 		else
 			self:SetFromString( params.Course:GetTitle() );
+			self:diffuse( SONGMAN:GetCourseColor(params.Course) );
 		end
 	end;
 };
