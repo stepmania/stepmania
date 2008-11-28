@@ -14,8 +14,8 @@ for i=1,NumColumns do
 		InitCommand=cmd(x,SCREEN_CENTER_X-60 + 80 * (i-1);y,SCREEN_CENTER_Y-154;);
 	};
 	
-	local d = THEHE:GetMetric(Var "LoadingScreen","ColumnDifficulty" .. i);
-	local st = THEHE:GetMetric(Var "LoadingScreen","ColumnStepsType" .. i);	
+	local d = THEME:GetMetric(Var "LoadingScreen","ColumnDifficulty" .. i);
+	local st = THEME:GetMetric(Var "LoadingScreen","ColumnStepsType" .. i);	
 	t[#t+1] = LoadFont("_venacti Bold 13px") .. {
 		InitCommand=cmd(settext,"EASY";diffuse,color("#FFFF00");x,SCREEN_CENTER_X-60 + 80 * (i-1);y,SCREEN_CENTER_Y-158;shadowlength,0;);
 	};
