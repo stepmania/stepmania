@@ -34,7 +34,7 @@ static void LoadFromSMTokens(
 
 	out.m_StepsType = GameManager::StringToStepsType( sStepsType );
 	out.SetDescription( sDescription );
-	out.SetDifficulty( BackwardCompatibleStringToDifficulty(sDifficulty) );
+	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDifficulty) );
 
 	// HACK:  We used to store SMANIAC as Difficulty_Hard with special description.
 	// Now, it has its own Difficulty_Challenge

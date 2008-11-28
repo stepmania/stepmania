@@ -59,7 +59,7 @@ void TrailID::LoadFromNode( const XNode* pNode )
 	st = GameManager::StringToStepsType( sTemp );
 
 	pNode->GetAttrValue( "CourseDifficulty", sTemp );
-	cd = BackwardCompatibleStringToDifficulty( sTemp );
+	cd = StringToDifficulty( sTemp );
 	m_Cache.Unset();
 }
 

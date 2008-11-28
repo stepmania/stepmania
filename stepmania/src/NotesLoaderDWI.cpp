@@ -173,7 +173,7 @@ static bool LoadFromDWITokens(
 	int iNumFeet = atoi(sNumFeet);
 	// out.SetDescription(sDescription); // Don't put garbage in the description.
 	out.SetMeter(iNumFeet);
-	out.SetDifficulty( BackwardCompatibleStringToDifficulty(sDescription) );
+	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDescription) );
 
 	NoteData newNoteData;
 	newNoteData.SetNumTracks( g_mapDanceNoteToNoteDataColumn.size() );

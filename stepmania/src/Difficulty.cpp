@@ -15,6 +15,7 @@ static const char *DifficultyNames[] = {
 	"Edit",
 };
 XToString( Difficulty );
+StringToX( Difficulty );
 LuaXType( Difficulty );
 
 static const char *DifficultyDisplayTypeNames[] = {
@@ -42,7 +43,7 @@ LuaFunction( DifficultyDisplayTypeToLocalizedString, DifficultyDisplayTypeToLoca
 /* TODO: Format specific hacks should be moved into the file loader for 
  * that format.  We don't want to carry these hacks forward to file
  * formats that don't need them. */
-Difficulty BackwardCompatibleStringToDifficulty( const RString& sDC )
+Difficulty DwiCompatibleStringToDifficulty( const RString& sDC )
 {
 	RString s2 = sDC;
 	s2.MakeLower();
