@@ -301,7 +301,7 @@ void StepsID::LoadFromNode( const XNode* pNode )
 	st = GameManager::StringToStepsType( sTemp );
 
 	pNode->GetAttrValue( "Difficulty", sTemp );
-	dc = StringToDifficulty( sTemp );
+	dc = BackwardCompatibleStringToDifficulty( sTemp );
 
 	if( dc == Difficulty_Edit )
 	{

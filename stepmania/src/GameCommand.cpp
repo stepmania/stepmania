@@ -192,7 +192,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "difficulty" )
 	{
-		Difficulty dc = StringToDifficulty( sValue );
+		Difficulty dc = BackwardCompatibleStringToDifficulty( sValue );
 		if( dc != Difficulty_Invalid )
 			m_dc = dc;
 		else
@@ -261,7 +261,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			if( pSong == NULL || pStyle == NULL )
 				RageException::Throw( "Must set Song and Style to set Steps." );
 
-			Difficulty dc = StringToDifficulty( sSteps );
+			Difficulty dc = BackwardCompatibleStringToDifficulty( sSteps );
 			if( dc != Difficulty_Edit )
 				m_pSteps = SongUtil::GetStepsByDifficulty( pSong, pStyle->m_StepsType, dc );
 			else
@@ -296,7 +296,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			if( pCourse == NULL || pStyle == NULL )
 				RageException::Throw( "Must set Course and Style to set Steps." );
 
-			const CourseDifficulty cd = StringToDifficulty( sTrail );
+			const CourseDifficulty cd = BackwardCompatibleStringToDifficulty( sTrail );
 			ASSERT_M( cd != Difficulty_Invalid, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );
 
 			m_pTrail = pCourse->GetTrail( pStyle->m_StepsType, cd );

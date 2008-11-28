@@ -1277,7 +1277,7 @@ void ScreenGameplay::LoadLights()
 
 	Difficulty d1 = Difficulty_Invalid;
 	if( asDifficulties.size() > 0 )
-		d1 = StringToDifficulty( asDifficulties[0] );
+		d1 = BackwardCompatibleStringToDifficulty( asDifficulties[0] );
 	pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, st, d1 );
 
 	// If we can't find anything at all, stop.
@@ -1289,7 +1289,7 @@ void ScreenGameplay::LoadLights()
 
 	if( asDifficulties.size() > 1 )
 	{
-		Difficulty d2 = StringToDifficulty( asDifficulties[1] );
+		Difficulty d2 = BackwardCompatibleStringToDifficulty( asDifficulties[1] );
 		const Steps *pSteps2 = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, st, d2 );
 		if( pSteps != NULL && pSteps2 != NULL && pSteps != pSteps2 )
 		{

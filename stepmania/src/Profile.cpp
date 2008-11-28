@@ -1235,8 +1235,8 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "WeightPounds",				m_iWeightPounds );
 	pNode->GetChildValue( "Guid",					m_sGuid );
 	pNode->GetChildValue( "SortOrder",				s );	m_SortOrder = StringToSortOrder( s );
-	pNode->GetChildValue( "LastDifficulty",				s );	m_LastDifficulty = StringToDifficulty( s );
-	pNode->GetChildValue( "LastCourseDifficulty",			s );	m_LastCourseDifficulty = StringToDifficulty( s );
+	pNode->GetChildValue( "LastDifficulty",				s );	m_LastDifficulty = BackwardCompatibleStringToDifficulty( s );
+	pNode->GetChildValue( "LastCourseDifficulty",			s );	m_LastCourseDifficulty = BackwardCompatibleStringToDifficulty( s );
 	pNode->GetChildValue( "LastStepsType",				s );	m_LastStepsType = GameManager::StringToStepsType( s );
 	pTemp = pNode->GetChild( "Song" );				if( pTemp ) m_lastSong.LoadFromNode( pTemp );
 	pTemp = pNode->GetChild( "Course" );				if( pTemp ) m_lastCourse.LoadFromNode( pTemp );

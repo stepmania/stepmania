@@ -491,7 +491,7 @@ void UnlockManager::Load()
 				break;
 			}
 
-			e->m_dc = StringToDifficulty( e->m_cmd.GetArg(1).s );
+			e->m_dc = BackwardCompatibleStringToDifficulty( e->m_cmd.GetArg(1).s );
 			if( e->m_dc == Difficulty_Invalid )
 			{
 				LOG->Warn( "Unlock: Invalid difficulty \"%s\"", e->m_cmd.GetArg(1).s.c_str() );

@@ -152,7 +152,7 @@ void Steps::TidyUpData()
 		m_StepsType = STEPS_TYPE_DANCE_SINGLE;
 
 	if( GetDifficulty() == Difficulty_Invalid )
-		SetDifficulty( StringToDifficulty(GetDescription()) );
+		SetDifficulty( BackwardCompatibleStringToDifficulty(GetDescription()) );
 	
 	if( GetDifficulty() == Difficulty_Invalid )
 	{
