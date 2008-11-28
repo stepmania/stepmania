@@ -45,7 +45,7 @@ void ThemeMetricDifficultiesToShow::Read()
 
 	FOREACH_CONST( RString, v, i )
 	{
-		Difficulty d = BackwardCompatibleStringToDifficulty( *i );
+		Difficulty d = StringToDifficulty( *i );
 		if( d == Difficulty_Invalid )
 			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow.", i->c_str() );
 		m_v.push_back( d );
@@ -75,7 +75,7 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 
 	FOREACH_CONST( RString, v, i )
 	{
-		CourseDifficulty d = BackwardCompatibleStringToDifficulty( *i );
+		CourseDifficulty d = StringToDifficulty( *i );
 		if( d == Difficulty_Invalid )
 			RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i->c_str() );
 		m_v.push_back( d );
