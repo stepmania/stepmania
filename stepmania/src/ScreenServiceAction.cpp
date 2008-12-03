@@ -410,26 +410,33 @@ static RString ResetPreferences()
 REGISTER_SCREEN_CLASS( ScreenServiceAction );
 void ScreenServiceAction::BeginScreen()
 {
-	RString sAction = THEME->GetMetric(m_sName,"Action");
+	RString sActions = THEME->GetMetric(m_sName,"Actions");
+	vector<RString> vsActions;
+	split( sActions, ",", vsActions );
 
-	RString (*pfn)() = NULL;
+	vector<RString> vsResults;
+	FOREACH( RString, vsActions, s )
+	{
+		RString (*pfn)() = NULL;
 
-	if(	 sAction == "ClearBookkeepingData" )			pfn = ClearBookkeepingData;
-	else if( sAction == "ClearMachineStats" )			pfn = ClearMachineStats;
-	else if( sAction == "ClearMachineEdits" )			pfn = ClearMachineEdits;
-	else if( sAction == "ClearMemoryCardEdits" )			pfn = ClearMemoryCardEdits;
-	else if( sAction == "TransferStatsMachineToMemoryCard" )	pfn = TransferStatsMachineToMemoryCard;
-	else if( sAction == "TransferStatsMemoryCardToMachine" )	pfn = TransferStatsMemoryCardToMachine;
-	else if( sAction == "CopyEditsMachineToMemoryCard" )		pfn = CopyEditsMachineToMemoryCard;
-	else if( sAction == "CopyEditsMemoryCardToMachine" )		pfn = CopyEditsMemoryCardToMachine;
-	else if( sAction == "SyncEditsMachineToMemoryCard" )		pfn = SyncEditsMachineToMemoryCard;
-	else if( sAction == "ResetPreferences" )			pfn = ResetPreferences;
-	
-	ASSERT_M( pfn, sAction );
-	
-	RString s = pfn();
+		if(	 *s == "ClearBookkeepingData" )			pfn = ClearBookkeepingData;
+		else if( *s == "ClearMachineStats" )			pfn = ClearMachineStats;
+		else if( *s == "ClearMachineEdits" )			pfn = ClearMachineEdits;
+		else if( *s == "ClearMemoryCardEdits" )			pfn = ClearMemoryCardEdits;
+		else if( *s == "TransferStatsMachineToMemoryCard" )	pfn = TransferStatsMachineToMemoryCard;
+		else if( *s == "TransferStatsMemoryCardToMachine" )	pfn = TransferStatsMemoryCardToMachine;
+		else if( *s == "CopyEditsMachineToMemoryCard" )		pfn = CopyEditsMachineToMemoryCard;
+		else if( *s == "CopyEditsMemoryCardToMachine" )		pfn = CopyEditsMemoryCardToMachine;
+		else if( *s == "SyncEditsMachineToMemoryCard" )		pfn = SyncEditsMachineToMemoryCard;
+		else if( *s == "ResetPreferences" )			pfn = ResetPreferences;
+		
+		ASSERT_M( pfn, *s );
+		
+		RString sResult = pfn();
+		vsResults.push_back( sResult );
+	}
 
-	ScreenPrompt::SetPromptSettings( s, PROMPT_OK );
+	ScreenPrompt::SetPromptSettings( join( "\n", vsResults ), PROMPT_OK );
 
 	ScreenPrompt::BeginScreen();
 }
