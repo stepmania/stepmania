@@ -23,6 +23,7 @@ LifeMeterBar::LifeMeterBar()
 	DANGER_THRESHOLD.Load	("LifeMeterBar","DangerThreshold");
 	INITIAL_VALUE.Load	("LifeMeterBar","InitialValue");
 	HOT_VALUE.Load		("LifeMeterBar","HotValue");
+	LIFE_MULTIPLIER.Load	( "LifeMeterBar","LifeMultiplier");
 	MIN_STAY_ALIVE.Load	("LifeMeterBar","MinStayAlive");
 	m_fLifePercentChange.Load( "LifeMeterBar", LIFE_PERCENT_CHANGE_NAME, NUM_ScoreEvent );
 
@@ -225,7 +226,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	}
 	
 	m_fLifePercentage += fDeltaLife;
-	CLAMP( m_fLifePercentage, 0, 1 );
+	CLAMP( m_fLifePercentage, 0, LIFE_MULTIPLIER );
 	AfterLifeChanged();
 }
 

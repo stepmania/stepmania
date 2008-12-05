@@ -37,6 +37,7 @@ private:
 	ThemeMetric<float> DANGER_THRESHOLD;
 	ThemeMetric<float> INITIAL_VALUE;
 	ThemeMetric<float> HOT_VALUE;
+	ThemeMetric<float> LIFE_MULTIPLIER;
 	ThemeMetric<TapNoteScore>   MIN_STAY_ALIVE;
 
 	ThemeMetric1D<float> m_fLifePercentChange;
