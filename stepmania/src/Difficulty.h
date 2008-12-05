@@ -37,7 +37,7 @@ Difficulty GetNextShownCourseDifficulty( Difficulty pn );
 // It is used to look up localized strings and look up colors.
 RString GetCustomDifficulty( Difficulty dc, StepsTypeCategory stc );
 RString GetLocalizedCustomDifficulty( const RString &sCustomDifficulty );
-RString GetLocalizedCustomDifficulty( Difficulty dc, StepsTypeCategory stc ) { return GetLocalizedCustomDifficulty( GetCustomDifficulty( dc, stc ) ); }
+static inline RString GetLocalizedCustomDifficulty( Difficulty dc, StepsTypeCategory stc ) { return GetLocalizedCustomDifficulty( GetCustomDifficulty( dc, stc ) ); }
 
 
 
