@@ -2339,6 +2339,8 @@ public:
 	{
 		p->m_bJukeboxUsesModifiers = BArg(1); return 0;
 	}
+	static int Reset( T* p, lua_State *L )				{ p->Reset(); return 0; }
+
 	DEFINE_METHOD( GetWorkoutGoalComplete,		m_bWorkoutGoalComplete )
 
 	LunaGameState() 
@@ -2424,6 +2426,7 @@ public:
 		ADD_METHOD( SaveLocalData );
 		ADD_METHOD( SetJukeboxUsesModifiers );
 		ADD_METHOD( GetWorkoutGoalComplete );
+		ADD_METHOD( Reset );
 	}
 };
 
