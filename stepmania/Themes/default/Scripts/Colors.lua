@@ -35,13 +35,13 @@ function CustomDifficultyToColor( sCustomDifficulty )
 	return color("#000000");
 end
 
-function DifficultyDisplayTypeToDarkColor( ddt ) 
-	local c = DifficultyDisplayTypeToColor(ddt);
+function CustomDifficultyToDarkColor( sCustomDifficulty ) 
+	local c = CustomDifficultyToColor(sCustomDifficulty);
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
 end
 
-function DifficultyDisplayTypeToLightColor( ddt ) 
-	local c = DifficultyDisplayTypeToColor(ddt);
+function CustomDifficultyToLightColor( sCustomDifficulty ) 
+	local c = CustomDifficultyToColor(sCustomDifficulty);
 	return { scale(c[1],0,1,0.5,1), scale(c[2],0,1,0.5,1), scale(c[3],0,1,0.5,1), c[4] };
 end
 
