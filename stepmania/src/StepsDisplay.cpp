@@ -181,10 +181,6 @@ void StepsDisplay::SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType st, in
 
 void StepsDisplay::SetInternal( const SetParams &params )
 {
-	RString sCustomDifficulty ;
-	if( params.st != StepsType_Invalid )
-		sCustomDifficulty = GetCustomDifficulty( params.st, params.dc );
-
 	Message msg( "Set" );
 	if( params.pSteps )
 		msg.SetParam( "Steps", LuaReference::CreateFromPush(*(Steps*)params.pSteps) );
@@ -195,7 +191,12 @@ void StepsDisplay::SetInternal( const SetParams &params )
 	msg.SetParam( "Difficulty", params.dc );
 	msg.SetParam( "IsCourseDifficulty", params.bIsCourseDifficulty );
 	msg.SetParam( "Description", params.sDescription );
-	msg.SetParam( "CustomDifficulty", sCustomDifficulty );
+	RString sCustomDifficulty;
+	if( params.st != StepsType_Invalid )
+	{
+		sCustomDifficulty = GetCustomDifficulty( params.st, params.dc );
+		msg.SetParam( "CustomDifficulty", sCustomDifficulty );
+	}
 
 	m_sprFrame->HandleMessage( msg );
 
@@ -236,7 +237,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		{
 			if( params.pSteps && params.pSteps->IsAnEdit() )
 				s = params.sDescription;
-			else
+			else if( !sCustomDifficulty.empty() )
 				s = GetLocalizedCustomDifficulty( sCustomDifficulty );
 		}
 

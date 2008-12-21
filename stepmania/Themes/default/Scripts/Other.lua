@@ -110,16 +110,15 @@ function TextBannerAfterSet(self,param)
 	local Title=self:GetChild("Title"); 
 	local Subtitle=self:GetChild("Subtitle"); 
 	--local Artist=self:GetChild("Artist"); 
-	local edge_x = 120;
 	if Subtitle:GetText() == "" then 
-		(cmd(maxwidth,300;x,edge_x;y,0;zoom,1.1;))(Title);
+		(cmd(maxwidth,300;y,0;zoom,1.1;))(Title);
 		(cmd(visible,false))(Subtitle);
-		--(cmd(zoom,0.66;maxwidth,300;x,edge_x;y,7))(Artist);
+		--(cmd(zoom,0.66;maxwidth,300;y,7))(Artist);
 	else
 		-- subtitle below
-		(cmd(zoom,1;x,edge_x;y,-6;zoom,1.0;))(Title);
-		(cmd(visible,true;zoom,0.6;x,edge_x;y,7))(Subtitle); 
-		--(cmd(zoom,0.66;maxwidth,300;x,edge_x;y,9))(Artist); 
+		(cmd(zoom,1;y,-6;zoom,1.0;))(Title);
+		(cmd(visible,true;zoom,0.6;y,7))(Subtitle); 
+		--(cmd(zoom,0.66;maxwidth,300;y,9))(Artist); 
 	end
 end
 

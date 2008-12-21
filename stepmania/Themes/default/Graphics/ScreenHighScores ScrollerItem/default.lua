@@ -8,7 +8,7 @@ t[#t+1] = LoadActor("frame") .. {
 
 
 t[#t+1] = Def.TextBanner {
-	InitCommand=cmd(x,-224;y,0;Load,"TextBanner";);
+	InitCommand=cmd(x,-196;y,0;Load,"TextBannerHighScores";);
 	SetCommand=function(self, params)
 		if params.Song then
 			self:SetFromSong( params.Song );
@@ -59,9 +59,9 @@ Scores.SetCommand=function(self, params)
 	for name, child in pairs(c) do
 		child:visible(false);
 	end
-	--for idx=1,NumColumns do
-	--	c[idx .. "Empty"]:visible(true);
-	--end
+	for idx=1,NumColumns do
+		c[idx .. "Empty"]:visible(true);
+	end
 
 	local Current = params.Song or params.Course;
 	if Current then
@@ -81,17 +81,16 @@ Scores.SetCommand=function(self, params)
 				--assert( c[sNameType], sNameType );
 				--assert( c[sScoreType], sScoreType );
 
+				name:visible( true );
+				score:visible( true );
+				filled:visible( true );
+				empty:visible( false );
 				if hs and #hs > 0 then
-					name:visible( true );
-					score:visible( true );
-					filled:visible( true );
-					empty:visible( false );
 					name:settext( hs[1]:GetName() );
 					score:settext( FormatPercentScore( hs[1]:GetPercentDP() ) );
 				else
-					empty:visible( true );
-					--name:settext( sNoScoreName );
-					--score:settext( FormatPercentScore( 0 ) );
+					name:settext( sNoScoreName );
+					score:settext( FormatPercentScore( 0 ) );
 				end
 			end
 		end;

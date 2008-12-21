@@ -105,7 +105,7 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc )
 					if( DIFFICULTY == Difficulty_Invalid  ||  dc == DIFFICULTY )	// match
 					{
 						ThemeMetric<RString> STRING("CustomDifficulty",(*sName)+"String");
-						return STRING;
+						return STRING.GetValue();
 					}
 				}
 			}
@@ -118,10 +118,14 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc )
 	}
 }
 
+LuaFunction( GetCustomDifficulty, GetCustomDifficulty(Enum::Check<StepsType>(L,1),Enum::Check<Difficulty>(L, 2)) );
+
 RString GetLocalizedCustomDifficulty( const RString &sCustomDifficulty )
 {
 	return THEME->GetString( "CustomDifficulty", sCustomDifficulty );
 }
+
+LuaFunction( GetLocalizedCustomDifficulty, GetLocalizedCustomDifficulty(SArg(1)) );
 
 
 /*

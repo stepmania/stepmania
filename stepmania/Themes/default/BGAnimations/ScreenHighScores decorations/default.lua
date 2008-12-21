@@ -14,10 +14,11 @@ for i=1,NumColumns do
 		InitCommand=cmd(x,SCREEN_CENTER_X-60 + 80 * (i-1);y,SCREEN_CENTER_Y-154;);
 	};
 	
-	local d = THEME:GetMetric(Var "LoadingScreen","ColumnDifficulty" .. i);
 	local st = THEME:GetMetric(Var "LoadingScreen","ColumnStepsType" .. i);	
+	local dc = THEME:GetMetric(Var "LoadingScreen","ColumnDifficulty" .. i);
+	local s = GetCustomDifficulty( st, dc );
 	t[#t+1] = LoadFont("_venacti Bold 13px") .. {
-		InitCommand=cmd(settext,"EASY";diffuse,color("#FFFF00");x,SCREEN_CENTER_X-60 + 80 * (i-1);y,SCREEN_CENTER_Y-158;shadowlength,0;);
+		InitCommand=cmd(uppercase,true;settext,GetLocalizedCustomDifficulty(s);diffuse,CustomDifficultyToColor(s);x,SCREEN_CENTER_X-60 + 80 * (i-1);y,SCREEN_CENTER_Y-158;shadowlength,0;);
 	};
 end
 
@@ -26,6 +27,6 @@ t[#t+1] = LoadFont("_terminator two 24px") .. {
 };
 
 t[#t+1] = LoadFont("_terminator two 30px") .. {
-	InitCommand=cmd(settext,"Best Ranking";uppercase,true;diffuse,color("#FFFFFF");x,SCREEN_CENTER_X-130;y,SCREEN_CENTER_Y-206;shadowlength,0;strokecolor,color("#3b009c44"););
+	InitCommand=cmd(settext,"Best Scores";uppercase,true;diffuse,color("#FFFFFF");x,SCREEN_CENTER_X-130;y,SCREEN_CENTER_Y-206;shadowlength,0;strokecolor,color("#3b009c44"););
 };
 return t;
