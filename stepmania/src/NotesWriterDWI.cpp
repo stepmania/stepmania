@@ -248,9 +248,9 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 			RString str;
 			switch( out.m_StepsType )
 			{
-			case STEPS_TYPE_DANCE_SINGLE:
-			case STEPS_TYPE_DANCE_COUPLE:
-			case STEPS_TYPE_DANCE_DOUBLE:
+			case StepsType_dance_single:
+			case StepsType_dance_couple:
+			case StepsType_dance_double:
 				str = NotesToDWIString( 
 					notedata.GetTapNote(start+0, row), 
 					notedata.GetTapNote(start+1, row),
@@ -263,7 +263,7 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 				notedata.SetTapNote(start+2, row, TAP_EMPTY);
 				notedata.SetTapNote(start+3, row, TAP_EMPTY);
 				break;
-			case STEPS_TYPE_DANCE_SOLO:
+			case StepsType_dance_solo:
 				str = NotesToDWIString( 
 					notedata.GetTapNote(0, row),
 					notedata.GetTapNote(1, row),
@@ -327,10 +327,10 @@ static bool WriteDWINotesTag( RageFile &f, const Steps &out )
 
 	switch( out.m_StepsType )
 	{
-	case STEPS_TYPE_DANCE_SINGLE:	f.Write( "#SINGLE:" );	break;
-	case STEPS_TYPE_DANCE_COUPLE:	f.Write( "#COUPLE:" );	break;
-	case STEPS_TYPE_DANCE_DOUBLE:	f.Write( "#DOUBLE:" );	break;
-	case STEPS_TYPE_DANCE_SOLO:		f.Write( "#SOLO:" );	break;
+	case StepsType_dance_single:	f.Write( "#SINGLE:" );	break;
+	case StepsType_dance_couple:	f.Write( "#COUPLE:" );	break;
+	case StepsType_dance_double:	f.Write( "#DOUBLE:" );	break;
+	case StepsType_dance_solo:		f.Write( "#SOLO:" );	break;
 	default:	return false;	// not a type supported by DWI
 	}
 
@@ -423,8 +423,8 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 			continue;
 
 		WriteDWINotesField( f, *pSteps, 0 );
-		if( pSteps->m_StepsType==STEPS_TYPE_DANCE_DOUBLE ||
-		    pSteps->m_StepsType==STEPS_TYPE_DANCE_COUPLE )
+		if( pSteps->m_StepsType==StepsType_dance_double ||
+		    pSteps->m_StepsType==StepsType_dance_couple )
 		{
 			f.PutLine( ":" );
 			WriteDWINotesField( f, *pSteps, 4 );

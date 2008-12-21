@@ -672,7 +672,7 @@ void ScreenEdit::Init()
 	CopyToLastSave();
 
 	m_CurrentAction = MAIN_MENU_CHOICE_INVALID;
-	if( GAMESTATE->m_pCurSteps[0]->m_StepsType == STEPS_TYPE_DANCE_ROUTINE )
+	if( GAMESTATE->m_pCurSteps[0]->m_StepsType == StepsType_dance_routine )
 		m_InputPlayerNumber = PLAYER_1;
 	else
 		m_InputPlayerNumber = PLAYER_INVALID;

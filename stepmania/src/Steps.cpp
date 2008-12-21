@@ -149,7 +149,7 @@ float Steps::PredictMeter() const
 void Steps::TidyUpData()
 {
 	if( m_StepsType == StepsType_Invalid )
-		m_StepsType = STEPS_TYPE_DANCE_SINGLE;
+		m_StepsType = StepsType_dance_single;
 
 	if( GetDifficulty() == Difficulty_Invalid )
 		SetDifficulty( StringToDifficulty(GetDescription()) );
@@ -216,7 +216,7 @@ void Steps::Decompress() const
 
 		int iNewTracks = GameManager::GetStepsTypeInfo(m_StepsType).iNumTracks;
 
-		if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
+		if( this->m_StepsType == StepsType_lights_cabinet )
 		{
 			NoteDataUtil::LoadTransformedLights( notedata, *m_pNoteData, iNewTracks );
 		}
@@ -265,7 +265,7 @@ void Steps::Decompress() const
 	else
 	{
 		// load from compressed
-		bool bComposite = m_StepsType == STEPS_TYPE_DANCE_ROUTINE;
+		bool bComposite = m_StepsType == StepsType_dance_routine;
 		m_bNoteDataIsFilled = true;
 		m_pNoteData->SetNumTracks( GameManager::GetStepsTypeInfo(m_StepsType).iNumTracks );
 
@@ -276,14 +276,14 @@ void Steps::Decompress() const
 void Steps::Compress() const
 {
 	/* Always leave lights data uncompressed. */
-	if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET && m_bNoteDataIsFilled )
+	if( this->m_StepsType == StepsType_lights_cabinet && m_bNoteDataIsFilled )
 	{
 		m_sNoteDataCompressed = RString();
 		return;
 	}
 
 	/* Always leave karaoke data uncompressed. */
-	if( this->m_StepsType == STEPS_TYPE_KARAOKE_SINGLE && m_bNoteDataIsFilled )
+	if( this->m_StepsType == StepsType_karaoke_single && m_bNoteDataIsFilled )
 	{
 		m_sNoteDataCompressed = RString();
 		return;

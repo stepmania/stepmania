@@ -466,7 +466,7 @@ void ScreenNetSelectMusic::StartSelectedSong()
 {
 	Song * pSong = m_MusicWheel.GetSelectedSong();
 	GAMESTATE->m_pCurSong.Set( pSong );
-	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType; //STEPS_TYPE_DANCE_SINGLE;
+	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType; //StepsType_dance_single;
 	FOREACH_EnabledPlayer (pn)
 	{
 		GAMESTATE->m_PreferredDifficulty[pn].Set( m_DC[pn] );

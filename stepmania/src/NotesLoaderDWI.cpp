@@ -128,28 +128,28 @@ static bool LoadFromDWITokens(
 
 	out.m_StepsType = StepsType_Invalid;
 
-	if( sMode == "SINGLE" )			out.m_StepsType = STEPS_TYPE_DANCE_SINGLE;
-	else if( sMode == "DOUBLE" )		out.m_StepsType = STEPS_TYPE_DANCE_DOUBLE;
-	else if( sMode == "COUPLE" )		out.m_StepsType = STEPS_TYPE_DANCE_COUPLE;
-	else if( sMode == "SOLO" )		out.m_StepsType = STEPS_TYPE_DANCE_SOLO;
+	if( sMode == "SINGLE" )			out.m_StepsType = StepsType_dance_single;
+	else if( sMode == "DOUBLE" )		out.m_StepsType = StepsType_dance_double;
+	else if( sMode == "COUPLE" )		out.m_StepsType = StepsType_dance_couple;
+	else if( sMode == "SOLO" )		out.m_StepsType = StepsType_dance_solo;
 	else	
 	{
 		ASSERT(0);	// Unrecognized DWI notes format
-		out.m_StepsType = STEPS_TYPE_DANCE_SINGLE;
+		out.m_StepsType = StepsType_dance_single;
 	}
 
 
 	g_mapDanceNoteToNoteDataColumn.clear();
 	switch( out.m_StepsType )
 	{
-	case STEPS_TYPE_DANCE_SINGLE:
+	case StepsType_dance_single:
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
 		break;
-	case STEPS_TYPE_DANCE_DOUBLE:
-	case STEPS_TYPE_DANCE_COUPLE:
+	case StepsType_dance_double:
+	case StepsType_dance_couple:
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
@@ -159,7 +159,7 @@ static bool LoadFromDWITokens(
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
 		break;
-	case STEPS_TYPE_DANCE_SOLO:
+	case StepsType_dance_solo:
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPLEFT] = 1;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 2;

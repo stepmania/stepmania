@@ -146,7 +146,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 			ToPlay.HasTiming = true;
 			ToPlay.m_TimingData = song.m_Timing;
 			// get cabinet lights if any
-			Steps *pStepsCabinetLights = SongUtil::GetOneSteps( &song, STEPS_TYPE_LIGHTS_CABINET );
+			Steps *pStepsCabinetLights = SongUtil::GetOneSteps( &song, StepsType_lights_cabinet );
 			if( pStepsCabinetLights )
 				pStepsCabinetLights->GetNoteData( ToPlay.m_LightsData );
 		}

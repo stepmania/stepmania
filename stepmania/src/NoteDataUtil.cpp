@@ -657,7 +657,7 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 	LightTransformHelper( in, out, aiTracks );
 }
 
-/* This transform is specific to STEPS_TYPE_LIGHTS_CABINET. */
+/* This transform is specific to StepsType_lights_cabinet. */
 #include "LightsManager.h" // for LIGHT_*
 void NoteDataUtil::LoadTransformedLightsFromTwo( const NoteData &marquee, const NoteData &bass, NoteData &out )
 {
@@ -985,10 +985,10 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 		// Is there a way to do this without handling each StepsType? -Chris
 		switch( st )
 		{
-		case STEPS_TYPE_DANCE_SINGLE:
-		case STEPS_TYPE_DANCE_DOUBLE:
-		case STEPS_TYPE_DANCE_COUPLE:
-		case STEPS_TYPE_DANCE_ROUTINE:
+		case StepsType_dance_single:
+		case StepsType_dance_double:
+		case StepsType_dance_couple:
+		case StepsType_dance_routine:
 			iTakeFromTrack[0] = 2;
 			iTakeFromTrack[1] = 0;
 			iTakeFromTrack[2] = 3;
@@ -998,7 +998,7 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 			iTakeFromTrack[6] = 7;
 			iTakeFromTrack[7] = 5;
 			break;
-		case STEPS_TYPE_DANCE_SOLO:
+		case StepsType_dance_solo:
 			iTakeFromTrack[0] = 5;
 			iTakeFromTrack[1] = 4;
 			iTakeFromTrack[2] = 0;
@@ -1006,8 +1006,8 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 			iTakeFromTrack[4] = 1;
 			iTakeFromTrack[5] = 2;
 			break;
-		case STEPS_TYPE_PUMP_SINGLE:
-		case STEPS_TYPE_PUMP_COUPLE:
+		case StepsType_pump_single:
+		case StepsType_pump_couple:
 			iTakeFromTrack[0] = 3;
 			iTakeFromTrack[1] = 4;
 			iTakeFromTrack[2] = 2;
@@ -1019,7 +1019,7 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 			iTakeFromTrack[8] = 5;
 			iTakeFromTrack[9] = 6;
 			break;
-		case STEPS_TYPE_PUMP_HALFDOUBLE:
+		case StepsType_pump_halfdouble:
 			iTakeFromTrack[0] = 2;
 			iTakeFromTrack[1] = 0;
 			iTakeFromTrack[2] = 1;
@@ -1027,7 +1027,7 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 			iTakeFromTrack[4] = 4;
 			iTakeFromTrack[5] = 5;
 			break;
-		case STEPS_TYPE_PUMP_DOUBLE:
+		case StepsType_pump_double:
 			iTakeFromTrack[0] = 8;
 			iTakeFromTrack[1] = 9;
 			iTakeFromTrack[2] = 7;
@@ -1079,8 +1079,8 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 	case NoteDataUtil::stomp:
 		switch( st )
 		{
-		case STEPS_TYPE_DANCE_SINGLE:
-		case STEPS_TYPE_DANCE_COUPLE:
+		case StepsType_dance_single:
+		case StepsType_dance_couple:
 			iTakeFromTrack[0] = 3;
 			iTakeFromTrack[1] = 2;
 			iTakeFromTrack[2] = 1;
@@ -1090,8 +1090,8 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 			iTakeFromTrack[6] = 5;
 			iTakeFromTrack[7] = 4;
 			break;
-		case STEPS_TYPE_DANCE_DOUBLE:
-		case STEPS_TYPE_DANCE_ROUTINE:
+		case StepsType_dance_double:
+		case StepsType_dance_routine:
 			iTakeFromTrack[0] = 1;
 			iTakeFromTrack[1] = 0;
 			iTakeFromTrack[2] = 3;
@@ -1874,10 +1874,10 @@ struct ValidRow
 #define f false
 const ValidRow g_ValidRows[] = 
 {
-	{ STEPS_TYPE_DANCE_DOUBLE, { T,T,T,T,f,f,f,f } },
-	{ STEPS_TYPE_DANCE_DOUBLE, { f,T,T,T,T,f,f,f } },
-	{ STEPS_TYPE_DANCE_DOUBLE, { f,f,f,T,T,T,T,f } },
-	{ STEPS_TYPE_DANCE_DOUBLE, { f,f,f,f,T,T,T,T } },
+	{ StepsType_dance_double, { T,T,T,T,f,f,f,f } },
+	{ StepsType_dance_double, { f,T,T,T,T,f,f,f } },
+	{ StepsType_dance_double, { f,f,f,T,T,T,T,f } },
+	{ StepsType_dance_double, { f,f,f,f,T,T,T,T } },
 };
 #undef T
 #undef f

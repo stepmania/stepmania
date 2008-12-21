@@ -111,7 +111,7 @@ static const Style g_Style_Dance_Single =
 	true,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"single",			// m_szName
-	STEPS_TYPE_DANCE_SINGLE,	// m_StepsType
+	StepsType_dance_single,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	4,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -147,7 +147,7 @@ static const Style g_Style_Dance_Versus =
 	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"versus",			// m_szName
-	STEPS_TYPE_DANCE_SINGLE,	// m_StepsType
+	StepsType_dance_single,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	4,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -183,7 +183,7 @@ static const Style g_Style_Dance_Double =
 	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"double",			// m_szName
-	STEPS_TYPE_DANCE_DOUBLE,	// m_StepsType
+	StepsType_dance_double,	// m_StepsType
 	StyleType_OnePlayerTwoSides,		// m_StyleType
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -227,7 +227,7 @@ static const Style g_Style_Dance_Couple =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"couple",			// m_szName
-	STEPS_TYPE_DANCE_COUPLE,	// m_StepsType
+	StepsType_dance_couple,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	4,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -263,7 +263,7 @@ static const Style g_Style_Dance_Solo =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"solo",				// m_szName
-	STEPS_TYPE_DANCE_SOLO,		// m_StepsType
+	StepsType_dance_solo,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	6,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -303,7 +303,7 @@ static const Style g_Style_Dance_Couple_Edit =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"couple-edit",			// m_szName
-	STEPS_TYPE_DANCE_COUPLE,	// m_StepsType
+	StepsType_dance_couple,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -344,7 +344,7 @@ static const Style g_Style_Dance_Couple_Edit =
 static const Style g_Style_Dance_Solo_Versus =
 {	// STYLE_DANCE_SOLO_VERSUS 
 	"dance-solo-versus",		// m_szName
-	STEPS_TYPE_DANCE_SOLO,		// m_StepsType
+	StepsType_dance_solo,		// m_StepsType
 	ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 	6,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -384,7 +384,7 @@ static const Style g_Style_Dance_Routine =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"routine",			// m_szName
-	STEPS_TYPE_DANCE_ROUTINE,	// m_StepsType
+	StepsType_dance_routine,	// m_StepsType
 	StyleType_TwoPlayersSharedSides,	// m_StyleType
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -499,7 +499,7 @@ static const Style g_Style_Pump_Single =
 	false,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"single",			// m_szName
-	STEPS_TYPE_PUMP_SINGLE,		// m_StepsType
+	StepsType_pump_single,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	5,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -537,7 +537,7 @@ static const Style g_Style_Pump_Versus =
 	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"versus",			// m_szName
-	STEPS_TYPE_PUMP_SINGLE,		// m_StepsType
+	StepsType_pump_single,		// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	5,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -575,7 +575,7 @@ static const Style g_Style_Pump_HalfDouble =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"halfdouble",			// m_szName
-	STEPS_TYPE_PUMP_HALFDOUBLE,	// m_StepsType
+	StepsType_pump_halfdouble,	// m_StepsType
 	StyleType_OnePlayerTwoSides,		// m_StyleType
 	6,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -615,7 +615,7 @@ static const Style g_Style_Pump_Double =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"double",			// m_szName
-	STEPS_TYPE_PUMP_DOUBLE,		// m_StepsType
+	StepsType_pump_double,		// m_StepsType
 	StyleType_OnePlayerTwoSides,		// m_StyleType
 	10,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -663,7 +663,7 @@ static const Style g_Style_Pump_Couple =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"couple",			// m_szName
-	STEPS_TYPE_PUMP_COUPLE,		// m_StepsType
+	StepsType_pump_couple,		// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	5,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -701,7 +701,7 @@ static const Style g_Style_Pump_Couple_Edit =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"couple-edit",			// m_szName
-	STEPS_TYPE_PUMP_COUPLE,		// m_StepsType
+	StepsType_pump_couple,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	10,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -808,7 +808,7 @@ static const Style g_Style_KB7_Single =
 	false,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"single",			// m_szName
-	STEPS_TYPE_KB7_SINGLE,		// m_StepsType
+	StepsType_kb7_single,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	7,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -850,7 +850,7 @@ static const Style g_Style_KB7_Versus =
 	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"versus",			// m_szName
-	STEPS_TYPE_KB7_SINGLE,		// m_StepsType
+	StepsType_kb7_single,		// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	7,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -937,7 +937,7 @@ static const Style g_Style_Ez2_Single =
 	false,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"single",			// m_szName
-	STEPS_TYPE_EZ2_SINGLE,		// m_StepsType
+	StepsType_ez2_single,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	5,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -975,7 +975,7 @@ static const Style g_Style_Ez2_Real =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"real",				// m_szName
-	STEPS_TYPE_EZ2_REAL,		// m_StepsType
+	StepsType_ez2_real,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	7,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1017,7 +1017,7 @@ static const Style g_Style_Ez2_Single_Versus =
 	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"versus",			// m_szName
-	STEPS_TYPE_EZ2_SINGLE,		// m_StepsType
+	StepsType_ez2_single,		// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	5,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1055,7 +1055,7 @@ static const Style g_Style_Ez2_Real_Versus =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"versusReal",			// m_szName
-	STEPS_TYPE_EZ2_REAL,		// m_StepsType
+	StepsType_ez2_real,		// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	7,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1097,7 +1097,7 @@ static const Style g_Style_Ez2_Real_Double =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"double",			// m_szName
-	STEPS_TYPE_EZ2_DOUBLE,		// m_StepsType
+	StepsType_ez2_double,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	10,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1204,7 +1204,7 @@ static const Style g_Style_Para_Single =
 	true,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"single",			// m_szName
-	STEPS_TYPE_PARA_SINGLE,		// m_StepsType
+	StepsType_para_single,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	5,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1242,7 +1242,7 @@ static const Style g_Style_Para_Versus =
 	true,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"versus",			// m_szName
-	STEPS_TYPE_PARA_SINGLE,		// m_StepsType
+	StepsType_para_single,		// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	5,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1331,7 +1331,7 @@ static const Style g_Style_DS3DDX_Single =
 	true,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"single",			// m_szName
-	STEPS_TYPE_DS3DDX_SINGLE,	// m_StepsType
+	StepsType_ds3ddx_single,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1434,7 +1434,7 @@ static const Style g_Style_Beat_Single5 =
 	true,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"single5",			// m_szName
-	STEPS_TYPE_BEAT_SINGLE5,	// m_StepsType
+	StepsType_beat_single5,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	6,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1474,7 +1474,7 @@ static const Style g_Style_Beat_Double =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"double5",			// m_szName
-	STEPS_TYPE_BEAT_DOUBLE5,	// m_StepsType
+	StepsType_beat_double5,	// m_StepsType
 	StyleType_OnePlayerTwoSides,		// m_StyleType
 	12,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1526,7 +1526,7 @@ static const Style g_Style_Beat_Single7 =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"single7",			// m_szName
-	STEPS_TYPE_BEAT_SINGLE7,	// m_StepsType
+	StepsType_beat_single7,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1570,7 +1570,7 @@ static const Style g_Style_Beat_Double7 =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"double7",			// m_szName
-	STEPS_TYPE_BEAT_DOUBLE7,	// m_StepsType
+	StepsType_beat_double7,	// m_StepsType
 	StyleType_OnePlayerTwoSides,		// m_StyleType
 	16,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1694,7 +1694,7 @@ static const Style g_Style_Maniax_Single =
 	true,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"single",			// m_szName
-	STEPS_TYPE_MANIAX_SINGLE,	// m_StepsType
+	StepsType_maniax_single,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	4,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1730,7 +1730,7 @@ static const Style g_Style_Maniax_Versus =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"versus",			// m_szName
-	STEPS_TYPE_MANIAX_SINGLE,	// m_StepsType
+	StepsType_maniax_single,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	4,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1766,7 +1766,7 @@ static const Style g_Style_Maniax_Double =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"double",			// m_szName
-	STEPS_TYPE_MANIAX_DOUBLE,	// m_StepsType
+	StepsType_maniax_double,	// m_StepsType
 	StyleType_OnePlayerTwoSides,		// m_StyleType
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1864,7 +1864,7 @@ static const Style g_Style_Techno_Single4 =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"single4",			// m_szName
-	STEPS_TYPE_TECHNO_SINGLE4,	// m_StepsType
+	StepsType_techno_single4,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	4,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1900,7 +1900,7 @@ static const Style g_Style_Techno_Single5 =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"single5",			// m_szName
-	STEPS_TYPE_TECHNO_SINGLE5,	// m_StepsType
+	StepsType_techno_single5,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	5,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1940,7 +1940,7 @@ static const Style g_Style_Techno_Single8 =
 	false,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"single8",			// m_szName
-	STEPS_TYPE_TECHNO_SINGLE8,	// m_StepsType
+	StepsType_techno_single8,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -1984,7 +1984,7 @@ static const Style g_Style_Techno_Versus4 =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"versus4",			// m_szName
-	STEPS_TYPE_TECHNO_SINGLE4,	// m_StepsType
+	StepsType_techno_single4,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	4,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2020,7 +2020,7 @@ static const Style g_Style_Techno_Versus5 =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"versus5",			// m_szName
-	STEPS_TYPE_TECHNO_SINGLE5,	// m_StepsType
+	StepsType_techno_single5,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	5,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2060,7 +2060,7 @@ static const Style g_Style_Techno_Versus8 =
 	true,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"versus8",			// m_szName
-	STEPS_TYPE_TECHNO_SINGLE8,	// m_StepsType
+	StepsType_techno_single8,	// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2106,7 +2106,7 @@ static const Style g_Style_Techno_Double4 =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"double4",			// m_szName
-	STEPS_TYPE_TECHNO_DOUBLE4,	// m_StepsType
+	StepsType_techno_double4,	// m_StepsType
 	StyleType_OnePlayerTwoSides,		// m_StyleType
 	8,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2150,7 +2150,7 @@ static const Style g_Style_Techno_Double5 =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"double5",			// m_szName
-	STEPS_TYPE_TECHNO_DOUBLE5,	// m_StepsType
+	StepsType_techno_double5,	// m_StepsType
 	StyleType_OnePlayerTwoSides,		// m_StyleType
 	10,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2279,7 +2279,7 @@ static const Style g_Style_Popn_Five =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"popn-five",			// m_szName
-	STEPS_TYPE_POPN_FIVE,		// m_StepsType
+	StepsType_popn_five,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	5,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2317,7 +2317,7 @@ static const Style g_Style_Popn_Nine =
 	true,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"popn-nine",			// m_szName
-	STEPS_TYPE_POPN_NINE,		// m_StepsType
+	StepsType_popn_nine,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	9,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2425,7 +2425,7 @@ static const Style g_Style_Karaoke_Single =
 	true,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
 	"single",			// m_szName
-	STEPS_TYPE_KARAOKE_SINGLE,		// m_StepsType
+	StepsType_karaoke_single,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	1,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -2506,7 +2506,7 @@ static const Style g_Style_Lights_Cabinet =
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
 	"cabinet",			// m_szName
-	STEPS_TYPE_LIGHTS_CABINET,	// m_StepsType
+	StepsType_lights_cabinet,	// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	NUM_CabinetLight,		// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];

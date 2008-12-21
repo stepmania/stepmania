@@ -744,7 +744,7 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		
 		// Don't set first/last beat based on lights.  They often start very 
 		// early and end very late.
-		if( pSteps->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
+		if( pSteps->m_StepsType == StepsType_lights_cabinet )
 			continue;
 
 		NoteData tempNoteData;
@@ -915,7 +915,7 @@ void Song::AddAutoGenNotes()
 			continue;
 
 		/* If m_bAutogenSteps is disabled, only autogen lights. */
-		if( !PREFSMAN->m_bAutogenSteps && stMissing != STEPS_TYPE_LIGHTS_CABINET )
+		if( !PREFSMAN->m_bAutogenSteps && stMissing != StepsType_lights_cabinet )
 			continue;
 		if( !GameManager::GetStepsTypeInfo(stMissing).bAllowAutogen )
 			continue;
@@ -1015,7 +1015,7 @@ bool Song::IsTutorial() const
 	// A Song is a tutorial song is it has only Beginner steps.
 	FOREACH_CONST( Steps*, m_vpSteps, s )
 	{
-		if( (*s)->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
+		if( (*s)->m_StepsType == StepsType_lights_cabinet )
 			continue;	// ignore
 		if( (*s)->GetDifficulty() != Difficulty_Beginner )
 			return false;

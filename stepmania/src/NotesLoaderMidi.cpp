@@ -875,7 +875,7 @@ skip_track:
 		}
 
 		Steps *pSteps = new Steps;
-		pSteps->m_StepsType = STEPS_TYPE_GUITAR_FIVE;
+		pSteps->m_StepsType = StepsType_guitar_five;
 		pSteps->SetDifficulty( (Difficulty)(gd+1) );
 		pSteps->SetNoteData( noteData );
 		songOut.AddSteps( pSteps );

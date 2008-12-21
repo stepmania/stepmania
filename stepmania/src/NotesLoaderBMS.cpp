@@ -173,20 +173,20 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 		 * 9 - popn 9-key */
 		switch( iNumNonEmptyTracks ) 
 		{
-		case 4:		return STEPS_TYPE_DANCE_SINGLE;
-		case 5:		return STEPS_TYPE_POPN_FIVE;
+		case 4:		return StepsType_dance_single;
+		case 5:		return StepsType_popn_five;
 		case 6:
 			// FIXME: There's no way to distinguish between these types.
 			// They use the same tracks.  Assume it's a Beat type since they
 			// are more common.
-			//return STEPS_TYPE_DANCE_SOLO;
-			return STEPS_TYPE_BEAT_SINGLE5;
-		case 8:		return STEPS_TYPE_BEAT_SINGLE7;
-		case 9:		return STEPS_TYPE_POPN_NINE;
+			//return StepsType_dance_solo;
+			return StepsType_beat_single5;
+		case 8:		return StepsType_beat_single7;
+		case 9:		return StepsType_popn_nine;
 		default:	return StepsType_Invalid;
 		}
 	case 2:	// couple/battle
-		return STEPS_TYPE_DANCE_COUPLE;
+		return StepsType_dance_couple;
 	case 3:	// double
 		/* Track counts:
 		 * 8 - dance Double
@@ -194,9 +194,9 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 		 * 16 - beat Double 7-key */
 		switch( iNumNonEmptyTracks ) 
 		{
-		case 8:		return STEPS_TYPE_BEAT_SINGLE7;
-		case 12:	return STEPS_TYPE_BEAT_DOUBLE5;
-		case 16:	return STEPS_TYPE_BEAT_DOUBLE7;
+		case 8:		return StepsType_beat_single7;
+		case 12:	return StepsType_beat_double5;
+		case 16:	return StepsType_beat_double7;
 		default:	return StepsType_Invalid;
 		}
 	default:
@@ -573,7 +573,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	}		
 
 	out.m_StepsType = DetermineStepsType( iPlayer, ndNotes, sPath );
-	if( out.m_StepsType == STEPS_TYPE_BEAT_SINGLE5 && GetTagFromMap( mapNameToData, "#title", sData ) )
+	if( out.m_StepsType == StepsType_beat_single5 && GetTagFromMap( mapNameToData, "#title", sData ) )
 	{
 		/* Hack: guess at 6-panel. */
 		
@@ -583,7 +583,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		
 		// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"		
 		if( sData.find('6', iOpenBracket) < iCloseBracket )
-			out.m_StepsType = STEPS_TYPE_DANCE_SOLO;
+			out.m_StepsType = StepsType_dance_solo;
 	}
 	
 	if( out.m_StepsType == StepsType_Invalid )
@@ -619,14 +619,14 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 
 	switch( out.m_StepsType )
 	{
-	case STEPS_TYPE_DANCE_SINGLE:
+	case StepsType_dance_single:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY3;
 		iTransformNewToOld[2] = BMS_P1_KEY5;
 		iTransformNewToOld[3] = BMS_P1_TURN;
 		break;
-	case STEPS_TYPE_DANCE_DOUBLE:
-	case STEPS_TYPE_DANCE_COUPLE:
+	case StepsType_dance_double:
+	case StepsType_dance_couple:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY3;
 		iTransformNewToOld[2] = BMS_P1_KEY5;
@@ -636,8 +636,8 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		iTransformNewToOld[6] = BMS_P2_KEY5;
 		iTransformNewToOld[7] = BMS_P2_TURN;
 		break;
-	case STEPS_TYPE_DANCE_SOLO:
-	case STEPS_TYPE_BEAT_SINGLE5:
+	case StepsType_dance_solo:
+	case StepsType_beat_single5:
 		// Hey! Why are these exactly the same? :-)
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
@@ -646,7 +646,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		iTransformNewToOld[4] = BMS_P1_KEY5;
 		iTransformNewToOld[5] = BMS_P1_TURN;
 		break;
-	case STEPS_TYPE_POPN_FIVE:
+	case StepsType_popn_five:
 		iTransformNewToOld[0] = BMS_P1_KEY3;
 		iTransformNewToOld[1] = BMS_P1_KEY4;
 		iTransformNewToOld[2] = BMS_P1_KEY5;
@@ -654,7 +654,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		iTransformNewToOld[3] = BMS_P2_KEY2;
 		iTransformNewToOld[4] = BMS_P2_KEY3;
 		break;
-	case STEPS_TYPE_POPN_NINE:
+	case StepsType_popn_nine:
 		iTransformNewToOld[0] = BMS_P1_KEY1; // lwhite
 		iTransformNewToOld[1] = BMS_P1_KEY2; // lyellow
 		iTransformNewToOld[2] = BMS_P1_KEY3; // lgreen
@@ -666,7 +666,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		iTransformNewToOld[7] = BMS_P2_KEY4; // ryellow
 		iTransformNewToOld[8] = BMS_P2_KEY5; // rwhite
 		break;
-	case STEPS_TYPE_BEAT_DOUBLE5:
+	case StepsType_beat_double5:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
 		iTransformNewToOld[2] = BMS_P1_KEY3;
@@ -680,7 +680,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		iTransformNewToOld[10] = BMS_P2_KEY5;
 		iTransformNewToOld[11] = BMS_P2_TURN;
 		break;
-	case STEPS_TYPE_BEAT_SINGLE7:
+	case StepsType_beat_single7:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
 		iTransformNewToOld[2] = BMS_P1_KEY3;
@@ -690,7 +690,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		iTransformNewToOld[6] = BMS_P1_KEY7;
 		iTransformNewToOld[7] = BMS_P1_TURN;
 		break;
-	case STEPS_TYPE_BEAT_DOUBLE7:
+	case StepsType_beat_double7:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
 		iTransformNewToOld[2] = BMS_P1_KEY3;
