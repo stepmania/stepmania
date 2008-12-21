@@ -64,7 +64,7 @@ void ScreenRanking::Init()
 	POINTS_START_Y.Load( m_sName, "PointsStartY" );
 	TIME_START_X.Load( m_sName, "TimeStartX" );
 	TIME_START_Y.Load( m_sName, "TimeStartY" );
-	STEPS_TYPE_COLOR.Load( m_sName,STEPS_TYPE_COLOR_NAME,5 );
+	STEPS_TYPE_COLOR.Load( m_sName,STEPS_TYPE_COLOR_NAME,NUM_RANKING_LINES );
 
 	if( RANKING_TYPE == RankingType_Category )
 	{

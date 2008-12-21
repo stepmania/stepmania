@@ -183,7 +183,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 {
 	RString sCustomDifficulty ;
 	if( params.st != StepsType_Invalid )
-		sCustomDifficulty = GetCustomDifficulty( params.dc, GameManager::GetStepsTypeInfo(params.st).m_StepsTypeCategory );
+		sCustomDifficulty = GetCustomDifficulty( params.st, params.dc );
 
 	Message msg( "Set" );
 	if( params.pSteps )

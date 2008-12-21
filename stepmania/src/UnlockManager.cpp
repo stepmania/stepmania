@@ -15,6 +15,8 @@
 #include <float.h>
 #include "CommonMetrics.h"
 #include "LuaManager.h"
+#include "GameManager.h"
+#include "Style.h"
 
 UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -360,7 +362,8 @@ RString UnlockEntry::GetDescription() const
 		return pSong ? pSong->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Steps:
 		{
-			return (pSong ? pSong->GetDisplayFullTitle() : "") + ", " + GetLocalizedCustomDifficulty( m_dc, StepsTypeCategory_Single );	// TODO: Is using "Single" the best thing we can do here?
+			StepsType st = GameManager::GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;	// TODO: Is this the best thing we can do here?
+			return (pSong ? pSong->GetDisplayFullTitle() : "") + ", " + GetLocalizedCustomDifficulty( st, m_dc );
 		}
 	case UnlockRewardType_Course:
 		return m_Course.IsValid() ? m_Course.ToCourse()->GetDisplayFullTitle() : "";

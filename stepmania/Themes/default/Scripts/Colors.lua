@@ -11,14 +11,14 @@ function PlayerScoreColor( pn )
 end
 
 local CustomDifficultyColors = {
-	"Beginner"	= color("#ff32f8"),
-	"Easy"		= color("#2cff00"),
-	"Medium"	= color("#fee600"),
-	"Hard"		= color("#ff2f39"),
-	"Challenge"	= color("#1cd8ff"),
-	"Edit"		= color("0.8,0.8,0.8,1"),	-- gray
-	"Couple"	= color("#ff9a00"),	-- orange
-	"Routine"	= color("#ff9a00"),	-- orange
+	Beginner	= color("#ff32f8"),
+	Easy		= color("#2cff00"),
+	Medium		= color("#fee600"),
+	Hard		= color("#ff2f39"),
+	Challenge	= color("#1cd8ff"),
+	Edit		= color("0.8,0.8,0.8,1"),	-- gray
+	Couple		= color("#ff9a00"),	-- orange
+	Routine		= color("#ff9a00"),	-- orange
 };
 
 local CourseDifficultyColors = {

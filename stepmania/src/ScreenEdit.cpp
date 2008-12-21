@@ -2889,7 +2889,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[difficulty].choices.clear();
 				FOREACH_ENUM( Difficulty, dc )
 				{
-					g_StepsInformation.rows[difficulty].choices.push_back( "|" + GetLocalizedCustomDifficulty( dc, GameManager::GetStepsTypeInfo( pSteps->m_StepsType ).m_StepsTypeCategory ) );
+					g_StepsInformation.rows[difficulty].choices.push_back( "|" + GetLocalizedCustomDifficulty( pSteps->m_StepsType, dc ) );
 				}
 				g_StepsInformation.rows[difficulty].iDefaultChoice = pSteps->GetDifficulty();
 				g_StepsInformation.rows[difficulty].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);

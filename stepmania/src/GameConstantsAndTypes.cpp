@@ -45,14 +45,7 @@ LuaXType( RadarCategory );
 
 RString StepsTypeToString( StepsType st )
 {
-	RString s = GameManager::GetStepsTypeInfo( st ).szName;
-	/* foo-bar -> Foo_Bar */
-	s.Replace('-','_');
-	for( size_t i = 0; i < s.size(); ++i )
-	{
-		if( i == 0 || s[i-1] == '_' )
-			s[i] = toupper( s[i] );
-	}
+	RString s = GameManager::GetStepsTypeInfo( st ).szName; // "dance-single"
 	return s;
 }
 namespace StringConversion { template<> RString ToString<StepsType>( const StepsType &value ) { return StepsTypeToString(value); } }

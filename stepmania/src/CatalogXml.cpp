@@ -280,7 +280,8 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			FOREACH_CONST( Difficulty, vDifficultiesToShow, iter )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "Difficulty", DifficultyToString(*iter) );
-				pNode3->AppendAttr( "DisplayAs", GetLocalizedCustomDifficulty( *iter, StepsTypeCategory_Single ) );	// TODO: Fix use of Single
+				StepsType st = GameManager::GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;	// TODO: Is this the best thing we can do here?
+				pNode3->AppendAttr( "DisplayAs", GetLocalizedCustomDifficulty( st, *iter ) );	// TODO: Fix use of Single
 			}
 		}
 

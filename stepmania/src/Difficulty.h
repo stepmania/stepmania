@@ -35,11 +35,9 @@ Difficulty GetNextShownCourseDifficulty( Difficulty pn );
 
 // CustomDifficulty is a themeable difficulty name based on Difficulty, string matching on StepsType, and bCourse.
 // It is used to look up localized strings and look up colors.
-RString GetCustomDifficulty( Difficulty dc, StepsTypeCategory stc );
+RString GetCustomDifficulty( StepsType st, Difficulty dc );
 RString GetLocalizedCustomDifficulty( const RString &sCustomDifficulty );
-static inline RString GetLocalizedCustomDifficulty( Difficulty dc, StepsTypeCategory stc ) { return GetLocalizedCustomDifficulty( GetCustomDifficulty( dc, stc ) ); }
-
-
+static inline RString GetLocalizedCustomDifficulty( StepsType st, Difficulty dc ) { return GetLocalizedCustomDifficulty( GetCustomDifficulty(st,dc) ); }
 
 
 #endif

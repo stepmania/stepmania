@@ -447,7 +447,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 					if( pSteps->IsAnEdit() )
 						s = pSteps->GetDescription();
 					else
-						s = GetLocalizedCustomDifficulty( pSteps->GetDifficulty(), GameManager::GetStepsTypeInfo(pSteps->m_StepsType).m_StepsTypeCategory );
+						s = GetLocalizedCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty() );
 				}
 				s += ssprintf( " %d", pSteps->GetMeter() );
 				m_Def.m_vsChoices.push_back( s );
@@ -560,7 +560,7 @@ public:
 				}
 				else
 				{
-					s = GetLocalizedCustomDifficulty( dc, GameManager::GetStepsTypeInfo( GAMESTATE->m_stEdit ).m_StepsTypeCategory );
+					s = GetLocalizedCustomDifficulty( GAMESTATE->m_stEdit, dc );
 				}
 				m_Def.m_vsChoices.push_back( s );
 			}
@@ -736,7 +736,8 @@ class OptionRowHandlerListDifficulties: public OptionRowHandlerList
 
 		FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), d )
 		{
-			RString s = GetLocalizedCustomDifficulty( *d, StepsTypeCategory_Single );	// TODO: Fix use of Single
+			StepsType st = GameManager::GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;	// TODO: Is this the best thing we can do here?
+			RString s = GetLocalizedCustomDifficulty( st, *d );
 
 			m_Def.m_vsChoices.push_back( s ); 
 			GameCommand mc;

@@ -4,6 +4,8 @@
 #include "ThemeMetric.h"
 #include "LuaManager.h"
 #include "LocalizedString.h"
+#include "GameConstantsAndTypes.h"
+#include "GameManager.h"
 
 static const char *DifficultyNames[] = {
 	"Beginner",
@@ -76,12 +78,13 @@ CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 
 static ThemeMetric<RString> NAMES("CustomDifficulty","Names");
 
-RString GetCustomDifficulty( Difficulty dc, StepsTypeCategory stc )
+RString GetCustomDifficulty( StepsType st, Difficulty dc )
 {
-	RString s;
-	switch( stc )
+	const StepsTypeInfo &sti = GameManager::GetStepsTypeInfo( st );
+
+	switch( sti.m_StepsTypeCategory )
 	{
-	DEFAULT_FAIL(stc);
+	DEFAULT_FAIL(sti.m_StepsTypeCategory);
 	case StepsTypeCategory_Single:
 	case StepsTypeCategory_Double:
 		if( dc == Difficulty_Edit )
@@ -90,16 +93,22 @@ RString GetCustomDifficulty( Difficulty dc, StepsTypeCategory stc )
 		}
 		else
 		{
-			/*
-			// OPTIMIZATION OPPORTUNITY: cache these metrics.
+			// OPTIMIZATION OPPORTUNITY: cache these metrics and cache the splitting
 			vector<RString> vsNames;
 			split( NAMES, ",", vsNames );
-			FOREACH( RString, vsNames, s )
+			FOREACH( RString, vsNames, sName )
 			{
-				if( STEPS_TYPE
-
+				ThemeMetric<StepsType> STEPS_TYPE("CustomDifficulty",(*sName)+"StepsType");
+				if( STEPS_TYPE == StepsType_Invalid  ||  st == STEPS_TYPE )	// match
+				{
+					ThemeMetric<Difficulty> DIFFICULTY("CustomDifficulty",(*sName)+"Difficulty");
+					if( DIFFICULTY == Difficulty_Invalid  ||  dc == DIFFICULTY )	// match
+					{
+						ThemeMetric<RString> STRING("CustomDifficulty",(*sName)+"String");
+						return STRING;
+					}
+				}
 			}
-			*/
 			return DifficultyToString( dc );
 		}
 	case StepsTypeCategory_Couple:
