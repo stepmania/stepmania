@@ -22,8 +22,8 @@ local t = LoadFallbackB();
 
 t[#t+1] = Def.ActorFrame { 
 	InitCommand=cmd(x,SCREEN_CENTER_X+140;y,SCREEN_CENTER_Y-20);
-	OnCommand=cmd(addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
-	OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
+	OnCommand=cmd(addx,SCREEN_WIDTH*0.6;bounceend,0.5;addx,-SCREEN_WIDTH*0.6);
+	OffCommand=cmd(bouncebegin,0.5;addx,SCREEN_WIDTH*0.6);
 	LoadActor( "_banner mask" ) .. {
 		InitCommand=cmd(y,-74;zwrite,1;z,1;blend,"BlendMode_NoEffect");
 	};
@@ -65,10 +65,11 @@ for pn in ivalues(PlayerNumber) do
 	local MetricsName = "OptionsArea" .. PlayerNumberToString(pn);
 	local spacing_x = THEME:GetMetric("ModIconRowSelectMusic","SpacingX");
 	local spacing_y = THEME:GetMetric("ModIconRowSelectMusic","SpacingY");
+	local num = THEME:GetMetric("ModIconRowSelectMusic","NumModIcons");
 	t[#t+1] = Def.ActorFrame {
-		InitCommand=function(self) self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXYAndOnCommand(self,Var "LoadingScreen"); end;
+		InitCommand=function(self) self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
 		Def.ActorFrame {
-			InitCommand=cmd(x,-1*spacing_x;y,-1*spacing_y;);
+			InitCommand=cmd(x,(-1-(num-1)/2)*spacing_x;y,(-1-(num-1)/2)*spacing_y;);
 			LoadActor( "option icon header" ) .. {
 			};
 			LoadFont("_terminator two 18px" ) .. {
@@ -95,7 +96,7 @@ t[#t+1] = Def.ActorFrame {
 		SetCommand = function(self)
 			local so = GAMESTATE:GetSortOrder();
 			if so ~= nil then
-				self:settext( string.upper(so) )
+				self:settext( string.upper( SortOrderToLocalizedString(so)) )
 			end;
 		end;
 		SortOrderChangedMessageCommand=cmd(playcommand,"Set");
@@ -116,7 +117,7 @@ for pn in ivalues(PlayerNumber) do
 	t[#t+1] = Def.PaneDisplay {
 		MetricsGroup="PaneDisplay";
 		PlayerNumber=pn;
-		InitCommand=function(self) self:player(pn); self:playcommand("Set"); self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXYAndOnCommand(self,Var "LoadingScreen"); end;
+		InitCommand=function(self) self:player(pn); self:playcommand("Set"); self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
 		SetCommand=function(self) self:SetFromGameState() end;
 		CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
 		CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
@@ -128,28 +129,28 @@ t[#t+1] = Def.BPMDisplay {
 	File=THEME:GetPathF("BPMDisplay", "bpm");
 	Name="BPMDisplay";
 	InitCommand=cmd(horizalign,right;x,SCREEN_CENTER_X+294;y,SCREEN_CENTER_Y-9;zoomx,0.8;shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000"););
-	OnCommand=cmd(stoptweening;addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
-	OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
+	OnCommand=cmd(stoptweening;addx,SCREEN_WIDTH*0.6;bounceend,0.5;addx,-SCREEN_WIDTH*0.6);
+	OffCommand=cmd(bouncebegin,0.5;addx,SCREEN_WIDTH*0.6);
 	SetCommand=function(self) self:SetFromGameState() end;
 	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 };
 t[#t+1] = LoadActor( "_bpm label" ) .. {
 	InitCommand=cmd(horizalign,left;x,SCREEN_CENTER_X+280;y,SCREEN_CENTER_Y-10);
-	OnCommand=cmd(addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
-	OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
+	OnCommand=cmd(addx,SCREEN_WIDTH*0.6;bounceend,0.5;addx,-SCREEN_WIDTH*0.6);
+	OffCommand=cmd(bouncebegin,0.5;addx,SCREEN_WIDTH*0.6);
 };
 
 t[#t+1] = LoadActor( "temp bpm meter" ) .. {
 	InitCommand=cmd(x,SCREEN_CENTER_X+230;y,SCREEN_CENTER_Y-22);
-	OnCommand=cmd(addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
-	OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
+	OnCommand=cmd(addx,SCREEN_WIDTH*0.6;bounceend,0.5;addx,-SCREEN_WIDTH*0.6);
+	OffCommand=cmd(bouncebegin,0.5;addx,SCREEN_WIDTH*0.6);
 };
 
 t[#t+1] = Def.ActorFrame {	
 	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
-	OnCommand=cmd(addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
-	OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
+	OnCommand=cmd(addx,SCREEN_WIDTH*0.6;bounceend,0.5;addx,-SCREEN_WIDTH*0.6);
+	OffCommand=cmd(bouncebegin,0.5;addx,SCREEN_WIDTH*0.6);
 	
 	BeginCommand=cmd(visible,false);
 
@@ -185,8 +186,8 @@ t[#t+1] = Def.ActorFrame {
 };
 t[#t+1] = LoadActor( "stop icon" ) .. {
 	InitCommand=cmd(x,SCREEN_CENTER_X+296;y,SCREEN_CENTER_Y-4);
-	OnCommand=cmd(addx,-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
-	OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
+	OnCommand=cmd(addx,SCREEN_WIDTH*0.6;bounceend,0.5;addx,-SCREEN_WIDTH*0.6);
+	OffCommand=cmd(bouncebegin,0.5;addx,SCREEN_WIDTH*0.6);
 	SetCommand=function(self) 
 			local b = false;
 			local song = GAMESTATE:GetCurrentSong();
@@ -310,7 +311,7 @@ t[#t+1] = Def.CourseContentsList {
 for pn in ivalues(PlayerNumber) do
 	local MetricsName = "StepsDisplay" .. PlayerNumberToString(pn);
 	t[#t+1] = StepsDisplay(pn) .. {
-		InitCommand=function(self) self:player(pn); self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXYAndOnCommand(self,Var "LoadingScreen"); end;
+		InitCommand=function(self) self:player(pn); self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
 	};
 end
 

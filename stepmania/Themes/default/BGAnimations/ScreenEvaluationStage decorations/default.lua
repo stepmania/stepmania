@@ -5,7 +5,8 @@ function GraphDisplay( pn )
 			BeginCommand=function(self)
 				local ss = SCREENMAN:GetTopScreen():GetStageStats();
 				self:Set( ss, ss:GetPlayerStageStats(pn) );
-			end,
+				self:player( pn );
+			end
 		};
 	};
 	return t;
@@ -18,7 +19,8 @@ function ComboGraph( pn )
 			BeginCommand=function(self)
 				local ss = SCREENMAN:GetTopScreen():GetStageStats();
 				self:Set( ss, ss:GetPlayerStageStats(pn) );
-			end,
+				self:player( pn );
+			end
 		};
 	};
 	return t;
@@ -47,7 +49,9 @@ if ShowStandardDecoration("ItsARecord") then
 				BeginCommand=function(self)
 					local pss = SCREENMAN:GetTopScreen():GetStageStats():GetPlayerStageStats(pn);
 					local index = pss:GetMachineHighScoreIndex();
-					local hsl = PROFILEMAN:GetMachineProfile():GetHighScoreList(pSong,pSteps);
+					local pSongOrCourse = GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong();
+					local pSteps = GAMESTATE:GetCurrentSteps();
+					local hsl = PROFILEMAN:GetMachineProfile():GetHighScoreList(pSongOrCourse,pSteps);
 					
 					local hsName = hsl:GetHighScores()[1]:GetName();
 					local hsPerc = hsl:GetHighScores()[1]:GetPercentDP();

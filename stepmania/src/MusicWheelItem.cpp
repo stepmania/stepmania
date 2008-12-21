@@ -85,7 +85,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	m_pTextSectionCount->PlayCommand( "On" );
 	this->AddChild( m_pTextSectionCount );
 
-	m_WheelNotifyIcon.SetName( "Icon" );
+	m_WheelNotifyIcon.SetName( "WheelNotifyIcon" );
 	ActorUtil::LoadAllCommands( m_WheelNotifyIcon, "MusicWheelItem" );
 	ActorUtil::SetXY( m_WheelNotifyIcon, "MusicWheelItem" );
 	m_WheelNotifyIcon.PlayCommand( "On" );

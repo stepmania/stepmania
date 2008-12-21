@@ -174,7 +174,7 @@ end
 function StandardDecorationFromTable( MetricsName, t )
 	if type(t) == "table" then
 		t = t .. {
-			InitCommand=function(self) self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXYAndOnCommand(self,Var "LoadingScreen"); end;
+			InitCommand=function(self) self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
 		};
 	end
 	return t;

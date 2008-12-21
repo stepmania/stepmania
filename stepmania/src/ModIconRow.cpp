@@ -44,7 +44,8 @@ void ModIconRow::Load( const RString &sMetricsGroup, PlayerNumber pn )
 	{
 		ModIcon *p = new ModIcon;
 		p->SetName( "ModIcon" );
-		p->SetXY( i*SPACING_X, i*SPACING_Y );
+		float fOffset = SCALE( i, 0, NUM_OPTION_ICONS-1, -(NUM_OPTION_ICONS-1)/2.0f, (float)(NUM_OPTION_ICONS-1)/2.0f );
+		p->SetXY( fOffset*SPACING_X, fOffset*SPACING_Y );
 		p->Load( OPTION_ICON_METRICS_GROUP );
 		ActorUtil::LoadAllCommands( p, sMetricsGroup );
 		m_vpModIcon.push_back( p );
