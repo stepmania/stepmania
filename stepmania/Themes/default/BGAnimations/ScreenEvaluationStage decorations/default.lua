@@ -41,33 +41,39 @@ end
 
 if ShowStandardDecoration("ItsARecord") then
 	for pn in ivalues(PlayerNumber) do
-		local t2 = Def.ActorFrame {
-		 	BeginCommand=function(self)
-				local pss = SCREENMAN:GetTopScreen():GetStageStats():GetPlayerStageStats(pn);
-				local index = pss:GetMachineHighScoreIndex();
-				local hsl = PROFILEMAN:GetMachineProfile():GetHighScoreList(pSong,pSteps):
-				hsl:GetHighScores()[1]:GetName GetScore GetPercentDP
-				if index == 0 then
-					self:GetChild("Record"):visible( true );
-					self:GetChild("NoRecord"):visible( false );
-				else
-					self:GetChild("Record"):visible( false );
-					self:GetChild("NoRecord"):visible( true );
-					if hsl then
-						self:GetChild("NoRecord"):settext("WWWW:\n82.34%");
+		-- only check if player exists, don't draw for both if one doesn't exist -aj
+		if GAMESTATE:IsSideJoined(pn) then
+			local t2 = Def.ActorFrame {
+				BeginCommand=function(self)
+					local pss = SCREENMAN:GetTopScreen():GetStageStats():GetPlayerStageStats(pn);
+					local index = pss:GetMachineHighScoreIndex();
+					local hsl = PROFILEMAN:GetMachineProfile():GetHighScoreList(pSong,pSteps);
+					
+					local hsName = hsl:GetHighScores()[1]:GetName();
+					local hsPerc = hsl:GetHighScores()[1]:GetPercentDP();
+					--hsl:GetHighScores()[1]:GetName GetScore GetPercentDP
+					if index == 0 then
+						self:GetChild("Record"):visible( true );
+						self:GetChild("NoRecord"):visible( false );
 					else
-						self:GetChild("NoRecord"):settext("");
+						self:GetChild("Record"):visible( false );
+						self:GetChild("NoRecord"):visible( true );
+						if hsl then
+							self:GetChild("NoRecord"):settext(hsName..":\n"..hsPerc);
+						else
+							self:GetChild("NoRecord"):settext("");
+						end
 					end
-				end
-			end;
-			LoadFont("_sf sports night ns upright 16px") .. {
-				InitCommand=cmd(name,"Record";settext,"It's a New\nRecord!!!";diffuse,color("#fffc00");strokecolor,color("#807e00");vertspacing,-2;shadowlength,0;glowshift;); 
-			};
-			LoadFont("common normal") .. {
-				InitCommand=cmd(name,"NoRecord";strokecolor,color("#706f43");shadowlength,0;); 
-			};
-		}
-		t[#t+1] = StandardDecorationFromTable( "ItsARecord" .. ToEnumShortString(pn), t2 );
+				end;
+				LoadFont("_sf sports night ns upright 16px") .. {
+					InitCommand=cmd(name,"Record";settext,"It's a New\nRecord!!!";diffuse,color("#fffc00");strokecolor,color("#807e00");vertspacing,-2;shadowlength,0;glowshift;); 
+				};
+				LoadFont("common normal") .. {
+					InitCommand=cmd(name,"NoRecord";strokecolor,color("#706f43");shadowlength,0;); 
+				};
+			}
+			t[#t+1] = StandardDecorationFromTable( "ItsARecord" .. ToEnumShortString(pn), t2 );
+		end
 	end
 end
 
