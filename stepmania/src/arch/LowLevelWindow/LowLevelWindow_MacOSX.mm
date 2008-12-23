@@ -287,7 +287,8 @@ void RenderTarget_MacOSX::FinishRenderingTo()
 	m_OldContext = nil;
 }
 
-LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(NULL)
+
+LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(NULL), m_DisplayID(0)
 {
 	POOL;
 	m_WindowDelegate = [[SMWindowDelegate alloc] init];
@@ -453,7 +454,7 @@ void LowLevelWindow_MacOSX::ShutDownFullScreen()
 	
 	ASSERT( err == kCGErrorSuccess );
 	CGDisplayShowCursor( kCGDirectMainDisplay );
-	err = CGReleaseAllDisplays();
+	err = CGDisplayRelease( m_DisplayID );
 	ASSERT( err == kCGErrorSuccess );
 	SetActualParamsFromMode( m_CurrentDisplayMode );
 	// We don't own this so we cannot release it.
@@ -469,7 +470,8 @@ int LowLevelWindow_MacOSX::ChangeDisplayMode( const VideoModeParams& p )
 	
 	if( !m_CurrentDisplayMode )
 	{
-		if( (err = CGCaptureAllDisplays()) != kCGErrorSuccess )
+		m_DisplayID = CGMainDisplayID();
+		if( (err = CGDisplayCapture(m_DisplayID)) != kCGErrorSuccess )
 			return err;
 		// Only hide the first time we go to full screen.
 		CGDisplayHideCursor( kCGDirectMainDisplay );	
