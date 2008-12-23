@@ -13,24 +13,6 @@
 #include "arch/Dialog/Dialog.h"
 #include <float.h>
 
-#if defined(MACOSX) && defined(__ppc__)
-#	define USE_VECLIB
-#endif
-
-#if defined(USE_VECLIB)
-// Work around global namespace pollution.
-// www.gnu.org/software/gsl/manual/gsl-ref_43.html
-namespace vblas
-{
-# include <vecLib/vBLAS.h>
-}
-using vblas::cblas_sgemv;
-using vblas::cblas_sgemm;
-using vblas::CblasRowMajor;
-using vblas::CblasTrans;
-using vblas::CblasNoTrans;
-#endif
-
 void RageVec3ClearBounds( RageVector3 &mins, RageVector3 &maxs )
 {
 	mins = RageVector3( FLT_MAX, FLT_MAX, FLT_MAX );
@@ -95,10 +77,6 @@ void RageVec3TransformNormal( RageVector3* pOut, const RageVector3* pV, const Ra
 
 void RageVec4TransformCoord( RageVector4* pOut, const RageVector4* pV, const RageMatrix* pM )
 {
-#if defined(USE_VECLIB)
-	// (M^t . v)^t = v^t . M 
-	cblas_sgemv( CblasRowMajor, CblasTrans, 4, 4, 1, &pM->m00, 4, &pV->x, 1, 0, &pOut->x, 1 );
-#else
 	const RageMatrix &a = *pM;
 	const RageVector4 &v = *pV;
 	*pOut = RageVector4(
@@ -106,7 +84,6 @@ void RageVec4TransformCoord( RageVector4* pOut, const RageVector4* pV, const Rag
 		a.m01*v.x+a.m11*v.y+a.m21*v.z+a.m31*v.w,
 		a.m02*v.x+a.m12*v.y+a.m22*v.z+a.m32*v.w,
 		a.m03*v.x+a.m13*v.y+a.m23*v.z+a.m33*v.w );
-#endif
 }
 
 RageMatrix::RageMatrix( float v00, float v01, float v02, float v03,
@@ -139,9 +116,6 @@ RageMatrix RageMatrix::GetTranspose() const
 
 void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatrix* pB )
 {
-#if defined(USE_VECLIB)
-	cblas_sgemm( CblasRowMajor, CblasNoTrans, CblasNoTrans, 4, 4, 4, 1, &pB->m00, 4, &pA->m00, 4, 0, &pOut->m00, 4);
-#else
 //#if defined(_WINDOWS) || defined(_XBOX)
 //	// <30 cycles for theirs versus >100 for ours.
 //	D3DXMatrixMultiply( (D3DMATRIX*)pOut, (D3DMATRIX*)pA, (D3DMATRIX*)pB );
@@ -169,7 +143,6 @@ void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatri
 	);
 	// phew!
 //#endif
-#endif
 }
 
 void RageMatrixTranslation( RageMatrix* pOut, float x, float y, float z )
