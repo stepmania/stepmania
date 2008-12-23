@@ -539,12 +539,18 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			else if( bLeftIsDown )
 			{
 				if( input.type != IET_RELEASE )
+				{
+					MESSAGEMAN->Broadcast( "PreviousSong" );
 					m_MusicWheel.Move( -1 );
+				}
 			}
 			else if( bRightIsDown )
 			{
 				if( input.type != IET_RELEASE )
+				{
+					MESSAGEMAN->Broadcast( "NextSong" );
 					m_MusicWheel.Move( +1 );
+				}
 			}
 			else
 			{
