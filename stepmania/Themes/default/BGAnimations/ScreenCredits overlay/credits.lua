@@ -73,6 +73,7 @@ local programming = {
 	"Jason “Wolfman2000” Felds",
 	"Eric “Subwire” Gustafson",
 	"Mike “Archer” Hawkins",
+	"Colby “shakesoda“ Klein",
 }
 
 local thanks = {
