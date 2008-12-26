@@ -29,6 +29,7 @@
 
 #include "archutils/Common/gcc_byte_swaps.h"
 
+#define attribute_deprecated // Shut ffmpeg up!
 #endif
 
 /*
