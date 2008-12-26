@@ -232,9 +232,13 @@ void ArchHooks_Unix::SetTime( tm newtime )
 		newtime.tm_sec );
 
 	LOG->Trace( "executing '%s'", sCommand.c_str() ); 
-	system( sCommand );
+	int ret = system( sCommand );
+	if( ret == -1 || ret == 127 || !WIFEXITED(ret) || WEXITSTATUS(ret) )
+		LOG->Trace( "'%s' failed", sCommand.c_str() );
 
-	system( "hwclock --systohc" );
+	ret = system( "hwclock --systohc" );
+	if( ret == -1 || ret == 127 || !WIFEXITED(ret) || WEXITSTATUS(ret) )
+		LOG->Trace( "'hwclock --systohc' failed" );
 }
 
 #include "RageFileManager.h"
@@ -276,7 +280,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	else if( !stat(RageFileManagerUtil::sInitialWorkingDirectory + "/Songs", &st) && st.st_mode&S_IFDIR )
 		Root = RageFileManagerUtil::sInitialWorkingDirectory;
 	else
-		RageException::Throw( COULDNT_FIND_SONGS.GetValue() );
+		RageException::Throw( "%s", COULDNT_FIND_SONGS.GetValue().c_str() );
 			
 	FILEMAN->Mount( "dir", Root, "/" );
 }
