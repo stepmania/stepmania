@@ -128,7 +128,7 @@ void ArrowEffects::Update()
 		//
 		// Update Beat
 		//
-		{
+		do {
 			float fAccelTime = 0.2f, fTotalTime = 0.5f;
 			float fBeat = GAMESTATE->m_fSongBeatVisible + fAccelTime;
 
@@ -158,7 +158,7 @@ void ArrowEffects::Update()
 			if( bEvenBeat )
 				data.m_fBeatFactor *= -1;
 			data.m_fBeatFactor *= 20.0f;
-		} while(0);
+		} while( false );
 	}
 }
 
