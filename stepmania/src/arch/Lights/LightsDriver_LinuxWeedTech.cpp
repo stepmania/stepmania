@@ -15,37 +15,41 @@ REGISTER_SOUND_DRIVER_CLASS(LinuxWeedTech);
 static int fd = -1;
 static LightsState	CurLights;
 
-inline void SerialClose()
+static inline void SerialClose()
 {
-	if(fd!=1) {close(fd);}
+	if( fd != 1 )
+		close( fd );
 }
 
-inline void SerialOut(const char *str, int len)
+static inline void SerialOut(const char *str, int len)
 {
-	if(fd!=-1) {
-		write(fd,str,len);
-		usleep(2000);
-	}
+	if( fd ==-1 )
+		return;
+	write( fd, str, len );
+	usleep( 2000 );
 }
 
-inline void SerialOpen()
+static inline void SerialOpen()
 {
 	// Make sure we've not already opened the port
 	SerialClose();
 	
 	// Open a fresh instance..
-	fd = open("/dev/ttyS0", O_WRONLY | O_NOCTTY | O_NDELAY);
-	if(fd < 0) {LOG->Warn("Error opening serial port for lights. Error:: %d %s", errno, strerror(errno));}
-	else {
+	fd = open( "/dev/ttyS0", O_WRONLY | O_NOCTTY | O_NDELAY );
+	if( fd < 0 )
+	{
+		LOG->Warn( "Error opening serial port for lights. Error:: %d %s", errno, strerror(errno) );
+	}
+	else
+	{
 		struct termios my_termios;
-		tcgetattr(fd, &my_termios);
-		tcflush(fd, TCIFLUSH);
+		tcgetattr( fd, &my_termios );
+		tcflush( fd, TCIFLUSH );
 		my_termios.c_cflag = B9600 | CS8 | CLOCAL | HUPCL;
         	
-		cfsetospeed(&my_termios, B9600);
-		tcsetattr(fd, TCSANOW, &my_termios);
+		cfsetospeed( &my_termios, B9600 );
+		tcsetattr( fd, TCSANOW, &my_termios );
 	}
-	return;
 }
 // End serial driver //
 
@@ -92,39 +96,39 @@ LightsDriver_LinuxWeedTech::LightsDriver_LinuxWeedTech()
 	SerialOpen();
 
 	// Disable device echoing
-	char	strinit[5]={'A','X','0',0x0d,0x00};
-	SerialOut(strinit,5);
-	strinit[0]='B';
-	SerialOut(strinit,5);
-	return;
+	char strinit[5] = { 'A', 'X', '0', 0x0d, 0x00 };
+	SerialOut( strinit, 5 );
+	strinit[0] = 'B';
+	SerialOut( strinit, 5 );
 }
 
 LightsDriver_LinuxWeedTech::~LightsDriver_LinuxWeedTech()
 {
 	// Turn off all lights
-	char	strkill[5]={'A','W','0',0x0d,0x00};
-	SerialOut(strkill,5);
-	strkill[0]='B';
-	SerialOut(strkill,5);
+	char strkill[5] = { 'A', 'W', '0', 0x0d, 0x00 };
+	SerialOut (strkill, 5 );
+	strkill[0] = 'B';
+	SerialOut( strkill, 5 );
 
 	// Close port
 	SerialClose();
-	return;
 }
 
-void LightsDriver_LinuxWeedTech::Set(const LightsState *ls)
+void LightsDriver_LinuxWeedTech::Set( const LightsState *ls )
 {
 	// Re-used var's
-	char	str[6]={0x00,0x00,0x00,'1',0x0d,0x00};
-	bool	bOn = false;
+	char str[6] = { 0x00, 0x00, 0x00, '1', 0x0d, 0x00 };
+	bool bOn = false;
 	
 	{
-		LightsMode	lm = LIGHTSMAN->GetLightsMode();
-		if(lm == LIGHTSMODE_GAMEPLAY) {
+		LightsMode lm = LIGHTSMAN->GetLightsMode();
+		if( lm == LIGHTSMODE_GAMEPLAY )
+		{
 			// Since all cabinet lights flash together during gameplay.. If 1 light is on, all are on.
 			// However, the player's menu buttons do NOT flash. This section allows us to turn
 			// on multiple lights without bogging down the system with delays. ((2ms between commands req.))
-			FOREACH_CabinetLight( cl ) {
+			FOREACH_CabinetLight( cl )
+			{
 				bOn |= ls->m_bCabinetLights[cl];
 				CurLights.m_bCabinetLights[cl] = ls->m_bCabinetLights[cl];
 			}
@@ -132,12 +136,20 @@ void LightsDriver_LinuxWeedTech::Set(const LightsState *ls)
 			str[0]='A';
 			str[1]='W';
 			
-			if(bOn)	{str[2]='C'; str[3]='F';}
-			else 	{str[2]='0'; str[3]='0';}
+			if( bOn )
+			{
+				str[2]='C';
+				str[3]='F';
+			}
+			else
+			{
+				str[2]='0';
+				str[3]='0';
+			}
 			
 			// Send command
-			printf("%s\n",str);
-			SerialOut(str, 6);
+			puts( str );
+			SerialOut( str, 6 );
 			return;
 		}
 		
@@ -145,7 +157,8 @@ void LightsDriver_LinuxWeedTech::Set(const LightsState *ls)
 		{
 			// Only send the command if the light has changed states (on/off)
 			bOn = ls->m_bCabinetLights[cl];
-			if(bOn != CurLights.m_bCabinetLights[cl]) {
+			if( bOn != CurLights.m_bCabinetLights[cl] )
+			{
 				if(cl == LIGHT_MARQUEE_UP_LEFT)		{str[0] = 'A'; str[2] = 'A';}
 				else if(cl == LIGHT_MARQUEE_UP_RIGHT)	{str[0] = 'A'; str[2] = 'B';}
 				else if(cl == LIGHT_MARQUEE_LR_LEFT)	{str[0] = 'A'; str[2] = 'C';}
@@ -154,11 +167,14 @@ void LightsDriver_LinuxWeedTech::Set(const LightsState *ls)
 				else if(cl == LIGHT_BASS_RIGHT)		{str[0] = 'A'; str[2] = 'H';}
 				
 				
-				if(bOn) {str[1]='L';}
-				else	{str[1]='H';}
+				if( bOn )
+					str[1]='L';
+				else
+					str[1]='H';
 				
-				if(str[0]!=0x00) {
-					SerialOut(str, 6);
+				if( str[0] != 0x00 )
+				{
+					SerialOut( str, 6 );
 					str[0]=0x00;
 				}
 				CurLights.m_bCabinetLights[cl] = bOn;
@@ -188,10 +204,13 @@ void LightsDriver_LinuxWeedTech::Set(const LightsState *ls)
 					if(gb == GAME_BUTTON_START)		{str[0] = 'A'; str[2] = 'F';}
 				}
 				
-				if(bOn) {str[1]='L';}
-				else	{str[1]='H';}
+				if( bOn )
+					str[1]='L';
+				else
+					str[1]='H';
 				
-				if(str[0]!=0x00) {
+				if( str[0] != 0x00 )
+				{
 					//SerialOut(str, 6);
 					str[0]=0x00;
 				}
@@ -200,5 +219,4 @@ void LightsDriver_LinuxWeedTech::Set(const LightsState *ls)
 		}
 	}
 
-	return;
 }
