@@ -50,7 +50,7 @@ if ShowStandardDecoration("ItsARecord") then
 					local pss = SCREENMAN:GetTopScreen():GetStageStats():GetPlayerStageStats(pn);
 					local index = pss:GetMachineHighScoreIndex();
 					local pSongOrCourse = GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong();
-					local pSteps = GAMESTATE:GetCurrentSteps();
+					local pSteps = GAMESTATE:GetCurrentSteps(pn);
 					local hsl = PROFILEMAN:GetMachineProfile():GetHighScoreList(pSongOrCourse,pSteps);
 					
 					local hsName = hsl:GetHighScores()[1]:GetName();
