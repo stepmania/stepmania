@@ -246,6 +246,7 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\NoteSkins\common\default"
 	RMDir /r "$INSTDIR\NoteSkins\dance\default"
 	RMDir /r "$INSTDIR\NoteSkins\dance\flat"
+	RMDir /r "$INSTDIR\NoteSkins\dance\gamma"
 	SetOutPath "$INSTDIR\NoteSkins"
 	File "NoteSkins\instructions.txt"
 
@@ -255,6 +256,7 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR\NoteSkins\dance"
 	File /r /x CVS /x .svn "NoteSkins\dance\default"
 	File /r /x CVS /x .svn "NoteSkins\dance\flat"
+	File /r /x CVS /x .svn "NoteSkins\dance\gamma"
 	SetOutPath "$INSTDIR"
 
 	CreateDirectory "$INSTDIR\BackgroundEffects"
@@ -576,6 +578,7 @@ Section "Uninstall"
 	RMDir "$INSTDIR\NoteSkins\common"
 	RMDir /r "$INSTDIR\NoteSkins\dance\default"
 	RMDir /r "$INSTDIR\NoteSkins\dance\flat"
+	RMDir /r "$INSTDIR\NoteSkins\dance\gamma"
 	RMDir /r "$INSTDIR\NoteSkins\dance\note"
 	RMDir /r "$INSTDIR\NoteSkins\dance\solo"
 	RMDir "$INSTDIR\NoteSkins\dance"
