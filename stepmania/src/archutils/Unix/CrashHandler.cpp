@@ -32,7 +32,15 @@ static void safe_print( int fd, ... )
 		const char *p = va_arg( ap, const char * );
 		if( p == NULL )
 			break;
-		write( fd, p, strlen(p) );
+		size_t len = strlen( p );
+		while( len )
+		{
+			ssize_t result = write( fd, p, strlen(p) );
+			if( result == -1 )
+				_exit( 1 );
+			len -= result;
+			p += result;
+		}
 	}
 	va_end( ap );
 }
@@ -79,10 +87,12 @@ static void NORETURN spawn_child_process( int from_parent )
 	}
 
 	char path[1024];
+	char magic[32];
 	GetExecutableName( path, sizeof(path) );
+	strncpy( magic, CHILD_MAGIC_PARAMETER, sizeof(magic) );
 
 	/* Use execve; it's the lowest-level of the exec calls.  The others may allocate. */
-	char *argv[3] = { path, CHILD_MAGIC_PARAMETER, NULL };
+	char *argv[3] = { path, magic, NULL };
 	char *envp[1] = { NULL };
 	execve( path, argv, envp );
 
