@@ -67,7 +67,7 @@ static int LoadInt(LoadState* S)
  LoadVar(S,x);
  if (S->flip)
   x = Swap32(x);
- IF (x<0, "bad integer");
+ IF ((int32_t)x<0, "bad integer");
  return x;
 }
 
