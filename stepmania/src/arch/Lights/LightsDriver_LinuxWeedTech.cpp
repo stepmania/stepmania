@@ -36,6 +36,7 @@ static inline void SerialOut( const char *str, size_t len )
 			return;
 		}
 		len -= result;
+		str += result;
 	}
 	usleep( 2000 );
 }
