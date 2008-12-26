@@ -178,6 +178,8 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 	 */
 #if defined(WIN32)
 #define LI "%I64i"
+#elif defined(PRIi64)
+#define LI "%" PRIi64
 #else
 #define LI "%lli"
 #endif
