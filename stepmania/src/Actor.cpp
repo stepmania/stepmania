@@ -717,7 +717,7 @@ void Actor::BeginTweening( float time, ITween *pTween )
 	{
 		RString sError = ssprintf( "Tween overflow: \"%s\"; infinitely recursing ActorCommand?", GetLineage().c_str() );
 				
-		LOG->Warn( sError );
+		LOG->Warn( "%s", sError.c_str() );
 		Dialog::OK( sError );
 		FinishTweening();
 	}
