@@ -984,11 +984,11 @@ template<typename ND, typename iter, typename TN>
 NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( const _all_tracks_iterator &other ) :
 #define COPY_OTHER( x ) x( other.x )
 	COPY_OTHER( m_pNoteData ),
-	COPY_OTHER( m_iTrack ),
-	COPY_OTHER( m_bReverse ),
 	COPY_OTHER( m_vBeginIters ),
+	COPY_OTHER( m_vCurrentIters ),
 	COPY_OTHER( m_vEndIters ),
-	COPY_OTHER( m_vCurrentIters )
+	COPY_OTHER( m_iTrack ),
+	COPY_OTHER( m_bReverse )
 #undef COPY_OTHER
 {
 }
