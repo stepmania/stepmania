@@ -10,8 +10,8 @@ WheelItemBaseData::WheelItemBaseData( WheelItemDataType type, RString sText, Rag
 
 WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):
 	ActorFrame( cpy ),
-	m_bExpanded( cpy.m_bExpanded ),
-	m_pData( cpy.m_pData )
+	m_pData( cpy.m_pData ),
+	m_bExpanded( cpy.m_bExpanded )
 {
 	// FIXME
 	//if( cpy.m_pGrayBar == cpy.m_sprBar )
