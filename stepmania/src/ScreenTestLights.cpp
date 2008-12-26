@@ -70,17 +70,17 @@ void ScreenTestLights::Update( float fDeltaTime )
 	if( cl == CabinetLight_Invalid )
 		s += CABINET_LIGHT.GetValue()+": -----\n";
 	else
-		s += ssprintf( CABINET_LIGHT.GetValue()+": %d %s\n", cl, CabinetLightToString(cl).c_str() );
+		s += ssprintf( "%s: %d %s\n", CABINET_LIGHT.GetValue().c_str(), cl, CabinetLightToString(cl).c_str() );
 
 	if( !gi.IsValid() )
 	{
-		s += ssprintf( CONTROLLER_LIGHT.GetValue()+": -----\n" );
+		s += CONTROLLER_LIGHT.GetValue()+": -----\n";
 	}
 	else
 	{
 		RString sGameButton = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), gi.button );
 		PlayerNumber pn = (PlayerNumber)(gi.controller);
-		s += ssprintf( CONTROLLER_LIGHT.GetValue()+": %s %d %s\n", PlayerNumberToString(pn).c_str(), gi.button, sGameButton.c_str() );
+		s += ssprintf( "%s: %s %d %s\n", CONTROLLER_LIGHT.GetValue().c_str(), PlayerNumberToString(pn).c_str(), gi.button, sGameButton.c_str() );
 	}
 
 	m_textInputs.SetText( s );

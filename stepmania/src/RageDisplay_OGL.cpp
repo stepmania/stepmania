@@ -505,7 +505,7 @@ RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 	{
 		if( !bAllowUnacceleratedRenderer )
 			return sError + "  " + OBTAIN_AN_UPDATED_VIDEO_DRIVER.GetValue() + "\n\n";
-		LOG->Warn( "Low-performance OpenGL renderer: " + sError );
+		LOG->Warn( "Low-performance OpenGL renderer: %s", sError.c_str() );
 	}
 
 #if defined(_WINDOWS)

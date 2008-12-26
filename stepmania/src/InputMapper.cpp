@@ -716,7 +716,7 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessageOut )
 		MESSAGEMAN->Broadcast( Message_AutoJoyMappingApplied );
 	}
 
-	LOG->Info( sMessageOut );
+	LOG->Info( "%s", sMessageOut.c_str() );
 
 	g_sLastSeenInputDevices.Set( join(",",vsCurrent) );
 	PREFSMAN->SavePrefsToDisk();

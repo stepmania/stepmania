@@ -387,7 +387,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	else
 	{
 		RString sWarning = ssprintf( "Command '%s' is not valid.", cmd.GetOriginalCommandString().c_str() );
-		LOG->Warn( sWarning );
+		LOG->Warn( "%s", sWarning.c_str() );
 		Dialog::OK( sWarning, "INVALID_GAME_COMMAND" );
 	}
 }
