@@ -20,7 +20,7 @@ bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, RageFileBasic &f )
 		return true;
 
 	RString sWarning = ssprintf( "XML: LoadFromFile failed: %s", sError.c_str() );
-	LOG->Warn( sWarning );
+	LOG->Warn( "%s", sWarning.c_str() );
 	Dialog::OK( sWarning, "XML_PARSE_ERROR" );
 	return false;
 }
@@ -39,7 +39,7 @@ bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, const RString &sFile )
 	if( !bSuccess )
 	{
 		RString sWarning = ssprintf( "XML: LoadFromFile failed for file: %s", sFile.c_str() );
-		LOG->Warn( sWarning );
+		LOG->Warn( "%s", sWarning.c_str() );
 		Dialog::OK( sWarning, "XML_PARSE_ERROR" );
 	}
 	return bSuccess;
@@ -84,7 +84,7 @@ static void InitEntities()
 
 
 // skip spaces
-static void tcsskip( const RString &s, unsigned &i )
+static void tcsskip( const RString &s, RString::size_type &i )
 {
 	i = s.find_first_not_of( " \t\r\n", i );
 }
@@ -116,7 +116,7 @@ static void SetString( const RString &s, int iStart, int iEnd, RString* ps, bool
 // Return : advanced string pointer. (error return npos)
 namespace
 {
-unsigned LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, unsigned iOffset )
+RString::size_type LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, RString::size_type iOffset )
 {
 	while( iOffset < xml.size() )
 	{
@@ -130,7 +130,7 @@ unsigned LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, u
 			return iOffset; // well-formed tag
 
 		// XML Attr Name
-		unsigned iEnd = xml.find_first_of( " =", iOffset );
+		RString::size_type iEnd = xml.find_first_of( " =", iOffset );
 		if( iEnd == xml.npos ) 
 		{
 			// error
@@ -207,7 +207,7 @@ unsigned LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, u
 // Param  : pszXml - plain xml text
 //          pi = parser information
 // Return : advanced string pointer  (error return npos)
-unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, unsigned iOffset )
+RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, RString::size_type iOffset )
 {
 	pNode->Clear();
 
@@ -226,7 +226,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 		iOffset += 4;
 
 		/* Find the close tag. */
-		unsigned iEnd = xml.find( "-->", iOffset );
+		RString::size_type iEnd = xml.find( "-->", iOffset );
 		if( iEnd == string::npos )
 		{
 			if( sErrorOut.empty() ) 
@@ -243,7 +243,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 
 	// XML Node Tag Name Open
 	iOffset++;
-	unsigned iTagEnd = xml.find_first_of( " \t\r\n/>", iOffset );
+	RString::size_type iTagEnd = xml.find_first_of( " \t\r\n/>", iOffset );
 	RString sName;
 	SetString( xml, iOffset, iTagEnd, &sName );
 	pNode->SetName( sName );
@@ -293,7 +293,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 	{
 		// Text Value 
 		++iOffset;
-		unsigned iEnd = xml.find( chXMLTagOpen, iOffset );
+		RString::size_type iEnd = xml.find( chXMLTagOpen, iOffset );
 		if( iEnd == string::npos )
 		{
 			if( sErrorOut.empty() ) 
@@ -345,7 +345,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 			if( iOffset >= xml.size()  )
 				continue;
 
-			unsigned iEnd = xml.find_first_of( " >", iOffset );
+			RString::size_type iEnd = xml.find_first_of( " >", iOffset );
 			if( iEnd == string::npos )
 			{
 				if( sErrorOut.empty() ) 
@@ -376,7 +376,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 			if( pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == NULL && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
 			{
 				// Text Value 
-				unsigned iEnd = xml.find( chXMLTagOpen, iOffset );
+				RString::size_type iEnd = xml.find( chXMLTagOpen, iOffset );
 				if( iEnd == string::npos ) 
 				{
 					// error cos not exist CloseTag </TAG>
