@@ -643,11 +643,11 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 
 	int ret = avcodec::av_open_input_file( &m_fctx, "rage://" + sFile, NULL, 0, NULL );
 	if( ret < 0 )
-		return ssprintf( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
+		return RString( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
 
 	ret = avcodec::av_find_stream_info( m_fctx );
 	if( ret < 0 )
-		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
+		return RString( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
 
 	avcodec::AVStream *pStream = FindVideoStream( m_fctx );
 	if( pStream == NULL )
@@ -689,7 +689,7 @@ RString MovieDecoder_FFMpeg::OpenCodec()
 
 	int ret = avcodec::avcodec_open( m_pStream->codec, pCodec );
 	if( ret < 0 )
-		return ssprintf( averr_ssprintf(ret, "Couldn't open codec \"%s\"", pCodec->name) );
+		return RString( averr_ssprintf(ret, "Couldn't open codec \"%s\"", pCodec->name) );
 	ASSERT( m_pStream->codec->codec );
 
 	/* This is set to true when we find a B-frame, to use on the next loop. */
