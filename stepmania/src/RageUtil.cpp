@@ -1418,7 +1418,7 @@ bool utf8_to_wchar_ec( const RString &s, unsigned &start, wchar_t &ch )
 			start += i;
 			return false;
 		}
-		ch = (ch << 6) | byte & 0x3F;
+		ch = (ch << 6) | (byte & 0x3F);
 	}
 
 	bool bValid = true;
@@ -1850,8 +1850,7 @@ void Replace_Unicode_Markers( RString &sText )
 			continue;
 
 		int iNumDigits = 0;
-		while( p < sText.size() &&
-			(bHex && isxdigit(sText[p])) || (!bHex && isdigit(sText[p])) )
+		while( p < sText.size() && bHex? isxdigit(sText[p]):isdigit(sText[p]) )
 		{
 		   p++;
 		   iNumDigits++;
