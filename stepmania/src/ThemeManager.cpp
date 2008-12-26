@@ -124,7 +124,7 @@ void ThemeManager::ClearThemePathCache()
 static void FileNameToMetricsGroupAndElement( const RString &sFileName, RString &sMetricsGroupOut, RString &sElementOut )
 {
 	// split into class name and file name
-	unsigned iIndexOfFirstSpace = sFileName.find(" ");
+	RString::size_type iIndexOfFirstSpace = sFileName.find(" ");
 	if( iIndexOfFirstSpace == string::npos )	// no space
 	{
 		sMetricsGroupOut = "";
