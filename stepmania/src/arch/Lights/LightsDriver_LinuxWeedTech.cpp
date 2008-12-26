@@ -13,19 +13,30 @@ REGISTER_SOUND_DRIVER_CLASS(LinuxWeedTech);
 
 // Begin serial driver //
 static int fd = -1;
-static LightsState	CurLights;
+static LightsState CurLights;
 
 static inline void SerialClose()
 {
 	if( fd != 1 )
 		close( fd );
+	fd = -1;
 }
 
-static inline void SerialOut(const char *str, int len)
+static inline void SerialOut( const char *str, size_t len )
 {
 	if( fd ==-1 )
 		return;
-	write( fd, str, len );
+	while( len )
+	{
+		ssize_t result = write( fd, str, len );
+		if( result == -1 )
+		{
+			LOG->Trace( "Failed to write to lights driver: %s", strerror(errno) );
+			SerialClose();
+			return;
+		}
+		len -= result;
+	}
 	usleep( 2000 );
 }
 
