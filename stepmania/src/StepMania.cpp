@@ -605,7 +605,7 @@ bool CheckVideoDefaultSettings()
 	// Video card changed since last run
 	RString sVideoDriver = GetVideoDriverName();
 	
-	LOG->Trace( "Last seen video driver: " + PREFSMAN->m_sLastSeenVideoDriver.Get() );
+	LOG->Trace( "Last seen video driver: %s", PREFSMAN->m_sLastSeenVideoDriver.Get().c_str() );
 
 	VideoCardDefaults defaults;
 	
