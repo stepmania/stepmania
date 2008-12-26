@@ -377,7 +377,7 @@ void InputHandler_Linux_Event::InputThread()
 
 			if( ret != sizeof(event) )
 			{
-				LOG->Warn("Unexpected packet (size %i != %i) from joystick %i; disabled", ret, sizeof(event), i);
+				LOG->Warn("Unexpected packet (size %i != %i) from joystick %i; disabled", ret, (int)sizeof(event), i);
 				g_apEventDevices[i]->Close();
 				continue;
 			}
