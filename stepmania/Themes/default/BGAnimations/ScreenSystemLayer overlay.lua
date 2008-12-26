@@ -29,7 +29,7 @@ local t = Def.ActorFrame {
 	LoadFont(Var "LoadingScreen","message") .. {
 		InitCommand=cmd(maxwidth,750;
 		horizalign,left;vertalign,top;
-		shadowlength,2;shadowcolor,("#000000");
+		shadowlength,2;shadowcolor,color("#000000");
 		y,SCREEN_TOP+20;
 		diffusealpha,0
 		);
