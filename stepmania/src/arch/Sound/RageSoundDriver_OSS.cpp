@@ -38,7 +38,9 @@ void RageSoundDriver_OSS::MixerThread()
 {
 	/* We want to set a higher priority, but Unix only lets root renice
 	 * < 0, which is silly.  Give it a try, anyway. */
-	nice( -10 );
+	int status = nice( -10 );
+	if( status != -1 )
+		LOG->Trace( "Set MixerThread nice value to %d", status );
 
 	while( !shutdown )
 	{
@@ -58,7 +60,9 @@ void RageSoundDriver_OSS::MixerThread()
 
 void RageSoundDriver_OSS::SetupDecodingThread()
 {
-	nice( -5 );
+	int status = nice( -5 );
+	if( status != -1 )
+		LOG->Trace( "Set DecodingThread nice value to %d", status );
 }
 
 bool RageSoundDriver_OSS::GetData()
