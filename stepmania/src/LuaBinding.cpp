@@ -226,6 +226,7 @@ bool LuaBinding::CheckLuaObjectType( lua_State *L, int iArg, const char *szType 
 #if defined(FAST_LUA)
 	return true;
 #endif
+	luaL_checkany( L, iArg );
 
 	/* Check that szType is in metatable.heirarchy. */
 	if( !luaL_getmetafield(L, iArg, "heirarchy") )

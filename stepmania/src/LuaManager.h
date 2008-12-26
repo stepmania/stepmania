@@ -190,6 +190,7 @@ inline bool MyLua_checkboolean (lua_State *L, int numArg)
  * used to mean "cmd,false". */
 inline bool MyLua_checkintboolean( lua_State *L, int iArg )
 {
+	luaL_checkany( L, iArg );
 	int iType = lua_type( L, iArg );
 	if( iType == LUA_TNUMBER )
 	{
