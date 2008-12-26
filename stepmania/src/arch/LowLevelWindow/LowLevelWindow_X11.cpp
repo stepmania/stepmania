@@ -35,7 +35,7 @@ static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed 
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
 	if( !OpenXConnection() )
-		RageException::Throw( FAILED_CONNECTION_XSERVER.GetValue() );
+		RageException::Throw( "%s", FAILED_CONNECTION_XSERVER.GetValue().c_str() );
 
 	const int iScreen = DefaultScreen( Dpy );
 	int iXServerVersion = XVendorRelease( Dpy ); /* eg. 40201001 */
