@@ -11,9 +11,9 @@ ModIcon::ModIcon()
 
 ModIcon::ModIcon( const ModIcon &cpy ):
 	ActorFrame(cpy),
+	m_text(cpy.m_text),
 	m_sprFilled(cpy.m_sprFilled),
-	m_sprEmpty(cpy.m_sprEmpty),
-	m_text(cpy.m_text)
+	m_sprEmpty(cpy.m_sprEmpty)
 {
 	this->RemoveAllChildren();
 	this->AddChild( m_sprFilled );
