@@ -5,17 +5,25 @@
 	"iMac4,1" = "iMac (Core Duo)";
 	"iMac5,1" = "iMac (Core 2 Duo)"; 
 	"iMac6,1" = "iMac (24-inch Core 2 Duo)";
+	"iMac7,1" = "iMac (Aluminum Core 2 Duo)";
+	"iMac8,1" = "iMac (Aluminum Core 2 Duo)";
+	"M43ADP1,1"  = "Development Mac Pro";
 	"MacBook1,1" = "MacBook (Core Duo)";
 	"MacBook2,1" = "MacBook (Core 2 Duo)";
 	"MacBook3,1" = "MacBook (Core 2 Duo)";
+	"MacBook4,1" = "MacBook (Early 2008)";
+	"MacBookAir1,1" = "MacBook Air";
 	"MacBookPro1,1" = "MacBook Pro (15-inch Core Duo)"; 
 	"MacBookPro1,2" = "MacBook Pro (17-inch Core Duo)";
 	"MacBookPro2,1" = "MacBook Pro (17-inch Core 2 Duo)";
 	"MacBookPro2,2" = "MacBook Pro (15-inch Core 2 Duo)";
 	"MacBookPro3,1" = "MacBook Pro (15-inch or 17-inch LED, Core 2 Duo)";
+	"MacBookPro4,1" = "MacBook Pro (15-inch or 17-inch LED, Early 2008)";
+	"MacBookPro5,1" = "MacBook Pro (15-inch LED Unibody, Late 2008)";
 	"Macmini1,1" = "Mac mini (Core Duo/Solo)";
 	"MacPro1,1" = "Mac Pro (Quad Xeon)";
-	"MacPro1,2" = "Mac Pro (Octal Xeon)";
+	"MacPro2,1" = "Mac Pro (Octal Xeon)";
+	"MacPro3,1" = "Mac Pro (Early 2008)";
 	"PowerBook1,1" = "PowerBook G3"; 
 	"PowerBook2,1" = iBook; 
 	"PowerBook2,2" = "iBook (FireWire)"; 
@@ -73,4 +81,6 @@
 	"RackMac1,1" = "Xserve G4"; 
 	"RackMac1,2" = "Xserve G4 (Slot-Loading)"; 
 	"RackMac3,1" = "Xserve G5";
+	"Xserve1,1" = "Xserve Xeon";
+	"Xserve2,1" = "Xserve Xeon";
 }
