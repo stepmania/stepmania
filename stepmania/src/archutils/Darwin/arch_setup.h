@@ -5,8 +5,6 @@
 extern "C" int SM_main( int argc, char *argv[] );
 #define main(x,y) SM_main(x,y)
 
-#include <libkern/OSByteOrder.h>
-
 #define HAVE_VERSION_INFO
 #define HAVE_CXA_DEMANGLE
 #define HAVE_THEORA
@@ -20,6 +18,8 @@ extern "C" int SM_main( int argc, char *argv[] );
  * but no <endian.h>. The definitions of LITTLE_ENDIAN, BIG_ENDIAN and end up conflicting
  * even though they resolve to the same thing (bug in gcc?). */
 #define HAVE_MACHINE_ENDIAN_H
+#define HAVE_INTTYPES_H
+#define __STDC_FORMAT_MACROS
 #define CRASH_HANDLER
 
 #define GL_GET_ERROR_IS_SLOW
@@ -45,6 +45,7 @@ extern "C" int SM_main( int argc, char *argv[] );
 # define __MACOSX__
 #endif
 
+#include <libkern/OSByteOrder.h>
 #define ArchSwap32(n) OSSwapInt32((n))
 #define ArchSwap24(n) (ArchSwap32((n)) >> 8)
 #define ArchSwap16(n) OSSwapInt16((n))
