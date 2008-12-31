@@ -555,7 +555,7 @@ static bool EnabledIfSet2GlobalMovieSongGroupAndGenre();
 static MenuDef g_BackgroundChange(
 	"ScreenMiniMenuBackgroundChange",
 	MenuRowDef( ScreenEdit::layer,						"Layer",				false,						EditMode_Full, true, false, 0, "" ),
-	MenuRowDef( ScreenEdit::rate,						"Rate",					true,						EditMode_Full, true, false, 10, "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" ),
+	MenuRowDef( ScreenEdit::rate,						"Rate",					true,						EditMode_Full, true, false, 10, "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%","220%","240%","260%","280%","300%","350%","400%" ),
 	MenuRowDef( ScreenEdit::transition,					"Force Transition",			true,						EditMode_Full, true, false, 0, NULL ),
 	MenuRowDef( ScreenEdit::effect,						"Force Effect",				true,						EditMode_Full, true, false, 0, NULL ),
 	MenuRowDef( ScreenEdit::color1,						"Force Color 1",			true,						EditMode_Full, true, false, 0, "-","1,1,1,1","0.5,0.5,0.5,1","1,1,1,0.5","0,0,0,1","1,0,0,1","0,1,0,1","0,0,1,1","1,1,0,1","0,1,1,1","1,0,1,1" ),
