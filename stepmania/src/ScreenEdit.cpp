@@ -65,24 +65,24 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 static const int BEATS_PER_MEASURE = 4;
 static const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
 
-AutoScreenMessage( SM_UpdateTextInfo )
-AutoScreenMessage( SM_BackFromMainMenu )
-AutoScreenMessage( SM_BackFromAreaMenu )
-AutoScreenMessage( SM_BackFromStepsInformation )
-AutoScreenMessage( SM_BackFromOptions )
-AutoScreenMessage( SM_BackFromSongInformation )
-AutoScreenMessage( SM_BackFromBGChange )
-AutoScreenMessage( SM_BackFromInsertTapAttack )
-AutoScreenMessage( SM_BackFromInsertTapAttackPlayerOptions )
-AutoScreenMessage( SM_BackFromInsertCourseAttack )
-AutoScreenMessage( SM_BackFromInsertCourseAttackPlayerOptions )
-AutoScreenMessage( SM_BackFromCourseModeMenu )
-AutoScreenMessage( SM_DoRevertToLastSave )
-AutoScreenMessage( SM_DoRevertFromDisk )
-AutoScreenMessage( SM_BackFromBPMChange )
-AutoScreenMessage( SM_BackFromStopChange )
-AutoScreenMessage( SM_DoSaveAndExit )
-AutoScreenMessage( SM_DoExit )
+AutoScreenMessage( SM_UpdateTextInfo );
+AutoScreenMessage( SM_BackFromMainMenu );
+AutoScreenMessage( SM_BackFromAreaMenu );
+AutoScreenMessage( SM_BackFromStepsInformation );
+AutoScreenMessage( SM_BackFromOptions );
+AutoScreenMessage( SM_BackFromSongInformation );
+AutoScreenMessage( SM_BackFromBGChange );
+AutoScreenMessage( SM_BackFromInsertTapAttack );
+AutoScreenMessage( SM_BackFromInsertTapAttackPlayerOptions );
+AutoScreenMessage( SM_BackFromInsertCourseAttack );
+AutoScreenMessage( SM_BackFromInsertCourseAttackPlayerOptions );
+AutoScreenMessage( SM_BackFromCourseModeMenu );
+AutoScreenMessage( SM_DoRevertToLastSave );
+AutoScreenMessage( SM_DoRevertFromDisk );
+AutoScreenMessage( SM_BackFromBPMChange );
+AutoScreenMessage( SM_BackFromStopChange );
+AutoScreenMessage( SM_DoSaveAndExit );
+AutoScreenMessage( SM_DoExit );
 AutoScreenMessage( SM_SaveSuccessful );
 AutoScreenMessage( SM_SaveFailed );
 
