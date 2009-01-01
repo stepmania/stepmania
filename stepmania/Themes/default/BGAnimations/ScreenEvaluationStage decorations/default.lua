@@ -54,7 +54,7 @@ if ShowStandardDecoration("ItsARecord") then
 					local hsl = PROFILEMAN:GetMachineProfile():GetHighScoreList(pSongOrCourse,pSteps);
 					
 					local hsName = hsl:GetHighScores()[1]:GetName();
-					local hsPerc = hsl:GetHighScores()[1]:GetPercentDP();
+					local hsPerc = math.floor( hsl:GetHighScores()[1]:GetPercentDP() * 10000 ) / 100;
 					--hsl:GetHighScores()[1]:GetName GetScore GetPercentDP
 					if index == 0 then
 						self:GetChild("Record"):visible( true );
@@ -63,7 +63,7 @@ if ShowStandardDecoration("ItsARecord") then
 						self:GetChild("Record"):visible( false );
 						self:GetChild("NoRecord"):visible( true );
 						if hsl then
-							self:GetChild("NoRecord"):settext(hsName..":\n"..hsPerc);
+							self:GetChild("NoRecord"):settext(hsName..":\n"..hsPerc .. "%");
 						else
 							self:GetChild("NoRecord"):settext("");
 						end
