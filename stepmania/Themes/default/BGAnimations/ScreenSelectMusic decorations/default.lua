@@ -52,13 +52,11 @@ t[#t+1] = LoadFont("Common", "normal") .. {
 };
 	
 t[#t+1] = Def.ActorFrame {
-	InitCommand=cmd(x,SCREEN_CENTER_X-56;y,SCREEN_CENTER_Y-10);
+	InitCommand=cmd(x,SCREEN_CENTER_X-44;y,SCREEN_CENTER_Y-10);
 	LoadActor( "wheel cursor glow" ) .. {
-		InitCommand=cmd(blend,"BlendMode_Add";diffuseshift;);
+		InitCommand=cmd(blend,"BlendMode_Add";diffuseshift);
 	};
-	LoadActor( "wheel cursor normal" ) .. {
-	
-	};
+	LoadActor( "wheel cursor normal" );
 };
 
 for pn in ivalues(PlayerNumber) do
