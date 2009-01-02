@@ -150,7 +150,9 @@ RString RageDisplay::GetStats() const
 
 	s = ssprintf( "%i FPS\n%i av FPS\n%i VPF", GetFPS(), GetCumFPS(), GetVPF() );
 	
+	#if defined(_WINDOWS)
 	s += "\n"+this->GetApiDescription();
+	#endif
 	
 	return s;
 }
