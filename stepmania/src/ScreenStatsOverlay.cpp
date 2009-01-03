@@ -23,34 +23,38 @@ void ScreenStatsOverlay::Init()
 	 * the time in the log. */
 	m_LastSkip = 0;
 
-	SKIP_X.Load( m_sName, "SkipX" );
-	SKIP_Y.Load( m_sName, "SkipY" );
-	SKIP_SPACING_Y.Load( m_sName, "SkipSpacingY" );
-	SKIP_WIDTH.Load( m_sName, "SkipWidth" );
-
-	RectF rectSkips = RectF(
-		SKIP_X-SKIP_WIDTH/2, 
-		SKIP_Y-(SKIP_SPACING_Y*NUM_SKIPS_TO_SHOW)/2 - 10, 
-		SKIP_X+SKIP_WIDTH/2, 
-		SKIP_Y+(SKIP_SPACING_Y*NUM_SKIPS_TO_SHOW)/2 + 10
-		);
-	m_quadSkipBackground.StretchTo( rectSkips );
-	m_quadSkipBackground.SetDiffuse( RageColor(0,0,0,0.4f) );
-	this->AddChild(&m_quadSkipBackground);
-
-	for( int i=0; i<NUM_SKIPS_TO_SHOW; i++ )
+	SHOW_SKIPS.Load( m_sName, "ShowSkips" );
+	if( SHOW_SKIPS )
 	{
-		/* This is somewhat big.  Let's put it on the right side, where it'll
-		 * obscure the 2P side during gameplay; there's nowhere to put it that
-		 * doesn't obscure something, and it's just a diagnostic. */
-		m_textSkips[i].LoadFromFont( THEME->GetPathF("Common","normal") );
-		m_textSkips[i].SetX( SKIP_X );
-		m_textSkips[i].SetY( 
-			SCALE( i, 0, NUM_SKIPS_TO_SHOW-1, rectSkips.top + 10, rectSkips.bottom - 10 ) 
+		SKIP_X.Load( m_sName, "SkipX" );
+		SKIP_Y.Load( m_sName, "SkipY" );
+		SKIP_SPACING_Y.Load( m_sName, "SkipSpacingY" );
+		SKIP_WIDTH.Load( m_sName, "SkipWidth" );
+		
+		RectF rectSkips = RectF(
+			SKIP_X-SKIP_WIDTH/2, 
+			SKIP_Y-(SKIP_SPACING_Y*NUM_SKIPS_TO_SHOW)/2 - 10, 
+			SKIP_X+SKIP_WIDTH/2, 
+			SKIP_Y+(SKIP_SPACING_Y*NUM_SKIPS_TO_SHOW)/2 + 10
 			);
-		m_textSkips[i].SetDiffuse( RageColor(1,1,1,0) );
-		m_textSkips[i].SetShadowLength( 0 );
-		this->AddChild( &m_textSkips[i] );
+		m_quadSkipBackground.StretchTo( rectSkips );
+		m_quadSkipBackground.SetDiffuse( RageColor(0,0,0,0.4f) );
+		this->AddChild(&m_quadSkipBackground);
+
+		for( int i=0; i<NUM_SKIPS_TO_SHOW; i++ )
+		{
+			/* This is somewhat big.  Let's put it on the right side, where it'll
+			 * obscure the 2P side during gameplay; there's nowhere to put it that
+			 * doesn't obscure something, and it's just a diagnostic. */
+			m_textSkips[i].LoadFromFont( THEME->GetPathF("Common","normal") );
+			m_textSkips[i].SetX( SKIP_X );
+			m_textSkips[i].SetY( 
+				SCALE( i, 0, NUM_SKIPS_TO_SHOW-1, rectSkips.top + 10, rectSkips.bottom - 10 ) 
+				);
+			m_textSkips[i].SetDiffuse( RageColor(1,1,1,0) );
+			m_textSkips[i].SetShadowLength( 0 );
+			this->AddChild( &m_textSkips[i] );
+		}
 	}
 
 	this->SubscribeToMessage( "ShowStatsChanged" );
@@ -74,7 +78,8 @@ void ScreenStatsOverlay::Update( float fDeltaTime )
 	if( PREFSMAN->m_bShowStats )
 	{
 		m_textStats.SetText( DISPLAY->GetStats() );
-		UpdateSkips();
+		if ( SHOW_SKIPS )
+			UpdateSkips();
 	}
 }
 

@@ -26,6 +26,7 @@ private:
 	RageTimer m_timerSkip;
 	int m_LastSkip;
 
+	ThemeMetric<bool>  SHOW_SKIPS;
 	ThemeMetric<float> SKIP_X;
 	ThemeMetric<float> SKIP_Y;
 	ThemeMetric<float> SKIP_SPACING_Y;
