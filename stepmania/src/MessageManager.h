@@ -159,6 +159,8 @@ public:
 	//
 	void SubscribeToMessage( MessageID message ); // will automatically unsubscribe
 	void SubscribeToMessage( const RString &sMessageName ); // will automatically unsubscribe
+	inline bool IsSubscribedToMessage( const RString &sMessageName ) const { return find( m_vsSubscribedTo.begin(), m_vsSubscribedTo.end(), sMessageName ) != m_vsSubscribedTo.end(); }
+	inline bool IsSubscribedToMessage( MessageID message ) const { return IsSubscribedToMessage( MessageIDToString(message) ); }
 
 	void UnsubscribeAll();
 
