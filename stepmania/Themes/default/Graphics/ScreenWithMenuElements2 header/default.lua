@@ -9,10 +9,14 @@ return Def.ActorFrame {
 		};
 		LoadFont( "_sf sports night ns upright 26px header text" ) .. {
 			InitCommand=cmd(x,64;y,-7;horizalign,left;shadowlength,0;settext,ScreenString("HeaderText");skewx,-0.15;zoomx,1.2;maxwidth,250;);
+			OnCommand=cmd(faderight,1;cropright,1;linear,.32;faderight,0;cropright,0);
+			OffCommand=cmd(faderight,0;cropright,0;linear,.32;faderight,1;cropright,1);
 			Name="HeaderText";
 		};
 		LoadFont( "_venacti 10px header subtext" ) .. {
 			InitCommand=cmd(x,64;y,11;horizalign,left;shadowlength,0;settext,ScreenString("HeaderSubText");zoomx,1.2;);
+			OnCommand=cmd(zoomy,.5;faderight,1;cropright,1;linear,.32;faderight,0;cropright,0;zoomy,1);
+			OffCommand=cmd(faderight,0;cropright,0;linear,.32;faderight,1;cropright,1);
 			Name="HeaderSubText";
 		};
 		LoadActor( "arrow" ) .. {
