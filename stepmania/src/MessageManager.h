@@ -159,8 +159,6 @@ public:
 	//
 	void SubscribeToMessage( MessageID message ); // will automatically unsubscribe
 	void SubscribeToMessage( const RString &sMessageName ); // will automatically unsubscribe
-	inline bool IsSubscribedToMessage( const RString &sMessageName ) const { return find( m_vsSubscribedTo.begin(), m_vsSubscribedTo.end(), sMessageName ) != m_vsSubscribedTo.end(); }
-	inline bool IsSubscribedToMessage( MessageID message ) const { return IsSubscribedToMessage( MessageIDToString(message) ); }
 
 	void UnsubscribeAll();
 
@@ -182,6 +180,8 @@ public:
 	void Broadcast( Message &msg ) const;
 	void Broadcast( const RString& sMessage ) const;
 	void Broadcast( MessageID m ) const;
+	bool IsSubscribedToMessage( IMessageSubscriber* pSubscriber, const RString &sMessage ) const;
+	inline bool IsSubscribedToMessage( IMessageSubscriber* pSubscriber, MessageID message ) const { return IsSubscribedToMessage( pSubscriber, MessageIDToString(message) ); }
 
 	// Lua
 	void PushSelf( lua_State *L );

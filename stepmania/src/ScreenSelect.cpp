@@ -29,7 +29,7 @@ void ScreenSelect::Init()
 	for( unsigned i = 0; i < m_asSubscribedMessages.size(); ++i )
 		MESSAGEMAN->Subscribe( this, m_asSubscribedMessages[i] );
 	// Only subscribe once.
-	if( !this->IsSubscribedToMessage(Message_PlayerJoined) )
+	if( !MESSAGEMAN->IsSubscribedToMessage(this, Message_PlayerJoined) )
 		this->SubscribeToMessage( Message_PlayerJoined );
 
 	//

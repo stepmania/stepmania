@@ -218,6 +218,12 @@ void MessageManager::Broadcast( MessageID m ) const
 	Broadcast( MessageIDToString(m) );
 }
 
+bool MessageManager::IsSubscribedToMessage( IMessageSubscriber* pSubscriber, const RString &sMessage ) const
+{
+	SubscribersSet& subs = g_MessageToSubscribers[sMessage];
+	return subs.find( pSubscriber ) != subs.end();
+}	
+
 void IMessageSubscriber::ClearMessages( const RString sMessage )
 {
 }
