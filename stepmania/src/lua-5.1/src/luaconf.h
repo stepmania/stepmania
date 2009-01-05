@@ -12,6 +12,7 @@
 #include <stddef.h>
 #if defined(_WIN32)
 typedef unsigned int uint32_t;
+typedef int int32_t;
 #else
 #include <inttypes.h>
 #endif
