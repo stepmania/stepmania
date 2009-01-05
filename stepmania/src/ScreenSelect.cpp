@@ -28,7 +28,9 @@ void ScreenSelect::Init()
 	split( UPDATE_ON_MESSAGE, ",", m_asSubscribedMessages );
 	for( unsigned i = 0; i < m_asSubscribedMessages.size(); ++i )
 		MESSAGEMAN->Subscribe( this, m_asSubscribedMessages[i] );
-	this->SubscribeToMessage( Message_PlayerJoined );
+	// Only subscribe once.
+	if( !this->IsSubscribedToMessage(Message_PlayerJoined) )
+		this->SubscribeToMessage( Message_PlayerJoined );
 
 	//
 	// Load choices
