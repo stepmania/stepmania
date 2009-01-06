@@ -13,11 +13,11 @@
 #include "mad-0.15.1b/mad.h"
 #ifdef _MSC_VER
 #ifdef _XBOX
-#ifdef _DEBUG
+#ifdef DEBUG
 #pragma comment(lib, "mad-0.15.1b/xboxmad/debug/xboxmad.lib")
 #else
 #pragma comment(lib, "mad-0.15.1b/xboxmad/Release/xboxmad.lib")
-#endif // _DEBUG
+#endif // DEBUG
 #else
 #pragma comment(lib, "mad-0.15.1b/msvc++/Release/libmad.lib")
 #endif // _XBOX

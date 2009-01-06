@@ -33,7 +33,7 @@ public:
 	{
 		if( m_pSubscribers == NULL )
 			m_pSubscribers = new set<T*>;
-#if _DEBUG
+#ifdef DEBUG
 		typename set<T*>::iterator iter = m_pSubscribers->find( p );
 		ASSERT_M( iter == m_pSubscribers->end(), "already subscribed" );
 #endif

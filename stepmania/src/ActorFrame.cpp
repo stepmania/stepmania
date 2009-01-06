@@ -123,7 +123,7 @@ void ActorFrame::LoadChildrenFromNode( const XNode* pNode )
 
 void ActorFrame::AddChild( Actor *pActor )
 {
-#if _DEBUG
+#ifdef DEBUG
 	// check that this Actor isn't already added.
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter != m_SubActors.end() )
