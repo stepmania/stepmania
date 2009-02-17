@@ -1,29 +1,32 @@
 #include "global.h"
 #include "SpecialDirs.h"
-#include "RegistryAccess.h"
 #include <shlobj.h>
 
-RString SpecialDirs::GetMyDocumentsDir()
-{
-	RString sMyDocumentsDir;
-	bool bSuccess = RegistryAccess::GetRegValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", "Personal", sMyDocumentsDir );
-	ASSERT( bSuccess );
-	sMyDocumentsDir.Replace( '\\', '/' );
-	sMyDocumentsDir += "/";
-	return sMyDocumentsDir;
-}
-
-RString SpecialDirs::GetDesktopDir()
+static RString GetSpecialFolderPath( int csidl )
 {
 	RString sDir;
 	TCHAR szDir[MAX_PATH] = "";
-	BOOL bResult = SHGetSpecialFolderPath( NULL, szDir, CSIDL_DESKTOP, FALSE );
+	BOOL bResult = SHGetSpecialFolderPath( NULL, szDir, csidl, FALSE );
 	ASSERT( bResult );
 	sDir = szDir;
 	sDir += "/";
 	return sDir;
 }
 
+RString SpecialDirs::GetAppDataDir()
+{
+	return GetSpecialFolderPath( CSIDL_APPDATA );
+}
+
+RString SpecialDirs::GetDesktopDir()
+{
+	return GetSpecialFolderPath( CSIDL_DESKTOP );
+}
+
+RString SpecialDirs::GetPicturesDir()
+{
+	return GetSpecialFolderPath( CSIDL_MYPICTURES );
+}
 
 
 /*

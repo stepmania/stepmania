@@ -138,8 +138,8 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 				STARTUPINFO	si;
 				ZeroMemory( &si, sizeof(si) );
 
-				RString sMyDocumentsDir = SpecialDirs::GetMyDocumentsDir();
-				RString sCommand = "notepad \"" + sMyDocumentsDir + PRODUCT_ID + "/Logs/log.txt\"";
+				RString sAppDataDir = SpecialDirs::GetAppDataDir();
+				RString sCommand = "notepad \"" + sAppDataDir + PRODUCT_ID + "/Logs/log.txt\"";
 				CreateProcess(
 					NULL,		// pointer to name of executable module
 					sCommand.GetBuffer(),	// pointer to command line string

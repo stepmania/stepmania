@@ -3,8 +3,9 @@
 
 namespace SpecialDirs
 {
-	RString GetMyDocumentsDir();
+	RString GetAppDataDir();
 	RString GetDesktopDir();
+	RString GetPicturesDir();
 };
 
 #endif

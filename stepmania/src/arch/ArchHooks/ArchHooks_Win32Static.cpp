@@ -4,6 +4,7 @@
 #include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
 #include "RageFileManager.h"
+#include "SpecialFiles.h"
 
 // for timeGetTime
 #include <windows.h>
@@ -51,13 +52,15 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	
 	FILEMAN->Mount( "dir", sDir, "/" );
 
-	RString sMyDocumentsDir = SpecialDirs::GetMyDocumentsDir();
-
 	// Mount everything game-writable (not counting the editor) to the user's directory.
-	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Cache", "/Cache" );
-	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Logs", "/Logs" );
-	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Save", "/Save" );
-	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Screenshots", "/Screenshots" );
+	RString sAppDataDir = SpecialDirs::GetAppDataDir();
+	FILEMAN->Mount( "dir", sAppDataDir + PRODUCT_ID + "/Cache", "/Cache" );
+	FILEMAN->Mount( "dir", sAppDataDir + PRODUCT_ID + "/Logs", "/Logs" );
+	FILEMAN->Mount( "dir", sAppDataDir + PRODUCT_ID + "/Save", "/Save" );
+	FILEMAN->Mount( "dir", sAppDataDir + PRODUCT_ID + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
+
+	RString sPicturesDir = SpecialDirs::GetPicturesDir();
+	FILEMAN->Mount( "dir", sPicturesDir + PRODUCT_ID, "/Screenshots" );
 }
 
 static RString LangIdToString( LANGID l )
