@@ -209,10 +209,9 @@ Section "Main Section" SecMain
 !endif
 
 !ifdef ASSOCIATE_SMZIP
-	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\tools.exe\shell\open\command" "" '"$INSTDIR\Program\tools.exe" "%1"'
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "$(TEXT_IO_SMZIP_PACKAGE)"
-	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\tools.exe,0"
-	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\tools.exe" "%1"'
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe,1"
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\${PRODUCT_FAMILY}.exe" "%1"'
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
 !endif
 
@@ -544,7 +543,6 @@ Section "Uninstall"
 !endif
 
 !ifdef ASSOCIATE_SMZIP
-	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\tools.exe\shell\open\command"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip"
 !endif
