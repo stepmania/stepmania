@@ -423,6 +423,7 @@ RString DwiEscape( const char *cUnescaped, int len );
 RString GetCwd();
 
 void SetCommandlineArguments( int argc, char **argv );
+void GetCommandLineArguments( int &argc, char **&argv );
 bool GetCommandlineArgument( const RString &option, RString *argument=NULL, int iIndex=0 );
 extern int g_argc;
 extern char **g_argv;

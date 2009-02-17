@@ -33,13 +33,11 @@ FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,332,35
     DEFPUSHBUTTON   "Close",IDOK,265,215,60,15
-    EDITTEXT        IDC_EDIT_ERROR,5,59,320,151,ES_MULTILINE | ES_READONLY | 
-                    WS_VSCROLL | NOT WS_TABSTOP
+    EDITTEXT        IDC_EDIT_ERROR,5,59,320,151,ES_MULTILINE | ES_READONLY | WS_VSCROLL | NOT WS_TABSTOP
     PUSHBUTTON      "View Log",IDC_BUTTON_VIEW_LOG,8,215,74,15
     PUSHBUTTON      "Report Error",IDC_BUTTON_REPORT,90,215,76,15
     PUSHBUTTON      "Restart Game",IDC_BUTTON_RESTART,175,215,80,15
-    LTEXT           "Specific details about the error are shown in the box below:",
-                    IDC_STATIC,7,45,319,11
+    LTEXT           "Specific details about the error are shown in the box below:",IDC_STATIC,7,45,319,11
     LTEXT           "Fatal Error",IDC_STATIC_HEADER_TEXT,5,5,249,23
     ICON            IDI_ICON,IDC_STATIC_ICON,296,6,21,20
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,0,34,332,1
@@ -49,12 +47,9 @@ IDD_LOADING_DIALOG DIALOG  0, 0, 312, 82
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE
 FONT 8, "MS Sans Serif"
 BEGIN
-    CTEXT           "line1",IDC_STATIC_MESSAGE1,0,41,310,10,SS_NOPREFIX | 
-                    SS_CENTERIMAGE
-    CTEXT           "line2",IDC_STATIC_MESSAGE2,0,54,310,10,SS_NOPREFIX | 
-                    SS_CENTERIMAGE
-    CTEXT           "line3",IDC_STATIC_MESSAGE3,0,65,310,10,SS_NOPREFIX | 
-                    SS_CENTERIMAGE
+    CTEXT           "line1",IDC_STATIC_MESSAGE1,0,41,310,10,SS_NOPREFIX | SS_CENTERIMAGE
+    CTEXT           "line2",IDC_STATIC_MESSAGE2,0,54,310,10,SS_NOPREFIX | SS_CENTERIMAGE
+    CTEXT           "line3",IDC_STATIC_MESSAGE3,0,65,310,10,SS_NOPREFIX | SS_CENTERIMAGE
     CONTROL         "",IDC_SPLASH,"Static",SS_BITMAP,0,0,310,25
 END
 
@@ -67,8 +62,7 @@ BEGIN
     PUSHBUTTON      "Report the &Error",IDC_BUTTON_REPORT,203,73,89,15
     PUSHBUTTON      "&Restart Game",IDC_BUTTON_RESTART,197,95,78,15
     PUSHBUTTON      "&Close",IDC_BUTTON_CLOSE,278,95,50,15
-    LTEXT           "A crash has occurred.  Diagnostic information has been saved to a file called ""crashinfo.txt"" in the game program directory.",
-                    IDC_STATIC,8,41,312,19
+    LTEXT           "A crash has occurred.  Diagnostic information has been saved to a file called ""crashinfo.txt"" in the game program directory.",IDC_STATIC,8,41,312,19
     CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,332,35
     LTEXT           "Program Crash",IDC_STATIC_HEADER_TEXT,5,5,249,23
     ICON            IDI_ICON,IDC_STATIC_ICON,296,6,20,20
@@ -76,32 +70,25 @@ BEGIN
 END
 
 IDD_OK DIALOGEX 0, 0, 336, 98
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | 
-    WS_CAPTION
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION
 CAPTION "Prompt"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,143,77,50,14
-    CONTROL         "&Don't display this message again",IDC_HUSH,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,7,63,181,10
-    EDITTEXT        IDC_MESSAGE,7,7,322,55,ES_CENTER | ES_MULTILINE | 
-                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | 
-                    WS_VSCROLL
+    CONTROL         "&Don't display this message again",IDC_HUSH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,63,181,10
+    EDITTEXT        IDC_MESSAGE,7,7,322,55,ES_CENTER | ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | WS_VSCROLL
 END
 
 IDD_REPORT_CRASH DIALOGEX 0, 0, 287, 98
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | DS_CENTERMOUSE | WS_POPUP | 
-    WS_CAPTION
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | DS_CENTERMOUSE | WS_POPUP | WS_CAPTION
 CAPTION "Program Crash"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     PUSHBUTTON      "&Send Error Report",IDC_BUTTON_AUTO_REPORT,132,79,89,15
     PUSHBUTTON      "&View Error Report",IDC_CRASH_SAVE,6,79,86,15
-    CONTROL         "",IDC_PROGRESS,"msctls_progress32",NOT WS_VISIBLE | 
-                    WS_BORDER,132,79,89,15
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",NOT WS_VISIBLE | WS_BORDER,132,79,89,15
     PUSHBUTTON      "&Don't Send",IDC_BUTTON_CLOSE,224,79,59,15
-    LTEXT           "The program has encountered an error.  Click Send Error Report to automatically report the problem and check for updates.",
-                    IDC_MAIN_TEXT,13,48,263,18
+    LTEXT           "The program has encountered an error.  Click Send Error Report to automatically report the problem and check for updates.",IDC_MAIN_TEXT,13,48,263,18
     CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,287,35
     LTEXT           "Program Crash",IDC_STATIC_HEADER_TEXT,5,5,249,23
     ICON            IDI_ICON,IDC_STATIC_ICON,259,6,21,20
@@ -184,6 +171,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
+IDI_ICON1               ICON                    "smzip.ico"
 IDI_ICON                ICON                    "StepMania.ICO"
 
 /////////////////////////////////////////////////////////////////////////////

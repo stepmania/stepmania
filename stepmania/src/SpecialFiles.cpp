@@ -1,6 +1,8 @@
 #include "global.h"
 #include "SpecialFiles.h"
 
+const RString SpecialFiles::USER_PACKAGES_DIR = "UserPackages/";
+const RString SpecialFiles::SYSTEM_PACKAGES_DIR = "SystemPackages/";
 const RString SpecialFiles::KEYMAPS_PATH = "Save/Keymaps.ini";
 const RString SpecialFiles::PREFERENCES_INI_PATH	= "Save/Preferences.ini";
 const RString SpecialFiles::THEMES_DIR  = "Themes/";

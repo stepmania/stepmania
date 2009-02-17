@@ -1095,6 +1095,7 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 	sValueName.Replace( "\r\n", "\\n" );
 	sValueName.Replace( "\n", "\\n" );
 
+	ASSERT( g_pLoadedThemeData );
 	RString s = GetMetricRaw( g_pLoadedThemeData->iniStrings, sMetricsGroup, sValueName );
 	FontCharAliases::ReplaceMarkers( s );
 	

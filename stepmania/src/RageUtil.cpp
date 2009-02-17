@@ -896,6 +896,12 @@ void SetCommandlineArguments( int argc, char **argv )
 	g_argv = argv;
 }
 
+void GetCommandLineArguments( int &argc, char **&argv )
+{
+	argc = g_argc;
+	argv = g_argv;
+}
+
 /*
  * Search for the commandline argument given; eg. "test" searches for the
  * option "--test".  All commandline arguments are getopt_long style: --foo;

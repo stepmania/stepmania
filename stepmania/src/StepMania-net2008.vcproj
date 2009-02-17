@@ -2357,6 +2357,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\archutils\Win32\smzip.ico"
+					>
+				</File>
+				<File
 					RelativePath=".\archutils\Win32\SpecialDirs.cpp"
 					>
 				</File>
@@ -6891,6 +6895,10 @@
 		</File>
 		<File
 			RelativePath="archutils\Win32\DialogErrorHeader.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\smzip.ico"
 			>
 		</File>
 		<File

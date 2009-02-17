@@ -3,6 +3,8 @@
 
 namespace ExportStrings
 {
+	bool AnyPackageFilesInCommandLine();
+	void Install();
 	void Nsis();
 	void LuaInformation();
 }

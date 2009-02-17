@@ -70,6 +70,7 @@
 #include "MessageManager.h"
 #include "StatsManager.h"
 #include "GameLoop.h"
+#include "SpecialFiles.h"
 
 #if defined(XBOX)
 #include "Archutils/Xbox/VirtualMemory.h"
@@ -78,8 +79,6 @@
 #if defined(WIN32) && !defined(XBOX)
 #include <windows.h>
 #endif
-
-#define ZIPS_DIR "Packages/"
 
 static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", false );
 
@@ -325,7 +324,7 @@ RString StepMania::GetInitialScreen()
 static Preference<int> g_iLastSeenMemory( "LastSeenMemory", 0 );
 #endif
 
-static void CheckSettings()
+static void AdjustForChangedSystemCapabilities()
 {
 #if defined(WIN32)
 	/* Has the amount of memory changed? */
@@ -777,11 +776,14 @@ static void SwitchToLastPlayedGame()
 	StepMania::ChangeCurrentGame( pGame );
 }
 
-static void ReadGamePrefsFromDisk()
+void StepMania::ChangeCurrentGame( const Game* g )
 {
+	ASSERT( g );
 	ASSERT( GAMESTATE );
 	ASSERT( ANNOUNCER );
 	ASSERT( THEME );
+
+	GAMESTATE->SetCurGame( g );
 
 	RString sAnnouncer = PREFSMAN->m_sAnnouncer;
 	RString sTheme = PREFSMAN->m_sTheme;
@@ -794,15 +796,7 @@ static void ReadGamePrefsFromDisk()
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
 	THEME->SwitchThemeAndLanguage( sTheme, PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
-}
 
-void StepMania::ChangeCurrentGame( const Game* g )
-{
-	ASSERT( g );
-
-	GAMESTATE->SetCurGame( g );
-
-	ReadGamePrefsFromDisk();
 
 	/* Set the input scheme for the new game, and load keymaps. */
 	if( INPUTMAPPER )
@@ -896,11 +890,28 @@ static void ApplyLogPreferences()
 static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "StepMania", "Couldn't open any loading windows." );
 
 int main(int argc, char* argv[])
-{	
+{
 	RageThreadRegister thread( "Main thread" );
 	RageException::SetCleanupHandler( HandleException );
 	
 	SetCommandlineArguments( argc, argv );
+
+
+	enum RunMode
+	{ 
+		RunMode_Normal, 
+		RunMode_Install, 
+		RunMode_ExportNsisStrings, 
+		RunMode_ExportLuaInformation,
+	};
+	RunMode runmode = RunMode_Normal;
+	if( ExportStrings::AnyPackageFilesInCommandLine() )
+		runmode = RunMode_Install;
+	else if( GetCommandlineArgument("ExportNsisStrings") )
+		runmode = RunMode_ExportNsisStrings;
+	else if( GetCommandlineArgument("ExportLuaInformation") )
+		runmode = RunMode_ExportLuaInformation;
+
 
 	/* Set up arch hooks first.  This may set up crash handling. */
 	HOOKS = ArchHooks::Create();
@@ -913,7 +924,7 @@ int main(int argc, char* argv[])
 	FILEMAN->MountInitialFilesystems();
 
 	/* Set this up next.  Do this early, since it's needed for RageException::Throw. */
-	LOG			= new RageLog;
+	LOG		= new RageLog;
 
 	/* Whew--we should be able to crash safely now! */
 
@@ -963,7 +974,7 @@ int main(int argc, char* argv[])
 			FILEMAN->Mount( "dir", dirs[i], "/AdditionalCourses" );
 	}
 
-	MountTreeOfZips( ZIPS_DIR );
+	MountTreeOfZips( SpecialFiles::SYSTEM_PACKAGES_DIR );
 
 	/* One of the above filesystems might contain files that affect preferences, eg Data/Static.ini.
 	 * Re-read preferences. */
@@ -980,9 +991,17 @@ int main(int argc, char* argv[])
 	GAMESTATE	= new GameState;
 
 	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
-	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
-	if( pLoadingWindow == NULL )
-		RageException::Throw( "%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str() );
+	LoadingWindow *pLoadingWindow = NULL;
+	switch( runmode )
+	{
+	case RunMode_Normal:
+		pLoadingWindow = LoadingWindow::Create();
+		if( pLoadingWindow == NULL )
+			RageException::Throw( "%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str() );
+		break;
+	default:
+		;	// no loading window for other RunModes
+	}
 
 	srand( time(NULL) );	// seed number generator	
 	
@@ -996,7 +1015,7 @@ int main(int argc, char* argv[])
 	LOG->Info( "TLS is %savailable", RageThread::GetSupportsTLS()? "":"not " );
 #endif
 
-	CheckSettings();
+	AdjustForChangedSystemCapabilities();
 
 	THEME		= new ThemeManager;
 	ANNOUNCER	= new AnnouncerManager;
@@ -1004,6 +1023,35 @@ int main(int argc, char* argv[])
 
 	/* Switch to the last used game type, and set up the theme and announcer. */
 	SwitchToLastPlayedGame();
+
+
+	// Handle special RunModes.  Some of these depend on ThemeManager being loaded above in SwitchToLastPlayedGame.
+	switch( runmode )
+	{
+	DEFAULT_FAIL( runmode );
+	case RunMode_Normal:
+		break;
+	case RunMode_Install:
+	case RunMode_ExportNsisStrings:
+	case RunMode_ExportLuaInformation:
+		THEME->SwitchThemeAndLanguage( "default", PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
+		switch( runmode )
+		{
+		DEFAULT_FAIL( runmode );
+		case RunMode_Install:
+			ExportStrings::Install();
+			break;
+		case RunMode_ExportNsisStrings:
+			ExportStrings::Nsis();
+			break;
+		case RunMode_ExportLuaInformation:
+			ExportStrings::LuaInformation();
+			break;
+		};
+		exit(0);
+	}
+
+
 
 	{
 		/* Now that THEME is loaded, load the icon for the current theme into the
@@ -1014,7 +1062,6 @@ int main(int argc, char* argv[])
 			pLoadingWindow->SetIcon( pIcon );
 		delete pIcon;
 	}
-
 
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
@@ -1036,8 +1083,7 @@ int main(int argc, char* argv[])
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager;
 	WORKOUTMAN	= new WorkoutManager;
-	if( !GetCommandlineArgument("ExportNsisStrings") && !GetCommandlineArgument("ExportLuaInformation") )
-		SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
+	SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	if( PREFSMAN->m_bSignProfileData )
 		CRYPTMAN->GenerateGlobalKeys();
@@ -1103,14 +1149,8 @@ int main(int argc, char* argv[])
 		NSMAN->DisplayStartupStatus();	// If we're using networking show what happened
 
 	/* Run the main loop. */
+	GameLoop::RunGameLoop();
 	
-	if( GetCommandlineArgument("ExportNsisStrings") )
-		ExportStrings::Nsis();
-	else if( GetCommandlineArgument("ExportLuaInformation") )
-		ExportStrings::LuaInformation();
-	else
-		GameLoop::RunGameLoop();
-
 	PREFSMAN->SavePrefsToDisk();
 
 	ShutdownGame();

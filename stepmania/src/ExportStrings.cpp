@@ -9,8 +9,114 @@
 #include "ProductInfo.h"
 #include "DateTime.h"
 #include "Foreach.h"
+#include "arch/Dialog/Dialog.h"
+#include "RageFileManager.h"
+#include "SpecialFiles.h"
 
 const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
+
+static const RString TEMP_MOUNT_POINT = "/@tempinstallpackage/";
+
+static bool IsPackageFile( RString sFile )
+{
+	RString sOsDir, sFilename, sExt;
+	splitpath( sFile, sOsDir, sFilename, sExt );
+
+	return sExt.EqualsNoCase(".smzip")  ||  sExt.EqualsNoCase(".zip");
+}
+
+static void GetPackageFilesToInstall( vector<RString> &vs )
+{
+	int argc;
+	char **argv;
+	GetCommandLineArguments( argc, argv );
+
+	for( int i = 1; i<argc; ++i )
+		vs.push_back( argv[i] );
+	
+	bool bFoundOne = false;
+	FOREACH( RString, vs, s )
+	{
+		if( IsPackageFile(*s) )
+		{
+			bFoundOne = true;
+			break;
+		}
+	}
+	if( !bFoundOne )
+		vs.clear();
+}
+
+bool ExportStrings::AnyPackageFilesInCommandLine()
+{
+	vector<RString> vs;
+	GetPackageFilesToInstall( vs );
+	return !vs.empty();
+}
+
+
+struct FileCopyResult
+{
+	FileCopyResult( RString _sFile, RString _sComment ) : sFile(_sFile), sComment(_sComment) {}
+	RString sFile, sComment;
+};
+
+void ExportStrings::Install()
+{
+	vector<FileCopyResult> vSucceeded;
+	vector<FileCopyResult> vFailed;
+
+	vector<RString> vs;
+	GetPackageFilesToInstall( vs );
+	FOREACH_CONST( RString, vs, s )
+	{
+		if( !IsPackageFile(*s) )
+		{
+			vFailed.push_back( FileCopyResult(*s,"wrong file extension") );
+			continue;
+		}
+
+		RString sOsDir, sFilename, sExt;
+		splitpath( *s, sOsDir, sFilename, sExt );
+
+		FILEMAN->Mount( "dir", sOsDir, TEMP_MOUNT_POINT );
+
+		// TODO: Validate that this zip contains files for this version of StepMania
+
+		bool bFileExists = DoesFileExist( SpecialFiles::USER_PACKAGES_DIR + sFilename + sExt );
+		if( FileCopy( TEMP_MOUNT_POINT + sFilename + sExt, SpecialFiles::USER_PACKAGES_DIR + sFilename + sExt ) )
+			vSucceeded.push_back( FileCopyResult(*s,bFileExists ? "overwrote existing file" : "") );
+		else
+			vFailed.push_back( FileCopyResult(*s,ssprintf("error copying file to '%s'",sOsDir.c_str())) );
+
+		FILEMAN->Unmount( "dir", sOsDir, TEMP_MOUNT_POINT );
+	}
+	if( vSucceeded.empty()  &&  vFailed.empty() )
+	{
+		Dialog::OK( "Install: no files specified" );
+		return;
+	}
+
+
+	RString sMessage;
+	for( int i=0; i<2; i++ )
+	{
+		const vector<FileCopyResult> &v = (i==0) ? vSucceeded : vFailed;
+		if( !v.empty() )
+		{
+			sMessage += (i==0) ? "Install succeeded for:\n" : "Install failed for:\n";
+			FOREACH_CONST( FileCopyResult, v, iter )
+			{
+				sMessage += "  - " + iter->sFile;
+				if( !iter->sComment.empty() )
+					sMessage += " : " + iter->sComment;
+				sMessage += "\n";
+			}
+			sMessage += "\n";
+		}
+	}
+	Dialog::OK( sMessage );
+}
 
 void ExportStrings::Nsis()
 {
