@@ -459,7 +459,7 @@ void Song::TidyUpData()
 
 	if( m_Timing.m_BPMSegments.empty() )
 	{
-		LOG->UserLog( "Song file", m_sSongDir + m_sSongFileName, "hs no BPM segments, default provided." );
+		LOG->UserLog( "Song file", m_sSongDir + m_sSongFileName, "has no BPM segments, default provided." );
 
 		m_Timing.AddBPMSegment( BPMSegment(0, 60) );
 	}
