@@ -10,20 +10,11 @@
 - (void) setAppleMenu:(NSMenu *)menu;
 @end
 
+// Replacement NSApplication class.
+// XXX: I can no longer remember the reason for this class... Clearly something to do with sendEvent:
 @interface SMApplication : NSApplication
 - (void) fullscreen:(id)sender;
 @end
-
-@interface SMMain : NSObject
-{
-	int	m_iArgc;
-	char	**m_pArgv;
-}
-- (id) initWithArgc:(int)argc argv:(char **)argv;
-- (void) startGame:(id)sender;
-- (NSApplicationTerminateReply) applicationShouldTerminate:(NSApplication *)sender;
-@end
-
 
 @implementation SMApplication
 - (void)fullscreen:(id)sender
@@ -41,6 +32,16 @@
 @end
 
 // The main class of the application, the application's delegate.
+@interface SMMain : NSObject
+{
+	int	m_iArgc;
+	char	**m_pArgv;
+}
+- (id) initWithArgc:(int)argc argv:(char **)argv;
+- (void) startGame:(id)sender;
+- (NSApplicationTerminateReply) applicationShouldTerminate:(NSApplication *)sender;
+@end
+
 @implementation SMMain
 
 - (id) initWithArgc:(int)argc argv:(char **)argv
