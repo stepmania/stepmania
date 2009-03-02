@@ -18,6 +18,9 @@ namespace SpecialFiles
 	extern const RString DEFAULTS_INI_PATH;
 	extern const RString STATIC_INI_PATH;
 	extern const RString TYPE_TXT_FILE;
+	extern const RString SONGS_DIR;
+	extern const RString COURSES_DIR;
+	extern const RString NOTESKINS_DIR;
 }
 
 #endif

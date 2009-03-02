@@ -87,7 +87,7 @@ const RString SBE_StretchNoLoop         = "StretchNoLoop";
 const RString SBE_StretchRewind         = "StretchRewind";
 const RString SBT_CrossFade             = "CrossFade";
 
-static void StripCvs( vector<RString> &vsPathsToStrip, vector<RString> &vsNamesToStrip )
+static void StripCvsAndSvn( vector<RString> &vsPathsToStrip, vector<RString> &vsNamesToStrip )
 {
 	ASSERT( vsPathsToStrip.size() == vsNamesToStrip.size() );
 	for( unsigned i=0; i<vsNamesToStrip.size(); i++ )
@@ -123,7 +123,7 @@ void BackgroundUtil::GetBackgroundEffects( const RString &_sName, vector<RString
 	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( GetFileNameWithoutExtension(*s) );
 
-	StripCvs( vsPathsOut, vsNamesOut );
+	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
 void BackgroundUtil::GetBackgroundTransitions( const RString &_sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
@@ -140,7 +140,7 @@ void BackgroundUtil::GetBackgroundTransitions( const RString &_sName, vector<RSt
 	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( GetFileNameWithoutExtension(*s) );
 
-	StripCvs( vsPathsOut, vsNamesOut );
+	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
 void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
@@ -159,7 +159,7 @@ void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const RString &sMat
 	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( Basename(*s) );
 
-	StripCvs( vsPathsOut, vsNamesOut );
+	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
 void BackgroundUtil::GetSongMovies( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
@@ -180,7 +180,7 @@ void BackgroundUtil::GetSongMovies( const Song *pSong, const RString &sMatch, ve
 	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( Basename(*s) );
 
-	StripCvs( vsPathsOut, vsNamesOut );
+	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
 void BackgroundUtil::GetSongBitmaps( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
@@ -202,7 +202,7 @@ void BackgroundUtil::GetSongBitmaps( const Song *pSong, const RString &sMatch, v
 	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( Basename(*s) );
 
-	StripCvs( vsPathsOut, vsNamesOut );
+	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
 static void GetFilterToFileNames( const RString sBaseDir, const Song *pSong, set<RString> &vsPossibleFileNamesOut )
@@ -246,7 +246,7 @@ void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const RString &sM
 	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( Basename(*s) );
 
-	StripCvs( vsPathsOut, vsNamesOut );
+	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
 void BackgroundUtil::GetGlobalRandomMovies( 
@@ -326,7 +326,7 @@ found_files:
 		RString sName = s->Right( s->size() - RANDOMMOVIES_DIR.size() - 1 );
 		vsNamesOut.push_back( sName );
 	}
-	StripCvs( vsPathsOut, vsNamesOut );
+	StripCvsAndSvn( vsPathsOut, vsNamesOut );
 }
 
 void BackgroundUtil::BakeAllBackgroundChanges( Song *pSong )

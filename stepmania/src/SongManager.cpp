@@ -34,13 +34,11 @@
 #include "TitleSubstitution.h"
 #include "TrailUtil.h"
 #include "UnlockManager.h"
-
+#include "SpecialFiles.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
-const RString SONGS_DIR			= "/Songs/";
 const RString ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
-const RString COURSES_DIR		= "/Courses/";
 const RString ADDITIONAL_COURSES_DIR	= "/AdditionalCourses/";
 const RString EDIT_SUBDIR		= "Edits/";
 
@@ -100,9 +98,9 @@ void SongManager::InitAll( LoadingWindow *ld )
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
 void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 {
-	FILEMAN->FlushDirCache( SONGS_DIR );
+	FILEMAN->FlushDirCache( SpecialFiles::SONGS_DIR );
 	FILEMAN->FlushDirCache( ADDITIONAL_SONGS_DIR );
-	FILEMAN->FlushDirCache( COURSES_DIR );
+	FILEMAN->FlushDirCache( SpecialFiles::COURSES_DIR );
 	FILEMAN->FlushDirCache( ADDITIONAL_COURSES_DIR );
 	FILEMAN->FlushDirCache( EDIT_SUBDIR );
 
@@ -135,7 +133,7 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 {
 	RageTimer tm;
-	LoadStepManiaSongDir( SONGS_DIR, ld );
+	LoadStepManiaSongDir( SpecialFiles::SONGS_DIR, ld );
 
 	const bool bOldVal = PREFSMAN->m_bFastLoad;
 	PREFSMAN->m_bFastLoad.Set( PREFSMAN->m_bFastLoadAdditionalSongs );
@@ -206,7 +204,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	vector<RString> arrayGroupDirs;
 	GetDirListing( sDir+"*", arrayGroupDirs, true );
 	SortRStringArray( arrayGroupDirs );
-	StripCvs( arrayGroupDirs );
+	StripCvsAndSvn( arrayGroupDirs );
 
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
 	{
@@ -217,7 +215,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		// Find all Song folders in this group directory
 		vector<RString> arraySongDirs;
 		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
-		StripCvs( arraySongDirs );
+		StripCvsAndSvn( arraySongDirs );
 		SortRStringArray( arraySongDirs );
 
 		LOG->Trace("Attempting to load %i songs from \"%s\"", int(arraySongDirs.size()),
@@ -688,7 +686,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	LOG->Trace( "Loading courses." );
 
 	vector<RString> vsCourseDirs;
-	vsCourseDirs.push_back( COURSES_DIR );
+	vsCourseDirs.push_back( SpecialFiles::COURSES_DIR );
 	vsCourseDirs.push_back( ADDITIONAL_COURSES_DIR );
 
 	vector<RString> vsCourseGroupNames;
@@ -696,11 +694,11 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	{
 		// Find all group directories in Courses dir
 		GetDirListing( *sDir + "*", vsCourseGroupNames, true, true );
-		StripCvs( vsCourseGroupNames );
+		StripCvsAndSvn( vsCourseGroupNames );
 	}
 
 	// Search for courses both in COURSES_DIR and in subdirectories
-	vsCourseGroupNames.push_back( COURSES_DIR );
+	vsCourseGroupNames.push_back( SpecialFiles::COURSES_DIR );
 	SortRStringArray( vsCourseGroupNames );
 
 	FOREACH_CONST( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
@@ -1090,7 +1088,7 @@ void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCou
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut )
 {
 	const RString sCourseSuffix = sPreferredGroup + (bExtra2 ? "/extra2.crs" : "/extra1.crs");
-	RString sCoursePath = SONGS_DIR + sCourseSuffix;
+	RString sCoursePath = SpecialFiles::SONGS_DIR + sCourseSuffix;
 
 	/* Couldn't find course in DWI path or alternative song folders */
 	if( !DoesFileExist(sCoursePath) )

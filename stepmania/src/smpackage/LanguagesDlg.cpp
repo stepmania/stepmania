@@ -53,7 +53,7 @@ BOOL LanguagesDlg::OnInitDialog()
 
 	vector<RString> vs;
 	GetDirListing( SpecialFiles::THEMES_DIR+"*", vs, true );
-	StripCvs( vs );
+	StripCvsAndSvn( vs );
 	FOREACH_CONST( RString, vs, s )
 		m_listThemes.AddString( *s );
 	if( !vs.empty() )

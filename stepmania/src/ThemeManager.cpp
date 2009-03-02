@@ -179,7 +179,7 @@ ThemeManager::~ThemeManager()
 void ThemeManager::GetThemeNames( vector<RString>& AddTo )
 {
 	GetDirListing( SpecialFiles::THEMES_DIR + "*", AddTo, true );
-	StripCvs( AddTo );
+	StripCvsAndSvn( AddTo );
 }
 
 void ThemeManager::GetSelectableThemeNames( vector<RString>& AddTo )

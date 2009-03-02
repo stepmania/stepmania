@@ -15,6 +15,9 @@ const RString SpecialFiles::BASE_THEME_NAME = "default";
 const RString SpecialFiles::DEFAULTS_INI_PATH	= "Data/Defaults.ini";
 const RString SpecialFiles::STATIC_INI_PATH = "Data/Static.ini";
 const RString SpecialFiles::TYPE_TXT_FILE = "Data/Type.txt";
+const RString SpecialFiles::SONGS_DIR = "Songs/";
+const RString SpecialFiles::COURSES_DIR	= "Courses/";
+const RString SpecialFiles::NOTESKINS_DIR = "NoteSkins/";
 
 
 /*

@@ -14,15 +14,15 @@
 #include "XmlFileUtil.h"
 #include "Sprite.h"
 #include <map>
+#include "SpecialFiles.h"
 
 
 NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program
 
 
-const RString NOTESKINS_DIR = "NoteSkins/";
 const RString GAME_COMMON_NOTESKIN_NAME = "common";
 const RString GAME_BASE_NOTESKIN_NAME = "default";
-const RString GLOBAL_BASE_DIR = NOTESKINS_DIR + GAME_COMMON_NOTESKIN_NAME + "/";
+const RString GLOBAL_BASE_DIR = SpecialFiles::NOTESKINS_DIR + GAME_COMMON_NOTESKIN_NAME + "/";
 static map<RString,RString> g_PathCache;
 
 struct NoteSkinData
@@ -72,11 +72,11 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 	// clear path cache
 	g_PathCache.clear();
 
-	RString sBaseSkinFolder = NOTESKINS_DIR + pGame->m_szName + "/";
+	RString sBaseSkinFolder = SpecialFiles::NOTESKINS_DIR + pGame->m_szName + "/";
 	vector<RString> asNoteSkinNames;
 	GetDirListing( sBaseSkinFolder + "*", asNoteSkinNames, true );
 
-	StripCvs( asNoteSkinNames );
+	StripCvsAndSvn( asNoteSkinNames );
 
 	g_mapNameToData.clear();
 	for( unsigned j=0; j<asNoteSkinNames.size(); j++ )
@@ -109,7 +109,7 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName_, 
 		++iDepth;
 		ASSERT_M( iDepth < 20, "Circular NoteSkin fallback references detected." );
 
-		RString sDir = NOTESKINS_DIR + m_pCurGame->m_szName + "/" + sNoteSkinName + "/";
+		RString sDir = SpecialFiles::NOTESKINS_DIR + m_pCurGame->m_szName + "/" + sNoteSkinName + "/";
 		if( !FILEMAN->IsADirectory(sDir) )
 		{
 			sDir = GLOBAL_BASE_DIR + sNoteSkinName + "/";
@@ -231,9 +231,9 @@ void NoteSkinManager::GetAllNoteSkinNamesForGame( const Game *pGame, vector<RStr
 	}
 	else
 	{
-		RString sBaseSkinFolder = NOTESKINS_DIR + pGame->m_szName + "/";
+		RString sBaseSkinFolder = SpecialFiles::NOTESKINS_DIR + pGame->m_szName + "/";
 		GetDirListing( sBaseSkinFolder + "*", AddTo, true );
-		StripCvs( AddTo );
+		StripCvsAndSvn( AddTo );
 	}
 }	
 

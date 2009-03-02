@@ -486,7 +486,7 @@ bool BeginsWith( const RString &sTestThis, const RString &sBeginning );
 bool EndsWith( const RString &sTestThis, const RString &sEnding );
 RString URLEncode( const RString &sStr );
 
-void StripCvs( vector<RString> &vs );	// remove all items that end in "cvs"
+void StripCvsAndSvn( vector<RString> &vs );	// remove all items that end in "cvs"
 
 RString DerefRedir( const RString &sPath );
 bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine = false );

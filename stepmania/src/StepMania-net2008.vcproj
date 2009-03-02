@@ -622,6 +622,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScreenOptionsExportPackage.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsExportPackage.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ScreenOptionsManageCourses.cpp"
 				>
 			</File>

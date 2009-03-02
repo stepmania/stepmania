@@ -1159,10 +1159,10 @@ RString URLEncode( const RString &sStr )
 
 static bool CVSOrSVN( const RString& s )
 {
-	return s.Right(3).CompareNoCase("CVS") == 0 || s == ".svn";
+	return s.Right(3).EqualsNoCase("CVS")  ||  s.Right(4) == ".svn";
 }
 
-void StripCvs( vector<RString> &vs )
+void StripCvsAndSvn( vector<RString> &vs )
 {
 	RemoveIf( vs, CVSOrSVN );
 }
