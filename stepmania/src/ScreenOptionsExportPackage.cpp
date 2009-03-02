@@ -86,21 +86,71 @@ void ScreenOptionsExportPackage::BeginScreen()
 	ScreenOptions::BeginScreen();
 }
 
+static RString ReplaceInvalidFileNameChars( RString sOldFileName )
+{
+	RString sNewFileName = sOldFileName;
+	const char charsToReplace[] = { 
+		' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', 
+		'+', '=', '[', ']', '{', '}', '|', ':', '\"', '\\',
+		'<', '>', ',', '?', '/' 
+	};
+	for( int i=0; i<sizeof(charsToReplace); i++ )
+		sNewFileName.Replace( charsToReplace[i], '_' );
+	return sNewFileName;
+}
+
+static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &sErrorOut )
+{
+	/*
+	RageFile f;
+	// TODO: Mount Desktop/ for each OS
+	if( !f.Open("Desktop/"+sPackageName, RageFile::WRITE) )
+	{
+		sErrorOut = ssprintf( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
+		return false;
+	}
+
+	RageFileObjZip zip( &f );
+	zip.Start();
+	zip.SetGlobalComment( sComment );
+
+	vector<RString> vs;
+	GetDirListingRecursive( sDirToExport, "*", vs );
+	SMPackageUtil::StripIgnoredSmzipFiles( vs );
+	FOREACH( RString, vs, s )
+	{
+		if( !zip.AddFile( *s ) )
+		{
+			sErrorOut = ssprintf( "Couldn't add file: %s", s->c_str() );
+			return false;
+		}
+	}
+
+	if( zip.Finish() == -1 )
+	{
+		sErrorOut = ssprintf( "Couldn't write to file %s", fn.c_str(), f.GetError().c_str() );
+		return false;
+	}
+
+	return true;
+	*/
+	return false;
+}
+
 void ScreenOptionsExportPackage::ProcessMenuStart( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;
 
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
-	OptionRow &row = *m_pRows[iCurRow];
-	RString sDirToExport = row.GetRowDef().m_sName;
-
+	RString sDirToExport = m_vsPossibleDirsToExport[ iCurRow ];
+	RString sPackageName = ReplaceInvalidFileNameChars( sDirToExport + ".smzip" );
 	
-	bool bSuccess = true; // DoExport();
-	if( bSuccess )
+	RString sError;
+	if( ExportPackage(sPackageName, sDirToExport, sError) )
 		ScreenPrompt::Prompt( SM_None, ssprintf("Exported '%s' to the desktop", sDirToExport.c_str()) );
 	else
-		ScreenPrompt::Prompt( SM_None, "Failed to export package" );
+		ScreenPrompt::Prompt( SM_None, ssprintf("Failed to export package: %s",sError.c_str()) );
 }
 
 void ScreenOptionsExportPackage::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
