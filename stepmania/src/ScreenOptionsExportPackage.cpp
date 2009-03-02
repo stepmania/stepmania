@@ -94,7 +94,7 @@ static RString ReplaceInvalidFileNameChars( RString sOldFileName )
 		'+', '=', '[', ']', '{', '}', '|', ':', '\"', '\\',
 		'<', '>', ',', '?', '/' 
 	};
-	for( int i=0; i<sizeof(charsToReplace); i++ )
+	for( unsigned i=0; i<sizeof(charsToReplace); i++ )
 		sNewFileName.Replace( charsToReplace[i], '_' );
 	return sNewFileName;
 }
