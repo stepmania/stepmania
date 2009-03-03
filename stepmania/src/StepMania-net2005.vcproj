@@ -631,6 +631,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScreenOptionsExportPackage.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsExportPackage.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ScreenOptionsManageCourses.cpp"
 				>
 			</File>
@@ -2355,6 +2363,10 @@
 				</File>
 				<File
 					RelativePath="archutils\Win32\RestartProgram.h"
+					>
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\smzip.ico"
 					>
 				</File>
 				<File
@@ -6892,6 +6904,10 @@
 		</File>
 		<File
 			RelativePath="archutils\Win32\DialogErrorHeader.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\smzip.ico"
 			>
 		</File>
 		<File
