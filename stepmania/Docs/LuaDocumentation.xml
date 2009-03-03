@@ -197,6 +197,9 @@
 	<Function name='SetTextureFiltering' return='void' arguments='bool b'>
 		Sets Texture Filtering for an Actor to <code>b</code>.
 	</Function>
+	<Function name='accelerate' return='void' arguments='float fRate'>
+		Plays the commands that follow at an accelerated rate (<code>fRate</code> * <code>fRate</code>), where <code>fRate</code> is in seconds.
+	</Function>
 	<Function name='addx' return='void' arguments='float xPos'>
 		Adds <code>xPos</code> to the Actor's current x position.
 	</Function>
@@ -208,6 +211,13 @@
 	</Function>
 	<Function name='animate' return='void' arguments='bool b'>
 		Sets whether or not the Actor should animate.
+	</Function>
+	<Function name='aux' return='void' arguments='float fAus'>
+		<!-- XXX: What is aux? -->
+		Sets the Actor's aux value.
+	</Function>
+	<Function name='backfacecull' return='void' arguments='bool b'>
+		If <code>true</code>, cull the Actor's back faces. See also: <Link class='Actor' function='cullmode' />.
 	</Function>
 	<Function name='basealpha' return='void' arguments='float fAlpha'>
 		Sets the Actor's base alpha to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
@@ -229,6 +239,9 @@
 	</Function>
 	<Function name='cullmode' return='void' arguments='CullMode mode'>
 		Sets the Actor's cull mode to <code>mode</code>.
+	</Function>
+	<Function name='decelerate' return='void' arguments='float fRate'>
+		Plays the commands that follow at an decelerated rate (1 - (1-<code>fRate</code>) * (1-<code>fRate</code>)), where <code>fRate</code> is in seconds.
 	</Function>
 	<Function name='diffuse' return='void' arguments='color c'>
 		Set the Actor's diffuse color to <code>c</code>.
@@ -275,6 +288,10 @@
 	<Function name='finishtweening' return='void' arguments=''>
 		Finishes up an Actor's tween immediately.
 	</Function>
+	<Function name='getaux' return='float' arguments=''>
+		<!-- XXX: What is aux? -->
+		Returns the Actor's aux value.
+	</Function>
 	<Function name='GetCommand' return='bool' arguments='string sCmdName'>
 		Returns <code>true</code> if the Actor has a command named <code>sCmdName</code>.
 	</Function>
@@ -305,6 +322,9 @@
 	<Function name='hurrytweening' return='void' arguments='float factor'>
 		Hurries up an Actor's tweening by <code>factor</code>.
 	</Function>
+	<Function name='linear' return='void' arguments='float fRate'>
+		Plays the commands that follow at a normal rate, where <code>fRate</code> is in seconds.
+	</Function>
 	<Function name='playcommand' return='void' arguments='string sCommandName'>
 		Plays a command named <code>sCommandName</code>.
 	</Function>
@@ -313,6 +333,9 @@
 	</Function>
 	<Function name='queuecommand' return='void' arguments='string sCommandName'>
 		Queues a command named <code>sCommandName</code> to be played.
+	</Function>
+	<Function name='rainbow' return='void' arguments=''>
+		Makes the Actor change colors continually using colors of the rainbow.
 	</Function>
 	<Function name='rotationx' return='void' arguments='float fRotation'>
 		Set the Actor's rotation on the X axis to <code>fAlign</code>.
@@ -353,6 +376,9 @@
 	<Function name='vertalign' return='void' arguments='VertAlign align'>
 		Set the vertical alignment of the Actor according to <code>align</code>. See <Link function="valign" /> for fractional alignment.
 	</Function>
+	<Function name='vibrate' return='void' arguments=''>
+		Makes the Actor vibrate violently. Can use <Link function='effectmagnitude' /> to define different vibration behavior.
+	</Function>
 	<Function name='visible' return='void' arguments='bool b'>
 		Sets an Actor's visibility to b.
 	</Function>
@@ -372,6 +398,9 @@
 	</Function>
 	<Function name='GetChild' return='Actor' arguments='string sName'>
 		Returns the child with a name of <code>sName</code>.
+	</Function>
+	<Function name='GetChildren' return='{Actor}' arguments=''>
+		Returns an table of all the children in the ActorFrame.
 	</Function>
 	<Function name='GetNumChildren' return='int' arguments=''>
 		Returns the number of children in the ActorFrame.
@@ -630,8 +659,8 @@
 	<Function name='GetCurrentStyle' return='Style' arguments=''>
 		Return the current <Link class='Style' />.
 	</Function>
-	<Function name='GetCurrentTrail' return='Trail' arguments=''>
-		Return the current <Link class='Trail' />.
+	<Function name='GetCurrentTrail' return='Trail' arguments='PlayerNumber pn'>
+		Return the current <Link class='Trail' /> for the specified player.
 	</Function>
 	<Function name='GetDefaultSongOptions' return='string' arguments=''>
 		Return a string representation of the default song options.
@@ -769,6 +798,9 @@
 	</Function>
 	<Function name='IsSideJoined' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code> has joined the game.
+	</Function>
+	<Function name='PlayerIsUsingModifier' return='bool' arguments='PlayerNumber pn, string sModifier'>
+		Returns <code>true</code> if player <code>pn</code> is using modifier <code>sModifier</code>.
 	</Function>
 	<Function name='PlayersCanJoin' return='bool' arguments=''>
 		Returns <code>true</code> if players can join the game.
