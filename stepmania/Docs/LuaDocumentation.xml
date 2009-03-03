@@ -212,7 +212,7 @@
 	<Function name='animate' return='void' arguments='bool b'>
 		Sets whether or not the Actor should animate.
 	</Function>
-	<Function name='aux' return='void' arguments='float fAus'>
+	<Function name='aux' return='void' arguments='float fAux'>
 		<!-- XXX: What is aux? -->
 		Sets the Actor's aux value.
 	</Function>
