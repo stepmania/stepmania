@@ -22,7 +22,10 @@ NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in t
 
 const RString GAME_COMMON_NOTESKIN_NAME = "common";
 const RString GAME_BASE_NOTESKIN_NAME = "default";
-const RString GLOBAL_BASE_DIR = SpecialFiles::NOTESKINS_DIR + GAME_COMMON_NOTESKIN_NAME + "/";
+
+// this isn't a global because of nondeterministic global ctor ordering might init this before SpecialFiles::NOTESKINS_DIR
+#define GLOBAL_BASE_DIR (SpecialFiles::NOTESKINS_DIR + GAME_COMMON_NOTESKIN_NAME + "/")
+
 static map<RString,RString> g_PathCache;
 
 struct NoteSkinData
