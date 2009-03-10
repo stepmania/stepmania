@@ -386,6 +386,7 @@ bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 		case TapNote::mine:
 		case TapNote::attack:
 		case TapNote::lift:
+		case TapNote::fake:
 			return false;
 
 		case TapNote::empty:
@@ -465,7 +466,7 @@ int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
 		{
 			const TapNote &tn = GetTapNote(t, r);
-			if( tn.type != TapNote::empty  &&  tn.type != TapNote::mine )
+			if( tn.type != TapNote::empty  &&  tn.type != TapNote::mine  &&  tn.type != TapNote::fake )
 				iNumNotes++;
 		}
 	}
@@ -523,6 +524,7 @@ bool NoteData::RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, 
 		{
 		case TapNote::mine:
 		case TapNote::empty:
+		case TapNote::fake:
 			continue;	// skip these types - they don't count
 		}
 		++iNumNotesThisIndex;
@@ -573,7 +575,7 @@ int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			const TapNote &tn = GetTapNote(t, r);
-			if( tn.type != TapNote::mine  &&  tn.type != TapNote::empty )	// mines don't count
+			if( tn.type != TapNote::mine  &&  tn.type != TapNote::empty  &&  tn.type != TapNote::fake )	// mines don't count
 				iNumNotesThisIndex++;
 		}
 		if( iNumNotesThisIndex >= iMinTaps )

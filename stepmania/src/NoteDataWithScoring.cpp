@@ -91,6 +91,8 @@ int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 				continue;
 			if( tn.type == TapNote::mine ) // mines don't count
 				continue;
+			if (tn.type == TapNote::fake ) // fake arrows don't count
+				continue;
 			if( tn.result.tns <= TNS_W5 )
 				Missed = true;
 		}
@@ -133,7 +135,7 @@ int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 	{
 		/* Skip empty tracks and mines */
 		const TapNote &tn = in.GetTapNote( t, iRow );
-		if( tn.type == TapNote::empty || tn.type == TapNote::mine ) 
+		if( tn.type == TapNote::empty || tn.type == TapNote::mine || tn.type == TapNote::fake ) 
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
 			continue;
@@ -171,9 +173,9 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 	TapNoteScore score = TNS_W1;
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
-		/* Ignore mines, or the score will always be TNS_None. */
+		/* Ignore mines (and fake arrows), or the score will always be TNS_None. */
 		const TapNote &tn = in.GetTapNote( t, row );
-		if( tn.type == TapNote::empty || tn.type == TapNote::mine )
+		if( tn.type == TapNote::empty || tn.type == TapNote::mine || tn.type == TapNote::fake )
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
 			continue;

@@ -150,6 +150,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				// case 'A': tn = TAP_ORIGINAL_ATTACK;			break;
 				case 'K': tn = TAP_ORIGINAL_AUTO_KEYSOUND;		break;
 				case 'L': tn = TAP_ORIGINAL_LIFT;			break;
+				case 'F': tn = TAP_ORIGINAL_FAKE;			break;
 				default: 
 					/* Invalid data.  We don't want to assert, since there might
 					 * simply be invalid data in an .SM, and we don't want to die
@@ -379,6 +380,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 					case TapNote::attack:			c = 'A'; break;
 					case TapNote::autoKeysound:		c = 'K'; break;
 					case TapNote::lift:			c = 'L'; break;
+					case TapNote::fake:			c = 'F'; break;
 					default: 
 						FAIL_M( ssprintf("tn %i", tn.type) );	// invalid enum value
 					}
@@ -1135,6 +1137,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			case TapNote::mine:
 			case TapNote::attack:
 			case TapNote::lift:
+			case TapNote::fake:
 				break;	// shuffle this
 			DEFAULT_FAIL( tn1.type );
 			}
@@ -1298,7 +1301,7 @@ void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 			iTrackToAdd--;
 		CLAMP( iTrackToAdd, 0, inout.GetNumTracks()-1 );
 
-		if( inout.GetTapNote(iTrackToAdd, i).type != TapNote::empty )
+		if( inout.GetTapNote(iTrackToAdd, i).type != TapNote::empty  &&  inout.GetTapNote(iTrackToAdd, i).type != TapNote::fake )
 		{
 			iTrackToAdd = (iTrackToAdd+1) % inout.GetNumTracks();
 		}

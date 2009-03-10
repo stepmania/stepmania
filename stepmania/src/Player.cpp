@@ -396,6 +396,7 @@ static bool NeedsTapJudging( const TapNote &tn )
 		return tn.result.tns == TNS_None;
 	case TapNote::hold_tail:
 	case TapNote::attack:
+	case TapNote::fake:
 		return false;
 	}
 }
@@ -415,6 +416,7 @@ static bool NeedsHoldJudging( const TapNote &tn )
 	case TapNote::mine:
 	case TapNote::lift:
 	case TapNote::attack:
+	case TapNote::fake:
 		return false;
 	}
 }
@@ -2403,7 +2405,7 @@ void Player::FlashGhostRow( int iRow, PlayerNumber pn )
 	{
 		const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
 		
-		if( tn.type == TapNote::empty || tn.type == TapNote::mine )
+		if( tn.type == TapNote::empty || tn.type == TapNote::mine || tn.type == TapNote::fake )
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
 			continue;
@@ -2477,7 +2479,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 			// check to see if there's a note at the crossed row
 			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			{
-				if( tn.type != TapNote::empty && tn.result.tns == TNS_None )
+				if( tn.type != TapNote::empty && tn.type != TapNote::fake && tn.result.tns == TNS_None )
 				{
 					Step( iTrack, iRow, now, false, false );
 					if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
@@ -2637,7 +2639,7 @@ void Player::HandleTapRowScore( unsigned row )
 	{
 		const TapNote &tn = m_NoteData.GetTapNote( track, row );
 		// Mines cannot be handled here.
-		if( tn.type == TapNote::empty || tn.type == TapNote::mine )
+		if( tn.type == TapNote::empty || tn.type == TapNote::fake || tn.type == TapNote::mine )
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
 			continue;

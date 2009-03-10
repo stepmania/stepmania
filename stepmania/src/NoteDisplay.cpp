@@ -20,6 +20,7 @@ static const char *NotePartNames[] = {
 	"TapNote",
 	"TapMine",
 	"TapLift",
+	"TapFake",
 	"HoldHead",
 	"HoldTopCap",
 	"HoldBody",
@@ -237,6 +238,7 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 	m_TapNote.Load(		sButton, "Tap Note" );
 	m_TapMine.Load(		sButton, "Tap Mine" );
 	m_TapLift.Load(		sButton, "Tap Lift" );
+	m_TapFake.Load(		sButton, "Tap Fake" );
 	
 	FOREACH_HoldType( ht )
 	{
@@ -700,6 +702,11 @@ void NoteDisplay::DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSam
 	{
 		pActor = GetTapActor( m_TapMine, NotePart_Mine, fBeat );
 		part = NotePart_Mine;
+	}
+	else if( tn.type == TapNote::fake )
+	{
+		pActor = GetTapActor( m_TapFake, NotePart_Fake, fBeat );
+		part = NotePart_Fake;
 	}
 	else if( bOnSameRowAsHoldStart  &&  cache->m_bDrawHoldHeadForTapsOnSameRow )
 	{

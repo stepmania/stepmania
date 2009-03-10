@@ -21,6 +21,7 @@ enum NotePart
 	NotePart_HoldTopCap,
 	NotePart_HoldBody,
 	NotePart_HoldBottomCap,
+	NotePart_Fake,
 	NUM_NotePart
 };
 
@@ -106,6 +107,7 @@ private:
 	NoteColorActor		m_TapNote;
 	NoteColorActor		m_TapMine;
 	NoteColorActor		m_TapLift;
+	NoteColorActor		m_TapFake;
 	NoteColorActor		m_HoldHead[NUM_HoldType][NUM_ActiveType];
 	NoteColorSprite		m_HoldTopCap[NUM_HoldType][NUM_ActiveType];
 	NoteColorSprite		m_HoldBody[NUM_HoldType][NUM_ActiveType];

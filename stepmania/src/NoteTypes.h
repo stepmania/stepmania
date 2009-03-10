@@ -76,6 +76,7 @@ struct TapNote
 		lift,		// up
 		attack,
 		autoKeysound,
+		fake,		// not scored for or against
  	};
 	enum SubType
 	{
@@ -170,6 +171,7 @@ extern TapNote TAP_ORIGINAL_MINE;		// 'M'
 extern TapNote TAP_ORIGINAL_LIFT;		// 'L'
 extern TapNote TAP_ORIGINAL_ATTACK;		// 'A'
 extern TapNote TAP_ORIGINAL_AUTO_KEYSOUND;	// 'K'
+extern TapNote TAP_ORIGINAL_FAKE;		// 'F'
 extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;
 
