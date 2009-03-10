@@ -330,7 +330,7 @@ static bool WriteDWINotesTag( RageFile &f, const Steps &out )
 	case StepsType_dance_single:	f.Write( "#SINGLE:" );	break;
 	case StepsType_dance_couple:	f.Write( "#COUPLE:" );	break;
 	case StepsType_dance_double:	f.Write( "#DOUBLE:" );	break;
-	case StepsType_dance_solo:		f.Write( "#SOLO:" );	break;
+	case StepsType_dance_solo:	f.Write( "#SOLO:" );	break;
 	default:	return false;	// not a type supported by DWI
 	}
 
