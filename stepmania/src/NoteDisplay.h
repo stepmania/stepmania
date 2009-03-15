@@ -16,12 +16,12 @@ enum NotePart
 	NotePart_Tap,
 	NotePart_Mine,
 	NotePart_Lift,
+	NotePart_Fake,
 	NotePart_HoldHead,
 	NotePart_HoldTail,
 	NotePart_HoldTopCap,
 	NotePart_HoldBody,
 	NotePart_HoldBottomCap,
-	NotePart_Fake,
 	NUM_NotePart
 };
 
