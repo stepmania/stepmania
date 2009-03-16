@@ -543,7 +543,7 @@ void ScreenEvaluation::Init()
 
 				static const int indeces[NUM_DetailLine] =
 				{
-					RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines, RadarCategory_Hands, RadarCategory_Rolls
+					RadarCategory_TapsAndHolds, RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines, RadarCategory_Hands, RadarCategory_Rolls
 				};
 				const int ind = indeces[l];
 				const int iActual = lrintf(m_pStageStats->m_player[p].m_radarActual[ind]);
