@@ -1034,8 +1034,8 @@ void ScreenEdit::UpdateTextInfo()
 	/* XXX
 	if( !PitchDetectionTest::MidiNoteToString( GAMESTATE->m_iEditMidiNote, sMidiNote ) )
 		sMidiNote = "";
-	*/
 	sText += ssprintf( "%s:\n  %i (%s)\n",	"Pitch", (int)GAMESTATE->m_iEditMidiNote, sMidiNote.c_str() );
+	*/
 
 	switch( EDIT_MODE.GetValue() )
 	{
