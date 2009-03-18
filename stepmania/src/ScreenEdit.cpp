@@ -1110,6 +1110,24 @@ void ScreenEdit::Input( const InputEventPlus &input )
 	if( EditB == EditButton_Invalid )
 		EditB = MenuButtonToEditButton( input.MenuI );
 		
+	/* ctrl/cmd+s is just about always save. */
+	bool bDoSave = input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_Cs ) &&
+		#if defined(MACOSX)	/* use cmd */
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA), &input.InputList) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA), &input.InputList);
+		#else			/* use ctrl */
+			!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL), &input.InputList) &&
+			!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL), &input.InputList);
+		#endif
+
+	if( bDoSave && input.type == IET_FIRST_PRESS )
+	{
+		m_pSteps->SetNoteData( m_NoteDataEdit );
+		m_pSong->Save();
+		HandleScreenMessage( SM_SaveSuccessful );
+		m_soundSave.Play();
+	}
+
 
 	if( EditB == EDIT_BUTTON_REMOVE_NOTE )
 	{
