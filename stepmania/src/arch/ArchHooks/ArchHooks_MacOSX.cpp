@@ -411,7 +411,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Save" );
 	
 	// /Screenshots -> ~/Documents/PRODUCT_ID Screenshots
-	PathForFolderType( dir, kDocumentsFolderType );
+	PathForFolderType( dir, kPictureDocumentsFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID " Screenshots", dir), "/Screenshots" );
 	
 	// /Cache -> ~/Library/Caches/PRODUCT_ID
