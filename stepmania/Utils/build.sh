@@ -51,20 +51,21 @@ usage () {
 	echo 'Build StepMania with a statically linked ffmpeg.'
 	echo "CONFIGURE_OPTIONS are passed to StepMania's configure."
 	echo ''
-	echo '  -d, --download             stop after ffmpeg download.'
-	echo '  -f, --ffmpeg               stop after building ffmpeg.'
-	echo '  -c, --configure            stop after configuring StepMania.'
-	echo '  -s, --stepmania            stop after building StepMania'
+	echo '  -d,  --download             stop after ffmpeg download.'
+	echo '  -f,  --ffmpeg               stop after building ffmpeg.'
+	echo '  -c,  --configure            stop after configuring StepMania.'
+	echo '  -s,  --stepmania            stop after building StepMania'
 	echo '                               (do not copy binaries).'
-	echo '  -h, --help                 print this help and exit.'
-	echo '  -v, --verbose              increase verbosity (up to 2).'
+	echo '  -j#, --jobs=#               pass -j# to make.'
+	echo '  -h,  --help                 print this help and exit.'
+	echo '  -v,  --verbose              increase verbosity (up to 2).'
 	echo '      --version              print version and exit.'
 	exit $1
 }
 
 version () {
-	echo 'build.sh (StepMania) 2.5'
-	echo 'Copyright (C) 2006-2007 Steve Checkoway'
+	echo 'build.sh (StepMania) 2.6'
+	echo 'Copyright (C) 2006-2009 Steve Checkoway'
 	echo 'StepMania is Copyright (C) 2001-2008 Chris Danford et al.'
 	exit 0
 }
@@ -77,13 +78,14 @@ fi
 
 if which getopt >/dev/null 2>&1; then
 	set -- `getopt	-l download,ffmpeg,configure,stepmania,help \
-			-l verbose,version -- dfcshv $*`
+			-l jobs::,verbose,version -- dfcshj::v $*`
 fi
 
 s_download=
 s_ffmpeg=
 s_configure=
 s_stepmania=
+num_jobs=1
 while [ $# -gt 0 ]; do
 	arg=$1
 	shift
@@ -93,6 +95,7 @@ while [ $# -gt 0 ]; do
 		-c|--configure)	s_configure=yes		;;
 		-s|--stepmania)	s_stepmania=yes		;;
 		-h|--help)	usage 0			;;
+		-j|--jobs)	num_jobs=$1; shift	;;
 		-v|--verbose)	verbose=$[verbose+1]	;;
 		--version)	version			;;
 		--)		break			;;
@@ -106,20 +109,19 @@ swscale_rev=26201
 swscale_repo=svn://svn.mplayerhq.hu/mplayer/trunk/libswscale
 if [ ! -d $ffmpeg ]; then
 	message 'Downloading ffmpeg'
-	if which svn &>/dev/null; then
-		call svn co --ignore-externals -r $revision $repository $ffmpeg
-		call svn co -r $swscale_rev $swscale_repo $ffmpeg/libswscale
-	else
+	if ! which svn &>/dev/null; then
 		failure 'Install subversion.'
 	fi
-	message 'Downloading ffmpeg patch'
 	if which curl &>/dev/null; then
 		get='curl -O'
 	elif which wget &>/dev/null; then
 		get=wget
 	else
-		failure 'Neither curl nor wget installed.'
+		failure 'Install either curl or wget.'
 	fi
+	call svn co --ignore-externals -r $revision $repository $ffmpeg
+	call svn co -r $swscale_rev $swscale_repo $ffmpeg/libswscale
+	message 'Downloading ffmpeg patch'
 	cd $ffmpeg
 	call $get http://stepmania.sourceforge.net/ffmpeg-r8448-avi.patch
 	message 'Patching ffmpeg'
@@ -155,7 +157,7 @@ if [ ! -f $ffmpeg/_inst/lib/libavcodec.a ]; then
 	message 'Configuring ffmpeg'
 	call ./configure --prefix="`pwd`/_inst" $args
 	message 'Building ffmpeg'
-	call make install-libs install-headers
+	call make --jobs="$num_jobs" install-libs install-headers
 	cd ..
 fi
 if [ -n "$s_ffmpeg" ]; then exit 0; fi
@@ -170,7 +172,7 @@ if [ -n "$s_configure" ]; then exit 0; fi
 if [ ! -f _build/src/stepmania ]; then
 	message 'Building StepMania'
 	cd _build || failure
-	call make
+	call make --jobs="$num_jobs"
 	cd ..
 fi
 if [ -n "$s_stepmania" ]; then exit 0; fi
@@ -180,7 +182,7 @@ if [ ! -f stepmania -o ! -f GtkModule.so ]; then
 fi
 
 
-# (c) 2006-2007 Steve Checkoway
+# (c) 2006-2009 Steve Checkoway
 # All rights reserved.
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a
