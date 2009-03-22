@@ -471,7 +471,7 @@ void ScreenOptionsEditPlaylist::ProcessMenuStart( const InputEventPlus &input )
 
 	int iRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 
-	int iSongCount = GAMESTATE->m_pCurCourse->m_vEntries.size();
+	unsigned iSongCount = GAMESTATE->m_pCurCourse->m_vEntries.size();
 
 	if( m_pRows[iRow]->GetRowType() == OptionRow::RowType_Exit  &&  iSongCount < unsigned(MIN_ENABLED_SONGS) )
 	{
