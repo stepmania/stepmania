@@ -373,18 +373,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenOptions.h">
 			</File>
 			<File
-				RelativePath="ScreenOptionsEditCourse.cpp">
-			</File>
-			<File
-				RelativePath="ScreenOptionsEditCourse.h">
-			</File>
-			<File
-				RelativePath="ScreenOptionsEditCourseEntry.cpp">
-			</File>
-			<File
-				RelativePath="ScreenOptionsEditCourseEntry.h">
-			</File>
-			<File
 				RelativePath=".\ScreenOptionsEditPlaylist.cpp">
 			</File>
 			<File
@@ -395,12 +383,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenOptionsEditProfile.h">
-			</File>
-			<File
-				RelativePath=".\ScreenOptionsEditWorkout.cpp">
-			</File>
-			<File
-				RelativePath=".\ScreenOptionsEditWorkout.h">
 			</File>
 			<File
 				RelativePath="ScreenOptionsManageCourses.cpp">
@@ -1161,12 +1143,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\Tween.h">
-			</File>
-			<File
-				RelativePath=".\Workout.cpp">
-			</File>
-			<File
-				RelativePath=".\Workout.h">
 			</File>
 		</Filter>
 		<Filter
