@@ -12,6 +12,7 @@ static const char *GameControllerNames[] = {
 };
 XToString( GameController );
 StringToX( GameController );
+LuaXType( GameController );
 
 
 RString GameButtonToString( const InputScheme* pInputs, GameButton i )

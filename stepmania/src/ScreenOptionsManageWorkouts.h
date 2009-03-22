@@ -4,7 +4,7 @@
 #include "ScreenOptions.h"
 #include "GameConstantsAndTypes.h"
 
-class Workout;
+class Course;
 
 class ScreenOptionsManageWorkouts : public ScreenOptions
 {
@@ -21,9 +21,9 @@ protected:
 	virtual void AfterChangeRow( PlayerNumber pn );
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 
-	Workout *GetWorkoutWithFocus() const;
+	Course *GetCourseWithFocus() const;
 
-	vector<Workout*> m_vpWorkouts;
+	vector<Course*> m_vpCourses;
 
 	ThemeMetric<RString> CREATE_NEW_SCREEN;
 };

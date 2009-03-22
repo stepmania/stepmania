@@ -8,111 +8,54 @@
 #include "FontCharAliases.h"
 #include "ProfileManager.h"
 #include "LocalizedString.h"
+#include "GameState.h"
+#include "GameManager.h"
+#include "Style.h"
+#include "Profile.h"
+#include "CourseWriterCRS.h"
 
-static const RString WORKOUTS_SUBDIR = "Workouts/";
+int EditCourseUtil::MAX_NAME_LENGTH = 16;
+int EditCourseUtil::MAX_PER_PROFILE = 32;
+bool EditCourseUtil::s_bNewCourseNeedsName = false;
 
-WorkoutManager*	WORKOUTMAN = NULL;	// global and accessable from anywhere in our program
-
-WorkoutManager::WorkoutManager()
+bool EditCourseUtil::Save( Course *pCourse )
 {
-	m_pCurWorkout = NULL;
-	m_pTempCourse = new Course;
+	return EditCourseUtil::RenameAndSave( pCourse, pCourse->GetDisplayFullTitle() );
+}
 
-	// Register with Lua.
+bool EditCourseUtil::RenameAndSave( Course *pCourse, RString sName )
+{
+	ASSERT( !sName.empty() );
+
+	EditCourseUtil::s_bNewCourseNeedsName = false;
+
+	RString sNewFilePath = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_COURSES_SUBDIR + sName + ".crs";
+
+	// remove the old file if the name is changing
+	if( !pCourse->m_sPath.empty()  &&  sNewFilePath != pCourse->m_sPath )
 	{
-		Lua *L = LUA->Get();
-		lua_pushstring( L, "WORKOUTMAN" );
-		this->PushSelf( L );
-		lua_settable(L, LUA_GLOBALSINDEX);
-		LUA->Release( L );
+		FILEMAN->Remove( pCourse->m_sPath );	// not fatal if this fails		
+		FlushDirCache();
 	}
+
+	pCourse->m_sMainTitle = sName;
+	pCourse->m_sPath = sNewFilePath;
+	return CourseWriterCRS::Write( *pCourse, pCourse->m_sPath, false );
 }
 
-WorkoutManager::~WorkoutManager()
+bool EditCourseUtil::RemoveAndDeleteFile( Course *pCourse )
 {
-	// Unregister with Lua.
-	LUA->UnsetGlobal( "WORKOUTMAN" );
-
-	FOREACH( Workout*, m_vpAllWorkouts, p )
-		SAFE_DELETE( *p );
-	m_vpAllWorkouts.clear();
-
-	SAFE_DELETE( m_pTempCourse );
-}
-
-void WorkoutManager::LoadAllFromDisk()
-{
-	m_vpAllWorkouts.clear();
-	vector<RString> vsFiles;
-	GetDirListing( PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + WORKOUTS_SUBDIR + "*.xml", vsFiles, false, true );
-	FOREACH_CONST( RString, vsFiles, s )
-	{
-		Workout *p = new Workout;
-		if( p->LoadFromFile( *s ) )
-			m_vpAllWorkouts.push_back( p );
-	}
-}
-
-void WorkoutManager::LoadDefaults( Workout &out )
-{
-	out = Workout();
-
-	// pick a default name
-	// XXX: Make this localizable
-	for( int i=0; i<10000; i++ )
-	{
-		out.m_sName = ssprintf("Workout %d", i+1);
-		bool bNameInUse = false;
-		FOREACH_CONST( Workout*, m_vpAllWorkouts, p )
-		{
-			if( out.m_sName == (*p)->m_sName )
-			{
-				bNameInUse = true;
-				break;
-			}
-		}
-
-		if( !bNameInUse )
-			break;
-	}
-	SongUtil::GetAllSongGenres( out.m_vsSongGenres );
-}
-
-bool WorkoutManager::RenameAndSave( Workout *pWorkout, RString sNewName )
-{
-	pWorkout->m_bNameWasSetByUser = true;
-	ASSERT( !sNewName.empty() );
-	vector<Workout*>::iterator iter = find( m_vpAllWorkouts.begin(), m_vpAllWorkouts.end(), pWorkout );
-	if( iter == m_vpAllWorkouts.end() )
-		return false;
-	pWorkout->m_sName = sNewName;
-	FILEMAN->Remove( pWorkout->m_sFile );
-	FlushDirCache();	// not fatal if this fails
-	pWorkout->m_sFile = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + WORKOUTS_SUBDIR + pWorkout->m_sName + ".xml";
-	return pWorkout->SaveToFile( pWorkout->m_sFile );
-}
-
-bool WorkoutManager::Save( Workout *pWorkout )
-{
-	ASSERT( !pWorkout->m_sFile.empty() );
-	return pWorkout->SaveToFile( pWorkout->m_sFile );
-}
-
-bool WorkoutManager::RemoveAndDeleteFile( Workout *pToDelete )
-{
-	vector<Workout*>::iterator iter = find( m_vpAllWorkouts.begin(), m_vpAllWorkouts.end(), pToDelete );
-	if( iter == m_vpAllWorkouts.end() )
-		return false;
-	if( !FILEMAN->Remove( pToDelete->m_sFile ) )
+	if( !FILEMAN->Remove( pCourse->m_sPath ) )
 		return false;
 	FlushDirCache();
+	PROFILEMAN->LoadMachineProfile();
 	return true;
 }
 
 static LocalizedString YOU_MUST_SUPPLY_NAME	( "WorkoutManager", "You must supply a name for your workout." );
 static LocalizedString EDIT_NAME_CONFLICTS	( "WorkoutManager", "The name you chose conflicts with another workout. Please use a different name." );
 static LocalizedString EDIT_NAME_CANNOT_CONTAIN	( "WorkoutManager", "The workout name cannot contain any of the following characters: %s" );
-bool WorkoutManager::ValidateWorkoutName( const RString &sAnswer, RString &sErrorOut )
+bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sErrorOut )
 {
 	if( sAnswer.empty() )
 	{
@@ -127,15 +70,15 @@ bool WorkoutManager::ValidateWorkoutName( const RString &sAnswer, RString &sErro
 		return false;
 	}
 
-	Workout *pWorkout = WORKOUTMAN->m_pCurWorkout;
-
-	// Steps name must be unique for this song.
-	FOREACH_CONST( Workout*, WORKOUTMAN->m_vpAllWorkouts, p )
+	// Check for name conflicts
+	vector<Course*> vpCourses;
+	EditCourseUtil::GetAllEditCourses( vpCourses );
+	FOREACH_CONST( Course*, vpCourses, p )
 	{
-		if( pWorkout == *p )
+		if( GAMESTATE->m_pCurCourse == *p )
 			continue;	// don't comepare name against ourself
 
-		if( (*p)->m_sName == sAnswer )
+		if( (*p)->GetDisplayFullTitle() == sAnswer )
 		{
 			sErrorOut = EDIT_NAME_CONFLICTS;
 			return false;
@@ -145,72 +88,75 @@ bool WorkoutManager::ValidateWorkoutName( const RString &sAnswer, RString &sErro
 	return true;
 }
 
-void WorkoutManager::GetWorkoutSongsForGenres( const vector<RString> &vsSongGenres, vector<Song*> &vpSongsOut )
+void EditCourseUtil::UpdateAndSetTrail()
 {
-	SongCriteria soc;
-	soc.m_Selectable = SongCriteria::Selectable_Yes;
-	soc.m_bUseSongGenreAllowedList = true;
-	soc.m_vsSongGenreAllowedList = vsSongGenres;
-	SongUtil::FilterSongs( soc, SONGMAN->GetSongs(), vpSongsOut );
+	StepsType st = GAMESTATE->m_pCurStyle->m_StepsType;
+	Trail *pTrail = GAMESTATE->m_pCurCourse->GetTrailForceRegenCache( st );
+	ASSERT( pTrail );
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 }
 
-static LocalizedString SONGS_ENABLED( "WorkoutManager", "%d/%d songs enabled" );
-static RString GetWorkoutSongsOverview()
+void EditCourseUtil::PrepareForPlay()
 {
-	SongCriteria soc;
+	GAMESTATE->m_pCurSong.Set( NULL );	// CurSong will be set if we back out.  Set it back to NULL so that ScreenStage won't show the last song.
+	GAMESTATE->m_PlayMode.Set( PLAY_MODE_ENDLESS );
+	GAMESTATE->m_bSideIsJoined[0] = true;
 
-	Workout defaultWorkout;
-	WORKOUTMAN->LoadDefaults( defaultWorkout );
-	soc.m_Selectable = SongCriteria::Selectable_Yes;
-	vector<Song*> vpAllSongs;
-	WORKOUTMAN->GetWorkoutSongsForGenres( defaultWorkout.m_vsSongGenres, vpAllSongs );
-
-	vector<Song*> vpSelectedSongs;
-	WORKOUTMAN->GetWorkoutSongsForGenres( WORKOUTMAN->m_pCurWorkout->m_vsSongGenres, vpSelectedSongs );
-
-	return ssprintf( SONGS_ENABLED.GetValue(), (int)vpSelectedSongs.size(), (int)vpAllSongs.size() );
+	PROFILEMAN->GetProfile(ProfileSlot_Player1)->m_GoalType = GoalType_Time;
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+	PROFILEMAN->GetProfile(ProfileSlot_Player1)->m_iGoalSeconds = pCourse->m_fGoalSeconds;
 }
 
-static RString GetWorkoutSongTitleText()
+void EditCourseUtil::GetAllEditCourses( vector<Course*> &vpCoursesOut )
 {
-	vector<RString> vs;
-	FOREACH_CONST( RString, WORKOUTMAN->m_pCurWorkout->m_vsSongGenres, s )
+	vector<Course*> vpCoursesTemp;
+	SONGMAN->GetAllCourses( vpCoursesTemp, false );
+	FOREACH_CONST( Course*, vpCoursesTemp, c )
 	{
-		RString s2 = *s;
-		s2.Replace( " ", "&nbsp;" );
-		vs.push_back( s2 );
+		if( (*c)->GetLoadedFromProfileSlot() != ProfileSlot_Invalid )
+			vpCoursesOut.push_back( *c );
+	}
+}
 
-		// show max N to avoid frame rate slowdown
-		if( vs.size() >= 40 )
+void EditCourseUtil::LoadDefaults( Course &out )
+{
+	out = Course();
+
+	out.m_fGoalSeconds = 0;
+
+	// pick a default name
+	// XXX: Make this localizable
+	for( int i=0; i<10000; i++ )
+	{
+		out.m_sMainTitle = ssprintf("Workout %d", i+1);
+		bool bNameInUse = false;
+
+		vector<Course*> vpCourses;
+		EditCourseUtil::GetAllEditCourses( vpCourses );
+		FOREACH_CONST( Course*, vpCourses, p )
+		{
+			if( out.m_sMainTitle == (*p)->m_sMainTitle )
+			{
+				bNameInUse = true;
+				break;
+			}
+		}
+
+		if( !bNameInUse )
 			break;
 	}
 
-	RString sReturn = join( ",   ", vs );
-	FontCharAliases::ReplaceMarkers( sReturn );
-	return sReturn;
+	vector<Song*> vpSongs;
+	SONGMAN->GetPreferredSortSongs( vpSongs );
+	for( int i=0; i<(int)vpSongs.size() && i<6; i++ )
+	{
+		CourseEntry ce;
+		ce.songID.FromSong( vpSongs[i] );
+		ce.stepsCriteria.m_difficulty = Difficulty_Easy;
+		out.m_vEntries.push_back( ce );
+	}
 }
 
-
-// lua start
-#include "LuaBinding.h"
-
-class LunaWorkoutManager: public Luna<WorkoutManager>
-{
-public:
-	static int GetCurrentWorkout( T* p, lua_State *L )		{ if(p->m_pCurWorkout) p->m_pCurWorkout->PushSelf(L); else lua_pushnil(L); return 1; }
-	static int GetWorkoutSongsOverview( T* p, lua_State *L )	{ lua_pushstring( L, ::GetWorkoutSongsOverview() ); return 1; }
-	static int GetWorkoutSongTitleText( T* p, lua_State *L )	{ lua_pushstring( L, ::GetWorkoutSongTitleText() ); return 1; }
-
-	LunaWorkoutManager()
-	{
-		ADD_METHOD( GetCurrentWorkout );
-		ADD_METHOD( GetWorkoutSongsOverview );
-		ADD_METHOD( GetWorkoutSongTitleText );
-	}
-};
-
-LUA_REGISTER_CLASS( WorkoutManager )
-// lua end
 
 /*
  * (c) 2003-2004 Chris Danford

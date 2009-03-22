@@ -10,6 +10,12 @@ class Trail;
 class Course;
 class XNode;
 
+namespace TrailUtil
+{
+	int GetNumSongs( const Trail *pTrail );
+	float GetTotalSeconds( const Trail *pTrail );
+};
+
 class TrailID
 {
 	StepsType st;

@@ -1,41 +1,26 @@
 #ifndef WorkoutManager_H
 #define WorkoutManager_H
 
-struct lua_State;
-class Song;
-class Workout;
 class Course;
 
-const int MAX_WORKOUT_NAME_LENGTH = 16;
-const int MAX_WORKOUTS_PER_PROFILE = 32;
-
-class WorkoutManager
+namespace EditCourseUtil
 {
-public:
-	WorkoutManager();
-	~WorkoutManager();
+	void UpdateAndSetTrail();
+	void PrepareForPlay();
+	void LoadDefaults( Course &out );
+	bool RemoveAndDeleteFile( Course *pCourse );
+	bool ValidateEditCourseName( const RString &sAnswer, RString &sErrorOut );
+	void GetAllEditCourses( vector<Course*> &vpCoursesOut );
+	bool Save( Course *pCourse );
+	bool RenameAndSave( Course *pCourse, RString sName );
 
-	void LoadAllFromDisk();
+	bool ValidateEditCourseNametName( const RString &sAnswer, RString &sErrorOut );
 
-	void LoadDefaults( Workout &out );
-	bool RenameAndSave( Workout *pToRename, RString sNewName );
-	bool Save( Workout *pToRename );
-	bool RemoveAndDeleteFile( Workout *pToDelete );
-	
-	static bool ValidateWorkoutName( const RString &sAnswer, RString &sErrorOut );
-
-	void GetWorkoutSongsForGenres( const vector<RString> &vsSongGenres, vector<Song*> &vpSongsOut );
-
-	vector<Workout*> m_vpAllWorkouts;
-	Workout *m_pCurWorkout;
-
-	Course *m_pTempCourse;
-
-	// Lua
-	void PushSelf( lua_State *L );
+	extern int MAX_NAME_LENGTH;
+	extern int MAX_PER_PROFILE;
+	extern bool s_bNewCourseNeedsName;	// if true, we are working with a Course that has never been named
 };
 
-extern WorkoutManager*	WORKOUTMAN;	// global and accessable from anywhere in our program
 
 #endif
 

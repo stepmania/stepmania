@@ -4,7 +4,23 @@
 #include "Course.h"
 #include "XmlFile.h"
 #include "GameManager.h"
+#include "Song.h"
 
+
+int TrailUtil::GetNumSongs( const Trail *pTrail )
+{
+	return pTrail->m_vEntries.size();
+}
+
+float TrailUtil::GetTotalSeconds( const Trail *pTrail )
+{
+	float fSecs = 0;
+	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+		fSecs += e->pSong->m_fMusicLengthSeconds;
+	return fSecs;
+}
+
+///////////////////////////////////////////////////////////////////////
 
 void TrailID::FromTrail( const Trail *p )
 {
@@ -83,6 +99,37 @@ bool TrailID::operator<( const TrailID &rhs ) const
 #undef COMP
 	return false;
 }
+
+
+// lua start
+#include "LuaBinding.h"
+
+namespace
+{
+	int GetNumSongs( lua_State *L )
+	{
+		Trail *pTrail = Luna<Trail>::check( L, 1, true );
+		int iNum = TrailUtil::GetNumSongs( pTrail );
+		LuaHelpers::Push( L, iNum );
+		return 1;
+	}
+	int GetTotalSeconds( lua_State *L )
+	{
+		Trail *pTrail = Luna<Trail>::check( L, 1, true );
+		float fSecs = TrailUtil::GetTotalSeconds( pTrail );
+		LuaHelpers::Push( L, fSecs );
+		return 1;
+	}
+
+	const luaL_Reg TrailUtilTable[] =
+	{
+		LIST_METHOD( GetNumSongs ),
+		LIST_METHOD( GetTotalSeconds ),
+		{ NULL, NULL }
+	};
+}
+
+LUA_REGISTER_NAMESPACE( TrailUtil )
 
 /*
  * (c) 2004 Chris Danford

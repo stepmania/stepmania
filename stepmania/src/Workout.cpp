@@ -103,22 +103,10 @@ void Workout::GenerateCourse( Course &out )
 	out.m_sMainTitle = "temp";
 	out.m_bRepeat = true;
 
-	// Choose a large number of course entries.  We may loop if the goal 
-	// is not yet reached, and it would be bad to play the same sequence 
-	// of songs over again.
-	const int iNumCourseEntries = 6*5;	// choose a multiple of the intervals above, or else the WorkoutGraph will get out of sync with the actual songs.
-
-	vector<int> viMeter;
-	GetEstimatedMeters( iNumCourseEntries, viMeter );
-
-	for( int i=0; i<iNumCourseEntries; i++ )
+	FOREACH( SongID, m_vSongs, s )
 	{
 		CourseEntry ce;
-
-		ce.songCriteria.m_bUseSongGenreAllowedList = true;
-		ce.songCriteria.m_vsSongGenreAllowedList = m_vsSongGenres;
-		
-		ce.stepsCriteria.m_iLowMeter = ce.stepsCriteria.m_iHighMeter = viMeter[i];
+		ce.songID = *s;
 		out.m_vEntries.push_back( ce );
 	}
 }
@@ -148,16 +136,18 @@ bool Workout::LoadFromFile( RString sFile )
 	xml.GetChildValue("AverageMeter",m_iAverageMeter);
 	CLAMP( m_iAverageMeter, MIN_METER, MAX_METER );
 
-	XNode *songGenres = xml.GetChild("SongGenres");
-	if( songGenres )
+	XNode *songs = xml.GetChild("Songs");
+	if( songs )
 	{
-		FOREACH_CONST_Child( songGenres, songGenre )
+		FOREACH_CONST_Child( songs, song )
 		{
-			if( songGenre->GetName() == "SongGenre" )
+			if( song->GetName() == "Song" )
 			{
 				RString s;
-				songGenre->GetTextValue( s );
-				m_vsSongGenres.push_back( s );
+				song->GetTextValue( s );
+				SongID sid;
+				sid.FromString( s );
+				m_vSongs.push_back( sid );
 			}
 		}
 	}
@@ -175,10 +165,10 @@ bool Workout::SaveToFile( RString sFile )
 	xml.AppendChild( "Minutes", m_iMinutes );
 	xml.AppendChild( "AverageMeter", m_iAverageMeter );
 	
-	XNode *songGenres = xml.AppendChild("SongGenres");
-	FOREACH_CONST( RString, m_vsSongGenres, s )
+	XNode *songs = xml.AppendChild("Songs");
+	FOREACH_CONST( SongID, m_vSongs, s )
 	{
-		songGenres->AppendChild( "SongGenre", *s );
+		songs->AppendChild( "Song", s->ToString() );
 	}
 
 	return XmlFileUtil::SaveToFile( &xml, sFile );

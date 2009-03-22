@@ -538,6 +538,11 @@ void ProfileManager::LoadMachineProfile()
 	// If the machine name has changed, make sure we use the new name
 	m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName;
 
+	LoadMachineProfileEdits();
+}
+
+void ProfileManager::LoadMachineProfileEdits()
+{
 	SONGMAN->FreeAllLoadedFromProfile( ProfileSlot_Machine );
 	SONGMAN->LoadStepEditsFromProfileDir( MACHINE_PROFILE_DIR, ProfileSlot_Machine );
 	SONGMAN->LoadCourseEditsFromProfileDir( MACHINE_PROFILE_DIR, ProfileSlot_Machine );

@@ -3,18 +3,23 @@
 #include "ScreenManager.h"
 #include "ScreenMiniMenu.h"
 #include "OptionRowHandler.h"
-#include "WorkoutManager.h"
-#include "Workout.h"
+#include "Course.h"
+#include "SongManager.h"
 #include "LocalizedString.h"
 #include "GameState.h"
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
 #include "StatsManager.h"
 #include "PrefsManager.h"
+#include "WorkoutManager.h"
+#include "ProfileManager.h"
+#include "GameManager.h"
+#include "CourseUtil.h"
 
 AutoScreenMessage( SM_BackFromRename )
 AutoScreenMessage( SM_BackFromDelete )
 AutoScreenMessage( SM_BackFromContextMenu )
+
 
 enum ManageWorkoutsAction
 {
@@ -53,7 +58,17 @@ void ScreenOptionsManageWorkouts::BeginScreen()
 {
 	STATSMAN->Reset();
 
-	WORKOUTMAN->LoadAllFromDisk();
+
+	vector<const Style*> vpStyles;
+	GameManager::GetStylesForGame( GAMESTATE->m_pCurGame, vpStyles );
+	const Style *pStyle = vpStyles[0];
+	GAMESTATE->SetCurrentStyle( pStyle );
+
+
+	// Remember the current course.  All Course pointers will be invalidated when we load the machine profile below.
+	CourseID cidLast;
+	cidLast.FromCourse( GAMESTATE->m_pCurCourse );
+
 
 	vector<OptionRowHandler*> vHands;
 
@@ -71,14 +86,16 @@ void ScreenOptionsManageWorkouts::BeginScreen()
 		iIndex++;
 	}
 
-	m_vpWorkouts = WORKOUTMAN->m_vpAllWorkouts;
+	FlushDirCache();
+	PROFILEMAN->LoadMachineProfileEdits();
+	EditCourseUtil::GetAllEditCourses( m_vpCourses );
 
-	FOREACH_CONST( Workout*, m_vpWorkouts, p )
+	FOREACH_CONST( Course*, m_vpCourses, p )
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
 		
-		def.m_sName = (*p)->m_sName;
+		def.m_sName = (*p)->GetDisplayFullTitle();
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Select Workout";
 		def.m_vsChoices.clear();
@@ -92,12 +109,14 @@ void ScreenOptionsManageWorkouts::BeginScreen()
 	ScreenOptions::BeginScreen();
 	
 	// select the last chosen course
-	if( WORKOUTMAN->m_pCurWorkout )
-	{
-		vector<Workout*>::const_iterator iter = find( m_vpWorkouts.begin(), m_vpWorkouts.end(), WORKOUTMAN->m_pCurWorkout );
-		if( iter != m_vpWorkouts.end() )
+	GAMESTATE->m_pCurCourse.Set( cidLast.ToCourse() );
+	if( GAMESTATE->m_pCurCourse )
+	{		
+		EditCourseUtil::UpdateAndSetTrail();
+		vector<Course*>::const_iterator iter = find( m_vpCourses.begin(), m_vpCourses.end(), GAMESTATE->m_pCurCourse );
+		if( iter != m_vpCourses.end() )
 		{
-			int iIndex = iter - m_vpWorkouts.begin();
+			int iIndex = iter - m_vpCourses.begin();
 			this->MoveRowAbsolute( PLAYER_1, 1 + iIndex );
 		}
 	}
@@ -105,11 +124,11 @@ void ScreenOptionsManageWorkouts::BeginScreen()
 	AfterChangeRow( PLAYER_1 );
 }
 
-static LocalizedString ERROR_RENAMING_WORKOUT		("ScreenOptionsManageWorkouts", "Error renaming workout file.");
-static LocalizedString ERROR_DELETING_WORKOUT_FILE	("ScreenOptionsManageWorkouts", "Error deleting the workout file '%s'.");
-static LocalizedString THIS_WORKOUT_WILL_BE_LOST	("ScreenOptionsManageWorkouts", "This workout will be lost permanently.");
-static LocalizedString CONTINUE_WITH_DELETE		("ScreenOptionsManageWorkouts", "Continue with delete?");
-static LocalizedString ENTER_NAME_FOR_WORKOUT		("ScreenOptionsManageWorkouts", "Enter a name for this workout.");
+static LocalizedString ERROR_RENAMING		("ScreenOptionsManageWorkouts", "Error renaming file.");
+static LocalizedString ERROR_DELETING_FILE	("ScreenOptionsManageWorkouts", "Error deleting the file '%s'.");
+static LocalizedString THIS_WILL_BE_LOST	("ScreenOptionsManageWorkouts", "This file will be lost permanently.");
+static LocalizedString CONTINUE_WITH_DELETE	("ScreenOptionsManageWorkouts", "Continue with delete?");
+static LocalizedString ENTER_NAME		("ScreenOptionsManageWorkouts", "Enter a name.");
 void ScreenOptionsManageWorkouts::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
@@ -118,9 +137,14 @@ void ScreenOptionsManageWorkouts::HandleScreenMessage( const ScreenMessage SM )
 
 		if( iCurRow == 0 )	// "create new"
 		{
-			WORKOUTMAN->m_pCurWorkout = new Workout;
-			WORKOUTMAN->LoadDefaults( *WORKOUTMAN->m_pCurWorkout );
-			WORKOUTMAN->m_vpAllWorkouts.push_back( WORKOUTMAN->m_pCurWorkout );
+			/* Allocate the Course now, but don't save the file until the user explicitly chooses Save */
+			Course *pCourse = new Course;
+			EditCourseUtil::LoadDefaults( *pCourse );
+			pCourse->m_LoadedFromProfile = ProfileSlot_Machine;
+			SONGMAN->AddCourse( pCourse );
+			GAMESTATE->m_pCurCourse.Set( pCourse );
+			EditCourseUtil::s_bNewCourseNeedsName = true;
+			EditCourseUtil::UpdateAndSetTrail();
 
 			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN );
 			return;	// don't call base
@@ -141,10 +165,9 @@ void ScreenOptionsManageWorkouts::HandleScreenMessage( const ScreenMessage SM )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
 
-			Workout *pWorkout = WORKOUTMAN->m_pCurWorkout;
-			if( !WORKOUTMAN->RenameAndSave(pWorkout, ScreenTextEntry::s_sLastAnswer) )
+			if( !EditCourseUtil::RenameAndSave(GAMESTATE->m_pCurCourse, ScreenTextEntry::s_sLastAnswer) )
 			{
-				ScreenPrompt::Prompt( SM_None, ERROR_RENAMING_WORKOUT );
+				ScreenPrompt::Prompt( SM_None, ERROR_RENAMING );
 				return;
 			}
 
@@ -155,14 +178,15 @@ void ScreenOptionsManageWorkouts::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
-			Workout *pWorkout = GetWorkoutWithFocus();
-			if( !WORKOUTMAN->RemoveAndDeleteFile( pWorkout ) )
+			Course *pCourse = GetCourseWithFocus();
+			if( !EditCourseUtil::RemoveAndDeleteFile( pCourse ) )
 			{
-				ScreenPrompt::Prompt( SM_None, ssprintf(ERROR_DELETING_WORKOUT_FILE.GetValue(),pWorkout->m_sFile.c_str()) );
+				ScreenPrompt::Prompt( SM_None, ssprintf(ERROR_DELETING_FILE.GetValue(),pCourse->m_sPath.c_str()) );
 				return;
 			}
 
-			WORKOUTMAN->m_pCurWorkout = NULL;
+			GAMESTATE->m_pCurCourse.Set( NULL );
+			GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
@@ -174,9 +198,9 @@ void ScreenOptionsManageWorkouts::HandleScreenMessage( const ScreenMessage SM )
 			{
 			case ManageWorkoutsAction_Choose:
 				{
-					Workout *p = GetWorkoutWithFocus();
-					WORKOUTMAN->m_pCurWorkout = p;
-
+					GAMESTATE->m_pCurCourse.Set( GetCourseWithFocus() );
+					EditCourseUtil::UpdateAndSetTrail();
+					EditCourseUtil::s_bNewCourseNeedsName = false;
 					ScreenOptions::BeginFadingOut();
 				}
 				break;
@@ -184,15 +208,15 @@ void ScreenOptionsManageWorkouts::HandleScreenMessage( const ScreenMessage SM )
 				{
 					ScreenTextEntry::TextEntry( 
 						SM_BackFromRename, 
-						ENTER_NAME_FOR_WORKOUT, 
-						WORKOUTMAN->m_pCurWorkout->m_sName, 
-						MAX_WORKOUT_NAME_LENGTH, 
-						WorkoutManager::ValidateWorkoutName );
+						ENTER_NAME, 
+						GAMESTATE->m_pCurCourse->GetDisplayFullTitle(), 
+						EditCourseUtil::MAX_NAME_LENGTH, 
+						EditCourseUtil::ValidateEditCourseName );
 				}
 				break;
 			case ManageWorkoutsAction_Delete:
 				{
-					ScreenPrompt::Prompt( SM_BackFromDelete, THIS_WORKOUT_WILL_BE_LOST.GetValue()+"\n\n"+CONTINUE_WITH_DELETE.GetValue(), PROMPT_YES_NO, ANSWER_NO );
+					ScreenPrompt::Prompt( SM_BackFromDelete, THIS_WILL_BE_LOST.GetValue()+"\n\n"+CONTINUE_WITH_DELETE.GetValue(), PROMPT_YES_NO, ANSWER_NO );
 				}
 				break;
 			}
@@ -212,13 +236,11 @@ void ScreenOptionsManageWorkouts::HandleScreenMessage( const ScreenMessage SM )
 	
 void ScreenOptionsManageWorkouts::AfterChangeRow( PlayerNumber pn )
 {
-	WORKOUTMAN->m_pCurWorkout = GetWorkoutWithFocus();
-
 	ScreenOptions::AfterChangeRow( pn );
 }
 
-static LocalizedString YOU_HAVE_MAX_WORKOUTS( "ScreenOptionsManageWorkouts", "You have %d workouts, the maximum number allowed." );
-static LocalizedString YOU_MUST_DELETE( "ScreenOptionsManageWorkouts", "You must delete an existing workout before creating a new workout." );
+static LocalizedString YOU_HAVE_MAX( "ScreenOptionsManageWorkouts", "You have %d, the maximum number allowed." );
+static LocalizedString YOU_MUST_DELETE( "ScreenOptionsManageWorkouts", "You must delete an existing before creating a new." );
 void ScreenOptionsManageWorkouts::ProcessMenuStart( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
@@ -228,9 +250,11 @@ void ScreenOptionsManageWorkouts::ProcessMenuStart( const InputEventPlus &input 
 
 	if( iCurRow == 0 )	// "create new"
 	{
-		if( WORKOUTMAN->m_vpAllWorkouts.size() >= size_t(MAX_WORKOUTS_PER_PROFILE) )
+		vector<Course*> vpCourses;
+		EditCourseUtil::GetAllEditCourses( vpCourses );
+		if( vpCourses.size() >= (size_t)EditCourseUtil::MAX_PER_PROFILE )
 		{
-			RString s = ssprintf( YOU_HAVE_MAX_WORKOUTS.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), MAX_WORKOUTS_PER_PROFILE );
+			RString s = ssprintf( YOU_HAVE_MAX.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), EditCourseUtil::MAX_PER_PROFILE );
 			ScreenPrompt::Prompt( SM_None, s );
 			return;
 		}
@@ -267,7 +291,7 @@ void ScreenOptionsManageWorkouts::ExportOptions( int iRow, const vector<PlayerNu
 
 }
 
-Workout *ScreenOptionsManageWorkouts::GetWorkoutWithFocus() const
+Course *ScreenOptionsManageWorkouts::GetCourseWithFocus() const
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 	if( iCurRow == 0 )
@@ -277,7 +301,7 @@ Workout *ScreenOptionsManageWorkouts::GetWorkoutWithFocus() const
 	
 	// a Steps
 	int iStepsIndex = iCurRow - 1;
-	return m_vpWorkouts[iStepsIndex];
+	return m_vpCourses[iStepsIndex];
 }
 
 /*

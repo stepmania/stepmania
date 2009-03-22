@@ -515,7 +515,7 @@ void OptionsList::ImportRow( RString sRow )
 	vpns.push_back( m_pn );
 	OptionRowHandler *pHandler = m_Rows[sRow];
 	aSelections[ m_pn ].resize( pHandler->m_Def.m_vsChoices.size() );
-	pHandler->ImportOption( vpns, aSelections );
+	pHandler->ImportOption( NULL, vpns, aSelections );
 	m_bSelections[sRow] = aSelections[ m_pn ];
 
 	if( m_setTopMenus.find(sRow) != m_setTopMenus.end() )

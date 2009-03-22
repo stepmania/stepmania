@@ -91,22 +91,27 @@ void ScreenOptionsEditWorkout::ImportOptions( int iRow, const vector<PlayerNumbe
 {
 	OptionRow &row = *m_pRows[iRow];
 
+	/*
+	FIXME
 	switch( iRow )
 	{
 	case WorkoutDetailsRow_WorkoutProgram:
-		row.SetOneSharedSelectionIfPresent( WorkoutProgramToLocalizedString(WORKOUTMAN->m_pCurWorkout->m_WorkoutProgram) );
+		row.SetOneSharedSelectionIfPresent( WorkoutProgramToLocalizedString(WORKOUTMAN->GetCurrentWorkout()->m_WorkoutProgram) );
 		break;
 	case WorkoutDetailsRow_Minutes:
-		row.SetOneSharedSelectionIfPresent( MakeMinutesString(WORKOUTMAN->m_pCurWorkout->m_iMinutes) );
+		row.SetOneSharedSelectionIfPresent( MakeMinutesString(WORKOUTMAN->GetCurrentWorkout()->m_iMinutes) );
 		break;
 	case WorkoutDetailsRow_Meter:
-		row.SetOneSharedSelectionIfPresent( MakeMeterString(WORKOUTMAN->m_pCurWorkout->m_iAverageMeter) );
+		row.SetOneSharedSelectionIfPresent( MakeMeterString(WORKOUTMAN->GetCurrentWorkout()->m_iAverageMeter) );
 		break;
 	}
+	*/
 }
 
 void ScreenOptionsEditWorkout::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
+	/*
+	FIXME
 	FOREACH_ENUM( WorkoutDetailsRow, i )
 	{
 		iRow = i;
@@ -120,18 +125,20 @@ void ScreenOptionsEditWorkout::ExportOptions( int iRow, const vector<PlayerNumbe
 		{
 		DEFAULT_FAIL(iRow);
 		case WorkoutDetailsRow_WorkoutProgram:
-			WORKOUTMAN->m_pCurWorkout->m_WorkoutProgram = (WorkoutProgram)iIndex;
+			WORKOUTMAN->GetCurrentWorkout()->m_WorkoutProgram = (WorkoutProgram)iIndex;
 			break;
 		case WorkoutDetailsRow_Minutes:
-			sscanf( sValue, "%d", &WORKOUTMAN->m_pCurWorkout->m_iMinutes );
+			sscanf( sValue, "%d", &WORKOUTMAN->GetCurrentWorkout()->m_iMinutes );
 			break;
 		case WorkoutDetailsRow_Meter:
-			WORKOUTMAN->m_pCurWorkout->m_iAverageMeter = iIndex + MIN_METER;
+			WORKOUTMAN->GetCurrentWorkout()->m_iAverageMeter = iIndex + MIN_METER;
 			break;
 		}
 	}
 
 	MESSAGEMAN->Broadcast( "WorkoutChanged" );
+	WORKOUTMAN->UpdateAndSetTrail();
+	*/
 }
 
 void ScreenOptionsEditWorkout::GoToNextScreen()

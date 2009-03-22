@@ -13,6 +13,9 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 
+const int MAX_ENTRIES_PER_COURSE = 50;
+
+
 enum EditCourseRow
 {
 	EditCourseRow_Type,
@@ -57,7 +60,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 	ASSERT( GAMESTATE->m_pCurCourse );
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	m_Original = *pCourse;
-	m_vpDisplayedSongs = SONGMAN->GetSongs();
+	m_vpDisplayedSongs = SONGMAN->GetAllSongs();
 
 	vector<OptionRowHandler*> vHands;
 

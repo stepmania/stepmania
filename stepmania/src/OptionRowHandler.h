@@ -8,7 +8,7 @@
 #include "RageUtil.h"
 #include <set>
 struct MenuRowDef;
-
+class OptionRow;
 struct ConfOption;
 
 enum SelectType
@@ -123,7 +123,7 @@ public:
 	virtual ReloadChanged Reload() { return RELOAD_CHANGED_NONE; }
 
 	virtual int GetDefaultOption() const { return -1; }
-	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
+	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
 	/* Returns an OPT mask. */
 	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }
 	virtual void GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const;

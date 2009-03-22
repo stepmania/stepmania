@@ -313,7 +313,7 @@ void SongManager::PreloadSongImages()
 	 * that we don't need to. */
 	RageTexturePreloader preload;
 
-	const vector<Song*> &songs = GetSongs();
+	const vector<Song*> &songs = GetAllSongs();
 	for( unsigned i = 0; i < songs.size(); ++i )
 	{
 		if( !songs[i]->HasBanner() )
@@ -659,17 +659,6 @@ int SongManager::GetNumCourseGroups() const
 	return m_mapCourseGroupToInfo.size();
 }
 
-int SongManager::GetNumEditCourses( ProfileSlot slot ) const
-{
-	int iNum = 0;
-	FOREACH_CONST( Course*, m_pCourses, p )
-	{
-		if( (*p)->GetLoadedFromProfileSlot() == slot )
-			++iNum;
-	}
-	return iNum;
-}
-
 RString SongManager::ShortenGroupName( RString sLongGroupName )
 {
 	static TitleSubst tsub("Groups");
@@ -756,7 +745,7 @@ void SongManager::InitAutogenCourses()
 		m_pCourses.push_back( pCourse );
 	}
 	
-	vector<Song*> apCourseSongs = GetSongs();
+	vector<Song*> apCourseSongs = GetAllSongs();
 
 	// Generate "All Songs" endless course.
 	pCourse = new Course;
@@ -769,7 +758,7 @@ void SongManager::InitAutogenCourses()
 		/* We normally sort by translit artist.  However, display artist is more
 		 * consistent.  For example, transliterated Japanese names are alternately
 		 * spelled given- and family-name first, but display titles are more consistent. */
-		vector<Song*> apSongs = this->GetSongs();
+		vector<Song*> apSongs = this->GetAllSongs();
 		SongUtil::SortSongPointerArrayByDisplayArtist( apSongs );
 
 		RString sCurArtist = "";
@@ -984,7 +973,7 @@ void SongManager::SaveEnabledSongsToPref()
 
 	// Intentionally drop disabled song entries for songs that aren't currently loaded.
 
-	const vector<Song*> &apSongs = SONGMAN->GetSongs();
+	const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
 	FOREACH_CONST( Song *, apSongs, s )
 	{
 		Song *pSong = (*s);
@@ -1016,7 +1005,7 @@ void SongManager::LoadEnabledSongsFromPref()
 
 void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot ) const
 {
-	const vector<Song*> &vSongs = GetSongs();
+	const vector<Song*> &vSongs = GetAllSongs();
 	FOREACH_CONST( Song*, vSongs, song )
 	{
 		(*song)->GetStepsLoadedFromProfile( slot, AddTo );
@@ -1026,7 +1015,7 @@ void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot 
 Song *SongManager::GetSongFromSteps( Steps *pSteps ) const
 {
 	ASSERT( pSteps );
-	const vector<Song*> &vSongs = GetSongs();
+	const vector<Song*> &vSongs = GetAllSongs();
 	FOREACH_CONST( Song*, vSongs, song )
 	{
 		vector<Steps*> vSteps;
@@ -1759,7 +1748,7 @@ class LunaSongManager: public Luna<SongManager>
 public:
 	static int GetAllSongs( T* p, lua_State *L )
 	{
-		const vector<Song*> &v = p->GetSongs();
+		const vector<Song*> &v = p->GetAllSongs();
 		LuaHelpers::CreateTableFromArray<Song*>( v, L );
 		return 1;
 	}

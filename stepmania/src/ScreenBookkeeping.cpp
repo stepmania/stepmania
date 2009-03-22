@@ -143,7 +143,7 @@ void ScreenBookkeeping::UpdateView()
 
 			vector<Song*> vpSongs;
 			int iCount = 0;
-			FOREACH_CONST( Song *, SONGMAN->GetSongs(), s )
+			FOREACH_CONST( Song *, SONGMAN->GetAllSongs(), s )
 			{
 				Song *pSong = *s;
 				if( UNLOCKMAN->SongIsLocked(pSong) & ~LOCKED_DISABLED )

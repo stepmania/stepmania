@@ -3,6 +3,7 @@
 
 #include "ScreenOptions.h"
 class Song;
+class Steps;
 
 class ScreenOptionsEditPlaylist : public ScreenOptions
 {
@@ -25,7 +26,12 @@ private:
 	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 
-	vector<RString> m_vsSongGenres;
+	void SetCurrentSong();
+	void SetCurrentSteps();
+	Song *GetSongForEntry( int iEntryIndex );
+	Steps *GetStepsForEntry( int iEntryIndex );
+
+	vector<Song*> m_vpSongs;
 };
 
 #endif

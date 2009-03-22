@@ -23,18 +23,18 @@
 enum ReviewWorkoutRow
 {
 	ReviewWorkoutRow_Play,
-	ReviewWorkoutRow_EditWorkout,
-	ReviewWorkoutRow_EditPlaylist,
+	ReviewWorkoutRow_Edit,
+	ReviewWorkoutRow_Shuffle,
 	ReviewWorkoutRow_Save,
 	NUM_ReviewWorkoutRow
 };
 
 static const MenuRowDef g_MenuRows[] = 
 {
-	MenuRowDef( -1,	"Play",			true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Edit Workout",		true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Edit Playlist",	true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Save",			true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Play",		true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Edit Workout",	true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Shuffle",	true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Save",		true, EditMode_Practice, true, false, 0, NULL ),
 };
 
 REGISTER_SCREEN_CLASS( ScreenOptionsReviewWorkout );
@@ -50,8 +50,7 @@ void ScreenOptionsReviewWorkout::Init()
 
 	m_soundSave.Load( THEME->GetPathS(m_sName,"Save") );
 	PLAY_SCREEN.Load(m_sName,"PlayScreen");
-	EDIT_WORKOUT_SCREEN.Load(m_sName,"EditWorkoutScreen");
-	EDIT_PLAYLIST_SCREEN.Load(m_sName,"EditPlaylistScreen");
+	EDIT_SCREEN.Load(m_sName,"EditScreen");
 }
 
 void ScreenOptionsReviewWorkout::BeginScreen()
@@ -67,6 +66,9 @@ void ScreenOptionsReviewWorkout::BeginScreen()
 	ScreenOptions::InitMenu( vHands );
 
 	ScreenOptions::BeginScreen();
+
+	// clear the current song in case it's set when we back out from gameplay
+	GAMESTATE->m_pCurSong.Set( NULL );
 }
 
 ScreenOptionsReviewWorkout::~ScreenOptionsReviewWorkout()
@@ -98,31 +100,11 @@ void ScreenOptionsReviewWorkout::HandleScreenMessage( const ScreenMessage SM )
 		switch( iRow )
 		{
 		case ReviewWorkoutRow_Play:
-			{
-				Workout *pWorkout = WORKOUTMAN->m_pCurWorkout;
-				pWorkout->GenerateCourse( *WORKOUTMAN->m_pTempCourse );
-				GAMESTATE->m_pCurSong.Set( NULL );	// CurSong will be set if we back out.  Set it back to NULL so that ScreenStage won't show the last song.
-				GAMESTATE->m_pCurCourse.Set( WORKOUTMAN->m_pTempCourse );
-				const Style *pStyle = GameManager::GameAndStringToStyle(GAMESTATE->m_pCurGame,"single");
-				StepsType st = pStyle->m_StepsType;
-				Trail *pTrail = GAMESTATE->m_pCurCourse->GetTrail( st );
-				ASSERT( pTrail );
-				GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
-
-				GAMESTATE->m_PlayMode.Set( PLAY_MODE_ENDLESS );
-				GAMESTATE->m_bSideIsJoined[0] = true;
-				GAMESTATE->SetCurrentStyle( pStyle );
-
-				PROFILEMAN->GetProfile(ProfileSlot_Player1)->m_GoalType = GoalType_Time;
-				PROFILEMAN->GetProfile(ProfileSlot_Player1)->m_iGoalSeconds = pWorkout->m_iMinutes * 60;
-				SCREENMAN->SetNewScreen( PLAY_SCREEN );
-			}
+			EditCourseUtil::PrepareForPlay();
+			SCREENMAN->SetNewScreen( PLAY_SCREEN );
 			return;	// handled
-		case ReviewWorkoutRow_EditWorkout:
-			SCREENMAN->SetNewScreen( EDIT_WORKOUT_SCREEN );
-			return;	// handled
-		case ReviewWorkoutRow_EditPlaylist:
-			SCREENMAN->SetNewScreen( EDIT_PLAYLIST_SCREEN );
+		case ReviewWorkoutRow_Edit:
+			SCREENMAN->SetNewScreen( EDIT_SCREEN );
 			return;	// handled
 		}
 	}
@@ -131,11 +113,11 @@ void ScreenOptionsReviewWorkout::HandleScreenMessage( const ScreenMessage SM )
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
-			if( WORKOUTMAN->RenameAndSave( WORKOUTMAN->m_pCurWorkout, ScreenTextEntry::s_sLastAnswer ) )
+			
+			if( EditCourseUtil::RenameAndSave( GAMESTATE->m_pCurCourse, ScreenTextEntry::s_sLastAnswer ) )
 			{
 				m_soundSave.Play();
 				SCREENMAN->SystemMessage( WORKOUT_SAVED );
-				MESSAGEMAN->Broadcast( "WorkoutChanged" );
 			}
 		}
 	}
@@ -159,30 +141,38 @@ void ScreenOptionsReviewWorkout::ProcessMenuStart( const InputEventPlus &input )
 	switch( iRow )
 	{
 	case ReviewWorkoutRow_Play:
-	case ReviewWorkoutRow_EditWorkout:
-	case ReviewWorkoutRow_EditPlaylist:
+	case ReviewWorkoutRow_Edit:
 		SCREENMAN->PlayStartSound();
 		this->BeginFadingOut();
 		return;	// handled
+	case ReviewWorkoutRow_Shuffle:
+		{
+			Course *pCourse = GAMESTATE->m_pCurCourse;
+			random_shuffle( pCourse->m_vEntries.begin(), pCourse->m_vEntries.end() );
+			Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_pCurStyle->m_StepsType );
+			GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
+			SCREENMAN->PlayStartSound();
+			MESSAGEMAN->Broadcast("CurrentCourseChanged");
+		}
+		return;	// handled
 	case ReviewWorkoutRow_Save:
 		{
-			bool bPromptForName = !WORKOUTMAN->m_pCurWorkout->m_bNameWasSetByUser;
+			bool bPromptForName = EditCourseUtil::s_bNewCourseNeedsName;
 			if( bPromptForName )
 			{
 				ScreenTextEntry::TextEntry( 
 					SM_BackFromEnterName, 
 					ENTER_WORKOUT_NAME, 
-					WORKOUTMAN->m_pCurWorkout->m_sName, 
-					MAX_WORKOUT_NAME_LENGTH, 
-					WorkoutManager::ValidateWorkoutName );
+					GAMESTATE->m_pCurCourse->GetDisplayFullTitle(), 
+					EditCourseUtil::MAX_NAME_LENGTH, 
+					EditCourseUtil::ValidateEditCourseName );
 			}
 			else
 			{
-				if( WORKOUTMAN->Save( WORKOUTMAN->m_pCurWorkout ) )
+				if( EditCourseUtil::Save( GAMESTATE->m_pCurCourse ) )
 				{
 					m_soundSave.Play();
 					SCREENMAN->SystemMessage( WORKOUT_SAVED );
-					MESSAGEMAN->Broadcast( "WorkoutChanged" );
 				}
 				else
 				{

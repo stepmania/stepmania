@@ -51,7 +51,8 @@ void CourseContentsList::SetFromGameState()
 	const Trail *pMasterTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
 	if( pMasterTrail == NULL )
 		return;
-	unsigned uNumEntriesToShow = min( pMasterTrail->m_vEntries.size(), m_vpDisplay.size() );
+	unsigned uNumEntriesToShow = pMasterTrail->m_vEntries.size(); 
+	CLAMP( uNumEntriesToShow, 0, m_vpDisplay.size() );
 
 	for( int i=0; i<(int)uNumEntriesToShow; i++ )
 	{

@@ -16,7 +16,7 @@ void ScreenOptionsToggleSongs::BeginScreen()
 
 	vector<OptionRowHandler*> vHands;
 
-	const vector<Song *> &apAllSongs = SONGMAN->GetSongs();
+	const vector<Song *> &apAllSongs = SONGMAN->GetAllSongs();
 	FOREACH_CONST( Song *, apAllSongs , s )
 	{
 		Song *pSong = *s;

@@ -843,14 +843,17 @@ void GameState::Update( float fDelta )
 		}
 	}
 
-	if( WORKOUTMAN->m_pCurWorkout != NULL  &&  !m_bWorkoutGoalComplete )
+	if( GAMESTATE->m_pCurCourse )
 	{
-		const StageStats &ssCurrent = STATSMAN->m_CurStageStats;
-		bool bGoalComplete = ssCurrent.m_fGameplaySeconds > WORKOUTMAN->m_pCurWorkout->m_iMinutes*60;
-		if( bGoalComplete )
+		if( GAMESTATE->m_pCurCourse->m_fGoalSeconds > 0  &&  !m_bWorkoutGoalComplete )
 		{
-			MESSAGEMAN->Broadcast( "WorkoutGoalComplete" );
-			m_bWorkoutGoalComplete = true;
+			const StageStats &ssCurrent = STATSMAN->m_CurStageStats;
+			bool bGoalComplete = ssCurrent.m_fGameplaySeconds > GAMESTATE->m_pCurCourse->m_fGoalSeconds;
+			if( bGoalComplete )
+			{
+				MESSAGEMAN->Broadcast( "WorkoutGoalComplete" );
+				m_bWorkoutGoalComplete = true;
+			}
 		}
 	}
 }

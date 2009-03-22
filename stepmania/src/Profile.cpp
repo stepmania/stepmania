@@ -251,7 +251,7 @@ int Profile::GetTotalStepsWithTopGrade( StepsType st, Difficulty d, Grade g ) co
 {
 	int iCount = 0;
 
-	FOREACH_CONST( Song*, SONGMAN->GetSongs(), pSong )
+	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), pSong )
 	{
 		if( !(*pSong)->NormallyDisplayed() )
 			continue;	// skip
@@ -310,7 +310,7 @@ float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 	int iTotalSteps = 0;
 
 	// add steps high scores
-	const vector<Song*> &vSongs = SONGMAN->GetSongs();
+	const vector<Song*> &vSongs = SONGMAN->GetAllSongs();
 	for( unsigned i=0; i<vSongs.size(); i++ )
 	{
 		Song* pSong = vSongs[i];

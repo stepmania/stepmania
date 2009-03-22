@@ -64,7 +64,8 @@ public:
 	//
 	// High scores
 	//
-	void LoadMachineProfile();
+	void LoadMachineProfile();	// including edits
+	void LoadMachineProfileEdits();
 	void SaveMachineProfile() const;
 
 	bool IsPersistentProfile( PlayerNumber pn ) const { return !m_sProfileDir[pn].empty(); }

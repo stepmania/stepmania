@@ -197,7 +197,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 
-		vector <Song *> AllSongs = SONGMAN->GetSongs();
+		vector <Song *> AllSongs = SONGMAN->GetAllSongs();
 		unsigned i;
 		for( i=0; i < AllSongs.size(); i++ )
 		{

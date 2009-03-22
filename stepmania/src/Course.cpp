@@ -207,7 +207,9 @@ void Course::Init()
 	m_sGroupName = "";
 
 	m_bRepeat = false;
+	m_fGoalSeconds = 0;
 	m_bShuffle = false;
+
 	m_iLives = -1;
 	FOREACH_ENUM( Difficulty,dc)
 		m_iCustomMeter[dc] = -1;
@@ -471,13 +473,13 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	if( m_bShuffle )
 	{
 		/* Always randomize the same way per round.  Otherwise, the displayed course
-		 * will change every time it's viewed, and the displayed order will have no
-		 * bearing on what you'll actually play. */
+		* will change every time it's viewed, and the displayed order will have no
+		* bearing on what you'll actually play. */
 		tmp_entries = m_vEntries;
 		random_shuffle( tmp_entries.begin(), tmp_entries.end(), rnd );
 	}
 
-	const vector<CourseEntry> &entries = m_bShuffle? tmp_entries:m_vEntries;
+	const vector<CourseEntry> &entries = m_bShuffle ? tmp_entries:m_vEntries;
 
 	/* This can take some time, so don't fill it out unless we need it. */
 	vector<Song*> vSongsByMostPlayed;
@@ -749,6 +751,11 @@ const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
 		}
 	}
 	return NULL;
+}
+
+void Course::InvalidateTrailCache()
+{
+	m_TrailCache.clear();
 }
 
 void Course::Invalidate( const Song *pStaleSong )
@@ -1032,6 +1039,8 @@ public:
 			lua_pushnumber( L, fTotalSeconds );
 		return 1;
 	}
+	DEFINE_METHOD( IsEndless,		IsEndless() )
+	DEFINE_METHOD( GetGoalSeconds,		m_fGoalSeconds )
 
 	LunaCourse()
 	{
@@ -1048,6 +1057,8 @@ public:
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( GetEstimatedNumStages );
 		ADD_METHOD( GetTotalSeconds );
+		ADD_METHOD( IsEndless );
+		ADD_METHOD( GetGoalSeconds );
 	}
 };
 

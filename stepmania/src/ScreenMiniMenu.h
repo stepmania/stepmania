@@ -13,7 +13,7 @@ struct MenuRowDef
 	int			iRowCode;
 	RString			sName;
 	bool			bEnabled;
-	MenuRowUpdateEnabled	pfnEnabled;	// if ! NULL, used to fill bEnabled
+	MenuRowUpdateEnabled	pfnEnabled;	// if ! NULL, used instead of bEnabled
 	EditMode		emShowIn;
 	int			iDefaultChoice;
 	vector<RString>		choices;

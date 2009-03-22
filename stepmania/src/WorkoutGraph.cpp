@@ -7,12 +7,12 @@
 #include "Steps.h"
 #include "GameState.h"
 #include "ThemeManager.h"
-#include "Workout.h"
-#include "WorkoutManager.h"
 #include "StatsManager.h"
 #include "Foreach.h"
+#include "Course.h"
+#include "Style.h"
 
-const int MAX_METERS_TO_SHOW = Workout::GetEstimatedNumSongsFromSeconds( 90 * 60 );
+const int MAX_METERS_TO_SHOW = 50;
 
 REGISTER_ACTOR_CLASS( WorkoutGraph )
 
@@ -48,7 +48,10 @@ void WorkoutGraph::SetFromCurrentWorkout()
 
 void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 {
-	ASSERT( WORKOUTMAN->m_pCurWorkout );
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+	ASSERT( pCourse );
+	Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
+	ASSERT( pTrail );
 
 	FOREACH( Sprite*, m_vpBars, p )
 	{
@@ -57,13 +60,12 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 	}
 	m_vpBars.clear();
 
-	int iWorkoutEstimatedSongs = WORKOUTMAN->m_pCurWorkout->GetEstimatedNumSongs();
-	int iNumSongsToShow = max( iMinSongsPlayed, iWorkoutEstimatedSongs );
 	vector<int> viMeters;
-	WORKOUTMAN->m_pCurWorkout->GetEstimatedMeters( iNumSongsToShow, viMeters );
-
-	m_iSongsChoppedOffAtBeginning = max( 0, ((int)viMeters.size()) - MAX_METERS_TO_SHOW );
-	viMeters.erase( viMeters.begin(), viMeters.begin()+m_iSongsChoppedOffAtBeginning );
+	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+	{
+		ASSERT( e->pSteps );
+		viMeters.push_back( e->pSteps->GetMeter() );
+	}
 
 	int iBlocksWide = viMeters.size();
 	int iBlocksHigh = MAX_METER;

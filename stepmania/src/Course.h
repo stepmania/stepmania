@@ -92,7 +92,6 @@ public:
 	void PushSelf( lua_State *L );
 };
 
-const int MAX_ENTRIES_PER_COURSE = 50;
 
 class Course
 {
@@ -151,6 +150,8 @@ public:
 	/* Call to regenerate Trails with random entries */
 	void RegenerateNonFixedTrails() const;
 
+	void InvalidateTrailCache();
+
 	/* Call when a Song or its Steps are deleted/changed. */
 	void Invalidate( const Song *pStaleSong );
 
@@ -186,7 +187,8 @@ public:
 	RString		m_sGroupName;
 
 	bool		m_bRepeat;	// repeat after last song?  "Endless"
-	bool		m_bShuffle;	// play the songs in a random order
+	float		m_fGoalSeconds;		// if not 0, stop play after this number of seconds
+	bool		m_bShuffle;
 	int		m_iLives;	// -1 means use bar life meter
 	int		m_iCustomMeter[NUM_Difficulty];	// -1 = no meter specified
 	bool		m_bSortByMeter;

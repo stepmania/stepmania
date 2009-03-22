@@ -37,7 +37,7 @@ public:
 	WorkoutProgram m_WorkoutProgram;
 	int m_iMinutes;
 	int m_iAverageMeter;
-	vector<RString> m_vsSongGenres;
+	vector<SongID> m_vSongs;
 
 	int GetEstimatedNumSongs() const;
 	static int GetEstimatedNumSongsFromSeconds( float fSeconds );

@@ -69,7 +69,7 @@ public:
 		return RELOAD_CHANGED_ALL;
 	}
 
-	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		vector<Song*>::const_iterator iter = find( m_vpDisplayedSongs.begin(), m_vpDisplayedSongs.end(), GAMESTATE->m_pCurSong.Get() );
 		int iChoice = 0;
@@ -250,7 +250,7 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				if( pSong == NULL )
 				{
 					// Find the longest non-tutorial song.
-					const vector<Song *> &vSongs = SONGMAN->GetSongs();					
+					const vector<Song *> &vSongs = SONGMAN->GetAllSongs();					
 					float fLen = -1.f;
 					
 					FOREACH_CONST( Song*, vSongs, i )

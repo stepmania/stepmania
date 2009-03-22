@@ -22,8 +22,7 @@ private:
 
 	RageSound	m_soundSave;
 	ThemeMetric<RString> PLAY_SCREEN;
-	ThemeMetric<RString> EDIT_WORKOUT_SCREEN;
-	ThemeMetric<RString> EDIT_PLAYLIST_SCREEN;
+	ThemeMetric<RString> EDIT_SCREEN;
 };
 
 #endif

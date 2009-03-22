@@ -224,7 +224,7 @@ public:
 			}
 		}
 	}
-	void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -576,7 +576,7 @@ public:
 			m_pDifficultyToFill->Set( m_vDifficulties[0] );
 		m_ppStepsToFill->Set( m_vSteps[0] );
 	}
-	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -961,7 +961,7 @@ public:
 		return RELOAD_CHANGED_ENABLED;
 	}
 
-	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		Lua *L = LUA->Get();
 
@@ -1114,7 +1114,7 @@ public:
 
 		m_Def.m_sName = m_pOpt->name;
 	}
-	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -1213,7 +1213,7 @@ public:
 			m_pstToFill->Set( m_vStepsTypesToShow[0] );
 	}
 
-	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -1276,7 +1276,7 @@ public:
 		m_Def.m_selectType = SELECT_NONE;
 		m_Def.m_vsChoices.push_back( "" );
 	}
-	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 	}
 	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const

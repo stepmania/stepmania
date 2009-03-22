@@ -14,6 +14,8 @@ enum GameController
 	NUM_GameController,	// leave this at the end
 	GameController_Invalid,
 };
+const RString& GameControllerToString( GameController mp );
+LuaDeclareType( GameController );
 
 enum GameButton
 {

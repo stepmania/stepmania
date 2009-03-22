@@ -10,6 +10,7 @@
 #include "PlayerState.h"
 #include "XmlFile.h"
 #include "WorkoutManager.h"
+#include "Course.h"
 
 
 REGISTER_ACTOR_CLASS( PercentageDisplay )
@@ -191,7 +192,17 @@ void PercentageDisplay::Refresh()
 bool PercentageDisplay::ShowDancePointsNotPercentage() const
 {
 	// Use staight dance points in workout because the percentage denominator isn't accurate - we don't know when the players are going to stop.
-	return (WORKOUTMAN->m_pCurWorkout != NULL)  ||  PREFSMAN->m_bDancePointsForOni;
+
+	if( GAMESTATE->m_pCurCourse )
+	{
+		if( GAMESTATE->m_pCurCourse->m_fGoalSeconds > 0 )
+			return true;
+	}
+
+	if( PREFSMAN->m_bDancePointsForOni )
+		return true;
+
+	return false;
 }
 
 

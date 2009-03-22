@@ -702,11 +702,12 @@ int OptionRow::GetOneSharedSelection( bool bAllowFail ) const
 
 void OptionRow::SetOneSelection( PlayerNumber pn, int iChoice )
 {
-	if( m_vbSelected[pn].empty() )
+	vector<bool> &vb = m_vbSelected[pn];
+	if( vb.empty() )
 		return;
-	for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
-		m_vbSelected[pn][i] = false;
-	m_vbSelected[pn][iChoice] = true;
+	FOREACH( bool, vb, b )
+		*b = false;
+	vb[iChoice] = true;
 }
 
 void OptionRow::SetOneSharedSelection( int iChoice )
@@ -888,7 +889,7 @@ void OptionRow::ImportOptions( const vector<PlayerNumber> &vpns )
 		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
 	}
 	
-	m_pHand->ImportOption( vpns, m_vbSelected );
+	m_pHand->ImportOption( this, vpns, m_vbSelected );
 
 	FOREACH_CONST( PlayerNumber, vpns, iter )
 	{

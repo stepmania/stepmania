@@ -403,8 +403,6 @@ void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 	ScreenOptions::AfterChangeRow( pn );
 }
 
-static LocalizedString YOU_HAVE_MAXIMUM_EDITS_ALLOWED( "ScreenOptionsManageCourses", "You have %d course edits, the maximum number allowed." );
-static LocalizedString YOU_MUST_DELETE( "ScreenOptionsManageCourses", "You must delete an existing course edit before creating a new course edit." );
 void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
@@ -420,15 +418,6 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 		}
 		else
 		{
-			if( SONGMAN->GetNumEditCourses(ProfileSlot_Machine) >= MAX_EDIT_COURSES_PER_PROFILE )
-			{
-				RString s = ssprintf( 
-						      YOU_HAVE_MAXIMUM_EDITS_ALLOWED.GetValue() + "\n\n" + YOU_MUST_DELETE.GetValue(),
-						      MAX_EDIT_COURSES_PER_PROFILE );
-				ScreenPrompt::Prompt( SM_None, s );
-				return;
-			}
-			
 			RString sDefaultName;
 			RString sThrowAway;
 			for( int i=1; i<=9999; i++ )

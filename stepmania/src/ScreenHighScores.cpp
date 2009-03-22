@@ -21,7 +21,7 @@ REGISTER_SCREEN_CLASS( ScreenHighScores );
 static void GetAllSongsToShow( vector<Song*> &vpOut, int iNumMostRecentScoresToShow )
 {
 	vpOut.clear();
-	FOREACH_CONST( Song*, SONGMAN->GetSongs(), s )
+	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
 	{
 		if( !(*s)->NormallyDisplayed() )
 			continue;	// skip
