@@ -582,22 +582,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsEditCourse.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenOptionsEditCourse.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenOptionsEditCourseEntry.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenOptionsEditCourseEntry.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ScreenOptionsEditPlaylist.cpp"
 				>
 			</File>
@@ -611,14 +595,6 @@
 			</File>
 			<File
 				RelativePath=".\ScreenOptionsEditProfile.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenOptionsEditWorkout.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenOptionsEditWorkout.h"
 				>
 			</File>
 			<File
@@ -1655,14 +1631,6 @@
 			</File>
 			<File
 				RelativePath=".\Tween.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Workout.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Workout.h"
 				>
 			</File>
 		</Filter>
