@@ -38,7 +38,7 @@ ControllerStateDisplay::ControllerStateDisplay()
 
 void ControllerStateDisplay::LoadMultiPlayer( RString sType, MultiPlayer mp )
 {
-	LoadInternal( sType, mp, GAME_CONTROLLER_1 );
+	LoadInternal( sType, mp, GameController_1 );
 }
 
 void ControllerStateDisplay::LoadGameController( RString sType, GameController gc )

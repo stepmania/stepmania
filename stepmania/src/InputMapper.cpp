@@ -93,7 +93,7 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 	{
 		DeviceButton key = m->m_deviceButton;
 		DeviceInput DeviceI( DEVICE_KEYBOARD, key );
-		GameInput GameI( m->m_bSecondController ? GAME_CONTROLLER_2 : GAME_CONTROLLER_1, m->m_gb );
+		GameInput GameI( m->m_bSecondController ? GameController_2 : GameController_1, m->m_gb );
 		if( !IsMapped(DeviceI) )	// if this key isn't already being used by another user-made mapping
 		{
 			if( !GameI.IsValid() )
@@ -583,7 +583,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 						if( !DeviceI.IsValid() )
 							continue;
 
-						AutoMappingEntry im( s, DeviceI.button, b, c > GAME_CONTROLLER_1 );
+						AutoMappingEntry im( s, DeviceI.button, b, c > GameController_1 );
 						mapping.m_vMaps.push_back( im );
 					}
 				}
@@ -971,8 +971,8 @@ void InputScheme::MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, vec
 	{
 		if( pn == PLAYER_INVALID )
 		{
-			GameIout.push_back( GameInput(GAME_CONTROLLER_1, *gb) );
-			GameIout.push_back( GameInput(GAME_CONTROLLER_2, *gb) );
+			GameIout.push_back( GameInput(GameController_1, *gb) );
+			GameIout.push_back( GameInput(GameController_2, *gb) );
 		}
 		else
 		{

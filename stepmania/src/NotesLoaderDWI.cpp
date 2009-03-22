@@ -65,9 +65,9 @@ static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Ou
 
 	switch( i )
 	{
-	case GAME_CONTROLLER_1:
+	case GameController_1:
 		break;
-	case GAME_CONTROLLER_2:
+	case GameController_2:
 		if( note1Out != DANCE_NOTE_NONE )
 			note1Out += 6;
 		if( note2Out != DANCE_NOTE_NONE )

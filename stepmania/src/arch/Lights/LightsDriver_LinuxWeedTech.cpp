@@ -201,14 +201,14 @@ void LightsDriver_LinuxWeedTech::Set( const LightsState *ls )
 			// Only send the command if the light has changed states (on/off)
 			bool bOn = ls->m_bGameButtonLights[gc][gb];
 			if(bOn != CurLights.m_bGameButtonLights[gc][gb]) {
-				if(gc == GAME_CONTROLLER_1) {
+				if(gc == GameController_1) {
 					if(gb == DANCE_BUTTON_LEFT)		{str[0] = 'A'; str[2] = 'I';}
 					if(gb == DANCE_BUTTON_RIGHT)		{str[0] = 'A'; str[2] = 'J';}
 					if(gb == DANCE_BUTTON_UP)		{str[0] = 'A'; str[2] = 'K';}
 					if(gb == DANCE_BUTTON_DOWN)		{str[0] = 'A'; str[2] = 'L';}
 					if(gb == GAME_BUTTON_START)		{str[0] = 'A'; str[2] = 'E';}
 				}
-				else if(gc == GAME_CONTROLLER_2) {
+				else if(gc == GameController_2) {
 					if(gb == DANCE_BUTTON_LEFT)		{str[0] = 'A'; str[2] = 'M';}
 					if(gb == DANCE_BUTTON_RIGHT)		{str[0] = 'A'; str[2] = 'N';}
 					if(gb == DANCE_BUTTON_UP)		{str[0] = 'B'; str[2] = 'A';}

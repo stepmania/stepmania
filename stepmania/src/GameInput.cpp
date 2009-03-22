@@ -7,8 +7,8 @@
 
 
 static const char *GameControllerNames[] = {
-	"Controller1",
-	"Controller2",
+	"1",
+	"2",
 };
 XToString( GameController );
 StringToX( GameController );

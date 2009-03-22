@@ -9,8 +9,8 @@ class InputScheme;
 
 enum GameController
 {
-	GAME_CONTROLLER_1 = 0,	// left controller
-	GAME_CONTROLLER_2,	// right controller
+	GameController_1 = 0,	// left controller
+	GameController_2,	// right controller
 	NUM_GameController,	// leave this at the end
 	GameController_Invalid,
 };
