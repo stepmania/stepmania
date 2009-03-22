@@ -46,7 +46,7 @@ public:
 				if( (*steps)->GetDifficulty() == Difficulty_Edit )
 					s = (*steps)->GetDescription();
 				else
-					s = DifficultyToLocalizedString( (*steps)->GetDifficulty() );
+					s = GetLocalizedCustomDifficulty( (*steps)->m_StepsType, (*steps)->GetDifficulty() );
 				s += ssprintf( " %d", (*steps)->GetMeter() );
 				m_Def.m_vsChoices.push_back( s );
 			}
