@@ -7,7 +7,6 @@
 #include "OptionRowHandler.h"
 #include "ProfileManager.h"
 #include "ScreenMiniMenu.h"
-#include "Workout.h"
 #include "LocalizedString.h"
 #include "SongManager.h"
 #include "SongUtil.h"

@@ -6,7 +6,6 @@
 #include "SongManager.h"
 #include "OptionRowHandler.h"
 #include "Song.h"
-#include "Workout.h"
 #include "GameState.h"
 #include "ScreenPrompt.h"
 #include "LocalizedString.h"

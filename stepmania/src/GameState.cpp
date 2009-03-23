@@ -38,7 +38,6 @@
 #include "ScreenManager.h"
 #include "Screen.h"
 #include "WorkoutManager.h"
-#include "Workout.h"
 
 #include <ctime>
 #include <set>

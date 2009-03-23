@@ -3,6 +3,9 @@
 
 class Course;
 
+const int MIN_WORKOUT_MINUTES = 4;
+const int MAX_WORKOUT_MINUTES = 90;
+
 namespace EditCourseUtil
 {
 	void UpdateAndSetTrail();

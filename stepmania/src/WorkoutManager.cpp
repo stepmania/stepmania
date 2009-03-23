@@ -3,7 +3,6 @@
 #include "SongUtil.h"
 #include "SongManager.h"
 #include "RageFileManager.h"
-#include "Workout.h"
 #include "Song.h"
 #include "FontCharAliases.h"
 #include "ProfileManager.h"
