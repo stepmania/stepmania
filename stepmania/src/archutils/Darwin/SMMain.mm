@@ -36,10 +36,14 @@
 {
 	int	m_iArgc;
 	char	**m_pArgv;
+	BOOL	m_bApplicationLaunched;
 }
 - (id) initWithArgc:(int)argc argv:(char **)argv;
 - (void) startGame:(id)sender;
 - (NSApplicationTerminateReply) applicationShouldTerminate:(NSApplication *)sender;
+- (BOOL) application:(NSApplication *)app openFile:(NSString *)file;
+- (void) application:(NSApplication *)app openFiles:(NSArray *)files;
+- (void) setForInstall:(NSArray *)files;
 @end
 
 @implementation SMMain
@@ -50,7 +54,10 @@
 	if( argc == 2 && !strncmp(argv[1], "-psn_", 5) )
 		argc = 1;
 	m_iArgc = argc;
-	m_pArgv = argv;
+	m_pArgv = new char*[argc];
+	for( int i = 0; i < argc; ++i )
+		m_pArgv[i] = argv[i];
+	m_bApplicationLaunched = NO;
 	return self;
 }
 
@@ -63,7 +70,42 @@
 // Called when the internal event loop has just started running.
 - (void) applicationDidFinishLaunching:(NSNotification *)note
 {
+	m_bApplicationLaunched = YES;
 	[NSThread detachNewThreadSelector:@selector(startGame:) toTarget:self withObject:nil];
+}
+
+- (BOOL) application:(NSApplication *)app openFile:(NSString *)file
+{
+	NSArray *files = [NSArray arrayWithObject:file];
+	if( m_bApplicationLaunched )
+		[NSTask launchedTaskWithLaunchPath:[NSString stringWithUTF8String:m_pArgv[0]] arguments:files];
+	else
+		[self setForInstall:files];
+	return YES;
+}
+
+- (void) application:(NSApplication *)app openFiles:(NSArray *)files
+{
+	if( m_bApplicationLaunched )
+		[NSTask launchedTaskWithLaunchPath:[NSString stringWithUTF8String:m_pArgv[0]] arguments:files];
+	else
+		[self setForInstall:files];
+	[app replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
+}
+
+- (void) setForInstall:(NSArray *)files
+{
+	char **temp = new char*[[files count] + m_iArgc];
+	for( int i = 0; i < m_iArgc; ++i )
+		temp[i] = m_pArgv[i];
+	for( unsigned i = 0; i < [files count]; ++i, ++m_iArgc )
+	{
+		const char *p = [[files objectAtIndex:i] fileSystemRepresentation];
+		temp[m_iArgc] = new char[strlen(p)+1];
+		strcpy( temp[m_iArgc], p );
+	}
+	delete[] m_pArgv;
+	m_pArgv = temp;
 }
 
 - (NSApplicationTerminateReply) applicationShouldTerminate:(NSApplication *)sender
