@@ -10,8 +10,10 @@
 - (void) setAppleMenu:(NSMenu *)menu;
 @end
 
-// Replacement NSApplication class.
-// XXX: I can no longer remember the reason for this class... Clearly something to do with sendEvent:
+/* Replacement NSApplication class.
+ * Replaces sendEvent so that key down events are only sent to the
+ * menu bar. We handle all other input by reading HID events from the
+ * keyboard directly. */
 @interface SMApplication : NSApplication
 - (void) fullscreen:(id)sender;
 @end
@@ -175,9 +177,6 @@ static void SetupMenus( void )
 int main( int argc, char **argv )
 {
 	RageThreadRegister guiThread( "GUI thread" );
-	
-	[SMApplication poseAsClass:[NSApplication class]];
-	
 	NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
 	SMMain			*sm;
 	
@@ -202,7 +201,7 @@ int main( int argc, char **argv )
 }
 
 /*
- * (c) 2005-2006 Steve Checkoway
+ * (c) 2005-2009 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
