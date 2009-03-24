@@ -1094,6 +1094,8 @@ void InputMappings::ReadMappings( const InputScheme *pInputScheme, RString sFile
 
 			GameInput GameI;
 			GameI.FromString( pInputScheme, name );
+			if( !GameI.IsValid() )
+				continue;
 
 			vector<RString> sDeviceInputStrings;
 			split( value, DEVICE_INPUT_SEPARATOR, sDeviceInputStrings, false );
