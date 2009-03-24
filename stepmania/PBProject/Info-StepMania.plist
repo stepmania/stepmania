@@ -52,6 +52,6 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright 2001-2009</string>
 	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
+	<string>SMApplication</string>
 </dict>
 </plist>
