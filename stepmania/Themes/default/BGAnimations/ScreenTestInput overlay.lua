@@ -1,7 +1,7 @@
 return Def.ActorFrame {
-	Def.ControllerStateDisplay {
-		InitCommand=cmd(LoadGameController,
-	};
+	--Def.ControllerStateDisplay {
+	--	InitCommand=cmd(LoadGameController,
+	--};
 	Def.DeviceList {
 		Font="Common normal";
 		InitCommand=cmd(x,SCREEN_LEFT+20;y,SCREEN_TOP+80;zoom,1.4;horizalign,left);
