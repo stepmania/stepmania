@@ -287,6 +287,17 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADJUST_FINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADJUST_FINE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
 	
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SAVE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_Cs);
+	#if defined(MACOSX)
+		/* use cmd */
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAVE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LMETA);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAVE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RMETA);
+	#else
+		/* use ctrl */
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAVE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+		m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SAVE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	#endif
+
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_UNDO][1] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
 	
 	// Switch players, if it makes sense to do so.
@@ -1110,25 +1121,6 @@ void ScreenEdit::Input( const InputEventPlus &input )
 	if( EditB == EditButton_Invalid )
 		EditB = MenuButtonToEditButton( input.MenuI );
 		
-	/* ctrl/cmd+s is just about always save. */
-	bool bDoSave = input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_Cs ) &&
-		#if defined(MACOSX)	/* use cmd */
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA), &input.InputList) ||
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA), &input.InputList);
-		#else			/* use ctrl */
-			!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL), &input.InputList) &&
-			!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL), &input.InputList);
-		#endif
-
-	if( bDoSave && input.type == IET_FIRST_PRESS )
-	{
-		m_pSteps->SetNoteData( m_NoteDataEdit );
-		m_pSong->Save();
-		HandleScreenMessage( SM_SaveSuccessful );
-		m_soundSave.Play();
-	}
-
-
 	if( EditB == EDIT_BUTTON_REMOVE_NOTE )
 	{
 		// Ugly: we need to know when the button was pressed or released, so we
@@ -1963,6 +1955,10 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		SCREENMAN->PlayInvalidSound();
 		break;
 
+	case EDIT_BUTTON_SAVE:
+		HandleMainMenuChoice( ScreenEdit::save );
+		break;
+		
 	case EDIT_BUTTON_UNDO:
 		Undo();
 		break;
