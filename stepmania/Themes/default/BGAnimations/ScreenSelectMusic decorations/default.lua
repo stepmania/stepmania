@@ -315,7 +315,7 @@ end
 
 
 t[#t+1] = Def.ActorFrame{
-	InitCommand=cmd(x,SCREEN_CENTER_X-190;y,SCREEN_CENTER_Y-32);
+	InitCommand=cmd(x,SCREEN_CENTER_X-190;y,SCREEN_CENTER_Y-32;diffusealpha,0);
 	ShowCommand=cmd(stoptweening;linear,0.2;diffusealpha,1);
 	HideCommand=cmd(stoptweening;linear,0.2;diffusealpha,0);
 	
@@ -337,14 +337,19 @@ t[#t+1] = Def.ActorFrame{
 	};
 	LoadFont("_venacti bold 24px")..{
 		Name="NumStages";
-		InitCommand=cmd(x,32;y,-4;shadowlength,0;skewx,-0.2;diffusebottomedge,color("#068EE1FF");strokecolor,color("#FF000000"));
+		InitCommand=cmd(x,30;y,-6;shadowlengthx,0;shadowlengthy,1;skewx,0;zoom,0.7;diffusebottomedge,color("#068EE1FF");strokecolor,color("#FF000000"));
 		SetCommand=function(self)
 			local Song = GAMESTATE:GetCurrentSong();
 			if Song then
+				-- xxx: use localized text
 				local postfix = " STAGES";
+				local numStages = GAMESTATE:GetNumStagesForCurrentSongAndStepsOrCourse();
+				--[[
 				if Song:IsLong() then self:settext("2"..postfix);
 				elseif Song:IsMarathon() then self:settext("3"..postfix);
 				end;
+                ]]
+				self:settext( numStages..postfix );
 			else
 				self:settext( "" );
 			end
@@ -353,7 +358,7 @@ t[#t+1] = Def.ActorFrame{
 	
 	SetCommand=function(self)
 		local Song = GAMESTATE:GetCurrentSong();
-		self:playcommand( (Song and (Song:IsLong() or Song:IsMarathon())) and "Show" or "Hide" );
+		self:playcommandonchildren( (Song and (Song:IsLong() or Song:IsMarathon())) and "Show" or "Hide" );
 	end;
 	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 };
