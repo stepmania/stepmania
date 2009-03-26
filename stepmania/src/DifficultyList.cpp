@@ -247,31 +247,20 @@ void DifficultyList::PositionItems()
 void DifficultyList::SetFromGameState()
 {
 	const Song *pSong = GAMESTATE->m_pCurSong;
-
-	for( int m = 0; m < MAX_METERS; ++m )
-	{
-		m_Lines[m].m_Meter.Unset();
-	}
-
-	m_Rows.clear();
-
+	unsigned i = 0;
+	
 	if( pSong == NULL )
 	{
 		// FIXME: This clamps to between the min and the max difficulty, but
 		// it really should round to the nearest difficulty that's in 
 		// DIFFICULTIES_TO_SHOW.
-		unsigned i=0;
-		FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), d )
+		const vector<Difficulty>& difficulties = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
+		m_Rows.resize( difficulties.size() );
+		FOREACH_CONST( Difficulty, difficulties, d )
 		{
-			m_Rows.resize( m_Rows.size()+1 );
-
-			Row &row = m_Rows.back();
-
-			row.m_dc = *d;
-
+			m_Rows[i].m_dc = *d;
 			m_Lines[i].m_Meter.SetFromStepsTypeAndMeterAndDifficulty( StepsType_Invalid, 0, *d );
-
-			i++;
+			++i;
 		}
 	}
 	else
@@ -279,19 +268,17 @@ void DifficultyList::SetFromGameState()
 		vector<Steps*>	vpSteps;
 		SongUtil::GetPlayableSteps( pSong, vpSteps );
 		/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
-
+		
 		m_Rows.resize( vpSteps.size() );
-		for( unsigned i = 0; i < vpSteps.size(); ++i )
+		FOREACH_CONST( Steps*, vpSteps, s )
 		{
-			Row &row = m_Rows[i];
-
-			row.m_Steps = vpSteps[i];
-
-			m_Lines[i].m_Meter.SetFromSteps( m_Rows[i].m_Steps );
-
-			row.m_dc = row.m_Steps->GetDifficulty();
+			m_Rows[i].m_Steps = *s;
+			m_Lines[i].m_Meter.SetFromSteps( *s );
+			++i;
 		}
 	}
+	while( i < MAX_METERS )
+		m_Lines[i++].m_Meter.Unset();
 
 	UpdatePositions();
 	PositionItems();
