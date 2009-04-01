@@ -12,7 +12,7 @@
 #define PRODUCT_ID_BARE StepMania4
 
 // Version info displayed to the user
-#define PRODUCT_VER_BARE alpha1
+#define PRODUCT_VER_BARE April 1st
 
 // A unique ID for a build of an application.  This is used in crash reports and in the network code's version handling 
 #define PRODUCT_ID_VER_BARE PRODUCT_ID_BARE PRODUCT_VER_BARE
