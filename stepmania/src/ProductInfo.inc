@@ -2,11 +2,10 @@
 ; Don't forget to also change ProductInfo.h!
 
 !define PRODUCT_FAMILY "StepMania"
-; String used for the install directory and registry locations
-; Official releases = "StepMania"; intermediate releases = "StepMania CVS".
-!define PRODUCT_ID "StepMania CVS"
-!define PRODUCT_VER "4.0"
-; !define PRODUCT_VER "4.0 alpha 1"
+
+; see ProductInfo.h for use descriptions
+!define PRODUCT_ID "StepMania4"
+!define PRODUCT_VER "alpha1"
 !define PRODUCT_DISPLAY "${PRODUCT_ID} ${PRODUCT_VER}"
 !define PRODUCT_BITMAP "sm4"
 

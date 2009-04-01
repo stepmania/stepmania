@@ -43,7 +43,10 @@ t[#t+1] = Def.ActorFrame {
        LoadActor( "stepmania logo" ) .. {
        };
        LoadFont( "common normal" ) .. {
-               InitCommand=cmd(y,-25;settext,ProductVersion() .. " " .. VersionTime();diffuse,color("#000000");shadowlength,0;);
+               InitCommand=cmd(y,-25;
+               --settext,ProductVersion();
+               settext,"April 1st edition";
+               diffuse,color("#000000");shadowlength,0;);
        };
 };
 return t;

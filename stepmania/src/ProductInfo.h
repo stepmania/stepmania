@@ -5,13 +5,18 @@
 
 // Don't forget to also change ProductInfo.inc!
 
-// Change these three.
+// A friendly string to refer to the product in crash dialogs, etc - i.e. "StepMania" not "StepMania4"
 #define PRODUCT_FAMILY_BARE StepMania
-#define PRODUCT_ID_BARE StepMania CVS
-#define PRODUCT_VER_BARE 4.0 CVS
-//#define PRODUCT_VER_BARE 4.0 alpha 1
-// String used for the install directory and registry locations
-// Official releases = "StepMania"; intermediate releases = "StepMania CVS".
+
+// A unique name for each application that you might want installed side-by-side with other applications - i.e. "StepMania4" not "StepMania" (would conflict with StepMania 3.x)
+#define PRODUCT_ID_BARE StepMania4
+
+// Version info displayed to the user
+#define PRODUCT_VER_BARE alpha1
+
+// A unique ID for a build of an application.  This is used in crash reports and in the network code's version handling 
+#define PRODUCT_ID_VER_BARE PRODUCT_ID_BARE PRODUCT_VER_BARE
+
 
 // These cannot be #undef'd so make them unlikely to conflict with anything
 #define PRODUCT_STRINGIFY(x) #x
@@ -20,7 +25,7 @@
 #define PRODUCT_FAMILY		PRODUCT_XSTRINGIFY(PRODUCT_FAMILY_BARE)
 #define PRODUCT_ID		PRODUCT_XSTRINGIFY(PRODUCT_ID_BARE)
 #define PRODUCT_VER		PRODUCT_XSTRINGIFY(PRODUCT_VER_BARE)
-#define PRODUCT_ID_VER		PRODUCT_ID " " PRODUCT_VER
+#define PRODUCT_ID_VER		PRODUCT_XSTRINGIFY(PRODUCT_ID_VER_BARE)
 
 #define VIDEO_TROUBLESHOOTING_URL "http://www.stepmania.com/stepmania/mediawiki.php?title=Video_Driver_Troubleshooting"
 #define REPORT_BUG_URL "http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366"
