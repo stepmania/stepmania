@@ -65,8 +65,6 @@ ScreenMapControllers.cpp ScreenMapControllers.h \
 ScreenMessage.cpp ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h \
 ScreenNameEntry.cpp ScreenNameEntry.h ScreenNameEntryTraditional.cpp ScreenNameEntryTraditional.h \
 ScreenOptions.cpp ScreenOptions.h \
-ScreenOptionsEditCourse.cpp ScreenOptionsEditCourse.h \
-ScreenOptionsEditCourseEntry.cpp ScreenOptionsEditCourseEntry.h \
 ScreenOptionsEditProfile.cpp ScreenOptionsEditProfile.h \
 ScreenOptionsManageCourses.cpp ScreenOptionsManageCourses.h \
 ScreenOptionsManageEditSteps.cpp ScreenOptionsManageEditSteps.h \
@@ -163,8 +161,7 @@ SubscriptionManager.h \
 TimingData.cpp TimingData.h \
 ThemeMetric.h \
 Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h \
-Tween.cpp Tween.h \
-Workout.cpp Workout.h
+Tween.cpp Tween.h
 
 if !WITHOUT_NETWORKING
 DataStructures += RoomWheel.cpp RoomWheel.h
