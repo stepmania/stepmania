@@ -372,7 +372,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		if( input.type != IET_FIRST_PRESS ) 
 			return;
 		PREFSMAN->m_bShowNativeLanguage.Set( !PREFSMAN->m_bShowNativeLanguage );
-		MESSAGEMAN->Broadcast( "ChangedLanguageDisplay" );
+		MESSAGEMAN->Broadcast( "DisplayLanguageChanged" );
 		m_MusicWheel.RebuildWheelItems();
 		return;
 	}

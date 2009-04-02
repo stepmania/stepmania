@@ -213,6 +213,7 @@ t[#t+1] = LoadFont("_regra Bold 16px") .. {
 		end;
 	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+	DisplayLanguageChangedMessageCommand=cmd(playcommand,"Set");
 };
 t[#t+1] = LoadFont("_regra Bold 16px") .. {
 	InitCommand=cmd(horizalign,right;x,SCREEN_CENTER_X+224;y,SCREEN_CENTER_Y-6;settext,"xxxx";shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000"););
