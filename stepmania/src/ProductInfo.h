@@ -9,10 +9,10 @@
 #define PRODUCT_FAMILY_BARE StepMania
 
 // A unique name for each application that you might want installed side-by-side with other applications - i.e. "StepMania4" not "StepMania" (would conflict with StepMania 3.x)
-#define PRODUCT_ID_BARE StepMania4
+#define PRODUCT_ID_BARE StepMania 4
 
 // Version info displayed to the user
-#define PRODUCT_VER_BARE April 1st
+#define PRODUCT_VER_BARE alpha 1
 
 // A unique ID for a build of an application.  This is used in crash reports and in the network code's version handling 
 #define PRODUCT_ID_VER_BARE PRODUCT_ID_BARE PRODUCT_VER_BARE

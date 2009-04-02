@@ -43,14 +43,8 @@ t[#t+1] = Def.ActorFrame {
        LoadActor( "stepmania logo" ) .. {
        };
        LoadFont( "common normal" ) .. {
-               InitCommand=cmd(y,-25;
-               --settext,ProductVersion();
-               settext,"NSFW edition";
-               diffuse,color("#000000");shadowlength,0;);
+               InitCommand=cmd(y,-25;settext,ProductVersion();diffuse,color("#000000");shadowlength,0;);
        };
-};
-t[#t+1] = LoadActor( "../ScreenGameplay toasty/toasty.png" ) .. {
-	InitCommand=cmd(x,SCREEN_LEFT;y,SCREEN_BOTTOM;vertalign,bottom;horizalign,left;);
 };
 
 return t;

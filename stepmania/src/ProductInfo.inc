@@ -4,8 +4,8 @@
 !define PRODUCT_FAMILY "StepMania"
 
 ; see ProductInfo.h for use descriptions
-!define PRODUCT_ID "StepMania4"
-!define PRODUCT_VER "April 1st"
+!define PRODUCT_ID "StepMania 4"
+!define PRODUCT_VER "alpha 1"
 !define PRODUCT_DISPLAY "${PRODUCT_ID} ${PRODUCT_VER}"
 !define PRODUCT_BITMAP "sm4"
 
