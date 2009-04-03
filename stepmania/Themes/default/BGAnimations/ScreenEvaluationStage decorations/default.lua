@@ -53,9 +53,10 @@ if ShowStandardDecoration("ItsARecord") then
 					local pSteps = GAMESTATE:GetCurrentSteps(pn);
 					local hsl = PROFILEMAN:GetMachineProfile():GetHighScoreList(pSongOrCourse,pSteps);
 					
-					local hsName = hsl:GetHighScores()[1]:GetName();
-					local hsPerc = math.floor( hsl:GetHighScores()[1]:GetPercentDP() * 10000 ) / 100;
-					--hsl:GetHighScores()[1]:GetName GetScore GetPercentDP
+					local hs = hsl:GetHighScores()[1]
+					local hsName = hs:GetName();
+					local hsPerc = FormatPercentScore( hs:GetPercentDP() );
+
 					if index == 0 then
 						self:GetChild("Record"):visible( true );
 						self:GetChild("NoRecord"):visible( false );
