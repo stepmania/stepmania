@@ -392,15 +392,6 @@ void ScreenGameplay::Init()
 	GAMESTATE->BeginStage();
 
 
-
-
-	// fill in difficulty of CPU players with that of the first human player
-	FOREACH_PotentialCpuPlayer(p)
-		GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
-	
-	FOREACH_EnabledPlayer(p)
-		ASSERT( GAMESTATE->m_pCurSteps[p].Get() );
-
 	/* Increment the course play count. */
 	if( GAMESTATE->IsCourseMode() && !GAMESTATE->m_bDemonstrationOrJukebox )
 		FOREACH_EnabledPlayer(p)
@@ -596,7 +587,7 @@ void ScreenGameplay::Init()
 		{
 			ASSERT( pi->m_ptextCourseSongNumber == NULL );
 			pi->m_ptextCourseSongNumber = new BitmapText;
-			pi->m_ptextCourseSongNumber->LoadFromFont( THEME->GetPathF(m_sName,"song num") );
+			pi->m_ptextCourseSongNumber->LoadFromFont( THEME->GetPathF(m_sName,"SongNum") );
 			pi->m_ptextCourseSongNumber->SetShadowLength( 0 );
 			pi->m_ptextCourseSongNumber->SetName( ssprintf("SongNumber%s",pi->GetName().c_str()) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextCourseSongNumber );
@@ -925,7 +916,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		pi->GetPlayerState()->m_fLastDrawnBeat = -100;
 
 		Steps *pSteps = pi->m_vpStepsQueue[iSongIndex];
-		GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ].Set( pSteps );
+ 		GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ].Set( pSteps );
 
 		/* Load new NoteData into Player.  Do this before 
 		 * RebuildPlayerOptionsFromActiveAttacks or else transform mods will get
@@ -1011,6 +1002,13 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
 		pi->GetPlayerState()->m_PlayerOptions.SetCurrentToLevel( ModsLevel_Stage );
 	}
+
+	// fill in difficulty of CPU players with that of the first human player
+	FOREACH_PotentialCpuPlayer(p)
+		GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
+	
+	FOREACH_EnabledPlayer(p)
+		ASSERT( GAMESTATE->m_pCurSteps[p].Get() );
 }
 
 void ScreenGameplay::ReloadCurrentSong()
