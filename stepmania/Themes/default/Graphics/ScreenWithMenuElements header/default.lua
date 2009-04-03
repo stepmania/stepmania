@@ -25,7 +25,7 @@ return Def.ActorFrame {
 			InitCommand=cmd(x,-1.5;y,2;spin;effectmagnitude,0,0,10;);
 		};
 		LoadActor( "ring diffuse" ) .. {
-			InitCommand=cmd(x,-1.5;y,-3;spin;effectmagnitude,0,0,10;);
+			InitCommand=cmd(x,-1.5;y,-3;spin;effectmagnitude,0,0,20;);
 		};
 		UpdateScreenHeaderMessageCommand=function(self,params)
 			local header = self:GetChild("HeaderText");
