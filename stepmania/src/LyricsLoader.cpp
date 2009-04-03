@@ -8,7 +8,8 @@
 
 #include <map>
 
-#define LYRICS_DEFAULT_COLOR      THEME->GetMetricC("ScreenGameplay","LyricsDefaultColor")
+// TODO: Use marker for default color instead of a specific color that may accidetnally get written back into a lyrics file.
+#define LYRICS_DEFAULT_COLOR      THEME->GetMetricC("ScreenGameplay","LyricDisplayDefaultColor")
 
 static int CompareLyricSegments(const LyricSegment &seg1, const LyricSegment &seg2)
 {

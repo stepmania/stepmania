@@ -1,4 +1,4 @@
-function Actor:lyriccommand(side)
+function Actor:LyricCommand(side)
 	self:settext( Var "LyricText" );
 
 	self:stoptweening();

@@ -657,7 +657,7 @@ void ScreenGameplay::Init()
 
 	if( g_bShowLyrics )
 	{
-		m_LyricDisplay.SetName( "Lyrics" );
+		m_LyricDisplay.SetName( "LyricDisplay" );
 		LOAD_ALL_COMMANDS( m_LyricDisplay );
 		this->AddChild( &m_LyricDisplay );
 	}
