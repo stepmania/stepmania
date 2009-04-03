@@ -246,7 +246,7 @@ t[#t+1] = Def.ActorFrame {
 t[#t+1] = Def.CourseContentsList {
 	MaxSongs = 5;
 
-	InitCommand=cmd(x,SCREEN_CENTER_X-160;y,SCREEN_CENTER_Y+91);
+	InitCommand=cmd(x,SCREEN_CENTER_X+160;y,SCREEN_CENTER_Y+91);
 	OnCommand=cmd(zoomy,0;bounceend,0.3;zoom,1);
 	OffCommand=cmd(zoomy,1;bouncebegin,0.3;zoomy,0);
 	ShowCommand=cmd(bouncebegin,0.3;zoomy,1);

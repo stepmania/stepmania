@@ -3,7 +3,7 @@ local frame = Def.ActorFrame
 	OnCommand=cmd(x,SCREEN_CENTER_X+180;y,SCREEN_CENTER_Y);--;addx,SCREEN_WIDTH/2;decelerate,0.5;addx,-SCREEN_WIDTH/2);
 	OffCommand=cmd(accelerate,0.5;addx,SCREEN_WIDTH/2);
 	LoadFont("Common", "normal") .. {
-		OnCommand=cmd(horizalign,left;x,-80;y,-130;zoom,0.65;playcommand,"CurrentCourseChanged");
+		OnCommand=cmd(horizalign,left;x,-80;y,-130;playcommand,"CurrentCourseChanged");
 		CurrentCourseChangedMessageCommand=function(self)
 			local c = GAMESTATE:GetCurrentCourse()
 			if c then
@@ -14,7 +14,7 @@ local frame = Def.ActorFrame
 		end;
 	};
 	LoadFont("Common", "normal") .. {
-		OnCommand=cmd(horizalign,left;x,-80;y,-100;zoom,0.65;playcommand,"CurrentTrailP1Changed");
+		OnCommand=cmd(horizalign,left;x,-80;y,-100;playcommand,"CurrentTrailP1Changed");
 		CurrentTrailP1ChangedMessageCommand=function(self)
 			local t = GAMESTATE:GetCurrentTrail( PLAYER_1 )
 			if t then
