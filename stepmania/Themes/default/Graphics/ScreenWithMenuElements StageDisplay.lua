@@ -23,7 +23,7 @@ for s in ivalues(Stage) do
 				StageIndex = ss:GetStageIndex();
 			end
 			self:visible( Stage == s );
-			self:settext( "3rd" );
+			self:settext( StageToLocalizedString(Stage) );
 			self:diffuse( StageToColor(s) );
 			self:strokecolor( StageToStrokeColor(s) );
 		end;

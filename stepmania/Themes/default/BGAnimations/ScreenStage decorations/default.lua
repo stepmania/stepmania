@@ -1,11 +1,5 @@
 local t = Def.ActorFrame {};
 local InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;);
-t[#t+1] = LoadActor("horizon") .. {
-	InitCommand=InitCommand;
-};
-t[#t+1] = LoadActor("sun") .. {
-	InitCommand=InitCommand;
-};
 local pm = GAMESTATE:GetPlayMode();
 -- This relies on play modes and stages having the same naming for
 -- everything but Regular.
