@@ -54,16 +54,14 @@ void ScreenSyncOverlay::Init()
 	m_quad.ZoomToWidth( m_textHelp.GetZoomedWidth()+20 ); 
 	m_quad.ZoomToHeight( m_textHelp.GetZoomedHeight()+20 ); 
 
+	m_textStatus.SetName( "Status" );
 	m_textStatus.LoadFromFont( THEME->GetPathF("Common", "normal") );
-	m_textStatus.SetHorizAlign( align_center );
-	m_textStatus.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y+150 );
-	m_textStatus.SetZoom( 0.8f );
-	m_textStatus.SetShadowLength( 2 );
+	ActorUtil::LoadAllCommandsAndOnCommand( m_textStatus, m_sName );
 	this->AddChild( &m_textStatus );
 
 	m_textSyncInfo.SetName( "SyncInfo" );
 	m_textSyncInfo.LoadFromFont( THEME->GetPathF("Common","normal") );
-	ActorUtil::LoadAllCommands( m_textSyncInfo, m_sName );
+	ActorUtil::LoadAllCommandsAndOnCommand( m_textSyncInfo, m_sName );
 	this->AddChild( &m_textSyncInfo );
 	
 	Update( 0 );
