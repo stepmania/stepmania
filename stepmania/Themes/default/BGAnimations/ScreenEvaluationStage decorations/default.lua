@@ -64,7 +64,7 @@ if ShowStandardDecoration("ItsARecord") then
 						self:GetChild("Record"):visible( false );
 						self:GetChild("NoRecord"):visible( true );
 						if hsl then
-							self:GetChild("NoRecord"):settext(hsName..":\n"..hsPerc .. "%");
+							self:GetChild("NoRecord"):settext(hsName..":\n"..hsPerc);
 						else
 							self:GetChild("NoRecord"):settext("");
 						end
