@@ -23,6 +23,7 @@ namespace StepMania
 	void ClearCredits();
 
 	void GetPreferredVideoModeParams( VideoModeParams &paramsOut );
+	bool GetHighResolutionTextures();
 }
 
 #endif

@@ -83,6 +83,15 @@ XToString( BannerCacheMode );
 StringToX( BannerCacheMode );
 LuaXType( BannerCacheMode );
 
+static const char *HighResolutionTexturesNames[] = {
+	"Auto",
+	"ForceOff",
+	"ForceOn",
+};
+XToString( HighResolutionTextures );
+StringToX( HighResolutionTextures );
+LuaXType( HighResolutionTextures );
+
 static const char *AttractSoundFrequencyNames[] = {
 	"Never",
 	"EveryTime",
@@ -147,6 +156,7 @@ PrefsManager::PrefsManager() :
 	m_iDisplayColorDepth	( "DisplayColorDepth",		16 ),
 	m_iTextureColorDepth	( "TextureColorDepth",		16 ),
 	m_iMovieColorDepth	( "MovieColorDepth",		16 ),
+	m_HighResolutionTextures	( "HighResolutionTextures",	HighResolutionTextures_Auto ),
 	m_iMaxTextureResolution	( "MaxTextureResolution",	2048 ),
 	m_iRefreshRate		( "RefreshRate",		REFRESH_DEFAULT ),
 	m_bAllowMultitexture	( "AllowMultitexture",		true ),

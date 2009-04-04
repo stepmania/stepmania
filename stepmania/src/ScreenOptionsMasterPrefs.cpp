@@ -710,6 +710,8 @@ static void InitializeConfOptions()
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_ASPECT_RATIO;
 	ADD( ConfOption( "DisplayColorDepth",		DisplayColorDepth,	"16bit","32bit" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
+	ADD( ConfOption( "HighResolutionTextures",	MovePref<HighResolutionTextures>, "Auto","Force Off","Force On" ) );
+	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "MaxTextureResolution",	MaxTextureResolution,	"|256","|512","|1024","|2048" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "TextureColorDepth",		TextureColorDepth,	"16bit","32bit" ) );

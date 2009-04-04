@@ -11,6 +11,7 @@ struct RageTextureManagerPrefs
 	int m_iMovieColorDepth;
 	bool m_bDelayedDelete;
 	int m_iMaxTextureResolution;
+	bool m_bHighResolutionTextures;
 	bool m_bMipMaps;
 	
 	RageTextureManagerPrefs()
@@ -19,6 +20,7 @@ struct RageTextureManagerPrefs
 		m_iMovieColorDepth = 16;
 		m_iTextureColorDepth = 16;
 		m_iMaxTextureResolution = 1024;
+		m_bHighResolutionTextures = true;
 		m_bMipMaps = false;
 	}
 	RageTextureManagerPrefs( 
@@ -26,12 +28,14 @@ struct RageTextureManagerPrefs
 		int iMovieColorDepth,
 		bool bDelayedDelete,
 		int iMaxTextureResolution,
+		bool bHighResolutionTextures,
 		bool bMipMaps )
 	{
 		m_bDelayedDelete = bDelayedDelete;
 		m_iMovieColorDepth = iMovieColorDepth;
 		m_iTextureColorDepth = iTextureColorDepth;
 		m_iMaxTextureResolution = iMaxTextureResolution;
+		m_bHighResolutionTextures = bHighResolutionTextures;
 		m_bMipMaps = bMipMaps;
 	}
 
@@ -42,6 +46,7 @@ struct RageTextureManagerPrefs
 			m_iMovieColorDepth != rhs.m_iMovieColorDepth ||
 			m_bDelayedDelete != rhs.m_bDelayedDelete ||
 			m_iMaxTextureResolution != rhs.m_iMaxTextureResolution ||
+			m_bHighResolutionTextures != rhs.m_bHighResolutionTextures ||
 			m_bMipMaps != rhs.m_bMipMaps;
 	}
 };

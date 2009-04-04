@@ -11,6 +11,7 @@
 #include "RageSurfaceUtils_Dither.h"
 #include "RageSurface_Load.h"
 #include "arch/Dialog/Dialog.h"
+#include "StepMania.h"
 
 static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight )
 {
@@ -122,9 +123,23 @@ void RageBitmapTexture::Create()
 	m_iSourceWidth = pImg->w;
 	m_iSourceHeight = pImg->h;
 
+	/* in-game imsage dimensions are the same as the source graphic */
+	m_iImageWidth = m_iSourceWidth;
+	m_iImageHeight = m_iSourceHeight;
+
+	/* if "doubleres" (high resolution) and we're not allowing high res textures, then image dimensions are half of the source */
+	if( sHintString.find("doubleres") != string::npos )
+	{
+		if( !StepMania::GetHighResolutionTextures() )
+		{
+			m_iImageWidth = m_iImageWidth / 2;
+			m_iImageHeight = m_iImageHeight / 2;
+		}
+	}
+
 	/* image size cannot exceed max size */
-	m_iImageWidth = min( m_iSourceWidth, actualID.iMaxSize );
-	m_iImageHeight = min( m_iSourceHeight, actualID.iMaxSize );
+	m_iImageWidth = min( m_iImageWidth, actualID.iMaxSize );
+	m_iImageHeight = min( m_iImageHeight, actualID.iMaxSize );
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two(m_iImageWidth);
@@ -293,6 +308,9 @@ void RageBitmapTexture::Create()
 	/* Check for hints that override the apparent "size". */
 	GetResolutionFromFileName( actualID.filename, m_iSourceWidth, m_iSourceHeight );
 
+	/* if "doubleres" (high resolution) then we want the image to appear in-game with dimensions 1/2 of the source.
+	 * So, cut down the source dimension here after everythign above is finished operating with the real image
+	 * source dimensions. */
 	if( sHintString.find("doubleres") != string::npos )
 	{
 		m_iSourceWidth = m_iSourceWidth / 2;

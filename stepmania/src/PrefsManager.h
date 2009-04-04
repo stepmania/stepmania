@@ -9,11 +9,38 @@ class IniFile;
 
 const int MAX_SONGS_PER_PLAY = 7;
 
-enum MusicWheelUsesSections { MusicWheelUsesSections_NEVER, MusicWheelUsesSections_ALWAYS, MusicWheelUsesSections_ABC_ONLY, NUM_MusicWheelUsesSections, MusicWheelUsesSections_Invalid };
-enum AllowW1 { ALLOW_W1_NEVER, ALLOW_W1_COURSES_ONLY, ALLOW_W1_EVERYWHERE, NUM_AllowW1, AllowW1_Invalid };
-enum Maybe { Maybe_ASK, Maybe_NO, Maybe_YES, NUM_Maybe, Maybe_Invalid };
-enum GetRankingName { RANKING_OFF, RANKING_ON, RANKING_LIST, NUM_GetRankingName, GetRankingName_Invalid };
-
+enum MusicWheelUsesSections
+{ 
+	MusicWheelUsesSections_NEVER, 
+	MusicWheelUsesSections_ALWAYS, 
+	MusicWheelUsesSections_ABC_ONLY, 
+	NUM_MusicWheelUsesSections, 
+	MusicWheelUsesSections_Invalid
+};
+enum AllowW1
+{ 
+	ALLOW_W1_NEVER, 
+	ALLOW_W1_COURSES_ONLY, 
+	ALLOW_W1_EVERYWHERE, 
+	NUM_AllowW1, 
+	AllowW1_Invalid
+};
+enum Maybe
+{ 
+	Maybe_ASK, 
+	Maybe_NO, 
+	Maybe_YES, 
+	NUM_Maybe, 
+	Maybe_Invalid 
+};
+enum GetRankingName 
+{ 
+	RANKING_OFF, 
+	RANKING_ON, 
+	RANKING_LIST, 
+	NUM_GetRankingName, 
+	GetRankingName_Invalid
+};
 enum RandomBackgroundMode
 {
 	BGMODE_OFF,
@@ -38,6 +65,14 @@ enum BannerCacheMode
 	BNCACHE_FULL,
 	NUM_BannerCacheMode,
 	BannerCacheMode_Invalid
+};
+enum HighResolutionTextures
+{
+	HighResolutionTextures_Auto,
+	HighResolutionTextures_ForceOff,
+	HighResolutionTextures_ForceOn,
+	NUM_HighResolutionTextures,
+	HighResolutionTextures_Invalid,
 };
 enum AttractSoundFrequency
 {
@@ -109,6 +144,7 @@ public:
 	Preference<int>		m_iDisplayColorDepth;
 	Preference<int>		m_iTextureColorDepth;
 	Preference<int>		m_iMovieColorDepth;
+	Preference<HighResolutionTextures>	m_HighResolutionTextures;
 	Preference<int>		m_iMaxTextureResolution;
 	Preference<int>		m_iRefreshRate;
 	Preference<bool>	m_bAllowMultitexture;

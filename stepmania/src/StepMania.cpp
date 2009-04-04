@@ -146,6 +146,23 @@ static void StoreActualGraphicOptions()
 
 static RageDisplay *CreateDisplay();
 
+bool StepMania::GetHighResolutionTextures()
+{
+	switch( PREFSMAN->m_HighResolutionTextures )
+	{
+	default:
+	case HighResolutionTextures_Auto:
+		{
+			const VideoModeParams &params = DISPLAY->GetActualVideoModeParams();
+			return params.height > 800;
+		}
+	case HighResolutionTextures_ForceOn:
+		return true;
+	case HighResolutionTextures_ForceOff:
+		return false;
+	}
+}
+
 static void StartDisplay()
 {
 	if( DISPLAY != NULL )
@@ -167,6 +184,7 @@ static void StartDisplay()
 			PREFSMAN->m_iMovieColorDepth,
 			PREFSMAN->m_bDelayedTextureDelete, 
 			PREFSMAN->m_iMaxTextureResolution,
+			StepMania::GetHighResolutionTextures(),
 			PREFSMAN->m_bForceMipMaps
 			)
 		);
@@ -201,6 +219,7 @@ void StepMania::ApplyGraphicOptions()
 			PREFSMAN->m_iMovieColorDepth,
 			PREFSMAN->m_bDelayedTextureDelete, 
 			PREFSMAN->m_iMaxTextureResolution,
+			StepMania::GetHighResolutionTextures(),
 			PREFSMAN->m_bForceMipMaps
 			)
 		);
