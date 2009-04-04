@@ -183,8 +183,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 
 		SCREENMAN->RefreshCreditsMessages();
 
-		if( !IsTransitioning() )
-			StartTransitioningScreen( SM_GoToNextScreen );
+		ASSERT( !IsTransitioning() );
+		StartTransitioningScreen( SM_GoToNextScreen );
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );

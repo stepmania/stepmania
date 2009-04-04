@@ -269,9 +269,10 @@ void ScreenSelectMaster::BeginScreen()
 
 	this->UpdateSelectableChoices();
 
-	m_fLockInputSecs = this->GetTweenTimeLeft();
-
 	ScreenSelect::BeginScreen();
+
+	// Call GetTweenTimeLeft after the base BeginScreen has started the in Transition.
+	m_fLockInputSecs = this->GetTweenTimeLeft();
 }
 
 void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
