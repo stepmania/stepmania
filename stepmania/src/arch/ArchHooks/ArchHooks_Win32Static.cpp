@@ -49,18 +49,22 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	CHECKPOINT_M( ssprintf( "... %i asParts", asParts.size()) );
 	ASSERT_M( asParts.size() > 1, ssprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
 	RString sDir = join( "/", asParts.begin(), asParts.end()-1 );
-	
 	FILEMAN->Mount( "dir", sDir, "/" );
 
-	// Mount everything game-writable (not counting the editor) to the user's directory.
-	RString sAppDataDir = SpecialDirs::GetAppDataDir();
-	FILEMAN->Mount( "dir", sAppDataDir + PRODUCT_ID + "/Cache", "/Cache" );
-	FILEMAN->Mount( "dir", sAppDataDir + PRODUCT_ID + "/Logs", "/Logs" );
-	FILEMAN->Mount( "dir", sAppDataDir + PRODUCT_ID + "/Save", "/Save" );
-	FILEMAN->Mount( "dir", sAppDataDir + PRODUCT_ID + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
+	/* Experimental: Check for a sentinel file and then operate in portable mode. */
+	// TODO: Make this cross-platform?
+	bool bPortable = DoesFileExist("Portable.ini");
+	RString sPortableDir = sDir + "/Portable";
 
-	RString sPicturesDir = SpecialDirs::GetPicturesDir();
-	FILEMAN->Mount( "dir", sPicturesDir + PRODUCT_ID, "/Screenshots" );
+	// Mount everything game-writable (not counting the editor) to the user's directory.
+	RString sAppDataDir = bPortable ? sPortableDir : SpecialDirs::GetAppDataDir() + PRODUCT_ID;
+	FILEMAN->Mount( "dir", sAppDataDir + "/Cache", "/Cache" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Logs", "/Logs" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Save", "/Save" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
+
+	RString sPicturesDir = bPortable ? sPortableDir : SpecialDirs::GetPicturesDir() + PRODUCT_ID;
+	FILEMAN->Mount( "dir", sPicturesDir, "/Screenshots" );
 }
 
 static RString LangIdToString( LANGID l )
