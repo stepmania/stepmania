@@ -116,7 +116,9 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
 
 void ShowWarningOrTrace( const char *file, int line, const char *message, bool bWarning ); // don't pull in LOG here
 #define WARN(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, true))
+#if !defined(CO_EXIST_WITH_MFC)
 #define TRACE(MESSAGE) (ShowWarningOrTrace(__FILE__, __LINE__, MESSAGE, false))
+#endif
 
 #ifdef DEBUG
 #define DEBUG_ASSERT(x)		ASSERT(x)

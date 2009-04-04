@@ -120,7 +120,7 @@ BOOL CSmpackageApp::InitInstance()
 		CString sArg = argv[i];
 		if( sArg == "--machine-profile-stats" )
 		{
-			RString sOSFile = SpecialDirs::GetMyDocumentsDir() + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
+			RString sOSFile = SpecialDirs::GetAppDataDir() + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
 			HINSTANCE hinst = ::ShellExecute( NULL, "open", sOSFile, "", "", SW_SHOWNORMAL );
 			// See MSDN for an explanation of this return value
 			if( (int)hinst == SE_ERR_FNF )

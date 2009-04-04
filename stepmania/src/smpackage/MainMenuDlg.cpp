@@ -218,7 +218,7 @@ void MainMenuDlg::OnBnClickedOpenPreferences()
 {
 	// TODO: Add your control notification handler code here
 	// TODO: Have RageFile* do the mapping to the OS file location.
-	RString sPreferencesOSFile = SpecialDirs::GetMyDocumentsDir() + PRODUCT_ID + "/" + SpecialFiles::PREFERENCES_INI_PATH;
+	RString sPreferencesOSFile = SpecialDirs::GetAppDataDir() + PRODUCT_ID + "/" + SpecialFiles::PREFERENCES_INI_PATH;
 	HINSTANCE hinst = ::ShellExecute( this->m_hWnd, "open", sPreferencesOSFile, "", "", SW_SHOWNORMAL );
 	if( (int)hinst == SE_ERR_FNF )
 		Dialog::OK( ssprintf(DOESNT_EXIST_IT_WILL_BE_CREATED.GetValue(),sPreferencesOSFile.c_str()) );
