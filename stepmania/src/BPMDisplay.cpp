@@ -242,7 +242,10 @@ void BPMDisplay::SetFromGameState()
 	}
 	if( GAMESTATE->m_pCurCourse.Get() )
 	{
-		SetBpmFromCourse( GAMESTATE->m_pCurCourse );
+		if( GAMESTATE->GetCurrentStyle() == NULL )
+			; // This is true when backing out from ScreenSelectCourse to ScreenTitleMenu.  So, don't call SetBpmFromCourse where an assert will fire.
+		else
+			SetBpmFromCourse( GAMESTATE->m_pCurCourse );
 
 		return;
 	}
