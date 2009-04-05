@@ -6,6 +6,8 @@ return Def.ActorFrame {
 		InitCommand=cmd(x,-284;y,-6;);
 		LoadActor( "bar" ) .. {
 			InitCommand=cmd(horizalign,left;y,4);
+			OnCommand=cmd(cropright,1;bounceend,0.32;cropright,0);
+			OffCommand=cmd(cropright,0;bouncebegin,0.32;cropright,1);
 		};
 		LoadFont( "_sf sports night ns upright 26px header text" ) .. {
 			InitCommand=cmd(x,64;y,-7;horizalign,left;shadowlength,0;settext,ScreenString("HeaderText");skewx,-0.15;zoomx,1.2;maxwidth,250;);
