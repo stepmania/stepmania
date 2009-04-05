@@ -23,11 +23,6 @@ RString SpecialDirs::GetDesktopDir()
 	return GetSpecialFolderPath( CSIDL_DESKTOP );
 }
 
-RString SpecialDirs::GetPicturesDir()
-{
-	return GetSpecialFolderPath( CSIDL_MYPICTURES );
-}
-
 
 /*
  * (c) 2002-2004 Chris Danford

@@ -61,10 +61,8 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", sAppDataDir + "/Cache", "/Cache" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Logs", "/Logs" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Save", "/Save" );
+	FILEMAN->Mount( "dir", sAppDataDir + "/Screenshots", "/Screenshots" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
-
-	RString sPicturesDir = bPortable ? sPortableDir : SpecialDirs::GetPicturesDir() + PRODUCT_ID;
-	FILEMAN->Mount( "dir", sPicturesDir, "/Screenshots" );
 }
 
 static RString LangIdToString( LANGID l )
