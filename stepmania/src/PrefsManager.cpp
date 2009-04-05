@@ -167,7 +167,7 @@ PrefsManager::PrefsManager() :
 	m_bVsync		( "Vsync",			true ),
 	m_bInterlaced		( "Interlaced",			false ),
 	m_bPAL			( "PAL",			false ),
-	m_bDelayedTextureDelete	( "DelayedTextureDelete",	true ),
+	m_bDelayedTextureDelete	( "DelayedTextureDelete",	false ),
 	m_bDelayedModelDelete	( "DelayedModelDelete",		false ),
 	m_BannerCache		( "BannerCache",		BNCACHE_LOW_RES_PRELOAD ),
 	m_bFastLoad		( "FastLoad",			false ),
