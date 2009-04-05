@@ -143,6 +143,12 @@ void ScreenOptionsExportPackage::ProcessMenuStart( const InputEventPlus &input )
 		return;
 
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
+	{
+		ScreenOptions::ProcessMenuStart( input );
+		return;
+	}
+
 	RString sDirToExport = m_vsPossibleDirsToExport[ iCurRow ];
 	RString sPackageName = ReplaceInvalidFileNameChars( sDirToExport + ".smzip" );
 	
