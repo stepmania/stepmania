@@ -173,15 +173,15 @@ void EditMenu::Load( const RString &sType )
 	ActorUtil::LoadAllCommands( m_SongTextBanner, sType );
 	this->AddChild( &m_SongTextBanner );
 	
-	m_Meter.SetName( "Meter" );
-	m_Meter.Load( "StepsDisplayEdit", NULL );
-	ActorUtil::SetXY( m_Meter, sType );
-	this->AddChild( &m_Meter );
+	m_StepsDisplay.SetName( "StepsDisplay" );
+	m_StepsDisplay.Load( "StepsDisplayEdit", NULL );
+	ActorUtil::SetXY( m_StepsDisplay, sType );
+	this->AddChild( &m_StepsDisplay );
 	
-	m_SourceMeter.SetName( "SourceMeter" );
-	m_SourceMeter.Load( "StepsDisplayEdit", NULL );
-	ActorUtil::SetXY( m_SourceMeter, sType );
-	this->AddChild( &m_SourceMeter );
+	m_StepsDisplaySource.SetName( "StepsDisplaySource" );
+	m_StepsDisplaySource.Load( "StepsDisplayEdit", NULL );
+	ActorUtil::SetXY( m_StepsDisplaySource, sType );
+	this->AddChild( &m_StepsDisplaySource );
 
 	m_soundChangeRow.Load( THEME->GetPathS(sType,"row"), true );
 	m_soundChangeValue.Load( THEME->GetPathS(sType,"value"), true );
@@ -481,9 +481,9 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_textValue[ROW_STEPS].SetText( s );
 		}
 		if( GetSelectedSteps() )
-			m_Meter.SetFromSteps( GetSelectedSteps() );
+			m_StepsDisplay.SetFromSteps( GetSelectedSteps() );
 		else
-			m_Meter.SetFromStepsTypeAndMeterAndDifficulty( GetSelectedSourceStepsType(), 0, GetSelectedDifficulty() );
+			m_StepsDisplay.SetFromStepsTypeAndMeterAndDifficulty( GetSelectedSourceStepsType(), 0, GetSelectedDifficulty() );
 		// fall through
 	case ROW_SOURCE_STEPS_TYPE:
 		m_textLabel[ROW_SOURCE_STEPS_TYPE].SetVisible( GetSelectedSteps() ? false : true );
@@ -533,10 +533,10 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			if( GetSelectedSourceDifficulty() == Difficulty_Invalid )
 				bHideMeter = true;
 			else if( GetSelectedSourceSteps() )
-				m_SourceMeter.SetFromSteps( GetSelectedSourceSteps() );
+				m_StepsDisplaySource.SetFromSteps( GetSelectedSourceSteps() );
 			else
-				m_SourceMeter.SetFromStepsTypeAndMeterAndDifficulty( GetSelectedSourceStepsType(), 0, GetSelectedSourceDifficulty() );
-			m_SourceMeter.SetVisible( !(bHideMeter || GetSelectedSteps()) );
+				m_StepsDisplaySource.SetFromStepsTypeAndMeterAndDifficulty( GetSelectedSourceStepsType(), 0, GetSelectedSourceDifficulty() );
+			m_StepsDisplaySource.SetVisible( !(bHideMeter || GetSelectedSteps()) );
 
 			m_Actions.clear();
 			if( GetSelectedSteps() )

@@ -94,8 +94,8 @@ private:
 	FadingBanner	m_GroupBanner;
 	FadingBanner	m_SongBanner;
 	TextBanner	m_SongTextBanner;
-	StepsDisplay	m_Meter;
-	StepsDisplay	m_SourceMeter;
+	StepsDisplay	m_StepsDisplay;
+	StepsDisplay	m_StepsDisplaySource;
 
 
 	struct StepsAndDifficulty
