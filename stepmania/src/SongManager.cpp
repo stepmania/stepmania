@@ -507,13 +507,15 @@ RageColor SongManager::GetCourseColor( const Course* pCourse ) const
 				if( *s == pCourse )
 				{
 					int i = v - m_vPreferredCourseSort.begin();
-					return COURSE_GROUP_COLOR.GetValue( i%NUM_COURSE_GROUP_COLORS );
+					CHECKPOINT_M( ssprintf( "%i, NUM_COURSE_GROUP_COLORS = %i", i, NUM_COURSE_GROUP_COLORS.GetValue()) );
+					return COURSE_GROUP_COLOR.GetValue( i % NUM_COURSE_GROUP_COLORS );
 				}
 			}
 		}
 
 		int i = m_vPreferredCourseSort.size();
-		return COURSE_GROUP_COLOR.GetValue( i%NUM_COURSE_GROUP_COLORS );
+		CHECKPOINT_M( ssprintf( "%i, NUM_COURSE_GROUP_COLORS = %i", i, NUM_COURSE_GROUP_COLORS.GetValue()) );
+		return COURSE_GROUP_COLOR.GetValue( i % NUM_COURSE_GROUP_COLORS );
 	}
 	else
 	{
