@@ -30,11 +30,6 @@ FadingBanner::FadingBanner()
 	{
 		m_Banner[i].SetName( "Banner" );
 		ActorUtil::LoadAllCommandsAndOnCommand( m_Banner[i], "FadingBanner" );
-
-		/* TODO: Move this into Lua.  Ideally, there should be a ZTEST_NO_CHANGE that 
-		 * would let a ztest command on an ActorFrame propagate to all children. */
-		m_Banner[i].SetZTestMode( ZTEST_WRITE_ON_FAIL );
-
 		this->AddChild( &m_Banner[i] );
 	}
 }
