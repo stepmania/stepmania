@@ -153,8 +153,8 @@ bool StepMania::GetHighResolutionTextures()
 	default:
 	case HighResolutionTextures_Auto:
 		{
-			const VideoModeParams &params = DISPLAY->GetActualVideoModeParams();
-			return params.height > 480;
+			int height = PREFSMAN->m_iDisplayHeight;
+			return height > 480;
 		}
 	case HighResolutionTextures_ForceOn:
 		return true;
