@@ -294,6 +294,7 @@ Section "Main Section" SecMain
 	File "Program\${PRODUCT_FAMILY}.exe"
 	File "Program\${PRODUCT_FAMILY}.vdi"
 	File "Program\tools.exe"
+	File "Program\Texture Font Generator.exe"
 !endif
 !ifdef ASSOCIATE_SMZIP
 	Call RefreshShellIcons
@@ -609,6 +610,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
 	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.vdi"
 	Delete "$INSTDIR\Program\tools.exe"
+	Delete "$INSTDIR\Program\Texture Font Generator.exe"
 !endif
 !ifdef ASSOCIATE_SMZIP
 	Call un.RefreshShellIcons
