@@ -138,7 +138,7 @@ static RString GetDebugButtonName( const IDebugLine *pLine )
 template<typename U, typename V>
 static bool GetKeyFromMap( const map<U, V> &m, const V &val, U &key )
 {
-	FOREACHM_CONST( U, V, m, iter )
+	for( typename map<U,V>::const_iterator iter = m.begin(); iter != m.end(); ++iter )
 	{
 		if( iter->second == val )
 		{
@@ -245,7 +245,6 @@ void ScreenDebugOverlay::Init()
 		RString sButton = INPUTMAN->GetDeviceSpecificInputString( di );
 
 		BitmapText *p = new BitmapText;	
-		vector<BitmapText*> ;
 		p->LoadFromFont( THEME->GetPathF("Common", "normal") );
 		p->SetXY( SCREEN_CENTER_X-100+iPage*100, SCREEN_TOP+20 );
 		p->SetText( *s + " (" + sButton + ")" );
