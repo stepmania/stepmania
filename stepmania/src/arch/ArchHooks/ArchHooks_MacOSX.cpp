@@ -12,6 +12,7 @@
 #include <mach/mach.h>
 extern "C" {
 #include <mach/mach_time.h>
+#include <IOKit/graphics/IOGraphicsLib.h>
 }
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOKitKeys.h>
@@ -422,6 +423,30 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	PathForFolderType( dir, kDomainLibraryFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/Logs/" PRODUCT_ID, dir), "/Logs" );
 }
+
+static inline int GetIntValue( CFTypeRef r )
+{
+	int ret;
+	
+	if( !r || CFGetTypeID(r) != CFNumberGetTypeID() || !CFNumberGetValue(CFNumberRef(r), kCFNumberIntType, &ret) )
+		return 0;
+	return ret;
+}
+
+
+float ArchHooks_MacOSX::GetDisplayAspectRatio()
+{
+	io_connect_t displayPort = CGDisplayIOServicePort( CGMainDisplayID() );
+	CFDictionaryRef dict = IODisplayCreateInfoDictionary( displayPort, 0 );
+	int width = GetIntValue( CFDictionaryGetValue(dict, CFSTR(kDisplayHorizontalImageSize)) );
+	int height = GetIntValue( CFDictionaryGetValue(dict, CFSTR(kDisplayVerticalImageSize)) );
+	
+	CFRelease( dict );
+	
+	if( width && height )
+		return float(width)/height;
+	return 4/3.f;
+}	
 
 /*
  * (c) 2003-2006 Steve Checkoway

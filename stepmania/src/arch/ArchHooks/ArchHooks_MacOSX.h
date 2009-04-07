@@ -12,6 +12,7 @@ public:
 	void DumpDebugInfo();
 	RString GetPreferredLanguage();
 	bool GoToURL( RString sUrl );
+	float GetDisplayAspectRatio();
 };
 
 #ifdef ARCH_HOOKS
