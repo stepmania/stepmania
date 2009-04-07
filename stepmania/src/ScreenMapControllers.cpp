@@ -34,7 +34,7 @@ void ScreenMapControllers::Init()
 	m_soundDelete.Load( THEME->GetPathS(m_sName,"delete"), true );
 
 
-	m_textDevices.LoadFromFont( THEME->GetPathF(m_sName,"normal") );
+	m_textDevices.LoadFromFont( THEME->GetPathF(m_sName,"devices") );
 	m_textDevices.SetName( "Devices" );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_textDevices );
 	this->AddChild( &m_textDevices );

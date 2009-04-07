@@ -26,22 +26,24 @@ local function CreditsText( pn )
 end
 
 local t = Def.ActorFrame {
-	LoadFont(Var "LoadingScreen","message") .. {
-		InitCommand=cmd(maxwidth,750;
-		horizalign,left;vertalign,top;
-		shadowlength,2;shadowcolor,color("#000000");
-		y,SCREEN_TOP+20;
-		diffusealpha,0
-		);
-
+	Def.ActorFrame {
+		Def.Quad {
+			InitCommand=cmd(zoomtowidth,SCREEN_WIDTH;zoomtoheight,30;horizalign,left;vertalign,top;y,SCREEN_TOP;diffusetopedge,color("#FFFFFF");diffusebottomedge,color("#000000");diffusealpha,0;);
+			OnCommand=cmd(finishtweening;x,SCREEN_LEFT;diffusealpha,0.3;addx,-SCREEN_WIDTH;linear,0.5;addx,SCREEN_WIDTH;);		
+			OffCommand=cmd(sleep,3;linear,0.5;diffusealpha,0;);
+		};
+		LoadFont(Var "LoadingScreen","SystemMessage") .. {
+			Name="Text";
+			InitCommand=cmd(maxwidth,750;horizalign,left;vertalign,top;y,SCREEN_TOP+10;strokecolor,color("#000000");shadowlength,0;diffusealpha,0;);
+			OnCommand=cmd(finishtweening;x,SCREEN_LEFT+10;diffusealpha,1;addx,-SCREEN_WIDTH;linear,0.5;addx,SCREEN_WIDTH;);
+			OffCommand=cmd(sleep,3;linear,0.5;diffusealpha,0;);
+		};
 		SystemMessageMessageCommand = function(self, params)
-			self:settext( params.Message );
-			local f = cmd(finishtweening;x,SCREEN_LEFT+20;diffusealpha,1;addx,-SCREEN_WIDTH;linear,0.5;addx,SCREEN_WIDTH); f(self);
+			self:GetChild("Text"):settext( params.Message );
 			self:playcommand( "On" );
 			if params.NoAnimate then
 				self:finishtweening();
 			end
-			f = cmd(sleep,5;linear,0.5;diffusealpha,0); f(self);
 			self:playcommand( "Off" );
 		end;
 		HideSystemMessageMessageCommand = cmd(finishtweening);
