@@ -84,6 +84,8 @@ ScreenDebugOverlay::~ScreenDebugOverlay()
 {
 	this->RemoveAllChildren();
 
+	FOREACH( BitmapText*, m_vptextPages, p )
+		SAFE_DELETE( *p );
 	FOREACH( BitmapText*, m_vptextButton, p )
 		SAFE_DELETE( *p );
 	m_vptextButton.clear();
@@ -131,6 +133,20 @@ static RString GetDebugButtonName( const IDebugLine *pLine )
 	default:
 		ASSERT(0);
 	}
+}
+
+template<typename U, typename V>
+static bool GetKeyFromMap( const map<U, V> &m, const V &val, U &key )
+{
+	FOREACHM_CONST( U, V, m, iter )
+	{
+		if( iter->second == val )
+		{
+			key = iter->first;
+			return true;
+		}
+	}
+	return false;
 }
 
 static LocalizedString DEBUG_MENU( "ScreenDebugOverlay", "Debug Menu" );
@@ -214,30 +230,49 @@ void ScreenDebugOverlay::Init()
 	
 	m_textHeader.LoadFromFont( THEME->GetPathF("Common", "normal") );
 	m_textHeader.SetHorizAlign( align_left );
-	m_textHeader.SetX( SCREEN_LEFT+20 );
-	m_textHeader.SetY( SCREEN_TOP+20 );
+	m_textHeader.SetXY( SCREEN_LEFT+20, SCREEN_TOP+20 );
 	m_textHeader.SetText( DEBUG_MENU );
 	this->AddChild( &m_textHeader );
+
+	FOREACH_CONST( RString, m_asPages, s )
+	{
+		int iPage = s - m_asPages.begin();
+
+		DeviceInput di;
+		bool b = GetKeyFromMap( g_Mappings.pageButton, iPage, di );
+		ASSERT( b );
+
+		RString sButton = INPUTMAN->GetDeviceSpecificInputString( di );
+
+		BitmapText *p = new BitmapText;	
+		vector<BitmapText*> ;
+		p->LoadFromFont( THEME->GetPathF("Common", "normal") );
+		p->SetXY( SCREEN_CENTER_X-100+iPage*100, SCREEN_TOP+20 );
+		p->SetText( *s + " (" + sButton + ")" );
+		p->SetShadowLength( 2 );
+		m_vptextPages.push_back( p );
+		this->AddChild( p );
+	}
 
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
 	{
 		{
-			BitmapText *pT1 = new BitmapText;
-			pT1->LoadFromFont( THEME->GetPathF("Common", "normal") );
-			pT1->SetHorizAlign( align_right );
-			pT1->SetText( "blah" );
-			pT1->SetShadowLength( 2 );
-			m_vptextButton.push_back( pT1 );
-			this->AddChild( pT1 );
+			BitmapText *p = new BitmapText;
+			p->LoadFromFont( THEME->GetPathF("Common", "normal") );
+			p->SetHorizAlign( align_right );
+			p->SetText( "blah" );
+			p->SetShadowLength( 2 );
+			m_vptextButton.push_back( p );
+			this->AddChild( p );
 		}
 		{
-			BitmapText *pT2 = new BitmapText;
-			pT2->LoadFromFont( THEME->GetPathF("Common", "normal") );
-			pT2->SetHorizAlign( align_left );
-			pT2->SetText( "blah" );
-			pT2->SetShadowLength( 2 );
-			m_vptextFunction.push_back( pT2 );
-			this->AddChild( pT2 );
+			BitmapText *p = new BitmapText;
+			p->LoadFromFont( THEME->GetPathF("Common", "normal") );
+			p->SetHorizAlign( align_left );
+			p->SetText( "blah" );
+			p->SetShadowLength( 2 );
+			m_vptextFunction.push_back( p );
+			this->AddChild( p );
 		}
 	}
 
@@ -290,12 +325,16 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 
 void ScreenDebugOverlay::UpdateText()
 {
-	m_textHeader.SetText( ssprintf("%s: %s", DEBUG_MENU.GetValue().c_str(), GetCurrentPageName().c_str()) );
-
 	/* Highlight options that aren't the default. */
 	const RageColor off(0.6f, 0.6f, 0.6f, 1.0f);
 	const RageColor on(1, 1, 1, 1);
 	
+	FOREACH_CONST( RString, m_asPages, s )
+	{
+		int iPage = s - m_asPages.begin();
+		m_vptextPages[iPage]->SetDiffuse( (iPage == m_iCurrentPage) ? on :  off );
+	}
+
 	int iOffset = 0;
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
 	{

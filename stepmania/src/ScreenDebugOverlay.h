@@ -27,6 +27,7 @@ private:
 
 	Quad m_Quad;
 	BitmapText m_textHeader;
+	vector<BitmapText*> m_vptextPages;
 	vector<BitmapText*> m_vptextButton;
 	vector<BitmapText*> m_vptextFunction;
 };
