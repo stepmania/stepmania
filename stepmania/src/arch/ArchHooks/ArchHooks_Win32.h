@@ -22,6 +22,7 @@ public:
 	void SetupConcurrentRenderingThread();
 	
 	bool GoToURL( RString sUrl );
+	virtual float GetDisplayAspectRatio();
 };
 
 #ifdef ARCH_HOOKS

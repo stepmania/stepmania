@@ -183,6 +183,16 @@ bool ArchHooks_Win32::GoToURL( RString sUrl )
 	return ::GotoURL( sUrl );
 }
 
+float ArchHooks_Win32::GetDisplayAspectRatio()
+{
+	DEVMODE dm;
+	ZERO( dm );
+	dm.dmSize = sizeof(dm);
+	BOOL bResult = EnumDisplaySettings( NULL, ENUM_REGISTRY_SETTINGS, &dm );
+	ASSERT( bResult );
+	return dm.dmPelsWidth / (float)dm.dmPelsHeight;
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.

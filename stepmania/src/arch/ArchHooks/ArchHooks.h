@@ -113,6 +113,8 @@ public:
 	 */
 	virtual bool GoToURL( RString sUrl );
 
+	virtual float GetDisplayAspectRatio() = 0;
+
 private:
 	/* This are helpers for GetMicrosecondsSinceStart on systems with a timer
 	 * that may loop or move backwards. */

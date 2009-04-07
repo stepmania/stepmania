@@ -84,21 +84,34 @@ static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", fal
 
 void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 {
+	/*
+	 * We can't rely on there being full-screen video modes that give us square pixels 
+	 * at non-4:3 aspects.  The lowest non-4:3 resolution my new laptop with Radeon supports is 1280x720.  
+	 * In most cases, we'll using a 4:3 resolution when full-screen let the monitor stretch to the correct 
+	 * aspect.  When windowed (no monitor stretching), we will tweak the width so that we get square pixels.
+	 * -Chris
+	 */
+	int iWidth = PREFSMAN->m_iDisplayWidth;
+	if( PREFSMAN->m_bWindowed )
+	{
+		iWidth = PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio;
+	}
+
 	paramsOut = VideoModeParams(
-			PREFSMAN->m_bWindowed,
-			PREFSMAN->m_iDisplayWidth,
-			PREFSMAN->m_iDisplayHeight,
-			PREFSMAN->m_iDisplayColorDepth,
-			PREFSMAN->m_iRefreshRate,
-			PREFSMAN->m_bVsync,
-			PREFSMAN->m_bInterlaced,
-			PREFSMAN->m_bSmoothLines,
-			PREFSMAN->m_bTrilinearFiltering,
-			PREFSMAN->m_bAnisotropicFiltering,
-			CommonMetrics::WINDOW_TITLE,
-			THEME->GetPathG("Common","window icon"),
-			PREFSMAN->m_bPAL,
-			PREFSMAN->m_fDisplayAspectRatio
+		PREFSMAN->m_bWindowed,
+		iWidth,
+		PREFSMAN->m_iDisplayHeight,
+		PREFSMAN->m_iDisplayColorDepth,
+		PREFSMAN->m_iRefreshRate,
+		PREFSMAN->m_bVsync,
+		PREFSMAN->m_bInterlaced,
+		PREFSMAN->m_bSmoothLines,
+		PREFSMAN->m_bTrilinearFiltering,
+		PREFSMAN->m_bAnisotropicFiltering,
+		CommonMetrics::WINDOW_TITLE,
+		THEME->GetPathG("Common","window icon"),
+		PREFSMAN->m_bPAL,
+		PREFSMAN->m_fDisplayAspectRatio
 	);
 }
 
@@ -131,11 +144,21 @@ static RString GetActualGraphicOptionsString()
 
 static void StoreActualGraphicOptions()
 {
-	// find out what we actually have
+	/* Store the settings that RageDisplay was actually able to use so that
+	 * we don't go through the process of auto-detecting a usable video mode
+	 * every time.
+	 */
 	const VideoModeParams &params = DISPLAY->GetActualVideoModeParams();
 	PREFSMAN->m_bWindowed		.Set( params.windowed );
-	PREFSMAN->m_iDisplayWidth	.Set( params.width );
-	PREFSMAN->m_iDisplayHeight	.Set( params.height );
+
+	/* If we're windowed, we may have tweaked the width based on the aspect ratio.  
+	 * Don't save this new value over the preferred value.
+	 */
+	if( !PREFSMAN->m_bWindowed )
+	{
+		PREFSMAN->m_iDisplayWidth	.Set( params.width );
+		PREFSMAN->m_iDisplayHeight	.Set( params.height );
+	}
 	PREFSMAN->m_iDisplayColorDepth	.Set( params.bpp );
 	if( PREFSMAN->m_iRefreshRate != REFRESH_DEFAULT )
 		PREFSMAN->m_iRefreshRate.Set( params.rate );
@@ -649,6 +672,7 @@ found_defaults:
 		PREFSMAN->m_iMovieColorDepth.Set( defaults.iMovieColor );
 		PREFSMAN->m_iMaxTextureResolution.Set( defaults.iTextureSize );
 		PREFSMAN->m_bSmoothLines.Set( defaults.bSmoothLines );
+		PREFSMAN->m_fDisplayAspectRatio.Set( HOOKS->GetDisplayAspectRatio() );
 
 		// Update last seen video card
 		PREFSMAN->m_sLastSeenVideoDriver.Set( GetVideoDriverName() );

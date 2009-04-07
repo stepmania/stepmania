@@ -556,7 +556,7 @@ static void RefreshRate( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 static void DisplayAspectRatio( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const float mapping[] = { 3/4.f,1,4/3.0f,16/10.0f,16/9.f, 8/3.f };
+	const float mapping[] = { 3/4.f, 1, 4/3.0f, 16/10.0f, 16/9.f, 8/3.f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
@@ -701,7 +701,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "DisplayResolution",		DisplayResolutionM, DisplayResolutionChoices ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS | OPT_APPLY_ASPECT_RATIO;
 	ADD( ConfOption( "DisplayAspectRatio",		DisplayAspectRatio,	"|3:4","|1:1","|4:3","|16:10","|16:9","|8:3" ) );
-	g_ConfOptions.back().m_iEffects = OPT_APPLY_ASPECT_RATIO;
+	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS | OPT_APPLY_ASPECT_RATIO;	// need OPT_APPLY_GRAPHICS because if windowed the width may change to make square pixels
 	ADD( ConfOption( "WideScreen16_10",		WideScreen16_10,	"Off", "On" ) );
 	g_ConfOptions.back().m_sPrefName = "DisplayAspectRatio";
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_ASPECT_RATIO;
