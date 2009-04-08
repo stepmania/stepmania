@@ -11,7 +11,6 @@ public:
 	void *GetProcAddress( RString s );
 	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	void GetDisplayResolutions( DisplayResolutions &out ) const;
-	float GetMonitorAspectRatio() const;
 	bool IsSoftwareRenderer( RString &sError );
 	void SwapBuffers();
 	void Update();

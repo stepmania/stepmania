@@ -14,7 +14,6 @@ public:
 
 	virtual RString GetApiDescription() const { return "OpenGL"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
-	virtual float GetMonitorAspectRatio() const;
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 

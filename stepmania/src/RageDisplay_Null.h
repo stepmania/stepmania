@@ -11,7 +11,6 @@ public:
 
 	virtual RString GetApiDescription() const { return "Null"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
-	virtual float GetMonitorAspectRatio() const { return 4/3.f; }
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
 	bool BeginFrame() { return true; }

@@ -25,7 +25,6 @@ namespace GraphicsWindow
 	void DestroyGraphicsWindow();
 
 	void GetDisplayResolutions( DisplayResolutions &out );
-	float GetMonitorAspectRatio();
 
 	const VideoModeParams &GetParams();
 	HDC GetHDC();

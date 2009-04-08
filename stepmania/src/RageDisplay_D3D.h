@@ -12,7 +12,6 @@ public:
 
 	virtual RString GetApiDescription() const { return "D3D"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
-	virtual float GetMonitorAspectRatio() const;
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 

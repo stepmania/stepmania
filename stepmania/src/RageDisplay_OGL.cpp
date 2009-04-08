@@ -536,11 +536,6 @@ void RageDisplay_OGL::GetDisplayResolutions( DisplayResolutions &out ) const
 	g_pWind->GetDisplayResolutions( out );
 }
 
-float RageDisplay_OGL::GetMonitorAspectRatio() const
-{
-	return g_pWind->GetMonitorAspectRatio();
-}
-
 static void CheckPalettedTextures()
 {
 	RString sError;
