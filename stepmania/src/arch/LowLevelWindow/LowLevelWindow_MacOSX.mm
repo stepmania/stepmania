@@ -566,20 +566,6 @@ void LowLevelWindow_MacOSX::GetDisplayResolutions( DisplayResolutions &dr ) cons
 	// Do not release modes! We don't own them here.
 }
 
-float LowLevelWindow_MacOSX::GetMonitorAspectRatio() const
-{
-	io_connect_t displayPort = CGDisplayIOServicePort( CGMainDisplayID() );
-	CFDictionaryRef dict = IODisplayCreateInfoDictionary( displayPort, 0 );
-	int width = GetIntValue( CFDictionaryGetValue(dict, CFSTR(kDisplayHorizontalImageSize)) );
-	int height = GetIntValue( CFDictionaryGetValue(dict, CFSTR(kDisplayVerticalImageSize)) );
-	
-	CFRelease( dict );
-	
-	if( width && height )
-		return float(width)/height;
-	return 4/3.f;
-}
-
 void LowLevelWindow_MacOSX::SwapBuffers()
 {
 	CGLFlushDrawable( CGLGetCurrentContext() );
