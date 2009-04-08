@@ -4,8 +4,7 @@ function Actor:LyricCommand(side)
 	self:stoptweening();
 	self:shadowlengthx(0);
 	self:shadowlengthy(5);
-	self:shadowcolor(color("#000000"));
-	self:strokecolor(color("#FFFFFF"));
+	self:strokecolor(color("#000000"));
 
 	local Zoom = SCREEN_WIDTH/(self:GetZoomedWidth()+1);
 	if( Zoom > 1 ) then Zoom = 1 end
@@ -22,7 +21,7 @@ function Actor:LyricCommand(side)
 		Color[1] * Factor,
 		Color[2] * Factor,
 		Color[3] * Factor,
-		Color[4] * 1 } )
+		Color[4] * Factor } )
 
 	if side == "Front" then
 		self:cropright(1);
@@ -32,7 +31,7 @@ function Actor:LyricCommand(side)
 
 	self:diffusealpha(0);
 	self:linear(0.2);
-	self:diffusealpha(1);
+	self:diffusealpha(0.75);
 	self:linear( Var "LyricDuration" * 0.75);
 	if side == "Front" then
 		self:cropright(0);
