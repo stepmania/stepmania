@@ -23,7 +23,7 @@ local graphics = {
 }
 
 local theme = {
-	"AJ “AJ 187” Kelly",
+	"AJ Kelly",
 	"Dan “dieKatze88” Colardeau",
 	"Mike “mDaWg” Calfin",
 }
