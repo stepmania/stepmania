@@ -11,7 +11,7 @@ end
 
 function ScreenCautionBranch()
 	if PREFSMAN:GetPreference("ShowCaution") then return "ScreenCaution" end
-	return "ScreenSelectStyle2"
+	return "ScreenSelectStyle"
 end
 
 function ScreenSelectGroupBranch()
