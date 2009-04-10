@@ -4810,6 +4810,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CommandLineActions.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CommandLineActions.h"
+				>
+			</File>
+			<File
 				RelativePath="CryptHelpers.cpp"
 				>
 			</File>
@@ -4823,14 +4831,6 @@
 			</File>
 			<File
 				RelativePath="CryptManager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ExportStrings.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ExportStrings.h"
 				>
 			</File>
 			<File

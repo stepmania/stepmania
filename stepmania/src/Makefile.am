@@ -172,7 +172,7 @@ MsdFile.cpp MsdFile.h \
 XmlFile.cpp XmlFile.h \
 XmlFileUtil.cpp XmlFileUtil.h
 
-StepMania = ExportStrings.h ExportStrings.cpp \
+StepMania = CommandLineActions.h CommandLineActions.cpp \
 StdString.h Foreach.h \
 StepMania.cpp StepMania.h \
 GameLoop.cpp GameLoop.h \
