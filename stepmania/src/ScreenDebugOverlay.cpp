@@ -459,21 +459,28 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			if( input.type != IET_FIRST_PRESS )
 				return true; /* eat the input but do nothing */
 
-			BitmapText &txt1 = *m_vptextButton[i];
-			txt1.FinishTweening();
-			float fZoom = txt1.GetZoom();
-			txt1.SetZoom( fZoom * 1.2f );
-			txt1.BeginTweening( 0.2f, TWEEN_LINEAR );
-			txt1.SetZoom( fZoom );
-
+			// do the action
 			RString sMessage;
 			(*p)->DoAndMakeSystemMessage( sMessage );
 			if( !sMessage.empty() )
-				SCREENMAN->SystemMessage( sMessage );
+				LOG->Trace("DEBUG: " + sMessage );
 			if( (*p)->ForceOffAfterUse() )
 				m_bForcedHidden = true;
-
+	
+			// update text to show the effect of what changed above
 			UpdateText();
+
+			// blink the text to show what changed
+			BitmapText &bt = *m_vptextButton[i];
+			bt.FinishTweening();
+			for( int i=0; i<8; i++ )
+			{
+				bt.SetGlow( RageColor(1,0,0,1) );
+				bt.Sleep(0.1f);
+				bt.SetGlow( RageColor(1,0,0,0) );
+				bt.Sleep(0.1f);
+			}
+
 			return true;
 		}
 	}
@@ -889,6 +896,8 @@ static void FillProfileStats( Profile *pProfile )
 			}
 		}
 	}
+
+	SCREENMAN->ZeroNextUpdate();
 }
 
 class DebugLineFillProfileStats : public IDebugLine
