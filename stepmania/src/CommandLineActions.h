@@ -1,7 +1,7 @@
-#ifndef ExportStrings_H
-#define ExportStrings_H
+#ifndef CommandLineActions_H
+#define CommandLineActions_H
 
-namespace ExportStrings
+namespace CommandLineActions
 {
 	bool AnyPackageFilesInCommandLine();
 	void Install();

@@ -3206,10 +3206,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			Name="StepMania"
 			Filter="">
 			<File
-				RelativePath=".\ExportStrings.cpp">
+				RelativePath=".\CommandLineActions.cpp">
 			</File>
 			<File
-				RelativePath=".\ExportStrings.h">
+				RelativePath=".\CommandLineActions.h">
 			</File>
 			<File
 				RelativePath=".\GameLoop.cpp">

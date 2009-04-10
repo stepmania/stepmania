@@ -1,5 +1,5 @@
 #include "global.h"
-#include "ExportStrings.h"
+#include "CommandLineActions.h"
 #include "RageFile.h"
 #include "RageUtil.h"
 #include "IniFile.h"
@@ -47,7 +47,7 @@ static void GetPackageFilesToInstall( vector<RString> &vs )
 		vs.clear();
 }
 
-bool ExportStrings::AnyPackageFilesInCommandLine()
+bool CommandLineActions::AnyPackageFilesInCommandLine()
 {
 	vector<RString> vs;
 	GetPackageFilesToInstall( vs );
@@ -61,7 +61,7 @@ struct FileCopyResult
 	RString sFile, sComment;
 };
 
-void ExportStrings::Install()
+void CommandLineActions::Install()
 {
 	vector<FileCopyResult> vSucceeded;
 	vector<FileCopyResult> vFailed;
@@ -118,7 +118,7 @@ void ExportStrings::Install()
 	Dialog::OK( sMessage );
 }
 
-void ExportStrings::Nsis()
+void CommandLineActions::Nsis()
 {
 	RageFile out;
 	if( !out.Open( "nsis_strings_temp.inc", RageFile::WRITE ) )
@@ -152,7 +152,7 @@ void ExportStrings::Nsis()
 	}
 }
 
-void ExportStrings::LuaInformation()
+void CommandLineActions::LuaInformation()
 {
 	XNode *pNode = LuaHelpers::GetLuaInformation();
 	pNode->AppendAttr( "xmlns", "http://www.stepmania.com" );

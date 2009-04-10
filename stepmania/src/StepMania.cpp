@@ -32,7 +32,7 @@
 #include "RageSurface.h"
 #include "RageSurface_Load.h"
 #include "CatalogXml.h"
-#include "ExportStrings.h"
+#include "CommandLineActions.h"
 
 #if !defined(SUPPORT_OPENGL) && !defined(SUPPORT_D3D)
 #define SUPPORT_OPENGL
@@ -932,7 +932,7 @@ int main(int argc, char* argv[])
 		RunMode_ExportLuaInformation,
 	};
 	RunMode runmode = RunMode_Normal;
-	if( ExportStrings::AnyPackageFilesInCommandLine() )
+	if( CommandLineActions::AnyPackageFilesInCommandLine() )
 		runmode = RunMode_Install;
 	else if( GetCommandlineArgument("ExportNsisStrings") )
 		runmode = RunMode_ExportNsisStrings;
@@ -1066,13 +1066,13 @@ int main(int argc, char* argv[])
 		{
 		DEFAULT_FAIL( runmode );
 		case RunMode_Install:
-			ExportStrings::Install();
+			CommandLineActions::Install();
 			break;
 		case RunMode_ExportNsisStrings:
-			ExportStrings::Nsis();
+			CommandLineActions::Nsis();
 			break;
 		case RunMode_ExportLuaInformation:
-			ExportStrings::LuaInformation();
+			CommandLineActions::LuaInformation();
 			break;
 		};
 		exit(0);
