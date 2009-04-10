@@ -13,6 +13,7 @@ public:
 	int64_t GetMicrosecondsSinceStart();
 
 	void MountInitialFilesystems( const RString &sDirOfExecutable );
+	float GetDisplayAspectRatio() { return 4.0f/3; }
 
 	static clockid_t GetClock();
 };
