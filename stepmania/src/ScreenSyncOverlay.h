@@ -16,6 +16,7 @@ public:
 
 	void Update( float fDeltaTime );
 
+	static void SetShowAutoplay( bool b );
 private:
 	void UpdateText();
 	void ShowHelp();

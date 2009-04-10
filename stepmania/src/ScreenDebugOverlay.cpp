@@ -26,6 +26,7 @@
 #include "SongManager.h"
 #include "GameLoop.h"
 #include "Song.h"
+#include "ScreenSyncOverlay.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
@@ -562,7 +563,7 @@ static LocalizedString SYNC_TEMPO   ( "ScreenDebugOverlay", "Tempo" );
 
 class DebugLineAutoplay : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return AUTO_PLAY.GetValue(); }
+	virtual RString GetDisplayTitle() { return AUTO_PLAY.GetValue() + " (+Shift = AI) (+Alt = hide)"; }
 	virtual RString GetDisplayValue()
 	{
 		switch( GamePreferences::m_AutoPlay.Get() )
@@ -579,7 +580,9 @@ class DebugLineAutoplay : public IDebugLine
 	{
 		ASSERT( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID );
 		PlayerController pc = GAMESTATE->m_pPlayerState[GAMESTATE->m_MasterPlayerNumber]->m_PlayerController;
-		bool bHoldingShift = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
+		bool bHoldingShift = 
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) ) || 
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT) );
 		if( bHoldingShift )
 			pc = (pc==PC_CPU) ? PC_HUMAN : PC_CPU;
 		else
@@ -589,6 +592,13 @@ class DebugLineAutoplay : public IDebugLine
 			GAMESTATE->m_pPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
 		FOREACH_MultiPlayer(p)
 			GAMESTATE->m_pMultiPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
+
+		// Hide Autoplay if Alt is held down
+		bool bHoldingAlt = 
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT) ) || 
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT) );
+		ScreenSyncOverlay::SetShowAutoplay( !bHoldingAlt );
+
 		IDebugLine::DoAndLog( sMessageOut );
 	}
 };

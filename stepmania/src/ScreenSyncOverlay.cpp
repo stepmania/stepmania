@@ -37,7 +37,6 @@ void ScreenSyncOverlay::Init()
 	m_textHelp.SetHorizAlign( align_left );
 	m_textHelp.SetXY( SCREEN_CENTER_X+20, SCREEN_TOP+100 );
 	m_textHelp.SetDiffuseAlpha( 0 );
-	m_textHelp.SetZoom( 0.6f );
 	m_textHelp.SetShadowLength( 2 );
 	m_textHelp.SetText( 
 		REVERT_SYNC_CHANGES.GetValue()+":\n"
@@ -81,7 +80,11 @@ void ScreenSyncOverlay::Update( float fDeltaTime )
 	UpdateText();
 }
 
-static Preference<bool>		g_bShowAutoPlayStatus( "ShowAutoPlayStatus", true );
+bool g_bShowAutoplay = true;
+void ScreenSyncOverlay::SetShowAutoplay( bool b )
+{
+	g_bShowAutoplay = b;
+}
 
 static LocalizedString AUTO_PLAY		( "ScreenSyncOverlay", "AutoPlay" );
 static LocalizedString AUTO_PLAY_CPU		( "ScreenSyncOverlay", "AutoPlayCPU" );
@@ -99,7 +102,7 @@ void ScreenSyncOverlay::UpdateText()
 	// 
 	vector<RString> vs;
 
-	if( g_bShowAutoPlayStatus )
+	if( g_bShowAutoplay )
 	{
 		switch( GamePreferences::m_AutoPlay.Get() )
 		{
