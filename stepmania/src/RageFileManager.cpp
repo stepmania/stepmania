@@ -282,6 +282,11 @@ void RageFileManager::MountInitialFilesystems()
 	HOOKS->MountInitialFilesystems( RageFileManagerUtil::sDirOfExecutable );
 }
 
+void RageFileManager::MountUserFilesystems()
+{
+	HOOKS->MountUserFilesystems( RageFileManagerUtil::sDirOfExecutable );
+}
+
 RageFileManager::~RageFileManager()
 {
 	/* Note that drivers can use previously-loaded drivers, eg. to load a ZIP

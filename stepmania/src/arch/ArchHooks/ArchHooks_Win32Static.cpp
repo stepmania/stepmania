@@ -40,7 +40,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 	return ret;
 }
 
-void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
+static RString GetMountDir( const RString &sDirOfExecutable )
 {
 	/* All Windows data goes in the directory one level above the executable. */
 	CHECKPOINT_M( ssprintf( "DOE \"%s\"", sDirOfExecutable.c_str()) );
@@ -49,15 +49,18 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	CHECKPOINT_M( ssprintf( "... %i asParts", asParts.size()) );
 	ASSERT_M( asParts.size() > 1, ssprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
 	RString sDir = join( "/", asParts.begin(), asParts.end()-1 );
+	return sDir;
+}
+
+void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
+{
+	RString sDir = GetMountDir( sDirOfExecutable );
 	FILEMAN->Mount( "dir", sDir, "/" );
+}
 
-	/* Experimental: Check for a sentinel file and then operate in portable mode. */
-	// TODO: Make this cross-platform?
-	bool bPortable = DoesFileExist("Portable.ini");
-	RString sPortableDir = sDir + "/Portable";
-
-	// Mount everything game-writable (not counting the editor) to the user's directory.
-	RString sAppDataDir = bPortable ? sPortableDir : SpecialDirs::GetAppDataDir() + PRODUCT_ID;
+void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+{
+	RString sAppDataDir = SpecialDirs::GetAppDataDir() + PRODUCT_ID;
 	FILEMAN->Mount( "dir", sAppDataDir + "/Cache", "/Cache" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Logs", "/Logs" );
 	FILEMAN->Mount( "dir", sAppDataDir + "/Save", "/Save" );

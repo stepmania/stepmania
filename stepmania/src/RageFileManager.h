@@ -18,6 +18,7 @@ public:
 	RageFileManager( const RString &argv0 );
 	~RageFileManager();
 	void MountInitialFilesystems();
+	void MountUserFilesystems();
 
 	void GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 	bool Move( const RString &sOldPath, const RString &sNewPath );

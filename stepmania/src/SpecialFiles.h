@@ -5,7 +5,7 @@
 
 namespace SpecialFiles
 {
-	extern const RString USER_PACKAGES_DIR;
+	extern const RString USER_PACKAGES_DIR;	// user packages should be a separate dir from system packages so that we can write to it (installing a package)
 	extern const RString PACKAGES_DIR;	// system packages (not user packages)
 	extern const RString KEYMAPS_PATH;
 	extern const RString PREFERENCES_INI_PATH;
