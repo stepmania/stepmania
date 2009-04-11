@@ -22,13 +22,23 @@ bool EditCourseUtil::Save( Course *pCourse )
 	return EditCourseUtil::RenameAndSave( pCourse, pCourse->GetDisplayFullTitle() );
 }
 
-bool EditCourseUtil::RenameAndSave( Course *pCourse, RString sName )
+bool EditCourseUtil::RenameAndSave( Course *pCourse, RString sNewName )
 {
-	ASSERT( !sName.empty() );
+	ASSERT( !sNewName.empty() );
 
 	EditCourseUtil::s_bNewCourseNeedsName = false;
 
-	RString sNewFilePath = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_COURSES_SUBDIR + sName + ".crs";
+	RString sNewFilePath;
+	if( pCourse->IsAnEdit() )
+	{
+		sNewFilePath = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_COURSES_SUBDIR + sNewName + ".crs";
+	}
+	else
+	{
+		RString sDir, sName, sExt;
+		splitpath( pCourse->m_sPath, sDir, sName, sExt );
+		sNewFilePath = sDir + sNewName + sExt;
+	}
 
 	// remove the old file if the name is changing
 	if( !pCourse->m_sPath.empty()  &&  sNewFilePath != pCourse->m_sPath )
@@ -37,7 +47,7 @@ bool EditCourseUtil::RenameAndSave( Course *pCourse, RString sName )
 		FlushDirCache();
 	}
 
-	pCourse->m_sMainTitle = sName;
+	pCourse->m_sMainTitle = sNewName;
 	pCourse->m_sPath = sNewFilePath;
 	return CourseWriterCRS::Write( *pCourse, pCourse->m_sPath, false );
 }
@@ -46,8 +56,17 @@ bool EditCourseUtil::RemoveAndDeleteFile( Course *pCourse )
 {
 	if( !FILEMAN->Remove( pCourse->m_sPath ) )
 		return false;
+	FILEMAN->Remove( pCourse->GetCacheFilePath() );
 	FlushDirCache();
-	PROFILEMAN->LoadMachineProfile();
+	if( pCourse->IsAnEdit() )
+	{
+		PROFILEMAN->LoadMachineProfile();
+	}
+	else
+	{
+		SONGMAN->DeleteCourse( pCourse );
+		delete pCourse;
+	}
 	return true;
 }
 

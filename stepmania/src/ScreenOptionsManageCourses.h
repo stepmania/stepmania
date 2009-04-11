@@ -7,24 +7,13 @@
 
 class Course;
 
-class ScreenOptionsEditCourseSubMenu : public ScreenOptions
-{
-	RageSound m_soundDifficultyChanged;
-	
-public:
-	virtual void Init();
-	
-protected:
-	virtual void MenuSelect( const InputEventPlus &input );
-	void WriteCourse();
-};
-
-class ScreenOptionsManageCourses : public ScreenOptionsEditCourseSubMenu
+class ScreenOptionsManageCourses : public ScreenOptions
 {
 public:
 	void Init();
 	virtual void BeginScreen();
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void MenuSelect( const InputEventPlus &input );
 
 protected:
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
@@ -36,6 +25,7 @@ protected:
 private:
 	Course *GetCourseWithFocus() const;
 
+	RageSound m_soundDifficultyChanged;
 	vector<Course*> m_vpCourses;
 	ThemeMetric<EditMode> EDIT_MODE;
 	ThemeMetric<RString> CREATE_NEW_SCREEN;

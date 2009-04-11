@@ -17,19 +17,34 @@
 #include "Profile.h"
 #include "CourseWriterCRS.h"
 #include "RageFileManager.h"
+#include "PrefsManager.h"
+#include "WorkoutManager.h"
 
-static void RefreshTrail()
+AutoScreenMessage( SM_BackFromRename )
+AutoScreenMessage( SM_BackFromDelete )
+AutoScreenMessage( SM_BackFromContextMenu )
+
+enum CourseAction
 {
-	Course *pCourse = GAMESTATE->m_pCurCourse;
-	if( pCourse == NULL )
-	{
-		GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
-		return;
-	}
-	GAMESTATE->m_pCurCourse.Set( pCourse );
-	Trail *pTrail = pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
-	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
-}
+	CourseAction_Edit,
+	CourseAction_Rename,
+	CourseAction_Delete,
+	NUM_CourseAction
+};
+static const char *CourseActionNames[] = {
+	"Edit",
+	"Rename",
+	"Delete",
+};
+XToString( CourseAction );
+#define FOREACH_CourseAction( i ) FOREACH_ENUM( CourseAction, i )
+
+static MenuDef g_TempMenu(
+	"ScreenMiniMenuContext"
+);
+
+REGISTER_SCREEN_CLASS( ScreenOptionsManageCourses );
+
 
 struct StepsTypeAndDifficulty
 {
@@ -62,106 +77,19 @@ static void SetNextCombination()
 	// XXX Testing.
 	SCREENMAN->SystemMessage( ssprintf("%s, %s", GameManager::GetStepsTypeInfo(curVal.st).szName, DifficultyToString(curVal.cd).c_str()) );
 
-	RefreshTrail();
+	EditCourseUtil::UpdateAndSetTrail();
 }
-
-void ScreenOptionsEditCourseSubMenu::Init()
-{
-	m_soundDifficultyChanged.Load( THEME->GetPathS("ScreenEditCourseSubmenu", "difficulty changed") );
-	ScreenOptions::Init();
-}
-
-void ScreenOptionsEditCourseSubMenu::MenuSelect( const InputEventPlus &input )
-{
-	if( input.type != IET_FIRST_PRESS )
-		return;
-	SetNextCombination();
-	m_soundDifficultyChanged.Play();
-
-}
-
-static LocalizedString FAILED_TO_WRITE_COURSE( "ScreenOptionsEditCourseSubMenu", "Failed to write course." );
-void ScreenOptionsEditCourseSubMenu::WriteCourse()
-{
-	Course *pCourse = GAMESTATE->m_pCurCourse;
-		
-	if( pCourse->m_sPath.empty() )
-	{
-		// Write the course to the profile directory
-		const RString& dir = PROFILEMAN->GetProfileDir( pCourse->GetLoadedFromProfileSlot() );
-		
-		ASSERT( !dir.empty() );
-		pCourse->m_sPath = dir + EDIT_COURSES_SUBDIR + pCourse->m_sMainTitle + ".crs";
-	}
-	if( !CourseWriterCRS::Write(*pCourse, pCourse->m_sPath, false) )
-	{
-		ScreenPrompt::Prompt( SM_None, FAILED_TO_WRITE_COURSE );
-		return;
-	}
-	
-	if( !pCourse->IsAnEdit() )
-		CourseWriterCRS::Write( *pCourse, pCourse->GetCacheFilePath(), true );
-}
-
-
-AutoScreenMessage( SM_BackFromEnterNameForNew )
-AutoScreenMessage( SM_BackFromRename )
-AutoScreenMessage( SM_BackFromContextMenu )
-
-enum CourseAction
-{
-	CourseAction_Edit,
-	CourseAction_Rename,
-	CourseAction_Delete,
-	NUM_CourseAction
-};
-static const char *CourseActionNames[] = {
-	"Edit",
-	"Rename",
-	"Delete",
-};
-XToString( CourseAction );
-#define FOREACH_CourseAction( i ) FOREACH_ENUM( CourseAction, i )
-
-static MenuDef g_TempMenu(
-	"ScreenMiniMenuContext"
-);
-
-
-static LocalizedString EDIT_NAME_CONFLICTS	( "ScreenOptionsManageCourses", "The name you chose conflicts with another edit. Please use a different name." );
-static bool ValidateEditCourseName( const RString &sAnswer, RString &sErrorOut )
-{
-	if( sAnswer.empty() )
-		return false;
-
-	// Course name must be unique
-	vector<Course*> v;
-	SONGMAN->GetAllCourses( v, false );
-	FOREACH_CONST( Course*, v, c )
-	{
-		if( GAMESTATE->m_pCurCourse.Get() == *c )
-			continue;	// don't compare name against ourself
-
-		if( (*c)->GetDisplayFullTitle() == sAnswer )
-		{
-			sErrorOut = EDIT_NAME_CONFLICTS;
-			return false;
-		}
-	}
-
-	return true;
-}
-
-
-REGISTER_SCREEN_CLASS( ScreenOptionsManageCourses );
 
 void ScreenOptionsManageCourses::Init()
 {
-	ScreenOptionsEditCourseSubMenu::Init();
+	if( PREFSMAN->m_iArcadeOptionsNavigation )
+		SetNavigation( NAV_THREE_KEY_MENU );
 
+	ScreenOptions::Init();
+
+	m_soundDifficultyChanged.Load( THEME->GetPathS("ScreenEditCourseSubmenu", "difficulty changed") );
 	EDIT_MODE.Load( m_sName,"EditMode" );
 	CREATE_NEW_SCREEN.Load( m_sName, "CreateNewScreen" );
-	GAMESTATE->m_MasterPlayerNumber = GAMESTATE->GetFirstHumanPlayer();
 }
 
 void ScreenOptionsManageCourses::BeginScreen()
@@ -172,6 +100,16 @@ void ScreenOptionsManageCourses::BeginScreen()
 		SetNextCombination();
 	}
 	
+	vector<const Style*> vpStyles;
+	GameManager::GetStylesForGame( GAMESTATE->m_pCurGame, vpStyles );
+	const Style *pStyle = vpStyles[0];
+	GAMESTATE->SetCurrentStyle( pStyle );
+
+
+	// Remember the current course.  All Course pointers will be invalidated when we load the machine profile below.
+	CourseID cidLast;
+	cidLast.FromCourse( GAMESTATE->m_pCurCourse );
+
 	vector<OptionRowHandler*> vHands;
 	
 	int iIndex = 0;
@@ -189,54 +127,32 @@ void ScreenOptionsManageCourses::BeginScreen()
 	}	
 
 	m_vpCourses.clear();
-	SONGMAN->GetAllCourses( m_vpCourses, false );
+	FlushDirCache();
+	PROFILEMAN->LoadMachineProfileEdits();
 	
 	switch( EDIT_MODE.GetValue() )
 	{
-		default:
-			RageException::Throw( "ScreenOptionsManageCourses: Invalid edit mode: %s.",
-					      EditModeToString(EDIT_MODE.GetValue()).c_str() );
-		case EditMode_Practice:
-		case EditMode_Home:
-			// Strip out non-edits.
-			// VC6 is missing mem_fun for const members.  Lame.  Work around by not using mem_fun. */
-			for( int i=m_vpCourses.size()-1; i>=0; i-- )
-			{
-				if( m_vpCourses[i]->IsAnEdit() )
-					m_vpCourses.erase( m_vpCourses.begin()+i );
-			}
-			break;
-		case EditMode_Full:
-			break;
+	DEFAULT_FAIL( EDIT_MODE.GetValue() );
+	case EditMode_Home:
+		EditCourseUtil::GetAllEditCourses( m_vpCourses );
+		break;
+	case EditMode_Practice:
+	case EditMode_Full:
+		SONGMAN->GetAllCourses( m_vpCourses, false );
+		break;
 	}
 	
-	FOREACH_CONST( Course*, m_vpCourses, c )
+	FOREACH_CONST( Course*, m_vpCourses, p )
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
 		
-		switch( EDIT_MODE.GetValue() )
-		{
-			default:
-				ASSERT(0);
-			case EditMode_Practice:
-			case EditMode_Home:
-				def.m_sName = CourseTypeToLocalizedString( (*c)->GetCourseType() );
-				break;
-			case EditMode_Full:
-				if( (*c)->IsAnEdit() )
-					def.m_sName = "Edit";
-				else
-					def.m_sName = SONGMAN->ShortenGroupName( (*c)->m_sGroupName );
-				break;
-		}
-		
-		def.m_sName = ssprintf( "%3d  %s", iIndex, def.m_sName.c_str() );
-		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-		def.m_bAllowThemeItems = false;
-		def.m_bAllowThemeTitle = false;
-		def.m_bOneChoiceForAllPlayers = true;
-		def.m_vsChoices.push_back( (*c)->GetDisplayFullTitle() );
+		def.m_sName = (*p)->GetDisplayFullTitle();
+		def.m_bAllowThemeTitle = false;	// not themable
+		def.m_sExplanationName = "Select Workout";
+		def.m_vsChoices.clear();
+		def.m_vsChoices.push_back( "" );
+		def.m_bAllowThemeItems = false;	// already themed
 		iIndex++;
 	}
 	
@@ -245,8 +161,10 @@ void ScreenOptionsManageCourses::BeginScreen()
 	ScreenOptions::BeginScreen();
 	
 	// select the last chosen course
+	GAMESTATE->m_pCurCourse.Set( cidLast.ToCourse() );
 	if( GAMESTATE->m_pCurCourse )
 	{
+		EditCourseUtil::UpdateAndSetTrail();
 		vector<Course*>::const_iterator iter = find( m_vpCourses.begin(), m_vpCourses.end(), GAMESTATE->m_pCurCourse );
 		if( iter != m_vpCourses.end() )
 		{
@@ -258,96 +176,69 @@ void ScreenOptionsManageCourses::BeginScreen()
 	AfterChangeRow( GAMESTATE->m_MasterPlayerNumber );
 }
 
+static LocalizedString ERROR_RENAMING		("ScreenOptionsManageCourses", "Error renaming file.");
+static LocalizedString ERROR_DELETING_FILE	("ScreenOptionsManageWorkouts", "Error deleting the file '%s'.");
 static LocalizedString COURSE_WILL_BE_LOST	( "ScreenOptionsManageCourses", "This course will be lost permanently." );
 static LocalizedString CONTINUE_WITH_DELETE	( "ScreenOptionsManageCourses", "Continue with delete?" );
 static LocalizedString ENTER_COURSE_NAME	( "ScreenOptionsManageCourses", "Enter a name for the course." );
 void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_Success )
-	{
-		LOG->Trace( "Delete succeeded; deleting course." );
-		Course *pCourse = GetCourseWithFocus();
-		
-		GAMESTATE->m_pCurCourse.Set( NULL ); // Maybe I should just go to the next course
-		RefreshTrail();
-		SONGMAN->DeleteCourse( pCourse );
-		FILEMAN->Remove( pCourse->m_sPath );
-		if( !pCourse->IsAnEdit() )
-			FILEMAN->Remove( pCourse->GetCacheFilePath() );
-		delete pCourse;
-		SCREENMAN->SetNewScreen( this->m_sName ); // reload
-	}
-	else if( SM == SM_Failure )
-	{
-		LOG->Trace( "Delete failed; not deleting course." );
-	}
-	else if( SM == SM_GoToNextScreen )
+	if( SM == SM_GoToNextScreen )
 	{
 		int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
-		if( iCurRow == (int)m_pRows.size() - 1 )
+
+		if( iCurRow == 0 )	// "create new"
+		{
+			/* Allocate the Course now, but don't save the file until the user explicitly chooses Save */
+			Course *pCourse = new Course;
+			EditCourseUtil::LoadDefaults( *pCourse );
+			pCourse->m_LoadedFromProfile = ProfileSlot_Machine;
+			SONGMAN->AddCourse( pCourse );
+			GAMESTATE->m_pCurCourse.Set( pCourse );
+			EditCourseUtil::s_bNewCourseNeedsName = true;
+			EditCourseUtil::UpdateAndSetTrail();
+
+			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN );
+			return;	// don't call base
+		}
+		else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
 		{
 			this->HandleScreenMessage( SM_GoToPrevScreen );
 			return;	// don't call base
 		}
-	}
-	else if( SM == SM_BackFromEnterNameForNew )
-	{
-		if( !ScreenTextEntry::s_bCancelledLast )
+		else
 		{
-			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
-		
-			// create
-			Course *pCourse = new Course;
-			ProfileSlot slot;
-			
-			pCourse->m_sMainTitle = ScreenTextEntry::s_sLastAnswer;
-			
-			switch( EDIT_MODE.GetValue() )
-			{
-				case EditMode_Practice:
-				case EditMode_Home:
-					slot = ProfileSlot_Machine;
-					break;
-				case EditMode_Full:
-					if( PROFILEMAN->IsPersistentProfile(GAMESTATE->m_MasterPlayerNumber) )
-						slot = (ProfileSlot)GAMESTATE->m_MasterPlayerNumber; // XXX I don't like this
-					else
-						slot = ProfileSlot_Machine;
-					break;
-				default:
-					FAIL_M( "Invalid EditMode." );
-			}
-			
-			pCourse->SetLoadedFromProfile( slot );
-			CourseEntry ce;
-			CourseUtil::MakeDefaultEditCourseEntry( ce );
-			pCourse->m_vEntries.push_back( ce );
-			SONGMAN->AddCourse( pCourse );
-			GAMESTATE->m_pCurCourse.Set( pCourse );
-			WriteCourse();
-
-			RefreshTrail();
-			this->HandleScreenMessage( SM_GoToNextScreen );
+			// do base behavior
 		}
 	}
 	else if( SM == SM_BackFromRename )
 	{
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
-			Course *pCourse = GAMESTATE->m_pCurCourse;
-			const RString& sNewName = ScreenTextEntry::s_sLastAnswer;
-			RString sDir, sName, sExt;
-			
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
-			ASSERT( !pCourse->m_sPath.empty() );
-			FILEMAN->Remove( pCourse->m_sPath );
-			if( !pCourse->IsAnEdit() )
-				FILEMAN->Remove( pCourse->GetCacheFilePath() );			
-			
-			splitpath( pCourse->m_sPath, sDir, sName, sExt );
-			pCourse->m_sPath = sDir + sNewName + sExt;
-			pCourse->m_sMainTitle = sNewName;
-			WriteCourse();
+
+			if( !EditCourseUtil::RenameAndSave(GAMESTATE->m_pCurCourse, ScreenTextEntry::s_sLastAnswer) )
+			{
+				ScreenPrompt::Prompt( SM_None, ERROR_RENAMING );
+				return;
+			}
+
+			SCREENMAN->SetNewScreen( this->m_sName ); // reload
+		}
+	}
+	else if( SM == SM_BackFromDelete )
+	{
+		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
+		{
+			Course *pCourse = GetCourseWithFocus();
+			if( !EditCourseUtil::RemoveAndDeleteFile( pCourse ) )
+			{
+				ScreenPrompt::Prompt( SM_None, ssprintf(ERROR_DELETING_FILE.GetValue(),pCourse->m_sPath.c_str()) );
+				return;
+			}
+
+			GAMESTATE->m_pCurCourse.Set( NULL );
+			GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
@@ -358,21 +249,20 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			switch( ScreenMiniMenu::s_iLastRowCode )
 			{
 			case CourseAction_Edit:
-			{
-				Course *pCourse = GetCourseWithFocus();
-				Trail *pTrail = pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
-				GAMESTATE->m_pCurCourse.Set( pCourse );
-				GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
-
-				ScreenOptions::BeginFadingOut();
-				break;
-			}
+				{
+					GAMESTATE->m_pCurCourse.Set( GetCourseWithFocus() );
+					EditCourseUtil::UpdateAndSetTrail();
+					EditCourseUtil::s_bNewCourseNeedsName = false;
+					ScreenOptions::BeginFadingOut();
+					break;
+				}
 			case CourseAction_Rename:
-				ScreenTextEntry::TextEntry( SM_BackFromRename, 
-							    ENTER_COURSE_NAME, 
-							    GAMESTATE->m_pCurCourse->GetDisplayFullTitle(), 
-							    MAX_EDIT_COURSE_TITLE_LENGTH, 
-							    ValidateEditCourseName );
+				ScreenTextEntry::TextEntry( 
+					SM_BackFromRename, 
+					ENTER_COURSE_NAME, 
+					GAMESTATE->m_pCurCourse->GetDisplayFullTitle(), 
+					EditCourseUtil::MAX_NAME_LENGTH, 
+					EditCourseUtil::ValidateEditCourseName );
 			break;
 			case CourseAction_Delete:
 				ScreenPrompt::Prompt( SM_None, COURSE_WILL_BE_LOST.GetValue()+"\n\n"+CONTINUE_WITH_DELETE.GetValue(), PROMPT_YES_NO, ANSWER_NO );
@@ -403,6 +293,17 @@ void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 	ScreenOptions::AfterChangeRow( pn );
 }
 
+void ScreenOptionsManageCourses::MenuSelect( const InputEventPlus &input )
+{
+	if( input.type != IET_FIRST_PRESS )
+		return;
+	SetNextCombination();
+	m_soundDifficultyChanged.Play();
+
+}
+
+static LocalizedString YOU_HAVE_MAX( "ScreenOptionsManageCourses", "You have %d, the maximum number allowed." );
+static LocalizedString YOU_MUST_DELETE( "ScreenOptionsManageCourses", "You must delete an existing before creating a new." );
 void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
@@ -412,28 +313,18 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 
 	if( iCurRow == 0 )	// "create new"
 	{
-		if( !CREATE_NEW_SCREEN.GetValue().empty() )
+		vector<Course*> vpCourses;
+		EditCourseUtil::GetAllEditCourses( vpCourses );
+		if( vpCourses.size() >= (size_t)EditCourseUtil::MAX_PER_PROFILE )
 		{
-			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN );
+			RString s = ssprintf( YOU_HAVE_MAX.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), EditCourseUtil::MAX_PER_PROFILE );
+			ScreenPrompt::Prompt( SM_None, s );
+			return;
 		}
-		else
-		{
-			RString sDefaultName;
-			RString sThrowAway;
-			for( int i=1; i<=9999; i++ )
-			{
-				sDefaultName = ssprintf( "NewCourse%04d", i );
-				if( ValidateEditCourseName(sDefaultName,sThrowAway) )
-					break;
-			}
-			ScreenTextEntry::TextEntry( SM_BackFromEnterNameForNew, 
-						    ENTER_COURSE_NAME, 
-						    sDefaultName, 
-						    MAX_EDIT_COURSE_TITLE_LENGTH, 
-						    ValidateEditCourseName );
-		}
+		SCREENMAN->PlayStartSound();
+		this->BeginFadingOut();
 	}
-	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
+	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
 	{
 		SCREENMAN->PlayStartSound();
 		this->BeginFadingOut();
@@ -468,12 +359,12 @@ Course *ScreenOptionsManageCourses::GetCourseWithFocus() const
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 	if( iCurRow == 0 )
 		return NULL;
-	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
+	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
 		return NULL;
 	
 	// a course
-	int iCourseIndex = iCurRow - 1;
-	return m_vpCourses[iCourseIndex];
+	int index = iCurRow - 1;
+	return m_vpCourses[index];
 }
 
 /*
