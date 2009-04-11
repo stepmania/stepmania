@@ -1,6 +1,6 @@
 #include "global.h"
 
-#include "ScreenOptionsEditPlaylist.h"
+#include "ScreenOptionsEditCourse.h"
 #include "ScreenMiniMenu.h"
 #include "SongUtil.h"
 #include "SongManager.h"
@@ -99,7 +99,7 @@ protected:
 
 const int NUM_SONG_ROWS = 20;
 
-REGISTER_SCREEN_CLASS( ScreenOptionsEditPlaylist );
+REGISTER_SCREEN_CLASS( ScreenOptionsEditCourse );
 
 enum WorkoutDetailsRow
 {
@@ -132,7 +132,7 @@ static int EntryIndexAndRowTypeToRow( int iEntryIndex, RowType rowType )
 	return NUM_WorkoutDetailsRow + iEntryIndex*NUM_RowType + rowType;
 }
 
-void ScreenOptionsEditPlaylist::Init()
+void ScreenOptionsEditCourse::Init()
 {
 	ScreenOptions::Init();
 	SONGMAN->GetPreferredSortSongs( m_vpSongs );
@@ -144,10 +144,10 @@ const MenuRowDef g_MenuRows[] =
 	MenuRowDef( -1,	"Workout Minutes",	true, EditMode_Practice, true, false, 0, NULL ),
 };
 
-static LocalizedString EMPTY	("ScreenOptionsEditPlaylist","-Empty-");
-static LocalizedString SONG	("ScreenOptionsEditPlaylist","Song");
-static LocalizedString STEPS	("ScreenOptionsEditPlaylist","Steps");
-static LocalizedString MINUTES	("ScreenOptionsEditPlaylist","minutes");
+static LocalizedString EMPTY	("ScreenOptionsEditCourse","-Empty-");
+static LocalizedString SONG	("ScreenOptionsEditCourse","Song");
+static LocalizedString STEPS	("ScreenOptionsEditCourse","Steps");
+static LocalizedString MINUTES	("ScreenOptionsEditCourse","minutes");
 
 static RString MakeMinutesString( int mins )
 {
@@ -156,7 +156,7 @@ static RString MakeMinutesString( int mins )
 	return ssprintf( "%d", mins ) + " " + MINUTES.GetValue();
 }
 
-void ScreenOptionsEditPlaylist::BeginScreen()
+void ScreenOptionsEditCourse::BeginScreen()
 {
 	vector<OptionRowHandler*> vHands;
 
@@ -236,12 +236,12 @@ void ScreenOptionsEditPlaylist::BeginScreen()
 	//this->AfterChangeRow( PLAYER_1 );
 }
 
-ScreenOptionsEditPlaylist::~ScreenOptionsEditPlaylist()
+ScreenOptionsEditCourse::~ScreenOptionsEditCourse()
 {
 
 }
 
-void ScreenOptionsEditPlaylist::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 	OptionRow &row = *m_pRows[iRow];
 	if( row.GetRowType() == OptionRow::RowType_Exit )
@@ -283,7 +283,7 @@ void ScreenOptionsEditPlaylist::ImportOptions( int iRow, const vector<PlayerNumb
 	}
 }
 
-void ScreenOptionsEditPlaylist::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 	FOREACH_ENUM( WorkoutDetailsRow, i )
 	{
@@ -343,15 +343,15 @@ void ScreenOptionsEditPlaylist::ExportOptions( int iRow, const vector<PlayerNumb
 	EditCourseUtil::UpdateAndSetTrail();
 }
 
-void ScreenOptionsEditPlaylist::GoToNextScreen()
+void ScreenOptionsEditCourse::GoToNextScreen()
 {
 }
 
-void ScreenOptionsEditPlaylist::GoToPrevScreen()
+void ScreenOptionsEditCourse::GoToPrevScreen()
 {
 }
 
-void ScreenOptionsEditPlaylist::HandleScreenMessage( const ScreenMessage SM )
+void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_ExportOptions )
 	{
@@ -361,7 +361,7 @@ void ScreenOptionsEditPlaylist::HandleScreenMessage( const ScreenMessage SM )
 	ScreenOptions::HandleScreenMessage( SM );
 }
 
-void ScreenOptionsEditPlaylist::SetCurrentSong()
+void ScreenOptionsEditCourse::SetCurrentSong()
 {
 	int iRow = m_iCurrentRow[PLAYER_1];
 	OptionRow &row = *m_pRows[iRow];
@@ -388,7 +388,7 @@ void ScreenOptionsEditPlaylist::SetCurrentSong()
 	}
 }
 
-void ScreenOptionsEditPlaylist::SetCurrentSteps()
+void ScreenOptionsEditCourse::SetCurrentSteps()
 {
 	Song *pSong = GAMESTATE->m_pCurSong;
 	if( pSong )
@@ -408,7 +408,7 @@ void ScreenOptionsEditPlaylist::SetCurrentSteps()
 	}
 }
 
-Song *ScreenOptionsEditPlaylist::GetSongForEntry( int iEntryIndex )
+Song *ScreenOptionsEditCourse::GetSongForEntry( int iEntryIndex )
 {
 	int iRow = EntryIndexAndRowTypeToRow( iEntryIndex, RowType_Song );
 	OptionRow &row = *m_pRows[iRow];
@@ -419,7 +419,7 @@ Song *ScreenOptionsEditPlaylist::GetSongForEntry( int iEntryIndex )
 	return m_vpSongs[ index - 1 ];
 }
 
-Steps *ScreenOptionsEditPlaylist::GetStepsForEntry( int iEntryIndex )
+Steps *ScreenOptionsEditCourse::GetStepsForEntry( int iEntryIndex )
 {
 	int iRow = EntryIndexAndRowTypeToRow( iEntryIndex, RowType_Steps );
 	OptionRow &row = *m_pRows[iRow];
@@ -430,14 +430,14 @@ Steps *ScreenOptionsEditPlaylist::GetStepsForEntry( int iEntryIndex )
 	return vpSteps[index];
 }
 
-void ScreenOptionsEditPlaylist::AfterChangeRow( PlayerNumber pn )
+void ScreenOptionsEditCourse::AfterChangeRow( PlayerNumber pn )
 {
 	ScreenOptions::AfterChangeRow( pn );
 
 	SetCurrentSong();
 }
 
-void ScreenOptionsEditPlaylist::AfterChangeValueInRow( int iRow, PlayerNumber pn )
+void ScreenOptionsEditCourse::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 {
 	ScreenOptions::AfterChangeValueInRow( iRow, pn );
 
@@ -462,8 +462,8 @@ void ScreenOptionsEditPlaylist::AfterChangeValueInRow( int iRow, PlayerNumber pn
 
 const int MIN_ENABLED_SONGS = 2;
 
-static LocalizedString MUST_ENABLE_AT_LEAST("ScreenOptionsEditPlaylist","You must enable at least %d songs.");
-void ScreenOptionsEditPlaylist::ProcessMenuStart( const InputEventPlus &input )
+static LocalizedString MUST_ENABLE_AT_LEAST("ScreenOptionsEditCourse","You must enable at least %d songs.");
+void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;

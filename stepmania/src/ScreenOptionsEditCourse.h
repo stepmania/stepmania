@@ -1,14 +1,14 @@
-#ifndef ScreenOptionsEditPlaylist_H
-#define ScreenOptionsEditPlaylist_H
+#ifndef ScreenOptionsEditCourse_H
+#define ScreenOptionsEditCourse_H
 
 #include "ScreenOptions.h"
 class Song;
 class Steps;
 
-class ScreenOptionsEditPlaylist : public ScreenOptions
+class ScreenOptionsEditCourse : public ScreenOptions
 {
 public:
-	virtual ~ScreenOptionsEditPlaylist();
+	virtual ~ScreenOptionsEditCourse();
 
 	virtual void Init();
 	virtual void BeginScreen();
