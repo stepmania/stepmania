@@ -23,6 +23,8 @@
 
 /* Begin PBXBuildFile section */
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
+		3659B56F0F902143002B6B68 /* CommandLineActions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3659B56D0F902143002B6B68 /* CommandLineActions.cpp */; };
+		3659B5700F902143002B6B68 /* CommandLineActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3659B56E0F902143002B6B68 /* CommandLineActions.h */; };
 		367D575B0EDE56F200B46814 /* ScreenHighScores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 367D57590EDE56F200B46814 /* ScreenHighScores.cpp */; };
 		3688B8530BD42DAA004186AD /* NotesLoaderMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */; };
 		AA059ABC0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
@@ -1004,9 +1006,6 @@
 		AA4F27B90B2C01B400ADEA79 /* RageSoundReader_Pan.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4F27B10B2C01B400ADEA79 /* RageSoundReader_Pan.h */; };
 		AA50201F05D6D7B200ACEFD0 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA50201D05D6D7B200ACEFD0 /* Profile.cpp */; };
 		AA5A51F40A8441AA006DBB92 /* ModsGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5A51F20A8441AA006DBB92 /* ModsGroup.h */; };
-		AA5A56E60A875DA3006DBB92 /* ExportStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5A56E40A875DA3006DBB92 /* ExportStrings.h */; };
-		AA5A56E70A875DA3006DBB92 /* ExportStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5A56E50A875DA3006DBB92 /* ExportStrings.cpp */; };
-		AA5A56E90A875DA3006DBB92 /* ExportStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5A56E50A875DA3006DBB92 /* ExportStrings.cpp */; };
 		AA5C73FD0637A5F100AFB891 /* CourseUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5C73F70637A5F000AFB891 /* CourseUtil.cpp */; };
 		AA5C73FF0637A5F100AFB891 /* SongUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5C73F90637A5F000AFB891 /* SongUtil.cpp */; };
 		AA5C74010637A5F100AFB891 /* StepsUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5C73FB0637A5F000AFB891 /* StepsUtil.cpp */; };
@@ -1777,6 +1776,8 @@
 		1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenGameplayNormal.h; path = ../src/ScreenGameplayNormal.h; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		3659B56D0F902143002B6B68 /* CommandLineActions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineActions.cpp; sourceTree = "<group>"; };
+		3659B56E0F902143002B6B68 /* CommandLineActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLineActions.h; sourceTree = "<group>"; };
 		367D57590EDE56F200B46814 /* ScreenHighScores.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenHighScores.cpp; path = ../src/ScreenHighScores.cpp; sourceTree = SOURCE_ROOT; };
 		367D575A0EDE56F200B46814 /* ScreenHighScores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenHighScores.h; path = ../src/ScreenHighScores.h; sourceTree = SOURCE_ROOT; };
 		3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderMidi.cpp; path = ../src/NotesLoaderMidi.cpp; sourceTree = "<group>"; };
@@ -1921,8 +1922,6 @@
 		AA53D28905277DAF00D02EE9 /* ScreenReloadSongs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenReloadSongs.h; path = ../src/ScreenReloadSongs.h; sourceTree = "<group>"; };
 		AA54709106F559DF008EB9B2 /* Preference.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Preference.h; path = ../src/Preference.h; sourceTree = "<group>"; };
 		AA5A51F20A8441AA006DBB92 /* ModsGroup.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ModsGroup.h; path = ../src/ModsGroup.h; sourceTree = "<group>"; };
-		AA5A56E40A875DA3006DBB92 /* ExportStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportStrings.h; sourceTree = "<group>"; };
-		AA5A56E50A875DA3006DBB92 /* ExportStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExportStrings.cpp; sourceTree = "<group>"; };
 		AA5C73F70637A5F000AFB891 /* CourseUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CourseUtil.cpp; path = ../src/CourseUtil.cpp; sourceTree = "<group>"; };
 		AA5C73F80637A5F000AFB891 /* CourseUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CourseUtil.h; path = ../src/CourseUtil.h; sourceTree = "<group>"; };
 		AA5C73F90637A5F000AFB891 /* SongUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = SongUtil.cpp; path = ../src/SongUtil.cpp; sourceTree = "<group>"; };
@@ -3167,8 +3166,8 @@
 			isa = PBXGroup;
 			children = (
 				AA70E3640663112800DAE1FD /* Foreach.h */,
-				AA5A56E40A875DA3006DBB92 /* ExportStrings.h */,
-				AA5A56E50A875DA3006DBB92 /* ExportStrings.cpp */,
+				3659B56D0F902143002B6B68 /* CommandLineActions.cpp */,
+				3659B56E0F902143002B6B68 /* CommandLineActions.h */,
 			);
 			name = "Other Source";
 			path = ../src;
@@ -4898,6 +4897,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAFF41A40F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h in Headers */,
+				3659B5700F902143002B6B68 /* CommandLineActions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5265,7 +5265,6 @@
 				AA5D165A0A79805C00F17E86 /* RageTextureRenderTarget.h in Headers */,
 				AA5D166F0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */,
 				AA5A51F40A8441AA006DBB92 /* ModsGroup.h in Headers */,
-				AA5A56E60A875DA3006DBB92 /* ExportStrings.h in Headers */,
 				AAFE710E0A91ADE6005F2290 /* ActorProxy.h in Headers */,
 				AAFE712A0A91B58F005F2290 /* RageSurface_Save_PNG.h in Headers */,
 				AAE780290AC7698200AEFC64 /* ScreenOptionsEditPlaylist.h in Headers */,
@@ -6092,7 +6091,6 @@
 				AA2EA0010A770208003A0C11 /* ScreenSelectLanguage.cpp in Sources */,
 				AA5D16570A79805C00F17E86 /* RageTextureRenderTarget.cpp in Sources */,
 				AA5D166C0A798C0E00F17E86 /* ActorFrameTexture.cpp in Sources */,
-				AA5A56E90A875DA3006DBB92 /* ExportStrings.cpp in Sources */,
 				AAFE710B0A91ADE6005F2290 /* ActorProxy.cpp in Sources */,
 				AAFE711F0A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */,
 				AAFE71200A91B551005F2290 /* RoomInfoDisplay.cpp in Sources */,
@@ -6147,6 +6145,7 @@
 				EEC7863F0E58208B00F559BC /* StepsDisplay.cpp in Sources */,
 				367D575B0EDE56F200B46814 /* ScreenHighScores.cpp in Sources */,
 				AAFF41A30F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.cpp in Sources */,
+				3659B56F0F902143002B6B68 /* CommandLineActions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6496,7 +6495,6 @@
 				AA2EA0030A770208003A0C11 /* ScreenSelectLanguage.cpp in Sources */,
 				AA5D16590A79805C00F17E86 /* RageTextureRenderTarget.cpp in Sources */,
 				AA5D166E0A798C0E00F17E86 /* ActorFrameTexture.cpp in Sources */,
-				AA5A56E70A875DA3006DBB92 /* ExportStrings.cpp in Sources */,
 				AAFE710D0A91ADE6005F2290 /* ActorProxy.cpp in Sources */,
 				AAFE71220A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */,
 				AABE830F0A9524D400001678 /* ModsGroup.cpp in Sources */,
