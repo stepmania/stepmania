@@ -148,7 +148,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 		
 		def.m_sName = (*p)->GetDisplayFullTitle();
 		def.m_bAllowThemeTitle = false;	// not themable
-		def.m_sExplanationName = "Select Workout";
+		def.m_sExplanationName = "Select Course";
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( "" );
 		def.m_bAllowThemeItems = false;	// already themed
@@ -176,7 +176,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 }
 
 static LocalizedString ERROR_RENAMING		("ScreenOptionsManageCourses", "Error renaming file.");
-static LocalizedString ERROR_DELETING_FILE	("ScreenOptionsManageWorkouts", "Error deleting the file '%s'.");
+static LocalizedString ERROR_DELETING_FILE	("ScreenOptionsManageCourses", "Error deleting the file '%s'.");
 static LocalizedString COURSE_WILL_BE_LOST	( "ScreenOptionsManageCourses", "This course will be lost permanently." );
 static LocalizedString CONTINUE_WITH_DELETE	( "ScreenOptionsManageCourses", "Continue with delete?" );
 static LocalizedString ENTER_COURSE_NAME	( "ScreenOptionsManageCourses", "Enter a name for the course." );
