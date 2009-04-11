@@ -591,11 +591,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsEditPlaylist.cpp"
+				RelativePath=".\ScreenOptionsCourseOverview.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsEditPlaylist.h"
+				RelativePath=".\ScreenOptionsCourseOverview.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditCourse.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditCourse.h"
 				>
 			</File>
 			<File
@@ -639,14 +647,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsManageWorkouts.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenOptionsManageWorkouts.h"
-				>
-			</File>
-			<File
 				RelativePath="ScreenOptionsMaster.cpp"
 				>
 			</File>
@@ -668,14 +668,6 @@
 			</File>
 			<File
 				RelativePath=".\ScreenOptionsMemoryCard.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenOptionsReviewWorkout.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenOptionsReviewWorkout.h"
 				>
 			</File>
 			<File
