@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "archutils/Unix/CrashHandler.h"
 #include "archutils/Unix/SignalHandler.h"
+#include "SpecialFiles.h"
 #include "ProductInfo.h"
 #include <CoreServices/CoreServices.h>
 #include <ApplicationServices/ApplicationServices.h>
@@ -407,9 +408,13 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 		CFRelease( dataUrl );
 	}
 	
-	// /Save -> ~/Library/Application Support/PRODUCT_ID
+	// /Save -> ~/Library/Preferences/PRODUCT_ID
 	PathForFolderType( dir, kPreferencesFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Save" );
+	
+	// /UserPackages -> ~/Library/Application Support/PRODUCT_ID/Packages
+	PathForFolderType( dir, kApplicationSupportFolderType );
+	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Packages", dir), "/" + SpecialFiles::USER_PACKAGES_DIR );
 	
 	// /Screenshots -> ~/Pictures/PRODUCT_ID Screenshots
 	PathForFolderType( dir, kPictureDocumentsFolderType );
