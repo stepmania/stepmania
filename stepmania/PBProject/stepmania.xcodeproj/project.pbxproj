@@ -27,6 +27,10 @@
 		3659B5700F902143002B6B68 /* CommandLineActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3659B56E0F902143002B6B68 /* CommandLineActions.h */; };
 		367D575B0EDE56F200B46814 /* ScreenHighScores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 367D57590EDE56F200B46814 /* ScreenHighScores.cpp */; };
 		3688B8530BD42DAA004186AD /* NotesLoaderMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */; };
+		36CA531C0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36CA531A0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp */; };
+		36CA531D0F91564A0063D59D /* ScreenOptionsCourseOverview.h in Headers */ = {isa = PBXBuildFile; fileRef = 36CA531B0F91564A0063D59D /* ScreenOptionsCourseOverview.h */; };
+		36CA53200F9156860063D59D /* ScreenOptionsEditCourse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36CA531E0F9156860063D59D /* ScreenOptionsEditCourse.cpp */; };
+		36CA53210F9156860063D59D /* ScreenOptionsEditCourse.h in Headers */ = {isa = PBXBuildFile; fileRef = 36CA531F0F9156860063D59D /* ScreenOptionsEditCourse.h */; };
 		AA059ABC0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
 		AA059ABD0B8CCFB5006F8139 /* ActorMultiTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */; };
 		AA059ABE0B8CCFB5006F8139 /* ActorMultiTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */; };
@@ -1531,9 +1535,6 @@
 		AAE2D6D50A67481E00071546 /* ScoreKeeper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE2D6D30A67481E00071546 /* ScoreKeeper.cpp */; };
 		AAE77F580AC3B52500AEFC64 /* RageTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE77F570AC3B52500AEFC64 /* RageTypes.cpp */; };
 		AAE77F590AC3B52500AEFC64 /* RageTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE77F570AC3B52500AEFC64 /* RageTypes.cpp */; };
-		AAE780260AC7698200AEFC64 /* ScreenOptionsReviewWorkout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE7801E0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.cpp */; };
-		AAE7802E0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE7801E0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.cpp */; };
-		AAE7802F0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE7801F0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.h */; };
 		AAE780400AC76A1200AEFC64 /* WorkoutGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE7803C0AC76A1200AEFC64 /* WorkoutGraph.cpp */; };
 		AAE780440AC76A1200AEFC64 /* WorkoutGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE7803C0AC76A1200AEFC64 /* WorkoutGraph.cpp */; };
 		AAE780450AC76A1200AEFC64 /* WorkoutGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE7803D0AC76A1200AEFC64 /* WorkoutGraph.h */; };
@@ -1773,6 +1774,10 @@
 		367D575A0EDE56F200B46814 /* ScreenHighScores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenHighScores.h; path = ../src/ScreenHighScores.h; sourceTree = SOURCE_ROOT; };
 		3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderMidi.cpp; path = ../src/NotesLoaderMidi.cpp; sourceTree = "<group>"; };
 		3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = NotesLoaderMidi.h; path = ../src/NotesLoaderMidi.h; sourceTree = "<group>"; };
+		36CA531A0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsCourseOverview.cpp; path = ../src/ScreenOptionsCourseOverview.cpp; sourceTree = SOURCE_ROOT; };
+		36CA531B0F91564A0063D59D /* ScreenOptionsCourseOverview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsCourseOverview.h; path = ../src/ScreenOptionsCourseOverview.h; sourceTree = SOURCE_ROOT; };
+		36CA531E0F9156860063D59D /* ScreenOptionsEditCourse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsEditCourse.cpp; path = ../src/ScreenOptionsEditCourse.cpp; sourceTree = SOURCE_ROOT; };
+		36CA531F0F9156860063D59D /* ScreenOptionsEditCourse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsEditCourse.h; path = ../src/ScreenOptionsEditCourse.h; sourceTree = SOURCE_ROOT; };
 		AA059ABA0B8CCFB5006F8139 /* ActorMultiTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorMultiTexture.cpp; path = ../src/ActorMultiTexture.cpp; sourceTree = "<group>"; };
 		AA059ABB0B8CCFB5006F8139 /* ActorMultiTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorMultiTexture.h; path = ../src/ActorMultiTexture.h; sourceTree = "<group>"; };
 		AA059E2A0B8F0C66006F8139 /* libz_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libz_link.a; sourceTree = "<group>"; };
@@ -2820,8 +2825,6 @@
 		AAE443F304B0FEB700D02EE9 /* ScoreKeeperRave.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScoreKeeperRave.cpp; path = ../src/ScoreKeeperRave.cpp; sourceTree = "<group>"; };
 		AAE443F404B0FEB700D02EE9 /* ScoreKeeperRave.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScoreKeeperRave.h; path = ../src/ScoreKeeperRave.h; sourceTree = "<group>"; };
 		AAE77F570AC3B52500AEFC64 /* RageTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageTypes.cpp; path = ../src/RageTypes.cpp; sourceTree = "<group>"; };
-		AAE7801E0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsReviewWorkout.cpp; path = ../src/ScreenOptionsReviewWorkout.cpp; sourceTree = "<group>"; };
-		AAE7801F0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsReviewWorkout.h; path = ../src/ScreenOptionsReviewWorkout.h; sourceTree = "<group>"; };
 		AAE7803C0AC76A1200AEFC64 /* WorkoutGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = WorkoutGraph.cpp; path = ../src/WorkoutGraph.cpp; sourceTree = "<group>"; };
 		AAE7803D0AC76A1200AEFC64 /* WorkoutGraph.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WorkoutGraph.h; path = ../src/WorkoutGraph.h; sourceTree = "<group>"; };
 		AAE78049060814AC0034E65F /* NetworkSyncManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NetworkSyncManager.cpp; path = ../src/NetworkSyncManager.cpp; sourceTree = "<group>"; };
@@ -3191,6 +3194,8 @@
 		AA6E00090477103E005F316C /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				36CA531E0F9156860063D59D /* ScreenOptionsEditCourse.cpp */,
+				36CA531F0F9156860063D59D /* ScreenOptionsEditCourse.h */,
 				AA6E000A047711F3005F316C /* Screen.cpp */,
 				AA6E000B047711F3005F316C /* Screen.h */,
 				AA6E0010047711F3005F316C /* ScreenAttract.cpp */,
@@ -3273,8 +3278,6 @@
 				AA53D28705277DAF00D02EE9 /* ScreenOptionsMasterPrefs.h */,
 				AAFBEEE7094D807E000029DE /* ScreenOptionsMemoryCard.cpp */,
 				AAFBEEE8094D807E000029DE /* ScreenOptionsMemoryCard.h */,
-				AAE7801E0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.cpp */,
-				AAE7801F0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.h */,
 				AAA7D4C70C7E872500FB8F78 /* ScreenOptionsToggleSongs.cpp */,
 				AAA7D4C80C7E872500FB8F78 /* ScreenOptionsToggleSongs.h */,
 				AA1145D9075DFADF0050A3D1 /* ScreenPackages.cpp */,
@@ -3328,6 +3331,8 @@
 				AA6E0079047711F3005F316C /* ScreenTestFonts.cpp */,
 				AA6E007A047711F3005F316C /* ScreenTestFonts.h */,
 				AAC622FA05389A0500D02EE9 /* ScreenTestInput.cpp */,
+				36CA531A0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp */,
+				36CA531B0F91564A0063D59D /* ScreenOptionsCourseOverview.h */,
 				AAC622FB05389A0500D02EE9 /* ScreenTestInput.h */,
 				AAF7435906110E8D00B19AD1 /* ScreenTestLights.cpp */,
 				AAF7435A06110E8D00B19AD1 /* ScreenTestLights.h */,
@@ -4877,6 +4882,8 @@
 			files = (
 				AAFF41A40F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h in Headers */,
 				3659B5700F902143002B6B68 /* CommandLineActions.h in Headers */,
+				36CA531D0F91564A0063D59D /* ScreenOptionsCourseOverview.h in Headers */,
+				36CA53210F9156860063D59D /* ScreenOptionsEditCourse.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5246,7 +5253,6 @@
 				AA5A51F40A8441AA006DBB92 /* ModsGroup.h in Headers */,
 				AAFE710E0A91ADE6005F2290 /* ActorProxy.h in Headers */,
 				AAFE712A0A91B58F005F2290 /* RageSurface_Save_PNG.h in Headers */,
-				AAE7802F0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.h in Headers */,
 				AAE780450AC76A1200AEFC64 /* WorkoutGraph.h in Headers */,
 				AA6999620ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */,
 				AAB779FE0B0D9CB200B74314 /* ScoreKeeperGuitar.h in Headers */,
@@ -6072,7 +6078,6 @@
 				AAFE71200A91B551005F2290 /* RoomInfoDisplay.cpp in Sources */,
 				AABE830E0A9524D400001678 /* ModsGroup.cpp in Sources */,
 				AAE77F580AC3B52500AEFC64 /* RageTypes.cpp in Sources */,
-				AAE780260AC7698200AEFC64 /* ScreenOptionsReviewWorkout.cpp in Sources */,
 				AAE780400AC76A1200AEFC64 /* WorkoutGraph.cpp in Sources */,
 				AAFAFC900AC8DB9F00427A6E /* EnumHelper.cpp in Sources */,
 				AA6999630ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */,
@@ -6119,6 +6124,8 @@
 				367D575B0EDE56F200B46814 /* ScreenHighScores.cpp in Sources */,
 				AAFF41A30F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.cpp in Sources */,
 				3659B56F0F902143002B6B68 /* CommandLineActions.cpp in Sources */,
+				36CA531C0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp in Sources */,
+				36CA53200F9156860063D59D /* ScreenOptionsEditCourse.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6472,7 +6479,6 @@
 				AAFE71220A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */,
 				AABE830F0A9524D400001678 /* ModsGroup.cpp in Sources */,
 				AAE77F590AC3B52500AEFC64 /* RageTypes.cpp in Sources */,
-				AAE7802E0AC7698200AEFC64 /* ScreenOptionsReviewWorkout.cpp in Sources */,
 				AAE780440AC76A1200AEFC64 /* WorkoutGraph.cpp in Sources */,
 				AAFAFC8F0AC8DB9F00427A6E /* EnumHelper.cpp in Sources */,
 				AA6999610ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */,
