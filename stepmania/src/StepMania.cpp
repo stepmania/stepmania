@@ -1001,7 +1001,8 @@ int main(int argc, char* argv[])
 			FILEMAN->Mount( "dir", dirs[i], "/AdditionalCourses" );
 	}
 
-	MountTreeOfZips( SpecialFiles::SYSTEM_PACKAGES_DIR );
+	MountTreeOfZips( SpecialFiles::PACKAGES_DIR );
+	MountTreeOfZips( SpecialFiles::USER_PACKAGES_DIR );
 
 	/* One of the above filesystems might contain files that affect preferences, eg Data/Static.ini.
 	 * Re-read preferences. */

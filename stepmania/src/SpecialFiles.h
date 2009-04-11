@@ -6,7 +6,7 @@
 namespace SpecialFiles
 {
 	extern const RString USER_PACKAGES_DIR;
-	extern const RString SYSTEM_PACKAGES_DIR;
+	extern const RString PACKAGES_DIR;	// system packages (not user packages)
 	extern const RString KEYMAPS_PATH;
 	extern const RString PREFERENCES_INI_PATH;
 	extern const RString THEMES_DIR;
