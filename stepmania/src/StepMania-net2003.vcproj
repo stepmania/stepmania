@@ -3195,12 +3195,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath="UnlockManager.h">
 			</File>
-			<File
-				RelativePath=".\WorkoutManager.cpp">
-			</File>
-			<File
-				RelativePath=".\WorkoutManager.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="StepMania"

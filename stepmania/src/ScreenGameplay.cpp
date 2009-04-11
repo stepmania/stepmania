@@ -58,7 +58,6 @@
 #include "SongUtil.h"
 #include "Song.h"
 #include "XmlFileUtil.h"
-#include "WorkoutManager.h"
 
 //
 // Defines

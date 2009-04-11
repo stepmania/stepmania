@@ -11,7 +11,6 @@
 #include "SongManager.h"
 #include "SongUtil.h"
 #include "ScreenTextEntry.h"
-#include "WorkoutManager.h"
 #include "GameManager.h"
 #include "Profile.h"
 #include "ScreenPrompt.h"

@@ -37,7 +37,6 @@
 #include "UnlockManager.h"
 #include "ScreenManager.h"
 #include "Screen.h"
-#include "WorkoutManager.h"
 
 #include <ctime>
 #include <set>

@@ -11,7 +11,6 @@
 #include "ScreenPrompt.h"
 #include "StatsManager.h"
 #include "PrefsManager.h"
-#include "WorkoutManager.h"
 #include "ProfileManager.h"
 #include "GameManager.h"
 #include "CourseUtil.h"

@@ -18,7 +18,6 @@
 #include "CourseWriterCRS.h"
 #include "RageFileManager.h"
 #include "PrefsManager.h"
-#include "WorkoutManager.h"
 
 AutoScreenMessage( SM_BackFromRename )
 AutoScreenMessage( SM_BackFromDelete )

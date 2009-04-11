@@ -38,6 +38,28 @@ namespace CourseUtil
 	void WarnOnInvalidMods( RString sMods );
 };
 
+namespace EditCourseUtil
+{
+	void UpdateAndSetTrail();
+	void PrepareForPlay();
+	void LoadDefaults( Course &out );
+	bool RemoveAndDeleteFile( Course *pCourse );
+	bool ValidateEditCourseName( const RString &sAnswer, RString &sErrorOut );
+	void GetAllEditCourses( vector<Course*> &vpCoursesOut );
+	bool Save( Course *pCourse );
+	bool RenameAndSave( Course *pCourse, RString sName );
+
+	bool ValidateEditCourseNametName( const RString &sAnswer, RString &sErrorOut );
+
+	extern int MAX_NAME_LENGTH;
+	extern int MAX_PER_PROFILE;
+	extern int MIN_WORKOUT_MINUTES;
+	extern int MAX_WORKOUT_MINUTES;
+
+	extern bool s_bNewCourseNeedsName;	// if true, we are working with a Course that has never been named
+};
+
+
 class CourseID
 {
 public:

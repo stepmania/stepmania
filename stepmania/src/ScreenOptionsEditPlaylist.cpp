@@ -9,7 +9,7 @@
 #include "GameState.h"
 #include "ScreenPrompt.h"
 #include "LocalizedString.h"
-#include "WorkoutManager.h"
+#include "CourseUtil.h"
 #include "song.h"
 #include "Style.h"
 #include "Steps.h"
@@ -173,9 +173,9 @@ void ScreenOptionsEditPlaylist::BeginScreen()
 		DEFAULT_FAIL(rowIndex);
 		case WorkoutDetailsRow_Minutes:
 			pHand->m_Def.m_vsChoices.push_back( MakeMinutesString(0) );
-			for( int i=MIN_WORKOUT_MINUTES; i<=20; i+=2 )
+			for( int i=EditCourseUtil::MIN_WORKOUT_MINUTES; i<=20; i+=2 )
 				pHand->m_Def.m_vsChoices.push_back( MakeMinutesString(i) );
-			for( int i=20; i<=MAX_WORKOUT_MINUTES; i+=5 )
+			for( int i=20; i<=EditCourseUtil::MAX_WORKOUT_MINUTES; i+=5 )
 				pHand->m_Def.m_vsChoices.push_back( MakeMinutesString(i) );
 			break;
 		}

@@ -9,7 +9,6 @@
 #include "StageStats.h"
 #include "PlayerState.h"
 #include "XmlFile.h"
-#include "WorkoutManager.h"
 #include "Course.h"
 
 
