@@ -54,14 +54,14 @@ void ScreenSyncOverlay::Init()
 	m_quad.ZoomToHeight( m_textHelp.GetZoomedHeight()+20 ); 
 
 	m_textStatus.SetName( "Status" );
-	m_textStatus.LoadFromFont( THEME->GetPathF("Common", "normal") );
+	m_textStatus.LoadFromFont( THEME->GetPathF(m_sName, "status") );
 	ActorUtil::LoadAllCommandsAndOnCommand( m_textStatus, m_sName );
 	this->AddChild( &m_textStatus );
 
-	m_textSyncInfo.SetName( "SyncInfo" );
-	m_textSyncInfo.LoadFromFont( THEME->GetPathF("Common","normal") );
-	ActorUtil::LoadAllCommandsAndOnCommand( m_textSyncInfo, m_sName );
-	this->AddChild( &m_textSyncInfo );
+	m_textAdjustments.SetName( "Adjustments" );
+	m_textAdjustments.LoadFromFont( THEME->GetPathF(m_sName,"Adjustments") );
+	ActorUtil::LoadAllCommandsAndOnCommand( m_textAdjustments, m_sName );
+	this->AddChild( &m_textAdjustments );
 	
 	Update( 0 );
 }
@@ -135,7 +135,7 @@ void ScreenSyncOverlay::UpdateText()
 	// Update SyncInfo
 	//
 	bool bVisible = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType != SongOptions::AUTOSYNC_OFF;
-	m_textSyncInfo.SetVisible( bVisible );
+	m_textAdjustments.SetVisible( bVisible );
 	if( bVisible )
 	{
 		float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
@@ -146,7 +146,7 @@ void ScreenSyncOverlay::UpdateText()
 		s += NEW_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fNew );
 		s += STANDARD_DEVIATION.GetValue() + ssprintf( ": %0.3f\n", fStdDev );
 		s += COLLECTING_SAMPLE.GetValue() + ssprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, AdjustSync::OFFSET_SAMPLE_COUNT );
-		m_textSyncInfo.SetText( s );
+		m_textAdjustments.SetText( s );
 	}
 }
 

@@ -101,12 +101,11 @@ t[#t+1] = Def.ActorFrame {
 	};
 };
 
-t[#t+1] = LoadActor( THEME:GetPathG(Var 'LoadingScreen','options message 1x2') ) .. {
-	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;pause);
+t[#t+1] = LoadFont( Var "LoadingScreen", "OptionsMessage" ) .. {
+	InitCommand=cmd(settext,"Press &START; again for options";x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoom,1.5;pause);
 	OnCommand=cmd(hidden,1;draworder,111);
-	ShowPressStartForOptionsCommand=cmd(hidden,0;setstate,0;
-		faderight,.3;fadeleft,.3;cropleft,-0.3;cropright,1.3;linear,0.4;cropright,-0.3);
-	ShowEnteringOptionsCommand=cmd(finishtweening;setstate,1;sleep,0.25;playcommand,"HidePressStartForOptions");
+	ShowPressStartForOptionsCommand=cmd(hidden,0;setstate,0;faderight,.3;fadeleft,.3;cropleft,-0.3;cropright,1.3;linear,0.4;cropright,-0.3);
+	ShowEnteringOptionsCommand=cmd(settext,"entering options...";finishtweening;setstate,1;sleep,0.25;playcommand,"HidePressStartForOptions");
 	HidePressStartForOptionsCommand=cmd(linear,0.4;cropleft,1.3);
 };
 
