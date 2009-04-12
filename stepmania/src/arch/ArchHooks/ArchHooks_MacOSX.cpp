@@ -429,6 +429,11 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", ssprintf("%s/Logs/" PRODUCT_ID, dir), "/Logs" );
 }
 
+void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+{
+	// XXX: Fix me.
+}
+
 static inline int GetIntValue( CFTypeRef r )
 {
 	int ret;
