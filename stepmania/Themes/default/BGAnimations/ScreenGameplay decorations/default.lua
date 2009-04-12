@@ -18,16 +18,13 @@ t[#t+1] = StandardDecorationFromFile( "LeftFrame", "LeftFrame" );
 t[#t+1] = StandardDecorationFromFile( "RightFrame", "RightFrame" );
 
 
-t[#t+1] = Def.ModIconRow {
-	InitCommand=cmd(x,THEME:GetMetric(Var "LoadingScreen","LeftFrameX");y,THEME:GetMetric(Var "LoadingScreen","LeftFrameY");Load,"ModIconRowGameplayP1",PLAYER_1;player,PLAYER_1;);
-	OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
-	OffCommand=cmd(linear,0.5;zoomy,0);
-};
-t[#t+1] = Def.ModIconRow {
-	InitCommand=cmd(x,THEME:GetMetric(Var "LoadingScreen","RightFrameX");y,THEME:GetMetric(Var "LoadingScreen","RightFrameY");Load,"ModIconRowGameplayP2",PLAYER_2;player,PLAYER_2;);
-	OnCommand=cmd(zoomy,0;linear,0.5;zoomy,1);
-	OffCommand=cmd(linear,0.5;zoomy,0);
-};
-
+if ShowStandardDecoration("ModIconRows") then
+	for pn in ivalues(PlayerNumber) do
+		local t2 = Def.ModIconRow {
+				InitCommand=cmd(Load,"ModIconRowGameplay"..ToEnumShortString(pn),pn);
+			};	
+		t[#t+1] = StandardDecorationFromTable( "ModIconRow" .. ToEnumShortString(pn), t2 );
+	end
+end
 
 return t;
