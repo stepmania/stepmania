@@ -86,6 +86,15 @@ function tableshuffle( t )
 	return ret
 end
 
+function tableslice( t, num )
+	local ret = { }
+	for i=1,table.getn(t) do
+		table.insert( ret, i, t[i] );
+	end
+	return ret
+end
+
+
 function GetRandomSongBackground()
 	for i=0,50 do
 		local song = SONGMAN:GetRandomSong()

@@ -171,8 +171,9 @@ function SelectEndingScreen()
 	end
 
 	local grade = STATSMAN:GetBestFinalGrade()
-	if Grade:Compare( grade, "Grade_Tier03" ) >= 0 then return "ScreenMusicScroll" end
-	return "ScreenCredits"
+	if Grade:Compare( grade, "Grade_Tier03" ) >= 0 then return "ScreenEnding3" end
+	if Grade:Compare( grade, "Grade_Tier05" ) >= 0 then return "ScreenEnding2" end
+	return "ScreenEnding1"
 end
 
 function ScreenProfileSaveNextScreen()
