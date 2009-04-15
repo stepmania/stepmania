@@ -276,7 +276,7 @@ public:
 	{
 		RString sMessage = SArg(1);
 		ScreenMessage SM = ScreenMessageHelpers::ToScreenMessage( sMessage );
-		p->PostScreenMessage( SM, 0 );
+		p->PostScreenMessage( SM, IArg(2) );
 		return 0;
 	}
 
