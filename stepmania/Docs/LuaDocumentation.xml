@@ -177,22 +177,45 @@
 		Returns true if <code>so</code> has a StepsType matching <code>st</code>.
 	</Function>
 </Namespace>
+<Namespace name='TrailUtil'>
+	<Function name='GetNumSongs' return ='float' arguments='Trail pTrail'>
+		Returns the number of songs in a Trail.
+	</Function>
+	<Function name='GetTotalSeconds' return ='int' arguments='Trail pTrail'>
+		Returns the Trail's total length in seconds.
+	</Function>
+</Namespace>
 </Namespaces>
 
 <!-- Classes -->
 <Classes>
 <Class name='Actor'>
+	<Function name='GetParent' return='Actor' arguments=''>
+		Returns the Actor's parent, or <code>nil</code> if it doesn't have one.
+	</Function>
 	<Function name='GetVisible' return='bool' arguments=''>
-		Returns the current Actor's visibility.
+		Returns the Actor's visibility.
 	</Function>
 	<Function name='GetX' return='float' arguments=''>
-		Returns the current Actor's x position.
+		Returns the Actor's x position.
 	</Function>
 	<Function name='GetY' return='float' arguments=''>
-		Returns the current Actor's y position.
+		Returns the Actor's y position.
 	</Function>
 	<Function name='GetZ' return='float' arguments=''>
-		Returns the current Actor's z position.
+		Returns the Actor's z position.
+	</Function>
+	<Function name='GetZoom' return='float' arguments=''>
+		Returns the Actor's zoom.
+	</Function>
+	<Function name='GetZoomX' return='float' arguments=''>
+		Returns the Actor's X zoom.
+	</Function>
+	<Function name='GetZoomY' return='float' arguments=''>
+		Returns the Actor's Y zoom.
+	</Function>
+	<Function name='GetZoomZ' return='float' arguments=''>
+		Returns the Actor's Z zoom.
 	</Function>
 	<Function name='SetTextureFiltering' return='void' arguments='bool b'>
 		Sets Texture Filtering for an Actor to <code>b</code>.
@@ -222,6 +245,21 @@
 	<Function name='basealpha' return='void' arguments='float fAlpha'>
 		Sets the Actor's base alpha to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
 	</Function>
+	<Function name='baserotationx' return='void' arguments='float rot'>
+		Sets the Actor's base X rotation to <code>rot</code>.
+	</Function>
+	<Function name='baserotationy' return='void' arguments='float rot'>
+		Sets the Actor's base Y rotation to <code>rot</code>.
+	</Function>
+	<Function name='baserotationz' return='void' arguments='float rot'>
+		Sets the Actor's base Z rotation to <code>rot</code>.
+	</Function>
+	<Function name='basezoomx' return='void' arguments='float zoom'>
+		Sets the Actor's base X zoom to <code>zoom</code>.
+	</Function>
+	<Function name='basezoomy' return='void' arguments='float zoom'>
+		Sets the Actor's base Y zoom to <code>zoom</code>.
+	</Function>
 	<Function name='blend' return='void' arguments='BlendMode mode'>
 		Sets the Actor to use the specified blend mode.
 	</Function>
@@ -247,13 +285,37 @@
 		Set the Actor's diffuse color to <code>c</code>.
 	</Function>
 	<Function name='diffusealpha' return='void' arguments='float fAlpha'>
-		Set's the Actor's alpha level to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
+		Sets the Actor's alpha level to <code>fAlpha</code>, where <code>fAlpha</code> is in the range 0..1.
+	</Function>
+	<Function name='diffusebottomedge' return='void' arguments=''>
+		Sets the Actor's bottom edge color to <code>c</code>.
 	</Function>
 	<Function name='diffusecolor' return='void' arguments='color c'>
 		Set the Actor's diffuse color to <code>c</code>, ignoring any alpha value in <code>c</code>.
 	</Function>
+	<Function name='diffuseleftedge' return='void' arguments='color c'>
+		Sets the Actor's left edge color to <code>c</code>.
+	</Function>
+	<Function name='diffuselowerleft' return='void' arguments='color c'>
+		Sets the Actor's lower left corner color to <code>c</code>.
+	</Function>
+	<Function name='diffuselowerright' return='void' arguments='color c'>
+		Sets the Actor's lower right corner color to <code>c</code>.
+	</Function>
+	<Function name='diffuserightedge' return='void' arguments='color c'>
+		Sets the Actor's right edge color to <code>c</code>.
+	</Function>
+	<Function name='diffusetopedge' return='void' arguments='color c'>
+		Sets the Actor's top edge color to <code>c</code>.
+	</Function>
+	<Function name='diffuseupperleft' return='void' arguments='color c'>
+		Sets the Actor's upper left corner color to <code>c</code>.
+	</Function>
+	<Function name='diffuseupperright' return='void' arguments='color c'>
+		Sets the Actor's upper right corner color to <code>c</code>.
+	</Function>
 	<Function name='draworder' return='void' arguments='int iOrder'>
-		Set's the Actor's draworder to <code>iOrder</code>, where larger values display first.
+		Sets the Actor's draworder to <code>iOrder</code>, where larger values display first.
 	</Function>
 	<Function name='effectclock' return='void' arguments='string s'>
 		Set the Actor's effect clock to <code>s</code>.
@@ -310,6 +372,9 @@
 	<Function name='GetWidth' return='float' arguments=''>
 		Returns the Actor's current width.
 	</Function>
+	<Function name='glow' return='void' arguments='color c'>
+		Sets the Actor's glow color.
+	</Function>
 	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
 	</Function>
@@ -324,6 +389,9 @@
 	</Function>
 	<Function name='linear' return='void' arguments='float fRate'>
 		Plays the commands that follow at a normal rate, where <code>fRate</code> is in seconds.
+	</Function>
+	<Function name='name' return='void' arguments='string sName'>
+		Sets the Actor's name to <code>sName</code>.
 	</Function>
 	<Function name='playcommand' return='void' arguments='string sCommandName'>
 		Plays a command named <code>sCommandName</code>.
@@ -370,6 +438,9 @@
 	<Function name='stopeffect' return='void' arguments=''>
 		Stops any effect the Actor has.
 	</Function>
+	<Function name='stretchto' return='void' arguments='float x1, float y1, float x2, float y2'>
+		Stretches the Actor to a rectangle of a specific size.
+	</Function>
 	<Function name='valign' return='void' arguments='float fAlign'>
 		Set the fractional vertical alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is top aligned while an alignment of 1 is bottom aligned. See <Link function="vertalign" /> for the common case.
 	</Function>
@@ -390,6 +461,27 @@
 	</Function>
 	<Function name='z' return='void' arguments='float zPos'>
 		Set the z position of the Actor to <code>zPos</code>.
+	</Function>
+	<Function name='zoom' return='void' arguments='float zoom'>
+		Zooms the Actor to <code>zoom</code> scale.
+	</Function>
+	<Function name='zoomto' return='void' arguments='float zoom'>
+		Zooms the Actor to <code>zoom</code> scale.
+	</Function>
+	<Function name='zoomtoheight' return='void' arguments='float zoom'>
+		Zooms the Actor to <code>zoom</code> height. See also: <Link function='zoomy' />.
+	</Function>
+	<Function name='zoomtowidth' return='void' arguments='float zoom'>
+		Zooms the Actor to <code>zoom</code> width. See also: <Link function='zoomx' />.
+	</Function>
+	<Function name='zoomx' return='void' arguments='float zoom'>
+		Zooms the Actor to <code>zoom</code> scale on the X axis.
+	</Function>
+	<Function name='zoomy' return='void' arguments='float zoom'>
+		Zooms the Actor to <code>zoom</code> scale on the Y axis.
+	</Function>
+	<Function name='zoomz' return='void' arguments='float zoom'>
+		Zooms the Actor to <code>zoom</code> scale on the Z axis.
 	</Function>
 </Class>
 <Class name='ActorFrame'>
