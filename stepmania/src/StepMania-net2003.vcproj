@@ -287,12 +287,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\ScreenContinue.h">
 			</File>
 			<File
-				RelativePath="ScreenCredits.cpp">
-			</File>
-			<File
-				RelativePath="ScreenCredits.h">
-			</File>
-			<File
 				RelativePath="ScreenDebugOverlay.cpp">
 			</File>
 			<File
