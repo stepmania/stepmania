@@ -4986,14 +4986,6 @@
 				RelativePath="UnlockManager.h"
 				>
 			</File>
-			<File
-				RelativePath=".\WorkoutManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\WorkoutManager.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="BaseClasses"
