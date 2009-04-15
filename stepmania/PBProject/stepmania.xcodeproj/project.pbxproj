@@ -194,7 +194,6 @@
 		AA29CDB90558741A00961A51 /* Sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFFC204770FFD005F316C /* Sprite.cpp */; };
 		AA29CDBA0558741A00961A51 /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E000A047711F3005F316C /* Screen.cpp */; };
 		AA29CDBB0558741A00961A51 /* ScreenAttract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0010047711F3005F316C /* ScreenAttract.cpp */; };
-		AA29CDBD0558741A00961A51 /* ScreenCredits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0019047711F3005F316C /* ScreenCredits.cpp */; };
 		AA29CDBE0558741A00961A51 /* ScreenDemonstration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001B047711F3005F316C /* ScreenDemonstration.cpp */; };
 		AA29CDBF0558741A00961A51 /* ScreenEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001D047711F3005F316C /* ScreenEdit.cpp */; settings = {COMPILER_FLAGS = "-finline-limit=300"; }; };
 		AA29CDC00558741A00961A51 /* ScreenEditMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001F047711F3005F316C /* ScreenEditMenu.cpp */; };
@@ -417,7 +416,6 @@
 		AA40D22909A08D650068C0D5 /* Sprite.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFFC304770FFD005F316C /* Sprite.h */; };
 		AA40D22A09A08D650068C0D5 /* Screen.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E000B047711F3005F316C /* Screen.h */; };
 		AA40D22B09A08D650068C0D5 /* ScreenAttract.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0011047711F3005F316C /* ScreenAttract.h */; };
-		AA40D22C09A08D650068C0D5 /* ScreenCredits.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E001A047711F3005F316C /* ScreenCredits.h */; };
 		AA40D22D09A08D650068C0D5 /* ScreenDemonstration.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E001C047711F3005F316C /* ScreenDemonstration.h */; };
 		AA40D22E09A08D650068C0D5 /* ScreenEdit.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E001E047711F3005F316C /* ScreenEdit.h */; };
 		AA40D22F09A08D650068C0D5 /* ScreenEditMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0020047711F3005F316C /* ScreenEditMenu.h */; };
@@ -757,7 +755,6 @@
 		AA40D3E809A08D650068C0D5 /* Sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFFC204770FFD005F316C /* Sprite.cpp */; };
 		AA40D3E909A08D650068C0D5 /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E000A047711F3005F316C /* Screen.cpp */; };
 		AA40D3EA09A08D650068C0D5 /* ScreenAttract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0010047711F3005F316C /* ScreenAttract.cpp */; };
-		AA40D3EB09A08D650068C0D5 /* ScreenCredits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0019047711F3005F316C /* ScreenCredits.cpp */; };
 		AA40D3EC09A08D650068C0D5 /* ScreenDemonstration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001B047711F3005F316C /* ScreenDemonstration.cpp */; };
 		AA40D3ED09A08D650068C0D5 /* ScreenEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001D047711F3005F316C /* ScreenEdit.cpp */; settings = {COMPILER_FLAGS = "-finline-limit=300"; }; };
 		AA40D3EE09A08D650068C0D5 /* ScreenEditMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001F047711F3005F316C /* ScreenEditMenu.cpp */; };
@@ -1959,8 +1956,6 @@
 		AA6E000B047711F3005F316C /* Screen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Screen.h; path = ../src/Screen.h; sourceTree = "<group>"; };
 		AA6E0010047711F3005F316C /* ScreenAttract.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenAttract.cpp; path = ../src/ScreenAttract.cpp; sourceTree = "<group>"; };
 		AA6E0011047711F3005F316C /* ScreenAttract.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenAttract.h; path = ../src/ScreenAttract.h; sourceTree = "<group>"; };
-		AA6E0019047711F3005F316C /* ScreenCredits.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenCredits.cpp; path = ../src/ScreenCredits.cpp; sourceTree = "<group>"; };
-		AA6E001A047711F3005F316C /* ScreenCredits.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenCredits.h; path = ../src/ScreenCredits.h; sourceTree = "<group>"; };
 		AA6E001B047711F3005F316C /* ScreenDemonstration.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenDemonstration.cpp; path = ../src/ScreenDemonstration.cpp; sourceTree = "<group>"; };
 		AA6E001C047711F3005F316C /* ScreenDemonstration.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenDemonstration.h; path = ../src/ScreenDemonstration.h; sourceTree = "<group>"; };
 		AA6E001D047711F3005F316C /* ScreenEdit.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenEdit.cpp; path = ../src/ScreenEdit.cpp; sourceTree = "<group>"; };
@@ -3204,8 +3199,6 @@
 				AADBE361053D5F8A00D02EE9 /* ScreenBookkeeping.h */,
 				AA2CA89D0BB745BD002441E9 /* ScreenContinue.cpp */,
 				AA2CA89E0BB745BD002441E9 /* ScreenContinue.h */,
-				AA6E0019047711F3005F316C /* ScreenCredits.cpp */,
-				AA6E001A047711F3005F316C /* ScreenCredits.h */,
 				AA07A5550843E72B00E33D21 /* ScreenDebugOverlay.cpp */,
 				AA07A5560843E72B00E33D21 /* ScreenDebugOverlay.h */,
 				AA6E001B047711F3005F316C /* ScreenDemonstration.cpp */,
@@ -4995,7 +4988,6 @@
 				AA40D22909A08D650068C0D5 /* Sprite.h in Headers */,
 				AA40D22A09A08D650068C0D5 /* Screen.h in Headers */,
 				AA40D22B09A08D650068C0D5 /* ScreenAttract.h in Headers */,
-				AA40D22C09A08D650068C0D5 /* ScreenCredits.h in Headers */,
 				AA40D22D09A08D650068C0D5 /* ScreenDemonstration.h in Headers */,
 				AA40D22E09A08D650068C0D5 /* ScreenEdit.h in Headers */,
 				AA40D22F09A08D650068C0D5 /* ScreenEditMenu.h in Headers */,
@@ -5823,7 +5815,6 @@
 				AA29CDB90558741A00961A51 /* Sprite.cpp in Sources */,
 				AA29CDBA0558741A00961A51 /* Screen.cpp in Sources */,
 				AA29CDBB0558741A00961A51 /* ScreenAttract.cpp in Sources */,
-				AA29CDBD0558741A00961A51 /* ScreenCredits.cpp in Sources */,
 				AA29CDBE0558741A00961A51 /* ScreenDemonstration.cpp in Sources */,
 				AA29CDBF0558741A00961A51 /* ScreenEdit.cpp in Sources */,
 				AA29CDC00558741A00961A51 /* ScreenEditMenu.cpp in Sources */,
@@ -6229,7 +6220,6 @@
 				AA40D3E809A08D650068C0D5 /* Sprite.cpp in Sources */,
 				AA40D3E909A08D650068C0D5 /* Screen.cpp in Sources */,
 				AA40D3EA09A08D650068C0D5 /* ScreenAttract.cpp in Sources */,
-				AA40D3EB09A08D650068C0D5 /* ScreenCredits.cpp in Sources */,
 				AA40D3EC09A08D650068C0D5 /* ScreenDemonstration.cpp in Sources */,
 				AA40D3ED09A08D650068C0D5 /* ScreenEdit.cpp in Sources */,
 				AA40D3EE09A08D650068C0D5 /* ScreenEditMenu.cpp in Sources */,
