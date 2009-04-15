@@ -370,14 +370,6 @@
 				>
 			</File>
 			<File
-				RelativePath="ScreenCredits.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenCredits.h"
-				>
-			</File>
-			<File
 				RelativePath="ScreenDebugOverlay.cpp"
 				>
 			</File>
