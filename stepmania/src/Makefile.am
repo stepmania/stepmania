@@ -445,8 +445,7 @@ PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h ScreenManage
 ScreenManager.h SongManager.cpp SongManager.h \
 StatsManager.cpp StatsManager.h \
 ThemeManager.cpp ThemeManager.h \
-UnlockManager.cpp UnlockManager.h \
-WorkoutManager.cpp WorkoutManager.h
+UnlockManager.cpp UnlockManager.h
 
 if !WITHOUT_NETWORKING
 # Compile NetworkSyncManager even if networking is disabled; it'll stub itself.
