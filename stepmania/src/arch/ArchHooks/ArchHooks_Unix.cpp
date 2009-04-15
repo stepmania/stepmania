@@ -285,6 +285,11 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", Root, "/" );
 }
 
+void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+{
+	// XXX: Fix me.
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
