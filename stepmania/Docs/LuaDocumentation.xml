@@ -465,8 +465,8 @@
 	<Function name='zoom' return='void' arguments='float zoom'>
 		Zooms the Actor to <code>zoom</code> scale.
 	</Function>
-	<Function name='zoomto' return='void' arguments='float zoom'>
-		Zooms the Actor to <code>zoom</code> scale.
+	<Function name='zoomto' return='void' arguments='float zoomX, float zoomY'>
+		Zooms the Actor on both the X and Y axis using <code>zoomX</code> and <code>zoomY</code>.
 	</Function>
 	<Function name='zoomtoheight' return='void' arguments='float zoom'>
 		Zooms the Actor to <code>zoom</code> height. See also: <Link function='zoomy' />.
