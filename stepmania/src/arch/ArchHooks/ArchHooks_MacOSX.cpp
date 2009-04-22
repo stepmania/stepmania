@@ -407,7 +407,12 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 		CFRelease( dataPath );
 		CFRelease( dataUrl );
 	}
-	
+}
+
+void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+{
+	char dir[PATH_MAX];
+
 	// /Save -> ~/Library/Preferences/PRODUCT_ID
 	PathForFolderType( dir, kPreferencesFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Save" );
@@ -423,15 +428,10 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	// /Cache -> ~/Library/Caches/PRODUCT_ID
 	PathForFolderType( dir, kCachedDataFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Cache" );
-
+	
 	// /Logs -> ~/Library/Logs/PRODUCT_ID
 	PathForFolderType( dir, kDomainLibraryFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/Logs/" PRODUCT_ID, dir), "/Logs" );
-}
-
-void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
-{
-	// XXX: Fix me.
 }
 
 static inline int GetIntValue( CFTypeRef r )
