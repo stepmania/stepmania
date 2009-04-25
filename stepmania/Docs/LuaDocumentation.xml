@@ -27,6 +27,11 @@
 	<Function name='Basename' return='string' arguments='string path'>
 		Returns the base name of file path.
 	</Function>
+	<Function name='color' return='color' arguments='string color'>
+		Returns a color from a string. <code>color</code> can be in
+		hex (<code>"#FFFFFFFF"</code>) or 0..1 values (<code>"1.0,1.0,1.0,1.0"</code>),
+		in RGBA order.
+	</Function>
 	<Function name='DayOfMonth' return='int' arguments=''>
 		Returns the current day of the month.
 	</Function>
@@ -171,10 +176,10 @@
 </Namespace>
 <Namespace name='SongUtil'>
 	<Function name='IsStepsPlayable' return='bool' arguments='Song so, Steps st'>
-		Returns true if <code>so</code> has steps for <code>st</code>.
+		Returns true if the song's steps (<code>st</code>) are playable.
 	</Function>
 	<Function name='IsStepsTypePlayable' return='bool' arguments='Song so, StepsType st'>
-		Returns true if <code>so</code> has a StepsType matching <code>st</code>.
+		Returns true if the song's StepsType (<code>st</code>) are playable.
 	</Function>
 </Namespace>
 <Namespace name='TrailUtil'>
@@ -665,10 +670,27 @@
 	<Function name='IsAutogen' return='bool' arguments=''>
 		Returns <code>true</code> if the Course was automatically generated.
 	</Function>
+	<Function name='IsEndless' return='bool' arguments=''>
+		Returns <code>true</code> if the Course is Endless.
+	</Function>
 </Class>
 <Class name='CourseEntry'>
 	<Function name='GetSong' return='Song' arguments=''>
 		Returns the Song that this CourseEntry corresponds to.
+	</Function>
+</Class>
+<Class name='Character'>
+	<Function name='GetCardPath' return='string' arguments=''>
+		Returns the path to the character's card graphic.
+	</Function>
+	<Function name='GetIconPath' return='string' arguments=''>
+		Returns the path to the character's icon.
+	</Function>
+	<Function name='GetSongSelectIconPath' return='string' arguments=''>
+		Returns the path to the character's ScreenSelectMode icon.
+	</Function>
+	<Function name='GetStageIconPath' return='string' arguments=''>
+		Returns the path to the character's ScreenStage icon.
 	</Function>
 </Class>
 <Class name='CharacterManager'>
@@ -962,6 +984,43 @@
 		set to <code>nil</code>.
 	</Function>
 </Class>
+<Class name='Model'>
+	<Function name='loop' return='void' arguments='bool bLoop'>
+		Controls if the model should loop or not.
+	</Function>
+	<Function name='playanimation' return='void' arguments='string sAniName, float fPlayRate'>
+		Plays animation <code>sAniName</code> at <code>fPlayRate</code> speed (default 1.0).
+	</Function>
+	<Function name='position' return='void' arguments='float fSeconds'>
+		Sets how far into the animation the model is.
+	</Function>
+	<Function name='rate' return='void' arguments='float fRate'>
+		Sets the current animation's playback rate to <code>fRate</code>.
+	</Function>
+	<Function name='SetDefaultAnimation' return='void' arguments='string sAnimation, float fPlayRate'>
+		Sets the model's default animation to <code>sAnimation</code> at <code>fPlayRate</code> speed (default 1.0).
+	</Function>
+</Class>
+<Class name='NoteSkinManager'>
+	<Function name='GetMetricA' return='ActorCommand' arguments='string sElement, string sValue'>
+		Returns a command from the specified element and value.
+	</Function>
+	<Function name='GetMetricB' return='bool' arguments='string sElement, string sValue'>
+		Returns a bool from the specified element and value.
+	</Function>
+	<Function name='GetMetricF' return='float' arguments='string sElement, string sValue'>
+		Returns a float from the specified element and value.
+	</Function>
+	<Function name='GetMetricI' return='int' arguments='string sElement, string sValue'>
+		Returns a integer from the specified element and value.
+	</Function>
+	<Function name='GetPath' return='string' arguments='string sButton, string sElement'>
+		Returns the path for the specified <code>sButton sElement</code>.
+	</Function>
+	<Function name='LoadActor' return='Actor' arguments='string sButton, string sElement'>
+		Returns the actor for the specified <code>sButton sElement</code>.
+	</Function>
+</Class>
 <Class name='PlayerInfo'>
 	<Function name='GetLifeMeter' return='LifeMeter' arguments='PlayerNumber pn'>
 		Returns the <Link class='LifeMeter' /> of player <code>pn</code>.
@@ -992,8 +1051,23 @@
 	<Function name='GetHoldNoteScores' return='int' arguments='HoldNoteScore hns'>
 		Returns the number of judgments for a specified HoldNoteScore.
 	</Function>
+	<Function name='GetLessonScoreActual' return='int' arguments=''>
+		Returns the player's actual score on the lesson.
+	</Function>
+	<Function name='GetLessonScoreNeeded' return='int' arguments=''>
+		Returns the score needed to pass the lesson.
+	</Function>
 	<Function name='GetLifeRemainingSeconds' return='float' arguments=''>
 		Returns the player's life remaining seconds.
+	</Function>
+	<Function name='GetMachineHighScoreIndex' return='int' arguments=''>
+		Returns the machine high score index for this performance.
+	</Function>
+	<Function name='GetPeakComboAward' return='PeakComboAward' arguments=''>
+		Returns the peak combo award for this performance.
+	</Function>
+	<Function name='GetPersonalHighScoreIndex' return='int' arguments=''>
+		Returns the personal high score index for this performance.
 	</Function>
 	<Function name='GetPercentDancePoints' return='float' arguments=''>
 		Returns the player's Dance Point percentage.
@@ -1004,8 +1078,17 @@
 	<Function name='GetScore' return='int' arguments=''>
 		Returns the score.
 	</Function>
+	<Function name='GetStageAward' return='StageAward' arguments=''>
+		Returns the stage award for this performance.
+	</Function>
+	<Function name='GetSurvivalSeconds' return='float' arguments=''>
+		Returns how long the player survived in seconds.
+	</Function>
 	<Function name='GetTapNoteScores' return='int' arguments='TapNoteScore tns'>
 		Returns the number of judgments for a specified TapNoteScore.
+	</Function>
+	<Function name='MaxCombo' return='int' arguments=''>
+		Returns the max combo for this performance.
 	</Function>
 	<Function name='IsDisqualified' return='bool' arguments=''>
 		Returns <code>true</code> if the player was disqualified from ranking.
@@ -1182,11 +1265,19 @@
 	<Function name='ScreenClassExists' return='bool' arguments='string s'>
 		Returns <code>true</code> if screen class <code>s</code> exists.
 	</Function>
+	<Function name='ScreenIsPrepped' return='bool' arguments='string s'>
+		Returns <code>true</code> if screen <code>s</code> is prepared.
+	</Function>
 	<Function name='SetNewScreen' return='void' arguments='string s'>
 		Sets the next screen to <code>s</code>.
 	</Function>
 	<Function name='SystemMessage' return='void' arguments='string s'>
 		Broadcasts a system message.
+	</Function>
+</Class>
+<Class name='ScreenOptions'>
+	<Function name='GetCurrentRow' return='int' arguments='PlayerNumber pn'>
+		Returns the current row that player <code>pn</code> is on.
 	</Function>
 </Class>
 <Class name='ScreenProfileLoad'>
@@ -1230,6 +1321,9 @@
 	<Function name='GetSongDir' return='string' arguments=''>
 		Returns the song's directory.
 	</Function>
+	<Function name='GetStepsByStepsType' return='{Steps}' arguments='StepsType st'>
+		Returns a table of Steps that have StepsType <code>st</code>.
+	</Function>
 	<Function name='GetTimingData' return='TimingData' arguments=''>
 		Returns the song's TimingData.
 	</Function>
@@ -1259,11 +1353,20 @@
 	</Function>
 </Class>
 <Class name='SongManager'>
+	<Function name='FindCourse' return='Course' arguments='string sCourse'>
+		Returns a Course if one matching <code>sCourse</code> is found.
+	</Function>
+	<Function name='FindSong' return='Song' arguments='string sSong'>
+		Returns a Song if one matching <code>sSong</code> is found.
+	</Function>
 	<Function name='GetAllCourses' return='{Course}' arguments='bool bIncludeAutogen'>
 		Returns an array of all the installed courses.
 	</Function>
 	<Function name='GetAllSongs' return='{Song}' arguments=''>
 		Returns an array of all the installed songs.
+	</Function>
+	<Function name='GetCourseColor' return='color' arguments='Course c'>
+		Returns the course color of course <code>c</code>.
 	</Function>
 	<Function name='GetNumAdditionalCourses' return='int' arguments=''>
 		Returns the number of courses loaded via Additional folders.
@@ -1277,11 +1380,17 @@
 	<Function name='GetNumCourses' return='int' arguments=''>
 		Returns the number of courses.
 	</Function>
+	<Function name='GetNumSelectableAndUnlockedSongs' return='int' arguments=''>
+		Returns the number of selectable and unlocked songs.
+	</Function>
 	<Function name='GetNumSongGroups' return='int' arguments=''>
 		Returns the number of song groups.
 	</Function>
 	<Function name='GetNumSongs' return='int' arguments=''>
 		Returns the number of songs.
+	</Function>
+	<Function name='GetNumUnlockedSongs' return='int' arguments=''>
+		Returns the number of unlocked songs.
 	</Function>
 	<Function name='GetRandomCourse' return='Course' arguments=''>
 		Returns a random course.
@@ -1290,7 +1399,7 @@
 		Returns a random song.
 	</Function>
 	<Function name='GetSongColor' return='color' arguments='Song s'>
-		Returns the song color of <code>s</code>.
+		Returns the song color of song <code>s</code>.
 	</Function>
 	<Function name='GetSongGroupColor' return='color' arguments='string sGroupName'>
 		Returns the song group color of <code>sGroupName</code>.
@@ -1356,6 +1465,66 @@
 	</Function>
 	<Function name='texcoordvelocity' return='void' arguments='float fVelX, float fVelY'>
 		Set the texture coordinate velocity which controls how the Sprite changes as it animates. <!-- XXX: Can we be more specific? -->
+	</Function>
+</Class>
+<Class name='StageStats'>
+	<Function name='AllFailed' return='bool' arguments=''>
+		Returns <code>true</code> if everyone failed.
+	</Function>
+	<Function name='GetEarnedExtraStage' return='EarnedExtraStage' arguments=''>
+		Returns the <Link class="ENUM" function="EarnedExtraStage">EarnedExtraStage</Link> value.
+	</Function>
+	<Function name='GetGameplaySeconds' return='float' arguments=''>
+		Returns the number of seconds played.
+	</Function>
+	<Function name='GetMultiPlayerStageStats' return='PlayerStageStats' arguments='MultiPlayer mp'>
+		Returns the PlayerStageStats of multiplayer <code>mp</code>.
+	</Function>
+	<Function name='GetPlayedSongs' return='{Song}' arguments='' />
+	<Function name='GetPlayerStageStats' return='PlayerStageStats' arguments='PlayerNumber pn'>
+		Returns the PlayerStageStats of player <code>pn</code>.
+	</Function>
+	<Function name='GetPossibleSongs' return='{Song}' arguments='' />
+	<Function name='GetStage' return='Stage' arguments=''>
+		Returns the <Link class="ENUM" function="Stage">Stage</Link> value.
+	</Function>
+	<Function name='GetStageIndex' return='int' arguments=''>
+		Returns the stage index.
+	</Function>
+	<Function name='OnePassed' return='bool' arguments=''>
+		Returns <code>true</code> if at least one person passed.
+	</Function>
+	<Function name='PlayerHasHighScore' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if player <code>pn</code> has a high score.
+	</Function>
+</Class>
+<Class name='StatsManager'>
+	<Function name='GetAccumPlayedStageStats' return='StageStats' arguments=''>
+		Returns the accumulated played StageStats.
+	</Function>
+	<Function name='GetBestFinalGrade' return='Grade' arguments=''>
+		Returns the best final grade.
+	</Function>
+	<Function name='GetBestGrade' return='Grade' arguments=''>
+		Returns the best grade.
+	</Function>
+	<Function name='GetCurStageStats' return='StageStats' arguments=''>
+		Returns the current StageStats.
+	</Function>
+	<Function name='GetFinalGrade' return='Grade' arguments='PlayerNumber pn'>
+		Returns player <code>pn</code>'s final grade.
+	</Function>
+	<Function name='GetPlayedStageStats' return='StageStats' arguments='int iAgo'>
+		Get the StageStats from <code>iAgo</code> rounds ago.
+	</Function>
+	<Function name='GetStagesPlayed' return='int' arguments=''>
+		Returns the number of stages played.
+	</Function>
+	<Function name='GetWorstGrade' return='Grade' arguments=''>
+		Returns the worst grade.
+	</Function>
+	<Function name='Reset' return='void' arguments=''>
+		Resets the stats.
 	</Function>
 </Class>
 <Class name='Steps'>
@@ -1443,6 +1612,56 @@
 	</Function>
 	<Function name='GetStepsType' return='StepsType' arguments=''>
 		Returns the Trail's StepsType.
+	</Function>
+</Class>
+<Class name='UnlockEntry'>
+	<Function name='GetDescription' return='string' arguments=''>
+		Returns the unlock description.
+	</Function>
+	<Function name='GetRequirement' return='UnlockRequirement' arguments=''>
+		Returns the UnlockRequirement.
+	</Function>
+	<Function name='GetSong' return='Song' arguments=''>
+		Returns the Song related to the UnlockEntry.
+	</Function>
+	<Function name='IsLocked' return='bool' arguments=''>
+		Returns <code>true</code> if the UnlockEntry is locked.
+	</Function>
+</Class>
+<Class name='UnlockManager'>
+	<Function name='AnyUnlocksToCelebrate' return='bool' arguments=''>
+		Returns <code>true</code> if there are any unlocks to celebrate.
+	</Function>
+	<Function name='FindEntryID' return='string' arguments='string sName'>
+		Returns the associated EntryID.
+	</Function>
+	<Function name='GetNumUnlocked' return='int' arguments=''>
+		Returns the number of unlocked items.
+	</Function>
+	<Function name='GetNumUnlocks' return='int' arguments=''>
+		Returns the number of all unlock items, regardless of status.
+	</Function>
+	<Function name='GetPointsUntilNextUnlock' return='float' arguments='UnlockRequirement ut'>
+		Returns the number of points until the next unlock.
+	</Function>
+	<Function name='GetSongsUnlockedByEntryID' return='{Song}' arguments='string sEntryID'>
+		Returns a table of songs unlocked by UnlockEntry <code>sEntryID</code>.
+	</Function>
+	<Function name='GetStepsUnlockedByEntryID' return='{Steps}' arguments='string sEntryID'>
+		Returns a table of steps unlocked by UnlockEntry <code>sEntryID</code>.
+	</Function>
+	<Function name='GetUnlockEntry' return='UnlockEntry' arguments='int iIndex'>
+		Returns the UnlockEntry at <code>iIndex</code>.
+	</Function>
+	<Function name='GetUnlockEntryIndexToCelebrate' return='int' arguments=''>
+		Returns the UnlockEntry index to celebrate.
+	</Function>
+	<Function name='PreferUnlockEntryID' return='void' arguments='string sUnlockEntryID' />
+	<Function name='UnlockEntryID' return='void' arguments='string sUnlockEntryID'>
+		Unlocks an entry by ID.
+	</Function>
+	<Function name='UnlockEntryIndex' return='void' arguments='int iUnlockEntryID'>
+		Unlocks an entry by index.
 	</Function>
 </Class>
 <Class name='WheelBase'>
