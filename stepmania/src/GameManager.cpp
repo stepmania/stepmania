@@ -1090,7 +1090,7 @@ static const Style g_Style_Ez2_Real_Versus =
 	false, // m_bLockDifficulties
 };
 
-static const Style g_Style_Ez2_Real_Double =
+static const Style g_Style_Ez2_Double =
 {	// STYLE_EZ2_DOUBLE
 	true,				// m_bUsedForGameplay
 	true,				// m_bUsedForEdit
@@ -1098,7 +1098,7 @@ static const Style g_Style_Ez2_Real_Double =
 	false,				// m_bUsedForHowToPlay
 	"double",			// m_szName
 	StepsType_ez2_double,		// m_StepsType
-	StyleType_OnePlayerOneSide,		// m_StyleType
+	StyleType_OnePlayerTwoSides,		// m_StyleType
 	10,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
@@ -1144,7 +1144,7 @@ static const Style *g_apGame_Ez2_Styles[] =
 	&g_Style_Ez2_Real,
 	&g_Style_Ez2_Single_Versus,
 	&g_Style_Ez2_Real_Versus,
-	&g_Style_Ez2_Real_Double,
+	&g_Style_Ez2_Double,
 	NULL
 };
 
@@ -1165,7 +1165,7 @@ static const Game g_Game_Ez2 =
 {
 	"ez2",						// m_szName
 	g_apGame_Ez2_Styles,				// m_apStyles
-	false,						// m_bCountNotesSeparately
+	true,						// m_bCountNotesSeparately
 	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"ez2",					// m_szName
