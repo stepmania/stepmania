@@ -36,12 +36,13 @@ void RollingNumbers::DrawPrimitives()
 
 	RString s = this->GetText();
 	int i;
-	// find the first non-zero, non-comma character
-	for( i=0; i<(int)s.length(); i++ )
+	// find the first non-zero non-comma character, or the last character
+	for( i=0; i<(int)(s.length()-1); i++ )
 	{
-		if( s[i] != '0' && s[i] != ',' )
+		if( s[i] != '0'  &&  s[i] != ',' )
 			break;
 	}
+
 	// Rewind to the first number, even if it's a zero.  If the string is "0000", we want the last zero to show in the regular color.
 	for( ; i>=0; i-- )
 	{
