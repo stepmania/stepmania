@@ -43,6 +43,7 @@ ScreenSelectMaster::ScreenSelectMaster()
 {
 	ZERO( m_iChoice );
 	ZERO( m_bChosen );
+	ZERO( m_bDoubleChoice );
 }
 
 void ScreenSelectMaster::Init()
@@ -69,6 +70,7 @@ void ScreenSelectMaster::Init()
 	SCROLLER_TRANSFORM.Load( m_sName, "ScrollerTransform" );
 	SCROLLER_SUBDIVISIONS.Load( m_sName, "ScrollerSubdivisions" );
 	DEFAULT_CHOICE.Load( m_sName, "DefaultChoice" );
+	DOUBLE_PRESS_TO_SELECT.Load(m_sName,"DoublePressToSelect");
 
 	ScreenSelect::Init();
 
@@ -253,6 +255,7 @@ void ScreenSelectMaster::BeginScreen()
 		m_iChoice[p] = (iDefaultChoice!=-1) ? iDefaultChoice : 0;
 		CLAMP( m_iChoice[p], 0, (int)m_aGameCommands.size()-1 );
 		m_bChosen[p] = false;
+		m_bDoubleChoice[p] = false;
 	}
 	if( !SHARED_SELECTION )
 	{
@@ -396,6 +399,14 @@ void ScreenSelectMaster::MenuLeft( const InputEventPlus &input )
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuLeftP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
+		
+		// if they use double select
+		if(DOUBLE_PRESS_TO_SELECT)
+		{
+			m_bDoubleChoice[pn] = false;	// player has cancelled their selection
+		}
+
+
 	}
 }
 
@@ -419,6 +430,12 @@ void ScreenSelectMaster::MenuRight( const InputEventPlus &input )
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuRightP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
+
+		// if they use double select
+		if(DOUBLE_PRESS_TO_SELECT)
+		{
+			m_bDoubleChoice[pn] = false;	// player has cancelled their selection
+		}
 	}
 }
 
@@ -442,6 +459,14 @@ void ScreenSelectMaster::MenuUp( const InputEventPlus &input )
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuUpP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
+		
+		// if they use double select
+		if(DOUBLE_PRESS_TO_SELECT)
+		{
+			m_bDoubleChoice[pn] = false;	// player has cancelled their selection
+		}
+
+
 	}
 }
 
@@ -465,6 +490,13 @@ void ScreenSelectMaster::MenuDown( const InputEventPlus &input )
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuDownP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
+
+		// if they use double select
+		if(DOUBLE_PRESS_TO_SELECT)
+		{
+			m_bDoubleChoice[pn] = false;	// player has cancelled their selection
+		}
+
 	}
 }
 
@@ -570,10 +602,34 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 				bOldStillHasFocus |= m_iChoice[p2] == iOldChoice;
 				bNewAlreadyHadFocus |= m_iChoice[p2] == iNewChoice;
 			}
-			if( !bOldStillHasFocus )
-				m_vsprIcon[iOldChoice]->PlayCommand( "LoseFocus" );
-			if( !bNewAlreadyHadFocus )
-				m_vsprIcon[iNewChoice]->PlayCommand( "GainFocus" );
+
+
+			if(DOUBLE_PRESS_TO_SELECT)
+			{
+				// this player is currently on a single press, which they are cancelling
+				if(m_bDoubleChoice[pn]) 
+				{
+					if( !bOldStillHasFocus )
+						m_vsprIcon[iOldChoice]->PlayCommand( "LoseFocus" );
+					if( !bNewAlreadyHadFocus )
+						m_vsprIcon[iNewChoice]->PlayCommand( "GainFocus" );
+				}
+				else
+				{
+					if( !bOldStillHasFocus )
+						m_vsprIcon[iOldChoice]->PlayCommand( "LoseFocus" );
+					if( !bNewAlreadyHadFocus )
+						m_vsprIcon[iNewChoice]->PlayCommand( "GainFocus" );
+				}
+			}
+			else // not using double selection
+			{
+
+				if( !bOldStillHasFocus )
+					m_vsprIcon[iOldChoice]->PlayCommand( "LostSelectedLoseFocus" );
+				if( !bNewAlreadyHadFocus )
+					m_vsprIcon[iNewChoice]->PlayCommand( "LostSelectedGainFocus" );
+			}
 		}
 
 		if( SHOW_CURSOR )
@@ -604,8 +660,26 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 
 			scroller.SetDestinationItem( (float)iNewChoice );
 			
-			vScroll[iOldChoice]->PlayCommand( "LoseFocus" );
-			vScroll[iNewChoice]->PlayCommand( "GainFocus" );
+			// using double selections
+			if(DOUBLE_PRESS_TO_SELECT)
+			{
+				// this player is currently on a single press, which they are cancelling
+				if(m_bDoubleChoice[pn]) 
+				{
+					vScroll[iOldChoice]->PlayCommand( "LostSelectedLoseFocus" );
+					vScroll[iNewChoice]->PlayCommand( "LostSelectedGainFocus" );
+				}
+				else // the player hasn't made any selections yet
+				{
+					vScroll[iOldChoice]->PlayCommand( "LoseFocus" );
+					vScroll[iNewChoice]->PlayCommand( "GainFocus" );
+				}
+			}
+			else // regular lose/gain focus
+			{
+				vScroll[iOldChoice]->PlayCommand( "LoseFocus" );
+				vScroll[iNewChoice]->PlayCommand( "GainFocus" );
+			}
 		}
 	}
 
@@ -679,6 +753,22 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 
 	if( !ProcessMenuStart( pn ) )
 		return;
+
+	// double press is enabled and the player hasn't made their first press
+	if(DOUBLE_PRESS_TO_SELECT && !m_bDoubleChoice[pn])
+	{
+		m_soundStart.PlayCopy();
+		m_bDoubleChoice[pn] = true;	
+
+		if(SHOW_SCROLLER)
+		{
+			vector<AutoActor> &vScroll = SHARED_SELECTION ? m_vsprScroll[0] : m_vsprScroll[pn];
+			vScroll[m_iChoice[pn]]->PlayCommand( "InitialSelection" );
+		}
+
+		return;
+	}
+
 
 	const GameCommand &mc = m_aGameCommands[m_iChoice[pn]];
 

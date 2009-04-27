@@ -44,6 +44,7 @@ protected:
 	Page GetPage( int iChoiceIndex ) const;
 	Page GetCurrentPage() const;
 
+	ThemeMetric<bool>	DOUBLE_PRESS_TO_SELECT;
 	ThemeMetric<bool>	SHOW_ICON;
 	ThemeMetric<bool>	SHOW_SCROLLER;
 	ThemeMetric<bool>	SHOW_CURSOR;
@@ -98,6 +99,7 @@ protected:
 
 	int m_iChoice[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];
+	bool m_bDoubleChoice[NUM_PLAYERS];
 
 	GameButton m_TrackingRepeatingInput;
 };
