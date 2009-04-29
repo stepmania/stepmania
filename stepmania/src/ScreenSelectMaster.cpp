@@ -232,7 +232,7 @@ void ScreenSelectMaster::Init()
 		}
 	}
 
-	m_bDoubleChoiceNoSound = true;
+	m_bDoubleChoiceNoSound = false;
 }
 
 RString ScreenSelectMaster::GetDefaultChoice()
@@ -324,6 +324,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 		{
 			FOREACH_HumanPlayer(p)
 			{
+				m_bDoubleChoiceNoSound = true;
 				m_bDoubleChoice[p] = true;
 				InputEventPlus iep;
 				iep.pn = p;
