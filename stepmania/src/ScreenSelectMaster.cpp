@@ -80,7 +80,9 @@ void ScreenSelectMaster::Init()
 	GetActiveElementPlayerNumbers( vpns );
 
 #define PLAYER_APPEND_NO_SPACE(p)	(SHARED_SELECTION ? RString() : ssprintf("P%d",(p)+1))
-	
+	this->SubscribeToMessage( SM_MenuTimer );
+
+
 	// init cursor
 	if( SHOW_CURSOR )
 	{
@@ -229,6 +231,8 @@ void ScreenSelectMaster::Init()
 			}
 		}
 	}
+
+	m_bDoubleChoiceNoSound = true;
 }
 
 RString ScreenSelectMaster::GetDefaultChoice()
@@ -308,9 +312,25 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 				int iChoice = m_iChoice[*p];
 				m_vsprScroll[*p][iChoice]->HandleMessage( msg );
 			}
+
+
 		}
 
 		m_fLockInputSecs = POST_SWITCH_PAGE_SECONDS;
+	}
+	else if( SM == SM_MenuTimer )
+	{
+		if(DOUBLE_PRESS_TO_SELECT)
+		{
+			FOREACH_HumanPlayer(p)
+			{
+				m_bDoubleChoice[p] = true;
+				InputEventPlus iep;
+				iep.pn = p;
+				MenuStart( iep );
+			}		
+		}
+
 	}
 }
 
@@ -780,7 +800,7 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc.m_sName.c_str())) );
 	
 	/* Play a copy of the sound, so it'll finish playing even if we leave the screen immediately. */
-	if( mc.m_sSoundPath.empty() )
+	if( mc.m_sSoundPath.empty() && !m_bDoubleChoiceNoSound )
 		m_soundStart.PlayCopy();
 
 	if( mc.m_sScreen.empty() )

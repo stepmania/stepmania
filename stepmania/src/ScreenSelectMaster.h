@@ -100,6 +100,7 @@ protected:
 	int m_iChoice[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];
 	bool m_bDoubleChoice[NUM_PLAYERS];
+	bool m_bDoubleChoiceNoSound;
 
 	GameButton m_TrackingRepeatingInput;
 };
