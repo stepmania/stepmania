@@ -23,6 +23,7 @@ class ScreenSelectMaster : public ScreenSelect
 {
 public:
 	ScreenSelectMaster();
+	//~ScreenSelectMaster();
 	virtual void Init();
 	virtual RString GetDefaultChoice();
 	virtual void BeginScreen();
@@ -44,6 +45,7 @@ protected:
 	Page GetPage( int iChoiceIndex ) const;
 	Page GetCurrentPage() const;
 
+	ThemeMetric<bool>	USE_TWO_SCROLLERS;
 	ThemeMetric<bool>	DOUBLE_PRESS_TO_SELECT;
 	ThemeMetric<bool>	SHOW_ICON;
 	ThemeMetric<bool>	SHOW_SCROLLER;
@@ -57,6 +59,7 @@ protected:
 	ThemeMetric<float>	PRE_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float>	POST_SWITCH_PAGE_SECONDS;
 	ThemeMetric1D<RString>	OPTION_ORDER;
+	ThemeMetric1D<RString>	OPTION_ORDER2;
 	ThemeMetric<bool>	WRAP_CURSOR;
 	ThemeMetric<bool>	WRAP_SCROLLER;
 	ThemeMetric<bool>	LOOP_SCROLLER;
@@ -69,6 +72,8 @@ protected:
 	ThemeMetric<RString>	DEFAULT_CHOICE;
 
 	map<int,int> m_mapCurrentChoiceToNextChoice[NUM_MenuDir];
+	map<int,int> m_mapCurrentChoiceToNextChoiceB[NUM_MenuDir]; // if using two lists
+
 
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
@@ -87,9 +92,17 @@ protected:
 	AutoActor	m_sprMore[NUM_Page];
 	// icon is the shared, per-choice piece
 	vector<AutoActor> m_vsprIcon;
+	vector<AutoActor> m_vsprIconB; // used if the user wants two lists
+
 	// preview is per-player, per-choice piece
 	vector<AutoActor> m_vsprScroll[NUM_PLAYERS];
+	vector<AutoActor> m_vsprScrollB[NUM_PLAYERS]; // used if the user wants two lists
+
+
 	ActorScroller	m_Scroller[NUM_PLAYERS];
+	ActorScroller	m_ScrollerB[NUM_PLAYERS]; // used if the user wants two lists
+
+
 	// cursor is the per-player, shared by all choices
 	AutoActor	m_sprCursor[NUM_PLAYERS];
 
