@@ -55,10 +55,12 @@ static RString g_sBannerPath;
 static bool g_bBannerWaiting = false;
 static bool g_bSampleMusicWaiting = false;
 static RageTimer g_StartedLoadingAt(RageZeroTimer);
+static RageTimer g_ScreenStartedLoadingAt(RageZeroTimer);
 
 REGISTER_SCREEN_CLASS( ScreenSelectMusic );
 void ScreenSelectMusic::Init()
 {
+	g_ScreenStartedLoadingAt.Touch();
 	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )
 	{
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
@@ -67,6 +69,7 @@ void ScreenSelectMusic::Init()
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	}
 
+	SAMPLE_MUSIC_DELAY_INIT.Load( m_sName, "SampleMusicDelayInit" );
 	SAMPLE_MUSIC_DELAY.Load( m_sName, "SampleMusicDelay" );
 	SAMPLE_MUSIC_LOOPS.Load( m_sName, "SampleMusicLoops" );
 	SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS.Load( m_sName, "SampleMusicFallbackFadeInSeconds" );
@@ -303,6 +306,9 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 	/* Nothing else is going.  Start the music, if we haven't yet. */
 	if( g_bSampleMusicWaiting )
 	{
+		if(g_ScreenStartedLoadingAt.Ago() < SAMPLE_MUSIC_DELAY_INIT)
+			return;
+
 		/* Don't start the music sample when moving fast. */
 		if( g_StartedLoadingAt.Ago() < SAMPLE_MUSIC_DELAY && !bForce )
 			return;

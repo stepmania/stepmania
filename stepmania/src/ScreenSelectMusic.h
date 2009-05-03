@@ -71,6 +71,7 @@ protected:
 	vector<Trail*>			m_vpTrails;
 	int				m_iSelection[NUM_PLAYERS];
 
+	ThemeMetric<float> SAMPLE_MUSIC_DELAY_INIT;
 	ThemeMetric<float> SAMPLE_MUSIC_DELAY;
 	ThemeMetric<bool> SAMPLE_MUSIC_LOOPS;
 	ThemeMetric<float> SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS;
