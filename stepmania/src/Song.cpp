@@ -1365,6 +1365,8 @@ public:
 	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
 	static int GetDisplayMainTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayMainTitle() ); return 1; }
 	static int GetTranslitMainTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitMainTitle() ); return 1; }
+	static int GetDisplaySubTitle( T* p, lua_State *L )     { lua_pushstring(L, p->GetDisplaySubTitle() ); return 1; }
+	static int GetTranslitSubTitle( T* p, lua_State *L )    { lua_pushstring(L, p->GetTranslitSubTitle() ); return 1; }
 	static int GetDisplayArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayArtist() ); return 1; }
 	static int GetTranslitArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitArtist() ); return 1; }
 	static int GetGenre( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGenre ); return 1; }
@@ -1420,6 +1422,8 @@ public:
 		ADD_METHOD( GetTranslitFullTitle );
 		ADD_METHOD( GetDisplayMainTitle );
 		ADD_METHOD( GetTranslitMainTitle );
+		ADD_METHOD( GetDisplaySubTitle );
+		ADD_METHOD( GetTranslitSubTitle );
 		ADD_METHOD( GetDisplayArtist );
 		ADD_METHOD( GetTranslitArtist );
 		ADD_METHOD( GetGenre );
