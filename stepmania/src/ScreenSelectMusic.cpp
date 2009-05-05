@@ -187,6 +187,8 @@ void ScreenSelectMusic::Init()
 
 void ScreenSelectMusic::BeginScreen()
 {
+	g_ScreenStartedLoadingAt.Touch();
+
 	if( CommonMetrics::AUTO_SET_STYLE )
 	{
 		vector<StepsType> vst;
