@@ -56,6 +56,7 @@ class ScoreKeeperNormal: public ScoreKeeper
 	ThemeMetric<float>		m_DoubleNoteMultiplier;
 	ThemeMetric<float>		m_TripleNoteMultiplier;
 	ThemeMetric<float>		m_QuadPlusNoteMultiplier;
+	ThemeMetric<float>		m_CustomComboMultiplier;
 
 	vector<Steps*>	m_apSteps;
 

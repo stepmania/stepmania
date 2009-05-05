@@ -83,6 +83,7 @@ void ScoreKeeperNormal::Load(
 	m_MinScoreToMaintainCombo.Load( "Gameplay", "MinScoreToMaintainCombo" );
 
 	// Custom Scoring
+	m_CustomComboMultiplier.Load( "CustomScoring", "ComboMultiplier" );
 	m_CustomTNS_W1.Load( "CustomScoring", "PointsW1" );
 	m_CustomTNS_W2.Load( "CustomScoring", "PointsW2" );
 	m_CustomTNS_W3.Load( "CustomScoring", "PointsW3" );
@@ -477,6 +478,8 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 			if( m_pPlayerStageStats->m_iCurCombo > m_CustomComboBonusThreshold )
 				p += m_CustomComboBonusValue;
 		}
+
+		p += m_pPlayerStageStats->m_iCurCombo * m_CustomComboMultiplier;
 
 		if( m_iNumNotesHitThisRow == 2 )
 			p = (int)(p * m_DoubleNoteMultiplier);
