@@ -929,7 +929,7 @@ static const Game g_Game_KB7 =
 };
 
 static const int EZ2_COL_SPACING = 46; 
-static const int EZ2_REAL_COL_SPACING = 40;
+static const int EZ2_REAL_COL_SPACING = 32;
 static const Style g_Style_Ez2_Single =
 {	// STYLE_EZ2_SINGLE
 	true,				// m_bUsedForGameplay
