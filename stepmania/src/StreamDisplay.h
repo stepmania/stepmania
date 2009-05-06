@@ -41,7 +41,8 @@ private:
 	
 	float m_fPassingAlpha;
 	float m_fHotAlpha;
-
+	
+	bool m_bUsingThreePart;
 };
 
 #endif

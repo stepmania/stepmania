@@ -31,6 +31,8 @@ void StreamDisplay::Load( const RString &_sMetricsGroup )
 
 	float fTextureCoordScaleX = THEME->GetMetricF(sMetricsGroup,"TextureCoordScaleX");
 	int iNumPills = THEME->GetMetricF(sMetricsGroup,"NumPills");
+	m_bUsingThreePart = THEME->GetMetricB(sMetricsGroup,"UseThreePartMethod");
+
 	FOREACH_ENUM( StreamType, st )
 	{
 		ASSERT( m_vpSprPill[st].empty() );
@@ -100,8 +102,21 @@ void StreamDisplay::Update( float fDeltaSecs )
 			CLAMP( fPercentFilledThisPill, 0.0f, 1.0f );
 			pSpr->SetCropRight( 1.0f - fPercentFilledThisPill );
 			// XXX scale by current song speed
-			pSpr->SetTexCoordVelocity(-1,0);
+		
+			if(!m_bUsingThreePart) // usual lifebar
+			{
+				pSpr->SetTexCoordVelocity(-1,0);
+			}
+			else // using the three-part method
+			{
 
+				if(i==0)
+					pSpr->SetCustomTextureRect( RectF(0,0,0.33f,1) );
+				else if(fPercentFilledThisPill >= 100)
+					pSpr->SetCustomTextureRect( RectF(0.33f,0,0.66f,1) );
+				else
+					pSpr->SetCustomTextureRect( RectF(0.66f,0,1,1) );
+			}
 			// Optimization: Don't draw pills that are covered up
 			switch( st )
 			{
