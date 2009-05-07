@@ -83,6 +83,7 @@ void ScreenSelectMusic::Init()
 	USE_PLAYER_SELECT_MENU.Load( m_sName, "UsePlayerSelectMenu" );
 	SELECT_MENU_CHANGES_DIFFICULTY.Load( m_sName, "SelectMenuChangesDifficulty" );
 	TWO_PART_SELECTION.Load( m_sName, "TwoPartSelection" );
+	TWO_PART_CONFIRMS_ONLY.Load( m_sName, "TwoPartConfirmsOnly" );
 	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
@@ -577,25 +578,40 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 	}
 
-	if( m_SelectionState == SelectionState_SelectingSteps  &&
-		input.type == IET_FIRST_PRESS  &&
-		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) &&
-		!m_bStepsChosen[input.pn] )
+	if(!TWO_PART_CONFIRMS_ONLY)
 	{
-		if( input.MenuI == m_GameButtonPreviousSong )
+
+		if( m_SelectionState == SelectionState_SelectingSteps  &&
+			input.type == IET_FIRST_PRESS  &&
+			(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) &&
+			!m_bStepsChosen[input.pn] )
 		{
-			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-				m_soundLocked.Play();
-			else
-				ChangeSteps( input.pn, -1 );
+			if( input.MenuI == m_GameButtonPreviousSong )
+			{
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+					ChangeSteps( input.pn, -1 );
+			}
+			else if( input.MenuI == m_GameButtonNextSong )
+			{
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+					ChangeSteps( input.pn, +1 );
+			}		
 		}
-		else if( input.MenuI == m_GameButtonNextSong )
+	}
+	else // two part selection without step selection
+	{
+		// moving the menu de-confirms your song choice.
+		if((input.MenuI == m_GameButtonPreviousSong || m_GameButtonNextSong) && input.MenuI != GAME_BUTTON_START)
 		{
-			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+			if(GAMESTATE->IsAnExtraStageAndSelectionLocked())
 				m_soundLocked.Play();
 			else
-				ChangeSteps( input.pn, +1 );
-		}		
+				m_SelectionState = SelectionState_SelectingSong;
+		}
 	}
 
 	if( input.type == IET_FIRST_PRESS && DetectCodes(input) )
