@@ -796,6 +796,12 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 			Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
 			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 		}
+
+		// hack-hack: if using a sound in a lua script which plays on PlayerJoined
+		// a copy of the sound ends up floating forever more (thus leaking through
+		// each game play) using a localised version of the join command seems
+		// to overcome this.
+		this->PlayCommand( "SSMPlayerJoined" );
 	}
 	
 	ScreenWithMenuElements::HandleMessage( msg );
