@@ -973,6 +973,13 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			}
 
 			bool bAllPlayersDoneSelectingSteps = bInitiatedByMenuTimer || bAllOtherHumanPlayersDone;
+
+			// if we are using song confirmation only, the confirmation affects all players
+			if(TWO_PART_CONFIRMS_ONLY) 
+			{
+				bAllPlayersDoneSelectingSteps = true;
+			}
+	
 			if( !bAllPlayersDoneSelectingSteps )
 			{
 				m_bStepsChosen[pn] = true;
@@ -1002,6 +1009,17 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	MESSAGEMAN->Broadcast( msg );
 
 	m_soundStart.Play();
+
+	// if the menu timer has pressed start,
+	// and we are confirming song selection only,
+	// go straight to finalised state and initiate the song.
+	if(TWO_PART_CONFIRMS_ONLY)
+	{
+		if(m_MenuTimer->GetSeconds() < 1)
+		{
+			m_SelectionState = SelectionState_Finalized;
+		}
+	}
 
 
 	if( m_SelectionState == SelectionState_Finalized )
