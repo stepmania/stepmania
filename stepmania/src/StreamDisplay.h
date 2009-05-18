@@ -43,6 +43,9 @@ private:
 	float m_fHotAlpha;
 	
 	bool m_bUsingThreePart;
+
+	float m_fThreePartWidth;
+	bool m_bAlwaysBounce;
 };
 
 #endif
