@@ -133,6 +133,7 @@ ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
 ThemeMetric<bool> CHECKPOINTS_USE_TIME_SIGNATURES ( "Player", "CheckpointsUseTimeSignatures" );
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
 ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads" );
+ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
 
 
 float Player::GetWindowSeconds( TimingWindow tw )
@@ -1668,23 +1669,26 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 					// Increase life
 					tn.HoldResult.fLife = 1;
 
-					// increment combo
-					const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-					const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
-
-					if( m_pPlayerStageStats )
+					if( ROLL_BODY_INCREMENTS_COMBO )
 					{
-						m_pPlayerStageStats->m_iCurCombo++;
-						m_pPlayerStageStats->m_iCurMissCombo = 0;
+						// increment combo
+						const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+						const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+
+						if( m_pPlayerStageStats )
+						{
+							m_pPlayerStageStats->m_iCurCombo++;
+							m_pPlayerStageStats->m_iCurMissCombo = 0;
+						}
+
+						SendComboMessages( iOldCombo, iOldMissCombo );
+						if( m_pPlayerStageStats )
+							SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+
+						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+						if( m_pNoteField )
+							m_pNoteField->DidHoldNote( col, HNS_Held, bBright );
 					}
-
-					SendComboMessages( iOldCombo, iOldMissCombo );
-					if( m_pPlayerStageStats )
-						SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
-
-					bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-					if( m_pNoteField )
-						m_pNoteField->DidHoldNote( col, HNS_Held, bBright );
 				}
 				break;
 			}
