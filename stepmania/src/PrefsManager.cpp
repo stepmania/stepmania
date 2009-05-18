@@ -207,6 +207,7 @@ PrefsManager::PrefsManager() :
 	m_bDisqualification		( "Disqualification",			false ),
 	m_bAutogenSteps			( "AutogenSteps",			true ),
 	m_bAutogenGroupCourses		( "AutogenGroupCourses",		true ),
+	m_bOnlyPreferredDifficulties ( "OnlyPreferredDifficulties", false ),
 	m_bBreakComboToGetItem		( "BreakComboToGetItem",		false ),
 	m_bLockCourseDifficulties	( "LockCourseDifficulties",		true ),
 	m_ShowDancingCharacters		( "ShowDancingCharacters",		SDC_Random ),

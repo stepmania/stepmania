@@ -195,6 +195,7 @@ public:
 	Preference<bool>	m_bDisqualification;
 	Preference<bool>	m_bAutogenSteps;
 	Preference<bool>	m_bAutogenGroupCourses;
+	Preference<bool>	m_bOnlyPreferredDifficulties;
 	Preference<bool>	m_bBreakComboToGetItem;
 	Preference<bool>	m_bLockCourseDifficulties;
 	Preference<ShowDancingCharacters>		m_ShowDancingCharacters;

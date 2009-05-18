@@ -363,9 +363,22 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 		if( (so!=SORT_ROULETTE || !RANDOM_PICKS_LOCKED_SONGS) && iLocked )
 			continue;
 
-		// If the song has at least one steps, add it.
-		if( pSong->HasStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType) )
-			arraySongs.push_back( pSong );
+
+		if(PREFSMAN->m_bOnlyPreferredDifficulties)
+		{
+			// if the song has steps that fit the preferred difficulty of the default player
+			if(pSong->HasStepsTypeAndDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,GAMESTATE->m_PreferredDifficulty[GAMESTATE->GetFirstHumanPlayer()]) )
+				arraySongs.push_back( pSong );
+		}
+		else
+		{
+			// If the song has at least one steps, add it.
+			if( pSong->HasStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType) )
+				arraySongs.push_back( pSong );
+
+		}
+
+		
 	}
 
 	/* Hack: Add extra stage item if it was eliminated for any reason (eg. it's a long

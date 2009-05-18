@@ -633,6 +633,7 @@ static void InitializeConfOptions()
 
 	/* Misc options */
 	ADD( ConfOption( "AutogenSteps",		MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "OnlyPreferredDifficulties", MovePref<bool>, "Off","On" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_SONG;
 
 	ADD( ConfOption( "AutogenGroupCourses",		MovePref<bool>,		"Off","On" ) );
