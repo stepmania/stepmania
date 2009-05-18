@@ -49,7 +49,14 @@ void StreamDisplay::Load( const RString &_sMetricsGroup )
 			Sprite *pSpr = new Sprite;
 
 			if(m_bUsingThreePart)
+			{
 				pSpr->Load( THEME->GetPathG(sMetricsGroup,ssprintf("%s part%d",StreamTypeToString(st).c_str(),i) ) );
+				
+				if(pSpr->GetNumStates() > 1)
+				{
+					pSpr->SetAllStateDelays(THEME->GetMetricF(sMetricsGroup,ssprintf("%spart%ddelay",StreamTypeToString(st).c_str(),i)));
+				}
+			}
 			else
 				pSpr->Load( THEME->GetPathG(sMetricsGroup,StreamTypeToString(st)) );
 			m_vpSprPill[st].push_back( pSpr );
@@ -67,9 +74,8 @@ void StreamDisplay::Load( const RString &_sMetricsGroup )
 		if(m_bUsingThreePart)
 		{
 			m_fThreePartWidth = THEME->GetMetricF(sMetricsGroup,"ThreePartWidth");
-			float fCroppedWidthRight = (1-m_vpSprPill[st][0]->GetCropRight())*m_vpSprPill[st][0]->GetZoomedWidth();
 			// first element positioned depending on metric width specified
-			m_vpSprPill[st][0]->AddX(-(m_fThreePartWidth/2 + m_vpSprPill[st][0]->GetZoomedWidth()/2) + fCroppedWidthRight);			
+			m_vpSprPill[st][0]->AddX(-(m_fThreePartWidth/2 + m_vpSprPill[st][0]->GetZoomedWidth()/2));			
 		}
 	}
 }

@@ -70,6 +70,14 @@ void Sprite::InitState()
 	m_bSkipNextUpdate = true;
 }
 
+void Sprite::SetAllStateDelays(float fDelay)
+{
+	for(unsigned int i=0;i<m_States.size();i++)
+	{
+		m_States[i].fDelay = fDelay;
+	}
+}
+
 RageTextureID Sprite::SongBGTexture( RageTextureID ID )
 {
 	ID.bMipMaps = true;
