@@ -964,6 +964,7 @@ int GameState::GetSmallestNumStagesLeftForAnyHumanPlayer() const
 
 bool GameState::IsFinalStageForAnyHumanPlayer() const
 {
+
 	return GetSmallestNumStagesLeftForAnyHumanPlayer() == 1;
 }
 
@@ -1004,7 +1005,10 @@ Stage GameState::GetCurrentStage() const
 	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return Stage_Endless;
 	else if( IsExtraStage() )			return Stage_Extra1;
 	else if( IsExtraStage2() )			return Stage_Extra2;
-	else if( IsFinalStageForAnyHumanPlayer() )	return Stage_Final;
+//	else if( IsFinalStageForAnyHumanPlayer() )	return Stage_Final;
+	// above function behaves weirdly, it will always return final stage if any player is 
+	// on final stage, rather than the last remaining player. The below method seems to make a bit more sense.
+	else if(m_iPlayerStageTokens[PLAYER_1] == 0 && m_iPlayerStageTokens[PLAYER_2] == 0) return Stage_Final;
 	else
 	{
 
