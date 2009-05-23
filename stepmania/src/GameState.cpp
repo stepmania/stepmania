@@ -2138,8 +2138,8 @@ public:
 		Steps* pSteps;
 		if( p->m_pCurSong.Get() != NULL )
 		{
-			pSteps = p->m_pCurSong.Get()->GetStepsByStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType)[pn];
-					
+			pSteps = SongUtil::GetOneSteps( p->m_pCurSong.Get(), GAMESTATE->GetCurrentStyle()->m_StepsType, GAMESTATE->GetClosestShownDifficulty(pn) );
+
 			if( pSteps == NULL )
 				pSteps = p->m_pCurSteps[pn];
 		}
