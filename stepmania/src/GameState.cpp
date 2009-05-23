@@ -2136,11 +2136,11 @@ public:
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		
 		Steps* pSteps;
-		if(p->m_pCurSong.Get() != NULL)
+		if( p->m_pCurSong.Get() != NULL )
 		{
 			pSteps = p->m_pCurSong.Get()->GetStepsByStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType)[pn];
 					
-			if(pSteps == NULL)
+			if( pSteps == NULL )
 				pSteps = p->m_pCurSteps[pn];
 		}
 		else
