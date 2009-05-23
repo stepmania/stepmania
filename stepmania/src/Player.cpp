@@ -2564,26 +2564,22 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	//
 	if( HOLD_CHECKPOINTS )
 	{
-		int CHECKPOINT_FREQUENCY_ROWS;
+		int iCheckpointFrequencyRows = ROWS_PER_BEAT/2;
 		if( CHECKPOINTS_USE_TIME_SIGNATURES )
 		{
-			TimeSignatureSegment tSignature =  GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iLastRowCrossed ) );
+			TimeSignatureSegment tSignature = GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iLastRowCrossed ) );
 			
 			// Most songs are in 4/4 time.  The frequency for checking tick counts should reflect that.
-			CHECKPOINT_FREQUENCY_ROWS = ROWS_PER_BEAT * tSignature.m_iDenominator / (tSignature.m_iNumerator * 4);
-		}
-		else
-		{
-			CHECKPOINT_FREQUENCY_ROWS = ROWS_PER_BEAT/2;
+			iCheckpointFrequencyRows = ROWS_PER_BEAT * tSignature.m_iDenominator / (tSignature.m_iNumerator * 4);
 		}
 
 		// "the first row after the start of the range that lands on a beat"
-		int iFirstCheckpointInRange = ((m_iFirstUncrossedRow+CHECKPOINT_FREQUENCY_ROWS-1)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;
+		int iFirstCheckpointInRange = ((m_iFirstUncrossedRow+iCheckpointFrequencyRows-1)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
 		
 		// "the last row or first row earlier that lands on a beat"
-		int iLastCheckpointInRange = ((iLastRowCrossed)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;
+		int iLastCheckpointInRange = ((iLastRowCrossed)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
 
-		for( int r = iFirstCheckpointInRange; r <= iLastCheckpointInRange; r += CHECKPOINT_FREQUENCY_ROWS )
+		for( int r = iFirstCheckpointInRange; r <= iLastCheckpointInRange; r += iCheckpointFrequencyRows )
 		{
 			//LOG->Trace( "%d...", r );
 			vector<int> viColsWithHold;
@@ -2603,10 +2599,10 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				int iTrack = iter.Track();
 
 				// "the first row after the hold head that lands on a beat"
-				int iFirstCheckpointOfHold = ((iStartRow+CHECKPOINT_FREQUENCY_ROWS)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;
+				int iFirstCheckpointOfHold = ((iStartRow+iCheckpointFrequencyRows)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
 				
 				// "the end row or the first earlier row that lands on a beat"
-				int iLastCheckpointOfHold = ((iEndRow)/CHECKPOINT_FREQUENCY_ROWS) * CHECKPOINT_FREQUENCY_ROWS;
+				int iLastCheckpointOfHold = ((iEndRow)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
 
 				// count the end of the hold as a checkpoint
 				bool bHoldOverlapsRow = iFirstCheckpointOfHold <= r  &&   r <= iLastCheckpointOfHold;
