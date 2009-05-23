@@ -30,6 +30,7 @@ static ThemeMetric<float> BOTTOM_EDGE				("Background","BottomEdge");
 #define RECT_BACKGROUND RectF					(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 static ThemeMetric<float> CLAMP_OUTPUT_PERCENT			("Background","ClampOutputPercent");
 static ThemeMetric<bool> SHOW_DANCING_CHARACTERS		("Background","ShowDancingCharacters");
+static ThemeMetric<bool> DONT_USE_STATIC_BG		("Background","DontUseStaticBackground");
 
 
 static Preference<bool>	g_bShowDanger( "ShowDanger", true );
@@ -169,6 +170,12 @@ void BackgroundImpl::Init()
 	m_bDangerAllWasVisible = false;
 	m_StaticBackgroundDef = BackgroundDef();
 	
+	if( DONT_USE_STATIC_BG )
+	{
+		m_StaticBackgroundDef.m_sColor1 = "0,0,0,0";
+		m_StaticBackgroundDef.m_sColor2 = "0,0,0,0";
+	}
+
 	// load transitions
 	{
 		ASSERT( m_mapNameToTransition.empty() );
@@ -582,6 +589,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 		// end showing the static song background
 		BackgroundChange change;
+
 		change.m_def = m_StaticBackgroundDef;
 		change.m_fStartBeat = pSong->m_fLastBeat;
 		layer.m_aBGChanges.push_back( change );
@@ -604,6 +612,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	{
 		BackgroundChange change;
 		change.m_def = m_StaticBackgroundDef;
+
 		change.m_fStartBeat = -10000;
 		mainlayer.m_aBGChanges.insert( mainlayer.m_aBGChanges.begin(), change );
 	}
