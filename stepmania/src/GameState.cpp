@@ -354,8 +354,16 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	// Set the current style to something appropriate for the new number of joined players.
 	if( ALLOW_LATE_JOIN  &&  m_pCurStyle != NULL )
 	{
-		const Style *pStyle = GameManager::GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), m_pCurStyle->m_StepsType );
-		m_pCurStyle.Set( pStyle );
+		const Style *pStyle;
+		// only use one player for StyleType_OnePlayerTwoSides.
+		// XXX: still shows non master player's "Insert Card" -aj
+		if( m_pCurStyle->m_StyleType == StyleType_OnePlayerTwoSides )
+			pStyle = GameManager::GetFirstCompatibleStyle( m_pCurGame, 1, m_pCurStyle->m_StepsType );
+		else
+			pStyle = GameManager::GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), m_pCurStyle->m_StepsType );
+
+		// use SetCurrentStyle in case of StyleType_OnePlayerTwoSides
+		SetCurrentStyle( pStyle );
 	}
 
 	Message msg( MessageIDToString(Message_PlayerJoined) );
