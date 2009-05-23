@@ -1680,8 +1680,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			bool bInitiatedNote = true;
 			if( REQUIRE_STEP_ON_HOLD_HEADS )
 				bInitiatedNote = tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start?
-			else
-				bInitiatedNote = true;
+
 			const int iEndRow = iRow + tn.iDuration;
 
 			if( bInitiatedNote && tn.HoldResult.fLife != 0 )
