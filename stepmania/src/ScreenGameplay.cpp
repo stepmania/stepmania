@@ -759,9 +759,7 @@ void ScreenGameplay::Init()
 
 	m_GiveUpTimer.SetZero();
 
-	// friez
-
-	if(USE_ALTERNATIVE_INPUT) // using alternative input
+	if( USE_ALTERNATIVE_INPUT ) // using alternative input
 	{
 		int iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
@@ -774,17 +772,17 @@ void ScreenGameplay::Init()
 			//	Dialog::OK(GameI.ToString(INPUTMAPPER->GetInputScheme()),"DEBUG");
 
 				ThemeMetric<RString> tmpMetric;
-				tmpMetric.Load(m_sName,ssprintf("AltInp%s%s",GAMESTATE->GetCurrentStyle()->m_szName,GameI.ToString( INPUTMAPPER->GetInputScheme() ).c_str() ) );
+				tmpMetric.Load( m_sName,ssprintf("AltInp%s%s",GAMESTATE->GetCurrentStyle()->m_szName,GameI.ToString( INPUTMAPPER->GetInputScheme() ).c_str() ) );
 				
 				if(tmpMetric.GetValue() != "")
 				{
 					GameInput GameIAlt;
-					GameIAlt.FromString(INPUTMAPPER->GetInputScheme(),tmpMetric.GetValue());
+					GameIAlt.FromString( INPUTMAPPER->GetInputScheme(),tmpMetric.GetValue() );
 
 					AlternateMapping tmpMap;
 					tmpMap.inpMain = GameI;
 					tmpMap.inpAlt = GameIAlt;
-					m_vAlterMap.push_back(tmpMap);
+					m_vAlterMap.push_back( tmpMap );
 				}
 			}
 		}
@@ -2248,11 +2246,11 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 	
 	int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
 
-	if(USE_ALTERNATIVE_INPUT) // using alternative input
+	if( USE_ALTERNATIVE_INPUT ) // using alternative input
 	{
 		for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
 		{
-			if(m_vAlterMap[i].inpAlt == input.GameI)
+			if( m_vAlterMap[i].inpAlt == input.GameI )
 			{
 				iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( m_vAlterMap[i].inpMain );
 			}

@@ -364,10 +364,10 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 			continue;
 
 
-		if(PREFSMAN->m_bOnlyPreferredDifficulties)
+		if( PREFSMAN->m_bOnlyPreferredDifficulties )
 		{
 			// if the song has steps that fit the preferred difficulty of the default player
-			if(pSong->HasStepsTypeAndDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,GAMESTATE->m_PreferredDifficulty[GAMESTATE->GetFirstHumanPlayer()]) )
+			if( pSong->HasStepsTypeAndDifficulty( GAMESTATE->GetCurrentStyle()->m_StepsType,GAMESTATE->m_PreferredDifficulty[GAMESTATE->GetFirstHumanPlayer()] ) )
 				arraySongs.push_back( pSong );
 		}
 		else
