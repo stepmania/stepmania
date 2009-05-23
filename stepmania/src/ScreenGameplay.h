@@ -156,12 +156,6 @@ protected:
 
 	ThemeMetric<bool> USE_ALTERNATIVE_INPUT;
 
-	struct AlternateMapping
-	{
-		GameInput inpMain;
-		GameInput inpAlt;
-	};
-
 	vector<AlternateMapping> m_vAlterMap;
 
 

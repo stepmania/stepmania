@@ -783,6 +783,11 @@ void ScreenGameplay::Init()
 					tmpMap.inpMain = GameI;
 					tmpMap.inpAlt = GameIAlt;
 					m_vAlterMap.push_back( tmpMap );
+
+					FOREACH( PlayerInfo, m_vPlayerInfo, pi )
+					{
+						pi->m_pPlayer->m_vAlterMap.push_back( tmpMap );
+					}
 				}
 			}
 		}
