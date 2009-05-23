@@ -2134,7 +2134,25 @@ public:
 	static int GetCurrentSteps( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		Steps *pSteps = p->m_pCurSteps[pn];  
+		
+		Steps* pSteps;
+		if(p->m_pCurSong.Get() != NULL)
+		{
+			pSteps = p->m_pCurSong.Get()->GetStepsByStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType)[pn];
+					
+			if(pSteps == NULL)
+				pSteps = p->m_pCurSteps[pn];
+		}
+		else
+		{
+			pSteps = p->m_pCurSteps[pn];
+		}
+
+		// if you're on the music select and change song, the current steps are not
+		// updated correctly/in time for CurrentSongChangedMessageCommand 
+		// (as such the returned steps are that of the previous song
+
+//		Steps *pSteps = p->m_pCurSteps[pn];  
 		if( pSteps ) { pSteps->PushSelf(L); }
 		else		 { lua_pushnil(L); }
 		return 1;
