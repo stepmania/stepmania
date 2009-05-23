@@ -498,7 +498,7 @@ PlayerStageStats::Combo_t PlayerStageStats::GetMaxCombo() const
 	return m_ComboList[m];
 }
 
-int	PlayerStageStats::GetComboAtStartOfStage() const
+int PlayerStageStats::GetComboAtStartOfStage() const
 {
 	if( m_ComboList.empty() )
 		return 0;
