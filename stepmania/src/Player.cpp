@@ -1577,7 +1577,7 @@ void Player::DoTapScoreNone()
 	if( PENALIZE_TAP_SCORE_NONE )
 	{
 		SetJudgment( TNS_Miss, -1, 0 );
-		// the ScoreKeeper will subrtract points later.
+		// the ScoreKeeper will subtract points later.
 	}
 }
 
