@@ -71,6 +71,8 @@ XToString( DetailLine );
 #define PLAYER_OPTIONS_SEPARATOR		THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
 
 
+#define CHECKPOINTS_WITH_JUDGMENTS		THEME->GetMetricB(m_sName,"CheckpointsWithJudgments")
+
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
 AutoScreenMessage( SM_PlayCheer )
@@ -501,12 +503,30 @@ void ScreenEvaluation::Init()
 				int iValue;
 				switch( l )
 				{
-				case JudgmentLine_W1:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W1];	break;
-				case JudgmentLine_W2:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W2];	break;
+				case JudgmentLine_W1:
+					iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W1];
+					if( CHECKPOINTS_WITH_JUDGMENTS && GAMESTATE->ShowW1() )
+					{
+						iValue += m_pStageStats->m_player[p].m_iTapNoteScores[TNS_CheckpointHit];
+					}
+					break;
+				case JudgmentLine_W2:
+					iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W2];
+					if( CHECKPOINTS_WITH_JUDGMENTS && !GAMESTATE->ShowW1() )
+					{
+						iValue += m_pStageStats->m_player[p].m_iTapNoteScores[TNS_CheckpointHit];
+					}
+					break;
 				case JudgmentLine_W3:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W3];	break;
 				case JudgmentLine_W4:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W4];	break;
 				case JudgmentLine_W5:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W5];	break;
-				case JudgmentLine_Miss:		iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_Miss];	break;
+				case JudgmentLine_Miss:
+					iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_Miss];
+					if( CHECKPOINTS_WITH_JUDGMENTS )
+					{
+						iValue += m_pStageStats->m_player[p].m_iTapNoteScores[TNS_CheckpointMiss];
+					}
+					break;
 				case JudgmentLine_Held:		iValue = m_pStageStats->m_player[p].m_iHoldNoteScores[HNS_Held];	break;
 				case JudgmentLine_MaxCombo:	iValue = m_pStageStats->m_player[p].GetMaxCombo().m_cnt;		break;
 				DEFAULT_FAIL( l );
