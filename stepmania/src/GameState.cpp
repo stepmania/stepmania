@@ -37,6 +37,8 @@
 #include "UnlockManager.h"
 #include "ScreenManager.h"
 #include "Screen.h"
+#include "arch/Dialog/Dialog.h"
+#include "GameConstantsAndTypes.h"
 
 #include <ctime>
 #include <set>
@@ -2140,13 +2142,23 @@ public:
 		Steps* pSteps;
 		if( p->m_pCurSong.Get() != NULL )
 		{
-			pSteps = SongUtil::GetOneSteps( p->m_pCurSong.Get(), GAMESTATE->GetCurrentStyle()->m_StepsType, GAMESTATE->GetClosestShownDifficulty(pn) );
+			pSteps = SongUtil::GetOneSteps( p->m_pCurSong.Get(), GAMESTATE->GetCurrentStyle()->m_StepsType, GAMESTATE->m_PreferredDifficulty[pn] );
+
+			// nothing found with preferred difficulty? try with closest
+			// closest seems to return 'easy' when prefrred difficulty is 'medium'
+			// even if the song has medium steps?
+			if(	pSteps == NULL )
+				pSteps = SongUtil::GetOneSteps( p->m_pCurSong.Get(), GAMESTATE->GetCurrentStyle()->m_StepsType, GAMESTATE->GetClosestShownDifficulty(pn) );
 
 			if( pSteps == NULL )
+			{
+			//	Dialog::OK( ssprintf("GetCurrentSteps() -- No Steps (Difficulty = %s Preferred = %s)",DifficultyToString(GAMESTATE->m_PreferredDifficulty[pn]).c_str() ),"Error");
 				pSteps = p->m_pCurSteps[pn];
+			}
 		}
 		else
 		{
+		//	Dialog::OK("GetCurrentSteps() -- No Song","Error");
 			pSteps = p->m_pCurSteps[pn];
 		}
 
