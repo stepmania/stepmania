@@ -2099,6 +2099,8 @@ public:
 	DEFINE_METHOD( GetMasterPlayerNumber,		m_MasterPlayerNumber )
 	DEFINE_METHOD( GetMultiplayer,			m_bMultiplayer )
 	DEFINE_METHOD( GetNumMultiplayerNoteFields,	m_iNumMultiplayerNoteFields )
+	DEFINE_METHOD( ShowW1,				ShowW1() )
+	
 	static int SetNumMultiplayerNoteFields( T* p, lua_State *L )
 	{
 		p->m_iNumMultiplayerNoteFields = IArg(1);
@@ -2382,6 +2384,7 @@ public:
 		ADD_METHOD( GetMasterPlayerNumber );
 		ADD_METHOD( GetMultiplayer );
 		ADD_METHOD( GetNumMultiplayerNoteFields );
+		ADD_METHOD( ShowW1 );
 		ADD_METHOD( SetNumMultiplayerNoteFields );
 		ADD_METHOD( GetPlayerState );
 		ADD_METHOD( GetMultiPlayerState );
