@@ -134,6 +134,7 @@ ThemeMetric<bool> CHECKPOINTS_USE_TIME_SIGNATURES ( "Player", "CheckpointsUseTim
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
 ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads" );
 ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
+ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
 
 
 float Player::GetWindowSeconds( TimingWindow tw )
@@ -2622,7 +2623,8 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				}
 			}
 
-			if( !viColsWithHold.empty() )
+			// TODO: Find a better way of handling hold checkpoints with other taps.
+			if( !viColsWithHold.empty() && ( CHECKPOINTS_TAPS_SEPARATE_JUDGMENT || m_NoteData.GetNumTapNotesInRow( iLastRowCrossed ) == 0 ) )
 			{
 				HandleHoldCheckpoint( r, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow, viColsWithHold );
 			}
@@ -2800,7 +2802,7 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 				m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
 		}
 	}
-
+		
 	SendComboMessages( iOldCombo, iOldMissCombo );
 
 	if( m_pPlayerStageStats )
