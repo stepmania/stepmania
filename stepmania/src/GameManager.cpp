@@ -929,7 +929,7 @@ static const Game g_Game_KB7 =
 };
 
 static const int EZ2_COL_SPACING = 46; 
-static const int EZ2_REAL_COL_SPACING = 32;
+static const int EZ2_REAL_COL_SPACING = 46;
 static const Style g_Style_Ez2_Single =
 {	// STYLE_EZ2_SINGLE
 	true,				// m_bUsedForGameplay
@@ -980,22 +980,22 @@ static const Style g_Style_Ez2_Real =
 	7,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
-			{ TRACK_1,	-EZ2_REAL_COL_SPACING*3.0f, NULL },
-			{ TRACK_2,	-EZ2_REAL_COL_SPACING*2.0f, NULL },
-			{ TRACK_3,	-EZ2_REAL_COL_SPACING*1.0f, NULL }, 
+			{ TRACK_1,	-EZ2_REAL_COL_SPACING*2.3f, NULL },
+			{ TRACK_2,	-EZ2_REAL_COL_SPACING*1.6f, NULL },
+			{ TRACK_3,	-EZ2_REAL_COL_SPACING*0.9f, NULL },
 			{ TRACK_4,	+EZ2_REAL_COL_SPACING*0.0f, NULL },
-			{ TRACK_5,	+EZ2_REAL_COL_SPACING*1.0f, NULL }, 
-			{ TRACK_6,	+EZ2_REAL_COL_SPACING*2.0f, NULL },
-			{ TRACK_7,	+EZ2_REAL_COL_SPACING*3.0f, NULL },
+			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL },
+			{ TRACK_6,	+EZ2_REAL_COL_SPACING*1.6f, NULL },
+			{ TRACK_7,	+EZ2_REAL_COL_SPACING*2.3f, NULL },
 		},
 		{	// PLAYER_2
-			{ TRACK_1,	-EZ2_REAL_COL_SPACING*3.0f, NULL },
-			{ TRACK_2,	-EZ2_REAL_COL_SPACING*2.0f, NULL },
-			{ TRACK_3,	-EZ2_REAL_COL_SPACING*1.0f, NULL }, 
+			{ TRACK_1,	-EZ2_REAL_COL_SPACING*2.3f, NULL },
+			{ TRACK_2,	-EZ2_REAL_COL_SPACING*1.6f, NULL },
+			{ TRACK_3,	-EZ2_REAL_COL_SPACING*0.9f, NULL }, 
 			{ TRACK_4,	+EZ2_REAL_COL_SPACING*0.0f, NULL },
-			{ TRACK_5,	+EZ2_REAL_COL_SPACING*1.0f, NULL }, 
-			{ TRACK_6,	+EZ2_REAL_COL_SPACING*2.0f, NULL },
-			{ TRACK_7,	+EZ2_REAL_COL_SPACING*3.0f, NULL },
+			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL }, 
+			{ TRACK_6,	+EZ2_REAL_COL_SPACING*1.6f, NULL },
+			{ TRACK_7,	+EZ2_REAL_COL_SPACING*2.3f, NULL },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
@@ -1003,7 +1003,7 @@ static const Style g_Style_Ez2_Real =
 		{ 0, 6, 3, 2, 4, 1, 5, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		3,0,6,2,4,1,5 // This should be from back to front: Down, UpLeft, UpRight, Lower Left Hand, Lower Right Hand, Upper Left Hand, Upper Right Hand 
+		3,0,6,1,5,2,4 // This should be from back to front: Down, UpLeft, UpRight, Lower Left Hand, Lower Right Hand, Upper Left Hand, Upper Right Hand 
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -1060,22 +1060,22 @@ static const Style g_Style_Ez2_Real_Versus =
 	7,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
-			{ TRACK_1,	-EZ2_REAL_COL_SPACING*3.0f, NULL },
-			{ TRACK_2,	-EZ2_REAL_COL_SPACING*2.0f, NULL },
-			{ TRACK_3,	-EZ2_REAL_COL_SPACING*1.0f, NULL }, 
+			{ TRACK_1,	-EZ2_REAL_COL_SPACING*2.3f, NULL },
+			{ TRACK_2,	-EZ2_REAL_COL_SPACING*1.6f, NULL },
+			{ TRACK_3,	-EZ2_REAL_COL_SPACING*0.9f, NULL },
 			{ TRACK_4,	+EZ2_REAL_COL_SPACING*0.0f, NULL },
-			{ TRACK_5,	+EZ2_REAL_COL_SPACING*1.0f, NULL }, 
-			{ TRACK_6,	+EZ2_REAL_COL_SPACING*2.0f, NULL },
-			{ TRACK_7,	+EZ2_REAL_COL_SPACING*3.0f, NULL },
+			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL },
+			{ TRACK_6,	+EZ2_REAL_COL_SPACING*1.6f, NULL },
+			{ TRACK_7,	+EZ2_REAL_COL_SPACING*2.3f, NULL },
 		},
 		{	// PLAYER_2
-			{ TRACK_1,	-EZ2_REAL_COL_SPACING*3.0f, NULL },
-			{ TRACK_2,	-EZ2_REAL_COL_SPACING*2.0f, NULL },
-			{ TRACK_3,	-EZ2_REAL_COL_SPACING*1.0f, NULL }, 
+			{ TRACK_1,	-EZ2_REAL_COL_SPACING*2.3f, NULL },
+			{ TRACK_2,	-EZ2_REAL_COL_SPACING*1.6f, NULL },
+			{ TRACK_3,	-EZ2_REAL_COL_SPACING*0.9f, NULL },
 			{ TRACK_4,	+EZ2_REAL_COL_SPACING*0.0f, NULL },
-			{ TRACK_5,	+EZ2_REAL_COL_SPACING*1.0f, NULL }, 
-			{ TRACK_6,	+EZ2_REAL_COL_SPACING*2.0f, NULL },
-			{ TRACK_7,	+EZ2_REAL_COL_SPACING*3.0f, NULL },
+			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL },
+			{ TRACK_6,	+EZ2_REAL_COL_SPACING*1.6f, NULL },
+			{ TRACK_7,	+EZ2_REAL_COL_SPACING*2.3f, NULL },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]

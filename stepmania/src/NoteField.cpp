@@ -142,6 +142,7 @@ void NoteField::CacheAllUsedNoteSkins()
 void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels )
 {
 	m_pPlayerState = pPlayerState;
+
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 	CacheAllUsedNoteSkins();
 }
