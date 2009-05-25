@@ -116,6 +116,7 @@ public:
 
 	bool HasBpmChanges() const;
 	bool HasStops() const;
+	bool HasTimeSignatures() const;
 
 	bool operator==( const TimingData &other )
 	{

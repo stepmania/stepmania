@@ -416,6 +416,11 @@ bool TimingData::HasStops() const
 	return m_StopSegments.size()>0;
 }
 
+bool TimingData::HasTimeSignatures() const
+{
+	return m_vTimeSignatureSegments.size()>0;
+}
+
 void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const
 {
 	iMeasureIndexOut = 0;
