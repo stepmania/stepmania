@@ -2612,7 +2612,8 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 					continue;
 
 				viColsWithHold.push_back( iTrack );
-				if( ( IMMEDIATE_CHECKPOINT_MISS && tn.HoldResult.bHeld ) || tn.HoldResult.fLife > 0 )
+				if( ( IMMEDIATE_CHECKPOINT_MISS && tn.HoldResult.bHeld ) || 
+				   ( !IMMEDIATE_CHECKPOINT_MISS && tn.HoldResult.fLife > 0 ) )
 				{
 					++iNumHoldsHeldThisRow;
 					++tn.HoldResult.iCheckpointsHit;
