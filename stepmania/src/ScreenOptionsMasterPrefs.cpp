@@ -701,7 +701,7 @@ static void InitializeConfOptions()
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "DisplayResolution",		DisplayResolutionM, DisplayResolutionChoices ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS | OPT_APPLY_ASPECT_RATIO;
-	ADD( ConfOption( "DisplayAspectRatio",		DisplayAspectRatio,	"|3:4","|1:1","|4:3","|16:10","|16:9","|8:3" ) );
+	ADD( ConfOption( "DisplayAspectRatio",		DisplayAspectRatio,	"|3:4","|1:1","|4:3","|5:4","|16:10","|16:9","|8:3" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS | OPT_APPLY_ASPECT_RATIO;	// need OPT_APPLY_GRAPHICS because if windowed the width may change to make square pixels
 	ADD( ConfOption( "WideScreen16_10",		WideScreen16_10,	"Off", "On" ) );
 	g_ConfOptions.back().m_sPrefName = "DisplayAspectRatio";
