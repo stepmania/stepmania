@@ -556,7 +556,7 @@ static void RefreshRate( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 static void DisplayAspectRatio( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const float mapping[] = { 3/4.f, 1, 4/3.0f, 16/10.0f, 16/9.f, 8/3.f };
+	const float mapping[] = { 3/4.f, 1, 4/3.0f, 5/4.0f, 16/10.0f, 16/9.f, 8/3.f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
