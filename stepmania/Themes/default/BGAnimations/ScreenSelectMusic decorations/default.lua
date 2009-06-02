@@ -189,7 +189,7 @@ t[#t+1] = LoadActor( "stop icon" ) .. {
 			local b = false;
 			local song = GAMESTATE:GetCurrentSong();
 			if song then
-				b = song:GetTimingData():HasStops(); 
+				b = song:GetTimingData():HasStops();
 			end;
 			self:visible( b );
 		end;
@@ -199,15 +199,23 @@ t[#t+1] = LoadActor( "stop icon" ) .. {
 	
 t[#t+1] = LoadFont("_venacti Bold 15px") .. {
 	InitCommand=cmd(horizalign,left;x,SCREEN_CENTER_X-14;y,SCREEN_CENTER_Y-24;settext,"xxxx";shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000");maxwidth,180);
-	SetCommand=function(self) 
+	SetCommand=function(self)
 			local s = "---";
-			local song = GAMESTATE:GetCurrentSong(); 
+			local song = GAMESTATE:GetCurrentSong();
+			local course = GAMESTATE:GetCurrentCourse();
 			if song then
-				local s2 = song:GetDisplayArtist(); 
-				if s2 ~= "" then 
-					s = "/" .. s2; 
+				local s2 = song:GetDisplayArtist();
+				if s2 ~= "" then
+					s = "/" .. s2;
 				end;
-			end; 
+			end;
+			if course then
+				local trail = GAMESTATE:GetCurrentTrail( GAMESTATE:GetMasterPlayerNumber() );
+				local c2 = join( ", ", trail:GetArtists() );
+				if c2 ~= "" then
+					s = c2;
+				end;
+			end;
 			self:settext( s );
 		end;
 	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
@@ -218,13 +226,19 @@ t[#t+1] = LoadFont("_venacti Bold 15px") .. {
 	InitCommand=cmd(horizalign,right;x,SCREEN_CENTER_X+224;y,SCREEN_CENTER_Y-6;settext,"xxxx";shadowlengthx,0;shadowlengthy,2;shadowcolor,color("#000000");maxwidth,156);
 	SetCommand=function(self) 
 			local s = "---";
-			local song = GAMESTATE:GetCurrentSong(); 
+			local song = GAMESTATE:GetCurrentSong();
+			local course = GAMESTATE:GetCurrentCourse();
 			if song then
-				local s2 = song:GetGenre(); 
-				if s2 ~= "" then 
-						s = "_" .. s2; 
+				local s2 = song:GetGenre();
+				if s2 ~= "" then
+						s = "_" .. s2;
 				end;
-			end; 
+			end;
+			if course then
+				-- xxx: use localized text
+				local postfix = "Stages";
+				s = course:GetEstimatedNumStages() .. " " .. postfix;
+			end;
 			self:settext( s );
 		end;
 	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
@@ -242,11 +256,25 @@ t[#t+1] = Def.ActorFrame {
 	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 };
 
+t[#t+1] = Def.Quad{
+	Name="CourseContentsListMaskTop";
+	InitCommand=cmd(x,SCREEN_CENTER_X+176;y,SCREEN_CENTER_Y-56;setsize,SCREEN_WIDTH/2,128;clearzbuffer,true;zwrite,true;blend,'BlendMode_NoEffect');
+	ShowCommand=cmd(bouncebegin,0.3;zoomy,1);
+	HideCommand=cmd(linear,0.3;zoomy,0);
+};
+
+t[#t+1] = Def.Quad{
+	Name="CourseContentsListMaskBottom";
+	InitCommand=cmd(x,SCREEN_CENTER_X+176;y,SCREEN_CENTER_Y+172;setsize,SCREEN_WIDTH/2,128;zwrite,true;blend,'BlendMode_NoEffect');
+	ShowCommand=cmd(bouncebegin,0.3;zoomy,1);
+	HideCommand=cmd(linear,0.3;zoomy,0);
+};
+
 t[#t+1] = Def.CourseContentsList {
 	MaxSongs = 5;
 
 	InitCommand=cmd(x,SCREEN_CENTER_X+160;y,SCREEN_CENTER_Y+91);
-	OnCommand=cmd(zoomy,0;bounceend,0.3;zoom,1);
+	OnCommand=cmd(zoomy,0;bounceend,0.3;zoom,1;ztest,true);
 	OffCommand=cmd(zoomy,1;bouncebegin,0.3;zoomy,0);
 	ShowCommand=cmd(bouncebegin,0.3;zoomy,1);
 	HideCommand=cmd(linear,0.3;zoomy,0);
@@ -260,7 +288,7 @@ t[#t+1] = Def.CourseContentsList {
 	CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
 
 	Display = Def.ActorFrame { 
-		InitCommand=cmd(setsize,270,44);
+		InitCommand=cmd(setsize,270,34);
 
 		LoadActor("_CourseEntryDisplay bar");
 
@@ -292,12 +320,12 @@ t[#t+1] = Def.CourseContentsList {
 		};
 
 		LoadFont("Common","normal") .. {
-			OnCommand=cmd(x,SCREEN_CENTER_X-192;y,SCREEN_CENTER_Y-230;horizalign,right;shadowlength,0);
+			OnCommand=cmd(x,-(SCREEN_CENTER_X*0.2);y,SCREEN_CENTER_Y-230;zoom,0.75;horizalign,right;shadowlength,0);
 			SetSongCommand=function(self, params) self:settext(params.Modifiers); end;
 		};
 
 		LoadFont("CourseEntryDisplay","difficulty") .. {
-			OnCommand=cmd(x,SCREEN_CENTER_X-222;y,-8;shadowlength,0;settext,"1");
+			OnCommand=cmd(x,SCREEN_CENTER_X-254;y,1;shadowlength,0;settext,"1");
 			DifficultyChangedCommand=function(self, params)
 				if params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber() then return end
 				self:diffuse( CourseDifficutlyToColor(params.Difficulty) );
@@ -362,26 +390,6 @@ t[#t+1] = Def.ActorFrame{
 	end;
 	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 };
-
-t[#t+1] = LoadFont("common normal") .. {
-	InitCommand=cmd(x,SCREEN_CENTER_X+262;y,SCREEN_CENTER_Y);
-	OnCommand=cmd(shadowlength,0;addx,-SCREEN_WIDTH;bounceend,0.5;addx,SCREEN_WIDTH);
-	OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH);
-
-	SetCommand=function(self)
-		local Course = GAMESTATE:GetCurrentCourse()
-		if not Course then
-			self:visible(false)
-			return
-		end
-
-		self:visible(true)
-		self:settext( Course:GetEstimatedNumStages() );
-	end;
-
-	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
-};
-
 
 if not GAMESTATE:IsCourseMode() then
 	t[#t+1] = Def.DifficultyList {
