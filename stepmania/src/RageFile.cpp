@@ -340,6 +340,12 @@ public:
 		return 1;
 	}
 
+	static int Seek( T* p, lua_State *L )
+	{
+		lua_pushinteger( L, p->Seek( IArg(1) ) );
+		return 1;
+	}
+
 	static int GetLine( T* p, lua_State *L )
 	{
 		RString string;
@@ -354,14 +360,22 @@ public:
 		return 1;
 	}
 
+	static int GetError( T* p, lua_State *L )
+	{
+		lua_pushstring( L, p->GetError() );
+		return 1;
+	}
+
 	LunaRageFile() 
 	{
 		ADD_METHOD( Open );
 		ADD_METHOD( Close );
 		ADD_METHOD( Write );
 		ADD_METHOD( Read );
+		ADD_METHOD( Seek );
 		ADD_METHOD( GetLine );
 		ADD_METHOD( PutLine );
+		ADD_METHOD( GetError );
 		ADD_METHOD( destroy );
 	}
 };
