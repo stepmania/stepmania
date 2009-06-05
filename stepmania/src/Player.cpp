@@ -135,7 +135,6 @@ ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
 ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads" );
 ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
 ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
-ThemeMetric<bool> IMMEDIATE_CHECKPOINT_MISS	( "Player", "ImmediateCheckpointMiss" );
 
 
 float Player::GetWindowSeconds( TimingWindow tw )
@@ -2612,8 +2611,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 					continue;
 
 				viColsWithHold.push_back( iTrack );
-				if( ( IMMEDIATE_CHECKPOINT_MISS && tn.HoldResult.bHeld ) || 
-				   ( !IMMEDIATE_CHECKPOINT_MISS && tn.HoldResult.fLife > 0 ) )
+				if( tn.HoldResult.fLife > 0 )
 				{
 					++iNumHoldsHeldThisRow;
 					++tn.HoldResult.iCheckpointsHit;
