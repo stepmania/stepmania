@@ -32,6 +32,9 @@
 		hex (<code>"#FFFFFFFF"</code>) or 0..1 values (<code>"1.0,1.0,1.0,1.0"</code>),
 		in RGBA order.
 	</Function>
+	<Function name='ConnectToServer' return='bool' arguments='string sAddress'>
+		Tries to connect to the server at <code>sAddress</code>.
+	</Function>
 	<Function name='DayOfMonth' return='int' arguments=''>
 		Returns the current day of the month.
 	</Function>
@@ -65,6 +68,10 @@
 	<Function name='IsNetSMOnline' return='bool' arguments=''>
 		Returns <code>true</code> if connected to StepMania Online.
 	</Function>
+	<Function name='IsSMOnlineLoggedIn' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if Player <code>pn</code> is logged on to
+		a SMOnline server.
+	</Function>
 	<Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
 		Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
 	</Function>
@@ -73,6 +80,12 @@
 	</Function>
 	<Function name='MonthOfYear' return='int' arguments=''>
 		Returns the current month of the year.
+	</Function>
+	<Function name='MonthToLocalizedString' return='string' arguments='Month m'>
+		Returns Month <code>m</code> as a localized string.
+	</Function>
+	<Function name='MonthToString' return='string' arguments='Month m'>
+		Returns Month <code>m</code> as a string.
 	</Function>
 	<Function name='Second' return='int' arguments=''>
 		Returns the current second.
@@ -1575,19 +1588,78 @@
 		Broadcasts a system message.
 	</Function>
 </Class>
+<Class name='ScreenNameEntryTraditional'>
+	<Function name='Backspace' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if Player <code>pn</code> backspaced successfully.
+	</Function>
+	<Function name='EnterKey' return='bool' arguments='PlayerNumber pn, string sKey'>
+		Returns <code>true</code> if Player <code>pn</code> was able to add <code>sKey</code> to their name.
+	</Function>
+	<Function name='Finish' return='bool' arguments='PlayerNumber pn'>
+		Attempts to finish Player <code>pn</code> and returns <code>true</code>
+		if successful.
+	</Function>
+	<Function name='GetAnyEntering' return='bool' arguments=''>
+		Returns <code>true</code> if anyone is entering their name.
+	</Function>
+	<Function name='GetAnyStillEntering' return='bool' arguments=''>
+		Returns <code>true</code> if anyone is still entering their name.<br />
+		(As opposed to those who are Finalized; see <Link function="GetFinalized" />)
+	</Function>
+	<Function name='GetEnteringName' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if Player <code>pn</code> is entering their name.
+	</Function>
+	<Function name='GetFinalized' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if Player <code>pn</code> is finished entering their name.
+	</Function>
+	<Function name='GetSelection' return='string' arguments='PlayerNumber pn'>
+		Gets the currently selected letter of Player <code>pn</code>.
+	</Function>
+</Class>
 <Class name='ScreenOptions'>
 	<Function name='GetCurrentRow' return='int' arguments='PlayerNumber pn'>
 		Returns the current row that player <code>pn</code> is on.
 	</Function>
 </Class>
+<Class name='ScreenPlayerOptions'>
+	<Function name='GetGoToOptions' return='bool' arguments=''>
+		Returns <code>true</code> if we are going to PlayerOptions.
+	</Function>
+</Class>
 <Class name='ScreenProfileLoad'>
+	<Function name='Continue' return='void' arguments=''>
+		Continues to the next screen.
+	</Function>
 	<Function name='HaveProfileToLoad' return='bool' arguments=''>
 		Returns <code>true</code> if there is a profile that can be loaded.
 	</Function>
 </Class>
 <Class name='ScreenProfileSave'>
+	<Function name='Continue' return='void' arguments=''>
+		Continues to the next screen.
+	</Function>
 	<Function name='HaveProfileToSave' return='bool' arguments=''>
 		Returns <code>true</code> if there is a profile that can be saved.
+	</Function>
+</Class>
+<Class name='ScreenSelectProfile'>
+	<Function name='Cancel' return='void' arguments=''>
+		Tells the screen to go to the previous screen.
+	</Function>
+	<Function name='Finish' return='bool' arguments=''>
+		Attempts to finish the screen and returns <code>true</code>
+		if successful.
+	</Function>
+	<Function name='GetProfileIndex' return='int' arguments='PlayerNumber pn'>
+		Returns the profile index of the specified Player.
+	</Function>
+	<Function name='SetProfileIndex' return='bool' arguments='PlayerNumber pn, int iProfileIndex'>
+		Sets the profile index of Player <code>pn</code> to <code>iProfileIndex</code>.
+	</Function>
+</Class>
+<Class name='ScreenWithMenuElements'>
+	<Function name='Cancel' return='void' arguments=''>
+		Tells the screen to go to the previous screen.
 	</Function>
 </Class>
 <Class name='Song'>
@@ -1608,6 +1680,9 @@
 	</Function>
 	<Function name='GetDisplayMainTitle' return='string' arguments=''>
 		Returns the displayed main title of the song.
+	</Function>
+	<Function name='GetDisplaySubTitle' return='string' arguments=''>
+		Returns the displayed subtitle of the song.
 	</Function>
 	<Function name='GetGenre' return='string' arguments=''>
 		Returns the genre of the song.
@@ -1635,6 +1710,9 @@
 	</Function>
 	<Function name='GetTranslitMainTitle' return='string' arguments=''>
 		Returns the transliterated main title of the song.
+	</Function>
+	<Function name='GetTranslitSubTitle' return='string' arguments=''>
+		Returns the transliterated subtitle of the song.
 	</Function>
 	<Function name='HasStepsTypeAndDifficulty' return='bool' arguments='StepsType st, Difficulty d'>
 		Returns <code>true</code> if the song has steps for the specified difficulty in <code>st</code>.
@@ -1700,6 +1778,9 @@
 	</Function>
 	<Function name='GetSongColor' return='color' arguments='Song s'>
 		Returns the song color of song <code>s</code>.
+	</Function>
+	<Function name='GetSongFromSteps' return='Song' arguments='Steps st'>
+		Returns a Song given a set of Steps <code>st</code>.
 	</Function>
 	<Function name='GetSongGroupColor' return='color' arguments='string sGroupName'>
 		Returns the song group color of <code>sGroupName</code>.
@@ -1850,6 +1931,23 @@
 		Returns <code>true</code> if the steps were automatically generated.
 	</Function>
 </Class>
+<Class name='StepsDisplay'>
+	<Function name='Load' return='void' arguments='string sMetricsGroup'>
+		Loads the StepsDisplay commands from the Metrics in group <code>sMetricsGroup</code>.
+	</Function>
+	<Function name='SetFromGameState' return='void' arguments='PlayerNumber pn'>
+		Sets the StepsDisplay from the GameState using Player <code>pn</code>.
+	</Function>
+	<Function name='SetFromSteps' return='void' arguments='PlayerNumber pn, Steps pSteps'>
+		Sets the StepsDisplay based on Steps <code>pSteps</code>.
+	</Function>
+	<Function name='SetFromStepsTypeAndMeterAndDifficulty' return='void' arguments='StepsType st, int iMeter, Difficulty dc'>
+		Sets the StepsDisplay based on the passed in StepsType, <code>iMeter</code>, and Difficulty.
+	</Function>
+	<Function name='SetFromTrail' return='void' arguments='Trail pTrail'>
+		Sets the StepsDisplay based on Trail <code>pTrail</code>.
+	</Function>
+</Class>
 <Class name='Style'>
 	<Function name='GetName' return='string' arguments=''>
 		Returns the name of the Style.
@@ -1915,17 +2013,51 @@
 	</Function>
 </Class>
 <Class name='UnlockEntry'>
+	<Function name='code' return='void' arguments='string m_sEntryID'>
+		Sets the UnlockEntry's ID to <code>m_sEntryID</code>.
+	</Function>
+	<Function name='course' return='void' arguments='string sCourseName'>
+		Sets the UnlockEntry's course to <code>sCourseName</code>.<br />
+		Example: <code>course,"Driven"</code>
+	</Function>
 	<Function name='GetDescription' return='string' arguments=''>
 		Returns the unlock description.
 	</Function>
 	<Function name='GetRequirement' return='UnlockRequirement' arguments=''>
 		Returns the UnlockRequirement.
 	</Function>
+	<Function name='GetRequirePassHardSteps' return='bool' arguments=''>
+		Returns <code>true</code> if the UnlockEntry requires you to pass Hard steps.
+	</Function>
 	<Function name='GetSong' return='Song' arguments=''>
 		Returns the Song related to the UnlockEntry.
 	</Function>
+	<Function name='GetUnlockRewardType' return='UnlockRewardType' arguments=''>
+		Returns the UnlockRewardType for this entry.
+	</Function>
 	<Function name='IsLocked' return='bool' arguments=''>
 		Returns <code>true</code> if the UnlockEntry is locked.
+	</Function>
+	<Function name='mod' return='void' arguments='string sModifier'>
+		Sets the UnlockEntry's modifier to <code>sModifier</code>.
+	</Function>
+	<Function name='require' return='void' arguments='UnlockRequirement ut, float m_fRequirement'>
+		
+	</Function>
+	<Function name='requirepasshardsteps' return='void' arguments=''>
+		Makes the UnlockEntry require passing Hard steps.
+	</Function>
+	<Function name='roulette' return='void' arguments=''>
+		Makes the UnlockEntry hide in Roulette.
+	</Function>
+	<Function name='song' return='void' arguments='string sSongName'>
+		Sets the UnlockEntry's song to <code>sSongName</code>.<br />
+		<code>sSongName</code> also requires the group.<br />
+		Example: <code>song,"In The Groove/Pandemonium"</code>
+	</Function>
+	<Function name='steps' return='void' arguments='string sSong, string sSteps'>
+		Sets the UnlockEntry to unlock a specified song's steps.<br />
+		Example: <code>steps,"In The Groove/Pandemonium","expert"</code>
 	</Function>
 </Class>
 <Class name='UnlockManager'>
@@ -1967,6 +2099,14 @@
 <Class name='WheelBase'>
 	<Function name='GetWheelItem' return='WheelItemBaseData' arguments='int iIndex'>
 		Returns the WheelItem at index <code>iIndex</code>.
+	</Function>
+</Class>
+<Class name='WorkoutGraph'>
+	<Function name='SetFromCurrentWorkout' return='void' arguments=''>
+		Sets the WorkoutGraph from the current Workout.
+	</Function>
+	<Function name='SetFromGameStateAndHighlightSong' return='void' arguments='int iSongIndex'>
+		Sets the WorkoutGraph from GameState and song index <code>iSongIndex</code>.
 	</Function>
 </Class>
 </Classes>
