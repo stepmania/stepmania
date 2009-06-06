@@ -237,6 +237,9 @@
 	<Function name='addz' return='void' arguments='float zPos'>
 		Adds <code>zPos</code> to the Actor's current z position.
 	</Function>
+	<Function name='align' return='void' arguments='float h, float v'>
+		Sets the alignment of an Actor, where <code>h</code> and <code>v</code> are in the range 0..1.
+	</Function>
 	<Function name='animate' return='void' arguments='bool b'>
 		Sets whether or not the Actor should animate.
 	</Function>
@@ -267,6 +270,12 @@
 	</Function>
 	<Function name='blend' return='void' arguments='BlendMode mode'>
 		Sets the Actor to use the specified blend mode.
+	</Function>
+	<Function name='bob' return='void' arguments=''>
+		Makes the Actor bob up and down. Can use <Link function='effectmagnitude' /> to define different bobbing behavior.
+	</Function>
+	<Function name='Center' return='void' arguments=''>
+		Centers an Actor.
 	</Function>
 	<Function name='cropbottom' return='void' arguments='float percent'>
 		Crops <code>percent</code> of the Actor from the bottom where <code>percent</code> is in the range 0..1.
@@ -355,6 +364,9 @@
 	<Function name='finishtweening' return='void' arguments=''>
 		Finishes up an Actor's tween immediately.
 	</Function>
+	<Function name='FullScreen' return='void' arguments=''>
+		Stretches an Actor to fill the entire screen.
+	</Function>
 	<Function name='getaux' return='float' arguments=''>
 		<!-- XXX: What is aux? -->
 		Returns the Actor's aux value.
@@ -376,6 +388,12 @@
 	</Function>
 	<Function name='GetWidth' return='float' arguments=''>
 		Returns the Actor's current width.
+	</Function>
+	<Function name='GetZoomedHeight' return='float' arguments=''>
+		Returns the zoomed height of an Actor.
+	</Function>
+	<Function name='GetZoomedWidth' return='float' arguments=''>
+		Returns the zoomed width of an Actor.
 	</Function>
 	<Function name='glow' return='void' arguments='color c'>
 		Sets the Actor's glow color.
@@ -499,8 +517,17 @@
 	<Function name='GetChildren' return='{Actor}' arguments=''>
 		Returns an table of all the children in the ActorFrame.
 	</Function>
+	<Function name='GetDrawFunction' return='LuaReference' arguments=''>
+		Gets the ActorFrame's Draw function.
+	</Function>
 	<Function name='GetNumChildren' return='int' arguments=''>
 		Returns the number of children in the ActorFrame.
+	</Function>
+	<Function name='SetDrawByZPosition' return='void' arguments='bool b'>
+		Sets if the ActorFrame should draw by Z position.
+	</Function>
+	<Function name='SetDrawFunction' return='void' arguments='LuaReference DrawFunction'>
+		Sets the ActorFrame's Draw function to the specified Lua function.
 	</Function>
 	<Function name='SetFOV' return='void' arguments='float fFOV'>
 		Sets the field of view for the ActorFrame.
@@ -538,8 +565,48 @@
 	</Function>
 </Class>
 <Class name='ActorScroller'>
+	<Function name='getsecondtodestination' return='float' arguments=''>
+		Returns the number of seconds until the scroller reaches its destination.
+	</Function>
+	<Function name='PositionItems' return='void' arguments=''>
+		Positions the scroller items.
+	</Function>
+	<Function name='scrollthroughallitems' return='void' arguments=''>
+		Scrolls through all the items in the scroller.
+	</Function>
+	<Function name='scrollwithpadding' return='void' arguments='float fItemPaddingStart, float fItemPaddingEnd'>
+		Scrolls through all the items in the scroller with padding at the beginning and end.
+	</Function>
+	<Function name='SetCurrentAndDestinationItem' return='void' arguments='float fItemIndex'>
+		Sets the item the scroller should scroll to next and makes it the current item.
+	</Function>
+	<Function name='SetDestinationItem' return='void' arguments='float fItemIndex'>
+		Sets the item the scroller should scroll to next.
+	</Function>
+	<Function name='setfastcatchup' return='void' arguments='bool bOn'>
+		Sets if the scroller should catch up fast.
+	</Function>
 	<Function name='SetLoop' return='void' arguments='bool bLoop'>
 		Specifies if the scroller should loop or not.
+	</Function>
+	<Function name='SetMask' return='void' arguments='float fWidth, float fHeight'>
+		Sets the scroller's mask to a Quad that is <code>fWidth</code> by <code>fHeight</code> pixels.
+	</Function>
+	<Function name='setnumsubdivisions' return='void' arguments='int iNumSubdivisions'>
+		Sets the number of subdivisions in the scroller.
+	</Function>
+	<Function name='SetPauseCountdownSeconds' return='void' arguments='float fSecs'>
+		Sets the scroller's pause countdown to <code>fSecs</code>.
+	</Function>
+	<Function name='SetSecondsPauseBetweenItems' return='void' arguments='float fSeconds'>
+		Sets the scroller's pause between items to <code>fSeconds</code>.
+	</Function>
+	<Function name='setsecondsperitem' return='void' arguments='float fSeconds'>
+		Sets how many seconds the scroller should spend on each item.<br />
+		A value of <code>0</code> means the scroller will not scroll.
+	</Function>
+	<Function name='SetTransformFromFunction' return='void' arguments='LuaReference ScrollerFunction'>
+		Sets the scroller's transform function to the specified Lua function.
 	</Function>
 	<Function name='SetTransformFromHeight' return='void' arguments='float fItemHeight'>
 		Sets the scroller's transform function from <code>fItemHeight</code>.
@@ -568,6 +635,18 @@
 	</Function>
 </Class>
 <Class name='Banner'>
+	<Function name='LoadBackgroundFromUnlockEntry' return='void' arguments='UnlockEntry pUE'>
+		Loads the background from an UnlockEntry.
+	</Function>
+	<Function name='LoadBannerFromUnlockEntry' return='void' arguments='UnlockEntry pUE'>
+		Loads the banner from an UnlockEntry.
+	</Function>
+	<Function name='LoadCardFromCharacter' return='void' arguments='Character pCharacter'>
+		Loads the card image from the specified Character.
+	</Function>
+	<Function name='LoadFromCachedBanner' return='void' arguments='string sPath'>
+		
+	</Function>
 	<Function name='LoadFromCourse' return='void' arguments='Course c'>
 		Loads a Banner from a specified Course.
 	</Function>
@@ -576,6 +655,15 @@
 	</Function>
 	<Function name='LoadFromSongGroup' return='void' arguments='string s'>
 		Loads a Banner from a specified Song Group.
+	</Function>
+	<Function name='LoadIconFromCharacter' return='void' arguments='Character pCharacter'>
+		Loads an icon from the specified Character.
+	</Function>
+	<Function name='scaletoclipped' return='void' arguments='float fWidth, float fHeight'>
+		See <Link class='Sprite' function='scaletoclipped' />.
+	</Function>
+	<Function name='ScaleToClipped' return='void' arguments='float fWidth, float fHeight'>
+		See <Link class='Sprite' function='scaletoclipped' />.
 	</Function>
 </Class>
 <Class name='BitmapText'>
@@ -630,6 +718,27 @@
 		Wrap the unzoomed text at <code>iWidth</code> pixels. If you <Link class='Actor' function='zoom' /> or <Link class='Actor' function='zoomx' /> by <code>x</code> and you want the text wrapped at <code>width</code>, then you should use <code>wrapwidthpixels(width/x)</code>.
 	</Function>
 </Class>
+<Class name='BPMDisplay'>
+	<Function name='SetFromGameState' return='void' arguments=''>
+		Sets the BPMDisplay from the GameState.
+	</Function>
+</Class>
+<Class name='ComboGraph'>
+	<Function name='Load' return='void' arguments='string sMetricsGroup'>
+		Loads the ComboGraph commands from the Metrics in group <code>sMetricsGroup</code>.
+	</Function>
+	<Function name='Set' return='void' arguments='StageStats s, PlayerStageStats pss'>
+		Sets the values of the ComboGraph using the specified StageStats and PlayerStageStats.
+	</Function>
+</Class>
+<Class name='ControllerStateDisplay'>
+	<Function name='LoadGameController' return='void' arguments='string sType, GameController gc'>
+		Loads the ControllerStateDisplay from the specified GameController.
+	</Function>
+	<Function name='LoadMultiPlayer' return='void' arguments='string sType, MultiPlayer mp'>
+		Loads the ControllerStateDisplay from the specified MultiPlayer.
+	</Function>
+</Class>
 <Class name='Course'>
 	<Function name='GetAllTrails' return='{Trail}' arguments=''>
 		Returns a table of all the Trails in the Course.
@@ -648,6 +757,9 @@
 	</Function>
 	<Function name='GetEstimatedNumStages' return='int' arguments=''>
 		Returns the estimated number of stages for the Course.
+	</Function>
+	<Function name='GetGoalSeconds' return='float' arguments=''>
+		Returns the goal seconds for the Course.
 	</Function>
 	<Function name='GetGroupName' return='string' arguments=''>
 		Returns the Course's group name.
@@ -674,6 +786,11 @@
 		Returns <code>true</code> if the Course is Endless.
 	</Function>
 </Class>
+<Class name='CourseContentsList'>
+	<Function name='SetFromGameState' return='void' arguments=''>
+		Sets the CourseContentsList from the GameState.
+	</Function>
+</Class>
 <Class name='CourseEntry'>
 	<Function name='GetSong' return='Song' arguments=''>
 		Returns the Song that this CourseEntry corresponds to.
@@ -698,9 +815,59 @@
 		Return the <Link class='Character' /> corresponding to <code>sID</code>.
 	</Function>
 </Class>
+<Class name='DifficultyIcon'>
+	<Function name='SetFromDifficulty' return='void' arguments='Difficulty dc'>
+		Sets the DifficultyIcon's state from the difficulty passed in.
+	</Function>
+	<Function name='SetFromSteps' return='void' arguments='PlayerNumber pn, Steps pSteps'>
+		Sets the DifficultyIcon's Player to <code>pn</code>,
+		then sets the DifficultyIcon's state from the difficulty of Steps <code>pSteps</code>
+	</Function>
+	<Function name='SetFromTrail' return='void' arguments='PlayerNumber pn, Trail pTrail'>
+		Sets the DifficultyIcon's Player to <code>pn</code>,
+		then sets the DifficultyIcon's state from the difficulty of Trail <code>pTrail</code>
+	</Function>
+	<Function name='SetPlayer' return='void' arguments='PlayerNumber pn'>
+		Sets the DifficultyIcon's Player to <code>pn</code>.
+	</Function>
+	<Function name='Unset' return='void' arguments=''>
+		Blanks the DifficultyIcon.
+	</Function>
+</Class>
+<Class name='DifficultyList'>
+	<Function name='setfromgamestate' return='void' arguments=''>
+		Sets the DifficultyList from the GameState.
+	</Function>
+</Class>
 <Class name='Game'>
 	<Function name='GetName' return='string' arguments=''>
 		Returns the name of the game such as &quot;dance&quot; or &quot;pump&quot;.
+	</Function>
+</Class>
+<Class name='GameCommand'>
+	<Function name='GetIndex' return='int' arguments=''>
+		Returns the index of this item.
+	</Function>
+	<Function name='GetMultiPlayer' return='MultiPlayer' arguments=''>
+		Returns any MultiPlayer that may have been set.
+	</Function>
+	<Function name='GetName' return='string' arguments=''>
+		Returns the choice name.
+	</Function>
+	<Function name='GetProfileID' return='string' arguments=''>
+		Returns any Profile ID that may have been set.
+	</Function>
+	<Function name='GetSong' return='Song' arguments=''>
+		Returns any Song that may have been set.
+	</Function>
+	<Function name='GetSongGroup' return='string' arguments=''>
+		Returns the name of any song group that may have been set.
+	</Function>
+	<Function name='GetStyle' return='Style' arguments=''>
+		Returns any Style that may have been set.
+	</Function>
+	<Function name='GetText' return='string' arguments=''>
+		Returns the display text.
 	</Function>
 </Class>
 <Class name='GameSoundManager'>
@@ -919,8 +1086,91 @@
 	<Function name='PlayersCanJoin' return='bool' arguments=''>
 		Returns <code>true</code> if players can join the game.
 	</Function>
+	<Function name='Reset' return='void' arguments=''>
+		Resets the GameState.
+	</Function>
 	<Function name='SaveLocalData' return='void' arguments=''>
 		Saves the bookkeeping and machine profile data.
+	</Function>
+	<Function name='SetCurrentCourse' return='void' arguments='Course course'>
+		Sets the current Course to <code>course</code>.
+	</Function>
+	<Function name='SetCurrentSong' return='void' arguments='Song song'>
+		Sets the current Song to <code>song</code>.
+	</Function>
+	<Function name='SetCurrentSteps' return='void' arguments='Steps steps'>
+		Sets the current Steps to <code>steps</code>.
+	</Function>
+	<Function name='SetCurrentTrail' return='void' arguments='Trail trail'>
+		Sets the current Trail to <code>trail</code>.
+	</Function>
+	<Function name='SetJukeboxUsesModifiers' return='void' arguments='bool bUseMods'>
+		Sets if the Jukebox should use modifiers.
+	</Function>
+	<Function name='SetNumMultiplayerNoteFields' return='void' arguments='int iFields'>
+		Sets the number of multiplayer notefields to <code>iFields</code>
+	</Function>
+	<Function name='SetPreferredDifficulty' return='void' arguments='PlayerNumber pn, Difficulty dc'>
+		Sets the preferred difficulty of Player <code>pn</code> to Difficulty <code>dc</code>.
+	</Function>
+	<Function name='SetPreferredSong' return='void' arguments='Song song'>
+		Sets the preferred Song to <code>song</code>.
+	</Function>
+	<Function name='SetPreferredSongGroup' return='void' arguments='String sGroup'>
+		Sets the preferred song group to <code>sGroup</code>.
+	</Function>
+	<Function name='SetSongOptions' return='void' arguments='ModsLevel m, string so'>
+		Sets the Song Options from <code>so</code> using ModsLevel <code>m</code>.
+	</Function>
+	<Function name='SetTemporaryEventMode' return='void' arguments='bool bOn'>
+		Turns temporary Event Mode on or off, depending on <code>bOn</code>.
+	</Function>
+	<Function name='ShowW1' return='void' arguments='bool bOn'>
+		Determines if Judgment W1 should be shown based on <code>bOn</code>.
+	</Function>
+</Class>
+<Class name='GradeDisplay'>
+	<Function name='Load' return='void' arguments='string sMetricsGroup'>
+		Loads the GradeDisplay commands from the Metrics in group <code>sMetricsGroup</code>.
+	</Function>
+	<Function name='SetGrade' return='void' arguments='Grade g'>
+		Sets the GradeDisplay to show Grade <code>g</code>.
+	</Function>
+</Class>
+<Class name='GraphDisplay'>
+	<Function name='Load' return='void' arguments='string sMetricsGroup'>
+		Loads the GraphDisplay commands from the Metrics in group <code>sMetricsGroup</code>.
+	</Function>
+	<Function name='Set' return='void' arguments='StageStats s, PlayerStageStats pss'>
+		Sets the values of the GraphDisplay using the specified StageStats and PlayerStageStats.
+	</Function>
+</Class>
+<Class name='GrooveRadar'>
+	<Function name='SetEmpty' return='void' arguments='PlayerNumber pn'>
+		Sets the GrooveRadar values for Player <code>pn</code> to empty.
+	</Function>
+	<Function name='SetFromRadarValues' return='void' arguments='PlayerNumber pn, RadarValues rv'>
+		Sets the GrooveRadar values for Player <code>pn</code> from RadarValues <code>rv</code>
+	</Function>
+	<Function name='tweenoffscreen' return='void' arguments=''>
+		Tweens the GrooveRadar off screen.
+	</Function>
+	<Function name='tweenonscreen' return='void' arguments=''>
+		Tweens the GrooveRadar on screen.
+	</Function>
+</Class>
+<Class name='HelpDisplay'>
+	<Function name='gettips' return='{string}' arguments=''>
+		Returns two tables representing the tips and alternate tips in the HelpDisplay.
+	</Function>
+	<Function name='SetSecsBetweenSwitches' return='void' arguments='float fSeconds'>
+		Sets the seconds between switches of tips to <code>fSeconds</code>.
+	</Function>
+	<Function name='settips' return='void' arguments='string tips, string altTips'>
+		Sets the HelpDisplay's tips using <code>tips</code> (and optionally <code>altTips</code>).
+	</Function>
+	<Function name='SetTipsColonSeparated' return='void' arguments='string sTips'>
+		Sets the HelpDisplay's text from <code>sTips</code> using colons to separate new sections.
 	</Function>
 </Class>
 <Class name='HighScore'>
@@ -938,6 +1188,14 @@
 	</Function>
 	<Function name='GetSurvivalSeconds' return='float' arguments=''>
 		Returns the number of seconds survived associated with the high score.
+	</Function>
+</Class>
+<Class name='HighScoreList'>
+	<Description>
+		You can get a HighScoreList using <Link class='Profile' function='GetHighScoreList' />.
+	</Description>
+	<Function name='GetHighScores' return='{HighScore}' arguments=''>
+		Returns a table of the high scores.
 	</Function>
 </Class>
 <Class name='LifeMeter'>
@@ -1001,6 +1259,11 @@
 		Sets the model's default animation to <code>sAnimation</code> at <code>fPlayRate</code> speed (default 1.0).
 	</Function>
 </Class>
+<Class name='ModIconRow'>
+	<Function name='Load' return='void' arguments='string sMetricsGroup, PlayerNumber pn'>
+		Loads the ModIconRow of Player <code>pn</code> from the Metrics in group <code>sMetricsGroup</code>.
+	</Function>
+</Class>
 <Class name='NoteSkinManager'>
 	<Function name='GetMetricA' return='ActorCommand' arguments='string sElement, string sValue'>
 		Returns a command from the specified element and value.
@@ -1019,6 +1282,16 @@
 	</Function>
 	<Function name='LoadActor' return='Actor' arguments='string sButton, string sElement'>
 		Returns the actor for the specified <code>sButton sElement</code>.
+	</Function>
+</Class>
+<Class name='PaneDisplay'>
+	<Function name='SetFromGameState' return='void' arguments=''>
+		Sets the PaneDisplay from the GameState.
+	</Function>
+</Class>
+<Class name='PercentageDisplay'>
+	<Function name='LoadFromStats' return='void' arguments='PlayerState pPlayerState, PlayerStageStats pPlayerStageStats'>
+		Sets the PaneDisplay from the specified PlayerState and PlayerStageStats.
 	</Function>
 </Class>
 <Class name='PlayerInfo'>
@@ -1069,11 +1342,17 @@
 	<Function name='GetPersonalHighScoreIndex' return='int' arguments=''>
 		Returns the personal high score index for this performance.
 	</Function>
+	<Function name='GetPlayedSteps' return='{Steps}' arguments=''>
+		Returns a table of played steps.
+	</Function>
 	<Function name='GetPercentDancePoints' return='float' arguments=''>
 		Returns the player's Dance Point percentage.
 	</Function>
 	<Function name='GetPossibleDancePoints' return='int' arguments=''>
 		Returns the number of possible Dance Points.
+	</Function>
+	<Function name='GetPossibleSteps' return='{Steps}' arguments=''>
+		Returns a table of possible steps.
 	</Function>
 	<Function name='GetScore' return='int' arguments=''>
 		Returns the score.
@@ -1189,10 +1468,31 @@
 	<Function name='Close' return='void' arguments=''>
 		Closes the file and releases it from memory.
 	</Function>
+	<Function name='destroy' return='void' arguments=''>
+		Safely deletes the file handle.
+	</Function>
+	<Function name='GetError' return='string' arguments=''>
+		Gets the last error message and returns it.
+	</Function>
+	<Function name='GetLine' return='string' arguments=''>
+		Gets a line and returns it.
+	</Function>
 	<Function name='Open' return='bool' arguments='string sPath, int iAccessType'>
 		Opens a file at <code>sPath</code> (relative to the StepMania root directory).<br />
 		<code>iAccessType</code> can be set to read (<code>1</code>), write (<code>2</code>), stream (<code>4</code>) or flush to disk on close (<code>8</code>).<br />
 		These can also be combined with addition. For example, to set up read and write, set <code>iAccessType</code> to <code>3</code> (1+2).
+	</Function>
+	<Function name='PutLine' return='int' arguments='string s'>
+		Puts a new line in the file.
+	</Function>
+	<Function name='Read' return='string' arguments=''>
+		Returns a string containing the entire contents of the file.
+	</Function>
+	<Function name='Seek' return='int' arguments=''>
+		Seeks to a position in the file and returns the new position.
+	</Function>
+	<Function name='Write' return='int' arguments='string str'>
+		Writes a file with the contents of <code>str</code>.
 	</Function>
 </Class>
 <Class name='RageInput'>
