@@ -409,10 +409,7 @@ static bool NeedsHoldJudging( const TapNote &tn )
 	{
 	DEFAULT_FAIL( tn.type );
 	case TapNote::hold_head:
-		if( tn.HoldResult.hns == HNS_None )
-			return true;
-		else
-			return false;
+		return tn.HoldResult.hns == HNS_None;
 	case TapNote::tap:
 	case TapNote::hold_tail:
 	case TapNote::mine:
