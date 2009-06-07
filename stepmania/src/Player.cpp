@@ -738,7 +738,7 @@ void Player::Update( float fDeltaTime )
 			{
 				if( m_vAlterMap[i].inpMain == GameI )
 				{
-					bIsHoldingButton = bIsHoldingButton | INPUTMAPPER->IsBeingPressed( m_vAlterMap[i].inpAlt );
+					bIsHoldingButton = bIsHoldingButton || INPUTMAPPER->IsBeingPressed( m_vAlterMap[i].inpAlt );
 				}
 			}
 		}
