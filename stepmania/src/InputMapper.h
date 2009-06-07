@@ -174,20 +174,20 @@ public:
 	void AutoMapJoysticksForCurrentGame();
 	bool CheckForChangedInputDevicesAndRemap( RString &sMessageOut );
 
-	bool IsMapped( const DeviceInput &DeviceI );
+	bool IsMapped( const DeviceInput &DeviceI ) const;
 	
-	bool DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI );	// return true if there is a mapping from device to pad
-	bool GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device
+	bool DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI ) const;	// return true if there is a mapping from device to pad
+	bool GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI ) const;	// return true if there is a mapping from pad to device
 
-	GameButton GameButtonToMenuButton( GameButton gb );
-	void MenuToGame( GameButton MenuI, PlayerNumber pn, vector<GameInput> &GameIout );
-	PlayerNumber ControllerToPlayerNumber( GameController controller );
+	GameButton GameButtonToMenuButton( GameButton gb ) const;
+	void MenuToGame( GameButton MenuI, PlayerNumber pn, vector<GameInput> &GameIout ) const;
+	PlayerNumber ControllerToPlayerNumber( GameController controller ) const;
 
-	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid );
-	float GetSecsHeld( GameButton MenuI, PlayerNumber pn );
+	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid ) const;
+	float GetSecsHeld( GameButton MenuI, PlayerNumber pn ) const;
 
-	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = NULL );
-	bool IsBeingPressed( GameButton MenuI, PlayerNumber pn );
+	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = NULL ) const;
+	bool IsBeingPressed( GameButton MenuI, PlayerNumber pn ) const;
 
 	void ResetKeyRepeat( const GameInput &GameI );
 	void ResetKeyRepeat( GameButton MenuI, PlayerNumber pn );
@@ -195,8 +195,8 @@ public:
 	void RepeatStopKey( const GameInput &GameI );
 	void RepeatStopKey( GameButton MenuI, PlayerNumber pn );
 
-	float GetLevel( const GameInput &GameI );
-	float GetLevel( GameButton MenuI, PlayerNumber pn );
+	float GetLevel( const GameInput &GameI ) const;
+	float GetLevel( GameButton MenuI, PlayerNumber pn ) const;
 
 	static InputDevice MultiPlayerToInputDevice( MultiPlayer mp );
 	static MultiPlayer InputDeviceToMultiPlayer( InputDevice id );

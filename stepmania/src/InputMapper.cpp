@@ -747,7 +747,7 @@ bool InputMapper::ClearFromInputMap( const GameInput &GameI, int iSlotIndex )
 	return true;
 }
 
-bool InputMapper::IsMapped( const DeviceInput &DeviceI )
+bool InputMapper::IsMapped( const DeviceInput &DeviceI ) const
 {
 	return g_tempDItoGI.find(DeviceI) != g_tempDItoGI.end();
 }
@@ -772,19 +772,19 @@ void InputMapper::UpdateTempDItoGI()
 	}
 }
 
-bool InputMapper::DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI ) // return true if there is a mapping from device to pad
+bool InputMapper::DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI ) const // return true if there is a mapping from device to pad
 {
 	GameI = g_tempDItoGI[DeviceI];
 	return GameI.controller != GameController_Invalid;
 }
 
-bool InputMapper::GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI )	// return true if there is a mapping from pad to device
+bool InputMapper::GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI ) const	// return true if there is a mapping from pad to device
 {
 	DeviceI = m_mappings.m_GItoDI[GameI.controller][GameI.button][iSlotNum];
 	return DeviceI.device != InputDevice_Invalid;
 }
 
-PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
+PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller ) const
 {
 	if( controller == GameController_Invalid )
 		return PLAYER_INVALID;
@@ -794,7 +794,7 @@ PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
 		return (PlayerNumber) controller;
 }
 
-GameButton InputMapper::GameButtonToMenuButton( GameButton gb )
+GameButton InputMapper::GameButtonToMenuButton( GameButton gb ) const
 {
 	return m_pInputScheme->GameButtonToMenuButton( gb );
 }
@@ -808,7 +808,7 @@ void InputMapper::SetJoinControllers( PlayerNumber pn )
 }
 
 
-void InputMapper::MenuToGame( GameButton MenuI, PlayerNumber pn, vector<GameInput> &GameIout )
+void InputMapper::MenuToGame( GameButton MenuI, PlayerNumber pn, vector<GameInput> &GameIout ) const
 {
 	if( g_JoinControllers != PLAYER_INVALID )
 		pn = PLAYER_INVALID;
@@ -817,7 +817,7 @@ void InputMapper::MenuToGame( GameButton MenuI, PlayerNumber pn, vector<GameInpu
 }
 
 
-bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp, const DeviceInputList *pButtonState )
+bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp, const DeviceInputList *pButtonState ) const
 {
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 	{
@@ -835,7 +835,7 @@ bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp, const 
 	return false;
 }
 
-bool InputMapper::IsBeingPressed( GameButton MenuI, PlayerNumber pn )
+bool InputMapper::IsBeingPressed( GameButton MenuI, PlayerNumber pn ) const
 {
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
@@ -865,7 +865,7 @@ void InputMapper::RepeatStopKey( GameButton MenuI, PlayerNumber pn )
 		RepeatStopKey( GameI[i] );
 }
 
-float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp )
+float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp ) const
 {
 	float fMaxSecsHeld = 0;
 
@@ -883,7 +883,7 @@ float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp )
 	return fMaxSecsHeld;
 }
 
-float InputMapper::GetSecsHeld( GameButton MenuI, PlayerNumber pn )
+float InputMapper::GetSecsHeld( GameButton MenuI, PlayerNumber pn ) const
 {
 	float fMaxSecsHeld = 0;
 
@@ -913,7 +913,7 @@ void InputMapper::ResetKeyRepeat( GameButton MenuI, PlayerNumber pn )
 		ResetKeyRepeat( GameI[i] );
 }
 
-float InputMapper::GetLevel( const GameInput &GameI )
+float InputMapper::GetLevel( const GameInput &GameI ) const
 {
 	float fLevel = 0;
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
@@ -926,7 +926,7 @@ float InputMapper::GetLevel( const GameInput &GameI )
 	return fLevel;
 }
 
-float InputMapper::GetLevel( GameButton MenuI, PlayerNumber pn )
+float InputMapper::GetLevel( GameButton MenuI, PlayerNumber pn ) const
 {
 	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
