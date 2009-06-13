@@ -780,7 +780,7 @@
 	<Function name='GetPlayMode' return='PlayMode' arguments=''>
 		Returns the Course's <Link class='ENUM' function='PlayMode' />.
 	</Function>
-	<Function name='GetTotalSeconds' return='float' arguments=''>
+	<Function name='GetTotalSeconds' return='float' arguments='StepsType st'>
 		Returns the total length of the Course in seconds.
 	</Function>
 	<Function name='GetTranslitFullTitle' return='string' arguments=''>
