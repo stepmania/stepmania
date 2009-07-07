@@ -497,7 +497,7 @@ GameInput LightsManager::GetFirstLitGameButtonLight()
 
 bool LightsManager::IsEnabled() const
 {
-	return m_vpDrivers.size() > 1 || PREFSMAN->m_bDebugLights;
+	return m_vpDrivers.size() >= 1 || PREFSMAN->m_bDebugLights;
 }
 
 
