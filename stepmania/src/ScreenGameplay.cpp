@@ -1315,27 +1315,7 @@ void ScreenGameplay::LoadLights()
 
 	Difficulty d1 = Difficulty_Invalid;
 	if( asDifficulties.size() > 0 )
-	{
-		// Make lights follow steps used by Human Player 1's selected difficulty
-		if (asDifficulties[0].CompareNoCase("selected") == 0)
-		{
-			PlayerInfo pi;
-
-			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
-			{
-				PlayerNumber pn = pi->GetStepsAndTrailIndex();
-
-				if(GAMESTATE->IsHumanPlayer(pn)) {
-					d1 = GAMESTATE->m_pCurSteps[pn]->GetDifficulty();
-					break;
-				}
-			}
-		}
-		else
-		{
-			d1 = StringToDifficulty( asDifficulties[0] );
-		}
-	}
+		d1 = StringToDifficulty( asDifficulties[0] );
 	pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, st, d1 );
 
 	// If we can't find anything at all, stop.
