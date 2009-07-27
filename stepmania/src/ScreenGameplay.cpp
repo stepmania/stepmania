@@ -1315,7 +1315,28 @@ void ScreenGameplay::LoadLights()
 
 	Difficulty d1 = Difficulty_Invalid;
 	if( asDifficulties.size() > 0 )
-		d1 = StringToDifficulty( asDifficulties[0] );
+	{
+		if( asDifficulties[0].CompareNoCase("selected") == 0 )
+		{
+			PlayerInfo pi;
+
+			// Base lights off current difficulty of active player
+			// Can be either P1 or P2 if they're individual; or P1 if both are active
+			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
+			{
+				PlayerNumber pn = pi->GetStepsAndTrailIndex();
+
+				if( GAMESTATE->IsPlayerEnabled(pn) )
+				{
+					d1 = GAMESTATE->m_pCurSteps[pn]->GetDifficulty();
+					break;
+				}
+			}
+		}
+		else
+			d1 = StringToDifficulty( asDifficulties[0] );
+	}
+
 	pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, st, d1 );
 
 	// If we can't find anything at all, stop.
@@ -1327,8 +1348,28 @@ void ScreenGameplay::LoadLights()
 
 	if( asDifficulties.size() > 1 )
 	{
-		Difficulty d2 = StringToDifficulty( asDifficulties[1] );
+		Difficulty d2 = Difficulty_Invalid;
+
+		// We've also specified for Player 2 to be based off current difficulty
+		if( asDifficulties[1].CompareNoCase("selected") == 0 && GAMESTATE->GetNumPlayersEnabled() > 1 )
+		{
+			PlayerInfo pi;
+
+			// Base lights off current difficulty of active player
+			// Only do this for P2 in a two-player situation, since P1 is taken care of above
+			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
+			{
+				PlayerNumber pn = pi->GetStepsAndTrailIndex();
+
+				if( pn == PLAYER_2 )
+					d2 = GAMESTATE->m_pCurSteps[pn]->GetDifficulty();
+			}
+		}
+		else
+			d2 = StringToDifficulty( asDifficulties[1] );
+
 		const Steps *pSteps2 = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, st, d2 );
+
 		if( pSteps != NULL && pSteps2 != NULL && pSteps != pSteps2 )
 		{
 			NoteData TapNoteData2;
