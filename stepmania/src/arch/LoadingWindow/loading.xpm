@@ -1,5 +1,5 @@
 /* XPM */
-static char * loading_xpm[] = {
+static char * loading[] = {
 "468 68 4225 2",
 "  	c None",
 ". 	c #E6ECF3",
