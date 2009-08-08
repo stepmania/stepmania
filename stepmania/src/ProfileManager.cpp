@@ -672,8 +672,8 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 	// save recent score	
 	//
 	if( IsPersistentProfile(pn) )
-		GetProfile(pn)->AddStepsRecentScore( pSong, pSteps, hs );
-	GetMachineProfile()->AddStepsRecentScore( pSong, pSteps, hs );
+		GetProfile(pn)->SaveStepsRecentScore( pSong, pSteps, hs );
+	GetMachineProfile()->SaveStepsRecentScore( pSong, pSteps, hs );
 }
 
 void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn )
@@ -722,8 +722,8 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 	// save recent score	
 	//
 	if( IsPersistentProfile(pn) )
-		GetProfile(pn)->AddCourseRecentScore( pCourse, pTrail, hs );
-	GetMachineProfile()->AddCourseRecentScore( pCourse, pTrail, hs );
+		GetProfile(pn)->SaveCourseRecentScore( pCourse, pTrail, hs );
+	GetMachineProfile()->SaveCourseRecentScore( pCourse, pTrail, hs );
 }
 
 void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail, PlayerNumber pn )

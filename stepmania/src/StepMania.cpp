@@ -70,6 +70,7 @@
 #include "StatsManager.h"
 #include "GameLoop.h"
 #include "SpecialFiles.h"
+#include "Profile.h"
 
 #if defined(XBOX)
 #include "Archutils/Xbox/VirtualMemory.h"
@@ -1196,31 +1197,12 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	 * write the same screenshot number for different formats (screen00011.bmp,
 	 * screen00011.jpg), and we always increase from the end, so if screen00003.jpg
 	 * is deleted, we won't fill in the hole (which makes screenshots hard to find). */
+	RString sFileNameNoExtension;
 	if( iIndex == -1 ) 
-	{
-		//
-		// Find a file name for the screenshot
-		//
-		FILEMAN->FlushDirCache( sDir );
+		sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension( sDir, "screen" );
+	else
+		sFileNameNoExtension = Profile::MakeFileNameNoExtension( "screen", iIndex );
 
-		vector<RString> files;
-		GetDirListing( sDir + "screen*", files, false, false );
-		sort( files.begin(), files.end() );
-
-		iIndex = 0;
-
-		for( int i = files.size()-1; i >= 0; --i )
-		{
-			static Regex re( "^screen([0-9]{5})\\....$" );
-			vector<RString> matches;
-			if( !re.Compare( files[i], matches ) )
-				continue;
-
-			ASSERT( matches.size() == 1 );
-			iIndex = atoi( matches[0] )+1;
-			break;
-		}
-	}
 
 	//
 	// Save the screenshot.  If writing lossy to a memcard, use SAVE_LOSSY_LOW_QUAL, so we
@@ -1234,7 +1216,7 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	else
 		fmt = RageDisplay::SAVE_LOSSLESS;
 
-	RString sFileName = ssprintf( "screen%05d.%s",iIndex,bSaveCompressed ? "jpg" : "bmp" );
+	RString sFileName = sFileNameNoExtension + "." + (bSaveCompressed ? "jpg" : "bmp");
 	RString sPath = sDir+sFileName;
 	bool bResult = DISPLAY->SaveScreenshot( sPath, fmt );
 	if( !bResult )

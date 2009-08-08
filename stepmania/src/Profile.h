@@ -247,14 +247,10 @@ public:
 		void Unset() { stepsID.Unset(); songID.Unset(); hs.Unset(); }
 
 		XNode* CreateNode() const;
-		void LoadFromNode( const XNode* pNode );
 	};
-	deque<HighScoreForASongAndSteps> m_vRecentStepsScores;
-	void AddStepsRecentScore( const Song* pSong, const Steps* pSteps, HighScore hs );
+	void SaveStepsRecentScore( const Song* pSong, const Steps* pSteps, HighScore hs );
 	
-	
-	StepsType GetLastPlayedStepsType() const;
-	
+		
 	//
 	// RecentCourseScores
 	//
@@ -268,10 +264,8 @@ public:
 		void Unset() { courseID.Unset(); hs.Unset(); }
 
 		XNode* CreateNode() const;
-		void LoadFromNode( const XNode* pNode );
 	};
-	deque<HighScoreForACourseAndTrail> m_vRecentCourseScores;	// add to back, erase from front
-	void AddCourseRecentScore( const Course* pCourse, const Trail* pTrail, HighScore hs );
+	void SaveCourseRecentScore( const Course* pCourse, const Trail* pTrail, HighScore hs );
 
 	//
 	// Init'ing
@@ -285,8 +279,6 @@ public:
 		InitCategoryScores(); 
 		InitScreenshotData(); 
 		InitCalorieData(); 
-		InitRecentSongScores(); 
-		InitRecentCourseScores(); 
 	}
 	void InitEditableData(); 
 	void InitGeneralData(); 
@@ -295,8 +287,6 @@ public:
 	void InitCategoryScores(); 
 	void InitScreenshotData(); 
 	void InitCalorieData(); 
-	void InitRecentSongScores(); 
-	void InitRecentCourseScores(); 
 	void ClearStats();
 
 	//
@@ -313,9 +303,7 @@ public:
 	void LoadCategoryScoresFromNode( const XNode* pNode );
 	void LoadScreenshotDataFromNode( const XNode* pNode );
 	void LoadCalorieDataFromNode( const XNode* pNode );
-	void LoadRecentSongScoresFromNode( const XNode* pNode );
-	void LoadRecentCourseScoresFromNode( const XNode* pNode );
-
+	
 	void SaveEditableDataToDir( RString sDir ) const;
 	bool SaveStatsXmlToDir( RString sDir, bool bSignData ) const;
 	XNode* SaveStatsXmlCreateNode() const;
@@ -325,8 +313,6 @@ public:
 	XNode* SaveCategoryScoresCreateNode() const;
 	XNode* SaveScreenshotDataCreateNode() const;
 	XNode* SaveCalorieDataCreateNode() const;
-	XNode* SaveRecentSongScoresCreateNode() const;
-	XNode* SaveRecentCourseScoresCreateNode() const;
 
 	XNode* SaveCoinDataCreateNode() const;
 
@@ -334,6 +320,9 @@ public:
 	void SaveMachinePublicKeyToDir( RString sDir ) const;
 
 	static void MoveBackupToDir( RString sFromDir, RString sToDir );
+	static RString MakeUniqueFileNameNoExtension( RString sDir, RString sFileNameBeginning );
+	static RString MakeFileNameNoExtension( RString sFileNameBeginning, int iIndex );
+
 
 	// Lua
 	void PushSelf( lua_State *L );
