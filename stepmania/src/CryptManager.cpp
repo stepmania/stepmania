@@ -378,7 +378,7 @@ RString CryptManager::GetMD5ForString( RString sData )
 
 RString CryptManager::GetSHA1ForString( RString sData )
 {
-	unsigned char digest[16];
+	unsigned char digest[20];
 
 	int iHash = register_hash( &sha1_desc );
 
