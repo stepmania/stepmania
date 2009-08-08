@@ -529,13 +529,13 @@ void GameState::LoadProfiles( bool bLoadEdits )
 	}
 }
 
-void GameState::SaveProfiles()
+void GameState::SavePlayerProfiles()
 {
 	FOREACH_HumanPlayer( pn )
-		SaveProfile( pn );
+		SavePlayerProfile( pn );
 }
 
-void GameState::SaveProfile( PlayerNumber pn )
+void GameState::SavePlayerProfile( PlayerNumber pn )
 {
 	if( !PROFILEMAN->IsPersistentProfile(pn) )
 		return;
@@ -773,7 +773,7 @@ void GameState::FinishStage()
 		{
 			LOG->Trace( "Played %i stages; saving profiles ...", iSaveProfileEvery );
 			PROFILEMAN->SaveMachineProfile();
-			this->SaveProfiles();
+			this->SavePlayerProfiles();
 		}
 	}
 }

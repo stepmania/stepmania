@@ -16,7 +16,7 @@ void ScreenProfileSave::Input( const InputEventPlus &input )
 
 void ScreenProfileSave::Continue()
 {
-	GAMESTATE->SaveProfiles();
+	GAMESTATE->SavePlayerProfiles();
 	SCREENMAN->ZeroNextUpdate();
 
 	StartTransitioningScreen( SM_GoToNextScreen );
