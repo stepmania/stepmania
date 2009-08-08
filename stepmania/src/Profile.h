@@ -114,8 +114,8 @@ public:
 	StepsType m_LastStepsType;
 	SongID m_lastSong;
 	CourseID m_lastCourse;
-	int m_iTotalPlays;
-	int m_iTotalPlaySeconds;
+	int m_iTotalSessions;
+	int m_iTotalSessionSeconds;
 	int m_iTotalGameplaySeconds;
 	float m_fTotalCaloriesBurned;
 	GoalType m_GoalType;

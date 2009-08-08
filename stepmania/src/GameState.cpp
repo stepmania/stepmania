@@ -350,7 +350,7 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	/* Count each player join as a play. */
 	{
 		Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
-		pMachineProfile->m_iTotalPlays++;
+		pMachineProfile->m_iTotalSessions++;
 	}
 
 	// Set the current style to something appropriate for the new number of joined players.
@@ -525,7 +525,7 @@ void GameState::LoadProfiles( bool bLoadEdits )
 
 		Profile* pPlayerProfile = PROFILEMAN->GetProfile( pn );
 		if( pPlayerProfile )
-			pPlayerProfile->m_iTotalPlays++;
+			pPlayerProfile->m_iTotalSessions++;
 	}
 }
 
@@ -717,8 +717,6 @@ void GameState::CommitStageStats()
 {
 	if( m_bDemonstrationOrJukebox )
 		return;
-	if( m_bMultiplayer )
-		return;
 
 	STATSMAN->CommitStatsToProfiles( &STATSMAN->m_CurStageStats );
 
@@ -726,13 +724,13 @@ void GameState::CommitStageStats()
 	int iPlaySeconds = max( 0, (int) m_timeGameStarted.GetDeltaTime() );
 
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
-	pMachineProfile->m_iTotalPlaySeconds += iPlaySeconds;
+	pMachineProfile->m_iTotalSessionSeconds += iPlaySeconds;
 
 	FOREACH_HumanPlayer( p )
 	{
 		Profile* pPlayerProfile = PROFILEMAN->GetProfile( p );
 		if( pPlayerProfile )
-			pPlayerProfile->m_iTotalPlaySeconds += iPlaySeconds;
+			pPlayerProfile->m_iTotalSessionSeconds += iPlaySeconds;
 	}
 }
 

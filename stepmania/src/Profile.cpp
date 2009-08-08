@@ -117,8 +117,8 @@ void Profile::InitGeneralData()
 	m_LastStepsType = StepsType_Invalid;
 	m_lastSong.Unset();
 	m_lastCourse.Unset();
-	m_iTotalPlays = 0;
-	m_iTotalPlaySeconds = 0;
+	m_iTotalSessions = 0;
+	m_iTotalSessionSeconds = 0;
 	m_iTotalGameplaySeconds = 0;
 	m_fTotalCaloriesBurned = 0;
 	m_GoalType = (GoalType)0;
@@ -1069,8 +1069,8 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 		pGeneralDataNode->AppendChild( "LastStepsType",			GameManager::GetStepsTypeInfo(m_LastStepsType).szName );
 	pGeneralDataNode->AppendChild( m_lastSong.CreateNode() );
 	pGeneralDataNode->AppendChild( m_lastCourse.CreateNode() );
-	pGeneralDataNode->AppendChild( "TotalPlays",			m_iTotalPlays );
-	pGeneralDataNode->AppendChild( "TotalPlaySeconds",		m_iTotalPlaySeconds );
+	pGeneralDataNode->AppendChild( "TotalSessions",			m_iTotalSessions );
+	pGeneralDataNode->AppendChild( "TotalSessionSeconds",		m_iTotalSessionSeconds );
 	pGeneralDataNode->AppendChild( "TotalGameplaySeconds",		m_iTotalGameplaySeconds );
 	pGeneralDataNode->AppendChild( "TotalCaloriesBurned",		m_fTotalCaloriesBurned );
 	pGeneralDataNode->AppendChild( "GoalType",			m_GoalType );
@@ -1240,8 +1240,8 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "LastStepsType",				s );	m_LastStepsType = GameManager::StringToStepsType( s );
 	pTemp = pNode->GetChild( "Song" );				if( pTemp ) m_lastSong.LoadFromNode( pTemp );
 	pTemp = pNode->GetChild( "Course" );				if( pTemp ) m_lastCourse.LoadFromNode( pTemp );
-	pNode->GetChildValue( "TotalPlays",				m_iTotalPlays );
-	pNode->GetChildValue( "TotalPlaySeconds",			m_iTotalPlaySeconds );
+	pNode->GetChildValue( "TotalSessions",				m_iTotalSessions );
+	pNode->GetChildValue( "TotalSessionSeconds",			m_iTotalSessionSeconds );
 	pNode->GetChildValue( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	pNode->GetChildValue( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
 	pNode->GetChildValue( "GoalType",				*ConvertValue<int>(&m_GoalType) );
