@@ -4,7 +4,6 @@
 #include "AnnouncerManager.h"
 #include "BackgroundUtil.h"
 #include "BannerCache.h"
-#include "CatalogXml.h"
 #include "CommonMetrics.h"
 #include "Course.h"
 #include "CourseLoaderCRS.h"
@@ -122,8 +121,7 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 	// reload scores and unlocks afterward
 	PROFILEMAN->LoadMachineProfile();
 	UNLOCKMAN->Reload();
-	CatalogXml::Save( NULL );
-
+	
 	if( !bAllowFastLoad )
 		PREFSMAN->m_bFastLoad.Set( OldVal );
 

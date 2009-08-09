@@ -21,14 +21,11 @@
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
 #include "Foreach.h"
-#include "CatalogXml.h"
 #include "Bookkeeper.h"
 #include "Game.h"
 #include "CharacterManager.h"
 #include "Character.h"
 
-const RString STATS_XSL            = "Stats.xsl";
-const RString COMMON_XSL           = "Common.xsl";
 const RString STATS_XML            = "Stats.xml";
 const RString STATS_XML_GZ         = "Stats.xml.gz";
 const RString EDITABLE_INI         = "Editable.ini";
@@ -41,8 +38,6 @@ const RString UPLOAD_SUBDIR	   = "Upload/";
 
 ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
 static Preference<bool> g_bProfileDataCompress( "ProfileDataCompress", false );
-static Preference<bool> g_bCopyCatalogToProfiles( "CopyCatalogToProfiles", true );
-extern Preference<bool> g_bWriteCatalog;
 static ThemeMetric<RString> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString" );
 #define GUID_SIZE_BYTES 8
 
@@ -983,8 +978,6 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 		{
 			RageFileObjGzip gzip( &f );
 			gzip.Start();
-			if( !XmlFileUtil::SaveToFile( xml.get(), gzip, STATS_XSL, false ) )
-				return false;
 			if( gzip.Finish() == -1 )
 				return false;
 
@@ -994,9 +987,6 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 		}
 		else
 		{
-			if( !XmlFileUtil::SaveToFile( xml.get(), f, STATS_XSL, false ) )
-				return false;
-
 			/* After successfully saving STATS_XML, remove any stray STATS_XML_GZ. */
 			if( FILEMAN->IsAFile(sDir + STATS_XML_GZ) )
 				FILEMAN->Remove( sDir + STATS_XML_GZ );
@@ -1626,14 +1616,6 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 void Profile::SaveStatsWebPageToDir( RString sDir ) const
 {
 	ASSERT( PROFILEMAN );
-
-	FileCopy( THEME->GetPathO("Profile",STATS_XSL), sDir+STATS_XSL );
-	FileCopy( THEME->GetPathO("Profile",COMMON_XSL), sDir+COMMON_XSL );
-	if( g_bCopyCatalogToProfiles && g_bWriteCatalog )
-	{
-		FileCopy( CATALOG_XML_FILE, sDir+CATALOG_XML );
-		FileCopy( THEME->GetPathO("Profile",CATALOG_XSL), sDir+CATALOG_XSL );
-	}
 }
 
 void Profile::SaveMachinePublicKeyToDir( RString sDir ) const
@@ -1742,9 +1724,6 @@ static void SaveRecentScore( XNode* xml )
 
 	RString sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension(UPLOAD_SUBDIR, sDate );
 	RString fn = UPLOAD_SUBDIR + sFileNameNoExtension + ".xml";
-
-	if( !XmlFileUtil::SaveToFile( xml, fn, STATS_XSL, false ) )
-		return;
 	
 	RString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
 	CryptManager::SignFileToFile(fn, sStatsXmlSigFile);

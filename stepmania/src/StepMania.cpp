@@ -31,7 +31,6 @@
 #include "Game.h"
 #include "RageSurface.h"
 #include "RageSurface_Load.h"
-#include "CatalogXml.h"
 #include "CommandLineActions.h"
 
 #if !defined(SUPPORT_OPENGL) && !defined(SUPPORT_D3D)
@@ -1129,10 +1128,6 @@ int main(int argc, char* argv[])
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdatePreferredSort();
 
-	/* This shouldn't need to be here; if it's taking long enough that this is
-	 * even visible, we should be fixing it, not showing a progress display. */
-	CatalogXml::Save( pLoadingWindow );
-	
 	NSMAN 		= new NetworkSyncManager( pLoadingWindow ); 
 	MESSAGEMAN	= new MessageManager;
 	STATSMAN	= new StatsManager;
