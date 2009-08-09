@@ -179,13 +179,19 @@ public:
 						m_Def.m_vEnabledForPlayers.insert( pn );
 					}
 				}
-				else if( sName == "exportonchange" )	m_Def.m_bExportOnChange = true;
+				else if( sName == "exportonchange" )
+				{
+					m_Def.m_bExportOnChange = true;
+				}
 				else if( sName == "broadcastonexport" )
 				{
 					for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
 						m_vsBroadcastOnExport.push_back( cmd.m_vsArgs[i] );
 				}
-				else	RageException::Throw( "Unkown row flag \"%s\".", sName.c_str() );
+				else
+				{
+					RageException::Throw( "Unknown row flag \"%s\".", sName.c_str() );
+				}
 			}
 
 			for( int col = 0; col < NumCols; ++col )
