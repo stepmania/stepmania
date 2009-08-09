@@ -34,7 +34,6 @@ const RString PUBLIC_KEY_FILE      = "public.key";
 const RString SCREENSHOTS_SUBDIR   = "Screenshots/";
 const RString EDIT_STEPS_SUBDIR    = "Edits/";
 const RString EDIT_COURSES_SUBDIR  = "EditCourses/";
-const RString UPLOAD_SUBDIR	   = "Upload/";
 
 ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
 static Preference<bool> g_bProfileDataCompress( "ProfileDataCompress", false );
@@ -978,6 +977,9 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 		{
 			RageFileObjGzip gzip( &f );
 			gzip.Start();
+			if( !XmlFileUtil::SaveToFile( xml.get(), gzip, "", false ) )
+				return false;
+
 			if( gzip.Finish() == -1 )
 				return false;
 
@@ -987,6 +989,9 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 		}
 		else
 		{
+			if( !XmlFileUtil::SaveToFile( xml.get(), f, "", false ) )
+				return false;
+
 			/* After successfully saving STATS_XML, remove any stray STATS_XML_GZ. */
 			if( FILEMAN->IsAFile(sDir + STATS_XML_GZ) )
 				FILEMAN->Remove( sDir + STATS_XML_GZ );
@@ -1717,75 +1722,6 @@ float Profile::GetCaloriesBurnedForDay( DateTime day ) const
 		return i->second.fCals;
 }
 
-static void SaveRecentScore( XNode* xml )
-{
-	RString sDate = DateTime::GetNowDate().GetString();
-	sDate.Replace(":","-");
-
-	RString sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension(UPLOAD_SUBDIR, sDate );
-	RString fn = UPLOAD_SUBDIR + sFileNameNoExtension + ".xml";
-	
-	RString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
-	CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
-}
-
-
-XNode* Profile::HighScoreForASongAndSteps::CreateNode() const
-{
-	XNode* pNode = new XNode( "HighScoreForASongAndSteps" );
-
-	pNode->AppendChild( songID.CreateNode() );
-	pNode->AppendChild( stepsID.CreateNode() );
-	pNode->AppendChild( hs.CreateNode() );
-
-	return pNode;
-}
-
-void Profile::SaveStepsRecentScore( const Song* pSong, const Steps* pSteps, HighScore hs )
-{
-	ASSERT( pSong );
-	ASSERT( pSteps );
-	HighScoreForASongAndSteps h;
-	h.songID.FromSong( pSong );
-	ASSERT( h.songID.IsValid() );
-	h.stepsID.FromSteps( pSteps );
-	ASSERT( h.stepsID.IsValid() );
-	h.hs = hs;
-
-	auto_ptr<XNode> xml( new XNode("Stats") );
-	xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
-	XNode *recent = xml->AppendChild( new XNode("RecentSongScores") );
-	recent->AppendChild( h.CreateNode() );
-
-	SaveRecentScore( xml.get() );
-}
-
-
-XNode* Profile::HighScoreForACourseAndTrail::CreateNode() const
-{
-	XNode* pNode = new XNode( "HighScoreForACourseAndTrail" );
-
-	pNode->AppendChild( courseID.CreateNode() );
-	pNode->AppendChild( trailID.CreateNode() );
-	pNode->AppendChild( hs.CreateNode() );
-
-	return pNode;
-}
-
-void Profile::SaveCourseRecentScore( const Course* pCourse, const Trail* pTrail, HighScore hs )
-{
-	HighScoreForACourseAndTrail h;
-	h.courseID.FromCourse( pCourse );
-	h.trailID.FromTrail( pTrail );
-	h.hs = hs;
-		
-	auto_ptr<XNode> xml( new XNode("Stats") );
-	xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
-	XNode *recent = xml->AppendChild( new XNode("RecentCourseScores") );
-	recent->AppendChild( h.CreateNode() );
-
-	SaveRecentScore( xml.get() );
-}
 
 const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID& songID ) const
 {
@@ -1882,7 +1818,7 @@ RString Profile::MakeUniqueFileNameNoExtension( RString sDir, RString sFileNameB
 	FILEMAN->FlushDirCache( sDir );
 
 	vector<RString> files;
-	GetDirListing( sDir + "sFileNameBeginning*", files, false, false );
+	GetDirListing( sDir + sFileNameBeginning+"*", files, false, false );
 	sort( files.begin(), files.end() );
 
 	int iIndex = 0;

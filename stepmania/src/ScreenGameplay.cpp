@@ -2446,7 +2446,7 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 
 	FOREACH_HumanPlayer( pn )
 		STATSMAN->m_CurStageStats.m_player[pn].CalcAwards( pn, STATSMAN->m_CurStageStats.m_bGaveUp, STATSMAN->m_CurStageStats.m_bUsedAutoplay );
-	STATSMAN->m_CurStageStats.CommitScores( false );
+	STATSMAN->m_CurStageStats.FinalizeScores( false );
 	
 	GAMESTATE->CommitStageStats();
 

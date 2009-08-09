@@ -419,7 +419,7 @@ void EditCourseUtil::UpdateAndSetTrail()
 	StepsType st = GAMESTATE->m_pCurStyle->m_StepsType;
 	Trail *pTrail = NULL;
 	if( GAMESTATE->m_pCurCourse )
-		GAMESTATE->m_pCurCourse->GetTrailForceRegenCache( st );
+		pTrail = GAMESTATE->m_pCurCourse->GetTrailForceRegenCache( st );
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 }
 

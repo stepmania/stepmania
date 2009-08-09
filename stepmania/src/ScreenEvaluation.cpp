@@ -237,7 +237,7 @@ void ScreenEvaluation::Init()
 	// update persistent statistics
 	//
 	if( SUMMARY )
-		m_pStageStats->CommitScores( true );
+		m_pStageStats->FinalizeScores( true );
 
 	// Run this here, so STATSMAN->m_CurStageStats is available to overlays.
 	ScreenWithMenuElements::Init();

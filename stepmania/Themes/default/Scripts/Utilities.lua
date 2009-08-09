@@ -115,6 +115,16 @@ function GetSongBackground()
 	return THEME:GetPathG("Common","fallback background")
 end
 
+function StepsOrTrailToCustomDifficulty( stepsOrTrail )
+	if lua.CheckType("Steps", stepsOrTrail) then
+		return StepsToCustomDifficulty( stepsOrTrail );
+	end
+	if lua.CheckType("Trail", stepsOrTrail) then
+		return TrailToCustomDifficulty( stepsOrTrail );
+	end
+end
+
+
 -- (c) 2005 Glenn Maynard, Chris Danford
 -- All rights reserved.
 -- 

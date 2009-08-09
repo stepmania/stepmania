@@ -27,8 +27,7 @@ public:
 	virtual StepsDisplay *Copy() const;
 
 	void SetFromGameState( PlayerNumber pn );
-	void SetFromStepsTypeAndMeterAndDifficulty( StepsType st, int iMeter, Difficulty dc );
-	void SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType st, int iMeter, CourseDifficulty cd );
+	void SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType st, int iMeter, Difficulty dc, CourseType ct );
 	void SetFromSteps( const Steps* pSteps );
 	void SetFromTrail( const Trail* pTrail );
 	void Unset();
@@ -42,10 +41,9 @@ private:
 		const Steps *pSteps;
 		const Trail *pTrail;
 		int iMeter;
-		StepsType st;
+		StepsType st;	// pass because there may be a StepType icons
 		Difficulty dc;
-		bool bIsCourseDifficulty;
-		RString sDescription;
+		CourseType ct;
 	};
 	void SetInternal( const SetParams &params );
 

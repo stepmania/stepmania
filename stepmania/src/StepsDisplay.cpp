@@ -125,7 +125,7 @@ void StepsDisplay::SetFromGameState( PlayerNumber pn )
 		if( pTrail )
 			SetFromTrail( pTrail );
 		else
-			SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType_Invalid, 0, GAMESTATE->m_PreferredCourseDifficulty[pn] );
+			SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, GAMESTATE->m_PreferredCourseDifficulty[pn], pTrail->m_CourseType );
 	}
 	else
 	{
@@ -133,7 +133,7 @@ void StepsDisplay::SetFromGameState( PlayerNumber pn )
 		if( pSteps )
 			SetFromSteps( pSteps );
 		else
-			SetFromStepsTypeAndMeterAndDifficulty( StepsType_Invalid, 0, GAMESTATE->m_PreferredDifficulty[pn] );
+			SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, GAMESTATE->m_PreferredDifficulty[pn], CourseType_Invalid );
 	}
 }
 
@@ -145,7 +145,7 @@ void StepsDisplay::SetFromSteps( const Steps* pSteps )
 		return;
 	}
 
-	SetParams params = { pSteps, NULL, pSteps->GetMeter(), pSteps->m_StepsType, pSteps->GetDifficulty(), false, pSteps->GetDescription() };
+	SetParams params = { pSteps, NULL, pSteps->GetMeter(), pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid };
 	SetInternal( params );
 }
 
@@ -157,50 +157,50 @@ void StepsDisplay::SetFromTrail( const Trail* pTrail )
 		return;
 	}
 
-	SetParams params = { NULL, pTrail, pTrail->GetMeter(), pTrail->m_StepsType, pTrail->m_CourseDifficulty, true, RString() };
+	SetParams params = { NULL, pTrail, pTrail->GetMeter(), pTrail->m_StepsType, pTrail->m_CourseDifficulty, pTrail->m_CourseType };
 	SetInternal( params );
 }
 
 void StepsDisplay::Unset()
 {
-	SetParams params = { NULL, NULL, 0, StepsType_Invalid, Difficulty_Invalid, false, RString() };
-	SetInternal( params );
+	this->SetVisible( false );
 }
 
-void StepsDisplay::SetFromStepsTypeAndMeterAndDifficulty( StepsType st, int iMeter, Difficulty dc )
+void StepsDisplay::SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType st, int iMeter, Difficulty dc, CourseType ct )
 {
-	SetParams params = { NULL, NULL, iMeter, st, dc, false, RString() };
-	SetInternal( params );
-}
-
-void StepsDisplay::SetFromStepsTypeAndMeterAndCourseDifficulty( StepsType st, int iMeter, CourseDifficulty cd )
-{
-	SetParams params = { NULL, NULL, 0, st, cd, true, RString() };
+	SetParams params = { NULL, NULL, iMeter, st, dc, ct };
 	SetInternal( params );
 }
 
 void StepsDisplay::SetInternal( const SetParams &params )
 {
+	this->SetVisible( true );
+
 	Message msg( "Set" );
+
+	RString sCustomDifficulty;
+	if( params.pSteps )
+		sCustomDifficulty = StepsToCustomDifficulty(params.pSteps);
+	else if( params.pTrail )
+		sCustomDifficulty = TrailToCustomDifficulty(params.pTrail);
+	else
+		sCustomDifficulty = GetCustomDifficulty( params.st, params.dc, params.ct );
+	msg.SetParam( "CustomDifficulty", sCustomDifficulty );
+
+	RString sDisplayDescription;
+	if( params.pSteps  &&  params.pSteps->IsAnEdit() )
+		sDisplayDescription = params.pSteps->GetDescription();
+	else
+		sDisplayDescription = CustomDifficultyToLocalizedString( sCustomDifficulty );
+	msg.SetParam( "DisplayDescription", sDisplayDescription );
+
 	if( params.pSteps )
 		msg.SetParam( "Steps", LuaReference::CreateFromPush(*(Steps*)params.pSteps) );
 	if( params.pTrail )
 		msg.SetParam( "Trail", LuaReference::CreateFromPush(*(Trail*)params.pTrail) );
 	msg.SetParam( "Meter", params.iMeter );
 	msg.SetParam( "StepsType", params.st );
-	msg.SetParam( "Difficulty", params.dc );
-	msg.SetParam( "IsCourseDifficulty", params.bIsCourseDifficulty );
-	msg.SetParam( "Description", params.sDescription );
-	RString sCustomDifficulty;
-	if( params.st != StepsType_Invalid )
-	{
-		if( params.pSteps )
-			sCustomDifficulty = StepsToCustomDifficulty(params.pSteps);
-		if( params.pTrail )
-			sCustomDifficulty = TrailToCustomDifficulty(params.pTrail);
-		msg.SetParam( "CustomDifficulty", sCustomDifficulty );
-	}
-
+	
 	m_sprFrame->HandleMessage( msg );
 
 	if( m_bShowTicks )
@@ -231,20 +231,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 
 	if( m_bShowDescription )
 	{
-		RString s;
-		if( params.bIsCourseDifficulty )
-		{
-			s = CourseDifficultyToLocalizedString(params.dc);
-		}
-		else
-		{
-			if( params.pSteps && params.pSteps->IsAnEdit() )
-				s = params.sDescription;
-			else if( !sCustomDifficulty.empty() )
-				s = CustomDifficultyToLocalizedString( sCustomDifficulty );
-		}
-
-		m_textDescription.SetText( s );
+		m_textDescription.SetText( sDisplayDescription );
 	}
 	
 	if( m_bShowAutogen )
@@ -273,7 +260,6 @@ class LunaStepsDisplay: public Luna<StepsDisplay>
 {
 public:
 	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), NULL ); return 0; }
-	static int SetFromStepsTypeAndMeterAndDifficulty( T* p, lua_State *L )		{ p->SetFromStepsTypeAndMeterAndDifficulty( Enum::Check<StepsType>(L, 1), IArg(2), Enum::Check<Difficulty>(L, 3) ); return 0; }
 	static int SetFromSteps( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) )
@@ -310,7 +296,6 @@ public:
 	LunaStepsDisplay()
 	{
 		ADD_METHOD( Load );
-		ADD_METHOD( SetFromStepsTypeAndMeterAndDifficulty );
 		ADD_METHOD( SetFromSteps );
 		ADD_METHOD( SetFromTrail );
 		ADD_METHOD( SetFromGameState );

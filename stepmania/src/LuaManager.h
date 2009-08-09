@@ -214,9 +214,6 @@ int LuaFunc_##func( lua_State *L ) { \
 void LuaFunc_Register_##func( lua_State *L ) { lua_register( L, #func, LuaFunc_##func ); } \
 REGISTER_WITH_LUA_FUNCTION( LuaFunc_Register_##func );
 
-#define LuaFunction2( func ) \
-void LuaFunc_Register_##func( lua_State *L ) { lua_register( L, #func, func ); } \
-REGISTER_WITH_LUA_FUNCTION( LuaFunc_Register_##func );
 
 #endif
 

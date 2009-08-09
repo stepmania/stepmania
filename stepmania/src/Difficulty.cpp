@@ -148,24 +148,9 @@ RString TrailToCustomDifficulty( const Trail *pTrail )
 
 #include "LuaBinding.h"
 
-static int StepsOrTrailToCustomDifficulty( lua_State *L )
-{
-	Steps *pSteps = Luna<Steps>::check(L, 1);
-	if( pSteps )
-	{
-		lua_pushstring(L, StepsToCustomDifficulty( pSteps ));
-		return 1;
-	}
-	Trail *pTrail = Luna<Trail>::check(L, 1);
-	if( pTrail )
-	{
-		lua_pushstring(L, TrailToCustomDifficulty( pTrail ));
-		return 1;
-	}
-	return 0;
-}
+LuaFunction( StepsToCustomDifficulty, StepsToCustomDifficulty(Luna<Steps>::check(L, 1)) );
+LuaFunction( TrailToCustomDifficulty, TrailToCustomDifficulty(Luna<Trail>::check(L, 1)) );
 
-LuaFunction2( StepsOrTrailToCustomDifficulty );
 
 /*
  * (c) 2001-2004 Chris Danford

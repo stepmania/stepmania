@@ -32,6 +32,7 @@ struct HighScore
 	int GetHoldNoteScore( HoldNoteScore tns ) const;
 	const RadarValues &GetRadarValues() const;
 	float GetLifeRemainingSeconds() const;
+	bool GetDisqualified() const;
 
 	void SetName( const RString &sName );
 	void SetGrade( Grade g );
@@ -47,6 +48,7 @@ struct HighScore
 	void SetHoldNoteScore( HoldNoteScore tns, int i );
 	void SetRadarValues( const RadarValues &rv );
 	void SetLifeRemainingSeconds( float f );
+	void SetDisqualified( bool b );
 
 	RString *GetNameMutable();
 	const RString *GetNameMutable() const { return const_cast<RString *> (const_cast<HighScore *>(this)->GetNameMutable()); }

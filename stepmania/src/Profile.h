@@ -235,39 +235,6 @@ public:
 	
 
 	//
-	// RecentSongScores
-	//
-	struct HighScoreForASongAndSteps
-	{
-		StepsID stepsID;
-		SongID songID;
-		HighScore hs;
-
-		HighScoreForASongAndSteps() { Unset(); }
-		void Unset() { stepsID.Unset(); songID.Unset(); hs.Unset(); }
-
-		XNode* CreateNode() const;
-	};
-	void SaveStepsRecentScore( const Song* pSong, const Steps* pSteps, HighScore hs );
-	
-		
-	//
-	// RecentCourseScores
-	//
-	struct HighScoreForACourseAndTrail
-	{
-		CourseID courseID;
-		TrailID	trailID;
-		HighScore hs;
-
-		HighScoreForACourseAndTrail() { Unset(); }
-		void Unset() { courseID.Unset(); hs.Unset(); }
-
-		XNode* CreateNode() const;
-	};
-	void SaveCourseRecentScore( const Course* pCourse, const Trail* pTrail, HighScore hs );
-
-	//
 	// Init'ing
 	//
 	void InitAll()

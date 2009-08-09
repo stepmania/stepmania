@@ -8,7 +8,7 @@
 #include "Foreach.h"
 #include "RadarValues.h"
 
-#define EMPTY_NAME			THEME->GetMetric ("HighScore","EmptyName")
+ThemeMetric<RString> EMPTY_NAME("HighScore","EmptyName");
 
 
 struct HighScoreImpl
@@ -27,6 +27,7 @@ struct HighScoreImpl
 	int iHoldNoteScores[NUM_HoldNoteScore];
 	RadarValues radarValues;
 	float fLifeRemainingSeconds;
+	bool bDisqualified;
 
 	HighScoreImpl();
 	XNode *CreateNode() const;
@@ -55,6 +56,7 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 		COMPARE( iHoldNoteScores[hns] );
 	COMPARE( radarValues );
 	COMPARE( fLifeRemainingSeconds );
+	COMPARE( bDisqualified );
 #undef COMPARE
 
 	return true;
@@ -76,6 +78,7 @@ HighScoreImpl::HighScoreImpl()
 	ZERO( iHoldNoteScores );
 	radarValues.MakeUnknown();
 	fLifeRemainingSeconds = 0;
+	bDisqualified = false;
 }
 
 XNode *HighScoreImpl::CreateNode() const
@@ -105,6 +108,7 @@ XNode *HighScoreImpl::CreateNode() const
 			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 	pNode->AppendChild( radarValues.CreateNode(bWriteSimpleValues, bWriteComplexValues) );
 	pNode->AppendChild( "LifeRemainingSeconds",	fLifeRemainingSeconds );
+	pNode->AppendChild( "Disqualified",		bDisqualified);
 
 	return pNode;
 }
@@ -138,6 +142,7 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	if( pRadarValues )
 		radarValues.LoadFromNode( pRadarValues );
 	pNode->GetChildValue( "LifeRemainingSeconds",	fLifeRemainingSeconds );
+	pNode->GetChildValue( "Disqualified",		bDisqualified);
 
 	/* Validate input. */
 	grade = clamp( grade, Grade_Tier01, Grade_Failed );
@@ -170,6 +175,7 @@ int HighScore::GetTapNoteScore( TapNoteScore tns ) const { return m_Impl->iTapNo
 int HighScore::GetHoldNoteScore( HoldNoteScore hns ) const { return m_Impl->iHoldNoteScores[hns]; }
 const RadarValues &HighScore::GetRadarValues() const { return m_Impl->radarValues; }
 float HighScore::GetLifeRemainingSeconds() const { return m_Impl->fLifeRemainingSeconds; }
+bool HighScore::GetDisqualified() const { return m_Impl->bDisqualified; }
 
 void HighScore::SetName( const RString &sName ) { m_Impl->sName = sName; }
 void HighScore::SetGrade( Grade g ) { m_Impl->grade = g; }
@@ -185,6 +191,7 @@ void HighScore::SetTapNoteScore( TapNoteScore tns, int i ) { m_Impl->iTapNoteSco
 void HighScore::SetHoldNoteScore( HoldNoteScore hns, int i ) { m_Impl->iHoldNoteScores[hns] = i; }
 void HighScore::SetRadarValues( const RadarValues &rv ) { m_Impl->radarValues = rv; }
 void HighScore::SetLifeRemainingSeconds( float f ) { m_Impl->fLifeRemainingSeconds = f; }
+void HighScore::SetDisqualified( bool b ) { m_Impl->bDisqualified = b; }
 
 /* We normally don't give direct access to the members.  We need this one
  * for NameToFillIn; use a special accessor so it's easy to find where this

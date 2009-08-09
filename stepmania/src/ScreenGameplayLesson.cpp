@@ -107,7 +107,7 @@ void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage SM )
 
 				// Commit scores here since we don't go through an eval screen.
 				// Only commit if we've cleared.  Don't commit if we've failed all 3 tries.
-				STATSMAN->m_CurStageStats.CommitScores( false );
+				STATSMAN->m_CurStageStats.FinalizeScores( false );
 			}
 			else if( bAnyTriesLeft )
 			{

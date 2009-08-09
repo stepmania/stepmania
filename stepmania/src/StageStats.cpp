@@ -129,7 +129,42 @@ float StageStats::GetTotalPossibleStepsSeconds() const
 	return fSecs / m_fMusicRate;
 }
 
-void StageStats::CommitScores( bool bSummary )
+static HighScore FillInHighScore( const PlayerStageStats &pss, const PlayerState &ps, RString sRankingToFillInMarker, RString sPlayerGuid )
+{
+	HighScore hs;
+	hs.SetName( sRankingToFillInMarker );
+	hs.SetGrade( pss.GetGrade() );
+	hs.SetScore( pss.m_iScore );
+	hs.SetPercentDP( pss.GetPercentDancePoints() );
+	hs.SetAliveSeconds( pss.m_fAliveSeconds );
+
+	vector<RString> asModifiers;
+	{
+		RString sPlayerOptions = ps.m_PlayerOptions.GetStage().GetString();
+		if( !sPlayerOptions.empty() )
+			asModifiers.push_back( sPlayerOptions );
+		RString sSongOptions = GAMESTATE->m_SongOptions.GetStage().GetString();
+		if( !sSongOptions.empty() )
+			asModifiers.push_back( sSongOptions );
+	}
+	hs.SetModifiers( join(", ", asModifiers) );
+
+	hs.SetDateTime( DateTime::GetNowDateTime() );
+	hs.SetPlayerGuid( sPlayerGuid );
+	hs.SetMachineGuid( PROFILEMAN->GetMachineProfile()->m_sGuid );
+	hs.SetProductID( PREFSMAN->m_iProductID );
+	FOREACH_ENUM( TapNoteScore, tns )
+		hs.SetTapNoteScore( tns, pss.m_iTapNoteScores[tns] );
+	FOREACH_ENUM( HoldNoteScore, hns )
+		hs.SetHoldNoteScore( hns, pss.m_iHoldNoteScores[hns] );
+	hs.SetRadarValues( pss.m_radarActual );
+	hs.SetLifeRemainingSeconds( pss.m_fLifeRemainingSeconds );
+	hs.SetDisqualified( pss.IsDisqualified() );
+
+	return hs;
+}
+
+void StageStats::FinalizeScores( bool bSummary )
 {
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -153,44 +188,23 @@ void StageStats::CommitScores( bool bSummary )
 
 	LOG->Trace( "saving stats and high scores" );
 
+	//
+	// generate a HighScore for each player
+	//
+	// whether or not to save scores when the stage was failed
+	// depends on if this is a course or not ... it's handled
+	// below in the switch
 	FOREACH_HumanPlayer( p )
 	{
-		// don't save scores if the player is disqualified
-		if( this->m_player[p].IsDisqualified() )
+		RString sPlayerGuid = PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : RString("");
+		m_player[p].m_HighScore = FillInHighScore( m_player[p], *GAMESTATE->m_pPlayerState[p], RANKING_TO_FILL_IN_MARKER[p], sPlayerGuid );
+	}
+	FOREACH_MultiPlayer( mp )
+	{
+		if( !GAMESTATE->IsMultiPlayerEnabled(mp) )
 			continue;
-
-		// whether or not to save scores when the stage was failed
-		// depends on if this is a course or not ... it's handled
-		// below in the switch
-
-		HighScore &hs = m_player[p].m_HighScore;
-		hs.SetName( RANKING_TO_FILL_IN_MARKER[p] );
-		hs.SetGrade( m_player[p].GetGrade() );
-		hs.SetScore( m_player[p].m_iScore );
-		hs.SetPercentDP( m_player[p].GetPercentDancePoints() );
-		hs.SetAliveSeconds( m_player[p].m_fAliveSeconds );
-
-		vector<RString> asModifiers;
-		{
-			RString sPlayerOptions = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetStage().GetString();
-			if( !sPlayerOptions.empty() )
-				asModifiers.push_back( sPlayerOptions );
-			RString sSongOptions = GAMESTATE->m_SongOptions.GetStage().GetString();
-			if( !sSongOptions.empty() )
-				asModifiers.push_back( sSongOptions );
-		}
-		hs.SetModifiers( join(", ", asModifiers) );
-
-		hs.SetDateTime( DateTime::GetNowDateTime() );
-		hs.SetPlayerGuid( PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : RString("") );
-		hs.SetMachineGuid( PROFILEMAN->GetMachineProfile()->m_sGuid );
-		hs.SetProductID( PREFSMAN->m_iProductID );
-		FOREACH_ENUM( TapNoteScore, tns )
-			hs.SetTapNoteScore( tns, m_player[p].m_iTapNoteScores[tns] );
-		FOREACH_ENUM( HoldNoteScore, hns )
-			hs.SetHoldNoteScore( hns, m_player[p].m_iHoldNoteScores[hns] );
-		hs.SetRadarValues( m_player[p].m_radarActual );
-		hs.SetLifeRemainingSeconds( m_player[p].m_fLifeRemainingSeconds );
+		RString sPlayerGuid = "????";	// FIXME
+		m_multiPlayer[mp].m_HighScore = FillInHighScore( m_multiPlayer[mp], *GAMESTATE->m_pMultiPlayerState[mp], "", sPlayerGuid );
 	}
 
 	FOREACH_HumanPlayer( p )
@@ -200,6 +214,10 @@ void StageStats::CommitScores( bool bSummary )
 
 		const Song* pSong = GAMESTATE->m_pCurSong;
 		const Steps* pSteps = GAMESTATE->m_pCurSteps[p];
+
+		// Don't save DQ'd scores
+		if( hs.GetDisqualified() )
+			continue;
 
 		if( bSummary )
 		{
@@ -217,6 +235,8 @@ void StageStats::CommitScores( bool bSummary )
 		}
 		else if( GAMESTATE->IsCourseMode() )
 		{
+			// Save this stage to recent scores
+
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			ASSERT( pCourse );
 			Trail* pTrail = GAMESTATE->m_pCurTrail[p];
@@ -230,8 +250,6 @@ void StageStats::CommitScores( bool bSummary )
 			PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
 		}
 	}
-
-	LOG->Trace( "done saving stats and high scores" );
 
 	// If both players get a machine high score in the same HighScoreList,
 	// then one player's score may have bumped the other player.  Look in 
@@ -272,7 +290,7 @@ void StageStats::CommitScores( bool bSummary )
 			m_player[p].m_iMachineHighScoreIndex = iter - pHSL->vHighScores.begin();
 	}
 
-
+	LOG->Trace( "done saving stats and high scores" );
 }
 
 bool StageStats::PlayerHasHighScore( PlayerNumber pn ) const
