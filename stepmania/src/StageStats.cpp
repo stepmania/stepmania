@@ -203,7 +203,7 @@ void StageStats::FinalizeScores( bool bSummary )
 	{
 		if( !GAMESTATE->IsMultiPlayerEnabled(mp) )
 			continue;
-		RString sPlayerGuid = "????";	// FIXME
+		RString sPlayerGuid = "00000000-0000-0000-0000-000000000000";	// FIXME
 		m_multiPlayer[mp].m_HighScore = FillInHighScore( m_multiPlayer[mp], *GAMESTATE->m_pMultiPlayerState[mp], "", sPlayerGuid );
 	}
 
