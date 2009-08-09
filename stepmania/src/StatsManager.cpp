@@ -1,5 +1,6 @@
 #include "global.h"
 #include "StatsManager.h"
+#include "RageFileManager.h"
 #include "GameState.h"
 #include "Foreach.h"
 #include "ProfileManager.h"
@@ -270,7 +271,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 		RString sDate = DateTime::GetNowDate().GetString();
 		sDate.Replace(":","-");
 
-		const RString UPLOAD_DIR = "Save/Upload/";
+		const RString UPLOAD_DIR = "/Save/Upload/";
 		RString sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension(UPLOAD_DIR, sDate + " " );
 		RString fn = UPLOAD_DIR + sFileNameNoExtension + ".xml";
 		
@@ -278,6 +279,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 		
 		if( bSaved )
 		{
+			FILEMAN->FlushDirCache( UPLOAD_DIR );
 			RString sStatsXmlSigFile = fn + SIGNATURE_APPEND;
 			CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
 		}
