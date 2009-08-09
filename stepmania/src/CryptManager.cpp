@@ -23,6 +23,7 @@ static bool HashFile( RageFileBasic &f, unsigned char buf_hash[20], int iHash )
 	RString s;
 	while( !f.AtEOF() )
 	{
+		s.erase();
 		if( f.Read(s, 1024*4) == -1 )
 		{
 			LOG->Warn( "Error reading %s: %s", f.GetDisplayPath().c_str(), f.GetError().c_str() );
