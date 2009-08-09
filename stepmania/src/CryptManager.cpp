@@ -396,6 +396,24 @@ RString CryptManager::GetPublicKeyFileName()
 	return PUBLIC_KEY_PATH;
 }
 
+/* Generate a version 4 random UUID. */
+RString CryptManager::GenerateRandomUUID()
+{
+	uint32_t buf[4];
+	CryptManager::GetRandomBytes( buf, sizeof(buf) );
+
+	buf[1] &= 0xFFFF0FFF;
+	buf[1] |= 0x00004000;
+	buf[2] &= 0x0FFFFFFF;
+	buf[2] |= 0xA0000000;
+
+	return ssprintf("%08x-%04x-%04x-%04x-%04x%08x\n",
+			buf[0],
+			buf[1] >> 16, buf[1] & 0xFFFF,
+			buf[2] >> 16, buf[2] & 0xFFFF,
+			buf[3]);
+}
+
 /*
  * (c) 2004-2007 Chris Danford, Glenn Maynard
  * All rights reserved.

@@ -86,6 +86,7 @@ public:
 
 	/* This is set to a random number per-game/round; it can be used for a random seed. */
 	int				m_iGameSeed, m_iStageSeed;
+	RString				m_sStageGUID;
 
 	bool		PlayersCanJoin() const;	// true if it's not too late for a player to join
 	int 		GetCoinsNeededToJoin() const;

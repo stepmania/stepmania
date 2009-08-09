@@ -21,6 +21,7 @@ public:
 	static bool Verify( RageFileBasic &file, RString sSignature, RString sPublicKey );
 
 	static void GetRandomBytes( void *pData, int iBytes );
+	static RString GenerateRandomUUID();
 
 	static RString GetMD5ForFile( RString fn );		// in binary
 	static RString GetMD5ForString( RString sData );	// in binary

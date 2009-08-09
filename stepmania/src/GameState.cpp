@@ -8,6 +8,7 @@
 #include "CharacterManager.h"
 #include "CommonMetrics.h"
 #include "Course.h"
+#include "CryptManager.h"
 #include "Foreach.h"
 #include "Game.h"
 #include "GameCommand.h"
@@ -692,6 +693,7 @@ void GameState::BeginStage()
 		if( CurrentOptionsDisqualifyPlayer(pn) )
 			STATSMAN->m_CurStageStats.m_player[pn].m_bDisqualified = true;
 	m_bEarnedExtraStage = false;
+	m_sStageGUID = CryptManager::GenerateRandomUUID();
 }
 
 void GameState::CancelStage()
