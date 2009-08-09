@@ -1176,7 +1176,7 @@ void Actor::AddCommand( const RString &sCmdName, apActorCommands apac )
 	if( GetMessageNameFromCommandName(sCmdName, sMessage) )
 	{
 		SubscribeToMessage( sMessage );
-		m_mapNameToCommands[sMessage] = apac;	// sCmdName w/o "Message" at the end
+			m_mapNameToCommands[sMessage] = apac;	// sCmdName w/o "Message" at the end
 	}
 	else
 	{

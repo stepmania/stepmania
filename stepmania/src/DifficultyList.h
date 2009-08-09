@@ -9,12 +9,12 @@
 class Song;
 class Steps;
 
-class DifficultyList: public ActorFrame
+class StepsDisplayList: public ActorFrame
 {
 public:
-	DifficultyList();
-	virtual ~DifficultyList();
-	virtual DifficultyList *Copy() const;
+	StepsDisplayList();
+	virtual ~StepsDisplayList();
+	virtual StepsDisplayList *Copy() const;
 	virtual void LoadFromNode( const XNode* pNode );
 
 	void HandleMessage( const Message &msg );

@@ -194,7 +194,10 @@ void StepsDisplay::SetInternal( const SetParams &params )
 	RString sCustomDifficulty;
 	if( params.st != StepsType_Invalid )
 	{
-		sCustomDifficulty = GetCustomDifficulty( params.st, params.dc );
+		if( params.pSteps )
+			sCustomDifficulty = StepsToCustomDifficulty(params.pSteps);
+		if( params.pTrail )
+			sCustomDifficulty = TrailToCustomDifficulty(params.pTrail);
 		msg.SetParam( "CustomDifficulty", sCustomDifficulty );
 	}
 
@@ -238,7 +241,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 			if( params.pSteps && params.pSteps->IsAnEdit() )
 				s = params.sDescription;
 			else if( !sCustomDifficulty.empty() )
-				s = GetLocalizedCustomDifficulty( sCustomDifficulty );
+				s = CustomDifficultyToLocalizedString( sCustomDifficulty );
 		}
 
 		m_textDescription.SetText( s );
@@ -255,7 +258,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		// TODO: Make this an AutoActor, optimize graphic loading
 		if( params.st != StepsType_Invalid )
 		{
-			RString sStepsType = GameManager::GetStepsTypeInfo(params.st).szName;
+			RString sStepsType = GAMEMAN->GetStepsTypeInfo(params.st).szName;
 			m_sprStepsType.Load( THEME->GetPathG(m_sMetricsGroup,"StepsType "+sStepsType) );
 		}
 	}

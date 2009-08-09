@@ -3,6 +3,8 @@
 
 #include "EnumHelper.h"
 #include "GameConstantsAndTypes.h"
+class Steps;
+class Trail;
 
 //
 // Player number stuff
@@ -33,11 +35,12 @@ const RString& CourseDifficultyToLocalizedString( Difficulty dc );
 Difficulty GetNextShownCourseDifficulty( Difficulty pn );
 
 
-// CustomDifficulty is a themeable difficulty name based on Difficulty, string matching on StepsType, and bCourse.
+// CustomDifficulty is a themeable difficulty name based on Difficulty, string matching on StepsType, and CourseType.
 // It is used to look up localized strings and look up colors.
-RString GetCustomDifficulty( StepsType st, Difficulty dc );
-RString GetLocalizedCustomDifficulty( const RString &sCustomDifficulty );
-static inline RString GetLocalizedCustomDifficulty( StepsType st, Difficulty dc ) { return GetLocalizedCustomDifficulty( GetCustomDifficulty(st,dc) ); }
+RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct );
+RString CustomDifficultyToLocalizedString( const RString &sCustomDifficulty );
+RString StepsToCustomDifficulty( const Steps *pSteps );
+RString TrailToCustomDifficulty( const Trail *pTrail );
 
 
 #endif

@@ -13,9 +13,9 @@
 
 #define MAX_METERS NUM_Difficulty + MAX_EDITS_PER_SONG
 
-REGISTER_ACTOR_CLASS( DifficultyList )
+REGISTER_ACTOR_CLASS( StepsDisplayList )
 
-DifficultyList::DifficultyList()
+StepsDisplayList::StepsDisplayList()
 {
 	m_bShown = true;
 
@@ -26,15 +26,15 @@ DifficultyList::DifficultyList()
 	}
 }
 
-DifficultyList::~DifficultyList()
+StepsDisplayList::~StepsDisplayList()
 {
 }
 
-void DifficultyList::LoadFromNode( const XNode* pNode )
+void StepsDisplayList::LoadFromNode( const XNode* pNode )
 {
 	ActorFrame::LoadFromNode( pNode );
 
-	ASSERT_M( !m_sName.empty(), "DifficultyList must have a Name" );
+	ASSERT_M( !m_sName.empty(), "StepsDisplayList must have a Name" );
 
 	ITEMS_SPACING_Y.Load( m_sName, "ItemsSpacingY" );
 	NUM_SHOWN_ITEMS.Load( m_sName, "NumShownItems" );
@@ -48,7 +48,7 @@ void DifficultyList::LoadFromNode( const XNode* pNode )
 	{
 		const XNode *pChild = pNode->GetChild( ssprintf("CursorP%i",pn+1) );
 		if( pChild == NULL )
-			RageException::Throw( "%s: DifficultyList: missing the node \"CursorP%d\"", ActorUtil::GetWhere(pNode).c_str(), pn+1 );
+			RageException::Throw( "%s: StepsDisplayList: missing the node \"CursorP%d\"", ActorUtil::GetWhere(pNode).c_str(), pn+1 );
 		m_Cursors[pn].LoadActorFromNode( pChild, this );
 
 		/* Hack: we need to tween cursors both up to down (cursor motion) and visible to
@@ -59,7 +59,7 @@ void DifficultyList::LoadFromNode( const XNode* pNode )
 		 * colors; I think we do need a diffuse color stack ... */
 		pChild = pNode->GetChild( ssprintf("CursorP%iFrame",pn+1) );
 		if( pChild == NULL )
-			RageException::Throw( "%s: DifficultyList: missing the node \"CursorP%dFrame\"", ActorUtil::GetWhere(pNode).c_str(), pn+1 );
+			RageException::Throw( "%s: StepsDisplayList: missing the node \"CursorP%dFrame\"", ActorUtil::GetWhere(pNode).c_str(), pn+1 );
 		m_CursorFrames[pn].LoadFromNode( pChild );
 		m_CursorFrames[pn].AddChild( m_Cursors[pn] );
 		this->AddChild( &m_CursorFrames[pn] );
@@ -76,7 +76,7 @@ void DifficultyList::LoadFromNode( const XNode* pNode )
 	PositionItems();
 }
 
-int DifficultyList::GetCurrentRowIndex( PlayerNumber pn ) const
+int StepsDisplayList::GetCurrentRowIndex( PlayerNumber pn ) const
 {
 	Difficulty ClosestDifficulty = GAMESTATE->GetClosestShownDifficulty(pn);
 	
@@ -100,7 +100,7 @@ int DifficultyList::GetCurrentRowIndex( PlayerNumber pn ) const
 }
 
 /* Update m_fY and m_bHidden[]. */
-void DifficultyList::UpdatePositions()
+void StepsDisplayList::UpdatePositions()
 {
 	int iCurrentRow[NUM_PLAYERS];
 	FOREACH_HumanPlayer( p )
@@ -193,7 +193,7 @@ void DifficultyList::UpdatePositions()
 }
 
 
-void DifficultyList::PositionItems()
+void StepsDisplayList::PositionItems()
 {
 	for( int i = 0; i < MAX_METERS; ++i )
 	{
@@ -244,7 +244,7 @@ void DifficultyList::PositionItems()
 	}
 }
 
-void DifficultyList::SetFromGameState()
+void StepsDisplayList::SetFromGameState()
 {
 	const Song *pSong = GAMESTATE->m_pCurSong;
 	unsigned i = 0;
@@ -287,7 +287,7 @@ void DifficultyList::SetFromGameState()
 		m_Lines[m].m_Meter.FinishTweening();
 }
 
-void DifficultyList::HideRows()
+void StepsDisplayList::HideRows()
 {
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
@@ -298,7 +298,7 @@ void DifficultyList::HideRows()
 	}
 }
 
-void DifficultyList::TweenOnScreen()
+void StepsDisplayList::TweenOnScreen()
 {
 	FOREACH_HumanPlayer( pn )
 		ON_COMMAND( m_Cursors[pn] );
@@ -322,12 +322,12 @@ void DifficultyList::TweenOnScreen()
 		COMMAND( m_Cursors[pn], "TweenOn" );
 }
 
-void DifficultyList::TweenOffScreen()
+void StepsDisplayList::TweenOffScreen()
 {
 
 }
 
-void DifficultyList::Show()
+void StepsDisplayList::Show()
 {
 	m_bShown = true;
 
@@ -340,7 +340,7 @@ void DifficultyList::Show()
 		COMMAND( m_Cursors[pn], "Show" );
 }
 
-void DifficultyList::Hide()
+void StepsDisplayList::Hide()
 {
 	m_bShown = false;
 	PositionItems();
@@ -349,7 +349,7 @@ void DifficultyList::Hide()
 		COMMAND( m_Cursors[pn], "Hide" );
 }
 
-void DifficultyList::HandleMessage( const Message &msg )
+void StepsDisplayList::HandleMessage( const Message &msg )
 {
 	FOREACH_ENUM( PlayerNumber, pn )
 	{
@@ -365,18 +365,18 @@ void DifficultyList::HandleMessage( const Message &msg )
 // lua start
 #include "LuaBinding.h"
 
-class LunaDifficultyList: public Luna<DifficultyList>
+class LunaStepsDisplayList: public Luna<StepsDisplayList>
 {
 public:
 	static int setfromgamestate( T* p, lua_State *L )		{ p->SetFromGameState(); return 0; }
 
-	LunaDifficultyList()
+	LunaStepsDisplayList()
 	{
 		ADD_METHOD( setfromgamestate );
 	}
 };
 
-LUA_REGISTER_DERIVED_CLASS( DifficultyList, ActorFrame )
+LUA_REGISTER_DERIVED_CLASS( StepsDisplayList, ActorFrame )
 // lua end
 
 /*

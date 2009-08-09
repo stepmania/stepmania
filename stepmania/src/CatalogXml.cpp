@@ -83,7 +83,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			FOREACH_CONST( StepsType, vStepsTypesToShow, st )
 			{
 				XNode* p3 = p2->AppendChild( "StepsType" );
-				p3->AppendAttr( "StepsType", GameManager::GetStepsTypeInfo(*st).szName );
+				p3->AppendAttr( "StepsType", GAMEMAN->GetStepsTypeInfo(*st).szName );
 				
 				int iNumStepsInGroupAndStepsType[NUM_Difficulty];
 				ZERO( iNumStepsInGroupAndStepsType );
@@ -280,8 +280,8 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			FOREACH_CONST( Difficulty, vDifficultiesToShow, iter )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "Difficulty", DifficultyToString(*iter) );
-				StepsType st = GameManager::GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;	// TODO: Is this the best thing we can do here?
-				pNode3->AppendAttr( "DisplayAs", GetLocalizedCustomDifficulty( st, *iter ) );	// TODO: Fix use of Single
+				StepsType st = GAMEMAN->GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;	// TODO: Is this the best thing we can do here?
+				pNode3->AppendAttr( "DisplayAs", CustomDifficultyToLocalizedString( GetCustomDifficulty( st, *iter, CourseType_Invalid) ) );	// TODO: Fix use of Single, Fix use of CourseType_Invalid
 			}
 		}
 
@@ -298,8 +298,8 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			XNode* pNode2 = pNode->AppendChild( "StepsType" );
 			FOREACH_CONST( StepsType, vStepsTypesToShow, iter )
 			{
-				XNode* pNode3 = pNode2->AppendChild( "StepsType", GameManager::GetStepsTypeInfo(*iter).szName );
-				pNode3->AppendAttr( "DisplayAs", GameManager::GetStepsTypeInfo(*iter).GetLocalizedString() );
+				XNode* pNode3 = pNode2->AppendChild( "StepsType", GAMEMAN->GetStepsTypeInfo(*iter).szName );
+				pNode3->AppendAttr( "DisplayAs", GAMEMAN->GetStepsTypeInfo(*iter).GetLocalizedString() );
 			}
 		}
 
@@ -317,7 +317,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 		{
 			XNode* pNode2 = pNode->AppendChild( "Style" );
 			vector<const Style*> vpStyle;
-			GameManager::GetStylesForGame( GAMESTATE->m_pCurGame, vpStyle );
+			GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vpStyle );
 			FOREACH( const Style*, vpStyle, pStyle )
 			{
 				if( !SHOW_STYLE(*pStyle) )
@@ -325,7 +325,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 				StyleID sID;
 				sID.FromStyle( (*pStyle) );
 				XNode* pNode3 = pNode2->AppendChild( sID.CreateNode() );
-				pNode3->AppendAttr( "DisplayAs", GameManager::StyleToLocalizedString(*pStyle) );
+				pNode3->AppendAttr( "DisplayAs", GAMEMAN->StyleToLocalizedString(*pStyle) );
 			}
 		}
 

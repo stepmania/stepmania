@@ -613,7 +613,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	}
 
 
-	int iNumNewTracks = GameManager::GetStepsTypeInfo( out.m_StepsType ).iNumTracks;
+	int iNumNewTracks = GAMEMAN->GetStepsTypeInfo( out.m_StepsType ).iNumTracks;
 	vector<int> iTransformNewToOld;
 	iTransformNewToOld.resize( iNumNewTracks, -1 );
 

@@ -93,7 +93,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		def.m_sExplanationName = "Select Edit Steps";
 		def.m_vsChoices.clear();
 		StepsType st = (*s)->m_StepsType;
-		RString sType = GameManager::GetStepsTypeInfo(st).GetLocalizedString();
+		RString sType = GAMEMAN->GetStepsTypeInfo(st).GetLocalizedString();
 		def.m_vsChoices.push_back( sType );
 		def.m_bAllowThemeItems = false;	// already themed
 		iIndex++;
@@ -140,7 +140,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 		{
 			Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 			ASSERT( pSteps );
-			const Style *pStyle = GameManager::GetEditorStyleForStepsType( pSteps->m_StepsType );
+			const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType( pSteps->m_StepsType );
 			GAMESTATE->SetCurrentStyle( pStyle );
 			// do base behavior
 		}

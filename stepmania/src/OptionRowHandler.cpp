@@ -447,7 +447,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 					if( pSteps->IsAnEdit() )
 						s = pSteps->GetDescription();
 					else
-						s = GetLocalizedCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty() );
+						s = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
 				}
 				s += ssprintf( " %d", pSteps->GetMeter() );
 				m_Def.m_vsChoices.push_back( s );
@@ -560,7 +560,7 @@ public:
 				}
 				else
 				{
-					s = GetLocalizedCustomDifficulty( GAMESTATE->m_stEdit, dc );
+					s = CustomDifficultyToLocalizedString( GetCustomDifficulty( GAMESTATE->m_stEdit, dc, CourseType_Invalid ) );
 				}
 				m_Def.m_vsChoices.push_back( s );
 			}
@@ -674,11 +674,11 @@ class OptionRowHandlerListStyles: public OptionRowHandlerList
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		vector<const Style*> vStyles;
-		GameManager::GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
+		GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
 		ASSERT( vStyles.size() );
 		FOREACH_CONST( const Style*, vStyles, s )
 		{
-			m_Def.m_vsChoices.push_back( GameManager::StyleToLocalizedString(*s) ); 
+			m_Def.m_vsChoices.push_back( GAMEMAN->StyleToLocalizedString(*s) ); 
 			GameCommand mc;
 			mc.m_pStyle = *s;
 			m_aListEntries.push_back( mc );
@@ -736,8 +736,8 @@ class OptionRowHandlerListDifficulties: public OptionRowHandlerList
 
 		FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), d )
 		{
-			StepsType st = GameManager::GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;	// TODO: Is this the best thing we can do here?
-			RString s = GetLocalizedCustomDifficulty( st, *d );
+			StepsType st = GAMEMAN->GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;	// TODO: Is this the best thing we can do here?
+			RString s = CustomDifficultyToLocalizedString( GetCustomDifficulty(st, *d, CourseType_Invalid) );
 
 			m_Def.m_vsChoices.push_back( s ); 
 			GameCommand mc;
@@ -1205,7 +1205,7 @@ public:
 		m_Def.m_vsChoices.clear();
 		FOREACH_CONST( StepsType, m_vStepsTypesToShow, st )
 		{
-			RString s = GameManager::GetStepsTypeInfo( *st ).GetLocalizedString();
+			RString s = GAMEMAN->GetStepsTypeInfo( *st ).GetLocalizedString();
 			m_Def.m_vsChoices.push_back( s );
 		}
 

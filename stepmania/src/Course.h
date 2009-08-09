@@ -20,20 +20,6 @@ class Game;
 
 const int MAX_EDIT_COURSE_TITLE_LENGTH = 12;
 
-enum CourseType
-{
-	COURSE_TYPE_NONSTOP,	// if life meter type is BAR
-	COURSE_TYPE_ONI,	// if life meter type is BATTERY
-	COURSE_TYPE_ENDLESS,	// if set to REPEAT
-	COURSE_TYPE_SURVIVAL,	// if life meter type is TIME
-	NUM_CourseType,
-	CourseType_Invalid
-};
-#define FOREACH_CourseType( i ) FOREACH_ENUM( CourseType, i )
-const RString& CourseTypeToString( CourseType i );
-const RString& CourseTypeToLocalizedString( CourseType i );
-LuaDeclareType( CourseType );
-
 inline PlayMode CourseTypeToPlayMode( CourseType ct ) { return (PlayMode)(PLAY_MODE_NONSTOP+ct); }
 inline CourseType PlayModeToCourseType( PlayMode pm ) { return (CourseType)(pm-PLAY_MODE_NONSTOP); }
 

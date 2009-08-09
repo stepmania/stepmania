@@ -64,7 +64,7 @@ void ScreenSelectMusic::Init()
 	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )
 	{
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GameManager::GameAndStringToStyle(GameManager::GetDefaultGame(),"versus") );
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
 		GAMESTATE->JoinPlayer( PLAYER_1 );
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	}
@@ -193,8 +193,8 @@ void ScreenSelectMusic::BeginScreen()
 	if( CommonMetrics::AUTO_SET_STYLE )
 	{
 		vector<StepsType> vst;
-		GameManager::GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
-		const Style *pStyle = GameManager::GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
+		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vst );
+		const Style *pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), vst[0] );
 		GAMESTATE->SetCurrentStyle( pStyle );
 	}
 
@@ -769,7 +769,7 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 		// selected, they are no longer playable now that P2 has joined.  
 		
 		// TODO: Invalidate the CurSteps only if they are no longer playable.  That way, 
-		// after music change will clamp to the nearest in the DifficultyList.
+		// after music change will clamp to the nearest in the StepsDisplayList.
 		GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber].SetWithoutBroadcast( NULL );
 		FOREACH_ENUM( PlayerNumber, p )
 			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
@@ -1068,7 +1068,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 					stCurrent = GAMESTATE->m_pCurSteps[pn]->m_StepsType;
 				}
 				vector<StepsType> vst;
-				pStyle = GameManager::GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), stCurrent );
+				pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), stCurrent );
 			}
 			GAMESTATE->SetCurrentStyle( pStyle );
 		}

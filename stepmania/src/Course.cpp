@@ -21,18 +21,6 @@
 
 static Preference<int> MAX_SONGS_IN_EDIT_COURSE( "MaxSongsInEditCourse", -1 );
 
-static const char *CourseTypeNames[] = {
-	"Nonstop",
-	"Oni",
-	"Endless",
-	"Survival",
-};
-XToString( CourseType );
-XToLocalizedString( CourseType );
-LuaXType( CourseType );
-LuaFunction( CourseTypeToLocalizedString, CourseTypeToLocalizedString( Enum::Check<CourseType>( L, 1 ) ) );
-
-
 static const char *SongSortNames[] = {
 	"Randomize",
 	"MostPlays",
@@ -486,6 +474,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	vector<Song*> AllSongsShuffled;
 
 	trail.m_StepsType = st;
+	trail.m_CourseType = GetCourseType();
 	trail.m_CourseDifficulty = cd;
 
 	/* Set to true if CourseDifficulty is able to change something. */
@@ -687,7 +676,7 @@ void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
 void Course::GetAllTrails( vector<Trail*> &AddTo ) const
 {
 	vector<StepsType> vStepsTypesToShow;
-	GameManager::GetStepsTypesForGame( GAMESTATE->m_pCurGame, vStepsTypesToShow );
+	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vStepsTypesToShow );
 	FOREACH( StepsType, vStepsTypesToShow, st )
 	{
 		GetTrails( AddTo, *st );
@@ -739,7 +728,7 @@ bool Course::AllSongsAreFixed() const
 const Style *Course::GetCourseStyle( const Game *pGame, int iNumPlayers ) const
 {
 	vector<const Style*> vpStyles;
-	GameManager::GetCompatibleStyles( pGame, iNumPlayers, vpStyles );
+	GAMEMAN->GetCompatibleStyles( pGame, iNumPlayers, vpStyles );
 
 	for( int s=0; s < (int) vpStyles.size(); ++s ) 
 	{

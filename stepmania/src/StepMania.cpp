@@ -308,6 +308,7 @@ void ShutdownGame()
 	SAFE_DELETE( SOUND ); /* uses GAMESTATE, PREFSMAN */
 	SAFE_DELETE( PREFSMAN );
 	SAFE_DELETE( GAMESTATE );
+	SAFE_DELETE( GAMEMAN );
 	SAFE_DELETE( NOTESKIN );
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
@@ -786,20 +787,20 @@ RageDisplay *CreateDisplay()
 
 static void SwitchToLastPlayedGame()
 {
-	const Game *pGame = GameManager::StringToGame( PREFSMAN->GetCurrentGame() );
+	const Game *pGame = GAMEMAN->StringToGame( PREFSMAN->GetCurrentGame() );
 
 	/* If the active game type isn't actually available, revert to the default. */
 	if( pGame == NULL )
-		pGame = GameManager::GetDefaultGame();
+		pGame = GAMEMAN->GetDefaultGame();
 	
-	if( !GameManager::IsGameEnabled( pGame ) && pGame != GameManager::GetDefaultGame() )
+	if( !GAMEMAN->IsGameEnabled( pGame ) && pGame != GAMEMAN->GetDefaultGame() )
 	{
-		pGame = GameManager::GetDefaultGame();
+		pGame = GAMEMAN->GetDefaultGame();
 		LOG->Warn( "Default NoteSkin for \"%s\" missing, reverting to \"%s\"",
-			pGame->m_szName, GameManager::GetDefaultGame()->m_szName );
+			pGame->m_szName, GAMEMAN->GetDefaultGame()->m_szName );
 	}
 
-	ASSERT( GameManager::IsGameEnabled(pGame) );
+	ASSERT( GAMEMAN->IsGameEnabled(pGame) );
 
 	StepMania::ChangeCurrentGame( pGame );
 }
@@ -1050,6 +1051,7 @@ int main(int argc, char* argv[])
 
 	AdjustForChangedSystemCapabilities();
 
+	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
 	ANNOUNCER	= new AnnouncerManager;
 	NOTESKIN	= new NoteSkinManager;

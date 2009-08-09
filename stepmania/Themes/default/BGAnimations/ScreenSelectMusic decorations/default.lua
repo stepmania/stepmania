@@ -315,7 +315,7 @@ t[#t+1] = Def.CourseContentsList {
 			DifficultyChangedCommand=function(self, params)
 				if params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber() then return end
 				self:settext( params.Meter );
-				self:diffuse( CourseDifficutlyToColor(params.Difficulty) );
+				self:diffuse( StepsOrTrailToColor(params.Trail) );
 			end;
 		};
 
@@ -328,7 +328,7 @@ t[#t+1] = Def.CourseContentsList {
 			OnCommand=cmd(x,SCREEN_CENTER_X-254;y,1;shadowlength,0;settext,"1");
 			DifficultyChangedCommand=function(self, params)
 				if params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber() then return end
-				self:diffuse( CourseDifficutlyToColor(params.Difficulty) );
+				self:diffuse( StepsOrTrailToColor(params.Trail) );
 			end;
 		};
 	};
@@ -392,8 +392,8 @@ t[#t+1] = Def.ActorFrame{
 };
 
 if not GAMESTATE:IsCourseMode() then
-	t[#t+1] = Def.DifficultyList {
-		Name="DifficultyList";
+	t[#t+1] = Def.StepsDisplayList {
+		Name="StepsDisplayList";
 		InitCommand=cmd(x,SCREEN_CENTER_X+166;y,SCREEN_CENTER_Y+20);
 		CursorP1 = Def.ActorFrame {
 			BeginCommand=cmd(visible,true);
@@ -402,7 +402,7 @@ if not GAMESTATE:IsCourseMode() then
 				self:visible(false);
 			end;
 			children={
-				LoadActor( "DifficultyList highlight" ) .. {
+				LoadActor( "StepsDisplayList highlight" ) .. {
 					InitCommand=cmd(addx,-10;diffusealpha,0.3);
 					BeginCommand=cmd(player,"PlayerNumber_P1");
 					OnCommand=cmd(playcommand,"UpdateAlpha");
@@ -428,7 +428,7 @@ if not GAMESTATE:IsCourseMode() then
 				Def.ActorFrame {
 					InitCommand=cmd(x,-150;bounce;effectmagnitude,-12,0,0;effectperiod,1.0;effectoffset,0.0;effectclock,"bgm");
 					children={
-						LoadActor( "DifficultyList cursor p1" ) .. {
+						LoadActor( "StepsDisplayList cursor p1" ) .. {
 							BeginCommand=cmd(player,"PlayerNumber_P1";);
 							PlayerJoinedMessageCommand=function(self,param )
 								if param.Player ~= "PlayerNumber_P1" then return end;
@@ -454,7 +454,7 @@ if not GAMESTATE:IsCourseMode() then
 				self:visible(false);
 			end;
 			children={
-				LoadActor( "DifficultyList highlight" ) .. {
+				LoadActor( "StepsDisplayList highlight" ) .. {
 					InitCommand=cmd(addx,-10;zoomx,-1;diffusealpha,0.3);
 					BeginCommand=cmd(player,"PlayerNumber_P2");
 					OnCommand=cmd(playcommand,"UpdateAlpha");
@@ -480,7 +480,7 @@ if not GAMESTATE:IsCourseMode() then
 				Def.ActorFrame {
 					InitCommand=cmd(x,130;bounce;effectmagnitude,12,0,0;effectperiod,1.0;effectoffset,0.0;effectclock,"bgm");
 					children={
-						LoadActor( "DifficultyList cursor p2" ) .. {
+						LoadActor( "StepsDisplayList cursor p2" ) .. {
 							BeginCommand=cmd(player,"PlayerNumber_P2";);
 							PlayerJoinedMessageCommand=function(self,param )
 								if param.Player ~= "PlayerNumber_P2" then return end;

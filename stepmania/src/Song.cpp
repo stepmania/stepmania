@@ -917,11 +917,11 @@ void Song::AddAutoGenNotes()
 		/* If m_bAutogenSteps is disabled, only autogen lights. */
 		if( !PREFSMAN->m_bAutogenSteps && stMissing != StepsType_lights_cabinet )
 			continue;
-		if( !GameManager::GetStepsTypeInfo(stMissing).bAllowAutogen )
+		if( !GAMEMAN->GetStepsTypeInfo(stMissing).bAllowAutogen )
 			continue;
 
 		// missing Steps of this type
-		int iNumTracksOfMissing = GameManager::GetStepsTypeInfo(stMissing).iNumTracks;
+		int iNumTracksOfMissing = GAMEMAN->GetStepsTypeInfo(stMissing).iNumTracks;
 
 		// look for closest match
 		StepsType stBestMatch = StepsType_Invalid;
@@ -933,7 +933,7 @@ void Song::AddAutoGenNotes()
 				continue;
 
 			/* has (non-autogen) Steps of this type */
-			const int iNumTracks = GameManager::GetStepsTypeInfo(st).iNumTracks;
+			const int iNumTracks = GAMEMAN->GetStepsTypeInfo(st).iNumTracks;
 			const int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
 			if( iTrackDifference < iBestTrackDifference )
 			{
@@ -949,7 +949,7 @@ void Song::AddAutoGenNotes()
 
 void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 {
-//	int iNumTracksOfTo = GameManager::StepsTypeToNumTracks(ntTo);
+//	int iNumTracksOfTo = GAMEMAN->StepsTypeToNumTracks(ntTo);
 
 	for( unsigned int j=0; j<m_vpSteps.size(); j++ )
 	{

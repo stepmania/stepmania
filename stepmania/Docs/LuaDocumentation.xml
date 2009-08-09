@@ -847,9 +847,9 @@
 		Blanks the DifficultyIcon.
 	</Function>
 </Class>
-<Class name='DifficultyList'>
+<Class name='StepsDisplayList'>
 	<Function name='setfromgamestate' return='void' arguments=''>
-		Sets the DifficultyList from the GameState.
+		Sets the StepsDisplayList from the GameState.
 	</Function>
 </Class>
 <Class name='Game'>

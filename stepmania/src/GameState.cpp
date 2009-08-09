@@ -360,9 +360,9 @@ void GameState::JoinPlayer( PlayerNumber pn )
 		// only use one player for StyleType_OnePlayerTwoSides.
 		// XXX: still shows non master player's "Insert Card" -aj
 		if( m_pCurStyle->m_StyleType == StyleType_OnePlayerTwoSides )
-			pStyle = GameManager::GetFirstCompatibleStyle( m_pCurGame, 1, m_pCurStyle->m_StepsType );
+			pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, 1, m_pCurStyle->m_StepsType );
 		else
-			pStyle = GameManager::GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), m_pCurStyle->m_StepsType );
+			pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), m_pCurStyle->m_StepsType );
 
 		// use SetCurrentStyle in case of StyleType_OnePlayerTwoSides
 		SetCurrentStyle( pStyle );
@@ -629,7 +629,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 			{
 				/* If a style isn't set, use the style of the selected steps. */
 				StepsType st = pSteps->m_StepsType;
-				pStyle = GameManager::GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), st );
+				pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), st );
 			}
 			else
 			{
@@ -637,7 +637,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 				 * joined players, or one player if no players are joined. */
 				vector<const Style*> vpStyles;
 				int iJoined = max( GetNumSidesJoined(), 1 );
-				GameManager::GetCompatibleStyles( m_pCurGame, iJoined, vpStyles );
+				GAMEMAN->GetCompatibleStyles( m_pCurGame, iJoined, vpStyles );
 				ASSERT( !vpStyles.empty() );
 				pStyle = vpStyles[0];
 			}
@@ -2331,7 +2331,7 @@ public:
 		for( unsigned i=0; i<vpStepsToShow.size(); i++ )
 		{
 			const Steps* pSteps = vpStepsToShow[i];
-			RString sDifficulty = GetLocalizedCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty() );
+			RString sDifficulty = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
 			
 			lua_pushstring( L, sDifficulty );
 			lua_pushstring( L, pSteps->GetDescription() );

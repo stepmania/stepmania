@@ -19,8 +19,12 @@ struct StepsTypeInfo
 	RString GetLocalizedString() const;
 };
 
-namespace GameManager
+class GameManager
 {
+public:
+	GameManager();
+	~GameManager();
+
 	void GetStylesForGame( const Game* pGame, vector<const Style*>& aStylesAddTo, bool editor=false );
 	const Game *GetGameForStyle( const Style *pStyle );
 	void GetStepsTypesForGame( const Game* pGame, vector<StepsType>& aStepsTypeAddTo );
@@ -41,7 +45,12 @@ namespace GameManager
 	const Game* StringToGame( RString sGame );
 	const Style* GameAndStringToStyle( const Game* pGame, RString sStyle );
 	RString StyleToLocalizedString( const Style* s );
-}
+
+	// Lua
+	void PushSelf( lua_State *L );
+};
+
+extern GameManager*	GAMEMAN;	// global and accessable from anywhere in our program
 
 #endif
 

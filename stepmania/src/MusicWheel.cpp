@@ -1025,7 +1025,7 @@ void MusicWheel::SetOpenSection( RString group )
 
 	vector<const Style*> vpPossibleStyles;
 	if( CommonMetrics::AUTO_SET_STYLE )
-		GameManager::GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
+		GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
 
 	m_CurWheelItemData.clear();
 	vector<MusicWheelItemData *> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];

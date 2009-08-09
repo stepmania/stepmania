@@ -116,7 +116,7 @@ void ScreenHowToPlay::Init()
 		}
 	}
 	
-	GAMESTATE->SetCurrentStyle( GameManager::GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
+	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
 
 	if( USE_PLAYER )
 	{

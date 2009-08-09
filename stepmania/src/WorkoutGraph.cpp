@@ -50,8 +50,6 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 {
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	ASSERT( pCourse );
-	Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
-	ASSERT( pTrail );
 
 	FOREACH( Sprite*, m_vpBars, p )
 	{
@@ -59,6 +57,10 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 		delete *p;
 	}
 	m_vpBars.clear();
+
+	Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
+	if( pTrail == NULL )
+		return;
 
 	vector<int> viMeters;
 	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )

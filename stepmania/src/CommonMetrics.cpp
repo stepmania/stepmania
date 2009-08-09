@@ -93,7 +93,7 @@ static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRem
 	// subtract StepsTypes
 	FOREACH_CONST( RString, v, i )
 	{
-		StepsType st = GameManager::StringToStepsType(*i);
+		StepsType st = GAMEMAN->StringToStepsType(*i);
 		if( st == StepsType_Invalid )
 		{
 			LOG->Warn( "Invalid StepsType value '%s' in '%s'", i->c_str(), sStepsTypesToRemove.c_str() );
@@ -119,7 +119,7 @@ void ThemeMetricStepsTypesToShow::Read()
 	ThemeMetric<RString>::Read();
 
 	m_v.clear();
-	GameManager::GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_v );
+	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_v );
 
 	RemoveStepsTypes( m_v, ThemeMetric<RString>::GetValue() );
 }

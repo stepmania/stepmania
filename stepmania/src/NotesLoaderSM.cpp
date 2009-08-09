@@ -32,7 +32,7 @@ static void LoadFromSMTokens(
 
 	//	LOG->Trace( "Steps::LoadFromSMTokens()" );
 
-	out.m_StepsType = GameManager::StringToStepsType( sStepsType );
+	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
 	out.SetDescription( sDescription );
 	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDifficulty) );
 

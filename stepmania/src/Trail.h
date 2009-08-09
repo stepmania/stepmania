@@ -45,6 +45,7 @@ class Trail
 {
 public:
 	StepsType		m_StepsType;
+	CourseType		m_CourseType;
 	CourseDifficulty	m_CourseDifficulty;
 	vector<TrailEntry>	m_vEntries;
 	int			m_iSpecifiedMeter;	// == -1 if no meter specified

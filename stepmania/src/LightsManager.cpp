@@ -70,7 +70,7 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 
 	set<GameInput> vGIs;
 	vector<const Style*> vStyles;
-	GameManager::GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
+	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
 	FOREACH( const Style*, vStyles, style )
 	{
 		bool bFound = find( CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().begin(), CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().end(), (*style)->m_StepsType ) != CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().end();

@@ -40,7 +40,7 @@ void ScreenDemonstration::Init()
 		}
 
 		vector<const Style*> vStylePossible;
-		GameManager::GetDemonstrationStylesForGame( GAMESTATE->m_pCurGame, vStylePossible );
+		GAMEMAN->GetDemonstrationStylesForGame( GAMESTATE->m_pCurGame, vStylePossible );
 		for( int i=(int)(vStylePossible.size())-1; i>=0; i-- )
 		{
 			bool bAllowThis = find( vStyleTypeAllow.begin(), vStyleTypeAllow.end(), vStylePossible[i]->m_StyleType ) != vStyleTypeAllow.end();

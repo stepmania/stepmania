@@ -6,6 +6,8 @@
 #include "LocalizedString.h"
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
+#include "Steps.h"
+#include "Trail.h"
 
 static const char *DifficultyNames[] = {
 	"Beginner",
@@ -78,9 +80,9 @@ CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 
 static ThemeMetric<RString> NAMES("CustomDifficulty","Names");
 
-RString GetCustomDifficulty( StepsType st, Difficulty dc )
+RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )
 {
-	const StepsTypeInfo &sti = GameManager::GetStepsTypeInfo( st );
+	const StepsTypeInfo &sti = GAMEMAN->GetStepsTypeInfo( st );
 
 	switch( sti.m_StepsTypeCategory )
 	{
@@ -104,11 +106,16 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc )
 					ThemeMetric<Difficulty> DIFFICULTY("CustomDifficulty",(*sName)+"Difficulty");
 					if( DIFFICULTY == Difficulty_Invalid  ||  dc == DIFFICULTY )	// match
 					{
-						ThemeMetric<RString> STRING("CustomDifficulty",(*sName)+"String");
-						return STRING.GetValue();
+						ThemeMetric<CourseType> COURSE_TYPE("CustomDifficulty",(*sName)+"CourseType");
+						if( COURSE_TYPE == CourseType_Invalid  ||  ct == COURSE_TYPE )	// match
+						{
+							ThemeMetric<RString> STRING("CustomDifficulty",(*sName)+"String");
+							return STRING.GetValue();
+						}
 					}
 				}
 			}
+			// no matching CustomDifficulty, so use a regular difficulty name
 			return DifficultyToString( dc );
 		}
 	case StepsTypeCategory_Couple:
@@ -118,15 +125,47 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc )
 	}
 }
 
-LuaFunction( GetCustomDifficulty, GetCustomDifficulty(Enum::Check<StepsType>(L,1),Enum::Check<Difficulty>(L, 2)) );
+LuaFunction( GetCustomDifficulty, GetCustomDifficulty(Enum::Check<StepsType>(L,1), Enum::Check<Difficulty>(L, 2), Enum::Check<CourseType>(L, 3)) );
 
-RString GetLocalizedCustomDifficulty( const RString &sCustomDifficulty )
+RString CustomDifficultyToLocalizedString( const RString &sCustomDifficulty )
 {
 	return THEME->GetString( "CustomDifficulty", sCustomDifficulty );
 }
 
-LuaFunction( GetLocalizedCustomDifficulty, GetLocalizedCustomDifficulty(SArg(1)) );
+LuaFunction( CustomDifficultyToLocalizedString, CustomDifficultyToLocalizedString(SArg(1)) );
 
+
+RString StepsToCustomDifficulty( const Steps *pSteps )
+{
+	return GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid );
+}
+
+RString TrailToCustomDifficulty( const Trail *pTrail )
+{
+	return GetCustomDifficulty( pTrail->m_StepsType, pTrail->m_CourseDifficulty, pTrail->m_CourseType );
+}
+
+
+#include "LuaBinding.h"
+
+static int StepsOrTrailToCustomDifficulty( lua_State *L )
+{
+	Steps *pSteps = Luna<Steps>::check(L, 1);
+	if( pSteps )
+	{
+		lua_pushstring(L, StepsToCustomDifficulty( pSteps ));
+		return 1;
+	}
+	Trail *pTrail = Luna<Trail>::check(L, 1);
+	if( pTrail )
+	{
+		lua_pushstring(L, TrailToCustomDifficulty( pTrail ));
+		return 1;
+	}
+	return 0;
+}
+
+LuaFunction2( StepsOrTrailToCustomDifficulty );
 
 /*
  * (c) 2001-2004 Chris Danford

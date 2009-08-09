@@ -45,7 +45,7 @@ LuaXType( RadarCategory );
 
 RString StepsTypeToString( StepsType st )
 {
-	RString s = GameManager::GetStepsTypeInfo( st ).szName; // "dance-single"
+	RString s = GAMEMAN->GetStepsTypeInfo( st ).szName; // "dance-single"
 	/* foo-bar -> Foo_Bar */
 	s.Replace('-','_');
 	return s;
@@ -419,6 +419,18 @@ static const char *MultiPlayerStatusNames[] = {
 	"MissingMultitap",
 };
 XToString( MultiPlayerStatus );
+
+
+static const char *CourseTypeNames[] = {
+	"Nonstop",
+	"Oni",
+	"Endless",
+	"Survival",
+};
+XToString( CourseType );
+XToLocalizedString( CourseType );
+LuaXType( CourseType );
+LuaFunction( CourseTypeToLocalizedString, CourseTypeToLocalizedString( Enum::Check<CourseType>( L, 1 ) ) );
 
 
 /*

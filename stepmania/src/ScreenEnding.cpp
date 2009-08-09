@@ -30,7 +30,7 @@ ScreenEnding::ScreenEnding()
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);
 
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GameManager::GameAndStringToStyle( GameManager::GetDefaultGame(),"versus") );
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus") );
 		GAMESTATE->JoinPlayer( PLAYER_1 );
 		GAMESTATE->JoinPlayer( PLAYER_2 );
 		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );

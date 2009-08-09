@@ -96,7 +96,7 @@ void ScreenEvaluation::Init()
 		StageStats &ss = STATSMAN->m_vPlayedStageStats.back();
 
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->SetCurrentStyle( GameManager::GameAndStringToStyle(GameManager::GetDefaultGame(),"versus") );
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
 		ss.m_playMode = GAMESTATE->m_PlayMode;
 		ss.m_pStyle = GAMESTATE->GetCurrentStyle();
 		ss.m_Stage = Stage_1st;

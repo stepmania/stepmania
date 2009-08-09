@@ -16,9 +16,10 @@ for i=1,NumColumns do
 	
 	local st = THEME:GetMetric(Var "LoadingScreen","ColumnStepsType" .. i);	
 	local dc = THEME:GetMetric(Var "LoadingScreen","ColumnDifficulty" .. i);
-	local s = GetCustomDifficulty( st, dc );
+	local ct = nil;
+	local s = GetCustomDifficulty( st, dc, ct );
 	t[#t+1] = LoadFont("_venacti Bold 13px") .. {
-		InitCommand=cmd(uppercase,true;settext,GetLocalizedCustomDifficulty(s);diffuse,CustomDifficultyToColor(s);x,SCREEN_CENTER_X-60 + 80 * (i-1);y,SCREEN_CENTER_Y-158;shadowlength,0;);
+		InitCommand=cmd(uppercase,true;settext,CustomDifficultyToLocalizedString(s);diffuse,CustomDifficultyToColor(s);x,SCREEN_CENTER_X-60 + 80 * (i-1);y,SCREEN_CENTER_Y-158;shadowlength,0;);
 	};
 end
 

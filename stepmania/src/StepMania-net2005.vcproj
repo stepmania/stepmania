@@ -292,7 +292,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
 				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib"
-				OutputFile="../Program/StepMania-fastdebug.exe"
+				OutputFile="C:\cvs\piu/Program/StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
@@ -987,11 +987,11 @@
 				>
 			</File>
 			<File
-				RelativePath="CatalogXml.cpp"
+				RelativePath=".\CatalogXml.cpp"
 				>
 			</File>
 			<File
-				RelativePath="CatalogXml.h"
+				RelativePath=".\CatalogXml.h"
 				>
 			</File>
 			<File

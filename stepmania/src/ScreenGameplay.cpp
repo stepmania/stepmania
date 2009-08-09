@@ -1311,7 +1311,7 @@ void ScreenGameplay::LoadLights()
 	split( sDifficulty, ",", asDifficulties );
 
 	// Always use the steps from the primary steps type so that lights are consistent over single and double styles.
-	StepsType st = GameManager::GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;
+	StepsType st = GAMEMAN->GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;
 
 	Difficulty d1 = Difficulty_Invalid;
 	if( asDifficulties.size() > 0 )
@@ -1381,7 +1381,7 @@ void ScreenGameplay::LoadLights()
 		/* fall through */
 	}
 
-	NoteDataUtil::LoadTransformedLights( TapNoteData1, m_CabinetLightsNoteData, GameManager::GetStepsTypeInfo(StepsType_lights_cabinet).iNumTracks );
+	NoteDataUtil::LoadTransformedLights( TapNoteData1, m_CabinetLightsNoteData, GAMEMAN->GetStepsTypeInfo(StepsType_lights_cabinet).iNumTracks );
 }
 
 void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMusic )

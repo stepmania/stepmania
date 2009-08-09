@@ -1,37 +1,13 @@
 
-local CustomDifficultyColors = {
-	Novice		= color("#ff32f8"),
-	Normal		= color("#2cff00"),
-	Hard		= color("#fee600"),
-	Crazy		= color("#ff2f39"),
-	HalfDouble	= color("#33ff33"),	-- greenish
-	Freestyle	= color("#A020A0"),	-- purplish
-	Nightmare	= color("#1cd8ff"),
-	Edit		= color("0.8,0.8,0.8,1"),	-- gray
+local GameCustomDifficultyColors = {
+	Easy		= color("#04fe04"),
+	Normal		= color("#fefb04"),
+	Hard		= color("#fe7704"),
+	Crazy		= color("#fe0a04"),
+	HalfDouble	= color("#04feba"),
+	Freestyle	= color("#fe04f5"),
+	Nightmare	= color("#04c6fe"),
 };
-
-function CustomDifficultyToColor( sCustomDifficulty ) 
-	local c = CustomDifficultyColors[sCustomDifficulty]
-	if c then return c end
-	return color("#000000");
-end
-
-function CustomDifficultyToDarkColor( sCustomDifficulty ) 
-	local c = CustomDifficultyToColor(sCustomDifficulty);
-	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
-end
-
-function CustomDifficultyToLightColor( sCustomDifficulty ) 
-	local c = CustomDifficultyToColor(sCustomDifficulty);
-	return { scale(c[1],0,1,0.5,1), scale(c[2],0,1,0.5,1), scale(c[3],0,1,0.5,1), c[4] };
-end
-
-function CourseDifficutlyToColor( cd )
-	local c = CourseDifficultyColors[cd]
-	if c then return c end
-	return color("#000000");
-end
-
 
 
 

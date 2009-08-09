@@ -74,7 +74,7 @@ static void SetNextCombination()
 	GAMESTATE->m_stEdit.Set( curVal.st );
 	GAMESTATE->m_cdEdit.Set( curVal.cd );
 	// XXX Testing.
-	SCREENMAN->SystemMessage( ssprintf("%s, %s", GameManager::GetStepsTypeInfo(curVal.st).szName, DifficultyToString(curVal.cd).c_str()) );
+	SCREENMAN->SystemMessage( ssprintf("%s, %s", GAMEMAN->GetStepsTypeInfo(curVal.st).szName, DifficultyToString(curVal.cd).c_str()) );
 
 	EditCourseUtil::UpdateAndSetTrail();
 }
@@ -92,17 +92,18 @@ void ScreenOptionsManageCourses::Init()
 }
 
 void ScreenOptionsManageCourses::BeginScreen()
-{
+{	
+	vector<const Style*> vpStyles;
+	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vpStyles );
+	const Style *pStyle = vpStyles[0];
+	GAMESTATE->SetCurrentStyle( pStyle );
+
+
 	if( GAMESTATE->m_stEdit == StepsType_Invalid  ||
 	    GAMESTATE->m_cdEdit == Difficulty_Invalid )
 	{
 		SetNextCombination();
 	}
-	
-	vector<const Style*> vpStyles;
-	GameManager::GetStylesForGame( GAMESTATE->m_pCurGame, vpStyles );
-	const Style *pStyle = vpStyles[0];
-	GAMESTATE->SetCurrentStyle( pStyle );
 
 
 	// Remember the current course.  All Course pointers will be invalidated when we load the machine profile below.

@@ -362,8 +362,8 @@ RString UnlockEntry::GetDescription() const
 		return pSong ? pSong->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Steps:
 		{
-			StepsType st = GameManager::GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;	// TODO: Is this the best thing we can do here?
-			return (pSong ? pSong->GetDisplayFullTitle() : "") + ", " + GetLocalizedCustomDifficulty( st, m_dc );
+			StepsType st = GAMEMAN->GetHowToPlayStyleForGame( GAMESTATE->m_pCurGame )->m_StepsType;	// TODO: Is this the best thing we can do here?
+			return (pSong ? pSong->GetDisplayFullTitle() : "") + ", " + CustomDifficultyToLocalizedString( GetCustomDifficulty(st, m_dc, CourseType_Invalid) );
 		}
 	case UnlockRewardType_Course:
 		return m_Course.IsValid() ? m_Course.ToCourse()->GetDisplayFullTitle() : "";

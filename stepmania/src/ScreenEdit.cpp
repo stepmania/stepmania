@@ -1504,7 +1504,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			RString s = ssprintf(
 				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
-				GameManager::GetStepsTypeInfo( pSteps->m_StepsType ).szName,
+				GAMEMAN->GetStepsTypeInfo( pSteps->m_StepsType ).szName,
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
 				pSteps->GetDescription().c_str(),
 				it - vSteps.begin() + 1,
@@ -2903,7 +2903,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[difficulty].choices.clear();
 				FOREACH_ENUM( Difficulty, dc )
 				{
-					g_StepsInformation.rows[difficulty].choices.push_back( "|" + GetLocalizedCustomDifficulty( pSteps->m_StepsType, dc ) );
+					g_StepsInformation.rows[difficulty].choices.push_back( "|" + CustomDifficultyToLocalizedString( GetCustomDifficulty(pSteps->m_StepsType, dc, CourseType_Invalid) ) );
 				}
 				g_StepsInformation.rows[difficulty].iDefaultChoice = pSteps->GetDifficulty();
 				g_StepsInformation.rows[difficulty].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
