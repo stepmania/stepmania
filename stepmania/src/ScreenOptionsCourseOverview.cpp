@@ -92,7 +92,12 @@ static LocalizedString ERROR_SAVING_COURSE	( "ScreenOptionsCourseOverview", "Err
 static LocalizedString COURSE_SAVED		( "ScreenOptionsCourseOverview", "Course saved successfully." );
 void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_GoToNextScreen )
+	if( SM == SM_GoToPrevScreen )
+	{
+		// If we're pointing to an unsaved course, it will be inaccessible once we're back on ScreenOptionsManageCourses.
+		GAMESTATE->m_pCurCourse.Set( NULL );
+	}
+	else if( SM == SM_GoToNextScreen )
 	{
 		int iRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 		switch( iRow )
