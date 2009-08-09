@@ -10,7 +10,7 @@
 #include "ScreenPrompt.h"
 #include "LocalizedString.h"
 #include "CourseUtil.h"
-#include "song.h"
+#include "Song.h"
 #include "Style.h"
 #include "Steps.h"
 
