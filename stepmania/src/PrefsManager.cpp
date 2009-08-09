@@ -230,8 +230,6 @@ PrefsManager::PrefsManager() :
 	m_bHideDefaultNoteSkin		( "HideDefaultNoteSkin",		false ),
 	m_iMaxHighScoresPerListForMachine	( "MaxHighScoresPerListForMachine",	10 ),
 	m_iMaxHighScoresPerListForPlayer	( "MaxHighScoresPerListForPlayer",	3 ),
-	m_iMaxRecentScoresForMachine		( "MaxRecentScoresForMachine",		100 ),
-	m_iMaxRecentScoresForPlayer		( "MaxRecentScoresForPlayer",		20 ),
 	m_bAllowMultipleHighScoreWithSameName	( "AllowMultipleHighScoreWithSameName",	true ),
 	m_bCelShadeModels		( "CelShadeModels",			false ),	// Work-In-Progress.. disable by default.
 	m_bPreferredSortUsesGroups	( "PreferredSortUsesGroups",		true ),

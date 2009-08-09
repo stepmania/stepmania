@@ -218,8 +218,6 @@ public:
 	Preference<bool>	m_bHideDefaultNoteSkin;
 	Preference<int>		m_iMaxHighScoresPerListForMachine;
 	Preference<int>		m_iMaxHighScoresPerListForPlayer;
-	Preference<int>		m_iMaxRecentScoresForMachine;
-	Preference<int>		m_iMaxRecentScoresForPlayer;
 	Preference<bool>	m_bAllowMultipleHighScoreWithSameName;
 	Preference<bool>	m_bCelShadeModels;
 	Preference<bool>	m_bPreferredSortUsesGroups;
