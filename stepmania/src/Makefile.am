@@ -107,7 +107,7 @@ DataStructures = \
 Attack.cpp Attack.h AutoKeysounds.cpp AutoKeysounds.h \
 AdjustSync.cpp AdjustSync.h \
 BackgroundUtil.cpp BackgroundUtil.h \
-BannerCache.cpp BannerCache.h CatalogXml.cpp CatalogXml.h \
+BannerCache.cpp BannerCache.h \
 Character.cpp Character.h \
 CodeDetector.cpp CodeDetector.h \
 CodeSet.cpp CodeSet.h \
