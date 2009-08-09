@@ -292,7 +292,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
 				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib"
-				OutputFile="C:\cvs\piu/Program/StepMania-fastdebug.exe"
+				OutputFile="../Program/StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
