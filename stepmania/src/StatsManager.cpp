@@ -287,8 +287,6 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 			CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
 		}
 	}
-
-	FileCopy( "Data/TempTestGroups.xml", "Save/Upload/data.xml" );
 }
 
 void StatsManager::UnjoinPlayer( PlayerNumber pn )
