@@ -355,6 +355,11 @@ void Player::Init(
 		m_pActorWithJudgmentPosition = &*m_sprJudgment;
 		this->AddChild( m_sprJudgment );
 	}
+	else
+	{
+		m_pActorWithComboPosition = NULL;
+		m_pActorWithJudgmentPosition = NULL;
+	}
 
 	// Load HoldJudgments
 	m_vpHoldJudgment.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
