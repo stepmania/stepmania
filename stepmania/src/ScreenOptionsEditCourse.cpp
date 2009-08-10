@@ -438,6 +438,7 @@ void ScreenOptionsEditCourse::AfterChangeRow( PlayerNumber pn )
 	ScreenOptions::AfterChangeRow( pn );
 
 	SetCurrentSong();
+	SetCurrentSteps();
 }
 
 void ScreenOptionsEditCourse::AfterChangeValueInRow( int iRow, PlayerNumber pn )
