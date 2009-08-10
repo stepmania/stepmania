@@ -179,7 +179,7 @@ XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerSta
 	}
 	else
 	{
-		XNode* pNode = new XNode( "HighScoreForASongAndSteps" );
+		pNode = new XNode( "HighScoreForASongAndSteps" );
 
 		SongID songID;
 		songID.FromSong( ss.m_vpPossibleSongs[0] );
@@ -261,12 +261,15 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 			recent = xml->AppendChild( new XNode("RecentSongScores") );
 		
 		if(!GAMESTATE->m_bMultiplayer)
+		{
 			FOREACH_HumanPlayer( p )
 				recent->AppendChild( MakeRecentScoreNode( *pSS, GAMESTATE->m_pCurTrail[p], pSS->m_player[p], MultiPlayer_Invalid ) );
+		}
 		else
+		{
 			FOREACH_EnabledMultiPlayer( mp )
 				recent->AppendChild( MakeRecentScoreNode( *pSS, GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber], pSS->m_multiPlayer[mp], mp ) );
-
+		}
 
 		RString sDate = DateTime::GetNowDate().GetString();
 		sDate.Replace(":","-");
