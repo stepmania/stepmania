@@ -407,7 +407,7 @@ RString CryptManager::GenerateRandomUUID()
 	buf[2] &= 0x0FFFFFFF;
 	buf[2] |= 0xA0000000;
 
-	return ssprintf("%08x-%04x-%04x-%04x-%04x%08x\n",
+	return ssprintf("%08x-%04x-%04x-%04x-%04x%08x",
 			buf[0],
 			buf[1] >> 16, buf[1] & 0xFFFF,
 			buf[2] >> 16, buf[2] & 0xFFFF,
