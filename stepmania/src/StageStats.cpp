@@ -194,15 +194,21 @@ void StageStats::FinalizeScores( bool bSummary )
 	// whether or not to save scores when the stage was failed
 	// depends on if this is a course or not ... it's handled
 	// below in the switch
-	FOREACH_HumanPlayer( p )
+	if(!GAMESTATE->m_bMultiplayer)
 	{
-		RString sPlayerGuid = PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : RString("");
-		m_player[p].m_HighScore = FillInHighScore( m_player[p], *GAMESTATE->m_pPlayerState[p], RANKING_TO_FILL_IN_MARKER[p], sPlayerGuid );
+		FOREACH_HumanPlayer( p )
+		{
+			RString sPlayerGuid = PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : RString("");
+			m_player[p].m_HighScore = FillInHighScore( m_player[p], *GAMESTATE->m_pPlayerState[p], RANKING_TO_FILL_IN_MARKER[p], sPlayerGuid );
+		}
 	}
-	FOREACH_EnabledMultiPlayer( mp )
+	else
 	{
-		RString sPlayerGuid = "00000000-0000-0000-0000-000000000000";	// FIXME
-		m_multiPlayer[mp].m_HighScore = FillInHighScore( m_multiPlayer[mp], *GAMESTATE->m_pMultiPlayerState[mp], "", sPlayerGuid );
+		FOREACH_EnabledMultiPlayer( mp )
+		{
+			RString sPlayerGuid = "00000000-0000-0000-0000-000000000000";	// FIXME
+			m_multiPlayer[mp].m_HighScore = FillInHighScore( m_multiPlayer[mp], *GAMESTATE->m_pMultiPlayerState[mp], "", sPlayerGuid );
+		}
 	}
 
 	FOREACH_HumanPlayer( p )
