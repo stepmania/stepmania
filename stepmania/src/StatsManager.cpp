@@ -193,6 +193,7 @@ XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerSta
 	XNode* pHighScore = pss.m_HighScore.CreateNode();
 	pHighScore->AppendChild("Pad", mp);
 	pHighScore->AppendChild("StageGuid", GAMESTATE->m_sStageGUID);
+	pHighScore->AppendChild("Guid", CryptManager::GenerateRandomUUID());
 
 	pNode->AppendChild( pHighScore );
 
