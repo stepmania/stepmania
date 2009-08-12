@@ -399,6 +399,9 @@
 	<Function name='GetHeight' return='float' arguments=''>
 		Returns the Actor's current height.
 	</Function>
+	<Function name='GetRotationY' return='float' arguments=''>
+		Returns the Actor's current Y rotation.
+	</Function>
 	<Function name='GetWidth' return='float' arguments=''>
 		Returns the Actor's current width.
 	</Function>
@@ -450,6 +453,12 @@
 	<Function name='rotationz' return='void' arguments='float fRotation'>
 		Set the Actor's rotation on the Z axis to <code>fAlign</code>.
 	</Function>
+	<Function name='scaletocover' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
+		Scales the Actor to cover a rectangle defined by the four float arguments.
+	</Function>
+	<Function name='scaletofit' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
+		Scales the Actor to fit inside a rectangle defined by the four float arguments.
+	</Function>
 	<Function name='setstate' return='void' arguments='int iNewState'>
 		Sets a multi-framed Actor's state to <code>iNewState</code>.
 	</Function>
@@ -467,6 +476,9 @@
 	</Function>
 	<Function name='skewx' return='void' arguments='float fAmount'>
 		Skews the Actor on the x axis by <code>fAmount</code>.
+	</Function>
+	<Function name='sleep' return='void' arguments='float fSeconds'>
+		Waits <code>fSeconds</code> before executing the next command.
 	</Function>
 	<Function name='spin' return='void' arguments=''>
 		Tells the Actor to spin. Can use <Link function='effectmagnitude' /> to define different spinning behavior.
@@ -1916,7 +1928,7 @@
 		Returns the Steps difficulty.
 	</Function>
 	<Function name='GetFilename' return='string' arguments=''>
-		Returns the Steps filename.
+		Returns the Steps filename from the Cache.
 	</Function>
 	<Function name='GetMeter' return='int' arguments=''>
 		Returns the numerical difficulty of the Steps.
