@@ -102,6 +102,8 @@ public:
 	void SetActorWithJudgmentPosition( Actor *pActor ) { m_pActorWithJudgmentPosition = pActor; }
 	void SetActorWithComboPosition( Actor *pActor ) { m_pActorWithComboPosition = pActor; }
 
+	void SetSendJudgmentAndComboMessages( bool b ) { m_bSendJudgmentAndComboMessages = b; }
+
 	//
 	// Lua
 	//
@@ -206,6 +208,8 @@ protected:
 #define NUM_CENTERED 2
 	TweenState		m_tsJudgment[NUM_REVERSE][NUM_CENTERED];
 	TweenState		m_tsCombo[NUM_REVERSE][NUM_CENTERED];
+
+	bool m_bSendJudgmentAndComboMessages;
 };
 
 class PlayerPlus

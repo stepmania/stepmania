@@ -184,6 +184,8 @@ Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
 		m_pNoteField->SetName( "NoteField" );
 	}
 	m_pJudgedRows = new JudgedRows;
+
+	m_bSendJudgmentAndComboMessages = true;
 }
 
 Player::~Player()
@@ -2883,14 +2885,17 @@ void Player::CacheAllUsedNoteSkins()
 
 void Player::SetJudgment( TapNoteScore tns, int iTrack, float fTapNoteOffset )
 {
-	Message msg("Judgment");
-	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
-	msg.SetParam( "FirstTrack", iTrack );
-	msg.SetParam( "TapNoteScore", tns );
-	msg.SetParam( "Early", fTapNoteOffset < 0.0f );
-	msg.SetParam( "TapNoteOffset", fTapNoteOffset );
-	MESSAGEMAN->Broadcast( msg );
+	if( m_bSendJudgmentAndComboMessages )
+	{
+		Message msg("Judgment");
+		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+		msg.SetParam( "FirstTrack", iTrack );
+		msg.SetParam( "TapNoteScore", tns );
+		msg.SetParam( "Early", fTapNoteOffset < 0.0f );
+		msg.SetParam( "TapNoteOffset", fTapNoteOffset );
+		MESSAGEMAN->Broadcast( msg );
+	}
 }
 
 void Player::SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack )
@@ -2899,13 +2904,16 @@ void Player::SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack )
 	if( m_vpHoldJudgment[iTrack] )
 		m_vpHoldJudgment[iTrack]->SetHoldJudgment( hns );
 
-	Message msg("Judgment");
-	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
-	msg.SetParam( "FirstTrack", iTrack );
-	msg.SetParam( "TapNoteScore", tns );
-	msg.SetParam( "HoldNoteScore", hns );
-	MESSAGEMAN->Broadcast( msg );
+	if( m_bSendJudgmentAndComboMessages )
+	{
+		Message msg("Judgment");
+		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+		msg.SetParam( "FirstTrack", iTrack );
+		msg.SetParam( "TapNoteScore", tns );
+		msg.SetParam( "HoldNoteScore", hns );
+		MESSAGEMAN->Broadcast( msg );
+	}
 }
 
 void Player::SetCombo( int iCombo, int iMisses )
@@ -2933,18 +2941,21 @@ void Player::SetCombo( int iCombo, int iMisses )
 	bool bPastMidpoint = GAMESTATE->GetCourseSongIndex()>0 ||
 		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds/4;
 
-	Message msg("Combo");
-	if( iCombo )
-		msg.SetParam( "Combo", iCombo );
-	if( iMisses )
-		msg.SetParam( "Misses", iMisses );
-	if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W1) )
-		msg.SetParam( "FullComboW1", true );
-	if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W2) )
-		msg.SetParam( "FullComboW2", true );
-	if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W3) )
-		msg.SetParam( "FullComboW3", true );
-	this->HandleMessage( msg );
+	if( m_bSendJudgmentAndComboMessages )
+	{
+		Message msg("Combo");
+		if( iCombo )
+			msg.SetParam( "Combo", iCombo );
+		if( iMisses )
+			msg.SetParam( "Misses", iMisses );
+		if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W1) )
+			msg.SetParam( "FullComboW1", true );
+		if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W2) )
+			msg.SetParam( "FullComboW2", true );
+		if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W3) )
+			msg.SetParam( "FullComboW3", true );
+		this->HandleMessage( msg );
+	}
 }
 
 RString Player::ApplyRandomAttack()
