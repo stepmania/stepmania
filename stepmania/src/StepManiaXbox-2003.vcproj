@@ -187,12 +187,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenBookkeeping.h">
 			</File>
 			<File
-				RelativePath="ScreenCenterImage.cpp">
-			</File>
-			<File
-				RelativePath="ScreenCenterImage.h">
-			</File>
-			<File
 				RelativePath=".\ScreenContinue.cpp">
 			</File>
 			<File
@@ -487,18 +481,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenSelectCharacter.h">
 			</File>
 			<File
-				RelativePath="ScreenSelectDifficulty.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectDifficulty.h">
-			</File>
-			<File
-				RelativePath="ScreenSelectGroup.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectGroup.h">
-			</File>
-			<File
 				RelativePath="ScreenSelectLanguage.cpp">
 			</File>
 			<File
@@ -529,12 +511,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\ScreenSelectProfile.h">
 			</File>
 			<File
-				RelativePath="ScreenSelectStyle.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectStyle.h">
-			</File>
-			<File
 				RelativePath=".\ScreenServiceAction.cpp">
 			</File>
 			<File
@@ -563,12 +539,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenSplash.h">
-			</File>
-			<File
-				RelativePath="ScreenStage.cpp">
-			</File>
-			<File
-				RelativePath="ScreenStage.h">
 			</File>
 			<File
 				RelativePath=".\ScreenStatsOverlay.cpp">
@@ -683,12 +653,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="BannerCache.h">
 			</File>
 			<File
-				RelativePath="CatalogXml.cpp">
-			</File>
-			<File
-				RelativePath="CatalogXml.h">
-			</File>
-			<File
 				RelativePath="Character.cpp">
 			</File>
 			<File
@@ -747,6 +711,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="CourseWriterCRS.h">
+			</File>
+			<File
+				RelativePath=".\CryptHelpers.cpp">
+			</File>
+			<File
+				RelativePath=".\CryptHelpers.h">
 			</File>
 			<File
 				RelativePath="DateTime.cpp">
@@ -1413,12 +1383,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath="archutils\Xbox\custom_launch_params.h">
 				</File>
 				<File
-					RelativePath=".\ExportStrings.cpp">
-				</File>
-				<File
-					RelativePath=".\ExportStrings.h">
-				</File>
-				<File
 					RelativePath="GameLoop.cpp">
 				</File>
 				<File
@@ -1509,6 +1473,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="MeterDisplay.h">
 			</File>
 			<File
+				RelativePath=".\StepsDisplay.cpp">
+			</File>
+			<File
+				RelativePath=".\StepsDisplay.h">
+			</File>
+			<File
 				RelativePath=".\StreamDisplay.cpp">
 			</File>
 			<File
@@ -1547,12 +1517,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="DifficultyList.h">
-			</File>
-			<File
-				RelativePath="DifficultyMeter.cpp">
-			</File>
-			<File
-				RelativePath="DifficultyMeter.h">
 			</File>
 			<File
 				RelativePath="DualScrollBar.cpp">
@@ -1615,6 +1579,18 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="MenuTimer.h">
 			</File>
 			<File
+				RelativePath=".\ModIcon.cpp">
+			</File>
+			<File
+				RelativePath=".\ModIcon.h">
+			</File>
+			<File
+				RelativePath=".\ModIconRow.cpp">
+			</File>
+			<File
+				RelativePath=".\ModIconRow.h">
+			</File>
+			<File
 				RelativePath="MusicBannerWheel.cpp">
 			</File>
 			<File
@@ -1637,18 +1613,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="MusicWheelItem.h">
-			</File>
-			<File
-				RelativePath="OptionIcon.cpp">
-			</File>
-			<File
-				RelativePath="OptionIcon.h">
-			</File>
-			<File
-				RelativePath="OptionIconRow.cpp">
-			</File>
-			<File
-				RelativePath="OptionIconRow.h">
 			</File>
 			<File
 				RelativePath=".\OptionRow.cpp">
@@ -2519,6 +2483,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="CharacterManager.h">
+			</File>
+			<File
+				RelativePath=".\CommandLineActions.cpp">
+			</File>
+			<File
+				RelativePath=".\CommandLineActions.h">
 			</File>
 			<File
 				RelativePath="CryptManager.cpp">

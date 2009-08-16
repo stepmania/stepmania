@@ -163,12 +163,36 @@ ArchHooks_Xbox::~ArchHooks_Xbox()
 	XLaunchNewImage( NULL, NULL );
 }
 
+void ArchHooks_Xbox::DumpDebugInfo()
+{
+
+}
+
+float ArchHooks_Xbox::GetDisplayAspectRatio()
+{
+	float fDisplayAspectRatio = 4.0 / 3.0;
+	IDirect3DSurface8 *pBackBuffer = NULL;
+	if( D3D__pDevice->GetBackBuffer( -1, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer) == D3D_OK )
+	{
+		D3DSURFACE_DESC Desc;
+		if( pBackBuffer->GetDesc(&Desc) == D3D_OK )
+		{
+			fDisplayAspectRatio = (float)Desc.Width / (float)Desc.Height;
+		}
+		pBackBuffer->Release();
+	}
+	return fDisplayAspectRatio;
+}
+
 #include "RageFileManager.h"
 
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	FILEMAN->Mount( "dir", "D:\\", "/" );
+}
 
+void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+{
 	// Mount everything game-writable (not counting the editor) to the game title persistent data region ( /E/TDATA/33342530/ )
 	FILEMAN->Mount( "dir", "T:/Cache", "/Cache" );
 	FILEMAN->Mount( "dir", "T:/Logs", "/Logs" );

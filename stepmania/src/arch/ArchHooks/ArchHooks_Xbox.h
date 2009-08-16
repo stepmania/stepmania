@@ -10,6 +10,8 @@ public:
 	ArchHooks_Xbox();
 	~ArchHooks_Xbox();
 	RString GetArchName() { return "Xbox"; }
+	void DumpDebugInfo();
+	float GetDisplayAspectRatio();
 
 	//void MountInitialFilesystems( const RString &sDirOfExecutable );
 };
