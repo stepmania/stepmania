@@ -553,7 +553,6 @@
 		AA40D2F409A08D650068C0D5 /* RageSurface_Load_PNG.h in Headers */ = {isa = PBXBuildFile; fileRef = AABBF6710659E78D00738526 /* RageSurface_Load_PNG.h */; };
 		AA40D2F509A08D650068C0D5 /* RageSurface_Load_XPM.h in Headers */ = {isa = PBXBuildFile; fileRef = AABBF6730659E78D00738526 /* RageSurface_Load_XPM.h */; };
 		AA40D2F609A08D650068C0D5 /* RageSurface_Load.h in Headers */ = {isa = PBXBuildFile; fileRef = AABBF6750659E78D00738526 /* RageSurface_Load.h */; };
-		AA40D2F709A08D650068C0D5 /* CatalogXml.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD6A6DF065E0A8D0042165A /* CatalogXml.h */; };
 		AA40D2F809A08D650068C0D5 /* Difficulty.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD6A713065E0FDF0042165A /* Difficulty.h */; };
 		AA40D2F909A08D650068C0D5 /* Foreach.h in Headers */ = {isa = PBXBuildFile; fileRef = AA70E3640663112800DAE1FD /* Foreach.h */; };
 		AA40D2FA09A08D650068C0D5 /* Trail.h in Headers */ = {isa = PBXBuildFile; fileRef = AA70E3660663112800DAE1FD /* Trail.h */; };
@@ -881,7 +880,6 @@
 		AA40D49209A08D650068C0D5 /* RageSurface_Load_PNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABBF6700659E78D00738526 /* RageSurface_Load_PNG.cpp */; };
 		AA40D49309A08D650068C0D5 /* RageSurface_Load_XPM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABBF6720659E78D00738526 /* RageSurface_Load_XPM.cpp */; };
 		AA40D49409A08D650068C0D5 /* RageSurface_Load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABBF6740659E78D00738526 /* RageSurface_Load.cpp */; };
-		AA40D49509A08D650068C0D5 /* CatalogXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD6A6DE065E0A8D0042165A /* CatalogXml.cpp */; };
 		AA40D49609A08D650068C0D5 /* Difficulty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD6A712065E0FDF0042165A /* Difficulty.cpp */; };
 		AA40D49709A08D650068C0D5 /* Trail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA70E3650663112800DAE1FD /* Trail.cpp */; };
 		AA40D49809A08D650068C0D5 /* TrailUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA70E3670663112800DAE1FD /* TrailUtil.cpp */; };
@@ -1522,7 +1520,6 @@
 		AAD36084062BB8AE00D0CED8 /* RageSoundPosMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD36082062BB8AE00D0CED8 /* RageSoundPosMap.cpp */; };
 		AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC6889905D7F3C800964E6D /* XmlFile.cpp */; };
 		AAD675F606795175006002B0 /* Dialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD675EF06795175006002B0 /* Dialog.cpp */; };
-		AAD6A6E0065E0A8D0042165A /* CatalogXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD6A6DE065E0A8D0042165A /* CatalogXml.cpp */; };
 		AAD6A714065E0FDF0042165A /* Difficulty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD6A712065E0FDF0042165A /* Difficulty.cpp */; };
 		AAD8F9340A4B97DF000311CF /* ScreenGameplayShared.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD8F9320A4B97DF000311CF /* ScreenGameplayShared.h */; };
 		AAD8F9350A4B97DF000311CF /* ScreenGameplayShared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD8F9330A4B97DF000311CF /* ScreenGameplayShared.cpp */; };
@@ -2793,8 +2790,6 @@
 		AAD675EF06795175006002B0 /* Dialog.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = Dialog.cpp; sourceTree = "<group>"; };
 		AAD675F006795175006002B0 /* Dialog.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Dialog.h; sourceTree = "<group>"; };
 		AAD675F106795175006002B0 /* DialogDriver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = DialogDriver.h; sourceTree = "<group>"; };
-		AAD6A6DE065E0A8D0042165A /* CatalogXml.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CatalogXml.cpp; path = ../src/CatalogXml.cpp; sourceTree = "<group>"; };
-		AAD6A6DF065E0A8D0042165A /* CatalogXml.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CatalogXml.h; path = ../src/CatalogXml.h; sourceTree = "<group>"; };
 		AAD6A712065E0FDF0042165A /* Difficulty.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Difficulty.cpp; path = ../src/Difficulty.cpp; sourceTree = "<group>"; };
 		AAD6A713065E0FDF0042165A /* Difficulty.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Difficulty.h; path = ../src/Difficulty.h; sourceTree = "<group>"; };
 		AAD8F9320A4B97DF000311CF /* ScreenGameplayShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenGameplayShared.h; path = ../src/ScreenGameplayShared.h; sourceTree = "<group>"; };
@@ -3675,8 +3670,6 @@
 				AA7DA2F0085760E90057F1EA /* BackgroundUtil.h */,
 				AABE35EB04967E25005F316C /* BannerCache.cpp */,
 				AABE35EC04967E26005F316C /* BannerCache.h */,
-				AAD6A6DE065E0A8D0042165A /* CatalogXml.cpp */,
-				AAD6A6DF065E0A8D0042165A /* CatalogXml.h */,
 				AA6EFDCB04770C79005F316C /* Character.cpp */,
 				AA6EFDCC04770C79005F316C /* Character.h */,
 				AA6EFDCD04770C79005F316C /* CodeDetector.cpp */,
@@ -5125,7 +5118,6 @@
 				AA40D2F409A08D650068C0D5 /* RageSurface_Load_PNG.h in Headers */,
 				AA40D2F509A08D650068C0D5 /* RageSurface_Load_XPM.h in Headers */,
 				AA40D2F609A08D650068C0D5 /* RageSurface_Load.h in Headers */,
-				AA40D2F709A08D650068C0D5 /* CatalogXml.h in Headers */,
 				AA40D2F809A08D650068C0D5 /* Difficulty.h in Headers */,
 				AA40D2F909A08D650068C0D5 /* Foreach.h in Headers */,
 				AA40D2FA09A08D650068C0D5 /* Trail.h in Headers */,
@@ -5943,7 +5935,6 @@
 				AABBF67A0659E78D00738526 /* RageSurface_Load_PNG.cpp in Sources */,
 				AABBF67C0659E78D00738526 /* RageSurface_Load_XPM.cpp in Sources */,
 				AABBF67E0659E78D00738526 /* RageSurface_Load.cpp in Sources */,
-				AAD6A6E0065E0A8D0042165A /* CatalogXml.cpp in Sources */,
 				AAD6A714065E0FDF0042165A /* Difficulty.cpp in Sources */,
 				AA70E36A0663112800DAE1FD /* Trail.cpp in Sources */,
 				AA70E36C0663112800DAE1FD /* TrailUtil.cpp in Sources */,
@@ -6346,7 +6337,6 @@
 				AA40D49209A08D650068C0D5 /* RageSurface_Load_PNG.cpp in Sources */,
 				AA40D49309A08D650068C0D5 /* RageSurface_Load_XPM.cpp in Sources */,
 				AA40D49409A08D650068C0D5 /* RageSurface_Load.cpp in Sources */,
-				AA40D49509A08D650068C0D5 /* CatalogXml.cpp in Sources */,
 				AA40D49609A08D650068C0D5 /* Difficulty.cpp in Sources */,
 				AA40D49709A08D650068C0D5 /* Trail.cpp in Sources */,
 				AA40D49809A08D650068C0D5 /* TrailUtil.cpp in Sources */,
