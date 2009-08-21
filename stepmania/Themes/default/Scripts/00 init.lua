@@ -12,8 +12,6 @@ Trace = lua.Trace
 Warn = lua.Warn
 print = Trace
 
-PREFSMAN:SetPreferenceToDefault("TimingWindowSecondsHold");
-
 PLAYER_1 = "PlayerNumber_P1"
 PLAYER_2 = "PlayerNumber_P2"
 NUM_PLAYERS = #PlayerNumber
