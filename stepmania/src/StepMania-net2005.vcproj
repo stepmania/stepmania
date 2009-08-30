@@ -987,14 +987,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CatalogXml.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CatalogXml.h"
-				>
-			</File>
-			<File
 				RelativePath="Character.cpp"
 				>
 			</File>

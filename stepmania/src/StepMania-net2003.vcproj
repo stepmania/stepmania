@@ -741,12 +741,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="BannerCache.h">
 			</File>
 			<File
-				RelativePath="CatalogXml.cpp">
-			</File>
-			<File
-				RelativePath="CatalogXml.h">
-			</File>
-			<File
 				RelativePath="Character.cpp">
 			</File>
 			<File
