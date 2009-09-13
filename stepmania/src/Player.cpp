@@ -754,9 +754,6 @@ void Player::Update( float fDeltaTime )
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
 			if( m_pNoteField )
 				m_pNoteField->SetPressed( col );
-
-
-
 	}
 
 
