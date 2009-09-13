@@ -464,7 +464,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			RString sMessage;
 			(*p)->DoAndLog( sMessage );
 			if( !sMessage.empty() )
-				LOG->Trace("%s", ("DEBUG: " + sMessage).c_str() );
+				LOG->Trace("DEBUG: %s", sMessage.c_str() );
 			if( (*p)->ForceOffAfterUse() )
 				m_bForcedHidden = true;
 	
