@@ -61,7 +61,7 @@ private:
 			m_bHidden = false;
 		}
 		
-		Steps *m_Steps;
+		const Steps *m_Steps;
 		Difficulty m_dc;
 		float m_fY;
 		bool m_bHidden; // currently off screen
