@@ -190,6 +190,8 @@ void StepsDisplay::SetInternal( const SetParams &params )
 	RString sDisplayDescription;
 	if( params.pSteps  &&  params.pSteps->IsAnEdit() )
 		sDisplayDescription = params.pSteps->GetDescription();
+	else if( sCustomDifficulty.empty() )
+		sDisplayDescription = RString();
 	else
 		sDisplayDescription = CustomDifficultyToLocalizedString( sCustomDifficulty );
 	msg.SetParam( "DisplayDescription", sDisplayDescription );
