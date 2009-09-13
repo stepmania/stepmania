@@ -1198,6 +1198,12 @@ void RageDisplay_D3D::SetTextureFiltering( TextureUnit tu, bool b )
 void RageDisplay_D3D::SetBlendMode( BlendMode mode )
 {
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+
+	if( mode == BLEND_INVERT_DEST )
+		g_pd3dDevice->SetRenderState( D3DRS_BLENDOP, D3DBLENDOP_SUBTRACT );
+	else
+		g_pd3dDevice->SetRenderState( D3DRS_BLENDOP, D3DBLENDOP_ADD );
+
 	switch( mode )
 	{
 	case BLEND_NORMAL:
@@ -1211,6 +1217,14 @@ void RageDisplay_D3D::SetBlendMode( BlendMode mode )
 	case BLEND_COPY_SRC:
 		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ONE );
 		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ZERO );
+		break;
+	case BLEND_WEIGHTED_MULTIPLY:
+		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_DESTCOLOR );
+		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_SRCCOLOR );
+		break;
+	case BLEND_INVERT_DEST:
+		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ONE );
+		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
 		break;
 	case BLEND_NO_EFFECT:
 		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ZERO );
