@@ -54,8 +54,17 @@ bool RageSoundDriver_ALSA9_Software::GetData()
 		return false;
 
 	static int16_t *buf = NULL;
-	if (!buf)
-		buf = new int16_t[g_iMaxWriteahead*samples_per_frame];
+	static int bufsize = 0;
+	if( buf && bufsize < frames_to_fill )
+	{
+		delete[] buf;
+		buf = NULL;
+	}
+	if( !buf )
+	{
+		buf = new int16_t[frames_to_fill*samples_per_frame];
+	        bufsize = frames_to_fill;
+	}
 
 	const int64_t play_pos = m_pPCM->GetPlayPos();
 	const int64_t cur_play_pos = m_pPCM->GetPosition();
