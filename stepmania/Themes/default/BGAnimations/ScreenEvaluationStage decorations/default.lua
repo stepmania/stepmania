@@ -49,6 +49,12 @@ if ShowStandardDecoration("ItsARecord") then
 				BeginCommand=function(self)
 					local pss = SCREENMAN:GetTopScreen():GetStageStats():GetPlayerStageStats(pn);
 					local index = pss:GetMachineHighScoreIndex();
+
+					if index == 0 then
+						self:GetChild("Record"):visible( true );
+						self:GetChild("NoRecord"):visible( false );
+						return;
+					end
 					local pSongOrCourse = GAMESTATE:GetCurrentCourse() or GAMESTATE:GetCurrentSong();
 					local pSteps = GAMESTATE:GetCurrentSteps(pn);
 					local hsl = PROFILEMAN:GetMachineProfile():GetHighScoreList(pSongOrCourse,pSteps);
@@ -56,18 +62,12 @@ if ShowStandardDecoration("ItsARecord") then
 					local hs = hsl:GetHighScores()[1]
 					local hsName = hs:GetName();
 					local hsPerc = FormatPercentScore( hs:GetPercentDP() );
-
-					if index == 0 then
-						self:GetChild("Record"):visible( true );
-						self:GetChild("NoRecord"):visible( false );
+					self:GetChild("Record"):visible( false );
+					self:GetChild("NoRecord"):visible( true );
+					if hsl then
+						self:GetChild("NoRecord"):settext(hsName..":\n"..hsPerc);
 					else
-						self:GetChild("Record"):visible( false );
-						self:GetChild("NoRecord"):visible( true );
-						if hsl then
-							self:GetChild("NoRecord"):settext(hsName..":\n"..hsPerc);
-						else
-							self:GetChild("NoRecord"):settext("");
-						end
+						self:GetChild("NoRecord"):settext("");
 					end
 				end;
 				LoadFont("_sf sports night ns upright 16px") .. {
