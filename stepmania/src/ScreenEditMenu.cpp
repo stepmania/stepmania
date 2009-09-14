@@ -210,7 +210,6 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 		}
 
 		file.Close();
-		FILEMAN->FlushDirCache( sDir );
 		FILEMAN->Remove( sTempFile );
 		break;
 	}

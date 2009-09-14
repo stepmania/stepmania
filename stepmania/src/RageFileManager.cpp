@@ -42,6 +42,7 @@ struct LoadedDriver
 };
 
 static vector<LoadedDriver *> g_pDrivers;
+static map<const RageFileBasic *,LoadedDriver *> g_mFileDriverMap;
 
 static void ReferenceAllDrivers( vector<LoadedDriver *> &apDriverList )
 {
@@ -439,15 +440,10 @@ bool RageFileManager::Remove( const RString &sPath_ )
 
 void RageFileManager::CreateDir( const RString &sDir )
 {
-	RString sTempFile = sDir + "temp";
+	RString sTempFile = sDir + "newdir.temp.newdir";
 	RageFile f;
 	f.Open( sTempFile, RageFile::WRITE );
 	f.Close();
-
-	// YUCK: The dir cache doesn't have this new file we just created,
-	// so the delete will fail unless we flush.
-	FlushDirCache( sDir );
-
 	Remove( sTempFile );
 }
 
@@ -772,6 +768,19 @@ RageFileBasic *RageFileManager::Open( const RString &sPath_, int mode, int &err 
 		return OpenForReading( sPath, mode, err );
 }
 
+void RageFileManager::CacheFile( const RageFileBasic *fb, const RString &sPath_ )
+{
+	map<const RageFileBasic *,LoadedDriver *>::iterator it = g_mFileDriverMap.find( fb );
+	
+	ASSERT_M( it != g_mFileDriverMap.end(), ssprintf("No recorded driver for file: %s", sPath_.c_str()) );
+	
+	RString sPath = sPath_;
+	NormalizePath( sPath );
+	sPath = it->second->GetPath( sPath );
+	it->second->m_pDriver->FDB->CacheFile( sPath );
+	g_mFileDriverMap.erase( it );
+}
+
 RageFileBasic *RageFileManager::OpenForReading( const RString &sPath, int mode, int &err )
 {
 	vector<LoadedDriver *> apDriverList;
@@ -863,6 +872,7 @@ RageFileBasic *RageFileManager::OpenForWriting( const RString &sPath, int mode, 
 		RageFileBasic *pRet = ld.m_pDriver->Open( sDriverPath, mode, iThisError );
 		if( pRet )
 		{
+			g_mFileDriverMap[pRet] = &ld;
 			UnreferenceAllDrivers( apDriverList );
 			return pRet;
 		}
@@ -985,12 +995,6 @@ bool DeleteRecursive( const RString &sDir )
 
 	return FILEMAN->Remove( sDir );
 }
-
-void FlushDirCache()
-{
-	FILEMAN->FlushDirCache( "" );
-}
-
 
 unsigned int GetHashForFile( const RString &sPath )
 {

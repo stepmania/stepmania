@@ -203,8 +203,6 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 				continue;
 			}
 		}
-	
-		FILEMAN->FlushDirCache( sToDir );
 	}
 
 	// TODO: Seprarate copying stats for steps and courses
@@ -225,10 +223,7 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 			else
 				iNumErrored++;
 		}
-
-		FILEMAN->FlushDirCache( sToDir );
 	}
-
 }
 
 static LocalizedString EDITS_NOT_COPIED		( "ScreenServiceAction", "Edits not copied - No memory cards ready." );
@@ -298,8 +293,6 @@ static void SyncFiles( const RString &sFromDir, const RString &sToDir, const RSt
 		else
 			++iNumFailed;
 	}
-
-	FILEMAN->FlushDirCache( sToDir );
 }
 
 static void SyncEdits( const RString &sFromDir, const RString &sToDir, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )

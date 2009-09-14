@@ -639,7 +639,6 @@ void ScreenPackages::HTTPUpdate()
 			if( m_bIsPackage && m_iResponseCode < 300 )
 			{
 				m_fOutputFile.Close();
-				FlushDirCache();
 				RefreshPackages();
 				m_iDownloaded = 0;
 			}

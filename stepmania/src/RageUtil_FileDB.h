@@ -39,7 +39,7 @@ struct File
 	File( const RString &fn )
 	{
 		SetName( fn );
-		dir=false; size=-1; hash=-1; priv=NULL;
+		dir=false; size=-1; hash=-1; priv=NULL; dirp=NULL;
 	}
 	
 	bool operator== (const File &rhs) const { return lname==rhs.lname; }
@@ -88,8 +88,7 @@ public:
 
 	void AddFile( const RString &sPath, int iSize, int iHash, void *pPriv=NULL );
 	void DelFile( const RString &sPath );
-	const File *GetFile( const RString &sPath );
-	const void *GetFilePriv( const RString &sPath );
+	void *GetFilePriv( const RString &sPath );
 
 	/* This handles at most two * wildcards.  If we need anything more complicated,
 	 * we'll need to use fnmatch or regex. */
@@ -105,13 +104,16 @@ public:
 	int GetFileHash( const RString &sFilePath );
 	void GetDirListing( const RString &sPath, vector<RString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo );
 
-	void FlushDirCache();
+	void FlushDirCache( const RString &sDir = RString() );
 
 	void GetFileSetCopy( const RString &dir, FileSet &out );
+	/* Probably slow, so override it. */
+	virtual void CacheFile( const RString &sPath );
 
 protected:
 	RageEvent m_Mutex;
-
+	
+	const File *GetFile( const RString &sPath );
 	FileSet *GetFileSet( const RString &sDir, bool create=true );
 
 	/* Directories we have cached: */
@@ -134,9 +136,7 @@ class NullFilenameDB: public FilenameDB
 {
 public:
 	NullFilenameDB() { ExpireSeconds = -1; }
-
-protected:
-	void PopulateFileSet( FileSet &fs, const RString &sPath ) { }
+	void CacheFile( const RString &sPath ) { }
 };
 
 #endif

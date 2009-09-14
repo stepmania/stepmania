@@ -349,10 +349,7 @@ bool EditCourseUtil::RenameAndSave( Course *pCourse, RString sNewName )
 
 	// remove the old file if the name is changing
 	if( !pCourse->m_sPath.empty()  &&  sNewFilePath != pCourse->m_sPath )
-	{
 		FILEMAN->Remove( pCourse->m_sPath );	// not fatal if this fails		
-		FlushDirCache();
-	}
 
 	pCourse->m_sMainTitle = sNewName;
 	pCourse->m_sPath = sNewFilePath;
@@ -364,7 +361,6 @@ bool EditCourseUtil::RemoveAndDeleteFile( Course *pCourse )
 	if( !FILEMAN->Remove( pCourse->m_sPath ) )
 		return false;
 	FILEMAN->Remove( pCourse->GetCacheFilePath() );
-	FlushDirCache();
 	if( pCourse->IsAnEdit() )
 	{
 		PROFILEMAN->LoadMachineProfile();

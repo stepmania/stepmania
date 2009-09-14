@@ -584,7 +584,6 @@ bool DoesFileExist( const RString &sPath );
 bool IsAFile( const RString &sPath );
 bool IsADirectory( const RString &sPath );
 unsigned GetFileSizeInBytes( const RString &sFilePath );
-void FlushDirCache();
 
 // call FixSlashesInPlace on any path that came from the user
 void FixSlashesInPlace( RString &sPath );

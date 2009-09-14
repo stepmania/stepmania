@@ -64,7 +64,7 @@ int RageFileDriver::GetFileHash( const RString &sPath )
 
 void RageFileDriver::FlushDirCache( const RString &sPath )
 {
-	FDB->FlushDirCache();
+	FDB->FlushDirCache( sPath );
 }
 
 

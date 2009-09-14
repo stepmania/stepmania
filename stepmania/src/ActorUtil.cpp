@@ -54,7 +54,7 @@ retry:
 				RageException::Throw( "%s", sError.c_str() ); 
 				break;
 			case Dialog::retry:
-				FlushDirCache();
+				FILEMAN->FlushDirCache();
 				goto retry;
 			case Dialog::ignore:
 				return false;
@@ -75,7 +75,7 @@ retry:
 				RageException::Throw( "%s", sError.c_str() ); 
 				break;
 			case Dialog::retry:
-				FlushDirCache();
+				FILEMAN->FlushDirCache();
 				goto retry;
 			case Dialog::ignore:
 				asPaths.erase( asPaths.begin()+1, asPaths.end() );

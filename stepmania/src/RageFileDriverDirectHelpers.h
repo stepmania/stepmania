@@ -40,7 +40,7 @@ class DirectFilenameDB: public FilenameDB
 public:
 	DirectFilenameDB( RString root );
 	void SetRoot( RString root );
-
+	void CacheFile( const RString &sPath );
 protected:
 	virtual void PopulateFileSet( FileSet &fs, const RString &sPath );
 	RString root;

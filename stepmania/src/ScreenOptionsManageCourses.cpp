@@ -127,7 +127,8 @@ void ScreenOptionsManageCourses::BeginScreen()
 	}	
 
 	m_vpCourses.clear();
-	FlushDirCache();
+	// XXX: Why are we flushing here?
+	FILEMAN->FlushDirCache();
 	PROFILEMAN->LoadMachineProfileEdits();
 	
 	switch( EDIT_MODE.GetValue() )

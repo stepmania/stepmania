@@ -50,10 +50,11 @@ public:
 	};
 	void GetLoadedDrivers( vector<DriverLocation> &asMounts );
 
-	void FlushDirCache( const RString &sPath );
+	void FlushDirCache( const RString &sPath = RString() );
 
 	/* Used only by RageFile: */
 	RageFileBasic *Open( const RString &sPath, int iMode, int &iError );
+	void CacheFile( const RageFileBasic *fb, const RString &sPath );
 
 	/* Retrieve or release a reference to the low-level driver for a mountpoint. */
 	RageFileDriver *GetFileDriver( RString sMountpoint );

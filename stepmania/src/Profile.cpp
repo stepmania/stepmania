@@ -935,8 +935,6 @@ bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 		FILEMAN->CreateDir( sDir + EDIT_COURSES_SUBDIR );
 	FILEMAN->CreateDir( sDir + SCREENSHOTS_SUBDIR );
 
-	FILEMAN->FlushDirCache( sDir );
-
 	return bSaved;
 }
 
@@ -998,16 +996,10 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 		}
 	}
 
-	// Update file cache, or else IsAFile in CryptManager won't see this new file.
-	FILEMAN->FlushDirCache( sDir );
-	
 	if( bSignData )
 	{
 		RString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
 		CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
-
-		// Update file cache, or else IsAFile in CryptManager won't see sStatsXmlSigFile.
-		FILEMAN->FlushDirCache( sDir );
 
 		// Save the "don't share" file
 		RString sDontShareFile = sDir + DONT_SHARE_SIG;
@@ -1815,7 +1807,6 @@ RString Profile::MakeUniqueFileNameNoExtension( RString sDir, RString sFileNameB
 	//
 	// Find a file name for the screenshot
 	//
-	FILEMAN->FlushDirCache( sDir );
 
 	vector<RString> files;
 	GetDirListing( sDir + sFileNameBeginning+"*", files, false, false );

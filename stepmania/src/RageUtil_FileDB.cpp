@@ -412,18 +412,14 @@ void FilenameDB::AddFile( const RString &sPath_, int iSize, int iHash, void *pPr
 		FileSet *fs = GetFileSet( dir );
 		ASSERT( m_Mutex.IsLockedByThisThread() );
 
-		File f;
-		f.SetName( fn );
-		if( fs->files.find( f ) == fs->files.end() )
+		// const_cast to cast away the constness that is only needed for the name
+		File &f = const_cast<File&>(*fs->files.insert( fn ).first);
+		f.dir = IsDir;
+		if( !IsDir )
 		{
-			f.dir = IsDir;
-			if( !IsDir )
-			{
-				f.size = iSize;
-				f.hash = iHash;
-				f.priv = pPriv;
-			}
-			fs->files.insert( f );
+			f.size = iSize;
+			f.hash = iHash;
+			f.priv = pPriv;
 		}
 		m_Mutex.Unlock(); /* locked by GetFileSet */
 		IsDir = true;
@@ -475,19 +471,35 @@ void FilenameDB::DelFile( const RString &sPath )
 	SplitPath(sPath, Dir, Name);
 	FileSet *Parent = GetFileSet( Dir, false );
 	if( Parent )
-	{
-		set<File>::iterator i = Parent->files.find( File(Name) );
-		if( i != Parent->files.end() )
-		{
-			Parent->files.erase( i );
-		}
-	}
+		Parent->files.erase( Name );
 	m_Mutex.Unlock(); /* locked by GetFileSet */
 }
 
-void FilenameDB::FlushDirCache()
+void FilenameDB::FlushDirCache( const RString &sDir )
 {
+	FileSet *pFileSet = NULL;
 	m_Mutex.Lock();
+	if( !sDir.empty() )
+	{
+		RString lower = sDir;
+		lower.MakeLower();
+		map<RString, FileSet *>::iterator it = dirs.find( lower );
+		if( it != dirs.end() )
+		{
+			pFileSet = it->second;
+			dirs.erase( it );
+			while( !pFileSet->m_bFilled )
+				m_Mutex.Wait();
+			delete pFileSet;
+		}
+		else
+		{
+			LOG->Warn( "Trying to flush an unknown directory %s.", sDir.c_str() );
+		}
+		m_Mutex.Unlock();
+		return;
+	}
+			
 	while( true )
 	{
 		if( dirs.empty() )
@@ -495,7 +507,7 @@ void FilenameDB::FlushDirCache()
 
 		/* Grab the first entry.  Take it out of the list while we hold the
 		 * lock, to guarantee that we own it. */
-		FileSet *pFileSet = dirs.begin()->second;
+		pFileSet = dirs.begin()->second;
 
 		dirs.erase( dirs.begin() );
 
@@ -522,14 +534,10 @@ const File *FilenameDB::GetFile( const RString &sPath )
 	if( it == fs->files.end() )
 		return NULL;
 
-	/* Oops.  &*it is a const File &, because you can't change the order
-	 * of something once it's in a list.  Cast away the const; we won't
-	 * change the filename (used for the ordering), but the rest of the
-	 * values are non-const. */
-	return const_cast<File *> (&*it);
+	return &*it;
 }
 
-const void *FilenameDB::GetFilePriv( const RString &path )
+void *FilenameDB::GetFilePriv( const RString &path )
 {
 	ASSERT( !m_Mutex.IsLockedByThisThread() );
 
@@ -591,6 +599,13 @@ void FilenameDB::GetFileSetCopy( const RString &sDir, FileSet &out )
 	out = *pFileSet;
 	m_Mutex.Unlock(); /* locked by GetFileSet */
 }
+
+void FilenameDB::CacheFile( const RString &sPath )
+{
+	LOG->Warn( "Slow cache due to: %s", sPath.c_str() );
+	FlushDirCache( Dirname(sPath) );
+}
+
 
 /*
  * Copyright (c) 2003-2004 Glenn Maynard

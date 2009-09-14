@@ -78,7 +78,12 @@ bool RageFile::Open( const RString& path, int mode )
 
 void RageFile::Close()
 {
-	SAFE_DELETE( m_File );
+	if( m_File == NULL )
+		return;
+	delete m_File;
+	if( m_Mode & WRITE )
+		FILEMAN->CacheFile( m_File, m_Path );
+	m_File = NULL;
 }
 
 #define ASSERT_OPEN ASSERT_M( IsOpen(), ssprintf("\"%s\" is not open.", m_Path.c_str()) );

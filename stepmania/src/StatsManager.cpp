@@ -283,7 +283,6 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 		
 		if( bSaved )
 		{
-			FILEMAN->FlushDirCache( UPLOAD_DIR );
 			RString sStatsXmlSigFile = fn + SIGNATURE_APPEND;
 			CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
 		}

@@ -77,7 +77,7 @@ static RString MakeTempFilename( const RString &sPath )
 	return Dirname(sPath) + "new." + Basename(sPath) + ".new";
 }
 
-RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iError )
+static RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iError )
 {
 	int iFD;
 	if( iMode & RageFile::READ )
@@ -153,13 +153,16 @@ bool RageFileDriverDirect::Move( const RString &sOldPath_, const RString &sNewPa
 		const RString sDir = Dirname(sNewPath);
 		CreateDirectories( m_sRoot + sDir );
 	}
-
+	int size = FDB->GetFileSize( sOldPath );
+	int hash = FDB->GetFileHash( sOldPath );
 	TRACE( ssprintf("rename \"%s\" -> \"%s\"", (m_sRoot + sOldPath).c_str(), (m_sRoot + sNewPath).c_str()) );
 	if( DoRename(m_sRoot + sOldPath, m_sRoot + sNewPath) == -1 )
 	{
 		WARN( ssprintf("rename(%s,%s) failed: %s", (m_sRoot + sOldPath).c_str(), (m_sRoot + sNewPath).c_str(), strerror(errno)) );
 		return false;
 	}
+	FDB->DelFile( sOldPath );
+	FDB->AddFile( sNewPath, size, hash, NULL );
 
 	return true;
 }
@@ -350,7 +353,6 @@ RageFileObjDirect::~RageFileObjDirect()
 			SetError( strerror(errno) );
 			break;
 		}
-#endif
 
 		if( m_iMode & RageFile::SLOW_FLUSH )
 		{
@@ -364,6 +366,7 @@ RageFileObjDirect::~RageFileObjDirect()
 
 		/* Success. */
 		return;
+#endif
 	} while(0);
 
 	/* The write or the rename failed.  Delete the incomplete temporary file. */

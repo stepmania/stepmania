@@ -2801,8 +2801,6 @@ void ScreenGameplay::SaveReplay()
 			//
 			// Find a file name for the screenshot
 			//
-			FILEMAN->FlushDirCache( "Save/" );
-
 			vector<RString> files;
 			GetDirListing( "Save/replay*", files, false, false );
 			sort( files.begin(), files.end() );

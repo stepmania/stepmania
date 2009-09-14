@@ -591,10 +591,6 @@ try_element_again:
 
 	if( asElementPaths.size() > 1 )
 	{
-		/* Why do we flush here? Aborting ends, retrying calls ReloadMetrics which will flush
-		 * and ignoring doesn't do anything further, nothing that would seem to require
-		 * flushing the cache. -- Steve */
-		FILEMAN->FlushDirCache( GetThemeDirFromName(sThemeName) );
 		g_ThemePathCache[category].clear();
 
 		RString message = ssprintf( 

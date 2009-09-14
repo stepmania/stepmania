@@ -19,6 +19,7 @@ public:
 	virtual int GetFileHash( const RString &sPath );
 	virtual int GetPathValue( const RString &sPath );
 	virtual void FlushDirCache( const RString &sPath );
+	virtual void CacheFile( const RString &sPath ) { }
 	virtual bool Move( const RString &sOldPath, const RString &sNewPath ) { return false; }
 	virtual bool Remove( const RString &sPath ) { return false; }
 

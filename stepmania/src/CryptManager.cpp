@@ -114,7 +114,6 @@ void CryptManager::GenerateGlobalKeys()
 	{
 		LOG->Warn( "Keys missing or failed to load.  Generating new keys" );
 		GenerateRSAKeyToFile( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH );
-		FlushDirCache();
 	}
 }
 

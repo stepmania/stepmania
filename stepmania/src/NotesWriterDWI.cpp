@@ -320,9 +320,6 @@ static bool WriteDWINotesTag( RageFile &f, const Steps &out )
 	if( out.GetDifficulty() == Difficulty_Edit )
 		return false;	// not supported by DWI
 
-	/* Flush dir cache when writing steps, so the old size isn't cached. */
-	FILEMAN->FlushDirCache( Dirname(f.GetRealPath()) );
-
 	LOG->Trace( "Steps::WriteDWINotesTag" );
 
 	switch( out.m_StepsType )

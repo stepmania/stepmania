@@ -228,9 +228,6 @@ static RString GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCac
 
 bool NotesWriterSM::Write( RString sPath, const Song &out, const vector<Steps*>& vpStepsToSave, bool bSavingCache )
 {
-	/* Flush dir cache when writing steps, so the old size isn't cached. */
-	FILEMAN->FlushDirCache( Dirname(sPath) );
-
 	int flags = RageFile::WRITE;
 
 	/* If we're not saving cache, we're saving real data, so enable SLOW_FLUSH
@@ -313,9 +310,6 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
 
 	RString sPath = sDir + GetEditFileName(pSong,pSteps);
 
-	/* Flush dir cache when writing steps, so the old size isn't cached. */
-	FILEMAN->FlushDirCache( Dirname(sPath) );
-
 	// Check to make sure that we're not clobering an existing file before opening.
 	bool bFileNameChanging = 
 		pSteps->GetSavedToDisk()  && 
@@ -347,9 +341,6 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
 	if( bFileNameChanging )
 		FILEMAN->Remove( pSteps->GetFilename() );
 	pSteps->SetFilename( sPath );
-
-	/* Flush dir cache or else the new file won't be seen. */
-	FILEMAN->FlushDirCache( Dirname(sPath) );
 
 	return true;
 }

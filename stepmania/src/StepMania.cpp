@@ -1224,11 +1224,6 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 
 	SCREENMAN->PlayScreenshotSound();
 
-	// We wrote a new file, and SignFile won't pick it up unless we invalidate
-	// the Dir cache.  There's got to be a better way of doing this than 
-	// thowing out all the cache. -Chris
-	FILEMAN->FlushDirCache( sDir );
-
 	if( PREFSMAN->m_bSignProfileData && bMakeSignature )
 		CryptManager::SignFileToFile( sPath );
 
