@@ -804,7 +804,9 @@ int RageSoundReader_MP3::SetPosition_toc( int iFrame, bool Xing )
 	{
 		/* We can speed up the seek using the XING tag.  First, figure
 		 * out what percentage the requested position falls in. */
+		ASSERT( SampleRate != 0 );
 		int ms = int( (iFrame * 1000LL) / SampleRate );
+		ASSERT( mad->length != 0 );
 		int percent = ms * 100 / mad->length;
 		if( percent < 100 )
 		{
