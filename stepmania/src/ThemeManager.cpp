@@ -1063,20 +1063,20 @@ void ThemeManager::GetOptionNames( vector<RString>& AddTo )
 
 static RString PseudoLocalize( RString s )
 {
-	s.Replace( "a", "àá" );
-	s.Replace( "A", "ÀÀ" );
-	s.Replace( "e", "éé" );
-	s.Replace( "E", "ÉÉ" );
-	s.Replace( "i", "íí" );
-	s.Replace( "I", "ÍÍ" );
-	s.Replace( "o", "óó" );
-	s.Replace( "O", "ÓÓ" );
-	s.Replace( "u", "üü" );
-	s.Replace( "U", "ÜÜ" );
-	s.Replace( "n", "ñ" );
-	s.Replace( "N", "Ñ" );
-	s.Replace( "c", "ç" );
-	s.Replace( "C", "Ç" );
+	s.Replace( "a", "*a" );
+	s.Replace( "A", "*A" );
+	s.Replace( "e", "*e" );
+	s.Replace( "E", "*E" );
+	s.Replace( "i", "*i" );
+	s.Replace( "I", "*I" );
+	s.Replace( "o", "*o" );
+	s.Replace( "O", "*O" );
+	s.Replace( "u", "*u" );
+	s.Replace( "U", "*U" );
+	s.Replace( "n", "*n" );
+	s.Replace( "N", "*N" );
+	s.Replace( "c", "*c" );
+	s.Replace( "C", "*C" );
 	// transformations that help expose punctuation assumptions
 	//s.Replace( ":", " :" );	// this messes up "::" help text tip separator markers
 	s.Replace( "?", " ?" );
