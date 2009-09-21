@@ -337,6 +337,7 @@ bool IsHexVal( const RString &s );
 RString BinaryToHex( const void *pData_, int iNumBytes );
 RString BinaryToHex( const RString &sString );
 bool HexToBinary( const RString &s, unsigned char *stringOut );
+bool HexToBinary( const RString &s, RString &sOut );
 float HHMMSSToSeconds( const RString &sHMS );
 RString SecondsToHHMMSS( float fSecs );
 RString SecondsToMSSMsMs( float fSecs );

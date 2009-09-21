@@ -178,6 +178,12 @@ bool HexToBinary( const RString &s, unsigned char *stringOut )
        return true;
 }
 
+bool HexToBinary( const RString &s, RString &sOut )
+{
+	sOut.resize(s.size() / 2);
+	return HexToBinary(s, (unsigned char *) sOut.data());
+}
+
 float HHMMSSToSeconds( const RString &sHHMMSS )
 {
 	vector<RString> arrayBits;
