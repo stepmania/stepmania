@@ -138,7 +138,14 @@ static int EntryIndexAndRowTypeToRow( int iEntryIndex, RowType rowType )
 void ScreenOptionsEditCourse::Init()
 {
 	ScreenOptions::Init();
-	SONGMAN->GetPreferredSortSongs( m_vpSongs );
+
+	SongCriteria sc;
+	sc.m_Selectable = SongCriteria::Selectable_Yes;
+	sc.m_Tutorial = SongCriteria::Tutorial_No;
+	sc.m_Locked = SongCriteria::Locked_Unlocked;
+
+	SongUtil::FilterSongs( sc, SONGMAN->GetAllSongs(), m_vpSongs );
+
 	SongUtil::SortSongPointerArrayByTitle( m_vpSongs );
 }
 
