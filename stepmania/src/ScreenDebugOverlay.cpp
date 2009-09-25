@@ -230,10 +230,12 @@ void ScreenDebugOverlay::Init()
 	this->AddChild( &m_Quad );
 	
 	m_textHeader.LoadFromFont( THEME->GetPathF("Common", "normal") );
+	m_textHeader.SetName( "HeaderText" );
 	m_textHeader.SetHorizAlign( align_left );
 	m_textHeader.SetXY( SCREEN_LEFT+20, SCREEN_TOP+20 );
 	m_textHeader.SetText( DEBUG_MENU );
 	this->AddChild( &m_textHeader );
+	LOAD_ALL_COMMANDS( m_textHeader );
 
 	FOREACH_CONST( RString, m_asPages, s )
 	{
@@ -247,11 +249,15 @@ void ScreenDebugOverlay::Init()
 
 		BitmapText *p = new BitmapText;	
 		p->LoadFromFont( THEME->GetPathF("Common", "normal") );
+		p->SetName( "PageText" );
 		p->SetXY( SCREEN_CENTER_X-100+iPage*100, SCREEN_TOP+20 );
 		p->SetText( *s + " (" + sButton + ")" );
 		p->SetShadowLength( 2 );
+
 		m_vptextPages.push_back( p );
 		this->AddChild( p );
+
+		LOAD_ALL_COMMANDS( *p );
 	}
 
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
@@ -259,20 +265,24 @@ void ScreenDebugOverlay::Init()
 		{
 			BitmapText *p = new BitmapText;
 			p->LoadFromFont( THEME->GetPathF("Common", "normal") );
+			p->SetName( "ButtonText" );
 			p->SetHorizAlign( align_right );
 			p->SetText( "blah" );
 			p->SetShadowLength( 2 );
 			m_vptextButton.push_back( p );
 			this->AddChild( p );
+			LOAD_ALL_COMMANDS( *p );
 		}
 		{
 			BitmapText *p = new BitmapText;
 			p->LoadFromFont( THEME->GetPathF("Common", "normal") );
+			p->SetName( "FunctionText" );
 			p->SetHorizAlign( align_left );
 			p->SetText( "blah" );
 			p->SetShadowLength( 2 );
 			m_vptextFunction.push_back( p );
 			this->AddChild( p );
+			LOAD_ALL_COMMANDS( *p );
 		}
 	}
 
@@ -326,7 +336,7 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 void ScreenDebugOverlay::UpdateText()
 {
 	/* Highlight options that aren't the default. */
-	const RageColor off(0.6f, 0.6f, 0.6f, 1.0f);
+	const RageColor off(0.7f, 0.7f, 0.7f, 1.0f);
 	const RageColor on(1, 1, 1, 1);
 	
 	FOREACH_CONST( RString, m_asPages, s )
