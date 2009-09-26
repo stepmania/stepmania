@@ -602,6 +602,22 @@ void Player::Update( float fDeltaTime )
 
 	ActorFrame::Update( fDeltaTime );
 
+	if(m_pPlayerState->m_mp != MultiPlayer_Invalid)
+	{
+		/*
+		 * In multiplayer, it takes too long to run player updates for every player each frame;
+		 * with 32 players and three difficulties, we have 96 Players to update.  Stagger these
+		 * updates, by only updating a few players each update; since we don't have screen elements
+		 * tightly tied to user actions in this mode, this doesn't degrade gameplay.  Run 4 players
+		 * per update, which means 12 Players in 3-difficulty mode.
+		 */
+		static int iCycle = 0;
+		iCycle = (iCycle + 1) % 8;
+
+		if((m_pPlayerState->m_mp % 8) != iCycle)
+			return;
+	}
+
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 	const int iSongRow = BeatToNoteRow( fSongBeat );
 
