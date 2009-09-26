@@ -574,15 +574,18 @@ void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
 	}
 
 
-	Message msg( "ComboChanged" );
-	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-	msg.SetParam( "OldCombo", iOldCombo );
-	msg.SetParam( "OldMissCombo", iOldMissCombo );
-	if( m_pPlayerState )
-		msg.SetParam( "PlayerState", LuaReference::CreateFromPush(*m_pPlayerState) );
-	if( m_pPlayerStageStats )
-		msg.SetParam( "PlayerStageStats", LuaReference::CreateFromPush(*m_pPlayerStageStats) );
-	MESSAGEMAN->Broadcast( msg );
+	if( m_bSendJudgmentAndComboMessages )
+	{
+		Message msg( "ComboChanged" );
+		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+		msg.SetParam( "OldCombo", iOldCombo );
+		msg.SetParam( "OldMissCombo", iOldMissCombo );
+		if( m_pPlayerState )
+			msg.SetParam( "PlayerState", LuaReference::CreateFromPush(*m_pPlayerState) );
+		if( m_pPlayerStageStats )
+			msg.SetParam( "PlayerStageStats", LuaReference::CreateFromPush(*m_pPlayerStageStats) );
+		MESSAGEMAN->Broadcast( msg );
+	}
 }
 
 void Player::Update( float fDeltaTime )
