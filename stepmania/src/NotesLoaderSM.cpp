@@ -554,7 +554,7 @@ bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
 
 	if( aFileNames.size() > 1 )
 	{
-		LOG->UserLog( "Song", sPath, "has more than one SM file. There should be only one!" );
+		LOG->UserLog( "Song", sPath, "has more than one SM file. There can be only one!" );
 		return false;
 	}
 
