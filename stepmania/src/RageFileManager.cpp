@@ -910,7 +910,7 @@ bool IsADirectory( const RString &sPath )
 	return FILEMAN->IsADirectory( sPath );
 }
 
-unsigned GetFileSizeInBytes( const RString &sPath )
+int GetFileSizeInBytes( const RString &sPath )
 {
 	return FILEMAN->GetFileSizeInBytes( sPath );
 }
