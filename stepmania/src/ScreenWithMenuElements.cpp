@@ -78,11 +78,18 @@ void ScreenWithMenuElements::Init()
 	
 	/* Experimental: Load "decorations" and make them children of the screen. */
 	{
-		AutoActor decorations;
-		decorations.LoadB( m_sName, "decorations" );
-		ActorFrame *pFrame = dynamic_cast<ActorFrame*>((Actor*)decorations);
+		m_Decorations.LoadB( m_sName, "decorations" );
+		ActorFrame *pFrame = dynamic_cast<ActorFrame*>(static_cast<Actor*>(m_Decorations));
+		vector<Actor*> children = pFrame->GetChildren();
 		if( pFrame )
-			pFrame->TransferChildren( this );
+		{
+			FOREACH( Actor*, children, child )
+				this->AddChild( *child );
+		}
+		else
+		{
+			m_Decorations.Unload();
+		}
 	}
 
 	m_In.SetName( "In" );

@@ -20,6 +20,7 @@ public:
 	virtual void RemoveChild( Actor *pActor );
 	void TransferChildren( ActorFrame *pTo );
 	Actor* GetChild( const RString &sName );
+	vector<Actor*> GetChildren() { return m_SubActors; }
 	int GetNumChildren() const { return m_SubActors.size(); }
 
 	void RemoveAllChildren();

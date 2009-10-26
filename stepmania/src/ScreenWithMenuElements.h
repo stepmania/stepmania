@@ -43,6 +43,7 @@ protected:
 	MemoryCardDisplay		*m_MemoryCardDisplay[NUM_PLAYERS];
 	MenuTimer			*m_MenuTimer;
 	AutoActor			m_sprOverlay;
+	AutoActor			m_Decorations;
 
 	Transition			m_In;
 	Transition			m_Out;
