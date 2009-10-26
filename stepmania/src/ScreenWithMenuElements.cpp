@@ -78,17 +78,15 @@ void ScreenWithMenuElements::Init()
 	
 	/* Experimental: Load "decorations" and make them children of the screen. */
 	{
-		m_Decorations.LoadB( m_sName, "decorations" );
-		ActorFrame *pFrame = dynamic_cast<ActorFrame*>(static_cast<Actor*>(m_Decorations));
-		vector<Actor*> children = pFrame->GetChildren();
+		AutoActor decorations;
+		decorations.LoadB( m_sName, "decorations" );
+		ActorFrame *pFrame = dynamic_cast<ActorFrame*>(static_cast<Actor*>(decorations));
 		if( pFrame )
 		{
-			FOREACH( Actor*, children, child )
+			m_vDecorations = pFrame->GetChildren();
+			FOREACH( Actor*, m_vDecorations, child )
 				this->AddChild( *child );
-		}
-		else
-		{
-			m_Decorations.Unload();
+			pFrame->RemoveAllChildren();
 		}
 	}
 
@@ -166,6 +164,8 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 		if( m_MemoryCardDisplay[p] != NULL )
 			SAFE_DELETE( m_MemoryCardDisplay[p] );
 	}
+	FOREACH( Actor*, m_vDecorations, actor )
+		delete *actor;
 }
 
 void ScreenWithMenuElements::SetHelpText( RString s )
