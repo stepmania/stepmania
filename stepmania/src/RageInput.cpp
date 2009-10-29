@@ -10,6 +10,16 @@ RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
 static Preference<RString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
 
+namespace
+{
+	struct LoadedInputHandler
+	{
+		InputHandler *m_pDevice;
+	};
+	vector<LoadedInputHandler> m_InputHandlers;
+	map<InputDevice, InputHandler *> g_mapDeviceToHandler;
+};
+
 RageInput::RageInput()
 {
 	LOG->Trace( "RageInput::RageInput()" );
@@ -29,8 +39,10 @@ RageInput::RageInput()
 RageInput::~RageInput()
 {
 	/* Delete optional devices. */
-	for( unsigned i = 0; i < m_pDevices.size(); ++i )
-		delete m_pDevices[i];
+	for( unsigned i = 0; i < m_InputHandlers.size(); ++i )
+		delete m_InputHandlers[i].m_pDevice;
+	m_InputHandlers.clear();
+	g_mapDeviceToHandler.clear();
 
 	// Unregister with Lua.
 	LUA->UnsetGlobal( "INPUTMAN" );
@@ -38,31 +50,36 @@ RageInput::~RageInput()
 
 void RageInput::LoadDrivers()
 {
-	for( unsigned i = 0; i < m_pDevices.size(); ++i )
-		delete m_pDevices[i];
-	m_pDevices.clear();
+	for( unsigned i = 0; i < m_InputHandlers.size(); ++i )
+		delete m_InputHandlers[i].m_pDevice;
+	m_InputHandlers.clear();
+	g_mapDeviceToHandler.clear();
 
 	/* Init optional devices. */
-	InputHandler::Create( g_sInputDrivers, m_pDevices );
+	vector<InputHandler *> apDevices;
+
+	InputHandler::Create( g_sInputDrivers, apDevices );
+	for( unsigned i = 0; i < apDevices.size(); ++i )
+		AddHandler( apDevices[i] );
 
 	/* If no input devices are loaded, the user won't be able to input anything. */
-	if( m_pDevices.size() == 0 )
+	if( apDevices.size() == 0 )
 		LOG->Warn( "No input devices were loaded." );
 }
 
 void RageInput::Update()
 {
 	/* Update optional devices. */
-	for( unsigned i = 0; i < m_pDevices.size(); ++i )
-		m_pDevices[i]->Update();
+	for( unsigned i = 0; i < m_InputHandlers.size(); ++i )
+		m_InputHandlers[i].m_pDevice->Update();
 }
 
 bool RageInput::DevicesChanged()
 {
 	/* Update optional devices. */
-	for( unsigned i = 0; i < m_pDevices.size(); ++i )
+	for( unsigned i = 0; i < m_InputHandlers.size(); ++i )
 	{
-		if( m_pDevices[i]->DevicesChanged() )
+		if( m_InputHandlers[i].m_pDevice->DevicesChanged() )
 			return true;
 	}
 	return false;
@@ -70,88 +87,73 @@ bool RageInput::DevicesChanged()
 
 void RageInput::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut ) const
 {
-	for( unsigned i = 0; i < m_pDevices.size(); ++i )
-		m_pDevices[i]->GetDevicesAndDescriptions( vDevicesOut );	
+	for( unsigned i = 0; i < m_InputHandlers.size(); ++i )
+		m_InputHandlers[i].m_pDevice->GetDevicesAndDescriptions( vDevicesOut );
 }
 
 void RageInput::WindowReset()
 {
-	for( unsigned i = 0; i < m_pDevices.size(); ++i )
-		m_pDevices[i]->WindowReset();
+	for( unsigned i = 0; i < m_InputHandlers.size(); ++i )
+		m_InputHandlers[i].m_pDevice->WindowReset();
 }
 
 void RageInput::AddHandler( InputHandler *pHandler )
 {
 	ASSERT( pHandler != NULL );
-	m_pDevices.push_back( pHandler );
+
+	LoadedInputHandler hand;
+	hand.m_pDevice = pHandler;
+	m_InputHandlers.push_back(hand);
+
+	vector<InputDeviceInfo> aDeviceInfo;
+	hand.m_pDevice->GetDevicesAndDescriptions( aDeviceInfo );
+	FOREACH_CONST( InputDeviceInfo, aDeviceInfo, idi )
+		g_mapDeviceToHandler[idi->id] = pHandler;
+}
+
+/* Return the first InputDriver for the requested InputDevice. */
+InputHandler *RageInput::GetHandlerForDevice( const InputDevice id )
+{
+	map<InputDevice, InputHandler *>::iterator it = g_mapDeviceToHandler.find(id);
+	if( it == g_mapDeviceToHandler.end() )
+		return NULL;
+	return it->second;
 }
 
 RString RageInput::GetDeviceSpecificInputString( const DeviceInput &di )
 {
-	FOREACH( InputHandler*, m_pDevices, i )
-	{
-		vector<InputDeviceInfo> vDevices;
-		(*i)->GetDevicesAndDescriptions( vDevices );
-
-		FOREACH_CONST( InputDeviceInfo, vDevices, idi )
-		{
-			if( idi->id == di.device )
-				return (*i)->GetDeviceSpecificInputString(di);
-		}
-	}
-
-	return di.ToString();
+	InputHandler *pDriver = GetHandlerForDevice( di.device );
+	if( pDriver != NULL )
+		return pDriver->GetDeviceSpecificInputString(di);
+	else
+		return di.ToString();
 }
 
 RString RageInput::GetLocalizedInputString( const DeviceInput &di )
 {
-	FOREACH( InputHandler*, m_pDevices, i )
-	{
-		vector<InputDeviceInfo> vDevices;
-		(*i)->GetDevicesAndDescriptions( vDevices );
-
-		FOREACH_CONST( InputDeviceInfo, vDevices, idi )
-		{
-			if( idi->id == di.device )
-				return (*i)->GetLocalizedInputString(di);
-		}
-	}
-
-	return Capitalize( DeviceButtonToString(di.button) );
+	InputHandler *pDriver = GetHandlerForDevice( di.device );
+	if( pDriver != NULL )
+		return pDriver->GetLocalizedInputString(di);
+	else
+		return Capitalize( DeviceButtonToString(di.button) );
 }
 
 wchar_t RageInput::DeviceInputToChar( DeviceInput di, bool bUseCurrentKeyModifiers )
 {
-	FOREACH( InputHandler*, m_pDevices, i )
-	{
-		vector<InputDeviceInfo> vDevices;
-		(*i)->GetDevicesAndDescriptions( vDevices );
-
-		FOREACH_CONST( InputDeviceInfo, vDevices, idi )
-		{
-			if( idi->id == di.device )
-				return (*i)->DeviceButtonToChar(di.button, bUseCurrentKeyModifiers);
-		}
-	}
-
-	return '\0';
+	InputHandler *pDriver = GetHandlerForDevice( di.device );
+	if( pDriver != NULL )
+		return pDriver->DeviceButtonToChar(di.button, bUseCurrentKeyModifiers);
+	else
+		return '\0';
 }
 
 InputDeviceState RageInput::GetInputDeviceState( InputDevice id )
 {
-	FOREACH( InputHandler*, m_pDevices, i )
-	{
-		vector<InputDeviceInfo> vDevices;
-		(*i)->GetDevicesAndDescriptions( vDevices );
-
-		FOREACH_CONST( InputDeviceInfo, vDevices, idi )
-		{
-			if( idi->id == id )
-				return (*i)->GetInputDeviceState(id);
-		}
-	}
-
-	return InputDeviceState_NoInputHandler;
+	InputHandler *pDriver = GetHandlerForDevice( id );
+	if( pDriver != NULL )
+		return pDriver->GetInputDeviceState(id);
+	else
+		return InputDeviceState_NoInputHandler;
 }
 
 RString RageInput::GetDisplayDevicesString() const
