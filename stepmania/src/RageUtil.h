@@ -183,6 +183,14 @@ static inline T enum_add2( T val, int iAmt )
 	return static_cast<T>( val + iAmt );
 }
 
+template<typename T>
+static inline T enum_cycle( T val, int iMax, int iAmt = 1 )
+{
+	int iVal = val + iAmt;
+	iVal %= iMax;
+	return static_cast<T>( iVal );
+}
+
 
 /*
  * We only have unsigned swaps; byte swapping a signed value doesn't make sense. 
