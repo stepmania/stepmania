@@ -48,9 +48,6 @@ void WorkoutGraph::SetFromCurrentWorkout()
 
 void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 {
-	Course *pCourse = GAMESTATE->m_pCurCourse;
-	ASSERT( pCourse );
-
 	FOREACH( Sprite*, m_vpBars, p )
 	{
 		this->RemoveChild( *p );
