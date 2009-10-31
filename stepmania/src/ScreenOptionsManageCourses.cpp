@@ -19,29 +19,6 @@
 #include "RageFileManager.h"
 #include "PrefsManager.h"
 
-AutoScreenMessage( SM_BackFromRename )
-AutoScreenMessage( SM_BackFromDelete )
-AutoScreenMessage( SM_BackFromContextMenu )
-
-enum CourseAction
-{
-	CourseAction_Edit,
-	CourseAction_Rename,
-	CourseAction_Delete,
-	NUM_CourseAction
-};
-static const char *CourseActionNames[] = {
-	"Edit",
-	"Rename",
-	"Delete",
-};
-XToString( CourseAction );
-#define FOREACH_CourseAction( i ) FOREACH_ENUM( CourseAction, i )
-
-static MenuDef g_TempMenu(
-	"ScreenMiniMenuContext"
-);
-
 REGISTER_SCREEN_CLASS( ScreenOptionsManageCourses );
 
 
@@ -177,11 +154,6 @@ void ScreenOptionsManageCourses::BeginScreen()
 	AfterChangeRow( GAMESTATE->m_MasterPlayerNumber );
 }
 
-static LocalizedString ERROR_RENAMING		("ScreenOptionsManageCourses", "Error renaming file.");
-static LocalizedString ERROR_DELETING_FILE	("ScreenOptionsManageCourses", "Error deleting the file '%s'.");
-static LocalizedString COURSE_WILL_BE_LOST	( "ScreenOptionsManageCourses", "This course will be lost permanently." );
-static LocalizedString CONTINUE_WITH_DELETE	( "ScreenOptionsManageCourses", "Continue with delete?" );
-static LocalizedString ENTER_COURSE_NAME	( "ScreenOptionsManageCourses", "Enter a name for the course." );
 void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
@@ -210,65 +182,6 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 		else
 		{
 			// do base behavior
-		}
-	}
-	else if( SM == SM_BackFromRename )
-	{
-		if( !ScreenTextEntry::s_bCancelledLast )
-		{
-			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
-
-			if( !EditCourseUtil::RenameAndSave(GAMESTATE->m_pCurCourse, ScreenTextEntry::s_sLastAnswer) )
-			{
-				ScreenPrompt::Prompt( SM_None, ERROR_RENAMING );
-				return;
-			}
-
-			SCREENMAN->SetNewScreen( this->m_sName ); // reload
-		}
-	}
-	else if( SM == SM_BackFromDelete )
-	{
-		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
-		{
-			Course *pCourse = GetCourseWithFocus();
-			if( !EditCourseUtil::RemoveAndDeleteFile( pCourse ) )
-			{
-				ScreenPrompt::Prompt( SM_None, ssprintf(ERROR_DELETING_FILE.GetValue(),pCourse->m_sPath.c_str()) );
-				return;
-			}
-
-			GAMESTATE->m_pCurCourse.Set( NULL );
-			GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
-			SCREENMAN->SetNewScreen( this->m_sName ); // reload
-		}
-	}
-	else if( SM == SM_BackFromContextMenu )
-	{
-		if( !ScreenMiniMenu::s_bCancelled )
-		{
-			switch( ScreenMiniMenu::s_iLastRowCode )
-			{
-			case CourseAction_Edit:
-				{
-					GAMESTATE->m_pCurCourse.Set( GetCourseWithFocus() );
-					EditCourseUtil::UpdateAndSetTrail();
-					EditCourseUtil::s_bNewCourseNeedsName = false;
-					ScreenOptions::BeginFadingOut();
-					break;
-				}
-			case CourseAction_Rename:
-				ScreenTextEntry::TextEntry( 
-					SM_BackFromRename, 
-					ENTER_COURSE_NAME, 
-					GAMESTATE->m_pCurCourse->GetDisplayFullTitle(), 
-					EditCourseUtil::MAX_NAME_LENGTH, 
-					EditCourseUtil::ValidateEditCourseName );
-			break;
-			case CourseAction_Delete:
-				ScreenPrompt::Prompt( SM_None, COURSE_WILL_BE_LOST.GetValue()+"\n\n"+CONTINUE_WITH_DELETE.GetValue(), PROMPT_YES_NO, ANSWER_NO );
-				break;
-			}
 		}
 	}
 	else if( SM == SM_LoseFocus )
@@ -332,16 +245,10 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 	}
 	else	// a course
 	{
-		g_TempMenu.rows.clear();
-		FOREACH_CourseAction( i )
-		{
-			MenuRowDef mrd( i, CourseActionToString(i), true, EditMode_Home, true, true, 0, "" );
-			g_TempMenu.rows.push_back( mrd );
-		}
-
-		int iWidth, iX, iY;
-		this->GetWidthXY( GAMESTATE->m_MasterPlayerNumber, iCurRow, 0, iWidth, iX, iY );
-		ScreenMiniMenu::MiniMenu( &g_TempMenu, SM_BackFromContextMenu, SM_BackFromContextMenu, (float)iX, (float)iY );
+		GAMESTATE->m_pCurCourse.Set( GetCourseWithFocus() );
+		EditCourseUtil::UpdateAndSetTrail();
+		EditCourseUtil::s_bNewCourseNeedsName = false;
+		ScreenOptions::BeginFadingOut();
 	}
 }
 

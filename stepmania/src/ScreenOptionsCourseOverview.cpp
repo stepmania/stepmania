@@ -23,6 +23,8 @@ enum CourseOverviewRow
 	CourseOverviewRow_Play,
 	CourseOverviewRow_Edit,
 	CourseOverviewRow_Shuffle,
+	CourseOverviewRow_Rename,
+	CourseOverviewRow_Delete,
 	CourseOverviewRow_Save,
 	NUM_CourseOverviewRow
 };
@@ -32,12 +34,24 @@ static const MenuRowDef g_MenuRows[] =
 	MenuRowDef( -1,	"Play",		true, EditMode_Practice, true, false, 0, NULL ),
 	MenuRowDef( -1,	"Edit Course",	true, EditMode_Practice, true, false, 0, NULL ),
 	MenuRowDef( -1,	"Shuffle",	true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Rename",	true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Delete",	true, EditMode_Practice, true, false, 0, NULL ),
 	MenuRowDef( -1,	"Save",		true, EditMode_Practice, true, false, 0, NULL ),
 };
 
 REGISTER_SCREEN_CLASS( ScreenOptionsCourseOverview );
 
+static LocalizedString ENTER_COURSE_NAME        ("ScreenOptionsCourseOverview", "Enter a name for the course.");
+static LocalizedString ERROR_SAVING_COURSE	("ScreenOptionsCourseOverview", "Error saving course.");
+static LocalizedString COURSE_SAVED		("ScreenOptionsCourseOverview", "Course saved successfully.");
+static LocalizedString ERROR_RENAMING           ("ScreenOptionsCourseOverview", "Error renaming file.");
+static LocalizedString ERROR_DELETING_FILE      ("ScreenOptionsCourseOverview", "Error deleting the file '%s'.");
+static LocalizedString COURSE_WILL_BE_LOST      ("ScreenOptionsCourseOverview", "This course will be lost permanently.");
+static LocalizedString CONTINUE_WITH_DELETE     ("ScreenOptionsCourseOverview", "Continue with delete?");
+
 AutoScreenMessage( SM_BackFromEnterName )
+AutoScreenMessage( SM_BackFromRename )
+AutoScreenMessage( SM_BackFromDelete )
 
 void ScreenOptionsCourseOverview::Init()
 {
@@ -88,8 +102,6 @@ void ScreenOptionsCourseOverview::ExportOptions( int iRow, const vector<PlayerNu
 		sValue = row.GetRowDef().m_vsChoices[ iIndex ];
 }
 
-static LocalizedString ERROR_SAVING_COURSE	( "ScreenOptionsCourseOverview", "Error saving course." );
-static LocalizedString COURSE_SAVED		( "ScreenOptionsCourseOverview", "Course saved successfully." );
 void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToPrevScreen )
@@ -124,6 +136,38 @@ void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 	}
+        else if( SM == SM_BackFromRename )
+	{
+		if( !ScreenTextEntry::s_bCancelledLast )
+		{
+			ASSERT( ScreenTextEntry::s_sLastAnswer != "" ); // validate should have assured this
+
+			if( !EditCourseUtil::RenameAndSave(GAMESTATE->m_pCurCourse, ScreenTextEntry::s_sLastAnswer) )
+			{
+				ScreenPrompt::Prompt( SM_None, ERROR_RENAMING );
+				return;
+			}
+
+			SCREENMAN->SetNewScreen( this->m_sName ); // reload
+		}
+	}
+	else if( SM == SM_BackFromDelete )
+	{
+		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
+		{
+			if( !EditCourseUtil::RemoveAndDeleteFile(GAMESTATE->m_pCurCourse) )
+			{
+				ScreenPrompt::Prompt( SM_None, ssprintf(ERROR_DELETING_FILE.GetValue(), GAMESTATE->m_pCurCourse->m_sPath.c_str()) );
+				return;
+			}
+
+			GAMESTATE->m_pCurCourse.Set( NULL );
+			GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
+
+			/* Our course is gone, so back out. */
+			StartTransitioningScreen( SM_GoToPrevScreen );
+		}
+	}
 
 	ScreenOptions::HandleScreenMessage( SM );
 }
@@ -134,7 +178,6 @@ void ScreenOptionsCourseOverview::AfterChangeValueInRow( int iRow, PlayerNumber 
 }
 
 
-static LocalizedString ENTER_COURSE_NAME	( "ScreenOptionsCourseOverview", "Enter a name for the course." );
 void ScreenOptionsCourseOverview::ProcessMenuStart( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
@@ -158,6 +201,17 @@ void ScreenOptionsCourseOverview::ProcessMenuStart( const InputEventPlus &input 
 			MESSAGEMAN->Broadcast("CurrentCourseChanged");
 		}
 		return;	// handled
+	case CourseOverviewRow_Rename:
+		ScreenTextEntry::TextEntry(
+				SM_BackFromRename,
+				ENTER_COURSE_NAME,
+				GAMESTATE->m_pCurCourse->GetDisplayFullTitle(),
+				EditCourseUtil::MAX_NAME_LENGTH,
+				EditCourseUtil::ValidateEditCourseName );
+		break;
+	case CourseOverviewRow_Delete:
+		ScreenPrompt::Prompt( SM_BackFromDelete, COURSE_WILL_BE_LOST.GetValue()+"\n\n"+CONTINUE_WITH_DELETE.GetValue(), PROMPT_YES_NO, ANSWER_NO );
+		break;
 	case CourseOverviewRow_Save:
 		{
 			bool bPromptForName = EditCourseUtil::s_bNewCourseNeedsName;
