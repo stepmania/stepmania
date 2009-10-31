@@ -20,6 +20,7 @@ struct HighScore
 	RString	GetName() const;
 	Grade GetGrade() const;
 	int GetScore() const;
+	bool IsEmpty() const;
 	float GetPercentDP() const;
 	float GetSurviveSeconds() const;
 	float GetSurvivalSeconds() const;

@@ -264,12 +264,20 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 		if(!GAMESTATE->m_bMultiplayer)
 		{
 			FOREACH_HumanPlayer( p )
+			{
+				if( pSS->m_player[p].m_HighScore.IsEmpty() )
+					continue;
 				recent->AppendChild( MakeRecentScoreNode( *pSS, GAMESTATE->m_pCurTrail[p], pSS->m_player[p], MultiPlayer_Invalid ) );
+			}
 		}
 		else
 		{
 			FOREACH_EnabledMultiPlayer( mp )
+			{
+				if( pSS->m_multiPlayer[mp].m_HighScore.IsEmpty() )
+					continue;
 				recent->AppendChild( MakeRecentScoreNode( *pSS, GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber], pSS->m_multiPlayer[mp], mp ) );
+			}
 		}
 
 		RString sDate = DateTime::GetNowDate().GetString();

@@ -160,6 +160,21 @@ void HighScore::Unset()
 	m_Impl = new HighScoreImpl;
 }
 
+bool HighScore::IsEmpty() const
+{
+	FOREACH_ENUM( TapNoteScore, tns )
+	{
+		if( m_Impl->iTapNoteScores[tns] > 0 )
+			return false;
+	}
+	FOREACH_ENUM( HoldNoteScore, hns )
+	{
+		if( m_Impl->iHoldNoteScores[hns] > 0 )
+			return false;
+	}
+	return true;
+}
+
 RString	HighScore::GetName() const { return m_Impl->sName; }
 Grade HighScore::GetGrade() const { return m_Impl->grade; }
 int HighScore::GetScore() const { return m_Impl->iScore; }
