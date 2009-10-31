@@ -29,13 +29,21 @@ enum CourseOverviewRow
 	NUM_CourseOverviewRow
 };
 
+static bool CurrentCourseIsSaved()
+{
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+	if( pCourse == NULL )
+		return false;
+	return !pCourse->m_sPath.empty();
+}
+
 static const MenuRowDef g_MenuRows[] = 
 {
 	MenuRowDef( -1,	"Play",		true, EditMode_Practice, true, false, 0, NULL ),
 	MenuRowDef( -1,	"Edit Course",	true, EditMode_Practice, true, false, 0, NULL ),
 	MenuRowDef( -1,	"Shuffle",	true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Rename",	true, EditMode_Practice, true, false, 0, NULL ),
-	MenuRowDef( -1,	"Delete",	true, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Rename",	CurrentCourseIsSaved, EditMode_Practice, true, false, 0, NULL ),
+	MenuRowDef( -1,	"Delete",	CurrentCourseIsSaved, EditMode_Practice, true, false, 0, NULL ),
 	MenuRowDef( -1,	"Save",		true, EditMode_Practice, true, false, 0, NULL ),
 };
 
