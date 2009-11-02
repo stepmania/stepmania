@@ -737,9 +737,10 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		if( pSteps->IsAutogen() )
 			continue;
 
-		/* Don't calculate with edits.  Otherwise, edits installed on the machine could 
+		/* Don't calculate with edits unless the only chart available
+		 * is an edit. Otherwise, edits installed on the machine could 
 		 * extend the length of the song. */
-		if( pSteps->IsAnEdit() )
+		if( pSteps->IsAnEdit() && m_vpSteps.size() > 1 )
 			continue;
 		
 		// Don't set first/last beat based on lights.  They often start very 
