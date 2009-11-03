@@ -162,16 +162,14 @@ void HighScore::Unset()
 
 bool HighScore::IsEmpty() const
 {
-	FOREACH_ENUM( TapNoteScore, tns )
-	{
-		if( m_Impl->iTapNoteScores[tns] > 0 )
-			return false;
-	}
-	FOREACH_ENUM( HoldNoteScore, hns )
-	{
-		if( m_Impl->iHoldNoteScores[hns] > 0 )
-			return false;
-	}
+	if(	m_Impl->iTapNoteScores[TNS_W1] ||
+		m_Impl->iTapNoteScores[TNS_W2] ||
+		m_Impl->iTapNoteScores[TNS_W3] ||
+		m_Impl->iTapNoteScores[TNS_W4] ||
+		m_Impl->iTapNoteScores[TNS_W5] )
+		return false;
+	if( m_Impl->iHoldNoteScores[HNS_Held] > 0 )
+		return false;
 	return true;
 }
 
