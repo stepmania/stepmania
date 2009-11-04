@@ -479,11 +479,30 @@ void FilenameDB::FlushDirCache( const RString &sDir )
 {
 	FileSet *pFileSet = NULL;
 	m_Mutex.Lock();
-	if( !sDir.empty() )
+	
+	while( true )
 	{
-		RString lower = sDir;
-		lower.MakeLower();
-		map<RString, FileSet *>::iterator it = dirs.find( lower );
+		if( dirs.empty() )
+			break;
+		
+		/* Grab the first entry.  Take it out of the list while we hold the
+		 * lock, to guarantee that we own it. */
+		pFileSet = dirs.begin()->second;
+		
+		dirs.erase( dirs.begin() );
+		
+		/* If it's being filled, we don't really own it until it's finished being
+		 * filled, so wait. */
+		while( !pFileSet->m_bFilled )
+			m_Mutex.Wait();
+		delete pFileSet;
+	}
+	
+#if 0
+	/* XXX: This is tricky, we want to flush all of the subdirectories of
+	 * sDir, but once we unlock the mutex, we basically have to start over.
+	 * It's just an optimization though, so it can wait. */
+	{
 		if( it != dirs.end() )
 		{
 			pFileSet = it->second;
@@ -491,33 +510,31 @@ void FilenameDB::FlushDirCache( const RString &sDir )
 			while( !pFileSet->m_bFilled )
 				m_Mutex.Wait();
 			delete pFileSet;
+			
+			if( sDir != "/" )
+			{
+				RString sParent = Dirname( sDir );
+				if( sParent == "./" )
+					sParent = "";
+				sParent.MakeLower();
+				it = dirs.find( sParent );
+				if( it != dirs.end() )
+				{
+					FileSet *pParent = it->second;
+					set<File>::iterator fileit = pParent->files.find( File(Basename(sDir)) );
+					if( fileit != pParent->files.end() )
+						fileit->dirp = NULL;
+				}
+			}
 		}
 		else
 		{
 			LOG->Warn( "Trying to flush an unknown directory %s.", sDir.c_str() );
 		}
+	}
+		
+#endif
 		m_Mutex.Unlock();
-		return;
-	}
-			
-	while( true )
-	{
-		if( dirs.empty() )
-			break;
-
-		/* Grab the first entry.  Take it out of the list while we hold the
-		 * lock, to guarantee that we own it. */
-		pFileSet = dirs.begin()->second;
-
-		dirs.erase( dirs.begin() );
-
-		/* If it's being filled, we don't really own it until it's finished being
-		 * filled, so wait. */
-		while( !pFileSet->m_bFilled )
-			m_Mutex.Wait();
-		delete pFileSet;
-	}
-	m_Mutex.Unlock();
 }
 
 const File *FilenameDB::GetFile( const RString &sPath )
