@@ -385,10 +385,17 @@ void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
 	_exit( 1 );
 }
 
-/* XXX test for recursive crashes here (eg. GetBacktrace crashing) */
-
 void CrashHandler::CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
+	static bool bInCrashSignalHandler = false;
+	if( bInCrashSignalHandler )
+	{
+		fprintf(stderr, "Fatal: crash from within the crash signal handler\n");
+		_exit(1);
+	}
+
+	bInCrashSignalHandler = true;
+
 	CrashData crash;
 	memset( &crash, 0, sizeof(crash) );
 
@@ -406,6 +413,9 @@ void CrashHandler::CrashSignalHandler( int signal, siginfo_t *si, const ucontext
 
 	strncpy( crash.m_ThreadName[0], RageThread::GetCurrentThreadName(), sizeof(crash.m_ThreadName[0])-1 );
 
+	bInCrashSignalHandler = false;
+
+	/* RunCrashHandler handles any recursive crashes of its own by itself. */
 	RunCrashHandler( &crash );
 }
 
