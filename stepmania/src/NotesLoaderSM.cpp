@@ -211,12 +211,10 @@ bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChange
 	{
 	case 11:
 		change.m_def.m_sColor2 = aBGChangeValues[10];
-		// .sm files made before we started escaping will still have '^' instead of ','
 		change.m_def.m_sColor2.Replace( '^', ',' );
 		// fall through
 	case 10:
 		change.m_def.m_sColor1 = aBGChangeValues[9];
-		// .sm files made before we started escaping will still have '^' instead of ','
 		change.m_def.m_sColor1.Replace( '^', ',' );
 		// fall through
 	case 9:
