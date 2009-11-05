@@ -797,6 +797,7 @@ void Song::Save()
 	 * files to avoid confusion. */
 	vector<RString> arrayOldFileNames;
 	GetDirListing( m_sSongDir + "*.bms", arrayOldFileNames );
+	GetDirListing( m_sSongDir + "*.pms", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );
 	
 	for( unsigned i=0; i<arrayOldFileNames.size(); i++ )
