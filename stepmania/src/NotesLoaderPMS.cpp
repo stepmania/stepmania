@@ -541,8 +541,8 @@ static bool LoadFromPMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		iTransformNewToOld[0] = PMS_P1_KEY3;
 		iTransformNewToOld[1] = PMS_P1_KEY4;
 		iTransformNewToOld[2] = PMS_P1_KEY5;
-		iTransformNewToOld[3] = PMS_P2_KEY6;
-		iTransformNewToOld[4] = PMS_P2_KEY7;
+		iTransformNewToOld[3] = PMS_P1_KEY6;
+		iTransformNewToOld[4] = PMS_P1_KEY7;
 		break;
 	case StepsType_popn_nine:
 		iTransformNewToOld[0] = PMS_P1_KEY1; // lwhite
