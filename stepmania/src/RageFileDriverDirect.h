@@ -19,6 +19,15 @@ private:
 	RString m_sRoot;
 };
 
+class RageFileDriverDirectReadOnly: public RageFileDriverDirect
+{
+public:
+	RageFileDriverDirectReadOnly( const RString &sRoot );
+	RageFileBasic *Open( const RString &sPath, int iMode, int &iError );
+	bool Move( const RString &sOldPath, const RString &sNewPath );
+	bool Remove( const RString &sPath );
+};
+
 #endif
 
 /*

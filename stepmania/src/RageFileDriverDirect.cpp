@@ -22,12 +22,19 @@
 #include <io.h>
 #endif
 
-
+/* Direct filesystem access: */
 static struct FileDriverEntry_DIR: public FileDriverEntry
 {
 	FileDriverEntry_DIR(): FileDriverEntry( "DIR" ) { }
 	RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverDirect( sRoot ); }
 } const g_RegisterDriver;
+
+/* Direct read-only filesystem access: */
+static struct FileDriverEntry_DIRRO: public FileDriverEntry
+{
+	FileDriverEntry_DIRRO(): FileDriverEntry( "DIRRO" ) { }
+	RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverDirectReadOnly( sRoot ); }
+} const g_RegisterDriver2;
 
 /* This driver handles direct file access. */
 
@@ -221,6 +228,22 @@ bool RageFileDriverDirect::Remount( const RString &sPath )
 
 	return true;
 }
+
+/* The DIRRO driver is just like DIR, except writes are disallowed. */
+RageFileDriverDirectReadOnly::RageFileDriverDirectReadOnly( const RString &sRoot ):
+	RageFileDriverDirect( sRoot ) { }
+RageFileBasic *RageFileDriverDirectReadOnly::Open( const RString &sPath, int iMode, int &iError )
+{
+	if( iMode & RageFile::WRITE )
+	{
+		iError = EROFS;
+		return NULL;
+	}
+
+	return RageFileDriverDirect::Open( sPath, iMode, iError );
+}
+bool RageFileDriverDirectReadOnly::Move( const RString &sOldPath, const RString &sNewPath ) { return false; }
+bool RageFileDriverDirectReadOnly::Remove( const RString &sPath ) { return false; }
 
 static const unsigned int BUFSIZE = 1024*64;
 RageFileObjDirect::RageFileObjDirect( const RString &sPath, int iFD, int iMode )
