@@ -1123,8 +1123,8 @@
 	<Function name='SetCurrentSong' return='void' arguments='Song song'>
 		Sets the current Song to <code>song</code>.
 	</Function>
-	<Function name='SetCurrentSteps' return='void' arguments='Steps steps'>
-		Sets the current Steps to <code>steps</code>.
+	<Function name='SetCurrentSteps' return='void' arguments='PlayerNumber pn, Steps steps'>
+		Sets the current Steps of Player <code>pn</code> to <code>steps</code>.
 	</Function>
 	<Function name='SetCurrentTrail' return='void' arguments='Trail trail'>
 		Sets the current Trail to <code>trail</code>.
