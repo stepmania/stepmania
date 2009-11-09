@@ -392,8 +392,11 @@ void ScreenSelectMaster::BeginScreen()
 		{
 			if( GAMESTATE->IsHumanPlayer(pn) )
 				continue;
+			/*
+			XXX: this code causes crashes
 			if( SHOW_CURSOR )
 				m_sprCursor[pn]->SetVisible( false );
+			*/
 			if( SHOW_SCROLLER )
 				m_Scroller[pn].SetVisible( false );
 		}

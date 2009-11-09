@@ -198,6 +198,10 @@ if HAVE_OSS
 Sound += arch/Sound/RageSoundDriver_OSS.cpp arch/Sound/RageSoundDriver_OSS.h
 endif
 
+if HAVE_PULSE
+Sound += arch/Sound/RageSoundDriver_PulseAudio.cpp arch/Sound/RageSoundDriver_PulseAudio.h
+endif
+
 if HAVE_ALSA
 Sound += arch/Sound/ALSA9Dynamic.cpp arch/Sound/ALSA9Dynamic.h arch/Sound/ALSA9Functions.h \
 	 arch/Sound/ALSA9Helpers.cpp arch/Sound/ALSA9Helpers.h \

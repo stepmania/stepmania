@@ -208,6 +208,13 @@ AC_ARG_ENABLE(force-oss, AS_HELP_STRING([--enable-force-oss],[Force OSS]), force
 AC_CHECK_HEADER(stdint.h, , [AC_DEFINE(MISSING_STDINT_H, 1, [stdint.h is missing])])
 AC_CHECK_HEADERS([inttypes.h endian.h machine/endian.h alloca.h])
 
+have_pulse=no
+AC_CHECK_LIB(pulse, pa_stream_new, have_pulse=yes)
+if test x$have_pulse = xyes; then
+  AC_DEFINE(HAVE_PULSE, 1, [pulseaudio support available])
+  LIBS="$LIBS -lpulse"
+fi
+
 AC_MSG_CHECKING(if cstdlib breaks llabs)
 AC_LANG_PUSH(C++)
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
@@ -227,6 +234,7 @@ AC_DEFINE(__STDC_FORMAT_MACROS, 1, [Use PRId64 and similar])
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_sys_soundcard_h = xyes )
+AM_CONDITIONAL(HAVE_PULSE, test x$have_pulse = xyes)
 AM_CONDITIONAL(USE_CRASH_HANDLER, test "$use_crash_handler" = "yes" )
 
 if test x$force_oss = xyes && test x$ac_cv_header_sys_soundcard_h = xyes; then
