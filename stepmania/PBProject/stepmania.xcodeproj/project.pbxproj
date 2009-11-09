@@ -1636,6 +1636,8 @@
 		AAFF41A40F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFF41A20F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h */; };
 		AAFF41A50F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFF41A10F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.cpp */; };
 		AAFF41A60F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFF41A20F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h */; };
+		EEA7C87310A80A5900082E7B /* NotesLoaderPMS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEA7C87110A80A5900082E7B /* NotesLoaderPMS.cpp */; };
+		EEA7C87410A80A5900082E7B /* NotesLoaderPMS.h in Headers */ = {isa = PBXBuildFile; fileRef = EEA7C87210A80A5900082E7B /* NotesLoaderPMS.h */; };
 		EEC7863F0E58208B00F559BC /* StepsDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */; };
 		F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */; };
 		F4BC045509E6B582003F770B /* ScreenGameplaySyncMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */; };
@@ -2960,6 +2962,8 @@
 		AAFF55220549F43A00D02EE9 /* ComboGraph.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ComboGraph.h; path = ../src/ComboGraph.h; sourceTree = "<group>"; };
 		AAFF5541054E736D00D02EE9 /* Attack.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Attack.cpp; path = ../src/Attack.cpp; sourceTree = "<group>"; };
 		AAFF5542054E736D00D02EE9 /* Attack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Attack.h; path = ../src/Attack.h; sourceTree = "<group>"; };
+		EEA7C87110A80A5900082E7B /* NotesLoaderPMS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderPMS.cpp; path = ../src/NotesLoaderPMS.cpp; sourceTree = SOURCE_ROOT; };
+		EEA7C87210A80A5900082E7B /* NotesLoaderPMS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderPMS.h; path = ../src/NotesLoaderPMS.h; sourceTree = SOURCE_ROOT; };
 		EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StepsDisplay.cpp; path = ../src/StepsDisplay.cpp; sourceTree = "<group>"; };
 		EEC7863E0E58208B00F559BC /* StepsDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StepsDisplay.h; path = ../src/StepsDisplay.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -3751,6 +3755,8 @@
 				AA6EFDF604770C79005F316C /* NotesLoaderSM.h */,
 				AA6EFDF704770C79005F316C /* NotesWriterDWI.cpp */,
 				AA6EFDF804770C79005F316C /* NotesWriterDWI.h */,
+				EEA7C87110A80A5900082E7B /* NotesLoaderPMS.cpp */,
+				EEA7C87210A80A5900082E7B /* NotesLoaderPMS.h */,
 				AA6EFDF904770C79005F316C /* NotesWriterSM.cpp */,
 				AA6EFDFA04770C79005F316C /* NotesWriterSM.h */,
 				AA6EFDFB04770C79005F316C /* NoteTypes.cpp */,
@@ -4870,6 +4876,7 @@
 				3659B5700F902143002B6B68 /* CommandLineActions.h in Headers */,
 				36CA531D0F91564A0063D59D /* ScreenOptionsCourseOverview.h in Headers */,
 				36CA53210F9156860063D59D /* ScreenOptionsEditCourse.h in Headers */,
+				EEA7C87410A80A5900082E7B /* NotesLoaderPMS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6108,6 +6115,7 @@
 				3659B56F0F902143002B6B68 /* CommandLineActions.cpp in Sources */,
 				36CA531C0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp in Sources */,
 				36CA53200F9156860063D59D /* ScreenOptionsEditCourse.cpp in Sources */,
+				EEA7C87310A80A5900082E7B /* NotesLoaderPMS.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
