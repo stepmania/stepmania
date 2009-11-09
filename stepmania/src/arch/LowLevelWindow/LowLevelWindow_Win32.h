@@ -17,6 +17,8 @@ public:
 	bool SupportsThreadedRendering();
 	void BeginConcurrentRendering();
 	void EndConcurrentRendering();
+	virtual bool SupportsRenderToTexture() const { return true; }
+	virtual RenderTarget *CreateRenderTarget();
 
 	const VideoModeParams &GetActualVideoModeParams() const;
 };

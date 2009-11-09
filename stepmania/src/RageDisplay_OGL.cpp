@@ -240,25 +240,6 @@ static void FixLittleEndian()
 #endif
 }
 
-
-/* Making an OpenGL call doesn't also flush the error state; if we happen
- * to have an error from a previous call, then the assert below will fail. 
- * Flush it. */
-#define FlushGLErrors() do { } while( glGetError() != GL_NO_ERROR )
-#define AssertNoGLError() \
-{ \
-	GLenum error = glGetError(); \
-	ASSERT_M( error == GL_NO_ERROR, GLToString(error) ); \
-}
-
-#if defined(DEBUG) || !defined(GL_GET_ERROR_IS_SLOW)
-#define DebugFlushGLErrors() FlushGLErrors()
-#define DebugAssertNoGLError() AssertNoGLError()
-#else
-#define DebugFlushGLErrors()
-#define DebugAssertNoGLError()
-#endif
-
 static void TurnOffHardwareVBO()
 {
 	if( GLExt.glBindBufferARB )
