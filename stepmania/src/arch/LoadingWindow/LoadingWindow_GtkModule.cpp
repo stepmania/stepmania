@@ -2,14 +2,13 @@
 #include "LoadingWindow_GtkModule.h"
 
 #include <gtk/gtk.h>
-#include "loading.xpm"
 
 static GtkWidget *label;
 static GtkWidget *window;
 
 extern "C" const char *Init( int *argc, char ***argv )
 {
-	GdkPixmap *loadmap;
+	const gchar *splash_image_path = "Data/splash.png";
 	GtkWidget *vbox;
 	GtkWidget *loadimage;
 
@@ -20,8 +19,7 @@ extern "C" const char *Init( int *argc, char ***argv )
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER );
 	gtk_widget_realize(window);
-	loadmap = gdk_pixmap_create_from_xpm_d(window->window,NULL,NULL,loading);
-	loadimage = gtk_image_new_from_pixmap(loadmap,NULL);
+	loadimage = gtk_image_new_from_file(splash_image_path);
 	label = gtk_label_new(NULL);
 	gtk_label_set_justify(GTK_LABEL(label),GTK_JUSTIFY_CENTER);
 	vbox = gtk_vbox_new(FALSE,5);
