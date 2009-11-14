@@ -84,8 +84,7 @@ public:
 			Lua *L = LUA->Get();
 			THEME->GetMetric( m_sGroup, m_sName, m_Value );
 			m_Value.PushSelf(L);
-			if( !LuaHelpers::FromStack(L, m_currentValue, -1) )
-				m_currentValue = T();
+			LuaHelpers::FromStack(L, m_currentValue, -1);
 			lua_pop( L, 1 );
 			LUA->Release(L);
 
