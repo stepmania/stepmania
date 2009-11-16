@@ -187,7 +187,6 @@ if HAVE_GTK
 LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h \
 arch/LoadingWindow/LoadingWindow_GtkModule.h
 endif
-EXTRA_DIST += arch/LoadingWindow/loading.xpm
 
 Sound = arch/Sound/RageSoundDriver.h arch/Sound/RageSoundDriver.cpp \
 	arch/Sound/RageSoundDriver_Null.cpp arch/Sound/RageSoundDriver_Null.h \
