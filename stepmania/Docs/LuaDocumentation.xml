@@ -895,6 +895,14 @@
 		Returns the display text.
 	</Function>
 </Class>
+<Class name='GameManager'>
+	<Function name='GetFirstStepsTypeForGame' return='StepsType' arguments='Game g'>
+		Returns the first StepsType for the specified Game.
+	</Function>
+	<Function name='StepsTypeToLocalizedString' return='string' arguments='StepsType st'>
+		Returns a localized string for the specified StepsType.
+	</Function>
+</Class>
 <Class name='GameSoundManager'>
 	<Function name='DimMusic' return='void' arguments='float fVolume, float fDuration'>
 		Set the music volume to <code>fVolume</code> for <code>fDuration</code> seconds.
@@ -1069,6 +1077,9 @@
 	<Function name='GetStageSeed' return='int' arguments=''>
 		Return the random seed for the current stage.
 	</Function>
+	<Function name='GetWorkoutGoalComplete' return='bool' arguments=''>
+		Returns <code>true</code> if the workout goal is complete.
+	</Function>
 	<Function name='HasEarnedExtraStage' return='bool' arguments=''>
 		Returns <code>true</code> if an extra stage was earned.
 	</Function>
@@ -1096,6 +1107,9 @@
 	<Function name='IsExtraStage2' return='bool' arguments=''>
 		Returns <code>true</code> if this is the second extra stage.
 	</Function>
+	<Function name='IsGoalComplete' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if player <code>pn</code> has completed the current Goal.
+	</Function>
 	<Function name='IsHumanPlayer' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code> is human.
 	</Function>
@@ -1104,6 +1118,9 @@
 	</Function>
 	<Function name='IsSideJoined' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if player <code>pn</code> has joined the game.
+	</Function>
+	<Function name='IsWinner' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if player <code>pn</code> is the winner.
 	</Function>
 	<Function name='PlayerIsUsingModifier' return='bool' arguments='PlayerNumber pn, string sModifier'>
 		Returns <code>true</code> if player <code>pn</code> is using modifier <code>sModifier</code>.
@@ -1424,8 +1441,35 @@
 	<Function name='GetCaloriesBurnedToday' return='float' arguments=''>
 		Returns the number of calories burned during the current day.
 	</Function>
+	<Function name='GetCharacter' return='Character' arguments=''>
+		Returns the Character being used by this profile.
+	</Function>
+	<Function name='GetCoursesActual' return='float' arguments='StepsType st, Difficulty d'>
+		Returns a composite of your high scores over courses with the specified StepsType and Difficulty.
+	</Function>
+	<Function name='GetCoursesPercentComplete' return='float' arguments='StepsType st, Difficulty d'>
+		Returns the percentage of courses that you've completed with the specified StepsType and Difficulty.
+	</Function>
+	<Function name='GetCoursesPossible' return='float' arguments='StepsType st, Difficulty d'>
+		Returns the possible score of courses with the specified StepsType and Difficulty.
+	</Function>
 	<Function name='GetDisplayName' return='string' arguments=''>
 		Returns the profile's display name.
+	</Function>
+	<Function name='GetDisplayTotalCaloriesBurned' return='string' arguments=''>
+		Return the number of calories burned as a string.
+	</Function>
+	<Function name='GetGoalCalories' return='int' arguments=''>
+		Returns the number of calories needed to reach the goal.
+	</Function>
+	<Function name='GetGoalSeconds' return='int' arguments=''>
+		Returns the number of seconds needed to reach the goal.
+	</Function>
+	<Function name='GetGoalType' return='GoalType' arguments=''>
+		Returns the current goal type.
+	</Function>
+	<Function name='GetHighScoreList' return='HighScoreList' arguments='Song s, Steps st'>
+		Gets the profile's HighScoreList for a specified Song and Steps. (Alternate arguments for Courses: <code>Course c, Trail t</code>)
 	</Function>
 	<Function name='GetNumToasties' return='int' arguments=''>
 		Returns the number of Toasties gotten using the specified profile.
@@ -1441,6 +1485,21 @@
 	</Function>
 	<Function name='GetSongNumTimesPlayed' return='int' arguments='Song s'>
 		Returns the number of times song <code>s</code> has been played with the profile.
+	</Function>
+	<Function name='GetSongsActual' return='float' arguments='StepsType st, Difficulty d'>
+		Returns a composite of your high scores over songs with the specified StepsType and Difficulty.
+	</Function>
+	<Function name='GetSongsAndCoursesPercentCompleteAllDifficulties' return='float' arguments='StepsType st'>
+		Returns the percent complete for all songs and courses for the specified StepsType <code>st</code>.
+	</Function>
+	<Function name='GetSongsPercentComplete' return='float' arguments='StepsType st, Difficulty d'>
+		Returns the percentage of songs that you've completed with the specified StepsType and Difficulty.
+	</Function>
+	<Function name='GetSongsPossible' return='float' arguments='StepsType st, Difficulty d'>
+		Returns the possible score of songs with the specified StepsType and Difficulty.
+	</Function>
+	<Function name='GetTotalCaloriesBurned' return='float' arguments=''>
+		Return the total number of calories burned.
 	</Function>
 	<Function name='GetTotalHands' return='int' arguments=''>
 		Returns the number of Hands stepped on.
@@ -1460,6 +1519,36 @@
 	<Function name='GetTotalRolls' return='int' arguments=''>
 		Returns the number of successful Rolls.
 	</Function>
+	<Function name='GetTotalStepsWithTopGrade' return='int' arguments='StepsType st, Difficulty d, Grade g'>
+		Returns the number of steps with the specified StepsType and Difficulty that you've scored a certain Grade <code>g</code> on.
+	</Function>
+	<Function name='GetTotalTapsAndHolds' return='int' arguments=''>
+		Returns the number of Taps and successful Holds.
+	</Function>
+	<Function name='GetTotalTrailsWithTopGrade' return='int' arguments='StepsType st, Difficulty d, Grade g'>
+		Returns the number of trails with the specified StepsType and Difficulty that you've scored a certain Grade <code>g</code> on.
+	</Function>
+	<Function name='GetWeightPounds' return='int' arguments=''>
+		Returns how much the player weighs.
+	</Function>
+	<Function name='HasPassedAnyStepsInSong' return='bool' arguments='Song s'>
+		Returns <code>true</code> if the player has passed any steps in the specified Song <code>s</code>.
+	</Function>
+	<Function name='IsCodeUnlocked' return='bool' arguments='string sUnlockEntryID'>
+		Returns <code>true</code> if the specified code <code>sUnlockEntryID</code> is unlocked.
+	</Function>
+	<Function name='SetGoalCalories' return='void' arguments='int iCals'>
+		Sets the goal to <code>iCals</code> calories.
+	</Function>
+	<Function name='SetGoalSeconds' return='void' arguments='int iSecs'>
+		Sets the goal to <code>iSecs</code> seconds.
+	</Function>
+	<Function name='SetGoalType' return='void' arguments='GoalType gt'>
+		Sets the current goal type to <code>gt</code>.
+	</Function>
+	<Function name='SetWeightPounds' return='void' arguments='int weightPounds'>
+		Sets how much the player weighs (in pounds) to <code>weightPounds</code>.
+	</Function>
 </Class>
 <Class name='ProfileManager'>
 	<Function name='GetMachineProfile' return='Profile' arguments=''>
@@ -1467,6 +1556,12 @@
 	</Function>
 	<Function name='GetNumLocalProfiles' return='int' arguments=''>
 		Retuns the amount of local profiles.
+	</Function>
+	<Function name='GetProfile' return='Profile' arguments='PlayerNumber pn'>
+		Retuns the Profile for Player <code>pn</code>.
+	</Function>
+	<Function name='IsPersistentProfile' return='bool' arguments='PlayerNumber pn'>
+		Retuns <code>true</code> if the Profile for Player <code>pn</code> is persistent.
 	</Function>
 	<Function name='SaveMachineProfile' return='void' arguments=''>
 		Saves the machine profile.
@@ -1567,6 +1662,11 @@
 	</Function>
 	<Function name='PostScreenMessage' return='void' arguments='string sScreenMsg'>
 		Posts a message with the text <code>sScreenMsg</code> to the Screen.
+	</Function>
+</Class>
+<Class name='ScreenEvaluation'>
+	<Function name='GetStageStats' return='StageStats' arguments=''>
+		Returns the StageStats.
 	</Function>
 </Class>
 <Class name='ScreenGameplay'>
