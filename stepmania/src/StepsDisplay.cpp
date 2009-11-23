@@ -125,7 +125,7 @@ void StepsDisplay::SetFromGameState( PlayerNumber pn )
 		if( pTrail )
 			SetFromTrail( pTrail );
 		else
-			SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, GAMESTATE->m_PreferredCourseDifficulty[pn], pTrail->m_CourseType );
+			SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, GAMESTATE->m_PreferredCourseDifficulty[pn], CourseType_Invalid );
 	}
 	else
 	{
