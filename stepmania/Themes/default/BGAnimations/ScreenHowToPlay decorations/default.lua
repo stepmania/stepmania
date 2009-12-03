@@ -26,13 +26,13 @@ end
 
 function Arrow(xpos,ypos,delay,length)
 	return LoadActor("arrow") .. {
-		OnCommand=cmd(x,xpos;y,ypos;diffusealpha,0;sleep,delay;addx,50;linear,0.5;diffusealpha,1;addx,-50;sleep,length;linear,0.5;diffusealpha,0;draworder,1;);
+		OnCommand=cmd(x,xpos;y,ypos;diffusealpha,0;sleep,delay;addx,50;linear,0.5;diffusealpha,1;addx,-50;sleep,length;linear,0.5;diffusealpha,0;draworder,10;);
 	};
 end
 
 return Def.ActorFrame {
 	LoadActor("how to play") .. {
-		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;diffusealpha,0;zoom,4;sleep,0.0;linear,0.3;diffusealpha,1;zoom,1.8;sleep,1.7;linear,0.3;zoom,1;addx,160;addy,-150;draworder,1;);
+		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;diffusealpha,0;zoom,4;sleep,0.0;linear,0.3;diffusealpha,1;zoom,1.8;sleep,1.7;linear,0.3;zoom,1;addx,160;addy,-150;draworder,10;);
 	};
 
 	ExplanationText( "When the arrows rise to this point, step on the matching panels.", 5, 9 );
