@@ -6,17 +6,14 @@ t[#t+1] = Def.ActorFrame {
 
 local NumColumns = THEME:GetMetric(Var "LoadingScreen", "NumColumns");
 
-
-
-
 for i=1,NumColumns do
 	t[#t+1] = LoadActor("difficulty pill") .. {
 		InitCommand=cmd(x,SCREEN_CENTER_X-60 + 80 * (i-1);y,SCREEN_CENTER_Y-154;);
 	};
-	
+
 	local st = THEME:GetMetric(Var "LoadingScreen","ColumnStepsType" .. i);	
 	local dc = THEME:GetMetric(Var "LoadingScreen","ColumnDifficulty" .. i);
-	local ct = nil;
+	local ct = 'CourseType_Nonstop';
 	local s = GetCustomDifficulty( st, dc, ct );
 	t[#t+1] = LoadFont("_venacti Bold 13px") .. {
 		InitCommand=cmd(uppercase,true;settext,CustomDifficultyToLocalizedString(s);diffuse,CustomDifficultyToColor(s);x,SCREEN_CENTER_X-60 + 80 * (i-1);y,SCREEN_CENTER_Y-158;shadowlength,0;);
