@@ -220,8 +220,6 @@ void LanguagesDlg::OnBnClickedButtonCreate()
 	file.Open( sLanguageFile, RageFile::WRITE );
 	file.Close();	// flush file
 
-	FlushDirCache();
-
 	OnSelchangeListThemes();
 	SelectString( m_listLanguages, SMPackageUtil::GetLanguageDisplayString(RString(dlg.m_sChosenLanguageCode)) );
 	OnSelchangeListLanguages();
@@ -245,7 +243,6 @@ void LanguagesDlg::OnBnClickedButtonDelete()
 		return;
 
 	FILEMAN->Remove( sLanguageFile );
-	FlushDirCache();
 
 	OnSelchangeListThemes();
 }

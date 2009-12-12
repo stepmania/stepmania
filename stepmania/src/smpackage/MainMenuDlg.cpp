@@ -192,7 +192,7 @@ void MainMenuDlg::OnBnClickedClearKeymaps()
 {
 	// TODO: Add your control notification handler code here
 
-	FlushDirCache();
+	FILEMAN->FlushDirCache( Dirname(SpecialFiles::KEYMAPS_PATH) );
 	if( !DoesFileExist( SpecialFiles::KEYMAPS_PATH ) )
 	{
 		Dialog::OK( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::KEYMAPS_PATH.c_str()) );
@@ -229,7 +229,7 @@ void MainMenuDlg::OnBnClickedOpenPreferences()
 void MainMenuDlg::OnBnClickedClearPreferences()
 {
 	// TODO: Add your control notification handler code here
-	FlushDirCache();
+	FILEMAN->FlushDirCache( Dirname(SpecialFiles::PREFERENCES_INI_PATH) );
 	if( !DoesFileExist(SpecialFiles::PREFERENCES_INI_PATH) )
 	{
 		Dialog::OK( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
