@@ -18,7 +18,8 @@ ret.Redir = function(sButton, sElement)
 	if sElement == "Hold Head Inactive" or
 	   sElement == "Hold Head Active" or
 	   sElement == "Roll Head Inactive" or
-	   sElement == "Roll Head Active"
+	   sElement == "Roll Head Active" or
+	   sElement == "Tap Fake"
 	then
 		sElement = "Tap Note";
 	end
@@ -61,6 +62,7 @@ ret.PartsToRotate =
 	["Tap Explosion Bright"] = true,
 	["Tap Explosion Dim"] = true,
 	["Tap Note"] = true,
+	["Tap Fake"] = true,
 	["Hold Head Active"] = true,
 	["Hold Head Inactive"] = true,
 	["Roll Head Active"] = true,

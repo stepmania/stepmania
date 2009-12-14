@@ -16,7 +16,7 @@ ret.Redir = function(sButton, sElement)
 	sButton, sElement = OldRedir(sButton, sElement);
 
 	--Point the head files back to the tap note
-	if string.find(sElement, "Head") then
+	if string.find(sElement, "Head") or sElement == "Tap Fake" then
 		sElement = "Tap Note";
 	end
 
@@ -42,14 +42,15 @@ ret.PartsToRotate =
 {
 	["Receptor"] = true,
 	["Tap Note"] = true,
+	["Tap Lift"] = true,
+	["Tap Fake"] = true,
 	["Ready Receptor"] = true,
 	["Tap Explosion Bright"] = true,
 	["Tap Explosion Dim"] = true,
 	["Hold Head Active"] = true,
 	["Hold Head Inactive"] = true,
 	["Roll Head Active"] = true,
-	["Roll Head Inactive"] = true,
-	["Tap Lift"] = true,
+	["Roll Head Inactive"] = true
 };
 ret.Rotate =
 {
