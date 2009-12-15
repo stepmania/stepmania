@@ -56,6 +56,7 @@ static bool g_bBannerWaiting = false;
 static bool g_bSampleMusicWaiting = false;
 static RageTimer g_StartedLoadingAt(RageZeroTimer);
 static RageTimer g_ScreenStartedLoadingAt(RageZeroTimer);
+RageTimer g_CanOpenOptionsList(RageZeroTimer);
 
 REGISTER_SCREEN_CLASS( ScreenSelectMusic );
 void ScreenSelectMusic::Init()
@@ -81,6 +82,8 @@ void ScreenSelectMusic::Init()
 	MODE_MENU_AVAILABLE.Load( m_sName, "ModeMenuAvailable" );
 	USE_OPTIONS_LIST.Load( m_sName, "UseOptionsList" );
 	USE_PLAYER_SELECT_MENU.Load( m_sName, "UsePlayerSelectMenu" );
+	SELECT_MENU_NAME.Load( m_sName, "SelectMenuScreenName" );
+	OPTIONS_LIST_TIMEOUT.Load( m_sName, "OptionsListTimeout" );
 	SELECT_MENU_CHANGES_DIFFICULTY.Load( m_sName, "SelectMenuChangesDifficulty" );
 	TWO_PART_SELECTION.Load( m_sName, "TwoPartSelection" );
 	TWO_PART_CONFIRMS_ONLY.Load( m_sName, "TwoPartConfirmsOnly" );
@@ -445,7 +448,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	{
 		if( input.type == IET_RELEASE  &&  input.MenuI == GAME_BUTTON_SELECT )
 		{
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
+			SCREENMAN->AddNewScreenToTop( SELECT_MENU_NAME, SM_BackFromPlayerOptions );
 		}
 	}
 
@@ -501,9 +504,21 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 				break;
 			}
 		}
-//		return;
+		else if( input.type == IET_FIRST_PRESS && input.MenuI != GAME_BUTTON_SELECT )
+		{
+			Message msg("SelectMenuInput");
+			msg.SetParam( "Player", input.pn );
+			msg.SetParam( "Button", GameButtonToString(INPUTMAPPER->GetInputScheme(), input.MenuI) );
+			MESSAGEMAN->Broadcast( msg );
+			m_bAcceptSelectRelease[input.pn] = false;
+		}
+		if( input.type == IET_FIRST_PRESS )
+			g_CanOpenOptionsList.Touch();
+		if( g_CanOpenOptionsList.Ago() > OPTIONS_LIST_TIMEOUT )
+			m_bAcceptSelectRelease[input.pn] = false;
+		return;
 	}
-
+	
 	if( m_SelectionState == SelectionState_SelectingSong  &&
 		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong || input.MenuI == GAME_BUTTON_SELECT) )
 	{
@@ -963,6 +978,8 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			/* We haven't made a selection yet. */
 			return;
 		}
+
+		MESSAGEMAN->Broadcast("SongChosen");
 
 		break;
 

@@ -83,7 +83,9 @@ protected:
 	ThemeMetric<bool> SELECT_MENU_AVAILABLE;
 	ThemeMetric<bool> MODE_MENU_AVAILABLE;
 	ThemeMetric<bool> USE_OPTIONS_LIST;
+	ThemeMetric<float> OPTIONS_LIST_TIMEOUT;
 	ThemeMetric<bool> USE_PLAYER_SELECT_MENU;
+	ThemeMetric<RString> SELECT_MENU_NAME;
 	ThemeMetric<bool> SELECT_MENU_CHANGES_DIFFICULTY;
 	ThemeMetric<bool> TWO_PART_SELECTION;
 
