@@ -200,7 +200,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 					      sRowString.c_str() );
 				return false;
 			}
-			if( BeginsWith(sRowString, "|B") || BeginsWith(sRowString, "|D") )
+			if( BeginsWith(sRowString, "|B") || BeginsWith(sRowString, "|D") || BeginsWith(sRowString, "|E") )
 			{
 				// These don't have to be worried about here: the changes and stops were already added.
 				continue;
@@ -470,8 +470,8 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			/* This is where the DMRequired test will take place. */
 			if( NoteRowString.size() != 13)
 			{
-				if (BeginsWith(NoteRowString, "|T") || 
-					BeginsWith(NoteRowString, "|B") || BeginsWith(NoteRowString, "|D") )
+				if (BeginsWith(NoteRowString, "|T") || BeginsWith(NoteRowString, "|B") ||
+					BeginsWith(NoteRowString, "|D") || BeginsWith(NoteRowString, "|E") )
 				{
 					bDMRequired = true;
 					RString temp = NoteRowString.substr(2,NoteRowString.size()-3);
@@ -488,10 +488,16 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 						speedToChange = numTemp;
 						continue;
 					}
-					else
+					else if (BeginsWith(NoteRowString, "|D"))
 					{
 						bBPMStopNeeded = true;
 						timeToStop = numTemp / 1000.0f;
+						continue;
+					}
+					else if (BeginsWith(NoteRowString, "|E"))
+					{
+						bBPMStopNeeded = true;
+						timeToStop = (60 / out.m_Timing.GetBPMAtBeat(NoteRowToBeat(i)) * numTemp) / (float)iTickCount;
 						continue;
 					}
 				}
