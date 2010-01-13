@@ -359,22 +359,26 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{
-		SortOrder so = GAMESTATE->m_SortOrder;
-		if ( ( so != SORT_TITLE ) && ( so != SORT_ARTIST ) )
+		// Don't change sort order when the wheel is locked.
+		if( !m_MusicWheel.WheelIsLocked() )
 		{
-			so = SORT_TITLE;
+			SortOrder so = GAMESTATE->m_SortOrder;
+			if ( ( so != SORT_TITLE ) && ( so != SORT_ARTIST ) )
+			{
+				so = SORT_TITLE;
 
-			GAMESTATE->m_PreferredSortOrder = so;
-			GAMESTATE->m_SortOrder.Set( so );
-			// Odd, changing the sort order requires us to call SetOpenSection more than once
+				GAMESTATE->m_PreferredSortOrder = so;
+				GAMESTATE->m_SortOrder.Set( so );
+				// Odd, changing the sort order requires us to call SetOpenSection more than once
+				m_MusicWheel.ChangeSort( so );
+				m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
+			}
+			m_MusicWheel.SelectSection( ssprintf("%c", c ) );
 			m_MusicWheel.ChangeSort( so );
 			m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
+			AfterMusicChange();
+			return;
 		}
-		m_MusicWheel.SelectSection( ssprintf("%c", c ) );
-		m_MusicWheel.ChangeSort( so );
-		m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
-		AfterMusicChange();
-		return;
 	}
 
 	// debugging?
