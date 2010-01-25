@@ -19,13 +19,8 @@ void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 	FOREACH_PlayerNumber( pn )
 	{
 		PlayerInfo &pi = vPlayerInfoOut[pn];
-		pi.m_pn = pn;
-		PlayerState *pPlayerState = pi.GetPlayerState();
-		PlayerStageStats *pPlayerStageStats = pi.GetPlayerStageStats();
-		
-		pi.m_pPrimaryScoreDisplay = new ScoreDisplayNormal;
-		pi.m_pPrimaryScoreDisplay->Init( pPlayerState, pPlayerStageStats );
-		pi.m_pPrimaryScoreKeeper = new ScoreKeeperShared( pPlayerState, pPlayerStageStats );
+		pi.Load( pn, MultiPlayer_Invalid, pn == mpn, Difficulty_Invalid );
+
 		pi.m_pPlayer = new Player( mpi.m_NoteData, pn == mpn );
 	}
 }
