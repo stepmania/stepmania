@@ -52,6 +52,7 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	{ "pump-halfdouble",	6,	true,	StepsTypeCategory_Double },
 	{ "pump-double",	10,	true,	StepsTypeCategory_Double },
 	{ "pump-couple",	10,	true,	StepsTypeCategory_Couple },
+	{ "pump-routine",	10,	true,	StepsTypeCategory_Routine },
 	{ "kb7-single",		7,	true,	StepsTypeCategory_Single },
 	{ "ez2-single",		5,	true,	StepsTypeCategory_Single },	// Single: TL,LHH,D,RHH,TR
 	{ "ez2-double",		10,	true,	StepsTypeCategory_Double },	// Double: Single x2
@@ -739,6 +740,54 @@ static const Style g_Style_Pump_Couple_Edit =
 	false, // m_bLockDifficulties
 };
 
+static const Style g_Style_Pump_Routine =
+{	// STYLE_DANCE_ROUTINE
+	true,				// m_bUsedForGameplay
+	true,				// m_bUsedForEdit
+	false,				// m_bUsedForDemonstration
+	false,				// m_bUsedForHowToPlay
+	"routine",			// m_szName
+	StepsType_pump_routine,		// m_StepsType
+	StyleType_TwoPlayersSharedSides,	// m_StyleType
+	10,				// m_iColsPerPlayer
+	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_1,	-PUMP_COL_SPACING*4.5f, NULL },
+			{ TRACK_2,	-PUMP_COL_SPACING*3.5f, NULL },
+			{ TRACK_3,	-PUMP_COL_SPACING*2.5f, NULL },
+			{ TRACK_4,	-PUMP_COL_SPACING*1.5f, NULL },
+			{ TRACK_5,	-PUMP_COL_SPACING*0.5f, NULL },
+			{ TRACK_6,	+PUMP_COL_SPACING*0.5f, NULL },
+			{ TRACK_7,	+PUMP_COL_SPACING*1.5f, NULL },
+			{ TRACK_8,	+PUMP_COL_SPACING*2.5f, NULL },
+			{ TRACK_9,	+PUMP_COL_SPACING*3.5f, NULL },
+			{ TRACK_10,	+PUMP_COL_SPACING*4.5f, NULL },
+		},
+		{	// PLAYER_2
+			{ TRACK_1,	-PUMP_COL_SPACING*4.5f, NULL },
+			{ TRACK_2,	-PUMP_COL_SPACING*3.5f, NULL },
+			{ TRACK_3,	-PUMP_COL_SPACING*2.5f, NULL },
+			{ TRACK_4,	-PUMP_COL_SPACING*1.5f, NULL },
+			{ TRACK_5,	-PUMP_COL_SPACING*0.5f, NULL },
+			{ TRACK_6,	+PUMP_COL_SPACING*0.5f, NULL },
+			{ TRACK_7,	+PUMP_COL_SPACING*1.5f, NULL },
+			{ TRACK_8,	+PUMP_COL_SPACING*2.5f, NULL },
+			{ TRACK_9,	+PUMP_COL_SPACING*3.5f, NULL },
+			{ TRACK_10,	+PUMP_COL_SPACING*4.5f, NULL },
+		},
+	},
+	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
+		{ 1, 3, 2, 0, 4, Style::END_MAPPING },
+		{ 6, 8, 7, 5, 9, Style::END_MAPPING },
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		2,1,3,0,4,7,6,8,1,9
+	},
+	false, // m_bNeedsZoomOutWith2Players
+	false, // m_bCanUseBeginnerHelper
+	true, // m_bLockDifficulties
+};
+
 static const Style *g_apGame_Pump_Styles[] =
 {
 	&g_Style_Pump_Single,
@@ -747,6 +796,7 @@ static const Style *g_apGame_Pump_Styles[] =
 	&g_Style_Pump_Double,
 	&g_Style_Pump_Couple,
 	&g_Style_Pump_Couple_Edit,
+	&g_Style_Pump_Routine,
 	NULL
 };
 

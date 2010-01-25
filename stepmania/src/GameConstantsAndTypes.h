@@ -63,6 +63,7 @@ enum StepsType
 	StepsType_pump_halfdouble,
 	StepsType_pump_double,
 	StepsType_pump_couple,
+	StepsType_pump_routine,
 	StepsType_kb7_single,
 	StepsType_ez2_single,
 	StepsType_ez2_double,
