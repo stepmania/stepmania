@@ -1,0 +1,19 @@
+syntax: glob
+*.orig
+*.rej
+*~
+*.o
+tests/*.err
+*.ncb
+*.suo
+*.obj
+.hg
+.hgignore
+.hgtags
+.svn
+.cvsignore
+ds_store
+thumbs.db
+
+syntax: regexp
+.*\#.*\#$
