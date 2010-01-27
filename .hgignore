@@ -1,4 +1,5 @@
 .DS_Store
+Data/UserPrefs
 PBProject/build
 src/ffmpeg/include
 src/ffmpeg/lib
