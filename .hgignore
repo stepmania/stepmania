@@ -19,6 +19,7 @@ Thumbs.db
 *.mode1v3
 PBProject/build
 ver.cpp
+lib*_link.a
 
 syntax: regexp
 .*\#.*\#$
