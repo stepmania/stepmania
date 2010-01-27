@@ -1,0 +1,5 @@
+.DS_Store
+PBProject/build
+src/ffmpeg/include
+src/ffmpeg/lib
+sm-ssc.app
