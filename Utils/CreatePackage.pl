@@ -53,7 +53,7 @@ sub ZipFiles($$@)
 	{
 		print "$x\n";
 		# No CVS directories, no dotfiles, files only.
-		my $output = `find "$x" -path '*/CVS' -prune -o -path '*/.*' -prune -o '(' -type f -a -name '*' ')' -print`;
+		my $output = `find "$x" -path '*/CVS' -prune -o -path '*/.*' -prune -o -path '*/*.psd' -prune -o '(' -type f -a -name '*' ')' -print`;
 		if( $? == -1 ) { die "Find failed: $!\n"; }
 		if( $? & 127 ) { die "Find failed with signal %d\n", ($? & 127); }
 		if( $? >> 8 != 0 ) { exit 1; }
@@ -72,7 +72,7 @@ sub ZipFiles($$@)
 		}
 		
 		# @lst contains the files for zip number $zipno.
-
+		
 		my $filename = $out . "/$file.smzip";
 		# If the ZIP already exists, get a list of files in it.  Delete any files
 		# that shouldn't be there.
@@ -84,13 +84,13 @@ sub ZipFiles($$@)
 			shift @files; # "--------    ----   ----    ----"
 			pop @files;   # "--------    ----   ----    -------"
 			pop @files;   # "    2501                   2 files"
-
+			
 			foreach my $fn ( @files )
 			{
 				# "     1081  02-11-04 19:27   foo" -> "foo"
 				$fn = substr( $fn, 28 );
 			}
-
+			
 			# Loop over files in the ZIP, and find any files not in %lst_hash.
 			my @unneeded;
 			for( my $n = 0; $n <= $#files; ++$n )
