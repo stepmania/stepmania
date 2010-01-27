@@ -1,8 +1,6 @@
 -- steps.lua: rough rough draft. Please don't use until finalized.
 -- ver 20100116
 
--- shakesoda is going to be making this more generic for use in rhythm.
-
 local MetaTags = {
 	Title = {"Dyamite Rave","(transliteration)"},
 	Subtitle = {"Down Bird Sota Mix","(transliteration)"},
