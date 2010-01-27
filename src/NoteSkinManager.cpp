@@ -23,14 +23,14 @@ NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in t
 const RString GAME_COMMON_NOTESKIN_NAME = "common";
 const RString GAME_BASE_NOTESKIN_NAME = "default";
 
-// this isn't a global because of nondeterministic global ctor ordering might init this before SpecialFiles::NOTESKINS_DIR
+// this isn't a global because of nondeterministic global actor ordering might init this before SpecialFiles::NOTESKINS_DIR
 #define GLOBAL_BASE_DIR (SpecialFiles::NOTESKINS_DIR + GAME_COMMON_NOTESKIN_NAME + "/")
 
 static map<RString,RString> g_PathCache;
 
 struct NoteSkinData
 {
-	RString sName;	
+	RString sName;
 	IniFile metrics;
 
 	// When looking for an element, search these dirs from head to tail.
@@ -500,6 +500,24 @@ public:
 	FOR_NOTESKIN( GetMetricA, 2 );
 	FOR_NOTESKIN( LoadActor, 2 );
 #undef FOR_NOTESKIN
+	static int GetNoteSkinNames( T* p, lua_State *L )
+	{
+		vector<RString> vNoteskins;
+		p->GetNoteSkinNames( vNoteskins );
+		LuaHelpers::CreateTableFromArray(vNoteskins, L);
+		return 1;
+	}
+	/*
+	static int GetNoteSkinNamesForGame( T* p, lua_State *L )
+	{
+		Game *pGame = Luna<Game>::check( L, 1 );
+		vector<RString> vGameNoteskins;
+		p->GetNoteSkinNames( pGame, vGameNoteskins );
+		LuaHelpers::CreateTableFromArray(vGameNoteskins, L);
+		return 1;
+	}
+	*/
+	static int DoesNoteSkinExist( T* p, lua_State *L ) { lua_pushboolean(L, p->DoesNoteSkinExist( SArg(1) )); return 1; }
 
 	LunaNoteSkinManager()
 	{
@@ -515,6 +533,8 @@ public:
 		ADD_METHOD( GetMetricBForNoteSkin );
 		ADD_METHOD( GetMetricAForNoteSkin );
 		ADD_METHOD( LoadActorForNoteSkin );
+		ADD_METHOD( GetNoteSkinNames );
+		ADD_METHOD( DoesNoteSkinExist ); // for the current game
 	}
 };
 

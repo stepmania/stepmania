@@ -120,6 +120,7 @@ void EditMenu::Load( const RString &sType )
 	ROW_VALUE_ON_COMMAND.Load(sType,"RowValueOnCommand");
 	ROW_Y.Load(sType,ROW_Y_NAME,NUM_EditMenuRow);
 	EDIT_MODE.Load(sType,"EditMode");
+	TEXT_BANNER_TYPE.Load( m_sName, "TextBannerType" );
 
 	for( int i=0; i<2; i++ )
 	{
@@ -168,7 +169,7 @@ void EditMenu::Load( const RString &sType )
 	this->AddChild( &m_SongBanner );
 
 	m_SongTextBanner.SetName( "SongTextBanner" );
-	m_SongTextBanner.Load( "TextBanner" );
+	m_SongTextBanner.Load( TEXT_BANNER_TYPE );
 	ActorUtil::SetXY( m_SongTextBanner, sType );
 	ActorUtil::LoadAllCommands( m_SongTextBanner, sType );
 	this->AddChild( &m_SongTextBanner );
@@ -355,8 +356,8 @@ void EditMenu::ChangeToRow( EditMenuRow newRow )
 
 void EditMenu::UpdateArrows()
 {
-	m_sprArrows[0]->RunCommands( CanGoLeft() ? ARROWS_ENABLED_COMMAND : ARROWS_DISABLED_COMMAND );
-	m_sprArrows[1]->RunCommands( CanGoRight()? ARROWS_ENABLED_COMMAND : ARROWS_DISABLED_COMMAND );
+	m_sprArrows[0]->RunCommands(  CanGoLeft() ? ARROWS_ENABLED_COMMAND : ARROWS_DISABLED_COMMAND );
+	m_sprArrows[1]->RunCommands( CanGoRight() ? ARROWS_ENABLED_COMMAND : ARROWS_DISABLED_COMMAND );
 	m_sprArrows[0]->EnableAnimation( CanGoLeft() );
 	m_sprArrows[1]->EnableAnimation( CanGoRight() );
 }

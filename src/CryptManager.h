@@ -2,6 +2,7 @@
 #define CryptManager_H
 
 class RageFileBasic;
+struct lua_State;
 
 const RString SIGNATURE_APPEND = ".sig";
 
@@ -28,6 +29,9 @@ public:
 	static RString GetSHA1ForString( RString sData );	// in binary
 
 	static RString GetPublicKeyFileName();
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 extern CryptManager*	CRYPTMAN;	// global and accessable from anywhere in our program

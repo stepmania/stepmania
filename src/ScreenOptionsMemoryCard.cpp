@@ -48,8 +48,7 @@ void ScreenOptionsMemoryCard::CreateMenu()
 	
 	FOREACH_CONST( UsbStorageDevice, m_CurrentUsbStorageDevices, iter )
 	{
-		// TODO: Make these string themable
-
+		// TODO: Make these strings themable
 		vector<RString> vs;
 		if( iter->sVolumeLabel.empty() )
 			vs.push_back( "(no label)" );

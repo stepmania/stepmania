@@ -1,0 +1,92 @@
+sm-ssc credits (in no particular order)
+---------------------------------------
+This list is currently incomplete.
+"Programming" is used in regards to the sm-ssc project.
+
+==the spinal shark collective==
+AJ Kelly
+ * Main programming
+ * UserPreferences and some other scripts
+ * small theme edits here and there
+
+Midiman
+ * Did most of the work on _fallback and default themes
+ * Some programming
+
+shakesoda
+ * Programming
+ * Theme edits
+
+==other contributors==
+StepMania Team
+ * Keeping StepMania 4 alive with changes, and providing a nice codebase for
+   us to work with.
+
+Aldo_MX
+ * Code (Pump it Up delays), ideas, and support.
+
+Jason Reid (jnr)
+ * Tested building sm-ssc on FreeBSD, provided fixes.
+
+Daisuke Master
+ * Pump/default, Pump/flat, and Pump/simple noteskins
+ * /Docs/Themerdocs/Noteskin elements Reference.txt
+ * Taking advantage of sm-ssc's new features already :)
+
+Shayde Zehetbauer/Koizumi
+ * Menu music!
+
+David Santamaría Rogado (howl)
+ * Various patches (see Changelog_sm-ssc.txt for more details and links)
+
+Macgravel
+ * Orbular noteskin (the kb7 noteskin; not included in private beta wave 1.3)
+
+theDtTvB
+ * Keysound patch (http://share11.appspot.com/20421)
+   [This patch is currently causing crashes for us, sadly.]
+
+sy567
+ * Small beginner helper fix
+ (http://www.stepmania.com/forums/showpost.php?p=158721&postcount=12)
+
+galopin
+ * Pump it Up Exceed PlayStation 2 USB dance mat support patch
+ (stepmania-devs mailing list 20091213 11:27 -0800 [Pacific Standard Time])
+
+FSX
+ * [Player] ScoreMissedHoldsAndRolls metric
+
+==the beta testers==
+[SSC Beta Testing Team]
+KeithD
+tweak62
+
+[Friends of the Devs]
+And4713
+HankPeters
+jnr
+kdaymea
+taiyal
+
+[Members of Team Step Masters (http://www.team-stepmasters.com/foro/)]
+Daisuke Master
+Nueel/emmanuel virus
+Fye
+Bijou
+Nek0
+Jib
+Robe
+Urqui
+h4m573r
+Torta
+
+[Private Beta Wave 1.x]
+FSX
+Sniper257
+Wolfman2000
+NitroX72
+Wanny
+Tio
+Cerbo
+Daisuke Master

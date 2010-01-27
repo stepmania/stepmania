@@ -1,5 +1,4 @@
 // EditInsallations.cpp : implementation file
-//
 
 #define CO_EXIST_WITH_MFC
 #include "global.h"
@@ -58,7 +57,7 @@ END_MESSAGE_MAP()
 BOOL EditInsallations::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
-	
+
 	// TODO: Add extra initialization here
 	DialogUtil::LocalizeDialogAndContents( *this );	
 
@@ -85,7 +84,7 @@ void EditInsallations::OnButtonMakeDefault()
 {
 	// TODO: Add your control notification handler code here
 	ASSERT( m_list.GetCurSel() != LB_ERR );
-	
+
 	CString sText;
 	m_list.GetText( m_list.GetCurSel(), sText );
 	m_list.DeleteString( m_list.GetCurSel() );
@@ -104,7 +103,7 @@ void EditInsallations::OnButtonAdd()
 		m_edit.GetWindowText( s );
 		sNewDir = s;
 	}
-	
+
 	if( sNewDir == "" )
 	{
 		Dialog::OK( YOU_MUST_TYPE_IN.GetValue() );

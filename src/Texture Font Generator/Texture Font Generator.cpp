@@ -12,7 +12,7 @@
 /*
  * TODO:
  *
- * allow importing fonts
+ * allow importing existing fonts (open .ini)
  * allow selectively creating font pages
  * allow creating font page types
  * tag font page names; "rage numbers=0"

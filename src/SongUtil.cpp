@@ -344,7 +344,7 @@ RString SongUtil::MakeSortString( RString s )
 	// Make sure that non-alphanumeric strings are placed at the very end.
 	if( s.size() > 0 )
 	{
-		if( s[0] == '.' )	// ".59"
+		if( s[0] == '.' )	// like the song ".59"
 			s.erase(s.begin());
 		if( (s[0] < 'A' || s[0] > 'Z') && (s[0] < '0' || s[0] > '9') )
 			s = char(126) + s;
@@ -405,7 +405,7 @@ static bool CompareSongPointersByLength( const Song *pSong1, const Song *pSong2 
 	float length1, length2;
 	length1 = pSong1->m_fMusicLengthSeconds;
 	length2 = pSong2->m_fMusicLengthSeconds;
-	
+
 	if( length1 < length2 )
 		return true;
 	if( length1 > length2 )
@@ -552,7 +552,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 		// guaranteed not empty	
 		return pSong->m_sGroupName;
 	case SORT_TITLE:
-	case SORT_ARTIST:	
+	case SORT_ARTIST:
 		{
 			RString s;
 			switch( so )
@@ -562,7 +562,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			default:	ASSERT(0);
 			}
 			s = MakeSortString(s);	// resulting string will be uppercase
-			
+
 			if( s.empty() )
 				return RString();
 			else if( s[0] >= '0' && s[0] <= '9' )
@@ -578,6 +578,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 		return SORT_NOT_AVAILABLE.GetValue();
 	case SORT_BPM:
 		{
+			// todo: make this a theme metric? -aj
 			const int iBPMGroupSize = 20;
 			DisplayBpms bpms;
 			pSong->GetDisplayBpms( bpms );
@@ -586,7 +587,16 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
 		}
 	case SORT_LENGTH:
+		{
+			// todo: make this a theme metric? -aj
+			const int iSortLengthSize = 5;
+			int iMaxLength = (int)pSong->m_fMusicLengthSeconds;
+			iMaxLength += (iSortLengthSize - (iMaxLength%iSortLengthSize) - 1);
+			int iMinLength = iMaxLength - (iSortLengthSize-1);
+			return ssprintf( "%s-%s", SecondsToMMSS(iMinLength).c_str(), SecondsToMMSS(iMaxLength).c_str() );
+		}
 	case SORT_POPULARITY:
+	case SORT_RECENT: // todo: make recent split into two groups: top X, and "the rest" -aj
 		return RString();
 	case SORT_TOP_GRADES:
 		{
@@ -601,6 +611,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			}
 			return GradeToLocalizedString( Grade_NoData );
 		}
+	case SORT_BEGINNER_METER:
 	case SORT_EASY_METER:
 	case SORT_MEDIUM_METER:
 	case SORT_HARD_METER:
@@ -614,9 +625,8 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			Difficulty dc;
 			SongUtil::GetStepsTypeAndDifficultyFromSortOrder( so, st, dc );
 
-
 			Steps* pSteps = GetStepsByDifficulty(pSong,st,dc);
-			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
+			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return SORT_NOT_AVAILABLE.GetValue();
 		}
@@ -673,6 +683,8 @@ void SongUtil::SortSongPointerArrayByStepsTypeAndMeter( vector<Song*> &vpSongsIn
 		 */
 		s += ssprintf( "%c", (pSteps? pSteps->GetDifficulty():0) + '0' );
 
+		// ???: will this cause a crash with player 2 only? -aj
+		// no, but I'm not sure if it causes problems either...
 		if( PREFSMAN->m_bSubSortByNumSteps )
 			s += ssprintf("%06.0f",pSteps ? pSteps->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds] : 0);
 	}
@@ -763,7 +775,7 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 	FOREACH_CONST( Steps*, v, s )
 	{
 		if( pSteps == *s )
-			continue;	// don't comepare name against ourself
+			continue;	// don't compare name against ourself
 
 		if( (*s)->GetDescription() == sAnswer )
 		{
@@ -856,8 +868,10 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 	FOREACH( const Style*, vpPossibleStyles, s )
 		vStepsTypes.insert( (*s)->m_StepsType );
 
-	// filter out hidden StepsTypes
-	// remove steps that we don't have enough stages left to play
+	/* filter out hidden StepsTypes, and remove steps that we don't
+	 * have enough stages left to play.
+	 */
+	// this being const may have caused some problems... -aj
 	const vector<StepsType> &vstToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
 	FOREACHS( StepsType, vStepsTypes, st )
 	{
@@ -907,6 +921,7 @@ bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &
 	{
 	default:
 		return false;
+	case SORT_BEGINNER_METER:
 	case SORT_EASY_METER:
 	case SORT_MEDIUM_METER:
 	case SORT_HARD_METER:
@@ -921,6 +936,7 @@ bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &
 	switch( so )
 	{
 	DEFAULT_FAIL( so );
+	case SORT_BEGINNER_METER:
 	case SORT_EASY_METER:
 	case SORT_MEDIUM_METER:
 	case SORT_HARD_METER:
@@ -952,10 +968,11 @@ bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &
 	switch( so )
 	{
 	DEFAULT_FAIL( so );
-	case SORT_EASY_METER:			dcOut = Difficulty_Easy;		break;
+	case SORT_BEGINNER_METER:			dcOut = Difficulty_Beginner;	break;
+	case SORT_EASY_METER:				dcOut = Difficulty_Easy;		break;
 	case SORT_MEDIUM_METER:			dcOut = Difficulty_Medium;		break;
-	case SORT_HARD_METER:			dcOut = Difficulty_Hard;		break;
-	case SORT_CHALLENGE_METER:		dcOut = Difficulty_Challenge;	break;
+	case SORT_HARD_METER:				dcOut = Difficulty_Hard;		break;
+	case SORT_CHALLENGE_METER:			dcOut = Difficulty_Challenge;	break;
 	case SORT_DOUBLE_EASY_METER:		dcOut = Difficulty_Easy;		break;
 	case SORT_DOUBLE_MEDIUM_METER:		dcOut = Difficulty_Medium;		break;
 	case SORT_DOUBLE_HARD_METER:		dcOut = Difficulty_Hard;		break;
@@ -975,7 +992,7 @@ void SongID::FromSong( const Song *p )
 		sDir = p->GetSongDir();
 	else
 		sDir = "";
-	
+
 	// HACK for backwards compatibility:
 	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
 	if( sDir.Left(1) == "/" )

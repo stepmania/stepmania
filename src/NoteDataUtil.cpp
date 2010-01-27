@@ -74,11 +74,11 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 		split( sSMNoteData, ",", start, size, end, true ); // Ignore empty is important.
 		if( start == end )
 			break;
-		
+
 		// Partial string split.
 		int measureLineStart = start, measureLineSize = -1;
 		const int measureEnd = start + size;
-		
+
 		aMeasureLines.clear();
 		while( true )
 		{
@@ -89,7 +89,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 			//RString &line = sSMNoteData.substr( measureLineStart, measureLineSize );
 			const char *beginLine = sSMNoteData.data() + measureLineStart;
 			const char *endLine = beginLine + measureLineSize;
-			
+
 			while( beginLine < endLine && strchr("\r\n\t ", *beginLine) )
 				++beginLine;
 			while( endLine > beginLine && strchr("\r\n\t ", *(endLine - 1)) )
@@ -97,31 +97,41 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 			if( beginLine < endLine ) // nonempty
 				aMeasureLines.push_back( pair<const char *, const char *>(beginLine, endLine) );
 		}
-			
+
 		for( unsigned l=0; l<aMeasureLines.size(); l++ )
 		{
 			const char *p = aMeasureLines[l].first;
 			const char *const beginLine = p;
 			const char *const endLine = aMeasureLines[l].second;
-			
+
 			const float fPercentIntoMeasure = l/(float)aMeasureLines.size();
 			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
 			const int iIndex = BeatToNoteRow( fBeat );
-						
+
 			int iTrack = 0;
 			while( iTrack < iNumTracks && p < endLine )
 			{
 				TapNote tn;
 				char ch = *p;
-				
+
 				switch( ch )
 				{
 				case '0': tn = TAP_EMPTY;				break;
 				case '1': tn = TAP_ORIGINAL_TAP;			break;
 				case '2':
 				case '4':
+				// case 'N': // minefield
 					tn = ch == '2' ? TAP_ORIGINAL_HOLD_HEAD : TAP_ORIGINAL_ROLL_HEAD;
-						
+					/*
+					// upcoming code for minefields -aj
+					switch(ch)
+					{
+					case '2': tn = TAP_ORIGINAL_HOLD_HEAD; break;
+					case '4': tn = TAP_ORIGINAL_ROLL_HEAD; break;
+					case 'N': tn = TAP_ORIGINAL_MINE_HEAD; break;
+					}
+					*/
+
 					/* Set the hold note to have infinite length.  We'll clamp it when
 					 * we hit the tail. */
 					tn.iDuration = MAX_NOTE_ROW;
@@ -139,7 +149,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					{
 						out.FindTapNote( iTrack, iHeadRow )->second.iDuration = iIndex - iHeadRow;
 					}
-					
+
 					/* This won't write tn, but keep parsing normally anyway. */
 					break;
 				}
@@ -151,6 +161,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				case 'K': tn = TAP_ORIGINAL_AUTO_KEYSOUND;		break;
 				case 'L': tn = TAP_ORIGINAL_LIFT;			break;
 				case 'F': tn = TAP_ORIGINAL_FAKE;			break;
+				// case 'I': tn = TAP_ORIGINAL_ITEM;			break;
 				default: 
 					/* Invalid data.  We don't want to assert, since there might
 					 * simply be invalid data in an .SM, and we don't want to die
@@ -160,7 +171,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					tn = TAP_EMPTY;
 					break;
 				}
-				
+
 				p++;
 				// We won't scan past the end of the line so these are safe to do.
 #if 0
@@ -168,7 +179,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				if( *p == '{' )
 				{
 					p++;
-					
+
 					char szModifiers[256] = "";
 					float fDurationSeconds = 0;
 					if( sscanf( p, "%255[^:]:%f}", szModifiers, &fDurationSeconds ) == 2 )	// not fatal if this fails due to malformed data
@@ -177,7 +188,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 						tn.sAttackModifiers = szModifiers;
 		 				tn.fAttackDurationSeconds = fDurationSeconds;
 					}
-					
+
 					// skip past the '}'
 					while( p < endLine )
 					{
@@ -186,7 +197,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					}
 				}
 #endif
-				
+
 				// look for optional keysound index (e.g. "[123]")
 				if( *p == '[' )
 				{
@@ -194,7 +205,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					int iKeysoundIndex = 0;
 					if( 1 == sscanf( p, "%d]", &iKeysoundIndex ) )	// not fatal if this fails due to malformed data
 		 				tn.iKeysoundIndex = iKeysoundIndex;
-					
+
 					// skip past the ']'
 					while( p < endLine )
 					{
@@ -202,7 +213,24 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 							break;
 					}
 				}
-				
+
+#if 0
+				// look for optional item name (e.g. "<potion>"),
+				// where the name in the <> is a Lua function defined elsewhere
+				// (Data/ItemTypes.lua, perhaps?) -aj
+				if( *p == '<' )
+				{
+					p++;
+
+					// skip past the '>'
+					while( p < endLine )
+					{
+						if( *(p++) == '>' )
+							break;
+					}
+				}
+#endif
+
 				/* Optimization: if we pass TAP_EMPTY, NoteData will do a search
 				 * to remove anything in this position.  We know that there's nothing
 				 * there, so avoid the search. */
@@ -211,7 +239,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					tn.pn = pn;
 					out.SetTapNote( iTrack, iIndex, tn );
 				}
-				
+
 				iTrack++;
 			}
 		}
@@ -249,7 +277,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNo
 	RString::size_type iIndexCommentEnd = 0;
 	RString::size_type origSize = sSMNoteData_.size();
 	const char *p = sSMNoteData_.data();
-	
+
 	sSMNoteData.reserve( origSize );
 	while( (iIndexCommentStart = sSMNoteData_.find("//", iIndexCommentEnd)) != RString::npos )
 	{
@@ -260,21 +288,21 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNo
 		p += iIndexCommentEnd - iIndexCommentStart;
 	}
 	sSMNoteData.append( p, origSize - iIndexCommentEnd );
-	
+
 	/* Clear notes, but keep the same number of tracks. */
 	int iNumTracks = out.GetNumTracks();
 	out.Init();
 	out.SetNumTracks( iNumTracks );
-	
+
 	if( !bComposite )
 	{
 		LoadFromSMNoteDataStringWithPlayer( out, sSMNoteData, 0, sSMNoteData.size(),
 						    PLAYER_INVALID, iNumTracks );
 		return;
 	}
-	
+
 	int start = 0, size = -1;
-	
+
 	vector<NoteData> vParts;
 	FOREACH_PlayerNumber( pn )
 	{
@@ -284,7 +312,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNo
 			break;
 		vParts.push_back( NoteData() );
 		NoteData &nd = vParts.back();
-		
+
 		nd.SetNumTracks( iNumTracks );
 		LoadFromSMNoteDataStringWithPlayer( nd, sSMNoteData, start, size, pn, iNumTracks );
 	}
@@ -323,9 +351,9 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 	//
 	vector<NoteData> parts;
 	float fLastBeat = -1.0f;
-	
+
 	SplitCompositeNoteData( in, parts );
-	
+
 	FOREACH( NoteData, parts, nd )
 	{
 		InsertHoldTails( *nd );
@@ -344,7 +372,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 			if( m )
 				sRet.append( 1, ',' );
 			sRet += ssprintf("  // measure %d\n", m+1);
-			
+
 			NoteType nt = GetSmallestNoteTypeForMeasure( *nd, m );
 			int iRowSpacing;
 			if( nt == NoteType_Invalid )
@@ -353,10 +381,10 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 				iRowSpacing = lrintf( NoteTypeToBeat(nt) * ROWS_PER_BEAT );
 			// (verify first)
 			// iRowSpacing = BeatToNoteRow( NoteTypeToBeat(nt) );
-			
+
 			const int iMeasureStartRow = m * ROWS_PER_MEASURE;
 			const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
-			
+
 			for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
 			{
 				for( int t = 0; t < nd->GetNumTracks(); ++t )
@@ -372,6 +400,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 						{
 						case TapNote::hold_head_hold:	c = '2'; break;
 						case TapNote::hold_head_roll:	c = '4'; break;
+						//case TapNote::hold_head_mine:	c = 'N'; break;
 						default:	ASSERT(0);
 						}
 						break;
@@ -385,16 +414,17 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 						FAIL_M( ssprintf("tn %i", tn.type) );	// invalid enum value
 					}
 					sRet.append( 1, c );
-					
+
 					if( tn.type == TapNote::attack )
 					{
 						sRet.append( ssprintf("{%s:%.2f}", tn.sAttackModifiers.c_str(),
 								      tn.fAttackDurationSeconds) );
 					}
+					// hey maybe if we have TapNote::item we can do shit here.
 					if( tn.iKeysoundIndex >= 0 )
 						sRet.append( ssprintf("[%d]",tn.iKeysoundIndex) );
 				}
-				
+
 				sRet.append( 1, '\n' );
 			}
 		}
@@ -408,7 +438,7 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 		out.push_back( in );
 		return;
 	}
-	
+
 	for( int t = 0; t < in.GetNumTracks(); ++t )
 	{
 		for( NoteData::const_iterator iter = in.begin(t); iter != in.end(t); ++iter )
@@ -416,7 +446,7 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 			int row = iter->first;
 			TapNote tn = iter->second;
 			unsigned index = int( tn.pn );
-			
+
 			DEBUG_ASSERT( index < NUM_PlayerNumber );
 			while( out.size() <= index )
 			{
@@ -434,7 +464,7 @@ void NoteDataUtil::CombineCompositeNoteData( NoteData &out, const vector<NoteDat
 	FOREACH_CONST( NoteData, in, nd )
 	{
 		const int iMaxTracks = min( out.GetNumTracks(), nd->GetNumTracks() );
-		
+
 		for( int track = 0; track < iMaxTracks; ++track )
 		{
 			for( NoteData::const_iterator i = nd->begin(track); i != nd->end(track); ++i )
@@ -531,7 +561,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 	int LastSourceTrack[MAX_NOTE_TRACKS];
 	int LastSourceRow[MAX_NOTE_TRACKS];
 	int DestRow[MAX_NOTE_TRACKS];
-	
+
 	for( int tr = 0; tr < MAX_NOTE_TRACKS; ++tr )
 	{
 		LastSourceTrack[tr] = -1;
@@ -1058,6 +1088,7 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 
 		break;
 	case NoteDataUtil::mirror:
+mirror_all:
 		for( int t=0; t<NumTracks; t++ )
 			iTakeFromTrack[t] = NumTracks-t-1;
 		break;
@@ -1076,6 +1107,137 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 				iShuffleSeed++;
 			}
 			while ( !memcmp( iOrig, iTakeFromTrack, sizeof(iOrig) ) );
+		}
+		break;
+	case NoteDataUtil::soft_shuffle:
+		{
+			// XXX: this is still pretty much a stub.
+
+			// soft shuffle, as described at
+			// http://www.stepmania.com/forums/showthread.php?t=19469
+
+			/*
+			 * one of the following at random:
+			 *
+			 * 0. No columns changed
+			 * 1. Left and right columns swapped
+			 * 2. Down and up columns swapped
+			 * 3. Mirror (left and right swapped, down and up swapped)
+			 * ----------------------------------------------------------------
+			 * To extend it to handle all game types, it would pick each axis
+			 * of symmetry the game type has and either flip it or not flip it.
+			 *
+			 * For instance, PIU singles has four axes:
+			 * horizontal, vertical,
+			 * diagonally top left to bottom right,
+			 * diagonally bottom left to top right.
+			 * (above text from forums)
+			 */
+
+			// TRICKY: Shuffle so that both player get the same shuffle mapping
+			// in the same round.
+
+			int iShuffleSeed = GAMESTATE->m_iStageSeed;
+			RandomGen rnd( iShuffleSeed );
+			int iRandChoice = (rnd() % 4);
+
+			// XXX: cases 1 and 2 only implemented for dance_*
+			switch( iRandChoice )
+			{
+				case 1:
+					// left and right mirror
+				case 2:
+					// up and down mirror
+					switch( st )
+					{
+					case StepsType_dance_single:
+						if( iRandChoice == 1 )
+						{
+							// left and right
+							iTakeFromTrack[0] = 3;
+							iTakeFromTrack[3] = 0;
+						}
+						if( iRandChoice == 2 )
+						{
+							// up and down
+							iTakeFromTrack[1] = 2;
+							iTakeFromTrack[2] = 1;
+						}
+						break;
+					case StepsType_dance_double:
+					case StepsType_dance_couple:
+					case StepsType_dance_routine:
+						if( iRandChoice == 1 )
+						{
+							// left and right
+							iTakeFromTrack[0] = 3;
+							iTakeFromTrack[3] = 0;
+							iTakeFromTrack[4] = 7;
+							iTakeFromTrack[7] = 4;
+						}
+						if( iRandChoice == 2 )
+						{
+							// up and down
+							iTakeFromTrack[1] = 2;
+							iTakeFromTrack[2] = 1;
+							iTakeFromTrack[5] = 6;
+							iTakeFromTrack[6] = 5;
+						}
+						break;
+					// here be dragons (unchanged code)
+					case StepsType_dance_solo:
+						iTakeFromTrack[0] = 5;
+						iTakeFromTrack[1] = 4;
+						iTakeFromTrack[2] = 0;
+						iTakeFromTrack[3] = 3;
+						iTakeFromTrack[4] = 1;
+						iTakeFromTrack[5] = 2;
+						break;
+					case StepsType_pump_single:
+					case StepsType_pump_couple:
+						iTakeFromTrack[0] = 3;
+						iTakeFromTrack[1] = 4;
+						iTakeFromTrack[2] = 2;
+						iTakeFromTrack[3] = 0;
+						iTakeFromTrack[4] = 1;
+						iTakeFromTrack[5] = 8;
+						iTakeFromTrack[6] = 9;
+						iTakeFromTrack[7] = 7;
+						iTakeFromTrack[8] = 5;
+						iTakeFromTrack[9] = 6;
+						break;
+					case StepsType_pump_halfdouble:
+						iTakeFromTrack[0] = 2;
+						iTakeFromTrack[1] = 0;
+						iTakeFromTrack[2] = 1;
+						iTakeFromTrack[3] = 3;
+						iTakeFromTrack[4] = 4;
+						iTakeFromTrack[5] = 5;
+						break;
+					case StepsType_pump_double:
+						iTakeFromTrack[0] = 8;
+						iTakeFromTrack[1] = 9;
+						iTakeFromTrack[2] = 7;
+						iTakeFromTrack[3] = 5;
+						iTakeFromTrack[4] = 6;
+						iTakeFromTrack[5] = 3;
+						iTakeFromTrack[6] = 4;
+						iTakeFromTrack[7] = 2;
+						iTakeFromTrack[8] = 0;
+						iTakeFromTrack[9] = 1;
+						break;
+					default: break;
+					}
+					break;
+				case 3:
+					// full mirror
+					goto mirror_all;
+					break;
+				case 0:
+				default:
+					// case 0 and default are set by identity matrix above
+					break;
+			}
 		}
 		break;
 	case NoteDataUtil::stomp:
@@ -2006,6 +2168,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTurns[PlayerOptions::TURN_LEFT] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::left, iStartIndex, iEndIndex );
 	if( po.m_bTurns[PlayerOptions::TURN_RIGHT] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::right, iStartIndex, iEndIndex );
 	if( po.m_bTurns[PlayerOptions::TURN_SHUFFLE] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::shuffle, iStartIndex, iEndIndex );
+	if( po.m_bTurns[PlayerOptions::TURN_SOFT_SHUFFLE] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::soft_shuffle, iStartIndex, iEndIndex );
 	if( po.m_bTurns[PlayerOptions::TURN_SUPER_SHUFFLE] )		NoteDataUtil::Turn( nd, st, NoteDataUtil::super_shuffle, iStartIndex, iEndIndex );
 }
 

@@ -293,6 +293,7 @@ static void SyncFiles( const RString &sFromDir, const RString &sToDir, const RSt
 		else
 			++iNumFailed;
 	}
+	FILEMAN->FlushDirCache( sToDir );
 }
 
 static void SyncEdits( const RString &sFromDir, const RString &sToDir, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )

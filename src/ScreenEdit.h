@@ -197,7 +197,7 @@ protected:
 	void ScrollTo( float fDestinationBeat );
 	void PlayTicks();
 	void PlayPreviewMusic();
-	
+
 	// Call this before modifying m_NoteDataEdit.
 	void SaveUndo();
 	// Revert m_NoteDataEdit using m_Undo.
@@ -241,6 +241,7 @@ protected:
 
 	NoteData		m_Clipboard;
 	bool    		m_bHasUndo;
+	// TODO: convert this into a stack of NoteData objs for multi-state undo -aj
 	NoteData		m_Undo;
 
 	bool			m_bDirty;
@@ -265,7 +266,6 @@ protected:
 
 
 // for MODE_RECORD
-
 	NoteField		m_NoteFieldRecord;
 	NoteData		m_NoteDataRecord;
 	RageTimer		m_RemoveNoteButtonLastChanged;
@@ -305,6 +305,7 @@ public:
 		edit_song_info,
 		edit_bpm,
 		edit_stop,
+		edit_delay,
 		play_preview_music,
 		exit,
 		save_on_exit,

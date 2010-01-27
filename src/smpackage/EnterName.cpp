@@ -1,5 +1,4 @@
 // EnterName.cpp : implementation file
-//
 
 #define CO_EXIST_WITH_MFC
 #include "global.h"
@@ -56,7 +55,6 @@ END_MESSAGE_MAP()
 void EnterName::OnOK() 
 {
 	// TODO: Add extra validation here
-	
 	m_edit.GetWindowText( m_sEnteredName );
 
 	CDialog::OnOK();

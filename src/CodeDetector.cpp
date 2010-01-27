@@ -9,6 +9,7 @@
 #include "RageUtil.h"
 #include "PlayerState.h"
 #include "InputEventPlus.h"
+#include "OptionRowHandler.h"
 
 const char *CodeNames[] = {
 	"PrevSteps1",
@@ -107,8 +108,71 @@ bool CodeDetector::EnteredModeMenu( GameController controller )
 #define  FLOAT_TOGGLE(v)	if(v!=1.f) v=1.f; else v=0.f;
 // XXX: Read the metrics file instead!
 // Using this can give us unlisted scroll speeds on the Options screen.
+// Zmey: done.
+// AJ: thanks Zmey! :D
 #define  INCREMENT_SCROLL_SPEED(s)	(s==0.5f) ? s=0.75f : (s==0.75f) ? s=1.0f : (s==1.0f) ? s=1.5f : (s==1.5f) ? s=2.0f : (s==2.0f) ? s=3.0f : (s==3.0f) ? s=4.0f : (s==4.0f) ? s=5.0f : (s==5.0f) ? s=8.0f : s=0.5f;
 #define  DECREMENT_SCROLL_SPEED(s)	(s==0.75f) ? s=0.5f : (s==1.0f) ? s=0.75f : (s==1.5f) ? s=1.0f : (s==2.0f) ? s=1.5f : (s==3.0f) ? s=2.0f : (s==4.0f) ? s=3.0f : (s==5.0f) ? s=4.0f : (s==8.0f) ? s=4.0f : s=8.0f;
+
+// from Pumpmania
+void CodeDetector::ChangeScrollSpeed( GameController controller, bool bIncrement )
+{
+	// this shit doesn't compile, hence the #if 0 below.
+	// also I bet your ass this code actually belongs in PlayerOptions.cpp
+	// on further inspection. -aj
+	// p.s. it's m_fScrollSpeed you'll want to mess with.
+#if 0
+	// opt = PlayerOptions
+	// setup
+	PlayerNumber pn = INPUTMAPPER->ControllerToPlayerNumber( controller );
+	PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
+
+	/* what this code seems to be doing is:
+	 * 1) getting the Speed line from the theme
+	 * 2) throwing it into a vector
+	 * 3) getting the current scroll speed (fallback on 1x)
+	 * 4) loop through the entries until you find the current mod
+	 * 5) check if it's increment/decrement, act accordingly
+	 * 6) set mod and return.
+	 * 7) "Current SpeedMod not found in Theme, revert to default"
+	 * although I'd rather have it move to the next possible value at
+	 * that point. If it's invalid, then revert to the default.
+	 */
+
+	OptionRowData row;
+	OptionRowHandler hand;
+
+	RString sTitleOut;
+	ScreenOptionsMaster::SetList( row, hand, "Speed", sTitleOut );
+
+	vector<ModeChoice>& entries = hand.ListEntries;
+
+	RString sScrollSpeed = po.GetScrollSpeedAsString();
+	if (sScrollSpeed.empty())
+		sScrollSpeed = "1x";
+
+	for ( vector<ModeChoice>::iterator it = entries.begin(); it != entries.end(); ++it )
+	{
+		ModeChoice& modeChoice = *it;
+		if ( modeChoice.m_sModifiers == sScrollSpeed ) {
+			if (bIncrement) {
+				if ( &modeChoice == &entries.back() )
+					po.FromString( entries.front().m_sModifiers );
+				else
+					po.FromString( (++it)->m_sModifiers );
+			} else { // Decrement
+				if ( &modeChoice == &entries.front() )
+					po.FromString( entries.back().m_sModifiers );
+				else
+					po.FromString( (--it)->m_sModifiers );
+			}
+			return;
+		}
+	}
+	// Current SpeedMod not found in Theme, revert to default:
+	ModeChoice& defaultChoice = hand.Default;
+	po.FromString(defaultChoice.m_sModifiers);
+#endif
+}
 
 bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 {

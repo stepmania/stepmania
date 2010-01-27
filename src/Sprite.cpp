@@ -102,7 +102,9 @@ RageTextureID Sprite::SongBannerTexture( RageTextureID ID )
 	/* TODO: Change to use color keying only if the graphic is a diagonal banner.  The color key convention is 
 	 * causing small holes in moderm banners that use magenta, and it's not good to require graphic
 	 * makers to know about archaic color key conventions. -Chris */
-	ID.bHotPinkColorKey = true;
+	
+	/* I disabled this anyways, it's extremely annoying -Colby */
+	ID.bHotPinkColorKey = false;
 
 	/* Ignore the texture color depth preference and always use 32-bit textures
 	 * if possible.  Banners are loaded while moving the wheel, so we want it to
@@ -140,7 +142,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 	{
 		// Load the texture
 		LoadFromTexture( sPath );
-		
+
 		LoadStatesFromTexture();
 
 
@@ -287,7 +289,7 @@ void Sprite::SetTexture( RageTexture *pTexture )
 
 	// the size of the sprite is the size of the image before it was scaled
 	Sprite::m_size.x = (float)m_pTexture->GetSourceFrameWidth();
-	Sprite::m_size.y = (float)m_pTexture->GetSourceFrameHeight();		
+	Sprite::m_size.y = (float)m_pTexture->GetSourceFrameHeight();
 
 	// apply clipping (if any)
 	if( m_fRememberedClipWidth != -1 && m_fRememberedClipHeight != -1 )
@@ -322,9 +324,9 @@ void Sprite::LoadStatesFromTexture()
 		newState.fDelay = 0.1f;
 		newState.rect = RectF( 0, 0, 1, 1 );
 		m_States.push_back( newState );
-		return;		
+		return;
 	}
-	
+
 	for( int i=0; i<m_pTexture->GetNumFrames(); ++i )
 	{
 		State newState;
@@ -948,7 +950,103 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 	// restore original XY
 	SetXY( fOriginalX, fOriginalY );
 }
+/* magic hurr */
+void Sprite::CropTo( float fWidth, float fHeight )
+{
+	m_fRememberedClipWidth = fWidth;
+	m_fRememberedClipHeight = fHeight;
 
+	if( !m_pTexture )
+		return;
+
+	int iSourceWidth	= m_pTexture->GetSourceWidth();
+	int iSourceHeight	= m_pTexture->GetSourceHeight();
+
+	// save the original X&Y.  We're going to restore them later.
+	float fOriginalX = GetX();
+	float fOriginalY = GetY();
+
+	if( IsDiagonalBanner(iSourceWidth, iSourceHeight) )		// this is a SSR/DWI CroppedSprite
+	{
+		float fCustomImageCoords[8] = {
+			0.02f,	0.78f,	// top left
+			0.22f,	0.98f,	// bottom left
+			0.98f,	0.22f,	// bottom right
+			0.78f,	0.02f,	// top right
+		};
+		Sprite::SetCustomImageCoords( fCustomImageCoords );
+
+		if( fWidth != -1 && fHeight != -1 )
+		{
+			m_size = RageVector2( fWidth, fHeight );
+		}
+		else
+		{
+			/* If no crop size is set, then we're only being used to crop diagonal
+			 * banners so they look like regular ones. We don't actually care about
+			 * the size of the image, only that it has an aspect ratio of 4:1.  */
+			m_size = RageVector2( 256, 64 );
+		}
+		SetZoom( 1 );
+	}
+	else if( m_pTexture->GetID().filename.find("(was rotated)") != string::npos && 
+			 fWidth != -1 && fHeight != -1 )
+	{
+		/* Dumb hack.  Normally, we crop all sprites except for diagonal banners,
+		 * which are stretched.  Low-res versions of banners need to do the same
+		 * thing as their full resolution counterpart, so the crossfade looks right.
+		 * However, low-res diagonal banners are un-rotated, to save space.  BannerCache
+		 * drops the above text into the "filename" (which is otherwise unused for
+		 * these banners) to tell us this.
+		 */
+		Sprite::StopUsingCustomCoords();
+		m_size = RageVector2( fWidth, fHeight );
+		SetZoom( 1 );
+	}
+	else if( fWidth != -1 && fHeight != -1 )
+	{
+		// this is probably a background graphic or something not intended to be a CroppedSprite
+		Sprite::StopUsingCustomCoords();
+
+		// first find the correct zoom
+		Sprite::ScaleToCover( RectF(0, 0, fWidth, fHeight) );
+		// find which dimension is larger
+		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
+		
+		if( bXDimNeedsToBeCropped )	// crop X
+		{
+			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
+			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
+			
+			// generate a rectangle with new texture coordinates
+			RectF fCustomImageRect( 
+				fPercentageToCutOffEachSide, 
+				0, 
+				1 - fPercentageToCutOffEachSide, 
+				1 );
+			SetCustomImageRect( fCustomImageRect );
+		}
+		else		// crop Y
+		{
+			float fPercentageToCutOff = (this->GetZoomedHeight() - fHeight) / this->GetZoomedHeight();
+			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
+			
+			// generate a rectangle with new texture coordinates
+			RectF fCustomImageRect( 
+				0, 
+				fPercentageToCutOffEachSide,
+				1, 
+				1 - fPercentageToCutOffEachSide );
+			SetCustomImageRect( fCustomImageRect );
+		}
+		m_size = RageVector2( fWidth, fHeight );
+		SetZoom( 1 );
+	}
+
+	// restore original XY
+	SetXY( fOriginalX, fOriginalY );
+}
+/* end magic */
 bool Sprite::IsDiagonalBanner( int iWidth, int iHeight )
 {
 	/* A diagonal banner is a square.  Give a couple pixels of leeway. */
@@ -1024,9 +1122,11 @@ public:
 	static int SetCustomImageRect( T* p, lua_State *L )	{ p->SetCustomImageRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
 	static int texcoordvelocity( T* p, lua_State *L )	{ p->SetTexCoordVelocity( FArg(1),FArg(2) ); return 0; }
 	static int scaletoclipped( T* p, lua_State *L )		{ p->ScaleToClipped( FArg(1),FArg(2) ); return 0; }
+	static int CropTo( T* p, lua_State *L )		{ p->CropTo( FArg(1),FArg(2) ); return 0; }
 	static int stretchtexcoords( T* p, lua_State *L )	{ p->StretchTexCoords( FArg(1),FArg(2) ); return 0; }
 	static int addimagecoords( T* p, lua_State *L )		{ p->AddImageCoords( FArg(1),FArg(2) ); return 0; }
 	static int setstate( T* p, lua_State *L )		{ p->SetState( IArg(1) ); return 0; }
+	static int GetState( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetState() ); return 1; }
 	static int GetAnimationLengthSeconds( T* p, lua_State *L ) { lua_pushnumber( L, p->GetAnimationLengthSeconds() ); return 1; }
 	static int SetTexture( T* p, lua_State *L )
 	{
@@ -1050,6 +1150,7 @@ public:
 		p->SetEffectMode( em );
 		return 0;
 	}
+	static int GetNumStates( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumStates() ); return 1; }
 
 	LunaSprite()
 	{
@@ -1060,13 +1161,16 @@ public:
 		ADD_METHOD( SetCustomImageRect );
 		ADD_METHOD( texcoordvelocity );
 		ADD_METHOD( scaletoclipped );
+		ADD_METHOD( CropTo );
 		ADD_METHOD( stretchtexcoords );
 		ADD_METHOD( addimagecoords );
 		ADD_METHOD( setstate );
+		ADD_METHOD( GetState );
 		ADD_METHOD( GetAnimationLengthSeconds );
 		ADD_METHOD( SetTexture );
 		ADD_METHOD( GetTexture );
 		ADD_METHOD( SetEffectMode );
+		ADD_METHOD( GetNumStates );
 	}
 };
 

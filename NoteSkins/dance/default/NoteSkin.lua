@@ -11,16 +11,12 @@ ret.RedirTable =
 };
 
 local OldRedir = ret.Redir;
+
 ret.Redir = function(sButton, sElement)
 	sButton, sElement = OldRedir(sButton, sElement);
 
-	-- Instead of separate hold heads, use the tap note graphics.
-	if sElement == "Hold Head Inactive" or
-	   sElement == "Hold Head Active" or
-	   sElement == "Roll Head Inactive" or
-	   sElement == "Roll Head Active" or
-	   sElement == "Tap Fake"
-	then
+	--Point the head files back to the tap note
+	if string.find(sElement, "Head") or sElement == "Tap Fake" then
 		sElement = "Tap Note";
 	end
 
@@ -29,18 +25,6 @@ ret.Redir = function(sButton, sElement)
 	return sButton, sElement;
 end
 
--- To have separate graphics for each hold part:
---[[
-local OldRedir = ret.Redir;
-ret.Redir = function(sButton, sElement)
-	-- Redirect non-hold, non-roll parts.
-	if string.find(sElement, "hold") then
-		return sButton, sElement;
-	end
-	return OldRedir(sButton, sElement);
-end
-]]
-
 local OldFunc = ret.Load;
 function ret.Load()
 	local t = OldFunc();
@@ -48,8 +32,7 @@ function ret.Load()
 	-- The main "Explosion" part just loads other actors; don't rotate
 	-- it.  The "Hold Explosion" part should not be rotated.
 	if Var "Element" == "Explosion" or
-	   Var "Element" == "Roll Explosion" or
-	   Var "Element" == "Hold Explosion" then
+	   Var "Element" == "Roll Explosion" then
 		t.BaseRotationZ = nil;
 	end
 	return t;
@@ -57,16 +40,16 @@ end
 
 ret.PartsToRotate =
 {
-	["Go Receptor"] = true,
+	["Receptor"] = true,
+	["Tap Note"] = true,
+	["Tap Fake"] = true,
 	["Ready Receptor"] = true,
 	["Tap Explosion Bright"] = true,
 	["Tap Explosion Dim"] = true,
-	["Tap Note"] = true,
-	["Tap Fake"] = true,
 	["Hold Head Active"] = true,
 	["Hold Head Inactive"] = true,
 	["Roll Head Active"] = true,
-	["Roll Head Inactive"] = true,
+	["Roll Head Inactive"] = true
 };
 ret.Rotate =
 {
@@ -78,17 +61,10 @@ ret.Rotate =
 	UpRight = 225,
 };
 
---
--- If a derived skin wants to have separate UpLeft graphics,
--- use this:
---
--- ret.RedirTable.UpLeft = "UpLeft";
--- ret.RedirTable.UpRight = "UpLeft";
--- ret.Rotate.UpLeft = 0;
--- ret.Rotate.UpRight = 90;
---
 ret.Blank =
 {
+	["Hold Explosion"] = true,
+	["Roll Explosion"] = true,
 	["Hold Topcap Active"] = true,
 	["Hold Topcap Inactive"] = true,
 	["Roll Topcap Active"] = true,

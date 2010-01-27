@@ -27,7 +27,7 @@ public:
 	typedef map<int,TapNote>::const_iterator const_iterator;
 	typedef map<int,TapNote>::reverse_iterator reverse_iterator;
 	typedef map<int,TapNote>::const_reverse_iterator const_reverse_iterator;
-	
+
 	iterator begin( int iTrack )					{ return m_TapNotes[iTrack].begin(); }
 	const_iterator begin( int iTrack ) const			{ return m_TapNotes[iTrack].begin(); }
 	reverse_iterator rbegin( int iTrack )				{ return m_TapNotes[iTrack].rbegin(); }
@@ -53,11 +53,11 @@ public:
 		/* There isn't a "past the beginning" iterator so this is hard to make a true bidirectional iterator. 
 		* Use the "past the end" iterator in place of the "past the beginning" iterator when in reverse. */
 		vector<iter>	m_vCurrentIters;
-		
+
 		vector<iter>	m_vEndIters;
 		int		m_iTrack;
 		bool		m_bReverse;
-		
+
 		void Find( bool bReverse );
 	public:
 		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, bool bInclusive );
@@ -86,7 +86,7 @@ private:
 
 public:
 	void Init();
-	
+
 	int GetNumTracks() const { return m_TapNotes.size(); }
 	void SetNumTracks( int iNewNumTracks );
 	bool IsComposite() const;
@@ -146,7 +146,7 @@ public:
 	bool GetNextTapNoteRowForAllTracks( int &rowInOut ) const;
 	bool GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const;
 	bool GetPrevTapNoteRowForAllTracks( int &rowInOut ) const;
-	
+
 	void MoveTapNoteTrack( int dest, int src );
 	void SetTapNote( int track, int row, const TapNote& tn );
 	void AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn ); // add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
@@ -177,10 +177,8 @@ public:
 
 	bool IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow = NULL ) const;
 	bool IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) const;
-	
-	//
+
 	// statistics
-	//
 	bool IsEmpty() const;
 	bool IsTrackEmpty( int iTrack ) const { return m_TapNotes[iTrack].empty(); }
 	int GetFirstRow() const; // return the beat number of the first note

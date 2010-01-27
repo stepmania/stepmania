@@ -1,0 +1,20 @@
+Notable StepMania CVS commit logs
+--------------------------------------------------------------------------------
+http://sourceforge.net/mailarchive/forum.php?thread_name=E1ICWkp-00073O-Ay%40mail.sourceforge.net&forum_name=stepmania-cvs
+"Any given step can continue the combo, maintain the combo, break the combo, or
+outright miss. Those that break the combo aren't misses and shouldn't increase
+the miss counter but they should break the combo."
+Yeah right it doesn't seem to do that...
+--------------------------------------------------------------------------------
+http://sourceforge.net/mailarchive/message.php?msg_id=E1FWjDl-0000Ob-IY%40mail.sourceforge.net
+"remove unfinished, crufty multiplayer stuff"
++
+http://sourceforge.net/mailarchive/message.php?msg_id=E1FWjpV-0007eC-2G%40mail.sourceforge.net
+"remove unfinished multiplayer stuff"
+
+Some of the multiplayer stuff was later re-assembled but I think some of the
+pieces are missing.
+________________________________________________________________________________
+Viewing old source code:
+http://stepmania.cvs.sourceforge.net/stepmania/stepmania/src/
+put a filename at the end of it.

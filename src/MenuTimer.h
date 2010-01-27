@@ -1,4 +1,4 @@
-/* MenuTimer - A timer in the upper right corner of the menu that ticks down. */
+/* MenuTimer - A timer on the menu that ticks down. */
 
 #ifndef MENU_TIMER_H
 #define MENU_TIMER_H

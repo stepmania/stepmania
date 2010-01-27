@@ -29,6 +29,7 @@
 #endif
 
 extern unsigned long version_num;
+extern const char *const version_date;
 extern const char *const version_time;
 
 // VDI symbol lookup:
@@ -433,9 +434,9 @@ struct CompleteCrashData
 static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 {
 	sOut += ssprintf(
-			"%s crash report (build %d, %s)\n"
+			"%s crash report (build %d, %s @ %s)\n"
 			"--------------------------------------\n\n",
-			PRODUCT_ID_VER, version_num, version_time );
+			PRODUCT_ID_VER, version_num, version_date, version_time );
 
 	sOut += ssprintf( "Crash reason: %s\n", Data.m_CrashInfo.m_CrashReason );
 	sOut += ssprintf( "\n" );

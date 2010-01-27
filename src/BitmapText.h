@@ -55,17 +55,15 @@ public:
 		int		length;
 		RageColor	diffuse[4];
 		RageColor	glow;
-		
+
 		void FromStack( lua_State *L, int iPos );
 	};
-	
+
 	Attribute GetDefaultAttribute() const;
 	void AddAttribute( size_t iPos, const Attribute &attr );
 	void ClearAttributes();
 
-	//
 	// Commands
-	//
 	virtual void PushSelf( lua_State *L );
 
 protected:

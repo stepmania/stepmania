@@ -190,7 +190,7 @@ public:
 				}
 				else
 				{
-					RageException::Throw( "Unknown row flag \"%s\".", sName.c_str() );
+					RageException::Throw( "Unkown row flag \"%s\".", sName.c_str() );
 				}
 			}
 
@@ -383,6 +383,7 @@ class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
 				m_Def.m_iDefault = skin;
 			GameCommand mc;
 			mc.m_sPreferredModifiers = arraySkinNames[skin];
+			//ms.m_sName = arraySkinNames[skin];
 			m_aListEntries.push_back( mc );
 			m_Def.m_vsChoices.push_back( arraySkinNames[skin] );
 		}

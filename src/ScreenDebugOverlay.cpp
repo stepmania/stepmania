@@ -27,6 +27,7 @@
 #include "GameLoop.h"
 #include "Song.h"
 #include "ScreenSyncOverlay.h"
+#include "ThemeMetric.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
@@ -34,6 +35,10 @@ static bool g_bIsHalt = false;
 static RageTimer g_HaltTimer(RageZeroTimer);
 static float g_fImageScaleCurrent = 1;
 static float g_fImageScaleDestination = 1;
+
+// colors
+static const ThemeMetric<RageColor>	LINE_ON_COLOR	("ScreenDebugOverlay", "LineOnColor");
+static const ThemeMetric<RageColor>	LINE_OFF_COLOR	("ScreenDebugOverlay", "LineOffColor");
 
 //
 // self-registering debug lines
@@ -205,7 +210,7 @@ void ScreenDebugOverlay::Init()
 	FOREACH( IDebugLine*, *g_pvpSubscribers, p )
 	{
 		RString sPageName = (*p)->GetPageName();
-		
+
 		DeviceInput di;
 		switch( (*p)->GetType() )
 		{
@@ -228,14 +233,14 @@ void ScreenDebugOverlay::Init()
 	m_Quad.StretchTo( RectF( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
 	m_Quad.SetDiffuse( RageColor(0, 0, 0, 0.5f) );
 	this->AddChild( &m_Quad );
-	
-	m_textHeader.LoadFromFont( THEME->GetPathF("Common", "normal") );
+
+	// if you're going to add user commands, make sure to have the overrides
+	// set after parsing the metrics. -aj
 	m_textHeader.SetName( "HeaderText" );
-	m_textHeader.SetHorizAlign( align_left );
-	m_textHeader.SetXY( SCREEN_LEFT+20, SCREEN_TOP+20 );
+	m_textHeader.LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "header") );
+	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textHeader );
 	m_textHeader.SetText( DEBUG_MENU );
 	this->AddChild( &m_textHeader );
-	LOAD_ALL_COMMANDS( m_textHeader );
 
 	FOREACH_CONST( RString, m_asPages, s )
 	{
@@ -247,39 +252,37 @@ void ScreenDebugOverlay::Init()
 
 		RString sButton = INPUTMAN->GetDeviceSpecificInputString( di );
 
-		BitmapText *p = new BitmapText;	
-		p->LoadFromFont( THEME->GetPathF("Common", "normal") );
+		BitmapText *p = new BitmapText;
 		p->SetName( "PageText" );
+		p->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "page") );
+		LOAD_ALL_COMMANDS( p );
 		p->SetXY( SCREEN_CENTER_X-100+iPage*100, SCREEN_TOP+20 );
 		p->SetText( *s + " (" + sButton + ")" );
-		p->SetShadowLength( 2 );
-
+		p->SetShadowLength( 1 );
 		m_vptextPages.push_back( p );
 		this->AddChild( p );
-
-		LOAD_ALL_COMMANDS( *p );
 	}
 
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
 	{
 		{
 			BitmapText *p = new BitmapText;
-			p->LoadFromFont( THEME->GetPathF("Common", "normal") );
 			p->SetName( "ButtonText" );
+			p->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "line") );
 			p->SetHorizAlign( align_right );
 			p->SetText( "blah" );
-			p->SetShadowLength( 2 );
+			//p->SetShadowLength( 2 );
 			m_vptextButton.push_back( p );
 			this->AddChild( p );
 			LOAD_ALL_COMMANDS( *p );
 		}
 		{
 			BitmapText *p = new BitmapText;
-			p->LoadFromFont( THEME->GetPathF("Common", "normal") );
 			p->SetName( "FunctionText" );
+			p->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "line") );
 			p->SetHorizAlign( align_left );
 			p->SetText( "blah" );
-			p->SetShadowLength( 2 );
+			//p->SetShadowLength( 2 );
 			m_vptextFunction.push_back( p );
 			this->AddChild( p );
 			LOAD_ALL_COMMANDS( *p );
@@ -336,13 +339,17 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 void ScreenDebugOverlay::UpdateText()
 {
 	/* Highlight options that aren't the default. */
+	// xxx: convert these into metrics? -aj
+	/*
 	const RageColor off(0.7f, 0.7f, 0.7f, 1.0f);
 	const RageColor on(1, 1, 1, 1);
-	
+	*/
+
 	FOREACH_CONST( RString, m_asPages, s )
 	{
 		int iPage = s - m_asPages.begin();
-		m_vptextPages[iPage]->SetDiffuse( (iPage == m_iCurrentPage) ? on :  off );
+		//m_vptextPages[iPage]->SetDiffuse( (iPage == m_iCurrentPage) ? on :  off );
+		m_vptextPages[iPage]->PlayCommand( (iPage == m_iCurrentPage) ? "GainFocus" :  "LoseFocus" );
 	}
 
 	int iOffset = 0;
@@ -377,8 +384,8 @@ void ScreenDebugOverlay::UpdateText()
 
 		bool bOn = (*p)->IsEnabled();
 
-		txt1.SetDiffuse( bOn ? on:off );
-		txt2.SetDiffuse( bOn ? on:off );
+		txt1.SetDiffuse( bOn ? LINE_ON_COLOR:LINE_OFF_COLOR );
+		txt2.SetDiffuse( bOn ? LINE_ON_COLOR:LINE_OFF_COLOR );
 
 		RString sButton = GetDebugButtonName( *p );
 		if( !sButton.empty() )
@@ -424,7 +431,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			(!g_Mappings.holdForDebug2.IsValid() || INPUTFILTER->IsBeingPressed(g_Mappings.holdForDebug2));
 		if( bHoldingNeither )
 			m_bForcedHidden = false;
-			
+
 		if( bHoldingBoth )
 			g_bIsDisplayed = true;
 		else
@@ -477,14 +484,16 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 				LOG->Trace("DEBUG: %s", sMessage.c_str() );
 			if( (*p)->ForceOffAfterUse() )
 				m_bForcedHidden = true;
-	
+
 			// update text to show the effect of what changed above
 			UpdateText();
 
 			// blink the text to show what changed
 			BitmapText &bt = *m_vptextButton[i];
 			bt.FinishTweening();
-			for( int i=0; i<8; i++ )
+			// blink 5 times instead of 8
+			// TODO: make this all metrics instead -aj
+			for( int i=0; i<5; i++ )
 			{
 				bt.SetGlow( RageColor(1,0,0,1) );
 				bt.Sleep(0.1f);
@@ -898,7 +907,7 @@ static void FillProfileStats( Profile *pProfile )
 			}
 		}
 	}
-	
+
 	vector<Course*> vpAllCourses;
 	SONGMAN->GetAllCourses( vpAllCourses, true );
 	FOREACH( Course*, vpAllCourses, pCourse )

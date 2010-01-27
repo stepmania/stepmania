@@ -472,6 +472,7 @@ void FilenameDB::DelFile( const RString &sPath )
 	FileSet *Parent = GetFileSet( Dir, false );
 	if( Parent )
 		Parent->files.erase( Name );
+
 	m_Mutex.Unlock(); /* locked by GetFileSet */
 }
 
@@ -479,7 +480,7 @@ void FilenameDB::FlushDirCache( const RString &sDir )
 {
 	FileSet *pFileSet = NULL;
 	m_Mutex.Lock();
-	
+
 	while( true )
 	{
 		if( dirs.empty() )
@@ -510,7 +511,7 @@ void FilenameDB::FlushDirCache( const RString &sDir )
 			while( !pFileSet->m_bFilled )
 				m_Mutex.Wait();
 			delete pFileSet;
-			
+
 			if( sDir != "/" )
 			{
 				RString sParent = Dirname( sDir );
@@ -531,8 +532,6 @@ void FilenameDB::FlushDirCache( const RString &sDir )
 		{
 			LOG->Warn( "Trying to flush an unknown directory %s.", sDir.c_str() );
 		}
-	}
-		
 #endif
 		m_Mutex.Unlock();
 }
@@ -622,7 +621,6 @@ void FilenameDB::CacheFile( const RString &sPath )
 	LOG->Warn( "Slow cache due to: %s", sPath.c_str() );
 	FlushDirCache( Dirname(sPath) );
 }
-
 
 /*
  * Copyright (c) 2003-2004 Glenn Maynard

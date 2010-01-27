@@ -5,17 +5,11 @@
 #include "Steps.h"
 #include "PlayerState.h"
 #include "Course.h"
-
-const float	BATTERY_X[NUM_PLAYERS]	=	{ -92, +92 };
-
-const float NUM_X[NUM_PLAYERS]		=	{ BATTERY_X[0], BATTERY_X[1] };
-const float NUM_Y					=	+2;
-
-const float BATTERY_BLINK_TIME		= 1.2f;
-
+#include "ActorUtil.h"
 
 LifeMeterBattery::LifeMeterBattery()
 {
+
 	m_iLivesLeft = GAMESTATE->m_SongOptions.GetStage().m_iBatteryLives;
 	m_iTrailingLivesLeft = m_iLivesLeft;
 
@@ -29,34 +23,54 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 {
 	LifeMeter::Load( pPlayerState, pPlayerStageStats );
 
-	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled( pPlayerState );
-
-	m_sprFrame.Load( THEME->GetPathG("LifeMeterBattery","frame") );
-	this->AddChild( &m_sprFrame );
-
-	m_sprBattery.Load( THEME->GetPathG("LifeMeterBattery","lives 1x4") );
-	m_sprBattery.StopAnimating();
-	if( bPlayerEnabled )
-		this->AddChild( &m_sprBattery );
-
-	m_textNumLives.LoadFromFont( THEME->GetPathF("LifeMeterBattery", "lives") );
-	m_textNumLives.SetDiffuse( RageColor(1,1,1,1) );
-	m_textNumLives.SetShadowLength( 0 );
-	if( bPlayerEnabled )
-		this->AddChild( &m_textNumLives );
-
+	const RString sType = "LifeMeterBattery";
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
+	BATTERY_BLINK_TIME.Load(sType, "BatteryBlinkTime"); // 1.2f by default
+
+	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled( pPlayerState );
+
+	m_sprFrame.Load( THEME->GetPathG(sType,"frame") );
+	this->AddChild( &m_sprFrame );
+
+	m_sprBattery.Load( THEME->GetPathG(sType,"lives 1x4") );
+	m_sprBattery.SetName( ssprintf("BatteryP%i",int(pn+1)) );
+	// required because it's a sprite. todo: allow for AutoActoring but detect
+	// Sprites for old behavior. -aj
+	m_sprBattery.StopAnimating();
+	if( bPlayerEnabled )
+	{
+		ActorUtil::LoadAllCommandsAndSetXY( m_sprBattery, sType );
+		this->AddChild( &m_sprBattery );
+	}
+
+	m_textNumLives.LoadFromFont( THEME->GetPathF(sType, "lives") );
+	m_textNumLives.SetName( ssprintf("NumLivesP%i",int(pn+1)) );
+	// fucking hardcoded shit
+	/*
+	m_textNumLives.SetDiffuse( RageColor(1,1,1,1) );
+	m_textNumLives.SetShadowLength( 0 );
+	*/
+	if( bPlayerEnabled )
+	{
+		ActorUtil::LoadAllCommandsAndSetXY( m_textNumLives, sType );
+		this->AddChild( &m_textNumLives );
+	}
+	// fucking hardcoded shit
+	/*
 	m_sprFrame.SetZoomX( pn==PLAYER_1 ? 1.0f : -1.0f );
 	m_sprBattery.SetZoomX( pn==PLAYER_1 ? 1.0f : -1.0f );
 	m_sprBattery.SetX( BATTERY_X[pn] );
 	m_textNumLives.SetX( NUM_X[pn] );
 	m_textNumLives.SetY( NUM_Y );
+	*/
 
 	if( bPlayerEnabled )
 	{
 		m_Percent.Load( pPlayerState, pPlayerStageStats, "LifeMeterBattery Percent", true );
-		m_Percent.SetZoomX( pn==PLAYER_1 ? 1.0f : -1.0f );
+		// fucking hardcoded shit (this type of command is useful, but let the
+		// themer decide what they want to do, please)
+		//m_Percent.SetZoomX( pn==PLAYER_1 ? 1.0f : -1.0f );
 		this->AddChild( &m_Percent );
 	}
 
@@ -93,6 +107,8 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 	if( m_iLivesLeft == 0 )
 		return;
 
+	// xxx: this is hardcoded; we should use metrics for this. -aj
+	// How to: have a TapNote reference similar to LifeMeterBattery
 	switch( score )
 	{
 	case TNS_W1:
@@ -107,16 +123,28 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 		m_iLivesLeft--;
 		m_soundLoseLife.Play();
 
+		m_textNumLives.PlayCommand("LoseLife");
+		/*
 		m_textNumLives.SetZoom( 1.5f );
 		m_textNumLives.BeginTweening( 0.15f );
 		m_textNumLives.SetZoom( 1.0f );
+		*/
 
 		Refresh();
 		m_fBatteryBlinkTime = BATTERY_BLINK_TIME;
 		break;
 	default:
+		break;
+		/*
+		// xxx: this doesn't handle hold checkpoints.
 		ASSERT(0);
+		*/
 	}
+
+	Message msg( "LifeChanged" );
+	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "LifeMeter", LuaReference::CreateFromPush(*this) );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
@@ -135,7 +163,7 @@ void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 
 void LifeMeterBattery::HandleTapScoreNone()
 {
-	
+	// do nothing
 }
 
 void LifeMeterBattery::ChangeLife( float fDeltaLifePercent )
@@ -167,6 +195,7 @@ float LifeMeterBattery::GetLife() const
 
 void LifeMeterBattery::Refresh()
 {
+	// todo: make this restraint metricable + handle non-sprites -aj
 	if( m_iLivesLeft <= 4 )
 	{
 		m_textNumLives.SetText( "" );
@@ -188,11 +217,10 @@ void LifeMeterBattery::Update( float fDeltaTime )
 		m_fBatteryBlinkTime -= fDeltaTime;
 		int iFrame1 = m_iLivesLeft-1;
 		int iFrame2 = m_iTrailingLivesLeft-1;
-		
+
 		int iFrameNo = (int(m_fBatteryBlinkTime*15)%2) ? iFrame1 : iFrame2;
 		CLAMP( iFrameNo, 0, 3 );
 		m_sprBattery.SetState( iFrameNo );
-
 	}
 	else
 	{

@@ -106,5 +106,5 @@ int mp_div_d (mp_int * a, mp_digit b, mp_int * c, mp_digit * d)
 #endif
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 24838 $ */
+/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */

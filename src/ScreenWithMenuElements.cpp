@@ -9,6 +9,7 @@
 #include "GameSoundManager.h"
 #include "MemoryCardDisplay.h"
 #include "InputEventPlus.h"
+#include "arch/Dialog/Dialog.h" // wow I import this for JUST ONE THING. -aj
 
 #define TIMER_STEALTH				THEME->GetMetricB(m_sName,"TimerStealth")
 #define SHOW_STAGE_DISPLAY			THEME->GetMetricB(m_sName,"ShowStageDisplay")
@@ -64,22 +65,27 @@ void ScreenWithMenuElements::Init()
 	}
 
 	/* TODO: Remove overlay and underlay in favor of more flexible decorations */
+	// Decorations don't let you use UpdateCommand, so don't ever
+	// remove underlay and overlay, otherwise good themes break. -aj
+
 	m_sprUnderlay.Load( THEME->GetPathB(m_sName,"underlay") );
 	m_sprUnderlay->SetName("Underlay");
 	m_sprUnderlay->SetDrawOrder( DRAW_ORDER_UNDERLAY );
 	this->AddChild( m_sprUnderlay );
 	LOAD_ALL_COMMANDS( m_sprUnderlay );
-	
+
 	m_sprOverlay.Load( THEME->GetPathB(m_sName,"overlay") );
 	m_sprOverlay->SetName("Overlay");
 	m_sprOverlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
 	this->AddChild( m_sprOverlay );
 	LOAD_ALL_COMMANDS( m_sprOverlay );
-	
-	/* Experimental: Load "decorations" and make them children of the screen. */
+
+	// decorations
 	{
 		AutoActor decorations;
 		decorations.LoadB( m_sName, "decorations" );
+		decorations->SetName("Decorations");
+		decorations->SetDrawOrder( DRAW_ORDER_DECORATIONS );
 		ActorFrame *pFrame = dynamic_cast<ActorFrame*>(static_cast<Actor*>(decorations));
 		if( pFrame )
 		{
@@ -136,7 +142,7 @@ void ScreenWithMenuElements::BeginScreen()
 	 * are joined, they'll join on the first JoinInput.) */
 	if( GAMESTATE->GetCoinMode() == CoinMode_Pay && GAMESTATE->m_bAutoJoin.Get() )
 	{
-               if( GAMESTATE->GetNumSidesJoined() > 0 && GAMESTATE->JoinPlayers() )
+		if( GAMESTATE->GetNumSidesJoined() > 0 && GAMESTATE->JoinPlayers() )
 			SCREENMAN->PlayStartSound();
 	}
 }
@@ -182,9 +188,60 @@ void ScreenWithMenuElements::StartPlayingMusic()
 	if( PLAY_MUSIC )
 	{
 		GameSoundManager::PlayMusicParams pmp;
-		pmp.sFile = m_sPathToMusic;
-		pmp.bAlignBeat = MUSIC_ALIGN_BEAT;
-		SOUND->PlayMusic( pmp );
+		FileType ft = ActorUtil::GetFileType( m_sPathToMusic );
+		/*
+		 * If m_sPathToMusic points to a Lua file, parse it and make sure it
+		 * returns a string pointing to a sound. Otherwise, if it points to
+		 * a normal music file, use the normal playback code. -aj
+		 * TODO: Make Lua music files accept playback params.
+		 */
+		if( ft == FT_Lua )
+		{
+			RString sScript;
+			RString sError;
+			if( GetFileContents(m_sPathToMusic, sScript) )
+			{
+				Lua *L = LUA->Get();
+
+				if( !LuaHelpers::RunScript(L, sScript, "@"+m_sPathToMusic, sError, 0, 1) )
+				{
+					LOG->Trace("run script failed");
+					LUA->Release( L );
+					sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
+					Dialog::OK( sError, "LUA_ERROR" );
+					return;
+				}
+				else
+				{
+					LOG->Trace("run script ok");
+					RString sMusicPathFromLua;
+					LuaHelpers::Pop(L, sMusicPathFromLua);
+
+					if( !sMusicPathFromLua.empty() )
+					{
+						pmp.sFile = sMusicPathFromLua;
+						pmp.bAlignBeat = MUSIC_ALIGN_BEAT;
+						// TODO: load other params into pmp here -aj
+						SOUND->PlayMusic( pmp );
+					}
+					else
+					{
+						LOG->Trace("Lua music script did not return a string. sm-ssc programmer error?");
+					}
+					LUA->Release( L );
+				}
+			}
+			else
+			{
+				LOG->Trace("run script failed hardcore, lol");
+			}
+		}
+		else
+		{
+			pmp.sFile = m_sPathToMusic;
+			pmp.bAlignBeat = MUSIC_ALIGN_BEAT;
+			SOUND->PlayMusic( pmp );
+		}
 	}
 }
 

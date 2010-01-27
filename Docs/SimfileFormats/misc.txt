@@ -1,0 +1,24 @@
+Miscellaneous Simfile Formats without directories
+-------------------------------------------------------------------------------
+[MSD]
+Along with BMS, the grand daddy of simfile formats.
+http://doremi.kalin.to/ddr/msd_format.html
+
+[PMS]
+It's pretty much like BMS. If you really need documentation,
+see src/NotesLoaderPMS.cpp I guess. I'm not going to make a folder for it when
+it's a BMS derivative :x.
+
+[KMS]
+Like BMS but for Keyboardmania? See http://wiki.bms.ms/KMS:Spec
+
+[GDA]
+Like BMS but for Session (Guitar Freaks/drummania). See http://wiki.bms.ms/GDA:Spec
+
+[pydance]
+They call it ".dance". I call it ARGH. See dance-spec.txt for the info.
+src: http://kai.vm.bytemark.co.uk/svn/pydance/trunk/pydance/docs/dance-spec.txt
+
+[D2R, SLO]
+Obscure old Japanese formats.
+src: http://web.archive.org/web/20040205071612/http://paramax.hypermart.net/

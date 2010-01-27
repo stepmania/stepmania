@@ -25,7 +25,7 @@ void Foreground::Unload()
 
 void Foreground::LoadFromSong( const Song *pSong )
 {
-        /* Song graphics can get very big; never keep them in memory. */
+	/* Song graphics can get very big; never keep them in memory. */
 	RageTextureID::TexPolicy OldPolicy = TEXTUREMAN->GetDefaultTexturePolicy();
 	TEXTUREMAN->SetDefaultTexturePolicy( RageTextureID::TEX_VOLATILE );
 
@@ -34,7 +34,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 	{
 		const BackgroundChange &change = *bgc;
 		RString sBGName = change.m_def.m_sFile1;
-		
+
 		LoadedBGA bga;
 		bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName, this );
 		bga.m_bga->PlayCommand( "On" );

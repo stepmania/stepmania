@@ -43,7 +43,7 @@ void ScreenSMOnlineLogin::Init()
 
 	if( pHand->m_Def.m_vsChoices.empty() )
 	{
-		//Give myself a message so that I can bail out later
+		// Give myself a message so that I can bail out later
 		PostScreenMessage(SM_NoProfilesDefined, 0);
 		SAFE_DELETE(pHand);
 	}
@@ -51,7 +51,7 @@ void ScreenSMOnlineLogin::Init()
 		vHands.push_back( pHand );
 
 	InitMenu( vHands );
-  	SOUND->PlayMusic( THEME->GetPathS("ScreenOptionsServiceChild", "music"));
+	SOUND->PlayMusic( THEME->GetPathS("ScreenOptionsServiceChild", "music"));
 	OptionRow &row = *m_pRows.back();
 	row.SetExitText("Login");
 }
@@ -99,7 +99,7 @@ static LocalizedString ENTER_YOUR_PASSWORD	( "ScreenSMOnlineLogin", "Enter your 
 void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 {
 	RString sLoginQuestion;
-//	if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) )		
+//	if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) )
 
 	if( SM == SM_PasswordDone )
 	{
@@ -115,9 +115,10 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 	}
 	else if( SM == SM_SMOnlinePack )
 	{
+		LOG->Trace("[ScreenSMOnlineLogin::HandleScreenMessage] SMOnlinePack");
 		sLoginQuestion = YOU_ARE_LOGGING_ON_AS.GetValue() + "\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n" + ENTER_YOUR_PASSWORD.GetValue();
-		int ResponceCode = NSMAN->m_SMOnlinePacket.Read1();
-		if (ResponceCode == 0)
+		int ResponseCode = NSMAN->m_SMOnlinePacket.Read1();
+		if (ResponseCode == 0)
 		{
 			int Status = NSMAN->m_SMOnlinePacket.Read1();
 			if(Status == 0)
@@ -136,13 +137,14 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			}
 			else
 			{
-				RString Responce = NSMAN->m_SMOnlinePacket.ReadNT();
-				ScreenTextEntry::Password( SM_PasswordDone, Responce + "\n\n"+sLoginQuestion, NULL );
+				RString Response = NSMAN->m_SMOnlinePacket.ReadNT();
+				ScreenTextEntry::Password( SM_PasswordDone, Response + "\n\n" + sLoginQuestion, NULL );
 			}
 		}
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
+		LOG->Trace("[ScreenSMOnlineLogin::HandleScreenMessage] GoToNextScreen");
 		vector<PlayerNumber> v;
 		v.push_back( GAMESTATE->m_MasterPlayerNumber );
 		for( unsigned r=0; r<m_pRows.size(); r++ )
@@ -216,7 +218,7 @@ void ScreenSMOnlineLogin::SendLogin( RString sPassword )
 #endif
 
 /*
- * (c) 2004-2005 Charles Lohr Adam Lowman
+ * (c) 2004-2005 Charles Lohr, Adam Lowman
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

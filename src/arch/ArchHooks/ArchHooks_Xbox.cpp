@@ -170,6 +170,7 @@ void ArchHooks_Xbox::DumpDebugInfo()
 
 float ArchHooks_Xbox::GetDisplayAspectRatio()
 {
+	// xxx: does this take into account system settings? -aj
 	float fDisplayAspectRatio = 4.0 / 3.0;
 	IDirect3DSurface8 *pBackBuffer = NULL;
 	if( D3D__pDevice->GetBackBuffer( -1, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer) == D3D_OK )

@@ -82,6 +82,7 @@ struct TapNote
 	{
 		hold_head_hold,
 		hold_head_roll,
+		//hold_head_mine,
 		NUM_SubType,
 		SubType_Invalid
 	};
@@ -90,7 +91,7 @@ struct TapNote
 		original,	// part of the original NoteData
 		addition,	// additional note added by a transform
 	};
-	
+
 	Type		type;
 	SubType		subType; // Only used if type is hold_head.
 	Source		source;
@@ -172,6 +173,7 @@ extern TapNote TAP_ORIGINAL_LIFT;		// 'L'
 extern TapNote TAP_ORIGINAL_ATTACK;		// 'A'
 extern TapNote TAP_ORIGINAL_AUTO_KEYSOUND;	// 'K'
 extern TapNote TAP_ORIGINAL_FAKE;		// 'F'
+//extern TapNote TAP_ORIGINAL_MINE_HEAD;		// 'N' (tentative, we'll see when iDance gets ripped.)
 extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;
 

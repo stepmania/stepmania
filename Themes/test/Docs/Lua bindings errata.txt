@@ -1,0 +1,8 @@
+to note, the current Lua bindings have bugs or don't work as intended:
+
+BPMDisplay:GetText() is always one off from the current song.
+
+Steps:GetHash() just plain doesn't work?
+
+CRYPTMAN hash strings use the literal characters instead of the hex displayed as
+ASCII. Not a bug, but something to make a note of, lest people get confused.

@@ -1,5 +1,4 @@
 // ShowComment.cpp : implementation file
-//
 
 #define CO_EXIST_WITH_MFC
 #include "global.h"
@@ -48,10 +47,10 @@ END_MESSAGE_MAP()
 BOOL ShowComment::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
-	
+
 	// TODO: Add extra initialization here
 	DialogUtil::LocalizeDialogAndContents( *this );
-	
+
 	m_edit.SetWindowText( m_sComment );
 
 	return TRUE;  // return TRUE unless you set the focus to a control

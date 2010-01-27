@@ -2,9 +2,14 @@
 #include "NoteDataWithScoring.h"
 #include "NoteData.h"
 #include "PlayerStageStats.h"
+#include "GameConstantsAndTypes.h"
+#include "ThemeMetric.h"
+#include "RageLog.h"
 
 namespace
 {
+
+//ThemeMetric<TapNoteScoreJudgeType> LAST_OR_MINIMUM_TNS	("Gameplay","LastOrMinimumTapNoteScore");
 
 int GetNumTapNotesWithScore( const NoteData &in, TapNoteScore tns, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW )
 { 
@@ -155,13 +160,70 @@ int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 	return best_track;
 }
 
+/* Return the minimum tap score of a row: the lowest grade of the tap in the row.
+ * If the row isn't complete (not all taps have been hit),
+ * return TNS_NONE or TNS_MISS. */
+#if 0
+int MinTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
+{
+	// this shit is a wip
+	float scoretime = -9999;
+	int worst_track = -1;
+	TapNoteScore lowestTNS = TapNoteScore_Invalid;
+	for( int t=0; t<in.GetNumTracks(); t++ )
+	{
+		// Skip empty tracks and mines
+		const TapNote &tn = in.GetTapNote( t, iRow );
+		if( tn.type == TapNote::empty || tn.type == TapNote::mine || tn.type == TapNote::fake ) 
+			continue;
+		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
+			continue;
+
+		TapNoteScore tns = tn.result.tns;
+
+		if( tns == TNS_Miss || tns == TNS_None )
+			return t;
+
+		float tm = tn.result.fTapNoteOffset;
+		if(tm > scoretime) continue; // huh -aj
+
+		// enum compare against lowestTNS here
+		//if( tns < lowestTNS ) continue;
+
+		scoretime = tm;
+		worst_track = t;
+	}
+
+	return worst_track;
+}
+#endif
+
 }
 
 const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, unsigned iRow, PlayerNumber pn )
 {
+	// Allow this to be configurable between LastTapNoteScoreTrack and
+	// MinTapNoteScore; this change inspired by PumpMania (Zmey, et al) -aj
+	/*
+	LOG->Trace( ssprintf("hi i'm NoteDataWithScoring::LastTapNoteWithResult(NoteData in, iRow=%i, PlayerNumber pn)", iRow) );
+	int iTrack = 0;
+	switch(LAST_OR_MINIMUM_TNS)
+	{
+		case TapNoteScoreJudgeType_MinimumScore:
+			iTrack = MinTapNoteScoreTrack( in, iRow, pn );
+			LOG->Trace( ssprintf("TapNoteScoreJudgeType_MinimumScore omg iTrack is %i and iRow is %i",iTrack,iRow) );
+			break;
+		case TapNoteScoreJudgeType_LastScore:
+		default:
+			iTrack = LastTapNoteScoreTrack( in, iRow, pn );
+			break;
+	}
+	*/
 	int iTrack = LastTapNoteScoreTrack( in, iRow, pn );
 	if( iTrack == -1 )
 		return TAP_EMPTY;
+
+	//LOG->Trace( ssprintf("returning in.GetTapNote(iTrack=%i, iRow=%i)", iTrack, iRow) );
 	return in.GetTapNote( iTrack, iRow );
 }
 
@@ -170,6 +232,7 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
  * taps have been hit), return TNS_None or TNS_Miss. */
 TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row, PlayerNumber pn )
 {
+	//LOG->Trace("Hey I'm NoteDataWithScoring::MinTapNoteScore");
 	TapNoteScore score = TNS_W1;
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
@@ -182,6 +245,7 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 		score = min( score, tn.result.tns );
 	}
 
+	//LOG->Trace( ssprintf("OMG score is?? %s",TapNoteScoreToString(score).c_str()) );
 	return score;
 }
 
@@ -276,6 +340,7 @@ void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, const Player
 		case RadarCategory_Rolls:		out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_Held );	break;
 		case RadarCategory_MinMidiNote:		out[rc] = 0;	break;	// no meaning
 		case RadarCategory_MaxMidiNote:		out[rc] = 0;	break;	// no meaning
+		//case RadarCategory_Minefields:	out[rc] = (float) GetNumMinefieldsWithScore( in, TapNote::hold_head_mine, HNS_Held );	break;
 		DEFAULT_FAIL( rc );
 		}
 	}

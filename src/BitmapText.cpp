@@ -33,9 +33,11 @@ static vector<RageColor> RAINBOW_COLORS;
 
 BitmapText::BitmapText()
 {
-	// Loading these theme metrics is slow, so only do it ever 20th time.
+	// Loading these theme metrics is slow, so only do it every 20th time.
+	// todo: why not check to see if you need to bother updating the fucker
+	// at all? -aj
 	static int iReloadCounter = 0;
-	if( iReloadCounter%20==0 )
+	if( iReloadCounter % 20==0 )
 	{
 		RAINBOW_COLORS.resize( NUM_RAINBOW_COLORS );
 		for( unsigned i = 0; i < RAINBOW_COLORS.size(); ++i )
@@ -54,10 +56,11 @@ BitmapText::BitmapText()
 	m_fMaxHeight = 0;
 	m_iVertSpacing = 0;
 	m_bHasGlowAttribute = false;
-
-	m_StrokeColor = RageColor(1,1,1,1);
-
-	SetShadowLength( 4 );
+	// We'd be better off not adding strokes to things we can't control
+	// themewise (ScreenDebugOverlay for example).
+	m_StrokeColor = RageColor(0,0,0,0);
+	// Never, this way we dont have awkward settings between themes.
+	SetShadowLength( 0 );
 }
 
 BitmapText::~BitmapText()
@@ -346,7 +349,7 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 			 * the texture wrapping state. If setting the wrapping state is found to be slow, 
 			 * there should probably be a "don't care" texture wrapping mode set in Actor. -Chris */
 			Actor::SetTextureRenderStates();
-			
+
 			RageSpriteVertex &start_vertex = m_aVertices[start*4];
 			int iNumVertsToDraw = (end-start)*4;
 			DISPLAY->DrawQuads( &start_vertex, iNumVertsToDraw );
@@ -756,7 +759,7 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 {
 	if( lua_type(L, iPos) != LUA_TTABLE )
 		return;
-	
+
 	lua_pushvalue( L, iPos );
 	const int iTab = lua_gettop( L );
 
@@ -764,7 +767,7 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 	lua_getfield( L, iTab, "Length" );
 	length = lua_tointeger( L, -1 );
 	lua_settop( L, iTab );
-	
+
 	// Get the diffuse colors.
 	lua_getfield( L, iTab, "Diffuses" );
 	if( !lua_isnil(L, -1) )
@@ -776,7 +779,7 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 		}
 	}
 	lua_settop( L, iTab );
-	
+
 	// Get a single diffuse color.
 	lua_getfield( L, iTab, "Diffuse" );
 	if( !lua_isnil(L, -1) )
@@ -785,7 +788,7 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 		diffuse[1] = diffuse[2] = diffuse[3] = diffuse[0];
 	}
 	lua_settop( L, iTab );
-	
+
 	// Get the glow color.
 	lua_getfield( L, iTab, "Glow" );
 	glow.FromStack( L, -1 );

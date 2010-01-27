@@ -40,7 +40,6 @@ struct RadarValues
 	RadarValues();
 	void MakeUnknown();
 	void Zero();
-	
 
 	RadarValues& operator+=( const RadarValues& other )
 	{

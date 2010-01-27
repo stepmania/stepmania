@@ -66,6 +66,15 @@ enum BannerCacheMode
 	NUM_BannerCacheMode,
 	BannerCacheMode_Invalid
 };
+enum BackgroundCacheMode
+{
+	BGCACHE_OFF,
+	BGCACHE_LOW_RES_PRELOAD, // preload low-res on start
+	BGCACHE_LOW_RES_LOAD_ON_DEMAND, // preload low-res on screen load
+	BGCACHE_FULL,
+	NUM_BackgroundCacheMode,
+	BackgroundCacheMode_Invalid
+};
 enum HighResolutionTextures
 {
 	HighResolutionTextures_Auto,
@@ -158,6 +167,7 @@ public:
 	Preference<bool>	m_bDelayedTextureDelete;
 	Preference<bool>	m_bDelayedModelDelete;
 	Preference<BannerCacheMode>		m_BannerCache;
+	Preference<BackgroundCacheMode>		m_BackgroundCache;
 	Preference<bool>	m_bFastLoad;
 	Preference<bool>        m_bFastLoadAdditionalSongs;
 
@@ -175,18 +185,18 @@ public:
 	Preference<bool>	m_bMercifulBeginner;	// don't subtract from percent score or grade DP, larger W5 window
 	Preference<bool>	m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
 	Preference<bool>	m_bDelayedBack;
-	Preference<bool>	m_bShowInstructions;
-	Preference<bool>	m_bShowSelectGroup;
+	Preference<bool>	m_bShowInstructions;	// how to play a mode
+	Preference<bool>	m_bShowSelectGroup;	// uh i thought we removed this shit
 	Preference<bool>	m_bShowCaution;
 	Preference<bool>	m_bShowNativeLanguage;
 	Preference<int>		m_iArcadeOptionsNavigation;
 	Preference<MusicWheelUsesSections>		m_MusicWheelUsesSections;
 	Preference<int>		m_iMusicWheelSwitchSpeed;
-	Preference<AllowW1>	m_AllowW1;
-	Preference<bool>	m_bEventMode;
+	Preference<AllowW1>	m_AllowW1;	// this should almost always be on, given use cases.
+	Preference<bool>	m_bEventMode;	// IF THIS IS NOT TRUE I WILL SHIT IN YOUR MOUTH -aj
 	Preference<int>		m_iCoinsPerCredit;
 	Preference<int>		m_iSongsPerPlay;
-	Preference<bool>	m_bDelayedCreditsReconcile;
+	Preference<bool>	m_bDelayedCreditsReconcile;	// zuh?
 	Preference<Maybe>		m_ShowSongOptions;
 	Preference<bool>	m_bDancePointsForOni;
 	Preference<bool>	m_bPercentageScoring;
@@ -249,6 +259,9 @@ public:
 	Preference<RString>	m_sAdditionalCourseFolders;
 	Preference<RString>	m_sAdditionalFolders;
 
+	// failsafe
+	Preference<RString>	m_sDefaultTheme;
+
 	Preference<RString>	m_sLastSeenVideoDriver;
 	Preference<RString>	m_sVideoRenderers;		// StepMania.cpp sets these on first run based on the card
 	Preference<bool>	m_bSmoothLines;
@@ -264,6 +277,8 @@ public:
 	Preference<bool>	m_bMonkeyInput;
 	Preference<RString>	m_sMachineName;
 	Preference<RString>	m_sCoursesToShowRanking;
+
+	Preference<bool>	m_bQuirksMode;			// enable quirky behavior desired by users of microsoft stepmania explorer 6.9
 
 	/* Debug: */
 	Preference<bool>	m_bLogToDisk;

@@ -34,14 +34,14 @@ class AnimatedTexture
 public:
 	AnimatedTexture();
 	~AnimatedTexture();
-	
+
 	void LoadBlank();
 	void Load( const RString &sTexOrIniFile );
 	void Unload();
 	void Update( float fDelta );
-	
+
 	RageTexture* GetCurrentTexture();
-	
+
 	int GetNumStates() const;
 	void SetState( int iNewState );
 	float GetAnimationLengthSeconds() const;

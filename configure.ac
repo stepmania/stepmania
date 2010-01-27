@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT(StepMania, CVS, [stepmania-devs@lists.sf.net], StepMania)
+AC_INIT(sm-ssc, experimental, [http://ssc.ajworld.net/sm-ssc/], StepMania)
 AC_CONFIG_SRCDIR([src/StepMania.cpp])
 AC_CONFIG_AUX_DIR(autoconf)
 AC_CANONICAL_TARGET
@@ -211,8 +211,8 @@ AC_CHECK_HEADERS([inttypes.h endian.h machine/endian.h alloca.h])
 have_pulse=no
 AC_CHECK_LIB(pulse, pa_stream_new, have_pulse=yes)
 if test x$have_pulse = xyes; then
-  AC_DEFINE(HAVE_PULSE, 1, [pulseaudio support available])
-  LIBS="$LIBS -lpulse"
+	AC_DEFINE(HAVE_PULSE, 1, [pulseaudio support available])
+	LIBS="$LIBS -lpulse"
 fi
 
 AC_MSG_CHECKING(if cstdlib breaks llabs)

@@ -21,7 +21,7 @@ void ScreenSelectProfile::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;
-	
+
 	ScreenWithMenuElements::Input( input );
 }
 
@@ -88,12 +88,12 @@ bool ScreenSelectProfile::Finish(){
 		if( m_iSelectedProfiles[p] > PROFILEMAN->GetNumLocalProfiles() )
 			return false;
 
-		//inc used profile count
+		// inc used profile count
 		if( m_iSelectedProfiles[p] > 0 )
 			iUsedLocalProfiles++;
 	}
 
-	//this allows to continue if there is less local profiles than number of human players
+	// this allows to continue if there is less local profiles than number of human players
 	if( iUnselectedProfiles && iUsedLocalProfiles < PROFILEMAN->GetNumLocalProfiles() )
 		return false;
 
@@ -117,7 +117,7 @@ bool ScreenSelectProfile::Finish(){
 			bool bSuccess = PROFILEMAN->LoadProfileFromMemoryCard( p, true );	// load full profile
 			MEMCARDMAN->UnmountCard( p );
 
-			/* Lock the card on successful load, so we won't allow it to be changed. */
+			// Lock the card on successful load, so we won't allow it to be changed.
 			if( bSuccess )
 				MEMCARDMAN->LockCard( p );
 		}

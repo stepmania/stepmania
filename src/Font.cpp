@@ -228,7 +228,8 @@ Font::Font()
 	m_iRefCount = 1;
 	m_pDefault = NULL;
 	m_bRightToLeft = false;
-	m_DefaultStrokeColor = RageColor(1,1,1,1);
+	// don't show strokes by default
+	m_DefaultStrokeColor = RageColor(0,0,0,0);
 }
 
 Font::~Font()

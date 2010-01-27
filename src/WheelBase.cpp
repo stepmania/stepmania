@@ -94,12 +94,12 @@ void WheelBase::SetItemPosition( Actor &item, float fPosOffsetsFromMiddle )
 	int iNumItems = 1; // dummy
 
 	Actor::TweenState ts = m_exprItemTransformFunction.GetTransformCached( fPosOffsetsFromMiddle, iItemIndex, iNumItems );
-	
+
 	/* Round to achieve pixel alignment.  Any benefit to moving this to Lua? -Chris */
 	ts.pos.x = roundf( ts.pos.x );
 	ts.pos.y = roundf( ts.pos.y );
 	ts.pos.z = roundf( ts.pos.z );
-	
+
 	item.DestTweenState() = ts;
 }
 
@@ -300,7 +300,6 @@ bool WheelBase::Select()	// return true if this selection can end the screen
 	return true;
 }
 
-// return true if this selection ends the screen
 WheelItemBaseData* WheelBase::GetItem( unsigned int iIndex )
 {
 	if( !m_bEmpty && iIndex < m_CurWheelItemData.size() )
@@ -442,7 +441,7 @@ void WheelBase::RebuildWheelItems( int iDist )
 	int iFirstVisibleIndex = m_iSelection;
 	if( m_iSelection > int(data.size()-1) )
 		m_iSelection = 0;
-		
+
 	// find the first wheel item shown
 	iFirstVisibleIndex -= NUM_WHEEL_ITEMS/2;
 
@@ -524,10 +523,18 @@ public:
 
 		return 1;
 	}
+	static int IsSettled( T* p, lua_State *L ){ lua_pushboolean( L, p->IsSettled() ); return 1; }
+	static int IsLocked( T* p, lua_State *L ){ lua_pushboolean( L, p->WheelIsLocked() ); return 1; }
+	// evil shit
+	static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); return 1; }
 
 	LunaWheelBase()
 	{
 		ADD_METHOD( GetWheelItem );
+		ADD_METHOD( IsSettled );
+		ADD_METHOD( IsLocked );
+		// evil shit
+		ADD_METHOD( Move );
 	}
 };
 

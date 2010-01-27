@@ -144,7 +144,7 @@ void ScreenOptionsCourseOverview::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 	}
-        else if( SM == SM_BackFromRename )
+	else if( SM == SM_BackFromRename )
 	{
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{

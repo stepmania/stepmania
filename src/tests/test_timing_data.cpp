@@ -20,7 +20,7 @@ void run()
 
 	TimingData test;
 	test.AddBPMSegment( BPMSegment(0, 60) );
-	
+
 	/* First, trivial sanity checks. */
 	CHECK( test.GetBeatFromElapsedTime(60), 60.0f );
 	CHECK( test.GetElapsedTimeFromBeat(60), 60.0f );
@@ -28,12 +28,12 @@ void run()
 	/* The first BPM segment extends backwards in time. */
 	CHECK( test.GetBeatFromElapsedTime(-60), -60.0f );
 	CHECK( test.GetElapsedTimeFromBeat(-60), -60.0f );
-	
+
 	CHECK( test.GetBeatFromElapsedTime(100000), 100000.0f );
 	CHECK( test.GetElapsedTimeFromBeat(100000), 100000.0f );
 	CHECK( test.GetBeatFromElapsedTime(-100000), -100000.0f );
 	CHECK( test.GetElapsedTimeFromBeat(-100000), -100000.0f );
-	
+
 	CHECK( test.GetBPMAtBeat(0), 60.0f );
 	CHECK( test.GetBPMAtBeat(100000), 60.0f );
 	CHECK( test.GetBPMAtBeat(-100000), 60.0f );
@@ -64,7 +64,7 @@ void run()
 	CHECK( test.GetBeatFromElapsedTime(14), 10.0f );
 	CHECK( test.GetBeatFromElapsedTime(15), 10.0f );
 	CHECK( test.GetBeatFromElapsedTime(15.5), 11.0f );
-	
+
 	CHECK( test.GetElapsedTimeFromBeat(9), 9.0f );
 	CHECK( test.GetElapsedTimeFromBeat(10), 10.0f );
 	CHECK( test.GetElapsedTimeFromBeat(11), 15.5f );
@@ -101,6 +101,8 @@ void run()
 	CHECK( test.GetElapsedTimeFromBeat(15.0f), 14.5f ); // stopped
 	CHECK( test.GetElapsedTimeFromBeat(16), 20.0f );
 
+	/* todo: add warp tests once the warp code is done */
+
 RageTimer foobar;
 	/* We can look up the time of any given beat, then look up the beat of that
 	 * time and get the original value.  (We can't do this in reverse; the beat
@@ -113,7 +115,7 @@ int q = 0;
 		const float b = test.GetBeatFromElapsedTime( f );
 
 		/* b == f */
-	
+
 //		if( fabsf(b-f) > 0.001 )
 //		{
 //			LOG->Warn( "%f != %f", b, f );
@@ -122,6 +124,7 @@ int q = 0;
 	}
 LOG->Trace("... %i in %f", q, foobar.GetDeltaTime());
 
+	// todo: add warp segments
 	TimingData test2;
 	test2.AddBPMSegment( BPMSegment(0, 60) );
 	test2.AddStopSegment( StopSegment(0, 1) );
@@ -145,7 +148,7 @@ int main( int argc, char *argv[] )
 	LOG->SetFlushing( true );
 
 	run();
-	
+
 	delete PREFSMAN;
 	delete LOG;
 	delete FILEMAN;

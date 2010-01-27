@@ -28,7 +28,8 @@ public:
 	virtual RoomWheelItem *Copy() const { return new RoomWheelItem(*this); }
 
 private:
-	AutoActor	m_sprBar;
+	AutoActor	m_sprNormalPart;
+	AutoActor	m_sprColorPart;
 	BitmapText	m_text;
 	BitmapText	m_Desc;
 };
@@ -54,7 +55,7 @@ public:
 	virtual void Move( int n );
 
 	inline RoomWheelItemData *GetItem( unsigned int i ) { return dynamic_cast<RoomWheelItemData*>( WheelBase::GetItem(i + m_offset) ); }
-	void AddPerminateItem( RoomWheelItemData *itemdata );
+	void AddPermanentItem( RoomWheelItemData *itemdata );
 	int GetCurrentIndex() const { return m_iSelection; }
 	int GetPerminateOffset() const { return m_offset; }
 	void AddItem( WheelItemBaseData *itemdata );

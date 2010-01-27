@@ -24,6 +24,8 @@ namespace CourseUtil
 	void SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, ProfileSlot slot, bool bDescending );
 	void SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, const Profile* pProfile, bool bDescending );
 	void SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesInOut );
+	// sm-ssc sort additions:
+	//void SortCoursePointerArrayBySectionName( vector<Course*> &vpCoursesInOut, SortOrder so );
 
 	void MoveRandomToEnd( vector<Course*> &vpCoursesInOut );
 
@@ -36,6 +38,9 @@ namespace CourseUtil
 	bool ValidateEditCourseName( const RString &sAnswer, RString &sErrorOut );
 
 	void WarnOnInvalidMods( RString sMods );
+
+	// sm-ssc additions:
+	//RString GetSectionNameFromCourseAndSort( const Course *pCourse, SortOrder so );
 };
 
 namespace EditCourseUtil

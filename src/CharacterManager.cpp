@@ -132,10 +132,31 @@ public:
 
 		return 1;
 	}
+	static int GetRandomCharacter( T* p, lua_State *L )
+	{
+		Character *pCharacter = p->GetRandomCharacter();
+		if( pCharacter != NULL )
+			pCharacter->PushSelf( L );
+		else
+			lua_pushnil( L );
+
+		return 1;
+	}
+	static int GetAllCharacters( T* p, lua_State *L )
+	{
+		vector<Character*> vChars;
+		p->GetCharacters(vChars);
+
+		LuaHelpers::CreateTableFromArray(vChars, L);
+		return 1;
+	}
 
 	LunaCharacterManager()
 	{
 		ADD_METHOD( GetCharacter );
+		// sm-ssc adds:
+		ADD_METHOD( GetRandomCharacter );
+		ADD_METHOD( GetAllCharacters );
 	}
 };
 

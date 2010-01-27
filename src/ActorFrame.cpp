@@ -11,9 +11,9 @@
 #include "ScreenDimensions.h"
 #include "Foreach.h"
 
-/* Tricky: We need ActorFrames created in XML to auto delete their children.
+/* Tricky: We need ActorFrames created in Lua to auto delete their children.
  * We don't want classes that derive from ActorFrame to auto delete their 
- * children.  The name "ActorFrame" is widely used in XML, so we'll have
+ * children.  The name "ActorFrame" is widely used in Lua, so we'll have
  * that string instead create an ActorFrameAutoDeleteChildren object.
  */
 //REGISTER_ACTOR_CLASS( ActorFrame )
@@ -34,6 +34,10 @@ ActorFrame::ActorFrame()
 	m_fVanishY = SCREEN_CENTER_Y;
 	m_bOverrideLighting = false;
 	m_bLighting = false;
+	m_ambientColor = RageColor(1,1,1,1);
+	m_diffuseColor = RageColor(1,1,1,1);
+	m_specularColor = RageColor(1,1,1,1);
+	m_lightDirection = RageVector3(0,0,1);
 }
 
 ActorFrame::~ActorFrame()
@@ -57,6 +61,10 @@ ActorFrame::ActorFrame( const ActorFrame &cpy ):
 	CPY( m_fVanishY );
 	CPY( m_bOverrideLighting );
 	CPY( m_bLighting );
+	CPY( m_ambientColor );
+	CPY( m_diffuseColor );
+	CPY( m_specularColor );
+	CPY( m_lightDirection );
 #undef CPY
 
 	/* If m_bDeleteChildren, we own our children and it's up to us to copy
@@ -91,6 +99,15 @@ void ActorFrame::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue( "VanishX", m_fVanishX );
 	pNode->GetAttrValue( "VanishY", m_fVanishY );
 	m_bOverrideLighting = pNode->GetAttrValue( "Lighting", m_bLighting );
+	// new lighting values
+	// Values need to be converted into RageColors, so more work needs to be done...
+	/*
+	pNode->GetAttrValue( "AmbientColor", m_ambientColor );
+	pNode->GetAttrValue( "DiffuseColor", m_diffuseColor );
+	pNode->GetAttrValue( "SpecularColor", m_specularColor );
+	*/
+	// Values need to be converted into a RageVector3, so more work needs to be done...
+	//pNode->GetAttrValue( "LightDirection", m_lightDirection );
 }
 
 void ActorFrame::LoadChildrenFromNode( const XNode* pNode )
@@ -98,9 +115,7 @@ void ActorFrame::LoadChildrenFromNode( const XNode* pNode )
 	// Shouldn't be calling this unless we're going to delete our children.
 	ASSERT( m_bDeleteChildren );
 
-	//
 	// Load children
-	//
 	const XNode* pChildren = pNode->GetChild("children");
 	bool bArrayOnly = false;
 	if( pChildren == NULL )
@@ -205,15 +220,10 @@ void ActorFrame::BeginDraw()
 	{
 		DISPLAY->SetLighting( m_bLighting );
 		if( m_bLighting )
-			DISPLAY->SetLightDirectional( 
-						      0, 
-						      RageColor(1,1,1,1), 
-						      RageColor(1,1,1,1),
-						      RageColor(1,1,1,1),
-						      RageVector3(0,0,1) );
-	}	
-}	
-	
+			DISPLAY->SetLightDirectional( 0,m_ambientColor,m_diffuseColor,m_specularColor,m_lightDirection );
+	}
+}
+
 
 void ActorFrame::DrawPrimitives()
 {
@@ -326,6 +336,8 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 		Actor *pActor = *it;
 		pActor->Update(fDeltaTime);
 	}
+
+	// todo: update lighting?
 
 	if( unlikely(!m_UpdateFunction.IsNil()) )
 	{
@@ -516,6 +528,44 @@ public:
 	}
 	static int SortByDrawOrder( T* p, lua_State *L )		{ p->SortByDrawOrder(); return 0; }
 
+	static int SetAmbientLightColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetAmbientLightColor( c ); return 0; }
+	static int SetDiffuseLightColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLightColor( c ); return 0; }
+	static int SetSpecularLightColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetSpecularLightColor( c ); return 0; }
+	static int SetLightDirection( T* p, lua_State *L )
+	{
+		luaL_checktype( L, 1, LUA_TTABLE );
+		lua_pushvalue( L, 1 );
+		vector<float> coords;
+		LuaHelpers::ReadArrayFromTable( coords, L );
+		lua_pop( L, 1 );
+		if( coords.size() !=3 )
+		{
+			//error
+		}
+		RageVector3 vTmp = RageVector3( coords[0], coords[1], coords[2] );
+		p->SetLightDirection( vTmp );
+		return 0;
+	}
+	// xxx: these might not be good ideas... -aj
+	/*
+	static int AddChild( T* p, lua_State *L )
+	{
+		// this one is tricky, we need to get an Actor from Lua.
+		return 0;
+	}
+	
+	static int RemoveChild( T* p, lua_State *L )
+	{
+		Actor *pChild = p->GetChild( SArg(1) );
+		if( pChild )
+			p->RemoveChild( pChild );
+		else
+			lua_pushnil( L );
+		return 1;
+	}
+	static int RemoveAllChildren( T* p, lua_State *L )				{ p->RemoveAllChildren( ); return 0; }
+	*/
+
 	LunaActorFrame()
 	{
 		ADD_METHOD( playcommandonchildren );
@@ -535,6 +585,16 @@ public:
 		ADD_METHOD( GetDrawFunction );
 		ADD_METHOD( SetUpdateFunction );
 		ADD_METHOD( SortByDrawOrder );
+		ADD_METHOD( SetAmbientLightColor );
+		ADD_METHOD( SetDiffuseLightColor );
+		ADD_METHOD( SetSpecularLightColor );
+		ADD_METHOD( SetLightDirection );
+		// not good ideas
+		/*
+		ADD_METHOD( AddChild );
+		ADD_METHOD( RemoveChild );
+		ADD_METHOD( RemoveAllChildren );
+		*/
 	}
 };
 

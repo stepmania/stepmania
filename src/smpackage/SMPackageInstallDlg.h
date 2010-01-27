@@ -5,7 +5,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 // SMPackageInstallDlg.h : header file
-//
 
 /////////////////////////////////////////////////////////////////////////////
 // CSMPackageInstallDlg dialog

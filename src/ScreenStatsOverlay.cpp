@@ -11,7 +11,7 @@ REGISTER_SCREEN_CLASS( ScreenStatsOverlay );
 void ScreenStatsOverlay::Init()
 {
 	Screen::Init();
-	
+
  	m_textStats.LoadFromFont( THEME->GetPathF(m_sName,"stats") );
 	m_textStats.SetName( "Stats" );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textStats ); 
@@ -30,7 +30,7 @@ void ScreenStatsOverlay::Init()
 		SKIP_Y.Load( m_sName, "SkipY" );
 		SKIP_SPACING_Y.Load( m_sName, "SkipSpacingY" );
 		SKIP_WIDTH.Load( m_sName, "SkipWidth" );
-		
+
 		RectF rectSkips = RectF(
 			SKIP_X-SKIP_WIDTH/2, 
 			SKIP_Y-(SKIP_SPACING_Y*NUM_SKIPS_TO_SHOW)/2 - 10, 
@@ -111,7 +111,7 @@ void ScreenStatsOverlay::UpdateSkips()
 
 	/* We want to display skips.  We expect to get updates of about 1.0/FPS ms. */
 	const float ExpectedUpdate = 1.0f / DISPLAY->GetFPS();
-	
+
 	/* These are thresholds for severity of skips.  The smallest
 	 * is slightly above expected, to tolerate normal jitter. */
 	const float Thresholds[] =
@@ -141,8 +141,6 @@ void ScreenStatsOverlay::UpdateSkips()
 			LOG->Trace( "Frame skip: %.0fms (%.0f)", 1000*UpdateTime, UpdateTime/ExpectedUpdate );
 	}
 }
-
-
 
 /*
  * (c) 2001-2005 Chris Danford, Glenn Maynard

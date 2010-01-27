@@ -8,6 +8,7 @@
 #include "RageThreads.h"
 #include "Foreach.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "LuaManager.h"
 
 #include <cerrno>
 
@@ -174,6 +175,7 @@ static RageFileDriverMountpoints *g_Mountpoints = NULL;
 static RString GetDirOfExecutable( RString argv0 )
 {
 #ifdef _XBOX
+	// ???: what if it's not running from D:\?
 	return "D:\\";
 #else
 	/* argv[0] can be wrong in most OS's; try to avoid using it. */
@@ -211,10 +213,10 @@ static RString GetDirOfExecutable( RString argv0 )
 		{
 			// This is in our path so look for it.
 			const char *path = getenv( "PATH" );
-			
+
 			if( !path )
 				path = _PATH_DEFPATH;
-			
+
 			vector<RString> vPath;
 			split( path, ":", vPath );
 			FOREACH( RString, vPath, i )
@@ -276,6 +278,15 @@ RageFileManager::RageFileManager( const RString &argv0 )
 
 	/* The mount path is unused, but must be nonempty. */
 	RageFileManager::Mount( "mem", "(cache)", "/@mem" );
+
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "FILEMAN" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
 }
 
 void RageFileManager::MountInitialFilesystems()
@@ -290,6 +301,9 @@ void RageFileManager::MountUserFilesystems()
 
 RageFileManager::~RageFileManager()
 {
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "FILEMAN" );
+
 	/* Note that drivers can use previously-loaded drivers, eg. to load a ZIP
 	 * from the FS.  Unload drivers in reverse order. */
 	for( int i = g_pDrivers.size()-1; i >= 0; --i )
@@ -444,6 +458,7 @@ void RageFileManager::CreateDir( const RString &sDir )
 	RageFile f;
 	f.Open( sTempFile, RageFile::WRITE );
 	f.Close();
+
 	Remove( sTempFile );
 }
 
@@ -801,7 +816,7 @@ RageFileBasic *RageFileManager::OpenForReading( const RString &sPath, int mode, 
 		}
 
 		/* ENOENT (File not found) is low-priority: if some other error
-		 * was reported, return that instead. */
+		 was reported, return that instead. */
 		if( error != ENOENT )
 			err = error;
 	}
@@ -1017,6 +1032,60 @@ unsigned int GetHashForDirectory( const RString &sDir )
 
 	return hash; 
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaRageFileManager: public Luna<RageFileManager>
+{
+public:
+	static int DoesFileExist( T* p, lua_State *L ){ lua_pushboolean( L, p->DoesFileExist(SArg(1)) ); return 1; }
+	static int GetFileSizeBytes( T* p, lua_State *L ){ lua_pushnumber( L, p->GetFileSizeInBytes(SArg(1)) ); return 1; }
+	static int GetHashForFile( T* p, lua_State *L ){ lua_pushnumber( L, p->GetFileHash(SArg(1)) ); return 1; }
+	static int GetDirListing( T* p, lua_State *L )
+	{
+		vector<RString> vDirs;
+		bool bOnlyDirs = false;
+		bool bReturnPathToo = false;
+
+		// the last two arguments of GetDirListing are optional;
+		// let's reflect that in the Lua too. -aj
+		if( lua_gettop(L) >= 2 && !lua_isnil(L,2) )
+		{
+			bOnlyDirs = BArg(2);
+			if( !lua_isnil(L,3) )
+			{
+				bReturnPathToo = BArg(3);
+			}
+		}
+		//( Path, addTo, OnlyDirs=false, ReturnPathToo=false );
+		p->GetDirListing( SArg(1), vDirs, bOnlyDirs, bReturnPathToo );
+		LuaHelpers::CreateTableFromArray(vDirs, L);
+		return 1;
+	}
+	/*
+	static int GetDirListingRecursive( T* p, lua_State *L )
+	{
+		vector<RString> vDirs;
+		// (directory, match, addto)
+		GetDirListingRecursive( SArg(1), SArg(2), vDirs );
+		LuaHelpers::CreateTableFromArray(vDirs, L);
+		return 1;
+	}
+	*/
+
+	LunaRageFileManager()
+	{
+		ADD_METHOD( DoesFileExist );
+		ADD_METHOD( GetFileSizeBytes );
+		ADD_METHOD( GetHashForFile );
+		ADD_METHOD( GetDirListing );
+		//ADD_METHOD( GetDirListingRecursive );
+	}
+};
+
+LUA_REGISTER_CLASS( RageFileManager )
+// lua end
 
 /*
  * Copyright (c) 2001-2004 Glenn Maynard, Chris Danford

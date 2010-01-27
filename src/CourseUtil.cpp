@@ -109,6 +109,33 @@ void CourseUtil::SortCoursePointerArrayByTotalDifficulty( vector<Course*> &vpCou
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTotalDifficulty );
 }
 
+// this code isn't ready yet!!
+#if 0
+RString GetSectionNameFromCourseAndSort( const Course *pCourse, SortOrder so )
+{
+	if( pCourse == NULL )
+		return RString();
+	// more code here
+}
+
+void SortCoursePointerArrayBySectionName( vector<Course*> &vpCoursesInOut, SortOrder so )
+{
+	RString sOther = SORT_OTHER.GetValue();
+	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
+	{
+		RString val = GetSectionNameFromCourseAndSort( vpCoursesInOut[i], so );
+
+		/* Make sure 0-9 comes first and OTHER comes last. */
+		if( val == "0-9" )			val = "0";
+		else if( val == sOther )    val = "2";
+		else						val = "1" + MakeSortString(val);
+
+		//g_mapSongSortVal[vpSongsInOut[i]] = val;
+	}
+}
+#endif
+// ok real code begins again
+
 static bool CompareCoursePointersByType( const Course* pCourse1, const Course* pCourse2 )
 {
 	return pCourse1->GetPlayMode() < pCourse2->GetPlayMode();
@@ -307,6 +334,17 @@ void CourseUtil::WarnOnInvalidMods( RString sMods )
 		RString sErrorDetail;
 		bValid |= po.FromOneModString( *s, sErrorDetail );
 		bValid |= so.FromOneModString( *s, sErrorDetail );
+		/* ==Invalid options that used to be valid==
+		 * all noteskins (solo, note, foon, &c.)
+		 * protiming (done in Lua now)
+		 * ==Things I've seen in real course files==
+		 * 900% BRINK (damnit japan)
+		 * TISPY
+		 * 9000% OVERCOMING (what?)
+		 * 9200% TORNADE (it's like a grenade but a tornado)
+		 * 50% PROTIMING (HOW THE HELL DOES 50% PROTIMING EVEN WORK)
+		 * BREAK
+		 */
 		if( !bValid )
 		{
 			RString sFullError = ssprintf("Error processing '%s' in '%s'", (*s).c_str(), sMods.c_str() );
@@ -349,7 +387,7 @@ bool EditCourseUtil::RenameAndSave( Course *pCourse, RString sNewName )
 
 	// remove the old file if the name is changing
 	if( !pCourse->m_sPath.empty()  &&  sNewFilePath != pCourse->m_sPath )
-		FILEMAN->Remove( pCourse->m_sPath );	// not fatal if this fails		
+		FILEMAN->Remove( pCourse->m_sPath );	// not fatal if this fails
 
 	pCourse->m_sMainTitle = sNewName;
 	pCourse->m_sPath = sNewFilePath;

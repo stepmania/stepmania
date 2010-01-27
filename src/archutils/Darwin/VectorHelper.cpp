@@ -9,7 +9,7 @@ bool Vector::CheckForVector()
 {
 	int32_t result = 0;
 	size_t size = 4;
-	
+
 	return !sysctlbyname( "hw.vectorunit", &result, &size, NULL, 0 ) && result;
 }
 
@@ -28,19 +28,19 @@ void Vector::FastSoundWrite( float *dest, const float *src, unsigned size )
 		vFloat load1Src = vec_ld( 0, src );
 		vFloat load1Dest = vec_ld( 0, dest );
 		vFloat store = (vFloat)(0.0f);
-		
+
 		// If dest is misaligned, pull the first loop iteration out.
 		if( intptr_t(dest) & 0xF )
 		{
 			vFloat load2Src = vec_ld( 15, src );
 			vFloat load2Dest = vec_ld( 15, dest );
-			
+
 			load1Src  = vec_perm( load1Src,  load2Src,  srcMask  );
 			load1Dest = vec_perm( load1Dest, load2Dest, destMask );
-			
+
 			load1Dest = vec_add(  load1Dest, load1Src );
 			store     = vec_perm( load1Dest, load1Dest, storeMask );
-			
+
 			while( (intptr_t(dest) + index) & 0xC )
 			{
 				vec_ste( store, index, dest );
@@ -56,7 +56,7 @@ void Vector::FastSoundWrite( float *dest, const float *src, unsigned size )
 			 * as incrementing dest but since we read from dest as well
 			 * we don't want to increment twice so decrement the index. */
 			// XXX: What in the world did I mean here?
-			index -= 16;			
+			index -= 16;
 		}
 		while( size >= 32 )
 		{
@@ -144,7 +144,7 @@ void Vector::FastSoundWrite( float *dest, const float *src, unsigned size )
 		{
 			vFloat load2Src  = vec_ld( 15, src );
 			vFloat load2Dest = vec_ld( 15, dest );
-			
+
 			load1Src  = vec_perm( load1Src,  load2Src,  srcMask );
 			load1Dest = vec_perm( load1Dest, load2Dest, destMask );
 			load1Dest = vec_add(  load1Dest, load1Src );
@@ -179,7 +179,7 @@ void Vector::FastSoundWrite( float *dest, const float *src, unsigned size )
 
 #elif defined(__SSE2__)
 #include <xmmintrin.h>
-// This is portable to other sysems since it uses Intel's intrinsics.
+// This is portable to other systems since it uses Intel's intrinsics.
 
 bool Vector::CheckForVector()
 {
@@ -190,12 +190,12 @@ bool Vector::CheckForVector()
 void Vector::FastSoundWrite( float *dest, const float *src, unsigned size )
 {
 	while( (intptr_t(dest) & 0xF) && size )
-        {
-                // Misaligned stores are slow.
-                *(dest++) += *(src++);
-                --size;
-        }
-	
+	{
+		// Misaligned stores are slow.
+		*(dest++) += *(src++);
+		--size;
+	}
+
 	// Misaligned loads are slower so specialize to aligned loads when possible.
 	if( intptr_t(src) & 0xF )
 	{
@@ -211,7 +211,7 @@ void Vector::FastSoundWrite( float *dest, const float *src, unsigned size )
 			src  += 8;
 			dest += 8;
 			size -= 8;
-		}		
+		}
 	}
 	else
 	{
@@ -229,8 +229,8 @@ void Vector::FastSoundWrite( float *dest, const float *src, unsigned size )
 			size -= 8;
 		}
 	}
-        while( size-- )
-                *(dest++) += *(src++);
+		while( size-- )
+			*(dest++) += *(src++);
 }
 
 #else

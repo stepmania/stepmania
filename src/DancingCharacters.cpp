@@ -15,20 +15,20 @@
 #define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterYP%d",choice+1))
 
 const float CAMERA_REST_DISTANCE = 32.f;
-const float CAMERA_REST_LOOK_AT_HEIGHT = -9.f;
+const float CAMERA_REST_LOOK_AT_HEIGHT = -11.f;
 
-const float CAMERA_SWEEP_DISTANCE = 20.f;
-const float CAMERA_SWEEP_DISTANCE_VARIANCE = 8.f;
-const float CAMERA_SWEEP_HEIGHT_VARIANCE = 28.f;
+const float CAMERA_SWEEP_DISTANCE = 28.f;
+const float CAMERA_SWEEP_DISTANCE_VARIANCE = 4.f;
+const float CAMERA_SWEEP_HEIGHT_VARIANCE = 7.f;
 const float CAMERA_SWEEP_PAN_Y_RANGE_DEGREES = 45.f;
-const float CAMERA_SWEEP_PAN_Y_VARIANCE_DEGREES = 180.f;
-const float CAMERA_SWEEP_LOOK_AT_HEIGHT = -9.f;
+const float CAMERA_SWEEP_PAN_Y_VARIANCE_DEGREES = 60.f;
+const float CAMERA_SWEEP_LOOK_AT_HEIGHT = -11.f;
 
-const float CAMERA_STILL_DISTANCE = 13.f;
-const float CAMERA_STILL_DISTANCE_VARIANCE = 7.f;
-const float CAMERA_STILL_PAN_Y_RANGE_DEGREES = 45.f;
-const float CAMERA_STILL_HEIGHT_VARIANCE = 6.f;
-const float CAMERA_STILL_LOOK_AT_HEIGHT = -14.f;
+const float CAMERA_STILL_DISTANCE = 26.f;
+const float CAMERA_STILL_DISTANCE_VARIANCE = 3.f;
+const float CAMERA_STILL_PAN_Y_RANGE_DEGREES = 120.f;
+const float CAMERA_STILL_HEIGHT_VARIANCE = 5.f;
+const float CAMERA_STILL_LOOK_AT_HEIGHT = -10.f;
 
 const float MODEL_X_ONE_PLAYER = 0;
 const float MODEL_X_TWO_PLAYERS[NUM_PLAYERS] = { +8, -8 };
@@ -166,7 +166,7 @@ int Neg1OrPos1() { return RandomInt( 2 ) ? -1 : +1; }
 
 void DancingCharacters::Update( float fDelta )
 {
-	if( GAMESTATE->m_bFreeze )
+	if( GAMESTATE->m_bFreeze || GAMESTATE->m_bDelay )
 	{
 		// spin the camera Matrix style
 		m_CameraPanYStart += fDelta*40;
@@ -215,7 +215,7 @@ void DancingCharacters::Update( float fDelta )
 	// time for a new sweep?
 	if( GAMESTATE->m_fSongBeat > m_fThisCameraEndBeat )
 	{
-		if( RandomInt(5) >= 2 )
+		if( RandomInt(6) >= 4 )
 		{
 			// sweeping camera
 			m_CameraDistance = CAMERA_SWEEP_DISTANCE + RandomInt(-1,1) * CAMERA_SWEEP_DISTANCE_VARIANCE;
@@ -322,26 +322,29 @@ void DancingCharacters::DrawPrimitives()
 
 	FOREACH_EnabledPlayer( p )
 	{
-		if( PREFSMAN->m_bCelShadeModels )
-		{
-			m_pCharacter[p]->DrawCelShaded();
-			continue;
-		}
-
 		bool bFailed = STATSMAN->m_CurStageStats.m_player[p].m_bFailed;
 		bool bDanger = m_bDrawDangerLight;
 
 		DISPLAY->SetLighting( true );
 		RageColor ambient  = bFailed ? RageColor(0.2f,0.1f,0.1f,1) : (bDanger ? RageColor(0.4f,0.1f,0.1f,1) : RageColor(0.4f,0.4f,0.4f,1));
-		RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(0.8f,0.8f,0.8f,1));
+		RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(1,0.95f,0.925f,1));
 		RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
 		DISPLAY->SetLightDirectional( 
 			0,
 			ambient, 
 			diffuse,
 			specular,
-			RageVector3(+1, 0, +1) );
+			RageVector3(-3, -7.5, +9) );
 
+		if( PREFSMAN->m_bCelShadeModels )
+		{
+			m_pCharacter[p]->DrawCelShaded();
+
+			DISPLAY->SetLightOff( 0 );
+			DISPLAY->SetLighting( false );
+			continue;
+		}
+		
 		m_pCharacter[p]->Draw();
 
 		DISPLAY->SetLightOff( 0 );

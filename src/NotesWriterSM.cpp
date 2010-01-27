@@ -111,9 +111,26 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	{
 		const StopSegment &fs = out.m_Timing.m_StopSegments[i];
 
-		f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
-		if( i != out.m_Timing.m_StopSegments.size()-1 )
-			f.Write( "," );
+		if(!fs.m_bDelay)
+		{
+			f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
+			if( i != out.m_Timing.m_StopSegments.size()-1 )
+				f.Write( "," );
+		}
+	}
+	f.PutLine( ";" );
+
+	f.Write( "#DELAYS:" );
+	for( unsigned i=0; i<out.m_Timing.m_StopSegments.size(); i++ )
+	{
+		const StopSegment &fs = out.m_Timing.m_StopSegments[i];
+
+		if( fs.m_bDelay )
+		{
+			f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
+			if( i != out.m_Timing.m_StopSegments.size()-1 )
+				f.Write( "," );
+		}
 	}
 	f.PutLine( ";" );
 

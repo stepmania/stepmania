@@ -37,7 +37,6 @@ static const char *SelectionStateNames[] = {
 };
 XToString( SelectionState );
 
-
 const int NUM_SCORE_DIGITS = 9;
 
 #define SHOW_OPTIONS_MESSAGE_SECONDS		THEME->GetMetricF( m_sName, "ShowOptionsMessageSeconds" )
@@ -73,6 +72,7 @@ void ScreenSelectMusic::Init()
 	SAMPLE_MUSIC_DELAY_INIT.Load( m_sName, "SampleMusicDelayInit" );
 	SAMPLE_MUSIC_DELAY.Load( m_sName, "SampleMusicDelay" );
 	SAMPLE_MUSIC_LOOPS.Load( m_sName, "SampleMusicLoops" );
+	SAMPLE_MUSIC_PREVIEW_MODE.Load( m_sName, "SampleMusicPreviewMode" );
 	SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS.Load( m_sName, "SampleMusicFallbackFadeInSeconds" );
 	DO_ROULETTE_ON_MENU_TIMER.Load( m_sName, "DoRouletteOnMenuTimer" );
 	ALIGN_MUSIC_BEATS.Load( m_sName, "AlignMusicBeat" );
@@ -86,7 +86,6 @@ void ScreenSelectMusic::Init()
 	OPTIONS_LIST_TIMEOUT.Load( m_sName, "OptionsListTimeout" );
 	SELECT_MENU_CHANGES_DIFFICULTY.Load( m_sName, "SelectMenuChangesDifficulty" );
 	TWO_PART_SELECTION.Load( m_sName, "TwoPartSelection" );
-	TWO_PART_CONFIRMS_ONLY.Load( m_sName, "TwoPartConfirmsOnly" );
 	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
@@ -103,6 +102,10 @@ void ScreenSelectMusic::Init()
 	this->SubscribeToMessage( Message_PlayerJoined );
 
 	/* Cache: */
+	/* SSC 
+		Marking for change
+		-- Midiman 
+	*/
 	m_sSectionMusicPath =		THEME->GetPathS(m_sName,"section music");
 	m_sSortMusicPath =		THEME->GetPathS(m_sName,"sort music");
 	m_sRouletteMusicPath =		THEME->GetPathS(m_sName,"roulette music");
@@ -172,7 +175,7 @@ void ScreenSelectMusic::Init()
 		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
 		m_textHighScore[p].LoadFromFont( THEME->GetPathF(m_sName,"score") );
 		m_textHighScore[p].SetShadowLength( 0 );
-		m_textHighScore[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
+		//m_textHighScore[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_textHighScore[p] );
 		this->AddChild( &m_textHighScore[p] );
 	}	
@@ -359,8 +362,9 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{
-		// Don't change sort order when the wheel is locked.
-		if( !m_MusicWheel.WheelIsLocked() )
+		// Only allow changing the sort order if the wheel is not locked
+		// and we're not in course mode. -aj
+		if( !m_MusicWheel.WheelIsLocked() && !GAMESTATE->IsCourseMode() )
 		{
 			SortOrder so = GAMESTATE->m_SortOrder;
 			if ( ( so != SORT_TITLE ) && ( so != SORT_ARTIST ) )
@@ -380,6 +384,32 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			return;
 		}
 	}
+
+	// saturn2888 likes to make me pollute my source code with shit that only
+	// he will use
+#if defined(SAT2888)
+	if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT))
+		|| INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) )
+	{
+		switch( input.DeviceI.button )
+		{
+			case KEY_SPACE:
+				// clear all mods for all players
+				FOREACH_HumanPlayer( pn )
+				{
+					/*
+					GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Init();
+					GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
+					*/
+					GAMESTATE->m_pPlayerState[pn]->ResetToDefaultPlayerOptions( ModsLevel_Preferred );
+				}
+				m_soundOptionsChange.Play();
+				MESSAGEMAN->Broadcast("PlayerOptionsChanged");
+				break;
+		}
+	}
+#endif
+	// and for that saturn2888 is a nignog
 
 	// debugging?
 	// I just like being able to see untransliterated titles occasionally.
@@ -584,8 +614,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			{
 				ASSERT(0);
 			}
-			
-			
+
 			// Reset the repeat timer when the button is released.
 			// This fixes jumping when you release Left and Right after entering the sort 
 			// code at the same if L & R aren't released at the exact same time.
@@ -597,40 +626,25 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 	}
 
-	if(!TWO_PART_CONFIRMS_ONLY)
+	if( m_SelectionState == SelectionState_SelectingSteps  &&
+		input.type == IET_FIRST_PRESS  &&
+		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) &&
+		!m_bStepsChosen[input.pn] )
 	{
-
-		if( m_SelectionState == SelectionState_SelectingSteps  &&
-			input.type == IET_FIRST_PRESS  &&
-			(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) &&
-			!m_bStepsChosen[input.pn] )
+		if( input.MenuI == m_GameButtonPreviousSong )
 		{
-			if( input.MenuI == m_GameButtonPreviousSong )
-			{
-				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
-				else
-					ChangeSteps( input.pn, -1 );
-			}
-			else if( input.MenuI == m_GameButtonNextSong )
-			{
-				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
-				else
-					ChangeSteps( input.pn, +1 );
-			}		
-		}
-	}
-	else // two part selection without step selection
-	{
-		// moving the menu de-confirms your song choice.
-		if((input.MenuI == m_GameButtonPreviousSong || m_GameButtonNextSong) && input.MenuI != GAME_BUTTON_START)
-		{
-			if(GAMESTATE->IsAnExtraStageAndSelectionLocked())
+			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 				m_soundLocked.Play();
 			else
-				m_SelectionState = SelectionState_SelectingSong;
+				ChangeSteps( input.pn, -1 );
 		}
+		else if( input.MenuI == m_GameButtonNextSong )
+		{
+			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+				m_soundLocked.Play();
+			else
+				ChangeSteps( input.pn, +1 );
+		}		
 	}
 
 	if( input.type == IET_FIRST_PRESS && DetectCodes(input) )
@@ -804,6 +818,13 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 		bool b = msg.GetParam( "Player", pn );
 		ASSERT( b );
 
+		// load player profiles
+		if( GAMESTATE->HaveProfileToLoad() )
+		{
+			GAMESTATE->LoadProfiles( true ); // I guess you could always load edits here...
+			SCREENMAN->ZeroNextUpdate(); // be kind, don't skip frames if you can avoid it
+		}
+
 		m_iSelection[pn] = iSel;
 		if( GAMESTATE->IsCourseMode() )
 		{
@@ -815,12 +836,6 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 			Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
 			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 		}
-
-		// hack-hack: if using a sound in a lua script which plays on PlayerJoined
-		// a copy of the sound ends up floating forever more (thus leaking through
-		// each game play) using a localised version of the join command seems
-		// to overcome this.
-		this->PlayCommand( "SSMPlayerJoined" );
 	}
 	
 	ScreenWithMenuElements::HandleMessage( msg );
@@ -983,6 +998,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			return;
 		}
 
+		// I believe this is for those who like pump pro.
 		MESSAGEMAN->Broadcast("SongChosen");
 
 		break;
@@ -1000,18 +1016,12 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			}
 
 			bool bAllPlayersDoneSelectingSteps = bInitiatedByMenuTimer || bAllOtherHumanPlayersDone;
-
-			// if we are using song confirmation only, the confirmation affects all players
-			if(TWO_PART_CONFIRMS_ONLY) 
-			{
-				bAllPlayersDoneSelectingSteps = true;
-			}
-	
 			if( !bAllPlayersDoneSelectingSteps )
 			{
 				m_bStepsChosen[pn] = true;
 				m_soundStart.Play();
 
+				// ttt: Pro uses "StepsSelected".
 				Message msg("StepsChosen");
 				msg.SetParam( "Player", pn );
 				MESSAGEMAN->Broadcast( msg );
@@ -1036,17 +1046,6 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	MESSAGEMAN->Broadcast( msg );
 
 	m_soundStart.Play();
-
-	// if the menu timer has pressed start,
-	// and we are confirming song selection only,
-	// go straight to finalised state and initiate the song.
-	if(TWO_PART_CONFIRMS_ONLY)
-	{
-		if(m_MenuTimer->GetSeconds() < 1)
-		{
-			m_SelectionState = SelectionState_Finalized;
-		}
-	}
 
 
 	if( m_SelectionState == SelectionState_Finalized )
@@ -1129,6 +1128,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		float fSeconds = m_MenuTimer->GetSeconds();
 		if( fSeconds < 10 )
 		{
+			// TODO: make this a theme option -aj
 			m_MenuTimer->SetSeconds( 13 );
 			m_MenuTimer->Start();
 		}
@@ -1138,6 +1138,21 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 
 void ScreenSelectMusic::MenuBack( const InputEventPlus &input )
 {
+	// Handle unselect song (ffff)
+	if( m_SelectionState == SelectionState_SelectingSteps  &&  !m_bStepsChosen[input.pn]  &&  input.MenuI == GAME_BUTTON_BACK  &&  input.type == IET_FIRST_PRESS )
+	{
+		// if a player has chosen their steps already, don't unchoose song.
+		FOREACH_HumanPlayer( p )
+			if( m_bStepsChosen[p] ) return;
+
+		// and if we get here...
+		Message msg("SongUnchosen");
+		msg.SetParam( "Player", input.pn );
+		MESSAGEMAN->Broadcast( msg );
+		m_SelectionState = SelectionState_SelectingSong;
+		return;
+	}
+
 	m_BackgroundLoader.Abort();
 
 	Cancel( SM_GoToPrevScreen );
@@ -1350,10 +1365,25 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_SONG:
 	case TYPE_PORTAL:
-		m_sSampleMusicToPlay = pSong->GetMusicPath();
-		m_pSampleMusicTimingData = &pSong->m_Timing;
-		m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
-		m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
+		// check SampleMusicPreviewMode here.
+		switch( SAMPLE_MUSIC_PREVIEW_MODE )
+		{
+			case SampleMusicPreviewMode_ScreenMusic:
+				// play the screen music, hopefully?
+				m_sSampleMusicToPlay = m_sLoopMusicPath;
+				m_fSampleStartSeconds = 0;
+				m_fSampleLengthSeconds = -1;
+				break;
+			case SampleMusicPreviewMode_Normal:
+				// play the sample music
+				m_sSampleMusicToPlay = pSong->GetMusicPath();
+				m_pSampleMusicTimingData = &pSong->m_Timing;
+				m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
+				m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
+				break;
+			default:
+				ASSERT(0);
+		}
 
 		SongUtil::GetPlayableSteps( pSong, m_vpSteps );
 

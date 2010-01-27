@@ -24,6 +24,7 @@
 
 #if defined(HAVE_VERSION_INFO)
 extern const unsigned long version_num;
+extern const char *const version_date;
 extern const char *const version_time;
 #endif
 
@@ -203,7 +204,7 @@ static void child_process()
 	
 	fprintf( CrashDump, "%s crash report", PRODUCT_ID_VER );
 #if defined(HAVE_VERSION_INFO)
-	fprintf( CrashDump, " (build %lu, %s)", version_num, version_time );
+	fprintf( CrashDump, " (build %lu, %s @ %s)", version_num, version_date, version_time );
 #endif
 	fprintf( CrashDump, "\n" );
 	fprintf( CrashDump, "--------------------------------------\n" );

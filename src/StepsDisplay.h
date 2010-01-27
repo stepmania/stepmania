@@ -54,7 +54,7 @@ private:
 	BitmapText		m_textMeter;	/* 3, 9 */
 	BitmapText		m_textDescription; /* Easy, Medium, SuperCoolEdit */
 	AutoActor		m_sprAutogen;	// visible if Steps and is autogen'd
-	Sprite			m_sprStepsType;	// TODO: Make this an AutoActor
+	AutoActor		m_sprStepsType;	// TODO: Make this an AutoActor
 
 	ThemeMetric<int>	m_iNumTicks;
 	ThemeMetric<int>	m_iMaxTicks;

@@ -104,12 +104,11 @@ public:
 
 	void SetSendJudgmentAndComboMessages( bool b ) { m_bSendJudgmentAndComboMessages = b; }
 
-	//
+	vector<AlternateMapping> m_vAlterMap;
+
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
-	vector<AlternateMapping> m_vAlterMap;
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void UpdateJudgedRows();
@@ -150,6 +149,7 @@ protected:
 	float			m_fNoteFieldHeight;
 
 	bool			m_bPaused;
+	bool			m_bDelay;
 
 	NoteData		&m_NoteData;
 	NoteField		*m_pNoteField;
@@ -201,6 +201,7 @@ protected:
 	ThemeMetric<int>	BRIGHT_GHOST_COMBO_THRESHOLD;
 	ThemeMetric<bool>	TAP_JUDGMENTS_UNDER_FIELD;
 	ThemeMetric<bool>	HOLD_JUDGMENTS_UNDER_FIELD;
+	ThemeMetric<bool>	COMBO_UNDER_FIELD;
 	ThemeMetric<int>	DRAW_DISTANCE_AFTER_TARGET_PIXELS;
 	ThemeMetric<int>	DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
 	

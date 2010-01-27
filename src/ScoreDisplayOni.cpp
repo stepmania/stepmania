@@ -7,7 +7,7 @@
 #include "StatsManager.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"
-
+#include "ActorUtil.h"
 
 ScoreDisplayOni::ScoreDisplayOni()
 {
@@ -18,7 +18,9 @@ ScoreDisplayOni::ScoreDisplayOni()
 
 	// init the text
 	m_text.LoadFromFont( THEME->GetPathF("ScoreDisplayOni","numbers") );
+	m_text.SetName( "ScoreDisplayOni Numbers" );
 	m_text.SetShadowLength( 0 );
+	LOAD_ALL_COMMANDS( m_text );
 	this->AddChild( &m_text );
 }
 

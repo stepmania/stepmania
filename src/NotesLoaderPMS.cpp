@@ -141,9 +141,9 @@ static bool GetTagFromMap( const NameToData_t &mapNameToData, const RString &sNa
 	it = mapNameToData.find( sName );
 	if( it == mapNameToData.end() )
 		return false;
-	
+
 	sOut = it->second;
-	
+
 	return true;
 }
 
@@ -157,7 +157,7 @@ static bool GetCommonTagFromMapList( const vector<NameToData_t> &aPMSData, const
 		RString sTag;
 		if( !GetTagFromMap( aPMSData[i], sName, sTag ) )
 			continue;
-		
+
 		if( !bFoundOne )
 		{
 			bFoundOne = true;
@@ -168,7 +168,7 @@ static bool GetCommonTagFromMapList( const vector<NameToData_t> &aPMSData, const
 			sOut = FindLargestInitialSubstring( sOut, sTag );
 		}
 	}
-	
+
 	return bFoundOne;
 }
 
@@ -276,13 +276,13 @@ static void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out, Me
 	return;
 #if 0
 	sigAdjustmentsOut.clear();
-	
+
 	MeasureToTimeSig_t::const_iterator it;
 	for( it = sigs.begin(); it != sigs.end(); ++it )
 	{
 		int iMeasure = it->first;
 		float fFactor = it->second;
-		
+
 #if 1
 		static const float ValidFactors[] =
 		{
@@ -294,12 +294,12 @@ static void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out, Me
 			1.5f,   /* 6/4 */
 			1.75f   /* 7/4 */
 		};
-		
+
 		bool bValidTimeSignature = false;
 		for( unsigned i = 0; i < ARRAYLEN(ValidFactors); ++i )
 			if( fabsf(fFactor-ValidFactors[i]) < 0.001 )
 				bValidTimeSignature = true;
-		
+
 		if( bValidTimeSignature )
 			continue;
 #else
@@ -311,17 +311,17 @@ static void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out, Me
 		int iDiv = gcd( iNum, iDen );
 		iNum /= iDiv;
 		iDen /= iDiv;
-		
+
 		/* Real time signatures usually come down to 1/2, 3/4, 7/8, etc.  Bogus
 		 * signatures that are only there to adjust sync usually look like 99/100. */
 		if( iNum <= 8 && iDen <= 8 )
 			continue;
 #endif
-		
+
 		/* This time signature is bogus.  Convert it to a BPM adjustment for this
 		 * measure. */
 		LOG->Trace("Converted time signature %f in measure %i to a BPM segment.", fFactor, iMeasure );
-		
+
 		/* Note that this GetMeasureStartRow will automatically include any adjustments
 		 * that we've made previously in this loop; as long as we make the timing
 		 * adjustment and the BPM adjustment together, everything remains consistent.
@@ -342,7 +342,7 @@ static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t 
 		const RString &sName = it->first;
 		if( sName.size() != 6 || sName[0] != '#' || !IsAnInt(sName.substr(1, 5)) )
 			continue;
-		
+
 		// this is step or offset data.  Looks like "#00705"
 		const RString &sData = it->second;
 		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
@@ -380,13 +380,13 @@ static bool LoadFromPMSFile( const RString &sPath, const NameToData_t &mapNameTo
 
 	int iHoldStarts[NUM_PMS_TRACKS];
 	int iHoldPrevs[NUM_PMS_TRACKS];
-	
+
 	for( int i = 0; i < NUM_PMS_TRACKS; ++i )
 	{
 		iHoldStarts[i] = -1;
 		iHoldPrevs[i] = -1;
 	}
-	
+
 	NameToData_t::const_iterator it;
 	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
 	{
@@ -422,13 +422,13 @@ static bool LoadFromPMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
 		{
 			float fPercentThroughMeasure = (float)j/(float)iNumNotesInThisMeasure;
-			
+
 			int row = iRowNo + lrintf( fPercentThroughMeasure * fBeatsPerMeasure * ROWS_PER_BEAT );
-			
+
 			// some PMS files seem to have funky alignment, causing us to write gigantic cache files.
 			// Try to correct for this by quantizing.
 			row = Quantize( row, ROWS_PER_MEASURE/64 );
-			
+
 			PmsTrack pmsTrack;
 			bool bIsHold;
 			if( ConvertRawTrackToTapNote(iRawTrackNum, pmsTrack, bIsHold) )
@@ -493,7 +493,7 @@ static bool LoadFromPMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	{
 		const int iBegin = iHoldStarts[iTrack];
 		const int iEnd = iHoldPrevs[iTrack];
-				
+
 		if( iBegin == -1 )
 			continue;
 		if( iBegin < iEnd )
@@ -503,7 +503,7 @@ static bool LoadFromPMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	}		
 
 	out.m_StepsType = DetermineStepsType( iPlayer, ndNotes, sPath );
-	
+
 	if( out.m_StepsType == StepsType_Invalid )
 	{
 		LOG->UserLog( "Song file", sPath, "has an unknown steps type" );
@@ -586,7 +586,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 	if( GetTagFromMap(mapNameToData, "#bpm", sData) )
 	{
 		const float fBPM = StringToFloat( sData );
-		
+
 		if( fBPM > 0.0f )
 		{
 			BPMSegment newSeg( 0, fBPM );
@@ -618,7 +618,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		 * we might also have "song.png", which we shouldn't match. */
 		if( !IsAFile(out.GetSongDir()+sData) )
 		{
-			const char *exts[] = { "ogg", "wav", "mp3", NULL }; // XXX: stop duplicating these everywhere
+			const char *exts[] = { "oga", "ogg", "wav", "mp3", NULL }; // XXX: stop duplicating these everywhere
 			for( unsigned i = 0; exts[i] != NULL; ++i )
 			{
 				RString fn = SetExtension( sData, exts[i] );
@@ -669,103 +669,103 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 
 			switch( iPMSTrackNo )
 			{
-			case PMS_TRACK_BPM:
-				if( iVal > 0 )
+				case PMS_TRACK_BPM:
+					if( iVal > 0 )
+					{
+						out.SetBPMAtBeat( fBeat, (float) iVal );
+						LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iVal );
+					}
+					else
+					{
+						LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %d.",
+								  fBeat, iVal );
+					}
+					break;
+
+				case PMS_TRACK_BPM_REF:
 				{
-					out.SetBPMAtBeat( fBeat, (float) iVal );
-					LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iVal );
+					RString sTagToLookFor = ssprintf( "#bpm%02x", iVal );
+					RString sBPM;
+					if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
+					{
+						float fBPM = StringToFloat( sBPM );
+
+						if( fBPM > 0.0f )
+						{
+							BPMSegment newSeg( BeatToNoteRow(fBeat), fBPM );
+							out.AddBPMSegment( newSeg );
+							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
+						}
+						else
+						{
+							LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f",
+									  fBeat, fBPM );
+						}
+					}
+					else
+					{
+						LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
+					}
+					break;
 				}
-				else
+				case PMS_TRACK_STOP:
 				{
-					LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %d.",
-						      fBeat, iVal );
+					RString sTagToLookFor = ssprintf( "#stop%02x", iVal );
+					RString sBeats;
+					if( GetTagFromMap( mapNameToData, sTagToLookFor, sBeats ) )
+					{
+						// find the BPM at the time of this freeze
+						float fBPS = out.m_Timing.GetBPMAtBeat(fBeat) / 60.0f;
+						float fBeats = StringToFloat( sBeats ) / 48.0f;
+						float fFreezeSecs = fBeats / fBPS;
+
+						StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
+						out.AddStopSegment( newSeg );
+						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.m_fStopSeconds );
+					}
+					else
+					{
+						LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
+					}
+					break;
 				}
-				break;
-				
+			}
+		}
+
+		switch( iPMSTrackNo )
+		{
 			case PMS_TRACK_BPM_REF:
 			{
-				RString sTagToLookFor = ssprintf( "#bpm%02x", iVal );
+				// XXX: offset
+				int iBPMNo;
+				sscanf( sData, "%x", &iBPMNo );	// data is in hexadecimal
+
 				RString sBPM;
+				RString sTagToLookFor = ssprintf( "#bpm%02x", iBPMNo );
 				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
 				{
 					float fBPM = StringToFloat( sBPM );
 
 					if( fBPM > 0.0f )
 					{
-						BPMSegment newSeg( BeatToNoteRow(fBeat), fBPM );
+						BPMSegment newSeg( iStepIndex, fBPM );
 						out.AddBPMSegment( newSeg );
-						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
+						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
+				
 					}
 					else
 					{
-						LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f",
-							      fBeat, fBPM );
+						LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f.",
+								  NoteRowToBeat(iStepIndex), fBPM );
 					}
 				}
 				else
 				{
 					LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
 				}
+
 				break;
 			}
-			case PMS_TRACK_STOP:
-			{
-				RString sTagToLookFor = ssprintf( "#stop%02x", iVal );
-				RString sBeats;
-				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBeats ) )
-				{
-					// find the BPM at the time of this freeze
-					float fBPS = out.m_Timing.GetBPMAtBeat(fBeat) / 60.0f;
-					float fBeats = StringToFloat( sBeats ) / 48.0f;
-					float fFreezeSecs = fBeats / fBPS;
-
-					StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
-					out.AddStopSegment( newSeg );
-					LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.m_fStopSeconds );
-				}
-				else
-				{
-					LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
-				}
-				break;
-			}
-			}
-		}
-			
-		switch( iPMSTrackNo )
-		{
-		case PMS_TRACK_BPM_REF:
-		{
-			// XXX: offset
-			int iBPMNo;
-			sscanf( sData, "%x", &iBPMNo );	// data is in hexadecimal
-
-			RString sBPM;
-			RString sTagToLookFor = ssprintf( "#bpm%02x", iBPMNo );
-			if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
-			{
-				float fBPM = StringToFloat( sBPM );
-
-				if( fBPM > 0.0f )
-				{
-					BPMSegment newSeg( iStepIndex, fBPM );
-					out.AddBPMSegment( newSeg );
-					LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
-			
-				}
-				else
-				{
-					LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f.",
-						      NoteRowToBeat(iStepIndex), fBPM );
-				}
-			}
-			else
-			{
-				LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
-			}
-
-			break;
-		}
 		}
 	}
 
@@ -787,15 +787,15 @@ static void SlideDuplicateDifficulties( Song &p )
 		{
 			if( dc == Difficulty_Edit )
 				continue;
-			
+
 			vector<Steps*> vSteps;
 			SongUtil::GetSteps( &p, vSteps, st, dc );
-			
+
 			StepsUtil::SortNotesArrayByDifficulty( vSteps );
 			for( unsigned k=1; k<vSteps.size(); k++ )
 			{
 				Steps* pSteps = vSteps[k];
-				
+
 				Difficulty dc2 = min( (Difficulty)(dc+1), Difficulty_Challenge );
 				pSteps->SetDifficulty( dc2 );
 			}
@@ -843,7 +843,7 @@ bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	vector<Steps*> apSteps;
 	for( unsigned i=0; i<arrayPMSFileNames.size(); i++ )
 		apSteps.push_back( new Steps );
-		
+
 	// Now, with our fancy little substring, trim the titles and
 	// figure out where each goes.
 	for( unsigned i=0; i<aPMSData.size(); i++ )
@@ -914,7 +914,7 @@ bool PMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	MeasureToTimeSig_t sigAdjustments;
 	map<RString,int> idToKeysoundIndex;
 	ReadGlobalTags( aPMSData[iMainDataIndex], out, sigAdjustments, idToKeysoundIndex );
-	    
+
 	// Override what that global tag said about the title if we have a good substring.
 	// Prevents clobbering and catches "MySong (7keys)" / "MySong (Another) (7keys)"
 	// Also catches "MySong (7keys)" / "MySong (14keys)"

@@ -162,7 +162,7 @@ ThemeManager::ThemeManager()
 	/* We don't have any theme loaded until SwitchThemeAndLanguage is called. */
 	m_sCurThemeName = "";
 	m_bPseudoLocalize = false;
-	
+
 	vector<RString> arrayThemeNames;
 	GetThemeNames( arrayThemeNames );
 }
@@ -230,6 +230,19 @@ RString ThemeManager::GetThemeDisplayName( const RString &sThemeName )
 		return s;
 
 	return sThemeName;
+}
+
+RString ThemeManager::GetThemeAuthor( const RString &sThemeName )
+{
+	RString sDir = GetThemeDirFromName(sThemeName);
+	IniFile ini;
+	ini.ReadFile( sDir + THEME_INFO_INI );
+
+	RString s;
+	if( ini.GetValue("ThemeInfo","Author",s) )
+		return s;
+
+	return "[unknown author]";
 }
 
 static bool EqualsNoCase( const RString &s1, const RString &s2 )
@@ -356,13 +369,20 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 {
 	RString sThemeName = sThemeName_;
 	RString sLanguage = sLanguage_;
+	// todo: if the theme isn't selectable, find the next theme that is,
+	// and change to that instead of asserting/crashing since
+	// SpecialFiles::BASE_THEME_NAME is _fallback now. -aj
 #if !defined(SMPACKAGE)
 	if( !IsThemeSelectable(sThemeName) )
 		sThemeName = PREFSMAN->m_sTheme.GetDefault();
 #endif
+	// sm-ssc's SpecialFiles::BASE_THEME_NAME is _fallback, which you can't
+	// select. This requires a metric, which allows it to be adapted for
+	// other purposes (e.g. PARASTAR).
 	if( !IsThemeSelectable(sThemeName) )
-		sThemeName = SpecialFiles::BASE_THEME_NAME;
-	
+		sThemeName = PREFSMAN->m_sDefaultTheme;
+		//sThemeName = SpecialFiles::BASE_THEME_NAME;
+
 	ASSERT( IsThemeSelectable(sThemeName) );
 
 	/* We haven't actually loaded the theme yet, so we can't check whether sLanguage
@@ -434,8 +454,31 @@ void ThemeManager::RunLuaScripts( const RString &sMask )
 	{
 		--iter;
 		const RString &sThemeDir = GetThemeDirFromName( iter->sThemeName );
+		
 		vector<RString> asElementPaths;
+		// get files from directories
+		vector<RString> asElementChildPaths;
+		vector<RString> arrayScriptDirs;
+		GetDirListing( sThemeDir + "Scripts/*", arrayScriptDirs, true );
+		SortRStringArray( arrayScriptDirs );
+		StripCvsAndSvn( arrayScriptDirs );
+		FOREACH_CONST( RString, arrayScriptDirs, s )	// foreach dir in /Scripts/
+		{
+			// Find all Lua files in this directory, add them to asElementPaths
+			RString sScriptDirName = *s;
+			GetDirListing( sThemeDir + "Scripts/" + sScriptDirName + "/" + sMask, asElementChildPaths, false, true );
+			for( unsigned i = 0; i < asElementChildPaths.size(); ++i )
+			{
+				// push these Lua files into the main element paths
+				const RString &sPath = asElementChildPaths[i];
+				asElementPaths.push_back(sPath);
+			}
+		}
+
+		// get regular Lua files
 		GetDirListing( sThemeDir + "Scripts/" + sMask, asElementPaths, false, true );
+
+		// load Lua files
 		for( unsigned i = 0; i < asElementPaths.size(); ++i )
 		{
 			const RString &sPath = asElementPaths[i];
@@ -540,13 +583,14 @@ try_element_again:
 
 		for( unsigned p = 0; p < asPaths.size(); ++p )
 		{
+			// BGAnimations, Fonts, Graphics, Sounds, Other
 			static const char *masks[NUM_ElementCategory][14] = {
-				{ "redir", "lua", "xml", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
+				{ "redir", "lua", "xml", "png", "jpg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", NULL},
 				{ "redir", "ini", NULL },
-				{ "redir", "lua", "xml", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
-				{ "redir", "mp3", "ogg", "wav", NULL },
+				{ "redir", "lua", "xml", "png", "jpg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", NULL},
+				{ "redir", "lua", "mp3", "oga", "ogg", "wav", NULL },
 				{ "*", NULL },
-			};		
+			};
 			const char **asset_masks = masks[category];
 
 			const RString ext = GetExtension( asPaths[p] );
@@ -582,7 +626,6 @@ try_element_again:
 			}
 		}
 	}
-	
 
 	if( asElementPaths.size() == 0 )
 		return false;	// This isn't fatal.
@@ -790,19 +833,18 @@ bool ThemeManager::HasString( const RString &sMetricsGroup, const RString &sValu
 	return GetMetricRawRecursive( g_pLoadedThemeData->iniStrings, sMetricsGroup, sValueName, sThrowAway );
 }
 
-static LocalizedString RELOADED_METRICS( "ThemeManager", "Reloaded metrics" );
+// the strings that were here before were moved to StepMania.cpp;
+// sorry for the inconvienence/sloppy coding. -aj
 void ThemeManager::ReloadMetrics()
 {
 	FILEMAN->FlushDirCache( GetCurThemeDir() );
 
+	// Reloading Lua scripts can cause crashes; don't do this. -aj
+	//UpdateLuaGlobals();
+
 	// force a reload of the metrics cache
 	LoadThemeMetrics( m_sCurThemeName, m_sCurLanguage );
 	ReloadSubscribers();
-
-#if !defined(SMPACKAGE)
-	if( SCREENMAN )
-		SCREENMAN->SystemMessage( RELOADED_METRICS );
-#endif
 
 	ClearThemePathCache();
 }
@@ -1013,6 +1055,18 @@ RString ThemeManager::GetNextTheme()
 	return as[iNewIndex];
 }
 
+RString ThemeManager::GetNextSelectableTheme()
+{
+	vector<RString> as;
+	GetSelectableThemeNames( as );
+	unsigned i;
+	for( i=0; i<as.size(); i++ )
+		if( as[i].CompareNoCase(m_sCurThemeName)==0 )
+			break;
+	int iNewIndex = (i+1)%as.size();
+	return as[iNewIndex];
+}
+
 void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RString>& asLanguagesOut )
 {
 	RString sLanguageDir = GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR;
@@ -1059,20 +1113,20 @@ void ThemeManager::GetOptionNames( vector<RString>& AddTo )
 
 static RString PseudoLocalize( RString s )
 {
-	s.Replace( "a", "*a" );
-	s.Replace( "A", "*A" );
-	s.Replace( "e", "*e" );
-	s.Replace( "E", "*E" );
-	s.Replace( "i", "*i" );
-	s.Replace( "I", "*I" );
-	s.Replace( "o", "*o" );
-	s.Replace( "O", "*O" );
-	s.Replace( "u", "*u" );
-	s.Replace( "U", "*U" );
-	s.Replace( "n", "*n" );
-	s.Replace( "N", "*N" );
-	s.Replace( "c", "*c" );
-	s.Replace( "C", "*C" );
+	s.Replace( "a", "àá" );
+	s.Replace( "A", "ÀÀ" );
+	s.Replace( "e", "éé" );
+	s.Replace( "E", "ÉÉ" );
+	s.Replace( "i", "íí" );
+	s.Replace( "I", "ÍÍ" );
+	s.Replace( "o", "óó" );
+	s.Replace( "O", "ÓÓ" );
+	s.Replace( "u", "üü" );
+	s.Replace( "U", "ÜÜ" );
+	s.Replace( "n", "ñ" );
+	s.Replace( "N", "Ñ" );
+	s.Replace( "c", "ç" );
+	s.Replace( "C", "Ç" );
 	// transformations that help expose punctuation assumptions
 	//s.Replace( ":", " :" );	// this messes up "::" help text tip separator markers
 	s.Replace( "?", " ?" );
@@ -1168,6 +1222,8 @@ RString ThemeManager::GetBlankGraphicPath()
 class LunaThemeManager: public Luna<ThemeManager>
 {
 public:
+	static int ReloadMetrics( T* p, lua_State *L )		{ p->ReloadMetrics(); return 0; }
+
 	static int GetMetric( T* p, lua_State *L )			{ p->PushMetric( L, SArg(1),SArg(2) ); return 1; }
 	static int GetString( T* p, lua_State *L )			{ lua_pushstring(L, p->GetString(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathInfoB( T* p, lua_State *L )
@@ -1183,10 +1239,16 @@ public:
 	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
+	static int GetPathO( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathO(SArg(1),SArg(2)) ); return 1; }
 	static int GetNumSelectableThemes( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumSelectableThemes() ); return 1; }
+
+	DEFINE_METHOD( GetCurrentThemeDirectory, GetCurThemeDir() );
+	static int GetThemeDisplayName( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeDisplayName(p->GetCurThemeName())); return 1; }
+	static int GetThemeAuthor( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeAuthor(p->GetCurThemeName())); return 1; }
 
 	LunaThemeManager()
 	{
+		ADD_METHOD( ReloadMetrics );
 		ADD_METHOD( GetMetric );
 		ADD_METHOD( GetString );
 		ADD_METHOD( GetPathInfoB );
@@ -1194,7 +1256,11 @@ public:
 		ADD_METHOD( GetPathG );
 		ADD_METHOD( GetPathB );
 		ADD_METHOD( GetPathS );
+		ADD_METHOD( GetPathO );
 		ADD_METHOD( GetNumSelectableThemes );
+		ADD_METHOD( GetCurrentThemeDirectory );
+		ADD_METHOD( GetThemeDisplayName );
+		ADD_METHOD( GetThemeAuthor );
 	}
 };
 

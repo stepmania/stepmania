@@ -20,10 +20,13 @@
 REGISTER_SCREEN_CLASS( ScreenTitleMenu );
 ScreenTitleMenu::ScreenTitleMenu()
 {
-	/* XXX We really need two common calls: 1, something run when exiting from gameplay
-	 * (to do this reset), and 2, something run when entering gameplay, to apply default
-	 * options.  Having special cases in attract screens and the title menu to reset
-	 * things stinks ... */
+	/* XXX We really need two common calls:
+	 * 1) something run when exiting from gameplay (to do this reset),
+	 * and 2) something run when entering gameplay, to apply default options.
+	 * Having special cases in attract screens and the title menu to reset
+	 * things stinks ...
+	 * [aj] Well... Can't #2 be done in Lua nowadays? and #1 as well? (hi shake)
+	 */
 	GAMESTATE->Reset();
 
 	this->SubscribeToMessage( GamePreferences::m_CoinMode.GetName()+"Changed" );
@@ -47,13 +50,11 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 
 	if( input.type == IET_FIRST_PRESS )
 	{
-		//
 		// detect codes
-		//
 		if( CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_THEME) ||
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_THEME2) )
 		{
-			GameLoop::ChangeTheme( THEME->GetNextTheme(), m_sName );
+			GameLoop::ChangeTheme( THEME->GetNextSelectableTheme(), m_sName );
 		}
 		if( CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_ANNOUNCER) ||
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_ANNOUNCER2) )

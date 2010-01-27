@@ -1,4 +1,4 @@
-/* LifeMeterBattery - Battery life meter used in Oni. */
+/* LifeMeterBattery - Battery life meter used in Oni mode. */
 
 #ifndef LIFEMETERBATTERY_H
 #define LIFEMETERBATTERY_H
@@ -8,6 +8,7 @@
 #include "BitmapText.h"
 #include "RageSound.h"
 #include "PercentageDisplay.h"
+#include "ThemeMetric.h"
 
 
 class LifeMeterBattery : public LifeMeter
@@ -36,6 +37,10 @@ private:
 	int			m_iTrailingLivesLeft;	// lags m_iLivesLeft
 
 	float		m_fBatteryBlinkTime;	// if > 0 battery is blinking
+
+	// theme metrics added for sm-ssc
+	//ThemeMetric<> METRIC_NAME;
+	ThemeMetric<float> BATTERY_BLINK_TIME;
 
 	Sprite		m_sprFrame;
 	Sprite		m_sprBattery;

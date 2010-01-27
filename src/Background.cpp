@@ -30,12 +30,12 @@ static ThemeMetric<float> BOTTOM_EDGE				("Background","BottomEdge");
 #define RECT_BACKGROUND RectF					(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 static ThemeMetric<float> CLAMP_OUTPUT_PERCENT			("Background","ClampOutputPercent");
 static ThemeMetric<bool> SHOW_DANCING_CHARACTERS		("Background","ShowDancingCharacters");
-static ThemeMetric<bool> DONT_USE_STATIC_BG		("Background","DontUseStaticBackground");
+static ThemeMetric<bool> USE_STATIC_BG		("Background","UseStaticBackground");
 
 
 static Preference<bool>	g_bShowDanger( "ShowDanger", true );
 static Preference<float> g_fBGBrightness( "BGBrightness", 0.7f );
-static Preference<RandomBackgroundMode> g_RandomBackgroundMode( "RandomBackgroundMode",	BGMODE_ANIMATIONS );
+static Preference<RandomBackgroundMode> g_RandomBackgroundMode( "RandomBackgroundMode",	BGMODE_RANDOMMOVIES );
 static Preference<int> g_iNumBackgrounds( "NumBackgrounds", 8 );
 static Preference<bool> g_bSongBackgrounds( "SongBackgrounds", true );
 
@@ -170,12 +170,12 @@ void BackgroundImpl::Init()
 	m_bDangerAllWasVisible = false;
 	m_StaticBackgroundDef = BackgroundDef();
 	
-	if( DONT_USE_STATIC_BG )
+	if( !USE_STATIC_BG )
 	{
 		m_StaticBackgroundDef.m_sColor1 = "0,0,0,0";
 		m_StaticBackgroundDef.m_sColor2 = "0,0,0,0";
 	}
-
+	
 	// load transitions
 	{
 		ASSERT( m_mapNameToTransition.empty() );
@@ -589,7 +589,6 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 		// end showing the static song background
 		BackgroundChange change;
-
 		change.m_def = m_StaticBackgroundDef;
 		change.m_fStartBeat = pSong->m_fLastBeat;
 		layer.m_aBGChanges.push_back( change );
@@ -612,7 +611,6 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	{
 		BackgroundChange change;
 		change.m_def = m_StaticBackgroundDef;
-
 		change.m_fStartBeat = -10000;
 		mainlayer.m_aBGChanges.insert( mainlayer.m_aBGChanges.begin(), change );
 	}
@@ -708,7 +706,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 
 	float fBeat, fBPS;
 	bool bFreeze;
-	pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze );
+	pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze, bFreeze );
 
 	/* Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it. */
 	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
@@ -719,7 +717,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	float fDeltaTime = fCurrentTime - fLastMusicSeconds;
 	if( i != -1  &&  i != m_iCurBGChangeIndex )	// we're changing backgrounds
 	{
-		LOG->Trace( "old bga %d -> new bga %d (%s), %f, %f", m_iCurBGChangeIndex, i, m_aBGChanges[i].GetTextDescription().c_str(), m_aBGChanges[i].m_fStartBeat, fBeat );
+//		LOG->Trace( "old bga %d -> new bga %d (%s), %f, %f", m_iCurBGChangeIndex, i, m_aBGChanges[i].GetTextDescription().c_str(), m_aBGChanges[i].m_fStartBeat, fBeat );
 
 		BackgroundChange oldChange;
 		if( m_iCurBGChangeIndex != -1 )
@@ -747,7 +745,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		if( m_pFadingBGA == m_pCurrentBGA )
 		{
 			m_pFadingBGA = NULL;
-			LOG->Trace( "bg didn't actually change.  Ignoring." );
+//			LOG->Trace( "bg didn't actually change.  Ignoring." );
 		}
 		else
 		{

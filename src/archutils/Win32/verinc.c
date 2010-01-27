@@ -5,6 +5,8 @@
 //
 // --Avery
 
+// took some ideas from OpenITG... -aj
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -12,41 +14,57 @@
 
 typedef unsigned long ulong;
 
-int main(void) {
+int main(void)
+{
 	FILE *f;
-	ulong build=0,build_t;
-	char s[25];
+	ulong build=0;
+	char strdate[10], strtime[64];
 	time_t tm;
-	struct tm *ptm;
-	//////////////
+	//struct tm *ptm;
 
-	if (f=fopen("version.bin","rb")) {
-		if (1==fread(&build_t,sizeof build_t,1,f))
-			build=build_t;
+	// try to read the last version seen
+	if( f = fopen("version.bin","r") )
+	{
+		fread( &build, sizeof(ulong), 1, f );
+		fclose( f );
 	}
 
-	++build;
+	// increment the build number and write it
+	build++;
+
+	if ( f = fopen("version.bin","wb") )
+	{
+		fwrite(&build,sizeof(ulong),1,f);
+		fclose(f);
+	}
 //	printf("Incrementing to build %d\n",build);
 
+	// get the current time
 	time(&tm);
-	
+
+	/*
 	//memcpy(version_time, asctime(localtime(&tm)), sizeof(version_time)-1);
 	ptm = localtime(&tm);
 	strftime(s, sizeof(s), "%Y%m%d", ptm);
 	s[sizeof(s)-1]=0;
-	
+	*/
 
-	if (f=fopen("verstub.cpp","w")) {
+	// print the debug serial date/time
+	strftime( strdate, 15, "%Y%m%d", localtime(&tm) );
+	strftime( strtime, 64, "%H:%M:%S %Z", localtime(&tm) );
+	//memcpy( strtime, asctime(localtime(&tm)), 24 );
+
+	// zero out the newline character
+	strtime[sizeof(strtime)-1] = 0;
+
+	// write to verstub
+	if ( f = fopen("verstub.cpp","w") )
+	{
 		fprintf(f,
 			"unsigned long version_num = %ld;\n"
-			"extern const char *const version_time = \"%s\";\n"
-			,build
-			,s);
-		fclose(f);
-	}
-
-	if (f=fopen("version.bin","wb")) {
-		fwrite(&build,sizeof build,1,f);
+			"extern const char *const version_date = \"%s\";\n"
+			"extern const char *const version_time = \"%s\";\n",
+			build, strdate, strtime);
 		fclose(f);
 	}
 

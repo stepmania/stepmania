@@ -1,5 +1,4 @@
 // SmpackageExportDlg.cpp : implementation file
-//
 
 #define CO_EXIST_WITH_MFC
 #include "global.h"
@@ -7,12 +6,12 @@
 #include "smpackage.h"
 #include "SmpackageExportDlg.h"
 #include "RageUtil.h"
-#include "ZipArchive\ZipArchive.h"	
-#include "EnterName.h"	
-#include "EnterComment.h"	
-#include "smpackageUtil.h"	
-#include "EditInsallations.h"	
-#include "IniFile.h"	
+#include "ZipArchive\ZipArchive.h"
+#include "EnterName.h"
+#include "EnterComment.h"
+#include "smpackageUtil.h"
+#include "EditInsallations.h"
+#include "IniFile.h"
 #include "RageFileDriverMemory.h"
 #include "archutils/Win32/SpecialDirs.h"
 #include "archutils/Win32/DialogUtil.h"
@@ -75,12 +74,12 @@ END_MESSAGE_MAP()
 BOOL CSmpackageExportDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
-	
+
 	// TODO: Add extra initialization here
 	DialogUtil::LocalizeDialogAndContents( *this );
 
 	RefreshInstallationList();
-	
+
 	RefreshTree();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -103,7 +102,7 @@ static LocalizedString ERROR_ADDING_FILE ( "SmpackageExportDlg", "Error adding f
 static bool ExportPackage( const RString &sPackageName, const RString &sSourceInstallDir, const vector<RString>& asDirectoriesToExport, const RString &sComment )	
 {
 	CZipArchive zip;
-	
+
 	//
 	// Create the package zip file
 	//
@@ -178,13 +177,15 @@ static bool ExportPackage( const RString &sPackageName, const RString &sSourceIn
 	for( unsigned j=0; j<asFilePaths.size(); j++ )
 	{
 		RString sFilePath = asFilePaths[j];
-		
+
 		RString sExt = GetExtension( sFilePath );
 		bool bUseCompression = true;
-		if( sExt.CompareNoCase("avi")==0 ||
+		if( sExt.CompareNoCase("ogv")==0 ||
+			sExt.CompareNoCase("avi")==0 ||
 			sExt.CompareNoCase("mpeg")==0 ||
 			sExt.CompareNoCase("mpg")==0 ||
 			sExt.CompareNoCase("mp3")==0 ||
+			sExt.CompareNoCase("oga")==0 ||
 			sExt.CompareNoCase("ogg")==0 ||
 			sExt.CompareNoCase("gif")==0 ||
 			sExt.CompareNoCase("jpg")==0 ||
@@ -277,7 +278,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 		Dialog::OK( NO_ITEMS_ARE_CHECKED.GetValue() );
 		return;
 	}
-	
+
 	// Generate a comment
 	RString sComment;
 	if( !MakeComment(sComment) )
@@ -286,7 +287,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 	vector<RString> asExportedPackages;
 	vector<RString> asFailedPackages;
 	for( unsigned i=0; i<asPaths.size(); i++ )
-	{		
+	{
 		// Generate a package name for every path
 		RString sPath = asPaths[i];
 
@@ -294,7 +295,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 
 		vector<RString> asPathsToExport;
 		asPathsToExport.push_back( sPath );
-		
+
 		if( ExportPackage( sPackageName, GetCurrentInstallDir(), asPathsToExport, sComment ) )
 			asExportedPackages.push_back( sPackageName );
 		else
@@ -304,7 +305,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 	RString sMessage;
 	if( asExportedPackages.size() > 0 )
 		sMessage += THE_FOLLOWING_PACKAGES_WERE_EXPORTED.GetValue()+"\n\n"+join( "\n", asExportedPackages );
-	
+
 	if( asFailedPackages.size() > 0 )
 	{
 		if( !sMessage.empty() )
@@ -324,7 +325,7 @@ void CSmpackageExportDlg::OnButtonPlay()
 void CSmpackageExportDlg::GetTreeItems( CArray<HTREEITEM,HTREEITEM>& aItemsOut )
 {
 	CArray<HTREEITEM,HTREEITEM> aRootsToExplore;	
-	
+
 	// add all top-level roots
 	HTREEITEM item = m_tree.GetRootItem();
 	while( item != NULL )
@@ -368,7 +369,7 @@ void CSmpackageExportDlg::GetCheckedPaths( vector<RString>& aPathsOut )
 		HTREEITEM item = aItems[i];
 
 		RString sPath;
-		
+
 		while( item )
 		{
 			sPath = RString((LPCTSTR)m_tree.GetItemText(item)) + '/' + sPath;
@@ -469,6 +470,7 @@ void CSmpackageExportDlg::RefreshTree()
 	{
 		vector<RString> as1;
 		HTREEITEM item1 = m_tree.InsertItem( "RandomMovies" );
+		fileDriver.GetDirListing( "RandomMovies/*.ogv", as1, false, false );
 		fileDriver.GetDirListing( "RandomMovies/*.avi", as1, false, false );
 		fileDriver.GetDirListing( "RandomMovies/*.mpg", as1, false, false );
 		fileDriver.GetDirListing( "RandomMovies/*.mpeg", as1, false, false );
@@ -480,6 +482,7 @@ void CSmpackageExportDlg::RefreshTree()
 	{
 		vector<RString> as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Visualizations" );
+		fileDriver.GetDirListing( "Visualizations/*.ogv", as1, false, false );
 		fileDriver.GetDirListing( "Visualizations/*.avi", as1, false, false );
 		fileDriver.GetDirListing( "Visualizations/*.mpg", as1, false, false );
 		fileDriver.GetDirListing( "Visualizations/*.mpeg", as1, false, false );
@@ -535,12 +538,13 @@ void CSmpackageExportDlg::RefreshTree()
 	}
 
 
-	// Strip out any "CVS" items
+	// Strip out any CVS/.svn items
 	CArray<HTREEITEM,HTREEITEM> aItems;
 	GetTreeItems( aItems );
 	for( int i=0; i<aItems.GetSize(); i++ )
 	{
-		if( m_tree.GetItemText(aItems[i]).CompareNoCase("CVS")==0 )
+		if( m_tree.GetItemText(aItems[i]).CompareNoCase("CVS")==0 ||
+			m_tree.GetItemText(aItems[i]).CompareNoCase(".svn")== 0)
 			m_tree.DeleteItem( aItems[i] );
 	}
 }
@@ -548,7 +552,7 @@ void CSmpackageExportDlg::RefreshTree()
 void CSmpackageExportDlg::OnButtonOpen() 
 {
 	// TODO: Add your control notification handler code here
-	
+
 	char szCurDir[MAX_PATH];
 	GetCurrentDirectory( MAX_PATH, szCurDir );
 

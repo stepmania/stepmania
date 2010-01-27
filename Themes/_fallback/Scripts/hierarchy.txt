@@ -1,0 +1,44 @@
+todo: edit this document to reflect sm-ssc's structure
+
+SMOKE WEED '98 Scripts Directory Organization,
+or "An applied case of application of prefixes to control order of execution".
+
+Based on the original document for NCRX by Synikal, updated for SW98 by various
+members of the NAKET Team.
+-------------------------------------------------------------------------------
+The general idea is that the order of execution in some scripts does matter.
+We can use filenames in order to load certain files before others.
+
+It is important to note that you do not always need to follow this order,
+especially if certain scripts do not require any dependencies. Typically,
+most scripts do not require hierarchy setup, only certain situations
+require it.
+
+Here is how we see the general hierarchy at NAKET HQ:
+
+00 = Initialization. Things that get called at the beginning of a theme.
+This is good for things that are required by everything. It's considered bad
+form to execute your own code before init, but there are ways around it if you
+do need to go around it.
+
+Examples include 00 init.lua (SM4 default) and 00 themeInfo.lua (various themes).
+
+01 = Base. After the initialization, the base layer goes on top and adds more
+core functionality to StepMania themes.
+
+Examples include 01 base.lua (SM4 default) and various 01 files in sm-ssc's
+fallback theme. In sm-ssc, these are treated differently than in normal SM4;
+01 files are used for aliasing/compatibility commands, which are just as
+important as 01 base.lua.
+----
+From here on out, these aren't officially used by the normal StepMania
+developers; they were invented by other themers.
+
+02 = Extensions. Generally, these are third party extensions, such as the KKI
+Labs stuff or vyhd's Genre Generator.
+
+03 = Theme-specific. This layer came into existence with dubaiOne/moonlight.
+
+It should be noted that this is still talking about StepMania 4 alphas, as
+sm-ssc introduces loading Scripts/folderA, Scripts/folderB, etc. (just not
+Scripts/folderA/folderB/ although why would you need that?)

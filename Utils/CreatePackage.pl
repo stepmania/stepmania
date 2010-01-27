@@ -147,17 +147,19 @@ my @files = (
 	"BackgroundEffects",
 	"BackgroundTransitions",
 	"BGAnimations",
-	"Characters",
-	"Courses/Samples",
+	"Characters/default",
+	"Courses/Default",
 	"Data",
 	"NoteSkins/common/common",
 	"NoteSkins/dance/default",
-	"NoteSkins/dance/flat",
-	"NoteSkins/dance/gamma",
-	"Themes/default",
-	"Themes/pump",
-	"Themes/beat"
+	"NoteSkins/dance/delta",
+	"NoteSkins/dance/retro",
+	"NoteSkins/pump/default",
+	"NoteSkins/pump/flat",
+	"Themes/_fallback",
+	"Themes/_portKit-sm4",
+	"Themes/default"
 );
 
-ZipFiles( ".", "StepMania", \@files );
+ZipFiles( ".", "GameData", \@files );
 

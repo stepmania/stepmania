@@ -129,7 +129,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case TNS_CheckpointHit:	fDeltaLife = m_fLifePercentChange.GetValue(SE_CheckpointHit);	break;
 	case TNS_CheckpointMiss:fDeltaLife = m_fLifePercentChange.GetValue(SE_CheckpointMiss);	break;
 	}
-	
+
 	if(FLASH_HOT_ON_NOTE_HIT)
 		if(score >= MIN_SCORE_TO_FLASH)
 			m_fHotAlpha = 1.0f; // flash the hot temporarily
@@ -233,7 +233,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 			fDeltaLife /= m_fLifeDifficulty;
 		break;
 	}
-	
+
 	m_fLifePercentage += fDeltaLife;
 	CLAMP( m_fLifePercentage, 0, LIFE_MULTIPLIER );
 	AfterLifeChanged();
@@ -275,7 +275,7 @@ bool LifeMeterBar::IsFailing() const
 void LifeMeterBar::Update( float fDeltaTime )
 {
 	LifeMeter::Update( fDeltaTime );
-	
+
 	m_fPassingAlpha += !IsFailing() ? +fDeltaTime*2 : -fDeltaTime*2;
 	CLAMP( m_fPassingAlpha, 0, 1 );
 

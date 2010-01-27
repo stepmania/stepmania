@@ -10,7 +10,7 @@
 void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBeat ) const
 {
 	ASSERT( pSong );
-	ASSERT_M( fStartSecond >= 0, ssprintf("%f",fStartSecond) );
+	ASSERT_M( fStartSecond >= 0, ssprintf("StartSecond: %f",fStartSecond) );
 
 	fStartBeat = pSong->GetBeatFromElapsedTime( fStartSecond );
 	fEndBeat = pSong->GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
@@ -40,7 +40,7 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 	fEndBeat = truncf(fEndBeat)+1;
 
 	// loading the course should have caught this.
-	ASSERT_M( fEndBeat >= fStartBeat, ssprintf("%f >= %f", fEndBeat, fStartBeat) );
+	ASSERT_M( fEndBeat >= fStartBeat, ssprintf("EndBeat %f >= StartBeat %f", fEndBeat, fStartBeat) );
 }
 
 bool Attack::operator== ( const Attack &rhs ) const

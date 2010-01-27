@@ -51,6 +51,7 @@ protected:
 		PlayerNumber m_PlayerNumber;
 	};
 
+	// xxx: convert Sprites to AutoActors -aj
 	Sprite m_sprRadarBase;
 	GrooveRadarValueMap m_GrooveRadarValueMap[NUM_PLAYERS];
 	Sprite m_sprRadarLabels[NUM_RadarCategory];

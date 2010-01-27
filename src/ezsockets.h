@@ -20,11 +20,12 @@
 #include <ctype.h>
 
 #if defined(_XBOX)
-// Summary : WinsockX is bad, XTL is good.
-// Explained : WinsockX may rely on some declares 
-//			   that are present in XTL. Also, using
-//			   XTL includes some files maybe needed
-//			   for other operations on Xbox.
+/*
+ * Summary : WinsockX is bad, XTL is good.
+ * Explained : WinsockX may rely on some declares that are present in XTL.
+ * Also, using XTL includes some files maybe needed for other operations
+ * on Xbox.
+ */
 #include <xtl.h>
 #elif defined(_WINDOWS)
 #include <winsock2.h>
@@ -52,7 +53,7 @@ public:
 	//Listen with socket
 	bool listen();
 
-	//Accept incomming socket
+	//Accept incoming socket
 	bool accept(EzSockets &socket);
 
 	//Connect
@@ -70,7 +71,7 @@ public:
 	bool DataAvailable() { return ( ( inBuffer.length()>0 ) || CanRead() ); }
 	bool IsError();
 	bool CanWrite();
-	
+
 	void update();
 
 	//Raw data system 
@@ -113,7 +114,7 @@ public:
 	unsigned long fromAddr_len;
 	static unsigned long LongFromAddrIn( const sockaddr_in & s );
 
-	//The following possibly should be private.
+	// The following possibly should be private.
 	string inBuffer;
 	string outBuffer;
 
@@ -125,13 +126,13 @@ public:
 
 	SockState state;
 
-	int lastCode;	//Used for debugging purposes
+	int lastCode;	// Used for debugging purposes
 
 	RString address;
 
 private:
 
-	//Only necessiary in windows, xbox
+	// Only necessary for Windows and Xbox
 #if defined(_WINDOWS) || defined(_XBOX)
 	WSADATA wsda;
 #endif
@@ -141,11 +142,11 @@ private:
 	struct sockaddr_in addr;
 
 
-	//Used for Select() command
+	// Used for Select() command
 	fd_set  *scks;
 	timeval *times;
 
-	//Buffers
+	// Buffers
 };
 
 istream& operator>>(istream& is, EzSockets& obj);

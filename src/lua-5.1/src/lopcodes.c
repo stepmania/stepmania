@@ -1,5 +1,5 @@
 /*
-** $Id$
+** $Id: lopcodes.c 23036 2006-09-25 07:35:34Z gmaynard $
 ** See Copyright Notice in lua.h
 */
 

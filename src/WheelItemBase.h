@@ -14,13 +14,13 @@ struct WheelItemBaseData;
 enum WheelItemDataType 
 {
 	TYPE_GENERIC,
-	TYPE_SECTION, 
-	TYPE_SONG, 
-	TYPE_ROULETTE, 
-	TYPE_RANDOM, 
-	TYPE_PORTAL, 
-	TYPE_COURSE, 
-	TYPE_SORT 
+	TYPE_SECTION,
+	TYPE_SONG,
+	TYPE_ROULETTE,
+	TYPE_RANDOM,
+	TYPE_PORTAL,
+	TYPE_COURSE,
+	TYPE_SORT
 };
 
 struct WheelItemBaseData
@@ -40,7 +40,7 @@ public:
 	WheelItemBase( const WheelItemBase &cpy );
 	virtual void DrawPrimitives();
 	virtual WheelItemBase *Copy() const { return new WheelItemBase(*this); }
-	
+
 	void Load( RString sType );
 	void DrawGrayBar( Actor& bar );
 	void SetExpanded( bool bExpanded ) { m_bExpanded = bExpanded; }

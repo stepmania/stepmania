@@ -49,7 +49,7 @@ public:
 	PlayerStageStats m_player[NUM_PLAYERS];
 	PlayerStageStats m_multiPlayer[NUM_MultiPlayer];
 
-	void FinalizeScores( bool bSummary );	// finalize by filling in the HighScore structures for all players
+	void FinalizeScores( bool bSummary );
 	bool PlayerHasHighScore( PlayerNumber pn ) const;
 	int GetMinimumMissCombo() const;
 

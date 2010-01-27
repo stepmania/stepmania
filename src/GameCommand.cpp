@@ -58,11 +58,16 @@ void GameCommand::Init()
 	m_GoalType = GoalType_Invalid;
 	m_sProfileID = "";
 	m_sUrl = "";
+	m_bUrlExits = true;
+	m_bPushScreen = false;
 
 	m_bInsertCredit = false;
 	m_bClearCredits = false;
 	m_bStopMusic = false;
 	m_bApplyDefaultOptions = false;
+	m_bFadeMusic = false;
+	m_fMusicFadeOutVolume = -1.0f;
+	m_fMusicFadeOutSeconds = -1.0f;
 }
 
 class SongOptions;
@@ -93,7 +98,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 			if( GAMESTATE->m_PreferredDifficulty[pn] != m_dc )
 				return false;
 	}
-		
+
 	if( m_sAnnouncer != "" && m_sAnnouncer != ANNOUNCER->GetCurAnnouncerName() )
 		return false;
 
@@ -237,6 +242,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "screen" )
 	{
 		m_sScreen = sValue;
+		m_bPushScreen = false;
 	}
 	
 	else if( sName == "song" )
@@ -328,7 +334,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			m_bInvalid |= true;
 		}
 	}
-	
+
 	else if( sName == "weight" )
 	{
 		m_iWeightPounds = atoi( sValue );
@@ -352,8 +358,9 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "url" )
 	{
 		m_sUrl = sValue;
+		m_bUrlExits = true;
 	}
-	
+
 	else if( sName == "sound" )
 	{
 		m_sSoundPath = sValue;
@@ -363,7 +370,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	{
 		m_vsScreensToPrepare.push_back( sValue );
 	}
-	
+
 	else if( sName == "insertcredit" )
 	{
 		m_bInsertCredit = true;
@@ -382,6 +389,44 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "applydefaultoptions" )
 	{
 		m_bApplyDefaultOptions = true;
+	}
+
+	/* sm-ssc additions begin: */
+	else if( sName == "urlnoexit" )
+	{
+		m_sUrl = sValue;
+		m_bUrlExits = false;
+	}
+
+	else if( sName == "setpref" )
+	{
+		if( cmd.m_vsArgs.size() == 3 )
+		{
+			IPreference *pPref = IPreference::GetPreferenceByName( cmd.m_vsArgs[1] );
+			if( pPref == NULL )
+			{
+				m_sInvalidReason = ssprintf("unknown preference \"%s\"", cmd.m_vsArgs[1].c_str() );
+				m_bInvalid |= true;
+			}
+			pPref->FromString(cmd.m_vsArgs[2]);
+		}
+	}
+
+	else if( sName == "pushscreen" )
+	{
+		m_sScreen = sValue;
+		m_bPushScreen = true;
+	}
+
+	else if( sName == "fademusic" )
+	{
+		// todo: parse for shit. 
+		if( cmd.m_vsArgs.size() == 3 )
+		{
+			m_bFadeMusic = true;
+			m_fMusicFadeOutVolume = atof( cmd.m_vsArgs[1] );
+			m_fMusicFadeOutSeconds = atof( cmd.m_vsArgs[2] );
+		}
 	}
 
 	else
@@ -460,14 +505,14 @@ bool GameCommand::IsPlayable( RString *why ) const
 		int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 		const int iNumCreditsPaid = GetNumCreditsPaid();
 		const int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
-		
+
 		switch( GAMESTATE->GetCoinMode() )
 		{
 		case CoinMode_Home:
 		case CoinMode_Free:
 			iCredits = NUM_PLAYERS; /* not iNumCreditsPaid */
 		}
-		
+
 		/* With PREFSMAN->m_bDelayedCreditsReconcile disabled, enough credits must be
 		 * paid.  (This means that enough sides must be joined.)  Enabled, simply having
 		 * enough credits lying in the machine is sufficient; we'll deduct the extra in
@@ -491,12 +536,14 @@ bool GameCommand::IsPlayable( RString *why ) const
 		 * the refund logic isn't that awkward because you never see the 
 		 * credits number jump up - the credits display is hidden if both 
 		 * sides are joined. -Chris */
-		//if( PREFSMAN->m_iCoinMode == COIN_PAY && iNumCreditsPaid > iNumCreditsRequired )
-		//{
-		//	if( why )
-		//		*why = ssprintf( "too many credits paid (%i > %i)", iNumCreditsPaid, iNumCreditsRequired );
-		//	return false;
-		//}
+		/*
+		if( PREFSMAN->m_iCoinMode == COIN_PAY && iNumCreditsPaid > iNumCreditsRequired )
+		{
+			if( why )
+				*why = ssprintf( "too many credits paid (%i > %i)", iNumCreditsPaid, iNumCreditsRequired );
+			return false;
+		}
+		*/
 
 		/* If both sides are joined, disallow singles modes, since easy to select them
 		 * accidentally, instead of versus mode. */
@@ -525,7 +572,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 		}
 	}
 
-	if( !m_sScreen.CompareNoCase("ScreenEditCoursesMenu") )
+	if( !m_sScreen.CompareNoCase("ScreenEditCoursesMenu") && !m_bPushScreen )
 	{
 		vector<Course*> vCourses;
 		SONGMAN->GetAllCourses( vCourses, false );
@@ -538,9 +585,10 @@ bool GameCommand::IsPlayable( RString *why ) const
 		}
 	}
 
-	if( !m_sScreen.CompareNoCase("ScreenJukeboxMenu") ||
+	if( (!m_sScreen.CompareNoCase("ScreenJukeboxMenu") ||
 		!m_sScreen.CompareNoCase("ScreenEditMenu") ||
-		!m_sScreen.CompareNoCase("ScreenEditCoursesMenu") )
+		!m_sScreen.CompareNoCase("ScreenEditCoursesMenu")) &&
+		!m_bPushScreen)
 	{
 		if( SONGMAN->GetNumSongs() == 0 )
 		{
@@ -680,8 +728,10 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		}
 		LUA->Release(L);
 	}
-	if( m_sScreen != "" && m_bApplyCommitsScreens )
+	if( m_sScreen != "" && m_bApplyCommitsScreens && !m_bPushScreen )
 		SCREENMAN->SetNewScreen( m_sScreen );
+	if( m_sScreen != "" && m_bApplyCommitsScreens && m_bPushScreen )
+		SCREENMAN->AddNewScreenToTop( m_sScreen );
 	if( m_pSong )
 	{
 		GAMESTATE->m_pCurSong.Set( m_pSong );
@@ -735,15 +785,18 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( !m_sUrl.empty() )
 	{
 		if( HOOKS->GoToURL( m_sUrl ) )
-			SCREENMAN->SetNewScreen( "ScreenExit" );
+			if( m_bUrlExits )
+				SCREENMAN->SetNewScreen( "ScreenExit" );
 		else
 			ScreenPrompt::Prompt( SM_None, COULD_NOT_LAUNCH_BROWSER );
-	}		
+	}
 
 	/* If we're going to stop music, do so before preparing new screens, so we don't
 	 * stop music between preparing screens and loading screens. */
 	if( m_bStopMusic )
 		SOUND->StopMusic();
+	if( m_bFadeMusic )
+		SOUND->DimMusic(m_fMusicFadeOutVolume, m_fMusicFadeOutSeconds);
 
 	FOREACH_CONST( RString, m_vsScreensToPrepare, s )
 		SCREENMAN->PrepareScreen( *s );
@@ -821,6 +874,7 @@ public:
 	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID ); return 1; }
 	static int GetSong( T* p, lua_State *L )	{ if(p->m_pSong==NULL) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
 	static int GetSongGroup( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sSongGroup ); return 1; }
+	static int GetUrl( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sUrl ); return 1; }
 
 	LunaGameCommand()
 	{
@@ -832,6 +886,7 @@ public:
 		ADD_METHOD( GetProfileID );
 		ADD_METHOD( GetSong );
 		ADD_METHOD( GetSongGroup );
+		ADD_METHOD( GetUrl );
 	}
 };
 

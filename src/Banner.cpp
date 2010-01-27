@@ -1,6 +1,7 @@
 #include "global.h"
 #include "Banner.h"
 #include "BannerCache.h"
+//#include "BackgroundCache.h" // XXX: this is probably a bad idea -aj
 #include "SongManager.h"
 #include "RageUtil.h"
 #include "Song.h"
@@ -72,6 +73,37 @@ void Banner::LoadFromCachedBanner( const RString &sPath )
 	else
 		LoadFallback();
 }
+
+// xxx: move this shit elsewhere yo -aj
+/*
+void Banner::LoadFromCachedBackground( const RString &sPath )
+{
+	if( sPath.empty() )
+	{
+		LoadFallbackBG();
+		return;
+	}
+
+	RageTextureID ID;
+	bool bLowRes = (PREFSMAN->m_BackgroundCache != BGCACHE_FULL);
+	if( !bLowRes )
+	{
+		ID = Sprite::SongBGTexture( sPath );
+	}
+	else
+	{
+		// Try to load the low quality version.
+		ID = BACKGROUNDCACHE->LoadCachedBackground( sPath );
+	}
+
+	if( TEXTUREMAN->IsTextureRegistered(ID) )
+		Load( ID );
+	else if( IsAFile(sPath) )
+		Load( sPath );
+	else
+		LoadFallbackBG();
+}
+*/
 
 void Banner::Update( float fDeltaTime )
 {
@@ -187,6 +219,11 @@ void Banner::LoadBackgroundFromUnlockEntry( const UnlockEntry* pUE )
 void Banner::LoadFallback()
 {
 	Load( THEME->GetPathG("Common","fallback banner") );
+}
+
+void Banner::LoadFallbackBG()
+{
+	Load( THEME->GetPathG("Common","fallback background") );
 }
 
 void Banner::LoadCourseFallback()

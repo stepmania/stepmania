@@ -67,7 +67,7 @@
 				TypeLibraryName=".\../StepMania.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
+				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania-debug.vdi&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="archutils\Win32\verinc
@@ -232,7 +232,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				TypeLibraryName=".\../StepMania.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
+				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania-fastdebug.vdi&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="archutils\Win32\verinc
@@ -579,12 +579,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenSelectMaster.h">
-			</File>
-			<File
-				RelativePath="ScreenSelectMode.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectMode.h">
 			</File>
 			<File
 				RelativePath="ScreenSelectMusic.cpp">
@@ -975,10 +969,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\NotesLoaderMidi.h">
 			</File>
 			<File
-				RelativePath=".\NotesLoaderPMS.cpp">
+				RelativePath="NotesLoaderPMS.cpp">
 			</File>
 			<File
-				RelativePath=".\NotesLoaderPMS.h">
+				RelativePath="NotesLoaderPMS.h">
 			</File>
 			<File
 				RelativePath="NotesLoaderSM.cpp">
@@ -1377,12 +1371,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\ModIconRow.h">
 			</File>
 			<File
-				RelativePath="MusicBannerWheel.cpp">
-			</File>
-			<File
-				RelativePath="MusicBannerWheel.h">
-			</File>
-			<File
 				RelativePath="MusicList.cpp">
 			</File>
 			<File
@@ -1441,12 +1429,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScrollBar.h">
-			</File>
-			<File
-				RelativePath="ScrollingList.cpp">
-			</File>
-			<File
-				RelativePath="ScrollingList.h">
 			</File>
 			<File
 				RelativePath="SnapDisplay.cpp">

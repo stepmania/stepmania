@@ -58,6 +58,8 @@ class ScoreKeeperNormal: public ScoreKeeper
 	ThemeMetric<float>		m_QuadPlusNoteMultiplier;
 	ThemeMetric<float>		m_CustomComboMultiplier;
 
+	ThemeMetric<int>		m_ToastyTriggers;
+
 	vector<Steps*>	m_apSteps;
 
 	virtual void AddTapScore( TapNoteScore tns );

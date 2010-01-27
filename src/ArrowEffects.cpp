@@ -41,7 +41,7 @@ void ArrowEffects::Update()
 	{
 		static float fLastTime = 0;
 		float fTime = RageTimer::GetTimeSinceStartFast();
-		if( !GAMESTATE->m_bFreeze )
+		if( !GAMESTATE->m_bFreeze || !GAMESTATE->m_bDelay )
 		{
 			g_fExpandSeconds += fTime - fLastTime;
 			g_fExpandSeconds = fmodf( g_fExpandSeconds, PI*2 );
@@ -52,7 +52,7 @@ void ArrowEffects::Update()
 	FOREACH_PlayerNumber( pn )
 	{
 		const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pn];
-	
+
 		PerPlayerData &data = g_EffectData[pn];
 		//
 		// Update Tornado
@@ -61,6 +61,16 @@ void ArrowEffects::Update()
 		{
 			// TRICKY: Tornado is very unplayable in doubles, so use a smaller
 			// tornado width if there are many columns
+
+			/*
+			 * the above makes an assumption for dance mode.
+			 * perhaps check if we are actually playing on singles without, say
+			 * more than 6 columns. That would exclude IIDX, pop'n, and
+			 * techno-8, all of which would be clusterfucks.
+			 * certain non-singles modes like halfdoubles (6cols), 
+			 * could possibly have tornado enabled.
+			 * let's also take default resolution (640x480) into mind. -aj
+			 */
 			bool bWideField = pStyle->m_iColsPerPlayer > 4;
 			int iTornadoWidth = bWideField ? 2 : 3;
 
@@ -71,7 +81,7 @@ void ArrowEffects::Update()
 
 			data.m_fMinTornadoX[iColNum] = FLT_MAX;
 			data.m_fMaxTornadoX[iColNum] = FLT_MIN;
-			
+
 			for( int i=iStartCol; i<=iEndCol; i++ )
 			{
 				data.m_fMinTornadoX[iColNum] = min( data.m_fMinTornadoX[iColNum], pCols[i].fXOffset );
@@ -261,7 +271,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 				SCALE( fRandom,
 						0.0f, 1.0f,
 						1.0f, pPlayerState->m_PlayerOptions.GetCurrent().m_fRandomSpeed + 1.0f );
-	}	
+	}
 
 
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] != 0 )
@@ -281,7 +291,7 @@ static void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int i
 	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
 	float fTinyPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
 	float fZoom = 1 - fTinyPercent*0.5f;
-	
+
 	// don't divide by 0
 	if( fabsf(fZoom) < 0.01 )
 		fZoom = 0.01f;
@@ -349,7 +359,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum], -1, 1 );
 		float fRads = acosf( fPositionBetween );
 		fRads += fYOffset * 6 / SCREEN_HEIGHT;
-		
+
 		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), -1, 1, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
 
 		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
@@ -428,7 +438,7 @@ float ArrowEffects::ReceptorGetRotation( const PlayerState* pPlayerState )
 {
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 	float fRotation = 0;
-	
+
 	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
 	{
 		float fConfRotation = GAMESTATE->m_fSongBeatVisible;

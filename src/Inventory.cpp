@@ -98,7 +98,7 @@ void Inventory::Update( float fDelta )
 		int iOldCombo = m_iLastSeenCombo;
 		m_iLastSeenCombo = STATSMAN->m_CurStageStats.m_player[pn].m_iCurCombo;
 		int iNewCombo = m_iLastSeenCombo;
-		
+
 #define CROSSED(i) (iOldCombo<i)&&(iNewCombo>=i)
 #define BROKE_ABOVE(i) (iNewCombo<iOldCombo)&&(iOldCombo>=i)
 
@@ -109,7 +109,7 @@ void Inventory::Update( float fDelta )
 				bEarnedThisItem = BROKE_ABOVE(g_Items[i].iCombo);
 			else
 				bEarnedThisItem = CROSSED(g_Items[i].iCombo);
-			
+
 			if( bEarnedThisItem )
 			{
 				AwardItem( i );

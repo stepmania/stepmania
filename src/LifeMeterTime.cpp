@@ -63,6 +63,7 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 
 	m_quadDangerGlow.ZoomToWidth( METER_WIDTH );
 	m_quadDangerGlow.ZoomToHeight( METER_HEIGHT );
+	// hardcoded effects...
 	m_quadDangerGlow.SetEffectDiffuseShift();
 	m_quadDangerGlow.SetEffectColor1( RageColor(1,0,0,0.8f) );
 	m_quadDangerGlow.SetEffectColor2( RageColor(1,0,0,0) );
@@ -85,22 +86,16 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 void LifeMeterTime::OnLoadSong()
 {
 	if( GetLifeSeconds() <= 0 && GAMESTATE->GetCourseSongIndex() > 0 )
-	{
 		return;
-	}
 
 	Course* pCourse = GAMESTATE->m_pCurCourse;
 	ASSERT( pCourse );
 
 	float fOldLife = m_fLifeTotalLostSeconds;
-
 	m_fLifeTotalGainedSeconds += pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].fGainSeconds;
-
 	m_soundGainLife.Play();
-
 	SendLifeChangedMessage( fOldLife, TapNoteScore_Invalid, HoldNoteScore_Invalid );
 }
-
 
 void LifeMeterTime::ChangeLife( TapNoteScore tns )
 {
@@ -123,9 +118,7 @@ void LifeMeterTime::ChangeLife( TapNoteScore tns )
 	}
 
 	float fOldLife = m_fLifeTotalLostSeconds;
-
 	m_fLifeTotalLostSeconds -= fMeterChange;
-
 	SendLifeChangedMessage( fOldLife, tns, HoldNoteScore_Invalid );
 }
 
@@ -143,15 +136,13 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 	}
 
 	float fOldLife = m_fLifeTotalLostSeconds;
-
 	m_fLifeTotalLostSeconds -= fMeterChange;
-
 	SendLifeChangedMessage( fOldLife, tns, hns );
 }
 
 void LifeMeterTime::HandleTapScoreNone()
 {
-	
+	// do nothing.
 }
 
 void LifeMeterTime::SendLifeChangedMessage( float fOldLife, TapNoteScore tns, HoldNoteScore hns )

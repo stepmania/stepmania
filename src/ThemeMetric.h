@@ -124,7 +124,7 @@ public:
 
 			// call function with 0 arguments and 1 result
 			m_Value.PushSelf( L );
-			lua_call(L, 0, 1); 
+			lua_call(L, 0, 1);
 			ASSERT( !lua_isnil(L, -1) );
 			LuaHelpers::Pop( L, m_currentValue );
 			LUA->Release(L);

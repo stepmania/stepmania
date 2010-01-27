@@ -39,6 +39,7 @@ public:
 	bool DoesThemeExist( const RString &sThemeName );
 	bool IsThemeSelectable( const RString &sThemeName );
 	RString GetThemeDisplayName( const RString &sThemeName );
+	RString GetThemeAuthor( const RString &sThemeName );
 	void GetLanguages( vector<RString>& AddTo );
 	bool DoesLanguageExist( const RString &sLanguage );
 	void SwitchThemeAndLanguage( const RString &sThemeName, const RString &sLanguage, bool bPseudoLocalize, bool bForceThemeReload = false );
@@ -48,6 +49,7 @@ public:
 	RString GetCurLanguage() const { return m_sCurLanguage; };
 	RString GetCurThemeDir() const { return GetThemeDirFromName(m_sCurThemeName); };
 	RString GetNextTheme();
+	RString GetNextSelectableTheme();
 	void ReloadMetrics();
 	void ReloadSubscribers();
 	void ClearSubscribers();

@@ -108,7 +108,7 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 					pChain->AddSound( iIndex, fSeconds, fPan );
 				}
 			}
-		}		
+		}
 	}
 }
 

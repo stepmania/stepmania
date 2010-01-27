@@ -1,0 +1,159 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=x-sjis">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>BM98Data_format_specification</title>
+</head>
+
+<body bgcolor="#F1DBC0">
+
+<p><font color="#008080" size="3" face="MS Sans Serif"><strong>BMS
+Format Specification</strong></font></p>
+
+<p align="right">written by Urao Yane(yaneurao@sun-inet.or.jp)</p>
+
+<p>&quot;BMS&quot; means a Be-Music Source file. A file which has
+BMS suffix is regarded as the BMS file. This file format was
+produced by Urao Yane and NBK in 1998. And I adopted this file
+format to BM98. Now,anyone can use this format freely.</p>
+
+<p>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</p>
+
+<p><font color="#008080">&lt;Command Line&gt;</font></p>
+
+<p>The line begining at '#' is the command line. All the rest are
+ignored (use for comments). And this BMS file is compiled at
+runtime , so you can order any lines freely. And there is no
+difference in the command line between using a capital letter or
+not.</p>
+
+<p>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</p>
+
+<p><font color="#008080">&lt;Header&gt;</font></p>
+
+<p>#PLAYER 1<br>
+This data is for Single Play.</p>
+
+<p>#PLAYER 2<br>
+This data is for Two Play.</p>
+
+<p>#PLAYER 3<br>
+This data is for Double Play.</p>
+
+<p>#GENRE xxxxxxxx<br>
+Definition of Genre.</p>
+
+<p>#TITLE xxxxxxxx<br>
+Definition of Title.</p>
+
+<p>#ARTIST xxxxxxxx<br>
+Definition of Artist.</p>
+
+<p>#BPM xxx<br>
+Definition of BPM.(Beat Per Minite) at the top of music. default
+: 130</p>
+
+<p>#MIDIFILE xxxxxxx.mid<br>
+Background music by MIDI.</p>
+
+<p>#PLAYLEVEL x<br>
+Information of Game Level for player.</p>
+
+<p>#RANK x<br>
+judgement level.<br>
+x = 0 :very hard, 1: hard, 2: normal, 3: easy</p>
+
+<p>Å@</p>
+
+<p>#VOLWAV xxx<br>
+relative volume control (percentage)</p>
+
+<p>#WAVxx yyyyyyyy.wav<br>
+definition of Wave Data. xx : 01 to FF (Hex) , yyyyyyyy.wav :
+wave file name</p>
+
+<p>e.g.<br>
+#WAV01 HOUSE01.WAV // assign HOUSE01.WAV to 01 wav<br>
+#WAV02 HOUSE02.WAV // assign HOUSE02.WAV to 02 wav<br>
+#WAVFF HOUSE03.WAV // assign HOUSE03.WAV to FF wav</p>
+
+<p>#BMPxx yyyyyyyy.bmp<br>
+definition of Bitmap file. xx : 01 to FF(Hex) , yyyyyyyy.bmp :
+bitmap file name<br>
+Bitmap size must be 256 * 256.(max color 65536)</p>
+
+<p>e.g.<br>
+#BMP01 HOUSE01.BMP // assign HOUSE01.BMP to 01 bitmap<br>
+#BMP02 HOUSE02.BMP // assign HOUSE02.BMP to 02 bitmap<br>
+#BMPEE HOUSE03.BMP // assign HOUSE03.BMP to EE bitmap<br>
+</p>
+
+<p>But ,the bitmap defined by #BMP00 is something special.<br>
+This bitmap shows when a player do a poor play.</p>
+
+<p>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</p>
+
+<p>// a sample of random loading function</p>
+
+<p>#random 2 // create a random number (1 or 2)</p>
+
+<p>#if 1 // if the number was equal to 1 then...<br>
+#00111:31313131 // this is effective...<br>
+#endif</p>
+
+<p>#if 2 // if the number was equal to 2 then...<br>
+#00113:32003232 // this is effective<br>
+#endif</p>
+
+<p>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</p>
+
+<p><font color="#008080">&lt;Channel Messages&gt;</font></p>
+
+<p>#aaabb:cccccccc</p>
+
+<p>aaa: track number (from 000 to 999)<br>
+bb : channel number where you want to send message.(from 00 to
+FF)<br>
+cccccccc : &lt;message&gt;</p>
+
+<p><font color="#008080">&lt;a brief Channel Number&gt;</font></p>
+
+<p>01 : BGM(background music by WAVE)<br>
+03 : changing a Tempo<br>
+04 : BGA(background animation)<br>
+06 : changing Poor-bitmap<br>
+11 to 17 : Object Channel of 1 player side<br>
+21 to 27 : Object Channel of 2 player side<br>
+</p>
+
+<p><font color="#008080">&lt;Example&gt;</font></p>
+
+<p>#00211:03030303<br>
+This means 4 objects at the left of 1 player side in 002 track.
+This object is assigned to wave No.03 which was defined by #WAV03
+xxxx.wav. And this 4 objects are arranged <font color="#FF0000"><em>evenly</em></font>
+in this track.</p>
+
+<p>Please try the following patterns.</p>
+
+<p>#00211:0303030303</p>
+
+<p>#00211:0303000303</p>
+
+<p>#00211:010101<br>
+#00211:00020202</p>
+
+<p>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</p>
+
+<p>This document and this format is <font color="#FF0000">free</font>!<br>
+I hope the day will come when my BMS format will use all over the
+world.</p>
+
+<p align="right">Urao Yane</p>
+
+<p><a href="http://www.sun-inet.or.jp/~yaneurao/">back to my
+homepage</a></p>
+</body>
+</html>

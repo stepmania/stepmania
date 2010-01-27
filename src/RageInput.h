@@ -26,7 +26,7 @@ public:
 	wchar_t DeviceInputToChar( DeviceInput di, bool bUseCurrentKeyModifiers );
 	InputDeviceState GetInputDeviceState( InputDevice id );
 	RString GetDisplayDevicesString() const;
-	
+
 	// Lua
 	void PushSelf( lua_State *L );
 };

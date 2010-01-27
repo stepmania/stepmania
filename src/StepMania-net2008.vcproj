@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="StepMania"
+	Name="sm-ssc"
 	ProjectGUID="{AF209DBD-24BD-4356-8DFE-41751B221195}"
 	RootNamespace="StepMania"
 	Keyword="MFCProj"
@@ -80,11 +80,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/lib/avcodec.lib ffmpeg/lib/avformat.lib ffmpeg/lib/avutil.lib ffmpeg/lib/swscale.lib"
 				OutputFile="../Program/StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="ffmpeg\lib"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib;msvcrt.lib"
 				GenerateDebugInformation="true"
@@ -116,7 +116,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"
+				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania-debug.vdi&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -157,7 +157,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\include;BaseClasses"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -190,11 +190,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib"
 				OutputFile="..\Program/StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="ffmpeg\lib"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib"
 				ProgramDatabaseFile="$(IntDir)/StepMania.pdb"
 				GenerateMapFile="true"
@@ -224,7 +224,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"
+				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -291,11 +291,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/lib/avcodec.lib ffmpeg/lib/avformat.lib ffmpeg/lib/avutil.lib ffmpeg/lib/swscale.lib"
 				OutputFile="..\Program/StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="ffmpeg\lib"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib;msvcrt.lib"
 				GenerateDebugInformation="true"
@@ -327,7 +327,118 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"
+				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania-fastdebug.vdi&quot;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release-SSE2|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="archutils\Win32\verinc&#x0D;&#x0A;cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\&#x0D;&#x0A;"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\../StepMania.tlb"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/MP4"
+				Optimization="3"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses"
+				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE"
+				StringPooling="true"
+				MinimalRebuild="false"
+				ExceptionHandling="0"
+				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
+				EnableFunctionLevelLinking="false"
+				EnableEnhancedInstructionSet="2"
+				UsePrecompiledHeader="1"
+				PrecompiledHeaderThrough="global.h"
+				PrecompiledHeaderFile="$(IntDir)/StepMania-SSE2.pch"
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
+				BrowseInformation="0"
+				WarningLevel="4"
+				SuppressStartupBanner="true"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
+				AdditionalDependencies="shell32.lib gdi32.lib user32.lib ole32.lib advapi32.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib"
+				OutputFile="..\Program/StepMania-SSE2.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="ffmpeg\lib"
+				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib"
+				ProgramDatabaseFile="$(IntDir)/StepMania-SSE2.pdb"
+				GenerateMapFile="true"
+				MapFileName="$(IntDir)\$(TargetName)-SSE2.map"
+				MapExports="true"
+				SubSystem="2"
+				OptimizeForWindows98="0"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName)-SSE2.map&quot; &quot;$(TargetDir)\StepMania-SSE2.vdi&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -766,14 +877,6 @@
 				>
 			</File>
 			<File
-				RelativePath="ScreenSelectMode.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenSelectMode.h"
-				>
-			</File>
-			<File
 				RelativePath="ScreenSelectMusic.cpp"
 				>
 			</File>
@@ -959,6 +1062,14 @@
 			</File>
 			<File
 				RelativePath="AutoKeysounds.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BackgroundCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BackgroundCache.h"
 				>
 			</File>
 			<File
@@ -1306,11 +1417,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\NotesLoaderPMS.cpp"
+				RelativePath="NotesLoaderPMS.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\NotesLoaderPMS.h"
+				RelativePath="NotesLoaderPMS.h"
 				>
 			</File>
 			<File
@@ -1692,6 +1803,14 @@
 						UsePrecompiledHeader="1"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\global.h"
@@ -1938,6 +2057,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\arch\MovieTexture\MovieTexture_DShow.h"
@@ -1960,6 +2087,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -1994,6 +2129,14 @@
 								Name="VCCLCompilerTool"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\arch\MovieTexture\MovieTexture_DShowHelper.h"
@@ -2016,6 +2159,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -2510,11 +2661,11 @@
 				>
 			</File>
 			<File
-				RelativePath="GraphDisplay.cpp"
+				RelativePath=".\GraphDisplay.cpp"
 				>
 			</File>
 			<File
-				RelativePath="GraphDisplay.h"
+				RelativePath=".\GraphDisplay.h"
 				>
 			</File>
 			<File
@@ -2571,14 +2722,6 @@
 			</File>
 			<File
 				RelativePath=".\ModIconRow.h"
-				>
-			</File>
-			<File
-				RelativePath="MusicBannerWheel.cpp"
-				>
-			</File>
-			<File
-				RelativePath="MusicBannerWheel.h"
 				>
 			</File>
 			<File
@@ -2651,14 +2794,6 @@
 			</File>
 			<File
 				RelativePath="ScrollBar.h"
-				>
-			</File>
-			<File
-				RelativePath="ScrollingList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScrollingList.h"
 				>
 			</File>
 			<File
@@ -3594,6 +3729,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="pcre\get.c"
@@ -3616,6 +3759,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -3654,6 +3805,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="pcre\pcre.c"
@@ -3676,6 +3835,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -3714,6 +3881,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 				</Filter>
 				<Filter
@@ -3740,6 +3915,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -3778,6 +3961,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\lauxlib.h"
@@ -3810,6 +4001,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\lcode.c"
@@ -3832,6 +4031,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -3870,6 +4077,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\ldebug.c"
@@ -3892,6 +4107,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -3930,6 +4153,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\ldo.h"
@@ -3962,6 +4193,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\lfunc.c"
@@ -3984,6 +4223,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4022,6 +4269,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\lgc.h"
@@ -4048,6 +4303,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4082,6 +4345,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\llex.c"
@@ -4104,6 +4375,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4146,6 +4425,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\lmem.c"
@@ -4168,6 +4455,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4206,6 +4501,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\lobject.c"
@@ -4228,6 +4531,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4266,6 +4577,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\lopcodes.h"
@@ -4298,6 +4617,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\lparser.c"
@@ -4320,6 +4647,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4358,6 +4693,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\lstate.h"
@@ -4384,6 +4727,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4422,6 +4773,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\ltable.c"
@@ -4444,6 +4803,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4482,6 +4849,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\ltm.c"
@@ -4504,6 +4879,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4554,6 +4937,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\lundump.h"
@@ -4586,6 +4977,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\lua-5.1\src\lvm.h"
@@ -4612,6 +5011,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="FastDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -4796,6 +5203,22 @@
 			<File
 				RelativePath=".\CommandLineActions.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="HAVE_VERSION_INFO"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="FastDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="HAVE_VERSION_INFO"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\CommandLineActions.h"
@@ -5019,6 +5442,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\amextra.h"
@@ -5041,6 +5473,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5078,6 +5518,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\amfilter.h"
@@ -5100,6 +5549,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5137,6 +5594,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\AMVIDEO.H"
@@ -5165,6 +5631,14 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\cache.h"
@@ -5187,6 +5661,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5224,6 +5706,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\combase.h"
@@ -5246,6 +5737,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5283,6 +5782,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\cprop.h"
@@ -5305,6 +5813,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5342,6 +5858,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\ctlutil.h"
@@ -5364,6 +5889,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5401,6 +5934,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\ddmm.h"
@@ -5423,6 +5965,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5453,6 +6003,15 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5491,6 +6050,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\dllsetup.h"
@@ -5513,6 +6081,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5547,6 +6123,14 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\fourcc.h"
@@ -5569,6 +6153,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5603,6 +6195,14 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\msgthrd.h"
@@ -5625,6 +6225,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5662,6 +6270,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\mtype.h"
@@ -5684,6 +6301,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5721,6 +6346,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\outputq.h"
@@ -5743,6 +6377,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5780,6 +6422,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\pstream.h"
@@ -5802,6 +6453,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5839,6 +6498,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\pullpin.h"
@@ -5861,6 +6529,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5898,6 +6574,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\refclock.h"
@@ -5926,6 +6611,14 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\reftime.h"
@@ -5948,6 +6641,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -5985,6 +6686,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\renbase.h"
@@ -6007,6 +6717,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6037,6 +6755,15 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6075,6 +6802,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\seekpt.h"
@@ -6097,6 +6833,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6134,6 +6878,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\source.h"
@@ -6162,6 +6915,14 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\streams.h"
@@ -6184,6 +6945,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6221,6 +6990,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\strmctl.h"
@@ -6243,6 +7021,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6280,6 +7066,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\sysclock.h"
@@ -6302,6 +7097,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6339,6 +7142,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\transfrm.h"
@@ -6361,6 +7173,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6398,6 +7218,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\transip.h"
@@ -6420,6 +7249,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6457,6 +7294,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\videoctl.h"
@@ -6479,6 +7325,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6516,6 +7370,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\vtrans.h"
@@ -6538,6 +7401,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6575,6 +7446,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\winctrl.h"
@@ -6597,6 +7477,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6634,6 +7522,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\winutil.h"
@@ -6656,6 +7553,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6693,6 +7598,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\wxdebug.h"
@@ -6715,6 +7629,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6752,6 +7674,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\wxlist.h"
@@ -6774,6 +7705,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -6811,6 +7750,15 @@
 						UsePrecompiledHeader="0"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\BaseClasses\wxutil.h"
@@ -6833,6 +7781,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="FastDebug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release-SSE2|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool

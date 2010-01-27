@@ -1,0 +1,80 @@
+okay what we should probabably do for rival data is fuck up stats somehow.
+
+Here's what rival data should have, taken from Stats.xml
+
+==GeneralData==
+This section holds very BASIC identifying and general information.
+
+<GeneralData>
+	<DisplayName>AJ</DisplayName>
+	<Guid>5ece7871bd060600</Guid>
+	<LastPlayedMachineGuid>faeae5b0da56509c</LastPlayedMachineGuid>
+	<LastPlayedDate>2008-07-06</LastPlayedDate>
+</GeneralData>
+
+==SongScores==
+Where song scores are held. Each song has its own entry in here.
+
+<Song Dir='Songs/Dance Dance Revolution 6th Mix -Max-/Do It Right/'>
+	<Steps Difficulty='Hard' StepsType='dance-single'>
+		<HighScoreList>
+			<NumTimesPlayed>2</NumTimesPlayed>
+			<LastPlayed>2008-02-08</LastPlayed>
+			<HighGrade>Tier02</HighGrade>
+
+			<HighScore>
+				<Grade>Tier02</Grade>
+				<PercentDP>0.952000</PercentDP>
+				<Modifiers>3x, Overhead, delta</Modifiers>
+				<DateTime>2008-02-08 17:12:08</DateTime>
+				<PlayerGuid>5ece7871bd060600</PlayerGuid>
+				<MachineGuid>faeae5b0da56509c</MachineGuid>
+
+				<TapNoteScores>
+					<HitMine>0</HitMine>
+					<AvoidMine>0</AvoidMine>
+					<CheckpointMiss>0</CheckpointMiss>
+					<Miss>0</Miss>
+					<W5>0</W5>
+					<W4>0</W4>
+					<W3>0</W3>
+					<W2>41</W2>
+					<W1>244</W1>
+					<CheckpointHit>0</CheckpointHit>
+				</TapNoteScores>
+
+				<HoldNoteScores>
+					<LetGo>0</LetGo>
+					<Held>0</Held>
+				</HoldNoteScores>
+			</HighScore>
+
+			<HighScore>
+				<Grade>Tier03</Grade>
+				<PercentDP>0.942600</PercentDP>
+				<Modifiers>3x, delta</Modifiers>
+				<DateTime>2008-02-08 17:08:17</DateTime>
+				<PlayerGuid>5ece7871bd060600</PlayerGuid>
+				<MachineGuid>faeae5b0da56509c</MachineGuid>
+
+				<TapNoteScores>
+					<HitMine>0</HitMine>
+					<AvoidMine>0</AvoidMine>
+					<CheckpointMiss>0</CheckpointMiss>
+					<Miss>0</Miss>
+					<W5>0</W5>
+					<W4>1</W4>
+					<W3>0</W3>
+					<W2>46</W2>
+					<W1>238</W1>
+					<CheckpointHit>0</CheckpointHit>
+				</TapNoteScores>
+
+				<HoldNoteScores>
+					<LetGo>0</LetGo>
+					<Held>0</Held>
+				</HoldNoteScores>
+			</HighScore>
+		</HighScoreList>
+	</Steps>
+</Song>

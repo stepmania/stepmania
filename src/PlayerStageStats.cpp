@@ -567,12 +567,12 @@ float PlayerStageStats::GetPercentageOfTaps( TapNoteScore tns ) const
 void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutoplay )
 {
 	LOG->Trace( "hand out awards" );
-	
+
 	m_PeakComboAward = PeakComboAward_Invalid;
 
 	if( bGaveUp || bUsedAutoplay )
 		return;
-	
+
 	deque<StageAward> &vPdas = GAMESTATE->m_vLastStageAwards[p];
 
 	LOG->Trace( "per difficulty awards" );
@@ -591,7 +591,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 			vPdas.push_back( StageAward_SingleDigitW2 );
 		if( FullComboOfScore( TNS_W1 ) )
 			vPdas.push_back( StageAward_FullComboW1 );
-		
+
 		if( OneOfScore( TNS_W3 ) )
 			vPdas.push_back( StageAward_OneW3 );
 		if( OneOfScore( TNS_W2 ) )
@@ -609,7 +609,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	// Max one PDA per stage
 	if( !vPdas.empty() )
 		vPdas.erase( vPdas.begin(), vPdas.end()-1 );
-	
+
 	if( !vPdas.empty() )
 		m_StageAward = vPdas.back();
 	else
@@ -660,16 +660,19 @@ public:
 	DEFINE_METHOD( GetLifeRemainingSeconds,		m_fLifeRemainingSeconds )
 	DEFINE_METHOD( GetSurvivalSeconds,		GetSurvivalSeconds() )
 	DEFINE_METHOD( GetCurrentCombo,			m_iCurCombo )
+	DEFINE_METHOD( GetCurrentMissCombo,			m_iCurMissCombo )
 	DEFINE_METHOD( GetCurrentScoreMultiplier,	m_iCurScoreMultiplier )
 	DEFINE_METHOD( GetScore,			m_iScore )
 	DEFINE_METHOD( GetTapNoteScores,		m_iTapNoteScores[Enum::Check<TapNoteScore>(L, 1)] )
 	DEFINE_METHOD( GetHoldNoteScores,		m_iHoldNoteScores[Enum::Check<HoldNoteScore>(L, 1)] )
 	DEFINE_METHOD( FullCombo,			FullCombo() )
+	DEFINE_METHOD( FullComboOfScore,			FullComboOfScore( Enum::Check<TapNoteScore>(L, 1) ) )
 	DEFINE_METHOD( MaxCombo,			GetMaxCombo().m_cnt )
 	DEFINE_METHOD( GetCurrentLife,			GetCurrentLife() )
 	DEFINE_METHOD( GetGrade,			GetGrade() )
 	DEFINE_METHOD( GetActualDancePoints,		m_iActualDancePoints )
 	DEFINE_METHOD( GetPossibleDancePoints,		m_iPossibleDancePoints )
+	DEFINE_METHOD( GetCurrentPossibleDancePoints,		m_iCurPossibleDancePoints )
 	DEFINE_METHOD( GetPercentDancePoints,		GetPercentDancePoints() )
 	DEFINE_METHOD( GetLessonScoreActual,		GetLessonScoreActual() )
 	DEFINE_METHOD( GetLessonScoreNeeded,		GetLessonScoreNeeded() )
@@ -678,6 +681,7 @@ public:
 	DEFINE_METHOD( GetStageAward,		m_StageAward )
 	DEFINE_METHOD( GetPeakComboAward,		m_PeakComboAward )
 	DEFINE_METHOD( IsDisqualified,			IsDisqualified() )
+	DEFINE_METHOD( GetAliveSeconds,		m_fAliveSeconds )
 
 	static int GetPlayedSteps( T* p, lua_State *L )
 	{
@@ -706,16 +710,19 @@ public:
 		ADD_METHOD( GetLifeRemainingSeconds );
 		ADD_METHOD( GetSurvivalSeconds );
 		ADD_METHOD( GetCurrentCombo );
+		ADD_METHOD( GetCurrentMissCombo );
 		ADD_METHOD( GetCurrentScoreMultiplier );
 		ADD_METHOD( GetScore );
 		ADD_METHOD( GetTapNoteScores );
 		ADD_METHOD( GetHoldNoteScores );
 		ADD_METHOD( FullCombo );
+		ADD_METHOD( FullComboOfScore );
 		ADD_METHOD( MaxCombo );
 		ADD_METHOD( GetCurrentLife );
 		ADD_METHOD( GetGrade );
 		ADD_METHOD( GetActualDancePoints );
 		ADD_METHOD( GetPossibleDancePoints );
+		ADD_METHOD( GetCurrentPossibleDancePoints );
 		ADD_METHOD( GetPercentDancePoints );
 		ADD_METHOD( GetLessonScoreActual );
 		ADD_METHOD( GetLessonScoreNeeded );
@@ -726,6 +733,7 @@ public:
 		ADD_METHOD( IsDisqualified );
 		ADD_METHOD( GetPlayedSteps );
 		ADD_METHOD( GetPossibleSteps );
+		ADD_METHOD( GetAliveSeconds );
 	}
 };
 

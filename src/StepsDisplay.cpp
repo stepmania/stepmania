@@ -13,6 +13,7 @@
 #include "LuaBinding.h"
 #include "GameManager.h"
 #include "PlayerState.h"
+#include "RageLog.h"
 
 REGISTER_ACTOR_CLASS( StepsDisplay );
 
@@ -102,9 +103,10 @@ void StepsDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlaye
 
 	if( m_bShowStepsType )
 	{
-		m_sprStepsType.SetName( "StepsType" );
+		m_sprStepsType.Load( THEME->GetPathG(m_sMetricsGroup,"StepsType") );
+		m_sprStepsType->SetName( "StepsType" );
 		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_sprStepsType, m_sMetricsGroup );
-		this->AddChild( &m_sprStepsType );
+		this->AddChild( m_sprStepsType );
 	}
 
 	// Play Load Command
@@ -121,11 +123,17 @@ void StepsDisplay::SetFromGameState( PlayerNumber pn )
 {
 	if( GAMESTATE->IsCourseMode() )
 	{
+		// figure out what course type is selected somehow.
 		const Trail* pTrail = GAMESTATE->m_pCurTrail[pn];
 		if( pTrail )
 			SetFromTrail( pTrail );
 		else
+		{
+			// why was it pTrail->m_CourseType as the last argument when pTrail
+			// can't possibly exist here? -aj
+			//pTrail = GAMESTATE->m_pPreferredCourse->GetTrail(GAMESTATE->m_PreferredStepsType, GAMESTATE->m_PreferredCourseDifficulty[pn]);
 			SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, GAMESTATE->m_PreferredCourseDifficulty[pn], CourseType_Invalid );
+		}
 	}
 	else
 	{
@@ -175,7 +183,6 @@ void StepsDisplay::SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType
 void StepsDisplay::SetInternal( const SetParams &params )
 {
 	this->SetVisible( true );
-
 	Message msg( "Set" );
 
 	RString sCustomDifficulty;
@@ -202,7 +209,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		msg.SetParam( "Trail", LuaReference::CreateFromPush(*(Trail*)params.pTrail) );
 	msg.SetParam( "Meter", params.iMeter );
 	msg.SetParam( "StepsType", params.st );
-	
+
 	m_sprFrame->HandleMessage( msg );
 
 	if( m_bShowTicks )
@@ -240,16 +247,6 @@ void StepsDisplay::SetInternal( const SetParams &params )
 	{
 		bool b = params.pSteps && params.pSteps->IsAutogen();
 		m_sprAutogen->SetVisible( b );
-	}
-
-	if( m_bShowStepsType )
-	{
-		// TODO: Make this an AutoActor, optimize graphic loading
-		if( params.st != StepsType_Invalid )
-		{
-			RString sStepsType = GAMEMAN->GetStepsTypeInfo(params.st).szName;
-			m_sprStepsType.Load( THEME->GetPathG(m_sMetricsGroup,"StepsType "+sStepsType) );
-		}
 	}
 
 	this->HandleMessage( msg );

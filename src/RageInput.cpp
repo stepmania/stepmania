@@ -18,7 +18,7 @@ namespace
 	};
 	vector<LoadedInputHandler> m_InputHandlers;
 	map<InputDevice, InputHandler *> g_mapDeviceToHandler;
-};
+}
 
 RageInput::RageInput()
 {

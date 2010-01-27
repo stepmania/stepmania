@@ -1,3 +1,4 @@
+/* MusicList - now an artifact from ScreenSelectGroup. */
 #ifndef MUSIC_LIST_H
 #define MUSIC_LIST_H
 
@@ -11,7 +12,7 @@ class Song;
 class MusicList : public ActorFrame
 {
 	BitmapText		m_textTitles[MAX_MLIST_COLUMNS];
-	
+
 	struct group
 	{
 		RString ContentsText[MAX_MLIST_COLUMNS];
@@ -21,7 +22,7 @@ class MusicList : public ActorFrame
 	vector<group> m_ContentsText;
 
 	int NumGroups, CurGroup;
-	
+
 public:
 	MusicList();
 	void Load();

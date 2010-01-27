@@ -16,12 +16,16 @@ class LuaClass;
 
 typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
 
+// background
 #define DRAW_ORDER_BEFORE_EVERYTHING		-200
+// underlay
 #define DRAW_ORDER_UNDERLAY			-100
+// decorations
+#define DRAW_ORDER_DECORATIONS		0
 // normal screen elements go here
 #define DRAW_ORDER_OVERLAY			+100
-#define DRAW_ORDER_TRANSITIONS			+110
-#define DRAW_ORDER_AFTER_EVERYTHING		+200
+#define DRAW_ORDER_TRANSITIONS			+200
+#define DRAW_ORDER_AFTER_EVERYTHING		+300
 
 enum HorizAlign
 {
@@ -63,13 +67,24 @@ public:
 	static void SetBGMTime( float fTime, float fBeat, float fTimeNoOffset, float fBeatNoOffset );
 	static void SetBGMLight( int iLightNumber, float fCabinetLights );
 
+	// todo: split out into diffuse effects and translation effects, or
+	// create an effect stack instead. -aj
 	enum Effect { no_effect,
+			// diffuse effects
 			diffuse_blink, diffuse_shift, diffuse_ramp,
-			glow_blink, glow_shift,
+			glow_blink, glow_shift, glow_ramp,
 			rainbow,
+			// translation effects
 			wag, bounce, bob, pulse,
 			spin, vibrate
 	};
+	/*
+	enum EffectType {
+		EffectType_Diffuse,
+		EffectType_Translate,
+		Num_EffectType
+	};
+	*/
 
 	struct TweenState
 	{
@@ -83,11 +98,12 @@ public:
 		RageVector3	rotation;
 		RageVector4	quat;
 		RageVector3	scale;
-		float		fSkewX;
+		float		fSkewX, fSkewY;
 		RectF		crop;	// 0 = no cropping, 1 = fully cropped
 		RectF		fade;	// 0 = no fade
 		RageColor	diffuse[4];
 		RageColor	glow;
+		// GlowMode	glowmode; // oh hello...
 		float		aux;
 	};
 
@@ -184,20 +200,22 @@ public:
 
 	void SetSkewX( float fAmount )			{ DestTweenState().fSkewX = fAmount; }
 	float GetSkewX( float fAmount ) const		{ return DestTweenState().fSkewX; }
+	void SetSkewY( float fAmount )			{ DestTweenState().fSkewY = fAmount; }
+	float GetSkewY( float fAmount ) const		{ return DestTweenState().fSkewY; }
 
 	float GetCropLeft() const			{ return DestTweenState().crop.left; }
 	float GetCropTop() const			{ return DestTweenState().crop.top; }
 	float GetCropRight() const			{ return DestTweenState().crop.right; }
 	float GetCropBottom() const			{ return DestTweenState().crop.bottom; }
 	void  SetCropLeft( float percent )		{ DestTweenState().crop.left = percent; }
-	void  SetCropTop( float percent	) 		{ DestTweenState().crop.top = percent;	}
-	void  SetCropRight( float percent )		{ DestTweenState().crop.right = percent;}
-	void  SetCropBottom( float percent )		{ DestTweenState().crop.bottom = percent;}
+	void  SetCropTop( float percent	) 		{ DestTweenState().crop.top = percent; }
+	void  SetCropRight( float percent )		{ DestTweenState().crop.right = percent; }
+	void  SetCropBottom( float percent )		{ DestTweenState().crop.bottom = percent; }
 
 	void  SetFadeLeft( float percent )		{ DestTweenState().fade.left = percent; }
 	void  SetFadeTop( float percent )		{ DestTweenState().fade.top = percent;	}
-	void  SetFadeRight( float percent )		{ DestTweenState().fade.right = percent;}
-	void  SetFadeBottom( float percent )		{ DestTweenState().fade.bottom = percent;}
+	void  SetFadeRight( float percent )		{ DestTweenState().fade.right = percent; }
+	void  SetFadeBottom( float percent )		{ DestTweenState().fade.bottom = percent; }
 
 	void SetGlobalDiffuseColor( RageColor c );
 
@@ -219,6 +237,8 @@ public:
 	float GetDiffuseAlpha() const			{ return DestTweenState().diffuse[0].a; };
 	void SetGlow( RageColor c )			{ DestTweenState().glow = c; };
 	RageColor GetGlow() const			{ return DestTweenState().glow; };
+	//void SetGlowMode( GlowMode m )	{ DestTweenState().glowmode = m; };
+	//GlowMode GetGlowMode() const		{ return DestTweenState().glowmode; };
 
 	void SetAux( float f )				{ DestTweenState().aux = f; }
 	float GetAux() const				{ return m_current.aux; }
@@ -242,7 +262,6 @@ public:
 	}
 	const TweenState& DestTweenState() const { return const_cast<Actor*>(this)->DestTweenState(); }
 
-	
 	enum StretchType { fit_inside, cover };
 
 	void ScaleToCover( const RectF &rect )		{ ScaleTo( rect, cover ); }
@@ -252,23 +271,25 @@ public:
 	void StretchTo( const RectF &rect );
 
 
-	//
 	// Alignment settings.  These need to be virtual for BitmapText
-	//
 	virtual void SetHorizAlign( float f ) { m_fHorizAlign = f; }
 	virtual void SetVertAlign( float f ) { m_fVertAlign = f; }
 	void SetHorizAlign( HorizAlign ha ) { SetHorizAlign( (ha == HorizAlign_Left)? 0.0f: (ha == HorizAlign_Center)? 0.5f: +1.0f ); }
 	void SetVertAlign( VertAlign va ) { SetVertAlign( (va == VertAlign_Top)? 0.0f: (va == VertAlign_Middle)? 0.5f: +1.0f ); }
 
 
-	//
 	// effects
-	//
+#if defined(SSC_FUTURES)
+	void StopEffects();
+	Effect GetEffect( int i ) const			{ return m_Effects[i]; }
+#else
 	void StopEffect()				{ m_Effect = no_effect; }
 	Effect GetEffect() const			{ return m_Effect; }
+#endif
 	float GetSecsIntoEffect() const			{ return m_fSecsIntoEffect; }
 	float GetEffectDelta() const			{ return m_fEffectDelta; }
 
+	// todo: account for SSC_FUTURES by adding an effect as an arg to each one -aj
 	void SetEffectColor1( RageColor c )		{ m_effectColor1 = c; }
 	void SetEffectColor2( RageColor c )		{ m_effectColor2 = c; }
 	void SetEffectPeriod( float fTime );
@@ -298,6 +319,10 @@ public:
 		float fEffectPeriodSeconds = 1.0f,
 		RageColor c1 = RageColor(1,1,1,0.2f),
 		RageColor c2 = RageColor(1,1,1,0.8f) );
+	void SetEffectGlowRamp( 
+		float fEffectPeriodSeconds = 1.0f,
+		RageColor c1 = RageColor(1,1,1,0.2f),
+		RageColor c2 = RageColor(1,1,1,0.8f) );
 	void SetEffectRainbow( 
 		float fEffectPeriodSeconds = 2.0f );
 	void SetEffectWag( 
@@ -317,9 +342,7 @@ public:
 	void SetEffectVibrate( RageVector3 vect = RageVector3(10,10,10) );
 
 
-	//
 	// other properties
-	//
 	bool GetVisible() const				{ return m_bVisible; }
 	void SetVisible( bool b )			{ m_bVisible = b; }
 	void SetShadowLength( float fLength )		{ m_fShadowLengthX = fLength; m_fShadowLengthY = fLength; }
@@ -336,9 +359,7 @@ public:
 	void StopAnimating()				{ this->EnableAnimation(false); }
 
 
-	//
 	// render states
-	//
 	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
 	void SetTextureWrapping( bool b ) 		{ m_bTextureWrapping = b; } 
 	void SetTextureFiltering( bool b ) 		{ m_bTextureFiltering = b; } 
@@ -349,38 +370,28 @@ public:
 	void SetZBias( float f )			{ m_fZBias = f; }
 	virtual void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 	virtual void PushContext( lua_State *L );
 
-	//
 	// Named commands
-	//
 	void AddCommand( const RString &sCmdName, apActorCommands apac );
 	bool HasCommand( const RString &sCmdName ) const;
 	const apActorCommands *GetCommand( const RString &sCommandName ) const;
 	void PlayCommand( const RString &sCommandName ) { HandleMessage( Message(sCommandName) ); } // convenience
 	void PlayCommandNoRecurse( const Message &msg );
 
-	//
 	// Commands by reference
-	//
 	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
 	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
 	virtual void RunCommandsRecursively( const LuaReference& cmds, const LuaReference *pParamTable = NULL ) { RunCommands(cmds, pParamTable); }
 	// If we're a leaf, then execute this command.
 	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = NULL ) { RunCommands(cmds, pParamTable); }
 
-	//
 	// Messages
-	//
 	virtual void HandleMessage( const Message &msg );
 
-	//
 	// Animation
-	//
 	virtual int GetNumStates() const { return 1; }
 	virtual void SetState( int iNewState ) {}
 	virtual float GetAnimationLengthSeconds() const { return 0; }
@@ -407,11 +418,9 @@ protected:
 		RString		m_sCommandName;		// command to execute when this TweenState goes into effect
 	};
 
-
 	RageVector3	m_baseRotation;
 	RageVector3	m_baseScale;
 	float m_fBaseAlpha;
-
 
 	RageVector2	m_size;
 	TweenState	m_current;
@@ -423,27 +432,25 @@ protected:
 	};
 	vector<TweenStateAndInfo *>	m_Tweens;
 
-	//
 	// Temporary variables that are filled just before drawing
-	//
 	TweenState *m_pTempState;
 
 	bool	m_bFirstUpdate;
 
-	//
 	// Stuff for alignment
-	//
 	float	m_fHorizAlign; /* 0.0 left 0.5 center 1.0 right */
 	float	m_fVertAlign;  /* 0.0 top  0.5 center 1.0 bottom */
 
 
-	//
 	// Stuff for effects
-	//
+#if defined(SSC_FUTURES) // be able to stack effects
+	vector<Effect> m_Effects;
+#else // compatibility
 	Effect m_Effect;
+#endif
 	float m_fSecsIntoEffect;
 	float m_fEffectDelta;
-	
+
 	// units depend on m_EffectClock
 	float m_fEffectRampUp;
 	float m_fEffectHoldAtHalf;
@@ -456,14 +463,13 @@ protected:
 	 * follow the effect clock.  Actor::Update must be called first. */
 	float GetEffectDeltaTime() const		{ return m_fEffectDelta; }
 
+	// todo: account for SSC_FUTURES by having these be vectors too -aj
 	RageColor	m_effectColor1;
 	RageColor	m_effectColor2;
 	RageVector3	m_vEffectMagnitude;
 
 
-	//
 	// other properties
-	//
 	bool		m_bVisible;
 	bool		m_bIsAnimating;
 	float		m_fHibernateSecondsLeft;
@@ -472,9 +478,7 @@ protected:
 	RageColor	m_ShadowColor;
 	int		m_iDrawOrder;		// lower first
 
-	//
 	// render states
-	//
 	BlendMode	m_BlendMode;
 	ZTestMode	m_ZTestMode;
 	CullMode	m_CullMode;
@@ -484,16 +488,12 @@ protected:
 	bool		m_bZWrite;
 	float		m_fZBias; // 0 = no bias; 1 = full bias
 
-	//
 	// global state
-	//
 	static float g_fCurrentBGMTime, g_fCurrentBGMBeat;
 	static float g_fCurrentBGMTimeNoOffset, g_fCurrentBGMBeatNoOffset;
 
 private:
-	//
 	// commands
-	//
 	map<RString, apActorCommands> m_mapNameToCommands;
 };
 

@@ -74,6 +74,7 @@ static const char *BlendModeNames[] =
 {
 	"Normal",
 	"Add",
+	"Modulate",
 
 	/*
 	 * Copy the source directly to the destination.  Alpha is not premultiplied.
@@ -101,11 +102,13 @@ static const char *BlendModeNames[] =
 	 * Ao = Ad*(1-As)
 	 */
 	"AlphaKnockOut",
+	"AlphaMultiply",
 	"WeightedMultiply",
 	"InvertDest",
 	"NoEffect"
 };
 XToString( BlendMode );
+StringToX( BlendMode );
 LuaXType( BlendMode );
 
 static const char *TextureModeNames[] =
@@ -133,6 +136,8 @@ static const char *EffectModeNames[] =
 	"ColorDodge",
 	"VividLight",
 	"HardMix",
+	"Overlay",
+	"Screen",
 
 	"YUYV422"
 };
@@ -148,6 +153,14 @@ static const char *ZTestModeNames[] =
 };
 XToString( ZTestMode );
 LuaXType( ZTestMode );
+
+static const char *GlowModeNames[] =
+{
+	"Brighten",
+	"Whiten",
+};
+XToString( GlowMode );
+LuaXType( GlowMode );
 
 int LuaFunc_color( lua_State *L )
 {

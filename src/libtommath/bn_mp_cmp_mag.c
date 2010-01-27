@@ -51,5 +51,5 @@ int mp_cmp_mag (mp_int * a, mp_int * b)
 #endif
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 24838 $ */
+/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */

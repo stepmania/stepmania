@@ -107,7 +107,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 	// XXX: Why are we flushing here?
 	FILEMAN->FlushDirCache();
 	PROFILEMAN->LoadMachineProfileEdits();
-	
+
 	switch( EDIT_MODE.GetValue() )
 	{
 	DEFAULT_FAIL( EDIT_MODE.GetValue() );

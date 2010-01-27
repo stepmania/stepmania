@@ -41,17 +41,13 @@ private:
 	//Chatting
 	ColorBitmapText		m_textChatInput;
 	ColorBitmapText		m_textChatOutput;
-	Sprite			m_sprChatInputBox;
-	Sprite			m_sprChatOutputBox;
+	AutoActor			m_sprChatInputBox;
+	AutoActor			m_sprChatOutputBox;
 	RString			m_sTextInput;
 	RString			m_actualText;
 
 	vector <BitmapText>	m_textUsers;
 };
-
-//Eventually we won't be using quads in this method.
-#define SET_QUAD_INIT( actor )	UtilSetQuadInit( actor, m_sName );
-void UtilSetQuadInit( Actor& actor, const RString &sClassName );
 
 #endif
 

@@ -1,7 +1,6 @@
 #pragma once
 #include "afxwin.h"
 
-
 // CreateLanguageDlg dialog
 
 class CreateLanguageDlg : public CDialog

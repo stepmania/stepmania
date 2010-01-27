@@ -1,0 +1,326 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fmodern\fprq1\fcharset0 Lucida Console;}}
+{\*\generator Msftedit 5.41.15.1503;}\viewkind4\uc1\pard\f0\fs20 ..: HOW TO READ A .BMS/.BME WITH A NOTEPAD AND A BRAIN :..\par
+         ..: Tutorial v1.1 by Jack A. Trades :..\par
+\par
+~ v1.1 differences\par
+~1 Updated BPM Change method for over 255 and/or decimal BPM usage.\par
+~2 Spelling/word errors fixed.\par
+~3 Added a new KEYLOCATION variable, to go with the ~1 update.\par
+\par
+!TIP!\par
+This tutorial is best viewed in fixed-width fonts, like Lucida Console or Courier New. It's also best viewed when Word Wrap  feature is enabled, so if you need to copy and paste the entire tutorial to a temporary Notepad, then you may do so. You can  always get the .rtf version if that's a hassle.\par
+\par
+!NOTE!\par
+This tutorial is intended for the creation/viewing/translation (what the hell?) of a .bms/.bme for any beatmania game. I will  not include any other function that might also function in other BEMANI games such as DDR arrows or whatever else that a . bms/.bme can do. BEATMANIA ONLY PLZTHXBYE.\par
+\par
+!!DISCLAIMER!!\par
+This tutorial is created entirely from my knowledge and experience of .bms/.bme. I am not responsible for any loss of work,  destruction of property, or loss of sanity when you are deciphering your own .bms/.bme and using this tutorial as your guide.  Do not bug me if you somehow burned your computer or threw your cat out of the balcony. I don't want to hear it, except the  cat part. I'll be sure to call Humane Society on that one.\par
+\par
+\par
+     So you want to read a BMS, eh? Well then, read on and I'll show what little bits of pieces of a .bms/.bme stand for, for  I had no life, and I deciphered almost each of the mechanics a BMS/BME can have.\par
+\par
+\par
+     A BMS have two parts: HEADER and MAIN DATA FIELD. Without each other, they're useless, basically.\par
+\par
+\par
+\par
+\par
+*----------HEADER\par
+\par
+  There are three sections of the header: BASIC, EXTENSION, and the third section that I like to call ASSIGNMENT. \par
+\par
+\bullet  BASIC is the heart and soul of the .bms/.bme, where it tells the simulator (and you) what the hell is the song about. Title  of the song, artist name, genre, BPM, play mode, and play level is specified here.\par
+\bullet  EXTENSION is the optional header that can contain tags you can put as cosmetics, basically.\par
+\bullet  ASSIGNMENT is the last, but not least, section of the header. This is where the life of keysounds and background animations  (hereon called as "bga") begin. You can specify as many as 255 keysound tags and 255 bga tags so the simulator knows what  file to play at where and when.\par
+\par
+  We will begin by explaining each available tags for BASIC header. Notice that lines that begin with *--- are my comments in  the header section, as to not confuse you in an actual .bms/.bme.\par
+\par
+*---BASIC HEADER\par
+\par
+\par
+\par
+#PLAYER #\par
+*---specifies player amount (options are 1 or 2). Use your logic; if it's 5/7-keys, use #PLAYER 1. If it's 10/14-keys, use  #PLAYER 2.\par
+\par
+#GENRE [x]\par
+*---specifies the genre [x] when the song is currently highlighted.\par
+\par
+#TITLE [x]\par
+*---specifies the title [x] when the song is currently highlighted.\par
+\par
+#ARTIST [x]\par
+*---specifies the artist [x] when the song is currently highlighted.\par
+\par
+#BPM ###\par
+*---specifies ### ( 0 to 999 ) as the first (or only) BPM value of the song.\par
+\par
+#PLAYLEVEL ##\par
+*---specifies # ( 0 to 9 ) as the amount of difficulty (stars) of the song. Some simulators, from my experience, can support  values above 9, but let's not be that stupid, shall we?\par
+\par
+#MIDIFILE xxx.mid\par
+*---This tag is optional if a bgm .wav/.mp3 already exists. Specifies the MIDI file to be played at the beginning of the  song. MIDI file must be in the same directory where your .bms/.bme exists.\par
+\par
+\par
+\par
+*---EXTENSION HEADER\par
+\par
+\par
+\par
+#RANK #\par
+*---specifies # ( 0 to 3, where 0 is Very Hard, 1 is Hard, 2 is Normal, and 3 is Easy) as the "rank" of the song. I don't  know the exact function, but I don't think it'll tell the simulator to change the judge setting.\par
+\par
+#TOTAL ###\par
+*---I'm not quite sure about this, but I think this specifies the maximum notes you can get in this song. So values from 0 to  9999 works, I guess.\par
+\par
+#VOLWAV ???\par
+*---I don't know the actual specifier, but I have a hunch this tells the simulator to decrease or increase the volume of the  bgm with/out keysounds.\par
+\par
+#STAGEFILE xxx.yyy\par
+*---specifies the "preview" graphic of the song. Think backgrounds in DDR. This will be shown after you choose the song,  during the loading of keysounds and bganimations, if available, and will disappear when the song starts. xxx.yyy specifies  the filename and filetype respectively. I think you can also use directory command (Using ..\\..\\hi.jpg may tell the simulator  to use the file hi.jpg two directories above the directory where this .bms/.bme exist) but I haven't tested it.\par
+\par
+%EMAIL [x]\par
+*---a comment header; you can enter your e-mail address, if desired.\par
+\par
+%URL [x]\par
+*---a comment header; you can enter your website url address, if desired.\par
+\par
+\par
+\par
+*---ASSIGNMENT HEADER\par
+\par
+\par
+\par
+#WAV** xxx.yyy\par
+\par
+*---this is where you specify the keysound file to be stored into a local variable by the simulator, where it will be able to  be called upon during the gameplay of the song, and where ** is a two-digit hex value, xxx is the filename, and yyy is the  filetype (commonly used are either WAV or MP3 files). \par
+*---In Layman's terms, this is where you'll give the simulator a cardboard sign that says a two-digit number (or letter.  explanation later...) and tell it to play SUCH AND SUCH file whenever you tell it to. So, an example would be:\par
+\par
+*---#WAV01 kickdrum.wav\par
+\par
+*---This means that whenever there's a section in the .bms/.bme that asks for a 01 in the keysound section, the simulator  will then play the file kickdrum.wav, under two conditions: (1) IF AND ONLY IF the player actually presses the key, or (2) IF  AND ONLY IF the digit called is in the Always-autoplay section.\par
+\par
+*---Confused with those new vocabularies? Read on and you'll understand what the hell I'm babbling.\par
+\par
+*---The **, or the two-digit number (or letter), ranges from 00 to FF. If you haven't noticed, it's the range of a 2-byte hex  value. This means that you can specify up to 255 _different_ keysound files for the simulator to memorize. To assign more  variables, just make a new line with changed variable number and filename. Example:\par
+\par
+*---#WAV01 kickdrum.wav\par
+*---#WAV02 hi-hats.wav\par
+\par
+#BMP** xxx.yyy\par
+\par
+*---The #BMP tag has the same idea as the #WAV tag, and also the same usage. The only difference is that the variables will  be called in different sections. See the Main Data Field for further explanation.\par
+\par
+*---HUGE NOTE, AS IN READ THE BELOW COMMENT BEFORE YOU GO ON\par
+*---HUGE NOTE, AS IN READ THE BELOW COMMENT BEFORE YOU GO ON\par
+*---HUGE NOTE, AS IN READ THE BELOW COMMENT BEFORE YOU GO ON\par
+\par
+*---You do NOT need to specify every single variable. That means stop typing 500 lines of specifying nothing. Any unspecified  variables will be assumed as "blanks" by the simulator, and when it is called, the simulator will do nothing, if it's a  keysound, or the simulator will stop any animation previously and display nothing, if it's a bga.\par
+\par
+\par
+*----------MAIN DATA FIELD\par
+\par
+    _THIS_ is the fun part. This section is where all of the keysounds are specified in bits and pieces of measures of the  music, and _THIS_ is where you must act like a detective and decipher what the hell each line stands for. Thankfully, I have  come with aid. And chips. And guacamole dip.\par
+\par
+BACK TO THE POINT\par
+\par
+    Many of you will see jumbles of nothing but digits in a normal .bms/.bme file, but do you ever wonder how does it work?  I'm sure you do, because if you've never wondered so, you won't be reading through here. Or to here, even.\par
+\par
+    So we will begin, with the explanation. I'll have fun 'splaining as I will 'yping.\par
+    'ey! 'ccent 're 'ool! 'nd 'nintelligible 'oo!!! 'o 'ffense.\par
+\par
+\par
+\par
+    So here you are, wandering around the main data field, and you see numbers like this.\par
+\par
+#00412:00000000000000005F0000001A000000E3\par
+\par
+and something like that repeated differently about 3000 times.\par
+\par
+Let's begin understanding each section by breaking down the given example line. Obviously you should already understand the  #. All codes begin with #. Duh.\par
+\par
+#   004    12  :00000000000000005F0000001A000000E3\par
+    ^\par
+    |\par
+    |\par
+\par
+This is your _Measure #_ . Obviously it ranges from Measure 1 (000) to Measure 1000 (999), but what song have 1000 measures?  Hopefully you're not making a .bms/.bme to a nonstop megamix. Anyway, this tells the simulator what's going on in such  measure. In this example, there are...12...thing...with a colon and many zeroes and 5F and 1A and E3 here and there in  measure 5....interesting. Don't worry; you'll understand those things soon.\par
+\par
+Speaking of soon, we're moving right along to the next part. Boy was that quick or what?\par
+\par
+\par
+#   004    12  :00000000000000005F0000001A000000E3\par
+           ^\par
+           |\par
+           |\par
+\par
+      This is what I like to call KEY LOCATION variable, where it tells the simulator to put those...zeroes...and 5F...and  the rest of the garbage into a variable of digit "12."\par
+      That didn't make a lot of sense, did it? Of course not. It didn't to me at first, until I deciphered the possible  variables of key locations. Below is the list of the KEY LOCATION and its variable two-digit number.\par
+\par
+\par
+KEYLOCATION - ACTUAL LOCATION/FUNCTION\par
+======================================\par
+11 - White key 1 (Most left)\par
+12 - Blue key 1 (Most left)\par
+13 - White key 2 (Second from the left)\par
+14 - Blue key 2 (Center)\par
+15 - White key 3 (Second from the right)\par
+18 - Blue key 3 (Most right)\par
+19 - White key 4 (Most right)\par
+16 - Scratch (The big circle thing that makes wiki wiki wiki wik wik sound)\par
+17 - \bullet unknown function currently\bullet\par
+04 - BGA\par
+07 - \bullet unknown function currently\bullet\par
+06 - MISS BGA\par
+01 - Always Autoplay\par
+03 - BPM Change\par
+08 - "Advanced" BPM Change\par
+\par
+\par
+     So in the above example, the code 00000000000000005F0000001A000000E3 will all be executed solely for the Blue key 1.\par
+\par
+\par
+     "BUT JACK A. TRADES, I WANNA KNOW HOW THOSE NUMBERS WORK AND WHAT ARE THEY ACTUALLY!?!??!?!/1/1/131'31'3nklnalndkland"\par
+\par
+     Let's stop the question and start looking at the example below.\par
+\par
+#   004    12  :00000000000000005F0000001A000000E3\par
+                ^                                ^\par
+                 --------------------------------\par
+                                 |\par
+                                 |\par
+\par
+     _NOT_ simply put, they are the codes that tell the simulator to call up all of the specified variables in a single  measure. I lost you, didn't I?\par
+     Simply put, in this example, the simulator is told to call the following variables: 00 (8 times), 5F, 00 (3 times), 1A,  00 (3 times), and E3. That means the simulator will first find what you have specified earlier in the ASSIGNMENT HEADER,  follow your command, and open/play that file for you at that point of time.\par
+     But how should this help you in terms of music? How can you specify exact call locations for the simulator, like a kick  drum every beat in a measure, or a hi-hats for every-other-eighth-beat in a measure? This is where the (other) fun part comes  in.\par
+\par
+     The amount of digits available will determine what kind of a note each double-digit is. I lost you again, didn't I?\par
+\par
+     For (another?) example, if you put a line of code such as this instead of the given example above:\par
+\par
+     #00412:5F\par
+\par
+     You're telling the simulator to play the 5F keysound whenever the player presses the blue key 1 at the first beat of  measure 5.\par
+\par
+     HOLY CRAP HOW DID I KNOW THAT!?\par
+     Well, if you've studied music, and understand what the hell I was saying earlier, then you must know you only specified  one digit for the measure, and that means the simulator will assume that double-digit as a whole note. Remember: 4 beats  equal a measure, and a whole note = 4 beats.\par
+\par
+     So if you specify this instead:\par
+\par
+     #00412:5F005F00\par
+\par
+     The simulator will assume each double-digit as _quarter note_ and do the polka. I mean, do its thing. Play 5F in the  first beat of the measure, play 00 in the second beat, play 5F in the third and finally play 00 in the fourth.\par
+     \par
+     If I specify:\par
+\par
+     #00412:001A001A001A001A\par
+\par
+     I'm telling the simulator to play the 1A in every other sixteenth notes. Get the picture?\par
+\par
+     \'a4 THE AMOUNT OF DOUBLE DIGITS AvAILABLE IN THE LINE OF CODE SPECIFIES THE TYPE OF NOTE EACH ARE \'a4\par
+\par
+  If there is one double-digit, it is a whole note.\par
+  If there are two double-digits, each double-digit is a half note.\par
+  If there are four double-digits, each double-digit is a quarter note.\par
+  If there are eight double-digits, each double-digit is a eighth note.\par
+  If there are sixteen double-digits, each double-digit is a sixteenth note.\par
+  If there are twelve double-digits, each double-digit is a twelveth note.\par
+  If there are thirty two double-digits, each double-digit is a thirty-second note.\par
+  ET CETERA\par
+\par
+     The highest note type a simulator can take, usually, is a 192nd note. If you go beyond that, something is wrong with you  or the song. Probably you, but you never know.\par
+\par
+\par
+     So let's recap! What does this code actually tell you?\par
+\par
+     #00412:00000000000000005F0000001A000000E3\par
+\par
+     \bullet  At measure 5 ( #004 = MEASURE #5 ),\par
+     \bullet  The following variables are to be called in the Blue Key 1 section ( #xxx12 = Blue Key 1 ):\par
+     \bullet  00,00,00,00,00,00,00,00,5F,00,00,00,1A,00,00,00,E3\par
+     \bullet  Where each note is assumed as (in this strange case) a seventeenth note.\par
+     \bullet  Therefore, the simulator must play the keysound of variable 00 in the first seventeenth note, then another 00 in the  second seventeenth note, etc.\par
+     \par
+\par
+     And you're done! See, that wasn't so hard, was it? But you think I'm forgetting something. Actually, two things. Well,  I'm not, so shut up.     That code always apply to everything you see in the KEYLOCATION table, including BGA and Always  Autoplay.\par
+     The difference in the BGA, however, is that the simulator will load the graphics of the specified variables. So, if  you've specified #BMP01 neh.bmp, and you want to call the graphic in a note, then the simulator will _NOT_ play the keysound  for 01, but it will instead load the neh.bmp file.\par
+     The other and my last point that you think I've forgotten is the actual explanation of the other KEYLOCATION functions.  I'll put the table below again for your convenience.\par
+\par
+\par
+\par
+KEYLOCATION - ACTUAL LOCATION/FUNCTION\par
+======================================\par
+11 - White key 1 (Most left)\par
+12 - Blue key 1 (Most left)\par
+13 - White key 2 (Second from the left)\par
+14 - Blue key 2 (Center)\par
+15 - White key 3 (Second from the right)\par
+18 - Blue key 3 (Most right)\par
+19 - White key 4 (Most right)\par
+16 - Scratch (The big circle thing that makes wiki wiki wiki wik wik sound)\par
+17 - \bullet unknown function currently\bullet\par
+04 - BGA\par
+07 - \bullet unknown function currently\bullet\par
+06 - MISS BGA\par
+01 - Always Autoplay\par
+03 - BPM Change\par
+08 - "Extended" BPM Change\par
+\par
+\par
+\par
+So what's 17 and 07 all about? I sure as hell don't know. Perhaps if you know, you would help me out with this tutorial.  C'mon; I typed everything you see here, from my brain, in one single session.\par
+\par
+Never mind that for now. What's MISS BGA, Always Autoplay, and BPM, you ask?\par
+\par
+   MISS BGA is where you can specify any custom animations you have when the player is currently missing the notes he's  playing. If you want an absolute, easy example, find and download onoken - P8107 bms file with the background, and just miss  a couple of notes (or the whole song and failing it, like I did!). You'll see that onoken has incorporated a custom MISS  animation.\par
+   Of course, if you don't have the patience to make one, you can always specify a single image that has the word MISS in  bold, or something. Preferably red, you know.\par
+   But nevertheless, to specify them is the exact same as how you would specify BGA or keysounds, but the only hassle is you  have to copy and paste the same exact line for each measure you have.\par
+\par
+   This is also true for my next topic: Always Autoplay. Mostly used in [L7] and usually in [7] keysound files, this baby  will make sure any sound (or annoying noises) will always be played even if the player just sits there and watches himself  plummet to a Game Over screen. Or something. The usage is a bit different, however. Remember that \'a4 THE AMOUNT OF DOUBLE  DIGITS AvAILABLE IN THE LINE OF CODE SPECIFIES THE TYPE OF NOTE EACH ARE \'a4 rule? Well, it applies to every code you can see,  even those beyond the horizon.\par
+\par
+   So what do you have to do when you want to have two, three, or even four or more keysounds to play at the same exact time?  Specify a new line, with different codes! Example is below:\par
+\par
+#00001:01\par
+#00001:02\par
+#00001:03\par
+\par
+This tells the simulator to play keysounds 01, 02, and 03 at the first note in measure 1. Simple, no?\par
+\par
+   But when you blame me for forgetting things, you are right for one thing, but ONLY one thing. I forgot to mention the BPM.  That lil' bugger is used when you want to suddenly change the BPM value of the song. The usage is still the same, with a  little variation.\par
+\par
+#01103:96\par
+\par
+   The lil' code above this paragraph tells the simulator to change the BPm at measure 12 to 150 BPM. So how did I get 150  from 96? Some weird formula like standard deviation of the population mean in a binomial distribution?\par
+\par
+   Heck no, I got 150 because 96 is the hex value of 150. Let me remind you that 2-byte hex value only goes up to 255 in  decimal, so in short, if you're trying to create a .bms/.bme for MaxX Unlimited, where the BPM changes from 300 to 280 to 300  to 150 to 320, we might have a problem. How would you specify a BPM value over 255?\par
+\par
+[credit goes to pukpuk/2220 for finding the method originally and jammitch for pointing me to the solution]\par
+\par
+   You can specify your BPM in the ASSIGNMENT header, as you may recall. The process is the same; the code tag is the only  one different. So if you want to specify a BPM of 320, put:\par
+\par
+#BPM01 320\par
+\par
+   And call it in the main data field like:\par
+\par
+#00408:01\par
+\par
+   This will call the BPM Change of 01 in measure 5, and thus changing the song's BPM to 320.\par
+\par
+\par
+   So if you want multiple BPM changes:\par
+\par
+#01103:96AFC8E1\par
+\par
+   This tells the simulator to change the BPM to 150 at the first quarter note of Measure 12, to 175 at second quarter note,  200 at third, and 225 and fourth.\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+And with that, I conclude this tutorial. Hopefully I have made a tutorial that can actually help you read .bms/.bme more  intelligently, and not think of egyptian inscriptions when you see those codes. Until next time, I am Jack A. Trades.\par
+\par
+~ let empathy fill the void ~\par
+}
+ 

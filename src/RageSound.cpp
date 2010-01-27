@@ -622,6 +622,30 @@ RageSoundParams::StopMode_t RageSound::GetStopMode() const
 		return RageSoundParams::M_STOP;
 }
 
+void RageSound::SetStopModeFromString( const RString &sStopMode )
+{
+	if( sStopMode.find("stop") != string::npos )
+	{
+		m_Param.StopMode = RageSoundParams::M_STOP;
+	}
+	else if( sStopMode.find("loop") != string::npos )
+	{
+		m_Param.StopMode = RageSoundParams::M_LOOP;
+	}
+	else if( sStopMode.find("continue") != string::npos )
+	{
+		m_Param.StopMode = RageSoundParams::M_CONTINUE;
+	}
+	else if( sStopMode.find("auto") != string::npos )
+	{
+		m_Param.StopMode = RageSoundParams::M_AUTO;
+	}
+	else
+	{
+		// error
+	}
+}
+
 
 // lua start
 #include "LuaBinding.h"
@@ -645,17 +669,35 @@ public:
 		return 0;
 	}
 
+	static int volume( T* p, lua_State *L )
+	{
+		RageSoundParams params( p->GetParams() );
+		params.m_Volume = FArg(1);
+		p->SetParams( params );
+		return 0;
+	}
+
 	static int SetProperty( T* p, lua_State *L )
 	{
 		LuaHelpers::Push( L, p->SetProperty(SArg(1), FArg(2)) );
 		return 1;
 	}
 
+	/*
+	static int SetStopMode( T* p, lua_State *L )
+	{
+		LuaHelpers::Push( L, p->SetStopModeFromString(SArg(1)) );
+		return 1;
+	}
+	*/
+
 	LunaRageSound()
 	{
 		ADD_METHOD( pitch );
 		ADD_METHOD( speed );
+		ADD_METHOD( volume );
 		ADD_METHOD( SetProperty );
+		//ADD_METHOD( SetStopMode );
 	}
 };
 

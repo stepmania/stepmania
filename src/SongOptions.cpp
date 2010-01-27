@@ -20,6 +20,7 @@ void SongOptions::Init()
 	m_bStaticBackground = false;
 	m_bRandomBGOnly = false;
 	m_bSaveScore = true;
+	m_bSaveReplay = false; // don't save replays by default?
 }
 
 void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
@@ -41,6 +42,7 @@ void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
 	DO_COPY( m_bStaticBackground );
 	DO_COPY( m_bRandomBGOnly );
 	DO_COPY( m_bSaveScore );
+	DO_COPY( m_bSaveReplay );
 #undef APPROACH
 #undef DO_COPY
 }
@@ -158,7 +160,7 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 	RString sBit = sOneMod;
 	sBit.MakeLower();
 	Trim( sBit );
-	
+
 	Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
 	vector<RString> matches;
 	if( mult.Compare(sBit, matches) )
@@ -201,6 +203,7 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 	else if( sBit == "staticbg" )				m_bStaticBackground = on;
 	else if( sBit == "randombg" )				m_bRandomBGOnly = on;
 	else if( sBit == "savescore" )				m_bSaveScore = on;
+	else if( sBit == "savereplay" )			m_bSaveReplay = on;
 	else if( sBit == "bar" )				m_LifeType = LIFE_BAR;
 	else if( sBit == "battery" )				m_LifeType = LIFE_BATTERY;
 	else if( sBit == "lifetime" )				m_LifeType = LIFE_TIME;
@@ -226,6 +229,7 @@ bool SongOptions::operator==( const SongOptions &other ) const
 	COMPARE( m_bStaticBackground );
 	COMPARE( m_bRandomBGOnly );
 	COMPARE( m_bSaveScore );
+	COMPARE( m_bSaveReplay );
 #undef COMPARE
 	return true;
 }

@@ -2,7 +2,7 @@
    @file sober128tab.c
    SOBER-128 Tables
 */   
-/* $Id$ */
+/* $Id: sober128tab.c 24838 2007-01-24 05:16:57Z gmaynard $ */
 /* @(#)TuringMultab.h   1.3 (QUALCOMM) 02/09/03 */
 /* Multiplication table for Turing using 0xD02B4367 */
 static const ulong32 Multab[256] = {
@@ -72,7 +72,7 @@ static const ulong32 Multab[256] = {
     0xEF72A3F1, 0x3F59E096, 0x0224253F, 0xD20F6658,
 };
 
-/* $Id$ */
+/* $Id: sober128tab.c 24838 2007-01-24 05:16:57Z gmaynard $ */
 /* Sbox for SOBER-128 */
 /*
  * This is really the combination of two SBoxes; the least significant
@@ -158,5 +158,5 @@ static const ulong32 Sbox[256] = {
 };
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 24838 $ */
+/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */

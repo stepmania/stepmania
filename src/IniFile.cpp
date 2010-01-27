@@ -67,6 +67,8 @@ bool IniFile::ReadFile( RageFileBasic &f )
 			continue; /* comment */
 		if( line.size() > 1 && line[0] == '/' && line[1] == '/' )
 			continue; /* comment */
+		if( line.size() > 1 && line[0] == '-' && line[1] == '-' )
+			continue; /* comment (Lua style) */
 
 		if( line[0] == '[' && line[line.size()-1] == ']'  )
 		{
@@ -120,7 +122,8 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 			const RString &sName = pAttr->first;
 			const RString &sValue = pAttr->second->GetValue<RString>();
 
-			// TODO: Are there esacpe rules for these?
+			// TODO: Are there escape rules for these?
+			// take a cue from how multi-line Lua functions are parsed
 			DEBUG_ASSERT( sName.find('\n') == sName.npos );
 			DEBUG_ASSERT( sName.find('=') == sName.npos );
 

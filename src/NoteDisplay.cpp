@@ -119,7 +119,7 @@ struct NoteResource
 
 	const NoteSkinAndPath m_nsap; /* should be refcounted along with g_NoteResource[] */
 	int m_iRefCount;
-	Actor *m_pActor;
+	Actor *m_pActor; // todo: AutoActor me? -aj
 };
 
 static map<NoteSkinAndPath, NoteResource *> g_NoteResource;
@@ -159,6 +159,8 @@ static void DeleteNoteResource( NoteResource *pRes )
 	delete pRes;
 }
 
+/* NoteColorActor */
+
 NoteColorActor::NoteColorActor()
 {
 	m_p = NULL;
@@ -180,6 +182,8 @@ Actor *NoteColorActor::Get()
 {
 	return m_p->m_pActor;
 }
+
+/* NoteColorSprite */
 
 NoteColorSprite::NoteColorSprite()
 {
@@ -205,6 +209,7 @@ Sprite *NoteColorSprite::Get()
 static const char *HoldTypeNames[] = {
 	"Hold",
 	"Roll",
+	//"Minefield",
 };
 XToString( HoldType );
 
@@ -235,11 +240,13 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 
 	cache->Load( sButton );
 
+	// "normal" note types
 	m_TapNote.Load(		sButton, "Tap Note" );
 	m_TapMine.Load(		sButton, "Tap Mine" );
 	m_TapLift.Load(		sButton, "Tap Lift" );
 	m_TapFake.Load(		sButton, "Tap Fake" );
-	
+
+	// hold types
 	FOREACH_HoldType( ht )
 	{
 		FOREACH_ActiveType( at )
@@ -303,7 +310,7 @@ void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAni
 Actor *NoteDisplay::GetTapActor( NoteColorActor &nca, NotePart part, float fNoteBeat )
 {
 	Actor *pActorOut = nca.Get();
-	
+
 	SetActiveFrame( fNoteBeat, *pActorOut, cache->m_fAnimationLengthInBeats[part], cache->m_bAnimationIsVivid[part] );
 	return pActorOut;
 }
@@ -316,7 +323,7 @@ Actor *NoteDisplay::GetHoldActor( NoteColorActor nca[NUM_HoldType][NUM_ActiveTyp
 Sprite *NoteDisplay::GetHoldSprite( NoteColorSprite ncs[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
 {
 	Sprite *pSpriteOut = ncs[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
-	
+
 	SetActiveFrame( fNoteBeat, *pSpriteOut, cache->m_fAnimationLengthInBeats[part], cache->m_bAnimationIsVivid[part] );
 	return pSpriteOut;
 }
@@ -343,7 +350,7 @@ struct StripBuffer
 	{
 		free( buf );
 	}
-		
+
 	void Init()
 	{
 		v = buf;
@@ -633,6 +640,8 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	DrawHoldBody( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, true, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 
 	/* These set the texture mode themselves. */
+	// this part was modified in pumpmania, where it flips the draw order
+	// of the head and tail. Perhaps make this a theme/noteskin metric? -aj
 	if( cache->m_bHoldTailIsAboveWavyParts )
 	{
 		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
@@ -658,18 +667,19 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	const float fGlow		= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const RageColor diffuse		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor glow		= RageColor(1,1,1,fGlow);
-	float fRotation			= 0;
+	float fRotationZ			= 0;
 
-	fRotation		= ArrowEffects::GetRotation(	m_pPlayerState, fBeat, tn.type == tn.hold_head );
+	fRotationZ		= ArrowEffects::GetRotation(	m_pPlayerState, fBeat, tn.type == tn.hold_head );
 	if( tn.type != tn.hold_head )
 		fColorScale		*= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
 
-	pActor->SetRotationZ( fRotation );
+	pActor->SetRotationZ( fRotationZ );
 	pActor->SetXY( fX, fY );
 	pActor->SetZ( fZ );
+	pActor->SetZoom( ArrowEffects::GetZoom(m_pPlayerState) );
+	// [AJ] this two lines (and how they're handled) piss off many people:
 	pActor->SetDiffuse( diffuse );
 	pActor->SetGlow( glow );
-	pActor->SetZoom( ArrowEffects::GetZoom(m_pPlayerState) );
 
 	bool bNeedsTranslate = (bIsAddition && !IsVectorZero(cache->m_fAdditionTextureCoordOffset[part])) || !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]);
 	if( bNeedsTranslate )
@@ -692,7 +702,7 @@ void NoteDisplay::DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSam
 {
 	Actor* pActor = NULL;
 	NotePart part = NotePart_Tap;
-	
+
 	if( tn.type == TapNote::lift )
 	{
 		pActor = GetTapActor( m_TapLift, NotePart_Lift, fBeat );
@@ -712,7 +722,7 @@ void NoteDisplay::DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSam
 	{
 		pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, false, false );
 	}
-	else	
+	else
 	{
 		pActor = GetTapActor( m_TapNote, NotePart_Tap, fBeat );
 	}

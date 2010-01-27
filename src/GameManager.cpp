@@ -43,44 +43,56 @@ RString StepsTypeInfo::GetLocalizedString() const
 }
 
 static const StepsTypeInfo g_StepsTypeInfos[] = {
+	// dance
 	{ "dance-single",	4,	true,	StepsTypeCategory_Single },
 	{ "dance-double",	8,	true,	StepsTypeCategory_Double },
 	{ "dance-couple",	8,	true,	StepsTypeCategory_Couple },
 	{ "dance-solo",		6,	true,	StepsTypeCategory_Single },
 	{ "dance-routine",	8,	false,	StepsTypeCategory_Routine },
+	// pump
 	{ "pump-single",	5,	true,	StepsTypeCategory_Single },
 	{ "pump-halfdouble",	6,	true,	StepsTypeCategory_Double },
 	{ "pump-double",	10,	true,	StepsTypeCategory_Double },
 	{ "pump-couple",	10,	true,	StepsTypeCategory_Couple },
+	// uh, dance-routine has that one bool as false... wtf? -aj
 	{ "pump-routine",	10,	true,	StepsTypeCategory_Routine },
-	{ "kb7-single",		7,	true,	StepsTypeCategory_Single },
+	// kb7
+	{ "kb7-single",		6,	true,	StepsTypeCategory_Single },
+	// ez2dancer
 	{ "ez2-single",		5,	true,	StepsTypeCategory_Single },	// Single: TL,LHH,D,RHH,TR
 	{ "ez2-double",		10,	true,	StepsTypeCategory_Double },	// Double: Single x2
 	{ "ez2-real",		7,	true,	StepsTypeCategory_Single },	// Real: TL,LHH,LHL,D,RHL,RHH,TR
+	// parapara paradise
 	{ "para-single",	5,	true,	StepsTypeCategory_Single },
+	// ds3ddx
 	{ "ds3ddx-single",	8,	true,	StepsTypeCategory_Single },
+	// beatmania
 	{ "bm-single5",		6,	true,	StepsTypeCategory_Single },	// called "bm" for backward compat
 	{ "bm-double5",		12,	true,	StepsTypeCategory_Double },	// called "bm" for backward compat
 	{ "bm-single7",		8,	true,	StepsTypeCategory_Single },	// called "bm" for backward compat
 	{ "bm-double7",		16,	true,	StepsTypeCategory_Double },	// called "bm" for backward compat
+	// dance maniax
 	{ "maniax-single",	4,	true,	StepsTypeCategory_Single },
 	{ "maniax-double",	8,	true,	StepsTypeCategory_Double },
+	// technomotion
 	{ "techno-single4",	4,	true,	StepsTypeCategory_Single },
 	{ "techno-single5",	5,	true,	StepsTypeCategory_Single },
 	{ "techno-single8",	8,	true,	StepsTypeCategory_Single },
 	{ "techno-double4",	8,	true,	StepsTypeCategory_Double },
 	{ "techno-double5",	10,	true,	StepsTypeCategory_Double },
+	// pop'n music
 	{ "pnm-five",		5,	true,	StepsTypeCategory_Single },	// called "pnm" for backward compat
 	{ "pnm-nine",		9,	true,	StepsTypeCategory_Single },	// called "pnm" for backward compat
+	// guitar hero
 	{ "guitar-five",	5,	true,	StepsTypeCategory_Single },	// 5 frets, no wail
+	// karaoke revolution
 	{ "karaoke",		1,	false,	StepsTypeCategory_Single },
+	// cabinet lights and other fine StepsTypes that don't exist lol
 	{ "lights-cabinet",	NUM_CabinetLight,	false,	StepsTypeCategory_Single }, // XXX disable lights autogen for now
 };
 
 
-//
 // Important:  Every game must define the buttons: "Start", "Back", "MenuLeft", "Operator" and "MenuRight"
-//
 static const AutoMappings g_AutoKeyMappings_Dance = AutoMappings (
 	"",
 	"",
@@ -105,7 +117,18 @@ static const AutoMappings g_AutoKeyMappings_Dance = AutoMappings (
 	AutoMappingEntry( 0, KEY_KP_C9,		DANCE_BUTTON_UPRIGHT,		true )
 );
 
+// xxx: get this from the theme? (see others)
+// the problem with getting it from the noteskin is that this is meant to be
+// static const; if we switch to anything we likely won't get const anymore
+// but i may be talking out of my ass -aj
 static const int DANCE_COL_SPACING = 64;
+
+//static ThemeMetric<int>	DANCE_COL_SPACING("ColumnSpacing","Dance");
+// named after a similar metric in Aldo_MX's build for compatibility/familiarity:
+//float	DANCE_COL_SPACING	NOTESKIN->GetMetricF("NoteDisplay","ArrowColSpacing");
+/* looking for ARROW_SIZE should be enough (ArrowSize)
+ * just arroweffects.cpp for rowspacing (ArrowRowSpacing)
+ */
 
 static const Style g_Style_Dance_Single =
 {	// STYLE_DANCE_SINGLE
@@ -299,6 +322,8 @@ static const Style g_Style_Dance_Solo =
 	false, // m_bLockDifficulties
 };
 
+// todo: "easy solo" or whatever the proper name for the 3 panel \|/ mode is.
+
 static const Style g_Style_Dance_Couple_Edit =
 {	// STYLE_DANCE_EDIT_COUPLE
 	false,				// m_bUsedForGameplay
@@ -343,6 +368,7 @@ static const Style g_Style_Dance_Couple_Edit =
 	false, // m_bLockDifficulties
 };
 
+// todo: re-enable? (lol)
 /*
 static const Style g_Style_Dance_Solo_Versus =
 {	// STYLE_DANCE_SOLO_VERSUS 
@@ -437,7 +463,6 @@ static const Style *g_apGame_Dance_Styles[] =
 	NULL
 };
 
-static const int PARA_COL_SPACING = 54;
 static const Game g_Game_Dance = 
 {
 	"dance",					// m_szName
@@ -494,7 +519,11 @@ static const AutoMappings g_AutoKeyMappings_Pump = AutoMappings (
 	AutoMappingEntry( 0, KEY_KP_C6,		GameButton_Invalid,		false )
 );
 
-static const int PUMP_COL_SPACING = 50;
+// PIU Defaults: RowSpacing = 60; ColSpacing = 52; ArrowSize = 54;
+// apparently column spacing is 48px
+//static ThemeMetric<int>	PUMP_COL_SPACING	("ColumnSpacing","Pump");
+static const int PUMP_COL_SPACING = 48;
+
 static const Style g_Style_Pump_Single =
 {	// STYLE_PUMP_SINGLE
 	true,				// m_bUsedForGameplay
@@ -623,28 +652,28 @@ static const Style g_Style_Pump_Double =
 	10,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
-			{ TRACK_1,	-PUMP_COL_SPACING*4.5f, NULL },
-			{ TRACK_2,	-PUMP_COL_SPACING*3.5f, NULL },
-			{ TRACK_3,	-PUMP_COL_SPACING*2.5f, NULL },
-			{ TRACK_4,	-PUMP_COL_SPACING*1.5f, NULL },
-			{ TRACK_5,	-PUMP_COL_SPACING*0.5f, NULL },
-			{ TRACK_6,	+PUMP_COL_SPACING*0.5f, NULL },
-			{ TRACK_7,	+PUMP_COL_SPACING*1.5f, NULL },
-			{ TRACK_8,	+PUMP_COL_SPACING*2.5f, NULL },
-			{ TRACK_9,	+PUMP_COL_SPACING*3.5f, NULL },
-			{ TRACK_10,	+PUMP_COL_SPACING*4.5f, NULL },
+			{ TRACK_1,	-PUMP_COL_SPACING*4.58f, NULL },
+			{ TRACK_2,	-PUMP_COL_SPACING*3.58f, NULL },
+			{ TRACK_3,	-PUMP_COL_SPACING*2.58f, NULL },
+			{ TRACK_4,	-PUMP_COL_SPACING*1.58f, NULL },
+			{ TRACK_5,	-PUMP_COL_SPACING*0.58f, NULL },
+			{ TRACK_6,	+PUMP_COL_SPACING*0.58f, NULL },
+			{ TRACK_7,	+PUMP_COL_SPACING*1.58f, NULL },
+			{ TRACK_8,	+PUMP_COL_SPACING*2.58f, NULL },
+			{ TRACK_9,	+PUMP_COL_SPACING*3.58f, NULL },
+			{ TRACK_10,	+PUMP_COL_SPACING*4.58f, NULL },
 		},
 		{	// PLAYER_2
-			{ TRACK_1,	-PUMP_COL_SPACING*4.5f, NULL },
-			{ TRACK_2,	-PUMP_COL_SPACING*3.5f, NULL },
-			{ TRACK_3,	-PUMP_COL_SPACING*2.5f, NULL },
-			{ TRACK_4,	-PUMP_COL_SPACING*1.5f, NULL },
-			{ TRACK_5,	-PUMP_COL_SPACING*0.5f, NULL },
-			{ TRACK_6,	+PUMP_COL_SPACING*0.5f, NULL },
-			{ TRACK_7,	+PUMP_COL_SPACING*1.5f, NULL },
-			{ TRACK_8,	+PUMP_COL_SPACING*2.5f, NULL },
-			{ TRACK_9,	+PUMP_COL_SPACING*3.5f, NULL },
-			{ TRACK_10,	+PUMP_COL_SPACING*4.5f, NULL },
+			{ TRACK_1,	-PUMP_COL_SPACING*4.58f, NULL },
+			{ TRACK_2,	-PUMP_COL_SPACING*3.58f, NULL },
+			{ TRACK_3,	-PUMP_COL_SPACING*2.58f, NULL },
+			{ TRACK_4,	-PUMP_COL_SPACING*1.58f, NULL },
+			{ TRACK_5,	-PUMP_COL_SPACING*0.58f, NULL },
+			{ TRACK_6,	+PUMP_COL_SPACING*0.58f, NULL },
+			{ TRACK_7,	+PUMP_COL_SPACING*1.58f, NULL },
+			{ TRACK_8,	+PUMP_COL_SPACING*2.58f, NULL },
+			{ TRACK_9,	+PUMP_COL_SPACING*3.58f, NULL },
+			{ TRACK_10,	+PUMP_COL_SPACING*4.58f, NULL },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
@@ -839,20 +868,19 @@ static const AutoMappings g_AutoKeyMappings_KB7 = AutoMappings (
 	AutoMappingEntry( 0, KEY_Cs,		KB7_BUTTON_KEY1,		false ),
 	AutoMappingEntry( 0, KEY_Cd,		KB7_BUTTON_KEY2,		false ),
 	AutoMappingEntry( 0, KEY_Cf,		KB7_BUTTON_KEY3,		false ),
-	AutoMappingEntry( 0, KEY_SPACE,		KB7_BUTTON_KEY4,		false ),
-	AutoMappingEntry( 0, KEY_Cj,		KB7_BUTTON_KEY5,		false ),
-	AutoMappingEntry( 0, KEY_Ck,		KB7_BUTTON_KEY6,		false ),
-	AutoMappingEntry( 0, KEY_Cl,		KB7_BUTTON_KEY7,		false ),
+	AutoMappingEntry( 0, KEY_Cj,		KB7_BUTTON_KEY4,		false ),
+	AutoMappingEntry( 0, KEY_Ck,		KB7_BUTTON_KEY5,		false ),
+	AutoMappingEntry( 0, KEY_Cl,		KB7_BUTTON_KEY6,		false ),
 	AutoMappingEntry( 0, KEY_Cw,		KB7_BUTTON_KEY1,		true ),
 	AutoMappingEntry( 0, KEY_Ce,		KB7_BUTTON_KEY2,		true ),
 	AutoMappingEntry( 0, KEY_Cr,		KB7_BUTTON_KEY3,		true ),
-	AutoMappingEntry( 0, KEY_Ct,		KB7_BUTTON_KEY4,		true ),
-	AutoMappingEntry( 0, KEY_Cy,		KB7_BUTTON_KEY5,		true ),
-	AutoMappingEntry( 0, KEY_Cu,		KB7_BUTTON_KEY6,		true ),
-	AutoMappingEntry( 0, KEY_Ci,		KB7_BUTTON_KEY7,		true )
+	AutoMappingEntry( 0, KEY_Cy,		KB7_BUTTON_KEY4,		true ),
+	AutoMappingEntry( 0, KEY_Cu,		KB7_BUTTON_KEY5,		true ),
+	AutoMappingEntry( 0, KEY_Ci,		KB7_BUTTON_KEY6,		true )
 );
 
-static const int KB7_COL_SPACING = 64;
+//ThemeMetric<int>	KB7_COL_SPACING	("ColumnSpacing","KB7");
+static const int KB7_COL_SPACING = 54;
 static const Style g_Style_KB7_Single =
 {	// STYLE_KB7_SINGLE
 	true,				// m_bUsedForGameplay
@@ -862,33 +890,31 @@ static const Style g_Style_KB7_Single =
 	"single",			// m_szName
 	StepsType_kb7_single,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
-	7,				// m_iColsPerPlayer
+	6,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
-			{ TRACK_1,	-KB7_COL_SPACING*3.0f, NULL },
-			{ TRACK_2,	-KB7_COL_SPACING*2.0f, NULL },
-			{ TRACK_3,	-KB7_COL_SPACING*1.0f, NULL },
-			{ TRACK_4,	+KB7_COL_SPACING*0.0f, NULL },
-			{ TRACK_5,	+KB7_COL_SPACING*1.0f, NULL },
-			{ TRACK_6,	+KB7_COL_SPACING*2.0f, NULL },
-			{ TRACK_7,	+KB7_COL_SPACING*3.0f, NULL },
+			{ TRACK_1,	-KB7_COL_SPACING*2.5f, NULL },
+			{ TRACK_2,	-KB7_COL_SPACING*1.5f, NULL },
+			{ TRACK_3,	-KB7_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+KB7_COL_SPACING*0.5f, NULL },
+			{ TRACK_5,	+KB7_COL_SPACING*1.5f, NULL },
+			{ TRACK_6,	+KB7_COL_SPACING*2.5f, NULL },
 		},
 		{	// PLAYER_2
-			{ TRACK_1,	-KB7_COL_SPACING*3.0f, NULL },
-			{ TRACK_2,	-KB7_COL_SPACING*2.0f, NULL },
-			{ TRACK_3,	-KB7_COL_SPACING*1.0f, NULL },
-			{ TRACK_4,	+KB7_COL_SPACING*0.0f, NULL },
-			{ TRACK_5,	+KB7_COL_SPACING*1.0f, NULL },
-			{ TRACK_6,	+KB7_COL_SPACING*2.0f, NULL },
-			{ TRACK_7,	+KB7_COL_SPACING*3.0f, NULL },
+			{ TRACK_1,	-KB7_COL_SPACING*2.5f, NULL },
+			{ TRACK_2,	-KB7_COL_SPACING*1.5f, NULL },
+			{ TRACK_3,	-KB7_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+KB7_COL_SPACING*0.5f, NULL },
+			{ TRACK_5,	+KB7_COL_SPACING*1.5f, NULL },
+			{ TRACK_6,	+KB7_COL_SPACING*2.5f, NULL },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ 0, 1, 2, 3, 4, 5, 6, Style::END_MAPPING },
-		{ 0, 1, 2, 3, 4, 5, 6, Style::END_MAPPING },
+		{ 0, 1, 2, 3, 4, 5, Style::END_MAPPING },
+		{ 0, 1, 2, 3, 4, 5, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		0,1,2,3,4,5,6
+		0,1,2,3,4,5
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -897,6 +923,7 @@ static const Style g_Style_KB7_Single =
 
 static const Style g_Style_KB7_Versus =
 {	// STYLE_KB7_VERSUS
+	// fuck player 2 in kb7(-1)
 	true,				// m_bUsedForGameplay
 	false,				// m_bUsedForEdit
 	true,				// m_bUsedForDemonstration
@@ -904,33 +931,31 @@ static const Style g_Style_KB7_Versus =
 	"versus",			// m_szName
 	StepsType_kb7_single,		// m_StepsType
 	StyleType_TwoPlayersTwoSides,		// m_StyleType
-	7,				// m_iColsPerPlayer
+	6,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
-			{ TRACK_1,	-KB7_COL_SPACING*3.0f, NULL },
-			{ TRACK_2,	-KB7_COL_SPACING*2.0f, NULL },
-			{ TRACK_3,	-KB7_COL_SPACING*1.0f, NULL },
-			{ TRACK_4,	+KB7_COL_SPACING*0.0f, NULL },
-			{ TRACK_5,	+KB7_COL_SPACING*1.0f, NULL },
-			{ TRACK_6,	+KB7_COL_SPACING*2.0f, NULL },
-			{ TRACK_7,	+KB7_COL_SPACING*3.0f, NULL },
+			{ TRACK_1,	-KB7_COL_SPACING*2.5f, NULL },
+			{ TRACK_2,	-KB7_COL_SPACING*1.5f, NULL },
+			{ TRACK_3,	-KB7_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+KB7_COL_SPACING*0.5f, NULL },
+			{ TRACK_5,	+KB7_COL_SPACING*1.5f, NULL },
+			{ TRACK_6,	+KB7_COL_SPACING*2.5f, NULL },
 		},
 		{	// PLAYER_2
-			{ TRACK_1,	-KB7_COL_SPACING*3.0f, NULL },
-			{ TRACK_2,	-KB7_COL_SPACING*2.0f, NULL },
-			{ TRACK_3,	-KB7_COL_SPACING*1.0f, NULL },
-			{ TRACK_4,	+KB7_COL_SPACING*0.0f, NULL },
-			{ TRACK_5,	+KB7_COL_SPACING*1.0f, NULL },
-			{ TRACK_6,	+KB7_COL_SPACING*2.0f, NULL },
-			{ TRACK_7,	+KB7_COL_SPACING*3.0f, NULL },
+			{ TRACK_1,	-KB7_COL_SPACING*2.5f, NULL },
+			{ TRACK_2,	-KB7_COL_SPACING*1.5f, NULL },
+			{ TRACK_3,	-KB7_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+KB7_COL_SPACING*0.5f, NULL },
+			{ TRACK_5,	+KB7_COL_SPACING*1.5f, NULL },
+			{ TRACK_6,	+KB7_COL_SPACING*2.5f, NULL },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ 0, 1, 2, 3, 4, 5, 6, Style::END_MAPPING },
-		{ 0, 1, 2, 3, 4, 5, 6, Style::END_MAPPING },
+		{ 0, 1, 2, 3, 4, 5, Style::END_MAPPING },
+		{ 0, 1, 2, 3, 4, 5, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		0,1,2,3,4,5,6
+		0,1,2,3,4,5
 	},
 	true, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -948,7 +973,7 @@ static const Game g_Game_KB7 =
 {
 	"kb7",						// m_szName
 	g_apGame_KB7_Styles,				// m_apStyles
-	false,						// m_bCountNotesSeparately
+	true,						// m_bCountNotesSeparately
 	false,						// m_bAllowHopos
 	{						// m_InputScheme
 		"kb7",					// m_szName
@@ -957,15 +982,13 @@ static const Game g_Game_KB7 =
 			{ "Key1",		GameButton_Invalid },
 			{ "Key2",		GAME_BUTTON_LEFT },
 			{ "Key3",		GAME_BUTTON_DOWN },
-			{ "Key4",		GAME_BUTTON_START },
-			{ "Key5",		GAME_BUTTON_UP },
-			{ "Key6",		GAME_BUTTON_RIGHT },
-			{ "Key7",		GameButton_Invalid },
+			{ "Key4",		GAME_BUTTON_UP },
+			{ "Key5",		GAME_BUTTON_RIGHT },
+			{ "Key6",		GameButton_Invalid },
 		},
 		&g_AutoKeyMappings_KB7
 	},
 	{
-		{ GameButtonType_Step },
 		{ GameButtonType_Step },
 		{ GameButtonType_Step },
 		{ GameButtonType_Step },
@@ -980,7 +1003,10 @@ static const Game g_Game_KB7 =
 	TNS_W5,	// m_mapW5To
 };
 
-static const int EZ2_COL_SPACING = 46; 
+//ThemeMetric<int>	EZ2_COL_SPACING	("ColumnSpacing","EZ2");
+static const int EZ2_COL_SPACING = 46;
+// do you even need this if they're the same now -aj
+//ThemeMetric<int>	EZ2__REAL_COL_SPACING	("ColumnSpacing","EZ2Real");
 static const int EZ2_REAL_COL_SPACING = 46;
 static const Style g_Style_Ez2_Single =
 {	// STYLE_EZ2_SINGLE
@@ -1034,9 +1060,9 @@ static const Style g_Style_Ez2_Real =
 		{	// PLAYER_1
 			{ TRACK_1,	-EZ2_REAL_COL_SPACING*2.3f, NULL },
 			{ TRACK_2,	-EZ2_REAL_COL_SPACING*1.6f, NULL },
-			{ TRACK_3,	-EZ2_REAL_COL_SPACING*0.9f, NULL },
+			{ TRACK_3,	-EZ2_REAL_COL_SPACING*0.9f, NULL }, 
 			{ TRACK_4,	+EZ2_REAL_COL_SPACING*0.0f, NULL },
-			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL },
+			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL }, 
 			{ TRACK_6,	+EZ2_REAL_COL_SPACING*1.6f, NULL },
 			{ TRACK_7,	+EZ2_REAL_COL_SPACING*2.3f, NULL },
 		},
@@ -1048,14 +1074,14 @@ static const Style g_Style_Ez2_Real =
 			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL }, 
 			{ TRACK_6,	+EZ2_REAL_COL_SPACING*1.6f, NULL },
 			{ TRACK_7,	+EZ2_REAL_COL_SPACING*2.3f, NULL },
-		},
+		},                                
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ 0, 6, 3, 2, 4, 1, 5, Style::END_MAPPING },
 		{ 0, 6, 3, 2, 4, 1, 5, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		3,0,6,1,5,2,4 // This should be from back to front: Down, UpLeft, UpRight, Lower Left Hand, Lower Right Hand, Upper Left Hand, Upper Right Hand 
+		3,0,6,1,5,2,4 // This should be from back to front: Down, UpLeft, UpRight, Lower Left Hand, Lower Right Hand, Upper Left Hand, Upper Right Hand
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -1114,21 +1140,21 @@ static const Style g_Style_Ez2_Real_Versus =
 		{	// PLAYER_1
 			{ TRACK_1,	-EZ2_REAL_COL_SPACING*2.3f, NULL },
 			{ TRACK_2,	-EZ2_REAL_COL_SPACING*1.6f, NULL },
-			{ TRACK_3,	-EZ2_REAL_COL_SPACING*0.9f, NULL },
+			{ TRACK_3,	-EZ2_REAL_COL_SPACING*0.9f, NULL }, 
 			{ TRACK_4,	+EZ2_REAL_COL_SPACING*0.0f, NULL },
-			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL },
+			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL }, 
 			{ TRACK_6,	+EZ2_REAL_COL_SPACING*1.6f, NULL },
 			{ TRACK_7,	+EZ2_REAL_COL_SPACING*2.3f, NULL },
-		},
+		},                                
 		{	// PLAYER_2
 			{ TRACK_1,	-EZ2_REAL_COL_SPACING*2.3f, NULL },
 			{ TRACK_2,	-EZ2_REAL_COL_SPACING*1.6f, NULL },
-			{ TRACK_3,	-EZ2_REAL_COL_SPACING*0.9f, NULL },
+			{ TRACK_3,	-EZ2_REAL_COL_SPACING*0.9f, NULL }, 
 			{ TRACK_4,	+EZ2_REAL_COL_SPACING*0.0f, NULL },
-			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL },
+			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL }, 
 			{ TRACK_6,	+EZ2_REAL_COL_SPACING*1.6f, NULL },
 			{ TRACK_7,	+EZ2_REAL_COL_SPACING*2.3f, NULL },
-		},
+		},                                
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ 0, 6, 3, 2, 4, 1, 5, Style::END_MAPPING },
@@ -1248,6 +1274,9 @@ static const Game g_Game_Ez2 =
 	TNS_W4,		// m_mapW4To
 	TNS_Miss,	// m_mapW5To
 };
+
+//ThemeMetric<int>	PARA_COL_SPACING	("ColumnSpacing","Para");
+static const int PARA_COL_SPACING = 54;
 
 static const Style g_Style_Para_Single =
 {	// STYLE_PARA_SINGLE
@@ -1375,6 +1404,7 @@ static const Game g_Game_Para =
 	TNS_W5,	// m_mapW5To
 };
 
+//ThemeMetric<int>	DS3DDX_COL_SPACING	("ColumnSpacing","DS3DDX");
 static const int DS3DDX_COL_SPACING = 46;
 static const Style g_Style_DS3DDX_Single =
 {	// STYLE_DS3DDX_SINGLE
@@ -1478,6 +1508,7 @@ static const Game g_Game_DS3DDX =
 	TNS_W5,	// m_mapW5To
 };
 
+//ThemeMetric<int>	BEAT_COL_SPACING	("ColumnSpacing","Beat");
 static const int BEAT_COL_SPACING = 34;
 static const Style g_Style_Beat_Single5 =
 {	// STYLE_BEAT_SINGLE5
@@ -1738,6 +1769,7 @@ static const Game g_Game_Beat =
 	TNS_W5,	// m_mapW5To
 };
 
+//ThemeMetric<int>	MANIAX_COL_SPACING	("ColumnSpacing","Maniax");
 static const int MANIAX_COL_SPACING = 36;
 static const Style g_Style_Maniax_Single =
 {	// STYLE_MANIAX_SINGLE
@@ -1907,7 +1939,11 @@ static const Game g_Game_Maniax =
 	TNS_W5,	// m_mapW5To
 };
 
+/** Techno *******************************************************************/
+
+//ThemeMetric<int>	TECHNO_COL_SPACING	("ColumnSpacing","Techno");
 static const int TECHNO_COL_SPACING = 56;
+//ThemeMetric<int>	TECHNO_VERSUS_COL_SPACING	("ColumnSpacing","TechnoVersus");
 static const int TECHNO_VERSUS_COL_SPACING = 33;
 static const Style g_Style_Techno_Single4 =
 {	// STYLE_TECHNO_SINGLE4
@@ -2322,7 +2358,10 @@ static const Game g_Game_Techno =
 	TNS_W5,	// m_mapW5To
 };
 
+/** popn *********************************************************************/
+//ThemeMetric<int>	POPN5_COL_SPACING	("ColumnSpacing","Popn5");
 static const int POPN5_COL_SPACING = 32; 
+//ThemeMetric<int>	POPN9_COL_SPACING	("ColumnSpacing","Popn9");
 static const int POPN9_COL_SPACING = 32; 
 static const Style g_Style_Popn_Five =
 {	// STYLE_POPN_FIVE
@@ -2470,6 +2509,62 @@ static const Game g_Game_Popn =
 	TNS_Miss,	// m_mapW5To
 };
 
+/** Guitar5 ******************************************************************/
+//ThemeMetric<int>	GUITAR5_COL_SPACING	("ColumnSpacing","Guitar5");
+static const int GUITAR5_COL_SPACING = 32; 
+/*
+static const Style g_Style_Guitar_Five =
+{	// STYLE_GUITAR_FIVE
+	true,				// m_bUsedForGameplay
+	true,				// m_bUsedForEdit
+	true,				// m_bUsedForDemonstration
+	true,				// m_bUsedForHowToPlay
+	"five",				// m_szName
+	StepsType_guitar_five,		// m_StepsType
+	StyleType_OnePlayerOneSide,		// m_StyleType
+	5,					// m_iColsPerPlayer
+	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_1,	-GUITAR5_COL_SPACING*2.0f, NULL },
+			{ TRACK_2,	-GUITAR5_COL_SPACING*1.0f, NULL },
+			{ TRACK_3,	+GUITAR5_COL_SPACING*0.0f, NULL },
+			{ TRACK_4,	+GUITAR5_COL_SPACING*1.0f, NULL },
+			{ TRACK_5,	+GUITAR5_COL_SPACING*2.0f, NULL },
+		},
+		{	// PLAYER_2
+			{ TRACK_1,	-GUITAR5_COL_SPACING*2.0f, NULL },
+			{ TRACK_2,	-GUITAR5_COL_SPACING*1.0f, NULL },
+			{ TRACK_3,	+GUITAR5_COL_SPACING*0.0f, NULL },
+			{ TRACK_4,	+GUITAR5_COL_SPACING*1.0f, NULL },
+			{ TRACK_5,	+GUITAR5_COL_SPACING*2.0f, NULL },
+		},
+	},
+	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
+		{ 0, 4, 3, 2, 1, Style::END_MAPPING },
+		{ 0, 4, 3, 2, 1, Style::END_MAPPING },
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		0,1,2,3,4
+	},
+	false, // m_bNeedsZoomOutWith2Players
+	false, // m_bCanUseBeginnerHelper
+	false, // m_bLockDifficulties
+};
+
+static const Style *g_apGame_Guitar_Styles[] =
+{
+	&g_Style_Guitar_Five,
+	NULL
+};
+
+// auto keymappings
+
+static const Game g_Game_Guitar = 
+{
+};
+*/
+/** Karaoke ******************************************************************/
+
 static const Style g_Style_Karaoke_Single =
 {	// STYLE_KARAOKE_SINGLE
 	true,				// m_bUsedForGameplay
@@ -2536,6 +2631,8 @@ static const Game g_Game_Karaoke =
 	TNS_W4,	// m_mapW4To
 	TNS_W5,	// m_mapW5To
 };
+
+/** Lights *******************************************************************/
 
 static const AutoMappings g_AutoKeyMappings_Lights = AutoMappings (
 	"",
@@ -2672,6 +2769,7 @@ GameManager::~GameManager()
 	// Unregister with Lua.
 	LUA->UnsetGlobal( "GAMEMAN" );
 }
+
 
 void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aStylesAddTo, bool editor )
 {
@@ -2865,7 +2963,7 @@ bool GameManager::IsGameEnabled( const Game *pGame )
 const StepsTypeInfo &GameManager::GetStepsTypeInfo( StepsType st )
 {
 	ASSERT( ARRAYLEN(g_StepsTypeInfos) == NUM_StepsType );
-	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
+	ASSERT_M( st < NUM_StepsType, ssprintf("StepsType %d < NUM_StepsType (%d)", st, NUM_StepsType) );
 	return g_StepsTypeInfos[st];
 }
 
@@ -2875,7 +2973,7 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 
 	// TODO: Format specific hacks should be moved into the file loader for that format.
 
-	// HACK!  We elminitated "ez2-single-hard", but we should still handle it.
+	// HACK!  We eliminated "ez2-single-hard", but we should still handle it.
 	if( sStepsType == "ez2-single-hard" )
 		sStepsType = "ez2-single";
 
@@ -2927,7 +3025,7 @@ const Style* GameManager::GameAndStringToStyle( const Game *game, RString sStyle
 
 class LunaGameManager: public Luna<GameManager>
 {
-public:	
+public:
 	static int StepsTypeToLocalizedString( T* p, lua_State *L )	{ lua_pushstring(L, p->GetStepsTypeInfo(Enum::Check<StepsType>(L, 1)).GetLocalizedString() ); return 1; }
 	static int GetFirstStepsTypeForGame( T* p, lua_State *L )
 	{
@@ -2940,12 +3038,24 @@ public:
 		LuaHelpers::Push( L, st ); 
 		return 1;
 	}
+	static int IsGameEnabled( T* p, lua_State *L )
+	{
+		Game *pGame = Luna<Game>::check( L, 1 );
+
+		lua_pushboolean(L, p->IsGameEnabled( pGame ) );
+
+		// string version; will clean this up later after finding a good home -aj
+		//lua_pushbool(L, p->IsGameEnabled( p->StringToGame(SArg(1)) ) );
+
+		return 1;
+	}
 
 	LunaGameManager()
 	{
 		ADD_METHOD( StepsTypeToLocalizedString );
 		ADD_METHOD( GetFirstStepsTypeForGame );
-	}
+		ADD_METHOD( IsGameEnabled );
+	};
 };
 
 LUA_REGISTER_CLASS( GameManager )

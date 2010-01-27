@@ -36,6 +36,7 @@ private:
 		vector<GameButton> m_aButtonsToHold;
 		vector<GameButton> m_aButtonsToNotHold;
 		vector<GameButton> m_aButtonsToPress;
+		//vector<char> m_aKeysToPress;
 
 		bool m_InputTypes[NUM_InputEventType];
 		bool m_bAllowIntermediatePresses;

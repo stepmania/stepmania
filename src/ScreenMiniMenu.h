@@ -103,15 +103,15 @@ protected:
 	virtual bool FocusedItemEndsScreen( PlayerNumber pn ) const;
 
 	void LoadMenu( const MenuDef* pDef );
-	
+
 	ScreenMessage		m_SMSendOnOK;
 	ScreenMessage		m_SMSendOnCancel;
 
 	vector<MenuRowDef>	m_vMenuRows;
 
 public:
-	static bool		s_bCancelled;
-	static int		s_iLastRowCode;
+	static bool s_bCancelled;
+	static int s_iLastRowCode;
 	static vector<int>	s_viLastAnswers;
 };
 

@@ -35,7 +35,7 @@ local function func()
 			t = Def.Actor {};
 		end
 		return t .. {
-			cmd(hidden,true);
+			cmd(visible,false);
 		};
 	end
 

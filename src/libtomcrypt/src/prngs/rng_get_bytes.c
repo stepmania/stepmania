@@ -148,5 +148,5 @@ unsigned long rng_get_bytes(unsigned char *out, unsigned long outlen,
 }
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 24878 $ */
+/* $Date: 2007-01-24 16:32:59 -0600 (Wed, 24 Jan 2007) $ */

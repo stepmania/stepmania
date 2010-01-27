@@ -36,8 +36,8 @@ private:
 
 	RString StripOutContainers( const RString & In );	//Strip off "'s and ''s
 
-	Sprite	m_sprExistingBG;
-	Sprite	m_sprWebBG;
+	AutoActor	m_sprExistingBG;
+	AutoActor	m_sprWebBG;
 
 	Sprite	m_sprWebSel;
 

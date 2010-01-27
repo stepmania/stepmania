@@ -7,7 +7,7 @@ local ScreenName = Var "LoadingScreen";
 
 function MakeBitmapTest()
 	return LoadFont(ScreenName,"StageDisplay") .. {
-		InitCommand=cmd(y,2;shadowlength,0;);
+
 	};
 end
 
@@ -17,15 +17,22 @@ for s in ivalues(Stage) do
 			local Stage = GAMESTATE:GetCurrentStage();
 			local StageIndex = GAMESTATE:GetCurrentStageIndex();
 			local screen = SCREENMAN:GetTopScreen();
+			local cStageOutlineColor = ColorDarkTone( StageToStrokeColor(s) );
+			cStageOutlineColor[4] = 0.75;
 			if screen and screen.GetStageStats then
 				local ss = screen:GetStageStats();
 				Stage = ss:GetStage();
 				StageIndex = ss:GetStageIndex();
 			end
 			self:visible( Stage == s );
-			self:settext( StageToLocalizedString(Stage) );
+			if Stage == 'Stage_Event' then
+				self:settext( StageToLocalizedString(Stage) .. " Mode" );
+			else
+				self:settext( StageToLocalizedString(Stage) .. " Stage" );
+			end
 			self:diffuse( StageToColor(s) );
-			self:strokecolor( StageToStrokeColor(s) );
+			self:diffusebottomedge( ColorMidTone(StageToColor(s)) );
+			self:strokecolor( cStageOutlineColor );
 		end;
 	}
 end

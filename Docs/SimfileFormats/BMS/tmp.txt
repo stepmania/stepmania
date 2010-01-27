@@ -1,0 +1,187 @@
+BMS Format Specification(Remake version.)
+Written in June 28th 2003.
+
+original document written by Urao Yane.
+edited by U(uhangel4u@yahoo.co.jp)
+
+"BMS" means a Be-Music Source file. A file which has BMS suffix is regarded as the BMS file. 
+This file format was produced by Urao Yane and NBK in 1998.and It revised sometime.
+And I adopted this file format to BM98, Delight Delight Reduplication, MixWaver, nazoBMPlay and so on.
+Now,anyone can use this format freely.
+
+BM98 Drink Edition
+http://www5c.biglobe.ne.jp/~kbs/bm98/ (Japanese)
+Delight Delight Reduplicaton
+http://nickle.hey.to/ (Japanese)
+MixWaver
+http://hello.to/mixwaver/ (Korean)
+nazoBMPlay
+http://www.nothing.sh/nazobmplay/ (Japanese)
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+<Command Line>
+
+The line begining at '#' is the command line. All the rest are ignored (use for comments). 
+And this BMS file is compiled at runtime , so you can order any lines freely.
+And there is no difference in the command line between using a capital letter or not.
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+<Header>
+
+#PLAYER [1-4]
+
+#PLAYER 1
+This data is for Single Play.
+#PLAYER 2
+This data is for Two Players.
+#PLAYER 3
+This data is for Double Play.
+#PLAYER 4
+This data is for Two Players.(Players will plays same sequence)
+
+#GENRE xxxxxxxx
+Definition of Genre.
+
+#TITLE xxxxxxxx
+Definition of Title.
+
+#ARTIST xxxxxxxx
+Definition of Artist.
+
+#BPM xxx
+Definition of BPM.(Beats Per Minite) at the top of music. default : 130 value type : double.
+
+#MIDIFILE xxxxxxx.mid
+Background music by MIDI.but,It's not recommend.
+
+#PLAYLEVEL x
+Information of Game Level for player.
+
+#RANK [0-3]
+judgement level.
+x = 0 :very hard, 1: hard, 2: normal, 3: easy default : 2
+
+#VOLWAV xxx
+relative volume control (percentage)
+
+#TOTAL xxx
+increments of Groove Gauge
+ex.
+#TOTAL 120
+It means when all sequence was played over great, Groove Gauge's value is 120%
+
+#WAVxx yyyyyyyy.wav(or .mp3)
+definition of Wave Data. xx : 01 to FZ(01-09-0A-0Z-10-1Z...)  , yyyyyyyy.wav : wave file name
+When use mp3 files,you need mp3 CODEC.
+
+e.g.
+#WAV01 HOUSE01.WAV // assign HOUSE01.WAV to 01 wav
+#WAV02 HOUSE02.WAV // assign HOUSE02.WAV to 02 wav
+#WAVFZ HOUSE03.mp3 // assign HOUSE03.mp3 to FZ wav
+
+#BMPxx yyyyyyyy.bmp(or gif,jpg,png)
+definition of Bitmap file. xx : 01 to FF(Hex) , yyyyyyyy.bmp : bitmap file name
+Bitmap size must be 256 * 256.(max color 65536)
+If you use "gif or jpg or png", with Susie Plug-in.
+gif : ifgif.spi jpg : ifjpg.spi png : ifpng.spi
+
+About Susie Plug-ins : http://www.digitalpad.co.jp/~takechin/
+
+e.g.
+#BMP01 HOUSE01.BMP // assign HOUSE01.BMP to 01 bitmap
+#BMP02 HOUSE02.BMP // assign HOUSE02.BMP to 02 bitmap
+#BMPEE HOUSE03.PNG // assign HOUSE03.PNG to EE bitmap
+
+#StageFile xxxx.bmp(or gif,jpg,png)
+Show assigned Picture when loading bitmaps,wavs and compiling bms.
+
+#BPMxx yyy
+Use to change BPM(Beats Per Minite). xx : 01 to ff(Hex)
+
+But ,the bitmap defined by #BMP00 is something special.
+This bitmap shows when a player do a poor play.
+
+#STOPxx yyy
+Use to stop sequence. xx : 01 to ff(Hex)
+yyy : a quarter note = 48
+      an eighth note = 24
+      a whole note   = 192
+      note / n       = 192/n
+
+#CDDA xx
+Audio cds Track No.
+
+#BackBMP xxxx.bmp(or gif,jpg,png)
+Set BackGround Picture.(size:640*480)
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+// a sample of random loading function
+
+#random 2 // create a random number (1 or 2)
+
+#if 1 // if the number was equal to 1 then...
+#00111:31313131 // this is effective...
+#endif
+
+#if 2 // if the number was equal to 2 then...
+#00113:32003232 // this is effective
+#endif
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+<Channel Messages>
+
+#aaabb:cccccccc
+
+aaa: track number (from 000 to 999)
+bb : channel number where you want to send message.(from 00 to FF)
+cccccccc : <message>
+
+<a brief Channel Number>
+
+01 : BGM(background music by WAVE)
+02 : shortening note.
+03 : changing a Tempo[1-255]
+04 : BGA(background animation)
+06 : changing Poor-bitmap
+07 : BGA Layer.
+08 : Extended BPM(Use assigned of #BPMxx)
+09 : Stop the sequence(Use assigned of #STOPxx)
+
+11 to 19 : Object Channel of 1 player side
+21 to 29 : Object Channel of 2 player side
+31 to 39 : Can't show Object Channel of 1 player side
+41 to 49 : Can't show Object Channel of 2 player side
+51 to 59 : Long note Object Channel of 1 player side
+61 to 69 : Long note Object Channel of 2 player side
+
+<Example>
+
+#00211:03030303
+This means 4 objects at the left of 1 player side in 002 track.
+This object is assigned to wave No.03 which was defined by #WAV03 xxxx.wav.
+And this 4 objects are arranged evenly in this track.
+
+Please try the following patterns.
+
+#00211:0303030303
+
+#00211:0303000303
+
+#00211:010101
+#00211:00020202
+
+P.S.
+
+#00202:0.5 : Track2 have Half length.
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+This document and this format is free!
+I hope the day will come when my BMS format will use all over the world.
+
+Urao Yane

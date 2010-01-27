@@ -78,11 +78,20 @@ public:
 	GoalType	m_GoalType;
 	RString		m_sProfileID;
 	RString		m_sUrl;
+	/* sm-ssc adds: */
+	bool		m_bUrlExits;	// for making stepmania not exit on url
+	bool		m_bPushScreen;	// for pushing a screen on top instead of as next
 
 	bool m_bInsertCredit;
 	bool m_bClearCredits;
 	bool m_bStopMusic;
 	bool m_bApplyDefaultOptions;
+	/* sm-ssc also adds: */
+	bool m_bFadeMusic;
+	float m_fMusicFadeOutVolume;
+	// currently, GameSoundManager uses consts for fade out/in times, so this
+	// is kind of pointless, but I want to have it working eventually. -aj
+	float m_fMusicFadeOutSeconds;
 
 	// Lua
 	void PushSelf( lua_State *L );

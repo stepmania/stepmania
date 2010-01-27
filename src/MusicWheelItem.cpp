@@ -186,7 +186,8 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 		type = MusicWheelItemType_Song;
 
 		m_TextBanner.SetFromSong( pWID->m_pSong );
-		m_TextBanner.SetDiffuse( pWID->m_color );
+		// We can do this manually..
+		m_TextBanner.SetDiffuse( pWID->m_color ); 
 		m_TextBanner.SetVisible( true );
 
 		m_WheelNotifyIcon.SetFlags( pWID->m_Flags );
@@ -198,7 +199,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 			sDisplayName = SONGMAN->ShortenGroupName(pWID->m_sText);
 			RString sExpandedSectionName;
 
-			// TODO: Move the expaneded section name into GameState?
+			// TODO: Move the expanded section name into GameState?
 			ScreenSelectMusic *pScreen = dynamic_cast<ScreenSelectMusic*>(SCREENMAN->GetTopScreen() );
 			if( pScreen )
 				sExpandedSectionName = pScreen->GetMusicWheel()->GetExpandedSectionName();
@@ -265,6 +266,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 		msg.SetParam( "HasFocus", bHasFocus );
 		msg.SetParam( "SongGroup", pWID->m_sText );
 		msg.SetParam( "DrawIndex", iDrawIndex );
+		msg.SetParam( "Type", MusicWheelItemTypeToString(type) );
 
 		this->HandleMessage( msg );
 	}

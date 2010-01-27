@@ -1,3 +1,4 @@
+/* StreamDisplay -  */
 #ifndef StreamDisplay_H
 #define StreamDisplay_H
 

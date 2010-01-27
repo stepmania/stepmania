@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // $Workfile: stdafx.h $
 // $Archive: /ZipArchive/stdafx.h $
-// $Date$ $Author$
+// $Date: 2006-01-20 13:43:41 -0600 (Fri, 20 Jan 2006) $ $Author: gmaynard $
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
 // is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)

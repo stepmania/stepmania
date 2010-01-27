@@ -835,5 +835,5 @@ int cipher_is_valid(int idx);
 LTC_MUTEX_PROTO(ltc_cipher_mutex)
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 24839 $ */
+/* $Date: 2007-01-23 23:42:14 -0600 (Tue, 23 Jan 2007) $ */

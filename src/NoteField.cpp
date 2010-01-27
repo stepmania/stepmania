@@ -29,7 +29,7 @@ static ThemeMetric<float> BAR_8TH_ALPHA( "NoteField", "Bar8thAlpha" );
 static ThemeMetric<float> BAR_16TH_ALPHA( "NoteField", "Bar16thAlpha" );
 
 NoteField::NoteField()
-{	
+{
 	m_pNoteData = NULL;
 	m_pCurDisplay = NULL;
 
@@ -81,7 +81,7 @@ void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 		return;
 
 	LockNoteSkin l( sNoteSkin );
-		
+
 	LOG->Trace("NoteField::CacheNoteSkin: cache %s", sNoteSkin.c_str() );
 	NoteDisplayCols *nd = new NoteDisplayCols( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 
@@ -142,7 +142,6 @@ void NoteField::CacheAllUsedNoteSkins()
 void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels )
 {
 	m_pPlayerState = pPlayerState;
-
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 	CacheAllUsedNoteSkins();
 }
@@ -223,11 +222,13 @@ void NoteField::Update( float fDeltaTime )
 	m_pCurDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_fPercentFadeToFail );
 
 
+	NoteDisplay::Update( fDeltaTime );
 	/*
 	 * Update all NoteDisplays.  Hack: We need to call this once per frame, not
 	 * once per player.
 	 */
 	// TODO: Remove use of PlayerNumber.
+
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	if( pn == GAMESTATE->m_MasterPlayerNumber )
 		NoteDisplay::Update( fDeltaTime );
@@ -253,7 +254,7 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 
 	float fAlpha;
 	int iState;
-	
+
 	if( bIsMeasure )
 	{
 		fAlpha = BAR_MEASURE_ALPHA;
@@ -302,10 +303,11 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 
 void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels )
 {
-	const float fYPosAt0		= ArrowEffects::GetYPos(    m_pPlayerState, 0, 0, m_fYReverseOffsetPixels );	
+	const float fYPosAt0		= ArrowEffects::GetYPos(    m_pPlayerState, 0, 0, m_fYReverseOffsetPixels );
 
 	// Draw the board centered on fYPosAt0 so that the board doesn't slide as the draw distance changes with modifiers.
-	
+
+	// todo: make this an AutoActor instead? -aj
 	Sprite *pSprite = dynamic_cast<Sprite *>( (Actor*)m_sprBoard );
 	if( pSprite == NULL )
 		RageException::Throw( "Board must be a Sprite" );
@@ -342,6 +344,7 @@ void NoteField::DrawMarkerBar( int iBeat )
 	m_rectMarkerBar.Draw();
 }
 
+// todo: make colors in this section metricable -aj
 void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 {
 	float fStartBeat = NoteRowToBeat( iStartBeat );
@@ -377,7 +380,7 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
+void NoteField::DrawFreezeText( const float fBeat, const float fSecs, const float bDelay )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
  	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
@@ -385,7 +388,10 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( align_right );
-	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
+	if(bDelay)
+		m_textMeasureNumber.SetDiffuse( RageColor(0,0.8f,0.8f,1) );
+	else
+		m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
 	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 10*fZoom, fYPos );
@@ -631,9 +637,7 @@ void NoteField::DrawPrimitives()
 	{
 		ASSERT(GAMESTATE->m_pCurSong);
 
-		//
 		// BPM text
-		//
 		const vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments;
 		for( unsigned i=0; i<aBPMSegments.size(); i++ )
 		{
@@ -646,9 +650,7 @@ void NoteField::DrawPrimitives()
 			}
 		}
 
-		//
 		// Freeze text
-		//
 		const vector<StopSegment> &aStopSegments = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments;
 		for( unsigned i=0; i<aStopSegments.size(); i++ )
 		{
@@ -657,13 +659,11 @@ void NoteField::DrawPrimitives()
 			{
 				float fBeat = NoteRowToBeat(aStopSegments[i].m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
-					DrawFreezeText( fBeat, aStopSegments[i].m_fStopSeconds );
+					DrawFreezeText( fBeat, aStopSegments[i].m_fStopSeconds, aStopSegments[i].m_bDelay );
 			}
 		}
 
-		//
 		// Time Signature text
-		//
 		const vector<TimeSignatureSegment> &vTimeSignatureSegments = GAMESTATE->m_pCurSong->m_Timing.m_vTimeSignatureSegments;
 		for( unsigned i=0; i<vTimeSignatureSegments.size(); i++ )
 		{
@@ -675,6 +675,8 @@ void NoteField::DrawPrimitives()
 					DrawTimeSignatureText( fBeat, vTimeSignatureSegments[i].m_iNumerator, vTimeSignatureSegments[i].m_iDenominator );
 			}
 		}
+
+		// todo: add warp text
 
 		//
 		// Course mods text
@@ -813,13 +815,13 @@ void NoteField::DrawPrimitives()
 
 		//
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
-		//	
+		//
 		{
 			NoteData::TrackMap::const_iterator begin, end;
 			m_pNoteData->GetTapNoteRangeInclusive( c, iFirstRowToDraw, iLastRowToDraw+1, begin, end );
 
 			for( ; begin != end; ++begin )
-			{	
+			{
 				const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, i);
 				if( tn.type != TapNote::hold_head )
 					continue;	// skip
@@ -857,13 +859,13 @@ void NoteField::DrawPrimitives()
 				const bool bIsHoldingNote = tn.HoldResult.bHeld;
 				if( bHoldGhostShowing )
 					m_pCurDisplay->m_GhostArrowRow.SetHoldShowing( c, tn );
-				
+
 				ASSERT_M( NoteRowToBeat(iStartRow) > -2000, ssprintf("%i %i %i", iStartRow, iEndRow, c) );
 
 				bool bIsInSelectionRange = false;
 				if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
 					bIsInSelectionRange = (m_iBeginMarker <= iStartRow && iEndRow < m_iEndMarker);
-				
+
 				NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
 				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, Result, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
 					m_fYReverseOffsetPixels, (float) iDrawDistanceAfterTargetsPixels, (float) iDrawDistanceBeforeTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
@@ -872,7 +874,7 @@ void NoteField::DrawPrimitives()
 				bAnyUpcomingInThisCol |= bNoteIsUpcoming;
 			}
 		}
-		
+
 
 		//
 		// Draw all TapNotes in this column
@@ -883,7 +885,7 @@ void NoteField::DrawPrimitives()
 		NoteData::TrackMap::const_iterator begin, end;
 		m_pNoteData->GetTapNoteRange( c, iFirstRowToDraw, iLastRowToDraw+1, begin, end );
 		for( ; begin != end; ++begin )
-		{	
+		{
 			int i = begin->first;
 			const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, i);
 			switch( tn.type )
@@ -930,7 +932,7 @@ void NoteField::DrawPrimitives()
 			bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
 			NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
 			displayCols->display[c].DrawTap( tn, c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, m_fYReverseOffsetPixels, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
-			
+
 			bool bNoteIsUpcoming = NoteRowToBeat(i) > GAMESTATE->m_fSongBeat;
 			bAnyUpcomingInThisCol |= bNoteIsUpcoming;
 		}

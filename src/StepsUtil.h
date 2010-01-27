@@ -17,6 +17,10 @@ public:
 	Difficulty m_difficulty;	// don't filter if Difficulty_Invalid
 	int m_iLowMeter;		// don't filter if -1
 	int m_iHighMeter;		// don't filter if -1
+	// Currently, Songs have BPM since TimingData is by Song. These are just
+	// here for the inevitable chart-based BPMs future. -aj
+	// float m_fLowBPM;		// don't filter if -1
+	// float m_fHighBPM;		// don't filter if -1
 	StepsType m_st;			// don't filter if StepsType_Invalid
 	enum Locked { Locked_Locked, Locked_Unlocked, Locked_DontCare } m_Locked;
 
@@ -25,6 +29,8 @@ public:
 		m_difficulty = Difficulty_Invalid;
 		m_iLowMeter = -1;
 		m_iHighMeter = -1;
+		//m_fLowBPM = -1;
+		//m_fHighBPM = -1;
 		m_st = StepsType_Invalid;
 		m_Locked = Locked_DontCare;
 	}

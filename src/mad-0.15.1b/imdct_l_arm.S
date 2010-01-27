@@ -22,7 +22,7 @@
 *
 *****************************************************************************
 *
-* $Id$
+* $Id: imdct_l_arm.S 8581 2004-02-18 04:36:30Z gmaynard $
 *
 * 2001/03/24:  Andre McCurdy <armccurdy@yahoo.co.uk>
 *   - Corrected PIC unsafe loading of address of 'imdct36_long_karray'

@@ -139,6 +139,7 @@ void TextureFont::FormatCharacter( wchar_t c, HDC hDC )
 		ii = GetGlyphOutline( hDC, c, GGO_BEZIER, &gm, ii, data, &mat );
 */
 
+	// lol what
 	if(c == L'j')
 		int q = 1;
 

@@ -1,0 +1,14 @@
+Some other rhythm game simulators are open source.
+Here's where to find code.
+--------------------------------------------------------------------------------
+Delight Delight Reduplication [Boost Software License]
+http://sourceforge.jp/projects/delight/svn/view/trunk/src/?root=delight
+
+Direct Move [unknown license]
+http://zsoo.net/38
+
+pydance [see http://kai.vm.bytemark.co.uk/svn/pydance/trunk/pydance/LICENSE]
+http://kai.vm.bytemark.co.uk/svn/pydance/trunk/pydance/
+
+be-pachi music [MIT license]
+http://x-raise.cjb.net/bpm.html

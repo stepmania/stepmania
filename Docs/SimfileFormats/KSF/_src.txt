@@ -1,0 +1,5 @@
+ksf-format.txt = http://kai.vm.bytemark.co.uk/svn/pydance/trunk/pydance/docs/ksf-format.txt
+
+[not in repository but good reading]
+http://worldance.us/foro/archive/index.php?t-1647.html (Spanish; Direct Move KSF)
+http://www.ph-online.net/html/ph_newspage_v3_09.html ("Explanation of KSF Pump It Up Step Format" by Turkeyslam)

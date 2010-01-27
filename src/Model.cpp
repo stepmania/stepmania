@@ -75,7 +75,6 @@ void Model::LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPat
 	Clear();
 
 	// TRICKY: Load materials before geometry so we can figure out whether the materials require normals.
-	
 	LoadMaterialsFromMilkshapeAscii( sMaterialsPath );
 
 	ASSERT( m_pGeometry == NULL );
@@ -297,14 +296,16 @@ void Model::DrawCelShaded()
 	this->SetGlow(RageColor(0,0,0,1));
 	this->SetDiffuseAlpha(0);
 	DISPLAY->SetPolygonMode( POLYGON_LINE );
-	DISPLAY->SetLineWidth( 4 );
+	DISPLAY->SetLineWidth( 3 );
 	this->SetZWrite( false );
 	this->Draw();
 	this->SetDiffuseAlpha(1);
 	this->SetGlow(RageColor(1,1,1,0));
 	DISPLAY->SetPolygonMode( POLYGON_FILL );
 	this->SetZWrite( true );
+	DISPLAY->SetCelShaded( true );
 	this->Draw();
+	DISPLAY->SetCelShaded( false );
 }
 
 void Model::DrawPrimitives()
@@ -333,11 +334,11 @@ void Model::DrawPrimitives()
 			{
 				// apply material
 				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
-				
+
 				RageColor Emissive = mat.Emissive;
 				RageColor Ambient = mat.Ambient;
 				RageColor Diffuse = mat.Diffuse;
-				
+
 				Emissive *= m_pTempState->diffuse[0];
 				Ambient *= m_pTempState->diffuse[0];
 				Diffuse *= m_pTempState->diffuse[0];
@@ -392,7 +393,7 @@ void Model::DrawPrimitives()
 					Actor::SetTextureRenderStates();	// set Actor-specified render states
 					DISPLAY->SetSphereEnvironmentMapping( TextureUnit_1, mat.diffuse.m_bSphereMapped );
 					DrawMesh( i );
-				
+
 					// render the additive texture
 					if( mat.alpha.GetCurrentTexture() )
 					{
@@ -457,6 +458,7 @@ void Model::DrawPrimitives()
 			}
 			else
 			{
+				// hey why is this otherwise empty else block here? -aj
 			}
 
 			DrawMesh( i );
@@ -515,11 +517,11 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 		const RageVector3 &vRot = pBone->Rotation;
 
 		RageMatrixAngles( &m_vpBones[i].m_Relative, vRot );
-		
+
 		m_vpBones[i].m_Relative.m[3][0] = pBone->Position[0];
 		m_vpBones[i].m_Relative.m[3][1] = pBone->Position[1];
 		m_vpBones[i].m_Relative.m[3][2] = pBone->Position[2];
-		
+
 		int nParentBone = m_pCurAnimation->FindBoneByName( pBone->sParentName );
 		if( nParentBone != -1 )
 		{
@@ -553,12 +555,12 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 				RageMatrix inverse;
 				RageMatrixTranspose( &inverse, &m_vpBones[bone].m_Absolute );	// transpose = inverse for rotation matrices
 				RageVec3TransformNormal( &vTmp, &pos, &inverse );
-				
+
 				pos = vTmp;
 			}
 		}
 	}
-	
+
 	/* Set up m_vpBones, just in case we're drawn without being Update()d. */
 	SetBones( m_pCurAnimation, m_fCurFrame, m_vpBones );
 	UpdateTempGeometry();
@@ -788,6 +790,7 @@ public:
 	static int SetDefaultAnimation( T* p, lua_State *L )	{ p->SetDefaultAnimation(SArg(1),FArg(2)); return 0; }
 	static int loop( T* p, lua_State *L )		{ p->SetLoop(BArg(1)); return 0; }
 	static int rate( T* p, lua_State *L )		{ p->SetRate(FArg(1)); return 0; }
+	static int GetNumStates( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumStates() ); return 1; }
 
 	LunaModel()
 	{
@@ -796,6 +799,8 @@ public:
 		ADD_METHOD( SetDefaultAnimation );
 		ADD_METHOD( loop );
 		ADD_METHOD( rate );
+		// sm-ssc adds:
+		ADD_METHOD( GetNumStates );
 	}
 };
 

@@ -1214,8 +1214,42 @@ void RageDisplay_D3D::SetBlendMode( BlendMode mode )
 		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
 		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
 		break;
+	case BLEND_MODULATE:
+		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ZERO );
+		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_SRCCOLOR );
+		break;
 	case BLEND_COPY_SRC:
 		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ONE );
+		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ZERO );
+		break;
+	/*
+	 * Effects currently missing in D3D:
+	 * BLEND_ALPHA_MASK, BLEND_ALPHA_KNOCK_OUT
+	 * These two may require DirectX9 since D3DRS_SRCALPHA and D3DRS_DESTALPHA
+	 * don't seem to exist in DX8. -aj
+	 */
+	case BLEND_ALPHA_MASK:
+		// RGB: iSourceRGB = GL_ZERO; iDestRGB = GL_ONE;
+		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ZERO );
+		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
+		// Alpha: iSourceAlpha = GL_ZERO; iDestAlpha = GL_SRC_ALPHA;
+		/*
+		g_pd3dDevice->SetRenderState( D3DRS_SRCALPHA,  D3DBLEND_ZERO );
+		g_pd3dDevice->SetRenderState( D3DRS_DESTALPHA, D3DBLEND_SRCALPHA );
+		*/
+		break;
+	case BLEND_ALPHA_KNOCK_OUT:
+		// RGB: iSourceRGB = GL_ZERO; iDestRGB = GL_ONE;
+		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ZERO );
+		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
+		// Alpha: iSourceAlpha = GL_ZERO; iDestAlpha = GL_ONE_MINUS_SRC_ALPHA;
+		/*
+		g_pd3dDevice->SetRenderState( D3DRS_SRCBLENDALPHA,  D3DBLEND_ZERO );
+		g_pd3dDevice->SetRenderState( D3DRS_DESTBLENDALPHA, D3DBLEND_INVSRCALPHA );
+		*/
+		break;
+	case BLEND_ALPHA_MULTIPLY:
+		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
 		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ZERO );
 		break;
 	case BLEND_WEIGHTED_MULTIPLY:
@@ -1539,6 +1573,14 @@ RageMatrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t, 
 void RageDisplay_D3D::SetSphereEnvironmentMapping( TextureUnit tu, bool b )
 {
 	g_bSphereMapping[tu] = b;
+}
+
+void RageDisplay_D3D::SetCelShaded( bool b )
+{
+	/* yo AJ doesn't know what the fuck is going on and he's the only one
+	 * of the sm-ssc team who's touched DirectX in C++ (for all of an hour)
+	 * and idkwtf.
+	 */
 }
 
 /*

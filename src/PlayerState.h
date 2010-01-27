@@ -23,14 +23,11 @@ public:
 	// GameState.
 	PlayerNumber		m_PlayerNumber;
 	MultiPlayer		m_mp;
-	
 
 	void ResetToDefaultPlayerOptions( ModsLevel l );
 	ModsGroup<PlayerOptions>	m_PlayerOptions;
 
-	//
 	// Used in Gameplay
-	//
 	mutable float		m_fLastDrawnBeat;	// Set by NoteField.  Used to push note-changing modifers back so that notes doesn't pop.
 
 	HealthState		m_HealthState;
@@ -49,7 +46,7 @@ public:
 	}
 
 	PlayerController	m_PlayerController;
-	
+
 	SampleHistory m_EffectHistory;
 
 	//
@@ -67,25 +64,18 @@ public:
 	float			m_fSecondsUntilAttacksPhasedOut;// positive means PlayerAI is still affected
 	bool			m_bAttackBeganThisUpdate;	// flag for other objects to watch (play sounds)
 	bool			m_bAttackEndedThisUpdate;	// flag for other objects to watch (play sounds)
-	
+
 	AttackArray		m_ActiveAttacks;
 	vector<Attack>		m_ModsToApply;
 
-	//
 	// Haste
-	//
 	int			m_iTapsHitSinceLastHasteUpdate;
 	int			m_iTapsMissedSinceLastHasteUpdate;
 
-	//
 	// Used in Rave
-	//
 	float			m_fSuperMeter;	// between 0 and NUM_ATTACK_LEVELS
 	float			m_fSuperMeterGrowthScale;
-
-	//
 	// Used in Battle
-	//
 	void RemoveAllInventory();
 	Attack			m_Inventory[NUM_INVENTORY_SLOTS];
 

@@ -1,4 +1,4 @@
-/* ScreenGameplaySyncMachine -  */
+/* ScreenGameplaySyncMachine - A gameplay screen used for syncing the machine's timing */
 
 #ifndef ScreenGameplaySyncMachine_H
 #define ScreenGameplaySyncMachine_H
@@ -22,7 +22,7 @@ protected:
 	virtual bool UseSongBackgroundAndForeground() const { return false; }
 	void RefreshText();
 
-	Song		m_Song;
+	Song	m_Song;
 	const Steps	*m_pSteps;
 
 	BitmapText	m_textSyncInfo;

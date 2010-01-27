@@ -30,7 +30,7 @@ void PlayerState::Reset()
 	m_fUpcomingMidiNote = -1;
 
 	m_PlayerController = PC_HUMAN;
-	
+
 	m_iCpuSkill = 5;
 
 	m_iLastPositiveSumOfAttackLevels = 0;
@@ -66,7 +66,7 @@ void PlayerState::Update( float fDelta )
 	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
 	{
 		Attack &attack = m_ActiveAttacks[s];
-		
+
 		// -1 is the "starts now" sentinel value.  You must add the attack
 		// by calling GameState::LaunchAttack, or else the -1 won't be 
 		// converted into the current music time.  
@@ -221,6 +221,7 @@ class LunaPlayerState: public Luna<PlayerState>
 {
 public:
 	DEFINE_METHOD( GetPlayerNumber, m_PlayerNumber );
+	DEFINE_METHOD( GetPlayerController, m_PlayerController );
 	static int SetPlayerOptions( T* p, lua_State *L )
 	{
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );

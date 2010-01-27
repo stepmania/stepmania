@@ -32,7 +32,7 @@ bool DIDevice::Open()
 
 	LOG->Trace( "Opening device '%s'", m_sName.c_str() );
 	buffered = true;
-	
+
 	LPDIRECTINPUTDEVICE tmpdevice;
 	HRESULT hr = g_dinput->CreateDevice( JoystickInst.guidInstance, &tmpdevice, NULL );
 	if ( hr != DI_OK )
@@ -60,6 +60,7 @@ bool DIDevice::Open()
 		return false;
 	}
 
+	
 	hr = Device->SetDataFormat( type == JOYSTICK? &c_dfDIJoystick: &c_dfDIKeyboard );
 	if ( hr != DI_OK )
 	{
@@ -85,6 +86,10 @@ bool DIDevice::Open()
 			Inputs.push_back(in);
 		}
 		break;
+	/*
+	case MOUSE:
+		break;
+	*/
 	}
 
 	{

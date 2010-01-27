@@ -32,7 +32,7 @@ void ScreenNetEvaluation::Init()
 	{
 		m_pActivePlayer = pn;
 	}
-	
+
 	if( m_pActivePlayer == PLAYER_1 )
 		m_iShowSide = 2;
 	else
@@ -44,7 +44,7 @@ void ScreenNetEvaluation::Init()
 	// XXX: The name should be ssprintf( "UsersBG%d", m_iShowSide ) and then
 	// then LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND should be used.
 	m_rectUsersBG.SetName( "UsersBG" );
-	
+
 	m_rectUsersBG.SetXY(
 		THEME->GetMetricF("ScreenNetEvaluation",ssprintf("UsersBG%dX",m_iShowSide)),
 		THEME->GetMetricF("ScreenNetEvaluation",ssprintf("UsersBG%dY",m_iShowSide)) );
@@ -70,7 +70,7 @@ void ScreenNetEvaluation::RedoUserTexts()
 
 	float cx = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dX",m_iShowSide));
 	float cy = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dY",m_iShowSide));
-	
+
 	m_iCurrentPlayer = 0;
 	m_textUsers.clear();
 	m_textUsers.resize(m_iActivePlayers);
@@ -127,17 +127,16 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	{
 		m_bHasStats = true;
 
-		LOG->Trace( "SMNETDebug:%d,%d",m_iActivePlayers,NSMAN->m_ActivePlayers );
+		LOG->Trace( "[SMNETDebug] num active players: %d (local), %d (NSMAN)",m_iActivePlayers,NSMAN->m_ActivePlayers );
 
 		RedoUserTexts();
 
 		LOG->Trace( "SMNETCheckpoint" );
 		for( int i=0; i<m_iActivePlayers; ++i )
 		{
-			//Strange occourances because of timing
-			//cause these things not to work right
-			//and will sometimes cause a crash.
-			//We should make SURE we won't crash!
+			// Strange occourances because of timing cause these things not to
+			// work right and will sometimes cause a crash.
+			// We should make SURE we won't crash!
 			if ( size_t(i) >= NSMAN->m_EvalPlayerData.size() )
 				break;
 
@@ -169,7 +168,7 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenNetEvaluation::TweenOffScreen( )
 {
-	for( int i=0; i<m_iActivePlayers; ++i )	
+	for( int i=0; i<m_iActivePlayers; ++i )
 		OFF_COMMAND( m_textUsers[i] );
 	OFF_COMMAND( m_rectUsersBG );
 	ScreenEvaluation::TweenOffScreen();
@@ -182,7 +181,8 @@ void ScreenNetEvaluation::UpdateStats()
 
 	m_Grades[m_pActivePlayer].SetGrade( (Grade)NSMAN->m_EvalPlayerData[m_iCurrentPlayer].grade );
 
-	m_textScore[m_pActivePlayer].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score) );
+	//m_textScore[m_pActivePlayer].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score) );
+	m_textScore[m_pActivePlayer].SetTargetNumber( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score );
 
 	//Values greater than 6 will cause crash
 	if ( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty < 6 )
@@ -193,12 +193,13 @@ void ScreenNetEvaluation::UpdateStats()
 
 	for( int j=0; j<NETNUMTAPSCORES; ++j )
 	{
-		//The name will be blank if ScreenEvaluation determined the
-		//line should not be shown
+		// The name will be blank if ScreenEvaluation determined the
+		// line should not be shown
 		if( !m_textJudgmentLineNumber[j][m_pActivePlayer].GetName().empty() )
 		{
-			int iNumDigits = (j==JudgmentLine_MaxCombo)? MAX_COMBO_NUM_DIGITS:4;
-			m_textJudgmentLineNumber[j][m_pActivePlayer].SetText( ssprintf("%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j]) );
+			// do we need this iNumDigits thing anymore? -aj
+			//int iNumDigits = (j==JudgmentLine_MaxCombo)? MAX_COMBO_NUM_DIGITS:4;
+			m_textJudgmentLineNumber[j][m_pActivePlayer].SetTargetNumber( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] );
 		}
 	}
 

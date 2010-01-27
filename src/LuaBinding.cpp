@@ -72,19 +72,19 @@ void LuaBinding::Register( lua_State *L )
 	/* Create the methods table, if it doesn't already exist. */
 	LuaBinding::CreateMethodsTable( L, GetClassName() );
 	int methods = lua_gettop( L );
-	
+
 	/* Create a metatable for the userdata objects. */
 	luaL_newmetatable( L, GetClassName() );
 	int metatable = lua_gettop( L );
-	
+
 	// We use the metatable to determine the type of the table, so don't
 	// allow it to be changed.
 	lua_pushstring( L, "(hidden)" );
 	lua_setfield( L, metatable, "__metatable" );
-	
+
 	lua_pushvalue( L, methods );
 	lua_setfield( L, metatable, "__index" );
-		
+
 	lua_pushcfunction( L, PushEqual );
 	lua_setfield( L, metatable, "__eq" );
 

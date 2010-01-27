@@ -11,6 +11,7 @@ namespace RageFileManagerUtil
 
 class RageFileDriver;
 class RageFileBasic;
+struct lua_State;
 
 class RageFileManager
 {
@@ -59,6 +60,9 @@ public:
 	/* Retrieve or release a reference to the low-level driver for a mountpoint. */
 	RageFileDriver *GetFileDriver( RString sMountpoint );
 	void ReleaseFileDriver( RageFileDriver *pDriver );
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	RageFileBasic *OpenForReading( const RString &sPath, int iMode, int &iError );

@@ -51,6 +51,7 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( Dpy, GLX_VENDOR ), glXGetClientString( Dpy, GLX_VERSION ) );
 	m_bWasWindowed = true;
 	g_pScreenConfig = XRRGetScreenInfo( Dpy, RootWindow(Dpy, DefaultScreen(Dpy)) );
+	g_iOldSize = XRRConfigCurrentConfiguration( g_pScreenConfig, &g_OldRotation );
 }
 
 LowLevelWindow_X11::~LowLevelWindow_X11()
@@ -181,11 +182,16 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// context.
 		bNewDeviceOut = false;
 	}
-	
-	g_iOldSize = XRRConfigCurrentConfiguration( g_pScreenConfig, &g_OldRotation );
-	
+
 	if( !p.windowed )
 	{
+		if( m_bWasWindowed )
+		{
+			// If the user changed the resolution while StepMania was windowed we overwrite the resolution to restore with it at exit.
+			g_iOldSize = XRRConfigCurrentConfiguration( g_pScreenConfig, &g_OldRotation );
+			m_bWasWindowed = false;
+		}
+
 		// Find a matching mode.
 		int iSizesXct;
 		XRRScreenSize *pSizesX = XRRSizes( Dpy, DefaultScreen(Dpy), &iSizesXct );
@@ -210,13 +216,10 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		XMoveWindow( Dpy, Win, 0, 0 );
 		
 		XRaiseWindow( Dpy, Win );
-		
-		if( m_bWasWindowed )
-		{
-			// We want to prevent the WM from catching anything that comes from the keyboard.
-			XGrabKeyboard( Dpy, Win, True, GrabModeAsync, GrabModeAsync, CurrentTime );
-			m_bWasWindowed = false;
-		}
+
+		// We want to prevent the WM from catching anything that comes from the keyboard.
+		// We should do this every time on fullscreen and not only we entering from windowed mode because we could lost focus at resolution change and that will leave the user input locked.
+		XGrabKeyboard( Dpy, Win, True, GrabModeAsync, GrabModeAsync, CurrentTime );
 	}
 	else
 	{

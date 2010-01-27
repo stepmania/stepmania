@@ -96,7 +96,7 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 			/* HandleGlobalInputs() already played the coin sound.  Don't play it again. */
 			if( input.MenuI != GAME_BUTTON_COIN )
 				SCREENMAN->PlayStartSound();
-			
+
 			pScreen->Cancel( SM_GoToStartScreen );
 			break;
 		default:

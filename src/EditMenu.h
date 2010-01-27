@@ -133,6 +133,7 @@ private:
 	ThemeMetric1D<float> ROW_Y;
 public:
 	ThemeMetric<EditMode> EDIT_MODE;
+	ThemeMetric<RString>  TEXT_BANNER_TYPE;
 };
 
 #endif

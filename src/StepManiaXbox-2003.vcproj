@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 /FIXED:NO /FORCE:MULTIPLE"
-				AdditionalDependencies="zlib/xboxzlib.lib libpng/lib/xboxlibpng.lib xbdm.lib xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib debug\verstub.obj"
+				AdditionalDependencies="zlib/xboxzlib.lib libpng/lib/xboxlibpng.lib xbdm.lib xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib debug\verstub.obj ffmpeg/lib/avcodec.lib ffmpeg/lib/avformat.lib ffmpeg/lib/avutil.lib ffmpeg/lib/swscale.lib"
 				OutputFile="../StepManiaXbox-debug.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -51,7 +51,7 @@
 				OptimizeReferences="0"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)StepMania.vdi ia32.vdi"
+				Description="disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)StepMania-debug.vdi ia32.vdi"
 				ExcludedFromBuild="TRUE"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -62,8 +62,8 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 "/>
 			<Tool
 				Name="XboxDeploymentTool"
-				ExcludedFromBuild="TRUE"
-				RemotePath="xe:\StepmaniaXbox\default-dbg.xbe"
+				ExcludedFromBuild="FALSE"
+				RemotePath="xe:\sm-ssc\default-dbg.xbe"
 				Progress="TRUE"/>
 			<Tool
 				Name="XboxImageTool"
@@ -93,7 +93,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="1"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0/include&quot;;ffmpeg/include"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1/include&quot;;ffmpeg/include"
 				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
@@ -113,7 +113,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 /FIXED:NO /FORCE:MULTIPLE"
-				AdditionalDependencies="$(intdir)\verstub.obj zlib/xboxzlib.lib libpng/lib/xboxlibpng.lib xapilib.lib d3d8.lib d3dx8.lib xgraphics.lib dsound.lib dmusic.lib xnet.lib xboxkrnl.lib libcmt.lib"
+				AdditionalDependencies="$(intdir)\verstub.obj zlib/xboxzlib.lib libpng/lib/xboxlibpng.lib xapilib.lib d3d8.lib d3dx8.lib xgraphics.lib dsound.lib dmusic.lib xnet.lib xboxkrnl.lib libcmt.lib ffmpeg/lib/avcodec.lib ffmpeg/lib/avformat.lib ffmpeg/lib/avutil.lib ffmpeg/lib/swscale.lib"
 				OutputFile="../StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -137,8 +137,8 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 "/>
 			<Tool
 				Name="XboxDeploymentTool"
-				ExcludedFromBuild="TRUE"
-				RemotePath="xe:\StepmaniaXbox\default-rls.xbe"
+				ExcludedFromBuild="FALSE"
+				RemotePath="xe:\sm-ssc\default.xbe"
 				Progress="TRUE"
 				ForceCopy="FALSE"/>
 			<Tool
@@ -151,7 +151,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				AltID="0x30253433"
 				XboxGameRating="5"
 				TitleInfo=""
-				TitleName="StepmaniaX"
+				TitleName="sm-ssc"
 				TitleImage=".\archutils\Xbox\smicon.XBX"
 				SaveGameImage=".\archutils\Xbox\saveblue.XBX"/>
 		</Configuration>
@@ -239,12 +239,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenExit.h">
-			</File>
-			<File
-				RelativePath="ScreenEz2SelectPlayer.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEz2SelectPlayer.h">
 			</File>
 			<File
 				RelativePath="ScreenGameplay.cpp">
@@ -493,12 +487,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenSelectMaster.h">
 			</File>
 			<File
-				RelativePath="ScreenSelectMode.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectMode.h">
-			</File>
-			<File
 				RelativePath="ScreenSelectMusic.cpp">
 			</File>
 			<File
@@ -639,6 +627,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="AutoKeysounds.h">
+			</File>
+			<File
+				RelativePath=".\BackgroundCache.cpp">
+			</File>
+			<File
+				RelativePath=".\BackgroundCache.h">
 			</File>
 			<File
 				RelativePath="BackgroundUtil.cpp">
@@ -893,10 +887,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\NotesLoaderMidi.h">
 			</File>
 			<File
-				RelativePath=".\NotesLoaderPMS.cpp">
+				RelativePath="NotesLoaderPMS.cpp">
 			</File>
 			<File
-				RelativePath=".\NotesLoaderPMS.h">
+				RelativePath="NotesLoaderPMS.h">
 			</File>
 			<File
 				RelativePath="NotesLoaderSM.cpp">
@@ -1597,16 +1591,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\ModIconRow.h">
 			</File>
 			<File
-				RelativePath="MusicBannerWheel.cpp">
+				RelativePath=".\MusicList.cpp">
 			</File>
 			<File
-				RelativePath="MusicBannerWheel.h">
-			</File>
-			<File
-				RelativePath="MusicList.cpp">
-			</File>
-			<File
-				RelativePath="MusicList.h">
+				RelativePath=".\MusicList.h">
 			</File>
 			<File
 				RelativePath=".\MusicWheel.cpp">
@@ -1661,12 +1649,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScrollBar.h">
-			</File>
-			<File
-				RelativePath="ScrollingList.cpp">
-			</File>
-			<File
-				RelativePath="ScrollingList.h">
 			</File>
 			<File
 				RelativePath="SnapDisplay.cpp">
@@ -2795,9 +2777,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\lua-5.1\src\lzio.h">
 			</File>
 		</Filter>
-		<File
-			RelativePath="StepMania.xpm">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

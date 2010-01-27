@@ -163,6 +163,12 @@ void RageMatrixSkewX( RageMatrix* pOut, float fAmount )
 	pOut->m[1][0] = fAmount;
 }
 
+void RageMatrixSkewY( RageMatrix* pOut, float fAmount )
+{
+	RageMatrixIdentity(pOut);
+	pOut->m[0][1] = fAmount;
+}
+
 /*
  * Return:
  *

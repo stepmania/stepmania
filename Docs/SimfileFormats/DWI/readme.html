@@ -1,0 +1,1224 @@
+<P><A href="http://dwi.claws-and-paws.com"><FONT size="+2">DANCE WITH INTENSITY</FONT></A> <B>v2.50.00</B><BR>
+&copy; SimWolf, 2003</P>
+
+<OL>
+<LI> DISCLAIMER AND TERMS OF USE
+<LI> <a href="#2">WHAT'S NEW?</a>
+<LI> <a href="#3">USING AND CONFIGURING DWI</a><BR>&nbsp;<UL>
+   <LI> Basic Operation
+   <LI> Song Sorting
+   <LI> Selecting Song Modifiers
+   <LI> Special keys   
+   <LI> Controller Configuration   
+   <LI> Gameplay Settings   
+   <LI> Sound Configuration   
+   <LI> Changing the Display from Windowed to Full-screen   
+   <LI> Sound effects   
+   <LI> <a href="#clo">Command-line options</a>   
+   <LI> Testing a song   
+   <LI> Setting Skins   
+   <LI> Setting Announcer and Sound Effects   
+   <LI> Folder- and Genre- Specific Banners
+   <LI> AVI Movie Support
+   <LI> Sonique Visualizations (SVP) Support
+   <LI> <A href='#profiles'>User Profiles</a>
+   </UL>&nbsp;
+<LI> <a href="#4">DWI FILE FORMAT</a><BR>&nbsp;<UL>
+   <LI> Steps
+   <LI> Hold Arrows
+   <LI> Tags
+   <LI> <a href="#background">Background Animations, Movies, and Visualizations</a>
+   </UL>&nbsp;
+<LI> <a href="#5">NONSTOP MODE AND CRS FILE FORMAT</a>
+<LI> <a href="#6">LRC (LYRICS) FILE FORMAT</a>
+<LI> <a href="#7">LIMITATIONS</a>
+<LI> <a href="#8">VERSION HISTORY</a>
+<LI> <a href="#9">FUTURE DEVELOPMENT AND THANKS</a>
+</OL>
+
+<P><FONT size="+1"><B>1. DISCLAIMER AND TERMS OF USE</B></font></P>
+
+<P>This program is provided for free, as-is.  Although it has been tested on multiple systems for compatability and reliability, you run this program at your own risk.  I cannot be held responsible if the program causes file loss or other problems.</P>
+
+<P>THIS PROGRAM IS *NOT* FOR SALE!!!  IT SHOULD NEVER BE BUNDLED WITH ANY OTHER FILES (MUSIC OR STEP FILES) ON ANY MEDIA, INCLUDING (BUT NOT LIMITED TO) CD's, DVD's, DISKS OR OTHER MEDIA.</P>
+
+<P>DWI is <b>Donation-Ware</b>.  Although you are not required to donate, it would be greatly appreciated if you enjoy the program that you contribute something towards the developers.</P>
+
+<P>This program simulates a popular arcade and home video game.  It was written to allow myself the ability to play songs from the games without having to switch CDs in my Playstation or Dreamcast, and also affords the ability to add new songs not currently available.  It also allows for playing older songs with new play modes, such as downward-scrolling arrows.  This program is being released to the public in the hopes that others would find it useful in the same manner.</P>
+
+<P>As such, this program REQUIRES responsibility on the part of the end-user (ie. YOU) to use the program LEGALLY.  You should *ONLY* play songs where you:<DIR>
+
+<TABLE cellspacing=0 cellpadding=2>
+<TR><TD align=right>a)&nbsp;</TD><TD> Own the game from which that music comes from.</TD></TR>
+<TR><TD align=right>or b)&nbsp;</TD><TD> Own the soundtrack CD from which the music comes from.</TD></TR>
+<TR><TD align=right>or c)&nbsp;</TD><TD> Legally own rights to the music being used (ie. other CDs, etc.)</TD></TR>
+</TABLE>
+</DIR></P>
+
+<P>I own all the available soundtracks and videogames for the music I own, and respectfully ask that you support the games and purchase them.  Thank you.</P>
+
+<P><FONT size="+1"><B><a name="2"></a>2. WHAT'S NEW?</B></font></P>
+
+<PRE>
+v2.50.00 - August 14, 2003.
+            - NEW: Addition of WAVE, BRAKE, and 0.25x modifiers.
+            - BUGFIX: Stage numbers and various other numbers are coloured again.
+				- BUGFIX: Bonus stages now default to Heavy/Maniac again.
+            - OTHER: Various other bugs I can't remember that have been fixed.
+				
+</PRE>
+</P>
+
+<P><a name="3"></a><FONT size="+1"><B>3. USING AND CONFIGURING DWI</B></font></P>
+
+<P><B>BASIC OPERATION</B></P>
+
+<P>When you first run DWI, you will receive a warning screen about responsible use of the program.  This warning screen will appear *EVERY* time the program detects new songs.</P>
+
+<P>DWI uses step-files with the extension ".DWI".  These files go in their own folder along with their associated background and banner images.  Optionally the music file can go in the same folder also.</P>
+
+<P>DWI supports multiple collections of songs, so you can organise your songs as you see fit.  To do this, just create different sub-directories in the "Songs" folder.</P>
+
+<P>eg. For a song with a step-file of "abc.dwi", put into a collection called "My Songs", your directory structure should look like this:<PRE>
+     &lt;INSTALL directory&gt;
+        + Songs
+           + My Songs
+              + abc
+                 + abc-banner.png   (any name, the program will detect that it's a banner)
+                 + abc-bg.png       (any name, the program will detect that it's a background)
+                 + abc.dwi          (any name)
+                 + (abc.mp3/wav)    (optional - otherwise FILE: tag is used).
+                 + (abc.lrc)        (optional - should have same base as DWI file).
+</PRE>
+</DIR></P>
+
+<P>So, in each "song folder", there should be two image files (background and banner), the DWI file, and optionally the music file in MP3 or WAV format.</P>
+
+<P><B>Song Sorting</B></P>
+
+<P>When you are at the song select screen, simply press up or down to change the current collection you are in.  Songs are organized alphabetically within each collection, and collections are organized alphabetically also.</P>
+
+<P>Another option is to sort your music by genre.  To activate this, go to "Options Menu", then "System Menu", and change the sort method to "GENRE" *.  This requires your DWI files to have a tag defining the genre to put the music into (see DWI format, below).  Multiple genres can be given (separated by a comma), to make the same song appear in different collections.  At the song select screen, press up or down to change the genre.</P>
+
+<P>You can also press Up-Left to change the sort method.  This cycles through:<UL>
+<LI> Folder/Genre (default)
+<LI> Folder/Genre, Separated
+<LI> All Music (by title)
+<LI> All Music (by artist)
+<LI> BPM.
+   <LI> Player's Best (top 64)
+</UL></P>
+
+<P><B>Selecting Song Modifiers</B></P>
+
+<P>At the song-select screen, press the "Select" button/key, and use the arrows to change options.  When done, press "Select" again.  Alternatively, you can hold down "Start" when selecting a song and you will be taken to a 
+screen where you can set your options.</P>
+
+<P align=center><TABLE cellspacing=0 cellpadding=2>
+<TR><TD align=right><B>Speed:</B>&nbsp;</TD><TD>1.5x, 2.0x, 3.0x, 4.0x, 5.0x, 8.0x, 0.5x, 0.75x, 0.25x</TD></TR>
+<TR><TD align=right><B>Boost:</B>&nbsp;</TD><TD>BOOST, BRAKE, WAVE</TD></TR>
+<TR><TD align=right><B>Appear:</B>&nbsp;</TD><TD>HIDDEN, SUDDEN, STEALTH</TD></TR>
+<TR><TD align=right><B>Turn:</B>&nbsp;</TD><TD>LEFT, MIRROR, RIGHT, SHUFFLE</TD></TR>
+<TR><TD align=right><B>Other:</B>&nbsp;</TD><TD>LITTLE, FLAT, SOLO</TD></TR>
+<TR><TD align=right><B>Dark:</B>&nbsp;</TD><TD>DARK <SMALL>(can't see arrow indicators)</SMALL></TD></TR>
+<TR><TD align=right><B>Scroll:</B>&nbsp;</TD><TD>REVERSE</TD></TR>
+<TR><TD align=right><B>Freeze:</B>&nbsp;</TD><TD>NOFREEZE</TD></TR>
+<TR><TD align=right><B>Power:</B>&nbsp;</TD><TD>POWER-DROP <SMALL>(gauge starts full and depletes)</SMALL>, DEATH <SMALL>(must full-combo song)</SMALL></TD></TR>
+</TABLE></P>
+
+<P>For courses and bonus stages, use the same text as above in the course definition file when setting modifiers.<BR>
+eg. <CODE>#SONG:Default\MySong:BASIC:1.5x,HIDDEN,LEFT,FLAT;</CODE></P>
+
+
+<P><B>Special keys</B></P>
+
+<P>The function keys will be used to adjust or enable various gameplay functions.  Primarily these are designed for people creating DWI files and want to adjust timing.</P>
+
+<P align=center><TABLE cellspacing=0 cellpadding=2>
+<TR><TD align=right><B>F1/F2</B>&nbsp;</TD><TD>- Restarts the song (developer mode only)</TD></TR>
+<TR><TD align=right><B>F3/F4</B>&nbsp;</TD><TD>- Adjust playback speed of song down/up (during song select/gameplay)</TD></TR>
+<TR><TD align=right><B>F5/F6</B>&nbsp;</TD><TD>- Adjust BPM value down/up by 0.50 BPM. (during gameplay)</TD></TR>
+<TR><TD align=right><B>F7/F8</B>&nbsp;</TD><TD>- Adjust BPM value down/up by 0.02 BPM. (during gameplay)</TD></TR>
+<TR><TD align=right><B>F9/F10</B>&nbsp;</TD><TD>- Adjust GAP value down/up by 5ms. (during gameplay)</TD></TR>
+<TR><TD align=right><B>F12</B>&nbsp;</TD><TD>- Toggle "Assist Click" on/off. (during song select/gameplay)</TD></TR>
+</TABLE></P>
+
+<SMALL><B>NB: Enable autoplay in the main options menu to prevent song from failing while fine-tuning.  (Or set "GAME OVER" to "End of Song"... or just use developer mode).</B></SMALL>
+
+<P><B>Controller Configuration</B></P>
+
+<P>To change the inputs, simply go to the Options Menu from the main screen and goto "Keyboard Configuration" or "Gamepad Configuration".  Choose to configure either Player 1 or Player 2's inputs and you will be prompted to press each key, joystick button or dancepad square in turn.  You cannot choose an input that is currently in use.  To skip joystick buttons, press the "TAB" key.</P>
+
+<P>When done, select "Return" to make the change take effect.</P>
+
+<P><B>Gameplay Settings</B></P>
+
+<P>Gameplay settings such as difficulty level, danger display, and end-of-game settings are selected from the Gameplay Configuration menu from the Options screen.  These changes take effect immediately.</P>
+
+<P><B>Extra Stages</B></P>
+
+<P>If you AA a Heavy or Challenge mode song on the last stage and have Extra Stages enabled in the Game Options, you can play another song.  The song(s) you can choose from are either generated randomly (3 for Extra Stage #1, one for Extra Stage #2), or can be defined in a CRS file.</P>
+
+<P align=center><DIR><TABLE cellspacing=0 cellpadding=2>
+<TR><TD nowrap valign=top><B><TT> bonus-1.crs </TT></B>&nbsp;</TD><TD> Songs for Extra Stage #1</TD></TR>
+<TR><TD nowrap valign=top><B><TT> bonus-2.crs </TT></B>&nbsp;</TD><TD> Songs for Extra Stage #2</TD></TR>
+</TABLE></DIR></P>
+
+<P><B><SMALL>NB: These CRS files go in the same directory as DWI2.exe, <I>not</I> the Courses folder.</SMALL></B></P>
+
+<P><B>Sound Configuration</B></P>
+
+<P>The default sound settings for DWI are 44Khz, Stereo, 16-bit samples.  However, you may want to lower these
+settings on slower computers.</P>
+
+<SMALL><B>* NB: You must exit DWI and start it again for this change to take effect.</B></SMALL>
+
+<P><B>Changing the Display from Windowed to Full-screen</B></P>
+<P>Go to the "System Menu" from the Options screen and change the display type.</P>
+
+<SMALL><B>* NB: You must exit DWI and start it again for this change to take effect.</B></SMALL>
+
+<P><B>Sound effects</B></P>
+
+<P>Sound effects are all in the "Sounds" directory.  You can add or remove files to most directories, and the program will use the existing files during gameplay.  However, files in the root of the sound-set directory and those in the "attract" and "combo" directories must be the same name in order for the program to find them and play them appropriately.</P>
+
+<P><a name="clo"></a><B>Command-line options</B></P>
+
+<P>You can run DWI with various command line options to configure some values.  (Please read the FAQ for details
+on how to start the program with command line options).  These options are available:</P>
+
+<P align=center><DIR><TABLE cellspacing=0 cellpadding=2>
+<TR><TD nowrap valign=top><B><TT> /sdl        </TT></B>&nbsp;</TD><TD> Starts DWI in the software-only graphics mode.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /16bpp      </TT></B>&nbsp;</TD><TD> Runs DWI in 16-bit colour mode (SDL), or uses a 16-bit primary surface (DirectX)</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /32bpp      </TT></B>&nbsp;</TD><TD> Runs DWI in 32-bit colour modes/32-bit primary surface.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /fullscreen </TT></B>&nbsp;</TD><TD> Runs DWI in fullscreen mode (may need to use to start on some cards)</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /window     </TT></B>&nbsp;</TD><TD> Runs DWI in a window.  Some cards won't support this so DWI will try fullscreen.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /log        </TT></B>&nbsp;</TD><TD> Creates a 'dance.log' file that can be useful for debugging.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /anysize    </TT></B>&nbsp;</TD><TD> In DirectX mode, this tries to make textures in any size, rather than creating textures to the nearest power-of-two value (ie. a 75x60 image is loaded into a texture that big instead of a 128x64 one).  This can speed up performance on some cards and save memory, if your card can handle it.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /sw         </TT></B>&nbsp;</TD><TD> In SDL mode, surfaces are created in regular memory (default)</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /hw         </TT></B>&nbsp;</TD><TD> In SDL mode, surfaces are created in hardware memory (can improve performance if your card can handle it).</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /priority:x </TT></B>&nbsp;</TD><TD> can force DWI to run as a more "important"  program under Windows.  "1" starts it as "ABOVE NORMAL", "2" is "TIME CRITICAL".  May improve performance in certain cases. (Use with caution if you're running many other processes at the same time).</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /sdevice:x  </TT></B>&nbsp;</TD><TD> tells DWI to use a given sound-device.  Use "/log" and look in dance.log first for a list of available sound-devices.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /fps:xx     </TT></B>&nbsp;</TD><TD> makes DWI try to stay at a given framerate (20..100).  If you've got a fast machine, this can really save on computer cycles.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /showsm     </TT></B>&nbsp;</TD><TD> will add songs with only SMANIAC steps to the song-select screen.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /skipsearch </TT></B>&nbsp;</TD><TD> will prevent DWI from searching the Songs folder at startup.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /dither:0   </TT></B>&nbsp;</TD><TD> will turn off the dithering effect DWI uses for semi-transparent images on old videocards that can't handle them.  Some users may prefer this to remove the 'speckles' in the gameplay graphics.</TD></TR>
+</TABLE></DIR></P>
+
+<P>You can limit paging to virtual memory during gameplay (which can cause skips as Windows decides to write or retrieve data from disk) using these flags:</P>
+
+<P><DIR><TABLE cellspacing=0 cellpadding=2>
+<TR><TD nowrap valign=top><B><TT> /minRAM:xx  </TT></B>&nbsp;</TD><TD> Instructs DWI to try to reserve at least this much physical memory from the Operating System. *</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /maxRAM:xx  </TT></B>&nbsp;</TD><TD> Instructs DWI to try to reserve at most this much physical memory from the Operating System. *<SMALL><BR>&nbsp;<BR><I>* Only works in Windows NT, 2000, and XP.  Default is 16-32MB.</I></SMALL></TD></TR>
+</TABLE></DIR></P>
+
+<P>Use these flags to fix strange behavior in DWI...</P>
+
+<P><DIR><TABLE cellspacing=0 cellpadding=2>
+<TR><TD nowrap valign=top><B><TT> /key:nonexclusive  </TT></B>&nbsp;</TD><TD valign=center rowspan=2> affect how DirectInput is initialized.  Should be paired with one of /key:fg or /key:bg</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /key:exclusive     </TT></B>&nbsp;</TD></TR>
+
+<TR><TD nowrap valign=top><B><TT> /key:fg     </TT></B>&nbsp;</TD><TD valign=center rowspan=2> affect how DirectInput is intialized.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /key:bg     </TT></B>&nbsp;</TD></TR>
+
+<TR><TD nowrap valign=top><B><TT> /altcombo   </TT></B>&nbsp;</TD><TD> for reasons known to the heavens and my machine in the basement, DWI would not display the 'lives' image in Nonstop Mode, instead locking up the computer.  I'm convinced this is a videocard/driver issue, as the code to draw the image is exactly the same as the code to display any other image... but oh well.  Using this command line argument will tell DWI to not try to display the image and instead write "X Lives" in its place, which seemed to make it work.  Strange... but the option's there in case you run into the problem too.</TD></TR>
+
+<TR><TD nowrap valign=top><B><TT> /v5hack     </TT></B>&nbsp;</TD><TD> some Voodoo card drivers seem to allocate space for textures incorrectly (off by one) - this should hopefully fix the problem.</TD></TR>
+
+<TR><TD nowrap valign=top><B><TT> /altmovie   </TT></B>&nbsp;</TD><TD> Uses an alternate way of drawing the background movies and visualizations for older videocards that display solid-colour textures instead.</TD></TR>
+
+<TR><TD nowrap valign=top><B><TT> /noshade    </TT></B>&nbsp;</TD><TD> Prevents the extra shading effect on the song-select wheel from being added.</TD></TR>
+</TABLE></DIR></P>
+
+<P><B>Testing a song</B></P>
+
+<P><DIR><TABLE cellspacing=0 cellpadding=2>
+<TR><TD nowrap valign=top><B><TT> /test:...        </TT></B>&nbsp;</TD><TD> You can start DWI in test/developer mode by using the "/test:..." command line argument.  Provide the *folder* the .dwi file is in.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /style:...       </TT></B>&nbsp;</TD><TD> use this set of steps (SINGLE, DOUBLE, SOLO).  Default is SINGLE.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /level:...       </TT></B>&nbsp;</TD><TD> use this level of steps (BASIC, ANOTHER, MANIAC, SMANIAC).  Default is BASIC.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /p2              </TT></B>&nbsp;</TD><TD> test using player 2's controls instead.</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /speed:X         </TT></B>&nbsp;</TD><TD> starts song at a given speed (1..5)</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /scroll:X        </TT></B>&nbsp;</TD><TD> starts song with given speed modifier (0.5, 0.75, 1.5, 2, 3, etc.)</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /startat:&lt;TIME&gt;  </TT></B>&nbsp;</TD><TD> jumps to a given time into the song (game-time). <TT>&lt;TIME&gt;</TT> can be given in minutes, seconds, or milliseconds.
+<PRE><B>   ie.  /startat:1:05.5  (minutes)
+        /startat:65.5    (seconds)
+        /startat:65500   (ms)      - all the same position.</B></PRE></TD></TR>
+<TR><TD nowrap valign=top><B><TT> /tick:1          </TT></B>&nbsp;</TD><TD> turns the assist click on at startup (default is off).</TD></TR>
+<TR><TD nowrap valign=top><B><TT> /dark            </TT></B>&nbsp;</TD><TD> hides the fixed-place arrows during testing.</TD></TR>
+</TABLE></DIR></P>
+
+<P>Example:</P>
+
+<P align=center><TT><SMALL><B>"DWI.exe /test:.\Songs\Development\MyNewSong /style:SINGLE /level:MANIAC /p2 /speed:4 /scroll:2 /startat:1:00"</B></SMALL></TT></P>
+
+<P>Starts testing the .dwi file found in \songs\development\mynewsong, in SINGLE mode, with MANIAC-level steps.  Player 2's controls are used, and the song's speed is set to '4'.  Arrows are displayed as though the "x2" modifier was active.  The song starts at the 1-minute mark.</P>
+
+<P><B>Setting Skins</B></P>
+
+<P>Create different sub-directories within the "Skins" folder  for each skin you wish to use.  So, for example:
+<PRE>
+     &lt;INSTALL directory&gt;
+        + Skins
+            + Default  (leave as-is)
+            + Skin A
+            + Skin B
+            + ...         </PRE></P>
+
+<P>The filenames for each skin should be the same as in the default directory.  If an image isn't found, the default is used.  This way you can create skins that are relatively simple, or very elaborate ones.  And you don't need to delete any of the original files. ;)  There is a limit of 64 skins.</P>
+
+<P>Changes will take effect when you leave the Skin Selection screen.</P>
+
+<P>I do ask, however, that you keep the title of the program as "Dance With Intensity".  Thank you. :)</P>
+
+<P><B>Setting Announcer and Sound Effects</B></P>
+
+<P>Similar to skins, just create new directories in the 'Sounds' folder for each sound set you wish to use.  So, for example:
+<PRE>
+     &lt;INSTALL directory&gt;
+        + Sounds
+            + Default   (leave as-is)
+            + Jack
+            + Jill
+            + ...         </PRE></P>
+
+<P>The tree structure for each set should be the same as is used for the "Default" directory.  For example:
+<PRE>    + Jill
+        + attract    - files should be named attract-00.wav, attract-01.wav, attract-02.wav
+        |              (these are the sounds used on the title screen)
+        + combo      - files should be named combo-00.wav and combo-01.wav
+        |              ("100 Combo" and "Combo stopped")
+        + danger     - a set of files played when power level at danger or zero.
+        + eval
+        |   + A
+        |   + B      - sets of files to play at the evaluation screen based on grade
+        |   + ...   
+        + good       - a set of files played when power level in the 'good' range
+        + great      - "                                           " 'great' range
+        + over
+        |   + fail   - files played at game over screen (failure)
+        |   + pass   - "                              " (cleared all stages)
+        + select
+        |   + new    - files played when #STATUS:NEW; is set in DWI file and song is selected
+        |   + song   - files played when a song is selected
+        + start
+        +   + go     - files played at "Here we go!" screen.
+        +   + ready  - files played at "Ready?" screen.
+        + warning    - a set of files played when the power gauge is in the 'warning' range.</PRE></P>
+
+<P>There should not be more than 64 sound effects in a single subdirectory.  There is a limit of 64 sets.  Changes will take effect once you leave the Announcer/Sound Select screen.  Please keep the title sound effect (attract-00.wav) as "Dance With Intensity".</P>
+
+<P><B>Folder- and Genre- Specific Banners</B></P>
+<P>You can make DWI display a special banner for each folder when it is highlighted on the Song-Select Screen.  To do this, simply put a standard (horizontal) banner with the same name as the folder in the 'Songs' folder.  (eg. a banner for 'Default Songs' would be ".\Songs\Default Songs.png").</P>
+
+<P>If you have sorting by Genre on, you can have special banners for each Genre by putting banners in PNG format with the same name as the Genre referenced into ".\Genres".  (eg. "Pop Music.png").</P>
+
+<P>Folder-Specific Banners can also be made for Courses too.  Just put a PNG file with the same name as the subfolder the CRS files are in, in the "Courses" directory.</P>
+
+<P><B>AVI Movie Support</B></P>
+<P>AVI movies can be played in the background while you play.  See the "<a href="#background">Background Animation</a>" section below for more details on how this is set up.  From the System Menu, you can tell DWI whether to not play AVI files at all, or set the quality level from 1 (worst) to 10 (full).  The default is 5.  Changing this value could affect your framerate, so play with the values to determine what works best for your system.</P>
+
+<P>Random animations are picked from the ./Movies/Random folder and played in the background of songs without a defined background script if enabled in the System Options menu.  This folder can be changed by a flag in the DWI file also, enabling themes.</P>
+
+<P><B>Sonique Visualizations (SVP) Support</B></P>
+<P>Sonique visualizations can be played in the background while you play.  See the "<a href="#background">Background Animation</a>" section below for more details on how this is set up.  From the System Menu, you can tell DWI whether to use them at all, or set the quality level from 1 (worst) to 10 (full).  The default is 5.  Changing this value could affect your framerate, so play with the values to determine what works best for your system.</P>
+
+<P>Random visualizations are picked from the ./Vis folder and played in the background of songs without a defined background script if enabled in the System Options menu.  Their behavior can often be changed by editing the 'vis.ini' file that is created after they are used in DWI, similar to in Sonique.</P>
+
+<P><A name='profiles'><B>User Profiles</B></a></P>
+<P>DWI2.40 introduced 'user profiles' - a way that multiple users can play DWI on the same machine and keep their own individual records.  Setting up a new profile is easy - simply create a new subdirectory in the "Profiles" directory with the name of the user (15 characters or less), and inside that folder, put a 64x64 PNG file called 'user.png' to represent you in the game.  Look at the 'Profiles/Sample User' folder for an example.</P>
+
+<P>When you use a profile, DWI will create an individual records file and profile information file in the same directory that keeps track of your individual achievements.</P>
+
+<P>When you get a high score, it will be saved to your own profile's records ("New Personal Best"), and, if you beat the overall high score, it will also be saved to the system records ("It's a New Record!"), with your username registered with it.</P>
+
+<P>Using a user-profile also lets you track some other statistics, such as overall high scores and combos for each mode.  It will also store the last-used modifiers you used (eg. 2x speed modifier, Reverse) between sessions, so you don't have to set it again each time you start a new game.</P>
+
+<P><SMALL><I>This option can be disabled in the Game Options Menu if you prefer.</I></SMALL></P>
+
+<a name="4"></a><FONT size="+1"><B>4. DWI FILE FORMAT</B></font>
+
+<P><B>Steps</B></P>
+
+<P>DWI uses step-files that are similar to the ".MSD" file format.  However, there are new additions and some tags are treated slightly differently, so the extension was changed to avoid confusion.  DWI files with these new additions will not work properly in other simulators.</P>
+
+<P>Step-patterns are defined in the same way as .MSD files - use the numeric keypad as a reference for most patterns:
+<PRE>
+  7=U+L     8=U      9=U+R
+
+  4=L                6=R
+
+  1=D+L     2=D      3=D+R
+
+    (U+D = A and L+R = B)
+</PRE></P>
+
+<P>A '0' indicates no step.  Each character defaults to one 1/8 of a beat.  Surround a series of characters with the following brackets to change the rate at which the steps come:
+<PRE>
+   (...)  = 1/16 steps
+   [...]  = 1/24 steps
+   {...}  = 1/64 steps
+   `...'  = 1/192 steps</PRE></P>
+
+<P>6-panel (Solo) mode uses additional characters:
+<PRE>
+   -\---- = C
+   ----/- = D
+
+   L\---- = E
+   -\D--- = F
+   -\-U-- = G
+   -\---R = H
+
+   L---/- = I
+   --D-/- = J
+   ---U/- = K
+   ----/R = L
+
+   -\--/- = M</PRE></P>
+
+<P>To do more than 2 panels at a time, you can join codes together with the "&lt;..&gt;" object, and they will all count as the same beat.  So, to do a jump that involves Left, Right, Up-Left, and Up-Right, you could do:
+<PRE>
+   -\--/- = M
+   L----R = B
+   ======
+   L\--/R = &lt;MB&gt;  (or &lt;LE&gt;, &lt;IH&gt;, &lt;46M&gt;, etc.)</PRE></P>
+
+<P>MSD files from other simulators will work with DWI, with a change in the 'GAP' value being the only change usually necessary.  DWI calculates the 'GAP' value differently than other simulators that use the MSD format.</P>
+
+<P>DWI does not support the BMS file format.  There is a utility available that can convert any BMS file into DWI format.  Each song only requires one DWI file for all of its steps, so if you are converting BMS files please remember that all the different difficulties of step patterns will be contained in the same DWI file.</P>
+
+<P><B>Hold Arrows</B></P>
+
+<P>In the DWI file format a hold arrow is signified with the <B><TT>!</TT></B> symbol.  The string <B><TT>8!8</TT></B> will begin an 'up' hold arrow, and the arrow will be released the next time the program encounters an 'up' arrow: by itself or combined with another arrow (7, 8, 9, A, etc.)  The characters <B><TT>7!4</TT></B>  would show both 'up' and 'left' arrows but only the left arrow would be held.  The format could best be described as "<B><TT>show!hold</TT></B>".</P>
+
+<P><B>Tags</B></P>
+
+<P>These tags should be in every DWI file:</P>
+
+<P><DIR><TABLE cellspacing=0 cellpadding=2>
+<TR><TD valign=top nowrap><B><TT>#TITLE:...;    </TT></B>&nbsp;</TD><TD valign=top> title of the song.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>#ARTIST:...;   </TT></B>&nbsp;</TD><TD valign=top> artist of the song.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>#GAP:...;      </TT></B>&nbsp;</TD><TD valign=top> number of milliseconds that pass before the program starts counting beats.  Used to sync the steps to the music.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>#BPM:...;      </TT></B>&nbsp;</TD><TD valign=top> BPM of the music</TD></TR>
+</TABLE></DIR></P>
+
+<P>Additionally, the following tags can be given:</P>
+
+<P><DIR>
+<TABLE cellspacing=0 cellpadding=2>
+   <TR>
+      <TD valign=top nowrap><B><TT>#DISPLAYTITLE:...; </TT></B>&nbsp;</TD>
+      <TD valign=top> provides an alternate version of the song name that can also include special characters.</SMALL></TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#DISPLAYARTIST:...;</TT></B>&nbsp;</TD>
+      <TD valign=top> provides an alternate version of the artist name that can also include special characters.<BR>
+         &nbsp;<BR>
+         <I>Special Characters are denoted by giving filenames in curly-brackets.</I><BR>
+         eg. <TT>#DISPLAYTITLE:The {kanji.png} Song;</TT><BR>
+         &nbsp;<BR>
+         <I>The extra character files should be 50 pixels high and be black-and-white.  The baseline for the font should be 34 pixels from the top.</I><BR>
+         &nbsp;</SMALL></TD>
+   </TR>
+
+   <TR>
+      <TD valign=top nowrap><b><TT>#DISPLAYBPM:...;</TT></b></TD>
+      <TD valign=top>tells DWI to display the BPM on the song select screen in a user-defined way.&nbsp; Options can be:<br>
+<BR>
+<TT>*&nbsp;&nbsp;&nbsp;</TT> - BPM cycles randomly<BR>
+<TT>a&nbsp;&nbsp;&nbsp;</TT> - BPM stays set at 'a' value (no cycling)<BR>
+<TT>a..b</TT> - BPM cycles between 'a' and 'b' values
+      </TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#FILE:...;     </TT></B>&nbsp;</TD>
+      <TD valign=top> path to the music file to play (eg. /music/mysongs/abc.mp3 )<BR>
+         <SMALL>(NB: if the file is not found, a .wav or .mp3 file in the same folder as the DWI file is used)</SMALL></TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#MD5:...;      </TT></B>&nbsp;</TD>
+      <TD valign=top> an MD5 string for the music file.  Helps ensure that same music file is used on all systems.</TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#FREEZE:...;   </TT></B>&nbsp;</TD>
+      <TD valign=top> a value of the format "BBB=sss".  Indicates that at 'beat' "BBB", the motion of the arrows should stop for "sss" milliseconds.  Turn on beat-display in the System menu to help determine what values to use.  Multiple freezes can be given by separating them with commas.</TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#CHANGEBPM:...; </TT></B>&nbsp;</TD>
+      <TD valign=top> a value of the format "BBB=nnn".  Indicates that at 'beat' "BBB", the speed of the arrows will change to reflect a new BPM of "nnn".  Multiple BPM changes can be given by separating them with commas.</TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#STATUS:...;   </TT></B>&nbsp;</TD>
+      <TD valign=top> can be "NEW" or "NORMAL".  Changes the display of songs on the song-select screen.</TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#GENRE:...;    </TT></B>&nbsp;</TD>
+      <TD valign=top> a genre to assign to the song if "sort by Genre" is selected in the System Options.  Multiple Genres can be given by separating them with commas.</TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#CDTITLE:...;  </TT></B>&nbsp;</TD>
+      <TD valign=top> points to a small graphic file (64x40) that will display in the song selection screen in the bottom right of the background, showing which CD the song is from.  The colour of the pixel in the upper-left will be made transparent.  </TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#SAMPLESTART:...;  </TT></B>&nbsp;</TD>
+      <TD valign=top> the time in the music file that the preview music should start at the song-select screen.  Can be given in Milliseconds (eg. 5230), Seconds (eg. 5.23), or minutes (eg. 0:05.23).  Prefix the number with a "+" to factor in the GAP value.</TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#SAMPLELENGTH:...; </TT></B>&nbsp;</TD>
+      <TD valign=top> how long to play the preview music for at the song-select screen.  Can be in milliseconds, seconds, or minutes.</TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#RANDSEED:x;       </TT></B>&nbsp;</TD>
+      <TD valign=top> provide a number that will influence what AVIs DWI picks and their order.  Will be the same animation each time if AVI filenames and count doesn't change (default is random each time).</TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#RANDSTART:x;      </TT></B>&nbsp;</TD>
+      <TD valign=top> tells DWI what beat to start the animations on.  Default is 32.</TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#RANDFOLDER:...;   </TT></B>&nbsp;</TD>
+      <TD valign=top> tells DWI to look in another folder when choosing AVIs, allowing 'themed' folders.</TD>
+   </TR>
+   <TR>
+      <TD valign=top nowrap><B><TT>#RANDLIST:...;     </TT></B>&nbsp;</TD>
+      <TD valign=top> a list of comma-separated filenames to use in the folder.</TD>
+   </TR>
+</TABLE>
+</DIR></P>
+
+<P>Each pattern of steps for different modes have the same basic format:
+<PRE><B>#SINGLE:BASIC:X:...;</B>
+ ^      ^     ^ ^
+ |      |     | + step patterns.  In doubles, the left pad's steps are given first, 
+ |      |     |   then the right pad's, separated by a colon (:).
+ |      |     |
+ |      |     + difficulty rating.  Should be 1 or higher.
+ |      |
+ |      + Difficulty.  Can be one of "BASIC", "ANOTHER", "MANIAC", or "SMANIAC"
+ |
+ + Style.  Can be one of "SINGLE", "DOUBLE", "COUPLE", or "SOLO".  "COUPLE" is 
+   Battle-mode steps.</PRE></P>
+
+<P>Comments can be used by using "//".  Everything after this on the same line in the file will be ignored.</P>
+
+<P><a name="background"></a><B>Background Animations, Movies, and Visualizations</B></P>
+
+<P>DWI allows for background animations using a special script within the step-file.  A script consists of static images, animated images, and/or an AVI movie.  Using the script, you can create a variety of layered effects.  A sample animation is described below:
+<PRE>
+   #BACKGROUND:
+
+     M:MOVIE:.\movies\sfx.avi STARTAT:-1.0 LAYER:0;
+     V:VIS:.\Vis\somevis.svp LAYER:0;
+     E:FILE:.\anim\equalizer.png ANIMATE:10,33 POSITION:-33,0 SPACING:40,40 LAYER:1;
+     D:FILE:.\anim\dancer-m1.png ANIMATE:24,66 SIZE:2 MULT:0,0.5,1 SPACING:30,30 LAYER:1;
+     X:LAYER:1 OFF;
+
+     SCRIPT:M.......................
+            ................E...............
+            D...............X,V...............E...............D...............
+            X,M...............E...............D...............X,V...............
+            E...............D...............X,M...............E...............
+            D...............X,V...............E...............D...............
+            X,M...............E...............D...............X;
+
+   #END;</PRE></P>
+
+<P>The first part of the "BACKGROUND" definition defines the effects.  Each effect is attributed to a letter or number ("a-z", "A-Z", "1-9").  The format for defining an effect is:</P>
+
+<P><DIR><TABLE cellspacing=0 cellpadding=2>
+<TR><TD colspan=2><SMALL><I><B>The first four tags cannot be used together...</B></I></SMALL></TD></TR>
+<TR><TD valign=top nowrap><B><TT><FONT color='yellow'>FILE:</FONT>       </TT></B>&nbsp;</TD><TD valign=top> path to a file.  Either a still image, or an animation (multiple frames of animation are stacked *vertically* in the image).</TD></TR>
+<TR><TD valign=top nowrap><B><TT><FONT color='yellow'>MOVIE:</FONT>      </TT></B>&nbsp;</TD><TD valign=top> path to a standard Windows AVI file.  Note that the movie won't play unless you have the right codecs installed in Windows.  Movies are currently stretched to fill the whole screen.</TD></TR>
+<TR><TD valign=top nowrap><B><TT><FONT color='yellow'>VIS:</FONT>      </TT></B>&nbsp;</TD><TD valign=top> path to a Sonique Visualization plug-in (SVP).  Visualizations are currently stretched to fill the whole screen and are always put on Layer 0, and no other commands will affect it.</TD></TR>
+<TR><TD valign=top nowrap><B><TT><FONT color='yellow'>OFF</FONT>         </TT></B>&nbsp;</TD><TD valign=top> turns off a layer, effectively making it invisible.  Will not turn off layer 0.</TD></TR>
+<TR><TD colspan=2>&nbsp;</TD></TR>
+
+<TR><TD valign=top nowrap><B><TT>LAYER:l     </TT></B>&nbsp;</TD><TD valign=top> the layer to use (required):
+<PRE>    0 - base layer.  
+        (Image/Movie is <B>always</B> tiled and SPACING is ignored).
+    1 - overlay layer
+    2 - overlay layer
+    3 - overlay layer</PRE></TD></TR>
+<TR><TD colspan=2>&nbsp;</TD></TR>
+
+<TR><TD valign=top nowrap><B><TT>STARTAT:t   </TT></B>&nbsp;</TD><TD valign=top> number of seconds into the AVI file to start at.  If negative, the movie will wait that many seconds before playing.  Can be decimal (eg. 1.3 = 1300ms).</TD></TR>
+<TR><TD valign=top nowrap><B><TT>MULT:r,g,b  </TT></B>&nbsp;</TD><TD valign=top> Red, Green, and Blue pixels in the image/movie are tinted by the given amounts.  This way the same image/movie can be used multiple times across DWI files and have different colours.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>ANIMATE:f,n1,n2,...nF </TT></B>&nbsp;</TD><TD valign=top> indicates that the FILE contains multiple frames of animation.  "f" is the number of frames of animation.  Each following value is the number of milliseconds each frame of animation is displayed.  If not enough time-values are given, the last given value is used.  Ignored for MOVIE type.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>MOVE:x,y    </TT></B>&nbsp;</TD><TD valign=top> the image/movie is moved by the given number of pixels every millisecond.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>SPACING:x,y </TT></B>&nbsp;</TD><TD valign=top> images are always tiled if they don't fill up the screen.  This tag allows you to add some spacing between the images by the given number of pixels horizontally and vertically (Layer &gt; 0)</TD></TR>
+<TR><TD valign=top nowrap><B><TT>SIZE:s      </TT></B>&nbsp;</TD><TD valign=top> multiplies the image size by 's' in both directions.  Must be a whole number.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>KEEPPOS     </TT></B>&nbsp;</TD><TD valign=top> normally when a new effect is turned on, its position is reset.  This tag keeps the layer where it is, useful for keeping images moving smoothly.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>KEEPTIME    </TT></B>&nbsp;</TD><TD valign=top> (MOVIEs only) normally when a movie starts, it starts from the beginning or the time given in the "STARTAT" tag.  Adding this tag will keep it playing so when that layer is enabled again, it will have kept going.</TD></TR>
+</TABLE></DIR></P>
+
+<P>Following the effect definition, comes the actual animation script.  This is a sequence of characters in a similar way as the step-patterns are given - each character normally is 1/8 of a beat, though brackets can be used to change the time-values.  In this way, background animations can be syched to the steps.  It is suggested that the steps for "SINGLE:BASIC" are copied to after the "SCRIPT:" tag, and then the effects be set.  In this way one knows that the script will match the same length of the music.</P>
+
+<P>The animations take effect as that point in the song is reached.  Multiple effects can occur at the same time if they are separated with a comma.  A period (.) means no new effect should take place at that point.  A zero (0) turns off all effects and returns the background to the original graphic.</P>
+
+<P><B>More Information</B></P>
+
+<P>Please check our website for more information and links to useful resources.</P>
+
+<P><a name="5"></a><FONT size="+1"><B>5. NONSTOP MODE AND CRS FILE FORMAT</B></FONT></P>
+
+<P>DWI uses special CRS files that should be put in subfolders of the "Courses" directory.  Now courses 
+can be shared with others if they have the same files and directory structure as you.</P>
+
+<P>CRS files are similar to DWI files in structure.  The file defines the basic details about the course, such as  its name and which songs should be played.  Currently these tags are supported:</P>
+
+<P><B>Required tags:</B></P>
+
+<P><DIR><TABLE cellspacing=0 cellpadding=2>
+<TR><TD valign=top nowrap><B><TT>#COURSE:...;       </TT></B>&nbsp;</TD><TD valign=top> the name of the course.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>#DISPLAYCOURSE:...;</TT></B>&nbsp;</TD><TD valign=top> alternate name of course that can include special characters.  Similar to #DISPLAYTITLE and #DISPLAYARTIST in DWI files.</TD></TR>
+
+<TR><TD valign=top nowrap><B><TT>#SONG:...;       </TT></B>&nbsp;</TD><TD valign=top> <P>defines a song in the course.  This can either be a selection from the Player's Best (or Worst), a Random stage or a predefined stage.  The syntax for each is given below:
+<PRE>    <B>PLAYER'S BEST/WORST STAGE:</B>
+    #SONG:BESTx:[BASIC|ANOTHER|MANAIC|SMANIAC];
+    #SONG:WORSTx:[BASIC|ANOTHER|MANAIC|SMANIAC];
+    - choose a song with the given index 'x'.  So <TT>BEST1</TT> is the most popular
+      song, and <TT>WORST5</TT> is the 5th least popular song.  If the given 
+      difficulty is not available, DWI will choose the next closest difficulty.
+      Songs that are equally popular will be put in random order.
+
+    <B>RANDOM STAGE:</B>
+    #SONG:*:[a]|[a..b];
+    - choose a random song, with a difficulty rating equal to or between 'a' and 'b'.
+    - if only 'a' is given, 'b' is assumed to be the same as 'a'.
+
+    #SONG:*:[BASIC|ANOTHER|MANIAC|SMANAIC];
+    - choose a random song with a given difficulty level.
+
+    #SONG:folder\*:[a]|[a..b]|[BASIC|ANOTHER|MANIAC|SMANIAC];
+    - choose a random song from a given folder.
+                   
+    <B>DEFINED STAGE:</B>
+    #SONG:&lt;FOLDER&gt;\&lt;SONG TITLE&gt;:&lt;DIFFICULTY&gt;;
+    - will use a song from &lt;FOLDER&gt; with the given title.
+      So to play a song called "My Song", which is in 
+      './Songs/Default/mysong/mysong.dwi', on MANIAC, 
+      you would say:
+
+      #SONG:Default\My Song:MANIAC;</PRE></P>
+
+<P><B><SMALL>NB: Either the TITLE or folder the DWI file is in can be used.</SMALL></B></P>
+
+<P>In addition, modifiers can be defined for each song by adding a list of comma-separated values to the end of the #SONG line.  These modifiers are the same as listed above, plus
+<PRE>
+     <B>xRANDOM</B>   - where 'x' is the number of random effects to apply.
+                 'x' can be 1 to 7.
+     <B>AWARDx</B>    - where 'x' is the number of lives to award after 
+                 finishing the stage.
+</PRE></P>
+<P>So to play "My Song", Maniac, with 2.0x, Left, Hidden, and with one random effect, use:<BR>
+<TT><B>#SONG:Default\My Song:MANIAC:2.0x,LEFT,HIDDEN,1RANDOM;</B></TT></P></TD></TR>
+</TABLE></DIR></P>
+
+<P><B>Optional tags:</B></P>
+
+<P><DIR><TABLE cellspacing=0 cellpadding=2>
+<TR><TD valign=top nowrap><B><TT>#REPEAT:...;     </TT></B>&nbsp;</TD><TD valign=top> can be "YES" or "NO".  If set, starts course over from the beginning after last song.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>#COMBO:PERFECT;  </TT></B>&nbsp;</TD><TD valign=top> during play, the combo counter will only go up if a "PERFECT" is made.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>#COMBOMODE:1;    </TT></B>&nbsp;</TD><TD valign=top> sets how much is added to the combo counter for jumps.  Can be 1 or 2.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>#LIVES:4;        </TT></B>&nbsp;</TD><TD valign=top> sets the number of 'lives' given to each player at the start of game play.  After each stage is cleared, a given number of lives is added, either by a value specified by the "AWARDx" tag in the CRS file, or using the scale below:
+<PRE>    Song was 6 feet or less - 1 life.
+    Song was 7 or 8 feet    - 2 lives.
+    Song was 9 feet or more - 3 lives.
+</PRE></TD></TR>
+</TABLE></DIR></P>
+
+<P>At the course selection screen, courses that have songs without steps for the current style (SINGLE, DOUBLE, etc) will be filtered out.  Courses are loaded when DWI starts.</P>
+
+<P><a name="6"></a><FONT size="+1"><B>6. LRC (LYRICS) FILE FORMAT</B></FONT></P>
+<P>DWI can display lyrics during a song if it finds a .LRC file in the same folder as the step-file.  The file should have the same file-base as the .DWI file - so, for example, if your DWI file is called "mysong.dwi", the lyrics file should be called "mysong.lrc".</P>
+
+<P>This file is a simple text-file that tells the program what text to display and when.  It can also define the colour the text is displayed in.</P>
+
+<P>Each line starts with a tag in the format <B><TT>[xxxxxx]</TT></B>.  Currently, these tags are supported:</P>
+
+<P><DIR><TABLE cellspacing=0 cellpadding=2>
+<TR><TD valign=top nowrap><B><TT>[COLOUR]         </TT></B>&nbsp;</TD><TD valign=top> Sets the colour for the following text.  After the tag, a colour value is given in hex (ie. yellow would be <TT><B>0xFFFF00</B></TT>).  Up to 10 colour values can be given, separated by commas.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>[offset:xxxx]    </TT></B>&nbsp;</TD><TD valign=top> Makes timestamps following this tag have their times adjusted by 'xxxx' milliseconds.  Use to fine-tune timings for lyrics.</TD></TR>
+<TR><TD valign=top nowrap><B><TT>[MM:SS.ss]       </TT></B>&nbsp;</TD><TD valign=top><P> Sets a time.  The text following the tag will be shown on the screen after this time has passed, replacing any text that was there before.  To clear text, provide just a tag with no text after it.</P><P> A line-break can be defined using the pipe "<TT>|</TT>" symbol.</P>
+<P>A new colour can be selected from the defined colours by using "<TT>{cX}</TT>", where "X" is a number from 0 to 9.</P>
+</TD></TR>
+
+</TABLE></DIR></P>
+
+<P>Sample LRC file:</P>
+<P><PRE>[0:00.00]aye-aye-aye|aye-aye-aye|aye-aye-aye
+[0:05.30]Where's my samurai?
+[0:07.00]
+[COLOUR]0xffff00
+[0:13.50]I've been searching for a man
+[0:16.00]All across Japan.
+<I>...etc...</I></PRE></P>
+
+<P><FONT size="+1"><a name="7"></a><B>7. LIMITATIONS</B></font></P>
+
+<P>Partly due to the compiler and my own lack of knowledge in some areas, there are a number of limitations
+imposed on the program that users should know about:<UL>
+ <LI> No more than 2048 songs.
+ <LI> No more than 64 sound effects in a single subdirectory of 'soundfx'
+</UL></P>
+
+<P>If the program runs slowly on your machine, try the following:<UL>
+ <LI> Install the latest DirectX 8.1 drivers.
+ <LI> Update the video drivers for your video card.
+ <LI> Try running the game in fullscreen mode, and/or setting your screen resolution to 16-bit mode.
+ <LI> Lower the sound quality to Mono, 8-bit, and/or 11 or 22Khz.
+ <LI> Lower the quality of background movies if you use them a lot.
+ <LI> Try limiting the framerate (/fps:xx).
+</UL></P>
+
+<P><a name="8"></a><FONT size="+1"><B>8. VERSION HISTORY</B></font></P>
+
+<P><PRE>v2.49.00 - May 22, 2003.
+            - NEW: Addition of "Player's Best" and "Player's Worst" to CRS file format.
+            - NEW: Expanded functionality of random song selection in CRS files.  You can now
+              choose a random song by difficulty (instead of just foot ratings), and also select a 
+              random song in a particular folder
+            - NEW: Courses are now arranged in subfolders, allowing for different groupings of 
+              courses.  One set could be for nonstop, others for challenge; or you can divide the 
+              courses up by mix or genre, etc.  You can also give each folder its own banner, like
+              in the song select interface.
+                 NOTE: You will have to move your existing courses into subfolders for them to 
+                 be recognized!
+            - NEW: #DISPLAYBPM:[xxx..xxx]|[xxx]|[*]; added, to force a certain display type on 
+              song select screen.
+            - NEW: For users with old videocards that can't display semi-transparent images, you 
+              can now turn off the dithering effect that DWI uses if you like.  Use the 
+              '/dither:0' command line argument.
+            - Tweaks to how #RANDFOLDER:...; behaves, plus program now searches folder DWI file 
+              is in for a "Movies" sub-folder, or AVIs in the same folder first before using the 
+              default /Movies/Random folder.
+            - Tweaks to banner display on Evaluation screen (for when song/course had no banner)
+            - Tweaks to record-display for courses.
+            - Tweak to beat-display in-game and in developers mode, so numbers won't 'jiggle'.
+            - BUGFIX: 'tiled images' on song-select screen (BPM, stage #, difficulty) and during 
+              gameplay on some old videocards has been fixed.  You should probably consider 
+              upgrading to a better card though anyway. ;^)
+            - BUGFIX: Can now have up to 512 courses, instead of 64.  Oops. ;)
+            - BUGFIX: "combo continuing" playing on every step past 9999 combo.  BTW, I hate you. ;)
+            - BUGFIX: Game doesn't crash on entering course-select screen after you've added new 
+              CRS files.
+            - OTHER: Other bugfixes and tweaks that I can't begin to remember. :P
+
+v2.41.00 - February 15, 2003.
+            - CHANGE: Drawing of text made more efficient and slightly more readable, through better 
+              drawing of drop-shadows.
+            - CHANGE: textures for SVP plug-ins to draw to now adjusted to nearest multiple of 2, as I 
+              suspect some assume it's supposed to be like that for efficiency reasons, and otherwise 
+              might cause problems overrunning memory.
+            - BUGFIX: DWI2.log file now created properly again.  (d'oh!!!)
+            - BUGFIX: problem drawing certain images in 32bpp SDL mode fixed (eg. BPM display, star-wipe)
+            - BUGFIX: extra 'N/A" box no longer appears in Solo mode "Select Profile" if started with P1.
+            - BUGFIX: Better freeing of music samples after gameplay, credits, and on song-select screen.
+
+v2.40.00 - February 2, 2003.
+            - NEW: Addition of "User Profiles", a system to keep user-specific records and high 
+              scores similar to the 'name entry' system from DWI1, but with more features.  Individual
+              users can tailor their own icon and (if directories are the same across systems) take 
+              their records with them between machines.  Now tracks personal high scores and overall
+              high scores, all viewable in the Records screen. (Can be disabled in Options menu if you
+              prefer not to use it).
+            - NEW: Arrow set for DWI completely redone to feature true colour-cycling arrows like the
+              arcade.  Also, arrows are drawn in last-to-first order now instead of first-to-last.
+              (NB: Thanks to uKER for the help creating the new arrow set).
+            - NEW: You can pause the game with the "Pause/Break" key.  However, like autoplay, high
+              score will not be saved.
+            - CHANGE: Folder-specific banners treated differently - now DWI looks for a PNG file with 
+              the same name as the sub-folder, in the base "Songs" folder.  Should be easier to 
+              manage the banners all in one folder now.
+            - some freeze arrow behavior tweaked.
+            - shading on song-select wheel made less dark.
+            - more details on LRC file support added to this file.
+            - style icon colours in default skin fixed (they were reversed).
+            - if you pass a song reasonably well, you'll get that cheer as the 'Cleared' text appears.
+            - BUGFIX: strange wrapping in View Records/Nonstop mode for some songs with two lines fixed.
+            - BUGFIX: Song titles and artist names with special characters on Nonstop mode now display
+              correctly
+            - BUGFIX: Timing in Developer mode after adjusting GAP fixed.  Actually tested it this time. ;)
+            - BUGFIX: Realigning the word 'Test' in developer mode.
+            - BUGFIX: /startat in developer mode is more accurrate.
+            - BUGFIX: Bonus CRS files don't 'skip' songs that are next to each other in the songlist.
+            - VARIOUS: other small tweaks I can't remember. ;)
+
+v2.30.01 - January 3, 2003.
+            - AVI and SVP decoding optimized slightly to reduce load on main game function.
+            - flag added to turn off shading on song select wheel, if desired.
+            - BUGFIX: "Game Over" back in on failing in regular mode.  Oops.
+            - BUGFIX: "NEW!" status works.  Expires after 2 weeks now.  May require songlist reset.
+            - BUGFIX: animation thread closes properly between stages.
+            - BUGFIX: steps are judged better again.  Oops x 2.
+
+v2.30.00 - January 1, 2003.
+            - NEW: Implemented Sonique Visualization Plugins (SVP) for background animations.
+            - NEW: Folder- and Genre- specific banners, plus banners for Roulette 
+                   and Title/Artist sort options.
+            - NEW: Sort by difficulty added to Song Select screen.
+            - NEW: Multiple colours on same line of lyrics possible.
+            - NEW: Can adjust the number of stages between breaks in Nonstop Mode.
+            - NEW: Ability to disable Background Scripts.
+            - NEW: Ability to set default sort method.
+            - New 'default' banners and backgrounds.
+            - Banner and Sample Start load time reduced.
+            - Sort by BPM now much faster.
+            - Paths in Background Scripts can now have spaces (use quotes around path).
+            - Addition to Background Script commands to use Visualizations (on Layer 0).
+            - Long song names with special characters now wrap.
+            - Options Screens reorganized to group some things better.
+            - Adjustments to GAP in Development mode handled properly if changed in DWI file.
+            - Ability to change method for drawing movies/etc. to older method (slower, but good
+              for old videocards that just give solid-colour images instead now).
+            - CRS files can take either title or directory now.
+            - Stage number/display now graphical, and colours can be assigned in skin CFG file.
+            - "TAB" can be used in song-titles to force line-wrap.
+            - Font updated to include missing '~' character.
+            - Song select wheel now has some extra shading.
+            - Support for semi-transparant images on older videocards improved by addition of 
+              pattern dithering instead of simply "off" or "on".
+            - BUGFIX: Missing '0's in scores during gameplay.
+            - BUGFIX: Rounding of scores to proper multiples of 10000000 on some processors.
+            - BUGFIX: Early "GOOD" judgement on a freeze arrow + jump combination fixed.
+            - BUGFIX: "New" tag treated properly again.
+            - BUGFIX: Random AVI search assumed any file was an AVI, without checking extension.
+            - BUGFIX: Skin CFG file with Hex values in uppercase read properly now.
+
+v2.20.30 - November 30, 2002.
+            - General performance improvements.
+            - Options left-over from main game removed in demo.
+            - Command-line options added for fine-tuning memory usage (WinNT/2k/XP).
+            - Time displayed in developer mode should be correct now at different speeds.
+            - Can disable lyrics from the Options menu.
+            - BUGFIX: Genre tag correctly parsed again.
+            - BUGFIX: GeForce/Detonator drivers bug fixed.
+            - BUGFIX: Corrections to Lyric file handling (timestamps, no return after last line)
+
+v2.20.10 - November 21, 2002.
+            - Lyrics now displayed in Test mode
+            - Lyrics now enabled for songs with positive GAP values
+            - SMANIAC songs selectable in extra stages even if /showsm not used.
+            - STREAM bar glows on final tally screen if you've AAA'd all songs(!)
+            - backgrounds and banners with upper-case extensions now recognised correctly
+            - in addition to PNG files, JPGs and BMPs can be used as backgrounds.
+            - "OK" flash for Reverse-scrolling arrows added
+            - Songlist.html only written if files added/updated/deleted
+
+v2.20.00 - November 20, 2002.
+            - NEW: "Final Tally" screen added if number of stages not set to "Unlimited".
+            - NEW: Timer added to developer mode.
+            - NEW: Support for lyrics during songs added through use of "LRC" files.
+            - NEW: "/skipsearch" command line argument added.
+            - Ability to reset songlist completely from Options Menu.
+            - BUGFIX: Groove Radar values calculated correctly again.
+            - BUGFIX: "Lost life" sound playing during Arcade mode removed.
+            - BUGFIX: Sample now played when combo jumps from 99..101.
+            - BUGFIX: "Skipped" notes in autoplay fixed.
+            - BUGFIX: Stream bar glows in Evaluation Screen if full combo and combo mode set 
+                      to "ORIGINAL"
+            - BUGFIX: Folders with no files in them handled better when searching for files.
+
+v2.10.00 - November 12, 2002.
+            - NEW: Songlist rebuild is now automatic and time for incremental updates has been
+                   dramatically reduced, as the whole song database does not get rebuilt from 
+                   scratch each time now.  (NB: Special thanks to uKER for his code that 
+                   implements this).
+            - NEW: Extra stages implemented - extra stages can be defined in CRS files, or 
+                   random songs are chosen automatically.
+            - NEW: Extra character support in song titles, course titles, and artist names
+                   now possible with new tags to DWI format.
+            - NEW: Various drop-shadow colours can be defined in the skin-configuration file.
+            - NEW: "Flash" added for "OK" on freeze-arrows.
+            - NEW: DWI now uses version 1.7 of the BASS sound library.
+            - NEW: "/dark" added for Developer mode.
+            - NEW: "+" modifier added to "#SAMPLESTART:" tag - the GAP value is used as a 
+                   reference.
+            - Autoplay now possible in Nonstop mode.
+            - Centre positions for combo and judgement displays adjusted.
+            - movie decoding performance improved slightly.
+            - game starts at a default of 60FPS now.  Adjust with '/fps:xx' command-line.
+            - selecting difficulty on song-select screen requires discrete button presses, so
+              it won't cycle accidentally.
+            - BUGFIX: 'empty' space below song-names on Course selection screen corrected.
+            - BUGFIX: Various graphical glitches corrected.
+            - BUGFIX: 'negative percentages' in Nonstop mode fixed.
+            - BUGFIX: 'broken freeze arrows' glitch fixed.
+            - VARIOUS: various other tweaks and fixes that I can't remember. ;)
+
+v2.03.00 - September 12, 2002.
+            - NEW: 'Global GAP' adjustment added to System Options (affects all files)
+            - NEW: Ability to reset 'Player's Best" list added to Options.
+            - NEW: Rebuilding songlist also creates 'dwi2-songlist.html', for easier reference.
+            - colour for random songs in Nonstop mode brightened.
+            - switching from a song with CHALLENGE steps to one without that set reverts to HEAVY, not LIGHT.
+            - small graphical bug with freeze arrows ending cleaned up.
+            - freeze arrow graphics updated for up-left/up-right.
+            - new Nonstop course banner to replace the old ugly one. ;) (thanks, Cave)
+            - more Q/A added to FAQ.html
+            - BUGFIX: Scoring precision improved to make 'AAA'd songs add up correctly.
+            - BUGFIX: extra 'ticks' being played with "Little" mode on.
+            - BUGFIX: 'invisible' steps being played when Autoplay was on in "Little" mode.
+            - BUGFIX: jumping to a specific spot with different speeds in Developer mode corrected.
+            - BUGFIX: starting a song with "Start" in SDL mode won't automatically take you to Options screen.
+            - BUGFIX: arrows loaded correctly when switching skins again.
+
+v2.02.00 - August 16, 2002.
+            - NEW: Freeze arrows with normal steps at same time have both arrows in 
+                   freeze-colour.
+            - NEW: Up-left and up-right arrows in Solo mode redone to match other arrows.
+            - NEW: SOLO arrow set available in Options.
+            - NEW: Rebuilding Songlist now provides information on status 
+                   instead of appearing to 'freeze'.
+            - Numeric Keypad's 'ENTER' key now re-enabled.
+            - BUGFIX: Grading system fixed ('points' value correctly calculated now).
+            - BUGFIX: Problem with 'skipped' steps not registering in Nonstop mode fixed.
+            - BUGFIX: ESCAPE handled better under new keyboard method.
+            - BUGFIX: Can now exit developer mode properly.
+            - BUGFIX: problem with REVERSE and HIDDEN in CRS files fixed.
+            - BUGFIX: locking up in some DWIs with animated backgrounds fixed.
+            - BUGFIX: jumps treated correctly again.
+
+v2.01.10 - August 12, 2002.
+            - '/showsm' will show SMANIAC-only songs on the select screen, otherwise they're hidden
+            - All keys now read using DirectInput (or SDL) instead of using old Windows interfaces.  So 
+              problems with Escape and F1..F12 should be fixed now.
+            - BUGFIX: doubling of time in Nonstop Versus mode fixed
+            - BUGFIX: lives added properly now in Nonstop Doubles and Solo modes.
+            - BUGFIX: after rebuilding songlist, starting in Single mode should behave now.
+
+v2.01.00 - August 11, 2002.
+            - NEW: Press up-left ("sort") button on Results screen to switch to percentage-display
+            - NEW: Credits screen finally added.  Thanks to all who have helped. :)
+            - NEW: Support for more than two panels at a time in a jump.  (DWI specification tweaked slightly)
+            - NEW: '/v5hack' command-line argument for some strange Voodoo card drivers.  Might
+                   fix problems on Voodoo cards if you can't get it working right.
+            - NEW: Ability to specify number of lives added after each stage in Nonstop mode.  Also changed
+                   default behavior to give back lives in relation to difficulty of song just played.
+            - Groove radar values calculated better; now Chaos gives a better value, and all values are in 
+              relation to the length of the song now (so extended-length songs don't give too-large values).
+            - Songs with only SMANIAC steps are now selectable in regular song-select screen.
+            - If current difficulty selected is 'bumped' when moving to a song that doesn't have that set of 
+              steps, it'll go back to that setting when the next song that does is selected.
+            - Wrapping of song-titles tweaked to wrap on " -", not just "-".
+            - Power bar 'sliding' behavior tweaked.
+            - In Options Menu, currently-selected item is remembered when returning from sub-menus.
+            - Maximum number of songs allowed upped to 2048.
+            - BUGFIX: going to course-select screen after rebuilding songlist should work correctly now.
+            - BUGFIX: starting a song with 'start' on a gamepad won't take you to the options screen unless
+                      you hold it now.
+            - BUGFIX: 'beat' counter behavior fixed for when a BPM-pause/freeze occurs.
+            - BUGFIX: animations should behave now when speed is altered.
+
+v2.00.52 - I released the DirectInput implementation too soon, sorry.  This should solve the
+           issues with DX mode in some operating systems, and SDL mode.
+
+v2.00.5 - August 2, 2002.
+          - I now have WindowsXP... yay... so now I can test DWI in it...
+          - 'white flashes' during video playback fixed.
+          - grading system (rounding) bug fixed... (I think...).
+          - keyboard input now uses DirectInput for most things, instead of Windows functions - 
+            should hopefully be faster and avoid some lag problems some have been experiencing.
+          - second set of keyboard inputs can be configured now.
+          - can't change sort method after choosing "ROULETTE" anymore.
+
+v2.00.3 - July 25, 2002.
+          - fixes a number of graphical problems related to songs with positive GAP values.
+          - groove radar calculations now a bit more tolerant of mistakes in files.
+          - .75x and .5x modifiers corrected in Options screen.
+          - Stealth now selectable through both methods.
+          - New freeze arrow 'flash' animation as earlier version was getting mixed reviews. ;)
+          - fixed Roulette when "Sort by Genre" is used.
+          - Difficulty tweaked slightly.
+          - Failure of stage behaves properly again.
+
+          - IMPORTANT - I meant to do this with the first release of 2.00, but forgot -
+            DWI2's configuration is stored in 'dwi2.cfg', 'dwi2.sng', 'dwi2.rec', etc.
+            IF YOU HAVE BEEN RUNNING v2.00, PLEASE RENAME 'dance.*' 'dwi2.*'.
+            Sorry for the inconvenience.
+
+v2.00.0 - July 22, 2002.
+          - Completely overhauled DWI's interface.  The 'brushed metal' look is out in favor
+            of a new, more colourful design
+          - New, more readable and stylish font
+          - optional timer on gameplay screens to hurry things up
+          - hold 'START' when selecting a song to open up a new 'select options' screen
+            ('SELECT' will still let you change options as before also).
+          - DWI2 has removed old interfaces that I feel are outdated and in the process makes 
+            it much easier to update.  At the same time, the base skin has been updated 
+            considerably. (NB: old skins will not be recognized, sorry...)
+          - Nonstop Mode now keeps track of time, percent, etc.
+          - MAX2 scoring and grading system
+          - Smooth animations for judgements, combo display
+          - New animation for song start/end
+          - Groove Radar implemented (values calculated when Songlist is rebuilt)
+          - Roulette added to song-select screen
+          - 5th/MAX-style power bars and gameplay interfaces, freeze arrows, etc.
+          - completely redone evaluation screen
+          - usernames taken out - they were a pain to put in anyway
+          - Song banners now used on song-select screen if available.  Can be horizontal or
+            old diagonal-style (backgrounds used as before if no banner found)
+          - Records screen now keeps track of Nonstop records too
+          - new option '/fps:xx' lets you set a maximum framerate (20..100); saves processor 
+            time for other applications if you've got a fast machine
+          - multiple bugs fixed.
+
+SPECIAL NOTE: DWI 2.0's skins require a file called 'dwi2-skin.cfg' to work.  This is done
+              to avoid accidentally choosing an old skin.
+              The Sounds folder is very similar, but with new samples for some things.  Users
+              upgrading from 1.7 and lower should run 'convert.bat', which does the following:
+                 1) copy all files from \eval\S to \eval\SS
+                 2) rename \eval\SS \eval\AA
+                 3) rename \eval\SSS \eval\AAA
+                 4) remove \eval\S
+                 5) move all files from \select\song to \start\ready
+                 6) remove \select\song.  (You can also delete \select\new)
+
+v1.70.0 - June 17, 2002.
+          - New method for creating Nonstop Mode courses - introduction of "CRS" file format.
+            This should allow for easier creation of Nonstop Mode courses.  See below for details.
+          - Removed all old Nonstop-mode sections.
+          - New Nonstop Course selection screen.  Banners can be given to a course.  Also allows for 
+            playing defined courses in different modes.
+          - Two people can play Nonstop mode courses at the same time.
+          - Better record keeping for Nonstop mode courses.
+          - Style Select Screen modified.  SOLO mode is now selected by pressing up/down there.
+          - New "Failed" sequence - arrows stop and fade out now instead of still scrolling.
+          - Freeze arrow behavior tweaked.
+          - Combo system can be chosen in Options Screen.
+          - New command line argument "/sdevice:x" can tell DWI what sound device to use.
+            (view dance.log to see a listing of available devices first).
+
+v1.65.5 - June 7, 2002.
+          - Added sound effect for when you lose a life in Nonstop "Combo" mode.
+          - Updated freeze arrows to behave more like MAX.
+          - Freeze-arrows don't do as much damage as they used to. ;)
+          - MAX-like combo system.
+
+v1.65.0 - May 26, 2002.
+          - Added random background animations.  Put looping AVIs into ./Movies/Random
+            and DWI will use them automatically in the backgrounds for songs with 
+            no background script.
+          - Random animations can be enabled/disabled in the System Options.
+          - Addition of four new tags to DWI files:
+             #RANDSEED:x;     - provide a number that will influence what AVIs DWI picks.
+                                Will be the same animation each time if AVI filenames and count
+                                doesn't change (default is random each time).
+             #RANDSTART:x;    - tells DWI what beat to start the animations on.  Default is 32.
+             #RANDFOLDER:...; - tells DWI to look in another folder when choosing AVIs, 
+                                allowing 'themed' folders.
+             #RANDLIST:...;   - a list of comma-separated filenames to use in the folder.
+
+          - Ability to tweak timings for judging Perfect, Great, etc. steps in System Options.
+          - New "Select Style" interface added (default now for "DWI (Second Interface)" skin).
+            Use "SelectStyle=2" under "[GENERAL]" in the 'dwi-skin.cfg' file to enable.
+          - Crowd cheers or moans during gameplay based on performance.
+          - Music loop added to "Select Style" screens.
+          - Routine for displaying background animations put into separate thread now.
+          - New command-line argument: '/priority:x' can force DWI to run as a more "important"
+            program under Windows.  "1" starts it as "ABOVE NORMAL", "2" is "TIME CRITICAL".  May
+            improve performance in certain cases.
+          - BUGFIX: Selecting an SMANIAC song after a previous one in 1st Interface fixed.
+          - Other various bugfixes that I can't remember. ;)
+
+v1.62.3 - May 6, 2002.
+          - Minor bug fixes.  Main change is a tweak to the /test: command line arguments to 
+            accommodate folders on other drives to faciliate step-file creator authors.
+
+v1.62.2 - April 18, 2002.
+          - Speed of song can now be set to faster than normal play using F3/F4 during gameplay or 
+            at song select screen (1..5..9).
+          - bug fix: BPM shift won't reset background animation.
+          - bug fix: GAP adjustment should behave better now.
+          - More developer functions added:
+              /startat:<TIME>  - jumps to a given time into the song (game-time).
+              /tick:1          - turns the assist click on at startup (default is off now).
+
+              During play: F1 restarts song from the beginning.
+                           F2 restarts song from time specified in /startat: option (if given).
+
+v1.62.0 - April 10, 2002.
+          - Can now adjust speed of song with use of F3/F4 during gameplay or at song select screen
+            (useful for training).
+          - Developer/Test mode added - using command line arguments, DWI creators can jump right 
+            into testing a song they're working on.
+              /test:...   - starts DWI in test mode.  See below for format.
+              /p2         - test using player 2's controls instead.
+              /speed:...  - starts song at a given speed (1..5)
+              /scroll:... = starts song with given speed modifier (0.5, 0.75, 1.5, 2, 3, etc.)
+
+v1.61 - April 5, 2002.
+        - Individual comments for "100, 200... 1000 combo" supported.
+        - "Assist Click" now possible (press f12 during gameplay or on the song-select screen).
+          Requires a fast computer to ensure all steps are caught (behaves similarly to "Auto Play")
+        - "Adjust GAP" value possible using f9/f10 during gameplay.
+        - "Adjust BPM" value possible using f5/f6 and f7/f8 during gameplay.
+          (Does not save new GAP/BPM values, but value is displayed so file can be updated).
+        - "/search" command line option added (to force DWI to rebuild its songlist on startup).
+        - Uses latest version of BASS.dll for better compatability, faster MP3 decoding, etc.
+        - Bug fix: problem with loading some DWI files (eg. V/Trick mode).
+        - Bug fix: problem with large positive values for GAP and immobile arrows.
+
+v1.60 - March 5, 2002.
+        - Nonstop mode added.  Adds ability to create your own courses, including the options to
+          choose random songs in a given difficulty range, with pre-defined modifiers or random ones.
+          Can set a course to "Repeat", effectively giving Endless mode.  "Combo" mode gives you a 
+          set number of lives that decreases each time anything less than a "Great" is made.
+        - Cleaned up modifiers slightly - "Power Drop" and "Sudden Death" are now together.  Woo.
+
+v1.51 - February 8, 2002.
+        - New modifiers:
+          x0.5, x0.75,
+          Boost,
+          Dark, 
+          "Power Drop" (power starts at full and depletes only),
+          "Sudden Death" (you have to maintain a full combo).
+        - New sort method available in 2nd Interface (folders grouped like in alpha/artist modes),
+          should be easier to move between folders now.
+        - Records screen modified to display full titles, and columns added for SManiac modes.
+        - No limit now on the total number of arrows in a DWI file (used to be 2048).
+        - BUGFIX: Comments in .dwi files outside of step patterns.
+        - BUGFIX: Player 1's arrows in Split/Unison Battle modes now behind text.
+        - BUGFIX: SAMPLESTART and SAMPLELENGTH work in the 1st interface song select mode now.
+        - BUGFIX: Left/Right reversed in 2nd Interface.
+
+v1.50 - February 3, 2002.
+        - PLEASE RUN 'convert.bat' ONCE BEFORE RUNNING DWI v1.50 IF YOU ARE UPGRADING.
+          The directory structure has changed slightly, and what was once 'images' and 'soundfx' have
+          been moved to be "Default" folders inside the 'Skins' and 'Sounds' (was 'alt-soundfx') folders.
+          You can delete the 'old-images' folder.
+
+        Changes:
+        - New "2nd Interface" available for Song-select screen.  (Other interfaces for other screens 
+          will be added later).
+        - New sort methods available in either song-select screen:
+             By folder/genre, Title (all music), Artist, Player's Best, BPM (2nd Interface only).
+        - New records-keeping routines:
+             - Records for Maniac and S-Maniac mode are kept separate.
+             - Names for high scores can be given and are kept.
+             - images displayed for grades on all screens now, rather than text (to match Skin).
+        - Songs folder is scanned only once, so subsequent start-ups of DWI are much faster.  To
+          find new songs/update song information, use the new "Rebuild Songlist" option.
+        - Sounds (announcer or sound effects) can be .mp3 or .wav now.
+        - Sounds during gameplay kept in memory to avoid disk access (smoother AVI playing which 
+          relies on disk-access).
+        - "Controller Configuration" replaced with "Keyboard Configuration" and "Gamepad Configuration",
+          so either can be used (not one or the other).
+        - #SAMPLESTART and #SAMPLELENGTH implemented in DWI files.
+        - Comments in DWI files allowed (started with "//").
+        - DirectX mode graphics fixes.
+        - Various bug-fixes all round.
+
+v1.27 - January 19, 2002.
+        - DWI should work on Voodoo 3 cards (and hopefully others) in DirectX mode now.
+          Graphics will take a hit as they can't do everything newer cards can do - in particular, 
+          backgrounds and other large images will be blockier, and graphics that had alpha channels will
+          lose some transparancy - but it will run in DirectX.
+        - New flag in BACKGROUND section: "KEEPTIME", for AVI files.
+        - Better/more efficient timekeeping in AVIs
+        - fixed fade 'edges' on song start/end.
+        - option "/anysize" added for DirectX mode.  
+          Forces textures to be created in original sizes if your videocard can handle it (can improve speed)
+        - proper 'fade in' for songs with positive "GAP" values.
+        - fixed selection in some options menus.
+
+v1.26 - January 15, 2002.
+        - Fixed problems with Voodoo cards (at least, tested on a Voodoo 5 with the 'x3dfx' drivers).
+
+v1.25 - January 13, 2002.
+        - Alternate graphics engine implemented.  Choose the SDL-based graphics engine at startup by using 
+          the command-line option "/sdl" (otherwise the default DirectX graphics engine is used).
+        - Other command line arguments:
+             /16bpp - forces a 16-bit graphics surface.  May speed things up on some computers.
+             /32bpp - forces a 32-bit graphics surface.  Some cards might require this option.
+             /hw    - (SDL only) attempts to load images in video hardware.  May fail on some hardware.
+             /fullscreen - forces fullscreen mode.
+             /window     - forces windowed mode.
+        - MD5 checking on files.  If MD5 doesn't match, warning message is displayed.
+        - Better treatment of songs with no music file associated with them (error message displayed)
+        - OGG/Vorbis support.  (Can now use MP3,WAV, or OGG files)
+        - Synchronization accross all sound cards should be improved now, latency accounted for.
+        - BPM display at song select screen (ensure that dwi-7segments.png is in the 'images' folder).
+        - Bugs and memory leaks (hopefully) fixed on song-select screen.
+
+v1.20 - January 7, 2002.
+          - DirectX graphics engine implemented.
+            YOU MUST HAVE DIRECTX 8.1 INSTALLED AND A VIDEO CARD THAT CAN TAKE ADVANTAGE OF 
+            HARDWARE 3D GRAPHICS.  Version 1.05 will work on most other systems although will
+            run slower.
+          - AVI file support for backgrounds.
+          - BASS.dll upgraded to latest version.
+
+v1.10 - December 31, 2001
+          - Used SDL.dll for graphics.  Seemed fairly buggy. :P
+          - You can now press 'escape' on the difficulty select screen to go back to the 
+            'select song' screen.
+          - Bugfix: announcer comments in Versus mode.
+
+v1.05 - December 26, 2001
+          - IMPORTANT NOTICE
+            DWI has changed the directory structure for where step files and images go.
+            The program will detect the old directory structure and make the changes for 
+            you after displaying a notice screen.  For the automatic conversion to work, 
+            the files in Backgrounds, Banners, and DWIs must NOT be "read-only".  You 
+            can set the attributes of the files by selecting them in Explorer and going 
+            to File-Properties.  More details are in the "Using and Configuring DWI" 
+            section below.
+          - fixed bug in "Sort by Genre".
+
+v1.04 - December 22, 2001 (pm)
+          - Expanded support for different audio sets, similar to skins.
+            The directory for new sets is "alt-soundfx", and each set goes in its
+            own subdirectory with that.  The layout of the sound-set directories 
+            should be the same tree structure as "soundfx".
+
+v1.03 - December 22, 2001
+          - Built-in support for skins, selectable from the options screen.
+            Simply create a directory called "skins" in the same folder as "DWI.exe",
+            then create different sub-directories within that for each skin you 
+            wish to use.
+
+v1.02 - December 21, 2001
+          - stealth mode arrows now appear if missed
+          - arrows rated 'good' continue to scroll up
+          - new features added to Game Options screen:
+               - Max Stage "Unlimited".  This effectively allows "Event Mode" - there is no limit
+                 to the number of stages you can play, and the difficulty level is capped after you 
+                 reach Stage 5.  Pressing "Escape" during gameplay will take you back to the 
+                 song-select screen without having to go back to the main menu.  Failing a song 
+                 takes you back to the song-select screen also, back at Stage 1.
+               - Auto Play.  Will play the game for you, though you can still press the inputs if you
+                 like.  NOTE: RECORDS WILL NOT BE KEPT when Auto Play mode is enabled.
+
+v1.01 - December 16, 2001
+          - minor fix to select screen, fixed crashing problems in Win2k and XP.
+
+v1.00 - December 14, 2001
+      - first public release.  Supported are:
+          - BPM changes, pauses
+          - Freeze arrows
+          - Split/Unison/Couple modes
+          - multiple folders
+          - downwards-scrolling arrows
+          - record keeping
+          - background animations
+</PRE></P>
+
+<P><FONT size="+1"><a name="9"></a><B>9. FUTURE DEVELOPMENT AND THANKS</B></font></P>
+
+<P>A long time was spent making this program, and I believe that this first release is fairly complete in terms of features.  New features will be considered as resources and interest permit.</P>
+
+<P>Special thanks go to DjDraftHorse for the announcer files - I think he did a fantastic job, very professional.  Also he has been a great beta-tester and a sounding board for new ideas.  Much appreciated!</P>
+
+<P>Also, a huge 'thank you' to BemaniRuler for beta-testing the program and your enthusiasm for the project.  He's been a great help in creating the new interfaces and I appreciate him letting me incorporate some of his graphics from his earlier skins in the release of DWI 2.0.</P>
+
+<P>Thanks also to Durikkan for his help in implementing the Groove Radar - the values used are based off of his algorithm.</P>
+
+<P>BBW, for putting up with my incessant programming of the simulator and my exhorting of the joys of Bemani. ;)</P>
+
+<P>LagGed and the others at "The Melting Pot" for the resources available there concerning the file formats and other simulators, and his offer to host the distribution files.  uKER for taking it upon himself to write some better code for song-management which I was able to implement into the main DWI code.  YrevaTeneb for his writeup on how to create DWI files at the Melting Pot, and for permission to list it here.  Also a special thanks to Apocalypse for his insight in getting DirectX working.</P>
+
+<P>Pawwaves to those in the furry community. :^)</P>
+
+<P>Enjoy...<BR>
+SimWolf.</P>

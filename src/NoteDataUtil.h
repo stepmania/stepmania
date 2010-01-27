@@ -51,7 +51,7 @@ namespace NoteDataUtil
 	void RemoveStretch( NoteData &inout, StepsType st, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveAllButOneTap( NoteData &inout, int row );
 	void RemoveAllButPlayer( NoteData &inout, PlayerNumber pn );
-	enum TrackMapping { left, right, mirror, shuffle, super_shuffle, stomp, NUM_TRACK_MAPPINGS };
+	enum TrackMapping { left, right, mirror, shuffle, soft_shuffle, super_shuffle, stomp, NUM_TRACK_MAPPINGS };
 	void Turn( NoteData &inout, StepsType st, TrackMapping tt, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void Little( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void Wide( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );

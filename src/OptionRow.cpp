@@ -478,7 +478,8 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 		int iWidth, iX, iY;
 		GetWidthXY( pn, iChoiceWithFocus, iWidth, iX, iY );
 		ul.SetX( (float)iX );
-		ul.SetDiffuse( RageColor(1,1,1,fAlpha) );
+		// only set alpha, in case a theme tries to color underlines. -aj
+		ul.SetDiffuseAlpha( fAlpha );
 
 		ASSERT( m_vbSelected[pnTakeSelectedFrom].size() == m_pHand->m_Def.m_vsChoices.size() );
 

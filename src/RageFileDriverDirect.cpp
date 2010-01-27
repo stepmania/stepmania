@@ -18,9 +18,9 @@
 #include "archutils/Win32/ErrorStrings.h"
 #if !defined(_XBOX)
 #include <windows.h>
-#endif
+#endif	// !defined(_XBOX)
 #include <io.h>
-#endif
+#endif // !defined(WIN32)
 
 /* Direct filesystem access: */
 static struct FileDriverEntry_DIR: public FileDriverEntry
@@ -168,9 +168,9 @@ bool RageFileDriverDirect::Move( const RString &sOldPath_, const RString &sNewPa
 		WARN( ssprintf("rename(%s,%s) failed: %s", (m_sRoot + sOldPath).c_str(), (m_sRoot + sNewPath).c_str(), strerror(errno)) );
 		return false;
 	}
+
 	FDB->DelFile( sOldPath );
 	FDB->AddFile( sNewPath, size, hash, NULL );
-
 	return true;
 }
 
@@ -376,6 +376,7 @@ RageFileObjDirect::~RageFileObjDirect()
 			SetError( strerror(errno) );
 			break;
 		}
+
 
 		if( m_iMode & RageFile::SLOW_FLUSH )
 		{

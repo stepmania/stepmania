@@ -22,7 +22,7 @@ namespace RageSurfaceUtils
 	void SetRawRGBAV( uint8_t *p, const RageSurface *src, const uint8_t *v );
 	uint32_t SetRGBAV( const RageSurfaceFormat *fmt, const uint8_t *v );
 	void SetRGBAV( uint8_t *p, const RageSurface *src, const uint8_t *v );
-	
+
 	/* Get the number of bits representing each color channel in fmt. */
 	void GetBitsPerChannel( const RageSurfaceFormat *fmt, uint32_t bits[4] );
 

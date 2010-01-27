@@ -134,6 +134,11 @@ static NSOpenGLContext *CreateOGLContext( GLContextType type, int iColorSize, in
 		NSOpenGLPFAColorSize, NSOpenGLPixelFormatAttribute(iColorSize),
 		NSOpenGLPFAAlphaSize, NSOpenGLPixelFormatAttribute(iAlphaSize),
 		NSOpenGLPFADepthSize, NSOpenGLPixelFormatAttribute(iDepthSize),
+/*
+		NSOpenGLPFAMultisample,
+		NSOpenGLPFASampleBuffers, (NSOpenGLPixelFormatAttribute)1,
+		NSOpenGLPFASamples, (NSOpenGLPixelFormatAttribute)4,
+*/
 		NSOpenGLPixelFormatAttribute(0), // 9
 		NSOpenGLPixelFormatAttribute(0), // 10
 		NSOpenGLPixelFormatAttribute(0), // 11

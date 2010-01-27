@@ -20,6 +20,7 @@
 #include "Style.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"
+#include "MessageManager.h"
 
 static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );
 
@@ -378,7 +379,7 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 
 		}
 
-		
+
 	}
 
 	/* Hack: Add extra stage item if it was eliminated for any reason (eg. it's a long
@@ -427,17 +428,17 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 	case SORT_TOP_GRADES:
 	case SORT_ARTIST:
 	case SORT_GENRE:
+	case SORT_BEGINNER_METER:
 	case SORT_EASY_METER:
 	case SORT_MEDIUM_METER:
 	case SORT_HARD_METER:
 	case SORT_CHALLENGE_METER:
 	case SORT_LENGTH:
+	case SORT_RECENT:
 		{
-			///////////////////////////////////
 			// Make an array of Song*, then sort them
-			///////////////////////////////////
 			vector<Song*> arraySongs;
-			
+
 			GetSongList( arraySongs, so, GAMESTATE->m_sPreferredSongGroup );
 
 			bool bUseSections = true;
@@ -481,6 +482,10 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			case SORT_LENGTH:
 				SongUtil::SortSongPointerArrayByLength( arraySongs );
 				break;
+			case SORT_RECENT:
+				SongUtil::SortByMostRecentlyPlayedForMachine( arraySongs );
+				break;
+			case SORT_BEGINNER_METER:
 			case SORT_EASY_METER:
 			case SORT_MEDIUM_METER:
 			case SORT_HARD_METER:
@@ -499,9 +504,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			}
 
 
-			///////////////////////////////////
 			// Build an array of WheelItemDatas from the sorted list of Song*'s
-			///////////////////////////////////
 			arrayWheelItemDatas.clear();	// clear out the previous wheel items 
 			arrayWheelItemDatas.reserve( arraySongs.size() );
 
@@ -559,7 +562,6 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 								break;
 						}
 						iSectionCount = j-i;
-
 
 						// new section, make a section item
 						RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
@@ -885,7 +887,7 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 	if( IsSongSort(new_so) )
 		GAMESTATE->m_PreferredSortOrder = new_so;
 	GAMESTATE->m_SortOrder.Set( new_so );
-	
+
 	return true;
 }
 
@@ -963,9 +965,11 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 	case TYPE_PORTAL:
 		break;
 	case TYPE_SORT:
+		/*
 		LOG->Trace("New sort order selected: %s - %s", 
 			GetCurWheelItemData(m_iSelection)->m_sLabel.c_str(), 
 			SortOrderToString(GetCurWheelItemData(m_iSelection)->m_pAction->m_SortOrder).c_str() );
+		*/
 		GetCurWheelItemData(m_iSelection)->m_pAction->ApplyToAllPlayers();
 		ChangeSort( GAMESTATE->m_PreferredSortOrder );
 		m_sLastModeMenuItem = GetCurWheelItemData(m_iSelection)->m_pAction->m_sName;
@@ -976,6 +980,7 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 
 void MusicWheel::StartRoulette() 
 {
+	MESSAGEMAN->Broadcast("StartRoulette");
 	m_WheelState = STATE_ROULETTE_SPINNING;
 	m_Moving = 1;
 	m_TimeBeforeMovingBegins = 0;
@@ -987,6 +992,7 @@ void MusicWheel::StartRoulette()
 
 void MusicWheel::StartRandom()
 {
+	MESSAGEMAN->Broadcast("StartRandom");
 	/* If RANDOM_PICKS_LOCKED_SONGS is disabled, pick a song from the active sort and
 	 * section.  If enabled, picking from the section makes it too easy to trick the
 	 * game into picking a locked song, so pick from SORT_ROULETTE. */
@@ -1016,7 +1022,7 @@ void MusicWheel::StartRandom()
 
 void MusicWheel::SetOpenSection( RString group )
 {
-	LOG->Trace( "SetOpenSection %s", group.c_str() );
+	//LOG->Trace( "SetOpenSection %s", group.c_str() );
 	m_sExpandedSectionName = group;
 
 	const WheelItemBaseData *old = NULL;

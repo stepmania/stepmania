@@ -1,0 +1,125 @@
+Scripts included with sm-ssc's fallback theme
+---------------------------------------------
+As a StepMania fork focused on themers, sm-ssc is going to be a bit different
+than a normal StepMania 4 setup. The fallback theme includes a number of scripts
+you won't find in the SM4 default theme. This file is meant to be an overview of
+what happens in the scripts; it does not go in depth with any of them. Please
+see the documentation included in the scripts as comments, as well as any text
+files for the more sufficiently advanced scripts.
+
+==00 init.lua== (StepMania 4)
+Always executed first, this file does the following:
+* replaces Lua's Uppercase function with StepMania's (which is always UTF8)
+* alias Trace, Warn, and print
+* creates convienence aliases PLAYER_1, PLAYER_2, and NUM_PLAYERS
+* creates find_last(text) function for strings.
+
+==01 alias.lua== (sm-ssc)
+This file is used to create aliases for functions. Usually, it's used for making
+case-sensitive commands case-insensitive without having to make source code
+edits to accomplish the same thing.
+
+==01 base.lua== (StepMania 4)
+* overrides loadfile to use StepMania's.
+* overrides dofile to use SM's loadfile.
+* creates a function ivalues(t), which is like pairs but returns only values.
+
+==01 compat.lua== (sm-ssc)
+sm-ssc compatibility helpers. Since sm-ssc renames and deprecates some features,
+this file is used to help ease the transition of themes that still use the old
+commands.
+
+==02 CustomSpeedMods.lua== (sm-ssc)
+This version of AJ Kelly's CustomSpeedMods is for sm-ssc, since it allows for
+reading in of both player and machine slots, as well as merging of the speed
+mods of all three (if applicable). By including this in _fallback, every sm-ssc
+theme has access to custom speed mods from the start.
+
+To use CustomSpeedMods in your theme, find [ScreenPlayerOptions] in the metrics,
+find "list,Speed" and replace it with "lua,SpeedMods()".
+
+==02 EnvUtils2.lua== (sm-ssc)
+EnvUtils2 provides the getenv(name) and setenv(name,value) commands.
+
+==02 HSV.lua== (sm-ssc)
+[to be written]
+
+==02 ProductivityHelpers.lua== (sm-ssc)
+This file is the sm-ssc edition of ProductivityHelpers. It shouldn't be used
+with any newly created regular SM4 themes, just sm-ssc ones.
+* provides the Blend alias, allowing for commands like blend,Blend.Add; etc.
+* provides the Health alias, which provides a mapping to various HealthState
+  enums.
+* CenterX, CenterY, xy (set both the x and y coords in one command)
+* MaskSource and MaskDest commands for easier masking.
+Various others are included, see the file for more information.
+
+==02 UserPreferences2.lua== (sm-ssc)
+[to be written]
+
+==03 FileUtils.lua== (sm-ssc)
+FileUtils is used to read and write files with minimal effort.
+
+* File.Read(path) reads in the file at path.
+* File.Write(path,buf) writes the contents of buf to the file at path.
+
+If either of the two error out/don't work, check the log for the reason why.
+
+==03 WidescreenHelpers.lua== (sm-ssc)
+[to be written]
+
+==Actor.lua== (StepMania 4)
+[to be written]
+
+==ActorDef.lua== (StepMania 4)
+[to be written]
+
+==Branches.lua== (sm-ssc)
+sm-ssc's branch system is slightly different than the one in StepMania 4.
+Instead of having multiple functions, all the branches are contained within a
+single table, Branch. All the branches are members of this table, so you'll see
+things like
+NextScreen=Branch.PlayerOptions()
+in the theme.
+
+==Colors.lua== (StepMania 4)
+[to be written]
+
+==DateTime.lua== (sm-ssc)
+freem, inc.'s DateTime class only exists to provide two commands at the moment:
+* Date.Today() - returns today's date as YYYYMMDD.
+* Time.Now() - returns the current time in 24 hour format as HH:MM:SS.
+Eventually, this class may grow bigger.
+
+==Debug.lua== (StepMania 4)
+[to be written]
+
+==Enum.lua== (StepMania 4)
+[to be written]
+
+==HelpDisplay.lua== (StepMania 4)
+[to be written]
+
+==Lyrics.lua== (StepMania 4)
+[to be written]
+
+==OptionsMenu.lua== (StepMania 4)
+[to be written]
+
+==Other.lua== (StepMania 4)
+[to be written]
+
+==Serialize.lua== (StepMania 4)
+[to be written]
+
+==Sound.lua== (StepMania 4)
+[to be written]
+
+==Sprite.lua== (StepMania 4)
+[to be written]
+
+==StageMods.lua== (StepMania 4)
+[to be written]
+
+==Utilities.lua== (StepMania 4)
+[to be written]

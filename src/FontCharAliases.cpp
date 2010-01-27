@@ -70,11 +70,13 @@ static void InitCharAliases()
 	CharAliases["default"]		= FONT_DEFAULT_GLYPH;	/* ? */
 	CharAliases["invalid"]		= INVALID_CHAR;			/* 0xFFFD */
 
-	/* The comments here are UTF-8; they won't show up in VC6 (use your
-	 * imagination). */
+	/* The comments here are UTF-8; they won't show up in VC6 (use a later
+	 * version of visual studio then, you old fart). -aj edited this */
 
 #define INTERNAL 0xE000
 
+	// todo: convert this into a vector? that way we can dynamically add
+	// to the list easier.
 	/* Hiragana: */
 	struct alias {
 		const char *str;
@@ -320,6 +322,23 @@ static void InitCharAliases()
 		{ "auxr3",	INTERNAL },
 		{ "auxselect",	INTERNAL },
 		{ "auxstart",	INTERNAL },
+		/* various other controllers (SNES, Saturn, Dreamcast stick styles) */
+		{ "auxa",	INTERNAL },
+		{ "auxb",	INTERNAL },
+		{ "auxc",	INTERNAL },
+		{ "auxd",	INTERNAL },
+		/* auxx is handled above */
+		{ "auxy",	INTERNAL },
+		{ "auxz",	INTERNAL },
+		{ "auxl",	INTERNAL },
+		{ "auxr",	INTERNAL },
+		/* Xbox (original, 360)-style controllers */
+		{ "auxwhite",	INTERNAL },
+		{ "auxblack",	INTERNAL },
+		{ "auxlb",	INTERNAL },
+		{ "auxrb",	INTERNAL },
+		{ "auxlt",	INTERNAL },
+		{ "auxrt",	INTERNAL },
 
 		{ NULL, 	0 }
 	};
@@ -358,7 +377,7 @@ bool FontCharAliases::GetChar( RString &codepoint, wchar_t &ch )
 	aliasmap::const_iterator i = CharAliases.find(codepoint);
 	if(i == CharAliases.end())
 		return false;
-	
+
 	ch = i->second;
 	return true;
 }

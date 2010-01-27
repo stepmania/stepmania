@@ -1,5 +1,5 @@
 /*
-** $Id$
+** $Id: luaconf.h 27862 2009-01-05 22:02:30Z GRIM657 $
 ** Configuration file for Lua
 ** See Copyright Notice in lua.h
 */

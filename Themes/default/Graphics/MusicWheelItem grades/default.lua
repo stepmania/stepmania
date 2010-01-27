@@ -12,7 +12,7 @@ local grades = {
 	Grade_None = 8;
 };
 
-local t = LoadActor( "grades" ) .. {
+--[[ local t = LoadActor( "grades" ) .. {
 	InitCommand=cmd(pause);
 	SetGradeCommand=function(self, params)
 		local state = grades[params.Grade] or grades.Grade_None;
@@ -23,6 +23,27 @@ local t = LoadActor( "grades" ) .. {
 		end
 
 		self:setstate(state);
+	end;
+}; --]]
+local t = LoadFont("Common Normal") .. {
+	InitCommand=cmd(zoom,0.75;shadowlength,1;strokecolor,Color("Black"));
+	ShowCommand=cmd(stoptweening;bounceend,0.15;zoomy,0.75);
+	HideCommand=cmd(stoptweening;bouncebegin,0.15;zoomy,0);
+	SetGradeCommand=function(self,params)
+		local pnPlayer = params.PlayerNumber;
+		local sGrade = params.Grade or 'Grade_None';
+		local gradeString = THEME:GetString("Grade",string.sub(sGrade,7));
+
+		self:settext(gradeString);
+		self:diffuse(PlayerColor(pnPlayer));
+		self:diffusetopedge(BoostColor(PlayerColor(pnPlayer),1.5));
+		self:strokecolor(BoostColor(PlayerColor(pnPlayer),0.25));
+		
+--[[ 		if sGrade == "Grade_NoTier" then
+			self:playcommand("Hide");
+		else
+			self:playcommand("Show");
+		end; --]]
 	end;
 };
 

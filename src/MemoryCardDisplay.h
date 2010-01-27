@@ -6,7 +6,6 @@
 #include "Sprite.h"
 #include "ActorFrame.h"
 
-
 class MemoryCardDisplay : public ActorFrame
 {
 public:
@@ -19,6 +18,7 @@ public:
 protected:
 	PlayerNumber m_PlayerNumber;
 	MemoryCardState	m_LastSeenState;
+	// todo: make this an AutoActor eventually -aj
 	Sprite m_spr[NUM_MemoryCardState];
 };
 

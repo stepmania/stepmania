@@ -402,7 +402,7 @@ void BannerCache::CacheBannerInternal( RString sBannerPath )
 		 * This also makes the banner take less memory, though that could also be
 		 * done by RLEing the surface.
 		 */
-		RageSurfaceUtils::ApplyHotPinkColorKey( pImage );
+		//RageSurfaceUtils::ApplyHotPinkColorKey( pImage );
 
 		RageSurfaceUtils::ConvertSurface(pImage, pImage->w, pImage->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 		
@@ -445,7 +445,7 @@ void BannerCache::CacheBannerInternal( RString sBannerPath )
 	iWidth = max( iWidth, min(32, power_of_two(iSourceWidth)) );
 	iHeight = max( iHeight, min(32, power_of_two(iSourceHeight)) );
 
-	RageSurfaceUtils::ApplyHotPinkColorKey( pImage );
+	//RageSurfaceUtils::ApplyHotPinkColorKey( pImage );
 
 	RageSurfaceUtils::Zoom( pImage, iWidth, iHeight );
 

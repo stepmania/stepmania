@@ -27,12 +27,13 @@ struct DIDevice
 	RString m_sName;
 
 	enum { KEYBOARD, JOYSTICK } type;
+	//enum { KEYBOARD, JOYSTICK, MOUSE } type;
 
 	bool buffered;
 	int buttons, axes, hats;
 	vector<input_t> Inputs;
 	InputDevice dev;
-	
+
 	DIDevice();
 
 	bool Open();

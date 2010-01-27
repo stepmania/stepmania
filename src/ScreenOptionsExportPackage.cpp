@@ -39,10 +39,12 @@ void ScreenOptionsExportPackage::BeginScreen()
 				GetDirListing( *s + "*", m_vsPossibleDirsToExport, true, true );
 		}
 
-		// Add courses.  Only support courses that are in a group folder.  Support for courses not in a group folder should be phased out.
+		// Add courses.  Only support courses that are in a group folder.
+		// Support for courses not in a group folder should be phased out.
 		{
 			vector<RString> vs;
 			GetDirListing( SpecialFiles::COURSES_DIR + "*", vs, true, true );
+			StripCvsAndSvn( vs );
 			FOREACH_CONST( RString, vs, s )
 			{
 				m_vsPossibleDirsToExport.push_back( *s );
@@ -60,11 +62,9 @@ void ScreenOptionsExportPackage::BeginScreen()
 				GetDirListing( *s + "/*", m_vsPossibleDirsToExport, true, true );
 			}
 		}
-	
+
 		StripCvsAndSvn( m_vsPossibleDirsToExport );
 	}
-
-
 
 	vector<OptionRowHandler*> OptionRowHandlers;
 	FOREACH_CONST( RString, m_vsPossibleDirsToExport, s )

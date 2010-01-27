@@ -46,6 +46,10 @@ enum SMOStepType
 	SMOST_W1,
 	SMOST_LETGO,
 	SMOST_HELD
+	/*
+	,SMOST_CHECKPOINTMISS,
+	SMOST_CHECKPOINTHIT
+	 */
 };
 
 const NSCommand NSServerOffset = (NSCommand)128;
@@ -107,26 +111,26 @@ public:
 	NetworkSyncManager( LoadingWindow *ld = NULL );
 	~NetworkSyncManager();
 
-    //If "useSMserver" then send score to server
+    // If "useSMserver" then send score to server
 	void ReportScore( int playerID, int step, int score, int combo, float offset );	
-	void ReportSongOver();	//Report to server that song is over
-	void ReportStyle();		//Report to server the style, players, and names
-	void ReportNSSOnOff( int i );	//Report song selection screen on/off
-	void StartRequest( short position );	//Request a start.  Block until granted.
+	void ReportSongOver();
+	void ReportStyle(); // Report style, players, and names
+	void ReportNSSOnOff( int i );	// Report song selection screen on/off
+	void StartRequest( short position );	// Request a start; Block until granted.
 	RString GetServerName();
-	
-	//SMOnline stuff
+
+	// SMOnline stuff
 	void SendSMOnline( );
 
-	bool Connect( const RString& addy, unsigned short port ); // Connect to SM Server
+	bool Connect( const RString& addy, unsigned short port );
 
 	void PostStartUp( const RString& ServerIP );
 
 	void CloseConnection();
 
-	void DisplayStartupStatus();	//Used to note user if connect attempt was successful or not.
+	void DisplayStartupStatus();	// Notify user if connect attempt was successful or not.
 
-	int m_playerLife[NUM_PLAYERS];	//Life (used for sending to server)
+	int m_playerLife[NUM_PLAYERS];	// Life (used for sending to server)
 
 	void Update( float fDeltaTime );
 
@@ -139,21 +143,21 @@ public:
 	vector <int> m_ActivePlayer;
 	vector <RString> m_PlayerNames;
 
-	//Used for ScreenNetEvaluation
+	// Used for ScreenNetEvaluation
 	vector<EndOfGame_PlayerData> m_EvalPlayerData;
 
-	//Used togeather for 
-	bool ChangedScoreboard(int Column);	//If scoreboard changed since this function last called, then true.
+	// Used together: 
+	bool ChangedScoreboard(int Column);	// Returns true if scoreboard changed since function was last called.
 	RString m_Scoreboard[NUM_NSScoreBoardColumn];
 
-	//Used for chatting
+	// Used for chatting
 	void SendChat(const RString& message);
 	RString m_WaitingChat;
 
-	//Used for options
+	// Used for options
 	void ReportPlayerOptions();
 
-	//Used for song checking/changing
+	// Used for song checking/changing
 	RString m_sMainTitle;
 	RString m_sArtist;
 	RString m_sSubTitle;
@@ -178,12 +182,12 @@ private:
 	SMOStepType TranslateStepType(int score);
 	void StartUp();
 
-	int m_playerID;  //these are currently unused, but need to stay
+	int m_playerID;  // Currently unused, but need to stay
 	int m_step;
 	int m_score;
 	int m_combo;
     
-	int m_startupStatus;	//Used to see if attempt was successful or not.
+	int m_startupStatus;	// Used to see if attempt was successful or not.
 	int m_iSalt;
 
 	bool m_scoreboardchange[NUM_NSScoreBoardColumn];
@@ -195,7 +199,7 @@ private:
 
 	vector<NetServerInfo> m_vAllLANServers;
 
-	int m_ServerVersion; //ServerVersion
+	int m_ServerVersion; // ServerVersion
 
 	bool Listen( unsigned short port );
 

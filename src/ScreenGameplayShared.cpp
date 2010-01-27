@@ -20,7 +20,6 @@ void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 	{
 		PlayerInfo &pi = vPlayerInfoOut[pn];
 		pi.Load( pn, MultiPlayer_Invalid, pn == mpn, Difficulty_Invalid );
-
 		pi.m_pPlayer = new Player( mpi.m_NoteData, pn == mpn );
 	}
 }

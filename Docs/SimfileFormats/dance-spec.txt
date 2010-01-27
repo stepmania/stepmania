@@ -1,0 +1,337 @@
+The "Dance" Format
+------------------
+The goals of this format are easy parsability, easy human readability,
+brevity, and disambiguity.
+
+Generic Information
+-------------------
+All strings are case-sensitive. Filenames are case-sensitive. The
+directory separator is '/' regardless of the platform. All text
+is encoded in UTF-8. Byte-order marking is not allowed.
+
+Enhanced Backus-Naur Form (ENBF) Specification
+----------------------------------------------
+This is purely the grammar. A semantic explanation is below.
+
+Although this is given as a CFG specification, .dance is designed to be
+parsed by a table-based DFA (as in pydance's fileparsers.py)
+
+Primitives:
+<String> ::= a sequence of characters
+<Float> ::= 0.0 to Inf, decimal value
+<NegInt> ::= 0 | -1 | -2 | -3 ...
+<PosInt> ::= 0 | 1 | 2 | 3 ...
+
+Almost primitives:
+<Whitespace> ::= (" " | "\t")+
+<Newline> ::= "\n" | "\r\n" | "\r"
+<LongString> ::= <String> (<Whitespace> <String>)*
+<EndToken> ::= "end" <Newline>
+<Int> ::= <NegInt> | <PosInt>
+<Comment> ::= [("#" <LongString>) | <Whitespace>] <Newline>
+
+Basic Structure:
+<File> ::= <Metadata> [<TextSection>+] <StepSection>+
+
+Metadata Storage:
+<Metadata> ::= (<Comment> | <MetadataLine>)+ <EndToken>
+<MetadataLine> ::= (<Filename> | <Title> | <Subtitle> | <Artist> | <Mix> |
+                    <BPM> | <Offset> | <BG> | <Banner> | <Preview> |
+                    <Checksum> | <StartAt> | <EndAt> | <Author> | <CDTitle> |
+		    <RevisionDate> | <Valid> | <Movie>) <Newline>
+<Filename> ::= "filename" <Whitespace> <LongString>
+<Title> ::= "title" <Whitespace> <LongString>
+<Subtitle> ::= "subtitle" <Whitespace> <LongString>
+<Artist> ::= "artist" <Whitespace> <LongString>
+<Mix> ::= "mix" <Whitespace> <LongString>
+<BPM> ::= "bpm" <Whitespace> <Float>
+<BPMDisplay> :: "bpmdisplay" ((<Whitespace> <Float>)+ | "*")
+<Gap> ::= "gap" <Whitespace> <Int>
+<StartAt> ::= "startat" <Whitespace> <Float>
+<EndAt> ::= "endat" <Whitespace> <Float>
+<BG> ::= "background" <Whitespace> <LongString>
+<Banner> ::= "banner" <Whitespace> <LongString>
+<Banner> ::= "cdtitle" <Whitespace> <LongString>
+<Preview> :: "preview" <Whitespace> <Float> <Whitespace> <Float>
+<Checksum> ::= "md5sum" <Whitespace> <String>
+<Author> ::= "author" <Whitespace> <LongString>
+<Movie> ::= "movie" <Whitespace> <LongString>
+<RevisionDate> ::= "revision" <Whitespace> <LongString>
+<Valid> ::= "valid" <Whitespace> 1 | 0
+
+Text Sections:
+<TextSection> ::= [<Description>] [<Lyrics>]
+<Lyrics> ::= "LYRICS" <Newline> (<LyricLine>)+ <EndToken>
+<LyricLine> ::= <Float> <Whitespace> <PosInt> <Whitespace> <LongString> <Newline>
+<Description> ::= "DESCRIPTION" <Newline> (<LongString> <Newline>)+ <EndToken>
+
+Step Sections:
+<StepSection> ::= <GameMode> <Difficulty> <Sequence>+ <EndToken>
+<GameMode> ::= <String> <Newline>
+<Difficulty> ::= <String> <Whitespace> <PosInt> <Newline>
+<Sequence> ::= (<Comment> | <Buttons> | <Command>) <Newline>
+
+Note Sequences:
+<Buttons> ::= <NoteType> (<Whitespace> <ButtonPresses>)+
+<NoteType> ::= "u" | "n" | "x" | "t" | "f" | "s" | "w" | "e" | "q" | "h" | "o"
+<ButtonPresses> ::= (0 | 1 | 3 | 5 | 7)+
+
+Song Commands:
+<Command> ::= <ChangeBPM> | <Ready> | <Wait> | <Stop> | <Delay> | <Lyric>
+<ChangeBPM> ::= "B" <Whitespace> <Float>
+<Ready> ::= "R"
+<Wait> ::= "W" <Whitespace> <Float>
+<Stop> ::= "S" <Whitespace> <Float>
+<Delay> ::= "D" <Whitespace> <Float>
+<Lyric> ::= "L" <Whitespace> <Float> <Whitespace> <PosInt> <Whitespace>
+                  <LongString>
+
+Informal & Semantic Description
+-------------------------------
+The dance format is basically the step format, but generalized, smaller,
+and more readable. A script to convert .step files to .dance files is
+forthcoming.
+
+A simple file might look like:
+
+filename asong.ogg
+title A Song
+subtitle Crazy Mix
+artist Someone
+# This is a comment
+end
+DESCRIPTION
+ This is an example song.
+ It's pretty uninteresting.
+end
+SINGLE
+BASIC 0
+q 1010
+# This is another comment.
+q 0101
+q 3030
+q 1010
+end
+
+Metadata Section:
+
+The metadata section of the song is the first section, and contains
+important data about the file. An explanation of the keys follow:
+
+'filename': The filename of the audio file to play.
+
+'title': The name of the song. This should not include "Foo Mix".
+
+'subtitle': "Foo Mix", "Crazy Version", whatever. Default none.
+
+'artist': The name of the artist(s) and any remixers.
+
+'bpm': The beats per minute of the song.
+
+'gap': The millisecond offset into the song at which the arrows should
+       start. If the first beat is 0.3 seconds into the song, for example,
+       this should be -300. This can be negative. Default 0.
+
+'bpmdisplay': A whitespace-separated list of floats, which will be
+	      cycled through on the song selector's BPM display. If
+	      not present this defaults to the BPM if the song. If "*",
+	      the BPM is displayed as constantly changing.
+
+'background': A background image (to display while the song is playing).
+              Default none.
+
+'banner': A banner for the song (to display in the song select). Default none.
+
+'cdtitle': A small (64x40) image to use as a CD title. Default none. This
+           path should either be relative to a special CD title directory,
+           or to the directory the file is in.
+
+'preview': An offset to seconds to start a song preview at, and a length to
+           play the preview. Default 45.0 and 10.0.
+
+'startat', 'endat': Start and end the music at these positions in seconds.
+                    offset and the steps are then relative to the startat
+                    position. Default 0.0 and the length of the song.
+
+'md5sum': If present, the MD5 checksum of the 'filename' file. If it's
+          present and the file doesn't match, a warning can be issued.
+
+'author': The person who wrote this file. Default none.
+
+'revision': The date of the last revision of this file, in YYYY.MM.DD format.
+            Defaults to "1970.01.01".
+
+'movie': The filename of a background movie; defaults to none.
+
+'valid': If not true, this song should be not selected using in random play
+         modes (e.g., it's not finished, hasn't been timed, etc). Default 1.
+
+The 'filename', 'title', 'artist', and 'bpm' keys are mandatory.
+
+Note that songs in this format will *NOT* have any files autodetected. If
+you want them to be found, explicitly state them in the file.
+
+The metadata section, like all sections, must end with "end" on a line
+by itself.
+
+Text Sections:
+
+There are two "text" sections in dance files; these are essentially
+extended metadata sections.
+
+The DESCRIPTION section contains a description of the song. The format
+roughly follows the DPKG description format: All lines of text start
+with a space. Whitespace, including newlines, is ignored. A period ('.')
+on a line by itself (with a space before it!) is to be interpreted as a
+paragraph separator. An 'end' token on a single line, with no space before
+it, ends the description.
+
+The LYRICS section contains lyric timing information. The format
+of each line is, an integer, a float, and then a string. The integer
+specifies the lyric "channel"; lyrics in the same channel should overwrite
+each other, appear in the same place on the screen, etc. The float is the
+time into the song during which the lyric should appear, irrespective
+of the 'gap' value.
+
+Step Sections:
+
+The meat of the file is in the step sections, which actually describe
+the game-related stuff. A step section is started as soon as an unknown
+section token is encounter (i.e. currently not LYRICS or DESCRIPTION).
+This first token is then taken as the "game mode". The two tokens on the
+next line are the difficulty name and rating number.
+
+Then, until the "end" token, there are lines describing the steps. These
+may be either a command, or a set of buttons to press. The "base" is 'q',
+the quarter note, which represents one beat in the song.
+
+o   Whole note (4 on-beat arrows)
+h   1/2 note
+q   1/4 note
+e   1/8 note
+w   1/12 note
+s   1/16 note
+f   1/24 note
+t   1/32 note
+u   1/48 note
+x   1/64 note
+n   1/192 note
+
+After the note comes a string of buttons. All these strings should be
+the same length across game modes. Example strings might "1001" or "0030".
+
+0   No button at this time
+1   A regular press at this time
+3   This button must be pressed here and held down until a 1 is encounted
+5   A secret step at this time.
+7   A secret step and hold at this time.
+
+(Note - With bitwise &,
+ num & 1 => pressed here,
+ num & 2 => hold here,
+ num & 4 => this is a secret note.
+
+This correspondance is not necesarily guaranateed to be true for all
+future additions to the .dance format, but will be maintained if possible.)
+
+Possible commands are:
+
+B <Float>	  Change the BPM of the song to this number at this point.
+R		  "Ready? Go!" graphics/sound, if any.
+W <Float>	  Wait this many seconds before the next event.
+S <Float>	  Stop scrolling for this many seconds before the next event.
+D <Float>	  The same as a sequence of 0 note strings for this many beats.
+L <PosInt> <LongString>	   Display some lyrics at this point.
+
+Failing Gracefully
+------------------
+Often, your parsers may come across tokens they don't know; maybe because
+someone made an invalid file, or because the parser doesn't support all
+of this format (or an old version of this format). If this is a section
+token, this isn't a big problem; jump to the next end token and keep
+going. Metadata tokens are equally easy to skip.
+
+Tokens in steps are more complicated. In general, you should treat
+them as comments, treat unknown note types as 0s, and hope for the
+best.
+
+Bad files shouldn't make your parser crash. It should return an error to
+the program, which behaves accordingly.
+
+Future Extensions
+-----------------
+If this format is found to be inadaquate, the following extensions
+may be added:
+
+New metadata keys. This would be a new line in the metadata section.
+It is unlikely such a line would be mandatory, since current songs
+work fine without them.
+
+New note types and commands. These would be new lowercase or uppercase
+single characters in the song section.
+
+Standard Game Modes
+-------------------
+SINGLE - Normal single player with up, down, left, and right, or versus
+         mode, if no VERSUS is found.
+VERSUS - Two players, both with the same steps.
+COUPLE - Two players with different steps.
+DOUBLE - Doubles, one player on both pads.
+
+5PANEL - Diagonal directions, and the center, for one player.
+5VERSUS, 5COUPLE, 5DOUBLE - Similar to the 4 panel relationships.
+
+6PANEL, 6VERSUS, 6DOUBLE, 6COUPLE: Up left, up right, up, down, left,
+                                   and right.
+8PANEL, etc: All directions except center.
+9PANEL, etc: All directions including center.
+3PANEL, etc: Up left, down, and up right.
+
+Changes:
+--------
+2004.03.01
+ - Version 1.2, released with pydance 1.0.
+ - Add 9 panel game mode.
+
+2004.01.16
+ - Include comments in the example.
+
+2003.12.23
+ - 3 panel modes.
+ - bpmdisplay metadata key.
+
+2003.12.22
+ - 'cdtitle' metadata line.
+
+2003.08.15
+ - Specify note types more exactly.
+ - Fix the broken DESCRIPTION in the example.
+ - Remove obsolete notes about the pydance implementation.
+ - Add more game modes to the list (especially of note is VERSUS).
+
+2003.07.30
+ - Fix example of 'gap' attribute (-300 instead of 300).
+ - Fix nonsensical hold arrow example.
+
+2003.06.29
+ - Fix a typo ("::" => "::=").
+
+2003.06.27
+ - Add EBNF for COUPLE-style modes (spaces in Buttons)
+
+2003.06.26
+ - Add a missing newline to LyricLine.
+ - Add (currently unexplained) BACKGROUNDS section.
+
+2003.06.03
+ - Version 1.1
+ - Add 192nd notes with 'n', 48th with 'u'.
+
+2003.06.01
+ - Version 1.0
+ - No more I command.
+
+2003.05.23:
+ - Started changes.
+ - v1.0 draft preparation.
+ - Need to explain the I command.

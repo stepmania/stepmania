@@ -46,6 +46,7 @@ public:
 	void SetNumSubdivisions( int iNumSubdivisions )			{ m_exprTransformFunction.SetNumSubdivisions( iNumSubdivisions ); }
 	float GetSecondsForCompleteScrollThrough() const;
 	float GetSecondsToDestination() const;
+	int GetNumItems() const						{ return m_iNumItems; }
 
 	//
 	// Commands
@@ -71,6 +72,7 @@ protected:
 	float	m_fQuantizePixels;
 
 	Quad	m_quadMask;
+	float	m_fMaskWidth, m_fMaskHeight;
 
 	LuaExpressionTransform m_exprTransformFunction;	// params: self,offset,itemIndex,numItems
 };

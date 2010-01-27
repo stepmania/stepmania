@@ -6,15 +6,15 @@
 #include "Song.h"
 #include "ActorUtil.h"
 
-/* If this actor is used anywhere other than SelectGroup, we
- * can add a setting that changes which metric group we pull
- * settings out of, so it can be configured separately. */
-static const ThemeMetric<int>			NUM_COLUMNS		("MusicList","NumColumns");
-static const ThemeMetric<int>			NUM_ROWS		("MusicList","NumRows");
-static const ThemeMetric<float>			START_X			("MusicList","StartX");
-static const ThemeMetric<float>			START_Y			("MusicList","StartY");
-static const ThemeMetric<float>			SPACING_X		("MusicList","SpacingX");
-static const ThemeMetric<float>			CROP_WIDTH		("MusicList","CropWidth");
+/* If this actor is used anywhere other than SelectGroup, we can add a setting
+ * that changes which metric group we pull settings out of, so it can be
+ * configured separately. */
+static const ThemeMetric<int>		NUM_COLUMNS	("MusicList","NumColumns");
+static const ThemeMetric<int>		NUM_ROWS	("MusicList","NumRows");
+static const ThemeMetric<float>	START_X		("MusicList","StartX");
+static const ThemeMetric<float>	START_Y		("MusicList","StartY");
+static const ThemeMetric<float>	SPACING_X	("MusicList","SpacingX");
+static const ThemeMetric<float>	CROP_WIDTH	("MusicList","CropWidth");
 
 MusicList::MusicList()
 {

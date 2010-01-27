@@ -63,9 +63,7 @@ public:
 			return PlayerNumberToString( m_pn );
 	}
 
-	//
 	// Lua
-	//
 	void PushSelf( lua_State *L );
 
 	PlayerNumber		m_pn;
@@ -97,7 +95,7 @@ public:
 
 	// used in PLAY_MODE_BATTLE
 	Inventory		*m_pInventory;
-	
+
 	StepsDisplay	*m_pStepsDisplay;
 
 	AutoActor		m_sprOniGameOver;
@@ -129,6 +127,8 @@ public:
 	LifeMeter *GetLifeMeter( PlayerNumber pn );
 	PlayerInfo *GetPlayerInfo( PlayerNumber pn );
 	PlayerInfo *GetDummyPlayerInfo( int iDummyIndex );
+	void Pause(bool bPause) { PauseGame(bPause); }
+	bool IsPaused() const { return m_bPaused; }
 
 protected:
 	virtual void UpdateStageStats( MultiPlayer mp ) {};	// overridden for multiplayer
@@ -152,12 +152,9 @@ protected:
 	ThemeMetric<bool> GIVING_UP_GOES_TO_PREV_SCREEN;
 	ThemeMetric<int> FAIL_ON_MISS_COMBO;
 	ThemeMetric<bool> ALLOW_CENTER_1_PLAYER;
-
-
 	ThemeMetric<bool> USE_ALTERNATIVE_INPUT;
 
 	vector<AlternateMapping> m_vAlterMap;
-
 
 	bool IsLastSong();
 	void SetupSong( int iSongIndex );

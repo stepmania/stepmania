@@ -73,11 +73,19 @@ void GhostArrowRow::Update( float fDeltaTime )
 				m_Ghost[i]->PlayCommand( "HoldingOff" );
 			else if( m_bLastHoldShowing[i] == TapNote::hold_head_roll )
 				m_Ghost[i]->PlayCommand( "RollOff" );
+			/*
+			else if( m_bLastHoldShowing[i] == TapNote::hold_head_mine )
+				m_Ghost[i]->PlayCommand( "MinefieldOff" );
+			*/
 
 			if( m_bHoldShowing[i] == TapNote::hold_head_hold )
 				m_Ghost[i]->PlayCommand( "HoldingOn" );
 			else if( m_bHoldShowing[i] == TapNote::hold_head_roll )
 				m_Ghost[i]->PlayCommand( "RollOn" );
+			/*
+			else if( m_bHoldShowing[i] == TapNote::hold_head_mine )
+				m_Ghost[i]->PlayCommand( "MinefieldOn" );
+			*/
 			m_bLastHoldShowing[i] = m_bHoldShowing[i];
 		}
 		m_bHoldShowing[i] = TapNote::SubType_Invalid;

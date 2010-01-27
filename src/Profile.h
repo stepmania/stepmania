@@ -20,18 +20,14 @@ class XNode;
 struct lua_State;
 class Character;
 
-//
 // Current file versions
-//
 extern const RString STATS_XML;
-
-extern const RString EDITABLE_INI;
 
 // Editable data is an INI because the default INI file association on Windows 
 // systems will open the ini file in an editor.  The default association for 
 // XML will open in IE.  Users have a much better chance of discovering how to 
 // edit this data if they don't have to fight against the file associations.
-extern const RString DONT_SHARE_SIG;
+extern const RString EDITABLE_INI;
 
 // The "don't share" file is something that the user should always keep private.
 // They can safely share STATS_XML with STATS_XML's signature so that others
@@ -40,13 +36,16 @@ extern const RString DONT_SHARE_SIG;
 // share" file.  DontShare contains a piece of information that we can 
 // construct using STATS_XML but the user can't construct using STATS_XML.
 // The file contains a signature of the STATS_XML's signature.
+extern const RString DONT_SHARE_SIG;
+
 extern const RString PUBLIC_KEY_FILE;
 extern const RString SCREENSHOTS_SUBDIR;
 extern const RString EDIT_STEPS_SUBDIR;
 extern const RString EDIT_COURSES_SUBDIR;
 extern const RString LASTGOOD_SUBDIR;
+// extern const RString RIVAL_SUBDIR;
 
-const unsigned int PROFILE_MAX_DISPLAY_NAME_LENGTH	= 12;
+const unsigned int PROFILE_MAX_DISPLAY_NAME_LENGTH	= 32;
 
 
 class Style;
@@ -88,7 +87,7 @@ public:
 	bool IsCodeUnlocked( RString sUnlockEntryID ) const;
 	Song *GetMostPopularSong() const;
 	Course *GetMostPopularCourse() const;
-	
+
 	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, int iNumHands, float fCaloriesBurned );
 
 	bool IsMachine() const;
@@ -180,7 +179,7 @@ public:
 	{
 		HighScoreList hsl;
 	};
-	struct HighScoresForACourse	
+	struct HighScoresForACourse
 	{
 		std::map<TrailID,HighScoresForATrail>	m_TrailHighScores;
 		int GetNumTimesPlayed() const;
@@ -232,8 +231,38 @@ public:
 	};
 	map<DateTime,Calories> m_mapDayToCaloriesBurned;
 	float GetCaloriesBurnedForDay( DateTime day ) const;
-	
 
+/*
+	// RecentSongScores
+	struct HighScoreForASongAndSteps
+	{
+		StepsID stepsID;
+		SongID songID;
+		HighScore hs;
+
+		HighScoreForASongAndSteps() { Unset(); }
+		void Unset() { stepsID.Unset(); songID.Unset(); hs.Unset(); }
+
+		XNode* CreateNode() const;
+	};
+
+	void SaveStepsRecentScore( const Song* pSong, const Steps* pSteps, HighScore hs );
+
+	// RecentCourseScores
+	struct HighScoreForACourseAndTrail
+	{
+		CourseID courseID;
+		TrailID	trailID;
+		HighScore hs;
+
+		HighScoreForACourseAndTrail() { Unset(); }
+		void Unset() { courseID.Unset(); hs.Unset(); }
+
+		XNode* CreateNode() const;
+	};
+
+	void SaveCourseRecentScore( const Course* pCourse, const Trail* pTrail, HighScore hs );
+*/
 	//
 	// Init'ing
 	//
@@ -270,7 +299,7 @@ public:
 	void LoadCategoryScoresFromNode( const XNode* pNode );
 	void LoadScreenshotDataFromNode( const XNode* pNode );
 	void LoadCalorieDataFromNode( const XNode* pNode );
-	
+
 	void SaveEditableDataToDir( RString sDir ) const;
 	bool SaveStatsXmlToDir( RString sDir, bool bSignData ) const;
 	XNode* SaveStatsXmlCreateNode() const;
@@ -289,7 +318,6 @@ public:
 	static void MoveBackupToDir( RString sFromDir, RString sToDir );
 	static RString MakeUniqueFileNameNoExtension( RString sDir, RString sFileNameBeginning );
 	static RString MakeFileNameNoExtension( RString sFileNameBeginning, int iIndex );
-
 
 	// Lua
 	void PushSelf( lua_State *L );

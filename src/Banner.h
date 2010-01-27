@@ -20,6 +20,7 @@ public:
 	void Load( RageTextureID ID, bool bIsBanner );
 	virtual void Load( RageTextureID ID ) { Load( ID, true ); }
 	void LoadFromCachedBanner( const RString &sPath );
+	//void LoadFromCachedBackground( const RString &sPath );
 
 	virtual void Update( float fDeltaTime );
 
@@ -35,6 +36,7 @@ public:
 	void LoadRoulette();
 	void LoadRandom();
 	void LoadFallback();
+	void LoadFallbackBG();
 	void LoadCourseFallback();
 	void LoadFallbackCharacterIcon();
 

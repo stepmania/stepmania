@@ -7,6 +7,11 @@
 #include "RageTimer.h"
 #include "ThemeManager.h"
 
+/*
+ * todo: replace this entire thing with a set of AutoActors and a Scroller.
+ * In reality, everything except the Beginner/Training icon can be replicated
+ * in Lua (in stock StepMania 4), so I'm not sure if we even need this... -aj
+ */
 
 static ThemeMetric<bool>	SHOW_TRAINING	("WheelNotifyIcon","ShowTraining");
 
@@ -44,11 +49,12 @@ void WheelNotifyIcon::SetFlags( Flags flags )
 		m_vIconsToShow.push_back( training );
 
 
-	// HACK:  Make players best blink if it's the only icon
+	// HACK: Make players best blink if it's the only icon
+	// TODO: metric this. use m_bPlayersBestHack as variable name, lol -aj
 	if( m_vIconsToShow.size() == 1 )
 	{
 		if( m_vIconsToShow[0] >= best1  &&  m_vIconsToShow[0] <= best3 )
-			m_vIconsToShow.push_back( empty );		
+			m_vIconsToShow.push_back( empty );
 	}
 
 

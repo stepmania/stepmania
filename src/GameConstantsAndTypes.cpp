@@ -46,7 +46,6 @@ LuaXType( RadarCategory );
 RString StepsTypeToString( StepsType st )
 {
 	RString s = GAMEMAN->GetStepsTypeInfo( st ).szName; // "dance-single"
-	
 	/* foo-bar -> Foo_Bar */
 	s.Replace('-','_');
 
@@ -107,6 +106,7 @@ static const char *PlayerControllerNames[] = {
 	"Human",
 	"Autoplay",
 	"Cpu",
+	//"Replay",
 };
 XToString( PlayerController );
 StringToX( PlayerController );
@@ -154,6 +154,7 @@ static const char *SortOrderNames[] = {
 	"TopGrades",
 	"Artist",
 	"Genre",
+	"BeginnerMeter",
 	"EasyMeter",
 	"MediumMeter",
 	"HardMeter",
@@ -169,6 +170,7 @@ static const char *SortOrderNames[] = {
 	"Endless",
 	"Length",
 	"Roulette",
+	"Recent",
 };
 XToString( SortOrder );
 StringToX( SortOrder );
@@ -269,6 +271,21 @@ static const char *ScoreEventNames[] = {
 	"LetGo",
 };
 XToString( ScoreEvent );
+
+static const char *TapNoteScoreJudgeTypeNames[] = {
+	"MinimumScore",
+	"LastScore",
+};
+XToString( TapNoteScoreJudgeType );
+LuaXType( TapNoteScoreJudgeType );
+
+static const char *ProfileSlotNames[] = {
+	"Player1",
+	"Player2",
+	"Machine",
+};
+XToString( ProfileSlot );
+LuaXType( ProfileSlot );
 
 static const char *MemoryCardStateNames[] = {
 	"ready",
@@ -396,6 +413,14 @@ XToString( EditMode );
 StringToX( EditMode );
 LuaXType( EditMode );
 
+static const char *SampleMusicPreviewModeNames[] = {
+	"Normal",
+	"ScreenMusic",
+};
+XToString( SampleMusicPreviewMode );
+StringToX( SampleMusicPreviewMode );
+LuaXType( SampleMusicPreviewMode );
+
 static const char *StageNames[] = {
 	"1st",
 	"2nd",
@@ -446,6 +471,7 @@ XToString( CourseType );
 XToLocalizedString( CourseType );
 LuaXType( CourseType );
 LuaFunction( CourseTypeToLocalizedString, CourseTypeToLocalizedString( Enum::Check<CourseType>( L, 1 ) ) );
+
 
 
 /*

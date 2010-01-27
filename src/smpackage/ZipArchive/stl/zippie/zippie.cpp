@@ -1,6 +1,6 @@
 /*
  * $Archive: /zippie/zippie.cpp $
- * $Author$
+ * $Author: gmaynard $
  *
  * $History: zippie.cpp $
  * 

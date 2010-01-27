@@ -17,12 +17,22 @@ void ActorSound::Play()
 	m_Sound.PlayCopy();
 }
 
+void ActorSound::Pause( bool bPause )
+{
+	m_Sound.Pause(bPause);
+}
+
+void ActorSound::Stop()
+{
+	m_Sound.Stop();
+}
+
 void ActorSound::LoadFromNode( const XNode* pNode )
 {
 	RageSoundLoadParams params;
 	pNode->GetAttrValue("SupportPan", params.m_bSupportPan);
 	pNode->GetAttrValue("SupportRateChanging", params.m_bSupportRateChanging);
-	
+
 	bool bPrecache = true;
 	pNode->GetAttrValue( "Precache", bPrecache );
 
@@ -41,12 +51,16 @@ class LunaActorSound: public Luna<ActorSound>
 public:
 	static int load( T* p, lua_State *L )			{ p->Load(SArg(1)); return 0; }
 	static int play( T* p, lua_State *L )			{ p->Play(); return 0; }
+	static int pause( T* p, lua_State *L )			{ p->Pause(BArg(1)); return 0; }
+	static int stop( T* p, lua_State *L )			{ p->Stop(); return 0; }
 	static int get( T* p, lua_State *L )			{ p->PushSound( L ); return 1; }
 
 	LunaActorSound()
 	{
 		ADD_METHOD( load );
 		ADD_METHOD( play );
+		ADD_METHOD( pause );
+		ADD_METHOD( stop );
 		ADD_METHOD( get );
 	}
 };

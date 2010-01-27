@@ -60,9 +60,7 @@ public:
 	void Update( float fDelta );
 
 
-	//
 	// Main state info
-	//
 	void SetCurGame( const Game *pGame );	// Call this instead of m_pCurGame.Set to make sure PREFSMAN->m_sCurrentGame stays in sync
 	BroadcastOnChangePtr<const Game>	m_pCurGame;
 	BroadcastOnChangePtr<const Style>	m_pCurStyle;
@@ -81,6 +79,7 @@ public:
 	bool IsCourseDifficultyShown( CourseDifficulty cd );
 	Difficulty GetClosestShownDifficulty( PlayerNumber pn ) const;
 	Difficulty GetEasiestStepsDifficulty() const;
+	Difficulty GetHardestStepsDifficulty() const;
 	RageTimer			m_timeGameStarted;	// from the moment the first player pressed Start
 	LuaTable			*m_Environment;
 
@@ -156,16 +155,15 @@ public:
 	bool		m_bLoadingNextSong;
 	int		GetLoadingCourseSongIndex() const;
 
-	//
+
 	// State Info used during gameplay
-	//
 
 	// NULL on ScreenSelectMusic if the currently selected wheel item isn't a Song.
 	BroadcastOnChangePtr<Song>	m_pCurSong;
 	// The last Song that the user manually changed to.
 	Song*		m_pPreferredSong;
 	BroadcastOnChangePtr1D<Steps,NUM_PLAYERS> m_pCurSteps;
-	
+
 	// NULL on ScreenSelectMusic if the currently selected wheel item isn't a Course.
 	BroadcastOnChangePtr<Course>	m_pCurCourse;
 	// The last Course that the user manually changed to.
@@ -173,24 +171,27 @@ public:
 	BroadcastOnChangePtr1D<Trail,NUM_PLAYERS>	m_pCurTrail;
 
 	bool        m_bBackedOutOfFinalStage;
-	
-	//
-	// Music statistics:  Arcade: the current stage (one song).  Oni/Endles: a single song in a course
-	//
-	// Let a lot of classes access this info here so the don't have to keep their own copies.
-	//
+
+	// Music statistics:
+	// Arcade - the current stage (one song).
+	// Oni/Endless - a single song in a course.
+	// Let a lot of classes access this info here so they don't have to keep their own copies.
+	// todo: [NUM_PLAYERS] this for split bpm lolol -aj
 	float		m_fMusicSeconds;	// time into the current song, not scaled by music rate
 	float		m_fSongBeat;
 	float		m_fSongBeatNoOffset;
 	float		m_fCurBPS;
 	float		m_fLightSongBeat; // g_fLightsFalloffSeconds ahead
+	//bool		m_bStop;	// in the middle of a stop (freeze or delay)
 	bool		m_bFreeze;	// in the middle of a freeze
+	bool		m_bDelay;	// in the middle of a delay
 	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
 	float		m_fMusicSecondsVisible;
 	float		m_fSongBeatVisible;
 
+	// if re-adding noteskin changes in courses, add functions and shit here -aj
 	void GetAllUsedNoteSkins( vector<RString> &out ) const;
 
 	static const float MUSIC_SECONDS_INVALID;
@@ -202,16 +203,12 @@ public:
 	bool AllAreInDangerOrWorse() const;
 	bool OneIsHot() const;
 
-	//
 	// Haste
-	//
 	float			m_fHasteRate; // [-1,+1]; 0 = normal speed
 	float			m_fLastHasteUpdateMusicSeconds;
 	float			m_fAccumulatedHasteSeconds;
 
-	//
 	// Random Attacks & Attack Mines
-	//
 	vector<RString>		m_RandomAttacks;
 
 	// used in PLAY_MODE_BATTLE
@@ -223,17 +220,14 @@ public:
 	// used in workout
 	bool	m_bGoalComplete[NUM_PLAYERS];
 	bool	m_bWorkoutGoalComplete;
-	
+
 	void RemoveAllActiveAttacks();	// called on end of song
 	PlayerNumber GetBestPlayer() const;
 	StageResult GetStageResult( PlayerNumber pn ) const;
 
 	void ResetStageStatistics();	// Call this when it's time to play a new stage.
 
-	//
 	// Options stuff
-	//
-
 	ModsGroup<SongOptions>	m_SongOptions;
 
 	// True if the current mode has changed the default NoteSkin, such as Edit/Sync Songs does.
@@ -260,9 +254,7 @@ public:
 	bool HasEarnedExtraStage() const { return m_bEarnedExtraStage; }
 
 
-	//
 	// Ranking Stuff
-	//
 	struct RankingFeat
 	{
 		enum { SONG, COURSE, CATEGORY } Type;
@@ -283,44 +275,32 @@ public:
 	vector<RString*> m_vpsNamesThatWereFilled;	// filled on StoreRankingName, 
 
 
-	//
 	// Award stuff
-	//
 	// lowest priority in front, highest priority at the back.
 	deque<StageAward> m_vLastStageAwards[NUM_PLAYERS];
 	deque<PeakComboAward> m_vLastPeakComboAwards[NUM_PLAYERS];
 
 
-	//
 	// Attract stuff
-	//
 	int m_iNumTimesThroughAttract;	// negative means play regardless of m_iAttractSoundFrequency setting
 	bool IsTimeToPlayAttractSounds() const;
 	void VisitAttractScreen( const RString sScreenName );
 
-	//
 	// PlayerState
-	//
 	PlayerState* m_pPlayerState[NUM_PLAYERS];
 	PlayerState* m_pMultiPlayerState[NUM_MultiPlayer];
 
-	//
 	// Preferences
-	//
 	static Preference<bool> m_bAutoJoin;
 
-	//
 	// These options have weird interactions depending on m_bEventMode, 
-	// so wrap them
-	//
+	// so wrap them.
 	bool		m_bTemporaryEventMode;
 	bool		IsEventMode() const;
 	CoinMode	GetCoinMode() const;
 	Premium		GetPremium() const;
-	
-	//
+
 	// Edit stuff
-	//
 	BroadcastOnChange<StepsType> m_stEdit;
 	BroadcastOnChange<CourseDifficulty> m_cdEdit;
 	BroadcastOnChangePtr<Steps> m_pEditSourceSteps;
@@ -336,7 +316,7 @@ public:
 
 	// Lua
 	void PushSelf( lua_State *L );
-	
+
 	// Keep extra stage logic internal to GameState.
 private:
 	EarnedExtraStage	CalculateEarnedExtraStage() const;

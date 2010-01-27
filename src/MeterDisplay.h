@@ -1,3 +1,4 @@
+/* MeterDisplay - */
 #ifndef METER_DISPLAY_H
 #define METER_DISPLAY_H
 

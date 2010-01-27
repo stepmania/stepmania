@@ -46,6 +46,7 @@ enum InputDevice
 	DEVICE_PUMP1,
 	DEVICE_PUMP2,
 	DEVICE_MIDI,
+	//DEVICE_MOUSE,
 	NUM_InputDevice,		// leave this at the end
 	InputDevice_Invalid			// means this is NULL
 };
@@ -54,6 +55,7 @@ const RString& InputDeviceToString( InputDevice i );
 InputDevice StringToInputDevice( const RString& s );
 inline bool IsJoystick( InputDevice id ) { return DEVICE_JOY1 <= id && id < DEVICE_JOY1+NUM_JOYSTICKS; }
 inline bool IsPump( InputDevice id ) { return DEVICE_PUMP1 <= id && id < DEVICE_PUMP1+NUM_PUMPS; }
+//inline bool IsMouse( InputDevice id ) { return id == DEVICE_MOUSE; }
 
 
 struct InputDeviceInfo
@@ -290,6 +292,17 @@ enum DeviceButton
 	MIDI_FIRST = 600,
 	MIDI_LAST = 699,
 
+	/* Mouse: */
+	/*
+	MOUSE_LEFT = 700,
+	MOUSE_RIGHT,
+	MOUSE_MIDDLE,
+	MOUSE_FORWARD, // for mice with forward and backwards buttons
+	MOUSE_BACK,
+	MOUSE_WHEELUP, // wheel mice
+	MOUSE_WHEELDOWN,
+	*/
+
 	NUM_DeviceButton,
 	DeviceButton_Invalid
 };
@@ -336,7 +349,7 @@ public:
 			return device < other.device;
 		return button < other.button;
 	}
-	
+
 	RString ToString() const;
 	bool FromString( const RString &s );
 

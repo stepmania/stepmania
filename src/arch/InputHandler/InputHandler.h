@@ -9,8 +9,8 @@
  * Note that, if the underlying device is capable of it, you're free to
  * start a blocking thread; just store inputs in your class and send them
  * off in a batch on the next Update.  This gets much more accurate timestamps;
- * we get events more quickly and timestamp them, instead of having a rough timing
- * granularity due to the framerate.
+ * we get events more quickly and timestamp them, instead of having a rough
+ * timing granularity due to the framerate.
  *
  * Send input events for a specific type of device.  Only one driver
  * for a given set of InputDevice types should be loaded for a given
@@ -34,7 +34,7 @@ public:
 	virtual void Update() { }
 	virtual bool DevicesChanged() { return false; }
 	virtual void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut ) = 0;
-	
+
 	// Override to return a pretty string that's specific to the controller type.
 	virtual RString GetDeviceSpecificInputString( const DeviceInput &di );
 	virtual RString GetLocalizedInputString( const DeviceInput &di );
@@ -49,8 +49,8 @@ public:
 	virtual void WindowReset() { }
 
 protected:
-	/* Convenience function: Call this to queue a received event.  This may be called
-	 * in a thread. 
+	/* Convenience function: Call this to queue a received event.
+	 * This may be called in a thread. 
 	 *
 	 * Important detail: If the timestamp, di.ts, is zero, then it is assumed that
 	 * this is not a threaded event handler.  In that case, input is being polled,
@@ -58,8 +58,8 @@ protected:
 	 * poll.  In this case, ButtonPressed will pretend the button was pressed at
 	 * the midpoint since the last update, which will smooth out the error.
 	 *
-	 * Note that timestamps are set to the current time by default, so for this to
-	 * happen, you need to explicitly call di.ts.SetZero(). 
+	 * Note that timestamps are set to the current time by default, so for this
+	 * to happen, you need to explicitly call di.ts.SetZero(). 
 	 *
 	 * If the timestamp is set, it'll be left alone. */
 	void ButtonPressed( DeviceInput di );

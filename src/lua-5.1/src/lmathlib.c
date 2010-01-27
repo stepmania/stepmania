@@ -1,5 +1,5 @@
 /*
-** $Id$
+** $Id: lmathlib.c 23036 2006-09-25 07:35:34Z gmaynard $
 ** Standard mathematical library
 ** See Copyright Notice in lua.h
 */

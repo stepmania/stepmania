@@ -50,11 +50,11 @@ void StreamDisplay::Load( const RString &_sMetricsGroup )
 
 			if( m_bUsingThreePart )
 			{
-				pSpr->Load( THEME->GetPathG( sMetricsGroup,ssprintf( "%s part%d", StreamTypeToString(st).c_str(),i ) ) );
+				pSpr->Load( THEME->GetPathG( sMetricsGroup, ssprintf("%s part%d",StreamTypeToString(st).c_str(),i) ) );
 				
 				if(pSpr->GetNumStates() > 1)
 				{
-					pSpr->SetAllStateDelays( THEME->GetMetricF( sMetricsGroup, ssprintf( "%spart%ddelay", StreamTypeToString(st).c_str(),i ) ) );
+					pSpr->SetAllStateDelays( THEME->GetMetricF( sMetricsGroup, ssprintf("%spart%ddelay",StreamTypeToString(st).c_str(),i) ) );
 				}
 			}
 			else
@@ -75,7 +75,7 @@ void StreamDisplay::Load( const RString &_sMetricsGroup )
 		{
 			m_fThreePartWidth = THEME->GetMetricF( sMetricsGroup, "ThreePartWidth" );
 			// first element positioned depending on metric width specified
-			m_vpSprPill[st][0]->AddX( -( m_fThreePartWidth/2 + m_vpSprPill[st][0]->GetZoomedWidth()/2 ) );			
+			m_vpSprPill[st][0]->AddX( -(m_fThreePartWidth/2 + m_vpSprPill[st][0]->GetZoomedWidth()/2) );			
 		}
 	}
 }
@@ -84,9 +84,7 @@ void StreamDisplay::Update( float fDeltaSecs )
 {
 	ActorFrame::Update( fDeltaSecs );
 
-
-
-	// HACK:  Tweaking these values is very difficulty.  Update the
+	// HACK:  Tweaking these values is very difficult.  Update the
 	// "physics" many times so that the spring motion appears faster
 	for( int i=0; i<10; i++ )
 	{
@@ -130,17 +128,17 @@ void StreamDisplay::Update( float fDeltaSecs )
 			Sprite *pSpr = m_vpSprPill[st][i];
 			float fPercentFilledThisPill = SCALE( m_fTrailingPercent, fPillWidthPercent*i, fPillWidthPercent*(i+1), 0.0f, 1.0f );
 			CLAMP( fPercentFilledThisPill, 0.0f, 1.0f );
-			
+
 			// XXX scale by current song speed
-		
+
 			if( !m_bUsingThreePart ) // usual lifebar
 			{
 				pSpr->SetCropRight( 1.0f - fPercentFilledThisPill );
-				pSpr->SetTexCoordVelocity( -1,0 );
+				pSpr->SetTexCoordVelocity( -1, 0 );
 			}
 			else // using the three-part method
 			{
-				
+
 				if( i==1 ) // middle pill
 				{
 					float fMiddleWidth = m_fThreePartWidth * m_fTrailingPercent;
@@ -149,7 +147,7 @@ void StreamDisplay::Update( float fDeltaSecs )
 					float fMiddleX = m_vpSprPill[st][0]->GetX() + ( fMiddleWidth/2 ) + ( m_vpSprPill[st][0]->GetZoomedWidth()/2 );
 					pSpr->SetX( fMiddleX );
 				}
-				else if(i!=0) // last pill
+				else if( i!=0 ) // last pill
 				{
 					float fEndX = m_vpSprPill[st][1]->GetX() + ( m_vpSprPill[st][1]->GetZoomedWidth()/2 ) + ( pSpr->GetZoomedWidth()/2 );
 					pSpr->SetX( fEndX );
@@ -177,7 +175,10 @@ void StreamDisplay::Update( float fDeltaSecs )
 
 void StreamDisplay::SetPercent( float fPercent )
 {
-	DEBUG_ASSERT( fPercent >= 0.0f && fPercent <= 1.0f );
+#ifdef DEBUG
+	float fLifeMultiplier = THEME->GetMetricF("LifeMeterBar","LifeMultiplier");
+#endif
+	DEBUG_ASSERT( fPercent >= 0.0f && fPercent <= 1.0f * fLifeMultiplier );
 	if( isnan(fPercent) )
 	{
 		DEBUG_ASSERT_M( 0, "fPercent is NaN" );

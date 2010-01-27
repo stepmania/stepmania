@@ -18,6 +18,7 @@
 #define WEBBG_WIDTH					THEME->GetMetricF(m_sName,"WebBGWidth")
 #define	NUM_PACKAGES_SHOW			THEME->GetMetricI(m_sName,"NumPackagesShow")
 #define NUM_LINKS_SHOW				THEME->GetMetricI(m_sName,"NumLinksShow")
+#define DEFAULT_URL					THEME->GetMetric(m_sName,"DefaultUrl")
 
 AutoScreenMessage( SM_BackFromURL )
 
@@ -26,7 +27,7 @@ REGISTER_SCREEN_CLASS( ScreenPackages );
 void ScreenPackages::Init()
 {
 	ScreenWithMenuElements::Init();
-	
+
 	m_iPackagesPos = 0;
 	m_iLinksPos = 0;
 	m_iDLorLST = 0;
@@ -40,15 +41,15 @@ void ScreenPackages::Init()
 	FOREACH_PlayerNumber( pn )
 		GAMESTATE->JoinPlayer( pn );
 
-	m_sprExistingBG.SetName( "PackagesBG" );
 	m_sprExistingBG.Load( THEME->GetPathG( m_sName, "PackagesBG" ) );
+	m_sprExistingBG->SetName( "PackagesBG" );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprExistingBG );
-	this->AddChild( &m_sprExistingBG );
+	this->AddChild( m_sprExistingBG );
 
-	m_sprWebBG.SetName( "WebBG" );
 	m_sprWebBG.Load( THEME->GetPathG( m_sName, "WebBG" ) );
+	m_sprWebBG->SetName( "WebBG" );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprWebBG );
-	this->AddChild( &m_sprWebBG );
+	this->AddChild( m_sprWebBG );
 
 	COMMAND( m_sprExistingBG, "Back" );
 	COMMAND( m_sprWebBG, "Away" );
@@ -69,6 +70,7 @@ void ScreenPackages::Init()
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textWeb );
 	this->AddChild( &m_textWeb);
 	m_Links.push_back( " " );
+	// TODO: make this a localized string -aj
 	m_LinkTitles.push_back( "--Visit URL--" );
 
 	m_textURL.LoadFromFont( THEME->GetPathF( m_sName,"default") );
@@ -77,7 +79,7 @@ void ScreenPackages::Init()
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textURL );
 	this->AddChild( &m_textURL );
 	UpdateLinksList();
-	
+
 	m_sprWebSel.SetName( "WebSel" );
 	m_sprWebSel.Load( THEME->GetPathG( m_sName, "WebSel" ) );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprWebSel );
@@ -101,12 +103,16 @@ void ScreenPackages::Init()
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textStatus );
 	this->AddChild( &m_textStatus );
 
+	// if the default url isn't empty, load it.
+	if( !DEFAULT_URL.empty() )
+		EnterURL( DEFAULT_URL );
+
 	UpdateProgress();
 
 	//Workaround:  For some reason, the first download sometimes
 	//corrupts; by opening and closing the rage file, this 
-	//problem does not occour.  Go figure?
-	
+	//problem does not occur.  Go figure?
+
 	//XXX:  This is a really dirty work around!
 	//Why does RageFile do this?
 
@@ -141,6 +147,7 @@ void ScreenPackages::Update( float fDeltaTime )
 	m_fLastUpdate += fDeltaTime;
 	if ( m_fLastUpdate >= 1.0 )
 	{
+		// TODO: Make this a themeable string -aj
 		if ( m_bIsDownloading && m_bGotHeader )
 			m_sStatus = ssprintf( "DL @ %d KB/s", int((m_iDownloaded-m_bytesLastUpdate)/1024) );
 
@@ -218,10 +225,12 @@ void ScreenPackages::MenuLeft( const InputEventPlus &input )
 		return;
 	if ( !m_bCanDL )
 		return;
-	
-	m_sprExistingBG.StopTweening( );
-	m_sprWebBG.StopTweening( );
-	
+
+	/*
+	m_sprExistingBG.StopTweening();
+	m_sprWebBG.StopTweening();
+	*/
+
 	if ( m_iDLorLST == 0 )
 	{
 		m_iDLorLST = 1;
@@ -243,7 +252,21 @@ void ScreenPackages::MenuRight( const InputEventPlus &input )
 		return;
 
 	/* Huh? */
-	MenuLeft( input );
+	//MenuLeft( input );
+
+	if ( m_iDLorLST == 1 )
+	{
+		m_iDLorLST = 0;
+		COMMAND( m_sprExistingBG, "Away" );
+		COMMAND( m_sprWebBG, "Back" );
+	}
+	else 
+	{	
+		m_iDLorLST = 1;
+		COMMAND( m_sprExistingBG, "Back" );
+		COMMAND( m_sprWebBG, "Away" );
+	}
+
 	ScreenWithMenuElements::MenuRight( input );
 }
 
@@ -280,10 +303,10 @@ void ScreenPackages::RefreshPackages()
 {
 	GetDirListing( "Packages/*.zip", m_Packages, false, false );
 	GetDirListing( "Packages/*.smzip", m_Packages, false, false );
-	
+
 	if ( m_iPackagesPos < 0 )
 		m_iPackagesPos = 0;
-	
+
 	if( (unsigned) m_iPackagesPos >= m_Packages.size() )
 		m_iPackagesPos = m_Packages.size() - 1;
 
@@ -366,6 +389,7 @@ void ScreenPackages::HTMLParse()
 				k = j;
 
 			RString TempLink = StripOutContainers( m_sBUFFER.substr(m+1,k-m-1) );
+			// xxx: handle https? -aj
 			if ( TempLink.substr(0,7).compare("http://") != 0 )
 				TempLink = m_sBaseAddress + TempLink;
 

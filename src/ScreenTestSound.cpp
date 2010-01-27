@@ -38,6 +38,9 @@ void ScreenTestSound::Init()
 	s[3].txt.SetXY(450, 250);
 	s[4].txt.SetXY(150, 400);
 
+	// howl says that "oga" is preferred over "ogg" as the extension;
+	// i personally don't give a shit until I see what the vorbis group
+	// has to say about it.
 	s[0].s.Load("Themes/default/Sounds/_common menu music (loop).ogg");
 	s[1].s.Load("Themes/default/Sounds/ScreenTitleMenu change.ogg");
 	s[2].s.Load("Themes/default/Sounds/ScreenEvaluation try extra1.ogg");

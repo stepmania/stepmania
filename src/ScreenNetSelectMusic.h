@@ -59,27 +59,26 @@ protected:
 
 	void TweenOffScreen();
 private:
-	MusicWheel		m_MusicWheel;
+	MusicWheel m_MusicWheel;
 
-	Sprite			m_sprDiff;
-
+	// todo: replace difficulty icons with StepsDisplay out the ass
 	//Difficulty Icon(s)
-	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
-	Difficulty			m_DC[NUM_PLAYERS];
+	//DifficultyIcon m_DifficultyIcon[NUM_PLAYERS];
+	Difficulty m_DC[NUM_PLAYERS];
 
 	void UpdateDifficulties( PlayerNumber pn );
-	StepsDisplay		m_StepsDisplays[NUM_PLAYERS];
+	StepsDisplay m_StepsDisplays[NUM_PLAYERS];
 
 	RageSound m_soundChangeOpt;
 	RageSound m_soundChangeSel;
 
-	BPMDisplay			m_BPMDisplay;
-	ModIconRow		m_ModIconRow[NUM_PLAYERS];
+	BPMDisplay m_BPMDisplay;
+	ModIconRow m_ModIconRow[NUM_PLAYERS];
 
-	Song *				m_cSong;
+	Song * m_cSong;
 
-	bool				m_bInitialSelect;
-	bool				m_bAllowInput;
+	bool m_bInitialSelect;
+	bool m_bAllowInput;
 };
 
 #endif

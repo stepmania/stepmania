@@ -208,6 +208,10 @@ public:
 	static int GetIconPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetIconPath() ); return 1; }
 	static int GetSongSelectIconPath( T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongSelectIconPath() ); return 1; }
 	static int GetStageIconPath( T* p, lua_State *L )		{ lua_pushstring(L, p->GetStageIconPath() ); return 1; }
+	static int GetModelPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetModelPath() ); return 1; }
+	static int GetRestAnimationPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetRestAnimationPath() ); return 1; }
+	static int GetWarmUpAnimationPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetWarmUpAnimationPath() ); return 1; }
+	static int GetDanceAnimationPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetDanceAnimationPath() ); return 1; }
 
 	LunaCharacter()
 	{
@@ -215,6 +219,11 @@ public:
 		ADD_METHOD( GetIconPath );
 		ADD_METHOD( GetSongSelectIconPath );
 		ADD_METHOD( GetStageIconPath );
+		// sm-ssc adds:
+		ADD_METHOD( GetModelPath );
+		ADD_METHOD( GetRestAnimationPath );
+		ADD_METHOD( GetWarmUpAnimationPath );
+		ADD_METHOD( GetDanceAnimationPath );
 	}
 };
 

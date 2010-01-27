@@ -2,6 +2,8 @@
 <!-- 
 # This file is UTF-8; to be readable, edit it in an editor capable
 # of UTF-8, such as Notepad in Windows 2000 and later.
+# Also it's best to view this with a font that supports various UTF-8
+# characters, as opposed to monospaced fonts.
 #
 # Six keywords: TitleFrom, ArtistFrom, SubtitleFrom, TitleTo,
 # ArtistTo, SubtitleTo.
@@ -42,9 +44,7 @@
 		<!-- "Candy", "Candy heart", or "Candy $". -->
 		<Translation TitleFrom="Candy(( heart)?|\$)" ArtistFrom=".*(Riyu|りゆ).*" TitleTo="CANDY♡" />
 		<Translation TitleFrom="(Kakumei)|(\+\{)" TitleTo="革命" />
-		<!-- Matsuri Japan is often just "Japan".  There may be other songs by that name, too, so match the artist, too. -->
-		<Translation TitleFrom="Japan" ArtistFrom=".*(Re-Venge)|(RevenG).*" TitleTo="祭 JAPAN" />
-		<!-- Fix up hacked titles: -->
+		<!-- Fix up hacked titles from 3.0 spigumus hacks: -->
 		<Translation TitleFrom="} JAPAN" TitleTo="祭 JAPAN" />
 		<Translation TitleFrom="\+\{" TitleTo="革命" />
 		<Translation TitleFrom="Sweet Sweet (Love |\$ )?Magic" TitleTo="Sweet Sweet ♡ Magic" />
@@ -80,13 +80,13 @@
 		<Translation TitleFrom="Senorita\(Speedy Mix\)" TitleTo="SEÑORITA" SubtitleTo="Speedy Mix" DontTransliterate />
 		<Translation TitleFrom="Chotto Kiitena" TitleTo="ちょっときいてな" />
 		<Translation TitleFrom="The Strong Jaeger" TitleTo="合体せよ！ストロングイェーガー！！" />
-		<!-- Subtitles: -->
+	<!-- Subtitles: -->
 		<!-- (Title is Graduation.) -->
 		<Translation SubtitleFrom=".*(Each Tomorrow|sorezore no ashita).*" SubtitleTo="~それぞれの明日~" />
 		<!-- Some files are missing the space, so the subtitle isn't parsed. -->
 		<Translation TitleFrom="GRADUATION~(Each Tomorrow|sorezore no ashita)~" TitleTo="GRADUATION"
 			SubtitleTo="~それぞれの明日~" SubtitleTransTo="sorezore no ashita" DontTransliterate />
-		<!-- Artists: -->
+	<!-- Artists: -->
 		<Translation TitleFrom="Max 300" ArtistFrom="%" ArtistTo="Ω" />
 		<Translation ArtistFrom="Omega" ArtistTo="Ω" />
 		<!-- I've seen both "Kosaku" and "Kosaka"; Kosaka is correct, but handle both. -->
@@ -102,7 +102,7 @@
 		<Translation TitleFrom="(Kick the Can|One Two|Na-Na|Swing It)" ArtistFrom="BUS STOP" ArtistTo="BUS★STOP" />
 		<Translation ArtistFrom="dj TAKA feat. ?Noria" ArtistTo="dj TAKA feat. のりあ" />
 		<Translation ArtistFrom="(Miyuki Kunitake)|(Kunitake Miyuki)" ArtistTo="くにたけみゆき" />
-		<!-- TM: -->
+		<!-- Tournamix: -->
 		<Translation ArtistFrom="(Masahiro Andoh)|(Andoh Masahiro)" ArtistTo="安藤まさひろ" />
 		<Translation TitleFrom="Sakura Saku" TitleTo="桜咲く" />
 		<!-- Theme from Excel Saga: 愛(忠誠心) -->
@@ -110,16 +110,16 @@
 		<Translation ArtistFrom="(Toshio Masuda)|(Masuda Toshio)" ArtistTo="舛田利雄" />
 		<!-- Theme from Trigun -->
 		<Translation ArtistFrom="(Tsuneo Imahori)|(Imahori Tsuneo)" ArtistTo="今堀恒雄" />
-		<!-- TM2: -->
+		<!-- Tournamix 2: -->
 		<!-- http://www.web-konami.com/products/ps2/castlevania/ -->
 		<Translation ArtistFrom="(Michuri Yamane)|(Yamane Michuri)" ArtistTransTo="Michiru Yamane" ArtistTo="山根ミチル" />
-		<!-- TM3: -->
+		<!-- Tournamix 3: -->
 		<Translation TitleFrom="Tsugaru Kaikyou no Onna" TitleTo="津軽海峡の女" ArtistTo="ソニン" />
 		<Translation TitleFrom="Kaniyuuutsu" TitleTo="甘いユウウツ" />
 		<Translation TitleFrom="Negai" TitleTo="願い" />
 		<!-- http://www.avexnet.or.jp/avexdb/morinaga/ -->
 		<Translation ArtistFrom="(Hatsumi Morinaga)|(Morinaga Hatsumi)" ArtistTo="守永初美" />
-		<!-- TM4: -->
+		<!-- Tournamix 4: -->
 		<Translation TitleFrom="Akumajo Dracula MEDLEY" TitleTo="悪魔城ドラキュラMEDLEY" />
 		<Translation ArtistFrom="Kukeihakurabu" ArtistTo="矩形波倶楽部" />
 		<Translation ArtistFrom="Yuji Ueda & Yui Horie" ArtistTo="上田祐司＆堀江由衣" />
@@ -157,7 +157,7 @@
 		<Translation ArtistFrom="(Yuzo Koshiro)|(Koshiro Yuzo)" ArtistTo="古代祐三" />
 		<!-- VLAD -->
 		<Translation ArtistFrom="Jaurim" ArtistTo="자우림" />
-		<!-- TM4+: -->
+		<!-- Tournamix 4+: -->
 		<Translation ArtistFrom="Gwashi" ArtistTo="グワシ" />
 		<Translation TitleFrom="Kuru Kuru Mirakuru" TitleTo="くるくるミラクル" />
 		<Translation TitleFrom="Nuh" TitleTo="너" />
@@ -195,7 +195,7 @@
 		<Translation ArtistFrom="M-FLO loves Crystal Kay" ArtistTo="M-FLO l♡ves Crystal Kay" />
 		<Translation TitleFrom="Syunikiss" ArtistFrom="Malice Mizer" SubtitleTo="~二度目の哀悼~" />
 		<Translation TitleFrom="kono omoi o tsutaetai" ArtistFrom="sakura" TitleTo="この思いを伝えたい" ArtistTo="さくら" />
-		<!-- TM5: -->
+		<!-- Tournamix 5: -->
 		<Translation TitleFrom="OMEGA" ArtistFrom="MAX DRAGON" TitleTo="Ω" />
 		<Translation TitleFrom="Haruka Kanata" TitleTo="遥か彼方" />
 		<Translation TitleFrom="Honjitsu wa Seiten Nari" TitleTo="本日は晴天なり" />
@@ -240,7 +240,7 @@
 		<Translation ArtistFrom="KaW vs. Smiley vs. Inspector K" ArtistTo="KaW vs. ☺ vs. Inspector K" />
 		<!-- http://www.hicbc.com/tv/kirby/staff/ -->
 		<Translation ArtistFrom="Miyagawa Akira" ArtistTo="宮川彬良" />
-		<!-- OSC: -->
+		<!-- OSC (Original Step Contest; http://ddrosc.bemanistyle.com/osc3/): -->
 		<Translation TitleFrom="Love Hina" SubtitleFrom="- main theme" ArtistFrom="Hayashibra Megumi\(Haruka Urashima\)"
 			TitleTo="桜咲く" TitleTransTo="Sakura Saku" SubtitleTo="-erase-" SubtitleTransTo="-erase-" ArtistTo="林原めぐみ"
 			ArtistTransTo="Hayashibara Megumi (Haruka Urashima)" />
@@ -282,6 +282,7 @@
 		<Translation TitleFrom="Zonapara" TitleTo="ゾナパラ" />
 		<Translation SubtitleFrom=".*WHY! Parapara Remix.*" SubtitleTo="WHY! パラパラ・リミックス" />
 		<Translation ArtistFrom="Zobekka" ArtistTo="ゾベッカ" />
+		<!-- (not oha sta, hurr) -->
 		<Translation ArtistFrom="Omega Versus KTz" ArtistTo="Ω Versus KTz" />
 		<Translation ArtistFrom="DJ Demon Versus Omega" ArtistTo="DJ 鬼 Versus 鬼" />
 		<Translation ArtistFrom="NW 260, ZZ, and 290" ArtistTo="NW 260, &doublezeta;, and 290" />
@@ -348,6 +349,20 @@
 		<!-- In the Groove: -->
 		<Translation ArtistFrom="Smiley" ArtistTo="☺" />
 		<Translation ArtistFrom="KaW feat. Smiley" ArtistTo="KaW feat. ☺" />
+		<!-- Mungyodance -->
+		<Translation TitleFrom="Hardcore Disco (Kitsune\? Remix)" TitleTo="Hardcore Disco (Kitsune² Remix)" />
+		<Translation TitleFrom="Micro N\?" TitleTo="Micro N²" />
+		<Translation TitleFrom="Caramelldansen (Ryu\* Remix)" TitleTo="Caramelldansen (Ryu☆ Remix)" />
+		<Translation ArtistFrom="Kitsune\?" ArtistTo="Kitsune²" />
+		<Translation ArtistFrom="Bl\?mchen" ArtistTo="Blümchen" />
+		<Translation ArtistFrom="Kitsune\? and Emoticon" ArtistTo="Kitsune² and Emoticon" />
+		<Translation ArtistFrom="Emoticon & Kitsune\?" ArtistTo="Emoticon & Kitsune²" />
+		<Translation ArtistFrom="D-Mode-D feat. Kitsune\?" ArtistTo="D-Mode-D feat. Kitsune²" />
+		<Translation ArtistFrom="Kitsune\? and D-Mode-D" ArtistTo="Kitsune² and D-Mode-D" />
+		<Translation ArtistFrom="Hecate and Kitsune\?" ArtistTo="Hecate and Kitsune²" />
+		<Translation ArtistFrom="Renard vs Kitsune\?" ArtistTo="Renard vs Kitsune²" />
+		<Translation ArtistFrom="MGD-Crew feat. Kitsune\?" ArtistTo="MGD-Crew feat. Kitsune²" />
+		<Translation ArtistFrom="Sonitus Vir x Kitsune\?" ArtistTo="Sonitus Vir x Kitsune²" />
 		<!-- Misc: -->
 		<Translation TitleFrom="Pokemon" TitleTo="Pokémon" DontTransliterate />
 		<Translation ArtistFrom="Omega Versus KTz" ArtistTo="Ω Versus KTz" />
@@ -417,5 +432,8 @@
 		<Translation TitleFrom="((Dance Station 3DDX)|(DS3DDX))(.*)" TitleTo="3DDX\${4}" />
 		<Translation TitleFrom="((BeatMania)|(Beatmania)|(BEATMANIA)|(beatmania))(.*)" TitleTo="BM\${6}" />
 		<Translation TitleFrom="((In The Groove)|(In the Groove))(.*)" TitleTo="ITG\${4}" />
+		<!-- <Translation TitleFrom="((Mungyodance)|(Mungyodance))(.*)" TitleTo="MGD\${4}" /> -->
+		<!-- <Translation TitleFrom="((Flightmix)|(Flightmix))(.*)" TitleTo="FMX\${4}" /> -->
+		<!-- <Translation TitleFrom="((Kurimix)|(Kurimix))(.*)" TitleTo="KMX\${4}" /> -->
 	</Groups>
 </Translations>

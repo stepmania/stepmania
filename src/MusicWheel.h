@@ -58,7 +58,7 @@ protected:
 
 	vector<MusicWheelItemData *>		m_WheelItemDatas[NUM_SortOrder];
 	const MusicWheelItemData *GetCurWheelItemData( int i ) { return (const MusicWheelItemData *) m_CurWheelItemData[i]; }
-	
+
 	RString				m_sLastModeMenuItem;
 	SortOrder			m_SortOrder;
 	RageSound			m_soundChangeSort;

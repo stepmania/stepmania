@@ -1,0 +1,157 @@
+Documentation on the KSF Format
+-------------------------------
+The KSF format is designed for representing steps for 5 panel diagonal
+dancing games, such as Pump It Up. It was originally used in the Kick It Up
+simulator, but can also be parsed by other programs. However, this seems
+to be the only actual format description available.
+
+The intention of this document is not to encourage creation of KSF files.
+I believe the format to be broken, and provide this reference only for
+people wishing to implement legacy file readers. Any new 5 panel dancing
+patterns should use a well-defined format such as .dance or .sm.
+
+Directory Layout
+----------------
+KSF filenames are case-insensitive.
+
+A KSF directory contains the following files:
+
+- At least one file matching *.KSF, containing the step data.
+- A file named SONG.MP3, SONG.WAV, or SONG.OGG.
+- A file named INTRO.MP3, INTRO.WAV, or INTRO.OGG, containing a sound clip,
+  used to preview the song in song selectors.
+- Disc.bmp, a 300x200 image used in song selectors.
+- Back.bmp or Title.bmp, a 640x480 image used as a background during the song.
+
+KSF directories may not have a special naming format, but some simulators
+will use the directory name to get the artist and title name, if it's not
+available in the KSF files themseleves. The format is "Title",
+"Title - Artist", or "Title - Artist - Difficulty". Difficulty can be
+ignored here, as it can be gotten from the KSF filename. Using the path
+name to determine the metadata for the song should only be used if it's
+not available in #TITLE.
+
+Concievably other audio or image formats could be used. None have been
+seen in the wild.
+
+KSF Filenames
+-------------
+KSF filenames describe the game type and difficulty. Each file holds the
+data for only one level of difficulty. There are two possible forms of
+the name: *<gametype>*.ksf, or *<difficulty>_<playernumber>*.ksf.
+
+The first type is used for double mode, and half-double mode. Double.ksf
+contains the steps for "Double" mode, where one player uses both paths.
+Stepmania supports Halfdouble.ksf, which ignores the outer 4 panels.
+
+The latter type is used for single ("unison", which is not the same
+as Dance Dance Revolution's Unison mode in early mixes) steps, where both
+players have the same steps, and couple steps, where players have different
+ones. If the player number is 1, they are single steps; if it's 2, they're
+couple steps. Difficulty is a difficulty name.
+
+KSF Headers
+-----------
+The basic KSF format is similar to DWI, SM, and MSD. Metadata is given
+in the format of:
+#TAGNAME:VALUE;
+
+The exception being the #STEPS tag, which has a newline between the ":"
+and the first line of steps, and ends in "2222222222222" on a line by
+itself instead of ";".
+
+KSF files seem to use CRLF (Windows-style) line termination. The vast
+majority of KSF files are in CP942/KSC 5601 encoding, but some are
+in EUC-KR. If ASCII alternatives are needed for these encodings, the
+path name must be checked as above.
+
+Common headers in KSF files are as follows:
+
+#TITLE: The artist and title of the song, and sometimes the difficulty.
+These are separated by " - "s, so the format is either "Title",
+"Artist - Title", or "Artist - Title - Difficulty". Information missing
+from this line can be filled in via path or file names.
+
+#BPM: The BPM of the song. This is analogous to the BPM value for every other
+dance format.
+
+#STARTTIME: The time into the song to offset events, in centiseconds. This
+is the opposite of .dance's gap and .sm's offset, and the same as .dwi's
+gap (although they use different units).
+
+#TICKCOUNT: Each step line specifies 1/TICKCOUNT beats. That is, if
+TICKCOUNT is 1, each line is the equivalent of a 'q' in .dance. If it's
+2, each line is the same as a normal length note in DWI (an 'e' in .dance).
+
+#STEP: Until a line of "2222222222222" is encountered, each line after this
+one represents a set of steps.
+
+Step Lines
+----------
+Each line in the step section represents one "line" of steps, like SM
+or .dance. Each line is 13 digits long; in single (unison) modes, only the
+first 5 are used; in couple and double, the first 10 are used.
+
+The order of the steps is Down Left, Up Left, Center, Up Right, Down Right.
+The second player's (or second pad in double) steps are the same order,
+but in positions 6-10 instead of 1-5.
+
+A 0 in a position indicates no step. A 1 indicates a regular step. A 4
+indicates a hold, for as long as a 4 is found in that column. The hold
+ends on the beat of the last 4, not on the first 0.
+
+Some files have been seen with repeated '1's in this manner as well;
+it is unknown if any dance simulator supports this use of KSF, and since
+a perfectly good non-ambiguous means of representing holds is available,
+its use is not recommended.
+
+A 2 (or a line of 13 2s) indicates the end of the step pattern.
+
+BPM Changes
+-----------
+BPM changes are handled by header values; they are specified by a pair
+of values #BPMx and #BUNKIx, where x is an integer. An example is:
+
+#BPM:146.10;
+#BPM2:180.20;
+#BPM3:195.00;
+#TICKCOUNT:2;
+#STARTTIME:0;
+#BUNKI:4200;
+#BUNKI2:10000;
+
+BPMn+1 starts at the time specified in centiseconds by BUNKIn (where n
+is omitted if it is 1). In the above, 42 seconds (4200 centiseconds)
+into the song, the BPM changes from its initial 146.1 to 180.2, and
+then 100 seconds into the song, from 180.2 to 195.
+
+BUNKIs can be a decimal value.
+
+Syntax Exceptions
+-----------------
+Unlike DWI files, KSF files seem to have few exceptions or violations of
+their syntax in the files seen in the wild. This may be because the format
+is so mind-numbingly stupid.
+
+Still Unknown
+-------------
+Some files contain a #STARTTIMEx (like #BPMx or #BUNKIx).
+
+KSF step lines are 13 digits wide; only 10 digits appear to specify steps,
+but the last 3 are not always 0. They probably represent something.
+
+Author
+------
+This document was written by Joe Wreschnig <piman@debian.org>. It is
+released into the public domain.
+
+Changes
+-------
+2003.08.15
+ - Initial check in / release.
+
+Acknowledgements
+----------------
+This document is based primarily off of extensive work done by Matt Reppert.
+The Stepmania KSF loader source code (src/NotesLoaderKSF.cpp) also proved
+useful in verifying some information.

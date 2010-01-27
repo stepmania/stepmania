@@ -18,8 +18,8 @@ local t = Def.ActorFrame {
 		W1Command=NOTESKIN:GetMetricA("GhostArrowDim", "W1Command");
 		HeldCommand=NOTESKIN:GetMetricA("GhostArrowDim", "HeldCommand");
 		JudgmentCommand=cmd(finishtweening);
-		BrightCommand=cmd(hidden,1);
-		DimCommand=cmd(hidden,0);
+		BrightCommand=cmd(visible,false);
+		DimCommand=cmd(visible,true);
 	};
 	NOTESKIN:LoadActor( Var "Button", "Tap Explosion Bright" ) .. {
 		InitCommand=cmd(diffusealpha,0);
@@ -30,8 +30,8 @@ local t = Def.ActorFrame {
 		W1Command=NOTESKIN:GetMetricA("GhostArrowBright", "W1Command");
 		HeldCommand=NOTESKIN:GetMetricA("GhostArrowBright", "HeldCommand");
 		JudgmentCommand=cmd(finishtweening);
-		BrightCommand=cmd(hidden,0);
-		DimCommand=cmd(hidden,1);
+		BrightCommand=cmd(visible,true);
+		DimCommand=cmd(visible,false);
 	};
 	NOTESKIN:LoadActor( Var "Button", "HitMine Explosion" ) .. {
 		InitCommand=cmd(blend,"BlendMode_Add";diffusealpha,0);

@@ -1,0 +1,36 @@
+Mission Mode Specifications/Draft
+
+-- #TITLE:; self explanitory
+#TITLE:;
+-- #METER:; defines the meter that shows up in StepsDisplay's.
+#METER:;
+-- #BANNER:; is a great thing to add because it makes sense in the long run.
+#BANNER:;
+-- #STYLE:; restricts playmodes ala Pump Pro.
+#STYLE:;
+-- #MISSIONREF:; is a complete LuaReference that has a params table passed 
+-- into the function, and is required to pass either:
+--	A: A true / false parameter for MISSION CLEARED / FAILED
+--	B: A seperate grade tier for missions, complimenting the default grade
+	   score.
+--	C: A replacement grade tier for missions, requesting an enum for 
+	   the grade to be set.
+#MISSIONREF:;
+
+#SONG:;
+
+--[[ Example ]]
+#TITLE:Test Mission;
+#METER:9;
+#BANNER:TestMission.png;
+#STYLE:Single,Versus;
+#MISSIONREF:function(self,params)
+	local tPlayerStats = params.PlayerStageStats;
+	
+	if tPlayerStats.GetTapNoteScores('TapNoteScore_W2') > 0 then
+		return 'Grade_Failed'
+	else 
+		return 'Grade_Tier01'
+	end
+end;
+#SONG:In The Groove 2/Determinator:Medium:2x,Hidden;

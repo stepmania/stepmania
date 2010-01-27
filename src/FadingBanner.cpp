@@ -2,6 +2,7 @@
 #include "FadingBanner.h"
 #include "RageTextureManager.h"
 #include "BannerCache.h"
+#include "BackgroundCache.h"
 #include "Song.h"
 #include "RageLog.h"
 #include "Course.h"
@@ -166,6 +167,62 @@ bool FadingBanner::LoadFromCachedBanner( const RString &path )
 	return bLowRes;
 }
 
+/* If this returns true, a low-resolution background was loaded, and the full-res
+ * background should be loaded later. */
+/*
+bool FadingBanner::LoadFromCachedBackground( const RString &path )
+{
+	// If we're already on the given background, don't fade again.
+	if( path != "" && m_Banner[m_iIndexLatest].GetTexturePath() == path )
+		return false;
+
+	if( path == "" )
+	{
+		// xxx: should load fallback background
+		LoadFallback();
+		return false;
+	}
+
+	// If we're currently fading to the given banner, go through this again,
+	// which will cause the fade-in to be further delayed.
+
+	RageTextureID ID;
+	bool bLowRes = (PREFSMAN->m_BackgroundCache != BGCACHE_FULL);
+	if( !bLowRes )
+	{
+		ID = Sprite::SongBGTexture( path );
+	}
+	else
+	{
+		// Try to load the low quality version.
+		ID = BACKGROUNDCACHE->LoadCachedBackground( path );
+	}
+
+	if( !TEXTUREMAN->IsTextureRegistered(ID) )
+	{
+		/* Oops.  We couldn't load a background quickly. We can load the actual
+		 * background, but that's slow, so we don't want to do that when we're moving
+		 * fast on the music wheel.  In that case, we should just keep the background
+		 * that's there (or load a "moving fast" background).  Once we settle down,
+		 * we'll get called again and load the real background. */
+/*
+		if( m_bMovingFast )
+			return false;
+
+		if( IsAFile(path) )
+			Load( path );
+		else
+			LoadFallback();
+
+		return false;
+	}
+
+	Load( ID );
+
+	return bLowRes;
+}
+*/
+
 void FadingBanner::LoadFromSong( const Song* pSong )
 {
 	if( pSong == NULL )
@@ -287,12 +344,14 @@ public:
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
 		return 0;
 	}
+	static int LoadFromSongGroup( T* p, lua_State *L )	{ p->LoadFromSongGroup( SArg(1) ); return 0; }
 
 	LunaFadingBanner()
 	{
 		ADD_METHOD( scaletoclipped );
 		ADD_METHOD( ScaleToClipped );
 		ADD_METHOD( LoadFromSong );
+		ADD_METHOD( LoadFromSongGroup );
 		ADD_METHOD( LoadFromCourse );
 		ADD_METHOD( LoadIconFromCharacter );
 		ADD_METHOD( LoadCardFromCharacter );

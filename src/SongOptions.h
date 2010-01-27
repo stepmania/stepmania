@@ -37,6 +37,7 @@ public:
 	bool m_bStaticBackground;
 	bool m_bRandomBGOnly;
 	bool m_bSaveScore;
+	bool m_bSaveReplay;
 	enum SoundEffectType {
 		SOUNDEFFECT_OFF,
 		SOUNDEFFECT_SPEED,

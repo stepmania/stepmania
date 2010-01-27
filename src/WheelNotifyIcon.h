@@ -1,4 +1,4 @@
-/* WheelNotifyIcon - A little graphic to the left of the song's text banner in the MusicWheel. */
+/* WheelNotifyIcon - A little graphic to the side of the song's text banner in the MusicWheel. */
 
 #ifndef WHEEL_NOTIFY_ICON_H
 #define WHEEL_NOTIFY_ICON_H

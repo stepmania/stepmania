@@ -8,9 +8,9 @@
 #include "ActorUtil.h"
 #include "LuaBinding.h"
 
-/* Tricky: We need ActorFrames created in XML to auto delete their children.
+/* Tricky: We need ActorFrames created in Lua to auto delete their children.
  * We don't want classes that derive from ActorFrame to auto delete their 
- * children.  The name "ActorFrame" is widely used in XML, so we'll have
+ * children.  The name "ActorFrame" is widely used in Lua, so we'll have
  * that string instead create an ActorFrameAutoDeleteChildren object.
  */
 //REGISTER_ACTOR_CLASS( ActorScroller )
@@ -36,6 +36,8 @@ ActorScroller::ActorScroller()
 
 	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );	// don't change color values
 	m_quadMask.SetUseZBuffer( true );	// we want to write to the Zbuffer
+	m_fMaskWidth = 0;
+	m_fMaskHeight = 0;
 	DisableMask();
 }
 
@@ -84,7 +86,9 @@ void ActorScroller::EnableMask( float fWidth, float fHeight )
 {
 	m_quadMask.SetVisible( fWidth != 0 && fHeight != 0 );
 	m_quadMask.SetWidth( fWidth );
+	m_fMaskWidth = fWidth;
 	m_quadMask.SetHeight( fHeight );
+	m_fMaskHeight = fHeight;
 }
 
 void ActorScroller::DisableMask()
@@ -146,8 +150,13 @@ void ActorScroller::LoadFromNode( const XNode *pNode )
 
 	bool bUseMask = false;
 	pNode->GetAttrValue( "UseMask", bUseMask );
+	
 	if( bUseMask )
-		EnableMask( 10, 10 ); // XXX
+	{
+		pNode->GetAttrValue( "MaskWidth", m_fMaskWidth );
+		pNode->GetAttrValue( "MaskHeight", m_fMaskHeight );
+		EnableMask( m_fMaskWidth, m_fMaskHeight );
+	}
 
 	pNode->GetAttrValue( "QuantizePixels", m_fQuantizePixels );
 }
@@ -317,16 +326,22 @@ public:
 	static int SetTransformFromWidth( T* p, lua_State *L )		{ p->SetTransformFromWidth(FArg(1)); return 0; }
 	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
 	static int SetDestinationItem( T* p, lua_State *L )		{ p->SetDestinationItem( FArg(1) ); return 0; }
-	static int getsecondtodestination( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetSecondsToDestination() ); return 1; }
-	static int setsecondsperitem( T* p, lua_State *L )		{ p->SetSecondsPerItem(FArg(1)); return 0; }
+	static int GetSecondsToDestination( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetSecondsToDestination() ); return 1; }
+	static int SetSecondsPerItem( T* p, lua_State *L )		{ p->SetSecondsPerItem(FArg(1)); return 0; }
 	static int SetSecondsPauseBetweenItems( T* p, lua_State *L )	{ p->SetSecondsPauseBetweenItems(FArg(1)); return 0; }
 	static int SetPauseCountdownSeconds( T* p, lua_State *L )	{ p->SetPauseCountdownSeconds(FArg(1)); return 0; }
-	static int setnumsubdivisions( T* p, lua_State *L )		{ p->SetNumSubdivisions(IArg(1)); return 0; }
-	static int scrollthroughallitems( T* p, lua_State *L )		{ p->ScrollThroughAllItems(); return 0; }
-	static int scrollwithpadding( T* p, lua_State *L )		{ p->ScrollWithPadding(FArg(1),FArg(2)); return 0; }
-	static int setfastcatchup( T* p, lua_State *L )			{ p->SetFastCatchup(BArg(1)); return 0; }
+	static int SetNumSubdivisions( T* p, lua_State *L )		{ p->SetNumSubdivisions(IArg(1)); return 0; }
+	static int ScrollThroughAllItems( T* p, lua_State *L )		{ p->ScrollThroughAllItems(); return 0; }
+	static int ScrollWithPadding( T* p, lua_State *L )		{ p->ScrollWithPadding(FArg(1),FArg(2)); return 0; }
+	static int SetFastCatchup( T* p, lua_State *L )			{ p->SetFastCatchup(BArg(1)); return 0; }
 	static int SetLoop( T* p, lua_State *L )			{ p->SetLoop(BArg(1)); return 0; }
 	static int SetMask( T* p, lua_State *L )			{ p->EnableMask(FArg(1), FArg(2)); return 0; }
+	
+	static int SetNumItemsToDraw( T* p, lua_State *L )		{ p->SetNumItemsToDraw(FArg(1)); return 0; }
+	static int GetFullScrollLengthSeconds( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecondsForCompleteScrollThrough() ); return 1; }
+	static int GetCurrentItem( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetCurrentItem() ); return 1; }
+	static int GetDestinationItem( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetDestinationItem() ); return 1; }
+	static int GetNumItems( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumItems() ); return 1; }
 
 	LunaActorScroller()
 	{
@@ -336,16 +351,21 @@ public:
 		ADD_METHOD( SetTransformFromWidth );
 		ADD_METHOD( SetCurrentAndDestinationItem );
 		ADD_METHOD( SetDestinationItem );
-		ADD_METHOD( getsecondtodestination );
-		ADD_METHOD( setsecondsperitem );
+		ADD_METHOD( GetSecondsToDestination );
+		ADD_METHOD( SetSecondsPerItem );
 		ADD_METHOD( SetSecondsPauseBetweenItems );
 		ADD_METHOD( SetPauseCountdownSeconds );
-		ADD_METHOD( setnumsubdivisions );
-		ADD_METHOD( scrollthroughallitems );
-		ADD_METHOD( scrollwithpadding );
-		ADD_METHOD( setfastcatchup );
+		ADD_METHOD( SetNumSubdivisions );
+		ADD_METHOD( ScrollThroughAllItems );
+		ADD_METHOD( ScrollWithPadding );
+		ADD_METHOD( SetFastCatchup );
 		ADD_METHOD( SetLoop );
 		ADD_METHOD( SetMask );
+		ADD_METHOD( SetNumItemsToDraw );
+		ADD_METHOD( GetFullScrollLengthSeconds );
+		ADD_METHOD( GetCurrentItem );
+		ADD_METHOD( GetDestinationItem );
+		ADD_METHOD( GetNumItems );
 	}
 };
 

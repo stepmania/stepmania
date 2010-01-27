@@ -3,6 +3,9 @@
  * don't want stuff in here to be wiped out by the next guy who works on something,
  * make a separate screen and add a hook into ScreenTest; this one's just a
  * scratchpad.
+ *
+ * AJ says: This is a great template for a Screen. You should probably use it
+ * if creating an entirely new screen.
  */
 
 #include "global.h"

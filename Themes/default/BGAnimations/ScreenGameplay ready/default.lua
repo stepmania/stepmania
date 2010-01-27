@@ -1,4 +1,4 @@
-local t = LoadActor( "ready" ) .. {
-	OnCommand = cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;diffusealpha,0;linear,0.5;diffusealpha,1;sleep,0.5;linear,0.5;diffusealpha,0);
-}
-return t
+return LoadActor("ready") .. {
+	InitCommand=cmd(Center);
+	OnCommand=cmd(zoom,1.3;diffusealpha,0;bounceend,0.25;zoom,1;diffusealpha,1;linear,0.15;glow,BoostColor(Color("Orange"),1.75);decelerate,0.3;glow,1,1,1,0;sleep,1-0.45;linear,0.25;diffusealpha,0;);
+};

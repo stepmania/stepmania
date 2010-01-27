@@ -37,11 +37,11 @@ EzSockets::EzSockets()
 {
 	MAXCON = 5;
 	memset (&addr,0,sizeof(addr)); //Clear the sockaddr_in structure
-	
+
 #if defined(_WINDOWS) || defined(_XBOX) // Windows REQUIRES WinSock Startup
 	WSAStartup( MAKEWORD(1,1), &wsda );
 #endif
-	
+
 	sock = INVALID_SOCKET;
 	blocking = true;
 	scks = new fd_set;
@@ -82,15 +82,13 @@ bool EzSockets::create(int Protocol)
 	case IPPROTO_UDP:
 		return create(IPPROTO_UDP, SOCK_DGRAM);
 	default:
-		//XBOX does not support the raw socket.
-		//So, since there's no need, we aren't
-		//going to allow it on XBOX
+		/* XBOX does not support raw sockets. So, since there's no need,
+		we aren't going to allow it on the XBOX. */
 #if defined(_XBOX)
 		return false;
 #else
 		return create(Protocol, SOCK_RAW);
 #endif
-			
 	}
 }
 
@@ -111,7 +109,7 @@ bool EzSockets::bind(unsigned short port)
 {
 	if(!check())
 		return false;
-	
+
 	addr.sin_family      = AF_INET;
 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	addr.sin_port        = htons(port);
@@ -124,7 +122,7 @@ bool EzSockets::listen()
 	lastCode = ::listen(sock, MAXCON);
 	if (lastCode == SOCKET_ERROR)
 		return false;
-	
+
 	state = skLISTENING;
 	return true;
 }
@@ -135,7 +133,6 @@ typedef int socklen_t;
 
 bool EzSockets::accept(EzSockets& socket)
 {
-
 	if (!blocking && !CanRead())
 		return false;
 
@@ -148,17 +145,17 @@ bool EzSockets::accept(EzSockets& socket)
 	#elif defined(HAVE_INET_NTOA)
 		address = inet_ntoa(addr.sin_addr);
 	#endif
-	
+
 	int length = sizeof(socket);
 	
 	socket.sock = ::accept(sock,(struct sockaddr*) &socket.addr, 
 						   (socklen_t*) &length);
-	
+
 	lastCode = socket.sock;
 
 	if ( socket.sock == SOCKET_ERROR )
 		return false;
-	
+
 	socket.state = skCONNECTED;
 	return true;
 }
@@ -168,7 +165,7 @@ void EzSockets::close()
 	state = skDISCONNECTED;
 	inBuffer = "";
 	outBuffer = "";
-	
+
 #if defined(WIN32) // The close socket command is different in Windows
 	::closesocket(sock);
 #else
@@ -186,7 +183,7 @@ bool EzSockets::connect(const std::string& host, unsigned short port)
 {
 	if(!check())
 		return false;
-	
+
 #if defined(_XBOX)
 	if(!isdigit(host[0])) // don't do a DNS lookup for an IP address
 	{
@@ -196,12 +193,12 @@ bool EzSockets::connect(const std::string& host, unsigned short port)
 		{
 			// Do something else while lookup is in progress
 		}
-		
+
 		if (pxndns->iStatus == 0)
 			memcpy(&addr.sin_addr, &pxndns->aina[0], sizeof(struct in_addr));
 		else
 			return false;
-		
+
 		XNetDnsRelease(pxndns);
 	}
 	else
@@ -215,10 +212,10 @@ bool EzSockets::connect(const std::string& host, unsigned short port)
 #endif 
 	addr.sin_family = AF_INET;
 	addr.sin_port   = htons(port);
-	
+
 	if(::connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
 		return false;
-	
+
 	state = skCONNECTED;
 	return true;
 }
@@ -227,7 +224,7 @@ bool EzSockets::CanRead()
 {
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock, scks);
-	
+
 	return select(sock+1,scks,NULL,NULL,times) > 0;
 }
 
@@ -235,13 +232,13 @@ bool EzSockets::IsError()
 {
 	if (state == skERROR)
 		return true;
-	
+
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock, scks);
-	
+
 	if (select(sock+1, NULL, NULL, scks, times) >=0 )
 		return false;
-	
+
 	state = skERROR;
 	return true;
 }
@@ -250,7 +247,7 @@ bool EzSockets::CanWrite()
 {
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock, scks);
-	
+
 	return select(sock+1, NULL, scks, NULL, times) > 0;
 }
 
@@ -258,11 +255,11 @@ void EzSockets::update()
 {
 	if (IsError()) //If socket is in error, don't bother.
 		return;
-	
+
 	while (CanRead() && !IsError()) //Check for Reading
 		if (pUpdateRead() < 1)
 			break;
-	
+
 	if (CanWrite() && (outBuffer.length()>0))
 		pUpdateWrite();
 }
@@ -316,12 +313,12 @@ int EzSockets::PeekData(char *data, unsigned int bytes)
 		while (CanRead() && !IsError())
 			if (pUpdateRead()<1)
 				break;
-	
+
 	int bytesRead = bytes;
 	if (inBuffer.length()<bytes)
 		bytesRead = inBuffer.length();
 	memcpy(data,inBuffer.c_str(), bytesRead);
-	
+
 	return bytesRead;
 }
 
@@ -339,10 +336,10 @@ void EzSockets::SendPack(const char *data, unsigned int bytes)
 int EzSockets::ReadPack(char *data, unsigned int max)
 {
 	int size = PeekPack(data, max);
-	
+
 	if (size != -1)
 		inBuffer = inBuffer.substr(size+4);
-	
+
 	return size;
 }
 
@@ -350,38 +347,38 @@ int EzSockets::PeekPack(char *data, unsigned int max)
 {
 	if (CanRead())
 		pUpdateRead();
-	
+
 	if (blocking)
 	{
 		while ((inBuffer.length()<4) && !IsError())
 			pUpdateRead();
-		
+
 		if (IsError())
 			return -1;
 	}
-	
+
 	if (inBuffer.length()<4)
 		return -1;
-	
+
 	unsigned int size;
 	PeekData((char*)&size, 4);
 	size = ntohl(size);
-	
+
 	if (blocking)
 		while (inBuffer.length()<(size+4) && !IsError())
 			pUpdateRead();
 	else
 		if (inBuffer.length()<(size+4) || inBuffer.length()<=4)
 			return -1;
-	
+
 	if (IsError())
 		return -1; 
-	//What if we get disconnected while waiting for data?
-	
+	// What if we get disconnected while waiting for data?
+
 	string tBuff(inBuffer.substr(4, size));
 	if (tBuff.length() > max)
 		tBuff.substr(0, max);
-	
+
 	memcpy (data, tBuff.c_str(),tBuff.length());
 	return size;
 }
@@ -418,7 +415,7 @@ int EzSockets::PeekStr(string& data, char delim)
 		}
 		data = inBuffer.substr(0, t);
 	}
-	
+
 	if(t >= 0)
 		data = inBuffer.substr(0, t);
 	return t;
@@ -452,7 +449,7 @@ int EzSockets::pUpdateRead()
 {
 	char tempData[1024];
 	int bytes = pReadData(tempData);
-	
+
 	if (bytes > 0)
 		inBuffer.append(tempData, bytes);
 	else if (bytes <= 0)
@@ -466,7 +463,7 @@ int EzSockets::pUpdateRead()
 int EzSockets::pUpdateWrite()
 {
 	int bytes = pWriteData(outBuffer.c_str(), outBuffer.length());
-	
+
 	if (bytes > 0)
 		outBuffer = outBuffer.substr(bytes);
 	else if (bytes < 0)
@@ -479,7 +476,7 @@ int EzSockets::pReadData(char* data)
 {
 	if(state == skCONNECTED || state == skLISTENING)
 		return recv(sock, data, 1024, 0);
-	
+
 	fromAddr_len = sizeof(sockaddr_in);
 	return recvfrom(sock, data, 1024, 0, (sockaddr*)&fromAddr,
 					(socklen_t*)&fromAddr_len);

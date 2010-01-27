@@ -1,0 +1,11 @@
+This folder contains information on various simfile formats that exist.
+
+BMS: Be-Music Script, typically used for beatmania files.
+DWI: Son of MSD, created for the Dance With Intensity simulator.
+KSF: Another son of MSD, created for the Kick it Up simulator, with extensions
+     added by Direct Move.
+SDF: .sm derivative used in Pocket DDR.
+
+misc.txt describes some formats that don't have directories.
+PMS: Like BMS but for pop'n music.
+Dance: pydance format; see dance-spec.txt for more information.

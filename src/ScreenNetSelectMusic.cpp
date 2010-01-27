@@ -34,6 +34,7 @@ AutoScreenMessage( SM_SongChanged )
 AutoScreenMessage( SM_UsersUpdate )
 AutoScreenMessage( SM_BackFromPlayerOptions )
 
+// todo: metric this?
 const RString AllGroups			= "[ALL MUSIC]";
 
 #define DIFFBG_WIDTH				THEME->GetMetricF(m_sName,"DiffBGWidth")
@@ -48,16 +49,9 @@ void ScreenNetSelectMusic::Init()
 
 	ScreenNetSelectBase::Init();
 
-	//Diff Icon background
-	m_sprDiff.Load( THEME->GetPathG( m_sName, "DiffBG" ) );
-	m_sprDiff.SetName( "DiffBG" );
-	m_sprDiff.SetWidth( DIFFBG_WIDTH );
-	m_sprDiff.SetHeight( DIFFBG_HEIGHT );
-	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprDiff );
-	this->AddChild( &m_sprDiff);
-
 	FOREACH_EnabledPlayer (p)
 	{
+		/*
 		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
 		m_DifficultyIcon[p].Load( THEME->GetPathG( "ScreenSelectMusic",
 												   ssprintf("difficulty icons 1x%d",
@@ -65,9 +59,10 @@ void ScreenNetSelectMusic::Init()
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_DifficultyIcon[p] );
 		this->AddChild( &m_DifficultyIcon[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
+		*/
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 
-		m_StepsDisplays[p].SetName( ssprintf("MeterP%d",p+1) );
+		m_StepsDisplays[p].SetName( ssprintf("StepsDisplayP%d",p+1) );
 		m_StepsDisplays[p].Load( "StepsDisplay", NULL );
 		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_StepsDisplays[p] );
 		this->AddChild( &m_StepsDisplays[p] );
@@ -80,13 +75,15 @@ void ScreenNetSelectMusic::Init()
 	ON_COMMAND( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
 	this->MoveToHead( &m_MusicWheel );
-	
+
+	// todo: lua me?
 	m_BPMDisplay.SetName( "BPMDisplay" );
 	m_BPMDisplay.LoadFromFont( THEME->GetPathF("BPMDisplay","bpm") );
 	m_BPMDisplay.Load();
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
 
+	// todo: lua me
 	FOREACH_EnabledPlayer( p )
 	{
 		m_ModIconRow[p].SetName( ssprintf("ModIconsP%d",p+1) );
@@ -108,7 +105,7 @@ void ScreenNetSelectMusic::Init()
 }
 
 void ScreenNetSelectMusic::Input( const InputEventPlus &input )
-{	
+{
 	if( !m_bAllowInput || IsTransitioning() )
 		return;
 
@@ -307,7 +304,6 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 
 done:
-
 	//Must be at end, as so it is last resort for SMOnline packets.
 	//If it doens't know what to do, then it'll just remove them.
 	ScreenNetSelectBase::HandleScreenMessage( SM );
@@ -316,7 +312,7 @@ done:
 void ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
-	
+
 	bool bLeftPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn );
 	bool bRightPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn );
 	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
@@ -330,7 +326,7 @@ void ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
 void ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
-	
+
 	bool bLeftPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn );
 	bool bRightPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn );
 	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
@@ -354,6 +350,7 @@ void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 	  player 2, allow them to use player 1's controls to change 
 	  their difficulty. */
 	/* Why?  Nothing else allows that. */
+	// I agree that's a fucking stupid idea -aj
 
 	PlayerNumber pn = input.pn;
 	if ( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) && 
@@ -448,12 +445,10 @@ void ScreenNetSelectMusic::TweenOffScreen()
 
 	OFF_COMMAND( m_BPMDisplay );
 
-	OFF_COMMAND( m_sprDiff );
-
 	FOREACH_EnabledPlayer (pn)
 	{
 		OFF_COMMAND( m_StepsDisplays[pn] );
-		OFF_COMMAND( m_DifficultyIcon[pn] );
+		//OFF_COMMAND( m_DifficultyIcon[pn] );
 		OFF_COMMAND( m_ModIconRow[pn] );
 	}
 
@@ -489,17 +484,20 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 	if ( GAMESTATE->m_pCurSong == NULL )
 	{
 		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid ); 
-		m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
+		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
 		return;
 	}
+
 	if ( m_DC[pn] < Difficulty_Edit && m_DC[pn] >= Difficulty_Beginner )
 	{
+		/*
 		m_DifficultyIcon[pn].SetPlayer( pn );
 		m_DifficultyIcon[pn].SetFromDifficulty( m_DC[pn] );
+		*/
 	}
 	else
 	{
-		m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
+		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
 	}
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
@@ -510,7 +508,7 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 	if ( ( m_DC[pn] < NUM_Difficulty ) && ( m_DC[pn] >= Difficulty_Beginner ) )
 		m_StepsDisplays[pn].SetFromSteps( pSteps );
 	else
-		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid ); 
+		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid );
 }
 
 void ScreenNetSelectMusic::MusicChanged()

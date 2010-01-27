@@ -85,7 +85,7 @@ sub CreateDirectories
 
 if ($#ARGV == -1)
 {
-	print "Install where?  (eg. /usr/games/stepmania)\n";
+	print "Install where?  (eg. /usr/games/sm-ssc)\n";
 	exit 1;
 }
 
@@ -118,7 +118,7 @@ if( !defined($bin_path) )
 
 print "Binary path: $bin_path\n";
 
-open(F, "stepmania.nsi") || die "Couldn't open stepmania.nsi: $!";
+open(F, "sm-ssc.nsi") || die "Couldn't open sm-ssc.nsi: $!";
 
 
 # Search for the default installation section.
@@ -136,7 +136,7 @@ while(!eof(F))
 
 }
 
-$FoundSection || die "stepmania.nsi parse error";
+$FoundSection || die "sm-ssc.nsi parse error";
 my $FoundEnd = 0;
 
 if( ! -d $instdir )
@@ -248,7 +248,7 @@ $FoundSection || print "warning: SectionEnd not found\n";
 
 close F;
 
-system("cp -vp \"" . $bin_path . "stepmania\" \"$instdir\"");
+system("cp -vp \"" . $bin_path . "sm-ssc\" \"$instdir\"");
 if( -e $bin_path . "GtkModule.so" )
 {
 	system("cp -vp \"" . $bin_path . "GtkModule.so\" \"$instdir\"");

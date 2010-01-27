@@ -54,7 +54,7 @@ public:
 	void SetMeter( int meter );
 	void SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] );
 	float PredictMeter() const;
-	
+
 	unsigned GetHash() const;
 	void GetNoteData( NoteData& noteDataOut ) const;
 	void SetNoteData( const NoteData& noteDataNew );
@@ -63,7 +63,7 @@ public:
 
 	void TidyUpData();
 	void CalculateRadarValues( float fMusicLengthSeconds );
-	
+
 	// Lua
 	void PushSelf( lua_State *L );
 

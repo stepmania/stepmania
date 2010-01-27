@@ -270,6 +270,7 @@ class LunaScreen: public Luna<Screen>
 {
 public:
 	static int GetNextScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetNextScreenName() ); return 1; }
+	static int GetPrevScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetPrevScreen() ); return 1; }
 	static int lockinput( T* p, lua_State *L ) { p->SetLockInputSecs(FArg(1)); return 0; }
 
 	static int PostScreenMessage( T* p, lua_State *L )
@@ -283,6 +284,7 @@ public:
 	LunaScreen()
 	{
 		ADD_METHOD( GetNextScreenName );
+		ADD_METHOD( GetPrevScreenName );
 		ADD_METHOD( PostScreenMessage );
 		ADD_METHOD( lockinput );
 	}

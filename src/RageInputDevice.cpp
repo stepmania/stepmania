@@ -24,79 +24,82 @@ static void InitNames()
 	if( !g_mapNamesToString.empty() )
 		return;
 
-	g_mapNamesToString[KEY_PERIOD] = "period"; 
-	g_mapNamesToString[KEY_COMMA] = "comma"; 
-	g_mapNamesToString[KEY_SPACE] = "space"; 
-	g_mapNamesToString[KEY_DEL] = "delete"; 
+	g_mapNamesToString[KEY_PERIOD] = "period";
+	g_mapNamesToString[KEY_COMMA] = "comma";
+	g_mapNamesToString[KEY_SPACE] = "space";
+	g_mapNamesToString[KEY_DEL] = "delete";
 
-	g_mapNamesToString[KEY_BACK] = "backspace"; 
-	g_mapNamesToString[KEY_TAB] = "tab"; 
-	g_mapNamesToString[KEY_ENTER] = "enter"; 
-	g_mapNamesToString[KEY_PAUSE] = "pause"; 
-	g_mapNamesToString[KEY_ESC] = "escape"; 
+	g_mapNamesToString[KEY_BACK] = "backspace";
+	g_mapNamesToString[KEY_TAB] = "tab";
+	g_mapNamesToString[KEY_ENTER] = "enter";
+	g_mapNamesToString[KEY_PAUSE] = "pause";
+	g_mapNamesToString[KEY_ESC] = "escape";
 
-	g_mapNamesToString[KEY_F1] = "F1"; 
-	g_mapNamesToString[KEY_F2] = "F2"; 
-	g_mapNamesToString[KEY_F3] = "F3"; 
-	g_mapNamesToString[KEY_F4] = "F4"; 
-	g_mapNamesToString[KEY_F5] = "F5"; 
-	g_mapNamesToString[KEY_F6] = "F6"; 
-	g_mapNamesToString[KEY_F7] = "F7"; 
-	g_mapNamesToString[KEY_F8] = "F8"; 
-	g_mapNamesToString[KEY_F9] = "F9"; 
-	g_mapNamesToString[KEY_F10] = "F10"; 
-	g_mapNamesToString[KEY_F11] = "F11"; 
-	g_mapNamesToString[KEY_F12] = "F12"; 
-	g_mapNamesToString[KEY_F13] = "F13"; 
-	g_mapNamesToString[KEY_F14] = "F14"; 
-	g_mapNamesToString[KEY_F15] = "F15"; 
-	g_mapNamesToString[KEY_F16] = "F16"; 
+	g_mapNamesToString[KEY_F1] = "F1";
+	g_mapNamesToString[KEY_F2] = "F2";
+	g_mapNamesToString[KEY_F3] = "F3";
+	g_mapNamesToString[KEY_F4] = "F4";
+	g_mapNamesToString[KEY_F5] = "F5";
+	g_mapNamesToString[KEY_F6] = "F6";
+	g_mapNamesToString[KEY_F7] = "F7";
+	g_mapNamesToString[KEY_F8] = "F8";
+	g_mapNamesToString[KEY_F9] = "F9";
+	g_mapNamesToString[KEY_F10] = "F10";
+	g_mapNamesToString[KEY_F11] = "F11";
+	g_mapNamesToString[KEY_F12] = "F12";
+	g_mapNamesToString[KEY_F13] = "F13";
+	g_mapNamesToString[KEY_F14] = "F14";
+	g_mapNamesToString[KEY_F15] = "F15";
+	g_mapNamesToString[KEY_F16] = "F16";
 
-	g_mapNamesToString[KEY_LCTRL] = "left ctrl"; 
-	g_mapNamesToString[KEY_RCTRL] = "right ctrl"; 
-	g_mapNamesToString[KEY_LSHIFT] = "left shift"; 
-	g_mapNamesToString[KEY_RSHIFT] = "right shift"; 
-	g_mapNamesToString[KEY_LALT] = "left alt"; 
-	g_mapNamesToString[KEY_RALT] = "right alt"; 
-	g_mapNamesToString[KEY_LMETA] = "left meta"; 
-	g_mapNamesToString[KEY_RMETA] = "right meta"; 
-	g_mapNamesToString[KEY_LSUPER] = "left wnd"; 
-	g_mapNamesToString[KEY_RSUPER] = "right wnd"; 
-	g_mapNamesToString[KEY_MENU] = "menu"; 
+	g_mapNamesToString[KEY_LCTRL] = "left ctrl";
+	g_mapNamesToString[KEY_RCTRL] = "right ctrl";
+	g_mapNamesToString[KEY_LSHIFT] = "left shift";
+	g_mapNamesToString[KEY_RSHIFT] = "right shift";
+	g_mapNamesToString[KEY_LALT] = "left alt";
+	g_mapNamesToString[KEY_RALT] = "right alt";
+	g_mapNamesToString[KEY_LMETA] = "left meta";
+	g_mapNamesToString[KEY_RMETA] = "right meta";
+	// Note: The super key means different things depending on the platform.
+	// On Windows, it's known as the Windows key. In other operating systems,
+	// it is the Super key. -aj
+	g_mapNamesToString[KEY_LSUPER] = "left super";
+	g_mapNamesToString[KEY_RSUPER] = "right super";
+	g_mapNamesToString[KEY_MENU] = "menu";
 
-	g_mapNamesToString[KEY_NUMLOCK] = "num lock"; 
-	g_mapNamesToString[KEY_SCRLLOCK] = "scroll lock"; 
-	g_mapNamesToString[KEY_CAPSLOCK] = "caps lock"; 
-	g_mapNamesToString[KEY_PRTSC] = "prtsc"; 
+	g_mapNamesToString[KEY_NUMLOCK] = "num lock";
+	g_mapNamesToString[KEY_SCRLLOCK] = "scroll lock";
+	g_mapNamesToString[KEY_CAPSLOCK] = "caps lock";
+	g_mapNamesToString[KEY_PRTSC] = "prtsc";
 
-	g_mapNamesToString[KEY_UP] = "up"; 
-	g_mapNamesToString[KEY_DOWN] = "down"; 
-	g_mapNamesToString[KEY_LEFT] = "left"; 
-	g_mapNamesToString[KEY_RIGHT] = "right"; 
+	g_mapNamesToString[KEY_UP] = "up";
+	g_mapNamesToString[KEY_DOWN] = "down";
+	g_mapNamesToString[KEY_LEFT] = "left";
+	g_mapNamesToString[KEY_RIGHT] = "right";
 
-	g_mapNamesToString[KEY_INSERT] = "insert"; 
-	g_mapNamesToString[KEY_HOME] = "home"; 
-	g_mapNamesToString[KEY_END] = "end"; 
-	g_mapNamesToString[KEY_PGUP] = "pgup"; 
-	g_mapNamesToString[KEY_PGDN] = "pgdn"; 
+	g_mapNamesToString[KEY_INSERT] = "insert";
+	g_mapNamesToString[KEY_HOME] = "home";
+	g_mapNamesToString[KEY_END] = "end";
+	g_mapNamesToString[KEY_PGUP] = "pgup";
+	g_mapNamesToString[KEY_PGDN] = "pgdn";
 
-	g_mapNamesToString[KEY_KP_C0] = "KP 0"; 
-	g_mapNamesToString[KEY_KP_C1] = "KP 1"; 
-	g_mapNamesToString[KEY_KP_C2] = "KP 2"; 
-	g_mapNamesToString[KEY_KP_C3] = "KP 3"; 
-	g_mapNamesToString[KEY_KP_C4] = "KP 4"; 
-	g_mapNamesToString[KEY_KP_C5] = "KP 5"; 
-	g_mapNamesToString[KEY_KP_C6] = "KP 6"; 
-	g_mapNamesToString[KEY_KP_C7] = "KP 7"; 
-	g_mapNamesToString[KEY_KP_C8] = "KP 8"; 
-	g_mapNamesToString[KEY_KP_C9] = "KP 9"; 
-	g_mapNamesToString[KEY_KP_SLASH] = "KP /"; 
-	g_mapNamesToString[KEY_KP_ASTERISK] = "KP *"; 
-	g_mapNamesToString[KEY_KP_HYPHEN] = "KP -"; 
-	g_mapNamesToString[KEY_KP_PLUS] = "KP +"; 
-	g_mapNamesToString[KEY_KP_PERIOD] = "KP ."; 
-	g_mapNamesToString[KEY_KP_EQUAL] = "KP ="; 
-	g_mapNamesToString[KEY_KP_ENTER] = "KP enter"; 
+	g_mapNamesToString[KEY_KP_C0] = "KP 0";
+	g_mapNamesToString[KEY_KP_C1] = "KP 1";
+	g_mapNamesToString[KEY_KP_C2] = "KP 2";
+	g_mapNamesToString[KEY_KP_C3] = "KP 3";
+	g_mapNamesToString[KEY_KP_C4] = "KP 4";
+	g_mapNamesToString[KEY_KP_C5] = "KP 5";
+	g_mapNamesToString[KEY_KP_C6] = "KP 6";
+	g_mapNamesToString[KEY_KP_C7] = "KP 7";
+	g_mapNamesToString[KEY_KP_C8] = "KP 8";
+	g_mapNamesToString[KEY_KP_C9] = "KP 9";
+	g_mapNamesToString[KEY_KP_SLASH] = "KP /";
+	g_mapNamesToString[KEY_KP_ASTERISK] = "KP *";
+	g_mapNamesToString[KEY_KP_HYPHEN] = "KP -";
+	g_mapNamesToString[KEY_KP_PLUS] = "KP +";
+	g_mapNamesToString[KEY_KP_PERIOD] = "KP .";
+	g_mapNamesToString[KEY_KP_EQUAL] = "KP =";
+	g_mapNamesToString[KEY_KP_ENTER] = "KP enter";
 
 	g_mapNamesToString[JOY_LEFT] = "Left1";
 	g_mapNamesToString[JOY_RIGHT] = "Right1";
@@ -108,7 +111,6 @@ static void InitNames()
 	g_mapNamesToString[JOY_RIGHT_2] = "Right2";
 	g_mapNamesToString[JOY_UP_2] = "Up2";
 	g_mapNamesToString[JOY_DOWN_2] = "Down2";
-
 
 	g_mapNamesToString[JOY_Z_UP] = "Z-Up";
 	g_mapNamesToString[JOY_Z_DOWN] = "Z-Down";
@@ -126,12 +128,23 @@ static void InitNames()
 	g_mapNamesToString[JOY_AUX_2] = "Aux2";
 	g_mapNamesToString[JOY_AUX_3] = "Aux3";
 	g_mapNamesToString[JOY_AUX_4] = "Aux4";
+
+	/*
+	g_mapNamesToString[MOUSE_LEFT] = "left mouse button";
+	g_mapNamesToString[MOUSE_RIGHT] = "right mouse button";
+	g_mapNamesToString[MOUSE_MIDDLE] = "middle mouse button";
+	g_mapNamesToString[MOUSE_FORWARD] = "forward mouse button";
+	g_mapNamesToString[MOUSE_BACK] = "back mouse button";
+	g_mapNamesToString[MOUSE_WHEELUP] = "mousewheel up";
+	g_mapNamesToString[MOUSE_WHEELDOWN] = "mousewheel down";
+	*/
+
 	FOREACHM( DeviceButton, RString, g_mapNamesToString, m )
 		g_mapStringToNames[m->second] = m->first;
 }
 
-/* Return a reversible representation of a DeviceButton.  This is not affected by InputDrivers,
- * localization or the keyboard language. */
+/* Return a reversible representation of a DeviceButton.  This is not affected
+ * by InputDrivers, localization or the keyboard language. */
 RString DeviceButtonToString( DeviceButton key )
 {
 	InitNames();
@@ -219,12 +232,13 @@ static const char *InputDeviceNames[] = {
 	"Pump1",
 	"Pump2",
 	"Midi",
+	//"Mouse",
 };
 XToString( InputDevice );
 StringToX( InputDevice );
 
-/* Return a reversible representation of a DeviceInput.  This is not affected by InputDrivers,
- * localization or the keyboard language. */
+/* Return a reversible representation of a DeviceInput.  This is not affected by
+ * InputDrivers, localization or the keyboard language. */
 RString DeviceInput::ToString() const
 {
 	if( device == InputDevice_Invalid )

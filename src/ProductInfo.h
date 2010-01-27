@@ -6,14 +6,24 @@
 // Don't forget to also change ProductInfo.inc!
 
 // A friendly string to refer to the product in crash dialogs, etc - i.e. "StepMania" not "StepMania4"
-#define PRODUCT_FAMILY_BARE StepMania
+#define PRODUCT_FAMILY_BARE sm-ssc
 
 // A unique name for each application that you might want installed side-by-side with other applications - i.e. "StepMania4" not "StepMania" (would conflict with StepMania 3.x)
-#define PRODUCT_ID_BARE StepMania 4
+#define PRODUCT_ID_BARE sm-ssc
 
-// Version info displayed to the user
+/* Version info displayed to the user.
+ * These are the 'official' version designations:
+ * 
+ * "experimental: pre-release versions
+ * "private beta v0.0": hmm, think about it for a second there.
+ * ==Public versions==
+ * "v0.0 alpha #": Alpha versions (bug squashing, polishing until we reach beta)
+ * "v0.0 beta #": Beta versions (bug squashing, _focus_ is on high priority bugs)
+ * "v0.0 rc#": Release Candidates (if there are no problems, move on to final)
+ * "v0.0": Final Releases
+*/
 #ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE alpha 5
+#define PRODUCT_VER_BARE private beta 1.4
 #endif
 
 // A unique ID for a build of an application.  This is used in crash reports and in the network code's version handling 
@@ -30,7 +40,7 @@
 #define PRODUCT_ID_VER		PRODUCT_XSTRINGIFY(PRODUCT_ID_VER_BARE)
 
 #define VIDEO_TROUBLESHOOTING_URL "http://www.stepmania.com/stepmania/mediawiki.php?title=Video_Driver_Troubleshooting"
-#define REPORT_BUG_URL "http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366"
+#define REPORT_BUG_URL "http://ssc.ajworld.net/sm-ssc/bugtracker/"
 
 #define CAN_INSTALL_PACKAGES true
 

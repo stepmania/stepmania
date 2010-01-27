@@ -16,7 +16,7 @@ SnapDisplay::SnapDisplay()
 	}
 
 	m_NoteType = NOTE_TYPE_4TH;
-	
+
 	m_iNumCols = 0;
 }
 

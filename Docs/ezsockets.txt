@@ -1,0 +1,132 @@
+HOW 2 UZE EZSOKETS BY FWEEM INC
+
+Hey there. ezsockets is the socket library used in StepMania. If you are going to
+develop any extended network functionality, it would be good to know about
+ezsockets. This is by no means an exhaustive guide, as it just covers what's
+contained in the header, as well as what that code does.
+
+Section 1: low level commands===================================================
+These are typically used for connecting to the server, according to a cursory
+glance at ScreenPackages code.
+
+=="Crating" a socket== (lol typos in the comments)
+There are three functions here, each with different arguments (yay overloading).
+All of them return a bool.
+
+bool create(int Protocol, int Type);
+This shows what's needed to make a socket. Consult the internet for complete
+documentation as to possible values, but here are some ones to know:
+
+[Protocol]
+TCP = IPPROTO_TCP
+UDP = IPPROTO_UDP
+Raw sockets = IPPROTO_RAW (though "Protocol" is used in the code. Raw sockets
+are not supported on Xbox)
+
+bool create();
+Creates a socket using (IPPROTO_TCP, SOCK_STREAM) as the parameters.
+
+bool create(int Protocol);
+This picks the right Type for you based on what Protocol you choose.
+TCP uses SOCK_STREAM, UDP uses SOCK_DGRAM for the Type value.
+
+==Binding Sockets to a Local Port==
+bool bind(unsigned short port);
+
+==Listening==
+bool listen()
+
+==Accepting==
+bool accept(EzSockets &socket);
+If it's not blocking and you can't read it, this will return false.
+Other than that... ??
+
+==Connecting to Server==
+bool connect(const string& host, unsigned short port);
+Connects to the server at host using port.
+
+==Closing/Killing Sockets==
+void close();
+Sets the state to disconnected, sets the buffers to empty strings,
+then closes the socket.
+
+==Checking Socket Status==
+bool check();
+"see if socket has been created". It checks (sock != INVALID_SOCKET) on the
+Xbox and (sock > SOCKET_NONE) on every other platform.
+
+bool CanRead();
+Returns true if you can read from the socket.
+
+bool DataAvailable() { return ( ( inBuffer.length()>0 ) || CanRead() ); }
+Yeah that's it in a nutshell. If the input buffer has data or you can read,
+there's data available.
+
+bool IsError();
+Returns true if there's an error.
+
+bool CanWrite();
+Returns true if you can write to the socket.
+
+==???==
+long uAddr();
+void update();
+
+Section 2: Higher Level Commands================================================
+These are higher level, since they assume you've already gotten the socket up
+and running (see check() in Section 1).
+
+//Raw data system 
+void SendData(const string& outData);
+void SendData(const char *data, unsigned int bytes);
+Send off some data that's either a string or a char buffer + num bytes.
+
+int ReadData(char *data, unsigned int bytes);
+Reads data, returns number of bytes read.
+
+int PeekData(char *data, unsigned int bytes);
+Peeks at the data, returns number of bytes read.
+
+//Packet system (for structures and classes)
+void SendPack(const char *data, unsigned int bytes);
+int ReadPack(char *data, unsigned int max);
+int PeekPack(char *data, unsigned int max);
+Similar to the raw data system above, but... you guessed it, for structures and classes.
+
+//String (Flash) system / Null-terminated strings
+void SendStr(const string& data, char delim = '\0');
+int ReadStr(string& data, char delim = '\0');
+int PeekStr(string& data, char delim = '\0');
+Similar to above, with null terminated strings.
+
+Section 3: putting it all together==============================================
+okay i didn't test this; this is based on ScreenPackages code (specifically
+ScreenPackages::EnterURL()), which assumes you have a private EzSockets object
+named m_wSocket.
+
+{
+	// defaults
+	RString sProto;
+	RString sServer;
+	int iPort=80;
+	RString sAddress;
+
+	m_wSocket.create(); // will create a TCP socket
+	m_wSocket.blocking = true; // you want to set this so that nothing else can use this socket and fuck things up
+	m_wSocket.connect( sServer, (short)iPort ); // connect uses an unsigned short, so a cast is needed. (int was used because of other code) check if this returns true/false, pls
+
+	// makin' headers (using SendData with raw data; http 1.0 in this case)
+	RString Header="";
+
+	Header = "GET "+sAddress+" HTTP/1.0\r\n";
+	Header+= "Host: " + Server + "\r\n";
+	Header+= "Connection: closed\r\n\r\n";
+
+	m_wSocket.SendData( Header.c_str(), Header.length() );
+
+	m_wSocket.blocking = false; // once you're done, you don't need to have the socket blocking anymore
+
+	// some other code can go here...
+
+	m_wSocket.close(); // and if you're done, you can close the socket.
+}

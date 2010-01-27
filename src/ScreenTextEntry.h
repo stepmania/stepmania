@@ -32,7 +32,7 @@ public:
 		int iMaxInputLength, 
 		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = NULL, 
 		void(*OnOK)(const RString &sAnswer) = NULL, 
-		void(*OnCanel)() = NULL,
+		void(*OnCancel)() = NULL,
 		bool bPassword = false,
 		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = NULL,
 		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = NULL
@@ -44,7 +44,7 @@ public:
 		int iMaxInputLength, 
 		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = NULL, 
 		void(*OnOK)(const RString &sAnswer) = NULL, 
-		void(*OnCanel)() = NULL,
+		void(*OnCancel)() = NULL,
 		bool bPassword = false,
 		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = NULL,
 		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = NULL
@@ -53,11 +53,11 @@ public:
 		ScreenMessage smSendOnPop, 
 		const RString &sQuestion, 
 		void(*OnOK)(const RString &sPassword) = NULL, 
-		void(*OnCanel)() = NULL )
+		void(*OnCancel)() = NULL )
 	{
-		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCanel, true );
+		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCancel, true );
 	}
-	
+
 	static bool FloatValidate( const RString &sAnswer, RString &sErrorOut );
 
 	virtual void Init();
@@ -86,10 +86,10 @@ private:
 
 	BitmapText		m_textQuestion;
 	BitmapText		m_textAnswer;
-	
+
 	RageSound		m_sndType;
 	RageSound		m_sndBackspace;
-	
+
 	RageTimer		m_timerToggleCursor;
 };
 
@@ -106,7 +106,7 @@ protected:
 	void PositionCursor();
 
 	virtual void TextEnteredDirectly();
-	
+
 	virtual void MenuLeft( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MoveX(-1); }
 	virtual void MenuRight( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MoveX(+1); }
 	virtual void MenuUp( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MoveY(-1); }
@@ -116,7 +116,7 @@ protected:
 
 	int			m_iFocusX;
 	KeyboardRow		m_iFocusY;
-	
+
 	AutoActor		m_sprCursor;
 	BitmapText		*m_ptextKeys[NUM_KeyboardRow][KEYS_PER_ROW];
 

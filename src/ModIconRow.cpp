@@ -70,6 +70,7 @@ struct OptionColumnEntry
 	int iSlotIndex;
 };
 
+// todo: metric these? -aj
 static const OptionColumnEntry g_OptionColumnEntries[] =
 {
 	{"Boost",		0},
@@ -77,30 +78,36 @@ static const OptionColumnEntry g_OptionColumnEntries[] =
 	{"Wave",		0},
 	{"Expand",		0},
 	{"Boomerang",		0},
+	//--------------------//
 	{"Drunk",		1},
 	{"Dizzy",		1},
 	{"Mini",		1},
 	{"Flip",		1},
 	{"Tornado",		1},
+	//--------------------//
 	{"Hidden",		2},
 	{"Sudden",		2},
 	{"Stealth",		2},
 	{"Blink",		2},
 	{"RandomVanish", 	2},
+	//--------------------//
 	{"Mirror",		3},
 	{"Left",		3},
 	{"Right",		3},
 	{"Shuffle",		3},
 	{"SuperShuffle",	3},
+	//--------------------//
 	{"Little",		4},
 	{"NoHolds",		4},
 	{"Dark",		4},
 	{"Blind",		4},
+	//--------------------//
 	{"Reverse",		5},
 	{"Split",		5},
 	{"Alternate",		5},
 	{"Cross",		5},
 	{"Centered",		5},
+	//--------------------//
 	{"Incoming",		6},
 	{"Space",		6},
 	{"Hallway",		6},
@@ -136,7 +143,7 @@ void ModIconRow::SetFromGameState()
 
 	vector<RString> vsText;	// fill these with what will be displayed on the tabs
 	vsText.resize( m_vpModIcon.size() );
-	
+
 	// for each option, look for the best column to place it in
 	for( unsigned i=0; i<vsOptions.size(); i++ )
 	{

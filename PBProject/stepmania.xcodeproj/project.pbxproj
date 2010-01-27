@@ -157,13 +157,11 @@
 		AA29CD860558741A00961A51 /* HelpDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9404770E7C005F316C /* HelpDisplay.cpp */; };
 		AA29CD890558741A00961A51 /* MenuTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9A04770E7C005F316C /* MenuTimer.cpp */; };
 		AA29CD8A0558741A00961A51 /* MeterDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */; };
-		AA29CD8B0558741A00961A51 /* MusicBannerWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9E04770E7C005F316C /* MusicBannerWheel.cpp */; };
 		AA29CD8C0558741A00961A51 /* MusicList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA004770E7C005F316C /* MusicList.cpp */; };
 		AA29CD8E0558741A00961A51 /* MusicWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA404770E7C005F316C /* MusicWheel.cpp */; };
 		AA29CD8F0558741A00961A51 /* MusicWheelItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */; };
 		AA29CD920558741A00961A51 /* OptionsCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAC04770E7C005F316C /* OptionsCursor.cpp */; };
 		AA29CD930558741A00961A51 /* ScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAE04770E7C005F316C /* ScrollBar.cpp */; };
-		AA29CD940558741A00961A51 /* ScrollingList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEB004770E7C005F316C /* ScrollingList.cpp */; };
 		AA29CD950558741A00961A51 /* SnapDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEB204770E7C005F316C /* SnapDisplay.cpp */; };
 		AA29CD960558741A00961A51 /* TextBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEB404770E7C005F316C /* TextBanner.cpp */; };
 		AA29CD970558741A00961A51 /* WheelNotifyIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEB604770E7C005F316C /* WheelNotifyIcon.cpp */; };
@@ -211,7 +209,6 @@
 		AA29CDD30558741A00961A51 /* ScreenSandbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0057047711F3005F316C /* ScreenSandbox.cpp */; };
 		AA29CDD40558741A00961A51 /* ScreenSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0059047711F3005F316C /* ScreenSelect.cpp */; };
 		AA29CDD50558741A00961A51 /* ScreenSelectCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E005B047711F3005F316C /* ScreenSelectCharacter.cpp */; };
-		AA29CDDA0558741A00961A51 /* ScreenSelectMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0067047711F3005F316C /* ScreenSelectMode.cpp */; };
 		AA29CDDB0558741A00961A51 /* ScreenSelectMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0069047711F3005F316C /* ScreenSelectMusic.cpp */; };
 		AA29CDDD0558741A00961A51 /* ScreenSongOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E006F047711F3005F316C /* ScreenSongOptions.cpp */; };
 		AA29CDE10558741A00961A51 /* ScreenTestFonts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0079047711F3005F316C /* ScreenTestFonts.cpp */; };
@@ -376,13 +373,11 @@
 		AA40D1FC09A08D650068C0D5 /* HelpDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9504770E7C005F316C /* HelpDisplay.h */; };
 		AA40D1FD09A08D650068C0D5 /* MenuTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9B04770E7C005F316C /* MenuTimer.h */; };
 		AA40D1FE09A08D650068C0D5 /* MeterDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9D04770E7C005F316C /* MeterDisplay.h */; };
-		AA40D1FF09A08D650068C0D5 /* MusicBannerWheel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9F04770E7C005F316C /* MusicBannerWheel.h */; };
 		AA40D20009A08D650068C0D5 /* MusicList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA104770E7C005F316C /* MusicList.h */; };
 		AA40D20209A08D650068C0D5 /* MusicWheel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA504770E7C005F316C /* MusicWheel.h */; };
 		AA40D20309A08D650068C0D5 /* MusicWheelItem.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA704770E7C005F316C /* MusicWheelItem.h */; };
 		AA40D20609A08D650068C0D5 /* OptionsCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEAD04770E7C005F316C /* OptionsCursor.h */; };
 		AA40D20709A08D650068C0D5 /* ScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEAF04770E7C005F316C /* ScrollBar.h */; };
-		AA40D20809A08D650068C0D5 /* ScrollingList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEB104770E7C005F316C /* ScrollingList.h */; };
 		AA40D20909A08D650068C0D5 /* SnapDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEB304770E7C005F316C /* SnapDisplay.h */; };
 		AA40D20A09A08D650068C0D5 /* TextBanner.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEB504770E7C005F316C /* TextBanner.h */; };
 		AA40D20B09A08D650068C0D5 /* WheelNotifyIcon.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEB704770E7C005F316C /* WheelNotifyIcon.h */; };
@@ -435,7 +430,6 @@
 		AA40D24009A08D650068C0D5 /* ScreenSandbox.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0058047711F3005F316C /* ScreenSandbox.h */; };
 		AA40D24109A08D650068C0D5 /* ScreenSelect.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E005A047711F3005F316C /* ScreenSelect.h */; };
 		AA40D24209A08D650068C0D5 /* ScreenSelectCharacter.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E005C047711F3005F316C /* ScreenSelectCharacter.h */; };
-		AA40D24509A08D650068C0D5 /* ScreenSelectMode.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0068047711F3005F316C /* ScreenSelectMode.h */; };
 		AA40D24609A08D650068C0D5 /* ScreenSelectMusic.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E006A047711F3005F316C /* ScreenSelectMusic.h */; };
 		AA40D24809A08D650068C0D5 /* ScreenSongOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0070047711F3005F316C /* ScreenSongOptions.h */; };
 		AA40D24A09A08D650068C0D5 /* ScreenTestFonts.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E007A047711F3005F316C /* ScreenTestFonts.h */; };
@@ -717,13 +711,11 @@
 		AA40D3BE09A08D650068C0D5 /* HelpDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9404770E7C005F316C /* HelpDisplay.cpp */; };
 		AA40D3BF09A08D650068C0D5 /* MenuTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9A04770E7C005F316C /* MenuTimer.cpp */; };
 		AA40D3C009A08D650068C0D5 /* MeterDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */; };
-		AA40D3C109A08D650068C0D5 /* MusicBannerWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9E04770E7C005F316C /* MusicBannerWheel.cpp */; };
 		AA40D3C209A08D650068C0D5 /* MusicList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA004770E7C005F316C /* MusicList.cpp */; };
 		AA40D3C409A08D650068C0D5 /* MusicWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA404770E7C005F316C /* MusicWheel.cpp */; };
 		AA40D3C509A08D650068C0D5 /* MusicWheelItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */; };
 		AA40D3C809A08D650068C0D5 /* OptionsCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAC04770E7C005F316C /* OptionsCursor.cpp */; };
 		AA40D3C909A08D650068C0D5 /* ScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAE04770E7C005F316C /* ScrollBar.cpp */; };
-		AA40D3CA09A08D650068C0D5 /* ScrollingList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEB004770E7C005F316C /* ScrollingList.cpp */; };
 		AA40D3CB09A08D650068C0D5 /* SnapDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEB204770E7C005F316C /* SnapDisplay.cpp */; };
 		AA40D3CC09A08D650068C0D5 /* TextBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEB404770E7C005F316C /* TextBanner.cpp */; };
 		AA40D3CD09A08D650068C0D5 /* WheelNotifyIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEB604770E7C005F316C /* WheelNotifyIcon.cpp */; };
@@ -771,7 +763,6 @@
 		AA40D3FD09A08D650068C0D5 /* ScreenSandbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0057047711F3005F316C /* ScreenSandbox.cpp */; };
 		AA40D3FE09A08D650068C0D5 /* ScreenSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0059047711F3005F316C /* ScreenSelect.cpp */; };
 		AA40D3FF09A08D650068C0D5 /* ScreenSelectCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E005B047711F3005F316C /* ScreenSelectCharacter.cpp */; };
-		AA40D40209A08D650068C0D5 /* ScreenSelectMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0067047711F3005F316C /* ScreenSelectMode.cpp */; };
 		AA40D40309A08D650068C0D5 /* ScreenSelectMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0069047711F3005F316C /* ScreenSelectMusic.cpp */; };
 		AA40D40509A08D650068C0D5 /* ScreenSongOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E006F047711F3005F316C /* ScreenSongOptions.cpp */; };
 		AA40D40709A08D650068C0D5 /* ScreenTestFonts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0079047711F3005F316C /* ScreenTestFonts.cpp */; };
@@ -1636,8 +1627,10 @@
 		AAFF41A40F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFF41A20F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h */; };
 		AAFF41A50F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFF41A10F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.cpp */; };
 		AAFF41A60F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFF41A20F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h */; };
-		EEA7C87310A80A5900082E7B /* NotesLoaderPMS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEA7C87110A80A5900082E7B /* NotesLoaderPMS.cpp */; };
-		EEA7C87410A80A5900082E7B /* NotesLoaderPMS.h in Headers */ = {isa = PBXBuildFile; fileRef = EEA7C87210A80A5900082E7B /* NotesLoaderPMS.h */; };
+		EE2153A910A75BEE0074B01B /* NotesLoaderPMS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */; };
+		EE2153AA10A75BEE0074B01B /* NotesLoaderPMS.h in Headers */ = {isa = PBXBuildFile; fileRef = EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */; };
+		EEA7C84310A805A300082E7B /* ScreenPackagesSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEA7C84110A805A300082E7B /* ScreenPackagesSSC.cpp */; };
+		EEA7C84410A805A300082E7B /* ScreenPackagesSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = EEA7C84210A805A300082E7B /* ScreenPackagesSSC.h */; };
 		EEC7863F0E58208B00F559BC /* StepsDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */; };
 		F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */; };
 		F4BC045509E6B582003F770B /* ScreenGameplaySyncMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */; };
@@ -1857,7 +1850,7 @@
 		AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MemoryCardManager.cpp; path = ../src/MemoryCardManager.cpp; sourceTree = "<group>"; };
 		AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MemoryCardManager.h; path = ../src/MemoryCardManager.h; sourceTree = "<group>"; };
 		AA29CE570558741A00961A51 /* Info-StepMania.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; path = "Info-StepMania.plist"; sourceTree = SOURCE_ROOT; };
-		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA29CE580558741A00961A51 /* sm-ssc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "sm-ssc.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA2C9C9F0BAD6F54002441E9 /* CodeSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeSet.cpp; path = ../src/CodeSet.cpp; sourceTree = "<group>"; };
 		AA2C9CA00BAD6F54002441E9 /* CodeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodeSet.h; path = ../src/CodeSet.h; sourceTree = "<group>"; };
 		AA2CA89D0BB745BD002441E9 /* ScreenContinue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenContinue.cpp; path = ../src/ScreenContinue.cpp; sourceTree = "<group>"; };
@@ -1888,7 +1881,7 @@
 		AA3D793206A279530064B980 /* DateTime.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DateTime.h; path = ../src/DateTime.h; sourceTree = "<group>"; };
 		AA3E3DF009D96A1400A259C7 /* CrashHandlerInternal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrashHandlerInternal.cpp; sourceTree = "<group>"; };
 		AA3F283B04BE6DDC00D02EE9 /* ArchHooks.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ArchHooks.cpp; path = ArchHooks/ArchHooks.cpp; sourceTree = "<group>"; };
-		AA40D52B09A08D660068C0D5 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA40D52B09A08D660068C0D5 /* sm-ssc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "sm-ssc.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA42F5E6067068D30013509E /* ScreenNetworkOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenNetworkOptions.cpp; path = ../src/ScreenNetworkOptions.cpp; sourceTree = "<group>"; };
 		AA42F5E7067068D30013509E /* ScreenNetworkOptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenNetworkOptions.h; path = ../src/ScreenNetworkOptions.h; sourceTree = "<group>"; };
 		AA44705209846B0800983E82 /* HIDDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDDevice.h; sourceTree = "<group>"; };
@@ -1994,8 +1987,6 @@
 		AA6E005A047711F3005F316C /* ScreenSelect.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSelect.h; path = ../src/ScreenSelect.h; sourceTree = "<group>"; };
 		AA6E005B047711F3005F316C /* ScreenSelectCharacter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSelectCharacter.cpp; path = ../src/ScreenSelectCharacter.cpp; sourceTree = "<group>"; };
 		AA6E005C047711F3005F316C /* ScreenSelectCharacter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSelectCharacter.h; path = ../src/ScreenSelectCharacter.h; sourceTree = "<group>"; };
-		AA6E0067047711F3005F316C /* ScreenSelectMode.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSelectMode.cpp; path = ../src/ScreenSelectMode.cpp; sourceTree = "<group>"; };
-		AA6E0068047711F3005F316C /* ScreenSelectMode.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSelectMode.h; path = ../src/ScreenSelectMode.h; sourceTree = "<group>"; };
 		AA6E0069047711F3005F316C /* ScreenSelectMusic.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSelectMusic.cpp; path = ../src/ScreenSelectMusic.cpp; sourceTree = "<group>"; };
 		AA6E006A047711F3005F316C /* ScreenSelectMusic.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSelectMusic.h; path = ../src/ScreenSelectMusic.h; sourceTree = "<group>"; };
 		AA6E006F047711F3005F316C /* ScreenSongOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSongOptions.cpp; path = ../src/ScreenSongOptions.cpp; sourceTree = "<group>"; };
@@ -2161,8 +2152,6 @@
 		AA6EFE9B04770E7C005F316C /* MenuTimer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MenuTimer.h; path = ../src/MenuTimer.h; sourceTree = "<group>"; };
 		AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MeterDisplay.cpp; path = ../src/MeterDisplay.cpp; sourceTree = "<group>"; };
 		AA6EFE9D04770E7C005F316C /* MeterDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MeterDisplay.h; path = ../src/MeterDisplay.h; sourceTree = "<group>"; };
-		AA6EFE9E04770E7C005F316C /* MusicBannerWheel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicBannerWheel.cpp; path = ../src/MusicBannerWheel.cpp; sourceTree = "<group>"; };
-		AA6EFE9F04770E7C005F316C /* MusicBannerWheel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MusicBannerWheel.h; path = ../src/MusicBannerWheel.h; sourceTree = "<group>"; };
 		AA6EFEA004770E7C005F316C /* MusicList.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicList.cpp; path = ../src/MusicList.cpp; sourceTree = "<group>"; };
 		AA6EFEA104770E7C005F316C /* MusicList.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MusicList.h; path = ../src/MusicList.h; sourceTree = "<group>"; };
 		AA6EFEA404770E7C005F316C /* MusicWheel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicWheel.cpp; path = ../src/MusicWheel.cpp; sourceTree = "<group>"; };
@@ -2173,8 +2162,6 @@
 		AA6EFEAD04770E7C005F316C /* OptionsCursor.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = OptionsCursor.h; path = ../src/OptionsCursor.h; sourceTree = "<group>"; };
 		AA6EFEAE04770E7C005F316C /* ScrollBar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScrollBar.cpp; path = ../src/ScrollBar.cpp; sourceTree = "<group>"; };
 		AA6EFEAF04770E7C005F316C /* ScrollBar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScrollBar.h; path = ../src/ScrollBar.h; sourceTree = "<group>"; };
-		AA6EFEB004770E7C005F316C /* ScrollingList.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScrollingList.cpp; path = ../src/ScrollingList.cpp; sourceTree = "<group>"; };
-		AA6EFEB104770E7C005F316C /* ScrollingList.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScrollingList.h; path = ../src/ScrollingList.h; sourceTree = "<group>"; };
 		AA6EFEB204770E7C005F316C /* SnapDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = SnapDisplay.cpp; path = ../src/SnapDisplay.cpp; sourceTree = "<group>"; };
 		AA6EFEB304770E7C005F316C /* SnapDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = SnapDisplay.h; path = ../src/SnapDisplay.h; sourceTree = "<group>"; };
 		AA6EFEB404770E7C005F316C /* TextBanner.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = TextBanner.cpp; path = ../src/TextBanner.cpp; sourceTree = "<group>"; };
@@ -2962,8 +2949,10 @@
 		AAFF55220549F43A00D02EE9 /* ComboGraph.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ComboGraph.h; path = ../src/ComboGraph.h; sourceTree = "<group>"; };
 		AAFF5541054E736D00D02EE9 /* Attack.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Attack.cpp; path = ../src/Attack.cpp; sourceTree = "<group>"; };
 		AAFF5542054E736D00D02EE9 /* Attack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Attack.h; path = ../src/Attack.h; sourceTree = "<group>"; };
-		EEA7C87110A80A5900082E7B /* NotesLoaderPMS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderPMS.cpp; path = ../src/NotesLoaderPMS.cpp; sourceTree = SOURCE_ROOT; };
-		EEA7C87210A80A5900082E7B /* NotesLoaderPMS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderPMS.h; path = ../src/NotesLoaderPMS.h; sourceTree = SOURCE_ROOT; };
+		EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderPMS.cpp; path = ../src/NotesLoaderPMS.cpp; sourceTree = SOURCE_ROOT; };
+		EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderPMS.h; path = ../src/NotesLoaderPMS.h; sourceTree = SOURCE_ROOT; };
+		EEA7C84110A805A300082E7B /* ScreenPackagesSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenPackagesSSC.cpp; path = ../src/ScreenPackagesSSC.cpp; sourceTree = SOURCE_ROOT; };
+		EEA7C84210A805A300082E7B /* ScreenPackagesSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenPackagesSSC.h; path = ../src/ScreenPackagesSSC.h; sourceTree = SOURCE_ROOT; };
 		EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StepsDisplay.cpp; path = ../src/StepsDisplay.cpp; sourceTree = "<group>"; };
 		EEC7863E0E58208B00F559BC /* StepsDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StepsDisplay.h; path = ../src/StepsDisplay.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -3101,8 +3090,8 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA29CE580558741A00961A51 /* StepMania.app */,
-				AA40D52B09A08D660068C0D5 /* StepMania.app */,
+				AA29CE580558741A00961A51 /* sm-ssc.app */,
+				AA40D52B09A08D660068C0D5 /* sm-ssc.app */,
 				AAE7817E0AC7E37B00AEFC64 /* liblua-5.1.a */,
 				AA7A2B940AE09B520054C5BA /* lua */,
 				AA7A2BAB0AE09CD50054C5BA /* luac */,
@@ -3274,6 +3263,8 @@
 				AAA7D4C80C7E872500FB8F78 /* ScreenOptionsToggleSongs.h */,
 				AA1145D9075DFADF0050A3D1 /* ScreenPackages.cpp */,
 				AA1145DA075DFADF0050A3D1 /* ScreenPackages.h */,
+				EEA7C84110A805A300082E7B /* ScreenPackagesSSC.cpp */,
+				EEA7C84210A805A300082E7B /* ScreenPackagesSSC.h */,
 				AA6E004F047711F3005F316C /* ScreenPlayerOptions.cpp */,
 				AA6E0050047711F3005F316C /* ScreenPlayerOptions.h */,
 				AA18935C0BD777C400AEC0BF /* ScreenProfileLoad.cpp */,
@@ -3298,8 +3289,6 @@
 				AA2EA0000A770208003A0C11 /* ScreenSelectLanguage.h */,
 				AA1DC47404A4861700D02EE9 /* ScreenSelectMaster.cpp */,
 				AA1DC47504A4861700D02EE9 /* ScreenSelectMaster.h */,
-				AA6E0067047711F3005F316C /* ScreenSelectMode.cpp */,
-				AA6E0068047711F3005F316C /* ScreenSelectMode.h */,
 				AA6E0069047711F3005F316C /* ScreenSelectMusic.cpp */,
 				AA6E006A047711F3005F316C /* ScreenSelectMusic.h */,
 				AAB3B7DA0C6C582D001BF487 /* ScreenSelectProfile.cpp */,
@@ -3751,12 +3740,12 @@
 				AA6EFDF404770C79005F316C /* NotesLoaderKSF.h */,
 				3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */,
 				3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */,
+				EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */,
+				EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */,
 				AA6EFDF504770C79005F316C /* NotesLoaderSM.cpp */,
 				AA6EFDF604770C79005F316C /* NotesLoaderSM.h */,
 				AA6EFDF704770C79005F316C /* NotesWriterDWI.cpp */,
 				AA6EFDF804770C79005F316C /* NotesWriterDWI.h */,
-				EEA7C87110A80A5900082E7B /* NotesLoaderPMS.cpp */,
-				EEA7C87210A80A5900082E7B /* NotesLoaderPMS.h */,
 				AA6EFDF904770C79005F316C /* NotesWriterSM.cpp */,
 				AA6EFDFA04770C79005F316C /* NotesWriterSM.h */,
 				AA6EFDFB04770C79005F316C /* NoteTypes.cpp */,
@@ -3900,8 +3889,6 @@
 				AA11A20C0DC5A1B0006BD8AC /* ModIcon.h */,
 				AA11A20D0DC5A1B0006BD8AC /* ModIconRow.cpp */,
 				AA11A20E0DC5A1B0006BD8AC /* ModIconRow.h */,
-				AA6EFE9E04770E7C005F316C /* MusicBannerWheel.cpp */,
-				AA6EFE9F04770E7C005F316C /* MusicBannerWheel.h */,
 				AA6EFEA004770E7C005F316C /* MusicList.cpp */,
 				AA6EFEA104770E7C005F316C /* MusicList.h */,
 				AA6EFEA404770E7C005F316C /* MusicWheel.cpp */,
@@ -3922,8 +3909,6 @@
 				AAAFE82F0835E8B100FC43E0 /* RoomWheel.h */,
 				AA6EFEAE04770E7C005F316C /* ScrollBar.cpp */,
 				AA6EFEAF04770E7C005F316C /* ScrollBar.h */,
-				AA6EFEB004770E7C005F316C /* ScrollingList.cpp */,
-				AA6EFEB104770E7C005F316C /* ScrollingList.h */,
 				AA6EFEB204770E7C005F316C /* SnapDisplay.cpp */,
 				AA6EFEB304770E7C005F316C /* SnapDisplay.h */,
 				EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */,
@@ -4876,7 +4861,8 @@
 				3659B5700F902143002B6B68 /* CommandLineActions.h in Headers */,
 				36CA531D0F91564A0063D59D /* ScreenOptionsCourseOverview.h in Headers */,
 				36CA53210F9156860063D59D /* ScreenOptionsEditCourse.h in Headers */,
-				EEA7C87410A80A5900082E7B /* NotesLoaderPMS.h in Headers */,
+				EE2153AA10A75BEE0074B01B /* NotesLoaderPMS.h in Headers */,
+				EEA7C84410A805A300082E7B /* ScreenPackagesSSC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4948,13 +4934,11 @@
 				AA40D1FC09A08D650068C0D5 /* HelpDisplay.h in Headers */,
 				AA40D1FD09A08D650068C0D5 /* MenuTimer.h in Headers */,
 				AA40D1FE09A08D650068C0D5 /* MeterDisplay.h in Headers */,
-				AA40D1FF09A08D650068C0D5 /* MusicBannerWheel.h in Headers */,
 				AA40D20009A08D650068C0D5 /* MusicList.h in Headers */,
 				AA40D20209A08D650068C0D5 /* MusicWheel.h in Headers */,
 				AA40D20309A08D650068C0D5 /* MusicWheelItem.h in Headers */,
 				AA40D20609A08D650068C0D5 /* OptionsCursor.h in Headers */,
 				AA40D20709A08D650068C0D5 /* ScrollBar.h in Headers */,
-				AA40D20809A08D650068C0D5 /* ScrollingList.h in Headers */,
 				AA40D20909A08D650068C0D5 /* SnapDisplay.h in Headers */,
 				AA40D20A09A08D650068C0D5 /* TextBanner.h in Headers */,
 				AA40D20B09A08D650068C0D5 /* WheelNotifyIcon.h in Headers */,
@@ -5007,7 +4991,6 @@
 				AA40D24009A08D650068C0D5 /* ScreenSandbox.h in Headers */,
 				AA40D24109A08D650068C0D5 /* ScreenSelect.h in Headers */,
 				AA40D24209A08D650068C0D5 /* ScreenSelectCharacter.h in Headers */,
-				AA40D24509A08D650068C0D5 /* ScreenSelectMode.h in Headers */,
 				AA40D24609A08D650068C0D5 /* ScreenSelectMusic.h in Headers */,
 				AA40D24809A08D650068C0D5 /* ScreenSongOptions.h in Headers */,
 				AA40D24A09A08D650068C0D5 /* ScreenTestFonts.h in Headers */,
@@ -5422,7 +5405,7 @@
 			name = stepmania;
 			productInstallPath = "$(HOME)/Applications";
 			productName = "SDL App";
-			productReference = AA29CE580558741A00961A51 /* StepMania.app */;
+			productReference = AA29CE580558741A00961A51 /* sm-ssc.app */;
 			productType = "com.apple.product-type.application";
 		};
 		AA40D1B409A08D650068C0D5 /* stepmania-bare */ = {
@@ -5449,7 +5432,7 @@
 			name = "stepmania-bare";
 			productInstallPath = "$(HOME)/Applications";
 			productName = "SDL App";
-			productReference = AA40D52B09A08D660068C0D5 /* StepMania.app */;
+			productReference = AA40D52B09A08D660068C0D5 /* sm-ssc.app */;
 			productType = "com.apple.product-type.application";
 		};
 		AA7A2B930AE09B520054C5BA /* lua */ = {
@@ -5777,13 +5760,11 @@
 				AA29CD860558741A00961A51 /* HelpDisplay.cpp in Sources */,
 				AA29CD890558741A00961A51 /* MenuTimer.cpp in Sources */,
 				AA29CD8A0558741A00961A51 /* MeterDisplay.cpp in Sources */,
-				AA29CD8B0558741A00961A51 /* MusicBannerWheel.cpp in Sources */,
 				AA29CD8C0558741A00961A51 /* MusicList.cpp in Sources */,
 				AA29CD8E0558741A00961A51 /* MusicWheel.cpp in Sources */,
 				AA29CD8F0558741A00961A51 /* MusicWheelItem.cpp in Sources */,
 				AA29CD920558741A00961A51 /* OptionsCursor.cpp in Sources */,
 				AA29CD930558741A00961A51 /* ScrollBar.cpp in Sources */,
-				AA29CD940558741A00961A51 /* ScrollingList.cpp in Sources */,
 				AA29CD950558741A00961A51 /* SnapDisplay.cpp in Sources */,
 				AA29CD960558741A00961A51 /* TextBanner.cpp in Sources */,
 				AA29CD970558741A00961A51 /* WheelNotifyIcon.cpp in Sources */,
@@ -5831,7 +5812,6 @@
 				AA29CDD30558741A00961A51 /* ScreenSandbox.cpp in Sources */,
 				AA29CDD40558741A00961A51 /* ScreenSelect.cpp in Sources */,
 				AA29CDD50558741A00961A51 /* ScreenSelectCharacter.cpp in Sources */,
-				AA29CDDA0558741A00961A51 /* ScreenSelectMode.cpp in Sources */,
 				AA29CDDB0558741A00961A51 /* ScreenSelectMusic.cpp in Sources */,
 				AA29CDDD0558741A00961A51 /* ScreenSongOptions.cpp in Sources */,
 				AA29CDE10558741A00961A51 /* ScreenTestFonts.cpp in Sources */,
@@ -6115,7 +6095,8 @@
 				3659B56F0F902143002B6B68 /* CommandLineActions.cpp in Sources */,
 				36CA531C0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp in Sources */,
 				36CA53200F9156860063D59D /* ScreenOptionsEditCourse.cpp in Sources */,
-				EEA7C87310A80A5900082E7B /* NotesLoaderPMS.cpp in Sources */,
+				EE2153A910A75BEE0074B01B /* NotesLoaderPMS.cpp in Sources */,
+				EEA7C84310A805A300082E7B /* ScreenPackagesSSC.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6182,13 +6163,11 @@
 				AA40D3BE09A08D650068C0D5 /* HelpDisplay.cpp in Sources */,
 				AA40D3BF09A08D650068C0D5 /* MenuTimer.cpp in Sources */,
 				AA40D3C009A08D650068C0D5 /* MeterDisplay.cpp in Sources */,
-				AA40D3C109A08D650068C0D5 /* MusicBannerWheel.cpp in Sources */,
 				AA40D3C209A08D650068C0D5 /* MusicList.cpp in Sources */,
 				AA40D3C409A08D650068C0D5 /* MusicWheel.cpp in Sources */,
 				AA40D3C509A08D650068C0D5 /* MusicWheelItem.cpp in Sources */,
 				AA40D3C809A08D650068C0D5 /* OptionsCursor.cpp in Sources */,
 				AA40D3C909A08D650068C0D5 /* ScrollBar.cpp in Sources */,
-				AA40D3CA09A08D650068C0D5 /* ScrollingList.cpp in Sources */,
 				AA40D3CB09A08D650068C0D5 /* SnapDisplay.cpp in Sources */,
 				AA40D3CC09A08D650068C0D5 /* TextBanner.cpp in Sources */,
 				AA40D3CD09A08D650068C0D5 /* WheelNotifyIcon.cpp in Sources */,
@@ -6236,7 +6215,6 @@
 				AA40D3FD09A08D650068C0D5 /* ScreenSandbox.cpp in Sources */,
 				AA40D3FE09A08D650068C0D5 /* ScreenSelect.cpp in Sources */,
 				AA40D3FF09A08D650068C0D5 /* ScreenSelectCharacter.cpp in Sources */,
-				AA40D40209A08D650068C0D5 /* ScreenSelectMode.cpp in Sources */,
 				AA40D40309A08D650068C0D5 /* ScreenSelectMusic.cpp in Sources */,
 				AA40D40509A08D650068C0D5 /* ScreenSongOptions.cpp in Sources */,
 				AA40D40709A08D650068C0D5 /* ScreenTestFonts.cpp in Sources */,
@@ -8015,10 +7993,8 @@
 		AAE44A2D0965707500B025E5 /* Universal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				BUILD_VARIANTS = normal;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				DEAD_CODE_STRIPPING = YES;
@@ -8057,14 +8033,15 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LINKER_DISPLAYS_MANGLED_NAMES = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.3;
 				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
 				PREBINDING = NO;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";

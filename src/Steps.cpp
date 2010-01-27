@@ -59,7 +59,7 @@ unsigned Steps::GetHash() const
 	}
 	m_iHash = GetHashForString( m_sNoteDataCompressed );
 	return m_iHash;
-}		
+}
 
 void Steps::SetNoteData( const NoteData& noteDataNew )
 {
@@ -121,7 +121,7 @@ void Steps::GetSMNoteData( RString &notes_comp_out ) const
 float Steps::PredictMeter() const
 {
 	float pMeter = 0.775f;
-	
+
 	const float RadarCoeffs[NUM_RadarCategory] =
 	{
 		10.1f, 5.27f,-0.905f, -1.10f, 2.86f,
@@ -130,13 +130,13 @@ float Steps::PredictMeter() const
 	const RadarValues &rv = GetRadarValues( PLAYER_1 );
 	for( int r = 0; r < NUM_RadarCategory; ++r )
 		pMeter += rv[r] * RadarCoeffs[r];
-	
+
 	const float DifficultyCoeffs[NUM_Difficulty] =
 	{
 		-0.877f, -0.877f, 0, 0.722f, 0.722f, 0
 	};
 	pMeter += DifficultyCoeffs[this->GetDifficulty()];
-	
+
 	// Init non-radar values
 	const float SV = rv[RadarCategory_Stream] * rv[RadarCategory_Voltage];
 	const float ChaosSquare = rv[RadarCategory_Chaos] * rv[RadarCategory_Chaos];
@@ -153,7 +153,7 @@ void Steps::TidyUpData()
 
 	if( GetDifficulty() == Difficulty_Invalid )
 		SetDifficulty( StringToDifficulty(GetDescription()) );
-	
+
 	if( GetDifficulty() == Difficulty_Invalid )
 	{
 		if(	 GetMeter() == 1 )	SetDifficulty( Difficulty_Beginner );
@@ -171,7 +171,7 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	// If we're autogen, don't calculate values.  GetRadarValues will take from our parent.
 	if( parent != NULL )
 		return;
-	
+
 	// Do write radar values, and leave it up to the reading app whether they want to trust
 	// the cached values without recalculating them.
 	/*
@@ -182,10 +182,10 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 
 	NoteData tempNoteData;
 	this->GetNoteData( tempNoteData );
-	
+
 	FOREACH_PlayerNumber( pn )
 		m_CachedRadarValues[pn].Zero();
-	
+
 	if( tempNoteData.IsComposite() )
 	{
 		vector<NoteData> vParts;
@@ -413,12 +413,25 @@ public:
 	DEFINE_METHOD( GetMeter,	GetMeter() )
 	DEFINE_METHOD( GetFilename,	GetFilename() )
 	DEFINE_METHOD( IsAutogen,	IsAutogen() )
-	
+	DEFINE_METHOD( IsAnEdit,	IsAnEdit() )
+	DEFINE_METHOD( IsAPlayerEdit,	IsAPlayerEdit() )
+
 	static int GetRadarValues( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		RadarValues &rv = const_cast<RadarValues &>(p->GetRadarValues(pn));
 		rv.PushSelf(L);
+		return 1;
+	}
+
+	static int GetHash( T* p, lua_State *L ) { lua_pushnumber( L, p->GetHash() ); return 1; }
+
+	// untested
+	static int GetSMNoteData( T* p, lua_State *L )
+	{
+		RString out;
+		p->GetSMNoteData( out );
+		lua_pushstring( L, out );
 		return 1;
 	}
 
@@ -431,6 +444,10 @@ public:
 		ADD_METHOD( GetFilename );
 		ADD_METHOD( GetRadarValues );
 		ADD_METHOD( IsAutogen );
+		ADD_METHOD( IsAnEdit );
+		ADD_METHOD( IsAPlayerEdit );
+		ADD_METHOD( GetHash );
+		//ADD_METHOD( GetSMNoteData );
 	}
 };
 

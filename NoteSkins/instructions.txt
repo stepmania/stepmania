@@ -1,1 +1,30 @@
-Place Note Skin folders in the appropriate game folder.
+How to Install Noteskins:
+
+1) Determine how the noteskins are packaged.
+
+path in archive         | extract to
+------------------------|-----------------------
+NoteSkins\dance\MyDance | StepMania root folder
+dance\MyDance           | NoteSkins folder
+MyDance                 | Whichever gametype folder (see Step 2)
+
+2) Figure out the game type if necessary.
+
+Valid gametypes:
+
+name    | description
+--------|------------
+beat    | beatmania (5 and 7 keys)
+dance   | dance dance revolution (4 panels)
+ds3ddx  | ds3d DX
+ez2     | Ez2Dancer
+guitar  | guitar * (5 keys, so Guitar Hero for now)
+karaoke | karaoke (unimplemented)
+kb7     | keyboard 7 (<del>7</del> 6 keys now?)
+lights  | lights (unused)
+maniax  | dance maniax (4 receptors)
+techno  | techno motion (4, 5, and 8 panels)
+popn    | pop'n music (5 and 9 keys)
+pump    | pump it up (5 panels)
+
+3) extract based on steps 1 and 2.

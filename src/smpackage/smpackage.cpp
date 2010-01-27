@@ -33,6 +33,7 @@ CSmpackageApp::CSmpackageApp()
 }
 
 CSmpackageApp theApp;
+extern const char *const version_date = "";
 extern const char *const version_time = "";
 
 #include "RageLog.h"
@@ -89,7 +90,7 @@ BOOL CSmpackageApp::InitInstance()
 				if( ini.GetValue(sType, "Fallback", sType) )
 					continue;
 				break;
-			}			
+			}
 		}
 	}
 
@@ -130,7 +131,7 @@ BOOL CSmpackageApp::InitInstance()
 			exit(1);	// better way to quit?
 		}
 	}
-	
+
 	// check if there's a .smzip command line argument and install it
 	for( int i=0; i<argc; i++ )
 	{

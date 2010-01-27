@@ -74,7 +74,7 @@ IDR_MAINFRAME           ICON                    "res\\Texture Font Generator.ico
 IDD_TEXTUREFONTGENERATOR_DIALOG DIALOGEX 0, 0, 371, 293
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
-CAPTION "Texture Font Generator"
+CAPTION "Texture Font Generator (ssc)"
 MENU IDR_MENU
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
@@ -117,9 +117,9 @@ BEGIN
         BEGIN
             VALUE "FileVersion", "1.0.0.0"
             VALUE "InternalName", "Texture Font Generator.exe"
-            VALUE "LegalCopyright", "(c) 2003-2007 Glenn F. Maynard.  All rights reserved."
+            VALUE "LegalCopyright", "© 2003-2007 Glenn F. Maynard. All rights reserved.\nSSC additions © 2009 the spinal shark collective."
             VALUE "OriginalFilename", "Texture Font Generator.exe"
-            VALUE "ProductName", "Texture Font Generator"
+            VALUE "ProductName", "Texture Font Generator (ssc)"
             VALUE "ProductVersion", "1.0.0.0"
         END
     END

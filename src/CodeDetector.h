@@ -59,6 +59,9 @@ public:
 	static bool DetectAndAdjustMusicOptions( GameController controller );
 	static bool EnteredCode( GameController controller, Code code );
 	static bool EnteredNextBannerGroup( GameController controller );
+
+	// move to PlayerOptions.h -aj
+	void ChangeScrollSpeed( GameController controller, bool bIncrement );
 };
 
 #endif

@@ -83,6 +83,16 @@ XToString( BannerCacheMode );
 StringToX( BannerCacheMode );
 LuaXType( BannerCacheMode );
 
+static const char *BackgroundCacheModeNames[] = {
+	"Off",
+	"LowResPreload",
+	"LowResLoadOnDemand",
+	"Full"
+};
+XToString( BackgroundCacheMode );
+StringToX( BackgroundCacheMode );
+LuaXType( BackgroundCacheMode );
+
 static const char *HighResolutionTexturesNames[] = {
 	"Auto",
 	"ForceOff",
@@ -147,9 +157,10 @@ PrefsManager::PrefsManager() :
 
 	m_sAnnouncer		( "Announcer",			"" ),
 	m_sTheme		( "Theme",			SpecialFiles::BASE_THEME_NAME ),
-	m_sDefaultModifiers	( "DefaultModifiers",		"" ),
+	m_sDefaultTheme		( "DefaultTheme",				"default" ),
+	m_sDefaultModifiers	( "DefaultModifiers",		"" ), 
 
-	m_bWindowed		( "Windowed",			TRUE_IF_DEBUG ),
+	m_bWindowed		( "Windowed",			true ),
 	m_iDisplayWidth		( "DisplayWidth",		640 ),
 	m_iDisplayHeight	( "DisplayHeight",		480 ),
 	m_fDisplayAspectRatio	( "DisplayAspectRatio",		4/3.f, ValidateDisplayAspectRatio ),
@@ -170,6 +181,7 @@ PrefsManager::PrefsManager() :
 	m_bDelayedTextureDelete	( "DelayedTextureDelete",	false ),
 	m_bDelayedModelDelete	( "DelayedModelDelete",		false ),
 	m_BannerCache		( "BannerCache",		BNCACHE_LOW_RES_PRELOAD ),
+	m_BackgroundCache		( "BackgroundCache",		BGCACHE_LOW_RES_PRELOAD ),
 	m_bFastLoad		( "FastLoad",			false ),
 	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    false ),
 
@@ -195,14 +207,14 @@ PrefsManager::PrefsManager() :
 	m_MusicWheelUsesSections	( "MusicWheelUsesSections",	MusicWheelUsesSections_ALWAYS ),
 	m_iMusicWheelSwitchSpeed	( "MusicWheelSwitchSpeed",	10 ),
 	m_AllowW1			( "AllowW1",			ALLOW_W1_EVERYWHERE ),
-	m_bEventMode			( "EventMode",			false ),
+	m_bEventMode			( "EventMode",			true ),
 	m_iCoinsPerCredit		( "CoinsPerCredit",		1 ),
 	m_iSongsPerPlay			( "SongsPerPlay",		3, ValidateSongsPerPlay ),
 	m_bDelayedCreditsReconcile	( "DelayedCreditsReconcile",	false ),
 	m_ShowSongOptions		( "ShowSongOptions",		Maybe_YES ),
 	m_bDancePointsForOni		( "DancePointsForOni",		false ),
 	m_bPercentageScoring		( "PercentageScoring",		false ),
-	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.5f ),
+	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.0001f ), // This is for home, who cares how bad you do?
 	m_fMinPercentageForMachineCourseHighScore	( "MinPercentageForMachineCourseHighScore",	0.0001f ),	// don't save course scores with 0 percentage
 	m_bDisqualification		( "Disqualification",			false ),
 	m_bAutogenSteps			( "AutogenSteps",			true ),
@@ -254,7 +266,7 @@ PrefsManager::PrefsManager() :
 	m_iSoundDevice			( "SoundDevice",			"" ),
 	m_iSoundPreferredSampleRate	( "SoundPreferredSampleRate",		0 ),
 	m_sLightsStepsDifficulty	( "LightsStepsDifficulty",		"medium" ),
-	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ),
+	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ), 
 	m_bThreadedInput		( "ThreadedInput",			true ),
 	m_bThreadedMovieDecode		( "ThreadedMovieDecode",		true ),
 	m_sTestInitialScreen		( "TestInitialScreen",			"" ),
@@ -262,6 +274,8 @@ PrefsManager::PrefsManager() :
 	m_bMonkeyInput			( "MonkeyInput",			false ),
 	m_sMachineName			( "MachineName",			"" ),
 	m_sCoursesToShowRanking		( "CoursesToShowRanking",		"" ),
+
+	m_bQuirksMode		( "QuirksMode",		false ),
 
 	/* Debug: */
 	m_bLogToDisk			( "LogToDisk",		true ),

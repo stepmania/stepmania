@@ -109,13 +109,13 @@ void CTreeCtrlEx::OnPaint()
 	CBitmap bitmap;
 	bitmap.CreateCompatibleBitmap( &dc, rcClient.Width(), rcClient.Height() );
 	memDC.SelectObject( &bitmap );
-	
+
 	// Set clip region to be same as that in paint DC
 	CRgn rgn;
 	rgn.CreateRectRgnIndirect( &rcClip );
 	memDC.SelectClipRgn(&rgn);
 	rgn.DeleteObject();
-	
+
 	// First let the control do its default drawing.
 	CWnd::DefWindowProc(WM_PAINT, (WPARAM)memDC.m_hDC, 0);
 
@@ -123,16 +123,16 @@ void CTreeCtrlEx::OnPaint()
 
 	int iItemCount = GetVisibleCount() + 1;
 	while(hItem && iItemCount--)
-	{		
+	{
 		CRect rect;
 
 		// Do not meddle with selected items or drop highlighted items
 		UINT selflag = TVIS_DROPHILITED | TVIS_SELECTED;
 		Color_Font cf;
-	
+
 		//if ( !(GetTreeCtrl().GetItemState( hItem, selflag ) & selflag ) 
 		//	&& m_mapColorFont.Lookup( hItem, cf ))
-		
+
 		if ((GetItemState(hItem, selflag) & selflag) 
 			&& ::GetFocus() == m_hWnd)
 			;
@@ -179,4 +179,3 @@ void CTreeCtrlEx::OnPaint()
 
 	memDC.DeleteDC();
 }
-

@@ -1,5 +1,5 @@
 /*
-** $Id$
+** $Id: lcode.c 25893 2007-04-21 20:08:12Z stevecheckoway $
 ** Code generator for Lua
 ** See Copyright Notice in lua.h
 */

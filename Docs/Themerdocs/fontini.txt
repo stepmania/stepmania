@@ -1,0 +1,26 @@
+SM4 Font .ini values
+
+[common]
+CapitalsOnly
+RightToLeft
+DefaultStrokeColor
+
+[main]
+import
+
+(per-page)
+DrawExtraPixelsLeft
+DrawExtraPixelsRight
+AddToAllWidths
+ScaleAllWidthsBy
+LineSpacing
+Top
+Baseline
+DefaultWidth
+AdvanceExtraPixels
+TextureHints
+
+(general commands)
+MAP
+RANGE
+LINE

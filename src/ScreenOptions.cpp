@@ -1275,10 +1275,12 @@ class LunaScreenOptions: public Luna<ScreenOptions>
 {
 public:
 	static int GetCurrentRow( T* p, lua_State *L ) { lua_pushnumber( L, p->GetCurrentRow(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
+	static int AllAreOnLastRow( T* p, lua_State *L ) { lua_pushboolean( L, p->AllAreOnLastRow() ); return 1; }
 
 	LunaScreenOptions()
 	{
 		ADD_METHOD( GetCurrentRow );
+		ADD_METHOD( AllAreOnLastRow );
 	}
 };
 

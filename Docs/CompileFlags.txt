@@ -1,0 +1,17 @@
+sm-ssc has a few compile flags that are helpful to know, as well as ones
+inherited from StepMania.
+================================================================================
+stepmania:
+================================================================================
+WITHOUT_NETWORKING
+Disables all networking stuff (SMO).
+================================================================================
+sm-ssc:
+================================================================================
+SSC_FUTURES
+{todo}
+--------------------------------------------------------------------------------
+HAVE_VERSION_INFO
+If this isn't defined, passing in --version will only show the name of the
+current sm-ssc version, no build number or date.
+Please define HAVE_VERSION_INFO if you can when building sm-ssc.

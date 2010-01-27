@@ -68,7 +68,7 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 		bool bHoldingCtrl = 
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
-		
+
 		if( bHoldingShift && !bHoldingCtrl )
 		{
 			MakeUpper( &c, 1 );

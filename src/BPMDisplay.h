@@ -45,7 +45,7 @@ protected:
 	ThemeMetric<float> RANDOM_CYCLE_SPEED;
 	ThemeMetric<RString> SEPARATOR;
 	ThemeMetric<RString> NO_BPM_TEXT;
-	
+
 	float m_fBPMFrom, m_fBPMTo;
 	int m_iCurrentBPM;
 	vector<float> m_BPMS;

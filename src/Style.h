@@ -23,16 +23,16 @@ public:
 	bool			m_bUsedForEdit;			// Can be used for editing?
 	bool			m_bUsedForDemonstration;	// Can be used for demonstration?
 	bool			m_bUsedForHowToPlay;		// Can be used for HowToPlay?
-	
+
 	/* The name of the style.  (This is currently unused.) */
 	const char *		m_szName;
-	
+
 	/* Steps format used for each player.  For example, "dance versus" reads
 	 * the Steps with the tag "dance-single". */
 	StepsType		m_StepsType;
-									
+
 	StyleType		m_StyleType;
-	
+
 	int			m_iColsPerPlayer;	// number of total tracks this style expects (e.g. 4 for versus, but 8 for double)
 	struct ColumnInfo 
 	{ 
@@ -60,7 +60,7 @@ public:
 	void GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& original, NoteData& noteDataOut ) const;
 
 	void GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const;
-	
+
 	// Lua
 	void PushSelf( lua_State *L );
 };

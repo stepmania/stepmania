@@ -6,7 +6,6 @@
 #include "Foreach.h"
 #include "InputMapper.h"
 
-
 InputQueue*	INPUTQUEUE = NULL;	// global and accessable from anywhere in our program
 
 const unsigned MAX_INPUT_QUEUE_LENGTH = 32;
@@ -167,6 +166,10 @@ bool InputQueueCode::Load( RString sButtonsNames )
 	m_aPresses.clear();
 
 	vector<RString> asPresses;
+	// in order to support text codes, I may be restricting usage; you can't mix
+	// game inputs with sequences to type in the same code. you will also have
+	// to worry about players who either don't have keyboards or map letter
+	// keys to the arrows. -aj
 	split( sButtonsNames, ",", asPresses, false );
 	FOREACH( RString, asPresses, sPress )
 	{
@@ -188,6 +191,7 @@ bool InputQueueCode::Load( RString sButtonsNames )
 
 			bool bHold = false;
 			bool bNotHold = false;
+			//bool bKeyPress = false; // special new "press keys" mode. -aj
 			while(1)
 			{
 				if( sButtonName.Left(1) == "+" )
@@ -211,6 +215,16 @@ bool InputQueueCode::Load( RString sButtonsNames )
 					sButtonName.erase(0, 1);
 					bNotHold = true;
 				}
+				/*
+				if( sButtonName.Left(1) == "$" )
+				{
+					// This modifier treats the string as a sequence of letters
+					// that need to be typed. This is going to add another loop,
+					// which will fucking suck, so only do it when needed. -aj
+					sButtonName.erase(0, 1);
+					bKeyPress = true;
+				}
+				*/
 				else
 				{
 					break;

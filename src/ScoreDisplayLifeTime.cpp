@@ -20,9 +20,6 @@ void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerSt
 
 	const RString sType = "ScoreDisplayLifeTime";
 
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = pPlayerState->m_PlayerNumber;
-
 	m_sprFrame.Load( THEME->GetPathG(sType,"frame") );
 	m_sprFrame->SetName( "Frame" );
 	this->AddChild( m_sprFrame );
@@ -32,7 +29,6 @@ void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerSt
 	m_textTimeRemaining.SetName( "TimeRemaining" );
 	this->AddChild( &m_textTimeRemaining );
 	ActorUtil::LoadAllCommandsAndOnCommand( m_textTimeRemaining, sType );
-	m_textTimeRemaining.RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(pn) );
 	
 	m_textDeltaSeconds.LoadFromFont( THEME->GetPathF(sType,"DeltaSeconds") );
 	m_textDeltaSeconds.SetName( "DeltaSeconds" );

@@ -235,6 +235,22 @@ RString SecondsToMMSSMsMsMs( float fSecs )
 	return sReturn;
 }
 
+RString SecondsToMSS( float fSecs )
+{
+	const int iMinsDisplay = (int)fSecs/60;
+	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
+	RString sReturn = ssprintf( "%01d:%02d", iMinsDisplay, iSecsDisplay);
+	return sReturn;
+}
+
+RString SecondsToMMSS( float fSecs )
+{
+	const int iMinsDisplay = (int)fSecs/60;
+	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
+	RString sReturn = ssprintf( "%02d:%02d", iMinsDisplay, iSecsDisplay);
+	return sReturn;
+}
+
 RString PrettyPercent( float fNumerator, float fDenominator)
 {
 	return ssprintf("%0.2f%%",fNumerator/fDenominator*100);
@@ -918,7 +934,7 @@ void GetCommandLineArguments( int &argc, char **&argv )
 bool GetCommandlineArgument( const RString &option, RString *argument, int iIndex )
 {
 	const RString optstr = "--" + option;
-	
+
 	for( int arg = 1; arg < g_argc; ++arg )
 	{
 		const RString CurArgument = g_argv[arg];
@@ -942,7 +958,7 @@ bool GetCommandlineArgument( const RString &option, RString *argument, int iInde
 			else
 				*argument = "";
 		}
-		
+
 		return true;
 	}
 
@@ -2210,13 +2226,20 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 }
 
 LuaFunction( SecondsToMSSMsMs, SecondsToMSSMsMs( FArg(1) ) )
+LuaFunction( SecondsToHHMMSS, SecondsToHHMMSS( FArg(1) ) )
+LuaFunction( SecondsToMMSSMsMs, SecondsToMMSSMsMs( FArg(1) ) )
+LuaFunction( SecondsToMMSSMsMsMs, SecondsToMMSSMsMsMs( FArg(1) ) )
+LuaFunction( SecondsToMSS, SecondsToMSS( FArg(1) ) )
+LuaFunction( SecondsToMMSS, SecondsToMMSS( FArg(1) ) )
 LuaFunction( FormatNumberAndSuffix, FormatNumberAndSuffix( IArg(1) ) )
 LuaFunction( Basename, Basename( SArg(1) ) )
 static RString MakeLower( RString s ) { s.MakeLower(); return s; }
 LuaFunction( Lowercase, MakeLower( SArg(1) ) )
 static RString MakeUpper( RString s ) { s.MakeUpper(); return s; }
 LuaFunction( Uppercase, MakeUpper( SArg(1) ) )
-LuaFunction( mbstrlen, (int)RStringToWstring(SArg(1)).length() );
+LuaFunction( mbstrlen, (int)RStringToWstring(SArg(1)).length() )
+LuaFunction( URLEncode, URLEncode( SArg(1) ) );
+//LuaFunction( IsHexVal, IsHexVal( SArg(1) ) );
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard

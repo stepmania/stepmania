@@ -143,6 +143,7 @@ public:
 	void SetParams( const RageSoundParams &p );
 	const RageSoundParams &GetParams() const { return m_Param; }
 	bool SetProperty( const RString &sProperty, float fValue );
+	void SetStopModeFromString( const RString &sStopMode );
 
 	//
 	// Lua
@@ -162,7 +163,7 @@ private:
 
 	void ApplyParams();
 	RageSoundParams m_Param;
-	
+
 	/* Current position of the output sound, in frames.  If < 0, nothing will play
 	 * until it becomes positive. */
 	int64_t m_iStreamFrame;

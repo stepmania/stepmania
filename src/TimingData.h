@@ -30,15 +30,18 @@ struct BPMSegment
 
 struct StopSegment 
 {
-	StopSegment() : m_iStartRow(-1), m_fStopSeconds(-1.0f)  { }
-	StopSegment( int s, float f ) { m_iStartRow = max( 0, s ); m_fStopSeconds = max( 0.0f, f ); }
+	StopSegment() : m_iStartRow(-1), m_fStopSeconds(-1.0f), m_bDelay(false)  { }
+	StopSegment( int s, float f ) { m_iStartRow = max( 0, s ); m_fStopSeconds = max( 0.0f, f ); m_bDelay = false; } // no delay by default
+	StopSegment( int s, float f, bool d ) { m_iStartRow = max( 0, s ); m_fStopSeconds = max( 0.0f, f ); m_bDelay = d; }
 	int m_iStartRow;
 	float m_fStopSeconds;
+	bool m_bDelay; // if true, treat this stop as a Pump delay instead
 
 	bool operator==( const StopSegment &other ) const
 	{
 		COMPARE( m_iStartRow );
 		COMPARE( m_fStopSeconds );
+		COMPARE( m_bDelay );
 		return true;
 	}
 	bool operator!=( const StopSegment &other ) const { return !operator==(other); }
@@ -54,7 +57,7 @@ struct TimeSignatureSegment
 	int m_iStartRow;
 	int m_iNumerator;
 	int m_iDenominator;
-	
+
 	/* With BeatToNoteRow(1) rows per beat, then we should have BeatToNoteRow(1)*m_iNumerator
 	 * beats per measure. But if we assume that every BeatToNoteRow(1) rows is a quarter note,
 	 * and we want the beats to be 1/m_iDenominator notes, then we should have
@@ -73,6 +76,28 @@ struct TimeSignatureSegment
 	bool operator<( const TimeSignatureSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
 };
 
+/* A warp segment is used to replicate the effects of Negative BPMs without
+ * ausing negative BPMs. Negative BPMs should be converted to warp segments.
+ * WarpAt=WarpTo is the format, where both are in beats. */
+/*
+struct WarpSegment
+{
+	WarpSegment() : m_iStartRow(-1), int m_iEndRow(-1) { }
+	WarpSegment( int s, int e ){ m_iStartRow = max( 0, s ); m_iEndRow = max( 0, e ) }
+	int m_iStartRow;
+	int m_iEndRow;
+
+	bool operator==( const WarpSegment &other ) const
+	{
+		COMPARE( m_iStartRow );
+		COMPARE( m_iEndRow );
+		return true;
+	}
+	bool operator!=( const WarpSegment &other ) const { return !operator==(other); }
+	bool operator<( const WarpSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+}
+*/
+
 class TimingData
 {
 public:
@@ -83,40 +108,43 @@ public:
 	void SetBPMAtRow( int iNoteRow, float fBPM );
 	void SetBPMAtBeat( float fBeat, float fBPM ) { SetBPMAtRow( BeatToNoteRow(fBeat), fBPM ); }
 	void SetStopAtRow( int iNoteRow, float fSeconds );
+	void SetStopAtRow( int iNoteRow, float fSeconds, bool bDelay ); // (sm-ssc)
 	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds ); }
-	float GetStopAtRow( int iNoteRow ) const;
+	void SetStopAtBeat( float fBeat, float fSeconds, bool bDelay ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, bDelay ); } // (sm-ssc)
+	float GetStopAtRow( int iNoteRow, bool &bDelayOut ) const;
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	void AddBPMSegment( const BPMSegment &seg );
 	void AddStopSegment( const StopSegment &seg );
 	void AddTimeSignatureSegment( const TimeSignatureSegment &seg );
+	//void AddWarpSegment( const WarpSegment &seg );
 	int GetBPMSegmentIndexAtBeat( float fBeat );
 	const TimeSignatureSegment& GetTimeSignatureSegmentAtBeat( float fBeat ) const;
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat );
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
 
-	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const;
+	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut ) const;
 	float GetBeatFromElapsedTime( float fElapsedTime ) const	// shortcut for places that care only about the beat
 	{
 		float fBeat, fThrowAway;
-		bool bThrowAway;
-		GetBeatAndBPSFromElapsedTime( fElapsedTime, fBeat, fThrowAway, bThrowAway );
+		bool bThrowAway, bThrowAway2;
+		GetBeatAndBPSFromElapsedTime( fElapsedTime, fBeat, fThrowAway, bThrowAway, bThrowAway2 );
 		return fBeat;
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const;
 
-	void GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const;
+	void GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut ) const;
 	float GetBeatFromElapsedTimeNoOffset( float fElapsedTime ) const	// shortcut for places that care only about the beat
 	{
 		float fBeat, fThrowAway;
-		bool bThrowAway;
-		GetBeatAndBPSFromElapsedTimeNoOffset( fElapsedTime, fBeat, fThrowAway, bThrowAway );
+		bool bThrowAway, bThrowAway2;
+		GetBeatAndBPSFromElapsedTimeNoOffset( fElapsedTime, fBeat, fThrowAway, bThrowAway, bThrowAway2 );
 		return fBeat;
 	}
 	float GetElapsedTimeFromBeatNoOffset( float fBeat ) const;
 
 	bool HasBpmChanges() const;
 	bool HasStops() const;
-	bool HasTimeSignatures() const;
+	// bool HasWarps() const;
 
 	bool operator==( const TimingData &other )
 	{
@@ -126,6 +154,11 @@ public:
 		COMPARE( m_StopSegments.size() );
 		for( unsigned i=0; i<m_StopSegments.size(); i++ )
 			COMPARE( m_StopSegments[i] );
+		/*
+		COMPARE( m_WarpSegments.size() );
+		for( unsigned i=0; i<m_WarpSegments.size(); i++ )
+			COMPARE( m_WarpSegments[i] );
+		*/
 		COMPARE( m_fBeat0OffsetInSeconds );
 		return true;
 	}
@@ -142,6 +175,7 @@ public:
 	vector<BPMSegment>		m_BPMSegments;	// this must be sorted before gameplay
 	vector<StopSegment>		m_StopSegments;	// this must be sorted before gameplay
 	vector<TimeSignatureSegment>	m_vTimeSignatureSegments;	// this must be sorted before gameplay
+	// vector<WarpSegment> m_vWarpSegments; // this must be sorted before gameplay
 	float	m_fBeat0OffsetInSeconds;
 };
 

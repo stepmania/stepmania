@@ -1,0 +1,17 @@
+BM98Data_format_specification.html = http://www.sun-inet.or.jp/~yaneurao/bm98/bmsformat.html
+BM98FinalSecret.html = http://www.sun-inet.or.jp/~yaneurao/bm98/bm98secret.html (Japanese)
+tmp.txt = http://unhappyangel.at.infoseek.co.jp/bms/tmp.txt
+BMS_Reading_Tutorial.txt = http://www.angelfire.com/ga4/jackatrades606606/BMS_Reading_Tutorial.txt
+
+[BMS Dialects]
+Drum BMS: http://wiki.bms.ms/Drum_BMS:Spec (Japanese)
+DDR BMS
+ * http://wiki.bms.ms/DDR_BMS:Spec (Japanese)
+ * http://www.mni.ne.jp/~asuma/dde/explain.html (Japanese)
+ * http://homepage1.nifty.com/nickle/ex_format.html (Japanese)
+
+[not in repository but good reading]
+http://fileformats.wikia.com/wiki/Be-Music_Script
+http://nvyu.net/rdm/rby_ex.php (warning: Korean language material)
+http://wiki.bms.ms/Bms:Spec
+http://wiki.bms.ms/index.php?title=Bms:Format&oldid=1615 (last good revision)

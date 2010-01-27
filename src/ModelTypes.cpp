@@ -56,12 +56,12 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 		const XNode* pAnimatedTexture = ini.GetChild("AnimatedTexture");
 		if( pAnimatedTexture == NULL )
 			RageException::Throw( "The animated texture file \"%s\" doesn't contain a section called \"AnimatedTexture\".", sTexOrIniPath.c_str() );
-		
+
 		pAnimatedTexture->GetAttrValue( "TexVelocityX", m_vTexVelocity.x );
 		pAnimatedTexture->GetAttrValue( "TexVelocityY", m_vTexVelocity.y );
 		pAnimatedTexture->GetAttrValue( "TexOffsetX", m_vTexOffset.x );
 		pAnimatedTexture->GetAttrValue( "TexOffsetY", m_vTexOffset.y );
-		
+
 		for( int i=0; i<1000; i++ )
 		{
 			RString sFileKey = ssprintf( "Frame%04d", i );

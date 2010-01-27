@@ -227,6 +227,7 @@ void BPMDisplay::SetVarious()
 {
 	m_BPMS.clear();
 	m_BPMS.push_back( -1 );
+	// XXX: this should be a themed string -aj
 	SetText( "Various" );
 }
 
@@ -235,7 +236,7 @@ void BPMDisplay::SetFromGameState()
 	if( GAMESTATE->m_pCurSong.Get() )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-			CycleRandomly();				
+			CycleRandomly();
 		else
 			SetBpmFromSong( GAMESTATE->m_pCurSong );
 		return;
@@ -289,10 +290,12 @@ class LunaBPMDisplay: public Luna<BPMDisplay>
 {
 public:
 	static int SetFromGameState( T* p, lua_State *L ) { p->SetFromGameState(); return 0; }
+	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
 
 	LunaBPMDisplay()
 	{
 		ADD_METHOD( SetFromGameState );
+		ADD_METHOD( GetText );
 	}
 };
 

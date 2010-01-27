@@ -27,6 +27,7 @@ enum BackgroundLayer
 {
 	BACKGROUND_LAYER_1,
 	BACKGROUND_LAYER_2,
+	//BACKGROUND_LAYER_3, // StepCollection get
 	NUM_BackgroundLayer,
 	BACKGROUND_LAYER_Invalid
 };
@@ -231,7 +232,7 @@ public:
 	// The index in this array corresponds to the index in TapNote.  If you 
 	// change the index in here, you must change all NoteData too.
 	// Any note that doesn't have a value in the range of this array
-	// means "this note doens't have a keysound".
+	// means "this note doesn't have a keysound".
 	vector<RString> m_vsKeysoundFile;
 
 	CachedObject<Song> m_CachedObject;

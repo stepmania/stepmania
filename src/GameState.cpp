@@ -38,7 +38,6 @@
 #include "UnlockManager.h"
 #include "ScreenManager.h"
 #include "Screen.h"
-#include "arch/Dialog/Dialog.h"
 #include "GameConstantsAndTypes.h"
 
 #include <ctime>
@@ -316,14 +315,14 @@ void GameState::Reset()
 	m_bTemporaryEventMode = false;
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
-	
+
 	m_stEdit.Set( StepsType_Invalid );
 	m_pEditSourceSteps.Set( NULL );
 	m_stEditSource.Set( StepsType_Invalid );
 	m_iEditCourseEntryIndex.Set( -1 );
 	m_sEditLocalProfileID.Set( "" );
 	m_iEditMidiNote = MIDI_NOTE_INVALID;
-	
+
 	m_bBackedOutOfFinalStage = false;
 	m_bEarnedExtraStage = false;
 	ApplyCmdline();
@@ -359,7 +358,7 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	{
 		const Style *pStyle;
 		// only use one player for StyleType_OnePlayerTwoSides.
-		// XXX: still shows non master player's "Insert Card" -aj
+		// XXX?: still shows joined player as "Insert Card". May not be an issue? -aj
 		if( m_pCurStyle->m_StyleType == StyleType_OnePlayerTwoSides )
 			pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, 1, m_pCurStyle->m_StepsType );
 		else
@@ -403,6 +402,8 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 	}
 }
 
+/* multiplayer join? */
+
 namespace
 {
 	bool JoinInputInternal( PlayerNumber pn )
@@ -432,7 +433,7 @@ namespace
 bool GameState::JoinInput( PlayerNumber pn )
 {
 	/* When AutoJoin is enabled, join all players on a single start press. */
-        if( GAMESTATE->m_bAutoJoin.Get() )
+	if( GAMESTATE->m_bAutoJoin.Get() )
 		return JoinPlayers();
 	else
 		return JoinInputInternal( pn );
@@ -457,7 +458,7 @@ int GameState::GetCoinsNeededToJoin() const
 	if( GetCoinMode() == CoinMode_Pay )
 		iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
 
-	// If joint premium don't take away a credit for the 2nd join.
+	// If joint premium, don't take away a credit for the second join.
 	if( GetPremium() == Premium_2PlayersFor1Credit  &&  
 		GetNumSidesJoined() == 1 )
 		iCoinsToCharge = 0;
@@ -706,7 +707,6 @@ void GameState::CancelStage()
 			case PLAY_MODE_RAVE:
 			m_iPlayerStageTokens[p] = PREFSMAN->m_iSongsPerPlay;
 		}
-
 	}
 
 	FOREACH_EnabledPlayer( p )
@@ -878,10 +878,13 @@ const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;
 void GameState::ResetMusicStatistics()
 {	
 	m_fMusicSeconds = 0; // MUSIC_SECONDS_INVALID;
+	// todo: move me to FOREACH_EnabledPlayer( p ) after [NUM_PLAYERS]ing
 	m_fSongBeat = 0;
 	m_fSongBeatNoOffset = 0;
 	m_fCurBPS = 10;
+	//m_bStop = false;
 	m_bFreeze = false;
+	m_bDelay = false;
 	m_fMusicSecondsVisible = 0;
 	m_fSongBeatVisible = 0;
 	Actor::SetBGMTime( 0, 0, 0, 0 );
@@ -934,8 +937,9 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 		m_LastBeatUpdate = timestamp;
 	else
 		m_LastBeatUpdate.Touch();
-	timing.GetBeatAndBPSFromElapsedTime( fPositionSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
-	ASSERT_M( m_fSongBeat > -2000, ssprintf("%f %f", m_fSongBeat, fPositionSeconds) );
+	timing.GetBeatAndBPSFromElapsedTime( fPositionSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze, m_bDelay );
+	// "Crash reason : -243478.890625 -48695.773438"
+	ASSERT_M( m_fSongBeat > -2000, ssprintf("Song beat %f at %f seconds", m_fSongBeat, fPositionSeconds) );
 
 	m_fMusicSeconds = fPositionSeconds;
 	m_fLightSongBeat = timing.GetBeatFromElapsedTime( fPositionSeconds + g_fLightsAheadSeconds );
@@ -945,11 +949,15 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	m_fMusicSecondsVisible = fPositionSeconds - g_fVisualDelaySeconds.Get();
 	float fThrowAway;
 	bool bThrowAway;
-	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway );
+	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway );
 
 	Actor::SetBGMTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fPositionSeconds, m_fSongBeatNoOffset );
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 }
+
+/*
+update player position code goes here
+ */
 
 float GameState::GetSongPercent( float beat ) const
 {
@@ -974,7 +982,6 @@ int GameState::GetSmallestNumStagesLeftForAnyHumanPlayer() const
 
 bool GameState::IsFinalStageForAnyHumanPlayer() const
 {
-
 	return GetSmallestNumStagesLeftForAnyHumanPlayer() == 1;
 }
 
@@ -1015,13 +1022,13 @@ Stage GameState::GetCurrentStage() const
 	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return Stage_Endless;
 	else if( IsExtraStage() )			return Stage_Extra1;
 	else if( IsExtraStage2() )			return Stage_Extra2;
-//	else if( IsFinalStageForAnyHumanPlayer() )	return Stage_Final;
+	//else if( IsFinalStageForAnyHumanPlayer() )	return Stage_Final;
 	// above function behaves weirdly, it will always return final stage if any player is 
 	// on final stage, rather than the last remaining player. The below method seems to make a bit more sense.
 	else if(m_iPlayerStageTokens[PLAYER_1] == 0 && m_iPlayerStageTokens[PLAYER_2] == 0) return Stage_Final;
+	// who gives a shit about stages -aj
 	else
 	{
-
 		switch( this->m_iCurrentStageIndex )
 		{
 		case 0:	return Stage_1st;
@@ -1244,7 +1251,7 @@ bool GameState::IsBattleMode() const
 	default:
 		return false;
 	}
-}	
+}
 
 EarnedExtraStage GameState::CalculateEarnedExtraStage() const
 {
@@ -1256,16 +1263,16 @@ EarnedExtraStage GameState::CalculateEarnedExtraStage() const
 
 	if( m_PlayMode != PLAY_MODE_REGULAR )
 		return EarnedExtraStage_No;
-	
+
 	if( m_bBackedOutOfFinalStage )
 		return EarnedExtraStage_No;
-	
+
 	if( GetSmallestNumStagesLeftForAnyHumanPlayer() > 0 )
 		return EarnedExtraStage_No;
 
 	if( m_iAwardedExtraStages[m_MasterPlayerNumber] >= 2 )
 		return EarnedExtraStage_No;
-	
+
 	FOREACH_EnabledPlayer( pn )
 	{
 		Difficulty dc = m_pCurSteps[pn]->GetDifficulty();
@@ -1290,7 +1297,7 @@ EarnedExtraStage GameState::CalculateEarnedExtraStage() const
 			return EarnedExtraStage_Extra1;
 		}
 	}
-	
+
 	return EarnedExtraStage_No;
 }
 
@@ -1395,6 +1402,12 @@ bool GameState::CurrentOptionsDisqualifyPlayer( PlayerNumber pn )
 	else
 		return po.IsEasierForSongAndSteps(  m_pCurSong, m_pCurSteps[pn], pn);
 }
+
+/* reset noteskins (?)
+ * GameState::ResetNoteSkins()
+ * GameState::ResetNoteSkinsForPlayer( PlayerNumber pn )
+ * 
+ */
 
 void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 {
@@ -1577,7 +1590,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 						asFeatsOut.push_back( feat );
 					}
 				}
-		
+
 				// Find Personal Records
 				if( pProf && PROFILE_RECORD_FEATS )
 				{
@@ -1600,6 +1613,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 						feat.iScore = hs.GetScore();
 
 						// XXX: temporary hack
+						// Why is this here? -aj
 						if( pSong->HasBackground() )
 							feat.Banner = pSong->GetBackgroundPath();
 		//					if( pSong->HasBanner() )
@@ -1791,9 +1805,7 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 
 	if( !PREFSMAN->m_bAllowMultipleHighScoreWithSameName )
 	{
-		//
 		// erase all but the highest score for each name
-		//
 		FOREACHM( SongID, Profile::HighScoresForASong, pProfile->m_SongHighScores, iter )
 			FOREACHM( StepsID, Profile::HighScoresForASteps, iter->second.m_StepsHighScores, iter2 )
 				iter2->second.hsl.RemoveAllButOneOfEachName();
@@ -1803,9 +1815,7 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 				iter2->second.hsl.RemoveAllButOneOfEachName();
 	}
 
-	//
 	// clamp high score sizes
-	//
 	FOREACHM( SongID, Profile::HighScoresForASong, pProfile->m_SongHighScores, iter )
 		FOREACHM( StepsID, Profile::HighScoresForASteps, iter->second.m_StepsHighScores, iter2 )
 			iter2->second.hsl.ClampSize( true );
@@ -1970,10 +1980,25 @@ Difficulty GameState::GetEasiestStepsDifficulty() const
 	{
 		if( m_pCurSteps[p] == NULL )
 		{
-			LOG->Warn( "GetEasiestNotesDifficulty called but p%i hasn't chosen notes", p+1 );
+			LOG->Warn( "GetEasiestStepsDifficulty called but p%i hasn't chosen notes", p+1 );
 			continue;
 		}
 		dc = min( dc, m_pCurSteps[p]->GetDifficulty() );
+	}
+	return dc;
+}
+
+Difficulty GameState::GetHardestStepsDifficulty() const
+{
+	Difficulty dc = Difficulty_Beginner;
+	FOREACH_HumanPlayer( p )
+	{
+		if( m_pCurSteps[p] == NULL )
+		{
+			LOG->Warn( "GetHardestStepsDifficulty called but p%i hasn't chosen notes", p+1 );
+			continue;
+		}
+		dc = max( dc, m_pCurSteps[p]->GetDifficulty() );
 	}
 	return dc;
 }
@@ -2102,7 +2127,7 @@ public:
 	DEFINE_METHOD( GetMultiplayer,			m_bMultiplayer )
 	DEFINE_METHOD( GetNumMultiplayerNoteFields,	m_iNumMultiplayerNoteFields )
 	DEFINE_METHOD( ShowW1,				ShowW1() )
-	
+
 	static int SetNumMultiplayerNoteFields( T* p, lua_State *L )
 	{
 		p->m_iNumMultiplayerNoteFields = IArg(1);
@@ -2137,36 +2162,33 @@ public:
 	}
 	static int GetCurrentSteps( T* p, lua_State *L )
 	{
+		// XXX: this will crash in certain situations, but if the PlayerNumber
+		// is checked for, difficulty displays will break... what to do? -aj
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		
 		Steps* pSteps;
+
 		if( p->m_pCurSong.Get() != NULL )
 		{
-			pSteps = SongUtil::GetOneSteps( p->m_pCurSong.Get(), GAMESTATE->GetCurrentStyle()->m_StepsType, GAMESTATE->m_PreferredDifficulty[pn] );
+			// try with the player's current steps first, since they're likely the correct ones.
+			pSteps = p->m_pCurSteps[pn];
 
-			// nothing found with preferred difficulty? try with closest
+			if( pSteps == NULL )
+				pSteps = SongUtil::GetOneSteps( p->m_pCurSong.Get(), GAMESTATE->GetCurrentStyle()->m_StepsType, GAMESTATE->m_PreferredDifficulty[pn] );
+			// nothing found with preferred difficulty? try with closest.
 			// closest seems to return 'easy' when prefrred difficulty is 'medium'
 			// even if the song has medium steps?
 			if(	pSteps == NULL )
 				pSteps = SongUtil::GetOneSteps( p->m_pCurSong.Get(), GAMESTATE->GetCurrentStyle()->m_StepsType, GAMESTATE->GetClosestShownDifficulty(pn) );
-
-			if( pSteps == NULL )
-			{
-			//	Dialog::OK( ssprintf("GetCurrentSteps() -- No Steps (Difficulty = %s Preferred = %s)",DifficultyToString(GAMESTATE->m_PreferredDifficulty[pn]).c_str() ),"Error");
-				pSteps = p->m_pCurSteps[pn];
-			}
 		}
 		else
 		{
-		//	Dialog::OK("GetCurrentSteps() -- No Song","Error");
 			pSteps = p->m_pCurSteps[pn];
 		}
 
 		// if you're on the music select and change song, the current steps are not
 		// updated correctly/in time for CurrentSongChangedMessageCommand 
-		// (as such the returned steps are that of the previous song
+		// (as such the returned steps are that of the previous song)
 
-//		Steps *pSteps = p->m_pCurSteps[pn];  
 		if( pSteps ) { pSteps->PushSelf(L); }
 		else		 { lua_pushnil(L); }
 		return 1;
@@ -2230,6 +2252,7 @@ public:
 	DEFINE_METHOD( GetPreferredDifficulty,		m_PreferredDifficulty[Enum::Check<PlayerNumber>(L, 1)] )
 	DEFINE_METHOD( AnyPlayerHasRankingFeats,	AnyPlayerHasRankingFeats() )
 	DEFINE_METHOD( IsCourseMode,			IsCourseMode() )
+	DEFINE_METHOD( IsBattleMode,			IsBattleMode() )
 	DEFINE_METHOD( IsDemonstration,			m_bDemonstrationOrJukebox )
 	DEFINE_METHOD( GetPlayMode,			m_PlayMode )
 	DEFINE_METHOD( GetSortOrder,			m_SortOrder )
@@ -2245,12 +2268,14 @@ public:
 	DEFINE_METHOD( GetCurrentStage,			GetCurrentStage() )
 	DEFINE_METHOD( HasEarnedExtraStage,		HasEarnedExtraStage() )
 	DEFINE_METHOD( GetEasiestStepsDifficulty,	GetEasiestStepsDifficulty() )
+	DEFINE_METHOD( GetHardestStepsDifficulty,	GetHardestStepsDifficulty() )
 	DEFINE_METHOD( IsEventMode,			IsEventMode() )
 	DEFINE_METHOD( GetNumPlayersEnabled,		GetNumPlayersEnabled() )
 	DEFINE_METHOD( GetSongBeat,			m_fSongBeat )
 	DEFINE_METHOD( GetSongBeatVisible,		m_fSongBeatVisible )
 	DEFINE_METHOD( GetSongBPS,			m_fCurBPS )
 	DEFINE_METHOD( GetSongFreeze,			m_bFreeze )
+	DEFINE_METHOD( GetSongDelay,			m_bDelay )
 	DEFINE_METHOD( GetGameplayLeadIn,		m_bGameplayLeadIn )
 	DEFINE_METHOD( GetCoins,			m_iCoins )
 	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[Enum::Check<PlayerNumber>(L, 1)] )
@@ -2300,6 +2325,7 @@ public:
 		lua_pushboolean(L, p->GetStageResult(PLAYER_1)==RESULT_DRAW); return 1;
 	}
 	static int GetCurrentGame( T* p, lua_State *L )			{ const_cast<Game*>(p->GetCurrentGame())->PushSelf( L ); return 1; }
+	//static int SetCurrentGame( T* p, lua_State *L )			{ p->SetCurrentGame( GAMEMAN->StringToGame( SArg(1) ) ); return 0; }
 	DEFINE_METHOD( GetEditCourseEntryIndex,		m_iEditCourseEntryIndex )
 	DEFINE_METHOD( GetEditLocalProfileID,		m_sEditLocalProfileID.Get() )
 	static int GetEditLocalProfile( T* p, lua_State *L )
@@ -2385,6 +2411,9 @@ public:
 		p->m_bJukeboxUsesModifiers = BArg(1); return 0;
 	}
 	static int Reset( T* p, lua_State *L )				{ p->Reset(); return 0; }
+	static int JoinPlayer( T* p, lua_State *L )				{ p->JoinPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
+	static int UnjoinPlayer( T* p, lua_State *L )				{ p->UnjoinPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
+	static int GetSongPercent( T* p, lua_State *L )				{ lua_pushnumber(L, p->GetSongPercent(FArg(1))); return 1; }
 
 	DEFINE_METHOD( GetWorkoutGoalComplete,		m_bWorkoutGoalComplete )
 
@@ -2396,8 +2425,8 @@ public:
 		ADD_METHOD( GetMasterPlayerNumber );
 		ADD_METHOD( GetMultiplayer );
 		ADD_METHOD( GetNumMultiplayerNoteFields );
-		ADD_METHOD( ShowW1 );
 		ADD_METHOD( SetNumMultiplayerNoteFields );
+		ADD_METHOD( ShowW1 );
 		ADD_METHOD( GetPlayerState );
 		ADD_METHOD( GetMultiPlayerState );
 		ADD_METHOD( ApplyGameCommand );
@@ -2418,6 +2447,7 @@ public:
 		ADD_METHOD( GetPreferredDifficulty );
 		ADD_METHOD( AnyPlayerHasRankingFeats );
 		ADD_METHOD( IsCourseMode );
+		ADD_METHOD( IsBattleMode );
 		ADD_METHOD( IsDemonstration );
 		ADD_METHOD( GetPlayMode );
 		ADD_METHOD( GetSortOrder );
@@ -2433,12 +2463,14 @@ public:
 		ADD_METHOD( GetCurrentStage );
 		ADD_METHOD( HasEarnedExtraStage );
 		ADD_METHOD( GetEasiestStepsDifficulty );
+		ADD_METHOD( GetHardestStepsDifficulty );
 		ADD_METHOD( IsEventMode );
 		ADD_METHOD( GetNumPlayersEnabled );
 		ADD_METHOD( GetSongBeat );
 		ADD_METHOD( GetSongBeatVisible );
 		ADD_METHOD( GetSongBPS );
 		ADD_METHOD( GetSongFreeze );
+		ADD_METHOD( GetSongDelay );
 		ADD_METHOD( GetGameplayLeadIn );
 		ADD_METHOD( GetCoins );
 		ADD_METHOD( IsSideJoined );
@@ -2456,6 +2488,7 @@ public:
 		ADD_METHOD( IsWinner );
 		ADD_METHOD( IsDraw );
 		ADD_METHOD( GetCurrentGame );
+		//ADD_METHOD( SetCurrentGame );
 		ADD_METHOD( GetEditCourseEntryIndex );
 		ADD_METHOD( GetEditLocalProfileID );
 		ADD_METHOD( GetEditLocalProfile );
@@ -2473,6 +2506,9 @@ public:
 		ADD_METHOD( SetJukeboxUsesModifiers );
 		ADD_METHOD( GetWorkoutGoalComplete );
 		ADD_METHOD( Reset );
+		ADD_METHOD( JoinPlayer );
+		ADD_METHOD( UnjoinPlayer );
+		ADD_METHOD( GetSongPercent );
 	}
 };
 

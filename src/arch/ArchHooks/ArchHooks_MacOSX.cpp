@@ -69,15 +69,14 @@ void ArchHooks_MacOSX::Init()
 	CrashHandler::InitializeCrashHandler();
 	SignalHandler::OnClose( DoCrashSignalHandler );
 	SignalHandler::OnClose( DoEmergencyShutdown );
-	
+
 	/* Now that the crash handler is set up, disable crash reporter. */
 	// Breaks gdb
 	// task_set_exception_ports( mach_task_self(), EXC_MASK_ALL, MACH_PORT_NULL, EXCEPTION_DEFAULT, 0 );
-	
 
 	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
 	CFStringRef key = CFSTR( "ApplicationBundlePath" );
-	
+
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef appID = CFBundleGetIdentifier( bundle );
 	if( appID == NULL )
@@ -90,13 +89,13 @@ void ArchHooks_MacOSX::Init()
 	CFURLRef path = CFBundleCopyBundleURL( bundle );
 	CFPropertyListRef value = CFURLCopyFileSystemPath( path, kCFURLPOSIXPathStyle );
 	CFMutableDictionaryRef newDict = NULL;
-	
+
 	if( old && CFGetTypeID(old) != CFDictionaryGetTypeID() )
 	{
 		CFRelease( old );
 		old = NULL;
 	}
-	
+
 	if( !old )
 	{
 		newDict = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
@@ -107,7 +106,7 @@ void ArchHooks_MacOSX::Init()
 	{
 		CFTypeRef oldValue;
 		CFDictionaryRef dict = CFDictionaryRef( old );
-		
+
 		if( !CFDictionaryGetValueIfPresent(dict, version, &oldValue) || !CFEqual(oldValue, value) )
 		{
 			// The value is either not present or it is but it is different
@@ -116,7 +115,7 @@ void ArchHooks_MacOSX::Init()
 		}
 		CFRelease( old );
 	}
-	
+
 	if( newDict )
 	{
 		CFPreferencesSetAppValue( key, newDict, appID );
@@ -146,19 +145,19 @@ RString ArchHooks_MacOSX::GetMachineId() const
 	CFMutableDictionaryRef dict = IOServiceMatching( "IOPlatformExpertDevice" );
 	CFMutableDictionaryRef property;
 	io_service_t service;
-	
+
 	if( dict )
 	{
 		// This consumes the reference.
 		service = IOServiceGetMatchingService( kIOMasterPortDefault, dict );
-		
+
 		if( service )
 		{
 			CFTypeRef serial;
 			CFStringRef key = CFSTR( "IOPlatformSerialNumber" ); // kIOPlatformSerialNumberKey
-			
+
 			serial = IORegistryEntryCreateCFProperty( service, key, kCFAllocatorDefault, 0 );
-			
+
 			if( serial )
 			{
 				const char *str = CFStringGetCStringPtr( (CFStringRef)serial, CFStringGetSystemEncoding() );
@@ -168,40 +167,40 @@ RString ArchHooks_MacOSX::GetMachineId() const
 			IOObjectRelease( service );
 		}
 	}
-	
+
 	dict = IOServiceMatching( kIOEthernetInterfaceClass );
-	
+
 	if( !dict )
 		return ret;
-	
+
 	property = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
 					      &kCFTypeDictionaryValueCallBacks );
-	
+
 	if( !property )
 	{
 		CFRelease( dict );
 		return ret;
 	}
-	
+
 	CFDictionarySetValue( property, CFSTR(kIOPrimaryInterface), kCFBooleanTrue );
 	CFDictionarySetValue( dict, CFSTR(kIOPropertyMatchKey), property );
 	CFRelease( property );
-	
+
 	io_iterator_t iter;
-	
+
 	if( IOServiceGetMatchingServices(kIOMasterPortDefault, dict, &iter) != KERN_SUCCESS )
 		return ret;
 	while( (service = IOIteratorNext(iter)) )
 	{
 		CFTypeRef data;
 		io_object_t controller;
-		
+
 		if( IORegistryEntryGetParentEntry(service, kIOServicePlane, &controller) != KERN_SUCCESS )
 		{
 			IOObjectRelease( service );
 			continue;
 		}
-		
+
 		data = IORegistryEntryCreateCFProperty( controller, CFSTR(kIOMACAddress),
 							kCFAllocatorDefault, 0 );
 		if( data )
@@ -221,12 +220,11 @@ RString ArchHooks_MacOSX::GetMachineId() const
 
 void ArchHooks_MacOSX::DumpDebugInfo()
 {
-	
 	/* Get system version */
 	RString sSystemVersion;
 	{
 		long major = 0, minor = 0, bugFix = 0;
-		
+
 		Gestalt( gestaltSystemVersionMajor, &major );
 		Gestalt( gestaltSystemVersionMinor, &minor );
 		Gestalt( gestaltSystemVersionBugFix, &bugFix );
@@ -269,7 +267,7 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 		GET_PARAM( "hw.logicalcpu_max", iMaxCPUs );
 		GET_PARAM( "hw.logicalcpu", iCPUs );
 		GET_PARAM( "hw.cpufrequency", iFreq );
-		
+
 		if( iFreq >= 1000000000 )
 		{
 			fFreq = float( double(iFreq) / 1000000000.0 );
@@ -280,7 +278,7 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 			fFreq = float( double(iFreq) / 1000000.0 );
 			freqPower = 'M';
 		}
-		
+
 		if( GET_PARAM("hw.model", szModel) )
 		{
 			sModel = "Unknown";
@@ -315,7 +313,7 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 		CFRelease( plRef );
 	} while( false );
 #undef GET_PARAM
-	
+
 	/* Send all of the information to the log */
 	LOG->Info( "Model: %s (%d/%d)", sModel.c_str(), iCPUs, iMaxCPUs );
 	LOG->Info( "Clock speed %.2f %cHz", fFreq, freqPower );
@@ -328,7 +326,7 @@ RString ArchHooks::GetPreferredLanguage()
 	CFStringRef app = kCFPreferencesCurrentApplication;
 	CFTypeRef t = CFPreferencesCopyAppValue( CFSTR("AppleLanguages"), app );
 	RString ret = "en";
-	
+
 	if( t == NULL )
 		return ret;
 	if( CFGetTypeID(t) != CFArrayGetTypeID() )
@@ -336,10 +334,10 @@ RString ArchHooks::GetPreferredLanguage()
 		CFRelease( t );
 		return ret;
 	}
-	
+
 	CFArrayRef languages = CFArrayRef( t );
 	CFStringRef lang;
-	
+
 	if( CFArrayGetCount(languages) > 0 &&
 	    (lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != NULL )
 	{
@@ -348,7 +346,7 @@ RString ArchHooks::GetPreferredLanguage()
 		ASSERT( str );
 		ret = RString( str, 2 );
 	}
-	
+
 	CFRelease( languages );
 	return ret;
 }
@@ -358,7 +356,7 @@ bool ArchHooks_MacOSX::GoToURL( RString sUrl )
 	CFURLRef url = CFURLCreateWithBytes( kCFAllocatorDefault, (const UInt8*)sUrl.data(),
 					     sUrl.length(), kCFStringEncodingUTF8, NULL );
 	OSStatus result = LSOpenCFURLRef( url, NULL );
-	
+
 	CFRelease( url );
 	return result == 0;
 }
@@ -367,11 +365,11 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	// http://developer.apple.com/qa/qa2004/qa1398.html
 	static double factor = 0.0;
-	
+
 	if( unlikely(factor == 0.0) )
 	{
 		mach_timebase_info_data_t timeBase;
-		
+
 		mach_timebase_info( &timeBase );
 		factor = timeBase.numer / ( 1000.0 * timeBase.denom );
 	}
@@ -396,7 +394,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), NULL );
 
 	FILEMAN->Mount( "dir", sDirOfExecutable, "/" );
-	
+
 	if( dataUrl )
 	{
 		CFStringRef dataPath = CFURLCopyFileSystemPath( dataUrl, kCFURLPOSIXPathStyle );
@@ -407,37 +405,37 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 		CFRelease( dataPath );
 		CFRelease( dataUrl );
 	}
-}
-
-void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
-{
-	char dir[PATH_MAX];
 
 	// /Save -> ~/Library/Preferences/PRODUCT_ID
 	PathForFolderType( dir, kPreferencesFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Save" );
-	
+
 	// /UserPackages -> ~/Library/Application Support/PRODUCT_ID/Packages
 	PathForFolderType( dir, kApplicationSupportFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Packages", dir), "/" + SpecialFiles::USER_PACKAGES_DIR );
-	
+
 	// /Screenshots -> ~/Pictures/PRODUCT_ID Screenshots
 	PathForFolderType( dir, kPictureDocumentsFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID " Screenshots", dir), "/Screenshots" );
-	
+
 	// /Cache -> ~/Library/Caches/PRODUCT_ID
 	PathForFolderType( dir, kCachedDataFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Cache" );
-	
+
 	// /Logs -> ~/Library/Logs/PRODUCT_ID
 	PathForFolderType( dir, kDomainLibraryFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/Logs/" PRODUCT_ID, dir), "/Logs" );
 }
 
+void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+{
+	// XXX: Fix me.
+}
+
 static inline int GetIntValue( CFTypeRef r )
 {
 	int ret;
-	
+
 	if( !r || CFGetTypeID(r) != CFNumberGetTypeID() || !CFNumberGetValue(CFNumberRef(r), kCFNumberIntType, &ret) )
 		return 0;
 	return ret;
@@ -450,9 +448,9 @@ float ArchHooks_MacOSX::GetDisplayAspectRatio()
 	CFDictionaryRef dict = IODisplayCreateInfoDictionary( displayPort, 0 );
 	int width = GetIntValue( CFDictionaryGetValue(dict, CFSTR(kDisplayHorizontalImageSize)) );
 	int height = GetIntValue( CFDictionaryGetValue(dict, CFSTR(kDisplayVerticalImageSize)) );
-	
+
 	CFRelease( dict );
-	
+
 	if( width && height )
 		return float(width)/height;
 	return 4/3.f;

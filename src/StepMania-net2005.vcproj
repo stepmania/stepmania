@@ -116,7 +116,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"
+				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania-debug.vdi&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -328,7 +328,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"
+				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania-fastdebug.vdi&quot;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -772,14 +772,6 @@
 			</File>
 			<File
 				RelativePath="ScreenSelectMaster.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenSelectMode.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenSelectMode.h"
 				>
 			</File>
 			<File
@@ -1307,11 +1299,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\NotesLoaderPMS.cpp"
+				RelativePath="NotesLoaderPMS.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\NotesLoaderPMS.h"
+				RelativePath="NotesLoaderPMS.h"
 				>
 			</File>
 			<File
@@ -2567,14 +2559,6 @@
 				>
 			</File>
 			<File
-				RelativePath="MusicBannerWheel.cpp"
-				>
-			</File>
-			<File
-				RelativePath="MusicBannerWheel.h"
-				>
-			</File>
-			<File
 				RelativePath="MusicList.cpp"
 				>
 			</File>
@@ -2644,14 +2628,6 @@
 			</File>
 			<File
 				RelativePath="ScrollBar.h"
-				>
-			</File>
-			<File
-				RelativePath="ScrollingList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScrollingList.h"
 				>
 			</File>
 			<File

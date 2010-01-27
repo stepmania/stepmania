@@ -1,0 +1,67 @@
+Used by Pocket DDR (http://www.stepmania.com/forums/showthread.php?t=6621).
+Basically a compressed version of a .SM that includes the banner and background
+in the file as well.
+
+{Banner}
+{Background}
+{SDF data}
+
+When running SM2SDF.exe with /log, the process looks like this:
+-------------------------------------------------
+      SM 2 SCF Converter v.1.0 by Robot2037
+-------------------------------------------------
+ SM File: test.sm
+ Loading file test.sm...done.
+ [LOG] parsing SM file
+ [LOG] songTitle = test song
+ [LOG] songSubTitle = a remix
+ [LOG] songArtist = kurt angle!
+ [LOG] songCredits = aj jelly
+ [LOG] songBanner = ssc-banner.png
+ [LOG] songBackground = ssc-bg.png
+ [LOG] songOffset = -0.060
+ [LOG] songBPMs = 0.000=93.810;
+ [LOG] songStops = ;
+ [LOG] parsing stepcharts
+ [LOG] difficulty 0 stepchart found, step difficulty = 2
+ [LOG] difficulty 1 stepchart found, step difficulty = 4
+ [LOG] difficulty 2 stepchart found, step difficulty = 6
+ [LOG] difficulty 3 stepchart found, step difficulty = 10
+ converting...
+ [LOG] converting song properties
+ [LOG] converting BPMs
+ [LOG] converting stops
+ [LOG] converting offset
+ [LOG] converting stepcharts
+ [LOG] converting stepchart 0
+ [LOG] converting done
+ [LOG] converting stepchart 1
+ [LOG] converting done
+ [LOG] converting stepchart 2
+ [LOG] converting done
+ [LOG] converting stepchart 3
+ [LOG] converting done
+ compressing stepchart 0 [ 576 -> 39 ]
+ compressing stepchart 1 [ 576 -> 71 ]
+ compressing stepchart 2 [ 576 -> 167 ]
+ compressing stepchart 3 [ 576 -> 233 ]
+ Converting image ssc-bg.png...done.
+ Converting image ssc-banner.png...done.
+ Writing file test.sdf...done.
+
+test_sm2sdf.sm is the equivalent of test.sm in the above example.
+test.sdf is the output file, with two BPMs.
+test-1bpm.sdf is an output file with only one BPM change (and a changed offset).
+the two images are included as well.
+--------------------------------------------------------------------------------
+A cursory glance at the steps part of the .SDF shows this:
+
+0x00-0x04: [000204060A]
+0x05-0x??: Title (first byte is number of characters/length of string)
+then Subtitle, Artist, and Credit follow the same pattern.
+That's followed by the Offset. +1.000 = 0x0003E8. -0.060 = 0x01003C.
+I think they call this binary coded decimal.
+
+After that is the number of BPMs, presumably followed by those BPMs.
+0x0007D0=0x0A2C2B == #BPMS:2.000=666.667;
+I'm just not sure how they're picking the places to store the decimal.

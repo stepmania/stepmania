@@ -66,8 +66,8 @@ void ScreenNetworkOptions::Init()
 		pHand->m_Def.m_vsChoices.push_back(SCORE_OFF);
 		pHand->m_Def.m_vsChoices.push_back(SCORE_ON);
 	}
+	/*
 	{
-
 		// Get info on all received servers from NSMAN.
 		AllServers.clear();
 		NSMAN->GetListOfLANServers( AllServers );
@@ -81,6 +81,7 @@ void ScreenNetworkOptions::Init()
 			vHands.push_back( pHand );
 		}
 	}
+	*/
 
 	InitMenu( vHands );
 
@@ -126,6 +127,7 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 		else
 			PREFSMAN->m_bEnableScoreboard.Set(false);
 		break;
+	/*
 	case PO_SERVERS:
 		if ( !AllServers.empty() )
 		{
@@ -140,6 +142,7 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 			ScreenOptions::MenuStart( input );
 		}
 		break;
+	*/
 	default:
 		ScreenOptions::MenuStart( input );
 	}

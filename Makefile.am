@@ -19,17 +19,17 @@ SMData:
 
 dist-hook: SMData
 	mkdir -p $(distdir)/Packages
-	cp StepMania.smzip $(distdir)/Packages
+	cp GameData.smzip $(distdir)/Packages
 	mkdir -p $(distdir)/Docs
 	cp $(srcdir)/Docs/Licenses.txt $(distdir)/Docs
 	cp $(srcdir)/Utils/build.sh $(distdir)
 
-install-data-hook: $(top_srcdir)/Packages/StepMania.smzip
+install-data-hook: $(top_srcdir)/Packages/GameData.smzip
 	mkdir -p "$(DESTDIR)$(bindir)/$(productID)/Packages"
 	$(INSTALL) $(installFiles) "$(DESTDIR)$(bindir)/$(productID)"
-	$(INSTALL_DATA) $(top_srcdir)/Packages/StepMania.smzip "$(DESTDIR)$(bindir)/$(productID)/Packages"
+	$(INSTALL_DATA) $(top_srcdir)/Packages/GameData.smzip "$(DESTDIR)$(bindir)/$(productID)/Packages"
 
 uninstall-hook:
 	rm -f "$(DESTDIR)$(bindir)/$(productID)/stepmania"
 	rm -f "$(DESTDIR)$(bindir)/$(productID)/GtkModule.so"
-	rm -f "$(DESTDIR)$(bindir)/$(productID)/Packages/StepMania.smzip"
+	rm -f "$(DESTDIR)$(bindir)/$(productID)/Packages/GameData.smzip"

@@ -23,12 +23,13 @@ public:
 	MultiPlayer mp;
 	DeviceInputList InputList;
 };
-	
+
 struct AlternateMapping
 {
 	GameInput inpMain;
 	GameInput inpAlt;
 };
+
 #endif
 
 /*

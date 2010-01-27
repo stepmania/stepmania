@@ -234,8 +234,8 @@ void DirectFilenameDB::CacheFile( const RString &sPath )
 	if( DoStat(root+sPath, &st) == -1 )
 	{
 		int iError = errno;
-		/* If it's a broken symlink, ignore it.  Otherwise, warn. */
-		/* Huh? */
+		// If it's a broken symlink, ignore it.  Otherwise, warn.
+		// Huh?
 		WARN( ssprintf("File '%s' is gone! (%s)",
 			       sPath.c_str(), strerror(iError)) );
 	}
@@ -313,7 +313,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 			continue;
 		
 		File f( pEnt->d_name );
-		
+
 		struct stat st;
 		if( DoStat(root+sPath + "/" + pEnt->d_name, &st) == -1 )
 		{

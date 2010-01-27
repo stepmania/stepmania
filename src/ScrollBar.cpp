@@ -54,7 +54,7 @@ void ScrollBar::SetPercentage( float fCenterPercent, float fSizePercent )
 		float fY = SCALE( fCenterPercent, 0.0f, 1.0f, -iBarContentHeight/2.0f, iBarContentHeight/2.0f );
 		fY = roundf( fY );
 		m_sprScrollTickThumb->SetY( fY );
-	}	
+	}
 
 	/* Set stretch thumb */
 	float fStartPercent = fCenterPercent - fSizePercent;

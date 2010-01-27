@@ -1,1 +1,3 @@
-Place CRS and course banner files here.
+Course files (.crs) typically go in folders, though they aren't shown like that
+on the wheel... yet. (Coming soon: a metric that allows a theme to do that, once
+we get the wheel to treat course directories like song directories)

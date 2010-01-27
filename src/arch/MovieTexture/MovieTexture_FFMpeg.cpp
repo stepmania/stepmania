@@ -11,19 +11,35 @@
 
 namespace avcodec
 {
-#include <ffmpeg/avformat.h>
+#if defined(MACOSX)
+	// old shit
+	#include <ffmpeg/avformat.h>
+#else
+	/* ...shit. this is gonna break building on Linux and Mac, isn't it?
+	 * (the way I have it set to include ffmpeg/crap/header.h instead of
+	 * crap/header.h like in the patch: http://pastie.org/701873 )
+	 */
+	extern "C"
+	{
+		#include <libavformat/avformat.h>
+		#include <libswscale/swscale.h>
+	}
+#endif
 };
 
 #if defined(_MSC_VER) && !defined(XBOX)
 	#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
 	#pragma comment(lib, "ffmpeg/lib/avformat.lib")
-#endif
+	#if defined(USE_MODERN_FFMPEG)
+		#pragma comment(lib, "ffmpeg/lib/swscale.lib")
+	#endif
+#endif // _MSC_VER && !XBOX
 
 #if defined(XBOX)
-	/* NOTES: ffmpeg static libraries arent included in cvs - you have to build them yourself 
-	 * or remove this file to produce xbox build
+	/* NOTES: ffmpeg static libraries arent included in SVN. You have to build
+	 *them yourself or remove this file to produce the xbox build.
 	 * 
-	 * build ffmpeg with mingw32 ( howto http://arrozcru.no-ip.org/ffmpeg_wiki/tiki-index.php )
+	 * build ffmpeg with mingw32 ( howto http://ffmpeg.arrozcru.org/wiki/index.php?title=Main_Page )
      * ./configure --enable-memalign-hack --enable-static --disable-mmx --target-os=mingw32 --arch=x86
      * you can use various switches to enable/disable codecs/muxers/etc. 
 	 * 
@@ -32,7 +48,14 @@ namespace avcodec
 	#pragma comment(lib, "ffmpeg/lib/libavcodec.a")
 	#pragma comment(lib, "ffmpeg/lib/libavformat.a")
 	#pragma comment(lib, "ffmpeg/lib/libavutil.a")
+	#pragma comment(lib, "ffmpeg/lib/libswscale.a")
 	#pragma comment(lib, "ffmpeg/lib/libgcc.a")
+	#pragma comment(lib, "ffmpeg/lib/libmingwex.a")
+	#pragma comment(lib, "ffmpeg/lib/libcoldname.a")
+#endif
+
+#if !defined(MACOSX)
+	static const int sws_flags = SWS_BICUBIC; // XXX: Reasonable default?
 #endif
 
 static struct AVPixelFormat_t
@@ -270,6 +293,9 @@ private:
 	avcodec::AVStream *m_pStream;
 	avcodec::AVFrame m_Frame;
 	avcodec::PixelFormat m_AVTexfmt; /* PixelFormat of output surface */
+#if !defined(MACOSX)
+	avcodec::SwsContext *m_swsctx;
+#endif
 
 	float m_fPTS;
 	avcodec::AVFormatContext *m_fctx;
@@ -311,6 +337,14 @@ MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 		avcodec::av_free_packet( &m_Packet );
 		m_iCurrentPacketOffset = -1;
 	}
+#if !defined(MACOSX)
+	if (m_swsctx)
+	{
+		avcodec::sws_freeContext(m_swsctx);
+		m_swsctx = NULL;
+	}
+#endif
+
 }
 
 void MovieDecoder_FFMpeg::Init()
@@ -322,6 +356,9 @@ void MovieDecoder_FFMpeg::Init()
 	m_fPTS = -1;
 	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
 	m_fTimestampOffset = 0;
+#if !defined(MACOSX)
+	m_swsctx = NULL;
+#endif
 
 	if( m_iCurrentPacketOffset != -1 )
 	{
@@ -513,9 +550,40 @@ void MovieDecoder_FFMpeg::GetFrame( RageSurface *pSurface )
 	pict.data[0] = (unsigned char *) pSurface->pixels;
 	pict.linesize[0] = pSurface->pitch;
 
+	/* Greetings. The code that's commented out below is what is found in the
+	 * current StepMania 4 ("vanilla") codebase, since they use ffmpeg r8448
+	 * with a patch. When looking at ffmpeg's code recently to see if they've
+	 * accepted the patch, they did, and since various people have decided to
+	 * make StepMania support modern versions of ffmpeg, we are doing so as
+	 * well. This is part of that whole "futures-oriented" thing we have going
+	 * on with sm-ssc. Just thought you'd like to know. :) -aj
+	 */
+#if defined(MACOSX)
 	avcodec::img_convert( &pict, m_AVTexfmt,
 			(avcodec::AVPicture *) &m_Frame, m_pStream->codec->pix_fmt, 
 			m_pStream->codec->width, m_pStream->codec->height );
+#else
+	/* XXX 1: Do this in one of the Open() methods instead?
+	 * XXX 2: The problem of doing this in Open() is that m_AVTexfmt is not
+	 * already initialized with its correct value.
+	 */
+	if( m_swsctx == NULL )
+	{
+		m_swsctx = avcodec::sws_getCachedContext( m_swsctx,
+				GetWidth(), GetHeight(), m_pStream->codec->pix_fmt,
+				GetWidth(), GetHeight(), m_AVTexfmt,
+				sws_flags, NULL, NULL, NULL );
+		if( m_swsctx == NULL )
+		{
+			LOG->Warn("Cannot initialize sws conversion context for (%d,%d) %d->%d", GetWidth(), GetHeight(), m_pStream->codec->pix_fmt, m_AVTexfmt);
+			return;
+		}
+	}
+
+	avcodec::sws_scale( m_swsctx,
+			m_Frame.data, m_Frame.linesize, 0, GetHeight(),
+			pict.data, pict.linesize );
+#endif
 }
 
 static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
@@ -596,11 +664,16 @@ int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
 	return f->Write( buf, size );
 }
 
-avcodec::offset_t URLRageFile_seek( avcodec::URLContext *h, avcodec::offset_t pos, int whence )
+// sm4svn has it as:
+#if defined(MACOSX)
+	avcodec::offset_t URLRageFile_seek( avcodec::URLContext *h, avcodec::offset_t pos, int whence )
+#else
+	avcodec::int64_t URLRageFile_seek( avcodec::URLContext *h, avcodec::int64_t pos, int whence )
+#endif
 {
 	RageFile *f = (RageFile *) h->priv_data;
 	if( whence == AVSEEK_SIZE )
-		return f->Tell();
+		return f->GetFileSize();
 
 	if( whence != SEEK_SET && whence != SEEK_CUR && whence != SEEK_END )
 		return -1;
@@ -623,6 +696,10 @@ static avcodec::URLProtocol RageProtocol =
 	URLRageFile_write,
 	URLRageFile_seek,
 	URLRageFile_close,
+#if !defined(MACOSX)
+	NULL, // why were these two nulls added? -aj
+	NULL,
+#endif
 	NULL
 };
 

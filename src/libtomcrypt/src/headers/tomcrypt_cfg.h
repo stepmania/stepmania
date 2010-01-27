@@ -138,5 +138,5 @@ LTC_EXPORT int   LTC_CALL XSTRCMP(const char *s1, const char *s2);
 
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 27820 $ */
+/* $Date: 2008-12-26 05:11:48 -0600 (Fri, 26 Dec 2008) $ */

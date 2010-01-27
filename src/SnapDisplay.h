@@ -8,7 +8,10 @@
 #include "Sprite.h"
 #include "PlayerNumber.h"
 
-
+/* sm-ssc todo:
+ * Convert m_sprIndicators to AutoActors
+ * ThemeMetric for deciding to load one or two indicators? -aj
+ */
 
 class SnapDisplay : public ActorFrame
 {

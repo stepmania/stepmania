@@ -1,18 +1,18 @@
 #!/bin/sh
 # Run this to generate configure, the initial makefiles, etc.
 #
-# Source (non-CVS) distributions should come with a "configure" script
+# Source (non-SVN) distributions should come with a "configure" script
 # already generated--people simply compiling the program shouldn't
 # need autoconf and friends installed.
 #
-# CVS only contains the source files: Makefile.am, configure.ac, and
+# SVN only contains the source files: Makefile.am, configure.ac, and
 # so on.
 
 
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-PKG_NAME="stepmania"
+PKG_NAME="sm-ssc"
 
 AUTOHEADER=autoheader
 ACLOCAL_OPTIONS="-I autoconf/m4/"

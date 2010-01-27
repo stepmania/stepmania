@@ -1,0 +1,127 @@
+How to Theme for sm-ssc: THE DOC.
+________________________________________________________________________________
+Table of Contents
+i.  Introduction
+ii. Requirements
+----------------
+1. Introduction to Concepts
+ 1. The Raw Elements
+  1. Metrics
+  2. BGAnimations
+  3. Graphics
+  4. Fonts
+  5. Sounds
+  6. Languages
+  7. Scripts
+  8. Other
+ 2. Screens, Classes, Managers and more
+2. Elements in Detail
+  1. Metrics and Languages
+  2. BGAnimations
+  3. Graphics
+  4. Fonts, Sound
+  5. Scripts
+X. Making Your First sm-ssc Theme
+ 1. Setup
+ 2. 
+________________________________________________________________________________
+ i. Introduction
+________________________________________________________________________________
+ii. Requirements
+In order to follow along with this guide, you will need the following:
+
+* sm-ssc (our fork of StepMania 4)
+  Right now, it's in private beta. If you have it, you're lucky.
+* A decent text editor (syntax highlighting is a plus)
+* A decent graphics editor (for any graphics changes you want to make)
+* A decent sound editor (in case you want to edit sounds)
+
+Some of these may not apply to you (e.g. you may just want to learn how to
+do BGAnimations in Lua and what the differences in the metrics are).
+That's fine. :)
+
+Other recommended utilities will be introduced throughout this guide; they are
+not required if you do not wish to use them.
+________________________________________________________________________________
+1.  Introduction to Concepts
+If you are familiar with theming for another version of StepMania already, you
+can skim this section to see what differences exist between that version and
+sm-ssc.
+--------------------------------------------------------------------------------
+1.1 The Raw Elements
+A StepMania theme is comprised of multiple parts. Some of these parts are more
+important than others. This section briefly introduces each of the elements,
+explaining what they do and why they're important.
+More in-depth descriptions will come with each chapter.
+
+1.1.1 Metrics
+The metrics (metrics.ini) contain the core elements of a theme. Most everything
+that has to do with StepMania's built-in types will be found here.
+
+1.1.2 BGAnimations
+BGAnimations are used to decorate screens. In SM4, they use Lua for BGAnims,
+which allows for some amazing stuff if done right. This guide won't delve too
+deeply into abusing BGAnimations for fun and profit (via custom coded elements),
+but it will be brought up later.
+
+1.1.3 Graphics
+Graphics are simply that. They go along with the metrics, but can also be
+called from BGAnimations. Some graphics can be replaced with Lua files for more
+complex creations.
+
+1.1.4 Fonts
+Fonts are used to draw text to the Screen. They can consist of a normal page
+and a stroke page, as well as the special numbers and alternate characters
+pages.
+
+One of the problems with SM Fonts is that they require a program to generate the
+required format. Both known programs are Windows-only, hindering those
+developing StepMania themes on Mac and Linux (unless some sort of virtualization
+solution is used).
+When you make a non-text font, you only have the choice of an image editor.
+Hope it has a customizable grid! (This is where Paint Shop Pro 7 beats any
+version of Photoshop.)
+
+1.1.5 Sounds
+The Sounds folder contains both sounds that play during the use of StepMania,
+as well as any music your theme contains.
+
+1.1.6 Languages
+Languages are where Strings that appear in the theme should be defined. Each
+language is represented by a two letter code, with the following examples from
+the default theme:
+en - English
+es - Spanish (Espanol)
+fr - French (Francais)
+it - Italian(o)
+de - German (Deutsch)
+
+1.1.7 Scripts
+Lua Scripts were introduced in StepMania 4 (really "3.95", if you want to get
+technical). If you've come from theming an earlier version where they didn't
+exist (3.9), this folder might take some getting used to. This directory holds
+Lua scripts that are loaded on startup. Some scripts lay down the theming
+foundation, meaning that if you're crazy enough, you can rewrite everything.
+If you do that though, this guide will start to make a lot less sense.
+
+1.1.8 Other
+The Other folder contains miscellaneous things. You generally won't need to
+worry about this folder unless you need to edit some uncommon files.
+________________________________________________________________________________
+2.  Elements in Detail
+Unless you are a very fast learner and can learn by looking at other people's
+code, you are probably wanting to know more about the elements in detail.
+
+2.1 Metrics and Languages
+These two are grouped together since they both use ini files. This means the
+layout of the file will contain groups, keys, and values.
+
+[Group]
+Key=Value
+{ caption: Example of various .ini elements }
+
+In StepMania, most groups are Screens.
+
+The Languages folder contains strings that StepMania displays when your theme
+is used. Chances are, if you want to edit the text of something, there's an
+entry for it in one of the Language files (en.ini, usually).

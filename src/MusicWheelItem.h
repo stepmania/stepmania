@@ -49,7 +49,7 @@ private:
 
 	AutoActor		m_sprColorPart[NUM_MusicWheelItemType];
 	AutoActor		m_sprNormalPart[NUM_MusicWheelItemType];
-	
+
 	TextBanner		m_TextBanner;	// used by Type_Song instead of m_pText
 	BitmapText		*m_pText[NUM_MusicWheelItemType];
 	BitmapText		*m_pTextSectionCount;
@@ -67,7 +67,7 @@ struct MusicWheelItemData : public WheelItemBaseData
 	Song*			m_pSong;
 	WheelNotifyIcon::Flags  m_Flags;
 
-	// for TYPE_SORT
+	// for TYPE_SECTION
 	int			m_iSectionCount;
 
 	// for TYPE_SORT

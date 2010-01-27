@@ -68,6 +68,11 @@ public:
 	void SetFOV( float fFOV ) { m_fFOV = fFOV; }
 	void SetVanishPoint( float fX, float fY) { m_fVanishX = fX; m_fVanishY = fY; }
 
+	void SetAmbientLightColor( RageColor c ) { m_ambientColor = c; }
+	void SetDiffuseLightColor( RageColor c ) { m_diffuseColor = c; }
+	void SetSpecularLightColor( RageColor c ) { m_specularColor = c; }
+	void SetLightDirection( RageVector3 vec ) { m_lightDirection = vec; }
+
 	virtual void SetPropagateCommands( bool b );
 
 	/* Amount of time until all tweens (and all children's tweens) have stopped: */
@@ -94,6 +99,12 @@ protected:
 	float m_fVanishY;
 	bool m_bOverrideLighting;	// if true, set lighting to m_bLighting
 	bool m_bLighting;
+
+	// lighting variables
+	RageColor m_ambientColor;
+	RageColor m_diffuseColor;
+	RageColor m_specularColor;
+	RageVector3 m_lightDirection;
 };
 
 class ActorFrameAutoDeleteChildren : public ActorFrame

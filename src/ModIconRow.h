@@ -1,8 +1,7 @@
-/* ModIconRow - Shows PlayerOptions and SongOptions in icon form. */
+/* ModIconRow - Shows a row of ModIcons. */
 
 #ifndef ModIconRow_H
 #define ModIconRow_H
-
 
 #include "ActorFrame.h"
 #include "ModIcon.h"
@@ -20,7 +19,7 @@ public:
 
 	virtual ModIconRow *Copy() const;
 	void SetFromGameState();
-	
+
 	virtual void HandleMessage( const Message &msg );
 
 	//

@@ -1,0 +1,38 @@
+as found by cppcheck against normal sm4svn source (as of 20090527), so
+line numbers will be different in sm-ssc for some of these.
+==================================================================================
+[.\ActorFrameTexture.h:38]: (all) Memory leak: ActorFrameTexture::m_pRenderTarget
+
+[.\AdjustSync.h:16]: (all) Memory leak: AdjustSync::s_pTimingDataOriginal
+
+[.\AutoKeysounds.h:32]: (all) Memory leak: AutoKeysounds::m_pSharedSound
+
+[.\Font.cpp:748]: (all) Memory leak: pPage
+
+[.\GameSoundManager.cpp:267]: (all) Memory leak: pSound
+
+[.\LifeMeterTime.h:40]: (all) Memory leak: LifeMeterTime::m_pStream
+
+[.\MusicWheelItem.h:55]: (all) Memory leak: MusicWheelItem::m_pTextSectionCount
+
+[.\OptionRow.h:131]: (all) Memory leak: OptionRow::m_textTitle
+
+[.\PitchDetectionTestUtil.cpp:928]: (error) Mismatching allocation and deallocation: inarray
+[.\PitchDetectionTestUtil.cpp:968]: (error) Mismatching allocation and deallocation: a
+
+[.\RageFile.cpp:377]: (all) Memory leak: pFile
+
+[.\RageFileDriverDeflate.cpp:533]: (all) Memory leak: mem
+
+[.\RageSoundReader_ChannelSplit.h:57]: (all) Memory leak: RageSoundSplitter::m_pImpl
+
+[.\RageSoundReader_PitchChange.h:25]: (all) Memory leak: RageSoundReader_PitchChange::m_pSpeedChange
+[.\RageSoundReader_PitchChange.h:26]: (all) Memory leak: RageSoundReader_PitchChange::m_pResample
+
+[.\RageThreads.cpp:141]: (all) Memory leak: pLock
+
+[.\archutils\Unix\CrashHandlerChild.cpp:290]: (error) Resource leak: tty
+
+[.\crypto\CryptRSA.cpp:447]: (error) Memory leak: rsa
+
+[.\smpackage\ZipArchive\Linux\ZipPlatform.cpp:87]: (style) Found 'mktemp'. You should use 'mkstemp' instead

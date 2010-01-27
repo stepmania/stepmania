@@ -14,6 +14,7 @@ TapNote TAP_ORIGINAL_MINE		( TapNote::mine,	TapNote::SubType_Invalid,	TapNote::o
 TapNote TAP_ORIGINAL_ATTACK		( TapNote::attack,	TapNote::SubType_Invalid,	TapNote::original, "", 0, -1 );
 TapNote TAP_ORIGINAL_AUTO_KEYSOUND	( TapNote::autoKeysound,TapNote::SubType_Invalid,	TapNote::original, "", 0, -1 );
 TapNote TAP_ORIGINAL_FAKE		( TapNote::fake,	TapNote::SubType_Invalid,	TapNote::original, "", 0, -1 );
+//TapNote TAP_ORIGINAL_MINE_HEAD	( TapNote::mine_head,	TapNote::hold_head_mine,	TapNote::original, "", 0, -1 );
 TapNote TAP_ADDITION_TAP		( TapNote::tap,		TapNote::SubType_Invalid,	TapNote::addition, "", 0, -1 );
 TapNote TAP_ADDITION_MINE		( TapNote::mine,	TapNote::SubType_Invalid,	TapNote::addition, "", 0, -1 );
 

@@ -1,0 +1,7 @@
+Recommended Practices when theming for sm-ssc
+---------------------------------------------
+1) Use the --theme= command line parameter to switch between themes quickly.
+This way, you don't have to deal with the theme switch and all the possible
+nonsense errors that might come up (due to you having a different amount of
+song group colors, timer warning states, etc.), and you can quickly switch
+themes if you work on many of them at once.

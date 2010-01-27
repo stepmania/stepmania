@@ -234,7 +234,6 @@ void StageStats::FinalizeScores( bool bSummary )
 		else if( GAMESTATE->IsCourseMode() )
 		{
 			// Save this stage to recent scores
-
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			ASSERT( pCourse );
 			Trail* pTrail = GAMESTATE->m_pCurTrail[p];

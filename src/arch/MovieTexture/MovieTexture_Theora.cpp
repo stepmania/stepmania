@@ -9,7 +9,15 @@
 
 namespace avcodec
 {
-#include <ffmpeg/avcodec.h> /* for avcodec::img_convert */
+#if defined(MACOSX)
+	#include <ffmpeg/avcodec.h>
+#else
+	extern "C"
+	{
+		#include <libavcodec/avcodec.h> // for avcodec::img_convert
+		#include <libswscale/swscale.h>
+	}
+#endif
 };
 
 // #define HAVE_THEORAEXP
@@ -20,6 +28,10 @@ namespace avcodec
 #if defined(_MSC_VER)
 #pragma comment(lib, OGG_LIB_DIR "ogg_static.lib")
 #pragma comment(lib, OGG_LIB_DIR "theora_static.lib")
+#endif
+
+#if !defined(MACOSX)
+	static const int sws_flags = SWS_BICUBIC; // XXX: Reasonable default?
 #endif
 
 class MovieDecoder_Theora: public MovieDecoder
@@ -47,7 +59,13 @@ private:
 	void Init();
 	RString ProcessHeaders();
 	int ReadPage( ogg_page *pOggPage, RString &sError, bool bInitializing );
-	void ConvertToSurface( RageSurface *pSurface ) const;
+	void ConvertToSurface( RageSurface *pSurface ) const; // sm4svn
+
+	// sm-ssc with modern ffmpeg:
+#if !defined(MACOSX)
+	void ConvertToSurface( RageSurface *pSurface );
+	void ConvertImage( avcodec::AVPicture &in, avcodec::AVPicture &out, int height );
+#endif
 
 	RageFile m_File;
 
@@ -61,6 +79,9 @@ private:
 
 	avcodec::PixelFormat m_InputPixFmt; /* PixelFormat of YUV input surface */
 	avcodec::PixelFormat m_OutputPixFmt; /* PixelFormat of RGB output surface */
+#if !defined(MACOSX)
+	avcodec::SwsContext *m_swsctx;
+#endif
 };
 
 MovieDecoder_Theora::MovieDecoder_Theora()
@@ -71,11 +92,21 @@ MovieDecoder_Theora::MovieDecoder_Theora()
 	memset( &m_TheoraComment, 0, sizeof(m_TheoraComment) );
 	memset( &m_OggStream, 0, sizeof(m_OggStream) );
 	memset( &m_TheoraState, 0, sizeof(m_TheoraState) );
+#if !defined(MACOSX)
+	m_swsctx = NULL;
+#endif
 }
 
 MovieDecoder_Theora::~MovieDecoder_Theora()
 {
 	Close();
+#if !defined(MACOSX)
+	if (m_swsctx)
+	{
+		avcodec::sws_freeContext(m_swsctx);
+		m_swsctx = NULL;
+	}
+#endif
 }
 
 void MovieDecoder_Theora::Init()
@@ -276,7 +307,35 @@ RageSurface *MovieDecoder_Theora::CreateCompatibleSurface( int iTextureWidth, in
 	return RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, *ConvertValue<int>(&m_OutputPixFmt), fmtout );
 }
 
-void MovieDecoder_Theora::ConvertToSurface( RageSurface *pSurface ) const
+#if !defined(MACOSX)
+void MovieDecoder_Theora::ConvertImage( avcodec::AVPicture &in, avcodec::AVPicture &out, int height )
+{
+	// XXX: Do we need separate contexts for different heights?
+	// XXX: Do this in one of the Open() methods instead?
+	// XXX: The problem of doing this in Open() is that m_OutputPixFmt is not already initialized with its correct value.
+	if( m_swsctx == NULL )
+	{
+		m_swsctx = avcodec::sws_getCachedContext( m_swsctx,
+				GetWidth(), GetHeight(), m_InputPixFmt,
+				GetWidth(), GetHeight(), m_OutputPixFmt,
+				sws_flags, NULL, NULL, NULL );
+		if( m_swsctx == NULL )
+		{
+			LOG->Warn("Cannot initialize sws conversion context for (%d,%d) %d->%d", GetWidth(), GetHeight(), m_InputPixFmt, m_OutputPixFmt);
+			return;
+		}
+	}
+
+	avcodec::sws_scale( m_swsctx,
+			in.data, in.linesize, 0, height,
+			out.data, out.linesize );
+}
+#endif
+// const in sm4svn:
+void MovieDecoder_Theora::ConvertToSurface( RageSurface *pSurface )
+#if defined(MACOSX)
+const
+#endif
 {
 	yuv_buffer yuv;
 	theora_decode_YUVout( (theora_state *) &m_TheoraState, &yuv );
@@ -303,9 +362,14 @@ void MovieDecoder_Theora::ConvertToSurface( RageSurface *pSurface ) const
 	RGBOut.data[0] = (unsigned char *) pSurface->pixels;
 	RGBOut.linesize[0] = pSurface->pitch;
 
+	// sm4svn code:
+#if defined(MACOSX)
 	avcodec::img_convert( &RGBOut, m_OutputPixFmt,
 			&YUVIn, m_InputPixFmt,
 			m_TheoraInfo.frame_width, m_TheoraInfo.frame_height );
+#else
+	ConvertImage( YUVIn, RGBOut, m_TheoraInfo.frame_height );
+#endif
 }
 
 float MovieDecoder_Theora::GetSourceAspectRatio() const
@@ -655,9 +719,14 @@ void MovieDecoder_Theora::DecodeStripe( theora_ycbcr_buffer yuv, int yfrag0, int
 		RGBOut.data[0] += RGBOut.linesize[0] * yfrag0;
 
 		int iRows = (yfrag_end-yfrag0) + 1;
+		// sm4svn code:
+#if defined(MACOSX)
 		avcodec::img_convert( &RGBOut, m_OutputPixFmt,
 				&YUVIn, m_InputPixFmt,
 				m_TheoraInfo.frame_width, iRows );
+#else
+		ConvertImage( YUVIn, RGBOut, iRows );
+#endif
 	}
 
 	{

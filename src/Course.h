@@ -47,7 +47,7 @@ public:
 	SongCriteria songCriteria;
 	StepsCriteria stepsCriteria;
 	bool bNoDifficult;		// if true, CourseDifficulty doesn't affect this entry
-	
+
 	SongSort songSort;		// sort by this after filtering
 	int iChooseIndex;		// 
 

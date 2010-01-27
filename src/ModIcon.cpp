@@ -43,6 +43,7 @@ void ModIcon::Set( const RString &_sText )
 {
 	RString sText = _sText;
 
+	// todo: make these metricable? -aj
 	static const RString sStopWords[] = 
 	{
 		"1X",
@@ -50,7 +51,7 @@ void ModIcon::Set( const RString &_sText )
 		"OVERHEAD",
 		"OFF",
 	};
-	
+
 	for( unsigned i=0; i<ARRAYLEN(sStopWords); i++ )
 		if( 0==stricmp(sText,sStopWords[i]) )
 			sText = "";

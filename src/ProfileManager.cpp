@@ -667,6 +667,13 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 		if( !pSteps->IsAPlayerEdit() )
 			GetMachineProfile()->AddStepsHighScore( pSong, pSteps, hs, iMachineIndexOut );
 	}
+
+	/*
+	// save recent score
+	if( IsPersistentProfile(pn) )
+		GetProfile(pn)->SaveStepsRecentScore( pSong, pSteps, hs );
+	GetMachineProfile()->SaveStepsRecentScore( pSong, pSteps, hs );
+	*/
 }
 
 void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn )
@@ -704,12 +711,19 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 
 
 	//
-	// save high score	
+	// save high score
 	//
 	if( IsPersistentProfile(pn) )
 		GetProfile(pn)->AddCourseHighScore( pCourse, pTrail, hs, iPersonalIndexOut );
 	if( hs.GetPercentDP() >= PREFSMAN->m_fMinPercentageForMachineCourseHighScore )
 		GetMachineProfile()->AddCourseHighScore( pCourse, pTrail, hs, iMachineIndexOut );
+
+	/*
+	// save recent score
+	if( IsPersistentProfile(pn) )
+		GetProfile(pn)->SaveCourseRecentScore( pCourse, pTrail, hs );
+	GetMachineProfile()->SaveCourseRecentScore( pCourse, pTrail, hs );
+	*/
 }
 
 void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail, PlayerNumber pn )
@@ -823,6 +837,9 @@ public:
 	static int GetLocalProfileIDFromIndex( T* p, lua_State *L )	{ lua_pushstring(L, p->GetLocalProfileIDFromIndex(IArg(1)) ); return 1; }
 	static int GetLocalProfileIndexFromID( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetLocalProfileIndexFromID(SArg(1)) ); return 1; }
 	static int GetNumLocalProfiles( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumLocalProfiles() ); return 1; }
+	//static int GetProfileDirectoryForPlayer( T* p, lua_State *L )	{ lua_pushstring(L, m_sProfileDir[Enum::Check<PlayerNumber>(L, 1)] ) return 1; }
+	static int GetProfileDir( T* p, lua_State *L ) { lua_pushstring(L, p->GetProfileDir(Enum::Check<ProfileSlot>(L, 1)) ); return 1; }
+	static int IsSongNew( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsSongNew(Luna<Song>::check(L,1)) ); return 1; }
 
 	LunaProfileManager()
 	{
@@ -835,6 +852,9 @@ public:
 		ADD_METHOD( GetLocalProfileIDFromIndex );
 		ADD_METHOD( GetLocalProfileIndexFromID );
 		ADD_METHOD( GetNumLocalProfiles );
+		//ADD_METHOD( GetProfileDirectoryForPlayer ); // uses PlayerNumber
+		ADD_METHOD( GetProfileDir ); // uses ProfileSlot
+		ADD_METHOD( IsSongNew );
 	}
 };
 

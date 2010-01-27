@@ -28,6 +28,11 @@ bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
 		handler = type = "MPEG";
 		return true;
 	}
+	if( !ext.CompareNoCase(".ogv") )
+	{
+		handler = type = "Ogg";
+		return true;
+	}
 
 	//Not very pretty but should do all the same error checking without iostream
 #define HANDLE_ERROR(x) { \

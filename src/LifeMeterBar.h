@@ -14,7 +14,7 @@ class LifeMeterBar : public LifeMeter
 public:
 	LifeMeterBar();
 	~LifeMeterBar();
-	
+
 	virtual void Load( const PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 
 	virtual void Update( float fDeltaTime );
@@ -59,7 +59,7 @@ private:
 	int			m_iMissCombo;			// current number of progressive W5/miss
 
 	int			m_iComboToRegainLife;		// combo needed before lifebar starts filling up after fail
-		
+
 	ThemeMetric<TapNoteScore>   MIN_SCORE_TO_FLASH;
 	ThemeMetric<bool> FLASH_HOT_ON_NOTE_HIT;
 };

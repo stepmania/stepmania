@@ -12,6 +12,7 @@
 #include "RageUtil_CharConversions.h"
 #include "NoteTypes.h"
 #include "NotesLoader.h"
+#include "PrefsManager.h"
 
 typedef multimap<RString, RString> NameToData_t;
 typedef map<int, float> MeasureToTimeSig_t;
@@ -449,14 +450,14 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	ReadTimeSigs( mapNameToData, mapMeasureToTimeSig );
 
 	int iHoldStarts[NUM_BMS_TRACKS];
-	int iHoldPrevs[NUM_BMS_TRACKS];
-	
+	TapNote iHoldHeads[NUM_BMS_TRACKS];
+
 	for( int i = 0; i < NUM_BMS_TRACKS; ++i )
 	{
 		iHoldStarts[i] = -1;
-		iHoldPrevs[i] = -1;
+		iHoldHeads[i] = TAP_EMPTY;
 	}
-	
+
 	NameToData_t::const_iterator it;
 	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
 	{
@@ -522,34 +523,35 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 							continue;
 						}
 					}
-					else if( bIsHold )
+					/* This handles the hold notes in the RDM TYPE 1 style,
+					 * like how uBMplay handles it. Different BMS simulators
+					 * supports hold notes differently. see
+					 * http://nvyu.net/rdm/ex.php for more info.
+ 					 */ 
+					else if( iHoldStarts[bmsTrack] != -1 )
 					{
-						if( iHoldStarts[bmsTrack] == -1 )
+						// This is ending a hold.
+						const int iBegin = iHoldStarts[bmsTrack];
+						const int iEnd = row;
+						if( iBegin < iEnd )
 						{
-							// Start of a hold.
-							iHoldStarts[bmsTrack] = row;
-							iHoldPrevs[bmsTrack] = row;
+							TapNote &noteHead = TAP_ORIGINAL_HOLD_HEAD;
+							noteHead.iKeysoundIndex = iHoldHeads[bmsTrack].iKeysoundIndex;
+							ndNotes.AddHoldNote( bmsTrack, iBegin, iEnd, noteHead );
 						}
 						else
 						{
-							// We're continuing a hold.
-							iHoldPrevs[bmsTrack] = row;
+							ndNotes.SetTapNote( bmsTrack, iBegin, iHoldHeads[bmsTrack] );
 						}
+						iHoldStarts[bmsTrack] = -1;
+					}
+					else if( bIsHold )
+					{
+						// Start of a hold.
+						iHoldStarts[bmsTrack] = row;
+						iHoldHeads[bmsTrack] = tn;
 						continue;
 					}
-				}
-				if( iHoldStarts[bmsTrack] != -1 )
-				{
-					// This is ending a hold.
-					const int iBegin = iHoldStarts[bmsTrack];
-					const int iEnd = iHoldPrevs[bmsTrack];
-					
-					if( iBegin < iEnd )
-						ndNotes.AddHoldNote( bmsTrack, iBegin, iEnd, TAP_ORIGINAL_HOLD_HEAD );
-					else
-						ndNotes.SetTapNote( bmsTrack, iBegin, TAP_ORIGINAL_TAP );
-					iHoldStarts[bmsTrack] = -1;
-					iHoldPrevs[bmsTrack] = -1;
 				}
 				// Don't bother inserting empty taps.
 				if( tn.type != TapNote::empty )
@@ -558,30 +560,16 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		}
 	}
 
-	// We're done reading in all of the BMS values. Time to check for any unfinished holds.
-	for( int iTrack = 0; iTrack < NUM_BMS_TRACKS; ++iTrack )
-	{
-		const int iBegin = iHoldStarts[iTrack];
-		const int iEnd = iHoldPrevs[iTrack];
-				
-		if( iBegin == -1 )
-			continue;
-		if( iBegin < iEnd )
-			ndNotes.AddHoldNote( iTrack, iBegin, iEnd, TAP_ORIGINAL_HOLD_HEAD );
-		else
-			ndNotes.SetTapNote( iTrack, iBegin, TAP_ORIGINAL_TAP );
-	}		
-
 	out.m_StepsType = DetermineStepsType( iPlayer, ndNotes, sPath );
 	if( out.m_StepsType == StepsType_beat_single5 && GetTagFromMap( mapNameToData, "#title", sData ) )
 	{
 		/* Hack: guess at 6-panel. */
-		
+
 		// extract the Steps description (looks like 'Music <BASIC>')
 		const size_t iOpenBracket = sData.find_first_of( "<(" );
 		const size_t iCloseBracket = sData.find_first_of( ">)", iOpenBracket );
-		
-		// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"		
+
+		// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"
 		if( sData.find('6', iOpenBracket) < iCloseBracket )
 			out.m_StepsType = StepsType_dance_solo;
 	}
@@ -591,27 +579,6 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		LOG->UserLog( "Song file", sPath, "has an unknown steps type" );
 		return false;
 	}
-
-
-	// shift all of the autokeysound tracks onto the main tracks
-	for( int t=BMS_AUTO_KEYSOUND_1; t<BMS_AUTO_KEYSOUND_1+NUM_AUTO_KEYSOUND_TRACKS; t++ )
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK( ndNotes, t, row )
-		{
-			TapNote tn = ndNotes.GetTapNote( t, row );
-			int iEmptyTrack;
-			if( ndNotes.GetTapFirstEmptyTrack(row, iEmptyTrack) )
-			{
-				ndNotes.SetTapNote( iEmptyTrack, row, tn );
-				ndNotes.SetTapNote( t, row, TAP_EMPTY );
-			}
-			else
-			{
-				LOG->UserLog( "Song file", sPath, "has no room to shift the autokeysound tracks." );
-			}
-		}
-	}
-
 
 	int iNumNewTracks = GAMEMAN->GetStepsTypeInfo( out.m_StepsType ).iNumTracks;
 	vector<int> iTransformNewToOld;
@@ -712,6 +679,31 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		ASSERT(0);
 	}
 
+	// shift all of the autokeysound tracks onto the main tracks
+	// Moved here so that most sounds are inserted.
+	for( int t=BMS_AUTO_KEYSOUND_1+NUM_AUTO_KEYSOUND_TRACKS-1; t>=BMS_AUTO_KEYSOUND_1; t-- )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK( ndNotes, t, row )
+		{
+			TapNote tn = ndNotes.GetTapNote( t, row );
+			int iEmptyTrack = -1;
+			for ( int i=0; i<iNumNewTracks; i++ ) {
+				if ( ndNotes.GetTapNote(iTransformNewToOld[i], row) == TAP_EMPTY ) {
+					iEmptyTrack = iTransformNewToOld[i];
+				}
+			}
+			if( iEmptyTrack > -1 )
+			{
+				ndNotes.SetTapNote( iEmptyTrack, row, tn );
+				ndNotes.SetTapNote( t, row, TAP_EMPTY );
+			}
+			else
+			{
+				LOG->UserLog( "Song file", sPath, "has too much simultenous autokeysound tracks." );
+			}
+		}
+	}
+
 	NoteData noteData2;
 	noteData2.SetNumTracks( iNumNewTracks );
 	noteData2.LoadTransformed( ndNotes, iNumNewTracks, &*iTransformNewToOld.begin() );
@@ -740,16 +732,28 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 	{
 		const float fBPM = StringToFloat( sData );
 		
-		if( fBPM > 0.0f )
+		if( PREFSMAN->m_bQuirksMode )
 		{
 			BPMSegment newSeg( 0, fBPM );
 			out.AddBPMSegment( newSeg );
-			LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
+			if( fBPM > 0.0f )
+				LOG->Trace( "Inserting new positive BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
+			else
+				LOG->Trace( "Inserting new negative BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
 		}
 		else
 		{
-			LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f.",
-				      NoteRowToBeat(0), fBPM );
+			if( fBPM > 0.0f )
+			{
+				BPMSegment newSeg( 0, fBPM );
+				out.AddBPMSegment( newSeg );
+				LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
+			}
+			else
+			{
+				LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f.",
+						  NoteRowToBeat(0), fBPM );
+			}
 		}
 	}
 
@@ -771,7 +775,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		 * we might also have "song.png", which we shouldn't match. */
 		if( !IsAFile(out.GetSongDir()+sData) )
 		{
-			const char *exts[] = { "ogg", "wav", "mp3", NULL }; // XXX: stop duplicating these everywhere
+			const char *exts[] = { "oga", "ogg", "wav", "mp3", NULL }; // XXX: stop duplicating these everywhere
 			for( unsigned i = 0; exts[i] != NULL; ++i )
 			{
 				RString fn = SetExtension( sData, exts[i] );
@@ -837,22 +841,34 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 				
 			case BMS_TRACK_BPM_REF:
 			{
-				RString sTagToLookFor = ssprintf( "#bpm%02x", iVal );
+				RString sTagToLookFor = ssprintf( "#bpm%s", sPair.c_str() );
 				RString sBPM;
 				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
 				{
 					float fBPM = StringToFloat( sBPM );
 
-					if( fBPM > 0.0f )
+					if( PREFSMAN->m_bQuirksMode )
 					{
 						BPMSegment newSeg( BeatToNoteRow(fBeat), fBPM );
 						out.AddBPMSegment( newSeg );
-						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
+						if( fBPM > 0.0f )
+							LOG->Trace( "Inserting new positive BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
+						else
+							LOG->Trace( "Inserting new negative BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
 					}
 					else
 					{
-						LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f",
-							      fBeat, fBPM );
+						if( fBPM > 0.0f )
+						{
+							BPMSegment newSeg( BeatToNoteRow(fBeat), fBPM );
+							out.AddBPMSegment( newSeg );
+							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
+						}
+						else
+						{
+							LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f",
+									  fBeat, fBPM );
+						}
 					}
 				}
 				else
@@ -899,17 +915,29 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 			{
 				float fBPM = StringToFloat( sBPM );
 
-				if( fBPM > 0.0f )
+				if( PREFSMAN->m_bQuirksMode )
 				{
 					BPMSegment newSeg( iStepIndex, fBPM );
 					out.AddBPMSegment( newSeg );
-					LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
-			
+					if( fBPM > 0.0f )
+						LOG->Trace( "Inserting new positive BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
+					else
+						LOG->Trace( "Inserting new negative BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
 				}
 				else
 				{
-					LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f.",
-						      NoteRowToBeat(iStepIndex), fBPM );
+					if( fBPM > 0.0f )
+					{
+						BPMSegment newSeg( iStepIndex, fBPM );
+						out.AddBPMSegment( newSeg );
+						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
+				
+					}
+					else
+					{
+						LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f.",
+								  NoteRowToBeat(iStepIndex), fBPM );
+					}
 				}
 			}
 			else

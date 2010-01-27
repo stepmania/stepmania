@@ -44,9 +44,9 @@ private:
 	void MenuLeft( const InputEventPlus &input );
 	void MenuRight( const InputEventPlus &input );
 	void CreateNewRoom( const RString& rName,  const RString& rDesc, const RString& rPass );
-		
+
 	RageSound m_soundChangeSel;
-	
+
 	vector < BitmapText > m_RoomList;
 	vector < RoomData > m_Rooms;
 	int m_iRoomPlace;

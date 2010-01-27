@@ -48,9 +48,9 @@
 	<key>CFBundleVersion</key>
 	<string>PRODUCT_VER_BARE</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>10.3.9</string>
+	<string>10.4.10</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 2001-2009</string>
+	<string>Copyright 2001-2010</string>
 	<key>NSPrincipalClass</key>
 	<string>SMApplication</string>
 </dict>

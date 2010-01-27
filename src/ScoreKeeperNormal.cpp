@@ -82,6 +82,13 @@ void ScoreKeeperNormal::Load(
 	m_MinScoreToContinueCombo.Load( "Gameplay", "MinScoreToContinueCombo" );
 	m_MinScoreToMaintainCombo.Load( "Gameplay", "MinScoreToMaintainCombo" );
 
+	// Toasty triggers (ported from 3.9+)
+	// todo: Needs to be a table of ints to be properly implemented 1:1,
+	// though the original implementation was a comma separated string.
+	// I prefer the new Lua method but it may be a pain to code; it's a
+	// single int for now.
+	m_ToastyTriggers.Load( "Gameplay", "ToastyTriggersAt" );
+
 	// Custom Scoring
 	m_CustomComboMultiplier.Load( "CustomScoring", "ComboMultiplier" );
 	m_CustomTNS_W1.Load( "CustomScoring", "PointsW1" );
@@ -558,7 +565,7 @@ void ScoreKeeperNormal::HandleHoldCheckpointScore( const NoteData &nd, int iRow,
 		int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
 
 		iCurMaxScore += m_CustomTNS_CheckpointHit;
-		
+
 		if( iNumHoldsMissedThisRow == 0 )
 			iScore += m_CustomTNS_CheckpointHit;
 		else
@@ -617,7 +624,7 @@ void ScoreKeeperNormal::GetRowCounts( const NoteData &nd, int iRow,
 	for( int track = 0; track < nd.GetNumTracks(); ++track )
 	{
 		const TapNote &tn = nd.GetTapNote( track, iRow );
-	
+
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
 			continue;
 		if( tn.type != TapNote::tap && tn.type != TapNote::hold_head && tn.type != TapNote::lift )
@@ -658,7 +665,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	//
 #ifndef DEBUG
 	if( (GamePreferences::m_AutoPlay != PC_HUMAN || m_pPlayerState->m_PlayerOptions.GetCurrent().m_fPlayerAutoPlay != 0)
-		&& !GAMESTATE->m_bDemonstrationOrJukebox )	// cheaters never prosper
+		&& !GAMESTATE->m_bDemonstrationOrJukebox )	// cheaters always prosper >:D -aj comment edit
 	{
 		m_iCurToastyCombo = 0;
 		return;
@@ -674,8 +681,8 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	case TNS_W2:
 		m_iCurToastyCombo += iNumTapsInRow;
 
-		if( m_iCurToastyCombo >= 250 &&
-			m_iCurToastyCombo - iNumTapsInRow < 250 &&
+		if( m_iCurToastyCombo >= m_ToastyTriggers &&
+			m_iCurToastyCombo - iNumTapsInRow < m_ToastyTriggers &&
 			!GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
@@ -689,7 +696,6 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 		break;
 	}
 
-
 	// TODO: Remove indexing with PlayerNumber
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	float offset = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow, pn ).result.fTapNoteOffset;
@@ -699,6 +705,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	Message msg( "ScoreChanged" );
 	msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
+	msg.SetParam( "ToastyCombo", m_iCurToastyCombo );
 	MESSAGEMAN->Broadcast( msg );
 }
 

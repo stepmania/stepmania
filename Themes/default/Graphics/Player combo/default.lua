@@ -1,7 +1,6 @@
 local c;
 local player = Var "Player";
 local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt");
-local ShowMissesAt = THEME:GetMetric("Combo", "ShowMissesAt");
 local Pulse = THEME:GetMetric("Combo", "PulseCommand");
 
 local NumberMinZoom = THEME:GetMetric("Combo", "NumberMinZoom");
@@ -9,73 +8,86 @@ local NumberMaxZoom = THEME:GetMetric("Combo", "NumberMaxZoom");
 local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt");
 
 local t = Def.ActorFrame {
-	LoadFont( "Combo", "ComboNumber" ) .. {
-		Name="ComboNumber";
-		OnCommand = THEME:GetMetric("Combo", "ComboNumberOnCommand");
+	LoadActor(THEME:GetPathG("Combo","100Milestone")) .. {
+		Name="OneHundredMilestone";
 	};
-	LoadFont( "Combo", "MissesNumber" ) .. {
-		Name="MissesNumber";
-		OnCommand = THEME:GetMetric("Combo", "MissesNumberOnCommand");
+	LoadActor(THEME:GetPathG("Combo","1000Milestone")) .. {
+		Name="OneThousandMilestone";
 	};
-	LoadActor("_combo") .. {
-		Name="ComboLabel";
-		OnCommand = THEME:GetMetric("Combo", "ComboLabelOnCommand");
+	LoadFont( "Combo", "numbers" ) .. {
+		Name="Number";
+		OnCommand = THEME:GetMetric("Combo", "NumberOnCommand");
 	};
-	LoadActor("_misses") .. {
-		Name="MissesLabel";
-		OnCommand = THEME:GetMetric("Combo", "MissesLabelOnCommand");
+	LoadFont("Common Normal") .. {
+		Name="Label";
+		OnCommand = THEME:GetMetric("Combo", "LabelOnCommand");
 	};
-
+	
 	InitCommand = function(self)
 		c = self:GetChildren();
-		c.ComboNumber:visible(false);
-		c.MissesNumber:visible(false);
-		c.ComboLabel:visible(false);
-		c.MissesLabel:visible(false);
+		c.Number:visible(false);
+		c.Label:visible(false);
 	end;
 
 	ComboCommand=function(self, param)
-		local iNum = param.Misses or param.Combo;
-
-		c.ComboNumber:visible(false);
-		c.MissesNumber:visible(false);
-		c.ComboLabel:visible(false);
-		c.MissesLabel:visible(false);
-
-		local ShowAt;
-		if param.Combo then
-			ShowAt = ShowComboAt;
-		else
-			ShowAt = ShowMissesAt;
-		end
-		
-		if not iNum  or  ShowAt == 0  or  iNum < ShowAt then
+		local iCombo = param.Misses or param.Combo;
+		if not iCombo or iCombo < ShowComboAt then
+			c.Number:visible(false);
+			c.Label:visible(false);
 			return;
 		end
 
-		local Number;
+		local labeltext = "";
 		if param.Combo then
-			Number = c.ComboNumber;
+			labeltext = "Combo";
 		else
-			Number = c.MissesNumber;
+			labeltext = "Misses";
 		end
-		local Label;
-		if param.Combo then
-			Label = c.ComboLabel;
-		else
-			Label = c.MissesLabel;
-		end
-		
-		param.Zoom = scale( iNum, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom );
+		c.Label:settext( labeltext );
+		c.Label:visible(false);
+
+		param.Zoom = scale( iCombo, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom );
 		param.Zoom = clamp( param.Zoom, NumberMinZoom, NumberMaxZoom );
 
-		Number:visible(true);
-		Label:visible(true);
-
-		Number:settext( string.format("%i", iNum) );
-
-		Pulse( Number, param );
-		Pulse( Label, param );
+		c.Number:visible(true);
+		c.Label:visible(true);
+		c.Number:settext( string.format("%i", iCombo) );
+		-- FullCombo Rewards
+		if param.FullComboW1 then
+			c.Number:diffuse(color("#00aeef"));
+			c.Number:glowshift();
+		elseif param.FullComboW2 then
+			c.Number:diffuse(color("#fff568"));
+			c.Number:glowshift();
+		elseif param.FullComboW3 then
+			c.Number:diffuse(color("#a4ff00"));
+			c.Number:stopeffect();
+		else
+			c.Number:diffuse(color("#ffffff"));
+			c.Number:stopeffect();
+		end
+		-- Pulse
+		Pulse( c.Number, param );
+-- 		Pulse( c.Label, param );
+		-- Milestone Logic
+		if (iCombo % 100) == 0 then
+			c.OneHundredMilestone:playcommand("Milestone");
+		elseif (iCombo % 250) == 0 then
+			-- It should really be 1000 but thats slightly unattainable, since
+			-- combo doesnt save over now.
+			c.OneThousandMilestone:playcommand("Milestone");
+		else
+			return
+		end;
+	end;
+	ScoreChangedMessageCommand=function(self,param)
+		local iToastyCombo = param.ToastyCombo;
+		if iToastyCombo and (iToastyCombo > 0) then
+-- 			(cmd(thump;effectmagnitude,1,1.2,1;effectclock,'beat'))(c.Number)
+-- 			(cmd(thump;effectmagnitude,1,1.2,1;effectclock,'beat'))(c.Number)
+		else
+-- 			c.Number:stopeffect();
+		end;
 	end;
 };
 

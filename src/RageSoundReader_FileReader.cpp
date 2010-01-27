@@ -30,7 +30,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RageFileBas
 #endif
 
 #ifndef NO_VORBIS_SUPPORT
-	if( !format.CompareNoCase("ogg") )
+	if( !format.CompareNoCase("oga") || !format.CompareNoCase("ogg") )
 		Sample = new RageSoundReader_Vorbisfile;
 #endif
 
@@ -121,6 +121,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 		}
 	}
 	set<RString> FileTypes;
+	FileTypes.insert("oga");
 	FileTypes.insert("ogg");
 	FileTypes.insert("mp3");
 	FileTypes.insert("wav");

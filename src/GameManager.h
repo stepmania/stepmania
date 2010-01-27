@@ -46,6 +46,7 @@ public:
 	const Style* GameAndStringToStyle( const Game* pGame, RString sStyle );
 	RString StyleToLocalizedString( const Style* s );
 
+
 	// Lua
 	void PushSelf( lua_State *L );
 };

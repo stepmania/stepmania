@@ -51,6 +51,7 @@ enum HoldType
 {
 	hold, 
 	roll, 
+	// minefield,
 	NUM_HoldType,
 	HoldType_Invalid
 };

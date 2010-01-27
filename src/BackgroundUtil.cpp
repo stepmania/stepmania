@@ -167,6 +167,7 @@ void BackgroundUtil::GetSongMovies( const Song *pSong, const RString &sMatch, ve
 	vsPathsOut.clear();
 	if( sMatch.empty() )
 	{
+		GetDirListing( pSong->GetSongDir()+sMatch+"*.ogv",	vsPathsOut, false, true );
 		GetDirListing( pSong->GetSongDir()+sMatch+"*.avi",	vsPathsOut, false, true );
 		GetDirListing( pSong->GetSongDir()+sMatch+"*.mpg",	vsPathsOut, false, true );
 		GetDirListing( pSong->GetSongDir()+sMatch+"*.mpeg", vsPathsOut, false, true );
@@ -292,6 +293,7 @@ void BackgroundUtil::GetGlobalRandomMovies(
 
 		FOREACH_CONST( RString, vsDirsToTry, sDir )
 		{
+			GetDirListing( *sDir+"*.ogv", vsPathsOut, false, true );
 			GetDirListing( *sDir+"*.avi", vsPathsOut, false, true );
 			GetDirListing( *sDir+"*.mpg", vsPathsOut, false, true );
 			GetDirListing( *sDir+"*.mpeg", vsPathsOut, false, true );

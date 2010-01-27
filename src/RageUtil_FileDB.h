@@ -112,7 +112,7 @@ public:
 
 protected:
 	RageEvent m_Mutex;
-	
+
 	const File *GetFile( const RString &sPath );
 	FileSet *GetFileSet( const RString &sDir, bool create=true );
 

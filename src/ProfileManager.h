@@ -53,17 +53,12 @@ public:
 	bool SaveProfile( PlayerNumber pn ) const;
 	bool SaveLocalProfile( RString sProfileID );
 	void UnloadProfile( PlayerNumber pn );
-	
-	//
+
 	// General data
-	//
 	void IncrementToastiesCount( PlayerNumber pn );
 	void AddStepTotals( PlayerNumber pn, int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, int iNumHands, float fCaloriesBurned );
 
-
-	//
 	// High scores
-	//
 	void LoadMachineProfile();	// including edits
 	void LoadMachineProfileEdits();
 	void SaveMachineProfile() const;
@@ -76,7 +71,7 @@ public:
 	Profile* GetProfile( PlayerNumber pn ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(pn); }
 	const Profile* GetProfile( ProfileSlot slot ) const;
 	Profile* GetProfile( ProfileSlot slot ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(slot); }
-	
+
 	const RString& GetProfileDir( ProfileSlot slot ) const;
 	RString GetProfileDirImportedFrom( ProfileSlot slot ) const;
 

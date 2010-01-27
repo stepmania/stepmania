@@ -42,6 +42,7 @@ const int MAX_BOTTOM_RANGE = 10;
 #define SORT_LEVEL4_COLOR	THEME->GetMetricC("Course","SortLevel4Color")
 #define SORT_LEVEL5_COLOR	THEME->GetMetricC("Course","SortLevel5Color")
 
+//#define INCLUDE_BEGINNER_STEPS	THEME->GetMetricB( "Course","IncludeBeginnerSteps" );
 
 RString CourseEntry::GetTextDescription() const
 {
@@ -447,6 +448,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	switch( cd )
 	{
 	case Difficulty_Beginner:
+		return false;
 	case Difficulty_Challenge:
 		return false;
 	}
@@ -567,6 +569,21 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		{
 			Difficulty new_dc = (Difficulty)(dc + cd - Difficulty_Medium);
 			new_dc = clamp( new_dc, (Difficulty)0, (Difficulty)(Difficulty_Edit-1) );
+			/*
+			// re-edit this code to work using the metric.
+			Difficulty new_dc;
+			if( INCLUDE_BEGINNER_STEPS )
+			{
+				// don't factor in the course difficulty if we're including
+				// beginner steps -aj
+				new_dc = clamp( dc, Difficulty_Beginner, (Difficulty)(Difficulty_Edit-1) );
+			}
+			else
+			{
+				new_dc = (Difficulty)(dc + cd - Difficulty_Medium);
+				new_dc = clamp( new_dc, (Difficulty)0, (Difficulty)(Difficulty_Edit-1) );
+			}
+			*/
 
 			bool bChangedDifficulty = false;
 			if( new_dc != dc )
@@ -706,6 +723,7 @@ bool Course::HasMods() const
 
 bool Course::HasTimedMods() const
 {
+	// ???: This seems to be the exact same as Course::HasMods(). -aj
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
 		if( !e->attacks.empty() )
@@ -798,7 +816,7 @@ RageColor Course::GetColor() const
 {
 	// FIXME: Calculate the meter.
 	int iMeter = 5;
-	
+
 	switch( PREFSMAN->m_CourseSortOrder )
 	{
 	case COURSE_SORT_PREFERRED:
@@ -896,7 +914,7 @@ void Course::UpdateCourseStats( StepsType st )
 	// OPTIMIZATION: Ranking info isn't dependant on style, so
 	// call it sparingly.  Its handled on startup and when
 	// themes change..
-	
+
 	LOG->Trace("%s: Total feet: %d",
 		this->m_sMainTitle.c_str(),
 		m_SortOrder_TotalDifficulty );
@@ -942,9 +960,8 @@ void Course::GetAllCachedTrails( vector<Trail *> &out )
 bool Course::ShowInDemonstrationAndRanking() const
 {
 	// Don't show endless courses in Ranking.
-	if( IsEndless() )
-		return false;
-	return true;
+	// todo: make this a metric? -aj
+	return !IsEndless();
 }
 
 void Course::CalculateRadarValues()
@@ -1000,12 +1017,12 @@ bool Course::Matches( RString sGroup, RString sCourse ) const
 class LunaCourse: public Luna<Course>
 {
 public:
-	static int GetPlayMode( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetPlayMode() ); return 1; }
+	DEFINE_METHOD( GetPlayMode, GetPlayMode() )
 	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
 	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
 	static int HasMods( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMods() ); return 1; }
 	static int HasTimedMods( T* p, lua_State *L )		{ lua_pushboolean( L, p->HasTimedMods() ); return 1; }
-	static int GetCourseType( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCourseType() ); return 1; }
+	DEFINE_METHOD( GetCourseType, GetCourseType() )
 	static int GetCourseEntry( T* p, lua_State *L )		{ CourseEntry &ce = p->m_vEntries[IArg(1)]; ce.PushSelf(L); return 1; }
 	static int GetAllTrails( T* p, lua_State *L )
 	{
@@ -1029,7 +1046,10 @@ public:
 		return 1;
 	}
 	DEFINE_METHOD( IsEndless,		IsEndless() )
+	DEFINE_METHOD( IsNonstop,		IsNonstop() )
+	DEFINE_METHOD( IsOni,		IsOni() )
 	DEFINE_METHOD( GetGoalSeconds,		m_fGoalSeconds )
+	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner() ); return 1; }
 
 	LunaCourse()
 	{
@@ -1047,7 +1067,10 @@ public:
 		ADD_METHOD( GetEstimatedNumStages );
 		ADD_METHOD( GetTotalSeconds );
 		ADD_METHOD( IsEndless );
+		ADD_METHOD( IsNonstop );
+		ADD_METHOD( IsOni );
 		ADD_METHOD( GetGoalSeconds );
+		ADD_METHOD( HasBanner );
 	}
 };
 

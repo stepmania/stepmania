@@ -13,17 +13,28 @@ REGISTER_INPUT_HANDLER_CLASS2( Pump, Win32_Pump );
 InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 {
 	m_bShutdown = false;
-	const int pump_usb_vid = 0x0d2f, pump_usb_pid = 0x0001;
+	const int pump_usb_vid = 0x0d2f, pump_usb_pid = 0x0001, pump_usb_pid_alt = 0x0003;
 
 	m_pDevice = new USBDevice[NUM_PUMPS];
+
+	// (thanks to galopin)
+	int pump1 = 0;
+	int pump3 = 0;
 
 	bool bFoundOnePad = false;
 	for( int i = 0; i < NUM_PUMPS; ++i )
 	{
-		if( m_pDevice[i].Open(pump_usb_vid, pump_usb_pid, sizeof(long), i, NULL) )
+		if( m_pDevice[i].Open(pump_usb_vid, pump_usb_pid, sizeof(long), pump1, NULL) )
 		{
+			pump1++;
 			bFoundOnePad = true;
-			LOG->Info( "Found Pump pad %i", i );
+			LOG->Info( "Found Pump pad %i", pump1 );
+		}
+		else if( m_pDevice[i].Open(pump_usb_vid, pump_usb_pid_alt, sizeof(long), pump3, NULL) )
+		{
+			pump3++;
+			bFoundOnePad = true;
+			LOG->Info( "Found Pump pad (Exceed PS2) %i", pump3 );
 		}
 	}
 

@@ -1,5 +1,4 @@
 // smpackage.h : main header file for the SMPACKAGE application
-//
 
 #if !defined(AFX_SMPACKAGE_H__FBCA9E6C_86A9_4271_8304_83CC34A31687__INCLUDED_)
 #define AFX_SMPACKAGE_H__FBCA9E6C_86A9_4271_8304_83CC34A31687__INCLUDED_
@@ -17,7 +16,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // CSmpackageApp:
 // See smpackage.cpp for the implementation of this class
-//
 
 class CSmpackageApp : public CWinApp
 {

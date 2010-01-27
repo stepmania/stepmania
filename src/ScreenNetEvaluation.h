@@ -20,16 +20,18 @@ protected:
 
 	void UpdateStats( );
 private:
-	Quad			m_rectUsersBG;
-	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
+	// todo: Make this an AutoActor -aj
+	Quad m_rectUsersBG;
+	// todo: Make this a DifficultyDisplay -aj
+	DifficultyIcon m_DifficultyIcon[NUM_PLAYERS];
 
 	vector<BitmapText>	m_textUsers;
-	int			m_iCurrentPlayer;
-	int			m_iActivePlayers;
-	
-	PlayerNumber		m_pActivePlayer;
+	int	 m_iCurrentPlayer;
+	int	 m_iActivePlayers;
 
-	bool			m_bHasStats;
+	PlayerNumber m_pActivePlayer;
+
+	bool m_bHasStats;
 
 	int m_iShowSide;
 

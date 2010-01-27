@@ -34,5 +34,5 @@ void crypt_argchk(char *v, char *s, int d);
 
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 24839 $ */
+/* $Date: 2007-01-23 23:42:14 -0600 (Tue, 23 Jan 2007) $ */

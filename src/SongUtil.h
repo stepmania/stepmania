@@ -23,6 +23,8 @@ public:
 	bool m_bUseSongAllowedList;
 	vector<Song*> m_vpSongAllowedList;
 	int m_iMaxStagesForSong;		// don't filter if -1
+	// float m_fMinBPM;		// don't filter if -1
+	// float m_fMaxBPM;		// don't filter if -1
 	enum Tutorial { Tutorial_Yes, Tutorial_No, Tutorial_DontCare } m_Tutorial;
 	enum Locked { Locked_Locked, Locked_Unlocked, Locked_DontCare } m_Locked;
 
@@ -32,6 +34,8 @@ public:
 		m_Selectable = Selectable_DontCare;
 		m_bUseSongAllowedList = false;
 		m_iMaxStagesForSong = -1;
+		// m_fMinBPM = -1;
+		// m_fMaxBPM = -1;
 		m_Tutorial = Tutorial_DontCare;
 		m_Locked = Locked_DontCare;
 	}
@@ -48,6 +52,8 @@ public:
 			X(m_bUseSongAllowedList) && 
 			X(m_vpSongAllowedList) &&
 			X(m_iMaxStagesForSong) && 
+			//X(m_fMinBPM) && 
+			//X(m_fMaxBPM) && 
 			X(m_Tutorial) && 
 			X(m_Locked);
 #undef X

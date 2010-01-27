@@ -5,16 +5,12 @@
 
 #include "EnumHelper.h"
 
-
-//
 // Note definitions
-//
-const int MAX_METER = 13;
+// Use 1-20 instead of 1-13 -aj
 const int MIN_METER = 1;
+const int MAX_METER = 20;
 
-//
 // Credits
-//
 const int MAX_NUM_CREDITS = 20;
 
 
@@ -91,9 +87,7 @@ enum StepsType
 };
 LuaDeclareType( StepsType );
 
-//
 // Play mode stuff
-//
 enum PlayMode
 {
 	PLAY_MODE_REGULAR,
@@ -111,8 +105,6 @@ PlayMode StringToPlayMode( const RString& s );
 LuaDeclareType( PlayMode );
 
 
-
-
 enum SortOrder 
 {
 	SORT_PREFERRED,
@@ -123,6 +115,7 @@ enum SortOrder
 	SORT_TOP_GRADES,
 	SORT_ARTIST,
 	SORT_GENRE,
+	SORT_BEGINNER_METER,
 	SORT_EASY_METER,
 	SORT_MEDIUM_METER,
 	SORT_HARD_METER,
@@ -138,6 +131,7 @@ enum SortOrder
 	SORT_ENDLESS_COURSES,
 	SORT_LENGTH,
 	SORT_ROULETTE,
+	SORT_RECENT,
 	NUM_SortOrder,
 	SortOrder_Invalid
 };
@@ -149,9 +143,7 @@ LuaDeclareType( SortOrder );
 
 inline bool IsSongSort( SortOrder so ) { return so >= SORT_PREFERRED && so <= SORT_DOUBLE_CHALLENGE_METER; }
 
-//
 // Scoring stuff
-//
 
 enum TapNoteScore { 
 	TNS_None, 
@@ -172,7 +164,6 @@ const RString& TapNoteScoreToString( TapNoteScore tns );
 const RString& TapNoteScoreToLocalizedString( TapNoteScore tns );
 TapNoteScore StringToTapNoteScore( const RString& str );
 LuaDeclareType( TapNoteScore );
-
 
 enum HoldNoteScore 
 { 
@@ -202,7 +193,6 @@ enum TimingWindow
 };
 const RString& TimingWindowToString( TimingWindow tw );
 
-
 enum ScoreEvent
 {
 	SE_CheckpointHit,
@@ -220,7 +210,6 @@ enum ScoreEvent
 };
 const RString& ScoreEventToString( ScoreEvent se );
 
-
 enum GameButtonType
 {
 	GameButtonType_Step,
@@ -229,10 +218,18 @@ enum GameButtonType
 	GameButtonType_INVALID
 };
 
+enum TapNoteScoreJudgeType
+{
+	TapNoteScoreJudgeType_MinimumScore,
+	TapNoteScoreJudgeType_LastScore,
+	NUM_TapNoteScoreJudgeType,
+	TapNoteScoreJudgeType_Invalid,
+};
+const RString& TapNoteScoreJudgeTypeToString( TapNoteScoreJudgeType jt );
+LuaDeclareType( TapNoteScoreJudgeType );
 
-//
+
 // Profile and MemCard stuff
-//
 enum ProfileSlot
 {
 	ProfileSlot_Player1,
@@ -241,6 +238,8 @@ enum ProfileSlot
 	NUM_ProfileSlot,
 	ProfileSlot_Invalid
 };
+const RString& ProfileSlotToString( ProfileSlot ps );
+LuaDeclareType( ProfileSlot );
 
 
 enum MemoryCardState
@@ -292,11 +291,12 @@ enum PlayerController
 	PC_HUMAN,
 	PC_AUTOPLAY,
 	PC_CPU,
+	//PC_REPLAY,
 	NUM_PlayerController,
 	PlayerController_Invalid
 };
 const RString& PlayerControllerToString( PlayerController pc );
-
+LuaDeclareType( PlayerController );
 
 enum HealthState
 {
@@ -460,6 +460,31 @@ enum EditMode
 const RString& EditModeToString( EditMode em );
 EditMode StringToEditMode( const RString& s );
 LuaDeclareType( EditMode );
+
+// I wish this didn't have to be here, but for it to be a metric, it has to. -aj
+/*
+original options from ScreenEz2SelectMusic:
+(if no confirm type is mentioned, there is none.)
+
+0 = play music as you select;			SampleMusicPreviewMode_Normal
+1 = no music plays, select 1x to play preview music, select again to confirm
+2 = no music plays at all				(SampleMusicPreviewMode_ScreenMusic + redir to silent)
+3 = play music as select, 2x to confirm
+4 = screen music plays;					SampleMusicPreviewMode_ScreenMusic
+
+Options 1 and 3 need to behave well with TWO_PART_SELECTION, and are not
+currently represented because of this.
+*/
+enum SampleMusicPreviewMode
+{
+	SampleMusicPreviewMode_Normal,
+	SampleMusicPreviewMode_ScreenMusic,
+	NUM_SampleMusicPreviewMode,
+	SampleMusicPreviewMode_Invalid,
+};
+const RString& SampleMusicPreviewModeToString( SampleMusicPreviewMode );
+SampleMusicPreviewMode StringToSampleMusicPreviewMode( const RString& s );
+LuaDeclareType( SampleMusicPreviewMode );
 
 enum Stage	// Shared stage values (not per-player) that are shown in StageDisplay
 {

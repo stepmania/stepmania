@@ -17,6 +17,7 @@ REGISTER_ACTOR_CLASS(GrooveRadar)
 #define 	LABEL_OFFSET_Y( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
 static const ThemeMetric<float>			LABEL_ON_DELAY				("GrooveRadar","LabelOnDelay");
 static const ThemeMetric<float>			RADAR_EDGE_WIDTH			("GrooveRadar","EdgeWidth");
+static const ThemeMetric<float>			RADAR_CENTER_ALPHA			("GrooveRadar","CenterAlpha");
 
 static float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
 
@@ -27,13 +28,16 @@ GrooveRadar::GrooveRadar()
 {
 	m_sprRadarBase.Load( THEME->GetPathG("GrooveRadar","base") );
 	m_Frame.AddChild( &m_sprRadarBase );
+	LOAD_ALL_COMMANDS( m_Frame );
 	m_Frame.SetName( "RadarFrame" );
 
 	FOREACH_PlayerNumber( p )
 	{
 		m_GrooveRadarValueMap[p].SetRadius( m_sprRadarBase.GetZoomedWidth() );
 		m_Frame.AddChild( &m_GrooveRadarValueMap[p] );
-		m_GrooveRadarValueMap[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
+		m_GrooveRadarValueMap[p].SetName( ssprintf("RadarValueMapP%d",p+1) );
+		ActorUtil::LoadAllCommands( m_GrooveRadarValueMap[p], "GrooveRadar" );
+		//m_GrooveRadarValueMap[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
 	}
 
 	this->AddChild( &m_Frame );
@@ -65,11 +69,14 @@ void GrooveRadar::TweenOnScreen()
 		m_sprRadarLabels[c].PlayCommand( "PostDelayOn" );
 	}
 
+	m_Frame.PlayCommand("TweenOnScreen");
+	/*
 	m_Frame.SetZoom( 0.5f );
 	m_Frame.SetRotationZ( 720 );
 	m_Frame.BeginTweening( 0.6f );
 	m_Frame.SetZoom( 1 );
 	m_Frame.SetRotationZ( 0 );
+	*/
 }
 
 void GrooveRadar::TweenOffScreen()
@@ -85,9 +92,12 @@ void GrooveRadar::TweenOffScreen()
 		m_sprRadarLabels[c].SetDiffuse( RageColor(1,1,1,0) );
 	}
 
+	m_Frame.PlayCommand("TweenOffScreen");
+	/*
 	m_Frame.BeginTweening( 0.6f );
 	m_Frame.SetRotationZ( 180*4 );
 	m_Frame.SetZoom( 0 );
+	*/
 }
 
 void GrooveRadar::SetEmpty( PlayerNumber pn )
@@ -173,7 +183,10 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	RageColor color = this->m_pTempState->diffuse[0];
 	color.a = 0.5f;
 	v[0].p = RageVector3( 0, 0, 0 );
-	v[0].c = color;
+	RageColor midcolor = color;
+	midcolor.a = RADAR_CENTER_ALPHA;
+	v[0].c = midcolor;
+	v[1].c = color;
 
 	for( int i=0; i<NUM_SHOWN_RADAR_CATEGORIES+1; i++ )	// do one extra to close the fan
 	{
@@ -185,7 +198,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		const float fY = -RageFastSin(fRotation) * fDistFromCenter;
 
 		v[1+i].p = RageVector3( fX, fY,	0 );
-		v[1+i].c = v[0].c;
+		v[1+i].c = v[1].c;
 	}
 
 	DISPLAY->DrawFan( v, NUM_SHOWN_RADAR_CATEGORIES+2 );

@@ -1,5 +1,4 @@
 // LanguagesDlg.cpp : implementation file
-//
 
 #define CO_EXIST_WITH_MFC
 #include "global.h"

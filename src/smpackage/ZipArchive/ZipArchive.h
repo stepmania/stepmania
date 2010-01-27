@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // $Workfile: ZipArchive.h $
 // $Archive: /ZipArchive/ZipArchive.h $
-// $Date$ $Author$
+// $Date: 2003-12-11 00:09:22 -0600 (Thu, 11 Dec 2003) $ $Author: gmaynard $
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
 // is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)

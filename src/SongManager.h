@@ -137,6 +137,7 @@ protected:
 
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	vector<Song*>		m_pPopularSongs;
+	//vector<Song*>		m_pRecentSongs;	// songs recently played on the machine
 	vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong
 	struct PreferredSortSection
 	{

@@ -69,8 +69,6 @@ XToString( DetailLine );
 #define MAX_COMBO_NUM_DIGITS			THEME->GetMetricI(m_sName,"MaxComboNumDigits")
 #define PLAYER_OPTIONS_HIDE_FAIL_TYPE		THEME->GetMetricB(m_sName,"PlayerOptionsHideFailType")
 #define PLAYER_OPTIONS_SEPARATOR		THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
-
-
 #define CHECKPOINTS_WITH_JUDGMENTS		THEME->GetMetricB(m_sName,"CheckpointsWithJudgments")
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
@@ -82,11 +80,10 @@ void ScreenEvaluation::Init()
 {
 	LOG->Trace( "ScreenEvaluation::Init()" );
 
-	//
 	// debugging
-	//
-	
-	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )	// Only fill StageStats with fake info if we're the InitialScreen (i.e. StageStats not already filled) 
+	// Only fill StageStats with fake info if we're the InitialScreen
+	// (i.e. StageStats not already filled)
+	if( PREFSMAN->m_sTestInitialScreen.Get() == m_sName )
 	{
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_1);
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);
@@ -110,7 +107,7 @@ void ScreenEvaluation::Init()
 		GAMESTATE->m_iCurrentStageIndex = 0;
 		FOREACH_ENUM( PlayerNumber, p )
 			GAMESTATE->m_iPlayerStageTokens[p] = 1;
-		
+
 		FOREACH_PlayerNumber( p )
 		{
 			if( RandomInt(2) )
@@ -128,7 +125,7 @@ void ScreenEvaluation::Init()
 			}
 			ss.m_player[p].m_vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			ss.m_player[p].m_iStepsPlayed = 1;
-			
+
 			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
 			PO_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, ChooseRandomModifiers );
 		}
@@ -139,7 +136,7 @@ void ScreenEvaluation::Init()
 			ss.m_player[PLAYER_1].SetLifeRecordAt( fP1, f );
 			ss.m_player[PLAYER_2].SetLifeRecordAt( 1-fP1, f );
 		}
-	
+
 		FOREACH_PlayerNumber( p )
 		{
 			float fSeconds = GAMESTATE->m_pCurSong->GetStepsSeconds();
@@ -214,37 +211,27 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-
 	ASSERT( !STATSMAN->m_vPlayedStageStats.empty() );
 	m_pStageStats = &STATSMAN->m_vPlayedStageStats.back();
 
 	ZERO( m_bSavedScreenshot );
 
-
-	SUMMARY.Load( m_sName, "Summary" );
-
-	//
 	// Figure out which statistics and songs we're going to display
-	//
-
+	SUMMARY.Load( m_sName, "Summary" );
 	if( SUMMARY )
 	{
 		STATSMAN->GetFinalEvalStageStats( m_FinalEvalStageStats );
 		m_pStageStats = &m_FinalEvalStageStats;
 	}
 
-	//
 	// update persistent statistics
-	//
 	if( SUMMARY )
 		m_pStageStats->FinalizeScores( true );
 
 	// Run this here, so STATSMAN->m_CurStageStats is available to overlays.
 	ScreenWithMenuElements::Init();
 
-	//
 	// Calculate grades
-	//
 	Grade grade[NUM_PLAYERS];
 
 	FOREACH_PlayerNumber( p )
@@ -254,16 +241,11 @@ void ScreenEvaluation::Init()
 		else
 			grade[p] = Grade_Failed;
 	}
-	
-	//
+
 	// load sounds
-	//
 	m_soundStart.Load( THEME->GetPathS(m_sName,"start") );
 
-	
-	//
 	// init banner area
-	//
 	if( SHOW_BANNER_AREA )
 	{
 		if( SUMMARY )
@@ -324,8 +306,18 @@ void ScreenEvaluation::Init()
 				m_textPlayerOptions[p].SetText( sPO );
 				this->AddChild( &m_textPlayerOptions[p] );
 			}
+
+			{
+				m_textSongOptions.LoadFromFont( THEME->GetPathF(m_sName,"SongOptions") );
+				m_textSongOptions.SetName( "SongOptions" );
+				ActorUtil::LoadAllCommands( m_textSongOptions, m_sName );
+				SET_XY( m_textSongOptions );
+				m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetStage().GetLocalizedString() );
+				this->AddChild( &m_textSongOptions );
+			}
 		}
 
+		// Dairy Queen'd (disqualified)
 		FOREACH_EnabledPlayer( p )
 		{
 			m_sprDisqualified[p].Load( THEME->GetPathG(m_sName,"Disqualified") );
@@ -336,9 +328,7 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	//
 	// init grade area
-	//
 	if( SHOW_GRADE_AREA )
 	{
 		FOREACH_EnabledPlayer( p )
@@ -359,9 +349,7 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	//
 	// init points area
-	//
 	if( SHOW_POINTS_AREA )
 	{
 		FOREACH_EnabledPlayer( p )
@@ -503,6 +491,9 @@ void ScreenEvaluation::Init()
 				int iValue;
 				switch( l )
 				{
+				/* xxx: This doesn't seem to handle checkpoints correctly.
+				 * Something about checkpoints needing to be tied into
+				 * the correct judgments instead of just W1/W2. Misses are ok. */
 				case JudgmentLine_W1:
 					iValue = m_pStageStats->m_player[p].m_iTapNoteScores[TNS_W1];
 					if( CHECKPOINTS_WITH_JUDGMENTS && GAMESTATE->ShowW1() )

@@ -9,7 +9,7 @@ class ArrowEffects
 {
 public:
 	static void Update();
-	
+
 	//	fYOffset is a vertical position in pixels relative to the center.
 	//	(positive if has not yet been stepped on, negative if has already passed).
 	//	The ArrowEffect and ScrollSpeed is applied in this stage.

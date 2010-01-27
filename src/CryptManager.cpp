@@ -5,6 +5,9 @@
 #include "RageFile.h"
 #include "RageFileManager.h"
 #include "CryptHelpers.h"
+#include "LuaBinding.h"
+#include "LuaReference.h"
+#include "LuaManager.h"
 
 #include "libtomcrypt/src/headers/tomcrypt.h"
 
@@ -81,6 +84,15 @@ static PRNGWrapper *g_pPRNG = NULL;
 
 CryptManager::CryptManager()
 {
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "CRYPTMAN" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
+
 	ltc_mp = ltm_desc;
 
 	g_pPRNG = new PRNGWrapper( &yarrow_desc );
@@ -120,6 +132,8 @@ void CryptManager::GenerateGlobalKeys()
 CryptManager::~CryptManager()
 {
 	SAFE_DELETE( g_pPRNG );
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "CRYPTMAN" );
 }
 
 static bool WriteFile( RString sFile, RString sBuf )
@@ -412,6 +426,46 @@ RString CryptManager::GenerateRandomUUID()
 			buf[2] >> 16, buf[2] & 0xFFFF,
 			buf[3]);
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaCryptManager: public Luna<CryptManager>
+{
+public:
+	static int MD5String( T* p, lua_State *L )
+	{
+		RString md5out;
+		md5out = p->GetMD5ForString(SArg(1));
+		lua_pushstring( L, md5out );
+		return 1;
+	}
+	static int MD5File( T* p, lua_State *L )
+	{
+		RString md5fout;
+		md5fout = p->GetMD5ForFile(SArg(1));
+		lua_pushstring( L, md5fout );
+		return 1;
+	}
+	static int SHA1String( T* p, lua_State *L )
+	{
+		RString sha1out;
+		sha1out = p->GetSHA1ForString(SArg(1));
+		lua_pushstring( L, sha1out );
+		return 1;
+	}
+
+	LunaCryptManager()
+	{
+		ADD_METHOD( MD5String );
+		ADD_METHOD( MD5File );
+		ADD_METHOD( SHA1String );
+	}
+};
+
+LUA_REGISTER_CLASS( CryptManager )
+
+// lua end
 
 /*
  * (c) 2004-2007 Chris Danford, Glenn Maynard

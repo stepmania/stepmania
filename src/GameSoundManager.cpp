@@ -279,6 +279,7 @@ static void DoPlayOnceFromDir( RString sPath )
 	GetDirListing( sPath + "*.mp3", arraySoundFiles );
 	GetDirListing( sPath + "*.wav", arraySoundFiles );
 	GetDirListing( sPath + "*.ogg", arraySoundFiles );
+	GetDirListing( sPath + "*.oga", arraySoundFiles );
 
 	if( arraySoundFiles.empty() )
 		return;
@@ -499,8 +500,10 @@ void GameSoundManager::Update( float fDeltaTime )
 
 	{
 		/* Duration of the fade-in and fade-out: */
-		const float fFadeInSpeed = 1.5f;
-		const float fFadeOutSpeed = 0.3f;
+		//const float fFadeInSpeed = 1.5f;
+		//const float fFadeOutSpeed = 0.3f;
+		float fFadeInSpeed = g_Playing->m_Music->GetParams().m_fFadeInSeconds;
+		float fFadeOutSpeed = g_Playing->m_Music->GetParams().m_fFadeOutSeconds;
 		float fVolume = g_Playing->m_Music->GetParams().m_Volume;
 		switch( g_FadeState )
 		{

@@ -144,7 +144,6 @@ public:
 		DISPLAY->DrawQuadStrip( m_Slices, ARRAYLEN(m_Slices) );
 	}
 
-
 	RageTexture* m_pTexture;
 	RageSpriteVertex m_Slices[2*VALUE_RESOLUTION];
 };

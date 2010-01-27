@@ -73,7 +73,7 @@ void SongMeterDisplay::Update( float fDeltaTime )
 		float fSongEndSeconds = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
 		float fPercentPositionSong = SCALE( GAMESTATE->m_fMusicSeconds, fSongStartSeconds, fSongEndSeconds, 0.0f, 1.0f );
 		CLAMP( fPercentPositionSong, 0, 1 );
-		
+
 		SetPercent( fPercentPositionSong );
 	}
 

@@ -13,10 +13,24 @@
 #define CHOICE( s )		THEME->GetMetric (m_sName,ssprintf("Choice%s",s.c_str()))
 #define IDLE_TIMEOUT_SCREEN	THEME->GetMetric (m_sName,"IdleTimeoutScreen")
 #define UPDATE_ON_MESSAGE	THEME->GetMetric (m_sName,"UpdateOnMessage")
-#define USE_TWO_LISTS			THEME->GetMetricB (m_sName,"UseTwoLists")
 
+#if defined(SSC_FUTURES)
+// ???: Instead of using NumLists, use a comma-separated list of list names?
+#define NUM_LISTS				THEME->GetMetricI (m_sName,"NumLists")
+#else
+// xxx: USE_TWO_LISTS is just a hack for two players.
+#define USE_TWO_LISTS			THEME->GetMetricB (m_sName,"UseTwoLists")
+#endif
+
+#if defined(SSC_FUTURES)
+#define LIST_CONDITION( i )		THEME->GetMetricR (m_sName,"List%iCondition",i)
+#define CHOICE_NAMES_MULTI( i )	THEME->GetMetric (m_sName,ssprintf("List%iChoiceNames",i))
+#define CHOICEMULTI( i, s )		THEME->GetMetric (m_sName,ssprintf("List%iChoice%s",i,s.c_str()))
+#else
+// xxx: these are used by USE_TWO_LISTS.
 #define CHOICE_NAMESB		THEME->GetMetric (m_sName,"ChoiceNamesB")
 #define CHOICEB( s )		THEME->GetMetric (m_sName,ssprintf("ChoiceB%s",s.c_str()))
+#endif
 
 void ScreenSelect::Init()
 {
@@ -104,7 +118,7 @@ void ScreenSelect::BeginScreen()
 		{
 			m_iSelectedList = 1;
 			this->UpdateSelectableChoices();
-		}		
+		}
 	}
 
 	m_timerIdleComment.GetDeltaTime();

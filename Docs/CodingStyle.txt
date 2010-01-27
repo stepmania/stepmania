@@ -1,0 +1,47 @@
+sm-ssc Code Style Guidelines
+--------------------------------------------------------------------------------
+AJ is biased, but prefers to edit text in SciTE and just uses Visual Studio when
+necessary. "It's really slow!"
+
+That being said, the sm-ssc code style guidelines are as follows:
+
+1) Follow the current coding conventions set forth in the source code.
+This means use tabs. AJ prefers tabs have a width of 4. Visual Studio and web
+browsers assume tabs to be 8 by default. :/
+Use of the tab character means you can define however the fuck wide you want it
+to be.
+
+Use of the space character is allowed for complex alignment. There are many
+examples of this in the code.
+
+If it can be done in one line, do so:
+int xTwenty(int factor){ return factor*20; }
+
+Otherwise, follow what's in the code, namely...
+
+for single line ifs :
+if( somecrap )
+	dosomethingelse();
+
+for multi-lines:
+if( anothercrap )
+{
+	omg();
+	lotsofstuff();
+}
+
+Naming conventions seem to be Hungarian (of Apps or System, I do not know).
+
+2) Remove any unnecessary whitespace. "Unnecessary" whitespace includes tabs
+at the end of } characters, tabs that lead nowhere, like this one:
+	
+and keep in mind that this can be done with spaces too:
+    
+so watch yourself. Remove 'em all.
+
+3) When making LOG->Trace()s in code, it's best to include the name of the Class
+and Function in [], like so:
+LOG->Info( "[NetworkSyncManager::Listen] Initializing socket..." );
+You may not always need to do this, but it helps for clarity and sanity.
+
+4) There are no other rules (yet).

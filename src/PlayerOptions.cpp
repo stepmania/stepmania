@@ -181,6 +181,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	if( m_bTurns[TURN_LEFT] )		AddTo.push_back( "Left" );
 	if( m_bTurns[TURN_RIGHT] )		AddTo.push_back( "Right" );
 	if( m_bTurns[TURN_SHUFFLE] )		AddTo.push_back( "Shuffle" );
+	if( m_bTurns[TURN_SOFT_SHUFFLE] )		AddTo.push_back( "SoftShuffle" );
 	if( m_bTurns[TURN_SUPER_SHUFFLE] )	AddTo.push_back( "SuperShuffle" );
 
 	if( m_bTransforms[TRANSFORM_NOHOLDS] )	AddTo.push_back( "NoHolds" );
@@ -355,6 +356,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "left" )				m_bTurns[TURN_LEFT] = on;
 	else if( sBit == "right" )				m_bTurns[TURN_RIGHT] = on;
 	else if( sBit == "shuffle" )				m_bTurns[TURN_SHUFFLE] = on;
+	else if( sBit == "softshuffle" )				m_bTurns[TURN_SOFT_SHUFFLE] = on;
 	else if( sBit == "supershuffle" )			m_bTurns[TURN_SUPER_SHUFFLE] = on;
 	else if( sBit == "little" )				m_bTransforms[TRANSFORM_LITTLE] = on;
 	else if( sBit == "wide" )				m_bTransforms[TRANSFORM_WIDE] = on;
@@ -414,6 +416,9 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "averagescore" )			m_ScoreDisplay = SCORING_AVERAGE;
 	else if( sBit == "muteonerror" )			m_bMuteOnError = on;
 	else if( sBit == "random" )				ChooseRandomModifiers();
+	// deprecated mods/left in for compatibility
+	else if( sBit == "converge" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
+	// end of the list
 	else
 	{
 		return false;
@@ -600,12 +605,12 @@ float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 
 	if( (iCol%2)==1 )
 		f += m_fScrolls[SCROLL_ALTERNATE];
-	
+
 	int iFirstCrossCol = iNumCols/4;
 	int iLastCrossCol = iNumCols-1-iFirstCrossCol;
 	if( iCol>=iFirstCrossCol && iCol<=iLastCrossCol )
 		f += m_fScrolls[SCROLL_CROSS];
-	
+
 	if( f > 2 )
 		f = fmodf( f, 2 );
 	if( f > 1 )

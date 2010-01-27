@@ -7,6 +7,7 @@
 #include "RageFile.h"
 #include "RageSurface_Save_BMP.h"
 #include "RageSurface_Save_JPEG.h"
+#include "RageSurface_Save_PNG.h"
 #include "RageSurfaceUtils_Zoom.h"
 #include "RageSurface.h"
 #include "Preference.h"
@@ -76,7 +77,7 @@ RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures 
 		return RString();
 	LOG->Trace( "TryVideoMode failed: %s", err.c_str() );
 	vs.push_back( err );
-	
+
 	// fall back to settings that will most likely work
 	p.bpp = 16;
 	if( err = this->TryVideoMode(p,bNeedReloadTextures) == "" )
@@ -149,11 +150,11 @@ RString RageDisplay::GetStats() const
 		s = "-- FPS\n-- av FPS\n-- VPF";
 
 	s = ssprintf( "%i FPS\n%i av FPS\n%i VPF", GetFPS(), GetCumFPS(), GetVPF() );
-	
+
 	#if defined(_WINDOWS)
 	s += "\n"+this->GetApiDescription();
 	#endif
-	
+
 	return s;
 }
 
@@ -400,6 +401,13 @@ public:
 		RageMatrixSkewX( &m, fAmount );
 		MultMatrixLocal( m );
 	}
+	
+	void SkewY( float fAmount )
+	{		
+		RageMatrix m;
+		RageMatrixSkewY( &m, fAmount );
+		MultMatrixLocal( m );
+	}
 
 	// Obtain the current matrix at the top of the stack
 	const RageMatrix* GetTop() const { return &stack.back(); }
@@ -506,6 +514,11 @@ void RageDisplay::RotateZ( float deg )
 void RageDisplay::SkewX( float fAmount )
 {
 	g_WorldStack.SkewX( fAmount );
+}
+
+void RageDisplay::SkewY( float fAmount )
+{
+	g_WorldStack.SkewY( fAmount );
 }
 
 void RageDisplay::PostMultMatrix( const RageMatrix &m )
@@ -742,11 +755,11 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 {
 	RageTimer timer;
 	RageSurface *surface = this->CreateScreenshot();
-	LOG->Trace( "CreateScreenshot took %f seconds", timer.GetDeltaTime() );
+//	LOG->Trace( "CreateScreenshot took %f seconds", timer.GetDeltaTime() );
 	/* Unless we're in lossless, resize the image to 640x480.  If we're saving lossy,
 	 * there's no sense in saving 1280x960 screenshots, and we don't want to output
 	 * screenshots in a strange (non-1) sample aspect ratio. */
-	if( format != SAVE_LOSSLESS )
+	if( format != SAVE_LOSSLESS && format != SAVE_LOSSLESS_SENSIBLE )
 	{
 		/* Maintain the DAR. */
 		ASSERT( GetActualVideoModeParams().fDisplayAspectRatio > 0 );
@@ -754,7 +767,7 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 		int iWidth = lrintf( iHeight * GetActualVideoModeParams().fDisplayAspectRatio );
 		timer.Touch();
 		RageSurfaceUtils::Zoom( surface, iWidth, iHeight );
-		LOG->Trace( "%ix%i -> %ix%i (%.3f) in %f seconds", surface->w, surface->h, iWidth, iHeight, GetActualVideoModeParams().fDisplayAspectRatio, timer.GetDeltaTime() );
+//		LOG->Trace( "%ix%i -> %ix%i (%.3f) in %f seconds", surface->w, surface->h, iWidth, iHeight, GetActualVideoModeParams().fDisplayAspectRatio, timer.GetDeltaTime() );
 	}
 
 	RageFile out;
@@ -767,10 +780,14 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 
 	bool bSuccess = false;
 	timer.Touch();
+	RString strError = "";
 	switch( format )
 	{
 	case SAVE_LOSSLESS:
 		bSuccess = RageSurfaceUtils::SaveBMP( surface, out );
+		break;
+	case SAVE_LOSSLESS_SENSIBLE:
+		bSuccess = RageSurfaceUtils::SavePNG( surface, out, strError );
 		break;
 	case SAVE_LOSSY_LOW_QUAL:
 		bSuccess = RageSurfaceUtils::SaveJPEG( surface, out, false );
@@ -780,7 +797,7 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 		break;
 	DEFAULT_FAIL( format );
 	}
-	LOG->Trace( "Saving Screenshot file took %f seconds.", timer.GetDeltaTime() );
+//	LOG->Trace( "Saving Screenshot file took %f seconds.", timer.GetDeltaTime() );
 
 	SAFE_DELETE( surface );
 

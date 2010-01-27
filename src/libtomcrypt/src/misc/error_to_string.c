@@ -70,5 +70,5 @@ const char *error_to_string(int err)
 
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 24838 $ */
+/* $Date: 2007-01-23 23:16:57 -0600 (Tue, 23 Jan 2007) $ */

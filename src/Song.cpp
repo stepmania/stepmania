@@ -54,7 +54,6 @@ Song::Song()
 	FOREACH_BackgroundLayer( i )
 		m_BackgroundChanges[i] = AutoPtrCopyOnWrite<VBackgroundChange>(new VBackgroundChange);
 	m_ForegroundChanges = AutoPtrCopyOnWrite<VBackgroundChange>(new VBackgroundChange);
-	
 
 	m_LoadedFromProfile = ProfileSlot_Invalid;
 	m_fMusicSampleStartSeconds = -1;
@@ -234,6 +233,7 @@ bool Song::LoadFromSongDir( RString sDir )
 
 			vector<RString> vs;
 			GetDirListing( sDir + "*.mp3", vs, false, false ); 
+			GetDirListing( sDir + "*.oga", vs, false, false ); 
 			GetDirListing( sDir + "*.ogg", vs, false, false ); 
 			bool bHasMusic = !vs.empty();
 
@@ -382,6 +382,7 @@ void Song::TidyUpData()
 	{
 		vector<RString> arrayPossibleMusic;
 		GetDirListing( m_sSongDir + RString("*.mp3"), arrayPossibleMusic );
+		GetDirListing( m_sSongDir + RString("*.oga"), arrayPossibleMusic );
 		GetDirListing( m_sSongDir + RString("*.ogg"), arrayPossibleMusic );
 		GetDirListing( m_sSongDir + RString("*.wav"), arrayPossibleMusic );
 
@@ -486,6 +487,8 @@ void Song::TidyUpData()
 
 	/* Some DWIs have lengths in ms when they meant seconds, eg. #SAMPLELENGTH:10;.
 	 * If the sample length is way too short, change it. */
+	// oh also this means that if you try to have a sample length longer than
+	// 30 seconds, it doesn't mean shit. -aj
 	if( m_fMusicSampleLengthSeconds < 3 || m_fMusicSampleLengthSeconds > 30 )
 		m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 
@@ -624,6 +627,13 @@ void Song::TidyUpData()
 		 *
 		 * My tallest CDTitle is 44.  Let's cut off in the middle and hope for
 		 * the best. */
+		/* The proper size of a CDTitle is 64x48 or sometihng. Simfile artists
+		 * typically don't give a shit about this (see Cetaka's fucking banner
+		 * -sized CDTitle). This is also subverted in certain designs (beta
+		 * Mungyodance 3 simfiles, for instance, used the CDTitle to hold
+		 * various information about the song in question). As it stands,
+		 * I'm keeping this code until I figure out wtf to do -aj
+		 */
 		if( !HasCDTitle()  &&  width<=100  &&  height<=48 )
 		{
 			m_sCDTitleFile = arrayImages[i];
@@ -637,6 +647,7 @@ void Song::TidyUpData()
 
 	if( HasBanner() )
 		BANNERCACHE->CacheBanner( GetBannerPath() );
+	// todo: backgroundcache -aj
 
 
 	// If no BGChanges are specified and there are movies in the song directory, then assume
@@ -644,6 +655,7 @@ void Song::TidyUpData()
 	if( !HasBGChanges() )
 	{
 		vector<RString> arrayPossibleMovies;
+		GetDirListing( m_sSongDir + RString("*.ogv"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + RString("*.avi"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + RString("*.mpg"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + RString("*.mpeg"), arrayPossibleMovies );
@@ -737,12 +749,12 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		if( pSteps->IsAutogen() )
 			continue;
 
-		/* Don't calculate with edits unless the only chart available
-		 * is an edit. Otherwise, edits installed on the machine could 
-		 * extend the length of the song. */
+		/* Don't calculate with edits unless the song only contains an edit
+		 * chart, like those in Mungyodance 3. Otherwise, edits installed on
+		 * the machine could extend the length of the song. */
 		if( pSteps->IsAnEdit() && m_vpSteps.size() > 1 )
 			continue;
-		
+
 		// Don't set first/last beat based on lights.  They often start very 
 		// early and end very late.
 		if( pSteps->m_StepsType == StepsType_lights_cabinet )
@@ -799,7 +811,7 @@ void Song::Save()
 	GetDirListing( m_sSongDir + "*.bms", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.pms", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );
-	
+
 	for( unsigned i=0; i<arrayOldFileNames.size(); i++ )
 	{
 		const RString sOldPath = m_sSongDir + arrayOldFileNames[i];
@@ -910,7 +922,7 @@ void Song::AddAutoGenNotes()
 		StepsType st = m_vpSteps[i]->m_StepsType;
 		HasNotes[st] = true;
 	}
-		
+
 	FOREACH_ENUM( StepsType, stMissing )
 	{
 		if( HasNotes[stMissing] )
@@ -960,6 +972,11 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 		{
 			Steps* pNewNotes = new Steps;
 			pNewNotes->AutogenFrom( pOriginalNotes, ntTo );
+			// Only generate Medium difficulty steps for Pump-Halfdouble, as
+			// that seems to be the only difficulty Half-doubles charts use,
+			// going by Pump Pro. -aj
+			if(ntTo == StepsType_pump_halfdouble && pNewNotes->GetDifficulty() != Difficulty_Medium)
+				continue;
 			this->AddSteps( pNewNotes );
 		}
 	}
@@ -1004,7 +1021,7 @@ bool Song::IsEasy( StepsType st ) const
 	const Steps* pBeginnerNotes = SongUtil::GetStepsByDifficulty( this, st, Difficulty_Beginner );
 	if( pBeginnerNotes )
 		return true;
-	
+
 	const Steps* pEasyNotes = SongUtil::GetStepsByDifficulty( this, st, Difficulty_Easy );
 	if( pEasyNotes && pEasyNotes->GetMeter() == 1 )
 		return true;
@@ -1367,8 +1384,8 @@ public:
 	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
 	static int GetDisplayMainTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayMainTitle() ); return 1; }
 	static int GetTranslitMainTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitMainTitle() ); return 1; }
-	static int GetDisplaySubTitle( T* p, lua_State *L )     { lua_pushstring(L, p->GetDisplaySubTitle() ); return 1; }
-	static int GetTranslitSubTitle( T* p, lua_State *L )    { lua_pushstring(L, p->GetTranslitSubTitle() ); return 1; }
+	static int GetDisplaySubTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplaySubTitle() ); return 1; }
+	static int GetTranslitSubTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitSubTitle() ); return 1; }
 	static int GetDisplayArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayArtist() ); return 1; }
 	static int GetTranslitArtist( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitArtist() ); return 1; }
 	static int GetGenre( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGenre ); return 1; }
@@ -1386,13 +1403,24 @@ public:
 		return 1;
 	}
 	static int GetSongDir( T* p, lua_State *L )		{ lua_pushstring(L, p->GetSongDir() ); return 1; }
+	static int GetMusicPath( T* p, lua_State *L )	{ RString s = p->GetMusicPath(); if( s.empty() ) return 0; lua_pushstring(L, s); return 1; }
 	static int GetBannerPath( T* p, lua_State *L )		{ RString s = p->GetBannerPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
 	static int GetBackgroundPath( T* p, lua_State *L )	{ RString s = p->GetBackgroundPath(); if( s.empty() ) return 0; lua_pushstring(L, s); return 1; }
+	static int GetCDTitlePath( T* p, lua_State *L )		{ RString s = p->GetCDTitlePath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
+	static int GetLyricsPath( T* p, lua_State *L )	{ RString s = p->GetLyricsPath(); if( s.empty() ) return 0; lua_pushstring(L, s); return 1; }
+	static int GetSongFilePath(  T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongFilePath() ); return 1; }
 	static int IsTutorial( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsTutorial()); return 1; }
+	static int IsEnabled( T* p, lua_State *L )		{ lua_pushboolean(L, p->GetEnabled()); return 1; }
 	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName); return 1; }
 	static int MusicLengthSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fMusicLengthSeconds); return 1; }
 	static int IsLong( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsLong()); return 1; }
 	static int IsMarathon( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsMarathon()); return 1; }
+	static int HasStepsType( T* p, lua_State *L )
+	{
+		StepsType st = Enum::Check<StepsType>(L, 1);
+		lua_pushboolean( L, p->HasStepsType(st) );
+		return 1;
+	}
 	static int HasStepsTypeAndDifficulty( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
@@ -1417,6 +1445,34 @@ public:
 		p->m_Timing.PushSelf(L);
 		return 1;
 	}
+	// has functions
+	static int HasMusic( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMusic()); return 1; }
+	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner()); return 1; }
+	static int HasBackground( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBackground()); return 1; }
+	static int HasCDTitle( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasCDTitle()); return 1; }
+	static int HasBGChanges( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBGChanges()); return 1; }
+	static int HasLyrics( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasLyrics()); return 1; }
+	// functions that AJ loves
+	static int GetBPMAtBeat( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetBPMAtBeat(FArg(1))); return 1; }
+	static int GetBeatFromElapsedTime( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetBeatFromElapsedTime(FArg(1))); return 1; }
+	static int GetElapsedTimeFromBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetElapsedTimeFromBeat(FArg(1))); return 1; }
+	static int HasSignificantBPMChangesOrStops( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSignificantBpmChangesOrStops()); return 1; }
+	static int HasEdits( T* p, lua_State *L )
+	{
+		StepsType st = Enum::Check<StepsType>(L, 1);
+		lua_pushboolean(L, p->HasEdits( st ));
+		return 1;
+	}
+	static int IsEasy( T* p, lua_State *L )
+	{
+		StepsType st = Enum::Check<StepsType>(L, 1);
+		lua_pushboolean(L, p->IsEasy( st ));
+		return 1;
+	}
+	static int GetStepsSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetStepsSeconds()); return 1; }
+	static int NormallyDisplayed( T* p, lua_State *L ){ lua_pushboolean(L, p->NormallyDisplayed()); return 1; }
+	static int GetFirstBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fFirstBeat); return 1; }
+	static int GetLastBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fLastBeat); return 1; }
 
 	LunaSong()
 	{
@@ -1432,17 +1488,40 @@ public:
 		ADD_METHOD( GetAllSteps );
 		ADD_METHOD( GetStepsByStepsType );
 		ADD_METHOD( GetSongDir );
+		ADD_METHOD( GetMusicPath );
 		ADD_METHOD( GetBannerPath );
 		ADD_METHOD( GetBackgroundPath );
+		ADD_METHOD( GetCDTitlePath );
+		ADD_METHOD( GetLyricsPath );
+		ADD_METHOD( GetSongFilePath );
 		ADD_METHOD( IsTutorial );
+		ADD_METHOD( IsEnabled );
 		ADD_METHOD( GetGroupName );
 		ADD_METHOD( MusicLengthSeconds );
 		ADD_METHOD( IsLong );
 		ADD_METHOD( IsMarathon );
+		ADD_METHOD( HasStepsType );
 		ADD_METHOD( HasStepsTypeAndDifficulty );
 		ADD_METHOD( GetOneSteps );
 		ADD_METHOD( GetTimingData );
-	}
+		ADD_METHOD( HasMusic );
+		ADD_METHOD( HasBanner );
+		ADD_METHOD( HasBackground );
+		ADD_METHOD( HasCDTitle );
+		ADD_METHOD( HasBGChanges );
+		ADD_METHOD( HasLyrics );
+		// danger will robinson
+		ADD_METHOD( GetBPMAtBeat );
+		ADD_METHOD( GetBeatFromElapsedTime );
+		ADD_METHOD( GetElapsedTimeFromBeat );
+		ADD_METHOD( HasSignificantBPMChangesOrStops );
+		ADD_METHOD( HasEdits );
+		ADD_METHOD( IsEasy );
+		ADD_METHOD( GetStepsSeconds );
+		ADD_METHOD( NormallyDisplayed );
+		ADD_METHOD( GetFirstBeat );
+		ADD_METHOD( GetLastBeat );
+	}   
 };
 
 LUA_REGISTER_CLASS( Song )

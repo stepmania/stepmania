@@ -58,7 +58,7 @@ public:
 	float GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState = NULL ) const;
 	float GetLevel( const DeviceInput &di, const DeviceInputList *pButtonState = NULL ) const;
 	RString GetButtonComment( const DeviceInput &di ) const;
-	
+
 	void GetInputEvents( vector<InputEvent> &aEventOut );
 	void GetPressedButtons( vector<DeviceInput> &array ) const;
 

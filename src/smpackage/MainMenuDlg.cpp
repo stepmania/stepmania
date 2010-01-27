@@ -1,5 +1,4 @@
 // MainMenuDlg.cpp : implementation file
-//
 
 #define CO_EXIST_WITH_MFC
 #include "global.h"
@@ -76,14 +75,14 @@ void MainMenuDlg::OnExportPackages()
 	// TODO: Add your control notification handler code here
 	CSmpackageExportDlg dlg;
 	dlg.DoModal();
-//	if (nResponse == IDOK)	
+//	if (nResponse == IDOK)
 }
 
 void MainMenuDlg::OnEditInstallations() 
 {
 	// TODO: Add your control notification handler code here
 	EditInsallations dlg;
-	dlg.DoModal();	
+	dlg.DoModal();
 }
 
 RString GetLastErrorString()
@@ -209,7 +208,7 @@ void MainMenuDlg::OnBnClickedChangePreferences()
 {
 	// TODO: Add your control notification handler code here
 	ChangeGameSettings dlg;
-	dlg.DoModal();	
+	dlg.DoModal();
 }
 
 static LocalizedString DOESNT_EXIST_IT_WILL_BE_CREATED	( "MainMenuDlg", "'%s' doesn't exist.  It will be created next time you start the game." );
@@ -229,7 +228,7 @@ void MainMenuDlg::OnBnClickedOpenPreferences()
 void MainMenuDlg::OnBnClickedClearPreferences()
 {
 	// TODO: Add your control notification handler code here
-	FILEMAN->FlushDirCache( Dirname(SpecialFiles::PREFERENCES_INI_PATH) );
+	FlushDirCache();
 	if( !DoesFileExist(SpecialFiles::PREFERENCES_INI_PATH) )
 	{
 		Dialog::OK( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
@@ -256,7 +255,7 @@ void MainMenuDlg::OnBnClickedLanguages()
 {
 	// TODO: Add your control notification handler code here
 	LanguagesDlg dlg;
-	dlg.DoModal();	
+	dlg.DoModal();
 }
 
 HBRUSH MainMenuDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

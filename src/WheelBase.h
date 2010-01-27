@@ -1,4 +1,4 @@
-/* WheelBase - A wheel with data eliments. */
+/* WheelBase - A wheel with data elements. */
 
 #ifndef WHEELBASE_H
 #define WHEELBASE_H
@@ -75,7 +75,7 @@ protected:
 	RString		m_sExpandedSectionName;
 
 
-	int		m_iSwitchesLeftInSpinDown;		
+	int			m_iSwitchesLeftInSpinDown;
 	float		m_fLockedWheelVelocity;
 	/* 0 = none; -1 or 1 = up/down */
 	int		m_Moving;
@@ -91,6 +91,7 @@ protected:
 		STATE_RANDOM_SPINNING,
 		STATE_LOCKED,
 	};
+
 	WheelState	m_WheelState;
 	float		m_fTimeLeftInState;
 	float		m_fPositionOffsetFromSelection;

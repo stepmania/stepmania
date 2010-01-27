@@ -10,15 +10,18 @@
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 
-
 class DeviceList: public BitmapText
 {
 public:
+	DeviceList()
+	{
+		this->SetName("DeviceList");
+		LOAD_ALL_COMMANDS(this);
+	}
+
 	void Update( float fDeltaTime )
 	{
-		//
 		// Update devices text
-		//
 		this->SetText( INPUTMAN->GetDisplayDevicesString() );
 
 		BitmapText::Update( fDeltaTime );
@@ -38,9 +41,7 @@ class InputList: public BitmapText
 
 	void Update( float fDeltaTime )
 	{
-		//
 		// Update input texts
-		//
 		vector<RString> asInputs;
 
 		DeviceInput di;
@@ -127,7 +128,7 @@ void ScreenTestInput::MenuBack( const InputEventPlus &input )
 	if( !IsTransitioning() )
 	{
 		SCREENMAN->PlayStartSound();
-		StartTransitioningScreen( SM_GoToPrevScreen );		
+		StartTransitioningScreen( SM_GoToPrevScreen );
 	}
 }
 

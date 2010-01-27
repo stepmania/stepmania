@@ -78,7 +78,6 @@ HighScoreImpl::HighScoreImpl()
 	ZERO( iHoldNoteScores );
 	radarValues.MakeUnknown();
 	fLifeRemainingSeconds = 0;
-	bDisqualified = false;
 }
 
 XNode *HighScoreImpl::CreateNode() const
@@ -428,6 +427,15 @@ public:
 		lua_pushboolean( L, bIsFillInMarker );
 		return 1;
 	}
+	static int GetModifiers( T* p, lua_State *L )			{ lua_pushstring(L, p->GetModifiers() ); return 1; }
+	static int GetTapNoteScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetTapNoteScore( Enum::Check<TapNoteScore>(L, 1) ) ); return 1; }
+	static int GetHoldNoteScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetHoldNoteScore( Enum::Check<HoldNoteScore>(L, 1) ) ); return 1; }
+	static int GetRadarValues( T* p, lua_State *L )
+	{
+		RadarValues &rv = const_cast<RadarValues &>(p->GetRadarValues());
+		rv.PushSelf(L);
+		return 1;
+	}
 
 	LunaHighScore()
 	{
@@ -436,7 +444,12 @@ public:
 		ADD_METHOD( GetPercentDP );
 		ADD_METHOD( GetDate );
 		ADD_METHOD( GetSurvivalSeconds );
-		ADD_METHOD( IsFillInMarker );	
+		ADD_METHOD( IsFillInMarker );
+		// sm-ssc additions:
+		ADD_METHOD( GetModifiers );
+		ADD_METHOD( GetTapNoteScore );
+		ADD_METHOD( GetHoldNoteScore );
+		ADD_METHOD( GetRadarValues );
 	}
 };
 

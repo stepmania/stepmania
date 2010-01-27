@@ -17,14 +17,9 @@
 #include "Font.h"
 #include "RageDisplay.h"
 
-#define CHATINPUT_WIDTH				THEME->GetMetricF(m_sName,"ChatInputBoxWidth")
-#define CHATINPUT_HEIGHT			THEME->GetMetricF(m_sName,"ChatInputBoxHeight")
-#define CHATOUTPUT_WIDTH			THEME->GetMetricF(m_sName,"ChatOutputBoxWidth")
-#define CHATOUTPUT_HEIGHT			THEME->GetMetricF(m_sName,"ChatOutputBoxHeight")
-#define SHOW_CHAT_LINES				THEME->GetMetricI(m_sName,"ChatOutputLines")
-
 #define CHAT_TEXT_OUTPUT_WIDTH		THEME->GetMetricF(m_sName,"ChatTextOutputWidth")
 #define CHAT_TEXT_INPUT_WIDTH		THEME->GetMetricF(m_sName,"ChatTextInputWidth")
+#define SHOW_CHAT_LINES				THEME->GetMetricI(m_sName,"ChatOutputLines")
 
 #define USERSALT_Y					THEME->GetMetricF(m_sName,"UsersAY")
 #define USERSDELT_X					THEME->GetMetricF(m_sName,"UsersDX")
@@ -41,36 +36,26 @@ void ScreenNetSelectBase::Init()
 {
 	ScreenWithMenuElements::Init();
 
-	//ChatBox
-	m_sprChatInputBox.SetName( "ChatInputBox" );
+	// Chat boxes
 	m_sprChatInputBox.Load( THEME->GetPathG( m_sName, "ChatInputBox" ) );
-	m_sprChatInputBox.SetWidth( CHATINPUT_WIDTH );
-	m_sprChatInputBox.SetHeight( CHATINPUT_HEIGHT );
+	m_sprChatInputBox->SetName( "ChatInputBox" );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprChatInputBox );
-	this->AddChild( &m_sprChatInputBox );
+	this->AddChild( m_sprChatInputBox );
 
-	m_sprChatOutputBox.SetName( "ChatOutputBox" );
 	m_sprChatOutputBox.Load( THEME->GetPathG( m_sName, "ChatOutputBox" ) );
-	m_sprChatOutputBox.SetWidth( CHATOUTPUT_WIDTH );
-	m_sprChatOutputBox.SetHeight( CHATOUTPUT_HEIGHT );
+	m_sprChatOutputBox->SetName( "ChatOutputBox" );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_sprChatOutputBox );
-	this->AddChild( &m_sprChatOutputBox );
+	this->AddChild( m_sprChatOutputBox );
 
 	m_textChatInput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
-	m_textChatInput.SetHorizAlign( align_left );
-	m_textChatInput.SetVertAlign( align_top );
-	m_textChatInput.SetShadowLength( 0 );
 	m_textChatInput.SetName( "ChatInput" );
 	m_textChatInput.SetWrapWidthPixels( (int)(CHAT_TEXT_INPUT_WIDTH) );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textChatInput );
 	this->AddChild( &m_textChatInput );
 
 	m_textChatOutput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
-	m_textChatOutput.SetWrapWidthPixels( (int)(CHAT_TEXT_OUTPUT_WIDTH) );
-	m_textChatOutput.SetHorizAlign( align_left );
-	m_textChatOutput.SetVertAlign( align_bottom );
-	m_textChatOutput.SetShadowLength( 0 );
 	m_textChatOutput.SetName( "ChatOutput" );
+	m_textChatOutput.SetWrapWidthPixels( (int)(CHAT_TEXT_OUTPUT_WIDTH) );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textChatOutput );
 	this->AddChild( &m_textChatOutput );
 
@@ -187,7 +172,7 @@ void ScreenNetSelectBase::UpdateUsers()
 		m_textUsers[i].SetVertAlign( align_top );
 		m_textUsers[i].SetShadowLength( 0 );
 		m_textUsers[i].SetName( "Users" );
-		
+
 		tX += USERSDELT_X;
 
 		if ( (i % 2) == 1)
@@ -198,7 +183,7 @@ void ScreenNetSelectBase::UpdateUsers()
 
 		ActorUtil::LoadAllCommands( m_textUsers[i], m_sName );
 		ActorUtil::OnCommand( m_textUsers[i] );
-	
+
 		m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] );
 		m_textUsers[i].RunCommands( THEME->GetMetricA( m_sName,
 			ssprintf("Users%dCommand", NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[i]] ) ) );
@@ -207,6 +192,7 @@ void ScreenNetSelectBase::UpdateUsers()
 	}
 }
 
+/** ColorBitmapText ***********************************************************/
 void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternateText, int iWrapWidthPixels )
 {
 	ASSERT( m_pFont );
@@ -224,7 +210,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 	// Set up the first color.
 	m_vColors.clear();
 	ColorChange change;
-	change.c = RageColor ( 1, 1, 1, 1 );
+	change.c = RageColor (1, 1, 1, 1);
 	change.l = 0;
 	m_vColors.push_back( change );
 
@@ -318,7 +304,7 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			break;
 		}
 	}
-	
+
 	if( iWordWidth > 0 )
 	{
 		sCurrentLine += sCurrentWord;
@@ -346,9 +332,7 @@ void ColorBitmapText::DrawPrimitives( )
 	/* Draw if we're not fully transparent or the zbuffer is enabled */
 	if( m_pTempState->diffuse[0].a != 0 )
 	{
-		//
 		// render the shadow
-		//
 		if( m_fShadowLengthX != 0  ||  m_fShadowLengthY != 0 )
 		{
 			DISPLAY->PushMatrix();
@@ -362,9 +346,7 @@ void ColorBitmapText::DrawPrimitives( )
 			DISPLAY->PopMatrix();
 		}
 
-		//
 		// render the diffuse pass
-		//
 		int loc = 0, cur = 0;
 		RageColor c = m_pTempState->diffuse[0];
 
@@ -386,7 +368,7 @@ void ColorBitmapText::DrawPrimitives( )
 		DrawChars( false );
 	}
 
-	/* render the glow pass */
+	// render the glow pass
 	if( m_pTempState->glow.a > 0.0001f )
 	{
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
@@ -447,14 +429,6 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 	BuildChars();
 }
 
-
-void UtilSetQuadInit( Actor& actor, const RString &sClassName )
-{
-	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( actor, sClassName );
-	actor.RunCommands( THEME->GetMetricA( sClassName, actor.GetName() + "Command" ) );
-	actor.SetWidth( THEME->GetMetricF( sClassName, actor.GetName() + "Width" ) );
-	actor.SetHeight( THEME->GetMetricF( sClassName, actor.GetName() + "Height" ) );
-}
 
 #endif
 

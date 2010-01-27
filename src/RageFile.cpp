@@ -344,10 +344,16 @@ public:
 		lua_pushstring( L, string );
 		return 1;
 	}
-
+	
 	static int Seek( T* p, lua_State *L )
 	{
 		lua_pushinteger( L, p->Seek( IArg(1) ) );
+		return 1;
+	}
+
+	static int Tell( T* p, lua_State *L )
+	{
+		lua_pushinteger( L, p->Tell() );
 		return 1;
 	}
 
@@ -364,10 +370,24 @@ public:
 		lua_pushinteger( L, p->PutLine( SArg(1) ) );
 		return 1;
 	}
-
+	
 	static int GetError( T* p, lua_State *L )
 	{
-		lua_pushstring( L, p->GetError() );
+		RString error;
+		error = p->GetError();
+		lua_pushstring( L, error );
+		return 1;
+	}
+	
+	static int ClearError( T* p, lua_State *L )
+	{
+		p->ClearError();
+		return 1;
+	}
+	
+	static int AtEOF( T* p, lua_State *L )
+	{
+		lua_pushboolean( L, p->AtEOF() );
 		return 1;
 	}
 
@@ -378,10 +398,13 @@ public:
 		ADD_METHOD( Write );
 		ADD_METHOD( Read );
 		ADD_METHOD( Seek );
+		ADD_METHOD( Tell );
 		ADD_METHOD( GetLine );
 		ADD_METHOD( PutLine );
-		ADD_METHOD( GetError );
 		ADD_METHOD( destroy );
+		ADD_METHOD( GetError );
+		ADD_METHOD( ClearError );
+		ADD_METHOD( AtEOF );
 	}
 };
 

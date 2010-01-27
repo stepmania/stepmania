@@ -7,6 +7,7 @@ namespace CommandLineActions
 	void Install();
 	void Nsis();
 	void LuaInformation();
+	void Version();
 }
 
 #endif

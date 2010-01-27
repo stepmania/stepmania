@@ -55,7 +55,7 @@ void MsdFile::ReadBuf( const char *buf, int len, bool bUnescape )
 			/* Unfortunately, many of these files are missing ;'s.
 			 * If we get a # when we thought we were inside a value, assume we
 			 * missed the ;.  Back up and end the value. */
-			/* Make sure this # is the first non-whitespace character on the line. */
+			// Make sure this # is the first non-whitespace character on the line.
 			bool FirstChar = true;
 			int j = iProcessedLen;
 			while( j > 0 && cProcessed[j - 1] != '\r' && cProcessed[j - 1] != '\n' )
@@ -134,7 +134,7 @@ void MsdFile::ReadBuf( const char *buf, int len, bool bUnescape )
 			cProcessed[iProcessedLen++] = buf[i++];
 		}
 	}
-	
+
 	/* Add any unterminated value at the very end. */
 	if( ReadingValue )
 		AddParam( cProcessed, iProcessedLen );

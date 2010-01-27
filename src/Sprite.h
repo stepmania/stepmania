@@ -39,12 +39,13 @@ public:
 	RageTexture* GetTexture() { return m_pTexture; };
 
 	virtual void EnableAnimation( bool bEnable );
-	
+
 	virtual int GetNumStates() const;
 	virtual void SetState( int iNewState );
+	int GetState() { return m_iCurState; }
 	virtual float GetAnimationLengthSeconds() const;
 	virtual void SetSecondsIntoAnimation( float fSeconds );
-	
+
 	RString	GetTexturePath() const;
 
 	void SetCustomTextureRect( const RectF &new_texcoord_frect );
@@ -63,6 +64,7 @@ public:
 	// Scale the Sprite maintaining the aspect ratio so that it fits 
 	// within (fWidth,fHeight) and is clipped to (fWidth,fHeight).
 	void ScaleToClipped( float fWidth, float fHeight );
+	void CropTo( float fWidth, float fHeight );
 	static bool IsDiagonalBanner( int iWidth, int iHeight );
 
 	//

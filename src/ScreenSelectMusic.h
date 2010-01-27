@@ -25,7 +25,6 @@ enum SelectionState
 };
 const RString& SelectionStateToString( SelectionState ss );
 
-
 class ScreenSelectMusic : public ScreenWithMenuElements
 {
 public:
@@ -59,7 +58,6 @@ protected:
 	void UpdateSelectButton( PlayerNumber pn, bool bBeingPressed );
 
 	void ChangeSteps( PlayerNumber pn, int dir );
-
 	void AfterStepsOrTrailChange( const vector<PlayerNumber> &vpns );
 	void SwitchToPreferredDifficulty();
 	void AfterMusicChange();
@@ -74,6 +72,7 @@ protected:
 	ThemeMetric<float> SAMPLE_MUSIC_DELAY_INIT;
 	ThemeMetric<float> SAMPLE_MUSIC_DELAY;
 	ThemeMetric<bool> SAMPLE_MUSIC_LOOPS;
+	ThemeMetric<SampleMusicPreviewMode> SAMPLE_MUSIC_PREVIEW_MODE;
 	ThemeMetric<float> SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS;
 	ThemeMetric<bool> DO_ROULETTE_ON_MENU_TIMER;
 	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
@@ -88,9 +87,6 @@ protected:
 	ThemeMetric<RString> SELECT_MENU_NAME;
 	ThemeMetric<bool> SELECT_MENU_CHANGES_DIFFICULTY;
 	ThemeMetric<bool> TWO_PART_SELECTION;
-
-	ThemeMetric<bool> TWO_PART_CONFIRMS_ONLY;
-
 	ThemeMetric<bool> WRAP_CHANGE_STEPS;
 
 	bool CanChangeSong() const { return m_SelectionState == SelectionState_SelectingSong; }

@@ -181,6 +181,13 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 		vector<const Game*> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
 		StepMania::ChangeCurrentGame( aGames[sel] );
+		/* XXX: reload metrics to force a refresh of
+		 * CommonMetrics::DIFFICULTIES_TO_SHOW, mainly if we're not switching
+		 * themes. I'm not sure if this was the case going from theme to theme,
+		 * but if it was, it should be fixed now. There should probably be a
+		 * better way than this, but I'm not sure what it'd be. -aj
+		 */
+		THEME->ReloadMetrics();
 	}
 }
 
@@ -574,6 +581,15 @@ static void WideScreen16_9( int &sel, bool ToSel, const ConfOption *pConfOption 
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
+/* SSC */
+/*
+// BackgroundCache code isn't live yet -aj
+static void BackgroundCache( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	const BackgroundCache mapping[] = { BackgroundCacheMode_Off, BackgroundCacheMode_LowResPreload, BackgroundCacheMode_LowResLoadOnDemand, BackgroundCacheMode_Full };
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
+}
+*/
 /* Sound options */
 
 static void SoundVolume( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -585,6 +601,12 @@ static void SoundVolume( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void SoundVolumeAttract( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
+}
+
+static void VisualDelaySeconds( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	const float mapping[] = { -0.125f,-0.1f,-0.075f,-0.05f,0.025f,0.0f,0.025f,0.05f,0.075f,0.1f,0.125f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
@@ -680,7 +702,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "SongsPerPlayOrEvent",		SongsPerPlayOrEventMode,"|1","|2","|3","|4","|5","Event" ) );
 	g_ConfOptions.back().m_sPrefName = "SongsPerPlay";
 
-	ADD( ConfOption( "EventMode",			MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "EventMode",			MovePref<bool>,		"Off","On (recommended)" ) );
 	ADD( ConfOption( "ScoringType",			MovePref<ScoringType>,	"New","Old","Custom" ) );
 	ADD( ConfOption( "TimingWindowScale",		TimingWindowScale,	"|1","|2","|3","|4","|5","|6","|7" ) );
 	ADD( ConfOption( "LifeDifficulty",		LifeDifficulty,		"|1","|2","|3","|4","|5" ) );
@@ -694,6 +716,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "JointPremium",		JointPremium,		"Off","2 Players for 1 Credit" ) );
 	g_ConfOptions.back().m_sPrefName = "Premium";
 	ADD( ConfOption( "ShowSongOptions",		MovePref<Maybe>,	"Ask", "Hide","Show" ) );
+	ADD( ConfOption( "PercentageScoring",	MovePref<bool>,	"Off","On" ) );
 	ADD( ConfOption( "GetRankingName",		MovePref<GetRankingName>, "Off", "On", "Ranking Songs" ) );
 
 	/* Graphic options */
@@ -735,6 +758,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "SoundVolume",			SoundVolume,		"Silent","|10%","|20%","|30%","|40%","|50%","|60%","|70%","|80%","|90%","|100%" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_SOUND;
 	ADD( ConfOption( "SoundVolumeAttract",		SoundVolumeAttract,	"Silent","|10%","|20%","|30%","|40%","|50%","|60%","|70%","|80%","|90%","|100%" ) );
+	ADD( ConfOption( "VisualDelaySeconds",		VisualDelaySeconds,	"|-5","|-4","|-3","|-2","|-1","|0","|+1","|+2","|+3","|+4","|+5" ) );
 	{
 		ConfOption c( "GlobalOffsetSeconds",		GlobalOffsetSeconds );
 		for( int i = -100; i <= +100; i += 5 )

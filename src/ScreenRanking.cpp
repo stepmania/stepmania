@@ -179,7 +179,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 			float fSecsToShow = SetPage( m_vPagesToShow[m_iNextPageToShow] );
 			++m_iNextPageToShow;
 			this->SortByDrawOrder();
-			
+
 			this->PostScreenMessage( SM_HidePage, fSecsToShow-PAGE_FADE_SECONDS );
 		}
 		else

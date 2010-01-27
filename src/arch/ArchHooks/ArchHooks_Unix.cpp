@@ -18,7 +18,10 @@
 #endif
 
 #if defined(HAVE_FFMPEG)
-#include <ffmpeg/avcodec.h>
+extern "C"
+{
+	#include <ffmpeg/libavcodec/avcodec.h>
+}
 #endif
 
 static bool IsFatalSignal( int signal )
@@ -160,7 +163,17 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 
 RString ArchHooks::GetPreferredLanguage()
 {
-	return "en";
+	RString locale;
+
+	if(getenv("LANG"))
+	{
+		locale = getenv("LANG");
+		locale = locale.substr(0,2);
+	}
+	else
+		locale = "en";
+
+	return locale;
 }
 
 void ArchHooks_Unix::Init()
@@ -217,7 +230,7 @@ void ArchHooks_Unix::DumpDebugInfo()
 	LOG->Info( "Runtime library: %s", LibcVersion().c_str() );
 	LOG->Info( "Threads library: %s", ThreadsVersion().c_str() );
 #if defined(HAVE_FFMPEG)
-	LOG->Info( "libavcodec: %#x (%u)", avcodec_version(), avcodec_build() );
+	LOG->Info( "libavcodec: %#x (%u)", avcodec_version(), avcodec_version() );
 #endif
 }
 
@@ -257,6 +270,20 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", "/proc", "/proc" );
 #endif
 	
+	/*
+	 * Next: path to write general mutable user data.
+	 *
+	 * Lowercase the PRODUCT_ID; dotfiles and directories are almost always lowercase.
+	 */
+	const char *szHome = getenv( "HOME" );
+	RString sProductId = PRODUCT_ID;
+	sProductId.MakeLower();
+	RString sUserDataPath = ssprintf( "%s/.%s", szHome? szHome:".", sProductId.c_str() );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Cache", "/Cache" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Logs", "/Logs" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Save", "/Save" );
+	FILEMAN->Mount( "dir", sUserDataPath + "/Screenshots", "/Screenshots" );
+
 	RString Root;
 	struct stat st;
 	if( !stat(sDirOfExecutable + "/Packages", &st) && st.st_mode&S_IFDIR )
@@ -273,17 +300,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 
 void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 {
-	/* Path to write general mutable user data.
-	 * Lowercase the PRODUCT_ID; dotfiles and directories are almost always lowercase. */
-	const char *szHome = getenv( "HOME" );
-	RString sProductId = PRODUCT_ID;
-	sProductId.MakeLower();
-	RString sUserDataPath = ssprintf( "%s/.%s", szHome? szHome:".", sProductId.c_str() );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Cache", "/Cache" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Logs", "/Logs" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Save", "/Save" );
-	FILEMAN->Mount( "dir", sUserDataPath + "/Screenshots", "/Screenshots" );
-
+	// XXX: Fix me.
 }
 
 /*

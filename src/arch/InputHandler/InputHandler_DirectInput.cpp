@@ -29,6 +29,7 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 	{
 	case DIDEVTYPE_KEYBOARD: device.type = device.KEYBOARD; break;
 	case DIDEVTYPE_JOYSTICK: device.type = device.JOYSTICK; break;
+	//case DIDEVTYPE_MOUSE: device.type = device.MOUSE; break;
 	default: return DIENUM_CONTINUE;
 	}
 
@@ -36,6 +37,12 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 
 	switch( device.type )
 	{
+	/*
+	case device.MOUSE:
+		device.dev = DEVICE_MOUSE;
+		break;
+	*/
+
 	case device.JOYSTICK:
 		if( g_iNumJoysticks == NUM_JOYSTICKS )
 			return DIENUM_CONTINUE;
@@ -95,11 +102,11 @@ InputHandler_DInput::InputHandler_DInput()
 	LOG->Trace( "InputHandler_DInput::InputHandler_DInput()" );
 
 	CheckForDirectInputDebugMode();
-	
+
 	m_bShutdown = false;
 	g_iNumJoysticks = 0;
 
-	AppInstance inst;	
+	AppInstance inst;
 	HRESULT hr = DirectInputCreate(inst.Get(), DIRECTINPUT_VERSION, &g_dinput, NULL);
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: DirectInputCreate") );
@@ -113,6 +120,14 @@ InputHandler_DInput::InputHandler_DInput()
 	hr = g_dinput->EnumDevices( DIDEVTYPE_JOYSTICK, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
+
+	/*
+	mouse
+	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_MOUSE)" );
+	hr = g_dinput->EnumDevices( DIDEVTYPE_MOUSE, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
+	if( hr != DI_OK )
+		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
+	*/
 
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
@@ -173,7 +188,7 @@ InputHandler_DInput::~InputHandler_DInput()
 		Devices[i].Close();
 
 	Devices.clear();
-	g_dinput->Release();	
+	g_dinput->Release();
 	g_dinput = NULL;
 }
 
@@ -210,18 +225,18 @@ static int TranslatePOV(DWORD value)
 {
 	const int HAT_VALS[] =
 	{
-	    HAT_UP_MASK,
-	    HAT_UP_MASK   | HAT_RIGHT_MASK,
-	    HAT_RIGHT_MASK,
-	    HAT_DOWN_MASK | HAT_RIGHT_MASK,
-	    HAT_DOWN_MASK,
-	    HAT_DOWN_MASK | HAT_LEFT_MASK,
-	    HAT_LEFT_MASK,
-	    HAT_UP_MASK   | HAT_LEFT_MASK
+		HAT_UP_MASK,
+		HAT_UP_MASK   | HAT_RIGHT_MASK,
+		HAT_RIGHT_MASK,
+		HAT_DOWN_MASK | HAT_RIGHT_MASK,
+		HAT_DOWN_MASK,
+		HAT_DOWN_MASK | HAT_LEFT_MASK,
+		HAT_LEFT_MASK,
+		HAT_UP_MASK   | HAT_LEFT_MASK
 	};
 
 	if( LOWORD(value) == 0xFFFF )
-	    return 0;
+		return 0;
 
 	/* Round the value up: */
 	value += 4500 / 2;
@@ -229,7 +244,7 @@ static int TranslatePOV(DWORD value)
 	value /= 4500;
 
 	if( value >= 8 )
-	    return 0; /* shouldn't happen */
+		return 0; /* shouldn't happen */
 	
 	return HAT_VALS[value];
 }
@@ -366,6 +381,10 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 			}
 		}
 		break;
+	/*
+	case device.MOUSE:
+		break;
+	*/
 	}
 }
 

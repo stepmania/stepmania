@@ -1,4 +1,4 @@
-/* ThemeManager - Managed non-persisted statistics. */
+/* StatsManager - Managed non-persisted statistics. */
 
 #ifndef StatsManager_H
 #define StatsManager_H

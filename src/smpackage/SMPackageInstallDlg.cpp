@@ -1,5 +1,4 @@
 // SMPackageInstallDlg.cpp : implementation file
-//
 
 #define CO_EXIST_WITH_MFC
 #include "global.h"
@@ -10,11 +9,11 @@
 #include "smpackageUtil.h"
 #include "EditInsallations.h"
 #include "ShowComment.h"
-#include "IniFile.h"	
-#include "UninstallOld.h"	
-#include <algorithm>	
-#include "RageFileManager.h"	
-#include "RageFileDriverZip.h"	
+#include "IniFile.h"
+#include "UninstallOld.h"
+#include <algorithm>
+#include "RageFileManager.h"
+#include "RageFileDriverZip.h"
 #include "archutils/Win32/DialogUtil.h"
 #include "LocalizedString.h"
 #include "RageLog.h"
@@ -138,9 +137,9 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 void CSMPackageInstallDlg::OnPaint() 
 {
 	CPaintDC dc(this); // device context for painting
-	
+
 	// TODO: Add your message handler code here
-	
+
 	if (IsIconic())
 	{
 		CPaintDC dc(this); // device context for painting

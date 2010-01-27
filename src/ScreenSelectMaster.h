@@ -46,6 +46,7 @@ protected:
 	Page GetCurrentPage() const;
 
 	ThemeMetric<bool>	USE_TWO_SCROLLERS;
+	ThemeMetric<bool>	DO_SWITCH_ANYWAYS;
 	ThemeMetric<bool>	DOUBLE_PRESS_TO_SELECT;
 	ThemeMetric<bool>	SHOW_ICON;
 	ThemeMetric<bool>	SHOW_SCROLLER;

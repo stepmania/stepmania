@@ -345,12 +345,14 @@ bool IsHexVal( const RString &s );
 RString BinaryToHex( const void *pData_, int iNumBytes );
 RString BinaryToHex( const RString &sString );
 bool HexToBinary( const RString &s, unsigned char *stringOut );
-bool HexToBinary( const RString &s, RString &sOut );
+bool HexToBinary( const RString &s, RString *sOut );
 float HHMMSSToSeconds( const RString &sHMS );
 RString SecondsToHHMMSS( float fSecs );
 RString SecondsToMSSMsMs( float fSecs );
 RString SecondsToMMSSMsMs( float fSecs );
 RString SecondsToMMSSMsMsMs( float fSecs );
+RString SecondsToMSS( float fSecs );
+RString SecondsToMMSS( float fSecs );
 RString PrettyPercent( float fNumerator, float fDenominator );
 inline RString PrettyPercent( int fNumerator, int fDenominator ) { return PrettyPercent( float(fNumerator), float(fDenominator) ); }
 RString Commify( int iNum );

@@ -267,6 +267,7 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_START,      false )
        ),
+	   // TODO: add black and white buttons, as well as other missing inputs -aj
        AutoMappings(
 		"dance",
 		"XBOX Gamepad Plugin V0.01",
@@ -772,13 +773,15 @@ void InputMapper::UpdateTempDItoGI()
 	}
 }
 
-bool InputMapper::DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI ) const // return true if there is a mapping from device to pad
+ // return true if there is a mapping from device to pad
+bool InputMapper::DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI ) const
 {
 	GameI = g_tempDItoGI[DeviceI];
 	return GameI.controller != GameController_Invalid;
 }
 
-bool InputMapper::GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI ) const	// return true if there is a mapping from pad to device
+// return true if there is a mapping from pad to device
+bool InputMapper::GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI ) const
 {
 	DeviceI = m_mappings.m_GItoDI[GameI.controller][GameI.button][iSlotNum];
 	return DeviceI.device != InputDevice_Invalid;

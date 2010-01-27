@@ -1,4 +1,4 @@
-DWI-style CDTiltes can be placed here.  
+DWI-style CDTitles can be placed here.  
 
 However, you are highly encouraged to place the CDTitle graphics
 inside the song folder since the package manager cannot use the 

@@ -1,4 +1,4 @@
-/* IniFile - Reading and writing .CSV files. */
+/* CsvFile - Reading and writing .CSV files. */
 
 #ifndef CsvFile_H
 #define CsvFile_H

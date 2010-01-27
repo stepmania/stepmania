@@ -385,6 +385,8 @@ void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
 	_exit( 1 );
 }
 
+
+
 void CrashHandler::CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
 	static bool bInCrashSignalHandler = false;

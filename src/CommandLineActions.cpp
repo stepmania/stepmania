@@ -13,6 +13,12 @@
 #include "RageFileManager.h"
 #include "SpecialFiles.h"
 
+#if defined(_WINDOWS)
+// fuck you
+#include <windows.h>
+#include <conio.h>
+#endif
+
 const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
 
 static const RString TEMP_MOUNT_POINT = "/@tempinstallpackage/";
@@ -165,6 +171,33 @@ void CommandLineActions::LuaInformation()
 	XmlFileUtil::SaveToFile( pNode, "Lua.xml", "Lua.xsl" );
 
 	delete pNode;
+}
+
+#if defined(HAVE_VERSION_INFO)
+extern unsigned long version_num;
+extern const char *const version_date;
+extern const char *const version_time;
+#endif
+
+void CommandLineActions::Version()
+{
+	/* HACK: This is only needed on Windows.
+	Mac and Linux print out version information on the command line regardless
+	of any preferences (tested by shakesoda on Mac). -aj */
+	#if defined(WIN32) && !defined(_XBOX)
+		RString sProductID = ssprintf( "%s", PRODUCT_ID_VER );
+		RString sVersion = "(sm-ssc was built without HAVE_VERSION_INFO)";
+		#if defined(HAVE_VERSION_INFO)
+			sVersion = ssprintf( "build %lu\nCompile Date: %s @ %s", version_num, version_date, version_time );
+		#endif // HAVE_VERSION_INFO
+
+		AllocConsole();
+		freopen( "CONOUT$","wb", stdout );
+		freopen( "CONOUT$","wb", stderr );
+
+		fprintf(stdout, "Version Information:\n%s %s\n", sProductID.c_str(), sVersion.c_str() );
+		_getch();
+	#endif // WIN32 && !_XBOX
 }
 
 /*

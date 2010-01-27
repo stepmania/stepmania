@@ -906,6 +906,7 @@ bool MidiLoader::LoadFromDir( const RString &sDir, Song &out )
 	
 	{
 		vector<RString> vsFiles;
+		GetDirListing( sDir + RString("*song.oga"), vsFiles );
 		GetDirListing( sDir + RString("*song.ogg"), vsFiles );
 		GetDirListing( sDir + RString("*song.mp3"), vsFiles );
 		GetDirListing( sDir + RString("*song.wav"), vsFiles );
@@ -915,6 +916,7 @@ bool MidiLoader::LoadFromDir( const RString &sDir, Song &out )
 
 	{
 		vector<RString> vsFiles;
+		GetDirListing( sDir + RString("*guitar.oga"), vsFiles );
 		GetDirListing( sDir + RString("*guitar.ogg"), vsFiles );
 		GetDirListing( sDir + RString("*guitar.mp3"), vsFiles );
 		GetDirListing( sDir + RString("*guitar.wav"), vsFiles );
@@ -924,6 +926,7 @@ bool MidiLoader::LoadFromDir( const RString &sDir, Song &out )
 
 	{
 		vector<RString> vsFiles;
+		GetDirListing( sDir + RString("*rhythm.oga"), vsFiles );
 		GetDirListing( sDir + RString("*rhythm.ogg"), vsFiles );
 		GetDirListing( sDir + RString("*rhythm.mp3"), vsFiles );
 		GetDirListing( sDir + RString("*rhythm.wav"), vsFiles );
@@ -933,6 +936,7 @@ bool MidiLoader::LoadFromDir( const RString &sDir, Song &out )
 
 	{
 		vector<RString> vsFiles;
+		GetDirListing( sDir + RString("*bass.oga"), vsFiles );
 		GetDirListing( sDir + RString("*bass.ogg"), vsFiles );
 		GetDirListing( sDir + RString("*bass.mp3"), vsFiles );
 		GetDirListing( sDir + RString("*bass.wav"), vsFiles );

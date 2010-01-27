@@ -58,6 +58,7 @@
 #include "InputQueue.h"
 #include "SongCacheIndex.h"
 #include "BannerCache.h"
+//#include "BackgroundCache.h"
 #include "UnlockManager.h"
 #include "RageFileManager.h"
 #include "Bookkeeper.h"
@@ -79,23 +80,38 @@
 #include <windows.h>
 #endif
 
+// since the XBOX SDK only works with VS.Net 2003, this doesn't exist yet.
+// see http://old.nabble.com/Linking-Error-with-MSVC%2B%2B-6.0-td21608559.html
+// for more information. -aj
+#if defined(XBOX)
+	extern "C"
+	{
+		int _get_output_format( void ){ return 0; }
+	}
+#endif
+
 static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", false );
 
 
 void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 {
 	/*
-	 * We can't rely on there being full-screen video modes that give us square pixels 
-	 * at non-4:3 aspects.  The lowest non-4:3 resolution my new laptop with Radeon supports is 1280x720.  
-	 * In most cases, we'll using a 4:3 resolution when full-screen let the monitor stretch to the correct 
-	 * aspect.  When windowed (no monitor stretching), we will tweak the width so that we get square pixels.
+	 * We can't rely on there being full-screen video modes that give us square
+	 * pixels at non-4:3 aspects.  The lowest non-4:3 resolution my new laptop
+	 * with Radeon supports is 1280x720. In most cases, we'll using a 4:3
+	 * resolution when full-screen let the monitor stretch to the correct aspect.
+	 * When windowed (no monitor stretching), we will tweak the width so that
+	 * we get square pixels.
 	 * -Chris
 	 */
 	int iWidth = PREFSMAN->m_iDisplayWidth;
+	// SAT2888 but could also be useful disabled
+	/*
 	if( PREFSMAN->m_bWindowed )
 	{
 		iWidth = PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio;
 	}
+	*/
 
 	paramsOut = VideoModeParams(
 		PREFSMAN->m_bWindowed,
@@ -279,6 +295,11 @@ void StepMania::ResetPreferences()
  * these may still be NULL. */
 void ShutdownGame()
 {
+#if defined(SAT2888)
+	LOG->Info("sm-ssc is Copyright ©2009,2010 the spinal shark collective, all rights reserved. Commercial use of this binary is prohibited by law and will be prosecuted to the fullest extent of the law.");
+	if(rand()%64 == 24)
+		LOG->Info("NAKET Coder isn't a fan of four panel footprint either, and would love to shit over your theme like you say NAKET Team shit over the options screen.");
+#endif
 	/* First, tell SOUNDMAN that we're shutting down.  This signals sound drivers to
 	 * stop sounds, which we want to do before any threads that may have started sounds
 	 * are closed; this prevents annoying DirectSound glitches and delays. */
@@ -303,6 +324,7 @@ void ShutdownGame()
 	SAFE_DELETE( MEMCARDMAN );
 	SAFE_DELETE( SONGMAN );
 	SAFE_DELETE( BANNERCACHE );
+	//SAFE_DELETE( BACKGROUNDCACHE );
 	SAFE_DELETE( SONGINDEX );
 	SAFE_DELETE( SOUND ); /* uses GAMESTATE, PREFSMAN */
 	SAFE_DELETE( PREFSMAN );
@@ -345,7 +367,7 @@ void StepMania::ResetGame()
 	{
 		RString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
 		if( !THEME->DoesThemeExist(sGameName) )
-			sGameName = "default";
+			sGameName = PREFSMAN->m_sDefaultTheme; // was "default"
 		THEME->SwitchThemeAndLanguage( sGameName, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
 		TEXTUREMAN->DoDelayedDelete();
 	}
@@ -380,6 +402,7 @@ static void AdjustForChangedSystemCapabilities()
 	LOG->Trace( "Memory changed from %i to %i; settings changed", g_iLastSeenMemory.Get(), Memory );
 	g_iLastSeenMemory.Set( Memory );
 
+	// is this assumption outdated?
 	/* Let's consider 128-meg systems low-memory, and 256-meg systems high-memory.
 	 * Cut off at 192.  This is somewhat conservative; many 128-meg systems can
 	 * deal with higher memory profile settings, but some can't. 
@@ -398,6 +421,8 @@ static void AdjustForChangedSystemCapabilities()
 	 * actual song data, it still adds up with a lot of songs. Disable it for 64-meg
 	 * systems. */
 	PREFSMAN->m_BannerCache.Set( LowMemory ? BNCACHE_OFF:BNCACHE_LOW_RES_PRELOAD );
+	// might wanna do this for backgrounds, too...
+	//PREFSMAN->m_BackgroundCache.Set( LowMemory ? BGCACHE_OFF:BGCACHE_LOW_RES_PRELOAD );
 
 	PREFSMAN->SavePrefsToDisk();
 #endif
@@ -815,16 +840,34 @@ void StepMania::ChangeCurrentGame( const Game* g )
 
 	RString sAnnouncer = PREFSMAN->m_sAnnouncer;
 	RString sTheme = PREFSMAN->m_sTheme;
+	RString sLanguage = PREFSMAN->m_sLanguage;
 
 	if( sAnnouncer.empty() )
 		sAnnouncer = GAMESTATE->GetCurrentGame()->m_szName;
 	if( sTheme.empty() )
 		sTheme = GAMESTATE->GetCurrentGame()->m_szName;
 
+	// process theme and language command line arguments;
+	// these change the preferences in order for transparent loading -aj
+	RString argTheme;
+	if( GetCommandlineArgument(	"theme",&argTheme) )
+	{
+		sTheme = argTheme;
+		// set theme in preferences too for correct behavior  -aj
+		PREFSMAN->m_sTheme.Set(sTheme);
+	}
+
+	RString argLanguage;
+	if( GetCommandlineArgument(	"language",&argLanguage) )
+	{
+		sLanguage = argLanguage;
+		// set language in preferences too for correct behavior -aj
+		PREFSMAN->m_sLanguage.Set(sLanguage);
+	}
+
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
-	THEME->SwitchThemeAndLanguage( sTheme, PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
-
+	THEME->SwitchThemeAndLanguage( sTheme, sLanguage, PREFSMAN->m_bPseudoLocalize );
 
 	/* Set the input scheme for the new game, and load keymaps. */
 	if( INPUTMAPPER )
@@ -869,6 +912,7 @@ static void MountTreeOfZips( const RString &dir )
 
 #if defined(HAVE_VERSION_INFO)
 extern unsigned long version_num;
+extern const char *const version_date;
 extern const char *const version_time;
 #endif
 
@@ -877,8 +921,12 @@ static void WriteLogHeader()
 	LOG->Info( PRODUCT_ID_VER );
 
 #if defined(HAVE_VERSION_INFO)
-	LOG->Info( "Compiled %s (build %lu)", version_time, version_num );
+	LOG->Info( "Compiled %s @ %s (build %lu)", version_date, version_time, version_num );
 #endif
+
+	// this code should only be enabled in distributed builds
+	LOG->Info("sm-ssc is Copyright ©2009 the spinal shark collective, all rights reserved. Commercial use of this binary is prohibited by law and will be prosecuted to the fullest extent of the law.");
+	// end limited code
 
 	time_t cur_time;
 	time(&cur_time);
@@ -931,6 +979,7 @@ int main(int argc, char* argv[])
 		RunMode_Install, 
 		RunMode_ExportNsisStrings, 
 		RunMode_ExportLuaInformation,
+		RunMode_DisplayVersion,
 	};
 	RunMode runmode = RunMode_Normal;
 	if( CommandLineActions::AnyPackageFilesInCommandLine() )
@@ -939,6 +988,8 @@ int main(int argc, char* argv[])
 		runmode = RunMode_ExportNsisStrings;
 	else if( GetCommandlineArgument("ExportLuaInformation") )
 		runmode = RunMode_ExportLuaInformation;
+	else if( GetCommandlineArgument("version") )
+		runmode = RunMode_DisplayVersion;
 
 
 	/* Set up arch hooks first.  This may set up crash handling. */
@@ -1068,6 +1119,8 @@ int main(int argc, char* argv[])
 	case RunMode_Install:
 	case RunMode_ExportNsisStrings:
 	case RunMode_ExportLuaInformation:
+	case RunMode_DisplayVersion:
+		// possible change: phase out "default"? -aj
 		THEME->SwitchThemeAndLanguage( "default", PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
 		switch( runmode )
 		{
@@ -1080,6 +1133,9 @@ int main(int argc, char* argv[])
 			break;
 		case RunMode_ExportLuaInformation:
 			CommandLineActions::LuaInformation();
+			break;
+		case RunMode_DisplayVersion:
+			CommandLineActions::Version();
 			break;
 		};
 		exit(0);
@@ -1113,7 +1169,8 @@ int main(int argc, char* argv[])
 	INPUTQUEUE	= new InputQueue;
 	SONGINDEX	= new SongCacheIndex;
 	BANNERCACHE	= new BannerCache;
-	
+	//BACKGROUNDCACHE	= new BackgroundCache;
+
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager;
 	SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
@@ -1177,6 +1234,33 @@ int main(int argc, char* argv[])
 	if( GetCommandlineArgument("netip") )
 		NSMAN->DisplayStartupStatus();	// If we're using networking show what happened
 
+	/* this code should only be enabled in distributed builds
+	 * HI PLEASE MAKE SURE THIS SECTION IS USING THE RIGHT VARIABLE WHEN YOU
+	 * GENERATE THE BUILDS FOR BETA WAVES, THANKS -aj
+	 * also remember to comment this out when it comes time for normal builds
+	 * the point of this section is to mark executables in case of leaks.
+	 * by the time sm-ssc v1.0 is out, this code should be GONE. ENTIRELY. -aj
+	 */
+	//RString sVariableFuzzer1995EXAnotherStep;
+
+	// generic codes //
+	//sVariableFuzzer1995EXAnotherStep = "9D76A02B8D814AEE7B8BF8A03359CB7D"; // SSC generic (input string "h01yd!v3rZ2009R33LR4C1NGR007$")
+	//sVariableFuzzer1995EXAnotherStep = "A333181F0F5DCBE20636ED99127F3C12"; // BoXoRRoXoRs (input string "l3tzR0X0RglennzBoXorZ")
+
+	// private beta wave 1 - 20091201 release //
+	// sVariableFuzzer1995EXAnotherStep = "4312B0FD2FB1B26BD8B5DCD8305813AA"; // FSX {input string "FSXFFFSSSXXX1283"}
+	// sVariableFuzzer1995EXAnotherStep = "1B9035054F6076F9E20696FEB0E4D8E3"; // Wolfman2000 {input string "jasonfeldenstein3Dz"}
+	// sVariableFuzzer1995EXAnotherStep = "804CF9D006ECCFD695541AEFD1EDB5C5"; // NitroX72 {input string "!nfam0uZn1tr0Glyc3r1n"}
+	// sVariableFuzzer1995EXAnotherStep = "285F8E6398F12485894BD6257C2524C7"; // Wanny {input string "wansicles2081"}
+	// sVariableFuzzer1995EXAnotherStep = "57AB620779AE965597AE7700CF378511"; // Tio {input string "teeba00lenmEhik0"}
+	// sVariableFuzzer1995EXAnotherStep = "226460C1442F11F2B7D1F5C926C5f6DA"; // cerbo {input string "audpnzstxnotseepiu"}
+	// sVariableFuzzer1995EXAnotherStep = "3AC41B7211C8BC18C974220EC55B77BA"; // Daisuke Master {input string "daisuBaisuWaisuNaisu!!"}
+
+	// sVariableFuzzer1995EXAnotherStep = "2A7ECF8AAC00C7E4BE657FCC4B73ADEA"; // Sniper257? {input string "McSn1p3rF3aT0uTsId3r"}
+	// sVariableFuzzer1995EXAnotherStep = "915ABA60E7FD1524076859B8B1C4A203"; // Karai? {input string "turororocobocolocoOMGz"}
+	// sVariableFuzzer1995EXAnotherStep = "8C310A867555866CA1A044F54B6EA4CD"; // djaydino? {input string "ez2dzaydinosaurusbagelz"}
+	// private beta wave 1 - 20091208 release //
+
 	/* Run the main loop. */
 	GameLoop::RunGameLoop();
 	
@@ -1195,11 +1279,10 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	 * screen00011.jpg), and we always increase from the end, so if screen00003.jpg
 	 * is deleted, we won't fill in the hole (which makes screenshots hard to find). */
 	RString sFileNameNoExtension;
-	if( iIndex == -1 ) 
+	if( iIndex == -1 )
 		sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension( sDir, "screen" );
 	else
 		sFileNameNoExtension = Profile::MakeFileNameNoExtension( "screen", iIndex );
-
 
 	//
 	// Save the screenshot.  If writing lossy to a memcard, use SAVE_LOSSY_LOW_QUAL, so we
@@ -1211,9 +1294,9 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	else if( bSaveCompressed )
 		fmt = RageDisplay::SAVE_LOSSY_HIGH_QUAL;
 	else
-		fmt = RageDisplay::SAVE_LOSSLESS;
+		fmt = RageDisplay::SAVE_LOSSLESS_SENSIBLE;
 
-	RString sFileName = sFileNameNoExtension + "." + (bSaveCompressed ? "jpg" : "bmp");
+	RString sFileName = sFileNameNoExtension + "." + (bSaveCompressed ? "jpg" : "png");
 	RString sPath = sDir+sFileName;
 	bool bResult = DISPLAY->SaveScreenshot( sPath, fmt );
 	if( !bResult )
@@ -1290,6 +1373,12 @@ void StepMania::ClearCredits()
 /* Returns true if the key has been handled and should be discarded, false if
  * the key should be sent on to screens. */
 static LocalizedString SERVICE_SWITCH_PRESSED ( "StepMania", "Service switch pressed" );
+// xxx: okay these probably shouldn't be here, but I wanted them to be
+// localized and this was the place to do it since this is where the control
+// structure is placed... apologies to those who like properly structured
+// metrics. I like compatibility.
+static LocalizedString RELOADED_METRICS( "ThemeManager", "Reloaded metrics" );
+static LocalizedString RELOADED_METRICS_AND_TEXTURES( "ThemeManager", "Reloaded metrics and textures" );
 bool HandleGlobalInputs( const InputEventPlus &input )
 {
 	/* None of the globals keys act on types other than FIRST_PRESS */
@@ -1321,6 +1410,38 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		}
 		StepMania::InsertCoin();
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
+	}
+
+	// re-added for 3.9 veterans, plus it's just plain old faster than the
+	// debug menu. However, this is without the LShift capability that was
+	// in 3.9; if we get enough requests, we'll re-add it, but meh. -aj
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F2) )
+	{
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT), &input.InputList) ||
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT), &input.InputList))
+		{
+			// Shift+F2: refresh metrics and CodeDetector cache only
+			THEME->ReloadMetrics();
+			CodeDetector::RefreshCacheItems();
+			SCREENMAN->SystemMessage( RELOADED_METRICS );
+		}
+		else
+		{
+			// F2 alone: refresh metrics, textures, noteskins, codedetector cache
+			THEME->ReloadMetrics();
+			TEXTUREMAN->ReloadAll();
+			NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
+			CodeDetector::RefreshCacheItems();
+			SCREENMAN->SystemMessage( RELOADED_METRICS_AND_TEXTURES );
+		}
+
+		/* If we're in screen test mode, reload the screen. 
+		if( PREFSMAN->m_bScreenTestMode )
+			ResetGame( true );
+		else
+		*/
+
+		return true;
 	}
 
 #if !defined(MACOSX)
@@ -1435,9 +1556,9 @@ void HandleInputEvents(float fDeltaTime)
 		}
 
 		INPUTMAPPER->DeviceToGame( input.DeviceI, input.GameI );
-		
+
 		input.mp = MultiPlayer_Invalid;
-		
+
 		{
 			// Translate input to the appropriate MultiPlayer.  Assume that all
 			// joystick devices are mapped the same as the master player.
@@ -1458,7 +1579,7 @@ void HandleInputEvents(float fDeltaTime)
 
 					input.mp = InputMapper::InputDeviceToMultiPlayer( input.DeviceI.device );
 					//LOG->Trace( "multiplayer %d", input.mp );
-					ASSERT( input.mp >= 0 && input.mp < NUM_MultiPlayer );					
+					ASSERT( input.mp >= 0 && input.mp < NUM_MultiPlayer );
 				}
 			}
 		}
@@ -1483,7 +1604,7 @@ void HandleInputEvents(float fDeltaTime)
 
 		if( HandleGlobalInputs(input) )
 			continue;	// skip
-		
+
 		// check back in event mode
 		if( GAMESTATE->IsEventMode() &&
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_BACK_IN_EVENT_MODE) )
@@ -1494,12 +1615,12 @@ void HandleInputEvents(float fDeltaTime)
 
 		SCREENMAN->Input( input );
 	}
-	
+
 	if( ArchHooks::GetAndClearToggleWindowed() )
 	{
 		PREFSMAN->m_bWindowed.Set( !PREFSMAN->m_bWindowed );
 		StepMania::ApplyGraphicOptions();
-	}	
+	}
 }
 
 /*

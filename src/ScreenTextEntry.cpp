@@ -159,7 +159,7 @@ void ScreenTextEntry::UpdateAnswerText()
 	if( m_bShowAnswerCaret 	&&  !bAnswerFull )
 		s += '_';
 	else
-		s += "  ";	// assumes that underscore is the width of two spaces
+		s += "  ";	// xxx: assumes that underscore is the width of two spaces
 
 	FontCharAliases::ReplaceMarkers( s );
 	m_textAnswer.SetText( s );
@@ -197,6 +197,7 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 		wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,true);
 		if( c >= L' ' ) 
 		{
+			// todo: handle caps lock -aj
 			TryAppendToAnswer( WStringToRString(wstring()+c) );
 
 			TextEnteredDirectly();
@@ -253,7 +254,7 @@ void ScreenTextEntry::End( bool bCancelled )
 	{
 		if( g_pOnCancel ) 
 			g_pOnCancel();
-		
+
 		Cancel( SM_GoToNextScreen );
 		//TweenOffScreen();
 	}

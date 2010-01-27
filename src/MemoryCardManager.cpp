@@ -721,10 +721,17 @@ public:
 		LuaHelpers::Push( L, p->GetCardState( pn ) );
 		return 1;
 	}
+	static int GetName( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		lua_pushstring(L, p->GetName(pn) );
+		return 1;
+	}
 
 	LunaMemoryCardManager()
 	{
 		ADD_METHOD( GetCardState );
+		ADD_METHOD( GetName );
 	}
 };
 

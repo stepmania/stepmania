@@ -1,5 +1,5 @@
 /*
-** $Id$
+** $Id: print.c 23036 2006-09-25 07:35:34Z gmaynard $
 ** print bytecodes
 ** See Copyright Notice in lua.h
 */

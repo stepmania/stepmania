@@ -304,7 +304,7 @@ int NoteData::GetLastTrackWithTapOrHoldHead( int row ) const
 void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 {
 	ASSERT( iStartRow>=0 && iEndRow>=0 );
-	ASSERT_M( iEndRow >= iStartRow, ssprintf("%d %d",iEndRow,iStartRow) );
+	ASSERT_M( iEndRow >= iStartRow, ssprintf("EndRow %d < StartRow %d",iEndRow,iStartRow) );
 	
 	/* Include adjacent (non-overlapping) hold notes, since we need to merge with them. */
 	iterator begin, end;
@@ -621,6 +621,26 @@ int NoteData::GetNumRolls( int iStartIndex, int iEndIndex ) const
 	return iNumRolls;
 }
 
+/*
+int NoteData::GetNumMinefields( int iStartIndex, int iEndIndex ) const
+{
+	int iNumMinefields = 0;
+	for( int t=0; t<GetNumTracks(); ++t )
+	{
+		const_iterator begin, end;
+		GetTapNoteRangeExclusive( t, iStartIndex, iEndIndex, begin, end );
+		for( ; begin != end; ++begin )
+		{
+			if( begin->second.type != TapNote::hold_head ||
+				begin->second.subType != TapNote::hold_head_mine )
+				continue;
+			iNumMinefields++;
+		}
+	}
+	return iNumMinefields;
+}
+*/
+
 // -1 for iOriginalTracksToTakeFrom means no track
 void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] )
 {
@@ -694,7 +714,7 @@ bool NoteData::GetNextTapNoteRowForTrack( int track, int &rowInOut ) const
 
 	// lower_bound and upper_bound have the same effect here because duplicate 
 	// keys aren't allowed.
-	//
+
 	// lower_bound "finds the first element whose key is not less than k" (>=);
 	// upper_bound "finds the first element whose key greater than k".  They don't
 	// have the same effect, but lower_bound(row+1) should equal upper_bound(row). -glenn
@@ -711,14 +731,14 @@ bool NoteData::GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const
 {
 	const TrackMap &mapTrack = m_TapNotes[track];
 
-	/* Find the first note >= rowInOut. */
+	// Find the first note >= rowInOut.
 	TrackMap::const_iterator iter = mapTrack.lower_bound( rowInOut );
 
-	/* If we're at the beginning, we can't move back any more. */
+	// If we're at the beginning, we can't move back any more.
 	if( iter == mapTrack.begin() )
 		return false;
 
-	/* Move back by one. */
+	// Move back by one.
 	--iter;	
 	ASSERT( iter->first < rowInOut );
 	rowInOut = iter->first;
@@ -742,16 +762,16 @@ void NoteData::GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap
 	}
 
 	if( iStartRow <= 0 )
-		begin = mapTrack.begin(); /* optimization */
+		begin = mapTrack.begin(); // optimization
 	else if( iStartRow >= MAX_NOTE_ROW )
-		begin = mapTrack.end(); /* optimization */
+		begin = mapTrack.end(); // optimization
 	else
 		begin = mapTrack.lower_bound( iStartRow );
 
 	if( iEndRow <= 0 )
-		end = mapTrack.begin(); /* optimization */
+		end = mapTrack.begin(); // optimization
 	else if( iEndRow >= MAX_NOTE_ROW )
-		end = mapTrack.end(); /* optimization */
+		end = mapTrack.end(); // optimization
 	else
 		end = mapTrack.lower_bound( iEndRow );
 }
@@ -777,7 +797,7 @@ void NoteData::GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow,
 				++iHoldEndRow;
 			if( iHoldEndRow > iStartRow )
 			{
-				/* The previous note is a hold. */
+				// The previous note is a hold.
 				begin = prev;
 			}
 		}
@@ -785,7 +805,7 @@ void NoteData::GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow,
 
 	if( bIncludeAdjacent && end != this->end(iTrack) )
 	{
-		/* Include the next note if it's a hold and starts on iEndRow. */
+		// Include the next note if it's a hold and starts on iEndRow.
 		const TapNote &tn = end->second;
 		int iHoldStartRow = end->first;
 		if( tn.type == TapNote::hold_head && iHoldStartRow == iEndRow )
@@ -797,7 +817,7 @@ void NoteData::GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow,
 {
 	GetTapNoteRange( iTrack, iStartRow, iEndRow, begin, end );
 
-	/* If end-1 is a hold_head, and extends beyond iEndRow, exclude it. */
+	// If end-1 is a hold_head, and extends beyond iEndRow, exclude it.
 	if( begin != end && end != this->begin(iTrack) )
 	{
 		iterator prev = end;
@@ -893,13 +913,13 @@ bool NoteData::GetPrevTapNoteRowForAllTracks( int &rowInOut ) const
 XNode* NoteData::CreateNode() const
 {
 	XNode *p = new XNode( "NoteData" );
-	
+
 	all_tracks_const_iterator iter = GetTapNoteRangeAllTracks( 0, GetLastRow() );
-	
+
 	for( ; !iter.IsAtEnd(); ++iter )
 	{
 		XNode *p2 = iter->CreateNode();
-		
+
 		p2->AppendAttr( "Track", iter.Track() );
 		p2->AppendAttr( "Row", iter.Row() );
 		p->AppendChild( p2 );

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * $Id$
+ * $Id: imdct_s.dat 8581 2004-02-18 04:36:30Z gmaynard $
  */
 
   /*  0 */  {  MAD_F(0x09bd7ca0) /*  0.608761429 */,

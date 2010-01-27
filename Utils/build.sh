@@ -66,7 +66,8 @@ usage () {
 version () {
 	echo 'build.sh (StepMania) 2.6'
 	echo 'Copyright (C) 2006-2009 Steve Checkoway'
-	echo 'StepMania is Copyright (C) 2001-2008 Chris Danford et al.'
+	echo 'StepMania is Copyright (C) 2001-2009 Chris Danford et al.'
+	echo 'sm-ssc is Copyright (C) 2009 the spinal shark collective'
 	exit 0
 }
 

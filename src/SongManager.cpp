@@ -121,7 +121,7 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 	// reload scores and unlocks afterward
 	PROFILEMAN->LoadMachineProfile();
 	UNLOCKMAN->Reload();
-	
+
 	if( !bAllowFastLoad )
 		PREFSMAN->m_bFastLoad.Set( OldVal );
 
@@ -148,6 +148,7 @@ void SongManager::SanityCheckGroupDir( RString sDir ) const
 	// Check to see if they put a song directly inside the group folder.
 	vector<RString> arrayFiles;
 	GetDirListing( sDir + "/*.mp3", arrayFiles );
+	GetDirListing( sDir + "/*.oga", arrayFiles );
 	GetDirListing( sDir + "/*.ogg", arrayFiles );
 	GetDirListing( sDir + "/*.wav", arrayFiles );
 	if( !arrayFiles.empty() )
@@ -722,7 +723,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 
 	RefreshCourseGroupInfo();
 }
-	
+
 void SongManager::InitAutogenCourses()
 {
 	//
@@ -744,7 +745,7 @@ void SongManager::InitAutogenCourses()
 		CourseUtil::AutogenNonstopFromGroup( sGroupName, Difficulty_Medium, *pCourse );
 		m_pCourses.push_back( pCourse );
 	}
-	
+
 	vector<Song*> apCourseSongs = GetAllSongs();
 
 	// Generate "All Songs" endless course.
@@ -804,7 +805,7 @@ void SongManager::InitAutogenCourses()
 void SongManager::InitRandomAttacks()
 {
 	GAMESTATE->m_RandomAttacks.clear();
-	
+
 	if( !IsAFile(ATTACK_FILE) )
 		LOG->Trace( "File Data/RandomAttacks.txt was not found" );
 	else
@@ -834,11 +835,11 @@ void SongManager::InitRandomAttacks()
 					continue;
 				}
 
-				// Check to make sure only one attack has been specified
-				// TODO: Allow combinations of mods
 				vector<RString> sAttackCheck;
 				split( sAttack, ",", sAttackCheck, false );
 
+				// Make sure only one attack has been specified.
+				// TODO: Allow combinations of mods. (shouldn't be too hard -aj)
 				if( sAttackCheck.size() > 1 )
 				{
 					LOG->Warn( "Attack \"%s\" has more than one modifier; must only be one modifier specified", sAttack.c_str() );
@@ -1780,7 +1781,7 @@ public:
 		else lua_pushnil(L);
 		return 1;
 	}
-	
+
 	static int GetExtraStageInfo( T* p, lua_State *L )
 	{
 		bool bExtra2 = BArg( 1 );
@@ -1797,6 +1798,28 @@ public:
 	DEFINE_METHOD( GetSongColor, GetSongColor( Luna<Song>::check(L,1) ) )
 	DEFINE_METHOD( GetSongGroupColor, GetSongGroupColor( SArg(1) ) )
 	DEFINE_METHOD( GetCourseColor, GetCourseColor( Luna<Course>::check(L,1) ) )
+	
+	// this binding has ABYSMAL performance, most likely due to the whole "hey
+	// let's keep repopulating the vector every time this is called" thing.
+	// gg whitehouse maybe if you included global variables in your terror
+	// alerts this wouldn't have happened ffffffffffffff
+	/*
+	static int GetSongRank( T* p, lua_State *L )
+	{
+		Song *pSong = Luna<Song>::check(L,1);
+		vector<Song*> apPopularSongs;
+		p->GetPopularSongs(apPopularSongs,GROUP_ALL);
+		const int index = FindIndex( apPopularSongs.begin(), apPopularSongs.end(), pSong );
+		if( index != -1 )
+			lua_pushnumber(L, index+1);
+		else lua_pushnil(L);
+		return 1;
+	}
+	static int GetSongRankFromProfile( T* p, lua_State *L )
+	{
+		// it's like the above but also takes in a ProfileSlot as well.
+	}
+	*/
 
 	LunaSongManager()
 	{
@@ -1819,7 +1842,7 @@ public:
 		ADD_METHOD( GetSongColor );
 		ADD_METHOD( GetSongGroupColor );
 		ADD_METHOD( GetCourseColor );
-
+		//ADD_METHOD( GetSongRank );
 	}
 };
 

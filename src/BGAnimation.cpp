@@ -126,6 +126,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 		GetDirListing( sAniDir+"*.png", asImagePaths, false, true );
 		GetDirListing( sAniDir+"*.jpg", asImagePaths, false, true );
 		GetDirListing( sAniDir+"*.gif", asImagePaths, false, true );
+		GetDirListing( sAniDir+"*.ogv", asImagePaths, false, true );
 		GetDirListing( sAniDir+"*.avi", asImagePaths, false, true );
 		GetDirListing( sAniDir+"*.mpg", asImagePaths, false, true );
 		GetDirListing( sAniDir+"*.mpeg", asImagePaths, false, true );

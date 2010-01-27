@@ -1,0 +1,5 @@
+Since a few people have asked me, I figured I'd put a LICENSE file here. I wrote
+this small library as an excercise. You are welcome to include jsonxx in your
+project and redistributed it with your code in any license, provided that you
+don't sue me for anything. Please let me know if you improved it, so that I can
+merge your changes.

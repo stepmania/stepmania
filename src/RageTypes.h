@@ -9,9 +9,11 @@ enum BlendMode
 {
 	BLEND_NORMAL,
 	BLEND_ADD,
+	BLEND_MODULATE,
 	BLEND_COPY_SRC,
 	BLEND_ALPHA_MASK,
 	BLEND_ALPHA_KNOCK_OUT,
+	BLEND_ALPHA_MULTIPLY,
 	BLEND_WEIGHTED_MULTIPLY,
 	BLEND_INVERT_DEST,
 	BLEND_NO_EFFECT,
@@ -45,6 +47,8 @@ enum EffectMode
 	EffectMode_ColorDodge,
 	EffectMode_VividLight,
 	EffectMode_HardMix,
+	EffectMode_Overlay,
+	EffectMode_Screen,
 	EffectMode_YUYV422,
 	NUM_EffectMode,
 	EffectMode_Invalid
@@ -79,6 +83,15 @@ enum PolygonMode
 	PolygonMode_Invalid
 };
 LuaDeclareType( PolygonMode );
+
+enum GlowMode
+{
+	GlowMode_Brighten,
+	GlowMode_Whiten,
+	NUM_GlowMode,
+	GlowMode_Invalid
+};
+LuaDeclareType( GlowMode );
 
 struct lua_State;
 
@@ -265,7 +278,7 @@ inline unsigned char FTOC(float a)
  * r, g, b, a order, independent of endianness, so storing them this
  * way avoids endianness problems.  Don't try to manipulate this; only
  * manip RageColors. */
-/* Perhaps the math in RageColor could be moved to RaveVColor.  We don't need the 
+/* Perhaps the math in RageColor could be moved to RageVColor.  We don't need the 
  * precision of a float for our calculations anyway.   -Chris */
 class RageVColor
 {

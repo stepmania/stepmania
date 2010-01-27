@@ -337,12 +337,23 @@ GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefi
 	if( !GLExt.m_bGL_ARB_vertex_shader && ShaderType == GL_VERTEX_SHADER_ARB )
 		return 0;
 
+	GLhandleARB secondaryShader = 0;
+	if( sFile == "Data/Shaders/GLSL/Cel.vert" )
+	{
+		secondaryShader = CompileShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Cel.frag", asDefines);
+	}
+	
 	GLhandleARB hShader = CompileShader( ShaderType, sFile, asDefines );
 	if( hShader == 0 )
 		return 0;
 
 	GLhandleARB hProgram = GLExt.glCreateProgramObjectARB();
 	GLExt.glAttachObjectARB( hProgram, hShader );
+	if( secondaryShader != 0 )
+	{
+		GLExt.glAttachObjectARB( hProgram, secondaryShader );
+		GLExt.glDeleteObjectARB( secondaryShader );
+	}
 	GLExt.glDeleteObjectARB( hShader );
 
 	// Link the program.
@@ -366,10 +377,16 @@ static GLhandleARB g_bColorBurnShader = 0;
 static GLhandleARB g_bColorDodgeShader = 0;
 static GLhandleARB g_bVividLightShader = 0;
 static GLhandleARB g_hHardMixShader = 0;
+static GLhandleARB g_hOverlayShader = 0;
+static GLhandleARB g_hScreenShader = 0;
 static GLhandleARB g_hYUYV422Shader = 0;
+static GLhandleARB g_gCelShader = 0;
 
 void InitShaders()
 {
+	// xxx: replace this with a ShaderManager or something that reads in
+	// the shaders and determines shader type by file extension. -aj
+	// argh shaders in stepmania are painful -colby
 	vector<RString> asDefines;
 	g_bTextureMatrixShader = LoadShader( GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Texture matrix scaling.vert", asDefines );
 	g_bUnpremultiplyShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Unpremultiply.frag", asDefines );
@@ -377,8 +394,11 @@ void InitShaders()
 	g_bColorDodgeShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Color dodge.frag", asDefines );
 	g_bVividLightShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Vivid light.frag", asDefines );
 	g_hHardMixShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Hard mix.frag", asDefines );
+	g_hOverlayShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Overlay.frag", asDefines );
+	g_hScreenShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Screen.frag", asDefines );
 	g_hYUYV422Shader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/YUYV422.frag", asDefines );
-
+	g_gCelShader = LoadShader( GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Cel.vert", asDefines);
+	
 	// Bind attributes.
 	if( g_bTextureMatrixShader )
 	{
@@ -1573,6 +1593,7 @@ void RageDisplay_OGL::SetTextureMode( TextureUnit tu, TextureMode tm )
 		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD );
 		break;
 	case TextureMode_Glow:
+		// the below function is brighten:
 		if( !GLExt.m_bARB_texture_env_combine && !GLExt.m_bEXT_texture_env_combine )
 		{
 			/* This is changing blend state, instead of texture state, which isn't
@@ -1581,6 +1602,7 @@ void RageDisplay_OGL::SetTextureMode( TextureUnit tu, TextureMode tm )
 			return;
 		}
 
+		// and this is whiten:
 		/* Source color is the diffuse color only: */
 		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT );
 		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_COMBINE_RGB_EXT), GL_REPLACE );
@@ -1642,6 +1664,8 @@ void RageDisplay_OGL::SetEffectMode( EffectMode effect )
 	case EffectMode_ColorDodge:	hShader = g_bColorDodgeShader; break;
 	case EffectMode_VividLight:	hShader = g_bVividLightShader; break;
 	case EffectMode_HardMix:	hShader = g_hHardMixShader; break;
+	case EffectMode_Overlay:	hShader = g_hOverlayShader; break;
+	case EffectMode_Screen:	hShader = g_hScreenShader; break;
 	case EffectMode_YUYV422:	hShader = g_hYUYV422Shader; break;
 	}
 
@@ -1675,6 +1699,8 @@ bool RageDisplay_OGL::IsEffectModeSupported( EffectMode effect )
 	case EffectMode_ColorDodge:	return g_bColorDodgeShader != 0;
 	case EffectMode_VividLight:	return g_bVividLightShader != 0;
 	case EffectMode_HardMix:	return g_hHardMixShader != 0;
+	case EffectMode_Overlay:	return g_hOverlayShader != 0;
+	case EffectMode_Screen:	return g_hScreenShader != 0;
 	case EffectMode_YUYV422:	return g_hYUYV422Shader != 0;
 	}
 
@@ -1703,6 +1729,9 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 	case BLEND_ADD:
 		iSourceRGB = GL_SRC_ALPHA; iDestRGB = GL_ONE;
 		break;
+	case BLEND_MODULATE:
+		iSourceRGB = GL_ZERO; iDestRGB = GL_SRC_COLOR;
+		break;
 	case BLEND_COPY_SRC:
 		iSourceRGB = GL_ONE; iDestRGB = GL_ZERO;
 		iSourceAlpha = GL_ONE; iDestAlpha = GL_ZERO;
@@ -1714,6 +1743,9 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 	case BLEND_ALPHA_KNOCK_OUT:
 		iSourceRGB = GL_ZERO; iDestRGB = GL_ONE;
 		iSourceAlpha = GL_ZERO; iDestAlpha = GL_ONE_MINUS_SRC_ALPHA;
+		break;
+	case BLEND_ALPHA_MULTIPLY:
+		iSourceRGB = GL_SRC_ALPHA; iDestRGB = GL_ZERO;
 		break;
 	case BLEND_WEIGHTED_MULTIPLY:
 		/* output = 2*(dst*src).  0.5,0.5,0.5 is identity; darker colors darken the image,
@@ -2594,8 +2626,35 @@ void RageDisplay_OGL::SetSphereEnvironmentMapping( TextureUnit tu, bool b )
 	}
 }
 
+GLint iCelTexture1, iCelTexture2 = NULL;
+
+void RageDisplay_OGL::SetCelShaded( bool b )
+{
+	if( GLExt.glUseProgramObjectARB == NULL )
+		return; // not supported
+
+	GLhandleARB hShader = 0;
+	if( b )
+		GLExt.glUseProgramObjectARB( g_gCelShader );
+	else
+		GLExt.glUseProgramObjectARB( hShader );
+
+	if( !b )
+		return;
+
+	/*
+	 * Optimization: don't get these again if we have already done it.
+	 * Getting data from the GPU is (relatively) slow, avoid it if possible.
+	 */
+	if( !iCelTexture1 )
+	{
+		iCelTexture1 = GLExt.glGetUniformLocationARB( hShader, "Texture1" );
+	}
+	GLExt.glUniform1iARB( iCelTexture1, 1 );
+}
+
 /*
- * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard
+ * Copyright (c) 2001-2009 Chris Danford, Glenn Maynard, Colby Klein
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

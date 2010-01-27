@@ -66,7 +66,8 @@ void ScreenSelectMaster::Init()
 
 	OPTION_ORDER2.Load( m_sName, OPTION_ORDER_NAME_LIST2, NUM_MenuDir );
 
-
+	DO_SWITCH_ANYWAYS.Load( m_sName, "DoSwitchAnyways" );
+	
 	WRAP_CURSOR.Load( m_sName, "WrapCursor" );
 	WRAP_SCROLLER.Load( m_sName, "WrapScroller" );
 	LOOP_SCROLLER.Load( m_sName, "LoopScroller" );
@@ -609,7 +610,7 @@ try_again:
 			return false; // went full circle and none found
 		seen.insert( iSwitchToIndex );
 
-		if( !m_aGameCommands[iSwitchToIndex].IsPlayable() )
+		if( !m_aGameCommands[iSwitchToIndex].IsPlayable() && !DO_SWITCH_ANYWAYS )
 				goto try_again;
 	}
 
@@ -636,14 +637,12 @@ void ScreenSelectMaster::MenuLeft( const InputEventPlus &input )
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuLeftP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
-		
+
 		// if they use double select
 		if(DOUBLE_PRESS_TO_SELECT)
 		{
 			m_bDoubleChoice[pn] = false;	// player has cancelled their selection
 		}
-
-
 	}
 }
 
@@ -939,7 +938,7 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 				{
 					// HACK: We can't tell from the option orders whether or not we wrapped.
 					// For now, assume that the order is increasing left to right.
-					int iPressedDir = (dir == MenuDir_Left) ? -1 : +1;
+					int iPressedDir = (dir == MenuDir_Left || dir == MenuDir_Up) ? -1 : +1;
 					int iActualDir = (iOldChoice < iNewChoice) ? +1 : -1;
 
 					if( iPressedDir != iActualDir )	// wrapped
@@ -959,7 +958,7 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 				{
 					// HACK: We can't tell from the option orders whether or not we wrapped.
 					// For now, assume that the order is increasing left to right.
-					int iPressedDir = (dir == MenuDir_Left) ? -1 : +1;
+					int iPressedDir = (dir == MenuDir_Left || dir == MenuDir_Up) ? -1 : +1;
 					int iActualDir = (iOldChoice < iNewChoice) ? +1 : -1;
 
 					if( iPressedDir != iActualDir )	// wrapped

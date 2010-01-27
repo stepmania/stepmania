@@ -1,5 +1,4 @@
 // ChangeGameSettings.cpp : implementation file
-//
 
 #define CO_EXIST_WITH_MFC
 #include "global.h"
@@ -68,8 +67,9 @@ BOOL ChangeGameSettings::OnInitDialog()
 	RString sValue;
 
 
+	// video renderers
 	sValue = "";
-	ini.GetValue( "Options", "VideoRenderers", sValue );	
+	ini.GetValue( "Options", "VideoRenderers", sValue );
 	if( sValue.CompareNoCase("opengl")==0 )
 		CheckDlgButton( IDC_RADIO_OPENGL, BST_CHECKED );
 	else if( sValue.CompareNoCase("d3d")==0 )
@@ -78,6 +78,7 @@ BOOL ChangeGameSettings::OnInitDialog()
 		CheckDlgButton( IDC_RADIO_DEFAULT, BST_CHECKED );
 
 
+	// sound drivers
 	sValue = "";
 	ini.GetValue( "Options", "SoundDrivers", sValue );
 	if( sValue.CompareNoCase("DirectSound")==0 )
@@ -118,7 +119,6 @@ void ChangeGameSettings::OnOK()
 	IniFile ini;
 	ini.ReadFile( SpecialFiles::PREFERENCES_INI_PATH );
 
-	
 	if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_OPENGL) )
 		ini.SetValue( "Options", "VideoRenderers", (RString)"opengl" );
 	else if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_DIRECT3D) )
@@ -152,14 +152,14 @@ void ChangeGameSettings::OnOK()
 	}
 	ini.SetValue( "Options", "LogToDisk",		BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_LOG_TO_DISK) );
 	ini.SetValue( "Options", "ShowLogOutput",	BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_SHOW_LOG_WINDOW) );
-	
+
 
 	if( !ini.WriteFile(SpecialFiles::PREFERENCES_INI_PATH) )
 	{
 		RString sError = ssprintf( ERROR_WRITING_FILE.GetValue(), SpecialFiles::PREFERENCES_INI_PATH.c_str(), ini.GetError().c_str() );
 		Dialog::OK( sError );
 	}
-	
+
 	CDialog::OnOK();
 }
 

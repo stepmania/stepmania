@@ -1,13 +1,12 @@
-Trace( "huh " .. PREFSMAN:GetPreference( "ShowSongOptions" ) );
 if PREFSMAN:GetPreference( "ShowSongOptions" ) ~= "Maybe_Ask" then
-	return LoadActor( THEME:GetPathB("", "_options to options") );
+	return LoadActor( THEME:GetPathB("Screen", "out") );
 end
 
 local t = Def.ActorFrame {
-	LoadActor( THEME:GetPathB("", "_fade out with sound") );
+	LoadActor( THEME:GetPathB("Screen", "out") );
 
 	LoadFont( "common normal" ) .. {
-		InitCommand=cmd(settext,"Press &START; for options";x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+100;visible,false);
+		InitCommand=cmd(settext,"Press &START; for more options";x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+100;visible,false);
 		AskForGoToOptionsCommand=cmd(
 			visible,true;
 			diffusealpha,0;
@@ -38,4 +37,3 @@ local t = Def.ActorFrame {
 };
 
 return t;
-

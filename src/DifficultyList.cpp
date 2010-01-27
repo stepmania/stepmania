@@ -53,7 +53,7 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 
 		/* Hack: we need to tween cursors both up to down (cursor motion) and visible to
 		 * invisible (fading).  Cursor motion needs to stoptweening, so multiple motions
-		 * don't queue and look unresponsive.  However, that stpotweening interrupts fading,
+		 * don't queue and look unresponsive.  However, that stoptweening interrupts fading,
 		 * resulting in the cursor remaining invisible or partially invisible.  So, do them
 		 * in separate tweening stacks.  This means the Cursor command can't change diffuse
 		 * colors; I think we do need a diffuse color stack ... */
@@ -248,7 +248,7 @@ void StepsDisplayList::SetFromGameState()
 {
 	const Song *pSong = GAMESTATE->m_pCurSong;
 	unsigned i = 0;
-	
+
 	if( pSong == NULL )
 	{
 		// FIXME: This clamps to between the min and the max difficulty, but
@@ -268,7 +268,7 @@ void StepsDisplayList::SetFromGameState()
 		vector<Steps*>	vpSteps;
 		SongUtil::GetPlayableSteps( pSong, vpSteps );
 		/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
-		
+
 		m_Rows.resize( vpSteps.size() );
 		FOREACH_CONST( Steps*, vpSteps, s )
 		{

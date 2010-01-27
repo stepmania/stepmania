@@ -171,14 +171,14 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 	{
 		RString& sRowString = vNoteRows[r];
 		StripCrnl( sRowString );
-		
+
 		if( sRowString == "" )
 			continue;	// skip
 
 		// All 2s indicates the end of the song.
 		if( sRowString == "2222222222222" )
 		{
-			// Finish any holds that didn't get...well, finished.		
+			// Finish any holds that didn't get...well, finished.
 			for( t=0; t < notedata.GetNumTracks(); t++ )
 			{
 				if( iHoldStartRow[t] != -1 )	// this ends the hold
@@ -193,7 +193,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		}
 
 		if( sRowString.size() != 13 )
-		{	
+		{
 			if( bKIUCompliant )
 			{
 				LOG->UserLog( "Song file", sPath, "has illegal syntax \"%s\" which can't be in KIU complient files.",
@@ -230,14 +230,14 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			iTickCount = newTick;
 			bTickChangeNeeded = false;
 		}
-		
+
 		for( t=0; t < notedata.GetNumTracks(); t++ )
 		{
 			if( sRowString[t] == '4' )
 			{
 				/* Remember when each hold starts; ignore the middle. */
 				if( iHoldStartRow[t] == -1 )
-					iHoldStartRow[t] = BeatToNoteRow(fCurBeat);					
+					iHoldStartRow[t] = BeatToNoteRow(fCurBeat);
 				continue;
 			}
 
@@ -268,7 +268,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			notedata.SetTapNote(t, BeatToNoteRow(fCurBeat), tap);
 		}
 		prevBeat = fCurBeat;
-		fCurBeat = prevBeat + 1.0f / iTickCount;		
+		fCurBeat = prevBeat + 1.0f / iTickCount;
 	}
 
 	/* We need to remove holes where the BPM increases. */
@@ -339,7 +339,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	int iTickCount = -1;
 	bKIUCompliant = false;
 	vector<RString> vNoteRows;
-	
+
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
@@ -386,12 +386,12 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		}
 		else if ( 0==stricmp(sValueName,"STARTTIME3") )
 		{
-			// STARTTIME3 only ensures this is a KIU complient simfile.
+			// STARTTIME3 only ensures this is a KIU compliant simfile.
 			bKIUCompliant = true;
 		}
 		else if ( 0==stricmp(sValueName,"TICKCOUNT") )
 		{
-			/* TICKCOUNT is will be used below if there are DM complient BPM changes and stops.
+			/* TICKCOUNT is will be used below if there are DM compliant BPM changes and stops.
 			 * It will be called again in LoadFromKSFFile for the actual steps. */
 			iTickCount = atoi( sParams[1] );
 			iTickCount = iTickCount > 0 ? iTickCount : 2;
@@ -456,10 +456,10 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		{
 			RString& NoteRowString = vNoteRows[i];
 			StripCrnl( NoteRowString );
-			
+
 			if( NoteRowString == "" )
 				continue;	// Empty rows do us no good.
-			
+
 			if( NoteRowString == "2222222222222" ) // Row of 2s = end.  Confirm KIUCompliency here.
 			{
 				if (!bDMRequired)
@@ -488,16 +488,16 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 						speedToChange = numTemp;
 						continue;
 					}
-					else if (BeginsWith(NoteRowString, "|D"))
-					{
-						bBPMStopNeeded = true;
-						timeToStop = numTemp / 1000.0f;
-						continue;
-					}
 					else if (BeginsWith(NoteRowString, "|E"))
 					{
 						bBPMStopNeeded = true;
 						timeToStop = (60 / out.m_Timing.GetBPMAtBeat(NoteRowToBeat(i)) * numTemp) / (float)iTickCount;
+						continue;
+					}
+					else if (BeginsWith(NoteRowString, "|D"))
+					{
+						bBPMStopNeeded = true;
+						timeToStop = numTemp / 1000.0f;
 						continue;
 					}
 				}
@@ -523,8 +523,8 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			}
 			if( bBPMStopNeeded )
 			{
-				LOG->Trace( "Adding tempo freeze of %f seconds at beat %f", timeToStop, fCurBeat );
-				out.AddStopSegment( StopSegment(BeatToNoteRow(fCurBeat),timeToStop) );
+				LOG->Trace( "Adding delay of %f seconds at beat %f", timeToStop, fCurBeat );
+				out.AddStopSegment( StopSegment(BeatToNoteRow(fCurBeat),timeToStop,true) );
 				bBPMStopNeeded = false;
 			}
 			fCurBeat += 1.0f / iTickCount;
@@ -543,6 +543,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	// search for music with song in the file name
 	vector<RString> arrayPossibleMusic;
 	GetDirListing( out.GetSongDir() + RString("song.mp3"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + RString("song.oga"), arrayPossibleMusic );
 	GetDirListing( out.GetSongDir() + RString("song.ogg"), arrayPossibleMusic );
 	GetDirListing( out.GetSongDir() + RString("song.wav"), arrayPossibleMusic );
 

@@ -97,6 +97,7 @@ public:
 		const RageVector3 &dir );
 
 	void SetSphereEnvironmentMapping( TextureUnit tu, bool b );
+	void SetCelShaded( bool b );
 
 	RageCompiledGeometry* CreateCompiledGeometry();
 	void DeleteCompiledGeometry( RageCompiledGeometry* p );

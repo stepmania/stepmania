@@ -45,7 +45,7 @@ public:
 		fDelta = m_Timer.GetDeltaTime();
 		m_Current.Approach( m_[ModsLevel_Song], fDelta );
 	}
-	
+
 	template<typename U>
 	inline void Assign( ModsLevel level, U T::*member, const U &val )
 	{
@@ -54,7 +54,7 @@ public:
 		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
 			m_[level].*member = val;
 	}
-	
+
 	template<typename U, int n>
 	inline void Assign_n( ModsLevel level, U (T::*member)[n], size_t index, const U &val )
 	{
@@ -63,8 +63,8 @@ public:
 			(m_Current.*member)[index] = val;
 		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
 			(m_[level].*member)[index] = val;
-	}	
-	
+	}
+
 	void Assign( ModsLevel level, const T &val )
 	{
 		if( level != ModsLevel_Song )
@@ -72,7 +72,7 @@ public:
 		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
 			m_[level] = val;
 	}
-	
+
 	void Call( ModsLevel level, void (T::*fun)() )
 	{
 		if( level != ModsLevel_Song )
@@ -80,7 +80,7 @@ public:
 		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
 			(m_[level].*fun)();
 	}
-	
+
 	void FromString( ModsLevel level, const RString &str )
 	{
 		if( level != ModsLevel_Song )
@@ -88,7 +88,7 @@ public:
 		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
 			m_[level].FromString( str );
 	}
-	
+
 	void SetCurrentToLevel( ModsLevel level )
 	{
 		m_Current = m_[level];

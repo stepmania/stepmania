@@ -1,39 +1,21 @@
-return Def.ActorFrame {
-	LoadActor( "top" ) .. {
-		InitCommand=cmd();
-	};
-	Def.ActorFrame {
-		InitCommand=cmd(x,-284;y,-6;);
-		LoadActor( "bar" ) .. {
-			InitCommand=cmd(horizalign,left;y,4);
-			OnCommand=cmd(cropright,1;bounceend,0.32;cropright,0);
-			OffCommand=cmd(cropright,0;bouncebegin,0.32;cropright,1);
-		};
-		LoadFont( "_sf sports night ns upright 26px header text" ) .. {
-			InitCommand=cmd(x,64;y,-7;horizalign,left;shadowlength,0;settext,ScreenString("HeaderText");skewx,-0.15;zoomx,1.2;maxwidth,250;);
-			OnCommand=cmd(faderight,1;cropright,1;linear,.32;faderight,0;cropright,0);
-			OffCommand=cmd(faderight,0;cropright,0;linear,.32;faderight,1;cropright,1);
-			Name="HeaderText";
-		};
-		LoadFont( "_venacti 10px header subtext" ) .. {
-			InitCommand=cmd(x,64;y,11;horizalign,left;shadowlength,0;settext,ScreenString("HeaderSubText");zoomx,1.2;);
-			OnCommand=cmd(zoomy,.5;faderight,1;cropright,1;linear,.32;faderight,0;cropright,0;zoomy,1);
-			OffCommand=cmd(faderight,0;cropright,0;linear,.32;faderight,1;cropright,1);
-			Name="HeaderSubText";
-		};
-		LoadActor( "arrow" ) .. {
-		};
-		LoadActor( "ring shadow" ) .. {
-			InitCommand=cmd(x,-1.5;y,2;spin;effectmagnitude,0,0,20;);
-		};
-		LoadActor( "ring diffuse" ) .. {
-			InitCommand=cmd(x,-1.5;y,-3;spin;effectmagnitude,0,0,20;);
-		};
-		UpdateScreenHeaderMessageCommand=function(self,params)
-			local header = self:GetChild("HeaderText");
-			local subHeader = self:GetChild("HeaderSubText");
-			header:settext( params.Header );
-			subHeader:settext( params.Subheader );
-		end
-	};
+local t = Def.ActorFrame {};
+
+t[#t+1] = LoadActor("Header") .. {
+	InitCommand=cmd(vertalign,top;zoomtowidth,SCREEN_WIDTH;diffuse,color("#ffd400"));
 };
+--[[ t[#t+1] = LoadActor("_texture stripe") .. {
+	InitCommand=cmd(vertalign,top;zoomto,SCREEN_WIDTH+64,44;customtexturerect,0,0,SCREEN_WIDTH+64/8,44/32);
+	OnCommand=cmd(fadebottom,0.8;texcoordvelocity,1,0;skewx,-0.0025;diffuse,Color("Black");diffusealpha,0.235);
+}; --]]
+t[#t+1] = LoadFont("Common Normal") .. {
+	Name="HeaderText";
+	Text=Screen.String("HeaderText");
+	InitCommand=cmd(x,-SCREEN_CENTER_X+24;y,24;zoom,1;horizalign,left;shadowlength,0;maxwidth,200);
+	OnCommand=cmd(strokecolor,Color("Outline");diffusebottomedge,color("0.875,0.875,0.875"));
+	UpdateScreenHeaderMessageCommand=function(self,param)
+		self:settext(param.Header);
+	end;
+};
+
+
+return t

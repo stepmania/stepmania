@@ -1,7 +1,7 @@
 return Def.HelpDisplay {
 	File = THEME:GetPathF("HelpDisplay", "text");
 	InitCommand=function(self)
-		local s = THEME:GetMetric(Var "LoadingScreen","HelpText");
+		local s = THEME:GetString(Var "LoadingScreen","HelpText");
 		self:SetTipsColonSeparated(s);
 	end;
 	SetHelpTextCommand=function(self, params)

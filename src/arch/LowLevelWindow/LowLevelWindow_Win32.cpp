@@ -135,11 +135,11 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		bNewDeviceOut = true;
 		GraphicsWindow::CreateGraphicsWindow( p );
 	} else {
-		/* We already have a window.  Assume that it's pixel format has already been
-		 * set. */
+		/* We already have a window.  Assume that its pixel format has already
+		 * been set. */
 		bCanSetPixelFormat = false;
 	}
-	
+
 	ASSERT( GraphicsWindow::GetHwnd() );
 
 	/* Set the display mode: switch to a fullscreen mode or revert to windowed mode. */
@@ -250,7 +250,7 @@ bool LowLevelWindow_Win32::SupportsThreadedRendering()
 {
 	return g_HGLRC_Background != NULL;
 }
-	
+
 void LowLevelWindow_Win32::BeginConcurrentRendering()
 {
 	if( !wglMakeCurrent( GraphicsWindow::GetHDC(), g_HGLRC_Background ) )
@@ -278,7 +278,7 @@ bool LowLevelWindow_Win32::IsSoftwareRenderer( RString &sError )
 		sError = OPENGL_NOT_AVAILABLE;
 		return true;
 	}
-	
+
 	return false;
 }
 

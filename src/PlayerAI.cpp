@@ -33,7 +33,7 @@ static TapScoreDistribution g_Distributions[NUM_SKILL_LEVELS];
 void PlayerAI::InitFromDisk()
 {
 	bool bSuccess;
-	
+
 	IniFile ini;
 	bSuccess = ini.ReadFile( AI_PATH );
 	ASSERT( bSuccess );
@@ -59,7 +59,7 @@ void PlayerAI::InitFromDisk()
 		ASSERT( bSuccess );
 		bSuccess = pNode->GetAttrValue( "WeightW1", dist.fPercent[TNS_W1] );
 		ASSERT( bSuccess );
-		
+
 		float fSum = 0;
 		for( int j=0; j<NUM_TapNoteScore; j++ )
 			fSum += dist.fPercent[j];
@@ -74,11 +74,20 @@ TapNoteScore PlayerAI::GetTapNoteScore( const PlayerState* pPlayerState )
 	if( pPlayerState->m_PlayerController == PC_AUTOPLAY )
 		return TNS_W1;
 
+	/*
+	if( pPlayerState->m_PlayerController == PC_REPLAY )
+	{
+		// ghost house
+	}
+	*/
+
 	int iCpuSkill = pPlayerState->m_iCpuSkill;
 
 	/* If we're in battle mode, reduce the skill based on the number of modifier attacks
 	 * against us.  If we're in demonstration or jukebox mode with modifiers attached,
 	 * don't make demonstration miss a lot. */
+	// xxx: weight certain modifiers (boomerang, tornado) more? (to simulate
+	// readability problems) -aj
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 	{
 		int iSumOfAttackLevels = 
@@ -94,7 +103,7 @@ TapNoteScore PlayerAI::GetTapNoteScore( const PlayerState* pPlayerState )
 	}
 
 	TapScoreDistribution& distribution = g_Distributions[iCpuSkill];
-		
+
 	return distribution.GetTapNoteScore();
 }
 

@@ -260,7 +260,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 			recent = xml->AppendChild( new XNode("RecentCourseScores") );
 		else
 			recent = xml->AppendChild( new XNode("RecentSongScores") );
-		
+
 		if(!GAMESTATE->m_bMultiplayer)
 		{
 			FOREACH_HumanPlayer( p )
@@ -291,11 +291,12 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 		
 		if( bSaved )
 		{
-			FILEMAN->FlushDirCache( UPLOAD_DIR );
 			RString sStatsXmlSigFile = fn + SIGNATURE_APPEND;
 			CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
 		}
 	}
+
+	//FileCopy( "Data/TempTestGroups.xml", "Save/Upload/data.xml" );
 }
 
 void StatsManager::UnjoinPlayer( PlayerNumber pn )

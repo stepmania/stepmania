@@ -1,0 +1,61 @@
+sm-ssc Command Line Arguments
+================================================================================
+Pass all arguments with --. For example, version would be entered as --version.
+stepmania --version
+
+Passing package files to StepMania on the command line will install them:
+stepmania moonlight.smzip
+================================================================================
+[GameState]
+* player
+usage: --player=1
+Joins in the specified player. Can also pass --player=2 at the same time,
+if desired. However, sm-ssc does not support more than two players, so don't
+go past 2.
+
+* mode
+usage: --mode=
+Applys a GameCommand to all players if valid.
+--------------------------------------------------------------------------------
+[NetworkSyncManager]
+* netip
+usage: --netip=localhost
+Connects to a server for online play.
+
+* listen
+usage: --listen
+Sets up a server, waiting for someone to connect. StepMania cannot connect to
+itself, so it's unknown what this option is really for. This option may be
+removed in future sm-ssc releases if it is deemed pointless.
+--------------------------------------------------------------------------------
+[PrefsManager]
+* Type
+usage: --Type=arcade
+Reads preferences from [Preferences-{Type}], usually from the metrics.
+--------------------------------------------------------------------------------
+[StepMania]
+* ExportNsisStrings
+usage: --ExportNsisStrings
+Exports strings for the installer.
+
+* ExportLuaInformation
+usage: --ExportLuaInformation
+Exports Lua.xml using the default theme (and anything it falls back on)
+for reference.
+
+* theme
+usage: --theme=default | --theme="theme with spaces"
+Sets the current theme.
+
+* language
+usage: --language=en
+Sets the current language.
+
+* version
+usage: --version
+Displays version information.
+--------------------------------------------------------------------------------
+[ThemeManager]
+* metric
+usage: --metric=(element)::(metric)=(value)
+Sets [Element] Metric=Value in the metrics. Can be used multiple times.

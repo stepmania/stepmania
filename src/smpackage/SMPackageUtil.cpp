@@ -3,10 +3,10 @@
 #include "stdafx.h"
 #include "SMPackageUtil.h"
 #include "archutils/Win32/RegistryAccess.h"
-#include "ProductInfo.h"	
-#include "RageUtil.h"	
-#include "RageFileManager.h"	
-#include "resource.h"	
+#include "ProductInfo.h"
+#include "RageUtil.h"
+#include "RageFileManager.h"
+#include "resource.h"
 #include "LocalizedString.h"
 #include "arch/Dialog/Dialog.h"
 
@@ -120,13 +120,17 @@ bool SMPackageUtil::SetPref( const RString &name, bool val )
  * songs and note skins, this is the first three. */
 RString SMPackageUtil::GetPackageDirectory(const RString &path)
 {
+	// ignore CVS/.svn files:
 	if( path.find("CVS") != string::npos )
-		return "";	// skip
+		return "";
+	if( path.find(".svn") != string::npos )
+		return "";
 
 	vector<RString> Parts;
 	split( path, "\\", Parts );
 
 	unsigned NumParts = 2;
+	// Songs/group/single_song, NoteSkins/gametype/single_noteskin:
 	if( !Parts[0].CompareNoCase("Songs") || !Parts[0].CompareNoCase("NoteSkins") )
 		NumParts = 3;
 	if( Parts.size() < NumParts )

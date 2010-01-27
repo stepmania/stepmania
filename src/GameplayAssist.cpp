@@ -64,12 +64,12 @@ void GameplayAssist::PlayTicks( const NoteData &nd )
 		int iLastCrossedBeatIndex;
 		int iLastCrossedRowsRemainder;
 		timing.NoteRowToMeasureAndBeat( iRowLastCrossed, iLastCrossedMeasureIndex, iLastCrossedBeatIndex, iLastCrossedRowsRemainder );
-		
+
 		int iCurrentMeasureIndex;
 		int iCurrentBeatIndex;
 		int iCurrentRowsRemainder;
 		timing.NoteRowToMeasureAndBeat( iSongRow, iCurrentMeasureIndex, iCurrentBeatIndex, iCurrentRowsRemainder );
-		
+
 		int iMetronomeRow = -1;
 		bool bIsMeasure = false;
 

@@ -27,7 +27,6 @@ void ScreenGameplayLesson::Init()
 
 	m_DancingState = STATE_DANCING;
 
-
 	// Load pages
 	Song *pSong = GAMESTATE->m_pCurSong;
 	RString sDir = pSong->GetSongDir();
@@ -42,7 +41,6 @@ void ScreenGameplayLesson::Init()
 		LuaThreadVariable iIndex( "PageIndex", LuaReference::Create(i) );
 		LuaThreadVariable iPages( "NumPages", LuaReference::Create( (int)vs.size() ) );
 		aa.Load( *s );
-
 
 		aa->SetDrawOrder( DRAW_ORDER_OVERLAY+1 );
 		this->AddChild( aa );

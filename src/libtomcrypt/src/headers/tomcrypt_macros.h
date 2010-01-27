@@ -420,5 +420,5 @@ static inline __attribute__((always_inline)) unsigned long ROR64c(unsigned long 
 #endif   
 
 /* $Source$ */
-/* $Revision$ */
-/* $Date$ */
+/* $Revision: 26244 $ */
+/* $Date: 2007-05-10 13:35:24 -0500 (Thu, 10 May 2007) $ */

@@ -38,6 +38,7 @@ void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers 
 #include "ProductInfo.h"
 #include "ScreenMessage.h"
 #include "GameManager.h"
+#include "MessageManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "PlayerState.h"
 #include "CryptManager.h"
@@ -107,7 +108,7 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 {
 	RString sAddress;
 	short iPort;
-	
+
 	size_t cLoc = ServerIP.find( ':' );
 	if( ServerIP.find( ':' ) != RString::npos )
 	{
@@ -153,23 +154,23 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 	// halt until we know what server version we're dealing with
 
 	m_packet.ClearPacket();
-
 	m_packet.Write1( NSCHello );	//Hello Packet
 
 	m_packet.Write1( NETPROTOCOLVERSION );
 
 	m_packet.WriteNT( RString(PRODUCT_ID_VER) );
 
-	//Block until responce is received
-	//Move mode to blocking in order to give CPU back to the 
-	//system, and not wait.
-	
+	/* Block until response is received.
+	 * Move mode to blocking in order to give CPU back to the system,
+	 * and not wait.
+	 */
+
 	bool dontExit = true;
 
 	NetPlayerClient->blocking = true;
 
-	//Following packet must get through, so we block for it.
-	//If we are serving we do not block for this.
+	// The following packet must get through, so we block for it.
+	// If we are serving, we do not block for this.
 	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
 
 	m_packet.ClearPacket();
@@ -181,8 +182,8 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 			dontExit=false; // Also allow exit if there is a problem on the socket
 		if( m_packet.Read1() == NSServerOffset + NSCHello )
 			dontExit=false;
-		//Only allow passing on handshake. 
-		//Otherwise scoreboard updates and such will confuse us.
+		// Only allow passing on handshake; otherwise scoreboard updates and
+		// such will confuse us.
 	}
 
 	NetPlayerClient->blocking = false;
@@ -224,9 +225,8 @@ bool NetworkSyncManager::Connect( const RString& addy, unsigned short port )
 }
 
 
-//Listen (Wait for connection in-bound)
-//NOTE: Right now, StepMania cannot connect back to StepMania!
-
+// Listen (Wait for connection in-bound)
+// NOTE: Right now, StepMania cannot connect back to StepMania!
 bool NetworkSyncManager::Listen( unsigned short port )
 {
 	LOG->Info( "Beginning to Listen" );
@@ -234,18 +234,29 @@ bool NetworkSyncManager::Listen( unsigned short port )
 	EzSockets *EZListener = new EzSockets;
 
 	EZListener->create();
+	//LOG->Info( "[NetworkSyncManager::Listen] Initializing socket..." );
 	NetPlayerClient->create(); // Initialize Socket
 
 	EZListener->bind( 8765 );
-    
-	useSMserver = EZListener->listen();
-	useSMserver = EZListener->accept( *NetPlayerClient );  //Wait for someone to connect
 
-	EZListener->close();	//Kill Listener
+	//LOG->Info( "[NetworkSyncManager::Listen] Listening..." );
+	useSMserver = EZListener->listen();
+
+	//LOG->Info( "[NetworkSyncManager::Listen] Accept NetPlayerClient" );
+	useSMserver = EZListener->accept( *NetPlayerClient );  // Wait for someone to connect
+
+	//LOG->Info( "[NetworkSyncManager::Listen] Kill listener" );
+	EZListener->close();	//Kill listener
 	delete EZListener;
-    
-	//LOG->Info("Accept Responce: ",useSMserver);
+
+	//LOG->Info("Accept Response: ", useSMserver);
 	useSMserver=true;
+	/*
+	if(useSMserver)
+		LOG->Info( "[NetworkSyncManager::Listen] using SMserver" );
+	else
+		LOG->Info( "[NetworkSyncManager::Listen] not using SMserver" );
+	*/
 	return useSMserver;
 }
 
@@ -266,7 +277,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 {
 	if( !useSMserver ) //Make sure that we are using the network
 		return;
-	
+
 	m_packet.ClearPacket();
 
 	m_packet.Write1( NSCGSU );
@@ -287,11 +298,11 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 
 	m_packet.Write2( (uint16_t)m_playerLife[playerID] );
 
-	//Offset Info
-	//Note: if a 0 is sent, then disregard data.
-	//
-	//ASSUMED: No step will be more than 16 seconds off center
-	//If assumption false: read 16 seconds either direction
+	// Offset Info
+	// Note: if a 0 is sent, then disregard data.
+
+	// ASSUMED: No step will be more than 16 seconds off center
+	// If assumption false: read 16 seconds either direction
 	int iOffset = int( (offset+16.384)*2000.0f );
 
 	if( iOffset>65535 )
@@ -308,7 +319,6 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position ); 
 
 }
-	
 
 void NetworkSyncManager::ReportSongOver() 
 {
@@ -445,8 +455,8 @@ void NetworkSyncManager::StartRequest( short position )
 
 			if (m_packet.Read1() == (NSServerOffset + NSCGSR))
 				dontExit=false;
-		//Only allow passing on Start request. 
-		//Otherwise scoreboard updates and such will confuse us.
+		// Only allow passing on Start request; otherwise scoreboard updates
+		// and such will confuse us.
 
 	}
 	NetPlayerClient->blocking=false;
@@ -531,21 +541,18 @@ void NetworkSyncManager::ProcessInput()
 		return;
 	}
 
-	//load new data into buffer
-
+	// load new data into buffer
 	NetPlayerClient->update();
-
 	m_packet.ClearPacket();
 
 	int packetSize;
-
 	while ( (packetSize = NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE) ) > 0 )
 	{
 		m_packet.size = packetSize;
 		int command = m_packet.Read1();
 		//Check to make sure command is valid from server
 		if (command < NSServerOffset)
-		{		
+		{
 			LOG->Trace("CMD (below 128) Invalid> %d",command);
  			break;
 		}
@@ -554,14 +561,14 @@ void NetworkSyncManager::ProcessInput()
 
 		switch (command)
 		{
-		case NSCPing: //Ping packet responce
+		case NSCPing: // Ping packet responce
 			m_packet.ClearPacket();
 			m_packet.Write1( NSCPingR );
 			NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
 			break;
-		case NSCPingR:	//These are in responce to when/if we send packet 0's
-		case NSCHello: //This is already taken care of by the blocking code earlier on
-		case NSCGSR: //This is taken care of by the blocking start code
+		case NSCPingR: // These are in response to when/if we send packet 0's
+		case NSCHello: // This is already taken care of by the blocking code earlier
+		case NSCGSR:   // This is taken care of by the blocking start code
 			break;
 		case NSCGON: 
 			{
@@ -583,7 +590,7 @@ void NetworkSyncManager::ProcessInput()
 				SCREENMAN->SendMessageToTopScreen( SM_GotEval );
 			}
 			break;
-		case NSCGSU: //Scoreboard Update
+		case NSCGSU: // Scoreboard Update
 			{	//Ease scope
 				int ColumnNumber=m_packet.Read1();
 				int NumberPlayers=m_packet.Read1();
@@ -609,15 +616,20 @@ void NetworkSyncManager::ProcessInput()
 				}
 				m_Scoreboard[ColumnNumber] = ColumnData;
 				m_scoreboardchange[ColumnNumber]=true;
+				/*
+				Message msg("ScoreboardUpdate");
+				msg.SetParam( "NumPlayers", NumberPlayers );
+				MESSAGEMAN->Broadcast( msg );
+				*/
 			}
 			break;
-		case NSCSU:	//System message from server
+		case NSCSU: //System message from server
 			{
 				RString SysMSG = m_packet.ReadNT();
 				SCREENMAN->SystemMessage( SysMSG );
 			}
 			break;
-		case NSCCM:	//Chat message from server					
+		case NSCCM: //Chat message from server
 			{
 				m_sChatText += m_packet.ReadNT() + " \n ";
 				//10000 chars backlog should be more than enough
@@ -681,7 +693,7 @@ void NetworkSyncManager::ProcessInput()
 			{
 				PlayerNumber iPlayerNumber = (PlayerNumber)m_packet.Read1();
 
-				if( GAMESTATE->IsPlayerEnabled( iPlayerNumber ) )	//Only attack if the player can be attacked.
+				if( GAMESTATE->IsPlayerEnabled( iPlayerNumber ) ) // Only attack if the player can be attacked.
 				{
 					Attack a;
 					a.fSecsRemaining = float( m_packet.Read4() ) / 1000.0f;
@@ -772,13 +784,12 @@ SMOStepType NetworkSyncManager::TranslateStepType(int score)
 	}
 }
 
-//Packet functions
-
+// Packet functions
 uint8_t PacketFunctions::Read1()
 {
 	if (Position>=NETMAXBUFFERSIZE)
 		return 0;
-	
+
 	return Data[Position++];
 }
 
@@ -789,8 +800,8 @@ uint16_t PacketFunctions::Read2()
 
 	uint16_t Temp;
 	memcpy( &Temp, Data + Position,2 );
-	Position+=2;		
-	return ntohs(Temp);	
+	Position+=2;
+	return ntohs(Temp);
 }
 
 uint32_t PacketFunctions::Read4()
@@ -858,7 +869,7 @@ void PacketFunctions::ClearPacket()
 }
 
 RString NetworkSyncManager::MD5Hex( const RString &sInput ) 
-{	
+{
 	return BinaryToHex( CryptManager::GetMD5ForString(sInput) ).MakeUpper();
 }
 
@@ -876,16 +887,17 @@ static bool ConnectToServer( const RString &t )
 
 extern Preference<RString> g_sLastServer;
 
-LuaFunction( ConnectToServer, 				ConnectToServer( ( RString(SArg(1)).length()==0 ) ? RString(g_sLastServer) : RString(SArg(1) ) ) )
+LuaFunction( ConnectToServer, 		ConnectToServer( ( RString(SArg(1)).length()==0 ) ? RString(g_sLastServer) : RString(SArg(1) ) ) )
 
 #endif
 
 static bool ReportStyle() { NSMAN->ReportStyle(); return true; }
 
-LuaFunction( IsSMOnlineLoggedIn,		NSMAN->isSMOLoggedIn[Enum::Check<PlayerNumber>(L, 1)] )
-LuaFunction( IsNetConnected,			NSMAN->useSMserver )
+LuaFunction( IsSMOnlineLoggedIn,	NSMAN->isSMOLoggedIn[Enum::Check<PlayerNumber>(L, 1)] )
+LuaFunction( IsNetConnected,		NSMAN->useSMserver )
 LuaFunction( IsNetSMOnline,			NSMAN->isSMOnline )
 LuaFunction( ReportStyle,			ReportStyle() )
+LuaFunction( GetServerName,			NSMAN->GetServerName() )
 
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen

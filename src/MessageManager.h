@@ -1,4 +1,4 @@
-/* MessageManager - Control lights. */
+/* MessageManager - Control the world. */
 
 #ifndef MessageManager_H
 #define MessageManager_H

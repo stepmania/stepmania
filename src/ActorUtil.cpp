@@ -390,9 +390,11 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 		sExt=="bmp" )		return FT_Bitmap;
 	else if( 
 		sExt=="ogg" ||
+		sExt=="oga" ||
 		sExt=="wav" || 
 		sExt=="mp3" )		return FT_Sound;
 	else if( 
+		sExt=="ogv" || 
 		sExt=="avi" || 
 		sExt=="mpeg" || 
 		sExt=="mpg" )		return FT_Movie;

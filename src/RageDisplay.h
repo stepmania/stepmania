@@ -279,6 +279,7 @@ public:
 		const RageVector3 &dir ) = 0;
 
 	virtual void SetSphereEnvironmentMapping( TextureUnit tu, bool b ) = 0;
+	virtual void SetCelShaded( bool b ) = 0;
 
 	virtual RageCompiledGeometry* CreateCompiledGeometry() = 0;
 	virtual void DeleteCompiledGeometry( RageCompiledGeometry* p ) = 0;
@@ -302,6 +303,7 @@ public:
 	enum GraphicsFileFormat
 	{
 		SAVE_LOSSLESS, // bmp
+		SAVE_LOSSLESS_SENSIBLE, // png
 		SAVE_LOSSY_LOW_QUAL, // jpg
 		SAVE_LOSSY_HIGH_QUAL // jpg
 	};
@@ -352,6 +354,7 @@ public:
 	void RotateY( float deg );
 	void RotateZ( float deg );
 	void SkewX( float fAmount );
+	void SkewY( float fAmount );
 	void MultMatrix( const RageMatrix &f ) { this->PostMultMatrix(f); } /* alias */
 	void PostMultMatrix( const RageMatrix &f );
 	void PreMultMatrix( const RageMatrix &f );

@@ -76,6 +76,7 @@ public:
 		TURN_LEFT,
 		TURN_RIGHT,
 		TURN_SHUFFLE,
+		TURN_SOFT_SHUFFLE,
 		TURN_SUPER_SHUFFLE,
 		NUM_TURNS 
 	};
@@ -145,7 +146,7 @@ public:
 	/* If this is > 0, then the player must have life above this value at the end of
 	 * the song to pass.  This is independent of SongOptions::m_FailType. */
 	float		m_fPassmark,			m_SpeedfPassmark;
-	
+
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
 	bool		m_bMuteOnError;

@@ -86,8 +86,12 @@ void Actor::InitState()
 
 	m_fHorizAlign = 0.5f;
 	m_fVertAlign = 0.5f;
-
+#if defined(SSC_FUTURES)
+	for( unsigned i = 0; i < m_Effects.size(); ++i )
+		m_Effects[i] = no_effect;
+#else
 	m_Effect =  no_effect;
+#endif
 	m_fSecsIntoEffect = 0;
 	m_fEffectDelta = 0;
 	m_fEffectRampUp = 0.5;
@@ -184,8 +188,13 @@ Actor::Actor( const Actor &cpy ):
 
 	CPY( m_fHorizAlign );
 	CPY( m_fVertAlign );
-
+#if defined(SSC_FUTURES)
+	// I'm a bit worried about this -aj
+	for( unsigned i = 0; i < cpy.m_Effects.size(); ++i )
+		m_Effects.push_back( (*cpy.m_Effects[i]) );
+#else
 	CPY( m_Effect );
+#endif
 	CPY( m_fSecsIntoEffect );
 	CPY( m_fEffectDelta );
 	CPY( m_fEffectRampUp );
@@ -268,7 +277,7 @@ void Actor::Draw()
 	// call the most-derived versions
 	this->BeginDraw();	
 	this->DrawPrimitives();	// call the most-derived version of DrawPrimitives();
-	this->EndDraw();	
+	this->EndDraw();
 }
 
 void Actor::BeginDraw()		// set the world matrix and calculate actor properties
@@ -283,6 +292,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	// set temporary drawing properties based on Effects 
 	//
 	static TweenState tempState;
+	// todo: account for SSC_FUTURES -aj
 	if( m_Effect == no_effect )
 	{
 	}
@@ -324,15 +334,16 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			fPercentThroughEffect = 0;
 		}
 		ASSERT_M( fPercentThroughEffect >= 0 && fPercentThroughEffect <= 1, 
-			ssprintf("%f", fPercentThroughEffect) );
+			ssprintf("PercentThroughEffect: %f", fPercentThroughEffect) );
 
 
 		bool bBlinkOn = fPercentThroughEffect > 0.5f;
 		float fPercentBetweenColors = RageFastSin( (fPercentThroughEffect + 0.25f) * 2 * PI ) / 2 + 0.5f;
 		ASSERT_M( fPercentBetweenColors >= 0 && fPercentBetweenColors <= 1,
-			ssprintf("%f, %f", fPercentBetweenColors, fPercentThroughEffect) );
+			ssprintf("PercentBetweenColors: %f, PercentThroughEffect: %f", fPercentBetweenColors, fPercentThroughEffect) );
 		float fOriginalAlpha = tempState.diffuse[0].a;
 
+		// todo: account for SSC_FUTURES -aj
 		switch( m_Effect )
 		{
 		case diffuse_blink:
@@ -365,6 +376,10 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			break;
 		case glow_shift:
 			tempState.glow = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
+			tempState.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
+			break;
+		case glow_ramp:
+			tempState.glow = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
 			tempState.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 			break;
 		case rainbow:
@@ -412,7 +427,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI ); 
 				float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
 				tempState.scale *= fZoom;
-				
+
 				// Use the color as a Vector3 to scale the effect for added control
 				RageColor c = SCALE( fPercentOffset, 0.f, 1.f, m_effectColor1, m_effectColor2 );
 				tempState.scale.x *= c.r;
@@ -436,9 +451,9 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 
 		for( int i=0; i<4; i++ )
 			tempState.diffuse[i].a *= m_fBaseAlpha;
-	}	
+	}
 
-	
+
 	if( m_pTempState->pos.x != 0 || m_pTempState->pos.y != 0 || m_pTempState->pos.z != 0 )	
 	{
 		RageMatrix m;
@@ -467,12 +482,13 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		}
 	}
 
+	// handle scaling
 	{
 		const float fScaleX = m_pTempState->scale.x * m_baseScale.x;
 		const float fScaleY = m_pTempState->scale.y * m_baseScale.y;
 		const float fScaleZ = m_pTempState->scale.z * m_baseScale.z;
 
-		if( fScaleX != 1 || fScaleY != 1 || fScaleZ != 1 )	
+		if( fScaleX != 1 || fScaleY != 1 || fScaleZ != 1 )
 		{
 			RageMatrix m;
 			RageMatrixScale( 
@@ -484,6 +500,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		}
 	}
 
+	// handle alignment; most actors have default alignment.
 	if( unlikely(m_fHorizAlign != 0.5f || m_fVertAlign != 0.5f) )
 	{
 		float fX = SCALE( m_fHorizAlign, 0.0f, 1.0f, +m_size.x/2.0f, -m_size.x/2.0f );
@@ -506,9 +523,15 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		DISPLAY->MultMatrix(mat);
 	}
 
+	// handle skews
 	if( m_pTempState->fSkewX != 0 )
 	{
 		DISPLAY->SkewX( m_pTempState->fSkewX );
+	}
+
+	if( m_pTempState->fSkewY != 0 )
+	{
+		DISPLAY->SkewY( m_pTempState->fSkewY );
 	}
 
 }
@@ -520,7 +543,7 @@ void Actor::SetGlobalRenderStates()
 		DISPLAY->SetBlendMode( m_BlendMode );
 	DISPLAY->SetZWrite( m_bZWrite );
 	DISPLAY->SetZTestMode( m_ZTestMode );
-	
+
 	// BLEND_NO_EFFECT is used to draw masks to the Z-buffer, which always wants
 	// Z-bias enabled.
 	if( m_fZBias == 0 && m_BlendMode == BLEND_NO_EFFECT )
@@ -610,7 +633,7 @@ bool Actor::IsFirstUpdate() const
 void Actor::Update( float fDeltaTime )
 {
 //	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
-	ASSERT_M( fDeltaTime >= 0, ssprintf("%f",fDeltaTime) );
+	ASSERT_M( fDeltaTime >= 0, ssprintf("DeltaTime: %f",fDeltaTime) );
 
 	if( m_fHibernateSecondsLeft > 0 )
 	{
@@ -682,6 +705,7 @@ void Actor::UpdateInternal( float fDeltaTime )
 	}
 
 	// update effect
+	// todo: account for SSC_FUTURES -aj
 	switch( m_Effect )
 	{
 	case spin:
@@ -716,7 +740,7 @@ void Actor::BeginTweening( float time, ITween *pTween )
 	if( m_Tweens.size() > 50 )
 	{
 		RString sError = ssprintf( "Tween overflow: \"%s\"; infinitely recursing ActorCommand?", GetLineage().c_str() );
-				
+
 		LOG->Warn( "%s", sError.c_str() );
 		Dialog::OK( sError );
 		FinishTweening();
@@ -874,6 +898,7 @@ void Actor::SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, floa
 
 void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != diffuse_blink )
 	{
 		m_Effect = diffuse_blink;
@@ -886,6 +911,7 @@ void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, Rag
 
 void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != diffuse_shift )
 	{
 		m_Effect = diffuse_shift;
@@ -898,6 +924,7 @@ void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, Rag
 
 void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != diffuse_ramp )
 	{
 		m_Effect = diffuse_ramp;
@@ -910,6 +937,7 @@ void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, Rage
 
 void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != glow_blink )
 	{
 		m_Effect = glow_blink;
@@ -922,6 +950,7 @@ void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageCo
 
 void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
+	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != glow_shift )
 	{
 		m_Effect = glow_shift;
@@ -932,8 +961,22 @@ void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageCo
 	m_effectColor2 = c2;
 }
 
+void Actor::SetEffectGlowRamp( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+{
+	// todo: account for SSC_FUTURES -aj
+	if( m_Effect != glow_ramp )
+	{
+		m_Effect = glow_ramp;
+		m_fSecsIntoEffect = 0;
+	}
+	SetEffectPeriod( fEffectPeriodSeconds );
+	m_effectColor1 = c1;
+	m_effectColor2 = c2;
+}
+
 void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
 {
+	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != rainbow )
 	{
 		m_Effect = rainbow;
@@ -944,6 +987,7 @@ void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
 
 void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 {
+	// todo: account for SSC_FUTURES -aj
 	if( m_Effect != wag )
 	{
 		m_Effect = wag;
@@ -955,6 +999,7 @@ void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 
 void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
 {
+	// todo: account for SSC_FUTURES -aj
 	m_Effect = bounce;
 	SetEffectPeriod( fPeriod );
 	m_vEffectMagnitude = vect;
@@ -963,6 +1008,7 @@ void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
 
 void Actor::SetEffectBob( float fPeriod, RageVector3 vect )
 {
+	// todo: account for SSC_FUTURES -aj
 	if( m_Effect!=bob || GetEffectPeriod() != fPeriod )
 	{
 		m_Effect = bob;
@@ -974,18 +1020,21 @@ void Actor::SetEffectBob( float fPeriod, RageVector3 vect )
 
 void Actor::SetEffectSpin( RageVector3 vect )
 {
+	// todo: account for SSC_FUTURES -aj
 	m_Effect = spin;
 	m_vEffectMagnitude = vect;
 }
 
 void Actor::SetEffectVibrate( RageVector3 vect )
 {
+	// todo: account for SSC_FUTURES -aj
 	m_Effect = vibrate;
 	m_vEffectMagnitude = vect;
 }
 
 void Actor::SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom )
 {
+	// todo: account for SSC_FUTURES -aj
 	m_Effect = pulse;
 	SetEffectPeriod( fPeriod );
 	m_vEffectMagnitude[0] = fMinZoom;
@@ -1018,7 +1067,7 @@ void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTab
 
 	// 1st parameter
 	this->PushSelf( L );
-	
+
 	// 2nd parameter
 	if( pParamTable == NULL )
 		lua_pushnil( L );
@@ -1091,6 +1140,7 @@ void Actor::TweenState::Init()
 	quat = RageVector4( 0, 0, 0, 1 );
 	scale = RageVector3( 1, 1, 1 );
 	fSkewX = 0;
+	fSkewY = 0;
 	crop = RectF( 0,0,0,0 );
 	fade = RectF( 0,0,0,0 );
 	for( int i=0; i<4; i++ )
@@ -1107,6 +1157,7 @@ bool Actor::TweenState::operator==( const TweenState &other ) const
 	COMPARE( quat );
 	COMPARE( scale );
 	COMPARE( fSkewX );
+	COMPARE( fSkewY );
 	COMPARE( crop );
 	COMPARE( fade );
 	for( unsigned i=0; i<ARRAYLEN(diffuse); i++ )
@@ -1124,7 +1175,8 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	average_out.rotation	= lerp( fPercentBetween, ts1.rotation,    ts2.rotation );
 	RageQuatSlerp( &average_out.quat, ts1.quat, ts2.quat, fPercentBetween );
 	average_out.fSkewX	= lerp( fPercentBetween, ts1.fSkewX,      ts2.fSkewX );
-	
+	average_out.fSkewY	= lerp( fPercentBetween, ts1.fSkewY,      ts2.fSkewY );
+
 	average_out.crop.left	= lerp( fPercentBetween, ts1.crop.left,   ts2.crop.left	);
 	average_out.crop.top	= lerp( fPercentBetween, ts1.crop.top,    ts2.crop.top );
 	average_out.crop.right	= lerp( fPercentBetween, ts1.crop.right,  ts2.crop.right );
@@ -1331,6 +1383,7 @@ public:
 	static int baserotationy( T* p, lua_State *L )		{ p->SetBaseRotationY(FArg(1)); return 0; }
 	static int baserotationz( T* p, lua_State *L )		{ p->SetBaseRotationZ(FArg(1)); return 0; }
 	static int skewx( T* p, lua_State *L )			{ p->SetSkewX(FArg(1)); return 0; }
+	static int skewy( T* p, lua_State *L )			{ p->SetSkewY(FArg(1)); return 0; }
 	static int heading( T* p, lua_State *L )		{ p->AddRotationH(FArg(1)); return 0; }
 	static int pitch( T* p, lua_State *L )			{ p->AddRotationP(FArg(1)); return 0; }
 	static int roll( T* p, lua_State *L )			{ p->AddRotationR(FArg(1)); return 0; }
@@ -1347,6 +1400,7 @@ public:
 	static int diffuseramp( T* p, lua_State *L )		{ p->SetEffectDiffuseRamp(); return 0; }
 	static int glowblink( T* p, lua_State *L )		{ p->SetEffectGlowBlink(); return 0; }
 	static int glowshift( T* p, lua_State *L )		{ p->SetEffectGlowShift(); return 0; }
+	static int glowramp( T* p, lua_State *L )		{ p->SetEffectGlowRamp(); return 0; }
 	static int rainbow( T* p, lua_State *L )		{ p->SetEffectRainbow(); return 0; }
 	static int wag( T* p, lua_State *L )			{ p->SetEffectWag(); return 0; }
 	static int bounce( T* p, lua_State *L )			{ p->SetEffectBounce(); return 0; }
@@ -1382,8 +1436,6 @@ public:
 	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode((BIArg(1)) ? CULL_BACK : CULL_NONE); return 0; }
 	static int cullmode( T* p, lua_State *L )		{ p->SetCullMode( Enum::Check<CullMode>(L, 1)); return 0; }
 	static int visible( T* p, lua_State *L )		{ p->SetVisible(BIArg(1)); return 0; }
-	// TODO: Remove hidden and leave visible
-	static int hidden( T* p, lua_State *L )			{ p->SetVisible(!BIArg(1)); return 0; }
 	static int hibernate( T* p, lua_State *L )		{ p->SetHibernate(FArg(1)); return 0; }
 	static int draworder( T* p, lua_State *L )		{ p->SetDrawOrder(IArg(1)); return 0; }
 	static int playcommand( T* p, lua_State *L )
@@ -1449,9 +1501,12 @@ public:
 	static int GetZoomY( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomY() ); return 1; }
 	static int GetZoomZ( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomZ() ); return 1; }
 	static int GetBaseZoomX( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetBaseZoomX() ); return 1; }
+	static int GetRotationX( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetRotationX() ); return 1; }
 	static int GetRotationY( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetRotationY() ); return 1; }
+	static int GetRotationZ( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetRotationZ() ); return 1; }
 	static int GetSecsIntoEffect( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecsIntoEffect() ); return 1; }
 	static int GetEffectDelta( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetEffectDelta() ); return 1; }
+	DEFINE_METHOD( GetDiffuse, GetDiffuse() )
 	static int GetDiffuseAlpha( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetDiffuseAlpha() ); return 1; }
 	static int GetVisible( T* p, lua_State *L )		{ lua_pushboolean( L, p->GetVisible() ); return 1; }
 
@@ -1536,6 +1591,7 @@ public:
 		ADD_METHOD( baserotationy );
 		ADD_METHOD( baserotationz );
 		ADD_METHOD( skewx );
+		ADD_METHOD( skewy );
 		ADD_METHOD( heading );
 		ADD_METHOD( pitch );
 		ADD_METHOD( roll );
@@ -1552,6 +1608,7 @@ public:
 		ADD_METHOD( diffuseramp );
 		ADD_METHOD( glowblink );
 		ADD_METHOD( glowshift );
+		ADD_METHOD( glowramp );
 		ADD_METHOD( rainbow );
 		ADD_METHOD( wag );
 		ADD_METHOD( bounce );
@@ -1587,7 +1644,6 @@ public:
 		ADD_METHOD( backfacecull );
 		ADD_METHOD( cullmode );
 		ADD_METHOD( visible );
-		ADD_METHOD( hidden );
 		ADD_METHOD( hibernate );
 		ADD_METHOD( draworder );
 		ADD_METHOD( playcommand );
@@ -1608,10 +1664,13 @@ public:
 		ADD_METHOD( GetZoomX );
 		ADD_METHOD( GetZoomY );
 		ADD_METHOD( GetZoomZ );
+		ADD_METHOD( GetRotationX );
 		ADD_METHOD( GetRotationY );
+		ADD_METHOD( GetRotationZ );
 		ADD_METHOD( GetBaseZoomX );
 		ADD_METHOD( GetSecsIntoEffect );
 		ADD_METHOD( GetEffectDelta );
+		ADD_METHOD( GetDiffuse );
 		ADD_METHOD( GetDiffuseAlpha );
 		ADD_METHOD( GetVisible );
 

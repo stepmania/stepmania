@@ -117,7 +117,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				else if( !sBits[0].CompareNoCase("MODS") )
 				{
 					attack.sModifiers = sBits[1];
-					
+
 					if( end != -9999 )
 					{
 						attack.fSecsRemaining = end - attack.fStartSecond;
@@ -129,7 +129,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 						LOG->UserLog( "Course file", sPath, "has an attack with a nonpositive length: %s", sBits[1].c_str() );
 						attack.fSecsRemaining = 0.0f;
 					}
-					
+
 					// warn on invalid so we catch typos on load
 					CourseUtil::WarnOnInvalidMods( attack.sModifiers );
 
@@ -141,29 +141,47 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				}
 			}
 
-				
 		}
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
 			CourseEntry new_entry;
 
 			// infer entry::Type from the first param
+			// todo: make sure these aren't generating bogus entries due
+			// to a lack of songs. -aj
+			// most played
 			if( sParams[1].Left(strlen("BEST")) == "BEST" )
 			{
 				new_entry.iChooseIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_MostPlays;
 			}
+			// least played
 			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
 			{
 				new_entry.iChooseIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
 				CLAMP( new_entry.iChooseIndex, 0, 500 );
 				new_entry.songSort = SongSort_FewestPlays;
 			}
+			// best grades
+			if( sParams[1].Left(strlen("GRADEBEST")) == "GRADEBEST" )
+			{
+				new_entry.iChooseIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("GRADEBEST")) ) - 1;
+				CLAMP( new_entry.iChooseIndex, 0, 500 );
+				new_entry.songSort = SongSort_TopGrades;
+			}
+			// worst grades
+			else if( sParams[1].Left(strlen("GRADEWORST")) == "GRADEWORST" )
+			{
+				new_entry.iChooseIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("GRADEWORST")) ) - 1;
+				CLAMP( new_entry.iChooseIndex, 0, 500 );
+				new_entry.songSort = SongSort_LowestGrades;
+			}
 			else if( sParams[1] == "*" )
 			{
 				//new_entry.bSecret = true;
 			}
+			// group random
 			else if( sParams[1].Right(1) == "*" )
 			{
 				//new_entry.bSecret = true;
@@ -261,7 +279,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			new_entry.attacks = attacks;
 			new_entry.fGainSeconds = fGainSeconds;
 			attacks.clear();
-			
+
 			out.m_vEntries.push_back( new_entry );
 		}
 		else if( !stricmp(sValueName, "DISPLAYCOURSE") || !stricmp(sValueName, "COMBO") ||
@@ -269,7 +287,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		{
 			// Ignore
 		}
-		
+
 		else if( bFromCache && !stricmp(sValueName, "RADAR") )
 		{
 			StepsType st = (StepsType) atoi(sParams[1]);
@@ -376,7 +394,6 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 	MsdFile msd;
 	if( !msd.ReadFile( sPath, false ) ) // don't unescape
 	{
-		
 		LOG->UserLog( "Course file", sPath, "couldn't be opened: %s.", msd.GetError().c_str() );
 		return false;
 	}
@@ -416,7 +433,7 @@ bool CourseLoaderCRS::LoadEditFromFile( const RString &sEditFilePath, ProfileSlo
 		return false;
 	}
 	Course *pCourse = new Course;
-	
+
 	pCourse->m_sPath = sEditFilePath;
 	LoadFromMsd( sEditFilePath, msd, *pCourse, true );
 

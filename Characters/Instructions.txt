@@ -1,0 +1,21 @@
+IF YOU DO NOT HAVE THE BONE FILES, 3D DANCING CHARACTERS WILL NOT WORK.
+THE BONE FILES ARE NOT DISTRIBUTED WITH ANY VERSION OF STEPMANIA/sm-ssc SINCE
+THEY CONTAIN COPYRIGHTED MATERIAL NOT MADE BY US. IF WE COME UP WITH DATA LATER,
+COOL. IF NOT, SO BE IT.
+
+http://stepmaniathings.com/downloads/characters/-required-bones-and-helper-files.html
+EXTRACT THE FILES IN THIS FOLDER SO THAT YOU SEE tons of _DDRPC_*.bones.txt files.
+
+THEN 3D CHARACTERS WILL WORK.
+JUST DON'T SPAM THE FORUMS AND BUGTRACKER ABOUT IT.
+THE INSTRUCTIONS COME WITH THE PROGRAM. YOU'RE READING THEM RIGHT NOW!!!
+
+oh and for compatibility, you will want to perform the following renames:
+
+old name          | new name
+------------------+--------------
+ DancePad-DDR.txt | DancePad.txt
+DancePads-DDR.txt | DancePads.txt
+
+a bit presumptious, but anything in the name of keeping it safe in regards to
+copyright, yeah?
