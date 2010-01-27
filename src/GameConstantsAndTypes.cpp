@@ -88,7 +88,7 @@ RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
 	if(      iAverageMeter <= 3 )	return RANKING_A;
 	else if( iAverageMeter <= 6 )	return RANKING_B;
 	else if( iAverageMeter <= 9 )	return RANKING_C;
-	else							return RANKING_D;
+	else				return RANKING_D;
 }
 
 
