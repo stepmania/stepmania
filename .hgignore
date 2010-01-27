@@ -20,6 +20,7 @@ Thumbs.db
 PBProject/build
 ver.cpp
 lib*_link.a
+Data/UserPrefs
 
 syntax: regexp
 .*\#.*\#$
