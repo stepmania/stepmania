@@ -15,7 +15,7 @@ void ScoreKeeperShared::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 {
 	vector<NoteData> vParts;
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	
+
 	NoteDataUtil::SplitCompositeNoteData( *pNoteData, vParts );
 	ScoreKeeperNormal::OnNextSong( iSongInCourseIndex, pSteps, &vParts[pn] );
 }

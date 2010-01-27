@@ -8,7 +8,7 @@ class ScoreKeeperShared : public ScoreKeeperNormal
 {
 public:
 	ScoreKeeperShared( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
-	
+
 	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );
 };
 #endif

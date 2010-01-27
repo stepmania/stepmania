@@ -154,6 +154,7 @@ ScoreKeeper.h ScoreKeeper.cpp \
 ScoreKeeperGuitar.cpp ScoreKeeperGuitar.h \
 ScoreKeeperNormal.cpp ScoreKeeperNormal.h \
 ScoreKeeperRave.cpp ScoreKeeperRave.h \
+ScoreKeeperShared.cpp ScoreKeeperShared.h \
 Song.cpp Song.h SongCacheIndex.cpp SongCacheIndex.h \
 SongOptions.cpp SongOptions.h SongUtil.cpp SongUtil.h StageStats.cpp StageStats.h Steps.cpp Steps.h \
 SoundEffectControl.cpp SoundEffectControl.h \
