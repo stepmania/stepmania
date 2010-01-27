@@ -15,6 +15,10 @@ tests/*.err
 .cvsignore
 .DS_Store
 Thumbs.db
+*.pbxuser
+*.mode1v3
+PBProject/build
+ver.cpp
 
 syntax: regexp
 .*\#.*\#$
