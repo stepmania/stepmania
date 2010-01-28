@@ -496,15 +496,12 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			{
 				m_OptionsList[pn].Input( input );
 
-				if( !m_OptionsList[pn].IsOpened() )
-					CloseOptionsList( pn );
-
 				return;
 			}
 			else
 			{
 				if( input.type == IET_RELEASE  &&  input.MenuI == GAME_BUTTON_SELECT && m_bAcceptSelectRelease[pn] )
-					OpenOptionsList( pn );
+					m_OptionsList[pn].Open();
 			}
 		}
 	}
@@ -1036,7 +1033,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		if( !TWO_PART_SELECTION || m_SelectionState == SelectionState_SelectingSteps )
 		{
 			if( m_OptionsList[p].IsOpened() )
-				CloseOptionsList(p);
+				m_OptionsList[p].Close();
 		}
 		UpdateSelectButton( p, false );
 	}
@@ -1467,22 +1464,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		vpns.push_back( p );
 
 	AfterStepsOrTrailChange( vpns );
-}
-
-void ScreenSelectMusic::OpenOptionsList( PlayerNumber pn )
-{
-	m_OptionsList[pn].Open();
-	Message msg("OptionsListOpened");
-	msg.SetParam( "Player", pn );
-	MESSAGEMAN->Broadcast( msg );
-}
-
-void ScreenSelectMusic::CloseOptionsList( PlayerNumber pn )
-{
-	m_OptionsList[pn].Close();
-	Message msg("OptionsListClosed");
-	msg.SetParam( "Player", pn );
-	MESSAGEMAN->Broadcast( msg );
 }
 
 // lua start

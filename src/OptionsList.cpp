@@ -254,8 +254,12 @@ void OptionsList::Reset()
 }
 
 void OptionsList::Open()
-{	
+{
 	this->PlayCommand( "Reset" );
+
+	Message msg("OptionsListOpened");
+	msg.SetParam( "Player", m_pn );
+	MESSAGEMAN->Broadcast( msg );
 
 	/* Push the initial menu. */
 	ASSERT( m_asMenuStack.size() == 0 );
@@ -268,6 +272,10 @@ void OptionsList::Open()
 
 void OptionsList::Close()
 {
+	Message msg("OptionsListClosed");
+	msg.SetParam( "Player", m_pn );
+	MESSAGEMAN->Broadcast( msg );
+
 	m_bStartIsDown = false;
 	m_asMenuStack.clear();
 	this->PlayCommand( "TweenOff" );

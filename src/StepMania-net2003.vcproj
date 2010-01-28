@@ -133,7 +133,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				AdditionalDependencies="libjpeg/jpeg.lib libpng/lib/libpng.lib"
+				AdditionalDependencies="libjpeg/jpeg.lib libpng/lib/libpng.lib ffmpeg/modern_working/lib/avcodec.lib ffmpeg/modern_working/lib/avformat.lib ffmpeg/modern_working/lib/avutil.lib ffmpeg/modern_working/lib/swscale.lib"
 				ShowProgress="0"
 				OutputFile="../Program/StepMania.exe"
 				LinkIncremental="2"
@@ -1087,6 +1087,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScoreKeeperRave.h">
+			</File>
+			<File
+				RelativePath=".\ScoreKeeperShared.cpp">
+			</File>
+			<File
+				RelativePath=".\ScoreKeeperShared.h">
 			</File>
 			<File
 				RelativePath="ScreenDimensions.cpp">
