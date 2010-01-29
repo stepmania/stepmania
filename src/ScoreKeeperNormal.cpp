@@ -413,10 +413,10 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 
 		switch( score )
 		{
-		case TNS_W1:	p = 10;		break;
-		case TNS_W2:	p = GAMESTATE->ShowW1()? 9:10; break;
-		case TNS_W3:	p = 5;		break;
-		default:	p = 0;		break;
+		case TNS_W1:	p = 10;				break;
+		case TNS_W2:	p = GAMESTATE->ShowW1()? 9:10;	break;
+		case TNS_W3:	p = 5;				break;
+		default:	p = 0;				break;
 		}
 
 		m_iTapNotesHit++;
@@ -471,13 +471,13 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 
 		switch( score )
 		{
-		case TNS_W1:	p = m_CustomTNS_W1;		break;
-		case TNS_W2:	p = m_CustomTNS_W2;		break;
-		case TNS_W3:	p = m_CustomTNS_W3;		break;
-		case TNS_W4:	p = m_CustomTNS_W4;		break;
-		case TNS_W5:	p = m_CustomTNS_W5;		break;
-		case TNS_Miss:	p = m_CustomTNS_Miss;		break;
-		default:	p = 0;				break;
+		case TNS_W1:	p = m_CustomTNS_W1;	break;
+		case TNS_W2:	p = m_CustomTNS_W2;	break;
+		case TNS_W3:	p = m_CustomTNS_W3;	break;
+		case TNS_W4:	p = m_CustomTNS_W4;	break;
+		case TNS_W5:	p = m_CustomTNS_W5;	break;
+		case TNS_Miss:	p = m_CustomTNS_Miss;	break;
+		default:	p = 0;			break;
 		}
 
 		if( m_CustomComboBonus )
@@ -750,7 +750,7 @@ int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& radars )
 	int NumHolds = int(radars[RadarCategory_Holds]); 
 	int NumRolls = int(radars[RadarCategory_Rolls]); 
 	return 
-		NumTaps*TapNoteScoreToDancePoints(TNS_W1, false)+
+		NumTaps*TapNoteScoreToDancePoints(TNS_W1, false) +
 		NumHolds*HoldNoteScoreToDancePoints(HNS_Held, false) +
 		NumRolls*HoldNoteScoreToDancePoints(HNS_Held, false);
 }
@@ -775,7 +775,7 @@ int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& radars )
 	int NumHolds = int(radars[RadarCategory_Holds]); 
 	int NumRolls = int(radars[RadarCategory_Rolls]); 
 	return 
-		NumTaps*TapNoteScoreToGradePoints(TNS_W1, false)+
+		NumTaps*TapNoteScoreToGradePoints(TNS_W1, false) +
 		NumHolds*HoldNoteScoreToGradePoints(HNS_Held, false) +
 		NumRolls*HoldNoteScoreToGradePoints(HNS_Held, false);
 }
@@ -843,9 +843,9 @@ int ScoreKeeperNormal::HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBegi
 	switch( hns )
 	{
 	DEFAULT_FAIL( hns );
-	case HNS_None:	iWeight = 0;						break;
-	case HNS_LetGo:	iWeight = g_iPercentScoreWeight[SE_LetGo];		break;
-	case HNS_Held:	iWeight = g_iPercentScoreWeight[SE_Held];		break;
+	case HNS_None:	iWeight = 0;					break;
+	case HNS_LetGo:	iWeight = g_iPercentScoreWeight[SE_LetGo];	break;
+	case HNS_Held:	iWeight = g_iPercentScoreWeight[SE_Held];	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -886,9 +886,9 @@ int ScoreKeeperNormal::HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBegi
 	switch( hns )
 	{
 	DEFAULT_FAIL( hns );
-	case HNS_None:	iWeight = 0;					break;
-	case HNS_LetGo:	iWeight = g_iGradeWeight[SE_LetGo];		break;
-	case HNS_Held:	iWeight = g_iGradeWeight[SE_Held];		break;
+	case HNS_None:	iWeight = 0;				break;
+	case HNS_LetGo:	iWeight = g_iGradeWeight[SE_LetGo];	break;
+	case HNS_Held:	iWeight = g_iGradeWeight[SE_Held];	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
