@@ -385,32 +385,6 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 	}
 
-	// saturn2888 likes to make me pollute my source code with shit that only
-	// he will use
-#if defined(SAT2888)
-	if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT))
-		|| INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) )
-	{
-		switch( input.DeviceI.button )
-		{
-			case KEY_SPACE:
-				// clear all mods for all players
-				FOREACH_HumanPlayer( pn )
-				{
-					/*
-					GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Init();
-					GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
-					*/
-					GAMESTATE->m_pPlayerState[pn]->ResetToDefaultPlayerOptions( ModsLevel_Preferred );
-				}
-				m_soundOptionsChange.Play();
-				MESSAGEMAN->Broadcast("PlayerOptionsChanged");
-				break;
-		}
-	}
-#endif
-	// and for that saturn2888 is a nignog
-
 	// debugging?
 	// I just like being able to see untransliterated titles occasionally.
 	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F9 )

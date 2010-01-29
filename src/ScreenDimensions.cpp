@@ -8,11 +8,10 @@
 static ThemeMetric<float> THEME_SCREEN_WIDTH("Common","ScreenWidth");
 static ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
 
-//
-// The theme's logical resolution specifies the minimum screen width
-// and the minimum screen height with a 4:3 aspect ratio.  Scale just one 
-// of the dimensions up to meet the requested aspect ratio.
-//
+/* The theme's logical resolution specifies the minimum screen width and
+ * the minimum screen height with a 4:3 aspect ratio. Scale just one 
+ * of the dimensions up to meet the requested aspect ratio.
+ */
 
 /* 
  * The theme resolution isn't necessarily 4:3; a natively widescreen

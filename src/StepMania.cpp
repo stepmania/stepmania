@@ -105,13 +105,12 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 	 * -Chris
 	 */
 	int iWidth = PREFSMAN->m_iDisplayWidth;
-	// SAT2888 but could also be useful disabled
-	/*
 	if( PREFSMAN->m_bWindowed )
 	{
-		iWidth = PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio;
+		float fRatio = PREFSMAN->m_iDisplayWidth / PREFSMAN->m_iDisplayHeight;
+		//iWidth = PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio;
+		iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
 	}
-	*/
 
 	paramsOut = VideoModeParams(
 		PREFSMAN->m_bWindowed,
@@ -295,11 +294,6 @@ void StepMania::ResetPreferences()
  * these may still be NULL. */
 void ShutdownGame()
 {
-#if defined(SAT2888)
-	LOG->Info("sm-ssc is Copyright ©2009,2010 the spinal shark collective, all rights reserved. Commercial use of this binary is prohibited by law and will be prosecuted to the fullest extent of the law.");
-	if(rand()%64 == 24)
-		LOG->Info("NAKET Coder isn't a fan of four panel footprint either, and would love to shit over your theme like you say NAKET Team shit over the options screen.");
-#endif
 	/* First, tell SOUNDMAN that we're shutting down.  This signals sound drivers to
 	 * stop sounds, which we want to do before any threads that may have started sounds
 	 * are closed; this prevents annoying DirectSound glitches and delays. */
@@ -402,7 +396,7 @@ static void AdjustForChangedSystemCapabilities()
 	LOG->Trace( "Memory changed from %i to %i; settings changed", g_iLastSeenMemory.Get(), Memory );
 	g_iLastSeenMemory.Set( Memory );
 
-	// is this assumption outdated?
+	// is this assumption outdated? -aj
 	/* Let's consider 128-meg systems low-memory, and 256-meg systems high-memory.
 	 * Cut off at 192.  This is somewhat conservative; many 128-meg systems can
 	 * deal with higher memory profile settings, but some can't. 
@@ -816,7 +810,7 @@ static void SwitchToLastPlayedGame()
 	/* If the active game type isn't actually available, revert to the default. */
 	if( pGame == NULL )
 		pGame = GAMEMAN->GetDefaultGame();
-	
+
 	if( !GAMEMAN->IsGameEnabled( pGame ) && pGame != GAMEMAN->GetDefaultGame() )
 	{
 		pGame = GAMEMAN->GetDefaultGame();
@@ -869,7 +863,7 @@ void StepMania::ChangeCurrentGame( const Game* g )
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
 	THEME->SwitchThemeAndLanguage( sTheme, sLanguage, PREFSMAN->m_bPseudoLocalize );
 
-	/* Set the input scheme for the new game, and load keymaps. */
+	// Set the input scheme for the new game, and load keymaps.
 	if( INPUTMAPPER )
 	{
 		INPUTMAPPER->SetInputScheme( &g->m_InputScheme );
@@ -992,13 +986,13 @@ int main(int argc, char* argv[])
 		runmode = RunMode_DisplayVersion;
 
 
-	/* Set up arch hooks first.  This may set up crash handling. */
+	// Set up arch hooks first.  This may set up crash handling.
 	HOOKS = ArchHooks::Create();
 	HOOKS->Init();
 
 	LUA		= new LuaManager;
 
-	/* Almost everything uses this to read and write files.  Load this early. */
+	// Almost everything uses this to read and write files.  Load this early.
 	FILEMAN = new RageFileManager( argv[0] );
 	FILEMAN->MountInitialFilesystems();
 	bool bPortable = DoesFileExist("Portable.ini");
@@ -1009,11 +1003,9 @@ int main(int argc, char* argv[])
 	/* Set this up next.  Do this early, since it's needed for RageException::Throw. */
 	LOG		= new RageLog;
 
-	/* Whew--we should be able to crash safely now! */
+	// Whew--we should be able to crash safely now!
 
-	//
 	// load preferences and mount any alternative trees.
-	//
 	PREFSMAN	= new PrefsManager;
 
 	/* Allow HOOKS to check for multiple instances.  We need to do this after PREFS is initialized,
@@ -1034,7 +1026,7 @@ int main(int argc, char* argv[])
 
 	WriteLogHeader();
 
-	/* Set up alternative filesystem trees. */
+	// Set up alternative filesystem trees.
 	if( PREFSMAN->m_sAdditionalFolders.Get() != "" )
 	{
 		vector<RString> dirs;
@@ -1064,17 +1056,15 @@ int main(int argc, char* argv[])
 	 * Re-read preferences. */
 	PREFSMAN->ReadPrefsFromDisk();
 	ApplyLogPreferences();
-	
-	/* This needs PREFSMAN. */
+
+	// This needs PREFSMAN.
 	Dialog::Init();
 
-	//
 	// Create game objects
-	//
 
 	GAMESTATE	= new GameState;
 
-	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
+	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
 	LoadingWindow *pLoadingWindow = NULL;
 	switch( runmode )
 	{
@@ -1087,8 +1077,8 @@ int main(int argc, char* argv[])
 		;	// no loading window for other RunModes
 	}
 
-	srand( time(NULL) );	// seed number generator	
-	
+	srand( time(NULL) );	// seed number generator
+
 	/* Do this early, so we have debugging output if anything else fails.  LOG and
 	 * Dialog must be set up first.  It shouldn't take long, but it might take a
 	 * little time; do this after the LoadingWindow is shown, since we don't want
