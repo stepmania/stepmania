@@ -109,14 +109,14 @@ void LifeMeterTime::ChangeLife( TapNoteScore tns )
 	float fMeterChange = 0;
 	switch( tns )
 	{
-	default:	ASSERT(0);
-	case TNS_W1:		fMeterChange = g_fTimeMeterSecondsChange[SE_W1];	break;
-	case TNS_W2:		fMeterChange = g_fTimeMeterSecondsChange[SE_W2];	break;
-	case TNS_W3:		fMeterChange = g_fTimeMeterSecondsChange[SE_W3];	break;
-	case TNS_W4:		fMeterChange = g_fTimeMeterSecondsChange[SE_W4];	break;
-	case TNS_W5:		fMeterChange = g_fTimeMeterSecondsChange[SE_W5];	break;
-	case TNS_Miss:		fMeterChange = g_fTimeMeterSecondsChange[SE_Miss];	break;
-	case TNS_HitMine:	fMeterChange = g_fTimeMeterSecondsChange[SE_HitMine];	break;
+	default:		ASSERT(0);
+	case TNS_W1:		fMeterChange = g_fTimeMeterSecondsChange[SE_W1];		break;
+	case TNS_W2:		fMeterChange = g_fTimeMeterSecondsChange[SE_W2];		break;
+	case TNS_W3:		fMeterChange = g_fTimeMeterSecondsChange[SE_W3];		break;
+	case TNS_W4:		fMeterChange = g_fTimeMeterSecondsChange[SE_W4];		break;
+	case TNS_W5:		fMeterChange = g_fTimeMeterSecondsChange[SE_W5];		break;
+	case TNS_Miss:		fMeterChange = g_fTimeMeterSecondsChange[SE_Miss];		break;
+	case TNS_HitMine:	fMeterChange = g_fTimeMeterSecondsChange[SE_HitMine];		break;
 	case TNS_CheckpointHit:	fMeterChange = g_fTimeMeterSecondsChange[SE_CheckpointHit];	break;
 	case TNS_CheckpointMiss:fMeterChange = g_fTimeMeterSecondsChange[SE_CheckpointMiss];	break;
 	}
