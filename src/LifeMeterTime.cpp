@@ -204,8 +204,7 @@ float LifeMeterTime::GetLife() const
 
 float LifeMeterTime::GetLifeSeconds() const
 {
-	float fSecs = m_fLifeTotalGainedSeconds - (m_fLifeTotalLostSeconds + STATSMAN->m_CurStageStats.m_fStepsSeconds);
-	return fSecs;
+	return m_fLifeTotalGainedSeconds - (m_fLifeTotalLostSeconds + STATSMAN->m_CurStageStats.m_fStepsSeconds);
 }
 
 
