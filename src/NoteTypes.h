@@ -93,20 +93,20 @@ struct TapNote
 	};
 
 	Type		type;
-	SubType		subType; // Only used if type is hold_head.
+	SubType		subType;		// Only used if type is hold_head.
 	Source		source;
 	TapNoteResult	result;
-	int8_t		iMidiNote;	// ignored by all game types but Karaoke
-	PlayerNumber	pn;	// used in routine mode
-	bool		bHopoPossible;	// set just before gameplay begins
+	int8_t		iMidiNote;		// ignored by all game types but Karaoke
+	PlayerNumber	pn;			// used in routine mode
+	bool		bHopoPossible;		// set just before gameplay begins
 	
 	RString		sAttackModifiers;	// used only if Type == attack
 	float		fAttackDurationSeconds;	// used only if Type == attack
 
 	int		iKeysoundIndex;		// Index into Song's vector of keysound files if nonnegative.
 
-	int		iDuration;	// used if hold_head only
-	HoldNoteResult	HoldResult;	// used if hold_head only
+	int		iDuration;		// used if hold_head only
+	HoldNoteResult	HoldResult;		// used if hold_head only
 	
 	// XML
 	XNode* CreateNode() const;
