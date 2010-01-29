@@ -21,6 +21,7 @@ PBProject/build
 ver.cpp
 lib*_link.a
 Data/UserPrefs
+PBProject/Hardware.plist
 
 syntax: regexp
 .*\#.*\#$
