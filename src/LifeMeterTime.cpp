@@ -17,6 +17,7 @@ static ThemeMetric<float> METER_WIDTH		("LifeMeterTime","MeterWidth");
 static ThemeMetric<float> METER_HEIGHT		("LifeMeterTime","MeterHeight");
 static ThemeMetric<float> DANGER_THRESHOLD	("LifeMeterTime","DangerThreshold");
 static ThemeMetric<float> INITIAL_VALUE		("LifeMeterTime","InitialValue");
+static ThemeMetric<float> MIN_LIFE_TIME		("LifeMeterTime","MinLifeTime");
 
 static const float g_fTimeMeterSecondsChangeInit[] =
 {
@@ -92,7 +93,10 @@ void LifeMeterTime::OnLoadSong()
 	ASSERT( pCourse );
 
 	float fOldLife = m_fLifeTotalLostSeconds;
-	m_fLifeTotalGainedSeconds += pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].fGainSeconds;
+	float fGainSeconds = pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].fGainSeconds;
+	if( MIN_LIFE_TIME > fGainSeconds )
+		fGainSeconds = MIN_LIFE_TIME;
+	m_fLifeTotalGainedSeconds += fGainSeconds;
 	m_soundGainLife.Play();
 	SendLifeChangedMessage( fOldLife, TapNoteScore_Invalid, HoldNoteScore_Invalid );
 }
