@@ -42,4 +42,13 @@ if ShowStandardDecoration("ComboGraph") then
 	end
 end
 
+if ShowStandardDecoration("StepsDisplay") then
+	for pn in ivalues(PlayerNumber) do
+		local t2 = Def.StepsDisplay {
+				InitCommand=cmd(Load,"StepsDisplayEvaluation",pn;SetFromGameState,pn;);
+			};
+		t[#t+1] = StandardDecorationFromTable( "StepsDisplay" .. ToEnumShortString(pn), t2 );
+	end
+end
+
 return t
