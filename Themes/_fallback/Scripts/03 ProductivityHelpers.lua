@@ -162,3 +162,76 @@ function ComboMaintain()
 	};
 	return Maintain[sGame]
 end;
+
+function ComboPerRow()
+	sGame = GAMESTATE:GetCurrentGame():GetName();
+	if sGame == "pump" then
+		return true;
+	elseif GAMESTATE:GetPlayMode() == "PlayMode_Oni" then
+		return true;
+	else return false;
+	end;
+end;
+
+function HoldTiming()
+	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+		return "0";
+	else return PREFSMAN:GetPreference("TimingWindowSecondsHold");
+	end;
+end;
+
+function HoldJudgmentFail()
+	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+		return "";
+	else return "shadowlength,0;diffusealpha,1;zoom,1;y,-10;linear,0.8;y,10;sleep,0.5;linear,0.1;zoomy,0.5;zoomx,2;diffusealpha,0";
+	end;
+end;
+
+function HoldJudgmentPass()
+	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+		return "";
+	else return "shadowlength,0;diffusealpha,1;zoom,1.25;linear,0.3;zoomx,1;zoomy,1;sleep,0.5;linear,0.1;zoomy,0.5;zoomx,2;diffusealpha,0";
+	end;
+end;
+
+function HoldHeadStep()
+	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+		return false;
+	else return true;
+	end;
+end;
+
+function InitialHoldLife()
+	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+		return 0.05;
+	else return 1;
+	end;
+end;
+
+function ImmediateHoldLetGo()
+	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+		return false;
+	else return true;
+	end;
+end;
+
+function RollBodyIncrementsCombo()
+	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+		return false;
+	else return true;
+	end;
+end;
+
+function CheckpointsTapsSeparateJudgment()
+	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+		return false;
+	else return true;
+	end;
+end;
+
+function ScoreMissedHoldsAndRolls()
+	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+		return false;
+	else return true;
+	end;
+end;
