@@ -2,9 +2,7 @@
 
 #include "StepMania.h"
 
-//
 // Rage global classes
-//
 #include "RageLog.h"
 #include "RageTextureManager.h"
 #include "RageSoundManager.h"
@@ -37,9 +35,7 @@
 #define SUPPORT_OPENGL
 #endif
 
-//
 // StepMania global classes
-//
 #include "ThemeManager.h"
 #include "NoteSkinManager.h"
 #include "PrefsManager.h"
@@ -108,8 +104,8 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 	if( PREFSMAN->m_bWindowed )
 	{
 		//float fRatio = PREFSMAN->m_iDisplayWidth / PREFSMAN->m_iDisplayHeight;
-		iWidth = PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio;
 		//iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
+		iWidth = PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio;
 	}
 
 	paramsOut = VideoModeParams(
