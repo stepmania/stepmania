@@ -333,7 +333,7 @@ void PrefsManager::SetCurrentGame( const RString &sGame )
 }
 
 void PrefsManager::StoreGamePrefs()
-{	
+{
 	ASSERT( !m_sCurrentGame.Get().empty() );
 
 	// save off old values
@@ -382,7 +382,7 @@ void PrefsManager::ResetToFactoryDefaults()
 	Init();
 	IPreference::LoadAllDefaults();
 	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection(), true );
-	
+
 	SavePrefsToDisk();
 }
 
@@ -410,13 +410,15 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection
 	}
 	s_iDepth--;
 
-	//IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
-	//	if( pPref == NULL )
-	//	{
-	//		LOG->Warn( "Unknown preference in [%s]: %s", sClassName.c_str(), sName->c_str() );
-	//		continue;
-	//	}
-	//	pPref->FromString( sVal );
+	/*
+	IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
+	if( pPref == NULL )
+	{
+		LOG->Warn( "Unknown preference in [%s]: %s", sClassName.c_str(), sName->c_str() );
+		continue;
+	}
+	pPref->FromString( sVal );
+	*/
 
 	const XNode *pChild = ini.GetChild(sSection);
 	if( pChild )
@@ -497,7 +499,7 @@ RString PrefsManager::GetPreferencesSection() const
 
 	// OK if this fails
 	GetFileContents( SpecialFiles::TYPE_TXT_FILE, sSection, true );
-	
+
 	// OK if this fails
 	GetCommandlineArgument( "Type", &sSection );
 
