@@ -127,6 +127,7 @@ static Preference<bool> g_bEnableMineSoundPlayback	( "EnableMineHitSound", true 
 Preference<float> g_fTimingWindowHopo		( "TimingWindowHopo",		0.25 );		// max time between notes in a hopo chain
 Preference<float> g_fTimingWindowStrum		( "TimingWindowStrum",		0.1f );		// max time between strum and when the frets must match
 ThemeMetric<float> INITIAL_HOLD_LIFE		( "Player", "InitialHoldLife" );
+ThemeMetric<float> MAX_HOLD_LIFE		( "Player", "MaxHoldLife" );
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
 ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
@@ -1039,7 +1040,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			if( bInitiatedNote && bIsHoldingButton )
 			{
 				// Increase life
-				fLife = 1;
+				fLife = MAX_HOLD_LIFE;
 			}
 			else
 			{
