@@ -103,8 +103,10 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 	int iWidth = PREFSMAN->m_iDisplayWidth;
 	if( PREFSMAN->m_bWindowed )
 	{
-		//float fRatio = PREFSMAN->m_iDisplayWidth / PREFSMAN->m_iDisplayHeight;
-		//iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
+		/*
+		float fRatio = PREFSMAN->m_iDisplayWidth / PREFSMAN->m_iDisplayHeight;
+		iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
+		*/
 		iWidth = PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio;
 	}
 
@@ -645,11 +647,11 @@ bool CheckVideoDefaultSettings()
 {
 	// Video card changed since last run
 	RString sVideoDriver = GetVideoDriverName();
-	
+
 	LOG->Trace( "Last seen video driver: %s", PREFSMAN->m_sLastSeenVideoDriver.Get().c_str() );
 
 	VideoCardDefaults defaults;
-	
+
 	for( unsigned i=0; i<ARRAYLEN(g_VideoCardDefaults); i++ )
 	{
 		defaults = g_VideoCardDefaults[i];
@@ -677,7 +679,7 @@ found_defaults:
 		bSetDefaultVideoParams = true;
 		LOG->Trace( "Video card has changed from %s to %s.  Applying new defaults.", PREFSMAN->m_sLastSeenVideoDriver.Get().c_str(), sVideoDriver.c_str() );
 	}
-		
+
 	if( bSetDefaultVideoParams )
 	{
 		PREFSMAN->m_sVideoRenderers.Set( defaults.sVideoRenderers );
@@ -915,7 +917,7 @@ static void WriteLogHeader()
 #endif
 
 	// this code should only be enabled in distributed builds
-	LOG->Info("sm-ssc is Copyright Â©2009 the spinal shark collective, all rights reserved. Commercial use of this binary is prohibited by law and will be prosecuted to the fullest extent of the law.");
+	LOG->Info("sm-ssc is Copyright ©2009 the spinal shark collective, all rights reserved. Commercial use of this binary is prohibited by law and will be prosecuted to the fullest extent of the law.");
 	// end limited code
 
 	time_t cur_time;

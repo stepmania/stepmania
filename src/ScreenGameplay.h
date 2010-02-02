@@ -177,6 +177,7 @@ protected:
 	virtual void SaveStats();
 	virtual void StageFinished( bool bBackedOut );
 	void SaveReplay();
+	//bool LoadReplay();
 	bool AllAreFailing();
 
 	virtual void InitSongQueues();

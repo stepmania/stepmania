@@ -59,7 +59,6 @@ void StepsDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlaye
 	m_bShowStepsType.Load(m_sMetricsGroup,"ShowStepsType");
 	m_sZeroMeterString.Load(m_sMetricsGroup,"ZeroMeterString");
 
-
 	m_sprFrame.Load( THEME->GetPathG(m_sMetricsGroup,"frame") );
 	m_sprFrame->SetName( "Frame" );
 	ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_sprFrame, m_sMetricsGroup );
@@ -67,7 +66,7 @@ void StepsDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlaye
 
 	if( m_bShowTicks )
 	{
-		RString sChars = "10";	// on, off
+		RString sChars = "10";	// on, off (todo: make this metricable -aj)
 		m_textTicks.SetName( "Ticks" );
 		m_textTicks.LoadFromTextureAndChars( THEME->GetPathF(m_sMetricsGroup,"ticks"), sChars );
 		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTicks, m_sMetricsGroup );
@@ -84,7 +83,7 @@ void StepsDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlaye
 		// These commands should have been loaded by SetXYAndOnCommand above.
 		ASSERT( m_textMeter.HasCommand("Set") );
 	}
-	
+
 	if( m_bShowDescription )
 	{
 		m_textDescription.SetName( "Description" );
@@ -92,7 +91,7 @@ void StepsDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlaye
 		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textDescription, m_sMetricsGroup );
 		this->AddChild( &m_textDescription );
 	}
-	
+
 	if( m_bShowAutogen )
 	{
 		m_sprAutogen.Load( THEME->GetPathG(m_sMetricsGroup,"Autogen") );
@@ -242,11 +241,22 @@ void StepsDisplay::SetInternal( const SetParams &params )
 	{
 		m_textDescription.SetText( sDisplayDescription );
 	}
-	
+
 	if( m_bShowAutogen )
 	{
 		bool b = params.pSteps && params.pSteps->IsAutogen();
 		m_sprAutogen->SetVisible( b );
+	}
+
+	if( m_bShowStepsType )
+	{
+		if( params.st != StepsType_Invalid )
+		{
+			/*
+			RString sStepsType = GAMEMAN->GetStepsTypeInfo(params.st).szName;
+			m_sprStepsType.Load( THEME->GetPathG(m_sMetricsGroup,"StepsType "+sStepsType) );
+			*/
+		}
 	}
 
 	this->HandleMessage( msg );

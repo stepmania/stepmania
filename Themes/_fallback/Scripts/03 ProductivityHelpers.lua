@@ -209,6 +209,7 @@ function FailCombo() -- The combo that causes game failure.
 	return Combo[sGame]
 end;
 
+-- todo: use tables for some of these -aj
 function HoldTiming()
 	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
 		return 0;

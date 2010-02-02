@@ -137,23 +137,23 @@ void Course::SetCourseType( CourseType ct )
 	m_iLives = -1;
 	if( !m_vEntries.empty() )
 		m_vEntries[0].fGainSeconds = 0;
-	
+
 	switch( ct )
 	{
 	default:	ASSERT(0);
 	case COURSE_TYPE_NONSTOP:
-		break;		
+		break;
 	case COURSE_TYPE_ONI:
 		m_iLives = 4;
-		break;		
+		break;
 	case COURSE_TYPE_ENDLESS:
 		m_bRepeat = true;
-		break;		
+		break;
 	case COURSE_TYPE_SURVIVAL:
 		if( !m_vEntries.empty() )
 			m_vEntries[0].fGainSeconds = 120;
-		break;		
-	}		
+		break;
+	}
 }
 
 PlayMode Course::GetPlayMode() const
@@ -222,7 +222,7 @@ bool Course::IsPlayableIn( StepsType st ) const
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
 		SongCriteria soc = e->songCriteria;
-		
+
 		Song *pSong = e->songID.ToSong();
 		if( pSong )
 		{
@@ -233,27 +233,27 @@ bool Course::IsPlayableIn( StepsType st ) const
 		soc.m_Locked = SongCriteria::Locked_Unlocked;
 		if( !soc.m_bUseSongAllowedList )
 			soc.m_iMaxStagesForSong = 1;
-		
+
 		StepsCriteria stc = e->stepsCriteria;
 		stc.m_st = st;
 		stc.m_Locked = StepsCriteria::Locked_Unlocked;
-		
+
 		const bool bSameSongCriteria  = e != m_vEntries.begin() && (e-1)->songCriteria == soc;
 		const bool bSameStepsCriteria = e != m_vEntries.begin() && (e-1)->stepsCriteria == stc;
-		
+
 		if( pSong )
 		{
-		        if( StepsUtil::HasMatching(pSong, stc) )
+			if( StepsUtil::HasMatching(pSong, stc) )
 				return true;
 		}
 		else if( !(bSameSongCriteria && bSameStepsCriteria) )
 		{
 			if( StepsUtil::HasMatching(soc, stc) )
-			        return true;
+				return true;
 		}
-		
+
 	}
-	
+
 	return false;
 }
 
@@ -307,18 +307,14 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 {
 	ASSERT( cd != Difficulty_Invalid );
 
-	//
 	// Check to see if the Trail cache is out of date
-	//
 	if( m_iTrailCacheSeed != GAMESTATE->m_iStageSeed )
 	{
 		RegenerateNonFixedTrails();
 		m_iTrailCacheSeed = GAMESTATE->m_iStageSeed;
 	}
 
-	//
 	// Look in the Trail cache
-	//
 	{
 		TrailCache_t::iterator it = m_TrailCache.find( CacheEntry(st, cd) );
 		if( it != m_TrailCache.end() )
@@ -335,22 +331,18 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 
 Trail* Course::GetTrailForceRegenCache( StepsType st, CourseDifficulty cd ) const
 {
-	//
 	// Construct a new Trail, add it to the cache, then return it.
-	//
 	CacheData &cache = m_TrailCache[ CacheEntry(st, cd) ];
 	Trail &trail = cache.trail;
 	trail.Init();
 	if( !GetTrailSorted(st, cd, trail) )
 	{
-		/* This course difficulty doesn't exist. */
+		// This course difficulty doesn't exist.
 		cache.null = true;
 		return NULL;
 	}
 
-	//
 	// If we have cached RadarValues for this trail, insert them.
-	//
 	{
 		RadarCache_t::const_iterator it = m_RadarCache.find( CacheEntry( st, cd ) );
 		if( it != m_RadarCache.end() )
@@ -453,10 +445,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		return false;
 	}
 
-	//
 	// Construct a new Trail, add it to the cache, then return it.
-	//
-	/* Different seed for each course, but the same for the whole round: */
+	// Different seed for each course, but the same for the whole round:
 	RandomGen rnd( GAMESTATE->m_iStageSeed + GetHashForString(m_sMainTitle) );
 
 	vector<CourseEntry> tmp_entries;
@@ -471,7 +461,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 	const vector<CourseEntry> &entries = m_bShuffle ? tmp_entries:m_vEntries;
 
-	/* This can take some time, so don't fill it out unless we need it. */
+	// This can take some time, so don't fill it out unless we need it.
 	vector<Song*> vSongsByMostPlayed;
 	vector<Song*> AllSongsShuffled;
 
@@ -479,7 +469,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	trail.m_CourseType = GetCourseType();
 	trail.m_CourseDifficulty = cd;
 
-	/* Set to true if CourseDifficulty is able to change something. */
+	// Set to true if CourseDifficulty is able to change something.
 	bool bCourseDifficultyIsSignificant = (cd == Difficulty_Medium);
 
 	vector<Song*> vpAllPossibleSongs;
@@ -490,7 +480,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	{
 		SongAndSteps resolved;	// fill this in
 		SongCriteria soc = e->songCriteria;
-		
+
 		Song *pSong = e->songID.ToSong();
 		if( pSong )
 		{
@@ -505,7 +495,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		StepsCriteria stc = e->stepsCriteria;
 		stc.m_st = st;
 		stc.m_Locked = StepsCriteria::Locked_Unlocked;
-		
+
 		const bool bSameSongCriteria  = e != entries.begin() && (e-1)->songCriteria == soc;
 		const bool bSameStepsCriteria = e != entries.begin() && (e-1)->stepsCriteria == stc;
 
@@ -525,7 +515,6 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		if( trail.m_vEntries.size() > 0  &&  vSongAndSteps.size() > 1 )
 		{
 			const TrailEntry &teLast = trail.m_vEntries.back();
-
 			RemoveIf( vSongAndSteps, SongIsEqual(teLast.pSong) );
 		}
 
@@ -539,14 +528,14 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
 		{
 			StepsVector &v = mapSongToSteps[sas->pSong];
-			
+
 			v.push_back( sas->pSteps );
 			if( v.size() == 1 )
 				vpSongs.push_back( sas->pSong );
 		}
 
 		CourseSortSongs( e->songSort, vpSongs, rnd );
-		
+
 		ASSERT( e->iChooseIndex >= 0 );
 		if( e->iChooseIndex < int(vSongAndSteps.size()) )
 		{
@@ -651,9 +640,9 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		trail.m_vEntries.push_back( te );
 
 		// LOG->Trace( "Chose: %s, %d", te.pSong->GetSongDir().c_str(), te.pSteps->GetMeter() );
-		
+
 		if( IsAnEdit() && MAX_SONGS_IN_EDIT_COURSE > 0 &&
-		    int(trail.m_vEntries.size()) >= MAX_SONGS_IN_EDIT_COURSE )
+			int(trail.m_vEntries.size()) >= MAX_SONGS_IN_EDIT_COURSE )
 		{
 			break;
 		}
@@ -723,13 +712,22 @@ bool Course::HasMods() const
 
 bool Course::HasTimedMods() const
 {
-	// ???: This seems to be the exact same as Course::HasMods(). -aj
+	// What makes this different from the SM4 implementation is that
+	// HasTimedMods now searches for bGlobal in the attacks; if one of
+	// them is false, it has timed mods. Also returning false will probably
+	// take longer than expected. -aj
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
 		if( !e->attacks.empty() )
-			return true;
+		{
+			for( unsigned s=0; s < e->attacks.size(); s++ )
+			{
+				Attack &attack = e->attacks[s];
+				if(!attack.bGlobal)
+					return true;
+			}
+		}
 	}
-
 	return false;
 }
 
@@ -779,7 +777,7 @@ void Course::Invalidate( const Song *pStaleSong )
 
 	// Invalidate any Trails that contain this song.
 	// If we find a Trail that contains this song, then it's part of a 
-	// non-fixed entry.  So, regenerating the Trail will force different
+	// non-fixed entry. So, regenerating the Trail will force different
 	// songs to be chosen.
 	FOREACH_ENUM( StepsType,st )
 	{
@@ -820,7 +818,7 @@ RageColor Course::GetColor() const
 	switch( PREFSMAN->m_CourseSortOrder )
 	{
 	case COURSE_SORT_PREFERRED:
-		return SORT_PREFERRED_COLOR;		//This will also be used for autogen'd courses in some cases.	
+		return SORT_PREFERRED_COLOR;	//This will also be used for autogen'd courses in some cases.
 
 	case COURSE_SORT_SONGS:	
 		if( m_vEntries.size() >= 7 )		return SORT_LEVEL2_COLOR;
@@ -848,7 +846,7 @@ RageColor Course::GetColor() const
 		else					return SORT_LEVEL4_COLOR;
 	default:
 		FAIL_M( ssprintf("Invalid course sort %d.", int(PREFSMAN->m_CourseSortOrder)) );
-		return RageColor(1,1,1,1);  // white, never should reach here
+		return RageColor(1,1,1,1);  // white; should never reach here
 	}
 }
 
@@ -911,9 +909,8 @@ void Course::UpdateCourseStats( StepsType st )
 
 	m_SortOrder_TotalDifficulty += pTrail != NULL? pTrail->GetTotalMeter():0;
 
-	// OPTIMIZATION: Ranking info isn't dependant on style, so
-	// call it sparingly.  Its handled on startup and when
-	// themes change..
+	// OPTIMIZATION: Ranking info isn't dependent on style, so call it
+	// sparingly. It's handled on startup and when themes change.
 
 	LOG->Trace("%s: Total feet: %d",
 		this->m_sMainTitle.c_str(),
@@ -923,7 +920,7 @@ void Course::UpdateCourseStats( StepsType st )
 bool Course::IsRanking() const
 {
 	vector<RString> rankingsongs;
-	
+
 	split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",", rankingsongs);
 
 	for(unsigned i=0; i < rankingsongs.size(); i++)
@@ -960,7 +957,7 @@ void Course::GetAllCachedTrails( vector<Trail *> &out )
 bool Course::ShowInDemonstrationAndRanking() const
 {
 	// Don't show endless courses in Ranking.
-	// todo: make this a metric? -aj
+	// todo: make this a metric of course types not to show? -aj
 	return !IsEndless();
 }
 

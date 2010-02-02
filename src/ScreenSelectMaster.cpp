@@ -474,7 +474,8 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 	vector<PlayerNumber> vpns;
 	GetActiveElementPlayerNumbers( vpns );
 
-	if(m_bUsingTwoLists && m_iSelectedList == 1) // using two lists and on the 2nd list
+	// using two lists and on the 2nd list
+	if(m_bUsingTwoLists && m_iSelectedList == 1)
 	{
 		for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 		{
@@ -482,13 +483,13 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 			{
 				m_vsprIcon[c]->PlayCommand( "List2Enabled" );
 			}
-			
+
 			FOREACH( PlayerNumber, vpns, p )
 				if( m_vsprScroll[*p][c].IsLoaded() )
 				{
 					m_vsprScroll[*p][c]->PlayCommand( "List2Enabled" );
 				}
-		}	
+		}
 
 		for( unsigned c=0; c<m_aGameCommandsB.size(); c++ )
 		{
@@ -496,14 +497,14 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 			{
 				m_vsprIconB[c]->PlayCommand( "List2Enabled" );
 				m_vsprIconB[c]->PlayCommand( m_aGameCommandsB[c].IsPlayable()? "Enabled":"Disabled" );
-				
+
 				// we will make element 0 the new selection, so it will gain focus
 				if(c==0)
 					m_vsprIconB[c]->PlayCommand( "GainFocus" );
 				else // everything else loses focus
 					m_vsprIconB[c]->PlayCommand( "LoseFocus" );
 			}
-			
+
 			FOREACH( PlayerNumber, vpns, p )
 				if( m_vsprScrollB[*p][c].IsLoaded() )
 				{
@@ -516,11 +517,10 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 						m_vsprScrollB[*p][c]->PlayCommand( "LoseFocus" );
 
 				}
-		}		
+		}
 	}
 	else
 	{
-
 		for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 		{
 			if( SHOW_ICON )

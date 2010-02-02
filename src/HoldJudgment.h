@@ -19,9 +19,7 @@ public:
 	void LoadFromMultiPlayer( MultiPlayer mp );
 	virtual void HandleMessage( const Message &msg );
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 protected:

@@ -2811,6 +2811,12 @@ void ScreenGameplay::SaveReplay()
 	}
 }
 
+/*
+bool ScreenGameplay::LoadReplay()
+{
+	// Load 
+}
+*/
 
 // lua start
 #include "LuaBinding.h"

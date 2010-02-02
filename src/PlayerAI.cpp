@@ -75,6 +75,7 @@ TapNoteScore PlayerAI::GetTapNoteScore( const PlayerState* pPlayerState )
 		return TNS_W1;
 
 	/*
+	// handle replay data playback -aj
 	if( pPlayerState->m_PlayerController == PC_REPLAY )
 	{
 		// ghost house

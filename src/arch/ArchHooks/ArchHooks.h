@@ -107,12 +107,12 @@ public:
 	 * Return true if the application has input focus.
 	 */
 	bool AppHasFocus() const { return m_bHasFocus; }
-	
+
 	/*
 	 * Returns true if the application's focus has changed since last called.
 	 */
 	bool AppFocusChanged();
-	
+
 	/*
 	 * Open a URL in the default web browser
 	 */

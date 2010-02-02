@@ -127,7 +127,7 @@ static Preference<bool> g_bEnableMineSoundPlayback	( "EnableMineHitSound", true 
 Preference<float> g_fTimingWindowHopo		( "TimingWindowHopo",		0.25 );		// max time between notes in a hopo chain
 Preference<float> g_fTimingWindowStrum		( "TimingWindowStrum",		0.1f );		// max time between strum and when the frets must match
 ThemeMetric<float> INITIAL_HOLD_LIFE		( "Player", "InitialHoldLife" );
-ThemeMetric<float> MAX_HOLD_LIFE		( "Player", "MaxHoldLife" );
+ThemeMetric<float> MAX_HOLD_LIFE		( "Player", "MaxHoldLife" ); // sm-ssc addition
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
 ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
@@ -137,7 +137,7 @@ ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads
 //ThemeMetric<bool> REQUIRE_STEP_ON_TAP_NOTES	( "Player", "RequireStepOnTapNotes" ); // parastar stuff; leave in though
 ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
 ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
-ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" );
+ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" ); // sm-ssc addition
 
 float Player::GetWindowSeconds( TimingWindow tw )
 {
@@ -374,6 +374,7 @@ void Player::Init(
 		for( int i = 0; i < GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; ++i )
 		{
 			HoldJudgment *pJudgment = new HoldJudgment;
+			// xxx: assumes sprite; todo: don't force 1x2 -aj
 			pJudgment->Load( THEME->GetPathG("HoldJudgment","label 1x2") );
 			m_vpHoldJudgment[i] = pJudgment;
 			this->AddChild( m_vpHoldJudgment[i] );
@@ -671,6 +672,7 @@ void Player::Update( float fDeltaTime )
 
 		// Update Y positions
 		{
+			// todo: unhardcode hold judgment cmds -aj
 			for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ )
 			{
 				float fPercentReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(c);
@@ -1040,7 +1042,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			if( bInitiatedNote && bIsHoldingButton )
 			{
 				// Increase life
-				fLife = MAX_HOLD_LIFE;
+				fLife = MAX_HOLD_LIFE; // was 1 -aj
 			}
 			else
 			{
@@ -1976,6 +1978,9 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		/*
 		case PC_REPLAY:
 			// based on where we are, see what grade to get.
+			score = PlayerAI::GetTapNoteScore( m_pPlayerState );
+			// row is the current row, col is current column (track)
+			fNoteOffset = TapNoteOffset attribute
 			break;
 		*/
 		default:
@@ -2588,7 +2593,6 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 					Step( iTrack, iRow, now, false, false );
 					if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 					{
-			
 						if( m_pPlayerStageStats )
 							m_pPlayerStageStats->m_bDisqualified = true;
 					}

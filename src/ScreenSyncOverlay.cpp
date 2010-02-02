@@ -97,9 +97,7 @@ static LocalizedString COLLECTING_SAMPLE( "ScreenSyncOverlay", "Collecting sampl
 static LocalizedString STANDARD_DEVIATION( "ScreenSyncOverlay", "Standard deviation" );
 void ScreenSyncOverlay::UpdateText()
 {
-	//
 	// Update Status
-	// 
 	vector<RString> vs;
 
 	if( g_bShowAutoplay )
@@ -126,14 +124,12 @@ void ScreenSyncOverlay::UpdateText()
 	{
 		AdjustSync::GetSyncChangeTextGlobal( vs );
 		AdjustSync::GetSyncChangeTextSong( vs );
-	}	
+	}
 
 	m_textStatus.SetText( join("\n",vs) );
 
 
-	//
 	// Update SyncInfo
-	//
 	bool bVisible = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType != SongOptions::AUTOSYNC_OFF;
 	m_textAdjustments.SetVisible( bVisible );
 	if( bVisible )
