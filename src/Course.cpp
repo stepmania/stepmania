@@ -722,7 +722,7 @@ bool Course::HasTimedMods() const
 		{
 			for( unsigned s=0; s < e->attacks.size(); s++ )
 			{
-				Attack &attack = e->attacks[s];
+				const Attack attack = e->attacks[s];
 				if(!attack.bGlobal)
 					return true;
 			}
