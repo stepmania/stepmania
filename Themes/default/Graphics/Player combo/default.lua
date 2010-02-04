@@ -28,7 +28,23 @@ local t = Def.ActorFrame {
 		c.Number:visible(false);
 		c.Label:visible(false);
 	end;
-
+	-- Milestones:
+	-- 25,50,100,250,600 Multiples;
+--[[ 		if (iCombo % 100) == 0 then
+			c.OneHundredMilestone:playcommand("Milestone");
+		elseif (iCombo % 250) == 0 then
+			-- It should really be 1000 but thats slightly unattainable, since
+			-- combo doesnt save over now.
+			c.OneThousandMilestone:playcommand("Milestone");
+		else
+			return
+		end; --]]
+	TwentyFiveMilestoneCommand=function(self,parent)
+		(cmd(rotationz,125;decelerate,0.125;rotationz,0))(self);
+	end;
+	ToastyAchievedMessageCommand=function(self,parent)
+		(cmd(stopeffect;spin;effectperiod,1))(self);
+	end;
 	ComboCommand=function(self, param)
 		local iCombo = param.Misses or param.Combo;
 		if not iCombo or iCombo < ShowComboAt then
@@ -70,15 +86,6 @@ local t = Def.ActorFrame {
 		Pulse( c.Number, param );
 -- 		Pulse( c.Label, param );
 		-- Milestone Logic
-		if (iCombo % 100) == 0 then
-			c.OneHundredMilestone:playcommand("Milestone");
-		elseif (iCombo % 250) == 0 then
-			-- It should really be 1000 but thats slightly unattainable, since
-			-- combo doesnt save over now.
-			c.OneThousandMilestone:playcommand("Milestone");
-		else
-			return
-		end;
 	end;
 	ScoreChangedMessageCommand=function(self,param)
 		local iToastyCombo = param.ToastyCombo;
