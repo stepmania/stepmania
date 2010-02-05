@@ -75,6 +75,7 @@ protected:
 	ThemeMetric<bool>		SHOW_PORTAL;
 	ThemeMetric<bool>		RANDOM_PICKS_LOCKED_SONGS;
 	ThemeMetric<int>		MOST_PLAYED_SONGS_TO_SHOW;
+	ThemeMetric<int>		RECENT_SONGS_TO_SHOW;
 	ThemeMetric<RString>		MODE_MENU_CHOICE_NAMES;
 	ThemeMetricMap<RString>		CHOICE;
 	ThemeMetric1D<RageColor>	SECTION_COLORS;

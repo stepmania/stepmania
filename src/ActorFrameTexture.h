@@ -29,9 +29,7 @@ public:
 
 	virtual void DrawPrimitives();
 
-	//
 	// Commands
-	//
 	virtual void PushSelf( lua_State *L );
 
 private:

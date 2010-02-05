@@ -517,7 +517,7 @@ void ScreenGameplay::Init()
 			pi->m_pLifeMeter->Load( pi->GetPlayerState(), pi->GetPlayerStageStats() );
 			pi->m_pLifeMeter->SetName( ssprintf("Life%s",pi->GetName().c_str()) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pLifeMeter );
-			this->AddChild( pi->m_pLifeMeter );		
+			this->AddChild( pi->m_pLifeMeter );
 		}
 		break;
 	case PLAY_MODE_BATTLE:
@@ -2757,6 +2757,7 @@ void ScreenGameplay::SaveReplay()
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
 			XNode *p = new XNode("ReplayData");
+			// todo: add version number, since this will change in the future -aj
 
 			// song information node
 			SongID songID;

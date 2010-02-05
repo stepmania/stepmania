@@ -1074,7 +1074,7 @@ static const Style g_Style_Ez2_Real =
 			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL }, 
 			{ TRACK_6,	+EZ2_REAL_COL_SPACING*1.6f, NULL },
 			{ TRACK_7,	+EZ2_REAL_COL_SPACING*2.3f, NULL },
-		},                                
+		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ 0, 6, 3, 2, 4, 1, 5, Style::END_MAPPING },
@@ -1145,7 +1145,7 @@ static const Style g_Style_Ez2_Real_Versus =
 			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL }, 
 			{ TRACK_6,	+EZ2_REAL_COL_SPACING*1.6f, NULL },
 			{ TRACK_7,	+EZ2_REAL_COL_SPACING*2.3f, NULL },
-		},                                
+		},
 		{	// PLAYER_2
 			{ TRACK_1,	-EZ2_REAL_COL_SPACING*2.3f, NULL },
 			{ TRACK_2,	-EZ2_REAL_COL_SPACING*1.6f, NULL },
@@ -1154,7 +1154,7 @@ static const Style g_Style_Ez2_Real_Versus =
 			{ TRACK_5,	+EZ2_REAL_COL_SPACING*0.9f, NULL }, 
 			{ TRACK_6,	+EZ2_REAL_COL_SPACING*1.6f, NULL },
 			{ TRACK_7,	+EZ2_REAL_COL_SPACING*2.3f, NULL },
-		},                                
+		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ 0, 6, 3, 2, 4, 1, 5, Style::END_MAPPING },
@@ -1185,8 +1185,8 @@ static const Style g_Style_Ez2_Double =
 			{ TRACK_3,	-EZ2_COL_SPACING*2.5f, NULL },
 			{ TRACK_4,	-EZ2_COL_SPACING*1.5f, NULL },
 			{ TRACK_5,	-EZ2_COL_SPACING*0.5f, NULL },
-			{ TRACK_6,	+EZ2_COL_SPACING*0.5f, NULL }, 
-			{ TRACK_7,	+EZ2_COL_SPACING*1.5f, NULL },  
+			{ TRACK_6,	+EZ2_COL_SPACING*0.5f, NULL },
+			{ TRACK_7,	+EZ2_COL_SPACING*1.5f, NULL },
 			{ TRACK_8,	+EZ2_COL_SPACING*2.5f, NULL },
 			{ TRACK_9,	+EZ2_COL_SPACING*3.5f, NULL },
 			{ TRACK_10,	+EZ2_COL_SPACING*4.5f, NULL },
@@ -1197,8 +1197,8 @@ static const Style g_Style_Ez2_Double =
 			{ TRACK_3,	-EZ2_COL_SPACING*2.5f, NULL },
 			{ TRACK_4,	-EZ2_COL_SPACING*1.5f, NULL },
 			{ TRACK_5,	-EZ2_COL_SPACING*0.5f, NULL },
-			{ TRACK_6,	+EZ2_COL_SPACING*0.5f, NULL }, 
-			{ TRACK_7,	+EZ2_COL_SPACING*1.5f, NULL },  
+			{ TRACK_6,	+EZ2_COL_SPACING*0.5f, NULL },
+			{ TRACK_7,	+EZ2_COL_SPACING*1.5f, NULL },
 			{ TRACK_8,	+EZ2_COL_SPACING*2.5f, NULL },
 			{ TRACK_9,	+EZ2_COL_SPACING*3.5f, NULL },
 			{ TRACK_10,	+EZ2_COL_SPACING*4.5f, NULL },
@@ -2519,7 +2519,7 @@ static const Style g_Style_Guitar_Five =
 	true,				// m_bUsedForEdit
 	true,				// m_bUsedForDemonstration
 	true,				// m_bUsedForHowToPlay
-	"five",				// m_szName
+	"guitar-five",				// m_szName
 	StepsType_guitar_five,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	5,					// m_iColsPerPlayer
@@ -2561,6 +2561,34 @@ static const Style *g_apGame_Guitar_Styles[] =
 
 static const Game g_Game_Guitar = 
 {
+	"guitar",						// m_szName
+	g_apGame_Guitar_Styles,				// m_apStyles
+	true,						// m_bCountNotesSeparately
+	true,						// m_bAllowHopos
+	{						// m_InputScheme
+		"guitar",					// m_szName
+		NUM_GUITAR_BUTTONS,			// m_iButtonsPerController
+		{	// m_szButtonNames
+			{ "Button Name",		GameButton_Invalid },
+		},
+		&g_AutoKeyMappings_Guitar
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+	},
+	TNS_W1,		// m_mapW1To
+	TNS_W1,		// m_mapW2To
+	TNS_W1,		// m_mapW3To
+	TNS_W1,		// m_mapW4To
+	TNS_Miss,	// m_mapW5To
 };
 */
 /** Karaoke ******************************************************************/
@@ -2903,7 +2931,7 @@ const Style *GameManager::GetFirstCompatibleStyle( const Game *pGame, int iNumPl
 	FOREACH_CONST( const Style*, vpStyles, s )
 		if( (*s)->m_StepsType == st )
 			return *s;
-	FAIL_M( ssprintf("No compatible styles for %s - %s with %d player%s.",  pGame->m_szName,
+	FAIL_M( ssprintf("No compatible styles for %s - %s with %d player%s.", pGame->m_szName,
 			 GetStepsTypeInfo(st).szName, iNumPlayers, iNumPlayers==1?"":"s") );
 	return NULL;
 }
@@ -2972,12 +3000,13 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 	sStepsType.MakeLower();
 
 	// TODO: Format specific hacks should be moved into the file loader for that format.
+	// If i'm assuming this correctly, these only apply to .sm files: -aj
 
-	// HACK!  We eliminated "ez2-single-hard", but we should still handle it.
+	// HACK: We eliminated "ez2-single-hard", but we should still handle it.
 	if( sStepsType == "ez2-single-hard" )
 		sStepsType = "ez2-single";
 
-	// HACK!  "para-single" used to be called just "para"
+	// HACK: "para-single" used to be called just "para"
 	if( sStepsType == "para" )
 		sStepsType = "para-single";
 

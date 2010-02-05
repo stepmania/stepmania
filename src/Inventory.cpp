@@ -138,11 +138,17 @@ void Inventory::Update( float fDelta )
 
 void Inventory::AwardItem( int iItemIndex )
 {
-	// CPU player is vanity only.  It should have no effect on gameplay
-	// and should not aquire/launch attacks.
+	/* CPU players and replay data are vanity only. They should not effect
+	 * gameplay by acquiring/launching attacks. */
 	if( m_pPlayerState->m_PlayerController == PC_CPU )
 		return;
-
+	/*
+	if( m_pPlayerState->m_PlayerController == PC_CPU ||
+		m_pPlayerState->m_PlayerController == PC_REPLAY)
+	{
+		return;
+	}
+	*/
 
 	// search for the first open slot
 	int iOpenSlot = -1;

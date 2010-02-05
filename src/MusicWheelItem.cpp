@@ -158,7 +158,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 	WheelItemBase::LoadFromWheelItemData( pData, iIndex, bHasFocus, iDrawIndex );
 
 	const MusicWheelItemData *pWID = dynamic_cast<const MusicWheelItemData*>( pData );
-	
+
 	// hide all
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
@@ -186,7 +186,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 		type = MusicWheelItemType_Song;
 
 		m_TextBanner.SetFromSong( pWID->m_pSong );
-		// We can do this manually..
+		// We can do this manually if we wanted... maybe have a metric for overrides? -aj
 		m_TextBanner.SetDiffuse( pWID->m_color ); 
 		m_TextBanner.SetVisible( true );
 

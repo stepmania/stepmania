@@ -114,7 +114,7 @@ void ScreenWithMenuElements::Init()
 	this->AddChild( &m_Cancel );
 	LOAD_ALL_COMMANDS( m_Cancel );
 
-	/* Grab the music path here; don't GetPath during BeginScreen. */
+	// Grab the music path here; don't GetPath during BeginScreen.
 	if( PLAY_MUSIC )
 		m_sPathToMusic = THEME->GetPathS( m_sName, "music" );
 }

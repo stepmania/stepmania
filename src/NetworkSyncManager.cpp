@@ -278,6 +278,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	if( !useSMserver ) //Make sure that we are using the network
 		return;
 
+	LOG->Trace( ssprintf("Player ID %i combo = %i", playerID, combo) );
 	m_packet.ClearPacket();
 
 	m_packet.Write1( NSCGSU );
@@ -291,18 +292,15 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 		ctr = uint8_t( 112 );	//Code for failed (failed constant seems not to work)
 
 	m_packet.Write1( ctr );
-
 	m_packet.Write4( score );
-
 	m_packet.Write2( (uint16_t)combo );
-
 	m_packet.Write2( (uint16_t)m_playerLife[playerID] );
 
 	// Offset Info
 	// Note: if a 0 is sent, then disregard data.
 
-	// ASSUMED: No step will be more than 16 seconds off center
-	// If assumption false: read 16 seconds either direction
+	// ASSUMED: No step will be more than 16 seconds off center.
+	// If this assumption is false, read 16 seconds in either direction.
 	int iOffset = int( (offset+16.384)*2000.0f );
 
 	if( iOffset>65535 )
@@ -310,7 +308,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	if( iOffset<1 )
 		iOffset=1;
 
-	//Report 0 if hold, or miss (don't forget mines should report)
+	// Report 0 if hold, or miss (don't forget mines should report)
 	if( step == SMOST_HITMINE || step > SMOST_W1 )
 		iOffset = 0;
 
@@ -390,7 +388,7 @@ void NetworkSyncManager::StartRequest( short position )
 		ctr = uint8_t( ctr + (int)tSteps->GetDifficulty() );
 
 	m_packet.Write1( ctr );
-	
+
 	//Notify server if this is for sync or not.
 	ctr = char( position*16 );
 	m_packet.Write1( ctr );
@@ -444,7 +442,6 @@ void NetworkSyncManager::StartRequest( short position )
 
 	m_packet.ClearPacket();
 
-	
 	while (dontExit)
 	{
 		m_packet.ClearPacket();
@@ -494,7 +491,7 @@ void NetworkSyncManager::Update(float fDeltaTime)
 	{
 		NetServerInfo ThisServer;
 		BroadIn.Position = 0;
-		if ( BroadIn.Read1() == 141 )
+		if ( BroadIn.Read1() == 141 ) // SMLS_Info?
 		{
 			ThisServer.Name = BroadIn.ReadNT();
 			int port = BroadIn.Read2();

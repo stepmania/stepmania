@@ -74,6 +74,7 @@ void MusicWheel::Load( RString sType )
 	SHOW_PORTAL			.Load(sType,"ShowPortal");
 	RANDOM_PICKS_LOCKED_SONGS	.Load(sType,"RandomPicksLockedSongs");
 	MOST_PLAYED_SONGS_TO_SHOW	.Load(sType,"MostPlayedSongsToShow");
+	RECENT_SONGS_TO_SHOW	.Load(sType,"RecentSongsToShow");
 	MODE_MENU_CHOICE_NAMES		.Load(sType,"ModeMenuChoiceNames");
 	SORT_ORDERS			.Load(sType,"SortOrders");
 	SHOW_EASY_FLAG			.Load(sType,"UseEasyMarkerFlag");
@@ -484,6 +485,9 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				break;
 			case SORT_RECENT:
 				SongUtil::SortByMostRecentlyPlayedForMachine( arraySongs );
+				if( (int) arraySongs.size() > RECENT_SONGS_TO_SHOW )
+					arraySongs.erase( arraySongs.begin()+RECENT_SONGS_TO_SHOW, arraySongs.end() );
+				bUseSections = false;
 				break;
 			case SORT_BEGINNER_METER:
 			case SORT_EASY_METER:

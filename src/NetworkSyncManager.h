@@ -13,23 +13,24 @@ const int NETPROTOCOLVERSION=3;
 const int NETMAXBUFFERSIZE=1020; //1024 - 4 bytes for EzSockets
 const int NETNUMTAPSCORES=8;
 
+// [SMLClientCommands name]
 enum NSCommand
 {
 	NSCPing = 0,
-	NSCPingR,		//1
-	NSCHello,		//2
-	NSCGSR,			//3
-	NSCGON,			//4
-	NSCGSU,			//5
-	NSCSU,			//6
-	NSCCM,			//7
-	NSCRSG,			//8
-	NSCUUL,			//9
-	NSCSMS,			//10
-	NSCUPOpts,		//11
-	NSCSMOnline,		//12
-	NSCFormatted,		//13
-	NSCAttack,		//14
+	NSCPingR,		//  1 [SMLC_PingR]
+	NSCHello,		//  2 [SMLC_Hello]
+	NSCGSR,			//  3 [SMLC_GameStart]
+	NSCGON,			//  4 [SMLC_GameOver]
+	NSCGSU,			//  5 [SMLC_GameStatusUpdate]
+	NSCSU,			//  6 [SMLC_StyleUpdate]
+	NSCCM,			//  7 [SMLC_Chat]
+	NSCRSG,			//  8 [SMLC_RequestStart]
+	NSCUUL,			//  9 [SMLC_Reserved1]
+	NSCSMS,			// 10 [SMLC_MusicSelect]
+	NSCUPOpts,		// 11 [SMLC_PlayerOpts]
+	NSCSMOnline,	// 12 [SMLC_SMO]
+	NSCFormatted,	// 13 [SMLC_RESERVED1]
+	NSCAttack,		// 14 [SMLC_RESERVED2]
 	NUM_NS_COMMANDS
 };
 

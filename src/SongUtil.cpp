@@ -596,7 +596,7 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			return ssprintf( "%s-%s", SecondsToMMSS(iMinLength).c_str(), SecondsToMMSS(iMaxLength).c_str() );
 		}
 	case SORT_POPULARITY:
-	case SORT_RECENT: // todo: make recent split into two groups: top X, and "the rest" -aj
+	case SORT_RECENT:
 		return RString();
 	case SORT_TOP_GRADES:
 		{
@@ -740,7 +740,7 @@ RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, co
 		if( IsEditDescriptionUnique(pSong, st, sTemp, NULL) )
 			return sTemp;
 	}
-	
+
 	// Edit limit guards should keep us from ever having more than 1000 edits per song.
 	ASSERT(0);
 	return RString();
@@ -800,7 +800,6 @@ bool SongUtil::ValidateCurrentStepsDescription( const RString &sAnswer, RString 
 	if( pSteps->GetDescription() == sAnswer )
 		return true;
 
-	
 	if( pSteps->IsAnEdit() )
 	{
 		return SongUtil::ValidateCurrentEditStepsDescription( sAnswer, sErrorOut );
@@ -869,8 +868,7 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 		vStepsTypes.insert( (*s)->m_StepsType );
 
 	/* filter out hidden StepsTypes, and remove steps that we don't
-	 * have enough stages left to play.
-	 */
+	 * have enough stages left to play. */
 	// this being const may have caused some problems... -aj
 	const vector<StepsType> &vstToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
 	FOREACHS( StepsType, vStepsTypes, st )

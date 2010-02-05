@@ -32,7 +32,7 @@ namespace
 void ScreenMiniMenu::MiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel, float fX, float fY )
 {
 	PrepareToLoadScreen( pDef->sClassName );
-	
+
 	g_pMenuDef = pDef;
 	g_SendOnOK = SM_SendOnOK;
 	g_SendOnCancel = SM_SendOnCancel;
@@ -97,7 +97,7 @@ void ScreenMiniMenu::AfterChangeValueOrRow( PlayerNumber pn )
 		vpns.push_back( p );
 	for( unsigned i=0; i<m_pRows.size(); i++ )
 		ExportOptions( i, vpns );
-	
+
 	// Changing one option can affect whether other options are available.
 	for( unsigned i=0; i<m_pRows.size(); i++ )
 	{

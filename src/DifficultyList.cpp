@@ -267,7 +267,7 @@ void StepsDisplayList::SetFromGameState()
 	{
 		vector<Steps*>	vpSteps;
 		SongUtil::GetPlayableSteps( pSong, vpSteps );
-		/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
+		// Should match the sort in ScreenSelectMusic::AfterMusicChange.
 
 		m_Rows.resize( vpSteps.size() );
 		FOREACH_CONST( Steps*, vpSteps, s )
