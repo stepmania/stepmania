@@ -22,6 +22,8 @@ ver.cpp
 lib*_link.a
 Data/UserPrefs
 PBProject/Hardware.plist
+Themes/pump
+Themes/optical-release
 
 syntax: regexp
 .*\#.*\#$
