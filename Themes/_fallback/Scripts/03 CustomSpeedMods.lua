@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 Custom Speed Mods v2.0 (for sm-ssc)
 by AJ Kelly of KKI Labs ( http://kki.ajworld.net/ )
 
