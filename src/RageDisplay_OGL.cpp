@@ -1715,6 +1715,8 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 	{
 		if( mode == BLEND_INVERT_DEST )
 			GLExt.glBlendEquation( GL_FUNC_SUBTRACT );
+		else if( mode == BLEND_SUBTRACT )
+			GLExt.glBlendEquation( GL_FUNC_REVERSE_SUBTRACT );
 		else
 			GLExt.glBlendEquation( GL_FUNC_ADD );
 	}
@@ -1728,6 +1730,9 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 		break;
 	case BLEND_ADD:
 		iSourceRGB = GL_SRC_ALPHA; iDestRGB = GL_ONE;
+		break;
+	case BLEND_SUBTRACT:
+		iSourceRGB = GL_SRC_ALPHA; iDestRGB = GL_ONE_MINUS_SRC_ALPHA;
 		break;
 	case BLEND_MODULATE:
 		iSourceRGB = GL_ZERO; iDestRGB = GL_SRC_COLOR;
