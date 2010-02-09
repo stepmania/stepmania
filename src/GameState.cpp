@@ -2169,11 +2169,13 @@ public:
 
 		if( p->m_pCurSong.Get() != NULL )
 		{
-			// try with the player's current steps first, since they're likely the correct ones.
-			pSteps = p->m_pCurSteps[pn];
+			// try our preferred steps type and difficulty first
+			pSteps = SongUtil::GetOneSteps( p->m_pCurSong.Get(), GAMESTATE->m_PreferredStepsType, GAMESTATE->m_PreferredDifficulty[pn] );
 
+			// no matches for preferred stepstype? try the current style
 			if( pSteps == NULL )
 				pSteps = SongUtil::GetOneSteps( p->m_pCurSong.Get(), GAMESTATE->GetCurrentStyle()->m_StepsType, GAMESTATE->m_PreferredDifficulty[pn] );
+
 			// nothing found with preferred difficulty? try with closest.
 			// closest seems to return 'easy' when prefrred difficulty is 'medium'
 			// even if the song has medium steps?
