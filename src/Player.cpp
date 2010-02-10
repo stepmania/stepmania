@@ -735,9 +735,6 @@ void Player::Update( float fDeltaTime )
 		DoStrumMiss();
 	}
 
-	// Check for TapNote misses
-	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
-
 	// update pressed flag
 	const int iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
 	ASSERT_M( iNumCols <= MAX_COLS_PER_PLAYER, ssprintf("%i > %i", iNumCols, MAX_COLS_PER_PLAYER) );
@@ -870,18 +867,32 @@ void Player::Update( float fDeltaTime )
 		{
 			if( GAMESTATE->IsPlayerEnabled(m_pPlayerState) )
 			{
-				if(m_bDelay)
+				if(GAMESTATE->m_bDelay)
 				{
-					CrossedRows( iRowNow-1, now );
-					m_bDelay = false;
+					if( !m_bDelay )
+						m_bDelay = true;
 				}
-				CrossedRows( iRowNow, now );
+				else
+				{
+					if(m_bDelay)
+					{
+						if(m_pPlayerState->m_PlayerController != PC_HUMAN)
+						{
+							CrossedRows( iRowNow-1, now );
+						}
+						m_bDelay = false;
+					}
+					CrossedRows( iRowNow, now );
+				}
 			}
 		}
 	}
 
 	// Check for completely judged rows.
 	UpdateJudgedRows();
+
+	// Check for TapNote misses
+	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
 
 	// process transforms that are waiting to be applied
 	ApplyWaitingTransforms();
