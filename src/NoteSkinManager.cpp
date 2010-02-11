@@ -242,21 +242,6 @@ void NoteSkinManager::GetAllNoteSkinNamesForGame( const Game *pGame, vector<RStr
 
 RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &sValue )
 {
-	// if no noteskin has loaded by now, something seriously went wrong!
-	if( m_sCurrentNoteSkin.empty() ) 
-	{
-		// try selecting the default noteskin
- 		if( DoesNoteSkinExist( "default" ) )
-		{
-			m_sCurrentNoteSkin = "default";
-			LOG->Warn("A noteskin was not loaded before NoteSkinManager::GetMetric() so the default noteskin was forced."); 
-		}
-		else
-		{
-			LOG->Warn("A noteskin was not loaded before NoteSkinManager::GetMetric() and none could be loaded."); 
-		}
-	}
-
 	ASSERT( !m_sCurrentNoteSkin.empty() );
 	RString sNoteSkinName = m_sCurrentNoteSkin;
 	sNoteSkinName.MakeLower();
