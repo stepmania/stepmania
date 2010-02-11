@@ -987,6 +987,79 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			}
 
 			bool bAllPlayersDoneSelectingSteps = bInitiatedByMenuTimer || bAllOtherHumanPlayersDone;
+
+			/* 
+			 * TRICKY: if we have a Routine chart selected, we need to ensure the following:
+			 *
+			 * 1. Both players must select the same Routine steps.
+			 * 2. If the other player picks non-Routine steps, this player cannot pick Routine.
+			 * 3. If the other player picked Routine steps, and we pick non-Routine steps, the other
+			 *    player's steps must be unselected.
+			 * 4. If time runs out, and both players don't have the same Routine chart selected,
+			 *	  we need to bump the player with a Routine chart selection to a playable chart.
+			 *    (Right now, we bump them to Beginner...can we come up with something better?)
+			 */
+
+			bool bSelectedRoutineSteps[NUM_PLAYERS], bAnySelectedRoutine = false;
+			bool bSelectedSameSteps = GAMESTATE->m_pCurSteps[PLAYER_1] == GAMESTATE->m_pCurSteps[PLAYER_2];
+
+			FOREACH_PlayerNumber( p )
+			{
+				const Steps *pSteps = GAMESTATE->m_pCurSteps[p];
+				const StepsTypeInfo &sti = GAMEMAN->GetStepsTypeInfo( pSteps->m_StepsType );
+
+				bSelectedRoutineSteps[p] = sti.m_StepsTypeCategory == StepsTypeCategory_Routine;
+				bAnySelectedRoutine |= bSelectedRoutineSteps[p];
+			}
+
+			if( bAnySelectedRoutine )
+			{
+				/* Timer ran out. If we haven't agreed on steps, move players with Routine steps down
+				 * to Beginner. I'll admit that's annoying, but at least they won't lose more stages. */
+				if( bInitiatedByMenuTimer && !bSelectedSameSteps )
+				{
+					// Since m_vpSteps is sorted by Difficulty, the first entry should be the easiest.
+					ASSERT( m_vpSteps.size() );
+					Steps *pSteps = m_vpSteps[0];
+
+					FOREACH_PlayerNumber( p )
+					{
+						if( bSelectedRoutineSteps[p] )
+							GAMESTATE->m_pCurSteps[p].Set( pSteps );
+					}
+
+					break;
+				}
+
+				// If the steps don't match up, we need to check some more conditions...
+				if( !bSelectedSameSteps )
+				{
+					const PlayerNumber other = OPPOSITE_PLAYER[pn];
+
+					if( m_bStepsChosen[other] )
+					{
+						/* Unready the other player if they selected Routine steps, but we didn't. */
+						if( bSelectedRoutineSteps[other] )
+						{
+							m_bStepsChosen[other] = false;
+							bAllPlayersDoneSelectingSteps = false;	// if the timer ran out, we handled it earlier
+
+							// HACK: send an event to Input to tell it to unready.
+							InputEventPlus event;
+							event.MenuI = GAME_BUTTON_SELECT;
+							event.pn = other;
+
+							this->Input( event );
+						}
+						else if( bSelectedRoutineSteps[pn] )
+						{
+							// They selected non-Routine steps, so we can't select Routine steps.
+							return;
+						}
+					}
+				}
+			}
+
 			if( !bAllPlayersDoneSelectingSteps )
 			{
 				m_bStepsChosen[pn] = true;
