@@ -407,6 +407,7 @@ static bool NeedsTapJudging( const TapNote &tn )
 		return tn.result.tns == TNS_None;
 	case TapNote::hold_tail:
 	case TapNote::attack:
+	case TapNote::autoKeysound:
 	case TapNote::fake:
 		return false;
 	}
@@ -424,6 +425,7 @@ static bool NeedsHoldJudging( const TapNote &tn )
 	case TapNote::mine:
 	case TapNote::lift:
 	case TapNote::attack:
+	case TapNote::autoKeysound:
 	case TapNote::fake:
 		return false;
 	}
