@@ -40,10 +40,10 @@ local t = Def.ActorFrame {
 			return
 		end; --]]
 	TwentyFiveMilestoneCommand=function(self,parent)
-		(cmd(rotationz,125;decelerate,0.125;rotationz,0))(self);
+		(cmd(zoom,1.25;drop,0.325;zoom,1))(self);
 	end;
 	ToastyAchievedMessageCommand=function(self,parent)
-		(cmd(stopeffect;spin;effectperiod,1))(self);
+		(cmd(pulse;effectperiod,1))(self);
 	end;
 	ComboCommand=function(self, param)
 		local iCombo = param.Misses or param.Combo;

@@ -141,7 +141,7 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )
 	}
 }
 
-LuaFunction( GetCustomDifficulty, GetCustomDifficulty(Enum::Check<StepsType>(L,1), Enum::Check<Difficulty>(L, 2), Enum::Check<CourseType>(L, 3)) );
+LuaFunction( GetCustomDifficulty, GetCustomDifficulty(Enum::Check<StepsType>(L,1), Enum::Check<Difficulty>(L, 2), Enum::Check<CourseType>(L, 3, true)) );
 
 RString CustomDifficultyToLocalizedString( const RString &sCustomDifficulty )
 {

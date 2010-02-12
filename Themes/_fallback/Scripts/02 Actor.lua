@@ -135,6 +135,18 @@ function Actor:Center()
     self:y(SCREEN_CENTER_Y);
 end;
 
+-- SSC Additions
+local DropBezier =
+{
+	0		,	0,
+	8/16	,	1,
+	12/16	,	0.5,
+	16/16	,	1,
+}
+function Actor:drop(t)
+	self:tween( t, "TweenType_Bezier", DropBezier );
+end
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --
