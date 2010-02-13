@@ -57,8 +57,8 @@ public:
 	int GameInputToColumn( const GameInput &GameI ) const;
 	RString ColToButtonName( int iCol ) const;
 
+	bool GetUsesCenteredArrows() const;
 	void GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& original, NoteData& noteDataOut ) const;
-
 	void GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const;
 
 	// Lua

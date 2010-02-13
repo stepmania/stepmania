@@ -20,6 +20,17 @@
 #include "NoteData.h"
 #include <float.h>
 
+bool Style::GetUsesCenteredArrows() const
+{
+	switch( m_StyleType )
+	{
+	case StyleType_OnePlayerTwoSides:
+	case StyleType_TwoPlayersSharedSides:
+		return true;
+	default:
+		return false;
+	}
+}
 
 void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& original, NoteData& noteDataOut ) const
 {

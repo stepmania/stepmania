@@ -362,7 +362,17 @@ void ScreenGameplay::Init()
 	ScreenWithMenuElements::Init();
 
 	this->FillPlayerInfo( m_vPlayerInfo );
-	ASSERT_M( !m_vPlayerInfo.empty(), "m_vPlayerInfo must be filled by FillPlayerInfo" );
+
+	{
+		ASSERT_M( !m_vPlayerInfo.empty(), "m_vPlayerInfo must be filled by FillPlayerInfo" );
+
+		int iNumEnabledPlayers = 0;
+		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+			++iNumEnabledPlayers;
+
+		/* If this is 0, we have no active players and havn't been initialized correctly. */
+		ASSERT( iNumEnabledPlayers > 0 );
+	}
 
 	/* Pause MEMCARDMAN.  If a memory card is removed, we don't want to interrupt the
 	 * player by making a noise until the game finishes. */
