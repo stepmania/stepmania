@@ -534,20 +534,6 @@ const vector<Song*> &SongManager::GetSongs( const RString &sGroupName ) const
 	return vEmpty;
 }
 
-void SongManager::GetPopularSongs( vector<Song*> &AddTo, const RString &sGroupName ) const
-{
-	if( sGroupName == GROUP_ALL )
-	{
-		AddTo.insert( AddTo.end(), m_pPopularSongs.begin(), m_pPopularSongs.end() );
-		return;
-	}
-	FOREACH_CONST( Song*, m_pPopularSongs, song )
-	{
-		if( (*song)->m_sGroupName == sGroupName )
-			AddTo.push_back( *song );
-	}
-}
-
 void SongManager::GetPreferredSortSongs( vector<Song*> &AddTo ) const
 {
 	if( m_vPreferredSongSort.empty() )

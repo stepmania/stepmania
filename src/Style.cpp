@@ -57,9 +57,14 @@ GameInput Style::StyleInputToGameInput( int iCol, PlayerNumber pn ) const
 		if( bUsingOneSide && gc != (int) pn )
 			continue;
 
-		for( GameButton gb=GAME_BUTTON_NEXT; gb < INPUTMAPPER->GetInputScheme()->m_iButtonsPerController && m_iInputColumn[gc][gb-GAME_BUTTON_NEXT] != END_MAPPING; gb=(GameButton)(gb+1) )
+		int iButtonsPerController = INPUTMAPPER->GetInputScheme()->m_iButtonsPerController;
+		for( GameButton gb=GAME_BUTTON_NEXT; gb < iButtonsPerController; gb=(GameButton)(gb+1) )
 		{
-			if( m_iInputColumn[gc][gb-GAME_BUTTON_NEXT] == iCol )
+			int iThisInputCol = m_iInputColumn[gc][gb-GAME_BUTTON_NEXT];
+			if( iThisInputCol == END_MAPPING )
+				break;
+
+			if( iThisInputCol == iCol )
 				return GameInput( gc, gb );
 		}
 	}

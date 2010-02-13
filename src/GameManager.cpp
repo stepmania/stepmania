@@ -810,7 +810,7 @@ static const Style g_Style_Pump_Routine =
 		{ 6, 8, 7, 5, 9, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		2,1,3,0,4,7,6,8,1,9
+		2,1,3,0,4,7,6,8,5,9
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper

@@ -316,7 +316,7 @@ bool MusicWheel::SelectModeMenuItem()
 	return true;
 }
 
-void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RString &sPreferredGroup )
+void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 {
 	vector<Song*> apAllSongs;
 	switch( so )
@@ -325,10 +325,10 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 		SONGMAN->GetPreferredSortSongs( apAllSongs );
 		break;
 	case SORT_POPULARITY:
-		SONGMAN->GetPopularSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup );
+		SONGMAN->GetPopularSongs();
 		break;
 	default:
-		apAllSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
+		apAllSongs = SONGMAN->GetAllSongs();
 		break;
 	}
 
@@ -365,7 +365,6 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 		if( (so!=SORT_ROULETTE || !RANDOM_PICKS_LOCKED_SONGS) && iLocked )
 			continue;
 
-
 		if( PREFSMAN->m_bOnlyPreferredDifficulties )
 		{
 			// if the song has steps that fit the preferred difficulty of the default player
@@ -377,9 +376,7 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RSt
 			// If the song has at least one steps, add it.
 			if( pSong->HasStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType) )
 				arraySongs.push_back( pSong );
-
 		}
-
 
 	}
 
@@ -440,7 +437,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			// Make an array of Song*, then sort them
 			vector<Song*> arraySongs;
 
-			GetSongList( arraySongs, so, GAMESTATE->m_sPreferredSongGroup );
+			GetSongList();
 
 			bool bUseSections = true;
 

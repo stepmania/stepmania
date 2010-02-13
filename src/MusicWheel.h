@@ -48,7 +48,7 @@ public:
 protected:
 	MusicWheelItem *MakeItem();
 
-	void GetSongList( vector<Song*> &arraySongs, SortOrder so, const RString &sPreferredGroup );
+	void GetSongList( vector<Song*> &arraySongs, SortOrder so );
 	void BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelItems, SortOrder so );
 	bool SelectSongOrCourse();
 	bool SelectCourse( const Course *p );
