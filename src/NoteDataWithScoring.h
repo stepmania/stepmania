@@ -14,9 +14,9 @@ struct TapNote;
 
 namespace NoteDataWithScoring
 {
-	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow, PlayerNumber pn );
-	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow, PlayerNumber pn );
-	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow, PlayerNumber pn );
+	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow );
+	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow );
+	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow );
 
 	void GetActualRadarValues( const NoteData &in, const PlayerStageStats &pss, float fSongSeconds, RadarValues& out );
 };

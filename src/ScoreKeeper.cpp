@@ -15,18 +15,16 @@ void ScoreKeeper::GetScoreOfLastTapInRow( const NoteData &nd, int iRow,
 {
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	int iNum = 0;
-	
+
 	for( int track = 0; track < nd.GetNumTracks(); ++track )
 	{
 		const TapNote &tn = nd.GetTapNote( track, iRow );
-	
-		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
-			continue;
+
 		if( tn.type != TapNote::tap && tn.type != TapNote::hold_head )
 			continue;
 		++iNum;
 	}
-	tnsOut = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow, pn ).result.tns;
+	tnsOut = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow ).result.tns;
 	iNumTapsInRowOut = iNum;
 }
 

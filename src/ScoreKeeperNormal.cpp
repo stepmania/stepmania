@@ -619,14 +619,11 @@ void ScoreKeeperNormal::GetRowCounts( const NoteData &nd, int iRow,
 				      int &iNumHitContinueCombo, int &iNumHitMaintainCombo,
 				      int &iNumBreakCombo )
 {
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	iNumHitContinueCombo = iNumHitMaintainCombo = iNumBreakCombo = 0;
 	for( int track = 0; track < nd.GetNumTracks(); ++track )
 	{
 		const TapNote &tn = nd.GetTapNote( track, iRow );
 
-		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
-			continue;
 		if( tn.type != TapNote::tap && tn.type != TapNote::hold_head && tn.type != TapNote::lift )
 			continue;
 		TapNoteScore tns = tn.result.tns;
@@ -650,7 +647,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 
 	m_iNumNotesHitThisRow = iNumTapsInRow;
 
-	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow, m_pPlayerState->m_PlayerNumber ).result.tns;
+	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow ).result.tns;
 	HandleTapNoteScoreInternal( scoreOfLastTap, TNS_W1 );
 
 	HandleComboInternal( iNumHitContinueCombo, iNumHitMaintainCombo, iNumBreakCombo );
@@ -672,9 +669,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	}
 #endif //DEBUG
 
-	//
 	// Toasty combo
-	//
 	switch( scoreOfLastTap )
 	{
 	case TNS_W1:
@@ -698,7 +693,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 
 	// TODO: Remove indexing with PlayerNumber
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	float offset = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow, pn ).result.fTapNoteOffset;
+	float offset = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow ).result.fTapNoteOffset;
 	NSMAN->ReportScore( pn, scoreOfLastTap,
 			m_pPlayerStageStats->m_iScore,
 			m_pPlayerStageStats->m_iCurCombo, offset );

@@ -112,7 +112,7 @@ public:
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void UpdateJudgedRows();
-	void FlashGhostRow( int iRow, PlayerNumber pn );
+	void FlashGhostRow( int iRow );
 	void HandleTapRowScore( unsigned row );
 	void HandleHoldScore( const TapNote &tn );
 	void HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const vector<int> &viColsWithHold );

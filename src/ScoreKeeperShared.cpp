@@ -1,29 +1,92 @@
 #include "global.h"
 #include "ScoreKeeperShared.h"
+#include "RageLog.h"
 #include "GameState.h"
-#include "StatsManager.h"
-#include "NoteDataUtil.h"
-#include "NoteData.h"
 #include "PlayerState.h"
 
+/* In Routine, we have two Players, but the master one handles all of the scoring.  The other
+ * one will just receive misses for everything, and shouldn't do anything. */
 ScoreKeeperShared::ScoreKeeperShared( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats ) :
 	ScoreKeeperNormal( pPlayerState, pPlayerStageStats )
 {
 }
 
-void ScoreKeeperShared::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
+void ScoreKeeperShared::Load(
+	const vector<Song*> &apSongs,
+	const vector<Steps*> &apSteps,
+	const vector<AttackArray> &asModifiers )
 {
-	vector<NoteData> vParts;
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-	NoteDataUtil::SplitCompositeNoteData( *pNoteData, vParts );
-	ScoreKeeperNormal::OnNextSong( iSongInCourseIndex, pSteps, &vParts[pn] );
+	if( m_pPlayerState->m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
+		return;
+	ScoreKeeperNormal::Load( apSongs, apSteps, asModifiers );
 }
 
-#undef CALL
+// These ScoreKeepers don't get to draw.
+void ScoreKeeperShared::DrawPrimitives()
+{
+	if( m_pPlayerState->m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
+		return;
+	ScoreKeeperNormal::DrawPrimitives();
+}
+
+void ScoreKeeperShared::Update( float fDelta )
+{
+	if( m_pPlayerState->m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
+		return;
+	ScoreKeeperNormal::Update( fDelta );
+}
+
+void ScoreKeeperShared::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
+{
+	if( m_pPlayerState->m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
+		return;
+	ScoreKeeperNormal::OnNextSong( iSongInCourseIndex, pSteps, pNoteData );
+}
+
+void ScoreKeeperShared::HandleTapScore( const TapNote &tn )
+{
+	if( m_pPlayerState->m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
+		return;
+	ScoreKeeperNormal::HandleTapScore( tn );
+}
+
+void ScoreKeeperShared::HandleTapRowScore( const NoteData &nd, int iRow )
+{
+	if( m_pPlayerState->m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
+		return;
+	ScoreKeeperNormal::HandleTapRowScore( nd, iRow );
+}
+
+void ScoreKeeperShared::HandleHoldScore( const TapNote &tn )
+{
+	if( m_pPlayerState->m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
+		return;
+	ScoreKeeperNormal::HandleHoldScore( tn );
+}
+
+void ScoreKeeperShared::HandleHoldActiveSeconds( float fMusicSecondsHeld )
+{
+	if( m_pPlayerState->m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
+		return;
+	ScoreKeeperNormal::HandleHoldActiveSeconds( fMusicSecondsHeld );
+}
+
+void ScoreKeeperShared::HandleHoldCheckpointScore( const NoteData &nd, int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow )
+{
+	if( m_pPlayerState->m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
+		return;
+	ScoreKeeperNormal::HandleHoldCheckpointScore( nd, iRow, iNumHoldsHeldThisRow,  iNumHoldsMissedThisRow );
+}
+
+void ScoreKeeperShared::HandleTapScoreNone()
+{
+	if( m_pPlayerState->m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
+		return;
+	ScoreKeeperNormal::HandleTapScoreNone();
+}
 
 /*
- * (c) 2006 Steve Checkoway
+ * (c) 2006-2010 Steve Checkoway, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

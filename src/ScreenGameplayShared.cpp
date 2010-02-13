@@ -4,56 +4,27 @@
 #include "Player.h"
 #include "NoteDataUtil.h"
 #include "NoteDataWithScoring.h"
-#include "ActiveAttackList.h"
-#include "ScoreDisplayNormal.h"
-#include "ScoreKeeperShared.h"
 #include "Song.h"
+#include "StatsManager.h"
 
 REGISTER_SCREEN_CLASS( ScreenGameplayShared );
 
 void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 {
-	PlayerNumber mpn = GAMESTATE->m_MasterPlayerNumber;
-	vPlayerInfoOut.resize( NUM_PLAYERS );
-	PlayerInfo &mpi = vPlayerInfoOut[mpn];
-	FOREACH_PlayerNumber( pn )
-	{
-		PlayerInfo &pi = vPlayerInfoOut[pn];
-		pi.Load( pn, MultiPlayer_Invalid, pn == mpn, Difficulty_Invalid );
-		pi.m_pPlayer = new Player( mpi.m_NoteData, pn == mpn );
-	}
+	const PlayerNumber master = GAMESTATE->m_MasterPlayerNumber;
+	const PlayerNumber other = (master == PLAYER_1? PLAYER_2:PLAYER_1);
+
+	/* The master player is where all of the real work takes place.  The other player exists
+	 * only so we have a place to split stats out into at the end. */
+	vPlayerInfoOut.resize( 2 );
+	vPlayerInfoOut[0].Load( master, MultiPlayer_Invalid, true, Difficulty_Invalid );
+	vPlayerInfoOut[1].Load( other, MultiPlayer_Invalid, false, Difficulty_Invalid );
 }
 
 PlayerInfo &ScreenGameplayShared::GetPlayerInfoForInput( const InputEventPlus& iep )
 {
 	return m_vPlayerInfo[GAMESTATE->m_MasterPlayerNumber];
 }
-
-void ScreenGameplayShared::SaveStats()
-{
-	vector<NoteData> vParts;
-	PlayerNumber mpn = GAMESTATE->m_MasterPlayerNumber;
-	float fMusicLen = GAMESTATE->m_pCurSong->m_fMusicLengthSeconds;
-	
-	NoteDataUtil::SplitCompositeNoteData( m_vPlayerInfo[mpn].m_pPlayer->GetNoteData(), vParts );
-	for( size_t i = 0; i < min(vParts.size(), m_vPlayerInfo.size()); ++i )
-	{
-		PlayerInfo &pi = m_vPlayerInfo[i];
-		
-		if( !pi.IsEnabled() )
-			continue;
-		NoteData &nd = vParts[i];
-		RadarValues rv;
-		PlayerStageStats &pss = *pi.GetPlayerStageStats();
-		
-		NoteDataUtil::CalculateRadarValues( nd, fMusicLen, rv );
-		pss.m_radarPossible += rv;
-		
-		NoteDataWithScoring::GetActualRadarValues( nd, pss, fMusicLen, rv );
-		pss.m_radarActual += rv;
-	}
-}
-
 
 /*
  * (c) 2006 Steve Checkoway

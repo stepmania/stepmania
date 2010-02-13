@@ -49,15 +49,15 @@ public:
 	virtual void Update( float fDelta ) { }
 
 	/* Note that pNoteData will include any transformations due to modifiers. */
-	virtual void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData ) = 0;	// before a song plays (called multiple times if course)
+	virtual void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData ) { };	// before a song plays (called multiple times if course)
 
 	// HandleTap* is called before HandleTapRow*
-	virtual void HandleTapScore( const TapNote &tn ) = 0;
-	virtual void HandleTapRowScore( const NoteData &nd, int iRow ) = 0;
-	virtual void HandleHoldScore( const TapNote &tn ) = 0;
-	virtual void HandleHoldActiveSeconds( float fMusicSecondsHeld ) = 0;
+	virtual void HandleTapScore( const TapNote &tn ) { }
+	virtual void HandleTapRowScore( const NoteData &nd, int iRow ) { }
+	virtual void HandleHoldScore( const TapNote &tn ) { }
+	virtual void HandleHoldActiveSeconds( float fMusicSecondsHeld ) { }
 	virtual void HandleHoldCheckpointScore( const NoteData &nd, int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow ) { }
-	virtual void HandleTapScoreNone() = 0;
+	virtual void HandleTapScoreNone() { }
 
 protected:
 	void GetScoreOfLastTapInRow( const NoteData &nd, int iRow, TapNoteScore &tnsOut, int &iNumTapsInRowOut );
