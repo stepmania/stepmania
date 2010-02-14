@@ -437,7 +437,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			// Make an array of Song*, then sort them
 			vector<Song*> arraySongs;
 
-			GetSongList();
+			GetSongList(arraySongs, so);
 
 			bool bUseSections = true;
 
