@@ -2483,7 +2483,7 @@ void Player::UpdateJudgedRows()
 
 void Player::FlashGhostRow( int iRow )
 {
-	TapNoteScore lastTNS = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow, pn ).result.tns;
+	TapNoteScore lastTNS = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow ).result.tns;
 	const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
 	const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) ) || bBlind;
 
@@ -2744,8 +2744,6 @@ void Player::HandleTapRowScore( unsigned row )
 		const TapNote &tn = m_NoteData.GetTapNote( track, row );
 		// Mines cannot be handled here.
 		if( tn.type == TapNote::empty || tn.type == TapNote::fake || tn.type == TapNote::mine )
-			continue;
-		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
 			continue;
 		if( m_pPrimaryScoreKeeper )
 			m_pPrimaryScoreKeeper->HandleTapScore( tn );
