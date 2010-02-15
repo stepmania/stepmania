@@ -3051,6 +3051,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RageFileDriverReadAhead.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RageFileDriverReadAhead.h"
+				>
+			</File>
+			<File
 				RelativePath="RageFileDriverSlice.cpp"
 				>
 			</File>
@@ -3080,6 +3088,14 @@
 			</File>
 			<File
 				RelativePath="RageFileManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RageFileManager_ReadAhead.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RageFileManager_ReadAhead.h"
 				>
 			</File>
 			<File

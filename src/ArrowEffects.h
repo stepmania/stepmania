@@ -29,39 +29,38 @@ public:
 	static float GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCol, float YPos, float fYReverseOffsetPixels );
 
 
-	//	fRotation is Z rotation of an arrow.  This will depend on the column of 
-	//	the arrow and possibly the Arrow effect and the fYOffset (in the case of 
-	//	EFFECT_DIZZY).
+	// fRotation is Z rotation of an arrow.  This will depend on the column of 
+	// the arrow and possibly the Arrow effect and the fYOffset (in the case of 
+	// EFFECT_DIZZY).
 	static float GetRotation(	const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead );
 	static float ReceptorGetRotation(	const PlayerState* pPlayerState );
 
 
-	//	fXPos is a horizontal position in pixels relative to the center of the field.
-	//	This depends on the column of the arrow and possibly the Arrow effect and
-	//	fYPos (in the case of EFFECT_DRUNK).
+	// fXPos is a horizontal position in pixels relative to the center of the field.
+	// This depends on the column of the arrow and possibly the Arrow effect and
+	// fYPos (in the case of EFFECT_DRUNK).
 	static float GetXPos( const PlayerState* pPlayerState, int iCol, float fYOffset );
 
-	// Shift a note's fXPos by this amount depending
-	//
+	// Shift a note's fXPos by this amount depending (on what? -aj)
 	static float GetXOffset( const PlayerState* pPlayerState, float fMidiNote );
 
-	//  Z position; normally 0.  Only visible in perspective modes.
+	// Z position; normally 0. Only visible in perspective modes.
 	static float GetZPos( const PlayerState* pPlayerState, int iCol, float fYPos );
 
 	// Enable this if any ZPos effects are enabled.
 	static bool NeedZBuffer( const PlayerState* pPlayerState );
 
-	//	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
-	//	AppearanceType.
+	// fAlpha is the transparency of the arrow.  It depends on fYPos and the 
+	// AppearanceType.
 	static float GetAlpha( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 
 
-	//	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
-	//	AppearanceType.
+	// fAlpha is the transparency of the arrow.  It depends on fYPos and the 
+	// AppearanceType.
 	static float GetGlow( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 
 
-	//	Depends on fYOffset.
+	// Depends on fYOffset.
 	static float GetBrightness( const PlayerState* pPlayerState, float fNoteBeat );
 
 	// This is the zoom of the individual tracks, not of the whole Player.

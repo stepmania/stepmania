@@ -439,6 +439,12 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 		return;
 	}
 
+	FOREACH_PlayerNumber( pn )
+	{
+		out.push_back( NoteData() );
+		out.back().SetNumTracks( in.GetNumTracks() );
+	}
+
 	for( int t = 0; t < in.GetNumTracks(); ++t )
 	{
 		for( NoteData::const_iterator iter = in.begin(t); iter != in.end(t); ++iter )
@@ -447,12 +453,7 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 			TapNote tn = iter->second;
 			unsigned index = int( tn.pn );
 
-			DEBUG_ASSERT( index < NUM_PlayerNumber );
-			while( out.size() <= index )
-			{
-				out.push_back( NoteData() );
-				out.back().SetNumTracks( in.GetNumTracks() );
-			}
+			ASSERT( index < NUM_PlayerNumber );
 			tn.pn = PLAYER_INVALID;
 			out[index].SetTapNote( t, row, tn );
 		}

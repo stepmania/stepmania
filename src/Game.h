@@ -9,24 +9,23 @@
 struct lua_State;
 class Style;
 
-//
-// PrimaryMenuButton and SecondaryMenuButton are used to support using DeviceInputs that only 
-// navigate the menus.
+// PrimaryMenuButton and SecondaryMenuButton are used to support using
+// DeviceInputs that only  navigate the menus.
 // 
-// A button being a primary menu button means that this GameButton will generate a the
-// corresponding MenuInput IF AND ONLY IF the GameButton corresponding to the pimary input 
-// is not mapped.
+// A button being a primary menu button means that this GameButton will generate
+// a the corresponding MenuInput IF AND ONLY IF the GameButton corresponding to
+// the pimary input is not mapped.
 //
-// Example 1:  A user is using an arcade machine as their controller.  Most machines have
-// MenuLeft, MenuStart, and MenuRight buttons on the cabinet, so they should be used to navigate menus.
-// The user will map these DeviceInputs to the GameButtons "MenuLeft (optional)", "MenuStart", and 
-// "MenuRight (optional)".
+// Example 1: A user is using an arcade machine as their controller. Most
+// machines have MenuLeft, MenuStart, and MenuRight buttons on the cabinet, so
+// they should be used to navigate menus. The user will map these DeviceInputs
+// to the GameButtons "MenuLeft (optional)", "MenuStart", and "MenuRight (optional)".
 //
-// Example 2:  A user is using PlayStation dance pads to play.  These controllers don't have dedicated
-// DeviceInputs for MenuLeft and MenuRight.  The user maps Up, Down, Left, and Right as normal.
-// Since the Left and Right GameButtons have the flag FLAG_SECONDARY_MENU_*, they will function as 
-// MenuLeft and MenuRight as long as "MenuLeft (optional)" and "MenuRight (optional)" are not mapped.
-//
+// Example 2:  A user is using PlayStation dance pads to play. These controllers
+// don't have dedicated DeviceInputs for MenuLeft and MenuRight. The user maps 
+// Up, Down, Left, and Right as normal. Since the Left and Right GameButtons 
+// have the flag FLAG_SECONDARY_MENU_*, they will function as MenuLeft and
+// MenuRight as long as "MenuLeft (optional)" and "MenuRight (optional)" are not mapped.
 
 class Game
 {
@@ -37,7 +36,7 @@ public:
 	bool			m_bCountNotesSeparately;	// Count multiple notes in a row as separate notes or as one note
 	bool			m_bAllowHopos;		// allow Hammer-ons and Pull-offs?  Only useful for guitar type input.
 	InputScheme		m_InputScheme;
-	
+
 	struct PerButtonInfo
 	{
 		GameButtonType m_gbt;
@@ -53,9 +52,7 @@ public:
 	TapNoteScore		m_mapW4To;
 	TapNoteScore		m_mapW5To;
 
-	//
 	// Lua
-	//
 	void PushSelf( lua_State *L );
 };
 

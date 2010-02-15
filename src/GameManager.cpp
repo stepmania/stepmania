@@ -48,6 +48,7 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	{ "dance-double",	8,	true,	StepsTypeCategory_Double },
 	{ "dance-couple",	8,	true,	StepsTypeCategory_Couple },
 	{ "dance-solo",		6,	true,	StepsTypeCategory_Single },
+	//{ "dance-three",		3,	true,	StepsTypeCategory_Single },
 	{ "dance-routine",	8,	false,	StepsTypeCategory_Routine },
 	// pump
 	{ "pump-single",	5,	true,	StepsTypeCategory_Single },
@@ -323,6 +324,41 @@ static const Style g_Style_Dance_Solo =
 };
 
 // todo: "easy solo" or whatever the proper name for the 3 panel \|/ mode is.
+/*
+static const Style g_Style_Dance_Three =
+{	// STYLE_DANCE_THREE
+	true,				// m_bUsedForGameplay
+	true,				// m_bUsedForEdit
+	false,				// m_bUsedForDemonstration
+	false,				// m_bUsedForHowToPlay
+	"three",				// m_szName
+	StepsType_dance_three,		// m_StepsType
+	StyleType_OnePlayerOneSide,		// m_StyleType
+	3,				// m_iColsPerPlayer
+	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_1,	-DANCE_COL_SPACING*1.0f, NULL },
+			{ TRACK_2,	+DANCE_COL_SPACING*0.0f, NULL },
+			{ TRACK_3,	+DANCE_COL_SPACING*1.0f, NULL },
+		},
+		{	// PLAYER_2
+			{ TRACK_1,	-DANCE_COL_SPACING*1.0f, NULL },
+			{ TRACK_2,	+DANCE_COL_SPACING*0.0f, NULL },
+			{ TRACK_3,	+DANCE_COL_SPACING*1.0f, NULL },
+		},
+	},
+	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
+		{ 0, 1, 2, Style::END_MAPPING },
+		{ 0, 1, 2, Style::END_MAPPING }
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		0,1,2
+	},
+	false, // m_bNeedsZoomOutWith2Players
+	false, // m_bCanUseBeginnerHelper
+	false, // m_bLockDifficulties
+};
+*/
 
 static const Style g_Style_Dance_Couple_Edit =
 {	// STYLE_DANCE_EDIT_COUPLE
@@ -458,6 +494,7 @@ static const Style *g_apGame_Dance_Styles[] =
 	&g_Style_Dance_Double,
 	&g_Style_Dance_Couple,
 	&g_Style_Dance_Solo,
+	//&g_Style_Dance_Three,
 	&g_Style_Dance_Couple_Edit,
 	&g_Style_Dance_Routine,
 	NULL
@@ -770,7 +807,7 @@ static const Style g_Style_Pump_Couple_Edit =
 };
 
 static const Style g_Style_Pump_Routine =
-{	// STYLE_DANCE_ROUTINE
+{	// STYLE_PUMP_ROUTINE
 	true,				// m_bUsedForGameplay
 	true,				// m_bUsedForEdit
 	false,				// m_bUsedForDemonstration
@@ -2511,7 +2548,7 @@ static const Game g_Game_Popn =
 
 /** Guitar5 ******************************************************************/
 //ThemeMetric<int>	GUITAR5_COL_SPACING	("ColumnSpacing","Guitar5");
-static const int GUITAR5_COL_SPACING = 32; 
+static const int GUITAR5_COL_SPACING = 32;
 /*
 static const Style g_Style_Guitar_Five =
 {	// STYLE_GUITAR_FIVE

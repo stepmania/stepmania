@@ -1272,10 +1272,8 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	else
 		sFileNameNoExtension = Profile::MakeFileNameNoExtension( "screen", iIndex );
 
-	//
 	// Save the screenshot.  If writing lossy to a memcard, use SAVE_LOSSY_LOW_QUAL, so we
 	// don't eat up lots of space.
-	//
 	RageDisplay::GraphicsFileFormat fmt;
 	if( bSaveCompressed && MEMCARDMAN->PathIsMemCard(sDir) )
 		fmt = RageDisplay::SAVE_LOSSY_LOW_QUAL;

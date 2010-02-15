@@ -50,6 +50,7 @@ public:
 	virtual RageFileObjDirect *Copy() const;
 	virtual RString GetDisplayPath() const { return m_sPath; }
 	virtual int GetFileSize() const;
+	virtual int GetFD();
 
 private:
 	bool FinalFlush();
@@ -467,6 +468,11 @@ int RageFileObjDirect::GetFileSize() const
 	ASSERT_M( iRet != -1, ssprintf("\"%s\": %s", m_sPath.c_str(), strerror(errno)) );
 	lseek( m_iFD, iOldPos, SEEK_SET );
 	return iRet;
+}
+
+int RageFileObjDirect::GetFD()
+{
+	return m_iFD;
 }
 
 /*

@@ -1950,6 +1950,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\RageFileDriverMemory.h">
 			</File>
 			<File
+				RelativePath=".\RageFileDriverReadAhead.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverReadAhead.h">
+			</File>
+			<File
 				RelativePath=".\RageFileDriverSlice.cpp">
 			</File>
 			<File
@@ -1972,6 +1978,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="RageFileManager.h">
+			</File>
+			<File
+				RelativePath=".\RageFileManager_ReadAhead.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileManager_ReadAhead.h">
 			</File>
 			<File
 				RelativePath=".\RageInput.cpp">

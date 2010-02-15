@@ -54,6 +54,7 @@ enum StepsType
 	StepsType_dance_double,
 	StepsType_dance_couple,
 	StepsType_dance_solo,
+	//StepsType_dance_three,
 	StepsType_dance_routine,
 	StepsType_pump_single,
 	StepsType_pump_halfdouble,

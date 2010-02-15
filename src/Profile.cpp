@@ -1645,7 +1645,7 @@ void Profile::LoadScreenshotDataFromNode( const XNode* pScreenshotData )
 		ss.LoadFromNode( pScreenshot );
 
 		m_vScreenshots.push_back( ss );
-	}	
+	}
 }
 
 XNode* Profile::SaveScreenshotDataCreateNode() const
@@ -1878,9 +1878,7 @@ void Profile::MoveBackupToDir( RString sFromDir, RString sToDir )
 RString Profile::MakeUniqueFileNameNoExtension( RString sDir, RString sFileNameBeginning )
 {
 	FILEMAN->FlushDirCache( sDir );
-	//
 	// Find a file name for the screenshot
-	//
 	vector<RString> files;
 	GetDirListing( sDir + sFileNameBeginning+"*", files, false, false );
 	sort( files.begin(), files.end() );

@@ -168,24 +168,24 @@ Grade PlayerStageStats::GetGrade() const
 	{
 		int iTapScoreValue = ScoreKeeperNormal::TapNoteScoreToGradePoints( tns, bIsBeginner );
 		fActual += m_iTapNoteScores[tns] * iTapScoreValue;
-		LOG->Trace( "GetGrade actual: %i * %i", m_iTapNoteScores[tns], iTapScoreValue );
+		//LOG->Trace( "GetGrade actual: %i * %i", m_iTapNoteScores[tns], iTapScoreValue );
 	}
 
 	FOREACH_ENUM( HoldNoteScore, hns )
 	{
 		int iHoldScoreValue = ScoreKeeperNormal::HoldNoteScoreToGradePoints( hns, bIsBeginner );
 		fActual += m_iHoldNoteScores[hns] * iHoldScoreValue;
-		LOG->Trace( "GetGrade actual: %i * %i", m_iHoldNoteScores[hns], iHoldScoreValue );
+		//LOG->Trace( "GetGrade actual: %i * %i", m_iHoldNoteScores[hns], iHoldScoreValue );
 	}
 
-	LOG->Trace( "GetGrade: fActual: %f, fPossible: %d", fActual, m_iPossibleGradePoints );
+	//LOG->Trace( "GetGrade: fActual: %f, fPossible: %d", fActual, m_iPossibleGradePoints );
 
 
 	float fPercent = (m_iPossibleGradePoints == 0) ? 0 : fActual / m_iPossibleGradePoints;
 
 	Grade grade = GetGradeFromPercent( fPercent );
 
-	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER02_IS_ALL_W2S );
+	//LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER02_IS_ALL_W2S );
 	if( GRADE_TIER02_IS_ALL_W2S )
 	{
 		if( FullComboOfScore(TNS_W1) )

@@ -166,6 +166,12 @@ int RageFile::GetFileSize() const
 	return m_File->GetFileSize();
 }
 
+int RageFile::GetFD()
+{
+	ASSERT_READ;
+	return m_File->GetFD();
+}
+
 int RageFile::Read( RString &buffer, int bytes )
 {
 	ASSERT_READ;

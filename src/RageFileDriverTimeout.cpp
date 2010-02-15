@@ -54,6 +54,7 @@ enum ThreadRequest
 	REQ_OPEN,
 	REQ_CLOSE,
 	REQ_GET_FILE_SIZE,
+	REQ_GET_FD,
 	REQ_READ,
 	REQ_WRITE,
 	REQ_SEEK,
@@ -78,6 +79,7 @@ public:
 	RageFileBasic *Open( const RString &sPath, int iMode, int &iErr );
 	void Close( RageFileBasic *pFile );
 	int GetFileSize( RageFileBasic *&pFile );
+	int GetFD( RageFileBasic *&pFile );
 	int Seek( RageFileBasic *&pFile, int iPos, RString &sError );
 	int Read( RageFileBasic *&pFile, void *pBuf, int iSize, RString &sError );
 	int Write( RageFileBasic *&pFile, const void *pBuf, int iSize, RString &sError );
@@ -366,6 +368,34 @@ int ThreadedFileWorker::GetFileSize( RageFileBasic *&pFile )
 	m_pRequestFile = pFile;
 
 	if( !DoRequest(REQ_GET_FILE_SIZE) )
+	{
+		/* If we time out, we can no longer access pFile. */
+		pFile = NULL;
+		return -1;
+	}
+
+	m_pRequestFile = NULL;
+
+	return m_iResultRequest;
+}
+
+int ThreadedFileWorker::GetFD( RageFileBasic *&pFile )
+{
+	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
+	
+	/* If we're currently in a timed-out state, fail. */
+	if( IsTimedOut() )
+	{
+		this->Close( pFile );
+		pFile = NULL;
+	}
+
+	if( pFile == NULL )
+		return -1;
+
+	m_pRequestFile = pFile;
+
+	if( !DoRequest(REQ_GET_FD) )
 	{
 		/* If we time out, we can no longer access pFile. */
 		pFile = NULL;
@@ -690,6 +720,23 @@ public:
 	int GetFileSize() const
 	{
 		return m_iFileSize;
+	}
+
+	int GetFD()
+	{
+		RString sError;
+		int iRet = m_pWorker->GetFD( m_pFile );
+
+		if( m_pFile == NULL )
+		{
+			SetError( "Operation timed out" );
+			return -1;
+		}
+
+		if( iRet == -1 )
+			SetError( sError );
+
+		return iRet;
 	}
 
 	RageFileBasic *Copy() const

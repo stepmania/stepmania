@@ -37,9 +37,7 @@ public:
 	void DeleteChildrenWhenDone( bool bDelete=true ) { m_bDeleteChildren = bDelete; }
 	void DeleteAllChildren();
 
-	//
 	// Commands
-	//
 	virtual void PushSelf( lua_State *L );
 	void PushChildrenTable( lua_State *L );
 	void PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable = NULL );
@@ -75,7 +73,7 @@ public:
 
 	virtual void SetPropagateCommands( bool b );
 
-	/* Amount of time until all tweens (and all children's tweens) have stopped: */
+	// Amount of time until all tweens (and all children's tweens) have stopped:
 	virtual float GetTweenTimeLeft() const;
 
 	virtual void HandleMessage( const Message &msg );

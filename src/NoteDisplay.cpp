@@ -22,12 +22,13 @@ static const char *NotePartNames[] = {
 	"TapLift",
 	"TapFake",
 	"HoldHead",
+	"HoldTail",
 	"HoldTopCap",
 	"HoldBody",
 	"HoldBottomCap",
-	"HoldTail",
 };
 XToString( NotePart );
+LuaXType( NotePart );
 
 static bool IsVectorZero( const RageVector2 &v )
 {
@@ -57,7 +58,6 @@ struct NoteMetricCache_t
 	bool m_bFlipHoldBodyWhenReverse;
 	bool m_bTopHoldAnchorWhenReverse;
 	bool m_bHoldActiveIsAddLayer;
-
 
 	void Load( const RString &sButton );
 } *NoteMetricCache;
@@ -658,16 +658,16 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 {
 	if( fYOffset < fDrawDistanceAfterTargetsPixels || fYOffset > fDrawDistanceBeforeTargetsPixels )
 		return;
-	const float fY			= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
+	const float fY		= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
 	float fX			= ArrowEffects::GetXPos(	m_pPlayerState, iCol, fYOffset );
 	if( tn.iMidiNote )
 		fX += ArrowEffects::GetXOffset( m_pPlayerState, tn.iMidiNote );
-	const float fZ			= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset );
-	const float fAlpha		= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const float fGlow		= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const RageColor diffuse		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
-	const RageColor glow		= RageColor(1,1,1,fGlow);
-	float fRotationZ			= 0;
+	const float fZ		= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset );
+	const float fAlpha	= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	const float fGlow	= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	const RageColor diffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+	const RageColor glow	= RageColor(1,1,1,fGlow);
+	float fRotationZ	= 0;
 
 	fRotationZ		= ArrowEffects::GetRotation(	m_pPlayerState, fBeat, tn.type == tn.hold_head );
 	if( tn.type != tn.hold_head )
@@ -735,6 +735,7 @@ void NoteDisplay::DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSam
 	}
 
 	const float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fBeat );
+	// this is the line that forces the (1,1,1,x) part of the noteskin diffuse -aj
 	DrawActor( tn, pActor, part, iCol, fYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, 1.0f, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 
 	if( tn.type == TapNote::attack )

@@ -51,8 +51,13 @@ public:
 
 	virtual void EnableCRC32( bool on=true ) = 0;
 	virtual bool GetCRC32( uint32_t *iRet ) = 0;
-	
+
 	virtual int GetFileSize() const = 0;
+
+	/* If this file is backed by a file descriptor, return it. This is valid even
+	 * if the file is being filtered or decompressed. If the file has no
+	 * associated file descriptor, return -1. */
+	virtual int GetFD() = 0;
 };
 
 class RageFileObj: public RageFileBasic
@@ -88,6 +93,7 @@ public:
 	bool GetCRC32( uint32_t *iRet );
 
 	virtual int GetFileSize() const = 0;
+	virtual int GetFD() { return -1; }
 	virtual RString GetDisplayPath() const { return RString(); }
 	virtual RageFileBasic *Copy() const { FAIL_M( "Copying unimplemented" ); }
 

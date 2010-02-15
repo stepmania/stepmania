@@ -26,7 +26,7 @@ StreamDisplay::StreamDisplay()
 
 void StreamDisplay::Load( const RString &_sMetricsGroup )
 {
-	// XXX
+	// XXX: actually load from the metrics group passed in -aj
 	RString sMetricsGroup = "StreamDisplay";
 
 	m_transformPill.SetFromReference( THEME->GetMetricR(sMetricsGroup,"PillTransformFunction") );

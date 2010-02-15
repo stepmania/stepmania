@@ -13,15 +13,15 @@ class RageFile: public RageFileBasic
 public:
 	enum
 	{
-		READ			= 0x1,
-		WRITE			= 0x2,
+		READ		= 0x1,
+		WRITE		= 0x2,
 
 		/* Always write directly to the destination file; don't do a safe write. (for logs) */
-		STREAMED		= 0x4,
+		STREAMED	= 0x4,
 
 		/* Flush the file to disk on close.  Combined with not streaming, this results
 		 * in very safe writes, but is slow. */
-		SLOW_FLUSH		= 0x8
+		SLOW_FLUSH	= 0x8
 	};
 
 	RageFile();
@@ -39,7 +39,7 @@ public:
 	 */
 	const RString &GetRealPath() const { return m_Path; }
 	RString GetPath() const;
-    
+
 	bool Open( const RString& path, int mode = READ );
 	void Close();
 	bool IsOpen() const { return m_File != NULL; }
@@ -51,7 +51,8 @@ public:
 	int Tell() const;
 	int Seek( int offset );
 	int GetFileSize() const;
-    
+	int GetFD();
+
 	/* Raw I/O: */
 	int Read( void *buffer, size_t bytes );
 	int Read( RString &buffer, int bytes = -1 );

@@ -192,8 +192,10 @@ void ScreenSelectMusic::Init()
 	this->SortByDrawOrder();
 }
 
+//#include "RageTimer.h"
 void ScreenSelectMusic::BeginScreen()
 {
+	//RageTimer tm;
 	g_ScreenStartedLoadingAt.Touch();
 
 	if( CommonMetrics::AUTO_SET_STYLE )
@@ -209,10 +211,11 @@ void ScreenSelectMusic::BeginScreen()
 
 	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
 	{
-	/* Instead of crashing here, let's just set the PlayMode to regular */
+		/* Instead of crashing here, let's just set the PlayMode to regular */
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		LOG->Trace( "PlayMode not set, setting as regular." );
 	}
+	//LOG->Trace("XXX 1 %f", tm.GetDeltaTime());
 	FOREACH_ENUM( PlayerNumber, pn )
 	{
 		if( GAMESTATE->IsHumanPlayer(pn) )
@@ -223,23 +226,30 @@ void ScreenSelectMusic::BeginScreen()
 	
 	OPTIONS_MENU_AVAILABLE.Load( m_sName, "OptionsMenuAvailable" );
 	PlayCommand( "Mods" );
+	//LOG->Trace("XXX 2a %f", tm.GetDeltaTime());
 	m_MusicWheel.BeginScreen();
-	
+	//LOG->Trace("XXX 2b %f", tm.GetDeltaTime());
+
 	m_SelectionState = SelectionState_SelectingSong;
 	ZERO( m_bStepsChosen );
 	m_bGoToOptions = false;
 	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;
 	ZERO( m_iSelection );
+	//LOG->Trace("XXX 3 %f", tm.GetDeltaTime());
 
 	if( USE_OPTIONS_LIST )
 		FOREACH_PlayerNumber( pn )
 			m_OptionsList[pn].Reset();
 
+	//LOG->Trace("XXX 4a %f", tm.GetDeltaTime());
 	AfterMusicChange();
+	//LOG->Trace("XXX 4b %f", tm.GetDeltaTime());
 
 	SOUND->PlayOnceFromAnnouncer( "select music intro" );
 
+	//LOG->Trace("XXX 4c %f", tm.GetDeltaTime());
 	ScreenWithMenuElements::BeginScreen();
+	//LOG->Trace("XXX 5 %f", tm.GetDeltaTime());
 }
 
 ScreenSelectMusic::~ScreenSelectMusic()

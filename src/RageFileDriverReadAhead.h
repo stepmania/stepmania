@@ -1,38 +1,49 @@
-/* RageFileDriverSlice - Treat a portion of a file as a file. */
+/* RageFileDriverReadAhead - Read-ahead hinting for seamless rewinding. */
 
-#ifndef RAGE_FILE_DRIVER_SLICE_H
-#define RAGE_FILE_DRIVER_SLICE_H
+#ifndef RAGE_FILE_DRIVER_READ_AHEAD_H
+#define RAGE_FILE_DRIVER_READ_AHEAD_H
 
 #include "RageFileBasic.h"
 
-class RageFileDriverSlice: public RageFileObj
+class RageFileDriverReadAhead: public RageFileObj
 {
 public:
+	/* This filter can only be used on supported files; test before using. */
+	static bool FileSupported( RageFileBasic *pFile );
+
 	/* pFile will be freed if DeleteFileWhenFinished is called. */
-	RageFileDriverSlice( RageFileBasic *pFile, int iOffset, int iFileSize );
-	RageFileDriverSlice( const RageFileDriverSlice &cpy );
-	~RageFileDriverSlice();
-	RageFileDriverSlice *Copy() const;
+	RageFileDriverReadAhead( RageFileBasic *pFile, int iCacheBytes, int iPostBufferReadAhead = -1 );
+	RageFileDriverReadAhead( const RageFileDriverReadAhead &cpy );
+	~RageFileDriverReadAhead();
+	RageFileDriverReadAhead *Copy() const;
 
 	void DeleteFileWhenFinished() { m_bFileOwned = true; }
 
+	virtual RString GetError() const { return m_pFile->GetError(); }
+	virtual void ClearError()  { return m_pFile->ClearError(); }
+
 	int ReadInternal( void *pBuffer, size_t iBytes );
-	int WriteInternal( const void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
+	int WriteInternal( const void *pBuffer, size_t iBytes ) { return m_pFile->Write( pBuffer, iBytes ); }
 	int SeekInternal( int iOffset );
-	int GetFileSize() const { return m_iFileSize; }
+	int GetFileSize() const { return m_pFile->GetFileSize(); }
 	int GetFD() { return m_pFile->GetFD(); }
+	int Tell() const { return m_iFilePos; }
 
 private:
+	void FillBuffer( int iBytes );
+
 	RageFileBasic *m_pFile;
 	int m_iFilePos;
-	int m_iOffset, m_iFileSize;
 	bool m_bFileOwned;
+	RString m_sBuffer;
+	int m_iPostBufferReadAhead;
+	bool m_bReadAheadNeeded;
 };
 
 #endif
 
 /*
- * Copyright (c) 2003-2004 Glenn Maynard
+ * Copyright (c) 2010 Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

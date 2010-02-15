@@ -370,9 +370,11 @@ lua-5.1/src/lundump.h lua-5.1/src/lvm.h lua-5.1/src/lzio.h
 RageFile = \
 RageFileBasic.cpp RageFileBasic.h \
 RageFile.cpp RageFile.h RageFileDriver.cpp RageFileDriver.h RageFileManager.cpp RageFileManager.h \
+RageFileManager_ReadAhead.cpp RageFileManager_ReadAhead.h \
 RageFileDriverDirect.cpp RageFileDriverDirect.h RageFileDriverDirectHelpers.cpp RageFileDriverDirectHelpers.h \
 RageFileDriverMemory.cpp RageFileDriverMemory.h RageFileDriverZip.cpp RageFileDriverZip.h \
 RageFileDriverDeflate.cpp RageFileDriverDeflate.h \
+RageFileDriverReadAhead.cpp RageFileDriverReadAhead.h \
 RageFileDriverSlice.cpp RageFileDriverSlice.h \
 RageFileDriverTimeout.cpp RageFileDriverTimeout.h
 

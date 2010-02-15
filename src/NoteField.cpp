@@ -28,6 +28,9 @@ static ThemeMetric<float> BAR_4TH_ALPHA( "NoteField", "Bar4thAlpha" );
 static ThemeMetric<float> BAR_8TH_ALPHA( "NoteField", "Bar8thAlpha" );
 static ThemeMetric<float> BAR_16TH_ALPHA( "NoteField", "Bar16thAlpha" );
 
+static RString RoutineNoteSkinName( size_t i ) { return ssprintf("RoutineNoteSkinP%i",int(i+1)); }
+static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
+
 NoteField::NoteField()
 {
 	m_pNoteData = NULL;
@@ -109,6 +112,14 @@ void NoteField::CacheAllUsedNoteSkins()
 	/* Cache all note skins that we might need for the whole song, course or battle
 	 * play, so we don't have to load them later (such as between course songs). */
 	vector<RString> asSkins;
+
+	// If we're in Routine mode, apply our per-player noteskins.
+	if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_TwoPlayersSharedSides )
+	{
+		FOREACH_EnabledPlayer( pn )
+			GAMESTATE->ApplyStageModifiers( pn, ROUTINE_NOTESKIN.GetValue(pn) );
+	}
+
 	GAMESTATE->GetAllUsedNoteSkins( asSkins );
 	asSkins.push_back( m_pPlayerState->m_PlayerOptions.GetStage().m_sNoteSkin );
 

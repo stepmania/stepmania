@@ -39,10 +39,10 @@ private:
 	float m_fPercent;	// percent filled
 	float m_fTrailingPercent;	// this approaches m_fPercent, use this value to draw
 	float m_fVelocity;	// velocity of m_fTrailingPercent
-	
+
 	float m_fPassingAlpha;
 	float m_fHotAlpha;
-	
+
 	bool m_bUsingThreePart;
 
 	float m_fThreePartWidth;

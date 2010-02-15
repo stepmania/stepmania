@@ -119,7 +119,7 @@ ITween *ITween::CreateFromStack( Lua *L, int iStackPos )
 			return pBezier;
 		}
 	}
-	
+
 	return CreateFromType( iType );
 }
 
