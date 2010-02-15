@@ -22,7 +22,8 @@ enum NotePart
 	NotePart_HoldTopCap,
 	NotePart_HoldBody,
 	NotePart_HoldBottomCap,
-	NUM_NotePart
+	NUM_NotePart,
+	NotePart_Invalid
 };
 
 struct NoteResource;

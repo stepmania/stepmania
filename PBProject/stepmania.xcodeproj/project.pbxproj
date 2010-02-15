@@ -27,6 +27,10 @@
 		3659B5700F902143002B6B68 /* CommandLineActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3659B56E0F902143002B6B68 /* CommandLineActions.h */; };
 		367D575B0EDE56F200B46814 /* ScreenHighScores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 367D57590EDE56F200B46814 /* ScreenHighScores.cpp */; };
 		3688B8530BD42DAA004186AD /* NotesLoaderMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */; };
+		36C6888311297FFE00453295 /* RageFileDriverReadAhead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36C6887F11297FFE00453295 /* RageFileDriverReadAhead.cpp */; };
+		36C6888411297FFE00453295 /* RageFileDriverReadAhead.h in Headers */ = {isa = PBXBuildFile; fileRef = 36C6888011297FFE00453295 /* RageFileDriverReadAhead.h */; };
+		36C6888511297FFE00453295 /* RageFileManager_ReadAhead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36C6888111297FFE00453295 /* RageFileManager_ReadAhead.cpp */; };
+		36C6888611297FFE00453295 /* RageFileManager_ReadAhead.h in Headers */ = {isa = PBXBuildFile; fileRef = 36C6888211297FFE00453295 /* RageFileManager_ReadAhead.h */; };
 		36CA531C0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36CA531A0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp */; };
 		36CA531D0F91564A0063D59D /* ScreenOptionsCourseOverview.h in Headers */ = {isa = PBXBuildFile; fileRef = 36CA531B0F91564A0063D59D /* ScreenOptionsCourseOverview.h */; };
 		36CA53200F9156860063D59D /* ScreenOptionsEditCourse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36CA531E0F9156860063D59D /* ScreenOptionsEditCourse.cpp */; };
@@ -1763,6 +1767,10 @@
 		367D575A0EDE56F200B46814 /* ScreenHighScores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenHighScores.h; path = ../src/ScreenHighScores.h; sourceTree = SOURCE_ROOT; };
 		3688B8510BD42DAA004186AD /* NotesLoaderMidi.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderMidi.cpp; path = ../src/NotesLoaderMidi.cpp; sourceTree = "<group>"; };
 		3688B8520BD42DAA004186AD /* NotesLoaderMidi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = NotesLoaderMidi.h; path = ../src/NotesLoaderMidi.h; sourceTree = "<group>"; };
+		36C6887F11297FFE00453295 /* RageFileDriverReadAhead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageFileDriverReadAhead.cpp; path = ../src/RageFileDriverReadAhead.cpp; sourceTree = SOURCE_ROOT; };
+		36C6888011297FFE00453295 /* RageFileDriverReadAhead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageFileDriverReadAhead.h; path = ../src/RageFileDriverReadAhead.h; sourceTree = SOURCE_ROOT; };
+		36C6888111297FFE00453295 /* RageFileManager_ReadAhead.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageFileManager_ReadAhead.cpp; path = ../src/RageFileManager_ReadAhead.cpp; sourceTree = SOURCE_ROOT; };
+		36C6888211297FFE00453295 /* RageFileManager_ReadAhead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageFileManager_ReadAhead.h; path = ../src/RageFileManager_ReadAhead.h; sourceTree = SOURCE_ROOT; };
 		36CA531A0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsCourseOverview.cpp; path = ../src/ScreenOptionsCourseOverview.cpp; sourceTree = SOURCE_ROOT; };
 		36CA531B0F91564A0063D59D /* ScreenOptionsCourseOverview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsCourseOverview.h; path = ../src/ScreenOptionsCourseOverview.h; sourceTree = SOURCE_ROOT; };
 		36CA531E0F9156860063D59D /* ScreenOptionsEditCourse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsEditCourse.cpp; path = ../src/ScreenOptionsEditCourse.cpp; sourceTree = SOURCE_ROOT; };
@@ -3515,6 +3523,10 @@
 				AA6EFD6E04770A7C005F316C /* RageBitmapTexture.h */,
 				AA6EFD6F04770A7C005F316C /* RageDisplay.cpp */,
 				AA6EFD7004770A7C005F316C /* RageDisplay.h */,
+				36C6887F11297FFE00453295 /* RageFileDriverReadAhead.cpp */,
+				36C6888011297FFE00453295 /* RageFileDriverReadAhead.h */,
+				36C6888111297FFE00453295 /* RageFileManager_ReadAhead.cpp */,
+				36C6888211297FFE00453295 /* RageFileManager_ReadAhead.h */,
 				AAF7458E061181F700B19AD1 /* RageDisplay_Null.cpp */,
 				AAF7458F061181F700B19AD1 /* RageDisplay_Null.h */,
 				AAC23F7C0485E68D005F316C /* RageDisplay_OGL.cpp */,
@@ -4863,6 +4875,8 @@
 				36CA53210F9156860063D59D /* ScreenOptionsEditCourse.h in Headers */,
 				EE2153AA10A75BEE0074B01B /* NotesLoaderPMS.h in Headers */,
 				EEA7C84410A805A300082E7B /* ScreenPackagesSSC.h in Headers */,
+				36C6888411297FFE00453295 /* RageFileDriverReadAhead.h in Headers */,
+				36C6888611297FFE00453295 /* RageFileManager_ReadAhead.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6097,6 +6111,8 @@
 				36CA53200F9156860063D59D /* ScreenOptionsEditCourse.cpp in Sources */,
 				EE2153A910A75BEE0074B01B /* NotesLoaderPMS.cpp in Sources */,
 				EEA7C84310A805A300082E7B /* ScreenPackagesSSC.cpp in Sources */,
+				36C6888311297FFE00453295 /* RageFileDriverReadAhead.cpp in Sources */,
+				36C6888511297FFE00453295 /* RageFileManager_ReadAhead.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
