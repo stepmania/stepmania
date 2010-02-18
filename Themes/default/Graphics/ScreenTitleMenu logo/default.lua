@@ -4,7 +4,17 @@
 local t = Def.ActorFrame{ -- [BGAnimation]
 	LoadActor("_ball"); -- [Layer1] Type=0 File=_ball.png
 	LoadActor("_text")..{ -- [Layer2] Type=0 File=_text.png
-		InitCommand=cmd(y,48); -- Command=y,48
+		InitCommand=cmd(y,48;hide_if,GAMESTATE:GetMultiplayer()); -- Command=y,48
+	};
+	LoadActor("_multi")..{ -- [Layer3] Type=0 File=_multi.png
+		InitCommand=cmd(y,60;hide_if,not GAMESTATE:GetMultiplayer()); -- Command=y,48
+		-- the hide_if command would be similar to Condition=, which also exists.
+		-- Condition=GAMESTATE:GetMultiplayer(); is the equivalent code.
+	};
+	LoadFont("Common normal")..{
+		Text="sm-ssc Multiplayer";
+		InitCommand=cmd(y,5;shadowlength,0;strokecolor,color("0,0,0,0.375");diffusebottomedge,color("#D6DBDD"););
+		BeginCommand=cmd(hide_if,not GAMESTATE:GetMultiplayer());
 	};
 };
 

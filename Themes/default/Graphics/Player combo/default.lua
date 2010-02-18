@@ -40,10 +40,10 @@ local t = Def.ActorFrame {
 			return
 		end; --]]
 	TwentyFiveMilestoneCommand=function(self,parent)
-		(cmd(zoom,1.25;drop,0.325;zoom,1))(self);
+		(cmd(zoom,1.25;decelerate,1.325;zoom,1))(self);
 	end;
 	ToastyAchievedMessageCommand=function(self,parent)
-		(cmd(pulse;effectperiod,1))(self);
+		(cmd(thump,2;effectclock,'beat'))(self);
 	end;
 	ComboCommand=function(self, param)
 		local iCombo = param.Misses or param.Combo;
@@ -55,9 +55,9 @@ local t = Def.ActorFrame {
 
 		local labeltext = "";
 		if param.Combo then
-			labeltext = "Combo";
+			labeltext = "COMBO";
 		else
-			labeltext = "Misses";
+			labeltext = "MISSES";
 		end
 		c.Label:settext( labeltext );
 		c.Label:visible(false);

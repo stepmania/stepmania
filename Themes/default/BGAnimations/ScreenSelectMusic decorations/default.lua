@@ -19,6 +19,7 @@ local function StepsDisplay(pn)
 
 	return t;
 end
+t[#t+1] = StandardDecorationFromFileOptional("AlternateHelpDisplay","AlternateHelpDisplay");
 -- Legacy StepMania 4 Function
 for pn in ivalues(PlayerNumber) do
 	local MetricsName = "StepsDisplay" .. PlayerNumberToString(pn);
@@ -44,6 +45,38 @@ t[#t+1] = StandardDecorationFromFileOptional("DifficultyList","DifficultyList");
 t[#t+1] = StandardDecorationFromFileOptional("CourseContentsList","CourseContentsList");
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("BPMLabel","BPMLabel");
+t[#t+1] = StandardDecorationFromFileOptional("SongTime","SongTime") .. {
+	SetCommand=function(self)
+		local curSelection, length = nil;
+		if GAMESTATE:IsCourseMode() then
+			curSelection = GAMESTATE:GetCurrentCourse();
+			self:playcommand("Reset");
+			if curSelection then
+				length = curSelection:GetTotalSeconds(GAMESTATE:GetCurrentStyle():GetStepsType());
+			else
+				length = 0.0;
+			end;
+		else
+			curSelection = GAMESTATE:GetCurrentSong();
+			self:playcommand("Reset");
+			if curSelection then
+				length = curSelection:MusicLengthSeconds();
+			else
+				length = 0.0;
+			end;
+			if curSelection:IsLong() then
+				self:playcommand("Long");
+			elseif curSelection:IsMarathon() then
+				self:playcommand("Marathon");
+			else
+				self:playcommand("Reset");
+			end
+		end;
+		self:settext( SecondsToMSS(length) );
+	end;
+	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
+	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+}
 
 if not GAMESTATE:IsCourseMode() then
 	t[#t+1] = StandardDecorationFromFileOptional("NewSong","NewSong") .. {

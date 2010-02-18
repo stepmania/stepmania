@@ -72,7 +72,17 @@ local SmoothBezier =
 function Actor:smooth(t)
 	self:tween( t, "TweenType_Bezier", SmoothBezier );
 end
-
+-- SSC Additions
+local DropBezier =
+{
+	0		,	0,
+	1/3	,	1,
+	2/3	,	0.5,
+	1	,	1,
+}
+function Actor:drop(t)
+	self:tween( t, "TweenType_Bezier", DropBezier );
+end
 -- Hide if b is true, but don't unhide if b is false.
 function Actor:hide_if(b)
 	if b then
@@ -134,18 +144,6 @@ function Actor:Center()
     self:x(SCREEN_CENTER_X);
     self:y(SCREEN_CENTER_Y);
 end;
-
--- SSC Additions
-local DropBezier =
-{
-	0		,	0,
-	8/16	,	1,
-	12/16	,	0.5,
-	16/16	,	1,
-}
-function Actor:drop(t)
-	self:tween( t, "TweenType_Bezier", DropBezier );
-end
 
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.

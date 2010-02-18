@@ -3,7 +3,7 @@ local gc = Var("GameCommand");
 local t = Def.ActorFrame {};
 
 t[#t+1] = LoadFont("Common Normal") .. {
-    Text=gc:GetName() .. "\n" .. gc:GetText();
+    Text=gc:GetName();
 };
 
 t.GainFocusCommand=cmd(visible,true);

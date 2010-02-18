@@ -278,7 +278,7 @@ function SpeedMods()
 end;
 
 --[[
-Copyright Â© 2008-2009 AJ Kelly/KKI Labs.
+Copyright © 2008-2009 AJ Kelly/KKI Labs.
 Use freely, so long this notice and the above documentation remains.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"

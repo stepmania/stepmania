@@ -14,16 +14,16 @@ t[#t+1] = Def.Sprite {
 
 t[#t+1] = Def.ActorFrame {
   InitCommand=cmd(Center);
-  OnCommand=cmd(stoptweening;addx,30;linear,3;addx,-30);
+  OnCommand=cmd(stoptweening;addy,-16;decelerate,3;addy,16);
 	LoadFont("Common Normal") .. {
 		Text=GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle() or GAMESTATE:GetCurrentSong():GetDisplayFullTitle();
 		InitCommand=cmd(strokecolor,Color("Outline");y,-20);
-		OnCommand=cmd(faderight,1;diffusealpha,0;linear,0.5;faderight,0;diffusealpha,1;sleep,1.5;linear,0.5;diffusealpha,0);
+		OnCommand=cmd(diffusealpha,0;linear,0.5;diffusealpha,1;sleep,1.5;linear,0.5;diffusealpha,0);
 	};
 	LoadFont("Common Normal") .. {
 		Text=GAMESTATE:IsCourseMode() and ToEnumShortString( GAMESTATE:GetCurrentCourse():GetCourseType() ) or GAMESTATE:GetCurrentSong():GetDisplayArtist();
 		InitCommand=cmd(strokecolor,Color("Outline");zoom,0.75);
-		OnCommand=cmd(faderight,1;diffusealpha,0;linear,0.5;faderight,0;diffusealpha,1;sleep,1.5;linear,0.5;diffusealpha,0);
+		OnCommand=cmd(diffusealpha,0;linear,0.5;diffusealpha,1;sleep,1.5;linear,0.5;diffusealpha,0);
 	};
 	LoadFont("Common Normal") .. {
 		InitCommand=cmd(strokecolor,Color("Outline");diffuse,Color("Orange");diffusebottomedge,Color("Yellow");zoom,0.75;y,20);
@@ -44,7 +44,7 @@ t[#t+1] = Def.ActorFrame {
 			end;
 			self:settext(text);
 		end;
-		OnCommand=cmd(faderight,1;diffusealpha,0;linear,0.5;faderight,0;diffusealpha,1;sleep,1.5;linear,0.5;diffusealpha,0);
+		OnCommand=cmd(diffusealpha,0;linear,0.5;diffusealpha,1;sleep,1.5;linear,0.5;diffusealpha,0);
 	};
 };
 

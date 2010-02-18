@@ -5,26 +5,26 @@ Colors = {
 -- UI Colors
 -- These colors are common to the theme interface and should be used
 -- often to make use of these efficiently.
-    Enabled = nilColor,
-    Disabled = nilColor,
-    Focused = nilColor,
-    Outline = nilColor,
-    Shadow = nilColor,
-    Important = nilColor,
-    Reward = nilColor,
+	Enabled = nilColor,
+	Disabled = nilColor,
+	Focused = nilColor,
+	Outline = nilColor,
+	Shadow = nilColor,
+	Important = nilColor,
+	Reward = nilColor,
 	Special 	=	color("#f7941d"),
 -- Global Colors
 -- These colors are usually tied to colors that shouldn't change that
 -- much throughout themes, but should be easily accessible.
 -- ( Do note that I want to remove '*Color' entirely, it'll look neater )
-    Player = {
+	Player = {
 		P1			=	color("#ef403d"),
 		P2			=	color("#0089cf"),
 	},
-    Difficulty = {
-		--[[	These are for 'Custom' Difficulty Ranks. It can be very 
-				useful in some cases, especially to apply new colors for 
-				stuff you couldn't before									]]
+	Difficulty = {
+		--[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
+		in some cases, especially to apply new colors for stuff you
+		couldn't before. (huh? -aj) ]]
 		Beginner	= color("#ff32f8"),			-- light cyan
 		Easy		= color("#2cff00"),			-- green
 		Medium		= color("#fee600"),			-- yellow
@@ -33,8 +33,8 @@ Colors = {
 		Edit		= color("0.8,0.8,0.8,1"),	-- gray
 		Couple		= color("#ed0972"),			-- hot pink
 		Routine		= color("#ff9a00"),			-- orange
-		--[[	These are for courses, so let's slap them here incase someone
-				you wanted to use Difficulty in Course and Step regions 	]]
+		--[[ These are for courses, so let's slap them here in case someone
+		wanted to use Difficulty in Course and Step regions. ]]
 		Difficulty_Beginner	= color("0.0,0.9,1.0,1"),		-- purple
 		Difficulty_Easy		= color("0.9,0.9,0.0,1"),		-- green
 		Difficulty_Medium	= color("1.0,0.1,0.1,1"),		-- yellow

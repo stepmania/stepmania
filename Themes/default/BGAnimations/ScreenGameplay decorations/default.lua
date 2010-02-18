@@ -96,6 +96,18 @@ for pn in ivalues(PlayerNumber) do
 				ActorUtil.LoadAllCommandsAndSetXY(self,MetricsName); 
 			end;
 		};
+		Def.Quad {
+			InitCommand=cmd(zoomto,2,8);
+			OnCommand=cmd(x,scale(0.25,0,1,-380/2,380/2);diffuse,Color("White");diffusealpha,0.5);
+		};
+		Def.Quad {
+			InitCommand=cmd(zoomto,2,8);
+			OnCommand=cmd(x,scale(0.5,0,1,-380/2,380/2);diffuse,Color("White");diffusealpha,0.5);
+		};
+		Def.Quad {
+			InitCommand=cmd(zoomto,2,8);
+			OnCommand=cmd(x,scale(0.75,0,1,-380/2,380/2);diffuse,Color("White");diffusealpha,0.5);
+		};
 		Def.SongMeterDisplay {
 			StreamWidth=THEME:GetMetric( MetricsName, 'StreamWidth' );
 			Stream=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'stream ' .. PlayerNumberToString(pn) ) )..{

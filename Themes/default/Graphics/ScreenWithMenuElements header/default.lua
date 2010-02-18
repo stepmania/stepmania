@@ -1,7 +1,7 @@
 local t = Def.ActorFrame {};
 
 t[#t+1] = LoadActor("Header") .. {
-	InitCommand=cmd(vertalign,top;zoomtowidth,SCREEN_WIDTH;diffuse,color("#ffd400"));
+	InitCommand=cmd(vertalign,top;zoomtowidth,SCREEN_WIDTH+1;diffuse,color("#ffd400"));
 };
 --[[ t[#t+1] = LoadActor("_texture stripe") .. {
 	InitCommand=cmd(vertalign,top;zoomto,SCREEN_WIDTH+64,44;customtexturerect,0,0,SCREEN_WIDTH+64/8,44/32);
