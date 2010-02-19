@@ -540,9 +540,7 @@ void Sprite::DrawTexture( const TweenState *state )
 	{
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
 
-		//////////////////////
 		// render the shadow
-		//////////////////////
 		if( m_fShadowLengthX != 0  ||  m_fShadowLengthY != 0 )
 		{
 			DISPLAY->PushMatrix();
@@ -554,9 +552,7 @@ void Sprite::DrawTexture( const TweenState *state )
 			DISPLAY->PopMatrix();
 		}
 
-		//////////////////////
 		// render the diffuse pass
-		//////////////////////
 		v[0].c = state->diffuse[0];	// top left
 		v[1].c = state->diffuse[2];	// bottom left
 		v[2].c = state->diffuse[3];	// bottom right
@@ -564,9 +560,7 @@ void Sprite::DrawTexture( const TweenState *state )
 		DISPLAY->DrawQuad( v );
 	}
 
-	//////////////////////
 	// render the glow pass
-	//////////////////////
 	if( state->glow.a > 0.0001f )
 	{
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );

@@ -67,7 +67,7 @@ void ScreenSelectMaster::Init()
 	OPTION_ORDER2.Load( m_sName, OPTION_ORDER_NAME_LIST2, NUM_MenuDir );
 
 	DO_SWITCH_ANYWAYS.Load( m_sName, "DoSwitchAnyways" );
-	
+
 	WRAP_CURSOR.Load( m_sName, "WrapCursor" );
 	WRAP_SCROLLER.Load( m_sName, "WrapScroller" );
 	LOOP_SCROLLER.Load( m_sName, "LoopScroller" );
@@ -89,7 +89,6 @@ void ScreenSelectMaster::Init()
 
 #define PLAYER_APPEND_NO_SPACE(p)	(SHARED_SELECTION ? RString() : ssprintf("P%d",(p)+1))
 	this->SubscribeToMessage( SM_MenuTimer );
-
 
 	// init cursor
 	if( SHOW_CURSOR )
@@ -415,11 +414,9 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 {
 	ScreenSelect::HandleScreenMessage( SM );
 
-
 	vector<PlayerNumber> vpns;
 	GetActiveElementPlayerNumbers( vpns );
 
-	
 	if( SM == SM_PlayPostSwitchPage )
 	{
 		int iNewChoice = m_iChoice[ GAMESTATE->m_MasterPlayerNumber ];
@@ -441,8 +438,6 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 				int iChoice = m_iChoice[*p];
 				m_vsprScroll[*p][iChoice]->HandleMessage( msg );
 			}
-
-
 		}
 
 		m_fLockInputSecs = POST_SWITCH_PAGE_SECONDS;
@@ -458,10 +453,9 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 				InputEventPlus iep;
 				iep.pn = p;
 				MenuStart( iep );
-			}		
+			}
 		}
 	}
-
 }
 
 int ScreenSelectMaster::GetSelectionIndex( PlayerNumber pn )
@@ -532,17 +526,15 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 		}
 	}
 
-	/*
-	 * If no options are playable at all, just wait.  Some external
+	/* If no options are playable at all, just wait.  Some external
 	 * stimulus may make options available (such as coin insertion).
-	 *
-	 * If any options are playable, make sure one is selected.
-	 */
+	 * If any options are playable, make sure one is selected. */
 	FOREACH_HumanPlayer( p )
 	{
 		if(m_bUsingTwoLists && m_iSelectedList == 1)
 		{
-			m_iChoice[p] = 0; // reset their choice position since we are moving to the new list
+			// reset their choice position since we are moving to the new list:
+			m_iChoice[p] = 0;
 			if( !m_aGameCommandsB[m_iChoice[p]].IsPlayable() )
 				Move( p, MenuDir_Auto );
 		}
@@ -556,19 +548,19 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 
 bool ScreenSelectMaster::AnyOptionsArePlayable() const
 {
-		// if they're using the second list
-		if(m_bUsingTwoLists && m_iSelectedList == 1)
-		{
-			for( unsigned i = 0; i < m_aGameCommandsB.size(); ++i )
-				if( m_aGameCommandsB[i].IsPlayable() )
-					return true;
-		}
-		else
-		{
-			for( unsigned i = 0; i < m_aGameCommands.size(); ++i )
-				if( m_aGameCommands[i].IsPlayable() )
-					return true;
-		}
+	// if they're using the second list
+	if(m_bUsingTwoLists && m_iSelectedList == 1)
+	{
+		for( unsigned i = 0; i < m_aGameCommandsB.size(); ++i )
+			if( m_aGameCommandsB[i].IsPlayable() )
+				return true;
+	}
+	else
+	{
+		for( unsigned i = 0; i < m_aGameCommands.size(); ++i )
+			if( m_aGameCommands[i].IsPlayable() )
+				return true;
+	}
 
 	return false;
 }
@@ -695,14 +687,12 @@ void ScreenSelectMaster::MenuUp( const InputEventPlus &input )
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuUpP1+pn) );
 		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuSelectionChanged) );
-		
+
 		// if they use double select
 		if(DOUBLE_PRESS_TO_SELECT)
 		{
 			m_bDoubleChoice[pn] = false;	// player has cancelled their selection
 		}
-
-
 	}
 }
 
@@ -732,7 +722,6 @@ void ScreenSelectMaster::MenuDown( const InputEventPlus &input )
 		{
 			m_bDoubleChoice[pn] = false;	// player has cancelled their selection
 		}
-
 	}
 }
 
@@ -756,7 +745,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	if( SHOW_ICON )
 		for( unsigned c = 0; c < m_aGameCommands.size(); ++c )
 			m_vsprIcon[c]->PlayCommand( sIconAndExplanationCommand );
-	
+
 	FOREACH_ENUM( Page, page )
 	{
 		m_sprExplanation[page]->PlayCommand( sIconAndExplanationCommand );
@@ -786,7 +775,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	{
 		// XXX: only play this once (I thought we already did that?)
 		// Play it on every change to page 2.  -Chris
-		/* That sounds ugly if you go back and forth quickly. -g */
+		// That sounds ugly if you go back and forth quickly. -g
 		// Should we lock input while it's scrolling? -Chris
 		m_soundDifficult.Stop();
 		m_soundDifficult.PlayRandom();
@@ -1057,7 +1046,7 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS )
 		return;
 	PlayerNumber pn = input.pn;
-	
+
 	if( m_fLockInputSecs > 0 )
 		return;
 	if( m_bChosen[pn] )
@@ -1070,7 +1059,7 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	if(DOUBLE_PRESS_TO_SELECT && !m_bDoubleChoice[pn])
 	{
 		m_soundStart.PlayCopy();
-		m_bDoubleChoice[pn] = true;	
+		m_bDoubleChoice[pn] = true;
 
 		if(SHOW_SCROLLER)
 		{
@@ -1096,10 +1085,10 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	 * If any options are playable, then the selection must be playable. */
 	if( !AnyOptionsArePlayable() )
 		return;
-		
+
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc.m_sName.c_str())) );
-	
-	/* Play a copy of the sound, so it'll finish playing even if we leave the screen immediately. */
+
+	// Play a copy of the sound, so it'll finish playing even if we leave the screen immediately.
 	if( mc.m_sSoundPath.empty() && !m_bDoubleChoiceNoSound )
 		m_soundStart.PlayCopy();
 
@@ -1108,12 +1097,12 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 		mc.ApplyToAllPlayers();
 		return;
 	}
-	
+
 	float fSecs = 0;
 	bool bAllDone = true;
 	if( (bool)SHARED_SELECTION || GetCurrentPage() == PAGE_2 )
 	{
-		/* Only one player has to pick.  Choose this for all the other players, too. */
+		// Only one player has to pick. Choose this for all the other players, too.
 		FOREACH_PlayerNumber( p )
 		{
 			ASSERT( !m_bChosen[p] );
@@ -1132,18 +1121,15 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 		this->PostScreenMessage( SM_BeginFadingOut, fSecs );// tell our owner it's time to move on
 }
 
-/*
- * We want all items to always run OnCommand and either GainFocus or LoseFocus on
+/* We want all items to always run OnCommand and either GainFocus or LoseFocus on
  * tween-in.  If we only run OnCommand, then it has to contain a copy of either
- * GainFocus or LoseFocus, which implies that the default setting is hard-coded in
- * the theme.  Always run both.
- *
+ * GainFocus or LoseFocus, which implies that the default setting is hard-coded
+ * in the theme.  Always run both.
  * However, the actual tween-in is OnCommand; we don't always want to actually run
  * through the Gain/LoseFocus tweens during initial tween-in.  So, we run the focus
  * command first, do a FinishTweening to pop it in place, and then run OnCommand.
  * This means that the focus command should be position neutral; eg. only use "addx",
- * not "x".
- */
+ * not "x". */
 void ScreenSelectMaster::TweenOnScreen()
 {
 	vector<PlayerNumber> vpns;
@@ -1175,8 +1161,8 @@ void ScreenSelectMaster::TweenOnScreen()
 		{
 			FOREACH( PlayerNumber, vpns, p )
 			{
-				// Play Gain/LoseFocus before playing the on command.  Gain/Lose will 
-				// often stop tweening, which ruins the OnCommand.
+				// Play Gain/LoseFocus before playing the on command.
+				// Gain/Lose will often stop tweening, which ruins the OnCommand.
 				for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 				{
 					m_vsprScrollB[*p][c]->PlayCommand( int(c) == m_iChoice[*p]? "GainFocus":"LoseFocus" );
@@ -1190,8 +1176,8 @@ void ScreenSelectMaster::TweenOnScreen()
 		{
 			FOREACH( PlayerNumber, vpns, p )
 			{
-				// Play Gain/LoseFocus before playing the on command.  Gain/Lose will 
-				// often stop tweening, which ruins the OnCommand.
+				// Play Gain/LoseFocus before playing the on command.
+				// Gain/Lose will often stop tweening, which ruins the OnCommand.
 				for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 				{
 					m_vsprScroll[*p][c]->PlayCommand( int(c) == m_iChoice[*p]? "GainFocus":"LoseFocus" );
@@ -1223,7 +1209,7 @@ void ScreenSelectMaster::TweenOffScreen()
 	GetActiveElementPlayerNumbers( vpns );
 
 	// using two lists -- may need to consider throwing a wider range of commands
-	// for themers if tweening out with one/two lists/focussed/not focussed etc?
+	// for themers if tweening out with one/two lists/focused/not focused etc?
 	if(m_bUsingTwoLists && m_iSelectedList == 1)
 	{
 		for( unsigned c=0; c<m_aGameCommandsB.size(); c++ )

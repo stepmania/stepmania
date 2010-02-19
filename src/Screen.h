@@ -60,9 +60,7 @@ public:
 	bool AllowOperatorMenuButton() const { return ALLOW_OPERATOR_MENU_BUTTON; }
 	virtual bool AllowLateJoin() const { return false; }
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 protected:

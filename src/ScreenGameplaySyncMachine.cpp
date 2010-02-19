@@ -41,7 +41,7 @@ void ScreenGameplaySyncMachine::Init()
 	m_DancingState = STATE_DANCING;
 
 	m_textSyncInfo.SetName( "SyncInfo" );
-	m_textSyncInfo.LoadFromFont( THEME->GetPathF("Common","normal") );
+	m_textSyncInfo.LoadFromFont( THEME->GetPathF(m_sName,"SyncInfo") );
 	ActorUtil::LoadAllCommands( m_textSyncInfo, m_sName );
 	this->AddChild( &m_textSyncInfo );
 

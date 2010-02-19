@@ -192,10 +192,8 @@ void ScreenSelectMusic::Init()
 	this->SortByDrawOrder();
 }
 
-//#include "RageTimer.h"
 void ScreenSelectMusic::BeginScreen()
 {
-	//RageTimer tm;
 	g_ScreenStartedLoadingAt.Touch();
 
 	if( CommonMetrics::AUTO_SET_STYLE )
@@ -215,7 +213,6 @@ void ScreenSelectMusic::BeginScreen()
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		LOG->Trace( "PlayMode not set, setting as regular." );
 	}
-	//LOG->Trace("XXX 1 %f", tm.GetDeltaTime());
 	FOREACH_ENUM( PlayerNumber, pn )
 	{
 		if( GAMESTATE->IsHumanPlayer(pn) )
@@ -226,30 +223,23 @@ void ScreenSelectMusic::BeginScreen()
 	
 	OPTIONS_MENU_AVAILABLE.Load( m_sName, "OptionsMenuAvailable" );
 	PlayCommand( "Mods" );
-	//LOG->Trace("XXX 2a %f", tm.GetDeltaTime());
 	m_MusicWheel.BeginScreen();
-	//LOG->Trace("XXX 2b %f", tm.GetDeltaTime());
 
 	m_SelectionState = SelectionState_SelectingSong;
 	ZERO( m_bStepsChosen );
 	m_bGoToOptions = false;
 	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;
 	ZERO( m_iSelection );
-	//LOG->Trace("XXX 3 %f", tm.GetDeltaTime());
 
 	if( USE_OPTIONS_LIST )
 		FOREACH_PlayerNumber( pn )
 			m_OptionsList[pn].Reset();
 
-	//LOG->Trace("XXX 4a %f", tm.GetDeltaTime());
 	AfterMusicChange();
-	//LOG->Trace("XXX 4b %f", tm.GetDeltaTime());
 
 	SOUND->PlayOnceFromAnnouncer( "select music intro" );
 
-	//LOG->Trace("XXX 4c %f", tm.GetDeltaTime());
 	ScreenWithMenuElements::BeginScreen();
-	//LOG->Trace("XXX 5 %f", tm.GetDeltaTime());
 }
 
 ScreenSelectMusic::~ScreenSelectMusic()
@@ -1010,61 +1000,64 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			 *    (Right now, we bump them to Beginner...can we come up with something better?)
 			 */
 
-			bool bSelectedRoutineSteps[NUM_PLAYERS], bAnySelectedRoutine = false;
-			bool bSelectedSameSteps = GAMESTATE->m_pCurSteps[PLAYER_1] == GAMESTATE->m_pCurSteps[PLAYER_2];
-
-			FOREACH_HumanPlayer( p )
+			if( !GAMESTATE->IsCourseMode() && GAMESTATE->GetNumSidesJoined() == 2 )
 			{
-				const Steps *pSteps = GAMESTATE->m_pCurSteps[p];
-				const StepsTypeInfo &sti = GAMEMAN->GetStepsTypeInfo( pSteps->m_StepsType );
+				bool bSelectedRoutineSteps[NUM_PLAYERS], bAnySelectedRoutine = false;
+				bool bSelectedSameSteps = GAMESTATE->m_pCurSteps[PLAYER_1] == GAMESTATE->m_pCurSteps[PLAYER_2];
 
-				bSelectedRoutineSteps[p] = sti.m_StepsTypeCategory == StepsTypeCategory_Routine;
-				bAnySelectedRoutine |= bSelectedRoutineSteps[p];
-			}
-
-			if( bAnySelectedRoutine )
-			{
-				/* Timer ran out. If we haven't agreed on steps, move players with Routine steps down
-				 * to Beginner. I'll admit that's annoying, but at least they won't lose more stages. */
-				if( bInitiatedByMenuTimer && !bSelectedSameSteps )
+				FOREACH_HumanPlayer( p )
 				{
-					// Since m_vpSteps is sorted by Difficulty, the first entry should be the easiest.
-					ASSERT( m_vpSteps.size() );
-					Steps *pSteps = m_vpSteps[0];
+					const Steps *pSteps = GAMESTATE->m_pCurSteps[p];
+					const StepsTypeInfo &sti = GAMEMAN->GetStepsTypeInfo( pSteps->m_StepsType );
 
-					FOREACH_PlayerNumber( p )
-					{
-						if( bSelectedRoutineSteps[p] )
-							GAMESTATE->m_pCurSteps[p].Set( pSteps );
-					}
-
-					break;
+					bSelectedRoutineSteps[p] = sti.m_StepsTypeCategory == StepsTypeCategory_Routine;
+					bAnySelectedRoutine |= bSelectedRoutineSteps[p];
 				}
 
-				// If the steps don't match up, we need to check some more conditions...
-				if( !bSelectedSameSteps )
+				if( bAnySelectedRoutine )
 				{
-					const PlayerNumber other = OPPOSITE_PLAYER[pn];
-
-					if( m_bStepsChosen[other] )
+					/* Timer ran out. If we haven't agreed on steps, move players with Routine steps down
+					* to Beginner. I'll admit that's annoying, but at least they won't lose more stages. */
+					if( bInitiatedByMenuTimer && !bSelectedSameSteps )
 					{
-						/* Unready the other player if they selected Routine steps, but we didn't. */
-						if( bSelectedRoutineSteps[other] )
+						/* Since m_vpSteps is sorted by Difficulty, the first entry should be the easiest. */
+						ASSERT( m_vpSteps.size() );
+						Steps *pSteps = m_vpSteps[0];
+
+						FOREACH_PlayerNumber( p )
 						{
-							m_bStepsChosen[other] = false;
-							bAllPlayersDoneSelectingSteps = false;	// if the timer ran out, we handled it earlier
-
-							// HACK: send an event to Input to tell it to unready.
-							InputEventPlus event;
-							event.MenuI = GAME_BUTTON_SELECT;
-							event.pn = other;
-
-							this->Input( event );
+							if( bSelectedRoutineSteps[p] )
+								GAMESTATE->m_pCurSteps[p].Set( pSteps );
 						}
-						else if( bSelectedRoutineSteps[pn] )
+
+						break;
+					}
+
+					/* If the steps don't match up, we need to check some more conditions... */
+					if( !bSelectedSameSteps )
+					{
+						const PlayerNumber other = OPPOSITE_PLAYER[pn];
+
+						if( m_bStepsChosen[other] )
 						{
-							// They selected non-Routine steps, so we can't select Routine steps.
-							return;
+							/* Unready the other player if they selected Routine steps, but we didn't. */
+							if( bSelectedRoutineSteps[other] )
+							{
+								m_bStepsChosen[other] = false;
+								bAllPlayersDoneSelectingSteps = false;	// if the timer ran out, we handled it earlier
+
+								// HACK: send an event to Input to tell it to unready.
+								InputEventPlus event;
+								event.MenuI = GAME_BUTTON_SELECT;
+								event.pn = other;
+
+								this->Input( event );
+							}
+							else if( bSelectedRoutineSteps[pn] )
+							{
+								/* They selected non-Routine steps, so we can't select Routine steps. */
+								return;
+							}
 						}
 					}
 				}

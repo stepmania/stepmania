@@ -35,7 +35,7 @@ public:
 	Profile *GetLocalProfile( const RString &sProfileID ) { return (Profile*) ((const ProfileManager *) this)->GetLocalProfile(sProfileID); }
 	Profile *GetLocalProfileFromIndex( int iIndex );
 	RString GetLocalProfileIDFromIndex( int iIndex );
-	
+
 	bool CreateLocalProfile( RString sName, RString &sProfileIDOut );
 	void AddLocalProfileByID( Profile *pProfile, RString sProfileID ); // transfers ownership of pProfile
 	bool RenameLocalProfile( RString sProfileID, RString sNewName );
@@ -82,24 +82,17 @@ public:
 	bool LastLoadWasTamperedOrCorrupt( PlayerNumber pn ) const;
 	bool LastLoadWasFromLastGood( PlayerNumber pn ) const;
 
-
-	//
 	// Song stats
-	//
 	int GetSongNumTimesPlayed( const Song* pSong, ProfileSlot card ) const;
 	bool IsSongNew( const Song* pSong ) const { return GetSongNumTimesPlayed(pSong,ProfileSlot_Machine)==0; }
 	void AddStepsScore( const Song* pSong, const Steps* pSteps , PlayerNumber pn, const HighScore &hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn );
 
-	//
 	// Course stats
-	//
 	void AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, const HighScore &hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail, PlayerNumber pn );
 
-	//
 	// Category stats
-	//
 	void AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, const HighScore &hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementCategoryPlayCount( StepsType st, RankingCategory rc, PlayerNumber pn );
 
@@ -126,11 +119,10 @@ private:
 	bool m_bLastLoadWasTamperedOrCorrupt[NUM_PLAYERS];	// true if Stats.xml was present, but failed to load (probably because of a signature failure)
 	bool m_bLastLoadWasFromLastGood[NUM_PLAYERS];		// if true, then m_bLastLoadWasTamperedOrCorrupt is also true
 	mutable bool m_bNeedToBackUpLastLoad[NUM_PLAYERS];	// if true, back up profile on next save
-	
+
 	Profile	*m_pMemoryCardProfile[NUM_PLAYERS];	// holds Profile for the currently inserted card
 	Profile *m_pMachineProfile;
 };
-
 
 extern ProfileManager*	PROFILEMAN;	// global and accessable from anywhere in our program
 

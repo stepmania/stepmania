@@ -1071,7 +1071,7 @@
 </Class>
 <Class name='GameManager'>
 	<Function name='GetFirstStepsTypeForGame' return='StepsType' arguments='Game game'>
-		Return the first of the <Link class='StepsType' /> corresponding to <code>game</code>.
+		Return the first <Link class='StepsType' /> for the specified <code>game</code>.
 	</Function>
 	<Function name='IsGameEnabled' sm-ssc='true' return='bool' arguments='Game g'>
 		Returns <code>true</code> if any noteskins exist for the specified Game <code>g</code>.
@@ -2097,13 +2097,13 @@
 	<Function name='GetDisplaySubTitle' return='string' arguments=''>
 		Returns the displayed subtitle of the song.
 	</Function>
-	<Function name='GetElapsedTimeFromBeat' sm-ssc='true' return='float' arguments='float fBeat'>
+	<Function name='GetElapsedTimeFromBeat' return='float' arguments='float fBeat'>
 		Returns the elapsed time from <code>fBeat</code>.
 	</Function>
-	<Function name='GetFirstBeat' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetFirstBeat' return='float' arguments=''>
 		Returns the first beat of the song.
 	</Function>
-	<Function name='GetLastBeat' sm-ssc='true' return='float' arguments=''>
+	<Function name='GetLastBeat' return='float' arguments=''>
 		Returns the last beat of the song.
 	</Function>
 	<Function name='GetLyricsPath' sm-ssc='true' return='string' arguments=''>

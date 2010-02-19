@@ -15,9 +15,7 @@
 #include "DisplayResolutions.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
-//
 // Statistics stuff
-//
 RageTimer	g_LastCheckTimer;
 int		g_iNumVerts;
 int		g_iFPS, g_iVPF, g_iCFPS;
@@ -145,7 +143,7 @@ void RageDisplay::ResetStats()
 RString RageDisplay::GetStats() const
 {
 	RString s;
-	/* If FPS == 0, we don't have stats yet. */
+	// If FPS == 0, we don't have stats yet.
 	if( !GetFPS() )
 		s = "-- FPS\n-- av FPS\n-- VPF";
 
@@ -182,7 +180,7 @@ void RageDisplay::StatsAddVerts( int iNumVertsRendered ) { g_iVertsRenderedSince
  * angle of the line. */
 void RageDisplay::DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth )
 {
-	/* soh cah toa strikes strikes again! */
+	// soh cah toa strikes strikes again!
 	float opp = p2.p.x - p1.p.x;
 	float adj = p2.p.y - p1.p.y;
 	float hyp = powf(opp*opp + adj*adj, 0.5f);
@@ -197,7 +195,7 @@ void RageDisplay::DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVerte
 
 	float ydist = lsin * LineWidth/2;
 	float xdist = lcos * LineWidth/2;
-	
+
 	v[0].p.x += xdist;
 	v[0].p.y -= ydist;
 	v[1].p.x -= xdist;
@@ -221,7 +219,7 @@ void RageDisplay::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVer
 	for( int i = 0; i < iNumVerts-1; ++i )
 		DrawPolyLine(v[i], v[i+1], LineWidth);
 
-	/* Join the lines with circles so we get rounded corners. */
+	// Join the lines with circles so we get rounded corners.
 	for( int i = 0; i < iNumVerts; ++i )
 		DrawCircle( v[i], LineWidth/2 );
 }
@@ -253,6 +251,7 @@ void RageDisplay::SetDefaultRenderStates()
 	SetCullMode( CULL_NONE );
 	SetZWrite( false ); 
 	SetZTestMode( ZTEST_OFF );
+	SetStencilTestMode( STENCILTEST_OFF );
 	SetAlphaTest( true );
 	SetBlendMode( BLEND_NORMAL );
 	SetTextureFiltering( TextureUnit_1, true );
@@ -261,9 +260,7 @@ void RageDisplay::SetDefaultRenderStates()
 }
 
 
-//
 // Matrix stuff
-//
 class MatrixStack
 {
 	vector<RageMatrix> stack;

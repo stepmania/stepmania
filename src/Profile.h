@@ -15,6 +15,7 @@
 #include "CourseUtil.h"	// for CourseID
 #include "TrailUtil.h"	// for TrailID
 #include "StyleUtil.h"	// for StyleID
+#include "LuaReference.h"
 
 class XNode;
 struct lua_State;
@@ -63,9 +64,7 @@ public:
 		InitAll();
 	}
 
-	//
 	// smart accessors
-	//
 	RString GetDisplayNameOrHighScoreName() const;
 	Character *GetCharacter() const;
 	RString GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
@@ -92,17 +91,13 @@ public:
 
 	bool IsMachine() const;
 
-	//
 	// Editable data
-	//
 	RString m_sDisplayName;
 	RString m_sCharacterID;
 	RString m_sLastUsedHighScoreName;	// this doesn't really belong in "editable", but we need it in the smaller editable file so that it can be ready quickly.
 	int m_iWeightPounds;	// 0 == not set
 
-	//
 	// General data
-	//
 	static RString MakeGuid();
 
 	RString m_sGuid;
@@ -143,10 +138,9 @@ public:
 	int m_iNumTotalSongsPlayed;
 	int m_iNumStagesPassedByPlayMode[NUM_PlayMode];
 	int m_iNumStagesPassedByGrade[NUM_Grade];
+	LuaReference m_UserData;
 
-	//
 	// Song high scores
-	//
 	struct HighScoresForASteps
 	{
 		HighScoreList hsl;
@@ -170,9 +164,7 @@ public:
 	bool HasPassedSteps( const Song* pSong, const Steps* pSteps ) const;
 	bool HasPassedAnyStepsInSong( const Song* pSong ) const;
 
-	//
 	// Course high scores
-	//
 	// struct was a typedef'd array of HighScores, but VC6 freaks out 
 	// in processing the templates for map::operator[].
 	struct HighScoresForATrail
@@ -195,9 +187,7 @@ public:
 	void IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail );
 
 
-	//
 	// Category high scores
-	//
 	HighScoreList m_CategoryHighScores[NUM_StepsType][NUM_RankingCategory];
 
 	void AddCategoryHighScore( StepsType st, RankingCategory rc, HighScore hs, int &iIndexOut );
@@ -207,17 +197,13 @@ public:
 	void IncrementCategoryPlayCount( StepsType st, RankingCategory rc );
 
 
-	//
 	// Screenshot Data
-	//
 	vector<Screenshot> m_vScreenshots;
 	void AddScreenshot( const Screenshot &screenshot );
 	int GetNextScreenshotIndex() { return m_vScreenshots.size(); }
 
 
-	//
 	// Calorie Data
-	//
 	// Why track calories in a map, and not in a static sized array like 
 	// Bookkeeping?  The machine's clock is not guaranteed to be set correctly.
 	// If calorie array is in a static sized array, playing on a machine with 
@@ -263,9 +249,7 @@ public:
 
 	void SaveCourseRecentScore( const Course* pCourse, const Trail* pTrail, HighScore hs );
 */
-	//
 	// Init'ing
-	//
 	void InitAll()
 	{
 		InitEditableData(); 
@@ -285,9 +269,7 @@ public:
 	void InitCalorieData(); 
 	void ClearStats();
 
-	//
 	// Loading and saving
-	//
 	ProfileLoadResult LoadAllFromDir( RString sDir, bool bRequireSignature );
 	bool SaveAllToDir( RString sDir, bool bSignData ) const;
 

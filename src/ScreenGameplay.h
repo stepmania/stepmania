@@ -119,9 +119,7 @@ public:
 
 	bool Center1Player() const;
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 	Song *GetNextCourseSong() const;
 	LifeMeter *GetLifeMeter( PlayerNumber pn );

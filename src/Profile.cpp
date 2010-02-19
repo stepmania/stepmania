@@ -147,6 +147,8 @@ void Profile::InitGeneralData()
 	m_iNumTotalSongsPlayed = 0;
 	ZERO( m_iNumStagesPassedByPlayMode );
 	ZERO( m_iNumStagesPassedByGrade );
+
+	m_UserData.Unset();
 }
 
 void Profile::InitSongScores()
@@ -328,50 +330,50 @@ float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 {
 	CHECKPOINT_M( ssprintf("Profile::GetSongsActual(%d,%d)",st,dc) );
-	
+
 	float fTotalPercents = 0;
-	
+
 	// add steps high scores
 	FOREACHM_CONST( SongID, HighScoresForASong, m_SongHighScores, i )
 	{
 		const SongID &id = i->first;
 		Song* pSong = id.ToSong();
-		
+
 		CHECKPOINT_M( ssprintf("Profile::GetSongsActual: %p", pSong) );
-		
+
 		// If the Song isn't loaded on the current machine, then we can't 
 		// get radar values to compute dance points.
 		if( pSong == NULL )
 			continue;
-		
+
 		if( !pSong->NormallyDisplayed() )
 			continue;	// skip
-		
+
 		CHECKPOINT_M( ssprintf("Profile::GetSongsActual: song %s", pSong->GetSongDir().c_str()) );
 		const HighScoresForASong &hsfas = i->second;
-		
+
 		FOREACHM_CONST( StepsID, HighScoresForASteps, hsfas.m_StepsHighScores, j )
 		{
 			const StepsID &id = j->first;
 			Steps* pSteps = id.ToSteps( pSong, true );
 			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: song %p, steps %p", pSong, pSteps) );
-			
+
 			// If the Steps isn't loaded on the current machine, then we can't 
 			// get radar values to compute dance points.
 			if( pSteps == NULL )
 				continue;
-			
+
 			if( pSteps->m_StepsType != st )
 				continue;
-			
+
 			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: n %s = %p", id.ToString().c_str(), pSteps) );
 			if( pSteps->GetDifficulty() != dc )
 				continue;	// skip
 			CHECKPOINT;
-			
+
 			const HighScoresForASteps& h = j->second;
 			const HighScoreList& hsl = h.hsl;
-			
+
 			fTotalPercents += hsl.GetTopScore().GetPercentDP();
 		}
 		CHECKPOINT;
@@ -418,11 +420,11 @@ float Profile::GetCoursesPossible( StepsType st, CourseDifficulty cd ) const
 	
 	return (float) iTotalTrails;
 }
-	
+
 float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
 {
 	float fTotalPercents = 0;
-	
+
 	vector<Course*> vpCourses;
 	GetHighScoreCourses( vpCourses );
 	FOREACH_CONST( Course*, vpCourses, c )
@@ -550,9 +552,7 @@ Course *Profile::GetMostPopularCourse() const
 	return id.ToCourse();
 }
 
-//
 // Steps high scores
-//
 void Profile::AddStepsHighScore( const Song* pSong, const Steps* pSteps, HighScore hs, int &iIndexOut )
 {
 	GetStepsHighScoreList(pSong,pSteps).AddHighScore( hs, iIndexOut, IsMachine() );
@@ -567,10 +567,10 @@ HighScoreList& Profile::GetStepsHighScoreList( const Song* pSong, const Steps* p
 {
 	SongID songID;
 	songID.FromSong( pSong );
-	
+
 	StepsID stepsID;
 	stepsID.FromSteps( pSteps );
-	
+
 	HighScoresForASong &hsSong = m_SongHighScores[songID];	// operator[] inserts into map
 	HighScoresForASteps &hsSteps = hsSong.m_StepsHighScores[stepsID];	// operator[] inserts into map
 
@@ -639,7 +639,6 @@ void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_Grade]
 	SongID songID;
 	songID.FromSong( pSong );
 
-	
 	memset( iCounts, 0, sizeof(int)*NUM_Grade );
 	const HighScoresForASong *hsSong = GetHighScoresForASong( songID );
 	if( hsSong == NULL )
@@ -660,9 +659,7 @@ void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_Grade]
 	}
 }
 
-//
 // Course high scores
-//
 void Profile::AddCourseHighScore( const Course* pCourse, const Trail* pTrail, HighScore hs, int &iIndexOut )
 {
 	GetCourseHighScoreList(pCourse,pTrail).AddHighScore( hs, iIndexOut, IsMachine() );
@@ -739,9 +736,7 @@ void Profile::IncrementCoursePlayCount( const Course* pCourse, const Trail* pTra
 	GetCourseHighScoreList(pCourse,pTrail).IncrementPlayCount( now );
 }
 
-//
 // Category high scores
-//
 void Profile::AddCategoryHighScore( StepsType st, RankingCategory rc, HighScore hs, int &iIndexOut )
 {
 	m_CategoryHighScores[st][rc].AddHighScore( hs, iIndexOut, IsMachine() );
@@ -772,10 +767,7 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 }
 
 
-//
 // Loading and saving
-//
-
 #define WARN_PARSER	ShowWarningOrTrace( __FILE__, __LINE__, "Error parsing file.", true )
 #define WARN_AND_RETURN { WARN_PARSER; return; }
 #define WARN_AND_CONTINUE { WARN_PARSER; continue; }
@@ -801,7 +793,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 
 	// Not critical if this fails
 	LoadEditableDataFromDir( sDir );
-	
+
 	// Check for the existance of stats.xml
 	RString fn = sDir + STATS_XML;
 	bool bCompressed = false;
@@ -836,9 +828,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 		pFile.reset( pInflate );
 	}
 
-	//
-	// Don't unreasonably large stats.xml files.
-	//
+	// Don't load unreasonably large stats.xml files.
 	if( !IsMachine() )	// only check stats coming from the player
 	{
 		int iBytes = pFile->GetFileSize();
@@ -884,8 +874,8 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 
 ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreEditable )
 {
-	/* The placeholder stats.xml file has an <html> tag.  Don't load it, but don't
-	 * warn about it. */
+	/* The placeholder stats.xml file has an <html> tag. Don't load it,
+	 * but don't warn about it. */
 	if( xml->GetName() == "html" )
 		return ProfileLoadResult_FailedNoProfile;
 
@@ -895,8 +885,7 @@ ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreE
 		return ProfileLoadResult_FailedTampered;
 	}
 
-	/* These are loaded from Editable, so we usually want to ignore them
-	 * here. */
+	// These are loaded from Editable, so we usually want to ignore them here.
 	RString sName = m_sDisplayName;
 	RString sCharacterID = m_sCharacterID;
 	RString sLastUsedHighScoreName = m_sLastUsedHighScoreName;
@@ -929,7 +918,7 @@ bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 	SaveEditableDataToDir( sDir );
 
 	bool bSaved = SaveStatsXmlToDir( sDir, bSignData );
-	
+
 	SaveStatsWebPageToDir( sDir );
 
 	// Empty directories if none exist.
@@ -963,7 +952,7 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 {
 	LOG->Trace( "SaveStatsXmlToDir: %s", sDir.c_str() );
 	auto_ptr<XNode> xml( SaveStatsXmlCreateNode() );
-	
+
 	// Save stats.xml
 	RString fn = sDir + (g_bProfileDataCompress? STATS_XML_GZ:STATS_XML);
 
@@ -975,7 +964,7 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 			LOG->Warn( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
 			return false;
 		}
-	
+
 		if( g_bProfileDataCompress )
 		{
 			RageFileObjGzip gzip( &f );
@@ -1097,7 +1086,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 		XNode* pNumSongsPlayedByPlayMode = pGeneralDataNode->AppendChild("NumSongsPlayedByPlayMode");
 		FOREACH_ENUM( PlayMode, pm )
 		{
-			/* Don't save unplayed PlayModes. */
+			// Don't save unplayed PlayModes.
 			if( !m_iNumSongsPlayedByPlayMode[pm] )
 				continue;
 			pNumSongsPlayedByPlayMode->AppendChild( PlayModeToString(pm), m_iNumSongsPlayedByPlayMode[pm] );
@@ -1144,7 +1133,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 		XNode* pNumStagesPassedByPlayMode = pGeneralDataNode->AppendChild("NumStagesPassedByPlayMode");
 		FOREACH_ENUM( PlayMode, pm )
 		{
-			/* Don't save unplayed PlayModes. */
+			// Don't save unplayed PlayModes.
 			if( !m_iNumStagesPassedByPlayMode[pm] )
 				continue;
 			pNumStagesPassedByPlayMode->AppendChild( PlayModeToString(pm), m_iNumStagesPassedByPlayMode[pm] );
@@ -1161,6 +1150,19 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 		}
 	}
 
+	// Load Lua UserData from profile
+	if( !IsMachine() && m_UserData.IsSet() )
+	{
+		Lua *L = LUA->Get();
+		m_UserData.PushSelf( L );
+		XNode* pUserTable = XmlFileUtil::XNodeFromTable( L );
+		LUA->Release( L );
+
+		// XXX: XNodeFromTable returns a root node with the name "Layer".
+		pUserTable->m_sName = "UserData";
+		pGeneralDataNode->AppendChild( pUserTable );
+	}
+
 	return pGeneralDataNode;
 }
 
@@ -1168,13 +1170,11 @@ ProfileLoadResult Profile::LoadEditableDataFromDir( RString sDir )
 {
 	RString fn = sDir + EDITABLE_INI;
 
-	//
 	// Don't load unreasonably large editable.xml files.
-	//
 	int iBytes = FILEMAN->GetFileSizeInBytes( fn );
 	if( iBytes > MAX_EDITABLE_INI_SIZE_BYTES )
 	{
-		LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
+		LOG->Warn( "The file '%s' is unreasonably large. It won't be loaded.", fn.c_str() );
 		return ProfileLoadResult_FailedTampered;
 	}
 
@@ -1331,7 +1331,24 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 		if( pNumStagesPassedByPlayMode )
 			FOREACH_ENUM( PlayMode, pm )
 				pNumStagesPassedByPlayMode->GetChildValue( PlayModeToString(pm), m_iNumStagesPassedByPlayMode[pm] );
-	
+
+	}
+
+	// Build the custom data table from the existing XNode.
+	if( !IsMachine() )
+	{
+		const XNode *pUserData = pNode->GetChild( "UserData" );
+
+		Lua *L = LUA->Get();
+
+		// If we have custom data, load it. Otherwise, make a blank table.
+		if( pUserData )
+			LuaHelpers::CreateTableFromXNode( L, pUserData );
+		else
+			lua_newtable( L );
+
+		m_UserData.SetFromStack( L );
+		LUA->Release( L );
 	}
 
 }
@@ -1361,7 +1378,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 	XNode* pNode = new XNode( "SongScores" );
 
 	FOREACHM_CONST( SongID, HighScoresForASong, m_SongHighScores, i )
-	{	
+	{
 		const SongID &songID = i->first;
 		const HighScoresForASong &hsSong = i->second;
 
@@ -1374,7 +1391,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 		int jCheck2 = hsSong.m_StepsHighScores.size();
 		int jCheck1 = 0;
 		FOREACHM_CONST( StepsID, HighScoresForASteps, hsSong.m_StepsHighScores, j )
-		{	
+		{
 			jCheck1++;
 			ASSERT( jCheck1 <= jCheck2 );
 			const StepsID &stepsID = j->first;
@@ -1391,7 +1408,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 			pStepsNode->AppendChild( hsl.CreateNode() );
 		}
 	}
-	
+
 	return pNode;
 }
 
@@ -1440,7 +1457,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 	ASSERT( pProfile );
 
 	XNode* pNode = new XNode( "CourseScores" );
-	
+
 	FOREACHM_CONST( CourseID, HighScoresForACourse, m_CourseHighScores, i )
 	{
 		const CourseID &courseID = i->first;
@@ -1490,7 +1507,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 		courseID.LoadFromNode( pCourse );
 		if( !courseID.IsValid() )
 			WARN_AND_CONTINUE;
-		
+
 
 		// Backward compatability hack to fix importing scores of old style 
 		// courses that weren't in group folder but have now been moved into
@@ -2001,6 +2018,7 @@ public:
 	static int GetTotalRolls( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalRolls ); return 1; }
 	static int GetTotalMines( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalMines ); return 1; }
 	static int GetTotalHands( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalHands ); return 1; }
+	static int GetUserData( T* p, lua_State *L )		{ p->m_UserData.PushSelf(L); return 1; }
 
 	LunaProfile()
 	{
@@ -2044,6 +2062,7 @@ public:
 		ADD_METHOD( GetTotalRolls );
 		ADD_METHOD( GetTotalMines );
 		ADD_METHOD( GetTotalHands );
+		ADD_METHOD( GetUserData );
 	}
 };
 

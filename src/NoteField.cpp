@@ -36,7 +36,7 @@ NoteField::NoteField()
 	m_pNoteData = NULL;
 	m_pCurDisplay = NULL;
 
-	m_textMeasureNumber.LoadFromFont( THEME->GetPathF("Common","normal") );
+	m_textMeasureNumber.LoadFromFont( THEME->GetPathF("NoteField","MeasureNumber") );
 	m_textMeasureNumber.SetZoom( 1.0f );
 	m_textMeasureNumber.SetShadowLength( 2 );
 	m_textMeasureNumber.SetWrapWidthPixels( 300 );

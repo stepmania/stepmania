@@ -19,7 +19,6 @@ static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight 
 	 *  Foo (res 512x128).png
 	 * Also allow, eg:
 	 *  Foo (dither, res 512x128).png
-	 *
 	 * Be careful that this doesn't get mixed up with frame dimensions. */
 	static Regex re( "\\([^\\)]*res ([0-9]+)x([0-9]+).*\\)" );
 
@@ -202,7 +201,7 @@ void RageBitmapTexture::Create()
 				case 1:
 					pixfmt = PixelFormat_RGB5A1;
 					break;
-				default:	
+				default:
 					pixfmt = PixelFormat_RGBA4;
 					break;
 				}

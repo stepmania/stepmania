@@ -65,7 +65,6 @@ RageFileDriverReadAhead::RageFileDriverReadAhead( RageFileBasic *pFile, int iCac
 	m_pFile = pFile;
 	m_iFilePos = pFile->Tell();
 	m_bFileOwned = false;
-	m_bReadAheadNeeded = true;
 	m_iPostBufferReadAhead = iPostBufferReadAhead;
 
 	FillBuffer( iCacheBytes );
@@ -79,7 +78,6 @@ RageFileDriverReadAhead::RageFileDriverReadAhead( const RageFileDriverReadAhead 
 	m_iFilePos = cpy.m_iFilePos;
 	m_bFileOwned = true;
 	m_iPostBufferReadAhead = cpy.m_iPostBufferReadAhead;
-	m_bReadAheadNeeded = cpy.m_bReadAheadNeeded;
 
 	RageFileManagerReadAhead::CacheHintStreaming( m_pFile );
 }
@@ -117,32 +115,39 @@ void RageFileDriverReadAhead::FillBuffer( int iBytes )
 
 int RageFileDriverReadAhead::ReadInternal( void *pBuffer, size_t iBytes )
 {
-	/* If we're in the buffered area, and we havn't already done read-ahead, start it. */
+	int iRet = -1;
 	if( m_bReadAheadNeeded && m_iFilePos < (int) m_sBuffer.size() )
 	{
-		RageFileManagerReadAhead::ReadAhead( m_pFile, m_iPostBufferReadAhead );
-
-		m_bReadAheadNeeded = false;
+		// If we can serve data out of the buffer, use it.
+		iRet = min( iBytes, m_sBuffer.size() - m_iFilePos );
+		memcpy( pBuffer, m_sBuffer.data() + m_iFilePos, iRet );
 	}
-	else if( !m_bReadAheadNeeded && m_iFilePos >= (int) m_sBuffer.size() )
+	else
 	{
-		/* Reset, so next time we rewind we'll read-ahead again. */
-		m_bReadAheadNeeded = true;
+		// Read out of the underlying file.
+		iRet = m_pFile->Read( pBuffer, iBytes );
 	}
 
-	/* If we can serve data out of the buffer, use it. */
-	if( m_iFilePos < (int) m_sBuffer.size() )
-	{
-		size_t iFromBuffer = min( iBytes, m_sBuffer.size() - m_iFilePos );
-		memcpy( pBuffer, m_sBuffer.data() + m_iFilePos, iFromBuffer );
-		m_iFilePos += iFromBuffer;
-		return iFromBuffer;
-	}
-
-	/* Read out of the underlying file. */
-	int iRet = m_pFile->Read( pBuffer, iBytes );
 	if( iRet != -1 )
 		m_iFilePos += iRet;
+
+	/*
+	 * Hint the read-ahead.  We only strictly need to do this when reading data from
+	 * m_sBuffer, so the kernel knows to start reading data ahead of it.  Always
+	 * doing it is simpler, and reduces some skips when under I/O load.
+	 */
+	RageFileManagerReadAhead::ReadAhead( m_pFile, m_iPostBufferReadAhead );
+
+	/*
+	 * We're streaming the file, so we don't need data that we've already read in cache.
+	 * Hint the OS to discard it, so it doesn't push more useful data out of cache.
+	 *
+	 * Keep the previous 32k of data in cache.  This prevents an issue in Linux: if we're at
+	 * the end of the file, flush the cache, then try to read (resulting in 0 bytes), it'll
+	 * hit the disk if we've flushed.
+	 */
+	RageFileManagerReadAhead::DiscardCache( m_pFile, -m_iPostBufferReadAhead - 1024*32, m_iPostBufferReadAhead );
+
 	return iRet;
 
 }

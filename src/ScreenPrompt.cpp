@@ -43,11 +43,9 @@ void ScreenPrompt::SetPromptSettings( const RString &sText, PromptType type, Pro
 void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const RString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
 {
 	SetPromptSettings( sText, type, defaultAnswer, OnYes, OnNo, pCallbackData );
-	
+
 	SCREENMAN->AddNewScreenToTop( "ScreenPrompt", smSendOnPop );
 }
-
-
 
 REGISTER_SCREEN_CLASS( ScreenPrompt );
 

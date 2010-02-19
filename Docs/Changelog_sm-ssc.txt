@@ -9,6 +9,138 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100218
+--------
+* Added Fonts/ScreenReloadSongs LoadingText, making the text on
+  ScreenReloadSongs themeable.
+* Added Fonts/NoteField MeasureNumber, ScreenGameplay debug,
+  ScreenGameplaySyncMachine SyncInfo.
+
+20100216
+--------
+sm4svn r28309: Fix crash in course mode, another (and, from the looks of it,
+  the last) dumb bug this block o' hack caused [vyhd]
+
+20100215
+--------
+Some more sm4svn commits:
+* r28304: read-ahead tweaks; support os read cache flushing [Glenn Maynard]
+* r28306: experimental code for storing Lua data in Profiles and
+  converting between XML and Lua data. [vyhd]
+
+20100214
+--------
+sm4svn catchup... Noticing a pattern?
+* r28293: add RageFile::GetFD for specialized file handling [Glenn Maynard]
+  (FD meaning File Descriptor -aj)
+* r28294: "remove absolutely pointless revision tags that cause [aclocal.m4 and
+  ltmain.sh in libmad] to constantly show up as modified" [Glenn Maynard]
+* r28295: [fix] copy and paste error [Glenn Maynard]
+* r28296: Experimental: hint the OS caching to avoid skips when starting/looping
+  movies [Glenn Maynard]
+* r28297: fix a bug, then disable the whole thing for now due to dup()
+  braindamage; Linux version works fine (posix_fadvise) [Glenn Maynard]
+* r28299: fix m_iFilePos updating on seek [Glenn Maynard]
+* r28300: Added theme metric for Routine noteskins (to enforce separate noteskins
+  per player, or at least conscious thought toward that issue), added fix for
+  ScreenEdit only handling switching players on dance-routine [vyhd]
+ (editor's note: the new metrics are RoutineNoteSkinP1 and RoutineNoteSkinP2 -aj)
+* r28303: make sure routine always writes as two charts, even if only one has
+  steps; DEBUG_ASSERT -> ASSERT [Glenn Maynard]
+
+20100213
+--------
+Even more sm4svn catchup:
+* r28277: remove preferred group filtering (leaving the setting in for later use) [Glenn Maynard]
+* r28279: simplify SongUtil::GetStepsTypeAndDifficultyFromSortOrder [Glenn Maynard]
+* r28281: fix SSM crashes when selecting a song with only one
+  player enabled [Glenn Maynard]
+* r28284: add Style::GetUsesCenteredArrows (doubles + routine)
+* r28285: sanity check (on ScreenGameplay) [Glenn Maynard]
+* various commits related to routine mode [Glenn Maynard]
+  (specifically, r28282,r28286,r28287,r28289,r28290)
+* r28291: fix pump routine right side DownLeft not drawn [Chris Danford]
+* r28292: easier debug stepping [Chris Danford]
+
+20100211
+--------
+sm-ssc:
+* Fix a crash with AutoKeysounds.
+
+Playing catch-up with sm4svn. This happens a lot.
+* r28273: "Added more logical handling of Routine mode selection
+  (see source code comments); hopefully, we can write up a more standard
+  solution to this later, since this is kind of a hack" [vyhd]
+* r28274: course type param to GetCustomDifficulty is optional [Glenn Maynard]
+* r28276: Lua binding for MeterDisplay. Allow setting and changing the
+  width dynamically. Phase out the "StreamWidth" node property; set it with
+  SetStreamWidth instead. [Glenn Maynard]
+
+20100210
+--------
+* Possible fix for handling of delays in autoplay. May also fix things
+  elsewhere (editor?), but that is untested. Autoplay seemed to work well
+  with Uprock (the song), so I have no complaints. -aj
+* Glenn started to revert some of Frieza's code in sm4:
+ * "Personally, there is an assert for checking if the noteskin is not empty.
+   Based on other code, it seems like the noteskin would have to be set
+   somewhere else. If this is a problem somewhere else, find where it's a
+   problem and don't patch this function." -aj re: NoteSkinManager.cpp r2098
+ * r28076 "Adds metric options to flash the lifebar when a note is hit"
+   My comment on why I did this: "Any competent themer can make a lifebar
+   flash when a note is hit. Just hook something up to a JudgmentMesageCommand,
+   read the params, and go from there. If it doesn't work on
+   StreamDisplay/LifeMeterBar, then GO CODE YOUR OWN LIFE METER IN LUA!!
+   Seriously there are enough publicly available references (moonlight,
+   optical, NCEvo if you want to go back in time to see a different type
+   of life meter) that claiming 'oh I don't know how to' isn't an excuse.
+   Please actually put in effort and seek examples when you try stuff
+   kthx i told you this would be ranty" -aj
+
+20100209
+--------
+* sm4svn r28266: Fix GAMESTATE:GetCurrentSteps() only returns single-player
+  steps for any difficulty [vyhd]
+
+20100207
+--------
+* sm4svn r28264: subtractive blend (OpenGL only for now) [Glenn Maynard]
+  (D3D version untested, I'm unsure of the behavior -aj)
+
+20100204
+--------
+* [MusicWheel] add RecentSongsToShow metric.
+
+20100203
+--------
+* "First pass of toasty message, hopefully this doesn't break!" [Midiman]
+
+20100202
+--------
+* [Course.cpp] HasTimedMods() now actually checks for timed mods
+  (technically non-global) instead of being a clone of HasMods().
+* [Player.cpp] add MAX_HOLD_LIFE/[Player] MaxHoldLife metric
+
+20100130
+--------
+* "various commits from wolfman from the hg repo; mostly cleanup aside from
+  rev. 79071b3442, which adds a new metric. (that change is forthcoming)"
+
+20100128
+--------
+* Add DELAYS to list of known .sm tags [Wolfman; sm-ssc hg ebb2bda5b4]
+* fix Windows icons for compiling on VS2003 and VS2005
+* add ScoreKeeperShared.cpp/.h to VS2k3 project
+
+20100127
+--------
+* sm4svn r28259: Change OptionsList behavior to pop menu on Select and
+  default to Exit only on SELECT_ONE [vyhd]
+
+20100126
+--------
+* Add ScreenGameplayShared, ScoreKeeperShared to Makefile.am
+
 sm-ssc Private Beta Wave 1.4 | 20100125
 ---------------------------------------
 

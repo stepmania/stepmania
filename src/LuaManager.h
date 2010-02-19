@@ -30,12 +30,12 @@ public:
 	Lua *Get();
 	void Release( Lua *&p );
 
-	/* Explicitly lock and unlock Lua access.  This is done automatically by Get() and
-	 * Release(). */
+	/* Explicitly lock and unlock Lua access. This is done automatically by
+	 * Get() and Release(). */
 	void YieldLua();
 	void UnyieldLua();
 
-	/* Register all subscribing types.  There's no harm in registering when already registered. */
+	// Register all subscribing types. There's no harm in registering when already registered.
 	void RegisterTypes();
 
 	void SetGlobal( const RString &sName, int val );
@@ -60,12 +60,12 @@ namespace LuaHelpers
 	 * false is returned. */
 	bool RunScriptOnStack( Lua *L, RString &sError, int iArgs = 0, int iReturnValues = 0 );
 
-	/* LoadScript the given script, and RunScriptOnStack it.  iArgs arguments are
+	/* LoadScript the given script, and RunScriptOnStack it. iArgs arguments are
 	 * at the top of the stack. */
 	bool RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iArgs = 0, int iReturnValues = 0 );
 
-	/* Run the given expression, returning a single value, and leave the return value on the
-	 * stack.  On error, push nil. */
+	/* Run the given expression, returning a single value, and leave the return
+	 * value on the stack.  On error, push nil. */
 	bool RunExpression( Lua *L, const RString &sExpression, const RString &sName = "" );
 
 	bool RunScriptFile( const RString &sFile );
@@ -73,12 +73,15 @@ namespace LuaHelpers
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,
 	 * and push it on the stack. */
 	void CreateTableFromArrayB( Lua *L, const vector<bool> &aIn );
-	
+
+	// Create a Lua table with contents set from this XNode, then push it on the stack.
+	void CreateTableFromXNode( Lua *L, const XNode *pNode );
+
 	/* Recursively copy elements from the table at stack element -2 into the table
 	 * at stack -1.  Pop both elements from the stack. */
 	void DeepCopy( lua_State *L );
 
-	/* Read the table at the top of the stack back into a vector. */
+	// Read the table at the top of the stack back into a vector.
 	void ReadArrayFromTableB( Lua *L, vector<bool> &aOut );
 
 	void ParseCommandList( lua_State *L, const RString &sCommands, const RString &sName );

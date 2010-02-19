@@ -16,10 +16,7 @@
 #include "RageFileManager.h"
 #include "CourseWriterCRS.h"
 
-
-//
 // Sorting stuff
-//
 static bool CompareCoursePointersByName( const Course* pCourse1, const Course* pCourse2 )
 {
 	RString sName1 = pCourse1->GetDisplayFullTitle();
@@ -187,7 +184,6 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCours
 
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), MovePlayersBestToEnd );
 }
- 
 
 void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, ProfileSlot slot, bool bDescending )
 {

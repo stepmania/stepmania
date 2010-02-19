@@ -365,6 +365,7 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 		if( (so!=SORT_ROULETTE || !RANDOM_PICKS_LOCKED_SONGS) && iLocked )
 			continue;
 
+
 		if( PREFSMAN->m_bOnlyPreferredDifficulties )
 		{
 			// if the song has steps that fit the preferred difficulty of the default player
@@ -377,6 +378,7 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 			if( pSong->HasStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType) )
 				arraySongs.push_back( pSong );
 		}
+
 
 	}
 
@@ -437,7 +439,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			// Make an array of Song*, then sort them
 			vector<Song*> arraySongs;
 
-			GetSongList(arraySongs, so);
+			GetSongList( arraySongs, so );
 
 			bool bUseSections = true;
 

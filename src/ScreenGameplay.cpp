@@ -34,7 +34,7 @@
 #include "LightsManager.h"
 #include "ProfileManager.h"
 #include "StatsManager.h"
-#include "PlayerAI.h"	// for NUM_SKILL_LEVELS
+#include "PlayerAI.h" // for NUM_SKILL_LEVELS
 #include "NetworkSyncManager.h"
 #include "Foreach.h"
 #include "DancingCharacters.h"
@@ -58,6 +58,7 @@
 #include "SongUtil.h"
 #include "Song.h"
 #include "XmlFileUtil.h"
+#include "Profile.h" // for replay data stuff
 
 // Defines
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB(m_sName,"ShowLifeMeterForDisabledPlayers")
@@ -671,7 +672,7 @@ void ScreenGameplay::Init()
 		m_Failed.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 ); // on top of everything else
 		this->AddChild( &m_Failed );
 
-		m_textDebug.LoadFromFont( THEME->GetPathF("Common","normal") );
+		m_textDebug.LoadFromFont( THEME->GetPathF(m_sName,"debug") );
 		m_textDebug.SetName( "Debug" );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_textDebug );
 		m_textDebug.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );	// just under transitions, over the foreground
@@ -2760,14 +2761,16 @@ void ScreenGameplay::SaveReplay()
 	 * Add proper steps hash?
 	 * Add modifiers used
 	 * Add date played, machine played on, etc.
-	 * Add/use player GUID
 	 */
 	FOREACH_HumanPlayer( pn )
 	{
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
+			Profile *pTempProfile = PROFILEMAN->GetProfile(pn);
+
 			XNode *p = new XNode("ReplayData");
-			// todo: add version number, since this will change in the future -aj
+			// append version number (in case the format changes)
+			p->AppendAttr("Version",0);
 
 			// song information node
 			SongID songID;
@@ -2787,7 +2790,8 @@ void ScreenGameplay::SaveReplay()
 
 			// player information node (rival data sup)
 			XNode *pPlayerInfoNode = new XNode("Player");
-			pPlayerInfoNode->AppendChild("Name", PROFILEMAN->GetPlayerName(pn));
+			pPlayerInfoNode->AppendChild("DisplayName", pTempProfile->m_sDisplayName);
+			pPlayerInfoNode->AppendChild("Guid", pTempProfile->m_sGuid);
 			p->AppendChild(pPlayerInfoNode);
 
 			// the timings.
@@ -2825,7 +2829,7 @@ void ScreenGameplay::SaveReplay()
 /*
 bool ScreenGameplay::LoadReplay()
 {
-	// Load 
+	// Load replay which was selected via options
 }
 */
 

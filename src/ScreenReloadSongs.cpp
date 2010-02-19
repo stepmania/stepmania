@@ -29,8 +29,8 @@ public:
 
 	void Paint()
 	{
-		/* We load songs much faster than we draw frames.  Cap the draw rate, so we don't
-		 * slow down the reload. */
+		/* We load songs much faster than we draw frames. Cap the draw rate,
+		 * so we don't slow down the reload. */
 		if( m_LastDraw.PeekDeltaTime() < 1.0f/DrawFrameRate )
 			return;
 		m_LastDraw.GetDeltaTime();
@@ -51,7 +51,8 @@ void ScreenReloadSongs::Init()
 
 	m_iUpdates = 0;
 
-	m_Loading.LoadFromFont( THEME->GetPathF("Common", "normal") );
+	m_Loading.SetName("LoadingText");
+	m_Loading.LoadFromFont( THEME->GetPathF(m_sName, "LoadingText") );
 	m_Loading.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	this->AddChild( &m_Loading );
 
@@ -68,7 +69,7 @@ void ScreenReloadSongs::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 
-	/* Start the reload on the second update.  On the first, 0, SCREENMAN->Draw won't draw. */
+	/* Start the reload on the second update. On the first (0), SCREENMAN->Draw won't draw. */
 	++m_iUpdates;
 	if( m_iUpdates != 2 )
 		return;

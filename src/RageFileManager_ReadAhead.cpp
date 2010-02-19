@@ -22,6 +22,26 @@ void RageFileManagerReadAhead::ReadAhead( RageFileBasic *pFile, int iBytes )
 	posix_fadvise( iFD, iStart, iBytes, POSIX_FADV_WILLNEED );
 }
 
+void RageFileManagerReadAhead::DiscardCache( RageFileBasic *pFile, int iRelativePosition, int iBytes )
+{
+	int iFD = pFile->GetFD();
+	if( iFD == -1 )
+		return;
+
+	int iStart = lseek( iFD, 0, SEEK_CUR );
+	iStart += iRelativePosition;
+	if( iStart < 0 )
+	{
+		iBytes -= iStart;
+		iStart = 0;
+	}
+
+	if( iBytes == 0 )
+		return;
+
+	posix_fadvise( iFD, iStart, iBytes, POSIX_FADV_DONTNEED );
+}
+
 #else
 #if 0
 /* This doesn't currently work, because dup() locks the file position of the new FD with the old
@@ -123,10 +143,12 @@ void RageFileManagerReadAhead::ReadAhead( RageFileBasic *pFile, int iBytes )
 		}
 	}
 }
+void RageFileManagerReadAhead::DiscardCache( RageFileBasic *pFile, int iRelativePosition, int iBytes ) { }
 #else
 void RageFileManagerReadAhead::Init() { }
 void RageFileManagerReadAhead::Shutdown() { }
 void RageFileManagerReadAhead::ReadAhead( RageFileBasic *pFile, int iBytes ) { }
+void RageFileManagerReadAhead::DiscardCache( RageFileBasic *pFile, int iRelativePosition, int iBytes ) { }
 #endif
 #endif
 

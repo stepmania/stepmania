@@ -71,7 +71,7 @@ public:
 
 	// Called when a fret, step, or strum type button changes
 	void Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
-	
+
 	// Called when the strum bar is pressed down
 	void Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
 
@@ -86,7 +86,7 @@ public:
 
 	// called by Fret for Hammer-ons and Pull-offs
 	void Hopo( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )	{ StepStrumHopo(col, row, tm, bHeld, bRelease, ButtonType_Hopo); }
-	
+
 	void RandomizeNotes( int iNoteRow );
 	void FadeToFail();
 	void CacheAllUsedNoteSkins();
