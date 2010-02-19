@@ -147,7 +147,7 @@ void OptionRow::LoadExit()
 
 void OptionRow::ChoicesChanged( RowType type )
 {
-	ASSERT( !m_pHand->m_Def.m_vsChoices.empty() );
+	ASSERT_M( !m_pHand->m_Def.m_vsChoices.empty(), m_pHand->m_Def.m_sName + " has no choices" );
 
 	// Remove the NextRow marker before reloading choices
 	if( m_pHand->m_Def.m_vsChoices[0] == NEXT_ROW_NAME )

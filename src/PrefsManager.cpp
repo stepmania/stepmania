@@ -239,7 +239,6 @@ PrefsManager::PrefsManager() :
 	m_fCenterImageAddHeight		( "CenterImageAddHeight",		0 ),
 	m_AttractSoundFrequency		( "AttractSoundFrequency",		ASF_EVERY_TIME ),
 	m_bAllowExtraStage		( "AllowExtraStage",			true ),
-	m_bHideDefaultNoteSkin		( "HideDefaultNoteSkin",		false ),
 	m_iMaxHighScoresPerListForMachine	( "MaxHighScoresPerListForMachine",	10 ),
 	m_iMaxHighScoresPerListForPlayer	( "MaxHighScoresPerListForPlayer",	3 ),
 	m_bAllowMultipleHighScoreWithSameName	( "AllowMultipleHighScoreWithSameName",	true ),
@@ -439,6 +438,7 @@ void PrefsManager::ReadGamePrefsFromIni( const RString &sIni )
 		RString sGame = section->GetName().Right( section->GetName().length() - GAME_SECTION_PREFIX.length() );
 		GamePrefs &gp = m_mapGameNameToGamePrefs[ sGame ];
 
+		// todo: read more prefs here? -aj
 		ini.GetValue( section->GetName(), "Announcer",		gp.m_sAnnouncer );
 		ini.GetValue( section->GetName(), "Theme",			gp.m_sTheme );
 		ini.GetValue( section->GetName(), "DefaultModifiers",	gp.m_sDefaultModifiers );
@@ -486,6 +486,7 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 	{
 		RString sSection = "Game-" + RString( iter->first );
 
+		// todo: write more values here? -aj
 		ini.SetValue( sSection, "Announcer",		iter->second.m_sAnnouncer );
 		ini.SetValue( sSection, "Theme",		iter->second.m_sTheme );
 		ini.SetValue( sSection, "DefaultModifiers",	iter->second.m_sDefaultModifiers );

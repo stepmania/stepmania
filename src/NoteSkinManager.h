@@ -18,7 +18,7 @@ public:
 	~NoteSkinManager();
 
 	void RefreshNoteSkinData( const Game* game );
-	void GetNoteSkinNames( const Game* game, vector<RString> &AddTo, bool bFilterDefault=true );
+	void GetNoteSkinNames( const Game* game, vector<RString> &AddTo );
 	void GetNoteSkinNames( vector<RString> &AddTo );	// looks up current const Game* in GAMESTATE
 	bool DoesNoteSkinExist( const RString &sNoteSkin );	// looks up current const Game* in GAMESTATE
 	bool DoNoteSkinsExistForGame( const Game *pGame );

@@ -313,6 +313,8 @@ void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )
 		return;
 	}
 
+	this->PlayCommand( "Cancel" );
+
 	if( m_Cancel.IsTransitioning() )
 		return;	// ignore
 

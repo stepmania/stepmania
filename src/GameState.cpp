@@ -741,7 +741,6 @@ void GameState::FinishStage()
 {
 	// Increment the stage counter.
 	const int iOldStageIndex = m_iCurrentStageIndex;
-
 	++m_iCurrentStageIndex;
 
 	m_iNumStagesOfThisSong = 0;
