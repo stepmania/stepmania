@@ -99,13 +99,14 @@ void ActorFrame::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue( "VanishX", m_fVanishX );
 	pNode->GetAttrValue( "VanishY", m_fVanishY );
 	m_bOverrideLighting = pNode->GetAttrValue( "Lighting", m_bLighting );
-	// new lighting values
-	// Values need to be converted into RageColors, so more work needs to be done...
-	/*
-	pNode->GetAttrValue( "AmbientColor", m_ambientColor );
-	pNode->GetAttrValue( "DiffuseColor", m_diffuseColor );
-	pNode->GetAttrValue( "SpecularColor", m_specularColor );
-	*/
+	// new lighting values (only ambient color seems to work?) -aj
+	RString sTemp1,sTemp2,sTemp3;
+	pNode->GetAttrValue( "AmbientColor", sTemp1 );
+	m_ambientColor.FromString(sTemp1);
+	pNode->GetAttrValue( "DiffuseColor", sTemp2 );
+	m_diffuseColor.FromString(sTemp2);
+	pNode->GetAttrValue( "SpecularColor", sTemp3 );
+	m_specularColor.FromString(sTemp3);
 	// Values need to be converted into a RageVector3, so more work needs to be done...
 	//pNode->GetAttrValue( "LightDirection", m_lightDirection );
 }
