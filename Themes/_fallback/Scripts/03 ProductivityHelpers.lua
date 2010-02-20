@@ -39,11 +39,10 @@ function Actor:xy(actorX,actorY)
 	self:y(actorY);
 end;
 
--- MaskSource()
--- Sets an actor up as the source for a mask.
--- todo: pass in a variable that states whether or not to clearzbuffer
-function Actor:MaskSource()
-	self:clearzbuffer(true);
+-- MaskSource([clearzbuffer])
+-- Sets an actor up as the source for a mask. Clears zBuffer by default.
+function Actor:MaskSource(_)
+	self:clearzbuffer(_ or true);
 	self:zwrite(true);
 	self:blend('BlendMode_NoEffect');
 end;
@@ -130,8 +129,7 @@ end
 --[[ end helper functions ]]
 -- this code is in the public domain.
 
---[[ Lists & Functions (sm-ssc specific code) ]]
-
+--[[ these should probably be moved into another file: ]]
 function GameCompatibleModes()
 	sGame = GAMESTATE:GetCurrentGame():GetName();
 	local Modes = {

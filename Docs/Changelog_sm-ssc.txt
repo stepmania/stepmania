@@ -9,6 +9,14 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100219
+--------
+* sm4svn r28313: don't filter NoteSkins at a PrefsManager/NoteSkinManager level.
+  Leave the NoteSkin sorting and filtering up to the theme. [Chris Danford]
+* load lighting from ActorFrame xnodes (in addition to Lua commands)
+* add Cancel command on ScreenWithMenuElements, so other things can react
+  to Screen cancel.
+
 20100218
 --------
 * Added Fonts/ScreenReloadSongs LoadingText, making the text on

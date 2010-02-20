@@ -5,7 +5,7 @@ t[#t+1] = Def.Quad {
 t[#t+1] = Def.Sprite {
 	InitCommand=cmd(Center);
 	BeginCommand=function(self)
-		if not GAMESTATE:IsCourseMode() then
+		if GAMESTATE:GetCurrentSong() then
 			self:LoadBackground( GAMESTATE:GetCurrentSong():GetBackgroundPath() );
 		end;
 	end;

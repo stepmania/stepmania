@@ -47,7 +47,8 @@ t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("BPMLabel","BPMLabel");
 t[#t+1] = StandardDecorationFromFileOptional("SongTime","SongTime") .. {
 	SetCommand=function(self)
-		local curSelection, length = nil;
+		local curSelection = nil;
+		local length = 0.0;
 		if GAMESTATE:IsCourseMode() then
 			curSelection = GAMESTATE:GetCurrentCourse();
 			self:playcommand("Reset");
@@ -61,16 +62,17 @@ t[#t+1] = StandardDecorationFromFileOptional("SongTime","SongTime") .. {
 			self:playcommand("Reset");
 			if curSelection then
 				length = curSelection:MusicLengthSeconds();
+				if curSelection:IsLong() then
+					self:playcommand("Long");
+				elseif curSelection:IsMarathon() then
+					self:playcommand("Marathon");
+				else
+					self:playcommand("Reset");
+				end
 			else
 				length = 0.0;
-			end;
-			if curSelection:IsLong() then
-				self:playcommand("Long");
-			elseif curSelection:IsMarathon() then
-				self:playcommand("Marathon");
-			else
 				self:playcommand("Reset");
-			end
+			end;
 		end;
 		self:settext( SecondsToMSS(length) );
 	end;
@@ -99,8 +101,29 @@ if not GAMESTATE:IsCourseMode() then
 		end;
 	};
 	t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
-	
 end;
+if GAMESTATE:IsCourseMode() then
+	t[#t+1] = StandardDecorationFromFileOptional("NumCourseSongs","NumCourseSongs")..{
+		InitCommand=cmd(horizalign,right);
+		SetCommand=function(self)
+			local curSelection= nil;
+			local sAppend = "";
+			if GAMESTATE:IsCourseMode() then
+				curSelection = GAMESTATE:GetCurrentCourse();
+				if curSelection then
+					sAppend = (curSelection:GetEstimatedNumStages() == 1) and "Stage" or "Stages";
+					self:visible(true);
+					self:settext( curSelection:GetEstimatedNumStages() .. " " .. sAppend);
+				else
+					self:visible(false);
+				end;
+			else
+				self:visible(false);
+			end;
+		end;
+		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+	};
+end
 t[#t+1] = StandardDecorationFromFileOptional("SortOrder","SortOrderText") .. {
 	BeginCommand=cmd(playcommand,"Set");
 	SortOrderChangedMessageCommand=cmd(playcommand,"Set";);

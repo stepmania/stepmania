@@ -154,8 +154,11 @@ Colors = {
     Saturation(hInput)
     Alpha(hInput)
     HSV(iHue,fSaturation,fValue or any other overload) --]]
+	Alpha = function(cColor,fAlpha)
+		local c = cColor;
+		return { c[1],c[2],c[3],fAlpha };
+	end,
 }
-
 --[[ Fallbacks ]]
 function Color(c)
 	return Colors[c];
@@ -164,7 +167,7 @@ end;
 function BoostColor( cColor, fBoost )
 	local c = cColor;
 	return { c[1]*fBoost, c[2]*fBoost, c[3]*fBoost, c[4] };
-end
+end;
 
 function ColorLightTone(c)
 	return { c[1]+(c[1]/2), c[2]+(c[2]/2), c[3]+(c[3]/2), c[4] };
