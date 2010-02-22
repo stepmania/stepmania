@@ -39,8 +39,8 @@ enum Code {
 	CODE_NEXT_THEME2,
 	CODE_NEXT_ANNOUNCER,
 	CODE_NEXT_ANNOUNCER2,
-	CODE_BW_NEXT_GROUP,
-	CODE_BW_NEXT_GROUP2,
+	CODE_NEXT_GROUP,
+	CODE_PREV_GROUP,
 	CODE_SAVE_SCREENSHOT1,
 	CODE_SAVE_SCREENSHOT2,
 	CODE_CANCEL_ALL_PLAYER_OPTIONS,
@@ -58,9 +58,10 @@ public:
 	static bool EnteredModeMenu( GameController controller );
 	static bool DetectAndAdjustMusicOptions( GameController controller );
 	static bool EnteredCode( GameController controller, Code code );
-	static bool EnteredNextBannerGroup( GameController controller );
+	static bool EnteredPrevGroup( GameController controller );
+	static bool EnteredNextGroup( GameController controller );
 
-	// move to PlayerOptions.h -aj
+	// todo: move to PlayerOptions.h -aj
 	void ChangeScrollSpeed( GameController controller, bool bIncrement );
 };
 

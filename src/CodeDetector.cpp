@@ -45,8 +45,8 @@ const char *CodeNames[] = {
 	"NextTheme2",
 	"NextAnnouncer",
 	"NextAnnouncer2",
-	"NextBannerGroup",
-	"NextBannerGroup2",
+	"NextGroup",
+	"PrevGroup",
 	"SaveScreenshot1",
 	"SaveScreenshot2",
 	"CancelAllPlayerOptions",
@@ -76,9 +76,14 @@ void CodeDetector::RefreshCacheItems( RString sClass )
 	}
 }
 
-bool CodeDetector::EnteredNextBannerGroup( GameController controller )
+bool CodeDetector::EnteredNextGroup( GameController controller )
 {
-	return EnteredCode(controller,CODE_BW_NEXT_GROUP) || EnteredCode(controller,CODE_BW_NEXT_GROUP2);
+	return EnteredCode(controller,CODE_NEXT_GROUP);
+}
+
+bool CodeDetector::EnteredPrevGroup( GameController controller )
+{
+	return EnteredCode(controller,CODE_PREV_GROUP);
 }
 
 bool CodeDetector::EnteredPrevSteps( GameController controller )

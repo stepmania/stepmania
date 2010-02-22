@@ -664,6 +664,30 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 
 		MESSAGEMAN->Broadcast( "SongOptionsChanged" );
 	}
+	else if( CodeDetector::EnteredNextGroup(input.GameI.controller) )
+	{
+		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+			m_soundLocked.Play();
+		else
+		{
+			RString sNewGroup = m_MusicWheel.JumpToNextGroup();
+			m_MusicWheel.SelectSection(sNewGroup);
+			m_MusicWheel.SetOpenSection(sNewGroup);
+			AfterMusicChange();
+		}
+	}
+	else if( CodeDetector::EnteredPrevGroup(input.GameI.controller) )
+	{
+		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+			m_soundLocked.Play();
+		else
+		{
+			RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
+			m_MusicWheel.SelectSection(sNewGroup);
+			m_MusicWheel.SetOpenSection(sNewGroup);
+			AfterMusicChange();
+		}
+	}
 	else
 	{
 		return false;

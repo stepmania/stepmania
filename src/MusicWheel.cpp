@@ -127,7 +127,6 @@ void MusicWheel::BeginScreen()
 		}
 	}
 
-
 	WheelBase::BeginScreen();
 
 	if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
@@ -139,14 +138,14 @@ void MusicWheel::BeginScreen()
 
 	GAMESTATE->m_SortOrder.Set( GAMESTATE->m_PreferredSortOrder );
 
-	/* Never start in the mode menu; some elements may not initialize correctly. */
+	// Never start in the mode menu; some elements may not initialize correctly.
 	if( GAMESTATE->m_SortOrder == SORT_MODE_MENU )
 		GAMESTATE->m_SortOrder.Set( SortOrder_Invalid );
 
 	GAMESTATE->m_SortOrder.Set( ForceAppropriateSort(GAMESTATE->m_PlayMode, GAMESTATE->m_SortOrder) );
 
-	/* Only save the sort order if the player didn't already have one.  If he did, don't
-	 * overwrite it. */
+	/* Only save the sort order if the player didn't already have one.
+	 * If he did, don't overwrite it. */
 	if( GAMESTATE->m_PreferredSortOrder == SortOrder_Invalid )
 		GAMESTATE->m_PreferredSortOrder = GAMESTATE->m_SortOrder;
 
@@ -350,21 +349,20 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 		if( iLocked & LOCKED_DISABLED )
 			continue;
 
-		/* If we're on an extra stage, and this song is selected, ignore #SELECTABLE. */
+		// If we're on an extra stage, and this song is selected, ignore #SELECTABLE.
 		if( pSong != GAMESTATE->m_pCurSong || !GAMESTATE->IsAnExtraStage() )
 		{
-			/* Hide songs that asked to be hidden via #SELECTABLE. */
+			// Hide songs that asked to be hidden via #SELECTABLE.
 			if( iLocked & LOCKED_SELECTABLE )
 				continue;
 			if( so != SORT_ROULETTE && iLocked & LOCKED_ROULETTE )
 				continue;
 		}
 
-		/* Hide locked songs.  If RANDOM_PICKS_LOCKED_SONGS, hide in Roulette and Random,
-		 * too. */
+		/* Hide locked songs.  If RANDOM_PICKS_LOCKED_SONGS, hide in Roulette
+		 * and Random, too. */
 		if( (so!=SORT_ROULETTE || !RANDOM_PICKS_LOCKED_SONGS) && iLocked )
 			continue;
-
 
 		if( PREFSMAN->m_bOnlyPreferredDifficulties )
 		{
@@ -382,8 +380,8 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 
 	}
 
-	/* Hack: Add extra stage item if it was eliminated for any reason (eg. it's a long
-	 * song). */
+	/* Hack: Add extra stage item if it was eliminated for any reason
+	 * (eg. it's a long song). */
 	if( GAMESTATE->IsAnExtraStage() )
 	{
 		Song* pSong;
@@ -761,14 +759,12 @@ void MusicWheel::UpdateSwitch()
 			const Song* pPrevSelectedSong = GetCurWheelItemData(m_iSelection)->m_pSong;
 
 			SCREENMAN->PostMessageToTopScreen( SM_SortOrderChanged, 0 );
-			
+
 			SetOpenSection( SongUtil::GetSectionNameFromSongAndSort(pPrevSelectedSong, GAMESTATE->m_SortOrder) );
 
 			m_iSelection = 0;
 
-			//
 			// Select the previously selected item
-			//
 			switch( GAMESTATE->m_SortOrder )
 			{
 			default:
@@ -780,9 +776,8 @@ void MusicWheel::UpdateSwitch()
 				break;
 			}
 
-			//
-			// Change difficulty for sorts by meter - XXX: do this with GameCommand?
-			//
+			// Change difficulty for sorts by meter
+			// XXX: do this with GameCommand?
 			StepsType st;
 			Difficulty dc;
 			if( SongUtil::GetStepsTypeAndDifficultyFromSortOrder( GAMESTATE->m_SortOrder, st, dc ) )
@@ -819,7 +814,7 @@ void MusicWheel::UpdateSwitch()
 			SCREENMAN->PlayStartSound();
 			m_fLockedWheelVelocity = 0;
 
-			/* Send this again so the screen starts sample music. */
+			// Send this again so the screen starts sample music.
 			SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 		}
 		else
@@ -855,7 +850,7 @@ void MusicWheel::ChangeMusic( int iDist )
 
 	SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 
-	/* If we're moving automatically, don't play this; it'll be called in Update. */
+	// If we're moving automatically, don't play this; it'll be called in Update.
 	if(!IsMoving())
 		m_soundChangeMusic.Play();
 }
@@ -867,7 +862,7 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 	if( GAMESTATE->m_SortOrder == new_so )
 		return false;
 
-	/* Don't change to SORT_MODE_MENU if it doesn't have at least two choices. */
+	// Don't change to SORT_MODE_MENU if it doesn't have at least two choices.
 	if( new_so == SORT_MODE_MENU && m_WheelItemDatas[new_so].size() < 2 )
 		return false;
 
@@ -886,7 +881,7 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 
 	TweenOffScreenForSort();
 
-	/* Save the new preference. */
+	// Save the new preference.
 	if( IsSongSort(new_so) )
 		GAMESTATE->m_PreferredSortOrder = new_so;
 	GAMESTATE->m_SortOrder.Set( new_so );
@@ -1001,7 +996,7 @@ void MusicWheel::StartRandom()
 	 * game into picking a locked song, so pick from SORT_ROULETTE. */
 	if( RANDOM_PICKS_LOCKED_SONGS )
 	{
-		/* Shuffle and use the roulette wheel. */
+		// Shuffle and use the roulette wheel.
 		RandomGen rnd;
 		random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end(), rnd );
 		GAMESTATE->m_SortOrder.Set( SORT_ROULETTE );
@@ -1067,9 +1062,7 @@ void MusicWheel::SetOpenSection( RString group )
 	}
 
 
-	//
 	// Try to select the item that was selected before changing groups
-	//
 	m_iSelection = 0;
 
 	for( unsigned i=0; i<m_CurWheelItemData.size(); i++ )
@@ -1084,7 +1077,59 @@ void MusicWheel::SetOpenSection( RString group )
 	RebuildWheelItems();
 }
 
-/* Called on late join.  Selectable courses may have changed; reopen the section. */
+// sm-ssc additions: jump to group
+RString MusicWheel::JumpToNextGroup()
+{
+	unsigned int iLastSelection = m_iSelection;
+	for( unsigned int i = m_iSelection; i < m_CurWheelItemData.size(); ++i )
+	{
+		if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION && i != (unsigned int)m_iSelection )
+		{
+			m_iSelection = i;
+			return m_CurWheelItemData[i]->m_sText;
+		}
+	}
+	// it should not get down here, but it might happen... only search up to
+	// the previous selection.
+	for( unsigned int i = 0; i < iLastSelection; ++i )
+	{
+		if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION && i != (unsigned int)m_iSelection )
+		{
+			m_iSelection = i;
+			return m_CurWheelItemData[i]->m_sText;
+		}
+	}
+	// and this would be el bad:
+	return "";
+}
+
+RString MusicWheel::JumpToPrevGroup()
+{
+	for( unsigned int i = m_iSelection; i > 0; --i )
+	{
+		if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION && i != (unsigned int)m_iSelection )
+		{
+			m_iSelection = i;
+			return m_CurWheelItemData[i]->m_sText;
+		}
+	}
+	// in case it wasn't found above:
+	for( unsigned int i = m_CurWheelItemData.size()-1; i > 0; --i )
+	{
+		LOG->Trace( ssprintf("JumpToPrevGroup iteration 2 | i = %u",i) );
+		if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION )
+		{
+			m_iSelection = i;
+			LOG->Trace( ssprintf("finding it in #2 | i = %u | text = %s",i, m_CurWheelItemData[i]->m_sText.c_str()) );
+			return m_CurWheelItemData[i]->m_sText;
+		}
+	}
+	LOG->Trace("NO I'M NOT OK!!!");
+	// and this would be el bad:
+	return "";
+}
+
+// Called on late join. Selectable courses may have changed; reopen the section.
 void MusicWheel::PlayerJoined()
 {
 	SetOpenSection( m_sExpandedSectionName );
@@ -1141,8 +1186,8 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 #define NUM_PROBES 1000
 	for( int i=0; i<NUM_PROBES; i++ )
 	{
-		/* Maintaining difficulties is higher priority than maintaining the current
-		 * group. */
+		/* Maintaining difficulties is higher priority than maintaining
+		 * the current group. */
 		if( i == NUM_PROBES/4 )
 			sPreferredGroup = "";
 		if( i == NUM_PROBES/2 )

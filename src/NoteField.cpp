@@ -178,7 +178,8 @@ void NoteField::Load(
 
 	// The note skin may have changed at the beginning of a new course song.
 	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin );
-	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin );
+	ASSERT_M( it != m_NoteDisplays.end(),
+		ssprintf("Player noteskin: %s", m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin.c_str()) );
 	m_pCurDisplay = it->second;
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 	FOREACH_EnabledPlayer( pn )

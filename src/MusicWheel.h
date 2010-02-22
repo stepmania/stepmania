@@ -44,6 +44,9 @@ public:
 	virtual void ChangeMusic( int dist ); /* +1 or -1 */ //CHECK THIS
 	void FinishChangingSorts();
 	void PlayerJoined();
+	// sm-ssc additions
+	RString JumpToNextGroup();
+	RString JumpToPrevGroup();
 
 protected:
 	MusicWheelItem *MakeItem();

@@ -77,7 +77,7 @@ protected:
 
 	int			m_iSwitchesLeftInSpinDown;
 	float		m_fLockedWheelVelocity;
-	/* 0 = none; -1 or 1 = up/down */
+	// 0 = none; -1 or 1 = up/down
 	int		m_Moving;
 	RageTimer	m_MovingSoundTimer;
 	float		m_TimeBeforeMovingBegins;
