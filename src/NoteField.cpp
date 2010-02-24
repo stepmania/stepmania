@@ -126,8 +126,8 @@ void NoteField::CacheAllUsedNoteSkins()
 	for( unsigned i=0; i < asSkins.size(); ++i )
 		CacheNoteSkin( asSkins[i] );
 
-	/* If we're changing note skins in the editor, we can have old note skins lying
-	 * around.  Remove them so they don't accumulate. */
+	/* If we're changing note skins in the editor, we can have old note skins
+	 * lying around. Remove them so they don't accumulate. */
 	set<RString> setNoteSkinsToUnload;
 	FOREACHM( RString, NoteDisplayCols *, m_NoteDisplays, d )
 	{
@@ -208,7 +208,7 @@ void NoteField::Update( float fDeltaTime )
 		const float fYOffsetLast	= ArrowEffects::GetYOffset( m_pPlayerState, 0, m_fCurrentBeatLastUpdate );
 		const float fYPosLast		= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffsetLast, m_fYReverseOffsetPixels );
 		const float fPixelDifference = fYPosLast - m_fYPosCurrentBeatLastUpdate;
-	
+
 		//LOG->Trace( "speed = %f, %f, %f, %f, %f, %f", fSpeed, fYOffsetAtCurrent, fYOffsetAtNext, fSecondsAtCurrent, fSecondsAtNext, fPixelDifference, fSecondsDifference );
 
 		m_fBoardOffsetPixels += fPixelDifference;
@@ -218,7 +218,6 @@ void NoteField::Update( float fDeltaTime )
 	const float fYOffsetCurrent	= ArrowEffects::GetYOffset( m_pPlayerState, 0, m_fCurrentBeatLastUpdate );
 	m_fYPosCurrentBeatLastUpdate	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffsetCurrent, m_fYReverseOffsetPixels );
 
-
 	m_rectMarkerBar.Update( fDeltaTime );
 
 	NoteDisplayCols *cur = m_pCurDisplay;
@@ -226,19 +225,16 @@ void NoteField::Update( float fDeltaTime )
 	cur->m_ReceptorArrowRow.Update( fDeltaTime );
 	cur->m_GhostArrowRow.Update( fDeltaTime );
 
+	// TODO: make fade time of 1.5 seconds metricable instead? -aj
 	if( m_fPercentFadeToFail >= 0 )
 		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5f, 1 );	// take 1.5 seconds to totally fade
-
 
 	// Update fade to failed
 	m_pCurDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_fPercentFadeToFail );
 
-
 	NoteDisplay::Update( fDeltaTime );
-	/*
-	 * Update all NoteDisplays.  Hack: We need to call this once per frame, not
-	 * once per player.
-	 */
+	/* Update all NoteDisplays. Hack: We need to call this once per frame, not
+	 * once per player. */
 	// TODO: Remove use of PlayerNumber.
 
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
@@ -315,15 +311,14 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 
 void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels )
 {
+	// Draw the board centered on fYPosAt0 so that the board doesn't slide as
+	// the draw distance changes with modifiers.
 	const float fYPosAt0		= ArrowEffects::GetYPos(    m_pPlayerState, 0, 0, m_fYReverseOffsetPixels );
-
-	// Draw the board centered on fYPosAt0 so that the board doesn't slide as the draw distance changes with modifiers.
 
 	// todo: make this an AutoActor instead? -aj
 	Sprite *pSprite = dynamic_cast<Sprite *>( (Actor*)m_sprBoard );
 	if( pSprite == NULL )
 		RageException::Throw( "Board must be a Sprite" );
-
 
 	RectF rect = *pSprite->GetCurrentTextureCoordRect();
 	const float fBoardGraphicHeightPixels = pSprite->GetUnzoomedHeight();
@@ -336,6 +331,7 @@ void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanc
 		pSprite->ZoomToHeight( fHeight );
 		pSprite->SetY( fY );
 
+		// handle tex coord offset and fade
 		rect.top = -fTexCoordOffset-(iDrawDistanceBeforeTargetsPixels/fBoardGraphicHeightPixels);
 		rect.bottom = -fTexCoordOffset+(-iDrawDistanceAfterTargetsPixels/fBoardGraphicHeightPixels);
 		pSprite->SetCustomTextureRect( rect );

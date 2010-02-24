@@ -51,16 +51,16 @@ public:
 
 	void Link( OptionsList *pLink ) { m_pLinked = pLink; }
 
-	/* Show the top-level menu. */
+	// Show the top-level menu.
 	void Open();
 
-	/* Close all menus (for menu timer). */
+	// Close all menus (for menu timer).
 	void Close();
 
 	void Input( const InputEventPlus &input );
 	bool IsOpened() const { return m_asMenuStack.size() > 0; }
 
-	bool Start();	/* return true if the last menu was popped in response to this press */
+	bool Start();	// return true if the last menu was popped in response to this press
 
 private:
 	ThemeMetric<RString> TOP_MENU;
@@ -94,7 +94,7 @@ private:
 	map<RString, OptionRowHandler *> m_Rows;
 	map<RString, vector<bool> > m_bSelections;
 	set<RString> m_setDirectRows;
-	set<RString> m_setTopMenus; /* list of top-level menus, pointing to submenus */
+	set<RString> m_setTopMenus; // list of top-level menus, pointing to submenus
 
 	PlayerNumber m_pn;
 	AutoActor m_Cursor;

@@ -23,7 +23,7 @@ private:
 	RString			m_sMetricsGroup;
 
 	BitmapText		m_textItem;
-	OptionsCursor		m_Underline[NUM_PLAYERS];
+	OptionsCursor	m_Underline[NUM_PLAYERS];
 	AutoActor		m_sprFrame;
 	BitmapText		m_textTitle;
 	ModIcon			m_ModIcon;
@@ -110,9 +110,7 @@ public:
 
 	void Reload();
 
-	//
 	// Messages
-	//
 	virtual void HandleMessage( const Message &msg );
 
 protected:

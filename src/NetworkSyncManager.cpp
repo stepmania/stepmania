@@ -752,8 +752,8 @@ void NetworkSyncManager::SendSMOnline( )
 
 SMOStepType NetworkSyncManager::TranslateStepType(int score)
 {
-	/* Translate from Stepmania's constantly changing TapNoteScore to SMO's
-	note scores */
+	/* Translate from Stepmania's constantly changing TapNoteScore
+	 * to SMO's note scores */
 	switch(score)
 	{
 	case TNS_HitMine:

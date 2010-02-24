@@ -62,7 +62,7 @@ public:
 	virtual bool TryWait() = 0;
 };
 
-/* These functions must be implemented by the thread implementation. */
+// These functions must be implemented by the thread implementation.
 ThreadImpl *MakeThread( int (*fn)(void *), void *data, uint64_t *piThreadID );
 ThreadImpl *MakeThisThread();
 MutexImpl *MakeMutex( RageMutex *pParent );

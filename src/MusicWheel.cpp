@@ -376,8 +376,6 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 			if( pSong->HasStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType) )
 				arraySongs.push_back( pSong );
 		}
-
-
 	}
 
 	/* Hack: Add extra stage item if it was eliminated for any reason

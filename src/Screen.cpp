@@ -156,7 +156,7 @@ void Screen::Update( float fDeltaTime )
 		CHECKPOINT_M( ssprintf("ScreenMessage(%s)", ScreenMessageHelpers::ScreenMessageToString(SM).c_str()) );
 		this->HandleScreenMessage( SM );
 
-		/* If the size changed, start over. */
+		// If the size changed, start over.
 		if( iSize != m_QueuedMessages.size() )
 			i = 0;
 	}
@@ -177,12 +177,12 @@ void Screen::Input( const InputEventPlus &input )
 	if( m_Codes.InputMessage(input, msg) )
 		this->HandleMessage( msg );
 
-	/* Don't send release messages with the default handler. */
+	// Don't send release messages with the default handler.
 	switch( input.type )
 	{
 	case IET_FIRST_PRESS:
 	case IET_REPEAT:
-		break; /* OK */
+		break; // OK
 	default:
 		return; // don't care
 	}
@@ -195,7 +195,7 @@ void Screen::Input( const InputEventPlus &input )
 	case GAME_BUTTON_MENULEFT:	this->MenuLeft	( input );	return;
 	case GAME_BUTTON_MENURIGHT:	this->MenuRight	( input );	return;
 	case GAME_BUTTON_BACK:	
-		/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
+		// Don't make the user hold the back button if they're pressing escape and escape is the back button.
 		if( !PREFSMAN->m_bDelayedBack || input.type==IET_REPEAT || (input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_ESC) )
 			this->MenuBack( input );
 		return;

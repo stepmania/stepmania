@@ -61,7 +61,7 @@ void ScreenNetEvaluation::RedoUserTexts()
 {
 	m_iActivePlayers = NSMAN->m_ActivePlayers;
 
-	//If unnecessary, just don't do this function.
+	// If unnecessary, just don't do this function.
 	if ( m_iActivePlayers == (int)m_textUsers.size() )
 		return;
 
@@ -78,7 +78,7 @@ void ScreenNetEvaluation::RedoUserTexts()
 	for( int i=0; i<m_iActivePlayers; ++i )
 	{
 		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"names") );
-		m_textUsers[i].SetName( "User" );
+		m_textUsers[i].SetName( ssprintf("User") );
 		m_textUsers[i].SetShadowLength( 1 );
 		m_textUsers[i].SetXY( cx, cy );
 
@@ -150,10 +150,12 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 				break;
 
 			m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_EvalPlayerData[i].name] );
-			if ( NSMAN->m_EvalPlayerData[i].grade < Grade_Tier03 )	//Yes, hardcoded (I'd like to leave it that way)
-				m_textUsers[i].SetRainbowScroll( true );
-			else
-				m_textUsers[i].SetRainbowScroll( false );
+			// Yes, hardcoded (I'd like to leave it that way) -CNLohr (in reference to Grade_Tier03)
+			// Themes can read this differently. The correct solution depends...
+			// TODO: make this a server-side variable, or just find out
+			// the data from the theme? If we find out from the theme, people
+			// will be using different themes so it means nothing. -aj
+			m_textUsers[i].SetRainbowScroll( NSMAN->m_EvalPlayerData[i].grade < Grade_Tier03 );
 			ON_COMMAND( m_textUsers[i] );
 			LOG->Trace( "SMNETCheckpoint%d", i );
 		}

@@ -89,7 +89,7 @@ class OptionRowHandler
 public:
 	OptionRowDefinition m_Def;
 	vector<RString> m_vsReloadRowMessages;	// refresh this row on on these messages
-	
+
 	OptionRowHandler() { Init(); }
 	virtual ~OptionRowHandler() { }
 	virtual void Init()
@@ -124,7 +124,7 @@ public:
 
 	virtual int GetDefaultOption() const { return -1; }
 	virtual void ImportOption( OptionRow *pRow, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
-	/* Returns an OPT mask. */
+	// Returns an OPT mask.
 	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }
 	virtual void GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const;
 	virtual RString GetScreen( int iChoice ) const { return RString(); }

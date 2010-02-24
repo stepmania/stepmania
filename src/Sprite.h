@@ -26,10 +26,10 @@ public:
 
 	void UpdateAnimationState();	// take m_fSecondsIntoState, and move to a new state
 
-	/* Adjust texture properties for song backgrounds. */
+	// Adjust texture properties for song backgrounds.
 	static RageTextureID SongBGTexture( RageTextureID ID );
 
-	/* Adjust texture properties for song banners. */
+	// Adjust texture properties for song banners.
 	static RageTextureID SongBannerTexture( RageTextureID ID );
 
 	virtual void Load( RageTextureID ID );
@@ -67,9 +67,7 @@ public:
 	void CropTo( float fWidth, float fHeight );
 	static bool IsDiagonalBanner( int iWidth, int iHeight );
 
-	//
 	// Commands
-	//
 	virtual void PushSelf( lua_State *L );
 
 	void SetAllStateDelays(float fDelay);

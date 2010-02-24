@@ -60,7 +60,6 @@ bool DIDevice::Open()
 		return false;
 	}
 
-	
 	hr = Device->SetDataFormat( type == JOYSTICK? &c_dfDIJoystick: &c_dfDIKeyboard );
 	if ( hr != DI_OK )
 	{
@@ -119,7 +118,7 @@ bool DIDevice::Open()
 
 void DIDevice::Close()
 {
-	/* Don't try to close a device that isn't open. */
+	// Don't try to close a device that isn't open.
 	ASSERT( Device != NULL );
 
 	Device->Unacquire();
@@ -138,13 +137,13 @@ static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev
 	input_t in;
 	const int SupportedMask = DIDFT_BUTTON | DIDFT_POV | DIDFT_AXIS;
 	if(!(dev->dwType & SupportedMask))
-	    return DIENUM_CONTINUE; /* unsupported */
+	    return DIENUM_CONTINUE; // unsupported
 
 	in.ofs = dev->dwOfs;
 
 	if(dev->dwType & DIDFT_BUTTON) {
 		if( device->buttons == 24 )
-			return DIENUM_CONTINUE; /* too many buttons */
+			return DIENUM_CONTINUE; // too many buttons
 
 		in.type = in.BUTTON;
 		in.num = device->buttons;
@@ -153,13 +152,13 @@ static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev
 		in.type = in.HAT;
 		in.num = device->hats;
 		device->hats++;
-	} else { /* dev->dwType & DIDFT_AXIS */
+	} else { // dev->dwType & DIDFT_AXIS
 		DIPROPRANGE diprg;
 		DIPROPDWORD dilong;
-		
+
 		in.type = in.AXIS;
 		in.num = device->axes;
-		
+
 		diprg.diph.dwSize		= sizeof(diprg);
 		diprg.diph.dwHeaderSize	= sizeof(diprg.diph);
 		diprg.diph.dwObj		= dev->dwOfs;
@@ -169,9 +168,9 @@ static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev
 
 		hr = device->Device->SetProperty( DIPROP_RANGE, &diprg.diph );
 		if ( hr != DI_OK )
-			return DIENUM_CONTINUE; /* don't use this axis */
-	
-		/* Set dead zone to 0. */
+			return DIENUM_CONTINUE; // don't use this axis
+
+		// Set dead zone to 0.
 		dilong.diph.dwSize		= sizeof(dilong);
 		dilong.diph.dwHeaderSize	= sizeof(dilong.diph);
 		dilong.diph.dwObj		= dev->dwOfs;

@@ -1,5 +1,28 @@
-todo: edit this document to reflect sm-ssc's structure
+sm-ssc Scripts Directory: Introduction 
+--------------------------------------------------------------------------------
+Hello, and welcome to the sm-ssc Scripts directory. You'll notice that our Lua
+scripts have numbers at the beginning of them. This is to control the order of
+execution.
 
+In sm-ssc, scripts in subdirectories of Scripts/
+(e.g. Scripts/01/somescript.lua) are loaded before scripts in the root of
+Scripts/ (e.g. Scripts/01 base.lua). This is important to know when making a
+theme for sm-ssc.
+
+In sm-ssc, there are five rings of script execution:
+
+00 - Initialization
+
+01 - Base
+
+02 - Defaults
+
+03 - Extensions
+
+04 - ?
+
+================================================================================
+previously:
 SMOKE WEED '98 Scripts Directory Organization,
 or "An applied case of application of prefixes to control order of execution".
 

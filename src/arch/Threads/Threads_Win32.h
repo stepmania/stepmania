@@ -73,7 +73,7 @@ public:
 private:
 	HANDLE sem;
 
-	/* We have to track the count ourself, since Windows gives no way to query it. */
+	// We have to track the count ourself, since Windows gives no way to query it.
 	int m_iCounter;
 };
 

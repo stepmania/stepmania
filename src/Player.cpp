@@ -51,7 +51,7 @@ class JudgedRows
 	vector<bool> m_vRows;
 	int m_iStart;
 	int m_iOffset;
-	
+
 	void Resize( size_t iMin )
 	{
 		size_t iNewSize = max( 2*m_vRows.size(), iMin );
@@ -132,6 +132,7 @@ ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
 ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
 ThemeMetric<bool> CHECKPOINTS_USE_TIME_SIGNATURES ( "Player", "CheckpointsUseTimeSignatures" );
+ThemeMetric<bool> CHECKPOINTS_FLASH_ON_HOLD ( "Player", "CheckpointsFlashOnHold" ); // sm-ssc addition
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
 ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads" );
 //ThemeMetric<bool> REQUIRE_STEP_ON_TAP_NOTES	( "Player", "RequireStepOnTapNotes" ); // parastar stuff; leave in though
@@ -2064,7 +2065,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 						goto done_checking_hopo;
 					}
 
-					// can't hopo on the same note 2x in a row
+					// con't hopo on the same note 2x in a row
 					if( col == m_pPlayerState->m_iLastHopoNoteCol )
 					{
 						bDidHopo = false;
@@ -2425,7 +2426,7 @@ void Player::UpdateJudgedRows()
 			switch( tn.result.tns )
 			{
 			DEFAULT_FAIL( tn.result.tns );
-			case TNS_None:
+			case TNS_None:		
 				bAllJudged = false;
 				continue;
 			case TNS_AvoidMine:
@@ -2834,11 +2835,15 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 
 	if( iNumHoldsMissedThisRow == 0 )
 	{
-		FOREACH_CONST( int, viColsWithHold, i )
+		// added for http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=16 -aj
+		if( CHECKPOINTS_FLASH_ON_HOLD )
 		{
-			bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-			if( m_pNoteField )
-				m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
+			FOREACH_CONST( int, viColsWithHold, i )
+			{
+				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+				if( m_pNoteField )
+					m_pNoteField->DidHoldNote( *i, HNS_Held, bBright );
+			}
 		}
 	}
 

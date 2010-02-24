@@ -16,14 +16,13 @@
 #include <map>
 #include "SpecialFiles.h"
 
-
 NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program
-
 
 const RString GAME_COMMON_NOTESKIN_NAME = "common";
 const RString GAME_BASE_NOTESKIN_NAME = "default";
 
-// this isn't a global because of nondeterministic global actor ordering might init this before SpecialFiles::NOTESKINS_DIR
+// this isn't a global because of nondeterministic global actor ordering
+// might init this before SpecialFiles::NOTESKINS_DIR
 #define GLOBAL_BASE_DIR (SpecialFiles::NOTESKINS_DIR + GAME_COMMON_NOTESKIN_NAME + "/")
 
 static map<RString,RString> g_PathCache;
@@ -96,7 +95,7 @@ void NoteSkinManager::LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinDa
 	data_out.metrics.Clear();
 	data_out.vsDirSearchOrder.clear();
 
-	/* Read the current NoteSkin and all of its fallbacks */
+	// Read the current NoteSkin and all of its fallbacks
 	LoadNoteSkinDataRecursive( sNoteSkinName, data_out );
 }
 
@@ -413,7 +412,7 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 
 	if( bSpriteOnly )
 	{
-		/* Make sure pActor is a Sprite (or something derived from Sprite). */
+		// Make sure pActor is a Sprite (or something derived from Sprite).
 		Sprite *pSprite = dynamic_cast<Sprite *>( pRet );
 		if( pSprite == NULL )
 			LOG->Warn( "%s: %s %s must be a Sprite", m_sCurrentNoteSkin.c_str(), sButton.c_str(), sElement.c_str() );

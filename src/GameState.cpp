@@ -764,6 +764,8 @@ void GameState::FinishStage()
 	if( m_bDemonstrationOrJukebox )
 		return;
 
+	// todo: simplify. profile saving is accomplished in ScreenProfileSave
+	// now; all this code does differently is save machine profile as well. -aj
 	if( IsEventMode() )
 	{
 		const int iSaveProfileEvery = 3;
@@ -1413,7 +1415,7 @@ void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 	{
 		out.push_back( m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin );
 
-		/* Add note skins that are used in courses. */
+		// Add note skins that are used in courses.
 		if( IsCourseMode() )
 		{
 			const Trail *pTrail = m_pCurTrail[pn];
@@ -1429,7 +1431,7 @@ void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 		}
 	}
 
-	/* Remove duplicates. */
+	// Remove duplicates.
 	sort( out.begin(), out.end() );
 	out.erase( unique( out.begin(), out.end() ), out.end() );
 }
@@ -1457,7 +1459,7 @@ PlayerOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayer
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 	PlayerOptions::FailType ft = pPlayerState->m_PlayerOptions.GetCurrent().m_FailType;
 
-	/* If the player changed the fail mode explicitly, leave it alone. */
+	// If the player changed the fail mode explicitly, leave it alone.
 	if( m_bChangedFailTypeOnScreenSongOptions )
 		return ft;
 

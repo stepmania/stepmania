@@ -19,7 +19,7 @@ static const char *PromptAnswerNames[] = {
 };
 XToString( PromptAnswer );
 
-/* Settings: */
+// Settings:
 namespace
 {
 	RString g_sText;

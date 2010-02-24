@@ -67,11 +67,10 @@ static void CheckForDirectInputDebugMode()
 	if( RegistryAccess::GetRegValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\DirectInput", "emulation", iVal) )
 	{
 		if( iVal & 0x8 )
-			LOG->Warn("DirectInput keyboard debug mode appears to be enabled.  This reduces\n"
-			          "input timing accuracy significantly.  Disabling this is strongly recommended." );
+			LOG->Warn("DirectInput keyboard debug mode appears to be enabled. This reduces\n"
+					  "input timing accuracy significantly. Disabling this is strongly recommended." );
 	}
 }
-
 
 static BOOL CALLBACK CountDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, void *pContext )
 {
@@ -81,7 +80,7 @@ static BOOL CALLBACK CountDevicesCallback( const DIDEVICEINSTANCE *pdidInstance,
 
 static int GetNumHidDevices()
 {
-	int i = 0;	
+	int i = 0;
 	RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\HidUsb\\Enum", "Count", i, false );	// don't warn on error
 	return i;
 }
@@ -194,7 +193,7 @@ InputHandler_DInput::~InputHandler_DInput()
 
 void InputHandler_DInput::WindowReset()
 {
-	/* We need to reopen keyboards. */
+	// We need to reopen keyboards.
 	ShutdownThread();
 
 	for( unsigned i = 0; i < Devices.size(); ++i )
@@ -204,12 +203,12 @@ void InputHandler_DInput::WindowReset()
 
 		Devices[i].Close();
 
-		/* We lose buffered inputs here, so we need to clear all pressed keys. */
+		// We lose buffered inputs here, so we need to clear all pressed keys.
 		INPUTFILTER->ResetDevice( Devices[i].dev );
 
 		bool ret = Devices[i].Open();
 
-		/* Reopening it should succeed. */
+		// Reopening it should succeed.
 		ASSERT( ret );
 	}
 
@@ -409,7 +408,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 
 	if( GetForegroundWindow() != GraphicsWindow::GetHwnd() )
 	{
-		/* Discard input when not focused, and release all keys. */
+		// Discard input when not focused, and release all keys.
 		INPUTFILTER->ResetDevice( device.dev );
 		return;
 	}
@@ -423,77 +422,77 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 
 			if( evtbuf[i].dwOfs != in.ofs )
 				continue;
-		
+
 			switch( in.type )
 			{
-			case in.KEY:
-				/*
-				switch( in.num )
-				{
-					// "Joystick with Keyboard" hack
-				case 115:	//s
-					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_UP, !!(evtbuf[i].dwData & 0x80), tm) );
-					break;
-				case 120:	//x
-					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_DOWN, !!(evtbuf[i].dwData & 0x80), tm) );
-					break;
-				case 122:	//z
-					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_LEFT, !!(evtbuf[i].dwData & 0x80), tm) );
-					break;
-				case 99:	//c
-					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_RIGHT, !!(evtbuf[i].dwData & 0x80), tm) );
-					break;
-				case 100:	//d
-					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_1, !!(evtbuf[i].dwData & 0x80), tm) );
-					break;
-				case 101:	//e
-					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_2, !!(evtbuf[i].dwData & 0x80), tm) );
-					break;
-				default:
-					*/
-					ButtonPressed( DeviceInput(dev, (DeviceButton) in.num, !!(evtbuf[i].dwData & 0x80), tm) );
+				case in.KEY:
 					/*
+					switch( in.num )
+					{
+						// "Joystick with Keyboard" hack
+					case 115:	//s
+						ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_UP, !!(evtbuf[i].dwData & 0x80), tm) );
+						break;
+					case 120:	//x
+						ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_DOWN, !!(evtbuf[i].dwData & 0x80), tm) );
+						break;
+					case 122:	//z
+						ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_LEFT, !!(evtbuf[i].dwData & 0x80), tm) );
+						break;
+					case 99:	//c
+						ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_RIGHT, !!(evtbuf[i].dwData & 0x80), tm) );
+						break;
+					case 100:	//d
+						ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_1, !!(evtbuf[i].dwData & 0x80), tm) );
+						break;
+					case 101:	//e
+						ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_2, !!(evtbuf[i].dwData & 0x80), tm) );
+						break;
+					default:
+						*/
+						ButtonPressed( DeviceInput(dev, (DeviceButton) in.num, !!(evtbuf[i].dwData & 0x80), tm) );
+						/*
+						break;
+					}
+					*/
+					break;
+
+				case in.BUTTON:
+					ButtonPressed( DeviceInput(dev, enum_add2(JOY_BUTTON_1, in.num), !!evtbuf[i].dwData, tm) );
+					break;
+
+				case in.AXIS:
+				{
+					DeviceButton up = DeviceButton_Invalid, down = DeviceButton_Invalid;
+					switch(in.ofs)
+					{
+					case DIJOFS_X:  up = JOY_LEFT; down = JOY_RIGHT; break;
+					case DIJOFS_Y:  up = JOY_UP; down = JOY_DOWN; break;
+					case DIJOFS_Z: up = JOY_Z_UP; down = JOY_Z_DOWN; break;
+					case DIJOFS_RX: up = JOY_ROT_UP; down = JOY_ROT_DOWN; break;
+					case DIJOFS_RY: up = JOY_ROT_LEFT; down = JOY_ROT_RIGHT; break;
+					case DIJOFS_RZ: up = JOY_ROT_Z_UP; down = JOY_ROT_Z_DOWN; break;
+					case DIJOFS_SLIDER(0): up = JOY_AUX_1; down = JOY_AUX_2; break;
+					case DIJOFS_SLIDER(1): up = JOY_AUX_3; down = JOY_AUX_4; break;
+					default: LOG->MapLog( "unknown input", 
+								 "Controller '%s' is returning an unknown joystick offset, %i",
+								 device.m_sName.c_str(), in.ofs );
+						continue;
+					}
+
+					float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
+					ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
+					ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
 					break;
 				}
-				*/
-				break;
-
-			case in.BUTTON:
-				ButtonPressed( DeviceInput(dev, enum_add2(JOY_BUTTON_1, in.num), !!evtbuf[i].dwData, tm) );
-				break;
-
-			case in.AXIS:
-			{
-				DeviceButton up = DeviceButton_Invalid, down = DeviceButton_Invalid;
-				switch(in.ofs)
+				case in.HAT:
 				{
-				case DIJOFS_X:  up = JOY_LEFT; down = JOY_RIGHT; break;
-				case DIJOFS_Y:  up = JOY_UP; down = JOY_DOWN; break;
-				case DIJOFS_Z: up = JOY_Z_UP; down = JOY_Z_DOWN; break;
-				case DIJOFS_RX: up = JOY_ROT_UP; down = JOY_ROT_DOWN; break;
-				case DIJOFS_RY: up = JOY_ROT_LEFT; down = JOY_ROT_RIGHT; break;
-				case DIJOFS_RZ: up = JOY_ROT_Z_UP; down = JOY_ROT_Z_DOWN; break;
-				case DIJOFS_SLIDER(0): up = JOY_AUX_1; down = JOY_AUX_2; break;
-				case DIJOFS_SLIDER(1): up = JOY_AUX_3; down = JOY_AUX_4; break;
-				default: LOG->MapLog( "unknown input", 
-							 "Controller '%s' is returning an unknown joystick offset, %i",
-							 device.m_sName.c_str(), in.ofs );
-					continue;
+					const int pos = TranslatePOV( evtbuf[i].dwData );
+					ButtonPressed( DeviceInput(dev, JOY_HAT_UP, !!(pos & HAT_UP_MASK), tm) );
+					ButtonPressed( DeviceInput(dev, JOY_HAT_DOWN, !!(pos & HAT_DOWN_MASK), tm) );
+					ButtonPressed( DeviceInput(dev, JOY_HAT_LEFT, !!(pos & HAT_LEFT_MASK), tm) );
+					ButtonPressed( DeviceInput(dev, JOY_HAT_RIGHT, !!(pos & HAT_RIGHT_MASK), tm) );
 				}
-
-				float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
-				ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
-				ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
-				break;
-			}
-			case in.HAT:
-			{
-				const int pos = TranslatePOV( evtbuf[i].dwData );
-				ButtonPressed( DeviceInput(dev, JOY_HAT_UP, !!(pos & HAT_UP_MASK), tm) );
-				ButtonPressed( DeviceInput(dev, JOY_HAT_DOWN, !!(pos & HAT_DOWN_MASK), tm) );
-				ButtonPressed( DeviceInput(dev, JOY_HAT_LEFT, !!(pos & HAT_LEFT_MASK), tm) );
-				ButtonPressed( DeviceInput(dev, JOY_HAT_RIGHT, !!(pos & HAT_RIGHT_MASK), tm) );
-			}
 			}
 		}
 	}
@@ -525,7 +524,7 @@ void InputHandler_DInput::PollAndAcquireDevices( bool bBuffered )
 
 void InputHandler_DInput::Update()
 {
-	/* Handle polled devices.  Handle buffered, too, if there's no input thread to do it. */
+	/* Handle polled devices. Handle buffered, too, if there's no input thread to do it. */
 	PollAndAcquireDevices( false );
 	if( !m_InputThread.IsCreated() )
 		PollAndAcquireDevices( true );
@@ -538,7 +537,7 @@ void InputHandler_DInput::Update()
 		}
 		else if( !m_InputThread.IsCreated() )
 		{
-			/* If we have an input thread, it'll handle buffered devices. */
+			// If we have an input thread, it'll handle buffered devices.
 			UpdateBuffered( Devices[i], RageZeroTimer );
 		}
 	}
@@ -551,7 +550,6 @@ const float POLL_FOR_JOYSTICK_CHANGES_EVERY_SECONDS = 0.25f;
 
 bool InputHandler_DInput::DevicesChanged()
 {
-	//
 	// GetNumJoysticksSlow() blocks DirectInput for a while even if called from a 
 	// different thread, so we can't poll with it.
 	// GetNumHidDevices() is fast, but sometimes the DirectInput joysticks haven't updated by 
@@ -564,7 +562,6 @@ bool InputHandler_DInput::DevicesChanged()
 	// Note that this "poll for N seconds" method will not work if the Add New Hardware wizard
 	// halts device installation to wait for a driver.  Most of the joysticks people would
 	// want to use don't prompt for a driver though and the wizard adds them pretty quickly.
-	//
 
 	int iOldNumHidDevices = m_iLastSeenNumHidDevices;
 	m_iLastSeenNumHidDevices = GetNumHidDevices();
@@ -602,7 +599,7 @@ void InputHandler_DInput::InputThreadMain()
 	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST))
 		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set DirectInput thread priority"));
 
-	/* Enable priority boosting. */
+	// Enable priority boosting.
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 
 	vector<DIDevice*> BufferedDevices;
@@ -611,7 +608,7 @@ void InputHandler_DInput::InputThreadMain()
 	{
 		if( !Devices[i].buffered )
 			continue;
-        
+
 		BufferedDevices.push_back( &Devices[i] );
 
 		Devices[i].Device->Unacquire();
@@ -626,7 +623,7 @@ void InputHandler_DInput::InputThreadMain()
 		CHECKPOINT;
 		if( BufferedDevices.size() )
 		{
-			/* Update buffered devices. */
+			// Update buffered devices.
 			PollAndAcquireDevices( true );
 
 			int ret = WaitForSingleObjectEx( Handle, 50, true );
@@ -636,15 +633,15 @@ void InputHandler_DInput::InputThreadMain()
 				continue;
 			}
 
-			/* Update devices even if no event was triggered, since this also checks for focus
-			 * loss. */
+			/* Update devices even if no event was triggered, since this also
+			 * checks for focus loss. */
 			RageTimer now;
 			for( unsigned i = 0; i < BufferedDevices.size(); ++i )
 				UpdateBuffered( *BufferedDevices[i], now );
 		}
 		CHECKPOINT;
 
-		/* If we have no buffered devices, we didn't delay at WaitForMultipleObjectsEx. */
+		// If we have no buffered devices, we didn't delay at WaitForMultipleObjectsEx.
 		if( BufferedDevices.size() == 0 )
 			usleep( 50000 );
 		CHECKPOINT;
@@ -671,7 +668,7 @@ void InputHandler_DInput::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vD
 
 static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 {
-	static HKL layout = GetKeyboardLayout(0);	// 0 == current thread
+	static HKL layout = GetKeyboardLayout(0); // 0 == current thread
 	UINT vk = MapVirtualKeyEx( scancode, 1, layout );
 	
 	static bool bInitialized = false;
@@ -687,7 +684,7 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 	}
 
 
-	unsigned short result[2];	// ToAscii writes a max of 2 chars
+	unsigned short result[2]; // ToAscii writes a max of 2 chars
 	ZERO( result );
 
 	if( pToUnicodeEx != NULL )
@@ -699,7 +696,7 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 	else
 	{
 		int iNum = ToAsciiEx( vk, scancode, keys, result, 0, layout );
-		// iNum == 2 will happen only for dead keys.  See MSDN for ToAsciiEx.
+		// iNum == 2 will happen only for dead keys. See MSDN for ToAsciiEx.
 		if( iNum == 1 )
 		{
 			RString s = RString()+(char)result[0];
@@ -712,7 +709,7 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 
 wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
 {
-	// ToAsciiEx maps these keys to a character.  They shouldn't be mapped to any character.
+	// ToAsciiEx maps these keys to a character. They shouldn't be mapped to any character.
 	switch( button )
 	{
 	case KEY_ESC:

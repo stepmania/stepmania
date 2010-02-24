@@ -40,10 +40,10 @@ public:
 	 * derived classes exist.  (Don't call it directly; use InitScreen.) */
 	virtual void Init();
 
-	/* This is called immediately before the screen is used. */
+	// This is called immediately before the screen is used.
 	virtual void BeginScreen();
 
-	/* This is called when the screen is popped. */
+	// This is called when the screen is popped.
 	virtual void EndScreen();
 
 	virtual void Update( float fDeltaTime );
@@ -83,9 +83,9 @@ protected:
 	RString m_sNextScreen;
 	ScreenMessage m_smSendOnPop;
 
-	float                           m_fLockInputSecs;
+	float m_fLockInputSecs;
 
-	/* If currently between BeginScreen/EndScreen calls: */
+	// If currently between BeginScreen/EndScreen calls:
 	bool m_bRunning;
 
 public:

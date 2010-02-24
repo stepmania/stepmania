@@ -55,6 +55,7 @@ enum SMOStepType
 
 const NSCommand NSServerOffset = (NSCommand)128;
 
+// TODO: Provide a Lua binding that gives access to this data. -aj
 struct EndOfGame_PlayerData
 {
 	int name;
@@ -139,10 +140,10 @@ public:
 	bool isSMOnline;
 	bool isSMOLoggedIn[NUM_PLAYERS];
 
-	vector <int> m_PlayerStatus;
+	vector<int> m_PlayerStatus;
 	int m_ActivePlayers;
-	vector <int> m_ActivePlayer;
-	vector <RString> m_PlayerNames;
+	vector<int> m_ActivePlayer;
+	vector<RString> m_PlayerNames;
 
 	// Used for ScreenNetEvaluation
 	vector<EndOfGame_PlayerData> m_EvalPlayerData;

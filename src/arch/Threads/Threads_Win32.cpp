@@ -62,15 +62,15 @@ int ThreadImpl_Win32::Wait()
 	return ret;
 }
 
-/* SetThreadName magic comes from VirtualDub. */
+// SetThreadName magic comes from VirtualDub.
 #define MS_VC_EXCEPTION 0x406d1388
 
 typedef struct tagTHREADNAME_INFO
 {
-	DWORD dwType;        // must be 0x1000
-	LPCSTR szName;       // pointer to name (in same addr space)
-	DWORD dwThreadID;    // thread ID (-1 caller thread)
-	DWORD dwFlags;       // reserved for future use, most be zero
+	DWORD dwType;		// must be 0x1000
+	LPCSTR szName;		// pointer to name (in same addr space)
+	DWORD dwThreadID;	// thread ID (-1 caller thread)
+	DWORD dwFlags;		// reserved for future use, must be zero
 } THREADNAME_INFO;
 
 static void SetThreadName( DWORD dwThreadID, LPCTSTR szThreadName )
@@ -114,7 +114,7 @@ static int GetOpenSlot( uint64_t iID )
 
 	g_pThreadIdMutex->Lock();
 
-	/* Find an open slot in g_ThreadIds. */
+	// Find an open slot in g_ThreadIds.
 	int slot = 0;
 	while( slot < MAX_THREADS && g_ThreadIds[slot] != 0 )
 		++slot;
@@ -173,7 +173,6 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 }
 
 
-
 MutexImpl_Win32::MutexImpl_Win32( RageMutex *pParent ):
 	MutexImpl( pParent )
 {
@@ -200,7 +199,7 @@ static bool SimpleWaitForSingleObject( HANDLE h, DWORD ms )
 		return false;
 
 	case WAIT_ABANDONED:
-		/* The docs aren't particular about what this does, but it should never happen. */
+		// The docs aren't particular about what this does, but it should never happen.
 		FAIL_M( "WAIT_ABANDONED" );
 
 	case WAIT_FAILED:
@@ -218,7 +217,7 @@ bool MutexImpl_Win32::Lock()
 
 	while( tries-- )
 	{
-		/* Wait for fifteen seconds.  If it takes longer than that, we're probably deadlocked. */
+		// Wait for fifteen seconds. If it takes longer than that, we're probably deadlocked.
 		if( SimpleWaitForSingleObject( mutex, len ) )
 			return true;
 
@@ -275,7 +274,7 @@ EventImpl_Win32::~EventImpl_Win32()
 {
 	ASSERT_M( m_iNumWaiting == 0, ssprintf("event destroyed while still in use (%i)", m_iNumWaiting) );
 
-	/* We don't own m_pParent; don't free it. */
+	// We don't own m_pParent; don't free it.
 	CloseHandle( m_WakeupSema );
 	DeleteCriticalSection( &m_iNumWaitingLock );
 	CloseHandle( m_WaitersDone );
@@ -288,7 +287,7 @@ EventImpl_Win32::~EventImpl_Win32()
 static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectToWaitOn, bool bFirstParamIsMutex, unsigned iMilliseconds = INFINITE )
 {
 	static bool bSignalObjectAndWaitUnavailable = false;
-	/* Watch out: SignalObjectAndWait doesn't work when iMilliseconds is zero. */
+	// Watch out: SignalObjectAndWait doesn't work when iMilliseconds is zero.
 	if( !bSignalObjectAndWaitUnavailable && iMilliseconds != 0 )
 	{
 		DWORD ret = SignalObjectAndWait( hObjectToSignal, hObjectToWaitOn, iMilliseconds, false );
@@ -298,14 +297,14 @@ static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 			return true;
 
 		case WAIT_ABANDONED:
-			/* The docs aren't particular about what this does, but it should never happen. */
+			// The docs aren't particular about what this does, but it should never happen.
 			FAIL_M( "WAIT_ABANDONED" );
 
-		case 1: /* bogus Win98 return value */
+		case 1: // bogus Win98 return value
 		case WAIT_FAILED:
 			if( GetLastError() == ERROR_CALL_NOT_IMPLEMENTED )
 			{
-				/* We're probably on 9x. */
+				// We're probably on 9x.
 				bSignalObjectAndWaitUnavailable = true;
 				break;
 			}
@@ -336,7 +335,7 @@ static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 		return true;
 
 	case WAIT_ABANDONED:
-		/* The docs aren't particular about what this does, but it should never happen. */
+		// The docs aren't particular about what this does, but it should never happen.
 		FAIL_M( "WAIT_ABANDONED" );
 
 	case WAIT_TIMEOUT:
@@ -347,7 +346,7 @@ static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 	}
 }
 
-/* Event logic from http://www.cs.wustl.edu/~schmidt/win32-cv-1.html. */
+// Event logic from http://www.cs.wustl.edu/~schmidt/win32-cv-1.html.
 bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 {
 	EnterCriticalSection( &m_iNumWaitingLock );
@@ -361,7 +360,7 @@ bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 		iMilliseconds = (unsigned) max( 0, int( fSecondsInFuture * 1000 ) );
 	}
 
-	/* Unlock the mutex and wait for a signal. */
+	// Unlock the mutex and wait for a signal.
 	bool bSuccess = PortableSignalObjectAndWait( m_pParent->mutex, m_WakeupSema, true, iMilliseconds );
 
 	EnterCriticalSection( &m_iNumWaitingLock );
@@ -401,7 +400,7 @@ void EventImpl_Win32::Signal()
 
 	LeaveCriticalSection( &m_iNumWaitingLock );
 
-	/* The waiter will touch m_WaitersDone. */
+	// The waiter will touch m_WaitersDone.
 	WaitForSingleObject( m_WaitersDone, INFINITE );
 }
 
@@ -419,8 +418,8 @@ void EventImpl_Win32::Broadcast()
 
 	LeaveCriticalSection( &m_iNumWaitingLock );
 
-	/* The last waiter will touch m_WaitersDone, so we wait for all waiters to wake up and
-	 * start waiting for the mutex before returning. */
+	/* The last waiter will touch m_WaitersDone, so we wait for all waiters to
+	 * wake up and start waiting for the mutex before returning. */
 	WaitForSingleObject( m_WaitersDone, INFINITE );
 }
 

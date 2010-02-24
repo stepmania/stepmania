@@ -761,7 +761,7 @@ void CTextureFontGeneratorDlg::UpdateFontViewAndCloseUp()
 	m_SpinTop.EnableWindow( true );
 	m_SpinBaseline.EnableWindow( true );
 	GetMenu()->EnableMenuItem( ID_FILE_SAVE, MF_ENABLED );
-	
+
 	if( g_pTextureFont->m_sError != "" )
 	{
 		m_SpinTop.EnableWindow(false);

@@ -474,6 +474,7 @@ void ScreenGameplay::Init()
 
 		pi->m_pPlayer->SetX( fPlayerX );
 		pi->m_pPlayer->RunCommands( PLAYER_INIT_COMMAND );
+		//ActorUtil::LoadAllCommands(pi->m_pPlayer, m_sName);
 		this->AddChild( pi->m_pPlayer );
 		pi->m_pPlayer->PlayCommand( "On" );
 	}
