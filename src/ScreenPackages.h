@@ -7,6 +7,7 @@
 #include "RageFileManager.h"
 #include "RageFile.h"
 #include "Sprite.h"
+#include "ThemeMetric.h"
 
 #if !defined(WITHOUT_NETWORKING)
 
@@ -26,6 +27,13 @@ public:
 
 	virtual void TweenOffScreen( );
 	virtual void Update(float f);
+
+protected:
+	ThemeMetric<float> EXISTINGBG_WIDTH; // "PackagesBGWidth"
+	ThemeMetric<float> WEBBG_WIDTH; // "WebBGWidth"
+	ThemeMetric<int> NUM_PACKAGES_SHOW; // "NumPackagesShow"
+	ThemeMetric<int> NUM_LINKS_SHOW; // "NumLinksShow"
+	ThemeMetric<RString> DEFAULT_URL; // "DefaultUrl"
 
 private:
 	void UpdatePackagesList();
@@ -56,7 +64,7 @@ private:
 	int m_iDLorLST;
 	int m_bCanDL;
 
-	//HTTP portion
+	// HTTP portion
 	void CancelDownload( );
 	void EnterURL( const RString & sURL );
 	void HTTPUpdate( );

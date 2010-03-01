@@ -7,8 +7,7 @@
 #include "RageTimer.h"
 #include "ThemeManager.h"
 
-/*
- * todo: replace this entire thing with a set of AutoActors and a Scroller.
+/* todo: replace this entire thing with a set of AutoActors and a Scroller.
  * In reality, everything except the Beginner/Training icon can be replicated
  * in Lua (in stock StepMania 4), so I'm not sure if we even need this... -aj
  */

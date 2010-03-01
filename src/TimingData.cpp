@@ -539,10 +539,25 @@ public:
 		{
 			const float fStartRow = NoteRowToBeat(seg->m_iStartRow);
 			const float fStopLength = seg->m_fStopSeconds;
-			vStops.push_back( ssprintf("%f=%f", fStartRow, fStopLength) );
+			if(!seg->m_bDelay)
+				vStops.push_back( ssprintf("%f=%f", fStartRow, fStopLength) );
 		}
 
 		LuaHelpers::CreateTableFromArray(vStops, L);
+		return 1;
+	}
+	static int GetDelays( T* p, lua_State *L )
+	{
+		vector<RString> vDelays;
+		FOREACH_CONST( StopSegment, p->m_StopSegments, seg )
+		{
+			const float fStartRow = NoteRowToBeat(seg->m_iStartRow);
+			const float fStopLength = seg->m_fStopSeconds;
+			if(seg->m_bDelay)
+				vDelays.push_back( ssprintf("%f=%f", fStartRow, fStopLength) );
+		}
+
+		LuaHelpers::CreateTableFromArray(vDelays, L);
 		return 1;
 	}
 	static int GetBPMs( T* p, lua_State *L )
@@ -581,15 +596,24 @@ public:
 		LuaHelpers::CreateTableFromArray(fBPMs, L);
 		return 1;
 	}
+	// formerly in Song.cpp in sm-ssc private beta 1.x:
+	static int GetBPMAtBeat( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetBPMAtBeat(FArg(1))); return 1; }
+	static int GetBeatFromElapsedTime( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetBeatFromElapsedTime(FArg(1))); return 1; }
+	static int GetElapsedTimeFromBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetElapsedTimeFromBeat(FArg(1))); return 1; }
 
 	LunaTimingData()
 	{
 		ADD_METHOD( HasStops );
 		ADD_METHOD( HasBPMChanges );
 		ADD_METHOD( GetStops );
+		ADD_METHOD( GetDelays );
 		ADD_METHOD( GetBPMs );
 		ADD_METHOD( GetBPMsAndTimes );
 		ADD_METHOD( GetActualBPM );
+		// formerly in Song.cpp in sm-ssc private beta 1.x:
+		ADD_METHOD( GetBPMAtBeat );
+		ADD_METHOD( GetBeatFromElapsedTime );
+		ADD_METHOD( GetElapsedTimeFromBeat );
 	}
 };
 

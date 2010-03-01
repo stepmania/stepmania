@@ -821,17 +821,6 @@ void SongManager::InitRandomAttacks()
 					continue;
 				}
 
-				vector<RString> sAttackCheck;
-				split( sAttack, ",", sAttackCheck, false );
-
-				// Make sure only one attack has been specified.
-				// TODO: Allow combinations of mods. (shouldn't be too hard -aj)
-				if( sAttackCheck.size() > 1 )
-				{
-					LOG->Warn( "Attack \"%s\" has more than one modifier; must only be one modifier specified", sAttack.c_str() );
-					continue;
-				}
-
 				GAMESTATE->m_RandomAttacks.push_back( sAttack );
 			}
 		}
@@ -1587,9 +1576,7 @@ void SongManager::RefreshCourseGroupInfo()
 void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
 {
 	{
-		//
 		// Load all edit steps
-		//
 		RString sDir = sProfileDir + EDIT_STEPS_SUBDIR;
 
 		vector<RString> vsFiles;
@@ -1610,9 +1597,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 void SongManager::LoadCourseEditsFromProfileDir( const RString &sProfileDir, ProfileSlot slot )
 {
 	{
-		//
 		// Load all edit courses
-		//
 		RString sDir = sProfileDir + EDIT_COURSES_SUBDIR;
 
 		vector<RString> vsFiles;
@@ -1651,20 +1636,20 @@ int SongManager::GetNumEditsLoadedFromProfile( ProfileSlot slot ) const
 
 void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 {
-	/* Profile courses may refer to profile steps, so free profile courses first. */
+	// Profile courses may refer to profile steps, so free profile courses first.
 	vector<Course*> apToDelete;
 	FOREACH( Course*, m_pCourses, c )
 	{
 		Course *pCourse = *c;
 		if( pCourse->GetLoadedFromProfileSlot() == ProfileSlot_Invalid )
 			continue;
-		
+
 		if( slot == ProfileSlot_Invalid || pCourse->GetLoadedFromProfileSlot() == slot )
 			apToDelete.push_back( *c );
 	}
 
-	/* We don't use DeleteCourse here, so we don't UpdatePopular and UpdateShuffled
-	 * repeatedly. */
+	/* We don't use DeleteCourse here, so we don't UpdatePopular and
+	 * UpdateShuffled repeatedly. */
 	for( unsigned i = 0; i < apToDelete.size(); ++i )
 	{
 		vector<Course*>::iterator iter = find( m_pCourses.begin(), m_pCourses.end(), apToDelete[i] );
@@ -1673,12 +1658,12 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 		delete apToDelete[i];
 	}
 
-	/* Popular and Shuffled may refer to courses that we just freed. */
+	// Popular and Shuffled may refer to courses that we just freed.
 	UpdatePopular();
 	UpdateShuffled();
 	RefreshCourseGroupInfo();
 
-	/* Free profile steps. */
+	// Free profile steps.
 	set<Steps*> setInUse;
 	if( STATSMAN )
 		STATSMAN->GetStepsInUse( setInUse );
@@ -1698,7 +1683,7 @@ int SongManager::GetNumStepsLoadedFromProfile()
 			if( (*ss)->GetLoadedFromProfileSlot() != ProfileSlot_Invalid )
 				iCount++;
 		}
-	}	
+	}
 
 	return iCount;
 }
@@ -1707,14 +1692,14 @@ template<class T>
 int FindCourseIndexOfSameMode( T begin, T end, const Course *p )
 {
 	const PlayMode pm = p->GetPlayMode();
-	
+
 	int n = 0;
 	for( T it = begin; it != end; ++it )
 	{
 		if( *it == p )
 			return n;
 
-		/* If it's not playable in this mode, don't increment.  It might result in 
+		/* If it's not playable in this mode, don't increment. It might result in 
 		 * different output in different modes, but that's better than having holes. */
 		if( !(*it)->IsPlayableIn( GAMESTATE->GetCurrentStyle()->m_StepsType ) )
 			continue;

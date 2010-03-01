@@ -30,9 +30,7 @@ public:
 	virtual void TweenOnScreen();
 	virtual void TweenOffScreen();
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 protected:
@@ -40,10 +38,10 @@ protected:
 	void SetHelpText( RString s );
 
 	AutoActor			m_sprUnderlay;
-	MemoryCardDisplay		*m_MemoryCardDisplay[NUM_PLAYERS];
+	MemoryCardDisplay	*m_MemoryCardDisplay[NUM_PLAYERS];
 	MenuTimer			*m_MenuTimer;
 	AutoActor			m_sprOverlay;
-	vector<Actor*>			m_vDecorations;
+	vector<Actor*>		m_vDecorations;
 
 	Transition			m_In;
 	Transition			m_Out;
@@ -53,11 +51,11 @@ protected:
 	ThemeMetric<bool>		MUSIC_ALIGN_BEAT;
 	ThemeMetric<bool>		CANCEL_TRANSITIONS_OUT;
 	ThemeMetric<float>		TIMER_SECONDS;
-	ThemeMetric<RString>		TIMER_METRICS_GROUP;
+	ThemeMetric<RString>	TIMER_METRICS_GROUP;
 	ThemeMetric<bool>		RESET_GAMESTATE;
 
 private:
-	RString				m_sPathToMusic;
+	RString m_sPathToMusic;
 };
 
 class ScreenWithMenuElementsSimple: public ScreenWithMenuElements
@@ -66,9 +64,7 @@ public:
 	void MenuStart( const InputEventPlus &input );
 	void MenuBack( const InputEventPlus &input );
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 protected:

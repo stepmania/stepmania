@@ -45,7 +45,7 @@ bool ScreenOptionsMemoryCard::UpdateCurrentUsbStorageDevices()
 void ScreenOptionsMemoryCard::CreateMenu()
 {
 	vector<OptionRowHandler*> vHands;
-	
+
 	FOREACH_CONST( UsbStorageDevice, m_CurrentUsbStorageDevices, iter )
 	{
 		// TODO: Make these strings themable

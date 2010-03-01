@@ -102,8 +102,8 @@ RageTextureID Sprite::SongBannerTexture( RageTextureID ID )
 	/* TODO: Change to use color keying only if the graphic is a diagonal banner.  The color key convention is 
 	 * causing small holes in moderm banners that use magenta, and it's not good to require graphic
 	 * makers to know about archaic color key conventions. -Chris */
-	
-	/* I disabled this anyways, it's extremely annoying -Colby */
+
+	// I disabled this anyways, it's extremely annoying -Colby
 	ID.bHotPinkColorKey = false;
 
 	/* Ignore the texture color depth preference and always use 32-bit textures
@@ -131,8 +131,8 @@ void Sprite::Load( RageTextureID ID )
 
 void Sprite::LoadFromNode( const XNode* pNode )
 {
-	/* Texture may refer to the ID of a render target; if it's already registered,
-	 * use it without trying ot resolve it. */
+	/* Texture may refer to the ID of a render target; if it's already
+	 * registered, use it without trying to resolve it. */
 	RString sPath;
 	pNode->GetAttrValue( "Texture", sPath );
 	if( !sPath.empty() && !TEXTUREMAN->IsTextureRegistered( RageTextureID(sPath) ) )
@@ -145,7 +145,6 @@ void Sprite::LoadFromNode( const XNode* pNode )
 
 		LoadStatesFromTexture();
 
-
 		// Read in frames and delays from the sprite file, 
 		// overwriting the states that LoadFromTexture created.
 		// If the .sprite file doesn't define any states, leave
@@ -155,8 +154,7 @@ void Sprite::LoadFromNode( const XNode* pNode )
 		const XNode *pFrames = pNode->GetChild( "Frames" );
 		if( pFrames != NULL )
 		{
-			/*
-			 * All attributes are optional.  If Frame is omitted, use the previous state's
+			/* All attributes are optional.  If Frame is omitted, use the previous state's
 			 * frame (or 0 if the first).
 			 * Frames = {
 			 *  { Delay=1.0f; Frame=0; { x=0, y=0 }, { x=1, y=1 } };
@@ -234,14 +232,14 @@ void Sprite::LoadFromNode( const XNode* pNode )
 
 void Sprite::UnloadTexture()
 {
-	if( m_pTexture != NULL )			// If there was a previous bitmap...
+	if( m_pTexture != NULL ) // If there was a previous bitmap...
 	{
-		TEXTUREMAN->UnloadTexture( m_pTexture );	// Unload it.
+		TEXTUREMAN->UnloadTexture( m_pTexture ); // Unload it.
 		m_pTexture = NULL;
 
-		/* Make sure we're reset to frame 0, so if we're reused, we aren't left on
-		 * a frame number that may be greater than the number of frames in the newly
-		 * loaded image. */
+		/* Make sure we're reset to frame 0, so if we're reused, we aren't left
+		 * on a frame number that may be greater than the number of frames in
+		 * the newly loaded image. */
 		SetState( 0 );
 	}
 }
@@ -253,19 +251,18 @@ void Sprite::EnableAnimation( bool bEnable )
 
 	if( bEnable && !bWasEnabled )
 	{
-		/*
-		 * When we start animating a movie, we need to discard the first update; send
-		 * 0 instead of the passed time.  This is for two reasons:
+		/* When we start animating a movie, we need to discard the first update; send
+		 * 0 instead of the passed time. This is for two reasons:
 		 *
 		 * First, and most fundamentally, the time we'll receive on the next update
-		 * represents time that passed *before* the movie was started.  For example,
-		 * 1: 20ms passes; 2: EnableAnimation(true); 3: Update(.020).  We don't want
+		 * represents time that passed *before* the movie was started. For example,
+		 * 1: 20ms passes; 2: EnableAnimation(true); 3: Update(.020). We don't want
 		 * to send that 20ms to the texture; on the first update, the movie's time
 		 * should be 0.
 		 *
 		 * Second, we don't receive Update() calls if we're in a BGAnimation that
-		 * doesn't have focus.  It looks like 1: EnableAnimation(false); 2: 30 seconds
-		 * pass; 3: EnableAnimation(true); 4: Update(30).  We must be sure not to send
+		 * doesn't have focus. It looks like 1: EnableAnimation(false); 2: 30 seconds
+		 * pass; 3: EnableAnimation(true); 4: Update(30). We must be sure not to send
 		 * that long 30-second update to the movie.
 		 *
 		 * (detail: the timestamps here are actually coming from GetEffectDeltaTime())
@@ -295,7 +292,7 @@ void Sprite::SetTexture( RageTexture *pTexture )
 	if( m_fRememberedClipWidth != -1 && m_fRememberedClipHeight != -1 )
 		ScaleToClipped( m_fRememberedClipWidth, m_fRememberedClipHeight );
 
-	/* Load default states if we haven't before. */
+	// Load default states if we haven't before.
 	if( m_States.empty() )
 		LoadStatesFromTexture();
 }
@@ -351,25 +348,24 @@ void Sprite::UpdateAnimationState()
 	}
 }
 
-/*
- * We treat frame animation and movie animation slightly differently.
+/* We treat frame animation and movie animation slightly differently.
  *
- * Sprite animation is always tied directly to the effect timer.  If you pause
- * animation, wait a while and restart it, sprite animations will snap back to the
- * effect timer.  This allows sprites to animate to the beat in BGAnimations, where
- * they might be disabled for a while.
+ * Sprite animation is always tied directly to the effect timer. If you pause
+ * animation, wait a while and restart it, sprite animations will snap back to
+ * the effect timer. This allows sprites to animate to the beat in BGAnimations,
+ * where they might be disabled for a while.
  *
- * Movies don't do this; if you pause a movie, wait a while and restart it, it'll
- * pick up where it left off.  We may have a lot of movies loaded, so it's too
- * expensive to decode movies that aren't being displayed.  Movies also don't loop
- * when the effect timer loops.
+ * Movies don't do this; if you pause a movie, wait a while and restart it,
+ * it'll pick up where it left off. We may have a lot of movies loaded, so
+ * it's too expensive to decode movies that aren't being displayed. Movies
+ * also don't loop when the effect timer loops.
  *
- * (I'd like to handle sprite and movie animation as consistently as possible; the above
- * is just documentation of current practice.)
- */
+ * (I'd like to handle sprite and movie animation as consistently as possible;
+ * the above is just documentation of current practice.) */
+// todo: source above comment, see if "current" practice is just that. -aj
 void Sprite::Update( float fDelta )
 {
-	Actor::Update( fDelta );	// do tweening
+	Actor::Update( fDelta ); // do tweening
 
 	const bool bSkipThisMovieUpdate = m_bSkipNextUpdate;
 	m_bSkipNextUpdate = false;
@@ -377,8 +373,8 @@ void Sprite::Update( float fDelta )
 	if( !m_bIsAnimating )
 		return;
 
-	if( !m_pTexture )	// no texture, nothing to animate
-	    return;
+	if( !m_pTexture ) // no texture, nothing to animate
+		return;
 
 	float fTimePassed = GetEffectDeltaTime();
 	m_fSecsIntoState += fTimePassed;
@@ -388,13 +384,11 @@ void Sprite::Update( float fDelta )
 
 	UpdateAnimationState();
 
-	/* If the texture is a movie, decode frames. */
+	// If the texture is a movie, decode frames.
 	if( !bSkipThisMovieUpdate )
 		m_pTexture->DecodeSeconds( max(0, fTimePassed) );
 
-	//
 	// update scrolling
-	//
 	if( m_fTexCoordVelocityX != 0 || m_fTexCoordVelocityY != 0 )
 	{
 		float fTexCoords[8];
@@ -410,9 +404,10 @@ void Sprite::Update( float fDelta )
 		fTexCoords[6] += fDelta*m_fTexCoordVelocityX;
 		fTexCoords[7] += fDelta*m_fTexCoordVelocityY;
 
-		/* When wrapping, avoid gradual loss of precision and sending unreasonably large
-		 * texture coordinates to the renderer by pushing texture coordinates back to 0.
-		 * As long as we adjust all four coordinates by the same amount, this won't be visible. */
+		/* When wrapping, avoid gradual loss of precision and sending
+		 * unreasonably large texture coordinates to the renderer by pushing
+		 * texture coordinates back to 0. As long as we adjust all four
+		 * coordinates by the same amount, this won't be visible. */
 		if( m_bTextureWrapping )
 		{
 			const float fXAdjust = floorf( fTexCoords[0] );
@@ -441,7 +436,7 @@ void TexCoordArrayFromRect( float fImageCoords[8], const RectF &rect )
 
 void Sprite::DrawTexture( const TweenState *state )
 {
-	Actor::SetGlobalRenderStates();	// set Actor-specified render states
+	Actor::SetGlobalRenderStates(); // set Actor-specified render states
 
 	// bail if cropped all the way 
 	if( state->crop.left + state->crop.right >= 1  || 
@@ -455,11 +450,10 @@ void Sprite::DrawTexture( const TweenState *state )
 	quadVerticies.top    = -m_size.y/2.0f;
 	quadVerticies.bottom = +m_size.y/2.0f;
 
-
 	/* Don't draw anything outside of the texture's image area.  Texels outside 
 	 * of the image area aren't guaranteed to be initialized. */
 	/* HACK: Clamp the crop values. It would be more accurate to clip the 
-	 * vertices to that the diffuse value is adjusted. */
+	 * vertices so that the diffuse value is adjusted. */
 	RectF crop = state->crop;
 	CLAMP( crop.left, 0, 1 );
 	CLAMP( crop.right, 0, 1 );
@@ -532,7 +526,7 @@ void Sprite::DrawTexture( const TweenState *state )
 			v[i].t.x = v[i].t.y = 0;
 	}
 
-	/* Draw if we're not fully transparent */
+	// Draw if we're not fully transparent
 	if( state->diffuse[0].a > 0 || 
 		state->diffuse[1].a > 0 ||
 		state->diffuse[2].a > 0 ||
@@ -553,10 +547,10 @@ void Sprite::DrawTexture( const TweenState *state )
 		}
 
 		// render the diffuse pass
-		v[0].c = state->diffuse[0];	// top left
-		v[1].c = state->diffuse[2];	// bottom left
-		v[2].c = state->diffuse[3];	// bottom right
-		v[3].c = state->diffuse[1];	// top right
+		v[0].c = state->diffuse[0]; // top left
+		v[1].c = state->diffuse[2]; // bottom left
+		v[2].c = state->diffuse[3]; // bottom right
+		v[3].c = state->diffuse[1]; // top right
 		DISPLAY->DrawQuad( v );
 	}
 
@@ -582,13 +576,13 @@ void Sprite::DrawPrimitives()
 		m_pTempState->fade.left > 0 ||
 		m_pTempState->fade.right > 0 )
 	{
-		/* We're fading the edges.  */
+		// We're fading the edges.
 		const RectF &FadeDist = m_pTempState->fade;
 
-		/* Actual size of the fade on each side: */
+		// Actual size of the fade on each side:
 		RectF FadeSize = FadeDist;
 
-		/* If the cropped size is less than the fade distance in either dimension, clamp. */
+		// If the cropped size is less than the fade distance in either dimension, clamp.
 		const float HorizRemaining = 1.0f - (m_pTempState->crop.left + m_pTempState->crop.right);
 		if( FadeDist.left+FadeDist.right > 0 &&
 			HorizRemaining < FadeDist.left+FadeDist.right )
@@ -607,13 +601,13 @@ void Sprite::DrawPrimitives()
 			FadeSize.bottom = (1.0f-TopPercent) * VertRemaining;
 		}
 
-		/* Alpha value of the un-faded side of each fade rect: */
+		// Alpha value of the un-faded side of each fade rect:
 		const float RightAlpha  = SCALE( FadeSize.right,  FadeDist.right,  0, 1, 0 );
 		const float LeftAlpha   = SCALE( FadeSize.left,   FadeDist.left,   0, 1, 0 );
 		const float TopAlpha    = SCALE( FadeSize.top,    FadeDist.top,    0, 1, 0 );
 		const float BottomAlpha = SCALE( FadeSize.bottom, FadeDist.bottom, 0, 1, 0 );
 
-		/* Draw the inside: */
+		// Draw the inside:
 		TweenState ts = *m_pTempState;
 		ts.crop.left += FadeDist.left;
 		ts.crop.right += FadeDist.right;
@@ -623,7 +617,7 @@ void Sprite::DrawPrimitives()
 
 		if( FadeSize.left > 0.001f )
 		{
-			/* Draw the left: */
+			// Draw the left:
 			ts.crop = m_pTempState->crop; // restore
 			ts.crop.right = 1 - (ts.crop.left + FadeSize.left);
 			ts.crop.top += FadeDist.top;		// lop off the corner if fading both x and y
@@ -642,7 +636,7 @@ void Sprite::DrawPrimitives()
 
 		if( FadeSize.right > 0.001f )
 		{
-			/* Draw the right: */
+			// Draw the right:
 			ts.crop = m_pTempState->crop; // restore
 			ts.crop.left = 1 - (ts.crop.right + FadeSize.right);
 			ts.crop.top += FadeDist.top;
@@ -662,7 +656,7 @@ void Sprite::DrawPrimitives()
 
 		if( FadeSize.top > 0.001f )
 		{
-			/* Draw the top: */
+			// Draw the top:
 			ts.crop = m_pTempState->crop; // restore
 			ts.crop.bottom = 1 - (ts.crop.top + FadeSize.top);
 			ts.crop.left += FadeDist.left;
@@ -682,7 +676,7 @@ void Sprite::DrawPrimitives()
 
 		if( FadeSize.bottom > 0.001f )
 		{
-			/* Draw the bottom: */
+			// Draw the bottom:
 			ts.crop = m_pTempState->crop; // restore
 			ts.crop.top = 1 - (ts.crop.bottom + FadeSize.bottom);
 			ts.crop.left += FadeDist.left;
@@ -714,7 +708,7 @@ int Sprite::GetNumStates() const
 void Sprite::SetState( int iNewState )
 {
 	// This assert will likely trigger if the "missing" theme element graphic 
-	// is loaded in place of a multi-frame sprite.  We want to know about these
+	// is loaded in place of a multi-frame sprite. We want to know about these
 	// problems in debug builds, but they're not fatal.
 	//
 	// Never warn about setting state 0.
@@ -722,7 +716,7 @@ void Sprite::SetState( int iNewState )
 	{
 		// Don't warn about number of states in "_blank" or "_missing".
 		if( !m_pTexture || (m_pTexture->GetID().filename.find("_blank") == string::npos &&
-		    m_pTexture->GetID().filename.find("_missing") == string::npos) )
+			m_pTexture->GetID().filename.find("_missing") == string::npos) )
 		{
 			RString sError;
 			if( m_pTexture )
@@ -815,8 +809,8 @@ const RectF *Sprite::GetTextureCoordRectForState( int iState ) const
 	return &m_States[iState].rect;
 }
 
-/* If we're using custom coordinates, return them; otherwise return the coordinates
- * for the current state. */
+/* If we're using custom coordinates, return them; otherwise return the
+ * coordinates for the current state. */
 void Sprite::GetActiveTextureCoords( float fTexCoordsOut[8] ) const
 {
 	if(m_bUsingCustomTexCoords) 
@@ -858,17 +852,17 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 	int iSourceWidth	= m_pTexture->GetSourceWidth();
 	int iSourceHeight	= m_pTexture->GetSourceHeight();
 
-	// save the original X&Y.  We're going to restore them later.
+	// save the original X and Y.  We're going to restore them later.
 	float fOriginalX = GetX();
 	float fOriginalY = GetY();
 
-	if( IsDiagonalBanner(iSourceWidth, iSourceHeight) )		// this is a SSR/DWI CroppedSprite
+	if( IsDiagonalBanner(iSourceWidth, iSourceHeight) ) // this is a SSR/DWI CroppedSprite
 	{
 		float fCustomImageCoords[8] = {
-			0.02f,	0.78f,	// top left
-			0.22f,	0.98f,	// bottom left
-			0.98f,	0.22f,	// bottom right
-			0.78f,	0.02f,	// top right
+			0.02f,	0.78f, // top left
+			0.22f,	0.98f, // bottom left
+			0.98f,	0.22f, // bottom right
+			0.78f,	0.02f, // top right
 		};
 		Sprite::SetCustomImageCoords( fCustomImageCoords );
 
@@ -880,7 +874,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		{
 			/* If no crop size is set, then we're only being used to crop diagonal
 			 * banners so they look like regular ones. We don't actually care about
-			 * the size of the image, only that it has an aspect ratio of 4:1.  */
+			 * the size of the image, only that it has an aspect ratio of 4:1. */
 			m_size = RageVector2( 256, 64 );
 		}
 		SetZoom( 1 );
@@ -888,12 +882,12 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 	else if( m_pTexture->GetID().filename.find("(was rotated)") != string::npos && 
 			 fWidth != -1 && fHeight != -1 )
 	{
-		/* Dumb hack.  Normally, we crop all sprites except for diagonal banners,
-		 * which are stretched.  Low-res versions of banners need to do the same
+		/* Dumb hack: Normally, we crop all sprites except for diagonal banners,
+		 * which are stretched. Low-res versions of banners need to do the same
 		 * thing as their full resolution counterpart, so the crossfade looks right.
-		 * However, low-res diagonal banners are un-rotated, to save space.  BannerCache
-		 * drops the above text into the "filename" (which is otherwise unused for
-		 * these banners) to tell us this.
+		 * However, low-res diagonal banners are un-rotated, to save space.
+		 * BannerCache drops the above text into the "filename" (which is
+		 * otherwise unused for these banners) to tell us this.
 		 */
 		Sprite::StopUsingCustomCoords();
 		m_size = RageVector2( fWidth, fHeight );
@@ -909,12 +903,12 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		// find which dimension is larger
 		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
 		
-		if( bXDimNeedsToBeCropped )	// crop X
+		if( bXDimNeedsToBeCropped ) // crop X
 		{
 			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
 			fPercentageToCutOff = max( fPercentageToCutOff-fScaleFudgePercent, 0 );
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
-			
+
 			// generate a rectangle with new texture coordinates
 			RectF fCustomImageRect( 
 				fPercentageToCutOffEachSide, 
@@ -923,12 +917,12 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 				1 );
 			SetCustomImageRect( fCustomImageRect );
 		}
-		else		// crop Y
+		else // crop Y
 		{
 			float fPercentageToCutOff = (this->GetZoomedHeight() - fHeight) / this->GetZoomedHeight();
 			fPercentageToCutOff = max( fPercentageToCutOff-fScaleFudgePercent, 0 );
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
-			
+
 			// generate a rectangle with new texture coordinates
 			RectF fCustomImageRect( 
 				0, 
@@ -944,7 +938,10 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 	// restore original XY
 	SetXY( fOriginalX, fOriginalY );
 }
-/* magic hurr */
+
+
+// magic hurr
+// This code should either be removed or refactored in the future -aj
 void Sprite::CropTo( float fWidth, float fHeight )
 {
 	m_fRememberedClipWidth = fWidth;
@@ -960,13 +957,13 @@ void Sprite::CropTo( float fWidth, float fHeight )
 	float fOriginalX = GetX();
 	float fOriginalY = GetY();
 
-	if( IsDiagonalBanner(iSourceWidth, iSourceHeight) )		// this is a SSR/DWI CroppedSprite
+	if( IsDiagonalBanner(iSourceWidth, iSourceHeight) ) // this is a SSR/DWI CroppedSprite
 	{
 		float fCustomImageCoords[8] = {
-			0.02f,	0.78f,	// top left
-			0.22f,	0.98f,	// bottom left
-			0.98f,	0.22f,	// bottom right
-			0.78f,	0.02f,	// top right
+			0.02f,	0.78f, // top left
+			0.22f,	0.98f, // bottom left
+			0.98f,	0.22f, // bottom right
+			0.78f,	0.02f, // top right
 		};
 		Sprite::SetCustomImageCoords( fCustomImageCoords );
 
@@ -986,7 +983,7 @@ void Sprite::CropTo( float fWidth, float fHeight )
 	else if( m_pTexture->GetID().filename.find("(was rotated)") != string::npos && 
 			 fWidth != -1 && fHeight != -1 )
 	{
-		/* Dumb hack.  Normally, we crop all sprites except for diagonal banners,
+		/* Dumb hack:  Normally, we crop all sprites except for diagonal banners,
 		 * which are stretched.  Low-res versions of banners need to do the same
 		 * thing as their full resolution counterpart, so the crossfade looks right.
 		 * However, low-res diagonal banners are un-rotated, to save space.  BannerCache
@@ -1011,7 +1008,7 @@ void Sprite::CropTo( float fWidth, float fHeight )
 		{
 			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
-			
+
 			// generate a rectangle with new texture coordinates
 			RectF fCustomImageRect( 
 				fPercentageToCutOffEachSide, 
@@ -1024,7 +1021,7 @@ void Sprite::CropTo( float fWidth, float fHeight )
 		{
 			float fPercentageToCutOff = (this->GetZoomedHeight() - fHeight) / this->GetZoomedHeight();
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
-			
+
 			// generate a rectangle with new texture coordinates
 			RectF fCustomImageRect( 
 				0, 
@@ -1040,10 +1037,12 @@ void Sprite::CropTo( float fWidth, float fHeight )
 	// restore original XY
 	SetXY( fOriginalX, fOriginalY );
 }
-/* end magic */
+// end magic
+
+
 bool Sprite::IsDiagonalBanner( int iWidth, int iHeight )
 {
-	/* A diagonal banner is a square.  Give a couple pixels of leeway. */
+	// A diagonal banner is a square.  Give a couple pixels of leeway.
 	return iWidth >= 100 && abs(iWidth - iHeight) < 2;
 }
 

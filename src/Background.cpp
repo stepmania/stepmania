@@ -42,8 +42,6 @@ static Preference<bool> g_bSongBackgrounds( "SongBackgrounds", true );
 // Width of the region separating the left and right brightness areas:
 static float g_fBackgroundCenterWidth = 40;
 
-
-
 class BrightnessOverlay: public ActorFrame
 {
 public:
@@ -81,7 +79,7 @@ public:
 
 	void FadeToActualBrightness() { m_Brightness.FadeToActualBrightness(); }
 	void SetBrightness( float fBrightness ) { m_Brightness.Set(fBrightness); } /* overrides pref and Cover */
-	
+
 	DancingCharacters* GetDancingCharacters() { return m_pDancingCharacters; };
 
 	void GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgroundChangesOut[NUM_BackgroundLayer] );
@@ -92,10 +90,10 @@ protected:
 	const Song *m_pSong;
 	map<RString,BackgroundTransition> m_mapNameToTransition;
 	deque<BackgroundDef> m_RandomBGAnimations;	// random background to choose from.  These may or may not be loaded into m_BGAnimations.
-	
+
 	void LoadFromRandom( float fFirstBeat, float fEndBeat, const BackgroundChange &change );
 	bool IsDangerAllVisible();
-	
+
 	class Layer
 	{
 	public:
@@ -112,7 +110,7 @@ protected:
 
 		map<BackgroundDef,Actor*> m_BGAnimations;
 		vector<BackgroundChange> m_aBGChanges;
-		int				m_iCurBGChangeIndex;
+		int	  m_iCurBGChangeIndex;
 		Actor *m_pCurrentBGA;
 		Actor *m_pFadingBGA;
 	};
@@ -121,7 +119,6 @@ protected:
 	float m_fLastMusicSeconds;
 	bool m_bDangerAllWasVisible;
 
-
 	// cover up the edge of animations that might hang outside of the background rectangle
 	Quad m_quadBorderLeft, m_quadBorderTop, m_quadBorderRight, m_quadBorderBottom;
 
@@ -129,7 +126,6 @@ protected:
 
 	BackgroundDef m_StaticBackgroundDef;
 };
-
 
 
 static RageColor GetBrightnessColor( float fBrightnessPercent )
@@ -280,7 +276,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 	for( unsigned i=0; i<vsToResolve.size(); i++ )
 	{
 		const RString &sToResolve = vsToResolve[i];
-	
+
 		if( sToResolve.empty() )
 		{
 			if( i == 0 )
@@ -318,7 +314,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 			else
 				sResolved = "../"+ThemeManager::GetBlankGraphicPath();
 		}
-		
+
 		ASSERT( !sResolved.empty() );
 
 		vsResolvedRef[i] = new LuaThreadVariable( ssprintf("File%d",i+1), sResolved );
@@ -346,11 +342,9 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 	}
 	ASSERT( !sEffect.empty() );
 
-
 	// Set Lua color globals
 	LuaThreadVariable sColor1( "Color1", bd.m_sColor1.empty() ? RString("1,1,1,1") : bd.m_sColor1 );
 	LuaThreadVariable sColor2( "Color2", bd.m_sColor2.empty() ? RString("1,1,1,1") : bd.m_sColor2 );
-
 
 	// Resolve the effect file.
 	RString sEffectFile;

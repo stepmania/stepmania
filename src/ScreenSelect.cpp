@@ -40,9 +40,7 @@ void ScreenSelect::Init()
 
 	ScreenWithMenuElements::Init();
 
-	//
 	// Load messages to update on
-	//
 	split( UPDATE_ON_MESSAGE, ",", m_asSubscribedMessages );
 	for( unsigned i = 0; i < m_asSubscribedMessages.size(); ++i )
 		MESSAGEMAN->Subscribe( this, m_asSubscribedMessages[i] );
@@ -50,9 +48,7 @@ void ScreenSelect::Init()
 	if( !MESSAGEMAN->IsSubscribedToMessage(this, Message_PlayerJoined) )
 		this->SubscribeToMessage( Message_PlayerJoined );
 
-	//
 	// Load choices
-	//
 	{
 		// Instead of using NUM_CHOICES, use a comma-separated list of choices.  Each
 		// element in the list is a choice name.  This level of indirection 
@@ -207,8 +203,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_BeginFadingOut )	/* Screen is starting to tween out. */
 	{
-		/*
-		 * Don't call GameCommand::Apply once per player on screens that 
+		/* Don't call GameCommand::Apply once per player on screens that 
 		 * have a shared selection.  This can cause change messages to be broadcast
 		 * multiple times.  Detect whether all players have the same choice, and 
 		 * if so, call ApplyToAll instead.

@@ -138,7 +138,7 @@ void PercentageDisplay::Refresh()
 	{
 		float fPercentDancePoints = m_pPlayerStageStats->GetPercentDancePoints();
 		float fCurMaxPercentDancePoints = m_pPlayerStageStats->GetCurMaxPercentDancePoints();
-		
+
 		if( m_bApplyScoreDisplayOptions )
 		{
 			switch( m_pPlayerState->m_PlayerOptions.GetCurrent().m_ScoreDisplay )
@@ -169,7 +169,7 @@ void PercentageDisplay::Refresh()
 			m_textPercentRemainder.SetText( ssprintf(".%01d%%", iPercentRemainder) );
 		}
 		else
-		{		
+		{
 			Lua *L = LUA->Get();
 			m_FormatPercentScore.PushSelf( L );
 			ASSERT( !lua_isnil(L, -1) );

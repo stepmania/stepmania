@@ -114,7 +114,8 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 
 void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, RageSoundReader *&pPlayer1, RageSoundReader *&pPlayer2 )
 {
-	/* If we have two players, prefer a three-track sound; otherwise prefer a two-track sound. */
+	// If we have two players, prefer a three-track sound; otherwise prefer a
+	// two-track sound.
 	//bool bTwoPlayers = GAMESTATE->GetNumPlayersEnabled() == 2;
 
 	pPlayer1 = NULL;
@@ -148,7 +149,7 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	{
 		RageSoundReader *pSongReader = vpSounds[0];
 
-		/* Load the buffering filter before the effects filters, so effects aren't delayed. */
+		// Load the buffering filter before the effects filters, so effects aren't delayed.
 		pSongReader = new RageSoundReader_Extend( pSongReader );
 		pSongReader = new RageSoundReader_ThreadedBuffer( pSongReader );
 		pShared = pSongReader;
@@ -163,20 +164,18 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 
 		RageSoundReader *pSongReader = pMerge;
 
-		/* Load the buffering filter before the effects filters, so effects aren't delayed. */
+		// Load the buffering filter before the effects filters, so effects aren't delayed.
 		pSongReader = new RageSoundReader_Extend( pSongReader );
 		pSongReader = new RageSoundReader_ThreadedBuffer( pSongReader );
 		pShared = pSongReader;
 	}
 
 
-
-
 	if( pSong->HasInstrumentTrack(InstrumentTrack_Guitar) )
 	{
 		RString sError;
 		RageSoundReader *pGuitarTrackReader = RageSoundReader_FileReader::OpenFile( pSong->GetInstrumentTrackPath(InstrumentTrack_Guitar), sError );
-		/* Load the buffering filter before the effects filters, so effects aren't delayed. */
+		// Load the buffering filter before the effects filters, so effects aren't delayed.
 		pGuitarTrackReader = new RageSoundReader_Extend( pGuitarTrackReader );
 		pGuitarTrackReader = new RageSoundReader_ThreadedBuffer( pGuitarTrackReader );
 		pPlayer1 = pGuitarTrackReader;	
@@ -193,10 +192,9 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 
 	// TODO: Make this work for player 2, and for 2 players
 
-
-	/* The code below is used to split the main sound stream into per-player sounds.
-	* The results of this method doesn't seem interesting enough to bother supporting this.
-	*/
+	/* The code below is used to split the main sound stream into per-player
+	 * sounds. The results of this method doesn't seem interesting enough to
+	 * bother supporting this. */
 
 	//RageSoundSplitter Splitter( pSongReader );
 
@@ -206,7 +204,6 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	//	pMainSound->AddSourceChannelToSound( 1, 1 );
 	//pShared = pMainSound;
 
-	//
 	//RageSoundReader_Split *pLeadSound = Splitter.CreateSound();
 	//pLeadSound->AddSourceChannelToSound( 2, 0 );
 	//if( pSongReader->GetNumChannels() >= 4 ) // stereo
@@ -256,7 +253,7 @@ void AutoKeysounds::FinishLoading()
 	vector<RageSoundReader *> apSounds;
 	LoadTracks( pSong, m_pSharedSound, m_pPlayerSounds[0], m_pPlayerSounds[1] );
 
-	/* Load autoplay sounds, if any. */
+	// Load autoplay sounds, if any.
 	{
 		RageSoundReader_Chain *pChain = new RageSoundReader_Chain;
 		pChain->SetPreferredSampleRate( SOUNDMAN->GetDriverSampleRate() );
@@ -291,7 +288,7 @@ void AutoKeysounds::FinishLoading()
 		m_pPlayerSounds[0] = new RageSoundReader_Pan( m_pPlayerSounds[0] );
 		apSounds.push_back( m_pPlayerSounds[0] );
 	}
-	
+
 	if( m_pPlayerSounds[1] != NULL )
 	{
 		m_pPlayerSounds[1] = new RageSoundReader_PitchChange( m_pPlayerSounds[1] );
@@ -325,9 +322,7 @@ void AutoKeysounds::FinishLoading()
 
 void AutoKeysounds::Update( float fDelta )
 {
-	//
 	// Play keysounds for crossed rows.
-	//
 /*
 	bool bCrossedABeat = false;
 	{
@@ -355,7 +350,7 @@ void AutoKeysounds::Update( float fDelta )
 					ASSERT( tn.type == TapNote::autoKeysound );
 					if( tn.bKeysound )
 						m_vKeysounds[tn.iKeysoundIndex].Play();
-				}		
+				}
 			}
 		}
 

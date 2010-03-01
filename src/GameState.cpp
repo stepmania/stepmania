@@ -2389,6 +2389,7 @@ public:
 	static int JoinPlayer( T* p, lua_State *L )				{ p->JoinPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
 	static int UnjoinPlayer( T* p, lua_State *L )				{ p->UnjoinPlayer(Enum::Check<PlayerNumber>(L, 1)); return 0; }
 	static int GetSongPercent( T* p, lua_State *L )				{ lua_pushnumber(L, p->GetSongPercent(FArg(1))); return 1; }
+	DEFINE_METHOD( GetCurMusicSeconds,	m_fMusicSeconds )
 
 	DEFINE_METHOD( GetWorkoutGoalComplete,		m_bWorkoutGoalComplete )
 
@@ -2484,6 +2485,7 @@ public:
 		ADD_METHOD( JoinPlayer );
 		ADD_METHOD( UnjoinPlayer );
 		ADD_METHOD( GetSongPercent );
+		ADD_METHOD( GetCurMusicSeconds );
 	}
 };
 

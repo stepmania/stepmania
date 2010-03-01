@@ -59,7 +59,6 @@ public:
 
 	void Update( float fDelta );
 
-
 	// Main state info
 	void SetCurGame( const Game *pGame );	// Call this instead of m_pCurGame.Set to make sure PREFSMAN->m_sCurrentGame stays in sync
 	BroadcastOnChangePtr<const Game>	m_pCurGame;
@@ -83,7 +82,7 @@ public:
 	RageTimer			m_timeGameStarted;	// from the moment the first player pressed Start
 	LuaTable			*m_Environment;
 
-	/* This is set to a random number per-game/round; it can be used for a random seed. */
+	// This is set to a random number per-game/round; it can be used for a random seed.
 	int				m_iGameSeed, m_iStageSeed;
 	RString				m_sStageGUID;
 
@@ -111,7 +110,7 @@ public:
 
 
 	bool IsCourseMode() const;
-	bool IsBattleMode() const; /* not Rave */
+	bool IsBattleMode() const; // not Rave
 
 	bool ShowW1() const;
 
@@ -191,7 +190,7 @@ public:
 	float		m_fMusicSecondsVisible;
 	float		m_fSongBeatVisible;
 
-	// if re-adding noteskin changes in courses, add functions and shit here -aj
+	// if re-adding noteskin changes in courses, add functions and such here -aj
 	void GetAllUsedNoteSkins( vector<RString> &out ) const;
 
 	static const float MUSIC_SECONDS_INVALID;
@@ -250,9 +249,7 @@ public:
 	// character stuff
 	Character* m_pCurCharacters[NUM_PLAYERS];
 
-
 	bool HasEarnedExtraStage() const { return m_bEarnedExtraStage; }
-
 
 	// Ranking Stuff
 	struct RankingFeat
@@ -274,12 +271,10 @@ public:
 	void StoreRankingName( PlayerNumber pn, RString name );	// Called by name entry screens
 	vector<RString*> m_vpsNamesThatWereFilled;	// filled on StoreRankingName, 
 
-
 	// Award stuff
 	// lowest priority in front, highest priority at the back.
 	deque<StageAward> m_vLastStageAwards[NUM_PLAYERS];
 	deque<PeakComboAward> m_vLastPeakComboAwards[NUM_PLAYERS];
-
 
 	// Attract stuff
 	int m_iNumTimesThroughAttract;	// negative means play regardless of m_iAttractSoundFrequency setting

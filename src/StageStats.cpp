@@ -11,8 +11,7 @@
 #include "Profile.h"
 #include "ProfileManager.h"
 
-/*
- * Arcade:	for the current stage (one song).  
+/* Arcade:	for the current stage (one song).  
  * Nonstop/Oni/Endless:	 for current course (which usually contains multiple songs)
  */
 
@@ -74,7 +73,6 @@ int StageStats::GetAverageMeter( PlayerNumber pn ) const
 	AssertValid( pn );
 
 	// TODO: This isn't correct for courses.
-	
 	int iTotalMeter = 0;
 
 	for( unsigned i=0; i<m_vpPlayedSongs.size(); i++ )
@@ -97,7 +95,7 @@ void StageStats::AddStats( const StageStats& other )
 
 	m_bGaveUp |= other.m_bGaveUp;
 	m_bUsedAutoplay |= other.m_bUsedAutoplay;
-	
+
 	m_fGameplaySeconds += other.m_fGameplaySeconds;
 	m_fStepsSeconds += other.m_fStepsSeconds;
 
@@ -170,7 +168,7 @@ void StageStats::FinalizeScores( bool bSummary )
 	{
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
-		return; /* don't save scores in battle */
+		return; // don't save scores in battle
 	}
 
 	if( PREFSMAN->m_sTestInitialScreen.Get() != "" )
@@ -188,9 +186,8 @@ void StageStats::FinalizeScores( bool bSummary )
 
 	LOG->Trace( "saving stats and high scores" );
 
-	//
 	// generate a HighScore for each player
-	//
+
 	// whether or not to save scores when the stage was failed
 	// depends on if this is a course or not ... it's handled
 	// below in the switch
@@ -205,6 +202,7 @@ void StageStats::FinalizeScores( bool bSummary )
 		m_multiPlayer[mp].m_HighScore = FillInHighScore( m_multiPlayer[mp], *GAMESTATE->m_pMultiPlayerState[mp], "", sPlayerGuid );
 	}
 
+	// todo: check if player was CPU autoplay here? -aj
 	FOREACH_HumanPlayer( p )
 	{
 		const HighScore &hs = m_player[p].m_HighScore;
@@ -227,8 +225,8 @@ void StageStats::FinalizeScores( bool bSummary )
 			m_player[p].m_rc = AverageMeterToRankingCategory( iAverageMeter );
 
 			PROFILEMAN->AddCategoryScore( st, m_player[p].m_rc, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
-			
-			// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
+
+			// TRICKY: Increment play count here, and not on ScreenGameplay like the others.
 			PROFILEMAN->IncrementCategoryPlayCount( st, m_player[p].m_rc, p );
 		}
 		else if( GAMESTATE->IsCourseMode() )
@@ -249,7 +247,7 @@ void StageStats::FinalizeScores( bool bSummary )
 	}
 
 	// If both players get a machine high score in the same HighScoreList,
-	// then one player's score may have bumped the other player.  Look in 
+	// then one player's score may have bumped the other player. Look in 
 	// the HighScoreList and re-get the high score index.
 	FOREACH_HumanPlayer( p )
 	{
@@ -279,7 +277,7 @@ void StageStats::FinalizeScores( bool bSummary )
 			Steps* pSteps = GAMESTATE->m_pCurSteps[p];
 			pHSL = &pProfile->GetStepsHighScoreList( pSong, pSteps );
 		}
-		
+
 		vector<HighScore>::const_iterator iter = find( pHSL->vHighScores.begin(), pHSL->vHighScores.end(), hs );
 		if( iter == pHSL->vHighScores.end() )
 			m_player[p].m_iMachineHighScoreIndex = -1;
@@ -357,7 +355,7 @@ public:
 			lua_rawseti( L, -2, i+1 );
 		}
 		return 1;
-	
+
 	}
 	static int GetGameplaySeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fGameplaySeconds); return 1; }
 	static int OnePassed( T* p, lua_State *L )		{ lua_pushboolean(L, p->OnePassed()); return 1; }

@@ -644,8 +644,8 @@ void Player::Update( float fDeltaTime )
 			if( fCurrentGameTime > 1.0f )
 			{
 				/* Update the attack if there are no others currently running.
-				* Note that we have a new one activate a little early; this is to have a bit
-				* of overlap rather than an abrupt change */
+				 * Note that we have a new one activate a little early; This is
+				 * to have a bit of overlap rather than an abrupt change. */
 				if( (fCurrentGameTime - m_fActiveRandomAttackStart) > (fAttackRunTime - 0.5f) )
 				{
 					m_fActiveRandomAttackStart = fCurrentGameTime;
@@ -2443,8 +2443,9 @@ void Player::UpdateJudgedRows()
 				setSounds.insert( &m_soundMine );
 
 			/* Attack Mines:
-			 * Only difference is these launch an attack rather than affecting the lifebar. All the
-			 * other mine impacts (score, dance points, etc.) are still applied. */
+			 * Only difference is these launch an attack rather than affecting
+			 * the lifebar. All the other mine impacts (score, dance points,
+			 * etc.) are still applied. */
 			if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_bTransforms[PlayerOptions::TRANSFORM_ATTACKMINES] )
 			{
 				// Should we hardcode this, or make it a preference/theme metric? ~ Mike
@@ -3019,7 +3020,11 @@ RString Player::ApplyRandomAttack()
 	if( GAMESTATE->m_RandomAttacks.size() < 1 )
 		return "";
 
-	int iAttackToUse = rand() % GAMESTATE->m_RandomAttacks.size();
+	//int iAttackToUse = rand() % GAMESTATE->m_RandomAttacks.size();
+	DateTime now = DateTime::GetNowDate();
+	int iSeed = now.tm_hour * now.tm_min * now.tm_sec * now.tm_mday;
+	RandomGen rnd( GAMESTATE->m_iStageSeed * iSeed );
+	int iAttackToUse = rnd() % GAMESTATE->m_RandomAttacks.size();
 	return GAMESTATE->m_RandomAttacks[iAttackToUse];
 }
 

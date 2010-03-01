@@ -905,7 +905,7 @@ void ScreenEdit::MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu )
 
 void ScreenEdit::EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
 {
-	/* Reload options. */
+	// Reload options.
 	MenuDef menu("");
 	MakeFilteredMenuDef( pDef, menu );
 	ScreenMiniMenu::MiniMenu( &menu, SM_SendOnOK, SM_SendOnCancel );
@@ -3375,7 +3375,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 					if( sIter[i]->IsAutogen() )
 						continue;
 
-					/* XXX: Edits are distinguished by description.  Compare vs m_pSteps. */
+					// XXX: Edits are distinguished by description.
+					// Compare vs m_pSteps.
 					if( (sIter[i]->m_StepsType == GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType) &&
 						(sIter[i]->GetDifficulty() == GAMESTATE->m_pCurSteps[PLAYER_1]->GetDifficulty()) )
 						continue;

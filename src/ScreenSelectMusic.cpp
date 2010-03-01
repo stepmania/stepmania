@@ -174,11 +174,11 @@ void ScreenSelectMusic::Init()
 
 		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
 		m_textHighScore[p].LoadFromFont( THEME->GetPathF(m_sName,"score") );
-		m_textHighScore[p].SetShadowLength( 0 );
+		//m_textHighScore[p].SetShadowLength( 0 );
 		//m_textHighScore[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_textHighScore[p] );
 		this->AddChild( &m_textHighScore[p] );
-	}	
+	}
 
 	RageSoundLoadParams SoundParams;
 	SoundParams.m_bSupportPan = true;
@@ -209,7 +209,7 @@ void ScreenSelectMusic::BeginScreen()
 
 	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
 	{
-		/* Instead of crashing here, let's just set the PlayMode to regular */
+		// Instead of crashing here, let's just set the PlayMode to regular
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		LOG->Trace( "PlayMode not set, setting as regular." );
 	}
@@ -220,7 +220,7 @@ void ScreenSelectMusic::BeginScreen()
 		m_sprHighScoreFrame[pn].SetVisible( false );
 		m_textHighScore[pn].SetVisible( false );
 	}
-	
+
 	OPTIONS_MENU_AVAILABLE.Load( m_sName, "OptionsMenuAvailable" );
 	PlayCommand( "Mods" );
 	m_MusicWheel.BeginScreen();
@@ -249,12 +249,12 @@ ScreenSelectMusic::~ScreenSelectMusic()
 
 }
 
-/* If bForce is true, the next request will be started even if it might cause a skip. */
+// If bForce is true, the next request will be started even if it might cause a skip.
 void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 {
 	if( g_bCDTitleWaiting )
 	{
-		/* The CDTitle is normally very small, so we don't bother waiting to display it. */
+		// The CDTitle is normally very small, so we don't bother waiting to display it.
 		RString sPath;
 		if( !m_BackgroundLoader.IsCacheFileFinished(g_sCDTitlePath, sPath) )
 			return;
@@ -277,11 +277,11 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 		m_BackgroundLoader.FinishedWithCachedFile( g_sCDTitlePath );
 	}
 
-	/* Loading the rest can cause small skips, so don't do it until the wheel settles. 
+	/* Loading the rest can cause small skips, so don't do it until the wheel settles.
 	 * Do load if we're transitioning out, though, so we don't miss starting the music
 	 * for the options screen if a song is selected quickly.  Also, don't do this
-	 * if the wheel is locked, since we're just bouncing around after selecting TYPE_RANDOM,
-	 * and it'll take a while before the wheel will settle. */
+	 * if the wheel is locked, since we're just bouncing around after selecting
+	 * TYPE_RANDOM, and it'll take a while before the wheel will settle. */
 	if( !m_MusicWheel.IsSettled() && !m_MusicWheel.WheelIsLocked() && !bForce )
 		return;
 
@@ -312,13 +312,13 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 			m_BackgroundLoader.FinishedWithCachedFile( g_sBannerPath );
 	}
 
-	/* Nothing else is going.  Start the music, if we haven't yet. */
+	// Nothing else is going.  Start the music, if we haven't yet.
 	if( g_bSampleMusicWaiting )
 	{
 		if(g_ScreenStartedLoadingAt.Ago() < SAMPLE_MUSIC_DELAY_INIT)
 			return;
 
-		/* Don't start the music sample when moving fast. */
+		// Don't start the music sample when moving fast.
 		if( g_StartedLoadingAt.Ago() < SAMPLE_MUSIC_DELAY && !bForce )
 			return;
 
@@ -398,11 +398,11 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	}
 
 	if( !input.GameI.IsValid() )
-		return;		// don't care
+		return; // don't care
 
 	// Handle late joining
 	if( m_SelectionState != SelectionState_Finalized  &&  input.MenuI == GAME_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
-		return;	// don't handle this press again below
+		return; // don't handle this press again below
 
 	if( !GAMESTATE->IsHumanPlayer(input.pn) )
 		return;
@@ -414,13 +414,13 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	    OPTIONS_MENU_AVAILABLE.GetValue() )
 	{
 		if( m_bGoToOptions )
-			return; /* got it already */
+			return; // got it already
 		if( !m_bAllowOptionsMenu )
-			return; /* not allowed */
+			return; // not allowed
 
 		if( !m_bAllowOptionsMenuRepeat && input.type == IET_REPEAT )
 		{
-			return; /* not allowed yet */
+			return; // not allowed yet
 		}
 		
 		m_bGoToOptions = true;
@@ -436,7 +436,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	}
 
 	if( IsTransitioning() )
-		return;		// ignore
+		return; // ignore
 
 	// Handle unselect steps
 	if( m_SelectionState == SelectionState_SelectingSteps  &&  m_bStepsChosen[input.pn]  &&  input.MenuI == GAME_BUTTON_SELECT  &&  input.type == IET_FIRST_PRESS )
@@ -450,7 +450,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	if( m_SelectionState == SelectionState_Finalized  ||
 		m_bStepsChosen[input.pn] )
-		return;		// ignore
+		return; // ignore
 
 	if( USE_PLAYER_SELECT_MENU )
 	{
@@ -460,7 +460,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 	}
 
-	// handle options list input
+	// handle OptionsList input
 	if( USE_OPTIONS_LIST )
 	{
 		PlayerNumber pn = input.pn;
@@ -528,10 +528,10 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong || input.MenuI == GAME_BUTTON_SELECT) )
 	{
 		{
-			/* If we're rouletting, hands off. */
+			// If we're rouletting, hands off.
 			if( m_MusicWheel.IsRouletting() )
 				return;
-			
+
 			bool bLeftIsDown = false;
 			bool bRightIsDown = false;
 			FOREACH_HumanPlayer( p )
@@ -544,14 +544,13 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 				bLeftIsDown |= INPUTMAPPER->IsBeingPressed( m_GameButtonPreviousSong, p );
 				bRightIsDown |= INPUTMAPPER->IsBeingPressed( m_GameButtonNextSong, p );
 			}
-			
+
 			bool bBothDown = bLeftIsDown && bRightIsDown;
 			bool bNeitherDown = !bLeftIsDown && !bRightIsDown;
-			
 
 			if( bNeitherDown )
 			{
-				/* Both buttons released. */
+				// Both buttons released.
 				m_MusicWheel.Move( 0 );
 			}
 			else if( bBothDown )
@@ -615,7 +614,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 				m_soundLocked.Play();
 			else
 				ChangeSteps( input.pn, +1 );
-		}		
+		}
 	}
 
 	if( input.type == IET_FIRST_PRESS && DetectCodes(input) )
@@ -728,7 +727,7 @@ void ScreenSelectMusic::ChangeSteps( PlayerNumber pn, int dir )
 				return;
 		}
 
-		// the user explicity switched difficulties.  Update the preferred Difficulty and StepsType
+		// the user explicity switched difficulties. Update the preferred Difficulty and StepsType
 		Steps *pSteps = m_vpSteps[ m_iSelection[pn] ];
 		GAMESTATE->ChangePreferredDifficultyAndStepsType( pn, pSteps->GetDifficulty(), pSteps->m_StepsType );
 	}
@@ -745,15 +744,17 @@ void ScreenSelectMusic::ChangeSteps( PlayerNumber pn, int dir )
 				return;
 		}
 
-		// the user explicity switched difficulties.  Update the preferred Difficulty and StepsType
+		// the user explicity switched difficulties. Update the preferred Difficulty and StepsType
 		Trail *pTrail = m_vpTrails[ m_iSelection[pn] ];
 		GAMESTATE->ChangePreferredCourseDifficultyAndStepsType( pn, pTrail->m_CourseDifficulty, pTrail->m_StepsType );
 	}
 	else
 	{
-		// If we're showing multiple StepsTypes in the list, don't allow changing the difficulty/StepsType 
-		// when a non-Song, non-Course is selected.  Chaning the preferred Difficulty and StepsType
-		// by direction is complicated when multiple StepsTypes are being shown, so we don't support it.
+		// If we're showing multiple StepsTypes in the list, don't allow
+		// changing the difficulty/StepsType when a non-Song, non-Course is
+		// selected. Changing the preferred Difficulty and StepsType by
+		// direction is complicated when multiple StepsTypes are being shown,
+		// so we don't support it.
 		if( CommonMetrics::AUTO_SET_STYLE )
 			return;
 		if( !GAMESTATE->ChangePreferredDifficulty( pn, dir ) )
@@ -793,17 +794,17 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 {
 	if( m_bRunning && msg == Message_PlayerJoined )
 	{
-		// The current steps may no longer be playable.  If one player has double steps 
-		// selected, they are no longer playable now that P2 has joined.  
-		
-		// TODO: Invalidate the CurSteps only if they are no longer playable.  That way, 
-		// after music change will clamp to the nearest in the StepsDisplayList.
+		// The current steps may no longer be playable. If one player has double
+		// steps selected, they are no longer playable now that P2 has joined.  
+
+		// TODO: Invalidate the CurSteps only if they are no longer playable.
+		// That way,  after music change will clamp to the nearest in the StepsDisplayList.
 		GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber].SetWithoutBroadcast( NULL );
 		FOREACH_ENUM( PlayerNumber, p )
 			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
 
-		/* If a course is selected, it may no longer be playable.  Let MusicWheel know
-		 * about the late join. */
+		/* If a course is selected, it may no longer be playable.
+		 * Let MusicWheel know about the late join. */
 		m_MusicWheel.PlayerJoined();
 
 		AfterMusicChange();
@@ -858,8 +859,8 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			// Finish sort changing so that the wheel can respond immediately to our
-			// request to choose random.
+			// Finish sort changing so that the wheel can respond immediately to
+			// our request to choose random.
 			m_MusicWheel.FinishChangingSorts();
 			if( m_MusicWheel.GetSelectedSong() == NULL && m_MusicWheel.GetSelectedCourse() == NULL )
 				m_MusicWheel.StartRandom();
@@ -870,9 +871,9 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToPrevScreen )
 	{
-		/* We may have stray SM_SongChanged messages from the music wheel.  We can't
-		 * handle them anymore, since the title menu (and attract screens) reset
-		 * the game state, so just discard them. */
+		/* We may have stray SM_SongChanged messages from the music wheel.
+		 * We can't handle them anymore, since the title menu (and attract
+		 * screens) reset the game state, so just discard them. */
 		ClearMessageQueue();
 	}
 	else if( SM == SM_BeginFadingOut )
@@ -892,7 +893,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	{
 		AfterMusicChange();
 	}
-	else if( SM == SM_SortOrderChanging ) /* happens immediately */
+	else if( SM == SM_SortOrderChanging ) // happens immediately
 	{
 		this->PlayCommand( "SortChange" );
 	}
@@ -902,7 +903,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_LoseFocus )
 	{
-		CodeDetector::RefreshCacheItems(); /* reset for other screens */
+		CodeDetector::RefreshCacheItems(); // reset for other screens
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );
@@ -913,9 +914,9 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS )
 		return;
 
-	/* If select is being pressed, this is probably an attempt to change the sort, not
-	 * to pick a song or difficulty.  If it gets here, the actual select press was probably
-	 * hit during a tween and ignored.  Ignore it. */
+	/* If select is being pressed, this is probably an attempt to change the
+	 * sort, not to pick a song or difficulty. If it gets here, the actual
+	 * select press was probably hit during a tween and ignored. Ignore it. */
 	if( input.pn != PLAYER_INVALID && INPUTMAPPER->IsBeingPressed(GAME_BUTTON_SELECT, input.pn) )
 		return;
 
@@ -928,7 +929,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	DEFAULT_FAIL( m_SelectionState );
 	case SelectionState_SelectingSong:
 
-		/* If false, we don't have a selection just yet. */
+		// If false, we don't have a selection just yet.
 		if( !m_MusicWheel.Select() )
 			return;
 
@@ -943,7 +944,8 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 					bIsHard = true;
 			}
 
-			/* See if this song is a repeat.  If we're in event mode, only check the last five songs. */
+			// See if this song is a repeat.
+			// If we're in event mode, only check the last five songs.
 			bool bIsRepeat = false;
 			int i = 0;
 			if( GAMESTATE->IsEventMode() )
@@ -952,7 +954,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 				if( STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs.back() == m_MusicWheel.GetSelectedSong() )
 					bIsRepeat = true;
 
-			/* Don't complain about repeats if the user didn't get to pick. */
+			// Don't complain about repeats if the user didn't get to pick.
 			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 				bIsRepeat = false;
 
@@ -965,8 +967,8 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			else
 				SOUND->PlayOnceFromAnnouncer( "select music comment general" );
 
-			/* If we're in event mode, we may have just played a course (putting us
-			* in course mode).  Make sure we're in a single song mode. */
+			/* If we're in event mode, we may have just played a course (putting 
+			 * us in course mode). Make sure we're in a single song mode. */
 			if( GAMESTATE->IsCourseMode() )
 				GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		}
@@ -989,11 +991,11 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		}
 		else
 		{
-			/* We haven't made a selection yet. */
+			// We haven't made a selection yet.
 			return;
 		}
 
-		// I believe this is for those who like pump pro.
+		// I believe this is for those who like pump pro. -aj
 		MESSAGEMAN->Broadcast("SongChosen");
 
 		break;
@@ -1012,16 +1014,18 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 
 			bool bAllPlayersDoneSelectingSteps = bInitiatedByMenuTimer || bAllOtherHumanPlayersDone;
 
-			/* 
-			 * TRICKY: if we have a Routine chart selected, we need to ensure the following:
-			 *
+			/* TRICKY: if we have a Routine chart selected, we need to ensure
+			 * the following:
 			 * 1. Both players must select the same Routine steps.
-			 * 2. If the other player picks non-Routine steps, this player cannot pick Routine.
-			 * 3. If the other player picked Routine steps, and we pick non-Routine steps, the other
-			 *    player's steps must be unselected.
-			 * 4. If time runs out, and both players don't have the same Routine chart selected,
-			 *	  we need to bump the player with a Routine chart selection to a playable chart.
-			 *    (Right now, we bump them to Beginner...can we come up with something better?)
+			 * 2. If the other player picks non-Routine steps, this player
+			 *    cannot pick Routine.
+			 * 3. If the other player picked Routine steps, and we pick
+			 *    non-Routine steps, the other player's steps must be unselected.
+			 * 4. If time runs out, and both players don't have the same Routine
+			 *    chart selected, we need to bump the player with a Routine
+			 *    chart selection to a playable chart.
+			 *    (Right now, we bump them to Beginner... Can we come up with
+			 *    something better?)
 			 */
 
 			if( !GAMESTATE->IsCourseMode() && GAMESTATE->GetNumSidesJoined() == 2 )
@@ -1040,11 +1044,13 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 
 				if( bAnySelectedRoutine )
 				{
-					/* Timer ran out. If we haven't agreed on steps, move players with Routine steps down
-					* to Beginner. I'll admit that's annoying, but at least they won't lose more stages. */
+					/* Timer ran out. If we haven't agreed on steps, move players with
+					 * Routine steps down to Beginner. I'll admit that's annoying,
+					 * but at least they won't lose more stages. */
 					if( bInitiatedByMenuTimer && !bSelectedSameSteps )
 					{
-						/* Since m_vpSteps is sorted by Difficulty, the first entry should be the easiest. */
+						/* Since m_vpSteps is sorted by Difficulty, the first
+						 * entry should be the easiest. */
 						ASSERT( m_vpSteps.size() );
 						Steps *pSteps = m_vpSteps[0];
 
@@ -1057,14 +1063,15 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 						break;
 					}
 
-					/* If the steps don't match up, we need to check some more conditions... */
+					// If the steps don't match up, we need to check some more conditions...
 					if( !bSelectedSameSteps )
 					{
 						const PlayerNumber other = OPPOSITE_PLAYER[pn];
 
 						if( m_bStepsChosen[other] )
 						{
-							/* Unready the other player if they selected Routine steps, but we didn't. */
+							/* Unready the other player if they selected Routine
+							 * steps, but we didn't. */
 							if( bSelectedRoutineSteps[other] )
 							{
 								m_bStepsChosen[other] = false;
@@ -1079,7 +1086,8 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 							}
 							else if( bSelectedRoutineSteps[pn] )
 							{
-								/* They selected non-Routine steps, so we can't select Routine steps. */
+								/* They selected non-Routine steps, so we can't
+								 * select Routine steps. */
 								return;
 							}
 						}
@@ -1092,7 +1100,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 				m_bStepsChosen[pn] = true;
 				m_soundStart.Play();
 
-				// ttt: Pro uses "StepsSelected".
+				// impldiff: Pump it Up Pro uses "StepsSelected". -aj
 				Message msg("StepsChosen");
 				msg.SetParam( "Player", pn );
 				MESSAGEMAN->Broadcast( msg );
@@ -1123,13 +1131,12 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	{
 		m_MenuTimer->Stop();
 
-
 		FOREACH_HumanPlayer( p )
 		{
 			if( !m_bStepsChosen[p] )
 			{
 				m_bStepsChosen[p] = true;
-				/* Don't play start sound.  We play it again below on finalized */
+				// Don't play start sound. We play it again below on finalized
 				//m_soundStart.Play();
 
 				Message msg("StepsChosen");
@@ -1140,7 +1147,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 
 		if( CommonMetrics::AUTO_SET_STYLE )
 		{
-			/* Now that Steps have been chosen, set a Style that can play them. */
+			// Now that Steps have been chosen, set a Style that can play them.
 			const Style *pStyle = NULL;
 			if( GAMESTATE->IsCourseMode() )
 				pStyle = GAMESTATE->m_pCurCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
@@ -1164,10 +1171,9 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			GAMESTATE->SetCurrentStyle( pStyle );
 		}
 
-
-		/* If we're currently waiting on song assets, abort all except the music and
-		* start the music, so if we make a choice quickly before background requests
-		* come through, the music will still start. */
+		/* If we're currently waiting on song assets, abort all except the music
+		 * and start the music, so if we make a choice quickly before background
+		 * requests come through, the music will still start. */
 		g_bCDTitleWaiting = g_bBannerWaiting = false;
 		m_BackgroundLoader.Abort();
 		CheckBackgroundRequests( true );
@@ -1180,9 +1186,9 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			m_bAllowOptionsMenu = true;
 
 			/* Don't accept a held START for a little while, so it's not
-			* hit accidentally.  Accept an initial START right away, though,
-			* so we don't ignore deliberate fast presses (which would be
-			* annoying). */
+			 * hit accidentally.  Accept an initial START right away, though,
+			 * so we don't ignore deliberate fast presses (which would be
+			 * annoying). */
 			this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
 
 			StartTransitioningScreen( SM_None );
@@ -1199,7 +1205,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		float fSeconds = m_MenuTimer->GetSeconds();
 		if( fSeconds < 10 )
 		{
-			// TODO: make this a theme option -aj
+			// TODO: make this a theme metric -aj
 			m_MenuTimer->SetSeconds( 13 );
 			m_MenuTimer->Start();
 		}
@@ -1235,7 +1241,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 	{
 		PlayerNumber pn = *p;
 		ASSERT( GAMESTATE->IsHumanPlayer(pn) );
-		
+
 		if( GAMESTATE->m_pCurSong )
 		{
 			CLAMP( m_iSelection[pn], 0, m_vpSteps.size()-1 );
@@ -1261,7 +1267,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
-			
+
 			GAMESTATE->m_pCurSteps[pn].Set( NULL );			
 			GAMESTATE->m_pCurTrail[pn].Set( pTrail );
 
@@ -1283,14 +1289,14 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 	{
 		FOREACH_HumanPlayer( pn )
 		{
-			/* Find the closest match to the user's preferred difficulty and StepsType. */
+			// Find the closest match to the user's preferred difficulty and StepsType.
 			int iCurDifference = -1;
 			int &iSelection = m_iSelection[pn];
 			FOREACH_CONST( Steps*, m_vpSteps, s )
 			{
 				int i = s - m_vpSteps.begin();
 
-				/* If the current steps are listed, use them. */
+				// If the current steps are listed, use them.
 				if( GAMESTATE->m_pCurSteps[pn] == *s )
 				{
 					iSelection = i;
@@ -1320,14 +1326,14 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 	{
 		FOREACH_HumanPlayer( pn )
 		{
-			/* Find the closest match to the user's preferred difficulty. */
+			// Find the closest match to the user's preferred difficulty.
 			int iCurDifference = -1;
 			int &iSelection = m_iSelection[pn];
 			FOREACH_CONST( Trail*, m_vpTrails, t )
 			{
 				int i = t - m_vpTrails.begin();
 
-				/* If the current trail is listed, use it. */
+				// If the current trail is listed, use it.
 				if( GAMESTATE->m_pCurTrail[pn] == m_vpTrails[i] )
 				{
 					iSelection = i;
@@ -1416,17 +1422,17 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_sSampleMusicToPlay = m_sSectionMusicPath;
 			break;
 		case TYPE_SORT:
-			bWantBanner = false; /* we load it ourself */
+			bWantBanner = false; // we load it ourself
 			m_Banner.LoadMode();
 			m_sSampleMusicToPlay = m_sSortMusicPath;
 			break;
 		case TYPE_ROULETTE:
-			bWantBanner = false; /* we load it ourself */
+			bWantBanner = false; // we load it ourself
 			m_Banner.LoadRoulette();
 			m_sSampleMusicToPlay = m_sRouletteMusicPath;
 			break;
 		case TYPE_RANDOM:
-			bWantBanner = false; /* we load it ourself */
+			bWantBanner = false; // we load it ourself
 			m_Banner.LoadRandom();
 			m_sSampleMusicToPlay = m_sRandomMusicPath;
 			break;
@@ -1495,7 +1501,8 @@ void ScreenSelectMusic::AfterMusicChange()
 	m_sprCDTitleFront.UnloadTexture();
 	m_sprCDTitleBack.UnloadTexture();
 
-	/* Cancel any previous, incomplete requests for song assets, since we need new ones. */
+	// Cancel any previous, incomplete requests for song assets,
+	// since we need new ones.
 	m_BackgroundLoader.Abort();
 
 	g_bCDTitleWaiting = false;
@@ -1512,9 +1519,8 @@ void ScreenSelectMusic::AfterMusicChange()
 		LOG->Trace("LoadFromCachedBanner(%s)",g_sBannerPath .c_str());
 		if( m_Banner.LoadFromCachedBanner( g_sBannerPath ) )
 		{
-			/* If the high-res banner is already loaded, just
-			 * delay before loading it, so the low-res one has
-			 * time to fade in. */
+			/* If the high-res banner is already loaded, just delay before
+			 * loading it, so the low-res one has time to fade in. */
 			if( !TEXTUREMAN->IsTextureRegistered( Sprite::SongBannerTexture(g_sBannerPath) ) )
 				m_BackgroundLoader.CacheFile( g_sBannerPath );
 

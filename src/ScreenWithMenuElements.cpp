@@ -189,8 +189,7 @@ void ScreenWithMenuElements::StartPlayingMusic()
 	{
 		GameSoundManager::PlayMusicParams pmp;
 		FileType ft = ActorUtil::GetFileType( m_sPathToMusic );
-		/*
-		 * If m_sPathToMusic points to a Lua file, parse it and make sure it
+		/* If m_sPathToMusic points to a Lua file, parse it and make sure it
 		 * returns a string pointing to a sound. Otherwise, if it points to
 		 * a normal music file, use the normal playback code. -aj
 		 * TODO: Make Lua music files accept playback params.

@@ -338,7 +338,7 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 		pActor->Update(fDeltaTime);
 	}
 
-	// todo: update lighting?
+	// todo: update lighting? -aj
 
 	if( unlikely(!m_UpdateFunction.IsNil()) )
 	{

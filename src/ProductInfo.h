@@ -23,12 +23,11 @@
  * "v0.0": Final Releases
 */
 #ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE private beta 1.4
+#define PRODUCT_VER_BARE v1.0 beta 1
 #endif
 
 // A unique ID for a build of an application.  This is used in crash reports and in the network code's version handling 
 #define PRODUCT_ID_VER_BARE PRODUCT_ID_BARE PRODUCT_VER_BARE
-
 
 // These cannot be #undef'd so make them unlikely to conflict with anything
 #define PRODUCT_STRINGIFY(x) #x

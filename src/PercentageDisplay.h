@@ -23,9 +23,7 @@ public:
 
 	bool ShowDancePointsNotPercentage() const;
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 private:

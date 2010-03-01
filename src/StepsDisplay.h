@@ -41,7 +41,7 @@ private:
 		const Steps *pSteps;
 		const Trail *pTrail;
 		int iMeter;
-		StepsType st;	// pass because there may be a StepType icons
+		StepsType st; // pass because there may be a StepType icon
 		Difficulty dc;
 		CourseType ct;
 	};
@@ -49,12 +49,12 @@ private:
 
 	RString		m_sMetricsGroup;
 
-	AutoActor		m_sprFrame;
-	BitmapText		m_textTicks;	/* 111100000 */
-	BitmapText		m_textMeter;	/* 3, 9 */
-	BitmapText		m_textDescription; /* Easy, Medium, SuperCoolEdit */
-	AutoActor		m_sprAutogen;	// visible if Steps and is autogen'd
-	AutoActor		m_sprStepsType;	// TODO: Make this an AutoActor
+	AutoActor	m_sprFrame;
+	BitmapText	m_textTicks; // 111100000
+	BitmapText	m_textMeter; // 3, 9
+	BitmapText	m_textDescription; // Easy, Medium, SuperCoolEdit
+	AutoActor	m_sprAutogen; // visible if Steps and is autogen'd
+	AutoActor	m_sprStepsType;
 
 	ThemeMetric<int>	m_iNumTicks;
 	ThemeMetric<int>	m_iMaxTicks;

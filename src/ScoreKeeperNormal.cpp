@@ -413,10 +413,10 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 
 		switch( score )
 		{
-		case TNS_W1:	p = 10;				break;
-		case TNS_W2:	p = GAMESTATE->ShowW1()? 9:10;	break;
-		case TNS_W3:	p = 5;				break;
-		default:	p = 0;				break;
+		case TNS_W1:	p = 10;	break;
+		case TNS_W2:	p = GAMESTATE->ShowW1()? 9:10; break;
+		case TNS_W3:	p = 5;	break;
+		default:		p = 0;	break;
 		}
 
 		m_iTapNotesHit++;
@@ -471,13 +471,13 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 
 		switch( score )
 		{
-		case TNS_W1:	p = m_CustomTNS_W1;	break;
-		case TNS_W2:	p = m_CustomTNS_W2;	break;
-		case TNS_W3:	p = m_CustomTNS_W3;	break;
-		case TNS_W4:	p = m_CustomTNS_W4;	break;
-		case TNS_W5:	p = m_CustomTNS_W5;	break;
+		case TNS_W1:	p = m_CustomTNS_W1;		break;
+		case TNS_W2:	p = m_CustomTNS_W2;		break;
+		case TNS_W3:	p = m_CustomTNS_W3;		break;
+		case TNS_W4:	p = m_CustomTNS_W4;		break;
+		case TNS_W5:	p = m_CustomTNS_W5;		break;
 		case TNS_Miss:	p = m_CustomTNS_Miss;	break;
-		default:	p = 0;			break;
+		default:		p = 0;					break;
 		}
 
 		if( m_CustomComboBonus )
@@ -657,9 +657,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 
 	AddTapRowScore( scoreOfLastTap, nd, iRow );		// only score once per row
 
-	//
 	// handle combo logic
-	//
 #ifndef DEBUG
 	if( (GamePreferences::m_AutoPlay != PC_HUMAN || m_pPlayerState->m_PlayerOptions.GetCurrent().m_fPlayerAutoPlay != 0)
 		&& !GAMESTATE->m_bDemonstrationOrJukebox )	// cheaters always prosper >:D -aj comment edit
@@ -681,6 +679,9 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 			!GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
+			Message msg("ToastyAchieved");
+			msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
+			MESSAGEMAN->Broadcast(msg);
 
 			// TODO: keep a pointer to the Profile.  Don't index with m_PlayerNumber
 			PROFILEMAN->IncrementToastiesCount( m_pPlayerState->m_PlayerNumber );
@@ -688,6 +689,9 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 		break;
 	default:
 		m_iCurToastyCombo = 0;
+		Message msg("ToastyDropped");
+		msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
+		MESSAGEMAN->Broadcast(msg);
 		break;
 	}
 
@@ -816,8 +820,8 @@ int ScoreKeeperNormal::TapNoteScoreToDancePoints( TapNoteScore tns, bool bBeginn
 	switch( tns )
 	{
 	DEFAULT_FAIL( tns );
-	case TNS_None:		iWeight = 0;						break;
-	case TNS_HitMine:	iWeight = g_iPercentScoreWeight[SE_HitMine];		break;
+	case TNS_None:		iWeight = 0;									break;
+	case TNS_HitMine:	iWeight = g_iPercentScoreWeight[SE_HitMine];	break;
 	case TNS_Miss:		iWeight = g_iPercentScoreWeight[SE_Miss];		break;
 	case TNS_W5:		iWeight = g_iPercentScoreWeight[SE_W5];			break;
 	case TNS_W4:		iWeight = g_iPercentScoreWeight[SE_W4];			break;
@@ -838,9 +842,9 @@ int ScoreKeeperNormal::HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBegi
 	switch( hns )
 	{
 	DEFAULT_FAIL( hns );
-	case HNS_None:	iWeight = 0;					break;
+	case HNS_None:	iWeight = 0;									break;
 	case HNS_LetGo:	iWeight = g_iPercentScoreWeight[SE_LetGo];	break;
-	case HNS_Held:	iWeight = g_iPercentScoreWeight[SE_Held];	break;
+	case HNS_Held:	iWeight = g_iPercentScoreWeight[SE_Held];		break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -858,9 +862,9 @@ int ScoreKeeperNormal::TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginn
 	switch( tns )
 	{
 	DEFAULT_FAIL( tns );
-	case TNS_None:		iWeight = 0;					break;
-	case TNS_AvoidMine:	iWeight = 0;					break;
-	case TNS_HitMine:	iWeight = g_iGradeWeight[SE_HitMine];		break;
+	case TNS_None:		iWeight = 0;							break;
+	case TNS_AvoidMine:	iWeight = 0;						break;
+	case TNS_HitMine:	iWeight = g_iGradeWeight[SE_HitMine];	break;
 	case TNS_Miss:		iWeight = g_iGradeWeight[SE_Miss];		break;
 	case TNS_W5:		iWeight = g_iGradeWeight[SE_W5];		break;
 	case TNS_W4:		iWeight = g_iGradeWeight[SE_W4];		break;
@@ -881,9 +885,9 @@ int ScoreKeeperNormal::HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBegi
 	switch( hns )
 	{
 	DEFAULT_FAIL( hns );
-	case HNS_None:	iWeight = 0;				break;
+	case HNS_None:	iWeight = 0;							break;
 	case HNS_LetGo:	iWeight = g_iGradeWeight[SE_LetGo];	break;
-	case HNS_Held:	iWeight = g_iGradeWeight[SE_Held];	break;
+	case HNS_Held:	iWeight = g_iGradeWeight[SE_Held];		break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );

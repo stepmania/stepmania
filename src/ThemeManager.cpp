@@ -377,7 +377,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 		sThemeName = PREFSMAN->m_sTheme.GetDefault();
 #endif
 	// sm-ssc's SpecialFiles::BASE_THEME_NAME is _fallback, which you can't
-	// select. This requires a metric, which allows it to be adapted for
+	// select. This requires a preference, which allows it to be adapted for
 	// other purposes (e.g. PARASTAR).
 	if( !IsThemeSelectable(sThemeName) )
 		sThemeName = PREFSMAN->m_sDefaultTheme;
@@ -385,8 +385,8 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 
 	ASSERT( IsThemeSelectable(sThemeName) );
 
-	/* We haven't actually loaded the theme yet, so we can't check whether sLanguage
-	 * exists.  Just check for empty. */
+	/* We haven't actually loaded the theme yet, so we can't check whether
+	 * sLanguage exists. Just check for empty. */
 	if( sLanguage.empty() )
 		sLanguage = GetDefaultLanguage();
 	LOG->Trace("ThemeManager::SwitchThemeAndLanguage: \"%s\", \"%s\"",
@@ -398,13 +398,13 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 
 	m_bPseudoLocalize = bPseudoLocalize;
 
-	// Load theme metrics.  If only the language is changing, this is all
+	// Load theme metrics. If only the language is changing, this is all
 	// we need to reload.
 	bool bThemeChanging = (sThemeName != m_sCurThemeName);
 	LoadThemeMetrics( sThemeName, sLanguage );
 
-	// Clear the theme path cache.  This caches language-specific graphic paths, so do this
-	// even if only the language is changing.
+	// Clear the theme path cache. This caches language-specific graphic paths,
+	// so do this even if only the language is changing.
 	ClearThemePathCache();
 	if( bThemeChanging )
 	{
@@ -454,7 +454,7 @@ void ThemeManager::RunLuaScripts( const RString &sMask )
 	{
 		--iter;
 		const RString &sThemeDir = GetThemeDirFromName( iter->sThemeName );
-		
+
 		vector<RString> asElementPaths;
 		// get files from directories
 		vector<RString> asElementChildPaths;
@@ -492,7 +492,7 @@ void ThemeManager::RunLuaScripts( const RString &sMask )
 void ThemeManager::UpdateLuaGlobals()
 {
 #if !defined(SMPACKAGE)
-	/* explicitly refresh cached metrics that we use. */
+	// explicitly refresh cached metrics that we use.
 	ScreenDimensions::ReloadScreenDimensions();
 
 	RunLuaScripts( "*.lua" );
@@ -523,8 +523,7 @@ struct CompareLanguageTag
 	}
 };
 
-/*
- * If there's more than one result, check for language tags.  For example,
+/* If there's more than one result, check for language tags.  For example,
  *
  * ScreenCompany graphic (lang English).png
  * ScreenCompany graphic (lang French).png
@@ -532,8 +531,7 @@ struct CompareLanguageTag
  * We still want to warn for ambiguous results.  Use std::unique to filter
  * files with the current language tag to the top, so choosing "ignore" from
  * the multiple-match dialog will cause it to default to the first entry, so
- * it'll still use a preferred language match if there were any.
- */
+ * it'll still use a preferred language match if there were any. */
 void ThemeManager::FilterFileLanguages( vector<RString> &asPaths )
 {
 	if( asPaths.size() <= 1 )
@@ -544,7 +542,7 @@ void ThemeManager::FilterFileLanguages( vector<RString> &asPaths )
 	int iDist = distance( asPaths.begin(), it );
 	if( iDist == 0 )
 	{
-		/* We didn't find any for the current language.  Try BASE_LANGUAGE. */
+		// We didn't find any for the current language.  Try BASE_LANGUAGE.
 		it = partition( asPaths.begin(), asPaths.end(), CompareLanguageTag(SpecialFiles::BASE_LANGUAGE) );
 		iDist = distance( asPaths.begin(), it );
 	}
@@ -555,8 +553,9 @@ void ThemeManager::FilterFileLanguages( vector<RString> &asPaths )
 
 bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, ElementCategory category, const RString &sMetricsGroup_, const RString &sElement_ ) 
 {
-	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
-	 * else that might suddenly go away when we call ReloadMetrics, so make a copy. */
+	/* Ugly: the parameters to this function may be a reference into g_vThemes,
+	 * or something else that might suddenly go away when we call ReloadMetrics,
+	 * so make a copy. */
 	const RString sThemeName = sThemeName_;
 	const RString sMetricsGroup = sMetricsGroup_;
 	const RString sElement = sElement_;
@@ -597,12 +596,12 @@ try_element_again:
 
 			for( int i = 0; asset_masks[i]; ++i )
 			{
-				/* No extension means directories. */
+				// No extension means directories.
 				if( asset_masks[i][0] == 0 )
 				{
 					if( !IsADirectory(asPaths[p]) )
 						continue;
-					
+
 					RString sXMLPath = asPaths[p] + "/default.xml";
 					if( DoesFileExist(sXMLPath) )
 					{
@@ -676,8 +675,8 @@ try_element_again:
 	 * the default theme point to "_shared background", and themes override
 	 * just "_shared background"; the redirs in the default theme should end
 	 * up resolving to the overridden background. */
-	/* Use GetPathToOptional because we don't want report that there's an element
-	 * missing.  Instead we want to report that the redirect is invalid. */
+	/* Use GetPathToOptional because we don't want report that there's an
+	 * element missing. Instead we want to report that the redirect is invalid. */
 	if( GetPathInfo(out,category,sNewClassName,sNewFile,true) )
 		return true;
 
@@ -724,15 +723,15 @@ bool ThemeManager::GetPathInfoToAndFallback( PathInfo &out, ElementCategory cate
 
 	RageException::Throw( "Infinite recursion looking up theme element \"%s\"",
 		MetricsGroupAndElementToFileName(sMetricsGroup, sElement).c_str() );
-	/* Not really reached, but Appple's gcc 4 can't figure that out without optimization
-	 * even though RE:Throw() is correctly annotated. */
+	/* Not really reached, but Appple's gcc 4 can't figure that out without
+	 * optimization even though RE:Throw() is correctly annotated. */
 	while( true ) {}
 }
 
 bool ThemeManager::GetPathInfo( PathInfo &out, ElementCategory category, const RString &sMetricsGroup_, const RString &sElement_, bool bOptional ) 
 {
-	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
-	 * else that might suddenly go away when we call ReloadMetrics. */
+	/* Ugly: the parameters to this function may be a reference into g_vThemes,
+	 * or something else that might suddenly go away when we call ReloadMetrics. */
 	const RString sMetricsGroup = sMetricsGroup_;
 	const RString sElement = sElement_;
 
@@ -741,7 +740,7 @@ bool ThemeManager::GetPathInfo( PathInfo &out, ElementCategory category, const R
 	map<RString, PathInfo> &Cache = g_ThemePathCache[category];
 	{
 		map<RString, PathInfo>::const_iterator i;
-		
+
 		i = Cache.find( sFileName );
 		if( i != Cache.end() )
 		{
@@ -749,9 +748,9 @@ bool ThemeManager::GetPathInfo( PathInfo &out, ElementCategory category, const R
 			return true;
 		}
 	}
-	
+
 try_element_again:
-	
+
 	// search the current theme
 	if( GetPathInfoToAndFallback( out, category, sMetricsGroup, sElement ) )	// we found something
 	{
@@ -767,7 +766,7 @@ try_element_again:
 
 	const RString &sCategory = ElementCategoryToString(category);
 
-	/* We can't fall back on _missing in Other: the file types are unknown. */
+	// We can't fall back on _missing in Other: the file types are unknown.
 	RString sMessage = "The theme element \"" + sCategory + "/" + sFileName +"\" is missing.";
 	Dialog::Result res;
 	if( category != EC_OTHER )
@@ -781,11 +780,11 @@ try_element_again:
 		goto try_element_again;
 	case Dialog::ignore:
 		LOG->UserLog( "Theme element", sCategory + '/' + sFileName,
-			      "could not be found in \"%s\" or \"%s\".",
-			      GetThemeDirFromName(m_sCurThemeName).c_str(), 
-			      GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
+					"could not be found in \"%s\" or \"%s\".",
+					GetThemeDirFromName(m_sCurThemeName).c_str(), 
+					GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
 
-		/* Err? */
+		// Err?
 		if( sFileName == "_missing" )
 			RageException::Throw( "\"_missing\" isn't present in \"%s%s\".", GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str(), sCategory.c_str() );
 
@@ -794,9 +793,9 @@ try_element_again:
 		return true;
 	case Dialog::abort:
 		LOG->UserLog( "Theme element", sCategory + '/' + sFileName,
-			      "could not be found in \"%s\" or \"%s\".",
-			      GetThemeDirFromName(m_sCurThemeName).c_str(), 
-			      GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
+					"could not be found in \"%s\" or \"%s\".",
+					GetThemeDirFromName(m_sCurThemeName).c_str(), 
+					GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
 		RageException::Throw( "Theme element \"%s/%s\" could not be found in \"%s\" or \"%s\".", 
 			sCategory.c_str(),
 			sFileName.c_str(), 

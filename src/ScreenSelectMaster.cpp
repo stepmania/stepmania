@@ -26,11 +26,10 @@ AutoScreenMessage( SM_PlayPostSwitchPage )
 
 static RString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetXFromIcon",int(p+1)); }
 static RString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetYFromIcon",int(p+1)); }
-/* e.g. "OptionOrderLeft=0:1,1:2,2:3,3:4" */
+// e.g. "OptionOrderLeft=0:1,1:2,2:3,3:4"
 static RString OPTION_ORDER_NAME( size_t dir ) { return "OptionOrder"+MenuDirToString((MenuDir)dir); }
 
 static RString OPTION_ORDER_NAME_LIST2( size_t dir ) { return "OptionOrderB"+MenuDirToString((MenuDir)dir); }
-
 
 REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 
@@ -828,7 +827,6 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 				bNewAlreadyHadFocus |= m_iChoice[p2] == iNewChoice;
 			}
 
-			//todo: condense this section
 			if(DOUBLE_PRESS_TO_SELECT)
 			{
 				if(m_bUsingTwoLists && m_iSelectedList == 1)

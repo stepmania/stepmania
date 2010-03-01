@@ -977,6 +977,8 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 			// going by Pump Pro. -aj
 			if(ntTo == StepsType_pump_halfdouble && pNewNotes->GetDifficulty() != Difficulty_Medium)
 				continue;
+			// todo: don't generate steps for Couples and Routine if
+			// AutoSetStyle is on? -aj
 			this->AddSteps( pNewNotes );
 		}
 	}
@@ -1453,9 +1455,6 @@ public:
 	static int HasBGChanges( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBGChanges()); return 1; }
 	static int HasLyrics( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasLyrics()); return 1; }
 	// functions that AJ loves
-	static int GetBPMAtBeat( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetBPMAtBeat(FArg(1))); return 1; }
-	static int GetBeatFromElapsedTime( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetBeatFromElapsedTime(FArg(1))); return 1; }
-	static int GetElapsedTimeFromBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetElapsedTimeFromBeat(FArg(1))); return 1; }
 	static int HasSignificantBPMChangesOrStops( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasSignificantBpmChangesOrStops()); return 1; }
 	static int HasEdits( T* p, lua_State *L )
 	{
@@ -1511,9 +1510,6 @@ public:
 		ADD_METHOD( HasBGChanges );
 		ADD_METHOD( HasLyrics );
 		// danger will robinson
-		ADD_METHOD( GetBPMAtBeat );
-		ADD_METHOD( GetBeatFromElapsedTime );
-		ADD_METHOD( GetElapsedTimeFromBeat );
 		ADD_METHOD( HasSignificantBPMChangesOrStops );
 		ADD_METHOD( HasEdits );
 		ADD_METHOD( IsEasy );

@@ -47,7 +47,7 @@ enum EditButton
 	EDIT_BUTTON_COLUMN_8,
 	EDIT_BUTTON_COLUMN_9,
 
-	/* These are modifiers to EDIT_BUTTON_COLUMN_*. */
+	// These are modifiers to EDIT_BUTTON_COLUMN_*.
 	EDIT_BUTTON_RIGHT_SIDE,
 	EDIT_BUTTON_LAY_MINE_OR_ROLL,
 	EDIT_BUTTON_LAY_TAP_ATTACK,
@@ -65,7 +65,7 @@ enum EditButton
 	EDIT_BUTTON_SCROLL_NEXT,
 	EDIT_BUTTON_SCROLL_PREV,
 
-	/* These are modifiers to EDIT_BUTTON_SCROLL_*. */
+	// These are modifiers to EDIT_BUTTON_SCROLL_*.
 	EDIT_BUTTON_SCROLL_SELECT,
 
 	EDIT_BUTTON_LAY_SELECT,
@@ -118,7 +118,7 @@ enum EditButton
 	EDIT_BUTTON_SAMPLE_LENGTH_UP,
 	EDIT_BUTTON_SAMPLE_LENGTH_DOWN,
 
-	/* This modifies offset, BPM, and stop segment changes. */
+	// This modifies offset, BPM, and stop segment changes.
 	EDIT_BUTTON_ADJUST_FINE,
 
 	EDIT_BUTTON_SAVE,
@@ -129,19 +129,17 @@ enum EditButton
 	
 	EDIT_BUTTON_SWITCH_PLAYERS,
 
-	NUM_EditButton,		// leave this at the end
+	NUM_EditButton, // leave this at the end
 	EditButton_Invalid
 };
 #define FOREACH_EditButton( e ) FOREACH_ENUM( EditButton, e )
 const int NUM_EDIT_TO_DEVICE_SLOTS = 2;
 const int NUM_EDIT_TO_MENU_SLOTS = 2;
 
-/*
- * g_MapEditToDI is a simple mapping: edit functions map to DeviceInputs.
+/* g_MapEditToDI is a simple mapping: edit functions map to DeviceInputs.
  * If g_MapEditToDIHold for a given edit function is valid, then at least one
  * input in g_MapEditToDIHold must be held when pressing any key in g_MapEditToDI
- * for the input to occur.
- */
+ * for the input to occur. */
 struct MapEditToDI
 {
 	DeviceInput button[NUM_EditButton][NUM_EDIT_TO_DEVICE_SLOTS];

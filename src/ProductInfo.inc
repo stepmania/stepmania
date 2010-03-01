@@ -5,7 +5,7 @@
 
 ; see ProductInfo.h for use descriptions
 !define PRODUCT_ID "sm-ssc"
-!define PRODUCT_VER "private beta 1.4"
+!define PRODUCT_VER "v1.0 beta 1"
 !define PRODUCT_DISPLAY "${PRODUCT_ID} ${PRODUCT_VER}"
 !define PRODUCT_BITMAP "sm4"
 

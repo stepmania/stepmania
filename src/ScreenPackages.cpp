@@ -14,18 +14,18 @@
 #include <cstdlib>
 #include "LocalizedString.h"
 
-#define EXISTINGBG_WIDTH			THEME->GetMetricF(m_sName,"PackagesBGWidth")
-#define WEBBG_WIDTH					THEME->GetMetricF(m_sName,"WebBGWidth")
-#define	NUM_PACKAGES_SHOW			THEME->GetMetricI(m_sName,"NumPackagesShow")
-#define NUM_LINKS_SHOW				THEME->GetMetricI(m_sName,"NumLinksShow")
-#define DEFAULT_URL					THEME->GetMetric(m_sName,"DefaultUrl")
-
 AutoScreenMessage( SM_BackFromURL )
 
 REGISTER_SCREEN_CLASS( ScreenPackages );
 
+static LocalizedString VISIT_URL( "ScreenPackages", "VisitURL" );
 void ScreenPackages::Init()
 {
+	EXISTINGBG_WIDTH.Load(m_sName, "PackagesBGWidth");
+	WEBBG_WIDTH.Load(m_sName, "WebBGWidth");
+	NUM_PACKAGES_SHOW.Load(m_sName, "NumPackagesShow");
+	NUM_LINKS_SHOW.Load(m_sName, "NumLinksShow");
+	DEFAULT_URL.Load(m_sName, "DefaultUrl");
 	ScreenWithMenuElements::Init();
 
 	m_iPackagesPos = 0;
@@ -69,9 +69,8 @@ void ScreenPackages::Init()
 	m_textWeb.SetMaxWidth( WEBBG_WIDTH );
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_textWeb );
 	this->AddChild( &m_textWeb);
-	m_Links.push_back( " " );
-	// TODO: make this a localized string -aj
-	m_LinkTitles.push_back( "--Visit URL--" );
+	m_Links.push_back( " " ); // what is this here for? -aj
+	m_LinkTitles.push_back( VISIT_URL );
 
 	m_textURL.LoadFromFont( THEME->GetPathF( m_sName,"default") );
 	m_textURL.SetShadowLength( 0 );
@@ -104,20 +103,20 @@ void ScreenPackages::Init()
 	this->AddChild( &m_textStatus );
 
 	// if the default url isn't empty, load it.
-	if( !DEFAULT_URL.empty() )
+	if( !DEFAULT_URL.GetValue().empty() )
 		EnterURL( DEFAULT_URL );
 
 	UpdateProgress();
 
-	//Workaround:  For some reason, the first download sometimes
-	//corrupts; by opening and closing the rage file, this 
-	//problem does not occur.  Go figure?
+	// Workaround: For some reason, the first download sometimes
+	// corrupts; by opening and closing the RageFile, this 
+	// problem does not occur.  Go figure?
 
-	//XXX:  This is a really dirty work around!
-	//Why does RageFile do this?
+	// XXX: This is a really dirty work around!
+	// Why does RageFile do this?
 
-	//It's always some strange number of bytes at the end of the
-	//file when it corrupts.
+	// It's always some strange number of bytes at the end of the
+	// file when it corrupts.
 	m_fOutputFile.Open( "Packages/dummy.txt", RageFile::WRITE );
 	m_fOutputFile.Close();
 }
@@ -140,6 +139,7 @@ void ScreenPackages::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
+static LocalizedString DOWNLOAD_PROGRESS( "ScreenPackages", "DL @ %d KB/s" );
 void ScreenPackages::Update( float fDeltaTime )
 {
 	HTTPUpdate();
@@ -147,9 +147,8 @@ void ScreenPackages::Update( float fDeltaTime )
 	m_fLastUpdate += fDeltaTime;
 	if ( m_fLastUpdate >= 1.0 )
 	{
-		// TODO: Make this a themeable string -aj
 		if ( m_bIsDownloading && m_bGotHeader )
-			m_sStatus = ssprintf( "DL @ %d KB/s", int((m_iDownloaded-m_bytesLastUpdate)/1024) );
+			m_sStatus = ssprintf( DOWNLOAD_PROGRESS.GetValue(), int((m_iDownloaded-m_bytesLastUpdate)/1024) );
 
 		m_bytesLastUpdate = m_iDownloaded;
 		UpdateProgress();
@@ -199,7 +198,7 @@ void ScreenPackages::MenuDown( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
 		return;
-	
+
 	if ( m_iDLorLST == 0)
 	{
 		if( (unsigned) m_iPackagesPos < m_Packages.size() - 1 )
@@ -251,7 +250,7 @@ void ScreenPackages::MenuRight( const InputEventPlus &input )
 	if ( m_bIsDownloading )
 		return;
 
-	/* Huh? */
+	// Huh?
 	//MenuLeft( input );
 
 	if ( m_iDLorLST == 1 )
@@ -261,7 +260,7 @@ void ScreenPackages::MenuRight( const InputEventPlus &input )
 		COMMAND( m_sprWebBG, "Back" );
 	}
 	else 
-	{	
+	{
 		m_iDLorLST = 1;
 		COMMAND( m_sprExistingBG, "Back" );
 		COMMAND( m_sprWebBG, "Away" );
@@ -354,10 +353,10 @@ void ScreenPackages::HTMLParse()
 	m_Links.clear();
 	m_LinkTitles.clear();
 	m_Links.push_back( " " );
-	m_LinkTitles.push_back( "--Visit URL--" );
+	m_LinkTitles.push_back( VISIT_URL.GetValue() );
 
-	//XXX: VERY DIRTY HTML PARSER!
-	//Only designed to find links on websites.
+	// XXX: VERY DIRTY HTML PARSER!
+	// Only designed to find links on websites.
 	size_t i = m_sBUFFER.find( "<A " );
 	size_t j = 0;
 	size_t k = 0;
@@ -383,7 +382,7 @@ void ScreenPackages::HTMLParse()
 
 			l = m_sBUFFER.find( "</", m+1 );
 
-			//Special case: There is exactly one extra tag in the link.
+			// Special case: There is exactly one extra tag in the link.
 			j = m_sBUFFER.find( ">", k+1 );
 			if ( j < l )
 				k = j;
@@ -454,6 +453,7 @@ void ScreenPackages::UpdateProgress()
 	m_textStatus.SetText( m_sStatus );
 }
 
+static LocalizedString DOWNLOAD_FAILED( "ScreenPackages", "Failed." );
 void ScreenPackages::CancelDownload( )
 {
 	m_wSocket.close();
@@ -461,11 +461,16 @@ void ScreenPackages::CancelDownload( )
 	m_iDownloaded = 0;
 	m_bGotHeader = false;
 	m_fOutputFile.Close();
-	m_sStatus = "Failed.";
+	m_sStatus = DOWNLOAD_FAILED.GetValue();
 	m_sBUFFER = "";
 	if( !FILEMAN->Remove( "Packages/" + m_sEndName ) )
 		SCREENMAN->SystemMessage( "Packages/" + m_sEndName );
 }
+
+static LocalizedString INVALID_URL( "ScreenPackages", "Invalid URL." );
+static LocalizedString FILE_ALREADY_EXISTS( "ScreenPackages", "File Already Exists" );
+static LocalizedString FAILED_TO_CONNECT( "ScreenPackages", "Failed to connect." );
+static LocalizedString HEADER_SENT( "ScreenPackages", "Header Sent." );
 void ScreenPackages::EnterURL( const RString & sURL )
 {
 	RString Proto;
@@ -475,13 +480,13 @@ void ScreenPackages::EnterURL( const RString & sURL )
 
 	if( !ParseHTTPAddress( sURL, Proto, Server, Port, sAddress ) )
 	{
-		m_sStatus = "Invalid URL.";
+		m_sStatus = INVALID_URL.GetValue();
 		UpdateProgress();
 		return;
 	}
 
-	//Determine if this is a website, or a package?
-	//Criteria: does it end with *zip?
+	// Determine if this is a website, or a package?
+	// Criteria: does it end with *zip?
 	if( sAddress.Right(3).CompareNoCase("zip") == 0 )
 		m_bIsPackage=true;
 	else
@@ -502,20 +507,20 @@ void ScreenPackages::EnterURL( const RString & sURL )
 		m_sEndName = "";
 	}
 
-	//Open the file...
+	// Open the file...
 
-	//First find out if a file by this name already exists
-	//if so, then we gotta ditch out.
-	//XXX: This should be fixed by a prompt or something?
+	// First find out if a file by this name already exists
+	// if so, then we gotta ditch out.
+	// XXX: This should be fixed by a prompt or something?
 
-	//if we are not talking about a file, let's not worry
+	// if we are not talking about a file, let's not worry
 	if( m_sEndName != "" && m_bIsPackage )
 	{
 		vector<RString> AddTo;
 		GetDirListing( "Packages/"+m_sEndName, AddTo, false, false );
 		if ( AddTo.size() > 0 )
 		{
-			m_sStatus = "File Already Exists";
+			m_sStatus = FILE_ALREADY_EXISTS.GetValue();
 			UpdateProgress();
 			return;
 		}
@@ -527,7 +532,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 			return;
 		}
 	}
-	//Continue...
+	// Continue...
 
 	sAddress = URLEncode( StripOutContainers(sAddress) );
 
@@ -541,7 +546,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 
 	if( !m_wSocket.connect( Server, (short) Port ) )
 	{
-		m_sStatus = "Failed to connect.";
+		m_sStatus = FAILED_TO_CONNECT.GetValue();
 		UpdateProgress();
 		return;
 	}
@@ -555,7 +560,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 	Header+= "Connection: closed\r\n\r\n";
 
 	m_wSocket.SendData( Header.c_str(), Header.length() );
-	m_sStatus = "Header Sent.";
+	m_sStatus = HEADER_SENT.GetValue();
 	m_wSocket.blocking = false;
 	m_bIsDownloading = true;
 	m_sBUFFER = "";
@@ -577,14 +582,15 @@ static size_t FindEndOfHeaders( const RString &buf )
 		return string::npos;
 }
 
+static LocalizedString WAITING_FOR_HEADER( "ScreenPackages", "Waiting for header." );
 void ScreenPackages::HTTPUpdate()
 {
 	if( !m_bIsDownloading )
 		return;
 
 	int BytesGot=0;
-	//Keep this as a code block
-	//as there may be need to "if" it out some time.
+	// Keep this as a code block
+	// as there may be need to "if" it out some time.
 	/* If you need a conditional for a large block of code, stick it in
 	 * a function and return. */
 	while(1)
@@ -600,8 +606,8 @@ void ScreenPackages::HTTPUpdate()
 
 	if( !m_bGotHeader )
 	{
-		m_sStatus = "Waiting for header.";
-		//We don't know if we are using unix-style or dos-style
+		m_sStatus = WAITING_FOR_HEADER.GetValue();
+		// We don't know if we are using unix-style or dos-style
 		size_t iHeaderEnd = FindEndOfHeaders( m_sBUFFER );
 		if( iHeaderEnd == m_sBUFFER.npos )
 			return;
@@ -652,7 +658,7 @@ void ScreenPackages::HTTPUpdate()
 		m_wSocket.close();
 		m_bIsDownloading = false;
 		m_bGotHeader=false;
-		m_sStatus = ssprintf( "Done;%dB", int(m_iDownloaded) );
+		m_sStatus = ssprintf( "Done ;%dB", int(m_iDownloaded) );
 
 		if( m_iResponseCode < 200 || m_iResponseCode >= 400 )
 		{

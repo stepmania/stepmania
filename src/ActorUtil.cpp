@@ -106,7 +106,7 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 {
 	ASSERT( pNode );
 
-	/* TODO: Remove this in favor of using conditionals in Lua. */
+	// TODO: Remove this in favor of using conditionals in Lua.
 	{
 		bool bCond;
 		if( pNode->GetAttrValue("Condition", bCond) && !bCond )

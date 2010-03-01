@@ -1216,52 +1216,25 @@ int main(int argc, char* argv[])
 
 	CodeDetector::RefreshCacheItems();
 
-	/* Initialize which courses are ranking courses here. */
+	// Initialize which courses are ranking courses here.
 	SONGMAN->UpdateRankingCourses();
 
 	if( GetCommandlineArgument("netip") )
 		NSMAN->DisplayStartupStatus();	// If we're using networking show what happened
 
-	/* this code should only be enabled in distributed builds
-	 * HI PLEASE MAKE SURE THIS SECTION IS USING THE RIGHT VARIABLE WHEN YOU
-	 * GENERATE THE BUILDS FOR BETA WAVES, THANKS -aj
-	 * also remember to comment this out when it comes time for normal builds
-	 * the point of this section is to mark executables in case of leaks.
-	 * by the time sm-ssc v1.0 is out, this code should be GONE. ENTIRELY. -aj
-	 */
-	//RString sVariableFuzzer1995EXAnotherStep;
-
-	// generic codes //
-	//sVariableFuzzer1995EXAnotherStep = "9D76A02B8D814AEE7B8BF8A03359CB7D"; // SSC generic (input string "h01yd!v3rZ2009R33LR4C1NGR007$")
-	//sVariableFuzzer1995EXAnotherStep = "A333181F0F5DCBE20636ED99127F3C12"; // BoXoRRoXoRs (input string "l3tzR0X0RglennzBoXorZ")
-
-	// private beta wave 1 - 20091201 release //
-	// sVariableFuzzer1995EXAnotherStep = "4312B0FD2FB1B26BD8B5DCD8305813AA"; // FSX {input string "FSXFFFSSSXXX1283"}
-	// sVariableFuzzer1995EXAnotherStep = "1B9035054F6076F9E20696FEB0E4D8E3"; // Wolfman2000 {input string "jasonfeldenstein3Dz"}
-	// sVariableFuzzer1995EXAnotherStep = "804CF9D006ECCFD695541AEFD1EDB5C5"; // NitroX72 {input string "!nfam0uZn1tr0Glyc3r1n"}
-	// sVariableFuzzer1995EXAnotherStep = "285F8E6398F12485894BD6257C2524C7"; // Wanny {input string "wansicles2081"}
-	// sVariableFuzzer1995EXAnotherStep = "57AB620779AE965597AE7700CF378511"; // Tio {input string "teeba00lenmEhik0"}
-	// sVariableFuzzer1995EXAnotherStep = "226460C1442F11F2B7D1F5C926C5f6DA"; // cerbo {input string "audpnzstxnotseepiu"}
-	// sVariableFuzzer1995EXAnotherStep = "3AC41B7211C8BC18C974220EC55B77BA"; // Daisuke Master {input string "daisuBaisuWaisuNaisu!!"}
-
-	// sVariableFuzzer1995EXAnotherStep = "2A7ECF8AAC00C7E4BE657FCC4B73ADEA"; // Sniper257? {input string "McSn1p3rF3aT0uTsId3r"}
-	// sVariableFuzzer1995EXAnotherStep = "915ABA60E7FD1524076859B8B1C4A203"; // Karai? {input string "turororocobocolocoOMGz"}
-	// sVariableFuzzer1995EXAnotherStep = "8C310A867555866CA1A044F54B6EA4CD"; // djaydino? {input string "ez2dzaydinosaurusbagelz"}
-	// private beta wave 1 - 20091208 release //
-
-	/* Run the main loop. */
+	// Run the main loop.
 	GameLoop::RunGameLoop();
-	
+
 	PREFSMAN->SavePrefsToDisk();
 
 	ShutdownGame();
-	
+
 	return 0;
 }
 
 RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex )
 {
-	/* Files should be of the form "screen#####.xxx".  Ignore the extension; find
+	/* Files should be of the form "screen#####.xxx". Ignore the extension; find
 	 * the last file of this form, and use the next number.  This way, we don't
 	 * write the same screenshot number for different formats (screen00011.bmp,
 	 * screen00011.jpg), and we always increase from the end, so if screen00003.jpg
@@ -1272,8 +1245,8 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	else
 		sFileNameNoExtension = Profile::MakeFileNameNoExtension( "screen", iIndex );
 
-	// Save the screenshot.  If writing lossy to a memcard, use SAVE_LOSSY_LOW_QUAL, so we
-	// don't eat up lots of space.
+	// Save the screenshot. If writing lossy to a memcard, use
+	// SAVE_LOSSY_LOW_QUAL, so we don't eat up lots of space.
 	RageDisplay::GraphicsFileFormat fmt;
 	if( bSaveCompressed && MEMCARDMAN->PathIsMemCard(sDir) )
 		fmt = RageDisplay::SAVE_LOSSY_LOW_QUAL;
@@ -1320,15 +1293,15 @@ void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 	else
 		SCREENMAN->PlayInvalidSound();
 
-	/* If AutoJoin and a player is already joined, then try to join a player.  (If no players
-	 * are joined, they'll join on the first JoinInput.) */
+	/* If AutoJoin and a player is already joined, then try to join a player.
+	 * (If no players are joined, they'll join on the first JoinInput.) */
 	if( GAMESTATE->m_bAutoJoin.Get() && GAMESTATE->GetNumSidesJoined() > 0 )
 	{
 		if( GAMESTATE->GetNumSidesJoined() > 0 && GAMESTATE->JoinPlayers() )
 			SCREENMAN->PlayStartSound();
 	}
 
-	/* TODO: remove this redundant message and things that depend on it */
+	// TODO: remove this redundant message and things that depend on it
 	Message msg( "CoinInserted" );
 	// below params are unused
 	//msg.SetParam( "Coins", GAMESTATE->m_iCoins );
@@ -1347,8 +1320,8 @@ void StepMania::ClearCredits()
 	LOG->Trace("%i coins cleared", GAMESTATE->m_iCoins.Get() );
 	GAMESTATE->m_iCoins.Set( 0 );
 	SCREENMAN->PlayInvalidSound();
-	
-	/* TODO: remove this redundant message and things that depend on it */
+
+	// TODO: remove this redundant message and things that depend on it
 	Message msg( "CoinInserted" );
 	// below params are unused
 	//msg.SetParam( "Coins", GAMESTATE->m_iCoins );
@@ -1362,12 +1335,12 @@ static LocalizedString SERVICE_SWITCH_PRESSED ( "StepMania", "Service switch pre
 // xxx: okay these probably shouldn't be here, but I wanted them to be
 // localized and this was the place to do it since this is where the control
 // structure is placed... apologies to those who like properly structured
-// metrics. I like compatibility.
+// metrics. I like compatibility. -aj
 static LocalizedString RELOADED_METRICS( "ThemeManager", "Reloaded metrics" );
 static LocalizedString RELOADED_METRICS_AND_TEXTURES( "ThemeManager", "Reloaded metrics and textures" );
 bool HandleGlobalInputs( const InputEventPlus &input )
 {
-	/* None of the globals keys act on types other than FIRST_PRESS */
+	// None of the globals keys act on types other than FIRST_PRESS
 	if( input.type != IET_FIRST_PRESS ) 
 		return false;
 
@@ -1388,19 +1361,19 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		return true;
 
 	case GAME_BUTTON_COIN:
-		/* Handle a coin insertion. */
+		// Handle a coin insertion.
 		if( GAMESTATE->IsEditing() )	// no coins while editing
 		{
 			LOG->Trace( "Ignored coin insertion (editing)" );
 			break;
 		}
 		StepMania::InsertCoin();
-		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
+		return false; // Attract needs to know because it goes to TitleMenu on > 1 credit
 	}
 
-	// re-added for 3.9 veterans, plus it's just plain old faster than the
-	// debug menu. However, this is without the LShift capability that was
-	// in 3.9; if we get enough requests, we'll re-add it, but meh. -aj
+	// re-added for StepMania 3.9 veterans, plus it's just plain old faster
+	// than the debug menu. However, this is without the LShift capability
+	// that was in 3.9; if we get enough requests, we'll re-add it, but meh. -aj
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F2) )
 	{
 		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT), &input.InputList) ||
@@ -1443,19 +1416,19 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	}
 #else
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_Cq) &&
-	    (INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LMETA), &input.InputList ) ||
-	     INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RMETA), &input.InputList )) )
+		(INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LMETA), &input.InputList ) ||
+		 INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RMETA), &input.InputList )) )
 	{
-		/* The user quit is handled by the menu item so we don't need to set it here;
-		 * however, we do want to return that it has been handled since this will happen
-		 * first. */
+		/* The user quit is handled by the menu item so we don't need to set it
+		 * here; however, we do want to return that it has been handled since
+		 * this will happen first. */
 		return true;
 	}
 #endif
 
 	bool bDoScreenshot = 
 #if defined(MACOSX)
-	/* Notebooks don't have F13. Use cmd-F12 as well. */
+	// Notebooks don't have F13. Use cmd-F12 as well.
 		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_PRTSC ) ||
 		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_F13 ) ||
 		( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) && 
@@ -1486,7 +1459,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT), &input.InputList) ||
 		 INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList)) )
 	{
-		/* alt-enter */
+		// alt-enter
 		/* In OS X, this is a menu item and will be handled as such. This will happen
 		 * first and then the lower priority GUI thread will happen second causing the
 		 * window to toggle twice. Another solution would be to put a timer in
@@ -1515,7 +1488,7 @@ void HandleInputEvents(float fDeltaTime)
 	vector<InputEvent> ieArray;
 	INPUTFILTER->GetInputEvents( ieArray );
 
-	/* If we don't have focus, discard input. */
+	// If we don't have focus, discard input.
 	if( !HOOKS->AppHasFocus() )
 		return;
 
@@ -1526,7 +1499,7 @@ void HandleInputEvents(float fDeltaTime)
 		input.type = ieArray[i].type;
 		swap( input.InputList, ieArray[i].m_ButtonState );
 
-		// hack for testing with only one joytick
+		// hack for testing (MultiPlayer) with only one joystick
 		if( input.DeviceI.IsJoystick() )
 		{
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT) ) )
@@ -1546,7 +1519,7 @@ void HandleInputEvents(float fDeltaTime)
 		input.mp = MultiPlayer_Invalid;
 
 		{
-			// Translate input to the appropriate MultiPlayer.  Assume that all
+			// Translate input to the appropriate MultiPlayer. Assume that all
 			// joystick devices are mapped the same as the master player.
 			if( input.DeviceI.IsJoystick() )
 			{
@@ -1578,7 +1551,7 @@ void HandleInputEvents(float fDeltaTime)
 
 		INPUTQUEUE->RememberInput( input );
 
-		/* When a GameButton is pressed, stop repeating other keys on the same controller. */
+		// When a GameButton is pressed, stop repeating other keys on the same controller.
 		if( input.type == IET_FIRST_PRESS && input.MenuI != GameButton_Invalid )
 		{
 			FOREACH_ENUM( GameButton,  m )

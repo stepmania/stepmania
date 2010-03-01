@@ -43,7 +43,7 @@ public:
 protected:
 	void BeforeChange( bool bLowResToHighRes=false );
 
-	enum { NUM_BANNERS = 5 };
+	static const int NUM_BANNERS = 5;
 	Banner		m_Banner[NUM_BANNERS];
 	int		m_iIndexLatest;
 

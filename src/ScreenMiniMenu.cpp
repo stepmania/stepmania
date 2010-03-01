@@ -21,7 +21,7 @@ vector<int>	ScreenMiniMenu::s_viLastAnswers;
 void PrepareToLoadScreen( const RString &sScreenName ) {}
 void FinishedLoadingScreen() {}
 
-/* Settings: */
+// Settings:
 namespace
 {
 	const MenuDef* g_pMenuDef = NULL;
@@ -65,9 +65,9 @@ void ScreenMiniMenu::BeginScreen()
 
 	ScreenOptions::BeginScreen();
 
-	/* HACK: An OptionRow exits if a screen is set.  ScreenMiniMenu is always pushed, so we
-	 * don't set screens to load.  Set a dummy screen, so ScreenOptions::GetNextScreenForSelection
-	 * will know to move on. */
+	/* HACK: An OptionRow exits if a screen is set. ScreenMiniMenu is always
+	 * pushed, so we don't set screens to load. Set a dummy screen, so
+	 * ScreenOptions::GetNextScreenForSelection will know to move on. */
 	m_sNextScreen = "xxx";
 }
 

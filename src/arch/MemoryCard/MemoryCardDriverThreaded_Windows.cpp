@@ -156,7 +156,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 	for( size_t i = 0; i < vDevicesOut.size(); ++i )
 	{
 		UsbStorageDevice &usbd = vDevicesOut[i];
-		
+
 		// TODO: fill in bus/level/port with this:
 		// http://www.codeproject.com/system/EnumDeviceProperties.asp
 

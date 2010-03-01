@@ -34,8 +34,7 @@ static vector<RageColor> RAINBOW_COLORS;
 BitmapText::BitmapText()
 {
 	// Loading these theme metrics is slow, so only do it every 20th time.
-	// todo: why not check to see if you need to bother updating the fucker
-	// at all? -aj
+	// todo: why not check to see if you need to bother updating this at all? -aj
 	static int iReloadCounter = 0;
 	if( iReloadCounter % 20==0 )
 	{
@@ -396,12 +395,11 @@ void BitmapText::SetTextInternal()
 	}
 	else
 	{
-		//
 		// Break sText into lines that don't exceed iWrapWidthPixels
 		// (if only one word fits on the line, it may be larger than iWrapWidthPixels).
-		//
-		// TODO: Investigate whether this works in all languages
-		/* It doesn't.  I can add Japanese wrapping, at least.  We could handle hyphens
+
+		// This does not work in all languages:
+		/* "...I can add Japanese wrapping, at least. We could handle hyphens
 		 * and soft hyphens and pretty easily, too. -glenn */
 		// TODO: Move this wrapping logic into Font
 		vector<RString> asLines;

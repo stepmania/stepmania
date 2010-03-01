@@ -17,7 +17,7 @@ class SnapDisplay : public ActorFrame
 {
 public:
 	SnapDisplay();
-	
+
 	void Load( PlayerNumber pn );
 
 	bool PrevSnapMode();
