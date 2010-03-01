@@ -18,12 +18,14 @@ shakesoda
  * Theme edits
 
 ==other contributors==
+(in no particular order aside from having SM team at the top)
+
 StepMania Team
  * Keeping StepMania 4 alive with changes, and providing a nice codebase for
    us to work with.
 
 Aldo_MX
- * Code (Pump it Up delays), ideas, and support.
+ * Code (Pump it Up delays, among others), ideas, and support.
 
 Jason Reid (jnr)
  * Tested building sm-ssc on FreeBSD, provided fixes.
@@ -56,6 +58,10 @@ galopin
 
 FSX
  * [Player] ScoreMissedHoldsAndRolls metric
+
+Henke37
+ * [MovieTexture_FFMpeg] Stutter fix
+ (http://www.pasteall.org/11353/diff)
 
 ==the beta testers==
 [SSC Beta Testing Team]

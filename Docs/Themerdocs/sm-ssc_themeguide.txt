@@ -19,8 +19,9 @@ ii. Requirements
   1. Metrics and Languages
   2. BGAnimations
   3. Graphics
-  4. Fonts, Sound
-  5. Scripts
+  4. Fonts
+  5. Sounds
+  6. Scripts
 X. Making Your First sm-ssc Theme
  1. Setup
  2. 
@@ -31,7 +32,6 @@ ii. Requirements
 In order to follow along with this guide, you will need the following:
 
 * sm-ssc (our fork of StepMania 4)
-  Right now, it's in private beta. If you have it, you're lucky.
 * A decent text editor (syntax highlighting is a plus)
 * A decent graphics editor (for any graphics changes you want to make)
 * A decent sound editor (in case you want to edit sounds)
@@ -112,7 +112,7 @@ ________________________________________________________________________________
 Unless you are a very fast learner and can learn by looking at other people's
 code, you are probably wanting to know more about the elements in detail.
 
-2.1 Metrics and Languages
+2.1 Metrics and Languages ______________________________________________________
 These two are grouped together since they both use ini files. This means the
 layout of the file will contain groups, keys, and values.
 
@@ -125,3 +125,79 @@ In StepMania, most groups are Screens.
 The Languages folder contains strings that StepMania displays when your theme
 is used. Chances are, if you want to edit the text of something, there's an
 entry for it in one of the Language files (en.ini, usually).
+
+By leaving out a key in your custom language, you tell StepMania to look in
+the default language (typically en.ini)
+
+2.2. BGAnimations ______________________________________________________________
+
+
+There are multiple names StepMania recognizes for BGAnimation folders. Some
+screens won't support all of these.
+================================================================================
+ScreenExample in - Played when the screen is transitioning in.
+ScreenExample background - Background of the screen.
+ScreenExample underlay - Shows over the background, but under decorations and overlay.
+ScreenExample decorations - Newly added in StepMania 4 alphas.
+ScreenExample overlay - Shows over everything, usually.
+ScreenExample out - Played when the screen is transitioning out.
+ScreenExample cancel - Played when the screen is canceled.
+================================================================================
+
+In StepMania 4 alphas and sm-ssc, BGAnimations are done with Lua.
+A sample Lua BGAnimation follows:
+=[begin code example]===========================================================
+return Def.ActorFrame{
+	Def.Quad{
+		InitCommand=cmd(FullScreen;diffuse,color("#FFFFFF");diffusebottomedge,color("#AAAAAA"););
+	};
+};
+=[end code example]=============================================================
+This will make a Quad (an untextured square) that fills the screen and fades from
+white to light grey. It is best used as a background. You can try this example
+out yourself by making a new folder in the Themes directory and putting this code
+in ScreenTitleMenu background.lua;
+The folder setup would end up like so:
+sm-ssc/
+ Themes/
+  MyCoolTheme/
+   BGAnimations/
+    ScreenTitleMenu background.lua
+
+Now open up sm-ssc and change the theme (or pass in --theme="MyCoolTheme",
+replacing "MyCoolTheme" with your theme's folder name), and head to the title menu.
+
+2.3. Graphics __________________________________________________________________
+The Graphics folder contains various files StepMania calls on. For example, the
+header and footer are found here, along with Common window icon and others.
+
+The Graphics folder is also where Decorations expects to find files to load when
+you use StandardDecorationFromFileOptional([MetricsName],[Filename]).
+
+2.4. Fonts _____________________________________________________________________
+StepMania fonts are a combination of images containing various characters, and
+an ini file that defines the font metrics, such as spacing, character widths,
+character mappings, and so on.
+
+Fonts are typically generated with Texture Font Generator (which is included
+with sm-ssc) or Bitmap Font Builder, both programs being Windows only. If you
+aren't on Windows, your choices are then limited to whatever image editor you
+can find (typically Photoshop or The GIMP).
+
+fontini.txt in the ThemerDocs folder contains a list of all the known
+font .ini values. It lacks explanation, however.
+
+[Common]
+CapitalsOnly
+RightToLeft
+DefaultStrokeColor
+
+2.5. Sounds ____________________________________________________________________
+
+
+sm-ssc can load Lua files as music, allowing for conditional music/sounds.
+
+2.6. Scripts ___________________________________________________________________
+Scripts allow you to define functions which can then be referenced in Metrics
+and BGAnimations. Scripts can also store values and do other nice things, some
+of which is outside of the scope of this guide.

@@ -611,6 +611,21 @@
 	<Function name='GetNumChildren' return='int' arguments=''>
 		Returns the number of children in the ActorFrame.
 	</Function>
+	<Function name='playcommandonchildren' return='void' arguments='string sCommandName'>
+		Plays the <code>sCommandName</code> command on the ActorFrame's children.
+	</Function>
+	<Function name='playcommandonleaves' return='void' arguments='string sCommandName'>
+		Plays the <code>sCommandName</code> command on the ActorFrame's leaves.
+	</Function>
+	<Function name='propagate' return='void' arguments='bool bPropagate'>
+		Sets if the Actorframe should propagate commands to its children.
+	</Function>
+	<Function name='RunCommandsOnChildren' return='void' arguments='LuaReference cmds'>
+		Runs the commands in <code>cmds</code> on the ActorFrame's children.
+	</Function>
+	<Function name='runcommandsonleaves' return='void' arguments='LuaReference cmds'>
+		Runs the commands in <code>cmds</code> on the ActorFrame's leaves.
+	</Function>
 	<Function name='SetAmbientLightColor' sm-ssc='true' return='void' arguments='Color c'>
 		Sets the ActorFrame's ambient light color to <code>c</code>.
 	</Function>
@@ -1123,6 +1138,9 @@
 		The <Link class='Song' />s in a <Link class='Course' /> are numbered sequentially
 		starting from 0. Return the number of the current <Link class='Song' />.
 	</Function>
+	<Function name='GetCurMusicSeconds' sm-ssc='true' return='float' arguments=''>
+		Return the current number of seconds that have passed in the current song. This value can be negative.
+	</Function>
 	<Function name='GetCurrentCourse' return='Course' arguments=''>
 		Return the current <Link class='Course' />.
 	</Function>
@@ -1527,20 +1545,38 @@
 	<Function name='GetMetricA' return='ActorCommand' arguments='string sElement, string sValue'>
 		Returns a command from the specified element and value.
 	</Function>
+	<Function name='GetMetricAForNoteSkin' return='ActorCommand' arguments='string sElement, string sValue, string sNoteSkin'>
+		Returns a command from the specified element and value using NoteSkin <code>sNoteSkin</code>.
+	</Function>
 	<Function name='GetMetricB' return='bool' arguments='string sElement, string sValue'>
 		Returns a bool from the specified element and value.
+	</Function>
+	<Function name='GetMetricBForNoteSkin' return='bool' arguments='string sElement, string sValue, string sNoteSkin'>
+		Returns a bool from the specified element and value using NoteSkin <code>sNoteSkin</code>.
 	</Function>
 	<Function name='GetMetricF' return='float' arguments='string sElement, string sValue'>
 		Returns a float from the specified element and value.
 	</Function>
+	<Function name='GetMetricFForNoteSkin' return='float' arguments='string sElement, string sValue, string sNoteSkin'>
+		Returns a float from the specified element and value using NoteSkin <code>sNoteSkin</code>.
+	</Function>
 	<Function name='GetMetricI' return='int' arguments='string sElement, string sValue'>
 		Returns a integer from the specified element and value.
+	</Function>
+	<Function name='GetMetricIForNoteSkin' return='int' arguments='string sElement, string sValue, string sNoteSkin'>
+		Returns a integer from the specified element and value using NoteSkin <code>sNoteSkin</code>.
 	</Function>
 	<Function name='GetPath' return='string' arguments='string sButton, string sElement'>
 		Returns the path for the specified <code>sButton sElement</code>.
 	</Function>
+	<Function name='GetPathForNoteSkin' return='string' arguments='string sButton, string sElement, string sNoteSkin'>
+		Returns the path for the specified <code>sButton sElement</code> using NoteSkin <code>sNoteSkin</code>.
+	</Function>
 	<Function name='LoadActor' return='Actor' arguments='string sButton, string sElement'>
 		Returns the actor for the specified <code>sButton sElement</code>.
+	</Function>
+	<Function name='LoadActorForNoteSkin' return='Actor' arguments='string sButton, string sElement, string sNoteSkin'>
+		Returns the actor for the specified <code>sButton sElement</code> using NoteSkin <code>sNoteSkin</code>.
 	</Function>
 	<!-- sm-ssc additions -->
 	<Function name='DoesNoteSkinExist' sm-ssc='true' return='bool' arguments='string strName'>
@@ -1557,7 +1593,7 @@
 </Class>
 <Class name='PercentageDisplay'>
 	<Function name='LoadFromStats' return='void' arguments='PlayerState pPlayerState, PlayerStageStats pPlayerStageStats'>
-		Sets the PaneDisplay from the specified PlayerState and PlayerStageStats.
+		Sets the PercentageDisplay from the specified PlayerState and PlayerStageStats.
 	</Function>
 </Class>
 <Class name='PlayerInfo'>
@@ -1972,6 +2008,11 @@
 		Pauses or unpauses the game, depending on the value of <code>bPause</code>.
 	</Function>
 </Class>
+<Class name='ScreenHowToPlay'>
+	<Function name='GetLifeMeter' return='LifeMeter' arguments=''>
+		Returns the LifeMeter.
+	</Function>
+</Class>
 <Class name='ScreenManager'>
 	<Function name='GetTopScreen' return='Screen' arguments=''>
 		Gets the screen at the top of the screen stack.
@@ -2076,12 +2117,6 @@
 	<Function name='GetBannerPath' return='string' arguments=''>
 		Returns the path to the song's banner.
 	</Function>
-	<Function name='GetBeatFromElapsedTime' sm-ssc='true' return='float' arguments='float fElapsedTime'>
-		Returns the beat from <code>fElapsedTime</code>.
-	</Function>
-	<Function name='GetBPMAtBeat' sm-ssc='true' return='float' arguments='float fBeat'>
-		Returns the BPM at <code>fBeat</code>.
-	</Function>
 	<Function name='GetCDTitlePath' sm-ssc='true' return='string' arguments=''>
 		Gets the path to the CDTitle.
 	</Function>
@@ -2097,11 +2132,14 @@
 	<Function name='GetDisplaySubTitle' return='string' arguments=''>
 		Returns the displayed subtitle of the song.
 	</Function>
-	<Function name='GetElapsedTimeFromBeat' return='float' arguments='float fBeat'>
-		Returns the elapsed time from <code>fBeat</code>.
-	</Function>
 	<Function name='GetFirstBeat' return='float' arguments=''>
 		Returns the first beat of the song.
+	</Function>
+	<Function name='GetGenre' return='string' arguments=''>
+		Returns the genre of the song.
+	</Function>
+	<Function name='GetGroupName' return='string' arguments=''>
+		Returns the group name that the song is in.
 	</Function>
 	<Function name='GetLastBeat' return='float' arguments=''>
 		Returns the last beat of the song.
@@ -2111,15 +2149,6 @@
 	</Function>
 	<Function name='GetMusicPath' sm-ssc='true' return='string' arguments=''>
 		Gets the path to the music file.
-	</Function>
-	<Function name='GetTranslitSubTitle' return='string' arguments=''>
-		Returns the displayed subtitle of the song.
-	</Function>
-	<Function name='GetGenre' return='string' arguments=''>
-		Returns the genre of the song.
-	</Function>
-	<Function name='GetGroupName' return='string' arguments=''>
-		Returns the group name that the song is in.
 	</Function>
 	<Function name='GetOneSteps' return='Steps' arguments='StepsType st, Difficulty d'>
 		Returns a Step object if the StepType and Difficulty exist.
@@ -2504,14 +2533,26 @@
 	<Function name='GetActualBPM' sm-ssc='true' return='{float}' arguments=''>
 		Returns the minimum and maximum BPM of the song in a table (in that order).
 	</Function>
+	<Function name='GetBeatFromElapsedTime' sm-ssc='true' return='float' arguments='float fElapsedTime'>
+		Returns the beat from <code>fElapsedTime</code>.
+	</Function>
+	<Function name='GetBPMAtBeat' sm-ssc='true' return='float' arguments='float fBeat'>
+		Returns the BPM at <code>fBeat</code>.
+	</Function>
 	<Function name='GetBPMs' sm-ssc='true' return='{string}' arguments=''>
 		Returns a table of the BPMs as strings.
 	</Function>
 	<Function name='GetBPMsAndTimes' sm-ssc='true' return='{string}' arguments=''>
 		Returns a table of the BPMs and the times they happen as strings with the format "<code>beat=BPM</code>".
 	</Function>
+	<Function name='GetElapsedTimeFromBeat' return='float' arguments='float fBeat'>
+		Returns the elapsed time from <code>fBeat</code>.
+	</Function>
 	<Function name='GetStops' sm-ssc='true' return='{string}' arguments=''>
 		Returns a table of the Stops and the times they happen as strings with the format "<code>beat=stop seconds</code>".
+	</Function>
+	<Function name='GetDelays' sm-ssc='true' return='{string}' arguments=''>
+		Returns a table of the Delays and the times they happen as strings with the format "<code>beat=stop seconds</code>".
 	</Function>
 	<Function name='HasBPMChanges' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains BPM changes.

@@ -180,6 +180,9 @@ The StepMania 4.0 alpha 4 Options Menu:
 * Profiles
 * Reload Songs/Courses
 
+sm-ssc changes this up again, making the "Options" item on the Title Menu go
+to System Direction (mostly-used options), leaving the normal options menu to
+the Scroll Lock key. Blame Midiman. :)
 --------------------------------------------------------------------------------
 2.2.1: Frequently Asked Questions that can be Solved by Changing the Configuration
 --------------------------------------------------------------------------------
@@ -316,7 +319,10 @@ StepMania\
 --------------------------------------------------------------------------------
 2.3.2: Installing Noteskins/New Gametypes
 --------------------------------------------------------------------------------
+NoteSkins change the appearance of the arrows. They are also linked with getting
+other gametypes supported in StepMania.
 
+The noteskin installation process looks something like this:
 StepMania\
  NoteSkins\
   (gametype)\
@@ -325,10 +331,42 @@ StepMania\
   (gametype2)\
    default\
 
+"gametype"/"gametype2" etc. can be any one of the following:
+dance (typically 4 panels)
+pump (typically 5 panels)
+para (5 receptors)
+techno (4, 5, and 8 panel modes)
+beat (5 and 7 key modes with a turntable on each)
+popn (5 and 9 line modes)
+kb7 (6 or 7 keys depending on when you try to use it)
+
 --------------------------------------------------------------------------------
 2.3.3: Installing Themes
 --------------------------------------------------------------------------------
+Depending on if the theme is packaged in a SMZip or not, you have a few options.
 
+If it is in a .smzip, you can put it in the Packages directory:
+StepMania/
+ Packages/
+  MyTheme.smzip
+and StepMania will automatically read it.
+On Windows, you can double click on the .smzip file to install it in your user
+packages directory. THIS IS NOT RECOMMENDED BECAUSE IT CAUSES CONFUSION.
+
+Since .smzip files are really .zip files, you could also extract them in the
+StepMania root folder.
+
+If the themer has not packaged the theme in a .smzip, then you have to look
+inside the archive to see how the directory layout looks.
+1) Themes folder
+   If it has a themes folder when you open it up, extract in the StepMania root
+   folder, like you would a .smzip file.
+2) Theme name as a folder
+   This one will have to be extracted in the Themes directory. You will get a
+   new folder with the files.
+3) A bunch of folders + metrics.ini
+   The themer was lazy; you're going to have to make a folder in the Themes
+   directory and extract the theme in there.
 
 When in doubt, read any documentation that comes with the theme for proper
 installation instructions.

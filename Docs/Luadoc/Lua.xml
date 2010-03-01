@@ -8,6 +8,7 @@
 		<Function name='Basename'/>
 		<Function name='BoostColor'/>
 		<Function name='Brightness'/>
+		<Function name='CheckpointsTapsSeparateJudgment'/>
 		<Function name='Color'/>
 		<Function name='ColorDarkTone'/>
 		<Function name='ColorLightTone'/>
@@ -16,6 +17,7 @@
 		<Function name='ColorToHex'/>
 		<Function name='ComboContinue'/>
 		<Function name='ComboMaintain'/>
+		<Function name='ComboPerRow'/>
 		<Function name='ComboTransformCommand'/>
 		<Function name='ConnectToServer'/>
 		<Function name='CourseDifficultyToLocalizedString'/>
@@ -27,6 +29,7 @@
 		<Function name='DayOfMonth'/>
 		<Function name='DayOfYear'/>
 		<Function name='DeepCopy'/>
+		<Function name='FailCombo'/>
 		<Function name='FindSelection'/>
 		<Function name='FindValue'/>
 		<Function name='FormatNumSongsPlayed'/>
@@ -55,9 +58,16 @@
 		<Function name='HSVA'/>
 		<Function name='HSVToColor'/>
 		<Function name='HSVToHex'/>
+		<Function name='HitCombo'/>
+		<Function name='HoldHeadStep'/>
+		<Function name='HoldJudgmentFail'/>
+		<Function name='HoldJudgmentPass'/>
+		<Function name='HoldTiming'/>
 		<Function name='Hour'/>
 		<Function name='Hue'/>
+		<Function name='ImmediateHoldLetGo'/>
 		<Function name='InitUserPrefs'/>
+		<Function name='InitialHoldLife'/>
 		<Function name='IsHighDefinition'/>
 		<Function name='IsNetConnected'/>
 		<Function name='IsNetSMOnline'/>
@@ -75,7 +85,9 @@
 		<Function name='LoadFont'/>
 		<Function name='LoadSongBackground'/>
 		<Function name='LocalizeOptionItem'/>
+		<Function name='MaxHoldLife'/>
 		<Function name='Minute'/>
+		<Function name='MissCombo'/>
 		<Function name='MonthOfYear'/>
 		<Function name='MonthToLocalizedString'/>
 		<Function name='MonthToString'/>
@@ -96,8 +108,10 @@
 		<Function name='ReadPrefFromFile'/>
 		<Function name='ReportStyle'/>
 		<Function name='ResolveRelativePath'/>
+		<Function name='RollBodyIncrementsCombo'/>
 		<Function name='SMOnlineScreen'/>
 		<Function name='Saturation'/>
+		<Function name='ScoreMissedHoldsAndRolls'/>
 		<Function name='Second'/>
 		<Function name='SecondsToHHMMSS'/>
 		<Function name='SecondsToMMSS'/>
@@ -132,6 +146,7 @@
 		<Function name='UserPrefAutoSetStyle'/>
 		<Function name='UserPrefGameplayShowScore'/>
 		<Function name='UserPrefGameplayShowStepsDisplay'/>
+		<Function name='UserPrefLongFail'/>
 		<Function name='UserPrefShowLotsaOptions'/>
 		<Function name='Var'/>
 		<Function name='VersionCheck'/>
@@ -270,6 +285,7 @@
 			<Function name='diffuseupperleft'/>
 			<Function name='diffuseupperright'/>
 			<Function name='draworder'/>
+			<Function name='drop'/>
 			<Function name='ease'/>
 			<Function name='effectclock'/>
 			<Function name='effectcolor1'/>
@@ -577,6 +593,7 @@
 			<Function name='GetCoins'/>
 			<Function name='GetCoinsNeededToJoin'/>
 			<Function name='GetCourseSongIndex'/>
+			<Function name='GetCurMusicSeconds'/>
 			<Function name='GetCurrentCourse'/>
 			<Function name='GetCurrentGame'/>
 			<Function name='GetCurrentSong'/>
@@ -717,6 +734,9 @@
 		<Class name='MessageManager'>
 			<Function name='Broadcast'/>
 		</Class>
+		<Class base='ActorFrame' name='MeterDisplay'>
+			<Function name='SetStreamWidth'/>
+		</Class>
 		<Class base='ActorFrame' name='ModIconRow'>
 			<Function name='Load'/>
 		</Class>
@@ -832,6 +852,7 @@
 			<Function name='GetTotalStepsWithTopGrade'/>
 			<Function name='GetTotalTapsAndHolds'/>
 			<Function name='GetTotalTrailsWithTopGrade'/>
+			<Function name='GetUserData'/>
 			<Function name='GetWeightPounds'/>
 			<Function name='HasPassedAnyStepsInSong'/>
 			<Function name='IsCodeUnlocked'/>
@@ -969,16 +990,13 @@
 		<Class base='ScreenWithMenuElements' name='ScreenWithMenuElementsSimple'/>
 		<Class name='Song'>
 			<Function name='GetAllSteps'/>
-			<Function name='GetBPMAtBeat'/>
 			<Function name='GetBackgroundPath'/>
 			<Function name='GetBannerPath'/>
-			<Function name='GetBeatFromElapsedTime'/>
 			<Function name='GetCDTitlePath'/>
 			<Function name='GetDisplayArtist'/>
 			<Function name='GetDisplayFullTitle'/>
 			<Function name='GetDisplayMainTitle'/>
 			<Function name='GetDisplaySubTitle'/>
-			<Function name='GetElapsedTimeFromBeat'/>
 			<Function name='GetFirstBeat'/>
 			<Function name='GetGenre'/>
 			<Function name='GetGroupName'/>
@@ -1132,8 +1150,12 @@
 		</Class>
 		<Class name='TimingData'>
 			<Function name='GetActualBPM'/>
+			<Function name='GetBPMAtBeat'/>
 			<Function name='GetBPMs'/>
 			<Function name='GetBPMsAndTimes'/>
+			<Function name='GetBeatFromElapsedTime'/>
+			<Function name='GetDelays'/>
+			<Function name='GetElapsedTimeFromBeat'/>
 			<Function name='GetStops'/>
 			<Function name='HasBPMChanges'/>
 			<Function name='HasStops'/>
@@ -1259,14 +1281,15 @@
 		<Enum name='BlendMode'>
 			<EnumValue name='&apos;BlendMode_Normal&apos;' value='0'/>
 			<EnumValue name='&apos;BlendMode_Add&apos;' value='1'/>
-			<EnumValue name='&apos;BlendMode_Modulate&apos;' value='2'/>
-			<EnumValue name='&apos;BlendMode_CopySrc&apos;' value='3'/>
-			<EnumValue name='&apos;BlendMode_AlphaMask&apos;' value='4'/>
-			<EnumValue name='&apos;BlendMode_AlphaKnockOut&apos;' value='5'/>
-			<EnumValue name='&apos;BlendMode_AlphaMultiply&apos;' value='6'/>
-			<EnumValue name='&apos;BlendMode_WeightedMultiply&apos;' value='7'/>
-			<EnumValue name='&apos;BlendMode_InvertDest&apos;' value='8'/>
-			<EnumValue name='&apos;BlendMode_NoEffect&apos;' value='9'/>
+			<EnumValue name='&apos;BlendMode_Subtract&apos;' value='2'/>
+			<EnumValue name='&apos;BlendMode_Modulate&apos;' value='3'/>
+			<EnumValue name='&apos;BlendMode_CopySrc&apos;' value='4'/>
+			<EnumValue name='&apos;BlendMode_AlphaMask&apos;' value='5'/>
+			<EnumValue name='&apos;BlendMode_AlphaKnockOut&apos;' value='6'/>
+			<EnumValue name='&apos;BlendMode_AlphaMultiply&apos;' value='7'/>
+			<EnumValue name='&apos;BlendMode_WeightedMultiply&apos;' value='8'/>
+			<EnumValue name='&apos;BlendMode_InvertDest&apos;' value='9'/>
+			<EnumValue name='&apos;BlendMode_NoEffect&apos;' value='10'/>
 		</Enum>
 		<Enum name='CoinMode'>
 			<EnumValue name='&apos;CoinMode_Home&apos;' value='0'/>
@@ -1774,6 +1797,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc private beta 1.4</Version>
-	<Date>2010-02-08</Date>
+	<Version>sm-ssc v1.0 beta 1</Version>
+	<Date>2010-02-28</Date>
 </Lua>

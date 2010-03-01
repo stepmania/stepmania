@@ -9,6 +9,58 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+sm-ssc v1.0 Public Beta 1 | 20100228
+------------------------------------
+This represents the first public version of sm-ssc. The previously publicly
+available release was not the official public beta version, but was released
+for more people to get their hands on it for testing.
+
+sm-ssc v1.0 Public Beta 1 has 111 Lua bindings that you currently can't find in
+StepMania 4 alpha versions as of 2010/02/28. That doesn't include the various
+helper functions available to you in scripts via the fallback theme, either. :)
+
+20100228
+--------
+* Applied stutter fix hack by Henke37
+  (src: http://www.pasteall.org/11353/diff)
+* [ScreenPackages] Some strings that were once hardcoded are now not:
+  "VisitURL", "DL @ %d KB/s", "Failed.", "Invalid URL.", "File Already Exists",
+  "Failed to connect.", "Header Sent.", "Waiting for header."
+* Allow multiple random modifiers to be listed in RandomModifiers.txt.
+  The random number generation for RandomModifiers has also changed.
+
+20100227
+--------
+* [GameState] add GetCurMusicSeconds binding. Values can be negative,
+  so watch out when using.
+
+20100226
+--------
+* rework some bindings to match SM4:
+  GetBPMAtBeat, GetBeatFromElapsedTime, and GetElapsedTimeFromBeat have
+  moved from Song to TimingData.
+  If you were using these against the Song, they will fail in your theme.
+
+* [TimingData] GetStops only returns Stops now (and not Delays).
+  If you want Delays, there is a new GetDelays() binding, which works
+  like GetStops.
+
+20100225
+--------
+* Added ToastyDropped message. [Midiman]
+
+20100223
+--------
+* [Player] CheckpointsFlashOnHold metric added. Fixes issue 16.
+
+
+20100222
+--------
+* [CodeDetector] NextBannerGroup and NextBannerGroup2 were previously used
+  for MusicBannerWheel, which is currently not used in sm-ssc. These codes
+  have been changed to NextGroup and PrevGroup. The codes switch between
+  groups as you would expect.
+
 20100219
 --------
 * sm4svn r28313: don't filter NoteSkins at a PrefsManager/NoteSkinManager level.
