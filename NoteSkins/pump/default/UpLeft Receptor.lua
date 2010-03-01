@@ -1,30 +1,39 @@
 local function Beat(self)
 	local this = self:GetChildren()
-	this.Glowpart:diffusealpha(0);
+	--Yes, why not?
+	this.Base:pause();
+	this.Glow:pause();
+	this.Tap:pause();
+	this.Base:setstate(0);
+	this.Glow:setstate(1);
+	this.Tap:setstate(2);
+	
+	this.Glow:blend('BlendMode_Add');
+	
+	this.Glow:diffusealpha(0);
 	local beat = GAMESTATE:GetSongBeat()
 	local part = beat%1
 	local eff = scale(part,0,0.5,1,0)
-	if beat >=0 then
-		this.Glowpart:diffusealpha(eff);
+	if beat  >= 0 then
+		this.Glow:diffusealpha(eff);
 	end
 end
 
 return Def.ActorFrame {
+	-- COMMANDS --
 	InitCommand=cmd(SetUpdateFunction,Beat);
-	LoadActor("_receptor parts")..{
-		InitCommand=cmd(pause;setstate,1);
+	-- LAYERS --
+	NOTESKIN:LoadActor(Var "Button", "Ready Receptor")..{
+		Name="Base";
+		InitCommand=cmd();
 	};
-	LoadActor("_receptor parts")..{
-		Name="Glowpart";
-		InitCommand=function(self)
-			--(NOTESKIN:GetMetricA("Receptor","BeatCommand"))(self);
-			self:pause();
-			self:setstate(4);
-			self:blend('BlendMode_Add');
-		end;
+	NOTESKIN:LoadActor(Var "Button", "Ready Receptor")..{
+		Name="Glow";
+		InitCommand=cmd();
 	};
-	LoadActor("_receptor parts")..{
-		InitCommand=cmd(pause;setstate,7;zoom,1;diffusealpha,0;glow,1,1,1,0);
-		PressCommand=cmd(finishtweening;glow,1,1,1,1;zoom,1;linear,0.2;glow,1,1,1,0;zoom,1.2);
+	NOTESKIN:LoadActor(Var "Button", "Ready Receptor")..{
+		Name="Tap";
+		InitCommand=NOTESKIN:GetMetricA(Var "Button" ,"ReceptorTapInitCommand");
+		PressCommand=NOTESKIN:GetMetricA(Var "Button" ,"ReceptorTapPressCommand");
 	};
 }

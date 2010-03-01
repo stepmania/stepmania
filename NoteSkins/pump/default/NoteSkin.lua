@@ -1,5 +1,6 @@
 local Noteskin = ... or {}
 
+--bBlanks: 
 Noteskin.bBlanks = {
 	--["element"] = true|false;
 	["Hold Tail Active"] = true;
@@ -8,8 +9,20 @@ Noteskin.bBlanks = {
 Noteskin.ElementRedirs = {
 	--["element"] = "redirected_element";
 	["Hold Head Active"] = "Tap Note";
+	["Hold Head Inactive"] = "Tap Note";
 	["Roll Head Active"] = "Tap Note";
+	["Roll Head Inactive"] = "Tap Note";
 	["Tap Fake"] = "Tap Note";
+	--
+	["Hold Topcap Inactive"] = "Hold Topcap Active";
+	["Hold Body Inactive"] = "Hold Body Active";
+	["Hold Bottomcap Inactive"] = "Hold Bottomcap Active";
+	["Hold Tail Inactive"] = "Hold Tail Active";
+	--
+	["Roll Topcap Inactive"] = "Roll Topcap Active";
+	["Roll Body Inactive"] = "Roll Body Active";
+	["Roll Bottomcap Inactive"] = "Roll Bottomcap Active";
+	["Roll Tail Inactive"] = "Roll Tail Active";
 }
 Noteskin.ButtonRedirs = {
 	Center = "Center";
@@ -37,10 +50,6 @@ local function func()
 	local sButton = Var "Button"
 	local sElement = Var "Element"
 	
-	--redir...
-	sElement = string.gsub(sElement,"Inactive","Active")
-	sElement = string.gsub(sElement,"inactive","active")
-	
 	if Noteskin.bBlanks[sElement] then
 		return Def.Actor {}
 	end
@@ -51,16 +60,32 @@ local function func()
 		ElementToLoad = sElement
 	end
 	
-	if sElement == "Explosion" or sElement == "Tap Lift" or sElement == "Tap Mine" then
+	--update: ahora receptor también
+	if sElement == "Explosion"
+	or sElement == "Tap Lift"
+	or sElement == "Tap Mine"
+	or sElement == "Receptor"
+	then
 		sButton = "UpLeft"
 	end
 	local path = NOTESKIN:GetPath(Noteskin.ButtonRedirs[sButton],ElementToLoad)
-	--sean holds o rollos pero que no sean cabezas ni colas, para tener gráficos separados por flechita :D
-	if ( string.find(sElement,"Hold") or string.find(sElement,"Roll") ) and not ( string.find(sElement,"Head") or string.find(sElement,"Tail") ) then
+	--Graficos separados para holds y rolls
+	if string.find(sElement,"Hold") or string.find(sElement,"Roll") then
 		path = NOTESKIN:GetPath(sButton,ElementToLoad)
 	end
 	
 	local t = LoadActor(path)
+	--Rotaciones independientes por elemento
+	--[[local dRotationX = Noteskin.BaseRotX[sButton][ElementToLoad]
+	if not dRotationX then
+		dRotationX = Noteskin.BaseRotX[sButton]["Common"]
+	end
+	
+	local dRotationY = Noteskin.BaseRotY[sButton][ElementToLoad]
+	if not dRotationY then
+		dRotationY = Noteskin.BaseRotY[sButton]["Common"]
+	end]]
+
 	t.BaseRotationX=Noteskin.BaseRotX[sButton]
 	t.BaseRotationY=Noteskin.BaseRotY[sButton]
 	
