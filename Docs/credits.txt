@@ -35,9 +35,6 @@ Daisuke Master
  * /Docs/Themerdocs/Noteskin elements Reference.txt
  * Taking advantage of sm-ssc's new features already :)
 
-Shayde Zehetbauer/Koizumi
- * Menu music!
-
 David Santamaría Rogado (howl)
  * Various patches (see Changelog_sm-ssc.txt for more details and links)
 
