@@ -86,6 +86,7 @@ void ScreenSelectMusic::Init()
 	OPTIONS_LIST_TIMEOUT.Load( m_sName, "OptionsListTimeout" );
 	SELECT_MENU_CHANGES_DIFFICULTY.Load( m_sName, "SelectMenuChangesDifficulty" );
 	TWO_PART_SELECTION.Load( m_sName, "TwoPartSelection" );
+	TWO_PART_CONFIRMS_ONLY.Load( m_sName, "TwoPartConfirmsOnly" );
 	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
@@ -596,24 +597,27 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 	}
 
-	if( m_SelectionState == SelectionState_SelectingSteps  &&
-		input.type == IET_FIRST_PRESS  &&
-		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) &&
-		!m_bStepsChosen[input.pn] )
+	if(!TWO_PART_CONFIRMS_ONLY)
 	{
-		if( input.MenuI == m_GameButtonPreviousSong )
+		if( m_SelectionState == SelectionState_SelectingSteps  &&
+			input.type == IET_FIRST_PRESS  &&
+			(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) &&
+			!m_bStepsChosen[input.pn] )
 		{
-			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-				m_soundLocked.Play();
-			else
-				ChangeSteps( input.pn, -1 );
-		}
-		else if( input.MenuI == m_GameButtonNextSong )
-		{
-			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-				m_soundLocked.Play();
-			else
-				ChangeSteps( input.pn, +1 );
+			if( input.MenuI == m_GameButtonPreviousSong )
+			{
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+					ChangeSteps( input.pn, -1 );
+			}
+			else if( input.MenuI == m_GameButtonNextSong )
+			{
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+					ChangeSteps( input.pn, +1 );
+			}
 		}
 	}
 
@@ -928,7 +932,6 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	{
 	DEFAULT_FAIL( m_SelectionState );
 	case SelectionState_SelectingSong:
-
 		// If false, we don't have a selection just yet.
 		if( !m_MusicWheel.Select() )
 			return;
@@ -1013,6 +1016,8 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			}
 
 			bool bAllPlayersDoneSelectingSteps = bInitiatedByMenuTimer || bAllOtherHumanPlayersDone;
+			if(TWO_PART_CONFIRMS_ONLY)
+				bAllPlayersDoneSelectingSteps = true;
 
 			/* TRICKY: if we have a Routine chart selected, we need to ensure
 			 * the following:
@@ -1126,6 +1131,15 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 
 	m_soundStart.Play();
 
+	// If the MenuTimer has forced us to move on && TWO_PART_CONFIRMS_ONLY,
+	// set Selection State to finalized and move on.
+	if(TWO_PART_CONFIRMS_ONLY)
+	{
+		if(m_MenuTimer->GetSeconds() < 1)
+		{
+			m_SelectionState = SelectionState_Finalized;
+		}
+	}
 
 	if( m_SelectionState == SelectionState_Finalized )
 	{

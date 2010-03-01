@@ -13,14 +13,12 @@ static ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
  * of the dimensions up to meet the requested aspect ratio.
  */
 
-/* 
- * The theme resolution isn't necessarily 4:3; a natively widescreen
+/* The theme resolution isn't necessarily 4:3; a natively widescreen
  * theme would have eg. 16:9 or 16:10.
  *
  * Note that "aspect ratio" here always means DAR (display aspect ratio: the
  * aspect ratio of the physical display); we don't care about the PAR (pixel
- * aspect ratio: the aspect ratio of a pixel).
- */
+ * aspect ratio: the aspect ratio of a pixel). */
 
 float ScreenDimensions::GetThemeAspectRatio()
 {
