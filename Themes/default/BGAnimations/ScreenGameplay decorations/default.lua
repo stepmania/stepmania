@@ -6,26 +6,27 @@ local function CreateStops()
 
 	local fFrameWidth = 380;
 	local fFrameHeight = 8;
-	if SSC then
+	-- XXX: doesn't work in course mode -aj
+	if not GAMESTATE:IsCourseMode() then
 	-- Straight rip off NCRX
-
 		local song = GAMESTATE:GetCurrentSong();
+		local timingData = song:GetTimingData();
 		-- if we're using SSC, might as well use the StepsSeconds, which will
 		-- almost always be more proper than a r21'd file.
 		if song then
 			local songLen = song:MusicLengthSeconds();
 
-			local firstBeatSecs = song:GetElapsedTimeFromBeat(song:GetFirstBeat());
-			local lastBeatSecs = song:GetElapsedTimeFromBeat(song:GetLastBeat());
+			local firstBeatSecs = timingData:GetElapsedTimeFromBeat(song:GetFirstBeat());
+			local lastBeatSecs = timingData:GetElapsedTimeFromBeat(song:GetLastBeat());
 
-			local bpms = song:GetTimingData():GetBPMs();
+			local bpms = timingData:GetBPMs();
 
-			local stops = song:GetTimingData():GetStops();
+			local stops = timingData:GetStops();
 			for i=1,#stops do
 				local data = split("=",stops[i]);
 				local beat = data[1];
 				local secs = data[2];
-				local beatTime = song:GetElapsedTimeFromBeat(beat);
+				local beatTime = timingData:GetElapsedTimeFromBeat(beat);
 
 				stopFrame[#stopFrame+1] = Def.ActorFrame {
 					Def.Quad {
@@ -98,15 +99,15 @@ for pn in ivalues(PlayerNumber) do
 		};
 		Def.Quad {
 			InitCommand=cmd(zoomto,2,8);
-			OnCommand=cmd(x,scale(0.25,0,1,-380/2,380/2);diffuse,Color("White");diffusealpha,0.5);
+			OnCommand=cmd(x,scale(0.25,0,1,-380/2,380/2);diffuse,PlayerColor(pn);diffusealpha,0.5);
 		};
 		Def.Quad {
 			InitCommand=cmd(zoomto,2,8);
-			OnCommand=cmd(x,scale(0.5,0,1,-380/2,380/2);diffuse,Color("White");diffusealpha,0.5);
+			OnCommand=cmd(x,scale(0.5,0,1,-380/2,380/2);diffuse,PlayerColor(pn);diffusealpha,0.5);
 		};
 		Def.Quad {
 			InitCommand=cmd(zoomto,2,8);
-			OnCommand=cmd(x,scale(0.75,0,1,-380/2,380/2);diffuse,Color("White");diffusealpha,0.5);
+			OnCommand=cmd(x,scale(0.75,0,1,-380/2,380/2);diffuse,PlayerColor(pn);diffusealpha,0.5);
 		};
 		Def.SongMeterDisplay {
 			StreamWidth=THEME:GetMetric( MetricsName, 'StreamWidth' );
@@ -117,10 +118,17 @@ for pn in ivalues(PlayerNumber) do
 		};
 		CreateStops();
 	};
-end
-
-
-
+end;
+for pn in ivalues(PlayerNumber) do
+	local MetricsName = "ToastyDisplay" .. PlayerNumberToString(pn);
+	t[#t+1] = LoadActor( THEME:GetPathG("Player", 'toasty'), pn ) .. {
+		InitCommand=function(self) 
+			self:player(pn); 
+			self:name(MetricsName); 
+			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); 
+		end;
+	};
+end;
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 

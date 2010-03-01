@@ -2,17 +2,23 @@ local c;
 local player = Var "Player";
 local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt");
 local Pulse = THEME:GetMetric("Combo", "PulseCommand");
+local PulseLabel = THEME:GetMetric("Combo", "PulseLabelCommand");
 
 local NumberMinZoom = THEME:GetMetric("Combo", "NumberMinZoom");
 local NumberMaxZoom = THEME:GetMetric("Combo", "NumberMaxZoom");
 local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt");
 
+local LabelMinZoom = THEME:GetMetric("Combo", "LabelMinZoom");
+local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom");
+
 local t = Def.ActorFrame {
 	LoadActor(THEME:GetPathG("Combo","100Milestone")) .. {
 		Name="OneHundredMilestone";
+		FiftyMilestoneCommand=cmd(playcommand,"Milestone");
 	};
 	LoadActor(THEME:GetPathG("Combo","1000Milestone")) .. {
 		Name="OneThousandMilestone";
+		ToastyAchievedMessageCommand=cmd(playcommand,"Milestone");
 	};
 	LoadFont( "Combo", "numbers" ) .. {
 		Name="Number";
@@ -40,10 +46,12 @@ local t = Def.ActorFrame {
 			return
 		end; --]]
 	TwentyFiveMilestoneCommand=function(self,parent)
-		(cmd(zoom,1.25;decelerate,1.325;zoom,1))(self);
+		(cmd(skewx,0.125;decelerate,0.325;skewx,1))(self);
 	end;
-	ToastyAchievedMessageCommand=function(self,parent)
-		(cmd(thump,2;effectclock,'beat'))(self);
+	ToastyAchievedMessageCommand=function(self,params)
+		if params.PlayerNumber == player then
+			(cmd(thump,2;effectclock,'beat'))(self);
+		end;
 	end;
 	ComboCommand=function(self, param)
 		local iCombo = param.Misses or param.Combo;
@@ -56,8 +64,10 @@ local t = Def.ActorFrame {
 		local labeltext = "";
 		if param.Combo then
 			labeltext = "COMBO";
+-- 			c.Number:playcommand("Reset");
 		else
 			labeltext = "MISSES";
+-- 			c.Number:playcommand("Miss");
 		end
 		c.Label:settext( labeltext );
 		c.Label:visible(false);
@@ -78,13 +88,18 @@ local t = Def.ActorFrame {
 		elseif param.FullComboW3 then
 			c.Number:diffuse(color("#a4ff00"));
 			c.Number:stopeffect();
-		else
+		elseif param.Combo then
 			c.Number:diffuse(color("#ffffff"));
 			c.Number:stopeffect();
+			(cmd(diffuse,Color("White");diffusebottomedge,color("0.5,0.5,0.5,1")))(c.Label);
+		else
+			c.Number:diffuse(color("#ff0000"));
+			c.Number:stopeffect();
+			(cmd(diffuse,Color("Red");diffusebottomedge,color("0.5,0,0,1")))(c.Label);
 		end
 		-- Pulse
 		Pulse( c.Number, param );
--- 		Pulse( c.Label, param );
+		PulseLabel( c.Label, param );
 		-- Milestone Logic
 	end;
 	ScoreChangedMessageCommand=function(self,param)

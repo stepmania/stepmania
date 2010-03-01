@@ -84,6 +84,8 @@ if not GAMESTATE:IsCourseMode() then
 	t[#t+1] = StandardDecorationFromFileOptional("NewSong","NewSong") .. {
 	-- 	ShowCommand=THEME:GetMetric(Var "LoadingScreen", "NewSongShowCommand" );
 	-- 	HideCommand=THEME:GetMetric(Var "LoadingScreen", "NewSongHideCommand" );
+		InitCommand=cmd(playcommand,"Set");
+		BeginCommand=cmd(playcommand,"Set");
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
 	-- 		local pTargetProfile;

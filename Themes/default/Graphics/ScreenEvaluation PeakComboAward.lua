@@ -1,0 +1,1 @@
+return LoadFont("Common Normal");

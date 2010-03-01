@@ -7,13 +7,15 @@ function InitUserPrefs()
 	if GetUserPref("UserPrefGameplayShowScore") == nil then
 		SetUserPref("UserPrefGameplayShowScore", true);
 	end;
-  	if GetUserPrefB("UserPrefShowLotsaOptions") == nil then
+	if GetUserPrefB("UserPrefShowLotsaOptions") == nil then
 		SetUserPref("UserPrefShowLotsaOptions", true);
 	end;  
 	if GetUserPrefB("UserPrefAutoSetStyle") == nil then
 		SetUserPref("UserPrefAutoSetStyle", true);
 	end;  
-	
+	if GetUserPrefB("UserPrefLongFail") == nil then
+		SetUserPref("UserPrefLongFail", false);
+	end;  
 --[[ 	if GetUserPref("ProTimingP1") == nil then
 		SetUserPref("ProTimingP1", false);
 	end;
@@ -69,7 +71,7 @@ end;
 
 
 function UserPrefGameplayShowScore()
-    local t = {
+	local t = {
 		Name = "UserPrefGameplayShowScore";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
@@ -77,16 +79,16 @@ function UserPrefGameplayShowScore()
 		ExportOnChange = false;
 		Choices = { 'Off','On' };
 		LoadSelections = function(self, list, pn)
-            if ReadPrefFromFile("UserPrefGameplayShowScore") ~= nil then
-                if GetUserPrefB("UserPrefGameplayShowScore") then
-                    list[2] = true;
-                else
-                    list[1] = true;
-                end;
-            else
-                WritePrefToFile("UserPrefGameplayShowScore",false);
+			if ReadPrefFromFile("UserPrefGameplayShowScore") ~= nil then
+				if GetUserPrefB("UserPrefGameplayShowScore") then
+					list[2] = true;
+				else
+					list[1] = true;
+				end;
+			else
+				WritePrefToFile("UserPrefGameplayShowScore",false);
 				list[1] = true;
-            end;
+			end;
 		end;
 		SaveSelections = function(self, list, pn)
 			local val;
@@ -95,8 +97,8 @@ function UserPrefGameplayShowScore()
 			else
 				val = false;
 			end;
-            WritePrefToFile("UserPrefGameplayShowScore",val);
-            MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			WritePrefToFile("UserPrefGameplayShowScore",val);
+			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
 		end;
 	};
 	setmetatable( t, t );
@@ -104,7 +106,7 @@ function UserPrefGameplayShowScore()
 end
 
 function UserPrefGameplayShowStepsDisplay()
-    local t = {
+	local t = {
 		Name = "UserPrefGameplayShowStepsDisplay";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
@@ -112,16 +114,16 @@ function UserPrefGameplayShowStepsDisplay()
 		ExportOnChange = false;
 		Choices = { 'Off','On' };
 		LoadSelections = function(self, list, pn)
-            if ReadPrefFromFile("UserPrefGameplayShowStepsDisplay") ~= nil then
-                if GetUserPrefB("UserPrefGameplayShowStepsDisplay") then
-                    list[2] = true;
-                else
-                    list[1] = true;
-                end;
-            else
-                WritePrefToFile("UserPrefGameplayShowStepsDisplay",false);
+			if ReadPrefFromFile("UserPrefGameplayShowStepsDisplay") ~= nil then
+				if GetUserPrefB("UserPrefGameplayShowStepsDisplay") then
+					list[2] = true;
+				else
+					list[1] = true;
+				end;
+			else
+				WritePrefToFile("UserPrefGameplayShowStepsDisplay",false);
 				list[1] = true;
-            end;
+			end;
 		end;
 		SaveSelections = function(self, list, pn)
 			local val;
@@ -130,8 +132,8 @@ function UserPrefGameplayShowStepsDisplay()
 			else
 				val = false;
 			end;
-            WritePrefToFile("UserPrefGameplayShowStepsDisplay",val);
-            MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			WritePrefToFile("UserPrefGameplayShowStepsDisplay",val);
+			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
 		end;
 	};
 	setmetatable( t, t );
@@ -139,7 +141,7 @@ function UserPrefGameplayShowStepsDisplay()
 end
 
 function UserPrefShowLotsaOptions()
-    local t = {
+	local t = {
 		Name = "UserPrefShowLotsaOptions";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
@@ -165,8 +167,8 @@ function UserPrefShowLotsaOptions()
 			else
 				val = false;
 			end;
-            WritePrefToFile("UserPrefShowLotsaOptions",val);
-            MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			WritePrefToFile("UserPrefShowLotsaOptions",val);
+			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
 		end;
 	};
 	setmetatable( t, t );
@@ -186,7 +188,7 @@ end
 end; 
 
 function UserPrefAutoSetStyle()
-    local t = {
+	local t = {
 		Name = "UserPrefAutoSetStyle";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
@@ -194,16 +196,16 @@ function UserPrefAutoSetStyle()
 		ExportOnChange = false;
 		Choices = { 'Off','On' };
 		LoadSelections = function(self, list, pn)
-            if ReadPrefFromFile("UserPrefAutoSetStyle") ~= nil then
-                if GetUserPrefB("UserPrefAutoSetStyle") then
-                    list[2] = true;
-                else
-                    list[1] = true;
-                end;
-            else
-                WritePrefToFile("UserPrefAutoSetStyle",false);
+			if ReadPrefFromFile("UserPrefAutoSetStyle") ~= nil then
+				if GetUserPrefB("UserPrefAutoSetStyle") then
+					list[2] = true;
+				else
+					list[1] = true;
+				end;
+			else
+				WritePrefToFile("UserPrefAutoSetStyle",false);
 				list[1] = true;
-            end;
+			end;
 		end;
 		SaveSelections = function(self, list, pn)
 			local val;
@@ -212,8 +214,44 @@ function UserPrefAutoSetStyle()
 			else
 				val = false;
 			end;
-            WritePrefToFile("UserPrefAutoSetStyle",val);
-            MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			WritePrefToFile("UserPrefAutoSetStyle",val);
+			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end
+
+
+function UserPrefLongFail()
+	local t = {
+		Name = "UserPrefLongFail";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = { 'Short','Long' };
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("UserPrefLongFail") ~= nil then
+				if GetUserPrefB("UserPrefLongFail") then
+					list[2] = true;
+				else
+					list[1] = true;
+				end;
+			else
+				WritePrefToFile("UserPrefLongFail",false);
+				list[1] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			local val;
+			if list[2] then
+				val = true;
+			else
+				val = false;
+			end;
+			WritePrefToFile("UserPrefLongFail",val);
+			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
 		end;
 	};
 	setmetatable( t, t );
