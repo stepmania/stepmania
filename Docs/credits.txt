@@ -38,6 +38,9 @@ Daisuke Master
 David Santamaría Rogado (howl)
  * Various patches (see Changelog_sm-ssc.txt for more details and links)
 
+Kita K.
+ * sm-ssc default theme music
+
 Macgravel
  * Orbular noteskin (the kb7 noteskin; not included in private beta wave 1.3)
 

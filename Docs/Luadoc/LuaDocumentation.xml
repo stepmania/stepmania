@@ -41,6 +41,9 @@
 	<Function name='DayOfYear' return='int' arguments=''>
 		Returns the current day of the year.
 	</Function>
+	<Function name='dofile' theme='_fallback' return='chunk' arguments='string sFilePath'>
+		[01 base.lua] "Override Lua's dofile to use our <Link function="loadfile">loadfile</Link>."
+	</Function>
 	<Function name='FormatNumberAndSuffix' return='string' arguments='int num'>
 		Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
 	</Function>
@@ -72,8 +75,29 @@
 		Returns <code>true</code> if Player <code>pn</code> is logged on to
 		a SMOnline server.
 	</Function>
+	<Function name='ivalues' theme='_fallback' return='{various}' arguments='table t'>
+		[01 base.lua] "Like ipairs(), but returns only values."
+	</Function>
 	<Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
 		Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
+	</Function>
+	<Function name='LoadActorFunc' theme='_fallback' return='ActorDef' arguments='string path, int level'>
+		[02 ActorDef.lua] Loads an actor template. This is the actual core of LoadActor.
+	</Function>
+	<Function name='LoadActorWithParams' theme='_fallback' return='lua.RunWithThreadVariables' arguments='string path, table params, ...'>
+		[02 ActorDef.lua] Loads an actor with params.
+	</Function>
+	<Function name='loadfile' theme='_fallback' return='chunk' arguments='string sFilePath'>
+		[01 base.lua] "Override Lua's loadfile to use <Link class="lua" function="ReadFile">lua.ReadFile</Link>."
+	</Function>
+	<Function name='LoadFallbackB' theme='_fallback' return='ActorDef' arguments=''>
+		[02 ActorDef.lua] Load the fallback BGA for the element that is currently being loaded.
+	</Function>
+	<Function name='LoadFont' theme='_fallback' return='ActorDef' arguments='string a, string b'>
+		[02 ActorDef.lua] Loads a font.
+	</Function>
+	<Function name='LoadSongBackground' theme='_fallback' return='Sprite' arguments=''>
+		[02 Sprite.lua] Returns a Sprite with the current song's background.
 	</Function>
 	<Function name='Minute' return='int' arguments=''>
 		Returns the current Minute.
@@ -87,20 +111,44 @@
 	<Function name='MonthToString' return='string' arguments='Month m'>
 		Returns Month <code>m</code> as a string.
 	</Function>
+	<Function name='ResolveRelativePath' theme='_fallback' return='string' arguments='string path, int level'>
+		[02 ActorDef.lua]
+	</Function>
 	<Function name='Second' return='int' arguments=''>
 		Returns the current second.
 	</Function>
 	<Function name='SecondsToMSSMsMs' return='string' arguments='float fSecs'>
 		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format.
 	</Function>
-	<Function name='ToEnumShortString' return='string' arguments='enum e'>
-		Returns a string representing an enum starting from '_'. For example, passing <Link class='ENUM' function='PlayerNumber'>PlayerNumber_P1</Link> to this function will return <code>P1</code>.
+	<Function name='SelectMusicOrCourse' theme='_fallback' return='string' arguments=''>
+		[02 Branches.lua] Determines the correct music/course selection screen to use and returns it.
+	</Function>
+	<Function name='ShowStandardDecoration' theme='_fallback' return='bool' arguments='string sMetricsName'>
+		[02 ActorDef.lua] Returns <code>true</code> if a decoration should be shown on the current screen or not.
+	</Function>
+	<Function name='StandardDecorationFromTable' theme='_fallback' return='Actor' arguments='string sMetricsName, table t'>
+		[02 ActorDef.lua] 
+	</Function>
+	<Function name='StandardDecorationFromFile' theme='_fallback' return='Actor' arguments='string sMetricsName, string sFileName'>
+		[02 ActorDef.lua] 
+	</Function>
+	<Function name='StandardDecorationFromFileOptional' theme='_fallback' return='Actor' arguments='string sMetricsName, string sFileName'>
+		[02 ActorDef.lua] 
+	</Function>
+	<Function name='ToEnumShortString' theme='_fallback' return='string' arguments='enum e'>
+		[02 Enum.lua] Returns a string representing an enum starting from '_'. For example, passing <Link class='ENUM' function='PlayerNumber'>PlayerNumber_P1</Link> to this function will return <code>P1</code>.
 	</Function>
 	<Function name='Trace' return='void' arguments='string sString'>
 		Alias for <Link class='lua' function='Trace' />.
 	</Function>
+	<Function name='Var' theme='_fallback' return='ThreadVariable' arguments=''>
+		[01 base.lua] Alias for <Link class="lua" function="GetThreadVariable">lua.GetThreadVariable</Link>.
+	</Function>
 	<Function name='Warn' return='void' arguments='string sString'>
 		Alias for <Link class='lua' function='Warn' />.
+	</Function>
+	<Function name='WrapInActorFrame' theme='_fallback' return='ActorFrame' arguments='table children'>
+		[02 ActorDef.lua] Wraps the children in an ActorFrame.
 	</Function>
 	<Function name='Year' return='int' arguments=''>
 		Returns the current year.
@@ -122,7 +170,7 @@
 		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format using two digits for each section except Milliseconds (uses 3).
 	</Function>
 	<Function name='SecondsToMSS' sm-ssc='true' return='string' arguments='float fSecs'>
-		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format using two digits for each section except Minutes (usese 1).
+		Converts <code>fSecs</code> to Minutes:Seconds.Milliseconds format using two digits for each section except Minutes (uses 1).
 	</Function>
 	<Function name='SecondsToMMSS' sm-ssc='true' return='string' arguments='float fSecs'>
 		Converts <code>fSecs</code> to Minutes:Seconds format.
@@ -133,14 +181,14 @@
 	<!-- Add all theme extensions here -->
 	<!-- CustomSpeedMods -->
 	<Function name='SpeedMods' theme='_fallback' return='LuaOptionRow' arguments=''>
-		[CustomSpeedMods] Returns a Lua option row with the custom speed mods defined in SpeedMods.txt.
+		[03 CustomSpeedMods.lua] Returns a Lua option row with the custom speed mods defined in SpeedMods.txt.
 	</Function>
 	<!-- FileUtils -->
 	<Function name='ReadFile' theme='_fallback' return='string' arguments='string path'>
-		[FileUtils] Reads the file at <code>path</code> and returns its contents.
+		[04 FileUtils.lua] Reads the file at <code>path</code> and returns its contents.
 	</Function>
 	<Function name='WriteFile' theme='_fallback' return='bool' arguments='string path, string buf'>
-		[FileUtils] Writes <code>buf</code> to the file at <code>path</code>.
+		[04 FileUtils.lua] Writes <code>buf</code> to the file at <code>path</code>.
 	</Function>
 </GlobalFunctions>
 
@@ -279,8 +327,8 @@
 	<Function name='addz' return='void' arguments='float zPos'>
 		Adds <code>zPos</code> to the Actor's current z position.
 	</Function>
-	<Function name='align' return='void' arguments='float h, float v'>
-		Sets the alignment of an Actor, where <code>h</code> and <code>v</code> are in the range 0..1.
+	<Function name='align' theme='_fallback' return='void' arguments='float h, float v'>
+		[02 Actor.lua] Sets the alignment of an Actor, where <code>h</code> and <code>v</code> are in the range 0..1.
 	</Function>
 	<Function name='animate' return='void' arguments='bool b'>
 		Sets whether or not the Actor should animate.
@@ -316,8 +364,14 @@
 	<Function name='bob' return='void' arguments=''>
 		Makes the Actor bob up and down. Can use <Link function='effectmagnitude' /> to define different bobbing behavior.
 	</Function>
+	<Function name='bouncebegin' theme='_fallback' return='void' arguments='float time'>
+		[02 Actor.lua]
+	</Function>
+	<Function name='bounceend' theme='_fallback' return='void' arguments='float time'>
+		[02 Actor.lua]
+	</Function>
 	<Function name='Center' theme='_fallback' return='void' arguments=''>
-		[Actor.lua] Centers an Actor.
+		[02 Actor.lua] Centers an Actor.
 	</Function>
 	<Function name='cropbottom' return='void' arguments='float percent'>
 		Crops <code>percent</code> of the Actor from the bottom, where <code>percent</code> is in the range 0..1.
@@ -373,6 +427,12 @@
 	<Function name='draworder' return='void' arguments='int iOrder'>
 		Sets the Actor's draworder to <code>iOrder</code>, where larger values display first.
 	</Function>
+	<Function name='drop' theme='_fallback' return='void' arguments='float time'>
+		[02 Actor.lua] (Added in sm-ssc)
+	</Function>
+	<Function name='ease' theme='_fallback' return='void' arguments='float time, float fEase'>
+		[02 Actor.lua]
+	</Function>
 	<Function name='effectclock' return='void' arguments='string s'>
 		Set the Actor's effect clock to <code>s</code>.
 	</Function>
@@ -406,8 +466,8 @@
 	<Function name='finishtweening' return='void' arguments=''>
 		Finishes up an Actor's tween immediately.
 	</Function>
-	<Function name='FullScreen' return='void' arguments=''>
-		Stretches an Actor to fill the entire screen.
+	<Function name='FullScreen' theme='_fallback' return='void' arguments=''>
+		[02 Actor.lua] Stretches an Actor to fill the entire screen.
 	</Function>
 	<Function name='getaux' return='float' arguments=''>
 		<!-- XXX: What is aux? -->
@@ -461,6 +521,9 @@
 	<Function name='hidden' return='void' theme='_fallback' arguments='bool b'>
 		[Deprecated] Compatibility alias for the hidden command, which was removed in sm-ssc. Use <Link function='visible' /> instead.
 	</Function>
+	<Function name='hide_if' theme='_fallback' return='void' arguments='bool b'>
+		[02 Actor.lua] "Hide if <code>b</code> is <code>true</code>, but don't unhide if <code>b</code> is <code>false</code>."
+	</Function>
 	<Function name='horizalign' return='void' arguments='HorizAlign align'>
 		Set the horizontal alignment of the Actor according to <code>align</code>. See <Link function='halign' /> for fractional alignment.
 	</Function>
@@ -494,6 +557,12 @@
 	<Function name='rotationz' return='void' arguments='float fRotation'>
 		Set the Actor's rotation on the Z axis to <code>fAlign</code>.
 	</Function>
+	<Function name='scale_or_crop_alternative' theme="_fallback" return='void' arguments=''>
+		[02 Actor.lua] An alternative version of <Link function='scale_or_crop_background' />.
+	</Function>
+	<Function name='scale_or_crop_background' theme="_fallback" return='void' arguments=''>
+		[02 Actor.lua]
+	</Function>
 	<Function name='scaletocover' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
 		Scales the Actor to cover a rectangle defined by the four float arguments.
 	</Function>
@@ -523,6 +592,9 @@
 	</Function>
 	<Function name='sleep' return='void' arguments='float fSeconds'>
 		Waits <code>fSeconds</code> before executing the next command.
+	</Function>
+	<Function name='smooth' theme='_fallback' return='void' arguments='float time'>
+		[02 Actor.lua]
 	</Function>
 	<Function name='spin' return='void' arguments=''>
 		Tells the Actor to spin. Can use <Link function='effectmagnitude' /> to define different spinning behavior.
@@ -577,22 +649,22 @@
 	</Function>
 	<!-- addons from scripts that come with sm-ssc (non-compat) -->
 	<Function name='CenterX' theme='_fallback' return='void' arguments=''>
-		[ProductivityHelpers] Centers an Actor on the X axis. (equivalent to <code>x,SCREEN_CENTER_X</code>)
+		[03 ProductivityHelpers.lua] Centers an Actor on the X axis. (equivalent to <code>x,SCREEN_CENTER_X</code>)
 	</Function>
 	<Function name='CenterY' theme='_fallback' return='void' arguments=''>
-		[ProductivityHelpers] Centers an Actor on the y axis. (equivalent to <code>y,SCREEN_CENTER_Y</code>)
+		[03 ProductivityHelpers.lua] Centers an Actor on the y axis. (equivalent to <code>y,SCREEN_CENTER_Y</code>)
 	</Function>
 	<Function name='MaskDest' theme='_fallback' return='void' arguments=''>
-		[ProductivityHelpers] Sets and Actor as a mask destination.
+		[03 ProductivityHelpers.lua] Sets and Actor as a mask destination.
 	</Function>
 	<Function name='MaskSource' theme='_fallback' return='void' arguments=''>
-		[ProductivityHelpers] Sets an Actor as a mask source. (Also clears zbuffer; other mask sources need to not clear the zbuffer)
+		[03 ProductivityHelpers.lua] Sets an Actor as a mask source. (Also clears zbuffer; other mask sources need to not clear the zbuffer)
 	</Function>
 	<Function name='thump' theme='_fallback' return='void' arguments='float fEffectPeriod'>
-		[ProductivityHelpers] A customized version of pulse that is more appealing for on-beat effects.
+		[03 ProductivityHelpers.lua] A customized version of pulse that is more appealing for on-beat effects.
 	</Function>
 	<Function name='xy' theme='_fallback' return='void' arguments='float actorX, float actorY'>
-		[ProductivityHelpers] Sets the x and y location of the Actor in one command.
+		[03 ProductivityHelpers.lua] Sets the x and y location of the Actor in one command.
 	</Function>
 </Class>
 <Class name='ActorFrame'>
@@ -619,6 +691,9 @@
 	</Function>
 	<Function name='propagate' return='void' arguments='bool bPropagate'>
 		Sets if the Actorframe should propagate commands to its children.
+	</Function>
+	<Function name='propagatecommand' theme='_fallback' return='void' arguments='LuaReference cmd'>
+		[02 Actor.lua] Propagates a command to the ActorFrame's children.
 	</Function>
 	<Function name='RunCommandsOnChildren' return='void' arguments='LuaReference cmds'>
 		Runs the commands in <code>cmds</code> on the ActorFrame's children.
@@ -781,8 +856,8 @@
 	<Function name='play' return='void' arguments=''>
 		Plays the sound.
 	</Function>
-	<Function name='playforplayer' return='void' arguments='PlayerNumber pn'>
-		Plays the sound on the given player's side. You must set <code>SupportPan = true</code> on load.
+	<Function name='playforplayer' theme='_fallback' return='void' arguments='PlayerNumber pn'>
+		[02 Sound.lua] Plays the sound on the given player's side. You must set <code>SupportPan = true</code> on load.
 	</Function>
 	<Function name='stop' sm-ssc='true' return='void' arguments=''>
 		Stops the sound.
@@ -842,7 +917,7 @@
 		Clear all attributes associated with the BitmapText.
 	</Function>
 	<Function name='DiffuseAndStroke' theme='_fallback' return='void' arguments='color diffuseColor, color strokeColor'>
-		[ProductivityHelpers] Sets the diffuse and stroke color of text in one command.
+		[03 ProductivityHelpers.lua] Sets the diffuse and stroke color of text in one command.
 	</Function>
 	<Function name='GetText' return='string' arguments=''>
 		Returns the text that is currently set.
@@ -857,10 +932,10 @@
 		Set the maximum width of the unzoomed text to <code>fWidth</code>. If <code>fWidth</code> is <code>0</code>, then there is no maximum width.
 	</Function>
 	<Function name='NoStroke' theme='_fallback' return='void' arguments=''>
-		[ProductivityHelpers] Remove any stroke color.
+		[03 ProductivityHelpers.lua] Remove any stroke color.
 	</Function>
 	<Function name='PixelFont' theme='_fallback' return='void' arguments=''>
-		[ProductivityHelpers] Alias for setting <Link class='Actor' function='SetTextureFiltering' /> to <code>false</code>.
+		[03 ProductivityHelpers.lua] Alias for setting <Link class='Actor' function='SetTextureFiltering' /> to <code>false</code>.
 	</Function>
 	<Function name='rainbowscroll' return='void' arguments='bool bRainbowScroll'>
 		If <code>true</code>, set each character of the text in turn to the rainbow colors in the metrics <code>BitmapText::RainbowColor#</code>.
@@ -869,10 +944,10 @@
 		Set the text to <code>sText</code>. This clears all attributes.
 	</Function>
 	<Function name='settextf' theme='_fallback' return='void' arguments='string sFormat, ...'>
-		[ProductivityHelpers] Sets text using <code>string.format(sFormat, ...)</code>.
+		[03 ProductivityHelpers.lua] Sets text using <code>string.format(sFormat, ...)</code>.
 	</Function>
 	<Function name='Stroke' theme='_fallback' return='void' arguments='color c'>
-		[ProductivityHelpers] Alias for <Link function='strokecolor' />.
+		[03 ProductivityHelpers.lua] Alias for <Link function='strokecolor' />.
 	</Function>
 	<Function name='strokecolor' return='void' arguments='color c'>
 		Sets the stroke color to <code>c</code>.
@@ -2301,8 +2376,8 @@
 	<Function name='GetTexture' return='RageTexture' arguments=''>
 		Returns the Sprite's texture.
 	</Function>
-	<Function name='LinearFrames' return='{Frame}' arguments='int iNumFrames, float fSeconds'>
-		Returns a <code>Frames</code> table consisting of <code>iNumFrames</code> frames lasting for a total of <code>fSeconds</code> seconds. This function is not a member function and should be used as <code>Frames = Sprite.LinearFrames( 5, 2.6 )</code>.
+	<Function name='LinearFrames' theme='_fallback' return='{Frame}' arguments='int iNumFrames, float fSeconds'>
+		[02 Sprite.lua] Returns a <code>Frames</code> table consisting of <code>iNumFrames</code> frames lasting for a total of <code>fSeconds</code> seconds. This function is not a member function and should be used as <code>Frames = Sprite.LinearFrames( 5, 2.6 )</code>.
 	</Function>
 	<Function name='Load' return='void' arguments='string sPath'>
 		If <code>sPath</code> is <code>nil</code>, then unload the texture. Otherwise, load the texture at path <code>sPath</code>.
@@ -2313,11 +2388,11 @@
 	<Function name='LoadBanner' return='void' arguments='string sPath'>
 		Load the song banner texture at <code>sPath</code>.
 	</Function>
-	<Function name='LoadFromSongBackground' return='void' arguments='Song song'>
-		Load the texture for <code>song</code>'s background.
+	<Function name='LoadFromSongBackground' theme='_fallback' return='void' arguments='Song song'>
+		[02 Sprite.lua] Load the texture for <code>song</code>'s background.
 	</Function>
-	<Function name='LoadFromSongBanner' return='void' arguments='Song song'>
-		Load the texture for <code>song</code>'s banner.
+	<Function name='LoadFromSongBanner' theme='_fallback' return='void' arguments='Song song'>
+		[02 Sprite.lua] Load the texture for <code>song</code>'s banner.
 	</Function>
 	<Function name='SetCustomImageRect' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
 		<!-- XXX: What does this do? -->
@@ -2334,14 +2409,14 @@
 	<Function name='customtexturerect' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
 		<!-- XXX: What does this do? -->
 	</Function>
-	<Function name='loop' return='void' arguments='bool bLoop'>
-		Call <Link class='RageTexture' function='loop'><code>RageTexture:loop</code></Link><code>( bLoop )</code> on the texture.
+	<Function name='loop' theme='_fallback' return='void' arguments='bool bLoop'>
+		[02 Sprite.lua] Call <Link class='RageTexture' function='loop'><code>RageTexture:loop</code></Link><code>( bLoop )</code> on the texture.
 	</Function>
-	<Function name='position' return='void' arguments='float fPos'>
-		Call <Link class='RageTexture' function='position'><code>RageTexture:position</code></Link><code>( fPos )</code> on the texture.
+	<Function name='position' theme='_fallback' return='void' arguments='float fPos'>
+		[02 Sprite.lua] Call <Link class='RageTexture' function='position'><code>RageTexture:position</code></Link><code>( fPos )</code> on the texture.
 	</Function>
-	<Function name='rate' return='void' arguments='float fRate'>
-		Call <Link class='RageTexture' function='rate'><code>RageTexture:rate</code></Link><code>( fRate )</code> on the texture.
+	<Function name='rate' theme='_fallback' return='void' arguments='float fRate'>
+		[02 Sprite.lua] Call <Link class='RageTexture' function='rate'><code>RageTexture:rate</code></Link><code>( fRate )</code> on the texture.
 	</Function>
 	<Function name='scaletoclipped' return='void' arguments='float fWidth, float fHeight'>
 		Scale the Sprite to width <code>fWidth</code> and height <code>fHeight</code> clipping if the dimensions do not match.

@@ -12,3 +12,6 @@ http://kai.vm.bytemark.co.uk/svn/pydance/trunk/pydance/
 
 be-pachi music [MIT license]
 http://x-raise.cjb.net/bpm.html
+
+marfitude [GPL license]
+http://www.erestar.net/games/marfitude/
