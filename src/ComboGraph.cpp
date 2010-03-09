@@ -24,7 +24,7 @@ void ComboGraph::Load( RString sMetricsGroup )
 	BODY_WIDTH.Load( sMetricsGroup, "BodyWidth" );
 
 	Actor *pActor = NULL;
-	
+
 	m_pBacking = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"Backing") );
 	m_pBacking->ZoomToWidth( BODY_WIDTH );
 	this->AddChild( m_pBacking );
@@ -49,7 +49,7 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 	const float fFirstSecond = 0;
 	const float fLastSecond = s.GetTotalPossibleStepsSeconds();
 
-	/* Find the largest combo. */
+	// Find the largest combo.
 	int iMaxComboSize = 0;
 	for( unsigned i = 0; i < pss.m_ComboList.size(); ++i )
 		iMaxComboSize = max( iMaxComboSize, pss.m_ComboList[i].GetStageCnt() );
@@ -58,7 +58,7 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 	{
 		const PlayerStageStats::Combo_t &combo = pss.m_ComboList[i];
 		if( combo.GetStageCnt() < MinComboSizeToShow )
-			continue; /* too small */
+			continue; // too small
 
 		const bool bIsMax = (combo.GetStageCnt() == iMaxComboSize);
 
@@ -80,7 +80,7 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 	{
 		const PlayerStageStats::Combo_t &combo = pss.m_ComboList[i];
 		if( combo.GetStageCnt() < MinComboSizeToShow )
-			continue; /* too small */
+			continue; // too small
 	
 		if( !iMaxComboSize )
 			continue;
@@ -103,7 +103,7 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 		this->AddChild( pText );
 	}
 
-	/* Hide the templates. */
+	// Hide the templates.
 	m_pNormalCombo->SetVisible( false );
 	m_pMaxCombo->SetVisible( false );
 	m_pComboNumber->SetVisible( false );

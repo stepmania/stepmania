@@ -23,7 +23,7 @@ int GetNumTapNotesWithScore( const NoteData &in, TapNoteScore tns, int iStartInd
 				iNumSuccessfulTapNotes++;
 		}
 	}
-	
+
 	return iNumSuccessfulTapNotes;
 }
 
@@ -38,7 +38,7 @@ int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iSt
 		if( iNumNotesInRow >= MinTaps && tnsRow >= tns )
 			iNumSuccessfulDoubles++;
 	}
-	
+
 	return iNumSuccessfulDoubles;
 }
 
@@ -79,7 +79,7 @@ int GetSuccessfulMines( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 	return iNumSuccessfulMinesNotes;
 }
 
-/* See NoteData::GetNumHands(). */
+// See NoteData::GetNumHands().
 int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW )
 {
 	int iNum = 0;
@@ -105,7 +105,7 @@ int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 		if( Missed )
 			continue;
 
-		/* Check hold scores. */
+		// Check hold scores.
 		for( int t=0; t<in.GetNumTracks(); ++t )
 		{
 			int iHeadRow;
@@ -113,8 +113,8 @@ int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 				continue;
 			const TapNote &tn = in.GetTapNote( t, iHeadRow );
 
-			/* If a hold is released *after* a hands containing it, the hands is
-			 * still good.  So, ignore the judgement and only examine iLastHeldRow
+			/* If a hold is released *after* a hand containing it, the hand is
+			 * still good. Ignore the judgement and only examine iLastHeldRow
 			 * to be sure that the hold was still held at the point of this row.
 			 * (Note that if the hold head tap was missed, then iLastHeldRow == i
 			 * and this won't fail--but the tap check above will have already failed.) */
@@ -152,7 +152,7 @@ int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 
 		float tm = tn.result.fTapNoteOffset;
 		if(tm < scoretime) continue;
-		
+
 		scoretime = tm;
 		best_track = t;
 	}
@@ -227,7 +227,6 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
 	return in.GetTapNote( iTrack, iRow );
 }
 
-
 /* Return the minimum tap score of a row.  If the row isn't complete (not all
  * taps have been hit), return TNS_None or TNS_Miss. */
 TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row )
@@ -236,7 +235,7 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 	TapNoteScore score = TNS_W1;
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
-		/* Ignore mines (and fake arrows), or the score will always be TNS_None. */
+		// Ignore mines (and fake arrows), or the score will always be TNS_None.
 		const TapNote &tn = in.GetTapNote( t, row );
 		if( tn.type == TapNote::empty || tn.type == TapNote::mine || tn.type == TapNote::fake )
 			continue;
@@ -254,7 +253,7 @@ bool NoteDataWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned ro
 
 namespace
 {
-/* Return the ratio of actual to possible Bs. */
+// Return the ratio of actual to possible Bs.
 float GetActualStreamRadarValue( const NoteData &in, float fSongSeconds )
 {
 	int iTotalSteps = in.GetNumTapNotes();
@@ -268,10 +267,11 @@ float GetActualStreamRadarValue( const NoteData &in, float fSongSeconds )
 /* Return the ratio of actual combo to max combo. */
 float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, const PlayerStageStats &pss )
 {
-	/* STATSMAN->m_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes: m_bComboContinuesBetweenSongs
-	 * might be on, and the way combo is counted varies depending on the mode and score
-	 * keeper.  Instead, let's use the length of the longest recorded combo.  This is
-	 * only subtly different: it's the percent of the song the longest combo took to get. */
+	/* STATSMAN->m_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes:
+	 * m_bComboContinuesBetweenSongs might be on, and the way combo is counted
+	 * varies depending on the mode and score keeper. Instead, let's use the
+	 * length of the longest recorded combo. This is only subtly different:
+	 * it's the percent of the song the longest combo took to get. */
 	const PlayerStageStats::Combo_t MaxCombo = pss.GetMaxCombo();
 	float fComboPercent = SCALE( MaxCombo.m_fSizeSeconds, 0, pss.m_fLastSecond-pss.m_fFirstSecond, 0.0f, 1.0f );
 	return clamp( fComboPercent, 0.0f, 1.0f );

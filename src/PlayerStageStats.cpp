@@ -428,14 +428,14 @@ float PlayerStageStats::GetCurrentLife() const
 	return iter->second;
 }
 
-/* If bRollover is true, we're being called before gameplay begins, so we can record
- * the amount of the first combo that comes from the previous song. */
+/* If bRollover is true, we're being called before gameplay begins, so we can
+ * record the amount of the first combo that comes from the previous song. */
 void PlayerStageStats::UpdateComboList( float fSecond, bool bRollover )
 {
 	// Don't save combo stats in endless courses, or could run OOM in a few hours.
 	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
 		return;
-	
+
 	if( fSecond < 0 )
 		return;
 
@@ -448,21 +448,21 @@ void PlayerStageStats::UpdateComboList( float fSecond, bool bRollover )
 
 	int cnt = m_iCurCombo;
 	if( !cnt )
-		return; /* no combo */
+		return; // no combo
 
 	if( m_ComboList.size() == 0 || m_ComboList.back().m_cnt >= cnt )
 	{
-		/* If the previous combo (if any) starts on -9999, then we rolled over some
-		 * combo, but missed the first step.  Remove it. */
+		/* If the previous combo (if any) starts on -9999, then we rolled over
+		 * some combo, but missed the first step. Remove it. */
 		if( m_ComboList.size() && m_ComboList.back().m_fStartSecond == -9999 )
 			m_ComboList.erase( m_ComboList.begin()+m_ComboList.size()-1, m_ComboList.end() );
 
-		/* This is a new combo. */
+		// This is a new combo.
 		Combo_t NewCombo;
-		/* "start" is the position that the combo started within this song.  If we're
-		 * recording rollover, the combo hasn't started yet (within this song), so put
-		 * a placeholder in and set it on the next call.  (Otherwise, start will be less
-		 * than fFirstPos.) */
+		/* "start" is the position that the combo started within this song.
+		 * If we're recording rollover, the combo hasn't started yet (within
+		 * this song), so put a placeholder in and set it on the next call.
+		 * (Otherwise, start will be less than fFirstPos.) */
 		if( bRollover )
 			NewCombo.m_fStartSecond = -9999;
 		else
@@ -656,20 +656,20 @@ LuaFunction( FormatPercentScore,	PlayerStageStats::FormatPercentScore( FArg(1) )
 class LunaPlayerStageStats: public Luna<PlayerStageStats>
 {
 public:
-	DEFINE_METHOD( GetCaloriesBurned,		m_fCaloriesBurned )
+	DEFINE_METHOD( GetCaloriesBurned,			m_fCaloriesBurned )
 	DEFINE_METHOD( GetLifeRemainingSeconds,		m_fLifeRemainingSeconds )
-	DEFINE_METHOD( GetSurvivalSeconds,		GetSurvivalSeconds() )
-	DEFINE_METHOD( GetCurrentCombo,			m_iCurCombo )
+	DEFINE_METHOD( GetSurvivalSeconds,			GetSurvivalSeconds() )
+	DEFINE_METHOD( GetCurrentCombo,				m_iCurCombo )
 	DEFINE_METHOD( GetCurrentMissCombo,			m_iCurMissCombo )
 	DEFINE_METHOD( GetCurrentScoreMultiplier,	m_iCurScoreMultiplier )
-	DEFINE_METHOD( GetScore,			m_iScore )
-	DEFINE_METHOD( GetTapNoteScores,		m_iTapNoteScores[Enum::Check<TapNoteScore>(L, 1)] )
-	DEFINE_METHOD( GetHoldNoteScores,		m_iHoldNoteScores[Enum::Check<HoldNoteScore>(L, 1)] )
-	DEFINE_METHOD( FullCombo,			FullCombo() )
+	DEFINE_METHOD( GetScore,					m_iScore )
+	DEFINE_METHOD( GetTapNoteScores,			m_iTapNoteScores[Enum::Check<TapNoteScore>(L, 1)] )
+	DEFINE_METHOD( GetHoldNoteScores,			m_iHoldNoteScores[Enum::Check<HoldNoteScore>(L, 1)] )
+	DEFINE_METHOD( FullCombo,					FullCombo() )
 	DEFINE_METHOD( FullComboOfScore,			FullComboOfScore( Enum::Check<TapNoteScore>(L, 1) ) )
-	DEFINE_METHOD( MaxCombo,			GetMaxCombo().m_cnt )
-	DEFINE_METHOD( GetCurrentLife,			GetCurrentLife() )
-	DEFINE_METHOD( GetGrade,			GetGrade() )
+	DEFINE_METHOD( MaxCombo,					GetMaxCombo().m_cnt )
+	DEFINE_METHOD( GetCurrentLife,				GetCurrentLife() )
+	DEFINE_METHOD( GetGrade,					GetGrade() )
 	DEFINE_METHOD( GetActualDancePoints,		m_iActualDancePoints )
 	DEFINE_METHOD( GetPossibleDancePoints,		m_iPossibleDancePoints )
 	DEFINE_METHOD( GetCurrentPossibleDancePoints,		m_iCurPossibleDancePoints )
@@ -678,10 +678,11 @@ public:
 	DEFINE_METHOD( GetLessonScoreNeeded,		GetLessonScoreNeeded() )
 	DEFINE_METHOD( GetPersonalHighScoreIndex,	m_iPersonalHighScoreIndex )
 	DEFINE_METHOD( GetMachineHighScoreIndex,	m_iMachineHighScoreIndex )
-	DEFINE_METHOD( GetStageAward,		m_StageAward )
-	DEFINE_METHOD( GetPeakComboAward,		m_PeakComboAward )
-	DEFINE_METHOD( IsDisqualified,			IsDisqualified() )
-	DEFINE_METHOD( GetAliveSeconds,		m_fAliveSeconds )
+	DEFINE_METHOD( GetStageAward,				m_StageAward )
+	DEFINE_METHOD( GetPeakComboAward,			m_PeakComboAward )
+	DEFINE_METHOD( IsDisqualified,				IsDisqualified() )
+	DEFINE_METHOD( GetAliveSeconds,				m_fAliveSeconds )
+	DEFINE_METHOD( GetPercentageOfTaps,			GetPercentageOfTaps( Enum::Check<TapNoteScore>(L, 1) ) )
 
 	static int GetPlayedSteps( T* p, lua_State *L )
 	{
@@ -734,6 +735,7 @@ public:
 		ADD_METHOD( GetPlayedSteps );
 		ADD_METHOD( GetPossibleSteps );
 		ADD_METHOD( GetAliveSeconds );
+		ADD_METHOD( GetPercentageOfTaps );
 	}
 };
 

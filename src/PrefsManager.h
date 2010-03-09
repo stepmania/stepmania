@@ -147,15 +147,15 @@ protected:
 
 public:
 	Preference<bool>	m_bWindowed;
-	Preference<int>		m_iDisplayWidth;
-	Preference<int>		m_iDisplayHeight;
+	Preference<int>	m_iDisplayWidth;
+	Preference<int>	m_iDisplayHeight;
 	Preference<float>	m_fDisplayAspectRatio;
-	Preference<int>		m_iDisplayColorDepth;
-	Preference<int>		m_iTextureColorDepth;
-	Preference<int>		m_iMovieColorDepth;
+	Preference<int>	m_iDisplayColorDepth;
+	Preference<int>	m_iTextureColorDepth;
+	Preference<int>	m_iMovieColorDepth;
 	Preference<HighResolutionTextures>	m_HighResolutionTextures;
-	Preference<int>		m_iMaxTextureResolution;
-	Preference<int>		m_iRefreshRate;
+	Preference<int>	m_iMaxTextureResolution;
+	Preference<int>	m_iRefreshRate;
 	Preference<bool>	m_bAllowMultitexture;
 	Preference<bool>	m_bShowStats;
 	Preference<bool>	m_bShowBanners;
@@ -169,7 +169,7 @@ public:
 	Preference<BannerCacheMode>		m_BannerCache;
 	Preference<BackgroundCacheMode>		m_BackgroundCache;
 	Preference<bool>	m_bFastLoad;
-	Preference<bool>        m_bFastLoadAdditionalSongs;
+	Preference<bool>	m_bFastLoadAdditionalSongs;
 
 	Preference<bool>	m_bOnlyDedicatedMenuButtons;
 	Preference<bool>	m_bMenuTimer;
@@ -177,27 +177,27 @@ public:
 	Preference<float>	m_fLifeDifficultyScale;
 
 	// Whoever added these: Please add a comment saying what they do. -Chris
-	Preference<int>		m_iRegenComboAfterMiss;
-	Preference<bool>	m_bMercifulDrain;	// negative life deltas are scaled by the players life percentage
-	Preference<bool>	m_bMinimum1FullSongInCourses;	// FEoS for 1st song, FailImmediate thereafter
+	Preference<int>	m_iRegenComboAfterMiss;
+	Preference<bool>	m_bMercifulDrain; // negative life deltas are scaled by the players life percentage
+	Preference<bool>	m_bMinimum1FullSongInCourses; // FEoS for 1st song, FailImmediate thereafter
 	Preference<bool>	m_bFailOffInBeginner;
 	Preference<bool>	m_bFailOffForFirstStageEasy;
-	Preference<bool>	m_bMercifulBeginner;	// don't subtract from percent score or grade DP, larger W5 window
-	Preference<bool>	m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
+	Preference<bool>	m_bMercifulBeginner; // don't subtract from percent score or grade DP, larger W5 window
+	Preference<bool>	m_bMercifulSuperMeter; // negative super deltas are scaled by the players life percentage
 	Preference<bool>	m_bDelayedBack;
-	Preference<bool>	m_bShowInstructions;	// how to play a mode
-	Preference<bool>	m_bShowSelectGroup;	// uh i thought we removed this shit
+	Preference<bool>	m_bShowInstructions; // how to play a mode
+	Preference<bool>	m_bShowSelectGroup; // uh i thought we removed this shit -aj
 	Preference<bool>	m_bShowCaution;
 	Preference<bool>	m_bShowNativeLanguage;
-	Preference<int>		m_iArcadeOptionsNavigation;
+	Preference<int>	m_iArcadeOptionsNavigation;
 	Preference<MusicWheelUsesSections>		m_MusicWheelUsesSections;
-	Preference<int>		m_iMusicWheelSwitchSpeed;
-	Preference<AllowW1>	m_AllowW1;	// this should almost always be on, given use cases.
-	Preference<bool>	m_bEventMode;	// IF THIS IS NOT TRUE I WILL SHIT IN YOUR MOUTH -aj
-	Preference<int>		m_iCoinsPerCredit;
-	Preference<int>		m_iSongsPerPlay;
-	Preference<bool>	m_bDelayedCreditsReconcile;	// zuh?
-	Preference<Maybe>		m_ShowSongOptions;
+	Preference<int>	m_iMusicWheelSwitchSpeed;
+	Preference<AllowW1>	m_AllowW1; // this should almost always be on, given use cases. -aj
+	Preference<bool>	m_bEventMode;
+	Preference<int>	m_iCoinsPerCredit;
+	Preference<int>	m_iSongsPerPlay;
+	Preference<bool>	m_bDelayedCreditsReconcile; // zuh?
+	Preference<Maybe>	m_ShowSongOptions;
 	Preference<bool>	m_bDancePointsForOni;
 	Preference<bool>	m_bPercentageScoring;
 	Preference<float>	m_fMinPercentageForMachineSongHighScore;
@@ -211,22 +211,22 @@ public:
 	Preference<ShowDancingCharacters>		m_ShowDancingCharacters;
 	Preference<bool>	m_bUseUnlockSystem;
 	Preference<float>	m_fGlobalOffsetSeconds;
-	Preference<int>		m_iProgressiveLifebar;
-	Preference<int>		m_iProgressiveStageLifebar;
-	Preference<int>		m_iProgressiveNonstopLifebar;
+	Preference<int>	m_iProgressiveLifebar;
+	Preference<int>	m_iProgressiveStageLifebar;
+	Preference<int>	m_iProgressiveNonstopLifebar;
 	Preference<bool>	m_bShowBeginnerHelper;
 	Preference<bool>	m_bDisableScreenSaver;
 	Preference<RString>	m_sLanguage;
-	Preference<RString>	m_sMemoryCardProfileSubdir;	// the directory on a memory card to look in for a profile
-	Preference<int>		m_iProductID;		// Saved in HighScore to track what software version a score came from.
-	Preference<int>		m_iCenterImageTranslateX;
-	Preference<int>		m_iCenterImageTranslateY;
-	Preference<int>		m_fCenterImageAddWidth;
-	Preference<int>		m_fCenterImageAddHeight;
+	Preference<RString>	m_sMemoryCardProfileSubdir; // the directory on a memory card to look in for a profile
+	Preference<int>	m_iProductID; // Saved in HighScore to track what software version a score came from.
+	Preference<int>	m_iCenterImageTranslateX;
+	Preference<int>	m_iCenterImageTranslateY;
+	Preference<int>	m_fCenterImageAddWidth;
+	Preference<int>	m_fCenterImageAddHeight;
 	Preference<AttractSoundFrequency>	m_AttractSoundFrequency;
 	Preference<bool>	m_bAllowExtraStage;
-	Preference<int>		m_iMaxHighScoresPerListForMachine;
-	Preference<int>		m_iMaxHighScoresPerListForPlayer;
+	Preference<int>	m_iMaxHighScoresPerListForMachine;
+	Preference<int>	m_iMaxHighScoresPerListForPlayer;
 	Preference<bool>	m_bAllowMultipleHighScoreWithSameName;
 	Preference<bool>	m_bCelShadeModels;
 	Preference<bool>	m_bPreferredSortUsesGroups;
@@ -241,15 +241,15 @@ public:
 	Preference<bool>	m_bTrilinearFiltering;		// has no effect without mipmaps on
 	Preference<bool>	m_bAnisotropicFiltering;	// has no effect without mipmaps on.  Not mutually exclusive with trilinear.
 
-	// If true, then signatures created when writing profile data 
-	// and verified when reading profile data.  Leave this false if 
-	// you want to use a profile on different machines that don't 
-	// have the same key, or else the profile's data will be discarded.
+	// If true, then signatures created when writing profile data and verified
+	// when reading profile data. Leave this false if you want to use a profile
+	// on different machines that don't have the same key, or else the
+	// profile's data will be discarded.
 	Preference<bool>	m_bSignProfileData;
-	
+
 	// course ranking
 	Preference<CourseSortOrders>	m_CourseSortOrder;
-	Preference<bool>	m_bSubSortByNumSteps;	
+	Preference<bool>	m_bSubSortByNumSteps;
 	Preference<GetRankingName>	m_GetRankingName;
 
 	Preference<ScoringType>	m_ScoringType;
@@ -262,11 +262,11 @@ public:
 	Preference<RString>	m_sDefaultTheme;
 
 	Preference<RString>	m_sLastSeenVideoDriver;
-	Preference<RString>	m_sVideoRenderers;		// StepMania.cpp sets these on first run based on the card
+	Preference<RString>	m_sVideoRenderers; // StepMania.cpp sets these on first run based on the card
 	Preference<bool>	m_bSmoothLines;
-	Preference<int>		m_iSoundWriteAhead;
+	Preference<int>	m_iSoundWriteAhead;
 	Preference<RString>	m_iSoundDevice;	
-	Preference<int>		m_iSoundPreferredSampleRate;
+	Preference<int>	m_iSoundPreferredSampleRate;
 	Preference<RString>	m_sLightsStepsDifficulty;
 	Preference<bool>	m_bAllowUnacceleratedRenderer;
 	Preference<bool>	m_bThreadedInput;
@@ -277,9 +277,9 @@ public:
 	Preference<RString>	m_sMachineName;
 	Preference<RString>	m_sCoursesToShowRanking;
 
-	Preference<bool>	m_bQuirksMode;			// enable quirky behavior desired by users of microsoft stepmania explorer 6.9
+	Preference<bool>	m_bQuirksMode; // enable quirky behavior desired by users of microsoft stepmania explorer 6.9
 
-	/* Debug: */
+	// Debug:
 	Preference<bool>	m_bLogToDisk;
 	Preference<bool>	m_bForceLogFlush;
 	Preference<bool>	m_bShowLogOutput;
@@ -291,7 +291,6 @@ public:
 #if !defined(WITHOUT_NETWORKING)
 	Preference<bool>	m_bEnableScoreboard;  //Alows disabling of scoreboard in network play
 #endif
-
 
 	void ReadPrefsFromIni( const IniFile &ini, const RString &sSection, bool bIsStatic );
 	void ReadGamePrefsFromIni( const RString &sIni );
@@ -312,9 +311,6 @@ protected:
 	void ReadPrefsFromFile( const RString &sIni, const RString &sSection, bool bIsStatic );
 	void ReadDefaultsFromFile( const RString &sIni, const RString &sSection );
 };
-
-
-
 
 /* This is global, because it can be accessed by crash handlers and error handlers
  * that are run after PREFSMAN shuts down (and probably don't want to deref that

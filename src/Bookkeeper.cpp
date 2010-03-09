@@ -127,7 +127,7 @@ void Bookkeeper::ReadFromDisk()
 
 void Bookkeeper::WriteToDisk()
 {
-	// Write data.  Use SLOW_FLUSH, to help ensure that we don't lose coin data.
+	// Write data. Use SLOW_FLUSH, to help ensure that we don't lose coin data.
 	RageFile f;
 	if( !f.Open(COINS_DAT, RageFile::WRITE|RageFile::SLOW_FLUSH) )
 	{
@@ -147,7 +147,7 @@ void Bookkeeper::CoinInserted()
 	++m_mapCoinsForHour[d];
 }
 
-/* Return the number of coins between [beginning,ending). */
+// Return the number of coins between [beginning,ending).
 int Bookkeeper::GetNumCoinsInRange( map<Date,int>::const_iterator begin, map<Date,int>::const_iterator end ) const
 {
 	int iCoins = 0;
@@ -206,8 +206,8 @@ void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] ) const
 	}
 }
 
-/* iDay is days since Jan 1.  iYear is eg. 2005.  Return the day of the week, where
- * 0 is Sunday. */
+/* iDay is days since Jan 1. iYear is eg. 2005. Return the day of the week,
+ * where 0 is Sunday. */
 void Bookkeeper::GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] ) const
 {
 	for( int i=0; i<DAYS_IN_WEEK; i++ )

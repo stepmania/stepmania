@@ -72,33 +72,33 @@ public:
 
 	struct Combo_t
 	{
-		/* Start and size of this combo, in the same scale as the combo list mapping and
-		 * the life record. */
+		/* Start and size of this combo, in the same scale as the combo list
+		 * mapping and the life record. */
 		float m_fStartSecond, m_fSizeSeconds;
 
-		/* Combo size, in steps. */
+		// Combo size, in steps.
 		int m_cnt;
 
-		/* Size of the combo that didn't come from this stage (rollover from the last song). 
-		 * (This is a subset of cnt.) */
+		/* Size of the combo that didn't come from this stage (rollover from the
+		 * last song). (This is a subset of cnt.) */
 		int m_rollover;
 
-		/* Get the size of the combo that came from this song. */
+		// Get the size of the combo that came from this song.
 		int GetStageCnt() const { return m_cnt - m_rollover; }
 
 		Combo_t(): m_fStartSecond(0), m_fSizeSeconds(0), m_cnt(0), m_rollover(0) { }
 		bool IsZero() const { return m_fStartSecond < 0; }
 	};
 	vector<Combo_t> m_ComboList;
-	float		m_fFirstSecond;
-	float		m_fLastSecond;
+	float	m_fFirstSecond;
+	float	m_fLastSecond;
 
 	int	GetComboAtStartOfStage() const;
 	bool	FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
 	bool	FullCombo() const { return FullComboOfScore(TNS_W3); }
 	bool	SingleDigitsOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
 	bool	OneOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
-	int	GetTotalTaps() const;
+	int		GetTotalTaps() const;
 	float	GetPercentageOfTaps( TapNoteScore tns ) const;
 	void	UpdateComboList( float fSecond, bool rollover );
 	Combo_t GetMaxCombo() const;
@@ -112,8 +112,8 @@ public:
 
 	int		m_iPersonalHighScoreIndex;
 	int		m_iMachineHighScoreIndex;
-	bool		m_bDisqualified;
-	bool IsDisqualified() const;
+	bool	m_bDisqualified;
+	bool	IsDisqualified() const;
 
 	RankingCategory	m_rc;
 	HighScore	m_HighScore;

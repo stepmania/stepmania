@@ -27,7 +27,7 @@ public:
 
 	void Load( int iIndex, const Commands& cmds );
 	void LoadOne( const Command& cmd );
-	
+
 	void ApplyToAllPlayers() const;
 	void Apply( PlayerNumber pn ) const;
 private:
@@ -39,12 +39,12 @@ public:
 	bool DescribesCurrentModeForAllPlayers() const;
 	bool IsPlayable( RString *why = NULL ) const;
 	bool IsZero() const;
-	
-	/* If true, Apply() will apply m_sScreen.  If false, it won't, and you need
+
+	/* If true, Apply() will apply m_sScreen. If false, it won't, and you need
 	 * to do it yourself. */
 	void ApplyCommitsScreens( bool bOn ) { m_bApplyCommitsScreens = bOn; }
 
-	// Same as what was passed to Load.  We need to keep the original commands
+	// Same as what was passed to Load. We need to keep the original commands
 	// so that we know the order of commands when it comes time to Apply.
 	Commands	m_Commands;
 
@@ -78,7 +78,7 @@ public:
 	GoalType	m_GoalType;
 	RString		m_sProfileID;
 	RString		m_sUrl;
-	/* sm-ssc adds: */
+	// sm-ssc adds:
 	bool		m_bUrlExits;	// for making stepmania not exit on url
 	bool		m_bPushScreen;	// for pushing a screen on top instead of as next
 
@@ -86,7 +86,7 @@ public:
 	bool m_bClearCredits;
 	bool m_bStopMusic;
 	bool m_bApplyDefaultOptions;
-	/* sm-ssc also adds: */
+	// sm-ssc also adds:
 	bool m_bFadeMusic;
 	float m_fMusicFadeOutVolume;
 	// currently, GameSoundManager uses consts for fade out/in times, so this

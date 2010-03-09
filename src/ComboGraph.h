@@ -18,9 +18,7 @@ public:
 	virtual ComboGraph *Copy() const;
 	virtual bool AutoLoadChildren() const { return true; }
 
-	//
 	// Commands
-	//
 	virtual void PushSelf( lua_State *L );
 
 private:

@@ -40,10 +40,8 @@ static float g_fImageScaleDestination = 1;
 static const ThemeMetric<RageColor>	LINE_ON_COLOR	("ScreenDebugOverlay", "LineOnColor");
 static const ThemeMetric<RageColor>	LINE_OFF_COLOR	("ScreenDebugOverlay", "LineOffColor");
 
-//
 // self-registering debug lines
 // We don't use SubscriptionManager, because we want to keep the line order.
-//
 static LocalizedString ON			( "ScreenDebugOverlay", "on" );
 static LocalizedString OFF			( "ScreenDebugOverlay", "off" );
 
@@ -256,6 +254,7 @@ void ScreenDebugOverlay::Init()
 		p->SetName( "PageText" );
 		p->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "page") );
 		LOAD_ALL_COMMANDS( p );
+		// todo: be able to set different values? -aj
 		p->SetXY( SCREEN_CENTER_X-100+iPage*100, SCREEN_TOP+20 );
 		p->SetText( *s + " (" + sButton + ")" );
 		p->SetShadowLength( 1 );
@@ -299,7 +298,7 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 		if( INPUTFILTER->IsBeingPressed(g_Mappings.holdForFast) )
 		{
 			if( INPUTFILTER->IsBeingPressed(g_Mappings.holdForSlow) )
-				fRate = 0; /* both; stop time */
+				fRate = 0; // both; stop time
 			else
 				fRate *= 4;
 		}
@@ -352,6 +351,7 @@ void ScreenDebugOverlay::UpdateText()
 		m_vptextPages[iPage]->PlayCommand( (iPage == m_iCurrentPage) ? "GainFocus" :  "LoseFocus" );
 	}
 
+	// todo: allow changing of various spacing/location things -aj
 	int iOffset = 0;
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
 	{
@@ -395,7 +395,7 @@ void ScreenDebugOverlay::UpdateText()
 			s1 += " - ";
 		txt2.SetText( s1 + s2 );
 	}
-	
+
 	if( g_bIsHalt )
 	{
 		/* More than once I've paused the game accidentally and wasted time
@@ -442,7 +442,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 	if( g_bIsDisplayed && GetValueFromMap(g_Mappings.pageButton, input.DeviceI, iPage) )
 	{
 		if( input.type != IET_FIRST_PRESS )
-			return true; /* eat the input but do nothing */
+			return true; // eat the input but do nothing
 		m_iCurrentPage = iPage;
 		CLAMP( m_iCurrentPage, 0, (int) m_asPages.size()-1 );
 		return true;
@@ -454,8 +454,8 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 
 		int i = p-g_pvpSubscribers->begin();
 
-		// Gameplay buttons are available only in gameplay.  Non-gameplay buttons are
-		// only available when the screen is displayed.
+		// Gameplay buttons are available only in gameplay. Non-gameplay buttons
+		// are only available when the screen is displayed.
 		switch( (*p)->GetType() )
 		{
 		case IDebugLine::all_screens:
@@ -475,7 +475,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 		if( input.DeviceI == (*p)->m_Button )
 		{
 			if( input.type != IET_FIRST_PRESS )
-				return true; /* eat the input but do nothing */
+				return true; // eat the input but do nothing
 
 			// do the action
 			RString sMessage;
@@ -509,9 +509,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 }
 
 
-//
 // DebugLine helpers
-//
 static void SetSpeed()
 {
 	// PauseMusic( g_bIsHalt );
@@ -537,36 +535,33 @@ void ChangeVisualDelay( float fDelta )
 }
 
 
-
-//
 // DebugLines
-//
 static LocalizedString AUTO_PLAY		( "ScreenDebugOverlay", "AutoPlay" );
 static LocalizedString ASSIST			( "ScreenDebugOverlay", "Assist" );
-static LocalizedString AUTOSYNC			( "ScreenDebugOverlay", "Autosync" );
+static LocalizedString AUTOSYNC		( "ScreenDebugOverlay", "Autosync" );
 static LocalizedString COIN_MODE		( "ScreenDebugOverlay", "CoinMode" );
 static LocalizedString HALT			( "ScreenDebugOverlay", "Halt" );
-static LocalizedString LIGHTS_DEBUG		( "ScreenDebugOverlay", "Lights Debug" );
-static LocalizedString MONKEY_INPUT		( "ScreenDebugOverlay", "Monkey Input" );
-static LocalizedString RENDERING_STATS		( "ScreenDebugOverlay", "Rendering Stats" );
+static LocalizedString LIGHTS_DEBUG	( "ScreenDebugOverlay", "Lights Debug" );
+static LocalizedString MONKEY_INPUT	( "ScreenDebugOverlay", "Monkey Input" );
+static LocalizedString RENDERING_STATS	( "ScreenDebugOverlay", "Rendering Stats" );
 static LocalizedString VSYNC			( "ScreenDebugOverlay", "Vsync" );
-static LocalizedString MULTITEXTURE		( "ScreenDebugOverlay", "Multitexture" );
-static LocalizedString SCREEN_TEST_MODE		( "ScreenDebugOverlay", "Screen Test Mode" );
+static LocalizedString MULTITEXTURE	( "ScreenDebugOverlay", "Multitexture" );
+static LocalizedString SCREEN_TEST_MODE	( "ScreenDebugOverlay", "Screen Test Mode" );
 static LocalizedString SCREEN_SHOW_MASKS	( "ScreenDebugOverlay", "Show Masks" );
 static LocalizedString PROFILE			( "ScreenDebugOverlay", "Profile" );
 static LocalizedString CLEAR_PROFILE_STATS	( "ScreenDebugOverlay", "Clear Profile Stats" );
 static LocalizedString FILL_PROFILE_STATS	( "ScreenDebugOverlay", "Fill Profile Stats" );
-static LocalizedString SEND_NOTES_ENDED		( "ScreenDebugOverlay", "Send Notes Ended" );
+static LocalizedString SEND_NOTES_ENDED	( "ScreenDebugOverlay", "Send Notes Ended" );
 static LocalizedString RELOAD			( "ScreenDebugOverlay", "Reload" );
 static LocalizedString RESTART			( "ScreenDebugOverlay", "Restart" );
 static LocalizedString SCREEN_ON		( "ScreenDebugOverlay", "Send On To Screen" );
 static LocalizedString SCREEN_OFF		( "ScreenDebugOverlay", "Send Off To Screen" );
 static LocalizedString RELOAD_THEME_AND_TEXTURES( "ScreenDebugOverlay", "Reload Theme and Textures" );
-static LocalizedString WRITE_PROFILES		( "ScreenDebugOverlay", "Write Profiles" );
+static LocalizedString WRITE_PROFILES	( "ScreenDebugOverlay", "Write Profiles" );
 static LocalizedString WRITE_PREFERENCES	( "ScreenDebugOverlay", "Write Preferences" );
 static LocalizedString MENU_TIMER		( "ScreenDebugOverlay", "Menu Timer" );
 static LocalizedString FLUSH_LOG		( "ScreenDebugOverlay", "Flush Log" );
-static LocalizedString PULL_BACK_CAMERA		( "ScreenDebugOverlay", "Pull Back Camera" );
+static LocalizedString PULL_BACK_CAMERA	( "ScreenDebugOverlay", "Pull Back Camera" );
 static LocalizedString VISUAL_DELAY_UP		( "ScreenDebugOverlay", "Visual Delay Up" );
 static LocalizedString VISUAL_DELAY_DOWN	( "ScreenDebugOverlay", "Visual Delay Down" );
 static LocalizedString VOLUME_UP		( "ScreenDebugOverlay", "Volume Up" );
@@ -574,10 +569,10 @@ static LocalizedString VOLUME_DOWN		( "ScreenDebugOverlay", "Volume Down" );
 static LocalizedString UPTIME			( "ScreenDebugOverlay", "Uptime" );
 static LocalizedString FORCE_CRASH		( "ScreenDebugOverlay", "Force Crash" );
 static LocalizedString SLOW			( "ScreenDebugOverlay", "Slow" );
-static LocalizedString CPU			( "ScreenDebugOverlay", "CPU" );
+static LocalizedString CPU				( "ScreenDebugOverlay", "CPU" );
 static LocalizedString SONG			( "ScreenDebugOverlay", "Song" );
 static LocalizedString MACHINE			( "ScreenDebugOverlay", "Machine" );
-static LocalizedString SYNC_TEMPO   ( "ScreenDebugOverlay", "Tempo" );
+static LocalizedString SYNC_TEMPO		( "ScreenDebugOverlay", "Tempo" );
 
 
 class DebugLineAutoplay : public IDebugLine
@@ -882,8 +877,8 @@ static void FillProfileStats( Profile *pProfile )
 	pProfile->InitCourseScores();
 
 	static int s_iCount = 0;
-	// Choose a percent for all scores.  This is useful for testing unlocks
-	// where some elements are unlocked at a certain percent complete
+	// Choose a percent for all scores. This is useful for testing unlocks
+	// where some elements are unlocked at a certain percent complete.
 	float fPercentDP = s_iCount ? randomf( 0.6f, 1.0f ) : 1.0f;
 	s_iCount = (s_iCount+1)%2;
 
@@ -1032,7 +1027,7 @@ class DebugLineReloadTheme : public IDebugLine
 		TEXTUREMAN->ReloadAll();
 		NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 		CodeDetector::RefreshCacheItems();
-		// HACK: Don't update text below.  Return immediately because this screen
+		// HACK: Don't update text below. Return immediately because this screen
 		// was just destroyed as part of the theme reload.
 		IDebugLine::DoAndLog( sMessageOut );
 	}

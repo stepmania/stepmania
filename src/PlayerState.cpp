@@ -62,12 +62,12 @@ void PlayerState::Update( float fDelta )
 
 	bool bRebuildPlayerOptions = false;
 
-	/* See if any delayed attacks are starting or ending. */
+	// See if any delayed attacks are starting or ending.
 	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
 	{
 		Attack &attack = m_ActiveAttacks[s];
 
-		// -1 is the "starts now" sentinel value.  You must add the attack
+		// -1 is the "starts now" sentinel value. You must add the attack
 		// by calling GameState::LaunchAttack, or else the -1 won't be 
 		// converted into the current music time.  
 		ASSERT( attack.fStartSecond != -1 );
@@ -78,7 +78,7 @@ void PlayerState::Update( float fDelta )
 			GAMESTATE->m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining );
 
 		if( m_ActiveAttacks[s].bOn == bCurrentlyEnabled )
-			continue; /* OK */
+			continue; // OK
 
 		if( m_ActiveAttacks[s].bOn && !bCurrentlyEnabled )
 			m_bAttackEndedThisUpdate = true;
@@ -93,7 +93,7 @@ void PlayerState::Update( float fDelta )
 	if( bRebuildPlayerOptions )
 		RebuildPlayerOptionsFromActiveAttacks();
 
-	/* Update after enabling attacks, so we appraoch the new state. */
+	// Update after enabling attacks, so we approach the new state.
 	m_PlayerOptions.Update( fDelta );
 
 	if( m_fSecondsUntilAttacksPhasedOut > 0 )
@@ -135,10 +135,10 @@ void PlayerState::LaunchAttack( const Attack& a )
 
 	Attack attack = a;
 
-	/* If fStartSecond is -1, it means "launch as soon as possible".  For m_ActiveAttacks,
-	 * mark the real time it's starting (now), so Update() can know when the attack started
-	 * so it can be removed later.  For m_ModsToApply, leave the -1 in, so Player::Update
-	 * knows to apply attack transforms correctly.  (yuck) */
+	/* If fStartSecond is -1, it means "launch as soon as possible". For m_ActiveAttacks,
+	 * mark the real time it's starting (now), so Update() can know when the attack
+	 * started so it can be removed later.  For m_ModsToApply, leave the -1 in,
+	 * so Player::Update knows to apply attack transforms correctly. (yuck) */
 	m_ModsToApply.push_back( attack );
 	if( attack.fStartSecond == -1 )
 		attack.fStartSecond = GAMESTATE->m_fMusicSeconds;
@@ -221,6 +221,7 @@ class LunaPlayerState: public Luna<PlayerState>
 {
 public:
 	DEFINE_METHOD( GetPlayerNumber, m_PlayerNumber );
+	DEFINE_METHOD( GetMultiPlayerNumber, m_mp );
 	DEFINE_METHOD( GetPlayerController, m_PlayerController );
 	static int SetPlayerOptions( T* p, lua_State *L )
 	{
@@ -241,6 +242,7 @@ public:
 	LunaPlayerState()
 	{
 		ADD_METHOD( GetPlayerNumber );
+		ADD_METHOD( GetMultiPlayerNumber );
 		ADD_METHOD( SetPlayerOptions );
 		ADD_METHOD( GetPlayerOptions );
 	}

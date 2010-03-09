@@ -66,7 +66,7 @@ void StepsDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlaye
 
 	if( m_bShowTicks )
 	{
-		RString sChars = "10";	// on, off (todo: make this metricable -aj)
+		RString sChars = "10"; // on, off (todo: make this metricable -aj)
 		m_textTicks.SetName( "Ticks" );
 		m_textTicks.LoadFromTextureAndChars( THEME->GetPathF(m_sMetricsGroup,"ticks"), sChars );
 		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textTicks, m_sMetricsGroup );

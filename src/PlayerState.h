@@ -21,7 +21,7 @@ public:
 	// TODO: Remove use of PlayerNumber.  All data about the player should live 
 	// in PlayerState and callers should not use PlayerNumber to index into 
 	// GameState.
-	PlayerNumber		m_PlayerNumber;
+	PlayerNumber	m_PlayerNumber;
 	MultiPlayer		m_mp;
 
 	void ResetToDefaultPlayerOptions( ModsLevel l );
@@ -32,9 +32,9 @@ public:
 
 	HealthState		m_HealthState;
 
-	float			m_fLastStrumMusicSeconds;	// Set to the MusicSeconds of when the a strum button was pressed.  If -1, the strum window has passed.
-	float			m_fLastHopoNoteMusicSeconds;	// Set to the MusicSeconds of the last note successfully strummed or hammered in a hopochain, -1, then there is no current hopo chain
-	int			m_iLastHopoNoteCol;	// if -1, then there is no current hopo chain
+	float		m_fLastStrumMusicSeconds;	// Set to the MusicSeconds of when the a strum button was pressed.  If -1, the strum window has passed.
+	float		m_fLastHopoNoteMusicSeconds;	// Set to the MusicSeconds of the last note successfully strummed or hammered in a hopochain, -1, then there is no current hopo chain
+	int			m_iLastHopoNoteCol;			// if -1, then there is no current hopo chain
 
 	float		m_fUpcomingMidiNote;
 	float		m_fWrappedMidiNote;
@@ -49,35 +49,33 @@ public:
 
 	SampleHistory m_EffectHistory;
 
-	//
 	// Used in Battle and Rave
-	//
 	void LaunchAttack( const Attack& a );
 	void RemoveActiveAttacks( AttackLevel al=NUM_ATTACK_LEVELS /*all*/ );
 	void EndActiveAttacks();
 	void RebuildPlayerOptionsFromActiveAttacks();
 	int GetSumOfActiveAttackLevels() const;
-	int			m_iCpuSkill;	// only used when m_PlayerController is PC_CPU
+	int		m_iCpuSkill;	// only used when m_PlayerController is PC_CPU
 	// Attacks take a while to transition out of use.  Account for this in PlayerAI
 	// by still penalizing it for 1 second after the player options are rebuilt.
-	int			m_iLastPositiveSumOfAttackLevels;
-	float			m_fSecondsUntilAttacksPhasedOut;// positive means PlayerAI is still affected
-	bool			m_bAttackBeganThisUpdate;	// flag for other objects to watch (play sounds)
-	bool			m_bAttackEndedThisUpdate;	// flag for other objects to watch (play sounds)
+	int		m_iLastPositiveSumOfAttackLevels;
+	float	m_fSecondsUntilAttacksPhasedOut; // positive means PlayerAI is still affected
+	bool	m_bAttackBeganThisUpdate;	// flag for other objects to watch (play sounds)
+	bool	m_bAttackEndedThisUpdate;	// flag for other objects to watch (play sounds)
 
 	AttackArray		m_ActiveAttacks;
-	vector<Attack>		m_ModsToApply;
+	vector<Attack>	m_ModsToApply;
 
 	// Haste
-	int			m_iTapsHitSinceLastHasteUpdate;
-	int			m_iTapsMissedSinceLastHasteUpdate;
+	int		m_iTapsHitSinceLastHasteUpdate;
+	int		m_iTapsMissedSinceLastHasteUpdate;
 
 	// Used in Rave
-	float			m_fSuperMeter;	// between 0 and NUM_ATTACK_LEVELS
-	float			m_fSuperMeterGrowthScale;
+	float	m_fSuperMeter;	// between 0 and NUM_ATTACK_LEVELS
+	float	m_fSuperMeterGrowthScale;
 	// Used in Battle
 	void RemoveAllInventory();
-	Attack			m_Inventory[NUM_INVENTORY_SLOTS];
+	Attack	m_Inventory[NUM_INVENTORY_SLOTS];
 
 	// Lua
 	void PushSelf( lua_State *L );
