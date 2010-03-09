@@ -814,7 +814,7 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 
 		if( SHOW_ICON )
 		{
-			/* XXX: If !SharedPreviewAndCursor, this is incorrect.  (Nothing uses
+			/* XXX: If !SharedPreviewAndCursor, this is incorrect. (Nothing uses
 			 * both icon focus and !SharedPreviewAndCursor right now.)
 			 * What is SharedPreviewAndCursor? -- Steve */
 			bool bOldStillHasFocus = false;
@@ -1119,15 +1119,15 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 		this->PostScreenMessage( SM_BeginFadingOut, fSecs );// tell our owner it's time to move on
 }
 
-/* We want all items to always run OnCommand and either GainFocus or LoseFocus on
- * tween-in.  If we only run OnCommand, then it has to contain a copy of either
- * GainFocus or LoseFocus, which implies that the default setting is hard-coded
- * in the theme.  Always run both.
- * However, the actual tween-in is OnCommand; we don't always want to actually run
- * through the Gain/LoseFocus tweens during initial tween-in.  So, we run the focus
- * command first, do a FinishTweening to pop it in place, and then run OnCommand.
- * This means that the focus command should be position neutral; eg. only use "addx",
- * not "x". */
+/* We want all items to always run OnCommand and either GainFocus or LoseFocus
+ * on tween-in. If we only run OnCommand, then it has to contain a copy of
+ * either GainFocus or LoseFocus, which implies that the default setting is
+ * hard-coded in the theme. Always run both.
+ * However, the actual tween-in is OnCommand; we don't always want to actually
+ * run through the Gain/LoseFocus tweens during initial tween-in. So, we run
+ * the focus command first, do a FinishTweening to pop it in place, and then
+ * run OnCommand. This means that the focus command should be position neutral;
+ * eg. only use "addx", not "x". */
 void ScreenSelectMaster::TweenOnScreen()
 {
 	vector<PlayerNumber> vpns;
@@ -1272,6 +1272,27 @@ float ScreenSelectMaster::GetCursorY( PlayerNumber pn )
 	AutoActor &spr = m_vsprIcon[iChoice];
 	return spr->GetDestY() + CURSOR_OFFSET_Y_FROM_ICON.GetValue(pn);
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaScreenSelectMaster: public Luna<ScreenSelectMaster>
+{
+public:
+	static int GetSelectionIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->GetSelectionIndexOfPlayer(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
+	// should I even bother adding this? -aj
+	// would have to make a public function to get this in ssmaster.h:
+	// m_aGameCommands[i].m_sName
+	// static int SelectionIndexToChoiceName( T* p, lua_State *L ){  return 1; }
+
+	LunaScreenSelectMaster()
+	{
+  		ADD_METHOD( GetSelectionIndex );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScreenSelectMaster, ScreenWithMenuElements )
+// lua end
 
 /*
  * (c) 2003-2004 Chris Danford

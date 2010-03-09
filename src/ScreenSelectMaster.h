@@ -39,6 +39,12 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual bool AllowLateJoin() const { return true; }
 
+	// sm-ssc additions:
+	int GetSelectionIndexOfPlayer(PlayerNumber pn){ return GetSelectionIndex(pn); }
+
+	// Lua
+	virtual void PushSelf( lua_State *L );
+
 protected:
 	enum Page { PAGE_1, PAGE_2, NUM_Page };	// on PAGE_2, cursors are locked together
 	static PlayerNumber GetSharedPlayer();
@@ -75,7 +81,6 @@ protected:
 	map<int,int> m_mapCurrentChoiceToNextChoice[NUM_MenuDir];
 	map<int,int> m_mapCurrentChoiceToNextChoiceB[NUM_MenuDir]; // if using two lists
 
-
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
 	bool AnyOptionsArePlayable() const;
@@ -93,16 +98,14 @@ protected:
 	AutoActor	m_sprMore[NUM_Page];
 	// icon is the shared, per-choice piece
 	vector<AutoActor> m_vsprIcon;
-	vector<AutoActor> m_vsprIconB; // used if the user wants two lists
+	vector<AutoActor> m_vsprIconB; // used if a themer wants two lists
 
 	// preview is per-player, per-choice piece
 	vector<AutoActor> m_vsprScroll[NUM_PLAYERS];
-	vector<AutoActor> m_vsprScrollB[NUM_PLAYERS]; // used if the user wants two lists
-
+	vector<AutoActor> m_vsprScrollB[NUM_PLAYERS]; // used if a themer wants two lists
 
 	ActorScroller	m_Scroller[NUM_PLAYERS];
-	ActorScroller	m_ScrollerB[NUM_PLAYERS]; // used if the user wants two lists
-
+	ActorScroller	m_ScrollerB[NUM_PLAYERS]; // used if a themer wants two lists
 
 	// cursor is the per-player, shared by all choices
 	AutoActor	m_sprCursor[NUM_PLAYERS];
