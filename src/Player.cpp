@@ -3020,13 +3020,13 @@ void Player::SetCombo( int iCombo, int iMisses )
 			msg.SetParam( "Combo", iCombo );
 		if( iMisses )
 			msg.SetParam( "Misses", iMisses );
-		if( bPastPastBeginning && m_pPlayerStageStats->FullComboOfScore(TNS_W1) )
+		if( bPastBeginning && m_pPlayerStageStats->FullComboOfScore(TNS_W1) )
 			msg.SetParam( "FullComboW1", true );
-		if( bPastPastBeginning && m_pPlayerStageStats->FullComboOfScore(TNS_W2) )
+		if( bPastBeginning && m_pPlayerStageStats->FullComboOfScore(TNS_W2) )
 			msg.SetParam( "FullComboW2", true );
-		if( bPastPastBeginning && m_pPlayerStageStats->FullComboOfScore(TNS_W3) )
+		if( bPastBeginning && m_pPlayerStageStats->FullComboOfScore(TNS_W3) )
 			msg.SetParam( "FullComboW3", true );
-		if( bPastPastBeginning && m_pPlayerStageStats->FullComboOfScore(TNS_W4) )
+		if( bPastBeginning && m_pPlayerStageStats->FullComboOfScore(TNS_W4) )
 			msg.SetParam( "FullComboW4", true );
 		this->HandleMessage( msg );
 	}
