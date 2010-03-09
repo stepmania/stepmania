@@ -48,6 +48,7 @@ static const char *DetailLineNames[NUM_DetailLine] =
 	"NumSteps","Jumps", "Holds", "Mines", "Hands", "Rolls",
 };
 XToString( DetailLine );
+#define DETAILLINE_FORMAT			THEME->GetMetric (m_sName,"DetailLineFormat")
 
 #define CHEER_DELAY_SECONDS			THEME->GetMetricF(m_sName,"CheerDelaySeconds")
 #define BAR_ACTUAL_MAX_COMMAND			THEME->GetMetricA(m_sName,"BarActualMaxCommand")
@@ -66,10 +67,10 @@ XToString( DetailLine );
 #define SHOW_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowScoreArea")
 #define SHOW_TIME_AREA				THEME->GetMetricB(m_sName,"ShowTimeArea")
 #define SHOW_RECORDS_AREA			THEME->GetMetricB(m_sName,"ShowRecordsArea")
-#define MAX_COMBO_NUM_DIGITS			THEME->GetMetricI(m_sName,"MaxComboNumDigits")
-#define PLAYER_OPTIONS_HIDE_FAIL_TYPE		THEME->GetMetricB(m_sName,"PlayerOptionsHideFailType")
-#define PLAYER_OPTIONS_SEPARATOR		THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
-#define CHECKPOINTS_WITH_JUDGMENTS		THEME->GetMetricB(m_sName,"CheckpointsWithJudgments")
+#define MAX_COMBO_NUM_DIGITS		THEME->GetMetricI(m_sName,"MaxComboNumDigits")
+#define PLAYER_OPTIONS_HIDE_FAIL_TYPE	THEME->GetMetricB(m_sName,"PlayerOptionsHideFailType")
+#define PLAYER_OPTIONS_SEPARATOR	THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
+#define CHECKPOINTS_WITH_JUDGMENTS	THEME->GetMetricB(m_sName,"CheckpointsWithJudgments")
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
@@ -370,9 +371,7 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	//
 	// init bonus area
-	//
 	if( SHOW_BONUS_AREA )
 	{
 		FOREACH_EnabledPlayer( p )
@@ -395,14 +394,14 @@ void ScreenEvaluation::Init()
 				m_sprActualBar[p][r].Load( THEME->GetPathG(m_sName,ssprintf("BarActual p%d",p+1)) );
 				// should be out of the possible bar, not actual (whatever value that is at)
 				m_sprActualBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * m_pStageStats->m_player[p].m_radarActual[r] );
-				
+
 				float value = (float)100 * m_sprActualBar[p][r].GetUnzoomedWidth() / m_sprPossibleBar[p][r].GetUnzoomedWidth();
 				LOG->Trace("Radar bar %d of 5 - %f percent", r,  value);
-				
+
 				m_sprActualBar[p][r].SetName( ssprintf("BarActual%dP%d",r+1,p+1) );
 				ActorUtil::LoadAllCommands( m_sprActualBar[p][r], m_sName );
 				SET_XY( m_sprActualBar[p][r] );
-				
+
 				// .99999 is fairly close to 1.00, so we use that 
 				if( m_pStageStats->m_player[p].m_radarActual[r] > 0.99999f )
 					m_sprActualBar[p][r].RunCommands( BAR_ACTUAL_MAX_COMMAND );
@@ -411,9 +410,7 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	//
 	// init survived area
-	//
 	if( SHOW_SURVIVED_AREA )
 	{
 		FOREACH_EnabledPlayer( p )
@@ -434,10 +431,8 @@ void ScreenEvaluation::Init()
 			this->AddChild( &m_textSurvivedNumber[p] );
 		}
 	}
-	
-	//
+
 	// init win area
-	//
 	if( SHOW_WIN_AREA )
 	{
 		FOREACH_EnabledPlayer( p )
@@ -458,14 +453,12 @@ void ScreenEvaluation::Init()
 			this->AddChild( &m_sprWin[p] );
 		}
 	}
-	
-	//
+
 	// init judgment area
-	//
 	FOREACH_ENUM( JudgmentLine, l )
 	{
 		if( l == JudgmentLine_W1  && !GAMESTATE->ShowW1() )
-			continue;	// skip
+			continue; // skip
 
 		if( SHOW_JUDGMENT_LINE(l) )
 		{
@@ -528,9 +521,7 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	//
 	// init detail area
-	//
 	if( SHOW_DETAIL_AREA )
 	{
 		FOREACH_EnabledPlayer( p )
@@ -560,14 +551,14 @@ void ScreenEvaluation::Init()
 				const int iActual = lrintf(m_pStageStats->m_player[p].m_radarActual[ind]);
 				const int iPossible = lrintf(m_pStageStats->m_player[p].m_radarPossible[ind]);
 
-				m_textDetailText[l][p].SetText( ssprintf("%3d/%3d",iActual,iPossible) );
+				// todo: check if format string is valid
+				// (two integer values in DETAILLINE_FORMAT) -aj
+				m_textDetailText[l][p].SetText( ssprintf(DETAILLINE_FORMAT,iActual,iPossible) );
 			}
 		}
 	}
 
-	//
 	// init score area
-	//
 	if( SHOW_SCORE_AREA )
 	{
 		m_sprScoreLabel.Load( THEME->GetPathG(m_sName,"ScoreLabel") );
@@ -588,9 +579,7 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	//
 	// init time area
-	//
 	if( SHOW_TIME_AREA )
 	{
 		m_sprTimeLabel.Load( THEME->GetPathG(m_sName,"time label") );
@@ -611,9 +600,7 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	//
 	// init records area
-	//
 	bool bOneHasNewTopRecord = false;
 	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsPlayerEnabled(p) && (m_pStageStats->m_player[p].m_iMachineHighScoreIndex == 0 || m_pStageStats->m_player[p].m_iPersonalHighScoreIndex == 0) )
@@ -622,7 +609,7 @@ void ScreenEvaluation::Init()
 	Grade best_grade = Grade_NoData;
 	FOREACH_PlayerNumber( p )
 		best_grade = min( best_grade, grade[p] ); 
-	
+
 	if( m_pStageStats->m_EarnedExtraStage != EarnedExtraStage_No )
 	{
 		SOUND->PlayOnce( THEME->GetPathS(m_sName,"try " + EarnedExtraStageToString(m_pStageStats->m_EarnedExtraStage)) );
@@ -632,7 +619,7 @@ void ScreenEvaluation::Init()
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
 	}
 	else
-	{	
+	{
 		if( SUMMARY || GAMESTATE->IsCourseMode() )
 		{
 			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final "+GradeToOldString(best_grade)) );
@@ -662,7 +649,7 @@ void ScreenEvaluation::Init()
 	case Grade_Tier01:
 	case Grade_Tier02:	
 	case Grade_Tier03:	
-		this->PostScreenMessage( SM_PlayCheer, CHEER_DELAY_SECONDS );	
+		this->PostScreenMessage( SM_PlayCheer, CHEER_DELAY_SECONDS );
 		break;
 	}
 }
@@ -683,12 +670,12 @@ void ScreenEvaluation::Input( const InputEventPlus &input )
 			{
 				if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) )
 					MEMCARDMAN->MountCard( pn );
-			
+
 				Profile* pProfile = PROFILEMAN->GetProfile(pn);
 				RString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
 				int iScreenshotIndex = pProfile->GetNextScreenshotIndex();
 				RString sFileName = StepMania::SaveScreenshot( sDir, true, true, iScreenshotIndex );
-				
+
 				if( !sFileName.empty() )
 				{
 					RString sPath = sDir+sFileName;
