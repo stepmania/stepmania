@@ -1,0 +1,1 @@
+return GAMESTATE:IsCourseMode() and LoadActor( THEME:GetPathB( Var "LoadingScreen", "background" ) ) or LoadActor( THEME:GetPathB("ScreenEvaluation","background") );

@@ -17,6 +17,22 @@ function GameCompatibleModes()
 	return Modes[sGame];
 end
 
+-- ScoreKeeperClass:
+-- [en] Determines the correct ScoreKeeper class to use.
+function ScoreKeeperClass()
+	sGame = GAMESTATE:GetCurrentGame():GetName();
+	local ScoreKeepers = {
+		-- xxx: allow for ScoreKeeperRave and ScoreKeeperShared when needed
+		dance = "ScoreKeeperNormal",
+		pump = "ScoreKeeperNormal",
+		beat = "ScoreKeeperNormal",
+		kb7 = "ScoreKeeperNormal",
+		para = "ScoreKeeperNormal",
+		guitar = "ScoreKeeperGuitar",
+	};
+	return ScoreKeepers[sGame]
+end;
+
 -- ComboContinue:
 -- [en] 
 function ComboContinue()
@@ -61,6 +77,7 @@ function HitCombo()
 		beat = 2,
 		kb7 = 2,
 		para = 2,
+		guitar = 2,
 	};
 	return Combo[sGame]
 end;
@@ -73,11 +90,14 @@ function MissCombo()
 		beat = 0,
 		kb7 = 0,
 		para = 0,
+		guitar = 0,
 	};
 	return Combo[sGame]
 end;
 
-function FailCombo() -- The combo that causes game failure.
+-- FailCombo:
+-- [en] The combo that causes game failure.
+function FailCombo()
 	sGame = GAMESTATE:GetCurrentGame():GetName();
 	local Combo = {
 		dance = 30, -- ITG/Pump Pro does it this way.
@@ -85,6 +105,7 @@ function FailCombo() -- The combo that causes game failure.
 		beat = -1,
 		kb7 = -1,
 		para = -1,
+		guitar = -1,
 	};
 	return Combo[sGame]
 end;

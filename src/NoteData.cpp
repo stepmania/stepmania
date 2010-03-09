@@ -653,7 +653,7 @@ void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
-		ASSERT_M( iOriginalTrack < in.GetNumTracks(), ssprintf("from %i >= %i (to %i)", 
+		ASSERT_M( iOriginalTrack < in.GetNumTracks(), ssprintf("from OriginalTrack %i >= %i (#tracks) (taking from %i)", 
 			iOriginalTrack, in.GetNumTracks(), iOriginalTrackToTakeFrom[t]));
 
 		if( iOriginalTrack == -1 )
@@ -672,19 +672,19 @@ void NoteData::MoveTapNoteTrack( int dest, int src )
 void NoteData::SetTapNote( int track, int row, const TapNote& t )
 {
 	DEBUG_ASSERT( track>=0 && track<GetNumTracks() );
-	
+
 	if( row < 0 )
 		return;
 
 	// There's no point in inserting empty notes into the map.
 	// Any blank space in the map is defined to be empty.
-	// If we're trying to insert an empty at a spot where
-	// another note already exists, then we're really deleting
-	// from the map.
+	// If we're trying to insert an empty at a spot where another note
+	// already exists, then we're really deleting from the map.
 	if( t == TAP_EMPTY )
 	{
 		TrackMap &trackMap = m_TapNotes[track];
-		// remove the element at this position (if any).  This will return either 0 or 1.
+		// remove the element at this position (if any).
+		// This will return either 0 or 1.
 		trackMap.erase( row );
 	}
 	else

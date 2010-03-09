@@ -12,6 +12,7 @@ local LabelMinZoom = THEME:GetMetric("Combo", "LabelMinZoom");
 local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom");
 
 local t = Def.ActorFrame {
+	InitCommand=cmd(vertalign,bottom);
 	LoadActor(THEME:GetPathG("Combo","100Milestone")) .. {
 		Name="OneHundredMilestone";
 		FiftyMilestoneCommand=cmd(playcommand,"Milestone");
@@ -46,7 +47,7 @@ local t = Def.ActorFrame {
 			return
 		end; --]]
 	TwentyFiveMilestoneCommand=function(self,parent)
-		(cmd(skewx,0.125;decelerate,0.325;skewx,1))(self);
+		(cmd(skewy,-0.125;decelerate,0.325;skewy,0))(self);
 	end;
 	ToastyAchievedMessageCommand=function(self,params)
 		if params.PlayerNumber == player then
@@ -74,7 +75,10 @@ local t = Def.ActorFrame {
 
 		param.Zoom = scale( iCombo, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom );
 		param.Zoom = clamp( param.Zoom, NumberMinZoom, NumberMaxZoom );
-
+		
+		param.LabelZoom = scale( iCombo, 0, NumberMaxZoomAt, LabelMinZoom, LabelMaxZoom );
+		param.LabelZoom = clamp( param.LabelZoom, LabelMinZoom, LabelMaxZoom );
+		
 		c.Number:visible(true);
 		c.Label:visible(true);
 		c.Number:settext( string.format("%i", iCombo) );
@@ -89,7 +93,7 @@ local t = Def.ActorFrame {
 			c.Number:diffuse(color("#a4ff00"));
 			c.Number:stopeffect();
 		elseif param.Combo then
-			c.Number:diffuse(color("#ffffff"));
+			c.Number:diffuse(PlayerColor(player));
 			c.Number:stopeffect();
 			(cmd(diffuse,Color("White");diffusebottomedge,color("0.5,0.5,0.5,1")))(c.Label);
 		else
@@ -102,7 +106,7 @@ local t = Def.ActorFrame {
 		PulseLabel( c.Label, param );
 		-- Milestone Logic
 	end;
-	ScoreChangedMessageCommand=function(self,param)
+--[[ 	ScoreChangedMessageCommand=function(self,param)
 		local iToastyCombo = param.ToastyCombo;
 		if iToastyCombo and (iToastyCombo > 0) then
 -- 			(cmd(thump;effectmagnitude,1,1.2,1;effectclock,'beat'))(c.Number)
@@ -110,7 +114,7 @@ local t = Def.ActorFrame {
 		else
 -- 			c.Number:stopeffect();
 		end;
-	end;
+	end; --]]
 };
 
 return t;

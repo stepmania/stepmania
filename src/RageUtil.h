@@ -145,8 +145,7 @@ private:
 	TO m_ToValue;
 };
 
-/*
- * Safely temporarily convert between types.  For example,
+/* Safely temporarily convert between types.  For example,
  *
  * float f = 10.5;
  * *ConvertValue<int>(&f) = 12;
@@ -157,8 +156,7 @@ ConvertValueHelper<TO, FROM> ConvertValue( FROM *pValue )
 	return ConvertValueHelper<TO, FROM>( pValue );
 }
 
-/*
- * Safely add an integer to an enum.
+/* Safely add an integer to an enum.
  *
  * This is illegal:
  *
@@ -192,8 +190,7 @@ static inline T enum_cycle( T val, int iMax, int iAmt = 1 )
 }
 
 
-/*
- * We only have unsigned swaps; byte swapping a signed value doesn't make sense. 
+/* We only have unsigned swaps; byte swapping a signed value doesn't make sense. 
  *
  * Platform-specific, optimized versions are defined in arch_setup, with the names
  * ArchSwap32, ArchSwap24, and ArchSwap16; we define them to their real names here,

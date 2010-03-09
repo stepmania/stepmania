@@ -175,7 +175,7 @@ function UserPrefShowLotsaOptions()
 	return t;
 end
 
- function GetDefaultOptionLines()
+function GetDefaultOptionLines()
 	local LineSets = {
 		"1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17",
 		"1,2,7,8,13,14,16,17",
@@ -185,7 +185,7 @@ end
 	else
 		return LineSets[2]; -- Just make sure!
 	end
-end; 
+end;
 
 function UserPrefAutoSetStyle()
 	local t = {

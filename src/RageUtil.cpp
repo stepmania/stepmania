@@ -1694,7 +1694,7 @@ void MakeLower( wchar_t *p, size_t iLen )
 float StringToFloat( const RString &sString )
 {
 	float ret = strtof( sString, NULL );
-	
+
 	if( !isfinite(ret) )
 		ret = 0.0f;
 	return ret;
@@ -1703,12 +1703,11 @@ float StringToFloat( const RString &sString )
 bool StringToFloat( const RString &sString, float &fOut )
 {
 	char *endPtr;
-	
+
 	fOut = strtof( sString, &endPtr );
 	return sString.size() && *endPtr == '\0' && isfinite( fOut );
 }
-	
-	
+
 const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
 
 wstring RStringToWstring( const RString &s )

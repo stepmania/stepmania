@@ -487,21 +487,17 @@ void Song::TidyUpData()
 
 	/* Some DWIs have lengths in ms when they meant seconds, eg. #SAMPLELENGTH:10;.
 	 * If the sample length is way too short, change it. */
-	// oh also this means that if you try to have a sample length longer than
-	// 30 seconds, it doesn't mean shit. -aj
+	// oh also this means that if you try to have a sample length longer
+	// than 30 seconds, it won't work. -aj
 	if( m_fMusicSampleLengthSeconds < 3 || m_fMusicSampleLengthSeconds > 30 )
 		m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 
-	//
 	// Here's the problem:  We have a directory full of images.  We want to determine which 
 	// image is the banner, which is the background, and which is the CDTitle.
-	//
 
 	CHECKPOINT_M( "Looking for images..." );
 
-	//
 	// First, check the file name for hints.
-	//
 	if( !HasBanner() )
 	{
 		/* If a nonexistant banner file is specified, and we can't find a replacement,

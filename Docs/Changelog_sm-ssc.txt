@@ -9,7 +9,40 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
-sm-ssc v1.0 Public Beta 1 | 20100228
+20100309
+--------
+* [ScreenSelectMaster] Add GetSelectionIndex(pn) Lua binding. (You'll have to
+  call this one using GAMESTATE:GetTopScreen():GetSelectionIndex(PLAYER_1) or
+  something like that.)
+
+20100308
+--------
+* [PlayerStageStats] add GetPercentageOfTaps(TapNoteScore) Lua binding
+* [PlayerState] add GetMultiPlayerNumber() Lua binding (untested)
+
+sm4svn catch up, all by Chris Danford:
+* r28326: fix handling of noteskins with an uppercase letter
+* r28327: track W4 full combo
+* r28328: draw glow using stroke texture
+
+20100306
+--------
+* [ScreenEvaluation] New metric DetailLineFormat. Must contain two integer flags
+  (%d or %i should work.)
+
+20100305
+--------
+* [ScreenNetEvaluation] add GetNumActivePlayers() binding and UpdateNetEvalStats
+  message (one param, ActivePlayerIndex). This is currently untested.
+
+20100301
+--------
+* Re-add SM4SVN r28063 "Allow for 'confirmation only' double press mechanisms
+as a choice for two part selection on ScreenSelectMusic" since
+  1) It actually did have a use
+  2) [AJ] was thinking of adding it anyways and forgot it was already made.
+
+sm-ssc v1.0 Public Beta 1 | 20100301
 ------------------------------------
 This represents the first public version of sm-ssc. The previously publicly
 available release was not the official public beta version, but was released
