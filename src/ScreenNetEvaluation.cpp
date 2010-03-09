@@ -33,16 +33,13 @@ void ScreenNetEvaluation::Init()
 		m_pActivePlayer = pn;
 	}
 
-	if( m_pActivePlayer == PLAYER_1 )
-		m_iShowSide = 2;
-	else
-		m_iShowSide = 1;
+	m_iShowSide = (m_pActivePlayer == PLAYER_1) ? 2 : 1;
 
 	m_rectUsersBG.SetWidth( USERSBG_WIDTH );
 	m_rectUsersBG.SetHeight( USERSBG_HEIGHT );
 	m_rectUsersBG.RunCommands( USERSBG_COMMAND );
-	// XXX: The name should be ssprintf( "UsersBG%d", m_iShowSide ) and then
-	// then LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND should be used.
+	// XXX: The name should be set with m_iShowSide and then
+	// LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND should be used. -aj
 	m_rectUsersBG.SetName( "UsersBG" );
 
 	m_rectUsersBG.SetXY(
@@ -206,7 +203,29 @@ void ScreenNetEvaluation::UpdateStats()
 	}
 
 	m_textPlayerOptions[m_pActivePlayer].SetText( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].playerOptions );
+
+	// broadcast a message so themes know that the active player has changed. -aj
+	Message msg("UpdateNetEvalStats");
+	msg.SetParam( "ActivePlayerIndex", m_pActivePlayer );
+	MESSAGEMAN->Broadcast(msg);
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaScreenNetEvaluation: public Luna<ScreenNetEvaluation>
+{
+public:
+	static int GetNumActivePlayers( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumActivePlayers() ); return 1; }
+
+	LunaScreenNetEvaluation()
+	{
+  		ADD_METHOD( GetNumActivePlayers );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScreenNetEvaluation, ScreenEvaluation )
+// lua end
 
 #endif
 

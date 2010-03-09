@@ -10,6 +10,12 @@ class ScreenNetEvaluation: public ScreenEvaluation
 public:
 	virtual void Init();
 
+	// sm-ssc:
+	int GetNumActivePlayers(){ return m_iActivePlayers; }
+
+	// Lua
+	virtual void PushSelf( lua_State *L );
+
 protected:
 	virtual void MenuLeft( const InputEventPlus &input );
 	virtual void MenuUp( const InputEventPlus &input );
