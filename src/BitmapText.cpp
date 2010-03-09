@@ -697,7 +697,9 @@ void BitmapText::DrawPrimitives()
 			for( ; i < iEnd; ++i )
 				m_aVertices[i].c = attr.glow;
 		}
+		// draw glow using the base texture and the glow texture.  Otherwise, glow looks too tame on BitmapText that has a stroke.
 		DrawChars( false );
+		DrawChars( true );
 	}
 }
 

@@ -77,15 +77,15 @@ void NoteField::Unload()
 
 void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 {
-	RString sNoteSkin = sNoteSkin_;
-	sNoteSkin.MakeLower();
+	RString sNoteSkinLower = sNoteSkin_;
+	sNoteSkinLower.MakeLower();
 
-	if( m_NoteDisplays.find(sNoteSkin) != m_NoteDisplays.end() )
+	if( m_NoteDisplays.find(sNoteSkinLower) != m_NoteDisplays.end() )
 		return;
 
-	LockNoteSkin l( sNoteSkin );
+	LockNoteSkin l( sNoteSkinLower );
 
-	LOG->Trace("NoteField::CacheNoteSkin: cache %s", sNoteSkin.c_str() );
+	LOG->Trace("NoteField::CacheNoteSkin: cache %s", sNoteSkinLower.c_str() );
 	NoteDisplayCols *nd = new NoteDisplayCols( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 
 	for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ ) 
@@ -93,26 +93,22 @@ void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 	nd->m_ReceptorArrowRow.Load( m_pPlayerState, m_fYReverseOffsetPixels );
 	nd->m_GhostArrowRow.Load( m_pPlayerState, m_fYReverseOffsetPixels );
 
-	m_NoteDisplays[ sNoteSkin ] = nd;
+	m_NoteDisplays[ sNoteSkinLower ] = nd;
 }
 
 void NoteField::UncacheNoteSkin( const RString &sNoteSkin_ )
 {
-	RString sNoteSkin( sNoteSkin_ );
-	sNoteSkin.MakeLower();
+	RString sNoteSkinLower = sNoteSkin_;
+	sNoteSkinLower.MakeLower();
 
-	LOG->Trace("NoteField::CacheNoteSkin: release %s", sNoteSkin.c_str() );
-	ASSERT_M( m_NoteDisplays.find(sNoteSkin) != m_NoteDisplays.end(), sNoteSkin );
-	delete m_NoteDisplays[sNoteSkin];
-	m_NoteDisplays.erase( sNoteSkin );
+	LOG->Trace("NoteField::CacheNoteSkin: release %s", sNoteSkinLower.c_str() );
+	ASSERT_M( m_NoteDisplays.find(sNoteSkinLower) != m_NoteDisplays.end(), sNoteSkinLower );
+	delete m_NoteDisplays[sNoteSkinLower];
+	m_NoteDisplays.erase( sNoteSkinLower );
 }
 
 void NoteField::CacheAllUsedNoteSkins()
 {
-	/* Cache all note skins that we might need for the whole song, course or battle
-	 * play, so we don't have to load them later (such as between course songs). */
-	vector<RString> asSkins;
-
 	// If we're in Routine mode, apply our per-player noteskins.
 	if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_TwoPlayersSharedSides )
 	{
@@ -120,32 +116,43 @@ void NoteField::CacheAllUsedNoteSkins()
 			GAMESTATE->ApplyStageModifiers( pn, ROUTINE_NOTESKIN.GetValue(pn) );
 	}
 
-	GAMESTATE->GetAllUsedNoteSkins( asSkins );
-	asSkins.push_back( m_pPlayerState->m_PlayerOptions.GetStage().m_sNoteSkin );
+	/* Cache all note skins that we might need for the whole song, course or battle
+	 * play, so we don't have to load them later (such as between course songs). */
+	vector<RString> asSkinsLower;
+	GAMESTATE->GetAllUsedNoteSkins( asSkinsLower );
+	asSkinsLower.push_back( m_pPlayerState->m_PlayerOptions.GetStage().m_sNoteSkin );
+	FOREACH( RString, asSkinsLower, s )
+		s->MakeLower();
 
-	for( unsigned i=0; i < asSkins.size(); ++i )
-		CacheNoteSkin( asSkins[i] );
+	for( unsigned i=0; i < asSkinsLower.size(); ++i )
+		CacheNoteSkin( asSkinsLower[i] );
 
-	/* If we're changing note skins in the editor, we can have old note skins
-	 * lying around. Remove them so they don't accumulate. */
+	/* If we're changing note skins in the editor, we can have old note skins lying
+	 * around.  Remove them so they don't accumulate. */
 	set<RString> setNoteSkinsToUnload;
 	FOREACHM( RString, NoteDisplayCols *, m_NoteDisplays, d )
 	{
-		if( find(asSkins.begin(), asSkins.end(), d->first) == asSkins.end() )
+		bool unused = find(asSkinsLower.begin(), asSkinsLower.end(), d->first) == asSkinsLower.end();
+		if( unused )
 			setNoteSkinsToUnload.insert( d->first );
 	}
 	FOREACHS( RString, setNoteSkinsToUnload, s )
 		UncacheNoteSkin( *s );
 
-	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin );
-	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin );
+	RString sCurrentNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+	sCurrentNoteSkinLower.MakeLower();
+
+	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( sCurrentNoteSkinLower );
+	ASSERT_M( it != m_NoteDisplays.end(), sCurrentNoteSkinLower );
 	m_pCurDisplay = it->second;
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
+
 	FOREACH_EnabledPlayer( pn )
 	{
-		const RString& sNoteSkin = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
-		it = m_NoteDisplays.find( sNoteSkin );
-		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkin );
+		RString sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+		sNoteSkinLower.MakeLower();
+		it = m_NoteDisplays.find( sNoteSkinLower );
+		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
 		m_pDisplays[pn] = it->second;
 	}
 }
@@ -177,16 +184,17 @@ void NoteField::Load(
 		ssprintf("%d = %d",m_pNoteData->GetNumTracks(), GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer) );
 
 	// The note skin may have changed at the beginning of a new course song.
-	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin );
-	ASSERT_M( it != m_NoteDisplays.end(),
-		ssprintf("Player noteskin: %s", m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin.c_str()) );
-	m_pCurDisplay = it->second;
+	RString sNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+	sNoteSkinLower.MakeLower();
+	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( sNoteSkinLower );
+	ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 	FOREACH_EnabledPlayer( pn )
 	{
-		const RString& sNoteSkin = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
-		it = m_NoteDisplays.find( sNoteSkin );
-		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkin );
+		RString sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+		sNoteSkinLower.MakeLower();
+		it = m_NoteDisplays.find( sNoteSkinLower );
+		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
 		m_pDisplays[pn] = it->second;
 	}
 }
@@ -686,9 +694,7 @@ void NoteField::DrawPrimitives()
 
 		// todo: add warp text
 
-		//
 		// Course mods text
-		//
 		const Course *pCourse = GAMESTATE->m_pCurCourse;
 		if( pCourse )
 		{

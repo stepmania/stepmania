@@ -611,8 +611,7 @@ void Player::Update( float fDeltaTime )
 
 	if(m_pPlayerState->m_mp != MultiPlayer_Invalid)
 	{
-		/*
-		 * In multiplayer, it takes too long to run player updates for every player each frame;
+		/* In multiplayer, it takes too long to run player updates for every player each frame;
 		 * with 32 players and three difficulties, we have 96 Players to update.  Stagger these
 		 * updates, by only updating a few players each update; since we don't have screen elements
 		 * tightly tied to user actions in this mode, this doesn't degrade gameplay.  Run 4 players
@@ -901,7 +900,7 @@ void Player::Update( float fDeltaTime )
 	ApplyWaitingTransforms();
 }
 
-/* Update a group of holds with shared scoring/life.  All of these holds will have the same start row. */
+/* Update a group of holds with shared scoring/life. All of these holds will have the same start row. */
 void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTapNote> &vTN )
 {
 	ASSERT( !vTN.empty() );
@@ -1026,9 +1025,10 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 	if( bInitiatedNote && fLife != 0 )
 	{
-		/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
-		 * Do this even if we're a little beyond the end of the hold note, to make sure
-		 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
+		/* This hold note is not judged and we stepped on its head.
+		 * Update iLastHeldRow. Do this even if we're a little beyond the end
+		 * of the hold note, to make sure iLastHeldRow is clamped to iEndRow
+		 * if the hold note is held all the way. */
 		FOREACH( TrackRowTapNote, vTN, trtn )
 		{
 			TapNote &tn = *trtn->pTN;
@@ -1098,8 +1098,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			m_pSecondaryScoreKeeper->HandleHoldActiveSeconds( fSecondsActiveSinceLastUpdate );
 	}
 
-	/* check for LetGo.  If the head was missed completely, don't count an LetGo. */
-	/* Why?  If you never step on the head, then it will be left as HNS_None, which doesn't seem correct. */
+	// check for LetGo. If the head was missed completely, don't count an LetGo.
+	/* Why?  If you never step on the head, then it will be left as HNS_None,
+	 * which doesn't seem correct. */
 	if( IMMEDIATE_HOLD_LET_GO )
 	{
 		if( bInitiatedNote && fLife == 0 )	// the player has not pressed the button for a long time!
@@ -1111,9 +1112,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	{
 		bool bLetGoOfHoldNote = false;
 
-		/* Score rolls that end with fLife == 0 as LetGo, even if HOLD_CHECKPOINTS is on.  
-		 * Rolls don't have iCheckpointsMissed set, so, unless we check Life == 0, rolls would always be
-		 * scored as Held. */
+		/* Score rolls that end with fLife == 0 as LetGo, even if
+		 * HOLD_CHECKPOINTS is on. Rolls don't have iCheckpointsMissed set, so,
+		 * unless we check Life == 0, rolls would always be scored as Held. */
 		bool bAllowHoldCheckpoints;
 		switch( subType )
 		{
@@ -1142,7 +1143,8 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			}
 			bLetGoOfHoldNote = iCheckpointsMissed > 0 || iCheckpointsHit == 0;
 
-			// TRICKY: If the hold is so short that it has no checkpoints, then mark it as Held if the head was stepped on.
+			// TRICKY: If the hold is so short that it has no checkpoints,
+			// then mark it as Held if the head was stepped on.
 			if( iCheckpointsHit == 0  &&  iCheckpointsMissed == 0 )
 				bLetGoOfHoldNote = !bSteppedOnHead;
 		}
@@ -1387,7 +1389,7 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool
 		if( !bForward )
 			--begin;
 
-		/* Is this the row we want? */
+		// Is this the row we want?
 		do {
 			const TapNote &tn = begin->second;
 			if( tn.type == TapNote::empty )
@@ -1405,7 +1407,7 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool
 	return -1;
 }
 
-/* Find the closest note to fBeat. */
+// Find the closest note to fBeat.
 int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const
 {
 	// Start at iIndexStartLookingAt and search outward.
@@ -1460,7 +1462,7 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool b
 	return -1;
 }
 
-/* Find the closest note to fBeat. */
+// Find the closest note to fBeat.
 int Player::GetClosestNonEmptyRow( int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const
 {
 	// Start at iIndexStartLookingAt and search outward.
@@ -1503,7 +1505,6 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 		LOG->Trace( "StrumTry" );
 		StepStrumHopo( col, row, tm, bHeld, bRelease, ButtonType_StrumFretsChanged );
 	}
-
 
 	// Handle hammer-ons and pull-offs
 	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
@@ -1555,7 +1556,6 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 
 	if( bDoHopo )
 		Hopo( iHopoCol, row, tm, bHeld, bRelease );
-
 
 	// Check if this fret breaks all active holds.
 	if( !bRelease )
@@ -1683,7 +1683,8 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 	if( IsOniDead() )
 		return;
 
-	// Do everything that depends on a RageTimer here and set your breakpoints somewhere after this block
+	// Do everything that depends on a RageTimer here;
+	// set your breakpoints somewhere after this block.
 	const float fLastBeatUpdate = GAMESTATE->m_LastBeatUpdate.Ago();
 	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
 	const float fTimeSinceStep = tm.Ago();
@@ -1824,13 +1825,17 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 	}
 
 	// Check for step on a TapNote
-	/* XXX: This seems wrong. If a player steps twice quickly and two notes are close together in the same column then
-	 * it is possible for the two notes to be graded out of order. Two possible fixes:
-	 * 1. Adjust the fSongBeat (or the resulting note row) backward by iStepSearchRows and search forward two iStepSearchRows
-	 * lengths, disallowing graded. This doesn't seem right because if a second note has passed, an earlier one should not
-	 * be graded.
+	/* XXX: This seems wrong. If a player steps twice quickly and two notes are
+	 * close together in the same column then it is possible for the two notes
+	 * to be graded out of order.
+	 * Two possible fixes:
+	 * 1. Adjust the fSongBeat (or the resulting note row) backward by
+	 * iStepSearchRows and search forward two iStepSearchRows lengths,
+	 * disallowing graded. This doesn't seem right because if a second note has
+	 * passed, an earlier one should not be graded.
 	 * 2. Clamp the distance searched backward to the previous row graded.
-	 * Either option would fundamentally change the grading of two quick notes "jack hammers." Hmm.
+	 * Either option would fundamentally change the grading of two quick notes
+	 * "jack hammers." Hmm.
 	 */
 	const int iStepSearchRows = BeatToNoteRow( StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate );
 	int iRowOfOverlappingNoteOrRow = row;
@@ -1910,7 +1915,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 			case TapNote::attack:
 				if( !bRelease && fSecondsFromExact <= GetWindowSeconds(TW_Attack) && !pTN->result.bHidden )
-					score = TNS_W2; /* sentinel */
+					score = TNS_W2; // sentinel
 				break;
 
 			case TapNote::hold_head:
@@ -1937,7 +1942,8 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		case PC_AUTOPLAY:
 			score = PlayerAI::GetTapNoteScore( m_pPlayerState );
 
-			/* XXX: This doesn't make sense. Step should only be called in autoplay for hit notes */
+			/* XXX: This doesn't make sense.
+			 * Step should only be called in autoplay for hit notes. */
 #if 0
 			// GetTapNoteScore always returns TNS_W1 in autoplay.
 			// If the step is far away, don't judge it.
@@ -1949,12 +1955,12 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			}
 #endif
 
-			// TRICKY:  We're asking the AI to judge mines.  consider TNS_W4 and below
-			// as "mine was hit" and everything else as "mine was avoided"
+			// TRICKY:  We're asking the AI to judge mines. Consider TNS_W4 and
+			// below as "mine was hit" and everything else as "mine was avoided"
 			if( pTN->type == TapNote::mine )
 			{
-				// The CPU hits a lot of mines.  Only consider hitting the 
-				// first mine for a row.  We know we're the first mine if 
+				// The CPU hits a lot of mines. Only consider hitting the
+				// first mine for a row. We know we're the first mine if 
 				// there are are no mines to the left of us.
 				for( int t=0; t<col; t++ )
 				{
@@ -1962,7 +1968,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 						return;	// avoid
 				}
 
-				// The CPU hits a lot of mines.  Make it less likely to hit 
+				// The CPU hits a lot of mines. Make it less likely to hit 
 				// mines that don't have a tap note on the same row.
 				bool bTapsOnRow = m_NoteData.IsThereATapOrHoldHeadAtRow( iRowOfOverlappingNoteOrRow );
 				TapNoteScore get_to_avoid = bTapsOnRow ? TNS_W3 : TNS_W4;
@@ -1974,7 +1980,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			}
 
 			if( pTN->type == TapNote::attack && score > TNS_W4 )
-				score = TNS_W2; /* sentinel */
+				score = TNS_W2; // sentinel
 
 			/* AI will generate misses here.  Don't handle a miss like a regular note because
 			 * we want the judgment animation to appear delayed.  Instead, return early if
@@ -2107,7 +2113,7 @@ done_checking_hopo:
 			break;
 		}
 
-
+		// handle attack notes
 		if( pTN->type == TapNote::attack && score == TNS_W2 )
 		{
 			score = TNS_None;	// don't score this as anything
@@ -2178,8 +2184,9 @@ done_checking_hopo:
 			if( pTN->type != TapNote::mine )
 			{
 				const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
-				// XXX This is the wrong combo for shared players. STATSMAN->m_CurStageStats.m_Player[pn] might work but could be wrong.
-				const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) ) || bBlind;			
+				// XXX: This is the wrong combo for shared players.
+				// STATSMAN->m_CurStageStats.m_Player[pn] might work, but could be wrong.
+				const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) ) || bBlind;
 				if( m_pNoteField )
 					m_pNoteField->DidTapNote( col, bBlind? TNS_W1:score, bBright );
 				if( score >= TNS_W3 || bBlind )
@@ -2359,12 +2366,19 @@ void Player::UpdateJudgedRows()
 	bool bAllJudged = true;
 	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
 
+	// todo: modify function for warps? -aj
 	{
 		NoteData::all_tracks_iterator iter = *m_pIterUnjudgedRows;
 		int iLastSeenRow = -1;
 		for( ; !iter.IsAtEnd()  &&  iter.Row() <= iEndRow; ++iter )
 		{
 			int iRow = iter.Row();
+
+			// if row is in a skip section, ignore it? -aj
+			//if(iRow)
+			//{
+			//	// stuff!!
+			//}
 
 			if( iLastSeenRow != iRow )
 			{
@@ -2402,6 +2416,7 @@ void Player::UpdateJudgedRows()
 		}
 	}
 
+	// handle mines.
 	{
 		bAllJudged = true;
 		set<RageSound *> setSounds;
@@ -2426,7 +2441,7 @@ void Player::UpdateJudgedRows()
 			switch( tn.result.tns )
 			{
 			DEFAULT_FAIL( tn.result.tns );
-			case TNS_None:		
+			case TNS_None:
 				bAllJudged = false;
 				continue;
 			case TNS_AvoidMine:
@@ -2995,7 +3010,7 @@ void Player::SetCombo( int iCombo, int iMisses )
 		this->PlayCommand( "ThousandMilestone" );
 
 	// don't show a colored combo until 1/4 of the way through the song
-	bool bPastMidpoint = GAMESTATE->GetCourseSongIndex()>0 ||
+	bool bPastBeginning = (!GAMESTATE->IsCourseMode() || GAMESTATE->GetCourseSongIndex()>0) &&
 		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds/4;
 
 	if( m_bSendJudgmentAndComboMessages )
@@ -3005,12 +3020,14 @@ void Player::SetCombo( int iCombo, int iMisses )
 			msg.SetParam( "Combo", iCombo );
 		if( iMisses )
 			msg.SetParam( "Misses", iMisses );
-		if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W1) )
+		if( bPastPastBeginning && m_pPlayerStageStats->FullComboOfScore(TNS_W1) )
 			msg.SetParam( "FullComboW1", true );
-		if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W2) )
+		if( bPastPastBeginning && m_pPlayerStageStats->FullComboOfScore(TNS_W2) )
 			msg.SetParam( "FullComboW2", true );
-		if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W3) )
+		if( bPastPastBeginning && m_pPlayerStageStats->FullComboOfScore(TNS_W3) )
 			msg.SetParam( "FullComboW3", true );
+		if( bPastPastBeginning && m_pPlayerStageStats->FullComboOfScore(TNS_W4) )
+			msg.SetParam( "FullComboW4", true );
 		this->HandleMessage( msg );
 	}
 }
