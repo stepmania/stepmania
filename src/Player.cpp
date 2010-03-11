@@ -860,9 +860,9 @@ void Player::Update( float fDeltaTime )
 	}
 
 	{
-		// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
+		// Why was this originally "BeatToNoteRowNotRounded"? It should be rounded. -Chris
 		/* We want to send the crossed row message exactly when we cross the row--not
-		 * .5 before the row.  Use a very slow song (around 2 BPM) as a test case: without
+		 * .5 before the row. Use a very slow song (around 2 BPM) as a test case: without
 		 * rounding, autoplay steps early. -glenn */
 		const int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
 		if( iRowNow >= 0 )
@@ -2841,6 +2841,15 @@ void Player::HandleTapRowScore( unsigned row )
 
 void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const vector<int> &viColsWithHold )
 {
+	bool bNoCheating = true;
+#ifdef DEBUG
+	bNoCheating = false;
+#endif
+
+	// don't accumulate combo if AutoPlay is on.
+	if( bNoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+		return;
+
 	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
 	const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
