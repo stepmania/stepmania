@@ -206,7 +206,6 @@ static void StartDisplay()
 
 	DISPLAY = CreateDisplay();
 
-
 	DISPLAY->ChangeCentering(
 		PREFSMAN->m_iCenterImageTranslateX, 
 		PREFSMAN->m_iCenterImageTranslateY,
@@ -273,7 +272,7 @@ void StepMania::ApplyGraphicOptions()
 	if( SCREENMAN )
 		SCREENMAN->SystemMessage( GetActualGraphicOptionsString() );
 
-	/* Give the input handlers a chance to re-open devices as necessary. */
+	// Give the input handlers a chance to re-open devices as necessary.
 	INPUTMAN->WindowReset();
 }
 
@@ -287,12 +286,12 @@ void StepMania::ResetPreferences()
 	ApplyGraphicOptions();
 }
 
-/* Shutdown all global singletons.  Note that this may be called partway through
+/* Shutdown all global singletons. Note that this may be called partway through
  * initialization, due to an object failing to initialize, in which case some of
  * these may still be NULL. */
 void ShutdownGame()
 {
-	/* First, tell SOUNDMAN that we're shutting down.  This signals sound drivers to
+	/* First, tell SOUNDMAN that we're shutting down. This signals sound drivers to
 	 * stop sounds, which we want to do before any threads that may have started sounds
 	 * are closed; this prevents annoying DirectSound glitches and delays. */
 	if( SOUNDMAN )
@@ -309,7 +308,7 @@ void ShutdownGame()
 	SAFE_DELETE( INPUTMAPPER );
 	SAFE_DELETE( INPUTFILTER );
 	SAFE_DELETE( MODELMAN );
-	SAFE_DELETE( PROFILEMAN );	// PROFILEMAN needs the songs still loaded
+	SAFE_DELETE( PROFILEMAN ); // PROFILEMAN needs the songs still loaded
 	SAFE_DELETE( CHARMAN );
 	SAFE_DELETE( UNLOCKMAN );
 	SAFE_DELETE( CRYPTMAN );
@@ -318,7 +317,7 @@ void ShutdownGame()
 	SAFE_DELETE( BANNERCACHE );
 	//SAFE_DELETE( BACKGROUNDCACHE );
 	SAFE_DELETE( SONGINDEX );
-	SAFE_DELETE( SOUND ); /* uses GAMESTATE, PREFSMAN */
+	SAFE_DELETE( SOUND ); // uses GAMESTATE, PREFSMAN
 	SAFE_DELETE( PREFSMAN );
 	SAFE_DELETE( GAMESTATE );
 	SAFE_DELETE( GAMEMAN );
@@ -343,23 +342,23 @@ static void HandleException( const RString &sError )
 	if( g_bAutoRestart )
 		HOOKS->RestartProgram();
 
-	/* Shut down first, so we exit graphics mode before trying to open a dialog. */
+	// Shut down first, so we exit graphics mode before trying to open a dialog.
 	ShutdownGame();
 
-	/* Throw up a pretty error dialog. */
+	// Throw up a pretty error dialog.
 	Dialog::Error( sError );
 	Dialog::Shutdown(); // Shut it back down.
 }
-	
+
 void StepMania::ResetGame()
 {
 	GAMESTATE->Reset();
-	
+
 	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
 	{
 		RString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
 		if( !THEME->DoesThemeExist(sGameName) )
-			sGameName = PREFSMAN->m_sDefaultTheme; // was "default"
+			sGameName = PREFSMAN->m_sDefaultTheme; // was previously "default" -aj
 		THEME->SwitchThemeAndLanguage( sGameName, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
 		TEXTUREMAN->DoDelayedDelete();
 	}
@@ -382,7 +381,7 @@ static Preference<int> g_iLastSeenMemory( "LastSeenMemory", 0 );
 static void AdjustForChangedSystemCapabilities()
 {
 #if defined(WIN32)
-	/* Has the amount of memory changed? */
+	// Has the amount of memory changed?
 	MEMORYSTATUS mem;
 	GlobalMemoryStatus(&mem);
 
@@ -396,7 +395,7 @@ static void AdjustForChangedSystemCapabilities()
 
 	// is this assumption outdated? -aj
 	/* Let's consider 128-meg systems low-memory, and 256-meg systems high-memory.
-	 * Cut off at 192.  This is somewhat conservative; many 128-meg systems can
+	 * Cut off at 192. This is somewhat conservative; many 128-meg systems can
 	 * deal with higher memory profile settings, but some can't. 
 	 *
 	 * Actually, Windows lops off a meg or two; cut off a little lower to treat
@@ -405,15 +404,15 @@ static void AdjustForChangedSystemCapabilities()
 	const bool LowMemory = (Memory < 100); /* 64 and 96-meg systems */
 
 	/* Two memory-consuming features that we can disable are texture caching and
-	 * preloaded banners.  Texture caching can use a lot of memory; disable it for
+	 * preloaded banners. Texture caching can use a lot of memory; disable it for
 	 * low-memory systems. */
 	PREFSMAN->m_bDelayedTextureDelete.Set( HighMemory );
 
 	/* Preloaded banners takes about 9k per song. Although it's smaller than the
-	 * actual song data, it still adds up with a lot of songs. Disable it for 64-meg
-	 * systems. */
+	 * actual song data, it still adds up with a lot of songs.
+	 * Disable it for 64-meg systems. */
 	PREFSMAN->m_BannerCache.Set( LowMemory ? BNCACHE_OFF:BNCACHE_LOW_RES_PRELOAD );
-	// might wanna do this for backgrounds, too...
+	// might wanna do this for backgrounds, too... -aj
 	//PREFSMAN->m_BackgroundCache.Set( LowMemory ? BGCACHE_OFF:BGCACHE_LOW_RES_PRELOAD );
 
 	PREFSMAN->SavePrefsToDisk();
@@ -486,7 +485,7 @@ struct VideoCardDefaults
 		true	// accelerated
 	),
 	VideoCardDefaults(
-		"Voodoo|3dfx", /* all other Voodoos: some drivers don't identify which one */
+		"Voodoo|3dfx", // all other Voodoos: some drivers don't identify which one
 		"d3d,opengl",
 		640,480,
 		16,16,16,
@@ -529,8 +528,8 @@ struct VideoCardDefaults
 		"Savage",
 		"d3d",
 			// OpenGL is unusable on my Savage IV with even the latest drivers.  
-			// It draws 30 frames of gibberish then crashes.  This happens even with
-			// simple NeHe demos.  -Chris
+			// It draws 30 frames of gibberish then crashes. This happens even with
+			// simple NeHe demos. -Chris
 		640,480,
 		16,16,16,
 		2048,
@@ -541,9 +540,9 @@ struct VideoCardDefaults
 		"d3d",
 			// OpenGL is not hardware accelerated, despite the fact that the 
 			// drivers come with an ICD.  Also, the WinXP driver performance 
-			// is terrible and supports only 640.  The ATI driver is usable.
+			// is terrible and supports only 640. The ATI driver is usable.
 			// -Chris
-		320,240,	// lower resolution for 60fps.  In-box WinXP driver doesn't support 400x300.
+		320,240,	// lower resolution for 60fps. In-box WinXP driver doesn't support 400x300.
 		16,16,16,
 		256,
 		false
@@ -602,8 +601,8 @@ struct VideoCardDefaults
 		false
 	),
 	VideoCardDefaults(
-		/* Unconfirmed texture problems on this; let's try D3D, since it's a VIA/S3
-		 * chipset. */
+		/* Unconfirmed texture problems on this; let's try D3D, since it's
+		 * a VIA/S3 chipset. */
 		"VIA/S3G KM400/KN400",
 		"d3d,opengl",
 		640,480,
@@ -617,7 +616,7 @@ struct VideoCardDefaults
 		640,480,
 		16,16,16,
 		2048,
-		true		// Right now, they've got to have NVidia or ATi Cards anyway..
+		true // Right now, they've got to have NVidia or ATi Cards anyway..
 	),
 	VideoCardDefaults(
 		// Default graphics settings used for all cards that don't match above.
@@ -664,7 +663,7 @@ bool CheckVideoDefaultSettings()
 			goto found_defaults;
 		}
 	}
-	ASSERT( 0 );	// we must have matched at least one above
+	ASSERT( 0 ); // we must have matched at least one above
 
 found_defaults:
 
@@ -725,16 +724,16 @@ RageDisplay *CreateDisplay()
 	 *
 	 * If we try to load OpenGL and we're missing acceleration, it may mean:
 	 *  1. We're missing drivers, and they just need upgrading.
-	 *  2. The card doesn't have drivers, and it should be using D3D8.  In other words,
-	 *     it needs an entry in this table.
-	 *  3. The card doesn't have drivers for either.  (Sorry, no S3 868s.)  Can't play.
-	 * 
+	 *  2. The card doesn't have drivers, and it should be using D3D8.
+	 *     In other words, it needs an entry in this table.
+	 *  3. The card doesn't have drivers for either.  (Sorry, no S3 868s.)
+	 *     Can't play.
 	 * In this case, fail to load; don't silently fall back on D3D.  We don't want
 	 * people unknowingly using D3D8 with old drivers (and reporting obscure bugs
 	 * due to driver problems).  We'll probably get bug reports for all three types.
 	 * #2 is the only case that's actually a bug.
 	 *
-	 * Actually, right now we're falling back.  I'm not sure which behavior is better.
+	 * Actually, right now we're falling back. I'm not sure which behavior is better.
 	 */
 
 	//bool bAppliedDefaults = CheckVideoDefaultSettings();
@@ -792,7 +791,7 @@ RageDisplay *CreateDisplay()
 			continue;
 		}
 
-		break;	// the display is ready to go
+		break; // the display is ready to go
 	}
 
 	if( pRet == NULL)
@@ -805,7 +804,7 @@ static void SwitchToLastPlayedGame()
 {
 	const Game *pGame = GAMEMAN->StringToGame( PREFSMAN->GetCurrentGame() );
 
-	/* If the active game type isn't actually available, revert to the default. */
+	// If the active game type isn't actually available, revert to the default.
 	if( pGame == NULL )
 		pGame = GAMEMAN->GetDefaultGame();
 
@@ -917,7 +916,7 @@ static void WriteLogHeader()
 #endif
 
 	// this code should only be enabled in distributed builds
-	LOG->Info("sm-ssc is Copyright ©2009 the spinal shark collective, all rights reserved. Commercial use of this binary is prohibited by law and will be prosecuted to the fullest extent of the law.");
+	//LOG->Info("sm-ssc is Copyright ©2009 the spinal shark collective, all rights reserved. Commercial use of this binary is prohibited by law and will be prosecuted to the fullest extent of the law.");
 	// end limited code
 
 	time_t cur_time;
@@ -961,7 +960,7 @@ int main(int argc, char* argv[])
 {
 	RageThreadRegister thread( "Main thread" );
 	RageException::SetCleanupHandler( HandleException );
-	
+
 	SetCommandlineArguments( argc, argv );
 
 
@@ -998,7 +997,7 @@ int main(int argc, char* argv[])
 		FILEMAN->MountUserFilesystems();
 
 
-	/* Set this up next.  Do this early, since it's needed for RageException::Throw. */
+	// Set this up next. Do this early, since it's needed for RageException::Throw.
 	LOG		= new RageLog;
 
 	// Whew--we should be able to crash safely now!
@@ -1050,8 +1049,8 @@ int main(int argc, char* argv[])
 	MountTreeOfZips( SpecialFiles::PACKAGES_DIR );
 	MountTreeOfZips( SpecialFiles::USER_PACKAGES_DIR );
 
-	/* One of the above filesystems might contain files that affect preferences, eg Data/Static.ini.
-	 * Re-read preferences. */
+	/* One of the above filesystems might contain files that affect preferences
+	 * (e.g. Data/Static.ini). Re-read preferences. */
 	PREFSMAN->ReadPrefsFromDisk();
 	ApplyLogPreferences();
 
@@ -1075,10 +1074,10 @@ int main(int argc, char* argv[])
 		;	// no loading window for other RunModes
 	}
 
-	srand( time(NULL) );	// seed number generator
+	srand( time(NULL) ); // seed number generator
 
-	/* Do this early, so we have debugging output if anything else fails.  LOG and
-	 * Dialog must be set up first.  It shouldn't take long, but it might take a
+	/* Do this early, so we have debugging output if anything else fails. LOG and
+	 * Dialog must be set up first. It shouldn't take long, but it might take a
 	 * little time; do this after the LoadingWindow is shown, since we don't want
 	 * that to appear delayed. */
 	HOOKS->DumpDebugInfo();
@@ -1094,9 +1093,8 @@ int main(int argc, char* argv[])
 	ANNOUNCER	= new AnnouncerManager;
 	NOTESKIN	= new NoteSkinManager;
 
-	/* Switch to the last used game type, and set up the theme and announcer. */
+	// Switch to the last used game type, and set up the theme and announcer.
 	SwitchToLastPlayedGame();
-
 
 	// Handle special RunModes.  Some of these depend on ThemeManager being loaded above in SwitchToLastPlayedGame.
 	switch( runmode )
@@ -1108,7 +1106,6 @@ int main(int argc, char* argv[])
 	case RunMode_ExportNsisStrings:
 	case RunMode_ExportLuaInformation:
 	case RunMode_DisplayVersion:
-		// possible change: phase out "default"? -aj
 		THEME->SwitchThemeAndLanguage( "default", PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
 		switch( runmode )
 		{
@@ -1130,10 +1127,9 @@ int main(int argc, char* argv[])
 	}
 
 
-
 	{
-		/* Now that THEME is loaded, load the icon for the current theme into the
-		 * loading window. */
+		/* Now that THEME is loaded, load the icon for the current theme into
+		 * the loading window. */
 		RString sError;
 		RageSurface *pIcon = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
 		if( pIcon )
@@ -1179,8 +1175,8 @@ int main(int argc, char* argv[])
 
 	SAFE_DELETE( pLoadingWindow );		// destroy this before init'ing Display
 
-	/* If the user has tried to quit during the loading, do it before creating the
-	 * main window. This prevents going to full screen just to quit. */
+	/* If the user has tried to quit during the loading, do it before creating
+	 * the main window. This prevents going to full screen just to quit. */
 	if( ArchHooks::UserQuit() )
 	{
 		ShutdownGame();
@@ -1332,12 +1328,13 @@ void StepMania::ClearCredits()
 /* Returns true if the key has been handled and should be discarded, false if
  * the key should be sent on to screens. */
 static LocalizedString SERVICE_SWITCH_PRESSED ( "StepMania", "Service switch pressed" );
-// xxx: okay these probably shouldn't be here, but I wanted them to be
+// xxx: Okay, these probably shouldn't be here, but I wanted them to be
 // localized and this was the place to do it since this is where the control
 // structure is placed... apologies to those who like properly structured
-// metrics. I like compatibility. -aj
+// language files. I like compatibility. -aj
 static LocalizedString RELOADED_METRICS( "ThemeManager", "Reloaded metrics" );
 static LocalizedString RELOADED_METRICS_AND_TEXTURES( "ThemeManager", "Reloaded metrics and textures" );
+static LocalizedString RELOADED_SCRIPTS( "ThemeManager", "Reloaded scripts" );
 bool HandleGlobalInputs( const InputEventPlus &input )
 {
 	// None of the globals keys act on types other than FIRST_PRESS
@@ -1383,6 +1380,13 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			THEME->ReloadMetrics();
 			CodeDetector::RefreshCacheItems();
 			SCREENMAN->SystemMessage( RELOADED_METRICS );
+		}
+		else if(INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL), &input.InputList) ||
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL), &input.InputList))
+		{
+			// Ctrl+F2: reload scripts only
+			THEME->UpdateLuaGlobals();
+			SCREENMAN->SystemMessage( RELOADED_SCRIPTS );
 		}
 		else
 		{
