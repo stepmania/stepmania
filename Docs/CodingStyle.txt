@@ -8,8 +8,7 @@ That being said, the sm-ssc code style guidelines are as follows:
 1) Follow the current coding conventions set forth in the source code.
 This means use tabs. AJ prefers tabs have a width of 4. Visual Studio and web
 browsers assume tabs to be 8 by default. :/
-Use of the tab character means you can define however the fuck wide you want it
-to be.
+Use of the tab character means you can define however wide you want it to be.
 
 Use of the space character is allowed for complex alignment. There are many
 examples of this in the code.
@@ -44,4 +43,42 @@ and Function in [], like so:
 LOG->Info( "[NetworkSyncManager::Listen] Initializing socket..." );
 You may not always need to do this, but it helps for clarity and sanity.
 
-4) There are no other rules (yet).
+4) Comment style. (This is a preferred suggestion. You may choose to do whatever
+you like, but it is recommended to follow this style when submitting code for
+inclusion.)
+// is preferred for one-liners
+// and also blocks of text where the comment isn't too long.
+// sometimes you'll find // comments longer than this thrown in there by AJ
+/* instead of doing this.
+ * when making a new line in a long form comment, start like this line.
+ * and put the end where it fits. */
+
+/*
+ * doing this (first line blank) is discouraged, but is allowed in certain places.
+ * Copyright notices use this style and should remain doing so; don't clean it up
+ * in that instance. All new copyright notices should follow this style as well,
+ * for consistency's sake.
+ */
+ 
+/* use of long comments for one line is VERY discouraged */
+// usually, it will will get cleaned up into this style, but there are exceptions:
+
+// exception #1: function arguments
+void SomeFunction(size_t /*ACTUAL DATA TYPE*/)
+// where you need to have it be /* */ or else it'll mess up.
+
+// exception #2: #defines
+#define /* you must use long form in defines, */ \
+ // otherwise it won't parse the newline correctly (this will cause an error) \
+
+// exception #3: .h files
+/* ScreenTypicalExample - this always shows up like this. It usually is always one line, even when it extends past column 80. This is acceptible; Most people don't write novels here like I just did. */
+
+// on comment length:
+/* typically total 80 characters is the preferred width per line, like this one.
+ * Sometimes, you can get away with sentences where a word or phrase hangs over the edge,
+ * especially if you can guess the context without needing to scroll.
+ * Pre-existing comments are usually trimmed to meet the 80-column width if they
+ * go way overboard. */
+
+5) There are no other rules (yet).

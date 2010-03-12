@@ -9,6 +9,12 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100311
+--------
+* [Player.cpp] Don't add checkpoints to the combo if Autoplay is on.
+* Re-add the ability to reload a theme's Lua scripts, this time using Ctrl+F2.
+* Convert GrooveRadar base into an AutoActor. (Now it can use a Lua BGAnim.)
+
 20100309
 --------
 * [ScreenSelectMaster] Add GetSelectionIndex(pn) Lua binding. (You'll have to

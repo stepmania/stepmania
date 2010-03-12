@@ -39,13 +39,13 @@ static void MemoryCardUsbLevelInit( size_t /*PlayerNumber*/ i, RString &sNameOut
 	defaultValueOut = -1;
 }
 
-static Preference<bool>		g_bMemoryCards( "MemoryCards", true );
-static Preference<bool>		g_bMemoryCardProfiles( "MemoryCardProfiles", true );
+static Preference<bool>	g_bMemoryCards( "MemoryCards", true );
+static Preference<bool>	g_bMemoryCardProfiles( "MemoryCardProfiles", true );
 
 // if set, always use the device that mounts to this point
 Preference1D<RString>		MemoryCardManager::m_sMemoryCardOsMountPoint( MemoryCardOsMountPointInit,	NUM_PLAYERS );
 
-// Look for this level, bus, port when assigning cards.  -1 = match any
+// Look for this level, bus, port when assigning cards. -1 = match any
 Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbBus( MemoryCardUsbBusInit,			NUM_PLAYERS );
 Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbPort( MemoryCardUsbPortInit,			NUM_PLAYERS );
 Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbLevel( MemoryCardUsbLevelInit,		NUM_PLAYERS );
@@ -54,19 +54,19 @@ Preference<RString>		MemoryCardManager::m_sEditorMemoryCardOsMountPoint( "Editor
 
 const RString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
 {
-	/* @ is important; see RageFileManager LoadedDriver::GetPath */
+	// @ is important; see RageFileManager LoadedDriver::GetPath
 	"/@mc1/",
 	"/@mc2/",
 };
 
 static const RString MEM_CARD_MOUNT_POINT_INTERNAL[NUM_PLAYERS] =
 {
-	/* @ is important; see RageFileManager LoadedDriver::GetPath */
+	// @ is important; see RageFileManager LoadedDriver::GetPath
 	"/@mc1int/",
 	"/@mc2int/",
 };
 
-/* Only access the memory card driver in a timeout-safe thread. */
+// Only access the memory card driver in a timeout-safe thread.
 class ThreadedMemoryCardWorker: public RageWorkerThread
 {
 public:
@@ -81,11 +81,11 @@ public:
 	};
 	void SetMountThreadState( MountThreadState mts );
 
-	/* These functions may time out. */
+	// These functions may time out.
 	bool Mount( const UsbStorageDevice *pDevice );
 	bool Unmount( const UsbStorageDevice *pDevice );
 
-	/* This function will not time out. */
+	// This function will not time out.
 	bool StorageDevicesChanged( vector<UsbStorageDevice> &aOut );
 
 protected:
@@ -161,12 +161,12 @@ ThreadedMemoryCardWorker::~ThreadedMemoryCardWorker()
 
 void ThreadedMemoryCardWorker::SetMountThreadState( MountThreadState mts )
 {
-	/* If "pause", stop calling updates in the heartbeat.  In principle, we should
+	/* If "pause", stop calling updates in the heartbeat. In principle, we should
 	 * also not return from this function until the current heartbeat, if running,
-	 * finishes.  However, since we can't guarantee that it'll exit within the timeout,
-	 * there's no point: we have to return when we time out, and in that case the
-	 * heartbeat will still be running.  I don't know if the reasons for pausing
-	 * really need us to wait, so don't. */
+	 * finishes.  However, since we can't guarantee that it'll exit within the
+	 * timeout, there's no point: we have to return when we time out, and in that
+	 * case the heartbeat will still be running. I don't know if the reasons for
+	 * pausing really need us to wait, so don't. */
 	m_MountThreadState = mts;
 }
 
@@ -174,28 +174,28 @@ void ThreadedMemoryCardWorker::HandleRequest( int iRequest )
 {
 	switch( iRequest )
 	{
-	case REQ_MOUNT:
-		m_bResult = m_pDriver->Mount( &m_RequestDevice );
-		m_aMountedDevices.push_back( m_RequestDevice );
-		break;
+		case REQ_MOUNT:
+			m_bResult = m_pDriver->Mount( &m_RequestDevice );
+			m_aMountedDevices.push_back( m_RequestDevice );
+			break;
 
-	case REQ_UNMOUNT:
-	{
-		m_pDriver->Unmount( &m_RequestDevice );
-		vector<UsbStorageDevice>::iterator it = 
-			find( m_aMountedDevices.begin(), m_aMountedDevices.end(), m_RequestDevice );
-		if( it == m_aMountedDevices.end() )
-			LOG->Warn( "Unmounted a device that wasn't mounted" );
-		else
-			m_aMountedDevices.erase( it );
-		break;
-	}
+		case REQ_UNMOUNT:
+		{
+			m_pDriver->Unmount( &m_RequestDevice );
+			vector<UsbStorageDevice>::iterator it = 
+				find( m_aMountedDevices.begin(), m_aMountedDevices.end(), m_RequestDevice );
+			if( it == m_aMountedDevices.end() )
+				LOG->Warn( "Unmounted a device that wasn't mounted" );
+			else
+				m_aMountedDevices.erase( it );
+			break;
+		}
 	}
 }
 
 void ThreadedMemoryCardWorker::RequestTimedOut()
 {
-	/* We timed out, so the current operation will abort.  The unmount request
+	/* We timed out, so the current operation will abort. The unmount request
 	 * may be skipped, if it's attempted during the timeout, so unmount all
 	 * mounted devices. */
 	for( unsigned i = 0; i < m_aMountedDevices.size(); ++i )
@@ -209,11 +209,11 @@ void ThreadedMemoryCardWorker::DoHeartbeat()
 	if( m_MountThreadState == paused )
 		return;
 
-	/* If true, detect and mount.  If false, only detect. */
+	// If true, detect and mount. If false, only detect.
 	bool bMount = (m_MountThreadState == detect_and_mount);
 
 	vector<UsbStorageDevice> aStorageDevices;
-//	LOG->Trace("update");
+	//LOG->Trace("update");
 	if( !m_pDriver->DoOneUpdate( bMount, aStorageDevices ) )
 		return;
 
@@ -227,7 +227,7 @@ bool ThreadedMemoryCardWorker::Mount( const UsbStorageDevice *pDevice )
 {
 	ASSERT( TimeoutEnabled() );
 
-	/* If we're currently in a timed-out state, fail. */
+	// If we're currently in a timed-out state, fail.
 	if( IsTimedOut() )
 		return false;
 
@@ -242,7 +242,7 @@ bool ThreadedMemoryCardWorker::Unmount( const UsbStorageDevice *pDevice )
 {
 	ASSERT( TimeoutEnabled() );
 
-	/* If we're currently in a timed-out state, fail. */
+	// If we're currently in a timed-out state, fail.
 	if( IsTimedOut() )
 		return false;
 
@@ -321,22 +321,22 @@ void MemoryCardManager::Update()
 	MESSAGEMAN->Broadcast( Message_StorageDevicesChanged );
 }
 
-/* Assign cards from m_vStorageDevices to m_Device. */
+// Assign cards from m_vStorageDevices to m_Device.
 void MemoryCardManager::UpdateAssignments()
 {
 	if( !g_bMemoryCardProfiles.Get() )
 		return;
 
 	// make a list of unassigned
-	vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices;        // copy
-	
+	vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices; // copy
+
 	// remove cards that are already assigned
 	FOREACH_PlayerNumber( p )
 	{
 		UsbStorageDevice &assigned_device = m_Device[p];
 		if( assigned_device.IsBlank() )     // no card assigned to this player
 			continue;
-		
+
 		FOREACH( UsbStorageDevice, vUnassignedDevices, d )
 		{
 			if( *d == assigned_device )
@@ -346,26 +346,26 @@ void MemoryCardManager::UpdateAssignments()
 			}
 		}
 	}
-	
-	// Try to assign each device to a player.  If a player already has a device
+
+	// Try to assign each device to a player. If a player already has a device
 	// assigned, and the device still exists, keep him on the same card.
 	FOREACH_PlayerNumber( p )
 	{
 		UsbStorageDevice &assigned_device = m_Device[p];
 		if( !assigned_device.IsBlank() )
 		{
-			/* The player has a card assigned.  If it's been removed, clear it. */
+			// The player has a card assigned. If it's been removed, clear it.
 			vector<UsbStorageDevice>::iterator it = find( m_vStorageDevices.begin(), m_vStorageDevices.end(), assigned_device );
 			if( it != m_vStorageDevices.end() )
 			{
-				/* The player has a card, and it's still plugged in.  Update any changed
-				 * state, such as m_State. */
+				/* The player has a card, and it's still plugged in. Update any
+				 * changed state, such as m_State. */
 				LOG->Trace( "Player %d already has a card: '%s'", p+1, assigned_device.sOsMountDir.c_str() );
 				assigned_device = *it;
 				continue;
 			}
 
-			/* The assigned card has been removed; clear it and re-search. */
+			// The assigned card has been removed; clear it and re-search.
 			LOG->Trace( "Player %i: disconnected bus %d port %d device %d path %s",
 				p+1, assigned_device.iBus, assigned_device.iPort, assigned_device.iLevel, assigned_device.sOsMountDir.c_str() );
 			assigned_device.MakeBlank();
@@ -378,25 +378,25 @@ void MemoryCardManager::UpdateAssignments()
 			// search for card dir match
 			if( !m_sMemoryCardOsMountPoint[p].Get().empty() &&
 				d->sOsMountDir.CompareNoCase(m_sMemoryCardOsMountPoint[p].Get()) )
-				continue;      // not a match
+				continue; // not a match
 			
 			// search for USB bus match
 			if( m_iMemoryCardUsbBus[p] != -1 &&
 				m_iMemoryCardUsbBus[p] != d->iBus )
-				continue;       // not a match
+				continue; // not a match
 			
 			if( m_iMemoryCardUsbPort[p] != -1 &&
 				m_iMemoryCardUsbPort[p] != d->iPort )
-				continue;       // not a match
+				continue; // not a match
 			
 			if( m_iMemoryCardUsbLevel[p] != -1 &&
 				m_iMemoryCardUsbLevel[p] != d->iLevel )
-				continue;       // not a match
+				continue;// not a match
 			
 			LOG->Trace( "Player %i: matched %s", p+1, d->sDevice.c_str() );
 
-			assigned_device = *d;    // save a copy
-			vUnassignedDevices.erase( d );       // remove the device so we don't match it for another player
+			assigned_device = *d; // save a copy
+			vUnassignedDevices.erase( d ); // remove the device so we don't match it for another player
 			break;
 		}
 	}
@@ -406,10 +406,10 @@ void MemoryCardManager::UpdateAssignments()
 
 void MemoryCardManager::CheckStateChanges()
 {
-	/* Deal with assignment changes. */
+	// Deal with assignment changes.
 	FOREACH_PlayerNumber( p )
 	{
-		const UsbStorageDevice &new_device = m_Device[p];		    
+		const UsbStorageDevice &new_device = m_Device[p];
 
 		MemoryCardState state = MemoryCardState_Invalid;
 		RString sError;
@@ -427,20 +427,21 @@ void MemoryCardManager::CheckStateChanges()
 			}
 			else
 			{
-				/* We had a card inserted when we finalized. */
+				// We had a card inserted when we finalized.
 				if( new_device.m_State == UsbStorageDevice::STATE_NONE )
 					state = MemoryCardState_Removed;
 				if( new_device.m_State == UsbStorageDevice::STATE_READY )
 				{
 					if( m_FinalDevice[p].sSerial != new_device.sSerial )
 					{
-						/* A different card is inserted than we had when we finalized. */
+						// A different card is inserted than we had when we finalized.
 						state = MemoryCardState_Error;
 						sError = "Changed";
 					}
 				}
 
-				/* Otherwise, the card is checking or has an error.  Use the regular logic. */
+				// Otherwise, the card is checking or has an error.
+				// Use the regular logic.
 			}
 		}
 
@@ -511,7 +512,7 @@ void MemoryCardManager::WaitForCheckingToComplete()
 	bool bLogged = false;
 	while( !g_pWorker->IsTimedOut() )
 	{
-		/* Check for changes. */
+		// Check for changes.
 		Update();
 
 		bool bEitherPlayerIsChecking = false;
@@ -521,8 +522,8 @@ void MemoryCardManager::WaitForCheckingToComplete()
 		if( !bEitherPlayerIsChecking )
 			break;
 
-		/* Only if we need to, wait for something to happen.  If we time out waiting for
-		 * a heartbeat, give up. */
+		/* Only if we need to, wait for something to happen. If we time out
+		 * waiting for a heartbeat, give up. */
 		if( !bLogged )
 		{
 			bLogged = true;
@@ -550,31 +551,31 @@ void MemoryCardManager::LockCard( PlayerNumber pn )
 	if( m_bCardLocked[pn] )
 		return;
 
-	/* Set the final state. */
+	// Set the final state.
 	CheckStateChanges();
 
-	/* If the card in this player's slot is ready, then use it.  If there is
+	/* If the card in this player's slot is ready, then use it. If there is
 	 * no card ready when we finalize, clear m_FinalDevice. */
 	if( m_Device[pn].m_State == UsbStorageDevice::STATE_READY )
 		m_FinalDevice[pn] = m_Device[pn];
 	else
 		m_FinalDevice[pn] = UsbStorageDevice();
 
-	/* Set this last, since it changes the behavior of CheckStateChanges. */
+	// Set this last, since it changes the behavior of CheckStateChanges.
 	m_bCardLocked[pn] = true;
 }
 
 void MemoryCardManager::UnlockCard( PlayerNumber pn )
 {
 	m_bCardLocked[pn] = false;
-	
+
 	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::detect_and_mount );
 
-	/* If a memory card was inserted too late last game, allow it now. */
+	// If a memory card was inserted too late last game, allow it now.
 	CheckStateChanges();
 }
 
-/* Called just before reading or writing to the memory card.  Should block. */
+// Called just before reading or writing to the memory card. Should block.
 bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 {
 	LOG->Trace( "MemoryCardManager::MountCard(%i)", pn );
@@ -582,14 +583,14 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 		return false;
 	ASSERT( !m_Device[pn].IsBlank() );
 
-	/* Pause the mounting thread when we mount the first drive. */
+	// Pause the mounting thread when we mount the first drive.
 	bool bStartingMemoryCardAccess = true;
 	FOREACH_PlayerNumber( p )
 		if( m_bMounted[p] )
-			bStartingMemoryCardAccess = false; /* already did */
+			bStartingMemoryCardAccess = false; // already did
 	if( bStartingMemoryCardAccess )
 	{
-		/* We're starting to do stuff to the memory cards. */
+		// We're starting to do stuff to the memory cards.
 		this->PauseMountingThread( iTimeout );
 	}
 
@@ -611,10 +612,10 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 		return true;
 	}
 
-	/* We don't want to unmount the timeout FS.  Instead, just move the target. */
+	// We don't want to unmount the timeout FS. Instead, just move the target.
 	pDriver->Remount( m_Device[pn].sOsMountDir );
 
-	/* Flush mountpoints pointing to what we've mounted. */
+	// Flush mountpoints pointing to what we've mounted.
 	FILEMAN->FlushDirCache( MEM_CARD_MOUNT_POINT[pn] );
 	FILEMAN->FlushDirCache( MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
 
@@ -643,16 +644,16 @@ void MemoryCardManager::UnmountCard( PlayerNumber pn )
 	if( !m_bMounted[pn] )
 		return;
 
-	/* Leave our own filesystem drivers mounted.  Unmount the kernel mount. */
+	// Leave our own filesystem drivers mounted.  Unmount the kernel mount.
 	g_pWorker->Unmount( &m_Device[pn] );
 
-	/* Flush mountpoints pointing to what we've unmounted. */
+	// Flush mountpoints pointing to what we've unmounted.
 	FILEMAN->FlushDirCache( MEM_CARD_MOUNT_POINT[pn] );
 	FILEMAN->FlushDirCache( MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
 
 	m_bMounted[pn] = false;
 
-	/* Unpause the mounting thread when we unmount the last drive. */
+	// Unpause the mounting thread when we unmount the last drive.
 	bool bNeedUnpause = true;
 	FOREACH_PlayerNumber( p )
 		if( m_bMounted[p] )
@@ -693,7 +694,7 @@ void MemoryCardManager::PauseMountingThread( int iTimeout )
 
 	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::paused );
 
-	/* Start the timeout period. */
+	// Start the timeout period.
 	g_pWorker->SetTimeout( (float) iTimeout );
 	RageFileDriverTimeout::SetTimeout( (float) iTimeout );
 }
@@ -704,7 +705,7 @@ void MemoryCardManager::UnPauseMountingThread()
 
 	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::detect_and_mount );
 
-	/* End the timeout period. */
+	// End the timeout period.
 	g_pWorker->SetTimeout( -1 );
 	RageFileDriverTimeout::SetTimeout( -1 );
 }
