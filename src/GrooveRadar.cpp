@@ -21,23 +21,21 @@ static const ThemeMetric<float>			RADAR_CENTER_ALPHA			("GrooveRadar","CenterAlp
 
 static float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
 
-//static const float RADAR_EDGE_WIDTH	= 2;
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
 GrooveRadar::GrooveRadar()
 {
 	m_sprRadarBase.Load( THEME->GetPathG("GrooveRadar","base") );
-	m_Frame.AddChild( &m_sprRadarBase );
+	m_Frame.AddChild( m_sprRadarBase );
 	LOAD_ALL_COMMANDS( m_Frame );
 	m_Frame.SetName( "RadarFrame" );
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_GrooveRadarValueMap[p].SetRadius( m_sprRadarBase.GetZoomedWidth() );
+		m_GrooveRadarValueMap[p].SetRadius( m_sprRadarBase->GetZoomedWidth() );
 		m_Frame.AddChild( &m_GrooveRadarValueMap[p] );
 		m_GrooveRadarValueMap[p].SetName( ssprintf("RadarValueMapP%d",p+1) );
 		ActorUtil::LoadAllCommands( m_GrooveRadarValueMap[p], "GrooveRadar" );
-		//m_GrooveRadarValueMap[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
 	}
 
 	this->AddChild( &m_Frame );
@@ -150,7 +148,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromSteps( const RadarValues &rv )
 		m_fValuesNew[c] = rv[c];
 	}	
 
-	if( !m_bValuesVisible )	// the values WERE invisible
+	if( !m_bValuesVisible ) // the values WERE invisible
 		m_PercentTowardNew = 1;
 	else
 		m_PercentTowardNew = 0;	
@@ -172,14 +170,12 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
-	RageSpriteVertex v[12];	// needed to draw 5 fan primitives and 10 strip primitives
+	RageSpriteVertex v[12]; // needed to draw 5 fan primitives and 10 strip primitives
 
 	if( !m_bValuesVisible )
 		return;
 
-	//
 	// use a fan to draw the volume
-	//
 	RageColor color = this->m_pTempState->diffuse[0];
 	color.a = 0.5f;
 	v[0].p = RageVector3( 0, 0, 0 );
@@ -188,7 +184,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	v[0].c = midcolor;
 	v[1].c = color;
 
-	for( int i=0; i<NUM_SHOWN_RADAR_CATEGORIES+1; i++ )	// do one extra to close the fan
+	for( int i=0; i<NUM_SHOWN_RADAR_CATEGORIES+1; i++ ) // do one extra to close the fan
 	{
 		const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
 		const float fDistFromCenter = 
@@ -203,9 +199,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 
 	DISPLAY->DrawFan( v, NUM_SHOWN_RADAR_CATEGORIES+2 );
 
-	//
 	// use a line loop to draw the thick line
-	//
 	for( int i=0; i<=NUM_SHOWN_RADAR_CATEGORIES; i++ )
 	{
 		const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
@@ -220,6 +214,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	}
 
 	// TODO: Add this back in.  -Chris
+	// TODO: Add this back in as a theme metric. -aj
 //	switch( PREFSMAN->m_iPolygonRadar )
 //	{
 //	case 0:		DISPLAY->DrawLoop_LinesAndPoints( v, NUM_SHOWN_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );	break;

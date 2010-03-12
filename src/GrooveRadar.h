@@ -5,6 +5,7 @@
 
 #include "ActorFrame.h"
 #include "Sprite.h"
+#include "AutoActor.h"
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 class Steps;
@@ -51,9 +52,9 @@ protected:
 		PlayerNumber m_PlayerNumber;
 	};
 
-	// xxx: convert Sprites to AutoActors -aj
-	Sprite m_sprRadarBase;
+	AutoActor m_sprRadarBase;
 	GrooveRadarValueMap m_GrooveRadarValueMap[NUM_PLAYERS];
+	// xxx: convert Sprite to AutoActor -aj
 	Sprite m_sprRadarLabels[NUM_RadarCategory];
 	ActorFrame m_Frame;
 };
