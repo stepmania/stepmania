@@ -562,8 +562,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 					{
 						if( i == BACKGROUND_LAYER_1 )
 						{
-							// The background was not found.  Try to use a random one instead.
-							bd = layer.CreateRandomBGA( pSong, bd.m_sEffect, m_RandomBGAnimations, this );
+							// The background was not found. Try to use a random one instead.
+							// Don't use the BackgroundDef's effect, because it may be an
+							// effect that requires 2 files, and random BGA will only supply one file
+							bd = layer.CreateRandomBGA( pSong, "", m_RandomBGAnimations, this );
 							if( bd.IsEmpty() )
 								bd = m_StaticBackgroundDef;
 						}
