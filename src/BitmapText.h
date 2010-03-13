@@ -42,11 +42,13 @@ public:
 	void SetStrokeColor( RageColor c )	{ m_StrokeColor = c; }
 	RageColor GetStrokeColor()		{ return m_StrokeColor; }
 
+	void SetTextGlowMode( TextGlowMode tgm )	{ m_TextGlowMode = tgm; }
+
 	void GetLines( vector<wstring> &wTextLines ) const { wTextLines = m_wTextLines; }
 	const vector<wstring> &GetLines() const { return m_wTextLines; }
 
 	RString GetText() const { return m_sText; }
-	/* Return true if the string 's' will use an alternate string, if available. */
+	// Return true if the string 's' will use an alternate string, if available.
 	bool StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const;
 
 	struct Attribute
@@ -67,26 +69,27 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	Font			*m_pFont;
-	bool			m_bUppercase;
-	RString			m_sText;
+	Font		*m_pFont;
+	bool		m_bUppercase;
+	RString		m_sText;
 	vector<wstring>		m_wTextLines;
-	vector<int>		m_iLineWidths;		// in source pixels
-	int			m_iWrapWidthPixels;	// -1 = no wrap
-	float			m_fMaxWidth;	// 0 = no max
-	float			m_fMaxHeight;	// 0 = no max
-	bool			m_bRainbowScroll;
-	bool			m_bJitter;
+	vector<int>		m_iLineWidths;	// in source pixels
+	int			m_iWrapWidthPixels;		// -1 = no wrap
+	float		m_fMaxWidth;			// 0 = no max
+	float		m_fMaxHeight;			// 0 = no max
+	bool		m_bRainbowScroll;
+	bool		m_bJitter;
 	int			m_iVertSpacing;
 
 	vector<RageSpriteVertex>	m_aVertices;
-	
+
 	vector<FontPageTextures*>	m_vpFontPageTextures;
 	map<size_t, Attribute>		m_mAttributes;
 	bool				m_bHasGlowAttribute;
 
 	RageColor		m_StrokeColor;
-	
+	TextGlowMode	m_TextGlowMode;
+
 	// recalculate the items in SetText()
 	void BuildChars();
 	void DrawChars( bool bUseStrokeTexture );

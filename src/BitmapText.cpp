@@ -56,10 +56,14 @@ BitmapText::BitmapText()
 	m_iVertSpacing = 0;
 	m_bHasGlowAttribute = false;
 	// We'd be better off not adding strokes to things we can't control
-	// themewise (ScreenDebugOverlay for example).
+	// themewise (ScreenDebugOverlay for example). -Midiman
 	m_StrokeColor = RageColor(0,0,0,0);
-	// Never, this way we dont have awkward settings between themes.
+	// Never, this way we dont have awkward settings between themes. -Midiman
 	SetShadowLength( 0 );
+	// SM4SVN r28328, "draw glow using stroke texture" forces the BitmapText to
+	// glow both the inner and stroke elements. This makes BitmapText elements
+	// with an invisible stroke have a glowing stroke instead. Not good. -aj
+	m_TextGlowMode = TextGlowMode_Both; // Both used for compatibility with SM4
 }
 
 BitmapText::~BitmapText()
@@ -174,22 +178,22 @@ bool BitmapText::LoadFromTextureAndChars( const RString& sTexturePath, const RSt
 
 void BitmapText::BuildChars()
 {
-	/* If we don't have a font yet, we'll do this when it loads. */
+	// If we don't have a font yet, we'll do this when it loads.
 	if( m_pFont == NULL )
 		return;
 
-	/* calculate line lengths and widths */
+	// calculate line lengths and widths
 	m_size.x = 0;
 
 	m_iLineWidths.clear();
-	for( unsigned l=0; l<m_wTextLines.size(); l++ )	// for each line
+	for( unsigned l=0; l<m_wTextLines.size(); l++ ) // for each line
 	{
 		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_wTextLines[l] ));
 		m_size.x = max( m_size.x, m_iLineWidths.back() );
 	}
 
-	/* Ensure that the width is always even.  This maintains pixel alignment; fX below will
-	 * always be an integer. */
+	/* Ensure that the width is always even. This maintains pixel alignment;
+	 * fX below will always be an integer. */
 	m_size.x = QuantizeUp( m_size.x, 2.0f );
 
 	m_aVertices.clear();
@@ -200,17 +204,17 @@ void BitmapText::BuildChars()
 
 	m_size.y = float(m_pFont->GetHeight() * m_wTextLines.size());
 
-	/* The height (from the origin to the baseline): */
+	// The height (from the origin to the baseline):
 	int iPadding = m_pFont->GetLineSpacing() - m_pFont->GetHeight();
 	iPadding += m_iVertSpacing;
 
-	/* There's padding between every line: */
+	// There's padding between every line:
 	m_size.y += iPadding * int(m_wTextLines.size()-1);
 
 	// the top position of the first row of characters
 	int iY = lrintf(-m_size.y/2.0f);
 
-	for( unsigned i=0; i<m_wTextLines.size(); i++ )		// foreach line
+	for( unsigned i=0; i<m_wTextLines.size(); i++ ) // foreach line
 	{
 		iY += m_pFont->GetHeight();
 
@@ -230,16 +234,16 @@ void BitmapText::BuildChars()
 			if( m_pFont->IsRightToLeft() )
 				iX -= g.m_iHadvance;
 
-			/* set vertex positions */
+			// set vertex positions
 			v[0].p = RageVector3( iX+g.m_fHshift,			iY+g.m_pPage->m_fVshift,		0 );	// top left
 			v[1].p = RageVector3( iX+g.m_fHshift,			iY+g.m_pPage->m_fVshift+g.m_fHeight,	0 );	// bottom left
 			v[2].p = RageVector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift+g.m_fHeight,	0 );	// bottom right
 			v[3].p = RageVector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift,		0 );	// top right
 
-			/* Advance the cursor. */
+			// Advance the cursor.
 			iX += g.m_iHadvance;
 
-			/* set texture coordinates */
+			// set texture coordinates
 			v[0].t = RageVector2( g.m_TexRect.left,		g.m_TexRect.top );
 			v[1].t = RageVector2( g.m_TexRect.left,		g.m_TexRect.bottom );
 			v[2].t = RageVector2( g.m_TexRect.right,	g.m_TexRect.bottom );
@@ -249,7 +253,7 @@ void BitmapText::BuildChars()
 			m_vpFontPageTextures.push_back( g.GetFontPageTextures() );
 		}
 
-		/* The amount of padding a line needs: */
+		// The amount of padding a line needs:
 		iY += iPadding;
 	}
 }
@@ -272,13 +276,13 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 		m_pTempState->fade.left > 0 ||
 		m_pTempState->fade.right > 0 )
 	{
-		/* Handle fading by tweaking the alpha values of the vertices. */
+		// Handle fading by tweaking the alpha values of the vertices.
 
-		/* Actual size of the fade on each side: */
+		// Actual size of the fade on each side:
 		const RectF &FadeDist = m_pTempState->fade;
 		RectF FadeSize = FadeDist;
 
-		/* If the cropped size is less than the fade distance, clamp. */
+		// If the cropped size is less than the fade distance, clamp.
 		const float fHorizRemaining = 1.0f - (m_pTempState->crop.left + m_pTempState->crop.right);
 		if( FadeDist.left+FadeDist.right > 0 &&
 			fHorizRemaining < FadeDist.left+FadeDist.right )
@@ -385,7 +389,6 @@ void BitmapText::SetText( const RString& _sText, const RString& _sAlternateText,
 void BitmapText::SetTextInternal()
 {
 	// Break the string into lines.
-	//
 
 	m_wTextLines.clear();
 
@@ -480,9 +483,9 @@ void BitmapText::UpdateBaseZoom()
 	else
 	{
 		const float fWidth = GetUnzoomedWidth();
-		if( fWidth != 0 )       // don't divide by 0
+		if( fWidth != 0 ) // don't divide by 0
 		{
-			/* Never decrease the zoom. */
+			// Never decrease the zoom.
 			const float fZoom = min( 1, m_fMaxWidth/fWidth );
 			this->SetBaseZoomX( fZoom );
 		}
@@ -495,9 +498,9 @@ void BitmapText::UpdateBaseZoom()
 	else
 	{
 		const float fHeight = GetUnzoomedHeight();
-		if( fHeight != 0 )      // don't divide by 0
+		if( fHeight != 0 ) // don't divide by 0
 		{
-			/* Never decrease the zoom. */
+			// Never decrease the zoom.
 			const float fZoom = min( 1, m_fMaxHeight/fHeight );
 			this->SetBaseZoomY( fZoom );
 		}
@@ -508,15 +511,15 @@ bool BitmapText::StringWillUseAlternate( const RString& sText, const RString& sA
 {
 	ASSERT( m_pFont );
 
-	/* Can't use the alternate if there isn't one. */
+	// Can't use the alternate if there isn't one.
 	if( !sAlternateText.size() )
 		return false;
 
-	/* False if the alternate isn't needed. */
+	// False if the alternate isn't needed.
 	if( m_pFont->FontCompleteForString(RStringToWstring(sText)) )
 		return false;
 
-	/* False if the alternate is also incomplete. */
+	// False if the alternate is also incomplete.
 	if( !m_pFont->FontCompleteForString(RStringToWstring(sAlternateText)) )
 		return false;
 
@@ -527,7 +530,7 @@ void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
 {
 	iMaxWidthInSourcePixels = max( 0, iMaxWidthInSourcePixels );
 
-	for( unsigned l=0; l<m_wTextLines.size(); l++ )	// for each line
+	for( unsigned l=0; l<m_wTextLines.size(); l++ ) // for each line
 	{
 		while( m_iLineWidths[l] > iMaxWidthInSourcePixels )
 		{
@@ -547,15 +550,13 @@ bool BitmapText::EarlyAbortDraw() const
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::DrawPrimitives()
 {
-	Actor::SetGlobalRenderStates();	// set Actor-specified render states
+	Actor::SetGlobalRenderStates(); // set Actor-specified render states
 	DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
 
-	/* Draw if we're not fully transparent or the zbuffer is enabled */
+	// Draw if we're not fully transparent or the zbuffer is enabled
 	if( m_pTempState->diffuse[0].a != 0 )
 	{
-		//
 		// render the shadow
-		//
 		if( m_fShadowLengthX != 0  ||  m_fShadowLengthY != 0 )
 		{
 			DISPLAY->PushMatrix();
@@ -570,9 +571,7 @@ void BitmapText::DrawPrimitives()
 			DISPLAY->PopMatrix();
 		}
 
-		//
 		// render the stroke
-		//
 		if( m_StrokeColor.a > 0 )
 		{
 			RageColor c = m_StrokeColor;
@@ -582,9 +581,7 @@ void BitmapText::DrawPrimitives()
 			DrawChars( true );
 		}
 
-		//
 		// render the diffuse pass
-		//
 		if( m_bRainbowScroll )
 		{
 			int color_index = int(RageTimer::GetTimeSinceStartFast() / 0.200) % RAINBOW_COLORS.size();
@@ -670,7 +667,7 @@ void BitmapText::DrawPrimitives()
 		}
 	}
 
-	/* render the glow pass */
+	// render the glow pass
 	if( m_pTempState->glow.a > 0.0001f || m_bHasGlowAttribute )
 	{
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
@@ -697,9 +694,18 @@ void BitmapText::DrawPrimitives()
 			for( ; i < iEnd; ++i )
 				m_aVertices[i].c = attr.glow;
 		}
-		// draw glow using the base texture and the glow texture.  Otherwise, glow looks too tame on BitmapText that has a stroke.
-		DrawChars( false );
-		DrawChars( true );
+		/* Draw glow using the base texture and the glow texture. Otherwise,
+		 * glow looks too tame on BitmapText that has a stroke. - Chris Danford */
+		/* This doesn't work well if the font is using an invisible stroke, as
+		 * the invisible stroke will glow as well. Time for TextGlowMode. -aj */
+		if(m_TextGlowMode == TextGlowMode_Inner || m_TextGlowMode == TextGlowMode_Both)
+		{
+			DrawChars( false );
+		}
+		if(m_TextGlowMode == TextGlowMode_Stroke || m_TextGlowMode == TextGlowMode_Both)
+		{
+			DrawChars( true );
+		}
 	}
 }
 
@@ -842,6 +848,7 @@ public:
 	static int ClearAttributes( T* p, lua_State *L )	{ p->ClearAttributes(); return 0; }
 	static int strokecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetStrokeColor( c ); return 0; }
 	static int uppercase( T* p, lua_State *L )		{ p->SetUppercase( BArg(1) ); return 0; }
+	static int textglowmode( T* p, lua_State *L )	{ p->SetTextGlowMode( Enum::Check<TextGlowMode>(L, 1) ); return 0; }
 
 	LunaBitmapText()
 	{
@@ -857,6 +864,7 @@ public:
 		ADD_METHOD( ClearAttributes );
 		ADD_METHOD( strokecolor );
 		ADD_METHOD( uppercase );
+		ADD_METHOD( textglowmode );
 	}
 };
 
