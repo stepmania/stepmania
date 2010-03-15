@@ -58,6 +58,8 @@ galopin
 
 FSX
  * [Player] ScoreMissedHoldsAndRolls metric
+ * [ScoreKeeperNormal] Patch for fixing the combo bug (untested)
+ (http://www.pastie.org/868201.txt)
 
 Henke37
  * [MovieTexture_FFMpeg] Stutter fix

@@ -9,6 +9,28 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100313
+--------
+* ScoreKeeperNormal double shot.
+ 1) convert toasty trigger from a single number to a Lua table. Only problem
+	is, the toasty only triggers on the first one. Since this makes it
+	equivalent to how it was set up before, I'm okay with this. [AJ]
+ 2) FSX submitted a patch that supposedly fixes the broken combo problem.
+	I can't fully test this, so I'm committing it in the hopes that someone
+	else tests it too.
+
+20100312
+--------
+* sm4svn r28332: if a BGCHANGE file can't be resolved, don't use the specified
+  effect because it may require 2 files and all random BGs specify only 1 file
+  [Chris Danford]
+* SM4SVN r28328, "draw glow using stroke texture" forces the BitmapText to glow
+  both the inner and stroke elements. This makes BitmapText elements with an
+  invisible stroke have a glowing stroke instead. Not good.
+  To combat this, I have developed the BitmapText::textglowmode command, along
+  with the TextGlowMode enum. Valid values include 'TextGlowMode_Inner',
+  'TextGlowMode_Stroke', 'TextGlowMode_Both'. [AJ]
+
 20100311
 --------
 * [Player.cpp] Don't add checkpoints to the combo if Autoplay is on.
