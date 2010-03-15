@@ -128,9 +128,7 @@ void ScreenEdit::InitEditMappings()
 {
 	m_EditMappingsDeviceInput.Clear();
 
-	//
 	// Common mappings:
-	//
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:
@@ -167,9 +165,7 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_CURSOR][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
 
-	//
 	// EditMode-specific mappings
-	//
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:
@@ -195,27 +191,27 @@ void ScreenEdit::InitEditMappings()
 		// Left/Right = Snap to Next/Prev
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LEFT);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RIGHT);
-		
+
 		// v = course attack menu
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cv);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADD_COURSE_MODS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
-		
+
 		// F1 = Show help popup
 		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_INPUT_HELP][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
-		
+
 		// Esc = Show Edit Menu
 		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 		m_EditMappingsMenuButton.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = GAME_BUTTON_START;
 		m_EditMappingsMenuButton.button   [EDIT_BUTTON_OPEN_EDIT_MENU][1]    = GAME_BUTTON_BACK;
-		
+
 		// Escape, Enter = exit play/record
 		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
 		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 		m_PlayMappingsMenuButton.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = GAME_BUTTON_START;
 		return;
-		
+
 	case EditMode_Full:
-		/* Don't allow F5/F6 in home mode.  It breaks the "delay creation until first save" logic. */
+		/* Don't allow F5/F6 in home mode. It breaks the "delay creation until first save" logic. */
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_PREV_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F5);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_NEXT_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F6);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_BPM_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F7);
@@ -3855,7 +3851,7 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Next/prev steps of same StepsType",		EDIT_BUTTON_OPEN_NEXT_STEPS,		EDIT_BUTTON_OPEN_PREV_STEPS ),
 	EditHelpLine( "Decrease/increase BPM at cur beat",		EDIT_BUTTON_BPM_DOWN,			EDIT_BUTTON_BPM_UP ),
 	EditHelpLine( "Decrease/increase stop at cur beat",		EDIT_BUTTON_STOP_DOWN,			EDIT_BUTTON_STOP_UP ),
-//	EditHelpLine( "Decrease/increase delay at cur beat",		EDIT_BUTTON_DELAY_DOWN,			EDIT_BUTTON_DELAY_UP ),
+	//EditHelpLine( "Decrease/increase delay at cur beat",		EDIT_BUTTON_DELAY_DOWN,			EDIT_BUTTON_DELAY_UP ),
 	EditHelpLine( "Decrease/increase music offset",			EDIT_BUTTON_OFFSET_DOWN,		EDIT_BUTTON_OFFSET_UP ),
 	EditHelpLine( "Decrease/increase sample music start",		EDIT_BUTTON_SAMPLE_START_DOWN,		EDIT_BUTTON_SAMPLE_START_UP ),
 	EditHelpLine( "Decrease/increase sample music length",		EDIT_BUTTON_SAMPLE_LENGTH_DOWN,		EDIT_BUTTON_SAMPLE_LENGTH_UP ),

@@ -106,7 +106,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 		IniFile ini;
 		ini.ReadFile( sPathToIni );
 
-		AddLayersFromAniDir( sAniDir, &ini );	// TODO: Check for circular load
+		AddLayersFromAniDir( sAniDir, &ini ); // TODO: Check for circular load
 
 		XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
 		XNode dummy( "BGAnimation" );
@@ -137,7 +137,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 		{
 			const RString sPath = asImagePaths[i];
 			if( Basename(sPath).Left(1) == "_" )
-				continue;	// don't directly load files starting with an underscore
+				continue; // don't directly load files starting with an underscore
 			BGAnimationLayer* pLayer = new BGAnimationLayer;
 			pLayer->LoadFromAniLayerFile( asImagePaths[i] );
 			AddChild( pLayer );

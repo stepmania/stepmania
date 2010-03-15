@@ -1009,7 +1009,7 @@ public:
 			lua_pop( L, 1 ); // pop option table
 
 			LuaHelpers::ReadArrayFromTableB( L, vbSelOut );
-			
+
 			lua_pop( L, 1 ); // pop vbSelectedOut table
 
 			ASSERT( lua_gettop(L) == 0 );

@@ -576,7 +576,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			{
 				if( SHOW_ROULETTE )
 					arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1), 0) );
-				/* Only add TYPE_PORTAL if there's at least one song on the list. */
+				// Only add TYPE_PORTAL if there's at least one song on the list.
 				bool bFoundAnySong = false;
 				for( unsigned i=0; !bFoundAnySong && i < arrayWheelItemDatas.size(); i++ )
 					if( arrayWheelItemDatas[i]->m_Type == TYPE_SONG )
@@ -599,7 +599,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				{
 					if( arrayWheelItemDatas[i]->m_pSong == pSong )
 					{
-						/* Change the song color. */
+						// Change the song color.
 						arrayWheelItemDatas[i]->m_color = SONG_REAL_EXTRA_COLOR;
 						break;
 					}

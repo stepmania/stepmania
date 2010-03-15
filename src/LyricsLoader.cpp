@@ -48,7 +48,8 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 		if(!line.compare(0, 2, "//"))
 			continue;
 
-		/* "[data1] data2".  Ignore whitespace at the beginning of the line. */
+		// (most tags are in the format of...)
+		// "[data1] data2".  Ignore whitespace at the beginning of the line.
 		static Regex x("^ *\\[([^]]+)\\] *(.*)$");
 
 		vector<RString> matches;
@@ -76,6 +77,8 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 			CurrentColor = RageColor(r / 256.0f, g / 256.0f, b / 256.0f, 1);
 			continue;
 		}
+
+		// todo: handle [offset:xxxx] (where xxxx is in milliseconds) tag? -aj
 
 		{
 			/* If we've gotten this far, and no other statement caught

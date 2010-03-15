@@ -554,7 +554,7 @@ public:
 		// this one is tricky, we need to get an Actor from Lua.
 		return 0;
 	}
-	
+
 	static int RemoveChild( T* p, lua_State *L )
 	{
 		Actor *pChild = p->GetChild( SArg(1) );

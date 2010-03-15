@@ -358,17 +358,16 @@ public:
 	void StartAnimating()				{ this->EnableAnimation(true); }
 	void StopAnimating()				{ this->EnableAnimation(false); }
 
-
 	// render states
 	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
-	void SetTextureWrapping( bool b ) 		{ m_bTextureWrapping = b; } 
+	void SetTextureWrapping( bool b ) 			{ m_bTextureWrapping = b; } 
 	void SetTextureFiltering( bool b ) 		{ m_bTextureFiltering = b; } 
 	void SetClearZBuffer( bool b ) 			{ m_bClearZBuffer = b; } 
-	void SetUseZBuffer( bool b ) 			{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); } 
+	void SetUseZBuffer( bool b ) 				{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); } 
 	virtual void SetZTestMode( ZTestMode mode )	{ m_ZTestMode = mode; } 
-	virtual void SetZWrite( bool b ) 		{ m_bZWrite = b; } 
-	void SetZBias( float f )			{ m_fZBias = f; }
-	virtual void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
+	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
+	void SetZBias( float f )					{ m_fZBias = f; }
+	virtual void SetCullMode( CullMode mode ) { m_CullMode = mode; } 
 
 	// Lua
 	virtual void PushSelf( lua_State *L );

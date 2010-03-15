@@ -118,7 +118,7 @@ void LuaHelpers::ReadArrayFromTableB( Lua *L, vector<bool> &aOut )
 
 namespace
 {
-	/* Creates a table from an XNode and leaves it on the stack. */
+	// Creates a table from an XNode and leaves it on the stack.
 	void CreateTableFromXNodeRecursive( Lua *L, const XNode *pNode )
 	{
 		// create our base table
@@ -137,9 +137,9 @@ namespace
 		FOREACH_CONST_Child( pNode, c )
 		{
 			const XNode *pChild = c;
-			lua_pushstring( L, pChild->m_sName );	// push key
+			lua_pushstring( L, pChild->m_sName ); // push key
 
-			// push value (more correctly, build this child's table and leave it there
+			// push value (more correctly, build this child's table and leave it there)
 			CreateTableFromXNodeRecursive( L, pChild );
 
 			// add key-value pair to the table
@@ -187,14 +187,14 @@ static int GetLuaStack( lua_State *L )
 			}
 		}
 
-		/* If the first call is this function, omit it from the trace. */
+		// If the first call is this function, omit it from the trace.
 		if( iLevel == 0 && lua_iscfunction(L, -1) && lua_tocfunction(L, 1) == GetLuaStack )
 		{
 			lua_pop( L, 1 ); // pop function
 			continue;
 		}
 		lua_pop( L, 1 ); // pop function
-		
+
 		sErr += ssprintf( "\n%s:", file );
 		if( ar.currentline != -1 )
 			sErr += ssprintf( "%i:", ar.currentline );
@@ -206,7 +206,7 @@ static int GetLuaStack( lua_State *L )
 		else
 			sErr += ssprintf( " unknown" );
 		sErr += ssprintf( "(%s)", join(",", vArgs).c_str() );
-	}		
+	}
 
 	LuaHelpers::Push( L, sErr );
 	return 1;
@@ -238,7 +238,7 @@ void LuaManager::Register( RegisterWithLuaFn pfn )
 LuaManager::LuaManager()
 {
 	pImpl = new Impl;
-	LUA = this;	// so that LUA is available when we call the Register functions
+	LUA = this; // so that LUA is available when we call the Register functions
 
 	lua_State *L = lua_open();
 	ASSERT( L );
@@ -251,14 +251,15 @@ LuaManager::LuaManager()
 	lua_pushcfunction( L, luaopen_string ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_table ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_debug ); lua_call( L, 0, 0 );
-	// these three can be dangerous. don't use them.
+	// these three can be dangerous. don't use them
+	// (unless you know what you are doing). -aj
 #if 0
 	lua_pushcfunction( L, luaopen_io ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_os ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_package ); lua_call( L, 0, 0 );
 #endif
 
-	/* Store the thread pool in a table on the stack, in the main thread. */
+	// Store the thread pool in a table on the stack, in the main thread.
 #define THREAD_POOL 1
 	lua_newtable( L );
 
@@ -287,7 +288,7 @@ Lua *LuaManager::Get()
 	{
 		pRet = lua_newthread( m_pLuaMain );
 
-		/* Store the new thread in THREAD_POOL, so it isn't collected. */
+		// Store the new thread in THREAD_POOL, so it isn't collected.
 		int iLast = lua_objlen( m_pLuaMain, THREAD_POOL );
 		lua_rawseti( m_pLuaMain, THREAD_POOL, iLast+1 );
 	}
@@ -322,13 +323,13 @@ void LuaManager::Release( Lua *&p )
  * to process long-running actions, without blocking all other threads from using Lua
  * until it finishes.
  *
- * Lua *L = LUA->Get();				// acquires L and locks Lua
+ * Lua *L = LUA->Get();			// acquires L and locks Lua
  * lua_newtable(L);				// does something with Lua
  * LUA->YieldLua();				// unlocks Lua for lengthy operation; L is still owned, but can't be used
  * RString s = ReadFile("/filename.txt");	// time-consuming operation; other threads may use Lua in the meantime
- * LUA->UnyieldLua();				// relock Lua
- * lua_pushstring( L, s );			// finish working with it
- * LUA->Release( L );				// release L and unlock Lua
+ * LUA->UnyieldLua();			// relock Lua
+ * lua_pushstring( L, s );		// finish working with it
+ * LUA->Release( L );			// release L and unlock Lua
  *
  * YieldLua() must not be called when already yielded, or when a lua_State has not been
  * acquired (you have nothing to yield), and always unyield before releasing the
@@ -336,8 +337,8 @@ void LuaManager::Release( Lua *&p )
  *
  * L1 = LUA->Get();
  * LUA->YieldLua();				// yields
- *   L2 = LUA->Get();				// unyields
- *   LUA->Release(L2);				// re-yields
+ *   L2 = LUA->Get();			// unyields
+ *   LUA->Release(L2);			// re-yields
  * LUA->UnyieldLua();
  * LUA->Release(L1);
  */
@@ -401,7 +402,7 @@ LuaThreadVariable::LuaThreadVariable( lua_State *L )
 {
 	m_Name = new LuaReference;
 	m_pOldValue = new LuaReference;
-	
+
 	lua_pushvalue( L, -2 );
 	m_Name->SetFromStack( L );
 
@@ -602,7 +603,7 @@ XNode *LuaHelpers::GetLuaInformation()
 				break;
 			}
 		}
-			// fall through
+		// fall through
 		case LUA_TUSERDATA: // table or userdata: class instance
 		{
 			if( !luaL_callmeta(L, -1, "__type") )
@@ -631,7 +632,7 @@ XNode *LuaHelpers::GetLuaInformation()
 				lua_getinfo( L, ">S", &ar ); // Pops the function
 				printf( "%s: %s\n", sKey.c_str(), ar.short_src );
 			}
-			 */
+			*/
 			break;
 		}
 	}
@@ -719,7 +720,7 @@ XNode *LuaHelpers::GetLuaInformation()
 
 		const vector<RString> &vEnum = iter->second;
 		pEnumNode->AppendAttr( "name", iter->first );
-		
+
 		for( unsigned i = 0; i < vEnum.size(); ++i )
 		{
 			XNode *pEnumValueNode = pEnumNode->AppendChild( "EnumValue" );
@@ -732,7 +733,7 @@ XNode *LuaHelpers::GetLuaInformation()
 	FOREACHM_CONST( RString, float, mConstants, c )
 	{
 		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
-		
+
 		pConstantNode->AppendAttr( "name", c->first );
 		if( c->second == truncf(c->second) )
 			pConstantNode->AppendAttr( "value", int(c->second) );
@@ -840,7 +841,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 	RString sLuaFunction;
 	if( sCommands.size() > 0 && sCommands[0] == '\033' )
 	{
-		/* This is a compiled Lua chunk.  Just pass it on directly. */
+		// This is a compiled Lua chunk. Just pass it on directly.
 		sLuaFunction = sCommands;
 	}
 	else if( sCommands.size() > 0 && sCommands[0] == '%' )
@@ -899,7 +900,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 	if( !LuaHelpers::RunScript(L, sLuaFunction, sName, sError, 0, 1) )
 		LOG->Warn( "Compiling \"%s\": %s", sLuaFunction.c_str(), sError.c_str() );
 
-	/* The function is now on the stack. */
+	// The function is now on the stack.
 }
 
 /* Like luaL_typerror, but without the special case for argument 1 being "self"
@@ -929,7 +930,7 @@ void LuaHelpers::DeepCopy( lua_State *L )
 	luaL_checktype( L, -2, LUA_TTABLE );
 	luaL_checktype( L, -1, LUA_TTABLE );
 
-	/* Call DeepCopy(t, u), where t is our referenced object and u is the new table. */
+	// Call DeepCopy(t, u), where t is our referenced object and u is the new table.
 	lua_getglobal( L, "DeepCopy" );
 
 	ASSERT_M( !lua_isnil(L, -1), "DeepCopy() missing" );
@@ -1006,7 +1007,8 @@ namespace
 	{
 		RString sPath = SArg(1);
 
-		/* Release Lua while we call GetFileContents, so we don't it while we read from he disk. */
+		/* Release Lua while we call GetFileContents, so we don't access
+		 * it while we read from the disk. */
 		LUA->YieldLua();
 
 		RString sFileContents;
@@ -1026,11 +1028,9 @@ namespace
 		}
 	}
 
-	/*
-	 * RunWithThreadVariables(func, { a = "x", b = "y" }, arg1, arg2, arg3 ... }
+	/* RunWithThreadVariables(func, { a = "x", b = "y" }, arg1, arg2, arg3 ... }
 	 * calls func(arg1, arg2, arg3) with two LuaThreadVariable set, and returns
-	 * the return values of func().
-	 */
+	 * the return values of func(). */
 	static int RunWithThreadVariables( lua_State *L )
 	{
 		luaL_checktype( L, 1, LUA_TFUNCTION );
@@ -1046,8 +1046,8 @@ namespace
 
 		lua_remove( L, 2 );
 
-		/* XXX: We want to clean up apVars on errors, but if we lua_pcall, we won't
-		 * propagate the error upwards. */
+		/* XXX: We want to clean up apVars on errors, but if we lua_pcall,
+		 * we won't propagate the error upwards. */
 		int iArgs = lua_gettop(L) - 1;
 		lua_call( L, iArgs, LUA_MULTRET );
 		int iVals = lua_gettop(L);
@@ -1064,7 +1064,7 @@ namespace
 		LuaThreadVariable::GetThreadVariable( L );
 		return 1;
 	}
-	
+
 	const luaL_Reg luaTable[] =
 	{
 		LIST_METHOD( Trace ),

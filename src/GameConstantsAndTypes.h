@@ -14,7 +14,7 @@ const int MAX_METER = 20;
 const int MAX_NUM_CREDITS = 20;
 
 
-/* This is just cached song data.  Not all of it may actually be displayed
+/* This is just cached song data. Not all of it may actually be displayed
  * in the radar. */
 enum RadarCategory
 {
@@ -108,6 +108,7 @@ LuaDeclareType( PlayMode );
 
 enum SortOrder 
 {
+	// song sorts
 	SORT_PREFERRED,
 	SORT_GROUP, 
 	SORT_TITLE, 
@@ -125,7 +126,9 @@ enum SortOrder
 	SORT_DOUBLE_MEDIUM_METER,
 	SORT_DOUBLE_HARD_METER,
 	SORT_DOUBLE_CHALLENGE_METER,
+	//
 	SORT_MODE_MENU,
+	// course sorts
 	SORT_ALL_COURSES,
 	SORT_NONSTOP_COURSES,
 	SORT_ONI_COURSES,
@@ -141,11 +144,10 @@ const RString& SortOrderToString( SortOrder so );
 const RString& SortOrderToLocalizedString( SortOrder so );
 SortOrder StringToSortOrder( const RString& str );
 LuaDeclareType( SortOrder );
-
+// IsSongSort is only used for saving sort order to the profile. -aj
 inline bool IsSongSort( SortOrder so ) { return so >= SORT_PREFERRED && so <= SORT_DOUBLE_CHALLENGE_METER; }
 
 // Scoring stuff
-
 enum TapNoteScore { 
 	TNS_None, 
 	TNS_HitMine,
@@ -168,9 +170,9 @@ LuaDeclareType( TapNoteScore );
 
 enum HoldNoteScore 
 { 
-	HNS_None,		// this HoldNote has not been scored yet
-	HNS_LetGo,		// the HoldNote has passed and they missed it
-	HNS_Held,		// the HoldNote has passed and was successfully held all the way through
+	HNS_None,		// HoldNote not scored yet
+	HNS_LetGo,		// HoldNote has passed, missed it
+	HNS_Held,		// HoldNote has passed, successfully held all the way
 	NUM_HoldNoteScore,
 	HoldNoteScore_Invalid,
 };
@@ -258,9 +260,7 @@ enum MemoryCardState
 const RString& MemoryCardStateToString( MemoryCardState mcs );
 LuaDeclareType( MemoryCardState );
 
-//
 // Ranking stuff
-//
 enum RankingCategory
 {
 	RANKING_A,	// 1-3 meter per song avg.
@@ -278,9 +278,7 @@ inline bool IsRankingToFillIn( const RString& sName ) { return !sName.empty() &&
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter );
 
-//
 // Group stuff
-//
 extern const RString GROUP_ALL;
 
 

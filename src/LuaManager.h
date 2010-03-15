@@ -35,7 +35,8 @@ public:
 	void YieldLua();
 	void UnyieldLua();
 
-	// Register all subscribing types. There's no harm in registering when already registered.
+	// Register all subscribing types.
+	// There's no harm in registering when already registered.
 	void RegisterTypes();
 
 	void SetGlobal( const RString &sName, int val );
@@ -49,19 +50,19 @@ private:
 
 namespace LuaHelpers
 {
-	/* Load the given script with the given name.  On success, the resulting
-	 * chunk will be on the stack.  On error, the error is stored in sError
+	/* Load the given script with the given name. On success, the resulting
+	 * chunk will be on the stack. On error, the error is stored in sError
 	 * and the stack is unchanged. */
 	bool LoadScript( Lua *L, const RString &sScript, const RString &sName, RString &sError );
 
 	/* Run the function with arguments at the top of the stack, with the given
-	 * number of arguments.  The specified number of return values are left on
-	 * the Lua stack.  On error, nils are left on the stack, sError is set and 
+	 * number of arguments. The specified number of return values are left on
+	 * the Lua stack. On error, nils are left on the stack, sError is set and 
 	 * false is returned. */
 	bool RunScriptOnStack( Lua *L, RString &sError, int iArgs = 0, int iReturnValues = 0 );
 
-	/* LoadScript the given script, and RunScriptOnStack it. iArgs arguments are
-	 * at the top of the stack. */
+	/* LoadScript the given script, and RunScriptOnStack it.
+	 * iArgs arguments are at the top of the stack. */
 	bool RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iArgs = 0, int iReturnValues = 0 );
 
 	/* Run the given expression, returning a single value, and leave the return
@@ -77,8 +78,8 @@ namespace LuaHelpers
 	// Create a Lua table with contents set from this XNode, then push it on the stack.
 	void CreateTableFromXNode( Lua *L, const XNode *pNode );
 
-	/* Recursively copy elements from the table at stack element -2 into the table
-	 * at stack -1.  Pop both elements from the stack. */
+	/* Recursively copy elements from the table at stack element -2 into the
+	 * table at stack -1. Pop both elements from the stack. */
 	void DeepCopy( lua_State *L );
 
 	// Read the table at the top of the stack back into a vector.
@@ -88,8 +89,8 @@ namespace LuaHelpers
 
 	XNode *GetLuaInformation();
 
-	/* Pops the last iArgs arguments from the stack, and return a function that returns
-	 * those values. */
+	/* Pops the last iArgs arguments from the stack, and return a function that
+	 * returns those values. */
 	void PushValueFunc( lua_State *L, int iArgs );
 
 	template<class T>

@@ -62,19 +62,20 @@ public:
 	void PreloadSongImages();
 
 	RString GetSongGroupBannerPath( RString sSongGroup ) const;
+	//RString GetSongGroupBackgroundPath( RString sSongGroup ) const;
 	void GetSongGroupNames( vector<RString> &AddTo ) const;
 	bool DoesSongGroupExist( RString sSongGroup ) const;
 	RageColor GetSongGroupColor( const RString &sSongGroupName ) const;
 	RageColor GetSongColor( const Song* pSong ) const;
 
 	RString GetCourseGroupBannerPath( const RString &sCourseGroup ) const;
+	//RString GetCourseGroupBackgroundPath( const RString &sCourseGroup ) const;
 	void GetCourseGroupNames( vector<RString> &AddTo ) const;
 	bool DoesCourseGroupExist( const RString &sCourseGroup ) const;
 	RageColor GetCourseGroupColor( const RString &sCourseGroupName ) const;
 	RageColor GetCourseColor( const Course* pCourse ) const;
-	
-	static RString ShortenGroupName( RString sLongGroupName );
 
+	static RString ShortenGroupName( RString sLongGroupName );
 
 	// Lookup
 	const vector<Song*> &GetSongs( const RString &sGroupName ) const;
@@ -114,9 +115,8 @@ public:
 	Course* GetCourseFromPath( RString sPath ) const;	// path to .crs file, or path to song group dir
 	Course* GetCourseFromName( RString sName ) const;
 
-
 	void UpdatePopular();
-	void UpdateShuffled();		// re-shuffle songs and courses
+	void UpdateShuffled();	// re-shuffle songs and courses
 	void UpdatePreferredSort(); 
 	void SortSongs();		// sort m_pSongs by CompareSongPointersByTitle
 
@@ -146,7 +146,8 @@ protected:
 	vector<PreferredSortSection> m_vPreferredSongSort;
 	vector<RString>		m_sSongGroupNames;
 	vector<RString>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
-	
+	//vector<RString>		m_sSongGroupBackgroundPaths; // each song group may have a background associated with it (very rarely)
+
 	struct Comp { bool operator()(const RString& s, const RString &t) const { return CompareRStringsAsc(s,t); } };
 	typedef vector<Song*> SongPointerVector;
 	map<RString,SongPointerVector,Comp> m_mapSongGroupIndex;
@@ -157,6 +158,7 @@ protected:
 	struct CourseGroupInfo
 	{
 		RString m_sBannerPath;
+		//RString m_sBackgroundPath;
 	};
 	map<RString,CourseGroupInfo> m_mapCourseGroupToInfo;
 	typedef vector<Course*> CoursePointerVector;

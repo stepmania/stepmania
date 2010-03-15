@@ -61,9 +61,7 @@ public:
 LoadedThemeData *g_pLoadedThemeData = NULL;
 
 
-//
 // For self-registering metrics
-//
 #include "SubscriptionManager.h"
 static SubscriptionManager<IThemeMetric> g_Subscribers;
 
@@ -113,7 +111,7 @@ void ThemeManager::Unsubscribe( IThemeMetric *p )
 }
 
 
-/* We spend a lot of time doing redundant theme path lookups.  Cache results. */
+// We spend a lot of time doing redundant theme path lookups. Cache results.
 static map<RString, ThemeManager::PathInfo> g_ThemePathCache[NUM_ElementCategory];
 void ThemeManager::ClearThemePathCache()
 {
@@ -125,7 +123,7 @@ static void FileNameToMetricsGroupAndElement( const RString &sFileName, RString 
 {
 	// split into class name and file name
 	RString::size_type iIndexOfFirstSpace = sFileName.find(" ");
-	if( iIndexOfFirstSpace == string::npos )	// no space
+	if( iIndexOfFirstSpace == string::npos ) // no space
 	{
 		sMetricsGroupOut = "";
 		sElementOut = sFileName;
@@ -159,7 +157,7 @@ ThemeManager::ThemeManager()
 		LUA->Release( L );
 	}
 
-	/* We don't have any theme loaded until SwitchThemeAndLanguage is called. */
+	// We don't have any theme loaded until SwitchThemeAndLanguage is called.
 	m_sCurThemeName = "";
 	m_bPseudoLocalize = false;
 
@@ -201,7 +199,7 @@ int ThemeManager::GetNumSelectableThemes()
 
 bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 {
-	vector<RString> asThemeNames;	
+	vector<RString> asThemeNames;
 	GetThemeNames( asThemeNames );
 	for( unsigned i=0; i<asThemeNames.size(); i++ )
 	{
@@ -247,7 +245,7 @@ RString ThemeManager::GetThemeAuthor( const RString &sThemeName )
 
 static bool EqualsNoCase( const RString &s1, const RString &s2 )
 {
-       return s1.EqualsNoCase(s2);
+	return s1.EqualsNoCase(s2);
 }
 void ThemeManager::GetLanguages( vector<RString>& AddTo )
 {
@@ -317,9 +315,10 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		if( bIsBaseTheme )
 			bLoadedBase = true;
 
-		/* Read the fallback theme.  If no fallback theme is specified, and we haven't
-		 * already loaded it, fall back on SpecialFiles::BASE_THEME_NAME.  That way, default theme
-		 * fallbacks can be disabled with "FallbackTheme=". */
+		/* Read the fallback theme. If no fallback theme is specified, and we haven't
+		 * already loaded it, fall back on SpecialFiles::BASE_THEME_NAME.
+		 * That way, default theme fallbacks can be disabled with
+		 * "FallbackTheme=". */
 		RString sFallback;
 		if( !iniMetrics.GetValue("Global","FallbackTheme",sFallback) )
 		{
@@ -340,13 +339,13 @@ void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &
 		sThemeName = sFallback;
 	}
 
-	/* Overlay metrics from the command line. */
+	// Overlay metrics from the command line.
 	RString sMetric;
 	for( int i = 0; GetCommandlineArgument( "metric", &sMetric, i ); ++i )
 	{
-		/* sMetric must be "foo::bar=baz".  "foo" and "bar" never contain "=", so in
-		 * "foo::bar=1+1=2", "baz" is always "1+1=2".  Neither foo nor bar may be
-		 * empty, but baz may be. */
+		/* sMetric must be "foo::bar=baz". "foo" and "bar" never contain "=", so
+		 * in "foo::bar=1+1=2", "baz" is always "1+1=2". Neither foo nor bar may
+		 * be empty, but baz may be. */
 		Regex re( "^([^=]+)::([^=]+)=(.*)$" );
 		vector<RString> sBits;
 		if( !re.Compare( sMetric, sBits ) )

@@ -96,17 +96,15 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_ExportOptions )
 	{
-		//
 		// Override ScreenOptions's calling of ExportOptions
-		//
 		m_iChangeMask = 0;
-	
+
 		CHECKPOINT;
 
 		vector<PlayerNumber> vpns;
 		FOREACH_OptionsPlayer( p )
 			vpns.push_back( p );
-		for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
+		for( unsigned r=0; r<m_pRows.size(); r++ ) // foreach row
 			ExportOptions( r, vpns );
 
 		if( m_iChangeMask & OPT_APPLY_ASPECT_RATIO )
@@ -117,14 +115,14 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		}
 
 		/* If the theme changes, we need to reset RageDisplay to apply the new window
-		 * title and icon.  If the aspect ratio changes, we need to reset RageDisplay
+		 * title and icon. If the aspect ratio changes, we need to reset RageDisplay
 		 * so that the projection matrix is re-created using the new screen dimensions. */
 		if( (m_iChangeMask & OPT_APPLY_THEME) || 
 			(m_iChangeMask & OPT_APPLY_GRAPHICS) ||
 			(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) )
 		{
-			/* If the resolution or aspect ratio changes, always reload the theme.  Otherwise,
-			 * only reload it if it changed. */
+			/* If the resolution or aspect ratio changes, always reload the theme.
+			 * Otherwise, only reload it if it changed. */
 			RString sNewTheme = PREFSMAN->m_sTheme.Get();
 			bool bForceThemeReload = !!(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) || !!(m_iChangeMask & OPT_APPLY_GRAPHICS);
 			GameLoop::ChangeTheme( sNewTheme, this->GetNextScreenName(), bForceThemeReload );

@@ -28,7 +28,7 @@ public:
 protected:
 
 	enum State { 
-		waiting,	
+		waiting,
 		transitioning, 
 		finished 
 	} m_State;

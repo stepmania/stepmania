@@ -54,7 +54,7 @@ public:
 	int		m_iMaxScore;
 	RadarValues	m_radarPossible;	// filled in by ScreenGameplay on start of notes
 	RadarValues	m_radarActual;
-	/* The number of songs played and passed, respectively. */
+	// The number of songs played and passed, respectively.
 	int		m_iSongsPassed;
 	int		m_iSongsPlayed;
 	float		m_fLifeRemainingSeconds;	// used in survival
