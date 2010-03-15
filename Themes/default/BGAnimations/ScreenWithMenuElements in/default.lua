@@ -8,7 +8,7 @@ end --]]
 local t = Def.ActorFrame {
 	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
 };
-for indx=1,iTilesX do
+--[[ for indx=1,iTilesX do
 	for indy=1,iTilesY do
 		t[#t+1] = Def.Quad {
 			InitCommand=cmd(zoom,fTileSize-2;
@@ -18,7 +18,7 @@ for indx=1,iTilesX do
 			OnCommand=cmd(diffuse,Color("Black");diffusealpha,1;zoom,fTileSize-2;sleep,(iTilesX+iTilesY)*(1/60);linear,0.0325 + ( indx / 60 );diffusealpha,0;zoom,fTileSize*1.25);
 		};
 	end
-end
+end --]]
 t[#t+1] = Def.Quad {
 	InitCommand=cmd(zoomto,SCREEN_WIDTH+1,SCREEN_HEIGHT);
 	OnCommand=cmd(diffuse,color("0,0,0,1");sleep,0.0325 + ( ( iTilesX/2 ) / 60 );linear,0.15;diffusealpha,0);

@@ -2543,7 +2543,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
 			if( pi->m_pLifeMeter )
-				pi->m_pLifeMeter->OnSongEnded();	
+				pi->m_pLifeMeter->OnSongEnded();
 		}
 
 		GAMESTATE->m_bLoadingNextSong = true;
@@ -2571,7 +2571,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_PlayToasty )
 	{
-		// todo: make multiple toasties a theme option -aj
+		// todo: make multiple toasties work -aj
 		if( g_bEasterEggs )
 			if( !m_Toasty.IsTransitioning()  &&  !m_Toasty.IsFinished() )	// don't play if we've already played it once
 				m_Toasty.StartTransitioning();

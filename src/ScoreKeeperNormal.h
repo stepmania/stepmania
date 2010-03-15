@@ -24,7 +24,9 @@ class ScoreKeeperNormal: public ScoreKeeper
 	int	m_iNumTapsAndHolds;
 	int	m_iMaxScoreSoFar; // for nonstop scoring
 	int	m_iPointBonus; // the difference to award at the end
- 	int	m_iCurToastyCombo;
+	int	m_iCurToastyCombo;
+	int	m_iCurToastyTrigger;
+	int	m_iNextToastyAt;
 	bool	m_bIsLastSongInCourse;
 	bool	m_bIsBeginner;
 
@@ -58,7 +60,7 @@ class ScoreKeeperNormal: public ScoreKeeper
 	ThemeMetric<float>		m_QuadPlusNoteMultiplier;
 	ThemeMetric<float>		m_CustomComboMultiplier;
 
-	ThemeMetric<int>		m_ToastyTriggers;
+	ThemeMetric<LuaReference>	m_vToastyTriggers;
 
 	vector<Steps*>	m_apSteps;
 
@@ -104,12 +106,13 @@ public:
 	static int HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBeginner );
 	static int TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginner );
 	static int HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBeginner );
-	
+
 private:
 	void HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteScore maximum );
 	void HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumBreakCombo );
+	void HandleRowComboInternal( TapNoteScore tns, int iNumTapsInRow );
 	void GetRowCounts( const NoteData &nd, int iRow, int &iNumHitContinueCombo, int &iNumHitMaintainCombo, int &iNumBreakCombo );
-	
+
 };
 
 #endif

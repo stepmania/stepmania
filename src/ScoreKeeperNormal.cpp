@@ -15,6 +15,7 @@
 #include "ProfileManager.h"
 #include "NetworkSyncManager.h"
 #include "PlayerState.h"
+#include "Game.h"
 #include "Style.h"
 #include "Song.h"
 #include "NoteDataWithScoring.h"
@@ -77,7 +78,7 @@ void ScoreKeeperNormal::Load(
 	ASSERT( apSongs.size() == apSteps.size() );
 	ASSERT( apSongs.size() == asModifiers.size() );
 
-	/* True if a jump is one to combo, false if combo is purely based on tap count. */
+	// True if a jump is one to combo, false if combo is purely based on tap count.
 	m_ComboIsPerRow.Load( "Gameplay", "ComboIsPerRow" );
 	m_MinScoreToContinueCombo.Load( "Gameplay", "MinScoreToContinueCombo" );
 	m_MinScoreToMaintainCombo.Load( "Gameplay", "MinScoreToMaintainCombo" );
@@ -85,9 +86,9 @@ void ScoreKeeperNormal::Load(
 	// Toasty triggers (ported from 3.9+)
 	// todo: Needs to be a table of ints to be properly implemented 1:1,
 	// though the original implementation was a comma separated string.
-	// I prefer the new Lua method but it may be a pain to code; it's a
-	// single int for now.
-	m_ToastyTriggers.Load( "Gameplay", "ToastyTriggersAt" );
+	// At this point, only one trigger seems to be playing, though the logic
+	// looks okay. -aj
+	m_vToastyTriggers.Load( "Gameplay", "ToastyTriggersAt" );
 
 	// Custom Scoring
 	m_CustomComboMultiplier.Load( "CustomScoring", "ComboMultiplier" );
@@ -113,9 +114,7 @@ void ScoreKeeperNormal::Load(
 	m_TripleNoteMultiplier.Load( "CustomScoring", "TripleNoteScoreMultiplier" );
 	m_QuadPlusNoteMultiplier.Load( "CustomScoring", "QuadOrHigherNoteScoreMultiplier" );
 
-	//
 	// Fill in STATSMAN->m_CurStageStats, calculate multiplier
-	//
 	int iTotalPossibleDancePoints = 0;
 	int iTotalPossibleGradePoints = 0;
 	for( unsigned i=0; i<apSteps.size(); i++ )
@@ -128,17 +127,16 @@ void ScoreKeeperNormal::Load(
 		NoteData ndTemp;
 		pSteps->GetNoteData( ndTemp );
 
-		/* We might have been given lots of songs; don't keep them in memory uncompressed. */
+		// We might have been given lots of songs; don't keep them in memory uncompressed.
 		pSteps->Compress();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 		NoteData nd;
 		pStyle->GetTransformedNoteDataForStyle( m_pPlayerState->m_PlayerNumber, ndTemp, nd );
 
-		/* Compute RadarValues before applying any user-selected mods.  Apply
+		/* Compute RadarValues before applying any user-selected mods. Apply
 		 * Course mods and count them in the "pre" RadarValues because they're
-		 * forced and not chosen by the user.
-		 */
+		 * forced and not chosen by the user. */
 		NoteDataUtil::TransformNoteData( nd, aa, pSteps->m_StepsType, pSong );
 		RadarValues rvPre;
 		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPre );
@@ -162,7 +160,9 @@ void ScoreKeeperNormal::Load(
 	m_pPlayerStageStats->m_iPossibleGradePoints = iTotalPossibleGradePoints;
 
 	m_iScoreRemainder = 0;
-	m_iCurToastyCombo = 0; 
+	m_iCurToastyCombo = 0;
+	m_iCurToastyTrigger = 0;
+	m_iNextToastyAt = 0;
 	m_iMaxScoreSoFar = 0;
 	m_iPointBonus = 0;
 	m_iNumTapsAndHolds = 0;
@@ -214,9 +214,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
   We also keep track of this scoring type in endless, with 100mil per iteration
   of all songs, though this score isn't actually seen anywhere right now.
 */
-	//
 	// Calculate the score multiplier
-	//
 	m_iMaxPossiblePoints = 0;
 	if( GAMESTATE->IsCourseMode() )
 	{
@@ -258,8 +256,8 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 			m_iMaxPossiblePoints = (iMeter * iLengthMultiplier + 1) * 5000000;
 			break;
 		case SCORING_CUSTOM:
-			/* This is just simple additive/subtractive scoring, but cap the score at the size of the
-			 * score counter */
+			/* This is just simple additive/subtractive scoring, but cap the
+			 * score at the size of the score counter */
 			m_iMaxPossiblePoints = 10 * 10000000 * iLengthMultiplier;
 			break;
 		DEFAULT_FAIL( int(PREFSMAN->m_ScoringType) );
@@ -274,8 +272,8 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	m_iPointBonus = m_iMaxPossiblePoints;
 	m_pPlayerStageStats->m_iMaxScore = m_iMaxScoreSoFar;
 
-	/* MercifulBeginner shouldn't clamp weights in course mode, even if a beginner song
-	 * is in a course, since that makes PlayerStageStats::GetGrade hard. */
+	/* MercifulBeginner shouldn't clamp weights in course mode, even if a beginner
+	 * song is in a course, since that makes PlayerStageStats::GetGrade hard. */
 	m_bIsBeginner = pSteps->GetDifficulty() == Difficulty_Beginner && !GAMESTATE->IsCourseMode();
 
 	ASSERT( m_iPointBonus >= 0 );
@@ -285,8 +283,8 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 
 static int GetScore(int p, int Z, int S, int n)
 {
-	/* There's a problem with the scoring system described below.  Z/S is truncated
-	 * to an int.  However, in some cases we can end up with very small base scores.
+	/* There's a problem with the scoring system described below. Z/S is truncated
+	 * to an int. However, in some cases we can end up with very small base scores.
 	 * Each song in a 50-song nonstop course will be worth 2mil, which is a base of
 	 * 200k; Z/S will end up being zero.
 	 *
@@ -297,13 +295,13 @@ static int GetScore(int p, int Z, int S, int n)
 	 */
 
 #if 0
-	/* This is the actual method described below. */
+	// This is the actual method described below.
 	return p * (Z / S) * n;
 #elif 1
-	/* This doesn't round down Z/S. */
+	// This doesn't round down Z/S.
 	return int(int64_t(p) * n * Z / S);
 #else
-	/* This also doesn't round down Z/S. Use this if you don't have 64-bit ints. */
+	// This also doesn't round down Z/S. Use this if you don't have 64-bit ints.
 	return int(p * n * (float(Z) / S));
 #endif
 
@@ -443,9 +441,9 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 			iScore += m_ComboBonusFactor[score] * iCurrentCombo;
 		}
 
-		/* Subtract the maximum this step could have been worth from the bonus. */
+		// Subtract the maximum this step could have been worth from the bonus.
 		m_iPointBonus -= GetScore(10, Z, sum, m_iTapNotesHit);
-		/* And add the maximum this step could have been worth to the max score up to now. */
+		// And add the maximum this step could have been worth to the max score up to now.
 		iCurMaxScore += GetScore(10, Z, sum, m_iTapNotesHit);
 
 		if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_W2 )
@@ -467,7 +465,7 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 	// Custom Scoring
 	else
 	{
-		int p = 0;	// score value
+		int p = 0; // score value
 
 		switch( score )
 		{
@@ -510,11 +508,11 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 
 	ASSERT( iScore >= 0 );
 
-	/* Undo rounding from the last tap, and re-round. */
+	// Undo rounding from the last tap, and re-round.
 	iScore += m_iScoreRemainder;
 	m_iScoreRemainder = (iScore % m_iRoundTo);
 	iScore = iScore - m_iScoreRemainder;
-	
+
 	ASSERT( iScore >= 0 );
 
 	// LOG->Trace( "score: %i", iScore );
@@ -551,7 +549,6 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 		msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
 		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
 		MESSAGEMAN->Broadcast( msg );
-
 	}
 
 	AddTapScore( tns );
@@ -591,9 +588,7 @@ void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteSco
 
 void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumBreakCombo )
 {
-	//
 	// Regular combo
-	//
 	if( m_ComboIsPerRow )
 	{
 		iNumHitContinueCombo = min( iNumHitContinueCombo, 1 );
@@ -602,7 +597,9 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 	}
 
 	if( iNumHitContinueCombo > 0 || iNumHitMaintainCombo > 0 )
+	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
+	}
 
 	if( iNumBreakCombo == 0 )
 	{
@@ -612,6 +609,24 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 	{
 		m_pPlayerStageStats->m_iCurCombo = 0;
 		m_pPlayerStageStats->m_iCurMissCombo += iNumBreakCombo;
+	}
+}
+
+void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsInRow )
+{
+	if( m_ComboIsPerRow )
+	{
+		iNumTapsInRow = min( iNumTapsInRow, 1);
+	}
+	if ( tns >= m_MinScoreToContinueCombo )
+	{
+		m_pPlayerStageStats->m_iCurMissCombo = 0;
+		m_pPlayerStageStats->m_iCurCombo += iNumTapsInRow;
+	}
+	else if ( tns < m_MinScoreToMaintainCombo )
+	{
+		m_pPlayerStageStats->m_iCurCombo = 0;
+		m_pPlayerStageStats->m_iCurMissCombo += iNumTapsInRow;
 	}
 }
 
@@ -650,7 +665,14 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow ).result.tns;
 	HandleTapNoteScoreInternal( scoreOfLastTap, TNS_W1 );
 
-	HandleComboInternal( iNumHitContinueCombo, iNumHitMaintainCombo, iNumBreakCombo );
+	if ( GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately )
+	{
+		HandleComboInternal( iNumHitContinueCombo, iNumHitMaintainCombo, iNumBreakCombo );
+	}
+	else
+	{
+		HandleRowComboInternal( scoreOfLastTap, iNumTapsInRow ); //This should work?
+	}
 
 	if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
 		MESSAGEMAN->Broadcast( enum_add2(Message_CurrentComboChangedP1,m_pPlayerState->m_PlayerNumber) );
@@ -668,23 +690,45 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 #endif //DEBUG
 
 	// Toasty combo
+	vector<int> iToastyMilestones;
 	switch( scoreOfLastTap )
 	{
 	case TNS_W1:
 	case TNS_W2:
 		m_iCurToastyCombo += iNumTapsInRow;
 
-		if( m_iCurToastyCombo >= m_ToastyTriggers &&
-			m_iCurToastyCombo - iNumTapsInRow < m_ToastyTriggers &&
+		// compile the list of toasty triggers
+		{
+			Lua *L = LUA->Get();
+			m_vToastyTriggers.PushSelf(L);
+			LuaHelpers::ReadArrayFromTable(iToastyMilestones, L);
+			lua_pop( L, 1 );
+			LUA->Release(L);
+		}
+		// find out which one we're at.
+		if(m_iCurToastyTrigger <= int(iToastyMilestones.size()))
+		{
+			m_iNextToastyAt = iToastyMilestones[m_iCurToastyTrigger];
+		}
+		else // out of index value? then don't make it toasty!
+		{
+			m_iNextToastyAt = -1;
+		}
+
+		if( m_iCurToastyCombo >= m_iNextToastyAt &&
+			m_iCurToastyCombo - iNumTapsInRow < m_iNextToastyAt &&
 			!GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
 			Message msg("ToastyAchieved");
 			msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
+			msg.SetParam( "ToastyCombo", m_iCurToastyCombo );
 			MESSAGEMAN->Broadcast(msg);
 
 			// TODO: keep a pointer to the Profile.  Don't index with m_PlayerNumber
 			PROFILEMAN->IncrementToastiesCount( m_pPlayerState->m_PlayerNumber );
+
+			m_iCurToastyTrigger++;
 		}
 		break;
 	default:
@@ -742,7 +786,7 @@ void ScoreKeeperNormal::HandleHoldScore( const TapNote &tn )
 
 int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& radars )
 {
-	/* Note that, if W1 timing is disabled or not active (not course mode),
+	/* Note: If W1 timing is disabled or not active (not course mode),
 	 * W2 will be used instead. */
 
 	int NumTaps = int(radars[RadarCategory_TapsAndHolds]);
@@ -756,10 +800,9 @@ int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& radars )
 
 int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars )
 {
-	/*
-	 * The logic here is that if you use a modifier that adds notes, you should have to
-	 * hit the new notes to get a high grade.  However, if you use one that removes notes,
-	 * they should simply be counted as misses. */
+	/* The logic here is that if you use a modifier that adds notes, you should
+	 * have to hit the new notes to get a high grade. However, if you use one
+	 * that removes notes, they should simply be counted as misses. */
 	return max( 
 		GetPossibleDancePoints(fOriginalRadars),
 		GetPossibleDancePoints(fPostRadars) );
@@ -767,7 +810,7 @@ int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& fOriginalRadar
 
 int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& radars )
 {
-	/* Note that, if W1 timing is disabled or not active (not course mode),
+	/* Note: if W1 timing is disabled or not active (not course mode),
 	 * W2 will be used instead. */
 
 	int NumTaps = int(radars[RadarCategory_TapsAndHolds]);
@@ -781,10 +824,9 @@ int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& radars )
 
 int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars )
 {
-	/*
-	 * The logic here is that if you use a modifier that adds notes, you should have to
-	 * hit the new notes to get a high grade.  However, if you use one that removes notes,
-	 * they should simply be counted as misses. */
+	/* The logic here is that if you use a modifier that adds notes, you should
+	 * have to hit the new notes to get a high grade. However, if you use one
+	 * that removes notes, they should simply be counted as misses. */
 	return max( 
 		GetPossibleGradePoints(fOriginalRadars),
 		GetPossibleGradePoints(fPostRadars) );
@@ -814,7 +856,7 @@ int ScoreKeeperNormal::TapNoteScoreToDancePoints( TapNoteScore tns, bool bBeginn
 	if( !GAMESTATE->ShowW1() && tns == TNS_W1 )
 		tns = TNS_W2;
 
-	/* This is used for Oni percentage displays.  Grading values are currently in
+	/* This is used for Oni percentage displays. Grading values are currently in
 	 * StageStats::GetGrade. */
 	int iWeight = 0;
 	switch( tns )
@@ -856,7 +898,7 @@ int ScoreKeeperNormal::TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginn
 	if( !GAMESTATE->ShowW1() && tns == TNS_W1 )
 		tns = TNS_W2;
 
-	/* This is used for Oni percentage displays.  Grading values are currently in
+	/* This is used for Oni percentage displays. Grading values are currently in
 	 * StageStats::GetGrade. */
 	int iWeight = 0;
 	switch( tns )
