@@ -141,7 +141,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		/* Check for "halfdouble" before "double". */
 		if( sFName.find("halfdouble") != string::npos || sFName.find("h_double") != string::npos )
 			out.m_StepsType = StepsType_pump_halfdouble;
-		else if( sFName.find("double") != string::npos || sFName.find("nightmare") != string::npos )
+		else if( sFName.find("double") != string::npos || sFName.find("nightmare") != string::npos || sFName.find("freestyle") != string::npos )
 			out.m_StepsType = StepsType_pump_double;
 		else if( sFName.find("_1") != string::npos )
 			out.m_StepsType = StepsType_pump_single;
