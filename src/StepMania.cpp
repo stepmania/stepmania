@@ -103,11 +103,9 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 	int iWidth = PREFSMAN->m_iDisplayWidth;
 	if( PREFSMAN->m_bWindowed )
 	{
-		/*
-		float fRatio = PREFSMAN->m_iDisplayWidth / PREFSMAN->m_iDisplayHeight;
-		iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
-		*/
-		iWidth = PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio;
+		//float fRatio = PREFSMAN->m_iDisplayWidth / PREFSMAN->m_iDisplayHeight;
+		//iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
+		iWidth = ceilf(PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio);
 	}
 
 	paramsOut = VideoModeParams(

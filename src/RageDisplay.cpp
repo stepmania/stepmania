@@ -15,9 +15,7 @@
 #include "DisplayResolutions.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
-//
 // Statistics stuff
-//
 RageTimer	g_LastCheckTimer;
 int		g_iNumVerts;
 int		g_iFPS, g_iVPF, g_iCFPS;
@@ -145,7 +143,7 @@ void RageDisplay::ResetStats()
 RString RageDisplay::GetStats() const
 {
 	RString s;
-	/* If FPS == 0, we don't have stats yet. */
+	// If FPS == 0, we don't have stats yet.
 	if( !GetFPS() )
 		s = "-- FPS\n-- av FPS\n-- VPF";
 
@@ -182,7 +180,7 @@ void RageDisplay::StatsAddVerts( int iNumVertsRendered ) { g_iVertsRenderedSince
  * angle of the line. */
 void RageDisplay::DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth )
 {
-	/* soh cah toa strikes strikes again! */
+	// soh cah toa strikes strikes again!
 	float opp = p2.p.x - p1.p.x;
 	float adj = p2.p.y - p1.p.y;
 	float hyp = powf(opp*opp + adj*adj, 0.5f);
@@ -197,7 +195,7 @@ void RageDisplay::DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVerte
 
 	float ydist = lsin * LineWidth/2;
 	float xdist = lcos * LineWidth/2;
-	
+
 	v[0].p.x += xdist;
 	v[0].p.y -= ydist;
 	v[1].p.x -= xdist;
@@ -215,13 +213,13 @@ void RageDisplay::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVer
 {
 	ASSERT( iNumVerts >= 2 );
 
-	/* Draw a line strip with rounded corners using polys.  This is used on
+	/* Draw a line strip with rounded corners using polys. This is used on
 	 * cards that have strange allergic reactions to antialiased points and
 	 * lines. */
 	for( int i = 0; i < iNumVerts-1; ++i )
 		DrawPolyLine(v[i], v[i+1], LineWidth);
 
-	/* Join the lines with circles so we get rounded corners. */
+	// Join the lines with circles so we get rounded corners.
 	for( int i = 0; i < iNumVerts; ++i )
 		DrawCircle( v[i], LineWidth/2 );
 }
@@ -246,7 +244,6 @@ void RageDisplay::DrawCircleInternal( const RageSpriteVertex &p, float radius )
 }
 
 
-
 void RageDisplay::SetDefaultRenderStates()
 {
 	SetLighting( false );
@@ -261,9 +258,7 @@ void RageDisplay::SetDefaultRenderStates()
 }
 
 
-//
 // Matrix stuff
-//
 class MatrixStack
 {
 	vector<RageMatrix> stack;
@@ -279,14 +274,14 @@ public:
 	void Pop()
 	{
 		stack.pop_back();
-		ASSERT( stack.size() > 0 );	// underflow
+		ASSERT( stack.size() > 0 ); // underflow
 	}
 
 	// Pushes the stack by one, duplicating the current matrix.
 	void Push()
 	{
 		stack.push_back( stack.back() );
-		ASSERT( stack.size() < 100 );	// overflow
+		ASSERT( stack.size() < 100 ); // overflow
 	}
 
 	// Loads identity in the current matrix.
@@ -336,7 +331,7 @@ public:
 		RageMatrixRotationZ( &m, degrees );
 		MultMatrix( m );
 	}
-	
+
 	// Left multiply the current matrix with the computed rotation
 	// matrix. All angles are counterclockwise. (rotation is about the
 	// local origin of the object)
@@ -396,14 +391,14 @@ public:
 	}
 
 	void SkewX( float fAmount )
-	{		
+	{
 		RageMatrix m;
 		RageMatrixSkewX( &m, fAmount );
 		MultMatrixLocal( m );
 	}
 	
 	void SkewY( float fAmount )
-	{		
+	{
 		RageMatrix m;
 		RageMatrixSkewY( &m, fAmount );
 		MultMatrixLocal( m );
@@ -555,7 +550,7 @@ void RageDisplay::TextureTranslate( float x, float y )
 
 void RageDisplay::LoadMenuPerspective( float fovDegrees, float fWidth, float fHeight, float fVanishPointX, float fVanishPointY )
 {
-	/* fovDegrees == 0 gives ortho projection. */
+	// fovDegrees == 0 gives ortho projection.
 	if( fovDegrees == 0 )
 	{
  		float left = 0, right = fWidth, bottom = fHeight, top = 0;
@@ -575,8 +570,7 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fWidth, float fHe
 		fVanishPointX -= fWidth/2;
 		fVanishPointY -= fHeight/2;
 
-
-		/* It's the caller's responsibility to push first. */
+		// It's the caller's responsibility to push first.
 		g_ProjectionStack.LoadMatrix(
 			GetFrustumMatrix(
 			  (fVanishPointX-fWidth/2)/fDistCameraFromImage,
@@ -608,14 +602,14 @@ void RageDisplay::CameraPopMatrix()
 }
 
 
-/* gluLookAt.  The result is pre-multiplied to the matrix (M = L * M) instead of
+/* gluLookAt. The result is pre-multiplied to the matrix (M = L * M) instead of
  * post-multiplied. */
 void RageDisplay::LoadLookAt( float fFOV, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up )
 {
 	float fAspect = GetActualVideoModeParams().fDisplayAspectRatio;
 	g_ProjectionStack.LoadMatrix( GetPerspectiveMatrix(fFOV, fAspect, 1, 1000) );
 
-	/* Flip the Y coordinate, so positive numbers go down. */
+	// Flip the Y coordinate, so positive numbers go down.
 	g_ProjectionStack.Scale( 1, -1, 1 );
 
 	g_ViewStack.LoadMatrix( RageLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z) );
@@ -624,12 +618,12 @@ void RageDisplay::LoadLookAt( float fFOV, const RageVector3 &Eye, const RageVect
 
 RageMatrix RageDisplay::GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar)
 {
-   float ymax = zNear * tanf(fovy * PI / 360.0f);
-   float ymin = -ymax;
-   float xmin = ymin * aspect;
-   float xmax = ymax * aspect;
+	float ymax = zNear * tanf(fovy * PI / 360.0f);
+	float ymin = -ymax;
+	float xmin = ymin * aspect;
+	float xmax = ymax * aspect;
 
-   return GetFrustumMatrix(xmin, xmax, ymin, ymax, zNear, zFar);
+	return GetFrustumMatrix(xmin, xmax, ymin, ymax, zNear, zFar);
 }
 
 RageSurface *RageDisplay::CreateSurfaceFromPixfmt( PixelFormat pixfmt,
@@ -662,10 +656,10 @@ PixelFormat RageDisplay::FindPixelFormat( int iBPP, int iRmask, int iGmask, int 
 
 	return PixelFormat_Invalid;
 }
-	
-/* These convert to OpenGL's coordinate system: -1,-1 is the bottom-left, +1,+1 is the
- * top-right, and Z goes from -1 (viewer) to +1 (distance).  It's a little odd, but
- * very well-defined. */
+
+/* These convert to OpenGL's coordinate system: -1,-1 is the bottom-left,
+ * +1,+1 is the top-right, and Z goes from -1 (viewer) to +1 (distance).
+ * It's a little odd, but very well-defined. */
 RageMatrix RageDisplay::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
 {
 	RageMatrix m(
@@ -693,20 +687,20 @@ RageMatrix RageDisplay::GetFrustumMatrix( float l, float r, float b, float t, fl
 
 void RageDisplay::ResolutionChanged()
 {
-	/* The centering matrix depends on the resolution. */
+	// The centering matrix depends on the resolution.
 	UpdateCentering();
 }
 
 void RageDisplay::CenteringPushMatrix()
 {
 	g_CenteringStack.push_back( g_CenteringStack.back() );
-	ASSERT( g_CenteringStack.size() < 100 );	// overflow
+	ASSERT( g_CenteringStack.size() < 100 ); // overflow
 }
 
 void RageDisplay::CenteringPopMatrix()
 {
 	g_CenteringStack.pop_back();
-	ASSERT( g_CenteringStack.size() > 0 );	// underflow
+	ASSERT( g_CenteringStack.size() > 0 ); // underflow
 	UpdateCentering();
 }
 
@@ -761,10 +755,12 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 	 * screenshots in a strange (non-1) sample aspect ratio. */
 	if( format != SAVE_LOSSLESS && format != SAVE_LOSSLESS_SENSIBLE )
 	{
-		/* Maintain the DAR. */
+		// Maintain the DAR.
 		ASSERT( GetActualVideoModeParams().fDisplayAspectRatio > 0 );
 		int iHeight = 480;
-		int iWidth = lrintf( iHeight * GetActualVideoModeParams().fDisplayAspectRatio );
+		// This used to be lrintf. However, lrintf causes odd resolutions like
+		// 639x480 (4:3) and 853x480 (16:9). ceilf gives correct values. -aj
+		int iWidth = ceilf( iHeight * GetActualVideoModeParams().fDisplayAspectRatio );
 		timer.Touch();
 		RageSurfaceUtils::Zoom( surface, iWidth, iHeight );
 //		LOG->Trace( "%ix%i -> %ix%i (%.3f) in %f seconds", surface->w, surface->h, iWidth, iHeight, GetActualVideoModeParams().fDisplayAspectRatio, timer.GetDeltaTime() );
@@ -818,7 +814,7 @@ void RageDisplay::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
 		return;
 
 	this->DrawQuadsInternal(v,iNumVerts);
-	
+
 	StatsAddVerts(iNumVerts);
 }
 
@@ -830,7 +826,7 @@ void RageDisplay::DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts )
 		return;
 
 	this->DrawQuadStripInternal(v,iNumVerts);
-	
+
 	StatsAddVerts(iNumVerts);
 }
 
@@ -839,7 +835,7 @@ void RageDisplay::DrawFan( const RageSpriteVertex v[], int iNumVerts )
 	ASSERT( iNumVerts >= 3 );
 
 	this->DrawFanInternal(v,iNumVerts);
-	
+
 	StatsAddVerts(iNumVerts);
 }
 
@@ -848,7 +844,7 @@ void RageDisplay::DrawStrip( const RageSpriteVertex v[], int iNumVerts )
 	ASSERT( iNumVerts >= 3 );
 
 	this->DrawStripInternal(v,iNumVerts);
-	
+
 	StatsAddVerts(iNumVerts); 
 }
 
@@ -856,7 +852,7 @@ void RageDisplay::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
 {
 	if( iNumVerts == 0 )
 		return;
-	
+
 	ASSERT( iNumVerts >= 3 );
 
 	this->DrawTrianglesInternal(v,iNumVerts);

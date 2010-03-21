@@ -25,6 +25,9 @@ float ScreenDimensions::GetThemeAspectRatio()
 	return THEME_NATIVE_ASPECT;
 }
 
+// ceilf was originally lrintf. However, lrintf causes odd resolutions like
+// 639x480 (4:3) and 853x480 (16:9). ceilf gives the correct values of 640x480
+// and 854x480 respectively. -aj
 float ScreenDimensions::GetScreenWidth()
 {
 	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
@@ -32,7 +35,7 @@ float ScreenDimensions::GetScreenWidth()
 	if( fAspect > THEME_NATIVE_ASPECT )
 		fScale = fAspect / THEME_NATIVE_ASPECT;
 	ASSERT( fScale >= 1 );
-	return (float) lrintf(THEME_SCREEN_WIDTH * fScale);
+	return (float) ceilf(THEME_SCREEN_WIDTH * fScale);
 }
 
 float ScreenDimensions::GetScreenHeight()
@@ -42,7 +45,7 @@ float ScreenDimensions::GetScreenHeight()
 	if( fAspect < THEME_NATIVE_ASPECT )
 		fScale = THEME_NATIVE_ASPECT / fAspect;
 	ASSERT( fScale >= 1 );
-	return (float) lrintf(THEME_SCREEN_HEIGHT * fScale);
+	return (float) ceilf(THEME_SCREEN_HEIGHT * fScale);
 }
 
 void ScreenDimensions::ReloadScreenDimensions()
