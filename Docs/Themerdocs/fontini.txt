@@ -1,26 +1,26 @@
 SM4 Font .ini values
 
 [common]
-CapitalsOnly
-RightToLeft
-DefaultStrokeColor
+CapitalsOnly			- If set to 1, lowercase letters are drawn with uppercase letters instead.
+RightToLeft				- Font should be rendered as right to left.
+DefaultStrokeColor		- Sets default stroke color. (e.g. #00000000)
 
 [main]
-import
+import					- Imports a font page into the current font.
 
 (per-page)
-DrawExtraPixelsLeft
-DrawExtraPixelsRight
-AddToAllWidths
-ScaleAllWidthsBy
-LineSpacing
-Top
-Baseline
-DefaultWidth
-AdvanceExtraPixels
-TextureHints
+DrawExtraPixelsLeft		- How many pixels to draw to the left of a character.
+DrawExtraPixelsRight	- How many pixels to draw to the right of a character.
+AddToAllWidths			- Adds x amount of pixels to all widths.
+ScaleAllWidthsBy		- Scales widths by the factor specified.
+LineSpacing				- Modifies line spacing.
+Top						- Specifies the top of the character. (in pixels)
+Baseline				- Specifies the baseline of the character. (in pixels)
+DefaultWidth			- Default width for a glyph.
+AdvanceExtraPixels		- Rudimentary way to control letter spacing
+TextureHints			- An alternative to throwing the TextureHints in the filename.
 
 (general commands)
-MAP
-RANGE
-LINE
+MAP						- Maps a keyword to a frame number. (e.g. map up=0)
+RANGE					- Defines a Unicode range to use.
+LINE					- (e.g. Line 1=ABCDEFGH)
