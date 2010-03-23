@@ -1,0 +1,61 @@
+sm-ssc Conditional Music/Sounds [v0001 | 2010/03/23 | written by AJ]
+--------------------------------------------------------------------
+Conditional Music/Sounds allows a themer to use Lua scripts to determine what
+sound is played. This can be useful for many reasons, mainly to give a theme
+some extra flavor. It can be used (along with UserPreferences+EnvUtils2) to
+mimic beatmania IIDX's BGM selection ability (also seen in various k//eternal
+themes for StepMania 3.9 via an external program).
+
+This is a feature that will lock your theme to sm-ssc, since StepMania 4 does
+not support it. If you care about having an easily-portable theme, conditional
+music/sounds won't really help. However, it is a nice feature to have.
+
+Implementing conditional music/sounds in sm-ssc requires the following:
+* multiple sound files in Themes/{yourtheme}/Sounds/
+* A Lua script that returns the path to one of these sounds, wrapped in a
+  THEME:GetPathS().
+
+The canonical example is the one used to test the code in the first place.
+This is a Lua script.
+
+[code]
+-- given two audio files _agB.(mp3/ogg/wav) and _agA.(mp3/ogg/wav), this will
+-- return a random sound.
+local a = math.random(50);
+local ret;
+if a % 2 == 0 then
+	ret = "_agB";
+else
+	ret = "_agA";
+end;
+-- THEME:GetPathS() has to be used here since the script doesn't know where it is.
+return THEME:GetPathS("",ret);
+[/code]
+
+Of course, this file could be simplified, but since only two choices were
+available at the time, there was no need. Unfortunately, that means a lot of
+possible edge cases exist where problems could arise.
+
+For example: it's currently unknown if you can use EnvUtils or UserPreferences
+to set the song.
+
+This example uses a different song each month.
+[code]
+local songs = {
+	"neatsong1",	-- January
+	"neatsong2",	-- February
+	"neatsong3",	-- March
+	"joke",			-- April
+	"fiesta",		-- May
+	"anothersong",	-- June
+	"airsong",		-- July
+	"earthsong",	-- August
+	"watersong",	-- September
+	"spooky",		-- October
+	"firesong",		-- November
+	"holidays",		-- December
+};
+-- MonthOfYear starts at 0. Lua arrays are 1-indexed, so correct
+local curMonth = MonthOfYear()+1;
+return THEME:GetPathS("",songs[curMonth]);
+[/code]
