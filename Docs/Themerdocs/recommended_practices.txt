@@ -5,3 +5,25 @@ This way, you don't have to deal with the theme switch and all the possible
 nonsense errors that might come up (due to you having a different amount of
 song group colors, timer warning states, etc.), and you can quickly switch
 themes if you work on many of them at once.
+
+2) If you want to create a theme that targets both regular StepMania 4 and
+sm-ssc, there are a few precautions to take care of.
+
+2a) First, decide if you want to develop it on sm-ssc first or SM4 first. It is
+usually easier to deal with making the theme in normal SM4 and using _portKit-SM4
+to get the theme running up in sm-ssc.
+
+If you do decide to make the theme for sm-ssc first, be prepared to fill in a lot
+of files that sm-ssc _fallback makes empty for you, as the metrics, graphics, and
+BGAnimations from SM4's default theme will be loaded instead of sm-ssc's _fallback.
+
+2b) sm-ssc's _fallback theme defines a variable, SSC, like so:
+[code]SSC = (ProductID() == "sm-ssc");[/code]
+This will return true if it's sm-ssc, or false if it's SM4.
+You should define this in a file in your theme, so that SM4 will be able to
+recognize it.
+
+With this "SSC guard" in place, you can now wrap things in "if SSC then"
+statements if they won't work on SM4. You can also provide alternatives if the
+player isn't using sm-ssc, since sometimes SM4 will have an approximation or
+alternate way to get the data.

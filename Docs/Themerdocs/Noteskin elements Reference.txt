@@ -64,7 +64,7 @@ HandLrRight
 Left
 UpLeft
 Up
-UpRigh
+UpRight
 Right
 
 --ds3ddx--
@@ -87,5 +87,12 @@ Scratch down
 --techno--
 
 --popn--
+
+--guitar-- (not enabled yet)
+Fret1
+Fret2
+Fret3
+Fret4
+Fret5
 
 --lights (rofl)--
