@@ -130,7 +130,8 @@ By leaving out a key in your custom language, you tell StepMania to look in
 the default language (typically en.ini)
 
 2.2. BGAnimations ______________________________________________________________
-
+Easily where you'll be spending the most time when making a theme, the
+BGAnimations provide a way for you to customize various theme parts.
 
 There are multiple names StepMania recognizes for BGAnimation folders. Some
 screens won't support all of these.
@@ -185,17 +186,39 @@ aren't on Windows, your choices are then limited to whatever image editor you
 can find (typically Photoshop or The GIMP).
 
 fontini.txt in the ThemerDocs folder contains a list of all the known
-font .ini values. It lacks explanation, however.
+font .ini values. The file is reprinted here:
+================================================================================
+[common]
+CapitalsOnly			- If set to 1, lowercase letters are drawn with uppercase letters instead.
+RightToLeft				- If set to 1, font will be rendered as right to left.
+DefaultStrokeColor		- Sets default stroke color. (e.g. #00000000)
 
-[Common]
-CapitalsOnly
-RightToLeft
-DefaultStrokeColor
+[main]
+import					- Imports a font page into the current font.
 
+(per-page)
+DrawExtraPixelsLeft		- How many pixels to draw to the left of a character.
+DrawExtraPixelsRight	- How many pixels to draw to the right of a character.
+AddToAllWidths			- Adds x amount of pixels to all widths.
+ScaleAllWidthsBy		- Scales widths by the factor specified.
+LineSpacing				- Modifies line spacing.
+Top						- Specifies the top of the character. (in pixels)
+Baseline				- Specifies the baseline of the character. (in pixels)
+DefaultWidth			- Default width for a glyph.
+AdvanceExtraPixels		- Rudimentary way to control letter spacing
+TextureHints			- An alternative to throwing the TextureHints in the filename.
+
+(general commands)
+MAP						- Maps a keyword to a frame number. (e.g. map up=0)
+RANGE					- Defines a Unicode range to use.
+LINE					- (e.g. Line 1=ABCDEFGH)
+================================================================================
 2.5. Sounds ____________________________________________________________________
 
 
 sm-ssc can load Lua files as music, allowing for conditional music/sounds.
+conditional_music.txt in the ThemerDocs folder explains it in more detail with
+code examples.
 
 2.6. Scripts ___________________________________________________________________
 Scripts allow you to define functions which can then be referenced in Metrics

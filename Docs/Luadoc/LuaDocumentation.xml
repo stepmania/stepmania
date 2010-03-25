@@ -952,6 +952,9 @@
 	<Function name='strokecolor' return='void' arguments='color c'>
 		Sets the stroke color to <code>c</code>.
 	</Function>
+	<Function name='textglowmode' sm-ssc='true' return='void' arguments='TextGlowMode tgm'>
+		If the text is glowing, specify if just the stroke layer, just the inner layer, or both are affected by the glow.
+	</Function>
 	<Function name='uppercase' return='void' arguments='bool b'>
 		If <code>true</code>, make all text uppercase.
 	</Function>
@@ -1734,6 +1737,9 @@
 	<Function name='GetPlayedSteps' return='{Steps}' arguments=''>
 		Returns a table of played steps.
 	</Function>
+	<Function name='GetPercentageOfTaps' sm-ssc='true' return='float' arguments='TapNoteScore tns'>
+		Gets the percentage of taps that were scored as <code>tns</code>.
+	</Function>
 	<Function name='GetPercentDancePoints' return='float' arguments=''>
 		Returns the player's Dance Point percentage.
 	</Function>
@@ -1755,6 +1761,18 @@
 	<Function name='GetTapNoteScores' return='int' arguments='TapNoteScore tns'>
 		Returns the number of judgments for a specified TapNoteScore.
 	</Function>
+	<Function name='IsFullComboW1' renamed='true' return='bool' arguments=''>
+		[01 compat.lua] Returns <code>true</code> if the player got a full combo of all W1s.
+	</Function>
+	<Function name='IsFullComboW2' renamed='true' return='bool' arguments=''>
+		[01 compat.lua] Returns <code>true</code> if the player got a full combo of all W2s.
+	</Function>
+	<Function name='IsFullComboW3' renamed='true' return='bool' arguments=''>
+		[01 compat.lua] Returns <code>true</code> if the player got a full combo of all W3s.
+	</Function>
+	<Function name='IsFullComboW4' renamed='true' return='bool' arguments=''>
+		[01 compat.lua] Returns <code>true</code> if the player got a full combo of all W4s.
+	</Function>
 	<Function name='MaxCombo' return='int' arguments=''>
 		Returns the max combo for this performance.
 	</Function>
@@ -1763,6 +1781,9 @@
 	</Function>
 </Class>
 <Class name='PlayerState'>
+	<Function name='GetMultiPlayerNumber' sm-ssc='true' return='MultiPlayer' arguments=''>
+		Returns the multiplayer number for this PlayerState.
+	</Function>
 	<Function name='GetPlayerController' sm-ssc='true' return='PlayerController' arguments=''>
 		Returns the PlayerController for this PlayerState.
 	</Function>
@@ -2133,6 +2154,11 @@
 		Gets the currently selected letter of Player <code>pn</code>.
 	</Function>
 </Class>
+<Class name='ScreenNetEvaluation'>
+	<Function name='GetNumActivePlayers' sm-ssc='true' return='int' arguments=''>
+		Returns the number of active players.
+	</Function>
+</Class>
 <Class name='ScreenOptions'>
 	<Function name='AllAreOnLastRow' return='bool' sm-ssc='true' arguments=''>
 		Returns <code>true</code> if all active players are on the last options row.
@@ -2160,6 +2186,11 @@
 	</Function>
 	<Function name='HaveProfileToSave' return='bool' arguments=''>
 		Returns <code>true</code> if there is a profile that can be saved.
+	</Function>
+</Class>
+<Class name='ScreenSelectMaster'>
+	<Function name='GetSelectionIndex' sm-ssc='true' return='int' arguments='PlayerNumber pn'>
+		Returns player <code>pn</code>'s current selected item as an integer.
 	</Function>
 </Class>
 <Class name='ScreenSelectProfile'>
@@ -2361,6 +2392,9 @@
 	</Function>
 	<Function name='GetSongGroupColor' return='color' arguments='string sGroupName'>
 		Returns the song group color of <code>sGroupName</code>.
+	</Function>
+	<Function name='ShortenGroupName' sm-ssc='true' return='string' arguments='string sGroupName'>
+		Returns the shortened group name (based on entries in Translations.xml).
 	</Function>
 </Class>
 <Class name='Sprite'>

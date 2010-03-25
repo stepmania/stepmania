@@ -27,3 +27,11 @@ With this "SSC guard" in place, you can now wrap things in "if SSC then"
 statements if they won't work on SM4. You can also provide alternatives if the
 player isn't using sm-ssc, since sometimes SM4 will have an approximation or
 alternate way to get the data.
+
+3) When dealing with frame size errors or theme code errors, don't just hide the
+dialog and pretend they don't exist. Good themers fix these problems instead of
+releasing the theme and saying "oh, just play it in fullscreen mode".
+
+If you have hidden the error dialogs, you'll need to modify Preferences.ini. 
+Find the IgnoredDialogs= line and remove everything after the = sign. You will
+now recieve the error messages in windowed mode again.

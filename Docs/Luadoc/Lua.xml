@@ -111,6 +111,7 @@
 		<Function name='RollBodyIncrementsCombo'/>
 		<Function name='SMOnlineScreen'/>
 		<Function name='Saturation'/>
+		<Function name='ScoreKeeperClass'/>
 		<Function name='ScoreMissedHoldsAndRolls'/>
 		<Function name='Second'/>
 		<Function name='SecondsToHHMMSS'/>
@@ -485,6 +486,7 @@
 			<Function name='settext'/>
 			<Function name='settextf'/>
 			<Function name='strokecolor'/>
+			<Function name='textglowmode'/>
 			<Function name='uppercase'/>
 			<Function name='vertspacing'/>
 			<Function name='wrapwidthpixels'/>
@@ -514,6 +516,7 @@
 		</Class>
 		<Class name='Course'>
 			<Function name='GetAllTrails'/>
+			<Function name='GetBackgroundPath'/>
 			<Function name='GetBannerPath'/>
 			<Function name='GetCourseEntry'/>
 			<Function name='GetCourseType'/>
@@ -797,6 +800,7 @@
 			<Function name='GetMachineHighScoreIndex'/>
 			<Function name='GetPeakComboAward'/>
 			<Function name='GetPercentDancePoints'/>
+			<Function name='GetPercentageOfTaps'/>
 			<Function name='GetPersonalHighScoreIndex'/>
 			<Function name='GetPlayedSteps'/>
 			<Function name='GetPossibleDancePoints'/>
@@ -806,9 +810,14 @@
 			<Function name='GetSurvivalSeconds'/>
 			<Function name='GetTapNoteScores'/>
 			<Function name='IsDisqualified'/>
+			<Function name='IsFullComboW1'/>
+			<Function name='IsFullComboW2'/>
+			<Function name='IsFullComboW3'/>
+			<Function name='IsFullComboW4'/>
 			<Function name='MaxCombo'/>
 		</Class>
 		<Class name='PlayerState'>
+			<Function name='GetMultiPlayerNumber'/>
 			<Function name='GetPlayerNumber'/>
 			<Function name='GetPlayerOptions'/>
 			<Function name='SetPlayerOptions'/>
@@ -958,6 +967,9 @@
 			<Function name='GetFinalized'/>
 			<Function name='GetSelection'/>
 		</Class>
+		<Class base='ScreenEvaluation' name='ScreenNetEvaluation'>
+			<Function name='GetNumActivePlayers'/>
+		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenOptions'>
 			<Function name='AllAreOnLastRow'/>
 			<Function name='GetCurrentRow'/>
@@ -972,6 +984,9 @@
 		<Class base='ScreenWithMenuElements' name='ScreenProfileSave'>
 			<Function name='Continue'/>
 			<Function name='HaveProfileToSave'/>
+		</Class>
+		<Class base='ScreenWithMenuElements' name='ScreenSelectMaster'>
+			<Function name='GetSelectionIndex'/>
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenSelectMusic'>
 			<Function name='GetGoToOptions'/>
@@ -1051,6 +1066,7 @@
 			<Function name='GetSongColor'/>
 			<Function name='GetSongFromSteps'/>
 			<Function name='GetSongGroupColor'/>
+			<Function name='ShortenGroupName'/>
 		</Class>
 		<Class base='Actor' name='Sprite'>
 			<Function name='CropTo'/>
@@ -1737,6 +1753,11 @@
 			<EnumValue name='&apos;TapNoteScoreJudgeType_MinimumScore&apos;' value='0'/>
 			<EnumValue name='&apos;TapNoteScoreJudgeType_LastScore&apos;' value='1'/>
 		</Enum>
+		<Enum name='TextGlowMode'>
+			<EnumValue name='&apos;TextGlowMode_Inner&apos;' value='0'/>
+			<EnumValue name='&apos;TextGlowMode_Stroke&apos;' value='1'/>
+			<EnumValue name='&apos;TextGlowMode_Both&apos;' value='2'/>
+		</Enum>
 		<Enum name='TextureMode'>
 			<EnumValue name='&apos;TextureMode_Modulate&apos;' value='0'/>
 			<EnumValue name='&apos;TextureMode_Glow&apos;' value='1'/>
@@ -1779,13 +1800,13 @@
 		<Constant name='ASPECT_SCALE_FACTOR' value='1'/>
 		<Constant name='NUM_PLAYERS' value='2'/>
 		<Constant name='SCREEN_BOTTOM' value='480'/>
-		<Constant name='SCREEN_CENTER_X' value='384'/>
+		<Constant name='SCREEN_CENTER_X' value='427'/>
 		<Constant name='SCREEN_CENTER_Y' value='240'/>
 		<Constant name='SCREEN_HEIGHT' value='480'/>
 		<Constant name='SCREEN_LEFT' value='0'/>
-		<Constant name='SCREEN_RIGHT' value='768'/>
+		<Constant name='SCREEN_RIGHT' value='854'/>
 		<Constant name='SCREEN_TOP' value='0'/>
-		<Constant name='SCREEN_WIDTH' value='768'/>
+		<Constant name='SCREEN_WIDTH' value='854'/>
 		<Constant name='PLAYER_1' value='&apos;PlayerNumber_P1&apos;'/>
 		<Constant name='PLAYER_2' value='&apos;PlayerNumber_P2&apos;'/>
 		<Constant name='_VERSION' value='&apos;Lua 5.1&apos;'/>
@@ -1798,5 +1819,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>sm-ssc v1.0 beta 1</Version>
-	<Date>2010-02-28</Date>
+	<Date>2010-03-24</Date>
 </Lua>
