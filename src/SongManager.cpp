@@ -126,6 +126,13 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 		PREFSMAN->m_bFastLoad.Set( OldVal );
 
 	UpdatePreferredSort();
+
+	// Reload song/course group colors to prevent a crash when switching
+	// themes in-game. -aj
+	NUM_SONG_GROUP_COLORS	.Load( "SongManager", "NumSongGroupColors" );
+	SONG_GROUP_COLOR		.Load( "SongManager", SONG_GROUP_COLOR_NAME, NUM_SONG_GROUP_COLORS );
+	NUM_COURSE_GROUP_COLORS .Load( "SongManager", "NumCourseGroupColors" );
+	COURSE_GROUP_COLOR		.Load( "SongManager", COURSE_GROUP_COLOR_NAME, NUM_COURSE_GROUP_COLORS );
 }
 
 void SongManager::InitSongsFromDisk( LoadingWindow *ld )
