@@ -48,6 +48,10 @@ void MenuTimer::Load( RString sMetricsGroup )
 	WARNING_START.Load(sMetricsGroup,"WarningStart");
 	WARNING_BEEP_START.Load(sMetricsGroup,"WarningBeepStart");
 	MAX_STALL_SECONDS.Load(sMetricsGroup,"MaxStallSeconds");
+
+	if(WARNING_COMMAND)
+		WARNING_COMMAND->Clear();
+
 	WARNING_COMMAND = new ThemeMetric1D<apActorCommands>(sMetricsGroup, WARNING_COMMAND_NAME, WARNING_START+1);
 
 	m_fStallSecondsLeft = MAX_STALL_SECONDS;

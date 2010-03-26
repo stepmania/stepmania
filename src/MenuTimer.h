@@ -22,14 +22,13 @@ public:
 	void Start();		// resume countdown from paused
 	void Pause();		// don't count down
 	void Stop();		// set to "00" and pause
-	void Disable();		// set to "99" and pause
+	void Disable();	// set to "99" and pause
 	void Stall();		// pause countdown for a sec
-	void EnableSilent( bool bSilent ) { m_bSilent = bSilent; }	// make timer silent
-	void EnableStealth( bool bStealth );	// make timer invisible and silent
+	void EnableSilent( bool bSilent ) { m_bSilent = bSilent; } // make timer silent
+	void EnableStealth( bool bStealth ); // make timer invisible and silent
 
-	//
+
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 protected:
