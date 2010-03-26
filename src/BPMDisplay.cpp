@@ -7,6 +7,7 @@
 #include "Style.h"
 #include "ActorUtil.h"
 #include "CommonMetrics.h"
+#include "LocalizedString.h"
 #include "Song.h"
 
 #include <limits.h>
@@ -34,6 +35,7 @@ void BPMDisplay::Load()
 	SEPARATOR.Load( m_sName, "Separator" );
 	SHOW_QMARKS.Load( m_sName, "ShowQMarksInRandomCycle" );
 	NO_BPM_TEXT.Load( m_sName, "NoBpmText" );
+	VARIOUS_TEXT.Load( m_sName, "VariousText" );
 
 	RunCommands( SET_NORMAL_COMMAND );
 }
@@ -56,13 +58,13 @@ void BPMDisplay::Update( float fDeltaTime )
 	if( !(bool)CYCLE )
 		return;
 	if( m_BPMS.size() == 0 )
-		return; /* no bpm */
+		return; // no bpm
 
 	m_fPercentInState -= fDeltaTime / m_fCycleTime;
 	if( m_fPercentInState < 0 )
 	{
 		// go to next state
-		m_fPercentInState = 1;		// reset timer
+		m_fPercentInState = 1; // reset timer
 
 		m_iCurrentBPM = (m_iCurrentBPM + 1) % m_BPMS.size();
 		m_fBPMFrom = m_fBPMTo;
@@ -227,8 +229,7 @@ void BPMDisplay::SetVarious()
 {
 	m_BPMS.clear();
 	m_BPMS.push_back( -1 );
-	// XXX: this should be a themed string -aj
-	SetText( "Various" );
+	SetText( VARIOUS_TEXT );
 }
 
 void BPMDisplay::SetFromGameState()
@@ -254,6 +255,7 @@ void BPMDisplay::SetFromGameState()
 	NoBPM();
 }
 
+// SongBPMDisplay (in-game BPM display)
 class SongBPMDisplay: public BPMDisplay
 {
 public:
