@@ -13,7 +13,7 @@ class IniFile : public XNode
 public:
 	IniFile();
 
-	/* Retrieve the filename of the last file loaded. */
+	// Retrieve the filename of the last file loaded.
 	RString GetPath() const { return m_sPath; }
 	const RString &GetError() const { return m_sError; }
 

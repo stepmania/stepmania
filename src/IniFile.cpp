@@ -37,7 +37,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 	while( 1 )
 	{
 		RString line;
-		/* Read lines until we reach a line that doesn't end in a backslash */
+		// Read lines until we reach a line that doesn't end in a backslash
 		while( true )
 		{
 			RString s;
@@ -47,7 +47,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 				m_sError = f.GetError();
 				return false;
 			case 0:
-				return true; /* eof */
+				return true; // eof
 			}
 
 			utf8_remove_bom( s );
@@ -63,21 +63,23 @@ bool IniFile::ReadFile( RageFileBasic &f )
 
 		if( line.size() == 0 )
 			continue;
+		if( line[0] == ';' )
+			continue; // comment
 		if( line[0] == '#' )
-			continue; /* comment */
+			continue; // comment
 		if( line.size() > 1 && line[0] == '/' && line[1] == '/' )
-			continue; /* comment */
+			continue; // comment
 		if( line.size() > 1 && line[0] == '-' && line[1] == '-' )
-			continue; /* comment (Lua style) */
+			continue; // comment (Lua style)
 
 		if( line[0] == '[' && line[line.size()-1] == ']'  )
 		{
-			/* New section. */
+			// New section.
 			keyname = line.substr(1, line.size()-2);
 		}
 		else
 		{
-			/* New value. */
+			// New value.
 			size_t iEqualIndex = line.find("=");
 			if( iEqualIndex != string::npos )
 			{
@@ -162,7 +164,7 @@ bool IniFile::DeleteKey(const RString &keyname)
 
 bool IniFile::RenameKey(const RString &from, const RString &to)
 {
-	/* If to already exists, do nothing. */
+	// If to already exists, do nothing.
 	if( GetChild(to) != NULL )
 		return false;
 

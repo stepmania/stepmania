@@ -1153,7 +1153,7 @@ int main(int argc, char* argv[])
 	BANNERCACHE	= new BannerCache;
 	//BACKGROUNDCACHE	= new BackgroundCache;
 
-	/* depends on SONGINDEX: */
+	// depends on SONGINDEX:
 	SONGMAN		= new SongManager;
 	SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
