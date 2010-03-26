@@ -9,6 +9,25 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100326
+--------
+* [BPMDisplay] make the "Various" text a theme-able string.
+* Allow ';' to start a comment in .ini files
+
+20100321
+--------
+* Fix a rounding bug that causes resolutions like 639x480 (4/3) and 853x480
+  (16/9); now they should be 640x480 and 854x480 as expected. Applies to
+  screenshots as well.
+  (Also, this fixes Midiman's pet peeve of having to add +1 to SCREEN_WIDTH)
+  * [RageDisplay.cpp] modified screenshot function
+  * [ScreenDimensions] modified SCREEN_WIDTH and SCREEN_HEIGHT algorithms
+  * [StepMania.cpp] modified windowed mode width calculation
+
+20100315
+--------
+* Make steps labeled as "freestyle" in .ksfs use doubles
+
 20100313
 --------
 * ScoreKeeperNormal double shot.
