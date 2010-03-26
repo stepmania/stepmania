@@ -139,6 +139,7 @@ ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads
 ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
 ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
 ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" ); // sm-ssc addition
+ThemeMetric<bool> PERCENT_UNTIL_COLOR_COMBO ( "Player", "PercentUntilColorCombo" );
 
 float Player::GetWindowSeconds( TimingWindow tw )
 {
@@ -3018,9 +3019,9 @@ void Player::SetCombo( int iCombo, int iMisses )
 	if( b1000Milestone )
 		this->PlayCommand( "ThousandMilestone" );
 
-	// don't show a colored combo until 1/4 of the way through the song
+	// don't show a colored combo until the specified point in the metrics.
 	bool bPastBeginning = (!GAMESTATE->IsCourseMode() || GAMESTATE->GetCourseSongIndex()>0) &&
-		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds/4;
+		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds * PERCENT_UNTIL_COLOR_COMBO;
 
 	if( m_bSendJudgmentAndComboMessages )
 	{
