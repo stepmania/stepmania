@@ -30,6 +30,9 @@ Aldo_MX
 Jason Reid (jnr)
  * Tested building sm-ssc on FreeBSD, provided fixes.
 
+Wolfman
+ * [Player] PercentUntilColorCombo metric
+
 Daisuke Master
  * Pump/default, Pump/flat, and Pump/simple noteskins
  * /Docs/Themerdocs/Noteskin elements Reference.txt

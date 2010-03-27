@@ -25,8 +25,8 @@ class ScoreKeeperNormal: public ScoreKeeper
 	int	m_iMaxScoreSoFar; // for nonstop scoring
 	int	m_iPointBonus; // the difference to award at the end
 	int	m_iCurToastyCombo;
-	int	m_iCurToastyTrigger;
-	int	m_iNextToastyAt;
+	//int	m_iCurToastyTrigger;
+	//int	m_iNextToastyAt;
 	bool	m_bIsLastSongInCourse;
 	bool	m_bIsBeginner;
 
@@ -60,7 +60,8 @@ class ScoreKeeperNormal: public ScoreKeeper
 	ThemeMetric<float>		m_QuadPlusNoteMultiplier;
 	ThemeMetric<float>		m_CustomComboMultiplier;
 
-	ThemeMetric<LuaReference>	m_vToastyTriggers;
+	//ThemeMetric<LuaReference>	m_vToastyTriggers;
+	ThemeMetric<int>	m_ToastyTrigger;
 
 	vector<Steps*>	m_apSteps;
 

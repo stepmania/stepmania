@@ -83,12 +83,12 @@ void ScoreKeeperNormal::Load(
 	m_MinScoreToContinueCombo.Load( "Gameplay", "MinScoreToContinueCombo" );
 	m_MinScoreToMaintainCombo.Load( "Gameplay", "MinScoreToMaintainCombo" );
 
-	// Toasty triggers (ported from 3.9+)
-	// todo: Needs to be a table of ints to be properly implemented 1:1,
-	// though the original implementation was a comma separated string.
-	// At this point, only one trigger seems to be playing, though the logic
-	// looks okay. -aj
-	m_vToastyTriggers.Load( "Gameplay", "ToastyTriggersAt" );
+	// Toasty triggers (idea from 3.9+)
+	// Multiple toasty support doesn't seem to be working right now.
+	// Since it's causing more problems than solutions, I'm going back to
+	// the old way of a single toasty trigger for now.
+	//m_vToastyTriggers.Load( "Gameplay", "ToastyTriggersAt" );
+	m_ToastyTrigger.Load( "Gameplay", "ToastyTriggersAt" );
 
 	// Custom Scoring
 	m_CustomComboMultiplier.Load( "CustomScoring", "ComboMultiplier" );
@@ -161,8 +161,8 @@ void ScoreKeeperNormal::Load(
 
 	m_iScoreRemainder = 0;
 	m_iCurToastyCombo = 0;
-	m_iCurToastyTrigger = 0;
-	m_iNextToastyAt = 0;
+	//m_iCurToastyTrigger = 0;
+	//m_iNextToastyAt = 0;
 	m_iMaxScoreSoFar = 0;
 	m_iPointBonus = 0;
 	m_iNumTapsAndHolds = 0;
@@ -690,13 +690,14 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 #endif //DEBUG
 
 	// Toasty combo
-	vector<int> iToastyMilestones;
+	//vector<int> iToastyMilestones;
 	switch( scoreOfLastTap )
 	{
 	case TNS_W1:
 	case TNS_W2:
 		m_iCurToastyCombo += iNumTapsInRow;
 
+		/*
 		// compile the list of toasty triggers
 		{
 			Lua *L = LUA->Get();
@@ -714,9 +715,10 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 		{
 			m_iNextToastyAt = -1;
 		}
+		*/
 
-		if( m_iCurToastyCombo >= m_iNextToastyAt &&
-			m_iCurToastyCombo - iNumTapsInRow < m_iNextToastyAt &&
+		if( m_iCurToastyCombo >= m_ToastyTrigger &&
+			m_iCurToastyCombo - iNumTapsInRow < m_ToastyTrigger &&
 			!GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
@@ -728,7 +730,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 			// TODO: keep a pointer to the Profile.  Don't index with m_PlayerNumber
 			PROFILEMAN->IncrementToastiesCount( m_pPlayerState->m_PlayerNumber );
 
-			m_iCurToastyTrigger++;
+			//m_iCurToastyTrigger++;
 		}
 		break;
 	default:
