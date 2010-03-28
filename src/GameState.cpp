@@ -621,23 +621,27 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 	if( m_pCurSong )
 	{
 		const Style *pStyle = m_pCurStyle;
+		int numSidesJoined = GetNumSidesJoined();
 		if( pStyle == NULL )
 		{
 			const Steps *pSteps = NULL;
 			if( m_MasterPlayerNumber != PlayerNumber_Invalid )
 				pSteps = m_pCurSteps[m_MasterPlayerNumber];
-			if( pSteps )
+			// Don't call GetFirstCompatibleStyle if numSidesJoined == 0.
+			// This happens because on SContinue when players are unjoined,
+			// pCurSteps will still be set while no players are joined. -Chris
+			if( pSteps && numSidesJoined > 0 )
 			{
 				/* If a style isn't set, use the style of the selected steps. */
 				StepsType st = pSteps->m_StepsType;
-				pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, GetNumSidesJoined(), st );
+				pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, numSidesJoined, st );
 			}
 			else
 			{
 				/* If steps aren't set either, pick any style for the number of
 				 * joined players, or one player if no players are joined. */
 				vector<const Style*> vpStyles;
-				int iJoined = max( GetNumSidesJoined(), 1 );
+				int iJoined = max( numSidesJoined, 1 );
 				GAMEMAN->GetCompatibleStyles( m_pCurGame, iJoined, vpStyles );
 				ASSERT( !vpStyles.empty() );
 				pStyle = vpStyles[0];
