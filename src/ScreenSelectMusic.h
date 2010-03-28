@@ -86,6 +86,7 @@ protected:
 	ThemeMetric<bool> SELECT_MENU_CHANGES_DIFFICULTY;
 	ThemeMetric<bool> TWO_PART_SELECTION;
 	ThemeMetric<bool> TWO_PART_CONFIRMS_ONLY;
+	ThemeMetric<float> TWO_PART_TIMER_SECONDS;
 	ThemeMetric<bool> WRAP_CHANGE_STEPS;
 
 	bool CanChangeSong() const { return m_SelectionState == SelectionState_SelectingSong; }

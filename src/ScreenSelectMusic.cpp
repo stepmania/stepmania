@@ -87,6 +87,7 @@ void ScreenSelectMusic::Init()
 	SELECT_MENU_CHANGES_DIFFICULTY.Load( m_sName, "SelectMenuChangesDifficulty" );
 	TWO_PART_SELECTION.Load( m_sName, "TwoPartSelection" );
 	TWO_PART_CONFIRMS_ONLY.Load( m_sName, "TwoPartConfirmsOnly" );
+	TWO_PART_TIMER_SECONDS.Load( m_sName, "TwoPartTimerSeconds" );
 	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
@@ -1219,8 +1220,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		float fSeconds = m_MenuTimer->GetSeconds();
 		if( fSeconds < 10 )
 		{
-			// TODO: make this a theme metric -aj
-			m_MenuTimer->SetSeconds( 13 );
+			m_MenuTimer->SetSeconds( TWO_PART_TIMER_SECONDS ); // was 13 -aj
 			m_MenuTimer->Start();
 		}
 	}
