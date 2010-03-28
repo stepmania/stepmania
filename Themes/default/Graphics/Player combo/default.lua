@@ -75,10 +75,10 @@ local t = Def.ActorFrame {
 
 		param.Zoom = scale( iCombo, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom );
 		param.Zoom = clamp( param.Zoom, NumberMinZoom, NumberMaxZoom );
-		
+
 		param.LabelZoom = scale( iCombo, 0, NumberMaxZoomAt, LabelMinZoom, LabelMaxZoom );
 		param.LabelZoom = clamp( param.LabelZoom, LabelMinZoom, LabelMaxZoom );
-		
+
 		c.Number:visible(true);
 		c.Label:visible(true);
 		c.Number:settext( string.format("%i", iCombo) );
@@ -93,7 +93,10 @@ local t = Def.ActorFrame {
 			c.Number:diffuse(color("#a4ff00"));
 			c.Number:stopeffect();
 		elseif param.Combo then
-			c.Number:diffuse(PlayerColor(player));
+			-- Player 1's color is Red, which conflicts with the miss combo.
+			-- instead, just diffuse to white for now. -aj
+			--c.Number:diffuse(PlayerColor(player));
+			c.Number:diffuse(Color("White"));
 			c.Number:stopeffect();
 			(cmd(diffuse,Color("White");diffusebottomedge,color("0.5,0.5,0.5,1")))(c.Label);
 		else
