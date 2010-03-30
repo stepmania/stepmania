@@ -221,13 +221,26 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR\Announcers"
 	File "Announcers\instructions.txt"
 
+	; background/movie related
 	CreateDirectory "$INSTDIR\BGAnimations"
 	SetOutPath "$INSTDIR\BGAnimations"
 	File "BGAnimations\instructions.txt"
 
-	CreateDirectory "$INSTDIR\CDTitles"
-	SetOutPath "$INSTDIR\CDTitles"
-	File "CDTitles\Instructions.txt"
+	CreateDirectory "$INSTDIR\BackgroundEffects"
+	File /r /x CVS /x .svn "BackgroundEffects"
+
+	CreateDirectory "$INSTDIR\BackgroundTransitions"
+	File /r /x CVS /x .svn "BackgroundTransitions"
+
+	CreateDirectory "$INSTDIR\RandomMovies"
+	SetOutPath "$INSTDIR\RandomMovies"
+	File "RandomMovies\instructions.txt"
+	; end background/movie related
+
+	; Nobody should be using this directory anymore. -aj
+	;CreateDirectory "$INSTDIR\CDTitles"
+	;SetOutPath "$INSTDIR\CDTitles"
+	;File "CDTitles\Instructions.txt"
 
 	RMDir /r "$INSTDIR\Characters\default"
 	CreateDirectory "$INSTDIR\Characters\default"
@@ -243,40 +256,57 @@ Section "Main Section" SecMain
 	CreateDirectory "$INSTDIR\Packages"
 	File "Packages\Instructions.txt"
 
+	; remove old noteskins
 	RMDir /r "$INSTDIR\NoteSkins\common\default"
+	; dance
 	RMDir /r "$INSTDIR\NoteSkins\dance\default"
-	RMDir /r "$INSTDIR\NoteSkins\dance\flat"
-	RMDir /r "$INSTDIR\NoteSkins\dance\gamma"
+	RMDir /r "$INSTDIR\NoteSkins\dance\Delta"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi"
+	RMDir /r "$INSTDIR\NoteSkins\dance\retro"
+	; pump
+	RMDir /r "$INSTDIR\NoteSkins\pump\default"
+	RMDir /r "$INSTDIR\NoteSkins\pump\simple"
+	; lights
+	RMDir /r "$INSTDIR\NoteSkins\lights\default"
 	SetOutPath "$INSTDIR\NoteSkins"
 	File "NoteSkins\instructions.txt"
 
 	SetOutPath "$INSTDIR\NoteSkins\common"
 	File /r /x CVS /x .svn "NoteSkins\common\Common"
 
+	; install dance noteskins
 	SetOutPath "$INSTDIR\NoteSkins\dance"
 	File /r /x CVS /x .svn "NoteSkins\dance\default"
-	File /r /x CVS /x .svn "NoteSkins\dance\flat"
-	File /r /x CVS /x .svn "NoteSkins\dance\gamma"
+	File /r /x CVS /x .svn "NoteSkins\dance\Delta"
+	File /r /x CVS /x .svn "NoteSkins\dance\midi"
+	File /r /x CVS /x .svn "NoteSkins\dance\retro"
 	SetOutPath "$INSTDIR"
 
-	CreateDirectory "$INSTDIR\BackgroundEffects"
-	File /r /x CVS /x .svn "BackgroundEffects"
+	; install pump noteskins
+	SetOutPath "$INSTDIR\NoteSkins\pump"
+	RMDir /r "$INSTDIR\NoteSkins\pump\default"
+	RMDir /r "$INSTDIR\NoteSkins\pump\simple"
+	SetOutPath "$INSTDIR"
 
-	CreateDirectory "$INSTDIR\BackgroundTransitions"
-	File /r /x CVS /x .svn "BackgroundTransitions"
+	; install lights noteskin
+	SetOutPath "$INSTDIR\NoteSkins\lights"
+	RMDir /r "$INSTDIR\NoteSkins\lights\default"
+	SetOutPath "$INSTDIR"
 
-	CreateDirectory "$INSTDIR\RandomMovies"
-	SetOutPath "$INSTDIR\RandomMovies"
-	File "RandomMovies\instructions.txt"
-
+	; make songs dir
 	CreateDirectory "$INSTDIR\Songs"
 	SetOutPath "$INSTDIR\Songs"
 	File "Songs\Instructions.txt"
 
+	; remove and install themes
+	RMDir /r "$INSTDIR\Themes\_fallback"
+	RMDir /r "$INSTDIR\Themes\_portKit-sm4"
 	RMDir /r "$INSTDIR\Themes\default"
 	CreateDirectory "$INSTDIR\Themes"
 	SetOutPath "$INSTDIR\Themes"
 	File "Themes\instructions.txt"
+	File /r /x CVS /x .svn "Themes\_fallback"
+	File /r /x CVS /x .svn "Themes\_portKit-sm4"
 	File /r /x CVS /x .svn "Themes\default"
 
 	CreateDirectory "$INSTDIR\Data"
@@ -289,11 +319,16 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR\pcks"
 	File /r "pcks\*.*"
 !endif
-	
+
 	SetOutPath "$INSTDIR\Program"
 !ifdef INSTALL_EXECUTABLES
+	; normal exec
 	File "Program\${PRODUCT_FAMILY}.exe"
 	File "Program\${PRODUCT_FAMILY}.vdi"
+	; sse2 exec
+	File "Program\${PRODUCT_FAMILY}-SSE2.exe"
+	File "Program\${PRODUCT_FAMILY}-SSE2.vdi"
+	; other programs
 	File "Program\tools.exe"
 	File "Program\Texture Font Generator.exe"
 !endif
@@ -301,18 +336,32 @@ Section "Main Section" SecMain
 	Call RefreshShellIcons
 !endif
 !ifdef INSTALL_PROGRAM_LIBRARIES
+	; microsoft!
 	File "Program\mfc71.dll"
 	File "Program\msvcr71.dll"
+	File "Program\msvcr80.dll"
 	File "Program\msvcp71.dll"
-	File "Program\jpeg.dll"
-	File "Program\avcodec-51.dll"
-	File "Program\avformat-51.dll"
+	File "Program\msvcp80.dll"
+	; ffmpeg and related
+	File "Program\avcodec-52.dll"
+	File "Program\avdevice-52.dll"
+	File "Program\avformat-52.dll"
+	File "Program\avutil-50.dll"
+	File "Program\swscale-0.dll"
+	; parallel lights
+	File "Program\parallel_lights_io.dll"
+	; others
 	File "Program\dbghelp.dll"
-	File "Program\avutil-49.dll"
+	File "Program\jpeg.dll"
 	File "Program\zlib1.dll"
 
-	SetOutPath "$INSTDIR"
-	File "Docs\Licenses.txt"
+	; documentation
+	CreateDirectory "$INSTDIR\Docs"
+	SetOutPath "$INSTDIR\Docs"
+	File "Licenses.txt"
+	File "credits.txt"
+	File "Changelog_sm-ssc.txt"
+	File "CommandLineArgs.txt"
 
 	CreateDirectory "$INSTDIR\Manual"
 	SetOutPath "$INSTDIR\Manual"

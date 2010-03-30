@@ -218,7 +218,7 @@
 		<div class="renamed">Renamed or otherwise modified in sm-ssc (differences will be noted)</div>
 		<div class="sm-ssc">Available in sm-ssc only (for the time being)</div>
 		<div class="_fallbackTheme">Defined in sm-ssc's _fallback theme <small>(<em>Foundation</em>)</small></div>
-		<div class="defaultTheme">Defined in sm-ssc's default theme <small>(<em>Urban Fragments</em>)</small></div>
+		<div class="defaultTheme">Defined in sm-ssc's default theme</div>
 		</fieldset>
 	</div>
 	<xsl:apply-templates select="sm:Singletons" />
