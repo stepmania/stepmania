@@ -106,20 +106,18 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 	acolorhist_item *acolormap=NULL;
 	int newcolors = 0;
 
-	/* "apixel", etc. make assumptions about byte order. */
+	// "apixel", etc. make assumptions about byte order.
 	RageSurfaceUtils::ConvertSurface( pImg, pImg->w, pImg->h, 32,
 		Swap32BE(0xFF000000), Swap32BE(0x00FF0000), Swap32BE(0x0000FF00), Swap32BE(0x000000FF));
 
 	pixval maxval = 255;
 
 	{
-		/*
-		 * Attempt to make a histogram of the colors, unclustered.
+		/* Attempt to make a histogram of the colors, unclustered.
 		 * If at first we don't succeed, lower maxval to increase color
-		 * coherence and try again.  This will eventually terminate, with
+		 * coherence and try again. This will eventually terminate, with
 		 * maxval at worst 15, since 32^3 is approximately MAXCOLORS.
-		 *        [GRR POSSIBLE BUG:  what about 32^4 ?]
-		 */
+		 * [GRR POSSIBLE BUG: what about 32^4 ?] */
 		acolorhist_item *achv;
 		int colors;
 		while(1)
@@ -143,7 +141,7 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 		}
 		newcolors = min( colors, iColors );
 
-		/* Apply median-cut to histogram, making the new acolormap. */
+		// Apply median-cut to histogram, making the new acolormap.
 		acolormap = mediancut( achv, colors, pImg->h * pImg->w, maxval, newcolors );
 		pam_freeacolorhist( achv );
 	}
@@ -151,12 +149,12 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 	RageSurface *pRet = CreateSurface( pImg->w, pImg->h, 8, 0, 0, 0, 0 );
 	pRet->format->palette->ncolors = newcolors;
 
-	/* Rescale the palette colors to a maxval of 255. */
+	// Rescale the palette colors to a maxval of 255.
 	{
 		RageSurfacePalette *pal = pRet->format->palette;
 		for( int x = 0; x < pal->ncolors; ++x )
 		{
-			/* This is really just PAM_DEPTH() broken out for the palette. */
+			// This is really just PAM_DEPTH() broken out for the palette.
 			pal->colors[x].r
 				= (PAM_GETR(acolormap[x].acolor)*255 + (maxval >> 1)) / maxval;
 			pal->colors[x].g
@@ -168,7 +166,7 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 		}
 	}
 
-	/* Map the colors in the image to their closest match in the new colormap. */
+	// Map the colors in the image to their closest match in the new colormap.
 	acolorhash_hash acht;
 
 	bool fs_direction = 0;
@@ -176,7 +174,7 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 
 	if( bDither )
 	{
-		/* Initialize Floyd-Steinberg error vectors. */
+		// Initialize Floyd-Steinberg error vectors.
 		thiserr = new pixerror_t[pImg->w + 2];
 		nexterr = new pixerror_t[pImg->w + 2];
 
@@ -209,7 +207,7 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 			uint8_t pixel[4] = { pIn[0], pIn[1], pIn[2], pIn[3] };
 			if( bDither )
 			{
-				/* Use Floyd-Steinberg errors to adjust actual color. */
+				// Use Floyd-Steinberg errors to adjust actual color.
 				for( int c = 0; c < 4; ++c )
 				{
 					sc[c] = pixel[c] + thiserr[col + 1].c[c] / FS_SCALE;
@@ -219,11 +217,11 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 				PAM_ASSIGN( pixel, (uint8_t)sc[0], (uint8_t)sc[1], (uint8_t)sc[2], (uint8_t)sc[3] );
 			}
 
-			/* Check hash table to see if we have already matched this color. */
+			// Check hash table to see if we have already matched this color.
 			int ind = pam_lookupacolor( acht, pixel );
 			if( ind == -1 )
 			{
-				/* No; search acolormap for closest match. */
+				// No; search acolormap for closest match.
 				static int square_table[512], *pSquareTable = NULL;
 				if( pSquareTable == NULL )
 				{
@@ -255,7 +253,7 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 
 			if( bDither )
 			{
-				/* Propagate Floyd-Steinberg error terms. */
+				// Propagate Floyd-Steinberg error terms.
 				if( !fs_direction )
 				{
 					for( int c = 0; c < 4; ++c )
@@ -307,13 +305,9 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 	pImg = pRet;
 }
 
-
-
-/*
- * Here is the fun part, the median-cut colormap generator.  This is based
+/* Here is the fun part, the median-cut colormap generator.  This is based
  * on Paul Heckbert's paper, "Color Image Quantization for Frame Buffer
- * Display," SIGGRAPH 1982 Proceedings, page 297.
- */
+ * Display," SIGGRAPH 1982 Proceedings, page 297. */
 
 typedef struct box *box_vector;
 struct box
@@ -343,34 +337,32 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 	for ( int i = 0; i < newcolors; ++i )
 		PAM_ASSIGN( acolormap[i].acolor, 0, 0, 0, 0 );
 
-	/* Set up the initial box. */
+	// Set up the initial box.
 	bv[0].ind = 0;
 	bv[0].colors = colors;
 	bv[0].sum = sum;
 	boxes = 1;
 
-	/* Main loop: split boxes until we have enough. */
+	// Main loop: split boxes until we have enough.
 	while( boxes < newcolors )
 	{
 		int indx, clrs;
 		int sm;
 		int halfsum, lowersum;
 
-		/* Find the first splittable box. */
+		// Find the first splittable box.
 		int bi;
 		for( bi = 0; bi < boxes; ++bi )
 			if ( bv[bi].colors >= 2 )
 				break;
 		if( bi == boxes )
-			break;        /* ran out of colors! */
+			break; // ran out of colors!
 		indx = bv[bi].ind;
 		clrs = bv[bi].colors;
 		sm = bv[bi].sum;
 
-		/*
-		 * Go through the box finding the minimum and maximum of each
-		 * component - the boundaries of the box.
-		 */
+		/* Go through the box finding the minimum and maximum of each
+		 * component - the boundaries of the box. */
 		int mins[4], maxs[4];
 		mins[0] = maxs[0] = achv[indx].acolor[0];
 		mins[1] = maxs[1] = achv[indx].acolor[1];
@@ -394,7 +386,7 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 			maxs[3] = max( maxs[3], v );
 		}
 
-		/* Find the largest dimension, and sort by that component. */
+		// Find the largest dimension, and sort by that component.
 		{
 			int iMax = 0;
 			for( int i = 1; i < 3; ++i )
@@ -409,10 +401,8 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 			case 3: sort( &achv[indx], &achv[indx+clrs], compare_index_3 ); break;
 			}
 		}
-		/*
-		 * Now find the median based on the counts, so that about half the
-		 * pixels (not colors, pixels) are in each subdivision.
-		 */
+		/* Now find the median based on the counts, so that about half the
+		 * pixels (not colors, pixels) are in each subdivision. */
 		lowersum = achv[indx].value;
 		halfsum = sm / 2;
 		int j;
@@ -423,7 +413,7 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 			lowersum += achv[indx + j].value;
 		}
 
-		/* Split the box, and sort to bring the biggest boxes to the top. */
+		// Split the box, and sort to bring the biggest boxes to the top.
 		bv[bi].colors = j;
 		bv[bi].sum = lowersum;
 		bv[boxes].ind = indx + j;
@@ -433,16 +423,14 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 		sort( &bv[0], &bv[boxes], CompareBySumDescending );
 	}
 
-	/*
-	 * Ok, we've got enough boxes.  Now choose a representative color for
-	 * each box.  There are a number of possible ways to make this choice.
+	/* Ok, we've got enough boxes. Now choose a representative color for
+	 * each box. There are a number of possible ways to make this choice.
 	 * One would be to choose the center of the box; this ignores any structure
-	 * within the boxes.  Another method would be to average all the colors in
-	 * the box - this is the method specified in Heckbert's paper.  A third
-	 * method is to average all the pixels in the box.  You can switch which
+	 * within the boxes. Another method would be to average all the colors in
+	 * the box - this is the method specified in Heckbert's paper. A third
+	 * method is to average all the pixels in the box. You can switch which
 	 * method is used by switching the commenting on the REP_ defines at
-	 * the beginning of this source file.
-	 */
+	 * the beginning of this source file. */
 	for( int bi = 0; bi < boxes; ++bi )
 	{
 #ifdef REP_AVERAGE_COLORS
@@ -462,7 +450,7 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 		b = b / clrs;
 		a = a / clrs;
 		PAM_ASSIGN( acolormap[bi].acolor, r, g, b, a );
-#endif /*REP_AVERAGE_COLORS*/
+#endif // REP_AVERAGE_COLORS
 #ifdef REP_AVERAGE_PIXELS
 		int indx = bv[bi].ind;
 		int clrs = bv[bi].colors;
@@ -485,10 +473,10 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 		a = a / sum;
 		a = min( a, (long) maxval );
 		PAM_ASSIGN( acolormap[bi].acolor, (uint8_t)r, (uint8_t)g, (uint8_t)b, (uint8_t)a );
-#endif /*REP_AVERAGE_PIXELS*/
+#endif // REP_AVERAGE_PIXELS
 	}
 
-	/* All done. */
+	// All done.
 	return acolormap;
 }
 
@@ -520,7 +508,7 @@ static bool pam_computeacolorhash( const RageSurface *src, int maxacolors, int* 
 
 	*acolorsP = 0;
 
-	/* Go through the entire image, building a hash table of colors. */
+	// Go through the entire image, building a hash table of colors.
 	for( int row = 0; row < src->h; ++row )
 	{
 		const apixel *pP = (const apixel *) (src->pixels + row*src->pitch);
@@ -553,23 +541,23 @@ static bool pam_computeacolorhash( const RageSurface *src, int maxacolors, int* 
 
 static acolorhist_item *pam_acolorhashtoacolorhist( const acolorhash_hash &acht, int maxacolors )
 {
-	/* Collate the hash table into a simple acolorhist array. */
+	// Collate the hash table into a simple acolorhist array.
 	acolorhist_item *achv = (acolorhist_item*) malloc( maxacolors * sizeof(struct acolorhist_item) );
 	ASSERT( achv != NULL );
 
-	/* Loop through the hash table. */
+	// Loop through the hash table.
 	int j = 0;
 	for( unsigned i = 0; i < HASH_SIZE; ++i )
 	{
 		for ( acolorhist_list achl = acht.hash[i]; achl != NULL; achl = achl->next )
 		{
-			/* Add the new entry. */
+			// Add the new entry.
 			achv[j] = achl->ch;
 			++j;
 		}
 	}
 
-	/* All done. */
+	// All done.
 	return achv;
 }
 

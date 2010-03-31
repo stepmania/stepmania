@@ -192,11 +192,37 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 		if( !arrayGroupBanners.empty() )
 			sBannerPath = sDir+arrayGroupBanners[0];
 	}
+	
+	// Group backgrounds are a bit trickier, and usually don't exist.
+	// However, for Background wheels, we support them. -aj
+	// background files MUST end in "-bg".ext in order to distinguish them.
+	// Yes hardcoding it sucks sometimes, but this is to keep my sanity. -aj
+/*
+	vector<RString> arrayGroupBackgrounds;
+	GetDirListing( sDir+sGroupDirName+"/*-bg.png", arrayGroupBanners );
+	GetDirListing( sDir+sGroupDirName+"/*-bg.jpg", arrayGroupBanners );
+	GetDirListing( sDir+sGroupDirName+"/*-bg.gif", arrayGroupBanners );
+	GetDirListing( sDir+sGroupDirName+"/*-bg.bmp", arrayGroupBanners );
 
+	RString sBackgroundPath;
+	if( !arrayGroupBackgrounds.empty() )
+		sBackgroundPath = sDir+sGroupDirName+"/"+arrayGroupBackgrounds[0];
+	else
+	{
+		// Look for a group background in the parent folder
+		GetDirListing( sDir+sGroupDirName+"-bg.png", arrayGroupBackgrounds );
+		GetDirListing( sDir+sGroupDirName+"-bg.jpg", arrayGroupBackgrounds );
+		GetDirListing( sDir+sGroupDirName+"-bg.gif", arrayGroupBackgrounds );
+		GetDirListing( sDir+sGroupDirName+"-bg.bmp", arrayGroupBackgrounds );
+		if( !arrayGroupBackgrounds.empty() )
+			sBackgroundPath = sDir+arrayGroupBackgrounds[0];
+	}
+*/
 	LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(), 
 				sBannerPath != ""? sBannerPath.c_str():"(none)" );
 	m_sSongGroupNames.push_back( sGroupDirName );
 	m_sSongGroupBannerPaths.push_back( sBannerPath );
+	//m_sSongGroupBackgroundPaths.push_back( sBackgroundPath );
 }
 
 static LocalizedString LOADING_SONGS ( "SongManager", "Loading songs..." );
@@ -263,9 +289,9 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		/* Add this group to the group array. */
 		AddGroup(sDir, sGroupDirName);
 
-		/* Cache and load the group banner. */
+		// Cache and load the group banner. (and background if it has one)
 		BANNERCACHE->CacheBanner( GetSongGroupBannerPath(sGroupDirName) );
-		
+
 		/* Load the group sym links (if any)*/
 		LoadGroupSymLinks(sDir, sGroupDirName);
 	}
@@ -312,21 +338,47 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 
 void SongManager::PreloadSongImages()
 {
+	bool bSkipBanners = false;
+	//bool bSkipBackgrounds = false;
 	if( PREFSMAN->m_BannerCache != BNCACHE_FULL )
-		return;
+		bSkipBanners = true;
+	/*
+	if( PREFSMAN->m_BackgroundCache != BNCACHE_FULL )
+		bSkipBackgrounds = true;
+	*/
 
 	/* Load textures before unloading old ones, so we don't reload textures
 	 * that we don't need to. */
 	RageTexturePreloader preload;
 
-	const vector<Song*> &songs = GetAllSongs();
-	for( unsigned i = 0; i < songs.size(); ++i )
+	//if( !bSkipBanners && !bSkipBackgrounds )
+	if( !bSkipBanners )
 	{
-		if( !songs[i]->HasBanner() )
-			continue;
+		const vector<Song*> &songs = GetAllSongs();
+		for( unsigned i = 0; i < songs.size(); ++i )
+		{
+			// preload banners
+			if( !songs[i]->HasBanner() && !songs[i]->HasBackground() )
+				continue;
 
-		const RageTextureID ID = Sprite::SongBannerTexture( songs[i]->GetBannerPath() );
-		preload.Load( ID );
+			if( !bSkipBanners && songs[i]->HasBanner() )
+			{
+				const RageTextureID ID = Sprite::SongBannerTexture( songs[i]->GetBannerPath() );
+				preload.Load( ID );
+			}
+
+			// preload backgrounds
+			/*
+			if( !bSkipBackgrounds && songs[i]->HasBackground() )
+			{
+				if ( !songs[i]->HasBackground() )
+					continue;
+
+				const RageTextureID IDbg = Sprite::SongBGTexture( songs[i]->GetBackgroundPath() );
+				preload.Load( IDbg );
+			}
+			*/
+		}
 	}
 
 	vector<Course*> courses;
@@ -347,13 +399,16 @@ void SongManager::FreeSongs()
 {
 	m_sSongGroupNames.clear();
 	m_sSongGroupBannerPaths.clear();
+	//m_sSongGroupBackgroundPaths.clear();
 
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 		SAFE_DELETE( m_pSongs[i] );
 	m_pSongs.clear();
 	m_mapSongGroupIndex.clear();
 
+	// wait why is it cleared twice? -aj
 	m_sSongGroupBannerPaths.clear();
+	//m_sSongGroupBackgroundPaths.clear(); // when in Rome... -aj
 
 	m_pPopularSongs.clear();
 	m_pShuffledSongs.clear();
@@ -369,7 +424,18 @@ RString SongManager::GetSongGroupBannerPath( RString sSongGroup ) const
 
 	return RString();
 }
+/*
+RString SongManager::GetSongGroupBackgroundPath( RString sSongGroup ) const
+{
+	for( unsigned i = 0; i < m_sSongGroupNames.size(); ++i )
+	{
+		if( sSongGroup == m_sSongGroupNames[i] ) 
+			return m_sSongGroupBackgroundPaths[i];
+	}
 
+	return RString();
+}
+*/
 void SongManager::GetSongGroupNames( vector<RString> &AddTo ) const
 {
 	AddTo.insert(AddTo.end(), m_sSongGroupNames.begin(), m_sSongGroupNames.end() );
@@ -385,9 +451,11 @@ RageColor SongManager::GetSongGroupColor( const RString &sSongGroup ) const
 	for( unsigned i=0; i<m_sSongGroupNames.size(); i++ )
 	{
 		if( m_sSongGroupNames[i] == sSongGroup )
+		{
 			return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
+		}
 	}
-	
+
 	ASSERT_M( 0, ssprintf("requested color for song group '%s' that doesn't exist",sSongGroup.c_str()) );
 	return RageColor(1,1,1,1);
 }
@@ -398,9 +466,8 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 
 	// Use unlock color if applicable
 	const UnlockEntry *pUE = UNLOCKMAN->FindSong( pSong );
-	if( pUE  &&  USE_UNLOCK_COLOR.GetValue() )
+	if( pUE && USE_UNLOCK_COLOR.GetValue() )
 		return UNLOCK_COLOR.GetValue();
-
 
 	if( USE_PREFERRED_SORT_COLOR )
 	{
@@ -423,18 +490,18 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 	{
 
 		/* XXX:
-		 * Previously, this matched all notes, which set a song to "extra" if it
-		 * had any 10-foot steps at all, even edits or doubles.
+		 * Previously, this matched all notes, which set a song to "extra" if
+		 * it had any 10-foot steps at all, even edits or doubles.
 		 *
-		 * For now, only look at notes for the current note type.  This means that
-		 * if a song has 10-foot steps on Doubles, it'll only show up red in Doubles.
-		 * That's not too bad, I think.  This will also change it in the song scroll,
-		 * which is a little odd but harmless. 
+		 * For now, only look at notes for the current note type. This means
+		 * that if a song has 10-foot steps on Doubles, it'll only show up red
+		 * in Doubles. That's not too bad, I think. This will also change it
+		 * in the song scroll, which is a little odd but harmless. 
 		 *
-		 * XXX: Ack.  This means this function can only be called when we have a style
-		 * set up, which is too restrictive.  How to handle this?
+		 * XXX: Ack. This means this function can only be called when we have
+		 * a style set up, which is too restrictive.  How to handle this?
 		 */
-	//	const StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+		//const StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 		const vector<Steps*>& vpSteps = pSong->GetAllSteps();
 		for( unsigned i=0; i<vpSteps.size(); i++ )
 		{
@@ -446,8 +513,8 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 				continue;
 			}
 
-	//		if(pSteps->m_StepsType != st)
-	//			continue;
+			//if(pSteps->m_StepsType != st)
+			//	continue;
 
 			if( pSteps->GetMeter() >= EXTRA_COLOR_METER )
 				return (RageColor)EXTRA_COLOR;
@@ -1287,7 +1354,7 @@ Song *SongManager::FindSong( RString sPath ) const
 	else if( bits.size() == 2 )
 		return FindSong( bits[0], bits[1] );
 
-	return NULL;	
+	return NULL;
 }
 
 Song *SongManager::FindSong( RString sGroup, RString sSong ) const
@@ -1300,7 +1367,7 @@ Song *SongManager::FindSong( RString sGroup, RString sSong ) const
 			return *s;
 	}
 
-	return NULL;	
+	return NULL;
 }
 
 Course *SongManager::FindCourse( RString sPath ) const
@@ -1314,7 +1381,7 @@ Course *SongManager::FindCourse( RString sPath ) const
 	else if( bits.size() == 2 )
 		return FindCourse( bits[0], bits[1] );
 
-	return NULL;	
+	return NULL;
 }
 
 Course *SongManager::FindCourse( RString sGroup, RString sName ) const
@@ -1335,13 +1402,13 @@ void SongManager::UpdatePopular()
 	for ( unsigned j=0; j < apBestSongs.size() ; ++j )
 	{
 		bool bFiltered = false;
-		/* Filter out locked songs. */
+		// Filter out locked songs.
 		if( !apBestSongs[j]->NormallyDisplayed() )
 			bFiltered = true;
 		if( !bFiltered )
 			continue;
 
-		/* Remove it. */
+		// Remove it.
 		swap( apBestSongs[j], apBestSongs.back() );
 		apBestSongs.erase( apBestSongs.end()-1 );
 		--j;
@@ -1776,11 +1843,11 @@ public:
 	DEFINE_METHOD( GetSongColor, GetSongColor( Luna<Song>::check(L,1) ) )
 	DEFINE_METHOD( GetSongGroupColor, GetSongGroupColor( SArg(1) ) )
 	DEFINE_METHOD( GetCourseColor, GetCourseColor( Luna<Course>::check(L,1) ) )
-	
+
 	// this binding has ABYSMAL performance, most likely due to the whole "hey
 	// let's keep repopulating the vector every time this is called" thing.
 	// gg whitehouse maybe if you included global variables in your terror
-	// alerts this wouldn't have happened ffffffffffffff
+	// alerts this wouldn't have happened ffffffffffffff -aj
 	/*
 	static int GetSongRank( T* p, lua_State *L )
 	{
@@ -1798,6 +1865,8 @@ public:
 		// it's like the above but also takes in a ProfileSlot as well.
 	}
 	*/
+
+	DEFINE_METHOD( ShortenGroupName, ShortenGroupName( SArg(1) ) )
 
 	LunaSongManager()
 	{
@@ -1821,6 +1890,7 @@ public:
 		ADD_METHOD( GetSongGroupColor );
 		ADD_METHOD( GetCourseColor );
 		//ADD_METHOD( GetSongRank );
+		ADD_METHOD( ShortenGroupName );
 	}
 };
 

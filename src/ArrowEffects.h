@@ -28,7 +28,6 @@ public:
 	// Inverse of ArrowGetYPos (YPos -> fYOffset).
 	static float GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCol, float YPos, float fYReverseOffsetPixels );
 
-
 	// fRotation is Z rotation of an arrow.  This will depend on the column of 
 	// the arrow and possibly the Arrow effect and the fYOffset (in the case of 
 	// EFFECT_DIZZY).

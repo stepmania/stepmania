@@ -14,10 +14,10 @@ struct ConfOption
 {
 	static ConfOption *Find( RString name );
 
-	/* Name of this option. */
+	// Name of this option.
 	RString name;
 
-	/* Name of the preference this option affects. */
+	// Name of the preference this option affects.
 	RString m_sPrefName;
 
 	typedef void (*MoveData_t)( int &sel, bool ToSel, const ConfOption *pConfOption );
@@ -25,12 +25,12 @@ struct ConfOption
 	int m_iEffects;
 	bool m_bAllowThemeItems;
 
-	/* For dynamic options, update the options.  Since this changes the available
+	/* For dynamic options, update the options. Since this changes the available
 	 * options, this may invalidate the offsets returned by Get() and Put(). */
 	void UpdateAvailableOptions();
 
-	/* Return the list of available selections; Get() and Put() use indexes into this
-	 * array.  UpdateAvailableOptions() should be called before using this. */
+	/* Return the list of available selections; Get() and Put() use indexes into
+	 * this array. UpdateAvailableOptions() should be called before using this. */
 	void MakeOptionsList( vector<RString> &out ) const;
 
 	inline int Get() const { int sel; MoveData( sel, true, this ); return sel; }
@@ -59,7 +59,7 @@ struct ConfOption
 		MoveData = m;
 		MakeOptionsListCB = lst;
 		m_iEffects = 0;
-		m_bAllowThemeItems = false;	// don't theme dynamic choices
+		m_bAllowThemeItems = false; // don't theme dynamic choices
 	}
 
 

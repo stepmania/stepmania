@@ -839,7 +839,7 @@ void StepMania::ChangeCurrentGame( const Game* g )
 	// process theme and language command line arguments;
 	// these change the preferences in order for transparent loading -aj
 	RString argTheme;
-	if( GetCommandlineArgument(	"theme",&argTheme) )
+	if( GetCommandlineArgument(	"theme",&argTheme) && argTheme != sTheme )
 	{
 		sTheme = argTheme;
 		// set theme in preferences too for correct behavior  -aj

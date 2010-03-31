@@ -6,7 +6,7 @@
 
 #include <map>
 
-/* Map from "&foo;" to a UTF-8 string. */
+// Map from "&foo;" to a UTF-8 string.
 typedef map<RString, wchar_t, StdString::StdStringLessNoCase> aliasmap;
 static aliasmap CharAliases;
 static map<RString,RString> CharAliasRepl;
@@ -25,11 +25,17 @@ static map<RString,RString> CharAliasRepl;
  * [Katakana]
  * [Punctuation]
  *
- * I'm not sure how to handle internal-use character, like Zz.  Whenever we write
+ * I'm not sure how to handle internal-use character, like Zz. Whenever we write
  * text to disk, we need to write placeholders (&doublezeta;) for them, and never
- * Unicode characters, since the codepoint is prone to change.  We can't currently
+ * Unicode characters, since the codepoint is prone to change. We can't currently
  * write &these; to SMs, due to format limitations.
  */
+
+// the above comment sounds old, look at the "kakumei1", which reminds me of the
+// old SPiGuMuS kanji font hack.
+// a more modern implementation would likely involve a Lua file in Data for the
+// base character aliases, and any alias not encountered in the list would be
+// added at the next possible code point. -aj
 
 /* Here's a copy-and-paste for a basic Japanese font page:
 
@@ -67,17 +73,17 @@ static void InitCharAliases()
 	if(!CharAliases.empty())
 		return;
 
-	CharAliases["default"]		= FONT_DEFAULT_GLYPH;	/* ? */
-	CharAliases["invalid"]		= INVALID_CHAR;			/* 0xFFFD */
+	CharAliases["default"]		= FONT_DEFAULT_GLYPH;	// ?
+	CharAliases["invalid"]		= INVALID_CHAR;			// 0xFFFD
 
-	/* The comments here are UTF-8; they won't show up in VC6 (use a later
-	 * version of visual studio then, you old fart). -aj edited this */
+	// The comments here are UTF-8; they won't show up in VC6
+	// (use a better editor then -aj)
 
 #define INTERNAL 0xE000
 
 	// todo: convert this into a vector? that way we can dynamically add
-	// to the list easier.
-	/* Hiragana: */
+	// to the list easier. -aj(?)
+	// Hiragana:
 	struct alias {
 		const char *str;
 		wchar_t chr;
@@ -168,7 +174,7 @@ static void InitCharAliases()
 		{ "hyos",	0x3087 }, /* ょ */
 		{ "hwas",	0x308e }, /* ゎ */
 
-		/* Katakana: */
+		// Katakana:
 		{ "hq",		0x3063 }, /* っ */
 		{ "ka",		0x30a2 }, /* ア */
 		{ "ki",		0x30a4 }, /* イ */
@@ -263,7 +269,7 @@ static void InitCharAliases()
 
 		{ "nbsp",	0x00a0 }, /* Non-breaking space */
 
-		/* Symbols: */
+		// Symbols:
 		{ "delta",	0x0394 }, /* Δ */
 		{ "sigma",	0x03a3 }, /* Σ */
 		{ "omega",	0x03a9 }, /* Ω */
@@ -309,7 +315,7 @@ static void InitCharAliases()
 		{ "ok",		INTERNAL },
 		{ "nextrow",	INTERNAL },
 		{ "select",	INTERNAL },
-		/* PlayStation-style controller */
+		// PlayStation-style controller
 		{ "auxx",	INTERNAL },
 		{ "auxtriangle",INTERNAL },
 		{ "auxsquare",	INTERNAL },
@@ -322,17 +328,17 @@ static void InitCharAliases()
 		{ "auxr3",	INTERNAL },
 		{ "auxselect",	INTERNAL },
 		{ "auxstart",	INTERNAL },
-		/* various other controllers (SNES, Saturn, Dreamcast stick styles) */
+		// various other controllers (SNES, Saturn, Dreamcast stick styles)
 		{ "auxa",	INTERNAL },
 		{ "auxb",	INTERNAL },
 		{ "auxc",	INTERNAL },
 		{ "auxd",	INTERNAL },
-		/* auxx is handled above */
+		// auxx is handled above
 		{ "auxy",	INTERNAL },
 		{ "auxz",	INTERNAL },
 		{ "auxl",	INTERNAL },
 		{ "auxr",	INTERNAL },
-		/* Xbox (original, 360)-style controllers */
+		// Xbox (original, 360)-style controllers
 		{ "auxwhite",	INTERNAL },
 		{ "auxblack",	INTERNAL },
 		{ "auxlb",	INTERNAL },
@@ -362,7 +368,7 @@ static void InitCharAliases()
 	}
 }
 
-/* Replace all &markers; and &#NNNN;s with UTF-8. */
+// Replace all &markers; and &#NNNN;s with UTF-8.
 void FontCharAliases::ReplaceMarkers( RString &sText )
 {
 	InitCharAliases();
@@ -370,7 +376,7 @@ void FontCharAliases::ReplaceMarkers( RString &sText )
 	Replace_Unicode_Markers(sText);
 }
 
-/* Replace all &markers; and &#NNNN;s with UTF-8. */
+// Replace all &markers; and &#NNNN;s with UTF-8.
 bool FontCharAliases::GetChar( RString &codepoint, wchar_t &ch )
 {
 	InitCharAliases();

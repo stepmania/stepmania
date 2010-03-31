@@ -2548,8 +2548,8 @@ static const Game g_Game_Popn =
 
 /** Guitar5 ******************************************************************/
 //ThemeMetric<int>	GUITAR5_COL_SPACING	("ColumnSpacing","Guitar5");
-static const int GUITAR5_COL_SPACING = 32;
-/*
+static const int GUITAR5_COL_SPACING = 48; // todo: get a proper value? -aj
+
 static const Style g_Style_Guitar_Five =
 {	// STYLE_GUITAR_FIVE
 	true,				// m_bUsedForGameplay
@@ -2577,8 +2577,8 @@ static const Style g_Style_Guitar_Five =
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ 0, 4, 3, 2, 1, Style::END_MAPPING },
-		{ 0, 4, 3, 2, 1, Style::END_MAPPING },
+		{ 0, 1, 2, 3, 4, Style::END_MAPPING },
+		{ 0, 1, 2, 3, 4, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2,3,4
@@ -2595,39 +2595,64 @@ static const Style *g_apGame_Guitar_Styles[] =
 };
 
 // auto keymappings
+static const AutoMappings g_AutoKeyMappings_Guitar = AutoMappings (
+	"",
+	"",
+	"",
+// p1
+	AutoMappingEntry( 0, KEY_Cz,		GUITAR_BUTTON_FRET1,	 false ),
+	AutoMappingEntry( 0, KEY_Cx,		GUITAR_BUTTON_FRET2,	 false ),
+	AutoMappingEntry( 0, KEY_Cc,		GUITAR_BUTTON_FRET3,	 false ),
+	AutoMappingEntry( 0, KEY_Cv,		GUITAR_BUTTON_FRET4,	 false ),
+	AutoMappingEntry( 0, KEY_Cb,		GUITAR_BUTTON_FRET5,	 false ),
+	AutoMappingEntry( 0, KEY_UP,		GUITAR_BUTTON_STRUM_UP,	 false ),
+	AutoMappingEntry( 0, KEY_DOWN,		GUITAR_BUTTON_STRUM_DOWN,false ),
+// p2
+	AutoMappingEntry( 0, KEY_Cy,		GUITAR_BUTTON_FRET1,	 true ),
+	AutoMappingEntry( 0, KEY_Cu,		GUITAR_BUTTON_FRET2,	 true ),
+	AutoMappingEntry( 0, KEY_Ci,		GUITAR_BUTTON_FRET3,	 true ),
+	AutoMappingEntry( 0, KEY_Co,		GUITAR_BUTTON_FRET4,	 true ),
+	AutoMappingEntry( 0, KEY_Cp,		GUITAR_BUTTON_FRET5,	 true ),
+	AutoMappingEntry( 0, KEY_KP_C8,		GUITAR_BUTTON_STRUM_UP,	 true ),
+	AutoMappingEntry( 0, KEY_KP_C5,		GUITAR_BUTTON_STRUM_DOWN,true )
+);
 
 static const Game g_Game_Guitar = 
 {
 	"guitar",						// m_szName
 	g_apGame_Guitar_Styles,				// m_apStyles
-	true,						// m_bCountNotesSeparately
+	false,						// m_bCountNotesSeparately (false stops crashes and failing)
 	true,						// m_bAllowHopos
 	{						// m_InputScheme
 		"guitar",					// m_szName
 		NUM_GUITAR_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			{ "Button Name",		GameButton_Invalid },
+			{ "Fret1",		GAME_BUTTON_START },
+			{ "Fret2",		GAME_BUTTON_BACK },
+			{ "Fret3",		GameButton_Invalid },
+			{ "Fret4",		GameButton_Invalid },
+			{ "Fret5",		GameButton_Invalid },
+			{ "StrumUp",		GAME_BUTTON_UP },
+			{ "StrumDown",		GAME_BUTTON_DOWN },
 		},
 		&g_AutoKeyMappings_Guitar
 	},
 	{
-		{ GameButtonType_Step },
-		{ GameButtonType_Step },
-		{ GameButtonType_Step },
-		{ GameButtonType_Step },
-		{ GameButtonType_Step },
-		{ GameButtonType_Step },
-		{ GameButtonType_Step },
-		{ GameButtonType_Step },
-		{ GameButtonType_Step },
+		{ GameButtonType_Fret }, // Green
+		{ GameButtonType_Fret }, // Red
+		{ GameButtonType_Fret }, // Yellow
+		{ GameButtonType_Fret }, // Blue
+		{ GameButtonType_Fret }, // Orange
+		{ GameButtonType_Strum },
+		{ GameButtonType_Strum },
 	},
 	TNS_W1,		// m_mapW1To
-	TNS_W1,		// m_mapW2To
-	TNS_W1,		// m_mapW3To
-	TNS_W1,		// m_mapW4To
-	TNS_Miss,	// m_mapW5To
+	TNS_W2,		// m_mapW2To
+	TNS_W3,		// m_mapW3To
+	TNS_W4,		// m_mapW4To
+	TNS_W5,		// m_mapW5To
 };
-*/
+
 /** Karaoke ******************************************************************/
 
 static const Style g_Style_Karaoke_Single =
@@ -2813,6 +2838,7 @@ static const Game *g_Games[] =
 	&g_Game_Maniax,
 	&g_Game_Techno,
 	&g_Game_Popn,
+	//&g_Game_Guitar,	// nope, still broken. -aj
 	&g_Game_Karaoke,
 	&g_Game_Lights,
 };

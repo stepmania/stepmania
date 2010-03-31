@@ -340,21 +340,19 @@ RageFileObjDirect::~RageFileObjDirect()
 	if( !(m_iMode & RageFile::WRITE) || (m_iMode & RageFile::STREAMED) )
 		return;
 
-	/* We now have path written to MakeTempFilename(m_sPath).  Rename the temporary
-	 * file over the real path. */
+	/* We now have path written to MakeTempFilename(m_sPath).
+	 * Rename the temporary file over the real path. */
 
 	do
 	{
 		if( bFailed || WriteFailed() )
 			break;
 
-		/*
-		 * We now have path written to MakeTempFilename(m_sPath).  Rename the temporary
-		 * file over the real path.  This should be an atomic operation with a journalling
-		 * filesystem.  That is, there should be no intermediate state a JFS might restore
-		 * the file we're writing (in the case of a crash/powerdown) to an empty or partial
-		 * file.
-		 */
+		/* We now have path written to MakeTempFilename(m_sPath). Rename the
+		 * temporary file over the real path. This should be an atomic operation
+		 * with a journalling filesystem. That is, there should be no
+		 * intermediate state a JFS might restore the file we're writing (in the
+		 * case of a crash/powerdown) to an empty or partial file. */
 
 		RString sOldPath = MakeTempFilename(m_sPath);
 		RString sNewPath = m_sPath;
@@ -389,12 +387,12 @@ RageFileObjDirect::~RageFileObjDirect()
 			}
 		}
 
-		/* Success. */
+		// Success.
 		return;
 #endif
 	} while(0);
 
-	/* The write or the rename failed.  Delete the incomplete temporary file. */
+	// The write or the rename failed. Delete the incomplete temporary file.
 	DoRemove( MakeTempFilename(m_sPath) );
 }
 
@@ -410,7 +408,7 @@ int RageFileObjDirect::ReadInternal( void *pBuf, size_t iBytes )
 	return iRet;
 }
 
-/* write(), but retry a couple times on EINTR. */
+// write(), but retry a couple times on EINTR.
 static int RetriedWrite( int iFD, const void *pBuf, size_t iCount )
 {
 	int iTries = 3, iRet;
@@ -443,7 +441,7 @@ int RageFileObjDirect::WriteInternal( const void *pBuf, size_t iBytes )
 		return -1;
 	}
 
-	/* The buffer is cleared.  If we still don't have space, it's bigger than
+	/* The buffer is cleared. If we still don't have space, it's bigger than
 	 * the buffer size, so just write it directly. */
 	int iRet = RetriedWrite( m_iFD, pBuf, iBytes );
 	if( iRet == -1 )

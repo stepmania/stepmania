@@ -23,7 +23,7 @@
  * "v0.0": Final Releases
 */
 #ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE v1.0 beta 1
+#define PRODUCT_VER_BARE v1.0 beta 2
 #endif
 
 // A unique ID for a build of an application.  This is used in crash reports and in the network code's version handling 

@@ -1147,7 +1147,7 @@ RString ThemeManager::GetString( const RString &sMetricsGroup, const RString &sV
 	ASSERT( g_pLoadedThemeData );
 	RString s = GetMetricRaw( g_pLoadedThemeData->iniStrings, sMetricsGroup, sValueName );
 	FontCharAliases::ReplaceMarkers( s );
-	
+
 	// Don't EvalulateString.  Strings are raw and shouldn't allow Lua.
 	//EvaluateString( s );
 

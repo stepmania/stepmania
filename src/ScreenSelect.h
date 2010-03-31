@@ -18,13 +18,13 @@ public:
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void HandleMessage( const Message &msg );
-	
+
 	virtual void MenuBack( const InputEventPlus &input );
 
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;
 	virtual void UpdateSelectableChoices() = 0;		// derived screens must handle this
-	
+
 	unsigned int m_iSelectedList;
 #if defined(SSC_FUTURES)
 	int m_iNumLists;
@@ -34,7 +34,7 @@ protected:
 
 	vector<GameCommand>	m_aGameCommands;		// derived classes should look here for what choices are available
 #if defined(SSC_FUTURES)
-	// this is gonna become awkward.. -aj
+	// this is gonna become awkward... -aj
 #else
 	vector<GameCommand>	m_aGameCommandsB; // only used if the theme requires a second list
 #endif

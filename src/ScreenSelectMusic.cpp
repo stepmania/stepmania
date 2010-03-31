@@ -25,6 +25,7 @@
 #include "PlayerState.h"
 #include "CommonMetrics.h"
 #include "BannerCache.h"
+//#include "BackgroundCache.h"
 #include "Song.h"
 #include "InputEventPlus.h"
 #include "RageInput.h"
@@ -119,6 +120,7 @@ void ScreenSelectMusic::Init()
 
 	m_TexturePreload.Load( m_sFallbackCDTitlePath );
 
+	// load banners
 	if( PREFSMAN->m_BannerCache != BNCACHE_OFF )
 	{
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","all music")) );
@@ -127,9 +129,23 @@ void ScreenSelectMusic::Init()
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","random")) );
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","mode")) );
 	}
+	// load backgrounds
+	/*
+	if( PREFSMAN->m_BackgroundCache != BGCACHE_OFF )
+	{
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","AllMusic")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("Common","fallback banner")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","roulette")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","random")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","Mode")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","group fallback")) );
+		m_TexturePreload.Load( Sprite::SongBGTexture(THEME->GetPathG("SongBackgroundItem","course fallback")) );
+	}
+	*/
 
-	/* Load low-res banners, if needed. */
+	// Load low-res banners and backgrounds if needed.
 	BANNERCACHE->Demand();
+	//BACKGROUNDCACHE->Demand();
 
 	m_MusicWheel.SetName( "MusicWheel" );
 	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
@@ -248,7 +264,7 @@ ScreenSelectMusic::~ScreenSelectMusic()
 {
 	LOG->Trace( "ScreenSelectMusic::~ScreenSelectMusic()" );
 	BANNERCACHE->Undemand();
-
+	//BACKGROUNDCACHE->Undemand();
 }
 
 // If bForce is true, the next request will be started even if it might cause a skip.
@@ -441,7 +457,9 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return; // ignore
 
 	// Handle unselect steps
-	if( m_SelectionState == SelectionState_SelectingSteps  &&  m_bStepsChosen[input.pn]  &&  input.MenuI == GAME_BUTTON_SELECT  &&  input.type == IET_FIRST_PRESS )
+	// xxx: select button could conflict with OptionsList here -aj
+	if( m_SelectionState == SelectionState_SelectingSteps && m_bStepsChosen[input.pn]
+		&& input.MenuI == GAME_BUTTON_SELECT && input.type == IET_FIRST_PRESS )
 	{
 		Message msg("StepsUnchosen");
 		msg.SetParam( "Player", input.pn );
@@ -803,7 +821,7 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 		// steps selected, they are no longer playable now that P2 has joined.  
 
 		// TODO: Invalidate the CurSteps only if they are no longer playable.
-		// That way,  after music change will clamp to the nearest in the StepsDisplayList.
+		// That way, after music change will clamp to the nearest in the StepsDisplayList.
 		GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber].SetWithoutBroadcast( NULL );
 		FOREACH_ENUM( PlayerNumber, p )
 			GAMESTATE->m_pCurSteps[p].SetWithoutBroadcast( NULL );
@@ -1001,6 +1019,14 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 
 		// I believe this is for those who like pump pro. -aj
 		MESSAGEMAN->Broadcast("SongChosen");
+
+		/*
+		if(TWO_PART_CONFIRMS_ONLY && SAMPLE_MUSIC_PREVIEW_MODE == SampleMusicPreviewMode_StartToPreview)
+		{
+			// start playing the preview music.
+			g_bSampleMusicWaiting = true;
+		}
+		*/
 
 		break;
 
@@ -1425,34 +1451,51 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_iSelection[p] = -1;
 
 		g_sCDTitlePath = ""; // none
-
+	
+		//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+		//{
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
+		//}
 
 		switch( m_MusicWheel.GetSelectedType() )
 		{
 		case TYPE_SECTION:
 			g_sBannerPath = SONGMAN->GetSongGroupBannerPath( m_MusicWheel.GetSelectedSection() );
+			//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
 			m_sSampleMusicToPlay = m_sSectionMusicPath;
 			break;
 		case TYPE_SORT:
 			bWantBanner = false; // we load it ourself
 			m_Banner.LoadMode();
+			//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
 			m_sSampleMusicToPlay = m_sSortMusicPath;
 			break;
 		case TYPE_ROULETTE:
 			bWantBanner = false; // we load it ourself
 			m_Banner.LoadRoulette();
+			//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
 			m_sSampleMusicToPlay = m_sRouletteMusicPath;
 			break;
 		case TYPE_RANDOM:
 			bWantBanner = false; // we load it ourself
 			m_Banner.LoadRandom();
+			//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
 			m_sSampleMusicToPlay = m_sRandomMusicPath;
 			break;
 		default:
 			ASSERT(0);
 		}
+		// override this if the sample music mode wants to.
+		/*
+		if(SAMPLE_MUSIC_PREVIEW_MODE == SampleMusicPreviewMode_LastSong)
+		{
+			m_sSampleMusicToPlay = pSong->GetMusicPath();
+			m_pSampleMusicTimingData = &pSong->m_Timing;
+			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
+			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
+		}
+		*/
 		break;
 	case TYPE_SONG:
 	case TYPE_PORTAL:

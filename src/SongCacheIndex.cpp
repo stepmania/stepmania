@@ -93,11 +93,12 @@ void SongCacheIndex::ReadCacheIndex()
 	int iCacheVersion = -1;
 	CacheIndex.GetValue( "Cache", "CacheVersion", iCacheVersion );
 	if( iCacheVersion == FILE_CACHE_VERSION )
-		return; /* OK */
+		return; // OK
 
 	LOG->Trace( "Cache format is out of date.  Deleting all cache files." );
 	EmptyDir( SpecialFiles::CACHE_DIR );
 	EmptyDir( SpecialFiles::CACHE_DIR+"Banners/" );
+	//EmptyDir( SpecialFiles::CACHE_DIR+"Backgrounds/" );
 	EmptyDir( SpecialFiles::CACHE_DIR+"Songs/" );
 	EmptyDir( SpecialFiles::CACHE_DIR+"Courses/" );
 

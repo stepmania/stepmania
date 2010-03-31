@@ -110,6 +110,7 @@ public:
 		SCROLL_ALTERNATE,
 		SCROLL_CROSS,
 		SCROLL_CENTERED,
+		//SCROLL_X,
 		NUM_SCROLLS
 	};
 	enum ScoreDisplay {

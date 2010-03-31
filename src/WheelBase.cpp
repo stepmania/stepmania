@@ -88,14 +88,14 @@ void WheelBase::BeginScreen()
 
 void WheelBase::SetItemPosition( Actor &item, float fPosOffsetsFromMiddle )
 {
-	/* Don't supply and item index or num items.  The number of items can be so 
+	/* Don't supply and item index or num items. The number of items can be so 
 	 * large that transforms that depend on such large numbers are likely to break. */
 	int iItemIndex = 0; // dummy
 	int iNumItems = 1; // dummy
 
 	Actor::TweenState ts = m_exprItemTransformFunction.GetTransformCached( fPosOffsetsFromMiddle, iItemIndex, iNumItems );
 
-	/* Round to achieve pixel alignment.  Any benefit to moving this to Lua? -Chris */
+	// Round to achieve pixel alignment. Any benefit to moving this to Lua? -Chris
 	ts.pos.x = roundf( ts.pos.x );
 	ts.pos.y = roundf( ts.pos.y );
 	ts.pos.z = roundf( ts.pos.z );
@@ -148,7 +148,7 @@ void WheelBase::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	/* If tweens aren't controlling the position of the wheel, set positions. */
+	// If tweens aren't controlling the position of the wheel, set positions.
 	if( !GetTweenTimeLeft() )
 		SetPositions();
 
@@ -207,7 +207,7 @@ void WheelBase::Update( float fDeltaTime )
 
 	if( IsMoving() )
 	{
-		/* We're automatically moving.  Move linearly, and don't clamp
+		/* We're automatically moving. Move linearly, and don't clamp
 		 * to the selection. */
 		float fSpinSpeed = m_SpinSpeed*m_Moving;
 		m_fPositionOffsetFromSelection -= fSpinSpeed*fDeltaTime;
@@ -215,8 +215,8 @@ void WheelBase::Update( float fDeltaTime )
 		/* Make sure that we don't go further than 1 away, in case the
 		 * speed is very high or we miss a lot of frames. */
 		m_fPositionOffsetFromSelection  = clamp(m_fPositionOffsetFromSelection, -1.0f, 1.0f);
-		
-		/* If it passed the selection, move again. */
+
+		// If it passed the selection, move again.
 		if((m_Moving == -1 && m_fPositionOffsetFromSelection >= 0) ||
 		   (m_Moving == 1 && m_fPositionOffsetFromSelection <= 0))
 		{
@@ -526,7 +526,10 @@ public:
 	static int IsSettled( T* p, lua_State *L ){ lua_pushboolean( L, p->IsSettled() ); return 1; }
 	static int IsLocked( T* p, lua_State *L ){ lua_pushboolean( L, p->WheelIsLocked() ); return 1; }
 	// evil shit
-	static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); return 1; }
+	//static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); return 0; }
+	//static int ChangeMusic( T* p, lua_State *L ){ p->ChangeMusic( IArg(1) ); return 0; }
+	//static int ChangeMusicUnlessLocked( T* p, lua_State *L ){ p->ChangeMusicUnlessLocked( IArg(1) ); return 0; }
+	//static int SetOpenSection( T* p, lua_State *L ){ p->SetOpenSection( SArg(1) ); return 0; }
 
 	LunaWheelBase()
 	{
@@ -534,7 +537,10 @@ public:
 		ADD_METHOD( IsSettled );
 		ADD_METHOD( IsLocked );
 		// evil shit
-		ADD_METHOD( Move );
+		//ADD_METHOD( Move );
+		//ADD_METHOD( ChangeMusic );
+		//ADD_METHOD( ChangeMusicUnlessLocked );
+		//ADD_METHOD( SetOpenSection );
 	}
 };
 

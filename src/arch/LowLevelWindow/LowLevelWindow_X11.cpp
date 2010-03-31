@@ -60,7 +60,7 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	if( !m_bWasWindowed )
 	{
 		XRRSetScreenConfig( Dpy, g_pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), g_iOldSize, g_OldRotation, CurrentTime );
-		
+
 		XUngrabKeyboard( Dpy, CurrentTime );
 	}
 	if( g_pContext )
@@ -94,8 +94,7 @@ void *LowLevelWindow_X11::GetProcAddress( RString s )
 RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 #if defined(UNIX)
-	/*
-	 * nVidia cards:
+	/* nVidia cards:
 	 *
 	 * This only works the first time we set up a window; after that, the
 	 * drivers appear to cache the value, so you have to actually restart
@@ -118,13 +117,13 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		if( p.bpp == 32 )
 		{
-			visAttribs[i++] = GLX_RED_SIZE;		visAttribs[i++] = 8;
+			visAttribs[i++] = GLX_RED_SIZE;	visAttribs[i++] = 8;
 			visAttribs[i++] = GLX_GREEN_SIZE;	visAttribs[i++] = 8;
 			visAttribs[i++] = GLX_BLUE_SIZE;	visAttribs[i++] = 8;
 		}
 		else
 		{
-			visAttribs[i++] = GLX_RED_SIZE;		visAttribs[i++] = 5;
+			visAttribs[i++] = GLX_RED_SIZE;	visAttribs[i++] = 5;
 			visAttribs[i++] = GLX_GREEN_SIZE;	visAttribs[i++] = 6;
 			visAttribs[i++] = GLX_BLUE_SIZE;	visAttribs[i++] = 5;
 		}
@@ -143,7 +142,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// So, let's recreate the window when changing that state.
 		if( !MakeWindow(Win, xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed) )
 			return "Failed to create the window.";
-		
+
 		if( !MakeWindow(g_AltWindow, xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed) )
 			FAIL_M( "Failed to create the alt window." ); // Should this be fatal?
 
@@ -178,8 +177,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	}
 	else
 	{
-		// We're remodeling the existing window, and not touching the
-		// context.
+		// We're remodeling the existing window, and not touching the context.
 		bNewDeviceOut = false;
 	}
 
@@ -196,9 +194,9 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		int iSizesXct;
 		XRRScreenSize *pSizesX = XRRSizes( Dpy, DefaultScreen(Dpy), &iSizesXct );
 		ASSERT_M( iSizesXct != 0, "Couldn't get resolution list from X server" );
-	
+
 		int iSizeMatch = -1;
-		
+
 		for( int i = 0; i < iSizesXct; ++i )
 		{
 			if( pSizesX[i].width == p.width && pSizesX[i].height == p.height )
@@ -211,10 +209,10 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// Set this mode.
 		// XXX: This doesn't handle if the config has changed since we queried it (see man Xrandr)
 		XRRSetScreenConfig( Dpy, g_pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), iSizeMatch, 1, CurrentTime );
-		
+
 		// Move the window to the corner that the screen focuses in on.
 		XMoveWindow( Dpy, Win, 0, 0 );
-		
+
 		XRaiseWindow( Dpy, Win );
 
 		// We want to prevent the WM from catching anything that comes from the keyboard.
@@ -275,21 +273,21 @@ void LowLevelWindow_X11::SwapBuffers()
 
 	if( PREFSMAN->m_bDisableScreenSaver )
 	{
-		/* Disable the screensaver. */
+		// Disable the screensaver.
 #if defined(HAVE_LIBXTST)
-		/* This causes flicker. */
+		// This causes flicker.
 		// XForceScreenSaver( Dpy, ScreenSaverReset );
-		
-		/*
-		 * Instead, send a null relative mouse motion, to trick X into thinking there has been
-		 * user activity. 
+
+		/* Instead, send a null relative mouse motion, to trick X into thinking
+		 * there has been user activity.
 		 *
-		 * This also handles XScreenSaver; XForceScreenSaver only handles the internal X11
-		 * screen blanker.
+		 * This also handles XScreenSaver; XForceScreenSaver only handles the
+		 * internal X11 screen blanker.
 		 *
-		 * This will delay the X blanker, DPMS and XScreenSaver from activating, and will
-		 * disable the blanker and XScreenSaver if they're already active (unless XSS is
-		 * locked).  For some reason, it doesn't un-blank DPMS if it's already active.
+		 * This will delay the X blanker, DPMS and XScreenSaver from activating,
+		 * and will disable the blanker and XScreenSaver if they're already active
+		 * (unless XSS is locked). For some reason, it doesn't un-blank DPMS if
+		 * it's already active.
 		 */
 
 		XLockDisplay( Dpy );
@@ -311,7 +309,7 @@ void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 	int iSizesXct;
 	XRRScreenSize *pSizesX = XRRSizes( Dpy, DefaultScreen( Dpy ), &iSizesXct );
 	ASSERT_M( iSizesXct != 0, "Couldn't get resolution list from X server" );
-	
+
 	for( int i = 0; i < iSizesXct; ++i )
 	{
 		DisplayResolution res = { pSizesX[i].width, pSizesX[i].height, true };
@@ -334,8 +332,8 @@ public:
 	unsigned GetTexture() const { return m_iTexHandle; }
 	void StartRenderingTo();
 	void FinishRenderingTo();
-	
-	/* Copying from the Pbuffer to the texture flips Y. */
+
+	// Copying from the Pbuffer to the texture flips Y.
 	virtual bool InvertY() const { return true; }
 
 private:
@@ -373,7 +371,7 @@ RenderTarget_X11::~RenderTarget_X11()
  * does not. */
 void RenderTarget_X11::Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
 {
-        //ASSERT( param.iWidth == power_of_two(param.iWidth) && param.iHeight == power_of_two(param.iHeight) );
+	//ASSERT( param.iWidth == power_of_two(param.iWidth) && param.iHeight == power_of_two(param.iHeight) );
 
 	m_iWidth = param.iWidth;
 	m_iHeight = param.iHeight;
@@ -423,10 +421,10 @@ void RenderTarget_X11::Create( const RenderTargetParam &param, int &iTextureWidt
 	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
 
 	LOG->Trace( "n %i, %ix%i", m_iTexHandle, param.iWidth, param.iHeight );
-        while( glGetError() != GL_NO_ERROR )
+		while( glGetError() != GL_NO_ERROR )
 		;
 
-        int iTextureWidth = power_of_two( param.iWidth );
+	int iTextureWidth = power_of_two( param.iWidth );
 	int iTextureHeight = power_of_two( param.iHeight );
 	iTextureWidthOut = iTextureWidth;
 	iTextureHeightOut = iTextureHeight;
@@ -458,7 +456,7 @@ void RenderTarget_X11::FinishRenderingTo()
 
 	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
 
-        while( glGetError() != GL_NO_ERROR )
+		while( glGetError() != GL_NO_ERROR )
 		;
 
 	glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_iWidth, m_iHeight );
@@ -476,7 +474,7 @@ void RenderTarget_X11::FinishRenderingTo()
 
 bool LowLevelWindow_X11::SupportsRenderToTexture() const
 {
-	/* Server must support pbuffers: */
+	// Server must support pbuffers:
 	const int iScreen = DefaultScreen( Dpy );
 	float fVersion = strtof( glXQueryServerString(Dpy, iScreen, GLX_VERSION), NULL );
 	if( fVersion < 1.3f )

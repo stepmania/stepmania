@@ -66,6 +66,7 @@ enum BannerCacheMode
 	NUM_BannerCacheMode,
 	BannerCacheMode_Invalid
 };
+/*
 enum BackgroundCacheMode
 {
 	BGCACHE_OFF,
@@ -75,6 +76,7 @@ enum BackgroundCacheMode
 	NUM_BackgroundCacheMode,
 	BackgroundCacheMode_Invalid
 };
+*/
 enum HighResolutionTextures
 {
 	HighResolutionTextures_Auto,
@@ -167,7 +169,7 @@ public:
 	Preference<bool>	m_bDelayedTextureDelete;
 	Preference<bool>	m_bDelayedModelDelete;
 	Preference<BannerCacheMode>		m_BannerCache;
-	Preference<BackgroundCacheMode>		m_BackgroundCache;
+	//Preference<BackgroundCacheMode>		m_BackgroundCache;
 	Preference<bool>	m_bFastLoad;
 	Preference<bool>	m_bFastLoadAdditionalSongs;
 

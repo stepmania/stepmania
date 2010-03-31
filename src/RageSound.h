@@ -28,30 +28,29 @@ struct RageSoundParams
 {
 	RageSoundParams();
 
-	/* The amount of data to play (or loop): */
+	// The amount of data to play (or loop):
 	float m_StartSecond;
 	float m_LengthSeconds;
 
-	/* Number of seconds to spend fading in. */
+	// Number of seconds to spend fading in.
 	float m_fFadeInSeconds;
 
-	/* Number of seconds to spend fading out. */
+	// Number of seconds to spend fading out.
 	float m_fFadeOutSeconds;
 
 	float m_Volume;	// multiplies with SOUNDMAN->GetMixVolume()
 	float m_fAttractVolume;	// multiplies with m_Volume
 
-	/* Number of samples input and output when changing speed.  Currently,
-	 * this is either 1/1, 5/4 or 4/5. */
+	/* Number of samples input and output when changing speed.
+	 * Currently, this is either 1/1, 5/4 or 4/5. */
 	float m_fPitch;
 	float m_fSpeed;
 
-	/* Optional driver feature: time to actually start playing sounds.  If zero, or if not
-	 * supported, the sound will start immediately. */
+	/* Optional driver feature: time to actually start playing sounds.
+	 * If zero, or if not supported, the sound will start immediately. */
 	RageTimer m_StartTime;
 
-	/*
-	 * M_STOP stops the sound at the end.
+	/* M_STOP stops the sound at the end.
 	 * M_LOOP restarts.
 	 * M_CONTINUE feeds silence, which is useful to continue timing longer than the actual sound.
 	 * M_AUTO (default) stops, obeying filename hints.
@@ -63,7 +62,7 @@ struct RageSoundParams
 		M_AUTO
 	} StopMode;
 
-	bool m_bIsCriticalSound;	// "is a sound that should be played even during attract"
+	bool m_bIsCriticalSound; // "is a sound that should be played even during attract"
 };
 
 struct RageSoundLoadParams
@@ -74,7 +73,7 @@ struct RageSoundLoadParams
 	 * small memory penalty if not used. */
 	bool m_bSupportRateChanging;
 
-	/* If true, panning will be supported for this sound. */
+	// If true, panning will be supported for this sound.
 	bool m_bSupportPan;
 };
 
@@ -86,8 +85,7 @@ public:
 	RageSound( const RageSound &cpy );
 	RageSound &operator=( const RageSound &cpy );
 
-	/*
-	 * If bPrecache == true, we'll preload the entire file into memory if
+	/* If bPrecache == true, we'll preload the entire file into memory if
 	 * small enough.  If this is done, a large number of copies of the sound
 	 * can be played without much performance penalty.  This is useful for
 	 * efficiently playing keyed sounds, and for rapidly-repeating sound
@@ -103,17 +101,15 @@ public:
 	 */
 	bool Load( RString sFile, bool bPrecache, const RageSoundLoadParams *pParams = NULL );
 
-	/* 
-	 * Using this version means the "don't care" about caching.  Currently, 
-	 * this always will not cache the sound; this may become a preference.
-	 */
+	/* Using this version means the "don't care" about caching. Currently, 
+	 * this always will not cache the sound; this may become a preference. */
 	bool Load( RString sFile );
 
-	/* Load a RageSoundReader that you've set up yourself.  Sample rate conversion will
-	 * be set up only if needed.  Doesn't fail. */
+	/* Load a RageSoundReader that you've set up yourself. Sample rate conversion
+	 * will be set up only if needed. Doesn't fail. */
 	void LoadSoundReader( RageSoundReader *pSound );
 
-	/* Get the loaded RageSoundReader.  While playing, only properties can be set. */
+	// Get the loaded RageSoundReader. While playing, only properties can be set.
 	RageSoundReader *GetSoundReader() { return m_pSource; }
 
 	void Unload();
@@ -129,7 +125,7 @@ public:
 	void PlayCopy( const RageSoundParams *pParams = NULL ) const;
 	void Stop();
 
-	/* Cleanly pause or unpause the sound.  If the sound wasn't already playing,
+	/* Cleanly pause or unpause the sound. If the sound wasn't already playing,
 	 * return true and do nothing. */
 	bool Pause( bool bPause );
 
@@ -145,9 +141,7 @@ public:
 	bool SetProperty( const RString &sProperty, float fValue );
 	void SetStopModeFromString( const RString &sStopMode );
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 private:
@@ -155,7 +149,7 @@ private:
 
 	RageSoundReader *m_pSource;
 
-	/* We keep track of sound blocks we've sent out recently through GetDataToPlay. */
+	// We keep track of sound blocks we've sent out recently through GetDataToPlay.
 	pos_map_queue m_HardwareToStreamMap;
 	pos_map_queue m_StreamToSourceMap;
 
@@ -164,7 +158,7 @@ private:
 	void ApplyParams();
 	RageSoundParams m_Param;
 
-	/* Current position of the output sound, in frames.  If < 0, nothing will play
+	/* Current position of the output sound, in frames. If < 0, nothing will play
 	 * until it becomes positive. */
 	int64_t m_iStreamFrame;
 
@@ -183,17 +177,17 @@ private:
 	int GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bApproximate = NULL ) const;
 
 	bool SetPositionFrames( int frames = -1 );
-	RageSoundParams::StopMode_t GetStopMode() const; /* resolves M_AUTO */
+	RageSoundParams::StopMode_t GetStopMode() const; // resolves M_AUTO
 
 	void SoundIsFinishedPlaying(); // called by sound drivers
 
 public:
-	/* These functions are called only by sound drivers. */
+	// These functions are called only by sound drivers.
 
-	/* Returns the number of bytes actually put into pBuffer. If 0 is returned, it
-	 * signals the stream to stop; once it's flushed, SoundStopped will be called.
-	 * Until then, SOUNDMAN->GetPosition can still be called; the sound is still
-	 * playing. */
+	/* Returns the number of bytes actually put into pBuffer. If 0 is returned,
+	 * it signals the stream to stop; once it's flushed, SoundStopped will be
+	 * called. Until then, SOUNDMAN->GetPosition can still be called; the sound
+	 * is still playing. */
 	int GetDataToPlay( float *pBuffer, int iSize, int64_t &iStreamFrame, int &iBytesRead );
 	void CommitPlayingPosition( int64_t iHardwareFrame, int64_t iStreamFrame, int iGotFrames );
 };

@@ -205,7 +205,7 @@ void GameState::ApplyGameCommand( const RString &sCommand, PlayerNumber pn )
 
 void GameState::ApplyCmdline()
 {
-	/* We need to join players before we can set the style. */
+	// We need to join players before we can set the style.
 	RString sPlayer;
 	for( int i = 0; GetCommandlineArgument( "player", &sPlayer, i ); ++i )
 	{
@@ -240,6 +240,7 @@ void GameState::ResetPlayer( PlayerNumber pn )
 	m_pPlayerState[pn]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
 }
 
+//static Preference<bool> g_bMultiplayer( "Multiplayer", false );
 void GameState::Reset()
 {
 	m_MasterPlayerNumber = PLAYER_INVALID; // must initialize for UnjoinPlayer
@@ -346,7 +347,7 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	if( GetNumSidesJoined() == 1 )
 		BeginGame();
 
-	/* Count each player join as a play. */
+	// Count each player join as a play.
 	{
 		Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 		pMachineProfile->m_iTotalSessions++;
@@ -889,10 +890,13 @@ void GameState::ResetMusicStatistics()
 	//m_bStop = false;
 	m_bFreeze = false;
 	m_bDelay = false;
+	/*
+	m_iWarpToRow = -1; // Set to -1 because some song may want to warp to row 0. -aj
+	m_iWarpFromRow = -1; // Set when a warp is encountered. also see above. -aj
+	*/
 	m_fMusicSecondsVisible = 0;
 	m_fSongBeatVisible = 0;
 	Actor::SetBGMTime( 0, 0, 0, 0 );
-
 
 	FOREACH_PlayerNumber( p )
 		m_pPlayerState[p]->ClearHopoState();
@@ -935,17 +939,35 @@ void GameState::ResetStageStatistics()
 }
 
 static Preference<float> g_fVisualDelaySeconds( "VisualDelaySeconds", 0.0f );
+// todo: modify for warps -aj
+// m_iWarpToRow
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
 {
 	if( !timestamp.IsZero() )
 		m_LastBeatUpdate = timestamp;
 	else
 		m_LastBeatUpdate.Touch();
+
+	/*
+	// xxx testing: only do this on monotune survivor
+	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
+		LOG->Trace( ssprintf("[GameState::UpdateSongPosition] cur BPS = %f, fPositionSeconds = %f",m_fCurBPS,fPositionSeconds) );
+	*/
 	timing.GetBeatAndBPSFromElapsedTime( fPositionSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze, m_bDelay );
 	// "Crash reason : -243478.890625 -48695.773438"
 	ASSERT_M( m_fSongBeat > -2000, ssprintf("Song beat %f at %f seconds", m_fSongBeat, fPositionSeconds) );
 
+	/*
+	// xxx testing: only do this on monotune survivor
+	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
+		LOG->Trace( ssprintf("[GameState::UpdateSongPosition] m_fMusicSeconds before = %f",m_fMusicSeconds) );
+	*/
 	m_fMusicSeconds = fPositionSeconds;
+	/*
+	// xxx testing: only do this on monotune survivor
+	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
+		LOG->Trace( ssprintf("[GameState::UpdateSongPosition] m_fMusicSeconds after = %f",m_fMusicSeconds) );
+	*/
 	m_fLightSongBeat = timing.GetBeatFromElapsedTime( fPositionSeconds + g_fLightsAheadSeconds );
 
 	m_fSongBeatNoOffset = timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
@@ -954,6 +976,25 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	float fThrowAway;
 	bool bThrowAway;
 	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway );
+
+	/*
+	// xxx testing: only do this on monotune survivor
+	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
+	{
+		// and only do it in the known negative bpm region. HACKITY HACK
+		if(m_fSongBeat >= 445.490f && m_fSongBeat <= 453.72f)
+		{
+			LOG->Trace( ssprintf("fPositionSeconds = %f",fPositionSeconds) );
+			LOG->Trace( ssprintf("Song beat: %f (%f seconds), BPS = %f (%f BPM)",m_fSongBeat,m_fMusicSecondsVisible,m_fCurBPS,m_fCurBPS*60.0f) );
+			//LOG->Trace( ssprintf("Music seconds visible %f = fPositionSeconds %f - g_fVisualDelaySeconds %f", m_fMusicSecondsVisible,fPositionSeconds,g_fVisualDelaySeconds.Get()) );
+		}
+		else if(m_fSongBeat == 445.500f)
+		{
+			LOG->Trace( ssprintf("[beat 445.500] fPositionSeconds = %f",fPositionSeconds) );
+			LOG->Trace( ssprintf("Song beat: %f (%f seconds), BPS = %f (%f BPM)",m_fSongBeat,m_fMusicSecondsVisible,m_fCurBPS,m_fCurBPS*60.0f) );
+		}
+	}
+	*/
 
 	Actor::SetBGMTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fPositionSeconds, m_fSongBeatNoOffset );
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
@@ -965,7 +1006,7 @@ update player position code goes here
 
 float GameState::GetSongPercent( float beat ) const
 {
-	/* 0 = first step; 1 = last step */
+	// 0 = first step; 1 = last step
 	return (beat - m_pCurSong->m_fFirstBeat) / m_pCurSong->m_fLastBeat;
 }
 
@@ -1482,7 +1523,7 @@ PlayerOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayer
 		if( !IsEventMode() )
 			bFirstStage |= m_iPlayerStageTokens[pPlayerState->m_PlayerNumber] == PREFSMAN->m_iSongsPerPlay-1; // HACK; -1 because this is called during gameplay
 
-		/* Easy and beginner are never harder than FAIL_IMMEDIATE_CONTINUE. */
+		// Easy and beginner are never harder than FAIL_IMMEDIATE_CONTINUE.
 		if( dc <= Difficulty_Easy )
 			setmax( ft, PlayerOptions::FAIL_IMMEDIATE_CONTINUE );
 
@@ -1535,11 +1576,9 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 			StepsType st = GetCurrentStyle()->m_StepsType;
 
-			//
 			// Find unique Song and Steps combinations that were played.
 			// We must keep only the unique combination or else we'll double-count
 			// high score markers.
-			//
 			vector<SongAndSteps> vSongAndSteps;
 
 			for( unsigned i=0; i<STATSMAN->m_vPlayedStageStats.size(); i++ )
@@ -2289,7 +2328,7 @@ public:
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
 
 		SongOptions so;
-		
+
 		so.FromString( SArg(2) );
 		p->m_SongOptions.Assign( m, so );
 		return 0;
@@ -2339,7 +2378,7 @@ public:
 		{
 			const Steps* pSteps = vpStepsToShow[i];
 			RString sDifficulty = CustomDifficultyToLocalizedString( GetCustomDifficulty( pSteps->m_StepsType, pSteps->GetDifficulty(), CourseType_Invalid ) );
-			
+
 			lua_pushstring( L, sDifficulty );
 			lua_pushstring( L, pSteps->GetDescription() );
 		}

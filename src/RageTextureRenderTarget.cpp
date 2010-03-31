@@ -20,15 +20,15 @@ void RageTextureRenderTarget::Reload()
 	Create();
 }
 
-/* RageTextureID identifies a file and a mechanism for loading it.  We don't use any
- * of that, except as a unique identifier for this texture, so it can be loaded
- * elsewhere.  Render targets can't be loaded blindly like a regular texture, anyway,
- * since something has to render into it. */
+/* RageTextureID identifies a file and a mechanism for loading it. We don't use
+ * any of that, except as a unique identifier for this texture, so it can be
+ * loaded elsewhere. Render targets can't be loaded blindly like a regular
+ * texture, anyway, since something has to render into it. */
 void RageTextureRenderTarget::Create()
 {
-	/* All render targets support non-power-of-two targets, but some require that the
-	 * resulting texture dimensions be powers of two.  CreateRenderTarget returns
-	 * the actual resolution. */
+	/* All render targets support non-power-of-two targets,
+	 * but some require that the resulting texture dimensions be powers of two.
+	 * CreateRenderTarget returns the actual resolution. */
 	m_iTexHandle = DISPLAY->CreateRenderTarget( m_Param, m_iTextureWidth, m_iTextureHeight );
 
 	m_iSourceWidth = m_Param.iWidth;
@@ -49,8 +49,8 @@ void RageTextureRenderTarget::BeginRenderingTo( bool bPreserveTexture )
 {
 	DISPLAY->SetRenderTarget( m_iTexHandle, bPreserveTexture );
 
-	/* We're rendering to a texture, not the framebuffer.  Stash away the
-	 * centering matrix, and set it to identity. */
+	/* We're rendering to a texture, not the framebuffer.
+	 * Stash away the centering matrix, and set it to identity. */
 	DISPLAY->CenteringPushMatrix();
 	DISPLAY->ChangeCentering( 0, 0, 0, 0 );
 

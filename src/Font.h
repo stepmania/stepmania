@@ -15,7 +15,9 @@ class IniFile;
 struct FontPageTextures
 {
 	RageTexture *m_pTextureMain;
-	RageTexture *m_pTextureStroke;	/* an optional texture drawn underneath Main that can help to acheive complicated layer styles */
+	/* an optional texture drawn underneath Main that can help to acheive
+	 * complicated layer styles. */
+	RageTexture *m_pTextureStroke;
 
 	FontPageTextures()
 	{
@@ -30,16 +32,16 @@ struct glyph
 	FontPageTextures m_FontPageTextures;
 	FontPageTextures *GetFontPageTextures() const { return const_cast<FontPageTextures *>(&m_FontPageTextures); }
 
-	/* Number of pixels to advance horizontally after drawing this character. */
+	// Number of pixels to advance horizontally after drawing this character.
 	int m_iHadvance;
 
-	/* Size of the actual rendered character. */
+	// Size of the actual rendered character.
 	float m_fWidth, m_fHeight;
 
-	/* Number of pixels to offset this character when rendering. */
-	float m_fHshift; // , vshift;
+	// Number of pixels to offset this character when rendering.
+	float m_fHshift; // , m_fVshift;
 
-	/* Texture coordinate rect. */
+	// Texture coordinate rect.
 	RectF m_TexRect;
 };
 
@@ -59,7 +61,7 @@ struct FontPageSettings
 	RString m_sTextureHints;
 
 	map<wchar_t,int> CharToGlyphNo;
-	/* If a value is missing, the width of the texture frame is used. */
+	// If a value is missing, the width of the texture frame is used.
 	map<int,int> m_mapGlyphWidths;
 
 	FontPageSettings():
@@ -74,7 +76,7 @@ struct FontPageSettings
 		m_sTextureHints("default")
 	{ }
 
-	/* Map a range from a character map to glyphs.  If cnt is -1, map the
+	/* Map a range from a character map to glyphs. If cnt is -1, map the
 	 * whole map. Returns "" or an error message. */
 	RString MapRange( RString sMapping, int iMapOffset, int iGlyphOffset, int iCount );
 };
@@ -87,21 +89,21 @@ public:
 
 	void Load( const FontPageSettings &cfg );
 
-	/* Page-global properties. */
+	// Page-global properties.
 	int m_iHeight;
 	int m_iLineSpacing;
 	float m_fVshift;
 	int GetCenter() const { return m_iHeight/2; }
 
-	/* Remember these only for GetLineWidthInSourcePixels. */
+	// Remember these only for GetLineWidthInSourcePixels.
 	int m_iDrawExtraPixelsLeft, m_iDrawExtraPixelsRight;
 
 	FontPageTextures m_FontPageTextures;
 
-	// XXX remove?
+	// XXX: remove?
 	RString m_sTexturePath;
 
-	/* All glyphs in this list will point to m_pTexture. */
+	// All glyphs in this list will point to m_pTexture.
 	vector<glyph> m_aGlyphs;
 
 	map<wchar_t,int> m_iCharToGlyphNo;
@@ -127,17 +129,17 @@ public:
 
 	bool FontCompleteForString( const wstring &str ) const;
 
-	/* Add a FontPage to this font. */
+	// Add a FontPage to this font.
 	void AddPage(FontPage *fp);
 
-	/* Steal all of a font's pages. */
+	// Steal all of a font's pages.
 	void MergeFont(Font &f);
 
 	void Load(const RString &sFontOrTextureFilePath, RString sChars);
 	void Unload();
 	void Reload();
 
-	/* Load font-wide settings. */
+	// Load font-wide settings.
 	void CapsOnly();
 
 	int GetHeight() const { return m_pDefault->m_iHeight; }
@@ -150,14 +152,14 @@ public:
 	const RageColor &GetDefaultStrokeColor() const { return m_DefaultStrokeColor; };
 
 private:
-	/* List of pages and fonts that we use (and are responsible for freeing). */
+	// List of pages and fonts that we use (and are responsible for freeing).
 	vector<FontPage *> m_apPages;
 
 	/* This is the primary fontpage of this font; font-wide height, center,
-	 * etc. is pulled from it.  (This is one of pages[].) */
+	 * etc. is pulled from it. (This is one of pages[].) */
 	FontPage *m_pDefault;
 
-	/* Map from characters to glyphs.  (Each glyph* is part of one of pages[].) */
+	// Map from characters to glyphs. (Each glyph* is part of one of pages[].)
 	map<wchar_t,glyph*> m_iCharToGlyph;
 	glyph *m_iCharToGlyphCache[128];
 
@@ -168,7 +170,7 @@ private:
 
 	RageColor m_DefaultStrokeColor;
 
-	/* We keep this around only for reloading. */
+	// We keep this around only for reloading.
 	RString m_sChars;
 
 	void LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RString &sTexturePath, const RString &PageName, RString sChars );

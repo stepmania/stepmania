@@ -41,9 +41,9 @@ public:
 	virtual void MenuStart( const InputEventPlus &input );
 	virtual void MenuBack( const InputEventPlus &input );
 
-	/* ScreenWithMenuElements override: never play music here; we do it ourself. */
+	// ScreenWithMenuElements override: never play music here; we do it ourself.
 	virtual void StartPlayingMusic() { }
-		
+
 	bool GetGoToOptions() const { return m_bGoToOptions; }
 	MusicWheel *GetMusicWheel() { return &m_MusicWheel; }
 
@@ -63,31 +63,31 @@ protected:
 	void CheckBackgroundRequests( bool bForce );
 	bool DetectCodes( const InputEventPlus &input );
 
-	vector<Steps*>			m_vpSteps;
-	vector<Trail*>			m_vpTrails;
-	int				m_iSelection[NUM_PLAYERS];
+	vector<Steps*>		m_vpSteps;
+	vector<Trail*>		m_vpTrails;
+	int					m_iSelection[NUM_PLAYERS];
 
-	ThemeMetric<float> SAMPLE_MUSIC_DELAY_INIT;
-	ThemeMetric<float> SAMPLE_MUSIC_DELAY;
-	ThemeMetric<bool> SAMPLE_MUSIC_LOOPS;
+	ThemeMetric<float>		SAMPLE_MUSIC_DELAY_INIT;
+	ThemeMetric<float>		SAMPLE_MUSIC_DELAY;
+	ThemeMetric<bool>		SAMPLE_MUSIC_LOOPS;
 	ThemeMetric<SampleMusicPreviewMode> SAMPLE_MUSIC_PREVIEW_MODE;
-	ThemeMetric<float> SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS;
-	ThemeMetric<bool> DO_ROULETTE_ON_MENU_TIMER;
-	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
-	ThemeMetric<RString> CODES;
-	ThemeMetric<RString> MUSIC_WHEEL_TYPE;
-	ThemeMetric<bool> OPTIONS_MENU_AVAILABLE;
-	ThemeMetric<bool> SELECT_MENU_AVAILABLE;
-	ThemeMetric<bool> MODE_MENU_AVAILABLE;
-	ThemeMetric<bool> USE_OPTIONS_LIST;
-	ThemeMetric<float> OPTIONS_LIST_TIMEOUT;
-	ThemeMetric<bool> USE_PLAYER_SELECT_MENU;
-	ThemeMetric<RString> SELECT_MENU_NAME;
-	ThemeMetric<bool> SELECT_MENU_CHANGES_DIFFICULTY;
-	ThemeMetric<bool> TWO_PART_SELECTION;
-	ThemeMetric<bool> TWO_PART_CONFIRMS_ONLY;
-	ThemeMetric<float> TWO_PART_TIMER_SECONDS;
-	ThemeMetric<bool> WRAP_CHANGE_STEPS;
+	ThemeMetric<float>		SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS;
+	ThemeMetric<bool>		DO_ROULETTE_ON_MENU_TIMER;
+	ThemeMetric<bool>		ALIGN_MUSIC_BEATS;
+	ThemeMetric<RString>	CODES;
+	ThemeMetric<RString>	MUSIC_WHEEL_TYPE;
+	ThemeMetric<bool>		OPTIONS_MENU_AVAILABLE;
+	ThemeMetric<bool>		SELECT_MENU_AVAILABLE;
+	ThemeMetric<bool>		MODE_MENU_AVAILABLE;
+	ThemeMetric<bool>		USE_OPTIONS_LIST;
+	ThemeMetric<float>		OPTIONS_LIST_TIMEOUT;
+	ThemeMetric<bool>		USE_PLAYER_SELECT_MENU;
+	ThemeMetric<RString>	SELECT_MENU_NAME;
+	ThemeMetric<bool>		SELECT_MENU_CHANGES_DIFFICULTY;
+	ThemeMetric<bool>		TWO_PART_SELECTION;
+	ThemeMetric<bool>		TWO_PART_CONFIRMS_ONLY;
+	ThemeMetric<float>		TWO_PART_TIMER_SECONDS;
+	ThemeMetric<bool>		WRAP_CHANGE_STEPS;
 
 	bool CanChangeSong() const { return m_SelectionState == SelectionState_SelectingSong; }
 	bool CanChangeSteps() const { return TWO_PART_SELECTION ? m_SelectionState == SelectionState_SelectingSteps : m_SelectionState == SelectionState_SelectingSong; }

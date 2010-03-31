@@ -49,12 +49,12 @@ struct MusicPlaying
 	bool m_bTimingDelayed;
 	bool m_bHasTiming;
 	bool m_bApplyMusicRate;
-	/* The timing data that we're currently using. */
+	// The timing data that we're currently using.
 	TimingData m_Timing;
 	NoteData m_Lights;
 
-	/* If m_bTimingDelayed is true, this will be the timing data for the song that's starting.
-	 * We'll copy it to m_Timing once sound is heard. */
+	/* If m_bTimingDelayed is true, this will be the timing data for the
+	 * song that's starting. We'll copy it to m_Timing once sound is heard. */
 	TimingData m_NewTiming;
 	RageSound *m_Music;
 	MusicPlaying( RageSound *Music )

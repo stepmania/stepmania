@@ -39,7 +39,7 @@ public:
 
 	// TODO: These are updated in ScreenGameplay::Update based on fDelta.  
 	// They should be made more accurate.
-	float	m_fGameplaySeconds;		// how many seconds before gameplay ended.  Updated by Gameplay, not scaled by music rate.
+	float	m_fGameplaySeconds;		// how many seconds before gameplay ended. Updated by Gameplay, not scaled by music rate.
 	float	m_fStepsSeconds;		// this is <= fGameplaySeconds unless the song has steps past the end
 	float	m_fMusicRate;
 

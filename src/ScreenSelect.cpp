@@ -15,19 +15,18 @@
 #define UPDATE_ON_MESSAGE	THEME->GetMetric (m_sName,"UpdateOnMessage")
 
 #if defined(SSC_FUTURES)
-// ???: Instead of using NumLists, use a comma-separated list of list names?
-#define NUM_LISTS				THEME->GetMetricI (m_sName,"NumLists")
+#define LIST_NAMES				THEME->GetMetric (m_sName,"ListNames")
 #else
-// xxx: USE_TWO_LISTS is just a hack for two players.
+// xxx: USE_TWO_LISTS is just a hack for two players. -aj
 #define USE_TWO_LISTS			THEME->GetMetricB (m_sName,"UseTwoLists")
 #endif
 
 #if defined(SSC_FUTURES)
-#define LIST_CONDITION( i )		THEME->GetMetricR (m_sName,"List%iCondition",i)
-#define CHOICE_NAMES_MULTI( i )	THEME->GetMetric (m_sName,ssprintf("List%iChoiceNames",i))
-#define CHOICEMULTI( i, s )		THEME->GetMetric (m_sName,ssprintf("List%iChoice%s",i,s.c_str()))
+#define LIST_CONDITION( s )		THEME->GetMetricR (m_sName,"List%sCondition",s.c_str())
+#define CHOICE_NAMES_MULTI( s )	THEME->GetMetric (m_sName,ssprintf("List%sChoiceNames",s.c_str()))
+#define CHOICEMULTI( s1, s2 )		THEME->GetMetric (m_sName,ssprintf("List%sChoice%s",s1.c_str(),s2.c_str()))
 #else
-// xxx: these are used by USE_TWO_LISTS.
+// xxx: these are used by USE_TWO_LISTS. -aj
 #define CHOICE_NAMESB		THEME->GetMetric (m_sName,"ChoiceNamesB")
 #define CHOICEB( s )		THEME->GetMetric (m_sName,ssprintf("ChoiceB%s",s.c_str()))
 #endif
@@ -50,10 +49,10 @@ void ScreenSelect::Init()
 
 	// Load choices
 	{
-		// Instead of using NUM_CHOICES, use a comma-separated list of choices.  Each
-		// element in the list is a choice name.  This level of indirection 
-		// makes it easier to add or remove items without having to change a bunch
-		// of indices.
+		// Instead of using NUM_CHOICES, use a comma-separated list of choices.
+		// Each element in the list is a choice name. This level of indirection 
+		// makes it easier to add or remove items without having to change a
+		// bunch of indices.
 		vector<RString> asChoiceNames;
 		split( CHOICE_NAMES, ",", asChoiceNames, true );
 
@@ -172,8 +171,7 @@ void ScreenSelect::Input( const InputEventPlus &input )
 				this->UpdateSelectableChoices();
 			}
 
-
-			// HACK: Only play start sound for the 2nd player who joins.  The 
+			// HACK: Only play start sound for the 2nd player who joins. The 
 			// start sound for the 1st player will be played by ScreenTitleMenu 
 			// when the player makes a selection on the screen.
 			SCREENMAN->PlayStartSound();
@@ -189,24 +187,26 @@ void ScreenSelect::Input( const InputEventPlus &input )
 		if( !ALLOW_DISABLED_PLAYER_INPUT )
 			return;
 
-		/* Never allow a START press by a player that's still not joined, even if ALLOW_DISABLED_PLAYER_INPUT
-		 * would allow other types of input.  If we let a non-joined player start, we might start the
-		 * game with no players joined (eg. if ScreenTitleJoin is started in pay with no credits). */
+		/* Never allow a START press by a player that's still not joined, even if
+		 * ALLOW_DISABLED_PLAYER_INPUT would allow other types of input. If we
+		 * let a non-joined player start, we might start the game with no
+		 * players joined (eg. if ScreenTitleJoin is started in pay with no
+		 * credits). */
 		if( input.MenuI == GAME_BUTTON_START )
 			return;
 	}
 
-	ScreenWithMenuElements::Input( input );	// default input handler
+	ScreenWithMenuElements::Input( input ); // default input handler
 }
 
 void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_BeginFadingOut )	/* Screen is starting to tween out. */
+	if( SM == SM_BeginFadingOut )	// Screen is starting to tween out.
 	{
 		/* Don't call GameCommand::Apply once per player on screens that 
-		 * have a shared selection.  This can cause change messages to be broadcast
-		 * multiple times.  Detect whether all players have the same choice, and 
-		 * if so, call ApplyToAll instead.
+		 * have a shared selection. This can cause change messages to be
+		 * broadcast multiple times. Detect whether all players have the
+		 * same choice, and  if so, call ApplyToAll instead.
 		 * TODO: Think of a better way to handle this.
 		 */
 		ASSERT( GAMESTATE->m_MasterPlayerNumber != PlayerNumber_Invalid );
@@ -250,7 +250,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 				m_sNextScreen = gc.m_sScreen;
 				if( !gc.m_bInvalid )
 					gc.ApplyToAllPlayers();
-			}	
+			}
 		}
 		else
 		{

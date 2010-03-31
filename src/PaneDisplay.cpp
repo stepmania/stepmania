@@ -25,6 +25,7 @@ static const char *PaneCategoryNames[] = {
 	"Rolls",
 	"Mines",
 	"Hands",
+	//"Lifts",
 	"MachineHighScore",
 	"MachineHighName",
 	"ProfileHighScore",
@@ -48,6 +49,7 @@ static const Content_t g_Contents[NUM_PaneCategory] =
 	{ NEED_NOTES, "count" },
 	{ NEED_NOTES, "count" },
 	{ NEED_NOTES, "count" },
+	//{ NEED_NOTES, "count" },
 	{ NEED_NOTES, "score" },
 	{ NEED_NOTES, "name" },
 	{ NEED_NOTES|NEED_PROFILE, "score" },
@@ -112,7 +114,7 @@ void PaneDisplay::LoadFromNode( const XNode *pNode )
 void PaneDisplay::SetContent( PaneCategory c )
 {
 	RString str = "";	// fill this in
-	float val = 0;	// fill this in
+	float val = 0;		// fill this in
 
 	const Song *pSong = GAMESTATE->m_pCurSong;
 	const Steps *pSteps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
@@ -153,11 +155,12 @@ void PaneDisplay::SetContent( PaneCategory c )
 		switch( c )
 		{
 		case PaneCategory_NumSteps:	val = rv[RadarCategory_TapsAndHolds]; break;
-		case PaneCategory_Jumps:	val = rv[RadarCategory_Jumps]; break;
-		case PaneCategory_Holds:	val = rv[RadarCategory_Holds]; break;
-		case PaneCategory_Rolls:	val = rv[RadarCategory_Rolls]; break;
-		case PaneCategory_Mines:	val = rv[RadarCategory_Mines]; break;
-		case PaneCategory_Hands:	val = rv[RadarCategory_Hands]; break;
+		case PaneCategory_Jumps:		val = rv[RadarCategory_Jumps]; break;
+		case PaneCategory_Holds:		val = rv[RadarCategory_Holds]; break;
+		case PaneCategory_Rolls:		val = rv[RadarCategory_Rolls]; break;
+		case PaneCategory_Mines:		val = rv[RadarCategory_Mines]; break;
+		case PaneCategory_Hands:		val = rv[RadarCategory_Hands]; break;
+		//case PaneCategory_Lifts:		val = rv[RadarCategory_Lifts]; break;
 		case PaneCategory_ProfileHighScore:
 		case PaneCategory_MachineHighName: /* set val for color */
 		case PaneCategory_MachineHighScore:
@@ -196,6 +199,7 @@ void PaneDisplay::SetContent( PaneCategory c )
 			case PaneCategory_Rolls:
 			case PaneCategory_Mines:
 			case PaneCategory_Hands:
+			//case PaneCategory_Lifts:
 				str = ssprintf( COUNT_FORMAT.GetValue(), val );
 			}
 		}

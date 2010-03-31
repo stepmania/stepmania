@@ -38,11 +38,11 @@ static void LoadFromSMTokens(
 	out.SetDescription( sDescription );
 	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDifficulty) );
 
-	// HACK:  We used to store SMANIAC as Difficulty_Hard with special description.
+	// HACK: We used to store SMANIAC as Difficulty_Hard with special description.
 	// Now, it has its own Difficulty_Challenge
 	if( sDescription.CompareNoCase("smaniac") == 0 ) 
 		out.SetDifficulty( Difficulty_Challenge );
-	// HACK:  We used to store CHALLENGE as Difficulty_Hard with special description.
+	// HACK: We used to store CHALLENGE as Difficulty_Hard with special description.
 	// Now, it has its own Difficulty_Challenge
 	if( sDescription.CompareNoCase("challenge") == 0 ) 
 		out.SetDifficulty( Difficulty_Challenge );
@@ -88,6 +88,9 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 	out.m_fBeat0OffsetInSeconds = 0;
 	out.m_BPMSegments.clear();
 	out.m_StopSegments.clear();
+	//out.m_WarpSegments.clear();
+
+	//vector<WarpSegment> arrayWarpsFromNegativeBPMs;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -174,11 +177,59 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
 				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
 
-				// todo: convert negative BPMs into Warp segments
+				// convert negative BPMs into Warp segments
+				/*
+				if( fNewBPM < 0.0f )
+				{
+					vector<RString> arrayNextBPMChangeValues;
+					// get next bpm in sequence
+					if((b+1) < arrayBPMChangeExpressions.size())
+					{
+						split( arrayBPMChangeExpressions[b+1], "=", arrayNextBPMChangeValues );
+						const float fNextPositiveBeat = StringToFloat( arrayNextBPMChangeValues[0] );
+						const float fNextPositiveBPM  = StringToFloat( arrayNextBPMChangeValues[1] );
+						//LOG->Trace( ssprintf("String (%s) vs. BPM (%f)",arrayNextBPMChangeValues[1].c_str(),fNextPositiveBPM) );
+						// tJumpPos = (tPosBPS-abs(negBPS)) + (gPosBPMPosition - fNegPosition)
+						float fDeltaBeat = ((fNextPositiveBPM/60.0f)-abs(fNewBPM/60.0f)) + (fNextPositiveBeat-fBeat);
+						float fWarpToBeat = fNextPositiveBeat + fDeltaBeat;
+						WarpSegment wsTemp(BeatToNoteRow(fBeat),BeatToNoteRow(fWarpToBeat));
+						arrayWarpsFromNegativeBPMs.push_back(wsTemp);
+						*/
+						/*
+						LOG->Trace( ssprintf("==NotesLoSM negbpm==\nfnextposbeat = %f, fnextposbpm = %f,\nfdelta = %f, fwarpto = %f",
+									fNextPositiveBeat,
+									fNextPositiveBPM,
+									fDeltaBeat,
+									fWarpToBeat
+									) );
+						*/
+						/*
+						LOG->Trace( ssprintf("==Negative/Subtractive BPM in NotesLoader==\nNegBPM has noterow = %i, BPM = %f\nNextBPM @ noterow %i\nDelta value = %i noterows\nThis warp will have us end up at noterow %i",
+							BeatToNoteRow(fBeat), fNewBPM,
+							BeatToNoteRow(fNextPositiveBeat),
+							BeatToNoteRow(fDeltaBeat),
+							BeatToNoteRow(fWarpToBeat))
+						);
+						*/
+						//float fDeltaBeat = ((fNextPositiveBPM/60.0f)-abs(fNewBPM/60.0f)) + (fNextPositiveBeat-fBeat);
+						/*
+						LOG->Trace( ssprintf("==NotesLoader Delta as NoteRows==\nfDeltaBeat = %f (beat)\nfDeltaBeat = (NextBPMSeg %f - abs(fBPS %f)) + (nextStartRow %i - thisRow %i)",
+							fDeltaBeat,(fNextPositiveBPM/60.0f),abs(fNewBPM/60.0f),BeatToNoteRow(fNextPositiveBeat),BeatToNoteRow(fBeat))
+						);
+						*/
+					/*
+					}
+					else
+					{
+						// last BPM is a negative one? ugh. -aj (MAX_NOTE_ROW exists btw)
+					}
+				}
+				*/
+
 				if( PREFSMAN->m_bQuirksMode )
 				{
 					// in quirks mode, accept all BPMs, not just positives.
-					// xxx: make this work for decent simfiles only? -aj
+					// xxx: make this work for decent simfiles only? (lol) -aj
 					out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
 				}
 				else
@@ -257,11 +308,35 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				const float fWarpAt = StringToFloat( arrayWarpValues[0] );
 				const float fWarpTo = StringToFloat( arrayWarpValues[1] );
 
-				WarpSegment new_seg( BeatToNoteRow(fWarpAt), BeatToNoteRow(fWarpTo) );
+				if( fWarpAt > 0.0f && fWarpTo > 0.0f )
+				{
+					WarpSegment new_seg( BeatToNoteRow(fWarpAt), BeatToNoteRow(fWarpTo) );
+					// LOG->Trace( "Adding a warp segment: starts at %f, jumps to %f", new_seg.m_iStartRow, new_seg.m_iEndRow );
+					out.AddWarpSegment( new_seg );
+				}
+				else
+				{
+					// Disallow negative warps, to prevent the same kind of
+					// problem that happened when Negative/Subtractive BPMs
+					// arrived on the StepMania scene. -aj
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid warp: from beat %f to beat %f.", fWarpAt, fWarpTo );
+				}
+			}
+		}
 
-				// LOG->Trace( "Adding a warp segment: starts at %f, jumps to %f", new_seg.m_iStartRow, new_seg.m_iEndRow );
-
-				out.AddWarpSegment( new_seg );
+		// We should not support files that contain both Negative BPMs & Warps.
+		// If Warps have been populated from Negative BPMs, then go through that
+		// instead of using the data in the Warps tag. This should be above,
+		// but it breaks compiling so...
+		{
+			if(arrayWarpsFromNegativeBPMs.size() > 0)
+			{
+				// zomg we already have some warps...
+				for( unsigned i=0; i<arrayWarpsFromNegativeBPMs.size(); i++ )
+				{
+					out.AddWarpSegment( arrayWarpsFromNegativeBPMs[i] );
+				}
+				// sorting will need to take place somewhere.
 			}
 		}
 		*/
@@ -389,7 +464,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 		else if( sValueName=="BACKGROUND" )
 			out.m_sBackgroundFile = sParams[1];
 
-		/* Save "#LYRICS" for later, so we can add an internal lyrics tag. */
+		// Save "#LYRICS" for later, so we can add an internal lyrics tag.
 		else if( sValueName=="LYRICSPATH" )
 			out.m_sLyricsFile = sParams[1];
 
@@ -463,6 +538,10 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 		else if( sValueName=="SAMPLELENGTH" )
 			out.m_fMusicSampleLengthSeconds = HHMMSSToSeconds( sParams[1] );
 
+		// SamplePath is used when the song has a separate preview clip. -aj
+		//else if( sValueName=="SAMPLEPATH" )
+			//out.m_sMusicSamplePath = sParams[1];
+
 		else if( sValueName=="DISPLAYBPM" )
 		{
 			// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
@@ -489,8 +568,8 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 			// (Why was it removed?)
 			else if(!stricmp(sParams[1],"ROULETTE"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
-			/* The following two cases are just fixes to make sure simfiles that used 3.9+ features
-			 * are not excluded here */
+			/* The following two cases are just fixes to make sure simfiles that
+			 * used 3.9+ features are not excluded here */
 			else if(!stricmp(sParams[1],"ES") || !stricmp(sParams[1],"OMES"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else if( atoi(sParams[1]) > 0 )
@@ -752,7 +831,7 @@ bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
 
 	ASSERT( aFileNames.size() == 1 );
 	/* We should have at least one; if we had none, we shouldn't have been
-	* called to begin with. */
+	 * called to begin with. */
 	//ASSERT( aFileNames.size() >= 1 );
 
 	return LoadFromSMFile( sPath + aFileNames[0], out );
@@ -770,7 +849,7 @@ bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool b
 	}
 
 	MsdFile msd;
-	if( !msd.ReadFile( sEditFilePath, true ) )  // unescape
+	if( !msd.ReadFile( sEditFilePath, true ) ) // unescape
 	{
 		LOG->UserLog( "Edit file", sEditFilePath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
@@ -782,7 +861,7 @@ bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool b
 bool SMLoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot )
 {
 	MsdFile msd;
-	msd.ReadFromString( sBuffer, true );  // unescape
+	msd.ReadFromString( sBuffer, true ); // unescape
 	return LoadEditFromMsd( msd, sEditFilePath, slot, true );
 }
 
@@ -857,7 +936,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 			}
 
 			pSong->AddSteps( pNewNotes );
-			return true;	// Only allow one Steps per edit file!
+			return true; // Only allow one Steps per edit file!
 		}
 		else
 		{
@@ -884,8 +963,8 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 	vector<BackgroundChange> &bg = song.GetBackgroundChanges(BACKGROUND_LAYER_1);
 	if( !bg.empty() )
 	{
-		/* BGChanges have been sorted.  On the odd chance that a BGChange exists
-		* with a very high beat, search the whole list. */
+		/* BGChanges have been sorted. On the odd chance that a BGChange exists
+		 * with a very high beat, search the whole list. */
 		bool bHasNoSongBgTag = false;
 
 		for( unsigned i = 0; !bHasNoSongBgTag && i < bg.size(); ++i )
@@ -897,20 +976,20 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 			}
 		}
 
-		/* If there's no -nosongbg- tag, add the song BG. */
+		// If there's no -nosongbg- tag, add the song BG.
 		if( !bHasNoSongBgTag ) do
 		{
-			/* If we're loading cache, -nosongbg- should always be in there.  We must
-			* not call IsAFile(song.GetBackgroundPath()) when loading cache. */
+			/* If we're loading cache, -nosongbg- should always be in there. We
+			 * must not call IsAFile(song.GetBackgroundPath()) when loading cache. */
 			if( bFromCache )
 				break;
 
-			/* If BGChanges already exist after the last beat, don't add the background
-			* in the middle. */
+			/* If BGChanges already exist after the last beat, don't add the
+			 * background in the middle. */
 			if( !bg.empty() && bg.back().m_fStartBeat-0.0001f >= song.m_fLastBeat )
 				break;
 
-			/* If the last BGA is already the song BGA, don't add a duplicate. */
+			// If the last BGA is already the song BGA, don't add a duplicate.
 			if( !bg.empty() && !bg.back().m_def.m_sFile1.CompareNoCase(song.m_sBackgroundFile) )
 				break;
 

@@ -18,9 +18,7 @@ public:
 	void Load( RString sMetricsGroup );
 	void Set( const StageStats &ss, const PlayerStageStats &s );
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 private:

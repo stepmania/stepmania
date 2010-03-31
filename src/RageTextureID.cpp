@@ -11,7 +11,7 @@ void RageTextureID::Init()
 	iGrayscaleBits = -1;
 	bDither = false;
 	bStretch = false;
-   	iColorDepth = -1; /* default */
+	iColorDepth = -1; // default
 	bHotPinkColorKey = false;
 	AdditionalTextureHints = "";
 	Policy = TEXTUREMAN->GetDefaultTexturePolicy();

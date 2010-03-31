@@ -174,9 +174,7 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 	UpdateVerts();
 
-	//
 	// Show song boundaries
-	//
 	float fSec = 0;
 	FOREACH_CONST( Song*, ss.m_vpPossibleSongs, song )
 	{
@@ -193,9 +191,7 @@ void GraphDisplay::Set( const StageStats &ss, const PlayerStageStats &pss )
 
 	if( !pss.m_bFailed )
 	{
-		//
 		// Search for the min life record to show "Just Barely!"
-		//
 		float fMinLifeSoFar = 1.0f;
 		int iMinLifeSoFarAt = 0;
 

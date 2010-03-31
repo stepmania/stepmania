@@ -13,6 +13,7 @@
 #include "FontCharAliases.h"
 #include "TitleSubstitution.h"
 #include "BannerCache.h"
+//#include "BackgroundCache.h"
 #include "Sprite.h"
 #include "RageFileManager.h"
 #include "RageSurface.h"
@@ -70,6 +71,7 @@ Song::Song()
 	m_bIsSymLink = false;
 	m_bHasMusic = false;
 	m_bHasBanner = false;
+	m_bHasBackground = false;
 }
 
 Song::~Song()
@@ -266,6 +268,11 @@ bool Song::LoadFromSongDir( RString sDir )
 	/* Load the cached banners, if it's not loaded already. */
 	if( PREFSMAN->m_BannerCache == BNCACHE_LOW_RES_PRELOAD && m_bHasBanner )
 		BANNERCACHE->LoadBanner( GetBannerPath() );
+	/* Load the cached background, if it's not loaded already. */
+	/*
+	if( PREFSMAN->m_BackgroundCache == BGCACHE_LOW_RES_PRELOAD && m_bHasBackground )
+		BACKGROUNDCACHE->LoadBackground( GetBackgroundPath() );
+	*/
 
 	/* Add AutoGen pointers.  (These aren't cached.) */
 	AddAutoGenNotes();
@@ -640,11 +647,14 @@ void Song::TidyUpData()
 	/* These will be written to cache, for Song::LoadFromSongDir to use later. */
 	m_bHasMusic = HasMusic();
 	m_bHasBanner = HasBanner();
+	m_bHasBackground = HasBackground();
 
 	if( HasBanner() )
 		BANNERCACHE->CacheBanner( GetBannerPath() );
-	// todo: backgroundcache -aj
-
+	/*
+	if( HasBackground() )
+		BANNERCACHE->CacheBackground( GetBackgroundPath() );
+	*/
 
 	// If no BGChanges are specified and there are movies in the song directory, then assume
 	// they are DWI style where the movie begins at beat 0.

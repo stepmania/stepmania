@@ -29,9 +29,7 @@ void RageTexture::CreateFrameRects()
 {
 	GetFrameDimensionsFromFileName( GetID().filename, &m_iFramesWide, &m_iFramesHigh );
 
-	//
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
-	//
 	m_TextureCoordRects.clear();
 
 	for( int j=0; j<m_iFramesHigh; j++ )		// traverse along Y

@@ -21,9 +21,7 @@ public:
 	Actor *GetTarget() { return m_pActorTarget; }
 	void SetTarget( Actor *pTarget ) { m_pActorTarget = pTarget; }
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 private:

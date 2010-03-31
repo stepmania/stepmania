@@ -5,9 +5,9 @@
 
 ; see ProductInfo.h for use descriptions
 !define PRODUCT_ID "sm-ssc"
-!define PRODUCT_VER "v1.0 beta 1"
+!define PRODUCT_VER "v1.0 beta 2"
 !define PRODUCT_DISPLAY "${PRODUCT_ID} ${PRODUCT_VER}"
-!define PRODUCT_BITMAP "sm4"
+!define PRODUCT_BITMAP "ssc"
 
 !define PRODUCT_URL "http://ssc.ajworld.net/sm-ssc/"
 !define UPDATES_URL "http://ssc.ajworld.net/sm-ssc/"

@@ -54,23 +54,19 @@ void ArrowEffects::Update()
 		const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pn];
 
 		PerPlayerData &data = g_EffectData[pn];
-		//
 		// Update Tornado
-		//
 		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
 		{
 			// TRICKY: Tornado is very unplayable in doubles, so use a smaller
 			// tornado width if there are many columns
 
-			/*
-			 * the above makes an assumption for dance mode.
-			 * perhaps check if we are actually playing on singles without, say
-			 * more than 6 columns. That would exclude IIDX, pop'n, and
-			 * techno-8, all of which would be clusterfucks.
-			 * certain non-singles modes like halfdoubles (6cols), 
+			/* the below makes an assumption for dance mode.
+			 * perhaps check if we are actually playing on singles without,
+			 * say more than 6 columns. That would exclude IIDX, pop'n, and
+			 * techno-8, all of which would be very hectic.
+			 * certain non-singles modes (like halfdoubles 6cols)
 			 * could possibly have tornado enabled.
-			 * let's also take default resolution (640x480) into mind. -aj
-			 */
+			 * let's also take default resolution (640x480) into mind. -aj */
 			bool bWideField = pStyle->m_iColsPerPlayer > 4;
 			int iTornadoWidth = bWideField ? 2 : 3;
 
@@ -89,9 +85,7 @@ void ArrowEffects::Update()
 			}
 		}
 
-		//
 		// Update Invert
-		//
 		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
 		{
 			const int iNumCols = pStyle->m_iColsPerPlayer;
@@ -135,9 +129,7 @@ void ArrowEffects::Update()
 			data.m_fInvertDistance[iColNum] = fNewPixelOffset - fOldPixelOffset;
 		}
 
-		//
 		// Update Beat
-		//
 		do {
 			float fAccelTime = 0.2f, fTotalTime = 0.5f;
 			float fBeat = GAMESTATE->m_fSongBeatVisible + fAccelTime;
@@ -148,7 +140,7 @@ void ArrowEffects::Update()
 			if( fBeat < 0 )
 				break;
 
-			/* -100.2 -> -0.2 -> 0.2 */
+			// -100.2 -> -0.2 -> 0.2
 			fBeat -= truncf( fBeat );
 			fBeat += 1;
 			fBeat -= truncf( fBeat );
@@ -172,19 +164,18 @@ void ArrowEffects::Update()
 	}
 }
 
-/* For visibility testing: if bAbsolute is false, random modifiers must return the
- * minimum possible scroll speed. */
+/* For visibility testing: if bAbsolute is false, random modifiers must return
+ * the minimum possible scroll speed. */
 float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, float &fPeakYOffsetOut, bool &bIsPastPeakOut, bool bAbsolute )
 {
 	// Default values that are returned if boomerang is off.
 	fPeakYOffsetOut = FLT_MAX;
 	bIsPastPeakOut = true;
 
-
 	float fYOffset = 0;
 
 	/* Usually, fTimeSpacing is 0 or 1, in which case we use entirely beat spacing or
-	 * entirely time spacing (respectively).  Occasionally, we tween between them. */
+	 * entirely time spacing (respectively). Occasionally, we tween between them. */
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 1.0f )
 	{
 		float fSongBeat = GAMESTATE->m_fSongBeatVisible;
@@ -213,7 +204,6 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	const float* fAccels = pPlayerState->m_PlayerOptions.GetCurrent().m_fAccels;
 	//const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 
-
 	float fYAdjust = 0;	// fill this in depending on PlayerOptions
 
 	if( fAccels[PlayerOptions::ACCEL_BOOST] != 0 )
@@ -221,7 +211,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		float fEffectHeight = GetNoteFieldHeight(pPlayerState);
 		float fNewYOffset = fYOffset * 1.5f / ((fYOffset+fEffectHeight/1.2f)/fEffectHeight); 
 		float fAccelYAdjust =	fAccels[PlayerOptions::ACCEL_BOOST] * (fNewYOffset - fYOffset);
-		// TRICKY:	Clamp this value, or else BOOST+BOOMERANG will draw a ton of arrows on the screen.
+		// TRICKY: Clamp this value, or else BOOST+BOOMERANG will draw a ton of arrows on the screen.
 		CLAMP( fAccelYAdjust, -400.f, 400.f );
 		fYAdjust += fAccelYAdjust;
 	}
@@ -231,7 +221,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		float fScale = SCALE( fYOffset, 0.f, fEffectHeight, 0, 1.f );
 		float fNewYOffset = fYOffset * fScale; 
 		float fBrakeYAdjust = fAccels[PlayerOptions::ACCEL_BRAKE] * (fNewYOffset - fYOffset);
-		// TRICKY:	Clamp this value the same way as BOOST so that in BOOST+BRAKE, BRAKE doesn't overpower BOOST
+		// TRICKY: Clamp this value the same way as BOOST so that in BOOST+BRAKE, BRAKE doesn't overpower BOOST
 		CLAMP( fBrakeYAdjust, -400.f, 400.f );
 		fYAdjust += fBrakeYAdjust;
 	}
@@ -240,9 +230,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	fYOffset += fYAdjust;
 
-	//
 	// Factor in boomerang
-	//
 	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0 )
 	{
 		float fPeakAtYOffset = SCREEN_HEIGHT * 0.75f;	// zero point of boomerang function
@@ -252,13 +240,11 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		fYOffset = (-1*fYOffset*fYOffset/SCREEN_HEIGHT) + 1.5f*fYOffset;
 	}
 
-	//
 	// Factor in scroll speed
-	//
 	float fScrollSpeed = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fRandomSpeed > 0 && !bAbsolute )
 	{
-		/* Generate a deterministically "random" speed for each arrow. */
+		// Generate a deterministically "random" speed for each arrow.
 		unsigned seed = GAMESTATE->m_iStageSeed + ( BeatToNoteRow( fNoteBeat ) << 8 ) + (iCol * 100);
 
 		for( int i = 0; i < 3; ++i )
@@ -272,7 +258,6 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 						0.0f, 1.0f,
 						1.0f, pPlayerState->m_PlayerOptions.GetCurrent().m_fRandomSpeed + 1.0f );
 	}
-
 
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] != 0 )
 	{
@@ -288,7 +273,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 static void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int iCol, float fYReverseOffsetPixels, float &fShiftOut, float &fScaleOut )
 {
-	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
+	// XXX: Hack: we need to scale the reverse shift by the zoom.
 	float fTinyPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
 	float fZoom = 1 - fTinyPercent*0.5f;
 
@@ -321,7 +306,13 @@ float ArrowEffects::GetYPos( const PlayerState* pPlayerState, int iCol, float fY
 
 	if( fEffects[PlayerOptions::EFFECT_TIPSY] != 0 )
 		f += fEffects[PlayerOptions::EFFECT_TIPSY] * ( RageFastCos( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*1.8f) * ARROW_SIZE*0.4f );
+
+	// In beware's DDR Extreme-focused fork of StepMania 3.9, this value is
+	// floored, making arrows show on integer Y coordinates. Supposedly it makes
+	// the arrows look better, but testing needs to be done.
+	// todo: make this a preference -aj
 	return f;
+	//return floor(f);
 }
 
 float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCol, float YPos, float fYReverseOffsetPixels )
@@ -344,8 +335,8 @@ float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCo
 
 float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float fYOffset ) 
 {
-	float fPixelOffsetFromCenter = 0;	// fill this in below
-	
+	float fPixelOffsetFromCenter = 0; // fill this in below
+
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 
@@ -386,11 +377,20 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	}
 
+	/*
+	if( fEffects[PlayerOptions::SCROLL_X] != 0 )
+	{
+		// Compare pPlayerState->m_PlayerNumber.
+		// notes will go \ for p1 and / for p2.
+		// pCols[iColNum] for each column.
+	}
+	*/
+
 	fPixelOffsetFromCenter += pCols[iColNum].fXOffset;
 
 	if( fEffects[PlayerOptions::EFFECT_MINI] != 0 )
 	{
-		/* Allow Mini to pull tracks together, but not to push them apart. */
+		// Allow Mini to pull tracks together, but not to push them apart.
 		float fMiniPercent = fEffects[PlayerOptions::EFFECT_MINI];
 		fMiniPercent = min( powf(0.5f, fMiniPercent), 1.0f );
 		fPixelOffsetFromCenter *= fMiniPercent;
@@ -450,14 +450,13 @@ float ArrowEffects::ReceptorGetRotation( const PlayerState* pPlayerState )
 	return fRotation;
 }
 
-
 #define CENTER_LINE_Y 160	// from fYOffset == 0
 #define FADE_DIST_Y 40
 
 static float GetCenterLine( const PlayerState* pPlayerState )
 {
-	/* Another mini hack: if EFFECT_MINI is on, then our center line is at eg. 320, 
-	 * not 160. */
+	/* Another mini hack: if EFFECT_MINI is on, then our center line is at
+	 * eg. 320, not 160. */
 	const float fMiniPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
 	const float fZoom = 1 - fMiniPercent*0.5f;
 	return CENTER_LINE_Y / fZoom;

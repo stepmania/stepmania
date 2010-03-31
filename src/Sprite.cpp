@@ -97,23 +97,22 @@ RageTextureID Sprite::SongBGTexture( RageTextureID ID )
 
 RageTextureID Sprite::SongBannerTexture( RageTextureID ID )
 {
-	/* Song banners often have HOT PINK color keys. */
-
-	/* TODO: Change to use color keying only if the graphic is a diagonal banner.  The color key convention is 
-	 * causing small holes in moderm banners that use magenta, and it's not good to require graphic
-	 * makers to know about archaic color key conventions. -Chris */
-
+	// Older song banners often have HOT PINK color keys.
+	/* Use color keying only if the graphic is a diagonal banner.
+	 * The color key convention is causing small holes in moderm banners that
+	 * use magenta, and it's not good to require graphic makers to know about
+	 * archaic color key conventions. -Chris */
 	// I disabled this anyways, it's extremely annoying -Colby
 	ID.bHotPinkColorKey = false;
 
 	/* Ignore the texture color depth preference and always use 32-bit textures
-	 * if possible.  Banners are loaded while moving the wheel, so we want it to
+	 * if possible. Banners are loaded while moving the wheel, so we want it to
 	 * be as fast as possible. */
 	ID.iColorDepth = 32;
 
-	/* If we don't support RGBA8 (and will probably fall back on RGBA4), we're probably
-	 * on something very old and slow, so let's opt for banding instead of slowing things
-	 * down further by dithering. */
+	/* If we don't support RGBA8 (and will probably fall back on RGBA4), we're
+	 * probably on something very old and slow, so let's opt for banding
+	 * instead of slowing things down further by dithering. */
 	// ID.bDither = true;
 
 	ID.Policy = RageTextureID::TEX_VOLATILE;
@@ -438,9 +437,10 @@ void Sprite::DrawTexture( const TweenState *state )
 {
 	Actor::SetGlobalRenderStates(); // set Actor-specified render states
 
+	RectF crop = state->crop;
 	// bail if cropped all the way 
-	if( state->crop.left + state->crop.right >= 1  || 
-		state->crop.top + state->crop.bottom >= 1 ) 
+	if( crop.left + crop.right >= 1  || 
+		crop.top + crop.bottom >= 1 ) 
 		return; 
 
 	// use m_temp_* variables to draw the object
@@ -454,7 +454,6 @@ void Sprite::DrawTexture( const TweenState *state )
 	 * of the image area aren't guaranteed to be initialized. */
 	/* HACK: Clamp the crop values. It would be more accurate to clip the 
 	 * vertices so that the diffuse value is adjusted. */
-	RectF crop = state->crop;
 	CLAMP( crop.left, 0, 1 );
 	CLAMP( crop.right, 0, 1 );
 	CLAMP( crop.top, 0, 1 );
@@ -481,7 +480,7 @@ void Sprite::DrawTexture( const TweenState *state )
 
 	// Must call this after setting the texture or else texture 
 	// parameters have no effect.
-	Actor::SetTextureRenderStates();	// set Actor-specified render states
+	Actor::SetTextureRenderStates(); // set Actor-specified render states
 	DISPLAY->SetEffectMode( m_EffectMode );
 
 	if( m_pTexture )

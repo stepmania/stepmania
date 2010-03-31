@@ -7,14 +7,12 @@
 #include <vector>
 using namespace std;
 
-/*
- * Coordinate 0x0 represents the exact top-left corner of a bitmap.  .5x.5
+/* Coordinate 0x0 represents the exact top-left corner of a bitmap.  .5x.5
  * represents the center of the top-left pixel; 1x1 is the center of the top
  * square of pixels.  
  *
  * (Look at a grid: map coordinates to the lines, not the squares between the
- * lines.)
- */
+ * lines.) */
 
 static void InitVectors( vector<int> &s0, vector<int> &s1, vector<uint32_t> &percent, int src, int dst )
 {
@@ -35,7 +33,7 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<uint32_t> &per
 			 * either pixel. */
 			const float xstep = sx/4.0f;
 
-			/* source x coordinates of left and right pixels to sample */
+			// source x coordinates of left and right pixels to sample
 			s0.push_back(int(sax-xstep));
 			s1.push_back(int(sax+xstep));
 
@@ -47,7 +45,7 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<uint32_t> &per
 			} else {
 				const int xdist = s1[x] - s0[x];
 
-				/* fleft is the left pixel sampled; +.5 is the center: */
+				// fleft is the left pixel sampled; +.5 is the center:
 				const float fleft = s0[x] + .5f;
 
 				/* sax is somewhere between the centers of both sampled
@@ -59,21 +57,19 @@ static void InitVectors( vector<int> &s0, vector<int> &s1, vector<uint32_t> &per
 	}
 	else
 	{
-		/*
-		 * Fencepost: If we have source:
+		/* Fencepost: If we have source:
 		 *    abcd
 		 * and dest:
 		 *    xyz
 		 * then we want x to be sampled entirely from a, and z entirely from d;
 		 * the inner pixels are interpolated.  (This behavior mimics Photoshop's
-		 * resize.)
-		 */
+		 * resize.) */
 		float sx = float(src-1) / (dst-1);
 		for( int x = 0; x < dst; x++ )
 		{
 			const float sax = sx*x;
 
-			/* source x coordinates of left and right pixels to sample */
+			// source x coordinates of left and right pixels to sample
 			s0.push_back( clamp(int(sax), 0, src-1));
 			s1.push_back( clamp(int(sax+1), 0, src-1) );
 
@@ -93,7 +89,7 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 	InitVectors( esx0, esx1, ex0, src->w, dst->w );
 	InitVectors( esy0, esy1, ey0, src->h, dst->h );
 
-	/* This is where all of the real work is done. */
+	// This is where all of the real work is done.
 	const uint8_t *sp = (uint8_t *) src->pixels;
 	const int height = dst->h;
 	const int width = dst->w;
@@ -107,7 +103,7 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 
 		for( int x = 0; x < width; x++ )
 		{
-			/* Grab pointers to the sampled pixels: */
+			// Grab pointers to the sampled pixels:
 			const uint8_t *c00 = csp + esx0[x]*4;
 			const uint8_t *c01 = csp + esx1[x]*4;
 			const uint8_t *c10 = ncsp + esx0[x]*4;
@@ -128,7 +124,7 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 			}
 			*dp = *(uint32_t *) color;
 
-			/* Advance destination pointer. */
+			// Advance destination pointer.
 			++dp;
 		}
 	}
@@ -145,7 +141,7 @@ void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
 	if( src->w == dstwidth && src->h == dstheight )
 		return;
 
-	/* resize currently only does RGBA8888 */
+	// resize currently only does RGBA8888
 	if( src->fmt.BytesPerPixel != 4 )
 	{
 		RageSurfaceUtils::ConvertSurface( src, src->w, src->h, 32,
@@ -158,7 +154,7 @@ void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
 		float yscale = float(dstheight)/src->h;
 
 		/* Our filter is a simple linear filter, so it can't scale to less than
-		 * 1:2 or more than 2:1 very well.  If we need to go beyond that, do it
+		 * 1:2 or more than 2:1 very well. If we need to go beyond that, do it
 		 * iteratively. */
 		xscale = clamp( xscale, .5f, 2.0f );
 		yscale = clamp( yscale, .5f, 2.0f );

@@ -41,7 +41,7 @@ public:
 	int GetImageFrameWidth() const		{return GetImageWidth()		/	GetFramesWide();}
 	int GetImageFrameHeight() const		{return GetImageHeight()	/	GetFramesHigh();}
 
-	/* Use these to convert between the different coordinate systems: */
+	// Use these to convert between the different coordinate systems:
 	float GetSourceToImageCoordsRatioX() const { return float(GetImageWidth()) / GetSourceWidth(); }
 	float GetImageToTexCoordsRatioX() const { return 1.0f / GetTextureWidth(); }
 	float GetSourceToTexCoordsRatioX() const { return GetSourceToImageCoordsRatioX() * GetImageToTexCoordsRatioX(); }
@@ -52,25 +52,23 @@ public:
 	const RectF *GetTextureCoordRect( int frameNo ) const;
 	int   GetNumFrames() const { return m_iFramesWide*m_iFramesHigh; }
 
-	/* Used by RageTextureManager.  Order is important; see RageTextureManager.cpp. */
+	// Used by RageTextureManager. Order is important; see RageTextureManager.cpp.
 	const RageTextureID::TexPolicy &GetPolicy() const { return m_ID.Policy; }
 	RageTextureID::TexPolicy &GetPolicy() { return m_ID.Policy; }
 	int		m_iRefCount;
 	bool	m_bWasUsed;
 
-	/* The ID that we were asked to load: */
+	// The ID that we were asked to load:
 	const RageTextureID &GetID() const { return m_ID; }
 
 	static void GetFrameDimensionsFromFileName( RString sPath, int* puFramesWide, int* puFramesHigh );
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 private:
 	/* We might change settings when loading (due to hints, hardware
-	 * limitations, etc).  The data actually loaded is here: */
+	 * limitations, etc). The data actually loaded is here: */
 	RageTextureID m_ID;
 
 protected:

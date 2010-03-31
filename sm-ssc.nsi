@@ -2,7 +2,6 @@
 ; created by 
 ;     BBF, GlennMaynard, ChrisDanford
 ; hacked by AJ for sm-ssc
-; I use the following command to create the installer:
 ; NOTE: this .NSI script is designed for NSIS v2.0+
 
 ;--------------------------------
@@ -25,8 +24,8 @@
 	Name "${PRODUCT_DISPLAY}"
 	OutFile "${PRODUCT_DISPLAY}.exe"
 
-	Caption "${PRODUCT_DISPLAY}"
-	UninstallCaption "${PRODUCT_DISPLAY}"
+	Caption "${PRODUCT_DISPLAY} | install"
+	UninstallCaption "${PRODUCT_DISPLAY} | uninstall"
 
 	; Some default compiler settings (uncomment and change at will):
 !ifdef COMPRESS
@@ -44,6 +43,7 @@
 	AutoCloseWindow true ; (can be true for the window go away automatically at end)
 	; ShowInstDetails hide ; (can be show to have them shown, or nevershow to disable)
 	SetDateSave on ; (can be on to have files restored to their orginal date)
+	; may not be the best idea for vista/7? -aj
 	InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
 	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" ""
 	; DirShow show ; (make this hide to not let the user change it)
@@ -148,7 +148,8 @@
 
 	; generate, then include installer strings
 	;!delfile "nsis_strings_temp.inc"
-	!system '"Program\${PRODUCT_FAMILY}.exe" --ExportNsisStrings'
+	; xxx: hardcoded to StepMania
+	!system '"Program\StepMania.exe" --ExportNsisStrings'
 	!include "nsis_strings_temp.inc"
 
 ;--------------------------------
@@ -194,6 +195,11 @@ Section "Main Section" SecMain
 	; add registry entries
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" "" "$INSTDIR"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "$(TEXT_IO_REMOVE_ONLY)"
+	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayVersion" "$(PRODUCT_VER)"
+	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "Comments" "sm-ssc is a rhythm game simulator (forked from StepMania)."
+	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "Publisher" "the spinal shark collective"
+	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "URLInfoAbout" "http://ssc.ajworld.net/sm-ssc/"
+	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "URLUpdateInfo" "http://code.google.com/p/sm-ssc/"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall.exe"'
 !endif
 
@@ -211,8 +217,8 @@ Section "Main Section" SecMain
 
 !ifdef ASSOCIATE_SMZIP
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "$(TEXT_IO_SMZIP_PACKAGE)"
-	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe,1"
-	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\${PRODUCT_FAMILY}.exe" "%1"'
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\StepMania.exe,1"
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\StepMania.exe" "%1"'
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
 !endif
 
@@ -232,9 +238,9 @@ Section "Main Section" SecMain
 	CreateDirectory "$INSTDIR\BackgroundTransitions"
 	File /r /x CVS /x .svn "BackgroundTransitions"
 
-	CreateDirectory "$INSTDIR\RandomMovies"
-	SetOutPath "$INSTDIR\RandomMovies"
-	File "RandomMovies\instructions.txt"
+	;CreateDirectory "$INSTDIR\RandomMovies"
+	;SetOutPath "$INSTDIR\RandomMovies"
+	;File "RandomMovies\instructions.txt"
 	; end background/movie related
 
 	; Nobody should be using this directory anymore. -aj
@@ -251,10 +257,10 @@ Section "Main Section" SecMain
 	CreateDirectory "$INSTDIR\Courses"
 	SetOutPath "$INSTDIR\Courses"
 	File "Courses\instructions.txt"
-	File /r /x CVS /x .svn "Courses\Samples"
+	File /r /x CVS /x .svn "Courses\Default"
 
 	CreateDirectory "$INSTDIR\Packages"
-	File "Packages\Instructions.txt"
+	;File "Packages\Instructions.txt"
 
 	; remove old noteskins
 	RMDir /r "$INSTDIR\NoteSkins\common\default"
@@ -296,7 +302,7 @@ Section "Main Section" SecMain
 	; make songs dir
 	CreateDirectory "$INSTDIR\Songs"
 	SetOutPath "$INSTDIR\Songs"
-	File "Songs\Instructions.txt"
+	;File "Songs\Instructions.txt"
 
 	; remove and install themes
 	RMDir /r "$INSTDIR\Themes\_fallback"
@@ -304,7 +310,7 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\Themes\default"
 	CreateDirectory "$INSTDIR\Themes"
 	SetOutPath "$INSTDIR\Themes"
-	File "Themes\instructions.txt"
+	;File "Themes\instructions.txt"
 	File /r /x CVS /x .svn "Themes\_fallback"
 	File /r /x CVS /x .svn "Themes\_portKit-sm4"
 	File /r /x CVS /x .svn "Themes\default"
@@ -322,15 +328,15 @@ Section "Main Section" SecMain
 
 	SetOutPath "$INSTDIR\Program"
 !ifdef INSTALL_EXECUTABLES
-	; normal exec
-	File "Program\${PRODUCT_FAMILY}.exe"
-	File "Program\${PRODUCT_FAMILY}.vdi"
+	; normal exec (xxx: hardcoded to StepMania instead of ${PRODUCT_FAMILY})
+	File "Program\StepMania.exe"
+	File "Program\StepMania.vdi"
 	; sse2 exec
-	File "Program\${PRODUCT_FAMILY}-SSE2.exe"
-	File "Program\${PRODUCT_FAMILY}-SSE2.vdi"
+	File "Program\StepMania-SSE2.exe"
+	File "Program\StepMania-SSE2.vdi"
 	; other programs
-	File "Program\tools.exe"
 	File "Program\Texture Font Generator.exe"
+	;File "Program\tools.exe" ; to be replaced
 !endif
 !ifdef ASSOCIATE_SMZIP
 	Call RefreshShellIcons
@@ -358,10 +364,10 @@ Section "Main Section" SecMain
 	; documentation
 	CreateDirectory "$INSTDIR\Docs"
 	SetOutPath "$INSTDIR\Docs"
-	File "Licenses.txt"
-	File "credits.txt"
-	File "Changelog_sm-ssc.txt"
-	File "CommandLineArgs.txt"
+	File "Docs\Licenses.txt"
+	File "Docs\credits.txt"
+	File "Docs\Changelog_sm-ssc.txt"
+	File "Docs\CommandLineArgs.txt"
 
 	CreateDirectory "$INSTDIR\Manual"
 	SetOutPath "$INSTDIR\Manual"
@@ -370,8 +376,10 @@ Section "Main Section" SecMain
 	; Create Start Menu icons
 	SetShellVarContext current  # 	'all' doesn't work on Win9x
 	CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
-	CreateShortCut "$DESKTOP\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+	; xxx: StepMania.exe
+	; xxx: make desktop shortcut an option
+	CreateShortCut "$DESKTOP\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania.exe"
 	!ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
 		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 	!endif
@@ -384,7 +392,8 @@ Section "Main Section" SecMain
 		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk" "${UPDATES_URL}"
 	!endif
 
-	CreateShortCut "$INSTDIR\${PRODUCT_ID}.lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+	; xxx: StepMania.exe
+	CreateShortCut "$INSTDIR\${PRODUCT_ID}.lnk" "$INSTDIR\Program\StepMania.exe"
 !endif
 
 	IfErrors do_error do_no_error
@@ -457,9 +466,10 @@ Function LeaveAutorun
 	install:
 	Call PreInstall
 	GoTo proceed
-	
+
 	play:
-	Exec "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+	; xxx: StepMania.exe
+	Exec "$INSTDIR\Program\StepMania.exe"
 	IfErrors play_error
 	quit
 
@@ -543,7 +553,8 @@ Function PreInstall
 	!endif
 !else
 		; Check that full version is installed.
-		IfFileExists "$INSTDIR\Program\${PRODUCT_FAMILY}.exe" proceed_with_patch
+		; xxx: StepMania.exe
+		IfFileExists "$INSTDIR\Program\StepMania.exe" proceed_with_patch
 		MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_FULL_INSTALL_NOT_FOUND)" IDYES proceed_with_patch
 		Abort
 		proceed_with_patch:
@@ -582,6 +593,7 @@ FunctionEnd
  
 ;--------------------------------
 ;Uninstaller Section
+; todo: update big time
 
 Section "Uninstall"
 
@@ -619,7 +631,7 @@ Section "Uninstall"
 	RMDir "$INSTDIR\Packages"
 
 	Delete "$INSTDIR\Courses\instructions.txt"
-	RMDir /r "$INSTDIR\Courses\Samples"
+	RMDir /r "$INSTDIR\Courses\Default"
 	RMDir "$INSTDIR\Courses"
 
 	Delete "$INSTDIR\NoteSkins\instructions.txt"
@@ -657,8 +669,11 @@ Section "Uninstall"
 !endif
 
 !ifdef INSTALL_EXECUTABLES
-	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
-	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.vdi"
+	; xxx: StepMania.exe
+	Delete "$INSTDIR\Program\StepMania.exe"
+	Delete "$INSTDIR\Program\StepMania.vdi"
+	Delete "$INSTDIR\Program\StepMania-SSE2.exe"
+	Delete "$INSTDIR\Program\StepMania-SSE2.vdi"
 	Delete "$INSTDIR\Program\tools.exe"
 	Delete "$INSTDIR\Program\Texture Font Generator.exe"
 !endif

@@ -74,7 +74,6 @@ protected:
 	int		m_iSelection;		// index into m_CurWheelItemBaseData
 	RString		m_sExpandedSectionName;
 
-
 	int			m_iSwitchesLeftInSpinDown;
 	float		m_fLockedWheelVelocity;
 	// 0 = none; -1 or 1 = up/down

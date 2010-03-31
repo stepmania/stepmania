@@ -82,8 +82,8 @@ struct TimeSignatureSegment
 /*
 struct WarpSegment
 {
-	WarpSegment() : m_iStartRow(-1), int m_iEndRow(-1) { }
-	WarpSegment( int s, int e ){ m_iStartRow = max( 0, s ); m_iEndRow = max( 0, e ) }
+	WarpSegment() : m_iStartRow(-1), m_iEndRow(-1) { }
+	WarpSegment( int s, int e ){ m_iStartRow = max( 0, s ); m_iEndRow = max( 0, e ); }
 	int m_iStartRow;
 	int m_iEndRow;
 
@@ -95,7 +95,7 @@ struct WarpSegment
 	}
 	bool operator!=( const WarpSegment &other ) const { return !operator==(other); }
 	bool operator<( const WarpSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
-}
+};
 */
 
 class TimingData
@@ -112,6 +112,7 @@ public:
 	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds ); }
 	void SetStopAtBeat( float fBeat, float fSeconds, bool bDelay ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, bDelay ); } // (sm-ssc)
 	float GetStopAtRow( int iNoteRow, bool &bDelayOut ) const;
+	void SetDelayAtRow( int iNoteRow, float fSeconds ); // sm-ssc
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	void AddBPMSegment( const BPMSegment &seg );
 	void AddStopSegment( const StopSegment &seg );

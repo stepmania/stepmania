@@ -40,7 +40,7 @@ void AutoActor::Load( const RString &sPath )
 	Unload();
 	m_pActor = ActorUtil::MakeActor( sPath );
 
-	/* If a Condition is false, MakeActor will return NULL. */
+	// If a Condition is false, MakeActor will return NULL.
 	if( m_pActor == NULL )
 		m_pActor = new Actor;
 }

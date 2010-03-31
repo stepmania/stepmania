@@ -178,12 +178,13 @@ void ScreenNetEvaluation::UpdateStats()
 	if( m_iCurrentPlayer >= (int) NSMAN->m_EvalPlayerData.size() )
 		return;
 
+	// XXX: These commands assume that grades and score are shown in the theme
+	// on ScreenNetEvaluation, which is not always the case. If a theme doesn't
+	// have these elements for whatever reason, a crash will occur. -aj
 	m_Grades[m_pActivePlayer].SetGrade( (Grade)NSMAN->m_EvalPlayerData[m_iCurrentPlayer].grade );
-
-	//m_textScore[m_pActivePlayer].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score) );
 	m_textScore[m_pActivePlayer].SetTargetNumber( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score );
 
-	//Values greater than 6 will cause crash
+	//Values greater than 6 will cause a crash
 	if ( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty < 6 )
 	{
 		m_DifficultyIcon[m_pActivePlayer].SetPlayer( m_pActivePlayer );
@@ -192,12 +193,10 @@ void ScreenNetEvaluation::UpdateStats()
 
 	for( int j=0; j<NETNUMTAPSCORES; ++j )
 	{
-		// The name will be blank if ScreenEvaluation determined the
-		// line should not be shown
+		// The name will be blank if ScreenEvaluation determined the line
+		// should not be shown.
 		if( !m_textJudgmentLineNumber[j][m_pActivePlayer].GetName().empty() )
 		{
-			// do we need this iNumDigits thing anymore? -aj
-			//int iNumDigits = (j==JudgmentLine_MaxCombo)? MAX_COMBO_NUM_DIGITS:4;
 			m_textJudgmentLineNumber[j][m_pActivePlayer].SetTargetNumber( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] );
 		}
 	}

@@ -71,10 +71,11 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		f.PutLine( ssprintf("#LASTBEATHINT:%.3f;", out.m_fSpecifiedLastBeat) );
 
 	f.Write( "#SELECTABLE:" );
-	switch(out.m_SelectionDisplay) {
-	default: ASSERT(0);  /* fallthrough */
-	case Song::SHOW_ALWAYS:		f.Write( "YES" );		break;
-	case Song::SHOW_NEVER:		f.Write( "NO" );		break;
+	switch(out.m_SelectionDisplay)
+	{
+		default: ASSERT(0); // fall through
+		case Song::SHOW_ALWAYS:	f.Write( "YES" );		break;
+		case Song::SHOW_NEVER:		f.Write( "NO" );		break;
 	}
 	f.PutLine( ";" );
 
@@ -133,6 +134,22 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		}
 	}
 	f.PutLine( ";" );
+
+	/*
+	f.Write( "#WARPS:" );
+	for( unsigned i=0; i<out.m_Timing.m_WarpSegments.size(); i++ )
+	{
+		const WarpSegment &fs = out.m_Timing.m_WarpSegments[i];
+
+		if( fs.m_bDelay )
+		{
+			f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
+			if( i != out.m_Timing.m_StopSegments.size()-1 )
+				f.Write( "," );
+		}
+	}
+	f.PutLine( ";" );
+	*/
 
 	ASSERT( !out.m_Timing.m_vTimeSignatureSegments.empty() );
 	f.Write( "#TIMESIGNATURES:" );

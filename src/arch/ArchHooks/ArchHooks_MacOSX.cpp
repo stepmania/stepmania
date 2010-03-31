@@ -39,14 +39,14 @@ static bool DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 	if( IsFatalSignal(signal) )
 		return false;
 
-	/* ^C. */
+	// ^C.
 	ArchHooks::SetUserQuit();
 	return true;
 }
 
 static bool DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
-	/* Don't dump a debug file if the user just hit ^C. */
+	// Don't dump a debug file if the user just hit ^C.
 	if( !IsFatalSignal(signal) )
 		return true;
 
@@ -63,14 +63,14 @@ static bool DoEmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *us
 
 void ArchHooks_MacOSX::Init()
 {
-	/* First, handle non-fatal termination signals. */
+	// First, handle non-fatal termination signals.
 	SignalHandler::OnClose( DoCleanShutdown );
 	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
 	CrashHandler::InitializeCrashHandler();
 	SignalHandler::OnClose( DoCrashSignalHandler );
 	SignalHandler::OnClose( DoEmergencyShutdown );
 
-	/* Now that the crash handler is set up, disable crash reporter. */
+	// Now that the crash handler is set up, disable crash reporter.
 	// Breaks gdb
 	// task_set_exception_ports( mach_task_self(), EXC_MASK_ALL, MACH_PORT_NULL, EXCEPTION_DEFAULT, 0 );
 
@@ -220,7 +220,7 @@ RString ArchHooks_MacOSX::GetMachineId() const
 
 void ArchHooks_MacOSX::DumpDebugInfo()
 {
-	/* Get system version */
+	// Get system version
 	RString sSystemVersion;
 	{
 		long major = 0, minor = 0, bugFix = 0;
@@ -236,7 +236,7 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 
 	size_t size;
 #define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, NULL, 0) )
-	/* Get memory */
+	// Get memory
 	float fRam;
 	char ramPower;
 	{
@@ -254,7 +254,7 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 		}
 	}
 
-	/* Get processor information */
+	// Get processor information
 	int iMaxCPUs = 0;
 	int iCPUs = 0;
 	float fFreq;
@@ -314,7 +314,7 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 	} while( false );
 #undef GET_PARAM
 
-	/* Send all of the information to the log */
+	// Send all of the information to the log 
 	LOG->Info( "Model: %s (%d/%d)", sModel.c_str(), iCPUs, iMaxCPUs );
 	LOG->Info( "Clock speed %.2f %cHz", fFreq, freqPower );
 	LOG->Info( "%s", sSystemVersion.c_str());
@@ -339,7 +339,7 @@ RString ArchHooks::GetPreferredLanguage()
 	CFStringRef lang;
 
 	if( CFArrayGetCount(languages) > 0 &&
-	    (lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != NULL )
+		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != NULL )
 	{
 		// MacRoman agrees with ASCII in the low-order 7 bits.
 		const char *str = CFStringGetCStringPtr( lang, kCFStringEncodingMacRoman );
@@ -354,7 +354,7 @@ RString ArchHooks::GetPreferredLanguage()
 bool ArchHooks_MacOSX::GoToURL( RString sUrl )
 {
 	CFURLRef url = CFURLCreateWithBytes( kCFAllocatorDefault, (const UInt8*)sUrl.data(),
-					     sUrl.length(), kCFStringEncodingUTF8, NULL );
+						 sUrl.length(), kCFStringEncodingUTF8, NULL );
 	OSStatus result = LSOpenCFURLRef( url, NULL );
 
 	CFRelease( url );

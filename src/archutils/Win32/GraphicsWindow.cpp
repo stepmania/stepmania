@@ -206,8 +206,8 @@ static void AdjustVideoModeParams( VideoModeParams &p )
 	}
 }
 
-/* Set the display mode to the given size, bit depth and refresh.  The refresh
- * setting may be ignored. */
+/* Set the display mode to the given size, bit depth and refresh.
+ * The refresh setting may be ignored. */
 RString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 {
 	if( p.windowed )
@@ -293,7 +293,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 		g_HDC = GetDC( g_hWndMain );
 	}
 
-	/* Update the window title. */
+	// Update the window title.
 	do
 	{
 		if( m_bWideWindowClass )
@@ -305,7 +305,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 		SetWindowTextA( g_hWndMain, ConvertUTF8ToACP(p.sWindowTitle) );
 	} while(0);
 
-	/* Update the window icon. */
+	// Update the window icon.
 	if( g_hIcon != NULL )
 	{
 		SetClassLong( g_hWndMain, GCL_HICON, (LONG) LoadIcon(NULL,IDI_APPLICATION) );

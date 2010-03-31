@@ -1,5 +1,4 @@
-/*
- * Handle loading and decoding of sounds.
+/* Handle loading and decoding of sounds.
  *
  * For small files, pre-decode the entire file into a regular buffer.  We
  * might want to play many samples at once, and we don't want to have to decode
@@ -92,8 +91,8 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 {
 	LockMut(cpy.m_Mutex);
 
-	/* If m_bDeleteWhenFinished, then nobody that has a reference to the sound should
-	 * be making copies. */
+	/* If m_bDeleteWhenFinished, then nobody that has a reference to the sound
+	 * should be making copies. */
 	ASSERT( !cpy.m_bDeleteWhenFinished );
 
 	m_Param = cpy.m_Param;
@@ -126,8 +125,8 @@ void RageSound::Unload()
 	m_sFilePath = "";
 }
 
-/* The sound will self-delete itself when it stops playing.  If the sound is not
- * playing, the sound will be deleted immediately.  The caller loses ownership
+/* The sound will self-delete itself when it stops playing. If the sound is not
+ * playing, the sound will be deleted immediately. The caller loses ownership
  * of the sound. */
 void RageSound::DeleteSelfWhenFinishedPlaying()
 {
@@ -454,7 +453,6 @@ bool RageSound::Pause( bool bPause )
 
 	return SOUNDMAN->Pause( this, bPause );
 }
-	
 
 float RageSound::GetLengthSeconds()
 {
@@ -472,7 +470,7 @@ float RageSound::GetLengthSeconds()
 		return -1;
 	}
 
-	return iLength / 1000.f; /* ms -> secs */
+	return iLength / 1000.f; // ms -> secs
 }
 
 int RageSound::GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bApproximate ) const
@@ -490,8 +488,7 @@ int RageSound::GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bA
 	return (int) iSourceFrame;
 }
 
-/*
- * If non-NULL, approximate is set to true if the returned time is approximated because of
+/* If non-NULL, approximate is set to true if the returned time is approximated because of
  * underrun, the sound not having started (after Play()) or finished (after EOF) yet.
  *
  * If non-NULL, Timestamp is set to the real clock time associated with the returned sound

@@ -88,7 +88,7 @@ RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
 	if(      iAverageMeter <= 3 )	return RANKING_A;
 	else if( iAverageMeter <= 6 )	return RANKING_B;
 	else if( iAverageMeter <= 9 )	return RANKING_C;
-	else				return RANKING_D;
+	else							return RANKING_D;
 }
 
 
@@ -316,9 +316,9 @@ StringToX( StageAward );
 LuaFunction( StageAwardToLocalizedString, StageAwardToLocalizedString(Enum::Check<StageAward>(L, 1)) );
 LuaXType( StageAward );
 
-// Numbers are intentially not at the front of these strings so that the 
+// Numbers are intentionally not at the front of these strings so that the 
 // strings can be used as XML entity names.
-// Numbers are intentially not at the back so that "1000" and "10000" don't 
+// Numbers are intentionally not at the back so that "1000" and "10000" don't 
 // conflict when searching for theme elements.
 static const char *PeakComboAwardNames[] = {
 	"1000",
@@ -415,7 +415,9 @@ LuaXType( EditMode );
 
 static const char *SampleMusicPreviewModeNames[] = {
 	"Normal",
+	//"StartToPreview",
 	"ScreenMusic",
+	//"LastSong"
 };
 XToString( SampleMusicPreviewMode );
 StringToX( SampleMusicPreviewMode );

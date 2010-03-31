@@ -32,9 +32,7 @@ public:
 
 	virtual ControllerStateDisplay *Copy() const;
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 protected:

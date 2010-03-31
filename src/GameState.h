@@ -184,6 +184,7 @@ public:
 	//bool		m_bStop;	// in the middle of a stop (freeze or delay)
 	bool		m_bFreeze;	// in the middle of a freeze
 	bool		m_bDelay;	// in the middle of a delay
+	//int			m_iWarpToRow, m_iWarpFromRow;	// used for warping
 	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 

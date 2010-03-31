@@ -117,8 +117,8 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 		m_ComboList.push_back( newcombo );
 	}
 
-	/* Merge identical combos.  This normally only happens in course mode, when a combo
-	 * continues between songs. */
+	/* Merge identical combos. This normally only happens in course mode, when
+	 * a combo continues between songs. */
 	for( unsigned i=1; i<m_ComboList.size(); ++i )
 	{
 		Combo_t &prevcombo = m_ComboList[i-1];
@@ -128,7 +128,7 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 		if( fabsf(PrevComboEnd - ThisComboStart) > 0.001 )
 			continue;
 
-		/* These are really the same combo. */
+		// These are really the same combo.
 		prevcombo.m_fSizeSeconds += combo.m_fSizeSeconds;
 		prevcombo.m_cnt += combo.m_cnt;
 		m_ComboList.erase( m_ComboList.begin()+i );
@@ -222,7 +222,7 @@ float PlayerStageStats::MakePercentScore( int iActual, int iPossible )
 	if( iActual == iPossible )
 		return 1;	// correct for rounding error
 
-	/* This can happen in battle, with transform attacks. */
+	// This can happen in battle, with transform attacks.
 	//ASSERT_M( iActual <= iPossible, ssprintf("%i/%i", iActual, iPossible) );
 
 	float fPercent =  iActual / (float)iPossible;
@@ -232,12 +232,12 @@ float PlayerStageStats::MakePercentScore( int iActual, int iPossible )
 
 	int iPercentTotalDigits = 3 + CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES;	// "100" + "." + "00"
 
-	// TRICKY: printf will round, but we want to truncate.  Otherwise, we may display a percent
-	// score that's too high and doesn't match up with the calculated grade.
+	// TRICKY: printf will round, but we want to truncate.  therwise, we may display
+	// a percent score that's too high and doesn't match up with the calculated grade.
 	float fTruncInterval = powf( 0.1f, (float)iPercentTotalDigits-1 );
-	
-	// TRICKY: ftruncf is rounding 1.0000000 to 0.99990004.  Give a little boost to 
-	// fPercentDancePoints to correct for this.
+
+	// TRICKY: ftruncf is rounding 1.0000000 to 0.99990004. Give a little boost
+	// to fPercentDancePoints to correct for this.
 	fPercent += 0.000001f;
 
 	fPercent = ftruncf( fPercent, fTruncInterval );
@@ -247,7 +247,7 @@ float PlayerStageStats::MakePercentScore( int iActual, int iPossible )
 RString PlayerStageStats::FormatPercentScore( float fPercentDancePoints )
 {
 	int iPercentTotalDigits = 3 + CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES;	// "100" + "." + "00"
-	
+
 	RString s = ssprintf( "%*.*f%%", iPercentTotalDigits, (int)CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES, fPercentDancePoints*100 );
 	return s;
 }
@@ -333,7 +333,7 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 	// Don't save life stats in endless courses, or could run OOM in a few hours.
 	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
 		return;
-	
+
 	if( fStepsSecond < 0 )
 		return;
 
@@ -346,13 +346,11 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 
 	MESSAGEMAN->Broadcast( Message_LifeMeterChangedP1 );
 
-	//
 	// Memory optimization:
 	// If we have three consecutive records A, B, and C all with the same fLife,
-	// we can eliminate record B without losing data.  Only check the last three 
+	// we can eliminate record B without losing data. Only check the last three 
 	// records in the map since we're only inserting at the end, and we know all 
 	// earlier redundant records have already been removed.
-	//
 	map<float,float>::iterator C = m_fLifeRecord.end();
 	--C;
 	if( C == m_fLifeRecord.begin() ) // no earlier records left
@@ -374,11 +372,11 @@ float PlayerStageStats::GetLifeRecordAt( float fStepsSecond ) const
 {
 	if( m_fLifeRecord.empty() )
 		return 0;
-	
-	/* Find the first element whose key is greater than k. */
+
+	// Find the first element whose key is greater than k.
 	map<float,float>::const_iterator it = m_fLifeRecord.upper_bound( fStepsSecond );
 
-	/* Find the last element whose key is less than or equal to k. */
+	// Find the last element whose key is less than or equal to k.
 	if( it != m_fLifeRecord.begin() )
 		--it;
 
@@ -390,22 +388,22 @@ float PlayerStageStats::GetLifeRecordLerpAt( float fStepsSecond ) const
 {
 	if( m_fLifeRecord.empty() )
 		return 0;
-	
-	/* Find the first element whose key is greater than k. */
+
+	// Find the first element whose key is greater than k.
 	map<float,float>::const_iterator later = m_fLifeRecord.upper_bound( fStepsSecond );
 
-	/* Find the last element whose key is less than or equal to k. */
+	// Find the last element whose key is less than or equal to k.
 	map<float,float>::const_iterator earlier = later;
 	if( earlier != m_fLifeRecord.begin() )
 		--earlier;
 
 	if( later == m_fLifeRecord.end() )
 		return earlier->second;
-	
+
 	if( earlier->first == later->first )	// two samples from the same time.  Don't divide by zero in SCALE
 		return earlier->second;
 
-	/* earlier <= pos <= later */
+	// earlier <= pos <= later
 	return SCALE( fStepsSecond, earlier->first, later->first, earlier->second, later->second );
 }
 

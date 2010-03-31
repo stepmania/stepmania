@@ -44,7 +44,7 @@ void TimingData::AddTimeSignatureSegment( const TimeSignatureSegment &seg )
 /*
 void TimingData::AddWarpSegment( const WarpSegment &seg )
 {
-	m_vWarpSegments.insert( upper_bound(m_vWarpSegments.begin(), m_vWarpSegments.end(), seg), seg );
+	m_WarpSegments.insert( upper_bound(m_WarpSegments.begin(), m_WarpSegments.end(), seg), seg );
 }
 */
 
@@ -127,10 +127,10 @@ float TimingData::GetStopAtRow( int iNoteRow, bool &bDelayOut ) const
 	return 0;
 }
 
-/* Multiply the BPM in the range [fStartBeat,fEndBeat) by fFactor. */
+// Multiply the BPM in the range [fStartBeat,fEndBeat) by fFactor.
 void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor )
 {
-	/* Change all other BPM segments in this range. */
+	// Change all other BPM segments in this range.
 	for( unsigned i=0; i<m_BPMSegments.size(); i++ )
 	{
 		const int iStartIndexThisSegment = m_BPMSegments[i].m_iStartRow;
@@ -140,19 +140,20 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 		if( iStartIndexThisSegment <= iStartIndex && iStartIndexNextSegment <= iStartIndex )
 			continue;
 
-		/* If this BPM segment crosses the beginning of the range, split it into two. */
+		/* If this BPM segment crosses the beginning of the range,
+		 * split it into two. */
 		if( iStartIndexThisSegment < iStartIndex && iStartIndexNextSegment > iStartIndex )
 		{
 			BPMSegment b = m_BPMSegments[i];
 			b.m_iStartRow = iStartIndexNextSegment;
 			m_BPMSegments.insert( m_BPMSegments.begin()+i+1, b );
 
-			/* Don't apply the BPM change to the first half of the segment we just split,
-			 * since it lies outside the range. */
+			/* Don't apply the BPM change to the first half of the segment we
+			 * just split, since it lies outside the range. */
 			continue;
 		}
 
-		/* If this BPM segment crosses the end of the range, split it into two. */
+		// If this BPM segment crosses the end of the range, split it into two.
 		if( iStartIndexThisSegment < iEndIndex && iStartIndexNextSegment > iEndIndex )
 		{
 			BPMSegment b = m_BPMSegments[i];
@@ -201,7 +202,7 @@ BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )
 	static BPMSegment empty;
 	if( m_BPMSegments.empty() )
 		return empty;
-	
+
 	int i = GetBPMSegmentIndexAtBeat( fBeat );
 	return m_BPMSegments[i];
 }
@@ -230,7 +231,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 		const float fStartBeatNextSegment = NoteRowToBeat( iStartRowNextSegment );
 		const float fBPS = m_BPMSegments[i].m_fBPS;
 
-		for( unsigned j=0; j<m_StopSegments.size(); j++ )	// foreach freeze
+		for( unsigned j=0; j<m_StopSegments.size(); j++ ) // foreach freeze
 		{
 			const bool bIsDelay = m_StopSegments[j].m_bDelay;
 			if( !bIsFirstBPMSegment && iStartRowThisSegment >= m_StopSegments[j].m_iStartRow )
@@ -265,8 +266,9 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			}
 		}
 
+		// by this point we should have the warps in their own place.
 		/*
-		for( unsigned j=0; j<m_WarpSegments.size(); j++ )	// foreach warp
+		for( unsigned j=0; j<m_WarpSegments.size(); j++ ) // foreach warp
 		{
 			if( !bIsFirstBPMSegment && iStartRowThisSegment >= m_WarpSegments[j].m_iStartRow )
 				continue;
@@ -282,6 +284,13 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 
 		const float fBeatsInThisSegment = fStartBeatNextSegment - fStartBeatThisSegment;
 		const float fSecondsInThisSegment =  fBeatsInThisSegment / fBPS;
+		//if(fBPS < 0.0f)
+		/*
+		if(fStartBeatThisSegment == 445.500f || fStartBeatThisSegment == 449.500)
+		{
+			LOG->Trace( ssprintf("segment (beat %f) beats: %f / seconds: %f / BPS: %f",fStartBeatThisSegment,fBeatsInThisSegment,fSecondsInThisSegment,fBPS) );
+		}
+		*/
 		if( bIsLastBPMSegment || fElapsedTime <= fSecondsInThisSegment )
 		{
 			// this BPMSegment IS the current segment
@@ -290,11 +299,22 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			bFreezeOut = false;
 			bDelayOut = false;
 			//bWarpOut = false;
+
 			return;
 		}
 
 		// this BPMSegment is NOT the current segment
 		fElapsedTime -= fSecondsInThisSegment;
+		// xxx: negative testing
+		/*
+		//if(fBPS < 0.0f)
+		if( (fStartBeatNextSegment >= 445.490f && fStartBeatNextSegment <= 453.72f) || fBPS < 0.0f )
+		{
+			//LOG->Trace( ssprintf("beat %f is %f BPS (%f BPM)",fBeatOut,fBPSOut,fBPSOut*60.0f) );
+			//LOG->Trace( ssprintf("start beat %f + elapsed time %f",fStartBeatThisSegment,fElapsedTime) );
+			//LOG->Trace( ssprintf("elapsed time is now %f",fElapsedTime) );
+		}
+		*/
 	}
 	// If we get here, something has gone wrong. Is everything sorted?
 	vector<BPMSegment> vBPMS = m_BPMSegments;
@@ -413,30 +433,30 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 
 	if( iStartRow == 0 )
 	{
-		/* If we're shifting up at the beginning, we just shifted up the first BPMSegment.  That
-		 * segment must always begin at 0. */
+		/* If we're shifting up at the beginning, we just shifted up the first
+		 * BPMSegment. That segment must always begin at 0. */
 		ASSERT( m_BPMSegments.size() > 0 );
 		m_BPMSegments[0].m_iStartRow = 0;
 	}
 }
 
-/* Delete BPMChanges and StopSegments in [iStartRow,iRowsToDelete), and shift down. */
+// Delete BPMChanges and StopSegments in [iStartRow,iRowsToDelete), and shift down.
 void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 {
 	/* Remember the BPM at the end of the region being deleted. */
 	float fNewBPM = this->GetBPMAtBeat( NoteRowToBeat(iStartRow+iRowsToDelete) );
 
-	/* We're moving rows up.  Delete any BPM changes and stops in the region being
-	 * deleted. */
+	/* We're moving rows up. Delete any BPM changes and stops in the region
+	 * being deleted. */
 	for( unsigned i = 0; i < m_BPMSegments.size(); i++ )
 	{
 		BPMSegment &bpm = m_BPMSegments[i];
 
-		/* Before deleted region: */
+		// Before deleted region:
 		if( bpm.m_iStartRow < iStartRow )
 			continue;
 
-		/* Inside deleted region: */
+		// Inside deleted region:
 		if( bpm.m_iStartRow < iStartRow+iRowsToDelete )
 		{
 			m_BPMSegments.erase( m_BPMSegments.begin()+i, m_BPMSegments.begin()+i+1 );
@@ -444,7 +464,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 			continue;
 		}
 
-		/* After deleted region: */
+		// After deleted region:
 		bpm.m_iStartRow -= iRowsToDelete;
 	}
 
@@ -452,11 +472,11 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	{
 		StopSegment &stop = m_StopSegments[i];
 
-		/* Before deleted region: */
+		// Before deleted region:
 		if( stop.m_iStartRow < iStartRow )
 			continue;
 
-		/* Inside deleted region: */
+		// Inside deleted region:
 		if( stop.m_iStartRow < iStartRow+iRowsToDelete )
 		{
 			m_StopSegments.erase( m_StopSegments.begin()+i, m_StopSegments.begin()+i+1 );
@@ -464,7 +484,7 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 			continue;
 		}
 
-		/* After deleted region: */
+		// After deleted region:
 		stop.m_iStartRow -= iRowsToDelete;
 	}
 

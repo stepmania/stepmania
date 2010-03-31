@@ -379,7 +379,7 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 	m_rectAreaHighlight.Draw();
 }
 
-
+// todo: add DrawWarpAreaBG? -aj
 
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
@@ -494,11 +494,9 @@ float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistance
 
 float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceBeforeTargetsPixels )
 {
-	//
 	// Probe for last note to draw.
 	// worst case is 0.25x + boost.  Adjust search distance to 
 	// so that notes don't pop onto the screen.
-	//
 	float fSearchDistance = 10;
 	float fLastBeatToDraw = GAMESTATE->m_fSongBeat+fSearchDistance;	
 
@@ -518,9 +516,9 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceB
 
 		if( bBoomerang && !bIsPastPeakYOffset )
 			fLastBeatToDraw += fSearchDistance;
-		else if( fYOffset > iDrawDistanceBeforeTargetsPixels )	// off screen
+		else if( fYOffset > iDrawDistanceBeforeTargetsPixels ) // off screen
 			fLastBeatToDraw -= fSearchDistance;
-		else	// on screen
+		else // on screen
 			fLastBeatToDraw += fSearchDistance;
 
 		fSearchDistance /= 2;
@@ -547,7 +545,7 @@ void NoteField::DrawPrimitives()
 {
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
 
-	/* This should be filled in on the first update. */
+	// This should be filled in on the first update.
 	ASSERT( m_pCurDisplay != NULL );
 
 	ArrowEffects::Update();
@@ -556,9 +554,7 @@ void NoteField::DrawPrimitives()
 
 	const PlayerOptions &current_po = m_pPlayerState->m_PlayerOptions.GetCurrent();
 
-	//
 	// Adjust draw range depending on some effects
-	//
 	int iDrawDistanceAfterTargetsPixels = m_iDrawDistanceAfterTargetsPixels;
 	// HACK: if boomerang and centered are on, then we want to draw much 
 	// earlier to that the notes don't pop on screen.
@@ -567,11 +563,11 @@ void NoteField::DrawPrimitives()
 		current_po.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
 	iDrawDistanceAfterTargetsPixels += int(SCALE( fCenteredTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 ));
 	int iDrawDistanceBeforeTargetsPixels = m_iDrawDistanceBeforeTargetsPixels;
-	
+
 	float fDrawScale = 1;
 	fDrawScale *= 1 + 0.5f * fabsf( current_po.m_fPerspectiveTilt );
 	fDrawScale *= 1 + fabsf( current_po.m_fEffects[PlayerOptions::EFFECT_TINY] );
-	
+
 	iDrawDistanceAfterTargetsPixels = (int)(iDrawDistanceAfterTargetsPixels * fDrawScale);
 	iDrawDistanceBeforeTargetsPixels = (int)(iDrawDistanceBeforeTargetsPixels * fDrawScale);
 
@@ -590,24 +586,18 @@ void NoteField::DrawPrimitives()
 
 #define IS_ON_SCREEN( fBeat )  IsOnScreen( fBeat, 0, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels )
 
-	//
 	// Draw board
-	//
 	if( SHOW_BOARD )
 	{
 		DrawBoard( iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
 	}
 
-	//
 	// Draw Receptors
-	//
 	{
 		cur->m_ReceptorArrowRow.Draw();
 	}
 
-	//
 	// Draw beat bars
-	//
 	if( GAMESTATE->IsEditing() || SHOW_BEAT_BARS )
 	{
 		const vector<TimeSignatureSegment> &vTimeSignatureSegments = GAMESTATE->m_pCurSong->m_Timing.m_vTimeSignatureSegments;
@@ -692,7 +682,7 @@ void NoteField::DrawPrimitives()
 			}
 		}
 
-		// todo: add warp text
+		// todo: add warp text -aj
 
 		// Course mods text
 		const Course *pCourse = GAMESTATE->m_pCurCourse;
@@ -715,9 +705,7 @@ void NoteField::DrawPrimitives()
 			}
 		}
 
-		//
 		// BGChange text
-		//
 		switch( GAMESTATE->m_EditMode )
 		{
 		case EditMode_Home:
@@ -783,9 +771,7 @@ void NoteField::DrawPrimitives()
 			ASSERT(0);
 		}
 
-		//
 		// Draw marker bars
-		//
 		if( m_iBeginMarker != -1  &&  m_iEndMarker != -1 )
 		{
 			int iBegin = m_iBeginMarker;
@@ -809,12 +795,9 @@ void NoteField::DrawPrimitives()
 	}
 
 
-
-	//
 	// Optimization is very important here because there are so many arrows to draw.  
-	// Draw the arrows in order of column.  This minimize texture switches and let us
+	// Draw the arrows in order of column. This minimize texture switches and let us
 	// draw in big batches.
-	//
 
 	float fSelectedRangeGlow = SCALE( RageFastCos(RageTimer::GetTimeSinceStartFast()*2), -1, 1, 0.1f, 0.3f );
 
@@ -827,9 +810,7 @@ void NoteField::DrawPrimitives()
 
 		bool bAnyUpcomingInThisCol = false;
 
-		//
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
-		//
 		{
 			NoteData::TrackMap::const_iterator begin, end;
 			m_pNoteData->GetTapNoteRangeInclusive( c, iFirstRowToDraw, iLastRowToDraw+1, begin, end );
@@ -889,10 +870,7 @@ void NoteField::DrawPrimitives()
 			}
 		}
 
-
-		//
 		// Draw all TapNotes in this column
-		//
 
 		// draw notes from furthest to closest
 
@@ -909,7 +887,7 @@ void NoteField::DrawPrimitives()
 				continue;	// skip
 			}
 
-			/* Don't draw hidden (fully judged) steps. */
+			// Don't draw hidden (fully judged) steps.
 			if( tn.result.bHidden )
 				continue;
 
@@ -922,8 +900,8 @@ void NoteField::DrawPrimitives()
 
 			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastRowToDraw, iFirstRowToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
 
-			// See if there is a hold step that begins on this index.  Only do this
-			// if the note skin cares.
+			// See if there is a hold step that begins on this index.
+			// Only do this if the noteskin cares.
 			bool bHoldNoteBeginsOnThisBeat = false;
 			if( m_pCurDisplay->display[c].DrawHoldHeadForTapsOnSameRow() )
 			{

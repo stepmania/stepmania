@@ -99,7 +99,7 @@ int StepsDisplayList::GetCurrentRowIndex( PlayerNumber pn ) const
 	return 0;
 }
 
-/* Update m_fY and m_bHidden[]. */
+// Update m_fY and m_bHidden[].
 void StepsDisplayList::UpdatePositions()
 {
 	int iCurrentRow[NUM_PLAYERS];
@@ -111,7 +111,7 @@ void StepsDisplayList::UpdatePositions()
 
 	int first_start, first_end, second_start, second_end;
 
-	/* Choices for each player.  If only one player is active, it's the same for both. */
+	// Choices for each player. If only one player is active, it's the same for both.
 	int P1Choice = GAMESTATE->IsHumanPlayer(PLAYER_1)? iCurrentRow[PLAYER_1]: GAMESTATE->IsHumanPlayer(PLAYER_2)? iCurrentRow[PLAYER_2]: 0;
 	int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? iCurrentRow[PLAYER_2]: GAMESTATE->IsHumanPlayer(PLAYER_1)? iCurrentRow[PLAYER_1]: 0;
 
@@ -120,19 +120,19 @@ void StepsDisplayList::UpdatePositions()
 	const bool BothPlayersActivated = GAMESTATE->IsHumanPlayer(PLAYER_1) && GAMESTATE->IsHumanPlayer(PLAYER_2);
 	if( !BothPlayersActivated )
 	{
-		/* Simply center the cursor. */
+		// Simply center the cursor.
 		first_start = max( P1Choice - halfsize, 0 );
 		first_end = first_start + total;
 		second_start = second_end = first_end;
 	}
 	else
 	{
-		/* First half: */
+		// First half:
 		const int earliest = min( P1Choice, P2Choice );
 		first_start = max( earliest - halfsize/2, 0 );
 		first_end = first_start + halfsize;
 
-		/* Second half: */
+		// Second half:
 		const int latest = max( P1Choice, P2Choice );
 
 		second_start = max( latest - halfsize/2, 0 );
@@ -152,23 +152,23 @@ void StepsDisplayList::UpdatePositions()
 	{
 		const int sum = (first_end - first_start) + (second_end - second_start);
 		if( sum >= (int) Rows.size() || sum >= total)
-			break; /* nothing more to display, or no room */
+			break; // nothing more to display, or no room
 
 		/* First priority: expand the top of the second half until it meets
 		 * the first half. */
 		if( second_start > first_end )
 			second_start--;
-		/* Otherwise, expand either end. */
+		// Otherwise, expand either end.
 		else if( first_start > 0 )
 			first_start--;
 		else if( second_end < (int) Rows.size() )
 			second_end++;
 		else
-			ASSERT(0); /* do we have room to grow or don't we? */
+			ASSERT(0); // do we have room to grow or don't we?
 	}
 
 	int pos = 0;
-	for( int i=0; i<(int) Rows.size(); i++ )		// foreach row
+	for( int i=0; i<(int) Rows.size(); i++ ) // foreach row
 	{
 		float ItemPosition;
 		if( i < first_start )
@@ -181,7 +181,7 @@ void StepsDisplayList::UpdatePositions()
 			ItemPosition = (float) pos++;
 		else
 			ItemPosition = (float) total - 0.5f;
-			
+
 		Row &row = Rows[i];
 
 		float fY = ITEMS_SPACING_Y*ItemPosition;

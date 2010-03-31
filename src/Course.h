@@ -85,7 +85,9 @@ public:
 	Course();
 
 	RString GetBannerPath() const;
+	RString GetBackgroundPath() const;
 	bool HasBanner() const;
+	bool HasBackground() const;
 
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit* below.
 	 * Otherwise, they return the main titles. */
@@ -96,7 +98,7 @@ public:
 	RString GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
 	RString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
 
-	/* "title subtitle" */
+	// "title subtitle"
 	RString GetDisplayFullTitle() const;
 	RString GetTranslitFullTitle() const;
 
@@ -162,24 +164,25 @@ public:
 	bool IsAnEdit() const { return m_LoadedFromProfile != ProfileSlot_Invalid; }
 
 
-	bool		m_bIsAutogen;		// was this created by AutoGen?
-	RString		m_sPath;
+	bool	m_bIsAutogen; // was this created by AutoGen?
+	RString	m_sPath;
 
-	RString		m_sMainTitle, m_sMainTitleTranslit;
-	RString		m_sSubTitle, m_sSubTitleTranslit;
+	RString	m_sMainTitle, m_sMainTitleTranslit;
+	RString	m_sSubTitle, m_sSubTitleTranslit;
 
-	RString		m_sBannerPath;
-	RString		m_sCDTitlePath;
-	RString		m_sGroupName;
+	RString	m_sBannerPath;
+	RString	m_sBackgroundPath; // after 9 years yes finally -aj
+	RString	m_sCDTitlePath;
+	RString	m_sGroupName;
 
-	bool		m_bRepeat;	// repeat after last song?  "Endless"
-	float		m_fGoalSeconds;		// if not 0, stop play after this number of seconds
-	bool		m_bShuffle;
-	int		m_iLives;	// -1 means use bar life meter
-	int		m_iCustomMeter[NUM_Difficulty];	// -1 = no meter specified
-	bool		m_bSortByMeter;
+	bool	m_bRepeat; // repeat after last song?  "Endless"
+	float	m_fGoalSeconds; // if not 0, stop play after this number of seconds
+	bool	m_bShuffle;
+	int		m_iLives; // -1 means use bar life meter
+	int		m_iCustomMeter[NUM_Difficulty]; // -1 = no meter specified
+	bool	m_bSortByMeter;
 
-	bool		m_bIncomplete;
+	bool	m_bIncomplete;
 
 	vector<CourseEntry> m_vEntries;
 

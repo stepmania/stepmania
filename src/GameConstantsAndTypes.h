@@ -283,8 +283,6 @@ extern const RString GROUP_ALL;
 
 
 //
-//
-//
 enum PlayerController
 {
 	PC_HUMAN,
@@ -316,9 +314,7 @@ enum StageResult
 };
 
 
-//
 // Battle stuff
-//
 const int NUM_INVENTORY_SLOTS	= 3;
 enum AttackLevel
 {
@@ -331,11 +327,7 @@ const int NUM_ATTACKS_PER_LEVEL	= 3;
 const int ITEM_NONE = -1;
 
 
-
-//
 // Coin stuff
-//
-
 enum CoinMode
 {
 	CoinMode_Home, 
@@ -348,9 +340,7 @@ const RString& CoinModeToString( CoinMode cm );
 LuaDeclareType( CoinMode );
 
 
-//
 // Premium
-//
 enum Premium
 {
 	Premium_Off,
@@ -364,10 +354,7 @@ const RString& PremiumToLocalizedString( Premium p );
 LuaDeclareType( Premium );
 
 
-//
 // Award stuff
-//
-
 enum StageAward
 {
 	StageAward_FullComboW3,
@@ -422,7 +409,7 @@ struct DisplayBpms
 
 enum StyleType
 {
-	StyleType_OnePlayerOneSide,	// e.g. single
+	StyleType_OnePlayerOneSide,		// e.g. single
 	StyleType_TwoPlayersTwoSides,	// e.g. versus
 	StyleType_OnePlayerTwoSides,	// e.g. double
 	StyleType_TwoPlayersSharedSides, // e.g. routine
@@ -460,7 +447,6 @@ const RString& EditModeToString( EditMode em );
 EditMode StringToEditMode( const RString& s );
 LuaDeclareType( EditMode );
 
-// I wish this didn't have to be here, but for it to be a metric, it has to. -aj
 /*
 original options from ScreenEz2SelectMusic:
 (if no confirm type is mentioned, there is none.)
@@ -468,16 +454,15 @@ original options from ScreenEz2SelectMusic:
 0 = play music as you select;			SampleMusicPreviewMode_Normal
 1 = no music plays, select 1x to play preview music, select again to confirm
 2 = no music plays at all				(SampleMusicPreviewMode_ScreenMusic + redir to silent)
-3 = play music as select, 2x to confirm
+3 = play music as select, 2x to confirm (SampleMusicPreviewMode_Normal + [SSMusic] TwoPartConfirmsOnly)
 4 = screen music plays;					SampleMusicPreviewMode_ScreenMusic
-
-Options 1 and 3 need to behave well with TWO_PART_SELECTION, and are not
-currently represented because of this.
 */
 enum SampleMusicPreviewMode
 {
 	SampleMusicPreviewMode_Normal,
+	//SampleMusicPreviewMode_StartToPreview,
 	SampleMusicPreviewMode_ScreenMusic,
+	//SampleMusicPreviewMode_LastSong,	// continue playing the last song
 	NUM_SampleMusicPreviewMode,
 	SampleMusicPreviewMode_Invalid,
 };
@@ -485,7 +470,7 @@ const RString& SampleMusicPreviewModeToString( SampleMusicPreviewMode );
 SampleMusicPreviewMode StringToSampleMusicPreviewMode( const RString& s );
 LuaDeclareType( SampleMusicPreviewMode );
 
-enum Stage	// Shared stage values (not per-player) that are shown in StageDisplay
+enum Stage // Shared stage values (not per-player) that are shown in StageDisplay
 {
 	Stage_1st,
 	Stage_2nd,
@@ -493,7 +478,7 @@ enum Stage	// Shared stage values (not per-player) that are shown in StageDispla
 	Stage_4th,
 	Stage_5th,
 	Stage_6th,
-	Stage_Next,	// after Stage_6th but not Final.  This won't normally happen because 7 stages is the max in the UI.
+	Stage_Next, // after Stage_6th but not Final. This won't normally happen because 7 stages is the max in the UI.
 	Stage_Final,
 	Stage_Extra1,
 	Stage_Extra2,
@@ -545,7 +530,7 @@ const RString& MultiPlayerStatusToString( MultiPlayerStatus i );
 enum CourseType
 {
 	COURSE_TYPE_NONSTOP,	// if life meter type is BAR
-	COURSE_TYPE_ONI,	// if life meter type is BATTERY
+	COURSE_TYPE_ONI,		// if life meter type is BATTERY
 	COURSE_TYPE_ENDLESS,	// if set to REPEAT
 	COURSE_TYPE_SURVIVAL,	// if life meter type is TIME
 	NUM_CourseType,

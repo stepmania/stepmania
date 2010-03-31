@@ -33,11 +33,11 @@ public:
 	virtual void Allocate( const vector<msMesh> &vMeshes ) = 0;	// allocate space
 	virtual void Change( const vector<msMesh> &vMeshes ) = 0;	// new data must be the same size as was passed to Set()
 	virtual void Draw( int iMeshIndex ) const = 0;
-	
+
 protected:
 	size_t GetTotalVertices() const { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iVertexStart + m_vMeshInfo.back().iVertexCount; }
 	size_t GetTotalTriangles() const { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iTriangleStart + m_vMeshInfo.back().iTriangleCount; }
-	
+
 	struct MeshInfo
 	{
 		int iVertexStart;
@@ -137,7 +137,7 @@ struct RenderTargetParam
 	{
 	}
 
-	/* The dimensions of the actual render target, analogous to a window size: */
+	// The dimensions of the actual render target, analogous to a window size:
 	int iWidth, iHeight;
 
 	bool bWithDepthBuffer;
@@ -150,10 +150,10 @@ struct RageTextureLock
 	virtual ~RageTextureLock() { }
 
 	/* Given a surface with a format and no pixel data, lock the texture into the
-	 * surface.  The data is write-only. */
+	 * surface. The data is write-only. */
 	virtual void Lock( unsigned iTexHandle, RageSurface *pSurface ) = 0;
 
-	/* Unlock and update the texture.  If bChanged is false, the texture update
+	/* Unlock and update the texture. If bChanged is false, the texture update
 	 * may be omitted. */
 	virtual void Unlock( RageSurface *pSurface, bool bChanged = true ) = 0;
 };
@@ -184,22 +184,22 @@ public:
 	// Return true if device was re-created and we need to reload textures.
 	RString SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures );
 
-	/* Call this when the resolution has been changed externally: */
+	// Call this when the resolution has been changed externally:
 	virtual void ResolutionChanged();
 
 	virtual bool BeginFrame();
 	virtual void EndFrame();
 	virtual VideoModeParams GetActualVideoModeParams() const = 0;
 	bool IsWindowed() const { return this->GetActualVideoModeParams().windowed; }
-	
+
 	virtual void SetBlendMode( BlendMode mode ) = 0;
 
 	virtual bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false ) = 0;
 	virtual bool SupportsThreadedRendering() { return false; }
 	virtual bool SupportsPerVertexMatrixScale() = 0;
 
-	// If threaded rendering is supported, these will be called from the rendering
-	// thread before and after rendering.
+	// If threaded rendering is supported, these will be called from the
+	// rendering thread before and after rendering.
 	virtual void BeginConcurrentRenderingMainThread() { }
 	virtual void EndConcurrentRenderingMainThread() { }
 	virtual void BeginConcurrentRendering();
@@ -208,8 +208,8 @@ public:
 	/* return 0 if failed or internal texture resource handle 
 	 * (unsigned in OpenGL, texture pointer in D3D) */
 	virtual unsigned CreateTexture( 
-		PixelFormat pixfmt,			// format of img and of texture in video mem
-		RageSurface* img, 		// must be in pixfmt
+		PixelFormat pixfmt,		// format of img and of texture in video mem
+		RageSurface* img,		// must be in pixfmt
 		bool bGenerateMipMaps
 		) = 0;
 	virtual void UpdateTexture( 
@@ -218,7 +218,7 @@ public:
 		int xoffset, int yoffset, int width, int height 
 		) = 0;
 	virtual void DeleteTexture( unsigned iTexHandle ) = 0;
-	/* Return an object to lock pixels for streaming.  If not supported, returns NULL.
+	/* Return an object to lock pixels for streaming. If not supported, returns NULL.
 	 * Delete the object normally. */
 	virtual RageTextureLock *CreateTextureLock() { return NULL; }
 	virtual void ClearAllTextures() = 0;
@@ -232,24 +232,22 @@ public:
 	virtual bool IsEffectModeSupported( EffectMode effect ) { return effect == EffectMode_Normal; }
 
 	bool SupportsRenderToTexture() const { return false; }
-	
-	/*
-	 * Create a render target, returning a texture handle.  In addition to normal
-	 * texture functions, this can be passed to SetRenderTarget.  Delete with
-	 * DeleteTexture.  (UpdateTexture is not permitted.)  Returns 0 if render-to-
+
+	/* Create a render target, returning a texture handle. In addition to normal
+	 * texture functions, this can be passed to SetRenderTarget. Delete with
+	 * DeleteTexture. (UpdateTexture is not permitted.) Returns 0 if render-to-
 	 * texture is unsupported.
 	 */
 	virtual unsigned CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut ) { return 0; }
 
-	/*
-	 * Set the render target, or 0 to resume rendering to the framebuffer.  An active render
-	 * target may not be used as a texture.  If bPreserveTexture is true, the contents
+	/* Set the render target, or 0 to resume rendering to the framebuffer. An active render
+	 * target may not be used as a texture. If bPreserveTexture is true, the contents
 	 * of the texture will be preserved from the previous call; otherwise, cleared.  If
 	 * bPreserveTexture is true the first time a render target is used, behave as if
 	 * bPreserveTexture was false.
 	 */
 	virtual void SetRenderTarget( unsigned iHandle, bool bPreserveTexture = true ) { }
-			
+
 	virtual bool IsZTestEnabled() const = 0;
 	virtual bool IsZWriteEnabled() const = 0;
 	virtual void SetZWrite( bool b ) = 0;
@@ -258,9 +256,9 @@ public:
 	virtual void ClearZBuffer() = 0;
 
 	virtual void SetCullMode( CullMode mode ) = 0;
-	
+
 	virtual void SetAlphaTest( bool b ) = 0;
-	
+
 	virtual void SetMaterial( 
 		const RageColor &emissive,
 		const RageColor &ambient,
@@ -302,10 +300,10 @@ public:
 
 	enum GraphicsFileFormat
 	{
-		SAVE_LOSSLESS, // bmp
-		SAVE_LOSSLESS_SENSIBLE, // png
-		SAVE_LOSSY_LOW_QUAL, // jpg
-		SAVE_LOSSY_HIGH_QUAL // jpg
+		SAVE_LOSSLESS,			// bmp
+		SAVE_LOSSLESS_SENSIBLE,	// png
+		SAVE_LOSSY_LOW_QUAL,	// jpg
+		SAVE_LOSSY_HIGH_QUAL	// jpg
 	};
 	bool SaveScreenshot( RString sPath, GraphicsFileFormat format );
 
@@ -335,16 +333,16 @@ protected:
 	void SetDefaultRenderStates();
 
 public:
-	/* Statistics */
+	// Statistics
 	int GetFPS() const;
 	int GetVPF() const;
-	int GetCumFPS() const; /* average FPS since last reset */
+	int GetCumFPS() const; // average FPS since last reset
 	virtual void ResetStats();
 	virtual void ProcessStatsOnFlip();
 	virtual RString GetStats() const;
 	void StatsAddVerts( int iNumVertsRendered );
 
-	/* World matrix stack functions. */
+	// World matrix stack functions.
 	void PushMatrix();
 	void PopMatrix();
 	void Translate( float x, float y, float z );
@@ -360,19 +358,19 @@ public:
 	void PreMultMatrix( const RageMatrix &f );
 	void LoadIdentity();
 
-	/* Texture matrix functions */
+	// Texture matrix functions
 	void TexturePushMatrix();
 	void TexturePopMatrix();
 	void TextureTranslate( float x, float y );
 	void TextureTranslate( const RageVector2 &v ) { this->TextureTranslate( v.x, v.y ); }	
 
-	/* Projection and View matrix stack functions. */
+	// Projection and View matrix stack functions.
 	void CameraPushMatrix();
 	void CameraPopMatrix();
 	void LoadMenuPerspective( float fFOVDegrees, float fWidth, float fHeight, float fVanishPointX, float fVanishPointY );
 	void LoadLookAt( float fov, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up );
 
-	/* Centering matrix */
+	// Centering matrix
 	void CenteringPushMatrix();
 	void CenteringPopMatrix();
 	void ChangeCentering( int trans_x, int trans_y, int add_width, int add_height );
@@ -386,13 +384,11 @@ public:
 protected:
 	RageMatrix GetPerspectiveMatrix( float fovy, float aspect, float zNear, float zFar );
 
-	// Different for D3D and OpenGL.  Not sure why they're not compatible. -Chris
+	// Different for D3D and OpenGL. Not sure why they're not compatible. -Chris
 	virtual RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 	virtual RageMatrix GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf ); 
 
-	//
 	// Matrix that adjusts position and scale of image on the screen
-	//
 	RageMatrix GetCenteringMatrix( float fTranslateX, float fTranslateY, float fAddWidth, float fAddHeight ) const;
 	void UpdateCentering();
 
@@ -403,10 +399,8 @@ protected:
 	const RageMatrix* GetWorldTop() const;
 	const RageMatrix* GetTextureTop() const;
 
-	//
 	// To limit the framerate, call FrameLimitBeforeVsync before waiting
 	// for vsync and FrameLimitAfterVsync after.
-	//
 	void FrameLimitBeforeVsync( int iFPS );
 	void FrameLimitAfterVsync();
 };

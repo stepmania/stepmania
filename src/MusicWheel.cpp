@@ -44,7 +44,7 @@ static SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
 	case PLAY_MODE_ENDLESS:	return SORT_ENDLESS_COURSES;
 	}
 
-	/* If we're not in a course mode, don't start in a course sort. */
+	// If we're not in a course mode, don't start in a course sort.
 	switch( so )
 	{
 	case SORT_ONI_COURSES:
@@ -576,6 +576,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			{
 				if( SHOW_ROULETTE )
 					arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1), 0) );
+
 				// Only add TYPE_PORTAL if there's at least one song on the list.
 				bool bFoundAnySong = false;
 				for( unsigned i=0; !bFoundAnySong && i < arrayWheelItemDatas.size(); i++ )

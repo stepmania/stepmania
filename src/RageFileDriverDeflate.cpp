@@ -31,7 +31,7 @@ RageFileObjInflate::RageFileObjInflate( RageFileBasic *pFile, int iUncompressedS
 	decomp_buf_avail = 0;
 	m_pInflate = new z_stream;
 	memset( m_pInflate, 0, sizeof(z_stream) );
-	
+
 	m_iUncompressedSize = iUncompressedSize;
 
 	int err = inflateInit2( m_pInflate, -MAX_WBITS );

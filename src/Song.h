@@ -158,7 +158,7 @@ public:
 
 
 	/* For loading only: */
-	bool m_bHasMusic, m_bHasBanner;
+	bool m_bHasMusic, m_bHasBanner, m_bHasBackground;
 
 	bool HasMusic() const;
 	bool HasInstrumentTrack( InstrumentTrack it ) const;

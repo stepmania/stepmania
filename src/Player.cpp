@@ -3019,7 +3019,7 @@ void Player::SetCombo( int iCombo, int iMisses )
 	if( b1000Milestone )
 		this->PlayCommand( "ThousandMilestone" );
 
-	// don't show a colored combo until the specified point in the metrics.
+	// don't show a colored combo until 1/4 of the way through the song
 	bool bPastBeginning = (!GAMESTATE->IsCourseMode() || GAMESTATE->GetCourseSongIndex()>0) &&
 		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds * PERCENT_UNTIL_COLOR_COMBO;
 

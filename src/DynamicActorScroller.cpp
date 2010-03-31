@@ -13,12 +13,10 @@ void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 {
 	ActorScroller::LoadFromNode( pNode );
 
-	/*
-	 * All of our children are identical, since they must be interchangeable.
+	/* All of our children are identical, since they must be interchangeable.
 	 * The <children> node loads only one; we copy the rest.
 	 *
-	 * Make one extra copy if masking is enabled.
-	 */
+	 * Make one extra copy if masking is enabled. */
 	if( m_SubActors.size() != 1 )
 		RageException::Throw( "%s: DynamicActorScroller: loaded %i nodes; require exactly one", ActorUtil::GetWhere(pNode).c_str(), (int)m_SubActors.size() );
 
@@ -38,7 +36,7 @@ void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 		LUA->Release(L);
 	}
 
-	/* Call the expression with line = nil to find out the number of lines. */
+	// Call the expression with line = nil to find out the number of lines.
 	{
 		Lua *L = LUA->Get();
 		m_LoadFunction.PushSelf( L );
@@ -55,20 +53,16 @@ void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 		LUA->Release(L);
 	}
 
-	/*
-	 * Reconfigure all items, so the loaded actors actually correspond with
-	 * m_iFirstSubActorIndex.
-	 */
+	/* Reconfigure all items, so the loaded actors actually correspond with
+	 * m_iFirstSubActorIndex. */
 	ShiftSubActors( INT_MAX );
 }
 
-/*
- * Shift m_SubActors forward by iDist, and then fill in the new entries.
+/* Shift m_SubActors forward by iDist, and then fill in the new entries.
  *
  * Important: under normal scrolling, with or without m_bLoop, at most one
  * object is created per update, and this normally only happens when an
- * object comes on screen.  Extra actor updates are avoided for efficiency.
- */
+ * object comes on screen.  Extra actor updates are avoided for efficiency. */
 void DynamicActorScroller::ShiftSubActors( int iDist )
 {
 	ActorScroller::ShiftSubActors( iDist );

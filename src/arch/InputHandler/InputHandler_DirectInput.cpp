@@ -670,7 +670,7 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 {
 	static HKL layout = GetKeyboardLayout(0); // 0 == current thread
 	UINT vk = MapVirtualKeyEx( scancode, 1, layout );
-	
+
 	static bool bInitialized = false;
 
 	typedef int (WINAPI TOUNICODEEX)( IN UINT wVirtKey, IN UINT wScanCode, IN CONST BYTE *lpKeyState, OUT LPWSTR pwszBuff, IN int cchBuff, IN UINT wFlags, IN HKL dwhkl );

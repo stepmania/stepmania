@@ -174,10 +174,10 @@ void RageBitmapTexture::Create()
 		pImg = pGrayscale;
 	}
 
-	/* Figure out which texture format we want the renderer to use. */
+	// Figure out which texture format we want the renderer to use.
 	PixelFormat pixfmt;
 
-	/* If the source is palleted, always load as paletted if supported. */
+	// If the source is palleted, always load as paletted if supported.
 	if( pImg->format->BitsPerPixel == 8 && DISPLAY->SupportsTextureFormat(PixelFormat_PAL) )
 	{
 		pixfmt = PixelFormat_PAL;
@@ -189,10 +189,10 @@ void RageBitmapTexture::Create()
 		{
 		case 16:
 			{
-				/* Bits of alpha in the source: */
+				// Bits of alpha in the source:
 				int iSourceAlphaBits = 8 - pImg->format->Loss[3];
 
-				/* Don't use more than we were hinted to. */
+				// Don't use more than we were hinted to.
 				iSourceAlphaBits = min( actualID.iAlphaBits, iSourceAlphaBits );
 
 				switch( iSourceAlphaBits )
@@ -214,7 +214,7 @@ void RageBitmapTexture::Create()
 		}
 	}
 
-	/* Make we're using a supported format. Every card supports either RGBA8 or RGBA4. */
+	// Make we're using a supported format. Every card supports either RGBA8 or RGBA4.
 	if( !DISPLAY->SupportsTextureFormat(pixfmt) )
 	{
 		pixfmt = PixelFormat_RGBA8;
@@ -222,14 +222,15 @@ void RageBitmapTexture::Create()
 			pixfmt = PixelFormat_RGBA4;
 	}
 
-	/* Dither if appropriate. XXX: This is a special case: don't bother dithering to
-	 * RGBA8888.  We actually want to dither only if the destination has greater color
-	 * depth on at least one color channel than the source.  For example, it doesn't
+	/* Dither if appropriate.
+	 * XXX: This is a special case: don't bother dithering to RGBA8888.
+	 * We actually want to dither only if the destination has greater color depth
+	 * on at least one color channel than the source. For example, it doesn't
 	 * make sense to do this when pixfmt is RGBA5551 if the image is only RGBA555. */
 	if( actualID.bDither && 
 		(pixfmt==PixelFormat_RGBA4 || pixfmt==PixelFormat_RGB5A1) )
 	{
-		/* Dither down to the destination format. */
+		// Dither down to the destination format.
 		const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
 		RageSurface *dst = CreateSurface( pImg->w, pImg->h, pfd->bpp,
 			pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
@@ -254,10 +255,8 @@ void RageBitmapTexture::Create()
 
 
 	{
-		//
-		// Enforce frames in the image have even dimensions.  Otherwise, 
-		// pixel/texel alignment will be off.
-		//
+		// Enforce frames in the image have even dimensions.
+		// Otherwise, pixel/texel alignment will be off.
 		int iDimensionMultiple = 2;
 
 		if( sHintString.find("doubleres") != string::npos )
@@ -266,12 +265,12 @@ void RageBitmapTexture::Create()
 		}
 
 		bool bRunCheck = true;
-		
+
 		// Don't check if the artist intentionally blanked the image by making it very tiny.
 		if( this->GetSourceWidth()<=iDimensionMultiple || this->GetSourceHeight()<=iDimensionMultiple )
 			bRunCheck = false;
-		
-		// HACK: Don't check song graphics.  Many of them are weird dimensions.
+
+		// HACK: Don't check song graphics. Many of them are weird dimensions.
 		if( !TEXTUREMAN->GetOddDimensionWarning() )
 			bRunCheck = false;
 
@@ -304,11 +303,12 @@ void RageBitmapTexture::Create()
 
 	delete pImg;
 
-	/* Check for hints that override the apparent "size". */
+	// Check for hints that override the apparent "size".
 	GetResolutionFromFileName( actualID.filename, m_iSourceWidth, m_iSourceHeight );
 
-	/* if "doubleres" (high resolution) then we want the image to appear in-game with dimensions 1/2 of the source.
-	 * So, cut down the source dimension here after everythign above is finished operating with the real image
+	/* if "doubleres" (high resolution) then we want the image to appear in-game
+	 * with dimensions 1/2 of the source. So, cut down the source dimension here
+	 * after everything above is finished operating with the real image
 	 * source dimensions. */
 	if( sHintString.find("doubleres") != string::npos )
 	{

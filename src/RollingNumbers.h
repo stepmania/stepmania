@@ -21,9 +21,7 @@ public:
 
 	void UpdateText();
 
-	//
 	// Commands
-	//
 	virtual void PushSelf( lua_State *L );
 
 private:

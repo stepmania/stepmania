@@ -10,11 +10,11 @@
 struct RageTextureID
 {
 	RString filename;
-	
-	/* Maximum size of the texture, per dimension. */
+
+	// Maximum size of the texture, per dimension.
 	int iMaxSize;
 
-	/* Generate mipmaps for this texture */
+	// Generate mipmaps for this texture
 	bool bMipMaps;
 
 	/* Maximum number of bits for alpha.  In 16-bit modes, lowering
@@ -30,29 +30,29 @@ struct RageTextureID
 	 *
 	 * This may be set to 0, resulting in an alpha map with all pixels white. */
 	int iGrayscaleBits;
-	
-	/* Preferred color depth of the image.  (This is overridden for
+
+	/* Preferred color depth of the image. (This is overridden for
 	 * paletted images and transparencies.)  -1 for default. */
 	int iColorDepth;
-	
-	/* If true and color precision is being lost, dither. (slow) */
+
+	// If true and color precision is being lost, dither. (slow)
 	bool bDither;
-	
-	/* If true, resize the image to fill the internal texture. (slow) */
+
+	// If true, resize the image to fill the internal texture. (slow) 
 	bool bStretch;
-	
+
 	/* If true, enable HOT PINK color keying. (deprecated but needed for
 	 * banners) */
-	bool bHotPinkColorKey; /* #FF00FF */
-	
-	/* These hints will be used in addition to any in the filename. */
+	bool bHotPinkColorKey; // #FF00FF
+
+	// These hints will be used in addition to any in the filename.
 	RString AdditionalTextureHints;
 
 	bool operator< (const RageTextureID &rhs) const;
 	bool operator== (const RageTextureID &rhs) const;
 
-	/* Used by RageTextureManager.  Order is important; see RageTextureManager.cpp.
-	 * Note that this property is not considered for ordering/equality.  Loading
+	/* Used by RageTextureManager. Order is important; see RageTextureManager.cpp.
+	 * Note that this property is not considered for ordering/equality. Loading
 	 * a texture with a different loading policy will reuse the same texture with
 	 * a different policy. */
 	enum TexPolicy { TEX_VOLATILE, TEX_DEFAULT } Policy;

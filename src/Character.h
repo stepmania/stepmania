@@ -38,9 +38,7 @@ public:
 	void DemandGraphics();
 	void UndemandGraphics();
 
-	//
 	// Lua
-	//
 	void PushSelf( Lua *L );
 
 	// smart accessor
@@ -48,17 +46,17 @@ public:
 
 	RString m_sCharDir;
 	RString m_sCharacterID;
+
 private:
 	RString m_sDisplayName;
 	RString m_sCardPath;
 	RString m_sIconPath;
 
 public:
-
 	apActorCommands m_cmdInit;
 
 	// All the stuff below will be filled in if this character is playable in Rave mode
-	bool	m_bUsableInRave;	
+	bool	m_bUsableInRave;
 
 	RString	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
 	RageTexturePreloader m_Preload;

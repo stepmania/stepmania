@@ -39,7 +39,7 @@ void ScreenOptionsExportPackage::BeginScreen()
 				GetDirListing( *s + "*", m_vsPossibleDirsToExport, true, true );
 		}
 
-		// Add courses.  Only support courses that are in a group folder.
+		// Add courses. Only support courses that are in a group folder.
 		// Support for courses not in a group folder should be phased out.
 		{
 			vector<RString> vs;
@@ -104,6 +104,7 @@ static bool ExportPackage( RString sPackageName, RString sDirToExport, RString &
 	/*
 	RageFile f;
 	// TODO: Mount Desktop/ for each OS
+	// SpecialDirs::GetDesktopDir() [windows only right now -aj]
 	if( !f.Open("Desktop/"+sPackageName, RageFile::WRITE) )
 	{
 		sErrorOut = ssprintf( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );

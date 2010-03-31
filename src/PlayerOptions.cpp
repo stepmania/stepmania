@@ -163,6 +163,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fScrolls[SCROLL_ALTERNATE],	"Alternate" );
 	AddPart( AddTo, m_fScrolls[SCROLL_CROSS],	"Cross" );
 	AddPart( AddTo, m_fScrolls[SCROLL_CENTERED],	"Centered" );
+	//AddPart( AddTo, m_fScrolls[SCROLL_X],	"XMode" );
 
 	AddPart( AddTo, m_fDark,	"Dark" );
 
@@ -327,6 +328,16 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		SET_FLOAT( fTimeSpacing )
 		m_fTimeSpacing = 1;
 	}
+	/* Port M-Mod's from OpenITG, starting from r537 */
+	// Midiman
+	else if( sscanf( sBit, "m%f", &level ) == 1 )
+	{
+		if( !isfinite(level) || level <= 0.0f )
+			level = 200.0f; // Just pick some value.
+		SET_FLOAT( fScrollBPM )
+		SET_FLOAT( fTimeSpacing )
+		m_fTimeSpacing = 1;
+	}
 	else if( sBit == "clearall" )				Init();
 	else if( sBit == "boost" )				SET_FLOAT( fAccels[ACCEL_BOOST] )
 	else if( sBit == "brake" || sBit == "land" )		SET_FLOAT( fAccels[ACCEL_BRAKE] )
@@ -380,6 +391,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "alternate" )				SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
 	else if( sBit == "cross" )				SET_FLOAT( fScrolls[SCROLL_CROSS] )
 	else if( sBit == "centered" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
+	//else if( sBit == "xmode" )				SET_FLOAT( fScrolls[SCROLL_X] )
 	else if( sBit == "noholds" )				m_bTransforms[TRANSFORM_NOHOLDS] = on;
 	else if( sBit == "norolls" )				m_bTransforms[TRANSFORM_NOROLLS] = on;
 	else if( sBit == "nomines" )				m_bTransforms[TRANSFORM_NOMINES] = on;

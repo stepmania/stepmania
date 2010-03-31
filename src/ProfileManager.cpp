@@ -417,10 +417,8 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 {
 	ASSERT( !sName.empty() );
 
-	//
 	// Find a directory directory name that's a number greater than all 
 	// existing numbers.  This preserves the "order by create date".
-	//
 	int iMaxProfileNumber = -1;
 	vector<RString> vs;
 	GetLocalProfileIDs( vs );
@@ -430,16 +428,12 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 	int iProfileNumber = iMaxProfileNumber + 1;
 	RString sProfileID = ssprintf( "%08d", iProfileNumber );
 
-	//
 	// Create the new profile.
-	//
 	Profile *pProfile = new Profile;
 	pProfile->m_sDisplayName = sName;
 	pProfile->m_sCharacterID = CHARMAN->GetRandomCharacter()->m_sCharacterID;
 
-	//
 	// Save it to disk.
-	//
 	RString sProfileDir = LocalProfileIDToDir( sProfileID );
 	if( !pProfile->SaveAllToDir(sProfileDir, PREFSMAN->m_bSignProfileData) )
 	{
@@ -500,7 +494,6 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 					if( (*i)->Get() == sProfileID )
 						(*i)->Set( "" );
 				}
-
 				return true;
 			}
 			else
@@ -509,8 +502,6 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 			}
 		}
 	}
-
-
 
 	LOG->Warn( "DeleteLocalProfile: ProfileID '%s' doesn't exist", sProfileID.c_str() );
 	return false;

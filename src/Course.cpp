@@ -192,6 +192,7 @@ void Course::Init()
 	m_sSubTitleTranslit = "";
 
 	m_sBannerPath = "";
+	m_sBackgroundPath = "";
 	m_sCDTitlePath = "";
 	m_sGroupName = "";
 
@@ -883,9 +884,25 @@ RString Course::GetBannerPath() const
 	return Dirname(m_sPath) + m_sBannerPath;
 }
 
+RString Course::GetBackgroundPath() const
+{
+	if( m_sBackgroundPath.empty() )
+		return RString();
+	if( m_sBackgroundPath[0] == '/' )
+		return m_sBackgroundPath;
+	// add "-bg" on the end to differentiate the background from the banner.
+	// This is based on traditional file naming found in most song files. -aj
+	return Dirname(m_sPath) + m_sBackgroundPath + RString("-bg");
+}
+
 bool Course::HasBanner() const
 {
 	return GetBannerPath() != ""  &&  IsAFile(GetBannerPath());
+}
+
+bool Course::HasBackground() const
+{
+	return GetBackgroundPath() != ""  &&  IsAFile(GetBackgroundPath());
 }
 
 void Course::UpdateCourseStats( StepsType st )
@@ -1029,6 +1046,7 @@ public:
 		return 1;
 	}
 	static int GetBannerPath( T* p, lua_State *L )		{ RString s = p->GetBannerPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
+	static int GetBackgroundPath( T* p, lua_State *L )		{ RString s = p->GetBackgroundPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
 	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName ); return 1; }
 	static int IsAutogen( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bIsAutogen ); return 1; }
 	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }
@@ -1059,6 +1077,7 @@ public:
 		ADD_METHOD( GetCourseEntry );
 		ADD_METHOD( GetAllTrails );
 		ADD_METHOD( GetBannerPath );
+		ADD_METHOD( GetBackgroundPath );
 		ADD_METHOD( GetGroupName );
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( GetEstimatedNumStages );

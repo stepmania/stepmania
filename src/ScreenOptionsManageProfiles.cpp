@@ -171,7 +171,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		if( row.GetRowType() == OptionRow::RowType_Exit )
 		{
 			this->HandleScreenMessage( SM_GoToPrevScreen );
-			return;	// don't call base
+			return; // don't call base
 		}
 	}
 	else if( SM == SM_BackFromEnterNameForNew )
@@ -179,7 +179,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
-		
+
 			RString sNewName = ScreenTextEntry::s_sLastAnswer;
 			ASSERT( GAMESTATE->m_sEditLocalProfileID.Get().empty() );
 
@@ -187,7 +187,11 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 
 			// create
 			RString sProfileID;
-			PROFILEMAN->CreateLocalProfile( ScreenTextEntry::s_sLastAnswer, sProfileID );	// TODO: Check return value
+
+			// is this the correct way to go about checking the return value? -aj
+			bool bCreateProfile = PROFILEMAN->CreateLocalProfile( ScreenTextEntry::s_sLastAnswer, sProfileID );
+			ASSERT(bCreateProfile);
+
 			GAMESTATE->m_sEditLocalProfileID.Set( sProfileID );
 
 			if( iNumProfiles < NUM_PLAYERS )
@@ -236,7 +240,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			GAMESTATE->m_sEditLocalProfileID.Set( m_vsLocalProfileID[iIndex] );
 
 			PROFILEMAN->DeleteLocalProfile( GetLocalProfileIDWithFocus() );
-			
+
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
@@ -294,6 +298,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 				{
 					RString sTitle = pProfile->m_sDisplayName;
 					RString sMessage = ssprintf( CONFIRM_DELETE_PROFILE.GetValue(), sTitle.c_str() );
+					LOG->Trace("[ScreenOptionsManageProfiles] ProfileAction_Delete");
 					ScreenPrompt::Prompt( SM_BackFromDeleteConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;
