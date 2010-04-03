@@ -357,6 +357,7 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 		FallbackMusic.fFadeInLengthSeconds = SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS;
 		FallbackMusic.bAlignBeat = ALIGN_MUSIC_BEATS;
 
+		//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_StartToPreview )
 		SOUND->PlayMusic( PlayParams, FallbackMusic );
 	}
 }
@@ -440,7 +441,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		{
 			return; // not allowed yet
 		}
-		
+
 		m_bGoToOptions = true;
 		m_soundStart.Play();
 		this->PlayCommand( "ShowEnteringOptions" );
@@ -616,7 +617,38 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 	}
 
-	if(!TWO_PART_CONFIRMS_ONLY)
+	// two part confirms only means we can actually change songs here,
+	// so we need some hackery. oops looks like this is never going into
+	// mainline sm4 then -aj
+	if(TWO_PART_CONFIRMS_ONLY)
+	{
+		if( m_SelectionState == SelectionState_SelectingSteps)
+		{
+			if( input.MenuI == m_GameButtonPreviousSong )
+			{
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+				{
+					m_SelectionState = SelectionState_SelectingSong;
+					MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
+					m_MusicWheel.ChangeMusicUnlessLocked( -1 );
+				}
+			}
+			else if( input.MenuI == m_GameButtonNextSong )
+			{
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+				{
+					m_SelectionState = SelectionState_SelectingSong;
+					MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
+					m_MusicWheel.ChangeMusicUnlessLocked( +1 );
+				}
+			}
+		}
+	}
+	else
 	{
 		if( m_SelectionState == SelectionState_SelectingSteps  &&
 			input.type == IET_FIRST_PRESS  &&
@@ -715,7 +747,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 		return false;
 	}
 	return true;
-}	
+}
 
 void ScreenSelectMusic::UpdateSelectButton( PlayerNumber pn, bool bSelectIsDown )
 {
@@ -1017,9 +1049,6 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			return;
 		}
 
-		// I believe this is for those who like pump pro. -aj
-		MESSAGEMAN->Broadcast("SongChosen");
-
 		/*
 		if(TWO_PART_CONFIRMS_ONLY && SAMPLE_MUSIC_PREVIEW_MODE == SampleMusicPreviewMode_StartToPreview)
 		{
@@ -1027,6 +1056,9 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			g_bSampleMusicWaiting = true;
 		}
 		*/
+
+		// I believe this is for those who like pump pro. -aj
+		MESSAGEMAN->Broadcast("SongChosen");
 
 		break;
 
@@ -1256,6 +1288,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 void ScreenSelectMusic::MenuBack( const InputEventPlus &input )
 {
 	// Handle unselect song (ffff)
+	// todo: this isn't right at all. -aj
 	if( m_SelectionState == SelectionState_SelectingSteps  &&  !m_bStepsChosen[input.pn]  &&  input.MenuI == GAME_BUTTON_BACK  &&  input.type == IET_FIRST_PRESS )
 	{
 		// if a player has chosen their steps already, don't unchoose song.
@@ -1509,6 +1542,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_fSampleLengthSeconds = -1;
 				break;
 			case SampleMusicPreviewMode_Normal:
+			//case SampleMusicPreviewMode_StartToPreview:
 				// play the sample music
 				m_sSampleMusicToPlay = pSong->GetMusicPath();
 				m_pSampleMusicTimingData = &pSong->m_Timing;
