@@ -25,6 +25,7 @@ t[#t+1] = Def.ActorFrame {
 	LoadActor(THEME:GetPathB("ScreenWithMenuElements","background/_bg top")) .. {
 		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH+1,SCREEN_HEIGHT);
 	};
+
 };
 
 return t
