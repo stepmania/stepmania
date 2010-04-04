@@ -338,47 +338,21 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 
 void SongManager::PreloadSongImages()
 {
-	bool bSkipBanners = false;
-	//bool bSkipBackgrounds = false;
 	if( PREFSMAN->m_BannerCache != BNCACHE_FULL )
-		bSkipBanners = true;
-	/*
-	if( PREFSMAN->m_BackgroundCache != BNCACHE_FULL )
-		bSkipBackgrounds = true;
-	*/
+		return;
 
 	/* Load textures before unloading old ones, so we don't reload textures
 	 * that we don't need to. */
 	RageTexturePreloader preload;
 
-	//if( !bSkipBanners && !bSkipBackgrounds )
-	if( !bSkipBanners )
+	const vector<Song*> &songs = GetAllSongs();
+	for( unsigned i = 0; i < songs.size(); ++i )
 	{
-		const vector<Song*> &songs = GetAllSongs();
-		for( unsigned i = 0; i < songs.size(); ++i )
-		{
-			// preload banners
-			if( !songs[i]->HasBanner() && !songs[i]->HasBackground() )
-				continue;
+		if( !songs[i]->HasBanner() )
+			continue;
 
-			if( !bSkipBanners && songs[i]->HasBanner() )
-			{
-				const RageTextureID ID = Sprite::SongBannerTexture( songs[i]->GetBannerPath() );
-				preload.Load( ID );
-			}
-
-			// preload backgrounds
-			/*
-			if( !bSkipBackgrounds && songs[i]->HasBackground() )
-			{
-				if ( !songs[i]->HasBackground() )
-					continue;
-
-				const RageTextureID IDbg = Sprite::SongBGTexture( songs[i]->GetBackgroundPath() );
-				preload.Load( IDbg );
-			}
-			*/
-		}
+		const RageTextureID ID = Sprite::SongBannerTexture( songs[i]->GetBannerPath() );
+		preload.Load( ID );
 	}
 
 	vector<Course*> courses;
@@ -1833,11 +1807,11 @@ public:
 		const Style *pStyle = Luna<Style>::check( L, 2 );
 		Song *pSong;
 		Steps *pSteps;
-		
+
 		p->GetExtraStageInfo( bExtra2, pStyle, pSong, pSteps );
 		pSong->PushSelf( L );
 		pSteps->PushSelf( L );
-		
+
 		return 2;
 	}
 	DEFINE_METHOD( GetSongColor, GetSongColor( Luna<Song>::check(L,1) ) )
@@ -1866,6 +1840,21 @@ public:
 	}
 	*/
 
+	static int GetSongGroupNames( T* p, lua_State *L )
+	{
+		vector<RString> v;
+		p->GetSongGroupNames( v );
+		LuaHelpers::CreateTableFromArray<RString>( v, L );
+		return 1;
+	}
+
+	static int GetSongsInGroup( T* p, lua_State *L )
+	{
+		vector<Song*> v = p->GetSongs(SArg(1));
+		LuaHelpers::CreateTableFromArray<Song*>( v, L );
+		return 1;
+	}
+
 	DEFINE_METHOD( ShortenGroupName, ShortenGroupName( SArg(1) ) )
 
 	LunaSongManager()
@@ -1890,6 +1879,8 @@ public:
 		ADD_METHOD( GetSongGroupColor );
 		ADD_METHOD( GetCourseColor );
 		//ADD_METHOD( GetSongRank );
+		ADD_METHOD( GetSongGroupNames );
+		ADD_METHOD( GetSongsInGroup );
 		ADD_METHOD( ShortenGroupName );
 	}
 };
