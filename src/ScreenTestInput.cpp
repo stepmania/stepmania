@@ -13,12 +13,6 @@
 class DeviceList: public BitmapText
 {
 public:
-	DeviceList()
-	{
-		this->SetName("DeviceList");
-		LOAD_ALL_COMMANDS(this);
-	}
-
 	void Update( float fDeltaTime )
 	{
 		// Update devices text

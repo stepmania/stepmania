@@ -9,10 +9,34 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+sm-ssc v1.0 Public Beta 2 | 20100331
+------------------------------------
+(Well, it was built on the 31st of March, anyways.)
+
+20100329
+--------
+* Added SONGMAN:ShortenGroupName(string) Lua binding
+
+20100328
+--------
+* sm4svn r28340: Don't call GetFirstCompatibleStyle if numSidesJoined == 0
+  (ScreenContinue) [Chris Danford]
+* [ScreenSelectMusic] TwoPartTimerSeconds metric added
+
 20100326
 --------
 * [BPMDisplay] make the "Various" text a theme-able string.
 * Allow ';' to start a comment in .ini files
+* [MenuTimer] Attempt to fix dialogs that come up when changing themes
+  (where one theme's warning timer starts higher than another).
+* [Player] PercentUntilColorCombo metric added. [Wolfman]
+  (float value in the range of 0..1)
+
+20100325
+--------
+* Fixed a crash caused by switching themes in StepMania. This crash was related
+  to the song group colors, which weren't getting reloaded on theme switch.
+  Since themes use different numbers of group colors... crashes! Not anymore.
 
 20100321
 --------
