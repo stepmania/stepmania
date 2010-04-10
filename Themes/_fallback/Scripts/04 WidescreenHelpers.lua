@@ -66,5 +66,4 @@ function Actor:PositionX(normalX,widescreenX)
 end;
 -- take and use it as you like, I don't care -aj
 
--- :ssh:
-function WideScale(AR4_3, AR16_10) return scale( SCREEN_WIDTH, 640, 960, AR4_3, AR16_10 ); end
+function WideScale(AR4_3, AR16_9) return scale( SCREEN_WIDTH, 640, 854, AR4_3, AR16_9 ); end
