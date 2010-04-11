@@ -1,0 +1,45 @@
+[sm-ssc v1.0 public beta 2 | last update 2010/apr 11]
+This is a list of all the known Actor classes in sm-ssc. You can use these by
+prefixing "Def." on the end of the name (e.g. Def.PaneDisplay).
+
+Actor
+ActorFrame
+ActorFrameTexture
+ActorMultiTexture
+ActorProxy
+ActorScroller
+Banner
+BGAnimation
+BitmapText
+BPMDisplay
+ComboGraph
+ControllerStateDisplay
+CourseContentsList
+DeviceList
+DifficultyIcon
+DynamicActorScroller
+FadingBanner
+GradeDisplay
+GraphDisplay
+GrooveRadar
+HelpDisplay
+HoldJudgment
+InputList
+MemoryCardDisplay
+MeterDisplay
+Model
+ModIconRow
+PaneDisplay
+PercentageDisplay
+Quad
+RollingNumbers
+ScoreDisplayAliveTime
+ScoreDisplayCalories
+SongBPMDisplay
+SongMeterDisplay
+Sound
+Sprite
+StepsDisplay
+StepsDisplayList
+TextBanner
+WorkoutGraph
