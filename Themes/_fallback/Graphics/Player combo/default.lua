@@ -85,7 +85,8 @@ local t = Def.ActorFrame {
 			c.Number:diffuse(color("#a4ff00"));
 			c.Number:stopeffect();
 		elseif param.Combo then
-			c.Number:diffuse(PlayerColor(player));
+			c.Number:diffuse(Color("White"));
+-- 			c.Number:diffuse(PlayerColor(player));
 			c.Number:stopeffect();
 			(cmd(diffuse,Color("White");diffusebottomedge,color("0.5,0.5,0.5,1")))(c.Label);
 		else
