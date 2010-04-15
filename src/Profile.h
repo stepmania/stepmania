@@ -87,7 +87,7 @@ public:
 	Song *GetMostPopularSong() const;
 	Course *GetMostPopularCourse() const;
 
-	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, int iNumHands, float fCaloriesBurned );
+	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, int iNumHands, int iNumLifts, float fCaloriesBurned );
 
 	bool IsMachine() const;
 
@@ -125,6 +125,7 @@ public:
 	int m_iTotalRolls;
 	int m_iTotalMines;
 	int m_iTotalHands;
+	int m_iTotalLifts;
 	set<RString> m_UnlockedEntryIDs;
 	mutable RString m_sLastPlayedMachineGuid;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	mutable DateTime m_LastPlayedDate;

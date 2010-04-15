@@ -136,6 +136,7 @@ void Profile::InitGeneralData()
 	m_iTotalRolls = 0;
 	m_iTotalMines = 0;
 	m_iTotalHands = 0;
+	m_iTotalLifts = 0;
 
 	FOREACH_ENUM( PlayMode, i )
 		m_iNumSongsPlayedByPlayMode[i] = 0;
@@ -1056,6 +1057,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "TotalRolls",			m_iTotalRolls );
 	pGeneralDataNode->AppendChild( "TotalMines",			m_iTotalMines );
 	pGeneralDataNode->AppendChild( "TotalHands",			m_iTotalHands );
+	pGeneralDataNode->AppendChild( "TotalLifts",			m_iTotalLifts );
 
 	// Keep declared variables in a very local scope so they aren't 
 	// accidentally used where they're not intended.  There's a lot of
@@ -1238,6 +1240,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "TotalRolls",				m_iTotalRolls );
 	pNode->GetChildValue( "TotalMines",				m_iTotalMines );
 	pNode->GetChildValue( "TotalHands",				m_iTotalHands );
+	pNode->GetChildValue( "TotalLifts",				m_iTotalLifts );
 
 	{
 		const XNode* pDefaultModifiers = pNode->GetChild("DefaultModifiers");
@@ -1353,7 +1356,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 
 }
 
-void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotalHolds, int iTotalRolls, int iTotalMines, int iTotalHands, float fCaloriesBurned )
+void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotalHolds, int iTotalRolls, int iTotalMines, int iTotalHands, int iTotalLifts, float fCaloriesBurned )
 {
 	m_iTotalTapsAndHolds += iTotalTapsAndHolds;
 	m_iTotalJumps += iTotalJumps;
@@ -1361,6 +1364,7 @@ void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotal
 	m_iTotalRolls += iTotalRolls;
 	m_iTotalMines += iTotalMines;
 	m_iTotalHands += iTotalHands;
+	m_iTotalLifts += iTotalLifts;
 
 	m_fTotalCaloriesBurned += fCaloriesBurned;
 
@@ -2018,6 +2022,7 @@ public:
 	static int GetTotalRolls( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalRolls ); return 1; }
 	static int GetTotalMines( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalMines ); return 1; }
 	static int GetTotalHands( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalHands ); return 1; }
+	static int GetTotalLifts( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalLifts ); return 1; }
 	static int GetUserData( T* p, lua_State *L )		{ p->m_UserData.PushSelf(L); return 1; }
 
 	LunaProfile()
@@ -2062,6 +2067,7 @@ public:
 		ADD_METHOD( GetTotalRolls );
 		ADD_METHOD( GetTotalMines );
 		ADD_METHOD( GetTotalHands );
+		ADD_METHOD( GetTotalLifts );
 		ADD_METHOD( GetUserData );
 	}
 };
