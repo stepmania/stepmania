@@ -23,7 +23,7 @@ enum PaneCategory
 	PaneCategory_Rolls,
 	PaneCategory_Mines,
 	PaneCategory_Hands,
-	//PaneCategory_Lifts,
+	PaneCategory_Lifts,
 	PaneCategory_MachineHighScore,
 	PaneCategory_MachineHighName,
 	PaneCategory_ProfileHighScore,

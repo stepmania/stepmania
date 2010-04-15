@@ -70,9 +70,9 @@ SongManager::SongManager()
 	}
 
 	NUM_SONG_GROUP_COLORS	.Load( "SongManager", "NumSongGroupColors" );
-	SONG_GROUP_COLOR	.Load( "SongManager", SONG_GROUP_COLOR_NAME, NUM_SONG_GROUP_COLORS );
+	SONG_GROUP_COLOR		.Load( "SongManager", SONG_GROUP_COLOR_NAME, NUM_SONG_GROUP_COLORS );
 	NUM_COURSE_GROUP_COLORS	.Load( "SongManager", "NumCourseGroupColors" );
-	COURSE_GROUP_COLOR	.Load( "SongManager", COURSE_GROUP_COLOR_NAME, NUM_COURSE_GROUP_COLORS );
+	COURSE_GROUP_COLOR		.Load( "SongManager", COURSE_GROUP_COLOR_NAME, NUM_COURSE_GROUP_COLORS );
 }
 
 SongManager::~SongManager()
@@ -128,7 +128,7 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 	UpdatePreferredSort();
 
 	// Reload song/course group colors to prevent a crash when switching
-	// themes in-game. -aj
+	// themes in-game. (apparently not, though.) -aj
 	NUM_SONG_GROUP_COLORS	.Load( "SongManager", "NumSongGroupColors" );
 	SONG_GROUP_COLOR		.Load( "SongManager", SONG_GROUP_COLOR_NAME, NUM_SONG_GROUP_COLORS );
 	NUM_COURSE_GROUP_COLORS .Load( "SongManager", "NumCourseGroupColors" );

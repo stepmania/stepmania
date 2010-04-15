@@ -129,6 +129,18 @@ int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 	return iNum;
 }
 
+int GetSuccessfulLifts( const NoteData &in, TapNoteScore tns, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW )
+{
+	int iNumSuccessfulLiftNotes = 0;
+	NoteData::all_tracks_const_iterator iter = in.GetTapNoteRangeAllTracks( iStartIndex, iEndIndex );
+	for( ; !iter.IsAtEnd(); ++iter )
+	{
+		if( iter->type == TapNote::lift && iter->result.tns == tns )
+			++iNumSuccessfulLiftNotes;
+	}
+	return iNumSuccessfulLiftNotes;
+}
+
 /* Return the last tap score of a row: the grade of the tap that completed
  * the row.  If the row has no tap notes, return -1.  If any tap notes aren't
  * graded (any tap is TNS_None) or are missed (TNS_Miss), return it. */
@@ -336,6 +348,7 @@ void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, const Player
 		case RadarCategory_Mines:		out[rc] = (float) GetSuccessfulMines( in );						break;
 		case RadarCategory_Hands:		out[rc] = (float) GetSuccessfulHands( in );						break;
 		case RadarCategory_Rolls:		out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_Held );	break;
+		case RadarCategory_Lifts:		out[rc] = (float) GetSuccessfulLifts( in, TNS_W4 );						break;
 		case RadarCategory_MinMidiNote:		out[rc] = 0;	break;	// no meaning
 		case RadarCategory_MaxMidiNote:		out[rc] = 0;	break;	// no meaning
 		//case RadarCategory_Minefields:	out[rc] = (float) GetNumMinefieldsWithScore( in, TapNote::hold_head_mine, HNS_Held );	break;

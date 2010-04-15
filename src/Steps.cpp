@@ -142,7 +142,7 @@ float Steps::PredictMeter() const
 	const float ChaosSquare = rv[RadarCategory_Chaos] * rv[RadarCategory_Chaos];
 	pMeter += -6.35f * SV;
 	pMeter += -2.58f * ChaosSquare;
-	if (pMeter < 1) pMeter = 1;	
+	if (pMeter < 1) pMeter = 1;
 	return pMeter;
 }
 

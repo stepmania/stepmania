@@ -37,18 +37,18 @@ bool NoteData::IsComposite() const
 	return false;
 }
 
-/* Clear [rowBegin,rowEnd). */
+// Clear (rowBegin,rowEnd).
 void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 {
-	/* Optimization: if the range encloses everything, just clear the whole maps. */
+	// Optimization: if the range encloses everything, just clear the whole maps.
 	if( rowBegin == 0 && rowEnd == MAX_NOTE_ROW )
 	{
 		m_TapNotes[iTrack].clear();
 		return;
 	}
 
-	/* If the range is empty, don't do anything.  Otherwise, an empty range will cause
-	 * hold notes to be split when they shouldn't be. */
+	/* If the range is empty, don't do anything. Otherwise, an empty range will
+	 * cause hold notes to be split when they shouldn't be. */
 	if( rowBegin == rowEnd )
 		return;
 
@@ -57,8 +57,8 @@ void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 
 	if( begin != end && begin->first < rowBegin && begin->first + begin->second.iDuration > rowEnd )
 	{
-		/* A hold note overlaps the whole range.  Truncate it, and add the remainder to
-		 * the end. */
+		/* A hold note overlaps the whole range. Truncate it, and add the
+		 * remainder to the end. */
 		TapNote tn1 = begin->second;
 		TapNote tn2 = tn1;
 
@@ -71,12 +71,12 @@ void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 		SetTapNote( iTrack, iRow, tn1 );
 		SetTapNote( iTrack, rowEnd, tn2 );
 
-		/* We may have invalidated our iterators. */
+		// We may have invalidated our iterators.
 		GetTapNoteRangeInclusive( iTrack, rowBegin, rowEnd, begin, end );
 	}
 	else if( begin != end && begin->first < rowBegin )
 	{
-		/* A hold note overlaps the beginning of the range.  Truncate it. */
+		// A hold note overlaps the beginning of the range.  Truncate it.
 		TapNote &tn1 = begin->second;
 		int iRow = begin->first;
 		tn1.iDuration = rowBegin - iRow;
@@ -92,7 +92,7 @@ void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 		int iRow = prev->first;
 		if( tn.type == TapNote::hold_head && iRow + tn.iDuration > rowEnd )
 		{
-			/* A hold note overlaps the end of the range.  Separate it. */
+			// A hold note overlaps the end of the range.  Separate it.
 			SetTapNote( iTrack, iRow, TAP_EMPTY );
 
 			int iAdd = rowEnd - iRow;
@@ -102,7 +102,7 @@ void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 			end = prev;
 		}
 
-		/* We may have invalidated our iterators. */
+		// We may have invalidated our iterators.
 		GetTapNoteRangeInclusive( iTrack, rowBegin, rowEnd, begin, end );
 	}
 
@@ -121,19 +121,19 @@ void NoteData::ClearAll()
 		m_TapNotes[t].clear();
 }
 
-/* Copy [rowFromBegin,rowFromEnd) from pFrom to this.  (Note that this does *not* overlay;
- * all data in the range is overwritten.) */
+/* Copy [rowFromBegin,rowFromEnd) from pFrom to this. (Note that this does
+ * *not* overlay; all data in the range is overwritten.) */
 void NoteData::CopyRange( const NoteData& from, int rowFromBegin, int rowFromEnd, int rowToBegin )
 {
 	ASSERT( from.GetNumTracks() == GetNumTracks() );
 
 	if( rowFromBegin > rowFromEnd )
-		return; /* empty range */
+		return; // empty range
 
 	const int rowToEnd = (rowFromEnd-rowFromBegin) + rowToBegin;
 	const int iMoveBy = rowToBegin-rowFromBegin;
 
-	/* Clear the region. */
+	// Clear the region.
 	ClearRange( rowToBegin, rowToEnd );
 
 	for( int t=0; t<GetNumTracks(); t++ )
@@ -305,12 +305,12 @@ void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 {
 	ASSERT( iStartRow>=0 && iEndRow>=0 );
 	ASSERT_M( iEndRow >= iStartRow, ssprintf("EndRow %d < StartRow %d",iEndRow,iStartRow) );
-	
+
 	/* Include adjacent (non-overlapping) hold notes, since we need to merge with them. */
 	iterator begin, end;
 	GetTapNoteRangeInclusive( iTrack, iStartRow, iEndRow, begin, end, true );
 
-	/* Look for other hold notes that overlap and merge them into add. */
+	// Look for other hold notes that overlap and merge them into add.
 	for( iterator it = begin; it != end; ++it )
 	{
 		int iOtherRow = it->first;
@@ -324,19 +324,19 @@ void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 
 	tn.iDuration = iEndRow - iStartRow;
 
-	/* Remove everything in the range. */
+	// Remove everything in the range.
 	while( begin != end )
 	{
 		iterator next = begin;
 		++next;
 
 		RemoveTapNote( iTrack, begin );
-		
+
 		begin = next;
 	}
 
-	/* Additionally, if there's a tap note lying at the end of our range, remove it,
-	 * too. */
+	/* Additionally, if there's a tap note lying at the end of our range,
+	 * remove it too. */
 	SetTapNote( iTrack, iEndRow, TAP_EMPTY );
 
 	// add a tap note at the start of this hold
@@ -358,8 +358,8 @@ bool NoteData::IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) cons
 	return IsHoldNoteAtRow( iTrack, iRow, pHeadRow );
 }
 
-/* Determine if a hold note lies on the given spot.  Return true if so.  If
- * pHeadRow is non-NULL, return the row of the head.  (Note that this returns
+/* Determine if a hold note lies on the given spot. Return true if so.  If
+ * pHeadRow is non-NULL, return the row of the head. (Note that this returns
  * false if a hold head lies on iRow itself.) */
 /* XXX: rename this to IsHoldBodyAtRow */
 bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
@@ -368,9 +368,9 @@ bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 	if( pHeadRow == NULL )
 		pHeadRow = &iDummy;
 
-	/* Starting at iRow, search upwards.  If we find a TapNote::hold_head, we're within
-	 * a hold.  If we find a tap, mine or attack, we're not--those never lie within hold
-	 * notes.  Ignore autoKeysound. */
+	/* Starting at iRow, search upwards. If we find a TapNote::hold_head, we're within
+	 * a hold. If we find a tap, mine or attack, we're not--those never lie
+	 * within hold notes. Ignore autoKeysound. */
 	FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( *this, iTrack, r, 0, iRow )
 	{
 		const TapNote &tn = GetTapNote( iTrack, r );
@@ -391,7 +391,7 @@ bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 
 		case TapNote::empty:
 		case TapNote::autoKeysound:
-			/* ignore */
+			// ignore
 			continue;
 		DEFAULT_FAIL( tn.type );
 		}
@@ -417,7 +417,7 @@ bool NoteData::IsEmpty() const
 int NoteData::GetFirstRow() const
 { 
 	int iEarliestRowFoundSoFar = -1;
-	
+
 	for( int t=0; t < GetNumTracks(); t++ )
 	{
 		int iRow = -1;
@@ -439,7 +439,7 @@ int NoteData::GetFirstRow() const
 int NoteData::GetLastRow() const
 { 
 	int iOldestRowFoundSoFar = 0;
-	
+
 	for( int t=0; t < GetNumTracks(); t++ )
 	{
 		int iRow = MAX_NOTE_ROW;
@@ -470,7 +470,7 @@ int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
 				iNumNotes++;
 		}
 	}
-	
+
 	return iNumNotes;
 }
 
@@ -486,7 +486,7 @@ int NoteData::GetNumRowsWithTap( int iStartIndex, int iEndIndex ) const
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 		if( IsThereATapAtRow(r) )
 			iNumNotes++;
-	
+
 	return iNumNotes;
 }
 
@@ -500,7 +500,7 @@ int NoteData::GetNumMines( int iStartIndex, int iEndIndex ) const
 			if( GetTapNote(t, r).type == TapNote::mine )
 				iNumMines++;
 	}
-	
+
 	return iNumMines;
 }
 
@@ -510,7 +510,7 @@ int NoteData::GetNumRowsWithTapOrHoldHead( int iStartIndex, int iEndIndex ) cons
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 		if( IsThereATapOrHoldHeadAtRow(r) )
 			iNumNotes++;
-	
+
 	return iNumNotes;
 }
 
@@ -581,7 +581,7 @@ int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int
 		if( iNumNotesThisIndex >= iMinTaps )
 			iNum++;
 	}
-	
+
 	return iNum;
 }
 
@@ -619,6 +619,20 @@ int NoteData::GetNumRolls( int iStartIndex, int iEndIndex ) const
 		}
 	}
 	return iNumRolls;
+}
+
+int NoteData::GetNumLifts( int iStartIndex, int iEndIndex ) const
+{
+	int iNumLifts = 0;
+
+	for( int t=0; t<GetNumTracks(); t++ )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
+			if( GetTapNote(t, r).type == TapNote::lift )
+				iNumLifts++;
+	}
+
+	return iNumLifts;
 }
 
 /*

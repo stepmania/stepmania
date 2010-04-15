@@ -25,7 +25,7 @@ static const char *PaneCategoryNames[] = {
 	"Rolls",
 	"Mines",
 	"Hands",
-	//"Lifts",
+	"Lifts",
 	"MachineHighScore",
 	"MachineHighName",
 	"ProfileHighScore",
@@ -43,16 +43,16 @@ struct Content_t
 
 static const Content_t g_Contents[NUM_PaneCategory] =
 {
-	{ NEED_NOTES, "count" },
-	{ NEED_NOTES, "count" },
-	{ NEED_NOTES, "count" },
-	{ NEED_NOTES, "count" },
-	{ NEED_NOTES, "count" },
-	{ NEED_NOTES, "count" },
-	//{ NEED_NOTES, "count" },
-	{ NEED_NOTES, "score" },
-	{ NEED_NOTES, "name" },
-	{ NEED_NOTES|NEED_PROFILE, "score" },
+	{ NEED_NOTES, "count" },	// NumSteps
+	{ NEED_NOTES, "count" },	// Jumps
+	{ NEED_NOTES, "count" },	// Holds
+	{ NEED_NOTES, "count" },	// Rolls
+	{ NEED_NOTES, "count" },	// Mines
+	{ NEED_NOTES, "count" },	// Hands
+	{ NEED_NOTES, "count" },	// Lifts
+	{ NEED_NOTES, "score" },	// MachineHighScore
+	{ NEED_NOTES, "name" },		// MachineHighName
+	{ NEED_NOTES|NEED_PROFILE, "score" }, // ProfileHighScore
 };
 
 REGISTER_ACTOR_CLASS( PaneDisplay )
@@ -64,7 +64,6 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 	EMPTY_MACHINE_HIGH_SCORE_NAME.Load( sMetricsGroup, "EmptyMachineHighScoreName" );
 	NOT_AVAILABLE.Load( sMetricsGroup, "NotAvailable" );
 	COUNT_FORMAT.Load( sMetricsGroup, "CountFormat" );
-
 
 	FOREACH_ENUM( PaneCategory, pc )
 	{
@@ -160,7 +159,7 @@ void PaneDisplay::SetContent( PaneCategory c )
 		case PaneCategory_Rolls:		val = rv[RadarCategory_Rolls]; break;
 		case PaneCategory_Mines:		val = rv[RadarCategory_Mines]; break;
 		case PaneCategory_Hands:		val = rv[RadarCategory_Hands]; break;
-		//case PaneCategory_Lifts:		val = rv[RadarCategory_Lifts]; break;
+		case PaneCategory_Lifts:		val = rv[RadarCategory_Lifts]; break;
 		case PaneCategory_ProfileHighScore:
 		case PaneCategory_MachineHighName: /* set val for color */
 		case PaneCategory_MachineHighScore:
@@ -199,7 +198,7 @@ void PaneDisplay::SetContent( PaneCategory c )
 			case PaneCategory_Rolls:
 			case PaneCategory_Mines:
 			case PaneCategory_Hands:
-			//case PaneCategory_Lifts:
+			case PaneCategory_Lifts:
 				str = ssprintf( COUNT_FORMAT.GetValue(), val );
 			}
 		}

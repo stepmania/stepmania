@@ -357,7 +357,6 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 		FallbackMusic.fFadeInLengthSeconds = SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS;
 		FallbackMusic.bAlignBeat = ALIGN_MUSIC_BEATS;
 
-		//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_StartToPreview )
 		SOUND->PlayMusic( PlayParams, FallbackMusic );
 	}
 }
@@ -990,6 +989,15 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		// a song was selected
 		if( m_MusicWheel.GetSelectedSong() != NULL )
 		{
+			/*
+			if(TWO_PART_CONFIRMS_ONLY && SAMPLE_MUSIC_PREVIEW_MODE == SampleMusicPreviewMode_StartToPreview)
+			{
+				// start playing the preview music.
+				g_bSampleMusicWaiting = true;
+				CheckBackgroundRequests( true );
+			}
+			*/
+
 			const bool bIsNew = PROFILEMAN->IsSongNew( m_MusicWheel.GetSelectedSong() );
 			bool bIsHard = false;
 			FOREACH_HumanPlayer( p )
@@ -1048,15 +1056,6 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			// We haven't made a selection yet.
 			return;
 		}
-
-		/*
-		if(TWO_PART_CONFIRMS_ONLY && SAMPLE_MUSIC_PREVIEW_MODE == SampleMusicPreviewMode_StartToPreview)
-		{
-			// start playing the preview music.
-			g_bSampleMusicWaiting = true;
-		}
-		*/
-
 		// I believe this is for those who like pump pro. -aj
 		MESSAGEMAN->Broadcast("SongChosen");
 
@@ -1484,7 +1483,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_iSelection[p] = -1;
 
 		g_sCDTitlePath = ""; // none
-	
+
 		//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
 		//{
 		m_fSampleStartSeconds = 0;
@@ -1535,22 +1534,23 @@ void ScreenSelectMusic::AfterMusicChange()
 		// check SampleMusicPreviewMode here.
 		switch( SAMPLE_MUSIC_PREVIEW_MODE )
 		{
+			DEFAULT_FAIL(SAMPLE_MUSIC_PREVIEW_MODE);
 			case SampleMusicPreviewMode_ScreenMusic:
-				// play the screen music, hopefully?
+				// play the screen music
 				m_sSampleMusicToPlay = m_sLoopMusicPath;
 				m_fSampleStartSeconds = 0;
 				m_fSampleLengthSeconds = -1;
 				break;
-			case SampleMusicPreviewMode_Normal:
 			//case SampleMusicPreviewMode_StartToPreview:
+				// we want to load the sample music, but we don't want to
+				// actually play it; fall through for now. -aj
+			case SampleMusicPreviewMode_Normal:
 				// play the sample music
 				m_sSampleMusicToPlay = pSong->GetMusicPath();
 				m_pSampleMusicTimingData = &pSong->m_Timing;
 				m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 				m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 				break;
-			default:
-				ASSERT(0);
 		}
 
 		SongUtil::GetPlayableSteps( pSong, m_vpSteps );

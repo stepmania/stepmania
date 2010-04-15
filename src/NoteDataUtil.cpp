@@ -729,8 +729,8 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 		switch( rc )
 		{
 		case RadarCategory_Stream:		out[rc] = GetStreamRadarValue( in, fSongSeconds );	break;	
-		case RadarCategory_Voltage:		out[rc] = GetVoltageRadarValue( in, fSongSeconds );	break;
-		case RadarCategory_Air:			out[rc] = GetAirRadarValue( in, fSongSeconds );		break;
+		case RadarCategory_Voltage:	out[rc] = GetVoltageRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_Air:		out[rc] = GetAirRadarValue( in, fSongSeconds );		break;
 		case RadarCategory_Freeze:		out[rc] = GetFreezeRadarValue( in, fSongSeconds );	break;
 		case RadarCategory_Chaos:		out[rc] = GetChaosRadarValue( in, fSongSeconds );	break;
 		case RadarCategory_TapsAndHolds:	out[rc] = (float) in.GetNumRowsWithTapOrHoldHead();	break;
@@ -739,6 +739,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 		case RadarCategory_Mines:		out[rc] = (float) in.GetNumMines();			break;
 		case RadarCategory_Hands:		out[rc] = (float) in.GetNumHands();			break;
 		case RadarCategory_Rolls:		out[rc] = (float) in.GetNumRolls();			break;
+		case RadarCategory_Lifts:		out[rc] = (float) in.GetNumLifts();			break;
 		case RadarCategory_MinMidiNote:
 			break;	// fill in below
 		case RadarCategory_MaxMidiNote:

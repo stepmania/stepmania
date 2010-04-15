@@ -35,6 +35,7 @@ static const char *RadarCategoryNames[] = {
 	"Mines",
 	"Hands",
 	"Rolls",
+	"Lifts",
 	"MinMidiNote",
 	"MaxMidiNote",
 };
