@@ -1534,7 +1534,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		// check SampleMusicPreviewMode here.
 		switch( SAMPLE_MUSIC_PREVIEW_MODE )
 		{
-			DEFAULT_FAIL(SAMPLE_MUSIC_PREVIEW_MODE);
 			case SampleMusicPreviewMode_ScreenMusic:
 				// play the screen music
 				m_sSampleMusicToPlay = m_sLoopMusicPath;
@@ -1551,6 +1550,8 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 				m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 				break;
+			default:
+				ASSERT(0);
 		}
 
 		SongUtil::GetPlayableSteps( pSong, m_vpSteps );
