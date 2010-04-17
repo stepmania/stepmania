@@ -30,7 +30,7 @@ namespace
 void RageFile_png_read( png_struct *png, png_byte *p, png_size_t size )
 {
 	CHECKPOINT;
-	RageFile *f = (RageFile *) png->io_ptr;
+	RageFile *f = (RageFile *) png_get_io_ptr(png);
 
 	int got = f->Read( p, size );
 	if( got == -1 )
@@ -56,17 +56,17 @@ struct error_info
 void PNG_Error( png_struct *png, const char *error )
 {
 	CHECKPOINT;
-	error_info *info = (error_info *) png->error_ptr;
+	error_info *info = (error_info *) png_get_error_ptr(png);
 	strncpy( info->err, error, 1024 );
 	info->err[1023] = 0;
 	LOG->Trace( "loading \"%s\": err: %s", info->fn, info->err );
-	longjmp( png->jmpbuf, 1 );
+	longjmp( png_jmpbuf(png), 1 );
 }
 
 void PNG_Warning( png_struct *png, const char *warning )
 {
 	CHECKPOINT;
-	error_info *info = (error_info *) png->error_ptr;
+	error_info *info = (error_info *) png_get_io_ptr(png);
 	LOG->Trace( "loading \"%s\": warning: %s", info->fn, warning );
 }
 
@@ -106,7 +106,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	RageSurface *volatile img = NULL;
 	CHECKPOINT;
-	if( setjmp(png->jmpbuf) )
+	if( setjmp(png_jmpbuf(png) ))
 	{
 		png_destroy_read_struct( &png, &info_ptr, NULL );
 		delete img;
@@ -140,7 +140,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	/* Expand grayscale images to the full 8 bits from 1, 2, or 4 bits/pixel */
 	if( color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8 )
-		png_set_gray_1_2_4_to_8( png );
+		png_set_expand_gray_1_2_4_to_8( png );
 
 	/* These are set for type == PALETTE. */
 	RageSurfaceColor colors[256];

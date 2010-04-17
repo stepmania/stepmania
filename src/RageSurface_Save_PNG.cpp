@@ -33,7 +33,7 @@ static void SafePngError( png_struct *pPng, const RString &sStr )
 
 static void RageFile_png_write( png_struct *pPng, png_byte *pData, png_size_t iSize )
 {
-	RageFile *pFile = (RageFile *) pPng->io_ptr;
+	RageFile *pFile = (RageFile *) png_get_io_ptr(pPng);
 
 	int iGot = pFile->Write( pData, iSize );
 	if( iGot == -1 )
@@ -42,7 +42,7 @@ static void RageFile_png_write( png_struct *pPng, png_byte *pData, png_size_t iS
 
 static void RageFile_png_flush( png_struct *pPng )
 {
-	RageFile *pFile = (RageFile *) pPng->io_ptr;
+	RageFile *pFile = (RageFile *) png_get_io_ptr(pPng);
 
 	int iGot = pFile->Flush();
 	if( iGot == -1 )
@@ -56,10 +56,10 @@ struct error_info
 
 static void PNG_Error( png_struct *pPng, const char *szError )
 {
-	error_info *pInfo = (error_info *) pPng->error_ptr;
+	error_info *pInfo = (error_info *) png_get_error_ptr(pPng);
 	strncpy( pInfo->szErr, szError, 1024 );
 	pInfo->szErr[1023] = 0;
-	longjmp( pPng->jmpbuf, 1 );
+	longjmp( png_jmpbuf(pPng), 1 );
 }
 
 static void PNG_Warning( png_struct *png, const char *warning )
@@ -101,9 +101,9 @@ static bool RageSurface_Save_PNG( RageFile &f, char szErrorbuf[1024], RageSurfac
 		return false;
 	}
 
-	if( setjmp(pPng->jmpbuf) )
+	if( setjmp(png_jmpbuf(pPng)) )
 	{
-		png_destroy_read_struct( &pPng, &pInfo, png_infopp_NULL );
+		png_destroy_read_struct( &pPng, &pInfo, NULL );
 		return false;
 	}
 
