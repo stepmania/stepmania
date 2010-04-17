@@ -27,11 +27,6 @@ ScoreDisplayOni::ScoreDisplayOni()
 void ScoreDisplayOni::Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats ) 
 {
 	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
-
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = pPlayerState->m_PlayerNumber;
-
-	m_text.RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(pn) );
 }
 
 

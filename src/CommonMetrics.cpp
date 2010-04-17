@@ -8,12 +8,8 @@
 #include "ProductInfo.h"
 #include "LuaManager.h"
 
-
-static RString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%dCommand",int(p+1)); }
-
 ThemeMetric<RString>			CommonMetrics::FIRST_ATTRACT_SCREEN		("Common","FirstAttractScreen");
 ThemeMetric<RString>			CommonMetrics::DEFAULT_MODIFIERS		("Common","DefaultModifiers" );
-ThemeMetric1D<apActorCommands>		CommonMetrics::PLAYER_COLOR			("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
 LocalizedString				CommonMetrics::WINDOW_TITLE			("Common","WindowTitle");
 ThemeMetric<int>			CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS("Common","MaxCourseEntriesBeforeShowVarious");
 ThemeMetric<float>			CommonMetrics::TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");

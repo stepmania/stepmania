@@ -192,8 +192,6 @@ void ScreenSelectMusic::Init()
 
 		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
 		m_textHighScore[p].LoadFromFont( THEME->GetPathF(m_sName,"score") );
-		//m_textHighScore[p].SetShadowLength( 0 );
-		//m_textHighScore[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_textHighScore[p] );
 		this->AddChild( &m_textHighScore[p] );
 	}
