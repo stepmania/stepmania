@@ -54,6 +54,11 @@ local t = Def.ActorFrame {
 			(cmd(thump,2;effectclock,'beat'))(self);
 		end;
 	end;
+	ToastyDroppedMessageCommand=function(self,params)
+		if params.PlayerNumber == player then
+			(cmd(stopeffect))(self);
+		end;
+	end;
 	ComboCommand=function(self, param)
 		local iCombo = param.Misses or param.Combo;
 		if not iCombo or iCombo < ShowComboAt then
