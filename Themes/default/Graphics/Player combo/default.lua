@@ -1,4 +1,5 @@
 local c;
+local cf;
 local player = Var "Player";
 local ShowComboAt = THEME:GetMetric("Combo", "ShowComboAt");
 local Pulse = THEME:GetMetric("Combo", "PulseCommand");
@@ -21,19 +22,22 @@ local t = Def.ActorFrame {
 		Name="OneThousandMilestone";
 		ToastyAchievedMessageCommand=cmd(playcommand,"Milestone");
 	};
-	LoadFont( "Combo", "numbers" ) .. {
-		Name="Number";
-		OnCommand = THEME:GetMetric("Combo", "NumberOnCommand");
+	Def.ActorFrame {
+		Name="ComboFrame";
+		LoadFont( "Combo", "numbers" ) .. {
+			Name="Number";
+			OnCommand = THEME:GetMetric("Combo", "NumberOnCommand");
+		};
+		LoadFont("Common Normal") .. {
+			Name="Label";
+			OnCommand = THEME:GetMetric("Combo", "LabelOnCommand");
+		};
 	};
-	LoadFont("Common Normal") .. {
-		Name="Label";
-		OnCommand = THEME:GetMetric("Combo", "LabelOnCommand");
-	};
-	
 	InitCommand = function(self)
 		c = self:GetChildren();
-		c.Number:visible(false);
-		c.Label:visible(false);
+		cf = c.ComboFrame:GetChildren();
+		cf.Number:visible(false);
+		cf.Label:visible(false);
 	end;
 	-- Milestones:
 	-- 25,50,100,250,600 Multiples;
@@ -51,19 +55,19 @@ local t = Def.ActorFrame {
 	end;
 	ToastyAchievedMessageCommand=function(self,params)
 		if params.PlayerNumber == player then
-			(cmd(thump,2;effectclock,'beat'))(self);
+			(cmd(thump,2;effectclock,'beat'))(c.ComboFrame);
 		end;
 	end;
 	ToastyDroppedMessageCommand=function(self,params)
 		if params.PlayerNumber == player then
-			(cmd(stopeffect))(self);
+			(cmd(stopeffect))(c.ComboFrame);
 		end;
 	end;
 	ComboCommand=function(self, param)
 		local iCombo = param.Misses or param.Combo;
 		if not iCombo or iCombo < ShowComboAt then
-			c.Number:visible(false);
-			c.Label:visible(false);
+			cf.Number:visible(false);
+			cf.Label:visible(false);
 			return;
 		end
 
@@ -75,8 +79,8 @@ local t = Def.ActorFrame {
 			labeltext = "MISSES";
 -- 			c.Number:playcommand("Miss");
 		end
-		c.Label:settext( labeltext );
-		c.Label:visible(false);
+		cf.Label:settext( labeltext );
+		cf.Label:visible(false);
 
 		param.Zoom = scale( iCombo, 0, NumberMaxZoomAt, NumberMinZoom, NumberMaxZoom );
 		param.Zoom = clamp( param.Zoom, NumberMinZoom, NumberMaxZoom );
@@ -84,34 +88,34 @@ local t = Def.ActorFrame {
 		param.LabelZoom = scale( iCombo, 0, NumberMaxZoomAt, LabelMinZoom, LabelMaxZoom );
 		param.LabelZoom = clamp( param.LabelZoom, LabelMinZoom, LabelMaxZoom );
 
-		c.Number:visible(true);
-		c.Label:visible(true);
-		c.Number:settext( string.format("%i", iCombo) );
+		cf.Number:visible(true);
+		cf.Label:visible(true);
+		cf.Number:settext( string.format("%i", iCombo) );
 		-- FullCombo Rewards
 		if param.FullComboW1 then
-			c.Number:diffuse(color("#00aeef"));
-			c.Number:glowshift();
+			cf.Number:diffuse(color("#00aeef"));
+			cf.Number:glowshift();
 		elseif param.FullComboW2 then
-			c.Number:diffuse(color("#fff568"));
-			c.Number:glowshift();
+			cf.Number:diffuse(color("#fff568"));
+			cf.Number:glowshift();
 		elseif param.FullComboW3 then
-			c.Number:diffuse(color("#a4ff00"));
-			c.Number:stopeffect();
+			cf.Number:diffuse(color("#a4ff00"));
+			cf.Number:stopeffect();
 		elseif param.Combo then
 			-- Player 1's color is Red, which conflicts with the miss combo.
 			-- instead, just diffuse to white for now. -aj
 			--c.Number:diffuse(PlayerColor(player));
-			c.Number:diffuse(Color("White"));
-			c.Number:stopeffect();
-			(cmd(diffuse,Color("White");diffusebottomedge,color("0.5,0.5,0.5,1")))(c.Label);
+			cf.Number:diffuse(Color("White"));
+			cf.Number:stopeffect();
+			(cmd(diffuse,Color("White");diffusebottomedge,color("0.5,0.5,0.5,1")))(cf.Label);
 		else
-			c.Number:diffuse(color("#ff0000"));
-			c.Number:stopeffect();
-			(cmd(diffuse,Color("Red");diffusebottomedge,color("0.5,0,0,1")))(c.Label);
+			cf.Number:diffuse(color("#ff0000"));
+			cf.Number:stopeffect();
+			(cmd(diffuse,Color("Red");diffusebottomedge,color("0.5,0,0,1")))(cf.Label);
 		end
 		-- Pulse
-		Pulse( c.Number, param );
-		PulseLabel( c.Label, param );
+		Pulse( cf.Number, param );
+		PulseLabel( cf.Label, param );
 		-- Milestone Logic
 	end;
 --[[ 	ScoreChangedMessageCommand=function(self,param)
