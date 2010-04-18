@@ -29,13 +29,13 @@ Branch = {
 	AfterProfileLoad = function()
 		if ( THEME:GetMetric("Common","AutoSetStyle") == true ) then
 			if IsNetConnected() then
-				-- use SelectPlayMode in online...
-				return "ScreenSelectPlayMode"
+				-- use SelectStyle in online...
+				return "ScreenSelectStyle"
 			else
-				return "ScreenSelectPlayStyle"
+				return "ScreenSelectPlayMode"
 			end
 		else
-			return "ScreenSelectPlayMode"
+			return "ScreenSelectStyle"
 		end
 	end,
 	AfterSelectPlayMode = function()
@@ -45,7 +45,7 @@ Branch = {
 		end
 		if IsNetSMOnline() then return SMOnlineScreen() end
 		if IsNetConnected() then return "ScreenNetRoom" end
-		return "ScreenSelectPlayStyle"
+		return "ScreenSelectPlayMode"
 	end,
 	AfterSelectStyle = function()
 		if CHARMAN:GetAllCharacters() ~= nil then
