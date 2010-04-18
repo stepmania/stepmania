@@ -1,0 +1,156 @@
+This file contains a list of messages that are used by certain actors.
+The parameters are included within (), and will sometimes have the proper
+type. (wip document lol)
+================================================================================
+GhostArrowRow
+
+ColumnJudgmentMessage(
+	tns TapNoteScore
+	tns HoldNoteScore
+	bool Bright
+)
+===========================================
+CourseContentsList
+
+SetSongMessage(
+	PlayerNumber
+	Song
+	Steps
+	Difficulty
+	Meter
+	Number
+	Modifiers
+	Secret
+)
+===========================================
+DifficultyMeter
+
+SetMessage(
+	Steps
+	Trail
+	Meter
+	StepsType
+	Difficulty
+	IsCourseDifficulty
+	EditDescription
+)
+===========================================
+EditMenu
+
+SetMessage( Song )
+===========================================
+GameSoundManager
+
+CrossedBeat( Beat )
+
+===========================================
+GameState
+
+MessageIDToString(Message_PlayerJoined)Message( Player )
+MessageIDToString(Message_PlayerUnjoined)Message( Player )
+===========================================
+LifeMeterBar
+
+LifeChangedMessage(
+	Player
+	LifeMeter
+)
+===========================================
+LifeMeterTime
+
+LifeChangedMessage(
+	Player
+	TapNoteScore
+	HoldNoteScore
+	OldLife
+	Difference
+	LifeMeter
+)
+===========================================
+MusicWheelItem
+
+SetMessage(
+	Song
+	Course
+	Index
+	HasFocus
+	SongGroup
+)
+
+SetGradeMessage(
+	PlayerNumber
+	Grade
+	NumTimesPlayed
+)
+===========================================
+NoteDisplay
+
+SetAttackMessage( "Modifiers" )
+===========================================
+OptionRow
+
+RefreshMessage( GameCommand )
+===========================================
+Player
+
+TransformMessage(
+	Player
+	MultiPlayer
+	iEnabledPlayerIndex
+	iNumEnabledPlayers
+	bPlayerUsingBothSides
+	bReverse
+	bCentered
+)
+
+ComboChangedMessage(
+	Player
+	OldCombo
+	OldMissCombo
+	PlayerState
+	PlayerStageStats
+)
+
+StepMessage( PlayerNumber, MultiPlayer )
+
+JudgmentMessage(
+	Player
+	MultiPlayer
+	TapNoteScore
+	Early
+	TapNoteOffset
+	HoldNoteScore
+)
+
+ComboMessage(
+	Combo
+	Misses
+	FullComboW1
+	FullComboW2
+	FullComboW3
+)
+===========================================
+ScoreKeeper*
+
+ScoreChangedMessage( PlayerNumber, MultiPlayer )
+===========================================
+ScreenContinue
+
+HurryTimerMessage( PlayerNumber )
+===========================================
+ScreenGameplay
+
+HealthStateChangedMessage(
+	PlayerNumber
+	HealthState
+)
+
+PlayerFailedMessage( PlayerNumber )
+===========================================
+ScreenManager
+
+SystemMessageMessage( Message, NoAnimate )
+===========================================
+ScreenWithMenuElements
+
+SetHelpTextMessage( Text )

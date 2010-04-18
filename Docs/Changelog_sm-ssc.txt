@@ -9,9 +9,35 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100417
+--------
+* Finally get rid of PLAYER_COLOR. ColorP1Command and ColorP2Command no
+  longer exist. The last things that were being diffused with player color
+  in the code included text in the Oni score display and ScreenSelectMusic score.
+  I'm sure you can diffuse ScoreDisplayOni Numbers, but I can't seem to find any
+  references to them in the metrics of any released theme. [AJ]
+
+20100404
+--------
+* [SongManager] Added GetSongGroupNames(), GetSongsInGroup(string) Lua bindings
+
+20100403
+--------
+* Fixed an issue where course banners were always cached, regardless of setting.
+
+20100401
+--------
+(Not jokes)
+* NextSong/PrevSong now work when TwoPartSelection=true and
+  TwoPartConfirmsOnly=true on ScreenSelectMusic. A new message
+  ("TwoPartConfirmCanceled") was added to catch when this happens.
+
+20100331
+--------
+* Added Lifts to PaneDisplay. (StepMania 3.9+/Plus Redux had them)
+
 sm-ssc v1.0 Public Beta 2 | 20100331
 ------------------------------------
-(Well, it was built on the 31st of March, anyways.)
 
 20100329
 --------

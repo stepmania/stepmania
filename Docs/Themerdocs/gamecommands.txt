@@ -1,0 +1,62 @@
+all the known gamecommands (pre-sm-ssc)
+
+"style"
+"playmode"
+"difficulty"
+
+"announcer" {m_sAnnouncer = sValue;}
+
+"name" {m_sName = sValue;}
+
+"text" {m_sText = sValue;}
+
+"mod" {m_sPreferredModifiers += sValue;}
+
+"stagemod" {m_sStageModifiers += sValue;}
+
+"lua"
+
+"screen" {m_sScreen = sValue;}
+
+"song"
+"steps"
+"course"
+"trail"
+
+"setenv" {
+	if( cmd.m_vsArgs.size() == 3 )
+		m_SetEnv[ cmd.m_vsArgs[1] ] = cmd.m_vsArgs[2]; }
+
+"songgroup" {m_sSongGroup = sValue;}
+
+"sort"
+{
+	m_SortOrder = StringToSortOrder( sValue );
+	if( m_SortOrder == SortOrder_Invalid )
+	{
+		m_sInvalidReason = ssprintf( "SortOrder \"%s\" is not valid.", sValue.c_str() );
+		m_bInvalid |= true;
+	}
+}
+
+"weight" ){m_iWeightPounds = atoi( sValue );}
+
+"goalcalories" {m_iGoalCalories = atoi( sValue );}
+
+"goaltype" {m_GoalType = StringToGoalType( sValue );}
+
+"profileid" {m_sProfileID = sValue;}
+
+"url" {m_sUrl = sValue;}
+
+"sound" {m_sSoundPath = sValue;}
+
+"preparescreen" {m_vsScreensToPrepare.push_back( sValue );}
+
+"insertcredit" {m_bInsertCredit = true;}
+
+"clearcredits" {m_bClearCredits = true;}
+
+"stopmusic" {m_bStopMusic = true;}
+
+"applydefaultoptions" {m_bApplyDefaultOptions = true;}
