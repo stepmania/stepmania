@@ -6,7 +6,7 @@ t[#t+1] = Def.Sprite {
 	InitCommand=cmd(Center);
 	BeginCommand=function(self)
 		if GAMESTATE:GetCurrentSong() then
-			self:LoadFromSong(GAMESTATE:GetCurrentSong());
+			self:LoadFromSongBackground(GAMESTATE:GetCurrentSong());
 			--self:LoadBackground( GAMESTATE:GetCurrentSong():GetBackgroundPath() );
 		end;
 	end;
