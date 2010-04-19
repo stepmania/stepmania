@@ -418,7 +418,7 @@ static const char *SampleMusicPreviewModeNames[] = {
 	"Normal",
 	//"StartToPreview",
 	"ScreenMusic",
-	//"LastSong"
+	"LastSong"
 };
 XToString( SampleMusicPreviewMode );
 StringToX( SampleMusicPreviewMode );

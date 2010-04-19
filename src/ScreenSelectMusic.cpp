@@ -1457,7 +1457,10 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	vector<RString> m_Artists, m_AltArtists;
 
-	m_sSampleMusicToPlay = "";
+	if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+	{
+		m_sSampleMusicToPlay = "";
+	}
 	m_pSampleMusicTimingData = NULL;
 	g_sCDTitlePath = "";
 	g_sBannerPath = "";
@@ -1482,30 +1485,40 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		g_sCDTitlePath = ""; // none
 
-		//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-		//{
-		m_fSampleStartSeconds = 0;
-		m_fSampleLengthSeconds = -1;
-		//}
+		if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+		{
+			m_fSampleStartSeconds = 0;
+			m_fSampleLengthSeconds = -1;
+		}
+		else
+		{
+			// HACK: Make random music work in LastSong mode (IDK if this is
+			// accurate or not) -aj
+			if( m_sSampleMusicToPlay == m_sRandomMusicPath )
+			{
+				m_fSampleStartSeconds = 0;
+				m_fSampleLengthSeconds = -1;
+			}
+		}
 
 		switch( m_MusicWheel.GetSelectedType() )
 		{
 		case TYPE_SECTION:
 			g_sBannerPath = SONGMAN->GetSongGroupBannerPath( m_MusicWheel.GetSelectedSection() );
-			//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-			m_sSampleMusicToPlay = m_sSectionMusicPath;
+			if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+				m_sSampleMusicToPlay = m_sSectionMusicPath;
 			break;
 		case TYPE_SORT:
 			bWantBanner = false; // we load it ourself
 			m_Banner.LoadMode();
-			//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-			m_sSampleMusicToPlay = m_sSortMusicPath;
+			if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+				m_sSampleMusicToPlay = m_sSortMusicPath;
 			break;
 		case TYPE_ROULETTE:
 			bWantBanner = false; // we load it ourself
 			m_Banner.LoadRoulette();
-			//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-			m_sSampleMusicToPlay = m_sRouletteMusicPath;
+			if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+				m_sSampleMusicToPlay = m_sRouletteMusicPath;
 			break;
 		case TYPE_RANDOM:
 			bWantBanner = false; // we load it ourself
@@ -1542,6 +1555,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				// we want to load the sample music, but we don't want to
 				// actually play it; fall through for now. -aj
 			case SampleMusicPreviewMode_Normal:
+			case SampleMusicPreviewMode_LastSong: // fall through
 				// play the sample music
 				m_sSampleMusicToPlay = pSong->GetMusicPath();
 				m_pSampleMusicTimingData = &pSong->m_Timing;

@@ -463,7 +463,7 @@ enum SampleMusicPreviewMode
 	SampleMusicPreviewMode_Normal,
 	//SampleMusicPreviewMode_StartToPreview,
 	SampleMusicPreviewMode_ScreenMusic,
-	//SampleMusicPreviewMode_LastSong,	// continue playing the last song
+	SampleMusicPreviewMode_LastSong,	// continue playing the last song
 	NUM_SampleMusicPreviewMode,
 	SampleMusicPreviewMode_Invalid,
 };
