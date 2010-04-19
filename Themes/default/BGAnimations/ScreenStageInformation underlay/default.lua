@@ -6,7 +6,8 @@ t[#t+1] = Def.Sprite {
 	InitCommand=cmd(Center);
 	BeginCommand=function(self)
 		if GAMESTATE:GetCurrentSong() then
-			self:LoadBackground( GAMESTATE:GetCurrentSong():GetBackgroundPath() );
+			self:LoadFromSong(GAMESTATE:GetCurrentSong());
+			--self:LoadBackground( GAMESTATE:GetCurrentSong():GetBackgroundPath() );
 		end;
 	end;
 	OnCommand=cmd(diffusealpha,0;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;sleep,0.5;linear,0.50;diffusealpha,PREFSMAN:GetPreference("BGBrightness"));

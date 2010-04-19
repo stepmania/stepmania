@@ -27,6 +27,7 @@ local function CreateStops()
 				local beat = data[1];
 				local secs = data[2];
 				local beatTime = timingData:GetElapsedTimeFromBeat(beat);
+				if beatTime < 0 then beatTime = 0; end;
 
 				stopFrame[#stopFrame+1] = Def.ActorFrame {
 					Def.Quad {
