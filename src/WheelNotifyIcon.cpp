@@ -16,6 +16,7 @@ static ThemeMetric<bool>	SHOW_TRAINING	("WheelNotifyIcon","ShowTraining");
 
 WheelNotifyIcon::WheelNotifyIcon()
 {
+	// Load( THEME->GetPathG("MusicWheelItem","WheelNotifyIcon") );
 	Load( THEME->GetPathG("WheelNotifyIcon","icons 4x2") );
 	StopAnimating();
 }
@@ -38,7 +39,7 @@ void WheelNotifyIcon::SetFlags( Flags flags )
 
 	switch( flags.iStagesForSong )
 	{
-	case 1:						break;
+	case 1:	break;
 	case 2:	m_vIconsToShow.push_back( long_ver );	break;
 	case 3:	m_vIconsToShow.push_back( marathon );	break;
 	default:	FAIL_M( ssprintf("flags.iStagesForSong = %d", flags.iStagesForSong) );
@@ -56,8 +57,11 @@ void WheelNotifyIcon::SetFlags( Flags flags )
 			m_vIconsToShow.push_back( empty );
 	}
 
-
 	m_vIconsToShow.resize( min(m_vIconsToShow.size(),2u) );	// crop to most important 2
+
+	// Broadcast Set message so items can react. (futures) -aj
+	//Message msg("Set");
+	//this->HandleMessage( msg );
 
 	/* Make sure the right icon is selected, since we might be drawn before
 	 * we get another update. */
@@ -75,6 +79,9 @@ void WheelNotifyIcon::Update( float fDeltaTime )
 {
 	if( m_vIconsToShow.size() > 0 )
 	{
+		/* We should probably end up parsing the vector and then dynamically
+		 * insert flag icons based on "priority". Easy to do, hopefully 
+			- Midiman */
 		const float fSecondFraction = fmodf( RageTimer::GetTimeSinceStartFast(), 1 );
 		const int index = (int)(fSecondFraction*m_vIconsToShow.size());
 		Sprite::SetState( m_vIconsToShow[index] );

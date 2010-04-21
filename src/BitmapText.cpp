@@ -96,7 +96,7 @@ BitmapText & BitmapText::operator=(const BitmapText &cpy)
 
 	if( m_pFont )
 		FONT->UnloadFont( m_pFont );
-	
+
 	if( cpy.m_pFont != NULL )
 		m_pFont = FONT->CopyFont( cpy.m_pFont );
 	else
@@ -198,7 +198,7 @@ void BitmapText::BuildChars()
 
 	m_aVertices.clear();
 	m_vpFontPageTextures.clear();
-	
+
 	if( m_wTextLines.empty() )
 		return;
 
@@ -244,8 +244,8 @@ void BitmapText::BuildChars()
 			iX += g.m_iHadvance;
 
 			// set texture coordinates
-			v[0].t = RageVector2( g.m_TexRect.left,		g.m_TexRect.top );
-			v[1].t = RageVector2( g.m_TexRect.left,		g.m_TexRect.bottom );
+			v[0].t = RageVector2( g.m_TexRect.left,	g.m_TexRect.top );
+			v[1].t = RageVector2( g.m_TexRect.left,	g.m_TexRect.bottom );
 			v[2].t = RageVector2( g.m_TexRect.right,	g.m_TexRect.bottom );
 			v[3].t = RageVector2( g.m_TexRect.right,	g.m_TexRect.top );
 
@@ -292,8 +292,8 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 			FadeSize.right = (1.0f-LeftPercent) * fHorizRemaining;
 		}
 
-		/* We fade from 0 to LeftColor, then from RightColor to 0.  (We won't fade all the way to
-		 * 0 if the crop is beyond the outer edge.) */
+		/* We fade from 0 to LeftColor, then from RightColor to 0. (We won't fade
+		 * all the way to 0 if the crop is beyond the outer edge.) */
 		const float fRightAlpha  = SCALE( FadeSize.right,  FadeDist.right,  0, 1, 0 );
 		const float fLeftAlpha   = SCALE( FadeSize.left,   FadeDist.left,   0, 1, 0 );
 
@@ -314,7 +314,7 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 			float fAlpha = 1.0f;
 			if( FadeSize.left > 0.001f )
 			{
-				/* Add .5, so we fade wrt. the center of the vert, not the left side. */
+				// Add .5, so we fade wrt. the center of the vert, not the left side.
 				float fPercent = SCALE( start+0.5f, fLeftFadeStartGlyph, fLeftFadeStopGlyph, 0.0f, 1.0f );
 				fPercent = clamp( fPercent, 0.0f, 1.0f );
 				fAlpha *= fPercent * fLeftAlpha;
@@ -403,7 +403,7 @@ void BitmapText::SetTextInternal()
 
 		// This does not work in all languages:
 		/* "...I can add Japanese wrapping, at least. We could handle hyphens
-		 * and soft hyphens and pretty easily, too. -glenn */
+		 * and soft hyphens and pretty easily, too." -glenn */
 		// TODO: Move this wrapping logic into Font
 		vector<RString> asLines;
 		split( m_sText, "\n", asLines, false );
@@ -709,7 +709,7 @@ void BitmapText::DrawPrimitives()
 	}
 }
 
-/* Rebuild when these change. */
+// Rebuild when these change.
 void BitmapText::SetHorizAlign( float f )
 {
 	float fHorizAlign = m_fHorizAlign;
@@ -798,7 +798,7 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 	// Get the glow color.
 	lua_getfield( L, iTab, "Glow" );
 	glow.FromStack( L, -1 );
-	
+
 	lua_settop( L, iTab - 1 );
 }
 
@@ -840,7 +840,7 @@ public:
 	{
 		size_t iPos = IArg(1);
 		BitmapText::Attribute attr = p->GetDefaultAttribute();
-		
+
 		attr.FromStack( L, 2 );
 		p->AddAttribute( iPos, attr );
 		return 0;
