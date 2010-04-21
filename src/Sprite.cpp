@@ -1104,7 +1104,9 @@ public:
 	static int LoadBanner( T* p, lua_State *L )
 	{
 		RageTextureID ID( SArg(1) );
+		TEXTUREMAN->DisableOddDimensionWarning();
 		p->Load( Sprite::SongBannerTexture(ID) );
+		TEXTUREMAN->EnableOddDimensionWarning();
 		return 1;
 	}
 
