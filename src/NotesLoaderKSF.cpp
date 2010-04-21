@@ -101,7 +101,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 
 	if( iTickCount == -1 )
 	{
-		iTickCount = 2;
+		iTickCount = 2; // Direct Move 0.5 has a default value of 4... -aj
 		LOG->UserLog( "Song file", sPath, "doesn't have a TICKCOUNT. Defaulting to %i.", iTickCount );
 	}
 
@@ -391,14 +391,22 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		}
 		else if ( 0==stricmp(sValueName,"TICKCOUNT") )
 		{
-			/* TICKCOUNT is will be used below if there are DM compliant BPM changes and stops.
-			 * It will be called again in LoadFromKSFFile for the actual steps. */
+			/* TICKCOUNT will be used below if there are DM compliant BPM changes
+			 * and stops. It will be called again in LoadFromKSFFile for the
+			 * actual steps. */
 			iTickCount = atoi( sParams[1] );
-			iTickCount = iTickCount > 0 ? iTickCount : 2;
+			iTickCount = iTickCount > 0 ? iTickCount : 2; // again, Direct Move uses 4 as a default.
+			// add a time signature for those using the [Player]
+			// CheckpointsUseTimeSignatures metric. -aj
+			TimeSignatureSegment seg;
+			seg.m_iStartRow = BeatToNoteRow(0.0f);
+			seg.m_iNumerator = iTickCount; 
+			seg.m_iDenominator = 4; 
+			out.m_Timing.AddTimeSignatureSegment( seg );
 		}
 		else if ( 0==stricmp(sValueName,"STEP") )
 		{
-			/* STEP will always be the last header in a KSF file by design.  Due to
+			/* STEP will always be the last header in a KSF file by design. Due to
 			 * the Direct Move syntax, it is best to get the rows of notes here. */
 			RString theSteps = sParams[1];
 			TrimLeft( theSteps );
@@ -458,16 +466,16 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			StripCrnl( NoteRowString );
 
 			if( NoteRowString == "" )
-				continue;	// Empty rows do us no good.
+				continue; // ignore empty rows.
 
-			if( NoteRowString == "2222222222222" ) // Row of 2s = end.  Confirm KIUCompliency here.
+			if( NoteRowString == "2222222222222" ) // Row of 2s = end. Confirm KIUCompliency here.
 			{
 				if (!bDMRequired)
 					bKIUCompliant = true;
 				break;
 			}
 
-			/* This is where the DMRequired test will take place. */
+			// This is where the DMRequired test will take place.
 			if( NoteRowString.size() != 13)
 			{
 				if (BeginsWith(NoteRowString, "|T") || BeginsWith(NoteRowString, "|B") ||
@@ -503,7 +511,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				}
 				else
 				{
-					/* Quit while we're ahead if any bad syntax is spotted. */
+					// Quit while we're ahead if any bad syntax is spotted.
 					LOG->UserLog( "Song file", sPath, "has an invalid RowString \"%s\".",
 						      NoteRowString.c_str() );
 					return false;
@@ -513,6 +521,12 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			if( bTickChangeNeeded )
 			{
 				iTickCount = tickToChange;
+				LOG->Trace( "Adding time signature of %i/4 at beat %f", iTickCount, fCurBeat );
+				TimeSignatureSegment seg;
+				seg.m_iStartRow = BeatToNoteRow(fCurBeat);
+				seg.m_iNumerator = iTickCount; 
+				seg.m_iDenominator = 4; 
+				out.m_Timing.AddTimeSignatureSegment( seg );
 				bTickChangeNeeded = false;
 			}
 			if( bBPMChangeNeeded )
@@ -531,7 +545,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		}
 	}
 
-	/* Try to fill in missing bits of information from the pathname. */
+	// Try to fill in missing bits of information from the pathname.
 	{
 		vector<RString> asBits;
 		split( sPath, "/", asBits, true);
@@ -565,7 +579,7 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	vector<RString> arrayKSFFileNames;
 	GetDirListing( sDir + RString("*.ksf"), arrayKSFFileNames );
 
-	/* We shouldn't have been called to begin with if there were no KSFs. */
+	// We shouldn't have been called to begin with if there were no KSFs.
 	ASSERT( arrayKSFFileNames.size() );
 
 	bool bKIUCompliant = false;
