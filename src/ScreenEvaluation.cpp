@@ -197,6 +197,7 @@ void ScreenEvaluation::Init()
 				case RadarCategory_Mines:
 				case RadarCategory_Hands:
 				case RadarCategory_Rolls:
+				case RadarCategory_Lifts:
 					ss.m_player[p].m_radarPossible[rc] = 1 + (rand() % 200);
 					ss.m_player[p].m_radarActual[rc] = rand() % (int)(ss.m_player[p].m_radarPossible[rc]);
 					break;
@@ -546,6 +547,7 @@ void ScreenEvaluation::Init()
 				static const int indeces[NUM_DetailLine] =
 				{
 					RadarCategory_TapsAndHolds, RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines, RadarCategory_Hands, RadarCategory_Rolls
+					//, RadarCategory_Lifts
 				};
 				const int ind = indeces[l];
 				const int iActual = lrintf(m_pStageStats->m_player[p].m_radarActual[ind]);
