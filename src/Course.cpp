@@ -416,10 +416,12 @@ static void CourseSortSongs( SongSort sort, vector<Song*> &vpPossibleSongs, Rand
 			SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), false );	// ascending
 		break;
 	case SongSort_TopGrades:
-		SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, true );	// descending
+		if( PROFILEMAN )
+			SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, true );	// descending
 		break;
 	case SongSort_LowestGrades:
-		SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, false );	// ascending
+		if( PROFILEMAN )
+			SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, false );	// ascending
 		break;
 	}
 }
