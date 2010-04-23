@@ -1,7 +1,7 @@
 -- SSC Color Module and Library
-local nilColor = color("0,0,0,0")
-
-Colors = {
+local nilColor = color("0,0,0,0");
+-- Double Entree.
+Color = {
 -- UI Colors
 -- These colors are common to the theme interface and should be used
 -- often to make use of these efficiently.
@@ -158,7 +158,58 @@ Colors = {
 		local c = cColor;
 		return { c[1],c[2],c[3],fAlpha };
 	end,
-}
+};
+Colors = Color;
+local DifficultyColors = {
+	--[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
+	in some cases, especially to apply new colors for stuff you
+	couldn't before. (huh? -aj) ]]
+	Beginner	= color("#ff32f8"),			-- light cyan
+	Easy		= color("#2cff00"),			-- green
+	Medium		= color("#fee600"),			-- yellow
+	Hard		= color("#ff2f39"),			-- red
+	Challenge	= color("#1cd8ff"),			-- light blue
+	Edit		= color("0.8,0.8,0.8,1"),	-- gray
+	Couple		= color("#ed0972"),			-- hot pink
+	Routine		= color("#ff9a00"),			-- orange
+	--[[ These are for courses, so let's slap them here in case someone
+	wanted to use Difficulty in Course and Step regions. ]]
+	Difficulty_Beginner	= color("0.0,0.9,1.0,1"),		-- purple
+	Difficulty_Easy		= color("0.9,0.9,0.0,1"),		-- green
+	Difficulty_Medium	= color("1.0,0.1,0.1,1"),		-- yellow
+	Difficulty_Hard		= color("0.2,1.0,0.2,1"),		-- red
+	Difficulty_Challenge	= color("0.2,0.6,1.0,1"),	-- light blue
+	Difficulty_Edit 	= color("0.8,0.8,0.8,1"),	-- gray
+	Difficulty_Couple	= color("#ed0972"),			-- hot pink
+	Difficulty_Routine	= color("#ff9a00"),			-- orange
+};
+local StageColors = {
+	Stage_1st	= color("#00ffc7"),
+	Stage_2nd	= color("#58ff00"),
+	Stage_3rd	= color("#f400ff"),
+	Stage_4th	= color("#00ffda"),
+	Stage_5th	= color("#ed00ff"),
+	Stage_6th	= color("#73ff00"),
+	Stage_Next	= color("#73ff00"),
+	Stage_Final	= color("#ff0707"),
+	Stage_Extra1	= color("#fafa00"),
+	Stage_Extra2	= color("#ff0707"),
+	Stage_Nonstop	= color("#FFFFFF"),
+	Stage_Oni	= color("#FFFFFF"),
+	Stage_Endless	= color("#FFFFFF"),
+	Stage_Event	= color("#FFFFFF"),
+	Stage_Demo	= color("#FFFFFF"),
+};
+local JudgmentColors = {
+	JudgmentLine_W1		= color("#00ffc7"),
+	JudgmentLine_W2		= color("#f6ff00"),
+	JudgmentLine_W3		= color("#00ff78"),
+	JudgmentLine_W4		= color("#34bfff"),
+	JudgmentLine_W5		= color("#e44dff"),
+	JudgmentLine_Held	= color("#FFFFFF"),
+	JudgmentLine_Miss	= color("#ff3c3c"),
+	JudgmentLine_MaxCombo	= color("#ffc600"),
+};
 --[[ Fallbacks ]]
 function Color(c)
 	return Colors[c];
@@ -193,16 +244,16 @@ function PlayerScoreColor( pn )
 end
 
 function CustomDifficultyToColor( sCustomDifficulty ) 
-	return Colors.Difficulty[sCustomDifficulty];
+	return DifficultyColors[sCustomDifficulty];
 end
 
 function CustomDifficultyToDarkColor( sCustomDifficulty ) 
-	local c = Colors.Difficulty[sCustomDifficulty];
+	local c = DifficultyColors[sCustomDifficulty];
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
 end
 
 function CustomDifficultyToLightColor( sCustomDifficulty ) 
-	local c = Colors.Difficulty[sCustomDifficulty];
+	local c = DifficultyColors[sCustomDifficulty];
 	return { scale(c[1],0,1,0.5,1), scale(c[2],0,1,0.5,1), scale(c[3],0,1,0.5,1), c[4] };
 end
 
@@ -217,17 +268,17 @@ function StageToColor( stage )
 end
 
 function StageToStrokeColor( stage )
-	local c = Colors.Stage[stage];
+	local c = StageColors[stage];
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
 end
 
 function JudgmentLineToColor( i )
-	local c = Colors.JudgmentLine[i];
+	local c = JudgmentColors[i];
 	if c then return c end
 	return color("#000000");
 end
 
 function JudgmentLineToStrokeColor( i )
-	local c = Colors.JudgmentLine[i];
+	local c = JudgmentColors[i];
 	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
 end
