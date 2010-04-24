@@ -20,14 +20,14 @@
 			<title>sm-ssc Lua Information</title>
 			<style type="text/css">
 			th {
-				background-color: #DDDDDD;
+				background: #DDDDDD url(./bgline.png) repeat-x scroll 0 0;
 				border: 0px solid #888888;
 				border-width: thin;
 				padding: 3px;
 				font-size: 1.2em;
 			}
 			thead th {
-				background-color: #EEEEEE;
+				background: #EEEEEE url(./bgline.png) repeat-x scroll 0 0;
 			}
 			table {
 				border-style: none;
@@ -47,37 +47,66 @@
 			.code {
 				font-family: monospace;
 			}
+			div fieldset {
+				padding: 1px;
+			}
 			.returnTypeCell {
 				font-family: monospace;
 				text-align: right;
 				vertical-align: text-top;
 				width: 10em;
-				background-color: #EEEEEE;
+				background: #EEEEEE url(./bgline.png) repeat-x scroll 0 0;
+				padding: 1px;
 			}
 			.descriptionCell {
 				text-align: justify;
 				vertical-align: text-top;
-				background-color: #DDEEFF;
+				background: #DDEEFF url(./bgline.png) repeat-x scroll 0 0;
+				padding: 1px;
+			}
+			fieldset div.descriptionCell{
+				margin: 1px 2px 1px 2px;
+				border: 1px solid #777;
 			}
 			.renamed{
 				text-align: justify;
 				vertical-align: text-top;
-				background-color: #FFEEDD;
+				background: #FFEEDD url(./bgline.png) repeat-x scroll 0 0;
+				padding: 1px;
+			}
+			fieldset div.renamed{
+				margin: 1px 2px 1px 2px;
+				border: 1px solid #777;
 			}
 			.sm-ssc{
 				text-align: justify;
 				vertical-align: text-top;
-				background-color: #FFDDEE;
+				background: #FFDDEE url(./bgline.png) repeat-x scroll 0 0;
+				padding: 1px;
+			}
+			fieldset div.sm-ssc{
+				margin: 1px 2px 1px 2px;
+				border: 1px solid #777;
 			}
 			._fallbackTheme{
 				text-align: justify;
 				vertical-align: text-top;
-				background-color: #DDFFEE;
+				background: #DDFFEE url(./bgline.png) repeat-x scroll 0 0;
+				padding: 1px;
+			}
+			fieldset div._fallbackTheme{
+				margin: 1px 2px 1px 2px;
+				border: 1px solid #777;
 			}
 			.defaultTheme{
 				text-align: justify;
 				vertical-align: text-top;
-				background-color: #FFD400;
+				background: #FFD400 url(./bgline.png) repeat-x scroll 0 0;
+				padding: 1px;
+			}
+			fieldset div.defaultTheme{
+				margin: 1px 2px 1px 2px;
+				border: 1px solid #777;
 			}
 			.descriptionName {
 				font-family: monospace;
@@ -189,9 +218,8 @@
 <xsl:template match="sm:Lua">
 	<div>
 		<div id="header">
-		<h2><a href="http://ssc.ajworld.net/sm-ssc/">sm-ssc</a> Lua Information</h2><br/>
-		<small>WARNING: Bindings are subject to change at any time. This includes, but is not limited to: renaming, removal, changing of arguments/return types.<br/>
-		To generate this file yourself, pass <code>--ExportLuaInformation</code> as an argument to the sm-ssc executable.</small>
+		<h2><a href="http://code.google.com/p/sm-ssc/">sm-ssc</a> Lua Information</h2><br/>
+		<small>A collection of Lua bindings which can be used in sm-ssc themes.</small>
 		</div>
 		<table id="sections">
 			<thead>
@@ -215,9 +243,9 @@
 		<fieldset>
 		<legend>Function Colors</legend>
 		<div class="descriptionCell">Available in SM4 baseline and sm-ssc</div>
-		<div class="renamed">Renamed or otherwise modified in sm-ssc (differences will be noted)</div>
+		<div class="renamed">Renamed or otherwise modified in sm-ssc</div>
 		<div class="sm-ssc">Available in sm-ssc only (for the time being)</div>
-		<div class="_fallbackTheme">Defined in sm-ssc's _fallback theme <small>(<em>Foundation</em>)</small></div>
+		<div class="_fallbackTheme">Defined in sm-ssc's _fallback theme</div>
 		<div class="defaultTheme">Defined in sm-ssc's default theme</div>
 		</fieldset>
 	</div>
@@ -465,7 +493,15 @@
 				</xsl:choose>
 			</xsl:attribute>
 			<span class="descriptionName">
-				<xsl:value-of select="@name" />
+				<xsl:choose>
+					<!-- make commands in certain sections link to the SMTheming
+						 wiki article for said command: -->
+					<xsl:when test="string($class)='Actor'"><a href="http://kki.ajworld.net/wiki/Commands:{@name}" title="'{@name}' on the SMTheming Wiki"><xsl:value-of select="@name" /></a></xsl:when>
+					<xsl:when test="string($class)='ActorFrame'"><a href="http://kki.ajworld.net/wiki/Commands:{@name}" title="'{@name}' on the SMTheming Wiki"><xsl:value-of select="@name" /></a></xsl:when>
+					<xsl:when test="string($class)='Sprite'"><a href="http://kki.ajworld.net/wiki/Commands:{@name}" title="'{@name}' on the SMTheming Wiki"><xsl:value-of select="@name" /></a></xsl:when>
+					<!-- and don't handle wiki links for anything else -->
+					<xsl:otherwise><xsl:value-of select="@name" /></xsl:otherwise>
+				</xsl:choose>
 			</span>
 			<span class="descriptionArguments">
 				<xsl:text>( </xsl:text>
