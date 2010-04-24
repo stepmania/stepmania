@@ -364,6 +364,9 @@
 	<Function name='bob' return='void' arguments=''>
 		Makes the Actor bob up and down. Can use <Link function='effectmagnitude' /> to define different bobbing behavior.
 	</Function>
+	<Function name='bounce' return='void' arguments=''>
+		Makes the Actor bounce, similar to bob but with one point acting as the ground. Can use <Link function='effectmagnitude' /> to define different bouncing behavior (with effectmagnitude values relating to x, y, and z movement).
+	</Function>
 	<Function name='bouncebegin' theme='_fallback' return='void' arguments='float time'>
 		[02 Actor.lua]
 	</Function>
@@ -1029,6 +1032,9 @@
 <Class name='Course'>
 	<Function name='GetAllTrails' return='{Trail}' arguments=''>
 		Returns a table of all the Trails in the Course.
+	</Function>
+	<Function name='GetBackgroundPath' sm-ssc='true' return='int' arguments=''>
+		Returns the path to the Course's background.
 	</Function>
 	<Function name='GetBannerPath' return='int' arguments=''>
 		Returns the path to the Course's banner.
@@ -1881,6 +1887,9 @@
 	<Function name='GetTotalJumps' return='int' arguments=''>
 		Returns the number of Jumps stepped on.
 	</Function>
+	<Function name='GetTotalLifts' sm-ssc='true' return='int' arguments=''>
+		Returns the number of successful Lifts.
+	</Function>
 	<Function name='GetTotalMines' return='int' arguments=''>
 		Returns the number of Mines stepped on.
 	</Function>
@@ -2289,6 +2298,9 @@
 	<Function name='HasStepsTypeAndDifficulty' return='bool' arguments='StepsType st, Difficulty d'>
 		Returns <code>true</code> if the song has steps for the specified difficulty in <code>st</code>.
 	</Function>
+	<Function name='HasAttacks' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the song has attacks.
+	</Function>
 	<Function name='HasBackground' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the song has a background.
 	</Function>
@@ -2392,6 +2404,13 @@
 	</Function>
 	<Function name='GetSongGroupColor' return='color' arguments='string sGroupName'>
 		Returns the song group color of <code>sGroupName</code>.
+	</Function>
+	<!-- sm-ssc additions: -->
+	<Function name='GetSongGroupNames' sm-ssc='true' return='{string}' arguments=''>
+		Returns a table containing all of the song group names.
+	</Function>
+	<Function name='GetSongsInGroup' sm-ssc='true' return='{Song}' arguments='string sGroupName'>
+		Returns a table containing all of the songs in group <code>sGroupName</code>.
 	</Function>
 	<Function name='ShortenGroupName' sm-ssc='true' return='string' arguments='string sGroupName'>
 		Returns the shortened group name (based on entries in Translations.xml).
@@ -2618,6 +2637,9 @@
 	</Function>
 	<Function name='GetPathG' return='string' arguments='string ClassName, string Element'>
 		Returns the path of an element in the Graphics folder.
+	</Function>
+	<Function name='GetPathInfoB' arguments='string ClassName, string Element' return='string, string, string'>
+		returns BGAnimation ResolvedPath, MatchingMetricsGroup, MatchingElement. Used in <Link class='GLOBAL' function='LoadFallbackB'>LoadFallbackB</Link> in themes/_fallback/02 Other.lua.
 	</Function>
 	<Function name='GetPathO' sm-ssc='true' return='string' arguments='string ClassName, string Element'>
 		Returns the path of an element in the Other folder.

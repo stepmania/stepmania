@@ -60,8 +60,8 @@
 		<Function name='HSVToHex'/>
 		<Function name='HitCombo'/>
 		<Function name='HoldHeadStep'/>
-		<Function name='HoldJudgmentFail'/>
-		<Function name='HoldJudgmentPass'/>
+		<Function name='HoldJudgmentHeld'/>
+		<Function name='HoldJudgmentLetGo'/>
 		<Function name='HoldTiming'/>
 		<Function name='Hour'/>
 		<Function name='Hue'/>
@@ -853,6 +853,7 @@
 			<Function name='GetTotalHands'/>
 			<Function name='GetTotalHolds'/>
 			<Function name='GetTotalJumps'/>
+			<Function name='GetTotalLifts'/>
 			<Function name='GetTotalMines'/>
 			<Function name='GetTotalNumSongsPlayed'/>
 			<Function name='GetTotalRolls'/>
@@ -1028,6 +1029,7 @@
 			<Function name='GetTranslitFullTitle'/>
 			<Function name='GetTranslitMainTitle'/>
 			<Function name='GetTranslitSubTitle'/>
+			<Function name='HasAttacks'/>
 			<Function name='HasBGChanges'/>
 			<Function name='HasBackground'/>
 			<Function name='HasBanner'/>
@@ -1066,6 +1068,8 @@
 			<Function name='GetSongColor'/>
 			<Function name='GetSongFromSteps'/>
 			<Function name='GetSongGroupColor'/>
+			<Function name='GetSongGroupNames'/>
+			<Function name='GetSongsInGroup'/>
 			<Function name='ShortenGroupName'/>
 		</Class>
 		<Class base='Actor' name='Sprite'>
@@ -1217,7 +1221,6 @@
 			<Function name='GetWheelItem'/>
 			<Function name='IsLocked'/>
 			<Function name='IsSettled'/>
-			<Function name='Move'/>
 		</Class>
 		<Class base='ActorFrame' name='WorkoutGraph'>
 			<Function name='SetFromCurrentWorkout'/>
@@ -1281,12 +1284,6 @@
 			<EnumValue name='&apos;AttractSoundFrequency_Every3Times&apos;' value='3'/>
 			<EnumValue name='&apos;AttractSoundFrequency_Every4Times&apos;' value='4'/>
 			<EnumValue name='&apos;AttractSoundFrequency_Every5Times&apos;' value='5'/>
-		</Enum>
-		<Enum name='BackgroundCacheMode'>
-			<EnumValue name='&apos;BackgroundCacheMode_Off&apos;' value='0'/>
-			<EnumValue name='&apos;BackgroundCacheMode_LowResPreload&apos;' value='1'/>
-			<EnumValue name='&apos;BackgroundCacheMode_LowResLoadOnDemand&apos;' value='2'/>
-			<EnumValue name='&apos;BackgroundCacheMode_Full&apos;' value='3'/>
 		</Enum>
 		<Enum name='BannerCacheMode'>
 			<EnumValue name='&apos;BannerCacheMode_Off&apos;' value='0'/>
@@ -1559,9 +1556,10 @@
 			<EnumValue name='&apos;PaneCategory_Rolls&apos;' value='3'/>
 			<EnumValue name='&apos;PaneCategory_Mines&apos;' value='4'/>
 			<EnumValue name='&apos;PaneCategory_Hands&apos;' value='5'/>
-			<EnumValue name='&apos;PaneCategory_MachineHighScore&apos;' value='6'/>
-			<EnumValue name='&apos;PaneCategory_MachineHighName&apos;' value='7'/>
-			<EnumValue name='&apos;PaneCategory_ProfileHighScore&apos;' value='8'/>
+			<EnumValue name='&apos;PaneCategory_Lifts&apos;' value='6'/>
+			<EnumValue name='&apos;PaneCategory_MachineHighScore&apos;' value='7'/>
+			<EnumValue name='&apos;PaneCategory_MachineHighName&apos;' value='8'/>
+			<EnumValue name='&apos;PaneCategory_ProfileHighScore&apos;' value='9'/>
 		</Enum>
 		<Enum name='PeakComboAward'>
 			<EnumValue name='&apos;PeakComboAward_1000&apos;' value='0'/>
@@ -1614,8 +1612,9 @@
 			<EnumValue name='&apos;RadarCategory_Mines&apos;' value='8'/>
 			<EnumValue name='&apos;RadarCategory_Hands&apos;' value='9'/>
 			<EnumValue name='&apos;RadarCategory_Rolls&apos;' value='10'/>
-			<EnumValue name='&apos;RadarCategory_MinMidiNote&apos;' value='11'/>
-			<EnumValue name='&apos;RadarCategory_MaxMidiNote&apos;' value='12'/>
+			<EnumValue name='&apos;RadarCategory_Lifts&apos;' value='11'/>
+			<EnumValue name='&apos;RadarCategory_MinMidiNote&apos;' value='12'/>
+			<EnumValue name='&apos;RadarCategory_MaxMidiNote&apos;' value='13'/>
 		</Enum>
 		<Enum name='RandomBackgroundMode'>
 			<EnumValue name='&apos;RandomBackgroundMode_Off&apos;' value='0'/>
@@ -1629,6 +1628,7 @@
 		<Enum name='SampleMusicPreviewMode'>
 			<EnumValue name='&apos;SampleMusicPreviewMode_Normal&apos;' value='0'/>
 			<EnumValue name='&apos;SampleMusicPreviewMode_ScreenMusic&apos;' value='1'/>
+			<EnumValue name='&apos;SampleMusicPreviewMode_LastSong&apos;' value='2'/>
 		</Enum>
 		<Enum name='ScoringType'>
 			<EnumValue name='&apos;ScoringType_New&apos;' value='0'/>
@@ -1800,13 +1800,13 @@
 		<Constant name='ASPECT_SCALE_FACTOR' value='1'/>
 		<Constant name='NUM_PLAYERS' value='2'/>
 		<Constant name='SCREEN_BOTTOM' value='480'/>
-		<Constant name='SCREEN_CENTER_X' value='427'/>
+		<Constant name='SCREEN_CENTER_X' value='384'/>
 		<Constant name='SCREEN_CENTER_Y' value='240'/>
 		<Constant name='SCREEN_HEIGHT' value='480'/>
 		<Constant name='SCREEN_LEFT' value='0'/>
-		<Constant name='SCREEN_RIGHT' value='854'/>
+		<Constant name='SCREEN_RIGHT' value='768'/>
 		<Constant name='SCREEN_TOP' value='0'/>
-		<Constant name='SCREEN_WIDTH' value='854'/>
+		<Constant name='SCREEN_WIDTH' value='768'/>
 		<Constant name='PLAYER_1' value='&apos;PlayerNumber_P1&apos;'/>
 		<Constant name='PLAYER_2' value='&apos;PlayerNumber_P2&apos;'/>
 		<Constant name='_VERSION' value='&apos;Lua 5.1&apos;'/>
@@ -1818,6 +1818,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc v1.0 beta 1</Version>
-	<Date>2010-03-24</Date>
+	<Version>sm-ssc v1.0 beta 2</Version>
+	<Date>2010-04-24</Date>
 </Lua>
