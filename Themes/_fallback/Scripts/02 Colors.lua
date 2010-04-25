@@ -1,6 +1,6 @@
 -- SSC Color Module and Library
 local nilColor = color("0,0,0,0");
--- Double Entree.
+-- Original Color Module.
 Color = {
 -- UI Colors
 -- These colors are common to the theme interface and should be used
@@ -159,6 +159,7 @@ Color = {
 		return { c[1],c[2],c[3],fAlpha };
 	end,
 };
+-- Remapped Color Module, since some themes are crazy
 Colors = Color;
 local DifficultyColors = {
 	--[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
