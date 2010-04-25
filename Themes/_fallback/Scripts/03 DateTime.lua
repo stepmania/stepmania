@@ -53,7 +53,7 @@ function date(format,...)
 	if ... then
 		-- convert value
 	else
-		-- convert today
+		-- convert current time
 		
 	end;
 end;

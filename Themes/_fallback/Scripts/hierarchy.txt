@@ -4,22 +4,47 @@ Hello, and welcome to the sm-ssc Scripts directory. You'll notice that our Lua
 scripts have numbers at the beginning of them. This is to control the order of
 execution.
 
-In sm-ssc, scripts in subdirectories of Scripts/
-(e.g. Scripts/01/somescript.lua) are loaded before scripts in the root of
-Scripts/ (e.g. Scripts/01 base.lua). This is important to know when making a
-theme for sm-ssc.
+In sm-ssc, scripts in subdirectories of Scripts/ (e.g. Scripts/01/somescript.lua)
+are loaded before scripts in the root of Scripts/ (e.g. Scripts/01 base.lua).
+This is important to know when making a theme for sm-ssc. It's also important
+to know that StepMania 4 (as of alpha 5) will not read scripts in subdirectories.
 
 In sm-ssc, there are five rings of script execution:
 
 00 - Initialization
-
+________________________________________________________________________________
 01 - Base
+There are three base scripts. "01 base.lua" is taken from StepMania 4's default
+theme and sets up very important function overrides and the "Var" alias (for
+lua.GetThreadVariable). The other two base scripts are sm-ssc specific.
 
+"01 alias.lua" contains non-compatibility aliases. To quote the file itself:
+"This is mainly here for making commands case-insensitive without needing to
+clutter up the C++ code. It can also be used to add custom functions that
+wouldn't otherwise belong somewhere else."
+
+"01 compat.lua" sets up compatibility aliases for some commands. Some commands
+were deprecated in sm-ssc (e.g. hidden), while others were renamed. If a problem
+was solved differently in sm-ssc, the corresponding StepMania 4 functions should
+live in here, and not the C++ code. (The prime example of this being
+PlayerStageStats:IsFullComboW* from SM4, whereas we have
+PlayerStageStats:FullComboOfScore, with the tap note score being passed in.)
+________________________________________________________________________________
 02 - Defaults
-
+The "02" scripts are pretty much the same scripts you'd find in StepMania 4's
+default theme. Some scripts do exhibit differences, however. The most notable
+of these changes is to "02 Color.lua", which adds a color library to the old
+StepMania 4 Colors script.
+________________________________________________________________________________
 03 - Extensions
-
+Scripts that extend normal (StepMania 4 default theme) functionality belong
+in the fourth ring. A number of these scripts come from KKI Labs (EnvUtils2,
+CustomSpeedMods, UserPreferences2), while others are from other themes (HSV)
+or written for sm-ssc (DateTime, Gameplay).
+________________________________________________________________________________
 04 - ?
+FileUtils and WidescreenHelpers are in the fifth ring. To be honest, I don't
+know why they were moved out here. -aj
 
 ================================================================================
 previously:
