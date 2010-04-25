@@ -13,8 +13,13 @@ function GetLocalProfiles()
 				InitCommand=cmd(shadowlength,1;y,-9;ztest,true);
 			};
 			LoadFont("Common Normal") .. {
-				Text=profile:GetNumTotalSongsPlayed() .. " Songs Played";
 				InitCommand=cmd(shadowlength,1;y,9;zoom,0.5;vertspacing,-8;ztest,true);
+				BeginCommand=function(self)
+					local numSongsPlayed = profile:GetNumTotalSongsPlayed();
+					local s = numSongsPlayed == 1 and "Song" or "Songs";
+					-- todo: localize
+					self:settext( numSongsPlayed.." "..s.." Played" );
+				end;
 			};
 		};
 		table.insert( ret, item );
@@ -26,12 +31,7 @@ end;
 function LoadPlayerStuff(Player)
 	local ret = {};
 
-	local pn;
-	if Player == PLAYER_1 then
-		pn = 1;
-	else
-		pn = 2;
-	end;
+	local pn = (Player == PLAYER_1) and 1 or 2;
 
 --[[ 	local t = LoadActor(THEME:GetPathB('', '_frame 3x3'), 'metal', 200, 230) .. {
 		Name = 'BigFrame';
@@ -132,8 +132,8 @@ function LoadPlayerStuff(Player)
 	}; --]]
 	t = LoadFont("Common Normal") .. {
 		Name = 'SelectedProfileText';
-		InitCommand=cmd(y,160);
-		OnCommand=cmd(shadowlength,1);
+		--InitCommand=cmd(y,160;shadowlength,1;diffuse,PlayerColor(Player));
+		InitCommand=cmd(y,160;shadowlength,1;);
 	};
 	table.insert( ret, t );
 
@@ -141,12 +141,7 @@ function LoadPlayerStuff(Player)
 end;
 
 function UpdateInternal3(self, Player)
-	local pn;
-	if Player == PLAYER_1 then
-		pn = 1;
-	else
-		pn = 2;
-	end;
+	local pn = (Player == PLAYER_1) and 1 or 2;
 	local frame = self:GetChild(string.format('P%uFrame', pn));
 	local scroller = frame:GetChild('Scroller');
 	local seltext = frame:GetChild('SelectedProfileText');
