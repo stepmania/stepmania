@@ -93,4 +93,6 @@ for pn in ivalues(PlayerNumber) do
 	};
 end
 
+t[#t+1] = StandardDecorationFromFileOptional("LifeDifficulty","LifeDifficulty");
+
 return t
