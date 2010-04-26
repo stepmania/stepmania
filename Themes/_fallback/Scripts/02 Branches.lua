@@ -27,6 +27,9 @@ end;
 Branch = {
 	TitleMenu = "ScreenTitleMenu",
 	AfterProfileLoad = function()
+		return "ScreenSelectProfile"
+	end,
+	AfterSelectProfile = function()
 		if ( THEME:GetMetric("Common","AutoSetStyle") == true ) then
 			if IsNetConnected() then
 				-- use SelectStyle in online...
