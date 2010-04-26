@@ -1098,6 +1098,28 @@
 	<Function name='GetSong' return='Song' arguments=''>
 		Returns the Song that this CourseEntry corresponds to.
 	</Function>
+	<!-- sm-ssc additions -->
+	<Function name='GetGainLives' sm-ssc='true' return='int' arguments=''>
+		Returns the number of lives gained after completing the song.
+	</Function>
+	<Function name='GetGainSeconds' sm-ssc='true' return='float' arguments=''>
+		Returns the number of seconds gained after completing the song.
+	</Function>
+	<Function name='GetNormalModifiers' sm-ssc='true' return='string' arguments=''>
+		Returns any stage (non-timed) modifiers.
+	</Function>
+	<Function name='GetNumModChanges' sm-ssc='true' return='int' arguments=''>
+		Returns the number of modifier changes in this CourseEntry.
+	</Function>
+	<Function name='GetTextDescription' sm-ssc='true' return='string' arguments=''>
+		Returns a comma-delimited string representing various facts about the CourseEntry.
+	</Function>
+	<Function name='IsFixedSong' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if this CourseEntry is a fixed song.
+	</Function>
+	<Function name='IsSecret' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if this CourseEntry is secret.
+	</Function>
 </Class>
 <Class name='CryptManager'>
 	<Function name='MD5File' sm-ssc='true' return='string' arguments='string sPath'>

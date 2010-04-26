@@ -539,7 +539,14 @@
 			<Function name='SetFromGameState'/>
 		</Class>
 		<Class name='CourseEntry'>
+			<Function name='GetGainLives'/>
+			<Function name='GetGainSeconds'/>
+			<Function name='GetNormalModifiers'/>
+			<Function name='GetNumModChanges'/>
 			<Function name='GetSong'/>
+			<Function name='GetTextDescription'/>
+			<Function name='IsFixedSong'/>
+			<Function name='IsSecret'/>
 		</Class>
 		<Class name='CryptManager'>
 			<Function name='MD5File'/>
@@ -1819,5 +1826,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>sm-ssc v1.0 beta 2</Version>
-	<Date>2010-04-24</Date>
+	<Date>2010-04-26</Date>
 </Lua>
