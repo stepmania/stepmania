@@ -94,5 +94,6 @@ for pn in ivalues(PlayerNumber) do
 end
 
 t[#t+1] = StandardDecorationFromFileOptional("LifeDifficulty","LifeDifficulty");
+t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficulty");
 
 return t
