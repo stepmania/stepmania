@@ -99,10 +99,27 @@ public:
 			lua_pushnil(L);
 		return 1;
 	}
+	DEFINE_METHOD( IsSecret, bSecret );
+	DEFINE_METHOD( IsFixedSong, IsFixedSong() );
+	DEFINE_METHOD( GetGainSeconds, fGainSeconds );
+	DEFINE_METHOD( GetGainLives, iGainLives );
+	DEFINE_METHOD( GetNormalModifiers, sModifiers );
+	// GetTimedModifiers - table
+	DEFINE_METHOD( GetNumModChanges, GetNumModChanges() );
+	DEFINE_METHOD( GetTextDescription, GetTextDescription() );
 
 	LunaCourseEntry()
 	{
 		ADD_METHOD( GetSong );
+		// sm-ssc additions:
+		ADD_METHOD( IsSecret );
+		ADD_METHOD( IsFixedSong );
+		ADD_METHOD( GetGainSeconds );
+		ADD_METHOD( GetGainLives );
+		ADD_METHOD( GetNormalModifiers );
+		//ADD_METHOD( GetTimedModifiers );
+		ADD_METHOD( GetNumModChanges );
+		ADD_METHOD( GetTextDescription );
 	}
 };
 
@@ -1070,25 +1087,25 @@ public:
 
 	LunaCourse()
 	{
-		ADD_METHOD( GetPlayMode );
+		ADD_METHOD( GetPlayMode ); // [sm-ssc] returns PlayMode enum now
 		ADD_METHOD( GetDisplayFullTitle );
 		ADD_METHOD( GetTranslitFullTitle );
 		ADD_METHOD( HasMods );
 		ADD_METHOD( HasTimedMods );
-		ADD_METHOD( GetCourseType );
+		ADD_METHOD( GetCourseType ); // [sm-ssc] returns CourseType enum now
 		ADD_METHOD( GetCourseEntry );
 		ADD_METHOD( GetAllTrails );
 		ADD_METHOD( GetBannerPath );
-		ADD_METHOD( GetBackgroundPath );
+		ADD_METHOD( GetBackgroundPath ); // sm-ssc addition
 		ADD_METHOD( GetGroupName );
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( GetEstimatedNumStages );
 		ADD_METHOD( GetTotalSeconds );
 		ADD_METHOD( IsEndless );
-		ADD_METHOD( IsNonstop );
-		ADD_METHOD( IsOni );
+		ADD_METHOD( IsNonstop );  // sm-ssc addition
+		ADD_METHOD( IsOni );  // sm-ssc addition
 		ADD_METHOD( GetGoalSeconds );
-		ADD_METHOD( HasBanner );
+		ADD_METHOD( HasBanner );  // sm-ssc addition
 	}
 };
 
