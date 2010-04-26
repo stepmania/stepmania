@@ -55,7 +55,7 @@ local songs = {
 	"firesong",		-- November
 	"holidays",		-- December
 };
--- MonthOfYear starts at 0. Lua arrays are 1-indexed, so correct
+-- MonthOfYear starts at 0. Lua arrays are 1-indexed, so fix the value
 local curMonth = MonthOfYear()+1;
 return THEME:GetPathS("",songs[curMonth]);
 [/code]

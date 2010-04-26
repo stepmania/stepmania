@@ -20,8 +20,8 @@ BGAnimations from SM4's default theme will be loaded instead of sm-ssc's _fallba
 2b) sm-ssc's _fallback theme defines a variable, SSC, like so:
 [code]SSC = (ProductID() == "sm-ssc");[/code]
 This will return true if it's sm-ssc, or false if it's SM4.
-You should define this in a file in your theme, so that SM4 will be able to
-recognize it.
+You should define this in a script (00 themeInfo.lua is a good place), so that
+SM4 will be able to recognize it.
 
 With this "SSC guard" in place, you can now wrap things in "if SSC then"
 statements if they won't work on SM4. You can also provide alternatives if the
@@ -35,3 +35,16 @@ releasing the theme and saying "oh, just play it in fullscreen mode".
 If you have hidden the error dialogs, you'll need to modify Preferences.ini. 
 Find the IgnoredDialogs= line and remove everything after the = sign. You will
 now recieve the error messages in windowed mode again.
+
+4) While this is a SSC-specific practice, having a themeInfo file set up in
+your theme's Scripts directory is a good way to store information about the
+theme (e.g. version number, date, product code, etc.)
+
+An example of a themeInfo script:
+[code]
+themeInfo = {
+	Name = "your theme's name",
+	Version = "v1.0", -- typically a float or string. floats are easier to compare.
+	Date = "20100426 1115",
+};
+[/code]

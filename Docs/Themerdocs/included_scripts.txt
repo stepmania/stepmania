@@ -1,11 +1,18 @@
 Scripts included with sm-ssc's fallback theme
 ---------------------------------------------
+(as of sm-ssc v1.0 beta 2, this document is out of date.
+Please see hierarchy.txt referenced below for an up-to-date look at the script
+execution order/prefixes. This document will be updated again soon)
+
 As a StepMania fork focused on themers, sm-ssc is going to be a bit different
 than a normal StepMania 4 setup. The fallback theme includes a number of scripts
 you won't find in the SM4 default theme. This file is meant to be an overview of
 what happens in the scripts; it does not go in depth with any of them. Please
 see the documentation included in the scripts as comments, as well as any text
 files for the more sufficiently advanced scripts.
+
+For an explanation of why the scripts are named with numbers at the beginning,
+see hierarchy.txt in Themes/_fallback/Scripts/ for more information.
 
 ==00 init.lua== (StepMania 4)
 Always executed first, this file does the following:

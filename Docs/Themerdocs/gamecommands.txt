@@ -39,7 +39,7 @@ all the known gamecommands (pre-sm-ssc)
 	}
 }
 
-"weight" ){m_iWeightPounds = atoi( sValue );}
+"weight" {m_iWeightPounds = atoi( sValue );}
 
 "goalcalories" {m_iGoalCalories = atoi( sValue );}
 

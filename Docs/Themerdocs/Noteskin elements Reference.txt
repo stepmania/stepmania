@@ -95,4 +95,4 @@ Fret3
 Fret4
 Fret5
 
---lights (rofl)--
+--lights-- (rofl)

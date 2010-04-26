@@ -56,7 +56,7 @@ More in-depth descriptions will come with each chapter.
 
 1.1.1 Metrics
 The metrics (metrics.ini) contain the core elements of a theme. Most everything
-that has to do with StepMania's built-in types will be found here.
+that has to do with StepMania's built-in types and elements will be found here.
 
 1.1.2 BGAnimations
 BGAnimations are used to decorate screens. In SM4, they use Lua for BGAnims,
@@ -102,7 +102,7 @@ technical). If you've come from theming an earlier version where they didn't
 exist (3.9), this folder might take some getting used to. This directory holds
 Lua scripts that are loaded on startup. Some scripts lay down the theming
 foundation, meaning that if you're crazy enough, you can rewrite everything.
-If you do that though, this guide will start to make a lot less sense.
+If you're capable of that, though, you probably don't need to read this guide. :)
 
 1.1.8 Other
 The Other folder contains miscellaneous things. You generally won't need to
