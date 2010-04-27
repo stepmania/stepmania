@@ -565,6 +565,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScreenGameplaySyncMachine.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenGameplaySyncMachine.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ScreenHighScores.cpp"
 				>
 			</File>
@@ -1062,14 +1070,6 @@
 			</File>
 			<File
 				RelativePath="AutoKeysounds.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BackgroundCache.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\BackgroundCache.h"
 				>
 			</File>
 			<File
