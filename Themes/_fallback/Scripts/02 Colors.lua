@@ -161,6 +161,12 @@ Color = {
 };
 -- Remapped Color Module, since some themes are crazy
 Colors = Color;
+
+local PlayerColors = {
+	PLAYER_1	= color("#ef403d"),
+	PLAYER_2	= color("#0089cf"),
+};
+
 local DifficultyColors = {
 	--[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
 	in some cases, especially to apply new colors for stuff you
@@ -180,9 +186,9 @@ local DifficultyColors = {
 	Difficulty_Medium	= color("1.0,0.1,0.1,1"),		-- yellow
 	Difficulty_Hard		= color("0.2,1.0,0.2,1"),		-- red
 	Difficulty_Challenge	= color("0.2,0.6,1.0,1"),	-- light blue
-	Difficulty_Edit 	= color("0.8,0.8,0.8,1"),	-- gray
-	Difficulty_Couple	= color("#ed0972"),			-- hot pink
-	Difficulty_Routine	= color("#ff9a00"),			-- orange
+	Difficulty_Edit 	= color("0.8,0.8,0.8,1"),		-- gray
+	Difficulty_Couple	= color("#ed0972"),				-- hot pink
+	Difficulty_Routine	= color("#ff9a00"),				-- orange
 };
 local StageColors = {
 	Stage_1st	= color("#00ffc7"),
@@ -234,13 +240,13 @@ function ColorDarkTone(c)
 end;
 
 function PlayerColor( pn )
-	if pn == PLAYER_1 then return Colors.Player['P1'] end	-- pink-red
-	if pn == PLAYER_2 then return Colors.Player['P2'] end	-- sea-blue
+	if pn == PLAYER_1 then return color("#ef403d") end	-- pink-red
+	if pn == PLAYER_2 then return color("#0089cf") end	-- sea-blue
 	return color("1,1,1,1")
 end
 function PlayerScoreColor( pn )
-	if pn == PLAYER_1 then return Colors.Player['P1'] end	-- pink-red
-	if pn == PLAYER_2 then return Colors.Player['P2'] end	-- sea-blue
+	if pn == PLAYER_1 then return color("#ef403d") end	-- pink-red
+	if pn == PLAYER_2 then return color("#0089cf") end	-- sea-blue
 	return color("1,1,1,1")
 end
 
