@@ -95,5 +95,6 @@ end
 
 t[#t+1] = StandardDecorationFromFileOptional("LifeDifficulty","LifeDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficulty");
+t[#t+1] = StandardDecorationFromFileOptional("GameType","GameType");
 
 return t
