@@ -1,0 +1,103 @@
+reference gradients
+4th:  #f99d1c -> #ed1c24 (orange -> red)
+8th:  #0066b3 -> #00bfe8 (blue -> cyan)
+12th: #d70b8c -> #6f2c91 (pink -> purple)
+16th: #fff200 -> #62bb46 (yellow -> green)
+24th: #fdb813 -> #fff200 (gold -> yellow)
+32nd: #f49ac1 -> #d70b8c (pinkish)
+48th: #00ffff -> #00a9a4 (cyan -> dark cyan)
+64th: # -> # (brown; skip me!)
+
+________________
+new order
+
+orange -> red
+red -> pink
+pink -> purple
+purple -> blue
+blue -> cyan
+cyan -> green
+green -> gold
+gold -> orange
+
+#f99d1c orange
+#f78b1f between orange and red 1
+=======
+#f57920 between orange and red 2
+#ed1c24 red
+-------------------
+#d70b8c pinkish
+#b43092 between pinkish and dark purple 1
+=======
+#92278f between pinkish and dark purple 2
+#6f2c91 dark purple
+-------------------
+#0066b3 blue
+#00a0da between blue and cyan 1
+=======
+#00bfe8 between blue and cyan 2
+#66ffa3 cyan
+-------------------
+#a3ff66 green
+#ccff66 between green and gold 1
+=======
+#ebff66 between green and gold 2
+#faed00 gold
+
+________________
+:::old order:::
+
+arrow 1:
+#ed1c24 <- incoming
+#f99d1c
+#d5fa1b <- outgoing
+________
+arrow 2:
+#ed1c9d
+#ed1c24
+#f99d1c
+________
+arrow 3:
+#c31ced
+#ed1c9d
+#ed1c24
+________
+arrow 4:
+#4a1ced
+#c31ced
+#ed1c9d
+________
+arrow 5:
+#1c69ed
+#4a1ced
+#c31ced
+________
+arrow 6:
+#1ce3ed
+#1c69ed
+#4a1ced
+________
+arrow 7:
+#1ced7e
+#1ce3ed
+#1c69ed
+________
+arrow 8:
+#35ed1c
+#1ced7e
+#1ce3ed
+________
+arrow 9:
+#afed1c
+#35ed1c
+#1ced7e
+________
+arrow 10:
+#edb21c
+#afed1c
+#35ed1c
+________
+arrow 11:
+#ed381c
+#edb21c
+#afed1c
