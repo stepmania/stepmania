@@ -9,6 +9,38 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100426
+--------
+* [Course.cpp] add a few Lua bindings to CourseEntry:
+ * IsSecret - bool
+ * IsFixedSong - bool
+ * GetGainSeconds - float
+ * GetGainLives - int
+ * GetNormalModifiers - string
+ * GetNumModChanges - int
+ * GetTextDescription - string
+* Re-add ScreenGameplaySyncMachine to project files that were missing it.
+
+20100422
+--------
+* libpng upgraded from 1.2.7 to 1.4.1 (Windows, BSD)
+  (libpng upgrade was not carried out for Xbox, but that version does
+  not run anyways, so it is no operational loss.)
+
+20100420
+--------
+* Convert |T| values in KSF files to TimeSignatures for [Player]
+  CheckpointsUseTimeSignatures metric.
+
+20100419
+--------
+* Add SampleMusicPreviewMode_LastSong, which gives similar behavior to
+  DDR Extreme. There is a hack for the random music based on Takuya's
+  DDR Extreme theme; I am unsure if this is accurate behavior or not. [AJ]
+* Allow MusicWheelItem Random and Portal to have different graphics
+  from Roulette.
+* Added Song:HasAttacks() Lua binding.
+
 20100417
 --------
 * Finally get rid of PLAYER_COLOR. ColorP1Command and ColorP2Command no
