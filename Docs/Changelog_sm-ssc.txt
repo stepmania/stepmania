@@ -23,7 +23,7 @@ _____________________________________________________________________________
 
 20100422
 --------
-* libpng upgraded from 1.2.7 to 1.4.1 (Windows, BSD)
+* libpng upgraded from 1.2.7 to 1.4.1 (Windows, Mac, BSD)
   (libpng upgrade was not carried out for Xbox, but that version does
   not run anyways, so it is no operational loss.)
 
