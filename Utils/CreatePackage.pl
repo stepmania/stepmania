@@ -6,7 +6,7 @@ my $CWD = `pwd`;
 chomp $CWD;
 my $ZIP = "zip";
 if ( -x "$CWD/zip.exe" ) { $ZIP = "$CWD/zip.exe"; }
-	
+
 if( $#ARGV < 1 )
 {
 	print "Usage: create-zips.pl <game directory> <zip directory>\n";
@@ -70,9 +70,9 @@ sub ZipFiles($$@)
 			push @lst, $list[$f];
 			$lst_hash{$list[$f]} = 1;
 		}
-		
+
 		# @lst contains the files for zip number $zipno.
-		
+
 		my $filename = $out . "/$file.smzip";
 		# If the ZIP already exists, get a list of files in it.  Delete any files
 		# that shouldn't be there.
@@ -84,13 +84,13 @@ sub ZipFiles($$@)
 			shift @files; # "--------    ----   ----    ----"
 			pop @files;   # "--------    ----   ----    -------"
 			pop @files;   # "    2501                   2 files"
-			
+
 			foreach my $fn ( @files )
 			{
 				# "     1081  02-11-04 19:27   foo" -> "foo"
 				$fn = substr( $fn, 28 );
 			}
-			
+
 			# Loop over files in the ZIP, and find any files not in %lst_hash.
 			my @unneeded;
 			for( my $n = 0; $n <= $#files; ++$n )
@@ -152,10 +152,15 @@ my @files = (
 	"Data",
 	"NoteSkins/common/common",
 	"NoteSkins/dance/default",
-	"NoteSkins/dance/delta",
+	"NoteSkins/dance/Delta",
+	"NoteSkins/dance/midi-note",
+	"NoteSkins/dance/midi-solo",
+	"NoteSkins/dance/midi-vivid",
+	"NoteSkins/dance/midi-routine-p1",
+	"NoteSkins/dance/midi-routine-p2",
 	"NoteSkins/dance/retro",
 	"NoteSkins/pump/default",
-	"NoteSkins/pump/flat",
+	"NoteSkins/pump/simple",
 	"Themes/_fallback",
 	"Themes/_portKit-sm4",
 	"Themes/default"

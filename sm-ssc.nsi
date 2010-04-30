@@ -267,7 +267,14 @@ Section "Main Section" SecMain
 	; dance
 	RMDir /r "$INSTDIR\NoteSkins\dance\default"
 	RMDir /r "$INSTDIR\NoteSkins\dance\Delta"
+	; the "midi-*" noteskin series was formerly known as just "midi".
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi"
+	; we may also want to remove the new ones?
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-solo"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-vivid"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-rhythm-p1"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-rhythm-p2"
 	RMDir /r "$INSTDIR\NoteSkins\dance\retro"
 	; pump
 	RMDir /r "$INSTDIR\NoteSkins\pump\default"
@@ -284,7 +291,12 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR\NoteSkins\dance"
 	File /r /x CVS /x .svn "NoteSkins\dance\default"
 	File /r /x CVS /x .svn "NoteSkins\dance\Delta"
-	File /r /x CVS /x .svn "NoteSkins\dance\midi"
+	; "midi" noteskin was split out after beta 2.
+	File /r /x CVS /x .svn "NoteSkins\dance\midi-note"
+	File /r /x CVS /x .svn "NoteSkins\dance\midi-solo"
+	File /r /x CVS /x .svn "NoteSkins\dance\midi-vivid"
+	File /r /x CVS /x .svn "NoteSkins\dance\midi-rhythm-p1"
+	File /r /x CVS /x .svn "NoteSkins\dance\midi-rhythm-p2"
 	File /r /x CVS /x .svn "NoteSkins\dance\retro"
 	SetOutPath "$INSTDIR"
 
