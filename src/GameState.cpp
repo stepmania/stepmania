@@ -459,7 +459,7 @@ int GameState::GetCoinsNeededToJoin() const
 		iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
 
 	// If joint premium, don't take away a credit for the second join.
-	if( GetPremium() == Premium_2PlayersFor1Credit  &&  
+	if( GetPremium() == Premium_2PlayersFor1Credit  &&
 		GetNumSidesJoined() == 1 )
 		iCoinsToCharge = 0;
 
@@ -604,7 +604,7 @@ int GameState::GetNumStagesForSongAndStyleType( const Song* pSong, StyleType st 
 {
 	int iNumStages = GetNumStagesMultiplierForSong( pSong );
 
-	// One player, two-sides styles cost extra 
+	// One player, two-sides styles cost extra
 	switch( st )
 	{
 	DEFAULT_FAIL( st );
@@ -886,7 +886,7 @@ void GameState::SetCurGame( const Game *pGame )
 const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;
 
 void GameState::ResetMusicStatistics()
-{	
+{
 	m_fMusicSeconds = 0; // MUSIC_SECONDS_INVALID;
 	// todo: move me to FOREACH_EnabledPlayer( p ) after [NUM_PLAYERS]ing
 	m_fSongBeat = 0;
@@ -1070,7 +1070,7 @@ Stage GameState::GetCurrentStage() const
 	else if( IsExtraStage() )			return Stage_Extra1;
 	else if( IsExtraStage2() )			return Stage_Extra2;
 	//else if( IsFinalStageForAnyHumanPlayer() )	return Stage_Final;
-	// above function behaves weirdly, it will always return final stage if any player is 
+	// above function behaves weirdly, it will always return final stage if any player is
 	// on final stage, rather than the last remaining player. The below method seems to make a bit more sense.
 	else if(m_iPlayerStageTokens[PLAYER_1] == 0 && m_iPlayerStageTokens[PLAYER_2] == 0) return Stage_Final;
 	// who gives a shit about stages -aj
@@ -1147,7 +1147,7 @@ bool GameState::PlayersCanJoin() const
 }
 
 int GameState::GetNumSidesJoined() const
-{ 
+{
 	int iNumSidesJoined = 0;
 	FOREACH_PlayerNumber( p )
 		if( m_bSideIsJoined[p] )
@@ -1220,7 +1220,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 
 	if( GetCurrentStyle() == NULL )	// no style chosen
 	{
-		if( PlayersCanJoin() )	
+		if( PlayersCanJoin() )
 			return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
 		else
 			return true;	// if we can't join, then we're on a screen like MusicScroll or GameOver
@@ -1269,7 +1269,7 @@ bool GameState::IsCpuPlayer( PlayerNumber pn ) const
 }
 
 bool GameState::AnyPlayersAreCpu() const
-{ 
+{
 	FOREACH_CpuPlayer( pn )
 		return true;
 	return false;
@@ -1453,7 +1453,7 @@ bool GameState::CurrentOptionsDisqualifyPlayer( PlayerNumber pn )
 /* reset noteskins (?)
  * GameState::ResetNoteSkins()
  * GameState::ResetNoteSkinsForPlayer( PlayerNumber pn )
- * 
+ *
  */
 
 void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
@@ -1814,7 +1814,7 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 		if( file.Open(NAME_BLACKLIST_FILE) )
 		{
 			RString sLine;
-			
+
 			while( !file.AtEOF() )
 			{
 				if( file.GetLine(sLine) == -1 )
@@ -1888,10 +1888,10 @@ bool GameState::OneIsHot() const
 
 bool GameState::IsTimeToPlayAttractSounds() const
 {
-	// m_iNumTimesThroughAttract will be -1 from the first attract screen after 
+	// m_iNumTimesThroughAttract will be -1 from the first attract screen after
 	// the end of a game until the next time FIRST_ATTRACT_SCREEN is reached.
-	// Play attract sounds for this sort span of time regardless of 
-	// m_AttractSoundFrequency because it's awkward to have the machine go 
+	// Play attract sounds for this sort span of time regardless of
+	// m_AttractSoundFrequency because it's awkward to have the machine go
 	// silent immediately after the end of a game.
 	if( m_iNumTimesThroughAttract == -1 )
 		return true;
@@ -1914,11 +1914,11 @@ void GameState::VisitAttractScreen( const RString sScreenName )
 
 bool GameState::DifficultiesLocked() const
 {
- 	if( m_PlayMode == PLAY_MODE_RAVE )
+	if( m_PlayMode == PLAY_MODE_RAVE )
 		return true;
 	if( IsCourseMode() )
 		return PREFSMAN->m_bLockCourseDifficulties;
- 	if( GetCurrentStyle()->m_bLockDifficulties )
+	if( GetCurrentStyle()->m_bLockDifficulties )
 		return true;
 	return false;
 }
@@ -2050,14 +2050,14 @@ Difficulty GameState::GetHardestStepsDifficulty() const
 
 bool GameState::IsEventMode() const
 {
-	return m_bTemporaryEventMode || PREFSMAN->m_bEventMode; 
+	return m_bTemporaryEventMode || PREFSMAN->m_bEventMode;
 }
 
 CoinMode GameState::GetCoinMode() const
 {
 	if( IsEventMode() && GamePreferences::m_CoinMode == CoinMode_Pay )
-		return CoinMode_Free; 
-	else 
+		return CoinMode_Free;
+	else
 		return GamePreferences::m_CoinMode;
 }
 
@@ -2177,13 +2177,13 @@ public:
 		return 0;
 	}
 	static int GetPlayerState( T* p, lua_State *L )
-	{ 
+	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		p->m_pPlayerState[pn]->PushSelf(L);
 		return 1;
 	}
 	static int GetMultiPlayerState( T* p, lua_State *L )
-	{ 
+	{
 		MultiPlayer mp = Enum::Check<MultiPlayer>(L, 1);
 		p->m_pMultiPlayerState[mp]->PushSelf(L);
 		return 1;
@@ -2198,7 +2198,7 @@ public:
 	}
 	static int GetCurrentSong( T* p, lua_State *L )			{ if(p->m_pCurSong) p->m_pCurSong->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetCurrentSong( T* p, lua_State *L )
-	{ 
+	{
 		if( lua_isnil(L,1) ) { p->m_pCurSong.Set( NULL ); }
 		else { Song *pS = Luna<Song>::check( L, 1, true ); p->m_pCurSong.Set( pS ); }
 		return 0;
@@ -2212,7 +2212,7 @@ public:
 		return 1;
 	}
 	static int SetCurrentSteps( T* p, lua_State *L )
-	{ 
+	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn].Set( NULL ); }
 		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn].Set( pS ); }
@@ -2223,7 +2223,7 @@ public:
 	}
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetCurrentCourse( T* p, lua_State *L )
-	{ 
+	{
 		if( lua_isnil(L,1) ) { p->m_pCurCourse.Set( NULL ); }
 		else { Course *pC = Luna<Course>::check(L,1); p->m_pCurCourse.Set( pC ); }
 		return 0;
@@ -2231,13 +2231,13 @@ public:
 	static int GetCurrentTrail( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		Trail *pTrail = p->m_pCurTrail[pn];  
+		Trail *pTrail = p->m_pCurTrail[pn];
 		if( pTrail ) { pTrail->PushSelf(L); }
 		else		 { lua_pushnil(L); }
 		return 1;
 	}
 	static int SetCurrentTrail( T* p, lua_State *L )
-	{ 
+	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		if( lua_isnil(L,2) )	{ p->m_pCurTrail[pn].Set( NULL ); }
 		else					{ Trail *pS = Luna<Trail>::check(L,2); p->m_pCurTrail[pn].Set( pS ); }
@@ -2255,7 +2255,7 @@ public:
 	static int Env( T* p, lua_State *L )	{ p->m_Environment->PushSelf(L); return 1; }
 	static int GetEditSourceSteps( T* p, lua_State *L )
 	{
-		Steps *pSteps = p->m_pEditSourceSteps;  
+		Steps *pSteps = p->m_pEditSourceSteps;
 		if( pSteps ) { pSteps->PushSelf(L); }
 		else		 { lua_pushnil(L); }
 		return 1;
@@ -2385,7 +2385,7 @@ public:
 
 		return vpStepsToShow.size()*2;
 	}
-	
+
 	static int SetPreferredSongGroup( T* p, lua_State *L ) { p->m_sPreferredSongGroup.Set( SArg(1) ); return 0; }
 	DEFINE_METHOD( GetPreferredSongGroup, m_sPreferredSongGroup.Get() );
 	static int GetHumanPlayers( T* p, lua_State *L )
@@ -2417,7 +2417,7 @@ public:
 	static int GetNumStagesLeft( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-		lua_pushnumber(L, p->GetNumStagesLeft(pn)); 
+		lua_pushnumber(L, p->GetNumStagesLeft(pn));
 		return 1;
 	}
 	static int GetGameSeed( T* p, lua_State *L )			{ LuaHelpers::Push( L, p->m_iGameSeed ); return 1; }
@@ -2436,7 +2436,7 @@ public:
 
 	DEFINE_METHOD( GetWorkoutGoalComplete,		m_bWorkoutGoalComplete )
 
-	LunaGameState() 
+	LunaGameState()
 	{
 		ADD_METHOD( IsPlayerEnabled );
 		ADD_METHOD( IsHumanPlayer );
@@ -2538,7 +2538,7 @@ LUA_REGISTER_CLASS( GameState )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard, Chris Gomez
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -2548,7 +2548,7 @@ LUA_REGISTER_CLASS( GameState )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
