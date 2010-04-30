@@ -541,6 +541,11 @@ void GameState::SavePlayerProfile( PlayerNumber pn )
 {
 	if( !PROFILEMAN->IsPersistentProfile(pn) )
 		return;
+	// AutoplayCPU should not save scores. -aj
+	// xxx: this MAY cause issues with Multiplayer. However, without a working
+	// Multiplayer build, we'll never know. -aj
+	if( m_pPlayerState[pn]->m_PlayerController != PC_HUMAN )
+		return;
 
 	bool bWasMemoryCard = PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn);
 	if( bWasMemoryCard )
@@ -890,10 +895,8 @@ void GameState::ResetMusicStatistics()
 	//m_bStop = false;
 	m_bFreeze = false;
 	m_bDelay = false;
-	/*
-	m_iWarpToRow = -1; // Set to -1 because some song may want to warp to row 0. -aj
-	m_iWarpFromRow = -1; // Set when a warp is encountered. also see above. -aj
-	*/
+	m_iWarpBeginRow = -1; // Set to -1 because some song may want to warp to row 0. -aj
+	m_iWarpEndRow = -1; // Set when a warp is encountered. also see above. -aj
 	m_fMusicSecondsVisible = 0;
 	m_fSongBeatVisible = 0;
 	Actor::SetBGMTime( 0, 0, 0, 0 );
@@ -940,7 +943,6 @@ void GameState::ResetStageStatistics()
 
 static Preference<float> g_fVisualDelaySeconds( "VisualDelaySeconds", 0.0f );
 // todo: modify for warps -aj
-// m_iWarpToRow
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
 {
 	if( !timestamp.IsZero() )
@@ -948,12 +950,11 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	else
 		m_LastBeatUpdate.Touch();
 
-	/*
 	// xxx testing: only do this on monotune survivor
 	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
 		LOG->Trace( ssprintf("[GameState::UpdateSongPosition] cur BPS = %f, fPositionSeconds = %f",m_fCurBPS,fPositionSeconds) );
-	*/
-	timing.GetBeatAndBPSFromElapsedTime( fPositionSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze, m_bDelay );
+
+	timing.GetBeatAndBPSFromElapsedTime( fPositionSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze, m_bDelay, m_iWarpBeginRow, m_iWarpEndRow );
 	// "Crash reason : -243478.890625 -48695.773438"
 	ASSERT_M( m_fSongBeat > -2000, ssprintf("Song beat %f at %f seconds", m_fSongBeat, fPositionSeconds) );
 
@@ -975,7 +976,8 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	m_fMusicSecondsVisible = fPositionSeconds - g_fVisualDelaySeconds.Get();
 	float fThrowAway;
 	bool bThrowAway;
-	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway );
+	int iThrowAway1, iThrowAway2;
+	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway, iThrowAway1, iThrowAway2 );
 
 	/*
 	// xxx testing: only do this on monotune survivor
@@ -1082,7 +1084,7 @@ Stage GameState::GetCurrentStage() const
 		case 3:	return Stage_4th;
 		case 4:	return Stage_5th;
 		case 5:	return Stage_6th;
-		default: return Stage_Next;
+		default:	return Stage_Next;
 		}
 	}
 }
@@ -1102,8 +1104,8 @@ int GameState::GetCourseSongIndex() const
 	}
 }
 
-/* Hack: when we're loading a new course song, we want to display the new song number, even
- * though we haven't started that song yet. */
+/* Hack: when we're loading a new course song, we want to display the new song
+ * number, even though we haven't started that song yet. */
 int GameState::GetLoadingCourseSongIndex() const
 {
 	int iIndex = GetCourseSongIndex();
@@ -1324,11 +1326,11 @@ EarnedExtraStage GameState::CalculateEarnedExtraStage() const
 		switch( dc )
 		{
 		case Difficulty_Edit:
-			continue; /* not hard enough! */
+			continue; // can't use edit steps
 			break;
 		default:
 			if( dc < MIN_DIFFICULTY_FOR_EXTRA )
-				continue; /* not hard enough! */
+				continue; // not hard enough!
 			break;
 		}
 
@@ -1376,11 +1378,11 @@ StageResult GameState::GetStageResult( PlayerNumber pn ) const
 		if( p == pn )
 			continue;
 
-		/* If anyone did just as well, at best it's a draw. */
+		// If anyone did just as well, at best it's a draw.
 		if( STATSMAN->m_CurStageStats.m_player[p].m_iActualDancePoints == STATSMAN->m_CurStageStats.m_player[pn].m_iActualDancePoints )
 			win = RESULT_DRAW;
 
-		/* If anyone did better, we lost. */
+		// If anyone did better, we lost.
 		if( STATSMAN->m_CurStageStats.m_player[p].m_iActualDancePoints > STATSMAN->m_CurStageStats.m_player[pn].m_iActualDancePoints )
 			return RESULT_LOSE;
 	}
@@ -1563,8 +1565,8 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 	Profile *pProf = PROFILEMAN->GetProfile(pn);
 
-	// Check for feats even if the PlayMode is rave or battle because the player may have
-	// made high scores then switched modes.
+	// Check for feats even if the PlayMode is rave or battle because the player
+	// may have made high scores then switched modes.
 	CHECKPOINT_M( ssprintf("PlayMode %i", int(m_PlayMode)) );
 	switch( m_PlayMode )
 	{
@@ -2059,12 +2061,10 @@ CoinMode GameState::GetCoinMode() const
 		return GamePreferences::m_CoinMode;
 }
 
+ThemeMetric<bool> DISABLE_PREMIUM_IN_EVENT_MODE("GameState","DisablePremiumInEventMode");
 Premium	GameState::GetPremium() const
-{ 
-	if( IsEventMode() ) 
-		return Premium_Off; 
-	else 
-		return g_Premium; 
+{
+	return DISABLE_PREMIUM_IN_EVENT_MODE ? Premium_Off : g_Premium;
 }
 
 float GameState::GetGoalPercentComplete( PlayerNumber pn )
