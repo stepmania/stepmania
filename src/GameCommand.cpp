@@ -259,7 +259,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	{
 		RString sSteps = sValue;
 
-		/* This must be processed after "song" and "style" commands. */
+		// This must be processed after "song" and "style" commands.
 		if( !m_bInvalid )
 		{
 			Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
@@ -294,7 +294,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	{
 		RString sTrail = sValue;
 
-		/* This must be processed after "course" and "style" commands. */
+		// This must be processed after "course" and "style" commands.
 		if( !m_bInvalid )
 		{
 			Course *pCourse = (m_pCourse != NULL)? m_pCourse:GAMESTATE->m_pCurCourse;

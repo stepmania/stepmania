@@ -50,9 +50,7 @@ public:
 
 	bool	MaterialsNeedNormals() const;
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 private:
@@ -63,26 +61,26 @@ private:
 	const msAnimation*		m_pCurAnimation;
 
 	static void SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone_t> &vpBones );
-	vector<myBone_t>		m_vpBones;
+	vector<myBone_t>	m_vpBones;
 
 	// If any vertex has a bone weight, then then render from m_pTempGeometry.  
 	// Otherwise, render directly from m_pGeometry.
 	RageCompiledGeometry*		m_pTempGeometry;
 	void UpdateTempGeometry();
-	
+
 	/* Keep a copy of the mesh data only if m_pTempGeometry is in use.  The normal and
 	 * position data will be changed; the rest is static and kept only to prevent making
 	 * a complete copy. */
-	vector<msMesh>			m_vTempMeshes;
+	vector<msMesh>	m_vTempMeshes;
 
 	void DrawMesh( int i ) const;
 	void AdvanceFrame( float fDeltaTime );
 
-	float				m_fCurFrame;
-	RString				m_sDefaultAnimation;
-	float				m_fDefaultAnimationRate;
-	float				m_fCurAnimationRate;
-	bool				m_bLoop;
+	float			m_fCurFrame;
+	RString			m_sDefaultAnimation;
+	float			m_fDefaultAnimationRate;
+	float			m_fCurAnimationRate;
+	bool			m_bLoop;
 };
 
 #endif

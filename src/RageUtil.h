@@ -581,7 +581,7 @@ struct char_traits_char_nocase: public char_traits<char>
 };
 typedef basic_string<char,char_traits_char_nocase> istring;
 
-/* Compatibility/convenience shortcuts.  These are actually defined in RageFileManager.h, but
+/* Compatibility/convenience shortcuts. These are actually defined in RageFileManager.h, but
  * declared here since they're used in many places. */
 void GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
 void GetDirListingRecursive( const RString &sDir, const RString &sMatch, vector<RString> &AddTo );	/* returns path too */
