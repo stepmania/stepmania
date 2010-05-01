@@ -68,7 +68,6 @@
 		<Function name='ImmediateHoldLetGo'/>
 		<Function name='InitUserPrefs'/>
 		<Function name='InitialHoldLife'/>
-		<Function name='IsHighDefinition'/>
 		<Function name='IsNetConnected'/>
 		<Function name='IsNetSMOnline'/>
 		<Function name='IsSMOnlineLoggedIn'/>
@@ -239,7 +238,6 @@
 			<Function name='LyricCommand'/>
 			<Function name='MaskDest'/>
 			<Function name='MaskSource'/>
-			<Function name='PositionX'/>
 			<Function name='RunCommandsRecursively'/>
 			<Function name='SetHeight'/>
 			<Function name='SetTextureFiltering'/>
@@ -1825,6 +1823,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc v1.0 beta 2</Version>
-	<Date>2010-04-26</Date>
+	<Version>sm-ssc v1.0 beta 3</Version>
+	<Date>2010-04-30</Date>
 </Lua>
