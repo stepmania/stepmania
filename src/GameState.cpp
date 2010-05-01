@@ -978,7 +978,8 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	float fThrowAway;
 	bool bThrowAway;
 	int iThrowAway1, iThrowAway2;
-	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway, iThrowAway1, iThrowAway2 );
+	//timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway, iThrowAway1, iThrowAway2 );
+	timing.GetBeatAndBPSFromElapsedTime( m_fMusicSecondsVisible, m_fSongBeatVisible, fThrowAway, bThrowAway, bThrowAway );
 
 	/*
 	// xxx testing: only do this on monotune survivor
