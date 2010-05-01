@@ -9,6 +9,25 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+sm-ssc v1.0 Public Beta 3 | 20100430
+------------------------------------
+There's an important change for themers that needs to be noted:
+We have renamed two screens in _fallback to match StepMania's names.
+
+ScreenSelectPlayMode (previously the select style screen)
+has been renamed to ScreenSelectStyle.
+
+ScreenSelectPlayStyle (previously select play mode) has been renamed
+to ScreenSelectPlayMode.
+
+This change effects branches (_fallback/02 Branches.lua) and metrics, so if
+you're not handling the two screens yourself, you will probably have to change
+some things around in your theme.
+
+20100430
+--------
+* [GameState] added DisablePremiumInEventMode metric.
+
 20100426
 --------
 * [Course.cpp] add a few Lua bindings to CourseEntry:
