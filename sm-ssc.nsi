@@ -84,7 +84,8 @@
 
 		# These indented statements modify settings for MUI_PAGE_FINISH
 		!define MUI_FINISHPAGE_NOAUTOCLOSE
-		!define MUI_FINISHPAGE_RUN "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+		; xxx: hardcoded to StepMania
+		!define MUI_FINISHPAGE_RUN "$INSTDIR\Program\StepMania.exe"
 		!define MUI_FINISHPAGE_RUN_NOTCHECKED
 		!define MUI_FINISHPAGE_RUN_TEXT "$(TEXT_IO_LAUNCH_THE_GAME)"
 
