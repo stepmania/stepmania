@@ -295,8 +295,8 @@ Section "Main Section" SecMain
 	File /r /x CVS /x .svn "NoteSkins\dance\midi-note"
 	File /r /x CVS /x .svn "NoteSkins\dance\midi-solo"
 	File /r /x CVS /x .svn "NoteSkins\dance\midi-vivid"
-	File /r /x CVS /x .svn "NoteSkins\dance\midi-rhythm-p1"
-	File /r /x CVS /x .svn "NoteSkins\dance\midi-rhythm-p2"
+	File /r /x CVS /x .svn "NoteSkins\dance\midi-routine-p1"
+	File /r /x CVS /x .svn "NoteSkins\dance\midi-routine-p2"
 	File /r /x CVS /x .svn "NoteSkins\dance\retro"
 	SetOutPath "$INSTDIR"
 
