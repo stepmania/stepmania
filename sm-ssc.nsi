@@ -234,9 +234,11 @@ Section "Main Section" SecMain
 	File "BGAnimations\instructions.txt"
 
 	CreateDirectory "$INSTDIR\BackgroundEffects"
+	SetOutPath "$INSTDIR\"
 	File /r /x CVS /x .svn "BackgroundEffects"
 
 	CreateDirectory "$INSTDIR\BackgroundTransitions"
+	SetOutPath "$INSTDIR\"
 	File /r /x CVS /x .svn "BackgroundTransitions"
 
 	;CreateDirectory "$INSTDIR\RandomMovies"
@@ -253,7 +255,7 @@ Section "Main Section" SecMain
 	CreateDirectory "$INSTDIR\Characters\default"
 	SetOutPath "$INSTDIR\Characters"
 	File /r /x CVS /x .svn "Characters\default"
-	# File "Characters\instructions.txt"
+	File "Characters\instructions.txt"
 
 	CreateDirectory "$INSTDIR\Courses"
 	SetOutPath "$INSTDIR\Courses"
@@ -303,13 +305,13 @@ Section "Main Section" SecMain
 
 	; install pump noteskins
 	SetOutPath "$INSTDIR\NoteSkins\pump"
-	RMDir /r "$INSTDIR\NoteSkins\pump\default"
-	RMDir /r "$INSTDIR\NoteSkins\pump\simple"
+	File /r /x CVS /x .svn "NoteSkins\pump\default"
+	File /r /x CVS /x .svn "NoteSkins\pump\simple"
 	SetOutPath "$INSTDIR"
 
 	; install lights noteskin
 	SetOutPath "$INSTDIR\NoteSkins\lights"
-	RMDir /r "$INSTDIR\NoteSkins\lights\default"
+	File /r /x CVS /x .svn "NoteSkins\lights\default"
 	SetOutPath "$INSTDIR"
 
 	; make songs dir
@@ -391,13 +393,15 @@ Section "Main Section" SecMain
 	CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
 	; xxx: StepMania.exe
 	; xxx: make desktop shortcut an option
-	CreateShortCut "$DESKTOP\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania.exe"
+	!ifdef MAKE_DESKTOP_SHORTCUT
+		CreateShortCut "$DESKTOP\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania.exe"
+	!endif
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania.exe"
 	!ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
 		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 	!endif
-		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
-		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
+		;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
+		;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
 		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk" "$INSTDIR\Manual\index.html"
 		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk" "$INSTDIR\uninstall.exe"
 		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk" "${PRODUCT_URL}"
