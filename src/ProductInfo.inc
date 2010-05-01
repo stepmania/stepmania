@@ -5,12 +5,12 @@
 
 ; see ProductInfo.h for use descriptions
 !define PRODUCT_ID "sm-ssc"
-!define PRODUCT_VER "v1.0 beta 2"
+!define PRODUCT_VER "v1.0 beta 3"
 !define PRODUCT_DISPLAY "${PRODUCT_ID} ${PRODUCT_VER}"
 !define PRODUCT_BITMAP "ssc"
 
-!define PRODUCT_URL "http://ssc.ajworld.net/sm-ssc/"
-!define UPDATES_URL "http://ssc.ajworld.net/sm-ssc/"
+!define PRODUCT_URL "http://code.google.com/p/sm-ssc/"
+!define UPDATES_URL "http://code.google.com/p/sm-ssc/"
 
 ;!define INSTALL_EXTERNAL_PCKS
 ;!define INSTALL_INTERNAL_PCKS

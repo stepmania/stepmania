@@ -1,9 +1,7 @@
-/* ProductInfo - Branding strings. */
+/* ProductInfo - Branding strings. Don't forget to also change ProductInfo.inc! */
 
 #ifndef PRODUCT_INFO_H
 #define PRODUCT_INFO_H
-
-// Don't forget to also change ProductInfo.inc!
 
 // A friendly string to refer to the product in crash dialogs, etc - i.e. "StepMania" not "StepMania4"
 #define PRODUCT_FAMILY_BARE sm-ssc
@@ -23,7 +21,7 @@
  * "v0.0": Final Releases
 */
 #ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE v1.0 beta 2
+#define PRODUCT_VER_BARE v1.0 beta 3
 #endif
 
 // A unique ID for a build of an application.  This is used in crash reports and in the network code's version handling 
