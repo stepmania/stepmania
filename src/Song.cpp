@@ -553,9 +553,7 @@ void Song::TidyUpData()
 			m_sLyricsFile = arrayLyricFiles[0];
 	}
 
-	//
 	// Now, For the images we still haven't found, look at the image dimensions of the remaining unclassified images.
-	//
 	vector<RString> arrayImages;
 	GetImageDirListing( m_sSongDir + "*", arrayImages );
 
@@ -1093,7 +1091,7 @@ bool Song::HasInstrumentTrack( InstrumentTrack it ) const
 }
 bool Song::HasLyrics() const		{return m_sLyricsFile != ""		&& IsAFile(GetLyricsPath()); }
 bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&& IsAFile(GetBackgroundPath()); }
-bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&& IsAFile(GetCDTitlePath()); }
+bool Song::HasCDTitle() const 	{return m_sCDTitleFile != ""		&& IsAFile(GetCDTitlePath()); }
 bool Song::HasBGChanges() const
 {
 	FOREACH_BackgroundLayer( i )
@@ -1103,6 +1101,7 @@ bool Song::HasBGChanges() const
 	}
 	return false;
 }
+bool Song::HasAttacks() const		{return !m_Attacks.empty(); }
 
 const vector<BackgroundChange> &Song::GetBackgroundChanges( BackgroundLayer bl ) const
 {
@@ -1478,6 +1477,33 @@ public:
 	static int NormallyDisplayed( T* p, lua_State *L ){ lua_pushboolean(L, p->NormallyDisplayed()); return 1; }
 	static int GetFirstBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fFirstBeat); return 1; }
 	static int GetLastBeat( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fLastBeat); return 1; }
+	static int HasAttacks( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasAttacks()); return 1; }
+	static int GetDisplayBpms( T* p, lua_State *L )
+	{
+		DisplayBpms temp;
+		p->GetDisplayBpms(temp);
+		float fMin = temp.GetMin();
+		float fMax = temp.GetMax();
+		vector<float> fBPMs;
+		fBPMs.push_back( fMin );
+		fBPMs.push_back( fMax );
+		LuaHelpers::CreateTableFromArray(fBPMs, L);
+		return 1;
+	}
+	static int IsDisplayBpmSecret( T* p, lua_State *L )
+	{
+		DisplayBpms temp;
+		p->GetDisplayBpms(temp);
+		lua_pushboolean( L, temp.IsSecret() );
+		return 1;
+	}
+	static int IsDisplayBpmConstant( T* p, lua_State *L )
+	{
+		DisplayBpms temp;
+		p->GetDisplayBpms(temp);
+		lua_pushboolean( L, temp.BpmIsConstant() );
+		return 1;
+	}
 
 	LunaSong()
 	{
@@ -1515,7 +1541,6 @@ public:
 		ADD_METHOD( HasCDTitle );
 		ADD_METHOD( HasBGChanges );
 		ADD_METHOD( HasLyrics );
-		// danger will robinson
 		ADD_METHOD( HasSignificantBPMChangesOrStops );
 		ADD_METHOD( HasEdits );
 		ADD_METHOD( IsEasy );
@@ -1523,6 +1548,10 @@ public:
 		ADD_METHOD( NormallyDisplayed );
 		ADD_METHOD( GetFirstBeat );
 		ADD_METHOD( GetLastBeat );
+		ADD_METHOD( HasAttacks );
+		ADD_METHOD( GetDisplayBpms );
+		ADD_METHOD( IsDisplayBpmSecret );
+		ADD_METHOD( IsDisplayBpmConstant );
 	}   
 };
 

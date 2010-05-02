@@ -57,11 +57,11 @@ class Song
 public:
 	void SetSongDir( const RString sDir ) { m_sSongDir = sDir; }
 
-	/* Set when this song should be displayed in the music wheel: */
+	// Set when this song should be displayed in the music wheel:
 	enum SelectionDisplay
 	{ 
-		SHOW_ALWAYS,	/* always */
-		SHOW_NEVER	/* never (unless song hiding is turned off) */
+		SHOW_ALWAYS,	// always
+		SHOW_NEVER		// never (unless song hiding is turned off)
 	} m_SelectionDisplay;
 
 	Song();
@@ -90,42 +90,42 @@ public:
 	void AutoGen( StepsType ntTo, StepsType ntFrom );	// create Steps of type ntTo from Steps of type ntFrom
 	void RemoveAutoGenNotes();
 
-	/* Directory this song data came from: */
+	// Directory this song data came from:
 	const RString &GetSongDir() const { return m_sSongDir; }
 
-	/* Filename associated with this file.  This will always have
-	 * an .SM extension.  If we loaded an .SM, this will point to 
+	/* Filename associated with this file. This will always have
+	 * an .SM extension. If we loaded an .SM, this will point to 
 	 * it, but if we loaded any other type, this will point to a
 	 * generated .SM filename. */
 	RString m_sSongFileName;
 
 	RString m_sGroupName;
 
-	ProfileSlot	m_LoadedFromProfile;	// ProfileSlot_Invalid if wasn't loaded from a profile
+	ProfileSlot	m_LoadedFromProfile;	// ProfileSlot_Invalid if not loaded from a profile
 	bool	m_bIsSymLink;
 	bool	m_bEnabled;
 
 	RString	m_sMainTitle, m_sSubTitle, m_sArtist;
 	RString m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit;
 
-	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit* below.
-	 * Otherwise, they return the main titles. */
+	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit*
+	 * below. Otherwise, they return the main titles. */
 	RString GetDisplayMainTitle() const;
 	RString GetDisplaySubTitle() const;
 	RString GetDisplayArtist() const;
 
-	/* Returns the transliterated titles, if any; otherwise returns the main titles. */
+	// Returns the transliterated titles, if any; otherwise returns the main titles.
 	RString GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
 	RString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
 	RString GetTranslitArtist() const { return m_sArtistTranslit.size()? m_sArtistTranslit:m_sArtist; }
 
-	/* "title subtitle" */
+	// "title subtitle"
 	RString GetDisplayFullTitle() const;
 	RString GetTranslitFullTitle() const;
 
 	RString m_sGenre;
 
-	/* This is read and saved, but never actually used. */
+	// This is read and saved, but never actually used.
 	RString	m_sCredit;
 
 	RString	m_sMusicFile;
@@ -156,8 +156,7 @@ public:
 	RString GetBackgroundPath() const;
 	RString GetCDTitlePath() const;
 
-
-	/* For loading only: */
+	// For loading only:
 	bool m_bHasMusic, m_bHasBanner, m_bHasBackground;
 
 	bool HasMusic() const;
@@ -168,10 +167,11 @@ public:
 	bool HasMovieBackground() const;
 	bool HasBGChanges() const;
 	bool HasLyrics() const;
+	bool HasAttacks() const;
 
 	bool Matches(RString sGroup, RString sSong) const;
 
-	TimingData				m_Timing;
+	TimingData m_Timing;
 
 	typedef vector<BackgroundChange> 	VBackgroundChange;
 private:
@@ -188,6 +188,7 @@ public:
 
 	void AddBPMSegment( const BPMSegment &seg ) { m_Timing.AddBPMSegment( seg ); }
 	void AddStopSegment( const StopSegment &seg ) { m_Timing.AddStopSegment( seg ); }
+	void AddWarpSegment( const WarpSegment &seg ) { m_Timing.AddWarpSegment( seg ); }
 	void AddBackgroundChange( BackgroundLayer blLayer, BackgroundChange seg );
 	void AddForegroundChange( BackgroundChange seg );
 	void AddLyricSegment( LyricSegment seg );
@@ -219,7 +220,7 @@ public:
 	bool NormallyDisplayed() const;
 	bool ShowInDemonstrationAndRanking() const;
 
-	void AddSteps( Steps* pSteps );		// we are responsible for deleting the memory pointed to by pSteps!
+	void AddSteps( Steps* pSteps ); // we are responsible for deleting the memory pointed to by pSteps!
 	void DeleteSteps( const Steps* pSteps, bool bReAutoGen = true );
 
 	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid, const set<Steps*> *setInUse = NULL );
