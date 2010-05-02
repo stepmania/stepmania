@@ -17,6 +17,11 @@ function GameCompatibleModes()
 	return Modes[sGame];
 end
 
+function SelectProfileKeys()
+	local game = GAMESTATE:GetCurrentGame():GetName();
+	return game == "dance" and "Up,Down,Start,Back,Up2,Down2" or "Up,Down,Start,Back";
+end;
+
 -- ScoreKeeperClass:
 -- [en] Determines the correct ScoreKeeper class to use.
 function ScoreKeeperClass()
