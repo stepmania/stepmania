@@ -310,7 +310,7 @@ float ArrowEffects::GetYPos( const PlayerState* pPlayerState, int iCol, float fY
 	// In beware's DDR Extreme-focused fork of StepMania 3.9, this value is
 	// floored, making arrows show on integer Y coordinates. Supposedly it makes
 	// the arrows look better, but testing needs to be done.
-	// todo: make this a preference -aj
+	// todo: make this a noteskin metric ("QuantizeArrowYPosition") -aj
 	return f;
 	//return floor(f);
 }
@@ -377,14 +377,39 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	}
 
-	/*
-	if( fEffects[PlayerOptions::SCROLL_X] != 0 )
+	if( fEffects[PlayerOptions::EFFECT_XMODE] != 0 )
 	{
-		// Compare pPlayerState->m_PlayerNumber.
-		// notes will go \ for p1 and / for p2.
-		// pCols[iColNum] for each column.
+		// based off of code by v1toko for StepNXA, except it should work on
+		// any gametype now.
+		switch( pStyle->m_StyleType )
+		{
+			case StyleType_OnePlayerTwoSides:
+			case StyleType_TwoPlayersSharedSides: // fall through?
+				{
+					// find the middle, and split based on iColNum
+					// it's unknown if this will work for routine.
+					const int iMiddleColumn = floor(pStyle->m_iColsPerPlayer/2.0f);
+					if( iColNum > iMiddleColumn-1 )
+						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*-(fYOffset);
+					else
+						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*fYOffset;
+				}
+				break;
+			case StyleType_OnePlayerOneSide:
+			case StyleType_TwoPlayersTwoSides: // fall through
+				{
+					// the code was the same for both of these cases in StepNXA.
+					if( pPlayerState->m_PlayerNumber == PLAYER_2 )
+						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*-(fYOffset);
+					else
+						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*fYOffset;
+				}
+				break;
+			default:
+				ASSERT("What the hell kind of styletype are you passing me anyways?");
+				break;
+		}
 	}
-	*/
 
 	fPixelOffsetFromCenter += pCols[iColNum].fXOffset;
 
@@ -554,7 +579,7 @@ float ArrowGetPercentVisible( const PlayerState* pPlayerState, float fYPosWithou
 
 float ArrowEffects::GetAlpha( const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
-	/* Get the YPos without reverse (that is, factor in EFFECT_TIPSY). */
+	// Get the YPos without reverse (that is, factor in EFFECT_TIPSY).
 	float fYPosWithoutReverse = ArrowEffects::GetYPos( pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
 
 	float fPercentVisible = ArrowGetPercentVisible( pPlayerState, fYPosWithoutReverse );
@@ -576,7 +601,7 @@ float ArrowEffects::GetAlpha( const PlayerState* pPlayerState, int iCol, float f
 
 float ArrowEffects::GetGlow( const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
-	/* Get the YPos without reverse (that is, factor in EFFECT_TIPSY). */
+	// Get the YPos without reverse (that is, factor in EFFECT_TIPSY).
 	float fYPosWithoutReverse = ArrowEffects::GetYPos( pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
 
 	float fPercentVisible = ArrowGetPercentVisible( pPlayerState, fYPosWithoutReverse );
@@ -654,7 +679,7 @@ float ArrowEffects::GetFrameWidthScale( const PlayerState* pPlayerState, float f
 	float fWidthEffect = pPlayerState->m_EffectHistory.GetSample( fSecond );
 	if( fWidthEffect != 0 && FRAME_WIDTH_LOCK_EFFECTS_TO_OVERLAPPING )
 	{
-		/* Don't display effect data that happened before this hold overlapped the top. */
+		// Don't display effect data that happened before this hold overlapped the top.
 		float fFromEndOfOverlapped = fOverlappedTime - fSecond;
 		float fTrailingPixels = FRAME_WIDTH_LOCK_EFFECTS_TWEEN_PIXELS;
 		float fTrailingSeconds = fTrailingPixels / fPixelsPerSecond;

@@ -58,6 +58,7 @@ public:
 		EFFECT_TIPSY,
 		EFFECT_BUMPY,
 		EFFECT_BEAT,
+		EFFECT_XMODE,
 		NUM_EFFECTS
 	};
 	enum Appearance {
@@ -110,7 +111,6 @@ public:
 		SCROLL_ALTERNATE,
 		SCROLL_CROSS,
 		SCROLL_CENTERED,
-		//SCROLL_X,
 		NUM_SCROLLS
 	};
 	enum ScoreDisplay {

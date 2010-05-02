@@ -149,6 +149,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],	"Tipsy" );
 	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],	"Bumpy" );
 	AddPart( AddTo, m_fEffects[EFFECT_BEAT],	"Beat" );
+	AddPart( AddTo, m_fEffects[EFFECT_XMODE],	"XMode" );
 
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],		"Hidden" );
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN_OFFSET],	"HiddenOffset" );
@@ -163,7 +164,6 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fScrolls[SCROLL_ALTERNATE],	"Alternate" );
 	AddPart( AddTo, m_fScrolls[SCROLL_CROSS],	"Cross" );
 	AddPart( AddTo, m_fScrolls[SCROLL_CENTERED],	"Centered" );
-	//AddPart( AddTo, m_fScrolls[SCROLL_X],	"XMode" );
 
 	AddPart( AddTo, m_fDark,	"Dark" );
 
@@ -305,7 +305,6 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		}
 	}
 
-	
 	sBit = asParts.back();
 
 #define SET_FLOAT( opt ) { m_ ## opt = level; m_Speed ## opt = speed; }
@@ -328,7 +327,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		SET_FLOAT( fTimeSpacing )
 		m_fTimeSpacing = 1;
 	}
-	/* Port M-Mod's from OpenITG, starting from r537 */
+	/* Port M-Mods from OpenITG, starting from r537 */
 	// Midiman
 	else if( sscanf( sBit, "m%f", &level ) == 1 )
 	{
@@ -355,6 +354,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "tipsy" )				SET_FLOAT( fEffects[EFFECT_TIPSY] )
 	else if( sBit == "bumpy" )				SET_FLOAT( fEffects[EFFECT_BUMPY] )
 	else if( sBit == "beat" )				SET_FLOAT( fEffects[EFFECT_BEAT] )
+	else if( sBit == "xmode" )				SET_FLOAT( fEffects[EFFECT_XMODE] )
 	else if( sBit == "hidden" )				SET_FLOAT( fAppearances[APPEARANCE_HIDDEN] )
 	else if( sBit == "hiddenoffset" )			SET_FLOAT( fAppearances[APPEARANCE_HIDDEN_OFFSET] )
 	else if( sBit == "sudden" )				SET_FLOAT( fAppearances[APPEARANCE_SUDDEN] )
@@ -391,7 +391,6 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "alternate" )				SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
 	else if( sBit == "cross" )				SET_FLOAT( fScrolls[SCROLL_CROSS] )
 	else if( sBit == "centered" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
-	//else if( sBit == "xmode" )				SET_FLOAT( fScrolls[SCROLL_X] )
 	else if( sBit == "noholds" )				m_bTransforms[TRANSFORM_NOHOLDS] = on;
 	else if( sBit == "norolls" )				m_bTransforms[TRANSFORM_NOROLLS] = on;
 	else if( sBit == "nomines" )				m_bTransforms[TRANSFORM_NOMINES] = on;
@@ -611,7 +610,7 @@ float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 	int iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
 
 	f += m_fScrolls[SCROLL_REVERSE];
-	
+
 	if( iCol >= iNumCols/2 )
 		f += m_fScrolls[SCROLL_SPLIT];
 
