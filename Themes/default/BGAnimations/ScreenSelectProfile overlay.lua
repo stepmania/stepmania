@@ -202,7 +202,7 @@ local t = Def.ActorFrame {
 				SCREENMAN:GetTopScreen():Finish();
 			end;
 		end;
-		if params.Name == 'Up' then
+		if params.Name == 'Up' or params.Name == 'Up2' then
 			if GAMESTATE:IsHumanPlayer(params.PlayerNumber) then
 				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(params.PlayerNumber);
 				if ind > 1 then
@@ -213,7 +213,7 @@ local t = Def.ActorFrame {
 				end;
 			end;
 		end;
-		if params.Name == 'Down' then
+		if params.Name == 'Down' or params.Name == 'Down2' then
 			if GAMESTATE:IsHumanPlayer(params.PlayerNumber) then
 				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(params.PlayerNumber);
 				if ind > 0 then
