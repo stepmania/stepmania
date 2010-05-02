@@ -48,7 +48,7 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	{ "dance-double",	8,	true,	StepsTypeCategory_Double },
 	{ "dance-couple",	8,	true,	StepsTypeCategory_Couple },
 	{ "dance-solo",		6,	true,	StepsTypeCategory_Single },
-	//{ "dance-three",		3,	true,	StepsTypeCategory_Single }, // kurisu calls this "3panel"
+	{ "dance-threepanel",	3,	true,	StepsTypeCategory_Single }, // thanks to kurisu
 	{ "dance-routine",	8,	false,	StepsTypeCategory_Routine },
 	// pump
 	{ "pump-single",	5,	true,	StepsTypeCategory_Single },
@@ -323,16 +323,14 @@ static const Style g_Style_Dance_Solo =
 	false, // m_bLockDifficulties
 };
 
-// todo: "easy solo" or whatever the proper name for the 3 panel \|/ mode is.
-/*
-static const Style g_Style_Dance_Three =
-{	// STYLE_DANCE_THREE
+static const Style g_Style_Dance_ThreePanel =
+{	// STYLE_DANCE_THREEPANEL
 	true,				// m_bUsedForGameplay
 	true,				// m_bUsedForEdit
 	false,				// m_bUsedForDemonstration
 	false,				// m_bUsedForHowToPlay
-	"3panel",			// m_szName
-	StepsType_dance_3panel,		// m_StepsType
+	"threepanel",			// m_szName
+	StepsType_dance_threepanel,		// m_StepsType
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	3,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -348,8 +346,9 @@ static const Style g_Style_Dance_Three =
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ 0, 1, 2, Style::END_MAPPING },
-		{ 0, 1, 2, Style::END_MAPPING }
+		// 4 3 5
+		{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, 1, 0, 2, Style::END_MAPPING },
+		{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, 1, 0, 2, Style::END_MAPPING }
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 		0,1,2
@@ -358,7 +357,6 @@ static const Style g_Style_Dance_Three =
 	false, // m_bCanUseBeginnerHelper
 	false, // m_bLockDifficulties
 };
-*/
 
 static const Style g_Style_Dance_Couple_Edit =
 {	// STYLE_DANCE_EDIT_COUPLE
@@ -494,9 +492,9 @@ static const Style *g_apGame_Dance_Styles[] =
 	&g_Style_Dance_Double,
 	&g_Style_Dance_Couple,
 	&g_Style_Dance_Solo,
-	//&g_Style_Dance_Three,
 	&g_Style_Dance_Couple_Edit,
 	&g_Style_Dance_Routine,
+	&g_Style_Dance_ThreePanel,
 	NULL
 };
 

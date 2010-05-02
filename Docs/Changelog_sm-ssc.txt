@@ -9,6 +9,16 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100502
+--------
+* Add dance-threepanel StepsType. Thanks to kurisu for the original 3.9 code.
+* XMode mod added, thanks to v1toko/StepNXA.
+
+20100501
+--------
+* Fixed an issue with StepsDisplayList crashing if more than 21 difficulties are
+  playable. This allows Technomotion to work with AutoSetStyle and Autogen on.
+
 sm-ssc v1.0 Public Beta 3 | 20100430
 ------------------------------------
 There's an important change for themers that needs to be noted:

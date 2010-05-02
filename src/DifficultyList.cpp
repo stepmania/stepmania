@@ -18,7 +18,7 @@
 // My first thought to fix this was:
 // (NUM_Difficulty (6) * NUM_StepsType (32)) + MAX_EDITS_PER_SONG (5*profileSlot (2)) = 202
 // However, 202 rows may be a bit overkill.
-// Dance has 6 stepstypes counting 3panel (disabled), Pump and Techno have 5.
+// Dance has 6 stepstypes counting 3panel, Pump and Techno have 5.
 // (6 difficulties * 6 stepstypes) + MAX_EDITS_PER_SONG (which is 5 * profileSlots) = 46 rows
 // 46 seems to be a good enough number for this. If we get a crash again, up the
 // "magic" 6. -aj
