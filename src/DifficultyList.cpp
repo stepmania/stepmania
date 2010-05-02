@@ -11,7 +11,18 @@
 #include "SongUtil.h"
 #include "XmlFile.h"
 
-#define MAX_METERS NUM_Difficulty + MAX_EDITS_PER_SONG
+// MAX_METERS was previously set to NUM_Difficulty + MAX_EDITS_PER_SONG.
+// This was all fine and well until AutoSetStyle was created. In certain
+// gametypes (technomotion for example), if autogen is on, the number of
+// available stepcharts exceeds MAX_METERS, resulting in a crash.
+// My first thought to fix this was:
+// (NUM_Difficulty (6) * NUM_StepsType (32)) + MAX_EDITS_PER_SONG (5*profileSlot (2)) = 202
+// However, 202 rows may be a bit overkill.
+// Dance has 6 stepstypes counting 3panel (disabled), Pump and Techno have 5.
+// (6 difficulties * 6 stepstypes) + MAX_EDITS_PER_SONG (which is 5 * profileSlots) = 46 rows
+// 46 seems to be a good enough number for this. If we get a crash again, up the
+// "magic" 6. -aj
+#define MAX_METERS (NUM_Difficulty * 6) + MAX_EDITS_PER_SONG
 
 REGISTER_ACTOR_CLASS( StepsDisplayList )
 
@@ -137,7 +148,7 @@ void StepsDisplayList::UpdatePositions()
 
 		second_start = max( latest - halfsize/2, 0 );
 
-		/* Don't overlap. */
+		// Don't overlap.
 		second_start = max( second_start, first_end );
 
 		second_end = second_start + halfsize;
@@ -272,11 +283,13 @@ void StepsDisplayList::SetFromGameState()
 		m_Rows.resize( vpSteps.size() );
 		FOREACH_CONST( Steps*, vpSteps, s )
 		{
+			//LOG->Trace(ssprintf("setting steps for row %i",i));
 			m_Rows[i].m_Steps = *s;
 			m_Lines[i].m_Meter.SetFromSteps( *s );
 			++i;
 		}
 	}
+
 	while( i < MAX_METERS )
 		m_Lines[i++].m_Meter.Unset();
 
