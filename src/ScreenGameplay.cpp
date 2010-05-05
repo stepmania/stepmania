@@ -155,7 +155,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 	PlayerState *const pPlayerState = GetPlayerState();
 	PlayerStageStats *const pPlayerStageStats = GetPlayerStageStats();
 
-	if(  m_pPrimaryScoreDisplay )
+	if( m_pPrimaryScoreDisplay )
 		m_pPrimaryScoreDisplay->Init( pPlayerState, pPlayerStageStats );
 
 	switch( GAMESTATE->m_PlayMode )
@@ -593,7 +593,7 @@ void ScreenGameplay::Init()
 			pi->m_ptextCourseSongNumber->SetName( ssprintf("SongNumber%s",pi->GetName().c_str()) );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextCourseSongNumber );
 			pi->m_ptextCourseSongNumber->SetText( "" );
-			pi->m_ptextCourseSongNumber->SetDiffuse( RageColor(0,0.5f,1,1) );	// light blue
+			//pi->m_ptextCourseSongNumber->SetDiffuse( RageColor(0,0.5f,1,1) );	// light blue
 			this->AddChild( pi->m_ptextCourseSongNumber );
 		}
 
@@ -979,9 +979,8 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		}
 
 		/* Update attack bOn flags, and rebuild Current-level options
-		 * from Song-level options.  The current NoteSkin could have changed
-		 * because of an attack ending. 
-		 */
+		 * from Song-level options. The current NoteSkin could have changed
+		 * because of an attack ending. */
 		pi->GetPlayerState()->Update( 0 );
 
 		// load player
@@ -2762,6 +2761,7 @@ void ScreenGameplay::SaveReplay()
 	 * Add proper steps hash?
 	 * Add modifiers used
 	 * Add date played, machine played on, etc.
+	 * Hash of some stuff to validate data (see Profile)
 	 */
 	FOREACH_HumanPlayer( pn )
 	{
