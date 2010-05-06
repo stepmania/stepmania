@@ -619,7 +619,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	// mainline sm4 then -aj
 	if(TWO_PART_CONFIRMS_ONLY)
 	{
-		if( m_SelectionState == SelectionState_SelectingSteps)
+		if( m_SelectionState == SelectionState_SelectingSteps )
 		{
 			if( input.MenuI == m_GameButtonPreviousSong )
 			{
@@ -1307,6 +1307,13 @@ void ScreenSelectMusic::MenuBack( const InputEventPlus &input )
 
 void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpns )
 {
+	if(TWO_PART_CONFIRMS_ONLY && m_SelectionState == SelectionState_SelectingSteps)
+	{
+		// if TWO_PART_CONFIRMS_ONLY, changing difficulties unsets the song. -aj
+		m_SelectionState = SelectionState_SelectingSong;
+		MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
+	}
+
 	FOREACH_CONST( PlayerNumber, vpns, p )
 	{
 		PlayerNumber pn = *p;
@@ -1349,6 +1356,11 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 			}
 
 			m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
+		}
+		else
+		{
+			// I don't like how numbers just stay up there if the current
+			// selection is NULL. -aj
 		}
 	}
 }
