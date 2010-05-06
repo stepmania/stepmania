@@ -38,6 +38,9 @@ v1.2
 
 v1.1
 * Cleaned up code some, I think.
+________________________________________________________________________________
+anticipated future changes:
+* M-Mod support (when sm-ssc imntegrates it)
 ]]
 
 -- ProfileDir(slot): gets the profile dir for slot,
@@ -144,15 +147,20 @@ end;
 local function SpeedModSort(tab)
 	local xMods = {};
 	local cMods = {};
+	--local mMods = {};
 
 	-- convert to numbers so sorting works:
 	for i=1,#tab do
 		local typ,val;
-		-- xxx: if people use C420.50 they're fucked;
-		-- trying to have a %f here causes an error for some dumb reason.
+		-- xxx: If people use a floating point CMod (e.g. C420.50),
+		-- it will get rounded. C420.50 gets rounded to 421, btw. -aj
 		if string.find(tab[i],"C%d") then
 			typ = cMods;
 			val = string.gsub(tab[i], "C", "");
+		elseif string.find(tab[i],"M%d") then
+			Trace("[CustomSpeedMods] OpenITG's M-Mods are not supported yet in sm-ssc.");
+			--typ = mMods;
+			--val = string.gsub(tab[i], "M", "");
 		else
 			typ = xMods;
 			val = string.gsub(tab[i], "x", "");
@@ -164,10 +172,13 @@ local function SpeedModSort(tab)
 	xMods = AnonSort(xMods);
 	-- sort cMods
 	cMods = AnonSort(cMods);
+	-- sort mMods
+	--mMods = AnonSort(mMods)
 	local fin = {};
 	-- convert it back to a string since that's what it expects
 	for i=1,#xMods do table.insert(fin, xMods[i].."x"); end;
 	for i=1,#cMods do table.insert(fin, "C"..cMods[i]); end;
+	--for i=1,#mMods do table.insert(fin, "M"..mMods[i]); end;
 	return fin;
 end;
 
