@@ -63,6 +63,7 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 
 	EMPTY_MACHINE_HIGH_SCORE_NAME.Load( sMetricsGroup, "EmptyMachineHighScoreName" );
 	NOT_AVAILABLE.Load( sMetricsGroup, "NotAvailable" );
+	//BLANK_COUNT_VALUE.Load( sMetricsGroup, "BlankCountValue" ); // todo: better name -aj
 	COUNT_FORMAT.Load( sMetricsGroup, "CountFormat" );
 
 	FOREACH_ENUM( PaneCategory, pc )
@@ -121,6 +122,49 @@ void PaneDisplay::SetContent( PaneCategory c )
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];
 	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
 	bool bIsPlayerEdit = pSteps && pSteps->IsAPlayerEdit();
+
+	// in SM3.9, all values would get set to a "?". In sm-ssc, we follow the
+	// fallbacks above. (todo: make this a preference? see BLANK_COUNT_VALUE) -aj
+	if(GAMESTATE->IsCourseMode() && !pTrail)
+	{
+		if( (g_Contents[c].req&NEED_PROFILE) )
+			str = NOT_AVAILABLE;
+
+		{
+			switch( c )
+			{
+			case PaneCategory_MachineHighName:
+				str = EMPTY_MACHINE_HIGH_SCORE_NAME;
+				break;
+			case PaneCategory_MachineHighScore:
+			case PaneCategory_ProfileHighScore:
+				str = NOT_AVAILABLE;
+				break;
+			}
+		}
+
+		goto done;
+	}
+	else if(!GAMESTATE->IsCourseMode() && !pSong)
+	{
+		if( (g_Contents[c].req&NEED_PROFILE) )
+			str = NOT_AVAILABLE;
+
+		{
+			switch( c )
+			{
+			case PaneCategory_MachineHighName:
+				str = EMPTY_MACHINE_HIGH_SCORE_NAME;
+				break;
+			case PaneCategory_MachineHighScore:
+			case PaneCategory_ProfileHighScore:
+				str = NOT_AVAILABLE;
+				break;
+			}
+		}
+
+		goto done;
+	}
 
 	if( (g_Contents[c].req&NEED_NOTES) && !pSteps && !pTrail )
 		goto done;

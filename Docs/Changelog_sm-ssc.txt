@@ -9,10 +9,25 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100507
+--------
+* [PaneDisplay] Show fallback values when Song/Course is null.
+
+20100506
+--------
+* [ScreenSelectMusic] Make it so changing difficulty also cancels
+  TwoPartSelection if TwoPartConfirmsOnly.
+
+20100504
+--------
+* [ScreenGameplay] Un-hardcoded the diffuse command on CourseSongNumber.
+
 20100502
 --------
 * Add dance-threepanel StepsType. Thanks to kurisu for the original 3.9 code.
 * XMode mod added, thanks to v1toko/StepNXA.
+* [Song] add GetDisplayBpms() [a table of two floats], IsDisplayBpmSecret(),
+  IsDisplayBpmConstant() [both bools] Lua bindings
 
 20100501
 --------
