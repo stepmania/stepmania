@@ -53,7 +53,12 @@ t[#t+1] = StandardDecorationFromFileOptional("SongTime","SongTime") .. {
 			curSelection = GAMESTATE:GetCurrentCourse();
 			self:playcommand("Reset");
 			if curSelection then
-				length = curSelection:GetTotalSeconds(GAMESTATE:GetCurrentStyle():GetStepsType());
+				local trail = GAMESTATE:GetCurrentTrail(GAMESTATE:GetMasterPlayerNumber());
+				if trail then
+					length = TrailUtil.GetTotalSeconds(trail);
+				else
+					length = 0.0;
+				end;
 			else
 				length = 0.0;
 			end;
@@ -78,6 +83,8 @@ t[#t+1] = StandardDecorationFromFileOptional("SongTime","SongTime") .. {
 	end;
 	CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 	CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
+	CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
+	CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
 }
 
 if not GAMESTATE:IsCourseMode() then

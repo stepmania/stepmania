@@ -36,7 +36,17 @@ return Def.CourseContentsList {
 			InitCommand=cmd(x,-96;y,2;Load,"TextBanner";SetFromString,"", "", "", "", "", "");
 			SetSongCommand=function(self, params)
 				if params.Song then
-					self:SetFromSong( params.Song );
+					if GAMESTATE:GetCurrentCourse():GetDisplayFullTitle() == "Abomination" then
+						if params.Number % 2 ~= 0 then
+							-- turkey march
+							local artist = params.Song:GetDisplayArtist();
+							self:SetFromString( "Turkey", "", "", "", artist, "" );
+						else
+							self:SetFromSong( params.Song );
+						end;
+					else
+						self:SetFromSong( params.Song );
+					end;
 					self:diffuse( SONGMAN:GetSongColor(params.Song) );
 -- 					self:glow("1,1,1,0.5");
 				else
