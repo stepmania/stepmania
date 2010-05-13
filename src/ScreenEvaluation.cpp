@@ -584,7 +584,7 @@ void ScreenEvaluation::Init()
 	// init time area
 	if( SHOW_TIME_AREA )
 	{
-		m_sprTimeLabel.Load( THEME->GetPathG(m_sName,"time label") );
+		m_sprTimeLabel.Load( THEME->GetPathG(m_sName,"TimeLabel") );
 		m_sprTimeLabel->SetName( "TimeLabel" );
 		ActorUtil::LoadAllCommands( *m_sprTimeLabel, m_sName );
 		SET_XY( m_sprTimeLabel );
