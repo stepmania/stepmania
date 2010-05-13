@@ -4,6 +4,7 @@
 #define TIMING_DATA_H
 
 #include "NoteTypes.h"
+#include "PrefsManager.h"
 struct lua_State;
 
 #define COMPARE(x) if(x!=other.x) return false;
@@ -31,8 +32,16 @@ struct BPMSegment
 struct StopSegment 
 {
 	StopSegment() : m_iStartRow(-1), m_fStopSeconds(-1.0f), m_bDelay(false)  { }
-	StopSegment( int s, float f ) { m_iStartRow = max( 0, s ); m_fStopSeconds = max( 0.0f, f ); m_bDelay = false; } // no delay by default
-	StopSegment( int s, float f, bool d ) { m_iStartRow = max( 0, s ); m_fStopSeconds = max( 0.0f, f ); m_bDelay = d; }
+	StopSegment( int s, float f ) {
+		m_iStartRow = max( 0, s );
+		m_fStopSeconds = PREFSMAN->m_bQuirksMode ? f : max( 0.0f, f );
+		m_bDelay = false; // no delay by default
+	}
+	StopSegment( int s, float f, bool d ) {
+		m_iStartRow = max( 0, s );
+		m_fStopSeconds = PREFSMAN->m_bQuirksMode ? f : max( 0.0f, f );
+		m_bDelay = d;
+	}
 	int m_iStartRow;
 	float m_fStopSeconds;
 	bool m_bDelay; // if true, treat this stop as a Pump delay instead
