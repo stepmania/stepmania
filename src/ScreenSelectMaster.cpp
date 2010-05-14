@@ -261,7 +261,7 @@ void ScreenSelectMaster::Init()
 					}
 
 					m_mapCurrentChoiceToNextChoiceB[dir][c] = c + add;
-					/* Always wrap around MenuDir_Auto. */
+					// Always wrap around MenuDir_Auto.
 					if( dir == MenuDir_Auto || (bool)WRAP_CURSOR )
 						wrap( m_mapCurrentChoiceToNextChoiceB[dir][c], m_aGameCommandsB.size() );
 					else
@@ -391,11 +391,11 @@ void ScreenSelectMaster::BeginScreen()
 		{
 			if( GAMESTATE->IsHumanPlayer(pn) )
 				continue;
-			/*
-			XXX: this code causes crashes
 			if( SHOW_CURSOR )
-				m_sprCursor[pn]->SetVisible( false );
-			*/
+			{
+				if(m_sprCursor[pn])
+					m_sprCursor[pn]->SetVisible( false );
+			}
 			if( SHOW_SCROLLER )
 				m_Scroller[pn].SetVisible( false );
 		}
@@ -765,7 +765,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 			m_sprCursor[*p]->HandleMessage( msg );
 			m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
 		}
-			
+
 		if( SHOW_SCROLLER )
 			m_vsprScroll[*p][m_iChoice[*p]]->HandleMessage( msg );
 	}
