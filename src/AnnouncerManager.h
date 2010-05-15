@@ -1,9 +1,14 @@
 #ifndef ANNOUNCER_MANAGER_H
 #define ANNOUNCER_MANAGER_H
 
+#include "RageTypes.h"
+
 class AnnouncerManager
 {
 public:
+	AnnouncerManager();
+	~AnnouncerManager();
+
 	void GetAnnouncerNames( vector<RString>& AddTo );
 	bool DoesAnnouncerExist( RString sAnnouncerName );
 	void SwitchAnnouncer( RString sNewAnnouncerName );
@@ -12,6 +17,9 @@ public:
 
 	RString GetPathTo( RString sFolderName );
 	bool HasSoundsFor( RString sFolderName );
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 protected:
 	static RString GetAnnouncerDirFromName( RString sAnnouncerName );
