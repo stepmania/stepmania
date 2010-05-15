@@ -9,6 +9,30 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100515
+--------
+* [AnnouncerManager] Lua bindings get added to AnnouncerManager, which now
+  exists as ANNOUNCER. New bindings:
+  ANNOUNCER:DoesAnnouncerExist(sAnnouncer)	- returns a bool
+  ANNOUNCER:GetAnnouncerNames()				- returns a table of strings
+  ANNOUNCER:GetCurrentAnnouncer()			- returns a string
+  ANNOUNCER:SetCurrentAnnouncer(sAnnouncer)	- Sets the announcer if it exists.
+
+20100513
+--------
+* [ScreenEvalation] Graphic "time label" renamed to "TimeLabel" for the sake
+  of naming consistency.
+* Add GetOSName() binding. Returns a string representing the current OS.
+* Allow Negative stops to "work" again in Quirks Mode.
+* [ScreenSelectMaster] Fix "THE" cursor crash by testing if the cursor object
+  is actually there (a.k.a. not null).
+
+20100512
+--------
+* [NotesLoaderSM] Only apply the old .sm format difficulty hacks if
+  difficulty == Difficulty_Hard.
+* [TimingData] add HasNegativeBpms() Lua binding.
+
 20100507
 --------
 * [PaneDisplay] Show fallback values when Song/Course is null.
