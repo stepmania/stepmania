@@ -25,7 +25,19 @@ function SelectMusicOrCourse()
 end;
 
 Branch = {
-	TitleMenu = "ScreenTitleMenu",
+	TitleMenu = function()
+		-- home mode is the most assumed use of sm-ssc.
+		if GAMESTATE:GetCoinMode() == "CoinMode_Home" then return "ScreenTitleMenu" end;
+		-- arcade junk:
+		if GAMESTATE:GetCoinsNeededToJoin() > GAMESTATE:GetCoins() then
+			-- if no credits are inserted, don't show the Join screen. SM4 has
+			-- this as the initial screen, but that means we'd be stuck in a
+			-- loop with ScreenInit. No good.
+			return "ScreenDemonstration";
+		else
+			return "ScreenTitleJoin"
+		end;
+	end,
 	AfterProfileLoad = function()
 		return "ScreenSelectProfile"
 	end,
