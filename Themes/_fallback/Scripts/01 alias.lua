@@ -8,3 +8,7 @@ wouldn't otherwise belong somewhere else.
 function Sprite:cropto(w,h)
 	self:CropTo(w,h);
 end;
+
+function Actor:SetSize(w,h)
+	self:setsize(w,h);
+end;
