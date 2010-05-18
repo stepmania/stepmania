@@ -703,6 +703,9 @@ public:
 		return 1;
 	}
 
+	static int GetRadarPossible( T* p, lua_State *L ) { p->m_radarPossible.PushSelf(L); return 1; }
+	static int GetRadarActual( T* p, lua_State *L ) { p->m_radarActual.PushSelf(L); return 1; }
+
 	LunaPlayerStageStats()
 	{
 		ADD_METHOD( GetCaloriesBurned );
@@ -734,6 +737,8 @@ public:
 		ADD_METHOD( GetPossibleSteps );
 		ADD_METHOD( GetAliveSeconds );
 		ADD_METHOD( GetPercentageOfTaps );
+		ADD_METHOD( GetRadarActual );
+		ADD_METHOD( GetRadarPossible );
 	}
 };
 
