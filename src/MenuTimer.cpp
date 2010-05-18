@@ -11,7 +11,6 @@
 
 RString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("Warning%dCommand",int(i)); }
 
-
 static const float TIMER_PAUSE_SECONDS = 99.99f;
 
 MenuTimer::MenuTimer()
@@ -49,6 +48,7 @@ void MenuTimer::Load( RString sMetricsGroup )
 	WARNING_BEEP_START.Load(sMetricsGroup,"WarningBeepStart");
 	MAX_STALL_SECONDS.Load(sMetricsGroup,"MaxStallSeconds");
 
+	// clear warning commands out if they already exist. -aj
 	if(WARNING_COMMAND)
 		WARNING_COMMAND->Clear();
 
@@ -197,6 +197,7 @@ class LunaMenuTimer: public Luna<MenuTimer>
 {
 public:
 	static int setseconds( T* p, lua_State *L )		{ p->SetSeconds(FArg(1)); return 0; }
+	static int GetSeconds( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetSeconds() ); return 1; }
 	static int pause( T* p, lua_State *L )			{ p->Pause(); return 0; }
 	static int stop( T* p, lua_State *L )			{ p->Stop(); return 0; }
 	static int silent( T* p, lua_State *L )			{ p->EnableSilent(BArg(1)); return 0; }
@@ -204,11 +205,12 @@ public:
 
 	LunaMenuTimer()
 	{
-  		ADD_METHOD( setseconds );
-  		ADD_METHOD( pause );
-  		ADD_METHOD( stop );
-  		ADD_METHOD( silent );
-  		ADD_METHOD( stealth );
+		ADD_METHOD( setseconds );
+		ADD_METHOD( GetSeconds );
+		ADD_METHOD( pause );
+		ADD_METHOD( stop );
+		ADD_METHOD( silent );
+		ADD_METHOD( stealth );
 	}
 };
 
