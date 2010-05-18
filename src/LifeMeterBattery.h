@@ -31,6 +31,10 @@ public:
 	virtual float GetLife() const;
 
 	void Refresh();
+	int GetLivesLeft() { return m_iLivesLeft; }
+
+	// Lua
+	virtual void PushSelf( lua_State *L );
 
 private:
 	int			m_iLivesLeft;			// dead when 0

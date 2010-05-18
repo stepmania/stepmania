@@ -231,6 +231,22 @@ void LifeMeterBattery::Update( float fDeltaTime )
 	}
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaLifeMeterBattery: public Luna<LifeMeterBattery>
+{
+public:
+	static int GetLivesLeft( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetLivesLeft() ); return 1; }
+
+	LunaLifeMeterBattery()
+	{
+		ADD_METHOD( GetLivesLeft );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( LifeMeterBattery, LifeMeter )
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
