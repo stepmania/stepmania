@@ -1509,6 +1509,8 @@ public:
 	DEFINE_METHOD( GetDiffuse, GetDiffuse() )
 	static int GetDiffuseAlpha( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetDiffuseAlpha() ); return 1; }
 	static int GetVisible( T* p, lua_State *L )		{ lua_pushboolean( L, p->GetVisible() ); return 1; }
+	static int GetHAlign( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetHorizAlign() ); return 1; }
+	static int GetVAlign( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetVertAlign() ); return 1; }
 
 	static int GetName( T* p, lua_State *L )		{ lua_pushstring( L, p->GetName() ); return 1; }
 	static int GetParent( T* p, lua_State *L )
@@ -1673,6 +1675,8 @@ public:
 		ADD_METHOD( GetDiffuse );
 		ADD_METHOD( GetDiffuseAlpha );
 		ADD_METHOD( GetVisible );
+		ADD_METHOD( GetHAlign );
+		ADD_METHOD( GetVAlign );
 
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetParent );

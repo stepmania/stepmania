@@ -276,7 +276,8 @@ public:
 	virtual void SetVertAlign( float f ) { m_fVertAlign = f; }
 	void SetHorizAlign( HorizAlign ha ) { SetHorizAlign( (ha == HorizAlign_Left)? 0.0f: (ha == HorizAlign_Center)? 0.5f: +1.0f ); }
 	void SetVertAlign( VertAlign va ) { SetVertAlign( (va == VertAlign_Top)? 0.0f: (va == VertAlign_Middle)? 0.5f: +1.0f ); }
-
+	virtual float GetHorizAlign() { return m_fHorizAlign; }
+	virtual float GetVertAlign() { return m_fVertAlign; }
 
 	// effects
 #if defined(SSC_FUTURES)
