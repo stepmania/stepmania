@@ -89,8 +89,8 @@ function SetUserPref(name,value)
 end;
 
 --[[ type specific, for when you want to be lazy ]]
--- XXX: make set funcs as well, since I hate dealing with colors and I know
--- other themers would be too.
+-- XXX: make set funcs, since I hate dealing with colors and I know
+-- other themers would too.
 
 -- GetUserPrefB: boolean
 function GetUserPrefB(name)

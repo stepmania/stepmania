@@ -58,7 +58,7 @@ end
 
 function ScreenSelectMusic:setupcoursestagemods()
 	local mode = GAMESTATE:GetPlayMode()
-	
+
 	if mode == "PlayMode_Oni" then
 		local po = "clearall,default"
 		-- Let SSMusic set battery.
