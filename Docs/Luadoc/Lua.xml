@@ -42,6 +42,7 @@
 		<Function name='GetEditModeSubScreens'/>
 		<Function name='GetGradeFromPercent'/>
 		<Function name='GetLifeDifficulty'/>
+		<Function name='GetOSName'/>
 		<Function name='GetProTiming'/>
 		<Function name='GetRandomSongBackground'/>
 		<Function name='GetScreenAspectRatio'/>
@@ -120,6 +121,7 @@
 		<Function name='SecondsToMSS'/>
 		<Function name='SecondsToMSSMsMs'/>
 		<Function name='SelectMusicOrCourse'/>
+		<Function name='SelectProfileKeys'/>
 		<Function name='Serialize'/>
 		<Function name='SetUserPref'/>
 		<Function name='ShowStandardDecoration'/>
@@ -215,6 +217,7 @@
 			<Function name='GetDiffuse'/>
 			<Function name='GetDiffuseAlpha'/>
 			<Function name='GetEffectDelta'/>
+			<Function name='GetHAlign'/>
 			<Function name='GetHeight'/>
 			<Function name='GetName'/>
 			<Function name='GetNumStates'/>
@@ -224,6 +227,7 @@
 			<Function name='GetRotationZ'/>
 			<Function name='GetSecsIntoEffect'/>
 			<Function name='GetTweenTimeLeft'/>
+			<Function name='GetVAlign'/>
 			<Function name='GetVisible'/>
 			<Function name='GetWidth'/>
 			<Function name='GetX'/>
@@ -240,6 +244,7 @@
 			<Function name='MaskSource'/>
 			<Function name='RunCommandsRecursively'/>
 			<Function name='SetHeight'/>
+			<Function name='SetSize'/>
 			<Function name='SetTextureFiltering'/>
 			<Function name='SetWidth'/>
 			<Function name='accelerate'/>
@@ -452,6 +457,12 @@
 			<Function name='play'/>
 			<Function name='playforplayer'/>
 			<Function name='stop'/>
+		</Class>
+		<Class name='AnnouncerManager'>
+			<Function name='DoesAnnouncerExist'/>
+			<Function name='GetAnnouncerNames'/>
+			<Function name='GetCurrentAnnouncer'/>
+			<Function name='SetCurrentAnnouncer'/>
 		</Class>
 		<Class base='BitmapText' name='BPMDisplay'>
 			<Function name='GetText'/>
@@ -728,11 +739,17 @@
 			<Function name='IsHot'/>
 			<Function name='IsInDanger'/>
 		</Class>
+		<Class base='LifeMeter' name='LifeMeterBattery'>
+			<Function name='GetLivesLeft'/>
+		</Class>
 		<Class name='MemoryCardManager'>
+			<Function name='GetCardLocked'/>
 			<Function name='GetCardState'/>
 			<Function name='GetName'/>
+			<Function name='IsNameAvailable'/>
 		</Class>
 		<Class base='ActorFrame' name='MenuTimer'>
+			<Function name='GetSeconds'/>
 			<Function name='pause'/>
 			<Function name='setseconds'/>
 			<Function name='silent'/>
@@ -810,6 +827,8 @@
 			<Function name='GetPlayedSteps'/>
 			<Function name='GetPossibleDancePoints'/>
 			<Function name='GetPossibleSteps'/>
+			<Function name='GetRadarActual'/>
+			<Function name='GetRadarPossible'/>
 			<Function name='GetScore'/>
 			<Function name='GetStageAward'/>
 			<Function name='GetSurvivalSeconds'/>
@@ -887,6 +906,8 @@
 			<Function name='GetProfileDir'/>
 			<Function name='IsPersistentProfile'/>
 			<Function name='IsSongNew'/>
+			<Function name='LastLoadWasFromLastGood'/>
+			<Function name='LastLoadWasTamperedOrCorrupt'/>
 			<Function name='SaveMachineProfile'/>
 		</Class>
 		<Class name='RadarValues'>
@@ -1015,6 +1036,7 @@
 			<Function name='GetBannerPath'/>
 			<Function name='GetCDTitlePath'/>
 			<Function name='GetDisplayArtist'/>
+			<Function name='GetDisplayBpms'/>
 			<Function name='GetDisplayFullTitle'/>
 			<Function name='GetDisplayMainTitle'/>
 			<Function name='GetDisplaySubTitle'/>
@@ -1045,6 +1067,8 @@
 			<Function name='HasSignificantBPMChangesOrStops'/>
 			<Function name='HasStepsType'/>
 			<Function name='HasStepsTypeAndDifficulty'/>
+			<Function name='IsDisplayBpmConstant'/>
+			<Function name='IsDisplayBpmSecret'/>
 			<Function name='IsEasy'/>
 			<Function name='IsEnabled'/>
 			<Function name='IsLong'/>
@@ -1183,6 +1207,7 @@
 			<Function name='GetElapsedTimeFromBeat'/>
 			<Function name='GetStops'/>
 			<Function name='HasBPMChanges'/>
+			<Function name='HasNegativeBPMs'/>
 			<Function name='HasStops'/>
 		</Class>
 		<Class name='Trail'>
@@ -1269,6 +1294,7 @@
 		</Namespace>
 	</Namespaces>
 	<Singletons>
+		<Singleton class='AnnouncerManager' name='ANNOUNCER'/>
 		<Singleton class='RageFileManager' name='FILEMAN'/>
 		<Singleton class='GameManager' name='GAMEMAN'/>
 		<Singleton class='GameState' name='GAMESTATE'/>
@@ -1706,34 +1732,35 @@
 			<EnumValue name='&apos;StepsType_Dance_Double&apos;' value='1'/>
 			<EnumValue name='&apos;StepsType_Dance_Couple&apos;' value='2'/>
 			<EnumValue name='&apos;StepsType_Dance_Solo&apos;' value='3'/>
-			<EnumValue name='&apos;StepsType_Dance_Routine&apos;' value='4'/>
-			<EnumValue name='&apos;StepsType_Pump_Single&apos;' value='5'/>
-			<EnumValue name='&apos;StepsType_Pump_Halfdouble&apos;' value='6'/>
-			<EnumValue name='&apos;StepsType_Pump_Double&apos;' value='7'/>
-			<EnumValue name='&apos;StepsType_Pump_Couple&apos;' value='8'/>
-			<EnumValue name='&apos;StepsType_Pump_Routine&apos;' value='9'/>
-			<EnumValue name='&apos;StepsType_Kb7_Single&apos;' value='10'/>
-			<EnumValue name='&apos;StepsType_Ez2_Single&apos;' value='11'/>
-			<EnumValue name='&apos;StepsType_Ez2_Double&apos;' value='12'/>
-			<EnumValue name='&apos;StepsType_Ez2_Real&apos;' value='13'/>
-			<EnumValue name='&apos;StepsType_Para_Single&apos;' value='14'/>
-			<EnumValue name='&apos;StepsType_Ds3ddx_Single&apos;' value='15'/>
-			<EnumValue name='&apos;StepsType_Bm_Single5&apos;' value='16'/>
-			<EnumValue name='&apos;StepsType_Bm_Double5&apos;' value='17'/>
-			<EnumValue name='&apos;StepsType_Bm_Single7&apos;' value='18'/>
-			<EnumValue name='&apos;StepsType_Bm_Double7&apos;' value='19'/>
-			<EnumValue name='&apos;StepsType_Maniax_Single&apos;' value='20'/>
-			<EnumValue name='&apos;StepsType_Maniax_Double&apos;' value='21'/>
-			<EnumValue name='&apos;StepsType_Techno_Single4&apos;' value='22'/>
-			<EnumValue name='&apos;StepsType_Techno_Single5&apos;' value='23'/>
-			<EnumValue name='&apos;StepsType_Techno_Single8&apos;' value='24'/>
-			<EnumValue name='&apos;StepsType_Techno_Double4&apos;' value='25'/>
-			<EnumValue name='&apos;StepsType_Techno_Double5&apos;' value='26'/>
-			<EnumValue name='&apos;StepsType_Pnm_Five&apos;' value='27'/>
-			<EnumValue name='&apos;StepsType_Pnm_Nine&apos;' value='28'/>
-			<EnumValue name='&apos;StepsType_Guitar_Five&apos;' value='29'/>
-			<EnumValue name='&apos;StepsType_Karaoke&apos;' value='30'/>
-			<EnumValue name='&apos;StepsType_Lights_Cabinet&apos;' value='31'/>
+			<EnumValue name='&apos;StepsType_Dance_Threepanel&apos;' value='4'/>
+			<EnumValue name='&apos;StepsType_Dance_Routine&apos;' value='5'/>
+			<EnumValue name='&apos;StepsType_Pump_Single&apos;' value='6'/>
+			<EnumValue name='&apos;StepsType_Pump_Halfdouble&apos;' value='7'/>
+			<EnumValue name='&apos;StepsType_Pump_Double&apos;' value='8'/>
+			<EnumValue name='&apos;StepsType_Pump_Couple&apos;' value='9'/>
+			<EnumValue name='&apos;StepsType_Pump_Routine&apos;' value='10'/>
+			<EnumValue name='&apos;StepsType_Kb7_Single&apos;' value='11'/>
+			<EnumValue name='&apos;StepsType_Ez2_Single&apos;' value='12'/>
+			<EnumValue name='&apos;StepsType_Ez2_Double&apos;' value='13'/>
+			<EnumValue name='&apos;StepsType_Ez2_Real&apos;' value='14'/>
+			<EnumValue name='&apos;StepsType_Para_Single&apos;' value='15'/>
+			<EnumValue name='&apos;StepsType_Ds3ddx_Single&apos;' value='16'/>
+			<EnumValue name='&apos;StepsType_Bm_Single5&apos;' value='17'/>
+			<EnumValue name='&apos;StepsType_Bm_Double5&apos;' value='18'/>
+			<EnumValue name='&apos;StepsType_Bm_Single7&apos;' value='19'/>
+			<EnumValue name='&apos;StepsType_Bm_Double7&apos;' value='20'/>
+			<EnumValue name='&apos;StepsType_Maniax_Single&apos;' value='21'/>
+			<EnumValue name='&apos;StepsType_Maniax_Double&apos;' value='22'/>
+			<EnumValue name='&apos;StepsType_Techno_Single4&apos;' value='23'/>
+			<EnumValue name='&apos;StepsType_Techno_Single5&apos;' value='24'/>
+			<EnumValue name='&apos;StepsType_Techno_Single8&apos;' value='25'/>
+			<EnumValue name='&apos;StepsType_Techno_Double4&apos;' value='26'/>
+			<EnumValue name='&apos;StepsType_Techno_Double5&apos;' value='27'/>
+			<EnumValue name='&apos;StepsType_Pnm_Five&apos;' value='28'/>
+			<EnumValue name='&apos;StepsType_Pnm_Nine&apos;' value='29'/>
+			<EnumValue name='&apos;StepsType_Guitar_Five&apos;' value='30'/>
+			<EnumValue name='&apos;StepsType_Karaoke&apos;' value='31'/>
+			<EnumValue name='&apos;StepsType_Lights_Cabinet&apos;' value='32'/>
 		</Enum>
 		<Enum name='StyleType'>
 			<EnumValue name='&apos;StyleType_OnePlayerOneSide&apos;' value='0'/>
@@ -1805,13 +1832,13 @@
 		<Constant name='ASPECT_SCALE_FACTOR' value='1'/>
 		<Constant name='NUM_PLAYERS' value='2'/>
 		<Constant name='SCREEN_BOTTOM' value='480'/>
-		<Constant name='SCREEN_CENTER_X' value='384'/>
+		<Constant name='SCREEN_CENTER_X' value='427'/>
 		<Constant name='SCREEN_CENTER_Y' value='240'/>
 		<Constant name='SCREEN_HEIGHT' value='480'/>
 		<Constant name='SCREEN_LEFT' value='0'/>
-		<Constant name='SCREEN_RIGHT' value='768'/>
+		<Constant name='SCREEN_RIGHT' value='854'/>
 		<Constant name='SCREEN_TOP' value='0'/>
-		<Constant name='SCREEN_WIDTH' value='768'/>
+		<Constant name='SCREEN_WIDTH' value='854'/>
 		<Constant name='PLAYER_1' value='&apos;PlayerNumber_P1&apos;'/>
 		<Constant name='PLAYER_2' value='&apos;PlayerNumber_P2&apos;'/>
 		<Constant name='_VERSION' value='&apos;Lua 5.1&apos;'/>
@@ -1824,5 +1851,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>sm-ssc v1.0 beta 3</Version>
-	<Date>2010-04-30</Date>
+	<Date>2010-05-18</Date>
 </Lua>

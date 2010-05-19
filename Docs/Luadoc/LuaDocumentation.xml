@@ -24,8 +24,23 @@
 <Documentation xmlns='http://www.stepmania.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.stepmania.com Lua.xsd'>
 <!-- Global functions -->
 <GlobalFunctions>
+	<Function name='AreStagePlayerModsForced' theme='_fallback' return='bool' arguments=''>
+		[02 StageMods.lua]
+	</Function>
+	<Function name='AreStageSongModsForced' theme='_fallback' return='bool' arguments=''>
+		[02 StageMods.lua]
+	</Function>
 	<Function name='Basename' return='string' arguments='string path'>
 		Returns the base name of file path.
+	</Function>
+	<Function name='BoostColor' theme='_fallback' return='color' arguments='color c, float fBoost'>
+		[02 Colors.lua]
+	</Function>
+	<Function name='Brightness' theme='_fallback' return='color' arguments='color c, float percent'>
+		[03 HSV.lua]
+	</Function>
+	<Function name='CheckpointsTapsSeparateJudgment' theme='_fallback' return='bool' arguments=''>
+		[03 Gameplay.lua]
 	</Function>
 	<Function name='color' return='color' arguments='string color'>
 		Returns a color from a string. <code>color</code> can be in
@@ -476,6 +491,9 @@
 		<!-- XXX: What is aux? -->
 		Returns the Actor's aux value.
 	</Function>
+	<Function name='GetBaseZoomX' return='float' arguments=''>
+		Returns the Actor's base X zoom value.
+	</Function>
 	<Function name='GetCommand' return='bool' arguments='string sCmdName'>
 		Returns <code>true</code> if the Actor has a command named <code>sCmdName</code>.
 	</Function>
@@ -484,6 +502,9 @@
 	</Function>
 	<Function name='GetDiffuseAlpha' return='float' arguments=''>
 		Returns the Actor's current diffusealpha.
+	</Function>
+	<Function name='GetHAlign' sm-ssc='true' return='float' arguments=''>
+		Returns the Actor's horizontal alignment as a number in the range 0..1.
 	</Function>
 	<Function name='GetName' return='string' arguments=''>
 		Returns the Actor's name.
@@ -502,6 +523,9 @@
 	</Function>
 	<Function name='GetRotationZ' sm-ssc='true' return='float' arguments=''>
 		Returns the Actor's current Z rotation.
+	</Function>
+	<Function name='GetVAlign' sm-ssc='true' return='float' arguments=''>
+		Returns the Actor's vertical alignment as a number in the range 0..1.
 	</Function>
 	<Function name='GetWidth' return='float' arguments=''>
 		Returns the Actor's current width.
@@ -536,11 +560,17 @@
 	<Function name='linear' return='void' arguments='float fRate'>
 		Plays the commands that follow at a normal rate, where <code>fRate</code> is in seconds.
 	</Function>
+	<Function name='LyricCommand' theme='_fallback' return='void' arguments='string side'>
+		[02 Lyrics.lua] Plays the lyric command for the specified <code>side</code> (<code>"Back"</code> or <code>"Front"</code>).
+	</Function>
 	<Function name='name' return='void' arguments='string sName'>
 		Sets the Actor's name to <code>sName</code>.
 	</Function>
 	<Function name='playcommand' return='void' arguments='string sCommandName'>
 		Plays a command named <code>sCommandName</code>.
+	</Function>
+	<Function name='player' theme='_fallback' return='void' arguments='PlayerNumber p'>
+		[02 Actor.lua] Sets the visibility of the Actor based on <code>p</code> being a human player.
 	</Function>
 	<Function name='pulse' return='void' arguments=''>
 		Makes the Actor grow and shrink. Can use <Link function='effectmagnitude' /> to define different pulsing behavior.
@@ -571,6 +601,12 @@
 	</Function>
 	<Function name='scaletofit' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
 		Scales the Actor to fit inside a rectangle defined by the four float arguments.
+	</Function>
+	<Function name='setsize' return='void' arguments='float width, float height'>
+		Sets the size of the Actor.
+	</Function>
+	<Function name='SetSize' theme='_fallback' return='void' arguments='float width, float height'>
+		[01 alias.lua] Alias for setsize.
 	</Function>
 	<Function name='setstate' return='void' arguments='int iNewState'>
 		Sets a multi-framed Actor's state to <code>iNewState</code>.
@@ -864,6 +900,20 @@
 	</Function>
 	<Function name='stop' sm-ssc='true' return='void' arguments=''>
 		Stops the sound.
+	</Function>
+</Class>
+<Class name='AnnouncerManager'>
+	<Function name='DoesAnnouncerExist' sm-ssc='true' return='bool' arguments='string sAnnonucer'>
+		Returns true if Announcer <code>sAnnouncer</code> exists.
+	</Function>
+	<Function name='GetAnnouncerNames' sm-ssc='true' return='{string}' arguments=''>
+		Returns a table of installed announcers.
+	</Function>
+	<Function name='GetCurrentAnnouncer' sm-ssc='true' return='string' arguments=''>
+		Returns the current announcer's name.
+	</Function>
+	<Function name='SetCurrentAnnouncer' sm-ssc='true' return='void' arguments='string sNewAnnouncer'>
+		Sets the announcer to <code>sNewAnnouncer</code>.
 	</Function>
 </Class>
 <Class name='Banner'>
@@ -1574,6 +1624,11 @@
 		Returns a table of the high scores.
 	</Function>
 </Class>
+<Class name='HoldJudgment'>
+	<Function name='LoadFromMultiPlayer' return='void' arguments='MultiPlayer mp'>
+		Loads the HoldJudgment for the specified MultiPlayer.
+	</Function>
+</Class>
 <Class name='LifeMeter'>
 	<Function name='GetLife' return='float' arguments=''>
 		Returns the amount of life left in the LifeMeter as a float in the range 0..1.
@@ -1588,15 +1643,29 @@
 		Returns <code>true</code> if in danger.
 	</Function>
 </Class>
+<Class name='LifeMeterBattery'>
+	<Function name='GetLivesLeft' sm-ssc='true' return='int' arguments=''>
+		Returns the number of lives remaining.
+	</Function>
+</Class>
 <Class name='MemoryCardManager'>
+	<Function name='GetCardLocked' sm-ssc='true' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if player <code>pn</code>'s card is locked.
+	</Function>
 	<Function name='GetCardState' return='MemoryCardState' arguments='PlayerNumber pn'>
 		Return the state for player <code>pn</code>.
 	</Function>
 	<Function name='GetName' sm-ssc='true' return='string' arguments='PlayerNumber pn'>
 		Returns the name of the storage device.
 	</Function>
+	<Function name='IsNameAvailable' sm-ssc='true' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if player <code>pn</code>'s name is available.
+	</Function>
 </Class>
 <Class name='MenuTimer'>
+	<Function name='GetSeconds' sm-ssc='true' return='float' arguments=''>
+		Returns the current MenuTimer's value.
+	</Function>
 	<Function name='pause' return='void' arguments=''>
 		Pauses the MenuTimer, stopping it from counting down.
 	</Function>
@@ -1619,6 +1688,11 @@
 		Broadcast the message to all listeners subscribed to <code>sMessage</code>. The
 		second argument is an optional table of parameters. It may be omitted or explicitly
 		set to <code>nil</code>.
+	</Function>
+</Class>
+<Class name='MeterDisplay'>
+	<Function name='SetStreamWidth' return='void' arguments='float fWidth'>
+		
 	</Function>
 </Class>
 <Class name='Model'>
@@ -1703,8 +1777,12 @@
 	</Function>
 </Class>
 <Class name='PlayerInfo'>
+	<Description>(PlayerInfo is a part of ScreenGameplay.)</Description>
 	<Function name='GetLifeMeter' return='LifeMeter' arguments='PlayerNumber pn'>
 		Returns the <Link class='LifeMeter' /> of player <code>pn</code>.
+	</Function>
+	<Function name='GetStepsQueueWrapped' return='Steps' arguments='int index'>
+		
 	</Function>
 </Class>
 <Class name='PlayerStageStats'>
@@ -1776,6 +1854,12 @@
 	</Function>
 	<Function name='GetPossibleSteps' return='{Steps}' arguments=''>
 		Returns a table of possible steps.
+	</Function>
+	<Function name='GetRadarActual' sm-ssc='true' return='RadarValues' arguments=''>
+		Returns a RadarValues object representing the player's actual performance.
+	</Function>
+	<Function name='GetRadarPossible' sm-ssc='true' return='RadarValues' arguments=''>
+		Returns a RadarValues object representing the total values for the song.
 	</Function>
 	<Function name='GetScore' return='int' arguments=''>
 		Returns the score.
@@ -1985,6 +2069,12 @@
 	<Function name='IsSongNew' sm-ssc="true" return='bool' arguments='Song s'>
 		Returns <code>true</code> if Song <code>s</code> has never been played before (according to the machine profile).
 	</Function>
+	<Function name='LastLoadWasFromLastGood' sm-ssc='true' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if the last load of player <code>pn</code>'s profile was a LastGood copy of the profile.
+	</Function>
+	<Function name='LastLoadWasTamperedOrCorrupt' sm-ssc='true' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if the last load of player <code>pn</code>'s profile resulted in a tampered or corrupt profile.
+	</Function>
 	<Function name='SaveMachineProfile' return='void' arguments=''>
 		Saves the machine profile.
 	</Function>
@@ -2115,15 +2205,26 @@
 		Posts a message with the text <code>sScreenMsg</code> to the Screen.
 	</Function>
 </Class>
+<Class name='ScreenEvaluation'>
+	<Function name='GetStageStats' return='StageStats' arguments=''>
+		Returns the current StageStats.
+	</Function>
+</Class>
 <Class name='ScreenGameplay'>
 	<Function name='Center1Player' return='bool' arguments=''>
 		Returns <code>true</code> if a single <Link class='Player' /> has its NoteField centered.
+	</Function>
+	<Function name='GetDummyPlayerInfo' return='PlayerInfo' arguments='int index'>
+		Returns a dummy PlayerInfo for the specified index.
 	</Function>
 	<Function name='GetLifeMeter' return='LifeMeter' arguments='PlayerNumber pn'>
 		Returns the <Link class='LifeMeter' /> for the specified <Link class='ENUM' function='PlayerNumber' /> <code>pn</code>.
 	</Function>
 	<Function name='GetNextCourseSong' return='Song' arguments=''>
 		Returns the next <Link class='Song' /> in the current <Link class='Course' />.
+	</Function>
+	<Function name='GetPlayerInfo' return='PlayerInfo' arguments='PlayerNumber pn'>
+		Returns the PlayerInfo for player <code>pn</code>.
 	</Function>
 	<Function name='SetNewScreen' return='void' arguments='string s'>
 		Sets the next Screen to be loaded.
@@ -2224,6 +2325,17 @@
 		Returns player <code>pn</code>'s current selected item as an integer.
 	</Function>
 </Class>
+<Class name='ScreenSelectMusic'>
+	<Function name='GetGoToOptions' return='bool' arguments=''>
+		Returns <code>true</code> if the player is going to the options screen.
+	</Function>
+	<Function name='setupcoursestagemods' theme='_fallback' return='void' arguments=''>
+		[02 StageMods.lua] Sets up modifiers for course modes.
+	</Function>
+	<Function name='setupmusicstagemods' theme='_fallback' return='void' arguments=''>
+		[02 StageMods.lua] Sets up modifiers for non-course modes.
+	</Function>
+</Class>
 <Class name='ScreenSelectProfile'>
 	<Function name='Cancel' return='void' arguments=''>
 		Tells the screen to go to the previous screen.
@@ -2259,6 +2371,9 @@
 	</Function>
 	<Function name='GetDisplayArtist' return='string' arguments=''>
 		Returns the displayed artist of the song.
+	</Function>
+	<Function name='GetDisplayBpms' sm-ssc='true' return='{float,float}' arguments=''>
+		Returns a table containing the display BPMs.
 	</Function>
 	<Function name='GetDisplayFullTitle' return='string' arguments=''>
 		Returns the displayed full title of the song, including subtitle.
@@ -2350,6 +2465,12 @@
 	<Function name='HasStepsType' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the song has .
 	</Function>
+	<Function name='IsDisplayBpmConstant' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the song's DisplayBPM is constant.
+	</Function>
+	<Function name='IsDisplayBpmSecret' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the song's DisplayBPM is secret.
+	</Function>
 	<Function name='IsEasy' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the song is considered easy.
 	</Function>
@@ -2387,6 +2508,9 @@
 	</Function>
 	<Function name='GetCourseColor' return='color' arguments='Course c'>
 		Returns the course color of course <code>c</code>.
+	</Function>
+	<Function name='GetExtraStageInfo' return='Song, Steps' arguments='bool bExtra2, Style s'>
+		Returns the extra stage info for the specified Style <code>s</code>. (If <code>bExtra2</code> is true, it will use the second Extra Stage data instead of the first.)
 	</Function>
 	<Function name='GetNumAdditionalCourses' return='int' arguments=''>
 		Returns the number of courses loaded via Additional folders.
@@ -2510,7 +2634,7 @@
 		Crops the Sprite to <code>fWidth</code>x<code>fHeight</code>.
 	</Function>
 	<Function name='cropto' theme='_fallback' return='void' arguments='float fWidth, float fHeight'>
-		Alias for CropTo.
+		[01 alias.lua] Alias for CropTo.
 	</Function>
 </Class>
 <Class name='StageStats'>
@@ -2634,6 +2758,9 @@
 	</Function>
 </Class>
 <Class name='TextBanner'>
+	<Function name='Load' return='void' arguments='string sMetricsGroup'>
+		Loads the TextBanner from the specified metrics group.
+	</Function>
 	<Function name='SetFromSong' return='void' arguments='Song s'>
 		Loads the TextBanner's child elements from a <Link class='Song' />.
 	</Function>
@@ -2709,6 +2836,9 @@
 	</Function>
 	<Function name='HasBPMChanges' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains BPM changes.
+	</Function>
+	<Function name='HasNegativeBPMs' return='bool' arguments=''>
+		Returns <code>true</code> if the TimingData contains any BPM changes with a negative BPM.
 	</Function>
 	<Function name='HasStops' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains stops.

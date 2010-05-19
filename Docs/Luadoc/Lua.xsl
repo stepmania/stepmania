@@ -244,7 +244,7 @@
 		<legend>Function Colors</legend>
 		<div class="descriptionCell">Available in SM4 baseline and sm-ssc</div>
 		<div class="renamed">Renamed or otherwise modified in sm-ssc</div>
-		<div class="sm-ssc">Available in sm-ssc only (for the time being)</div>
+		<div class="sm-ssc">Available in sm-ssc only (compared to StepMania 4 alpha 5)</div>
 		<div class="_fallbackTheme">Defined in sm-ssc's _fallback theme</div>
 		<div class="defaultTheme">Defined in sm-ssc's default theme</div>
 		</fieldset>
