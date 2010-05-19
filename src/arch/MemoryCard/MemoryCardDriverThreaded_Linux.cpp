@@ -7,6 +7,7 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <dirent.h>
+#include <sys/stat.h>
 
 bool MemoryCardDriverThreaded_Linux::TestWrite( UsbStorageDevice* pDevice )
 {
