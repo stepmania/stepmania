@@ -26,6 +26,7 @@ if test "$with_ffmpeg" != "no"; then
 		AC_SEARCH_LIBS(guess_format, [avformat], have_libavformat=yes,  have_libavformat=no)
 		AC_SEARCH_LIBS(sws_scale, [swscale], have_libswscale=yes,  have_libswscale=no)
 	fi
+fi
 
 have_ffmpeg=no
 if test "$have_libavutil" = "yes" -a "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes" -a "$have_libswscale" = "yes"; then

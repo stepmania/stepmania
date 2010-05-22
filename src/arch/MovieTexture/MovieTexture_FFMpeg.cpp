@@ -695,7 +695,7 @@ int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
 #if defined(MACOSX)
 	avcodec::offset_t URLRageFile_seek( avcodec::URLContext *h, avcodec::offset_t pos, int whence )
 #else
-	int64_t URLRageFile_seek( avcodec::URLContext *h, avcodec::int64_t pos, int whence )
+	int64_t URLRageFile_seek( avcodec::URLContext *h, int64_t pos, int whence )
 #endif
 {
 	RageFileBasic *f = (RageFileBasic *) h->priv_data;
