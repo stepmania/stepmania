@@ -17,14 +17,14 @@
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
 enum JudgmentLine
 {
-	JudgmentLine_W1, 
-	JudgmentLine_W2, 
-	JudgmentLine_W3, 
-	JudgmentLine_W4, 
-	JudgmentLine_W5, 
-	JudgmentLine_Miss, 
-	JudgmentLine_Held, 
-	JudgmentLine_MaxCombo, 
+	JudgmentLine_W1,
+	JudgmentLine_W2,
+	JudgmentLine_W3,
+	JudgmentLine_W4,
+	JudgmentLine_W5,
+	JudgmentLine_Miss,
+	JudgmentLine_Held,
+	JudgmentLine_MaxCombo,
 	NUM_JudgmentLine,
 	JudgmentLine_Invalid
 };
@@ -69,7 +69,7 @@ protected:
 
 	// grade area
 	AutoActor		m_sprGradeFrame[NUM_PLAYERS];
-	GradeDisplay		m_Grades[NUM_PLAYERS];
+	GradeDisplay	m_Grades[NUM_PLAYERS];
 
 	// points area
 	bool			m_bNewSongsUnlocked;
@@ -91,7 +91,7 @@ protected:
 
 	// judgment area
 	AutoActor		m_sprSharedJudgmentLineLabels[NUM_JudgmentLine];
-	RollingNumbers		m_textJudgmentLineNumber[NUM_JudgmentLine][NUM_PLAYERS];
+	RollingNumbers	m_textJudgmentLineNumber[NUM_JudgmentLine][NUM_PLAYERS];
 
 	// stats area
 	AutoActor		m_sprDetailFrame[NUM_PLAYERS];
@@ -99,7 +99,7 @@ protected:
 
 	// score area
 	AutoActor		m_sprScoreLabel;
-	RollingNumbers		m_textScore[NUM_PLAYERS];
+	RollingNumbers	m_textScore[NUM_PLAYERS];
 
 	// time area
 	AutoActor		m_sprTimeLabel;

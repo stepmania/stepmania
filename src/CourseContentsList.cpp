@@ -132,7 +132,7 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 			s = ssprintf("%d", te->pSteps->GetMeter());
 			dc = te->pSteps->GetDifficulty();
 		}
-			
+
 		Message msg("SetSong");
 		msg.SetParam( "PlayerNumber", pn );
 		msg.SetParam( "Song", te->pSong );

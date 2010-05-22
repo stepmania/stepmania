@@ -48,9 +48,7 @@ public:
 	float GetSecondsToDestination() const;
 	int GetNumItems() const						{ return m_iNumItems; }
 
-	//
 	// Commands
-	//
 	void PushSelf( lua_State *L );
 
 protected:

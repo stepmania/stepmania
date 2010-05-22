@@ -260,7 +260,7 @@ void BitmapText::BuildChars()
 
 void BitmapText::DrawChars( bool bUseStrokeTexture )
 {
-	// bail if cropped all the way 
+	// bail if cropped all the way
 	if( m_pTempState->crop.left + m_pTempState->crop.right >= 1  || 
 		m_pTempState->crop.top + m_pTempState->crop.bottom >= 1 ) 
 		return; 

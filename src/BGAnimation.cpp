@@ -102,7 +102,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 
 	if( DoesFileExist(sPathToIni) )
 	{
-		// This is a new style BGAnimation (using .ini)
+		// This is a 3.9-style BGAnimation (using .ini)
 		IniFile ini;
 		ini.ReadFile( sPathToIni );
 
@@ -117,7 +117,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 	}
 	else
 	{
-		// This is an old style BGAnimation (not using .ini)
+		// This is an 3.0 and before-style BGAnimation (not using .ini)
 
 		// loading a directory of layers
 		vector<RString> asImagePaths;
@@ -154,7 +154,7 @@ void BGAnimation::LoadFromNode( const XNode* pNode )
 	ActorFrame::LoadFromNode( pNode );
 
 	/* Backwards-compatibility: if a "LengthSeconds" value is present, create a dummy
-	 * actor that sleeps for the given length of time.  This will extend GetTweenTimeLeft. */
+	 * actor that sleeps for the given length of time. This will extend GetTweenTimeLeft. */
 	float fLengthSeconds = 0;
 	if( pNode->GetAttrValue( "LengthSeconds", fLengthSeconds ) )
 	{

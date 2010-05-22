@@ -61,7 +61,7 @@ void Banner::LoadFromCachedBanner( const RString &sPath )
 	}
 	else
 	{
-		/* Try to load the low quality version. */
+		// Try to load the low quality version.
 		ID = BANNERCACHE->LoadCachedBanner( sPath );
 	}
 

@@ -33,10 +33,10 @@ public:
 
 	LunaLifeMeter()
 	{
-  		ADD_METHOD( GetLife );
-  		ADD_METHOD( IsInDanger );
-  		ADD_METHOD( IsHot );
-  		ADD_METHOD( IsFailing );
+		ADD_METHOD( GetLife );
+		ADD_METHOD( IsInDanger );
+		ADD_METHOD( IsHot );
+		ADD_METHOD( IsFailing );
 	}
 };
 

@@ -66,13 +66,13 @@ public:
 	// Lua
 	void PushSelf( lua_State *L );
 
-	PlayerNumber		m_pn;
-	MultiPlayer		m_mp;
-	bool			m_bIsDummy;
+	PlayerNumber	m_pn;
+	MultiPlayer	m_mp;
+	bool		m_bIsDummy;
 	int			m_iDummyIndex;
 	int			m_iAddToDifficulty;	// if > 0, use the Nth harder Steps
-	bool			m_bPlayerEnabled; // IsEnabled cache for iterators
-	PlayerState		m_PlayerStateDummy;
+	bool		m_bPlayerEnabled; // IsEnabled cache for iterators
+	PlayerState	m_PlayerStateDummy;
 	PlayerStageStats	m_PlayerStageStatsDummy;
 	SoundEffectControl	m_SoundEffectControl;
 
@@ -83,8 +83,8 @@ public:
 	BitmapText		*m_ptextCourseSongNumber;
 	BitmapText		*m_ptextStepsDescription;
 
-	ScoreDisplay		*m_pPrimaryScoreDisplay;
-	ScoreDisplay		*m_pSecondaryScoreDisplay;
+	ScoreDisplay	*m_pPrimaryScoreDisplay;
+	ScoreDisplay	*m_pSecondaryScoreDisplay;
 	ScoreKeeper		*m_pPrimaryScoreKeeper;
 	ScoreKeeper		*m_pSecondaryScoreKeeper;
 	BitmapText		*m_ptextPlayerOptions;
