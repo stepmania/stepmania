@@ -18,6 +18,7 @@ void HelpDisplay::Load( const RString &sType )
 {
 	RunCommands( THEME->GetMetricA(sType,"TipOnCommand") );
 	m_fSecsUntilSwitch = THEME->GetMetricF(sType,"TipShowTime");
+	m_fSecsBetweenSwitches = THEME->GetMetricF(sType,"TipSwitchTime");
 }
 
 void HelpDisplay::SetTips( const vector<RString> &arrayTips, const vector<RString> &arrayTipsAlt )
