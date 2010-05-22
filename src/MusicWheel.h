@@ -23,8 +23,8 @@ public:
 	virtual void Load( RString sType );
 	void BeginScreen();
 
-	bool ChangeSort( SortOrder new_so );		// return true if change successful
-	bool NextSort();				// return true if change successful
+	bool ChangeSort( SortOrder new_so );	// return true if change successful
+	bool NextSort();						// return true if change successful
 	void StartRoulette();
 	void StartRandom();
 	bool IsRouletting() const;
@@ -71,15 +71,15 @@ protected:
 	ThemeMetric<float>		ROULETTE_SWITCH_SECONDS;
 	ThemeMetric<int>		ROULETTE_SLOW_DOWN_SWITCHES;
 	ThemeMetric<int>		NUM_SECTION_COLORS;
-	ThemeMetric<RageColor>		SONG_REAL_EXTRA_COLOR;
-	ThemeMetric<RageColor>		SORT_MENU_COLOR;
+	ThemeMetric<RageColor>	SONG_REAL_EXTRA_COLOR;
+	ThemeMetric<RageColor>	SORT_MENU_COLOR;
 	ThemeMetric<bool>		SHOW_ROULETTE;
 	ThemeMetric<bool>		SHOW_RANDOM;
 	ThemeMetric<bool>		SHOW_PORTAL;
 	ThemeMetric<bool>		RANDOM_PICKS_LOCKED_SONGS;
 	ThemeMetric<int>		MOST_PLAYED_SONGS_TO_SHOW;
 	ThemeMetric<int>		RECENT_SONGS_TO_SHOW;
-	ThemeMetric<RString>		MODE_MENU_CHOICE_NAMES;
+	ThemeMetric<RString>	MODE_MENU_CHOICE_NAMES;
 	ThemeMetricMap<RString>		CHOICE;
 	ThemeMetric1D<RageColor>	SECTION_COLORS;
 	ThemeMetric<LuaReference>	SORT_ORDERS;

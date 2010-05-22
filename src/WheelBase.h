@@ -30,7 +30,7 @@ public:
 	virtual void ChangeMusic(int dist); /* +1 or -1 */
 	virtual void SetOpenSection( RString group ) { }
 
-	/* Return true if we're moving fast automatically. */
+	// Return true if we're moving fast automatically.
 	int IsMoving() const;
 	bool IsSettled() const;
 

@@ -28,9 +28,9 @@ struct WheelItemBaseData
 	WheelItemBaseData() {}
 	WheelItemBaseData( WheelItemDataType type, RString sText, RageColor color );
 	virtual ~WheelItemBaseData() {}
-	WheelItemDataType	m_Type;
-	RString			m_sText;
-	RageColor		m_color;	// either text color or section background color
+	WheelItemDataType m_Type;
+	RString		m_sText;
+	RageColor	m_color;	// either text color or section background color
 };
 
 class WheelItemBase : public ActorFrame
@@ -47,15 +47,15 @@ public:
 
 	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus, int iDrawIndex );
 
-	RageColor	m_colorLocked;
+	RageColor m_colorLocked;
 
 protected:
 	void SetGrayBar( Actor *pBar ) { m_pGrayBar = pBar; }
 
 	const WheelItemBaseData* m_pData;
-	bool m_bExpanded;	// if TYPE_SECTION, whether this section is expanded
+	bool m_bExpanded; // if TYPE_SECTION whether this section is expanded
 
-	Actor*		m_pGrayBar;
+	Actor* m_pGrayBar;
 };
 
 #endif
