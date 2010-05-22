@@ -900,12 +900,14 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		if( m_MusicWheel.IsRouletting() )
 		{
 			MenuStart( InputEventPlus() );
+			// todo: make this value a metric -aj
 			m_MenuTimer->SetSeconds( 15 );
 			m_MenuTimer->Start();
 		}
 		else if( DO_ROULETTE_ON_MENU_TIMER  &&  m_MusicWheel.GetSelectedSong() == NULL  &&  m_MusicWheel.GetSelectedCourse() == NULL )
 		{
 			m_MusicWheel.StartRoulette();
+			// todo: make this value a metric -aj
 			m_MenuTimer->SetSeconds( 15 );
 			m_MenuTimer->Start();
 		}
@@ -1345,7 +1347,7 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
 
-			GAMESTATE->m_pCurSteps[pn].Set( NULL );			
+			GAMESTATE->m_pCurSteps[pn].Set( NULL );
 			GAMESTATE->m_pCurTrail[pn].Set( pTrail );
 
 			int iScore = 0;
@@ -1360,7 +1362,9 @@ void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpn
 		else
 		{
 			// I don't like how numbers just stay up there if the current
-			// selection is NULL. -aj
+			// selection is NULL.
+			// todo: Let themers set the text instead of just using 0. -aj
+			m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, 0) );
 		}
 	}
 }
