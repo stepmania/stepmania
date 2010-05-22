@@ -16,7 +16,7 @@
 #include "CourseUtil.h"
 #include <float.h>
 
-const int MAX_EDIT_COURSE_SIZE_BYTES	= 30*1024;	// 30KB
+const int MAX_EDIT_COURSE_SIZE_BYTES	= 32*1024;	// 32KB
 
 const char *g_CRSDifficultyNames[] =
 {
@@ -69,6 +69,10 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		else if( 0 == stricmp(sValueName, "BANNER") )
 		{
 			out.m_sBannerPath = sParams[1];
+		}
+		else if( 0 == stricmp(sValueName, "BACKGROUND") )
+		{
+			out.m_sBackgroundPath = sParams[1];
 		}
 		else if( 0 == stricmp(sValueName, "LIVES") )
 		{
