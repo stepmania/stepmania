@@ -20,7 +20,7 @@
 #if defined(HAVE_FFMPEG)
 extern "C"
 {
-	#include <ffmpeg/libavcodec/avcodec.h>
+	#include <libavcodec/avcodec.h>
 }
 #endif
 
