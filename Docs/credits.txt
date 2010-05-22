@@ -1,7 +1,7 @@
 sm-ssc credits (in no particular order)
 ---------------------------------------
-This list is currently incomplete.
-"Programming" is used in regards to the sm-ssc project.
+* "Programming" is used in regards to the sm-ssc project.
+* If you have any corrections to this list, let us know (via forums or IRC).
 
 ==the spinal shark collective==
 AJ Kelly
@@ -18,7 +18,7 @@ shakesoda
  * Theme edits
 
 ==other contributors==
-(in no particular order aside from having SM team at the top)
+(in no particular order, aside from having SM team at the top)
 
 StepMania Team
  * Keeping StepMania 4 alive with changes, and providing a nice codebase for
@@ -36,7 +36,7 @@ Wolfman
 Daisuke Master
  * Pump/default, Pump/flat, and Pump/simple noteskins
  * /Docs/Themerdocs/Noteskin elements Reference.txt
- * Taking advantage of sm-ssc's new features already :)
+ * Taking advantage of sm-ssc's new features :)
 
 David Santamaría Rogado (howl)
  * Various patches (see Changelog_sm-ssc.txt for more details and links)
@@ -73,6 +73,10 @@ FSX
 Henke37
  * [MovieTexture_FFMpeg] Stutter fix
  (http://www.pasteall.org/11353/diff)
+
+corec
+ * [ArchHooks_Unix, MovieTexture_FFMpeg] Make sm-ssc work with system's FFMpeg.
+ (http://github.com/corec/cc-overlay/blob/master/games-arcade/sm-ssc/files/sm-ssc-ffmpeg-fixes-01.patch)
 
 ==the beta testers==
 [SSC Beta Testing Team]
