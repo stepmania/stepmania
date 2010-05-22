@@ -558,12 +558,26 @@ public:
 		LOG->Trace( "Restored preference \"%s\" to default \"%s\"", sName.c_str(), pPref->ToString().c_str() );
 		return 0;
 	}
+	static int PreferenceExists( T* p, lua_State *L )
+	{
+		RString sName = SArg(1);
+
+		IPreference *pPref = IPreference::GetPreferenceByName( sName );
+		if( pPref == NULL )
+		{
+			lua_pushboolean( L, false );
+			return 1;
+		}
+		lua_pushboolean( L, true );
+		return 1;
+	}
 
 	LunaPrefsManager()
 	{
 		ADD_METHOD( GetPreference );
 		ADD_METHOD( SetPreference );
 		ADD_METHOD( SetPreferenceToDefault );
+		ADD_METHOD( PreferenceExists );
 	}
 };
 
