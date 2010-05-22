@@ -105,12 +105,10 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 	}
 }
 
-/*
 void TimingData::SetDelayAtRow( int iRow, float fSeconds )
 {
 	SetStopAtRow(iRow,fSeconds,true);
 }
-*/
 
 float TimingData::GetStopAtRow( int iNoteRow, bool &bDelayOut ) const
 {
