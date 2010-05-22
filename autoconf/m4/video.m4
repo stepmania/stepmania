@@ -18,51 +18,17 @@ if test "$with_ffmpeg" != "no"; then
 		AC_CHECK_FUNC([avcodec_init], have_libavcodec=yes, have_libavcodec=no)
 		LIBS="$with_ffmpeg/lib/libavformat.a $LIBS"
 		AC_CHECK_FUNC([guess_format], have_libavformat=yes, have_libavformat=no)
+		LIBS="$with_ffmpeg/lib/libswscale.a $LIBS"
+		AC_CHECK_FUNC([sws_scale], have_libswscale=yes, have_libswscale=no)
 	else
 		AC_SEARCH_LIBS(av_free, [avutil], have_libavutil=yes,  have_libavutil=no)
 		AC_SEARCH_LIBS(avcodec_init, [avcodec], have_libavcodec=yes,  have_libavcodec=no)
 		AC_SEARCH_LIBS(guess_format, [avformat], have_libavformat=yes,  have_libavformat=no)
+		AC_SEARCH_LIBS(sws_scale, [swscale], have_libswscale=yes,  have_libswscale=no)
 	fi
 
-if test "$have_libavcodec" = "yes"; then
-  AC_MSG_CHECKING([for matching libavcodec headers and libs])
-  AC_RUN_IFELSE([AC_LANG_SOURCE([[
-	#include <ffmpeg/avcodec.h>
-	int main()
-	{
-		return ( LIBAVCODEC_VERSION_INT == avcodec_version() &&
-			 LIBAVCODEC_BUILD == avcodec_build() ) ? 0:1;
-	}
-	]])],[],[have_libavcodec=no],[])
-  AC_MSG_RESULT($have_libavcodec)
-  if test "$have_libavcodec" = "yes"; then
-    AC_MSG_CHECKING([libavcodec revision])
-    AC_RUN_IFELSE([AC_LANG_SOURCE([[
-	#include <ffmpeg/avcodec.h>
-	int main()
-	{
-		return ( LIBAVCODEC_VERSION_INT == 0x332800 ) ? 0:1;
-	}
-	]])],[],[have_libavcodec=no],[])
-    AC_MSG_RESULT($have_libavcodec)
-  fi
-fi
-
-if test "$have_libavformat" = "yes"; then
-  AC_MSG_CHECKING([libavformat revision])
-  AC_RUN_IFELSE([AC_LANG_SOURCE([[
-	#include <ffmpeg/avformat.h>
-	int main()
-	{
-		return ( LIBAVFORMAT_VERSION_INT == 0x330B00 )? 0:1;
-	}
-	]])],[],[have_libavformat=no],[])
-  AC_MSG_RESULT($have_libavformat)
-fi
-fi
-
 have_ffmpeg=no
-if test "$have_libavutil" = "yes" -a "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes"; then
+if test "$have_libavutil" = "yes" -a "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes" -a "$have_libswscale" = "yes"; then
 	have_ffmpeg=yes
 	AC_DEFINE(HAVE_FFMPEG, 1, [FFMPEG support available])
 else
