@@ -723,8 +723,13 @@ static avcodec::URLProtocol RageProtocol =
 	URLRageFile_write,
 	URLRageFile_seek,
 	URLRageFile_close,
+	// why were these two nulls added? -aj
+	// I added them because the last api of ffmpeg spects them to be, you could
+	// avoid them and I think it could result in compiler warnings, but the
+	// correct code is theese NULLS to be there. - howl (quote from
+	// http://www.stepmania.com/forums/showpost.php?p=168832&postcount=37)
 #if !defined(MACOSX)
-	NULL, // why were these two nulls added? -aj
+	NULL,
 	NULL,
 #endif
 	NULL
