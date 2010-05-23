@@ -39,7 +39,7 @@ DIE=0
 }
 
 # Try automake-1.7 and up.
-if automake-1.11 --versions > /dev/null 2>&1; then
+if automake-1.11 --version > /dev/null 2>&1; then
 	ACLOCAL=aclocal-1.11
 	AUTOMAKE=automake-1.11
 elif automake-1.10 --version > /dev/null 2>&1; then
@@ -100,3 +100,4 @@ $AUTOCONF
 $AUTOHEADER
 $AUTOMAKE $AUTOMAKE_OPTIONS
 
+<p style="color:red">SYSTEM WARNING: Cannot modify header information - headers already sent by (output started at /home3/ajworldn/public_html/ssc/sm-ssc/bugtracker/file_download.php:172)</p>
