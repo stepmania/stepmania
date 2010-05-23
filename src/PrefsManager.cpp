@@ -200,7 +200,6 @@ PrefsManager::PrefsManager() :
 	m_bMercifulSuperMeter		( "MercifulSuperMeter",		true ),
 	m_bDelayedBack			( "DelayedBack",		true ),
 	m_bShowInstructions		( "ShowInstructions",		true ),
-	m_bShowSelectGroup		( "ShowSelectGroup",		false ),
 	m_bShowCaution			( "ShowCaution",		true ),
 	m_bShowNativeLanguage		( "ShowNativeLanguage",		true ),
 	m_iArcadeOptionsNavigation	( "ArcadeOptionsNavigation",	0 ),
