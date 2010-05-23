@@ -99,5 +99,3 @@ $ACLOCAL $ACLOCAL_OPTIONS
 $AUTOCONF
 $AUTOHEADER
 $AUTOMAKE $AUTOMAKE_OPTIONS
-
-<p style="color:red">SYSTEM WARNING: Cannot modify header information - headers already sent by (output started at /home3/ajworldn/public_html/ssc/sm-ssc/bugtracker/file_download.php:172)</p>
