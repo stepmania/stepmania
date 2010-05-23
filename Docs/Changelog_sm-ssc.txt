@@ -9,6 +9,10 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100523
+--------
+* Add --game command line argument
+
 20100522
 --------
 * [CourseLoaderCRS] up the maximum size of an edit course from 30KB to 32KB;
