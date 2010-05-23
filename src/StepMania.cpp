@@ -108,6 +108,8 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 		iWidth = ceilf(PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio);
 	}
 
+	// todo: allow for PRODUCT_ID + "-" + CommonMetrics::WINDOW_TITLE as
+	// a theme option (Midi requested it, AJ had the idea for making it optional)
 	paramsOut = VideoModeParams(
 		PREFSMAN->m_bWindowed,
 		iWidth,
@@ -825,6 +827,16 @@ void StepMania::ChangeCurrentGame( const Game* g )
 	ASSERT( ANNOUNCER );
 	ASSERT( THEME );
 
+	// process game command line argument. oh dear. -aj
+	RString argGame;
+	if( GetCommandlineArgument(	"game",&argGame) )
+	{
+		// we need to perform some conversion surgery
+		const Game* newG = GAMEMAN->StringToGame(argGame);
+		if(newG && newG != g)
+			g = newG;
+	}
+
 	GAMESTATE->SetCurGame( g );
 
 	RString sAnnouncer = PREFSMAN->m_sAnnouncer;
@@ -979,7 +991,6 @@ int main(int argc, char* argv[])
 		runmode = RunMode_ExportLuaInformation;
 	else if( GetCommandlineArgument("version") )
 		runmode = RunMode_DisplayVersion;
-
 
 	// Set up arch hooks first.  This may set up crash handling.
 	HOOKS = ArchHooks::Create();
