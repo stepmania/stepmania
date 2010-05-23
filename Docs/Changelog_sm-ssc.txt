@@ -9,6 +9,25 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100522
+--------
+* [CourseLoaderCRS] up the maximum size of an edit course from 30KB to 32KB;
+  allow the #BACKGROUND tag to be read from .crs files.
+* [HelpDisplay] new TipSwitchTime metric
+* [PrefsManager] add PreferenceExists(sPrefName) Lua binding;
+  removed now-unused ShowSelectGroup preference.
+* [ScreenSelectMusic] make the ScoreDisplay 0 out if nothing is selected.
+
+20100518
+--------
+* The great Lua binding addition begins...
+ * [Actor] GetHAlign(), GetVAlign()
+ * [LifeMeterBattery] GetLivesLeft()
+ * [MemoryCardManager] GetCardLocked(pn), IsNameAvailable(pn)
+ * [MenuTimer] GetSeconds()
+ * [PlayerStageStats] GetRadarPossible(), GetRadarActual()
+ * [ProfileManager] LastLoadWasFromLastGood(pn), LastLoadWasTamperedOrCorrupt(pn)
+
 20100515
 --------
 * [AnnouncerManager] Lua bindings get added to AnnouncerManager, which now
