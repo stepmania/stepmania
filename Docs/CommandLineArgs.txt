@@ -43,6 +43,10 @@ usage: --ExportLuaInformation
 Exports Lua.xml using the default theme (and anything it falls back on)
 for reference.
 
+* game
+usage: --game=dance
+Sets the current gametype. Valid values depend on what NoteSkins are installed.
+
 * theme
 usage: --theme=default | --theme="theme with spaces"
 Sets the current theme.
