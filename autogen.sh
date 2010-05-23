@@ -39,7 +39,10 @@ DIE=0
 }
 
 # Try automake-1.7 and up.
-if automake-1.10 --version > /dev/null 2>&1; then
+if automake-1.11 --versions > /dev/null 2>&1; then
+	ACLOCAL=aclocal-1.11
+	AUTOMAKE=automake-1.11
+elif automake-1.10 --version > /dev/null 2>&1; then
 	ACLOCAL=aclocal-1.10
 	AUTOMAKE=automake-1.10
 elif automake-1.9 --version > /dev/null 2>&1; then
