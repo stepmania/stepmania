@@ -9,10 +9,6 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
-20100523
---------
-* Add --game command line argument
-
 20100522
 --------
 * [CourseLoaderCRS] up the maximum size of an edit course from 30KB to 32KB;
@@ -48,7 +44,8 @@ _____________________________________________________________________________
 * Add GetOSName() binding. Returns a string representing the current OS.
 * Allow Negative stops to "work" again in Quirks Mode.
 * [ScreenSelectMaster] Fix "THE" cursor crash by testing if the cursor object
-  is actually there (a.k.a. not null).
+  is actually there (a.k.a. not null). It should be noted that cursors can
+  still crash, however. (yay bugs)
 
 20100512
 --------
