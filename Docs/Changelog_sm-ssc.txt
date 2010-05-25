@@ -9,6 +9,13 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100525
+--------
+* [ScreenSelectProfile] Actually load player's last used settings.
+* [ScreenNetEvaluation] Don't assume every theme has a Grade display and/or
+  Points display; This fixes crashes in themes which don't have them when
+  people go to view another player's stats.
+
 20100522
 --------
 * [CourseLoaderCRS] up the maximum size of an edit course from 30KB to 32KB;
