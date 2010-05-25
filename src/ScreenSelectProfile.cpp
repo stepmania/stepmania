@@ -67,9 +67,7 @@ bool ScreenSelectProfile::Finish(){
 
 	// if profile indexes are the same for both players
 	if( GAMESTATE->GetNumPlayersEnabled() == 2 && m_iSelectedProfiles[0] == m_iSelectedProfiles[1] && m_iSelectedProfiles[0] > 0 )
-	{
 		return false;
-	}
 
 	int iUsedLocalProfiles = 0;
 	int iUnselectedProfiles = 0;
@@ -108,6 +106,7 @@ bool ScreenSelectProfile::Finish(){
 		{
 			PROFILEMAN->m_sDefaultLocalProfileID[p].Set( PROFILEMAN->GetLocalProfileIDFromIndex( m_iSelectedProfiles[p] - 1 ) );
 			PROFILEMAN->LoadLocalProfileFromMachine( p );
+			GAMESTATE->LoadCurrentSettingsFromProfile(p);
 		}
 		if( m_iSelectedProfiles[p] == 0 )
 		{
@@ -119,7 +118,10 @@ bool ScreenSelectProfile::Finish(){
 
 			// Lock the card on successful load, so we won't allow it to be changed.
 			if( bSuccess )
+			{
+				GAMESTATE->LoadCurrentSettingsFromProfile(p);
 				MEMCARDMAN->LockCard( p );
+			}
 		}
 	}
 	StartTransitioningScreen( SM_GoToNextScreen );
