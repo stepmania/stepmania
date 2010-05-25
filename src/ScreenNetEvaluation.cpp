@@ -178,11 +178,12 @@ void ScreenNetEvaluation::UpdateStats()
 	if( m_iCurrentPlayer >= (int) NSMAN->m_EvalPlayerData.size() )
 		return;
 
-	// XXX: These commands assume that grades and score are shown in the theme
-	// on ScreenNetEvaluation, which is not always the case. If a theme doesn't
-	// have these elements for whatever reason, a crash will occur. -aj
-	m_Grades[m_pActivePlayer].SetGrade( (Grade)NSMAN->m_EvalPlayerData[m_iCurrentPlayer].grade );
-	m_textScore[m_pActivePlayer].SetTargetNumber( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score );
+	// Only run these commands if the theme has these things shown; not every
+	// theme has them, so don't assume. -aj
+	if( THEME->GetMetricB(m_sName,"ShowGradeArea") )
+		m_Grades[m_pActivePlayer].SetGrade( (Grade)NSMAN->m_EvalPlayerData[m_iCurrentPlayer].grade );
+	if( THEME->GetMetricB(m_sName,"ShowScoreArea") )
+		m_textScore[m_pActivePlayer].SetTargetNumber( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score );
 
 	//Values greater than 6 will cause a crash
 	if ( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty < 6 )
