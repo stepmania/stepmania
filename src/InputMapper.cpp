@@ -393,8 +393,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_2,      /* dpad D */    DANCE_BUTTON_DOWN,      false ),
 		//AutoMappingEntry{ 0, JOY_BUTTON_5,    /* Tri */       GAME_BUTTON_BACK,       false ),
 		//AutoMappingEntry{ 0, JOY_BUTTON_6,    /* Square */    GAME_BUTTON_BACK,       false ),
-		//AutoMappingEntry{ 1, JOY_BUTTON_7,    /* X */	       GAME_BUTTON_START,      false ),
-		AutoMappingEntry( 0, JOY_BUTTON_8,      /* O */	       GAME_BUTTON_START,      false ),
+		AutoMappingEntry( 0, JOY_BUTTON_7,      /* X */	       DANCE_BUTTON_UPLEFT,      false ),
+		AutoMappingEntry( 0, JOY_BUTTON_8,      /* O */	       DANCE_BUTTON_UPRIGHT,      false ),
 		AutoMappingEntry( 1, JOY_BUTTON_9,      /* Start	*/     GAME_BUTTON_START,      false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     /* Sel */       GAME_BUTTON_BACK,       false )
        ),
