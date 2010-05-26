@@ -1409,7 +1409,7 @@ void ScreenGameplay::PauseGame( bool bPause, GameController gc )
 		return;
 	}
 
-	/* Don't pause if we're already tweening out. */
+	// Don't pause if we're already tweening out.
 	if( bPause && m_DancingState == STATE_OUTRO )
 		return;
 
@@ -1939,7 +1939,7 @@ float ScreenGameplay::GetHasteRate()
 	if( GAMESTATE->m_fAccumulatedHasteSeconds <= 1 )
 	{
 		/* Only allow slowing down the song while the players have accumulated
-		 * haste.  This prevents dragging on the song by keeping the life meter
+		 * haste. This prevents dragging on the song by keeping the life meter
 		 * nearly empty. */
 		float fClamped = max( 1.0f, fSpeed );
 		fSpeed = lerp( GAMESTATE->m_fAccumulatedHasteSeconds, fClamped, fSpeed );
@@ -2125,7 +2125,7 @@ void ScreenGameplay::BeginBackingOutFromGameplay()
 	AbortGiveUp( false );
 
 	m_pSoundMusic->StopPlaying();
-	m_GameplayAssist.StopPlaying(); /* Stop any queued assist ticks. */
+	m_GameplayAssist.StopPlaying(); // Stop any queued assist ticks.
 
 	this->ClearMessageQueue();
 
@@ -2179,9 +2179,8 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		GAMESTATE->IsHumanPlayer(input.pn)  &&
 		!m_Cancel.IsTransitioning() )
 	{
-		/*
-		 * Allow bailing out by holding any START button.  This gives a way to
-		 * "give up" when a back button isn't available.
+		/* Allow bailing out by holding any START button.
+		 * This gives a way to "give up" when a back button isn't available.
 		 * If this is also a style button, don't do this; pump center is start.
 		 */
 		bool bHoldingGiveUp = false;
@@ -2193,7 +2192,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 
 		if( bHoldingGiveUp )
 		{
-			/* No PREFSMAN->m_bDelayedEscape; always delayed. */
+			// No PREFSMAN->m_bDelayedEscape; always delayed.
 			if( input.type==IET_RELEASE )
 			{
 				AbortGiveUp( true );
@@ -2206,7 +2205,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 				m_textDebug.BeginTweening( 1/8.f );
 				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
-				m_GiveUpTimer.Touch(); /* start the timer */
+				m_GiveUpTimer.Touch(); // start the timer
 			}
 
 			return;
@@ -2324,8 +2323,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 }
 
 
-/*
- * Saving StageStats that are affected by the note pattern is a little tricky:
+/* Saving StageStats that are affected by the note pattern is a little tricky:
  *
  * Stats are cumulative for course play.
  *
@@ -2335,14 +2333,13 @@ void ScreenGameplay::Input( const InputEventPlus &input )
  * The pattern changes during play in battle and course mode. We want to include
  * these changes, so run stats for a song after the song finishes.
  *
- * If we fail, be sure to include the current song in stats, with the current modifier set.
- *
- * So:
- * 
- * 1. At the end of a song in any mode, pass or fail, add stats for that song (from m_pPlayer).
- * 2. At the end of gameplay in course mode, add stats for any songs that weren't played,
- *    applying the modifiers the song would have been played with. This doesn't
- *    include songs that were played but failed; that was done in #1.
+ * If we fail, be sure to include the current song in stats,
+ * with the current modifier set. So:
+ * 1. At the end of a song in any mode, pass or fail, add stats for that song
+ *    (from m_pPlayer).
+ * 2. At the end of gameplay in course mode, add stats for any songs that weren't
+ *    played, applying the modifiers the song would have been played with.
+ *    This doesn't include songs that were played but failed; that was done in #1.
  */
 void ScreenGameplay::SaveStats()
 {
@@ -2380,7 +2377,7 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 	if( GAMESTATE->IsCourseMode() && GAMESTATE->m_PlayMode != PLAY_MODE_ENDLESS )
 	{
 		LOG->Trace("Stage finished at index %i/%i", GAMESTATE->GetCourseSongIndex(), (int) m_apSongsQueue.size() );
-		/* +1 to skip the current song; that song has already passed. */
+		// +1 to skip the current song; that song has already passed.
 		for( unsigned i = GAMESTATE->GetCourseSongIndex()+1; i < m_apSongsQueue.size(); ++i )
 		{
 			LOG->Trace("Running stats for %i", i );
@@ -2397,7 +2394,7 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 		return;
 	}
 
-	/* If all players failed, kill. */
+	// If all players failed, kill.
 	if( STATSMAN->m_CurStageStats.AllFailed() )
 	{
 		FOREACH_HumanPlayer( p )
@@ -2436,11 +2433,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		m_Go.StartTransitioning( SM_None );
 		GAMESTATE->m_bGameplayLeadIn.Set( false );
-		m_DancingState = STATE_DANCING;		// STATE CHANGE!  Now the user is allowed to press Back
+		m_DancingState = STATE_DANCING; // STATE CHANGE!  Now the user is allowed to press Back
 	}
 	else if( SM == SM_NotesEnded )	// received while STATE_DANCING
 	{
-		AbortGiveUp( false );	// don't allow giveup while the next song is loading
+		AbortGiveUp( false ); // don't allow giveup while the next song is loading
 
 		/* Do this in LoadNextSong, so we don't tween off old attacks until
 		 * m_NextSong finishes. */
@@ -2448,7 +2445,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
-			/* Mark failure. */
+			// Mark failure.
 			if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != PlayerOptions::FAIL_OFF &&
 				(pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing()) )
 				pi->GetPlayerStageStats()->m_bFailed = true;
@@ -2476,7 +2473,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			/* Load the next song in the course. */
+			// Load the next song in the course.
 			HandleScreenMessage( SM_StartLoadingNextSong );
 			return;
 		}
@@ -2491,7 +2488,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		{
 			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 			{
-				/* XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ). */
+				// XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ).
 				if( pi->GetPlayerStageStats()->m_bFailed )
 					pDancers->Change2DAnimState( pi->m_pn, AS2D_FAIL ); // fail anim
 				else if( pi->m_pLifeMeter && pi->GetPlayerState()->m_HealthState == HealthState_Hot )
@@ -2501,7 +2498,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 
-		/* End round. */
+		// End round.
 		if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
 			return;		// ignore
 		m_DancingState = STATE_OUTRO;
@@ -2536,8 +2533,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_StartLoadingNextSong )
 	{
-		/* Next song. */
-
+		// Next song.
 		// give a little life back between stages
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
@@ -2628,19 +2624,19 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GainFocus )
 	{
-		/* We do this ourself. */
+		// We do this ourself.
 		SOUND->HandleSongTimer( false );
 	}
 	else if( SM == SM_LoseFocus )
 	{
-		/* We might have turned the song timer off.  Be sure to turn it back on. */
+		// We might have turned the song timer off. Be sure to turn it back on.
 		SOUND->HandleSongTimer( true );
 	}
 	else if( SM == SM_BeginFailed )
 	{
 		m_DancingState = STATE_OUTRO;
 		AbortGiveUp( false );
-		m_GameplayAssist.StopPlaying(); /* Stop any queued assist ticks. */
+		m_GameplayAssist.StopPlaying(); // Stop any queued assist ticks.
 		TweenOffScreen();
 		m_Failed.StartTransitioning( SM_DoNextScreen );
 
@@ -2668,7 +2664,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_Pause )
 	{
-		/* Ignore SM_Pause when in demonstration. */
+		// Ignore SM_Pause when in demonstration.
 		if( GAMESTATE->m_bDemonstrationOrJukebox )
 			return;
 

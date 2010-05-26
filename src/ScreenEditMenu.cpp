@@ -31,10 +31,10 @@ REGISTER_SCREEN_CLASS( ScreenEditMenu );
 
 void ScreenEditMenu::Init()
 {
-	/* HACK: Disable any style set by the editor. */
+	// HACK: Disable any style set by the editor.
 	GAMESTATE->m_pCurStyle.Set( NULL );
 
-	/* Enable all players. */
+	// Enable all players.
 	FOREACH_PlayerNumber( pn )
 		GAMESTATE->JoinPlayer( pn );
 
@@ -186,10 +186,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetEditorStyleForStepsType(st) );
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
-	//
 	// handle error cases
-	//
-
 	if( !pSong->HasMusic() )
 	{
 		ScreenPrompt::Prompt( SM_None, MISSING_MUSIC_FILE );
@@ -227,9 +224,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 		}
 	}
 
-	//
 	// Do work
-	//
 	switch( action )
 	{
 	case EditMenuAction_Edit:
@@ -288,17 +283,14 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 		ASSERT(0);
 	}
 
-	
-	//
 	// Go to the next screen.
-	//
 	switch( action )
 	{
 	case EditMenuAction_Edit:
 	case EditMenuAction_Create:
 	case EditMenuAction_Practice:
 		{
-			// Prepare prepare for ScreenEdit
+			// Prepare for ScreenEdit
 			ASSERT( pSteps );
 			bool bPromptToNameSteps = (action == EditMenuAction_Create && dc == Difficulty_Edit);
 			if( bPromptToNameSteps )
@@ -328,7 +320,7 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 }
 
 void ScreenEditMenu::MenuBack( const InputEventPlus &input )
-{	
+{
 	Cancel( SM_GoToPrevScreen );
 
 	SOUND->StopMusic();

@@ -18,7 +18,7 @@ AutoScreenMessage( SM_ExportOptions )
 
 enum InputMode 
 { 
-	INPUTMODE_INDIVIDUAL, 	// each player controls their own cursor
+	INPUTMODE_INDIVIDUAL,		// each player controls their own cursor
 	INPUTMODE_SHARE_CURSOR,		// both players control the same cursor
 	NUM_InputMode,
 	InputMode_Invalid
@@ -43,12 +43,9 @@ public:
 	virtual void TweenOnScreen();
 	virtual void TweenOffScreen();
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 	friend class LunaScreenOptions;
-
 
 protected:
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
@@ -93,17 +90,17 @@ protected:	// derived classes need access to these
 	void SetNavigation( Navigation nav ) { m_OptionsNavigation = nav; }
 	void SetInputMode( InputMode im ) { m_InputMode = im; }
 
-	/* Map menu lines to m_OptionRow entries. */
+	// Map menu lines to m_OptionRow entries.
 	vector<OptionRow*>	m_pRows;
 	int			m_iCurrentRow[NUM_PLAYERS];
 
-	OptionRowType		m_OptionRowTypeNormal;
-	OptionRowType		m_OptionRowTypeExit;
+	OptionRowType	m_OptionRowTypeNormal;
+	OptionRowType	m_OptionRowTypeExit;
 
 	Navigation		m_OptionsNavigation;
 	InputMode		m_InputMode;
 
-	int			m_iFocusX[NUM_PLAYERS];
+	int				m_iFocusX[NUM_PLAYERS];
 	bool			m_bWasOnExit[NUM_PLAYERS];
 
 	// TRICKY: People hold Start to get to PlayerOptions, then 
@@ -115,12 +112,12 @@ protected:	// derived classes need access to these
 	ActorFrame		m_frameContainer;
 	AutoActor		m_sprPage;
 
-	OptionsCursor		m_Cursor[NUM_PLAYERS];
+	OptionsCursor	m_Cursor[NUM_PLAYERS];
 	AutoActor		m_sprLineHighlight[NUM_PLAYERS];
 
 	BitmapText		m_textExplanation[NUM_PLAYERS];
 	BitmapText		m_textExplanationTogether;
-	DualScrollBar		m_ScrollBar;
+	DualScrollBar	m_ScrollBar;
 	AutoActor		m_sprMore;
 
 	RageSound		m_SoundChangeCol;
@@ -134,7 +131,7 @@ protected:	// derived classes need access to these
 	ThemeMetric<apActorCommands>	ROW_INIT_COMMAND;
 	ThemeMetric<apActorCommands>	ROW_ON_COMMAND;
 	ThemeMetric<apActorCommands>	ROW_OFF_COMMAND;
-	LuaExpressionTransform		m_exprRowPositionTransformFunction;	// params: self,offsetFromCenter,itemIndex,numItems
+	LuaExpressionTransform	m_exprRowPositionTransformFunction;	// params: self,offsetFromCenter,itemIndex,numItems
 	ThemeMetric<bool>		SHOW_SCROLL_BAR;
 	ThemeMetric<float>		SCROLL_BAR_HEIGHT;
 	ThemeMetric<float>		SCROLL_BAR_TIME;
@@ -146,8 +143,8 @@ protected:	// derived classes need access to these
 	ThemeMetric<bool>		ALLOW_REPEATING_CHANGE_VALUE_INPUT;
 	ThemeMetric<float>		CURSOR_TWEEN_SECONDS;
 	ThemeMetric<bool>		WRAP_VALUE_IN_ROW;
-	ThemeMetric<RString>		OPTION_ROW_NORMAL_METRICS_GROUP;
-	ThemeMetric<RString>		OPTION_ROW_EXIT_METRICS_GROUP;
+	ThemeMetric<RString>	OPTION_ROW_NORMAL_METRICS_GROUP;
+	ThemeMetric<RString>	OPTION_ROW_EXIT_METRICS_GROUP;
 };
 
 #endif

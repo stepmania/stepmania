@@ -149,7 +149,7 @@ void ScreenOptions::Init()
 		LOAD_ALL_COMMANDS( m_Cursor[p] );
 		m_frameContainer.AddChild( &m_Cursor[p] );
 	}
-	
+
 	switch( m_InputMode )
 	{
 	case INPUTMODE_INDIVIDUAL:
@@ -258,14 +258,14 @@ void ScreenOptions::RestartOptions()
 	vector<PlayerNumber> vpns;
 	FOREACH_HumanPlayer( p )
 		vpns.push_back( p );
-	
+
 	for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
 	{
 		OptionRow *pRow = m_pRows[r];
 		pRow->Reload();
 
 		this->ImportOptions( r, vpns );
-	
+
 		// HACK: Process disabled players, too, to hide inactive underlines.
 		FOREACH_PlayerNumber( p )
 			pRow->AfterImportOptions( p );
@@ -382,7 +382,7 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int
 void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 {
 	OptionRow &row = *m_pRows[iRow];
-	
+
 	const OptionRowDefinition &def = row.GetRowDef();
 
 	// find first selection and whether multiple are selected
@@ -405,7 +405,7 @@ void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 			pHand->GetIconTextAndGameCommand( iSelection, sIcon, gc );
 		}
 	}
-	
+
 
 	/* XXX: hack to not display text in the song options menu */
 	if( def.m_bOneChoiceForAllPlayers )
@@ -452,8 +452,8 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 
 	OptionsCursor &cursor = m_Cursor[pn];
-	if( cursor.GetDestX() != (float) iX  || 
-		cursor.GetDestY() != (float) iY  || 
+	if( cursor.GetDestX() != (float) iX  ||
+		cursor.GetDestY() != (float) iY  ||
 		cursor.GetBarWidth() != iWidth )
 	{
 		cursor.StopTweening();
@@ -477,7 +477,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	cursor.SetCanGo( bCanGoLeft, bCanGoRight );
 
 
-	if( GAMESTATE->IsHumanPlayer(pn) )  
+	if( GAMESTATE->IsHumanPlayer(pn) )
 	{
 		COMMAND( m_sprLineHighlight[pn], "Change" );
 		if( row.GetRowType() == OptionRow::RowType_Exit )
@@ -658,7 +658,7 @@ void ScreenOptions::PositionRows( bool bTween )
 
 		Actor::TweenState tsDestination = m_exprRowPositionTransformFunction.GetTransformCached( fPos, i, min( (int)Rows.size(), (int)NUM_ROWS_SHOWN ) );
 
-		bool bHidden = 
+		bool bHidden =
 			i < first_start ||
 			(i >= first_end && i < second_start) ||
 			i >= second_end;
@@ -691,7 +691,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 
 	if( iCurRow == -1 )
 		return;
-	
+
 	/* Update m_fY and m_bHidden[]. */
 	PositionRows( true );
 
@@ -784,7 +784,7 @@ void ScreenOptions::MenuStart( const InputEventPlus &input )
 			return;	// don't allow repeat
 		break;
 	}
-	
+
 	/* If we are in a three-button mode, check to see if GAME_BUTTON_LEFT and
 	 * GAME_BUTTON_RIGHT are being held. */
 	switch( m_OptionsNavigation )
@@ -792,7 +792,7 @@ void ScreenOptions::MenuStart( const InputEventPlus &input )
 	case NAV_THREE_KEY:
 	case NAV_TOGGLE_THREE_KEY:
 		{
-			bool bHoldingLeftAndRight = 
+			bool bHoldingLeftAndRight =
 				INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn ) &&
 				INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn );
 			if( bHoldingLeftAndRight )
@@ -803,7 +803,7 @@ void ScreenOptions::MenuStart( const InputEventPlus &input )
 			}
 		}
 	}
-	
+
 	this->ProcessMenuStart( input );
 }
 
@@ -849,7 +849,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 		if( bEndThisScreen &&
 			(input.type != IET_FIRST_PRESS || IsTransitioning()) )
 			return;
-		
+
 		if( bEndThisScreen )
 		{
 			SCREENMAN->PlayStartSound();
@@ -867,7 +867,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 			return;
 		}
 	}
-	
+
 	if( row.GetRowDef().m_selectType == SELECT_MULTIPLE )
 	{
 		int iChoiceInRow = row.GetChoiceInRowWithFocus(pn);
@@ -941,7 +941,7 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 
 	int iWidth, iY;
 	GetWidthXY( pn, m_iCurrentRow[pn], row.GetChoiceInRowWithFocus(pn), iWidth, m_iFocusX[pn], iY );
-	LOG->Trace("cur selection %ix%i @ %i", 
+	LOG->Trace("cur selection %ix%i @ %i",
 		m_iCurrentRow[pn], row.GetChoiceInRowWithFocus(pn), m_iFocusX[pn]);
 }
 
@@ -987,7 +987,7 @@ void ScreenOptions::ChangeValueInRowAbsolute( int iRow, PlayerNumber pn, int iCh
 		return;		// don't allow a move
 
 	OptionRow &row = *m_pRows[iRow];
-	
+
 	const int iNumChoices = row.GetRowDef().m_vsChoices.size();
 	ASSERT( iNumChoices >= 0 && iChoiceIndex < iNumChoices );
 
@@ -1003,13 +1003,13 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 		return;		// don't allow a move
 
 	OptionRow &row = *m_pRows[iRow];
-	
+
 	const int iNumChoices = row.GetRowDef().m_vsChoices.size();
 
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumChoices <= 1 )	// 1 or 0
 	{
 		/* There are no other options on the row; move up or down instead of left and right.
-		 * This allows navigating the options menu with left/right/start. 
+		 * This allows navigating the options menu with left/right/start.
 		 *
 		 * XXX: Only allow repeats if the opposite key isn't pressed; otherwise, holding both
 		 * directions will repeat in place continuously, which is weird. */
@@ -1038,7 +1038,7 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 		wrap( iNewChoiceWithFocus, iNumChoices );
 	else
 		CLAMP( iNewChoiceWithFocus, 0, iNumChoices-1 );
-	
+
 	if( iCurrentChoiceWithFocus != iNewChoiceWithFocus )
 		bOneChanged = true;
 
@@ -1105,13 +1105,13 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 	this->AfterChangeValueInRow( iRow, pn );
 }
 
-void ScreenOptions::AfterChangeValueInRow( int iRow, PlayerNumber pn ) 
+void ScreenOptions::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 {
 	AfterChangeValueOrRow( pn );
 }
 
 /* Move up/down.  Returns true if we actually moved. */
-bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat ) 
+bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat )
 {
 	LOG->Trace( "MoveRowRelative(pn %i, dir %i, rep %i)", pn, iDir, bRepeat );
 
@@ -1144,7 +1144,7 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat )
 	return MoveRowAbsolute( pn, iDest );
 }
 
-void ScreenOptions::AfterChangeRow( PlayerNumber pn ) 
+void ScreenOptions::AfterChangeRow( PlayerNumber pn )
 {
 	const int iRow = m_iCurrentRow[pn];
 	if( iRow != -1 )
@@ -1176,7 +1176,7 @@ void ScreenOptions::AfterChangeRow( PlayerNumber pn )
 
 		if( row.GetFirstItemGoesDown() )
 		{
-			// If moving to a bFirstChoiceGoesDown row, put focus back on 
+			// If moving to a bFirstChoiceGoesDown row, put focus back on
 			// the first choice.
 			row.SetChoiceInRowWithFocus( pn, 0 );
 		}
@@ -1185,7 +1185,7 @@ void ScreenOptions::AfterChangeRow( PlayerNumber pn )
 	AfterChangeValueOrRow( pn );
 }
 
-bool ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow ) 
+bool ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow )
 {
 	bool bChanged = false;
 	FOREACH_PlayerNumber( p )
@@ -1291,7 +1291,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenOptions, ScreenWithMenuElements )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1301,7 +1301,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenOptions, ScreenWithMenuElements )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

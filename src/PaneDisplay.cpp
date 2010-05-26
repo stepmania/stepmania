@@ -63,7 +63,6 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 
 	EMPTY_MACHINE_HIGH_SCORE_NAME.Load( sMetricsGroup, "EmptyMachineHighScoreName" );
 	NOT_AVAILABLE.Load( sMetricsGroup, "NotAvailable" );
-	//BLANK_COUNT_VALUE.Load( sMetricsGroup, "BlankCountValue" ); // todo: better name -aj
 	COUNT_FORMAT.Load( sMetricsGroup, "CountFormat" );
 
 	FOREACH_ENUM( PaneCategory, pc )
@@ -123,8 +122,11 @@ void PaneDisplay::SetContent( PaneCategory c )
 	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
 	bool bIsPlayerEdit = pSteps && pSteps->IsAPlayerEdit();
 
-	// in SM3.9, all values would get set to a "?". In sm-ssc, we follow the
-	// fallbacks above. (todo: make this a preference? see BLANK_COUNT_VALUE) -aj
+	// Note: in SM3.9, all values would get set to a "?" if the current
+	// selection (pSong/pCourse, in this case) is invalid. In sm-ssc, we use
+	// the falback values (everything is blank).
+	// TODO: add a theme option to use a similar behavior. -aj
+
 	if(GAMESTATE->IsCourseMode() && !pTrail)
 	{
 		if( (g_Contents[c].req&NEED_PROFILE) )
@@ -205,7 +207,7 @@ void PaneDisplay::SetContent( PaneCategory c )
 		case PaneCategory_Hands:		val = rv[RadarCategory_Hands]; break;
 		case PaneCategory_Lifts:		val = rv[RadarCategory_Lifts]; break;
 		case PaneCategory_ProfileHighScore:
-		case PaneCategory_MachineHighName: /* set val for color */
+		case PaneCategory_MachineHighName: // set val for color
 		case PaneCategory_MachineHighScore:
 			CHECKPOINT;
 			val = pHSL->GetTopScore().GetPercentDP();
@@ -266,7 +268,7 @@ done:
 
 void PaneDisplay::SetFromGameState()
 {
-	/* Don't update text that doesn't apply to the current mode.  It's still tweening off. */
+	// Don't update text that doesn't apply to the current mode. It's still tweening off.
 	FOREACH_ENUM( PaneCategory, i )
 		SetContent( i );
 }
