@@ -67,7 +67,7 @@ galopin
 
 FSX
  * [Player] ScoreMissedHoldsAndRolls metric
- * [ScoreKeeperNormal] Patch for fixing the combo bug (untested)
+ * [ScoreKeeperNormal] Patch for fixing "the" combo bug (untested)
  (http://www.pastie.org/868201.txt)
 
 Henke37
@@ -77,6 +77,12 @@ Henke37
 corec
  * [ArchHooks_Unix, MovieTexture_FFMpeg] Make sm-ssc work with system's FFMpeg.
  (http://github.com/corec/cc-overlay/blob/master/games-arcade/sm-ssc/files/sm-ssc-ffmpeg-fixes-01.patch)
+ * [InputMapper] Enabling upper diagonal keys for Positive Gaming Impact dance mat
+ (http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=137)
+
+gholms
+ * Make autogen.sh look for automake 1.11
+ (http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=140)
 
 ==the beta testers==
 [SSC Beta Testing Team]
