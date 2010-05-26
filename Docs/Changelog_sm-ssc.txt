@@ -15,6 +15,12 @@ _____________________________________________________________________________
 * [ScreenNetEvaluation] Don't assume every theme has a Grade display and/or
   Points display; This fixes crashes in themes which don't have them when
   people go to view another player's stats.
+* [ScoreKeeperNormal] add [Gameplay] MaxScoreToIncrementMissCombo metric.
+* [Course] add GetCourseDir(), HasBackground(), IsAnEdit() Lua bindings.
+* [GameManager] rework how the IsGameEnabled() Lua binding works:
+  it now takes a string as a parameter.
+* [ScoreKeeper] allow ScoreKeeperRave to be used as a ScoreKeeper.
+* [ThemeManager] add GetCurLanguage() Lua binding.
 
 20100522
 --------
