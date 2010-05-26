@@ -82,6 +82,7 @@ void ScoreKeeperNormal::Load(
 	m_ComboIsPerRow.Load( "Gameplay", "ComboIsPerRow" );
 	m_MinScoreToContinueCombo.Load( "Gameplay", "MinScoreToContinueCombo" );
 	m_MinScoreToMaintainCombo.Load( "Gameplay", "MinScoreToMaintainCombo" );
+	m_MaxScoreToIncrementMissCombo.Load( "Gameplay", "MaxScoreToIncrementMissCombo" );
 
 	// Toasty triggers (idea from 3.9+)
 	// Multiple toasty support doesn't seem to be working right now.
@@ -626,7 +627,9 @@ void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsIn
 	else if ( tns < m_MinScoreToMaintainCombo )
 	{
 		m_pPlayerStageStats->m_iCurCombo = 0;
-		m_pPlayerStageStats->m_iCurMissCombo += iNumTapsInRow;
+
+		if( tns <= m_MaxScoreToIncrementMissCombo )
+			m_pPlayerStageStats->m_iCurMissCombo += iNumTapsInRow;
 	}
 }
 
