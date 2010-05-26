@@ -3130,12 +3130,11 @@ public:
 	}
 	static int IsGameEnabled( T* p, lua_State *L )
 	{
-		Game *pGame = Luna<Game>::check( L, 1 );
-
-		lua_pushboolean(L, p->IsGameEnabled( pGame ) );
-
-		// string version; will clean this up later after finding a good home -aj
-		//lua_pushbool(L, p->IsGameEnabled( p->StringToGame(SArg(1)) ) );
+		const Game *pGame = p->StringToGame(SArg(1));
+		if(pGame)
+			lua_pushboolean(L, p->IsGameEnabled( pGame ) );
+		else
+			lua_pushnil(L);
 
 		return 1;
 	}
