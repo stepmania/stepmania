@@ -13,7 +13,6 @@ ScoreKeeper::ScoreKeeper( PlayerState *pPlayerState, PlayerStageStats *pPlayerSt
 void ScoreKeeper::GetScoreOfLastTapInRow( const NoteData &nd, int iRow,
 					  TapNoteScore &tnsOut, int &iNumTapsInRowOut )
 {
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	int iNum = 0;
 
 	for( int track = 0; track < nd.GetNumTracks(); ++track )
@@ -29,6 +28,7 @@ void ScoreKeeper::GetScoreOfLastTapInRow( const NoteData &nd, int iRow,
 }
 
 #include "ScoreKeeperNormal.h"
+#include "ScoreKeeperRave.h"
 #include "ScoreKeeperGuitar.h"
 #include "ScoreKeeperShared.h"
 
@@ -36,6 +36,8 @@ ScoreKeeper* ScoreKeeper::MakeScoreKeeper( RString sClassName, PlayerState *pPla
 {
 	if( sClassName == "ScoreKeeperNormal" )
 		return new ScoreKeeperNormal( pPlayerState, pPlayerStageStats );
+	else if( sClassName == "ScoreKeeperRave" )
+		return new ScoreKeeperRave( pPlayerState, pPlayerStageStats );
 	else if( sClassName == "ScoreKeeperGuitar" )
 		return new ScoreKeeperGuitar( pPlayerState, pPlayerStageStats );
 	else if( sClassName == "ScoreKeeperShared" )
