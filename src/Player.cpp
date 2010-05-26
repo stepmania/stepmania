@@ -401,7 +401,6 @@ static bool NeedsTapJudging( const TapNote &tn )
 {
 	switch( tn.type )
 	{
-	DEFAULT_FAIL( tn.type );
 	case TapNote::tap:
 	case TapNote::hold_head:
 	case TapNote::mine:
@@ -412,6 +411,7 @@ static bool NeedsTapJudging( const TapNote &tn )
 	case TapNote::autoKeysound:
 	case TapNote::fake:
 		return false;
+	DEFAULT_FAIL( tn.type );
 	}
 }
 
@@ -419,7 +419,6 @@ static bool NeedsHoldJudging( const TapNote &tn )
 {
 	switch( tn.type )
 	{
-	DEFAULT_FAIL( tn.type );
 	case TapNote::hold_head:
 		return tn.HoldResult.hns == HNS_None;
 	case TapNote::tap:
@@ -430,6 +429,7 @@ static bool NeedsHoldJudging( const TapNote &tn )
 	case TapNote::autoKeysound:
 	case TapNote::fake:
 		return false;
+	DEFAULT_FAIL( tn.type );
 	}
 }
 
