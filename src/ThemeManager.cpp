@@ -1241,6 +1241,7 @@ public:
 	static int GetNumSelectableThemes( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumSelectableThemes() ); return 1; }
 
 	DEFINE_METHOD( GetCurrentThemeDirectory, GetCurThemeDir() );
+	DEFINE_METHOD( GetCurLanguage, GetCurLanguage() );
 	static int GetThemeDisplayName( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeDisplayName(p->GetCurThemeName())); return 1; }
 	static int GetThemeAuthor( T* p, lua_State *L )			{  lua_pushstring(L, p->GetThemeAuthor(p->GetCurThemeName())); return 1; }
 
@@ -1257,6 +1258,7 @@ public:
 		ADD_METHOD( GetPathO );
 		ADD_METHOD( GetNumSelectableThemes );
 		ADD_METHOD( GetCurrentThemeDirectory );
+		ADD_METHOD( GetCurLanguage );
 		ADD_METHOD( GetThemeDisplayName );
 		ADD_METHOD( GetThemeAuthor );
 	}
