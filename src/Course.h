@@ -94,7 +94,7 @@ public:
 	RString GetDisplayMainTitle() const;
 	RString GetDisplaySubTitle() const;
 
-	/* Returns the transliterated titles, if any; otherwise returns the main titles. */
+	// Returns the transliterated titles, if any; otherwise returns the main titles.
 	RString GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
 	RString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
 

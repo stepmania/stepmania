@@ -1066,6 +1066,7 @@ public:
 	}
 	static int GetBannerPath( T* p, lua_State *L )		{ RString s = p->GetBannerPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
 	static int GetBackgroundPath( T* p, lua_State *L )		{ RString s = p->GetBackgroundPath(); if( s.empty() ) return 0; LuaHelpers::Push(L, s); return 1; }
+	static int GetCourseDir( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sPath ); return 1; }
 	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName ); return 1; }
 	static int IsAutogen( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bIsAutogen ); return 1; }
 	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }
@@ -1084,6 +1085,8 @@ public:
 	DEFINE_METHOD( IsOni,		IsOni() )
 	DEFINE_METHOD( GetGoalSeconds,		m_fGoalSeconds )
 	static int HasBanner( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBanner() ); return 1; }
+	static int HasBackground( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasBackground() ); return 1; }
+	DEFINE_METHOD( IsAnEdit,		IsAnEdit() )
 
 	LunaCourse()
 	{
@@ -1097,15 +1100,18 @@ public:
 		ADD_METHOD( GetAllTrails );
 		ADD_METHOD( GetBannerPath );
 		ADD_METHOD( GetBackgroundPath ); // sm-ssc addition
+		ADD_METHOD( GetCourseDir ); // sm-ssc addition
 		ADD_METHOD( GetGroupName );
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( GetEstimatedNumStages );
 		ADD_METHOD( GetTotalSeconds );
 		ADD_METHOD( IsEndless );
-		ADD_METHOD( IsNonstop );  // sm-ssc addition
-		ADD_METHOD( IsOni );  // sm-ssc addition
+		ADD_METHOD( IsNonstop ); // sm-ssc addition
+		ADD_METHOD( IsOni ); // sm-ssc addition
 		ADD_METHOD( GetGoalSeconds );
-		ADD_METHOD( HasBanner );  // sm-ssc addition
+		ADD_METHOD( HasBanner ); // sm-ssc addition
+		ADD_METHOD( HasBackground ); // sm-ssc addition
+		ADD_METHOD( IsAnEdit );
 	}
 };
 
