@@ -838,6 +838,7 @@ void ScreenSelectMusic::ChangeSteps( PlayerNumber pn, int dir )
 
 	Message msg( "ChangeSteps" );
 	msg.SetParam( "Player", pn );
+	msg.SetParam( "Direction", dir );
 	MESSAGEMAN->Broadcast( msg );
 }
 
