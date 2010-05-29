@@ -9,6 +9,10 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100527
+--------
+* Add Direction param to ChangeStepsMessage.
+
 20100526
 --------
 * Enable upper diagonal keys for Positive Gaming Impact dance mat [corec]
