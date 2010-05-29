@@ -175,3 +175,24 @@ function ScoreMissedHoldsAndRolls()
 	else return true;
 	end;
 end;
+
+local tNotePositions = {
+	-- DDR
+	Classic = {
+		-144,
+		144,
+	},
+	-- ITG
+	Modern = {
+		-125,
+		145,
+	},
+}
+function GetTapPosition( sType )
+	bCategory = (sType == 'Standard') and 1 or 2;
+	-- true: Classic
+	-- false: Modern
+	bPreference = GetUserPrefB("UserPrefNotePosition") and "Classic" or "Modern";
+	tNotePos = tNotePositions[bPreference];
+	return tNotePos[bCategory]
+end
