@@ -233,7 +233,7 @@ function UserPrefNotePosition()
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = true;
 		ExportOnChange = false;
-		Choices = { 'Classic','Modern' };
+		Choices = { 'Normal','Lower' };
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefNotePosition") ~= nil then
 				if GetUserPrefB("UserPrefNotePosition") then
@@ -260,6 +260,7 @@ function UserPrefNotePosition()
 	setmetatable( t, t );
 	return t;
 end
+
 function UserPrefLongFail()
 	local t = {
 		Name = "UserPrefLongFail";

@@ -177,22 +177,22 @@ function ScoreMissedHoldsAndRolls()
 end;
 
 local tNotePositions = {
-	-- DDR
-	Classic = {
+	-- StepMania 3.9/4.0
+	Normal = {
 		-144,
 		144,
 	},
 	-- ITG
-	Modern = {
+	Lower = {
 		-125,
 		145,
 	},
 }
 function GetTapPosition( sType )
 	bCategory = (sType == 'Standard') and 1 or 2;
-	-- true: Classic
-	-- false: Modern
-	bPreference = GetUserPrefB("UserPrefNotePosition") and "Classic" or "Modern";
+	-- true: Normal
+	-- false: Lower
+	bPreference = GetUserPrefB("UserPrefNotePosition") and "Normal" or "Lower";
 	tNotePos = tNotePositions[bPreference];
 	return tNotePos[bCategory]
 end
