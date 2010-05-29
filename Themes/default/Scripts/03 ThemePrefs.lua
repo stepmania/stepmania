@@ -16,6 +16,9 @@ function InitUserPrefs()
 	if GetUserPrefB("UserPrefLongFail") == nil then
 		SetUserPref("UserPrefLongFail", false);
 	end;  
+	if GetUserPrefB("UserPrefNotePosition") == nil then
+		SetUserPref("UserPrefNotePosition", true);
+	end;  
 --[[ 	if GetUserPref("ProTimingP1") == nil then
 		SetUserPref("ProTimingP1", false);
 	end;
@@ -223,6 +226,40 @@ function UserPrefAutoSetStyle()
 end
 
 
+function UserPrefNotePosition()
+	local t = {
+		Name = "UserPrefNotePosition";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = { 'Classic','Modern' };
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("UserPrefNotePosition") ~= nil then
+				if GetUserPrefB("UserPrefNotePosition") then
+					list[1] = true;
+				else
+					list[2] = true;
+				end;
+			else
+				WritePrefToFile("UserPrefNotePosition",false);
+				list[1] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			local val;
+			if list[1] then
+				val = true;
+			else
+				val = false;
+			end;
+			WritePrefToFile("UserPrefNotePosition",val);
+			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end
 function UserPrefLongFail()
 	local t = {
 		Name = "UserPrefLongFail";

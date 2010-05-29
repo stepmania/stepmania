@@ -10,10 +10,10 @@ function GetLocalProfiles()
 			}; --]]
 			LoadFont("Common Normal") .. {
 				Text=profile:GetDisplayName();
-				InitCommand=cmd(shadowlength,1;y,-9;zoom,0.95;ztest,true);
+				InitCommand=cmd(shadowlength,1;y,-10;zoom,1;ztest,true);
 			};
 			LoadFont("Common Normal") .. {
-				InitCommand=cmd(shadowlength,1;y,9;zoom,0.5;vertspacing,-8;ztest,true);
+				InitCommand=cmd(shadowlength,1;y,8;zoom,0.5;vertspacing,-8;ztest,true);
 				BeginCommand=function(self)
 					local numSongsPlayed = profile:GetNumTotalSongsPlayed();
 					local s = numSongsPlayed == 1 and "Song" or "Songs";
@@ -28,6 +28,15 @@ function GetLocalProfiles()
 	return ret;
 end;
 
+function LoadCard(cColor)
+	local t = Def.ActorFrame {
+		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardBackground") ) .. {
+			InitCommand=cmd(diffuse,cColor);
+		};
+		LoadActor( THEME:GetPathG("ScreenSelectProfile","CardFrame") );
+	};
+	return t
+end
 function LoadPlayerStuff(Player)
 	local ret = {};
 
@@ -38,14 +47,15 @@ function LoadPlayerStuff(Player)
 	}; --]]
 	local t = Def.ActorFrame {
 		Name = 'JoinFrame';
-		Def.Quad {
+		LoadCard(Color('Orange'));
+--[[ 		Def.Quad {
 			InitCommand=cmd(zoomto,200+4,230+4);
 			OnCommand=cmd(shadowlength,1;diffuse,color("0,0,0,0.5"));
 		};
 		Def.Quad {
 			InitCommand=cmd(zoomto,200,230);
 			OnCommand=cmd(diffuse,Color('Orange');diffusealpha,0.5);
-		};
+		}; --]]
 		LoadFont("Common Normal") .. {
 			Text="Press &START; to join.";
 			InitCommand=cmd(shadowlength,1);
@@ -56,14 +66,7 @@ function LoadPlayerStuff(Player)
 	
 	t = Def.ActorFrame {
 		Name = 'BigFrame';
-		Def.Quad {
-			InitCommand=cmd(zoomto,200+4,230+4);
-			OnCommand=cmd(shadowlength,1);
-		};
-		Def.Quad {
-			InitCommand=cmd(zoomto,200,230);
-			OnCommand=cmd(diffuse,PlayerColor(Player));
-		};
+		LoadCard(PlayerColor(Player));
 	};
 	table.insert( ret, t );
 
@@ -78,21 +81,21 @@ function LoadPlayerStuff(Player)
 		}; --]]
 		InitCommand=cmd(y,-2);
 		Def.Quad {
-			InitCommand=cmd(zoomto,200,40+2);
+			InitCommand=cmd(zoomto,200-10,40+2);
 			OnCommand=cmd(diffuse,Color('Black');diffusealpha,0.5);
 		};
 		Def.Quad {
-			InitCommand=cmd(zoomto,200,40);
+			InitCommand=cmd(zoomto,200-10,40);
 			OnCommand=cmd(diffuse,PlayerColor(Player);glow,color("1,1,1,0.25"));
 		};
 		Def.Quad {
-			InitCommand=cmd(zoomto,200,40;y,-40/2+20);
+			InitCommand=cmd(zoomto,200-10,40;y,-40/2+20);
 			OnCommand=cmd(diffuse,Color("Black");fadebottom,1;diffusealpha,0.35);
 		};
 		Def.Quad {
-			InitCommand=cmd(zoomto,200,1;y,-40/2+1);
+			InitCommand=cmd(zoomto,200-10,1;y,-40/2+1);
 			OnCommand=cmd(diffuse,PlayerColor(Player);glow,color("1,1,1,0.25"));
-		};
+		};	
 	};
 	table.insert( ret, t );
 
@@ -100,7 +103,7 @@ function LoadPlayerStuff(Player)
 		Name = 'Scroller';
 		NumItemsToDraw=6;
 -- 		InitCommand=cmd(y,-230/2+20;);
-		OnCommand=cmd(SetFastCatchup,true;SetMask,200,50;SetSecondsPerItem,0.15);
+		OnCommand=cmd(y,1;SetFastCatchup,true;SetMask,200,58;SetSecondsPerItem,0.15);
 		TransformFunction=function(self, offset, itemIndex, numItems)
 			local focus = scale(math.abs(offset),0,2,1,0);
 			self:visible(false);
@@ -115,14 +118,14 @@ function LoadPlayerStuff(Player)
 	
 	t = Def.ActorFrame {
 		Name = "EffectFrame";
-		Def.Quad {
-			InitCommand=cmd(y,-230/2;vertalign,top;zoomto,200,8;fadebottom,1);
-			OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
-		};
-		Def.Quad {
-			InitCommand=cmd(y,230/2;vertalign,bottom;zoomto,200,8;fadetop,1);
-			OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
-		};
+	--[[ 		Def.Quad {
+				InitCommand=cmd(y,-230/2;vertalign,top;zoomto,200,8;fadebottom,1);
+				OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
+			};
+			Def.Quad {
+				InitCommand=cmd(y,230/2;vertalign,bottom;zoomto,200,8;fadetop,1);
+				OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
+			}; --]]
 	};
 	table.insert( ret, t );
 --[[ 	t = Def.BitmapText {
@@ -146,6 +149,7 @@ function UpdateInternal3(self, Player)
 	local frame = self:GetChild(string.format('P%uFrame', pn));
 	local scroller = frame:GetChild('Scroller');
 	local seltext = frame:GetChild('SelectedProfileText');
+	local joinframe = frame:GetChild('JoinFrame');
 	local smallframe = frame:GetChild('SmallFrame');
 	local bigframe = frame:GetChild('BigFrame');
 
@@ -153,6 +157,7 @@ function UpdateInternal3(self, Player)
 		frame:visible(true);
 		if MEMCARDMAN:GetCardState(Player) == 'MemoryCardState_none' then
 			--using profile if any
+			joinframe:visible(false);
 			smallframe:visible(true);
 			bigframe:visible(true);
 			seltext:visible(true);
@@ -166,6 +171,7 @@ function UpdateInternal3(self, Player)
 					scroller:SetDestinationItem(0);
 					self:queuecommand('UpdateInternal2');
 				else
+					joinframe:visible(true);
 					smallframe:visible(false);
 					bigframe:visible(false);
 					scroller:visible(false);
@@ -180,6 +186,7 @@ function UpdateInternal3(self, Player)
 			SCREENMAN:GetTopScreen():SetProfileIndex(Player, 0);
 		end;
 	else
+		joinframe:visible(true);
 		scroller:visible(false);
 		seltext:visible(false);
 		smallframe:visible(false);
@@ -259,7 +266,7 @@ local t = Def.ActorFrame {
 			OffCommand=cmd(bouncebegin,0.35;zoom,0);
 			PlayerJoinedMessageCommand=function(self,param)
 				if param.Player == PLAYER_1 then
-					(cmd(bouncebegin,0.175;zoom,1.15;bounceend,0.175;zoom,1.0;))(self);
+					(cmd(;zoom,1.15;bounceend,0.175;zoom,1.0;))(self);
 				end;
 			end;
 			children = LoadPlayerStuff(PLAYER_1);
@@ -271,7 +278,7 @@ local t = Def.ActorFrame {
 			OffCommand=cmd(bouncebegin,0.35;zoom,0);
 			PlayerJoinedMessageCommand=function(self,param)
 				if param.Player == PLAYER_2 then
-					(cmd(bouncebegin,0.175;zoom,1.15;bounceend,0.175;zoom,1.0;))(self);
+					(cmd(zoom,1.15;bounceend,0.175;zoom,1.0;))(self);
 				end;
 			end;
 			children = LoadPlayerStuff(PLAYER_2);

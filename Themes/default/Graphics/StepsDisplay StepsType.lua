@@ -1,5 +1,6 @@
 local sString;
 local t = Def.ActorFrame{
+	
 	LoadFont("Common normal")..{
 		InitCommand=cmd(shadowlength,1);
 		SetMessageCommand=function(self,param)
