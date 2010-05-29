@@ -23,8 +23,8 @@ return Def.StepsDisplayList {
 				(cmd(bouncebegin,0.3;zoom,0))(self);
 			end;
 		end;
-		LoadActor(THEME:GetPathG("_StepsDisplayListRow","Cursor")) .. {
-			InitCommand=cmd(diffuse,PlayerColor(PLAYER_1));
+ 		LoadActor(THEME:GetPathG("_StepsDisplayListRow","Cursor")) .. {
+			InitCommand=cmd(diffuse,PlayerColor(PLAYER_1);x,8;zoom,0.75);
 		};
 		LoadActor(THEME:GetPathG("_StepsDisplayListRow","arrow")) .. {
 			InitCommand=cmd(x,20;diffuse,PlayerColor(PLAYER_1));
@@ -32,7 +32,8 @@ return Def.StepsDisplayList {
 		};
 		LoadFont("Common Normal") .. {
 			Text="P1";
-			InitCommand=cmd(x,-4;diffuse,PlayerColor(PLAYER_1));
+			InitCommand=cmd(x,2;diffuse,PlayerColor(PLAYER_1);shadowlength,1);
+			OnCommand=cmd(zoom,0.75);
 		};
 	};
 	CursorP2 = Def.ActorFrame {
@@ -49,8 +50,8 @@ return Def.StepsDisplayList {
 				(cmd(bouncebegin,0.3;zoom,0))(self);
 			end;
 		end;
-		LoadActor(THEME:GetPathG("_StepsDisplayListRow","Cursor")) .. {
-			InitCommand=cmd(diffuse,PlayerColor(PLAYER_2);zoomx,-1);
+ 		LoadActor(THEME:GetPathG("_StepsDisplayListRow","Cursor")) .. {
+			InitCommand=cmd(diffuse,PlayerColor(PLAYER_2);x,-8;zoom,0.75;zoomx,-0.75;);
 		};
 		LoadActor(THEME:GetPathG("_StepsDisplayListRow","arrow")) .. {
 			InitCommand=cmd(x,-20;diffuse,PlayerColor(PLAYER_2);zoomx,-1);
@@ -58,7 +59,8 @@ return Def.StepsDisplayList {
 		};
 		LoadFont("Common Normal") .. {
 			Text="P2";
-			InitCommand=cmd(x,8;diffuse,PlayerColor(PLAYER_2));
+			InitCommand=cmd(x,-2;diffuse,PlayerColor(PLAYER_2);shadowlength,1);
+			OnCommand=cmd(zoom,0.75);
 		};
 	};
 	CursorP1Frame = Def.Actor{
