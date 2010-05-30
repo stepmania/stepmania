@@ -14,7 +14,16 @@ t[#t+1] = Def.Sprite {
 };
 
 t[#t+1] = Def.ActorFrame {
-  InitCommand=cmd(Center);
+	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
+	OnCommand=cmd(stoptweening;zoom,1.25;decelerate,3;zoom,1);
+	
+	LoadActor( THEME:GetPathG("ScreenStageInformation", "Stage " .. ToEnumShortString(GAMESTATE:GetCurrentStage()) ) ) .. {
+		OnCommand=cmd(diffusealpha,0;linear,0.5;diffusealpha,1);
+	};
+};
+
+t[#t+1] = Def.ActorFrame {
+  InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y+96);
   OnCommand=cmd(stoptweening;addy,-16;decelerate,3;addy,16);
 	LoadFont("Common Normal") .. {
 		Text=GAMESTATE:IsCourseMode() and GAMESTATE:GetCurrentCourse():GetDisplayFullTitle() or GAMESTATE:GetCurrentSong():GetDisplayFullTitle();
