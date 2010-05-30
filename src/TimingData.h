@@ -86,9 +86,9 @@ struct TimeSignatureSegment
 };
 
 /* A warp segment is used to replicate the effects of Negative BPMs without
- * ausing negative BPMs. Negative BPMs should be converted to warp segments.
- * WarpAt=WarpTo is the format, where both are in beats. */
-/*
+ * abusing negative BPMs. Negative BPMs should be converted to warp segments.
+ * WarpAt=WarpTo is the format, where both are in beats. (Technically they're
+ * both rows though.) */
 struct WarpSegment
 {
 	WarpSegment() : m_iStartRow(-1), m_iEndRow(-1) { }
@@ -105,7 +105,6 @@ struct WarpSegment
 	bool operator!=( const WarpSegment &other ) const { return !operator==(other); }
 	bool operator<( const WarpSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
 };
-*/
 
 class TimingData
 {
@@ -121,40 +120,43 @@ public:
 	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds ); }
 	void SetStopAtBeat( float fBeat, float fSeconds, bool bDelay ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, bDelay ); } // (sm-ssc)
 	float GetStopAtRow( int iNoteRow, bool &bDelayOut ) const;
+	int GetWarpToRow( int iWarpBeginRow ) const;
 	void SetDelayAtRow( int iNoteRow, float fSeconds ); // sm-ssc
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	void AddBPMSegment( const BPMSegment &seg );
 	void AddStopSegment( const StopSegment &seg );
 	void AddTimeSignatureSegment( const TimeSignatureSegment &seg );
-	//void AddWarpSegment( const WarpSegment &seg );
+	void AddWarpSegment( const WarpSegment &seg );
 	int GetBPMSegmentIndexAtBeat( float fBeat );
 	const TimeSignatureSegment& GetTimeSignatureSegmentAtBeat( float fBeat ) const;
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat );
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
 
-	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut ) const;
+	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, int &iWarpEndOut ) const;
 	float GetBeatFromElapsedTime( float fElapsedTime ) const	// shortcut for places that care only about the beat
 	{
 		float fBeat, fThrowAway;
 		bool bThrowAway, bThrowAway2;
-		GetBeatAndBPSFromElapsedTime( fElapsedTime, fBeat, fThrowAway, bThrowAway, bThrowAway2 );
+		int iThrowAway, iThrowAway2;
+		GetBeatAndBPSFromElapsedTime( fElapsedTime, fBeat, fThrowAway, bThrowAway, bThrowAway2, iThrowAway, iThrowAway2 );
 		return fBeat;
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const;
 
-	void GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut ) const;
+	void GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, int &iWarpEndOut ) const;
 	float GetBeatFromElapsedTimeNoOffset( float fElapsedTime ) const	// shortcut for places that care only about the beat
 	{
 		float fBeat, fThrowAway;
 		bool bThrowAway, bThrowAway2;
-		GetBeatAndBPSFromElapsedTimeNoOffset( fElapsedTime, fBeat, fThrowAway, bThrowAway, bThrowAway2 );
+		int iThrowAway, iThrowAway2;
+		GetBeatAndBPSFromElapsedTimeNoOffset( fElapsedTime, fBeat, fThrowAway, bThrowAway, bThrowAway2, iThrowAway, iThrowAway2 );
 		return fBeat;
 	}
 	float GetElapsedTimeFromBeatNoOffset( float fBeat ) const;
 
 	bool HasBpmChanges() const;
 	bool HasStops() const;
-	// bool HasWarps() const;
+	bool HasWarps() const;
 
 	bool operator==( const TimingData &other )
 	{
@@ -164,11 +166,9 @@ public:
 		COMPARE( m_StopSegments.size() );
 		for( unsigned i=0; i<m_StopSegments.size(); i++ )
 			COMPARE( m_StopSegments[i] );
-		/*
 		COMPARE( m_WarpSegments.size() );
 		for( unsigned i=0; i<m_WarpSegments.size(); i++ )
 			COMPARE( m_WarpSegments[i] );
-		*/
 		COMPARE( m_fBeat0OffsetInSeconds );
 		return true;
 	}
@@ -181,12 +181,13 @@ public:
 	// Lua
 	void PushSelf( lua_State *L );
 
-	RString				m_sFile;		// informational only
+	RString					m_sFile;		// informational only
 	vector<BPMSegment>		m_BPMSegments;	// this must be sorted before gameplay
 	vector<StopSegment>		m_StopSegments;	// this must be sorted before gameplay
 	vector<TimeSignatureSegment>	m_vTimeSignatureSegments;	// this must be sorted before gameplay
-	// vector<WarpSegment> m_vWarpSegments; // this must be sorted before gameplay
+	vector<WarpSegment> m_WarpSegments; // this must be sorted before gameplay
 	float	m_fBeat0OffsetInSeconds;
+	bool	m_bHasNegativeBpms; // only used for Lua bindings in Song (to be moved to TimingData later)
 };
 
 #undef COMPARE

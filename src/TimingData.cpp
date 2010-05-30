@@ -11,6 +11,7 @@
 TimingData::TimingData()
 {
 	m_fBeat0OffsetInSeconds = 0;
+	m_bHasNegativeBpms = false;
 }
 
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const
@@ -41,12 +42,10 @@ void TimingData::AddTimeSignatureSegment( const TimeSignatureSegment &seg )
 	m_vTimeSignatureSegments.insert( upper_bound(m_vTimeSignatureSegments.begin(), m_vTimeSignatureSegments.end(), seg), seg );
 }
 
-/*
 void TimingData::AddWarpSegment( const WarpSegment &seg )
 {
 	m_WarpSegments.insert( upper_bound(m_WarpSegments.begin(), m_WarpSegments.end(), seg), seg );
 }
-*/
 
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
 void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
@@ -110,6 +109,13 @@ void TimingData::SetDelayAtRow( int iRow, float fSeconds )
 	SetStopAtRow(iRow,fSeconds,true);
 }
 
+/*
+void TimingData::SetWarpAtRow( int iRowAt, int iRowTo )
+{
+	// todo: code this -aj
+}
+*/
+
 float TimingData::GetStopAtRow( int iNoteRow, bool &bDelayOut ) const
 {
 	bDelayOut = false; // not a delay by default
@@ -122,6 +128,18 @@ float TimingData::GetStopAtRow( int iNoteRow, bool &bDelayOut ) const
 		}
 	}
 
+	return 0;
+}
+
+int TimingData::GetWarpToRow( int iWarpBeginRow ) const
+{
+	for( unsigned i=0; i<m_WarpSegments.size(); i++ )
+	{
+		if( m_WarpSegments[i].m_iStartRow == iWarpBeginRow )
+		{
+			return m_WarpSegments[i].m_iEndRow;
+		}
+	}
 	return 0;
 }
 
@@ -205,15 +223,14 @@ BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )
 	return m_BPMSegments[i];
 }
 
-void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut ) const
+void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, int &iWarpEndOut ) const
 {
 	fElapsedTime += PREFSMAN->m_fGlobalOffsetSeconds;
 
-	GetBeatAndBPSFromElapsedTimeNoOffset( fElapsedTime, fBeatOut, fBPSOut, bFreezeOut, bDelayOut );
+	GetBeatAndBPSFromElapsedTimeNoOffset( fElapsedTime, fBeatOut, fBPSOut, bFreezeOut, bDelayOut, iWarpBeginOut, iWarpEndOut );
 }
 
-//, int &iWarpOut
-void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut ) const
+void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, int &iWarpEndOut ) const
 {
 //	LOG->Trace( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
 	const float fTime = fElapsedTime;
@@ -254,18 +271,18 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			if( (fFreezeStartSecond >= fElapsedTime && !bIsDelay) ||
 				(fFreezeStartSecond > fElapsedTime && bIsDelay) )
 			{
-				/* The time lies within the stop. */
+				// The time lies within the stop.
 				fBeatOut = NoteRowToBeat(m_StopSegments[j].m_iStartRow);
 				fBPSOut = fBPS;
 				bFreezeOut = !bIsDelay;
 				bDelayOut = bIsDelay;
-				//bWarpOut = false;
+				//iWarpBeginOut = -1;
+				//iWarpEndOut = -1;
 				return;
 			}
 		}
 
 		// by this point we should have the warps in their own place.
-		/*
 		for( unsigned j=0; j<m_WarpSegments.size(); j++ ) // foreach warp
 		{
 			if( !bIsFirstBPMSegment && iStartRowThisSegment >= m_WarpSegments[j].m_iStartRow )
@@ -273,12 +290,18 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			if( !bIsLastBPMSegment && m_WarpSegments[j].m_iStartRow > iStartRowNextSegment )
 				continue;
 
+			// this warp lies within this BPMSegment.
+			iWarpBeginOut = m_WarpSegments[j].m_iStartRow;
+			iWarpEndOut = m_WarpSegments[j].m_iEndRow;
+
 			// this warp lies within this BPMSegment, and these are wrong
+			// huh? -aj
+			/*
 			const int iRowsBeatsSinceStartOfSegment = m_WarpSegments[j].m_iStartRow - iStartRowThisSegment;
 			const float fBeatsSinceStartOfSegment = NoteRowToBeat(iRowsBeatsSinceStartOfSegment);
 			const float fWarpStartSecond = fBeatsSinceStartOfSegment / fBPS;
+			*/
 		}
-		*/
 
 		const float fBeatsInThisSegment = fStartBeatNextSegment - fStartBeatThisSegment;
 		const float fSecondsInThisSegment =  fBeatsInThisSegment / fBPS;
@@ -291,17 +314,17 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 		*/
 		if( bIsLastBPMSegment || fElapsedTime <= fSecondsInThisSegment )
 		{
-			// this BPMSegment IS the current segment
+			// this BPMSegment IS the current segment.
 			fBeatOut = fStartBeatThisSegment + fElapsedTime*fBPS;
 			fBPSOut = fBPS;
 			bFreezeOut = false;
 			bDelayOut = false;
-			//bWarpOut = false;
-
+			//iWarpBeginOut;
+			//iWarpEndOut;
 			return;
 		}
 
-		// this BPMSegment is NOT the current segment
+		// this BPMSegment is NOT the current segment.
 		fElapsedTime -= fSecondsInThisSegment;
 		// xxx: negative testing
 		/*
@@ -317,13 +340,13 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 	// If we get here, something has gone wrong. Is everything sorted?
 	vector<BPMSegment> vBPMS = m_BPMSegments;
 	vector<StopSegment> vSS = m_StopSegments;
-	//vector<WarpSegment> vWS = m_WarpSegments;
+	vector<WarpSegment> vWS = m_WarpSegments;
 	sort( vBPMS.begin(), vBPMS.end() );
 	sort( vSS.begin(), vSS.end() );
-	//sort( vWS.begin(), vWS.end() );
+	sort( vWS.begin(), vWS.end() );
 	ASSERT_M( vBPMS == m_BPMSegments, "The BPM segments were not sorted!" );
 	ASSERT_M( vSS == m_StopSegments, "The Stop segments were not sorted!" );
-	//ASSERT_M( vWS == m_WarpSegments, "The Warp segments were not sorted!" );
+	ASSERT_M( vWS == m_WarpSegments, "The Warp segments were not sorted!" );
 	FAIL_M( ssprintf("Failed to find the appropriate segment for elapsed time %f.", fTime) );
 }
 
@@ -375,7 +398,9 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 	/*
 	for( unsigned i=0; i<m_WarpSegments.size(); i++ ) // foreach WarpSegment
 	{
-		// do some crap with warps here
+		// todo: is this correct? -aj
+		const int iWarpToRow = m_WarpSegments[i].m_iEndRow;
+		fElapsedTime += NoteRowToBeat( iWarpToRow );
 	}
 	*/
 
@@ -499,12 +524,10 @@ bool TimingData::HasStops() const
 	return m_StopSegments.size()>0;
 }
 
-/*
 bool TimingData::HasWarps() const
 {
 	return m_WarpSegments.size()>0;
 }
-*/
 
 void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const
 {
@@ -515,7 +538,7 @@ void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, i
 		vector<TimeSignatureSegment>::const_iterator next = iter;
 		next++;
 		int iSegmentEndRow = (next == m_vTimeSignatureSegments.end()) ? INT_MAX : next->m_iStartRow;
-	
+
 		int iRowsPerMeasureThisSegment = iter->GetNoteRowsPerMeasure();
 
 		if( iNoteRow >= iter->m_iStartRow )
@@ -614,6 +637,7 @@ public:
 		LuaHelpers::CreateTableFromArray(fBPMs, L);
 		return 1;
 	}
+	static int HasNegativeBPMs( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bHasNegativeBpms); return 1; }
 	// formerly in Song.cpp in sm-ssc private beta 1.x:
 	static int GetBPMAtBeat( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetBPMAtBeat(FArg(1))); return 1; }
 	static int GetBeatFromElapsedTime( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetBeatFromElapsedTime(FArg(1))); return 1; }
@@ -628,6 +652,7 @@ public:
 		ADD_METHOD( GetBPMs );
 		ADD_METHOD( GetBPMsAndTimes );
 		ADD_METHOD( GetActualBPM );
+		ADD_METHOD( HasNegativeBPMs );
 		// formerly in Song.cpp in sm-ssc private beta 1.x:
 		ADD_METHOD( GetBPMAtBeat );
 		ADD_METHOD( GetBeatFromElapsedTime );

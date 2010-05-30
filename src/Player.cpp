@@ -135,7 +135,7 @@ ThemeMetric<bool> CHECKPOINTS_USE_TIME_SIGNATURES ( "Player", "CheckpointsUseTim
 ThemeMetric<bool> CHECKPOINTS_FLASH_ON_HOLD ( "Player", "CheckpointsFlashOnHold" ); // sm-ssc addition
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
 ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads" );
-//ThemeMetric<bool> REQUIRE_STEP_ON_TAP_NOTES	( "Player", "RequireStepOnTapNotes" ); // parastar stuff; leave in though
+//ThemeMetric<bool> HOLD_TRIGGERS_TAP_NOTES	( "Player", "HoldTriggersTapNotes" ); // parastar stuff; leave in though
 ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
 ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
 ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" ); // sm-ssc addition
@@ -355,6 +355,9 @@ void Player::Init(
 		m_pActorWithComboPosition = &*m_sprCombo;
 		this->AddChild( m_sprCombo );
 
+		// todo: allow for judgments to be loaded per-column a la pop'n?
+		// see how HoldJudgments are handled below for an example, though
+		// it would need more work. -aj
 		m_sprJudgment.Load( THEME->GetPathG(sType,"judgment") );
 		m_sprJudgment->SetName( "Judgment" );
 		m_pActorWithJudgmentPosition = &*m_sprJudgment;
@@ -481,6 +484,9 @@ void Player::Load()
 		{
 			// ugly, ugly, ugly.  Works only w/ dance.
 			// Why does this work only with dance? - Steve
+			// it has to do with there only being four cases. This is a lame
+			// workaround, but since only DDR has ever really implemented those
+			// modes, it's stayed like this. -aj
 			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 			NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), st );
 
@@ -675,7 +681,6 @@ void Player::Update( float fDeltaTime )
 
 		// Update Y positions
 		{
-			// todo: unhardcode hold judgment cmds -aj
 			for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ )
 			{
 				float fPercentReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(c);
@@ -749,7 +754,7 @@ void Player::Update( float fDeltaTime )
 		GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( col, m_pPlayerState->m_PlayerNumber );
 
 		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI );
-		
+
 		if( m_vAlterMap.size() > 0 ) // alternate input is being used
 		{
 			for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
@@ -766,7 +771,6 @@ void Player::Update( float fDeltaTime )
 			if( m_pNoteField )
 				m_pNoteField->SetPressed( col );
 	}
-
 
 	// handle Autoplay for rolls
 	if( m_pPlayerState->m_PlayerController != PC_HUMAN )
@@ -821,8 +825,8 @@ void Player::Update( float fDeltaTime )
 			TrackRowTapNote trtn = { iTrack, iRow, &tn };
 
 			/* All holds must be of the same subType because fLife is handled 
-			 * in different ways depending on the SubType.  Handle Rolls one at a time 
-			 * and don't mix with holds. */
+			 * in different ways depending on the SubType. Handle Rolls one at
+			 * a time and don't mix with holds. */
 			switch( tn.subType )
 			{
 			DEFAULT_FAIL( tn.subType );
@@ -901,7 +905,7 @@ void Player::Update( float fDeltaTime )
 	ApplyWaitingTransforms();
 }
 
-/* Update a group of holds with shared scoring/life. All of these holds will have the same start row. */
+// Update a group of holds with shared scoring/life. All of these holds will have the same start row.
 void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTapNote> &vTN )
 {
 	ASSERT( !vTN.empty() );
@@ -2321,7 +2325,8 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		bool bFreeze, bDelay;
 		float fMissIfOlderThanThisBeat;
 		float fThrowAway;
-		GAMESTATE->m_pCurSong->m_Timing.GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze, bDelay );
+		int iWarpBeginRow, iWarpEndRow;
+		GAMESTATE->m_pCurSong->m_Timing.GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze, bDelay, iWarpBeginRow, iWarpEndRow );
 
 		iMissIfOlderThanThisRow = BeatToNoteRow( fMissIfOlderThanThisBeat );
 		if( bFreeze || bDelay )
@@ -2356,6 +2361,11 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		}
 		else
 		{
+			// warp hackery: don't score notes within the warp region.
+			// (Only useful when QuirksMode is enabled.) -aj
+			if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() <= GAMESTATE->m_iWarpEndRow )
+				continue;
+
 			tn.result.tns = TNS_Miss;
 		}
 	}
@@ -2367,7 +2377,6 @@ void Player::UpdateJudgedRows()
 	bool bAllJudged = true;
 	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
 
-	// todo: modify function for warps? -aj
 	{
 		NoteData::all_tracks_iterator iter = *m_pIterUnjudgedRows;
 		int iLastSeenRow = -1;
@@ -2375,15 +2384,13 @@ void Player::UpdateJudgedRows()
 		{
 			int iRow = iter.Row();
 
-			// if row is in a skip section, ignore it? -aj
-			//if(iRow)
-			//{
-			//	// stuff!!
-			//}
-
 			if( iLastSeenRow != iRow )
 			{
 				iLastSeenRow = iRow;
+
+				// if row is within a warp section, ignore it. -aj
+				if(iRow >= GAMESTATE->m_iWarpBeginRow && iRow <= GAMESTATE->m_iWarpEndRow)
+					continue;
 
 				// crossed a nonempty row
 				if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow) )
@@ -2526,7 +2533,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	int iLastSeenRow = -1;
 	for( ; !iter.IsAtEnd()  &&  iter.Row() <= iLastRowCrossed; ++iter )
 	{
-		/* Apply InitialHoldLife. */
+		// Apply InitialHoldLife.
 		TapNote &tn = *iter;
 		int iRow = iter.Row();
 		int iTrack = iter.Track();
@@ -2630,7 +2637,7 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		{
 			TimeSignatureSegment tSignature = GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iLastRowCrossed ) );
 
-			// Most songs are in 4/4 time.  The frequency for checking tick counts should reflect that.
+			// Most songs are in 4/4 time. The frequency for checking tick counts should reflect that.
 			iCheckpointFrequencyRows = ROWS_PER_BEAT * tSignature.m_iDenominator / (tSignature.m_iNumerator * 4);
 		}
 
@@ -2743,6 +2750,10 @@ void Player::HandleTapRowScore( unsigned row )
 #ifdef DEBUG
 	bNoCheating = false;
 #endif
+
+	// more warp hackery. -aj
+	if(row >= (unsigned)GAMESTATE->m_iWarpBeginRow && row <= (unsigned)GAMESTATE->m_iWarpEndRow)
+		return;
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
 		bNoCheating = false;

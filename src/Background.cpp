@@ -702,7 +702,8 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 
 	float fBeat, fBPS;
 	bool bFreeze;
-	pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze, bFreeze );
+	int iThrowAway1, iThrowAway2;
+	pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze, bFreeze, iThrowAway1, iThrowAway2 );
 
 	/* Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it. */
 	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
@@ -850,7 +851,7 @@ void BackgroundImpl::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBack
 
 bool BackgroundImpl::IsDangerAllVisible()
 {
-	/* The players are never in danger in FAIL_OFF. */
+	// The players are never in danger in FAIL_OFF.
 	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->GetPlayerFailType(GAMESTATE->m_pPlayerState[p]) == PlayerOptions::FAIL_OFF )
 			return false;

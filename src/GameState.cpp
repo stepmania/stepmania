@@ -240,7 +240,6 @@ void GameState::ResetPlayer( PlayerNumber pn )
 	m_pPlayerState[pn]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
 }
 
-//static Preference<bool> g_bMultiplayer( "Multiplayer", false );
 void GameState::Reset()
 {
 	m_MasterPlayerNumber = PLAYER_INVALID; // must initialize for UnjoinPlayer
@@ -895,8 +894,8 @@ void GameState::ResetMusicStatistics()
 	//m_bStop = false;
 	m_bFreeze = false;
 	m_bDelay = false;
-	//m_iWarpBeginRow = -1; // Set to -1 because some song may want to warp to row 0. -aj
-	//m_iWarpEndRow = -1; // Set when a warp is encountered. also see above. -aj
+	m_iWarpBeginRow = -1; // Set to -1 because some song may want to warp to row 0. -aj
+	m_iWarpEndRow = -1; // Set when a warp is encountered. also see above. -aj
 	m_fMusicSecondsVisible = 0;
 	m_fSongBeatVisible = 0;
 	Actor::SetBGMTime( 0, 0, 0, 0 );
@@ -951,8 +950,10 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 		m_LastBeatUpdate.Touch();
 
 	// xxx testing: only do this on monotune survivor
+	/*
 	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
 		LOG->Trace( ssprintf("[GameState::UpdateSongPosition] cur BPS = %f, fPositionSeconds = %f",m_fCurBPS,fPositionSeconds) );
+	*/
 
 	//timing.GetBeatAndBPSFromElapsedTime( fPositionSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze, m_bDelay, m_iWarpBeginRow, m_iWarpEndRow );
 	timing.GetBeatAndBPSFromElapsedTime( fPositionSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze, m_bDelay );
