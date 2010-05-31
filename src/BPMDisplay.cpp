@@ -74,6 +74,7 @@ void BPMDisplay::Update( float fDeltaTime )
 		{
 			m_fBPMFrom = -1;
 
+			// todo: allow themer to customize "xxx" string -aj
 			if( (bool)SHOW_QMARKS )
 				SetText( (RandomFloat(0,1)>0.90f) ? RString("xxx") : ssprintf("%03.0f",RandomFloat(0,999)) );
 			else
@@ -120,7 +121,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 		if( MinBPM == MaxBPM )
 		{
 			if( MinBPM == -1 )
-				SetText( "..." ); // random
+				SetText( "..." ); // random (todo: let themer customize string -aj)
 			else
 				SetText( ssprintf("%i", MinBPM) );
 		}

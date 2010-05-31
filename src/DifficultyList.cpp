@@ -90,7 +90,7 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 int StepsDisplayList::GetCurrentRowIndex( PlayerNumber pn ) const
 {
 	Difficulty ClosestDifficulty = GAMESTATE->GetClosestShownDifficulty(pn);
-	
+
 	for( unsigned i=0; i<m_Rows.size(); i++ )
 	{
 		const Row &row = m_Rows[i];
@@ -106,7 +106,7 @@ int StepsDisplayList::GetCurrentRowIndex( PlayerNumber pn ) const
 				return i;
 		}
 	}
-	
+
 	return 0;
 }
 

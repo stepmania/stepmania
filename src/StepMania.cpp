@@ -827,16 +827,6 @@ void StepMania::ChangeCurrentGame( const Game* g )
 	ASSERT( ANNOUNCER );
 	ASSERT( THEME );
 
-	// process game command line argument. oh dear. -aj
-	RString argGame;
-	if( GetCommandlineArgument(	"game",&argGame) )
-	{
-		// we need to perform some conversion surgery
-		const Game* newG = GAMEMAN->StringToGame(argGame);
-		if(newG && newG != g)
-			g = newG;
-	}
-
 	GAMESTATE->SetCurGame( g );
 
 	RString sAnnouncer = PREFSMAN->m_sAnnouncer;
@@ -1353,7 +1343,6 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	switch( input.MenuI )
 	{
 	case GAME_BUTTON_OPERATOR:
-
 		/* Global operator key, to get quick access to the options menu. Don't
 		 * do this if we're on a "system menu", which includes the editor
 		 * (to prevent quitting without storing changes). */
@@ -1407,12 +1396,6 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			SCREENMAN->SystemMessage( RELOADED_METRICS_AND_TEXTURES );
 		}
 
-		/* If we're in screen test mode, reload the screen. 
-		if( PREFSMAN->m_bScreenTestMode )
-			ResetGame( true );
-		else
-		*/
-
 		return true;
 	}
 
@@ -1450,9 +1433,9 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 
 #else
 	/* The default Windows message handler will capture the desktop window upon
-	 * pressing PrntScrn, or will capture the foregroud with focus upon pressing
-	 * Alt+PrntScrn.  Windows will do this whether or not we save a screenshot 
-	 * ourself by dumping the frame buffer.  */
+	 * pressing PrntScrn, or will capture the foreground with focus upon pressing
+	 * Alt+PrntScrn. Windows will do this whether or not we save a screenshot 
+	 * ourself by dumping the frame buffer. */
 	// "if pressing PrintScreen and not pressing Alt"
 		input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PRTSC) && 
 		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList) &&
@@ -1461,6 +1444,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	if( bDoScreenshot )
 	{
 		// If holding LShift save uncompressed, else save compressed
+		// todo: allow for RShift -aj
 		bool bSaveCompressed = !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
 		RageTimer timer;
 		StepMania::SaveScreenshot( "Screenshots/", bSaveCompressed, false );

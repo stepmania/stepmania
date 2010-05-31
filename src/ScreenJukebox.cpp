@@ -196,10 +196,10 @@ void ScreenJukebox::Init()
 	if( Benchmark )
 	{
 		/* Note that you also need to make sure you benchmark with the
-		 * same notes.  I use a copy of MaxU with only heavy notes included. */
+		 * same notes. I use a copy of MaxU with only heavy notes included. */
 		FOREACH_EnabledPlayer( p )
 		{
-			/* Lots and lots of arrows.  This might even bias to arrows a little
+			/* Lots and lots of arrows. This might even bias to arrows a little
 			 * too much. */
 			PO_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, Init );
 			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, .25f );
