@@ -41,6 +41,43 @@ bool TrailEntry::ContainsTransformOrTurn() const
 	return false;
 }
 
+// lua start
+#include "LuaBinding.h"
+class LunaTrailEntry: public Luna<TrailEntry>
+{
+public:
+	static int GetSong( T* p, lua_State *L )
+	{
+		if( p->pSong )
+			p->pSong->PushSelf(L);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
+	static int GetSteps( T* p, lua_State *L )
+	{
+		if( p->pSteps )
+			p->pSteps->PushSelf(L);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
+	DEFINE_METHOD( IsSecret, bSecret );
+	DEFINE_METHOD( GetNormalModifiers, Modifiers );
+
+	LunaTrailEntry()
+	{
+		ADD_METHOD( GetSong );
+		ADD_METHOD( GetSteps );
+		ADD_METHOD( IsSecret );
+		ADD_METHOD( GetNormalModifiers );
+	}
+};
+
+LUA_REGISTER_CLASS( TrailEntry )
+// lua end
+
+
 void Trail::SetRadarValues( const RadarValues &rv )
 {
 	m_CachedRadarValues = rv;
@@ -226,6 +263,7 @@ public:
 		LuaHelpers::CreateTableFromArray( asAltArtists, L );
 		return 2;
 	}
+	static int GetTrailEntry( T* p, lua_State *L )	{ TrailEntry &te = p->m_vEntries[IArg(1)]; te.PushSelf(L); return 1; }
 
 	LunaTrail()
 	{
@@ -234,6 +272,7 @@ public:
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( GetRadarValues );
 		ADD_METHOD( GetArtists );
+		ADD_METHOD( GetTrailEntry );
 	}
 };
 
