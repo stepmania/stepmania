@@ -9,6 +9,13 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100531
+--------
+* [Trail] Add GetTrailEntry() Lua binding.
+* [TrailEntry] Allow TrailEntry to push itself, making Lua bindings possible.
+  TrailEntry's Lua bindings include GetSong(), GetSteps(), IsSecret() and
+  GetNormalModifiers().
+
 20100527
 --------
 * Add Direction param to ChangeStepsMessage.
