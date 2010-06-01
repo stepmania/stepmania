@@ -9,6 +9,20 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100601
+--------
+* [MusicWheel] added UseSectionsWithPreferredGroup metric
+  (allows sm-ssc to display all song groups if you use the songgroup
+  GameCommand, instead of no groups.)
+
+================================================================================
+sm-ssc v1.0 Public Beta 4 | 20100531
+--------------------------------------------------------------------------------
+The letter grade tiers have been reset to the old SM4CVS/3.9 values. You
+should probably reset your scores to maintain consistency. (Though if you
+used themes with their own scoring system, you never had consistency in the
+first place. :s)
+
 20100531
 --------
 * [Trail] Add GetTrailEntry() Lua binding.
@@ -106,8 +120,9 @@ _____________________________________________________________________________
 * Fixed an issue with StepsDisplayList crashing if more than 21 difficulties are
   playable. This allows Technomotion to work with AutoSetStyle and Autogen on.
 
+================================================================================
 sm-ssc v1.0 Public Beta 3 | 20100430
-------------------------------------
+--------------------------------------------------------------------------------
 There's an important change for themers that needs to be noted:
 We have renamed two screens in _fallback to match StepMania's names.
 
@@ -184,8 +199,9 @@ some things around in your theme.
 --------
 * Added Lifts to PaneDisplay. (StepMania 3.9+/Plus Redux had them)
 
+================================================================================
 sm-ssc v1.0 Public Beta 2 | 20100331
-------------------------------------
+--------------------------------------------------------------------------------
 
 20100329
 --------
@@ -287,8 +303,9 @@ as a choice for two part selection on ScreenSelectMusic" since
   1) It actually did have a use
   2) [AJ] was thinking of adding it anyways and forgot it was already made.
 
+================================================================================
 sm-ssc v1.0 Public Beta 1 | 20100301
-------------------------------------
+--------------------------------------------------------------------------------
 This represents the first public version of sm-ssc. The previously publicly
 available release was not the official public beta version, but was released
 for more people to get their hands on it for testing.
@@ -479,8 +496,9 @@ Playing catch-up with sm4svn. This happens a lot.
 --------
 * Add ScreenGameplayShared, ScoreKeeperShared to Makefile.am
 
+================================================================================
 sm-ssc Private Beta Wave 1.4 | 20100125
----------------------------------------
+--------------------------------------------------------------------------------
 
 20100125
 --------
@@ -553,8 +571,9 @@ mostly [ScreenNetSelectBase] related changes:
 * [GameConstantsAndTypes.h] bump MAX_METER from 13 to 20.
 * [MemoryCardManager] add GetName(pn) Lua binding. Returns the name of the device.
 
+================================================================================
 sm-ssc Private Beta Wave 1.3 | 20100106
----------------------------------------
+--------------------------------------------------------------------------------
 
 20100105
 --------
@@ -609,8 +628,9 @@ sm-ssc Private Beta Wave 1.3 | 20100106
 * Fix OS hotkey issues by invalidating input on ScreenEdit while meta keys
   (cmd or winkey) are being held. [shakesoda]
 
+================================================================================
 sm-ssc Private Beta Wave 1.2 | 20091219
----------------------------------------
+--------------------------------------------------------------------------------
 Theme-related additions/bugfixes aren't listed here, usually.
 
 20091218
