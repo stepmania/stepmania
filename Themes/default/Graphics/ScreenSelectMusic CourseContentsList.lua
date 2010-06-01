@@ -22,10 +22,10 @@ return Def.CourseContentsList {
 			SetSongCommand=function(self, params)
 				if params.Song then
 					self:diffuse( SONGMAN:GetSongColor(params.Song) );
-					self:diffuseleftedge( Colors.CourseDifficultyColors[params.Difficulty] );
+					self:diffuseleftedge( CustomDifficultyToColor(params.Difficulty) );
 				else
 					self:diffuse( color("#FFFFFF") );
-					self:diffuseleftedge( Colors.CourseDifficultyColors[params.Difficulty] );
+					self:diffuseleftedge( CustomDifficultyToColor(params.Difficulty) );
 				end
 
 				(cmd(finishtweening;diffusealpha,0;sleep,0.125*params.Number;linear,0.125;diffusealpha,1;linear,0.05;glow,color("1,1,1,0.5");decelerate,0.1;glow,color("1,1,1,0")))(self);
@@ -37,10 +37,15 @@ return Def.CourseContentsList {
 			SetSongCommand=function(self, params)
 				if params.Song then
 					if GAMESTATE:GetCurrentCourse():GetDisplayFullTitle() == "Abomination" then
-						if params.Number % 2 ~= 0 then
-							-- turkey march
-							local artist = params.Song:GetDisplayArtist();
-							self:SetFromString( "Turkey", "", "", "", artist, "" );
+						-- abomination hack
+						if PREFSMAN:GetPreference("EasterEggs") then
+							if params.Number % 2 ~= 0 then
+								-- turkey march
+								local artist = params.Song:GetDisplayArtist();
+								self:SetFromString( "Turkey", "", "", "", artist, "" );
+							else
+								self:SetFromSong( params.Song );
+							end;
 						else
 							self:SetFromSong( params.Song );
 						end;
@@ -73,7 +78,7 @@ return Def.CourseContentsList {
 			SetSongCommand=function(self, params)
 				if params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber() then return end
 				self:settext( params.Meter );
-				self:diffuse( Colors.CourseDifficultyColors[params.Difficulty] );
+				self:diffuse( CustomDifficultyToColor(params.Difficulty) );
 				(cmd(finishtweening;zoomy,0;sleep,0.125*params.Number;linear,0.125;zoomy,1.1;linear,0.05;zoomx,1.1;decelerate,0.1;zoom,1))(self);
 			end;
 		}; 
