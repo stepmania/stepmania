@@ -181,11 +181,11 @@ local DifficultyColors = {
 	Routine		= color("#ff9a00"),			-- orange
 	--[[ These are for courses, so let's slap them here in case someone
 	wanted to use Difficulty in Course and Step regions. ]]
-	Difficulty_Beginner	= color("0.0,0.9,1.0,1"),		-- purple
-	Difficulty_Easy		= color("0.9,0.9,0.0,1"),		-- green
-	Difficulty_Medium	= color("1.0,0.1,0.1,1"),		-- yellow
-	Difficulty_Hard		= color("0.2,1.0,0.2,1"),		-- red
-	Difficulty_Challenge	= color("0.2,0.6,1.0,1"),	-- light blue
+	Difficulty_Beginner	= color("#ff32f8"),		-- purple
+	Difficulty_Easy		= color("#2cff00"),		-- green
+	Difficulty_Medium	= color("#fee600"),		-- yellow
+	Difficulty_Hard		= color("#ff2f39"),		-- red
+	Difficulty_Challenge	= color("#1cd8ff"),	-- light blue
 	Difficulty_Edit 	= color("0.8,0.8,0.8,1"),		-- gray
 	Difficulty_Couple	= color("#ed0972"),				-- hot pink
 	Difficulty_Routine	= color("#ff9a00"),				-- orange
