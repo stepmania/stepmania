@@ -84,6 +84,7 @@ protected:
 	ThemeMetric1D<RageColor>	SECTION_COLORS;
 	ThemeMetric<LuaReference>	SORT_ORDERS;
 	ThemeMetric<bool>		SHOW_EASY_FLAG;
+	ThemeMetric<bool>		USE_SECTIONS_WITH_PREFERRED_GROUP;
 };
 
 #endif

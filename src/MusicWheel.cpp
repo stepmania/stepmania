@@ -30,7 +30,7 @@ static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );
 static RString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",int(i+1)); }
 static RString CHOICE_NAME( RString s )		{ return ssprintf("Choice%s",s.c_str()); }
 
-AutoScreenMessage( SM_SongChanged )          // TODO: Replace this with a Message and MESSAGEMAN
+AutoScreenMessage( SM_SongChanged ) // TODO: Replace this with a Message and MESSAGEMAN
 AutoScreenMessage( SM_SortOrderChanging );
 AutoScreenMessage( SM_SortOrderChanged );
 
@@ -66,18 +66,19 @@ void MusicWheel::Load( RString sType )
 {
 	ROULETTE_SWITCH_SECONDS		.Load(sType,"RouletteSwitchSeconds");
 	ROULETTE_SLOW_DOWN_SWITCHES	.Load(sType,"RouletteSlowDownSwitches");
-	NUM_SECTION_COLORS		.Load(sType,"NumSectionColors");
+	NUM_SECTION_COLORS			.Load(sType,"NumSectionColors");
 	SONG_REAL_EXTRA_COLOR		.Load(sType,"SongRealExtraColor");
-	SORT_MENU_COLOR			.Load(sType,"SortMenuColor");
-	SHOW_ROULETTE			.Load(sType,"ShowRoulette");
-	SHOW_RANDOM			.Load(sType,"ShowRandom");
-	SHOW_PORTAL			.Load(sType,"ShowPortal");
+	SORT_MENU_COLOR				.Load(sType,"SortMenuColor");
+	SHOW_ROULETTE				.Load(sType,"ShowRoulette");
+	SHOW_RANDOM					.Load(sType,"ShowRandom");
+	SHOW_PORTAL					.Load(sType,"ShowPortal");
 	RANDOM_PICKS_LOCKED_SONGS	.Load(sType,"RandomPicksLockedSongs");
 	MOST_PLAYED_SONGS_TO_SHOW	.Load(sType,"MostPlayedSongsToShow");
-	RECENT_SONGS_TO_SHOW	.Load(sType,"RecentSongsToShow");
+	RECENT_SONGS_TO_SHOW		.Load(sType,"RecentSongsToShow");
 	MODE_MENU_CHOICE_NAMES		.Load(sType,"ModeMenuChoiceNames");
-	SORT_ORDERS			.Load(sType,"SortOrders");
-	SHOW_EASY_FLAG			.Load(sType,"UseEasyMarkerFlag");
+	SORT_ORDERS					.Load(sType,"SortOrders");
+	SHOW_EASY_FLAG				.Load(sType,"UseEasyMarkerFlag");
+	USE_SECTIONS_WITH_PREFERRED_GROUP		.Load(sType,"UseSectionsWithPreferredGroup");
 	vector<RString> vsModeChoiceNames;
 	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
 	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
@@ -172,9 +173,16 @@ void MusicWheel::BeginScreen()
 		}
 	}
 
-	// Select the the previously selected song (if any)
-	if( !SelectSongOrCourse() )
+	if(GAMESTATE->m_sPreferredSongGroup != GROUP_ALL)
+	{
+		// if we have a preferred song group set, we should go there.
+		SetOpenSection(GAMESTATE->m_sPreferredSongGroup);
+	}
+	else if( !SelectSongOrCourse() )
+	{
+		// Select the the previously selected song (if any)
 		SetOpenSection("");
+	}
 
 	// rebuild the WheelItems that appear on screen
 	RebuildWheelItems();
@@ -187,9 +195,9 @@ MusicWheel::~MusicWheel()
 			delete *i;
 }
 
-/* If a song or course is set in GAMESTATE and available, select it.  Otherwise, choose the
- * first available song or course.  Return true if an item was set, false if no items are
- * available. */
+/* If a song or course is set in GAMESTATE and available, select it. Otherwise,
+ * choose the first available song or course. Return true if an item was set,
+ * false if no items are available. */
 bool MusicWheel::SelectSongOrCourse()
 {
 	if( GAMESTATE->m_pPreferredSong && SelectSong( GAMESTATE->m_pPreferredSong ) )
@@ -453,7 +461,10 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				break;
 			case SORT_GROUP:
 				SongUtil::SortSongPointerArrayByGroupAndTitle( arraySongs );
-				bUseSections = GAMESTATE->m_sPreferredSongGroup == GROUP_ALL;
+				if(USE_SECTIONS_WITH_PREFERRED_GROUP)
+					bUseSections = true;
+				else
+					bUseSections = GAMESTATE->m_sPreferredSongGroup == GROUP_ALL;
 				break;
 			case SORT_TITLE:
 				SongUtil::SortSongPointerArrayByTitle( arraySongs );
@@ -520,10 +531,10 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 
 			if( bUseSections )
 			{
-				// Sorting twice isn't necessary.  Instead, modify the compatator functions 
-				// in Song.cpp to have the desired effect. -Chris
+				// Sorting twice isn't necessary. Instead, modify the compatator
+				// functions in Song.cpp to have the desired effect. -Chris
 				/* Keeping groups together with the sorts is tricky and brittle; we
-				 * keep getting OTHER split up without this.  However, it puts the 
+				 * keep getting OTHER split up without this. However, it puts the 
 				 * Grade and BPM sorts in the wrong order, and they're already correct,
 				 * so don't re-sort for them. */
 				/* We're using sections, so use the section name as the top-level sort. */
@@ -1040,7 +1051,7 @@ void MusicWheel::SetOpenSection( RString group )
 			 d.m_sText != group )
 			 continue;
 
-		/* If AUTO_SET_STYLE, hide courses that prefer a style that isn't available. */
+		// If AUTO_SET_STYLE, hide courses that prefer a style that isn't available.
 		if( d.m_Type == TYPE_COURSE && CommonMetrics::AUTO_SET_STYLE )
 		{
 			const Style *pStyle = d.m_pCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
@@ -1051,7 +1062,7 @@ void MusicWheel::SetOpenSection( RString group )
 			}
 		}
 
-		/* Only show tutorial songs in arcade */
+		// Only show tutorial songs in arcade
 		if( GAMESTATE->m_PlayMode!=PLAY_MODE_REGULAR && 
 			d.m_pSong &&
 			d.m_pSong->IsTutorial() )
@@ -1123,7 +1134,6 @@ RString MusicWheel::JumpToPrevGroup()
 			return m_CurWheelItemData[i]->m_sText;
 		}
 	}
-	LOG->Trace("NO I'M NOT OK!!!");
 	// and this would be el bad:
 	return "";
 }
