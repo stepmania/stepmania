@@ -32,7 +32,7 @@ function ScreenSelectMusic:setupmusicstagemods()
 		local song, steps = SONGMAN:GetExtraStageInfo( bExtra2, style )
 		local po, so
 		if bExtra2 then
-			po = "sudden,shuffle,flat";
+			po = "default,1.5x,reverse";
 			so = "suddendeath";
 		else
 			po = "default,1.5x,reverse";

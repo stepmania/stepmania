@@ -180,13 +180,17 @@ end
 
 function GetDefaultOptionLines()
 	local LineSets = {
-		"1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17",
-		"1,2,7,8,13,14,16,17",
+		"1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17", -- All
+		"1,2,7,8,13,14,16,17", -- DDR Essentials ( no turns, fx )
 	};
-	if GetUserPrefB("UserPrefShowLotsaOptions") then
-		return GetUserPrefB("UserPrefShowLotsaOptions") and LineSets[1] or LineSets[2];
+	if not GAMESTATE:IsExtraStage() then
+		if GetUserPrefB("UserPrefShowLotsaOptions") then
+			return GetUserPrefB("UserPrefShowLotsaOptions") and LineSets[1] or LineSets[2];
+		else
+			return LineSets[2]; -- Just make sure!
+		end
 	else
-		return LineSets[2]; -- Just make sure!
+		return "1,2,7,8,13,14,17" -- No Steps Selection
 	end
 end;
 
