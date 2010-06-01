@@ -19,13 +19,14 @@ return Def.CourseContentsList {
 		InitCommand=cmd(setsize,270,44);
 
 		LoadActor(THEME:GetPathG("CourseEntryDisplay","bar")) .. {
+-- 			InitCommand=cmd(diffusetopedge,Color("Invisible"));
 			SetSongCommand=function(self, params)
-				if params.Song then
-					self:diffuse( SONGMAN:GetSongColor(params.Song) );
-					self:diffuseleftedge( CustomDifficultyToColor(params.Difficulty) );
+				if params.Difficulty then
+-- 					self:diffuse( SONGMAN:GetSongColor(params.Song) );
+					self:diffuse( CustomDifficultyToColor(params.Difficulty) );
 				else
 					self:diffuse( color("#FFFFFF") );
-					self:diffuseleftedge( CustomDifficultyToColor(params.Difficulty) );
+-- 					self:diffuse( CustomDifficultyToColor(params.Difficulty) );
 				end
 
 				(cmd(finishtweening;diffusealpha,0;sleep,0.125*params.Number;linear,0.125;diffusealpha,1;linear,0.05;glow,color("1,1,1,0.5");decelerate,0.1;glow,color("1,1,1,0")))(self);
@@ -33,7 +34,7 @@ return Def.CourseContentsList {
 		};
 
 		Def.TextBanner {
-			InitCommand=cmd(x,-96;y,2;Load,"TextBanner";SetFromString,"", "", "", "", "", "");
+			InitCommand=cmd(x,-96;y,1;Load,"TextBanner";SetFromString,"", "", "", "", "", "");
 			SetSongCommand=function(self, params)
 				if params.Song then
 					if GAMESTATE:GetCurrentCourse():GetDisplayFullTitle() == "Abomination" then
@@ -52,7 +53,7 @@ return Def.CourseContentsList {
 					else
 						self:SetFromSong( params.Song );
 					end;
-					self:diffuse( SONGMAN:GetSongColor(params.Song) );
+					self:diffuse( CustomDifficultyToColor(params.Difficulty) );
 -- 					self:glow("1,1,1,0.5");
 				else
 					self:SetFromString( "??????????", "??????????", "", "", "", "" );
