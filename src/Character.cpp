@@ -212,6 +212,8 @@ public:
 	static int GetRestAnimationPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetRestAnimationPath() ); return 1; }
 	static int GetWarmUpAnimationPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetWarmUpAnimationPath() ); return 1; }
 	static int GetDanceAnimationPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetDanceAnimationPath() ); return 1; }
+	static int GetCharacterDir( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sCharDir ); return 1; }
+	static int GetCharacterID( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sCharacterID ); return 1; }
 
 	LunaCharacter()
 	{
@@ -224,6 +226,8 @@ public:
 		ADD_METHOD( GetRestAnimationPath );
 		ADD_METHOD( GetWarmUpAnimationPath );
 		ADD_METHOD( GetDanceAnimationPath );
+		ADD_METHOD( GetCharacterDir );
+		ADD_METHOD( GetCharacterID );
 	}
 };
 

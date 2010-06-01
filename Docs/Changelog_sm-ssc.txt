@@ -14,6 +14,7 @@ _____________________________________________________________________________
 * [MusicWheel] added UseSectionsWithPreferredGroup metric
   (allows sm-ssc to display all song groups if you use the songgroup
   GameCommand, instead of no groups.)
+* [Character] add GetCharacterDir() and GetCharacterID() Lua bindings.
 
 ================================================================================
 sm-ssc v1.0 Public Beta 4 | 20100531
