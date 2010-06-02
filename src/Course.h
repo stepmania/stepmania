@@ -52,8 +52,8 @@ public:
 	int iChooseIndex;		// 
 
 	RString sModifiers;		// set player and song options using these
-	AttackArray attacks;		// timed sModifiers
-	float fGainSeconds;		// time gained back at the beginning of the song.  LifeMeterTime only.
+	AttackArray attacks;	// timed sModifiers
+	float fGainSeconds;	// time gained back at the beginning of the song.  LifeMeterTime only.
 	int iGainLives;			// lives gained back at the beginning of the next song
 
 	CourseEntry()
@@ -135,12 +135,12 @@ public:
 
 	void UpdateCourseStats( StepsType st );
 
-	/* Call to regenerate Trails with random entries */
+	// Call to regenerate Trails with random entries
 	void RegenerateNonFixedTrails() const;
 
 	void InvalidateTrailCache();
 
-	/* Call when a Song or its Steps are deleted/changed. */
+	// Call when a Song or its Steps are deleted/changed.
 	void Invalidate( const Song *pStaleSong );
 
 	void GetAllCachedTrails( vector<Trail *> &out );
@@ -205,7 +205,7 @@ public:
 	typedef map<CacheEntry, RadarValues> RadarCache_t;
 	RadarCache_t m_RadarCache;
 
-	/* Preferred styles: */
+	// Preferred styles:
 	set<RString> m_setStyles;
 
 	CachedObject<Course> m_CachedObject;

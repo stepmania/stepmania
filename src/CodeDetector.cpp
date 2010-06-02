@@ -121,8 +121,8 @@ bool CodeDetector::EnteredModeMenu( GameController controller )
 // from Pumpmania
 void CodeDetector::ChangeScrollSpeed( GameController controller, bool bIncrement )
 {
-	// this shit doesn't compile, hence the #if 0 below.
-	// also I bet your ass this code actually belongs in PlayerOptions.cpp
+	// this doesn't compile, hence the #if 0 below.
+	// also I bet this code actually belongs in PlayerOptions.cpp
 	// on further inspection. -aj
 	// p.s. it's m_fScrollSpeed you'll want to mess with.
 #if 0
@@ -186,7 +186,7 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 	for( int c=CODE_MIRROR; c<=CODE_CANCEL_ALL; c++ )
 	{
 		Code code = (Code)c;
-		
+
 		PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
 
 		if( EnteredCode(controller,code) )
