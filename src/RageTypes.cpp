@@ -155,14 +155,6 @@ static const char *ZTestModeNames[] =
 XToString( ZTestMode );
 LuaXType( ZTestMode );
 
-static const char *GlowModeNames[] =
-{
-	"Brighten",
-	"Whiten",
-};
-XToString( GlowMode );
-LuaXType( GlowMode );
-
 static const char *TextGlowModeNames[] =
 {
 	"Inner",

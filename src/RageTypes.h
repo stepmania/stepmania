@@ -25,14 +25,14 @@ LuaDeclareType( BlendMode );
 
 enum TextureMode
 {
-	/* Affects one texture stage.  Texture is modulated with the diffuse color. */
+	// Affects one texture stage. Texture is modulated with the diffuse color.
 	TextureMode_Modulate,
 
-	/* Affects one texture stage.  Color is replaced with white, leaving alpha.  Used
-	 * with BLEND_ADD to add glow. */
+	/* Affects one texture stage. Color is replaced with white, leaving alpha.
+	 * Used with BLEND_ADD to add glow. */
 	TextureMode_Glow,
 
-	/* Affects one texture stage.  Color is added to the previous texture stage. */
+	// Affects one texture stage. Color is added to the previous texture stage.
 	TextureMode_Add,
 
 	NUM_TextureMode,
@@ -84,15 +84,6 @@ enum PolygonMode
 	PolygonMode_Invalid
 };
 LuaDeclareType( PolygonMode );
-
-enum GlowMode
-{
-	GlowMode_Brighten,
-	GlowMode_Whiten,
-	NUM_GlowMode,
-	GlowMode_Invalid
-};
-LuaDeclareType( GlowMode );
 
 enum TextGlowMode
 {

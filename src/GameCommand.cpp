@@ -168,7 +168,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	RString sName = cmd.GetName();
 	if( sName.empty() )
 		return;
-	
+
 	RString sValue;
 	for( unsigned i = 1; i < cmd.m_vsArgs.size(); ++i )
 	{
@@ -208,7 +208,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	{
 		m_sAnnouncer = sValue;
 	}
-	
+
 	else if( sName == "name" )
 	{
 		m_sName = sValue;
@@ -232,19 +232,19 @@ void GameCommand::LoadOne( const Command& cmd )
 			m_sStageModifiers += ",";
 		m_sStageModifiers += sValue;
 	}
-	
+
 	else if( sName == "lua" )
 	{
 		m_LuaFunction.SetFromExpression( sValue );
 		ASSERT_M( !m_LuaFunction.IsNil(), ssprintf("\"%s\" evaluated to nil", sValue.c_str()) );
 	}
-	
+
 	else if( sName == "screen" )
 	{
 		m_sScreen = sValue;
 		m_bPushScreen = false;
 	}
-	
+
 	else if( sName == "song" )
 	{
 		m_pSong = SONGMAN->FindSong( sValue );
@@ -391,7 +391,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		m_bApplyDefaultOptions = true;
 	}
 
-	/* sm-ssc additions begin: */
+	// sm-ssc additions begin:
 	else if( sName == "urlnoexit" )
 	{
 		m_sUrl = sValue;
@@ -420,7 +420,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "fademusic" )
 	{
-		// todo: parse for shit. 
+		// todo: parse things correctly. -aj
 		if( cmd.m_vsArgs.size() == 3 )
 		{
 			m_bFadeMusic = true;
@@ -478,13 +478,14 @@ static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 	case PLAY_MODE_RAVE:
 		// Can't play rave if there isn't enough room for two players.
 		// This is correct for dance (ie, no rave for solo and doubles),
-		// and should be okay for pump .. not sure about other game types.
+		// and should be okay for pump.. not sure about other game types.
 		// Techno Motion scales down versus arrows, though, so allow this.
 		if( style->m_iColsPerPlayer >= 6 && RString(GAMESTATE->m_pCurGame->m_szName) != "techno" )
 			return false;
-		
-		/* Don't allow battle modes if the style takes both sides. */
-		if( style->m_StyleType==StyleType_OnePlayerTwoSides )
+
+		// Don't allow battle modes if the style takes both sides.
+		if( style->m_StyleType==StyleType_OnePlayerTwoSides ||
+			style->m_StyleType==StyleType_TwoPlayersSharedSides )
 			return false;
 	}
 
@@ -510,13 +511,13 @@ bool GameCommand::IsPlayable( RString *why ) const
 		{
 		case CoinMode_Home:
 		case CoinMode_Free:
-			iCredits = NUM_PLAYERS; /* not iNumCreditsPaid */
+			iCredits = NUM_PLAYERS; // not iNumCreditsPaid
 		}
 
-		/* With PREFSMAN->m_bDelayedCreditsReconcile disabled, enough credits must be
-		 * paid.  (This means that enough sides must be joined.)  Enabled, simply having
-		 * enough credits lying in the machine is sufficient; we'll deduct the extra in
-		 * Apply(). */
+		/* With PREFSMAN->m_bDelayedCreditsReconcile disabled, enough credits must
+		 * be paid. (This means that enough sides must be joined.)  Enabled, simply
+		 * having enough credits lying in the machine is sufficient; we'll deduct the
+		 * extra in Apply(). */
 		int iNumCreditsAvailable = iNumCreditsPaid;
 		if( PREFSMAN->m_bDelayedCreditsReconcile )
 			iNumCreditsAvailable += iCredits;
@@ -528,10 +529,10 @@ bool GameCommand::IsPlayable( RString *why ) const
 			return false;
 		}
 
-		/* If you've paid too much already, don't allow the mode.  (If we allow this,
+		/* If you've paid too much already, don't allow the mode. (If we allow this,
 		 * the credits will be "refunded" in Apply(), but that's confusing.) */
 		/* Do allow the mode if they've already joined in more credits than 
-		 * are required.  Otherwise, people who put in two credits to play 
+		 * are required. Otherwise, people who put in two credits to play 
 		 * doubles on a doubles-premium machiune will get locked out.
 		 * the refund logic isn't that awkward because you never see the 
 		 * credits number jump up - the credits display is hidden if both 
@@ -545,8 +546,8 @@ bool GameCommand::IsPlayable( RString *why ) const
 		}
 		*/
 
-		/* If both sides are joined, disallow singles modes, since easy to select them
-		 * accidentally, instead of versus mode. */
+		/* If both sides are joined, disallow singles modes, since easy to select
+		 * them accidentally, instead of versus mode. */
 		if( m_pStyle->m_StyleType == StyleType_OnePlayerOneSide &&
 			GAMESTATE->GetNumSidesJoined() > 1 )
 		{
@@ -642,7 +643,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 {
 	if( m_Commands.v.size() )
 	{
-		// We were filled using a GameCommand from metrics.  Apply the options in order.
+		// We were filled using a GameCommand from metrics. Apply the options in order.
 		FOREACH_CONST( Command, m_Commands.v, cmd )
 		{
 			GameCommand gc;
@@ -654,7 +655,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 	}
 	else
 	{
-		// We were filled by an OptionRowHandler in code.  m_Commands isn't filled,
+		// We were filled by an OptionRowHandler in code. m_Commands isn't filled,
 		// so just apply the values that are already set in this.
 		this->ApplySelf( vpns );
 	}
@@ -671,10 +672,9 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	{
 		GAMESTATE->SetCurrentStyle( m_pStyle );
 
-		// It's possible to choose a style that didn't have enough 
-		// players joined.  If enough players aren't joined, then 
-		// we need to subtract credits for the sides that will be
-		// joined as a result of applying this option.
+		// It's possible to choose a style that didn't have enough players joined.
+		// If enough players aren't joined, then  we need to subtract credits
+		// for the sides that will be joined as a result of applying this option.
 		if( GAMESTATE->GetCoinMode() == CoinMode_Pay )
 		{
 			int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
@@ -685,9 +685,8 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 					iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit, GAMESTATE->m_iCoins.Get() );
 		}
 
-
-		// If only one side is joined and we picked a style
-		// that requires both sides, join the other side.
+		// If only one side is joined and we picked a style that requires both
+		// sides, join the other side.
 		switch( m_pStyle->m_StyleType )
 		{
 		case StyleType_OnePlayerOneSide:
@@ -791,8 +790,8 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			ScreenPrompt::Prompt( SM_None, COULD_NOT_LAUNCH_BROWSER );
 	}
 
-	/* If we're going to stop music, do so before preparing new screens, so we don't
-	 * stop music between preparing screens and loading screens. */
+	/* If we're going to stop music, do so before preparing new screens, so we
+	 * don't stop music between preparing screens and loading screens. */
 	if( m_bStopMusic )
 		SOUND->StopMusic();
 	if( m_bFadeMusic )
@@ -823,7 +822,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		GAMESTATE->GetDefaultSongOptions( so );
 		GAMESTATE->m_SongOptions.Assign( ModsLevel_Stage, so );
 	}
-	// HACK:  Set life type to BATTERY just once here so it happens once and 
+	// HACK: Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI && 
 		GAMESTATE->m_PlayMode != OldPlayMode &&
