@@ -103,7 +103,6 @@ public:
 		RectF		fade;	// 0 = no fade
 		RageColor	diffuse[4];
 		RageColor	glow;
-		// GlowMode	glowmode; // oh hello...
 		float		aux;
 	};
 
@@ -191,9 +190,14 @@ public:
 	float GetRotationX() const			{ return DestTweenState().rotation.x; }
 	float GetRotationY() const			{ return DestTweenState().rotation.y; }
 	float GetRotationZ() const			{ return DestTweenState().rotation.z; }
-	void  SetRotationX( float rot )			{ DestTweenState().rotation.x = rot; }
-	void  SetRotationY( float rot )			{ DestTweenState().rotation.y = rot; }
-	void  SetRotationZ( float rot )			{ DestTweenState().rotation.z = rot; }
+	void  SetRotationX( float rot )		{ DestTweenState().rotation.x = rot; }
+	void  SetRotationY( float rot )		{ DestTweenState().rotation.y = rot; }
+	void  SetRotationZ( float rot )		{ DestTweenState().rotation.z = rot; }
+	// added in StepNXA, now available in sm-ssc:
+	void  AddRotationX( float rot )		{ DestTweenState().rotation.x += rot; };
+	void  AddRotationY( float rot )		{ DestTweenState().rotation.y += rot; };
+	void  AddRotationZ( float rot )		{ DestTweenState().rotation.z += rot; };
+	// and these were normally in SM:
 	void  AddRotationH( float rot );
 	void  AddRotationP( float rot );
 	void  AddRotationR( float rot );

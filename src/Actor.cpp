@@ -1378,6 +1378,9 @@ public:
 	static int rotationx( T* p, lua_State *L )		{ p->SetRotationX(FArg(1)); return 0; }
 	static int rotationy( T* p, lua_State *L )		{ p->SetRotationY(FArg(1)); return 0; }
 	static int rotationz( T* p, lua_State *L )		{ p->SetRotationZ(FArg(1)); return 0; }
+	static int addrotationx( T* p, lua_State *L )		{ p->AddRotationX(FArg(1)); return 0; }
+	static int addrotationy( T* p, lua_State *L )		{ p->AddRotationY(FArg(1)); return 0; }
+	static int addrotationz( T* p, lua_State *L )		{ p->AddRotationZ(FArg(1)); return 0; }
 	static int getrotation( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetRotationX()); lua_pushnumber(L, p->GetRotationY()); lua_pushnumber(L, p->GetRotationZ()); return 3; }
 	static int baserotationx( T* p, lua_State *L )		{ p->SetBaseRotationX(FArg(1)); return 0; }
 	static int baserotationy( T* p, lua_State *L )		{ p->SetBaseRotationY(FArg(1)); return 0; }
@@ -1588,6 +1591,9 @@ public:
 		ADD_METHOD( rotationx );
 		ADD_METHOD( rotationy );
 		ADD_METHOD( rotationz );
+		ADD_METHOD( addrotationx );
+		ADD_METHOD( addrotationy );
+		ADD_METHOD( addrotationz );
 		ADD_METHOD( getrotation );
 		ADD_METHOD( baserotationx );
 		ADD_METHOD( baserotationy );
