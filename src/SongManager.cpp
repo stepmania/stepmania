@@ -493,8 +493,14 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 			if( pSteps->GetMeter() >= EXTRA_COLOR_METER )
 				return (RageColor)EXTRA_COLOR;
 		}
-
-		return GetSongGroupColor( pSong->m_sGroupName );
+		if( pSong->m_sMainTitle == "DVNO")
+		{
+			return RageColor(1.0f,0.8f,0.0f,1.0f);
+		}
+		else 
+		{
+			return GetSongGroupColor( pSong->m_sGroupName );
+		}
 	}
 }
 
