@@ -9,6 +9,14 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100602
+--------
+* [Actor] add addrotationx, addrotationy, addrotationz bindings/commands
+* [GameCommand] Don't allow battle/rave with Routine
+  (StyleType_TwoPlayersSharedSides).
+* Reordered ScreenEdit's main menu (escape) slightly.
+* Expand various floats from 3 decimal places to 6 (experimental) [Midiman]
+
 20100601
 --------
 * [MusicWheel] added UseSectionsWithPreferredGroup metric

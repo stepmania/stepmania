@@ -149,6 +149,8 @@ PlayerFailedMessage( PlayerNumber )
 ===========================================
 ScreenManager
 
+HideSystemMessage()
+RefreshCreditText()
 SystemMessageMessage( Message, NoAnimate )
 ===========================================
 ScreenWithMenuElements

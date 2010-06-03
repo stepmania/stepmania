@@ -6,7 +6,7 @@ AutoScreenMessage()s and any messages that appear in
 Screen*::HandleScreenMessage(const ScreenMessage SM).
 Consider this a list of messages that screens can reply to.
 
-[ScreenMessage.*]
+[ScreenMessage]
 SM_Invalid			
 SM_None				
 SM_MenuTimer		Timer = 00
@@ -20,12 +20,12 @@ SM_Pause			try it on Gameplay... :)
 SM_Success			
 SM_Failure			
 
-[Inventory.*]
+[Inventory]
 SM_BattleDamageLevel1	
 SM_BattleDamageLevel2	
 SM_BattleDamageLevel3	
 
-[Player.*]
+[Player]
 SM_100Combo			
 SM_200Combo			
 SM_300Combo			
@@ -39,13 +39,13 @@ SM_1000Combo
 SM_ComboStopped		
 SM_ComboContinuing	
 
-[ScorekeeperNormal.*]
+[ScorekeeperNormal]
 SM_PlayToasty		what do you think it does
 
-[ScreenAttract.*]
+[ScreenAttract]
 SM_GoToStartScreen	
 
-[ScreenGameplay.*]
+[ScreenGameplay]
 SM_NotesEnded				
 SM_BeginFailed				
 SM_LeaveGameplay			
@@ -63,31 +63,31 @@ SM_BattleTrickLevel3
 SM_PlayToasty				
 SM_100Combo - SM_1000Combo	
 
-[ScreenOptions.*]
+[ScreenOptions]
 SM_ExportOptions
 
-[MusicWheel.*]
+[MusicWheel]
 SM_SongChanged			
 SM_SortOrderChanging	
 SM_SortOrderChanged		
 
-[NetworkSyncManager.*]
+[NetworkSyncManager]
 SM_AddToChat		
 SM_ChangeSong		
 SM_GotEval			
 SM_UsersUpdate		
 SM_SMOnlinePack		
 
-[RoomInfoDisplay.*]
+[RoomInfoDisplay]
 SM_RoomInfoRetract		
 SM_RoomInfoDeploy		
 
-[RoomWheel.*]
+[RoomWheel]
 SM_BackFromRoomName		
 SM_RoomInfoRetract		
 SM_RoomInfoDeploy		
 
-[ScreenEdit.*]
+[ScreenEdit]
 SM_UpdateTextInfo							
 SM_BackFromMainMenu							
 SM_BackFromAreaMenu							
@@ -109,22 +109,22 @@ SM_DoExit
 SM_SaveSuccessful							
 SM_SaveFailed								
 
-[ScreenEditMenu.*]
+[ScreenEditMenu]
 SM_RefreshSelector				
 SM_BackFromEditDescription		
 
-[ScreenEvaluation.*]
+[ScreenEvaluation]
 SM_PlayCheer	
 SM_AddBonus		
 
-[ScreenMiniMenu.*]
+[ScreenMiniMenu]
 SM_GoToOK			
 SM_GoToCancel		
 
-[ScreenNetEvaluation.*]
+[ScreenNetEvaluation]
 SM_GotEval	
 
-[ScreenNetRoom.*]
+[ScreenNetRoom]
 SM_SMOnlinePack			
 SM_BackFromRoomName		
 SM_BackFromRoomDesc		
@@ -133,12 +133,12 @@ SM_BackFromReqPass
 SM_RoomInfoRetract		
 SM_RoomInfoDeploy		
 
-[ScreenNetSelectBase.*]
+[ScreenNetSelectBase]
 SM_AddToChat		
 SM_UsersUpdate		
 SM_SMOnlinePack		
 
-[ScreenNetSelectMusic.*]
+[ScreenNetSelectMusic]
 SM_NoSongs					
 SM_ChangeSong				
 SM_SMOnlinePack				
@@ -148,13 +148,13 @@ SM_SongChanged
 SM_UsersUpdate				
 SM_BackFromPlayerOptions	
 
-[ScreenNetworkOptions.*]
+[ScreenNetworkOptions]
 SM_DoneConnecting	
 
-[ScreenOptionsEditCourse.*]
+[ScreenOptionsEditCourse]
 SM_BackFromContextMenu	
 
-[ScreenOptionsEditCourseEntry.*]
+[ScreenOptionsEditCourseEntry]
 SM_BackFromCoursePlayerOptions
 
 [ScreenOptionsManageCourses]
@@ -162,48 +162,48 @@ SM_BackFromEnterNameForNew
 SM_BackFromRename				
 SM_BackFromContextMenu			
 
-[ScreenOptionsManageEditSteps.*]
+[ScreenOptionsManageEditSteps]
 SM_BackFromRename			
 SM_BackFromDelete			
 SM_BackFromContextMenu		
 
-[ScreenOptionsManageProfiles.*]
+[ScreenOptionsManageProfiles]
 SM_BackFromEnterNameForNew		
 SM_BackFromRename				
 SM_BackFromDeleteConfirm		
 SM_BackFromClearConfirm			
 SM_BackFromContextMenu			
 
-[ScreenOptionsManageWorkouts.*]
+[ScreenOptionsManageWorkouts]
 
-[ScreenOptionsReviewWorkout.*]
+[ScreenOptionsReviewWorkout]
 
-[ScreenPackages.*]
+[ScreenPackages]
 
-[ScreenRanking.*]
+[ScreenRanking]
 
-[ScreenSelectMaster.*]
+[ScreenSelectMaster]
 
-[ScreenSelectMusic.*]
+[ScreenSelectMusic]
 SM_AllowOptionsMenuRepeat	
 SM_SongChanged				
 SM_SortOrderChanging		
 SM_SortOrderChanged			
 
-[ScreenSMOnlineLogin.*]
+[ScreenSMOnlineLogin]
 SM_SMOnlinePack			
 SM_PasswordDone			
 SM_NoProfilesDefined	
 SM_GoToNextScreen		
 
-[ScreenSplash.*]
+[ScreenSplash]
 SM_PrepScreen		
 
-[ScreenStage.*]
+[ScreenStage]
 SM_PrepScreen		
 
-[ScreenTestFonts.*]
+[ScreenTestFonts]
 SM_ChangeText	
 
-[WheelBase.*]
+[WheelBase]
 SM_SongChanged	
