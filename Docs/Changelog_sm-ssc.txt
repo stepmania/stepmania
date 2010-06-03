@@ -16,6 +16,8 @@ _____________________________________________________________________________
   (StyleType_TwoPlayersSharedSides).
 * Reordered ScreenEdit's main menu (escape) slightly.
 * Expand various floats from 3 decimal places to 6 (experimental) [Midiman]
+* [BPMDisplay] add RandomText metric for theming the "..." that appears when
+  BPMs don't cycle and MinBPM == -1.
 
 20100601
 --------

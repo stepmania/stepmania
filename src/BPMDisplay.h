@@ -46,6 +46,7 @@ protected:
 	ThemeMetric<RString> SEPARATOR;
 	ThemeMetric<RString> NO_BPM_TEXT;
 	ThemeMetric<RString> VARIOUS_TEXT;
+	ThemeMetric<RString> RANDOM_TEXT;
 
 	float m_fBPMFrom, m_fBPMTo;
 	int m_iCurrentBPM;

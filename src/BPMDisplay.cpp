@@ -35,6 +35,8 @@ void BPMDisplay::Load()
 	SEPARATOR.Load( m_sName, "Separator" );
 	SHOW_QMARKS.Load( m_sName, "ShowQMarksInRandomCycle" );
 	NO_BPM_TEXT.Load( m_sName, "NoBpmText" );
+	//QUESTIONMARKS_TEXT.Load( m_sName, "QuestionMarksText" );
+	RANDOM_TEXT.Load( m_sName, "RandomText" );
 	VARIOUS_TEXT.Load( m_sName, "VariousText" );
 
 	RunCommands( SET_NORMAL_COMMAND );
@@ -121,7 +123,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 		if( MinBPM == MaxBPM )
 		{
 			if( MinBPM == -1 )
-				SetText( "..." ); // random (todo: let themer customize string -aj)
+				SetText( RANDOM_TEXT ); // random (was "...") -aj
 			else
 				SetText( ssprintf("%i", MinBPM) );
 		}
