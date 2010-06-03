@@ -39,6 +39,7 @@ static RString BackgroundChangeToString( const BackgroundChange &bgc )
 
 static void WriteGlobalTags( RageFile &f, const Song &out )
 {
+	//f.PutLine( ssprintf( "#SMVERSION:;", SmEscape(RString("ssc-v1.0_b2")).c_str() ) );
 	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
 	f.PutLine( ssprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
 	f.PutLine( ssprintf( "#ARTIST:%s;", SmEscape(out.m_sArtist).c_str() ) );
@@ -64,17 +65,18 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.PutLine( "#INSTRUMENTTRACK:" + s + ";\n" );
 		}
 	}
-	f.PutLine( ssprintf( "#OFFSET:%.3f;", out.m_Timing.m_fBeat0OffsetInSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds ) );
-	f.PutLine( ssprintf( "#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds ) );
+	f.PutLine( ssprintf( "#OFFSET:%.6f;", out.m_Timing.m_fBeat0OffsetInSeconds ) );
+	f.PutLine( ssprintf( "#SAMPLESTART:%.6f;", out.m_fMusicSampleStartSeconds ) );
+	f.PutLine( ssprintf( "#SAMPLELENGTH:%.6f;", out.m_fMusicSampleLengthSeconds ) );
 	if( out.m_fSpecifiedLastBeat > 0 )
-		f.PutLine( ssprintf("#LASTBEATHINT:%.3f;", out.m_fSpecifiedLastBeat) );
+		f.PutLine( ssprintf("#LASTBEATHINT:%.6f;", out.m_fSpecifiedLastBeat) );
 
 	f.Write( "#SELECTABLE:" );
 	switch(out.m_SelectionDisplay)
 	{
 		default: ASSERT(0); // fall through
 		case Song::SHOW_ALWAYS:	f.Write( "YES" );		break;
+		//case Song::SHOW_NONSTOP:	f.Write( "NONSTOP" );	break;
 		case Song::SHOW_NEVER:		f.Write( "NO" );		break;
 	}
 	f.PutLine( ";" );
@@ -86,9 +88,9 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		break;
 	case Song::DISPLAY_SPECIFIED:
 		if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.3f;", out.m_fSpecifiedBPMMin ) );
+			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
 		else
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.3f:%.3f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
+			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
 		break;
 	case Song::DISPLAY_RANDOM:
 		f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
@@ -101,7 +103,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	{
 		const BPMSegment &bs = out.m_Timing.m_BPMSegments[i];
 
-		f.Write( ssprintf( "%.3f=%.3f", NoteRowToBeat(bs.m_iStartRow), bs.GetBPM() ) );
+		f.Write( ssprintf( "%.6f=%.6f", NoteRowToBeat(bs.m_iStartRow), bs.GetBPM() ) );
 		if( i != out.m_Timing.m_BPMSegments.size()-1 )
 			f.Write( "," );
 	}
@@ -114,7 +116,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 
 		if(!fs.m_bDelay)
 		{
-			f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
+			f.PutLine( ssprintf( "%.6f=%.6f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
 			if( i != out.m_Timing.m_StopSegments.size()-1 )
 				f.Write( "," );
 		}
@@ -128,7 +130,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 
 		if( fs.m_bDelay )
 		{
-			f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
+			f.PutLine( ssprintf( "%.6f=%.6f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
 			if( i != out.m_Timing.m_StopSegments.size()-1 )
 				f.Write( "," );
 		}
@@ -155,7 +157,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.Write( "#TIMESIGNATURES:" );
 	FOREACH_CONST( TimeSignatureSegment, out.m_Timing.m_vTimeSignatureSegments, iter )
 	{
-		f.PutLine( ssprintf( "%.3f=%d=%d", NoteRowToBeat(iter->m_iStartRow), iter->m_iNumerator, iter->m_iDenominator ) );
+		f.PutLine( ssprintf( "%.6f=%d=%d", NoteRowToBeat(iter->m_iStartRow), iter->m_iNumerator, iter->m_iDenominator ) );
 		vector<TimeSignatureSegment>::const_iterator iter2 = iter;
 		iter2++;
 		if( iter2 != out.m_Timing.m_vTimeSignatureSegments.end() )
