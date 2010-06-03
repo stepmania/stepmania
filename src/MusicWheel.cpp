@@ -380,9 +380,33 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 		}
 		else
 		{
-			// If the song has at least one steps, add it.
-			if( pSong->HasStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType) )
-				arraySongs.push_back( pSong );
+			if(CommonMetrics::AUTO_SET_STYLE)
+			{
+				// with AUTO_SET_STYLE on and Autogen off, some songs may get
+				// hidden. Search through every playable StepsType until you
+				// find one, then add the song.
+				// see Issue 147 for more information. -aj
+				// http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=147
+				set<StepsType> vStepsType;
+				SongUtil::GetPlayableStepsTypes( pSong, vStepsType );
+				bool bHasFoundStepsType = false;
+
+				FOREACHS( StepsType, vStepsType, st )
+				{
+					if(pSong->HasStepsType(*st) && !bHasFoundStepsType)
+					{
+						arraySongs.push_back( pSong );
+						bHasFoundStepsType = true;
+						continue;
+					}
+				}
+			}
+			else
+			{
+				// If the song has at least one steps, add it.
+				if( pSong->HasStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType) )
+					arraySongs.push_back( pSong );
+			}
 		}
 	}
 
