@@ -93,6 +93,10 @@ end
 function LoadActorFunc( path, level )
 	level = level or 1
 
+	if path == "" then
+		error( "Passing in a blank filename is a great way to eat up RAM. Good thing we warn you about this." );
+	end;
+
 	local ResolvedPath = ResolveRelativePath( path, level+1 );
 	if not ResolvedPath then
 		error( path .. ": not found", level+1 );
