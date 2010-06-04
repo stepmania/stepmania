@@ -81,14 +81,12 @@ static map<RString,CreateScreenFn>	*g_pmapRegistrees = NULL;
 
 namespace ScreenManagerUtil
 {
-	//
 	// in draw order first to last
-	//
 	struct LoadedScreen
 	{
 		Screen *m_pScreen;
-	
-		/* Normally true.  If false, the screen is owned by another screen
+
+		/* Normally true. If false, the screen is owned by another screen
 		 * and was given to us for use, and it's not ours to free. */
 		bool m_bDeleteWhenDone;
 
@@ -102,17 +100,17 @@ namespace ScreenManagerUtil
 		}
 	};
 
-	Actor                   *g_pSharedBGA;  // BGA object that's persistent between screens
-	RString			m_sPreviousTopScreen;
-	vector<LoadedScreen>    g_ScreenStack;  // bottommost to topmost
-	vector<Screen*>         g_OverlayScreens;
+	Actor				*g_pSharedBGA;  // BGA object that's persistent between screens
+	RString				m_sPreviousTopScreen;
+	vector<LoadedScreen>	g_ScreenStack;  // bottommost to topmost
+	vector<Screen*>		g_OverlayScreens;
 	set<RString>		g_setGroupedScreens;
 	set<RString>		g_setPersistantScreens;
 
 	vector<LoadedScreen>    g_vPreparedScreens;
 	vector<Actor*>          g_vPreparedBackgrounds;
 
-	/* Add a screen to g_ScreenStack.  This is the only function that adds to g_ScreenStack. */
+	// Add a screen to g_ScreenStack. This is the only function that adds to g_ScreenStack.
 	void PushLoadedScreen( const LoadedScreen &ls )
 	{
 		LOG->Trace( "PushScreen: \"%s\"", ls.m_pScreen->GetName().c_str() );
@@ -122,14 +120,14 @@ namespace ScreenManagerUtil
 		// during BeginScreen.
 		g_ScreenStack.push_back( ls );
 
-		/* Set the name of the loading screen. */
+		// Set the name of the loading screen.
 		{
 			LuaThreadVariable var1( "PreviousScreen", m_sPreviousTopScreen );
 			LuaThreadVariable var2( "LoadingScreen", ls.m_pScreen->GetName() );
 			ls.m_pScreen->BeginScreen();
 		}
 
-		/* If this is the new top screen, save the name. */
+		// If this is the new top screen, save the name.
 		if( g_ScreenStack.size() == 1 )
 			m_sPreviousTopScreen = ls.m_pScreen->GetName();
 
@@ -166,7 +164,7 @@ namespace ScreenManagerUtil
 
 	void BeforeDeleteScreen()
 	{
-		/* Deleting a screen can take enough time to cause a frame skip. */
+		// Deleting a screen can take enough time to cause a frame skip.
 		SCREENMAN->ZeroNextUpdate();
 	}
 
@@ -178,14 +176,14 @@ namespace ScreenManagerUtil
 		 * cached textures. */
 		TEXTUREMAN->DeleteCachedTextures();
 
-		/* Cleanup song data.  This can free up a fair bit of memory, so do it after
-		 * deleting screens. */
+		/* Cleanup song data. This can free up a fair bit of memory, so do it
+		 * after deleting screens. */
 		SONGMAN->Cleanup();
 	}
 
 	/* Take ownership of all screens and backgrounds that are owned by
 	 * us (this excludes screens where m_bDeleteWhenDone is false).
-	 * Clear the prepared lists.  The contents of apOut must be
+	 * Clear the prepared lists. The contents of apOut must be
 	 * freed by the caller. */
 	void GrabPreparedActors( vector<Actor*> &apOut )
 	{
@@ -201,7 +199,7 @@ namespace ScreenManagerUtil
 		g_setPersistantScreens.clear();
 	}
 	
-	/* Called when changing screen groups.  Delete all prepared screens,
+	/* Called when changing screen groups. Delete all prepared screens,
 	 * reset the screen group and list of persistant screens. */
 	void DeletePreparedScreens()
 	{
@@ -268,7 +266,7 @@ ScreenManager::~ScreenManager()
 	LUA->UnsetGlobal( "SCREENMAN" );
 }
 
-/* This is called when we start up, and when the theme changes or is reloaded. */
+// This is called when we start up, and when the theme changes or is reloaded.
 void ScreenManager::ThemeChanged()
 {
 	LOG->Trace( "ScreenManager::ThemeChanged" );
@@ -296,7 +294,10 @@ void ScreenManager::ThemeChanged()
 		pScreen->BeginScreen();
 		g_OverlayScreens.push_back( pScreen );
 	}
-	
+
+	// reload song manager colors (to avoid crashes) -aj
+	SONGMAN->ResetGroupColors();
+
 	// force recreate of new BGA
 	SAFE_DELETE( g_pSharedBGA );
 	g_pSharedBGA = new Actor;
@@ -331,7 +332,7 @@ bool ScreenManager::AllowOperatorMenuButton() const
 
 bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
 {
-	/* True if the screen is in the screen stack, but not the first. */
+	// True if the screen is in the screen stack, but not the first.
 	for( unsigned i = 1; i < g_ScreenStack.size(); ++i )
 		if( g_ScreenStack[i].m_pScreen == pScreen )
 			return true;
@@ -340,7 +341,7 @@ bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
 
 /* Pop the top screen off the stack, sending SM_LoseFocus messages and
  * returning the message the popped screen wants sent to the new top
- * screen.  Does not send SM_GainFocus. */
+ * screen. Does not send SM_GainFocus. */
 ScreenMessage ScreenManager::PopTopScreenInternal( bool bSendLoseFocus )
 {
 	if( g_ScreenStack.empty() )
@@ -355,7 +356,7 @@ ScreenMessage ScreenManager::PopTopScreenInternal( bool bSendLoseFocus )
 
 	if( g_setPersistantScreens.find(ls.m_pScreen->GetName()) != g_setPersistantScreens.end() )
 	{
-		/* Move the screen back to the prepared list. */
+		// Move the screen back to the prepared list.
 		g_vPreparedScreens.push_back( ls );
 	}
 	else
@@ -378,9 +379,7 @@ ScreenMessage ScreenManager::PopTopScreenInternal( bool bSendLoseFocus )
 
 void ScreenManager::Update( float fDeltaTime )
 {
-	//
 	// Pop the top screen, if PopTopScreen was called.
-	//
 	if( m_PopTopScreen != SM_Invalid )
 	{
 		ScreenMessage SM = m_PopTopScreen;
@@ -393,8 +392,7 @@ void ScreenManager::Update( float fDeltaTime )
 		SendMessageToTopScreen( SM2 );
 	}
 
-	/*
-	 * Screens take some time to load.  If we don't do this, then screens
+	/* Screens take some time to load.  If we don't do this, then screens
 	 * receive an initial update that includes all of the time they spent
 	 * loading, which will chop off their tweens.  
 	 *
@@ -405,8 +403,7 @@ void ScreenManager::Update( float fDeltaTime )
 	 * If we cap that large update delta from the screen load, the update
 	 * to load the new screen will come after 4 seconds plus the load time.
 	 *
-	 * So, let's just zero the first update for every screen.
-	 */
+	 * So, let's just zero the first update for every screen. */
 	ASSERT( !g_ScreenStack.empty() || m_sDelayedScreen != "" );	// Why play the game if there is nothing showing?
 
 	Screen* pScreen = g_ScreenStack.empty() ? NULL : GetTopScreen();
@@ -423,9 +420,7 @@ void ScreenManager::Update( float fDeltaTime )
 		m_bZeroNextUpdate = false;
 	}
 
-	//
 	// Update screens.
-	//
 	{
 		for( unsigned i=0; i<g_ScreenStack.size(); i++ )
 			g_ScreenStack[i].m_pScreen->Update( fDeltaTime );
@@ -436,8 +431,8 @@ void ScreenManager::Update( float fDeltaTime )
 			g_OverlayScreens[i]->Update( fDeltaTime );	
 	}
 
-	/* The music may be started on the first update.  If we're reading from a CD,
-	 * it might not start immediately.  Make sure we start playing the sound before
+	/* The music may be started on the first update. If we're reading from a CD,
+	 * it might not start immediately. Make sure we start playing the sound before
 	 * continuing, since it's strange to start rendering before the music starts. */
 	if( bFirstUpdate )
 		SOUND->Flush();
@@ -453,9 +448,9 @@ void ScreenManager::Update( float fDeltaTime )
 
 void ScreenManager::Draw()
 {
-	/* If it hasn't been updated yet, skip the render.  We can't call Update(0), since
+	/* If it hasn't been updated yet, skip the render. We can't call Update(0), since
 	 * that'll confuse the "zero out the next update after loading a screen logic.
-	 * If we don't render, don't call BeginFrame or EndFrame.  That way, we won't
+	 * If we don't render, don't call BeginFrame or EndFrame. That way, we won't
 	 * clear the buffer, and we won't wait for vsync. */
 	if( g_ScreenStack.size() && g_ScreenStack.back().m_pScreen->IsFirstUpdate() )
 		return;
@@ -506,14 +501,14 @@ void ScreenManager::Input( const InputEventPlus &input )
 	g_ScreenStack.back().m_pScreen->Input( input );
 }
 
-/* Just create a new screen; don't do any associated cleanup. */
+// Just create a new screen; don't do any associated cleanup.
 Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 {
 	RageTimer t;
 	LOG->Trace( "Loading screen: \"%s\"", sScreenName.c_str() );
 
 	RString sClassName = THEME->GetMetric( sScreenName,"Class" );
-	
+
 	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	if( iter == g_pmapRegistrees->end() )
 		RageException::Throw( "Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), sClassName.c_str() );
@@ -590,15 +585,13 @@ void ScreenManager::SetNewScreen( const RString &sScreenName )
 	m_sDelayedScreen = sScreenName;
 }
 
-/* Activate the screen and/or its background, if either are loaded.  Return true if both were
- * activated. */
+/* Activate the screen and/or its background, if either are loaded.
+ * Return true if both were activated. */
 bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenName )
 {
 	bool bLoadedBoth = true;
 
-	//
 	// Find the prepped screen.
-	//
 	if( GetTopScreen() == NULL || GetTopScreen()->GetName() != sScreenName )
 	{
 		LoadedScreen ls;
@@ -634,7 +627,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 			}
 		}
 
-		/* If the BGA isn't loaded yet, load a dummy actor.  If we're not going to use the same
+		/* If the BGA isn't loaded yet, load a dummy actor. If we're not going to use the same
 		 * BGA for the new screen, always move the old BGA back to g_vPreparedBackgrounds now. */
 		if( pNewBGA == NULL )
 		{
@@ -663,31 +656,31 @@ void ScreenManager::LoadDelayedScreen()
 	// Pop the top screen, if any.
 	ScreenMessage SM = PopTopScreenInternal();
 
-	/* If the screen is already prepared, activate it before performing any cleanup, so
-	 * it doesn't get deleted by cleanup. */
+	/* If the screen is already prepared, activate it before performing any
+	 * cleanup, so it doesn't get deleted by cleanup. */
 	bool bLoaded = ActivatePreparedScreenAndBackground( sScreenName );
 
 	vector<Actor*> apActorsToDelete;
 	if( g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end() )
 	{
-		/* It's time to delete all old prepared screens.  Depending on DelayedScreenLoad,
-		 * we can either delete the screens before or after we load the new screen.  Either
-		 * way, we must remove them from the prepared list before we prepare new screens.
-		 *
-		 * If DelayedScreenLoad is true, delete them now; this lowers memory requirements,
-		 * but results in redundant loads as we unload common data. */
+		/* It's time to delete all old prepared screens. Depending on DelayedScreenLoad,
+		 * we can either delete the screens before or after we load the new screen.
+		 * Either way, we must remove them from the prepared list before we prepare
+		 * new screens.
+		 * If DelayedScreenLoad is true, delete them now; this lowers memory
+		 * requirements, but results in redundant loads as we unload common data. */
 		if( g_bDelayedScreenLoad )
 			DeletePreparedScreens();
 		else
 			GrabPreparedActors( apActorsToDelete );
 	}
 
-	/* If the screen wasn't already prepared, load it. */
+	// If the screen wasn't already prepared, load it.
 	if( !bLoaded )
 	{
 		PrepareScreen( sScreenName );
 
-		// Screens may not call SetNewScreen from the ctor or Init().  (We don't do this
+		// Screens may not call SetNewScreen from the ctor or Init(). (We don't do this
 		// check inside PrepareScreen; that may be called from a thread for concurrent
 		// loading, and the main thread may call SetNewScreen during that time.)
 		ASSERT_M( m_sDelayedScreen.empty(), m_sDelayedScreen );
@@ -738,7 +731,7 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
  * from inside a screen. */
 void ScreenManager::PopAllScreens()
 {
-	/* Make sure only the top screen receives LoseFocus. */
+	// Make sure only the top screen receives LoseFocus.
 	bool bFirst = true;
 	while( !g_ScreenStack.empty() )
 	{
@@ -867,6 +860,7 @@ public:
 	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); return 0; }
 	static int ScreenIsPrepped( T* p, lua_State *L )	{ lua_pushboolean( L, ScreenManagerUtil::ScreenIsPrepped( SArg(1) ) ); return 1; }
 	static int ScreenClassExists( T* p, lua_State *L )	{ lua_pushboolean( L, g_pmapRegistrees->find( SArg(1) ) != g_pmapRegistrees->end() ); return 1; }
+	//static int GetScreenStackSize( T* p, lua_State *L )	{ lua_pushnumber( L, ScreenManagerUtil::g_ScreenStack.size() ); return 1; }
 
 	LunaScreenManager()
 	{
@@ -875,6 +869,7 @@ public:
 		ADD_METHOD( SystemMessage );
 		ADD_METHOD( ScreenIsPrepped );
 		ADD_METHOD( ScreenClassExists );
+		//ADD_METHOD( GetScreenStackSize );
 	}
 };
 

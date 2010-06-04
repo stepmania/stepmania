@@ -9,6 +9,15 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100603
+--------
+* [MusicWheel] If AutoSetStyle is on and Autogen is off, some songs with valid
+  steps may be missing from the wheel. Re-add them by checking for every
+  playable StepsType when AutoSetStyle is on.
+  Fixes issue 147: http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=147
+* Fix a crash that occured when changing themes that had differing numbers
+  of song/course group colors. (Yes, finally.)
+
 20100602
 --------
 * [Actor] add addrotationx, addrotationy, addrotationz bindings/commands

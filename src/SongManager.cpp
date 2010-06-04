@@ -126,13 +126,6 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 		PREFSMAN->m_bFastLoad.Set( OldVal );
 
 	UpdatePreferredSort();
-
-	// Reload song/course group colors to prevent a crash when switching
-	// themes in-game. (apparently not, though.) -aj
-	NUM_SONG_GROUP_COLORS	.Load( "SongManager", "NumSongGroupColors" );
-	SONG_GROUP_COLOR		.Load( "SongManager", SONG_GROUP_COLOR_NAME, NUM_SONG_GROUP_COLORS );
-	NUM_COURSE_GROUP_COLORS .Load( "SongManager", "NumCourseGroupColors" );
-	COURSE_GROUP_COLOR		.Load( "SongManager", COURSE_GROUP_COLOR_NAME, NUM_COURSE_GROUP_COLORS );
 }
 
 void SongManager::InitSongsFromDisk( LoadingWindow *ld )
@@ -574,6 +567,19 @@ RageColor SongManager::GetCourseColor( const Course* pCourse ) const
 	{
 		return GetCourseGroupColor( pCourse->m_sGroupName );
 	}
+}
+
+void SongManager::ResetGroupColors()
+{
+	// Reload song/course group colors to prevent a crash when switching
+	// themes in-game. (apparently not, though.) -aj
+	SONG_GROUP_COLOR.Clear();
+	COURSE_GROUP_COLOR.Clear();
+
+	NUM_SONG_GROUP_COLORS	.Load( "SongManager", "NumSongGroupColors" );
+	SONG_GROUP_COLOR		.Load( "SongManager", SONG_GROUP_COLOR_NAME, NUM_SONG_GROUP_COLORS );
+	NUM_COURSE_GROUP_COLORS .Load( "SongManager", "NumCourseGroupColors" );
+	COURSE_GROUP_COLOR		.Load( "SongManager", COURSE_GROUP_COLOR_NAME, NUM_COURSE_GROUP_COLORS );
 }
 
 const vector<Song*> &SongManager::GetSongs( const RString &sGroupName ) const

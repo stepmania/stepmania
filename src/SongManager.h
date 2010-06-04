@@ -75,6 +75,8 @@ public:
 	RageColor GetCourseGroupColor( const RString &sCourseGroupName ) const;
 	RageColor GetCourseColor( const Course* pCourse ) const;
 
+	void ResetGroupColors(); // sm-ssc add
+
 	static RString ShortenGroupName( RString sLongGroupName );
 
 	// Lookup
