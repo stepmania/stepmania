@@ -389,15 +389,13 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 				// http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=147
 				set<StepsType> vStepsType;
 				SongUtil::GetPlayableStepsTypes( pSong, vStepsType );
-				bool bHasFoundStepsType = false;
 
 				FOREACHS( StepsType, vStepsType, st )
 				{
-					if(pSong->HasStepsType(*st) && !bHasFoundStepsType)
+					if(pSong->HasStepsType(*st))
 					{
 						arraySongs.push_back( pSong );
-						bHasFoundStepsType = true;
-						continue;
+						break;
 					}
 				}
 			}
