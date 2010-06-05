@@ -70,7 +70,7 @@ if test -z "$AUTOMAKE" && automake --version > /dev/null 2>&1; then
 		echo "1.7 or newer is required."
 		exit 1
 	fi
-	IFS=
+	unset IFS
 	ACLOCAL=aclocal
 	AUTOMAKE=automake
 fi
