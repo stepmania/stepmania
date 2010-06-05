@@ -12,6 +12,7 @@ function GameCompatibleModes()
 		beat = "5Keys,7Keys,10Keys,14Keys",
 		kb7 = "KB7",
 		para = "Single",
+		techno = "Single4,Single5,Single8,Double4,Double8",
 		lights = "Single", -- lights shouldn't be playable
 	};
 	return Modes[sGame];
@@ -27,12 +28,16 @@ end;
 function ScoreKeeperClass()
 	sGame = GAMESTATE:GetCurrentGame():GetName();
 	local ScoreKeepers = {
-		-- xxx: allow for ScoreKeeperRave and ScoreKeeperShared when needed
+		-- xxx: allow for ScoreKeeperShared when needed
 		dance = "ScoreKeeperNormal",
 		pump = "ScoreKeeperNormal",
 		beat = "ScoreKeeperNormal",
 		kb7 = "ScoreKeeperNormal",
 		para = "ScoreKeeperNormal",
+		techno = "ScoreKeeperNormal",
+		ez2 = "ScoreKeeperNormal",
+		ds3ddx = "ScoreKeeperNormal",
+		maniax = "ScoreKeeperNormal",
 		guitar = "ScoreKeeperGuitar",
 	};
 	return ScoreKeepers[sGame]
