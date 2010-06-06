@@ -161,10 +161,11 @@ function ImmediateHoldLetGo()
 end;
 
 function RollBodyIncrementsCombo()
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
+	return false
+--[[ 	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
 		return false;
 	else return true;
-	end;
+	end; --]]
 end;
 
 function CheckpointsTapsSeparateJudgment()
