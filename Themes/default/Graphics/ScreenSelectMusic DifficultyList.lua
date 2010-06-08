@@ -4,7 +4,7 @@ return Def.ActorFrame {
 		OnCommand=cmd(diffuse,Color("Black");diffusealpha,0;linear,0.35;diffusealpha,0.5);
 	};
 	Def.Quad {
-		InitCommand=cmd(y,24*8-10;zoomto,164,2;fadeleft,8/164;faderight,8/164);
+		InitCommand=cmd(y,24*(GetUserPrefB("UserPrefAutoSetStyle") and 8 or 5)-10;zoomto,164,2;fadeleft,8/164;faderight,8/164);
 		OnCommand=cmd(diffuse,Color("Black");diffusealpha,0;linear,0.35;diffusealpha,0.5);
 	};
 	Def.StepsDisplayList {
