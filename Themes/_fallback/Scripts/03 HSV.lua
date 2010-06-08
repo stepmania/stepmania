@@ -19,25 +19,30 @@ Saturation is different too.
 
 -- ColorToHSV(c)
 -- Takes in a normal color("") and returns a table with the HSV values.
+function HasAlpha(c)
+	if c[4] then
+	 	return c[4]
+	else
+		return 1
+	end
+end
+
 function ColorToHSV(c)
-	local r = c[1];
-	local g = c[2];
-	local b = c[3];
+	local r = c[1]
+	local g = c[2]
+	local b = c[3]
 	-- alpha requires error checking sometimes.
-	local a;
-	if c[4] then a = c[4];
-	else a = 1;
-	end;
+	local a = HasAlpha(c)
 
-	local h = 0;
-	local s = 0;
-	local v = 0;
+	local h = 0
+	local s = 0
+	local v = 0
 
-	local min = math.min( r, g, b );
-	local max = math.max( r, g, b );
-	v = max;
+	local min = math.min( r, g, b )
+	local max = math.max( r, g, b )
+	v = max
 
-	local delta = max - min;
+	local delta = max - min
 
 	-- xxx: how do we deal with complete black?
 	if min == 0 and max == 0 then
@@ -47,137 +52,137 @@ function ColorToHSV(c)
 			Sat = 0,
 			Value = 0,
 			Alpha = a
-		};
-	end;
+		}
+	end
 
 	if max ~= 0 then
-		s = delta / max; -- rofl deltamax :|
+		s = delta / max -- rofl deltamax :|
 	else
 		-- r = g = b = 0; s = 0, v is undefined
-		s = 0;
-		h = -1;
+		s = 0
+		h = -1
 		return {
 			Hue = h,
 			Sat = s,
 			Value = v,
 			Alpha = 1
-		};
-	end;
+		}
+	end
 
 	if r == max then
-		h = ( g - b ) / delta;     -- yellow/magenta
+		h = ( g - b ) / delta     -- yellow/magenta
 	elseif g == max then
-		h = 2 + ( b - r ) / delta; -- cyan/yellow
+		h = 2 + ( b - r ) / delta -- cyan/yellow
 	else
-		h = 4 + ( r - g ) / delta; -- magenta/cyan
-	end;
+		h = 4 + ( r - g ) / delta -- magenta/cyan
+	end
 
-	h = h * 60; -- degrees
+	h = h * 60 -- degrees
 
 	if h < 0 then
-		h = h + 360;
-	end;
+		h = h + 360
+	end
 
 	return {
 		Hue = h,
 		Sat = s,
 		Value = v,
 		Alpha = a
-	};
-end;
+	}
+end
 
 -- HSVToColor(hsv)
 -- Converts a set of HSV values to a color. hsv is a table.
 -- See also: HSV(h, s, v)
 function HSVToColor(hsv)
-	local i;
-	local f, q, p, t;
-	local r, g, b;
-	local h, s, v;
+	local i
+	local f, q, p, t
+	local r, g, b
+	local h, s, v
 
-	local a;
+	local a
 
-	s = hsv.Sat;
-	v = hsv.Value;
+	s = hsv.Sat
+	v = hsv.Value
 
-	if hsv.Alpha then a = hsv.Alpha;
-	else a = 0;
-	end;
+	if hsv.Alpha then
+		a = hsv.Alpha
+	else
+		a = 0
+	end
 
 	if s == 0 then
-		return { v, v, v, a };
-	end;
+		return { v, v, v, a }
+	end
 
-	h = hsv.Hue / 60;
+	h = hsv.Hue / 60
 
-	i = math.floor(h);
-	f = h - i;
-	p = v * (1-s);
-	q = v * (1-s*f);
-	t = v * (1-s*(1-f));
+	i = math.floor(h)
+	f = h - i
+	p = v * (1-s)
+	q = v * (1-s*f)
+	t = v * (1-s*(1-f))
 
 	if i == 0 then
-		return { v, t, p, a };
+		return { v, t, p, a }
 	elseif i == 1 then
-		return { q, v, p, a };
+		return { q, v, p, a }
 	elseif i == 2 then
-		return { p, v, t, a };
+		return { p, v, t, a }
 	elseif i == 3 then
-		return { p, q, v, a };
+		return { p, q, v, a }
 	elseif i == 4 then
-		return { t, p, v, a };
+		return { t, p, v, a }
 	else
-		return { v, p, q, a };
-	end;
-end;
+		return { v, p, q, a }
+	end
+end
 
 -- ColorToHex(c)
 -- Takes in a normal color("") and returns the hex representation.
 -- Adapted from code in LuaBit (http://luaforge.net/projects/bit/),
 -- which is MIT licensed and copyright (C) 2006~2007 hanzhao.
 function ColorToHex(c)
-	local r = c[1];
-	local g = c[2];
-	local b = c[3];
-	local a;
-	if c[4] then a = c[4];
-	else a = 1;
-	end;
+	local r = c[1]
+	local g = c[2]
+	local b = c[3]
+	local a = HasAlpha(c)
 
 	local function hex(value)
-		value = math.ceil(value);
+		value = math.ceil(value)
 
-		local hexVals = {'A', 'B', 'C', 'D', 'E', 'F'}
-		local out = "";
-		local last = 0;
+		local hexVals = { 'A', 'B', 'C', 'D', 'E', 'F' }
+		local out = ""
+		local last = 0
 
 		while(value ~= 0) do
-			last = math.mod(value, 16);
+			last = math.mod(value, 16)
 			if(last < 10) then
-				out = tostring(last) .. out;
+				out = tostring(last) .. out
 			else
-				out = hexVals[(last-10)+1] .. out;
-			end;
-			value = math.floor(value/16);
-		end;
+				out = hexVals[(last-10)+1] .. out
+			end
+			value = math.floor(value/16)
+		end
 
 		if(out == "") then
-			return "00";
+			return "00"
 		end
-		return string.format( "%02X", tonumber(out,16) );
-	end;
+		
+		return string.format( "%02X", tonumber(out,16) )
+	end
 
-	local rX = hex( scale(r, 0, 1, 0, 255) );
-	local gX = hex( scale(g, 0, 1, 0, 255) );
-	local bX = hex( scale(b, 0, 1, 0, 255) );
-	local aX = hex( scale(a, 0, 1, 0, 255) );
+	local rX = hex( scale(r, 0, 1, 0, 255) )
+	local gX = hex( scale(g, 0, 1, 0, 255) )
+	local bX = hex( scale(b, 0, 1, 0, 255) )
+	local aX = hex( scale(a, 0, 1, 0, 255) )
 
-	return rX .. gX .. bX .. aX;
-end;
+	return rX .. gX .. bX .. aX
+end
 
 function HSVToHex(hsv)
-	return ColorToHex( HSVToColor(hsv) );
-end;
+	return ColorToHex( HSVToColor(hsv) )
+end
 
 --[[ you should mainly use these functions                                    ]]
 
@@ -188,9 +193,9 @@ function HSV(h, s, v)
 		Sat = s,
 		Value = v,
 		Alpha = 1
-	};
-	return HSVToColor(t);
-end;
+	}
+	return HSVToColor(t)
+end
 
 -- here's the proper one
 function HSVA(h, s, v, a)
@@ -199,43 +204,43 @@ function HSVA(h, s, v, a)
 		Sat = s,
 		Value = v,
 		Alpha = a
-	};
-	return HSVToColor(t);
-end;
+	}
+	return HSVToColor(t)
+end
 
 function Saturation(color,percent)
-	local c = ColorToHSV(color);
+	local c = ColorToHSV(color)
 	-- error checking
 	if percent < 0 then
-		percent = 0.0;
+		percent = 0.0
 	elseif percent > 1 then
-		percent = 1.0;
-	end;
-	c.Sat = percent;
-	return HSVToColor(c);
-end;
+		percent = 1.0
+	end
+	c.Sat = percent
+	return HSVToColor(c)
+end
 
 function Brightness(color,percent)
-	local c = ColorToHSV(color);
+	local c = ColorToHSV(color)
 	-- error checking
 	if percent < 0 then
-		percent = 0.0;
+		percent = 0.0
 	elseif percent > 1 then
-		percent = 1.0;
-	end;
-	c.Value = percent;
-	return HSVToColor(c);
-end;
+		percent = 1.0
+	end
+	c.Value = percent
+	return HSVToColor(c)
+end
 
 function Hue(color,newHue)
-	local c = ColorToHSV(color);
+	local c = ColorToHSV(color)
 	-- handle wrapping
 	if newHue < 0 then
-		newHue = 360 + newHue;
+		newHue = 360 + newHue
 	elseif newHue > 360 then
 		--newHue = math.mod(newHue, 360); -- ?? untested
-		newHue = newHue - 360;
-	end;
-	c.Hue = newHue;
-	return HSVToColor(c);
+		newHue = newHue - 360
+	end
+	c.Hue = newHue
+	return HSVToColor(c)
 end;

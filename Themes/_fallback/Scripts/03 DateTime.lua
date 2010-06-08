@@ -46,26 +46,25 @@ local dateChars = {
 	--[[ full datetime ]]
 	'c', -- ISO 8601 date
 	'r', -- RFC 2822 formatted date
-	'U', -- Seconds since the Unix Epoch (January 1 1970 00:00:00 GMT)
-};
+	'U' -- Seconds since the Unix Epoch (January 1 1970 00:00:00 GMT)
+}
 
 function date(format,...)
 	if ... then
 		-- convert value
 	else
-		-- convert current time
-		
-	end;
-end;
+		-- convert current time	
+	end
+end
 
 Date = {
 	Today = function()
-		return string.format("%i%02i%02i", Year(), (MonthOfYear()+1), DayOfMonth());
-	end;
-};
+		return string.format("%i%02i%02i", Year(), (MonthOfYear()+1), DayOfMonth())
+	end
+}
 
 Time = {
 	Now = function()
-		return string.format( "%02i:%02i:%02i", Hour(), Minute(), Second() );
-	end;
-};
+		return string.format( "%02i:%02i:%02i", Hour(), Minute(), Second() )
+	end
+}

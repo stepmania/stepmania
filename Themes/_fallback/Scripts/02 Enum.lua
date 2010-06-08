@@ -1,23 +1,29 @@
 function Enum:Compare( e1, e2 )
-	local Reverse = self:Reverse();
-	local Value1 = Reverse[e1];
-	local Value2 = Reverse[e2];
+	local Reverse = self:Reverse()
+	local Value1 = Reverse[e1]
+	local Value2 = Reverse[e2]
 
-	assert( Value1, tostring(e1) .. " is not an enum of type " .. self:GetName() );
-	assert( Value2, tostring(e2) .. " is not an enum of type " .. self:GetName() );
+	assert( Value1, tostring(e1) .. " is not an enum of type " .. self:GetName() )
+	assert( Value2, tostring(e2) .. " is not an enum of type " .. self:GetName() )
 
 	-- Nil enums correspond to "invalid".  These compare greater
 	-- than any valid enum value, to line up with the equivalent
 	-- C++ code.
-	if not e1 then Value1 = 99999999 end;
-	if not e2 then Value2 = 99999999 end;
-	return Value1 - Value2;
+	
+	-- should this be changed to math.huge()? -shake
+	if not e1 then
+		Value1 = 99999999
+	end
+	if not e2 then
+		Value2 = 99999999
+	end
+	return Value1 - Value2
 end
 
 function ToEnumShortString( e )
 	local pos = string.find( e, '_' )
-	assert( pos, "'" .. e .. "' is not an enum value" );
-	return string.sub( e, pos+1 );
+	assert( pos, "'" .. e .. "' is not an enum value" )
+	return string.sub( e, pos+1 )
 end
 
 -- (c) 2006 Glenn Maynard

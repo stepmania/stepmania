@@ -1,5 +1,5 @@
 -- SSC Color Module and Library
-local nilColor = color("0,0,0,0");
+local nilColor = color("0,0,0,0")
 -- Original Color Module.
 Color = {
 -- UI Colors
@@ -19,7 +19,7 @@ Color = {
 -- ( Do note that I want to remove '*Color' entirely, it'll look neater )
 	Player = {
 		P1			=	color("#ef403d"),
-		P2			=	color("#0089cf"),
+		P2			=	color("#0089cf")
 	},
 	Difficulty = {
 		--[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
@@ -42,7 +42,7 @@ Color = {
 		Difficulty_Challenge	= color("0.2,0.6,1.0,1"),	-- light blue
 		Difficulty_Edit 	= color("0.8,0.8,0.8,1"),	-- gray
 		Difficulty_Couple	= color("#ed0972"),			-- hot pink
-		Difficulty_Routine	= color("#ff9a00"),			-- orange
+		Difficulty_Routine	= color("#ff9a00")			-- orange
     },
     Course = {
 		Beginner	= color("0.0,0.9,1.0,1"),		-- purple
@@ -60,7 +60,7 @@ Color = {
 		Difficulty_Easy		= color("0.9,0.9,0.0,1"),		-- green
 		Difficulty_Medium	= color("1.0,0.1,0.1,1"),		-- yellow
 		Difficulty_Hard		= color("0.2,1.0,0.2,1"),		-- red
-		Difficulty_Challenge	= color("0.2,0.6,1.0,1"),	-- light blue
+		Difficulty_Challenge	= color("0.2,0.6,1.0,1")	-- light blue
     },
     CourseDifficultyColors = {
 		Beginner	= color("0.0,0.9,1.0,1"),		-- purple
@@ -78,7 +78,7 @@ Color = {
 		Difficulty_Easy		= color("0.9,0.9,0.0,1"),		-- green
 		Difficulty_Medium	= color("1.0,0.1,0.1,1"),		-- yellow
 		Difficulty_Hard		= color("0.2,1.0,0.2,1"),		-- red
-		Difficulty_Challenge	= color("0.2,0.6,1.0,1"),	-- light blue
+		Difficulty_Challenge	= color("0.2,0.6,1.0,1")	-- light blue
     },
 	Stage = {
 		Stage_1st	= color("#00ffc7"),
@@ -95,7 +95,7 @@ Color = {
 		Stage_Oni	= color("#FFFFFF"),
 		Stage_Endless	= color("#FFFFFF"),
 		Stage_Event	= color("#FFFFFF"),
-		Stage_Demo	= color("#FFFFFF"),
+		Stage_Demo	= color("#FFFFFF")
 	},
 	Judgment = {
 		JudgmentLine_W1		= color("#00ffc7"),
@@ -105,7 +105,7 @@ Color = {
 		JudgmentLine_W5		= color("#e44dff"),
 		JudgmentLine_Held	= color("#FFFFFF"),
 		JudgmentLine_Miss	= color("#ff3c3c"),
-		JudgmentLine_MaxCombo	= color("#ffc600"),
+		JudgmentLine_MaxCombo	= color("#ffc600")
 	},
 	JudgmentLine = {
 		JudgmentLine_W1		= color("#00ffc7"),
@@ -115,7 +115,7 @@ Color = {
 		JudgmentLine_W5		= color("#e44dff"),
 		JudgmentLine_Held	= color("#FFFFFF"),
 		JudgmentLine_Miss	= color("#ff3c3c"),
-		JudgmentLine_MaxCombo	= color("#ffc600"),
+		JudgmentLine_MaxCombo	= color("#ffc600")
 	},
     Grade = {},
     Menu = {},
@@ -125,11 +125,11 @@ Color = {
 		StreakW1 = nilColor,
 		StreakW2 = nilColor,
 		StreakW3 = nilColor,
-		Misses = nilColor,
+		Misses = nilColor
 	},
 	Song = {
 		Extra = nilColor,
-		Unlock = nilColor,
+		Unlock = nilColor
 	},
 -- Color Library
 -- These colors are pure swatch colors and are here purely to be used
@@ -157,15 +157,16 @@ Color = {
 	Alpha = function(cColor,fAlpha)
 		local c = cColor;
 		return { c[1],c[2],c[3],fAlpha };
-	end,
-};
+	end
+}
+
 -- Remapped Color Module, since some themes are crazy
-Colors = Color;
+Colors = Color
 
 local PlayerColors = {
 	PLAYER_1	= color("#ef403d"),
-	PLAYER_2	= color("#0089cf"),
-};
+	PLAYER_2	= color("#0089cf")
+}
 
 local DifficultyColors = {
 	--[[ These are for 'Custom' Difficulty Ranks. It can be very  useful
@@ -188,8 +189,9 @@ local DifficultyColors = {
 	Difficulty_Challenge	= color("#1cd8ff"),	-- light blue
 	Difficulty_Edit 	= color("0.8,0.8,0.8,1"),		-- gray
 	Difficulty_Couple	= color("#ed0972"),				-- hot pink
-	Difficulty_Routine	= color("#ff9a00"),				-- orange
-};
+	Difficulty_Routine	= color("#ff9a00")				-- orange
+}
+
 local StageColors = {
 	Stage_1st	= color("#00ffc7"),
 	Stage_2nd	= color("#58ff00"),
@@ -205,8 +207,9 @@ local StageColors = {
 	Stage_Oni	= color("#FFFFFF"),
 	Stage_Endless	= color("#FFFFFF"),
 	Stage_Event	= color("#FFFFFF"),
-	Stage_Demo	= color("#FFFFFF"),
-};
+	Stage_Demo	= color("#FFFFFF")
+}
+
 local JudgmentColors = {
 	JudgmentLine_W1		= color("#00ffc7"),
 	JudgmentLine_W2		= color("#f6ff00"),
@@ -215,77 +218,90 @@ local JudgmentColors = {
 	JudgmentLine_W5		= color("#e44dff"),
 	JudgmentLine_Held	= color("#FFFFFF"),
 	JudgmentLine_Miss	= color("#ff3c3c"),
-	JudgmentLine_MaxCombo	= color("#ffc600"),
-};
+	JudgmentLine_MaxCombo	= color("#ffc600")
+}
+
 --[[ Fallbacks ]]
 function Color(c)
-	return Colors[c];
-end;
+	return Colors[c]
+end
 
 function BoostColor( cColor, fBoost )
-	local c = cColor;
-	return { c[1]*fBoost, c[2]*fBoost, c[3]*fBoost, c[4] };
-end;
+	local c = cColor
+	return { c[1]*fBoost, c[2]*fBoost, c[3]*fBoost, c[4] }
+end
 
 function ColorLightTone(c)
-	return { c[1]+(c[1]/2), c[2]+(c[2]/2), c[3]+(c[3]/2), c[4] };
-end;
+	return { c[1]+(c[1]/2), c[2]+(c[2]/2), c[3]+(c[3]/2), c[4] }
+end
 
 function ColorMidTone(c)
-	return { c[1]/1.5, c[2]/1.5, c[3]/1.5, c[4] };
-end;
+	return { c[1]/1.5, c[2]/1.5, c[3]/1.5, c[4] }
+end
 
 function ColorDarkTone(c)
-	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
-end;
+	return { c[1]/2, c[2]/2, c[3]/2, c[4] }
+end
 
 function PlayerColor( pn )
-	if pn == PLAYER_1 then return color("#ef403d") end	-- pink-red
-	if pn == PLAYER_2 then return color("#0089cf") end	-- sea-blue
+	if pn == PLAYER_1 then
+		return color("#ef403d") -- pink-red
+	end
+	if pn == PLAYER_2 then
+		return color("#0089cf") -- sea-blue
+	end
 	return color("1,1,1,1")
 end
 function PlayerScoreColor( pn )
-	if pn == PLAYER_1 then return color("#ef403d") end	-- pink-red
-	if pn == PLAYER_2 then return color("#0089cf") end	-- sea-blue
+	if pn == PLAYER_1 then
+		return color("#ef403d") -- pink-red
+	end
+	if pn == PLAYER_2 then
+		return color("#0089cf") -- sea-blue
+	end
 	return color("1,1,1,1")
 end
 
 function CustomDifficultyToColor( sCustomDifficulty ) 
-	return DifficultyColors[sCustomDifficulty];
+	return DifficultyColors[sCustomDifficulty]
 end
 
 function CustomDifficultyToDarkColor( sCustomDifficulty ) 
-	local c = DifficultyColors[sCustomDifficulty];
-	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
+	local c = DifficultyColors[sCustomDifficulty]
+	return { c[1]/2, c[2]/2, c[3]/2, c[4] }
 end
 
 function CustomDifficultyToLightColor( sCustomDifficulty ) 
-	local c = DifficultyColors[sCustomDifficulty];
-	return { scale(c[1],0,1,0.5,1), scale(c[2],0,1,0.5,1), scale(c[3],0,1,0.5,1), c[4] };
+	local c = DifficultyColors[sCustomDifficulty]
+	return { scale(c[1],0,1,0.5,1), scale(c[2],0,1,0.5,1), scale(c[3],0,1,0.5,1), c[4] }
 end
 
 function StepsOrTrailToColor(StepsOrTrail)
-	return CustomDifficultyToColor( StepsOrTrailToCustomDifficulty(stepsOrTrail) );
+	return CustomDifficultyToColor( StepsOrTrailToCustomDifficulty(stepsOrTrail) )
 end
 
 function StageToColor( stage )
-	local c = Colors.Stage[stage];
-	if c then return c end
-	return color("#000000");
+	local c = Colors.Stage[stage]
+	if c then
+		return c
+	end
+	return color("#000000")
 end
 
 function StageToStrokeColor( stage )
-	local c = StageColors[stage];
-	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
+	local c = StageColors[stage]
+	return { c[1]/2, c[2]/2, c[3]/2, c[4] }
 end
 
 function JudgmentLineToColor( i )
-	local c = JudgmentColors[i];
-	if c then return c end
-	return color("#000000");
+	local c = JudgmentColors[i]
+	if c then
+		return c
+	end
+	return color("#000000")
 end
 
 function JudgmentLineToStrokeColor( i )
-	local c = JudgmentColors[i];
-	return { c[1]/2, c[2]/2, c[3]/2, c[4] };
+	local c = JudgmentColors[i]
+	return { c[1]/2, c[2]/2, c[3]/2, c[4] }
 end

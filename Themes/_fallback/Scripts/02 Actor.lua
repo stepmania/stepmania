@@ -123,27 +123,27 @@ This function will stretch any background up to 640x480]]
 function Actor:scale_or_crop_background()
 	--local bgAspectRatio = self:GetWidth() / self:GetHeight();
 	if self:GetWidth() <= 640 and self:GetHeight() <= 480 then
-		self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
+		self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
 	else
-		self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
+		self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
 	end
 end
 -- Testing
 function Actor:scale_or_crop_alternative()
 	if self:GetWidth() and self:GetHeight() then
-		local fRatio = self:GetWidth() / self:GetHeight();
+		local fRatio = self:GetWidth() / self:GetHeight()
 		if fRatio == 4/3 then
-			self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
+			self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
 		else
-			self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
+			self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
 		end
 	end
 end
 
 function Actor:Center()
-    self:x(SCREEN_CENTER_X);
-    self:y(SCREEN_CENTER_Y);
-end;
+    self:x(SCREEN_CENTER_X)
+    self:y(SCREEN_CENTER_Y)
+end
 
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.

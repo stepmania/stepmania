@@ -31,62 +31,62 @@ ThemeInfo is documented at http://kki.ajworld.net/wiki/ThemeInfo.lua
 
 After that's set up, read the docs.
 ]]
-local PrefPath = "Data/UserPrefs/".. THEME:GetThemeDisplayName() .."/";
+local PrefPath = "Data/UserPrefs/".. THEME:GetThemeDisplayName() .."/"
 
 --[[ begin internal stuff; no need to edit below this line. ]]
 
 -- Local internal function to write envs. ___Not for themer use.___
 local function WriteEnv(envName,envValue)
-	return setenv(envName,envValue);
-end;
+	return setenv(envName,envValue)
+end
 
 function ReadPrefFromFile(name)
-	local f = RageFileUtil.CreateRageFile();
-	local fullFilename = PrefPath..name..".cfg";
-	local option;
+	local f = RageFileUtil.CreateRageFile()
+	local fullFilename = PrefPath..name..".cfg"
+	local option
 
 	if f:Open(fullFilename,1) then
-		option = tostring( f:Read() );
-		WriteEnv(name,option);
-		f:destroy();
-		return option;
+		option = tostring( f:Read() )
+		WriteEnv(name,option)
+		f:destroy()
+		return option
 	else
-		local fError = f:GetError();
-		Trace( "[FileUtils] Error reading ".. fullFilename ..": ".. fError );
-		f:ClearError();
-		f:destroy();
-		return nil;
-	end;
-end;
+		local fError = f:GetError()
+		Trace( "[FileUtils] Error reading ".. fullFilename ..": ".. fError )
+		f:ClearError()
+		f:destroy()
+		return nil
+	end
+end
 
 function WritePrefToFile(name,value)
-	local f = RageFileUtil.CreateRageFile();
-	local fullFilename = PrefPath..name..".cfg";
+	local f = RageFileUtil.CreateRageFile()
+	local fullFilename = PrefPath..name..".cfg"
 
 	if f:Open(fullFilename, 2) then
-		f:Write( tostring(value) );
-		WriteEnv(name,value);
+		f:Write( tostring(value) )
+		WriteEnv(name,value)
 	else
-		local fError = f:GetError();
-		Trace( "[FileUtils] Error writing to ".. fullFilename ..": ".. fError );
-		f:ClearError();
-		f:destroy();
-		return false;
-	end;
+		local fError = f:GetError()
+		Trace( "[FileUtils] Error writing to ".. fullFilename ..": ".. fError )
+		f:ClearError()
+		f:destroy()
+		return false
+	end
 
-	f:destroy();
-	return true;
-end;
+	f:destroy()
+	return true
+end
 
 --[[ end internal functions; still don't edit below this line ]]
 
 function GetUserPref(name)
-	return ReadPrefFromFile(name);
-end;
+	return ReadPrefFromFile(name)
+end
 
 function SetUserPref(name,value)
-	return WritePrefToFile(name,value);
-end;
+	return WritePrefToFile(name,value)
+end
 
 --[[ type specific, for when you want to be lazy ]]
 -- XXX: make set funcs, since I hate dealing with colors and I know
@@ -95,41 +95,40 @@ end;
 -- GetUserPrefB: boolean
 function GetUserPrefB(name)
 	-- this one is a bit trickier.
-	local pref = ReadPrefFromFile(name);
+	local pref = ReadPrefFromFile(name)
 
 	if type(pref) == "string" then
-		pref = string.lower(pref);
+		pref = string.lower(pref)
 		if pref == "true" or cmp == "t" then
-			return true;
+			return true
 		elseif pref == "false" or cmp == "f" then
-			return false;
+			return false
 		else
-			Trace("Error in GetUserPrefB(".. name ..") converting from string" );
-			return false;
-		end;
-
+			Trace("Error in GetUserPrefB(".. name ..") converting from string" )
+			return false
+		end
 	elseif type(pref) == "number" then
 		-- both 0 and -1 are false; if you want to change this, 
 		-- feel free to remove "or pref == -1".
 		if pref == 0 or pref == -1 then
-			return false;
+
 		else
-			return true;
-		end;
-	end;
-end;
+			return true
+		end
+	end
+end
 
 -- GetUserPrefC: color
 function GetUserPrefC(name)
 	-- XXX: make sure it's grabbing a string that can be turned into a color
 	-- and also possibly handle HSV values too.
-	return color( ReadPrefFromFile(name) );
-end;
+	return color( ReadPrefFromFile(name) )
+end
 
 -- GetUserPrefN: numbers (integers, floats)
 function GetUserPrefN(name)
-	return tonumber( ReadPrefFromFile(name) );
-end;
+	return tonumber( ReadPrefFromFile(name) )
+end
 
 --[[
 Copyright © 2008-2009 AJ Kelly/KKI Labs

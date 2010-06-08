@@ -58,7 +58,7 @@ function wrap(val,n)
 	local x = val
 	Trace( "wrap "..x.." "..n )
 	if x<0 then 
-		x = x + (math.ceil(-x/n)+1)*n;
+		x = x + (math.ceil(-x/n)+1)*n
 	end
 	Trace( "adjusted "..x )
 	local ret = math.mod(x,n)
@@ -67,21 +67,26 @@ function wrap(val,n)
 end
 
 function fapproach( val, other_val, to_move )
-	if val == other_val then return val end
-	local fDelta = other_val - val
-	local fSign = fDelta / math.abs( fDelta )
-	local fToMove = fSign*to_move
-	if math.abs(fToMove) > math.abs(fDelta) then
-		fToMove = fDelta	-- snap
+	if val == other_val then
+		return val -- already done!
 	end
-	val = val + fToMove
+	
+	local delta = other_val - val
+	local sign = delta / math.abs(delta)
+	local toMove = sign*to_move
+	
+	if math.abs(toMove) > math.abs(delta) then
+		toMove = delta	-- snap
+	end
+	
+	val = val + toMove
 	return val
 end
 
 function tableshuffle( t )
 	local ret = { }
 	for i=1,table.getn(t) do
-		table.insert( ret, math.random(i), t[i] );
+		table.insert( ret, math.random(i), t[i] )
 	end
 	return ret
 end
@@ -89,7 +94,7 @@ end
 function tableslice( t, num )
 	local ret = { }
 	for i=1,table.getn(t) do
-		table.insert( ret, i, t[i] );
+		table.insert( ret, i, t[i] )
 	end
 	return ret
 end
@@ -100,7 +105,9 @@ function GetRandomSongBackground()
 		local song = SONGMAN:GetRandomSong()
 		if song then
 			local path = song:GetBackgroundPath()
-			if path then return path end
+			if path then
+				return path
+			end
 		end
 	end
 	return THEME:GetPathG("", "_blank")
@@ -110,17 +117,19 @@ function GetSongBackground()
 	local song = GAMESTATE:GetCurrentSong()
 	if song then
 		local path = song:GetBackgroundPath()
-		if path then return path end
+		if path then
+			return path
+		end
 	end
 	return THEME:GetPathG("Common","fallback background")
 end
 
 function StepsOrTrailToCustomDifficulty( stepsOrTrail )
 	if lua.CheckType("Steps", stepsOrTrail) then
-		return StepsToCustomDifficulty( stepsOrTrail );
+		return StepsToCustomDifficulty( stepsOrTrail )
 	end
 	if lua.CheckType("Trail", stepsOrTrail) then
-		return TrailToCustomDifficulty( stepsOrTrail );
+		return TrailToCustomDifficulty( stepsOrTrail )
 	end
 end
 

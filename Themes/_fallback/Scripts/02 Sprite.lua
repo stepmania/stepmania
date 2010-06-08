@@ -8,7 +8,7 @@ function Sprite:LoadFromSongBanner(song)
 		self:LoadBanner( Path )
 	else
 		self:LoadBanner( THEME:GetPathG("Common","fallback banner") )
-	end;
+	end
 end
 
 function Sprite:LoadFromSongBackground(song)
@@ -22,34 +22,33 @@ end
 
 function LoadSongBackground()
 	return Def.Sprite {
-		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
-		BeginCommand=cmd(LoadFromSongBackground,GAMESTATE:GetCurrentSong();scale_or_crop_background);
-	};
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y),
+		BeginCommand=cmd(LoadFromSongBackground,GAMESTATE:GetCurrentSong();scale_or_crop_background)
+	}
 end
 
 
 function Sprite:position( f )
-	self:GetTexture():position( f );
+	self:GetTexture():position( f )
 end
 
 function Sprite:loop( f )
-	self:GetTexture():loop( f );
+	self:GetTexture():loop( f )
 end
 
 function Sprite:rate( f )
-	self:GetTexture():rate( f );
+	self:GetTexture():rate( f )
 end
 
 function Sprite.LinearFrames(NumFrames, Seconds)
-	local Frames = {};
+	local Frames = {}
 	for i = 0,NumFrames-1 do
 		Frames[#Frames+1] = {
-			Frame = i;
-			Delay = (1/NumFrames)*Seconds;
-		};
+			Frame = i,
+			Delay = (1/NumFrames)*Seconds
+		}
 	end
-
-	return Frames;
+	return Frames
 end
 
 -- (c) 2005 Glenn Maynard

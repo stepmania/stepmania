@@ -7,8 +7,8 @@ File = {
 			f:destroy()
 			return true
 		else
-			Trace( "[FileUtils] Error writing to ".. path ..": ".. f:GetError() );
-			f:ClearError();
+			Trace( "[FileUtils] Error writing to ".. path ..": ".. f:GetError() )
+			f:ClearError()
 			f:destroy()
 			return false
 		end
@@ -21,12 +21,12 @@ File = {
 			f:destroy()
 			return ret
 		else
-			Trace( "[FileUtils] Error reading from ".. path ..": ".. f:GetError() );
-			f:ClearError();
+			Trace( "[FileUtils] Error reading from ".. path ..": ".. f:GetError() )
+			f:ClearError()
 			f:destroy()
 			return nil
 		end
 	end
-};
+}
 -- this code if public domain and/or has no copyright, depending on your
 -- country's laws. I wish for you to use this code freely, without restriction.

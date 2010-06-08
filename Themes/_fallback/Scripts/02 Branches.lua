@@ -9,34 +9,38 @@ If the line is a function, you'll have to use Branch.keyname() instead.
 -- used for various SMOnline-enabled screens:
 function SMOnlineScreen()
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-		if not IsSMOnlineLoggedIn(pn) then return "ScreenSMOnlineLogin" end;
-	end;
+		if not IsSMOnlineLoggedIn(pn) then
+			return "ScreenSMOnlineLogin"
+		end
+	end
 	return "ScreenNetRoom"
-end;
+end
 
 function SelectMusicOrCourse()
 	if IsNetSMOnline() then
 		return "ScreenNetSelectMusic";
 	elseif GAMESTATE:IsCourseMode() then
-		return "ScreenSelectCourse";
+		return "ScreenSelectCourse"
 	else
-		return "ScreenSelectMusic";
-	end;
-end;
+		return "ScreenSelectMusic"
+	end
+end
 
 Branch = {
 	TitleMenu = function()
 		-- home mode is the most assumed use of sm-ssc.
-		if GAMESTATE:GetCoinMode() == "CoinMode_Home" then return "ScreenTitleMenu" end;
+		if GAMESTATE:GetCoinMode() == "CoinMode_Home" then
+			return "ScreenTitleMenu"
+		end
 		-- arcade junk:
 		if GAMESTATE:GetCoinsNeededToJoin() > GAMESTATE:GetCoins() then
 			-- if no credits are inserted, don't show the Join screen. SM4 has
 			-- this as the initial screen, but that means we'd be stuck in a
 			-- loop with ScreenInit. No good.
-			return "ScreenDemonstration";
+			return "ScreenDemonstration"
 		else
 			return "ScreenTitleJoin"
-		end;
+		end
 	end,
 	AfterProfileLoad = function()
 		return "ScreenSelectProfile"
@@ -58,8 +62,12 @@ Branch = {
 			ReportStyle()
 			GAMESTATE:ApplyGameCommand("playmode,regular")
 		end
-		if IsNetSMOnline() then return SMOnlineScreen() end
-		if IsNetConnected() then return "ScreenNetRoom" end
+		if IsNetSMOnline() then
+			return SMOnlineScreen()
+		end
+		if IsNetConnected() then
+			return "ScreenNetRoom"
+		end
 		return "ScreenSelectPlayMode"
 	end,
 	AfterSelectStyle = function()
@@ -82,8 +90,8 @@ Branch = {
 		end
 	end,
 	GetGameInformationScreen = function()
-		bTrue = PREFSMAN:GetPreference("ShowInstructions");
-		return (bTrue and GoToMusic() or "ScreenGameInformation");
+		bTrue = PREFSMAN:GetPreference("ShowInstructions")
+		return (bTrue and GoToMusic() or "ScreenGameInformation")
 	end,
 	AfterSMOLogin = SMOnlineScreen(),
 	BackOutOfPlayerOptions = function()
@@ -138,5 +146,5 @@ Branch = {
 	QuickSetupB = "ScreenQuickSetupPhaseTwo",
 	QuickSetupC = "ScreenQuickSetupPhaseThree",
 	QuickSetupD = "ScreenQuickSetupPhaseFour",
-	QuickSetupFinished = "ScreenQuickSetupFinished",
-};
+	QuickSetupFinished = "ScreenQuickSetupFinished"
+}

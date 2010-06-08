@@ -46,36 +46,36 @@ anticipated future changes:
 -- ProfileDir(slot): gets the profile dir for slot,
 -- where slot is a 'ProfileSlot_*' enum value.
 local function ProfileDir(slot)
-	local profileDir = PROFILEMAN:GetProfileDir(slot);
-	return profileDir or nil;
-end;
+	local profileDir = PROFILEMAN:GetProfileDir(slot)
+	return profileDir or nil
+end
 
 -- Tries to parse the file at path. If successful, returns a table of mods.
 -- If it can't open the file, it will write a fallback set of mods.
 local function ParseSpeedModFile(path)
-	local file = RageFileUtil.CreateRageFile();
+	local file = RageFileUtil.CreateRageFile()
 	if file:Open(path, 1) then
 		-- success
-		local contents = file:Read();
-		mods = split(',',contents);
+		local contents = file:Read()
+		mods = split(',',contents)
 
 		-- strip any whitespace
 		for i=1,#mods do
-			string.gsub(mods[i], "%s", "");
+			string.gsub(mods[i], "%s", "")
 		end
 
-		file:destroy();
-		return mods;
+		file:destroy()
+		return mods
 	else
 		-- error; write a fallback mod file and return it
-		local fallbackString = "0.5x,1x,1.5x,2x,3x,4x,8x,C200,C400";
-		Trace("[CustomSpeedMods]: Could not read SpeedMods; writing fallback to "..path);
-		file:Open(path, 2);
-		file:Write(fallbackString);
-		file:destroy();
-		return split(',',fallbackString);
-	end;
-end;
+		local fallbackString = "0.5x,1x,1.5x,2x,3x,4x,8x,C200,C400"
+		Trace("[CustomSpeedMods]: Could not read SpeedMods; writing fallback to "..path)
+		file:Open(path, 2)
+		file:Write(fallbackString)
+		file:destroy()
+		return split(',',fallbackString)
+	end
+end
 
 -- MarkDupes(src,parent)
 -- Marks duplicates in src from any matches in parent.
@@ -84,32 +84,34 @@ local function MarkDupes(src,parent)
 	for iPar=1,#parent do
 		for iSrc=1,#src do
 			if parent[iPar] == src[iSrc] then
-				src[iSrc] = "XXX";
-			end;
-		end;
-	end;
-	return src;
-end;
+				src[iSrc] = "XXX"
+			end
+		end
+	end
+	return src
+end
 
 -- RemoveMarked(src)
 -- Removes any values marked for deletion.
 local function RemoveMarked(src)
 	for iSrc=1,#src do
 		if src[iSrc] == "XXX" then
-			table.remove(src,iSrc);
-		end;
-	end;
-	return src;
-end;
+			table.remove(src,iSrc)
+		end
+	end
+	return src
+end
 
 -- MergeTables(parent,child)
 -- Adds the child's contents to the parent.
 -- the overall mods are usually used as the parent.
 local function MergeTables(parent,child)
-	child = RemoveMarked(child);
-	if #child == 0 then return parent; end;
+	child = RemoveMarked(child)
+	if #child == 0 then
+		return parent
+	end
 
-	local addMe = true;
+	local addMe = true
 	for iC=1,#child do
 		--[[
 		for iP=1,#parent do
@@ -118,133 +120,137 @@ local function MergeTables(parent,child)
 				-- why am I doing this anyways?
 				-- by the time these tables are passed in,
 				-- dupes should be gone.
-			end;
-		end;
+			end
+		end
 		]]
 		if addMe then
-			table.insert(parent,child[iC]);
-		end;
-	end;
-	return parent;
-end;
+			table.insert(parent,child[iC])
+		end
+	end
+	return parent
+end
 
 -- code in this function is based off of code in
 -- http://astrofra.com/weblog/files/sort.lua
 local function AnonSort(t)
-	local index_min;
+	local index_min
 	for i=1,#t,1 do
-		index_min = i;
+		index_min = i
 		for j=i+1,#t,1 do
 			if (t[j] < t[index_min]) then
-				index_min = j;
-			end;
-		end;
-		t[i], t[index_min] = t[index_min], t[i];
-	end;
-	return t;
-end;
+				index_min = j
+			end
+		end
+		t[i], t[index_min] = t[index_min], t[i]
+	end
+	return t
+end
 
 local function SpeedModSort(tab)
-	local xMods = {};
-	local cMods = {};
-	--local mMods = {};
+	local xMods = {}
+	local cMods = {}
+	--local mMods = {}
 
 	-- convert to numbers so sorting works:
 	for i=1,#tab do
-		local typ,val;
+		local typ,val
 		-- xxx: If people use a floating point CMod (e.g. C420.50),
 		-- it will get rounded. C420.50 gets rounded to 421, btw. -aj
 		if string.find(tab[i],"C%d") then
-			typ = cMods;
-			val = string.gsub(tab[i], "C", "");
+			typ = cMods
+			val = string.gsub(tab[i], "C", "")
 		elseif string.find(tab[i],"M%d") then
-			Trace("[CustomSpeedMods] OpenITG's M-Mods are not supported yet in sm-ssc.");
-			--typ = mMods;
-			--val = string.gsub(tab[i], "M", "");
+			Trace("[CustomSpeedMods] OpenITG's M-Mods are not supported yet in sm-ssc.")
+			--typ = mMods
+			--val = string.gsub(tab[i], "M", "")
 		else
-			typ = xMods;
-			val = string.gsub(tab[i], "x", "");
-		end;
-		table.insert(typ,tonumber(val));
-	end;
+			typ = xMods
+			val = string.gsub(tab[i], "x", "")
+		end
+		table.insert(typ,tonumber(val))
+	end
 
 	-- sort xMods
-	xMods = AnonSort(xMods);
+	xMods = AnonSort(xMods)
 	-- sort cMods
-	cMods = AnonSort(cMods);
+	cMods = AnonSort(cMods)
 	-- sort mMods
 	--mMods = AnonSort(mMods)
-	local fin = {};
+	local fin = {}
 	-- convert it back to a string since that's what it expects
-	for i=1,#xMods do table.insert(fin, xMods[i].."x"); end;
-	for i=1,#cMods do table.insert(fin, "C"..cMods[i]); end;
+	for i=1,#xMods do
+		table.insert(fin, xMods[i].."x")
+	end
+	for i=1,#cMods do
+		table.insert(fin, "C"..cMods[i])
+	end
 	--for i=1,#mMods do table.insert(fin, "M"..mMods[i]); end;
-	return fin;
-end;
+	return fin
+end
 
 -- parse everything
 local function GetSpeedMods()
-	local finalMods = {};
+	local finalMods = {}
 
 	local baseFilename = "SpeedMods.txt"
 	local profileDirs = {
 		Fallback = "Data/",
 		Machine = ProfileDir('ProfileSlot_Machine'),
 		PlayerNumber_P1 = ProfileDir('ProfileSlot_Player1'),
-		PlayerNumber_P2 = ProfileDir('ProfileSlot_Player2'),
-	};
+		PlayerNumber_P2 = ProfileDir('ProfileSlot_Player2')
+	}
 
 	-- figure out how many players we have to deal with.
-	local numPlayers = GAMESTATE:GetNumPlayersEnabled();
+	local numPlayers = GAMESTATE:GetNumPlayersEnabled()
 	-- load fallback
-	local fallbackMods = ParseSpeedModFile(profileDirs.Fallback..baseFilename);
+	local fallbackMods = ParseSpeedModFile(profileDirs.Fallback..baseFilename)
 
 	-- load machine
-	local machineMods = ParseSpeedModFile(profileDirs.Machine..baseFilename);
+	local machineMods = ParseSpeedModFile(profileDirs.Machine..baseFilename)
 
-	local playerMods = {};
+	local playerMods = {}
 	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 		-- file loading logic per player;
 		-- only bother if it's not the machine profile though.
 		if PROFILEMAN:IsPersistentProfile(pn) or
 			MEMCARDMAN:GetCardState(pn) == 'MemoryCardState_ready' then
-			playerMods[#playerMods+1] = ParseSpeedModFile(profileDirs[pn]..baseFilename);
-		end;
-	end;
+			playerMods[#playerMods+1] = ParseSpeedModFile(profileDirs[pn]..baseFilename)
+		end
+	end
 
 	-- with all loaded... the merging BEGINS!!
-	finalMods = fallbackMods;
+	finalMods = fallbackMods
 	-- mine for duplicates, first pass (fallback <-> machine)
-	machineMods = MarkDupes(machineMods,finalMods);
+	machineMods = MarkDupes(machineMods,finalMods)
 	for ply=1,#playerMods do
-		playerMods[ply] = MarkDupes(playerMods[ply],finalMods);
-	end;
+		playerMods[ply] = MarkDupes(playerMods[ply],finalMods)
+	end
 	-- remove XXX, first pass
 	machineMods = RemoveMarked(machineMods);
 	for ply=1,#playerMods do
-		playerMods[ply] = RemoveMarked(playerMods[ply]);
-	end;
+		playerMods[ply] = RemoveMarked(playerMods[ply])
+	end
 	-- mine for duplicates, second pass (machine <-> player)
 	for ply=1,#playerMods do
-		playerMods[ply] = MarkDupes(playerMods[ply],machineMods);
-	end;
+		playerMods[ply] = MarkDupes(playerMods[ply],machineMods)
+	end
 	-- remove XXX, second pass
-	machineMods = RemoveMarked(machineMods);
+	machineMods = RemoveMarked(machineMods)
 	for ply=1,#playerMods do
-		playerMods[ply] = RemoveMarked(playerMods[ply]);
-	end;
+		playerMods[ply] = RemoveMarked(playerMods[ply])
+	end
 
 	-- merge zone
-	finalMods = MergeTables(finalMods,machineMods);
+	finalMods = MergeTables(finalMods,machineMods)
 	for ply=1,#playerMods do
-		finalMods = MergeTables(finalMods,playerMods[ply]);
-	end;
+		finalMods = MergeTables(finalMods,playerMods[ply])
+	end
 
 	-- final removal of XXX before sorting
-	finalMods = RemoveMarked(finalMods);
+	finalMods = RemoveMarked(finalMods)
 	-- sort the mods before returning them
-	return SpeedModSort(finalMods);
-end;
+	return SpeedModSort(finalMods)
+end
 
 function SpeedMods()
 	-- here we see the option menu itself.
@@ -257,36 +263,36 @@ function SpeedMods()
 		Choices = GetSpeedMods(),
 
 		LoadSelections = function(self, list, pn)
-			local pMods = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred");
+			local pMods = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
 			for i = 1,table.getn(self.Choices) do
 				if string.find(pMods, self.Choices[i]) then
-					list[i] = true;
-					return;
-				end;
-			end;
+					list[i] = true
+					return
+				end
+			end
 
 			-- if we've reached this point, try to find 1x or 1.0x instead,
 			-- in case the player has defined a speed mod under 1.0x
 			for i = 1,table.getn(self.Choices) do
 				if self.Choices[i] == "1x" or self.Choices[i] == "1.0x" then
-					list[i] = true;
-					return;
-				end;
-			end;
+					list[i] = true
+					return
+				end
+			end
 		end,
 		SaveSelections = function(self, list, pn)
 			for i = 1,table.getn(self.Choices) do
 				if list[i] then
-					local PlayerState = GAMESTATE:GetPlayerState(pn);
-					PlayerState:SetPlayerOptions("ModsLevel_Preferred",self.Choices[i]);
+					local PlayerState = GAMESTATE:GetPlayerState(pn)
+					PlayerState:SetPlayerOptions("ModsLevel_Preferred",self.Choices[i])
 					return
 				end
 			end
 		end
-	};
-	setmetatable( t, t );
-	return t;
-end;
+	}
+	setmetatable( t, t )
+	return t
+end
 
 --[[
 Copyright © 2008-2009 AJ Kelly/KKI Labs.

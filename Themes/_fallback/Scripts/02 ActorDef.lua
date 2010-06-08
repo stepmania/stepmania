@@ -1,42 +1,45 @@
 -- Convert "@/path/file" to "/path/".
 local function DebugPathToRealPath( p )
 	if not p or p:sub( 1, 1 ) ~= "@" then
-		return nil;
+		return nil
 	end
 
-	local Path = p:sub( 2 );
-	local pos = Path:find_last( '/' );
-	return string.sub( Path, 1, pos );
+	local Path = p:sub( 2 )
+	local pos = Path:find_last( '/' )
+	return string.sub( Path, 1, pos )
 end
 
 local function MergeTables( left, right )
 	local ret = { }
 	for key, val in pairs(left) do
-		ret[key] = val;
+		ret[key] = val
 	end
 
 	for key, val in pairs(right) do
 		if ret[key] then
 			if type(val) == "function" and
 			   type(ret[key]) == "function" then
-				local f1 = ret[key];
+				local f1 = ret[key]
 				local f2 = val
-				val = function(...) f1(...); return f2(...) end
+				val = function(...)
+					f1(...)
+					return f2(...)
+				end
 			else
 				Warn( string.format( "%s\n\nOverriding \"%s\": %s with %s",
-					 debug.traceback(), key, type(ret[key]), type(val)) );
+					 debug.traceback(), key, type(ret[key]), type(val)) )
 			end
 		end
 
-		ret[key] = val;
+		ret[key] = val
 	end
-	setmetatable( ret, getmetatable(left) );
+	setmetatable( ret, getmetatable(left) )
 	return ret
 end
 
 DefMetatable = {
 	__concat = function(left, right)
-		return MergeTables( left, right );
+		return MergeTables( left, right )
 	end
 }
 
@@ -50,11 +53,11 @@ setmetatable( Def, {
 		-- given to Def.  Fill in standard fields.
 		return function(t)
 			if not ActorUtil.IsRegisteredClass(Class) then
-				error( Class .. " is not a registered actor class", 2 );
+				error( Class .. " is not a registered actor class", 2 )
 			end
 
-			t.Class = Class;
-		
+			t.Class = Class
+
 			local level = 2
 			if t._Level then
 				level = t._Level + 1
@@ -62,30 +65,30 @@ setmetatable( Def, {
 			local info = debug.getinfo(level,"Sl");
 
 			-- Source file of caller:
-			local Source = info.source;
-			t._Source = Source;
+			local Source = info.source
+			t._Source = Source
 
 			t._Dir = DebugPathToRealPath( Source )
 
 			-- Line number of caller:
-			t._Line = info.currentline;
+			t._Line = info.currentline
 
-			setmetatable( t, DefMetatable );
-			return t;
+			setmetatable( t, DefMetatable )
+			return t
 		end
 	end,
-});
+})
 
 function ResolveRelativePath( path, level )
 	if path:sub(1,1) ~= "/" then
 		-- "Working directory":
 		local sDir = DebugPathToRealPath( debug.getinfo(level+1,"S").source )
-		assert( sDir );
+		assert( sDir )
 
 		path = sDir .. path
 	end
 
-	path = ActorUtil.ResolvePath( path, level+1 );
+	path = ActorUtil.ResolvePath( path, level+1 )
 	return path
 end
 
@@ -94,21 +97,21 @@ function LoadActorFunc( path, level )
 	level = level or 1
 
 	if path == "" then
-		error( "Passing in a blank filename is a great way to eat up RAM. Good thing we warn you about this." );
-	end;
+		error( "Passing in a blank filename is a great way to eat up RAM. Good thing we warn you about this." )
+	end
 
-	local ResolvedPath = ResolveRelativePath( path, level+1 );
+	local ResolvedPath = ResolveRelativePath( path, level+1 )
 	if not ResolvedPath then
-		error( path .. ": not found", level+1 );
+		error( path .. ": not found", level+1 )
 	end
 	path = ResolvedPath
 
-	local Type = ActorUtil.GetFileType( path );
-	Trace( "Loading " .. path .. ", type " .. tostring(Type) );
+	local Type = ActorUtil.GetFileType( path )
+	Trace( "Loading " .. path .. ", type " .. tostring(Type) )
 
 	if Type == "FileType_Lua" then
 		-- Load the file.
-		local chunk, errmsg = loadfile( path );
+		local chunk, errmsg = loadfile( path )
 		if not chunk then error(errmsg) end
 		return chunk
 	end
@@ -140,38 +143,38 @@ function LoadActorFunc( path, level )
 		return function()
 			return Def.BGAnimation {
 				_Level = level+1,
-				AniDir = path,
+				AniDir = path
 			}
 		end
 	end
 
-	error( path .. ": unknown file type (" .. tostring(Type) .. ")", level+1 );
+	error( path .. ": unknown file type (" .. tostring(Type) .. ")", level+1 )
 end
 
 -- Load and create an actor template.
 function LoadActor( path, ... )
-	local t = LoadActorFunc( path, 2 );
-	assert(t);
-	return t(...);
+	local t = LoadActorFunc( path, 2 )
+	assert(t)
+	return t(...)
 end
 
 function LoadActorWithParams( path, params, ... )
-	local t = LoadActorFunc( path, 2 );
-	assert(t);
-	return lua.RunWithThreadVariables( function(...) return t(...) end, params, ... );
+	local t = LoadActorFunc( path, 2 )
+	assert(t)
+	return lua.RunWithThreadVariables( function(...) return t(...) end, params, ... )
 end
 
 function LoadFont(a, b)
-	local sSection = b and a or "";
-	local sFile = b or a;
+	local sSection = b and a or ""
+	local sFile = b or a
 	if (sFile == "" and sSection == "") or (sFile == nil and sSection == nil) then
-		sSection = "Common";
-		sFile = "normal";
-	end;
-	local sPath = THEME:GetPathF(sSection, sFile);
+		sSection = "Common"
+		sFile = "normal"
+	end
+	local sPath = THEME:GetPathF(sSection, sFile)
 	return Def.BitmapText {
-		_Level = 2;
-		File = sPath;
+		_Level = 2,
+		File = sPath
 	}
 end
 
@@ -182,20 +185,23 @@ end
 function StandardDecorationFromTable( MetricsName, t )
 	if type(t) == "table" then
 		t = t .. {
-			InitCommand=function(self) self:name(MetricsName); ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); end;
-		};
+			InitCommand=function(self)
+				self:name(MetricsName)
+				ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen")
+			end
+		}
 	end
-	return t;
+	return t
 end
 
 function StandardDecorationFromFile( MetricsName, FileName )
-	local t = LoadActor( THEME:GetPathG(Var "LoadingScreen",FileName) );
-	return StandardDecorationFromTable( MetricsName, t );
+	local t = LoadActor( THEME:GetPathG(Var "LoadingScreen",FileName) )
+	return StandardDecorationFromTable( MetricsName, t )
 end
 
 function StandardDecorationFromFileOptional( MetricsName, FileName )
 	if ShowStandardDecoration(MetricsName) then
-		return StandardDecorationFromFile( MetricsName, FileName );
+		return StandardDecorationFromFile( MetricsName, FileName )
 	end
 end
 

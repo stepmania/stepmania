@@ -1,9 +1,10 @@
+-- Can this be moved into some other file? Feels like clutter. -shake
 -- Play the sound on the given player's side. Must set SupportPan = true
 -- on load.
 function ActorSound:playforplayer(pn)
-	local fBalance = SOUND:GetPlayerBalance(pn);
-	self:get():SetProperty("Pan", fBalance);
-	self:play();
+	local fBalance = SOUND:GetPlayerBalance(pn)
+	self:get():SetProperty("Pan", fBalance)
+	self:play()
 end
 
 -- (c) 2007 Glenn Maynard

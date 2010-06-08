@@ -9,16 +9,18 @@ AspectRatios = {
 	FourThree   = 1.33333,	--* 640x480
 	SixteenTen  = 1.6,		--* 720x480
 	SixteenNine = 1.77778,	--* 853x480
-	EightThree  = 2.66666,	-- 1280x480
-};
+	EightThree  = 2.66666	-- 1280x480
+}
 
 function IsUsingWideScreen()
-	return GetScreenAspectRatio() >= 1.6;
-end;
+	return GetScreenAspectRatio() >= 1.6
+end
 
 -- take and use it as you like, I don't care -aj
 -- (although I should mention this file was specific to moonlight and was pretty
 -- bad before some editing. -aj)
 
 -- this one is good though:
-function WideScale(AR4_3, AR16_9) return scale( SCREEN_WIDTH, 640, 854, AR4_3, AR16_9 ); end
+function WideScale(AR4_3, AR16_9)
+	return scale( SCREEN_WIDTH, 640, 854, AR4_3, AR16_9 )
+end

@@ -10,7 +10,7 @@ This new version should also work better and be less confusing.
 --]]
 
 -- Env table global
-envTable = GAMESTATE:Env();
+envTable = GAMESTATE:Env()
 
 -- setenv(name,value)
 -- Sets aside an entry for /name/ and puts /value/ into it.
@@ -18,14 +18,14 @@ envTable = GAMESTATE:Env();
 -- If you need to store more than one value, you're welcome to use a
 -- table as /value/, it should work just fine.
 function setenv(name,value)
-	envTable[name] = value;
-end;
+	envTable[name] = value
+end
 
 -- getenv(name)
 -- This will return whatever value is at envTable[name].
 function getenv(name)
-	return envTable[name];
-end;
+	return envTable[name]
+end
 
 --[[
 Copyright © 2008 AJ Kelly/KKI Labs

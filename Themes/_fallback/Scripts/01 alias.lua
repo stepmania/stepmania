@@ -6,9 +6,18 @@ wouldn't otherwise belong somewhere else.
 
 -- in fact, this probably belongs in Sprite.lua...
 function Sprite:cropto(w,h)
-	self:CropTo(w,h);
-end;
+	self:CropTo(w,h)
+end
 
 function Actor:SetSize(w,h)
-	self:setsize(w,h);
-end;
+	self:setsize(w,h)
+end
+
+-- shorthand! this is tedious to type and makes things ugly so let's make it shorter.
+-- screen.w, screen.h, etc.
+local _screen = {
+	w  = SCREEN_WIDTH,
+	h  = SCREEN_HEIGHT,
+	cx = SCREEN_CENTER_X,
+	cy = SCREEN_CENTER_Y
+}

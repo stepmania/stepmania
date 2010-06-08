@@ -10,11 +10,20 @@ function debug.traceback(...)
 	local thread = coroutine.running()
 	local msg = ""
 	local level = 1
-	local args = {...};
+	local args = {...}
 	
-	if type(args[1]) == "thread" then thread = args[1]; table.remove(args) end
-	if type(args[1]) == "string" then msg = args[1]; table.remove(args) end
-	if type(args[1]) == "number" then level = args[1]; table.remove(args) end
+	if type(args[1]) == "thread" then
+		thread = args[1]
+		table.remove(args)
+	end
+	if type(args[1]) == "string" then
+		msg = args[1]
+		table.remove(args)
+	end
+	if type(args[1]) == "number" then
+		level = args[1]
+		table.remove(args)
+	end
 
 	if thread == coroutine.running() then
 		level = level + 1 -- skip this function
@@ -22,22 +31,22 @@ function debug.traceback(...)
 
 	local stack = {}
 	repeat
-		local info = debug.getinfo(level, "Sln");
-		table.insert( stack, info );
+		local info = debug.getinfo(level, "Sln")
+		table.insert( stack, info )
 		level = level + 1
 	until not info
 
 	if #stack == 0 then
-		return "";
+		return ""
 	end
 
 	-- The original caller is usually C; remove it.
 	if( stack[#stack].what == "C" ) then
-		table.remove( stack );
+		table.remove( stack )
 	end
 	local function FormatFrame(level, frame)
 		local sFrameInfo = ""
-		sFrameInfo = sFrameInfo .. "#" .. level .. "  ";
+		sFrameInfo = sFrameInfo .. "#" .. level .. "  "
 		if( frame.what == "tail" ) then
 		--      sFrameInfo = sFrameInfo .. "(tail call)"
 		--      return sFrameInfo
@@ -46,7 +55,7 @@ function debug.traceback(...)
 		elseif frame.name then
 			sFrameInfo = sFrameInfo .. frame.name .. "() in "
 		else
-			sFrameInfo = sFrameInfo .. "... in ";
+			sFrameInfo = sFrameInfo .. "... in "
 		end
 			sFrameInfo = sFrameInfo .. frame.short_src
 
@@ -61,7 +70,7 @@ function debug.traceback(...)
 	for level, frame in ipairs(stack) do
 		FrameInfo[level] = FormatFrame(level, frame)
 	end
-	return table.concat( FrameInfo, "\n" );
+	return table.concat( FrameInfo, "\n" )
 end
 
 -- (c) 2006 Glenn Maynard

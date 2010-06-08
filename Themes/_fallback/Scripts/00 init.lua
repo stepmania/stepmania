@@ -17,11 +17,13 @@ PLAYER_2 = "PlayerNumber_P2"
 NUM_PLAYERS = #PlayerNumber
 
 function string:find_last( text )
-	local LastPos = 0;
+	local LastPos = 0
 	while true do
-		local p = string.find( self, text, LastPos+1, true );
-		if not p then return LastPos end
-		LastPos = p;
+		local p = string.find( self, text, LastPos+1, true )
+		if not p then
+			return LastPos
+		end
+		LastPos = p
 	end
 end
 

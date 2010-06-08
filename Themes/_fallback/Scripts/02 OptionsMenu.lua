@@ -31,8 +31,10 @@ function OptionsRowTest()
 		-- Set list[1] to true if Option1 should be selected, and
 		-- list[2] if Option2 should be selected.  This will be
 		-- called once per enabled player.
-		LoadSelections = (function(self,list,pn) list[1] = true; end),
-		SaveSelections = Set,
+		LoadSelections = function(self,list,pn)
+			list[1] = true
+		end,
+		SaveSelections = Set
 	}
 end
 
@@ -62,37 +64,35 @@ OptionRowTable =
 
 function OptionsRandomJukebox()	
 	local function AllChoices()
-		Trace('all choices');
-		local ret = { }
-		ret[1] = 'Off';
-		ret[2] = 'Random';
+		Trace('all choices')
+		local ret = { 'Off', 'Random' }
 		return ret
 	end
 
 	local t = 
 	{
 		-- Name is used to retrieve the header and explanation text.
-		Name = "OptionsRandomJukebox";
-		LayoutType = "ShowAllInRow";
-		SelectType = "SelectOne";
-		OneChoiceForAllPlayers = true;
-		ExportOnChange = false;
-		Choices = AllChoices();
+		Name = "OptionsRandomJukebox",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = false,
+		Choices = AllChoices(),
 		LoadSelections = function(self, list, pn)
 			list[1] = true
-		end;
+		end,
 		SaveSelections = function(self, list, pn)
-			local val;
+			local val
 			if list[1] then
-				val = false;
+				val = false
 			else
-				val = true;
+				val = true
 			end
-			GAMESTATE:SetJukeboxUsesModifiers(val);
-		end;
-	};
-	setmetatable( t, t );
-	return t;
+			GAMESTATE:SetJukeboxUsesModifiers(val)
+		end
+	}
+	setmetatable( t, t )
+	return t
 end
 
 -- (c) 2005 Glenn Maynard
