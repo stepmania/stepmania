@@ -8,9 +8,12 @@ return Def.CourseContentsList {
 	HideCommand=cmd(linear,0.3;zoomy,0);
 	SetCommand=function(self)
 		self:SetFromGameState();
+		self:PositionItems();
+		self:SetTransformFromHeight(44);
 		self:SetCurrentAndDestinationItem(0);
+-- 		self:SetDestinationItem( self:GetNumItems()-2 );
 		self:SetLoop(false);
-		self:SetMask(270,44);
+		self:SetMask(270,0);
 	end;
 	CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
 	CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
@@ -34,7 +37,7 @@ return Def.CourseContentsList {
 		};
 
 		Def.TextBanner {
-			InitCommand=cmd(x,-96;y,1;Load,"TextBanner";SetFromString,"", "", "", "", "", "");
+			InitCommand=cmd(x,-128;y,1;Load,"TextBanner";SetFromString,"", "", "", "", "", "");
 			SetSongCommand=function(self, params)
 				if params.Song then
 					if GAMESTATE:GetCurrentCourse():GetDisplayFullTitle() == "Abomination" then
@@ -65,17 +68,17 @@ return Def.CourseContentsList {
 			end;
 		};
 
-		LoadFont("CourseEntryDisplay","number") .. {
-			InitCommand=cmd(x,-114-8;y,-12;shadowlength,1);
+--[[ 		LoadFont("CourseEntryDisplay","number") .. {
+			InitCommand=cmd(x,114+8;y,-12;shadowlength,1);
 			SetSongCommand=function(self, params) 
 				self:settext(string.format("#%i", params.Number)); 
 
 				(cmd(finishtweening;zoom,0.5;zoomy,0.5*1.5;diffusealpha,0;sleep,0.125*params.Number;linear,0.125;diffusealpha,1;linear,0.05;zoomy,0.5*1;zoomx,0.5*1.1;glow,color("1,1,1,0.5");decelerate,0.1;zoom,0.5;glow,color("1,1,1,0")))(self);
 			end;
-		};
+		}; --]]
  		LoadFont("CourseEntryDisplay","difficulty") .. {
 			Text="0";
-			InitCommand=cmd(x,-114;y,3;zoom,0.75;shadowlength,1);
+			InitCommand=cmd(x,114;y,0;zoom,0.75;shadowlength,1);
 			SetSongCommand=function(self, params)
 				if params.PlayerNumber ~= GAMESTATE:GetMasterPlayerNumber() then return end
 				self:settext( params.Meter );
