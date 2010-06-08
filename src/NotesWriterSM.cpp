@@ -16,6 +16,14 @@
 #include "Song.h"
 #include "Steps.h"
 
+static RString EscapeBackgroundColor( const RString color )
+{
+	// Comma separates values in a background change.  Caret separates RGBA values in a color value, and NotesLoaderSM switches them to commas on load.
+	RString c = color;
+	c.Replace(",", "^");
+	return c;
+}
+
 static RString BackgroundChangeToString( const BackgroundChange &bgc )
 {
 	// TODO: Technically we need to double-escape the filename (because it might contain '=') and then
@@ -31,8 +39,8 @@ static RString BackgroundChangeToString( const BackgroundChange &bgc )
 		bgc.m_def.m_sEffect.c_str(), 
 		bgc.m_def.m_sFile2.c_str(), 
 		bgc.m_sTransition.c_str(),
-		SmEscape(bgc.m_def.m_sColor1).c_str(),
-		SmEscape(bgc.m_def.m_sColor2).c_str()
+		SmEscape(EscapeBackgroundColor(bgc.m_def.m_sColor1)).c_str(),
+		SmEscape(EscapeBackgroundColor(bgc.m_def.m_sColor2)).c_str()
 		);
 	return s;
 }
