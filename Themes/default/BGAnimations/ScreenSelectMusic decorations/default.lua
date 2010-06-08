@@ -133,6 +133,7 @@ if GAMESTATE:IsCourseMode() then
 		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 	};
 end
+	t[#t+1] = StandardDecorationFromFileOptional("DifficultyDisplay","DifficultyDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("SortOrder","SortOrderText") .. {
 	BeginCommand=cmd(playcommand,"Set");
 	SortOrderChangedMessageCommand=cmd(playcommand,"Set";);

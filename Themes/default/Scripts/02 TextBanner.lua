@@ -1,6 +1,6 @@
 local mainMaxWidth = 228; -- zoom w/subtitle is 0.75 (multiply by 1.25)
 local subMaxWidth = 420; -- zoom is 0.6 (multiply zoom,1 value by 1.4)
-local artistMaxWidth = 300;
+local artistMaxWidth = 300/0.8;
 
 function TextBannerAfterSet(self,param) 
 	local Title=self:GetChild("Title"); 
