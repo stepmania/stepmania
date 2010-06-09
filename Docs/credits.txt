@@ -27,7 +27,7 @@ StepMania Team
 Aldo_MX
  * Code (Pump it Up delays, among others), ideas, and support.
 
-Jason Reid (jnr)
+Nicole Reid (okeeblow)
  * Tested building sm-ssc on FreeBSD, provided fixes.
 
 Wolfman
@@ -92,7 +92,7 @@ tweak/tweak62
 [Friends of the Devs]
 And4713
 HankPeters
-jnr
+okeeblow
 kdaymea
 taiyal
 
