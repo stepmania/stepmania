@@ -31,7 +31,6 @@ ret.Redir = function(sButton, sElement)
 end
 
 -- To have separate graphics for each hold part:
---[[
 local OldRedir = ret.Redir;
 ret.Redir = function(sButton, sElement)
 	-- Redirect non-hold, non-roll parts.
@@ -40,7 +39,6 @@ ret.Redir = function(sButton, sElement)
 	end
 	return OldRedir(sButton, sElement);
 end
-]]
 
 local OldFunc = ret.Load;
 function ret.Load()
