@@ -87,9 +87,7 @@ bool StepsUtil::HasMatching( const Song *pSong, const StepsCriteria &stc )
 	return false;
 }
 
-//
 // Sorting stuff
-//
 map<const Steps*, RString> steps_sort_val;
 
 static bool CompareStepsPointersBySortValueAscending(const Steps *pSteps1, const Steps *pSteps2)

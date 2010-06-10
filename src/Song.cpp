@@ -745,11 +745,9 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 
 		pSteps->CalculateRadarValues( m_fMusicLengthSeconds );
 
-		//
 		// calculate lastBeat
-		//
 
-		/* If it's autogen, then first/last beat will come from the parent. */
+		// If it's autogen, then first/last beat will come from the parent.
 		if( pSteps->IsAutogen() )
 			continue;
 
@@ -845,9 +843,9 @@ bool Song::SaveToSMFile( RString sPath, bool bSavingCache )
 	{
 		Steps *pSteps = *s;
 		if( pSteps->IsAutogen() )
-			continue; /* don't write autogen notes */
+			continue; // don't write autogen notes
 
-		/* Only save steps that weren't loaded from a profile. */
+		// Only save steps that weren't loaded from a profile.
 		if( pSteps->WasLoadedFromProfile() )
 			continue;
 
@@ -932,7 +930,7 @@ void Song::AddAutoGenNotes()
 		if( HasNotes[stMissing] )
 			continue;
 
-		/* If m_bAutogenSteps is disabled, only autogen lights. */
+		// If m_bAutogenSteps is disabled, only autogen lights.
 		if( !PREFSMAN->m_bAutogenSteps && stMissing != StepsType_lights_cabinet )
 			continue;
 		if( !GAMEMAN->GetStepsTypeInfo(stMissing).bAllowAutogen )
@@ -950,7 +948,7 @@ void Song::AddAutoGenNotes()
 			if( !HasNotes[st] )
 				continue;
 
-			/* has (non-autogen) Steps of this type */
+			// has (non-autogen) Steps of this type
 			const int iNumTracks = GAMEMAN->GetStepsTypeInfo(st).iNumTracks;
 			const int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
 			if( iTrackDifference < iBestTrackDifference )
@@ -996,7 +994,7 @@ void Song::RemoveAutoGenNotes()
 		{
 			if( m_vpStepsByType[st][j]->IsAutogen() )
 			{
-//				delete m_vpSteps[j]; // delete below
+				// delete m_vpSteps[j]; // delete below
 				m_vpStepsByType[st].erase( m_vpStepsByType[st].begin()+j );
 			}
 		}
@@ -1235,7 +1233,6 @@ void Song::DeleteSteps( const Steps* pSteps, bool bReAutoGen )
 
 	if( bReAutoGen )
 		RemoveAutoGenNotes();
-
 
 	vector<Steps*> &vpSteps = m_vpStepsByType[pSteps->m_StepsType];
 	for( int j=vpSteps.size()-1; j>=0; j-- )

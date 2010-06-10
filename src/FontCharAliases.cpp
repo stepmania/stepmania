@@ -35,7 +35,7 @@ static map<RString,RString> CharAliasRepl;
 // old SPiGuMuS kanji font hack.
 // a more modern implementation would likely involve a Lua file in Data for the
 // base character aliases, and any alias not encountered in the list would be
-// added at the next possible code point. -aj
+// added at the next possible internal code point. -aj
 
 /* Here's a copy-and-paste for a basic Japanese font page:
 
@@ -345,6 +345,7 @@ static void InitCharAliases()
 		{ "auxrb",	INTERNAL },
 		{ "auxlt",	INTERNAL },
 		{ "auxrt",	INTERNAL },
+		{ "auxback",	INTERNAL },
 
 		{ NULL, 	0 }
 	};
