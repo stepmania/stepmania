@@ -14,6 +14,15 @@
 #define PERSIST_SCREENS		THEME->GetMetric (m_sName,"PersistScreens")
 #define GROUPED_SCREENS		THEME->GetMetric (m_sName,"GroupedScreens")
 
+static const char *ScreenTypeNames[] = {
+	"Attract",
+	"GameMenu",
+	"Gameplay",
+	"SystemMenu",
+};
+XToString( ScreenType );
+LuaXType( ScreenType );
+
 void Screen::InitScreen( Screen *pScreen )
 {
 	pScreen->Init();
@@ -272,6 +281,7 @@ public:
 	static int GetNextScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetNextScreenName() ); return 1; }
 	static int GetPrevScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetPrevScreen() ); return 1; }
 	static int lockinput( T* p, lua_State *L ) { p->SetLockInputSecs(FArg(1)); return 0; }
+	DEFINE_METHOD( GetScreenType,	GetScreenType() )
 
 	static int PostScreenMessage( T* p, lua_State *L )
 	{
@@ -287,6 +297,7 @@ public:
 		ADD_METHOD( GetPrevScreenName );
 		ADD_METHOD( PostScreenMessage );
 		ADD_METHOD( lockinput );
+		ADD_METHOD( GetScreenType );
 	}
 };
 

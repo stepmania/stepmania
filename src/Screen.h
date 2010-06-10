@@ -11,6 +11,7 @@
 #include "InputQueue.h"
 #include "CodeSet.h"
 #include "LightsManager.h"
+#include "EnumHelper.h"
 
 class InputEventPlus;
 class Screen;
@@ -26,8 +27,12 @@ enum ScreenType
 	attract,
 	game_menu,
 	gameplay,
-	system_menu
+	system_menu,
+	NUM_ScreenType,
+	ScreenType_Invalid
 };
+const RString& ScreenTypeToString( ScreenType st );
+LuaDeclareType( ScreenType );
 
 class Screen : public ActorFrame
 {
