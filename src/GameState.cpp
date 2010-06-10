@@ -694,7 +694,9 @@ void GameState::BeginStage()
 	ASSERT( m_iNumStagesOfThisSong != -1 );
 	FOREACH_EnabledPlayer( p )
 	{
-		if( !IsEventMode() )
+		// only do this check with human players, assume CPU players (Rave)
+		// always have tokens. -aj (this could probably be moved below, even.)
+		if( !IsEventMode() && !IsCpuPlayer(p) )
 			ASSERT( m_iPlayerStageTokens[p] >= m_iNumStagesOfThisSong );
 		m_iPlayerStageTokens[p] -= m_iNumStagesOfThisSong;
 	}
@@ -959,6 +961,13 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	// "Crash reason : -243478.890625 -48695.773438"
 	ASSERT_M( m_fSongBeat > -2000, ssprintf("Song beat %f at %f seconds", m_fSongBeat, fPositionSeconds) );
 
+	//if( m_iWarpBeginRow != -1 || m_iWarpEndRow == -1 )
+	if( m_iWarpBeginRow != -1 && m_iWarpEndRow == -1 )
+	{
+		// we got a warp in this section.
+		LOG->Trace("warp at %i jumps to %i",m_iWarpBeginRow,m_iWarpEndRow);
+		// i hate this part because how the shit do i convert rows to seconds?
+	}
 	/*
 	// xxx testing: only do this on monotune survivor
 	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
@@ -2169,6 +2178,11 @@ public:
 	DEFINE_METHOD( GetPlayerDisplayName,		GetPlayerDisplayName(Enum::Check<PlayerNumber>(L, 1)) )
 	DEFINE_METHOD( GetMasterPlayerNumber,		m_MasterPlayerNumber )
 	DEFINE_METHOD( GetMultiplayer,			m_bMultiplayer )
+	static int SetMultiplayer( T* p, lua_State *L )
+	{
+		p->m_bMultiplayer = BArg(1);
+		return 0;
+	}
 	DEFINE_METHOD( GetNumMultiplayerNoteFields,	m_iNumMultiplayerNoteFields )
 	DEFINE_METHOD( ShowW1,				ShowW1() )
 
@@ -2444,6 +2458,7 @@ public:
 		ADD_METHOD( GetPlayerDisplayName );
 		ADD_METHOD( GetMasterPlayerNumber );
 		ADD_METHOD( GetMultiplayer );
+		ADD_METHOD( SetMultiplayer );
 		ADD_METHOD( GetNumMultiplayerNoteFields );
 		ADD_METHOD( SetNumMultiplayerNoteFields );
 		ADD_METHOD( ShowW1 );

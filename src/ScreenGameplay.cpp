@@ -401,6 +401,15 @@ void ScreenGameplay::Init()
 	/* Called once per stage (single song or single course). */
 	GAMESTATE->BeginStage();
 
+	if(!GAMESTATE->IsCourseMode() && !GAMESTATE->m_bDemonstrationOrJukebox)
+	{
+		// fill in difficulty of CPU players with that of the first human player
+		FOREACH_PotentialCpuPlayer(p)
+			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
+
+		FOREACH_EnabledPlayer(p)
+			ASSERT( GAMESTATE->m_pCurSteps[p].Get() );
+	}
 
 	/* Increment the course play count. */
 	if( GAMESTATE->IsCourseMode() && !GAMESTATE->m_bDemonstrationOrJukebox )
@@ -734,6 +743,7 @@ void ScreenGameplay::Init()
 			pi->GetPlayerStageStats()->m_vpPossibleSteps = pi->m_vpStepsQueue;
 	}
 
+	LOG->Trace("[ScreenGameplay::Init] loading scorekeepers");
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		ASSERT( !pi->m_vpStepsQueue.empty() );
@@ -802,8 +812,6 @@ bool ScreenGameplay::Center1Player() const
 // fill in m_apSongsQueue, m_vpStepsQueue, m_asModifiersQueue
 void ScreenGameplay::InitSongQueues()
 {
-	LOG->Trace("InitSongQueues");
-
 	if( GAMESTATE->IsCourseMode() )
 	{
 		Course* pCourse = GAMESTATE->m_pCurCourse;
@@ -936,6 +944,7 @@ bool ScreenGameplay::IsLastSong()
 
 void ScreenGameplay::SetupSong( int iSongIndex )
 {
+	LOG->Trace("[ScreenGameplay::SetupSong] begin");
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		/* This is the first beat that can be changed without it being visible.  Until
@@ -1028,13 +1037,6 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
 		pi->GetPlayerState()->m_PlayerOptions.SetCurrentToLevel( ModsLevel_Stage );
 	}
-
-	// fill in difficulty of CPU players with that of the first human player
-	FOREACH_PotentialCpuPlayer(p)
-		GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
-
-	FOREACH_EnabledPlayer(p)
-		ASSERT( GAMESTATE->m_pCurSteps[p].Get() );
 }
 
 void ScreenGameplay::ReloadCurrentSong()
