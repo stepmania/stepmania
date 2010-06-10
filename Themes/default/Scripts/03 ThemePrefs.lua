@@ -102,6 +102,7 @@ function UserPrefGameplayShowScore()
 			end;
 			WritePrefToFile("UserPrefGameplayShowScore",val);
 			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();	
 		end;
 	};
 	setmetatable( t, t );
@@ -137,6 +138,7 @@ function UserPrefGameplayShowStepsDisplay()
 			end;
 			WritePrefToFile("UserPrefGameplayShowStepsDisplay",val);
 			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();	
 		end;
 	};
 	setmetatable( t, t );
@@ -172,6 +174,7 @@ function UserPrefShowLotsaOptions()
 			end;
 			WritePrefToFile("UserPrefShowLotsaOptions",val);
 			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();	
 		end;
 	};
 	setmetatable( t, t );
@@ -223,6 +226,7 @@ function UserPrefAutoSetStyle()
 			end;
 			WritePrefToFile("UserPrefAutoSetStyle",val);
 			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();	
 		end;
 	};
 	setmetatable( t, t );
@@ -259,6 +263,7 @@ function UserPrefNotePosition()
 			end;
 			WritePrefToFile("UserPrefNotePosition",val);
 			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();	
 		end;
 	};
 	setmetatable( t, t );
@@ -294,6 +299,7 @@ function UserPrefLongFail()
 			end;
 			WritePrefToFile("UserPrefLongFail",val);
 			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();	
 		end;
 	};
 	setmetatable( t, t );
