@@ -165,7 +165,9 @@ public:
 	// Base
 	float GetBaseZoomX() const			{ return m_baseScale.x;	}
 	void  SetBaseZoomX( float zoom )		{ m_baseScale.x = zoom;	}
+	float GetBaseZoomY() const			{ return m_baseScale.y;	}
 	void  SetBaseZoomY( float zoom )		{ m_baseScale.y = zoom; }
+	float GetBaseZoomZ() const			{ return m_baseScale.z;	}
 	void  SetBaseZoomZ( float zoom )		{ m_baseScale.z = zoom; }
 	void  SetBaseZoom( float zoom )			{ m_baseScale = RageVector3(zoom,zoom,zoom); }
 	void  SetBaseRotationX( float rot )		{ m_baseRotation.x = rot; }
@@ -241,8 +243,6 @@ public:
 	float GetDiffuseAlpha() const			{ return DestTweenState().diffuse[0].a; };
 	void SetGlow( RageColor c )			{ DestTweenState().glow = c; };
 	RageColor GetGlow() const			{ return DestTweenState().glow; };
-	//void SetGlowMode( GlowMode m )	{ DestTweenState().glowmode = m; };
-	//GlowMode GetGlowMode() const		{ return DestTweenState().glowmode; };
 
 	void SetAux( float f )				{ DestTweenState().aux = f; }
 	float GetAux() const				{ return m_current.aux; }

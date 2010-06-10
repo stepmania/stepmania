@@ -1350,8 +1350,10 @@ public:
 	static int SetWidth( T* p, lua_State *L )		{ p->SetWidth(FArg(1)); return 0; }
 	static int SetHeight( T* p, lua_State *L )		{ p->SetHeight(FArg(1)); return 0; }
 	static int basealpha( T* p, lua_State *L )		{ p->SetBaseAlpha(FArg(1)); return 0; }
+	static int basezoom( T* p, lua_State *L )		{ p->SetBaseZoom(FArg(1)); return 0; }
 	static int basezoomx( T* p, lua_State *L )		{ p->SetBaseZoomX(FArg(1)); return 0; }
 	static int basezoomy( T* p, lua_State *L )		{ p->SetBaseZoomY(FArg(1)); return 0; }
+	static int basezoomz( T* p, lua_State *L )		{ p->SetBaseZoomZ(FArg(1)); return 0; }
 	static int stretchto( T* p, lua_State *L )		{ p->StretchTo( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
 	static int cropleft( T* p, lua_State *L )		{ p->SetCropLeft(FArg(1)); return 0; }
 	static int croptop( T* p, lua_State *L )		{ p->SetCropTop(FArg(1)); return 0; }
@@ -1504,12 +1506,15 @@ public:
 	static int GetZoomY( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomY() ); return 1; }
 	static int GetZoomZ( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomZ() ); return 1; }
 	static int GetBaseZoomX( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetBaseZoomX() ); return 1; }
+	static int GetBaseZoomY( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetBaseZoomY() ); return 1; }
+	static int GetBaseZoomZ( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetBaseZoomZ() ); return 1; }
 	static int GetRotationX( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetRotationX() ); return 1; }
 	static int GetRotationY( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetRotationY() ); return 1; }
 	static int GetRotationZ( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetRotationZ() ); return 1; }
 	static int GetSecsIntoEffect( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecsIntoEffect() ); return 1; }
 	static int GetEffectDelta( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetEffectDelta() ); return 1; }
 	DEFINE_METHOD( GetDiffuse, GetDiffuse() )
+	DEFINE_METHOD( GetGlow, GetGlow() )
 	static int GetDiffuseAlpha( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetDiffuseAlpha() ); return 1; }
 	static int GetVisible( T* p, lua_State *L )		{ lua_pushboolean( L, p->GetVisible() ); return 1; }
 	static int GetHAlign( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetHorizAlign() ); return 1; }
@@ -1563,8 +1568,10 @@ public:
 		ADD_METHOD( SetWidth );
 		ADD_METHOD( SetHeight );
 		ADD_METHOD( basealpha );
+		ADD_METHOD( basezoom );
 		ADD_METHOD( basezoomx );
 		ADD_METHOD( basezoomy );
+		ADD_METHOD( basezoomz );
 		ADD_METHOD( stretchto );
 		ADD_METHOD( cropleft );
 		ADD_METHOD( croptop );
@@ -1676,10 +1683,13 @@ public:
 		ADD_METHOD( GetRotationY );
 		ADD_METHOD( GetRotationZ );
 		ADD_METHOD( GetBaseZoomX );
+		ADD_METHOD( GetBaseZoomY );
+		ADD_METHOD( GetBaseZoomZ );
 		ADD_METHOD( GetSecsIntoEffect );
 		ADD_METHOD( GetEffectDelta );
 		ADD_METHOD( GetDiffuse );
 		ADD_METHOD( GetDiffuseAlpha );
+		ADD_METHOD( GetGlow );
 		ADD_METHOD( GetVisible );
 		ADD_METHOD( GetHAlign );
 		ADD_METHOD( GetVAlign );
