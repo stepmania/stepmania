@@ -232,20 +232,47 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	}
 	int rate = XRRConfigCurrentRate( g_pScreenConfig );
 
+	// Make a window fixed size, don't let resize it or maximize it.
 	// Do this before resizing the window so that pane-style WMs (Ion,
 	// ratpoison) don't resize us back inappropriately.
 	{
 		XSizeHints hints;
 
-		hints.flags = PBaseSize;
-		hints.base_width = p.width;
-		hints.base_height = p.height;
+		hints.flags = PMinSize|PMaxSize|PWinGravity;
+		hints.min_width = hints.max_width = p.width;
+		hints.min_height = hints.max_height = p.height;
+		hints.win_gravity = CenterGravity;
 
 		XSetWMNormalHints( Dpy, Win, &hints );
 	}
 
-	// Do this even if we just created the window -- works around Ion2 not
-	// catching WM normal hints changes in mapped windows.
+	// Workaround for metacity and compiz, if the window have the same resolution or higher than the screen
+	// it gets automaximized even when the window is set to don't let do it.
+	// This happens changing from fullscreen to window mode and our screen resolution is bigger.
+	{
+		XEvent xev;
+		Atom wm_state = XInternAtom(Dpy, "_NET_WM_STATE", False);
+		Atom maximized_vert = XInternAtom(Dpy, "_NET_WM_STATE_MAXIMIZED_VERT", False);
+		Atom maximized_horz = XInternAtom(Dpy, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
+
+		memset(&xev, 0, sizeof(xev));
+		xev.type = ClientMessage;
+		xev.xclient.window = Win;
+		xev.xclient.message_type = wm_state;
+		xev.xclient.format = 32;
+		xev.xclient.data.l[0] = 1;
+		xev.xclient.data.l[1] = maximized_vert;
+		xev.xclient.data.l[2] = 0;
+
+		XSendEvent(Dpy, DefaultRootWindow(Dpy), False, SubstructureNotifyMask, &xev);
+		xev.xclient.data.l[1] = maximized_horz;
+		XSendEvent(Dpy, DefaultRootWindow(Dpy), False, SubstructureNotifyMask, &xev);
+
+		// This one is needed for compiz, if the window reaches out of bounds of the screen it becames destroyed, only the window, the program is left running.
+		XMoveWindow( Dpy, Win, 0, 0 );
+	}
+
+	// Resize the window.
 	XResizeWindow( Dpy, Win, p.width, p.height );
 
 	CurrentParams = p;

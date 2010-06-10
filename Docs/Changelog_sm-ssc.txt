@@ -16,6 +16,9 @@ _____________________________________________________________________________
 * [Actor] add basezoom, basezoomz, GetBaseZoomY(), GetBaseZoomZ(), and
   GetGlow() Lua bindings
 * [Screen] add GetScreenType() Lua binding.
+* howl's patch for fixing LowLevelWindow
+  (stepmania4-fullscreen-focus-lost-and-restore-resolution2.patch)
+  http://www.stepmania.com/forums/showthread.php?t=23693
 
 20100608
 --------
