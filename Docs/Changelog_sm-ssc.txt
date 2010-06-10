@@ -9,6 +9,25 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100610
+--------
+* Allow Rave and Battle to work again.
+* Chris Danford changed galopin's code for detecting pump mats.
+* [Actor] add basezoom, basezoomz, GetBaseZoomY(), GetBaseZoomZ(), and
+  GetGlow() Lua bindings
+* [Screen] add GetScreenType() Lua binding.
+
+20100608
+--------
+* sm4svn r28359: fix BackgroundChange color values being written with commas.
+  Commas are a reserved character that seprate values in a tag. Caret was
+  used to separate RGBA values in a color in this case and NotesLoaderSM
+  already handles that. [Chris Danford]
+
+20100605
+--------
+* Add Windows 7 and Windows Vista as identified OS versions in DebugInfoHunt.
+
 20100603
 --------
 * [MusicWheel] If AutoSetStyle is on and Autogen is off, some songs with valid
