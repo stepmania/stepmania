@@ -15,6 +15,23 @@ if not PREFSMAN:GetPreference("EventMode") then
 	for s in ivalues(Stage) do
 		stages[#stages+1] = MakeBitmapTest() .. {
 			SetCommand=function(self, params)
+				local tRemap = {
+					Stage_1st		= 1,
+					Stage_2nd		= 2,
+					Stage_3rd		= 3,
+					Stage_4th		= 4,
+					Stage_5th		= 5,
+					Stage_6th		= 6,
+--[[ 					'Stage_Next'	= 6,
+					'Stage_Final'	= 7,
+					'Stage_Extra1'	= 8,
+					'Stage_Extra2'	= 9,
+					'Stage_Nonstop'	= 10,
+					'Stage_Oni'		= 11,
+					'Stage_Endless'	= 12,
+					'Stage_Event'	= 13,
+					'Stage_Demo'	= 14, --]]
+				}
 				local Stage = GAMESTATE:GetCurrentStage();
 				local StageIndex = GAMESTATE:GetCurrentStageIndex();
 				local screen = SCREENMAN:GetTopScreen();
@@ -26,14 +43,19 @@ if not PREFSMAN:GetPreference("EventMode") then
 					StageIndex = ss:GetStageIndex();
 				end
 				self:visible( Stage == s );
-				if Stage == 'Stage_Event' then
-					self:settext( StageToLocalizedString(Stage) .. " Mode" );
+				
+				if tRemap[Stage] == PREFSMAN:GetPreference("SongsPerPlay") then
+					Stage = 'Stage_Final';
+-- 					s = 7;
 				else
-					self:settext( StageToLocalizedString(Stage) .. " Stage" );
-				end
-				self:diffuse( StageToColor(s) );
--- 				self:diffusebottomedge( ColorMidTone(StageToColor(s)) );
-				self:strokecolor( cStageOutlineColor );
+					Stage = Stage;
+					s = s;
+				end;
+				self:settext( StageToLocalizedString(Stage) .. " Stage" );
+-- 				self:settext( StageToLocalizedString(Stage) .. " Stage" );
+				self:diffuse( (Stage == 'Stage_Final') and StageToColor('Stage_Final') or StageToColor(s) );
+				self:diffusebottomedge( (Stage == 'Stage_Final') and ColorMidTone(StageToColor('Stage_Final')) or ColorMidTone(StageToColor(s)) );
+				self:strokecolor( (Stage == 'Stage_Final') and ColorDarkTone(StageToColor('Stage_Final')) or ColorDarkTone(StageToColor(s)) );
 			end;
 		}
 	end
