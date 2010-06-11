@@ -1,3 +1,4 @@
+
 local stages = Def.ActorFrame {
 	BeginCommand=cmd(playcommand,"Set";);
 	CurrentSongChangedMessageCommand=cmd(finishtweening;playcommand,"Set";);
@@ -17,8 +18,8 @@ if not PREFSMAN:GetPreference("EventMode") then
 				local Stage = GAMESTATE:GetCurrentStage();
 				local StageIndex = GAMESTATE:GetCurrentStageIndex();
 				local screen = SCREENMAN:GetTopScreen();
-				local cStageOutlineColor = ColorDarkTone( StageToStrokeColor(s) );
-				cStageOutlineColor[4] = 0.75;
+-- 				local cStageOutlineColor = ColorDarkTone( StageToStrokeColor(s) );
+-- 				cStageOutlineColor[4] = 0.75;
 				if screen and screen.GetStageStats then
 					local ss = screen:GetStageStats();
 					Stage = ss:GetStage();
@@ -31,7 +32,7 @@ if not PREFSMAN:GetPreference("EventMode") then
 					self:settext( StageToLocalizedString(Stage) .. " Stage" );
 				end
 				self:diffuse( StageToColor(s) );
-				self:diffusebottomedge( ColorMidTone(StageToColor(s)) );
+-- 				self:diffusebottomedge( ColorMidTone(StageToColor(s)) );
 				self:strokecolor( cStageOutlineColor );
 			end;
 		}
@@ -39,8 +40,10 @@ if not PREFSMAN:GetPreference("EventMode") then
 else
 	stages[#stages+1] = MakeBitmapTest() .. {
 		SetCommand=function(self,params)
+			local Offset = THEME:GetMetric(Var "LoadingScreen","StageDisplayNumberOffset");
 			local Stage = GAMESTATE:GetCurrentStageIndex();
-			self:settextf( "Stage %03i", Stage);
+			local RealStage = Stage + Offset;
+			self:settextf( "Stage %03i", RealStage);
 				self:diffuse( StageToColor('Stage_1st') );
 				self:diffusebottomedge( ColorMidTone(StageToColor('Stage_1st')) );
 				self:strokecolor( Colors.Alpha( ColorDarkTone(StageToColor('Stage_1st')), 0.75) );
