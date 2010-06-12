@@ -24,7 +24,8 @@ static void LoadFromSMTokens(
 			     Steps &out
 			     )
 {
-	out.SetSavedToDisk( true );	// we're loading from disk, so this is by definintion already saved
+	// we're loading from disk, so this is by definition already saved:
+	out.SetSavedToDisk( true );
 
 	Trim( sStepsType );
 	Trim( sDescription );
@@ -38,14 +39,18 @@ static void LoadFromSMTokens(
 	out.SetDescription( sDescription );
 	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDifficulty) );
 
-	// HACK: We used to store SMANIAC as Difficulty_Hard with special description.
-	// Now, it has its own Difficulty_Challenge
-	if( sDescription.CompareNoCase("smaniac") == 0 ) 
-		out.SetDifficulty( Difficulty_Challenge );
-	// HACK: We used to store CHALLENGE as Difficulty_Hard with special description.
-	// Now, it has its own Difficulty_Challenge
-	if( sDescription.CompareNoCase("challenge") == 0 ) 
-		out.SetDifficulty( Difficulty_Challenge );
+	// Handle hacks that originated back when StepMania didn't have
+	// Difficulty_Challenge. (At least v1.64, possibly v3.0 final...)
+	if( out.GetDifficulty() == Difficulty_Hard )
+	{
+		// HACK: SMANIAC used to be Difficulty_Hard with a special description.
+		if( sDescription.CompareNoCase("smaniac") == 0 ) 
+			out.SetDifficulty( Difficulty_Challenge );
+
+		// HACK: CHALLENGE used to be Difficulty_Hard with a special description.
+		if( sDescription.CompareNoCase("challenge") == 0 ) 
+			out.SetDifficulty( Difficulty_Challenge );
+	}
 
 	out.SetMeter( atoi(sMeter) );
 	vector<RString> saValues;
@@ -88,9 +93,10 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 	out.m_fBeat0OffsetInSeconds = 0;
 	out.m_BPMSegments.clear();
 	out.m_StopSegments.clear();
-	//out.m_WarpSegments.clear();
+	out.m_WarpSegments.clear();
 
-	//vector<WarpSegment> arrayWarpsFromNegativeBPMs;
+	vector<WarpSegment> arrayWarpsFromNegativeBPMs;
+	//vector<WarpSegment> arrayWarpsFromNegativeStops;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -121,12 +127,24 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 
 				const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
 				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
-
 				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
 
-				// LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-
-				out.AddStopSegment( new_seg );
+				if(fFreezeSeconds > 0.0f)
+				{
+					// LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
+					out.AddStopSegment( new_seg );
+				}
+				else
+				{
+					// negative stops (hi JS!) -aj
+					if( PREFSMAN->m_bQuirksMode )
+					{
+						// LOG->Trace( "Adding a negative freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
+						out.AddStopSegment( new_seg );
+					}
+					else
+						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid stop at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
+				}
 			}
 		}
 		else if( sValueName=="DELAYS" )
@@ -153,7 +171,10 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 
 				// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 
-				out.AddStopSegment( new_seg );
+				if(fFreezeSeconds > 0.0f)
+					out.AddStopSegment( new_seg );
+				else
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid delay at beat %f, length %f.", fFreezeBeat, fFreezeSeconds );
 			}
 		}
 
@@ -178,7 +199,6 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
 
 				// convert negative BPMs into Warp segments
-				/*
 				if( fNewBPM < 0.0f )
 				{
 					vector<RString> arrayNextBPMChangeValues;
@@ -194,7 +214,6 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 						float fWarpToBeat = fNextPositiveBeat + fDeltaBeat;
 						WarpSegment wsTemp(BeatToNoteRow(fBeat),BeatToNoteRow(fWarpToBeat));
 						arrayWarpsFromNegativeBPMs.push_back(wsTemp);
-						*/
 						/*
 						LOG->Trace( ssprintf("==NotesLoSM negbpm==\nfnextposbeat = %f, fnextposbpm = %f,\nfdelta = %f, fwarpto = %f",
 									fNextPositiveBeat,
@@ -217,24 +236,20 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 							fDeltaBeat,(fNextPositiveBPM/60.0f),abs(fNewBPM/60.0f),BeatToNoteRow(fNextPositiveBeat),BeatToNoteRow(fBeat))
 						);
 						*/
-					/*
 					}
 					else
 					{
 						// last BPM is a negative one? ugh. -aj (MAX_NOTE_ROW exists btw)
 					}
 				}
-				*/
 
-				if( PREFSMAN->m_bQuirksMode )
-				{
-					// in quirks mode, accept all BPMs, not just positives.
-					// xxx: make this work for decent simfiles only? (lol) -aj
+				if(fNewBPM > 0.0f)
 					out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
-				}
 				else
 				{
-					if( fNewBPM > 0.0f )
+					out.m_bHasNegativeBpms = true;
+					// only add Negative BPMs in quirks mode -aj
+					if( PREFSMAN->m_bQuirksMode )
 						out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
 					else
 						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
@@ -323,23 +338,21 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				}
 			}
 		}
+		*/
 
 		// We should not support files that contain both Negative BPMs & Warps.
 		// If Warps have been populated from Negative BPMs, then go through that
 		// instead of using the data in the Warps tag. This should be above,
 		// but it breaks compiling so...
+		if(arrayWarpsFromNegativeBPMs.size() > 0)
 		{
-			if(arrayWarpsFromNegativeBPMs.size() > 0)
+			// zomg we already have some warps...
+			for( unsigned i=0; i<arrayWarpsFromNegativeBPMs.size(); i++ )
 			{
-				// zomg we already have some warps...
-				for( unsigned i=0; i<arrayWarpsFromNegativeBPMs.size(); i++ )
-				{
-					out.AddWarpSegment( arrayWarpsFromNegativeBPMs[i] );
-				}
-				// sorting will need to take place somewhere.
+				out.AddWarpSegment( arrayWarpsFromNegativeBPMs[i] );
 			}
+			// sorting will need to take place somewhere.
 		}
-		*/
 
 	}
 }
@@ -356,10 +369,12 @@ bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChange
 	case 11:
 		change.m_def.m_sColor2 = aBGChangeValues[10];
 		change.m_def.m_sColor2.Replace( '^', ',' );
+		change.m_def.m_sColor2 = RageColor::NormalizeColorString( change.m_def.m_sColor2 );
 		// fall through
 	case 10:
 		change.m_def.m_sColor1 = aBGChangeValues[9];
 		change.m_def.m_sColor1.Replace( '^', ',' );
+		change.m_def.m_sColor1 = RageColor::NormalizeColorString( change.m_def.m_sColor1 );
 		// fall through
 	case 9:
 		change.m_sTransition = aBGChangeValues[8];
@@ -564,8 +579,9 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			else if(!stricmp(sParams[1],"NO"))
 				out.m_SelectionDisplay = out.SHOW_NEVER;
-			// handle ROULETTE from 3.9. todo: re-implement.
-			// (Why was it removed?)
+			// ROULETTE from 3.9. It was removed since UnlockManager can serve
+			// the same purpose somehow. This, of course, assumes you're using
+			// unlocks. -aj
 			else if(!stricmp(sParams[1],"ROULETTE"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
 			/* The following two cases are just fixes to make sure simfiles that

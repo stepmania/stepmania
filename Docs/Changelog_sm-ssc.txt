@@ -9,9 +9,19 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100612
+--------
+* sm4svn r28359-r28364. [Chris Danford]
+  Notable commit logs:
+  * r28359: "fix BackgroundChange color values being written with commas.
+    Commas are a reserved character that seprate values in a tag.
+    Caret was used to separate RGBA values in a color in this case and
+    NotesLoaderSM already handles that."
+  * r28361: "normalize colors in BGCHANGES to HTML colors, to fix weird escaping"
+
 20100610
 --------
-* Allow Rave and Battle to work again.
+* Fix Rave/Battle crashes, allowing it to work again.
 * Chris Danford changed galopin's code for detecting pump mats.
 * [Actor] add basezoom, basezoomz, GetBaseZoomY(), GetBaseZoomZ(), and
   GetGlow() Lua bindings

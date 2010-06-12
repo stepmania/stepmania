@@ -60,7 +60,7 @@ RString BackgroundChange::GetTextDescription() const
 	if( !m_def.m_sEffect.empty() )	vsParts.push_back( m_def.m_sEffect );
 	if( !m_def.m_sColor1.empty() )	vsParts.push_back( m_def.m_sColor1 );
 	if( !m_def.m_sColor2.empty() )	vsParts.push_back( m_def.m_sColor2 );
-	
+
 	if( vsParts.empty() )
 		vsParts.push_back( "(empty)" );
 
@@ -118,7 +118,7 @@ void BackgroundUtil::GetBackgroundEffects( const RString &_sName, vector<RString
 
 	vsPathsOut.clear();
 	GetDirListing( BACKGROUND_EFFECTS_DIR+sName+".lua", vsPathsOut, false, true );
-	
+
 	vsNamesOut.clear();
 	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( GetFileNameWithoutExtension(*s) );
@@ -135,7 +135,7 @@ void BackgroundUtil::GetBackgroundTransitions( const RString &_sName, vector<RSt
 	vsPathsOut.clear();
 	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".xml", vsPathsOut, false, true );
 	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".lua", vsPathsOut, false, true );
-	
+
 	vsNamesOut.clear();
 	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( GetFileNameWithoutExtension(*s) );
@@ -154,7 +154,7 @@ void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const RString &sMat
 	{
 		GetDirListing( pSong->GetSongDir()+sMatch, vsPathsOut, true, true );
 	}
-	
+
 	vsNamesOut.clear();
 	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( Basename(*s) );
@@ -217,7 +217,7 @@ static void GetFilterToFileNames( const RString sBaseDir, const Song *pSong, set
 	IniFile ini;
 	RString sPath = sBaseDir+pSong->m_sGroupName+"/"+"BackgroundMapping.ini";
 	ini.ReadFile( sPath );
-	
+
 	RString sSection;
 	bool bSuccess = ini.GetValue( "GenreToSection", pSong->m_sGenre, sSection );
 	if( !bSuccess )
@@ -269,15 +269,13 @@ void BackgroundUtil::GetGlobalRandomMovies(
 		GetDirListing( RANDOMMOVIES_DIR+sMatch, vsPathsOut, false, true );
 		if( !vsPathsOut.empty() )
 			goto found_files;
-		
+
 		if( sMatch != NO_SONG_BG_FILE )
 			LOG->Warn( "Background missing: %s", sMatch.c_str() );
 		return;
 	}
 
-	//
 	// Search for the most appropriate background
-	//
 	{
 		set<RString> ssFileNameWhitelist;
 		if( bTryInsideOfSongGroupAndGenreFirst  &&  pSong  &&  !pSong->m_sGenre.empty() )
@@ -300,20 +298,18 @@ void BackgroundUtil::GetGlobalRandomMovies(
 
 			if( !ssFileNameWhitelist.empty() )
 			{
-				vector<RString> vsFiltered = vsPathsOut;
-				for( unsigned i=0; i<vsPathsOut.size(); i++ )
+				vector<RString> vsMatches;
+				FOREACH_CONST( RString, vsPathsOut, s )
 				{
-					RString sBasename = Basename( vsPathsOut[i] );
+					RString sBasename = Basename( *s );
 					bool bFound = ssFileNameWhitelist.find(sBasename) != ssFileNameWhitelist.end();
-					if( !bFound )
-					{
-						vsPathsOut.erase( vsPathsOut.begin()+i );
-						i--;
-					}
+					if( bFound )
+						vsMatches.push_back(*s);
 				}
-				// If we filtered every movie out then this was a bad whitelist, so ignore the whitelist.
-				if( !vsFiltered.empty() )
-					vsPathsOut = vsFiltered;
+				// If we found any that match the whitelist, use only them.
+				// If none match the whitelist, ignore the whitelist..
+				if( !vsMatches.empty() )
+					vsPathsOut = vsMatches;
 			}
 
 			if( !vsPathsOut.empty() )

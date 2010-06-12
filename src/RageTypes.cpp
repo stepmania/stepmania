@@ -51,6 +51,29 @@ void RageColor::FromStackCompat( lua_State *L, int iPos )
 	}
 }
 
+RString RageColor::ToString() const
+{
+	int iR = clamp( (int) lrintf(r * 255), 0, 255 );
+	int iG = clamp( (int) lrintf(g * 255), 0, 255 );
+	int iB = clamp( (int) lrintf(b * 255), 0, 255 );
+	int iA = clamp( (int) lrintf(a * 255), 0, 255 );
+
+	if( iA == 255 )
+		return ssprintf( "#%02X%02X%02X", iR, iG, iB );
+	else
+		return ssprintf( "#%02X%02X%02X%02X", iR, iG, iB, iA );
+}
+
+RString RageColor::NormalizeColorString( RString sColor )
+{
+	if( sColor.empty() )
+		return "";
+	RageColor c;
+	if( !c.FromString(sColor) )
+		return "";
+	return c.ToString();
+}
+
 namespace LuaHelpers
 {
 	template<> bool FromStack<RageColor>( lua_State *L, RageColor &Object, int iOffset )
