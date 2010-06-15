@@ -1399,6 +1399,13 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		return true;
 	}
 
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PAUSE) )
+	{
+		Message msg("ToggleConsoleDisplay");
+		MESSAGEMAN->Broadcast( msg );
+		return true;
+	}
+
 #if !defined(MACOSX)
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F4) )
 	{
@@ -1443,15 +1450,16 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 #endif
 	if( bDoScreenshot )
 	{
-		// If holding LShift save uncompressed, else save compressed
-		// todo: allow for RShift -aj
-		bool bSaveCompressed = !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
+		// If holding Shift save uncompressed, else save compressed
+		bool bHoldingShift = ( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) )
+								|| INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) ) );
+		bool bSaveCompressed = !bHoldingShift;
 		RageTimer timer;
-		StepMania::SaveScreenshot( "Screenshots/", bSaveCompressed, false );
+		StepMania::SaveScreenshot( "Screenshots/", bSaveCompressed, false, -1 );
 		LOG->Trace( "Screenshot took %f seconds.", timer.GetDeltaTime() );
 		return true;	// handled
 	}
-	
+
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_ENTER) &&
 		(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT), &input.InputList) ||
 		 INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList)) )
