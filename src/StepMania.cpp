@@ -1452,7 +1452,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	{
 		// If holding Shift save uncompressed, else save compressed
 		bool bHoldingShift = ( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) )
-								|| INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) ) );
+								|| INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT) ) );
 		bool bSaveCompressed = !bHoldingShift;
 		RageTimer timer;
 		StepMania::SaveScreenshot( "Screenshots/", bSaveCompressed, false, -1 );
