@@ -159,7 +159,6 @@ Color = {
 		return { c[1],c[2],c[3],fAlpha };
 	end
 }
-
 -- Remapped Color Module, since some themes are crazy
 Colors = Color
 
@@ -191,6 +190,9 @@ local DifficultyColors = {
 	Difficulty_Couple	= color("#ed0972"),				-- hot pink
 	Difficulty_Routine	= color("#ff9a00")				-- orange
 }
+DifficultyColors["Crazy"] = DifficultyColors["Hard"];
+-- DifficultyColors["Freestyle"] = Color["Purple"];
+DifficultyColors["Nightmare"] = DifficultyColors["Challenge"];
 
 local StageColors = {
 	Stage_1st	= color("#00ffc7"),
