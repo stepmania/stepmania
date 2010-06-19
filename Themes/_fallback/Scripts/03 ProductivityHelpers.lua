@@ -67,6 +67,19 @@ function Actor:thump(fEffectPeriod)
 	self:effectmagnitude(1,1.125,1)
 end
 
+-- Heartbeat()
+-- A customized version of pulse that is more appealing for on-beat
+-- effects;
+function Actor:heartbeat(fEffectPeriod)
+	self:pulse()
+	if fEffectPeriod ~= nil then
+		self:effecttiming(0,0.125*fEffectPeriod,0.125*fEffectPeriod,0.75*fEffectPeriod);
+	else
+		self:effecttiming(0,0.125,0.125,0.75);
+	end
+	self:effecmagnitude(1,1.125,1)
+end
+
 --[[ BitmapText commands ]]
 
 -- PixelFont()
