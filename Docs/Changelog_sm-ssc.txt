@@ -9,6 +9,19 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100619
+--------
+* [HighScore] add GetGrade() Lua binding.
+
+20100618
+--------
+* Allow RShift+Print Screen to take uncompressed screenshots.
+
+20100614
+--------
+* Attempt to fix screenshot numbering bug. Seems to work, if testing is
+  any indication.
+
 20100612
 --------
 * sm4svn r28359-r28364. [Chris Danford]

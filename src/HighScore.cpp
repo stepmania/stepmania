@@ -91,7 +91,7 @@ XNode *HighScoreImpl::CreateNode() const
 	pNode->AppendChild( "Grade",			GradeToString(grade) );
 	pNode->AppendChild( "Score",			iScore );
 	pNode->AppendChild( "PercentDP",		fPercentDP );
-	pNode->AppendChild( "SurviveSeconds",		fSurviveSeconds );
+	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
 	pNode->AppendChild( "Modifiers",		sModifiers );
 	pNode->AppendChild( "DateTime",			dateTime.GetString() );
 	pNode->AppendChild( "PlayerGuid",		sPlayerGuid );
@@ -143,7 +143,7 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	pNode->GetChildValue( "LifeRemainingSeconds",	fLifeRemainingSeconds );
 	pNode->GetChildValue( "Disqualified",		bDisqualified);
 
-	/* Validate input. */
+	// Validate input.
 	grade = clamp( grade, Grade_Tier01, Grade_Failed );
 }
 
@@ -351,7 +351,7 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 		{
 			vHighScores.resize( vHighScores.size()+1 );
 			vHighScores.back().LoadFromNode( p );
-			
+
 			// ignore all high scores that are 0
 			if( vHighScores.back().GetScore() == 0 )
 				vHighScores.pop_back();
@@ -436,6 +436,7 @@ public:
 		rv.PushSelf(L);
 		return 1;
 	}
+	DEFINE_METHOD( GetGrade, GetGrade() )
 
 	LunaHighScore()
 	{
@@ -450,6 +451,7 @@ public:
 		ADD_METHOD( GetTapNoteScore );
 		ADD_METHOD( GetHoldNoteScore );
 		ADD_METHOD( GetRadarValues );
+		ADD_METHOD( GetGrade );
 	}
 };
 
