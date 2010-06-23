@@ -990,14 +990,12 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		// a song was selected
 		if( m_MusicWheel.GetSelectedSong() != NULL )
 		{
-			/*
 			if(TWO_PART_CONFIRMS_ONLY && SAMPLE_MUSIC_PREVIEW_MODE == SampleMusicPreviewMode_StartToPreview)
 			{
 				// start playing the preview music.
 				g_bSampleMusicWaiting = true;
 				CheckBackgroundRequests( true );
 			}
-			*/
 
 			const bool bIsNew = PROFILEMAN->IsSongNew( m_MusicWheel.GetSelectedSong() );
 			bool bIsHard = false;
@@ -1568,9 +1566,9 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_fSampleStartSeconds = 0;
 				m_fSampleLengthSeconds = -1;
 				break;
-			//case SampleMusicPreviewMode_StartToPreview:
+			case SampleMusicPreviewMode_StartToPreview:
 				// we want to load the sample music, but we don't want to
-				// actually play it; fall through for now. -aj
+				// actually play it. fall through. -aj
 			case SampleMusicPreviewMode_Normal:
 			case SampleMusicPreviewMode_LastSong: // fall through
 				// play the sample music
@@ -1654,8 +1652,12 @@ void ScreenSelectMusic::AfterMusicChange()
 	if( !m_MusicWheel.IsRouletting() && SOUND->GetMusicPath() != m_sSampleMusicToPlay )
 	{
 		SOUND->StopMusic();
-		if( !m_sSampleMusicToPlay.empty() )
-			g_bSampleMusicWaiting = true;
+		// some SampleMusicPreviewModes don't want the sample music immediately.
+		if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_StartToPreview )
+		{
+			if( !m_sSampleMusicToPlay.empty() )
+				g_bSampleMusicWaiting = true;
+		}
 	}
 
 	g_StartedLoadingAt.Touch();

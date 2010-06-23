@@ -9,6 +9,12 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100623
+--------
+* Implement the last remaining SampleMusicPreviewMode: StartToPreview.
+  This one requires [ScreenSelectMusic] TwoPartConfirmsOnly=true in the
+  metrics to work correctly.
+
 20100619
 --------
 * [HighScore] add GetGrade() Lua binding.

@@ -106,7 +106,7 @@ const RString& PlayModeToLocalizedString( PlayMode pm );
 PlayMode StringToPlayMode( const RString& s );
 LuaDeclareType( PlayMode );
 
-
+// ziup2 has SortOrder_PinnedMeter (¿qef?)
 enum SortOrder 
 {
 	// song sorts
@@ -461,7 +461,7 @@ original options from ScreenEz2SelectMusic:
 enum SampleMusicPreviewMode
 {
 	SampleMusicPreviewMode_Normal,
-	//SampleMusicPreviewMode_StartToPreview,
+	SampleMusicPreviewMode_StartToPreview,
 	SampleMusicPreviewMode_ScreenMusic,
 	SampleMusicPreviewMode_LastSong,	// continue playing the last song
 	NUM_SampleMusicPreviewMode,

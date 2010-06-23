@@ -416,7 +416,7 @@ LuaXType( EditMode );
 
 static const char *SampleMusicPreviewModeNames[] = {
 	"Normal",
-	//"StartToPreview",
+	"StartToPreview",
 	"ScreenMusic",
 	"LastSong"
 };
