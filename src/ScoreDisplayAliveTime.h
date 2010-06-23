@@ -23,9 +23,7 @@ public:
 
 	void UpdateNumber();
 
-	//
 	// Commands
-	//
 	virtual void PushSelf( lua_State *L );
 
 private:

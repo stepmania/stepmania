@@ -66,14 +66,14 @@ namespace StepsUtil
 	bool CompareNotesPointersByRadarValues(const Steps* pSteps1, const Steps* pSteps2);
 	bool CompareNotesPointersByMeter(const Steps *pSteps1, const Steps* pSteps2);
 	bool CompareNotesPointersByDifficulty(const Steps *pSteps1, const Steps *pSteps2);
-	void SortNotesArrayByDifficulty( vector<Steps*> &vpStepsInOut );	
+	void SortNotesArrayByDifficulty( vector<Steps*> &vpStepsInOut );
 	bool CompareStepsPointersByTypeAndDifficulty(const Steps *pStep1, const Steps *pStep2);
 	void SortStepsByTypeAndDifficulty( vector<Steps*> &vpStepsInOut );
 	void SortStepsPointerArrayByNumPlays( vector<Steps*> &vpStepsInOut, ProfileSlot slot, bool bDescending );
 	void SortStepsPointerArrayByNumPlays( vector<Steps*> &vpStepsInOut, const Profile* pProfile, bool bDescending );
 	bool CompareStepsPointersByDescription(const Steps *pStep1, const Steps *pStep2);
 	void SortStepsByDescription( vector<Steps*> &vpStepsInOut );
-	void RemoveLockedSteps( const Song *pSong, vector<Steps*> &vpStepsInOut );	
+	void RemoveLockedSteps( const Song *pSong, vector<Steps*> &vpStepsInOut );
 };
 
 class StepsID

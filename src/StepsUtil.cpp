@@ -130,7 +130,6 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 		}
 	}
 
-
 	ASSERT( pProfile );
 	for(unsigned i = 0; i < vStepsPointers.size(); ++i)
 	{
@@ -146,7 +145,7 @@ bool StepsUtil::CompareNotesPointersByRadarValues(const Steps* pSteps1, const St
 {
 	float fScore1 = 0;
 	float fScore2 = 0;
-	
+
 	fScore1 += pSteps1->GetRadarValues( PLAYER_1 )[RadarCategory_TapsAndHolds];
 	fScore2 += pSteps2->GetRadarValues( PLAYER_1 )[RadarCategory_TapsAndHolds];
 
@@ -165,7 +164,7 @@ bool StepsUtil::CompareNotesPointersByDifficulty(const Steps *pSteps1, const Ste
 
 void StepsUtil::SortNotesArrayByDifficulty( vector<Steps*> &arraySteps )
 {
-	/* Sort in reverse order of priority.  Sort by description first, to get
+	/* Sort in reverse order of priority. Sort by description first, to get
 	 * a predictable order for songs with no radar values (edits). */
 	stable_sort( arraySteps.begin(), arraySteps.end(), CompareStepsPointersByDescription );
 	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByRadarValues );
@@ -203,7 +202,7 @@ void StepsUtil::RemoveLockedSteps( const Song *pSong, vector<Steps*> &vpSteps )
 	{
 		if( UNLOCKMAN->StepsIsLocked(pSong, vpSteps[i]) )
 			vpSteps.erase( vpSteps.begin()+i );
-	}		
+	}
 }
 
 
