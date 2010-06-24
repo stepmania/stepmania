@@ -23,6 +23,19 @@ Health = {
 	Dead   = 'HealthState_Dead'
 }
 
+-- Make graphics their true size at any resolution.
+function Actor:Real()
+	-- normal
+	local theme = THEME:GetMetric("Common","ScreenHeight")
+	local res = PREFSMAN:GetPreference("DisplayHeight")
+	
+	-- scale back down to real pixels.
+	self:basezoom(theme/res)
+	
+	-- don't make this ugly
+	self:SetTextureFiltering(false)
+end
+
 --[[ Actor commands ]]
 function Actor:CenterX()
 	self:x(SCREEN_CENTER_X)
