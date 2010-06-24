@@ -14,6 +14,8 @@ _____________________________________________________________________________
 * Implement the last remaining SampleMusicPreviewMode: StartToPreview.
   This one requires [ScreenSelectMusic] TwoPartConfirmsOnly=true in the
   metrics to work correctly.
+* Added Actor:Real(), which makes graphics their true size at
+  any resolution. [shakesoda]
 
 20100619
 --------
@@ -777,7 +779,7 @@ Petr Baudis (3):
 	MovieTexture_FFMpeg: Port img_convert to libswscale method.
 	MovieTexture_Theora: Port img_convert to libswscale method.
 
-David Santamar�a Rogado (howl) (12):
+David Santamaría Rogado (howl) (12):
 	video.m4: Simplify FFMpeg checks.
 	ArchHooks_Unix: Correct ffmpeg include.
 	MovieTexture_FFMpeg: Add and correct ffmpeg necessary includes.
@@ -854,7 +856,7 @@ changes are from baseline StepMania 4 SVN, in order to keep compatibility.
 20091122
 --------
 * [ArchHooks_Unix] Follow user's system language as default.
-  [David Santamar�a Rogado (howl)]
+  [David Santamaría Rogado (howl)]
   See http://www.stepmania.com/forums/showthread.php?t=21471 for more info.
 
 20091120
@@ -880,12 +882,12 @@ changes are from baseline StepMania 4 SVN, in order to keep compatibility.
 20091115
 --------
 * Prevent focus lost at Fullscreen on X11, fix windowed->fullscreen resolution
-  changes so that they save [David Santamar�a Rogado (howl)]
+  changes so that they save [David Santamaría Rogado (howl)]
   (http://www.stepmania.com/forums/showthread.php?t=21430)
 
 20091114
 --------
-* Add support for .oga and .ogv files. [David Santamar�a Rogado (howl)]
+* Add support for .oga and .ogv files. [David Santamaría Rogado (howl)]
   (http://pastie.org/698741)
 
 20091113
@@ -927,10 +929,10 @@ changes are from baseline StepMania 4 SVN, in order to keep compatibility.
  may provide a compatibility script for SM4SVN, so be on the lookout.)
  * r28221: "allow overriding, like PRODUCT_ID" [Glenn Maynard]
  * r28222-28223: "adding support for pms files" [GRIM657]
- * The pulseaudio patch [David Santamar�a Rogado (howl), Ondřej Hošek, Damien Thébault]
+ * The pulseaudio patch [David Santamaría Rogado (howl), Ondřej Hošek, Damien Thébault]
    (see http://www.stepmania.com/forums/showthread.php?t=21348)
  * Greg Nadja's OpenGL/Windows patch
- * Load Splash.png instead of an .xpm [David Santamar�a Rogado (howl)]
+ * Load Splash.png instead of an .xpm [David Santamaría Rogado (howl)]
    (http://www.stepmania.com/forums/showpost.php?p=157340&postcount=3)
 
 * sm-ssc Changes:
@@ -974,12 +976,10 @@ times a second" [Glenn Maynard]
  * r28199: The official log is as follows:
    "Hack to get the decorations to be deleted. Fixes crashes,
    but probably not the best way to go about this."
-   In addition to doing this, it adds GetChildren() to ActorFrame in the
-   code itself. (It already existed in Lua, I just felt like pointing
-   this out. :D) [Steve Checkoway]
+   [Steve Checkoway]
  * r28200: The official log is as follows:
    "Do not use an AutoActor to keep track of the children."
-   However, this also fixes the hack in r28200. [Steve Checkoway]
+   However, this also fixes the hack in r28199. [Steve Checkoway]
 
 * Allow for Codes on ScreenGameplay. [shakesoda]
 
