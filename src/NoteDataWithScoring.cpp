@@ -178,7 +178,7 @@ int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 #if 0
 int MinTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 {
-	// this shit is a wip
+	// work in progress
 	float scoretime = -9999;
 	int worst_track = -1;
 	TapNoteScore lowestTNS = TapNoteScore_Invalid;
@@ -276,7 +276,7 @@ float GetActualStreamRadarValue( const NoteData &in, float fSongSeconds )
 	return clamp( float(iW2s)/iTotalSteps, 0.0f, 1.0f );
 }
 
-/* Return the ratio of actual combo to max combo. */
+// Return the ratio of actual combo to max combo.
 float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, const PlayerStageStats &pss )
 {
 	/* STATSMAN->m_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes:
@@ -289,7 +289,7 @@ float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, const 
 	return clamp( fComboPercent, 0.0f, 1.0f );
 }
 
-/* Return the ratio of actual to possible W2s on jumps. */
+// Return the ratio of actual to possible W2s on jumps.
 float GetActualAirRadarValue( const NoteData &in, float fSongSeconds )
 {
 	const int iTotalDoubles = in.GetNumJumps();
@@ -301,7 +301,7 @@ float GetActualAirRadarValue( const NoteData &in, float fSongSeconds )
 	return clamp( (float)iNumDoubles / iTotalDoubles, 0.0f, 1.0f );
 }
 
-/* Return the ratio of actual to possible dance points. */
+// Return the ratio of actual to possible dance points.
 float GetActualChaosRadarValue( const NoteData &in, float fSongSeconds, const PlayerStageStats &pss )
 {
 	const int iPossibleDP = pss.m_iPossibleDancePoints;
@@ -312,7 +312,7 @@ float GetActualChaosRadarValue( const NoteData &in, float fSongSeconds, const Pl
 	return clamp( float(ActualDP)/iPossibleDP, 0.0f, 1.0f );
 }
 
-/* Return the ratio of actual to possible successful holds. */
+// Return the ratio of actual to possible successful holds.
 float GetActualFreezeRadarValue( const NoteData &in, float fSongSeconds )
 {
 	// number of hold steps

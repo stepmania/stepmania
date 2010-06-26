@@ -46,7 +46,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 
 	m_textNumLives.LoadFromFont( THEME->GetPathF(sType, "lives") );
 	m_textNumLives.SetName( ssprintf("NumLivesP%i",int(pn+1)) );
-	// fucking hardcoded shit
+	// old hardcoded commands:
 	/*
 	m_textNumLives.SetDiffuse( RageColor(1,1,1,1) );
 	m_textNumLives.SetShadowLength( 0 );
@@ -56,7 +56,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 		ActorUtil::LoadAllCommandsAndSetXY( m_textNumLives, sType );
 		this->AddChild( &m_textNumLives );
 	}
-	// fucking hardcoded shit
+	// old hardcoded commands:
 	/*
 	m_sprFrame.SetZoomX( pn==PLAYER_1 ? 1.0f : -1.0f );
 	m_sprBattery.SetZoomX( pn==PLAYER_1 ? 1.0f : -1.0f );
@@ -68,8 +68,8 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	if( bPlayerEnabled )
 	{
 		m_Percent.Load( pPlayerState, pPlayerStageStats, "LifeMeterBattery Percent", true );
-		// fucking hardcoded shit (this type of command is useful, but let the
-		// themer decide what they want to do, please)
+		// old hardcoded commands (this is useful, but let the themer decide
+		// what they want to do, please -aj)
 		//m_Percent.SetZoomX( pn==PLAYER_1 ? 1.0f : -1.0f );
 		this->AddChild( &m_Percent );
 	}
@@ -238,10 +238,13 @@ class LunaLifeMeterBattery: public Luna<LifeMeterBattery>
 {
 public:
 	static int GetLivesLeft( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetLivesLeft() ); return 1; }
+	// is this right? wtf -q2x
+	//static int GetTotalLives( T* p, lua_State *L )	{ lua_pushnumber( L, GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives ); return 1; }
 
 	LunaLifeMeterBattery()
 	{
 		ADD_METHOD( GetLivesLeft );
+		//ADD_METHOD( GetTotalLives );
 	}
 };
 
