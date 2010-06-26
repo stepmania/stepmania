@@ -784,8 +784,10 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( !m_sUrl.empty() )
 	{
 		if( HOOKS->GoToURL( m_sUrl ) )
+		{
 			if( m_bUrlExits )
 				SCREENMAN->SetNewScreen( "ScreenExit" );
+		}
 		else
 			ScreenPrompt::Prompt( SM_None, COULD_NOT_LAUNCH_BROWSER );
 	}

@@ -9,6 +9,12 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100626
+--------
+* Fixed a bug with urlnoexit GameCommand always returning the "Could not
+  launch web browser" message.
+* Removed some untested/non-working Model Lua bindings.
+
 20100623
 --------
 * Implement the last remaining SampleMusicPreviewMode: StartToPreview.
