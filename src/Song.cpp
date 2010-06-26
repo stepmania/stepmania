@@ -979,8 +979,10 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 			// going by Pump Pro. -aj
 			if(ntTo == StepsType_pump_halfdouble && pNewNotes->GetDifficulty() != Difficulty_Medium)
 				continue;
-			// todo: don't generate steps for Couples and Routine if
-			// AutoSetStyle is on? -aj
+			// Only generate Medium difficulty steps for Routine modes. -aj
+			if( (ntTo == StepsType_dance_routine || ntTo == StepsType_pump_routine )
+				&& pNewNotes->GetDifficulty() != Difficulty_Medium)
+				continue;
 			this->AddSteps( pNewNotes );
 		}
 	}
