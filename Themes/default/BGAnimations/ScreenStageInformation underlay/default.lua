@@ -18,7 +18,7 @@ t[#t+1] = Def.ActorFrame {
 	OnCommand=cmd(stoptweening;zoom,1.25;decelerate,3;zoom,1);
 	
 	LoadActor( THEME:GetPathG("ScreenStageInformation", "Stage " .. ToEnumShortString(GAMESTATE:GetCurrentStage()) ) ) .. {
-		OnCommand=cmd(diffusealpha,0;linear,0.5;diffusealpha,1);
+		OnCommand=cmd(diffusealpha,0;linear,0.25;diffusealpha,1;sleep,1.75;linear,0.5;zoomy,0;zoomx,2;diffusealpha,0);
 	};
 };
 

@@ -2,6 +2,27 @@
 -- This is the sm-ssc version. You should not be using this in themes for
 -- SM4 right now... We'll post an updated version soon.
 
+--[[ Globals ]]
+function IsArcade()
+	local sPayMode = GAMESTATE:GetCoinMode();
+	local bIsArcade = (sPayMode ~= 'CoinMode_Home');
+	return bIsArcade;
+end
+
+function IsHome()
+	local sPayMode = GAMESTATE:GetCoinMode();
+	local bIsArcade = (sPayMode == 'CoinMode_Home');
+	return bIsArcade;
+end
+
+function IsFreePlay()
+	if IsArcade() then
+		return (GAMESTATE:GetCoinMode() == 'CoinMode_Free');
+	else
+		return false
+	end
+end
+
 --[[ Aliases ]]
 
 -- Blend Modes

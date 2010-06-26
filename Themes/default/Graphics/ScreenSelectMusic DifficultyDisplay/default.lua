@@ -19,13 +19,23 @@ for idx,diff in pairs(Difficulty) do
 -- 			local Bar = self:GetChild("Bar");
 -- 			local Meter = self:GetChild("Meter"
 			local song = GAMESTATE:GetCurrentSong()
-			local st = GAMESTATE:GetCurrentStyle():GetStepsType()
-			local steps = song:GetOneSteps( st, diff );
--- 			local meter = steps:GetMeter();
-			local bHasStepsTypeAndDifficulty =
-				song and song:HasStepsTypeAndDifficulty( st, diff );
--- 			c.Meter:settext( meter );
-			
+			local bHasStepsTypeAndDifficulty = false;
+			local meter = "";
+			if song then
+				local st = GAMESTATE:GetCurrentStyle():GetStepsType()
+				bHasStepsTypeAndDifficulty = song:HasStepsTypeAndDifficulty( st, diff );
+				local steps = song:GetOneSteps( st, diff );
+				if steps then
+					meter = steps:GetMeter();
+					if meter >= 50 then
+						meter = "!";
+					end;
+					if diff == 'Difficulty_Edit' then
+						meter = meter .. " Edit";
+					end;
+				end;
+			end;
+			c.Meter:settext( meter );
 			self:playcommand( bHasStepsTypeAndDifficulty and "Show" or "Hide" );
 		end;
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
@@ -41,7 +51,7 @@ for idx,diff in pairs(Difficulty) do
 			Text=(sDifficulty == "Edit") and "0 Edits" or "0";
 			ShowCommand=cmd(stoptweening;linear,0.1;diffuse,CustomDifficultyToColor( sDifficulty ));
 			HideCommand=cmd(stoptweening;decelerate,0.2;diffuse,CustomDifficultyToDarkColor( sDifficulty ));
-			InitCommand=cmd(x,-64-8+tLocation[sDifficulty];zoom,0.5;diffuse,CustomDifficultyToColor( sDifficulty ));
+			InitCommand=cmd(x,-64-8+tLocation[sDifficulty];shadowlength,1;zoom,0.5;diffuse,CustomDifficultyToColor( sDifficulty ));
 		};
 	};
 end

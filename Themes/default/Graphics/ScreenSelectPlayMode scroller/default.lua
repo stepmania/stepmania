@@ -23,7 +23,7 @@ t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(x,-192;zoom,0.9);
 	LoadActor( gc:GetName() ) .. {
 		InitCommand=cmd(diffusealpha,0;zoom,0.75);
-		GainFocusCommand=cmd(stoptweening;smooth,0.125;diffusealpha,1;zoom,1;glow,Color("White");decelerate,0.25;glow,Color("Invisible");pulse;effecttiming,0,0.125,0.125,0.75;effectmagnitude,0.95,1,1;);
+		GainFocusCommand=cmd(stoptweening;stopeffect;smooth,0.125;diffusealpha,1;zoom,1;glow,Color("White");decelerate,0.25;glow,Color("Invisible");pulse;effecttiming,0.75,0.125,0.125,0.75;effectmagnitude,0.95,1,1;);
 		LoseFocusCommand=cmd(stoptweening;stopeffect;smooth,0.25;diffusealpha,0;zoom,0.75;glow,Color("Invisible"));
 	};
 };

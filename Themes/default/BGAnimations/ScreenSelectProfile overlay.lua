@@ -86,7 +86,7 @@ function LoadPlayerStuff(Player)
 		};
 		Def.Quad {
 			InitCommand=cmd(zoomto,200-10,40);
-			OnCommand=cmd(diffuse,PlayerColor(Player);glow,color("1,1,1,0.25"));
+			OnCommand=cmd(diffuse,PlayerColor(Player);fadeleft,0.25;faderight,0.25;glow,color("1,1,1,0.25"));
 		};
 		Def.Quad {
 			InitCommand=cmd(zoomto,200-10,40;y,-40/2+20);
