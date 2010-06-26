@@ -4,6 +4,8 @@ Code adapted from http://www.cs.rit.edu/~ncs/color/t_convert.html
 
 changelog:
 
+v 1
+
 = v1.1 =
 * Hue(color, newHue) changed to wrap around for invalid values.
 * Desaturate(color, percent) renamed to Saturation(color, percent).
@@ -17,8 +19,7 @@ HSV treats absolute brightness of a color at 1.0 in V.
 Saturation is different too.
 ]]
 
--- ColorToHSV(c)
--- Takes in a normal color("") and returns a table with the HSV values.
+-- HasAlpha(c)
 function HasAlpha(c)
 	if c[4] then
 	 	return c[4]
@@ -27,6 +28,8 @@ function HasAlpha(c)
 	end
 end
 
+-- ColorToHSV(c)
+-- Takes in a normal color("") and returns a table with the HSV values.
 function ColorToHSV(c)
 	local r = c[1]
 	local g = c[2]
