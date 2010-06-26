@@ -80,11 +80,11 @@ void Model::LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPat
 	ASSERT( m_pGeometry == NULL );
 	m_pGeometry = MODELMAN->LoadMilkshapeAscii( sMeshesPath, this->MaterialsNeedNormals() );
 
-	/* Validate material indices. */
+	// Validate material indices.
 	for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 	{
 		const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-		
+
 		if( pMesh->nMaterialIndex >= (int) m_Materials.size() )
 			RageException::Throw( "Model \"%s\" mesh \"%s\" references material index %i, but there are only %i materials.",
 				sMeshesPath.c_str(), pMesh->sName.c_str(), pMesh->nMaterialIndex, (int)m_Materials.size() );
@@ -93,10 +93,7 @@ void Model::LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPat
 	if( LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sBonesPath ) )
 		PlayAnimation( DEFAULT_ANIMATION_NAME );
 
-
-	//
 	// Setup temp vertices (if necessary)
-	//
 	if( m_pGeometry->HasAnyPerVertexBones() )
 	{
 		m_vTempMeshes = m_pGeometry->m_Meshes;
@@ -154,10 +151,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 			// m_pModel->nFrame = nFrame;
 		}
 
-
-		//
 		// materials
-		//
 		int nNumMaterials = 0;
 		if( sscanf(sLine, "Materials: %d", &nNumMaterials) == 1 )
 		{
@@ -312,7 +306,7 @@ void Model::DrawPrimitives()
 {
 	Actor::SetGlobalRenderStates();	// set Actor-specified render states
 
-	/* Don't if we're fully transparent */
+	// Don't if we're fully transparent
 	if( m_pTempState->diffuse[0].a < 0.001f && m_pTempState->glow.a < 0.001f )
 		return;
 
@@ -328,7 +322,6 @@ void Model::DrawPrimitives()
 		for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 		{
 			const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-
 
 			if( pMesh->nMaterialIndex != -1 )	// has a material
 			{
@@ -352,8 +345,8 @@ void Model::DrawPrimitives()
 					DISPLAY->TextureTranslate( vTexTranslate.x, vTexTranslate.y );
 				}
 
-				/* There's some common code that could be folded out here, but it seems
-				 * clearer to keep it separate. */
+				/* There's some common code that could be folded out here, but
+				 * it seems clearer to keep it separate. */
 				bool bUseMultitexture = PREFSMAN->m_bAllowMultitexture  &&  DISPLAY->GetNumTextureUnits() >= 2;
 				if( bUseMultitexture )
 				{
@@ -361,12 +354,12 @@ void Model::DrawPrimitives()
 					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() ? mat.diffuse.GetCurrentTexture()->GetTexHandle() : 0 );
 					Actor::SetTextureRenderStates();	// set Actor-specified render states
 					DISPLAY->SetSphereEnvironmentMapping( TextureUnit_1, mat.diffuse.m_bSphereMapped );
-					
+
 					// render the additive texture with texture unit 2
 					if( mat.alpha.GetCurrentTexture() )
 					{
 						DISPLAY->SetTexture( TextureUnit_2, mat.alpha.GetCurrentTexture() ? mat.alpha.GetCurrentTexture()->GetTexHandle() : 0 );
-						Actor::SetTextureRenderStates();	// set Actor-specified render states
+						Actor::SetTextureRenderStates(); // set Actor-specified render states
 						DISPLAY->SetSphereEnvironmentMapping( TextureUnit_2, mat.alpha.m_bSphereMapped );
 						DISPLAY->SetTextureMode( TextureUnit_2, TextureMode_Add );
 						DISPLAY->SetTextureFiltering( TextureUnit_2, true );
@@ -375,12 +368,12 @@ void Model::DrawPrimitives()
 					{
 						DISPLAY->SetTexture( TextureUnit_2, 0 );
 
-						// set current texture back to 0 or else texture transform applied above 
-						// isn't used.  Why?!?
+						// set current texture back to 0 or else texture
+						// transform applied above  isn't used. Why?!?
 						DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() ? mat.diffuse.GetCurrentTexture()->GetTexHandle() : 0 );
 					}
 
-					/* go */
+					// go
 					DrawMesh( i );
 
 					// Turn off environment mapping on tex unit 0.
@@ -401,7 +394,7 @@ void Model::DrawPrimitives()
 						Actor::SetTextureRenderStates();	// set Actor-specified render states
 
 						DISPLAY->SetSphereEnvironmentMapping( TextureUnit_1, mat.alpha.m_bSphereMapped );
-						// UGLY:  This overrides the Actor's BlendMode
+						// UGLY: This overrides the Actor's BlendMode.
 						DISPLAY->SetBlendMode( BLEND_ADD );
 						DISPLAY->SetTextureFiltering( TextureUnit_1, true );
 						DrawMesh( i );
@@ -429,9 +422,7 @@ void Model::DrawPrimitives()
 		}
 	}
 
-	//////////////////////
 	// render the glow pass
-	//////////////////////
 	if( m_pTempState->glow.a > 0.0001f )
 	{
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
@@ -541,7 +532,7 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 		vector<RageModelVertex> &Vertices = pMesh->Vertices;
 		for( unsigned j = 0; j < Vertices.size(); j++ )
 		{
-//			int iBoneIndex = (pMesh->m_iBoneIndex!=-1) ? pMesh->m_iBoneIndex : bone;
+			// int iBoneIndex = (pMesh->m_iBoneIndex!=-1) ? pMesh->m_iBoneIndex : bone;
 			RageVector3 &pos = Vertices[j].p;
 			int8_t bone = Vertices[j].bone;
 			if( bone != -1 )
@@ -561,7 +552,7 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 		}
 	}
 
-	/* Set up m_vpBones, just in case we're drawn without being Update()d. */
+	// Set up m_vpBones, just in case we're drawn without being Update()d.
 	SetBones( m_pCurAnimation, m_fCurFrame, m_vpBones );
 	UpdateTempGeometry();
 }
@@ -578,10 +569,10 @@ void Model::AdvanceFrame( float fDeltaTime )
 		m_pGeometry->m_Meshes.empty() || 
 		!m_pCurAnimation )
 	{
-		return;	// bail early
+		return; // bail early
 	}
 
-//	LOG->Trace( "m_fCurFrame = %f", m_fCurFrame );
+	// LOG->Trace( "m_fCurFrame = %f", m_fCurFrame );
 
 	m_fCurFrame += FRAMES_PER_SECOND * fDeltaTime * m_fCurAnimationRate;
 	if( m_fCurFrame < 0 || m_fCurFrame >= m_pCurAnimation->nTotalFrames )
@@ -613,9 +604,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			continue;
 		}
 
-		//
 		// search for the adjacent position keys
-		//
 		const msPositionKey *pLastPositionKey = NULL, *pThisPositionKey = NULL;
 		for( size_t j = 0; j < pBone->PositionKeys.size(); ++j )
 		{
@@ -639,9 +628,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		else if( pThisPositionKey == NULL )
 			vPos = pLastPositionKey->Position;
 
-		//
 		// search for the adjacent rotation keys
-		//
 		const msRotationKey *pLastRotationKey = NULL, *pThisRotationKey = NULL;
 		for( size_t j = 0; j < pBone->RotationKeys.size(); ++j )
 		{
