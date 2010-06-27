@@ -122,13 +122,14 @@ Branch = {
 		local restricted = { "PlayMode_Oni", "PlayMode_Rave",
 			--"PlayMode_Battle" -- ??
 		};
+		local optionsScreen = "ScreenPlayerOptions"
 		for i=1,#restricted do
 			if restricted[i] == pm then
-				return "ScreenPlayerOptionsRestricted"
+				optionsScreen = "ScreenPlayerOptionsRestricted"
 			end;
 		end
 		if SCREENMAN:GetTopScreen():GetGoToOptions() then
-			return "ScreenPlayerOptions";
+			return optionsScreen;
 		else
 			return "ScreenStageInformation";
 		end
