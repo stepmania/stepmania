@@ -12,7 +12,7 @@
 #if 0
 static void RemoveHoles( NoteData &out, const Song &song )
 {
-	/* Start at the second BPM segment; the first one is already aligned. */
+	// Start at the second BPM segment; the first one is already aligned.
 	for( unsigned seg = 1; seg < song.m_Timing.m_BPMSegments.size(); ++seg )
 	{
 //		const float FromBeat = song.m_Timing.m_BPMSegments[seg].m_fStartBeat;
@@ -72,6 +72,9 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 	int iTickCount = -1;	// this is the value we read for TICKCOUNT
 	vector<RString> vNoteRows;
 
+	// According to Aldo_MX, there is a default BPM and it's 60. -aj
+	bool bDoublesChart = false;
+
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue( i );
@@ -96,6 +99,14 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		else if( 0==stricmp(sValueName,"DIFFICULTY") )
 		{
 			out.SetMeter( max(atoi(sParams[1]), 0) );
+		}
+		// new cases from Aldo_MX's fork:
+		else if( 0==stricmp(sValueName,"PLAYER") )
+		{
+			RString player = sParams[1];
+			player.ToLower();
+			if( player.Find( "double" ) != -1 )
+				bDoublesChart = true;
 		}
 	}
 
@@ -138,10 +149,11 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 
 		out.m_StepsType = StepsType_pump_single;
 
-		/* Check for "halfdouble" before "double". */
+		// Check for "halfdouble" before "double".
 		if( sFName.find("halfdouble") != string::npos || sFName.find("h_double") != string::npos )
 			out.m_StepsType = StepsType_pump_halfdouble;
-		else if( sFName.find("double") != string::npos || sFName.find("nightmare") != string::npos || sFName.find("freestyle") != string::npos )
+		// Handle bDoublesChart from above as well. -aj
+		else if( sFName.find("double") != string::npos || sFName.find("nightmare") != string::npos || sFName.find("freestyle") != string::npos || bDoublesChart )
 			out.m_StepsType = StepsType_pump_double;
 		else if( sFName.find("_1") != string::npos )
 			out.m_StepsType = StepsType_pump_single;
@@ -220,7 +232,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			}
 		}
 
-		/* Half-doubles is offset; "0011111100000". */
+		// Half-doubles is offset; "0011111100000".
 		if( out.m_StepsType == StepsType_pump_halfdouble )
 			sRowString.erase( 0, 2 );
 
@@ -271,7 +283,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		fCurBeat = prevBeat + 1.0f / iTickCount;
 	}
 
-	/* We need to remove holes where the BPM increases. */
+	// We need to remove holes where the BPM increases.
 //	if( song.m_Timing.m_BPMSegments.size() > 1 )
 //		RemoveHoles( notedata, song );
 
@@ -290,7 +302,7 @@ static void LoadTags( const RString &str, Song &out )
 	 * str is either "title", "artist - title", or "artist - title - difficulty". */
 	vector<RString> asBits;
 	split( str, " - ", asBits, false );
-	/* Ignore the difficulty, since we get that elsewhere. */
+	// Ignore the difficulty, since we get that elsewhere.
 	if( asBits.size() == 3 && (
 		!stricmp(asBits[2], "double") ||
 		!stricmp(asBits[2], "easy") ||
@@ -314,7 +326,7 @@ static void LoadTags( const RString &str, Song &out )
 		title = asBits[0];
 	}
 
-	/* Convert, if possible.  Most KSFs are in Korean encodings (CP942/EUC-KR). */
+	// Convert, if possible. Most KSFs are in Korean encodings (CP942/EUC-KR).
 	if( !ConvertString( title, "korean" ) )
 		title = "";
 	if( !ConvertString( artist, "korean" ) )
@@ -413,11 +425,17 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			split( theSteps, "\n", vNoteRows, true );
 		}
 
-		else if( 0==stricmp(sValueName,"DIFFICULTY"))
+		else if( 0==stricmp(sValueName,"DIFFICULTY") )
 		{
 			/* DIFFICULTY is handled only in LoadFromKSFFile.  Ignore it here. */
 			continue;
 		}
+		// New cases noted in Aldo_MX's code:
+		else if( 0==stricmp(sValueName,"MUSICINTRO") || 0==stricmp(sValueName,"INTRO") )
+		{
+			out.m_fMusicSampleStartSeconds = HHMMSSToSeconds( sParams[1] );
+		}
+		// end new cases
 		else
 		{
 			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".",
@@ -439,7 +457,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				    BPM1, BeatsPerSecond, BPMPos2, beat );
 			out.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BPM2) );
 		}
-		
+
 		if( BPM3 > 0 && BPMPos3 > 0 )
 		{
 			const float BeatsPerSecond = BPM2 / 60.0f;

@@ -9,6 +9,11 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100627
+--------
+* [NotesLoaderKSF] Support reading of #PLAYER and #MUSICINTRO/#INTRO tags in
+  KSF files. [based on code by Aldo_MX]
+
 20100626
 --------
 * Fixed a bug with urlnoexit GameCommand always returning the "Could not
