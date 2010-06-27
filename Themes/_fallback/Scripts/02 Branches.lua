@@ -42,6 +42,16 @@ Branch = {
 			return "ScreenTitleJoin"
 		end
 	end,
+	StartGame = function()
+		-- Check to see if there are 0 songs installed. Also make sure to check
+		-- that the additional song count is also 0, because there is
+		-- a possibility someone will use their existing StepMania simfile
+		-- collection with sm-ssc via AdditionalFolders/AdditionalSongFolders.
+		if SONGMAN:GetNumSongs() == 0 and SONGMAN:GetNumAdditionalSongs() == 0 then
+			return "ScreenHowToInstallSongs";
+		end;
+		return "ScreenSelectProfile";
+	end,
 	AfterProfileLoad = function()
 		return "ScreenSelectProfile"
 	end,
@@ -108,6 +118,15 @@ Branch = {
 		end
 	end,
 	PlayerOptions = function()
+		local pm = GAMESTATE:GetPlayMode()
+		local restricted = { "PlayMode_Oni", "PlayMode_Rave",
+			--"PlayMode_Battle" -- ??
+		};
+		for i=1,#restricted do
+			if restricted[i] == pm then
+				return "ScreenPlayerOptionsRestricted"
+			end;
+		end
 		if SCREENMAN:GetTopScreen():GetGoToOptions() then
 			return "ScreenPlayerOptions";
 		else
