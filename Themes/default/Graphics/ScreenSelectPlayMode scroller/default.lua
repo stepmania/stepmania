@@ -16,15 +16,18 @@ t[#t+1] = Def.ActorFrame {
 		InitCommand=cmd(diffuse,colors[gc:GetName()];diffusealpha,0);
 		GainFocusCommand=cmd(stoptweening;linear,0.125;diffusealpha,1);
 		LoseFocusCommand=cmd(stoptweening;linear,0.125;diffusealpha,0);
+		OffFocusedCommand=cmd(finishtweening;glow,Color("White");decelerate,1.5;glow,Color("Invisible"));
 	};
 };
 -- Emblem Frame
 t[#t+1] = Def.ActorFrame {
+	FOV=90;
 	InitCommand=cmd(x,-192;zoom,0.9);
 	LoadActor( gc:GetName() ) .. {
 		InitCommand=cmd(diffusealpha,0;zoom,0.75);
 		GainFocusCommand=cmd(stoptweening;stopeffect;smooth,0.125;diffusealpha,1;zoom,1;glow,Color("White");decelerate,0.25;glow,Color("Invisible");pulse;effecttiming,0.75,0.125,0.125,0.75;effectmagnitude,0.95,1,1;);
 		LoseFocusCommand=cmd(stoptweening;stopeffect;smooth,0.25;diffusealpha,0;zoom,0.75;glow,Color("Invisible"));
+		OffFocusedCommand=cmd(finishtweening;stopeffect;glow,colors[gc:GetName()];decelerate,1.75;rotationy,360*1;glow,Color("Invisible"));
 	};
 };
 -- Text Frame
