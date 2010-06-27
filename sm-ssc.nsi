@@ -4,7 +4,7 @@
 ; hacked by AJ for sm-ssc
 ; NOTE: this .NSI script is designed for NSIS v2.0+
 
-;--------------------------------
+;-------------------------------------------------------------------------------
 ;Includes
 
 	!include "MUI.nsh"	; Modern UI
@@ -15,7 +15,7 @@
 	; the title screen version text.
 	!include "src\ProductInfo.inc"
 
-;--------------------------------
+;-------------------------------------------------------------------------------
 ;General
 
 	!system "echo Compressing executables. This may take a moment ..." ignore
@@ -51,7 +51,7 @@
 	InstallColors /windows
 	InstProgressFlags smooth
 
-;--------------------------------
+;-------------------------------------------------------------------------------
 ;Interface Settings
 
 	!define MUI_HEADERIMAGE
@@ -61,7 +61,7 @@
 	!define MUI_ICON "Installer\install.ico"
 	!define MUI_UNICON "Installer\uninstall.ico"
 
-;--------------------------------
+;-------------------------------------------------------------------------------
 ;Language Selection Dialog Settings
 
 	;Remember the installer language
@@ -69,7 +69,7 @@
 	!define MUI_LANGDLL_REGISTRY_KEY "Software\${PRODUCT_ID}" 
 	!define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
-;--------------------------------
+;-------------------------------------------------------------------------------
 ;Pages
 
 !ifdef SHOW_AUTORUN
@@ -94,7 +94,7 @@
 	!insertmacro MUI_UNPAGE_CONFIRM
 	!insertmacro MUI_UNPAGE_INSTFILES
 
-;--------------------------------
+;-------------------------------------------------------------------------------
 ;Languages
 
 	!insertmacro MUI_LANGUAGE "English" # first language is the default language
@@ -153,7 +153,7 @@
 	!system '"Program\StepMania.exe" --ExportNsisStrings'
 	!include "nsis_strings_temp.inc"
 
-;--------------------------------
+;-------------------------------------------------------------------------------
 ;Reserve Files
   
   ;These files should be inserted before other files in the data block
@@ -162,7 +162,7 @@
   
   !insertmacro MUI_RESERVEFILE_LANGDLL
 
-;--------------------------------
+;-------------------------------------------------------------------------------
 ;Utility Functions
 !ifdef ASSOCIATE_SMZIP
 !define SHCNE_ASSOCCHANGED 0x08000000
@@ -180,7 +180,7 @@ Function un.RefreshShellIcons
 FunctionEnd
 !endif
 
-;--------------------------------
+;-------------------------------------------------------------------------------
 ;Installer Sections
 
 Section "Main Section" SecMain
@@ -272,7 +272,7 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\NoteSkins\dance\Delta"
 	; the "midi-*" noteskin series was formerly known as just "midi".
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi"
-	; we may also want to remove the new ones?
+	; we may also want to remove the new ones.
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-solo"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-vivid"
@@ -282,6 +282,8 @@ Section "Main Section" SecMain
 	; pump
 	RMDir /r "$INSTDIR\NoteSkins\pump\default"
 	RMDir /r "$INSTDIR\NoteSkins\pump\simple"
+	; kb7
+	RMDir /r "$INSTDIR\NoteSkins\kb7\default"
 	; lights
 	RMDir /r "$INSTDIR\NoteSkins\lights\default"
 	SetOutPath "$INSTDIR\NoteSkins"
@@ -307,6 +309,11 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR\NoteSkins\pump"
 	File /r /x CVS /x .svn "NoteSkins\pump\default"
 	File /r /x CVS /x .svn "NoteSkins\pump\simple"
+	SetOutPath "$INSTDIR"
+
+	; install kb7 noteskins
+	SetOutPath "$INSTDIR\NoteSkins\kb7"
+	File /r /x CVS /x .svn "NoteSkins\kb7\default"
 	SetOutPath "$INSTDIR"
 
 	; install lights noteskin
@@ -394,9 +401,10 @@ Section "Main Section" SecMain
 	; xxx: StepMania.exe
 	; xxx: make desktop shortcut an option
 	!ifdef MAKE_DESKTOP_SHORTCUT
-		CreateShortCut "$DESKTOP\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania.exe"
+		CreateShortCut "$DESKTOP\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
 	!endif
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN_WITHOUT_SSE2).lnk" "$INSTDIR\Program\StepMania.exe"
 	!ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
 		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 	!endif
@@ -421,7 +429,7 @@ Section "Main Section" SecMain
 	
 SectionEnd
 
-;--------------------------------
+;-------------------------------------------------------------------------------
 ;Installer Functions
 
 !ifdef SHOW_AUTORUN
@@ -608,7 +616,7 @@ Function .onInit
 
 FunctionEnd
  
-;--------------------------------
+;-------------------------------------------------------------------------------
 ;Uninstaller Section
 ; todo: update big time
 
@@ -655,17 +663,26 @@ Section "Uninstall"
 	RMDir /r "$INSTDIR\NoteSkins\common\default"
 	RMDir "$INSTDIR\NoteSkins\common"
 	RMDir /r "$INSTDIR\NoteSkins\dance\default"
-	RMDir /r "$INSTDIR\NoteSkins\dance\flat"
-	RMDir /r "$INSTDIR\NoteSkins\dance\gamma"
-	RMDir /r "$INSTDIR\NoteSkins\dance\note"
-	RMDir /r "$INSTDIR\NoteSkins\dance\solo"
+	RMDir /r "$INSTDIR\NoteSkins\dance\Delta"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-note"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-routine-p1"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-routine-p2"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-solo"
+	RMDir /r "$INSTDIR\NoteSkins\dance\midi-vivid"
+	RMDir /r "$INSTDIR\NoteSkins\dance\retro"
 	RMDir "$INSTDIR\NoteSkins\dance"
-	RMDir /r "$INSTDIR\NoteSkins\pump\classic"
+
 	RMDir /r "$INSTDIR\NoteSkins\pump\default"
+	RMDir /r "$INSTDIR\NoteSkins\pump\simple"
 	RMDir "$INSTDIR\NoteSkins\pump"
-	RMDir /r "$INSTDIR\NoteSkins\para\default"
-	RMDir "$INSTDIR\NoteSkins\para"
-	RMDir "$INSTDIR\NoteSkins"
+
+	RMDir /r "$INSTDIR\NoteSkins\kb7\default"
+	RMDir "$INSTDIR\NoteSkins\kb7"
+
+	; we don't currently install para noteskins
+	;RMDir /r "$INSTDIR\NoteSkins\para\default"
+	;RMDir "$INSTDIR\NoteSkins\para"
+	;RMDir "$INSTDIR\NoteSkins"
 
 	RMDir /r "$INSTDIR\BackgroundEffects"
 
@@ -732,7 +749,7 @@ Section "Uninstall"
 
 SectionEnd
 
-;--------------------------------
+;-------------------------------------------------------------------------------
 ;Uninstaller Functions
 
 Function un.onInit
