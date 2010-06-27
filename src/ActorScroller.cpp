@@ -10,9 +10,8 @@
 
 /* Tricky: We need ActorFrames created in Lua to auto delete their children.
  * We don't want classes that derive from ActorFrame to auto delete their 
- * children.  The name "ActorFrame" is widely used in Lua, so we'll have
- * that string instead create an ActorFrameAutoDeleteChildren object.
- */
+ * children. The name "ActorFrame" is widely used in Lua, so we'll have
+ * that string instead create an ActorFrameAutoDeleteChildren object. */
 //REGISTER_ACTOR_CLASS( ActorScroller )
 REGISTER_ACTOR_CLASS_WITH_NAME( ActorScrollerAutoDeleteChildren, ActorScroller )
 ActorScroller *ActorScroller::Copy() const { return new ActorScroller(*this); }
@@ -150,7 +149,7 @@ void ActorScroller::LoadFromNode( const XNode *pNode )
 
 	bool bUseMask = false;
 	pNode->GetAttrValue( "UseMask", bUseMask );
-	
+
 	if( bUseMask )
 	{
 		pNode->GetAttrValue( "MaskWidth", m_fMaskWidth );
@@ -165,7 +164,7 @@ void ActorScroller::UpdateInternal( float fDeltaTime )
 {
 	ActorFrame::UpdateInternal( fDeltaTime );
 
-	/* If we have no children, the code below will busy loop. */
+	// If we have no children, the code below will busy loop.
 	if( !m_SubActors.size() )
 		return;
 
@@ -219,10 +218,8 @@ void ActorScroller::PositionItems()
 	PositionItemsAndDrawPrimitives( false );
 }
 
-/*
- * Shift m_SubActors forward by iDist.  This will place item m_iFirstSubActorIndex
- * in m_SubActors[0].
- */
+/* Shift m_SubActors forward by iDist. This will place item m_iFirstSubActorIndex
+ * in m_SubActors[0]. */
 void ActorScroller::ShiftSubActors( int iDist )
 {
 	if( iDist != INT_MAX )
@@ -264,7 +261,7 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 	vector<Actor*> subs;
 
 	{
-		/* Shift m_SubActors so iFirstItemToDraw is at the beginning. */
+		// Shift m_SubActors so iFirstItemToDraw is at the beginning.
 		int iNewFirstIndex = iFirstItemToDraw;
 		int iDist = iNewFirstIndex - m_iFirstSubActorIndex;
 		m_iFirstSubActorIndex = iNewFirstIndex;
@@ -282,9 +279,10 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 		else if( iIndex < 0 || iIndex >= (int)m_SubActors.size() )
 			continue;
 
-		// Optimization: Zero out unused parameters so that they don't create new, unnecessary 
-		// entries in the position cache.  On scrollers with lots of items,
-		// especially with Subdivisions > 1, m_exprTransformFunction uses too much memory.
+		// Optimization: Zero out unused parameters so that they don't create new,
+		// unnecessary  entries in the position cache. On scrollers with lots of
+		// items, especially with Subdivisions > 1, m_exprTransformFunction uses
+		// too much memory.
 		if( !m_bFunctionDependsOnPositionOffset )
 			fPosition = 0;
 		if( !m_bFunctionDependsOnItemIndex )
@@ -336,7 +334,7 @@ public:
 	static int SetFastCatchup( T* p, lua_State *L )			{ p->SetFastCatchup(BArg(1)); return 0; }
 	static int SetLoop( T* p, lua_State *L )			{ p->SetLoop(BArg(1)); return 0; }
 	static int SetMask( T* p, lua_State *L )			{ p->EnableMask(FArg(1), FArg(2)); return 0; }
-	
+
 	static int SetNumItemsToDraw( T* p, lua_State *L )		{ p->SetNumItemsToDraw(FArg(1)); return 0; }
 	static int GetFullScrollLengthSeconds( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecondsForCompleteScrollThrough() ); return 1; }
 	static int GetCurrentItem( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetCurrentItem() ); return 1; }
