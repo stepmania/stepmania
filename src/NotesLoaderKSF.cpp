@@ -103,9 +103,9 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		// new cases from Aldo_MX's fork:
 		else if( 0==stricmp(sValueName,"PLAYER") )
 		{
-			RString player = sParams[1];
-			player.ToLower();
-			if( player.Find( "double" ) != -1 )
+			RString sPlayer = sParams[1];
+			sPlayer.MakeLower();
+			if( sPlayer.find( "double" ) != string::npos )
 				bDoublesChart = true;
 		}
 	}
