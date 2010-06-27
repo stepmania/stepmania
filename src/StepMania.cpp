@@ -1147,7 +1147,17 @@ int main(int argc, char* argv[])
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 
-	StepMania::ChangeCurrentGame( GAMESTATE->GetCurrentGame() );
+	// allow the player to pass in a gametype via command line. -aj
+	RString argGame;
+	const Game* g = GAMESTATE->GetCurrentGame();
+	if( GetCommandlineArgument(	"game",&argGame) )
+	{
+		// we need to perform some conversion surgery
+		const Game* newG = GAMEMAN->StringToGame(argGame);
+		if(newG && newG != g)
+			g = newG;
+	}
+	StepMania::ChangeCurrentGame( g );
 
 	INPUTQUEUE	= new InputQueue;
 	SONGINDEX	= new SongCacheIndex;

@@ -13,6 +13,7 @@ _____________________________________________________________________________
 --------
 * [NotesLoaderKSF] Support reading of #PLAYER and #MUSICINTRO/#INTRO tags in
   KSF files. [based on code by Aldo_MX]
+* Added --game= command line option.
 
 20100626
 --------
