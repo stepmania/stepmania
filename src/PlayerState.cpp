@@ -238,6 +238,14 @@ public:
 		LuaHelpers::Push( L, s );
 		return 1;
 	}
+	static int GetPlayerOptionsArray( T* p, lua_State *L )
+	{
+		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
+		vector<RString> s;
+		p->m_PlayerOptions.Get(m).GetMods(s);
+		LuaHelpers::CreateTableFromArray<RString>( s, L );
+		return 1;
+	}
 
 	LunaPlayerState()
 	{
@@ -245,6 +253,7 @@ public:
 		ADD_METHOD( GetMultiPlayerNumber );
 		ADD_METHOD( SetPlayerOptions );
 		ADD_METHOD( GetPlayerOptions );
+		ADD_METHOD( GetPlayerOptionsArray );
 	}
 };
 
