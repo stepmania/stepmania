@@ -868,11 +868,14 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 		ASSERT( b );
 
 		// load player profiles
+		// (this could be a possible cause of the screenshot bug. I'm not sure. -aj)
+		/*
 		if( GAMESTATE->HaveProfileToLoad() )
 		{
 			GAMESTATE->LoadProfiles( true ); // I guess you could always load edits here...
 			SCREENMAN->ZeroNextUpdate(); // be kind, don't skip frames if you can avoid it
 		}
+		*/
 
 		m_iSelection[pn] = iSel;
 		if( GAMESTATE->IsCourseMode() )
