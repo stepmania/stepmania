@@ -14,6 +14,9 @@ _____________________________________________________________________________
 * Fixed a bug with urlnoexit GameCommand always returning the "Could not
   launch web browser" message.
 * Removed some untested/non-working Model Lua bindings.
+* Only autogen Medium difficulty steps for Routine modes.
+* Added PlayerState:GetPlayerOptionsArray() Lua binding.
+* Revert a commit from 20091219 regarding profile loading on ScreenSelectMusic.
 
 20100623
 --------
