@@ -142,7 +142,7 @@ void ScoreKeeperNormal::Load(
 		RadarValues rvPre;
 		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPre );
 
-		/* Apply user transforms to find out how the notes will really look. 
+		/* Apply user transforms to find out how the notes will really look.
 		 *
 		 * XXX: This is brittle: if we end up combining mods for a song differently
 		 * than ScreenGameplay, we'll end up with the wrong data.  We should probably
@@ -152,7 +152,7 @@ void ScoreKeeperNormal::Load(
 		NoteDataUtil::TransformNoteData( nd, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
 		RadarValues rvPost;
 		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
-		 
+
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
 		iTotalPossibleGradePoints += this->GetPossibleGradePoints( rvPre, rvPost );
 	}
@@ -203,7 +203,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 
   Nonstop mode requires the player to play 4 songs in succession, with the total maximum possible score for
   the four song set being 100,000,000. This comes from the sum of the four stages' maximum possible scores,
-  which, regardless of song or difficulty is: 
+  which, regardless of song or difficulty is:
 
   10,000,000 for the first song
   20,000,000 for the second song
@@ -370,28 +370,28 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
   Regular scoring:
 
   Let p = score multiplier (W1 = W2 = 10, W3 = 5, other = 0)
-  
+
   Note on NONSTOP Mode scoring
 
   Let p = score multiplier (W1 = 10, W2 = 9, W3 = 5, other = 0)
 
   N = total number of steps and freeze steps
-  S = The sum of all integers from 1 to N (the total number of steps/freeze steps) 
+  S = The sum of all integers from 1 to N (the total number of steps/freeze steps)
   n = number of the current step or freeze step (varies from 1 to N)
   Z = Base value of the song (1,000,000 X the number of feet difficulty) - All edit data is rated as 5 feet
-  So, the score for one step is: 
-  one_step_score = p * (Z/S) * n 
-  
-  *IMPORTANT* : Double steps (U+L, D+R, etc.) count as two steps instead of one *for your combo count only*, 
-  so if you get a double L+R on the 112th step of a song, you score is calculated for only one step, not two, 
-  as the combo counter might otherwise imply.  
-	
-  Now, through simple algebraic manipulation:
-  S = 1+...+N = (1+N)*N/2 (1 through N added together) 
+  So, the score for one step is:
+  one_step_score = p * (Z/S) * n
 
-  Okay, time for an example.  Suppose we wanted to calculate the step score of a W3 on the 57th step of 
-  a 441 step, 8-foot difficulty song (I'm just making this one up): 
-  
+  *IMPORTANT* : Double steps (U+L, D+R, etc.) count as two steps instead of one *for your combo count only*,
+  so if you get a double L+R on the 112th step of a song, you score is calculated for only one step, not two,
+  as the combo counter might otherwise imply.
+
+  Now, through simple algebraic manipulation:
+  S = 1+...+N = (1+N)*N/2 (1 through N added together)
+
+  Okay, time for an example.  Suppose we wanted to calculate the step score of a W3 on the 57th step of
+  a 441 step, 8-foot difficulty song (I'm just making this one up):
+
   S = (1 + 441)*441 / 2
   = 194,222 / 2
   = 97,461
@@ -399,16 +399,16 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
   = 5 * (8,000,000 / 97,461) * 57
   = 5 * (82) * 57 (The 82 is rounded down from 82.08411...)
   = 23,370
-  
-  Remember this is just the score for the step, not the cumulative score up to the 57th step. Also, please note that 
-  I am currently checking into rounding errors with the system and if there are any, how they are resolved in the system. 
-  
-  Note: if you got all W2s on this song, you would get (p=10)*Z, which is 80,000,000. In fact, the maximum possible 
-  score for any song is the number of feet difficulty X 10,000,000. 
+
+  Remember this is just the score for the step, not the cumulative score up to the 57th step. Also, please note that
+  I am currently checking into rounding errors with the system and if there are any, how they are resolved in the system.
+
+  Note: if you got all W2s on this song, you would get (p=10)*Z, which is 80,000,000. In fact, the maximum possible
+  score for any song is the number of feet difficulty X 10,000,000.
 */
 	if( PREFSMAN->m_ScoringType != SCORING_CUSTOM || GAMESTATE->IsCourseMode() )
 	{
-		int p = 0;	// score multiplier 
+		int p = 0;	// score multiplier
 
 		switch( score )
 		{
@@ -531,7 +531,7 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 				m_pPlayerStageStats->m_iActualDancePoints += TapNoteScoreToDancePoints( TNS_HitMine );
 			m_pPlayerStageStats->m_iTapNoteScores[TNS_HitMine] += 1;
 
-			
+
 			if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
 			{
 				int &iScore = m_pPlayerStageStats->m_iScore;
@@ -539,12 +539,12 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 			}
 		}
 
-		NSMAN->ReportScore( 
-			m_pPlayerState->m_PlayerNumber, 
+		NSMAN->ReportScore(
+			m_pPlayerState->m_PlayerNumber,
 			tns,
 			m_pPlayerStageStats->m_iScore,
 			m_pPlayerStageStats->m_iCurCombo,
-			tn.result.fTapNoteOffset 
+			tn.result.fTapNoteOffset
 		);
 		Message msg( "ScoreChanged" );
 		msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
@@ -634,8 +634,8 @@ void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsIn
 }
 
 void ScoreKeeperNormal::GetRowCounts( const NoteData &nd, int iRow,
-				      int &iNumHitContinueCombo, int &iNumHitMaintainCombo,
-				      int &iNumBreakCombo )
+					  int &iNumHitContinueCombo, int &iNumHitMaintainCombo,
+					  int &iNumBreakCombo )
 {
 	iNumHitContinueCombo = iNumHitMaintainCombo = iNumBreakCombo = 0;
 	for( int track = 0; track < nd.GetNumTracks(); ++track )
@@ -777,8 +777,8 @@ void ScoreKeeperNormal::HandleHoldScore( const TapNote &tn )
 	// TODO: Remove indexing with PlayerNumber
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	NSMAN->ReportScore(
-		pn, 
-		holdScore+TapNoteScore_Invalid, 
+		pn,
+		holdScore+TapNoteScore_Invalid,
 		m_pPlayerStageStats->m_iScore,
 		m_pPlayerStageStats->m_iCurCombo,
 		tn.result.fTapNoteOffset );
@@ -798,7 +798,7 @@ int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& radars )
 	int NumLifts = int(radars[RadarCategory_Lifts]);
 	int NumHolds = int(radars[RadarCategory_Holds]);
 	int NumRolls = int(radars[RadarCategory_Rolls]);
-	return 
+	return
 		NumTaps*TapNoteScoreToDancePoints(TNS_W1, false) +
 		NumLifts*TapNoteScoreToDancePoints(TNS_W1, false) +
 		NumHolds*HoldNoteScoreToDancePoints(HNS_Held, false) +
@@ -810,7 +810,7 @@ int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& fOriginalRadar
 	/* The logic here is that if you use a modifier that adds notes, you should
 	 * have to hit the new notes to get a high grade. However, if you use one
 	 * that removes notes, they should simply be counted as misses. */
-	return max( 
+	return max(
 		GetPossibleDancePoints(fOriginalRadars),
 		GetPossibleDancePoints(fPostRadars) );
 }
@@ -824,7 +824,7 @@ int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& radars )
 	int NumLifts = int(radars[RadarCategory_Lifts]);
 	int NumHolds = int(radars[RadarCategory_Holds]);
 	int NumRolls = int(radars[RadarCategory_Rolls]);
-	return 
+	return
 		NumTaps*TapNoteScoreToGradePoints(TNS_W1, false) +
 		NumLifts*TapNoteScoreToGradePoints(TNS_W1, false) +
 		NumHolds*HoldNoteScoreToGradePoints(HNS_Held, false) +
@@ -836,7 +836,7 @@ int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& fOriginalRadar
 	/* The logic here is that if you use a modifier that adds notes, you should
 	 * have to hit the new notes to get a high grade. However, if you use one
 	 * that removes notes, they should simply be counted as misses. */
-	return max( 
+	return max(
 		GetPossibleGradePoints(fOriginalRadars),
 		GetPossibleGradePoints(fPostRadars) );
 }
@@ -948,7 +948,7 @@ int ScoreKeeperNormal::HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBegi
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -958,7 +958,7 @@ int ScoreKeeperNormal::HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBegi
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
