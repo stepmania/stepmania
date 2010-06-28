@@ -5,7 +5,8 @@ ret.RedirTable =
 	Key1 = "Key",
 	Key2 = "Key",
 	Key3 = "Key",
-	Key4 = GAMESTATE:IsSideJoined(PLAYER_1) and "Key" or "Space",
+	-- should work? doesn't though.
+	Key4 = GAMESTATE:IsSideJoined('PlayerNumber_P2') and "Space" or "Key",
 	Key5 = "Key",
 	Key6 = "Key",
 	Key7 = "Key",
