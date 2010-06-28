@@ -1,7 +1,7 @@
 local t = Def.ActorFrame{
 	-- normal
 	Def.Sprite {
-		Texture=NOTESKIN:GetPath( '_down', 'receptor' );
+		Texture=NOTESKIN:GetPath( '_down', 'receptor base' );
 		Frame0000=0;
 		Delay0000=1;
 		InitCommand=NOTESKIN:GetMetricA('ReceptorArrow', 'InitCommand');
@@ -10,7 +10,7 @@ local t = Def.ActorFrame{
 	};
 	-- flashpert
 	Def.Sprite {
-		Texture="_receptor tap";
+		Texture="_down receptor tap";
 		Frame0000=0;
 		Delay0000=1;
 		InitCommand=NOTESKIN:GetMetricA('ReceptorOverlay', 'InitCommand');

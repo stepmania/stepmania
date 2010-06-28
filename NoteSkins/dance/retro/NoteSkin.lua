@@ -16,10 +16,8 @@ local OldRedir = ret.Redir;
 ret.Redir = function(sButton, sElement)
 	sButton, sElement = OldRedir(sButton, sElement);
 
-	-- Instead of separate hold heads, use the tap note graphics.
-	if sElement == "Hold Head Inactive" or
-	   sElement == "Hold Head Active" or
-	   sElement == "Roll Head Inactive" or
+	-- Instead of separate roll heads (for now), use the tap note graphics.
+	if sElement == "Roll Head Inactive" or
 	   sElement == "Roll Head Active"
 	then
 		sElement = "Tap Note";
@@ -31,7 +29,6 @@ ret.Redir = function(sButton, sElement)
 end
 
 -- To have separate graphics for each hold part:
---[[
 local OldRedir = ret.Redir;
 ret.Redir = function(sButton, sElement)
 	-- Redirect non-hold, non-roll parts.
@@ -40,7 +37,6 @@ ret.Redir = function(sButton, sElement)
 	end
 	return OldRedir(sButton, sElement);
 end
-]]
 
 local OldFunc = ret.Load;
 function ret.Load()
@@ -78,15 +74,14 @@ ret.Rotate =
 	UpRight = 225,
 };
 
---
 -- If a derived skin wants to have separate UpLeft graphics,
 -- use this:
---
--- ret.RedirTable.UpLeft = "UpLeft";
--- ret.RedirTable.UpRight = "UpLeft";
--- ret.Rotate.UpLeft = 0;
--- ret.Rotate.UpRight = 90;
---
+
+ret.RedirTable.UpLeft = "UpLeft";
+ret.RedirTable.UpRight = "UpLeft";
+ret.Rotate.UpLeft = 0;
+ret.Rotate.UpRight = 90;
+
 ret.Blank =
 {
 	["Hold Topcap Active"] = true,
