@@ -929,24 +929,24 @@ static const Style g_Style_KB7_Single =
 	StyleType_OnePlayerOneSide,		// m_StyleType
 	7,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
-		{	// PLAYER_1
-			{ TRACK_1,	-KB7_COL_SPACING*2.5f, NULL },
-			{ TRACK_2,	-KB7_COL_SPACING*1.5f, NULL },
-			{ TRACK_3,	-KB7_COL_SPACING*0.5f, NULL },
-			{ TRACK_4,	+KB7_COL_SPACING*0.0f, NULL },
-			{ TRACK_4,	+KB7_COL_SPACING*0.5f, NULL },
-			{ TRACK_5,	+KB7_COL_SPACING*1.5f, NULL },
-			{ TRACK_6,	+KB7_COL_SPACING*2.5f, NULL },
-		},
 		// intentionally different
-		{	// PLAYER_2
+		{	// PLAYER_1
 			{ TRACK_1,	-KB7_COL_SPACING*3.0f, NULL },
 			{ TRACK_2,	-KB7_COL_SPACING*2.0f, NULL },
 			{ TRACK_3,	-KB7_COL_SPACING*1.0f, NULL },
 			{ TRACK_4,	+KB7_COL_SPACING*0.0f, NULL },
-			{ TRACK_4,	+KB7_COL_SPACING*1.0f, NULL },
-			{ TRACK_5,	+KB7_COL_SPACING*2.0f, NULL },
-			{ TRACK_6,	+KB7_COL_SPACING*3.0f, NULL },
+			{ TRACK_5,	+KB7_COL_SPACING*1.0f, NULL },
+			{ TRACK_6,	+KB7_COL_SPACING*2.0f, NULL },
+			{ TRACK_7,	+KB7_COL_SPACING*3.0f, NULL },
+		},
+		{	// PLAYER_2
+			{ TRACK_1,	-KB7_COL_SPACING*2.5f, NULL },
+			{ TRACK_2,	-KB7_COL_SPACING*1.5f, NULL },
+			{ TRACK_3,	-KB7_COL_SPACING*0.5f, NULL },
+			{ TRACK_4,	+KB7_COL_SPACING*0.0f, NULL },
+			{ TRACK_5,	+KB7_COL_SPACING*0.5f, NULL },
+			{ TRACK_6,	+KB7_COL_SPACING*1.5f, NULL },
+			{ TRACK_7,	+KB7_COL_SPACING*2.5f, NULL },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
@@ -954,7 +954,7 @@ static const Style g_Style_KB7_Single =
 		{ 0, 1, 2, 3, 4, 5, 6, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		4,0,1,2,3,5,6
+		4,0,1,2,3,5,6 // doesn't work?
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -977,18 +977,18 @@ static const Style g_Style_KB7_Versus =
 			{ TRACK_2,	-KB7_COL_SPACING*1.5f, NULL },
 			{ TRACK_3,	-KB7_COL_SPACING*0.5f, NULL },
 			{ TRACK_4,	+KB7_COL_SPACING*0.0f, NULL },
-			{ TRACK_4,	+KB7_COL_SPACING*0.5f, NULL },
-			{ TRACK_5,	+KB7_COL_SPACING*1.5f, NULL },
-			{ TRACK_6,	+KB7_COL_SPACING*2.5f, NULL },
+			{ TRACK_5,	+KB7_COL_SPACING*0.5f, NULL },
+			{ TRACK_6,	+KB7_COL_SPACING*1.5f, NULL },
+			{ TRACK_7,	+KB7_COL_SPACING*2.5f, NULL },
 		},
 		{	// PLAYER_2
 			{ TRACK_1,	-KB7_COL_SPACING*2.5f, NULL },
 			{ TRACK_2,	-KB7_COL_SPACING*1.5f, NULL },
 			{ TRACK_3,	-KB7_COL_SPACING*0.5f, NULL },
 			{ TRACK_4,	+KB7_COL_SPACING*0.0f, NULL },
-			{ TRACK_4,	+KB7_COL_SPACING*0.5f, NULL },
-			{ TRACK_5,	+KB7_COL_SPACING*1.5f, NULL },
-			{ TRACK_6,	+KB7_COL_SPACING*2.5f, NULL },
+			{ TRACK_5,	+KB7_COL_SPACING*0.5f, NULL },
+			{ TRACK_6,	+KB7_COL_SPACING*1.5f, NULL },
+			{ TRACK_7,	+KB7_COL_SPACING*2.5f, NULL },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
