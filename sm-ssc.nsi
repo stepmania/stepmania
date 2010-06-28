@@ -418,7 +418,8 @@ Section "Main Section" SecMain
 	!endif
 
 	; xxx: StepMania.exe
-	CreateShortCut "$INSTDIR\${PRODUCT_ID}.lnk" "$INSTDIR\Program\StepMania.exe"
+	CreateShortCut "$INSTDIR\${PRODUCT_ID}.lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
+	CreateShortCut "$INSTDIR\${PRODUCT_ID} (non-SSE2).lnk" "$INSTDIR\Program\StepMania.exe"
 !endif
 
 	IfErrors do_error do_no_error
@@ -695,6 +696,8 @@ Section "Uninstall"
 	RMDir "$INSTDIR\Songs"	; will delete only if empty
 
 	Delete "$INSTDIR\Themes\instructions.txt"
+	RMDir /r "$INSTDIR\Themes\_fallback"
+	RMDir /r "$INSTDIR\Themes\_portKit-sm4"
 	RMDir /r "$INSTDIR\Themes\default"
 	RMDir "$INSTDIR\Themes"
 
@@ -733,6 +736,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\info.txt"
 	Delete "$INSTDIR\crashinfo.txt"
 	Delete "$INSTDIR\${PRODUCT_ID}.lnk"
+	Delete "$INSTDIR\${PRODUCT_ID} (non-SSE2).lnk"
 
 	RMDir "$INSTDIR"	; will delete only if empty
 
