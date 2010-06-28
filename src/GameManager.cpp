@@ -954,7 +954,7 @@ static const Style g_Style_KB7_Single =
 		{ 0, 1, 2, 3, 4, 5, 6, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		0,1,2,3,4,5,6
+		4,0,1,2,3,5,6
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -996,7 +996,7 @@ static const Style g_Style_KB7_Versus =
 		{ 0, 1, 2, 3, 4, 5, 6, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		0,1,2,3,4,5,6
+		4,0,1,2,3,5,6
 	},
 	true, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
