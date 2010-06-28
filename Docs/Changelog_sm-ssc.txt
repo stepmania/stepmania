@@ -14,6 +14,8 @@ _____________________________________________________________________________
 * [NotesLoaderKSF] Support reading of #PLAYER and #MUSICINTRO/#INTRO tags in
   KSF files. [based on code by Aldo_MX]
 * Added --game= command line option.
+* Adjust KB7 draw order which still seems wrong, change noteskin.
+  Use default-p2 and join as player 2 to play with original spacing. [shakesoda]
 
 20100626
 --------
