@@ -151,6 +151,7 @@ my @files = (
 	"Courses/Default",
 	"Data",
 	"NoteSkins/common/common",
+	# dance noteskins
 	"NoteSkins/dance/default",
 	"NoteSkins/dance/Delta",
 	"NoteSkins/dance/midi-note",
@@ -159,8 +160,12 @@ my @files = (
 	"NoteSkins/dance/midi-routine-p1",
 	"NoteSkins/dance/midi-routine-p2",
 	"NoteSkins/dance/retro",
+	# pump noteskins
 	"NoteSkins/pump/default",
 	"NoteSkins/pump/simple",
+	# kb7 noteskins
+	"NoteSkins/kb7/default",
+	# themes
 	"Themes/_fallback",
 	"Themes/_portKit-sm4",
 	"Themes/default"
