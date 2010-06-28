@@ -2,7 +2,7 @@
 
 <!-- Before checking the documentation in, make sure that it validates by
      going to http://tools.decisionsoft.com/schemaValidate/ and using
-     Lua.xsd for the XML Schema and this file for the XML Instanace. -->
+     Lua.xsd for the XML Schema and this file for the XML Instance. -->
 
 <!-- Using Link:
      If you leave out the text (i.e., <Link ... />), it tries to output what
@@ -30,6 +30,9 @@
 	<Function name='AreStageSongModsForced' theme='_fallback' return='bool' arguments=''>
 		[02 StageMods.lua]
 	</Function>
+	<Function name='assert' return='various' arguments='LuaReference v, string sAssertMessage'>
+		Issues an error when <code>v</code> is <code>false</code> (or <code>nil</code>). Returns all arguments otherwise. <code>sAssertMessage</code> is an optional error message (the default is "assertion failed!").
+	</Function>
 	<Function name='Basename' return='string' arguments='string path'>
 		Returns the base name of file path.
 	</Function>
@@ -41,6 +44,12 @@
 	</Function>
 	<Function name='CheckpointsTapsSeparateJudgment' theme='_fallback' return='bool' arguments=''>
 		[03 Gameplay.lua]
+	</Function>
+	<Function name='clamp' return='float' arguments='float fValue, float fLow, float fHigh'>
+		CLAMP is an all-female Japanese mangaka group that formed in the mid 1980s. Erm, I mean... Clamps <code>fValue</code> between <code>fLow</code> and <code>fHigh</code>.
+	</Function>
+	<Function name='collectgarbage' return='void' arguments='string opt, float arg'>
+		A generic interface to Lua's garbage collector. Performs different functions based on the value of <code>opt</code>.
 	</Function>
 	<Function name='color' return='color' arguments='string color'>
 		Returns a color from a string. <code>color</code> can be in
@@ -65,11 +74,17 @@
 	<Function name='FormatPercentScore' return='string' arguments='float fPercentDancePoints'>
 		Returns <code>fPercentDancePoints</code> formatted as a percentage.
 	</Function>
+	<Function name='GetCustomDifficulty' return='string' arguments='StepsType st, Difficulty d, CourseType ct'>
+		Returns the corresponding CustomDifficulty string for a StepsType/Difficulty (/optional CourseType) combination.
+	</Function>
 	<Function name='GetGradeFromPercent' return='Grade' arguments='float fPercent, bool bMerciful'>
 		Returns a corresponding <Link class='ENUM' function='Grade' /> for the given percentage.
 	</Function>
 	<Function name='GetLifeDifficulty' return='int' arguments=''>
 		Returns the current Life Difficulty.
+	</Function>
+	<Function name='GetOSName' sm-ssc='true' return='string' arguments=''>
+		Returns a string representing the name of the operating system being used. (e.g. "Xbox", "Windows", "Linux", "Mac, "Unknown")
 	</Function>
 	<Function name='GetThemeAspectRatio' return='float' arguments=''>
 		Returns the theme's aspect ratio.
@@ -99,7 +114,7 @@
 	<Function name='LoadActorFunc' theme='_fallback' return='ActorDef' arguments='string path, int level'>
 		[02 ActorDef.lua] Loads an actor template. This is the actual core of LoadActor.
 	</Function>
-	<Function name='LoadActorWithParams' theme='_fallback' return='lua.RunWithThreadVariables' arguments='string path, table params, ...'>
+	<Function name='LoadActorWithParams' theme='_fallback' return='void' arguments='string path, table params, ...'>
 		[02 ActorDef.lua] Loads an actor with params.
 	</Function>
 	<Function name='loadfile' theme='_fallback' return='chunk' arguments='string sFilePath'>
@@ -150,11 +165,14 @@
 	<Function name='StandardDecorationFromFileOptional' theme='_fallback' return='Actor' arguments='string sMetricsName, string sFileName'>
 		[02 ActorDef.lua] 
 	</Function>
+	<Function name='TextBannerAfterSet' theme='_fallback' return='void' arguments=''>
+		[02 Other.lua] This function defines how the TextBanner is laid out.
+	</Function>
 	<Function name='ToEnumShortString' theme='_fallback' return='string' arguments='enum e'>
 		[02 Enum.lua] Returns a string representing an enum starting from '_'. For example, passing <Link class='ENUM' function='PlayerNumber'>PlayerNumber_P1</Link> to this function will return <code>P1</code>.
 	</Function>
-	<Function name='Trace' return='void' arguments='string sString'>
-		Alias for <Link class='lua' function='Trace' />.
+	<Function name='Trace' theme='_fallback' return='void' arguments='string sString'>
+		[00 init.lua] Alias for <Link class='lua' function='Trace' />.
 	</Function>
 	<Function name='Var' theme='_fallback' return='ThreadVariable' arguments=''>
 		[01 base.lua] Alias for <Link class="lua" function="GetThreadVariable">lua.GetThreadVariable</Link>.
@@ -333,6 +351,15 @@
 	<Function name='accelerate' return='void' arguments='float fRate'>
 		Plays the commands that follow at an accelerated rate (<code>fRate</code> * <code>fRate</code>), where <code>fRate</code> is in seconds.
 	</Function>
+	<Function name='addrotationx' sm-ssc='true' return='void' arguments='float rot'>
+		Adds <code>rot</code> to the Actor's current x rotation.
+	</Function>
+	<Function name='addrotationy' sm-ssc='true' return='void' arguments='float rot'>
+		Adds <code>rot</code> to the Actor's current y rotation.
+	</Function>
+	<Function name='addrotationz' sm-ssc='true' return='void' arguments='float rot'>
+		Adds <code>rot</code> to the Actor's current z rotation.
+	</Function>
 	<Function name='addx' return='void' arguments='float xPos'>
 		Adds <code>xPos</code> to the Actor's current x position.
 	</Function>
@@ -349,8 +376,7 @@
 		Sets whether or not the Actor should animate.
 	</Function>
 	<Function name='aux' return='void' arguments='float fAux'>
-		<!-- XXX: What is aux? -->
-		Sets the Actor's aux value.
+		Sets the Actor's aux value. (This can be a solution for coupling data with an Actor.)
 	</Function>
 	<Function name='backfacecull' return='void' arguments='bool b'>
 		If <code>true</code>, cull the Actor's back faces. See also: <Link class='Actor' function='cullmode' />.
@@ -469,6 +495,9 @@
 	<Function name='effectperiod' return='void' arguments='float fTime'>
 		Set the Actor's effect period to <code>fTime</code>.
 	</Function>
+	<Function name='effecttiming' return='void' arguments='float fRampUp, float fAtHalf, float fRampDown, float fAtZero'>
+		Set the Actor's effect timing.
+	</Function>
 	<Function name='fadebottom' return='void' arguments='float percent'>
 		Fades <code>percent</code> of the Actor from the bottom where <code>percent</code> is in the range 0..1.
 	</Function>
@@ -488,7 +517,6 @@
 		[02 Actor.lua] Stretches an Actor to fill the entire screen.
 	</Function>
 	<Function name='getaux' return='float' arguments=''>
-		<!-- XXX: What is aux? -->
 		Returns the Actor's aux value.
 	</Function>
 	<Function name='GetBaseZoomX' return='float' arguments=''>
@@ -502,6 +530,12 @@
 	</Function>
 	<Function name='GetDiffuseAlpha' return='float' arguments=''>
 		Returns the Actor's current diffusealpha.
+	</Function>
+	<Function name='GetEffectDelta' return='float' arguments=''>
+		Returns the Actor's current effect delta.
+	</Function>
+	<Function name='geteffectfagnitude' return='float' arguments=''>
+		Returns the Actor's current effect magnitude as three floats (not one; I hate Lua.xsd).
 	</Function>
 	<Function name='GetHAlign' sm-ssc='true' return='float' arguments=''>
 		Returns the Actor's horizontal alignment as a number in the range 0..1.
@@ -523,6 +557,12 @@
 	</Function>
 	<Function name='GetRotationZ' sm-ssc='true' return='float' arguments=''>
 		Returns the Actor's current Z rotation.
+	</Function>
+	<Function name='GetSecsIntoEffect' return='float' arguments=''>
+		Returns the number of seconds into the currently running effect (e.g. diffuseshift, bob).
+	</Function>
+	<Function name='GetTweenTimeLeft' return='float' arguments=''>
+		Returns how much time is remaining for the current tween.
 	</Function>
 	<Function name='GetVAlign' sm-ssc='true' return='float' arguments=''>
 		Returns the Actor's vertical alignment as a number in the range 0..1.
@@ -578,6 +618,9 @@
 	<Function name='queuecommand' return='void' arguments='string sCommandName'>
 		Queues a command named <code>sCommandName</code> to be played.
 	</Function>
+	<Function name='queuemessage' return='void' arguments='string sMessageName'>
+		Basically creates a command named <code>!sMessageName</code> (Note the ! at the beginning. The source code says this: "Hack: use "!" as a marker to broadcast a command, instead of playing a command, so we don't have to add yet another element to every tween state for this rarely-used command.")
+	</Function>
 	<Function name='rainbow' return='void' arguments=''>
 		Makes the Actor change colors continually using colors of the rainbow.
 	</Function>
@@ -602,6 +645,9 @@
 	<Function name='scaletofit' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
 		Scales the Actor to fit inside a rectangle defined by the four float arguments.
 	</Function>
+	<Function name='SetHeight' return='void' arguments='float height'>
+		Sets the height of the Actor.
+	</Function>
 	<Function name='setsize' return='void' arguments='float width, float height'>
 		Sets the size of the Actor.
 	</Function>
@@ -610,6 +656,9 @@
 	</Function>
 	<Function name='setstate' return='void' arguments='int iNewState'>
 		Sets a multi-framed Actor's state to <code>iNewState</code>.
+	</Function>
+	<Function name='SetWidth' return='void' arguments='float width'>
+		Sets the width of the Actor.
 	</Function>
 	<Function name='shadowcolor' return='void' arguments='color c'>
 		Sets the shadow's color to <code>c</code>.
@@ -693,11 +742,20 @@
 	<Function name='CenterY' theme='_fallback' return='void' arguments=''>
 		[03 ProductivityHelpers.lua] Centers an Actor on the y axis. (equivalent to <code>y,SCREEN_CENTER_Y</code>)
 	</Function>
+	<Function name='heartbeat' theme='_fallback' return='void' arguments='float fEffectPeriod'>
+		[03 ProductivityHelpers.lua] A customized version of pulse that is more appealing for on-beat effects.
+	</Function>
 	<Function name='MaskDest' theme='_fallback' return='void' arguments=''>
 		[03 ProductivityHelpers.lua] Sets and Actor as a mask destination.
 	</Function>
 	<Function name='MaskSource' theme='_fallback' return='void' arguments=''>
 		[03 ProductivityHelpers.lua] Sets an Actor as a mask source. (Also clears zbuffer; other mask sources need to not clear the zbuffer)
+	</Function>
+	<Function name='Real' theme='_fallback' return='void' arguments='float f'>
+		[03 ProductivityHelpers.lua] Make graphics their true size at any resolution.
+	</Function>
+	<Function name='RealInverse' theme='_fallback' return='void' arguments='float f'>
+		[03 ProductivityHelpers.lua] Scale things back up after they have already been scaled down.
 	</Function>
 	<Function name='thump' theme='_fallback' return='void' arguments='float fEffectPeriod'>
 		[03 ProductivityHelpers.lua] A customized version of pulse that is more appealing for on-beat effects.
@@ -1030,6 +1088,12 @@
 	<Function name='GetCardPath' return='string' arguments=''>
 		Returns the path to the character's card graphic.
 	</Function>
+	<Function name='GetCharacterDir' sm-ssc='true' return='string' arguments=''>
+		Returns this character's directory.
+	</Function>
+	<Function name='GetCharacterID' sm-ssc='true' return='string' arguments=''>
+		Returns this character's ID.
+	</Function>
 	<Function name='GetDanceAnimationPath' sm-ssc='true' return='string' arguments=''>
 		Returns the path of the dancing animation of this character.
 	</Function>
@@ -1089,6 +1153,9 @@
 	<Function name='GetBannerPath' return='int' arguments=''>
 		Returns the path to the Course's banner.
 	</Function>
+	<Function name='GetCourseDir' sm-ssc='true' return='string' arguments=''>
+		Returns the Course's directory.
+	</Function>
 	<Function name='GetCourseEntry' return='CourseEntry' arguments='int iIndex'>
 		Gets the CourseEntry at <code>iIndex</code> from the Course.
 	</Function>
@@ -1116,21 +1183,26 @@
 	<Function name='GetTranslitFullTitle' return='string' arguments=''>
 		Returns the full transliterated title of the Course.
 	</Function>
+	<Function name='HasBackground' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the Course has a background.
+	</Function>
+	<Function name='HasBanner' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the Course has a banner.
+	</Function>
 	<Function name='HasMods' return='bool' arguments=''>
 		Returns <code>true</code> if the Course has modifiers.
 	</Function>
 	<Function name='HasTimedMods' return='bool' arguments=''>
 		Returns <code>true</code> if the Course has timed modifiers.
 	</Function>
+	<Function name='IsAnEdit' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the Course is an edit.
+	</Function>
 	<Function name='IsAutogen' return='bool' arguments=''>
 		Returns <code>true</code> if the Course was automatically generated.
 	</Function>
 	<Function name='IsEndless' return='bool' arguments=''>
 		Returns <code>true</code> if the Course is Endless.
-	</Function>
-	<!-- sm-ssc additions -->
-	<Function name='HasBanner' sm-ssc='true' return='bool' arguments=''>
-		Returns <code>true</code> if the Course has a banner.
 	</Function>
 	<Function name='IsNonstop' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the Course is Nonstop.
@@ -1244,8 +1316,8 @@
 	<Function name='GetFirstStepsTypeForGame' return='StepsType' arguments='Game game'>
 		Return the first <Link class='StepsType' /> for the specified <code>game</code>.
 	</Function>
-	<Function name='IsGameEnabled' sm-ssc='true' return='bool' arguments='Game g'>
-		Returns <code>true</code> if any noteskins exist for the specified Game <code>g</code>.
+	<Function name='IsGameEnabled' sm-ssc='true' return='bool' arguments='string s'>
+		Returns <code>true</code> if any noteskins exist for the specified Game <code>s</code>.
 	</Function>
 	<Function name='StepsTypeToLocalizedString' return='string' arguments='StepsType st'>
 		Return the localized string representation of <code>st</code>.
@@ -1518,6 +1590,9 @@
 	<Function name='SetJukeboxUsesModifiers' return='void' arguments='bool bUseMods'>
 		Sets if the Jukebox should use modifiers.
 	</Function>
+	<Function name='SetMultiplayer' sm-ssc='true' return='void' arguments='bool b'>
+		
+	</Function>
 	<Function name='SetNumMultiplayerNoteFields' return='void' arguments='int iFields'>
 		Sets the number of multiplayer notefields to <code>iFields</code>
 	</Function>
@@ -1590,6 +1665,9 @@
 <Class name='HighScore'>
 	<Function name='GetDate' return='DateTime' arguments=''>
 		Returns the date and time the high score was achieved.
+	</Function>
+	<Function name='GetGrade' return='Grade' arguments=''>
+		Returns the Grade of this high score.
 	</Function>
 	<Function name='GetHoldNoteScore' sm-ssc="true" return='int' arguments='HoldNoteScore hns'>
 		Return the number of HoldNoteScores that match <code>hns</code>.
@@ -1912,6 +1990,9 @@
 <Class name='PrefsManager'>
 	<Function name='GetPreference' return='various' arguments='string sPreference'>
 		Return the value of the preference <code>sPreference</code>.
+	</Function>
+	<Function name='PreferenceExists' sm-ssc='true' return='bool' arguments='string sPreference'>
+		Return true if preference <code>sPreference</code> exists.
 	</Function>
 	<Function name='SetPreference' return='void' arguments='string sPreference, various value'>
 		Set the value of the preference <code>sPreference</code> to <code>value</code>.
@@ -2372,8 +2453,8 @@
 	<Function name='GetDisplayArtist' return='string' arguments=''>
 		Returns the displayed artist of the song.
 	</Function>
-	<Function name='GetDisplayBpms' sm-ssc='true' return='{float,float}' arguments=''>
-		Returns a table containing the display BPMs.
+	<Function name='GetDisplayBpms' sm-ssc='true' return='{float}' arguments=''>
+		Returns a table of 2 floats containing the display BPMs.
 	</Function>
 	<Function name='GetDisplayFullTitle' return='string' arguments=''>
 		Returns the displayed full title of the song, including subtitle.
@@ -2509,8 +2590,8 @@
 	<Function name='GetCourseColor' return='color' arguments='Course c'>
 		Returns the course color of course <code>c</code>.
 	</Function>
-	<Function name='GetExtraStageInfo' return='Song, Steps' arguments='bool bExtra2, Style s'>
-		Returns the extra stage info for the specified Style <code>s</code>. (If <code>bExtra2</code> is true, it will use the second Extra Stage data instead of the first.)
+	<Function name='GetExtraStageInfo' return='various' arguments='bool bExtra2, Style s'>
+		Returns the extra stage info (Song, Steps) for the specified Style <code>s</code>. (If <code>bExtra2</code> is true, it will use the second Extra Stage data instead of the first. Again, Lua.xsd sucks)
 	</Function>
 	<Function name='GetNumAdditionalCourses' return='int' arguments=''>
 		Returns the number of courses loaded via Additional folders.
@@ -2769,6 +2850,9 @@
 	</Function>
 </Class>
 <Class name='ThemeManager'>
+	<Function name='GetCurLanguage' sm-ssc='true' return='string' arguments=''>
+		Returns the current language.
+	</Function>
 	<Function name='GetCurrentThemeDirectory' sm-ssc='true' return='string' arguments=''>
 		Returns the theme's current directory.
 	</Function>
@@ -2787,8 +2871,8 @@
 	<Function name='GetPathG' return='string' arguments='string ClassName, string Element'>
 		Returns the path of an element in the Graphics folder.
 	</Function>
-	<Function name='GetPathInfoB' arguments='string ClassName, string Element' return='string, string, string'>
-		returns BGAnimation ResolvedPath, MatchingMetricsGroup, MatchingElement. Used in <Link class='GLOBAL' function='LoadFallbackB'>LoadFallbackB</Link> in themes/_fallback/02 Other.lua.
+	<Function name='GetPathInfoB' return='string' arguments='string ClassName, string Element'>
+		returns three strings: BGAnimation ResolvedPath, MatchingMetricsGroup, MatchingElement. Used in <Link class='GLOBAL' function='LoadFallbackB'>LoadFallbackB</Link> in themes/_fallback/02 Other.lua. (Lua.xsd sucks)
 	</Function>
 	<Function name='GetPathO' sm-ssc='true' return='string' arguments='string ClassName, string Element'>
 		Returns the path of an element in the Other folder.
@@ -2837,7 +2921,7 @@
 	<Function name='HasBPMChanges' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains BPM changes.
 	</Function>
-	<Function name='HasNegativeBPMs' return='bool' arguments=''>
+	<Function name='HasNegativeBPMs' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the TimingData contains any BPM changes with a negative BPM.
 	</Function>
 	<Function name='HasStops' return='bool' arguments=''>
@@ -2859,6 +2943,23 @@
 	</Function>
 	<Function name='GetStepsType' return='StepsType' arguments=''>
 		Returns the Trail's StepsType.
+	</Function>
+	<Function name='GetTrailEntry' sm-ssc='true' return='TrailEntry' arguments='int iEntry'>
+		Returns the TrailEntry at index <code>iEntry</code>.
+	</Function>
+</Class>
+<Class name='TrailEntry'>
+	<Function name='GetNormalModifiers' sm-ssc='true' return='string' arguments=''>
+		Returns a string of modifiers used in this TrailEntry.
+	</Function>
+	<Function name='GetSong' return='Song' arguments=''>
+		Returns the Song used in this TrailEntry.
+	</Function>
+	<Function name='GetSteps' sm-ssc='true' return='Steps' arguments=''>
+		Returns the Steps used in this TrailEntry.
+	</Function>
+	<Function name='IsSecret' sm-ssc='true' return='bool' arguments=''>
+		(why'd I think this was a good idea when we have CourseEntry:IsSecret?)
 	</Function>
 </Class>
 <Class name='UnlockEntry'>

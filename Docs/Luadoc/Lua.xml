@@ -45,9 +45,12 @@
 		<Function name='GetOSName'/>
 		<Function name='GetProTiming'/>
 		<Function name='GetRandomSongBackground'/>
+		<Function name='GetReal'/>
+		<Function name='GetRealInverse'/>
 		<Function name='GetScreenAspectRatio'/>
 		<Function name='GetServerName'/>
 		<Function name='GetSongBackground'/>
+		<Function name='GetTapPosition'/>
 		<Function name='GetThemeAspectRatio'/>
 		<Function name='GetTimingDifficulty'/>
 		<Function name='GetUnlockEntryIndexToCelebrate'/>
@@ -59,16 +62,18 @@
 		<Function name='HSVA'/>
 		<Function name='HSVToColor'/>
 		<Function name='HSVToHex'/>
+		<Function name='HasAlpha'/>
 		<Function name='HitCombo'/>
 		<Function name='HoldHeadStep'/>
-		<Function name='HoldJudgmentHeld'/>
-		<Function name='HoldJudgmentLetGo'/>
 		<Function name='HoldTiming'/>
 		<Function name='Hour'/>
 		<Function name='Hue'/>
 		<Function name='ImmediateHoldLetGo'/>
 		<Function name='InitUserPrefs'/>
 		<Function name='InitialHoldLife'/>
+		<Function name='IsArcade'/>
+		<Function name='IsFreePlay'/>
+		<Function name='IsHome'/>
 		<Function name='IsNetConnected'/>
 		<Function name='IsNetSMOnline'/>
 		<Function name='IsSMOnlineLoggedIn'/>
@@ -124,6 +129,7 @@
 		<Function name='SelectProfileKeys'/>
 		<Function name='Serialize'/>
 		<Function name='SetUserPref'/>
+		<Function name='ShowHoldJudgments'/>
 		<Function name='ShowStandardDecoration'/>
 		<Function name='SortOrderToLocalizedString'/>
 		<Function name='SpeedMods'/>
@@ -149,9 +155,9 @@
 		<Function name='UserPrefGameplayShowScore'/>
 		<Function name='UserPrefGameplayShowStepsDisplay'/>
 		<Function name='UserPrefLongFail'/>
+		<Function name='UserPrefNotePosition'/>
 		<Function name='UserPrefShowLotsaOptions'/>
 		<Function name='Var'/>
-		<Function name='VersionCheck'/>
 		<Function name='VersionDate'/>
 		<Function name='VersionTime'/>
 		<Function name='Warn'/>
@@ -213,10 +219,13 @@
 			<Function name='Draw'/>
 			<Function name='FullScreen'/>
 			<Function name='GetBaseZoomX'/>
+			<Function name='GetBaseZoomY'/>
+			<Function name='GetBaseZoomZ'/>
 			<Function name='GetCommand'/>
 			<Function name='GetDiffuse'/>
 			<Function name='GetDiffuseAlpha'/>
 			<Function name='GetEffectDelta'/>
+			<Function name='GetGlow'/>
 			<Function name='GetHAlign'/>
 			<Function name='GetHeight'/>
 			<Function name='GetName'/>
@@ -242,6 +251,8 @@
 			<Function name='LyricCommand'/>
 			<Function name='MaskDest'/>
 			<Function name='MaskSource'/>
+			<Function name='Real'/>
+			<Function name='RealInverse'/>
 			<Function name='RunCommandsRecursively'/>
 			<Function name='SetHeight'/>
 			<Function name='SetSize'/>
@@ -249,6 +260,9 @@
 			<Function name='SetWidth'/>
 			<Function name='accelerate'/>
 			<Function name='addcommand'/>
+			<Function name='addrotationx'/>
+			<Function name='addrotationy'/>
+			<Function name='addrotationz'/>
 			<Function name='addx'/>
 			<Function name='addy'/>
 			<Function name='addz'/>
@@ -260,8 +274,10 @@
 			<Function name='baserotationx'/>
 			<Function name='baserotationy'/>
 			<Function name='baserotationz'/>
+			<Function name='basezoom'/>
 			<Function name='basezoomx'/>
 			<Function name='basezoomy'/>
+			<Function name='basezoomz'/>
 			<Function name='blend'/>
 			<Function name='bob'/>
 			<Function name='bounce'/>
@@ -312,6 +328,7 @@
 			<Function name='glowshift'/>
 			<Function name='halign'/>
 			<Function name='heading'/>
+			<Function name='heartbeat'/>
 			<Function name='hibernate'/>
 			<Function name='hidden'/>
 			<Function name='hide_if'/>
@@ -502,6 +519,8 @@
 		</Class>
 		<Class name='Character'>
 			<Function name='GetCardPath'/>
+			<Function name='GetCharacterDir'/>
+			<Function name='GetCharacterID'/>
 			<Function name='GetDanceAnimationPath'/>
 			<Function name='GetIconPath'/>
 			<Function name='GetModelPath'/>
@@ -527,6 +546,7 @@
 			<Function name='GetAllTrails'/>
 			<Function name='GetBackgroundPath'/>
 			<Function name='GetBannerPath'/>
+			<Function name='GetCourseDir'/>
 			<Function name='GetCourseEntry'/>
 			<Function name='GetCourseType'/>
 			<Function name='GetDisplayFullTitle'/>
@@ -536,9 +556,11 @@
 			<Function name='GetPlayMode'/>
 			<Function name='GetTotalSeconds'/>
 			<Function name='GetTranslitFullTitle'/>
+			<Function name='HasBackground'/>
 			<Function name='HasBanner'/>
 			<Function name='HasMods'/>
 			<Function name='HasTimedMods'/>
+			<Function name='IsAnEdit'/>
 			<Function name='IsAutogen'/>
 			<Function name='IsEndless'/>
 			<Function name='IsNonstop'/>
@@ -685,6 +707,7 @@
 			<Function name='SetCurrentSteps'/>
 			<Function name='SetCurrentTrail'/>
 			<Function name='SetJukeboxUsesModifiers'/>
+			<Function name='SetMultiplayer'/>
 			<Function name='SetNumMultiplayerNoteFields'/>
 			<Function name='SetPreferredDifficulty'/>
 			<Function name='SetPreferredSong'/>
@@ -717,6 +740,7 @@
 		</Class>
 		<Class name='HighScore'>
 			<Function name='GetDate'/>
+			<Function name='GetGrade'/>
 			<Function name='GetHoldNoteScore'/>
 			<Function name='GetModifiers'/>
 			<Function name='GetName'/>
@@ -844,10 +868,12 @@
 			<Function name='GetMultiPlayerNumber'/>
 			<Function name='GetPlayerNumber'/>
 			<Function name='GetPlayerOptions'/>
+			<Function name='GetPlayerOptionsArray'/>
 			<Function name='SetPlayerOptions'/>
 		</Class>
 		<Class name='PrefsManager'>
 			<Function name='GetPreference'/>
+			<Function name='PreferenceExists'/>
 			<Function name='SetPreference'/>
 			<Function name='SetPreferenceToDefault'/>
 		</Class>
@@ -1183,6 +1209,7 @@
 			<Function name='SetFromString'/>
 		</Class>
 		<Class name='ThemeManager'>
+			<Function name='GetCurLanguage'/>
 			<Function name='GetCurrentThemeDirectory'/>
 			<Function name='GetMetric'/>
 			<Function name='GetNumSelectableThemes'/>
@@ -1216,6 +1243,13 @@
 			<Function name='GetMeter'/>
 			<Function name='GetRadarValues'/>
 			<Function name='GetStepsType'/>
+			<Function name='GetTrailEntry'/>
+		</Class>
+		<Class name='TrailEntry'>
+			<Function name='GetNormalModifiers'/>
+			<Function name='GetSong'/>
+			<Function name='GetSteps'/>
+			<Function name='IsSecret'/>
 		</Class>
 		<Class name='UnlockEntry'>
 			<Function name='GetDescription'/>
@@ -1404,10 +1438,6 @@
 			<EnumValue name='&apos;GetRankingName_Off&apos;' value='0'/>
 			<EnumValue name='&apos;GetRankingName_On&apos;' value='1'/>
 			<EnumValue name='&apos;GetRankingName_List&apos;' value='2'/>
-		</Enum>
-		<Enum name='GlowMode'>
-			<EnumValue name='&apos;GlowMode_Brighten&apos;' value='0'/>
-			<EnumValue name='&apos;GlowMode_Whiten&apos;' value='1'/>
 		</Enum>
 		<Enum name='GoalType'>
 			<EnumValue name='&apos;GoalType_Calories&apos;' value='0'/>
@@ -1658,13 +1688,20 @@
 		</Enum>
 		<Enum name='SampleMusicPreviewMode'>
 			<EnumValue name='&apos;SampleMusicPreviewMode_Normal&apos;' value='0'/>
-			<EnumValue name='&apos;SampleMusicPreviewMode_ScreenMusic&apos;' value='1'/>
-			<EnumValue name='&apos;SampleMusicPreviewMode_LastSong&apos;' value='2'/>
+			<EnumValue name='&apos;SampleMusicPreviewMode_StartToPreview&apos;' value='1'/>
+			<EnumValue name='&apos;SampleMusicPreviewMode_ScreenMusic&apos;' value='2'/>
+			<EnumValue name='&apos;SampleMusicPreviewMode_LastSong&apos;' value='3'/>
 		</Enum>
 		<Enum name='ScoringType'>
 			<EnumValue name='&apos;ScoringType_New&apos;' value='0'/>
 			<EnumValue name='&apos;ScoringType_Old&apos;' value='1'/>
 			<EnumValue name='&apos;ScoringType_Custom&apos;' value='2'/>
+		</Enum>
+		<Enum name='ScreenType'>
+			<EnumValue name='&apos;ScreenType_Attract&apos;' value='0'/>
+			<EnumValue name='&apos;ScreenType_GameMenu&apos;' value='1'/>
+			<EnumValue name='&apos;ScreenType_Gameplay&apos;' value='2'/>
+			<EnumValue name='&apos;ScreenType_SystemMenu&apos;' value='3'/>
 		</Enum>
 		<Enum name='ShowDancingCharacters'>
 			<EnumValue name='&apos;ShowDancingCharacters_Off&apos;' value='0'/>
@@ -1829,7 +1866,7 @@
 		</Enum>
 	</Enums>
 	<Constants>
-		<Constant name='ASPECT_SCALE_FACTOR' value='1'/>
+		<Constant name='ASPECT_SCALE_FACTOR' value='854'/>
 		<Constant name='NUM_PLAYERS' value='2'/>
 		<Constant name='SCREEN_BOTTOM' value='480'/>
 		<Constant name='SCREEN_CENTER_X' value='427'/>
@@ -1847,9 +1884,9 @@
 		<Constant name='left' value='&apos;HorizAlign_Left&apos;'/>
 		<Constant name='middle' value='&apos;VertAlign_Middle&apos;'/>
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
-		<Constant name='sGame' value='&apos;dance&apos;'/>
+		<Constant name='sGame' value='&apos;kb7&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc v1.0 beta 3</Version>
-	<Date>2010-05-18</Date>
+	<Version>sm-ssc v1.0 rc1</Version>
+	<Date>2010-06-27</Date>
 </Lua>

@@ -9,6 +9,9 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+================================================================================
+sm-ssc v1.0 Release Candidate 1 | 20100627
+--------------------------------------------------------------------------------
 20100627
 --------
 * [NotesLoaderKSF] Support reading of #PLAYER and #MUSICINTRO/#INTRO tags in
