@@ -9,6 +9,13 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100629
+--------
+* Fix an issue involving setting a group via GameCommand and a metric ([MusicWheel]
+  UseSectionsWithPreferredGroup=false). Previously, this situation would ignore
+  the group and show all songs. Instead, it has been fixed to work as intended,
+  only showing the songs in that group. (A DDR 4th Mix theme is feasible again.)
+
 ================================================================================
 sm-ssc v1.0 Release Candidate 1 | 20100627
 --------------------------------------------------------------------------------
