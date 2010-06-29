@@ -15,6 +15,9 @@ _____________________________________________________________________________
   UseSectionsWithPreferredGroup=false). Previously, this situation would ignore
   the group and show all songs. Instead, it has been fixed to work as intended,
   only showing the songs in that group. (A DDR 4th Mix theme is feasible again.)
+* If [MusicWheel] UseSectionsWithPreferredGroup=true and a song group is set
+  via GameCommand, the wheel will now scroll to the first song in the desired
+  group, instead of the very first wheel item.
 
 ================================================================================
 sm-ssc v1.0 Release Candidate 1 | 20100627
