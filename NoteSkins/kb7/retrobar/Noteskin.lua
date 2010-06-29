@@ -8,19 +8,25 @@ Noteskin.ElementRedirs = {
 
 -- button redirs (since this is a bar noteskin, it's all the same)
 Noteskin.ButtonRedirs = {
-	Left	= "Bar";
-	UpLeft	= "Bar";
-	Up		= "Bar";
-	Down	= "Bar";
-	UpRight	= "Bar";
-	Right	= "Bar";
-	Key1	= "Bar";
-	Key2	= "Bar";
-	Key3	= "Bar";
-	Key4	= "Bar";
-	Key5	= "Bar";
-	Key6	= "Bar";
-	Key7	= "Bar";
+	-- dance
+	Left		= "Bar";
+	UpLeft		= "Bar";
+	Up			= "Bar";
+	Down		= "Bar";
+	UpRight		= "Bar";
+	Right		= "Bar";
+	-- kb7
+	Key1		= "Bar";
+	Key2		= "Bar";
+	Key3		= "Bar";
+	Key4		= "Bar";
+	Key5		= "Bar";
+	Key6		= "Bar";
+	Key7		= "Bar";
+	-- pump
+	DownLeft	= "Bar";
+	DownRight	= "Bar";
+	Center		= "Bar";
 };
 
 -- things to blank out
