@@ -207,6 +207,7 @@
 				}
 			}
 			</script>
+		<link rel="icon" type="image/vnd.microsoft.icon" href="./favicon.ico"/>
 		</head>
 		<body>
 			<xsl:apply-templates />
