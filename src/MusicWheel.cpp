@@ -175,8 +175,16 @@ void MusicWheel::BeginScreen()
 
 	if(GAMESTATE->m_sPreferredSongGroup != GROUP_ALL)
 	{
-		// if we have a preferred song group set, we should go there.
+		// If a preferred song group is set, open the group and select the
+		// first song in the group. -aj
+		if(!GAMESTATE->IsCourseMode())
+		{
+			vector<Song*> vTemp = SONGMAN->GetSongs(GAMESTATE->m_sPreferredSongGroup);
+			ASSERT(vTemp.size() > 0);
+			GAMESTATE->m_pCurSong.Set(vTemp[0]);
+		};
 		SetOpenSection(GAMESTATE->m_sPreferredSongGroup);
+		SelectSongOrCourse();
 	}
 	else if( !SelectSongOrCourse() )
 	{
