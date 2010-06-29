@@ -334,6 +334,15 @@ void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so )
 	case SORT_POPULARITY:
 		SONGMAN->GetPopularSongs();
 		break;
+	case SORT_GROUP:
+		// if we're not using sections with a preferred song group, and there
+		// is a group to load, only load those songs. -aj
+		if(GAMESTATE->m_sPreferredSongGroup != GROUP_ALL && !USE_SECTIONS_WITH_PREFERRED_GROUP )
+		{
+			apAllSongs = SONGMAN->GetSongs(GAMESTATE->m_sPreferredSongGroup);
+			break;
+		}
+		// otherwise fall through
 	default:
 		apAllSongs = SONGMAN->GetAllSongs();
 		break;
