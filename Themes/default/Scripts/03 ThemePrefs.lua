@@ -9,16 +9,16 @@ function InitUserPrefs()
 	end;
 	if GetUserPrefB("UserPrefShowLotsaOptions") == nil then
 		SetUserPref("UserPrefShowLotsaOptions", true);
-	end;  
+	end;
 	if GetUserPrefB("UserPrefAutoSetStyle") == nil then
 		SetUserPref("UserPrefAutoSetStyle", true);
-	end;  
+	end;
 	if GetUserPrefB("UserPrefLongFail") == nil then
 		SetUserPref("UserPrefLongFail", false);
-	end;  
+	end;
 	if GetUserPrefB("UserPrefNotePosition") == nil then
 		SetUserPref("UserPrefNotePosition", true);
-	end;  
+	end;
 --[[ 	if GetUserPref("ProTimingP1") == nil then
 		SetUserPref("ProTimingP1", false);
 	end;
@@ -102,7 +102,7 @@ function UserPrefGameplayShowScore()
 			end;
 			WritePrefToFile("UserPrefGameplayShowScore",val);
 			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
-			THEME:ReloadMetrics();	
+			THEME:ReloadMetrics();
 		end;
 	};
 	setmetatable( t, t );
@@ -138,7 +138,7 @@ function UserPrefGameplayShowStepsDisplay()
 			end;
 			WritePrefToFile("UserPrefGameplayShowStepsDisplay",val);
 			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
-			THEME:ReloadMetrics();	
+			THEME:ReloadMetrics();
 		end;
 	};
 	setmetatable( t, t );
@@ -174,7 +174,7 @@ function UserPrefShowLotsaOptions()
 			end;
 			WritePrefToFile("UserPrefShowLotsaOptions",val);
 			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
-			THEME:ReloadMetrics();	
+			THEME:ReloadMetrics();
 		end;
 	};
 	setmetatable( t, t );
@@ -183,7 +183,7 @@ end
 
 function GetDefaultOptionLines()
 	local LineSets = {
-		"1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17", -- All
+		"1,2,3,4,5,6,R,7,8,9,10,11,12,13,14,15,16,17", -- All
 		"1,2,7,8,13,14,16,17", -- DDR Essentials ( no turns, fx )
 	};
 	local function IsExtra()
@@ -233,7 +233,7 @@ function UserPrefAutoSetStyle()
 			end;
 			WritePrefToFile("UserPrefAutoSetStyle",val);
 			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
-			THEME:ReloadMetrics();	
+			THEME:ReloadMetrics();
 		end;
 	};
 	setmetatable( t, t );
@@ -270,7 +270,7 @@ function UserPrefNotePosition()
 			end;
 			WritePrefToFile("UserPrefNotePosition",val);
 			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
-			THEME:ReloadMetrics();	
+			THEME:ReloadMetrics();
 		end;
 	};
 	setmetatable( t, t );
@@ -306,7 +306,7 @@ function UserPrefLongFail()
 			end;
 			WritePrefToFile("UserPrefLongFail",val);
 			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
-			THEME:ReloadMetrics();	
+			THEME:ReloadMetrics();
 		end;
 	};
 	setmetatable( t, t );
