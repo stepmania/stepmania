@@ -36,9 +36,11 @@ static RageTimer g_HaltTimer(RageZeroTimer);
 static float g_fImageScaleCurrent = 1;
 static float g_fImageScaleDestination = 1;
 
-// colors
+// DebugLine theming
 static const ThemeMetric<RageColor>	LINE_ON_COLOR	("ScreenDebugOverlay", "LineOnColor");
 static const ThemeMetric<RageColor>	LINE_OFF_COLOR	("ScreenDebugOverlay", "LineOffColor");
+static const ThemeMetric<float>		DEBUG_LINE_START_Y	("ScreenDebugOverlay", "LineStartY");
+static const ThemeMetric<float>		DEBUG_LINE_SPACING	("ScreenDebugOverlay", "LineSpacing");
 
 // self-registering debug lines
 // We don't use SubscriptionManager, because we want to keep the line order.
@@ -337,17 +339,9 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 
 void ScreenDebugOverlay::UpdateText()
 {
-	/* Highlight options that aren't the default. */
-	// xxx: convert these into metrics? -aj
-	/*
-	const RageColor off(0.7f, 0.7f, 0.7f, 1.0f);
-	const RageColor on(1, 1, 1, 1);
-	*/
-
 	FOREACH_CONST( RString, m_asPages, s )
 	{
 		int iPage = s - m_asPages.begin();
-		//m_vptextPages[iPage]->SetDiffuse( (iPage == m_iCurrentPage) ? on :  off );
 		m_vptextPages[iPage]->PlayCommand( (iPage == m_iCurrentPage) ? "GainFocus" :  "LoseFocus" );
 	}
 
@@ -359,7 +353,8 @@ void ScreenDebugOverlay::UpdateText()
 
 		int i = p-g_pvpSubscribers->begin();
 
-		float fY = SCREEN_TOP+50 + iOffset * 16;
+		//float fY = SCREEN_TOP+50 + iOffset * 16;
+		float fY = DEBUG_LINE_START_Y + iOffset * DEBUG_LINE_SPACING;
 
 		BitmapText &txt1 = *m_vptextButton[i];
 		BitmapText &txt2 = *m_vptextFunction[i];
