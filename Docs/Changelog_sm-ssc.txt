@@ -9,6 +9,11 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+================================================================================
+sm-ssc v1.0 Release Candidate 2 | 201007xx
+--------------------------------------------------------------------------------
+(work in progress, it's not out yet [hence the "xx" above].)
+
 20100629
 --------
 * Fix an issue involving setting a group via GameCommand and a metric ([MusicWheel]
@@ -18,10 +23,13 @@ _____________________________________________________________________________
 * If [MusicWheel] UseSectionsWithPreferredGroup=true and a song group is set
   via GameCommand, the wheel will now scroll to the first song in the desired
   group, instead of the very first wheel item.
+* [CourseUtil] make the "All Songs" course use the current theme's
+  Graphics/Banner all music file.
 
 ================================================================================
 sm-ssc v1.0 Release Candidate 1 | 20100627
 --------------------------------------------------------------------------------
+
 20100627
 --------
 * [NotesLoaderKSF] Support reading of #PLAYER and #MUSICINTRO/#INTRO tags in

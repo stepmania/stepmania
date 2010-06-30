@@ -239,7 +239,8 @@ void CourseUtil::AutogenEndlessFromGroup( const RString &sGroupName, Difficulty 
 	if( sGroupName == "" )
 	{
 		out.m_sMainTitle = "All Songs";
-		// m_sBannerPath = ""; // XXX
+		// this sounds reasonable... -aj
+		out.m_sBannerPath = THEME->GetPathG("Banner","all music");
 	}
 	else
 	{
@@ -288,23 +289,25 @@ void CourseUtil::AutogenOniFromArtist( const RString &sArtistName, RString sArti
 	ASSERT( sArtistName != "" );
 	ASSERT( aSongs.size() > 0 );
 
-	/* "Artist Oni" is a little repetitive; "by Artist" stands out less, and lowercasing
-	 * "by" puts more emphasis on the artist's name.  It also sorts them together. */
+	/* "Artist Oni" is a little repetitive; "by Artist" stands out less, and
+	 * lowercasing "by" puts more emphasis on the artist's name. It also sorts
+	 * them together. */
 	out.m_sMainTitle = "by " + sArtistName;
 	if( sArtistNameTranslit != sArtistName )
 		out.m_sMainTitleTranslit = "by " + sArtistNameTranslit;
 
-
+	// How would we handle Artist Oni course banners, anyways? -aj
 	// m_sBannerPath = ""; // XXX
 
-	/* Shuffle the list to determine which songs we'll use.  Shuffle it deterministically,
-	 * so we always get the same set of songs unless the song set changes. */
+	/* Shuffle the list to determine which songs we'll use. Shuffle it
+	 * deterministically, so we always get the same set of songs unless the
+	 * song set changes. */
 	{
 		RandomGen rng( GetHashForString( sArtistName ) + aSongs.size() );
 		random_shuffle( aSongs.begin(), aSongs.end(), rng );
 	}
 
-	/* Only use up to four songs. */
+	// Only use up to four songs.
 	if( aSongs.size() > 4 )
 		aSongs.erase( aSongs.begin()+4, aSongs.end() );
 
