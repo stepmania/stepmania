@@ -39,8 +39,10 @@ static float g_fImageScaleDestination = 1;
 // DebugLine theming
 static const ThemeMetric<RageColor>	LINE_ON_COLOR	("ScreenDebugOverlay", "LineOnColor");
 static const ThemeMetric<RageColor>	LINE_OFF_COLOR	("ScreenDebugOverlay", "LineOffColor");
-static const ThemeMetric<float>		DEBUG_LINE_START_Y	("ScreenDebugOverlay", "LineStartY");
-static const ThemeMetric<float>		DEBUG_LINE_SPACING	("ScreenDebugOverlay", "LineSpacing");
+static const ThemeMetric<float>		LINE_START_Y	("ScreenDebugOverlay", "LineStartY");
+static const ThemeMetric<float>		LINE_SPACING	("ScreenDebugOverlay", "LineSpacing");
+static const ThemeMetric<float>		LINE_BUTTON_X	("ScreenDebugOverlay", "LineButtonX");
+static const ThemeMetric<float>		LINE_FUNCTION_X	("ScreenDebugOverlay", "LineFunctionX");
 
 // self-registering debug lines
 // We don't use SubscriptionManager, because we want to keep the line order.
@@ -354,7 +356,7 @@ void ScreenDebugOverlay::UpdateText()
 		int i = p-g_pvpSubscribers->begin();
 
 		//float fY = SCREEN_TOP+50 + iOffset * 16;
-		float fY = DEBUG_LINE_START_Y + iOffset * DEBUG_LINE_SPACING;
+		float fY = LINE_START_Y + iOffset * LINE_SPACING;
 
 		BitmapText &txt1 = *m_vptextButton[i];
 		BitmapText &txt2 = *m_vptextFunction[i];
@@ -368,10 +370,10 @@ void ScreenDebugOverlay::UpdateText()
 		txt2.SetVisible( true );
 		++iOffset;
 
-		txt1.SetX( SCREEN_CENTER_X-50 );
+		txt1.SetX( LINE_BUTTON_X );
 		txt1.SetY( fY );
 
-		txt2.SetX( SCREEN_CENTER_X-30 );
+		txt2.SetX( LINE_FUNCTION_X );
 		txt2.SetY( fY );
 
 		RString s1 = (*p)->GetDisplayTitle();

@@ -16,7 +16,8 @@ sm-ssc v1.0 Release Candidate 2 | 201007xx
 
 20100630
 --------
-* [ScreenDebugOverlay] add LineStartY, LineSpacing metrics
+* [ScreenDebugOverlay] add new metrics: LineStartY, LineSpacing,
+  LineButtonX, LineFunctionX.
 
 20100629
 --------
