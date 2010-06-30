@@ -52,7 +52,7 @@ protected:
 	bool IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const;
 
 	void DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels );
-	
+
 	enum BeatBarType { measure, beat, half_beat, quarter_beat };
 	void DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIndex );
 	void DrawMarkerBar( int fBeat );

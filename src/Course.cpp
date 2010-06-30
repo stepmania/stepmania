@@ -669,8 +669,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	}
 
 	/* Hack: If any entry was non-FIXED, or m_bShuffle is set, then radar values
-	 * for this trail will be meaningless as they'll change every time.  Pre-cache
-	 * empty data.  XXX: How can we do this cleanly, without propagating lots of
+	 * for this trail will be meaningless as they'll change every time. Pre-cache
+	 * empty data. XXX: How can we do this cleanly, without propagating lots of
 	 * otherwise unnecessary data (course entry types, m_bShuffle) to Trail, or
 	 * storing a Course pointer in Trail (yuck)? */
 	if( !AllSongsAreFixed() || m_bShuffle )

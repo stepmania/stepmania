@@ -13,14 +13,12 @@
 
 REGISTER_ACTOR_CLASS( FadingBanner )
 
-/*
- * Allow fading from one banner to another.  We can handle two fades at once;
+/* Allow fading from one banner to another. We can handle two fades at once;
  * this is used to fade from an old banner to a low-quality banner to a high-
  * quality banner smoothly.
  *
  * m_iIndexLatest is the latest banner loaded, and the one that we'll end up
- * displaying when the fades stop.
- */
+ * displaying when the fades stop. */
 FadingBanner::FadingBanner()
 {
 	m_bMovingFast = false;
@@ -60,7 +58,7 @@ void FadingBanner::DrawPrimitives()
 	// draw manually
 //	ActorFrame::DrawPrimitives();
 
-	/* Render the latest banner first. */
+	// Render the latest banner first.
 	for( int i = 0; i < NUM_BANNERS; ++i )
 	{
 		int index = m_iIndexLatest - i;
@@ -73,7 +71,7 @@ void FadingBanner::Load( RageTextureID ID, bool bLowResToHighRes )
 {
 	BeforeChange( bLowResToHighRes );
 	m_Banner[m_iIndexLatest].Load(ID);
-	
+
 	/* XXX: Hack to keep movies from updating multiple times.
 	 * We need to either completely disallow movies in banners or support
 	 * them. There are a number of files that use them currently in the
@@ -89,7 +87,7 @@ void FadingBanner::Load( RageTextureID ID, bool bLowResToHighRes )
 		wrap( index, NUM_BANNERS );
 		if( m_Banner[index].GetTexturePath() == ID.filename )
 			m_Banner[index].UnloadTexture();
-	}	
+	}
 }
 
 /* If bLowResToHighRes is true, we're fading from a low-res banner to the
@@ -108,8 +106,8 @@ void FadingBanner::BeforeChange( bool bLowResToHighRes )
 
 	m_Banner[m_iIndexLatest].PlayCommand( "ResetFade" );
 
-	/* We're about to load a banner.  It'll probably cause a frame skip or
-	 * two.  Skip an update, so the fade-in doesn't skip. */
+	/* We're about to load a banner. It'll probably cause a frame skip or two.
+	 * Skip an update, so the fade-in doesn't skip. */
 	m_bSkipNextBannerUpdate = true;
 }
 
@@ -117,7 +115,7 @@ void FadingBanner::BeforeChange( bool bLowResToHighRes )
  * banner should be loaded later. */
 bool FadingBanner::LoadFromCachedBanner( const RString &path )
 {
-	/* If we're already on the given banner, don't fade again. */
+	// If we're already on the given banner, don't fade again.
 	if( path != "" && m_Banner[m_iIndexLatest].GetTexturePath() == path )
 		return false;
 
@@ -138,16 +136,16 @@ bool FadingBanner::LoadFromCachedBanner( const RString &path )
 	}
 	else
 	{
-		/* Try to load the low quality version. */
+		// Try to load the low quality version.
 		ID = BANNERCACHE->LoadCachedBanner( path );
 	}
 
 	if( !TEXTUREMAN->IsTextureRegistered(ID) )
 	{
-		/* Oops.  We couldn't load a banner quickly.  We can load the actual
+		/* Oops. We couldn't load a banner quickly. We can load the actual
 		 * banner, but that's slow, so we don't want to do that when we're moving
-		 * fast on the music wheel.  In that case, we should just keep the banner
-		 * that's there (or load a "moving fast" banner).  Once we settle down,
+		 * fast on the music wheel. In that case, we should just keep the banner
+		 * that's there (or load a "moving fast" banner). Once we settle down,
 		 * we'll get called again and load the real banner. */
 
 		if( m_bMovingFast )
@@ -174,7 +172,7 @@ void FadingBanner::LoadFromSong( const Song* pSong )
 		return;
 	}
 
-	/* Don't call HasBanner.  That'll do disk access and cause the music wheel
+	/* Don't call HasBanner. That'll do disk access and cause the music wheel
 	 * to skip. */
 	RString sPath = pSong->GetBannerPath();
 	if( sPath.empty() )
@@ -209,7 +207,7 @@ void FadingBanner::LoadFromCourse( const Course* pCourse )
 		return;
 	}
 
-	/* Don't call HasBanner.  That'll do disk access and cause the music wheel
+	/* Don't call HasBanner. That'll do disk access and cause the music wheel
 	 * to skip. */
 	RString sPath = pCourse->GetBannerPath();
 	if( sPath.empty() )

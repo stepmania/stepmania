@@ -136,16 +136,14 @@ float LightsManager::GetActorLightLatencySeconds() const
 
 void LightsManager::Update( float fDeltaTime )
 {
-	//
 	// Update actor effect lights.
-	//
 	FOREACH_CabinetLight( cl )
 	{
 		float fTime = fDeltaTime;
 		float &fDuration = m_fSecsLeftInActorLightBlink[cl];
 		if( fDuration > 0 )
 		{
-			/* The light has power left.  Brighten it. */
+			// The light has power left.  Brighten it.
 			float fSeconds = min( fDuration, fTime );
 			fDuration -= fSeconds;
 			fTime -= fSeconds;
@@ -154,7 +152,7 @@ void LightsManager::Update( float fDeltaTime )
 
 		if( fTime > 0 )
 		{
-			/* The light is out of power.  Dim it. */
+			// The light is out of power.  Dim it.
 			fapproach( m_fActorLights[cl], 0, fTime / g_fLightEffectFalloffSeconds );
 		}
 
@@ -173,9 +171,7 @@ void LightsManager::Update( float fDeltaTime )
 				fapproach( m_fSecsLeftInGameButtonBlink[gc][gb], 0, fDeltaTime );
 	}
 
-	//
 	// Set new lights state cabinet lights
-	//
 	{
 		ZERO( m_LightsState.m_bCabinetLights );
 		ZERO( m_LightsState.m_bGameButtonLights );
@@ -249,7 +245,7 @@ void LightsManager::Update( float fDeltaTime )
 			default:	ASSERT(0);
 			}
 
-			/* Light the menu buttons. */
+			// Light the menu buttons.
 			switch( m_LightsMode )
 			{
 			DEFAULT_FAIL(m_LightsMode);
@@ -275,7 +271,7 @@ void LightsManager::Update( float fDeltaTime )
 								break;
 							}
 						}
-					}					
+					}
 				}
 				break;
 			case LIGHTSMODE_JOINING:
@@ -324,9 +320,7 @@ void LightsManager::Update( float fDeltaTime )
 	}
 
 
-	//
 	// Update game controller lights
-	//
 	switch( m_LightsMode )
 	{
 	case LIGHTSMODE_ATTRACT:
@@ -351,9 +345,7 @@ void LightsManager::Update( float fDeltaTime )
 		{
 			if( m_LightsMode == LIGHTSMODE_GAMEPLAY  &&  g_bBlinkGameplayButtonLightsOnNote )
 			{
-				//
 				// Blink on notes.
-				//
 				FOREACH_ENUM( GameController,  gc )
 				{
 					FOREACH_ENUM( GameButton,  gb )
@@ -364,9 +356,7 @@ void LightsManager::Update( float fDeltaTime )
 			}
 			else
 			{
-				//
 				// Blink on button presses.
-				//
 				FOREACH_ENUM( GameController,  gc )
 				{
 					FOREACH_GameButton_Custom( gb )

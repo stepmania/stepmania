@@ -287,11 +287,9 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	// Somthing below may set m_pTempState to tempState
 	m_pTempState = &m_current;
 
-
-	//
-	// set temporary drawing properties based on Effects 
-	//
+	// set temporary drawing properties based on Effects
 	static TweenState tempState;
+
 	// todo: account for SSC_FUTURES -aj
 	if( m_Effect == no_effect )
 	{
@@ -304,7 +302,6 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		const float fTotalPeriod = GetEffectPeriod();
 		ASSERT( fTotalPeriod > 0 );
 		const float fTimeIntoEffect = fmodfp( m_fSecsIntoEffect+m_fEffectOffset, fTotalPeriod );
-
 
 		float fPercentThroughEffect;
 		if( fTimeIntoEffect < m_fEffectRampUp )
@@ -335,7 +332,6 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		}
 		ASSERT_M( fPercentThroughEffect >= 0 && fPercentThroughEffect <= 1, 
 			ssprintf("PercentThroughEffect: %f", fPercentThroughEffect) );
-
 
 		bool bBlinkOn = fPercentThroughEffect > 0.5f;
 		float fPercentBetweenColors = RageFastSin( (fPercentThroughEffect + 0.25f) * 2 * PI ) / 2 + 0.5f;
@@ -440,7 +436,6 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		}
 	}
 
-
 	if( m_fBaseAlpha != 1 )
 	{
 		if( m_pTempState != &tempState )
@@ -452,7 +447,6 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		for( int i=0; i<4; i++ )
 			tempState.diffuse[i].a *= m_fBaseAlpha;
 	}
-
 
 	if( m_pTempState->pos.x != 0 || m_pTempState->pos.y != 0 || m_pTempState->pos.z != 0 )	
 	{
@@ -468,7 +462,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 
 	{
 		/* The only time rotation and quat should normally be used simultaneously
-		 * is for m_baseRotation.  Most objects aren't rotated at all, so optimize
+		 * is for m_baseRotation. Most objects aren't rotated at all, so optimize
 		 * that case. */
 		const float fRotateX = m_pTempState->rotation.x + m_baseRotation.x;
 		const float fRotateY = m_pTempState->rotation.y + m_baseRotation.y;
@@ -580,7 +574,7 @@ void Actor::UpdateTweening( float fDeltaTime )
 
 		// update current tween state
 		// earliest tween
-		TweenState &TS = m_Tweens[0]->state;	
+		TweenState &TS = m_Tweens[0]->state;
 		TweenInfo  &TI = m_Tweens[0]->info;
 
 		bool bBeginning = TI.m_fTimeLeftInTween == TI.m_fTweenTime;
@@ -591,7 +585,7 @@ void Actor::UpdateTweening( float fDeltaTime )
 
 		RString sCommand = TI.m_sCommandName;
 		if( bBeginning )			// we are just beginning this tween
-			m_start = m_current;		// set the start position
+			m_start = m_current;	// set the start position
 	
 		if( TI.m_fTimeLeftInTween == 0 )	// Current tween is over.  Stop.
 		{
@@ -601,7 +595,7 @@ void Actor::UpdateTweening( float fDeltaTime )
 			delete m_Tweens.front();
 			m_Tweens.erase( m_Tweens.begin() );
 		}
-		else		// in the middle of tweening.  Recalcute the current position.
+		else	// in the middle of tweening. Recalcute the current position.
 		{
 			const float fPercentThroughTween = 1-(TI.m_fTimeLeftInTween / TI.m_fTweenTime);
 
@@ -612,8 +606,8 @@ void Actor::UpdateTweening( float fDeltaTime )
 
 		if( bBeginning )
 		{
-			// Execute the command in this tween (if any).  Do this last, and don't access
-			// TI or TS after, since this may modify the tweening queue.
+			// Execute the command in this tween (if any). Do this last, and don't
+			// access TI or TS after, since this may modify the tweening queue.
 			if( !sCommand.empty() )
 			{
 				if( sCommand.Left(1) == "!" )
@@ -641,7 +635,7 @@ void Actor::Update( float fDeltaTime )
 		if( m_fHibernateSecondsLeft > 0 )
 			return;
 
-		/* Grab the leftover time. */
+		// Grab the leftover time.
 		fDeltaTime = -m_fHibernateSecondsLeft;
 		m_fHibernateSecondsLeft = 0;
 	}
@@ -660,8 +654,8 @@ void Actor::UpdateInternal( float fDeltaTime )
 		m_fSecsIntoEffect += fDeltaTime;
 		m_fEffectDelta = fDeltaTime;
 
-		/* Wrap the counter, so it doesn't increase indefinitely (causing loss of
-		 * precision if a screen is left to sit for a day). */
+		/* Wrap the counter, so it doesn't increase indefinitely (causing loss
+		 * of precision if a screen is left to sit for a day). */
 		if( m_fSecsIntoEffect >= GetEffectPeriod() )
 			m_fSecsIntoEffect -= GetEffectPeriod();
 		break;
@@ -1094,18 +1088,16 @@ float Actor::GetTweenTimeLeft() const
 	return tot;
 }
 
-/*
- * This is a hack to change all tween states while leaving existing tweens alone.
+/* This is a hack to change all tween states while leaving existing tweens alone.
  *
- * Hmm.  Most commands actually act on a TweenStateAndInfo, not the Actor itself.
+ * Hmm. Most commands actually act on a TweenStateAndInfo, not the Actor itself.
  * Conceptually, it wouldn't be hard to give TweenState a presence in Lua, so
  * we can simply say eg. "for x in states(Actor) do x.SetDiffuseColor(c) end".
  * However, we'd then have to give every TweenState a userdata in Lua while it's
- * being manipulated, which would add overhead ...
- */
+ * being manipulated, which would add overhead ... */
 void Actor::SetGlobalDiffuseColor( RageColor c )
 {
-	for( int i=0; i<4; i++ ) /* color, not alpha */
+	for( int i=0; i<4; i++ ) // color, not alpha
 	{
 		for( unsigned ts = 0; ts < m_Tweens.size(); ++ts )
 		{
@@ -1189,6 +1181,7 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 
 	for( int i=0; i<4; ++i )
 		average_out.diffuse[i] = lerp( fPercentBetween, ts1.diffuse[i], ts2.diffuse[i] );
+
 	average_out.glow	= lerp( fPercentBetween, ts1.glow,        ts2.glow );
 	average_out.aux		= lerp( fPercentBetween, ts1.aux,         ts2.aux );
 }

@@ -107,24 +107,24 @@ static Preference<Premium> g_Premium( "Premium", Premium_Off );
 Preference<bool> GameState::m_bAutoJoin( "AutoJoin", false );
 
 GameState::GameState() :
-	m_pCurGame(			Message_CurrentGameChanged ),
+	m_pCurGame(				Message_CurrentGameChanged ),
 	m_pCurStyle(			Message_CurrentStyleChanged ),
-	m_PlayMode(			Message_PlayModeChanged ),
-	m_iCoins(			Message_CoinsChanged ),
-	m_sPreferredSongGroup(		Message_PreferredSongGroupChanged ),
+	m_PlayMode(				Message_PlayModeChanged ),
+	m_iCoins(				Message_CoinsChanged ),
+	m_sPreferredSongGroup(	Message_PreferredSongGroupChanged ),
 	m_sPreferredCourseGroup(	Message_PreferredCourseGroupChanged ),
-	m_PreferredStepsType(		Message_PreferredStepsTypeChanged ),
-	m_PreferredDifficulty(		Message_PreferredDifficultyP1Changed ),
+	m_PreferredStepsType(	Message_PreferredStepsTypeChanged ),
+	m_PreferredDifficulty(	Message_PreferredDifficultyP1Changed ),
 	m_PreferredCourseDifficulty(	Message_PreferredCourseDifficultyP1Changed ),
 	m_SortOrder(			Message_SortOrderChanged ),
-	m_pCurSong(			Message_CurrentSongChanged ),
+	m_pCurSong(				Message_CurrentSongChanged ),
 	m_pCurSteps(			Message_CurrentStepsP1Changed ),
 	m_pCurCourse(			Message_CurrentCourseChanged ),
 	m_pCurTrail(			Message_CurrentTrailP1Changed ),
 	m_bGameplayLeadIn(		Message_GameplayLeadInChanged ),
 	m_bDidModeChangeNoteSkin(	false ),
-	m_stEdit(			Message_EditStepsTypeChanged ),
-	m_cdEdit(			Message_EditCourseDifficultyChanged ),
+	m_stEdit(				Message_EditStepsTypeChanged ),
+	m_cdEdit(				Message_EditCourseDifficultyChanged ),
 	m_pEditSourceSteps(		Message_EditSourceStepsChanged ),
 	m_stEditSource(			Message_EditSourceStepsTypeChanged ),
 	m_iEditCourseEntryIndex(	Message_EditCourseEntryIndexChanged ),
@@ -160,8 +160,7 @@ GameState::GameState() :
 
 	m_Environment = new LuaTable;
 
-	/* Don't reset yet; let the first screen do it, so we can
-	 * use PREFSMAN and THEME. */
+	// Don't reset yet; let the first screen do it, so we can use PREFSMAN and THEME.
 //	Reset();
 
 	// Register with Lua.
@@ -296,8 +295,8 @@ void GameState::Reset()
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdateShuffled();
 
-	/* We may have cached trails from before everything was loaded (eg. from before
-	 * SongManager::UpdatePopular could be called).  Erase the cache. */
+	/* We may have cached trails from before everything was loaded (eg. from
+	 * before SongManager::UpdatePopular could be called). Erase the cache. */
 	SONGMAN->RegenerateNonFixedCourses();
 
 	STATSMAN->Reset();
@@ -391,7 +390,7 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 	msg.SetParam( "Player", pn );
 	MESSAGEMAN->Broadcast( msg );
 
-	/* If there are no players left, reset some non-player-specific stuff, too. */
+	// If there are no players left, reset some non-player-specific stuff, too.
 	if( m_MasterPlayerNumber == PLAYER_INVALID )
 	{
 		SongOptions so;
@@ -401,7 +400,7 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 	}
 }
 
-/* multiplayer join? */
+/* handle multiplayer join? */
 
 namespace
 {
@@ -410,11 +409,11 @@ namespace
 		if( !GAMESTATE->PlayersCanJoin() )
 			return false;
 
-		/* If this side is already in, don't re-join. */
+		// If this side is already in, don't re-join.
 		if( GAMESTATE->m_bSideIsJoined[pn] )
 			return false;
 
-		/* subtract coins */
+		// subtract coins
 		int iCoinsNeededToJoin = GAMESTATE->GetCoinsNeededToJoin();
 
 		if( GAMESTATE->m_iCoins < iCoinsNeededToJoin )
@@ -428,17 +427,17 @@ namespace
 	}
 };
 
-/* Handle an input that can join a player.  Return true if the player joined. */
+// Handle an input that can join a player. Return true if the player joined
 bool GameState::JoinInput( PlayerNumber pn )
 {
-	/* When AutoJoin is enabled, join all players on a single start press. */
+	// When AutoJoin is enabled, join all players on a single start press.
 	if( GAMESTATE->m_bAutoJoin.Get() )
 		return JoinPlayers();
 	else
 		return JoinInputInternal( pn );
 }
 
-/* Attempt to join all players, as if each player pressed Start. */
+// Attempt to join all players, as if each player pressed Start.
 bool GameState::JoinPlayers()
 {
 	bool bJoined = false;
@@ -465,8 +464,7 @@ int GameState::GetCoinsNeededToJoin() const
 	return iCoinsToCharge;
 }
 
-/*
- * Game flow:
+/* Game flow:
  *
  * BeginGame() - the first player has joined; the game is starting.
  *
@@ -481,8 +479,7 @@ int GameState::GetCoinsNeededToJoin() const
  *   is up-to-date for Evaluation.
  *
  * FinishStage() - gameplay and evaluation is finished
- *   Clears data which was stored by CommitStageStats.
- */
+ *   Clears data which was stored by CommitStageStats. */
 void GameState::BeginGame()
 {
 	m_timeGameStarted.Touch();
@@ -499,7 +496,7 @@ void GameState::BeginGame()
 
 void GameState::LoadProfiles( bool bLoadEdits )
 {
-	/* Unlock any cards that we might want to load. */
+	// Unlock any cards that we might want to load.
 	FOREACH_HumanPlayer( pn )
 		if( !PROFILEMAN->IsPersistentProfile(pn) )
 			MEMCARDMAN->UnlockCard( pn );
@@ -519,7 +516,7 @@ void GameState::LoadProfiles( bool bLoadEdits )
 		if( !bSuccess )
 			continue;
 
-		/* Lock the card on successful load, so we won't allow it to be changed. */
+		// Lock the card on successful load, so we won't allow it to be changed.
 		MEMCARDMAN->LockCard( pn );
 
 		LoadCurrentSettingsFromProfile( pn );
@@ -540,6 +537,7 @@ void GameState::SavePlayerProfile( PlayerNumber pn )
 {
 	if( !PROFILEMAN->IsPersistentProfile(pn) )
 		return;
+
 	// AutoplayCPU should not save scores. -aj
 	// xxx: this MAY cause issues with Multiplayer. However, without a working
 	// Multiplayer build, we'll never know. -aj
@@ -558,11 +556,11 @@ bool GameState::HaveProfileToLoad()
 {
 	FOREACH_HumanPlayer( pn )
 	{
-		/* We won't load this profile if it's already loaded. */
+		// We won't load this profile if it's already loaded.
 		if( PROFILEMAN->IsPersistentProfile(pn) )
 			continue;
 
-		/* If a memory card is inserted, we'l try to load it. */
+		// If a memory card is inserted, we'l try to load it.
 		if( MEMCARDMAN->CardInserted(pn) )
 			return true;
 		if( !PROFILEMAN->m_sDefaultLocalProfileID[pn].Get().empty() )
@@ -637,7 +635,7 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 			// pCurSteps will still be set while no players are joined. -Chris
 			if( pSteps && numSidesJoined > 0 )
 			{
-				/* If a style isn't set, use the style of the selected steps. */
+				// If a style isn't set, use the style of the selected steps.
 				StepsType st = pSteps->m_StepsType;
 				pStyle = GAMEMAN->GetFirstCompatibleStyle( m_pCurGame, numSidesJoined, st );
 			}
@@ -652,7 +650,8 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 				pStyle = vpStyles[0];
 			}
 		}
-		/* Extra stages need to only count as one stage in case a multistage song is chosen. */
+		/* Extra stages need to only count as one stage in case a multi-stage
+		 * song is chosen. */
 		if( IsAnExtraStage() )
 			iNumStagesOfThisSong = 1;
 		else
@@ -668,13 +667,13 @@ int GameState::GetNumStagesForCurrentSongAndStepsOrCourse() const
 	return iNumStagesOfThisSong;
 }
 
-/* Called by ScreenGameplay.  Set the length of the current song. */
+// Called by ScreenGameplay. Set the length of the current song.
 void GameState::BeginStage()
 {
 	if( m_bDemonstrationOrJukebox )
 		return;
 
-	/* This should only be called once per stage. */
+	// This should only be called once per stage.
 	if( m_iNumStagesOfThisSong != 0 )
 		LOG->Warn( "XXX: m_iNumStagesOfThisSong == %i?", m_iNumStagesOfThisSong );
 
@@ -746,8 +745,8 @@ void GameState::CommitStageStats()
 	}
 }
 
-/* Called by ScreenSelectMusic (etc).  Increment the stage counter if we just played a
- * song.  Might be called more than once. */
+/* Called by ScreenSelectMusic (etc). Increment the stage counter if we just
+ * played a song. Might be called more than once. */
 void GameState::FinishStage()
 {
 	// Increment the stage counter.
@@ -800,9 +799,9 @@ void GameState::LoadCurrentSettingsFromProfile( PlayerNumber pn )
 	RString sModifiers;
 	if( pProfile->GetDefaultModifiers( m_pCurGame, sModifiers ) )
 	{
-		/* We don't save negative preferences (eg. "no reverse").  If the theme
+		/* We don't save negative preferences (eg. "no reverse"). If the theme
 		 * sets a default of "reverse", and the player turns it off, we should
-		 * set it off.  However, don't reset modifiers that aren't saved by the
+		 * set it off. However, don't reset modifiers that aren't saved by the
 		 * profile, so we don't ignore unsaved modifiers when a profile is in use. */
 		PO_GROUP_CALL( m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, ResetSavedPrefs );
 		ApplyPreferredModifiers( pn, sModifiers );
@@ -966,7 +965,7 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	{
 		// we got a warp in this section.
 		LOG->Trace("warp at %i jumps to %i",m_iWarpBeginRow,m_iWarpEndRow);
-		// i hate this part because how the shit do i convert rows to seconds?
+		// i hate this part because how the hell do i convert rows to seconds?
 	}
 	/*
 	// xxx testing: only do this on monotune survivor
@@ -1083,7 +1082,6 @@ Stage GameState::GetCurrentStage() const
 	// above function behaves weirdly, it will always return final stage if any player is
 	// on final stage, rather than the last remaining player. The below method seems to make a bit more sense.
 	else if(m_iPlayerStageTokens[PLAYER_1] == 0 && m_iPlayerStageTokens[PLAYER_2] == 0) return Stage_Final;
-	// who gives a shit about stages -aj
 	else
 	{
 		switch( this->m_iCurrentStageIndex )
@@ -1101,7 +1099,7 @@ Stage GameState::GetCurrentStage() const
 
 int GameState::GetCourseSongIndex() const
 {
-	/* iSongsPlayed includes the current song, so it's 1-based; subtract one. */
+	// iSongsPlayed includes the current song, so it's 1-based; subtract one.
 	if( GAMESTATE->m_bMultiplayer )
 	{
 		FOREACH_EnabledMultiPlayer(mp)
@@ -1472,7 +1470,7 @@ void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 	{
 		out.push_back( m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin );
 
-		// Add note skins that are used in courses.
+		// Add noteskins that are used in courses.
 		if( IsCourseMode() )
 		{
 			const Trail *pTrail = m_pCurTrail[pn];

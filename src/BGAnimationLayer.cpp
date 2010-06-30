@@ -541,7 +541,7 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
 		{
 			for( unsigned i=0; i<m_SubActors.size(); i++ )
 			{
-				/* XXX: there's no longer any guarantee that this is a Sprite */
+				// XXX: there's no longer any guarantee that this is a Sprite
 				Sprite *pSprite = (Sprite*)m_SubActors[i];
 				pSprite->StretchTexCoords(
 					fDeltaTime*m_fTexCoordVelocityX,
