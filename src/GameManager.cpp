@@ -112,8 +112,8 @@ static const AutoMappings g_AutoKeyMappings_Dance = AutoMappings (
 	AutoMappingEntry( 0, KEY_KP_PLUS,		GAME_BUTTON_MENUDOWN,		true ),
 	AutoMappingEntry( 0, KEY_KP_C4,		DANCE_BUTTON_LEFT,		true ),
 	AutoMappingEntry( 0, KEY_KP_C6,		DANCE_BUTTON_RIGHT,		true ),
-	AutoMappingEntry( 0, KEY_KP_C7,		DANCE_BUTTON_UP,		true ),
-	AutoMappingEntry( 0, KEY_KP_C9,		DANCE_BUTTON_DOWN,		true ),
+	AutoMappingEntry( 0, KEY_KP_C8,		DANCE_BUTTON_UP,		true ),
+	AutoMappingEntry( 0, KEY_KP_C2,		DANCE_BUTTON_DOWN,		true ),
 	AutoMappingEntry( 0, KEY_KP_C7,		DANCE_BUTTON_UPLEFT,		true ),
 	AutoMappingEntry( 0, KEY_KP_C9,		DANCE_BUTTON_UPRIGHT,		true )
 );
