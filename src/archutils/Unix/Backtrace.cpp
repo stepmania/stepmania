@@ -76,6 +76,8 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 	while( !eof && got < size-1 )
 	{
 		int ret = read( fd, file+file_used, sizeof(file) - file_used);
+		if( ret == -1 )
+			return false;
 		if( ret < int(sizeof(file)) - file_used)
 			eof = true;
 
