@@ -16,6 +16,11 @@ sm-ssc v1.0 Release Candidate 2 | 201007xx
 
 20100630
 --------
+sm4svn commits:
+ * r28367: fix resampler noise [Glenn Maynard]
+ * r28368: fix get_readable_ranges error handling [Glenn Maynard]
+
+sm-ssc:
 * [ScreenDebugOverlay] add new metrics: LineStartY, LineSpacing,
   LineButtonX, LineFunctionX.
 * Fix an odd mapping issue in dance mode where keypad 7 and 9 would control
