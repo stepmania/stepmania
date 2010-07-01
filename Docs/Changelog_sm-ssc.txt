@@ -19,6 +19,10 @@ sm-ssc v1.0 Release Candidate 2 | 201007xx
 sm4svn commits:
  * r28367: fix resampler noise [Glenn Maynard]
  * r28368: fix get_readable_ranges error handling [Glenn Maynard]
+ * r28369: don't use fprintf from the crash handler [Glenn Maynard]
+ * r28370: work around not all recursive crashes being caught [Glenn Maynard]
+ * r28371: use /proc weirdness to make the crash handler work even after
+   the binary has been deleted or replaced [Glenn Maynard]
 
 sm-ssc:
 * [ScreenDebugOverlay] add new metrics: LineStartY, LineSpacing,
