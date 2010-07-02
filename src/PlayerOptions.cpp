@@ -797,7 +797,7 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	case saved_prefs_invalid_for_course:
 		break;
 	}
-	CPY( m_fScrolls[SCROLL_REVERSE] );
+
 	CPY( m_fPerspectiveTilt );
 	CPY( m_bTransforms[TRANSFORM_NOHOLDS] );
 	CPY( m_bTransforms[TRANSFORM_NOROLLS] );
