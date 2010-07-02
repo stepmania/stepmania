@@ -9,6 +9,12 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20100702
+--------
+sm4svn:
+ * r28372: use MercifulDrain logic for MercifulBeginner [Chris Danford]
+ * r28373: don't override user scroll in courses [Chris Danford]
+
 ================================================================================
 sm-ssc v1.0 Release Candidate 2 | 201007xx
 --------------------------------------------------------------------------------
@@ -30,6 +36,8 @@ sm-ssc:
 * Fix an odd mapping issue in dance mode where keypad 7 and 9 would control
   up/down as well as upleft/upright. (Numpad 8 is now up and numpad 2 is now
   down.)
+* Step editor can now process meters from 0-25.
+* MAX_METER upped to 35.
 
 20100629
 --------
