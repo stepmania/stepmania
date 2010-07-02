@@ -94,16 +94,11 @@ void LifeMeterBar::Load( const PlayerState *pPlayerState, PlayerStageStats *pPla
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
 	// Change life difficulty to really easy if merciful beginner on
-	bool bMercifulBeginnerInEffect = 
+	bMercifulBeginnerInEffect = 
 		GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR  &&  
 		GAMESTATE->IsPlayerEnabled( pPlayerState )  &&
 		GAMESTATE->m_pCurSteps[pn]->GetDifficulty() == Difficulty_Beginner  &&
 		PREFSMAN->m_bMercifulBeginner;
-	if( bMercifulBeginnerInEffect )
-	{
-		m_fBaseLifeDifficulty = 1.5f;
-		m_fLifeDifficulty = m_fBaseLifeDifficulty;
-	}
 
 	AfterLifeChanged();
 }
@@ -156,7 +151,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 	case SongOptions::DRAIN_NORMAL:
 		switch( score )
 		{
-		case HNS_Held:	fDeltaLife = m_fLifePercentChange.GetValue(SE_Held);	break;
+		case HNS_Held:		fDeltaLife = m_fLifePercentChange.GetValue(SE_Held);	break;
 		case HNS_LetGo:	fDeltaLife = m_fLifePercentChange.GetValue(SE_LetGo);	break;
 		default:
 			ASSERT(0);
@@ -167,7 +162,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 	case SongOptions::DRAIN_NO_RECOVER:
 		switch( score )
 		{
-		case HNS_Held:	fDeltaLife = +0.000f;	break;
+		case HNS_Held:		fDeltaLife = +0.000f;	break;
 		case HNS_LetGo:	fDeltaLife = m_fLifePercentChange.GetValue(SE_LetGo);	break;
 		default:
 			ASSERT(0);
@@ -177,7 +172,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		switch( score )
 		{
 		case HNS_Held:		fDeltaLife = +0;	break;
-		case HNS_LetGo:		fDeltaLife = -1.0;	break;
+		case HNS_LetGo:	fDeltaLife = -1.0;	break;
 		default:
 			ASSERT(0);
 		}
@@ -191,8 +186,9 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 
 void LifeMeterBar::ChangeLife( float fDeltaLife )
 {
-	if( PREFSMAN->m_bMercifulDrain  &&  fDeltaLife < 0 )
-		fDeltaLife *= SCALE( m_fLifePercentage, 0.f, 1.f, 0.5f, 1.f);
+	bool bUseMercifulDrain = m_bMercifulBeginnerInEffect || PREFSMAN->m_bMercifulDrain;
+	if( bUseMercifulDrain  &&  fDeltaLife < 0 )
+		fDeltaLife *= 0.4f;
 
 	// handle progressiveness and ComboToRegainLife here
 	if( fDeltaLife >= 0 )
@@ -205,13 +201,12 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	else
 	{
 		fDeltaLife *= 1 + (float)m_iProgressiveLifebar/8 * m_iMissCombo;
-		// do this after; only successive W5/miss will
-		// increase the amount of life lost.
+		// do this after; only successive W5/miss will increase the amount of life lost.
 		m_iMissCombo++;
 		m_iComboToRegainLife = PREFSMAN->m_iRegenComboAfterMiss;
 	}
 
-	/* If we've already failed, there's no point in letting them fill up the bar again.  */
+	// If we've already failed, there's no point in letting them fill up the bar again.
 	if( m_pPlayerStageStats->m_bFailed )
 		return;
 
@@ -311,8 +306,9 @@ void LifeMeterBar::UpdateNonstopLifebar()
 //	if (iTotal == 0) iTotal = 1;  // no division by 0
 
 	if( GAMESTATE->IsAnExtraStage() )
-	{   // extra stage is its own thing, should not be progressive
-	    // and it should be as difficult as life 4
+	{
+		// extra stage is its own thing, should not be progressive
+		// and it should be as difficult as life 4
 		// (e.g. it should not depend on life settings)
 
 		m_iProgressiveLifebar = 0;
@@ -328,8 +324,7 @@ void LifeMeterBar::UpdateNonstopLifebar()
 	if( m_fLifeDifficulty >= 0.4f )
 		return;
 
-	/*
-	 * Approximate deductions for a miss
+	/* Approximate deductions for a miss
 	 * Life 1 :    5   %
 	 * Life 2 :    5.7 %
 	 * Life 3 :    6.6 %
@@ -353,13 +348,11 @@ void LifeMeterBar::UpdateNonstopLifebar()
 	 * Everything past 7 is intended mainly for nonstop mode.
 	 */
 
-
 	// the lifebar is pretty harsh at 0.4 already (you lose
 	// about 20% of your lifebar); at 0.2 it would be 40%, which
 	// is too harsh at one difficulty level higher.  Override.
-
 	int iLifeDifficulty = int( (1.8f - m_fLifeDifficulty)/0.2f );
-	
+
 	// first eight values don't matter
 	float fDifficultyValues[16] = {0,0,0,0,0,0,0,0, 
 		0.3f, 0.25f, 0.2f, 0.16f, 0.14f, 0.12f, 0.10f, 0.08f};
