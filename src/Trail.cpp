@@ -264,6 +264,16 @@ public:
 		return 2;
 	}
 	static int GetTrailEntry( T* p, lua_State *L )	{ TrailEntry &te = p->m_vEntries[IArg(1)]; te.PushSelf(L); return 1; }
+	static int GetTrailEntries( T* p, lua_State *L )
+	{
+		vector<TrailEntry*> v;
+		for( unsigned i = 0; i < p->m_vEntries.size(); ++i )
+		{
+			v.push_back(&p->m_vEntries[i]);
+		}
+		LuaHelpers::CreateTableFromArray<TrailEntry*>( v, L );
+		return 1;
+	}
 
 	LunaTrail()
 	{
@@ -273,6 +283,7 @@ public:
 		ADD_METHOD( GetRadarValues );
 		ADD_METHOD( GetArtists );
 		ADD_METHOD( GetTrailEntry );
+		ADD_METHOD( GetTrailEntries );
 	}
 };
 

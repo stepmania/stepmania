@@ -127,8 +127,6 @@ LUA_REGISTER_CLASS( CourseEntry )
 // lua end
 
 
-
-
 Course::Course()
 {
 	Init();
@@ -1057,6 +1055,16 @@ public:
 	static int HasTimedMods( T* p, lua_State *L )		{ lua_pushboolean( L, p->HasTimedMods() ); return 1; }
 	DEFINE_METHOD( GetCourseType, GetCourseType() )
 	static int GetCourseEntry( T* p, lua_State *L )		{ CourseEntry &ce = p->m_vEntries[IArg(1)]; ce.PushSelf(L); return 1; }
+	static int GetCourseEntries( T* p, lua_State *L )
+	{
+		vector<CourseEntry*> v;
+		for( unsigned i = 0; i < p->m_vEntries.size(); ++i )
+		{
+			v.push_back(&p->m_vEntries[i]);
+		}
+		LuaHelpers::CreateTableFromArray<CourseEntry*>( v, L );
+		return 1;
+	}
 	static int GetAllTrails( T* p, lua_State *L )
 	{
 		vector<Trail*> v;
@@ -1097,6 +1105,7 @@ public:
 		ADD_METHOD( HasTimedMods );
 		ADD_METHOD( GetCourseType ); // [sm-ssc] returns CourseType enum now
 		ADD_METHOD( GetCourseEntry );
+		ADD_METHOD( GetCourseEntries );
 		ADD_METHOD( GetAllTrails );
 		ADD_METHOD( GetBannerPath );
 		ADD_METHOD( GetBackgroundPath ); // sm-ssc addition
