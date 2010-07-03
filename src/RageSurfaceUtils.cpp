@@ -18,7 +18,7 @@ uint32_t RageSurfaceUtils::decodepixel( const uint8_t *p, int bpp )
 			return p[0] | p[1] << 8 | p[2] << 16;
 
 	case 4: return *(uint32_t *)p;
-	default: return 0;       /* shouldn't happen, but avoids warnings */
+	default: return 0;	// shouldn't happen, but avoids warnings
 	}
 }
 
@@ -44,7 +44,7 @@ void RageSurfaceUtils::encodepixel( uint8_t *p, int bpp, uint32_t pixel )
 	}
 }
 
-/* Get and set colors without scaling to 0..255. */
+// Get and set colors without scaling to 0..255.
 void RageSurfaceUtils::GetRawRGBAV( uint32_t pixel, const RageSurfaceFormat &fmt, uint8_t *v )
 {
 	if( fmt.BytesPerPixel == 1 )
@@ -87,11 +87,11 @@ void RageSurfaceUtils::GetRGBAV( const uint8_t *p, const RageSurface *src, uint8
 		memcpy( v, &src->format->palette->colors[pixel], sizeof(RageSurfaceColor));
 	}
 	else	// RGBA
-		GetRGBAV(pixel, src, v);	
+		GetRGBAV(pixel, src, v);
 }
 
 
-/* Inverse of GetRawRGBAV. */
+// Inverse of GetRawRGBAV.
 uint32_t RageSurfaceUtils::SetRawRGBAV( const RageSurfaceFormat *fmt, const uint8_t *v )
 {
 	return 	v[0] << fmt->Rshift |
@@ -106,7 +106,7 @@ void RageSurfaceUtils::SetRawRGBAV( uint8_t *p, const RageSurface *src, const ui
 	encodepixel(p, src->format->BytesPerPixel, pixel);
 }
 
-/* Inverse of GetRGBAV. */
+// Inverse of GetRGBAV.
 uint32_t RageSurfaceUtils::SetRGBAV( const RageSurfaceFormat *fmt, const uint8_t *v )
 {
 	return 	(v[0] >> fmt->Loss[0]) << fmt->Shift[0] |
@@ -124,14 +124,14 @@ void RageSurfaceUtils::SetRGBAV( uint8_t *p, const RageSurface *src, const uint8
 
 void RageSurfaceUtils::GetBitsPerChannel( const RageSurfaceFormat *fmt, uint32_t bits[4] )
 {
-	/* The actual bits stored in each color is 8-loss.  */
+	// The actual bits stored in each color is 8-loss.
 	for( int c = 0; c < 4; ++c )
 		bits[c] = 8 - fmt->Loss[c];
 }
 
 void RageSurfaceUtils::CopySurface( const RageSurface *src, RageSurface *dest )
 {
-	/* Copy the palette, if we have one. */
+	// Copy the palette, if we have one.
 	if( src->format->BitsPerPixel == 8 && dest->format->BitsPerPixel == 8 )
 	{
 		ASSERT( dest->fmt.palette );
@@ -147,7 +147,7 @@ bool RageSurfaceUtils::ConvertSurface( RageSurface *src, RageSurface *&dst,
 {
 	dst = CreateSurface( width, height, bpp, R, G, B, A );
 
-	/* If the formats are the same, no conversion is needed.  Ignore the palette. */
+	// If the formats are the same, no conversion is needed. Ignore the palette.
 	if( width == src->w && height == src->h && src->format->Equivalent( *dst->format ) )
 	{
 		delete dst;
@@ -172,16 +172,16 @@ void RageSurfaceUtils::ConvertSurface(RageSurface *&image,
 }
 
 
-/* Local helper for FixHiddenAlpha. */
+// Local helper for FixHiddenAlpha.
 static void FindAlphaRGB(const RageSurface *img, uint8_t &r, uint8_t &g, uint8_t &b, bool reverse)
 {
 	r = g = b = 0;
-	
-	/* If we have no alpha, there's no alpha color. */
+
+	// If we have no alpha, there's no alpha color.
 	if( img->format->BitsPerPixel > 8 && !img->format->Amask )
 		return;
 
-	/* Eww.  Sorry.  Iterate front-to-back or in reverse. */
+	// Eww. Sorry. Iterate front-to-back or in reverse.
 	for(int y = reverse? img->h-1:0;
 		reverse? (y >=0):(y < img->h); reverse? (--y):(++y))
 	{
@@ -196,7 +196,7 @@ static void FindAlphaRGB(const RageSurface *img, uint8_t &r, uint8_t &g, uint8_t
 			{
 				if( img->format->palette->colors[val].a )
 				{
-					/* This color isn't fully transparent, so grab it. */
+					// This color isn't fully transparent, so grab it.
 					r = img->format->palette->colors[val].r;
 					g = img->format->palette->colors[val].g;
 					b = img->format->palette->colors[val].b;
@@ -207,7 +207,7 @@ static void FindAlphaRGB(const RageSurface *img, uint8_t &r, uint8_t &g, uint8_t
 			{
 				if( val & img->format->Amask )
 				{
-					/* This color isn't fully transparent, so grab it. */
+					// This color isn't fully transparent, so grab it.
 					img->format->GetRGB( val, &r, &g, &b );
 					return;
 				}
@@ -220,15 +220,15 @@ static void FindAlphaRGB(const RageSurface *img, uint8_t &r, uint8_t &g, uint8_t
 		}
 	}
 
-	/* Huh?  The image is completely transparent. */
+	// Huh?  The image is completely transparent.
 	r = g = b = 0;
 }
 
-/* Local helper for FixHiddenAlpha. Set the underlying RGB values of all pixels in
- * img that are completely transparent. */
+/* Local helper for FixHiddenAlpha. Set the underlying RGB values of all pixels
+ * in img that are completely transparent. */
 static void SetAlphaRGB(const RageSurface *pImg, uint8_t r, uint8_t g, uint8_t b)
 {
-	/* If it's a paletted surface, all we have to do is change the palette. */
+	// If it's a paletted surface, all we have to do is change the palette.
 	if( pImg->format->BitsPerPixel == 8 )
 	{
 		for( int c = 0; c < pImg->format->palette->ncolors; ++c )
@@ -242,8 +242,7 @@ static void SetAlphaRGB(const RageSurface *pImg, uint8_t r, uint8_t g, uint8_t b
 		return;
 	}
 
-
-	/* If it's RGBA and there's no alpha channel, we have nothing to do. */
+	// If it's RGBA and there's no alpha channel, we have nothing to do.
 	if( pImg->format->BitsPerPixel > 8 && !pImg->format->Amask )
 		return;
 
@@ -266,32 +265,31 @@ static void SetAlphaRGB(const RageSurface *pImg, uint8_t r, uint8_t g, uint8_t b
 	}
 }
 
-/*
- * When we scale up images (which we always do in high res), pixels
+/* When we scale up images (which we always do in high res), pixels
  * that are completely transparent can be blended with opaque pixels,
- * causing their RGB elements to show.  This is visible in many textures
- * as a pixel-wide border in the wrong color.  This is tricky to fix.
+ * causing their RGB elements to show. This is visible in many textures
+ * as a pixel-wide border in the wrong color. This is tricky to fix.
  * We need to set the RGB components of completely transparent pixels
  * to a reasonable color.
  *
- * Most images have a single border color.  For these, the transparent
+ * Most images have a single border color. For these, the transparent
  * color is easy: search through the image top-bottom-left-right,
  * find the first non-transparent pixel, and pull out its RGB.
  *
- * A few images don't.  We can only make a guess here.  After the above
- * search, do the same in reverse (bottom-top-right-left).  If the color
+ * A few images don't. We can only make a guess here. After the above
+ * search, do the same in reverse (bottom-top-right-left). If the color
  * we find is different, just set the border color to black.  
  */
 void RageSurfaceUtils::FixHiddenAlpha( RageSurface *pImg )
 {
-	/* If there are no alpha bits, there's nothing to fix. */
+	// If there are no alpha bits, there's nothing to fix.
 	if( pImg->format->BitsPerPixel != 8 && pImg->format->Amask == 0 )
 		return;
 
 	uint8_t r, g, b;
 	FindAlphaRGB( pImg, r, g, b, false );
 
-	uint8_t cr, cg, cb; /* compare */
+	uint8_t cr, cg, cb; // compare
 	FindAlphaRGB( pImg, cr, cg, cb, true );
 
 	if( cr != r || cg != g || cb != b )
@@ -300,7 +298,7 @@ void RageSurfaceUtils::FixHiddenAlpha( RageSurface *pImg )
 	SetAlphaRGB( pImg, r, g, b );
 }
 
-/* Scan the surface to see what level of alpha it uses.  This can be used to
+/* Scan the surface to see what level of alpha it uses. This can be used to
  * find the best surface format for a texture; eg. a TRAIT_BOOL_TRANSPARENCY or
  * TRAIT_NO_TRANSPARENCY surface can use RGB5A1 instead of RGBA4 for greater
  * color resolution; a TRAIT_NO_TRANSPARENCY could also use R5G6B5. */
@@ -312,7 +310,7 @@ int RageSurfaceUtils::FindSurfaceTraits( const RageSurface *img )
 	uint32_t max_alpha;
 	if( img->format->BitsPerPixel == 8 )
 	{
-		/* Short circuit if we already know we have no transparency. */
+		// Short circuit if we already know we have no transparency.
 		bool bHaveNonOpaque = false;
 		for( int c = 0; !bHaveNonOpaque && c < img->format->palette->ncolors; ++c )
 		{
@@ -327,7 +325,7 @@ int RageSurfaceUtils::FindSurfaceTraits( const RageSurface *img )
 	}
 	else
 	{
-		/* Short circuit if we already know we have no transparency. */
+		// Short circuit if we already know we have no transparency.
 		if( img->format->Amask == 0 )
 			return TRAIT_NO_TRANSPARENCY;
 
@@ -370,7 +368,7 @@ int RageSurfaceUtils::FindSurfaceTraits( const RageSurface *img )
 }
 
 
-/* Local helper for BlitTransform. */
+// Local helper for BlitTransform.
 static inline void GetRawRGBAV_XY( const RageSurface *src, uint8_t *v, int x, int y )
 {
 	const uint8_t *srcp = (const uint8_t *) src->pixels + (y * src->pitch);
@@ -384,7 +382,7 @@ static inline float scale( float x, float l1, float h1, float l2, float h2 )
 	return ((x - l1) / (h1 - l1) * (h2 - l2) + l2);
 }
 
-/* Completely unoptimized. */
+// Completely unoptimized.
 void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst, 
 					const float fCoords[8] /* TL, BR, BL, TR */ )
 {
@@ -403,7 +401,7 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 	for( int y = 0; y < dst->h; ++y )
 	{
 		uint8_t *dstp = (uint8_t *) dst->pixels + (y * dst->pitch); /* line */
-		uint8_t *dstpx = dstp; /* pixel */
+		uint8_t *dstpx = dstp; // pixel
 
 		const float start_y = scale(float(y), 0, float(dst->h), Coords[TL_Y], Coords[BL_Y]);
 		const float end_y = scale(float(y), 0, float(dst->h), Coords[TR_Y], Coords[BR_Y]);
@@ -427,24 +425,24 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 			src_y[0] = (int) truncf(src_yp - 0.5f);
 			src_y[1] = src_y[0] + 1;
 
-			/* Emulate GL_REPEAT. */
+			// Emulate GL_REPEAT.
 			src_x[0] = clamp(src_x[0], 0, src->w);
 			src_x[1] = clamp(src_x[1], 0, src->w);
 			src_y[0] = clamp(src_y[0], 0, src->h);
 			src_y[1] = clamp(src_y[1], 0, src->h);
 
-			/* Decode our four pixels. */
+			// Decode our four pixels.
 			uint8_t v[4][4];
 			GetRawRGBAV_XY(src, v[0], src_x[0], src_y[0]);
 			GetRawRGBAV_XY(src, v[1], src_x[0], src_y[1]);
 			GetRawRGBAV_XY(src, v[2], src_x[1], src_y[0]);
 			GetRawRGBAV_XY(src, v[3], src_x[1], src_y[1]);
 
-			/* Distance from the pixel chosen: */
+			// Distance from the pixel chosen:
 			float weight_x = src_xp - (src_x[0] + 0.5f);
 			float weight_y = src_yp - (src_y[0] + 0.5f);
 
-			/* Filter: */
+			// Filter:
 			uint8_t out[4] = { 0,0,0,0 };
 			for(int i = 0; i < 4; ++i)
 			{
@@ -456,7 +454,7 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 				out[i] = (uint8_t) clamp( lrintf(sum), 0L, 255L );
 			}
 
-			/* If the source has no alpha, set the destination to opaque. */
+			// If the source has no alpha, set the destination to opaque.
 			if( src->format->Amask == 0 )
 				out[3] = uint8_t( dst->format->Amask >> dst->format->Ashift );
 
@@ -468,14 +466,12 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 }
 
 
-/*
- * Simplified:
+/* Simplified:
  *
  * No source alpha.
  * Palette -> palette blits assume the palette is identical (no mapping).
  * No color key.
- * No general blitting rects.
- */
+ * No general blitting rects. */
 
 static bool blit_same_type( const RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
 {
@@ -489,14 +485,14 @@ static bool blit_same_type( const RageSurface *src_surf, const RageSurface *dst_
 	const uint8_t *src = src_surf->pixels;
 	uint8_t *dst = dst_surf->pixels;
 
-	/* If possible, memcpy the whole thing. */
+	// If possible, memcpy the whole thing.
 	if( src_surf->w == width && dst_surf->w == width && src_surf->pitch == dst_surf->pitch )
 	{
 		memcpy( dst, src, height*src_surf->pitch );
 		return true;
 	}
 
-	/* The rows don't line up, so memcpy row by row. */
+	// The rows don't line up, so memcpy row by row.
 	while( height-- )
 	{
 		memcpy( dst, src, width*src_surf->format->BytesPerPixel );
@@ -507,7 +503,7 @@ static bool blit_same_type( const RageSurface *src_surf, const RageSurface *dst_
 	return true;
 }
 
-/* Rescaling blit with no ckey.  This is used to update movies in
+/* Rescaling blit with no ckey. This is used to update movies in
  * D3D, so optimization is very important. */
 static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
 {
@@ -517,7 +513,7 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 	const uint8_t *src = src_surf->pixels;
 	uint8_t *dst = dst_surf->pixels;
 
-	/* Bytes to skip at the end of a line. */
+	// Bytes to skip at the end of a line.
 	const int srcskip = src_surf->pitch - width*src_surf->format->BytesPerPixel;
 	const int dstskip = dst_surf->pitch - width*dst_surf->format->BytesPerPixel;
 
@@ -536,15 +532,14 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 
 		if( src_masks[c] == 0 )
 		{
-			/* The source is missing a channel.  Alpha defaults to opaque, other
+			/* The source is missing a channel. Alpha defaults to opaque, other
 			 * channels default to 0. */
 			if( c == 3 )
 				lookup[c][0] = (uint8_t) max_dst_val;
 			else
 				lookup[c][0] = 0;
 		} else {
-			/*
-			 * Calculate a color conversion table.  There are a few ways we can do
+			/* Calculate a color conversion table. There are a few ways we can do
 			 * this (each list is the resulting table for 4->2 bit):
 			 *
 			 * SCALE( i, 0, max_src_val+1, 0, max_dst_val+1 );
@@ -569,8 +564,7 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 			 * second, since the first doesn't scale max_src_val to max_dst_val.
 			 *
 			 * Having separate formulas for increasing and decreasing resolution seems
-			 * strange; what's wrong here?
-			 */
+			 * strange; what's wrong here? */
 			if( max_src_val > max_dst_val )
 				for( uint32_t i = 0; i <= max_src_val; ++i )
 					lookup[c][i] = (uint8_t) SCALE( i, 0, max_src_val+1, 0, max_dst_val+1 );
@@ -587,7 +581,7 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 		{
 			unsigned int pixel = RageSurfaceUtils::decodepixel( src, src_surf->format->BytesPerPixel );
 
-			/* Convert pixel to the destination format. */
+			// Convert pixel to the destination format.
 			unsigned int opixel = 0;
 			for( int c = 0; c < 4; ++c )
 			{
@@ -595,7 +589,7 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 				opixel |= lookup[c][src] << dst_shifts[c];
 			}
 
-			/* Store it. */
+			// Store it.
 			RageSurfaceUtils::encodepixel( dst, dst_surf->format->BytesPerPixel, opixel );
 
 			src += src_surf->format->BytesPerPixel;
@@ -617,7 +611,7 @@ static bool blit_generic( const RageSurface *src_surf, const RageSurface *dst_su
 	const uint8_t *src = src_surf->pixels;
 	uint8_t *dst = dst_surf->pixels;
 
-	/* Bytes to skip at the end of a line. */
+	// Bytes to skip at the end of a line.
 	const int srcskip = src_surf->pitch - width*src_surf->format->BytesPerPixel;
 	const int dstskip = dst_surf->pitch - width*dst_surf->format->BytesPerPixel;
 
@@ -629,14 +623,14 @@ static bool blit_generic( const RageSurface *src_surf, const RageSurface *dst_su
 			unsigned int pixel = RageSurfaceUtils::decodepixel( src, src_surf->format->BytesPerPixel );
 
 			uint8_t colors[4];
-				/* Convert pixel to the destination RGBA. */
+				// Convert pixel to the destination RGBA.
 				colors[0] = src_surf->format->palette->colors[pixel].r;
 				colors[1] = src_surf->format->palette->colors[pixel].g;
 				colors[2] = src_surf->format->palette->colors[pixel].b;
 				colors[3] = src_surf->format->palette->colors[pixel].a;
 			pixel = RageSurfaceUtils::SetRGBAV(dst_surf->format, colors);
 
-			/* Store it. */
+			// Store it.
 			RageSurfaceUtils::encodepixel( dst, dst_surf->format->BytesPerPixel, pixel );
 
 			src += src_surf->format->BytesPerPixel;
@@ -650,7 +644,7 @@ static bool blit_generic( const RageSurface *src_surf, const RageSurface *dst_su
 	return true;
 }
 
-/* Blit src onto dst. */
+// Blit src onto dst.
 void RageSurfaceUtils::Blit( const RageSurface *src, RageSurface *dst, int width, int height )
 {
 	if( width == -1 )
@@ -664,46 +658,43 @@ void RageSurfaceUtils::Blit( const RageSurface *src, RageSurface *dst, int width
 	 * so we use the fastest blit possible. */
 	do
 	{
-		/* RGBA->RGBA with the same format, or PAL->PAL.  Simple copy. */
+		// RGBA->RGBA with the same format, or PAL->PAL. Simple copy.
 		if( blit_same_type(src, dst, width, height) )
 			break;
 
-		/* RGBA->RGBA with different formats. */
+		// RGBA->RGBA with different formats.
 		if( blit_rgba_to_rgba(src, dst, width, height) )
 			break;
 
-		/* PAL->RGBA. */
+		// PAL->RGBA.
 		if( blit_generic(src, dst, width, height) )
 			break;
 
-		/* We don't do RGBA->PAL. */
+		// We don't do RGBA->PAL.
 		ASSERT(0);
 	} while(0);
 
-	/*
-	 * The destination surface may be larger than the source.  For example, we may be
-	 * blitting a 200x200 image onto a 256x256 surface for OpenGL.  Normally, that extra
-	 * space isn't actually used; we'll only render the image space.  However, bilinear
+	/* The destination surface may be larger than the source. For example, we may be
+	 * blitting a 200x200 image onto a 256x256 surface for OpenGL. Normally, that extra
+	 * space isn't actually used; we'll only render the image space. However, bilinear
 	 * filtering will cause the lines of pixels at 201x... and ...x201 to be visible. We
 	 * need to make sure those pixels make sense.
 	 *
-	 * Previously, we just cleared the image to transparent or the color key.  This
-	 * has two problems.  First, we may not have space for a color key (an image with
-	 * 256 non-transparent palette colors).  Second, that's not completely correct;
-	 * it'll force the outside border of the image to filter to transparent.  If the image
+	 * Previously, we just cleared the image to transparent or the color key. This
+	 * has two problems. First, we may not have space for a color key (an image with
+	 * 256 non-transparent palette colors). Second, that's not completely correct;
+	 * it'll force the outside border of the image to filter to transparent. If the image
 	 * is being tiled with another image, that may leave seams.
 	 *
 	 * (In some cases, filtering to transparent is preferable, particularly when displaying
-	 * a sprite in perspective.  If you want that, add blank space to the image explicitly.)
+	 * a sprite in perspective. If you want that, add blank space to the image explicitly.)
 	 *
-	 * Copy the last column (200x... -> 201x...), then the last row (...x200 -> ...x201).
-	 */
+	 * Copy the last column (200x... -> 201x...), then the last row (...x200 -> ...x201). */
 
 	CorrectBorderPixels( dst, width, height );
 }
 
-/*
- * If only width x height of img is actually going to be used, and there's extra
+/* If only width x height of img is actually going to be used, and there's extra
  * space on the surface, duplicate the last row and column to ensure that we don't
  * pull in unexpected data when rendering with bilinear filtering.
  *
@@ -711,13 +702,12 @@ void RageSurfaceUtils::Blit( const RageSurface *src, RageSurface *dst, int width
  * of the image (in the per-line padding or after the end).  This way, surfaces
  * can be padded to power-of-two dimensions by the image loaders, and if no other
  * adjustments are needed, they can be passed directly to the renderer without
- * doing any extra copies.
- */
+ * doing any extra copies. */
 void RageSurfaceUtils::CorrectBorderPixels( RageSurface *img, int width, int height )
 {
 	if( width*img->fmt.BytesPerPixel < img->pitch )
 	{
-		/* Duplicate the last column. */
+		// Duplicate the last column.
 		int offset = img->format->BytesPerPixel * (width-1);
 		uint8_t *p = (uint8_t *) img->pixels + offset;
 
@@ -732,7 +722,7 @@ void RageSurfaceUtils::CorrectBorderPixels( RageSurface *img, int width, int hei
 
 	if( height < img->h )
 	{
-		/* Duplicate the last row. */
+		// Duplicate the last row.
 		uint8_t *srcp = img->pixels;
 		srcp += img->pitch * (height-1);
 		memcpy( srcp + img->pitch, srcp, img->pitch );
@@ -746,7 +736,7 @@ struct SurfaceHeader
 	int bpp;
 };
 
-/* Save and load RageSurfaces to disk, in a very fast, nonportable way. */
+// Save and load RageSurfaces to disk, in a very fast, nonportable way.
 bool RageSurfaceUtils::SaveSurface( const RageSurface *img, RString file )
 {
 	RageFile f;
@@ -774,7 +764,7 @@ bool RageSurfaceUtils::SaveSurface( const RageSurface *img, RString file )
 	}
 
 	f.Write( img->pixels, img->h * img->pitch );
-	
+
 	return true;
 }
 
@@ -787,7 +777,7 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 	SurfaceHeader h;
 	if( f.Read( &h, sizeof(h) ) != sizeof(h) )
 		return NULL;
-	
+
 	RageSurfacePalette palette;
 	if( h.bpp == 8 )
 	{
@@ -798,7 +788,7 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 			return NULL;
 	}
 
-	/* Create the surface. */
+	// Create the surface.
 	RageSurface *img = CreateSurface( h.width, h.height, h.bpp,
 			h.Rmask, h.Gmask, h.Bmask, h.Amask );
 	ASSERT( img );
@@ -820,15 +810,14 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 		return NULL;
 	}
 
-	/* Set the palette. */
+	// Set the palette.
 	if( h.bpp == 8 )
 		*img->fmt.palette = palette;
 
 	return img;
 }
 
-/*
- * This converts an image to a special 8-bit paletted format.  The palette is set up
+/* This converts an image to a special 8-bit paletted format. The palette is set up
  * so that palette indexes look like regular, packed components.
  *
  * For example, an image with 8 bits of grayscale and 0 bits of alpha has a palette
@@ -843,19 +832,18 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
  * values: the first two bits of the index are the grayscale component, and the next
  * two bits are the alpha component.
  *
- * This gives us a generic way to handle arbitrary 8-bit texture formats.
- */
+ * This gives us a generic way to handle arbitrary 8-bit texture formats. */
 RageSurface *RageSurfaceUtils::PalettizeToGrayscale( const RageSurface *src_surf, int GrayBits, int AlphaBits )
 {
 	AlphaBits = min( AlphaBits, 8-src_surf->format->Loss[3] );
-	
+
 	const int TotalBits = GrayBits + AlphaBits;
 	ASSERT( TotalBits <= 8 );
 
 	RageSurface *dst_surf = CreateSurface(src_surf->w, src_surf->h,
 		8, 0,0,0,0 );
 
-	/* Set up the palette. */
+	// Set up the palette.
 	const int TotalColors = 1 << TotalBits;
 	const int Ivalues = 1 << GrayBits;					// number of intensity values
 	const int Ishift = 0;								// intensity shift
@@ -899,7 +887,7 @@ RageSurface *RageSurfaceUtils::PalettizeToGrayscale( const RageSurface *src_surf
 	int height = src_surf->h;
 	int width = src_surf->w;
 
-	/* Bytes to skip at the end of a line. */
+	// Bytes to skip at the end of a line.
 	const int srcskip = src_surf->pitch - width*src_surf->format->BytesPerPixel;
 	const int dstskip = dst_surf->pitch - width*dst_surf->format->BytesPerPixel;
 
@@ -922,7 +910,7 @@ RageSurface *RageSurfaceUtils::PalettizeToGrayscale( const RageSurface *src_surf
 			pixel = (Ival >> Iloss) << Ishift |
 					(colors[3] >> Aloss) << Ashift;
 
-			/* Store it. */
+			// Store it.
 			*dst = uint8_t(pixel);
 
 			src += src_surf->format->BytesPerPixel;
@@ -949,8 +937,8 @@ RageSurface *RageSurfaceUtils::MakeDummySurface( int height, int width )
 	return ret_image;
 }
 
-/* HACK:  Some banners and textures have #F800F8 as the color key. Search the edge
- * it; if we find it, use that as the color key. */
+/* HACK: Some banners and textures have #F800F8 as the color key.
+ * Search the edge for it; if we find it, use that as the color key. */
 static bool ImageUsesOffHotPink( const RageSurface *img )
 {
 	uint32_t OffHotPink;
@@ -978,8 +966,8 @@ static bool ImageUsesOffHotPink( const RageSurface *img )
 	return false;
 }
 
-/* Set #FF00FF and #F800F8 to transparent.  img may be reallocated if it has no alpha
- * bits. */
+/* Set #FF00FF and #F800F8 to transparent. img may be reallocated if it has no
+ * alpha bits. */
 void RageSurfaceUtils::ApplyHotPinkColorKey( RageSurface *&img )
 {
 	if( img->format->BitsPerPixel == 8 )
@@ -992,14 +980,14 @@ void RageSurfaceUtils::ApplyHotPinkColorKey( RageSurface *&img )
 		return;
 	}
 
-	/* RGBA. Make sure we have alpha. */
+	// RGBA. Make sure we have alpha.
 	if( img->format->Amask == 0 )
 	{
-		/* We don't have any alpha.  Try to enable it without copying. */
+		// We don't have any alpha.  Try to enable it without copying.
 		/* XXX: need to scan the surface and make sure the new alpha bit is always 1 */
 		/*
 		const int used_bits = img->format->Rmask | img->format->Gmask | img->format->Bmask;
-		
+
 		for( int i = 0; img->format->Amask == 0 && i < img->format->BitsPerPixel; ++i )
 		{
 			if( (used_bits & (1<<i)) )
@@ -1010,7 +998,7 @@ void RageSurfaceUtils::ApplyHotPinkColorKey( RageSurface *&img )
 			}
 		}
 		*/
-		/* If we didn't have any free bits, convert to make room. */
+		// If we didn't have any free bits, convert to make room.
 		if( img->format->Amask == 0  )
 			ConvertSurface( img, img->w, img->h,
 				32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF );

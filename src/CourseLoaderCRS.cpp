@@ -257,7 +257,8 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			}
 
 			{
-				/* If "showcourse" or "noshowcourse" is in the list, force new_entry.secret on or off. */
+				// If "showcourse" or "noshowcourse" is in the list, force
+				// new_entry.secret on or off.
 				vector<RString> mods;
 				split( sParams[3], ",", mods, true );
 				for( int j = (int) mods.size()-1; j >= 0 ; --j )
@@ -338,7 +339,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 	out.m_sMainTitle = title.Title;
 	out.m_sMainTitleTranslit = title.TitleTranslit;
 
-	/* Cache and load the course banner.  Only bother doing this if at least one
+	/* Cache and load the course banner. Only bother doing this if at least one
 	 * song was found in the course. */
 	if( out.m_vEntries.empty() )
 		return true;
@@ -365,21 +366,20 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 	{
 		vector<RString> parts;
 		split( sPath, "/", parts, false );
-		if( parts.size() >= 4 ) // e.g. "/Courses/blah/fun.cvs"
+		if( parts.size() >= 4 ) // e.g. "/Courses/blah/fun.crs"
 			out.m_sGroupName = parts[parts.size()-2];
 	}
 
 
 	bool bUseCache = true;
 	{
-		/* First look in the cache for this course.  Don't bother
-		 * honoring FastLoad for checking the course hash, since
-		 * courses are normally grouped into a few directories, not
-		 * one directory per course. XXX: if !FastLoad, regen
-		 * cache if the used songs have changed */
+		/* First look in the cache for this course. Don't bother honoring
+		 * FastLoad for checking the course hash, since courses are normally
+		 * grouped into a few directories, not one directory per course. */
 		unsigned uHash = SONGINDEX->GetCacheHash( out.m_sPath );
 		if( !DoesFileExist(out.GetCacheFilePath()) )
 			bUseCache = false;
+		// XXX: if !FastLoad, regen cache if the used songs have changed
 		if( !PREFSMAN->m_bFastLoad && GetHashForFile(out.m_sPath) != uHash )
 			bUseCache = false; // this cache is out of date 
 	}
@@ -407,7 +407,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 
 	if( !bUseCache )
 	{
-		/* If we have any cache data, write the cache file. */
+		// If we have any cache data, write the cache file.
 		if( out.m_RadarCache.size() )
 		{
 			RString sCachePath = out.GetCacheFilePath();

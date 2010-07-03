@@ -47,7 +47,7 @@ StringToX( LayoutType );
 RString OptionRowHandler::OptionTitle() const
 {
 	bool bTheme = false;
-	
+
 	// HACK: Always theme the NEXT_ROW and EXIT items, even if metrics says not to theme.
 	if( m_Def.m_bAllowThemeTitle )
 		bTheme = true;
@@ -65,7 +65,7 @@ RString OptionRowHandler::GetThemedItemText( int iChoice ) const
 	if( s == "" )
 		return "";
 	bool bTheme = false;
-	
+
 	if( m_Def.m_bAllowThemeItems )	bTheme = true;
 
 	// Items beginning with a pipe mean "don't theme".
@@ -201,7 +201,7 @@ public:
 				mc.ApplyCommitsScreens( false );
 				mc.Load( 0, ParseCommands(ENTRY_MODE(sParam, col)) );
 				/* If the row has just one entry, use the name of the row as the name of the
-				 * entry.  If it has more than one, each one must be specified explicitly. */
+				 * entry. If it has more than one, each one must be specified explicitly. */
 				if( mc.m_sName == "" && NumCols == 1 )
 					mc.m_sName = sParam;
 				if( mc.m_sName == "" )
@@ -248,9 +248,10 @@ public:
 
 				if( mc.IsZero() )
 				{
-					/* The entry has no effect.  This is usually a default "none of the
-					 * above" entry.  It will always return true for DescribesCurrentMode().
-					 * It's only the selected choice if nothing else matches. */
+					/* The entry has no effect. This is usually a default "none
+					 * of the above" entry. It will always return true for
+					 * DescribesCurrentMode(). It's only the selected choice if
+					 * nothing else matches. */
 					continue;
 				}
 
@@ -1028,8 +1029,8 @@ public:
 			PlayerNumber p = *pn;
 			const vector<bool> &vbSel = vbSelected[p];
 
-			/* Evaluate SaveSelections(self,array,pn) function, where array is a table
-			 * representing vbSelectedOut. */
+			/* Evaluate SaveSelections(self,array,pn) function, where array is
+			 * a table representing vbSelectedOut. */
 
 			vector<bool> vbSelectedCopy = vbSel;
 
@@ -1094,7 +1095,7 @@ public:
 
 		Init();
 
-		/* Configuration values are never per-player. */
+		// Configuration values are never per-player.
 		m_Def.m_bOneChoiceForAllPlayers = true;
 
 		ConfOption *pConfOption = ConfOption::Find( sParam );
@@ -1136,16 +1137,16 @@ public:
 
 			int iSel = OptionRowHandlerUtil::GetOneSelection(vbSel);
 
-			/* Get the original choice. */
+			// Get the original choice.
 			int iOriginal = m_pOpt->Get();
 
-			/* Apply. */
+			// Apply.
 			m_pOpt->Put( iSel );
 
-			/* Get the new choice. */
+			// Get the new choice.
 			int iNew = m_pOpt->Get();
 
-			/* If it didn't change, don't return any side-effects. */
+			// If it didn't change, don't return any side-effects.
 			if( iOriginal != iNew )
 				bChanged = true;
 		}
@@ -1372,13 +1373,14 @@ OptionRowHandler* OptionRowHandlerUtil::MakeSimple( const MenuRowDef &mr )
 	pHand->m_Def.m_selectType = SELECT_ONE;
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = false;//true;
-		
+
+	// MISTER CHOICES!
 	pHand->m_Def.m_vsChoices = mr.choices;
 
 	// Each row must have at least one choice.
 	if( pHand->m_Def.m_vsChoices.empty() )
 		pHand->m_Def.m_vsChoices.push_back( "" );
-	
+
 	pHand->m_Def.m_bAllowThemeTitle = mr.bThemeTitle;
 	pHand->m_Def.m_bAllowThemeItems = mr.bThemeItems;
 

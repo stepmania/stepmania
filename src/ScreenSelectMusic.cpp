@@ -848,7 +848,7 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 	if( m_bRunning && msg == Message_PlayerJoined )
 	{
 		// The current steps may no longer be playable. If one player has double
-		// steps selected, they are no longer playable now that P2 has joined.  
+		// steps selected, they are no longer playable now that P2 has joined.
 
 		// TODO: Invalidate the CurSteps only if they are no longer playable.
 		// That way, after music change will clamp to the nearest in the StepsDisplayList.
@@ -889,7 +889,7 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 		}
 	}
-	
+
 	ScreenWithMenuElements::HandleMessage( msg );
 }
 
@@ -972,9 +972,10 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS )
 		return;
 
-	/* If select is being pressed, this is probably an attempt to change the
-	 * sort, not to pick a song or difficulty. If it gets here, the actual
-	 * select press was probably hit during a tween and ignored. Ignore it. */
+	/* If select is being pressed at the same time, this is probably an attempt
+	 * to change the sort, not to pick a song or difficulty. If it gets here,
+	 * the actual select press was probably hit during a tween and ignored.
+	 * Ignore it. */
 	if( input.pn != PLAYER_INVALID && INPUTMAPPER->IsBeingPressed(GAME_BUTTON_SELECT, input.pn) )
 		return;
 

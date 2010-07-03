@@ -190,7 +190,7 @@ void SetupFormat( RageSurfaceFormat &fmt,
 		ZERO( fmt.Mask );
 		ZERO( fmt.Shift );
 
-		/* Loss for paletted textures is zero, since the actual palette entries are 8-bit. */
+		// Loss for paletted textures is zero; the actual palette entries are 8-bit.
 		ZERO( fmt.Loss );
 
 		fmt.palette = new RageSurfacePalette;
@@ -227,10 +227,12 @@ RageSurface *CreateSurface( int width, int height, int BitsPerPixel, uint32_t Rm
 	pImg->pitch = width*BitsPerPixel/8;
 	pImg->pixels = new uint8_t[ pImg->pitch*height ];
 
-//	if( BitsPerPixel == 8 )
-//	{
-//		pImg->fmt.palette = new RageSurfacePalette;
-//	}
+	/*
+	if( BitsPerPixel == 8 )
+	{
+		pImg->fmt.palette = new RageSurfacePalette;
+	}
+	*/
 
 	return pImg;
 }
