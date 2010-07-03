@@ -96,6 +96,7 @@ public:
 	int	GetComboAtStartOfStage() const;
 	bool	FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
 	bool	FullCombo() const { return FullComboOfScore(TNS_W3); }
+	TapNoteScore PlayerStageStats::GetBestFullComboTapNoteScore() const;
 	bool	SingleDigitsOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
 	bool	OneOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
 	int		GetTotalTaps() const;

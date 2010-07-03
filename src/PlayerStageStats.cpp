@@ -530,6 +530,18 @@ bool PlayerStageStats::FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) con
 	return false;
 }
 
+TapNoteScore PlayerStageStats::GetBestFullComboTapNoteScore() const
+{
+	// Optimization opportunity: ...
+	// (seriously? -aj)
+	for( TapNoteScore i=TNS_W1; i >= TNS_W5; enum_add(i,-1))
+	{
+		if( FullComboOfScore(i) )
+			return i;
+	}
+	return TapNoteScore_Invalid;
+}
+
 bool PlayerStageStats::SingleDigitsOfScore( TapNoteScore tnsAllGreaterOrEqual ) const
 {
 	return FullComboOfScore( tnsAllGreaterOrEqual ) &&
@@ -681,6 +693,7 @@ public:
 	DEFINE_METHOD( IsDisqualified,				IsDisqualified() )
 	DEFINE_METHOD( GetAliveSeconds,				m_fAliveSeconds )
 	DEFINE_METHOD( GetPercentageOfTaps,			GetPercentageOfTaps( Enum::Check<TapNoteScore>(L, 1) ) )
+	DEFINE_METHOD( GetBestFullComboTapNoteScore, GetBestFullComboTapNoteScore() )
 
 	static int GetPlayedSteps( T* p, lua_State *L )
 	{
@@ -739,6 +752,7 @@ public:
 		ADD_METHOD( GetPercentageOfTaps );
 		ADD_METHOD( GetRadarActual );
 		ADD_METHOD( GetRadarPossible );
+		ADD_METHOD( GetBestFullComboTapNoteScore );
 	}
 };
 
