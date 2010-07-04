@@ -603,10 +603,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 	}
 
 
-
-	//
 	// apply auto mappings
-	//
 	int iNumJoysticksMapped = 0;
 	FOREACH_CONST( InputDeviceInfo, vDevices, device )
 	{
@@ -618,9 +615,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 			if( !regex.Compare(sDescription) )
 				continue;	// driver names don't match
 
-			//
 			// We have a mapping for this joystick
-			//
 			GameController gc = (GameController)iNumJoysticksMapped;
 			if( gc >= NUM_GameController )
 				break;	// stop mapping.  We already mapped one device for each game controller.
@@ -694,7 +689,6 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessageOut )
 				vsLastSeenJoysticks.erase( iter );
 		}
 	}
-
 
 	bool bJoysticksChanged = vsCurrentJoysticks != vsLastSeenJoysticks;
 	if( !bJoysticksChanged )
@@ -803,7 +797,7 @@ GameButton InputMapper::GameButtonToMenuButton( GameButton gb ) const
 }
 
 /* If set (not PLAYER_INVALID), inputs from both GameControllers will be mapped
- * to the specified player.  If PLAYER_INVALID, GameControllers will be mapped
+ * to the specified player. If PLAYER_INVALID, GameControllers will be mapped
  * individually. */
 void InputMapper::SetJoinControllers( PlayerNumber pn )
 {
