@@ -64,23 +64,3 @@ end
 if ScreenMetric then
 	ScreenMetric = Screen.Metric
 end
-
--- SM4SVN r28330: "add IsFullCombo bindings" - Chris Danford
--- Unfortunately we already bound FullComboOfScore(tns), meaning we're not
--- going to go back and redefine bindings that match it. Alias them instead
--- for any themes expecting to use them:
-function PlayerStageStats:IsFullComboW1()
-	return self:FullComboOfScore('TapNoteScore_W1')
-end
-
-function PlayerStageStats:IsFullComboW2()
-	return self:FullComboOfScore('TapNoteScore_W2')
-end
-
-function PlayerStageStats:IsFullComboW3()
-	return self:FullComboOfScore('TapNoteScore_W3')
-end
-
-function PlayerStageStats:IsFullComboW4()
-	return self:FullComboOfScore('TapNoteScore_W4')
-end
