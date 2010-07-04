@@ -143,6 +143,8 @@ void ScreenTextEntry::BeginScreen()
 	UpdateAnswerText();
 }
 
+static LocalizedString ANSWER_CARET	( "ScreenTextEntry", "AnswerCaret" );
+static LocalizedString ANSWER_BLANK	( "ScreenTextEntry", "AnswerBlank" );
 void ScreenTextEntry::UpdateAnswerText()
 {
 	RString s;
@@ -157,9 +159,11 @@ void ScreenTextEntry::UpdateAnswerText()
 		s = g_pFormatAnswerForDisplay( s );
 
 	if( m_bShowAnswerCaret 	&&  !bAnswerFull )
-		s += '_';
+		s += ANSWER_CARET; // was '_'
 	else
-		s += "  ";	// xxx: assumes that underscore is the width of two spaces
+	{
+		s += ANSWER_BLANK; // was "  "
+	}
 
 	FontCharAliases::ReplaceMarkers( s );
 	m_textAnswer.SetText( s );
