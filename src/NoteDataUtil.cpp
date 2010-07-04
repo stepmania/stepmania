@@ -48,7 +48,7 @@ NoteType NoteDataUtil::GetSmallestNoteTypeInRange( const NoteData &n, int iStart
 		if( bFoundSmallerNote )
 			continue;	// searching the next NoteType
 		else
-			break;	// stop searching.  We found the smallest NoteType
+			break;	// stop searching. We found the smallest NoteType
 	}
 
 	if( nt == NUM_NoteType )	// we didn't find one
@@ -132,13 +132,13 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					}
 					*/
 
-					/* Set the hold note to have infinite length.  We'll clamp it when
-					 * we hit the tail. */
+					/* Set the hold note to have infinite length. We'll clamp
+					 * it when we hit the tail. */
 					tn.iDuration = MAX_NOTE_ROW;
 					break;
 				case '3':
 				{
-					/* This is the end of a hold.  Search for the beginning. */
+					// This is the end of a hold. Search for the beginning.
 					int iHeadRow;
 					if( !out.IsHoldNoteAtRow( iTrack, iIndex, &iHeadRow ) )
 					{
@@ -150,7 +150,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 						out.FindTapNote( iTrack, iHeadRow )->second.iDuration = iIndex - iHeadRow;
 					}
 
-					/* This won't write tn, but keep parsing normally anyway. */
+					// This won't write tn, but keep parsing normally anyway.
 					break;
 				}
 				//				case 'm':
@@ -163,9 +163,9 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				case 'F': tn = TAP_ORIGINAL_FAKE;			break;
 				// case 'I': tn = TAP_ORIGINAL_ITEM;			break;
 				default: 
-					/* Invalid data.  We don't want to assert, since there might
+					/* Invalid data. We don't want to assert, since there might
 					 * simply be invalid data in an .SM, and we don't want to die
-					 * due to invalid data.  We should probably check for this when
+					 * due to invalid data. We should probably check for this when
 					 * we load SM data for the first time ... */
 					// ASSERT(0); 
 					tn = TAP_EMPTY;
@@ -244,8 +244,8 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 			}
 		}
 	}
-	
-	/* Make sure we don't have any hold notes that didn't find a tail. */
+
+	// Make sure we don't have any hold notes that didn't find a tail.
 	for( int t=0; t<out.GetNumTracks(); t++ )
 	{
 		NoteData::iterator begin = out.begin( t );
@@ -260,18 +260,15 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				LOG->UserLog( "", "", "While loading SM note data, there was an unmatched 2 at beat %f", NoteRowToBeat(iRow) );
 				out.RemoveTapNote( t, begin );
 			}
-			
+
 			begin = next;
 		}
 	}
-	
 }
 
 void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNoteData_, bool bComposite )
 {
-	//
 	// Load note data
-	//
 	RString sSMNoteData;
 	RString::size_type iIndexCommentStart = 0;
 	RString::size_type iIndexCommentEnd = 0;
@@ -289,7 +286,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNo
 	}
 	sSMNoteData.append( p, origSize - iIndexCommentEnd );
 
-	/* Clear notes, but keep the same number of tracks. */
+	// Clear notes, but keep the same number of tracks.
 	int iNumTracks = out.GetNumTracks();
 	out.Init();
 	out.SetNumTracks( iNumTracks );
@@ -336,7 +333,7 @@ void NoteDataUtil::InsertHoldTails( NoteData &inout )
 			tail.type = TapNote::hold_tail;
 
 			/* If iDuration is 0, we'd end up overwriting the head with the tail
-				* (and invalidating our iterator).  Empty hold notes aren't valid. */
+			 * (and invalidating our iterator). Empty hold notes aren't valid. */
 			ASSERT( tn.iDuration != 0 );
 
 			inout.SetTapNote( t, iRow + tn.iDuration, tail );
@@ -346,9 +343,7 @@ void NoteDataUtil::InsertHoldTails( NoteData &inout )
 
 void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 {
-	//
 	// Get note data
-	//
 	vector<NoteData> parts;
 	float fLastBeat = -1.0f;
 
@@ -394,7 +389,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 					switch( tn.type )
 					{
 					case TapNote::empty:			c = '0'; break;
-					case TapNote::tap:			c = '1'; break;
+					case TapNote::tap:				c = '1'; break;
 					case TapNote::hold_head:
 						switch( tn.subType )
 						{
@@ -407,7 +402,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 					case TapNote::hold_tail:		c = '3'; break;
 					case TapNote::mine:			c = 'M'; break;
 					case TapNote::attack:			c = 'A'; break;
-					case TapNote::autoKeysound:		c = 'K'; break;
+					case TapNote::autoKeysound:	c = 'K'; break;
 					case TapNote::lift:			c = 'L'; break;
 					case TapNote::fake:			c = 'F'; break;
 					default: 
@@ -420,7 +415,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 						sRet.append( ssprintf("{%s:%.2f}", tn.sAttackModifiers.c_str(),
 								      tn.fAttackDurationSeconds) );
 					}
-					// hey maybe if we have TapNote::item we can do shit here.
+					// hey maybe if we have TapNote::item we can do things here.
 					if( tn.iKeysoundIndex >= 0 )
 						sRet.append( ssprintf("[%d]",tn.iKeysoundIndex) );
 				}
@@ -490,7 +485,7 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 
 	if( in.GetNumTracks() > iNewNumTracks )
 	{
-		/* Use a different algorithm for reducing tracks. */
+		// Use a different algorithm for reducing tracks.
 		LoadOverlapped( in, out, iNewNumTracks );
 		return;
 	}
@@ -557,7 +552,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 	out.SetNumTracks( iNewNumTracks );
 
 	/* Keep track of the last source track that put a tap into each destination track,
-	 * and the row of that tap.  Then, if two rows are trying to put taps into the
+	 * and the row of that tap. Then, if two rows are trying to put taps into the
 	 * same row within the shift threshold, shift the newcomer source row. */
 	int LastSourceTrack[MAX_NOTE_TRACKS];
 	int LastSourceRow[MAX_NOTE_TRACKS];
@@ -581,7 +576,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 			if( tnFrom.type == TapNote::empty )
 				continue;
 
-			/* If this is a hold note, find the end. */
+			// If this is a hold note, find the end.
 			int iEndIndex = row;
 			if( tnFrom.type == TapNote::hold_head )
 				iEndIndex = row + tnFrom.iDuration;
@@ -591,14 +586,14 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 			{
 				if( iEndIndex - LastSourceRow[iTrackTo] < ShiftThreshold )
 				{
-					/* This destination track is in use by a different source track.  Use the
-					 * least-recently-used track. */
+					/* This destination track is in use by a different source
+					 * track. Use the least-recently-used track. */
 					for( int DestTrack = 0; DestTrack < iNewNumTracks; ++DestTrack )
 						if( LastSourceRow[DestTrack] < LastSourceRow[iTrackTo] )
 							iTrackTo = DestTrack;
 				}
 
-				/* If it's still in use, then we just don't have an available track. */
+				// If it's still in use, then we just don't have an available track.
 				if( iEndIndex - LastSourceRow[iTrackTo] < ShiftThreshold )
 					continue;
 			}
@@ -631,7 +626,7 @@ int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
 	return iMaxTailRow;
 }
 
-/* For every row in "in" with a tap or hold on any track, enable the specified tracks in "out". */
+// For every row in "in" with a tap or hold on any track, enable the specified tracks in "out".
 void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> &aiTracks )
 {
 	for( unsigned i = 0; i < aiTracks.size(); ++i )
@@ -654,7 +649,7 @@ void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> 
 
 		if( iHoldEnd != -1 )
 		{
-			/* If we found a hold note, add it to all tracks. */
+			// If we found a hold note, add it to all tracks.
 			for( unsigned i = 0; i < aiTracks.size(); ++i )
 			{
 				int t = aiTracks[i];
@@ -666,7 +661,7 @@ void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> 
 		if( in.IsRowEmpty(r) )
 			continue;
 
-		/* Enable every track in the output. */
+		// Enable every track in the output.
 		for( unsigned i = 0; i < aiTracks.size(); ++i )
 		{
 			int t = aiTracks[i];
@@ -675,7 +670,7 @@ void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> 
 	}
 }
 
-/* For every track enabled in "in", enable all tracks in "out". */
+// For every track enabled in "in", enable all tracks in "out".
 void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int iNewNumTracks )
 {
 	// reset all notes
@@ -690,15 +685,15 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 	LightTransformHelper( in, out, aiTracks );
 }
 
-/* This transform is specific to StepsType_lights_cabinet. */
+// This transform is specific to StepsType_lights_cabinet.
 #include "LightsManager.h" // for LIGHT_*
 void NoteDataUtil::LoadTransformedLightsFromTwo( const NoteData &marquee, const NoteData &bass, NoteData &out )
 {
 	ASSERT( marquee.GetNumTracks() >= 4 );
 	ASSERT( bass.GetNumTracks() >= 1 );
 
-	/* For each track in "marquee", enable a track in the marquee lights.  This will 
-	 * reinit out. */
+	/* For each track in "marquee", enable a track in the marquee lights.
+	 * This will reinit out. */
 	{
 		NoteData transformed_marquee;
 		transformed_marquee.CopyAll( marquee );
@@ -708,7 +703,7 @@ void NoteDataUtil::LoadTransformedLightsFromTwo( const NoteData &marquee, const 
 		out.LoadTransformed( transformed_marquee, NUM_CabinetLight, iOriginalTrackToTakeFrom );
 	}
 
-	/* For each track in "bass", enable the bass lights. */
+	// For each track in "bass", enable the bass lights.
 	{
 		vector<int> aiTracks;
 		aiTracks.push_back( LIGHT_BASS_LEFT );
@@ -716,7 +711,7 @@ void NoteDataUtil::LoadTransformedLightsFromTwo( const NoteData &marquee, const 
 		LightTransformHelper( bass, out, aiTracks );
 	}
 
-	/* Delete all mines. */
+	// Delete all mines.
 	NoteDataUtil::RemoveMines( out );
 }
 
@@ -1004,7 +999,6 @@ void NoteDataUtil::RemoveAllButPlayer( NoteData &inout, PlayerNumber pn )
 		}
 	}
 }
-	
 
 static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int NumTracks, int *iTakeFromTrack )
 {
@@ -1078,7 +1072,7 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 
 		if( tt == NoteDataUtil::right )
 		{
-			/* Invert. */
+			// Invert.
 			int iTrack[MAX_NOTE_TRACKS];
 			memcpy( iTrack, iTakeFromTrack, sizeof(iTrack) );
 			for( int t = 0; t < MAX_NOTE_TRACKS; ++t )
@@ -1090,7 +1084,6 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 
 		break;
 	case NoteDataUtil::mirror:
-mirror_all:
 		for( int t=0; t<NumTracks; t++ )
 			iTakeFromTrack[t] = NumTracks-t-1;
 		break;
@@ -1118,8 +1111,7 @@ mirror_all:
 			// soft shuffle, as described at
 			// http://www.stepmania.com/forums/showthread.php?t=19469
 
-			/*
-			 * one of the following at random:
+			/* one of the following at random:
 			 *
 			 * 0. No columns changed
 			 * 1. Left and right columns swapped
@@ -1133,8 +1125,7 @@ mirror_all:
 			 * horizontal, vertical,
 			 * diagonally top left to bottom right,
 			 * diagonally bottom left to top right.
-			 * (above text from forums)
-			 */
+			 * (above text from forums) */
 
 			// TRICKY: Shuffle so that both player get the same shuffle mapping
 			// in the same round.
@@ -1146,10 +1137,8 @@ mirror_all:
 			// XXX: cases 1 and 2 only implemented for dance_*
 			switch( iRandChoice )
 			{
-				case 1:
-					// left and right mirror
-				case 2:
-					// up and down mirror
+				case 1: // left and right mirror
+				case 2: // up and down mirror
 					switch( st )
 					{
 					case StepsType_dance_single:
@@ -1231,9 +1220,8 @@ mirror_all:
 					default: break;
 					}
 					break;
-				case 3:
-					// full mirror
-					goto mirror_all;
+				case 3: // full mirror
+					GetTrackMapping( st, NoteDataUtil::mirror, NumTracks, iTakeFromTrack );
 					break;
 				case 0:
 				default:
@@ -1657,10 +1645,8 @@ TrackIterator::TrackIterator()
 
 void NoteDataUtil::AddMines( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	//
 	// Change whole rows at a time to be tap notes.  Otherwise, it causes
 	// major problems for our scoring system. -Chris
-	//
 
 	int iRowCount = 0;
 	int iPlaceEveryRows = 6;
