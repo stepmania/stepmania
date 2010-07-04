@@ -6,9 +6,11 @@
 #include "EnumHelper.h"
 
 // Note definitions
-// Use 1-20 instead of 1-13 -aj
+// Use 1-35 instead of 1-13. -aj
+/* 35 is used because we have to be mindful of Profile data.
+ * See Profile::InitGeneralData() for how MAX_METER is used. -aj */
 const int MIN_METER = 1;
-const int MAX_METER = 20;
+const int MAX_METER = 35;
 
 // Credits
 const int MAX_NUM_CREDITS = 20;
