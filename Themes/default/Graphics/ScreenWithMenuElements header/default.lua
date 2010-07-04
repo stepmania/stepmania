@@ -11,7 +11,7 @@ t[#t+1] = LoadFont("Common Normal") .. {
 	Name="HeaderText";
 	Text=Screen.String("HeaderText");
 	InitCommand=cmd(x,-SCREEN_CENTER_X+24;y,24;zoom,1;horizalign,left;shadowlength,0;maxwidth,200);
-	OnCommand=cmd(strokecolor,Color("Outline");diffusebottomedge,color("0.875,0.875,0.875"));
+	OnCommand=cmd(skewx,-0.125;strokecolor,Color("Outline");diffusebottomedge,color("0.875,0.875,0.875"));
 	UpdateScreenHeaderMessageCommand=function(self,param)
 		self:settext(param.Header);
 	end;

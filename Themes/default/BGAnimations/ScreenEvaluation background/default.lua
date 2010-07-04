@@ -13,10 +13,11 @@ t[#t+1] = Def.ActorFrame {
 			end
 		end;
 	};
---[[ 	Def.Quad {
+ 	Def.Quad {
 		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH+1,SCREEN_HEIGHT);
 		OnCommand=cmd(diffuse,color("#FFCB05");diffusebottomedge,color("#F0BA00");diffusealpha,0.45);
 	};
+--[[
 	LoadActor(THEME:GetPathB("ScreenWithMenuElements","background/_grid")).. {
 		InitCommand=cmd(customtexturerect,0,0,(SCREEN_WIDTH+1)/4,SCREEN_HEIGHT/4;SetTextureFiltering,true);
 		OnCommand=cmd(zoomto,SCREEN_WIDTH+1,SCREEN_HEIGHT;diffuse,Color("Black");diffuseshift;effecttiming,(1/8)*4,0,(7/8)*4,0;effectclock,'beatnooffset';

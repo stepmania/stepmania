@@ -22,4 +22,5 @@ local t = Def.ActorFrame {
 		HideSystemMessageMessageCommand = cmd(finishtweening);
 	};
 };
+t[#t+1] = LoadActor(THEME:GetPathB("ScreenSystemLayer","aux"));
 return t;

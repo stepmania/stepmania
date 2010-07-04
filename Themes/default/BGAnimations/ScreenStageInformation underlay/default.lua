@@ -10,13 +10,8 @@ t[#t+1] = Def.Quad {
 };
 t[#t+1] = Def.Sprite {
 	InitCommand=cmd(Center);
-	BeginCommand=function(self)
-		if GAMESTATE:GetCurrentSong() then
-			self:LoadFromSongBackground(GAMESTATE:GetCurrentSong());
-			--self:LoadBackground( GAMESTATE:GetCurrentSong():GetBackgroundPath() );
-		end;
-	end;
-	OnCommand=cmd(diffusealpha,0;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;sleep,0.5;linear,0.50;diffusealpha,PREFSMAN:GetPreference("BGBrightness"));
+	BeginCommand=cmd(LoadFromCurrentSongBackground);
+	OnCommand=cmd(diffusealpha,0;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;sleep,0.5;linear,0.50;diffusealpha,1;sleep,3);
 };
 
 t[#t+1] = Def.ActorFrame {

@@ -27,6 +27,20 @@ function SelectMusicOrCourse()
 end
 
 Branch = {
+	Init = function()
+		if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
+			return "ScreenInit"
+		else
+			return "ScreenInit"
+		end
+	end,
+	AfterInit = function()
+		if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
+			return Branch.TitleMenu()
+		else
+			return "ScreenTitle"
+		end
+	end,
 	TitleMenu = function()
 		-- home mode is the most assumed use of sm-ssc.
 		if GAMESTATE:GetCoinMode() == "CoinMode_Home" then
@@ -37,7 +51,7 @@ Branch = {
 			-- if no credits are inserted, don't show the Join screen. SM4 has
 			-- this as the initial screen, but that means we'd be stuck in a
 			-- loop with ScreenInit. No good.
-			return "ScreenDemonstration"
+			return "ScreenTitleJoin"
 		else
 			return "ScreenTitleJoin"
 		end

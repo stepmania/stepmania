@@ -8,9 +8,9 @@ return Def.ActorFrame {
 			self:stoptweening();
 -- 			self:linear(0.25);
 			if song then
-				self:diffusebottomedge( song:GetTimingData():HasStops() and color("#55CCEE") or color("#FFFFFF") );
+				self:diffusebottomedge( song:GetTimingData():HasStops() and Color("Orange") or Color("White") );
 			else
-				self:diffusebottomedge( color("#FFFFFF") );
+				self:diffusebottomedge( Color("White") );
 			end;
 		end;
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
