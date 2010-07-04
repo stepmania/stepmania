@@ -1,4 +1,5 @@
 local t = LoadFallbackB();
+
 -- Legacy StepMania 4 Function
 local function StepsDisplay(pn)
 	local function set(self, player)
@@ -20,6 +21,71 @@ local function StepsDisplay(pn)
 	return t;
 end
 t[#t+1] = StandardDecorationFromFileOptional("AlternateHelpDisplay","AlternateHelpDisplay");
+
+local function PercentScore(pn)
+	local t = LoadFont("Common normal")..{
+		InitCommand=cmd(zoom,0.7;shadowlength,1);
+		BeginCommand=cmd(playcommand,"Set");
+		SetCommand=function(self)
+			local SongOrCourse, StepsOrTrail;
+			if GAMESTATE:IsCourseMode() then
+				SongOrCourse = GAMESTATE:GetCurrentCourse();
+				StepsOrTrail = GAMESTATE:GetCurrentTrail(pn);
+			else
+				SongOrCourse = GAMESTATE:GetCurrentSong();
+				StepsOrTrail = GAMESTATE:GetCurrentSteps(pn);
+			end;
+
+			local profile, scorelist;
+			local text = "";
+			if SongOrCourse and StepsOrTrail then
+				local st = StepsOrTrail:GetStepsType();
+				local diff = StepsOrTrail:GetDifficulty();
+				local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
+				local cd = GetCustomDifficulty(st, diff, courseType);
+				self:diffuse(CustomDifficultyToColor(cd));
+				self:shadowcolor(CustomDifficultyToDarkColor(cd));
+
+				if PROFILEMAN:IsPersistentProfile(pn) then
+					-- player profile
+					profile = PROFILEMAN:GetProfile(pn);
+				else
+					-- machine profile
+					profile = PROFILEMAN:GetMachineProfile();
+				end;
+
+				scorelist = profile:GetHighScoreList(SongOrCourse,StepsOrTrail);
+				assert(scorelist)
+				local scores = scorelist:GetHighScores();
+				local topscore = scores[1];
+				if topscore then
+					text = string.format("%.2f%%", topscore:GetPercentDP()*100.0);
+					-- 100% hack
+					if text == "100.00%" then
+						text = "100%";
+					end;
+				else
+					text = string.format("%.2f%%", 0);
+				end;
+			else
+				text = "";
+			end;
+			self:settext(text);
+		end;
+		CurrentSongChangesMessageCommand=cmd(playcommand,"Set");
+	};
+
+	if pn == PLAYER_1 then
+		t.CurrentStepsP1ChangedMessageCommand=cmd(playcommand,"Set");
+		t.CurrentTrailP1ChangedMessageCommand=cmd(playcommand,"Set");
+	else
+		t.CurrentStepsP2ChangedMessageCommand=cmd(playcommand,"Set");
+		t.CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
+	end
+
+	return t;
+end
+
 -- Legacy StepMania 4 Function
 for pn in ivalues(PlayerNumber) do
 	local MetricsName = "StepsDisplay" .. PlayerNumberToString(pn);
@@ -30,14 +96,17 @@ for pn in ivalues(PlayerNumber) do
 				self:visible(true);
 				(cmd(zoom,0;bounceend,0.3;zoom,1))(self);
 			end;
-		  end;
+		end;
 		PlayerUnjoinedMessageCommand=function(self, params)
 			if params.Player == pn then
 				self:visible(true);
 				(cmd(bouncebegin,0.3;zoom,0))(self);
 			end;
-		  end;
-		};
+		end;
+	};
+	if ShowStandardDecoration("PercentScore"..ToEnumShortString(pn)) then
+		t[#t+1] = StandardDecorationFromTable("PercentScore"..ToEnumShortString(pn), PercentScore(pn));
+	end;
 end
 
 t[#t+1] = StandardDecorationFromFileOptional("BannerFrame","BannerFrame");
@@ -45,6 +114,7 @@ t[#t+1] = StandardDecorationFromFileOptional("DifficultyList","DifficultyList");
 t[#t+1] = StandardDecorationFromFileOptional("CourseContentsList","CourseContentsList");
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("BPMLabel","BPMLabel");
+
 t[#t+1] = StandardDecorationFromFileOptional("SongTime","SongTime") .. {
 	SetCommand=function(self)
 		local curSelection = nil;
