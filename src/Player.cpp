@@ -135,6 +135,7 @@ ThemeMetric<bool> CHECKPOINTS_USE_TIME_SIGNATURES ( "Player", "CheckpointsUseTim
 ThemeMetric<bool> CHECKPOINTS_FLASH_ON_HOLD ( "Player", "CheckpointsFlashOnHold" ); // sm-ssc addition
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
 ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads" );
+ThemeMetric<bool> REQUIRE_STEP_ON_MINES	( "Player", "RequireStepOnMines" );
 //ThemeMetric<bool> HOLD_TRIGGERS_TAP_NOTES	( "Player", "HoldTriggersTapNotes" ); // parastar stuff; leave in though
 ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
 ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
@@ -476,7 +477,7 @@ void Player::Load()
 	const Song* pSong = GAMESTATE->m_pCurSong;
 	if( GAMESTATE->m_pCurGame->m_bAllowHopos )
 		NoteDataUtil::SetHopoPossibleFlags( pSong, m_NoteData );
-	
+
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_RAVE:
@@ -836,6 +837,7 @@ void Player::Update( float fDeltaTime )
 				{
 					vector<TrackRowTapNote> v;
 					v.push_back( trtn );
+					//LOG->Trace("UpdateHoldNotes from a roll");
 					UpdateHoldNotes( iSongRow, fDeltaTime, v );
 				}
 				continue;	// don't process this below
@@ -849,6 +851,7 @@ void Player::Update( float fDeltaTime )
 			{
 				if( !vHoldNotesToGradeTogether.empty() )
 				{
+					//LOG->Trace( ssprintf("UpdateHoldNotes; %i != %i || !judge holds on same row together",iRow,iRowOfLastHoldNote) );
 					UpdateHoldNotes( iSongRow, fDeltaTime, vHoldNotesToGradeTogether );
 					vHoldNotesToGradeTogether.clear();
 				}
@@ -859,6 +862,7 @@ void Player::Update( float fDeltaTime )
 
 		if( !vHoldNotesToGradeTogether.empty() )
 		{
+			//LOG->Trace("UpdateHoldNotes since !vHoldNotesToGradeTogether.empty()");
 			UpdateHoldNotes( iSongRow, fDeltaTime, vHoldNotesToGradeTogether );
 			vHoldNotesToGradeTogether.clear();
  		}
@@ -909,6 +913,11 @@ void Player::Update( float fDeltaTime )
 void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTapNote> &vTN )
 {
 	ASSERT( !vTN.empty() );
+	/*
+	LOG->Trace("--------------------------------");
+	LOG->Trace("[Player::UpdateHoldNotes] begins");
+	LOG->Trace( ssprintf("song row %i, deltaTime = %f",iSongRow,fDeltaTime) );
+	*/
 
 	int iStartRow = vTN[0].iRow;
 	int iMaxEndRow = INT_MIN;
@@ -936,6 +945,8 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	}
 
 	ASSERT( iFirstTrackWithMaxEndRow != -1 );
+	//LOG->Trace( ssprintf("start row: %i; max/end row: = %i",iStartRow,iMaxEndRow) );
+	//LOG->Trace( ssprintf("first track with max end row = %i",iFirstTrackWithMaxEndRow) );
 
 	FOREACH( TrackRowTapNote, vTN, trtn )
 	{
@@ -946,28 +957,50 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		tn.HoldResult.bActive = false;
 
 		int iRow = trtn->iRow;
+		//LOG->Trace( ssprintf("this row: %i",iRow) );
 
 		// If the song beat is in the range of this hold:
 		if( iRow <= iSongRow  &&  iRow <= iMaxEndRow )
+		{
+			//LOG->Trace( ssprintf("overlap time before: %f",tn.HoldResult.fOverlappedTime) );
 			tn.HoldResult.fOverlappedTime += fDeltaTime;
+			//LOG->Trace( ssprintf("overlap time after: %f",tn.HoldResult.fOverlappedTime) );
+		}
 		else
+		{
+			//LOG->Trace( "overlap time = 0" );
 			tn.HoldResult.fOverlappedTime = 0;
+		}
 	}
 
 	HoldNoteScore hns = vTN[0].pTN->HoldResult.hns;
 	float fLife = vTN[0].pTN->HoldResult.fLife;
+
 	if( hns != HNS_None )	// if this HoldNote already has a result
 		return;	// we don't need to update the logic for this group
+
+	//LOG->Trace( ssprintf("[C++] hold note score: %s",HoldNoteScoreToString(hns).c_str()) );
+	//LOG->Trace(ssprintf("[Player::UpdateHoldNotes] fLife = %f",fLife));
 
 	bool bSteppedOnHead = true;
 	FOREACH( TrackRowTapNote, vTN, trtn )
 	{
 		TapNote &tn = *trtn->pTN;
 		TapNoteScore tns = tn.result.tns;
+		//LOG->Trace( ssprintf("[C++] tap note score: %s",TapNoteScoreToString(tns).c_str()) );
 
 		// TODO: When using JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER, require that the whole row of 
 		// taps was hit before activating this group of holds.
-		bSteppedOnHead &= tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start of this hold?
+		/* Something about the logic in this section is causing 192nd steps to
+		 * fail for some odd reason. -aj */
+		bSteppedOnHead &= (tns != TNS_None  &&  tns != TNS_Miss);	// did they step on the start of this hold?
+
+		/*
+		if(bSteppedOnHead)
+			LOG->Trace("[Player::UpdateHoldNotes] player stepped on head");
+		else
+			LOG->Trace("[Player::UpdateHoldNotes] player didn't step on the head");
+		*/
 	}
 
 	bool bInitiatedNote;
@@ -1012,7 +1045,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
 				// this previously read as bIsHoldingButton &=
 				// was there a specific reason for this? - Friez
-				bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
+				bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
 
 				if( m_vAlterMap.size() > 0 ) // alternate input is being used
 				{
@@ -1030,6 +1063,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 	if( bInitiatedNote && fLife != 0 )
 	{
+		//LOG->Trace("[Player::UpdateHoldNotes] initiated note, fLife != 0");
 		/* This hold note is not judged and we stepped on its head.
 		 * Update iLastHeldRow. Do this even if we're a little beyond the end
 		 * of the hold note, to make sure iLastHeldRow is clamped to iEndRow
@@ -1060,11 +1094,25 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 			if( bInitiatedNote && bIsHoldingButton )
 			{
+				//LOG->Trace("bInitiatedNote && bIsHoldingButton; Increasing hold life to MAX_HOLD_LIFE");
 				// Increase life
 				fLife = MAX_HOLD_LIFE; // was 1 -aj
 			}
 			else
 			{
+				/*
+				LOG->Trace("Checklist:");
+				if(bInitiatedNote)
+					LOG->Trace("[X] Initiated Note");
+				else
+					LOG->Trace("[ ] Initiated Note");
+
+				if(bIsHoldingButton)
+					LOG->Trace("[X] Holding Button");
+				else
+					LOG->Trace("[ ] Holding Button");
+				*/
+
 				// Decrease life
 				fLife -= fDeltaTime/GetWindowSeconds(TW_Hold);
 				fLife = max( fLife, 0 );	// clamp
@@ -1109,7 +1157,10 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	if( IMMEDIATE_HOLD_LET_GO )
 	{
 		if( bInitiatedNote && fLife == 0 )	// the player has not pressed the button for a long time!
+		{
+			//LOG->Trace("LetGo from life == 0 (did initiate hold)");
 			hns = HNS_LetGo;
+		}
 	}
 
 	// score hold notes that have passed
@@ -1139,6 +1190,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 		if( HOLD_CHECKPOINTS  &&  bAllowHoldCheckpoints )
 		{
+			//LOG->Trace("(hold checkpoints are allowed and enabled.)");
 			int iCheckpointsHit = 0;
 			int iCheckpointsMissed = 0;
 			FOREACH( TrackRowTapNote, vTN, v )
@@ -1152,28 +1204,53 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			// then mark it as Held if the head was stepped on.
 			if( iCheckpointsHit == 0  &&  iCheckpointsMissed == 0 )
 				bLetGoOfHoldNote = !bSteppedOnHead;
+
+			/*
+			if(bLetGoOfHoldNote)
+				LOG->Trace("let go of hold note, life is 0");
+			else
+				LOG->Trace("did not let go of hold note :D");
+			*/
 		}
 		else
 		{
+			//LOG->Trace("(hold checkpoints disabled.)");
 			bLetGoOfHoldNote = fLife == 0;
+			/*
+			if(bLetGoOfHoldNote)
+				LOG->Trace("let go of hold note, life is 0");
+			else
+				LOG->Trace("did not let go of hold note :D");
+			*/
 		}
 
-		if( bInitiatedNote  &&  !bLetGoOfHoldNote )
+		if( bInitiatedNote )
 		{
-			fLife = 1;
-			hns = HNS_Held;
-			bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-			if( m_pNoteField )
+			if(!bLetGoOfHoldNote)
 			{
-				FOREACH( TrackRowTapNote, vTN, trtn )
+				//LOG->Trace("initiated note and didn't let go");
+				fLife = 1; // xxx: should be MAX_HOLD_LIFE instead? -aj
+				hns = HNS_Held;
+				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+				if( m_pNoteField )
 				{
-					int iTrack = trtn->iTrack;
-					m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
+					FOREACH( TrackRowTapNote, vTN, trtn )
+					{
+						int iTrack = trtn->iTrack;
+						m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
+					}
 				}
 			}
+			/*
+			else
+			{
+				LOG->Trace("initiated note and let go :(");
+			}
+			*/
 		}
 		else
 		{
+			//LOG->Trace("did not initiate note");
 			if( !bInitiatedNote && !SCORE_MISSED_HOLDS_AND_ROLLS )
 				hns = HNS_None;
 			else
@@ -1202,10 +1279,12 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 	if( hns != HNS_None )
 	{
+		//LOG->Trace("tap note scoring time.");
 		TapNote &tn = *vTN[0].pTN;
 		HandleHoldScore( tn );
 		SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iFirstTrackWithMaxEndRow );
 	}
+	//LOG->Trace("[Player::UpdateHoldNotes] ends");
 }
 
 void Player::ApplyWaitingTransforms()
@@ -1884,9 +1963,11 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 			// The offset from the actual step in seconds:
 			fNoteOffset = (fStepSeconds - fMusicSeconds) / GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;	// account for music rate
-//			LOG->Trace("step was %.3f ago, music is off by %f: %f vs %f, step was %f off", 
-//				fTimeSinceStep, GAMESTATE->m_LastBeatUpdate.Ago()/GAMESTATE->m_SongOptions.m_fMusicRate,
-//				fStepSeconds, fMusicSeconds, fNoteOffset );
+			/*
+			LOG->Trace("step was %.3f ago, music is off by %f: %f vs %f, step was %f off", 
+				fTimeSinceStep, GAMESTATE->m_LastBeatUpdate.Ago()/GAMESTATE->m_SongOptions.m_fMusicRate,
+				fStepSeconds, fMusicSeconds, fNoteOffset );
+			*/
 		}
 
 		const float fSecondsFromExact = fabsf( fNoteOffset );
@@ -1914,7 +1995,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			{
 			case TapNote::mine:
 				// Stepped too close to mine?
-				if( !bRelease && fSecondsFromExact <= GetWindowSeconds(TW_Mine) )
+				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && fSecondsFromExact <= GetWindowSeconds(TW_Mine) )
 					score = TNS_HitMine;
 				break;
 
