@@ -51,6 +51,7 @@ const char *CodeNames[] = {
 	"SaveScreenshot2",
 	"CancelAllPlayerOptions",
 	"BackInEventMode",
+	"CloseCurrentFolder",
 };
 XToString( Code );
 
@@ -74,6 +75,11 @@ void CodeDetector::RefreshCacheItems( RString sClass )
 
 		item.Load( sButtonsNames );
 	}
+}
+
+bool CodeDetector::EnteredCloseFolder( GameController controller )
+{
+	return EnteredCode(controller,CODE_CLOSE_CURRENT_FOLDER);
 }
 
 bool CodeDetector::EnteredNextGroup( GameController controller )

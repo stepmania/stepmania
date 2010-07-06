@@ -14,6 +14,11 @@ sm-ssc v1.0 Release Candidate 2 | 201007xx
 --------------------------------------------------------------------------------
 (work in progress, it's not out yet [hence the "xx" above].)
 
+20100706
+--------
+* [ScreenSelectMusic] add a code for closing the current folder from any
+  location (a la DDR X2).
+
 20100705
 --------
 * [Player] add RequireStepOnMines metric. This allows DDR's Shock Arrows to

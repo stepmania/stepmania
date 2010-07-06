@@ -45,6 +45,7 @@ enum Code {
 	CODE_SAVE_SCREENSHOT2,
 	CODE_CANCEL_ALL_PLAYER_OPTIONS,
 	CODE_BACK_IN_EVENT_MODE,
+	CODE_CLOSE_CURRENT_FOLDER,
 	NUM_Code	// leave this at the end
 };
 
@@ -60,6 +61,7 @@ public:
 	static bool EnteredCode( GameController controller, Code code );
 	static bool EnteredPrevGroup( GameController controller );
 	static bool EnteredNextGroup( GameController controller );
+	static bool EnteredCloseFolder( GameController controller );
 
 	// todo: move to PlayerOptions.h -aj
 	void ChangeScrollSpeed( GameController controller, bool bIncrement );

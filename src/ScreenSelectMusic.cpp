@@ -739,6 +739,18 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 			AfterMusicChange();
 		}
 	}
+	else if( CodeDetector::EnteredCloseFolder(input.GameI.controller) )
+	{
+		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+			m_soundLocked.Play();
+		else
+		{
+			RString sCurSection = m_MusicWheel.GetSelectedSection();
+			m_MusicWheel.SelectSection(sCurSection);
+			m_MusicWheel.SetOpenSection("");
+			AfterMusicChange();
+		}
+	}
 	else
 	{
 		return false;
