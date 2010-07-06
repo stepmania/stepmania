@@ -38,7 +38,7 @@ Branch = {
 		if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
 			return Branch.TitleMenu()
 		else
-			return "ScreenTitle"
+			return "ScreenLogo"
 		end
 	end,
 	TitleMenu = function()
