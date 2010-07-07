@@ -2,7 +2,8 @@
 themeInfo = {
 	ProductCode = "SSC-00X",
 	Name = "Urban Fragments",
-	Version = "v0.00",
-	Date = "00000000",
-	Internal = "dev 00000000-0000 | i0000",
+	Version = 0.70,
+	Date = "20100706",
+	Internal = "dev 00000000-0000",
+	Revision = 3002,
 };

@@ -19,6 +19,9 @@ function InitUserPrefs()
 	if GetUserPrefB("UserPrefNotePosition") == nil then
 		SetUserPref("UserPrefNotePosition", true);
 	end;
+	if GetUserPrefB("UserPrefComboOnRolls") == nil then
+		SetUserPref("UserPrefComboOnRolls", false);
+	end;
 --[[ 	if GetUserPref("ProTimingP1") == nil then
 		SetUserPref("ProTimingP1", false);
 	end;
@@ -101,7 +104,7 @@ function UserPrefGameplayShowScore()
 				val = false;
 			end;
 			WritePrefToFile("UserPrefGameplayShowScore",val);
-			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
 	};
@@ -137,7 +140,7 @@ function UserPrefGameplayShowStepsDisplay()
 				val = false;
 			end;
 			WritePrefToFile("UserPrefGameplayShowStepsDisplay",val);
-			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
 	};
@@ -173,7 +176,7 @@ function UserPrefShowLotsaOptions()
 				val = false;
 			end;
 			WritePrefToFile("UserPrefShowLotsaOptions",val);
-			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
 	};
@@ -232,7 +235,7 @@ function UserPrefAutoSetStyle()
 				val = false;
 			end;
 			WritePrefToFile("UserPrefAutoSetStyle",val);
-			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
 	};
@@ -269,7 +272,7 @@ function UserPrefNotePosition()
 				val = false;
 			end;
 			WritePrefToFile("UserPrefNotePosition",val);
-			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
 	};
@@ -305,7 +308,43 @@ function UserPrefLongFail()
 				val = false;
 			end;
 			WritePrefToFile("UserPrefLongFail",val);
-			MESSAGEMAN:Broadcast("PrferenceSet", { Message == "Set Preference" } );
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end
+
+function UserPrefComboOnRolls()
+	local t = {
+		Name = "UserPrefComboOnRolls";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = { 'Off','On' };
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("UserPrefComboOnRolls") ~= nil then
+				if GetUserPrefB("UserPrefComboOnRolls") then
+					list[2] = true;
+				else
+					list[1] = true;
+				end;
+			else
+				WritePrefToFile("UserPrefComboOnRolls",false);
+				list[1] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			local val;
+			if list[2] then
+				val = true;
+			else
+				val = false;
+			end;
+			WritePrefToFile("UserPrefComboOnRolls",val);
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
 	};
