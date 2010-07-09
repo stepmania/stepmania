@@ -4,6 +4,7 @@
 #include "ProfileManager.h"
 #include "GameState.h"
 #include "MemoryCardManager.h"
+#include "InputEventPlus.h"
 
 REGISTER_SCREEN_CLASS( ScreenSelectProfile );
 
@@ -14,6 +15,7 @@ void ScreenSelectProfile::Init()
 		// no selection initially
 		m_iSelectedProfiles[p]=-1;
 	}
+	m_TrackingRepeatingInput = GameButton_Invalid;
 	ScreenWithMenuElements::Init();
 }
 
@@ -23,6 +25,86 @@ void ScreenSelectProfile::Input( const InputEventPlus &input )
 		return;
 
 	ScreenWithMenuElements::Input( input );
+}
+
+void ScreenSelectProfile::MenuLeft( const InputEventPlus &input )
+{
+	PlayerNumber pn = input.pn;
+	if( m_fLockInputSecs > 0 )
+		return;
+	if( input.type == IET_RELEASE )
+		return;
+	if( input.type != IET_FIRST_PRESS )
+	{
+		/*
+		if( !ALLOW_REPEATING_INPUT )
+			return;
+		*/
+		if( m_TrackingRepeatingInput != input.MenuI )
+			return;
+	}
+	m_TrackingRepeatingInput = input.MenuI;
+	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuLeftP1+pn) );
+}
+
+void ScreenSelectProfile::MenuRight( const InputEventPlus &input )
+{
+	PlayerNumber pn = input.pn;
+	if( m_fLockInputSecs > 0 )
+		return;
+	if( input.type == IET_RELEASE )
+		return;
+	if( input.type != IET_FIRST_PRESS )
+	{
+		/*
+		if( !ALLOW_REPEATING_INPUT )
+			return;
+		*/
+		if( m_TrackingRepeatingInput != input.MenuI )
+			return;
+	}
+	m_TrackingRepeatingInput = input.MenuI;
+	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuRightP1+pn) );
+}
+
+void ScreenSelectProfile::MenuUp( const InputEventPlus &input )
+{
+	PlayerNumber pn = input.pn;
+	if( m_fLockInputSecs > 0 )
+		return;
+	if( input.type == IET_RELEASE )
+		return;
+	if( input.type != IET_FIRST_PRESS )
+	{
+		/*
+		if( !ALLOW_REPEATING_INPUT )
+			return;
+		*/
+		if( m_TrackingRepeatingInput != input.MenuI )
+			return;
+	}
+	m_TrackingRepeatingInput = input.MenuI;
+	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuUpP1+pn) );
+}
+
+void ScreenSelectProfile::MenuDown( const InputEventPlus &input )
+{
+	PlayerNumber pn = input.pn;
+	if( m_fLockInputSecs > 0 )
+		return;
+	if( input.type == IET_RELEASE )
+		return;
+	if( input.type != IET_FIRST_PRESS )
+	{
+		/*
+		if( !ALLOW_REPEATING_INPUT )
+			return;
+		*/
+		if( m_TrackingRepeatingInput != input.MenuI )
+			return;
+	}
+	m_TrackingRepeatingInput = input.MenuI;
+	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuDownP1+pn) );
 }
 
 bool ScreenSelectProfile::SetProfileIndex( PlayerNumber pn, int iProfileIndex )

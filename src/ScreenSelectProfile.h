@@ -10,10 +10,16 @@ class ScreenSelectProfile : public ScreenWithMenuElements
 public:
 	virtual void Init();
 	virtual void Input( const InputEventPlus &input );
+	virtual void MenuLeft( const InputEventPlus &input );
+	virtual void MenuRight( const InputEventPlus &input );
+	virtual void MenuUp( const InputEventPlus &input );
+	virtual void MenuDown( const InputEventPlus &input );
+
+	GameButton m_TrackingRepeatingInput;
 
 	// Lua
 	void PushSelf( lua_State *L );
-	bool SetProfileIndex( PlayerNumber pn, int iProfileIndex );	
+	bool SetProfileIndex( PlayerNumber pn, int iProfileIndex );
 	int GetProfileIndex( PlayerNumber pn ) { return m_iSelectedProfiles[pn]; }
 	bool Finish();
 
