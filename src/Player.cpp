@@ -2077,7 +2077,59 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 			// Put some small, random amount in fNoteOffset so that demonstration 
 			// show a mix of late and early.
-			fNoteOffset = randomf( -0.1f, 0.1f );
+			//fNoteOffset = randomf( -0.1f, 0.1f );
+			// XXX: This is not the best thing to be doing. Random numbers should
+			// be generated based on score, so that they can logically match up
+			// with the current timing windows. -aj
+			{
+				float fWindowW1 = GetWindowSeconds(TW_W1);
+				float fWindowW2 = GetWindowSeconds(TW_W2);
+				float fWindowW3 = GetWindowSeconds(TW_W3);
+				float fWindowW4 = GetWindowSeconds(TW_W4);
+				float fWindowW5 = GetWindowSeconds(TW_W5);
+
+				// W1 is the top judgment, there is no overlap.
+				if( score == TNS_W1 )
+					fNoteOffset = randomf(-fWindowW1, fWindowW1);
+				else
+				{
+					// figure out overlap.
+					float fLowerBound = 0.0f; // negative upper limit
+					float fUpperBound = 0.0f; // positive lower limit
+					float fCompareWindow; // filled in here:
+					if( score == TNS_W2 )
+					{
+						fLowerBound = -fWindowW1;
+						fUpperBound = fWindowW1;
+						fCompareWindow = fWindowW2;
+					}
+					else if( score == TNS_W3 )
+					{
+						fLowerBound = -fWindowW2;
+						fUpperBound = fWindowW2;
+						fCompareWindow = fWindowW3;
+					}
+					else if( score == TNS_W4 )
+					{
+						fLowerBound = -fWindowW3;
+						fUpperBound = fWindowW3;
+						fCompareWindow = fWindowW4;
+					}
+					else if( score == TNS_W5 )
+					{
+						fLowerBound = -fWindowW4;
+						fUpperBound = fWindowW4;
+						fCompareWindow = fWindowW5;
+					}
+					float f1 = randomf(-fCompareWindow, fLowerBound);
+					float f2 = randomf(fUpperBound, fCompareWindow);
+
+					if(randomf() * 100 >= 50)
+						fNoteOffset = f1;
+					else
+						fNoteOffset = f2;
+				}
+			}
 
 			break;
 

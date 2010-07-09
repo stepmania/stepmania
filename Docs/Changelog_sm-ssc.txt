@@ -14,6 +14,12 @@ sm-ssc v1.0 Release Candidate 2 | 201007xx
 --------------------------------------------------------------------------------
 (work in progress, it's not out yet [hence the "xx" above].)
 
+20100709
+--------
+* Modify Autoplay/AutoplayCPU's tap note offset code to generate proper offsets
+  (as opposed to offsets between -0.1f and 0.1f, which makes Selling Out Made
+  Simple 2's protiming look weird).
+
 20100708
 --------
 * [ScreenSelectProfile] Transplant menu input functions from ScreenSelectMaster.
