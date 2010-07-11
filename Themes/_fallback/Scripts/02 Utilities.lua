@@ -70,15 +70,15 @@ function fapproach( val, other_val, to_move )
 	if val == other_val then
 		return val -- already done!
 	end
-	
+
 	local delta = other_val - val
 	local sign = delta / math.abs(delta)
 	local toMove = sign*to_move
-	
+
 	if math.abs(toMove) > math.abs(delta) then
 		toMove = delta	-- snap
 	end
-	
+
 	val = val + toMove
 	return val
 end
@@ -99,6 +99,13 @@ function tableslice( t, num )
 	return ret
 end
 
+function round(val, decimal)
+	if (decimal) then
+		return math.floor( (val * 10^decimal) + 0.5) / (10^decimal)
+	else
+		return math.floor(val+0.5)
+	end
+end
 
 function GetRandomSongBackground()
 	for i=0,50 do
