@@ -14,6 +14,12 @@ sm-ssc v1.0 Release Candidate 2 | 201007xx
 --------------------------------------------------------------------------------
 (work in progress, it's not out yet [hence the "xx" above].)
 
+20100710
+--------
+sm4svn:
+ * r28376: use GetProcessImageFileName instead of GetModuleFileNameEx;
+   it works in more cases, eg. when losing focus to the taskbar [Glenn Maynard]
+
 20100709
 --------
 * Modify Autoplay/AutoplayCPU's tap note offset code to generate proper offsets
