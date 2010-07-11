@@ -96,7 +96,7 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 		HANDLE hSnap = CreateToolhelp32Snapshot( TH32CS_SNAPMODULE, iProcessID );
 		if( hSnap == NULL )
 		{
-			sName = werr_ssprintf( GetLastError(), "OpenProcess" );
+			sName = werr_ssprintf( GetLastError(), "CreateToolhelp32Snapshot" );
 			break;
 		}
 
@@ -118,8 +118,8 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 	/* This method only works in NT/2K/XP. */
 	do {
 		static HINSTANCE hPSApi = NULL;
-	    typedef DWORD (WINAPI* pfnGetModuleFileNameEx)(HANDLE,HMODULE,LPSTR,DWORD);
-		static pfnGetModuleFileNameEx pGetModuleFileNameEx = NULL;
+		typedef DWORD (WINAPI* pfnGetProcessImageFileNameA)(HANDLE hProcess, LPSTR lpImageFileName, DWORD nSize);
+		static pfnGetProcessImageFileNameA pGetProcessImageFileName = NULL;
 		static bool bTried = false;
 
 		if( !bTried )
@@ -134,8 +134,8 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 			}
 			else
 			{
-				pGetModuleFileNameEx = (pfnGetModuleFileNameEx) GetProcAddress( hPSApi, "GetModuleFileNameExA" );
-				if( pGetModuleFileNameEx == NULL )
+				pGetProcessImageFileName = (pfnGetProcessImageFileNameA) GetProcAddress( hPSApi, "GetProcessImageFileNameA" );
+				if( pGetProcessImageFileName == NULL )
 				{
 					sName = werr_ssprintf( GetLastError(), "GetProcAddress" );
 					break;
@@ -143,7 +143,7 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 			}
 		}
 
-		if( pGetModuleFileNameEx != NULL )
+		if( pGetProcessImageFileName != NULL )
 		{
 			HANDLE hProc = OpenProcess( PROCESS_VM_READ|PROCESS_QUERY_INFORMATION, NULL, iProcessID );
 			if( hProc == NULL )
@@ -153,17 +153,18 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 			}
 
 			char buf[1024];
-			int iRet = pGetModuleFileNameEx( hProc, NULL, buf, 1024 );
+			int iRet = pGetProcessImageFileName( hProc, buf, sizeof(buf) );
 			CloseHandle( hProc );
 
 			if( iRet )
 			{
-				buf[iRet] = 0;
+				if( iRet == sizeof(buf) )
+					buf[iRet-1] = 0;
 				sName = buf;
 				return true;
 			}
 
-			sName = werr_ssprintf( GetLastError(), "GetModuleFileNameEx" );
+			sName = werr_ssprintf( GetLastError(), "GetProcessImageFileName" );
 		}
 	} while(0);
 
