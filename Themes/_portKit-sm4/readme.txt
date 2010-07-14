@@ -4,7 +4,7 @@ PortKit: StepMania 4
 PortKits are designed to help facilitate rapid porting of themes from one
 version of StepMania to another.
 
-[How to use a ThemeKit]
+[How to use a PortKit/ThemeKit]
 In the metrics.ini file for the theme, you'll need to add (or change) the lines
 between the underscores:
 ___________________________
