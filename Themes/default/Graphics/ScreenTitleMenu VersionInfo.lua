@@ -1,6 +1,6 @@
 return Def.ActorFrame {
 	LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
-		OnCommand=cmd(diffuse,Color("Orange");diffusetopedge,Color("Yellow"));
+		OnCommand=cmd(diffuse,Color("Orange");diffusetopedge,Color("Yellow");diffusealpha,0.25);
 	};
 	LoadFont("Common Normal") .. {
 		Text=ProductID();

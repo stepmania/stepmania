@@ -23,6 +23,14 @@ t[#t+1] = Def.ActorFrame {
 t[#t+1] = Def.ActorFrame {
 	FOV=90;
 	InitCommand=cmd(x,-192;zoom,0.9);
+	-- Main Shadow
+	LoadActor( gc:GetName() ) .. {
+		InitCommand=cmd(x,2;y,2;diffuse,Color("Black");diffusealpha,0;zoom,0.75);
+		GainFocusCommand=cmd(stoptweening;stopeffect;smooth,0.125;diffusealpha,0;zoom,1;decelerate,0.25;diffusealpha,0.5;pulse;effecttiming,0.75,0.125,0.125,0.75;effectmagnitude,0.95,1,1;);
+		LoseFocusCommand=cmd(stoptweening;stopeffect;smooth,0.25;diffusealpha,0;zoom,0.75;);
+		OffFocusedCommand=cmd(finishtweening;stopeffect;glow,colors[gc:GetName()];decelerate,1.75;rotationy,360*1;);
+	};
+	-- Main Emblem
 	LoadActor( gc:GetName() ) .. {
 		InitCommand=cmd(diffusealpha,0;zoom,0.75);
 		GainFocusCommand=cmd(stoptweening;stopeffect;smooth,0.125;diffusealpha,1;zoom,1;glow,Color("White");decelerate,0.25;glow,Color("Invisible");pulse;effecttiming,0.75,0.125,0.125,0.75;effectmagnitude,0.95,1,1;);

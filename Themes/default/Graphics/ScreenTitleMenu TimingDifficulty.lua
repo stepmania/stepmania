@@ -1,5 +1,5 @@
 return Def.ActorFrame {
-	LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
+--[[ 	LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
 		OnCommand=function(self)
 			if GetTimingDifficulty() == 7 then
 				(cmd(glowshift;diffuse,Color("Yellow");diffuserightedge,Color("Red");effectcolor1,Colors.Alpha( Color("Red"), 0.5 );effectcolor2,Color("Invisible");effectperiod,1.25/2))(self);
@@ -11,7 +11,7 @@ return Def.ActorFrame {
 				(cmd(diffuse,Color("Orange");diffusetopedge,Color("Yellow")))(self);
 			end;
 		end;
-	};
+	}; --]]
 	LoadFont("Common Normal") .. {
 		Text=GetTimingDifficulty();
 		AltText="";

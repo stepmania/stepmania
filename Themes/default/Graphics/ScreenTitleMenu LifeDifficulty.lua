@@ -1,5 +1,5 @@
 return Def.ActorFrame {
-	LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
+--[[ 	LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
 		OnCommand=function(self)
 			if GetLifeDifficulty() < 3 then
 				(cmd(diffuseshift;effectcolor1,Color("Blue");effectcolor2,ColorDarkTone(Color("Blue"));effectperiod,1.25))(self);
@@ -9,7 +9,7 @@ return Def.ActorFrame {
 				(cmd(diffuse,Color("Orange");diffusetopedge,Color("Yellow")))(self);
 			end;
 		end;
-	};
+	}; --]]
 	LoadFont("Common Normal") .. {
 		Text=GetLifeDifficulty();
 		AltText="";

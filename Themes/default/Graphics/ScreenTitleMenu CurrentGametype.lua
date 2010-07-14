@@ -2,7 +2,7 @@ local curGameName = GAMESTATE:GetCurrentGame():GetName();
 
 local t = Def.ActorFrame{
 	LoadFont("Common Normal") .. {
-		InitCommand=cmd(horizalign,right;zoom,0.5;);
+		InitCommand=cmd(horizalign,left;zoom,0.5;);
 		BeginCommand=function(self)
 			self:settextf( Screen.String("CurrentGametype"), curGameName );
 		end;
