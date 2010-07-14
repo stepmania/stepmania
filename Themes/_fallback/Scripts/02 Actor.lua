@@ -118,25 +118,13 @@ end
 640x480 - most simfiles in distribution today are this big.
 768x480 - 16:10 aspect ratio backgrounds
 854x480 - pump it up pro
-
-This function will stretch any background up to 640x480]]
+]]
+-- "Most backgrounds are 640x480. Some are 768x480. Stretch the 4:3 ones."
 function Actor:scale_or_crop_background()
-	--local bgAspectRatio = self:GetWidth() / self:GetHeight();
-	if self:GetWidth() <= 640 and self:GetHeight() <= 480 then
-		self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
+	if (self:GetWidth() * 3) / 4 == self:GetHeight() then
+		self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
 	else
-		self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
-	end
-end
--- Testing
-function Actor:scale_or_crop_alternative()
-	if self:GetWidth() and self:GetHeight() then
-		local fRatio = self:GetWidth() / self:GetHeight()
-		if fRatio == 4/3 then
-			self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
-		else
-			self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT )
-		end
+		self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
 	end
 end
 
