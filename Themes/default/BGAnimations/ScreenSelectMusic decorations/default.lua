@@ -24,7 +24,7 @@ t[#t+1] = StandardDecorationFromFileOptional("AlternateHelpDisplay","AlternateHe
 
 local function PercentScore(pn)
 	local t = LoadFont("Common normal")..{
-		InitCommand=cmd(zoom,0.7;shadowlength,1);
+		InitCommand=cmd(zoom,0.625;shadowlength,1);
 		BeginCommand=cmd(playcommand,"Set");
 		SetCommand=function(self)
 			local SongOrCourse, StepsOrTrail;

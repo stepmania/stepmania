@@ -1,4 +1,4 @@
-function GraphDisplay( pn )
+local function GraphDisplay( pn )
 	local t = Def.ActorFrame {
 		Def.GraphDisplay {
 			InitCommand=cmd(Load,"GraphDisplay";);
@@ -12,7 +12,7 @@ function GraphDisplay( pn )
 	return t;
 end
 
-function ComboGraph( pn )
+local function ComboGraph( pn )
 	local t = Def.ActorFrame {
 		Def.ComboGraph {
 			InitCommand=cmd(Load,"ComboGraph";);
@@ -22,6 +22,39 @@ function ComboGraph( pn )
 				self:player( pn );
 			end
 		};
+	};
+	return t;
+end
+
+local function PercentScore( pn )
+	local t = LoadFont("Common normal")..{
+		InitCommand=cmd(zoom,0.625;shadowlength,1;player,pn);
+		BeginCommand=cmd(playcommand,"Set");
+		SetCommand=function(self)
+			-- todo: color by difficulty
+			local StepsOrTrail;
+			if GAMESTATE:IsCourseMode() then
+				StepsOrTrail = GAMESTATE:GetCurrentTrail(pn)
+			else
+				StepsOrTrail = GAMESTATE:GetCurrentSteps(pn)
+			end;
+			local st = StepsOrTrail:GetStepsType();
+			local diff = StepsOrTrail:GetDifficulty();
+			local courseType = GAMESTATE:IsCourseMode() and SongOrCourse:GetCourseType() or nil;
+			local cd = GetCustomDifficulty(st, diff, courseType);
+			self:diffuse(CustomDifficultyToColor(cd));
+			self:shadowcolor(CustomDifficultyToDarkColor(cd));
+
+			local pss = STATSMAN:GetPlayedStageStats(1):GetPlayerStageStats(pn);
+			if pss then
+				local pct = pss:GetPercentDancePoints();
+				if pct == 1 then
+					self:settext("100%");
+				else
+					self:settext(FormatPercentScore(pct));
+				end;
+			end;
+		end;
 	};
 	return t;
 end
@@ -48,6 +81,7 @@ if ShowStandardDecoration("StepsDisplay") then
 				InitCommand=cmd(Load,"StepsDisplayEvaluation",pn;SetFromGameState,pn;);
 			};
 		t[#t+1] = StandardDecorationFromTable( "StepsDisplay" .. ToEnumShortString(pn), t2 );
+		t[#t+1] = StandardDecorationFromTable( "PercentScore" .. ToEnumShortString(pn), PercentScore(pn) );
 	end
 end
 
