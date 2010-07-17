@@ -692,15 +692,15 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 	if( iCurRow == -1 )
 		return;
 
-	/* Update m_fY and m_bHidden[]. */
+	// Update m_fY and m_bHidden[].
 	PositionRows( true );
 
-	/* Do positioning. */
+	// Do positioning.
 	RefreshIcons( iCurRow, pn );
 	for( unsigned r=0; r<m_pRows.size(); r++ )
 	{
-		/* After changing a value, position underlines.  Do this for both players, since
-		 * underlines for both players will change with m_bOneChoiceForAllPlayers. */
+		/* After changing a value, position underlines. Do this for both players,
+		 * since underlines for both players will change with m_bOneChoiceForAllPlayers. */
 		FOREACH_HumanPlayer( p )
 			m_pRows[r]->PositionUnderlines( p );
 		m_pRows[r]->PositionIcons( pn );
@@ -716,7 +716,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 		m_ScrollBar.SetPercentage( pn, fPercent );
 	}
 
-	/* Update all players, since changing one player can move both cursors. */
+	// Update all players, since changing one player can move both cursors.
 	FOREACH_HumanPlayer( p )
 		TweenCursor( p );
 
@@ -826,14 +826,12 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 		}
 	}
 
-	//
 	// Check whether Start ends this screen.
-	//
 	{
 		bool bEndThisScreen = false;
 
-		// If we didn't apply and return above in NAV_THREE_KEY_MENU, then the selection
-		// sets a screen.
+		// If we didn't apply and return above in NAV_THREE_KEY_MENU, then the
+		// selection sets a screen.
 		if( m_OptionsNavigation == NAV_THREE_KEY_MENU )
 			bEndThisScreen = true;
 
@@ -845,7 +843,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 		if( AllAreOnLastRow() )
 			bEndThisScreen = true;
 
-		/* Don't accept START to go to the next screen if we're still transitioning in. */
+		// Don't accept START to go to the next screen if we're still transitioning in.
 		if( bEndThisScreen &&
 			(input.type != IET_FIRST_PRESS || IsTransitioning()) )
 			return;
@@ -933,7 +931,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 
 void ScreenOptions::StoreFocus( PlayerNumber pn )
 {
-	/* Long rows always put us in the center, so don't update the focus. */
+	// Long rows always put us in the center, so don't update the focus.
 	int iCurrentRow = m_iCurrentRow[pn];
 	const OptionRow &row = *m_pRows[iCurrentRow];
 	if( row.GetRowDef().m_layoutType == LAYOUT_SHOW_ONE_IN_ROW )
@@ -980,7 +978,7 @@ void ScreenOptions::BeginFadingOut()
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }
 
-/* Left/right */
+// Left/right
 void ScreenOptions::ChangeValueInRowAbsolute( int iRow, PlayerNumber pn, int iChoiceIndex, bool bRepeat )
 {
 	if( iRow == -1	)	// no row selected
@@ -1011,8 +1009,9 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 		/* There are no other options on the row; move up or down instead of left and right.
 		 * This allows navigating the options menu with left/right/start.
 		 *
-		 * XXX: Only allow repeats if the opposite key isn't pressed; otherwise, holding both
-		 * directions will repeat in place continuously, which is weird. */
+		 * XXX: Only allow repeats if the opposite key isn't pressed; otherwise,
+		 * holding both directions will repeat in place continuously,
+		 * which is weird. */
 		if( MoveRowRelative(pn, iDelta, bRepeat) )
 		{
 			if( iDelta < 0 )
@@ -1031,7 +1030,6 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 
 	bool bOneChanged = false;
 
-
 	int iCurrentChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
 	int iNewChoiceWithFocus = iCurrentChoiceWithFocus + iDelta;
 	if( !bRepeat  &&  WRAP_VALUE_IN_ROW.GetValue() )
@@ -1048,7 +1046,7 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 	if( row.GetRowDef().m_bOneChoiceForAllPlayers )
 	{
 		/* If this row is bOneChoiceForAllPlayers, then lock the cursors together
-		 * for this row.  Don't do this in toggle modes, since the current selection
+		 * for this row. Don't do this in toggle modes, since the current selection
 		 * and the current focus are detached. */
 		bool bForceFocusedChoiceTogether = false;
 		if( m_OptionsNavigation!=NAV_TOGGLE_THREE_KEY &&
@@ -1058,7 +1056,7 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 			bForceFocusedChoiceTogether = true;
 		}
 
-		/* Also lock focus if the screen is explicitly set to share cursors. */
+		// Also lock focus if the screen is explicitly set to share cursors.
 		if( m_InputMode == INPUTMODE_SHARE_CURSOR )
 			bForceFocusedChoiceTogether = true;
 
@@ -1110,10 +1108,10 @@ void ScreenOptions::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 	AfterChangeValueOrRow( pn );
 }
 
-/* Move up/down.  Returns true if we actually moved. */
+// Move up/down. Returns true if we actually moved.
 bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat )
 {
-	LOG->Trace( "MoveRowRelative(pn %i, dir %i, rep %i)", pn, iDir, bRepeat );
+	//LOG->Trace( "MoveRowRelative(pn %i, dir %i, rep %i)", pn, iDir, bRepeat );
 
 	int iDest = -1;
 	ASSERT( m_pRows.size() );
@@ -1149,9 +1147,7 @@ void ScreenOptions::AfterChangeRow( PlayerNumber pn )
 	const int iRow = m_iCurrentRow[pn];
 	if( iRow != -1 )
 	{
-		//
 		// In FIVE_KEY, keep the selection in the row near the focus.
-		//
 		OptionRow &row = *m_pRows[iRow];
 		switch( m_OptionsNavigation )
 		{
@@ -1211,6 +1207,9 @@ void ScreenOptions::MenuLeft( const InputEventPlus &input )
 		MenuUpDown( input, -1 );
 	else
 		ChangeValueInRowRelative(m_iCurrentRow[input.pn],input.pn,-1, input.type != IET_FIRST_PRESS);
+
+	PlayerNumber pn = input.pn;
+	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuLeftP1+pn) );
 }
 
 void ScreenOptions::MenuRight( const InputEventPlus &input )
@@ -1219,16 +1218,23 @@ void ScreenOptions::MenuRight( const InputEventPlus &input )
 		MenuUpDown( input, +1 );
 	else
 		ChangeValueInRowRelative(m_iCurrentRow[input.pn], input.pn,+1, input.type != IET_FIRST_PRESS);
+
+	PlayerNumber pn = input.pn;
+	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuRightP1+pn) );
 }
 
 void ScreenOptions::MenuUp( const InputEventPlus &input )
 {
 	MenuUpDown( input, -1 );
+	PlayerNumber pn = input.pn;
+	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuUpP1+pn) );
 }
 
 void ScreenOptions::MenuDown( const InputEventPlus &input )
 {
 	MenuUpDown( input, +1 );
+	PlayerNumber pn = input.pn;
+	MESSAGEMAN->Broadcast( (MessageID)(Message_MenuDownP1+pn) );
 }
 
 void ScreenOptions::MenuSelect( const InputEventPlus &input )
@@ -1243,8 +1249,8 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 
 	if( input.type == IET_REPEAT )
 	{
-		/* If down is pressed, don't allow up to repeat, and vice versa.  This prevents
-		 * holding both up and down from toggling repeatedly in-place. */
+		/* If down is pressed, don't allow up to repeat, and vice versa. This
+		 * prevents holding both up and down from toggling repeatedly in-place. */
 		if( iDir == +1 )
 		{
 			if( INPUTMAPPER->IsBeingPressed(GAME_BUTTON_MENUUP, pn) ||
