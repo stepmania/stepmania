@@ -21,6 +21,9 @@ void ScreenProfileLoad::BeginScreen()
 
 void ScreenProfileLoad::Input( const InputEventPlus &input )
 {
+	Message msg("");
+	if( m_Codes.InputMessage(input, msg) )
+		this->HandleMessage( msg );
 }
 
 void ScreenProfileLoad::Continue()
