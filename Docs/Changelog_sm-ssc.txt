@@ -17,6 +17,9 @@ sm-ssc v1.0 Release Candidate 2 | 201007xx
 20100717
 --------
 * Added Menu(Left/Right/Up/Down)(P1/P2) messages to ScreenOptions.
+* [ScreenSelectMusic] Add ChangeStepsWithGameButtons, PreviousDifficultyButton,
+  and NextDifficultyButton metrics, allowing the themer to not have to use
+  CodeDetector. [Daisuke Master]
 
 20100715
 --------
