@@ -743,7 +743,6 @@ void ScreenGameplay::Init()
 			pi->GetPlayerStageStats()->m_vpPossibleSteps = pi->m_vpStepsQueue;
 	}
 
-	LOG->Trace("[ScreenGameplay::Init] loading scorekeepers");
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		ASSERT( !pi->m_vpStepsQueue.empty() );
@@ -801,7 +800,7 @@ bool ScreenGameplay::Center1Player() const
 	/* Perhaps this should be handled better by defining a new
 	 * StyleType for ONE_PLAYER_ONE_CREDIT_AND_ONE_COMPUTER,
 	 * but for now just ignore Center1Player when it's Battle or Rave
-	 * Mode.  This doesn't begin to address two-player solo (6 arrows) */
+	 * Mode. This doesn't begin to address two-player solo (6 arrows) */
 	return g_bCenter1Player && 
 		(bool)ALLOW_CENTER_1_PLAYER &&
 		GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
@@ -907,9 +906,9 @@ ScreenGameplay::~ScreenGameplay()
 {
 	if( this->IsFirstUpdate() )
 	{
-		/* We never received any updates.  That means we were deleted without being
-		 * used, and never actually played.  (This can happen when backing out of
-		 * ScreenStage.)  Cancel the stage. */
+		/* We never received any updates. That means we were deleted without being
+		 * used, and never actually played. (This can happen when backing out of
+		 * ScreenStage.) Cancel the stage. */
 		GAMESTATE->CancelStage();
 	}
 
@@ -944,22 +943,21 @@ bool ScreenGameplay::IsLastSong()
 
 void ScreenGameplay::SetupSong( int iSongIndex )
 {
-	LOG->Trace("[ScreenGameplay::SetupSong] begin");
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		/* This is the first beat that can be changed without it being visible.  Until
-		 * we draw for the first time, any beat can be changed. */
+		/* This is the first beat that can be changed without it being visible.
+		 * Until we draw for the first time, any beat can be changed. */
 		pi->GetPlayerState()->m_fLastDrawnBeat = -100;
 
 		Steps *pSteps = pi->m_vpStepsQueue[iSongIndex];
  		GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ].Set( pSteps );
 
-		/* Load new NoteData into Player.  Do this before 
+		/* Load new NoteData into Player. Do this before 
 		 * RebuildPlayerOptionsFromActiveAttacks or else transform mods will get
-		 * propogated to GAMESTATE->m_pPlayerOptions too early and be double-applied
+		 * propagated to GAMESTATE->m_pPlayerOptions too early and be double-applied
 		 * to the NoteData:
-		 * once in Player::Load, then again in Player::ApplyActiveAttacks.  This 
-		 * is very bad for transforms like AddMines.
+		 * once in Player::Load, then again in Player::ApplyActiveAttacks.
+		 * This is very bad for transforms like AddMines.
 		 */
 		NoteData originalNoteData;
 		pSteps->GetNoteData( originalNoteData );
@@ -1031,10 +1029,10 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			GAMESTATE->m_SongOptions.FromString( ModsLevel_Song, a.sModifiers );
 		}
 
-		/* Update attack bOn flags. */
+		// Update attack bOn flags.
 		pi->GetPlayerState()->Update( 0 );
 
-		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
+		// Hack: Course modifiers that are set to start immediately shouldn't tween on.
 		pi->GetPlayerState()->m_PlayerOptions.SetCurrentToLevel( ModsLevel_Stage );
 	}
 }

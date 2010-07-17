@@ -1,4 +1,4 @@
-/* ScreenEvaluation - Shows the user their score after gameplay has ended. */
+/* ScreenEvaluation - Shows the player their score after gameplay has ended. */
 
 #ifndef SCREEN_EVALUATION_H
 #define SCREEN_EVALUATION_H

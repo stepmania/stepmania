@@ -7,9 +7,9 @@
 #include "RageLog.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
-/* This screen used to wait for sounds to stop.  However, implementing GetPlayingSounds()
+/* This screen used to wait for sounds to stop. However, implementing GetPlayingSounds()
  * is annoying, because sounds might be deleted at any time; they aren't ours to have
- * references to.  Also, it's better to quit on command instead of waiting several seconds
+ * references to. Also, it's better to quit on command instead of waiting several seconds
  * for a sound to stop. */
 REGISTER_SCREEN_CLASS( ScreenExit );
 
@@ -22,7 +22,7 @@ void ScreenExit::Init()
 	ArchHooks::SetUserQuit();
 
 	/* It'd be better for any previous screen playing music to fade it out as it fades
-	 * out the screen.  XXX: Check to see if it's fading out; if it'll stop playing in
+	 * out the screen. XXX: Check to see if it's fading out; if it'll stop playing in
 	 * reasonable time, let it. */
 //	SOUND->StopMusic();
 }
@@ -33,7 +33,7 @@ void ScreenExit::Update( float fDelta )
 	if( m_Exited )
 		return;
 
-	/* Grab the list of playing sounds, and see if it's empty. */
+	// Grab the list of playing sounds, and see if it's empty.
 	const set<RageSound *> &PlayingSounds = SOUNDMAN->GetPlayingSounds();
 	bool DoQuit = PlayingSounds.empty();
 

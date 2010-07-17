@@ -1,5 +1,4 @@
 #include "global.h"
-
 #include "ScreenJukebox.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
@@ -28,13 +27,12 @@
 REGISTER_SCREEN_CLASS( ScreenJukebox );
 void ScreenJukebox::SetSong()
 {
-	ThemeMetric<bool>				ALLOW_ADVANCED_MODIFIERS(m_sName,"AllowAdvancedModifiers");
+	ThemeMetric<bool>	ALLOW_ADVANCED_MODIFIERS(m_sName,"AllowAdvancedModifiers");
 
 	vector<Song*> vSongs;
 
-	//Check to see if there is a theme-course
-	//I.E. If there is a course called exactly the theme name, 
-	//then we pick a song from this course.
+	/* Check to see if there is a theme course. If there is a course that has
+	 * the exact same name as the theme, then we pick a song from this course. */
 	Course *pCourse = SONGMAN->GetCourseFromName( THEME->GetCurThemeName() );
 	if( pCourse != NULL )
 		for ( unsigned i = 0; i < pCourse->m_vEntries.size(); i++ )
@@ -45,13 +43,11 @@ void ScreenJukebox::SetSong()
 		vSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
 
 
-	//
 	// Calculate what difficulties to show
-	//
 	vector<Difficulty> vDifficultiesToShow;
 	if( m_bDemonstration )
 	{
-		// HACK: This belongs in ScreenDemonstration
+		// HACK: This belongs in ScreenDemonstration.
 		ThemeMetricDifficultiesToShow	DIFFICULTIES_TO_SHOW_HERE(m_sName,"DifficultiesToShow");
 		vDifficultiesToShow = DIFFICULTIES_TO_SHOW_HERE.GetValue();
 	}
@@ -70,9 +66,7 @@ void ScreenJukebox::SetSong()
 
 	ASSERT( !vDifficultiesToShow.empty() );
 
-	//
-	// Search for a Song and Steps to play during the demo
-	//
+	// Search for a Song and Steps to play during the demo.
 	for( int i=0; i<1000; i++ )
 	{
 		if( vSongs.size() == 0 )
@@ -103,13 +97,12 @@ void ScreenJukebox::SetSong()
 		AdjustSync::ResetOriginalSyncData();
 		FOREACH_PlayerNumber( p )
 			GAMESTATE->m_pCurSteps[p].Set( pSteps );
-		
 
 		bool bShowModifiers = randomf(0,1) <= SHOW_COURSE_MODIFIERS_PROBABILITY;
 		if( bShowModifiers )
 		{
-			/* If we have a modifier course containing this song, apply its modifiers.  Only check
-			 * fixed course entries. */
+			/* If we have a modifier course containing this song, apply its
+			 * modifiers. Only check fixed course entries. */
 			vector<Course*> apCourses;
 			SONGMAN->GetAllCourses( apCourses, false );
 			vector<const CourseEntry *> apOptions;
@@ -120,7 +113,6 @@ void ScreenJukebox::SetSong()
 				const CourseEntry *pEntry = pCourse->FindFixedSong( pSong );
 				if( pEntry == NULL || pEntry->attacks.size() == 0 )
 					continue;
-				
 
 				if( !ALLOW_ADVANCED_MODIFIERS )
 				{
@@ -133,6 +125,7 @@ void ScreenJukebox::SetSong()
 					{
 						RString s = a->sModifiers;
 						s.MakeLower();
+						// todo: allow themers to modify this list? -aj
 						if( s.find("dark") != string::npos ||
 							s.find("stealth") != string::npos )
 						{
@@ -144,7 +137,6 @@ void ScreenJukebox::SetSong()
 						continue;	// skip
 				}
 
-
 				apOptions.push_back( pEntry );
 				apPossibleCourses.push_back( pCourse );
 			}
@@ -154,7 +146,7 @@ void ScreenJukebox::SetSong()
 				int iIndex = RandomInt( apOptions.size() );
 				m_pCourseEntry = apOptions[iIndex];
 				Course *pCourse = apPossibleCourses[iIndex]; 
-			
+
 				PlayMode pm = CourseTypeToPlayMode( pCourse->GetCourseType() );
 				GAMESTATE->m_PlayMode.Set( pm );
 				GAMESTATE->m_pCurCourse.Set( pCourse );
@@ -164,8 +156,8 @@ void ScreenJukebox::SetSong()
 					ASSERT( GAMESTATE->m_pCurTrail[p] );
 				}
 			}
-		}		
-		
+		}
+
 		return;	// done looking
 	}
 
@@ -175,13 +167,12 @@ void ScreenJukebox::SetSong()
 ScreenJukebox::ScreenJukebox()
 {
 	m_bDemonstration = false;
-
 	m_pCourseEntry = NULL;
 }
 
 void ScreenJukebox::Init()
 {
-	// ScreeJukeboxMenu must set this
+	// ScreenJukeboxMenu must set this
 	ASSERT( GAMESTATE->GetCurrentStyle() );
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 
@@ -196,7 +187,8 @@ void ScreenJukebox::Init()
 	if( Benchmark )
 	{
 		/* Note that you also need to make sure you benchmark with the
-		 * same notes. I use a copy of MaxU with only heavy notes included. */
+		 * same notes. I (who? -aj) use a copy of Maxx Unlimited with only heavy notes
+		 * included.*/
 		FOREACH_EnabledPlayer( p )
 		{
 			/* Lots and lots of arrows. This might even bias to arrows a little
@@ -211,7 +203,7 @@ void ScreenJukebox::Init()
 
 	FOREACH_EnabledPlayer( p )
 	{
-		/* Reset score between songs. */
+		// Reset score between songs.
 		STATSMAN->m_CurStageStats.m_player[p].ResetScoreForLesson();
 
 		if( GAMESTATE->m_bJukeboxUsesModifiers )
@@ -232,7 +224,7 @@ void ScreenJukebox::Init()
 
 	GAMESTATE->m_bDemonstrationOrJukebox = true;
 
-	/* Now that we've set up, init the base class. */
+	// Now that we've set up, init the base class.
 	ScreenGameplay::Init();
 
 	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.
@@ -253,7 +245,7 @@ void ScreenJukebox::Input( const InputEventPlus &input )
 	//LOG->Trace( "ScreenJukebox::Input()" );
 
 	if( input.type != IET_FIRST_PRESS )
-		return; /* ignore */
+		return; // ignore
 
 	switch( input.MenuI )
 	{

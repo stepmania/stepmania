@@ -660,7 +660,7 @@ void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int
 {
 	// reset all notes
 	Init();
-	
+
 	SetNumTracks( iNewNumTracks );
 
 	// copy tracks

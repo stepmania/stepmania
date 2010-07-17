@@ -11,15 +11,15 @@ class XNode;
 struct TapNoteResult
 {
 	TapNoteResult() : tns(TNS_None), fTapNoteOffset(0.f), bHidden(false) { }
-	
+
 	TapNoteScore	tns;
 
-	/* Offset, in seconds, for a tap grade.  Negative numbers mean the note
-	 * was hit early; positive numbers mean it was hit late.  These values are
+	/* Offset, in seconds, for a tap grade. Negative numbers mean the note
+	 * was hit early; positive numbers mean it was hit late. These values are
 	 * only meaningful for graded taps (tns >= TNS_W5). */
 	float		fTapNoteOffset;
 
-	/* If the whole row has been judged, all taps on the row will be set to hidden. */
+	// If the whole row has been judged, all taps on the row will be set to hidden.
 	bool		bHidden;
 
 	// XML
@@ -31,7 +31,7 @@ struct HoldNoteResult
 {
 	HoldNoteResult() : hns(HNS_None), fLife(1.f), fOverlappedTime(0), iLastHeldRow(0), iCheckpointsHit(0), iCheckpointsMissed(0), bHeld(false), bActive(false) { }
 	float GetLastHeldBeat() const;
-	
+
 	HoldNoteScore	hns;
 
 	/* 1.0 means this HoldNote has full life.
@@ -40,15 +40,15 @@ struct HoldNoteResult
 	 * If the life is > 0.0 when the HoldNote ends, then m_HoldScore becomes HNS_Held. */
 	float	fLife;
 
-	/* The number of seconds the hold note has overlapped the current beat, or 0 if it
-	 * doesn't overlap. */
+	/* The number of seconds the hold note has overlapped the current beat, or 0
+	 * if it doesn't overlap. */
 	float	fOverlappedTime;
 
-	/* Last index where fLife was greater than 0.  If the tap was missed, this will
-	 * be the first index of the hold. */
+	/* Last index where fLife was greater than 0. If the tap was missed, this
+	 * will be the first index of the hold. */
 	int		iLastHeldRow;
 
-	/* If checkpoint holds are enabled, the number of checkpoints hit and missed. */
+	// If checkpoint holds are enabled, the number of checkpoints hit and missed.
 	int		iCheckpointsHit;
 	int		iCheckpointsMissed;
 
@@ -98,16 +98,16 @@ struct TapNote
 	TapNoteResult	result;
 	int8_t		iMidiNote;		// ignored by all game types but Karaoke
 	PlayerNumber	pn;			// used in routine mode
-	bool		bHopoPossible;		// set just before gameplay begins
-	
+	bool		bHopoPossible;	// set just before gameplay begins
+
 	RString		sAttackModifiers;	// used only if Type == attack
 	float		fAttackDurationSeconds;	// used only if Type == attack
 
 	int		iKeysoundIndex;		// Index into Song's vector of keysound files if nonnegative.
 
-	int		iDuration;		// used if hold_head only
-	HoldNoteResult	HoldResult;		// used if hold_head only
-	
+	int		iDuration;			// used if hold_head only
+	HoldNoteResult	HoldResult;	// used if hold_head only
+
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
@@ -180,11 +180,11 @@ extern TapNote TAP_ADDITION_MINE;
 // TODO: Don't have a hard-coded track limit.
 const int MAX_NOTE_TRACKS = 16;
 
-/* This is a divisor for our "fixed-point" time/beat representation.  It must be evenly divisible
- * by 2, 3, and 4, to exactly represent 8th, 12th and 16th notes. */
+/* This is a divisor for our "fixed-point" time/beat representation. It must be
+ * evenly divisible by 2, 3, and 4, to exactly represent 8th, 12th and 16th notes. */
 const int ROWS_PER_BEAT	= 48;
 
-/* In the editor, enforce a reasonable limit on the number of notes. */
+// In the editor, enforce a reasonable limit on the number of notes.
 const int MAX_NOTES_PER_MEASURE = 50;
 
 
