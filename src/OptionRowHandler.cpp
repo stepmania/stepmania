@@ -140,7 +140,7 @@ public:
 		ASSERT( sParam.size() );
 
 		m_bUseModNameForIcon = true;
-			
+
 		m_Def.m_sName = sParam;
 
 		m_Default.Load( -1, ParseCommands(ENTRY_DEFAULT(sParam)) );
@@ -1106,7 +1106,7 @@ public:
 			ASSERT_M( pConfOption != NULL, "ConfOption::Find(Invalid)" );
 		}
 
-   		pConfOption->UpdateAvailableOptions();
+		pConfOption->UpdateAvailableOptions();
 
 		m_pOpt = pConfOption;
 		m_pOpt->MakeOptionsList( m_Def.m_vsChoices );
