@@ -75,7 +75,6 @@ function OptionRowProTiming()
 	return t;
 end;
 
-
 function UserPrefGameplayShowScore()
 	local t = {
 		Name = "UserPrefGameplayShowScore";
