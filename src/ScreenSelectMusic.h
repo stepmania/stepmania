@@ -89,6 +89,8 @@ protected:
 	ThemeMetric<float>		TWO_PART_TIMER_SECONDS;
 	ThemeMetric<bool>		WRAP_CHANGE_STEPS;
 
+	ThemeMetric<bool>		CHANGE_STEPS_WITH_GAME_BUTTONS;
+
 	bool CanChangeSong() const { return m_SelectionState == SelectionState_SelectingSong; }
 	bool CanChangeSteps() const { return TWO_PART_SELECTION ? m_SelectionState == SelectionState_SelectingSteps : m_SelectionState == SelectionState_SelectingSong; }
 	SelectionState GetNextSelectionState() const
@@ -105,6 +107,8 @@ protected:
 
 	GameButton m_GameButtonPreviousSong;
 	GameButton m_GameButtonNextSong;
+	GameButton m_GameButtonPreviousDifficulty;
+	GameButton m_GameButtonNextDifficulty;
 
 	RString m_sSectionMusicPath;
 	RString m_sSortMusicPath;

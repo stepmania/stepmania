@@ -653,7 +653,7 @@ static const Style g_Style_Pump_HalfDouble =
 			{ TRACK_4,	+PUMP_COL_SPACING*0.5f+4, NULL },
 			{ TRACK_5,	+PUMP_COL_SPACING*1.5f+4, NULL },
 			{ TRACK_6,	+PUMP_COL_SPACING*2.5f+4, NULL },
-		}
+		},
 		{	// PLAYER_2
 			{ TRACK_1,	-PUMP_COL_SPACING*2.5f-4, NULL },
 			{ TRACK_2,	-PUMP_COL_SPACING*1.5f-4, NULL },
@@ -783,7 +783,7 @@ static const Style g_Style_Pump_Couple_Edit =
 			{ TRACK_8,	+PUMP_COL_SPACING*3.0f+4, NULL },
 			{ TRACK_9,	+PUMP_COL_SPACING*4.0f+4, NULL },
 			{ TRACK_10,	+PUMP_COL_SPACING*5.0f+4, NULL },
-		}
+		},
 		{	// PLAYER_2
 			{ TRACK_1,	-PUMP_COL_SPACING*2.0f, NULL },
 			{ TRACK_2,	-PUMP_COL_SPACING*1.0f, NULL },

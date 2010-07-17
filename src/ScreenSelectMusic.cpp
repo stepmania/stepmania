@@ -90,9 +90,18 @@ void ScreenSelectMusic::Init()
 	TWO_PART_CONFIRMS_ONLY.Load( m_sName, "TwoPartConfirmsOnly" );
 	TWO_PART_TIMER_SECONDS.Load( m_sName, "TwoPartTimerSeconds" );
 	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
+	//To allow changing steps with gamebuttons -DaisuMaster
+	CHANGE_STEPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeStepsWithGameButtons" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
 	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextSongButton") );
+	
+	//Ask for those only if changing steps with gamebuttons is allowed -DaisuMaster
+	if( CHANGE_STEPS_WITH_GAME_BUTTONS )
+	{
+		m_GameButtonPreviousDifficulty = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousDifficultyButton") );
+		m_GameButtonNextDifficulty = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextDifficultyButton") );
+	}
 
 	FOREACH_ENUM( PlayerNumber, p )
 	{
@@ -552,6 +561,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 			bool bLeftIsDown = false;
 			bool bRightIsDown = false;
+
 			FOREACH_HumanPlayer( p )
 			{
 				if( m_OptionsList[p].IsOpened() )
@@ -614,10 +624,31 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 	}
 
+	// To allow changing steps with gamebuttons, NOT WITH THE GODDAMN CODEDETECTOR
+	// yeah, wanted this since a while ago... -DaisuMaster
+	if(CHANGE_STEPS_WITH_GAME_BUTTONS)
+	{
+		// avoid anything not being just press (read: release or repeat/hold)
+		if(input.type != IET_FIRST_PRESS)
+			return;
+
+		if(m_SelectionState == SelectionState_SelectingSong)
+		{
+			if(input.MenuI == m_GameButtonPreviousDifficulty)
+			{
+				ChangeSteps(input.pn, -1);
+			}
+			else if( input.MenuI == m_GameButtonNextDifficulty )
+			{
+				ChangeSteps(input.pn, +1);
+			}
+		}
+	}
+
 	// two part confirms only means we can actually change songs here,
 	// so we need some hackery. oops looks like this is never going into
 	// mainline sm4 then -aj
-	if(TWO_PART_CONFIRMS_ONLY)
+	if( TWO_PART_CONFIRMS_ONLY )
 	{
 		if( m_SelectionState == SelectionState_SelectingSteps )
 		{
@@ -641,6 +672,30 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 					m_SelectionState = SelectionState_SelectingSong;
 					MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
 					m_MusicWheel.ChangeMusicUnlessLocked( +1 );
+				}
+			}
+			// added an entry for difficulty change with
+			// gamebuttons -DaisuMaster
+			else if( input.MenuI == m_GameButtonPreviousDifficulty )
+			{
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+				{
+					m_SelectionState = SelectionState_SelectingSong;
+					MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
+					ChangeSteps( input.pn, -1);
+				}
+			}
+			else if( input.MenuI == m_GameButtonNextDifficulty )
+			{
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+				{
+					m_SelectionState = SelectionState_SelectingSong;
+					MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
+					ChangeSteps( input.pn, +1);
 				}
 			}
 		}
@@ -737,6 +792,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 			m_MusicWheel.SelectSection(sNewGroup);
 			m_MusicWheel.SetOpenSection(sNewGroup);
 			AfterMusicChange();
+			//m_MusicWheel.
 		}
 	}
 	else if( CodeDetector::EnteredCloseFolder(input.GameI.controller) )

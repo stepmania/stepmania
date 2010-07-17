@@ -508,22 +508,23 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 						tickToChange = (int)numTemp;
 						continue;
 					}
-					else if (BeginsWith(NoteRowString, "|B")) 
+					if (BeginsWith(NoteRowString, "|B")) 
 					{
 						bBPMChangeNeeded = true;
 						speedToChange = numTemp;
 						continue;
 					}
-					else if (BeginsWith(NoteRowString, "|E"))
+					if (BeginsWith(NoteRowString, "|E"))
 					{
 						bBPMStopNeeded = true;
-						timeToStop = (60 / out.m_Timing.GetBPMAtBeat(NoteRowToBeat(i)) * numTemp) / (float)iTickCount;
+						timeToStop = 60 / out.m_Timing.GetBPMAtBeat(NoteRowToBeat(i)) * numTemp / (float)tickToChange;
 						continue;
 					}
-					else if (BeginsWith(NoteRowString, "|D"))
+					if (BeginsWith(NoteRowString, "|D"))
 					{
 						bBPMStopNeeded = true;
-						timeToStop = numTemp / 1000.0f;
+						//bool bDelay = true;
+						timeToStop = numTemp / 1000.0f; // + out.m_Timing.GetStopAtRow(i-1, bDelay);
 						continue;
 					}
 				}
@@ -531,7 +532,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				{
 					// Quit while we're ahead if any bad syntax is spotted.
 					LOG->UserLog( "Song file", sPath, "has an invalid RowString \"%s\".",
-						      NoteRowString.c_str() );
+								NoteRowString.c_str() );
 					return false;
 				}
 			}
@@ -542,8 +543,8 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				LOG->Trace( "Adding time signature of %i/4 at beat %f", iTickCount, fCurBeat );
 				TimeSignatureSegment seg;
 				seg.m_iStartRow = BeatToNoteRow(fCurBeat);
-				seg.m_iNumerator = iTickCount; 
-				seg.m_iDenominator = 4; 
+				seg.m_iNumerator = iTickCount;
+				seg.m_iDenominator = 4;
 				out.m_Timing.AddTimeSignatureSegment( seg );
 				bTickChangeNeeded = false;
 			}
@@ -562,6 +563,8 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			fCurBeat += 1.0f / iTickCount;
 		}
 	}
+
+	out.m_fMusicSampleLengthSeconds = 7.0f;
 
 	// Try to fill in missing bits of information from the pathname.
 	{
