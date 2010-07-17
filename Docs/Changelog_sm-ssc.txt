@@ -16,7 +16,6 @@ sm-ssc v1.0 Release Candidate 2 | 201007xx
 
 20100717
 --------
-* Handle codes on ScreenProfileLoad and ScreenProfileSave.
 * Added Menu(Left/Right/Up/Down)(P1/P2) messages to ScreenOptions.
 
 20100715

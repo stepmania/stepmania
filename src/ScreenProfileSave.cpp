@@ -12,9 +12,6 @@ void ScreenProfileSave::BeginScreen()
 
 void ScreenProfileSave::Input( const InputEventPlus &input )
 {
-	Message msg("");
-	if( m_Codes.InputMessage(input, msg) )
-		this->HandleMessage( msg );
 }
 
 void ScreenProfileSave::Continue()
