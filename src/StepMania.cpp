@@ -1229,16 +1229,15 @@ int main(int argc, char* argv[])
 
 RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex )
 {
-	/* Files should be of the form "screen#####.xxx". Ignore the extension; find
-	 * the last file of this form, and use the next number.  This way, we don't
-	 * write the same screenshot number for different formats (screen00011.bmp,
-	 * screen00011.jpg), and we always increase from the end, so if screen00003.jpg
-	 * is deleted, we won't fill in the hole (which makes screenshots hard to find). */
-	RString sFileNameNoExtension;
-	if( iIndex == -1 )
-		sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension( sDir, "screen" );
-	else
-		sFileNameNoExtension = Profile::MakeFileNameNoExtension( "screen", iIndex );
+	/* As of sm-ssc v1.0 rc2, screenshots are no longer named by an arbitrary
+	 * index. This was causing naming issues for some unknown reason, so we have
+	 * changed the screenshot names to a non-blocking format: date and time.
+	 * As before, we ignore the extension. -aj */
+	RString sFileNameNoExtension = DateTime::GetNowDateTime().GetString();
+	// replace space with underscore.
+	sFileNameNoExtension.Replace(" ","_");
+	// colons are illegal in filenames.
+	sFileNameNoExtension.Replace(":","");
 
 	// Save the screenshot. If writing lossy to a memcard, use
 	// SAVE_LOSSY_LOW_QUAL, so we don't eat up lots of space.
