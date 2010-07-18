@@ -16,10 +16,19 @@ sm-ssc v1.0 Release Candidate 2 | 201007xx
 
 20100717
 --------
+sm4svn:
+* r28385: Fix memory card port handling on newer kernels. There's got to be a
+  better way to parse out a USB device's connection path. [Glenn Maynard]
+* r28386: Fix partitioned USB devices not always being seen correctly due to
+  race condition with the kernel partition scan. The sleep was a hack to work
+  around this issue which doesn't work in all cases. [Glenn Maynard]
+
+sm-ssc:
 * Added Menu(Left/Right/Up/Down)(P1/P2) messages to ScreenOptions.
 * [ScreenSelectMusic] Add ChangeStepsWithGameButtons, PreviousDifficultyButton,
   and NextDifficultyButton metrics, allowing the themer to not have to use
   CodeDetector. [Daisuke Master]
+
 
 20100715
 --------
