@@ -1,19 +1,17 @@
-local Noteskin = {}
+local Noteskin = ... or {}
 
---bBlanks:
+--bBlanks: 
 Noteskin.bBlanks = {
 	--["element"] = true|false;
 	["Hold Tail Active"] = true;
-	["Hold Tail Active"] = true;
-	["Roll Tail Inactive"] = true;
-	["Roll Tail Inactive"] = true;
+	["Roll Tail Active"] = true;
 }
 Noteskin.ElementRedirs = {
 	--["element"] = "redirected_element";
 	["Hold Head Active"] = "Tap Note";
 	["Hold Head Inactive"] = "Tap Note";
-	["Roll Head Active"] = "Roll Head Active";
-	["Roll Head Inactive"] = "Roll Head Active";
+	["Roll Head Active"] = "Tap Note";
+	["Roll Head Inactive"] = "Tap Note";
 	["Tap Fake"] = "Tap Note";
 	--
 	["Hold Topcap Inactive"] = "Hold Topcap Active";
@@ -21,22 +19,17 @@ Noteskin.ElementRedirs = {
 	["Hold Bottomcap Inactive"] = "Hold Bottomcap Active";
 	["Hold Tail Inactive"] = "Hold Tail Active";
 	--
-	["Roll Topcap Active"] = "Hold Topcap Active";
-	["Roll Body Active"] = "Hold Body Active";
-	["Roll Bottomcap Active"] = "Hold Bottomcap Active";
-	["Roll Tail Active"] = "Hold Tail Active";
-	--
-	["Roll Topcap Inactive"] = "Hold Topcap Active";
-	["Roll Body Inactive"] = "Hold Body Active";
-	["Roll Bottomcap Inactive"] = "Hold Bottomcap Active";
-	["Roll Tail Inactive"] = "Hold Tail Active";
+	["Roll Topcap Inactive"] = "Roll Topcap Active";
+	["Roll Body Inactive"] = "Roll Body Active";
+	["Roll Bottomcap Inactive"] = "Roll Bottomcap Active";
+	["Roll Tail Inactive"] = "Roll Tail Active";
 }
 Noteskin.ButtonRedirs = {
 	Center = "Center";
 	UpLeft = "UpLeft";
-	UpRight = "UpRight";
+	UpRight = "UpLeft";
 	DownLeft = "DownLeft";
-	DownRight = "DownRight";
+	DownRight = "DownLeft";
 }
 Noteskin.BaseRotX = {
 	Center = 0;
@@ -48,9 +41,9 @@ Noteskin.BaseRotX = {
 Noteskin.BaseRotY = {
 	Center = 0;
 	UpLeft = 0;
-	UpRight = 0;
+	UpRight = 180;
 	DownLeft = 0;
-	DownRight = 0;
+	DownRight = 180;
 }
 
 local function func()
@@ -78,8 +71,6 @@ local function func()
 	local path = NOTESKIN:GetPath(Noteskin.ButtonRedirs[sButton],ElementToLoad)
 	--Graficos separados para holds y rolls
 	if string.find(sElement,"Hold") or string.find(sElement,"Roll") then
-	--if ( string.find(sElement,"Hold") or string.find(sElement,"Roll") ) and not ( string.find(sElement,"Head") or string.find(sElement,"Tail") ) then
-	--if ( string.find(sElement,"Hold") or string.find(sElement,"Roll") ) and ( string.find(sElement,"Body") ) then
 		path = NOTESKIN:GetPath(sButton,ElementToLoad)
 	end
 	
