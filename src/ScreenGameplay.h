@@ -151,7 +151,7 @@ protected:
 	ThemeMetric<int> FAIL_ON_MISS_COMBO;
 	ThemeMetric<bool> ALLOW_CENTER_1_PLAYER;
 	ThemeMetric<bool> USE_ALTERNATIVE_INPUT;
-	ThemeMetric<bool> UNPAUSE_WITH_GAME_BUTTON_START;
+	ThemeMetric<bool> UNPAUSE_WITH_START;
 
 	vector<AlternateMapping> m_vAlterMap;
 

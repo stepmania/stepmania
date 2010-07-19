@@ -353,8 +353,8 @@ void ScreenGameplay::Init()
 	FAIL_ON_MISS_COMBO.Load(		m_sName, "FailOnMissCombo" );
 	ALLOW_CENTER_1_PLAYER.Load(		m_sName, "AllowCenter1Player" );
 	USE_ALTERNATIVE_INPUT.Load(		m_sName, "UseAlternativeInput");
-	//configurable
-	UNPAUSE_WITH_GAME_BUTTON_START.Load(	m_sName, "UnpauseOnStart" );
+	// configurable:
+	UNPAUSE_WITH_START.Load(		m_sName, "UnpauseWithStart")
 
 	if( UseSongBackgroundAndForeground() )
 	{
@@ -2172,9 +2172,11 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		if( GAMESTATE->IsHumanPlayer(input.pn) && input.MenuI == GAME_BUTTON_START && input.type == IET_FIRST_PRESS )
 		{
 			if( m_PauseController == GameController_Invalid || m_PauseController == input.GameI.controller )
-				//IMO is better to have this configurable -DaisuMaster
-				if( UNPAUSE_WITH_GAME_BUTTON_START )
+			{
+				// IMO, it's better to have this configurable. -DaisuMaster
+				if( UNPAUSE_WITH_START )
 					this->PauseGame( false );
+			}
 		}
 		return;
 	}
