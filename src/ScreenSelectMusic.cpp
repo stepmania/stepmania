@@ -732,18 +732,18 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 {
-	if( CodeDetector::EnteredPrevSteps(input.GameI.controller) )
+	if( CodeDetector::EnteredPrevSteps(input.GameI.controller) && !CHANGE_STEPS_WITH_GAME_BUTTONS )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			m_soundLocked.Play();
 		else
 			ChangeSteps( input.pn, -1 );
 	}
-	else if( CodeDetector::EnteredNextSteps(input.GameI.controller) )
+	else if( CodeDetector::EnteredNextSteps(input.GameI.controller) && !CHANGE_STEPS_WITH_GAME_BUTTONS )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			m_soundLocked.Play();
-		else
+			else
 			ChangeSteps( input.pn, +1 );
 	}
 	else if( CodeDetector::EnteredModeMenu(input.GameI.controller) )
@@ -792,7 +792,6 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 			m_MusicWheel.SelectSection(sNewGroup);
 			m_MusicWheel.SetOpenSection(sNewGroup);
 			AfterMusicChange();
-			//m_MusicWheel.
 		}
 	}
 	else if( CodeDetector::EnteredCloseFolder(input.GameI.controller) )

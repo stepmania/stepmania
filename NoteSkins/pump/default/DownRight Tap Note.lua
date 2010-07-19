@@ -1,1 +1,3 @@
-return NOTESKIN:LoadActor("DownLeft","Tap Note");
+return NOTESKIN:LoadActor("DownLeft","Tap Note")..{
+	InitCommand=cmd(rotationy,180);
+};

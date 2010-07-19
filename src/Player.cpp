@@ -2005,7 +2005,10 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				break;
 
 			case TapNote::hold_head:
-				if( !REQUIRE_STEP_ON_HOLD_HEADS && fNoteOffset > 0.f )
+				//oh wow, this was causing the trigger
+				//before the hold heads -DaisuMaster
+				//(It was >)
+				if( !REQUIRE_STEP_ON_HOLD_HEADS && fNoteOffset <= 0.f )
 				{
 					score = TNS_W1;
 					break;
