@@ -88,7 +88,6 @@ protected:
 	ThemeMetric<bool>		TWO_PART_CONFIRMS_ONLY;
 	ThemeMetric<float>		TWO_PART_TIMER_SECONDS;
 	ThemeMetric<bool>		WRAP_CHANGE_STEPS;
-
 	ThemeMetric<bool>		CHANGE_STEPS_WITH_GAME_BUTTONS;
 
 	bool CanChangeSong() const { return m_SelectionState == SelectionState_SelectingSong; }
