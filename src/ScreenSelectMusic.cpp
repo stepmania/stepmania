@@ -95,7 +95,7 @@ void ScreenSelectMusic::Init()
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
 	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextSongButton") );
-	
+
 	//Ask for those only if changing steps with gamebuttons is allowed -DaisuMaster
 	if( CHANGE_STEPS_WITH_GAME_BUTTONS )
 	{
@@ -550,7 +550,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			m_bAcceptSelectRelease[input.pn] = false;
 		return;
 	}
-	
+
 	if( m_SelectionState == SelectionState_SelectingSong  &&
 		(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong || input.MenuI == GAME_BUTTON_SELECT) )
 	{
@@ -626,21 +626,21 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	// To allow changing steps with gamebuttons, NOT WITH THE GODDAMN CODEDETECTOR
 	// yeah, wanted this since a while ago... -DaisuMaster
-	if(CHANGE_STEPS_WITH_GAME_BUTTONS)
+	if( CHANGE_STEPS_WITH_GAME_BUTTONS )
 	{
 		// avoid anything not being just press (read: release or repeat/hold)
-		if(input.type != IET_FIRST_PRESS)
+		if( input.type != IET_FIRST_PRESS )
 			return;
 
-		if(m_SelectionState == SelectionState_SelectingSong)
+		if( m_SelectionState == SelectionState_SelectingSong )
 		{
-			if(input.MenuI == m_GameButtonPreviousDifficulty)
+			if (input.MenuI == m_GameButtonPreviousDifficulty )
 			{
-				ChangeSteps(input.pn, -1);
+				ChangeSteps( input.pn, -1 );
 			}
 			else if( input.MenuI == m_GameButtonNextDifficulty )
 			{
-				ChangeSteps(input.pn, +1);
+				ChangeSteps( input.pn, +1 );
 			}
 		}
 	}
@@ -743,7 +743,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			m_soundLocked.Play();
-			else
+		else
 			ChangeSteps( input.pn, +1 );
 	}
 	else if( CodeDetector::EnteredModeMenu(input.GameI.controller) )
