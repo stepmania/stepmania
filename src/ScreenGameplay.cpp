@@ -354,7 +354,7 @@ void ScreenGameplay::Init()
 	ALLOW_CENTER_1_PLAYER.Load(		m_sName, "AllowCenter1Player" );
 	USE_ALTERNATIVE_INPUT.Load(		m_sName, "UseAlternativeInput");
 	// configurable:
-	UNPAUSE_WITH_START.Load(		m_sName, "UnpauseWithStart")
+	UNPAUSE_WITH_START.Load(		m_sName, "UnpauseWithStart");
 
 	if( UseSongBackgroundAndForeground() )
 	{
