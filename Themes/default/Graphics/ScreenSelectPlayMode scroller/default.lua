@@ -3,9 +3,10 @@ local colors = {
 	Easy		= color("#00ff00"),
 	Normal		= color("#feee00"),
 	Hard		= color("#feee00"),
+	Rave		= color("#c44dff"),
 	Extended	= color("#00ffff"),
 	Oni			= color("#d70b8c"),
-	Rave		= color("#c44dff"),
+	Endless		= color("748392"),
 };
 local t = Def.ActorFrame {};
 -- Background!
