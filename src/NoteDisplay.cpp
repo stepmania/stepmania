@@ -44,11 +44,13 @@ static const NoteType MAX_DISPLAY_NOTE_TYPE = (NoteType)7;
 struct NoteMetricCache_t
 {
 	bool m_bDrawHoldHeadForTapsOnSameRow;
-	float m_fAnimationLengthInBeats[NUM_NotePart];
+	float m_fAnimationLength[NUM_NotePart];
 	bool m_bAnimationIsVivid[NUM_NotePart];
 	RageVector2 m_fAdditionTextureCoordOffset[NUM_NotePart];
 	RageVector2 m_fNoteColorTextureCoordSpacing[NUM_NotePart];
 
+	//For animation based on beats or seconds -DaisuMaster
+	bool m_bAnimationBasedOnBeats;
 	bool m_bHoldHeadIsAboveWavyParts;
 	bool m_bHoldTailIsAboveWavyParts;
 	int m_iStartDrawingHoldBodyOffsetFromHead;
@@ -68,13 +70,15 @@ void NoteMetricCache_t::Load( const RString &sButton )
 	FOREACH_NotePart( p )
 	{
 		const RString &s = NotePartToString(p);
-		m_fAnimationLengthInBeats[p] = NOTESKIN->GetMetricF(sButton,s+"AnimationLengthInBeats");
+		m_fAnimationLength[p] = NOTESKIN->GetMetricF(sButton,s+"AnimationLength");
 		m_bAnimationIsVivid[p] = NOTESKIN->GetMetricB(sButton,s+"AnimationIsVivid");
 		m_fAdditionTextureCoordOffset[p].x = NOTESKIN->GetMetricF(sButton,s+"AdditionTextureCoordOffsetX");
 		m_fAdditionTextureCoordOffset[p].y = NOTESKIN->GetMetricF(sButton,s+"AdditionTextureCoordOffsetY");
 		m_fNoteColorTextureCoordSpacing[p].x = NOTESKIN->GetMetricF(sButton,s+"NoteColorTextureCoordSpacingX");
 		m_fNoteColorTextureCoordSpacing[p].y = NOTESKIN->GetMetricF(sButton,s+"NoteColorTextureCoordSpacingY");
 	}
+	//I was here -DaisuMaster
+	m_bAnimationBasedOnBeats = NOTESKIN->GetMetricB(sButton,"AnimationIsBeatBased");
 	m_bHoldHeadIsAboveWavyParts =		NOTESKIN->GetMetricB(sButton,"HoldHeadIsAboveWavyParts");
 	m_bHoldTailIsAboveWavyParts =		NOTESKIN->GetMetricB(sButton,"HoldTailIsAboveWavyParts");
 	m_iStartDrawingHoldBodyOffsetFromHead =	NOTESKIN->GetMetricI(sButton,"StartDrawingHoldBodyOffsetFromHead");
@@ -277,20 +281,20 @@ void NoteDisplay::Update( float fDeltaTime )
 	}
 }
 
-void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid )
+void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLength, bool bVivid )
 {
 	/* -inf ... inf */
-	float fSongBeat = GAMESTATE->m_fSongBeat;
+	float fBeatOrSecond = cache->m_bAnimationBasedOnBeats ? GAMESTATE->m_fSongBeat : GAMESTATE->m_fMusicSeconds;
 	/* -len ... +len */
-	float fPercentIntoAnimation = fmodf( fSongBeat, fAnimationLengthInBeats );
+	float fPercentIntoAnimation = fmodf( fBeatOrSecond, fAnimationLength );
 	/* -1 ... 1 */
-	fPercentIntoAnimation /= fAnimationLengthInBeats;
+	fPercentIntoAnimation /= fAnimationLength;
 
 	if( bVivid )
 	{
 		float fNoteBeatFraction = fmodf( fNoteBeat, 1.0f );
 
-		const float fInterval = 1.f / fAnimationLengthInBeats;
+		const float fInterval = 1.f / fAnimationLength;
 		fPercentIntoAnimation += QuantizeDown( fNoteBeatFraction, fInterval );
 
 		// just in case somehow we're majorly negative with the subtraction
@@ -311,7 +315,7 @@ Actor *NoteDisplay::GetTapActor( NoteColorActor &nca, NotePart part, float fNote
 {
 	Actor *pActorOut = nca.Get();
 
-	SetActiveFrame( fNoteBeat, *pActorOut, cache->m_fAnimationLengthInBeats[part], cache->m_bAnimationIsVivid[part] );
+	SetActiveFrame( fNoteBeat, *pActorOut, cache->m_fAnimationLength[part], cache->m_bAnimationIsVivid[part] );
 	return pActorOut;
 }
 
@@ -324,7 +328,7 @@ Sprite *NoteDisplay::GetHoldSprite( NoteColorSprite ncs[NUM_HoldType][NUM_Active
 {
 	Sprite *pSpriteOut = ncs[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
 
-	SetActiveFrame( fNoteBeat, *pSpriteOut, cache->m_fAnimationLengthInBeats[part], cache->m_bAnimationIsVivid[part] );
+	SetActiveFrame( fNoteBeat, *pSpriteOut, cache->m_fAnimationLength[part], cache->m_bAnimationIsVivid[part] );
 	return pSpriteOut;
 }
 
