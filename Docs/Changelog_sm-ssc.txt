@@ -14,11 +14,18 @@ sm-ssc v1.0 Release Candidate 2 | 201007xx
 --------------------------------------------------------------------------------
 (work in progress, it's not out yet [hence the "xx" above].)
 
+20100719
+--------
+* Add --game= command line argument. (e.g. --game=kb7, --game=dance)
+
 20100718
 --------
 * Change screenshot naming format from "screen#####" to "YYYY-MM-DD_HHMMSS".
   This should solve an issue where screen00000 was getting written multiple
   times for unknown reasons.
+* Make EnteredPrevSteps/EnteredNextSteps codes only trigger if
+  CHANGE_STEPS_WITH_GAME_BUTTONS = true. [Daisuke Master]
+* [ScreenGameplay] Added UnpauseWithStart metric. [Daisuke Master]
 
 20100717
 --------
@@ -155,8 +162,8 @@ sm-ssc v1.0 Release Candidate 1 | 20100627
 
 20100614
 --------
-* Attempt to fix screenshot numbering bug. Seems to work, if testing is
-  any indication.
+* <del>Attempt to fix screenshot numbering bug. Seems to work, if testing is
+  any indication.</del> (Did not work.)
 
 20100612
 --------

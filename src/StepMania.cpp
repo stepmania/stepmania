@@ -1147,6 +1147,14 @@ int main(int argc, char* argv[])
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 
+	RString argGame;
+	if( GetCommandlineArgument(	"game",&argGame) )
+	{
+		const Game *g = GAMEMAN->StringToGame(argGame);
+		if( g && g != GAMESTATE->GetCurrentGame() )
+			GAMESTATE->SetCurGame(g);
+	}
+
 	StepMania::ChangeCurrentGame( GAMESTATE->GetCurrentGame() );
 
 	INPUTQUEUE	= new InputQueue;
