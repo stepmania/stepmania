@@ -16,7 +16,7 @@ sm-ssc v1.0 Release Candidate 2 | 201007xx
 
 20100719
 --------
-* Add --game= command line argument. (e.g. --game=kb7, --game=dance)
+* 
 
 20100718
 --------
