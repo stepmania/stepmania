@@ -85,8 +85,8 @@ local function CreateStops()
 end
 local t = LoadFallbackB()
 for pn in ivalues(PlayerNumber) do
-	local MetricsName = "SongMeterDisplay" .. PlayerNumberToString(pn);
-	t[#t+1] = Def.ActorFrame {
+-- 	local MetricsName = "SongMeterDisplay" .. PlayerNumberToString(pn);
+--[[ 	t[#t+1] = Def.ActorFrame {
 		InitCommand=function(self) 
 			self:player(pn); 
 			self:name(MetricsName); 
@@ -118,7 +118,7 @@ for pn in ivalues(PlayerNumber) do
 			Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(pn) ) ) .. { InitCommand=cmd(visible,false); };
 		};
 		CreateStops();
-	};
+	}; --]]
 end;
 for pn in ivalues(PlayerNumber) do
 	local MetricsName = "ToastyDisplay" .. PlayerNumberToString(pn);
@@ -132,5 +132,36 @@ for pn in ivalues(PlayerNumber) do
 end;
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
-
+t[#t+1] = Def.ActorFrame {
+	InitCommand=function(self)
+		self:name("SongMeterDisplay"); 
+		ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); 
+	end;
+	LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'frame ' .. PlayerNumberToString(PLAYER_1) ) ) .. {
+		InitCommand=function(self)
+			self:name('Frame'); 
+			ActorUtil.LoadAllCommandsAndSetXY(self,"SongMeterDisplay"); 
+		end;
+	};
+	Def.Quad {
+		InitCommand=cmd(zoomto,2,8);
+		OnCommand=cmd(x,scale(0.25,0,1,-380/2,380/2);diffuse,Color("Orange");diffusealpha,0.5);
+	};
+	Def.Quad {
+		InitCommand=cmd(zoomto,2,8);
+		OnCommand=cmd(x,scale(0.5,0,1,-380/2,380/2);diffuse,Color("Orange");diffusealpha,0.5);
+	};
+	Def.Quad {
+		InitCommand=cmd(zoomto,2,8);
+		OnCommand=cmd(x,scale(0.75,0,1,-380/2,380/2);diffuse,Color("Orange");diffusealpha,0.5);
+	};
+	Def.SongMeterDisplay {
+		StreamWidth=THEME:GetMetric( "SongMeterDisplay", 'StreamWidth' );
+		Stream=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'stream ' .. PlayerNumberToString(PLAYER_1) ) )..{
+			InitCommand=cmd(diffuse,Color("Orange");diffusealpha,0.5;blend,Blend.Add;);
+		};
+		Tip=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'tip ' .. PlayerNumberToString(PLAYER_1) ) ) .. { InitCommand=cmd(visible,false); };
+	};
+	CreateStops();
+};
 return t

@@ -14,14 +14,14 @@ local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom");
 
 local t = Def.ActorFrame {
 	InitCommand=cmd(vertalign,bottom);
-	LoadActor(THEME:GetPathG("Combo","100Milestone")) .. {
+--[[ 	LoadActor(THEME:GetPathG("Combo","100Milestone")) .. {
 		Name="OneHundredMilestone";
 		FiftyMilestoneCommand=cmd(playcommand,"Milestone");
 	};
 	LoadActor(THEME:GetPathG("Combo","1000Milestone")) .. {
 		Name="OneThousandMilestone";
 		ToastyAchievedMessageCommand=cmd(playcommand,"Milestone");
-	};
+	}; --]]
 	Def.ActorFrame {
 		Name="ComboFrame";
 		LoadFont( "Combo", "numbers" ) .. {
