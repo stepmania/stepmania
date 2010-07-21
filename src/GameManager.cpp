@@ -590,7 +590,7 @@ static const Style g_Style_Pump_Single =
 		{ 1, 3, 2, 0, 4, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		1,3,4,2,0
+		2,1,3,0,4
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -628,7 +628,7 @@ static const Style g_Style_Pump_Versus =
 		{ 1, 3, 2, 0, 4, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		1,3,4,2,0
+		2,1,3,0,4
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -668,7 +668,7 @@ static const Style g_Style_Pump_HalfDouble =
 		{ 4, Style::NO_MAPPING, 5, 3, Style::NO_MAPPING, Style::END_MAPPING }
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		5,4,3,0,1,2
+		2,3,1,4,0,5
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -716,7 +716,7 @@ static const Style g_Style_Pump_Double =
 		{ 6, 8, 7, 5, 9, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		1,3,4,2,0,6,8,9,7,5
+		2,1,3,0,4, 2+5,1+5,3+5,0+5,4+5
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -754,7 +754,7 @@ static const Style g_Style_Pump_Couple =
 		{ 1, 3, 2, 0, 4, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		1,3,4,2,0
+		2,1,3,0,4
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -797,7 +797,7 @@ static const Style g_Style_Pump_Couple_Edit =
 		{ 1, 3, 2, 0, 4, 6, 8, 7, 5, 9, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		1,3,4,2,0
+		2,1,3,0,4
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
@@ -845,7 +845,7 @@ static const Style g_Style_Pump_Routine =
 		{ 6, 8, 7, 5, 9, Style::END_MAPPING },
 	},
 	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		1,3,4,2,0,6,8,9,7,5
+		2,1,3,0,4,7,6,8,5,9
 	},
 	false, // m_bNeedsZoomOutWith2Players
 	false, // m_bCanUseBeginnerHelper
