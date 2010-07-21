@@ -5,13 +5,13 @@ function InitUserPrefs()
 		SetUserPref("UserPrefGameplayShowStepsDisplay", true);
 	end;
 	if GetUserPref("UserPrefGameplayShowScore") == nil then
-		SetUserPref("UserPrefGameplayShowScore", true);
+		SetUserPref("UserPrefGameplayShowScore", false);
 	end;
 	if GetUserPrefB("UserPrefShowLotsaOptions") == nil then
 		SetUserPref("UserPrefShowLotsaOptions", true);
 	end;
 	if GetUserPrefB("UserPrefAutoSetStyle") == nil then
-		SetUserPref("UserPrefAutoSetStyle", true);
+		SetUserPref("UserPrefAutoSetStyle", false);
 	end;
 	if GetUserPrefB("UserPrefLongFail") == nil then
 		SetUserPref("UserPrefLongFail", false);
