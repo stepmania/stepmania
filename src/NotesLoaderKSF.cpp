@@ -533,14 +533,8 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	}
 	else
 	{
-		//TODO: Cleanup -DaisuMaster
-		//int tickToChange = iTickCount;
 		float fCurBeat = 0.0f;
-		//float speedToChange = 0.0f, timeToStop = 0.0f;
 		bool bDMRequired = false;
-		//bool bBPMChangeNeeded = false;
-		//bool bBPMStopNeeded = false;
-		//bool bTickChangeNeeded = false;
 
 		for( unsigned i=0; i < vNoteRows.size(); ++i )
 		{
@@ -568,8 +562,6 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 					float numTemp = StringToFloat(temp);
 					if (BeginsWith(NoteRowString, "|T")) 
 					{
-						//bTickChangeNeeded = true;
-						//tickToChange = (int)numTemp;
 						iTickCount = (int)numTemp;
 						TimeSignatureSegment seg;
 						seg.m_iStartRow = BeatToNoteRow(fCurBeat);
@@ -581,8 +573,6 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 					}
 					else if (BeginsWith(NoteRowString, "|B")) 
 					{
-						//bBPMChangeNeeded = true;
-						//speedToChange = numTemp;
 						out.m_Timing.AddBPMSegment( BPMSegment( BeatToNoteRow(fCurBeat), (float)numTemp ) );
 						continue;
 					}
@@ -595,9 +585,6 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 					}
 					else if (BeginsWith(NoteRowString, "|D"))
 					{
-						//bBPMStopNeeded = true;
-						//bool bDelay = true;
-						//timeToStop = numTemp / 1000.0f; // + out.m_Timing.GetStopAtRow(i-1, bDelay);
 						bool bDelay = true;
 						float fCurDelay = out.m_Timing.GetStopAtRow(i, bDelay);
 						out.m_Timing.AddStopSegment( StopSegment( BeatToNoteRow(fCurBeat), fCurDelay, true ) );
@@ -615,29 +602,6 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				}
 			}
 
-			/*if( bTickChangeNeeded )
-			{
-				iTickCount = tickToChange;
-				LOG->Trace( "Adding time signature of %i/4 at beat %f", iTickCount, fCurBeat );
-				TimeSignatureSegment seg;
-				seg.m_iStartRow = BeatToNoteRow(fCurBeat);
-				seg.m_iNumerator = iTickCount;
-				seg.m_iDenominator = 4;
-				out.m_Timing.AddTimeSignatureSegment( seg );
-				bTickChangeNeeded = false;
-			}
-			if( bBPMChangeNeeded )
-			{
-				LOG->Trace( "Adding tempo change of %f BPM at beat %f", speedToChange, fCurBeat );
-				out.AddBPMSegment( BPMSegment(BeatToNoteRow(fCurBeat), speedToChange) );
-				bBPMChangeNeeded = false;
-			}
-			if( bBPMStopNeeded )
-			{
-				LOG->Trace( "Adding delay of %f seconds at beat %f", timeToStop, fCurBeat );
-				out.AddStopSegment( StopSegment(BeatToNoteRow(fCurBeat),timeToStop,true) );
-				bBPMStopNeeded = false;
-			}*/
 			fCurBeat += 1.0f / iTickCount;
 		}
 	}
