@@ -124,33 +124,48 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		sFName.MakeLower();
 
 		out.SetDescription(sFName);
-		if( sFName.find("crazy") != string::npos || sFName.find("nightmare") != string::npos || 
-			sFName.find("crazydouble") != string::npos )
+		//Check another before anything else... is this okay? -DaisuMaster
+		if( sFName.find("another") != string::npos )
+		{
+			out.SetDifficulty( Difficulty_Edit );
+			if( !out.GetMeter() ) out.SetMeter( 25 );
+		}
+		else if( sFName.find("wild") != string::npos || sFName.find("wd") != string::npos || sFName.find("crazy+") != string::npos || sFName.find("cz+") != string::npos || sFName.find("hardcore") != string::npos )
+		{
+			out.SetDifficulty( Difficulty_Challenge );
+			if( !out.GetMeter() ) out.SetMeter( 20 );
+		}
+		else if( sFName.find("crazy") != string::npos || sFName.find("cz") != string::npos || sFName.find("nightmare") != string::npos || sFName.find("nm") != string::npos || sFName.find("crazydouble") != string::npos )
 		{
 			out.SetDifficulty( Difficulty_Hard );
 			if( !out.GetMeter() ) out.SetMeter( 14 ); // Set the meters to the Pump scale, not DDR.
 		}
-		else if( sFName.find("hard") != string::npos || sFName.find("freestyle") != string::npos ||
-			sFName.find("double") != string::npos )
+		else if( sFName.find("hard") != string::npos || sFName.find("hd") != string::npos || sFName.find("freestyle") != string::npos || sFName.find("fs") != string::npos || sFName.find("double") != string::npos )
 		{
 			out.SetDifficulty( Difficulty_Medium );
 			if( !out.GetMeter() ) out.SetMeter( 8 );
 		}
-		else if( sFName.find("easy") != string::npos || sFName.find("normal") != string::npos )
+		else if( sFName.find("easy") != string::npos || sFName.find("ez") != string::npos || sFName.find("normal") != string::npos )
 		{
+			//I wonder if I should leave easy fall into the Beginner difficulty... -DaisuMaster
 			out.SetDifficulty( Difficulty_Easy );
+			if( !out.GetMeter() ) out.SetMeter( 4 );
+		}
+		else if( sFName.find("beginner") != string::npos || sFName.find("practice") != string::npos || sFName.find("pr") != string::npos  )
+		{
+			out.SetDifficulty( Difficulty_Beginner );
 			if( !out.GetMeter() ) out.SetMeter( 4 );
 		}
 		else
 		{
-			out.SetDifficulty( Difficulty_Medium );
-			if( !out.GetMeter() ) out.SetMeter( 8 );
+			out.SetDifficulty( Difficulty_Hard );
+			if( !out.GetMeter() ) out.SetMeter( 10 );
 		}
 
 		out.m_StepsType = StepsType_pump_single;
 
 		// Check for "halfdouble" before "double".
-		if( sFName.find("halfdouble") != string::npos || sFName.find("h_double") != string::npos )
+		if( sFName.find("halfdouble") != string::npos || sFName.find("half-double") != string::npos || sFName.find("h_double") != string::npos )
 			out.m_StepsType = StepsType_pump_halfdouble;
 		// Handle bDoublesChart from above as well. -aj
 		else if( sFName.find("double") != string::npos || sFName.find("nightmare") != string::npos || sFName.find("freestyle") != string::npos || bDoublesChart )
@@ -211,13 +226,15 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 				LOG->UserLog( "Song file", sPath, "has illegal syntax \"%s\" which can't be in KIU complient files.",
 					      sRowString.c_str() );
 				return false;
+				//In other words: you can't mix ksf's with DM05 tags and ksf's without any DM05 tags
+				//Either one set or another will be read...
 			}
 			if( BeginsWith(sRowString, "|B") || BeginsWith(sRowString, "|D") || BeginsWith(sRowString, "|E") )
 			{
 				// These don't have to be worried about here: the changes and stops were already added.
 				continue;
 			}
-			if ( BeginsWith(sRowString, "|T") )
+			else if ( BeginsWith(sRowString, "|T") )
 			{
 				RString temp = sRowString.substr(2,sRowString.size()-3);
 				newTick = atoi(temp);
@@ -226,9 +243,11 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			}
 			else
 			{
-				LOG->UserLog( "Song file", sPath, "has a RowString with an improper length \"%s\"; corrupt notes ignored.",
-					      sRowString.c_str() );
-				return false;
+				// Is this why improper ksf or some kiucompilant ksf mixed with dm05 ksf are ignored?? -DaisuMaster
+				//LOG->UserLog( "Song file", sPath, "has a RowString with an improper length \"%s\"; corrupt notes ignored.",
+				//	      sRowString.c_str() );
+				//return false;
+				continue;
 			}
 		}
 
@@ -271,6 +290,19 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			{
 			case '0':	tap = TAP_EMPTY;		break;
 			case '1':	tap = TAP_ORIGINAL_TAP;		break;
+				//allow setting more notetypes on ksf files, this may come in handy (it should) -DaisuMaster
+			case 'M':
+			case 'm':
+						tap = TAP_ORIGINAL_MINE;
+						break;
+			case 'F':
+			case 'f':
+						tap = TAP_ORIGINAL_FAKE;
+						break;
+			case 'L':
+			case 'l':
+						tap = TAP_ORIGINAL_LIFT;
+						break;
 			default:
 				LOG->UserLog( "Song file", sPath, "has an invalid row \"%s\"; corrupt notes ignored.",
 					      sRowString.c_str() );
@@ -346,6 +378,18 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
 	}
+
+	// changed up there in case of something is found inside the SONGFILE tag in the head ksf -DaisuMaster
+	// search for music with song in the file name
+	vector<RString> arrayPossibleMusic;
+	GetDirListing( out.GetSongDir() + RString("song.mp3"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + RString("song.oga"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + RString("song.ogg"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + RString("song.wav"), arrayPossibleMusic );
+
+	if( !arrayPossibleMusic.empty() )		// we found a match
+		out.m_sMusicFile = arrayPossibleMusic[0];
+	// ^this was below, at the end
 
 	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
 	int iTickCount = -1;
@@ -435,6 +479,22 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		{
 			out.m_fMusicSampleStartSeconds = HHMMSSToSeconds( sParams[1] );
 		}
+		else if( 0==stricmp(sValueName,"TITLEFILE") )
+		{
+			out.m_sBackgroundFile = sParams[1];
+		}
+		else if( 0==stricmp(sValueName,"DISCFILE") )
+		{
+			out.m_sBannerFile = sParams[1];
+		}
+		else if( 0==stricmp(sValueName,"SONGFILE") )
+		{
+			out.m_sSongFileName = sParams[1];
+		}
+		//else if( 0==stricmp(sValueName,"INTROFILE") )
+		//{
+		//	nothing to add...
+		//}
 		// end new cases
 		else
 		{
@@ -442,6 +502,9 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				      sValueName.c_str() );
 		}
 	}
+
+	//intro length in piu mixes is normally 7 seconds
+	out.m_fMusicSampleLengthSeconds = 7.0f;
 
 	/* BPM Change checks are done here.  If bKIUCompliant, it's short and sweet.
 	 * Otherwise, the whole file has to be processed.  Right now, this is only 
@@ -470,13 +533,14 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	}
 	else
 	{
-		int tickToChange = iTickCount;
+		//TODO: Cleanup -DaisuMaster
+		//int tickToChange = iTickCount;
 		float fCurBeat = 0.0f;
-		float speedToChange = 0.0f, timeToStop = 0.0f;
+		//float speedToChange = 0.0f, timeToStop = 0.0f;
 		bool bDMRequired = false;
-		bool bBPMChangeNeeded = false;
-		bool bBPMStopNeeded = false;
-		bool bTickChangeNeeded = false;
+		//bool bBPMChangeNeeded = false;
+		//bool bBPMStopNeeded = false;
+		//bool bTickChangeNeeded = false;
 
 		for( unsigned i=0; i < vNoteRows.size(); ++i )
 		{
@@ -504,40 +568,55 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 					float numTemp = StringToFloat(temp);
 					if (BeginsWith(NoteRowString, "|T")) 
 					{
-						bTickChangeNeeded = true;
-						tickToChange = (int)numTemp;
+						//bTickChangeNeeded = true;
+						//tickToChange = (int)numTemp;
+						iTickCount = (int)numTemp;
+						TimeSignatureSegment seg;
+						seg.m_iStartRow = BeatToNoteRow(fCurBeat);
+						seg.m_iNumerator = iTickCount;
+						seg.m_iDenominator = 4;
+						out.m_Timing.AddTimeSignatureSegment( seg );
+						
 						continue;
 					}
-					if (BeginsWith(NoteRowString, "|B")) 
+					else if (BeginsWith(NoteRowString, "|B")) 
 					{
-						bBPMChangeNeeded = true;
-						speedToChange = numTemp;
+						//bBPMChangeNeeded = true;
+						//speedToChange = numTemp;
+						out.m_Timing.AddBPMSegment( BPMSegment( BeatToNoteRow(fCurBeat), (float)numTemp ) );
 						continue;
 					}
-					if (BeginsWith(NoteRowString, "|E"))
+					else if (BeginsWith(NoteRowString, "|E"))
 					{
-						bBPMStopNeeded = true;
-						timeToStop = 60 / out.m_Timing.GetBPMAtBeat(NoteRowToBeat(i)) * numTemp / (float)tickToChange;
+						//Finally! the |E| tag is working as it should. I can die happy now -DaisuMaster
+						float fCurDelay = 60 / out.m_Timing.GetBPMAtBeat(fCurBeat) * (float)numTemp / iTickCount;
+						out.m_Timing.AddStopSegment( StopSegment( BeatToNoteRow(fCurBeat), fCurDelay, true ) );
+
 						continue;
 					}
-					if (BeginsWith(NoteRowString, "|D"))
+					else if (BeginsWith(NoteRowString, "|D"))
 					{
-						bBPMStopNeeded = true;
+						//bBPMStopNeeded = true;
 						//bool bDelay = true;
-						timeToStop = numTemp / 1000.0f; // + out.m_Timing.GetStopAtRow(i-1, bDelay);
+						//timeToStop = numTemp / 1000.0f; // + out.m_Timing.GetStopAtRow(i-1, bDelay);
+						bool bDelay = true;
+						float fCurDelay = out.m_Timing.GetStopAtRow(i, bDelay);
+						out.m_Timing.AddStopSegment( StopSegment( BeatToNoteRow(fCurBeat), fCurDelay, true ) );
 						continue;
 					}
 				}
 				else
 				{
 					// Quit while we're ahead if any bad syntax is spotted.
-					LOG->UserLog( "Song file", sPath, "has an invalid RowString \"%s\".",
-								NoteRowString.c_str() );
-					return false;
+					//LOG->UserLog( "Song file", sPath, "has an invalid RowString \"%s\".",
+					//			NoteRowString.c_str() );
+					//return false;
+					//how about no? :D -DaisuMaster
+					continue;
 				}
 			}
 
-			if( bTickChangeNeeded )
+			/*if( bTickChangeNeeded )
 			{
 				iTickCount = tickToChange;
 				LOG->Trace( "Adding time signature of %i/4 at beat %f", iTickCount, fCurBeat );
@@ -559,12 +638,10 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				LOG->Trace( "Adding delay of %f seconds at beat %f", timeToStop, fCurBeat );
 				out.AddStopSegment( StopSegment(BeatToNoteRow(fCurBeat),timeToStop,true) );
 				bBPMStopNeeded = false;
-			}
+			}*/
 			fCurBeat += 1.0f / iTickCount;
 		}
 	}
-
-	out.m_fMusicSampleLengthSeconds = 7.0f;
 
 	// Try to fill in missing bits of information from the pathname.
 	{
@@ -574,16 +651,6 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		ASSERT( asBits.size() > 1 );
 		LoadTags( asBits[asBits.size()-2], out );
 	}
-
-	// search for music with song in the file name
-	vector<RString> arrayPossibleMusic;
-	GetDirListing( out.GetSongDir() + RString("song.mp3"), arrayPossibleMusic );
-	GetDirListing( out.GetSongDir() + RString("song.oga"), arrayPossibleMusic );
-	GetDirListing( out.GetSongDir() + RString("song.ogg"), arrayPossibleMusic );
-	GetDirListing( out.GetSongDir() + RString("song.wav"), arrayPossibleMusic );
-
-	if( !arrayPossibleMusic.empty() )		// we found a match
-		out.m_sMusicFile = arrayPossibleMusic[0];
 
 	return true;
 }
