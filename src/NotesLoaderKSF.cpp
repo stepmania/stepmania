@@ -456,7 +456,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			// CheckpointsUseTimeSignatures metric. -aj
 			TimeSignatureSegment seg;
 			seg.m_iStartRow = BeatToNoteRow(0.0f);
-			seg.m_iNumerator = iTickCount; 
+			seg.m_iNumerator = CLAMP( iTickCount, 0, ROWS_PER_BEAT ); 
 			seg.m_iDenominator = 4; 
 			out.m_Timing.AddTimeSignatureSegment( seg );
 		}
@@ -573,7 +573,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 						iTickCount = (int)numTemp;
 						TimeSignatureSegment seg;
 						seg.m_iStartRow = BeatToNoteRow(fCurBeat);
-						seg.m_iNumerator = iTickCount;
+						seg.m_iNumerator = CLAMP( iTickCount, 0, ROWS_PER_BEAT);
 						seg.m_iDenominator = 4;
 						out.m_Timing.AddTimeSignatureSegment( seg );
 						
@@ -591,7 +591,6 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 						//Finally! the |E| tag is working as it should. I can die happy now -DaisuMaster
 						float fCurDelay = 60 / out.m_Timing.GetBPMAtBeat(fCurBeat) * (float)numTemp / iTickCount;
 						out.m_Timing.AddStopSegment( StopSegment( BeatToNoteRow(fCurBeat), fCurDelay, true ) );
-
 						continue;
 					}
 					else if (BeginsWith(NoteRowString, "|D"))
