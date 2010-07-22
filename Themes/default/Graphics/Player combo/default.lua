@@ -12,16 +12,22 @@ local NumberMaxZoomAt = THEME:GetMetric("Combo", "NumberMaxZoomAt");
 local LabelMinZoom = THEME:GetMetric("Combo", "LabelMinZoom");
 local LabelMaxZoom = THEME:GetMetric("Combo", "LabelMaxZoom");
 
+local ShowFlashyCombo = GetUserPrefB("UserPrefFlashyCombo")
+
 local t = Def.ActorFrame {
 	InitCommand=cmd(vertalign,bottom);
---[[ 	LoadActor(THEME:GetPathG("Combo","100Milestone")) .. {
+	-- flashy combo elements:
+ 	LoadActor(THEME:GetPathG("Combo","100Milestone")) .. {
 		Name="OneHundredMilestone";
+		InitCommand=cmd(visible,ShowFlashyCombo);
 		FiftyMilestoneCommand=cmd(playcommand,"Milestone");
 	};
 	LoadActor(THEME:GetPathG("Combo","1000Milestone")) .. {
 		Name="OneThousandMilestone";
+		InitCommand=cmd(visible,ShowFlashyCombo);
 		ToastyAchievedMessageCommand=cmd(playcommand,"Milestone");
-	}; --]]
+	};
+	-- normal combo elements:
 	Def.ActorFrame {
 		Name="ComboFrame";
 		LoadFont( "Combo", "numbers" ) .. {
@@ -50,9 +56,13 @@ local t = Def.ActorFrame {
 		else
 			return
 		end; --]]
---[[ 	TwentyFiveMilestoneCommand=function(self,parent)
-		(cmd(skewy,-0.125;decelerate,0.325;skewy,0))(self);
+ 	TwentyFiveMilestoneCommand=function(self,parent)
+		if ShowFlashyCombo then
+			(cmd(skewy,-0.125;decelerate,0.325;skewy,0))(self);
+		end;
 	end;
+	--]]
+	--[[
 	ToastyAchievedMessageCommand=function(self,params)
 		if params.PlayerNumber == player then
 			(cmd(thump,2;effectclock,'beat'))(c.ComboFrame);
