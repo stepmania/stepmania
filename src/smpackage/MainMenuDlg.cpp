@@ -228,7 +228,7 @@ void MainMenuDlg::OnBnClickedOpenPreferences()
 void MainMenuDlg::OnBnClickedClearPreferences()
 {
 	// TODO: Add your control notification handler code here
-	FlushDirCache();
+	FILEMAN->FlushDirCache();
 	if( !DoesFileExist(SpecialFiles::PREFERENCES_INI_PATH) )
 	{
 		Dialog::OK( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );

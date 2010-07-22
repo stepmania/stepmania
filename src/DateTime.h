@@ -50,13 +50,12 @@ struct DateTime
 
 	static DateTime GetNowDateTime();
 	static DateTime GetNowDate();	// GetNowDateTime() with time chopped off
-	
+
 	void StripTime();
 
 	RString GetString() const;
 	bool FromString( const RString sDateTime );
 };
-
 
 #endif
 

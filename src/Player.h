@@ -204,7 +204,7 @@ protected:
 	ThemeMetric<bool>	COMBO_UNDER_FIELD;
 	ThemeMetric<int>	DRAW_DISTANCE_AFTER_TARGET_PIXELS;
 	ThemeMetric<int>	DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
-	
+
 #define NUM_REVERSE 2
 #define NUM_CENTERED 2
 	TweenState		m_tsJudgment[NUM_REVERSE][NUM_CENTERED];

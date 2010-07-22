@@ -10,8 +10,7 @@ static ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
 
 /* The theme's logical resolution specifies the minimum screen width and
  * the minimum screen height with a 4:3 aspect ratio. Scale just one 
- * of the dimensions up to meet the requested aspect ratio.
- */
+ * of the dimensions up to meet the requested aspect ratio. */
 
 /* The theme resolution isn't necessarily 4:3; a natively widescreen
  * theme would have eg. 16:9 or 16:10.
@@ -25,9 +24,10 @@ float ScreenDimensions::GetThemeAspectRatio()
 	return THEME_NATIVE_ASPECT;
 }
 
-// ceilf was originally lrintf. However, lrintf causes odd resolutions like
-// 639x480 (4:3) and 853x480 (16:9). ceilf gives the correct values of 640x480
-// and 854x480 respectively. -aj
+/* ceilf was originally lrintf. However, lrintf causes odd resolutions like
+ * 639x480 (4:3) and 853x480 (16:9). ceilf gives the correct values of 640x480
+ * and 854x480 (should really be 852 so that SCREEN_CENTER_X == 426 and not 427)
+ * respectively. -aj */
 float ScreenDimensions::GetScreenWidth()
 {
 	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
@@ -50,7 +50,7 @@ float ScreenDimensions::GetScreenHeight()
 
 void ScreenDimensions::ReloadScreenDimensions()
 {
-	/* Important: explicitly refresh cached metrics that we use. */
+	// Important: explicitly refresh cached metrics that we use.
 	THEME_SCREEN_WIDTH.Read();
 	THEME_SCREEN_HEIGHT.Read();
 

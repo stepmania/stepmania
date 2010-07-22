@@ -12,7 +12,7 @@
 #include "OptionRowHandler.h"
 #include "LocalizedString.h"
 
-static LocalizedString NEW_PROFILE_DEFAULT_NAME(	"ScreenOptionsManageProfiles", "NewProfileDefaultName" );
+static LocalizedString NEW_PROFILE_DEFAULT_NAME( "ScreenOptionsManageProfiles", "NewProfileDefaultName" );
 
 #define SHOW_CREATE_NEW (!PROFILEMAN->FixedProfiles())
 
@@ -139,7 +139,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 	RString sEditLocalProfileID = GAMESTATE->m_sEditLocalProfileID;
 
 	ScreenOptions::BeginScreen();
-	
+
 	// select the last chosen profile
 	if( !sEditLocalProfileID.empty() )
 	{
@@ -323,7 +323,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 
 	ScreenOptions::HandleScreenMessage( SM );
 }
-	
+
 void ScreenOptionsManageProfiles::AfterChangeRow( PlayerNumber pn )
 {
 	GAMESTATE->m_sEditLocalProfileID.Set( GetLocalProfileIDWithFocus() );
@@ -411,7 +411,7 @@ int ScreenOptionsManageProfiles::GetLocalProfileIndexWithFocus() const
 		return -1;
 	else if( row.GetRowType() == OptionRow::RowType_Exit )
 		return -1;
-	
+
 	// a profile
 	int iIndex = iCurRow + (SHOW_CREATE_NEW ? -1 : 0);
 	return iIndex;

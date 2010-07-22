@@ -27,7 +27,7 @@ private:
 	int m_iColNo;
 
 	AutoActor m_pReceptor;
-	
+
 	bool m_bIsPressed;
 	bool m_bWasPressed;	// set in Update
 	bool m_bWasReverse;

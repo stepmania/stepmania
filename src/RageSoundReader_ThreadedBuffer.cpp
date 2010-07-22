@@ -4,21 +4,19 @@
 #include "Foreach.h"
 #include "RageLog.h"
 
-/*
- * Implement threaded read-ahead buffering.
+/* Implement threaded read-ahead buffering.
  *
  * If a buffer is low on data, keep filling until it has a g_iMinFillFrames.
  * Once beyond that, fill at a rate relative to realtime.
  *
  * This allows a stream to have a large buffer, for higher reliability, without
- * causing major CPU bursts when the stream starts or underruns.  Filling 32k
- * takes more CPU than filling 4k frames, and may cause a skip.
- */
+ * causing major CPU bursts when the stream starts or underruns. Filling 32k
+ * takes more CPU than filling 4k frames, and may cause a skip. */
 
-/* The amount of data to read at once: */
+// The amount of data to read at once:
 static const unsigned g_iReadBlockSizeFrames = 1024;
 
-/* The maximum number of frames to buffer: */
+// The maximum number of frames to buffer:
 static const int g_iStreamingBufferFrames = 1024*32;
 
 /* When a sound has fewer than g_iMinFillFrames buffered, buffer at maximum speed.
@@ -200,20 +198,20 @@ void RageSoundReader_ThreadedBuffer::BufferingThread()
 			continue;
 		}
 
-		/* Fill some data. */
+		// Fill some data.
 		m_bFilling = true;
-		
+
 		int iFramesToFill = g_iReadBlockSizeFrames;
 		if( GetFilledFrames() < g_iMinFillFrames )
 			iFramesToFill = max( iFramesToFill, g_iMinFillFrames - GetFilledFrames() );
 
 		int iRet = FillFrames( iFramesToFill );
 
-		/* Release m_bFilling, and signal the event to wake anyone waiting for it. */
+		// Release m_bFilling, and signal the event to wake anyone waiting for it.
 		m_bFilling = false;
 		m_Event.Broadcast();
 
-		/* On error or end of file, stop buffering the sound. */
+		// On error or end of file, stop buffering the sound.
 		if( iRet < 0 )
 		{
 			m_bEnabled = false;
@@ -253,7 +251,7 @@ int RageSoundReader_ThreadedBuffer::FillFrames( int iFrames )
 
 		if( iRet == 0 )
 			break;
-		/* On error or end of file, stop buffering the sound. */
+		// On error or end of file, stop buffering the sound.
 		if( iRet < 0 )
 			return iRet;
 
@@ -277,7 +275,7 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 	m_Event.Unlock();
 
 	{
-		/* We own m_pSource, even after unlocking, because m_bFilling is true. */
+		// We own m_pSource, even after unlocking, because m_bFilling is true.
 		unsigned iBufSize;
 		float *pBuf = m_DataBuffer.get_write_pointer( &iBufSize );
 		ASSERT( (iBufSize % iSamplesPerFrame) == 0 );
@@ -288,7 +286,7 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 
 	if( iGotFrames > 0 )
 	{
-		/* Add the data to the buffer. */
+		// Add the data to the buffer.
 		m_DataBuffer.advance_write_pointer( iGotFrames * iSamplesPerFrame );
 		if( iNextSourceFrame != m_StreamPosition.back().iPositionOfFirstFrame + m_StreamPosition.back().iFramesBuffered ||
 			fRate != m_StreamPosition.back().fRate )
@@ -315,7 +313,7 @@ int RageSoundReader_ThreadedBuffer::Read( float *pBuffer, int iFrames )
 
 	{
 		/* Delete any empty mappings from the beginning, but don't empty the list,
-		 * so we always have the current position and rate.  If we delete an item,
+		 * so we always have the current position and rate. If we delete an item,
 		 * the rate or position has probably changed, so return. */
 		list<Mapping>::iterator it = m_StreamPosition.begin();
 		++it;
@@ -344,7 +342,7 @@ int RageSoundReader_ThreadedBuffer::Read( float *pBuffer, int iFrames )
 	else
 		iRet = WOULD_BLOCK;
 	m_Event.Unlock();
-	
+
 	return iRet;
 }
 
