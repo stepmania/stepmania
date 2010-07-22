@@ -91,15 +91,13 @@ static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", fal
 
 void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 {
-	/*
-	 * We can't rely on there being full-screen video modes that give us square
+	/* We can't rely on there being full-screen video modes that give us square
 	 * pixels at non-4:3 aspects.  The lowest non-4:3 resolution my new laptop
 	 * with Radeon supports is 1280x720. In most cases, we'll using a 4:3
 	 * resolution when full-screen let the monitor stretch to the correct aspect.
 	 * When windowed (no monitor stretching), we will tweak the width so that
 	 * we get square pixels.
-	 * -Chris
-	 */
+	 * -Chris */
 	int iWidth = PREFSMAN->m_iDisplayWidth;
 	if( PREFSMAN->m_bWindowed )
 	{
@@ -128,12 +126,12 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 	);
 }
 
-static LocalizedString COLOR		("StepMania","color");
-static LocalizedString TEXTURE		("StepMania","texture");
+static LocalizedString COLOR			("StepMania","color");
+static LocalizedString TEXTURE			("StepMania","texture");
 static LocalizedString WINDOWED		("StepMania","Windowed");
-static LocalizedString FULLSCREEN	("StepMania","Fullscreen");
-static LocalizedString ANNOUNCER_	("StepMania","Announcer");
-static LocalizedString VSYNC		("StepMania","Vsync");
+static LocalizedString FULLSCREEN		("StepMania","Fullscreen");
+static LocalizedString ANNOUNCER_		("StepMania","Announcer");
+static LocalizedString VSYNC			("StepMania","Vsync");
 static LocalizedString NO_VSYNC		("StepMania","NoVsync");
 static LocalizedString SMOOTH_LINES	("StepMania","SmoothLines");
 static LocalizedString NO_SMOOTH_LINES	("StepMania","NoSmoothLines");
@@ -159,14 +157,12 @@ static void StoreActualGraphicOptions()
 {
 	/* Store the settings that RageDisplay was actually able to use so that
 	 * we don't go through the process of auto-detecting a usable video mode
-	 * every time.
-	 */
+	 * every time. */
 	const VideoModeParams &params = DISPLAY->GetActualVideoModeParams();
-	PREFSMAN->m_bWindowed		.Set( params.windowed );
+	PREFSMAN->m_bWindowed.Set( params.windowed );
 
 	/* If we're windowed, we may have tweaked the width based on the aspect ratio.  
-	 * Don't save this new value over the preferred value.
-	 */
+	 * Don't save this new value over the preferred value. */
 	if( !PREFSMAN->m_bWindowed )
 	{
 		PREFSMAN->m_iDisplayWidth	.Set( params.width );

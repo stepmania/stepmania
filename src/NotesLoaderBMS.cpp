@@ -18,7 +18,7 @@ typedef multimap<RString, RString> NameToData_t;
 typedef map<int, float> MeasureToTimeSig_t;
 
 /* BMS encoding:	tap-hold
- * 4&8panel:   		Player1     	Player2
+ * 4&8panel:	Player1		Player2
  * Left			11-51		21-61
  * Down			13-53		23-63
  * Up			15-55		25-65
@@ -153,7 +153,7 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 			if( nd.GetTapNote(t, r).type != TapNote::empty )
 			{
 				bTrackHasNote[t] = true;
-				break;				
+				break;
 			}
 		}
 	}
@@ -165,7 +165,7 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 
 	switch( iPlayer )
 	{
-	case 1:	// "1 player"		
+	case 1:	// "1 player"
 		/* Track counts:
 		 * 4 - dance 4-panel
 		 * 5 - pop 5-key
@@ -212,13 +212,13 @@ static bool GetTagFromMap( const NameToData_t &mapNameToData, const RString &sNa
 	it = mapNameToData.find( sName );
 	if( it == mapNameToData.end() )
 		return false;
-	
+
 	sOut = it->second;
-	
+
 	return true;
 }
 
-/* Finds the longest common match for the given tag in all files.  If the given tag
+/* Finds the longest common match for the given tag in all files. If the given tag
  * was found in at least one file, returns true; otherwise returns false. */
 static bool GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const RString &sName, RString &sOut )
 {
@@ -228,7 +228,7 @@ static bool GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const
 		RString sTag;
 		if( !GetTagFromMap( aBMSData[i], sName, sTag ) )
 			continue;
-		
+
 		if( !bFoundOne )
 		{
 			bFoundOne = true;
@@ -239,7 +239,7 @@ static bool GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const
 			sOut = FindLargestInitialSubstring( sOut, sTag );
 		}
 	}
-	
+
 	return bFoundOne;
 }
 
@@ -272,7 +272,7 @@ static void SearchForDifficulty( RString sTag, Steps *pOut )
 {
 	sTag.MakeLower();
 
-	/* Only match "Light" in parentheses. */
+	// Only match "Light" in parentheses.
 	if( sTag.find( "(light" ) != sTag.npos )
 	{
 		pOut->SetDifficulty( Difficulty_Easy );
@@ -332,16 +332,14 @@ enum
 	BMS_TRACK_STOP = 9
 };
 
-/*
- * Time signatures are often abused to tweak sync.  Real time signatures should
- * cause us to adjust the row offsets so one beat remains one beat.  Fake time signatures,
- * like 1.001 or 0.999, should be removed and converted to BPM changes.  This is much
+/* Time signatures are often abused to tweak sync. Real time signatures should
+ * cause us to adjust the row offsets so one beat remains one beat. Fake time signatures,
+ * like 1.001 or 0.999, should be removed and converted to BPM changes. This is much
  * more accurate, and prevents the whole song from being shifted off of the beat, causing
  * BeatToNoteType to be wrong.
  *
  * Evaluate each time signature, and guess which time signatures should be converted
- * to BPM changes.  This isn't perfect, but errors aren't fatal.
- */
+ * to BPM changes. This isn't perfect, but errors aren't fatal. */
 static void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out, MeasureToTimeSig_t &sigAdjustmentsOut )
 {
 	return;
@@ -353,7 +351,6 @@ static void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out, Me
 	{
 		int iMeasure = it->first;
 		float fFactor = it->second;
-		
 #if 1
 		static const float ValidFactors[] =
 		{
@@ -365,34 +362,34 @@ static void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out, Me
 			1.5f,   /* 6/4 */
 			1.75f   /* 7/4 */
 		};
-		
+
 		bool bValidTimeSignature = false;
 		for( unsigned i = 0; i < ARRAYLEN(ValidFactors); ++i )
 			if( fabsf(fFactor-ValidFactors[i]) < 0.001 )
 				bValidTimeSignature = true;
-		
+
 		if( bValidTimeSignature )
 			continue;
 #else
 		/* Alternate approach that I tried first: see if the ratio is sane.  However,
 		 * some songs have values like "1.4", which comes out to 7/4 and is not a valid
 		 * time signature. */
-		/* Convert the factor to a ratio, and reduce it. */
+		// Convert the factor to a ratio, and reduce it.
 		int iNum = lrintf( fFactor * 1000 ), iDen = 1000;
 		int iDiv = gcd( iNum, iDen );
 		iNum /= iDiv;
 		iDen /= iDiv;
 		
-		/* Real time signatures usually come down to 1/2, 3/4, 7/8, etc.  Bogus
+		/* Real time signatures usually come down to 1/2, 3/4, 7/8, etc. Bogus
 		 * signatures that are only there to adjust sync usually look like 99/100. */
 		if( iNum <= 8 && iDen <= 8 )
 			continue;
 #endif
-		
-		/* This time signature is bogus.  Convert it to a BPM adjustment for this
+
+		/* This time signature is bogus. Convert it to a BPM adjustment for this
 		 * measure. */
 		LOG->Trace("Converted time signature %f in measure %i to a BPM segment.", fFactor, iMeasure );
-		
+
 		/* Note that this GetMeasureStartRow will automatically include any adjustments
 		 * that we've made previously in this loop; as long as we make the timing
 		 * adjustment and the BPM adjustment together, everything remains consistent.
@@ -413,7 +410,7 @@ static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t 
 		const RString &sName = it->first;
 		if( sName.size() != 6 || sName[0] != '#' || !IsAnInt(sName.substr(1, 5)) )
 			continue;
-		
+
 		// this is step or offset data.  Looks like "#00705"
 		const RString &sData = it->second;
 		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
@@ -444,7 +441,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	NoteData ndNotes;
 	ndNotes.SetNumTracks( NUM_BMS_TRACKS );
 
-	/* Read time signatures.  Note that these can differ across files in the same
+	/* Read time signatures. Note that these can differ across files in the same
 	 * song. */
 	MeasureToTimeSig_t mapMeasureToTimeSig;
 	ReadTimeSigs( mapNameToData, mapMeasureToTimeSig );
@@ -512,7 +509,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 						// shift the auto keysound as far right as possible
 						int iLastEmptyTrack = -1;
 						if( ndNotes.GetTapLastEmptyTrack(row, iLastEmptyTrack)  &&
-						    iLastEmptyTrack >= BMS_AUTO_KEYSOUND_1 )
+							iLastEmptyTrack >= BMS_AUTO_KEYSOUND_1 )
 						{
 							tn.type = TapNote::autoKeysound;
 							bmsTrack = (BmsTrack)iLastEmptyTrack;
@@ -525,9 +522,8 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 					}
 					/* This handles the hold notes in the RDM TYPE 1 style,
 					 * like how uBMplay handles it. Different BMS simulators
-					 * supports hold notes differently. see
-					 * http://nvyu.net/rdm/ex.php for more info.
- 					 */ 
+					 * support hold notes differently. see
+					 * http://nvyu.net/rdm/ex.php for more info. */ 
 					else if( iHoldStarts[bmsTrack] != -1 )
 					{
 						// This is ending a hold.
@@ -563,7 +559,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	out.m_StepsType = DetermineStepsType( iPlayer, ndNotes, sPath );
 	if( out.m_StepsType == StepsType_beat_single5 && GetTagFromMap( mapNameToData, "#title", sData ) )
 	{
-		/* Hack: guess at 6-panel. */
+		// Hack: guess at 6-panel.
 
 		// extract the Steps description (looks like 'Music <BASIC>')
 		const size_t iOpenBracket = sData.find_first_of( "<(" );
@@ -573,7 +569,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		if( sData.find('6', iOpenBracket) < iCloseBracket )
 			out.m_StepsType = StepsType_dance_solo;
 	}
-	
+
 	if( out.m_StepsType == StepsType_Invalid )
 	{
 		LOG->UserLog( "Song file", sPath, "has an unknown steps type" );
@@ -731,7 +727,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 	if( GetTagFromMap(mapNameToData, "#bpm", sData) )
 	{
 		const float fBPM = StringToFloat( sData );
-		
+
 		if( PREFSMAN->m_bQuirksMode )
 		{
 			BPMSegment newSeg( 0, fBPM );
@@ -771,7 +767,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 
 		/* Due to bugs in some programs, many BMS files have a "WAV" extension
 		 * on files in the BMS for files that actually have some other extension.
-		 * Do a search.  Don't do a wildcard search; if sData is "song.wav",
+		 * Do a search. Don't do a wildcard search; if sData is "song.wav",
 		 * we might also have "song.png", which we shouldn't match. */
 		if( !IsAFile(out.GetSongDir()+sData) )
 		{
@@ -795,7 +791,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		LOG->Trace( "Inserting keysound index %u '%s'", unsigned(out.m_vsKeysoundFile.size()-1), sWavID.c_str() );
 	}
 
-	/* Time signature tags affect all other global timing tags, so read them first. */
+	// Time signature tags affect all other global timing tags, so read them first.
 	MeasureToTimeSig_t mapMeasureToTimeSig;
 	ReadTimeSigs( mapNameToData, mapMeasureToTimeSig );
 
@@ -838,7 +834,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 						      fBeat, iVal );
 				}
 				break;
-				
+
 			case BMS_TRACK_BPM_REF:
 			{
 				RString sTagToLookFor = ssprintf( "#bpm%s", sPair.c_str() );
@@ -900,64 +896,64 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 			}
 			}
 		}
-			
+
 		switch( iBMSTrackNo )
 		{
-		case BMS_TRACK_BPM_REF:
-		{
-			// XXX: offset
-			int iBPMNo;
-			sscanf( sData, "%x", &iBPMNo );	// data is in hexadecimal
-
-			RString sBPM;
-			RString sTagToLookFor = ssprintf( "#bpm%02x", iBPMNo );
-			if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
+			case BMS_TRACK_BPM_REF:
 			{
-				float fBPM = StringToFloat( sBPM );
+				// XXX: offset
+				int iBPMNo;
+				sscanf( sData, "%x", &iBPMNo );	// data is in hexadecimal
 
-				if( PREFSMAN->m_bQuirksMode )
+				RString sBPM;
+				RString sTagToLookFor = ssprintf( "#bpm%02x", iBPMNo );
+				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
 				{
-					BPMSegment newSeg( iStepIndex, fBPM );
-					out.AddBPMSegment( newSeg );
-					if( fBPM > 0.0f )
-						LOG->Trace( "Inserting new positive BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
-					else
-						LOG->Trace( "Inserting new negative BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
-				}
-				else
-				{
-					if( fBPM > 0.0f )
+					float fBPM = StringToFloat( sBPM );
+
+					if( PREFSMAN->m_bQuirksMode )
 					{
 						BPMSegment newSeg( iStepIndex, fBPM );
 						out.AddBPMSegment( newSeg );
-						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
-				
+						if( fBPM > 0.0f )
+							LOG->Trace( "Inserting new positive BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
+						else
+							LOG->Trace( "Inserting new negative BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
 					}
 					else
 					{
-						LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f.",
-								  NoteRowToBeat(iStepIndex), fBPM );
+						if( fBPM > 0.0f )
+						{
+							BPMSegment newSeg( iStepIndex, fBPM );
+							out.AddBPMSegment( newSeg );
+							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
+
+						}
+						else
+						{
+							LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f.",
+									  NoteRowToBeat(iStepIndex), fBPM );
+						}
 					}
 				}
-			}
-			else
-			{
-				LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
-			}
+				else
+				{
+					LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
+				}
 
-			break;
-		}
+				break;
+			}
 		}
 	}
 
-	/* Now that we're done reading BPMs, factor out weird time signatures. */
+	// Now that we're done reading BPMs, factor out weird time signatures.
 	SetTimeSigAdjustments( mapMeasureToTimeSig, out, sigAdjustmentsOut );
 }
 
 static void SlideDuplicateDifficulties( Song &p )
 {
 	/* BMS files have to guess the Difficulty from the meter; this is inaccurate,
-	* and often leads to duplicates.  Slide duplicate difficulties upwards.  We
+	* and often leads to duplicates. Slide duplicate difficulties upwards. We
 	* only do this with BMS files, since a very common bug was having *all*
 	* difficulties slid upwards due to (for example) having two beginner steps.
 	* We do a second pass in Song::TidyUpData to eliminate any remaining duplicates
@@ -968,15 +964,15 @@ static void SlideDuplicateDifficulties( Song &p )
 		{
 			if( dc == Difficulty_Edit )
 				continue;
-			
+
 			vector<Steps*> vSteps;
 			SongUtil::GetSteps( &p, vSteps, st, dc );
-			
+
 			StepsUtil::SortNotesArrayByDifficulty( vSteps );
 			for( unsigned k=1; k<vSteps.size(); k++ )
 			{
 				Steps* pSteps = vSteps[k];
-				
+
 				Difficulty dc2 = min( (Difficulty)(dc+1), Difficulty_Challenge );
 				pSteps->SetDifficulty( dc2 );
 			}
@@ -1003,7 +999,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	 * called to begin with. */
 	ASSERT( arrayBMSFileNames.size() );
 
-	/* Read all BMS files. */
+	// Read all BMS files.
 	vector<NameToData_t> aBMSData;
 	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
 	{
@@ -1021,11 +1017,11 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 		LOG->UserLog( "Song", sDir, "has BMS files with inconsistent titles." );
 	}
 
-	/* Create a Steps for each. */
+	// Create a Steps for each.
 	vector<Steps*> apSteps;
 	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
 		apSteps.push_back( new Steps );
-		
+
 	// Now, with our fancy little substring, trim the titles and
 	// figure out where each goes.
 	for( unsigned i=0; i<aBMSData.size(); i++ )
@@ -1073,7 +1069,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 		// As said before, all bets are off.
 		// From here on in, it's nothing but guesswork.
 
-		/* Try to figure out the difficulty of each file. */
+		// Try to figure out the difficulty of each file.
 		for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
 		{
 			// XXX: Is this really effective if Common Substring parsing failed?
@@ -1085,7 +1081,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 		}
 	}
 
-	/* Prefer to read global tags from a Difficulty_Medium file.  These tend to
+	/* Prefer to read global tags from a Difficulty_Medium file. These tend to
 	 * have the least cruft in the #TITLE tag, so it's more likely to get a clean
 	 * title. */
 	int iMainDataIndex = 0;
@@ -1096,7 +1092,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	MeasureToTimeSig_t sigAdjustments;
 	map<RString,int> idToKeysoundIndex;
 	ReadGlobalTags( aBMSData[iMainDataIndex], out, sigAdjustments, idToKeysoundIndex );
-	    
+
 	// Override what that global tag said about the title if we have a good substring.
 	// Prevents clobbering and catches "MySong (7keys)" / "MySong (Another) (7keys)"
 	// Also catches "MySong (7keys)" / "MySong (14keys)"
@@ -1120,7 +1116,6 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	ConvertString( out.m_sMainTitle, "utf-8,japanese" );
 	ConvertString( out.m_sArtist, "utf-8,japanese" );
 	ConvertString( out.m_sGenre, "utf-8,japanese" );
-
 
 	return true;
 }
