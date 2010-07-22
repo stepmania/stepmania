@@ -62,13 +62,15 @@ if not PREFSMAN:GetPreference("EventMode") then
 else
 	stages[#stages+1] = MakeBitmapTest() .. {
 		SetCommand=function(self,params)
-			local Offset = THEME:GetMetric(Var "LoadingScreen","StageDisplayNumberOffset");
-			local Stage = GAMESTATE:GetCurrentStageIndex();
-			local RealStage = Stage + Offset;
-			self:settextf( "Stage %03i", RealStage);
+			if Var "LoadingScreen" then
+				local Offset = THEME:GetMetric(Var "LoadingScreen","StageDisplayNumberOffset");
+				local Stage = GAMESTATE:GetCurrentStageIndex();
+				local RealStage = Stage + Offset;
+				self:settextf( "Stage %03i", RealStage);
 				self:diffuse( StageToColor('Stage_1st') );
 				self:diffusebottomedge( ColorMidTone(StageToColor('Stage_1st')) );
 				self:strokecolor( Colors.Alpha( ColorDarkTone(StageToColor('Stage_1st')), 0.75) );
+			end;
 		end;
 	}
 end
