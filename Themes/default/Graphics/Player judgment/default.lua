@@ -1,6 +1,6 @@
 local c;
 local player = Var "Player";
-
+local bShowProtiming = GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(player) );
 local JudgeCmds = {
 	TapNoteScore_W1 = THEME:GetMetric( "Judgment", "JudgmentW1Command" );
 	TapNoteScore_W2 = THEME:GetMetric( "Judgment", "JudgmentW2Command" );
@@ -35,14 +35,13 @@ t[#t+1] = Def.ActorFrame {
 		OnCommand=THEME:GetMetric("Judgment","JudgmentOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
-	LoadFont("Common Normal") .. {
+	LoadFont("Combo Numbers") .. {
 		Name="ProtimingDisplay";
 		Text="";
 		InitCommand=cmd(visible,false);
 		OnCommand=THEME:GetMetric("Protiming","ProtimingOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
-	
 	InitCommand = function(self)
 		c = self:GetChildren();
 	end;
@@ -66,12 +65,12 @@ t[#t+1] = Def.ActorFrame {
 		
 		self:playcommand("Reset");
 
-		c.Judgment:visible( true );
+		c.Judgment:visible( not bShowProtiming );
 		c.Judgment:setstate( iFrame );
 		JudgeCmds[param.TapNoteScore](c.Judgment);
 		
---~ 		c.ProtimingDisplay:visible( true );
-		c.ProtimingDisplay:settext( math.floor(math.abs(param.TapNoteOffset * 1000)) );
+		c.ProtimingDisplay:visible( bShowProtiming );
+		c.ProtimingDisplay:settextf("%i%%",100 - math.floor(math.abs(param.TapNoteOffset * 1000)) );
 		ProtimingCmds[param.TapNoteScore](c.ProtimingDisplay);
 		
 	end;

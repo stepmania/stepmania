@@ -22,6 +22,12 @@ function InitUserPrefs()
 	if GetUserPrefB("UserPrefComboOnRolls") == nil then
 		SetUserPref("UserPrefComboOnRolls", false);
 	end;
+	if GetUserPrefB("UserPrefProtimingP1") == nil then
+		SetUserPref("UserPrefProtimingP1", false);
+	end;
+	if GetUserPrefB("UserPrefProtimingP2") == nil then
+		SetUserPref("UserPrefProtimingP2", false);
+	end;
 	if GetUserPrefB("FlashyCombos") == nil then
 		SetUserPref("FlashyCombos", false);
 	end;
@@ -55,23 +61,41 @@ function OptionRowProTiming()
 		ExportOnChange = false;
 		Choices = { 'Off','On' };
 		LoadSelections = function(self, list, pn)
-			local pname = ToEnumShortString(pn);
+			local bShow;
+			if GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(pn) ) then
+				bShow = GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(pn) );
+				if bShow then
+					list[2] = true;
+				else
+					list[1] = true;
+				end
+			else
+				list[1] = true;
+			end;
+--[[ 			local pname = ToEnumShortString(pn);
 
 			if getenv("ProTiming"..pname) == true then
 				list[2] = true;
 			else
 				list[1] = true;
-			end;
+			end; --]]
 		end;
 		SaveSelections = function(self, list, pn)
-			local val;
+			local bSave;
+			if list[2] then
+				bSave = true;
+			else
+				bSave = false;
+			end;
+			SetUserPref("UserPrefProtiming" .. ToEnumShortString(pn),bSave);
+--[[ 			local val;
 			if list[2] then
 				val = true;
 			else
 				val = false;
 			end;
 			local pname = ToEnumShortString(pn);
-			setenv("ProTiming"..pname, val);
+			setenv("ProTiming"..pname, val); --]]
 		end;
 	};
 	setmetatable( t, t );
@@ -188,8 +212,8 @@ end
 
 function GetDefaultOptionLines()
 	local LineSets = {
-		"1,2,3,4,5,6,R,7,8,9,10,11,12,13,14,15,16,17", -- All
-		"1,2,7,8,13,14,16,17", -- DDR Essentials ( no turns, fx )
+		"1,2,3,4,5,6,R,7,8,9,10,11,12,13,14,15,16,17,18", -- All
+		"1,2,7,8,13,14,16,17,18", -- DDR Essentials ( no turns, fx )
 	};
 	local function IsExtra()
 		if GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() then
@@ -205,7 +229,7 @@ function GetDefaultOptionLines()
 			return LineSets[2]; -- Just make sure!
 		end
 	else
-		return "1,2,7,8,13,14,17" -- "failsafe" list
+		return "1,2,7,8,13,14,17,18" -- "failsafe" list
 	end
 end;
 

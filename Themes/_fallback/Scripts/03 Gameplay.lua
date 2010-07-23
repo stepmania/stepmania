@@ -4,6 +4,23 @@
 
 -- shakesoda calls this pump.lua
 
+-- GetExtraColorThreshold()
+-- [en] returns the difficulty threshold in meter
+-- for songs that should be counted as boss songs.
+function GetExtraColorThreshold()
+	sGame = GAMESTATE:GetCurrentGame():GetName()
+	local Modes = {
+		dance = 10,
+		pump = 15,
+		beat = 12,
+		kb7 = 10,
+		para = 10,
+		techno = 10,
+		lights = 10, -- lights shouldn't be playable
+	}
+	return Modes[sGame]
+end
+
 -- GetEditModifiers
 -- [en] returns modifiers for ScreenEdit to use.
 function GetEditModifiers()
