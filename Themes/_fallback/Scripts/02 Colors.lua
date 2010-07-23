@@ -219,8 +219,9 @@ GameColor = {
 	},
 };
 GameColor.Difficulty["Crazy"] = GameColor.Difficulty["Hard"];
--- DifficultyColors["Freestyle"] = Color["Purple"];
+GameColor.Difficulty["Freestyle"] = GameColor.Difficulty["Easy"];
 GameColor.Difficulty["Nightmare"] = GameColor.Difficulty["Challenge"];
+GameColor.Difficulty["HalfDouble"] = GameColor.Difficulty["Medium"];
 
 --[[ Fallbacks ]]
 function Color(c)
