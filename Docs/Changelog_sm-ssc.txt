@@ -10,13 +10,25 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.0 Release Candidate 2 | 201007xx
+sm-ssc v1.0 Release Candidate 2 | 2010xxxx
 --------------------------------------------------------------------------------
-(work in progress, it's not out yet [hence the "xx" above].)
+(Miniholds bug must be fixed before this can be released)
+
+sm-ssc v1.0 Release Candidate 1.5 | 20100723
+--------------------------------------------------------------------------------
+(not officially out yet...)
+
+20100721
+--------
+* Major tweaks to notesloaderksf, |E| Tags are working as they should now
+  [Daisuke Master]
+* More column spacing values edited for Pump [Daisuke Master]
 
 20100719
 --------
-* 
+* Allow noteskins to use animation based on beats or seconds via a new noteskin
+  metric: AnimationIsBeatBased. [Daisuke Master]
+* Widen the lane for the middle note in kb7. [shakesoda]
 
 20100718
 --------
