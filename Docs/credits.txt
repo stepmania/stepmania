@@ -34,9 +34,16 @@ Wolfman
  * [Player] PercentUntilColorCombo metric
 
 Daisuke Master
- * Pump/default, Pump/flat, and Pump/simple noteskins
+ * Programming
+ * Pump/simple and Pump/complex noteskins
  * /Docs/Themerdocs/Noteskin elements Reference.txt
  * Taking advantage of sm-ssc's new features :)
+
+Kaox
+ * Pump/default noteskin
+
+Cesar
+ * Pump/cmd noteskin
 
 David Santamaría Rogado (howl)
  * Various patches (see Changelog_sm-ssc.txt for more details and links)
