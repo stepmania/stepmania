@@ -837,7 +837,6 @@ void Player::Update( float fDeltaTime )
 				{
 					vector<TrackRowTapNote> v;
 					v.push_back( trtn );
-					//LOG->Trace("UpdateHoldNotes from a roll");
 					UpdateHoldNotes( iSongRow, fDeltaTime, v );
 				}
 				continue;	// don't process this below
@@ -913,6 +912,7 @@ void Player::Update( float fDeltaTime )
 void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTapNote> &vTN )
 {
 	ASSERT( !vTN.empty() );
+
 	/*
 	LOG->Trace("--------------------------------");
 	LOG->Trace("[Player::UpdateHoldNotes] begins");
@@ -977,7 +977,12 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	float fLife = vTN[0].pTN->HoldResult.fLife;
 
 	if( hns != HNS_None )	// if this HoldNote already has a result
+	{
+		//LOG->Trace("hold note has a result, skipping.");
 		return;	// we don't need to update the logic for this group
+	}
+
+	//LOG->Trace("hold note doesn't already have result, let's check.");
 
 	//LOG->Trace( ssprintf("[C++] hold note score: %s",HoldNoteScoreToString(hns).c_str()) );
 	//LOG->Trace(ssprintf("[Player::UpdateHoldNotes] fLife = %f",fLife));
@@ -987,7 +992,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	{
 		TapNote &tn = *trtn->pTN;
 		TapNoteScore tns = tn.result.tns;
-		//LOG->Trace( ssprintf("[C++] tap note score: %s",TapNoteScoreToString(tns).c_str()) );
+		//LOG->Trace( ssprintf("[C++] tap note score: %s",StringConversion::ToString(tns).c_str()) );
 
 		// TODO: When using JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER, require that the whole row of 
 		// taps was hit before activating this group of holds.
@@ -1073,6 +1078,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			TapNote &tn = *trtn->pTN;
 			int iEndRow = iStartRow + tn.iDuration;
 
+			//LOG->Trace(ssprintf("trying for min between iSongRow (%i) and iEndRow (%i) (duration %i)",iSongRow,iEndRow,tn.iDuration));
 			trtn->pTN->HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
 		}
 	}
@@ -1114,8 +1120,11 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				*/
 
 				// Decrease life
+				//LOG->Trace("fLife before minus: %f",fLife);
 				fLife -= fDeltaTime/GetWindowSeconds(TW_Hold);
+				//LOG->Trace("fLife before clamp: %f",fLife);
 				fLife = max( fLife, 0 );	// clamp
+				//LOG->Trace("fLife after: %f",fLife);
 			}
 			break;
 		case TapNote::hold_head_roll:
@@ -1152,7 +1161,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	}
 
 	// check for LetGo. If the head was missed completely, don't count an LetGo.
-	/* Why?  If you never step on the head, then it will be left as HNS_None,
+	/* Why? If you never step on the head, then it will be left as HNS_None,
 	 * which doesn't seem correct. */
 	if( IMMEDIATE_HOLD_LET_GO )
 	{
@@ -1241,12 +1250,11 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 					}
 				}
 			}
-			/*
+
 			else
 			{
-				LOG->Trace("initiated note and let go :(");
+				//LOG->Trace("initiated note and let go :(");
 			}
-			*/
 		}
 		else
 		{
@@ -1282,6 +1290,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		//LOG->Trace("tap note scoring time.");
 		TapNote &tn = *vTN[0].pTN;
 		HandleHoldScore( tn );
+		//LOG->Trace("hold result = %s",StringConversion::ToString(tn.HoldResult.hns).c_str());
 		SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iFirstTrackWithMaxEndRow );
 	}
 	//LOG->Trace("[Player::UpdateHoldNotes] ends");
@@ -1321,9 +1330,13 @@ void Player::DrawPrimitives()
 		return;
 
 	// Draw these below everything else.
+	// xxx: if NoteField Board is enabled and COMBO_UNDER_FIELD, we really want
+	// the combo under the field but over the notefield board. -aj
 	if( COMBO_UNDER_FIELD && m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind == 0 )
+	{
 		if( m_sprCombo )
 			m_sprCombo->Draw();
+	}
 
 	if( m_pAttackDisplay )
 		m_pAttackDisplay->Draw();
@@ -1337,7 +1350,6 @@ void Player::DrawPrimitives()
 	float fTilt = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fPerspectiveTilt;
 	float fSkew = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fSkew;
 	bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0)>0.5;
-
 
 	DISPLAY->CameraPushMatrix();
 	DISPLAY->PushMatrix();
@@ -1375,6 +1387,7 @@ void Player::DrawPrimitives()
 	DISPLAY->CameraPopMatrix();
 	DISPLAY->PopMatrix();
 
+	// m_pNoteField->m_sprBoard->GetVisible()
 	if( !(bool)COMBO_UNDER_FIELD && m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind == 0 )
 		if( m_sprCombo )
 			m_sprCombo->Draw();
@@ -1830,6 +1843,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
 				 * Do this even if we're a little beyond the end of the hold note, to make sure
 				 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
+				//LOG->Trace("setting iLastHeldRow to min of iSongRow (%i) and iEndRow (%i)",iSongRow,iEndRow);
 				tn.HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
 			}
 
@@ -2005,10 +2019,9 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				break;
 
 			case TapNote::hold_head:
-				//oh wow, this was causing the trigger
-				//before the hold heads -DaisuMaster
-				//(It was >)
-				if( !REQUIRE_STEP_ON_HOLD_HEADS && fNoteOffset <= GetWindowSeconds( TW_W5 ) )
+				// oh wow, this was causing the trigger before the hold heads
+				// bug. (It was fNoteOffset > 0.f before) -DaisuMaster
+				if( !REQUIRE_STEP_ON_HOLD_HEADS && fNoteOffset <= 0.f )
 				{
 					score = TNS_W1;
 					break;
@@ -2635,7 +2648,7 @@ void Player::UpdateJudgedRows()
 
 		FOREACHS( RageSound *, setSounds, s )
 		{
-			/* Only play one copy of each mine sound at a time per player. */
+			// Only play one copy of each mine sound at a time per player.
 			(*s)->Stop();
 			(*s)->Play();
 		}
