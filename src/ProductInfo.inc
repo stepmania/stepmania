@@ -5,7 +5,7 @@
 
 ; see ProductInfo.h for use descriptions
 !define PRODUCT_ID "sm-ssc"
-!define PRODUCT_VER "v1.0 rc1"
+!define PRODUCT_VER "v1.0 rc1.5"
 !define PRODUCT_DISPLAY "${PRODUCT_ID} ${PRODUCT_VER}"
 !define PRODUCT_BITMAP "ssc"
 
@@ -20,6 +20,7 @@
 ;!define ASSOCIATE_SMZIP
 ;!define SHOW_AUTORUN
 !define MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
+!define MAKE_OPEN_SETTINGS_FOLDER_SHORTCUT
 ;!define DIRECTX_81_REDIST_PRESENT
 ;!define MAKE_UPDATES_SHORTCUT
 !define CRC_CHECK
