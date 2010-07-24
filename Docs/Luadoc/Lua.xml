@@ -40,6 +40,7 @@
 		<Function name='GetCustomDifficulty'/>
 		<Function name='GetDefaultOptionLines'/>
 		<Function name='GetEditModeSubScreens'/>
+		<Function name='GetExtraColorThreshold'/>
 		<Function name='GetGradeFromPercent'/>
 		<Function name='GetLifeDifficulty'/>
 		<Function name='GetOSName'/>
@@ -152,6 +153,8 @@
 		<Function name='URLEncode'/>
 		<Function name='UnlockRewardTypeToLocalizedString'/>
 		<Function name='UserPrefAutoSetStyle'/>
+		<Function name='UserPrefComboOnRolls'/>
+		<Function name='UserPrefFlashyCombo'/>
 		<Function name='UserPrefGameplayShowScore'/>
 		<Function name='UserPrefGameplayShowStepsDisplay'/>
 		<Function name='UserPrefLongFail'/>
@@ -349,7 +352,6 @@
 			<Function name='rotationx'/>
 			<Function name='rotationy'/>
 			<Function name='rotationz'/>
-			<Function name='scale_or_crop_alternative'/>
 			<Function name='scale_or_crop_background'/>
 			<Function name='scaletocover'/>
 			<Function name='scaletofit'/>
@@ -547,6 +549,7 @@
 			<Function name='GetBackgroundPath'/>
 			<Function name='GetBannerPath'/>
 			<Function name='GetCourseDir'/>
+			<Function name='GetCourseEntries'/>
 			<Function name='GetCourseEntry'/>
 			<Function name='GetCourseType'/>
 			<Function name='GetDisplayFullTitle'/>
@@ -765,6 +768,7 @@
 		</Class>
 		<Class base='LifeMeter' name='LifeMeterBattery'>
 			<Function name='GetLivesLeft'/>
+			<Function name='GetTotalLives'/>
 		</Class>
 		<Class name='MemoryCardManager'>
 			<Function name='GetCardLocked'/>
@@ -832,6 +836,7 @@
 			<Function name='FullComboOfScore'/>
 			<Function name='GetActualDancePoints'/>
 			<Function name='GetAliveSeconds'/>
+			<Function name='GetBestFullComboTapNoteScore'/>
 			<Function name='GetCaloriesBurned'/>
 			<Function name='GetCurrentCombo'/>
 			<Function name='GetCurrentLife'/>
@@ -858,10 +863,6 @@
 			<Function name='GetSurvivalSeconds'/>
 			<Function name='GetTapNoteScores'/>
 			<Function name='IsDisqualified'/>
-			<Function name='IsFullComboW1'/>
-			<Function name='IsFullComboW2'/>
-			<Function name='IsFullComboW3'/>
-			<Function name='IsFullComboW4'/>
 			<Function name='MaxCombo'/>
 		</Class>
 		<Class name='PlayerState'>
@@ -1137,6 +1138,7 @@
 			<Function name='Load'/>
 			<Function name='LoadBackground'/>
 			<Function name='LoadBanner'/>
+			<Function name='LoadFromCurrentSongBackground'/>
 			<Function name='LoadFromSongBackground'/>
 			<Function name='LoadFromSongBanner'/>
 			<Function name='SetCustomImageRect'/>
@@ -1239,11 +1241,14 @@
 		</Class>
 		<Class name='Trail'>
 			<Function name='GetArtists'/>
+			<Function name='GetDescription'/>
 			<Function name='GetDifficulty'/>
+			<Function name='GetEntries'/>
 			<Function name='GetMeter'/>
 			<Function name='GetRadarValues'/>
 			<Function name='GetStepsType'/>
 			<Function name='GetTrailEntry'/>
+			<Function name='IsAPlayerEdit'/>
 		</Class>
 		<Class name='TrailEntry'>
 			<Function name='GetNormalModifiers'/>
@@ -1887,6 +1892,6 @@
 		<Constant name='sGame' value='&apos;kb7&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc v1.0 rc1</Version>
-	<Date>2010-06-27</Date>
+	<Version>sm-ssc v1.0 rc1.5</Version>
+	<Date>2010-07-24</Date>
 </Lua>
