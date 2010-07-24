@@ -44,6 +44,7 @@ NoteField::NoteField()
 	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
 
 	m_sprBoard.Load( THEME->GetPathG("NoteField","board") );
+	m_sprBoard->SetName("Board");
 	m_sprBoard->PlayCommand( "On" );
 	this->AddChild( m_sprBoard );
 
