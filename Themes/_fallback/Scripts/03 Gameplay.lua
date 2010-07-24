@@ -21,22 +21,6 @@ function GetExtraColorThreshold()
 	return Modes[sGame]
 end
 
--- GetEditModifiers
--- [en] returns modifiers for ScreenEdit to use.
-function GetEditModifiers()
-	sGame = GAMESTATE:GetCurrentGame():GetName()
-	local Modes = {
-		dance = "",
-		pump = "",
-		beat = "reverse",
-		kb7 = "reverse",
-		para = "",
-		techno = "",
-		lights = "" -- lights shouldn't be playable
-	}
-	return Modes[sGame]
-end
-
 -- GameCompatibleModes:
 -- [en] returns possible modes for ScreenSelectPlayMode
 function GameCompatibleModes()
