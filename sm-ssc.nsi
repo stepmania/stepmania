@@ -80,7 +80,7 @@
 
 	; we need to warn people on Windows Vista and 7 not to install in
 	; Program Files
-	!insertmacro MUI_PAGE_LICENSE "Docs\Windows7.txt"
+	!insertmacro MUI_PAGE_LICENSE ".\Docs\Windows7.txt"
 
 	;!insertmacro MUI_PAGE_COMPONENTS
 	!insertmacro MUI_PAGE_DIRECTORY
