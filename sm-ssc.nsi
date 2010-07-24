@@ -77,7 +77,11 @@
 !endif
 
 	!insertmacro MUI_PAGE_WELCOME
-	;!insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Docs\Modern UI\License.txt"
+
+	; we need to warn people on Windows Vista and 7 not to install in
+	; Program Files
+	!insertmacro MUI_PAGE_LICENSE "Docs\Windows7.txt"
+
 	;!insertmacro MUI_PAGE_COMPONENTS
 	!insertmacro MUI_PAGE_DIRECTORY
 	!insertmacro MUI_PAGE_INSTFILES
@@ -199,7 +203,7 @@ Section "Main Section" SecMain
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayVersion" "$(PRODUCT_VER)"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "Comments" "sm-ssc is a rhythm game simulator (forked from StepMania)."
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "Publisher" "the spinal shark collective"
-	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "URLInfoAbout" "http://ssc.ajworld.net/sm-ssc/"
+	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "URLInfoAbout" "http://code.google.com/p/sm-ssc/"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "URLUpdateInfo" "http://code.google.com/p/sm-ssc/"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall.exe"'
 !endif
@@ -278,12 +282,20 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-vivid"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-rhythm-p1"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-rhythm-p2"
+	; retro, retrobar.
 	RMDir /r "$INSTDIR\NoteSkins\dance\retro"
+	RMDir /r "$INSTDIR\NoteSkins\dance\retrobar"
+	RMDir /r "$INSTDIR\NoteSkins\dance\retrobar-splithand_whiteblue"
 	; pump
 	RMDir /r "$INSTDIR\NoteSkins\pump\default"
 	RMDir /r "$INSTDIR\NoteSkins\pump\simple"
 	; kb7
 	RMDir /r "$INSTDIR\NoteSkins\kb7\default"
+	RMDir /r "$INSTDIR\NoteSkins\kb7\orbital"
+	; retrobar
+	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar"
+	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar-iidx"
+	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar-o2jam"
 	; lights
 	RMDir /r "$INSTDIR\NoteSkins\lights\default"
 	SetOutPath "$INSTDIR\NoteSkins"
@@ -302,11 +314,16 @@ Section "Main Section" SecMain
 	File /r /x CVS /x .svn "NoteSkins\dance\midi-vivid"
 	File /r /x CVS /x .svn "NoteSkins\dance\midi-routine-p1"
 	File /r /x CVS /x .svn "NoteSkins\dance\midi-routine-p2"
+	; retro and retrobar
 	File /r /x CVS /x .svn "NoteSkins\dance\retro"
+	File /r /x CVS /x .svn "NoteSkins\dance\retrobar"
+	File /r /x CVS /x .svn "NoteSkins\dance\retrobar-splithand_whiteblue"
 	SetOutPath "$INSTDIR"
 
 	; install pump noteskins
 	SetOutPath "$INSTDIR\NoteSkins\pump"
+	File /r /x CVS /x .svn "NoteSkins\pump\cmd"
+	File /r /x CVS /x .svn "NoteSkins\pump\complex"
 	File /r /x CVS /x .svn "NoteSkins\pump\default"
 	File /r /x CVS /x .svn "NoteSkins\pump\simple"
 	SetOutPath "$INSTDIR"
@@ -314,6 +331,10 @@ Section "Main Section" SecMain
 	; install kb7 noteskins
 	SetOutPath "$INSTDIR\NoteSkins\kb7"
 	File /r /x CVS /x .svn "NoteSkins\kb7\default"
+	; retrobar
+	File /r /x CVS /x .svn "NoteSkins\kb7\retrobar"
+	File /r /x CVS /x .svn "NoteSkins\kb7\retrobar-iidx"
+	File /r /x CVS /x .svn "NoteSkins\kb7\retrobar-o2jam"
 	SetOutPath "$INSTDIR"
 
 	; install lights noteskin
@@ -365,12 +386,15 @@ Section "Main Section" SecMain
 !endif
 !ifdef INSTALL_PROGRAM_LIBRARIES
 	; microsoft!
+	; xxx: how many of these do we really need?
 	File "Program\mfc71.dll"
 	File "Program\msvcr71.dll"
 	File "Program\msvcr80.dll"
+	File "Program\msvcr90.dll"
 	File "Program\msvcp71.dll"
 	File "Program\msvcp80.dll"
-	; ffmpeg and related
+	File "Program\msvcp90.dll"
+	; FFmpeg and related
 	File "Program\avcodec-52.dll"
 	File "Program\avdevice-52.dll"
 	File "Program\avformat-52.dll"
@@ -390,6 +414,9 @@ Section "Main Section" SecMain
 	File "Docs\credits.txt"
 	File "Docs\Changelog_sm-ssc.txt"
 	File "Docs\CommandLineArgs.txt"
+	File /r /x CVS /x .svn "Docs\license-ext"
+	File /r /x CVS /x .svn "Docs\Luadoc"
+	File /r /x CVS /x .svn "Docs\Themerdocs"
 
 	CreateDirectory "$INSTDIR\Manual"
 	SetOutPath "$INSTDIR\Manual"
@@ -403,16 +430,22 @@ Section "Main Section" SecMain
 	!ifdef MAKE_DESKTOP_SHORTCUT
 		CreateShortCut "$DESKTOP\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
 	!endif
+
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\StepMania-SSE2.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN_WITHOUT_SSE2).lnk" "$INSTDIR\Program\StepMania.exe"
+
 	!ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
 		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 	!endif
-		;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
-		;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
-		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk" "$INSTDIR\Manual\index.html"
-		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk" "$INSTDIR\uninstall.exe"
-		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk" "${PRODUCT_URL}"
+	!ifdef MAKE_OPEN_SETTINGS_FOLDER_SHORTCUT
+		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_SETTINGS_FOLDER).lnk" "$WINDIR\explorer.exe" "%APPDATA%\${PRODUCT_ID}"
+	!endif
+
+	;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
+	;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk" "$INSTDIR\Manual\index.html"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk" "$INSTDIR\uninstall.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk" "${PRODUCT_URL}"
 	!ifdef MAKE_UPDATES_SHORTCUT
 		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk" "${UPDATES_URL}"
 	!endif
@@ -427,7 +460,7 @@ Section "Main Section" SecMain
 	MessageBox MB_OK|MB_ICONSTOP "$(TEXT_IO_FATAL_ERROR_INSTALL)"
 	Quit
 	do_no_error:
-	
+
 SectionEnd
 
 ;-------------------------------------------------------------------------------
@@ -671,16 +704,24 @@ Section "Uninstall"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-solo"
 	RMDir /r "$INSTDIR\NoteSkins\dance\midi-vivid"
 	RMDir /r "$INSTDIR\NoteSkins\dance\retro"
+	RMDir /r "$INSTDIR\NoteSkins\dance\retrobar"
+	RMDir /r "$INSTDIR\NoteSkins\dance\retrobar-splithand_whiteblue"
 	RMDir "$INSTDIR\NoteSkins\dance"
 
+	RMDir /r "$INSTDIR\NoteSkins\pump\cmd"
+	RMDir /r "$INSTDIR\NoteSkins\pump\complex"
 	RMDir /r "$INSTDIR\NoteSkins\pump\default"
 	RMDir /r "$INSTDIR\NoteSkins\pump\simple"
 	RMDir "$INSTDIR\NoteSkins\pump"
 
 	RMDir /r "$INSTDIR\NoteSkins\kb7\default"
+	RMDir /r "$INSTDIR\NoteSkins\kb7\orbital"
+	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar"
+	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar-iidx"
+	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar-o2jam"
 	RMDir "$INSTDIR\NoteSkins\kb7"
 
-	; we don't currently install para noteskins
+	; we don't currently install para noteskins...
 	;RMDir /r "$INSTDIR\NoteSkins\para\default"
 	;RMDir "$INSTDIR\NoteSkins\para"
 	;RMDir "$INSTDIR\NoteSkins"
@@ -721,10 +762,19 @@ Section "Uninstall"
 	Delete "$INSTDIR\Program\mfc71.dll"
 	Delete "$INSTDIR\Program\msvcr71.dll"
 	Delete "$INSTDIR\Program\msvcp71.dll"
-	Delete "$INSTDIR\Program\jpeg.dll"
-	Delete "$INSTDIR\Program\avcodec.dll"
-	Delete "$INSTDIR\Program\avformat.dll"
+	Delete "$INSTDIR\Program\msvcr80.dll"
+	Delete "$INSTDIR\Program\msvcp80.dll"
+	Delete "$INSTDIR\Program\msvcr90.dll"
+	Delete "$INSTDIR\Program\msvcp90.dll"
+	; FFmpeg and related
+	Delete "$INSTDIR\Program\avcodec-52.dll"
+	Delete "$INSTDIR\Program\avdevice-52.dll"
+	Delete "$INSTDIR\Program\avformat-52.dll"
+	Delete "$INSTDIR\Program\avutil-50.dll"
+	Delete "$INSTDIR\Program\swscale-0.dll"
+	; others
 	Delete "$INSTDIR\Program\dbghelp.dll"
+	Delete "$INSTDIR\Program\jpeg.dll"
 	Delete "$INSTDIR\Program\zlib1.dll"
 	RMDir "$INSTDIR\Program"
 

@@ -12,9 +12,11 @@ AJ Kelly
 Midiman
  * Did most of the work on _fallback and default themes
  * Some programming
+ * Noteskins (midi-*)
 
 shakesoda
  * Programming
+ * Noteskins (kb7 default)
  * Theme edits
 
 ==other contributors==
@@ -58,7 +60,7 @@ v1toko
  * Lead coder of StepNXA, which is where we got the original XMode code from.
 
 Macgravel
- * Orbular noteskin (the kb7 noteskin)
+ * Orbular noteskin (the default kb7 noteskin)
 
 theDtTvB
  * Keysound patch (http://share11.appspot.com/20421)
@@ -115,7 +117,7 @@ Urqui
 h4m573r
 Torta
 
-[Private Beta Wave 1.x]
+[Private Beta Wave 1.x Testers]
 FSX
 Sniper257
 Wolfman2000
