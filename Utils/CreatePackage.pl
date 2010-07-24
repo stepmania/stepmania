@@ -154,17 +154,27 @@ my @files = (
 	# dance noteskins
 	"NoteSkins/dance/default",
 	"NoteSkins/dance/Delta",
+	## midi series
 	"NoteSkins/dance/midi-note",
 	"NoteSkins/dance/midi-solo",
 	"NoteSkins/dance/midi-vivid",
 	"NoteSkins/dance/midi-routine-p1",
 	"NoteSkins/dance/midi-routine-p2",
+	## retro/retrobar
 	"NoteSkins/dance/retro",
+	"NoteSkins/dance/retrobar",
+	"NoteSkins/dance/retrobar-splithand_whiteblue",
 	# pump noteskins
+	"NoteSkins/pump/cmd",
+	"NoteSkins/pump/complex",
 	"NoteSkins/pump/default",
 	"NoteSkins/pump/simple",
 	# kb7 noteskins
 	"NoteSkins/kb7/default",
+	"NoteSkins/kb7/orbital",
+	"NoteSkins/kb7/retrobar",
+	"NoteSkins/kb7/retrobar-iidx",
+	"NoteSkins/kb7/retrobar-o2jam",
 	# themes
 	"Themes/_fallback",
 	"Themes/_portKit-sm4",
