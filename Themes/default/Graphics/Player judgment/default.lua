@@ -47,13 +47,12 @@ t[#t+1] = Def.ActorFrame {
 	end;
 
 	JudgmentMessageCommand=function(self, param)
+		local t
 		if param.Player ~= player then return end;
 		if param.HoldNoteScore then return end;
-
+		
 		local iNumStates = c.Judgment:GetNumStates();
 		local iFrame = TNSFrames[param.TapNoteScore];
-		
-		local iTapNoteOffset = param.TapNoteOffset;
 		
 		if not iFrame then return end
 		if iNumStates == 12 then
@@ -61,6 +60,13 @@ t[#t+1] = Def.ActorFrame {
 			if not param.Early then
 				iFrame = iFrame + 1;
 			end
+		end
+		
+		local iTapNoteOffset = param.TapNoteOffset;
+		if param.HoldNoteScore then
+			iTapNoteOffset = 1;
+		else
+			iTapNoteOffset = param.TapNoteOFfset; 
 		end
 		
 		self:playcommand("Reset");
