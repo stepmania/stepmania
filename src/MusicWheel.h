@@ -86,7 +86,7 @@ protected:
 	ThemeMetric<bool>		SHOW_EASY_FLAG;
 	ThemeMetric<bool>		USE_SECTIONS_WITH_PREFERRED_GROUP;
 	//sm-ssc additions -DaisuMaster
-	ThemeMetric<bool>		HIDE_SECTIONS;
+	ThemeMetric<bool>		HIDE_INACTIVE_SECTIONS;
 };
 
 #endif
