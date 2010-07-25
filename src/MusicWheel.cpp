@@ -1225,6 +1225,15 @@ RString MusicWheel::JumpToPrevGroup()
 // Called on late join. Selectable courses may have changed; reopen the section.
 void MusicWheel::PlayerJoined()
 {
+	// TRICKY: If Autogen is off and someone joins, the first player may be on
+	// a song that has an illegal stepstype for the current amount of players.
+	// (e.g. a song that only has doubles difficulties and a second player joins.)
+	// We need to rebuild the wheel item data in this situation. -aj
+	if( !GAMESTATE->IsCourseMode() && !PREFSMAN->m_bAutogenSteps )
+	{
+		BuildWheelItemDatas( m_WheelItemDatas[GAMESTATE->m_SortOrder], GAMESTATE->m_SortOrder );
+	}
+
 	SetOpenSection( m_sExpandedSectionName );
 }
 
