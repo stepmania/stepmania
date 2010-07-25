@@ -706,6 +706,11 @@ int SongManager::GetNumCourseGroups() const
 	return m_mapCourseGroupToInfo.size();
 }
 
+RString SongManager::GetSongGroupByIndex(unsigned index)
+{
+	return m_sSongGroupNames[index];
+}
+
 RString SongManager::ShortenGroupName( RString sLongGroupName )
 {
 	static TitleSubst tsub("Groups");

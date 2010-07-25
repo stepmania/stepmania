@@ -98,6 +98,7 @@ public:
 	int GetNumCourses() const;
 	int GetNumAdditionalCourses() const;
 	int GetNumCourseGroups() const;
+	RString GetSongGroupByIndex(unsigned index);
 	Song* GetRandomSong();
 	Course* GetRandomCourse();
 

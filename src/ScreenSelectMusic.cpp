@@ -92,6 +92,7 @@ void ScreenSelectMusic::Init()
 	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
 	//To allow changing steps with gamebuttons -DaisuMaster
 	CHANGE_STEPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeStepsWithGameButtons" );
+	CHANGE_GROUPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeGroupsWithGameButtoms" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
 	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextSongButton") );
@@ -101,6 +102,12 @@ void ScreenSelectMusic::Init()
 	{
 		m_GameButtonPreviousDifficulty = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousDifficultyButton") );
 		m_GameButtonNextDifficulty = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextDifficultyButton") );
+	}
+	//same here but for groups -DaisuMaster
+	if( CHANGE_GROUPS_WITH_GAME_BUTTONS )
+	{
+		m_GameButtonPreviousGroup = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousGroupButton") );
+		m_GameButtonNextGroup = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextGroupButton") );
 	}
 
 	FOREACH_ENUM( PlayerNumber, p )
@@ -634,13 +641,55 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 		if( m_SelectionState == SelectionState_SelectingSong )
 		{
-			if (input.MenuI == m_GameButtonPreviousDifficulty )
+			if ( input.MenuI == m_GameButtonPreviousDifficulty )
 			{
-				ChangeSteps( input.pn, -1 );
+				// Oh! I forgot to restrict to switch if the selection is locked... -DaisuMaster
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+					ChangeSteps( input.pn, -1 );
 			}
 			else if( input.MenuI == m_GameButtonNextDifficulty )
 			{
-				ChangeSteps( input.pn, +1 );
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+					ChangeSteps( input.pn, +1 );
+			}
+		}
+	}
+	// Most likely a copypasta of the previous addition -DaisuMaster
+	if( CHANGE_GROUPS_WITH_GAME_BUTTONS )
+	{
+		if( input.type != IET_FIRST_PRESS)
+			return;
+
+		if( m_SelectionState == SelectionState_SelectingSong )
+		{
+			if(input.MenuI == m_GameButtonPreviousGroup )
+			{
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+				{
+					//for real: copypasta
+					RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
+					m_MusicWheel.SelectSection(sNewGroup);
+					m_MusicWheel.SetOpenSection(sNewGroup);
+					AfterMusicChange();
+				}
+			}
+			if(input.MenuI == m_GameButtonNextGroup )
+			{
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+				{
+					RString sNewGroup = m_MusicWheel.JumpToNextGroup();
+					m_MusicWheel.SelectSection(sNewGroup);
+					m_MusicWheel.SetOpenSection(sNewGroup);
+					AfterMusicChange();
+				}
 			}
 		}
 	}
@@ -770,7 +819,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 
 		MESSAGEMAN->Broadcast( "SongOptionsChanged" );
 	}
-	else if( CodeDetector::EnteredNextGroup(input.GameI.controller) )
+	else if( CodeDetector::EnteredNextGroup(input.GameI.controller) && !CHANGE_GROUPS_WITH_GAME_BUTTONS )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			m_soundLocked.Play();
@@ -782,7 +831,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 			AfterMusicChange();
 		}
 	}
-	else if( CodeDetector::EnteredPrevGroup(input.GameI.controller) )
+	else if( CodeDetector::EnteredPrevGroup(input.GameI.controller) && !CHANGE_GROUPS_WITH_GAME_BUTTONS )
 	{
 		if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 			m_soundLocked.Play();

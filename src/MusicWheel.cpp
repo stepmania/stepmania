@@ -79,6 +79,7 @@ void MusicWheel::Load( RString sType )
 	SORT_ORDERS					.Load(sType,"SortOrders");
 	SHOW_EASY_FLAG				.Load(sType,"UseEasyMarkerFlag");
 	USE_SECTIONS_WITH_PREFERRED_GROUP		.Load(sType,"UseSectionsWithPreferredGroup");
+	HIDE_SECTIONS				.Load(sType,"HideSections");
 	vector<RString> vsModeChoiceNames;
 	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
 	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
@@ -615,7 +616,9 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 						// new section, make a section item
 						RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
-						arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection, iSectionCount) );
+						// This restricts to show only one group at time (ever heard about exceed or zero?)
+						if( !HIDE_SECTIONS )
+							arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection, iSectionCount) );
 						sLastSection = sThisSection;
 					}
 				}
@@ -1129,23 +1132,44 @@ void MusicWheel::SetOpenSection( RString group )
 // sm-ssc additions: jump to group
 RString MusicWheel::JumpToNextGroup()
 {
-	unsigned int iLastSelection = m_iSelection;
-	for( unsigned int i = m_iSelection; i < m_CurWheelItemData.size(); ++i )
+	//Thanks to Juanelote for this small addition
+	if(HIDE_SECTIONS)
 	{
-		if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION && i != (unsigned int)m_iSelection )
+		unsigned iNumGroups = SONGMAN->GetNumSongGroups();
+
+		for(unsigned i = 0 ; i < iNumGroups ; i++)
 		{
-			m_iSelection = i;
-			return m_CurWheelItemData[i]->m_sText;
+			if( m_sExpandedSectionName == SONGMAN->GetSongGroupByIndex(i) )
+			{
+				if ( i < iNumGroups - 1 )
+					return SONGMAN->GetSongGroupByIndex(i+1);
+				else
+				{
+					//i = 0;
+					return SONGMAN->GetSongGroupByIndex(0);
+				}
+			}
 		}
 	}
-	// it should not get down here, but it might happen... only search up to
-	// the previous selection.
-	for( unsigned int i = 0; i < iLastSelection; ++i )
-	{
-		if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION && i != (unsigned int)m_iSelection )
+	else{
+		unsigned int iLastSelection = m_iSelection;
+		for( unsigned int i = m_iSelection; i < m_CurWheelItemData.size(); ++i )
 		{
-			m_iSelection = i;
-			return m_CurWheelItemData[i]->m_sText;
+			if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION && i != (unsigned int)m_iSelection )
+			{
+				m_iSelection = i;
+				return m_CurWheelItemData[i]->m_sText;
+			}
+		}
+		// it should not get down here, but it might happen... only search up to
+		// the previous selection.
+		for( unsigned int i = 0; i < iLastSelection; ++i )
+		{
+			if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION && i != (unsigned int)m_iSelection )
+			{
+				m_iSelection = i;
+				return m_CurWheelItemData[i]->m_sText;
+			}
 		}
 	}
 	// and this would be el bad:
@@ -1154,23 +1178,44 @@ RString MusicWheel::JumpToNextGroup()
 
 RString MusicWheel::JumpToPrevGroup()
 {
-	for( unsigned int i = m_iSelection; i > 0; --i )
+	if(HIDE_SECTIONS)
 	{
-		if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION && i != (unsigned int)m_iSelection )
+		unsigned iNumGroups = SONGMAN->GetNumSongGroups();
+
+		for(unsigned i = 0 ; i < iNumGroups ; i++)
 		{
-			m_iSelection = i;
-			return m_CurWheelItemData[i]->m_sText;
+			if( m_sExpandedSectionName == SONGMAN->GetSongGroupByIndex(i) )
+			{
+				if ( i > 0 )
+					return SONGMAN->GetSongGroupByIndex(i-1);
+				else
+				{
+					//i = iNumGroups - 1;
+					return SONGMAN->GetSongGroupByIndex(iNumGroups - 1);
+				}
+			}
 		}
 	}
-	// in case it wasn't found above:
-	for( unsigned int i = m_CurWheelItemData.size()-1; i > 0; --i )
+	else
 	{
-		LOG->Trace( ssprintf("JumpToPrevGroup iteration 2 | i = %u",i) );
-		if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION )
+		for( unsigned int i = m_iSelection; i > 0; --i )
 		{
-			m_iSelection = i;
-			LOG->Trace( ssprintf("finding it in #2 | i = %u | text = %s",i, m_CurWheelItemData[i]->m_sText.c_str()) );
-			return m_CurWheelItemData[i]->m_sText;
+			if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION && i != (unsigned int)m_iSelection )
+			{
+				m_iSelection = i;
+				return m_CurWheelItemData[i]->m_sText;
+			}
+		}
+		// in case it wasn't found above:
+		for( unsigned int i = m_CurWheelItemData.size()-1; i > 0; --i )
+		{
+			LOG->Trace( ssprintf("JumpToPrevGroup iteration 2 | i = %u",i) );
+			if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION )
+			{
+				m_iSelection = i;
+				LOG->Trace( ssprintf("finding it in #2 | i = %u | text = %s",i, m_CurWheelItemData[i]->m_sText.c_str()) );
+				return m_CurWheelItemData[i]->m_sText;
+			}
 		}
 	}
 	// and this would be el bad:
