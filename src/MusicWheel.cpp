@@ -79,7 +79,7 @@ void MusicWheel::Load( RString sType )
 	SORT_ORDERS					.Load(sType,"SortOrders");
 	SHOW_EASY_FLAG				.Load(sType,"UseEasyMarkerFlag");
 	USE_SECTIONS_WITH_PREFERRED_GROUP		.Load(sType,"UseSectionsWithPreferredGroup");
-	HIDE_SECTIONS				.Load(sType,"HideSections");
+	HIDE_INACTIVE_SECTIONS		.Load(sType,"OnlyShowActiveSection");
 	vector<RString> vsModeChoiceNames;
 	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
 	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
@@ -617,7 +617,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 						RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
 						// This restricts to show only one group at time (ever heard about exceed or zero?)
-						if( !HIDE_SECTIONS )
+						if( !HIDE_INACTIVE_SECTIONS )
 							arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection, iSectionCount) );
 						sLastSection = sThisSection;
 					}
@@ -1133,7 +1133,7 @@ void MusicWheel::SetOpenSection( RString group )
 RString MusicWheel::JumpToNextGroup()
 {
 	//Thanks to Juanelote for this small addition
-	if(HIDE_SECTIONS)
+	if(HIDE_INACTIVE_SECTIONS)
 	{
 		unsigned iNumGroups = SONGMAN->GetNumSongGroups();
 
@@ -1178,7 +1178,7 @@ RString MusicWheel::JumpToNextGroup()
 
 RString MusicWheel::JumpToPrevGroup()
 {
-	if(HIDE_SECTIONS)
+	if(HIDE_INACTIVE_SECTIONS)
 	{
 		unsigned iNumGroups = SONGMAN->GetNumSongGroups();
 
