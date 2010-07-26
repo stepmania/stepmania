@@ -616,7 +616,8 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 						// new section, make a section item
 						RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
-						// This restricts to show only one group at time (ever heard about exceed or zero?)
+						// In certain situations (e.g. simulating Pump it Up), themes may
+						// want to only show one group at a time.
 						if( !HIDE_INACTIVE_SECTIONS )
 							arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection, iSectionCount) );
 						sLastSection = sThisSection;
@@ -1132,8 +1133,8 @@ void MusicWheel::SetOpenSection( RString group )
 // sm-ssc additions: jump to group
 RString MusicWheel::JumpToNextGroup()
 {
-	//Thanks to Juanelote for this small addition
-	if(HIDE_INACTIVE_SECTIONS)
+	// Thanks to Juanelote for this logic:
+	if( HIDE_INACTIVE_SECTIONS )
 	{
 		unsigned iNumGroups = SONGMAN->GetNumSongGroups();
 
@@ -1151,7 +1152,8 @@ RString MusicWheel::JumpToNextGroup()
 			}
 		}
 	}
-	else{
+	else
+	{
 		unsigned int iLastSelection = m_iSelection;
 		for( unsigned int i = m_iSelection; i < m_CurWheelItemData.size(); ++i )
 		{
@@ -1172,13 +1174,13 @@ RString MusicWheel::JumpToNextGroup()
 			}
 		}
 	}
-	// and this would be el bad:
+	// it shouldn't get here, but just in case...
 	return "";
 }
 
 RString MusicWheel::JumpToPrevGroup()
 {
-	if(HIDE_INACTIVE_SECTIONS)
+	if( HIDE_INACTIVE_SECTIONS )
 	{
 		unsigned iNumGroups = SONGMAN->GetNumSongGroups();
 
@@ -1218,7 +1220,7 @@ RString MusicWheel::JumpToPrevGroup()
 			}
 		}
 	}
-	// and this would be el bad:
+	// it shouldn't get here, but just in case...
 	return "";
 }
 
