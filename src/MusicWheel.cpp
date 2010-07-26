@@ -80,11 +80,12 @@ void MusicWheel::Load( RString sType )
 	SHOW_EASY_FLAG				.Load(sType,"UseEasyMarkerFlag");
 	USE_SECTIONS_WITH_PREFERRED_GROUP		.Load(sType,"UseSectionsWithPreferredGroup");
 	HIDE_INACTIVE_SECTIONS		.Load(sType,"OnlyShowActiveSection");
+	REMIND_WHEEL_POSITIONS		.Load(sType,"RemindWheelPositions");
 	vector<RString> vsModeChoiceNames;
 	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
 	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
 	SECTION_COLORS			.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
-
+	
 	WheelBase::Load( sType );
 
 	SONGMAN->UpdateRankingCourses();
@@ -191,6 +192,20 @@ void MusicWheel::BeginScreen()
 	{
 		// Select the the previously selected song (if any)
 		SetOpenSection("");
+	}
+
+	if( REMIND_WHEEL_POSITIONS && HIDE_INACTIVE_SECTIONS )
+	{
+		// store the group song index, run this also here because it forgets the current position when
+		// not changing the song if you came back from gameplay or your last round song (profiles)
+		// is not the first one in the group.
+		for( unsigned idx = 0 ; idx < m_viWheelPositions.size() ; idx++ )
+		{
+			if( m_sExpandedSectionName == SONGMAN->GetSongGroupByIndex(idx) )
+			{
+				m_viWheelPositions[idx] = m_iSelection;
+			}
+		}
 	}
 
 	// rebuild the WheelItems that appear on screen
@@ -897,6 +912,18 @@ void MusicWheel::ChangeMusic( int iDist )
 	m_iSelection += iDist;
 	wrap( m_iSelection, m_CurWheelItemData.size() );
 
+	if( REMIND_WHEEL_POSITIONS && HIDE_INACTIVE_SECTIONS )
+	{
+		// store the group song index
+		for( unsigned idx = 0 ; idx < m_viWheelPositions.size() ; idx++ )
+		{
+			if( m_sExpandedSectionName == SONGMAN->GetSongGroupByIndex(idx) )
+			{
+				m_viWheelPositions[idx] = m_iSelection;
+			}
+		}
+	}
+
 	RebuildWheelItems( iDist );
 
 	m_fPositionOffsetFromSelection += iDist;
@@ -1076,6 +1103,10 @@ void MusicWheel::SetOpenSection( RString group )
 	//LOG->Trace( "SetOpenSection %s", group.c_str() );
 	m_sExpandedSectionName = group;
 
+	// wheel positions = num song groups
+	if ( REMIND_WHEEL_POSITIONS && HIDE_INACTIVE_SECTIONS )
+		m_viWheelPositions.resize( SONGMAN->GetNumSongGroups() );
+
 	const WheelItemBaseData *old = NULL;
 	if( !m_CurWheelItemData.empty() )
 		old = GetCurWheelItemData(m_iSelection);
@@ -1114,16 +1145,29 @@ void MusicWheel::SetOpenSection( RString group )
 		m_CurWheelItemData.push_back(&d);
 	}
 
-
-	// Try to select the item that was selected before changing groups
-	m_iSelection = 0;
-
-	for( unsigned i=0; i<m_CurWheelItemData.size(); i++ )
+	//restore the past group song index
+	if( REMIND_WHEEL_POSITIONS && HIDE_INACTIVE_SECTIONS )
 	{
-		if( m_CurWheelItemData[i] == old )
+		for( unsigned idx = 0 ; idx < m_viWheelPositions.size() ; idx++ )
 		{
-			m_iSelection=i;
-			break;
+			if( m_sExpandedSectionName == SONGMAN->GetSongGroupByIndex(idx) )
+			{
+				m_iSelection = m_viWheelPositions[idx];
+			}
+		}
+	}
+	else
+	{
+		// Try to select the item that was selected before changing groups
+		m_iSelection = 0;
+
+		for( unsigned i=0; i<m_CurWheelItemData.size(); i++ )
+		{
+			if( m_CurWheelItemData[i] == old )
+			{
+				m_iSelection=i;
+				break;
+			}
 		}
 	}
 
@@ -1136,6 +1180,7 @@ RString MusicWheel::JumpToNextGroup()
 	// Thanks to Juanelote for this logic:
 	if( HIDE_INACTIVE_SECTIONS )
 	{
+		//todo: make it work with other sort types
 		unsigned iNumGroups = SONGMAN->GetNumSongGroups();
 
 		for(unsigned i = 0 ; i < iNumGroups ; i++)

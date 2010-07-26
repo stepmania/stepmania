@@ -635,7 +635,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	// yeah, wanted this since a while ago... -DaisuMaster
 	if( CHANGE_STEPS_WITH_GAME_BUTTONS )
 	{
-		// avoid anything not being just press (read: release or repeat/hold)
+		// Avoid any event not being first press
 		if( input.type != IET_FIRST_PRESS )
 			return;
 
@@ -657,8 +657,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			}
 		}
 	}
-
-	// Most likely a copypasta of the previous addition -DaisuMaster
+	// Actually I don't like to just copy and paste code because it may go wrong
+	// if something goes overlooked -DaisuMaster
 	if( CHANGE_GROUPS_WITH_GAME_BUTTONS )
 	{
 		if( input.type != IET_FIRST_PRESS)
@@ -672,14 +672,14 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 					m_soundLocked.Play();
 				else
 				{
-					// for real: copypasta
 					RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
 					m_MusicWheel.SelectSection(sNewGroup);
 					m_MusicWheel.SetOpenSection(sNewGroup);
+					MESSAGEMAN->Broadcast("PreviousGroup");
 					AfterMusicChange();
 				}
 			}
-			if(input.MenuI == m_GameButtonNextGroup )
+			else if(input.MenuI == m_GameButtonNextGroup )
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 					m_soundLocked.Play();
@@ -688,6 +688,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 					RString sNewGroup = m_MusicWheel.JumpToNextGroup();
 					m_MusicWheel.SelectSection(sNewGroup);
 					m_MusicWheel.SetOpenSection(sNewGroup);
+					MESSAGEMAN->Broadcast("NextGroup");
 					AfterMusicChange();
 				}
 			}
@@ -723,8 +724,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 					m_MusicWheel.ChangeMusicUnlessLocked( +1 );
 				}
 			}
-			// added an entry for difficulty change with
-			// gamebuttons -DaisuMaster
+			// added an entry for difficulty change with gamebuttons -DaisuMaster
 			else if( input.MenuI == m_GameButtonPreviousDifficulty )
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
@@ -747,28 +747,70 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 					ChangeSteps( input.pn, +1);
 				}
 			}
+			// added also for groupchanges
+			else if(input.MenuI == m_GameButtonPreviousGroup )
+			{
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+				{
+					RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
+					m_MusicWheel.SelectSection(sNewGroup);
+					m_MusicWheel.SetOpenSection(sNewGroup);
+					MESSAGEMAN->Broadcast("PreviousGroup");
+					AfterMusicChange();
+				}
+			}
+			else if(input.MenuI == m_GameButtonNextGroup )
+			{
+				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+					m_soundLocked.Play();
+				else
+				{
+					RString sNewGroup = m_MusicWheel.JumpToNextGroup();
+					m_MusicWheel.SelectSection(sNewGroup);
+					m_MusicWheel.SetOpenSection(sNewGroup);
+					MESSAGEMAN->Broadcast("NextGroup");
+					AfterMusicChange();
+				}
+			}
 		}
 	}
 	else
 	{
-		if( m_SelectionState == SelectionState_SelectingSteps  &&
-			input.type == IET_FIRST_PRESS  &&
-			(input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong) &&
-			!m_bStepsChosen[input.pn] )
+		if( m_SelectionState == SelectionState_SelectingSteps && input.type == IET_FIRST_PRESS && !m_bStepsChosen[input.pn] )
 		{
-			if( input.MenuI == m_GameButtonPreviousSong )
+			if( input.MenuI == m_GameButtonNextSong || input.MenuI == m_GameButtonPreviousSong )
 			{
-				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
-					m_soundLocked.Play();
-				else
-					ChangeSteps( input.pn, -1 );
+				if( input.MenuI == m_GameButtonPreviousSong )
+				{
+					if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+						m_soundLocked.Play();
+					else
+						ChangeSteps( input.pn, -1 );
+				}
+				else if( input.MenuI == m_GameButtonNextSong )
+				{
+					if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
+						m_soundLocked.Play();
+					else
+						ChangeSteps( input.pn, +1 );
+				}
 			}
-			else if( input.MenuI == m_GameButtonNextSong )
+			else if( input.MenuI == GAME_BUTTON_MENUUP || input.MenuI == GAME_BUTTON_MENUDOWN ) // && TWO_PART_DESELECTS_WITH_MENUUPDOWN
 			{
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 					m_soundLocked.Play();
 				else
-					ChangeSteps( input.pn, +1 );
+				{
+					Message msg("SongUnchosen");
+					msg.SetParam( "Player", input.pn );
+					MESSAGEMAN->Broadcast( msg );
+					//unset all steps
+					FOREACH_ENUM( PlayerNumber , p )
+						m_bStepsChosen[p] = false;
+					m_SelectionState = SelectionState_SelectingSong;
+				}
 			}
 		}
 	}
@@ -828,6 +870,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 			RString sNewGroup = m_MusicWheel.JumpToNextGroup();
 			m_MusicWheel.SelectSection(sNewGroup);
 			m_MusicWheel.SetOpenSection(sNewGroup);
+			MESSAGEMAN->Broadcast("PreviousGroup");
 			AfterMusicChange();
 		}
 	}
@@ -840,6 +883,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 			RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
 			m_MusicWheel.SelectSection(sNewGroup);
 			m_MusicWheel.SetOpenSection(sNewGroup);
+			MESSAGEMAN->Broadcast("NextGroup");
 			AfterMusicChange();
 		}
 	}
@@ -1407,7 +1451,8 @@ void ScreenSelectMusic::MenuBack( const InputEventPlus &input )
 {
 	// Handle unselect song (ffff)
 	// todo: this isn't right at all. -aj
-	if( m_SelectionState == SelectionState_SelectingSteps  &&  !m_bStepsChosen[input.pn]  &&  input.MenuI == GAME_BUTTON_BACK  &&  input.type == IET_FIRST_PRESS )
+	// temporal: deactivating this for the time being -DaisuMaster
+	/*if( m_SelectionState == SelectionState_SelectingSteps  &&  !m_bStepsChosen[input.pn]  &&  input.MenuI == GAME_BUTTON_BACK  &&  input.type == IET_FIRST_PRESS )
 	{
 		// if a player has chosen their steps already, don't unchoose song.
 		FOREACH_HumanPlayer( p )
@@ -1419,7 +1464,7 @@ void ScreenSelectMusic::MenuBack( const InputEventPlus &input )
 		MESSAGEMAN->Broadcast( msg );
 		m_SelectionState = SelectionState_SelectingSong;
 		return;
-	}
+	}*/
 
 	m_BackgroundLoader.Abort();
 

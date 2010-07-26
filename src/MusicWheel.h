@@ -87,6 +87,8 @@ protected:
 	// sm-ssc additions:
 	ThemeMetric<bool>		USE_SECTIONS_WITH_PREFERRED_GROUP;
 	ThemeMetric<bool>		HIDE_INACTIVE_SECTIONS;
+	ThemeMetric<bool>		REMIND_WHEEL_POSITIONS;
+	vector <int> m_viWheelPositions;
 };
 
 #endif
