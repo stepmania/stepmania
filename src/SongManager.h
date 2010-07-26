@@ -98,9 +98,10 @@ public:
 	int GetNumCourses() const;
 	int GetNumAdditionalCourses() const;
 	int GetNumCourseGroups() const;
-	RString GetSongGroupByIndex(unsigned index);
 	Song* GetRandomSong();
 	Course* GetRandomCourse();
+	// sm-ssc addition:
+	RString GetSongGroupByIndex(unsigned index) { return m_sSongGroupNames[index]; }
 
 	void GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot ) const;
 	Song *GetSongFromSteps( Steps *pSteps ) const;
