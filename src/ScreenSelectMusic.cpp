@@ -90,20 +90,20 @@ void ScreenSelectMusic::Init()
 	TWO_PART_CONFIRMS_ONLY.Load( m_sName, "TwoPartConfirmsOnly" );
 	TWO_PART_TIMER_SECONDS.Load( m_sName, "TwoPartTimerSeconds" );
 	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
-	//To allow changing steps with gamebuttons -DaisuMaster
+	// To allow changing steps with gamebuttons -DaisuMaster
 	CHANGE_STEPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeStepsWithGameButtons" );
 	CHANGE_GROUPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeGroupsWithGameButtoms" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
 	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextSongButton") );
 
-	//Ask for those only if changing steps with gamebuttons is allowed -DaisuMaster
+	// Ask for those only if changing steps with gamebuttons is allowed -DaisuMaster
 	if( CHANGE_STEPS_WITH_GAME_BUTTONS )
 	{
 		m_GameButtonPreviousDifficulty = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousDifficultyButton") );
 		m_GameButtonNextDifficulty = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextDifficultyButton") );
 	}
-	//same here but for groups -DaisuMaster
+	// same here but for groups -DaisuMaster
 	if( CHANGE_GROUPS_WITH_GAME_BUTTONS )
 	{
 		m_GameButtonPreviousGroup = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousGroupButton") );
@@ -641,9 +641,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 		if( m_SelectionState == SelectionState_SelectingSong )
 		{
-			if ( input.MenuI == m_GameButtonPreviousDifficulty )
+			if (input.MenuI == m_GameButtonPreviousDifficulty )
 			{
-				// Oh! I forgot to restrict to switch if the selection is locked... -DaisuMaster
 				if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
 					m_soundLocked.Play();
 				else
@@ -658,6 +657,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			}
 		}
 	}
+
 	// Most likely a copypasta of the previous addition -DaisuMaster
 	if( CHANGE_GROUPS_WITH_GAME_BUTTONS )
 	{
@@ -672,7 +672,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 					m_soundLocked.Play();
 				else
 				{
-					//for real: copypasta
+					// for real: copypasta
 					RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
 					m_MusicWheel.SelectSection(sNewGroup);
 					m_MusicWheel.SetOpenSection(sNewGroup);
