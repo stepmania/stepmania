@@ -903,17 +903,10 @@ static const AutoMappings g_AutoKeyMappings_KB7 = AutoMappings (
 	AutoMappingEntry( 0, KEY_Cs,		KB7_BUTTON_KEY1,		false ),
 	AutoMappingEntry( 0, KEY_Cd,		KB7_BUTTON_KEY2,		false ),
 	AutoMappingEntry( 0, KEY_Cf,		KB7_BUTTON_KEY3,		false ),
-	AutoMappingEntry( 0, KEY_SPACE,	KB7_BUTTON_KEY4,		false ),
+	AutoMappingEntry( 0, KEY_SPACE,		KB7_BUTTON_KEY4,		false ),
 	AutoMappingEntry( 0, KEY_Cj,		KB7_BUTTON_KEY5,		false ),
 	AutoMappingEntry( 0, KEY_Ck,		KB7_BUTTON_KEY6,		false ),
-	AutoMappingEntry( 0, KEY_Cl,		KB7_BUTTON_KEY7,		false ),
-	AutoMappingEntry( 0, KEY_Cw,		KB7_BUTTON_KEY1,		true ),
-	AutoMappingEntry( 0, KEY_Ce,		KB7_BUTTON_KEY2,		true ),
-	AutoMappingEntry( 0, KEY_Cr,		KB7_BUTTON_KEY3,		true ),
-	AutoMappingEntry( 0, KEY_Ct,		KB7_BUTTON_KEY4,		true ),
-	AutoMappingEntry( 0, KEY_Cy,		KB7_BUTTON_KEY5,		true ),
-	AutoMappingEntry( 0, KEY_Cu,		KB7_BUTTON_KEY6,		true ),
-	AutoMappingEntry( 0, KEY_Ci,		KB7_BUTTON_KEY7,		true )
+	AutoMappingEntry( 0, KEY_Cl,		KB7_BUTTON_KEY7,		false )
 );
 
 //ThemeMetric<int>	KB7_COL_SPACING	("ColumnSpacing","KB7");
@@ -1022,7 +1015,7 @@ static const Game g_Game_KB7 =
 			{ "Key1",		GameButton_Invalid },
 			{ "Key2",		GAME_BUTTON_LEFT },
 			{ "Key3",		GAME_BUTTON_DOWN },
-			{ "Key4",		GAME_BUTTON_START },
+			{ "Key4",		GameButton_Invalid },
 			{ "Key5",		GAME_BUTTON_UP },
 			{ "Key6",		GAME_BUTTON_RIGHT },
 			{ "Key7",		GameButton_Invalid },
