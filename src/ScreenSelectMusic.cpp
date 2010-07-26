@@ -710,6 +710,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 				{
 					m_SelectionState = SelectionState_SelectingSong;
 					MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
+					MESSAGEMAN->Broadcast("PreviousSong");
 					m_MusicWheel.ChangeMusicUnlessLocked( -1 );
 				}
 			}
@@ -721,6 +722,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 				{
 					m_SelectionState = SelectionState_SelectingSong;
 					MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
+					MESSAGEMAN->Broadcast("NextSong");
 					m_MusicWheel.ChangeMusicUnlessLocked( +1 );
 				}
 			}
@@ -757,6 +759,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 					RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
 					m_MusicWheel.SelectSection(sNewGroup);
 					m_MusicWheel.SetOpenSection(sNewGroup);
+					MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
 					MESSAGEMAN->Broadcast("PreviousGroup");
 					AfterMusicChange();
 				}
@@ -770,6 +773,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 					RString sNewGroup = m_MusicWheel.JumpToNextGroup();
 					m_MusicWheel.SelectSection(sNewGroup);
 					m_MusicWheel.SetOpenSection(sNewGroup);
+					MESSAGEMAN->Broadcast("TwoPartConfirmCanceled");
 					MESSAGEMAN->Broadcast("NextGroup");
 					AfterMusicChange();
 				}
@@ -803,10 +807,11 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 					m_soundLocked.Play();
 				else
 				{
+					// XXX: should this be called "TwoPartCancelled"?
 					Message msg("SongUnchosen");
 					msg.SetParam( "Player", input.pn );
 					MESSAGEMAN->Broadcast( msg );
-					//unset all steps
+					// unset all steps
 					FOREACH_ENUM( PlayerNumber , p )
 						m_bStepsChosen[p] = false;
 					m_SelectionState = SelectionState_SelectingSong;
