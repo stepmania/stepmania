@@ -92,7 +92,7 @@ void ScreenSelectMusic::Init()
 	WRAP_CHANGE_STEPS.Load( m_sName, "WrapChangeSteps" );
 	// To allow changing steps with gamebuttons -DaisuMaster
 	CHANGE_STEPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeStepsWithGameButtons" );
-	CHANGE_GROUPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeGroupsWithGameButtoms" );
+	CHANGE_GROUPS_WITH_GAME_BUTTONS.Load( m_sName, "ChangeGroupsWithGameButtons" );
 
 	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
 	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextSongButton") );
