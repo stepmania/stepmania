@@ -573,21 +573,25 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 					}
 					else if (BeginsWith(NoteRowString, "|B")) 
 					{
-						out.m_Timing.AddBPMSegment( BPMSegment( BeatToNoteRow(fCurBeat), (float)numTemp ) );
+						//out.m_Timing.AddBPMSegment( BPMSegment( BeatToNoteRow(fCurBeat), (float)numTemp ) );
+						out.m_Timing.SetBPMAtBeat( (float)numTemp, fCurBeat );
 						continue;
 					}
 					else if (BeginsWith(NoteRowString, "|E"))
 					{
 						//Finally! the |E| tag is working as it should. I can die happy now -DaisuMaster
+						bool bDelay = true;
 						float fCurDelay = 60 / out.m_Timing.GetBPMAtBeat(fCurBeat) * (float)numTemp / iTickCount;
-						out.m_Timing.AddStopSegment( StopSegment( BeatToNoteRow(fCurBeat), fCurDelay, true ) );
+						fCurDelay += out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat), bDelay);
+						out.m_Timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
 						continue;
 					}
 					else if (BeginsWith(NoteRowString, "|D"))
 					{
 						bool bDelay = true;
-						float fCurDelay = out.m_Timing.GetStopAtRow(i, bDelay);
-						out.m_Timing.AddStopSegment( StopSegment( BeatToNoteRow(fCurBeat), fCurDelay, true ) );
+						float fCurDelay = out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat), bDelay);
+						fCurDelay += (float)numTemp / 1000;
+						out.m_Timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
 						continue;
 					}
 				}
