@@ -111,6 +111,10 @@ enum EditButton
 	EDIT_BUTTON_BPM_DOWN,
 	EDIT_BUTTON_STOP_UP,
 	EDIT_BUTTON_STOP_DOWN,
+	/*
+	EDIT_BUTTON_DELAY_UP,
+	EDIT_BUTTON_DELAY_DOWN,
+	*/
 	EDIT_BUTTON_OFFSET_UP,
 	EDIT_BUTTON_OFFSET_DOWN,
 	EDIT_BUTTON_SAMPLE_START_UP,
@@ -185,8 +189,8 @@ public:
 	virtual void HandleMessage( const Message &msg );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void SetDirty( bool bDirty )	{ m_bDirty = bDirty; }
-	bool IsDirty() const		{ return m_bDirty; }
+	void SetDirty( bool bDirty ) { m_bDirty = bDirty; }
+	bool IsDirty() const { return m_bDirty; }
 
 protected:
 	virtual ScreenType GetScreenType() const { return m_EditState==STATE_PLAYING ? gameplay : ScreenWithMenuElements::GetScreenType(); }
@@ -217,7 +221,7 @@ protected:
 	Song*			m_pSong;
 	Steps*			m_pSteps;
 
-	PlayerNumber		m_InputPlayerNumber;
+	PlayerNumber	m_InputPlayerNumber;
 	PlayerState		m_PlayerStateEdit;
 	NoteField		m_NoteFieldEdit;
 	NoteData		m_NoteDataEdit;
@@ -226,21 +230,21 @@ protected:
 	BitmapText		m_textInputTips;
 
 	void UpdateTextInfo();
-	BitmapText		m_textInfo;		// status information that changes
+	BitmapText		m_textInfo; // status information that changes
 	bool			m_bTextInfoNeedsUpdate;
 
 	BitmapText		m_textPlayRecordHelp;
 
 	// keep track of where we are and what we're doing
-	float			m_fTrailingBeat;	// this approaches GAMESTATE->m_fSongBeat, which is the actual beat
-	/* The location we were at when shift was pressed, or
-	 * -1 when shift isn't pressed: */
+	float			m_fTrailingBeat; // this approaches GAMESTATE->m_fSongBeat, which is the actual beat
+	// The location we were at when shift was pressed, or -1 when shift isn't pressed:
 	int			m_iShiftAnchor;
 
 	NoteData		m_Clipboard;
 	bool    		m_bHasUndo;
 	// TODO: convert this into a stack of NoteData objs for multi-state undo -aj
 	NoteData		m_Undo;
+	// TODO: also maybe have a redo stack/option -aj
 
 	bool			m_bDirty;
 
@@ -277,12 +281,12 @@ protected:
 	bool			m_bReturnToRecordMenuAfterPlay;
 
 // for MODE_RECORD and MODE_PLAY
-	int			m_iStartPlayingAt, m_iStopPlayingAt;
+	int				m_iStartPlayingAt, m_iStopPlayingAt;
 	float			m_fBeatToReturnTo;
 
-	AutoKeysounds		m_AutoKeysounds;
+	AutoKeysounds	m_AutoKeysounds;
 	RageSound		*m_pSoundMusic;
-	GameplayAssist		m_GameplayAssist;
+	GameplayAssist	m_GameplayAssist;
 
 	ThemeMetric<EditMode> EDIT_MODE;
 
@@ -421,6 +425,7 @@ public:
 		main_title,
 		sub_title,
 		artist,
+		genre,
 		credit,
 		main_title_transliteration,
 		sub_title_transliteration,
