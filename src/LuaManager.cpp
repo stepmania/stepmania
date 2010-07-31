@@ -251,12 +251,12 @@ LuaManager::LuaManager()
 	lua_pushcfunction( L, luaopen_string ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_table ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_debug ); lua_call( L, 0, 0 );
-	// these three can be dangerous. don't use them
+	lua_pushcfunction( L, luaopen_package ); lua_call( L, 0, 0 ); // this one seems safe -shake
+	// these two can be dangerous. don't use them
 	// (unless you know what you are doing). -aj
 #if 0
 	lua_pushcfunction( L, luaopen_io ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_os ); lua_call( L, 0, 0 );
-	lua_pushcfunction( L, luaopen_package ); lua_call( L, 0, 0 );
 #endif
 
 	// Store the thread pool in a table on the stack, in the main thread.
