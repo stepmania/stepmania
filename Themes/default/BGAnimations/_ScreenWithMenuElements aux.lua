@@ -1,0 +1,1 @@
+local t = Def.ActorFrame {};

@@ -1,9 +1,21 @@
-local curStage = GAMESTATE:GetCurrentStage()
 local playMode = GAMESTATE:GetPlayMode()
 if playMode ~= 'PlayMode_Regular' and playMode ~= 'PlayMode_Rave' and playMode ~= 'PlayMode_Battle' then
 	curStage = playMode;
 end;
-
+local sStage = GAMESTATE:GetCurrentStage();
+local tRemap = {
+	Stage_1st		= 1,
+	Stage_2nd		= 2,
+	Stage_3rd		= 3,
+	Stage_4th		= 4,
+	Stage_5th		= 5,
+	Stage_6th		= 6,
+};
+if tRemap[sStage] == PREFSMAN:GetPreference("SongsPerPlay") then
+	sStage = "Stage_Final";
+else
+	return
+end;
 local t = Def.ActorFrame {};
 t[#t+1] = Def.Quad {
 	InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color("Black"));
@@ -18,7 +30,7 @@ t[#t+1] = Def.ActorFrame {
 	InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y);
 	OnCommand=cmd(stoptweening;zoom,1.25;decelerate,3;zoom,1);
 	
-	LoadActor( THEME:GetPathG("ScreenStageInformation", "Stage " .. ToEnumShortString(curStage) ) ) .. {
+	LoadActor( THEME:GetPathG("ScreenStageInformation", "Stage " .. ToEnumShortString(sStage) ) ) .. {
 		OnCommand=cmd(diffusealpha,0;linear,0.25;diffusealpha,1;sleep,1.75;linear,0.5;zoomy,0;zoomx,2;diffusealpha,0);
 	};
 };
