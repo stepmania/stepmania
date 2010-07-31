@@ -93,6 +93,10 @@ gholms
  * Make autogen.sh look for automake 1.11
  (http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=140)
 
+juanelote
+ * [SongManager] GetSongGroupByIndex function
+ * [MusicWheel] JumpToNextGroup/JumpToPrevGroup logic modifications
+
 ==the beta testers==
 [SSC Beta Testing Team]
 KeithD

@@ -14,6 +14,29 @@ sm-ssc v1.0 Release Candidate 2 | 2010xxxx
 --------------------------------------------------------------------------------
 (Miniholds bug must be fixed before this can be released)
 
+20100731
+--------
+* Add "package" to StepMania's Lua. [shakesoda]
+
+20100727
+--------
+* Allow editing of a Song's #GENRE tag within the editor.
+
+20100726
+--------
+* Fix |D| tag handling in Direct Move KSFs [Daisuke Master]
+* Fix up alternate mappings for kb7 [shakesoda]
+* [MusicWheel] Add RemindWheelPositions metric. [Daisuke Master]
+
+20100725
+--------
+* [MusicWheel] JumpToNext/PrevGroup functions tweaked [juanelote]
+* [MusicWheel] Added OnlyShowActiveSection metric. Only shows one group at
+  time. Use the Next/Previous Group codes to switch groups. [Daisuke Master]
+* Allowed group changing via GameButtons as well. [Daisuke Master]
+* [SongManager] Added GetSongGroupByIndex function. [juanelote]
+  (to-do: Give this a Lua binding. -aj)
+
 ================================================================================
 sm-ssc v1.0 Release Candidate 1.5 | 20100723
 --------------------------------------------------------------------------------
