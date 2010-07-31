@@ -75,6 +75,7 @@ void ScreenSelectMaster::Init()
 	SCROLLER_SECONDS_PER_ITEM.Load( m_sName, "ScrollerSecondsPerItem" );
 	SCROLLER_NUM_ITEMS_TO_DRAW.Load( m_sName, "ScrollerNumItemsToDraw" );
 	SCROLLER_TRANSFORM.Load( m_sName, "ScrollerTransform" );
+	//SCROLLER_TWEEN.Load( m_sName, "ScrollerTween" );
 	SCROLLER_SUBDIVISIONS.Load( m_sName, "ScrollerSubdivisions" );
 	DEFAULT_CHOICE.Load( m_sName, "DefaultChoice" );
 	DOUBLE_PRESS_TO_SELECT.Load(m_sName,"DoublePressToSelect");
@@ -438,6 +439,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 				m_vsprScroll[*p][iChoice]->HandleMessage( msg );
 			}
 		}
+		MESSAGEMAN->Broadcast(msg);
 
 		m_fLockInputSecs = POST_SWITCH_PAGE_SECONDS;
 	}
@@ -757,6 +759,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	Message msg("PreSwitchPage");
 	msg.SetParam( "OldPageIndex", (int)oldPage );
 	msg.SetParam( "NewPageIndex", (int)newPage );
+	//MESSAGEMAN->Broadcast( msg );
 
 	FOREACH( PlayerNumber, vpns, p )
 	{
@@ -792,7 +795,9 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 
 	Page page = GetPage( iNewChoice );
 	if( GetPage(m_iChoice[pn]) != page )
+	{
 		return ChangePage( iNewChoice );
+	}
 
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION  ||  page != PAGE_1 )
@@ -914,9 +919,8 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 
 		if( SHOW_SCROLLER )
 		{
-
-			ActorScroller &scroller = (m_bUsingTwoLists && m_iSelectedList == 1)?(SHARED_SELECTION ? m_ScrollerB[0] : m_ScrollerB[*p]):(SHARED_SELECTION ? m_Scroller[0] : m_Scroller[*p]);
-			vector<AutoActor> &vScroll = (m_bUsingTwoLists && m_iSelectedList == 1)?(SHARED_SELECTION ? m_vsprScrollB[0] : m_vsprScrollB[*p]):(SHARED_SELECTION ? m_vsprScroll[0] : m_vsprScroll[*p]);
+			ActorScroller &scroller = (m_bUsingTwoLists && m_iSelectedList == 1)?(SHARED_SELECTION ? m_ScrollerB[0] : m_ScrollerB[*p]):(SHARED_SELECTION ||  page != PAGE_1 ? m_Scroller[0] : m_Scroller[*p]);
+			vector<AutoActor> &vScroll = (m_bUsingTwoLists && m_iSelectedList == 1)?(SHARED_SELECTION ? m_vsprScrollB[0] : m_vsprScrollB[*p]):(SHARED_SELECTION ||  page != PAGE_1 ? m_vsprScroll[0] : m_vsprScroll[*p]);
 
 			// second list
 			if(m_bUsingTwoLists && m_iSelectedList == 1)
