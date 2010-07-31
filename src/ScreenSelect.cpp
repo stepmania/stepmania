@@ -14,23 +14,6 @@
 #define IDLE_TIMEOUT_SCREEN	THEME->GetMetric (m_sName,"IdleTimeoutScreen")
 #define UPDATE_ON_MESSAGE	THEME->GetMetric (m_sName,"UpdateOnMessage")
 
-#if defined(SSC_FUTURES)
-#define LIST_NAMES				THEME->GetMetric (m_sName,"ListNames")
-#else
-// xxx: USE_TWO_LISTS is just a hack for two players. -aj
-#define USE_TWO_LISTS			THEME->GetMetricB (m_sName,"UseTwoLists")
-#endif
-
-#if defined(SSC_FUTURES)
-#define LIST_CONDITION( s )		THEME->GetMetricR (m_sName,"List%sCondition",s.c_str())
-#define CHOICE_NAMES_MULTI( s )	THEME->GetMetric (m_sName,ssprintf("List%sChoiceNames",s.c_str()))
-#define CHOICEMULTI( s1, s2 )		THEME->GetMetric (m_sName,ssprintf("List%sChoice%s",s1.c_str(),s2.c_str()))
-#else
-// xxx: these are used by USE_TWO_LISTS. -aj
-#define CHOICE_NAMESB		THEME->GetMetric (m_sName,"ChoiceNamesB")
-#define CHOICEB( s )		THEME->GetMetric (m_sName,ssprintf("ChoiceB%s",s.c_str()))
-#endif
-
 void ScreenSelect::Init()
 {
 	IDLE_COMMENT_SECONDS.Load( m_sName, "IdleCommentSeconds" );
@@ -67,54 +50,15 @@ void ScreenSelect::Init()
 			mc.Load( c, cmd );
 			m_aGameCommands.push_back( mc );
 		}
-
-		m_iSelectedList = 0;
-		if(USE_TWO_LISTS)
-		{
-			m_bUsingTwoLists = true;
-			vector<RString> asChoiceNames2;
-			split( CHOICE_NAMESB, ",", asChoiceNames2, true );
-
-			for( unsigned c=0; c<asChoiceNames2.size(); c++ )
-			{
-				RString sChoiceName = asChoiceNames2[c];
-
-				GameCommand mc;
-				mc.ApplyCommitsScreens( false );
-				mc.m_sName = sChoiceName;
-				Commands cmd = ParseCommands( CHOICEB(sChoiceName) );
-				mc.Load( c, cmd );
-				m_aGameCommandsB.push_back( mc );
-			}
-		}
-		else
-		{
-			m_bUsingTwoLists = false;
-		}
 	}
 
 	if( !m_aGameCommands.size() )
 		RageException::Throw( "Screen \"%s\" does not set any choices.", m_sName.c_str() );
-
-	if(USE_TWO_LISTS)
-	{
-		if(!m_aGameCommandsB.size() )
-			RageException::Throw ("Screen \"%s\" has specified two lists, but does not set any choices for the second list.",m_sName.c_str() );
-	}
 }
 
 void ScreenSelect::BeginScreen()
 {
 	ScreenWithMenuElements::BeginScreen();
-
-	if(USE_TWO_LISTS)
-	{
-		if( GAMESTATE->GetNumSidesJoined() > 1 )
-		{
-			m_iSelectedList = 1;
-			this->UpdateSelectableChoices();
-		}
-	}
 
 	m_timerIdleComment.GetDeltaTime();
 	m_timerIdleTimeout.GetDeltaTime();
@@ -163,19 +107,11 @@ void ScreenSelect::Input( const InputEventPlus &input )
 
 	if( input.MenuI == GAME_BUTTON_START && input.type == IET_FIRST_PRESS && GAMESTATE->JoinInput(input.pn) )
 	{
+		// HACK: Only play start sound for the 2nd player who joins. The 
+		// start sound for the 1st player will be played by ScreenTitleMenu 
+		// when the player makes a selection on the screen.
 		if( GAMESTATE->GetNumSidesJoined() > 1 )
-		{
-			if(USE_TWO_LISTS)
-			{
-				m_iSelectedList = 1;
-				this->UpdateSelectableChoices();
-			}
-
-			// HACK: Only play start sound for the 2nd player who joins. The 
-			// start sound for the 1st player will be played by ScreenTitleMenu 
-			// when the player makes a selection on the screen.
 			SCREENMAN->PlayStartSound();
-		}
 
 		if( !ALLOW_DISABLED_PLAYER_INPUT )
 			return;	// don't let the screen handle the MENU_START press
@@ -223,72 +159,20 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 
 		if( bAllPlayersChoseTheSame )
 		{
-			if(USE_TWO_LISTS) // using two lists
-			{
-				if(m_iSelectedList == 0) // first list is selected
-				{
-					const GameCommand &gc = m_aGameCommands[iMastersIndex];
-
-					m_sNextScreen = gc.m_sScreen;
-					if( !gc.m_bInvalid )
-						gc.ApplyToAllPlayers();
-				}
-				else // second list is selected
-				{
-					const GameCommand &gc = m_aGameCommandsB[iMastersIndex];
-
-					m_sNextScreen = gc.m_sScreen;
-					if( !gc.m_bInvalid )
-						gc.ApplyToAllPlayers();
-
-				}
-
-			}
-			else // not using two lists
-			{
-				const GameCommand &gc = m_aGameCommands[iMastersIndex];
-				m_sNextScreen = gc.m_sScreen;
-				if( !gc.m_bInvalid )
-					gc.ApplyToAllPlayers();
-			}
+			const GameCommand &gc = m_aGameCommands[iMastersIndex];
+			m_sNextScreen = gc.m_sScreen;
+			if( !gc.m_bInvalid )
+				gc.ApplyToAllPlayers();
 		}
 		else
 		{
-			if(USE_TWO_LISTS) // using two lists
+			FOREACH_HumanPlayer( p )
 			{
-				if(m_iSelectedList == 0) // first list is selected
-				{
-					FOREACH_HumanPlayer( p )
-					{
-						int iIndex = this->GetSelectionIndex(p);
-						const GameCommand &gc = m_aGameCommands[iIndex];
-						m_sNextScreen = gc.m_sScreen;
-						if( !gc.m_bInvalid )
-							gc.Apply( p );
-					}
-				}
-				else
-				{
-					FOREACH_HumanPlayer( p )
-					{
-						int iIndex = this->GetSelectionIndex(p);
-						const GameCommand &gc = m_aGameCommandsB[iIndex];
-						m_sNextScreen = gc.m_sScreen;
-						if( !gc.m_bInvalid )
-							gc.Apply( p );
-					}
-				}
-			}
-			else // only using a single list
-			{
-				FOREACH_HumanPlayer( p )
-				{
-					int iIndex = this->GetSelectionIndex(p);
-					const GameCommand &gc = m_aGameCommands[iIndex];
-					m_sNextScreen = gc.m_sScreen;
-					if( !gc.m_bInvalid )
-						gc.Apply( p );
-				}
+				int iIndex = this->GetSelectionIndex(p);
+				const GameCommand &gc = m_aGameCommands[iIndex];
+				m_sNextScreen = gc.m_sScreen;
+				if( !gc.m_bInvalid )
+					gc.Apply( p );
 			}
 		}
 

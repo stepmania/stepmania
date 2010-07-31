@@ -75,11 +75,11 @@ protected:
 	ThemeMetric<float>	SCROLLER_SECONDS_PER_ITEM;
 	ThemeMetric<float>	SCROLLER_NUM_ITEMS_TO_DRAW;
 	ThemeMetric<LuaReference> SCROLLER_TRANSFORM;
+	//ThemeMetric<LuaReference> SCROLLER_TWEEN;
 	ThemeMetric<int>	SCROLLER_SUBDIVISIONS;
 	ThemeMetric<RString>	DEFAULT_CHOICE;
 
 	map<int,int> m_mapCurrentChoiceToNextChoice[NUM_MenuDir];
-	map<int,int> m_mapCurrentChoiceToNextChoiceB[NUM_MenuDir]; // if using two lists
 
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
@@ -98,14 +98,11 @@ protected:
 	AutoActor	m_sprMore[NUM_Page];
 	// icon is the shared, per-choice piece
 	vector<AutoActor> m_vsprIcon;
-	vector<AutoActor> m_vsprIconB; // used if a themer wants two lists
 
 	// preview is per-player, per-choice piece
 	vector<AutoActor> m_vsprScroll[NUM_PLAYERS];
-	vector<AutoActor> m_vsprScrollB[NUM_PLAYERS]; // used if a themer wants two lists
 
 	ActorScroller	m_Scroller[NUM_PLAYERS];
-	ActorScroller	m_ScrollerB[NUM_PLAYERS]; // used if a themer wants two lists
 
 	// cursor is the per-player, shared by all choices
 	AutoActor	m_sprCursor[NUM_PLAYERS];
