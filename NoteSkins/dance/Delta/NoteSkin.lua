@@ -42,6 +42,8 @@ ret.PartsToRotate =
 {
 	["Receptor"] = true,
 	["Tap Note"] = true,
+	["Tap Fake"] = true,
+	["Tap Lift"] = true,
 	["Ready Receptor"] = true,
 	["Tap Explosion Bright"] = true,
 	["Tap Explosion Dim"] = true,
