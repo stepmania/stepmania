@@ -7,8 +7,8 @@
 #include <fcntl.h>
 
 #include <errno.h>
-#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <linux/input.h>
 
 REGISTER_INPUT_HANDLER_CLASS2( Event, Linux_Event );

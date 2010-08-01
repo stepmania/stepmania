@@ -8,6 +8,7 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <dirent.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 
 bool MemoryCardDriverThreaded_Linux::TestWrite( UsbStorageDevice* pDevice )
@@ -46,7 +47,7 @@ static bool ReadFile( const RString &sPath, RString &sBuf )
 		LOG->Warn( "Error opening \"%s\": %s", sPath.c_str(), strerror(errno) );
 		return false;
 	}
-
+	
 	while(1)
 	{
 		char buf[1024];
@@ -62,7 +63,7 @@ static bool ReadFile( const RString &sPath, RString &sBuf )
 		if( iGot < (int) sizeof(buf) )
 			break;
 	}
-
+	
 	close(fd);
 	return true;
 }
@@ -88,7 +89,7 @@ bool MemoryCardDriverThreaded_Linux::USBStorageDevicesChanged()
 	/* If a device is removed and reinserted, the inode of the /sys/block entry
 	 * will change. */
 	RString sDevicePath = "/sys/block/";
-
+	
 	vector<RString> asDevices;
 	GetFileList( sDevicePath, asDevices );
 
@@ -100,7 +101,7 @@ bool MemoryCardDriverThreaded_Linux::USBStorageDevicesChanged()
 
 		sThisDevices += ssprintf( "%i,", (int) buf.st_ino );
 	}
-
+	       
 	bool bChanged = sThisDevices != m_sLastDevices;
 	m_sLastDevices = sThisDevices;
 	if( bChanged )
@@ -111,7 +112,7 @@ bool MemoryCardDriverThreaded_Linux::USBStorageDevicesChanged()
 void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
 	LOG->Trace( "GetUSBStorageDevices" );
-
+	
 	vDevicesOut.clear();
 
 	{
@@ -130,18 +131,20 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			RString sPath = sBlockDevicePath + sDevice + "/";
 			usbd.sSysPath = sPath;
 
-			// Ignore non-removable devices.
+			/* Ignore non-removable devices. */
 			RString sBuf;
 			if( !ReadFile( sPath + "removable", sBuf ) )
 				continue; // already warned
 			if( atoi(sBuf) != 1 )
 				continue;
 
-			/* The kernel isn't exposing all of /sys atomically, so we end up missing
-			 * the partition due to it not being shown yet. It won't show up until the
+			/*
+			 * The kernel isn't exposing all of /sys atomically, so we end up missing
+			 * the partition due to it not being shown yet.  It won't show up until the
 			 * kernel has scanned the partition table, which can take a variable amount
-			 * of time, sometimes over a second. Watch for the "queue" sysfs directory,
-			 * which is created after this, to tell when partition directories are created. */
+			 * of time, sometimes over a second.  Watch for the "queue" sysfs directory,
+			 * which is created after this, to tell when partition directories are created.
+			 */
 			RageTimer WaitUntil;
 			WaitUntil += 5;
 			RString sQueueFilePath = usbd.sSysPath + "queue";
@@ -166,7 +169,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				usleep(10000);
 			}
 
-			// If the first partition device exists, eg. /sys/block/uba/uba1, use it.
+			/* If the first partition device exists, eg. /sys/block/uba/uba1, use it. */
 			if( access(usbd.sSysPath + sDevice + "1", F_OK) != -1 )
 			{
 				LOG->Trace("OK");
@@ -178,7 +181,8 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				usbd.sDevice = "/dev/" + sDevice;
 			}
 
-			/* sPath/device should be a symlink to the actual device.  For USB
+			/*
+			 * sPath/device should be a symlink to the actual device.  For USB
 			 * devices, it looks like this:
 			 *
 			 * device -> ../../devices/pci0000:00/0000:00:02.1/usb2/2-1/2-1:1.0
@@ -193,10 +197,13 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			}
 			else
 			{
-				/* The full path looks like:
-				 * ../../devices/pci0000:00/0000:00:02.1/usb2/2-2/2-2.1/2-2.1:1.0
+				/*
+				 * The full path looks like
+				 *
+				 *   ../../devices/pci0000:00/0000:00:02.1/usb2/2-2/2-2.1/2-2.1:1.0
 				 *
 				 * In newer kernels, it looks like:
+				 *
 				 * ../../../3-2.1:1.0
 				 *
 				 * Each path element refers to a new hop in the chain.
@@ -207,7 +214,8 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				 *       .2       ... port 2 on the next hub ...
 				 * 
 				 * We want the bus number and the port of the last hop.  The level is
-				 * the number of hops. */
+				 * the number of hops.
+				 */
 				szLink[iRet] = 0;
 				vector<RString> asBits;
 				split( szLink, "/", asBits );
@@ -215,12 +223,12 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				RString sHostPort = asBits[asBits.size()-1];
 				if( !sHostPort.empty() )
 				{
-					// Strip off the endpoint information after the colon.
+					/* Strip off the endpoint information after the colon. */
 					size_t pos = sHostPort.find(':');
 					if( pos != string::npos )
 						sHostPort.erase( pos );
 					
-					// sHostPort is eg. 2-2.1.
+					/* sHostPort is eg. 2-2.1. */
 					sHostPort.Replace( "-", "." );
 					asBits.clear();
 					split( sHostPort, ".", asBits );
@@ -261,11 +269,11 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 
 	{
 		// Find where each device is mounted. Output looks like:
-
+		
 		// /dev/sda1               /mnt/flash1             auto    noauto,owner 0 0
 		// /dev/sdb1               /mnt/flash2             auto    noauto,owner 0 0
 		// /dev/sdc1               /mnt/flash3             auto    noauto,owner 0 0
-
+		
 		RString fn = "/rootfs/etc/fstab";
 		RageFile f;
 		if( !f.Open(fn) )
@@ -273,7 +281,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			LOG->Warn( "can't open '%s': %s", fn.c_str(), f.GetError().c_str() );
 			return;
 		}
-
+		
 		RString sLine;
 		while( !f.AtEOF() )
 		{
@@ -284,18 +292,18 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				LOG->Warn( "error reading '%s': %s", fn.c_str(), f.GetError().c_str() );
 				return;
 			}
-
+			
 			char szScsiDevice[1024];
 			char szMountPoint[1024];
 			int iRet = sscanf( sLine, "%s %s", szScsiDevice, szMountPoint );
 			if( iRet != 2 )
 				continue;	// don't process this line
-
-
+			
+			
 			RString sMountPoint = szMountPoint;
 			TrimLeft( sMountPoint );
 			TrimRight( sMountPoint );
-
+			
 			// search for the mountpoint corresponding to the device
 			for( unsigned i=0; i<vDevicesOut.size(); i++ )
 			{
@@ -316,20 +324,20 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				usbd.sDevice.c_str(), usbd.iBus, usbd.iLevel, usbd.iPort, usbd.idVendor, usbd.idProduct, usbd.sVendor.c_str(),
 				usbd.sProduct.c_str(), usbd.sSerial.c_str(), usbd.sOsMountDir.c_str() );
 	}
-
-	// Remove any devices that we couldn't find a mountpoint for.
+	
+	/* Remove any devices that we couldn't find a mountpoint for. */
 	for( unsigned i=0; i<vDevicesOut.size(); i++ )
 	{
 		UsbStorageDevice& usbd = vDevicesOut[i];
 		if( usbd.sOsMountDir.empty() )
 		{
 			LOG->Trace( "Ignoring %s (couldn't find in /etc/fstab)", usbd.sDevice.c_str() );
-
+			
 			vDevicesOut.erase( vDevicesOut.begin()+i );
 			--i;
 		}
 	}
-
+	
 	LOG->Trace( "Done with GetUSBStorageDevices" );
 }
 
@@ -338,8 +346,8 @@ bool MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice )
 {
 	ASSERT( !pDevice->sDevice.empty() );
 	
-		RString sCommand = "mount " + pDevice->sDevice;
-		bool bMountedSuccessfully = ExecuteCommand( sCommand );
+        RString sCommand = "mount " + pDevice->sDevice;
+        bool bMountedSuccessfully = ExecuteCommand( sCommand );
 
 	return bMountedSuccessfully;
 }
@@ -348,7 +356,7 @@ void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice )
 {
 	if( pDevice->sDevice.empty() )
 		return;
-
+	
 	/* Use umount -l, so we unmount the device even if it's in use.  Open
 	 * files remain usable, and the device (eg. /dev/sda) won't be reused
 	 * by new devices until those are closed.  Without this, if something
