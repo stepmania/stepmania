@@ -11,11 +11,13 @@ local tRemap = {
 	Stage_5th		= 5,
 	Stage_6th		= 6,
 };
+
 if tRemap[sStage] == PREFSMAN:GetPreference("SongsPerPlay") then
 	sStage = "Stage_Final";
 else
-	return
+	sStage = sStage;
 end;
+
 local t = Def.ActorFrame {};
 t[#t+1] = Def.Quad {
 	InitCommand=cmd(Center;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color("Black"));
