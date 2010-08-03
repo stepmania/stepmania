@@ -19,7 +19,7 @@ return Def.ActorFrame {
 			end
 		end; --]]
 		OnCommand=cmd(strokecolor,Color("Outline"));
-		GainFocusCommand=cmd(zoom,1;diffuse,color("1,1,1,1"));
+		GainFocusCommand=cmd(stoptweening;linear,0.125;zoom,1;diffuse,color("1,1,1,1"));
 --[[ 		GainFocusCommand=function(self)
 			if string.find( tostring( THEME:GetMetric( Var "LoadingScreen", "DisabledChoices") ) , gc:GetText() ) ~= nil then
 				self:zoom(1);
@@ -29,6 +29,6 @@ return Def.ActorFrame {
 				self:diffuse(Color("White"));
 			end
 		end; --]]
-		LoseFocusCommand=cmd(zoom,0.75;diffuse,color("0.5,0.5,0.5,1"));
+		LoseFocusCommand=cmd(stoptweening;linear,0.125;zoom,0.75;diffuse,color("0.5,0.5,0.5,1"));
 	};
 };

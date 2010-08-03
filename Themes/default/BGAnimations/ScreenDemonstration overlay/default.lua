@@ -1,12 +1,12 @@
 local t = Def.ActorFrame{
 	Def.Quad{
 		Name="TopFrame";
-		InitCommand=cmd(CenterX;y,SCREEN_TOP;valign,0;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT*0.15;diffuse,color("0.1,0.1,0.1,1");fadebottom,0.5);
+		InitCommand=cmd(CenterX;y,SCREEN_TOP;valign,0;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT*0.15;diffuse,color("0,0,0,1");fadebottom,0.5);
 	};
 
 	Def.Quad{
 		Name="BotFrame";
-		InitCommand=cmd(CenterX;y,SCREEN_BOTTOM;valign,1;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT*0.15;diffuse,color("0.1,0.1,0.1,1");fadetop,0.5);
+		InitCommand=cmd(CenterX;y,SCREEN_BOTTOM;valign,1;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT*0.15;diffuse,color("0,0,0,1");fadetop,0.5);
 	};
 
 	Def.ActorFrame{
@@ -26,17 +26,17 @@ local t = Def.ActorFrame{
 
 	LoadFont("Common normal")..{
 		Name="SongTitle";
-		InitCommand=cmd(x,SCREEN_WIDTH*2;y,SCREEN_TOP+20;);
+		InitCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_TOP+20;zoom,0.5;shadowlength,1);
 		BeginCommand=function(self)
 			local song = GAMESTATE:GetCurrentSong();
 			local text = "";
 			if song then
-				text = song:GetDisplayArtist().." / "..song:GetDisplayFullTitle().."   [from "..song:GetGroupName().."]";
+				text = song:GetDisplayArtist().." - "..song:GetDisplayFullTitle().."   [from "..song:GetGroupName().."]";
 			end;
 			self:settext(text);
 		end;
-		OnCommand=cmd(queuecommand,"Scroll");
-		ScrollCommand=cmd(linear,10;x,-SCREEN_WIDTH*2;sleep,1;x,SCREEN_WIDTH*2;queuecommand,"Scroll");
+-- 		OnCommand=cmd(queuecommand,"Scroll");
+-- 		ScrollCommand=cmd(linear,10;x,-SCREEN_WIDTH*2;sleep,1;x,SCREEN_WIDTH*2;queuecommand,"Scroll");
 	};
 };
 
