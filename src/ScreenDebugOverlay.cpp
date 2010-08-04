@@ -43,6 +43,8 @@ static const ThemeMetric<float>		LINE_START_Y	("ScreenDebugOverlay", "LineStartY
 static const ThemeMetric<float>		LINE_SPACING	("ScreenDebugOverlay", "LineSpacing");
 static const ThemeMetric<float>		LINE_BUTTON_X	("ScreenDebugOverlay", "LineButtonX");
 static const ThemeMetric<float>		LINE_FUNCTION_X	("ScreenDebugOverlay", "LineFunctionX");
+static const ThemeMetric<float>		PAGE_START_X	("ScreenDebugOverlay", "PageStartX");
+static const ThemeMetric<float>		PAGE_SPACING_X	("ScreenDebugOverlay", "PageSpacingX");
 
 // self-registering debug lines
 // We don't use SubscriptionManager, because we want to keep the line order.
@@ -258,10 +260,10 @@ void ScreenDebugOverlay::Init()
 		p->SetName( "PageText" );
 		p->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "page") );
 		LOAD_ALL_COMMANDS( p );
-		// todo: be able to set different values? -aj
-		p->SetXY( SCREEN_CENTER_X-100+iPage*100, SCREEN_TOP+20 );
+		// todo: Y value is still hardcoded. -aj
+		p->SetXY( PAGE_START_X+iPage*PAGE_SPACING_X, SCREEN_TOP+20 );
 		p->SetText( *s + " (" + sButton + ")" );
-		p->SetShadowLength( 1 );
+		//p->SetShadowLength( 1 );
 		m_vptextPages.push_back( p );
 		this->AddChild( p );
 	}
