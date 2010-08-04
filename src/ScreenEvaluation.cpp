@@ -649,8 +649,8 @@ void ScreenEvaluation::Init()
 	switch( best_grade )
 	{
 	case Grade_Tier01:
-	case Grade_Tier02:	
-	case Grade_Tier03:	
+	case Grade_Tier02:
+	case Grade_Tier03:
 		this->PostScreenMessage( SM_PlayCheer, CHEER_DELAY_SECONDS );
 		break;
 	}

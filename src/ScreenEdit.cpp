@@ -782,7 +782,7 @@ void ScreenEdit::Init()
 
 	m_EditState = EditState_Invalid;
 	TransitionEditState( STATE_EDITING );
-	
+
 	m_bRemoveNoteButtonDown = false;
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
@@ -791,7 +791,6 @@ void ScreenEdit::Init()
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
 	m_bDirty = false;
-
 
 	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	m_Player->CacheAllUsedNoteSkins();
@@ -829,11 +828,8 @@ void ScreenEdit::Init()
 	m_soundSave.Load(		THEME->GetPathS("ScreenEdit","save") );
 	m_GameplayAssist.Init();
 
-
-
 	m_AutoKeysounds.FinishLoading();
 	m_pSoundMusic = m_AutoKeysounds.GetSound();
-	
 
 	this->HandleScreenMessage( SM_UpdateTextInfo );
 	m_bTextInfoNeedsUpdate = true;

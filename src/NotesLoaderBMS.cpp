@@ -490,13 +490,13 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
 		{
 			float fPercentThroughMeasure = (float)j/(float)iNumNotesInThisMeasure;
-			
+
 			int row = iRowNo + lrintf( fPercentThroughMeasure * fBeatsPerMeasure * ROWS_PER_BEAT );
-			
+
 			// some BMS files seem to have funky alignment, causing us to write gigantic cache files.
 			// Try to correct for this by quantizing.
 			row = Quantize( row, ROWS_PER_MEASURE/64 );
-			
+
 			BmsTrack bmsTrack;
 			bool bIsHold;
 			if( ConvertRawTrackToTapNote(iRawTrackNum, bmsTrack, bIsHold) )
@@ -1035,8 +1035,8 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 			sTag.MakeLower();
 
 			// XXX: We should do this with filenames too, I have plenty of examples.
-			//      however, filenames will be trickier, as stuff at the beginning AND
-			//      end change per-file, so we'll need a fancier FindLargestInitialSubstring()
+			// however, filenames will be trickier, as stuff at the beginning AND
+			// end change per-file, so we'll need a fancier FindLargestInitialSubstring()
 
 			// XXX: This matches (double), but I haven't seen it used. Again, MORE EXAMPLES NEEDED
 			if( sTag.find('l') != sTag.npos )
