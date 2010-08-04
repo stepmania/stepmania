@@ -35,6 +35,12 @@ void ModIcon::Load( RString sMetricsGroup )
 	this->AddChild( &m_text );
 
 	CROP_TEXT_TO_WIDTH.Load( sMetricsGroup, "CropTextToWidth" );
+	// stop words
+	/*
+	STOP_WORDS.Load( sMetricsGroup, "StopWords" );
+	m_vStopWords.empty();
+	split(STOP_WORDS, ",", m_vStopWords);
+	*/
 
 	Set("");
 }
@@ -43,7 +49,7 @@ void ModIcon::Set( const RString &_sText )
 {
 	RString sText = _sText;
 
-	// todo: make these metricable? -aj
+	// todo: make these metricable -aj
 	static const RString sStopWords[] = 
 	{
 		"1X",
@@ -63,6 +69,7 @@ void ModIcon::Set( const RString &_sText )
 	m_sprEmpty->SetVisible( bVacant );
 
 	m_text.SetText( sText );
+	// This line  makes Lua option rows crash: -aj
 	m_text.CropToWidth( CROP_TEXT_TO_WIDTH );
 }
 
