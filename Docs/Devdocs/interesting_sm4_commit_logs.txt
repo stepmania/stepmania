@@ -14,6 +14,12 @@ http://sourceforge.net/mailarchive/message.php?msg_id=E1FWjpV-0007eC-2G%40mail.s
 
 Some of the multiplayer stuff was later re-assembled but I think some of the
 pieces are missing.
+
+http://sourceforge.net/mailarchive/message.php?msg_id=E1HbPRZ-0003kC-8h%40mail.sourceforge.net
+"We have two ways of only showing songs in roulette: unlocks and "#SELECTABLE".
+
+I'm not sure if this feature is worth keeping, but there definitely doesn't
+need to be two ways to do it.  Remove #SELECTABLE:ROULETTE."
 ________________________________________________________________________________
 Viewing old source code:
 http://stepmania.cvs.sourceforge.net/stepmania/stepmania/src/

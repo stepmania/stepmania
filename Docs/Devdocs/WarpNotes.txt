@@ -1,0 +1,17 @@
+warps are purple in the editor btw
+
+beat 445.500 = 107.02325 seconds
+----------------------------------
+beat 453.72919 = 107.04103 seconds
+
+
+00:03.145: ==NotesLoSM negbpm==
+00:03.145: fnextposbeat = 449.500000, fnextposbpm = 47.419998,
+00:03.145: fdelta = 4.040333, fwarpto = 453.540344
+
+00:47.228: ==TimingData Delta as NoteRows==
+00:47.228: fDeltaBeat = 4.000000 (beat)
+00:47.228: fDeltaBeat = (NextBPMSeg 0.790333 - abs(fBPS 0.750000)) + (nextStartRow 21576 - thisRow 21384)
+00:47.228: ==TimingData Delta as Beats==
+00:47.228: fDeltaBeat = 4.000000 (beat)
+00:47.228: fDeltaBeat = (NextBPMSeg 0.790333 - abs(fBPS 0.750000)) + (nextStartRow 21576 - thisRow 21384)

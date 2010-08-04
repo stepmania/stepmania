@@ -1,0 +1,34 @@
+SMXML Control Format | Informal and Unofficial Specification
+____________________________________________________________
+There is no formal DTD for SMXML as of this writing, so we can only go on the
+example file and comments written about the format from developers.
+
+Chris Danford writes[1]:
+"I've been finishing a new in-game download system. The goal is to:
+- Have as few user clicks as possible to install a package (or many packages)
+- Have one cross-platform method of installing packages
+
+The new file association - .smxml - contains control data that StepMania will use
+on launch. The file format currently supports one or more packages to install."
+
+The canonical sample SMXML file[2] looks like this:
+<SMXML>
+	<Credentials>
+		<Username>chrisdanford</Username>
+		<PasswordToken>#&DJASDJ#$&$JSD</PasswordToken>
+	</Credentials>
+	<Install>
+		<URL>http://stepmaniam3.com/sm/data/files/Songs_DJMcFox_PlagueMixOne.smzip</URL>
+	</Install>
+	<Install>
+		<URL>http://stepmaniam3.com/sm/data/files/Songs_DJMcFox_PlagueMixTwo.smzip</URL>
+	</Install>
+</SMXML>
+
+The Credentials section seems to be optional, but is useful to know about:
+"In the future, it might also be used to pass login credentials or other tokens
+from the web site to StepMania for things like in-game uploads (instead of going
+to stepmaniashare.com)"[1]
+__________________________________________________________
+[1] http://www.stepmania.com/forums/showthread.php?t=24203
+[2] http://www.stepmania.com/test.smxml

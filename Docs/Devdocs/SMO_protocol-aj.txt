@@ -1,0 +1,554 @@
+A re-writing of the SMLan Protocol, because I wish to understand it in
+my own words. -aj
+
+Protocol version: 0x04 (v4)
+This has nothing to do with the server versions (see below)
+
+==Client Versions==
+(NETPROTOCOLVERSION in NetworkSyncManager.h)
+1: StepMania 3.9 (SMLan?)
+2: StepMania 3.95
+3: StepMania 4 alphas/sm-ssc v1.0 RC1-Final
+
+==Server Versions==
+  1: SMLan (old)
+128: SMOnline
+129: SMOnline with "better song identification using chart hashes"
+
+==Notes==
+I use the term "client" and "player" interchangeably.
+The original document used "client" and "user" interchangeably.
+
+These two notes are from the SMOCaml project:
+https://sourceforge.net/projects/smocaml/
+
+Command S2C 004 (132): The data from miss to marvelous are reversed
+
+Commands C2S 012-001 and 012-001: when there is no password the 'password' field
+    isn't sended at all, not even a NULL character
+
+==Information==
+The default port is 8765/tcp, though this is actually assigned to Ultraseek HTTP
+by the IANA (see http://www.iana.org/assignments/port-numbers).
+
+A sm-ssc version of a online server for StepMania will use the currently
+unassigned port 48040/tcp (and/or udp if the need arises).
+
+The protocol is packaged in "EzSockets Data Packets".
+
+A basic representation
+
+ 0123 4 5......  [Octets]
++----+-+---//--+
+|ssss|C|Payload| [data]
++----+-+---//--+
+where:
+ssss	= Size of packet (handled by EzSockets if using C++)
+C		= Command
+Payload	= (variable size based on command)
+
+The payload may contain more data than expected, for instance, if it's a new
+protocol version.
+
+"Size" refers to the size of the data chunk.
+Some commonly referred to size types:
+ NT = Null-terminated string
+MSN = Most significant 4 bits (byte/16)
+LSN = Least significant 4 bits (byte%16)
+
+The primary player is 0x0, secondary is 0x1. This does not take into account
+Multiplayer notefields.
+
+==[ Client -> Server Communication Protocol ]===================================
+0x00 (000) No Operation
+This command will case the server to respond with a nop.
+
+Payload: None
+Expected response: Server 0x01 (001)
+________________________________________________________________________________
+0x01 (001) No Operation Response
+This command is used to respond to a no operation.
+
+Payload: None
+Expected response: None
+________________________________________________________________________________
+0x02 (002) Hello
+This is the first packet a client sends to the server.
+
+Payload:
+[Size] [Description]
+  0x01 Client Protocol Version (see Client Versions above)
+	NT StepMania build name (PRODUCT_ID)
+
+Expected response: Server 0x02 (002)
+________________________________________________________________________________
+0x03 (003) Game Start Request
+
+Payload:
+[Size] [Description]
+   MSN Primary Player Meter [0 if no player]
+   LSN Secondary Player Meter [0 if no player]
+   MSN Primary Player Difficulty
+	   0 = Beginner
+	   1 = Easy
+	   2 = Medium
+	   3 = Hard
+	   4 = Expert
+   LSN Secondary Player Difficulty (values same as primary)
+   MSN Start Position:
+	   0 = pre-sync
+	   1 = sync
+   LSN Reserved
+   NT  Song Title
+   NT  Song Subtitle
+   NT  Song Artist
+   NT  Course Title (null if doesn't exist)
+   NT  Song options string
+   NT  Primary player's options (null if doesn't exist)
+   NT  Secondary player's options (null if doesn't exist)
+
+Expected response: Server 0x03 (003)
+________________________________________________________________________________
+0x04 (004) Game Over Notice
+Sent when end of game is encountered. I think technically this is round over.
+
+Payload: None
+Expected response: None (though later in the document you'd assume Server 0x04)
+________________________________________________________________________________
+0x05 (005) Game Status Update
+
+The payload changes between protocols, and it will likely have to change again
+to acconut for some more StepIDs.
+
+Payload:
+[Size] [Description]
+   MSN Player Number
+   LSN StepID
+	   (if Protocol >= 3)
+	   1 = HitMine
+	   2 = AvoidMine
+	   3 = Miss
+	   4 = W5
+	   5 = W4
+	   6 = W3
+	   7 = W2
+	   8 = W1
+	   9 = LetGo
+	   10 = Held
+
+	   (if Protocol <= 2; Don't support these in any new server software)
+	   1 = Miss
+	   2 = W5
+	   3 = W4
+	   4 = W3
+	   5 = W2
+	   6 = W1
+	   7 = LetGo
+	   8 = Held
+
+   MSN Projected Grade (StepMania enum int, which can cause problems with themes.)
+   LSN Reserved (so discuss it with people if changing)
+  0x04 Score (net-order long)
+  0x02 Combo (net-order int; songs with large combos may cause issues?)
+  0x02 Health (net-order int)
+  0x02 Offset (net-order number. huh)
+		32767 would be DEAD on the note
+		If the user is hitting late, the # will be higher.
+		It if the user is exactly 0.25 seconds off, the number will be
+		different by 500. With this pattern 0.5 gives a difference of 1000.
+
+Expected response: None
+________________________________________________________________________________
+0x06 (006) Style Update
+!IMPORTANT! This command is unrelated to Server Command 0x06 (006). !IMPORTANT!
+This is sent when a style is chosen.
+
+Payload:
+[Size] [Description]
+ 0x01 Number of enabled players (1 or 2)
+ 0x01 Player Number (0 = P1, 1 = P2)
+   NT Player name for specified player number
+
+Expected response: None
+________________________________________________________________________________
+0x07 (007) Chat Message
+Send a general chat message.
+
+Payload:
+[Size] [Description]
+	NT Message
+
+Expected response: none?
+________________________________________________________________________________
+0x08 (008) Request Start Game, Tell server if Song exists or not.
+The player selected a song on a net-enabled screen.
+
+Payload:
+[Size] [Description]
+ 0x01 Message Use:
+	   0 = User has specified song (response to Server 0x08)
+	   1 = User does not have specified song (response to Server 0x08)
+	   2 = User has requested start game for the song
+	NT Song Title		(GetTranslitMainTitle)
+	NT Song Artist		(GetTranslitArtist)
+	NT Song Subtitle	(GetTranslitSubTitle)
+
+Expected response: none?
+________________________________________________________________________________
+0x09 (009) [Reserved]
+________________________________________________________________________________
+0x0A (010) User entered/exited a network screen
+
+Payload:
+[Size] [Description]
+ 0x01 Status:
+	   0 = exited ScreenNetSelectMusic
+	   1 = entered ScreenNetSelectMusic
+	   2 = not sent
+	   3 = entered Options
+	   4 = exited ScreenNetEvaluation
+	   5 = entered ScreenNetEvaluation
+	   6 = exited ScreenNetRoom
+	   7 = entered ScreenNetRoom
+
+Expected response: none?
+________________________________________________________________________________
+0x0B (011) Player options changed
+
+Payload:
+[Size] [Description]
+    NT Player 0's options (PLAYER_1)
+    NT Player 1's options (PLAYER_2)
+
+Expected response: none?
+________________________________________________________________________________
+0x0C (012) SMOnline Packet (Special Case)
+The SMOnline Packet is not defined here.
+SMLan packet 12 is a wrapper for the SMOnline packet. It is used for
+"protection" of sorts for the SMO coders.
+
+Payload:
+[Size] [Description]
+  0x01 SMOnline command
+ <...> SMOnline data (<...> = "<VARIABLE>" in original docs)
+
+Expected response: none?
+________________________________________________________________________________
+0x0D (013) [Reserved]
+________________________________________________________________________________
+0x0E (014) [Reserved]
+________________________________________________________________________________
+0x0F (015) XML Packet
+This packet contains data in XML format.
+
+Payload:
+[Size] [Description]
+    NT XML
+
+Expected response: none?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+==[ Server -> Client Communication Protocol ]===================================
+The Server->Client Communication Protocol begins at 0x80 (128). References to
+protocol numbers based on 000 will appear here as well.
+________________________________________________________________________________
+0x80 (128) [0x00 (000)] No Operation
+This command makes the server respond with a nop.
+
+Expected Response: Server 0x01 (001; so really 0x81/129?)
+________________________________________________________________________________
+0x81 (129) [0x01 (001)] No Operation Response
+The response the server gives to a client nop.
+________________________________________________________________________________
+0x82 (130) [0x02 (002)] Server Hello Response
+Introduces the server to the client.
+
+Payload:
+[Size] [Description]
+ 0x01 Server Protocol version (if >= 128; server is SMOnline.)
+	NT Server Name
+ 0x04 Random Key (or Salt, iirc. Used for alternate login method.)
+________________________________________________________________________________
+0x83 (131) [0x03 (003)] Allow Start
+Causes the client to start the game.
+________________________________________________________________________________
+0x84 (132) [0x04 (004)] Game over stats
+Sent in response to the game over packet.
+(Technically, this is the evaluation stats.)
+
+Payload:
+[Size] [Description]
+  0x01 Number of players in this packet (active)
+	   Send every player's information for a given field.
+ 0x01 First player's PlayerID
+	 <other PlayerIDs>
+ 0x04 Score
+	 <other Scores>
+ 0x01 Grade
+	 <other Grades>
+ 0x01 Difficulty (0 = Beginner, &c.)
+	 <other Difficulties>
+
+	(the steps type section is reversed. We may need to do some packet analysis.)
+ 0x02 Judgement_Miss
+	 <other Miss counts>
+ 0x02 Judgement_W5 (Boo)
+	 <other W5s>
+ 0x02 Judgement_W4 (Good)
+	 <other W4s>
+ 0x02 Judgement_W3 (Great)
+	 <other W3s>
+ 0x02 Judgement_W2 (Perfect)
+	 <other W2s>
+ 0x02 Judgement_W1 (Marvelous)
+	 <other W1s>
+ 0x02 Judgement_Held (OK)
+	 <other Helds>
+	 (LetGo doesn't seem to be handled.)
+ 0x02 Max Combo
+	 <other MaxCombos>
+	NT Player options
+	 <other Player Options>
+________________________________________________________________________________
+0x85 (133) [0x05 (005)] Scoreboard update
+Update the client's scoreboard.
+
+Payload:
+[Size] [Description]
+  0x01 Section
+		0 = names
+		1 = combos
+		2 = grades (Projected)
+  0x01 Number of players to display
+
+The rest of the payload depends on section.
+switch(section)
+{
+	case Names:
+  0x01 Index of Player in 1st place
+  0x01 Index of Player in 2nd place
+	 ...
+  0x01 Last player's index
+	 break;
+
+	case Combos:
+  0x01 Player 1's combo
+  0x01 Player 2's combo
+	 ...
+  0x01 Last player's combo
+	 break;
+
+	case Grades: // uses same format as other Grade reports
+  0x01 Player 1's grade
+  0x01 Player 2's grade
+	 ...
+  0x01 Last player's grade
+	 break;
+}
+________________________________________________________________________________
+0x86 (134) [0x06 (006)] System Message
+!IMPORTANT! This command is unrelated to Server Command 0x06 (006). !IMPORTANT!
+Send a system message to the user.
+
+Payload:
+[Size] [Description]
+    NT Message
+________________________________________________________________________________
+0x87 (135) [0x07 (007)] Chat Message
+Add a message to the chat window. ("on some StepMania screens.")
+
+Payload:
+[Size] [Description]
+	NT Message
+________________________________________________________________________________
+0x88 (136) [0x08 (008)] Ask if client has song/Tell client to start song
+The player selected a song on a net-enabled screen.
+
+Payload:
+[Size] [Description]
+  0x01 Message Type
+		0 = See if client has song.
+		1 = See if client has song. If so, scroll to it.
+		2 = See if client has song. If so, scroll to it and play it.
+		3 = Blindly start song. (Probably assumes everyone has the song.)
+	NT Song Title		(GetTranslitMainTitle)
+	NT Song Artist		(GetTranslitArtist)
+	NT Song Subtitle	(GetTranslitSubTitle)
+
+________________________________________________________________________________
+0x89 (137) [0x09 (009)] Update user list
+Sends all the players currently connected.
+
+Payload:
+[Size] [Description]
+  0x01 Max number of players
+  0x01 Number of players in this packet
+  0x01 Player 0's status
+	NT Player 0's name (if no player, it should be an empty string ("").)
+	 ...
+  0x01 Last player's status
+	NT Last player's name
+
+The status flag:
+0x00 = Inactive (user unknown)
+0x01 = Active (user known)
+0x02 = On a selection screen
+0x02 = In options
+0x02 = On Eval.
+________________________________________________________________________________
+0x8A (138) [0x0A (010)] Force change to NetSelectMusic
+
+Payload:
+[Size] [Description]
+	NT Gametype to set
+	NT Style to set
+________________________________________________________________________________
+0x8B (139) [0x0B (011)] Reserved
+________________________________________________________________________________
+0x8C (140) [0x0C (012)] SMOnline Packet (Special Case)
+The SMOnline Packet is not defined here.
+SMLan packet 12 is a wrapper for the SMOnline packet. It is used for
+"protection" of sorts for the SMO coders.
+
+Payload:
+[Size] [Description]
+	 1 SMOnline command
+ <...> SMOnline data (<...> = "<VARIABLE>" in original docs)
+________________________________________________________________________________
+0x8D (141) [0x0D (013)] Formatted information packet
+Send formatted information about the server back to the player.
+This function is alternatively a broadcast packet (via UDP).
+
+Payload:
+[Size] [Description]
+	NT Server name
+  0x02 Server port
+  0x02 Number of players connected
+________________________________________________________________________________
+0x8E (142) [0x0E (014)] Attack client
+
+Payload:
+[Size] [Description]
+  0x01 Player number
+  0x04 Attack length (milliseconds)
+	NT Modifier string
+________________________________________________________________________________
+0x8F (143) [0x0F (015)] XML reply
+
+Payload:
+[Size] [Description]
+	NT XML data
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+==[ Client SMOnline Packets ]===================================================
+0x00 (000) Send Login Information
+
+Payload:
+[Size] [Description]
+  0x01 Player Number
+  0x01 Encryption Text:
+	   0 = MD5 hash
+	   1 = MD5(MD5 hash + salt), where salt is a plaintext base 10 string.
+	NT Username
+	NT Password
+
+If the server's salt is 0, Encryption Text can't be 1. Block login.
+________________________________________________________________________________
+0x01 (001) Ask to enter room
+
+Payload:
+[Size] [Description]
+  0x01 Enter or Exit?:
+	   0 = Exit
+	   1 = Enter
+	NT Room Name (only when entering)
+	NT Password (empty if unused)
+
+________________________________________________________________________________
+0x02 (002) Create a new room
+
+Payload:
+[Size] [Description]
+  0x01 Room Type:
+	   0 = Normal (with subrooms) 
+	   1 = Game (no subrooms)
+	NT Room Title
+	NT Room Description
+	NR Room Password (blank if no password)
+
+________________________________________________________________________________
+0x03 (003) Request room info
+
+Payload:
+[Size] [Description]
+	NT Room name
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+==[ Server SMOnline Packets ]===================================================
+0x00 (000) Login Response
+Payload:
+[Size] [Description]
+  0x01 Approval status:
+	   0 = Login OK
+	   1 = Login Failed
+	NT Login Response (plaintext)
+________________________________________________________________________________
+0x01 (001)
+
+Payload:
+The payload changes depending on the type of update.
+[Size] [Description]
+  0x01 Update Type:
+	   0 = Change Room Title
+	   1 = Update List of rooms/games
+
+if Update Type == 0 (Change Room Title)
+[Size] [Description]
+	NT Room Title
+	NT Room Description
+  0x01 Room Type:
+	   0 = Chat
+	   1 = Game
+  0x01 Allow Subroom creation?
+	   0 = No
+	   1 = Yes
+
+if Update Type == 1 (Update room/game list)
+[Size] [Description]
+  0x01 Number of rooms
+for 1 to Number of Rooms where room number = # do
+	NT Room# Title
+	NT Room# Description
+
+Reverse compatiblity Room Status
+[Size] [Description]
+  0x01 Room# Status
+	   0 = Normal
+	   1 = unused
+	   2 = Playing Game
+	   3 = Song Selection Stage1
+	   4 = Song Selection Stage2
+
+Reverse compatiblity Room Flags
+[Size] [Description]
+  0x01 Room# Flags
+	   if bit 0, Passworded
+________________________________________________________________________________
+0x02 (002) Request general information from server.
+
+Payload:
+[Size] [Description]
+  0x01 Stats format
+	   0 = Normal unformatted stats
+________________________________________________________________________________
+0x03 (003) Request room information
+
+Payload:
+[Size] [Description]
+	NT Last Song Title
+	NT Last Song Subtitle
+	NT Last Song Artist
+  0x01 Number of players
+  0x01 Max players
+	NT Player1 name
+	 ...
+	NT Last player (PlayerN) name
