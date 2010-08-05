@@ -1,6 +1,17 @@
 local c;
 local player = Var "Player";
 local bShowProtiming = GetUserPrefB("UserPrefProtiming" .. ToEnumShortString(player) );
+
+local function MakeAverage( t )
+	local sum = 0;
+	for i=1,#t do
+		sum = sum + t[i];
+	end
+	return sum / #t
+end
+
+local tTotalJudgments = {};
+
 local JudgeCmds = {
 	TapNoteScore_W1 = THEME:GetMetric( "Judgment", "JudgmentW1Command" );
 	TapNoteScore_W2 = THEME:GetMetric( "Judgment", "JudgmentW2Command" );
@@ -17,6 +28,10 @@ local ProtimingCmds = {
 	TapNoteScore_W4 = THEME:GetMetric( "Protiming", "ProtimingW4Command" );
 	TapNoteScore_W5 = THEME:GetMetric( "Protiming", "ProtimingW5Command" );
 	TapNoteScore_Miss = THEME:GetMetric( "Protiming", "ProtimingMissCommand" );
+};
+
+local AverageCmds = {
+	Pulse = THEME:GetMetric( "Protiming", "AveragePulseCommand" );
 };
 
 local TNSFrames = {
@@ -42,12 +57,18 @@ t[#t+1] = Def.ActorFrame {
 		OnCommand=THEME:GetMetric("Protiming","ProtimingOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
+	LoadFont("Common Normal") .. {
+		Name="ProtimingAverage";
+		Text="";
+		InitCommand=cmd(visible,false);
+		OnCommand=THEME:GetMetric("Protiming","AverageOnCommand");
+		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
+	};
 	InitCommand = function(self)
 		c = self:GetChildren();
 	end;
 
 	JudgmentMessageCommand=function(self, param)
-		local t
 		if param.Player ~= player then return end;
 		if param.HoldNoteScore then return end;
 		
@@ -61,6 +82,9 @@ t[#t+1] = Def.ActorFrame {
 				iFrame = iFrame + 1;
 			end
 		end
+		
+		-- we're safe, you can push the values
+		tTotalJudgments[#tTotalJudgments+1] = math.abs( param.TapNoteOffset );
 		
 		local iTapNoteOffset = param.TapNoteOffset;
 		if param.HoldNoteScore then
@@ -79,6 +103,9 @@ t[#t+1] = Def.ActorFrame {
 		c.ProtimingDisplay:settextf("%i%%",100 - math.floor(math.abs(param.TapNoteOffset * 1000)) );
 		ProtimingCmds[param.TapNoteScore](c.ProtimingDisplay);
 		
+		c.ProtimingAverage:visible( bShowProtiming );
+		c.ProtimingAverage:settextf("%i%%",100 - MakeAverage( tTotalJudgments ) * 1000 );
+		AverageCmds['Pulse'](c.ProtimingAverage);
 	end;
 };
 
