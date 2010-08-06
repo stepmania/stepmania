@@ -90,6 +90,7 @@ function tableshuffle( t )
 	end
 	return ret
 end
+table.shuffle = tableshuffle
 
 function tableslice( t, num )
 	local ret = { }
@@ -97,6 +98,30 @@ function tableslice( t, num )
 		table.insert( ret, i, t[i] )
 	end
 	return ret
+end
+table.slice = tableslice
+
+-- add together the contents of a table
+function table.sum( t )
+	local sum = 0
+	for i=1,#t do
+		sum = sum + t[i]
+	end
+	return sum
+end
+
+-- average of all table values
+function table.average( t )
+	return table.sum( t ) / #t
+end
+
+-- furthest value from the average of a given table
+function table.deviation( t )
+	local offset = math.abs(table.average(t))
+	for i=1,#t do
+		offset = math.max(math.abs(t[i]), offset)
+	end
+	return offset
 end
 
 function round(val, decimal)
