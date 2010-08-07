@@ -860,6 +860,7 @@ public:
 	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); return 0; }
 	static int ScreenIsPrepped( T* p, lua_State *L )	{ lua_pushboolean( L, ScreenManagerUtil::ScreenIsPrepped( SArg(1) ) ); return 1; }
 	static int ScreenClassExists( T* p, lua_State *L )	{ lua_pushboolean( L, g_pmapRegistrees->find( SArg(1) ) != g_pmapRegistrees->end() ); return 1; }
+	static int AddNewScreenToTop( T* p, lua_State *L )	{ p->AddNewScreenToTop( SArg(1) ); return 0; }
 	//static int GetScreenStackSize( T* p, lua_State *L )	{ lua_pushnumber( L, ScreenManagerUtil::g_ScreenStack.size() ); return 1; }
 
 	LunaScreenManager()
@@ -869,6 +870,7 @@ public:
 		ADD_METHOD( SystemMessage );
 		ADD_METHOD( ScreenIsPrepped );
 		ADD_METHOD( ScreenClassExists );
+		ADD_METHOD( AddNewScreenToTop );
 		//ADD_METHOD( GetScreenStackSize );
 	}
 };
