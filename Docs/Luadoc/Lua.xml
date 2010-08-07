@@ -188,6 +188,7 @@
 		<Function name='loadfile'/>
 		<Function name='loadstring'/>
 		<Function name='mbstrlen'/>
+		<Function name='module'/>
 		<Function name='newproxy'/>
 		<Function name='next'/>
 		<Function name='pairs'/>
@@ -197,6 +198,7 @@
 		<Function name='rawequal'/>
 		<Function name='rawget'/>
 		<Function name='rawset'/>
+		<Function name='require'/>
 		<Function name='round'/>
 		<Function name='scale'/>
 		<Function name='select'/>
@@ -1005,6 +1007,7 @@
 			<Function name='GetLifeMeter'/>
 		</Class>
 		<Class name='ScreenManager'>
+			<Function name='AddNewScreenToTop'/>
 			<Function name='GetTopScreen'/>
 			<Function name='ScreenClassExists'/>
 			<Function name='ScreenIsPrepped'/>
@@ -1889,9 +1892,9 @@
 		<Constant name='left' value='&apos;HorizAlign_Left&apos;'/>
 		<Constant name='middle' value='&apos;VertAlign_Middle&apos;'/>
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
-		<Constant name='sGame' value='&apos;kb7&apos;'/>
+		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>sm-ssc v1.0 rc1.5</Version>
-	<Date>2010-07-24</Date>
+	<Date>2010-08-07</Date>
 </Lua>
