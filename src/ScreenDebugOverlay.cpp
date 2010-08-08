@@ -260,6 +260,8 @@ void ScreenDebugOverlay::Init()
 		p->SetName( "PageText" );
 		p->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "page") );
 		LOAD_ALL_COMMANDS( p );
+		// xxx: I shouldn't have to do this:
+		ON_COMMAND( p );
 		// todo: Y value is still hardcoded. -aj
 		p->SetXY( PAGE_START_X+iPage*PAGE_SPACING_X, SCREEN_TOP+20 );
 		p->SetText( *s + " (" + sButton + ")" );
@@ -277,9 +279,11 @@ void ScreenDebugOverlay::Init()
 			p->SetHorizAlign( align_right );
 			p->SetText( "blah" );
 			//p->SetShadowLength( 2 );
+			LOAD_ALL_COMMANDS( *p );
+			// xxx: I shouldn't have to do this:
+			ON_COMMAND( p );
 			m_vptextButton.push_back( p );
 			this->AddChild( p );
-			LOAD_ALL_COMMANDS( *p );
 		}
 		{
 			BitmapText *p = new BitmapText;
@@ -288,9 +292,11 @@ void ScreenDebugOverlay::Init()
 			p->SetHorizAlign( align_left );
 			p->SetText( "blah" );
 			//p->SetShadowLength( 2 );
+			LOAD_ALL_COMMANDS( *p );
+			// xxx: I shouldn't have to do this:
+			ON_COMMAND( p );
 			m_vptextFunction.push_back( p );
 			this->AddChild( p );
-			LOAD_ALL_COMMANDS( *p );
 		}
 	}
 
