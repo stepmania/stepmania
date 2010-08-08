@@ -573,8 +573,9 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 					}
 					else if (BeginsWith(NoteRowString, "|B")) 
 					{
+						float fCurBpm = (float)numTemp;
 						//out.m_Timing.AddBPMSegment( BPMSegment( BeatToNoteRow(fCurBeat), (float)numTemp ) );
-						out.m_Timing.SetBPMAtBeat( (float)numTemp, fCurBeat );
+						out.m_Timing.SetBPMAtBeat( fCurBeat, (float)numTemp );
 						continue;
 					}
 					else if (BeginsWith(NoteRowString, "|E"))

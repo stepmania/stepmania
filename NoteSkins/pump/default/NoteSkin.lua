@@ -58,7 +58,11 @@ local function func()
 	local sElement = Var "Element"
 	
 	if Noteskin.bBlanks[sElement] then
-		return Def.Actor {}
+		local t = Def.Actor {};
+		if Var "SpriteOnly" then
+			t = LoadActor( "_blank" );
+		end
+		return t
 	end
 	
 	--local ButtonToLoad = Noteskin.ButtonRedirs[sButton]
@@ -84,17 +88,7 @@ local function func()
 	end
 	
 	local t = LoadActor(path)
-	--Rotaciones independientes por elemento
-	--[[local dRotationX = Noteskin.BaseRotX[sButton][ElementToLoad]
-	if not dRotationX then
-		dRotationX = Noteskin.BaseRotX[sButton]["Common"]
-	end
 	
-	local dRotationY = Noteskin.BaseRotY[sButton][ElementToLoad]
-	if not dRotationY then
-		dRotationY = Noteskin.BaseRotY[sButton]["Common"]
-	end]]
-
 	t.BaseRotationX=Noteskin.BaseRotX[sButton]
 	t.BaseRotationY=Noteskin.BaseRotY[sButton]
 	

@@ -46,8 +46,23 @@ return Def.ActorFrame {
 		HeldCommand=cmd(playcommand,"Glow");
 		GlowCommand=cmd(setstate,0;finishtweening;diffusealpha,1;zoom,1;linear,0.2;diffusealpha,0;zoom,1.2);
 	};
-	Def.Quad {
-		InitCommand=cmd(diffuse,1,1,1,0;zoomto,SCREEN_WIDTH*100,SCREEN_HEIGHT*100;zoomz,SCREEN_WIDTH*SCREEN_HEIGHT);
-		HitMineCommand=cmd(finishtweening;diffusealpha,1;linear,0.3;diffusealpha,0);
+	Def.Actor {
+		HitMineCommand=function(self) MESSAGEMAN:BroadCast("AMineWasHit"); end;
 	};
+	--[[Def.Quad {
+		InitCommand=function(self)
+			local style = GAMESTATE:GetCurrentStyle()GetStyleType()
+			local maxzoom = SCREEN_WIDTH
+			if style == 'StyleType_OnePlayerTwoSides' then
+				maxzoom = 320
+			end
+			
+			self:diffuse(1,1,1,0);
+			self:zoomx(maxzoom);
+			self:zoomy(SCREEN_HEIGHT*5)
+		end;
+		--cmd(diffuse,1,1,1,0;zoomy,SCREEN_HEIGHT*100);
+		HitMineCommand=function(self) MESSAGEMAN:BroadCast("AMineWasHit"); end;
+		--cmd(finishtweening;diffusealpha,1;linear,0.3;diffusealpha,0);
+	};]]
 }
