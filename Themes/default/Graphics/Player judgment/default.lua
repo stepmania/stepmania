@@ -104,7 +104,7 @@ t[#t+1] = Def.ActorFrame {
 		ProtimingCmds[param.TapNoteScore](c.ProtimingDisplay);
 		
 		c.ProtimingAverage:visible( bShowProtiming );
-		c.ProtimingAverage:settextf("%i%%",100 - MakeAverage( tTotalJudgments ) * 1000 );
+		c.ProtimingAverage:settextf("%.2f%%",100 - MakeAverage( tTotalJudgments ) * 1000 );
 		AverageCmds['Pulse'](c.ProtimingAverage);
 	end;
 };

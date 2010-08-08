@@ -1,4 +1,12 @@
 return Def.ActorFrame {
+	CurrentSongChangedMessageCommand=function(self)
+		local song = GAMESTATE:GetCurrentSong(); 
+		if song then
+			self:playcommand("TweenOn");
+		elseif not song then
+			self:playcommand("TweenOff");
+		end;
+	end;
 	Def.Quad {
 		InitCommand=cmd(y,-14;zoomto,164,2;fadeleft,8/164;faderight,8/164);
 		OnCommand=cmd(diffuse,Color("Black");diffusealpha,0;linear,0.35;diffusealpha,0.5);
@@ -9,14 +17,6 @@ return Def.ActorFrame {
 	};
 	Def.StepsDisplayList {
 		Name="StepsDisplayListRow";
-		CurrentSongChangedMessageCommand=function(self)
-			local song = GAMESTATE:GetCurrentSong();
-			if song and self:GetZoomX() == 0 then
-				self:playcommand("Show");
-			elseif not song and self:GetZoomX() == 1 then
-				self:playcommand("Hide");
-			end;
-		end;
 
 		CursorP1 = Def.ActorFrame {
 			InitCommand=cmd(x,-128+16;player,PLAYER_1);
