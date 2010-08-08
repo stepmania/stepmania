@@ -86,6 +86,28 @@ if ShowStandardDecoration("StepsDisplay") then
 end
 
 for pn in ivalues(PlayerNumber) do
+	local MetricsName = "MachineRecord" .. PlayerNumberToString(pn);
+	t[#t+1] = LoadActor( THEME:GetPathG(Var "LoadingScreen", "MachineRecord"), pn ) .. {
+		InitCommand=function(self) 
+			self:player(pn); 
+			self:name(MetricsName); 
+			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); 
+		end;
+	};
+end
+
+for pn in ivalues(PlayerNumber) do
+	local MetricsName = "PersonalRecord" .. PlayerNumberToString(pn);
+	t[#t+1] = LoadActor( THEME:GetPathG(Var "LoadingScreen", "PersonalRecord"), pn ) .. {
+		InitCommand=function(self) 
+			self:player(pn); 
+			self:name(MetricsName); 
+			ActorUtil.LoadAllCommandsAndSetXY(self,Var "LoadingScreen"); 
+		end;
+	};
+end
+
+for pn in ivalues(PlayerNumber) do
 	local MetricsName = "StageAward" .. PlayerNumberToString(pn);
 	t[#t+1] = LoadActor( THEME:GetPathG(Var "LoadingScreen", "StageAward"), pn ) .. {
 		InitCommand=function(self) 
@@ -130,5 +152,6 @@ end
 t[#t+1] = StandardDecorationFromFileOptional("LifeDifficulty","LifeDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("GameType","GameType");
+
 
 return t
