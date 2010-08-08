@@ -165,10 +165,11 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		out.m_StepsType = StepsType_pump_single;
 
 		// Check for "halfdouble" before "double".
-		if( sFName.find("halfdouble") != string::npos || sFName.find("half-double") != string::npos || sFName.find("h_double") != string::npos )
+		if( sFName.find("halfdouble") != string::npos || sFName.find("half-double") != string::npos || sFName.find("h_double") != string::npos || sFName.find("hdb") != string::npos )
+		//if( BeginsWith( sFName.MakeLower(), "half" ) && EndsWith( sFName.MakeLower(), "double" )
 			out.m_StepsType = StepsType_pump_halfdouble;
 		// Handle bDoublesChart from above as well. -aj
-		else if( sFName.find("double") != string::npos || sFName.find("nightmare") != string::npos || sFName.find("freestyle") != string::npos || bDoublesChart )
+		else if( sFName.find("double") != string::npos || sFName.find("nightmare") != string::npos || sFName.find("freestyle") != string::npos || sFName.find("db") != string::npos || sFName.find("nm") != string::npos || sFName.find("fs") != string::npos || bDoublesChart )
 			out.m_StepsType = StepsType_pump_double;
 		else if( sFName.find("_1") != string::npos )
 			out.m_StepsType = StepsType_pump_single;
