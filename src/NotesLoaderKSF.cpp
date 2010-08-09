@@ -124,7 +124,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		sFName.MakeLower();
 
 		out.SetDescription(sFName);
-		//Check another before anything else... is this okay? -DaisuMaster
+		// Check another before anything else... is this okay? -DaisuMaster
 		if( sFName.find("another") != string::npos )
 		{
 			out.SetDifficulty( Difficulty_Edit );
@@ -147,7 +147,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		}
 		else if( sFName.find("easy") != string::npos || sFName.find("ez") != string::npos || sFName.find("normal") != string::npos )
 		{
-			//I wonder if I should leave easy fall into the Beginner difficulty... -DaisuMaster
+			// I wonder if I should leave easy fall into the Beginner difficulty... -DaisuMaster
 			out.SetDifficulty( Difficulty_Easy );
 			if( !out.GetMeter() ) out.SetMeter( 4 );
 		}
@@ -166,7 +166,6 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 
 		// Check for "halfdouble" before "double".
 		if( sFName.find("halfdouble") != string::npos || sFName.find("half-double") != string::npos || sFName.find("h_double") != string::npos || sFName.find("hdb") != string::npos )
-		//if( BeginsWith( sFName.MakeLower(), "half" ) && EndsWith( sFName.MakeLower(), "double" )
 			out.m_StepsType = StepsType_pump_halfdouble;
 		// Handle bDoublesChart from above as well. -aj
 		else if( sFName.find("double") != string::npos || sFName.find("nightmare") != string::npos || sFName.find("freestyle") != string::npos || sFName.find("db") != string::npos || sFName.find("nm") != string::npos || sFName.find("fs") != string::npos || bDoublesChart )
@@ -220,6 +219,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			break;
 		}
 
+		// Why do this? Rows made with precise DM05 tags can go up to 13 too -DaisuMaster
 		if( sRowString.size() != 13 )
 		{
 			if( bKIUCompliant )
@@ -576,7 +576,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 					{
 						float fCurBpm = (float)numTemp;
 						//out.m_Timing.AddBPMSegment( BPMSegment( BeatToNoteRow(fCurBeat), (float)numTemp ) );
-						out.m_Timing.SetBPMAtBeat( fCurBeat, (float)numTemp );
+						out.m_Timing.SetBPMAtBeat( fCurBeat, fCurBpm );
 						continue;
 					}
 					else if (BeginsWith(NoteRowString, "|E"))

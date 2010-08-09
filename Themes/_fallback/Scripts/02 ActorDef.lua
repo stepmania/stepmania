@@ -167,7 +167,8 @@ end
 function LoadFont(a, b)
 	local sSection = b and a or ""
 	local sFile = b or a
-	if (sFile == "" and sSection == "") or (sFile == nil and sSection == nil) then
+	--if (sFile == "" and sSection == "") or (sFile == nil and sSection == nil) then
+	if not a and not b then
 		sSection = "Common"
 		sFile = "normal"
 	end
