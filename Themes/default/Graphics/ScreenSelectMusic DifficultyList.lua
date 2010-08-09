@@ -2,8 +2,10 @@ return Def.ActorFrame {
 	CurrentSongChangedMessageCommand=function(self)
 		local song = GAMESTATE:GetCurrentSong(); 
 		if song then
+-- 			self:setaux(0);
 			self:playcommand("TweenOn");
 		elseif not song then
+-- 			self:setaux(1);
 			self:playcommand("TweenOff");
 		end;
 	end;

@@ -103,13 +103,13 @@ local t = Def.ActorFrame {
 		cf.Number:settext( string.format("%i", iCombo) );
 		-- FullCombo Rewards
 		if param.FullComboW1 then
-			cf.Number:diffuse(color("#00aeef"));
+			cf.Number:diffuse( GameColor.Judgment["JudgmentLine_W1"] );
 			cf.Number:glowshift();
 		elseif param.FullComboW2 then
-			cf.Number:diffuse(color("#fff568"));
+			cf.Number:diffuse( GameColor.Judgment["JudgmentLine_W2"] );
 			cf.Number:glowshift();
 		elseif param.FullComboW3 then
-			cf.Number:diffuse(color("#a4ff00"));
+			cf.Number:diffuse( GameColor.Judgment["JudgmentLine_W3"] );
 			cf.Number:stopeffect();
 		elseif param.Combo then
 			-- Player 1's color is Red, which conflicts with the miss combo.
