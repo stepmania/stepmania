@@ -868,6 +868,7 @@
 			<Function name='MaxCombo'/>
 		</Class>
 		<Class name='PlayerState'>
+			<Function name='GetHealthState'/>
 			<Function name='GetMultiPlayerNumber'/>
 			<Function name='GetPlayerNumber'/>
 			<Function name='GetPlayerOptions'/>
@@ -1896,5 +1897,5 @@
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
 	<Version>sm-ssc v1.0 rc1.5</Version>
-	<Date>2010-08-07</Date>
+	<Date>2010-08-10</Date>
 </Lua>

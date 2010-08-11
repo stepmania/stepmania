@@ -56,6 +56,15 @@
 		hex (<code>"#FFFFFFFF"</code>) or 0..1 values (<code>"1.0,1.0,1.0,1.0"</code>),
 		in RGBA order.
 	</Function>
+	<Function name='ComboContinue' theme='_fallback' return='TapNoteScore' arguments=''>
+		[03 Gameplay.lua] Determines what TapNoteScore allows for continuing the combo.
+	</Function>
+	<Function name='ComboMaintain' theme='_fallback' return='TapNoteScore' arguments=''>
+		[03 Gameplay.lua] Determines what TapNoteScore allows for maintaining the combo.
+	</Function>
+	<Function name='ComboPerRow' theme='_fallback' return='bool' arguments=''>
+		[03 Gameplay.lua] Determines if combo should be per row (Jump = 1) or per column (Jump = 2).
+	</Function>
 	<Function name='ConnectToServer' return='bool' arguments='string sAddress'>
 		Tries to connect to the server at <code>sAddress</code>.
 	</Function>
@@ -68,14 +77,29 @@
 	<Function name='dofile' theme='_fallback' return='chunk' arguments='string sFilePath'>
 		[01 base.lua] "Override Lua's dofile to use our <Link function="loadfile">loadfile</Link>."
 	</Function>
+	<Function name='FindValue' theme='_fallback' return='string' arguments='table tab, various value'>
+		[02 Utilities.lua] Find a key in <code>tab</code> with the given <code>value</code>.
+	</Function>
+	<Function name='FindSelection' theme='_fallback' return='int' arguments='table list'>
+		[02 Utilities.lua] Return the index of a true value in <code>list</code>.
+	</Function>
 	<Function name='FormatNumberAndSuffix' return='string' arguments='int num'>
 		Returns the number passed to the function followed by its suffix (&quot;th&quot;, &quot;nd&quot;, and so on).
 	</Function>
 	<Function name='FormatPercentScore' return='string' arguments='float fPercentDancePoints'>
 		Returns <code>fPercentDancePoints</code> formatted as a percentage.
 	</Function>
+	<Function name='GameCompatibleModes' theme='_fallback' return='string' arguments=''>
+		[03 Gameplay.lua] Returns a list of valid styles for the current gametype.
+	</Function>
 	<Function name='GetCustomDifficulty' return='string' arguments='StepsType st, Difficulty d, CourseType ct'>
 		Returns the corresponding CustomDifficulty string for a StepsType/Difficulty (/optional CourseType) combination.
+	</Function>
+	<Function name='getenv' theme='_fallback' return='various' arguments='string name'>
+		[03 EnvUtils2.lua] Returns the value of <code>name</code> from the Env table.
+	</Function>
+	<Function name='GetExtraColorThreshold' theme='_fallback' return='int' arguments=''>
+		[03 Gameplay.lua] Returns the number at which the Extra color should be used.
 	</Function>
 	<Function name='GetGradeFromPercent' return='Grade' arguments='float fPercent, bool bMerciful'>
 		Returns a corresponding <Link class='ENUM' function='Grade' /> for the given percentage.
@@ -86,14 +110,41 @@
 	<Function name='GetOSName' sm-ssc='true' return='string' arguments=''>
 		Returns a string representing the name of the operating system being used. (e.g. "Xbox", "Windows", "Linux", "Mac, "Unknown")
 	</Function>
+	<Function name='GetProTiming' theme='default' return='bool' arguments='PlayerNumber pn'>
+		[03 ThemePrefs.lua] Returns <code>true</code> if player <code>pn</code> is using ProTiming.
+	</Function>
 	<Function name='GetThemeAspectRatio' return='float' arguments=''>
 		Returns the theme's aspect ratio.
+	</Function>
+	<Function name='GetUserPref' theme='_fallback' return='string' arguments='string name'>
+		[03 UserPreferences2.lua] Themer-facing function for getting a user preference.
+	</Function>
+	<Function name='GetUserPrefB' theme='_fallback' return='bool' arguments='string name'>
+		[03 UserPreferences2.lua] Themer-facing function for getting a user preference as a boolean.
+	</Function>
+	<Function name='GetUserPrefC' theme='_fallback' return='color' arguments='string name'>
+		[03 UserPreferences2.lua] Themer-facing function for getting a user preference as a color.
+	</Function>
+	<Function name='GetUserPrefN' theme='_fallback' return='float' arguments='string name'>
+		[03 UserPreferences2.lua] Themer-facing function for getting a user preference as a number.
 	</Function>
 	<Function name='Hour' return='int' arguments=''>
 		Returns the current hour.
 	</Function>
+	<Function name='InitUserPrefs' theme='default' return='void' arguments=''>
+		[03 ThemePrefs.lua] Initializes various user preferences.
+	</Function>
+	<Function name='IsArcade' theme="_fallback" return='bool' arguments=''>
+		[03 ProductivityHelpers.lua] Returns <code>true</code> if the coin mode is not set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
+	</Function>
 	<Function name='IsEventMode' return='bool' arguments=''>
 		Returns <code>true</code> if Event Mode is turned on.
+	</Function>
+	<Function name='IsFreePlay' theme="_fallback" return='bool' arguments=''>
+		[03 ProductivityHelpers.lua] Returns <code>true</code> <Link function='IsArcade'>if Arcade</Link> and the coin mode is <Link class='ENUM' function='CoinMode'>CoinMode_Free</Link>.
+	</Function>
+	<Function name='IsHome' theme="_fallback" return='bool' arguments=''>
+		[03 ProductivityHelpers.lua] Returns <code>true</code> if the coin mode is set to <Link class='ENUM' function='CoinMode'>CoinMode_Home</Link>.
 	</Function>
 	<Function name='IsNetConnected' return='bool' arguments=''>
 		Returns <code>true</code> if connected to the Internet.
@@ -105,8 +156,14 @@
 		Returns <code>true</code> if Player <code>pn</code> is logged on to
 		a SMOnline server.
 	</Function>
+	<Function name='IsUsingWideScreen' theme='_fallback' return='bool' arguments=''>
+		[04 WidescreenHelpers.lua] Returns <code>true</code> if the aspect ratio is 16:10 (<code>1.6</code>) or higher.
+	</Function>
 	<Function name='ivalues' theme='_fallback' return='{various}' arguments='table t'>
 		[01 base.lua] "Like ipairs(), but returns only values."
+	</Function>
+	<Function name='join' theme='_fallback' return='string' arguments='string delimiter, table list'>
+		[02 Utilities.lua] Joins a table, splitting each item with <code>delimiter</code>, returning a string of the results.
 	</Function>
 	<Function name='LoadActor' return='ActorDef' arguments='string sPath, ...'>
 		Returns an Actor definition for the actor at <code>sPath</code>. If <code>sPath</code> points to a Lua file, any additional arguments will be passed to that script.
@@ -141,8 +198,23 @@
 	<Function name='MonthToString' return='string' arguments='Month m'>
 		Returns Month <code>m</code> as a string.
 	</Function>
+	<Function name='pname' theme='_fallback' return='string' arguments='PlayerNumber pn'>
+		[03 ProductivityHelpers.lua] Converts a PlayerNumber into a short string (e.g. "P1", "P2").
+	</Function>
+	<Function name='print' theme='_fallback' return='void' arguments='string s'>
+		[00 init.lua] 
+	</Function>
 	<Function name='ResolveRelativePath' theme='_fallback' return='string' arguments='string path, int level'>
 		[02 ActorDef.lua]
+	</Function>
+	<Function name='ReadPrefFromFile' theme='_fallback' return='string' arguments='string prefName'>
+		[03 UserPreferences2.lua] (internal) Reads the specified user preference from its config file.
+	</Function>
+	<Function name='round' theme='_fallback' return='int' arguments='float val, int decimal'>
+		[02 Utilities.lua] Round a number.
+	</Function>
+	<Function name='ScoreKeeperClass' theme='_fallback' return='string' arguments=''>
+		[03 Gameplay.lua] Returns the primary ScoreKeeper class to use.
 	</Function>
 	<Function name='Second' return='int' arguments=''>
 		Returns the current second.
@@ -153,8 +225,20 @@
 	<Function name='SelectMusicOrCourse' theme='_fallback' return='string' arguments=''>
 		[02 Branches.lua] Determines the correct music/course selection screen to use and returns it.
 	</Function>
+	<Function name='SelectProfileKeys' theme='_fallback' return='string' arguments=''>
+		[03 Gameplay.lua] (soon to be deprecated) Returns a list of codes to use on ScreenSelectProfile.
+	</Function>
+	<Function name='setenv' theme='_fallback' return='various' arguments='string name, various value'>
+		[03 EnvUtils2.lua] Sets the value of <code>name</code> to <code>value</code> in the Env table.
+	</Function>
+	<Function name='SetUserPref' theme='_fallback' return='bool' arguments='string name, string value'>
+		[03 UserPreferences2.lua] Themer-facing function for setting a user preference.
+	</Function>
 	<Function name='ShowStandardDecoration' theme='_fallback' return='bool' arguments='string sMetricsName'>
 		[02 ActorDef.lua] Returns <code>true</code> if a decoration should be shown on the current screen or not.
+	</Function>
+	<Function name='split' theme='_fallback' return='table' arguments='string delimiter, string text'>
+		[02 Utilities.lua] Splits a string at every occurence of <code>delimiter</code>, returning a table of the results.
 	</Function>
 	<Function name='StandardDecorationFromTable' theme='_fallback' return='Actor' arguments='string sMetricsName, table t'>
 		[02 ActorDef.lua] 
@@ -165,8 +249,14 @@
 	<Function name='StandardDecorationFromFileOptional' theme='_fallback' return='Actor' arguments='string sMetricsName, string sFileName'>
 		[02 ActorDef.lua] 
 	</Function>
-	<Function name='TextBannerAfterSet' theme='_fallback' return='void' arguments=''>
-		[02 Other.lua] This function defines how the TextBanner is laid out.
+	<Function name='TableStringLookup' theme='_fallback' return='table' arguments='table t, string group'>
+		[02 Utilities.lua] Look up each value in a table, returning a table with the resulting strings.
+	</Function>
+	<Function name='TextBannerAfterSet' theme='default' return='void' arguments=''>
+		[02 TextBanner.lua] This function defines how the TextBanner is laid out.
+	</Function>
+	<Function name='tobool' theme='_fallback' return='bool' arguments='various v'>
+		[03 ProductivityHelpers.lua] Converts a string or number to a bool.
 	</Function>
 	<Function name='ToEnumShortString' theme='_fallback' return='string' arguments='enum e'>
 		[02 Enum.lua] Returns a string representing an enum starting from '_'. For example, passing <Link class='ENUM' function='PlayerNumber'>PlayerNumber_P1</Link> to this function will return <code>P1</code>.
@@ -177,11 +267,17 @@
 	<Function name='Var' theme='_fallback' return='ThreadVariable' arguments=''>
 		[01 base.lua] Alias for <Link class="lua" function="GetThreadVariable">lua.GetThreadVariable</Link>.
 	</Function>
-	<Function name='Warn' return='void' arguments='string sString'>
-		Alias for <Link class='lua' function='Warn' />.
+	<Function name='Warn' theme='_fallback' return='void' arguments='string sString'>
+		[00 init.lua] Alias for <Link class='lua' function='Warn' />.
+	</Function>
+	<Function name='WideScale' theme='_fallback' return='float' arguments='float ar43, float 169'>
+		[04 WidescreenHelpers.lua] Depending on the screen width, scales between <code>ar43</code> (4:3; 640px) and <code>ar169</code> (16:9; 854px).
 	</Function>
 	<Function name='WrapInActorFrame' theme='_fallback' return='ActorFrame' arguments='table children'>
 		[02 ActorDef.lua] Wraps the children in an ActorFrame.
+	</Function>
+	<Function name='WritePrefToFile' theme='_fallback' return='bool' arguments='string prefName, various value'>
+		[03 UserPreferences2.lua] (internal) Writes user preference <code>prefName</code> to its config file with <code>value</code> being <code>tostring</code>'d.
 	</Function>
 	<Function name='Year' return='int' arguments=''>
 		Returns the current year.
@@ -211,7 +307,6 @@
 	<Function name='URLEncode' sm-ssc='true' return='string' arguments='string sInput'>
 		Returns a string with characters escaped for URLs. (e.g. a space becomes '%20')
 	</Function>
-	<!-- Add all theme extensions here -->
 	<!-- CustomSpeedMods -->
 	<Function name='SpeedMods' theme='_fallback' return='LuaOptionRow' arguments=''>
 		[03 CustomSpeedMods.lua] Returns a Lua option row with the custom speed mods defined in SpeedMods.txt.
@@ -222,6 +317,28 @@
 	</Function>
 	<Function name='WriteFile' theme='_fallback' return='bool' arguments='string path, string buf'>
 		[04 FileUtils.lua] Writes <code>buf</code> to the file at <code>path</code>.
+	</Function>
+	<!-- default theme preferences -->
+	<Function name='OptionRowProTiming' theme='default' return='LuaOptionRow' arguments=''>
+		[03 ThemePrefs.lua] Returns a Lua option row for ProTiming.
+	</Function>
+	<Function name='UserPrefAutoSetStyle' theme='default' return='LuaOptionRow' arguments=''>
+		[03 ThemePrefs.lua] Returns a Lua option row for toggling AutoSetStyle.
+	</Function>
+	<Function name='UserPrefGameplayShowScore' theme='default' return='LuaOptionRow' arguments=''>
+		[03 ThemePrefs.lua] Returns a Lua option row for displaying the score on ScreenGameplay.
+	</Function>
+	<Function name='UserPrefGameplayShowStepsDisplay' theme='default' return='LuaOptionRow' arguments=''>
+		[03 ThemePrefs.lua] Returns a Lua option row for displaying the StepsDisplay on ScreenGameplay.
+	</Function>
+	<Function name='UserPrefGameplayLongFail' theme='default' return='LuaOptionRow' arguments=''>
+		[03 ThemePrefs.lua] Returns a Lua option row for determining the fail length.
+	</Function>
+	<Function name='UserPrefNotePosition' theme='default' return='LuaOptionRow' arguments=''>
+		[03 ThemePrefs.lua] Returns a Lua option row for determining the receptor arrow position.
+	</Function>
+	<Function name='UserPrefShowLotsaOptions' theme='default' return='LuaOptionRow' arguments=''>
+		[03 ThemePrefs.lua] Returns a Lua option row determining how deep the player options menu should go.
 	</Function>
 </GlobalFunctions>
 
@@ -522,6 +639,12 @@
 	<Function name='GetBaseZoomX' return='float' arguments=''>
 		Returns the Actor's base X zoom value.
 	</Function>
+	<Function name='GetBaseZoomY' sm-ssc='true' return='float' arguments=''>
+		Returns the Actor's base Y zoom value.
+	</Function>
+	<Function name='GetBaseZoomZ' sm-ssc='true' return='float' arguments=''>
+		Returns the Actor's base Z zoom value.
+	</Function>
 	<Function name='GetCommand' return='bool' arguments='string sCmdName'>
 		Returns <code>true</code> if the Actor has a command named <code>sCmdName</code>.
 	</Function>
@@ -536,6 +659,9 @@
 	</Function>
 	<Function name='geteffectfagnitude' return='float' arguments=''>
 		Returns the Actor's current effect magnitude as three floats (not one; I hate Lua.xsd).
+	</Function>
+	<Function name='GetGlow' sm-ssc='true' return='color' arguments=''>
+		Returns the Actor's current glow color.
 	</Function>
 	<Function name='GetHAlign' sm-ssc='true' return='float' arguments=''>
 		Returns the Actor's horizontal alignment as a number in the range 0..1.
@@ -772,7 +898,7 @@
 		Returns the child with a name of <code>sName</code>.
 	</Function>
 	<Function name='GetChildren' return='{Actor}' arguments=''>
-		Returns an table of all the children in the ActorFrame.
+		Returns a table of all the children in the ActorFrame.
 	</Function>
 	<Function name='GetDrawFunction' return='LuaReference' arguments=''>
 		Gets the ActorFrame's Draw function.
@@ -1156,6 +1282,9 @@
 	<Function name='GetCourseDir' sm-ssc='true' return='string' arguments=''>
 		Returns the Course's directory.
 	</Function>
+	<Function name='GetCourseEntries' sm-ssc='true' return='{CourseEntry}' arguments=''>
+		Returns a table of CourseEntry items.
+	</Function>
 	<Function name='GetCourseEntry' return='CourseEntry' arguments='int iIndex'>
 		Gets the CourseEntry at <code>iIndex</code> from the Course.
 	</Function>
@@ -1258,7 +1387,7 @@
 	<Function name='SetFromDifficulty' return='void' arguments='Difficulty dc'>
 		Sets the DifficultyIcon's state from the difficulty passed in.
 	</Function>
-	<Function name='SetFromSteps' return='void' arguments='PlayerNumber pn, Steps pSteps'>
+	<Function name='SetFromSteps' return='void' arguments='Steps pSteps'>
 		Sets the DifficultyIcon's Player to <code>pn</code>,
 		then sets the DifficultyIcon's state from the difficulty of Steps <code>pSteps</code>
 	</Function>
@@ -1381,6 +1510,9 @@
 	<Function name='GetCurrentStage' return='Stage' arguments=''>
 		Return the current <Link class='Stage' />.
 	</Function>
+	<Function name='GetCurrentStageIndex' return='int' arguments=''>
+		Returns the current stage index (starts at 0).
+	</Function>
 	<Function name='GetCurrentSteps' return='Steps' arguments='PlayerNumber pn'>
 		Return the current <Link class='Steps' /> for the specified Player.
 	</Function>
@@ -1496,6 +1628,9 @@
 	</Function>
 	<Function name='GetSongFreeze' return='bool' arguments=''>
 		Returns <code>true</code> if the song is currently in a freeze.
+	</Function>
+	<Function name='GetSongOptions' return='string' arguments='ModsLevel ml'>
+		Returns the song options for the specified ModsLevel as a string.
 	</Function>
 	<Function name='GetSongOptionsString' return='string' arguments=''>
 		Returns the song options as a string.
@@ -1876,6 +2011,9 @@
 	<Function name='GetAliveSeconds' sm-ssc='true' return='float' arguments=''>
 		Returns how long the player has been alive.
 	</Function>
+	<Function name='GetBestFullComboTapNoteScore' return='TapNoteScore' arguments=''>
+		Returns the best tap note score for a full combo.
+	</Function>
 	<Function name='GetCaloriesBurned' return='float' arguments=''>
 		Returns the number of calories burned.
 	</Function>
@@ -1951,6 +2089,7 @@
 	<Function name='GetTapNoteScores' return='int' arguments='TapNoteScore tns'>
 		Returns the number of judgments for a specified TapNoteScore.
 	</Function>
+	<!-- removed:
 	<Function name='IsFullComboW1' renamed='true' return='bool' arguments=''>
 		[01 compat.lua] Returns <code>true</code> if the player got a full combo of all W1s.
 	</Function>
@@ -1963,6 +2102,7 @@
 	<Function name='IsFullComboW4' renamed='true' return='bool' arguments=''>
 		[01 compat.lua] Returns <code>true</code> if the player got a full combo of all W4s.
 	</Function>
+	-->
 	<Function name='MaxCombo' return='int' arguments=''>
 		Returns the max combo for this performance.
 	</Function>
@@ -1980,11 +2120,14 @@
 	<Function name='GetPlayerNumber' return='PlayerNumber' arguments=''>
 		Returns the player number for this PlayerState.
 	</Function>
-	<Function name='SetPlayerOptions' return='string' arguments='ModsLevel ml, string sPlayerOptions'>
-		Sets the player options to <code>sPlayerOptions</code> for the specified ModsLevel.
-	</Function>
 	<Function name='GetPlayerOptions' return='string' arguments='ModsLevel ml'>
 		Returns a string of player options for the specified ModsLevel.
+	</Function>
+	<Function name='GetPlayerOptionsArray' return='{string}' arguments='ModsLevel ml'>
+		Returns a table of strings, containing the player options for the specified ModsLevel.
+	</Function>
+	<Function name='SetPlayerOptions' return='string' arguments='ModsLevel ml, string sPlayerOptions'>
+		Sets the player options to <code>sPlayerOptions</code> for the specified ModsLevel.
 	</Function>
 </Class>
 <Class name='PrefsManager'>
@@ -2323,6 +2466,9 @@
 	</Function>
 </Class>
 <Class name='ScreenManager'>
+	<Function name='AddNewScreenToTop' sm-ssc='true' return='void' arguments='string sScreenName'>
+		Adds a screen at the top of the screen stack.
+	</Function>
 	<Function name='GetTopScreen' return='Screen' arguments=''>
 		Gets the screen at the top of the screen stack.
 	</Function>
@@ -2934,6 +3080,9 @@
 	</Function>
 	<Function name='GetDifficulty' return='Difficulty' arguments=''>
 		Returns the Trail's difficulty.
+	</Function>
+	<Function name='GetEntries' sm-ssc='true' return='{TrailEntry}' arguments=''>
+		Returns a table of TrailEntry items.
 	</Function>
 	<Function name='GetMeter' return='int' arguments=''>
 		Returns the Trail's difficulty rating.
