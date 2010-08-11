@@ -850,7 +850,7 @@ void Player::Update( float fDeltaTime )
 			{
 				if( !vHoldNotesToGradeTogether.empty() )
 				{
-					//LOG->Trace( ssprintf("UpdateHoldNotes; %i != %i || !judge holds on same row together",iRow,iRowOfLastHoldNote) );
+					LOG->Trace( ssprintf("UpdateHoldNotes; %i != %i || !judge holds on same row together",iRow,iRowOfLastHoldNote) );
 					UpdateHoldNotes( iSongRow, fDeltaTime, vHoldNotesToGradeTogether );
 					vHoldNotesToGradeTogether.clear();
 				}
@@ -861,7 +861,7 @@ void Player::Update( float fDeltaTime )
 
 		if( !vHoldNotesToGradeTogether.empty() )
 		{
-			//LOG->Trace("UpdateHoldNotes since !vHoldNotesToGradeTogether.empty()");
+			LOG->Trace("UpdateHoldNotes since !vHoldNotesToGradeTogether.empty()");
 			UpdateHoldNotes( iSongRow, fDeltaTime, vHoldNotesToGradeTogether );
 			vHoldNotesToGradeTogether.clear();
  		}
@@ -1010,7 +1010,16 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 
 	bool bInitiatedNote;
 	if( REQUIRE_STEP_ON_HOLD_HEADS )
-		bInitiatedNote = bSteppedOnHead;
+	{
+		// XXX HACK: Miniholds (a 192nd length hold) will not always register
+		// as Held, even if you hit the note. This is considered a major
+		// roadblock to adoption, so until a proper fix is found,
+		// DON'T REMOVE THIS HACK! -aj
+		if( iMaxEndRow-iStartRow <= 1 )
+			bInitiatedNote = true;
+		else
+			bInitiatedNote = bSteppedOnHead;
+	}
 	else
 		bInitiatedNote = true;
 
@@ -2021,7 +2030,6 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			case TapNote::hold_head:
 				// oh wow, this was causing the trigger before the hold heads
 				// bug. (It was fNoteOffset > 0.f before) -DaisuMaster
-				// todo: make this part a metric or a preference
 				if( !REQUIRE_STEP_ON_HOLD_HEADS && fNoteOffset <= GetWindowSeconds( TW_W5 ) )
 				{
 					score = TNS_W1;

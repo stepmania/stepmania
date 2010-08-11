@@ -10,9 +10,30 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.0 Release Candidate 2 | 2010xxxx
+sm-ssc v1.0 Release Candidate 2 | 201008xx
 --------------------------------------------------------------------------------
-(Miniholds bug must be fixed before this can be released)
+
+20100811
+--------
+* [Player] Implement a hack for miniholds until a proper solution can be found.
+
+20100810
+--------
+[ScreenNetEvaluation]
+ * Replace hardcoded rainbow effect with UserTier02OrBetterCommand.
+ * Added Difficulty and Steps param to UpdateNetEvalStats message. The
+   beginning of custom-themable online stuff begins.
+
+[ScreenNetSelectMusic]
+ * Started to port SampleMusicPreviewMode from ScreenSelectMusic.
+ * Changed MusicWheel metrics to read from OnlineMusicWheel instead.
+ * Added section, roulette, and random music (not used yet).
+ * Stop the music when reaching a section.
+
+20100808
+--------
+* [ScreenDebugOverlay] force sm-ssc to read the OnCommand for ButtonText,
+  FunctionText and PageText.
 
 20100807
 --------
