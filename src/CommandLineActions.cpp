@@ -13,15 +13,15 @@
 #include "RageFileManager.h"
 #include "SpecialFiles.h"
 
+// only used for Version()
 #if defined(_WINDOWS)
-// fuck you
 #include <windows.h>
 #include <conio.h>
 #endif
 
 const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
 
-static const RString TEMP_MOUNT_POINT = "/@tempinstallpackage/";
+static const RString TEMP_ZIP_MOUNT_POINT = "/@temp-zip/";
 
 static bool IsPackageFile( RString sFile )
 {
@@ -39,7 +39,7 @@ static void GetPackageFilesToInstall( vector<RString> &vs )
 
 	for( int i = 1; i<argc; ++i )
 		vs.push_back( argv[i] );
-	
+
 	bool bFoundOne = false;
 	FOREACH( RString, vs, s )
 	{
@@ -85,17 +85,17 @@ void CommandLineActions::Install()
 		RString sOsDir, sFilename, sExt;
 		splitpath( *s, sOsDir, sFilename, sExt );
 
-		FILEMAN->Mount( "dir", sOsDir, TEMP_MOUNT_POINT );
+		FILEMAN->Mount( "dir", sOsDir, TEMP_ZIP_MOUNT_POINT );
 
 		// TODO: Validate that this zip contains files for this version of StepMania
 
 		bool bFileExists = DoesFileExist( SpecialFiles::USER_PACKAGES_DIR + sFilename + sExt );
-		if( FileCopy( TEMP_MOUNT_POINT + sFilename + sExt, SpecialFiles::USER_PACKAGES_DIR + sFilename + sExt ) )
+		if( FileCopy( TEMP_ZIP_MOUNT_POINT + sFilename + sExt, SpecialFiles::USER_PACKAGES_DIR + sFilename + sExt ) )
 			vSucceeded.push_back( FileCopyResult(*s,bFileExists ? "overwrote existing file" : "") );
 		else
 			vFailed.push_back( FileCopyResult(*s,ssprintf("error copying file to '%s'",sOsDir.c_str())) );
 
-		FILEMAN->Unmount( "dir", sOsDir, TEMP_MOUNT_POINT );
+		FILEMAN->Unmount( "dir", sOsDir, TEMP_ZIP_MOUNT_POINT );
 	}
 	if( vSucceeded.empty()  &&  vFailed.empty() )
 	{
@@ -129,7 +129,7 @@ void CommandLineActions::Nsis()
 	RageFile out;
 	if( !out.Open( "nsis_strings_temp.inc", RageFile::WRITE ) )
 		RageException::Throw( "Error opening file for write." );
-	
+
 	vector<RString> vs;
 	GetDirListing( INSTALLER_LANGUAGES_DIR + "*.ini", vs, false, false );
 	FOREACH_CONST( RString, vs, s )
@@ -137,10 +137,10 @@ void CommandLineActions::Nsis()
 		RString sThrowAway, sLangCode;
 		splitpath( *s, sThrowAway, sLangCode, sThrowAway );
 		const LanguageInfo *pLI = GetLanguageInfo( sLangCode );
-		
+
 		RString sLangNameUpper = pLI->szEnglishName;
 		sLangNameUpper.MakeUpper();
-		
+
 		IniFile ini;
 		if( !ini.ReadFile( INSTALLER_LANGUAGES_DIR + *s ) )
 			RageException::Throw( "Error opening file for read." );
@@ -196,6 +196,7 @@ void CommandLineActions::Version()
 		freopen( "CONOUT$","wb", stderr );
 
 		fprintf(stdout, "Version Information:\n%s %s\n", sProductID.c_str(), sVersion.c_str() );
+		fprintf(stdout, "Press any key to exit." );
 		_getch();
 	#endif // WIN32 && !_XBOX
 }
