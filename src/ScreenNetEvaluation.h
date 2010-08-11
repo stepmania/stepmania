@@ -4,6 +4,7 @@
 #include "BitmapText.h"
 #include "ScreenMessage.h"
 #include "DifficultyIcon.h"
+#include "StepsDisplay.h"
 
 class ScreenNetEvaluation: public ScreenEvaluation
 {
@@ -28,8 +29,10 @@ protected:
 private:
 	// todo: Make this an AutoActor -aj
 	Quad m_rectUsersBG;
-	// todo: Make this a DifficultyDisplay -aj
+
+	// todo: Make this a StepsDisplay -aj
 	DifficultyIcon m_DifficultyIcon[NUM_PLAYERS];
+	//StepsDisplay m_StepsDisplays[NUM_PLAYERS];
 
 	vector<BitmapText>	m_textUsers;
 	int	 m_iCurrentPlayer;

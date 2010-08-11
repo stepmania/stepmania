@@ -5,6 +5,8 @@
 #include "ThemeManager.h"
 #include "GameState.h"
 #include "RageLog.h"
+#include "Style.h"
+#include "SongUtil.h"
 
 static const int NUM_SCORE_DIGITS = 9;
 
@@ -147,12 +149,15 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 				break;
 
 			m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_EvalPlayerData[i].name] );
+
 			// Yes, hardcoded (I'd like to leave it that way) -CNLohr (in reference to Grade_Tier03)
 			// Themes can read this differently. The correct solution depends...
 			// TODO: make this a server-side variable, or just find out
 			// the data from the theme? If we find out from the theme, people
 			// will be using different themes so it means nothing. -aj
-			m_textUsers[i].SetRainbowScroll( NSMAN->m_EvalPlayerData[i].grade < Grade_Tier03 );
+			if( NSMAN->m_EvalPlayerData[i].grade < Grade_Tier03 )
+				m_textUsers[i].PlayCommand("Tier02OrBetter");
+
 			ON_COMMAND( m_textUsers[i] );
 			LOG->Trace( "SMNETCheckpoint%d", i );
 		}
@@ -186,11 +191,13 @@ void ScreenNetEvaluation::UpdateStats()
 		m_textScore[m_pActivePlayer].SetTargetNumber( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score );
 
 	//Values greater than 6 will cause a crash
-	if ( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty < 6 )
+	/*
+	if( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty < 6 )
 	{
 		m_DifficultyIcon[m_pActivePlayer].SetPlayer( m_pActivePlayer );
 		m_DifficultyIcon[m_pActivePlayer].SetFromDifficulty( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
 	}
+	*/
 
 	for( int j=0; j<NETNUMTAPSCORES; ++j )
 	{
@@ -204,9 +211,16 @@ void ScreenNetEvaluation::UpdateStats()
 
 	m_textPlayerOptions[m_pActivePlayer].SetText( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].playerOptions );
 
+	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+	Difficulty dc = NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty;
+	Steps *pSteps = SongUtil::GetOneSteps( GAMESTATE->m_pCurSong, st, dc );
+
 	// broadcast a message so themes know that the active player has changed. -aj
 	Message msg("UpdateNetEvalStats");
 	msg.SetParam( "ActivePlayerIndex", m_pActivePlayer );
+	msg.SetParam( "Difficulty", NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
+	if( pSteps )
+		msg.SetParam( "Steps", pSteps );
 	MESSAGEMAN->Broadcast(msg);
 }
 

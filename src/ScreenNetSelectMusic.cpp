@@ -49,6 +49,8 @@ void ScreenNetSelectMusic::Init()
 
 	ScreenNetSelectBase::Init();
 
+	SAMPLE_MUSIC_PREVIEW_MODE.Load( m_sName, "SampleMusicPreviewMode" );
+
 	FOREACH_EnabledPlayer (p)
 	{
 		/*
@@ -69,7 +71,7 @@ void ScreenNetSelectMusic::Init()
 	}
 
 	m_MusicWheel.SetName( "MusicWheel" );
-	m_MusicWheel.Load( "MusicWheel" );
+	m_MusicWheel.Load( "OnlineMusicWheel" );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_MusicWheel );
 	m_MusicWheel.BeginScreen();
 	ON_COMMAND( m_MusicWheel );
@@ -93,9 +95,12 @@ void ScreenNetSelectMusic::Init()
 		this->AddChild( &m_ModIconRow[p] );
 	}
 
-	//Load SFX next
+	// Load SFX and music
 	m_soundChangeOpt.Load( THEME->GetPathS(m_sName,"change opt") );
 	m_soundChangeSel.Load( THEME->GetPathS(m_sName,"change sel") );
+	m_sSectionMusicPath =	THEME->GetPathS(m_sName,"section music");
+	m_sRouletteMusicPath =	THEME->GetPathS(m_sName,"roulette music");
+	m_sRandomMusicPath =	THEME->GetPathS(m_sName,"random music");
 
 	NSMAN->ReportNSSOnOff(1);
 	NSMAN->ReportPlayerOptions();
@@ -268,12 +273,12 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromPlayerOptions )
 	{
-		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
+		// XXX HACK: This will cause ScreenSelectOptions to go back here.
 		NSMAN->ReportNSSOnOff(1);
 		GAMESTATE->m_EditMode = EditMode_Invalid;
 		NSMAN->ReportPlayerOptions();
 
-		//Update changes
+		// Update changes
 		FOREACH_EnabledPlayer(p)
 			m_ModIconRow[p].SetFromGameState();
 	}
@@ -288,7 +293,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		{
 			switch ( NSMAN->m_SMOnlinePacket.Read1() )
 			{
-			case 0: //Room title Change
+			case 0: // Room title Change
 				{
 					RString titleSub;
 					titleSub = NSMAN->m_SMOnlinePacket.ReadNT() + "\n";
@@ -304,8 +309,8 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 
 done:
-	//Must be at end, as so it is last resort for SMOnline packets.
-	//If it doens't know what to do, then it'll just remove them.
+	// Must be at end, as so it is last resort for SMOnline packets.
+	// If it doesn't know what to do, then it'll just remove them.
 	ScreenNetSelectBase::HandleScreenMessage( SM );
 }
 
@@ -318,7 +323,7 @@ void ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
 	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
 
 	if ( bLeftAndRightPressed )
-		m_MusicWheel.ChangeSort( SORT_MODE_MENU );		
+		m_MusicWheel.ChangeSort( SORT_MODE_MENU );
 	else
 		m_MusicWheel.Move( -1 );
 }
@@ -346,11 +351,10 @@ void ScreenNetSelectMusic::MenuUp( const InputEventPlus &input )
 
 void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 {
-	/*Tricky:  If we have a player on player 2, and there is only
-	  player 2, allow them to use player 1's controls to change 
-	  their difficulty. */
-	/* Why?  Nothing else allows that. */
-	// I agree that's a fucking stupid idea -aj
+	/* Tricky: If we have a player on player 2, and there is only player 2,
+	 * allow them to use player 1's controls to change their difficulty. */
+	/* Why?  Nothing else allows that. (-who?) */
+	// I agree, that's a stupid idea -aj
 
 	PlayerNumber pn = input.pn;
 	if ( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) && 
@@ -384,14 +388,18 @@ void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 				break;
 			}
 		}
-		//If failed to go up, loop
+		// If failed to go up, loop
 		if ( i == NUM_Difficulty )
+		{
 			for (i = 0;i<NUM_Difficulty;i++)
-			if (dcs[i])
 			{
-				m_DC[pn] = (Difficulty)i;
-				break;
+				if (dcs[i])
+				{
+					m_DC[pn] = (Difficulty)i;
+					break;
+				}
 			}
+		}
 
 	}
 	UpdateDifficulties( pn );
@@ -518,6 +526,9 @@ void ScreenNetSelectMusic::MusicChanged()
 		m_BPMDisplay.NoBPM();
 		FOREACH_EnabledPlayer (pn)
 			UpdateDifficulties( pn );
+
+		SOUND->StopMusic();
+		// xxx: it should play the menu music instead. -aj
 		return;
 	} 
 	m_BPMDisplay.SetBpmFromSong( GAMESTATE->m_pCurSong );
@@ -559,13 +570,14 @@ void ScreenNetSelectMusic::MusicChanged()
 		}
 		UpdateDifficulties( pn );
 	}
-	//Copied from ScreenSelectMusic
+
+	// Copied from ScreenSelectMusic
+	// TODO: Update me! -aj
 	SOUND->StopMusic();
 	if( GAMESTATE->m_pCurSong->HasMusic() )
 	{
 		if(SOUND->GetMusicPath().CompareNoCase(GAMESTATE->m_pCurSong->GetMusicPath())) // dont play the same sound over and over
 		{
-			
 			SOUND->StopMusic();
 			SOUND->PlayMusic(
 				GAMESTATE->m_pCurSong->GetMusicPath(), 

@@ -58,6 +58,12 @@ protected:
 	void MusicChanged();
 
 	void TweenOffScreen();
+
+	ThemeMetric<SampleMusicPreviewMode> SAMPLE_MUSIC_PREVIEW_MODE;
+	RString m_sSectionMusicPath;
+	RString m_sRouletteMusicPath;
+	RString m_sRandomMusicPath;
+
 private:
 	MusicWheel m_MusicWheel;
 
