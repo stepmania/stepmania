@@ -15,7 +15,14 @@ sm-ssc v1.0 Release Candidate 2 | 201008xx
 
 20100811
 --------
-* [Player] Implement a hack for miniholds until a proper solution can be found.
+sm-ssc:
+ * [Player] Implement a hack for miniholds until a proper solution can be found.
+ * [ActorSound] Fix Play() so that stop and pause are usable. [Daisuke Master]
+
+sm4.0:
+ * r28455: fix EFFECT_BOUNCE, give particles a start position uniformly
+   distributed across the screen [Chris Danford]
+ * r28456: change flip effects to use degrees, not radians [Chris Danford]
 
 20100810
 --------
