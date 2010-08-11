@@ -1,3 +1,4 @@
+/* DancingCharacters - Characters that react to how the players are doing. */
 #ifndef DancingCharacters_H
 #define DancingCharacters_H
 

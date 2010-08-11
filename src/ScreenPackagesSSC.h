@@ -16,7 +16,7 @@ public:
 
 	/* Input stuff */
 	virtual void Input( const InputEventPlus &input );
-	virtual void MenuBack( const InputEventPlus &input );	
+	virtual void MenuBack( const InputEventPlus &input );
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void Update(float f);

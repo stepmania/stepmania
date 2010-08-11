@@ -19,7 +19,7 @@ void ScreenPackagesSSC::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "PrevScreen") );
 	else if( SM ==SM_GoToNextScreen )
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
-	
+
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
@@ -46,7 +46,7 @@ void ScreenPackagesSSC::DrawPrimitives()
 }
 
 RString ScreenPackagesSSC::JSONParse( const RString &string_in )
-{	
+{
 	/* json++ stuff here */
 	return "";
 }

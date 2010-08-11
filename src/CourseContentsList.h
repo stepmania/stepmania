@@ -11,7 +11,7 @@ class CourseContentsList : public ActorScroller
 public:
 	~CourseContentsList();
 	virtual CourseContentsList *Copy() const;
-	
+
 	void LoadFromNode( const XNode* pNode );
 
 	void SetFromGameState();

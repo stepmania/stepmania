@@ -17,11 +17,11 @@ public:
 	virtual void DrawPrimitives();
 
 	void Load( const PlayerState* pPlayerState, float fYReverseOffset );
-	
+
 	void DidTapNote( int iCol, TapNoteScore tns, bool bBright );
 	void DidHoldNote( int iCol, HoldNoteScore hns, bool bBright );
 	void SetHoldShowing( int iCol, const TapNote &tn );
-	
+
 protected:
 	float m_fYReverseOffsetPixels;
 	const PlayerState* m_pPlayerState;
