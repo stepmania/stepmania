@@ -13,6 +13,12 @@ _____________________________________________________________________________
 sm-ssc v1.0 Release Candidate 2 | 201008xx
 --------------------------------------------------------------------------------
 
+20100814
+--------
+sm4.0:
+ * r28482: number measures starting with 0 (makes the mental conversion
+   between the .SM and the editor much easier) [Chris Danford]
+
 20100811
 --------
 sm-ssc:

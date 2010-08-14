@@ -307,7 +307,7 @@ void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIn
 
 	if( GAMESTATE->IsEditing()  &&  bIsMeasure )
 	{
-		int iMeasureNoDisplay = iMeasureIndex+1;
+		int iMeasureNoDisplay = iMeasureIndex;
 
 		m_textMeasureNumber.SetDiffuse( RageColor(1,1,1,1) );
 		m_textMeasureNumber.SetGlow( RageColor(1,1,1,0) );
