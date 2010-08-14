@@ -3,7 +3,7 @@ local Color = color(Var "Color1");
 
 local t = Def.ActorFrame {
 	LoadActor(Var "File1") .. {
-		OnCommand=cmd(horizalign,left;scaletocover,0,0,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color(Color);effectclock,"music");
+		OnCommand=cmd(horizalign,left;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color(Color));
 		GainFocusCommand=cmd(play);
 		LoseFocusCommand=cmd(pause);
 	};

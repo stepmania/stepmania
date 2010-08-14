@@ -1,7 +1,7 @@
 local Color = color(Var "Color1");
 local t = Def.ActorFrame {
 	LoadActor(Var "File1") .. {
-		OnCommand=cmd(scale_or_crop_background;diffuse,Color;loop,false;effectclock,"music");
+		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color;loop,false);
 		GainFocusCommand=cmd(play);
 		LoseFocusCommand=cmd(pause);
 	};

@@ -1,7 +1,7 @@
 local Color = color(Var "Color1");
 
 local a = LoadActor(Var "File1") .. {
-	OnCommand=cmd(zoomtowidth,SCREEN_WIDTH/2;zoomtoheight,SCREEN_HEIGHT/2;diffuse,Color;effectclock,"music");
+	OnCommand=cmd(scaletoclipped,SCREEN_WIDTH/2,SCREEN_HEIGHT/2;diffuse,Color);
 	GainFocusCommand=cmd(play);
 	LoseFocusCommand=cmd(pause);
 };
