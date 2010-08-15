@@ -1238,6 +1238,17 @@ public:
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathO( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathO(SArg(1),SArg(2)) ); return 1; }
+
+	static int GetSelectableThemeNames( T* p, lua_State *L )
+	{
+		// pushes a table of theme folders from GetSelectableThemeNames()
+		//lua_pushnumber(L, p->GetNumSelectableThemes() );
+		vector<RString> sThemes;
+		p->GetSelectableThemeNames(sThemes);
+		LuaHelpers::CreateTableFromArray<RString>( sThemes, L );
+		return 1;
+	}
+
 	static int GetNumSelectableThemes( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumSelectableThemes() ); return 1; }
 
 	DEFINE_METHOD( GetCurrentThemeDirectory, GetCurThemeDir() );
@@ -1256,6 +1267,7 @@ public:
 		ADD_METHOD( GetPathB );
 		ADD_METHOD( GetPathS );
 		ADD_METHOD( GetPathO );
+		ADD_METHOD( GetSelectableThemeNames );
 		ADD_METHOD( GetNumSelectableThemes );
 		ADD_METHOD( GetCurrentThemeDirectory );
 		ADD_METHOD( GetCurLanguage );
