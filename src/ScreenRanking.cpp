@@ -70,7 +70,7 @@ void ScreenRanking::Init()
 	{
 		m_textCategory.SetName( "Category" );
 		m_textCategory.LoadFromFont( THEME->GetPathF(m_sName,"category") );
-		m_textCategory.SetShadowLength( 0 );
+		//m_textCategory.SetShadowLength( 0 );
 		this->AddChild( &m_textCategory );
 		LOAD_ALL_COMMANDS( m_textCategory );
 
@@ -96,7 +96,7 @@ void ScreenRanking::Init()
 
 		m_textCourseTitle.SetName( "CourseTitle" );
 		m_textCourseTitle.LoadFromFont( THEME->GetPathF(m_sName,"course title") );
-		m_textCourseTitle.SetShadowLength( 0 );
+		//m_textCourseTitle.SetShadowLength( 0 );
 		this->AddChild( &m_textCourseTitle );
 		LOAD_ALL_COMMANDS( m_textCourseTitle );
 
@@ -202,9 +202,7 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 	// So, zero the next update so we don't skip.
 	SCREENMAN->ZeroNextUpdate();
 
-	//
 	// init page
-	//
 	StepsType st = pts.aTypes.front().second;
 	m_textStepsType.SetText( GAMEMAN->GetStepsTypeInfo(st).GetLocalizedString() );
 
@@ -258,7 +256,7 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 				}
 				else
 				{
-					hs.SetName( NO_SCORE_NAME );				
+					hs.SetName( NO_SCORE_NAME );
 				}
 
 				m_textNames[l].SetText( hs.GetDisplayName() );
@@ -298,7 +296,7 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 				}
 				else
 				{
-					hs.SetName( NO_SCORE_NAME );				
+					hs.SetName( NO_SCORE_NAME );
 				}
 
 				m_textNames[l].SetText( hs.GetDisplayName() );
