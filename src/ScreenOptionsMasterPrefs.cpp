@@ -711,8 +711,8 @@ static void InitializeConfOptions()
 
 	ADD( ConfOption( "EventMode",			MovePref<bool>,		"Off","On (recommended)" ) );
 	ADD( ConfOption( "ScoringType",			MovePref<ScoringType>,	"New","Old","Custom" ) );
-	ADD( ConfOption( "TimingWindowScale",		TimingWindowScale,	"|1","|2","|3","|4","|5","|6","|7" ) );
-	ADD( ConfOption( "LifeDifficulty",		LifeDifficulty,		"|1","|2","|3","|4","|5" ) );
+	ADD( ConfOption( "TimingWindowScale",		TimingWindowScale,	"|1","|2","|3","|4","|5","|6","|7","|8","Justice" ) );
+	ADD( ConfOption( "LifeDifficulty",		LifeDifficulty,		"|1","|2","|3","|4","|5","|6","|7" ) );
 	g_ConfOptions.back().m_sPrefName = "LifeDifficultyScale";
 	ADD( ConfOption( "ProgressiveLifebar",		MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8") );
 	ADD( ConfOption( "ProgressiveStageLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
