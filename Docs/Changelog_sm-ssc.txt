@@ -13,6 +13,14 @@ _____________________________________________________________________________
 sm-ssc v1.0 Release Candidate 2 | 201008xx
 --------------------------------------------------------------------------------
 
+20100815
+--------
+* [GameCommand] Remove pushscreen command
+* [ScreenOptionsMasterPrefs] Reset Judge and Life values to the ones used in SM4
+* [ScreenNetEvaluation] add Score, Grade, PlayerOptions params to
+  UpdateNetEvalStats message
+* [PlayerState] add GetHealthState Lua binding
+
 20100814
 --------
 sm4.0:
