@@ -11,8 +11,8 @@ end
 
 function IsHome()
 	local sPayMode = GAMESTATE:GetCoinMode();
-	local bIsArcade = (sPayMode == 'CoinMode_Home');
-	return bIsArcade;
+	local bIsHome = (sPayMode == 'CoinMode_Home');
+	return bIsHome;
 end
 
 function IsFreePlay()
@@ -51,30 +51,6 @@ Health = {
 	uglyfying my code just to handle rare cases). -shake
 --]]
 
-function Actor:Real()
-	-- normal
-	local theme = THEME:GetMetric("Common","ScreenHeight")
-	local res = PREFSMAN:GetPreference("DisplayHeight")
-
-	-- scale back down to real pixels.
-	self:basezoom(theme/res)
-
-	-- don't make this ugly
-	self:SetTextureFiltering(false)
-end
-
--- Scale things back up after they have already been scaled down.
-function Actor:RealInverse()
-	-- normal
-	local theme = THEME:GetMetric("Common","ScreenHeight")
-	local res = PREFSMAN:GetPreference("DisplayHeight")
-
-	-- scale back up to theme resolution
-	self:basezoom(res/theme)
-
-	self:SetTextureFiltering(true)
-end
-
 -- useful
 function GetReal()
 	local theme = THEME:GetMetric("Common","ScreenHeight")
@@ -86,6 +62,20 @@ function GetRealInverse()
 	local theme = THEME:GetMetric("Common","ScreenHeight")
 	local res = PREFSMAN:GetPreference("DisplayHeight")
 	return res/theme
+end
+
+function Actor:Real()
+	-- scale back down to real pixels.
+	self:basezoom(GetReal())
+	-- don't make this ugly
+	self:SetTextureFiltering(false)
+end
+
+-- Scale things back up after they have already been scaled down.
+function Actor:RealInverse()
+	-- scale back up to theme resolution
+	self:basezoom(GetRealInverse())
+	self:SetTextureFiltering(true)
 end
 
 --[[ Actor commands ]]
@@ -202,11 +192,6 @@ end
 
 function pname(pn)
 	return ToEnumShortString(pn)
-end
-
--- from http://ardoris.wordpress.com/2008/11/07/rounding-to-a-certain-number-of-decimal-places-in-lua/
-function round(what, precision)
-	return math.floor(what*math.pow(10,precision)+0.5) / math.pow(10,precision)
 end
 
 --[[ end helper functions ]]

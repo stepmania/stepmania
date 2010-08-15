@@ -32,11 +32,11 @@ function ScreenSelectMusic:setupmusicstagemods()
 		local song, steps = SONGMAN:GetExtraStageInfo( bExtra2, style )
 		local po, so
 		if bExtra2 then
-			po = THEME:GetMetric("SongManager","ExtraStagePlayerModifiers");
-			so = THEME:GetMetric("SongManager","ExtraStageStageModifiers");
-		else
 			po = THEME:GetMetric("SongManager","OMESPlayerModifiers");
 			so = THEME:GetMetric("SongManager","OMESStageModifiers");
+		else
+			po = THEME:GetMetric("SongManager","ExtraStagePlayerModifiers");
+			so = THEME:GetMetric("SongManager","ExtraStageStageModifiers");
 		end
 		local difficulty = steps:GetDifficulty()
 		local Reverse = PlayerNumber:Reverse()

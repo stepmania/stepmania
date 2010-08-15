@@ -157,6 +157,13 @@ end
 t[#t+1] = StandardDecorationFromFileOptional("LifeDifficulty","LifeDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("GameType","GameType");
-
+t[#t+1] = LoadActor( THEME:GetPathG("ScreenStageInformation","Stage extra1" ) ) .. {
+	InitCommand=cmd(Center;draworder,105);
+	OnCommand=cmd(visible,GAMESTATE:IsExtraStage() and not GAMESTATE:IsExtraStage2();linear,2;zoom,0;diffusealpha,1;);
+};
+t[#t+1] = LoadActor( THEME:GetPathG("ScreenStageInformation","Stage extra2" ) ) .. {
+	InitCommand=cmd(Center;draworder,105);
+	OnCommand=cmd(visible,not GAMESTATE:IsExtraStage() and GAMESTATE:IsExtraStage2();linear,2;zoom,0;diffusealpha,1;);
+};
 
 return t

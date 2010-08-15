@@ -83,15 +83,22 @@ t[#t+1] = Def.ActorFrame {
 			end
 		end
 		
-		-- we're safe, you can push the values
-		tTotalJudgments[#tTotalJudgments+1] = math.abs( param.TapNoteOffset );
-		
-		local iTapNoteOffset = param.TapNoteOffset;
+
+		local fTapNoteOffset = param.TapNoteOffset;
 		if param.HoldNoteScore then
-			iTapNoteOffset = 1;
+			fTapNoteOffset = 1;
 		else
-			iTapNoteOffset = param.TapNoteOFfset; 
+			fTapNoteOffset = param.TapNoteOffset; 
 		end
+		
+		if param.TapNoteScore == 'TapNoteScore_Miss' then
+			fTapNoteOffset = 1;
+		else
+			fTapNoteOffset = fTapNoteOffset;
+		end;
+		
+		-- we're safe, you can push the values
+		tTotalJudgments[#tTotalJudgments+1] = math.abs( fTapNoteOffset );
 		
 		self:playcommand("Reset");
 
@@ -100,11 +107,11 @@ t[#t+1] = Def.ActorFrame {
 		JudgeCmds[param.TapNoteScore](c.Judgment);
 		
 		c.ProtimingDisplay:visible( bShowProtiming );
-		c.ProtimingDisplay:settextf("%i%%",100 - math.floor(math.abs(param.TapNoteOffset * 1000)) );
+		c.ProtimingDisplay:settextf("%i%%",clamp(100 - math.floor(math.abs(fTapNoteOffset * 1000)) ,0,100));
 		ProtimingCmds[param.TapNoteScore](c.ProtimingDisplay);
 		
 		c.ProtimingAverage:visible( bShowProtiming );
-		c.ProtimingAverage:settextf("%.2f%%",100 - MakeAverage( tTotalJudgments ) * 1000 );
+		c.ProtimingAverage:settextf("%.2f%%",clamp(100 - MakeAverage( tTotalJudgments ) * 1000 ,0,100));
 		AverageCmds['Pulse'](c.ProtimingAverage);
 	end;
 };
