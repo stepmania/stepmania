@@ -850,7 +850,7 @@ void Player::Update( float fDeltaTime )
 			{
 				if( !vHoldNotesToGradeTogether.empty() )
 				{
-					LOG->Trace( ssprintf("UpdateHoldNotes; %i != %i || !judge holds on same row together",iRow,iRowOfLastHoldNote) );
+					//LOG->Trace( ssprintf("UpdateHoldNotes; %i != %i || !judge holds on same row together",iRow,iRowOfLastHoldNote) );
 					UpdateHoldNotes( iSongRow, fDeltaTime, vHoldNotesToGradeTogether );
 					vHoldNotesToGradeTogether.clear();
 				}
@@ -861,7 +861,7 @@ void Player::Update( float fDeltaTime )
 
 		if( !vHoldNotesToGradeTogether.empty() )
 		{
-			LOG->Trace("UpdateHoldNotes since !vHoldNotesToGradeTogether.empty()");
+			//LOG->Trace("UpdateHoldNotes since !vHoldNotesToGradeTogether.empty()");
 			UpdateHoldNotes( iSongRow, fDeltaTime, vHoldNotesToGradeTogether );
 			vHoldNotesToGradeTogether.clear();
  		}
@@ -913,8 +913,8 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 {
 	ASSERT( !vTN.empty() );
 
+	//LOG->Trace("--------------------------------");
 	/*
-	LOG->Trace("--------------------------------");
 	LOG->Trace("[Player::UpdateHoldNotes] begins");
 	LOG->Trace( ssprintf("song row %i, deltaTime = %f",iSongRow,fDeltaTime) );
 	*/
@@ -947,6 +947,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	ASSERT( iFirstTrackWithMaxEndRow != -1 );
 	//LOG->Trace( ssprintf("start row: %i; max/end row: = %i",iStartRow,iMaxEndRow) );
 	//LOG->Trace( ssprintf("first track with max end row = %i",iFirstTrackWithMaxEndRow) );
+	//LOG->Trace( ssprintf("max end row - start row (in beats) = %f",NoteRowToBeat(iMaxEndRow)-NoteRowToBeat(iStartRow)) );
 
 	FOREACH( TrackRowTapNote, vTN, trtn )
 	{
@@ -1011,11 +1012,11 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	bool bInitiatedNote;
 	if( REQUIRE_STEP_ON_HOLD_HEADS )
 	{
-		// XXX HACK: Miniholds (a 192nd length hold) will not always register
-		// as Held, even if you hit the note. This is considered a major
-		// roadblock to adoption, so until a proper fix is found,
+		// XXX HACK: Miniholds (a 64th or 192nd length hold) will not always
+		// register as Held, even if you hit the note. This is considered a
+		// major roadblock to adoption, so until a proper fix is found,
 		// DON'T REMOVE THIS HACK! -aj
-		if( iMaxEndRow-iStartRow <= 1 )
+		if( iMaxEndRow-iStartRow <= 4 )
 			bInitiatedNote = true;
 		else
 			bInitiatedNote = bSteppedOnHead;
@@ -2121,7 +2122,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 					// figure out overlap.
 					float fLowerBound = 0.0f; // negative upper limit
 					float fUpperBound = 0.0f; // positive lower limit
-					float fCompareWindow; // filled in here:
+					float fCompareWindow = 0.0f; // filled in here:
 					if( score == TNS_W2 )
 					{
 						fLowerBound = -fWindowW1;
@@ -2483,8 +2484,9 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		bool bFreeze, bDelay;
 		float fMissIfOlderThanThisBeat;
 		float fThrowAway;
-		int iWarpBeginRow, iWarpEndRow;
-		GAMESTATE->m_pCurSong->m_Timing.GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze, bDelay, iWarpBeginRow, iWarpEndRow );
+		int iWarpBeginRow;
+		float fWarpLength;
+		GAMESTATE->m_pCurSong->m_Timing.GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze, bDelay, iWarpBeginRow, fWarpLength );
 
 		iMissIfOlderThanThisRow = BeatToNoteRow( fMissIfOlderThanThisBeat );
 		if( bFreeze || bDelay )
@@ -2521,7 +2523,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		{
 			// warp hackery: don't score notes within the warp region.
 			// (Only useful when QuirksMode is enabled.) -aj
-			if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() <= GAMESTATE->m_iWarpEndRow )
+			if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
 				continue;
 
 			tn.result.tns = TNS_Miss;
@@ -2547,7 +2549,8 @@ void Player::UpdateJudgedRows()
 				iLastSeenRow = iRow;
 
 				// if row is within a warp section, ignore it. -aj
-				if(iRow >= GAMESTATE->m_iWarpBeginRow && iRow <= GAMESTATE->m_iWarpEndRow)
+				if( iRow >= GAMESTATE->m_iWarpBeginRow &&
+					iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
 					continue;
 
 				// crossed a nonempty row
@@ -2910,7 +2913,8 @@ void Player::HandleTapRowScore( unsigned row )
 #endif
 
 	// more warp hackery. -aj
-	if(row >= (unsigned)GAMESTATE->m_iWarpBeginRow && row <= (unsigned)GAMESTATE->m_iWarpEndRow)
+	if( row >= (unsigned)GAMESTATE->m_iWarpBeginRow &&
+		row <= (unsigned)(GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
 		return;
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
@@ -2982,14 +2986,11 @@ void Player::HandleTapRowScore( unsigned row )
 	if( m_pPlayerStageStats )
 		m_pPlayerStageStats->m_iMaxCombo = max(m_pPlayerStageStats->m_iMaxCombo, iCurCombo);
 
-	/*
-	 * Use the real current beat, not the beat we've been passed.  That's because we
-	 * want to record the current life/combo to the current time; eg. if it's a MISS,
-	 * the beat we're registering is in the past, but the life is changing now.
-	 *
-	 * We need to include time from previous songs in a course, so we can't use
-	 * GAMESTATE->m_fMusicSeconds.  Use fStepsSeconds instead.
-	 */
+	/* Use the real current beat, not the beat we've been passed. That's because
+	 * we want to record the current life/combo to the current time; eg. if it's
+	 * a MISS, the beat we're registering is in the past, but the life is changing
+	 * now. We need to include time from previous songs in a course, so we
+	 * can't use GAMESTATE->m_fMusicSeconds. Use fStepsSeconds instead. */
 	if( m_pPlayerStageStats )
 		m_pPlayerStageStats->UpdateComboList( STATSMAN->m_CurStageStats.m_fStepsSeconds, false );
 
@@ -3188,9 +3189,29 @@ void Player::SetCombo( int iCombo, int iMisses )
 	if( b1000Milestone )
 		this->PlayCommand( "ThousandMilestone" );
 
-	// don't show a colored combo until 1/4 of the way through the song
-	bool bPastBeginning = (!GAMESTATE->IsCourseMode() || GAMESTATE->GetCourseSongIndex()>0) &&
-		GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds * PERCENT_UNTIL_COLOR_COMBO;
+	/* Colored combo logic differs between Songs and Courses.
+	 *	Songs:
+	 *	The theme decides how far into the song the combo color should appear.
+	 *	(PERCENT_UNTIL_COLOR_COMBO)
+	 *
+	 *	Courses:
+	 *	PERCENT_UNTIL_COLOR_COMBO refers to how long through the course the
+	 *	combo color should appear (scaling to the number of songs). This may
+	 *	not be desired behavior, however. -aj
+	 *
+	 *	TODO: Add a metric that determines Course combo colors logic?
+	 *	Or possibly move the logic to a Lua function? -aj */
+	bool bPastBeginning = false;
+	if( GAMESTATE->IsCourseMode() )
+	{
+		int iSongIndexStartColoring = GAMESTATE->m_pCurCourse->GetEstimatedNumStages();
+		iSongIndexStartColoring = floor(iSongIndexStartColoring*PERCENT_UNTIL_COLOR_COMBO);
+		bPastBeginning = GAMESTATE->GetCourseSongIndex() >= iSongIndexStartColoring;
+	}
+	else
+	{
+		bPastBeginning = GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds * PERCENT_UNTIL_COLOR_COMBO;
+	}
 
 	if( m_bSendJudgmentAndComboMessages )
 	{

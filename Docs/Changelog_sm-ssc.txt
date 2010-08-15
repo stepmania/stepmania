@@ -20,6 +20,13 @@ sm-ssc v1.0 Release Candidate 2 | 201008xx
 * [ScreenNetEvaluation] add Score, Grade, PlayerOptions params to
   UpdateNetEvalStats message
 * [PlayerState] add GetHealthState Lua binding
+* [Player] fix a warning [shakesoda]
+* [Player] Change combo coloring logic in course mode:
+  "PERCENT_UNTIL_COLOR_COMBO refers to how long through the course the combo
+  color should appear (scaling to the number of songs). (This may not be
+  desired behavior, however.)" Let me know if I should add an alternate way to
+  specify course combo color logic.  -aj
+* [ScreenRanking] Cleanup and un-hardcode shadowlength
 
 20100814
 --------

@@ -700,10 +700,10 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	if( m_aBGChanges.size() == 0 )
 		return;
 
-	float fBeat, fBPS;
+	float fBeat, fBPS, fThrowAway;
 	bool bFreeze;
-	int iThrowAway1, iThrowAway2;
-	pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze, bFreeze, iThrowAway1, iThrowAway2 );
+	int iThrowAway;
+	pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze, bFreeze, iThrowAway, fThrowAway );
 
 	/* Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it. */
 	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;

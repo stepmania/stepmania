@@ -208,12 +208,13 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 						split( arrayBPMChangeExpressions[b+1], "=", arrayNextBPMChangeValues );
 						const float fNextPositiveBeat = StringToFloat( arrayNextBPMChangeValues[0] );
 						const float fNextPositiveBPM  = StringToFloat( arrayNextBPMChangeValues[1] );
-						//LOG->Trace( ssprintf("String (%s) vs. BPM (%f)",arrayNextBPMChangeValues[1].c_str(),fNextPositiveBPM) );
+
 						// tJumpPos = (tPosBPS-abs(negBPS)) + (gPosBPMPosition - fNegPosition)
 						float fDeltaBeat = ((fNextPositiveBPM/60.0f)-abs(fNewBPM/60.0f)) + (fNextPositiveBeat-fBeat);
-						float fWarpToBeat = fNextPositiveBeat + fDeltaBeat;
-						WarpSegment wsTemp(BeatToNoteRow(fBeat),BeatToNoteRow(fWarpToBeat));
+						//float fWarpLengthBeats = fNextPositiveBeat + fDeltaBeat;
+						WarpSegment wsTemp(BeatToNoteRow(fBeat),fDeltaBeat);
 						arrayWarpsFromNegativeBPMs.push_back(wsTemp);
+
 						/*
 						LOG->Trace( ssprintf("==NotesLoSM negbpm==\nfnextposbeat = %f, fnextposbpm = %f,\nfdelta = %f, fwarpto = %f",
 									fNextPositiveBeat,
@@ -236,6 +237,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 							fDeltaBeat,(fNextPositiveBPM/60.0f),abs(fNewBPM/60.0f),BeatToNoteRow(fNextPositiveBeat),BeatToNoteRow(fBeat))
 						);
 						*/
+						continue;
 					}
 					else
 					{
@@ -302,6 +304,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 			}
 		}
 
+		// warps (replacement for Negative BPM and Negative Stops)
 		/*
 		else if( sValueName=="WARPS" )
 		{
@@ -320,27 +323,28 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 					continue;
 				}
 
-				const float fWarpAt = StringToFloat( arrayWarpValues[0] );
-				const float fWarpTo = StringToFloat( arrayWarpValues[1] );
+				const float fWarpStart = StringToFloat( arrayWarpValues[0] );
+				const float fWarpBeats = StringToFloat( arrayWarpValues[1] );
 
-				if( fWarpAt > 0.0f && fWarpTo > 0.0f )
+				if( fWarpStart > 0.0f && fWarpBeats > 0.0f )
 				{
-					WarpSegment new_seg( BeatToNoteRow(fWarpAt), BeatToNoteRow(fWarpTo) );
-					// LOG->Trace( "Adding a warp segment: starts at %f, jumps to %f", new_seg.m_iStartRow, new_seg.m_iEndRow );
+					WarpSegment new_seg( BeatToNoteRow(fWarpStart), fWarpBeats );
 					out.AddWarpSegment( new_seg );
 				}
 				else
 				{
-					// Disallow negative warps, to prevent the same kind of
-					// problem that happened when Negative/Subtractive BPMs
-					// arrived on the StepMania scene. -aj
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid warp: from beat %f to beat %f.", fWarpAt, fWarpTo );
+					// Currently disallow negative warps, to prevent the same
+					// kind of problem that happened when Negative/Subtractive
+					// BPMs arrived on the StepMania scene. -aj
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid warp at beat %f lasting %f beats.", fWarpStart, fWarpBeats );
 				}
 			}
 		}
 		*/
 
-		// We should not support files that contain both Negative BPMs & Warps.
+		// Note: Even though it is possible to have Negative BPMs and Stops in
+		// a song along with Warps, we should not support files that contain
+		// both styles of warp tricks (Negatives vs. #WARPS).
 		// If Warps have been populated from Negative BPMs, then go through that
 		// instead of using the data in the Warps tag. This should be above,
 		// but it breaks compiling so...
@@ -351,9 +355,9 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 			{
 				out.AddWarpSegment( arrayWarpsFromNegativeBPMs[i] );
 			}
-			// sorting will need to take place somewhere.
 		}
-
+		// warp sorting will need to take place.
+		//sort(out.m_WarpSegments.begin(), out.m_WarpSegments.end());
 	}
 }
 

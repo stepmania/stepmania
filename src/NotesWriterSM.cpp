@@ -141,14 +141,11 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.Write( "#WARPS:" );
 	for( unsigned i=0; i<out.m_Timing.m_WarpSegments.size(); i++ )
 	{
-		const WarpSegment &fs = out.m_Timing.m_WarpSegments[i];
+		const WarpSegment &ws = out.m_Timing.m_WarpSegments[i];
 
-		if( fs.m_bDelay )
-		{
-			f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
-			if( i != out.m_Timing.m_StopSegments.size()-1 )
-				f.Write( "," );
-		}
+		f.PutLine( ssprintf( "%.6f=%.6f", NoteRowToBeat(ws.m_iStartRow), ws.m_fWarpBeats ) );
+		if( i != out.m_Timing.m_WarpSegments.size()-1 )
+			f.Write( "," );
 	}
 	f.PutLine( ";" );
 	*/
@@ -292,9 +289,7 @@ bool NotesWriterSM::Write( RString sPath, const Song &out, const vector<Steps*>&
 		f.PutLine( ssprintf( "// end cache tags" ) );
 	}
 
-	//
 	// Save specified Steps to this file
-	//
 	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
 	{
 		const Steps* pSteps = *s;
@@ -311,8 +306,8 @@ void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps,
 {
 	sOut = "";
 	RString sDir = pSong->GetSongDir();
-	
-	/* "Songs/foo/bar"; strip off "Songs/". */
+
+	// "Songs/foo/bar"; strip off "Songs/".
 	vector<RString> asParts;
 	split( sDir, "/", asParts );
 	if( asParts.size() )
@@ -323,7 +318,7 @@ void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps,
 
 RString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
 {
-	/* Try to make a unique name.  This isn't guaranteed.  Edit descriptions are
+	/* Try to make a unique name. This isn't guaranteed. Edit descriptions are
 	 * case-sensitive, filenames on disk are usually not, and we decimate certain
 	 * characters for FAT filesystems. */
 	RString sFile = pSong->GetTranslitFullTitle() + " - " + pSteps->GetDescription();
@@ -331,7 +326,7 @@ RString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
 	// HACK:
 	if( pSteps->m_StepsType == StepsType_dance_double )
 		sFile += " (doubles)";
-	
+
 	sFile += ".edit";
 
 	MakeValidFilename( sFile );
@@ -372,7 +367,7 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
 	}
 
 	/* If the file name of the edit has changed since the last save, then delete the old
-	 * file after saving the new one.  If we delete it first, then we'll lose data on error. */
+	 * file after saving the new one. If we delete it first, then we'll lose data on error. */
 
 	if( bFileNameChanging )
 		FILEMAN->Remove( pSteps->GetFilename() );

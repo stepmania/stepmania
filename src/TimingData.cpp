@@ -110,7 +110,7 @@ void TimingData::SetDelayAtRow( int iRow, float fSeconds )
 }
 
 /*
-void TimingData::SetWarpAtRow( int iRowAt, int iRowTo )
+void TimingData::SetWarpAtRow( int iRowAt, float fLengthBeats )
 {
 	// todo: code this -aj
 }
@@ -137,7 +137,7 @@ int TimingData::GetWarpToRow( int iWarpBeginRow ) const
 	{
 		if( m_WarpSegments[i].m_iStartRow == iWarpBeginRow )
 		{
-			return m_WarpSegments[i].m_iEndRow;
+			return iWarpBeginRow + BeatToNoteRow(m_WarpSegments[i].m_fWarpBeats);
 		}
 	}
 	return 0;
@@ -223,14 +223,14 @@ BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )
 	return m_BPMSegments[i];
 }
 
-void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, int &iWarpEndOut ) const
+void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &fWarpLengthOut ) const
 {
 	fElapsedTime += PREFSMAN->m_fGlobalOffsetSeconds;
 
-	GetBeatAndBPSFromElapsedTimeNoOffset( fElapsedTime, fBeatOut, fBPSOut, bFreezeOut, bDelayOut, iWarpBeginOut, iWarpEndOut );
+	GetBeatAndBPSFromElapsedTimeNoOffset( fElapsedTime, fBeatOut, fBPSOut, bFreezeOut, bDelayOut, iWarpBeginOut, fWarpLengthOut );
 }
 
-void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, int &iWarpEndOut ) const
+void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &fWarpLengthOut ) const
 {
 //	LOG->Trace( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
 	const float fTime = fElapsedTime;
@@ -277,7 +277,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 				bFreezeOut = !bIsDelay;
 				bDelayOut = bIsDelay;
 				//iWarpBeginOut = -1;
-				//iWarpEndOut = -1;
+				//fWarpLengthOut = -1;
 				return;
 			}
 		}
@@ -290,16 +290,30 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			if( !bIsLastBPMSegment && m_WarpSegments[j].m_iStartRow > iStartRowNextSegment )
 				continue;
 
-			// this warp lies within this BPMSegment.
-			iWarpBeginOut = m_WarpSegments[j].m_iStartRow;
-			iWarpEndOut = m_WarpSegments[j].m_iEndRow;
-
-			// this warp lies within this BPMSegment, and these are wrong
-			// huh? -aj
+			// are these wrong? am I second guessing myself?
 			/*
 			const int iRowsBeatsSinceStartOfSegment = m_WarpSegments[j].m_iStartRow - iStartRowThisSegment;
 			const float fBeatsSinceStartOfSegment = NoteRowToBeat(iRowsBeatsSinceStartOfSegment);
 			const float fWarpStartSecond = fBeatsSinceStartOfSegment / fBPS;
+			*/
+
+			// the freeze segment is <= current time
+			//fElapsedTime -= m_WarpSegments[j].m_fWarpBeats;
+
+			// this warp lies within this BPMSegment.
+			/*
+			if( fWarpStartSecond >= fElapsedTime )
+			{
+				// this WarpSegment IS the current segment.
+				// don't know how to properly handle beatout -aj
+				//fBeatOut = NoteRowToBeat(m_WarpSegments[j].m_iStartRow);
+				fBPSOut = m_BPMSegments[i+1].m_fBPS;
+				bFreezeOut = false;
+				bDelayOut = false;
+				iWarpBeginOut = m_WarpSegments[j].m_iStartRow;
+				fWarpLengthOut = m_WarpSegments[j].m_fWarpBeats;
+				return;
+			}
 			*/
 		}
 
@@ -320,7 +334,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			bFreezeOut = false;
 			bDelayOut = false;
 			//iWarpBeginOut;
-			//iWarpEndOut;
+			//fWarpLengthOut;
 			return;
 		}
 

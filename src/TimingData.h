@@ -91,15 +91,15 @@ struct TimeSignatureSegment
  * both rows though.) */
 struct WarpSegment
 {
-	WarpSegment() : m_iStartRow(-1), m_iEndRow(-1) { }
-	WarpSegment( int s, int e ){ m_iStartRow = max( 0, s ); m_iEndRow = max( 0, e ); }
+	WarpSegment() : m_iStartRow(-1), m_fWarpBeats(-1) { }
+	WarpSegment( int s, float b ){ m_iStartRow = max( 0, s ); m_fWarpBeats = max( 0, b ); }
 	int m_iStartRow;
-	int m_iEndRow;
+	float m_fWarpBeats;
 
 	bool operator==( const WarpSegment &other ) const
 	{
 		COMPARE( m_iStartRow );
-		COMPARE( m_iEndRow );
+		COMPARE( m_fWarpBeats );
 		return true;
 	}
 	bool operator!=( const WarpSegment &other ) const { return !operator==(other); }
@@ -132,24 +132,24 @@ public:
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat );
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
 
-	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, int &iWarpEndOut ) const;
+	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &fWarpLengthOut ) const;
 	float GetBeatFromElapsedTime( float fElapsedTime ) const	// shortcut for places that care only about the beat
 	{
-		float fBeat, fThrowAway;
+		float fBeat, fThrowAway, fThrowAway2;
 		bool bThrowAway, bThrowAway2;
-		int iThrowAway, iThrowAway2;
-		GetBeatAndBPSFromElapsedTime( fElapsedTime, fBeat, fThrowAway, bThrowAway, bThrowAway2, iThrowAway, iThrowAway2 );
+		int iThrowAway;
+		GetBeatAndBPSFromElapsedTime( fElapsedTime, fBeat, fThrowAway, bThrowAway, bThrowAway2, iThrowAway, fThrowAway2 );
 		return fBeat;
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const;
 
-	void GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, int &iWarpEndOut ) const;
+	void GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &iWarpLengthOut ) const;
 	float GetBeatFromElapsedTimeNoOffset( float fElapsedTime ) const	// shortcut for places that care only about the beat
 	{
-		float fBeat, fThrowAway;
+		float fBeat, fThrowAway, fThrowAway2;
 		bool bThrowAway, bThrowAway2;
-		int iThrowAway, iThrowAway2;
-		GetBeatAndBPSFromElapsedTimeNoOffset( fElapsedTime, fBeat, fThrowAway, bThrowAway, bThrowAway2, iThrowAway, iThrowAway2 );
+		int iThrowAway;
+		GetBeatAndBPSFromElapsedTimeNoOffset( fElapsedTime, fBeat, fThrowAway, bThrowAway, bThrowAway2, iThrowAway, fThrowAway2 );
 		return fBeat;
 	}
 	float GetElapsedTimeFromBeatNoOffset( float fBeat ) const;
