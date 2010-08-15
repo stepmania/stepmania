@@ -38,6 +38,7 @@ static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions
 	PREFSMAN->m_sDefaultModifiers.Set( join(", ",as) );
 }
 
+
 /* Ugly: the input values may be a different type than the mapping.  For example,
  * the mapping may be an enum, and value an int.  This is because we don't
  * have FromString/ToString for every enum type.  Assume that the distance between
@@ -156,6 +157,8 @@ static void MoveNop( int &iSel, bool bToSel, const ConfOption *pConfOption )
 		iSel = 0;
 }
 
+// TODO: Write GenerateValueList() function that can use ints and floats. -aj
+
 static void GameChoices( vector<RString> &out )
 {
 	vector<const Game*> aGames;
@@ -184,12 +187,11 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 		vector<const Game*> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
 		StepMania::ChangeCurrentGame( aGames[sel] );
-		/* XXX: reload metrics to force a refresh of
-		 * CommonMetrics::DIFFICULTIES_TO_SHOW, mainly if we're not switching
-		 * themes. I'm not sure if this was the case going from theme to theme,
-		 * but if it was, it should be fixed now. There should probably be a
-		 * better way than this, but I'm not sure what it'd be. -aj
-		 */
+		/* Reload metrics to force a refresh of CommonMetrics::DIFFICULTIES_TO_SHOW,
+		 * mainly if we're not switching themes. I'm not sure if this was the
+		 * case going from theme to theme, but if it was, it should be fixed
+		 * now. There's probably be a better way to do it, but I'm not sure
+		 * what it'd be. -aj */
 		THEME->ReloadMetrics();
 	}
 }
@@ -431,13 +433,15 @@ static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pCo
 // Machine options
 static void TimingWindowScale( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const float mapping[] = { 2.0f,1.66f,1.33f,1.00f,0.75f,0.50f,0.25f };
+	//const float mapping[] = { 2.0f,1.66f,1.33f,1.00f,0.75f,0.50f,0.25f };
+	const float mapping[] = { 1.50f,1.33f,1.16f,1.00f,0.84f,0.66f,0.50f,0.33f,0.20f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const float mapping[] = { 2.0f,1.50f,1.00f,0.66f,0.33f };
+	//const float mapping[] = { 2.0f,1.50f,1.00f,0.66f,0.33f };
+	const float mapping[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 

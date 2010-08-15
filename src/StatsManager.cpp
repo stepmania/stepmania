@@ -202,11 +202,9 @@ XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerSta
 
 void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 {
-	//
 	// Add step totals.  Use radarActual, since the player might have failed part way
 	// through the song, in which case we don't want to give credit for the rest of the
 	// song.
-	//
 	FOREACH_HumanPlayer( pn )
 	{
 		int iNumTapsAndHolds	= (int) pSS->m_player[pn].m_radarActual[RadarCategory_TapsAndHolds];

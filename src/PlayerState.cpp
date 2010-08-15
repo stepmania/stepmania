@@ -246,6 +246,7 @@ public:
 		LuaHelpers::CreateTableFromArray<RString>( s, L );
 		return 1;
 	}
+	DEFINE_METHOD( GetHealthState, m_HealthState );
 
 	LunaPlayerState()
 	{
@@ -254,6 +255,7 @@ public:
 		ADD_METHOD( SetPlayerOptions );
 		ADD_METHOD( GetPlayerOptions );
 		ADD_METHOD( GetPlayerOptionsArray );
+		ADD_METHOD( GetHealthState );
 	}
 };
 

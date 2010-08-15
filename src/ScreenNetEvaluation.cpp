@@ -219,6 +219,9 @@ void ScreenNetEvaluation::UpdateStats()
 	Message msg("UpdateNetEvalStats");
 	msg.SetParam( "ActivePlayerIndex", m_pActivePlayer );
 	msg.SetParam( "Difficulty", NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
+	msg.SetParam( "Score", NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score );
+	msg.SetParam( "Grade", NSMAN->m_EvalPlayerData[m_iCurrentPlayer].grade );
+	msg.SetParam( "PlayerOptions", NSMAN->m_EvalPlayerData[m_iCurrentPlayer].playerOptions );
 	if( pSteps )
 		msg.SetParam( "Steps", pSteps );
 	MESSAGEMAN->Broadcast(msg);

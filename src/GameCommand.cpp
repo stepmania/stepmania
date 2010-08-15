@@ -59,7 +59,6 @@ void GameCommand::Init()
 	m_sProfileID = "";
 	m_sUrl = "";
 	m_bUrlExits = true;
-	m_bPushScreen = false;
 
 	m_bInsertCredit = false;
 	m_bClearCredits = false;
@@ -242,7 +241,6 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "screen" )
 	{
 		m_sScreen = sValue;
-		m_bPushScreen = false;
 	}
 
 	else if( sName == "song" )
@@ -412,12 +410,6 @@ void GameCommand::LoadOne( const Command& cmd )
 		}
 	}
 
-	else if( sName == "pushscreen" )
-	{
-		m_sScreen = sValue;
-		m_bPushScreen = true;
-	}
-
 	else if( sName == "fademusic" )
 	{
 		// todo: parse things correctly. -aj
@@ -573,7 +565,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 		}
 	}
 
-	if( !m_sScreen.CompareNoCase("ScreenEditCoursesMenu") && !m_bPushScreen )
+	if( !m_sScreen.CompareNoCase("ScreenEditCoursesMenu") )
 	{
 		vector<Course*> vCourses;
 		SONGMAN->GetAllCourses( vCourses, false );
@@ -588,8 +580,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 	if( (!m_sScreen.CompareNoCase("ScreenJukeboxMenu") ||
 		!m_sScreen.CompareNoCase("ScreenEditMenu") ||
-		!m_sScreen.CompareNoCase("ScreenEditCoursesMenu")) &&
-		!m_bPushScreen)
+		!m_sScreen.CompareNoCase("ScreenEditCoursesMenu")) )
 	{
 		if( SONGMAN->GetNumSongs() == 0 )
 		{
@@ -727,10 +718,8 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		}
 		LUA->Release(L);
 	}
-	if( m_sScreen != "" && m_bApplyCommitsScreens && !m_bPushScreen )
+	if( m_sScreen != "" && m_bApplyCommitsScreens )
 		SCREENMAN->SetNewScreen( m_sScreen );
-	if( m_sScreen != "" && m_bApplyCommitsScreens && m_bPushScreen )
-		SCREENMAN->AddNewScreenToTop( m_sScreen );
 	if( m_pSong )
 	{
 		GAMESTATE->m_pCurSong.Set( m_pSong );

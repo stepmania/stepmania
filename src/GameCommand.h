@@ -80,7 +80,6 @@ public:
 	RString		m_sUrl;
 	// sm-ssc adds:
 	bool		m_bUrlExits;	// for making stepmania not exit on url
-	bool		m_bPushScreen;	// for pushing a screen on top instead of as next
 
 	bool m_bInsertCredit;
 	bool m_bClearCredits;
