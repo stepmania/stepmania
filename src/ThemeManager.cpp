@@ -374,13 +374,14 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 #if !defined(SMPACKAGE)
 	if( !IsThemeSelectable(sThemeName) )
 		sThemeName = PREFSMAN->m_sTheme.GetDefault();
-#endif
+
 	// sm-ssc's SpecialFiles::BASE_THEME_NAME is _fallback, which you can't
 	// select. This requires a preference, which allows it to be adapted for
 	// other purposes (e.g. PARASTAR).
 	if( !IsThemeSelectable(sThemeName) )
 		sThemeName = PREFSMAN->m_sDefaultTheme;
 		//sThemeName = SpecialFiles::BASE_THEME_NAME;
+#endif
 
 	ASSERT( IsThemeSelectable(sThemeName) );
 
