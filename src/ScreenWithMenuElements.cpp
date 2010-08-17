@@ -204,7 +204,6 @@ void ScreenWithMenuElements::StartPlayingMusic()
 
 				if( !LuaHelpers::RunScript(L, sScript, "@"+m_sPathToMusic, sError, 0, 1) )
 				{
-					LOG->Trace("run script failed");
 					LUA->Release( L );
 					sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
 					Dialog::OK( sError, "LUA_ERROR" );
@@ -212,7 +211,9 @@ void ScreenWithMenuElements::StartPlayingMusic()
 				}
 				else
 				{
-					LOG->Trace("run script ok");
+					// there are two possible ways to load a music file via Lua.
+					// 1) return the path to the sound
+					// (themer has to use THEME:GetPathS())
 					RString sMusicPathFromLua;
 					LuaHelpers::Pop(L, sMusicPathFromLua);
 
@@ -225,7 +226,9 @@ void ScreenWithMenuElements::StartPlayingMusic()
 					}
 					else
 					{
-						LOG->Trace("Lua music script did not return a string. sm-ssc programmer error?");
+						// 2) perhaps it's a table with some params? unsure if I want to support
+						// this just yet. -aj
+						LOG->Trace("Lua music script did not return a path to a sound.");
 					}
 					LUA->Release( L );
 				}
