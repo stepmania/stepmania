@@ -13,6 +13,10 @@ _____________________________________________________________________________
 sm-ssc v1.0 Release Candidate 2 | 201008xx
 --------------------------------------------------------------------------------
 
+20100817
+--------
+* [GraphDisplay] Allow Line to be themed via metrics.
+
 20100815
 --------
 * [GameCommand] Remove pushscreen command

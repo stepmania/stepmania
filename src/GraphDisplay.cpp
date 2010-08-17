@@ -232,6 +232,8 @@ void GraphDisplay::Load( RString sMetricsGroup )
 	this->AddChild( m_pGraphBody );
 
 	m_pGraphLine = new GraphLine;
+	m_pGraphLine->SetName("Line");
+	ActorUtil::LoadAllCommands( m_pGraphLine, sMetricsGroup );
 	this->AddChild( m_pGraphLine );
 
 	m_sprSongBoundary.Load( THEME->GetPathG(sMetricsGroup,"SongBoundary") );
