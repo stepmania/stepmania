@@ -181,6 +181,7 @@ if not GAMESTATE:IsCourseMode() then
 	};
 	t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 end;
+
 if GAMESTATE:IsCourseMode() then
 	t[#t+1] = StandardDecorationFromFileOptional("NumCourseSongs","NumCourseSongs")..{
 		InitCommand=cmd(horizalign,right);
@@ -203,7 +204,9 @@ if GAMESTATE:IsCourseMode() then
 		CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 	};
 end
-	t[#t+1] = StandardDecorationFromFileOptional("DifficultyDisplay","DifficultyDisplay");
+
+t[#t+1] = StandardDecorationFromFileOptional("DifficultyDisplay","DifficultyDisplay");
+
 t[#t+1] = StandardDecorationFromFileOptional("SortOrder","SortOrderText") .. {
 	BeginCommand=cmd(playcommand,"Set");
 	SortOrderChangedMessageCommand=cmd(playcommand,"Set";);
@@ -213,6 +216,7 @@ t[#t+1] = StandardDecorationFromFileOptional("SortOrder","SortOrderText") .. {
 		self:playcommand("Sort");
 	end;
 };
+
 t[#t+1] = StandardDecorationFromFileOptional("SortOrderFrame","SortOrderFrame") .. {
 --[[ 	BeginCommand=cmd(playcommand,"Set");
 	SortOrderChangedMessageCommand=cmd(playcommand,"Set";);
