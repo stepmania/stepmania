@@ -93,12 +93,14 @@ t[#t+1] = Def.ActorFrame {
 		
 		if param.TapNoteScore == 'TapNoteScore_Miss' then
 			fTapNoteOffset = 1;
+			bUseNegative = true;
 		else
-			fTapNoteOffset = fTapNoteOffset;
+-- 			fTapNoteOffset = fTapNoteOffset;
+			bUseNegative = false;
 		end;
 		
 		-- we're safe, you can push the values
-		tTotalJudgments[#tTotalJudgments+1] = math.abs( fTapNoteOffset );
+		tTotalJudgments[#tTotalJudgments+1] = bUseNegative and fTapNoteOffset or math.abs( fTapNoteOffset );
 		
 		self:playcommand("Reset");
 
@@ -107,7 +109,7 @@ t[#t+1] = Def.ActorFrame {
 		JudgeCmds[param.TapNoteScore](c.Judgment);
 		
 		c.ProtimingDisplay:visible( bShowProtiming );
-		c.ProtimingDisplay:settextf("%i%%",clamp(100 - math.floor(math.abs(fTapNoteOffset * 1000)) ,0,100));
+		c.ProtimingDisplay:settextf("%i%%",clamp(100 - math.floor(fTapNoteOffset * 1000) ,-100,100));
 		ProtimingCmds[param.TapNoteScore](c.ProtimingDisplay);
 		
 		c.ProtimingAverage:visible( bShowProtiming );

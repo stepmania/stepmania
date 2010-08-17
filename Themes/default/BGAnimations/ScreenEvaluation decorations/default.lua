@@ -157,13 +157,30 @@ end
 t[#t+1] = StandardDecorationFromFileOptional("LifeDifficulty","LifeDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("GameType","GameType");
-t[#t+1] = LoadActor( THEME:GetPathG("ScreenStageInformation","Stage extra1" ) ) .. {
-	InitCommand=cmd(Center;draworder,105);
-	OnCommand=cmd(visible,GAMESTATE:IsExtraStage() and not GAMESTATE:IsExtraStage2();linear,2;zoom,0;diffusealpha,1;);
+t[#t+1] = Def.ActorFrame {
+	Condition=GAMESTATE:IsExtraStage() and not GAMESTATE:IsExtraStage2();
+	InitCommand=cmd(draworder,105);
+	LoadActor( THEME:GetPathS("ScreenEvaluation","try Extra1" ) ) .. {
+		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
+		OnCommand=cmd(play);
+	};
+	LoadActor( THEME:GetPathG("ScreenStageInformation","Stage extra1" ) ) .. {
+		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
+		InitCommand=cmd(Center);
+		OnCommand=cmd(diffusealpha,0;zoom,0.85;bounceend,1;zoom,1;diffusealpha,1;sleep,0;glow,Color("White");decelerate,1;glow,Color("Invisible");smooth,0.35;zoom,0.25;y,SCREEN_BOTTOM-72);
+	};
 };
-t[#t+1] = LoadActor( THEME:GetPathG("ScreenStageInformation","Stage extra2" ) ) .. {
-	InitCommand=cmd(Center;draworder,105);
-	OnCommand=cmd(visible,not GAMESTATE:IsExtraStage() and GAMESTATE:IsExtraStage2();linear,2;zoom,0;diffusealpha,1;);
+t[#t+1] = Def.ActorFrame {
+	Condition=not GAMESTATE:IsExtraStage() and GAMESTATE:IsExtraStage2();
+	InitCommand=cmd(draworder,105);
+	LoadActor( THEME:GetPathS("ScreenEvaluation","try Extra2" ) ) .. {
+		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
+		OnCommand=cmd(play);
+	};
+	LoadActor( THEME:GetPathG("ScreenStageInformation","Stage extra2" ) ) .. {
+		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
+		InitCommand=cmd(Center);
+		OnCommand=cmd(diffusealpha,0;zoom,0.85;bounceend,1;zoom,1;diffusealpha,1;sleep,0;glow,Color("White");decelerate,1;glow,Color("Invisible");smooth,0.35;zoom,0.25;y,SCREEN_BOTTOM-72);
+	};
 };
-
 return t
