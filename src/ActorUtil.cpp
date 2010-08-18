@@ -106,7 +106,9 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 {
 	ASSERT( pNode );
 
-	// TODO: Remove this in favor of using conditionals in Lua.
+	// Remove this in favor of using conditionals in Lua. -Chris
+	// There are a number of themes out there that depend on this (including
+	// sm-ssc default). Probably for the best to leave this in. -aj
 	{
 		bool bCond;
 		if( pNode->GetAttrValue("Condition", bCond) && !bCond )
