@@ -12,29 +12,12 @@ ret.RedirTable =
 	UpRight = "Down",
 };
 
+
 local OldRedir = ret.Redir;
 ret.Redir = function(sButton, sElement)
-	-- sButton, sElement = OldRedir(sButton, sElement);
-
-	-- Instead of separate hold heads, use the tap note graphics.
-	if sElement == "Hold Head Inactive" or
-	   sElement == "Hold Head Active" or
-	   sElement == "Roll Head Inactive" or
-	   sElement == "Roll Head Active"
-	then
-		sElement = "Tap Note";
-	end
-
 	sButton = ret.RedirTable[sButton];
-
 	return sButton, sElement;
 end
-
--- local OldRedir = ret.Redir;
--- ret.Redir = function(sButton, sElement)
-	-- sButton = ret.RedirTable[sButton];
-	-- return sButton, sElement;
--- end
 
 -- To have separate graphics for each hold part:
 local OldRedir = ret.Redir;
@@ -59,8 +42,27 @@ function ret.Load()
 	end
 	return t;
 end
-]]
 
+
+local OldRedir = ret.Redir;
+ret.Redir = function(sButton, sElement)
+	sButton, sElement = OldRedir(sButton, sElement);
+
+	--we want to use custom hold/roll per direction, but
+	--keep global hold/roll heads and explosions.	
+	if not string.find(sElement, "Head") and
+	not string.find(sElement, "Explosion") then
+		if string.find(sElement, "Hold") or
+		string.find(sElement, "Roll") then
+			return sButton, sElement;
+		end
+	end
+
+	sButton = ret.RedirTable[sButton];
+
+	return sButton, sElement;
+end
+]]
 local OldFunc = ret.Load;
 function ret.Load()
 	local t = OldFunc();
@@ -71,6 +73,7 @@ function ret.Load()
 	end
 	return t;
 end
+
 
 ret.PartsToRotate =
 {
@@ -98,15 +101,6 @@ ret.Rotate =
 	UpRight = 225,
 };
 
---
--- If a derived skin wants to have separate UpLeft graphics,
--- use this:
---
--- ret.RedirTable.UpLeft = "UpLeft";
--- ret.RedirTable.UpRight = "UpLeft";
--- ret.Rotate.UpLeft = 0;
--- ret.Rotate.UpRight = 90;
---
 ret.Blank =
 {
 	["Hold Topcap Active"] = true,
