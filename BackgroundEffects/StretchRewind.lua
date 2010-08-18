@@ -1,8 +1,8 @@
-local Color = color(Var "Color1");
-
+-- Stretch & Replay.
+local cColor1 = color(Var "Color1");
 local t = Def.ActorFrame {
 	LoadActor(Var "File1") .. {
-		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,Color;position,0);
+		OnCommand=cmd(x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomto,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,cColor1;position,0);
 		GainFocusCommand=cmd(play);
 		LoseFocusCommand=cmd(pause);
 	};
