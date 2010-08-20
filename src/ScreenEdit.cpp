@@ -35,16 +35,11 @@
 #include "ThemeMetric.h"
 #include "Game.h"
 #include "RageSoundReader.h"
-/* XXX
-#include "PitchDetectionTest.h"
-*/
 
 static Preference<float> g_iDefaultRecordLength( "DefaultRecordLength", 4 );
 static Preference<bool> g_bEditorShowBGChangesPlay( "EditorShowBGChangesPlay", true );
 
-//
 // Defines specific to ScreenEdit
-//
 const float RECORD_HOLD_SECONDS = 0.3f;
 
 #define PLAYER_X		(SCREEN_CENTER_X)
@@ -283,9 +278,6 @@ void ScreenEdit::InitEditMappings()
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LEFT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RIGHT);
-
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_MIDI_NOTE_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_EQUAL);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_MIDI_NOTE_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_HYPHEN);
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_EDIT_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_EditMappingsMenuButton.button[EDIT_BUTTON_OPEN_EDIT_MENU][0] = GAME_BUTTON_START;
@@ -1064,13 +1056,6 @@ void ScreenEdit::UpdateTextInfo()
 			sText += " ...\n";
 	}
 
-	RString sMidiNote;
-	/* XXX
-	if( !PitchDetectionTest::MidiNoteToString( GAMESTATE->m_iEditMidiNote, sMidiNote ) )
-		sMidiNote = "";
-	sText += ssprintf( "%s:\n  %i (%s)\n",	"Pitch", (int)GAMESTATE->m_iEditMidiNote, sMidiNote.c_str() );
-	*/
-
 	switch( EDIT_MODE.GetValue() )
 	{
 	DEFAULT_FAIL( EDIT_MODE.GetValue() );
@@ -1411,20 +1396,6 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_SNAP_PREV:
 		if( m_SnapDisplay.NextSnapMode() )
 			OnSnapModeChange();
-		break;
-	case EDIT_BUTTON_MIDI_NOTE_NEXT:
-		if( GAMESTATE->m_iEditMidiNote < NUM_MIDI_NOTES-1 )
-		{
-			GAMESTATE->m_iEditMidiNote++;
-			m_soundValueIncrease.Play();
-		}
-		break;
-	case EDIT_BUTTON_MIDI_NOTE_PREV:
-		if( GAMESTATE->m_iEditMidiNote > 0 )
-		{
-			GAMESTATE->m_iEditMidiNote--;
-			m_soundValueDecrease.Play();
-		}
 		break;
 	case EDIT_BUTTON_LAY_SELECT:
 		{

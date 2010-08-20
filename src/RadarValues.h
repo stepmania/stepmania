@@ -29,8 +29,6 @@ struct RadarValues
 			float fNumHands;
 			float fNumRolls;
 			float fNumLifts;
-			float fMinMidiNote;
-			float fMaxMidiNote;
 		} v;
 		float f[NUM_RadarCategory];
 	} m_Values;

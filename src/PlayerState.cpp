@@ -3,9 +3,6 @@
 #include "Foreach.h"
 #include "GameState.h"
 #include "RageLog.h"
-/* XXX
-#include "PitchDetectionTest.h"
-*/
 #include "RadarValues.h"
 #include "Steps.h"
 
@@ -26,8 +23,6 @@ void PlayerState::Reset()
 
 	m_fLastHopoNoteMusicSeconds = -1;
 	m_iLastHopoNoteCol = -1;
-
-	m_fUpcomingMidiNote = -1;
 
 	m_PlayerController = PC_HUMAN;
 
@@ -98,26 +93,6 @@ void PlayerState::Update( float fDelta )
 
 	if( m_fSecondsUntilAttacksPhasedOut > 0 )
 		m_fSecondsUntilAttacksPhasedOut = max( 0, m_fSecondsUntilAttacksPhasedOut - fDelta );
-
-	/* XXX
-	m_fWrappedMidiNote = -1;
-	if( m_fUpcomingMidiNote != -1 )
-	{
-		m_fWrappedMidiNote = PitchDetectionTest::WrapToNearestOctave( PitchDetectionTest::s_ms.fMidiNote, m_fUpcomingMidiNote );
-	}
-	else
-	{
-		Steps *pSteps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
-		if( pSteps )
-		{
-			const RadarValues &rv = pSteps->GetRadarValues(PLAYER_1);
-			float fMinMidiNote = rv.m_Values.v.fMinMidiNote;
-			float fMaxMidiNote = rv.m_Values.v.fMaxMidiNote;
-			if( fMinMidiNote != -1 && fMaxMidiNote != -1 )
-				m_fWrappedMidiNote = PitchDetectionTest::WrapToNearestOctave( PitchDetectionTest::s_ms.fMidiNote, (fMinMidiNote+fMaxMidiNote)/2 );
-		}
-	}
-	*/
 }
 
 void PlayerState::ResetToDefaultPlayerOptions( ModsLevel l )

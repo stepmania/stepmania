@@ -60,10 +60,6 @@ struct HoldNoteResult
 	void LoadFromNode( const XNode* pNode );
 };
 
-const int8_t MIDI_NOTE_INVALID = -1;
-const int NUM_MIDI_NOTES = 128;
-const int MIDI_NOTES_PER_OCTAVE = 12;
-
 struct TapNote
 {
 	enum Type
@@ -96,17 +92,19 @@ struct TapNote
 	SubType		subType;		// Only used if type is hold_head.
 	Source		source;
 	TapNoteResult	result;
-	int8_t		iMidiNote;		// ignored by all game types but Karaoke
 	PlayerNumber	pn;			// used in routine mode
 	bool		bHopoPossible;	// set just before gameplay begins
 
-	RString		sAttackModifiers;	// used only if Type == attack
-	float		fAttackDurationSeconds;	// used only if Type == attack
+	// used only if Type == attack:
+	RString		sAttackModifiers;
+	float		fAttackDurationSeconds;
 
-	int		iKeysoundIndex;		// Index into Song's vector of keysound files if nonnegative.
+	// Index into Song's vector of keysound files if nonnegative:
+	int		iKeysoundIndex;
 
-	int		iDuration;			// used if hold_head only
-	HoldNoteResult	HoldResult;	// used if hold_head only
+	// also used for hold_head only:
+	int		iDuration;
+	HoldNoteResult	HoldResult;
 
 	// XML
 	XNode* CreateNode() const;
@@ -121,7 +119,6 @@ struct TapNote
 		type = empty;
 		subType = SubType_Invalid; 
 		source = original; 
-		iMidiNote = MIDI_NOTE_INVALID;
 		pn = PLAYER_INVALID, 
 		bHopoPossible = false;
 		fAttackDurationSeconds = 0.f; 
@@ -156,7 +153,6 @@ struct TapNote
 		COMPARE(fAttackDurationSeconds);
 		COMPARE(iKeysoundIndex);
 		COMPARE(iDuration);
-		COMPARE(iMidiNote);
 		COMPARE(pn);
 #undef COMPARE
 		return true;

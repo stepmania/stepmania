@@ -735,22 +735,6 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 		case RadarCategory_Hands:		out[rc] = (float) in.GetNumHands();			break;
 		case RadarCategory_Rolls:		out[rc] = (float) in.GetNumRolls();			break;
 		case RadarCategory_Lifts:		out[rc] = (float) in.GetNumLifts();			break;
-		case RadarCategory_MinMidiNote:
-			break;	// fill in below
-		case RadarCategory_MaxMidiNote:
-			uint8_t uMinMidiNoteOut;
-			uint8_t uMaxMidiNoteOut;
-			if( GetMinAndMaxMidiNote( in, uMinMidiNoteOut, uMaxMidiNoteOut ) )
-			{
-				out[RadarCategory_MinMidiNote] = (float) uMinMidiNoteOut;
-				out[RadarCategory_MaxMidiNote] = (float) uMaxMidiNoteOut;
-			}
-			else
-			{
-				out[RadarCategory_MinMidiNote] = (float) -1;
-				out[RadarCategory_MaxMidiNote] = (float) -1;
-			}
-			break;
 		default:	ASSERT(0);
 		}
 	}
@@ -826,31 +810,6 @@ float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
 
 	float fReturn = iNumChaosNotes / fSongSeconds * 0.5f;
 	return min( fReturn, 1.0f );
-}
-
-bool NoteDataUtil::GetMinAndMaxMidiNote( const NoteData &in, uint8_t &uMinMidiNoteOut, uint8_t &uMaxMidiNoteOut )
-{
-	int iMin = INT_MAX;
-	int iMax = INT_MIN;
-	NoteData::all_tracks_const_iterator iter = in.GetTapNoteRangeAllTracks( 0, MAX_NOTE_ROW );
-	for( ; !iter.IsAtEnd(); ++iter )
-	{
-		const TapNote &tn = *iter;
-		if( tn.iMidiNote != MIDI_NOTE_INVALID )
-		{
-			iMin = min( iMin, (int)tn.iMidiNote );
-			iMax = max( iMax, (int)tn.iMidiNote );
-		}
-	}
-
-	if( iMin != INT_MAX && iMax != INT_MIN )
-	{
-		uMinMidiNoteOut = iMin;
-		uMaxMidiNoteOut = iMax;
-		return true;
-	}
-
-	return false;
 }
 
 void NoteDataUtil::RemoveHoldNotes( NoteData &in, int iStartIndex, int iEndIndex )

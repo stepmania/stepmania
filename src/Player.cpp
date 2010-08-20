@@ -41,9 +41,6 @@
 #include "GameCommand.h"
 #include "LocalizedString.h"
 #include "AdjustSync.h"
-/* XXX
-#include "PitchDetectionTest.h"
-*/
 
 // Helper class to ensure that each row is only judged once without taking too much memory.
 class JudgedRows
@@ -689,10 +686,6 @@ void Player::Update( float fDeltaTime )
 				//float fGrayYPos = SCALE( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD, GRAY_ARROWS_Y_REVERSE );
 
 				float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
-				/* XXX
-				if( PitchDetectionTest::s_ms.bVoiced )
-					fX += ArrowEffects::GetXOffset( m_pPlayerState, m_pPlayerState->m_fWrappedMidiNote );
-				*/
 				const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
 
 				m_vpHoldJudgment[c]->SetX( fX );
@@ -1044,32 +1037,18 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		}
 		else
 		{
-			if( GAMESTATE->m_pCurGame->m_szName == RString("karaoke") )
-			{
-				int8_t iMidiNote = trtn->pTN->iMidiNote;
-				ASSERT( iMidiNote != MIDI_NOTE_INVALID );
-				/* XXX
-				const float fMidiNoteMaxAllowedError = 0.25;
-				bIsHoldingButton &= 
-					PitchDetectionTest::s_ms.bVoiced  && 
-					fabsf( m_pPlayerState->m_fWrappedMidiNote - iMidiNote) < fMidiNoteMaxAllowedError;
-				*/
-			}
-			else
-			{
-				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
-				// this previously read as bIsHoldingButton &=
-				// was there a specific reason for this? - Friez
-				bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
+			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
+			// this previously read as bIsHoldingButton &=
+			// was there a specific reason for this? - Friez
+			bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
 
-				if( m_vAlterMap.size() > 0 ) // alternate input is being used
+			if( m_vAlterMap.size() > 0 ) // alternate input is being used
+			{
+				for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
 				{
-					for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
+					if( m_vAlterMap[i].inpMain == GameI )
 					{
-						if( m_vAlterMap[i].inpMain == GameI )
-						{
-							bIsHoldingButton = bIsHoldingButton | INPUTMAPPER->IsBeingPressed( m_vAlterMap[i].inpAlt );
-						}
+						bIsHoldingButton = bIsHoldingButton | INPUTMAPPER->IsBeingPressed( m_vAlterMap[i].inpAlt );
 					}
 				}
 			}
@@ -2860,18 +2839,6 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	}
 
 	m_iFirstUncrossedRow = iLastRowCrossed+1;
-
-	{
-		// find the next note and fill in m_fUpcomingMidiNote
-		NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( iLastRowCrossed+1, MAX_NOTE_ROW );
-		for( ; !iter.IsAtEnd(); ++iter )
-		{
-			TapNote &tn = *iter;
-			if( tn.iMidiNote != MIDI_NOTE_INVALID )
-				m_pPlayerState->m_fUpcomingMidiNote = tn.iMidiNote;
-			break;
-		}
-	}
 }
 
 void Player::RandomizeNotes( int iNoteRow )

@@ -21,16 +21,13 @@
 #include "NetworkSyncManager.h"
 #include "RageTimer.h"
 #include "RageInput.h"
-/* XXX
-#include "PitchDetectionTest.h"
-*/
 
 static RageTimer g_GameplayTimer;
 
 static Preference<bool> g_bNeverBoostAppPriority( "NeverBoostAppPriority", false );
 
-/* experimental: force a specific update rate.  This prevents big 
- * animation jumps on frame skips.  0 to disable. */
+/* experimental: force a specific update rate. This prevents big  animation
+ * jumps on frame skips. 0 to disable. */
 static Preference<float> g_fConstantUpdateDeltaSeconds( "ConstantUpdateDeltaSeconds", 0 );
 
 void HandleInputEvents( float fDeltaTime );
@@ -49,8 +46,9 @@ static void CheckGameLoopTimerSkips( float fDeltaTime )
 	static int iLastFPS = 0;
 	int iThisFPS = DISPLAY->GetFPS();
 
-	/* If vsync is on, and we have a solid framerate (vsync == refresh and we've sustained this
-	 * for at least one second), we expect the amount of time for the last frame to be 1/FPS. */
+	/* If vsync is on, and we have a solid framerate (vsync == refresh and we've
+	 * sustained this for at least one second), we expect the amount of time for
+	 * the last frame to be 1/FPS. */
 	if( iThisFPS != DISPLAY->GetActualVideoModeParams().rate || iThisFPS != iLastFPS )
 	{
 		iLastFPS = iThisFPS;
@@ -90,7 +88,7 @@ static bool ChangeAppPri()
 	}
 #endif
 
-	/* If this is a debug build, don't.  It makes the VC debugger sluggish. */
+	// If this is a debug build, don't. It makes the VC debugger sluggish.
 #if defined(WIN32) && defined(DEBUG)
 	return false;
 #else
@@ -103,7 +101,7 @@ static void CheckFocus()
 	if( !HOOKS->AppFocusChanged() )
 		return;
 
-	/* If we lose focus, we may lose input events, especially key releases. */
+	// If we lose focus, we may lose input events, especially key releases.
 	INPUTFILTER->Reset();
 
 	if( ChangeAppPri() )
@@ -115,7 +113,7 @@ static void CheckFocus()
 	}
 }
 
-/* On the next update, change themes, and load sNewScreen. */
+// On the next update, change themes, and load sNewScreen.
 static RString g_sNewTheme;
 static RString g_sNewScreen;
 static bool g_bForceThemeReload;
@@ -134,13 +132,13 @@ namespace
 		SAFE_DELETE( SCREENMAN );
 		TEXTUREMAN->DoDelayedDelete();
 
-		/* In case the previous theme overloaded class bindings, reinitialize them. */
+		// In case the previous theme overloaded class bindings, reinitialize them.
 		LUA->RegisterTypes();
 
 		THEME->SwitchThemeAndLanguage( g_sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize, g_bForceThemeReload );
 		PREFSMAN->m_sTheme.Set( g_sNewTheme );
 
-		/* Apply the new window title, icon and aspect ratio. */
+		// Apply the new window title, icon and aspect ratio.
 		StepMania::ApplyGraphicOptions();
 
 		SCREENMAN = new ScreenManager();
@@ -167,9 +165,7 @@ void GameLoop::RunGameLoop()
 		if( !g_sNewTheme.empty() )
 			DoChangeTheme();
 
-		/*
-		 * Update
-		 */
+		// Update
 		float fDeltaTime = g_GameplayTimer.GetDeltaTime();
 
 		if( g_fConstantUpdateDeltaSeconds > 0 )
@@ -179,18 +175,14 @@ void GameLoop::RunGameLoop()
 
 		fDeltaTime *= g_fUpdateRate;
 
-		/* XXX
-		PitchDetectionTest::Update();
-		*/
-
 		CheckFocus();
 
-		/* Update SOUNDMAN early (before any RageSound::GetPosition calls), to flush position data. */
+		// Update SOUNDMAN early (before any RageSound::GetPosition calls), to flush position data.
 		SOUNDMAN->Update();
 
 		/* Update song beat information -before- calling update on all the classes that
-		 * depend on it.  If you don't do this first, the classes are all acting on old 
-		 * information and will lag.  (but no longer fatally, due to timestamping -glenn) */
+		 * depend on it. If you don't do this first, the classes are all acting on old 
+		 * information and will lag. (but no longer fatally, due to timestamping -glenn) */
 		SOUND->Update( fDeltaTime );
 		TEXTUREMAN->Update( fDeltaTime );
 		GAMESTATE->Update( fDeltaTime );
@@ -198,7 +190,8 @@ void GameLoop::RunGameLoop()
 		MEMCARDMAN->Update();
 		NSMAN->Update( fDeltaTime );
 
-		/* Important:  Process input AFTER updating game logic, or input will be acting on song beat from last frame */
+		/* Important: Process input AFTER updating game logic, or input will be
+		 * acting on song beat from last frame */
 		HandleInputEvents( fDeltaTime );
 
 		if( INPUTMAN->DevicesChanged() )
@@ -212,13 +205,11 @@ void GameLoop::RunGameLoop()
 
 		LIGHTSMAN->Update( fDeltaTime );
 
-		/*
-		 * Render
-		 */
+		// Render
 		SCREENMAN->Draw();
 	}
 
-	/* If we ended mid-game, finish up. */
+	// If we ended mid-game, finish up.
 	GAMESTATE->SaveLocalData();
 
 	if( ChangeAppPri() )
@@ -302,7 +293,7 @@ void ConcurrentRenderer::RenderThread()
 
 		if( m_State == RENDERING_START )
 		{
-			/* We're starting to render.  Set up, and then kick the event to wake
+			/* We're starting to render. Set up, and then kick the event to wake
 			 * up the calling thread. */
 			DISPLAY->BeginConcurrentRendering();
 			HOOKS->SetupConcurrentRenderingThread();
@@ -315,9 +306,9 @@ void ConcurrentRenderer::RenderThread()
 			m_Event.Unlock();
 		}
 
-		/* This is started during Update().  The next thing the game loop
+		/* This is started during Update(). The next thing the game loop
 		 * will do is Draw, so shift operations around to put Draw at the
-		 * top.  This makes sure updates are seamless. */
+		 * top. This makes sure updates are seamless. */
 		if( m_State == RENDERING_ACTIVE )
 		{
 			SCREENMAN->Draw();

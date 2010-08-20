@@ -9,9 +9,6 @@
 #include "PlayerState.h"
 #include "Style.h"
 #include "ActorUtil.h"
-/* XXX
-#include "PitchDetectionTest.h"
-*/
 
 void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset )
 {
@@ -47,10 +44,6 @@ void GhostArrowRow::Update( float fDeltaTime )
 		m_Ghost[c]->Update( fDeltaTime );
 
 		float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
-		/* XXX
-		if( PitchDetectionTest::s_ms.bVoiced )
-			fX += ArrowEffects::GetXOffset( m_pPlayerState, m_pPlayerState->m_fWrappedMidiNote );
-		*/
 		float fY = ArrowEffects::GetYPos( m_pPlayerState, c, 0, m_fYReverseOffsetPixels );
 		float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
 

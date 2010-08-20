@@ -424,21 +424,6 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	return fPixelOffsetFromCenter;
 }
 
-float ArrowEffects::GetXOffset( const PlayerState* pPlayerState, float fMidiNote ) 
-{
-	if( fMidiNote == MIDI_NOTE_INVALID )
-		return 0;
-	Steps *pSteps = GAMESTATE->m_pCurSteps[ pPlayerState->m_PlayerNumber ];
-	const RadarValues &rv = pSteps->GetRadarValues( pPlayerState->m_PlayerNumber );
-	float fMinMidiNote = rv.m_Values.v.fMinMidiNote;
-	float fMaxMidiNote = rv.m_Values.v.fMaxMidiNote;
-	if( fMinMidiNote == -1 || fMaxMidiNote == -1 )
-		return 0;
-	float fXOffset = SCALE( fMidiNote, fMinMidiNote, fMaxMidiNote, -200.0f, 200.0f );
-	fXOffset = roundf( fXOffset );
-	return fXOffset;
-}
-
 float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead ) 
 {
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;

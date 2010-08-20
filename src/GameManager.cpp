@@ -86,8 +86,6 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	{ "pnm-nine",		9,	true,	StepsTypeCategory_Single },	// called "pnm" for backward compat
 	// guitar hero
 	{ "guitar-five",	5,	true,	StepsTypeCategory_Single },	// 5 frets, no wail
-	// karaoke revolution
-	{ "karaoke",		1,	false,	StepsTypeCategory_Single },
 	// cabinet lights and other fine StepsTypes that don't exist lol
 	{ "lights-cabinet",	NUM_CabinetLight,	false,	StepsTypeCategory_Single }, // XXX disable lights autogen for now
 };
@@ -2651,75 +2649,6 @@ static const Game g_Game_Guitar =
 	TNS_W5,		// m_mapW5To
 };
 
-/** Karaoke ******************************************************************/
-
-static const Style g_Style_Karaoke_Single =
-{	// STYLE_KARAOKE_SINGLE
-	true,				// m_bUsedForGameplay
-	true,				// m_bUsedForEdit
-	true,				// m_bUsedForDemonstration
-	true,				// m_bUsedForHowToPlay
-	"single",			// m_szName
-	StepsType_karaoke_single,		// m_StepsType
-	StyleType_OnePlayerOneSide,		// m_StyleType
-	1,				// m_iColsPerPlayer
-	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
-		{	// PLAYER_1
-			{ TRACK_1,	0.0f, NULL },
-		},
-		{	// PLAYER_2
-			{ TRACK_1,	0.0f, NULL },
-		},
-	},
-	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
-		{ 0, Style::END_MAPPING },
-		{ 0, Style::END_MAPPING },
-	},
-	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-		0, 
-	},
-	false, // m_bNeedsZoomOutWith2Players
-	false, // m_bCanUseBeginnerHelper
-	false, // m_bLockDifficulties
-};
-
-static const Style *g_apGame_Karaoke_Styles[] =
-{
-	&g_Style_Karaoke_Single,
-	NULL
-};
-
-static const AutoMappings g_AutoKeyMappings_Karaoke = AutoMappings (
-	"",
-	"",
-	"",
-	AutoMappingEntry( 0, KEY_LEFT,		KARAOKE_BUTTON_LEFT,		false )
-);
-
-static const Game g_Game_Karaoke = 
-{
-	"karaoke",					// m_szName
-	g_apGame_Karaoke_Styles,			// m_apStyles
-	false,						// m_bCountNotesSeparately
-	false,						// m_bAllowHopos
-	{						// m_InputScheme
-		"karaoke",					// m_szName
-		NUM_KARAOKE_BUTTONS,			// m_iButtonsPerController
-		{	// m_szButtonNames
-			{ "Left",		GAME_BUTTON_LEFT },
-		},
-		&g_AutoKeyMappings_Karaoke
-	},
-	{
-		{ GameButtonType_Step },
-	},
-	TNS_W1,	// m_mapW1To
-	TNS_W2,	// m_mapW2To
-	TNS_W3,	// m_mapW3To
-	TNS_W4,	// m_mapW4To
-	TNS_W5,	// m_mapW5To
-};
-
 /** Lights *******************************************************************/
 
 static const AutoMappings g_AutoKeyMappings_Lights = AutoMappings (
@@ -2837,7 +2766,6 @@ static const Game *g_Games[] =
 	&g_Game_Techno,
 	&g_Game_Popn,
 	//&g_Game_Guitar,	// nope, still broken. -aj
-	&g_Game_Karaoke,
 	&g_Game_Lights,
 };
 

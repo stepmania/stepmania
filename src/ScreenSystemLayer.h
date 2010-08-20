@@ -5,26 +5,14 @@
 
 #include "Screen.h"
 #include "AutoActor.h"
-/* XXX
-#include "PitchDetectionTest.h"
-#include "Quad.h"
-#include "BitmapText.h"
-*/
 
 class ScreenSystemLayer : public Screen
 {
 public:
 	virtual void Init();
-	virtual void Update( float fDelta );
 
 private:
 	AutoActor m_sprOverlay;
-
-	/* XXX
-	Quad m_quadMicBar;
-	Quad m_quadMicPos;
-	BitmapText m_textFreq;
-	*/
 };
 
 

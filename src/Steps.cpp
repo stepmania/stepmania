@@ -1,5 +1,4 @@
-/*
- * This stores a single note pattern for a song.
+/* This stores a single note pattern for a song.
  *
  * We can have too much data to keep everything decompressed as NoteData, so most
  * songs are kept in memory compressed as SMData until requested.  NoteData is normally
@@ -11,8 +10,7 @@
  * this yet.)
  *
  * Data can be on disk (always compressed), compressed in memory, and uncompressed in
- * memory.
- */
+ * memory. */
 #include "global.h"
 #include "Steps.h"
 #include "StepsUtil.h"
@@ -275,15 +273,8 @@ void Steps::Decompress() const
 
 void Steps::Compress() const
 {
-	/* Always leave lights data uncompressed. */
+	// Always leave lights data uncompressed.
 	if( this->m_StepsType == StepsType_lights_cabinet && m_bNoteDataIsFilled )
-	{
-		m_sNoteDataCompressed = RString();
-		return;
-	}
-
-	/* Always leave karaoke data uncompressed. */
-	if( this->m_StepsType == StepsType_karaoke_single && m_bNoteDataIsFilled )
 	{
 		m_sNoteDataCompressed = RString();
 		return;
@@ -291,14 +282,11 @@ void Steps::Compress() const
 
 	if( !m_sFilename.empty() && m_LoadedFromProfile == ProfileSlot_Invalid )
 	{
-		/*
-		 * We have a file on disk; clear all data in memory.
-		 *
-		 * Data on profiles can't be accessed normally (need to mount and time-out the
-		 * device), and when we start a game and load edits, we want to be sure that
-		 * it'll be available if the user picks it and pulls the device.  Also,
-		 * Decompress() doesn't know how to load .edits.
-		 */
+		/* We have a file on disk; clear all data in memory.
+		 * Data on profiles can't be accessed normally (need to mount and time-out
+		 * the device), and when we start a game and load edits, we want to be
+		 * sure that it'll be available if the user picks it and pulls the device.
+		 * Also, Decompress() doesn't know how to load .edits. */
 		m_pNoteData->Init();
 		m_bNoteDataIsFilled = false;
 
@@ -308,7 +296,7 @@ void Steps::Compress() const
 		return;
 	}
 
-	/* We have no file on disk.  Compress the data, if necessary. */
+	// We have no file on disk. Compress the data, if necessary.
 	if( m_sNoteDataCompressed.empty() )
 	{
 		if( !m_bNoteDataIsFilled )
@@ -320,12 +308,12 @@ void Steps::Compress() const
 	m_bNoteDataIsFilled = false;
 }
 
-/* Copy our parent's data.  This is done when we're being changed from autogen
+/* Copy our parent's data. This is done when we're being changed from autogen
  * to normal. (needed?) */
 void Steps::DeAutogen( bool bCopyNoteData )
 {
 	if( !parent )
-		return; /* OK */
+		return; // OK
 
 	if( bCopyNoteData )
 		Decompress();	// fills in m_pNoteData with sliding window transform

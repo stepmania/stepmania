@@ -32,8 +32,6 @@ enum RadarCategory
 	RadarCategory_Hands,
 	RadarCategory_Rolls,
 	RadarCategory_Lifts,
-	RadarCategory_MinMidiNote,
-	RadarCategory_MaxMidiNote,
 	NUM_RadarCategory,	// leave this at the end
 	RadarCategory_Invalid
 };
@@ -84,7 +82,6 @@ enum StepsType
 	StepsType_popn_five,
 	StepsType_popn_nine,
 	StepsType_guitar_five,
-	StepsType_karaoke_single,
 	StepsType_lights_cabinet,
 	NUM_StepsType,		// leave this at the end
 	StepsType_Invalid,

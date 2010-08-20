@@ -40,9 +40,6 @@ public:
 	// fYPos (in the case of EFFECT_DRUNK).
 	static float GetXPos( const PlayerState* pPlayerState, int iCol, float fYOffset );
 
-	// Shift a note's fXPos by this amount depending (on what? -aj)
-	static float GetXOffset( const PlayerState* pPlayerState, float fMidiNote );
-
 	// Z position; normally 0. Only visible in perspective modes.
 	static float GetZPos( const PlayerState* pPlayerState, int iCol, float fYPos );
 

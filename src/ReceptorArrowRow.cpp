@@ -6,10 +6,6 @@
 #include "GameState.h"
 #include "PlayerState.h"
 #include "Style.h"
-/* XXX
-#include "PitchDetectionTest.h"
-*/
-
 
 ReceptorArrowRow::ReceptorArrowRow()
 {
@@ -50,23 +46,15 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 		// m_fDark==1 or m_fFadeToFailPercent==1 should make fBaseAlpha==0
 		float fBaseAlpha = (1 - m_pPlayerState->m_PlayerOptions.GetCurrent().m_fDark) * (1 - m_fFadeToFailPercent);
 		CLAMP( fBaseAlpha, 0.0f, 1.0f );
-		m_ReceptorArrow[c]->SetBaseAlpha( fBaseAlpha );		
+		m_ReceptorArrow[c]->SetBaseAlpha( fBaseAlpha );
 
 		// set arrow XYZ
 		float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
-		/* XXX
-		if( PitchDetectionTest::s_ms.bVoiced )
-			fX += ArrowEffects::GetXOffset( m_pPlayerState, m_pPlayerState->m_fWrappedMidiNote );
-		*/
 		const float fY = ArrowEffects::GetYPos( m_pPlayerState, c, 0, m_fYReverseOffsetPixels );
 		const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
 		m_ReceptorArrow[c]->SetX( fX );
 		m_ReceptorArrow[c]->SetY( fY );
 		m_ReceptorArrow[c]->SetZ( fZ );
-
-		/* XXX
-		m_ReceptorArrow[c]->SetVisible( PitchDetectionTest::s_ms.bVoiced );
-		*/
 
 		const float fRotation = ArrowEffects::ReceptorGetRotation( m_pPlayerState );
 		m_ReceptorArrow[c]->SetRotationZ( fRotation );

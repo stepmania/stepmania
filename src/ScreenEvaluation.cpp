@@ -201,11 +201,6 @@ void ScreenEvaluation::Init()
 					ss.m_player[p].m_radarPossible[rc] = 1 + (rand() % 200);
 					ss.m_player[p].m_radarActual[rc] = rand() % (int)(ss.m_player[p].m_radarPossible[rc]);
 					break;
-				case RadarCategory_MinMidiNote:
-				case RadarCategory_MaxMidiNote:
-					ss.m_player[p].m_radarPossible[rc] = 0;
-					ss.m_player[p].m_radarActual[rc] = 0;
-					break;
 				}
 
 				;	// filled in by ScreenGameplay on start of notes
