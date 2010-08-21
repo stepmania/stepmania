@@ -12,6 +12,7 @@
 #include "NoteTypes.h"
 #include "LuaBinding.h"
 #include "Foreach.h"
+#include "RageMath.h"
 
 const RString& NoteNotePartToString( NotePart i );
 #define FOREACH_NotePart( i ) FOREACH_ENUM( NotePart, i )
@@ -444,9 +445,21 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 
 		float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
 
-		const float fXLeft		= fX - fScaledFrameWidth/2;
+		// XXX: Actor rotations use degrees, RageFastCos/Sin use radians. Convert here.
+		const float fRotationY		= ArrowEffects::GetRotationY( m_pPlayerState, fYOffset ) * PI/180;
+
+		// if we're rotating, we need to modify the X and Z coords for the outer edges.
+		const float fRotOffsetX		= fFrameWidth/2 * RageFastCos(fRotationY);
+		const float fRotOffsetZ		= fFrameWidth/2 * RageFastSin(fRotationY);
+
+		//const float fXLeft			= fX - (fScaledFrameWidth/2);
+		const float fXLeft			= fX - fRotOffsetX;
 		const float fXCenter		= fX;
-		const float fXRight		= fX + fScaledFrameWidth/2;
+		//const float fXRight		= fX + (fScaledFrameWidth/2);
+		const float fXRight		= fX + fRotOffsetX;
+		const float fZLeft			= fZ - fRotOffsetZ;
+		const float fZRight		= fZ + fRotOffsetZ;
+
 		const float fDistFromTop	= fY - fYTop;
 		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom );
 		fTexCoordTop += fAddToTexCoord;
@@ -457,9 +470,9 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
 
-		queue.v[0].p = RageVector3(fXLeft,  fY, fZ);  queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		queue.v[0].p = RageVector3(fXLeft,  fY, fZLeft);  queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
 		queue.v[1].p = RageVector3(fXCenter, fY, fZ); queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordCenter, fTexCoordTop);
-		queue.v[2].p = RageVector3(fXRight, fY, fZ);  queue.v[2].c = color; queue.v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		queue.v[2].p = RageVector3(fXRight, fY, fZRight);  queue.v[2].c = color; queue.v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=3;
 
 		if( queue.Free() < 3 || bLast )
@@ -666,12 +679,18 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	const float fGlow	= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const RageColor diffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor glow	= RageColor(1,1,1,fGlow);
+	float fRotationX	= 0;
+	float fRotationY	= 0;
 	float fRotationZ	= 0;
 
-	fRotationZ		= ArrowEffects::GetRotation(	m_pPlayerState, fBeat, tn.type == tn.hold_head );
+	fRotationX		= ArrowEffects::GetRotationX(	m_pPlayerState, fYOffset );
+	fRotationY		= ArrowEffects::GetRotationY(	m_pPlayerState, fYOffset );
+	fRotationZ		= ArrowEffects::GetRotationZ(	m_pPlayerState, fBeat, tn.type == tn.hold_head );
 	if( tn.type != tn.hold_head )
 		fColorScale		*= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
 
+	pActor->SetRotationX( fRotationX );
+	pActor->SetRotationY( fRotationY );
 	pActor->SetRotationZ( fRotationZ );
 	pActor->SetXY( fX, fY );
 	pActor->SetZ( fZ );

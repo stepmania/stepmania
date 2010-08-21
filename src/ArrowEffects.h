@@ -31,9 +31,13 @@ public:
 	// fRotation is Z rotation of an arrow.  This will depend on the column of 
 	// the arrow and possibly the Arrow effect and the fYOffset (in the case of 
 	// EFFECT_DIZZY).
-	static float GetRotation(	const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead );
-	static float ReceptorGetRotation(	const PlayerState* pPlayerState );
+	static float GetRotationZ(	const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead );
+	static float ReceptorGetRotationZ(	const PlayerState* pPlayerState );
 
+	// Due to the handling logic for holds on Twirl, we need to use an offset instead.
+	// It's more intuitive for Roll to be based off offset, so use an offset there too.
+	static float GetRotationX(  const PlayerState* pPlayerState, float fYOffset );
+	static float GetRotationY(  const PlayerState *pPlayerState, float fYOffset );
 
 	// fXPos is a horizontal position in pixels relative to the center of the field.
 	// This depends on the column of the arrow and possibly the Arrow effect and

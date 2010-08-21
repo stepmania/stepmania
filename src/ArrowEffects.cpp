@@ -424,12 +424,34 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	return fPixelOffsetFromCenter;
 }
 
-float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead ) 
+float ArrowEffects::GetRotationX( const PlayerState *pPlayerState, float fYOffset )
+{
+	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
+	float fRotation = 0;
+	if( fEffects[PlayerOptions::EFFECT_ROLL] != 0 )
+	{
+		fRotation = fEffects[PlayerOptions::EFFECT_ROLL] * fYOffset/2;
+	}
+	return fRotation;
+}
+
+float ArrowEffects::GetRotationY( const PlayerState *pPlayerState, float fYOffset )
+{
+	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
+	float fRotation = 0;
+	if( fEffects[PlayerOptions::EFFECT_TWIRL] != 0 )
+	{
+		fRotation = fEffects[PlayerOptions::EFFECT_TWIRL] * fYOffset/2;
+	}
+	return fRotation;
+}
+
+float ArrowEffects::GetRotationZ( const PlayerState* pPlayerState, float fNoteBeat, bool bIsHoldHead ) 
 {
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 	float fRotation = 0;
 	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
-		fRotation += ReceptorGetRotation( pPlayerState );
+		fRotation += ReceptorGetRotationZ( pPlayerState );
 
 	// Doesn't affect hold heads, unlike confusion
 	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && !bIsHoldHead )
@@ -444,7 +466,7 @@ float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBea
 	return fRotation;
 }
 
-float ArrowEffects::ReceptorGetRotation( const PlayerState* pPlayerState ) 
+float ArrowEffects::ReceptorGetRotationZ( const PlayerState* pPlayerState ) 
 {
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 	float fRotation = 0;
@@ -626,7 +648,10 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 bool ArrowEffects::NeedZBuffer( const PlayerState* pPlayerState )
 {
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
-	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
+	// We also need to use the Z buffer if twirl is in play, because of
+	// hold modulation. -vyhd (OpenITG r623)
+	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 ||
+		fEffects[PlayerOptions::EFFECT_TWIRL] != 0 )
 		return true;
 
 	return false;

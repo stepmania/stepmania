@@ -56,7 +56,7 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 		m_ReceptorArrow[c]->SetY( fY );
 		m_ReceptorArrow[c]->SetZ( fZ );
 
-		const float fRotation = ArrowEffects::ReceptorGetRotation( m_pPlayerState );
+		const float fRotation = ArrowEffects::ReceptorGetRotationZ( m_pPlayerState );
 		m_ReceptorArrow[c]->SetRotationZ( fRotation );
 
 		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );

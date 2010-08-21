@@ -105,7 +105,7 @@ RString PlayerOptions::GetString( bool bForceNoteSkin ) const
 
 void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 {
-	RString sReturn;
+	//RString sReturn;
 
 	if( !m_fTimeSpacing )
 	{
@@ -134,35 +134,37 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 
 	AddPart( AddTo, m_fAccels[ACCEL_BOOST],		"Boost" );
 	AddPart( AddTo, m_fAccels[ACCEL_BRAKE],		"Brake" );
-	AddPart( AddTo, m_fAccels[ACCEL_WAVE],		"Wave" );
-	AddPart( AddTo, m_fAccels[ACCEL_EXPAND],	"Expand" );
+	AddPart( AddTo, m_fAccels[ACCEL_WAVE],			"Wave" );
+	AddPart( AddTo, m_fAccels[ACCEL_EXPAND],		"Expand" );
 	AddPart( AddTo, m_fAccels[ACCEL_BOOMERANG],	"Boomerang" );
 
-	AddPart( AddTo, m_fEffects[EFFECT_DRUNK],	"Drunk" );
-	AddPart( AddTo, m_fEffects[EFFECT_DIZZY],	"Dizzy" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK],		"Drunk" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIZZY],		"Dizzy" );
 	AddPart( AddTo, m_fEffects[EFFECT_CONFUSION],	"Confusion" );
-	AddPart( AddTo, m_fEffects[EFFECT_MINI],	"Mini" );
-	AddPart( AddTo, m_fEffects[EFFECT_TINY],	"Tiny" );
-	AddPart( AddTo, m_fEffects[EFFECT_FLIP],	"Flip" );
-	AddPart( AddTo, m_fEffects[EFFECT_INVERT],	"Invert" );
+	AddPart( AddTo, m_fEffects[EFFECT_MINI],		"Mini" );
+	AddPart( AddTo, m_fEffects[EFFECT_TINY],		"Tiny" );
+	AddPart( AddTo, m_fEffects[EFFECT_FLIP],		"Flip" );
+	AddPart( AddTo, m_fEffects[EFFECT_INVERT],		"Invert" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
-	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],	"Tipsy" );
-	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],	"Bumpy" );
-	AddPart( AddTo, m_fEffects[EFFECT_BEAT],	"Beat" );
-	AddPart( AddTo, m_fEffects[EFFECT_XMODE],	"XMode" );
+	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],		"Tipsy" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],		"Bumpy" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT],		"Beat" );
+	AddPart( AddTo, m_fEffects[EFFECT_XMODE],		"XMode" );
+	AddPart( AddTo, m_fEffects[EFFECT_TWIRL],		"Twirl" );
+	AddPart( AddTo, m_fEffects[EFFECT_ROLL],		"Roll" );
 
-	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],		"Hidden" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],			"Hidden" );
 	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN_OFFSET],	"HiddenOffset" );
-	AddPart( AddTo, m_fAppearances[APPEARANCE_SUDDEN],		"Sudden" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_SUDDEN],			"Sudden" );
 	AddPart( AddTo, m_fAppearances[APPEARANCE_SUDDEN_OFFSET],	"SuddenOffset" );
 	AddPart( AddTo, m_fAppearances[APPEARANCE_STEALTH],		"Stealth" );
-	AddPart( AddTo, m_fAppearances[APPEARANCE_BLINK],		"Blink" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_BLINK],			"Blink" );
 	AddPart( AddTo, m_fAppearances[APPEARANCE_RANDOMVANISH],	"RandomVanish" );
 
 	AddPart( AddTo, m_fScrolls[SCROLL_REVERSE],	"Reverse" );
-	AddPart( AddTo, m_fScrolls[SCROLL_SPLIT],	"Split" );
+	AddPart( AddTo, m_fScrolls[SCROLL_SPLIT],		"Split" );
 	AddPart( AddTo, m_fScrolls[SCROLL_ALTERNATE],	"Alternate" );
-	AddPart( AddTo, m_fScrolls[SCROLL_CROSS],	"Cross" );
+	AddPart( AddTo, m_fScrolls[SCROLL_CROSS],		"Cross" );
 	AddPart( AddTo, m_fScrolls[SCROLL_CENTERED],	"Centered" );
 
 	AddPart( AddTo, m_fDark,	"Dark" );
@@ -179,10 +181,10 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fRandomSpeed,	"RandomSpeed" );
 
 	if( m_bTurns[TURN_MIRROR] )		AddTo.push_back( "Mirror" );
-	if( m_bTurns[TURN_LEFT] )		AddTo.push_back( "Left" );
-	if( m_bTurns[TURN_RIGHT] )		AddTo.push_back( "Right" );
+	if( m_bTurns[TURN_LEFT] )			AddTo.push_back( "Left" );
+	if( m_bTurns[TURN_RIGHT] )			AddTo.push_back( "Right" );
 	if( m_bTurns[TURN_SHUFFLE] )		AddTo.push_back( "Shuffle" );
-	if( m_bTurns[TURN_SOFT_SHUFFLE] )		AddTo.push_back( "SoftShuffle" );
+	if( m_bTurns[TURN_SOFT_SHUFFLE] )	AddTo.push_back( "SoftShuffle" );
 	if( m_bTurns[TURN_SUPER_SHUFFLE] )	AddTo.push_back( "SuperShuffle" );
 
 	if( m_bTransforms[TRANSFORM_NOHOLDS] )	AddTo.push_back( "NoHolds" );
@@ -190,7 +192,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	if( m_bTransforms[TRANSFORM_NOMINES] )	AddTo.push_back( "NoMines" );
 	if( m_bTransforms[TRANSFORM_LITTLE] )	AddTo.push_back( "Little" );
 	if( m_bTransforms[TRANSFORM_WIDE] )	AddTo.push_back( "Wide" );
-	if( m_bTransforms[TRANSFORM_BIG] )	AddTo.push_back( "Big" );
+	if( m_bTransforms[TRANSFORM_BIG] )		AddTo.push_back( "Big" );
 	if( m_bTransforms[TRANSFORM_QUICK] )	AddTo.push_back( "Quick" );
 	if( m_bTransforms[TRANSFORM_BMRIZE] )	AddTo.push_back( "BMRize" );
 	if( m_bTransforms[TRANSFORM_SKIPPY] )	AddTo.push_back( "Skippy" );
@@ -355,6 +357,8 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "bumpy" )				SET_FLOAT( fEffects[EFFECT_BUMPY] )
 	else if( sBit == "beat" )				SET_FLOAT( fEffects[EFFECT_BEAT] )
 	else if( sBit == "xmode" )				SET_FLOAT( fEffects[EFFECT_XMODE] )
+	else if( sBit == "twirl" )				SET_FLOAT( fEffects[EFFECT_TWIRL] )
+	else if( sBit == "roll" )				SET_FLOAT( fEffects[EFFECT_ROLL] )
 	else if( sBit == "hidden" )				SET_FLOAT( fAppearances[APPEARANCE_HIDDEN] )
 	else if( sBit == "hiddenoffset" )			SET_FLOAT( fAppearances[APPEARANCE_HIDDEN_OFFSET] )
 	else if( sBit == "sudden" )				SET_FLOAT( fAppearances[APPEARANCE_SUDDEN] )

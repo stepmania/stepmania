@@ -59,6 +59,8 @@ public:
 		EFFECT_BUMPY,
 		EFFECT_BEAT,
 		EFFECT_XMODE,
+		EFFECT_TWIRL,
+		EFFECT_ROLL,
 		NUM_EFFECTS
 	};
 	enum Appearance {
