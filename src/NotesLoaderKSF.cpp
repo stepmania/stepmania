@@ -579,7 +579,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				}
 				else if (BeginsWith(NoteRowString, "|E"))
 				{
-					//Finally! the |E| tag is working as it should. I can die happy now -DaisuMaster
+					// Finally! the |E| tag is working as it should. I can die happy now -DaisuMaster
 					bool bDelay = true;
 					float fCurDelay = 60 / out.m_Timing.GetBPMAtBeat(fCurBeat) * (float)numTemp / iTickCount;
 					fCurDelay += out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat), bDelay);
@@ -597,7 +597,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			}
 			else
 			{
-				//ignore whatever else...
+				// ignore whatever else...
 				continue;
 			}
 
