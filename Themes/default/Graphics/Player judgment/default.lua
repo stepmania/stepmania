@@ -64,6 +64,36 @@ t[#t+1] = Def.ActorFrame {
 		OnCommand=THEME:GetMetric("Protiming","AverageOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
+	Def.Quad {
+		Name="ProtimingGraphBG";
+		InitCommand=cmd(visible,false;y,32;zoomto,192,16);
+		ResetCommand=cmd(finishtweening;diffusealpha,0.8;visible,false);
+		OnCommand=cmd(diffuse,Color("Black");diffusetopedge,color("0.1,0.1,0.1,1");diffusealpha,0.8;shadowlength,2;);
+	};
+	Def.Quad {
+		Name="ProtimingGraphUnderlay";
+		InitCommand=cmd(visible,false;y,32;zoomto,192-4,16-4);
+		ResetCommand=cmd(finishtweening;diffusealpha,0.5;visible,false);
+		OnCommand=cmd(diffuse,Color("Orange");diffusealpha,0.5);
+	};
+	Def.Quad {
+		Name="ProtimingGraphFill";
+		InitCommand=cmd(visible,false;y,32;zoomto,0,16-4;horizalign,left;);
+		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
+		OnCommand=cmd(diffuse,Color("Orange");diffuserightedge,Color("Yellow"););
+	};
+	Def.Quad {
+		Name="ProtimingGraphAverage";
+		InitCommand=cmd(visible,false;y,32;zoomto,2,7;);
+		ResetCommand=cmd(finishtweening;diffusealpha,0.5;visible,false);
+		OnCommand=cmd(diffuse,Color("Green");diffusealpha,0.5;glowshift);
+	};
+	Def.Quad {
+		Name="ProtimingGraphCenter";
+		InitCommand=cmd(visible,false;y,32;zoomto,2,16-4;);
+		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
+		OnCommand=cmd(diffuse,Color("White");diffusealpha,1);
+	};
 	InitCommand = function(self)
 		c = self:GetChildren();
 	end;
@@ -115,7 +145,23 @@ t[#t+1] = Def.ActorFrame {
 		c.ProtimingAverage:visible( bShowProtiming );
 		c.ProtimingAverage:settextf("%.2f%%",clamp(100 - MakeAverage( tTotalJudgments ) * 1000 ,0,100));
 		AverageCmds['Pulse'](c.ProtimingAverage);
+		
+		c.ProtimingGraphBG:visible( bShowProtiming );
+		c.ProtimingGraphUnderlay:visible( bShowProtiming );
+		c.ProtimingGraphFill:visible( bShowProtiming );
+		c.ProtimingGraphFill:finishtweening();
+		c.ProtimingGraphFill:decelerate(0.025);
+		c.ProtimingGraphFill:zoomtowidth( clamp(fTapNoteOffset * 188,-188/2,188/2) );
+		c.ProtimingGraphAverage:visible( bShowProtiming );
+		c.ProtimingGraphAverage:zoomtowidth( clamp(MakeAverage( tTotalJudgments ) * 1880,0,188) );
+		c.ProtimingGraphCenter:visible( bShowProtiming );
+		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphBG);
+		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphUnderlay);
+		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphFill);
+		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphAverage);
+		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphCenter);
 	end;
+
 };
 
 
