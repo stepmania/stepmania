@@ -449,8 +449,8 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		const float fRotationY		= ArrowEffects::GetRotationY( m_pPlayerState, fYOffset ) * PI/180;
 
 		// if we're rotating, we need to modify the X and Z coords for the outer edges.
-		const float fRotOffsetX		= fFrameWidth/2 * RageFastCos(fRotationY);
-		const float fRotOffsetZ		= fFrameWidth/2 * RageFastSin(fRotationY);
+		const float fRotOffsetX		= (fScaledFrameWidth/2) * RageFastCos(fRotationY);
+		const float fRotOffsetZ		= (fScaledFrameWidth/2) * RageFastSin(fRotationY);
 
 		//const float fXLeft			= fX - (fScaledFrameWidth/2);
 		const float fXLeft			= fX - fRotOffsetX;
@@ -458,6 +458,7 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		//const float fXRight		= fX + (fScaledFrameWidth/2);
 		const float fXRight		= fX + fRotOffsetX;
 		const float fZLeft			= fZ - fRotOffsetZ;
+		const float fZCenter	= fZ;
 		const float fZRight		= fZ + fRotOffsetZ;
 
 		const float fDistFromTop	= fY - fYTop;
@@ -471,7 +472,7 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 			bAllAreTransparent = false;
 
 		queue.v[0].p = RageVector3(fXLeft,  fY, fZLeft);  queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-		queue.v[1].p = RageVector3(fXCenter, fY, fZ); queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordCenter, fTexCoordTop);
+		queue.v[1].p = RageVector3(fXCenter, fY, fZCenter); queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordCenter, fTexCoordTop);
 		queue.v[2].p = RageVector3(fXRight, fY, fZRight);  queue.v[2].c = color; queue.v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=3;
 
@@ -679,13 +680,11 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	const float fGlow	= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const RageColor diffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor glow	= RageColor(1,1,1,fGlow);
-	float fRotationX	= 0;
-	float fRotationY	= 0;
-	float fRotationZ	= 0;
+	float fRotationX	= 0, fRotationY	= 0, fRotationZ	= 0;
 
-	fRotationX		= ArrowEffects::GetRotationX(	m_pPlayerState, fYOffset );
-	fRotationY		= ArrowEffects::GetRotationY(	m_pPlayerState, fYOffset );
-	fRotationZ		= ArrowEffects::GetRotationZ(	m_pPlayerState, fBeat, tn.type == tn.hold_head );
+	fRotationX		= ArrowEffects::GetRotationX( m_pPlayerState, fYOffset );
+	fRotationY		= ArrowEffects::GetRotationY( m_pPlayerState, fYOffset );
+	fRotationZ		= ArrowEffects::GetRotationZ( m_pPlayerState, fBeat, tn.type == tn.hold_head );
 	if( tn.type != tn.hold_head )
 		fColorScale		*= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
 

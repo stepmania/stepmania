@@ -19,6 +19,7 @@
 		<Function name='ComboMaintain'/>
 		<Function name='ComboPerRow'/>
 		<Function name='ComboTransformCommand'/>
+		<Function name='ComboUnderField'/>
 		<Function name='ConnectToServer'/>
 		<Function name='CourseDifficultyToLocalizedString'/>
 		<Function name='CourseTypeToLocalizedString'/>
@@ -154,6 +155,7 @@
 		<Function name='UnlockRewardTypeToLocalizedString'/>
 		<Function name='UserPrefAutoSetStyle'/>
 		<Function name='UserPrefComboOnRolls'/>
+		<Function name='UserPrefComboUnderField'/>
 		<Function name='UserPrefFlashyCombo'/>
 		<Function name='UserPrefGameplayShowScore'/>
 		<Function name='UserPrefGameplayShowStepsDisplay'/>
@@ -1225,6 +1227,7 @@
 			<Function name='GetPathInfoB'/>
 			<Function name='GetPathO'/>
 			<Function name='GetPathS'/>
+			<Function name='GetSelectableThemeNames'/>
 			<Function name='GetString'/>
 			<Function name='GetThemeAuthor'/>
 			<Function name='GetThemeDisplayName'/>
@@ -1683,8 +1686,6 @@
 			<EnumValue name='&apos;RadarCategory_Hands&apos;' value='9'/>
 			<EnumValue name='&apos;RadarCategory_Rolls&apos;' value='10'/>
 			<EnumValue name='&apos;RadarCategory_Lifts&apos;' value='11'/>
-			<EnumValue name='&apos;RadarCategory_MinMidiNote&apos;' value='12'/>
-			<EnumValue name='&apos;RadarCategory_MaxMidiNote&apos;' value='13'/>
 		</Enum>
 		<Enum name='RandomBackgroundMode'>
 			<EnumValue name='&apos;RandomBackgroundMode_Off&apos;' value='0'/>
@@ -1805,8 +1806,7 @@
 			<EnumValue name='&apos;StepsType_Pnm_Five&apos;' value='28'/>
 			<EnumValue name='&apos;StepsType_Pnm_Nine&apos;' value='29'/>
 			<EnumValue name='&apos;StepsType_Guitar_Five&apos;' value='30'/>
-			<EnumValue name='&apos;StepsType_Karaoke&apos;' value='31'/>
-			<EnumValue name='&apos;StepsType_Lights_Cabinet&apos;' value='32'/>
+			<EnumValue name='&apos;StepsType_Lights_Cabinet&apos;' value='31'/>
 		</Enum>
 		<Enum name='StyleType'>
 			<EnumValue name='&apos;StyleType_OnePlayerOneSide&apos;' value='0'/>
@@ -1896,6 +1896,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc v1.0 rc1.5</Version>
-	<Date>2010-08-10</Date>
+	<Version>sm-ssc v1.0 rc2</Version>
+	<Date>2010-08-22</Date>
 </Lua>
