@@ -761,6 +761,7 @@ void GameState::FinishStage()
 		LOG->Trace( "awarded extra stage" );
 		FOREACH_HumanPlayer( p )
 		{
+			// todo: unhardcode the extra stage limit? -aj
 			if( m_iAwardedExtraStages[p] < 2 )
 			{
 				++m_iAwardedExtraStages[p];

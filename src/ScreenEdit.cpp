@@ -657,9 +657,8 @@ static MenuDef g_CourseMode(
 	MenuRowDef( -1, "Play mods from course",	true, EditMode_Practice, true, false, 0, NULL )
 );
 
-// HACK: need to remember the track we're inserting on so
-// that we can lay the attack note after coming back from
-// menus.
+// HACK: need to remember the track we're inserting on so that we can lay the
+// attack note after coming back from menus.
 static int g_iLastInsertTapAttackTrack = -1;
 static float g_fLastInsertAttackDurationSeconds = -1;
 static float g_fLastInsertAttackPositionSeconds = -1;
@@ -669,7 +668,7 @@ static void SetDefaultEditorNoteSkin( size_t num, RString &sNameOut, RString &de
 {
 	sNameOut = ssprintf( "EditorNoteSkinP%d", int(num + 1) );
 
-	// XXX: We need more supported note skins.
+	// XXX: We need more supported noteskins.
 	switch( num )
 	{
 	case 0: defaultValueOut = "default"; return;
