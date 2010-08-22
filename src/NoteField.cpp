@@ -944,7 +944,6 @@ void NoteField::FadeToFail()
 void NoteField::Step( int iCol, TapNoteScore score ) { m_pCurDisplay->m_ReceptorArrowRow.Step( iCol, score ); }
 void NoteField::SetPressed( int iCol ) {
 	m_pCurDisplay->m_ReceptorArrowRow.SetPressed( iCol );
-	m_pCurDisplay->m_GhostArrowRow.DidStep( iCol );
 }
 void NoteField::DidTapNote( int iCol, TapNoteScore score, bool bBright ) { m_pCurDisplay->m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
 void NoteField::DidHoldNote( int iCol, HoldNoteScore score, bool bBright ) { m_pCurDisplay->m_GhostArrowRow.DidHoldNote( iCol, score, bBright ); }

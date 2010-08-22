@@ -18,7 +18,6 @@ public:
 
 	void Load( const PlayerState* pPlayerState, float fYReverseOffset );
 
-	void DidStep( int iCol );
 	void DidTapNote( int iCol, TapNoteScore tns, bool bBright );
 	void DidHoldNote( int iCol, HoldNoteScore hns, bool bBright );
 	void SetHoldShowing( int iCol, const TapNote &tn );
