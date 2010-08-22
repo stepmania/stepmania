@@ -379,7 +379,7 @@ Section "Main Section" SecMain
 	File "Program\StepMania-SSE2.vdi"
 	; other programs
 	File "Program\Texture Font Generator.exe"
-	;File "Program\tools.exe" ; to be replaced
+	File "Program\tools.exe" ; to be replaced eventually, but include for now
 !endif
 !ifdef ASSOCIATE_SMZIP
 	Call RefreshShellIcons
@@ -442,7 +442,7 @@ Section "Main Section" SecMain
 	!endif
 
 	;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
-	;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk" "$INSTDIR\Manual\index.html"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk" "$INSTDIR\uninstall.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk" "${PRODUCT_URL}"
