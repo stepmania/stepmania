@@ -8,6 +8,11 @@ Noteskin.bBlanks = {
 	["Roll Tail Inactive"] = true;
 	["Roll Tail Inactive"] = true;
 }
+Noteskin.PartsToRotate = {
+	--["elemenu"] = true|false;
+	["Roll Head Active"] = false;
+	["Roll Head Inactive"] = false;
+}
 Noteskin.ElementRedirs = {
 	--["element"] = "redirected_element";
 	["Hold Head Active"] = "Tap Note";
@@ -89,8 +94,13 @@ local function func()
 	
 	local t = LoadActor(path)
 	
-	t.BaseRotationX=Noteskin.BaseRotX[sButton]
-	t.BaseRotationY=Noteskin.BaseRotY[sButton]
+	local bRotate = Noteskin.PartsToRotate[ElementToLoad]
+	--rotate by default
+	if bRotate == nil then bRotate = true end
+	if bRotate then
+		t.BaseRotationX=Noteskin.BaseRotX[sButton]
+		t.BaseRotationY=Noteskin.BaseRotY[sButton]
+	end
 	
 	return t
 end

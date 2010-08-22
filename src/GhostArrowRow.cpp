@@ -97,6 +97,8 @@ void GhostArrowRow::DidTapNote( int iCol, TapNoteScore tns, bool bBright )
 
 	Message msg("ColumnJudgment");
 	msg.SetParam( "TapNoteScore", tns );
+	// This may be useful for popn styled judgment :) -DaisuMaster
+	msg.SetParam( "Column", iCol );
 	if( bBright )
 		msg.SetParam( "Bright", true );
 	m_Ghost[iCol]->HandleMessage( msg );
@@ -115,6 +117,7 @@ void GhostArrowRow::DidHoldNote( int iCol, HoldNoteScore hns, bool bBright )
 	ASSERT( iCol >= 0  &&  iCol < (int) m_Ghost.size() );
 	Message msg("ColumnJudgment");
 	msg.SetParam( "HoldNoteScore", hns );
+	msg.SetParam( "Column", iCol );
 	if( bBright )
 		msg.SetParam( "Bright", true );
 	m_Ghost[iCol]->HandleMessage( msg );

@@ -220,36 +220,34 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		}
 
 		// Why do this? Rows made with precise DM05 tags can go up to 13 too -DaisuMaster
-		if( sRowString.size() != 13 )
+		//if( sRowString.size() != 13 )
+		if( bKIUCompliant )
 		{
-			if( bKIUCompliant )
-			{
-				LOG->UserLog( "Song file", sPath, "has illegal syntax \"%s\" which can't be in KIU complient files.",
-					      sRowString.c_str() );
-				return false;
-				//In other words: you can't mix ksf's with DM05 tags and ksf's without any DM05 tags
-				//Either one set or another will be read...
-			}
-			if( BeginsWith(sRowString, "|B") || BeginsWith(sRowString, "|D") || BeginsWith(sRowString, "|E") )
-			{
-				// These don't have to be worried about here: the changes and stops were already added.
-				continue;
-			}
-			else if ( BeginsWith(sRowString, "|T") )
-			{
-				RString temp = sRowString.substr(2,sRowString.size()-3);
-				newTick = atoi(temp);
-				bTickChangeNeeded = true;
-				continue;
-			}
-			else
-			{
-				// Is this why improper ksf or some kiucompilant ksf mixed with dm05 ksf are ignored?? -DaisuMaster
-				//LOG->UserLog( "Song file", sPath, "has a RowString with an improper length \"%s\"; corrupt notes ignored.",
-				//	      sRowString.c_str() );
-				//return false;
-				continue;
-			}
+			LOG->UserLog( "Song file", sPath, "has illegal syntax \"%s\" which can't be in KIU complient files.",
+				      sRowString.c_str() );
+			return false;
+			//In other words: you can't mix ksf's with DM05 tags and ksf's without any DM05 tags
+			//Either one set or another will be read...
+		}
+		if( BeginsWith(sRowString, "|B") || BeginsWith(sRowString, "|D") || BeginsWith(sRowString, "|E") )
+		{
+			// These don't have to be worried about here: the changes and stops were already added.
+			continue;
+		}
+		else if ( BeginsWith(sRowString, "|T") )
+		{
+			RString temp = sRowString.substr(2,sRowString.size()-3);
+			newTick = atoi(temp);
+			bTickChangeNeeded = true;
+			continue;
+		}
+		else
+		{
+			// Is this why improper ksf or some kiucompilant ksf mixed with dm05 ksf are ignored?? -DaisuMaster
+			//LOG->UserLog( "Song file", sPath, "has a RowString with an improper length \"%s\"; corrupt notes ignored.",
+			//	      sRowString.c_str() );
+			//return false;
+			continue;
 		}
 
 		// Half-doubles is offset; "0011111100000".
@@ -555,59 +553,52 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			}
 
 			// This is where the DMRequired test will take place.
-			if( NoteRowString.size() != 13)
+			if (BeginsWith(NoteRowString, "|T") || BeginsWith(NoteRowString, "|B") ||
+				BeginsWith(NoteRowString, "|D") || BeginsWith(NoteRowString, "|E") )
 			{
-				if (BeginsWith(NoteRowString, "|T") || BeginsWith(NoteRowString, "|B") ||
-					BeginsWith(NoteRowString, "|D") || BeginsWith(NoteRowString, "|E") )
+				bDMRequired = true;
+				RString temp = NoteRowString.substr(2,NoteRowString.size()-3);
+				float numTemp = StringToFloat(temp);
+				if (BeginsWith(NoteRowString, "|T")) 
 				{
-					bDMRequired = true;
-					RString temp = NoteRowString.substr(2,NoteRowString.size()-3);
-					float numTemp = StringToFloat(temp);
-					if (BeginsWith(NoteRowString, "|T")) 
-					{
-						iTickCount = (int)numTemp;
-						TimeSignatureSegment seg;
-						seg.m_iStartRow = BeatToNoteRow(fCurBeat);
-						seg.m_iNumerator = iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount;
-						seg.m_iDenominator = 4;
-						out.m_Timing.AddTimeSignatureSegment( seg );
-						
-						continue;
-					}
-					else if (BeginsWith(NoteRowString, "|B")) 
-					{
-						float fCurBpm = (float)numTemp;
-						//out.m_Timing.AddBPMSegment( BPMSegment( BeatToNoteRow(fCurBeat), (float)numTemp ) );
-						out.m_Timing.SetBPMAtBeat( fCurBeat, fCurBpm );
-						continue;
-					}
-					else if (BeginsWith(NoteRowString, "|E"))
-					{
-						//Finally! the |E| tag is working as it should. I can die happy now -DaisuMaster
-						bool bDelay = true;
-						float fCurDelay = 60 / out.m_Timing.GetBPMAtBeat(fCurBeat) * (float)numTemp / iTickCount;
-						fCurDelay += out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat), bDelay);
-						out.m_Timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
-						continue;
-					}
-					else if (BeginsWith(NoteRowString, "|D"))
-					{
-						bool bDelay = true;
-						float fCurDelay = out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat), bDelay);
-						fCurDelay += (float)numTemp / 1000;
-						out.m_Timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
-						continue;
-					}
-				}
-				else
-				{
-					// Quit while we're ahead if any bad syntax is spotted.
-					//LOG->UserLog( "Song file", sPath, "has an invalid RowString \"%s\".",
-					//			NoteRowString.c_str() );
-					//return false;
-					//how about no? :D -DaisuMaster
+					iTickCount = (int)numTemp;
+					TimeSignatureSegment seg;
+					seg.m_iStartRow = BeatToNoteRow(fCurBeat);
+					seg.m_iNumerator = iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount;
+					seg.m_iDenominator = 4;
+					out.m_Timing.AddTimeSignatureSegment( seg );
+					
 					continue;
 				}
+				else if (BeginsWith(NoteRowString, "|B")) 
+				{
+					float fCurBpm = (float)numTemp;
+					//out.m_Timing.AddBPMSegment( BPMSegment( BeatToNoteRow(fCurBeat), (float)numTemp ) );
+					out.m_Timing.SetBPMAtBeat( fCurBeat, fCurBpm );
+					continue;
+				}
+				else if (BeginsWith(NoteRowString, "|E"))
+				{
+					//Finally! the |E| tag is working as it should. I can die happy now -DaisuMaster
+					bool bDelay = true;
+					float fCurDelay = 60 / out.m_Timing.GetBPMAtBeat(fCurBeat) * (float)numTemp / iTickCount;
+					fCurDelay += out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat), bDelay);
+					out.m_Timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
+					continue;
+				}
+				else if (BeginsWith(NoteRowString, "|D"))
+				{
+					bool bDelay = true;
+					float fCurDelay = out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat), bDelay);
+					fCurDelay += (float)numTemp / 1000;
+					out.m_Timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
+					continue;
+				}
+			}
+			else
+			{
+				//ignore whatever else...
+				continue;
 			}
 
 			fCurBeat += 1.0f / iTickCount;
