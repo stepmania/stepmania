@@ -158,7 +158,7 @@ t[#t+1] = StandardDecorationFromFileOptional("LifeDifficulty","LifeDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("TimingDifficulty","TimingDifficulty");
 t[#t+1] = StandardDecorationFromFileOptional("GameType","GameType");
 t[#t+1] = Def.ActorFrame {
-	Condition=GAMESTATE:IsExtraStage() and not GAMESTATE:IsExtraStage2();
+	Condition=GAMESTATE:HasEarnedExtraStage() and GAMESTATE:IsExtraStage() and not GAMESTATE:IsExtraStage2();
 	InitCommand=cmd(draworder,105);
 	LoadActor( THEME:GetPathS("ScreenEvaluation","try Extra1" ) ) .. {
 		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
@@ -171,7 +171,7 @@ t[#t+1] = Def.ActorFrame {
 	};
 };
 t[#t+1] = Def.ActorFrame {
-	Condition=not GAMESTATE:IsExtraStage() and GAMESTATE:IsExtraStage2();
+	Condition=GAMESTATE:HasEarnedExtraStage() and not GAMESTATE:IsExtraStage() and GAMESTATE:IsExtraStage2();
 	InitCommand=cmd(draworder,105);
 	LoadActor( THEME:GetPathS("ScreenEvaluation","try Extra2" ) ) .. {
 		Condition=THEME:GetMetric( Var "LoadingScreen","Summary" ) == false;
