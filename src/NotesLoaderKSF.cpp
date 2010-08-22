@@ -307,7 +307,9 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			default:
 				LOG->UserLog( "Song file", sPath, "has an invalid row \"%s\"; corrupt notes ignored.",
 					      sRowString.c_str() );
-				return false;
+				//return false;
+				tap = TAP_EMPTY;
+				break;
 			}
 
 			notedata.SetTapNote(t, BeatToNoteRow(fCurBeat), tap);
@@ -490,7 +492,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		}
 		else if( 0==stricmp(sValueName,"SONGFILE") )
 		{
-			out.m_sSongFileName = sParams[1];
+			out.m_sMusicFile = sParams[1];
 		}
 		//else if( 0==stricmp(sValueName,"INTROFILE") )
 		//{
