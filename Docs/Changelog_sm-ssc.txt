@@ -10,12 +10,13 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.0 Release Candidate 2 | 201008xx
+sm-ssc v1.0 Release Candidate 2 | 20100822
 --------------------------------------------------------------------------------
 
 20100821
 --------
 * Add roll and twirl from OpenITG [vyhd]
+* Ignore invalid notes in KSF files [Daisuke Master]
 
 20100817
 --------
