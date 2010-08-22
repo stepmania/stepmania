@@ -91,6 +91,11 @@ void GhostArrowRow::DrawPrimitives()
 		m_Ghost[c]->Draw();
 }
 
+void GhostArrowRow::DidStep( int iCol )
+{
+	ASSERT_M( iCol >= 0  &&  iCol < (int) m_Ghost.size(), ssprintf("assert(iCol %i >= 0  && iCol %i < (int)m_Ghost.size() %i) failed",iCol,iCol,(int)m_Ghost.size()) );
+	m_Ghost[iCol]->PlayCommand("TapNone");
+}
 
 void GhostArrowRow::DidTapNote( int iCol, TapNoteScore tns, bool bBright )
 {

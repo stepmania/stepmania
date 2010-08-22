@@ -18,20 +18,20 @@ return Def.ActorFrame {
 		InitCommand=cmd(zoom,1;diffusealpha,0);
 		TapCommand=cmd(finishtweening;diffusealpha,1;zoom,1;linear,0.2;diffusealpha,0;zoom,1.2);
 		
-		W1Command=cmd(playcommand,"Tap");
-		W2Command=cmd(playcommand,"Tap");
-		W3Command=cmd(playcommand,"Tap");
-		W4Command=cmd(playcommand,"Tap");
-		W5Command=cmd(playcommand,"Tap");
+		--W1Command=cmd(playcommand,"Tap");
+		--W2Command=cmd(playcommand,"Tap");
+		--W3Command=cmd(playcommand,"Tap");
+		--W4Command=cmd(playcommand,"Tap");
+		--W5Command=cmd(playcommand,"Tap");
 		
-		HitMineCommand=cmd(playcommand,"Tap");
+		--HitMineCommand=cmd(playcommand,"Tap");
 		HeldCommand=cmd(playcommand,"Tap");
+		ColumnJudgmentMessageCommand=cmd(playcommand,"Tap");
+		TapNoneCommand=cmd(playcommand,"Tap");
 		
 		--NONECommand=cmd(playcommand,"Tap");
-		
 		--HeldCommand=NOTESKIN:GetMetricA(Var "Button", "TapHeldCommand");
-		--NOT WORKING!!
-		NoneCommand=cmd(linear,0.1;zoom,2);
+		
 	};
 	--explosion
 	LoadActor("_flash")..{

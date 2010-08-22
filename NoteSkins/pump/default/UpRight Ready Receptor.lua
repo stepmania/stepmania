@@ -4,5 +4,5 @@ return NOTESKIN:LoadActor("UpLeft", "Ready Receptor")..{
 		{ Frame = 1 };
 		{ Frame = 2 };
 	};
-	InitCommand=cmd(rotationy,180);
+	--InitCommand=cmd(rotationy,180);
 };

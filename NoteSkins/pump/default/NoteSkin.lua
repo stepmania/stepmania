@@ -48,9 +48,9 @@ Noteskin.BaseRotX = {
 Noteskin.BaseRotY = {
 	Center = 0;
 	UpLeft = 0;
-	UpRight = 0;
+	UpRight = 180;
 	DownLeft = 0;
-	DownRight = 0;
+	DownRight = 180;
 }
 
 local function func()
