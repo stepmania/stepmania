@@ -1,4 +1,4 @@
-/* ScreenContinue - . */
+/* ScreenContinue - A screen with a countdown that allows players to join/continue the game. */
 
 #ifndef ScreenContinue_H
 #define ScreenContinue_H

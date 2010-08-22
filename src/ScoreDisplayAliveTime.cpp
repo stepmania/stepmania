@@ -40,14 +40,12 @@ void ScoreDisplayAliveTime::LoadFromNode( const XNode* pNode )
 void ScoreDisplayAliveTime::Update( float fDelta )
 {
 	UpdateNumber();
-	
 	BitmapText::Update( fDelta );
 }
 
 void ScoreDisplayAliveTime::HandleMessage( const Message &msg )
 {
 	// TODO: Add handling of GoalComplete message
-	
 	BitmapText::HandleMessage( msg );
 }
 

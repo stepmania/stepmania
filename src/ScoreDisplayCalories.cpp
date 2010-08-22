@@ -33,17 +33,17 @@ void ScoreDisplayCalories::LoadFromNode( const XNode* pNode )
 		LuaHelpers::Pop( L, m_PlayerNumber );
 		LUA->Release( L );
 	}
-	
+
 	MESSAGEMAN->Subscribe( this, "Step" );
 }
 
 void ScoreDisplayCalories::Update( float fDelta )
 {
-	// We have to set the initial text after StatsManager::CalcAccumPlayedStageStats 
+	// We have to set the initial text after StatsManager::CalcAccumPlayedStageStats
 	// is called.
 	if( IsFirstUpdate() )
 		UpdateNumber();
-	
+
 	RollingNumbers::Update( fDelta );
 }
 
@@ -56,7 +56,7 @@ void ScoreDisplayCalories::HandleMessage( const Message &msg )
 		if( pn == m_PlayerNumber )
 			UpdateNumber();
 	}
-	
+
 	RollingNumbers::HandleMessage( msg );
 }
 
@@ -65,7 +65,7 @@ void ScoreDisplayCalories::UpdateNumber()
 	float fCals = 
 		STATSMAN->GetAccumPlayedStageStats().m_player[m_PlayerNumber].m_fCaloriesBurned + 
 		STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].m_fCaloriesBurned;
-	
+
 	SetTargetNumber( fCals );
 }
 

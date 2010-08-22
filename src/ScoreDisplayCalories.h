@@ -1,4 +1,4 @@
-/* ScoreDisplayCalories - Shows point score during gameplay and some menus. */
+/* ScoreDisplayCalories - Shows calorie score during gameplay and some menus. */
 
 #ifndef ScoreDisplayCalories_H
 #define ScoreDisplayCalories_H
@@ -22,9 +22,7 @@ public:
 
 	void UpdateNumber();
 
-	//
-	// Commands
-	//
+	// Lua
 	virtual void PushSelf( lua_State *L );
 
 private:

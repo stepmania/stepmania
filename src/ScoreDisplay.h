@@ -15,11 +15,11 @@ public:
 
 	virtual void SetScore( int iNewScore ) {}
 	virtual void OnLoadSong() {};
-	/* Notification of a tap note judgment.  This *is* called for
-	 * the head of hold notes. */
+	/* Notification of a tap note judgment. This *is* called for the head of
+	 * hold notes. */
 	virtual void OnJudgment( TapNoteScore score ) {};
-	/* Notification of a hold judgment.  tscore is the score
-	 * received for the initial tap note. */
+	/* Notification of a hold judgment. tscore is the score received for the
+	 * initial tap note. */
 	virtual void OnJudgment( HoldNoteScore score, TapNoteScore tscore ) {};
 
 protected:

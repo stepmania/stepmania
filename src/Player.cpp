@@ -2073,19 +2073,20 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			if( pTN->type == TapNote::attack && score > TNS_W4 )
 				score = TNS_W2; // sentinel
 
-			/* AI will generate misses here.  Don't handle a miss like a regular note because
-			 * we want the judgment animation to appear delayed.  Instead, return early if
-			 * AI generated a miss, and let UpdateTapNotesMissedOlderThan() detect and handle the 
-			 * misses. */
+			/* AI will generate misses here. Don't handle a miss like a regular
+			 * note because we want the judgment animation to appear delayed.
+			 * Instead, return early if AI generated a miss, and let
+			 * UpdateTapNotesMissedOlderThan() detect and handle the misses. */
 			if( score == TNS_Miss )
 				return;
 
 			// Put some small, random amount in fNoteOffset so that demonstration 
-			// show a mix of late and early.
+			// show a mix of late and early. - Chris (StepMania r15628)
 			//fNoteOffset = randomf( -0.1f, 0.1f );
-			// XXX: This is not the best thing to be doing. Random numbers should
-			// be generated based on score, so that they can logically match up
-			// with the current timing windows. -aj
+			// Since themes may use the offset in a visual graph, the above
+			// behavior is not the best thing to do. Instead, random numbers
+			// should be generated based on the TapNoteScore, so that they can
+			// logically match up with the current timing windows. -aj
 			{
 				float fWindowW1 = GetWindowSeconds(TW_W1);
 				float fWindowW2 = GetWindowSeconds(TW_W2);
