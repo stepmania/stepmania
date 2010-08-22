@@ -31,6 +31,9 @@ function InitUserPrefs()
 	if GetUserPrefB("FlashyCombos") == nil then
 		SetUserPref("FlashyCombos", false);
 	end;
+	if GetUserPrefB("UserPrefComboUnderField") == nil then
+		SetUserPref("UserPrefComboUnderField", true);
+	end;
 --[[ 	if GetUserPref("ProTimingP1") == nil then
 		SetUserPref("ProTimingP1", false);
 	end;
@@ -406,6 +409,42 @@ function UserPrefFlashyCombo()
 				val = false;
 			end;
 			WritePrefToFile("UserPrefFlashyCombo",val);
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end
+
+function UserPrefComboUnderField()
+	local t = {
+		Name = "UserPrefComboUnderField";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = { 'Off','On' };
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("UserPrefComboUnderField") ~= nil then
+				if GetUserPrefB("UserPrefComboUnderField") then
+					list[2] = true;
+				else
+					list[1] = true;
+				end;
+			else
+				WritePrefToFile("UserPrefComboUnderField",true);
+				list[2] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			local val;
+			if list[2] then
+				val = true;
+			else
+				val = false;
+			end;
+			WritePrefToFile("UserPrefComboUnderField",val);
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;

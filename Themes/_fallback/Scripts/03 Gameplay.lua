@@ -232,3 +232,7 @@ function GetTapPosition( sType )
 	tNotePos = tNotePositions[bPreference]
 	return tNotePos[bCategory]
 end
+
+function ComboUnderField()
+	return GetUserPrefB("UserPrefComboUnderField")
+end
