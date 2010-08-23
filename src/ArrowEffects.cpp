@@ -15,6 +15,7 @@
 #include <float.h>
 
 static ThemeMetric<float>	ARROW_SPACING( "ArrowEffects", "ArrowSpacing" );
+static ThemeMetric<bool>	HIDDEN_SUDDEN_PAST_RECEPTOR( "ArrowEffects", "DrawHiddenNotesBeforeReceptor");
 
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
@@ -546,7 +547,7 @@ float ArrowGetPercentVisible( const PlayerState* pPlayerState, float fYPosWithou
 {
 	const float fDistFromCenterLine = fYPosWithoutReverse - GetCenterLine( pPlayerState );
 
-	if( fYPosWithoutReverse < 0 )	// past Gray Arrows
+	if( fYPosWithoutReverse < 0 && HIDDEN_SUDDEN_PAST_RECEPTOR)	// past Gray Arrows
 		return 1;	// totally visible
 
 	const float* fAppearances = pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances;
