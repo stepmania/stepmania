@@ -270,7 +270,7 @@
 	<Function name='Warn' theme='_fallback' return='void' arguments='string sString'>
 		[00 init.lua] Alias for <Link class='lua' function='Warn' />.
 	</Function>
-	<Function name='WideScale' theme='_fallback' return='float' arguments='float ar43, float 169'>
+	<Function name='WideScale' theme='_fallback' return='float' arguments='float ar43, float ar169'>
 		[04 WidescreenHelpers.lua] Depending on the screen width, scales between <code>ar43</code> (4:3; 640px) and <code>ar169</code> (16:9; 854px).
 	</Function>
 	<Function name='WrapInActorFrame' theme='_fallback' return='ActorFrame' arguments='table children'>
@@ -2111,6 +2111,9 @@
 	</Function>
 </Class>
 <Class name='PlayerState'>
+	<Function name='GetHealthState' sm-ssc='true' return='HealthState' arguments=''>
+		Returns the HealthState for this PlayerState.
+	</Function>
 	<Function name='GetMultiPlayerNumber' sm-ssc='true' return='MultiPlayer' arguments=''>
 		Returns the multiplayer number for this PlayerState.
 	</Function>
@@ -2821,7 +2824,7 @@
 		[02 Sprite.lua] Load the texture for <code>song</code>'s banner.
 	</Function>
 	<Function name='SetCustomImageRect' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
-		<!-- XXX: What does this do? -->
+		Sets the custom image rectangle. (Works in image pixel space.)
 	</Function>
 	<Function name='SetEffectMode' return='void' arguments='EffectMode mode'>
 		Set the <Link class='ENUM' function='EffectMode' /> to <code>mode</code>.
@@ -2830,10 +2833,10 @@
 		Set the texture to <code>texture</code>.
 	</Function>
 	<Function name='addimagecoords' return='void' arguments='float fX, float fY'>
-		<!-- XXX: What does this do? -->
+		<!-- XXX: how does this work? -->
 	</Function>
 	<Function name='customtexturerect' return='void' arguments='float fLeft, float fTop, float fRight, float fBottom'>
-		<!-- XXX: What does this do? -->
+		Allows the themer to set a custom texture rectangle that effects the way the texture is drawn.
 	</Function>
 	<Function name='loop' theme='_fallback' return='void' arguments='bool bLoop'>
 		[02 Sprite.lua] Call <Link class='RageTexture' function='loop'><code>RageTexture:loop</code></Link><code>( bLoop )</code> on the texture.
@@ -3026,6 +3029,9 @@
 	<Function name='GetPathS' return='string' arguments='string ClassName, string Element'>
 		Returns the path of an element in the Sounds folder.
 	</Function>
+	<Function name='GetSelectableThemeNames' sm-ssc='true' return='{string}' arguments=''>
+		Returns a table of selectable theme directories.
+	</Function>
 	<Function name='GetString' return='string' arguments='string ClassName, string Element'>
 		Returns the value of <code>Element</code> in <code>Class</code> for the currently loaded language.
 	</Function>
@@ -3141,7 +3147,7 @@
 		Sets the UnlockEntry's modifier to <code>sModifier</code>.
 	</Function>
 	<Function name='require' return='void' arguments='UnlockRequirement ut, float m_fRequirement'>
-		
+		Sets the requirement for this unlock to <code>m_fRequirement</code>.
 	</Function>
 	<Function name='requirepasshardsteps' return='void' arguments=''>
 		Makes the UnlockEntry require passing Hard steps.
