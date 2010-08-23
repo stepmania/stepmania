@@ -124,23 +124,11 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 	LOG->Info( "Attempting to connect to: %s, Port: %d", sAddress.c_str(), iPort );
 
 	CloseConnection();
-	if( ServerIP!="LISTEN" )
+	if( !Connect(sAddress.c_str(), iPort) )
 	{
-		if( !Connect(sAddress.c_str(), iPort) )
-		{
-			m_startupStatus = 2;
-			LOG->Warn( "Network Sync Manager failed to connect" );
-			return;
-		}
-	}
-	else
-	{
-		if( !Listen(iPort) )
-		{
-			m_startupStatus = 2;
-			LOG->Warn( "Listen() failed" );
-			return;
-		}
+		m_startupStatus = 2;
+		LOG->Warn( "Network Sync Manager failed to connect" );
+		return;
 	}
 
 	FOREACH_PlayerNumber( pn )
@@ -204,8 +192,6 @@ void NetworkSyncManager::StartUp()
 
 	if( GetCommandlineArgument( "netip", &ServerIP ) )
 		PostStartUp( ServerIP );
-	else if( GetCommandlineArgument("listen") )
-		PostStartUp("LISTEN");
 
 	BroadcastReception = new EzSockets;
 	BroadcastReception->create( IPPROTO_UDP );
@@ -221,42 +207,6 @@ bool NetworkSyncManager::Connect( const RString& addy, unsigned short port )
 	NetPlayerClient->create(); // Initialize Socket
 	useSMserver = NetPlayerClient->connect( addy, port );
     
-	return useSMserver;
-}
-
-
-// Listen (Wait for connection in-bound)
-// NOTE: Right now, StepMania cannot connect back to StepMania!
-bool NetworkSyncManager::Listen( unsigned short port )
-{
-	LOG->Info( "Beginning to Listen" );
-
-	EzSockets *EZListener = new EzSockets;
-
-	EZListener->create();
-	//LOG->Info( "[NetworkSyncManager::Listen] Initializing socket..." );
-	NetPlayerClient->create(); // Initialize Socket
-
-	EZListener->bind( 8765 );
-
-	//LOG->Info( "[NetworkSyncManager::Listen] Listening..." );
-	useSMserver = EZListener->listen();
-
-	//LOG->Info( "[NetworkSyncManager::Listen] Accept NetPlayerClient" );
-	useSMserver = EZListener->accept( *NetPlayerClient );  // Wait for someone to connect
-
-	//LOG->Info( "[NetworkSyncManager::Listen] Kill listener" );
-	EZListener->close();	//Kill listener
-	delete EZListener;
-
-	//LOG->Info("Accept Response: ", useSMserver);
-	useSMserver=true;
-	/*
-	if(useSMserver)
-		LOG->Info( "[NetworkSyncManager::Listen] using SMserver" );
-	else
-		LOG->Info( "[NetworkSyncManager::Listen] not using SMserver" );
-	*/
 	return useSMserver;
 }
 

@@ -203,8 +203,6 @@ private:
 
 	int m_ServerVersion; // ServerVersion
 
-	bool Listen( unsigned short port );
-
 	PacketFunctions m_packet;
 #endif
 };
