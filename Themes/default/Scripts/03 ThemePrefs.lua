@@ -215,8 +215,8 @@ end
 
 function GetDefaultOptionLines()
 	local LineSets = {
-		"1,2,3,4,5,6,R,7,8,9,10,11,12,13,14,15,16,17,18", -- All
-		"1,2,7,8,13,14,16,17,18", -- DDR Essentials ( no turns, fx )
+		"1,8,14,2,3,4,5,6,R,7,9,10,11,12,13,15,16,17,18", -- All
+		"1,8,14,2,7,13,16,17,18", -- DDR Essentials ( no turns, fx )
 	};
 	local function IsExtra()
 		if GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() then
@@ -232,7 +232,7 @@ function GetDefaultOptionLines()
 			return LineSets[2]; -- Just make sure!
 		end
 	else
-		return "1,2,7,8,13,14,17,18" -- "failsafe" list
+		return "1,8,14,2,7,13,16,17,18" -- "failsafe" list
 	end
 end;
 
