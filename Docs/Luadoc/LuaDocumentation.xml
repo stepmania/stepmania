@@ -1273,10 +1273,10 @@
 	<Function name='GetAllTrails' return='{Trail}' arguments=''>
 		Returns a table of all the Trails in the Course.
 	</Function>
-	<Function name='GetBackgroundPath' sm-ssc='true' return='int' arguments=''>
+	<Function name='GetBackgroundPath' sm-ssc='true' return='string' arguments=''>
 		Returns the path to the Course's background.
 	</Function>
-	<Function name='GetBannerPath' return='int' arguments=''>
+	<Function name='GetBannerPath' return='string' arguments=''>
 		Returns the path to the Course's banner.
 	</Function>
 	<Function name='GetCourseDir' sm-ssc='true' return='string' arguments=''>
