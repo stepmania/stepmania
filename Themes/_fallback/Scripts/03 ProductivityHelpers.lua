@@ -30,9 +30,10 @@ end
 Blend = {
 	Normal   = 'BlendMode_Normal',
 	Add      = 'BlendMode_Add',
+	Modulate = 'BlendMode_Modulate',
 	Multiply = 'BlendMode_WeightedMultiply',
 	Invert   = 'BlendMode_InvertDest',
-	NoEffect = 'BlendMode_NoEffect'
+	NoEffect = 'BlendMode_NoEffect',
 }
 
 -- Health Declarations
