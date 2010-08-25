@@ -27,7 +27,7 @@ return Def.ActorFrame {
 		InitCommand=cmd(x,72*0.75;zoom,0.875);
 		OnCommand=function(self)
 			(cmd(shadowlength,1;skewx,-0.125))(self);
-			if GetTimingDifficulty() == 7 then
+			if GetTimingDifficulty() == 9 then
 				self:settext("Justice");
 				(cmd(zoom,0.5;diffuse,ColorLightTone( Color("Orange")) ))(self);
 			else

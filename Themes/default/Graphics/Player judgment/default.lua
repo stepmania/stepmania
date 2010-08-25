@@ -139,7 +139,7 @@ t[#t+1] = Def.ActorFrame {
 		JudgeCmds[param.TapNoteScore](c.Judgment);
 		
 		c.ProtimingDisplay:visible( bShowProtiming );
-		c.ProtimingDisplay:settextf("%i%%",clamp(100 - math.floor(fTapNoteOffset * 1000) ,-100,100));
+		c.ProtimingDisplay:settextf("%i",math.abs(fTapNoteOffset * 1000));
 		ProtimingCmds[param.TapNoteScore](c.ProtimingDisplay);
 		
 		c.ProtimingAverage:visible( bShowProtiming );

@@ -7,6 +7,9 @@ t[#t+1] = Def.ActorFrame {
 		InitCommand=cmd(scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT);
 		OnCommand=cmd(diffuse,color("#FFCB05");diffusebottomedge,color("#F0BA00"));
 	};
+	LoadActor("_particleLoader") .. {
+		InitCommand=cmd(x,-SCREEN_CENTER_X;y,-SCREEN_CENTER_Y);
+	};
 --[[ 	LoadActor("_particles") .. {
 		InitCommand=cmd(x,-SCREEN_CENTER_X;y,-SCREEN_CENTER_Y);
 	}; --]]
