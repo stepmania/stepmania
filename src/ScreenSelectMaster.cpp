@@ -547,7 +547,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	Message msg("PreSwitchPage");
 	msg.SetParam( "OldPageIndex", (int)oldPage );
 	msg.SetParam( "NewPageIndex", (int)newPage );
-	//MESSAGEMAN->Broadcast( msg );
+	MESSAGEMAN->Broadcast( msg );
 
 	FOREACH( PlayerNumber, vpns, p )
 	{
