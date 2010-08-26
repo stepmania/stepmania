@@ -27,6 +27,7 @@ CharacterManager::CharacterManager()
 	vector<RString> as;
 	GetDirListing( CHARACTERS_DIR "*", as, true, true );
 	StripCvsAndSvn( as );
+	StripMacResourceForks( as );
 
 	bool FoundDefault = false;
 	for( unsigned i=0; i<as.size(); i++ )

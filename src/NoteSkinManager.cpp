@@ -79,6 +79,7 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 	GetDirListing( sBaseSkinFolder + "*", asNoteSkinNames, true );
 
 	StripCvsAndSvn( asNoteSkinNames );
+	StripMacResourceForks( asNoteSkinNames );
 
 	g_mapNameToData.clear();
 	for( unsigned j=0; j<asNoteSkinNames.size(); j++ )
@@ -227,6 +228,7 @@ void NoteSkinManager::GetAllNoteSkinNamesForGame( const Game *pGame, vector<RStr
 		RString sBaseSkinFolder = SpecialFiles::NOTESKINS_DIR + pGame->m_szName + "/";
 		GetDirListing( sBaseSkinFolder + "*", AddTo, true );
 		StripCvsAndSvn( AddTo );
+		StripMacResourceForks( AddTo );
 	}
 }	
 

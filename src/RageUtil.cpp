@@ -1189,6 +1189,16 @@ void StripCvsAndSvn( vector<RString> &vs )
 	RemoveIf( vs, CVSOrSVN );
 }
 
+static bool MacResourceFork( const RString& s )
+{
+	return s.Left(2).EqualsNoCase("._");
+}
+
+void StripMacResourceForks( vector<RString> &vs )
+{
+	RemoveIf( vs, MacResourceFork );
+}
+
 /* path is a .redir pathname.  Read it and return the real one. */
 RString DerefRedir( const RString &_path )
 {

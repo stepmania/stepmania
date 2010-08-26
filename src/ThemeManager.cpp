@@ -178,6 +178,7 @@ void ThemeManager::GetThemeNames( vector<RString>& AddTo )
 {
 	GetDirListing( SpecialFiles::THEMES_DIR + "*", AddTo, true );
 	StripCvsAndSvn( AddTo );
+	StripMacResourceForks( AddTo );
 }
 
 void ThemeManager::GetSelectableThemeNames( vector<RString>& AddTo )
@@ -462,6 +463,7 @@ void ThemeManager::RunLuaScripts( const RString &sMask )
 		GetDirListing( sThemeDir + "Scripts/*", arrayScriptDirs, true );
 		SortRStringArray( arrayScriptDirs );
 		StripCvsAndSvn( arrayScriptDirs );
+		StripMacResourceForks( arrayScriptDirs );
 		FOREACH_CONST( RString, arrayScriptDirs, s )	// foreach dir in /Scripts/
 		{
 			// Find all Lua files in this directory, add them to asElementPaths

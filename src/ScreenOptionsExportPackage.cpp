@@ -45,6 +45,7 @@ void ScreenOptionsExportPackage::BeginScreen()
 			vector<RString> vs;
 			GetDirListing( SpecialFiles::COURSES_DIR + "*", vs, true, true );
 			StripCvsAndSvn( vs );
+			StripMacResourceForks( vs );
 			FOREACH_CONST( RString, vs, s )
 			{
 				m_vsPossibleDirsToExport.push_back( *s );
@@ -64,6 +65,7 @@ void ScreenOptionsExportPackage::BeginScreen()
 		}
 
 		StripCvsAndSvn( m_vsPossibleDirsToExport );
+		StripMacResourceForks( m_vsPossibleDirsToExport );
 	}
 
 	vector<OptionRowHandler*> OptionRowHandlers;

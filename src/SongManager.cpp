@@ -230,6 +230,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	GetDirListing( sDir+"*", arrayGroupDirs, true );
 	SortRStringArray( arrayGroupDirs );
 	StripCvsAndSvn( arrayGroupDirs );
+	StripMacResourceForks( arrayGroupDirs );
 
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
 	{
@@ -241,6 +242,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		vector<RString> arraySongDirs;
 		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
 		StripCvsAndSvn( arraySongDirs );
+		StripMacResourceForks( arraySongDirs );
 		SortRStringArray( arraySongDirs );
 
 		LOG->Trace("Attempting to load %i songs from \"%s\"", int(arraySongDirs.size()),
@@ -731,6 +733,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 		// Find all group directories in Courses dir
 		GetDirListing( *sDir + "*", vsCourseGroupNames, true, true );
 		StripCvsAndSvn( vsCourseGroupNames );
+		StripMacResourceForks( vsCourseGroupNames );
 	}
 
 	// Search for courses both in COURSES_DIR and in subdirectories
