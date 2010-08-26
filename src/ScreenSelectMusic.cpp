@@ -399,16 +399,17 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		if( !m_MusicWheel.WheelIsLocked() && !GAMESTATE->IsCourseMode() )
 		{
 			SortOrder so = GAMESTATE->m_SortOrder;
-			if ( ( so != SORT_TITLE ) && ( so != SORT_ARTIST ) )
-			{
+			// When in Artist sort, this means first letter of the artist.
+			// Otherwise, if not in Title sort already, switch to Title sort.
+			if ( so != SORT_ARTIST )
 				so = SORT_TITLE;
 
-				GAMESTATE->m_PreferredSortOrder = so;
-				GAMESTATE->m_SortOrder.Set( so );
-				// Odd, changing the sort order requires us to call SetOpenSection more than once
-				m_MusicWheel.ChangeSort( so );
-				m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
-			}
+			GAMESTATE->m_PreferredSortOrder = so;
+			GAMESTATE->m_SortOrder.Set( so );
+			// Odd, changing the sort order requires us to call SetOpenSection more than once
+			m_MusicWheel.ChangeSort( so );
+			m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
+
 			m_MusicWheel.SelectSection( ssprintf("%c", c ) );
 			m_MusicWheel.ChangeSort( so );
 			m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
@@ -657,8 +658,9 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			}
 		}
 	}
-	// Actually I don't like to just copy and paste code because it may go wrong
-	// if something goes overlooked -DaisuMaster
+
+	// Actually I don't like to just copy and paste code because it may go
+	// wrong if something goes overlooked -DaisuMaster
 	if( CHANGE_GROUPS_WITH_GAME_BUTTONS )
 	{
 		if( input.type != IET_FIRST_PRESS)
@@ -875,7 +877,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 			RString sNewGroup = m_MusicWheel.JumpToNextGroup();
 			m_MusicWheel.SelectSection(sNewGroup);
 			m_MusicWheel.SetOpenSection(sNewGroup);
-			MESSAGEMAN->Broadcast("PreviousGroup");
+			MESSAGEMAN->Broadcast("NextGroup");
 			AfterMusicChange();
 		}
 	}
@@ -888,7 +890,7 @@ bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
 			RString sNewGroup = m_MusicWheel.JumpToPrevGroup();
 			m_MusicWheel.SelectSection(sNewGroup);
 			m_MusicWheel.SetOpenSection(sNewGroup);
-			MESSAGEMAN->Broadcast("NextGroup");
+			MESSAGEMAN->Broadcast("PreviousGroup");
 			AfterMusicChange();
 		}
 	}
@@ -1456,8 +1458,8 @@ void ScreenSelectMusic::MenuBack( const InputEventPlus &input )
 {
 	// Handle unselect song (ffff)
 	// todo: this isn't right at all. -aj
-	// temporal: deactivating this for the time being -DaisuMaster
-	/*if( m_SelectionState == SelectionState_SelectingSteps  &&  !m_bStepsChosen[input.pn]  &&  input.MenuI == GAME_BUTTON_BACK  &&  input.type == IET_FIRST_PRESS )
+	/*
+	if( m_SelectionState == SelectionState_SelectingSteps  &&  !m_bStepsChosen[input.pn]  &&  input.MenuI == GAME_BUTTON_BACK  &&  input.type == IET_FIRST_PRESS )
 	{
 		// if a player has chosen their steps already, don't unchoose song.
 		FOREACH_HumanPlayer( p )
@@ -1469,7 +1471,8 @@ void ScreenSelectMusic::MenuBack( const InputEventPlus &input )
 		MESSAGEMAN->Broadcast( msg );
 		m_SelectionState = SelectionState_SelectingSong;
 		return;
-	}*/
+	}
+	*/
 
 	m_BackgroundLoader.Abort();
 
