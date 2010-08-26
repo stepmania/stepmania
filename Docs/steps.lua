@@ -1,6 +1,8 @@
 -- steps.lua: rough rough draft. Please don't use until finalized.
 -- ver 20100116
 
+-- shakesoda is going to be making this more generic for use in rhythm.
+
 local MetaTags = {
 	Title = {"Dyamite Rave","(transliteration)"},
 	Subtitle = {"Down Bird Sota Mix","(transliteration)"},
@@ -23,7 +25,7 @@ local CacheData {
 	HasLyrics = true,
 	HasMusic = true,
 	SongFileNames = "path/from/song/folder",
-	LongestChartLength = 220.000
+	LongestChartLength = 220.000 -- use this to thwart the ogg length patch
 }
 
 local MetaData = {
@@ -53,15 +55,19 @@ local MetaData = {
 	BPMs = { 0.000 = 280.000 },
 	CDTitle = "",
 	DisplayBPM = { 150, 300 }, -- can be either an array of two values to cycle or 'Random'
-	FormatRevision = 1,
+	FormatRevision = 2,
 	InstrumentTracks = {
-		-- todo: account for dj-hero style crossfading for an arbitrary amount of tracks (at least two)
-		InstrumentTrack_Guitar = "guitar.ogg",
-		InstrumentTrack_Rhythm = "rhythm.ogg",
-		InstrumentTrack_Bass = "bass.ogg"
+		-- guitar hero/rock band
+		Guitar = "guitar.ogg",
+		Rhythm = "rhythm.ogg",
+		Bass = "bass.ogg",
+		-- dj hero
+		LeftDeck = "left.ogg",
+		RightDeck = "right.ogg",
 	},
 	Keysounds = {}, -- I forget exactly how the SM format does this, but it'll be similar here.
 	LeadOut = 3,
+	Warps = { 5 = 4, 10 = 4 },
 	LyricsPath = "Dynamite Rave.lrc",
 	Offset = 0.014,
 	Overlay = {}, -- same as Background, but without path.
@@ -76,19 +82,26 @@ local NoteCharts = {
 		ChartRevison = 20,
 		BPMs = { 0.000 = 140.000 }, -- override
 		Description = "Z. Nard", -- usually the chart author or "Copied from *"
-		Difficulty = 'Difficulty_Hard',
+		Difficulty = 'Hard', -- "invalid" names will be assumed to be edits.
+		EditName = '', -- valid for all charts, typically only shows for edits.
 		Meter = '100', -- value clamped between 1 and 100, scaled to whatever works theme-side.
 		RadarValues = {
 			-- may not be 100%; won't be commented/linebroken in actual file
-			0.931, -- Stream (0..1)
-			1.000, -- Voltage (0..1)
-			0.439, -- Air (0..1)
-			0.174, -- Freeze (0..1)
-			0.156, -- Chaos (0..1)
+			Stream = 0.931,
+			Voltage = 1.000,
+			Air = 0.439,
+			Freeze = 0.174,
+			Chaos = 0.156,
 		},
-		-- taps and holds, jumps, holds, mines, hands, rolls
-		Stats = { 645, 48, 19, 3, 0, 0 },
-		StepsType = 'StepsType_Dance_Single',
+		Stats = { -- will probably have more i.e. fakes, lifts.
+			Total = 645,
+			Jumps = 48,
+			Holds = 19,
+			Mines = 3,
+			Hands = 0,
+			Rolls = 0
+		},
+		StepsType = 'Dance_Single',
 		Stops = { 140.000 = 0.860 }, -- override
 		TimeSignatures = { 0.000 = "4/4" }, -- override
 		NoteData = {
@@ -113,22 +126,27 @@ local NoteCharts = {
 	-- second example chart
 	{
 		ChartRevison = 5,
-		BPMs = { 0.000 = 140.000 }, -- override
-		Description = "B. McLargeHuge", -- usually the chart author or "Copied from *"
-		Difficulty = 'Difficulty_Expert',
+		BPMs = { 0.000 = 140.000 },
+		Description = "B. McLargeHuge",
+		Difficulty = 'Expert',
+		EditName = '',
 		Meter = '60',
 		RadarValues = {
-			-- may not be 100%; won't be commented/linebroken in actual file
-			0.931, -- Stream (0..1)
-			1.000, -- Voltage (0..1)
-			0.439, -- Air (0..1)
-			0.174, -- Freeze (0..1)
-			0.156, -- Chaos (0..1)
+			Stream = 0.931,
+			Voltage = 1.000,
+			Air = 0.439,
+			Freeze = 0.174,
+			Chaos = 0.156,
 		},
-		-- taps and holds, jumps, holds, mines, hands, rolls
-		Stats = { 16, 0, 0, 16, 0, 0 },
-		StepsType = 'StepsType_Dance_Single',
-		-- usually last
+		Stats = {
+			Total = 16,
+			Jumps = 0,
+			Holds = 0,
+			Mines = 16,
+			Hands = 0,
+			Rolls = 0
+		},
+		StepsType = 'Dance_Single',
 		NoteData = {
 			{ { 1,0,0,0 }, { 0,0,0,0 }, { 0,0,0,0 }, { 0,0,0,'m' }, },
 			{ { 0,1,0,0 }, { 0,0,0,0 }, { 0,0,0,0 }, { 0,0,'m',0 }, },
