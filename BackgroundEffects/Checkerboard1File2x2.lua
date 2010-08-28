@@ -1,7 +1,7 @@
 -- 4 repeats of the same file using File 1
 local cColor1 = color(Var "Color1");
 local a = LoadActor(Var "File1") .. {
-	OnCommand=cmd(zoomto,SCREEN_WIDTH/2,SCREEN_HEIGHT/2;diffuse,cColor1);
+	OnCommand=cmd(scaletoclipped,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,cColor1);
 	GainFocusCommand=cmd(play);
 	LoseFocusCommand=cmd(pause);
 };
