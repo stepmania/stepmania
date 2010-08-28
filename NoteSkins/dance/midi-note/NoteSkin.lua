@@ -17,12 +17,17 @@ ret.Redir = function(sButton, sElement)
 	-- sButton, sElement = OldRedir(sButton, sElement);
 
 	-- Instead of separate hold heads, use the tap note graphics.
-	if sElement == "Hold Head Inactive" or
-	   sElement == "Hold Head Active" or
-	   sElement == "Roll Head Inactive" or
+	if sElement == "Hold Head Active" or
 	   sElement == "Roll Head Active"
 	then
-		sElement = "Tap Note";
+		sElement = "StreamHead Active";
+	end
+	
+	-- Test
+	if sElement == "Hold Head Inactive" or
+	   sElement == "Roll Head Inactive" or
+	then
+		sElement = "StreamHead Inactive";
 	end
 
 	sButton = ret.RedirTable[sButton];
