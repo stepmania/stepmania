@@ -23,6 +23,14 @@ function IsFreePlay()
 	end
 end
 
+function Center1Player()
+	return PREFSMAN:GetPreference("Center1Player") and
+	THEME:GetMetric("ScreenGameplay","AllowCenter1Player") and 
+	not GAMESTATE:GetPlayMode("PlayMode_Battle") and 
+	not GAMESTATE:GetPlayMode("PlayMode_Rave") and 
+	GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerOneSide";
+end
+
 --[[ Aliases ]]
 
 -- Blend Modes
