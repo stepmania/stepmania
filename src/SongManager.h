@@ -121,7 +121,7 @@ public:
 
 	void UpdatePopular();
 	void UpdateShuffled();	// re-shuffle songs and courses
-	void UpdatePreferredSort(); 
+	void UpdatePreferredSort(RString sPreferredSongs = "PreferredSongs.txt", RString sPreferredCourses = "PreferredCourses.txt"); 
 	void SortSongs();		// sort m_pSongs by CompareSongPointersByTitle
 
 	void UpdateRankingCourses();	// courses shown on the ranking screen

@@ -1433,7 +1433,7 @@ void SongManager::UpdateShuffled()
 	random_shuffle( m_pShuffledCourses.begin(), m_pShuffledCourses.end(), g_RandomNumberGenerator );
 }
 
-void SongManager::UpdatePreferredSort()
+void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferredCourses)
 {
 	ASSERT( UNLOCKMAN );
 
@@ -1441,7 +1441,7 @@ void SongManager::UpdatePreferredSort()
 		m_vPreferredSongSort.clear();
 
 		vector<RString> asLines;
-		RString sFile = THEME->GetPathO( "SongManager", "PreferredSongs.txt" );
+		RString sFile = THEME->GetPathO( "SongManager", sPreferredSongs );
 		GetFileContents( sFile, asLines );
 		if( asLines.empty() )
 			return;
@@ -1527,7 +1527,7 @@ void SongManager::UpdatePreferredSort()
 		m_vPreferredCourseSort.clear();
 
 		vector<RString> asLines;
-		RString sFile = THEME->GetPathO( "SongManager", "PreferredCourses.txt" );
+		RString sFile = THEME->GetPathO( "SongManager", sPreferredCourses );
 		if( !GetFileContents(sFile, asLines) )
 			return;
 
@@ -1781,6 +1781,17 @@ int FindCourseIndexOfSameMode( T begin, T end, const Course *p )
 class LunaSongManager: public Luna<SongManager>
 {
 public:
+	static int SetPreferredSongs( T* p, lua_State *L )
+	{
+		p->UpdatePreferredSort( SArg(1), "PreferredCourses.txt" );
+		return 0; 
+	}
+
+	static int SetPreferredCourses( T* p, lua_State *L )
+	{
+		p->UpdatePreferredSort( "PreferredSongs.txt", SArg(1) );
+		return 0; 
+	}
 	static int GetAllSongs( T* p, lua_State *L )
 	{
 		const vector<Song*> &v = p->GetAllSongs();
@@ -1897,6 +1908,8 @@ public:
 		ADD_METHOD( GetSongGroupNames );
 		ADD_METHOD( GetSongsInGroup );
 		ADD_METHOD( ShortenGroupName );
+		ADD_METHOD( SetPreferredSongs );
+		ADD_METHOD( SetPreferredCourses );
 	}
 };
 
