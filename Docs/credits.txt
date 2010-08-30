@@ -23,7 +23,7 @@ shakesoda
 (in no particular order, aside from having SM team at the top)
 
 StepMania Team
- * Keeping StepMania 4 alive with changes, and providing a nice codebase for
+ * Keeping StepMania 5 alive with changes, and providing a nice codebase for
    us to work with.
 
 Aldo_MX
@@ -96,6 +96,9 @@ gholms
 juanelote
  * [SongManager] GetSongGroupByIndex function
  * [MusicWheel] JumpToNextGroup/JumpToPrevGroup logic modifications
+
+cerbo
+ * [SongManager] SetPreferredSongs() and SetPreferredCourses() Lua bindings
 
 ==the beta testers==
 [SSC Beta Testing Team]

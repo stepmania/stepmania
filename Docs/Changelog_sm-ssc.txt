@@ -10,6 +10,25 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
+sm-ssc v1.0 "final" | to be released 20100910
+--------------------------------------------------------------------------------
+
+20100829
+--------
+* [SongManager] Added SetPreferredSongs(string) and SetPreferredCourses(string)
+  Lua bindings. The files have to be named "SongManager <name>.txt"
+  Example: SONGMAN:SetPreferredSongs("mysongs.txt") calls the file
+  "SongManager mysongs.txt". [cerbo]
+
+20100826
+--------
+* Make Ctrl+[letter] work as expected in Artist sort. [Midiman, AJ]
+
+20100822
+--------
+* Add [ArrowEffects] DrawHiddenNotesAfterReceptor metric [Daisuke Master]
+
+================================================================================
 sm-ssc v1.0 Release Candidate 2 | 20100822
 --------------------------------------------------------------------------------
 
