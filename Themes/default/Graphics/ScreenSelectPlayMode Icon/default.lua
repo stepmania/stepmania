@@ -21,6 +21,10 @@ t[#t+1] = Def.ActorFrame {
 	LoadFont("_helveticaneuelt std extblk cn 42px")..{
 		InitCommand=cmd(y,27.5;zoom,0.45;maxwidth,320*1.6;uppercase,true;settext,THEME:GetString(Var "LoadingScreen", gc:GetName().."Explanation"));
 	};
+	LoadActor("_background base") .. {
+		DisabledCommand=cmd(diffuse,color("0,0,0,0.5"));
+		EnabledCommand=cmd(diffuse,color("1,1,1,0"));
+	};
 	--[[
 	LoadActor(THEME:GetPathG("_SelectIcon",gc:GetName() )) .. {
 		DisabledCommand=cmd(diffuse,color("0.5,0.5,0.5,1"));

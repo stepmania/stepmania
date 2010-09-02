@@ -192,7 +192,13 @@ float LifeMeterBattery::GetLife() const
 
 	return float(m_iLivesLeft) / GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives;
 }
+int LifeMeterBattery::GetRemainingLives() const
+{
+	if( !GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives )
+		return 1;
 
+	return m_iLivesLeft;
+}
 void LifeMeterBattery::Refresh()
 {
 	// todo: make this restraint metricable + handle non-sprites -aj
@@ -239,12 +245,12 @@ class LunaLifeMeterBattery: public Luna<LifeMeterBattery>
 public:
 	static int GetLivesLeft( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetLivesLeft() ); return 1; }
 	// is this right? wtf -q2x
-	//static int GetTotalLives( T* p, lua_State *L )	{ lua_pushnumber( L, GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives ); return 1; }
+	static int GetTotalLives( T* p, lua_State *L )	{ lua_pushnumber( L, GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives ); return 1; }
 
 	LunaLifeMeterBattery()
 	{
 		ADD_METHOD( GetLivesLeft );
-		//ADD_METHOD( GetTotalLives );
+		ADD_METHOD( GetTotalLives );
 	}
 };
 

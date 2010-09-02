@@ -31,6 +31,28 @@ function Center1Player()
 	GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerOneSide";
 end
 
+--[[ 3.9 Conditionals ]]
+Condition = {
+	Hour = function()
+		return Hour()
+	end,
+	IsDemonstration = function()
+		return GAMESTATE:IsDemonstration()
+	end,
+	CurSong = function(sSongName)
+		return GAMESTATE:GetCurrentSong():GetDisplayMainTitle() == sSongName
+	end,
+	DayOfMonth = function()
+		return DayOfMonth()
+	end,
+	MonthOfYear = function()
+		return MonthOfYear()
+	end,
+	UsingModifier = function(pnPlayer, sModifier)
+		return GAMESTATE:PlayerIsUsingModifier( pnPlayer, sModifier );
+	end,
+}
+
 --[[ Aliases ]]
 
 -- Blend Modes

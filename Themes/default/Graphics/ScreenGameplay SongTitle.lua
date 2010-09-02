@@ -11,5 +11,6 @@ return LoadFont("ScreenGameplay","SongTitle") .. {
 			sText = vCourse:GetDisplayFullTitle() .. " - " .. vSong:GetDisplayFullTitle();
 		end
 		self:settext( sText );
+		self:playcommand( "On" );
 	end;
 };

@@ -29,6 +29,7 @@ public:
 	virtual bool IsHot() const;
 	virtual bool IsFailing() const;
 	virtual float GetLife() const;
+	virtual int GetRemainingLives() const;
 
 	void Refresh();
 	int GetLivesLeft() { return m_iLivesLeft; }
