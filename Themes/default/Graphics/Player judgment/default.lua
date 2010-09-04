@@ -71,22 +71,40 @@ t[#t+1] = Def.ActorFrame {
 		OnCommand=cmd(diffuse,Color("Black");diffusetopedge,color("0.1,0.1,0.1,1");diffusealpha,0.8;shadowlength,2;);
 	};
 	Def.Quad {
+		Name="ProtimingGraphWindowW3";
+		InitCommand=cmd(visible,false;y,32;zoomto,192-4,16-4);
+		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
+		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W3"];);
+	};
+	Def.Quad {
+		Name="ProtimingGraphWindowW2";
+		InitCommand=cmd(visible,false;y,32;zoomto,scale(PREFSMAN:GetPreference("TimingWindowSecondsW2"),0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),0,192-4),16-4);
+		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
+		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W2"];);
+	};
+	Def.Quad {
+		Name="ProtimingGraphWindowW1";
+		InitCommand=cmd(visible,false;y,32;zoomto,scale(PREFSMAN:GetPreference("TimingWindowSecondsW1"),0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),0,192-4),16-4);
+		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
+		OnCommand=cmd(diffuse,GameColor.Judgment["JudgmentLine_W1"];);
+	};
+	Def.Quad {
 		Name="ProtimingGraphUnderlay";
 		InitCommand=cmd(visible,false;y,32;zoomto,192-4,16-4);
-		ResetCommand=cmd(finishtweening;diffusealpha,0.5;visible,false);
-		OnCommand=cmd(diffuse,Color("Orange");diffusealpha,0.5);
+		ResetCommand=cmd(finishtweening;diffusealpha,0.25;visible,false);
+		OnCommand=cmd(diffuse,Color("Black");diffusealpha,0.25);
 	};
 	Def.Quad {
 		Name="ProtimingGraphFill";
 		InitCommand=cmd(visible,false;y,32;zoomto,0,16-4;horizalign,left;);
 		ResetCommand=cmd(finishtweening;diffusealpha,1;visible,false);
-		OnCommand=cmd(diffuse,Color("Orange");diffuserightedge,Color("Yellow"););
+		OnCommand=cmd(diffuse,Color("Red"););
 	};
 	Def.Quad {
 		Name="ProtimingGraphAverage";
 		InitCommand=cmd(visible,false;y,32;zoomto,2,7;);
 		ResetCommand=cmd(finishtweening;diffusealpha,0.5;visible,false);
-		OnCommand=cmd(diffuse,Color("Green");diffusealpha,0.5;glowshift);
+		OnCommand=cmd(diffuse,Color("Blue");diffusealpha,0.5;glowshift);
 	};
 	Def.Quad {
 		Name="ProtimingGraphCenter";
@@ -148,15 +166,35 @@ t[#t+1] = Def.ActorFrame {
 		
 		c.ProtimingGraphBG:visible( bShowProtiming );
 		c.ProtimingGraphUnderlay:visible( bShowProtiming );
+		c.ProtimingGraphWindowW3:visible( bShowProtiming );
+		c.ProtimingGraphWindowW2:visible( bShowProtiming );
+		c.ProtimingGraphWindowW1:visible( bShowProtiming );
 		c.ProtimingGraphFill:visible( bShowProtiming );
 		c.ProtimingGraphFill:finishtweening();
-		c.ProtimingGraphFill:decelerate(0.025);
-		c.ProtimingGraphFill:zoomtowidth( clamp(fTapNoteOffset * 188,-188/2,188/2) );
+		c.ProtimingGraphFill:decelerate(1/60);
+-- 		c.ProtimingGraphFill:zoomtowidth( clamp(fTapNoteOffset * 188,-188/2,188/2) );
+		c.ProtimingGraphFill:zoomtowidth( clamp(
+				scale(
+				fTapNoteOffset,
+				0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),
+				0,188/2),
+			-188/2,188/2)
+		);
 		c.ProtimingGraphAverage:visible( bShowProtiming );
-		c.ProtimingGraphAverage:zoomtowidth( clamp(MakeAverage( tTotalJudgments ) * 1880,0,188) );
+		c.ProtimingGraphAverage:zoomtowidth( clamp(
+				scale(
+				MakeAverage( tTotalJudgments ),
+				0,PREFSMAN:GetPreference("TimingWindowSecondsW3"),
+				0,188),
+			0,188)
+		);
+-- 		c.ProtimingGraphAverage:zoomtowidth( clamp(MakeAverage( tTotalJudgments ) * 1880,0,188) );
 		c.ProtimingGraphCenter:visible( bShowProtiming );
 		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphBG);
 		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphUnderlay);
+		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphWindowW3);
+		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphWindowW2);
+		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphWindowW1);
 		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphFill);
 		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphAverage);
 		(cmd(sleep,2;linear,0.5;diffusealpha,0))(c.ProtimingGraphCenter);

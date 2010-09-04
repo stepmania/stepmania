@@ -12,10 +12,14 @@ return Def.ActorFrame {
 			end;
 		end;
 	}; --]]
+-- 	LoadActor(THEME:GetPathG("OptionRowExit","frame"));
+	LoadActor(THEME:GetPathG("_icon","Timing")) .. {
+		InitCommand=cmd(x,-60;shadowlength,1);
+	};
 	LoadFont("Common Normal") .. {
 		Text=GetTimingDifficulty();
 		AltText="";
-		InitCommand=cmd(x,-72;horizalign,left;zoom,0.5);
+		InitCommand=cmd(x,-72+28;horizalign,left;zoom,0.5);
 		OnCommand=cmd(shadowlength,1);
 		BeginCommand=function(self)
 			self:settextf( Screen.String("TimingDifficulty"), "" );
@@ -24,7 +28,7 @@ return Def.ActorFrame {
 	LoadFont("Common Normal") .. {
 		Text=GetTimingDifficulty();
 		AltText="";
-		InitCommand=cmd(x,72*0.75;zoom,0.875);
+		InitCommand=cmd(x,72*0.75+8;zoom,0.875);
 		OnCommand=function(self)
 			(cmd(shadowlength,1;skewx,-0.125))(self);
 			if GetTimingDifficulty() == 9 then
