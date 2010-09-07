@@ -21,12 +21,6 @@ Applys a GameCommand to all players if valid.
 * netip
 usage: --netip=localhost
 Connects to a server for online play.
-
-* listen
-usage: --listen
-Sets up a server, waiting for someone to connect. StepMania cannot connect to
-itself, so it's unknown what this option is really for. This option may be
-removed in future sm-ssc releases if it is deemed pointless.
 --------------------------------------------------------------------------------
 [PrefsManager]
 * Type
@@ -42,10 +36,6 @@ Exports strings for the installer.
 usage: --ExportLuaInformation
 Exports Lua.xml using the default theme (and anything it falls back on)
 for reference.
-
-* game
-usage: --game=dance
-Sets the current gametype. Valid values depend on what NoteSkins are installed.
 
 * theme
 usage: --theme=default | --theme="theme with spaces"
