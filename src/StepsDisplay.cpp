@@ -222,6 +222,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		int iNumOff = max( 0, m_iNumTicks-iNumOn );
 		sNewText.insert( sNewText.end(), iNumOff, off );
 		m_textTicks.SetText( sNewText );
+		m_textTicks.HandleMessage( msg );
 	}
 
 	if( m_bShowMeter )
@@ -234,17 +235,20 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		{
 			const RString sMeter = ssprintf( "%i", params.iMeter );
 			m_textMeter.SetText( sMeter );
+			m_textMeter.HandleMessage( msg );
 		}
 	}
 
 	if( m_bShowDescription )
 	{
 		m_textDescription.SetText( sDisplayDescription );
+		m_textDescription.HandleMessage( msg );
 	}
 
 	if( m_bShowAutogen )
 	{
 		bool b = params.pSteps && params.pSteps->IsAutogen();
+		m_sprAutogen->HandleMessage( msg );
 		m_sprAutogen->SetVisible( b );
 	}
 
