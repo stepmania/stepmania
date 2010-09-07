@@ -24,11 +24,22 @@ function IsFreePlay()
 end
 
 function Center1Player()
-	return PREFSMAN:GetPreference("Center1Player") and
+	if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerTwoSides" then
+		return true
+	elseif PREFSMAN:GetPreference("Center1Player") then
+		if GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerOneSide" then
+			return true
+		else
+			return false
+		end
+	else
+		return false
+	end
+--[[ 	return PREFSMAN:GetPreference("Center1Player") and
 	THEME:GetMetric("ScreenGameplay","AllowCenter1Player") and 
 	not GAMESTATE:GetPlayMode("PlayMode_Battle") and 
 	not GAMESTATE:GetPlayMode("PlayMode_Rave") and 
-	GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerOneSide";
+	GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_OnePlayerOneSide"; --]]
 end
 
 --[[ 3.9 Conditionals ]]
