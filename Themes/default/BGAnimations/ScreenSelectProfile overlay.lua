@@ -201,7 +201,7 @@ local t = Def.ActorFrame {
 	end;
 
 	CodeMessageCommand = function(self, params)
-		if params.Name == 'Start' then
+		if params.Name == 'Start' or params.Name == 'Center' then
 			MESSAGEMAN:Broadcast("StartButton");
 			if not GAMESTATE:IsHumanPlayer(params.PlayerNumber) then
 				SCREENMAN:GetTopScreen():SetProfileIndex(params.PlayerNumber, -1);
@@ -209,7 +209,7 @@ local t = Def.ActorFrame {
 				SCREENMAN:GetTopScreen():Finish();
 			end;
 		end;
-		if params.Name == 'Up' or params.Name == 'Up2' then
+		if params.Name == 'Up' or params.Name == 'Up2' or params.Name == 'DownLeft' then
 			if GAMESTATE:IsHumanPlayer(params.PlayerNumber) then
 				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(params.PlayerNumber);
 				if ind > 1 then
@@ -220,7 +220,7 @@ local t = Def.ActorFrame {
 				end;
 			end;
 		end;
-		if params.Name == 'Down' or params.Name == 'Down2' then
+		if params.Name == 'Down' or params.Name == 'Down2' or params.Name == 'DownRight' then
 			if GAMESTATE:IsHumanPlayer(params.PlayerNumber) then
 				local ind = SCREENMAN:GetTopScreen():GetProfileIndex(params.PlayerNumber);
 				if ind > 0 then

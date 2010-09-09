@@ -38,8 +38,14 @@ function GameCompatibleModes()
 end
 
 function SelectProfileKeys()
-	local game = GAMESTATE:GetCurrentGame():GetName()
-	return game == "dance" and "Up,Down,Start,Back,Up2,Down2" or "Up,Down,Start,Back"
+	local sGame = GAMESTATE:GetCurrentGame():GetName()	
+	if sGame == "pump" then
+		return "Up,Down,Start,Back,Center,DownLeft,DownRight"
+	elseif sGame == "dance" then
+		return "Up,Down,Start,Back,Up2,Down2"
+	else
+		return "Up,Down,Start,Back"
+	end
 end
 
 -- ScoreKeeperClass:
