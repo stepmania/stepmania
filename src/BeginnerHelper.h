@@ -1,3 +1,4 @@
+/* BeginnerHelper - A dancing character that follows the steps of the song. */
 #ifndef BEGINNER_HELPER_H
 #define BEGINNER_HELPER_H
 
@@ -13,13 +14,13 @@ class BeginnerHelper : public ActorFrame
 public:
 	BeginnerHelper();
 	~BeginnerHelper();
-	
+
 	bool Initialize( int iDancePadType );
 	bool IsInitialized() { return m_bInitialized; }
 	static bool CanUse();
 	void AddPlayer( PlayerNumber pn, const NoteData &nd );
 	void ShowStepCircle( PlayerNumber pn, int CSTEP );
-	bool	m_bShowBackground;
+	bool m_bShowBackground;
 
 	void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -37,7 +38,7 @@ protected:
 
 	int	m_iLastRowChecked;
 	int	m_iLastRowFlashed;
-	bool	m_bInitialized;
+	bool m_bInitialized;
 };
 #endif
 

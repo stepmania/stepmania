@@ -1,3 +1,4 @@
+/* StepsDisplayList - Shows all available difficulties for a Song/Course. */
 #ifndef DIFFICULTY_LIST_H
 #define DIFFICULTY_LIST_H
 
@@ -60,13 +61,13 @@ private:
 			m_fY = 0;
 			m_bHidden = false;
 		}
-		
+
 		const Steps *m_Steps;
 		Difficulty m_dc;
 		float m_fY;
 		bool m_bHidden; // currently off screen
 	};
-	
+
 	vector<Row>		m_Rows;
 
 };

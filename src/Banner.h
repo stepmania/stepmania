@@ -1,4 +1,4 @@
-/* Banner - The song's banner displayed in SelectSong. */
+/* Banner - The song/course's banner displayed in SelectMusic/Course. */
 
 #ifndef BANNER_H
 #define BANNER_H

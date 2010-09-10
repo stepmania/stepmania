@@ -1,4 +1,4 @@
-/* GrooveRadar - The song's GrooveRadar displayed in SelectSong. */
+/* GrooveRadar - The song's GrooveRadar displayed in SelectMusic. */
 
 #ifndef GROOVE_RADAR_H
 #define GROOVE_RADAR_H

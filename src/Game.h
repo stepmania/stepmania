@@ -11,16 +11,16 @@ class Style;
 
 // PrimaryMenuButton and SecondaryMenuButton are used to support using
 // DeviceInputs that only  navigate the menus.
-// 
+
 // A button being a primary menu button means that this GameButton will generate
 // a the corresponding MenuInput IF AND ONLY IF the GameButton corresponding to
 // the pimary input is not mapped.
-//
+
 // Example 1: A user is using an arcade machine as their controller. Most
 // machines have MenuLeft, MenuStart, and MenuRight buttons on the cabinet, so
 // they should be used to navigate menus. The user will map these DeviceInputs
 // to the GameButtons "MenuLeft (optional)", "MenuStart", and "MenuRight (optional)".
-//
+
 // Example 2:  A user is using PlayStation dance pads to play. These controllers
 // don't have dedicated DeviceInputs for MenuLeft and MenuRight. The user maps 
 // Up, Down, Left, and Right as normal. Since the Left and Right GameButtons 
@@ -41,16 +41,16 @@ public:
 	{
 		GameButtonType m_gbt;
 	};
-	/* Data for each Game-specific GameButton.  This starts at GAME_BUTTON_NEXT. */
+	// Data for each Game-specific GameButton. This starts at GAME_BUTTON_NEXT.
 	PerButtonInfo		m_PerButtonInfo[NUM_GameButton];
 	const PerButtonInfo *GetPerButtonInfo( GameButton gb ) const;
 
 	TapNoteScore MapTapNoteScore( TapNoteScore tns ) const;
-	TapNoteScore		m_mapW1To;
-	TapNoteScore		m_mapW2To;
-	TapNoteScore		m_mapW3To;
-	TapNoteScore		m_mapW4To;
-	TapNoteScore		m_mapW5To;
+	TapNoteScore m_mapW1To;
+	TapNoteScore m_mapW2To;
+	TapNoteScore m_mapW3To;
+	TapNoteScore m_mapW4To;
+	TapNoteScore m_mapW5To;
 
 	// Lua
 	void PushSelf( lua_State *L );

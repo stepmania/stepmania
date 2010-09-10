@@ -1,4 +1,4 @@
-/* PitchDetectionTestUtil -  */
+/* PitchDetectionTestUtil - Holdover from incomplete karaoke mode. */
 
 #ifndef PitchDetectionTestUtil_H
 #define PitchDetectionTestUtil_H

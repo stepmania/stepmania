@@ -1,4 +1,4 @@
-/* Profile - Player data that persists between sessions.  Can be stored on a local disk or on a memory card. */
+/* Profile - Player data that persists between sessions. Can be stored on a local disk or on a memory card. */
 
 #ifndef Profile_H
 #define Profile_H
@@ -96,6 +96,7 @@ public:
 	RString m_sCharacterID;
 	RString m_sLastUsedHighScoreName;	// this doesn't really belong in "editable", but we need it in the smaller editable file so that it can be ready quickly.
 	int m_iWeightPounds;	// 0 == not set
+	//RString m_sProfileImageName;	// todo: add a default image -aj
 
 	// General data
 	static RString MakeGuid();

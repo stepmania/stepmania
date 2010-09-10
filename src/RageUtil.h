@@ -1,4 +1,4 @@
-/* RageUtil - Miscellaneous helper macros and functions.  */
+/* RageUtil - Miscellaneous helper macros and functions. */
 
 #ifndef RAGE_UTIL_H
 #define RAGE_UTIL_H

@@ -1,4 +1,4 @@
-/* AutoKeysounds - handle playback of auto keysounds notes. */
+/* AutoKeysounds - handle playback of auto keysound notes. */
 
 #ifndef AUTO_KEYSOUNDS_H
 #define AUTO_KEYSOUNDS_H

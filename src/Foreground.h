@@ -1,3 +1,4 @@
+/* Foreground - Foreground in front of notes while playing. */
 #ifndef FOREGROUND_H
 #define FOREGROUND_H
 

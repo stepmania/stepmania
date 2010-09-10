@@ -1,3 +1,4 @@
+/* GraphDisplay - A graph of the player's life over the course of Gameplay, used on Evaluation. */
 #ifndef GRAPH_DISPLAY_H
 #define GRAPH_DISPLAY_H
 

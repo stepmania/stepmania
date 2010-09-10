@@ -1,4 +1,4 @@
-/* LifeMeterTime - Battery life meter used in Oni. */
+/* LifeMeterTime - Battery life meter used in Survival. */
 
 #ifndef LifeMeterTime_H
 #define LifeMeterTime_H

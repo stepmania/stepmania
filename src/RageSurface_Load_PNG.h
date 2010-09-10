@@ -1,3 +1,5 @@
+/* RageSurface_Load_PNG - PNG file loader */
+
 #ifndef RAGE_SURFACE_LOAD_PNG_H
 #define RAGE_SURFACE_LOAD_PNG_H
 

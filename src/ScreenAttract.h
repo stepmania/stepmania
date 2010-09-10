@@ -1,4 +1,4 @@
-/* ScreenAttract - Base class for all attraction screens.  This class handles input and coin logic. */
+/* ScreenAttract - Base class for all attraction screens. This class handles input and coin logic. */
 
 #ifndef ScreenAttract_H
 #define ScreenAttract_H

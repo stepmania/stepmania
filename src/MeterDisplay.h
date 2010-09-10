@@ -1,4 +1,5 @@
-/* MeterDisplay - */
+/* MeterDisplay - Display position in a song. */
+
 #ifndef METER_DISPLAY_H
 #define METER_DISPLAY_H
 
@@ -15,6 +16,10 @@ public:
 	virtual MeterDisplay *Copy() const;
 
 	void SetPercent( float fPercent );
+	void SetStreamWidth( float fStreamWidth );
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	float	m_fStreamWidth;

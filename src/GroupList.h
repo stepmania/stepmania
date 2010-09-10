@@ -1,3 +1,4 @@
+/*  GroupList - Displays a list of groups for SelectGroup. (An old holdover.) */
 #ifndef GROUP_LIST_H
 #define GROUP_LIST_H
 

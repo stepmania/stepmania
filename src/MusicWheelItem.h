@@ -1,4 +1,4 @@
-/* MusicWheelItem - An item on the music wheel. */
+/* MusicWheelItem - An item on the MusicWheel. */
 
 #ifndef MUSIC_WHEEL_ITEM_H
 #define MUSIC_WHEEL_ITEM_H

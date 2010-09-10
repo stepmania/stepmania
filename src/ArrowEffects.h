@@ -10,9 +10,9 @@ class ArrowEffects
 public:
 	static void Update();
 
-	//	fYOffset is a vertical position in pixels relative to the center.
-	//	(positive if has not yet been stepped on, negative if has already passed).
-	//	The ArrowEffect and ScrollSpeed is applied in this stage.
+	// fYOffset is a vertical position in pixels relative to the center
+	// (positive if has not yet been stepped on, negative if has already passed).
+	// The ArrowEffect and ScrollSpeed is applied in this stage.
 	static float GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, float &fPeakYOffsetOut, bool &bIsPastPeakYOffset, bool bAbsolute=false );
 	static float GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, bool bAbsolute=false )
 	{
@@ -54,11 +54,9 @@ public:
 	// AppearanceType.
 	static float GetAlpha( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 
-
 	// fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 	// AppearanceType.
 	static float GetGlow( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
-
 
 	// Depends on fYOffset.
 	static float GetBrightness( const PlayerState* pPlayerState, float fNoteBeat );

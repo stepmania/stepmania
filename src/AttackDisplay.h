@@ -1,3 +1,4 @@
+/* AttackDisplay - A graphical display for attacks. */
 #ifndef AttackDisplay_H
 #define AttackDisplay_H
 

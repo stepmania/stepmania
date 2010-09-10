@@ -1,3 +1,5 @@
+/* RageSurface_Save_JPEG - Save a RageSurface to a JPEG. */
+
 #ifndef RAGE_SURFACE_SAVE_JPEG_H
 #define RAGE_SURFACE_SAVE_JPEG_H
 

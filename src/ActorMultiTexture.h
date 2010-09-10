@@ -1,4 +1,4 @@
-/* ActorMultiTexture - A bitmap Actor that animates and moves around. */
+/* ActorMultiTexture - A texture created from multiple textures. */
 
 #ifndef ACTOR_MULTI_TEXTURE_H
 #define ACTOR_MULTI_TEXTURE_H

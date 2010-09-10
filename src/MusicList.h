@@ -1,4 +1,4 @@
-/* MusicList - now an artifact from ScreenSelectGroup. */
+/* MusicList - Displays all the songs in a given group. (An artifact from SelectGroup.) */
 #ifndef MUSIC_LIST_H
 #define MUSIC_LIST_H
 

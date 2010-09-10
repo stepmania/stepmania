@@ -1,3 +1,5 @@
+/* RoomInfoDisplay: Shows information about an online game room. */
+
 #ifndef ROOM_INFO_DISPLAY_H
 #define ROOM_INFO_DISPLAY_H
 

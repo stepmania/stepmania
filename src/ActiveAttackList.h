@@ -1,3 +1,4 @@
+/* ActiveAttackList - Shows currently active player modifiers during gameplay. */
 #ifndef ACTIVE_ATTACK_LIST_H
 #define ACTIVE_ATTACK_LIST_H
 

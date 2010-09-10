@@ -6,9 +6,7 @@
 #include "EnumHelper.h"
 
 
-//
 // Player number stuff
-//
 enum PlayerNumber
 {
 	PLAYER_1 = 0,

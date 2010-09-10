@@ -1,4 +1,4 @@
-/* CharacterManager - Manage characters... */
+/* CharacterManager - Manage characters. */
 
 #ifndef CHARACTER_MANAGER_H
 #define CHARACTER_MANAGER_H

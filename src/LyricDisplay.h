@@ -1,4 +1,5 @@
 /* LyricDisplay - Displays lyrics along with the song on Gameplay. */
+
 #ifndef LYRIC_DISPLAY_H
 #define LYRIC_DISPLAY_H
 

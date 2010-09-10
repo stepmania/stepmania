@@ -1,4 +1,4 @@
-/* Definitions of metrics that are in the "Common" group */
+/* CommonMetrics - Definitions of metrics that are in the "Common" group */
 
 #ifndef COMMON_METRICS_H
 #define COMMON_METRICS_H

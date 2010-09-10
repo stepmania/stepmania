@@ -1,4 +1,4 @@
-/* RageTextureManager - Interface for loading textures.  */
+/* RageTextureManager - Interface for loading textures. */
 
 #ifndef RAGE_TEXTURE_MANAGER_H
 #define RAGE_TEXTURE_MANAGER_H
@@ -74,12 +74,12 @@ public:
 
 	// call this between Screens
 	void DeleteCachedTextures()	{ GarbageCollect( screen_changed ); }
-	
+
 	// call this on switch theme
 	void DoDelayedDelete()	{ GarbageCollect( delayed_delete ); }
-	
+
 	void InvalidateTextures();
-	
+
 	void AdjustTextureID( RageTextureID &ID ) const;
 	void DiagnosticOutput() const;
 

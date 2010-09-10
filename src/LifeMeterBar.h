@@ -1,3 +1,5 @@
+/* LifeMeterBar - The player's life represented as a bar. */
+
 #ifndef LIFEMETERBAR_H
 #define LIFEMETERBAR_H
 

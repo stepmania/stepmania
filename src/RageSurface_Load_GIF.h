@@ -1,3 +1,5 @@
+/* RageSurface_Load_GIF - (non-animated) GIF file loader */
+
 #ifndef RAGE_SURFACE_LOAD_GIF_H
 #define RAGE_SURFACE_LOAD_GIF_H
 

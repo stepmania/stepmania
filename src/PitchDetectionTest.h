@@ -1,4 +1,4 @@
-/* Microphone -  */
+/* Microphone - Holdover from incomplete karaoke mode. */
 
 #ifndef Microphone_H
 #define Microphone_H

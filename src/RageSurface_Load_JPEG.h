@@ -1,3 +1,5 @@
+/* RageSurface_Load_JPEG - JPEG file loader */
+
 #ifndef RAGE_SURFACE_LOAD_JPEG_H
 #define RAGE_SURFACE_LOAD_JPEG_H
 

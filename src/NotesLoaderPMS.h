@@ -1,4 +1,4 @@
-/* BMSLoader - reads a Song from a set of .BMS files. */
+/* PMSLoader - reads a Song from a set of .PMS files. */
 
 #ifndef NOTES_LOADER_PMS_H
 #define NOTES_LOADER_PMS_H

@@ -1,3 +1,5 @@
+/* MemoryCardDisplay - A graphic displaying the state of memory cards. */
+
 #ifndef MEMORY_CARD_DISPLAY_H
 #define MEMORY_CARD_DISPLAY_H
 

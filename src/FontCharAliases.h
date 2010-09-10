@@ -1,3 +1,4 @@
+/* FontCharAliases - Provides support for nonstandard characters in text. */
 #ifndef FONT_CHAR_ALIASES
 #define FONT_CHAR_ALIASES
 
