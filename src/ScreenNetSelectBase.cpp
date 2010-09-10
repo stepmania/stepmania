@@ -21,10 +21,10 @@
 #define CHAT_TEXT_INPUT_WIDTH		THEME->GetMetricF(m_sName,"ChatTextInputWidth")
 #define SHOW_CHAT_LINES				THEME->GetMetricI(m_sName,"ChatOutputLines")
 
-#define USERSALT_Y					THEME->GetMetricF(m_sName,"UsersAY")
-#define USERSDELT_X					THEME->GetMetricF(m_sName,"UsersDX")
-#define USERS_Y						THEME->GetMetricF(m_sName,"UsersY")
 #define USERS_X						THEME->GetMetricF(m_sName,"UsersX")
+#define USERS_Y						THEME->GetMetricF(m_sName,"UsersY")
+#define USER_SPACING_X				THEME->GetMetricF(m_sName,"UserSpacingX")
+#define USER_ADD_Y					THEME->GetMetricF(m_sName,"UserLine2Y")
 
 AutoScreenMessage( SM_AddToChat )
 AutoScreenMessage( SM_UsersUpdate )
@@ -79,7 +79,7 @@ void ScreenNetSelectBase::Input( const InputEventPlus &input )
 	bool bHoldingCtrl = 
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
-		(!NSMAN->useSMserver);	//If we are disconnected, assume no chatting
+		(!NSMAN->useSMserver);	// If we are disconnected, assume no chatting.
 
 	switch( input.DeviceI.button )
 	{
@@ -109,7 +109,9 @@ void ScreenNetSelectBase::Input( const InputEventPlus &input )
 			UpdateTextInput();
 		}
 
-		//Tricky: If both players are playing, allow the 2 button through to the keymapper
+		// Tricky: If both players are playing, allow the 2 button through to
+		// the keymapper. (who? -aj)
+		// What purpose does this serve? -aj
 		if( c == '2' && GAMESTATE->IsPlayerEnabled( PLAYER_2 ) && GAMESTATE->IsPlayerEnabled( PLAYER_1 ) )
 			break;
 
@@ -117,7 +119,7 @@ void ScreenNetSelectBase::Input( const InputEventPlus &input )
 			return;
 		break;
 	}
-	Screen::Input( input );	// default input handler
+	Screen::Input( input );
 }
 
 void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )
@@ -155,7 +157,7 @@ void ScreenNetSelectBase::UpdateTextInput()
 
 void ScreenNetSelectBase::UpdateUsers()
 {
-	float tX = USERS_X - USERSDELT_X;
+	float tX = USERS_X - USER_SPACING_X;
 	float tY = USERS_Y;
 
 	for( unsigned i=0; i< m_textUsers.size(); i++)
@@ -173,10 +175,10 @@ void ScreenNetSelectBase::UpdateUsers()
 		m_textUsers[i].SetShadowLength( 0 );
 		m_textUsers[i].SetName( "Users" );
 
-		tX += USERSDELT_X;
+		tX += USER_SPACING_X;
 
 		if ( (i % 2) == 1)
-			tY = USERSALT_Y + USERS_Y;
+			tY = USER_ADD_Y + USERS_Y;
 		else
 			tY = USERS_Y;
 		m_textUsers[i].SetXY( tX, tY );
@@ -396,7 +398,6 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 
 		for( unsigned i = 0; i < m_wTextLines.size() - iNumLines; i++ )
 			shift += m_wTextLines[i].length();
-
 
 		// When we're cutting out text, we need to maintain the last
 		// color, so our text at the top doesn't become colorless.

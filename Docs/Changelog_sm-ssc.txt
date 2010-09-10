@@ -13,6 +13,11 @@ _____________________________________________________________________________
 sm-ssc v1.0 "final" | to be released 20100910
 --------------------------------------------------------------------------------
 
+20100910
+--------
+* [ScreenNetSelectBase] Metric name changes: UsersDX -> UserSpacingX,
+  UsersAY -> UsersLine2Y
+
 20100907
 --------
 * [StepsDisplay] Make everything else (that isn't the frame) react to the
