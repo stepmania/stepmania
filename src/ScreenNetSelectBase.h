@@ -8,6 +8,8 @@
 #include "Quad.h"
 #include "BitmapText.h"
 
+// With the addition of Attributes to BitmapText, this class may very well be
+// redundant. (Leave it in for now, though.) -aj
 class ColorBitmapText : public BitmapText
 {
 public:
@@ -19,8 +21,8 @@ public:
 protected:
 	struct ColorChange
 	{
-		RageColor c;	//Color to change to
-		int l;		//Change Location
+		RageColor c;	// Color to change to
+		int l;			// Change Location
 	};
 	vector<ColorChange> m_vColors;
 };
@@ -43,8 +45,8 @@ private:
 	ColorBitmapText		m_textChatOutput;
 	AutoActor			m_sprChatInputBox;
 	AutoActor			m_sprChatOutputBox;
-	RString			m_sTextInput;
-	RString			m_actualText;
+	RString				m_sTextInput;
+	RString				m_actualText;
 
 	vector <BitmapText>	m_textUsers;
 };

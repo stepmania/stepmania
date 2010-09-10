@@ -23,7 +23,7 @@ public:
 	int GetProfileIndex( PlayerNumber pn ) { return m_iSelectedProfiles[pn]; }
 	bool Finish();
 
-private:
+protected:
 	int m_iSelectedProfiles[NUM_PLAYERS];
 };
 
