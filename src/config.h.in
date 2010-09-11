@@ -1,0 +1,258 @@
+/* src/config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define if building universal (internal helper macro) */
+#undef AC_APPLE_UNIVERSAL_BUILD
+
+/* Define demangle type */
+#undef BACKTRACE_DEMANGLE_METHOD_TEXT
+
+/* Define symbol lookup type */
+#undef BACKTRACE_LOOKUP_METHOD_BACKTRACE_SYMBOLS
+
+/* Define symbol lookup type */
+#undef BACKTRACE_LOOKUP_METHOD_DLADDR
+
+/* Define backtrace type */
+#undef BACKTRACE_LOOKUP_METHOD_TEXT
+
+/* Define backtrace type */
+#undef BACKTRACE_METHOD_PPC_LINUX
+
+/* Define backtrace type */
+#undef BACKTRACE_METHOD_TEXT
+
+/* Define backtrace type */
+#undef BACKTRACE_METHOD_X86_LINUX
+
+/* BSD */
+#undef BSD
+
+/* PPC */
+#undef CPU_PPC
+
+/* x86 */
+#undef CPU_X86
+
+/* x86-64 */
+#undef CPU_X86_64
+
+/* Define if using crash handler */
+#undef CRASH_HANDLER
+
+/* Big endian */
+#undef ENDIAN_BIG
+
+/* Little endian */
+#undef ENDIAN_LITTLE
+
+/* Force OSS Usage */
+#undef FORCE_OSS
+
+/* Define to 1 if you have the <alloca.h> header file. */
+#undef HAVE_ALLOCA_H
+
+/* Define presence of ALSA */
+#undef HAVE_ALSA
+
+/* abi::__cxa_demangle available */
+#undef HAVE_CXA_DEMANGLE
+
+/* Define to 1 if you have the declaration of `SIGPWR', and to 0 if you don't.
+   */
+#undef HAVE_DECL_SIGPWR
+
+/* Define to 1 if you have the declaration of `SIGUSR1', and to 0 if you
+   don't. */
+#undef HAVE_DECL_SIGUSR1
+
+/* Define to 1 if you have the <endian.h> header file. */
+#undef HAVE_ENDIAN_H
+
+/* FFMPEG support available */
+#undef HAVE_FFMPEG
+
+/* Define presence of GTK */
+#undef HAVE_GTK
+
+/* Define if you have the iconv() function. */
+#undef HAVE_ICONV
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `asound' library (-lasound). */
+#undef HAVE_LIBASOUND
+
+/* Liberty available */
+#undef HAVE_LIBIBERTY
+
+/* libpthread is available */
+#undef HAVE_LIBPTHREAD
+
+/* libXtst available */
+#undef HAVE_LIBXTST
+
+/* Define to 1 if you have the <machine/endian.h> header file. */
+#undef HAVE_MACHINE_ENDIAN_H
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* OSS support available */
+#undef HAVE_OSS
+
+/* OSS_GETVERSION is defined */
+#undef HAVE_OSS_GETVERSION
+
+/* pthreads has pthread_cond_timedwait() */
+#undef HAVE_PTHREAD_COND_TIMEDWAIT
+
+/* pthreads has pthread_mutex_timedlock() */
+#undef HAVE_PTHREAD_MUTEX_TIMEDLOCK
+
+/* pulseaudio support available */
+#undef HAVE_PULSE
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/param.h> header file. */
+#undef HAVE_SYS_PARAM_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Theora support available */
+#undef HAVE_THEORA
+
+/* Define if the compiler supports __thread */
+#undef HAVE_TLS
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* X11 libraries present */
+#undef HAVE_X11
+
+/* Define as const if the declaration of iconv() needs const. */
+#undef ICONV_CONST
+
+/* Integer Vorbis decoding */
+#undef INTEGER_VORBIS
+
+/* Linux */
+#undef LINUX
+
+/* Linux for Lua */
+#undef LUA_USE_LINUX
+
+/* stdint.h is missing */
+#undef MISSING_STDINT_H
+
+/* Need acosf */
+#undef NEED_ACOSF
+
+/* Need tanf */
+#undef NEED_COSF
+
+/* cstdlib breaks llabs */
+#undef NEED_CSTDLIB_WORKAROUND
+
+/* Need powf */
+#undef NEED_POWF
+
+/* Need roundf */
+#undef NEED_ROUNDF
+
+/* Need sinf */
+#undef NEED_SINF
+
+/* Need sqrtf */
+#undef NEED_SQRTF
+
+/* Need strtof */
+#undef NEED_STRTOF
+
+/* Need cosf */
+#undef NEED_TANF
+
+/* Need truncf */
+#undef NEED_TRUNCF
+
+/* JPEG support not available */
+#undef NO_JPEG_SUPPORT
+
+/* Define to 1 if your C compiler doesn't accept -c and -o together. */
+#undef NO_MINUS_C_MINUS_O
+
+/* MP3 support not available */
+#undef NO_MP3_SUPPORT
+
+/* Vorbis support not available */
+#undef NO_VORBIS_SUPPORT
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Unix */
+#undef UNIX
+
+/* Networking support not available */
+#undef WITHOUT_NETWORKING
+
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+#  undef WORDS_BIGENDIAN
+# endif
+#endif
+
+/* STL debug */
+#undef _GLIBCXX_DEBUG
+
+/* STL pedantic debug */
+#undef _GLIBCXX_DEBUG_PEDANTIC
+
+/* Use GNU extensions */
+#undef _GNU_SOURCE
+
+/* Use PRId64 and similar */
+#undef __STDC_FORMAT_MACROS
+
+/* Define to the compiler TLS keyword */
+#undef thread_local
