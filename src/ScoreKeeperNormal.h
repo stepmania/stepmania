@@ -36,6 +36,8 @@ class ScoreKeeperNormal: public ScoreKeeper
 	ThemeMetric<TapNoteScore>	m_MinScoreToContinueCombo;
 	ThemeMetric<TapNoteScore>	m_MinScoreToMaintainCombo;
 	ThemeMetric<TapNoteScore>	m_MaxScoreToIncrementMissCombo;
+	ThemeMetric<bool>		m_MineHitIncrementsMissCombo;
+	ThemeMetric<bool>		m_AvoidMineIncrementsCombo;
 
 	// Custom Scoring Theme Metrics
 	ThemeMetric<int>		m_CustomTNS_W1;

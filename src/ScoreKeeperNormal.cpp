@@ -83,6 +83,8 @@ void ScoreKeeperNormal::Load(
 	m_MinScoreToContinueCombo.Load( "Gameplay", "MinScoreToContinueCombo" );
 	m_MinScoreToMaintainCombo.Load( "Gameplay", "MinScoreToMaintainCombo" );
 	m_MaxScoreToIncrementMissCombo.Load( "Gameplay", "MaxScoreToIncrementMissCombo" );
+	m_MineHitIncrementsMissCombo.Load( "Gameplay", "MineHitIncrementsMissCombo" );
+	m_AvoidMineIncrementsCombo.Load( "Gameplay", "AvoidMineIncrementsCombo" );
 
 	// Toasty triggers (idea from 3.9+)
 	// Multiple toasty support doesn't seem to be working right now.
@@ -530,14 +532,18 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 			if( !m_pPlayerStageStats->m_bFailed )
 				m_pPlayerStageStats->m_iActualDancePoints += TapNoteScoreToDancePoints( TNS_HitMine );
 			m_pPlayerStageStats->m_iTapNoteScores[TNS_HitMine] += 1;
-
-
+			if( m_MineHitIncrementsMissCombo )
+				HandleComboInternal( 0, 0, 1 );
+			
 			if( PREFSMAN->m_ScoringType == SCORING_CUSTOM )
 			{
 				int &iScore = m_pPlayerStageStats->m_iScore;
 				iScore += m_CustomTNS_HitMine;
 			}
 		}
+		
+		if( tns == TNS_AvoidMine )
+			HandleComboInternal( 1, 0, 0 );
 
 		NSMAN->ReportScore(
 			m_pPlayerState->m_PlayerNumber,
