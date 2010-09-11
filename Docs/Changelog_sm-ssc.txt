@@ -10,13 +10,15 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.0 "final" | to be released 20100910
+sm-ssc v1.0 "final" | 20100910
 --------------------------------------------------------------------------------
 
 20100910
 --------
 * [ScreenNetSelectBase] Metric name changes: UsersDX -> UserSpacingX,
   UsersAY -> UsersLine2Y
+* [ScoreKeeperNormal] add MineHitIncrementsMissCombo and
+  AvoidMineIncrementsCombo metrics. [FSX]
 
 20100907
 --------
