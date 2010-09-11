@@ -292,10 +292,12 @@ Section "Main Section" SecMain
 	; kb7
 	RMDir /r "$INSTDIR\NoteSkins\kb7\default"
 	RMDir /r "$INSTDIR\NoteSkins\kb7\orbital"
-	; retrobar
+	; retrobar for kb7
 	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar"
 	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar-iidx"
 	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar-o2jam"
+	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar-razor"
+	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar-razor_o2"
 	; lights
 	RMDir /r "$INSTDIR\NoteSkins\lights\default"
 	SetOutPath "$INSTDIR\NoteSkins"
@@ -335,6 +337,8 @@ Section "Main Section" SecMain
 	File /r /x CVS /x .svn "NoteSkins\kb7\retrobar"
 	File /r /x CVS /x .svn "NoteSkins\kb7\retrobar-iidx"
 	File /r /x CVS /x .svn "NoteSkins\kb7\retrobar-o2jam"
+	File /r /x CVS /x .svn "NoteSkins\kb7\retrobar-razor"
+	File /r /x CVS /x .svn "NoteSkins\kb7\retrobar-razor_o2"
 	SetOutPath "$INSTDIR"
 
 	; install lights noteskin
@@ -379,7 +383,8 @@ Section "Main Section" SecMain
 	File "Program\StepMania-SSE2.vdi"
 	; other programs
 	File "Program\Texture Font Generator.exe"
-	File "Program\tools.exe" ; to be replaced eventually, but include for now
+	; this crashes so fuck it
+	;File "Program\tools.exe" ; to be replaced eventually
 !endif
 !ifdef ASSOCIATE_SMZIP
 	Call RefreshShellIcons
@@ -442,7 +447,7 @@ Section "Main Section" SecMain
 	!endif
 
 	;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
+	;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk" "$INSTDIR\Manual\index.html"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk" "$INSTDIR\uninstall.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk" "${PRODUCT_URL}"
@@ -719,6 +724,8 @@ Section "Uninstall"
 	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar"
 	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar-iidx"
 	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar-o2jam"
+	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar-razor"
+	RMDir /r "$INSTDIR\NoteSkins\kb7\retrobar-razor_o2"
 	RMDir "$INSTDIR\NoteSkins\kb7"
 
 	; we don't currently install para noteskins...
