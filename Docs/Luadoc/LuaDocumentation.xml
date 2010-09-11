@@ -2791,6 +2791,12 @@
 	<Function name='ShortenGroupName' sm-ssc='true' return='string' arguments='string sGroupName'>
 		Returns the shortened group name (based on entries in Translations.xml).
 	</Function>
+	<Function name='SetPreferredCourses' sm-ssc='true' return='void' arguments='string sListName'>
+		Loads preferred courses from <code>{theme}/Other/SongManager sListName.txt</code>.
+	</Function>
+	<Function name='SetPreferredSongs' sm-ssc='true' return='void' arguments='string sListName'>
+		Loads preferred songs from <code>{theme}/Other/SongManager sListName.txt</code>.
+	</Function>
 </Class>
 <Class name='Sprite'>
 	<Function name='GetAnimationLengthSeconds' return='float' arguments=''>

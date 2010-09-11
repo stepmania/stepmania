@@ -8,6 +8,7 @@
 		<Function name='Basename'/>
 		<Function name='BoostColor'/>
 		<Function name='Brightness'/>
+		<Function name='Center1Player'/>
 		<Function name='CheckpointsTapsSeparateJudgment'/>
 		<Function name='Color'/>
 		<Function name='ColorDarkTone'/>
@@ -1132,6 +1133,8 @@
 			<Function name='GetSongGroupColor'/>
 			<Function name='GetSongGroupNames'/>
 			<Function name='GetSongsInGroup'/>
+			<Function name='SetPreferredCourses'/>
+			<Function name='SetPreferredSongs'/>
 			<Function name='ShortenGroupName'/>
 		</Class>
 		<Class base='Actor' name='Sprite'>
@@ -1893,9 +1896,9 @@
 		<Constant name='left' value='&apos;HorizAlign_Left&apos;'/>
 		<Constant name='middle' value='&apos;VertAlign_Middle&apos;'/>
 		<Constant name='right' value='&apos;HorizAlign_Right&apos;'/>
-		<Constant name='sGame' value='&apos;dance&apos;'/>
+		<Constant name='sGame' value='&apos;kb7&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc v1.0 rc2</Version>
-	<Date>2010-08-22</Date>
+	<Version>sm-ssc v1.0</Version>
+	<Date>2010-09-10</Date>
 </Lua>
