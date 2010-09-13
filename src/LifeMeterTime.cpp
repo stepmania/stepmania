@@ -22,7 +22,7 @@ static ThemeMetric<float> MIN_LIFE_TIME		("LifeMeterTime","MinLifeTime");
 static const float g_fTimeMeterSecondsChangeInit[] =
 {
 	+0.0f, // SE_CheckpointHit
-	+0.1f, // SE_W1
+	+0.2f, // SE_W1
 	+0.0f, // SE_W2
 	-0.5f, // SE_W3
 	-1.0f, // SE_W4
