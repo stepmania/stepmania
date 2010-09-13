@@ -186,6 +186,23 @@ void NoteField::Load(
 
 	// The note skin may have changed at the beginning of a new course song.
 	RString sNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+	
+	/* XXX: Combination of good idea and bad idea to ensure
+	 * courses load regardless of noteskin content.
+	 * This may take awhile to fix. */
+	NoteDisplayCols *badIdea = m_pCurDisplay;
+	
+	if (sNoteSkinLower.empty())
+	{
+		sNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetPreferred().m_sNoteSkin;
+		
+		if (sNoteSkinLower.empty())
+		{
+			sNoteSkinLower = "default";
+		}
+		m_NoteDisplays.insert(pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
+	}
+	
 	sNoteSkinLower.MakeLower();
 	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( sNoteSkinLower );
 	ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
@@ -193,6 +210,19 @@ void NoteField::Load(
 	FOREACH_EnabledPlayer( pn )
 	{
 		RString sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+		
+		// XXX: Re-setup sNoteSkinLower. Unsure if inserting the skin again is needed.
+		if (sNoteSkinLower.empty())
+		{
+			sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred().m_sNoteSkin;
+			
+			if (sNoteSkinLower.empty())
+			{
+				sNoteSkinLower = "default";
+			}
+			m_NoteDisplays.insert(pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
+		}
+		
 		sNoteSkinLower.MakeLower();
 		it = m_NoteDisplays.find( sNoteSkinLower );
 		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
