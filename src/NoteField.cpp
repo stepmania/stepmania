@@ -914,7 +914,7 @@ void NoteField::DrawPrimitives()
 			switch( tn.type )
 			{
 			case TapNote::empty: // no note here
-			case TapNote::hold_head:
+			//case TapNote::hold_head:
 				continue;	// skip
 			}
 
