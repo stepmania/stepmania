@@ -221,14 +221,15 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 
 		// Why do this? Rows made with precise DM05 tags can go up to 13 too -DaisuMaster
 		//if( sRowString.size() != 13 )
-		if( bKIUCompliant )
+		//this is wrong in many ways...
+		/*if( bKIUCompliant )
 		{
 			LOG->UserLog( "Song file", sPath, "has illegal syntax \"%s\" which can't be in KIU complient files.",
 				      sRowString.c_str() );
 			return false;
 			//In other words: you can't mix ksf's with DM05 tags and ksf's without any DM05 tags
 			//Either one set or another will be read...
-		}
+		}*/
 		if( BeginsWith(sRowString, "|B") || BeginsWith(sRowString, "|D") || BeginsWith(sRowString, "|E") )
 		{
 			// These don't have to be worried about here: the changes and stops were already added.
@@ -247,7 +248,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 			//LOG->UserLog( "Song file", sPath, "has a RowString with an improper length \"%s\"; corrupt notes ignored.",
 			//	      sRowString.c_str() );
 			//return false;
-			continue;
+			//continue;
 		}
 
 		// Half-doubles is offset; "0011111100000".
@@ -598,9 +599,9 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			else
 			{
 				// ignore whatever else...
-				continue;
+				//continue;
 			}
-
+			
 			fCurBeat += 1.0f / iTickCount;
 		}
 	}
