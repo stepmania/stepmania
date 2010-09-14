@@ -260,6 +260,7 @@ float PlayerStageStats::GetPercentDancePoints() const
 float PlayerStageStats::GetCurMaxPercentDancePoints() const
 {
 	if ( m_iPossibleDancePoints == 0 )
+
 		return 0; // div/0
 
 	if ( m_iCurPossibleDancePoints == m_iPossibleDancePoints )
@@ -513,13 +514,17 @@ bool PlayerStageStats::FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) con
 	if( m_iHoldNoteScores[HNS_LetGo] > 0 )
 		return false;
 
+	//if any checkpoints were missed, it's not a full combo	either
+	if( m_iTapNoteScores[TNS_CheckpointMiss] > 0 )
+		return false;
+
 	// If has any of the judgments below, then not a full combo
 	for( int i=TNS_Miss; i<tnsAllGreaterOrEqual; i++ )
 	{
 		if( m_iTapNoteScores[i] > 0 )
 			return false;
 	}
-
+	
 	// If has at least one of the judgments equal to or above, then is a full combo.
 	for( int i=tnsAllGreaterOrEqual; i<NUM_TapNoteScore; i++ )
 	{
