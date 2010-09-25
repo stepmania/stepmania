@@ -721,16 +721,6 @@ public:
 		}
 		return 1;
 	}
-	static int SetScore(T* p, lua_State *L )
-	{
-		int newScore = lua_tonumber(1, L);
-		if( newScore >= 0)
-		{
-			p->m_iScore = newScore;
-			return 1;
-		}
-		return 0;
-	}
 
 	static int GetRadarPossible( T* p, lua_State *L ) { p->m_radarPossible.PushSelf(L); return 1; }
 	static int GetRadarActual( T* p, lua_State *L ) { p->m_radarActual.PushSelf(L); return 1; }
