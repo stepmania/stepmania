@@ -261,6 +261,7 @@ float PlayerStageStats::GetCurMaxPercentDancePoints() const
 {
 	if ( m_iPossibleDancePoints == 0 )
 
+
 		return 0; // div/0
 
 	if ( m_iCurPossibleDancePoints == m_iPossibleDancePoints )
@@ -719,6 +720,16 @@ public:
 			lua_rawseti( L, -2, i+1 );
 		}
 		return 1;
+	}
+	static int SetScore(T* p, lua_State *L )
+	{
+		int newScore = lua_tonumber(1, L);
+		if( newScore >= 0)
+		{
+			p->m_iScore = newScore;
+			return 1;
+		}
+		return 0;
 	}
 
 	static int GetRadarPossible( T* p, lua_State *L ) { p->m_radarPossible.PushSelf(L); return 1; }
