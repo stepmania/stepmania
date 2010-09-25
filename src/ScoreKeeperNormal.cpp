@@ -542,7 +542,7 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 			}
 		}
 		
-		if( tns == TNS_AvoidMine )
+		if( tns == TNS_AvoidMine && m_AvoidMineIncrementsCombo )
 			HandleComboInternal( 1, 0, 0 );
 
 		NSMAN->ReportScore(
