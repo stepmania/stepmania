@@ -64,10 +64,10 @@ usage () {
 }
 
 version () {
-	echo 'build.sh (StepMania) 2.6'
+	echo 'build.sh (StepMania) 2.61'
 	echo 'Copyright (C) 2006-2009 Steve Checkoway'
 	echo 'StepMania is Copyright (C) 2001-2009 Chris Danford et al.'
-	echo 'sm-ssc is Copyright (C) 2009 the spinal shark collective'
+	echo 'sm-ssc is Copyright (C) 2009-2010 the spinal shark collective'
 	exit 0
 }
 
@@ -103,15 +103,19 @@ while [ $# -gt 0 ]; do
 		*)		usage 1			;;
 	esac
 done
-revision=8448
-repository=svn://svn.mplayerhq.hu/ffmpeg/trunk/
-ffmpeg=ffmpeg-r$revision
-swscale_rev=26201
-swscale_repo=svn://svn.mplayerhq.hu/mplayer/trunk/libswscale
+version=0.6
+ffmpeg=ffmpeg-$version
+directory=http://ffmpeg.org/releases
 if [ ! -d $ffmpeg ]; then
 	message 'Downloading ffmpeg'
-	if ! which svn &>/dev/null; then
-		failure 'Install subversion.'
+	if which bzip2 &>/dev/null; then
+		zipcommand=jxf
+		ffmarc=ffmpeg-$version.tar.bz2
+	elif which gzip &>/dev/null
+		zipcommand=zxf
+		ffmarc=ffmpeg-$version.tar.gz	
+	else
+		failure 'Install either bzip2 or gzip.'	
 	fi
 	if which curl &>/dev/null; then
 		get='curl -O'
@@ -120,14 +124,11 @@ if [ ! -d $ffmpeg ]; then
 	else
 		failure 'Install either curl or wget.'
 	fi
-	call svn co --ignore-externals -r $revision $repository $ffmpeg
-	call svn co -r $swscale_rev $swscale_repo $ffmpeg/libswscale
-	message 'Downloading ffmpeg patch'
-	cd $ffmpeg
-	call $get http://stepmania.sourceforge.net/ffmpeg-r8448-avi.patch
-	message 'Patching ffmpeg'
-	call 'patch -p1 < ffmpeg-r8448-avi.patch'
-	cd ..
+	call $get $directory/$ffmarc
+	message 'Extracting ffmpeg'
+	call tar -$zipcommand $ffmarc
+	message 'Cleaning up temporary files'
+	call rm $ffmarc
 fi
 
 if [ -n "$s_download" ]; then exit 0; fi
