@@ -262,6 +262,7 @@ float PlayerStageStats::GetCurMaxPercentDancePoints() const
 	if ( m_iPossibleDancePoints == 0 )
 
 
+
 		return 0; // div/0
 
 	if ( m_iCurPossibleDancePoints == m_iPossibleDancePoints )
@@ -724,6 +725,7 @@ public:
 
 	static int GetRadarPossible( T* p, lua_State *L ) { p->m_radarPossible.PushSelf(L); return 1; }
 	static int GetRadarActual( T* p, lua_State *L ) { p->m_radarActual.PushSelf(L); return 1; }
+	static int SetScore( T* p, lua_State *L )                { if( IArg(1) >= 0 ){ p->m_iScore = IArg(1); return 1; } return 0; }
 
 	LunaPlayerStageStats()
 	{
@@ -759,6 +761,7 @@ public:
 		ADD_METHOD( GetRadarActual );
 		ADD_METHOD( GetRadarPossible );
 		ADD_METHOD( GetBestFullComboTapNoteScore );
+		ADD_METHOD( SetScore );
 	}
 };
 
