@@ -103,8 +103,8 @@ t[#t+1] = Def.ActorFrame {
 	Def.Quad {
 		Name="ProtimingGraphAverage";
 		InitCommand=cmd(visible,false;y,32;zoomto,2,7;);
-		ResetCommand=cmd(finishtweening;diffusealpha,0.5;visible,false);
-		OnCommand=cmd(diffuse,Color("Blue");diffusealpha,0.5;glowshift);
+		ResetCommand=cmd(finishtweening;diffusealpha,0.85;visible,false);
+		OnCommand=cmd(diffuse,Color("Orange");diffusealpha,0.85);
 	};
 	Def.Quad {
 		Name="ProtimingGraphCenter";
@@ -147,8 +147,10 @@ t[#t+1] = Def.ActorFrame {
 			bUseNegative = false;
 		end;
 		
-		-- we're safe, you can push the values
-		tTotalJudgments[#tTotalJudgments+1] = bUseNegative and fTapNoteOffset or math.abs( fTapNoteOffset );
+		if fTapNoteOffset ~= 1 then
+			-- we're safe, you can push the values
+			tTotalJudgments[#tTotalJudgments+1] = bUseNegative and fTapNoteOffset or math.abs( fTapNoteOffset );
+		end
 		
 		self:playcommand("Reset");
 
