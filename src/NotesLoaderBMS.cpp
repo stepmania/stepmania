@@ -520,33 +520,10 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 							continue;
 						}
 					}
-					/* This handles the hold notes in the RDM TYPE 1 style,
-					 * like how uBMplay handles it. Different BMS simulators
-					 * support hold notes differently. see
-					 * http://nvyu.net/rdm/ex.php for more info. */ 
-					else if( iHoldStarts[bmsTrack] != -1 )
-					{
-						// This is ending a hold.
-						const int iBegin = iHoldStarts[bmsTrack];
-						const int iEnd = row;
-						if( iBegin < iEnd )
-						{
-							TapNote &noteHead = TAP_ORIGINAL_HOLD_HEAD;
-							noteHead.iKeysoundIndex = iHoldHeads[bmsTrack].iKeysoundIndex;
-							ndNotes.AddHoldNote( bmsTrack, iBegin, iEnd, noteHead );
-						}
-						else
-						{
-							ndNotes.SetTapNote( bmsTrack, iBegin, iHoldHeads[bmsTrack] );
-						}
-						iHoldStarts[bmsTrack] = -1;
-					}
 					else if( bIsHold )
 					{
-						// Start of a hold.
-						iHoldStarts[bmsTrack] = row;
-						iHoldHeads[bmsTrack] = tn;
-						continue;
+						tn.type = TapNote::hold_head;
+						tn.subType = TapNote::hold_head_hold;
 					}
 				}
 				// Don't bother inserting empty taps.
@@ -555,7 +532,40 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			}
 		}
 	}
-
+	
+	/* Handles hold notes like uBMPlay.
+	 * Different BMS simulators support hold notes differently.
+	 * See http://nvyu.net/rdm/ex.php for more info.
+	 */
+	for( int t=BMS_P1_KEY1; t<=BMS_P2_KEY7; t++ )
+	{
+		int iHoldStart = -1;
+		TapNote iHoldHead;
+		FOREACH_NONEMPTY_ROW_IN_TRACK( ndNotes, t, row )
+		{
+			TapNote tn = ndNotes.GetTapNote( t, row );
+			if ( tn.type == TapNote::hold_head || tn.type == TapNote::tap )
+			{
+				if ( iHoldStart != -1 )
+				{
+					ndNotes.SetTapNote( t, row, TAP_EMPTY );
+					if ( iHoldStart < row )
+					{
+						ndNotes.AddHoldNote( t, iHoldStart, row, iHoldHead );
+					}
+					iHoldStart = -1;
+				}
+				else if ( tn.type == TapNote::hold_head )
+				{
+					iHoldStart = row;
+					iHoldHead = tn;
+					ndNotes.SetTapNote( t, row, TAP_EMPTY );
+				}
+			}
+		}
+	}
+	
+	
 	out.m_StepsType = DetermineStepsType( iPlayer, ndNotes, sPath );
 	if( out.m_StepsType == StepsType_beat_single5 && GetTagFromMap( mapNameToData, "#title", sData ) )
 	{
