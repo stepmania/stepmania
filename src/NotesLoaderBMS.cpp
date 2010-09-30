@@ -539,27 +539,34 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 	 */
 	for( int t=BMS_P1_KEY1; t<=BMS_P2_KEY7; t++ )
 	{
-		int iHoldStart = -1;
-		TapNote iHoldHead;
+		int iHoldHeadRow = -1;
+		TapNote tnHoldHead;
 		FOREACH_NONEMPTY_ROW_IN_TRACK( ndNotes, t, row )
 		{
 			TapNote tn = ndNotes.GetTapNote( t, row );
 			if ( tn.type == TapNote::hold_head || tn.type == TapNote::tap )
 			{
-				if ( iHoldStart != -1 )
+				if ( iHoldHeadRow != -1 )
 				{
+					// Delete head and tail, and add the hold note there.
 					ndNotes.SetTapNote( t, row, TAP_EMPTY );
-					if ( iHoldStart < row )
+					ndNotes.SetTapNote( t, iHoldHeadRow, TAP_EMPTY );
+					if ( iHoldHeadRow < row )
 					{
-						ndNotes.AddHoldNote( t, iHoldStart, row, iHoldHead );
+						ndNotes.AddHoldNote( t, iHoldHeadRow, row, tnHoldHead );
 					}
-					iHoldStart = -1;
+					iHoldHeadRow = -1;
 				}
 				else if ( tn.type == TapNote::hold_head )
 				{
-					iHoldStart = row;
-					iHoldHead = tn;
-					ndNotes.SetTapNote( t, row, TAP_EMPTY );
+					// Head of the hold note, store it to find the tail.
+					iHoldHeadRow = row;
+					tnHoldHead = tn;
+					
+					// Replace with a tap note.
+					tn.type = TapNote::tap;
+					tn.subType = TapNote::SubType_Invalid;
+					ndNotes.SetTapNote( t, row, tn );
 				}
 			}
 		}
