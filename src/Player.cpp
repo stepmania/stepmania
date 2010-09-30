@@ -2010,7 +2010,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			case TapNote::hold_head:
 				// oh wow, this was causing the trigger before the hold heads
 				// bug. (It was fNoteOffset > 0.f before) -DaisuMaster
-				if( !REQUIRE_STEP_ON_HOLD_HEADS && fNoteOffset <= GetWindowSeconds( TW_W5 ) )
+				if( !REQUIRE_STEP_ON_HOLD_HEADS && ( fNoteOffset <= GetWindowSeconds( TW_W5 ) && GetWindowSeconds( TW_W5 ) != 0 ) )
 				{
 					score = TNS_W1;
 					break;
