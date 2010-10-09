@@ -911,6 +911,9 @@ void NoteField::DrawPrimitives()
 		{
 			int i = begin->first;
 			const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, i);
+			
+			// Switch modified by Wolfman2000, tested by Saturn2888
+			// Fixes hold head overlapping issue, but not the rolls.
 			switch( tn.type )
 			{
 			case TapNote::empty: // no note here
