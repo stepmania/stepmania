@@ -920,12 +920,11 @@ void NoteField::DrawPrimitives()
 				{
 					continue;
 				}
-			//The following doesn't work yet.
-			/*case TapNote::hold_head:
+			case TapNote::hold_head:
 				{
-					if (tn.subType == TapNote::hold_head_roll)
+					//if (tn.subType == TapNote::hold_head_roll)
 						continue;	// skip
-				}*/
+				}
 			}
 
 			// Don't draw hidden (fully judged) steps.
