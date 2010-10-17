@@ -63,7 +63,12 @@ Condition = {
 		return GAMESTATE:PlayerIsUsingModifier( pnPlayer, sModifier );
 	end,
 }
-
+--[[ 3.9 Functions ]]
+Game = {
+	GetStage = function()
+	
+	end,
+}
 --[[ Aliases ]]
 
 -- Blend Modes
