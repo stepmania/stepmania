@@ -111,6 +111,10 @@ for pn in ivalues(PlayerNumber) do
 end
 
 t[#t+1] = StandardDecorationFromFileOptional("BannerFrame","BannerFrame");
+t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayFrameP1","PaneDisplayFrame");
+t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayFrameP2","PaneDisplayFrame");
+t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayTextP1","PaneDisplayTextP1");
+t[#t+1] = StandardDecorationFromFileOptional("PaneDisplayTextP2","PaneDisplayTextP2");
 t[#t+1] = StandardDecorationFromFileOptional("DifficultyList","DifficultyList");
 t[#t+1] = StandardDecorationFromFileOptional("CourseContentsList","CourseContentsList");
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
