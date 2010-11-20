@@ -36,7 +36,13 @@ local function CreatePaneDisplayItem( _pnPlayer, _sLabel, _rcRadarCategory )
 			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 			SetCommand=function(self)
-				self:settextf("%03i", GetRadarData( _pnPlayer, _rcRadarCategory ) );
+				local song = GAMESTATE:GetCurrentSong()
+				local course = GAMESTATE:GetCurrentCourse()
+				if not song and not course then
+					self:settext("000")
+				else
+					self:settextf("%03i", GetRadarData( _pnPlayer, _rcRadarCategory ) );
+				end
 			end;
 		};
 	};
@@ -63,7 +69,13 @@ local function CreatePaneDisplayGraph( _pnPlayer, _sLabel, _rcRadarCategory )
 			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 			SetCommand=function(self)
-				self:zoomtowidth( GetRadarData( _pnPlayer, _rcRadarCategory ) * 50 );
+				local song = GAMESTATE:GetCurrentSong()
+				local course = GAMESTATE:GetCurrentCourse()
+				if not song and not course then
+					self:zoomtowidth(0)
+				else
+					self:zoomtowidth( GetRadarData( _pnPlayer, _rcRadarCategory ) * 50 );
+				end
 			end;
 		};
 		LoadFont("Common Normal") .. {
@@ -76,7 +88,13 @@ local function CreatePaneDisplayGraph( _pnPlayer, _sLabel, _rcRadarCategory )
 			CurrentTrailP2ChangedMessageCommand=cmd(playcommand,"Set");
 			CurrentCourseChangedMessageCommand=cmd(playcommand,"Set");
 			SetCommand=function(self)
-				self:settextf("%i%%", GetRadarData( _pnPlayer, _rcRadarCategory ) * 100 );
+				local song = GAMESTATE:GetCurrentSong()
+				local course = GAMESTATE:GetCurrentCourse()
+				if not song and not course then
+					self:settext("")
+				else
+					self:settextf("%i%%", GetRadarData( _pnPlayer, _rcRadarCategory ) * 100 );
+				end
 			end;
 		};
 	};
