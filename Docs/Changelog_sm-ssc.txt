@@ -10,6 +10,32 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
+sm-ssc v1.1 | 20101120
+--------------------------------------------------------------------------------
+
+20100929
+--------
+* Fix issues with RequireStepOnHoldHeads not working properly if the W5
+  window is zero. [FSX]
+
+20100925
+--------
+* Add SetScore Lua binding to PlayerStageStats. [FSX]
+* Don't increase combo on AvoidMine if AvoidMineIncrementsCombo is false. [FSX]
+* Change build.sh to use ffmpeg 0.6 under Linux. [FSX]
+
+20100913
+--------
+* Attempt to fix issues with full combos occuring when checkpoints
+  have been missed. [FSX]
+* Fix NotesLoaderKSF. [Daisuke Master]
+
+20100912
+--------
+* Add a hack allowing all courses to play, regardless of missing noteskins [wolfman2000]
+* Restore ITG behavior, allow survivals to be won. [wolfman2000]
+
+================================================================================
 sm-ssc v1.0 "final" | 20100910
 --------------------------------------------------------------------------------
 
