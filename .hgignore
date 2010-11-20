@@ -21,6 +21,7 @@ Thumbs.db
 *.vdi
 PBProject/build
 Xcode/build
+src/build-*
 ver.cpp
 lib*_link.a
 Data/UserPrefs
