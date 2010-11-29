@@ -34,6 +34,9 @@ function InitUserPrefs()
 	if GetUserPrefB("UserPrefComboUnderField") == nil then
 		SetUserPref("UserPrefComboUnderField", true);
 	end;
+	if GetUserPrefB("UserPrefAdjustSpeed") == nil then
+		SetUserPref("UserPrefAdjustSpeed", false);
+	end;
 --[[ 	if GetUserPref("ProTimingP1") == nil then
 		SetUserPref("ProTimingP1", false);
 	end;
@@ -445,6 +448,51 @@ function UserPrefComboUnderField()
 				val = false;
 			end;
 			WritePrefToFile("UserPrefComboUnderField",val);
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end
+
+function GetDefaultArrowSpacing()
+	local rates = {
+		64,		-- Default
+		80,		-- Pro
+		128,	-- New
+	};
+	return GetUserPrefB("UserPrefAdjustSpeed") and rates[3] or rates[1];
+end;
+
+function UserPrefAdjustSpeed()
+	local t = {
+		Name = "UserPrefAdjustSpeed";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = { 'Slow','Fast' };
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("UserPrefAdjustSpeed") ~= nil then
+				if GetUserPrefB("UserPrefAdjustSpeed") then
+					list[2] = true;
+				else
+					list[1] = true;
+				end;
+			else
+				WritePrefToFile("UserPrefAdjustSpeed",true);
+				list[2] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			local val;
+			if list[2] then
+				val = true;
+			else
+				val = false;
+			end;
+			WritePrefToFile("UserPrefAdjustSpeed",val);
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
