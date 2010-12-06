@@ -311,8 +311,8 @@ namespace SymbolLookup
 
 		if( obuf[0] == '_' )
 		{
-			strcat( obuf, "()" ); /* _main -> _main() */
-			return obuf+1; /* _main -> main */
+			strcat( obuf, "()" ); // _main -> _main()
+			return obuf+1; // _main -> main
 		}
 
 		return obuf;
@@ -487,7 +487,7 @@ static void DoSave( const RString &sReport )
 
 	fclose( pFile );
 
-	/* Discourage changing crashinfo.txt. */
+	// Discourage changing crashinfo.txt.
 	SetFileAttributes( sName, FILE_ATTRIBUTE_READONLY );
 }
 
@@ -522,15 +522,15 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 {
 	_setmode( _fileno(stdin), O_BINARY );
 
-	/* 0. Read the parent handle. */
+	// 0. Read the parent handle.
 	if( !ReadFromParent(iFD, &SymbolLookup::g_hParent, sizeof(SymbolLookup::g_hParent)) )
 		return false;
 
-	/* 1. Read the CrashData. */
+	// 1. Read the CrashData.
 	if( !ReadFromParent(iFD, &Data.m_CrashInfo, sizeof(Data.m_CrashInfo)) )
 		return false;
 
-	/* 2. Read info. */
+	// 2. Read info.
 	int iSize;
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
@@ -540,7 +540,7 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 		return false;
 	Data.m_sInfo.ReleaseBuffer( iSize );
 
-	/* 3. Read AdditionalLog. */
+	// 3. Read AdditionalLog.
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
 
@@ -549,7 +549,7 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 		return false;
 	Data.m_sAdditionalLog.ReleaseBuffer( iSize );
 
-	/* 4. Read RecentLogs. */
+	// 4. Read RecentLogs.
 	int iCnt = 0;
 	if( !ReadFromParent(iFD, &iCnt, sizeof(iCnt)) )
 		return false;
@@ -565,7 +565,7 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 		sBuf.ReleaseBuffer( iSize );
 	}
 
-	/* 5. Read CHECKPOINTs. */
+	// 5. Read CHECKPOINTs.
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
 
@@ -577,7 +577,7 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	split( sBuf, "$$", Data.m_asCheckpoints );
 	sBuf.ReleaseBuffer( iSize );
 
-	/* 6. Read the crashed thread's name. */
+	// 6. Read the crashed thread's name.
 	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
 		return false;
 	pBuf = Data.m_sCrashedThread.GetBuffer( iSize );
@@ -588,13 +588,11 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	return true;
 }
 
-/*
- * Localization for the crash handler is different, and a little tricky.  We don't
- * have ThemeManager loaded, so we have to localize it ourself.  We can supply
- * translations with our own substitution function.  We need to figure out which
- * language to use.  Since these strings won't be pulled from the theme, defer
- * loading them until we use them.  XXX
- */
+/* Localization for the crash handler is different, and a little tricky. We don't
+ * have ThemeManager loaded, so we have to localize it ourself. We can supply
+ * translations with our own substitution function. We need to figure out which
+ * language to use. Since these strings won't be pulled from the theme, defer
+ * loading them until we use them. XXX */
 static LocalizedString A_CRASH_HAS_OCCURRED;
 static LocalizedString REPORTING_THE_PROBLEM;
 static LocalizedString CLOSE;
@@ -688,7 +686,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			HWND hwndStatic = (HWND)lParam;
 			HBRUSH hbr = NULL;
 
-			// TODO:  Change any attributes of the DC here
+			// TODO: Change any attributes of the DC here
 			switch( GetDlgCtrlID(hwndStatic) )
 			{
 			case IDC_STATIC_HEADER_TEXT:
@@ -699,7 +697,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				break;
 			}
 
-			// TODO:  Return a different brush if the default is not desired
+			// TODO: Return a different brush if the default is not desired
 			return (BOOL)hbr;
 		}
 
@@ -709,7 +707,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		case IDC_BUTTON_CLOSE:
 			if( m_pPost != NULL )
 			{
-				/* Cancel reporting, and revert the dialog as if "report" had not been pressed. */
+				// Cancel reporting, and revert the dialog as if "report" had not been pressed.
 				m_pPost->Cancel();
 				KillTimer( hDlg, 0 );
 
@@ -718,11 +716,11 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				return TRUE;
 			}
 
-			/* Close the dialog. */
+			// Close the dialog.
 			EndDialog(hDlg, FALSE);
 			return TRUE;
 		case IDOK:
-			// EndDialog(hDlg, TRUE); /* don't always exit on ENTER */
+			// EndDialog(hDlg, TRUE); // don't always exit on ENTER
 			return TRUE;
 		case IDC_VIEW_LOG:
 			ViewWithNotepad("../log.txt");
@@ -740,8 +738,8 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		case IDC_BUTTON_AUTO_REPORT:
 			if( !m_sUpdateURL.empty() )
 			{
-				/* We already sent the report, were told that there's an update, and
-				 * substituted the URL. */
+				/* We already sent the report, were told that there's an update,
+				 * and substituted the URL. */
 				GotoURL( m_sUpdateURL );
 				break;
 			}
@@ -753,7 +751,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETRANGE, 0, MAKELPARAM(0,100) );
 			SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETPOS, 0, 0 );
 
-			/* Create the form data to send. */
+			// Create the form data to send.
 			m_pPost = new NetworkPostData;
 			m_pPost->SetData( "Product", PRODUCT_ID );
 			m_pPost->SetData( "Version", PRODUCT_VER );
@@ -779,8 +777,8 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			{
 				KillTimer( hDlg, 0 );
 
-				/* Grab the result, which is the data output from the HTTP request.  It's
-				* simple XML. */
+				/* Grab the result, which is the data output from the HTTP request.
+				 * It's simple XML. */
 				RString sResult = m_pPost->GetResult();
 				RString sError = m_pPost->GetError();
 				if( sError.empty() && sResult.empty() )
@@ -803,18 +801,18 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				int iID;
 				if( !sError.empty() )
 				{
-					/* On error, don't show the "report" button again.  If the submission was actually
+					/* On error, don't show the "report" button again. If the submission was actually
 					* successful, then it'd be too easy to accidentally spam the server by holding
 					* down the button. */
 					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
 				}
-				else if( xml.GetAttrValue("UpdateAvailable", m_sUpdateURL) )
+				else if( xml.GetChildValue("UpdateAvailable", m_sUpdateURL) )
 				{
 					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_AVAILABLE.GetValue() );
 					SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), VIEW_UPDATE.GetValue() );
 					ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
 				}
-				else if( xml.GetAttrValue("ReportId", iID) )
+				else if( xml.GetChildValue("ReportId", iID) )
 				{
 					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_NOT_AVAILABLE.GetValue() );
 				}
@@ -823,7 +821,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
 				}
 
-				if( xml.GetAttrValue("ReportId", iID) )
+				if( xml.GetChildValue("ReportId", iID) )
 				{
 					char sBuf[1024];
 					GetWindowText( hDlg, sBuf, 1024 );
@@ -841,7 +839,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 
 void ChildProcess()
 {
-	/* Read the crash data from the crashed parent. */
+	// Read the crash data from the crashed parent.
 	CompleteCrashData Data;
 	ReadCrashDataFromParent( fileno(stdin), Data );
 
@@ -852,10 +850,10 @@ void ChildProcess()
 
 	DoSave( sCrashReport );
 
-	/* Tell the crashing process that it can exit.  Be sure to write crashinfo.txt first. */
+	// Tell the crashing process that it can exit. Be sure to write crashinfo.txt first.
 	fclose( stdout );
 
-	/* Now that we've done that, the process is gone.  Don't use g_hParent. */
+	// Now that we've done that, the process is gone. Don't use g_hParent.
 	CloseHandle( SymbolLookup::g_hParent );
 	SymbolLookup::g_hParent = NULL;
 
