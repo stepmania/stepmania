@@ -5,7 +5,7 @@ local function UpdateTime(self)
 		local vStats = STATSMAN:GetCurStageStats():GetPlayerStageStats( pn );
 		local vTime;
 		local obj = self:GetChild( string.format("RemainingTime" .. PlayerNumberToString(pn) ) );
-		if vStats then
+		if vStats and obj then
 			vTime = vStats:GetLifeRemainingSeconds()
 			obj:settext( SecondsToMMSSMsMs( vTime ) );
 		end;
