@@ -241,5 +241,12 @@ function pname(pn)
 	return ToEnumShortString(pn)
 end
 
+function math.round(num, pre)
+	if pre and pre < 0 then pre = 0 end
+	local mult = 10^(pre or 0) 
+	if num >= 0 then return math.floor(num*mult+.5)/mult 
+	else return math.ceil(num*mult-.5)/mult end
+end
+
 --[[ end helper functions ]]
 -- this code is in the public domain.
