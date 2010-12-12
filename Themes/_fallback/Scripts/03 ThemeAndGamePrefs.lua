@@ -1,49 +1,56 @@
 -- sm-ssc Default Theme Preferences Handler
 function InitGamePrefs()
-	if GetGamePrefB("AutoSetStyle") == nil then
-		SetGamePref("AutoSetStyle", false);
-	end;
-	if GetGamePrefB("NotePosition") == nil then
-		SetGamePref("NotePosition", true);
-	end;
-	if GetGamePrefB("ComboOnRolls") == nil then
-		SetGamePref("ComboOnRolls", false);
-	end;
-	if GetGamePrefB("ComboUnderField") == nil then
-		SetGamePref("ComboUnderField", true);
-	end;
-	if GetGamePrefB("AdjustSpeed") == nil then
-		SetGamePref("AdjustSpeed", false);
+	local Prefs =
+	{
+		{ "AutoSetStyle",	false },
+		{ "NotePosition",	true },
+		{ "ComboOnRolls",	false },
+		{ "ComboUnderField",	true },
+		{ "AdjustSpeed",	false },
+	};
+
+	for idx,pref in ipairs(Prefs) do
+		if GetGamePrefB( pref[1] ) == nil then
+			SetGamePref( pref[1], pref[2] );
+		end;
 	end;
 end
 function InitUserPrefs()
-	if GetUserPref("UserPrefGameplayShowStepsDisplay") == nil then
-		SetUserPref("UserPrefGameplayShowStepsDisplay", true);
-	end;
-	if GetUserPref("UserPrefGameplayShowScore") == nil then
-		SetUserPref("UserPrefGameplayShowScore", false);
-	end;
 	if GetUserPrefB("UserPrefShowLotsaOptions") == nil then
 		SetUserPref("UserPrefShowLotsaOptions", true);
 	end;
-	if GetUserPrefB("UserPrefLongFail") == nil then
-		SetUserPref("UserPrefLongFail", false);
+
+	local Prefs =
+	{
+		{ "UserPrefGameplayShowStepsDisplay",	true },
+		{ "UserPrefGameplayShowScore",		false},
+--[[		{ "ProTimingP1",	false},
+		{ "ProTimingP2",	false},
+--]]
+	};		
+
+	local BPrefs = 
+	{
+		{ "UserPrefShowLotsaOptions",		true},
+		{ "UserPrefLongFail",			false},
+		{ "UserPrefProtimingP1",		false},
+		{ "UserPrefProtimingP2",		false},
+		{ "FlashyCombos",	false},
+	};
+
+	for idx,pref in ipairs(Prefs) do
+		if GetUserPref( pref[1] ) == nil then
+			SetUserPref( pref[1], pref[2] );
+		end;
 	end;
-	if GetUserPrefB("UserPrefProtimingP1") == nil then
-		SetUserPref("UserPrefProtimingP1", false);
+
+	-- making sure I don't screw up anything yet...
+	for idx,pref in ipairs(BPrefs) do
+		if GetUserPrefB( pref[1] ) == nil then
+			SetUserPref( pref[1], pref[2] );
+		end;
 	end;
-	if GetUserPrefB("UserPrefProtimingP2") == nil then
-		SetUserPref("UserPrefProtimingP2", false);
-	end;
-	if GetUserPrefB("FlashyCombos") == nil then
-		SetUserPref("FlashyCombos", false);
-	end;
---[[ 	if GetUserPref("ProTimingP1") == nil then
-		SetUserPref("ProTimingP1", false);
-	end;
-	if GetUserPref("ProTimingP2") == nil then
-		SetUserPref("ProTimingP2", false);
-	end; --]]
+
 end;
 --[[ theme option rows ]]
 -- screen cover
