@@ -269,6 +269,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 		msg.SetParam( "SongGroup", pWID->m_sText );
 		msg.SetParam( "DrawIndex", iDrawIndex );
 		msg.SetParam( "Type", MusicWheelItemTypeToString(type) );
+		msg.SetParam( "Color", pWID->m_color );
 
 		this->HandleMessage( msg );
 	}
