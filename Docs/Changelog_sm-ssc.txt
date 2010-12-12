@@ -9,6 +9,11 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+20101212
+--------
+* [MusicWheelItem] Gave NormalPart/ColorPart names, so metrics can be used to
+  manipulate them. [freem]
+
 ================================================================================
 sm-ssc v1.1 | 20101120
 --------------------------------------------------------------------------------

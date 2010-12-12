@@ -49,9 +49,11 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
 		m_sprColorPart[i].Load( THEME->GetPathG(sType,MusicWheelItemTypeToString(i)+" ColorPart") );
+		m_sprColorPart[i]->SetName( MusicWheelItemTypeToString(i)+"ColorPart" );
 		this->AddChild( m_sprColorPart[i] );
 
 		m_sprNormalPart[i].Load( THEME->GetPathG(sType,MusicWheelItemTypeToString(i)+" NormalPart") );
+		m_sprNormalPart[i]->SetName( MusicWheelItemTypeToString(i)+"NormalPart" );
 		this->AddChild( m_sprNormalPart[i] );
 	}
 
