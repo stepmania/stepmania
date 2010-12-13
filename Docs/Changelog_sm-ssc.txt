@@ -13,6 +13,9 @@ _____________________________________________________________________________
 --------
 * [MusicWheelItem] Gave NormalPart/ColorPart names, so metrics can be used to
   manipulate them. [freem]
+* [MusicWheelItem] add Color param to SetMessage. [freem]
+* Added --with-sse2 configure flag for SSE2 heuristic optimizations. [vyhd]
+* Added 03 IniFile to start building new userprefs/themeprefs API. [vyhd]
 * [EditMenu] Converted old non-specific metrics to more specific metrics. [freem]
   {Metric Changes}
   SongBannerWidth,SongBannerHeight -> SongBannerOnCommand
