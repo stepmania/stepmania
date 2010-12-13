@@ -13,6 +13,19 @@ _____________________________________________________________________________
 --------
 * [MusicWheelItem] Gave NormalPart/ColorPart names, so metrics can be used to
   manipulate them. [freem]
+* [EditMenu] Converted old non-specific metrics to more specific metrics. [freem]
+  {Metric Changes}
+  SongBannerWidth,SongBannerHeight -> SongBannerOnCommand
+  GroupBannerWidth,GroupBannerHeight -> GroupBannerOnCommand
+  RowLabelsX -> Label#X
+  RowLabelOnCommand -> Label#OnCommand
+  RowValue#X -> Value#X
+  RowValueOnCommand -> Row#OnCommand
+  {Metric Additions}
+  SongBannerChangeCommand/GroupBannerChangeCommand - runs when song/group
+  banner is changed.
+  Label#GainFocus/LoseFocusCommand and Value#GainFocus/LoseFocusCommand - runs
+  when the Label and Value gain/lose focus.
 
 ================================================================================
 sm-ssc v1.1 | 20101120

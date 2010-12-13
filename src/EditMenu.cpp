@@ -14,7 +14,6 @@
 #include "UnlockManager.h"
 #include "SongUtil.h"
 
-
 static const char *EditMenuRowNames[] = {
 	"Group",
 	"Song",
@@ -38,9 +37,7 @@ XToLocalizedString( EditMenuAction );
 StringToX( EditMenuAction );
 
 static RString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",int(i+1)); }
-static RString ROW_VALUE_X_NAME( size_t i )	{ return ssprintf("RowValue%dX",int(i+1)); }
 static RString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",int(i+1)); }
-
 
 void EditMenu::StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v )
 {
@@ -110,14 +107,6 @@ void EditMenu::Load( const RString &sType )
 	ARROWS_X.Load(sType,ARROWS_X_NAME,NUM_ARROWS);
 	ARROWS_ENABLED_COMMAND.Load(sType,"ArrowsEnabledCommand");
 	ARROWS_DISABLED_COMMAND.Load(sType,"ArrowsDisabledCommand");
-	SONG_BANNER_WIDTH.Load(sType,"SongBannerWidth");
-	SONG_BANNER_HEIGHT.Load(sType,"SongBannerHeight");
-	GROUP_BANNER_WIDTH.Load(sType,"GroupBannerWidth");
-	GROUP_BANNER_HEIGHT.Load(sType,"GroupBannerHeight");
-	ROW_LABELS_X.Load(sType,"RowLabelsX");
-	ROW_LABEL_ON_COMMAND.Load(sType,"RowLabelOnCommand");
-	ROW_VALUE_X.Load(sType,ROW_VALUE_X_NAME,NUM_EditMenuRow);
-	ROW_VALUE_ON_COMMAND.Load(sType,"RowValueOnCommand");
 	ROW_Y.Load(sType,ROW_Y_NAME,NUM_EditMenuRow);
 	EDIT_MODE.Load(sType,"EditMode");
 	TEXT_BANNER_TYPE.Load( m_sName, "TextBannerType" );
@@ -133,39 +122,39 @@ void EditMenu::Load( const RString &sType )
 
 	ZERO( m_iSelection );
 
-
 	FOREACH_EditMenuRow( r )
 	{
+		m_textLabel[r].SetName(ssprintf("Label%i",r+1));
 		m_textLabel[r].LoadFromFont( THEME->GetPathF(sType,"title") );
-		m_textLabel[r].SetXY( ROW_LABELS_X, ROW_Y.GetValue(r) );
 		m_textLabel[r].SetText( EditMenuRowToLocalizedString(r) );
-		m_textLabel[r].RunCommands( ROW_LABEL_ON_COMMAND );
-		m_textLabel[r].SetHorizAlign( align_left );
+		ActorUtil::LoadAllCommandsAndSetXY( m_textLabel[r], sType );
+		//m_textLabel[r].SetHorizAlign( align_left );
 		this->AddChild( &m_textLabel[r] );
 
+		m_textValue[r].SetName(ssprintf("Value%i",r+1));
 		m_textValue[r].LoadFromFont( THEME->GetPathF(sType,"value") );
-		m_textValue[r].SetXY( ROW_VALUE_X.GetValue(r), ROW_Y.GetValue(r) );
 		m_textValue[r].SetText( "blah" );
-		m_textValue[r].RunCommands( ROW_VALUE_ON_COMMAND );
+		ActorUtil::LoadAllCommandsAndSetXY( m_textValue[r], sType );
 		this->AddChild( &m_textValue[r] );
 	}
 
 	m_textLabel[ROW_GROUP].SetVisible( SHOW_GROUPS.GetValue() );
 	m_textValue[ROW_GROUP].SetVisible( SHOW_GROUPS.GetValue() );
 
-
-	/* Load low-res banners, if needed. */
+	// Load low-res banners, if needed.
 	BANNERCACHE->Demand();
 
 	if( SHOW_GROUPS.GetValue() )
 	{
 		m_GroupBanner.SetName( "GroupBanner" );
 		ActorUtil::SetXY( m_GroupBanner, sType );
+		ActorUtil::LoadAllCommands( m_GroupBanner, sType );
 		this->AddChild( &m_GroupBanner );
 	}
 
 	m_SongBanner.SetName( "SongBanner" );
 	ActorUtil::SetXY( m_SongBanner, sType );
+	ActorUtil::LoadAllCommands( m_SongBanner, sType );
 	this->AddChild( &m_SongBanner );
 
 	m_SongTextBanner.SetName( "SongTextBanner" );
@@ -173,12 +162,12 @@ void EditMenu::Load( const RString &sType )
 	ActorUtil::SetXY( m_SongTextBanner, sType );
 	ActorUtil::LoadAllCommands( m_SongTextBanner, sType );
 	this->AddChild( &m_SongTextBanner );
-	
+
 	m_StepsDisplay.SetName( "StepsDisplay" );
 	m_StepsDisplay.Load( "StepsDisplayEdit", NULL );
 	ActorUtil::SetXY( m_StepsDisplay, sType );
 	this->AddChild( &m_StepsDisplay );
-	
+
 	m_StepsDisplaySource.SetName( "StepsDisplaySource" );
 	m_StepsDisplaySource.Load( "StepsDisplayEdit", NULL );
 	ActorUtil::SetXY( m_StepsDisplaySource, sType );
@@ -187,12 +176,9 @@ void EditMenu::Load( const RString &sType )
 	m_soundChangeRow.Load( THEME->GetPathS(sType,"row"), true );
 	m_soundChangeValue.Load( THEME->GetPathS(sType,"value"), true );
 
-	//
 	// fill in data structures
-	//
 	GetGroupsToShow( m_sGroups );
 	m_StepsTypes = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
-
 
 	RefreshAll();
 }
@@ -253,7 +239,7 @@ bool EditMenu::CanGoDown()
 bool EditMenu::CanGoLeft()
 {
 	if( m_SelectedRow == ROW_SONG || m_SelectedRow == ROW_GROUP )
-		return true; /* wraps */
+		return true; // wraps
 	return m_iSelection[m_SelectedRow] != 0;
 }
 
@@ -261,12 +247,12 @@ int EditMenu::GetRowSize( EditMenuRow er ) const
 {
 	switch( er )
 	{
-	case ROW_GROUP:			return m_sGroups.size();
+	case ROW_GROUP:		return m_sGroups.size();
 	case ROW_SONG:			return m_pSongs.size();
-	case ROW_STEPS_TYPE:		return m_StepsTypes.size();
-	case ROW_STEPS:			return m_vpSteps.size();
+	case ROW_STEPS_TYPE:	return m_StepsTypes.size();
+	case ROW_STEPS:		return m_vpSteps.size();
 	case ROW_SOURCE_STEPS_TYPE:	return m_StepsTypes.size();
-	case ROW_SOURCE_STEPS:		return m_vpSourceSteps.size();
+	case ROW_SOURCE_STEPS:	return m_vpSourceSteps.size();
 	case ROW_ACTION:		return m_Actions.size();
 	default: FAIL_M( ssprintf("%i", er) );
 	}
@@ -276,7 +262,7 @@ int EditMenu::GetRowSize( EditMenuRow er ) const
 bool EditMenu::CanGoRight()
 {
 	if( m_SelectedRow == ROW_SONG || m_SelectedRow == ROW_GROUP )
-		return true; /* wraps */
+		return true; // wraps
 	return m_iSelection[m_SelectedRow] != GetRowSize(m_SelectedRow)-1;
 }
 
@@ -344,9 +330,13 @@ void EditMenu::Right()
 	}
 }
 
-
 void EditMenu::ChangeToRow( EditMenuRow newRow )
 {
+	m_textLabel[newRow].PlayCommand("GainFocus");
+	m_textValue[newRow].PlayCommand("GainFocus");
+	m_textLabel[m_SelectedRow].PlayCommand("LoseFocus");
+	m_textValue[m_SelectedRow].PlayCommand("LoseFocus");
+
 	m_SelectedRow = newRow;
 
 	for( int i=0; i<2; i++ )
@@ -374,7 +364,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		if( SHOW_GROUPS.GetValue() )
 		{
 			m_GroupBanner.LoadFromSongGroup( GetSelectedGroup() );
-			m_GroupBanner.ScaleToClipped( GROUP_BANNER_WIDTH, GROUP_BANNER_HEIGHT );
+			m_GroupBanner.PlayCommand("Changed");
 		}
 		m_pSongs.clear();
 		GetSongsToShowForGroup( GetSelectedGroup(), m_pSongs );
@@ -383,7 +373,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 	case ROW_SONG:
 		m_textValue[ROW_SONG].SetText( "" );
 		m_SongBanner.LoadFromSong( GetSelectedSong() );
-		m_SongBanner.ScaleToClipped( SONG_BANNER_WIDTH, SONG_BANNER_HEIGHT );
+		m_SongBanner.PlayCommand("Changed");
 		m_SongTextBanner.SetFromSong( GetSelectedSong() );
 
 		// fall through
@@ -461,7 +451,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				}
 			}
 			StripLockedStepsAndDifficulty( m_vpSteps );
-		
+
 			FOREACH( StepsAndDifficulty, m_vpSteps, s )
 			{
 				if( s->dc == dcOld )
@@ -571,7 +561,6 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		ASSERT(0);	// invalid row
 	}
 }
-
 
 /*
  * (c) 2001-2004 Chris Danford
