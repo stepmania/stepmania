@@ -8,6 +8,10 @@ tests/*.err
 *.suo
 *.obj
 *.app
+*.dep
+*.idb
+*.pdb
+*.exp
 .hg
 .hgignore
 .hgtags
@@ -16,18 +20,28 @@ tests/*.err
 .DS_Store
 Thumbs.db
 *.pbxuser
+*.user
 *.mode1v3
 *.exe
 *.vdi
 PBProject/build
 Xcode/build
 src/build-*
+src/Release-*
+src/libtomcrypt/build-*
+src/libtomcrypt/Release-*
+src/libtommath/build-*
+src/libtommath/Release-*
 ver.cpp
 lib*_link.a
 Data/UserPrefs
 PBProject/Hardware.plist
 Themes/pump
 Themes/optical-release
+src/version.bin
+src/verstub.cpp
+nsis_strings_temp.inc
+Data/SpeedMods.txt
 
 syntax: regexp
 .*\#.*\#$
