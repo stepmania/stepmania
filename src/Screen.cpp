@@ -184,7 +184,10 @@ void Screen::Input( const InputEventPlus &input )
 {
 	Message msg("");
 	if( m_Codes.InputMessage(input, msg) )
+	{
 		this->HandleMessage( msg );
+		return;
+	}
 
 	// Don't send release messages with the default handler.
 	switch( input.type )

@@ -385,6 +385,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
 
+	ScreenWithMenuElements::Input( input );
+
 	bool bHoldingCtrl = 
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
@@ -825,7 +827,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	if( input.type == IET_FIRST_PRESS && DetectCodes(input) )
 		return;
 
-	ScreenWithMenuElements::Input( input );
+	//ScreenWithMenuElements::Input( input );
 }
 
 bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
