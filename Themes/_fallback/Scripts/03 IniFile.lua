@@ -50,12 +50,13 @@ IniFile =
 	end,
 
 	ReadFile = function( file_path )
+		Trace( "IniFile.ReadFile( " .. file_path .. " )" )
 		local file = RageFileUtil.CreateRageFile()
 
 		if not file:Open(file_path, RageFile.READ) then
 			Warn( string.format("ReadFile(%s): %s",file_path,file:GetError()) )
 			file:destroy()
-			return nil
+			return { }	-- return a blank table
 		end
 
 		local tbl = { }
@@ -87,6 +88,7 @@ IniFile =
 	end,
 
 	WriteFile = function( file_path, tbl )
+		Trace( "IniFile.WriteFile( " .. file_path .. " )" )
 		local file = RageFileUtil.CreateRageFile()
 
 		if not file:Open(file_path, RageFile.WRITE) then

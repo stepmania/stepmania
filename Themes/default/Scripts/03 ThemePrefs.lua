@@ -1,5 +1,19 @@
 -- sm-ssc Default Theme Preferences Handler
 
+-- Example usage of new system (not really implemented yet)
+
+local Prefs =
+{
+	AutoSetStyle =
+	{
+		Default = false,
+		Choices = { "ON", "OFF" },
+		Values = { true, false }
+	},
+};
+
+ThemePrefs.InitAll( Prefs )
+
 function InitUserPrefs()
 	if GetUserPref("UserPrefGameplayShowStepsDisplay") == nil then
 		SetUserPref("UserPrefGameplayShowStepsDisplay", true);
