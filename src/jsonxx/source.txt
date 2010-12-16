@@ -1,3 +1,0 @@
-http://hjiang.net/archives/245
-and
-http://github.com/hjiang/jsonxx
