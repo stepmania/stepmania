@@ -82,7 +82,7 @@ void RollingNumbers::Update( float fDeltaTime )
 
 void RollingNumbers::SetTargetNumber( float fTargetNumber )
 {
-	if( fTargetNumber == m_fTargetNumber )	// no change
+	if( fTargetNumber == m_fTargetNumber ) // no change
 		return;
 	m_fTargetNumber = fTargetNumber;
 	m_fScoreVelocity = (m_fTargetNumber-m_fCurrentNumber) / APPROACH_SECONDS.GetValue();
@@ -102,10 +102,12 @@ void RollingNumbers::UpdateText()
 class LunaRollingNumbers: public Luna<RollingNumbers>
 {
 public:
+	static int Load( T* p, lua_State *L )			{ p->Load(SArg(1)); return 0; }
 	static int targetnumber( T* p, lua_State *L )	{ p->SetTargetNumber( FArg(1) ); return 0; }
 
 	LunaRollingNumbers()
 	{
+		ADD_METHOD( Load );
 		ADD_METHOD( targetnumber );
 	}
 };
