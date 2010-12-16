@@ -6,8 +6,10 @@
 #include "RageFileManager.h"
 #include "SpecialFiles.h"
 #include "RageLog.h"
+#include "Preference.h"
+#include "Foreach.h"
 
-FileDownload::FileDownload()
+FileTransfer::FileTransfer()
 {
 	m_iPackagesPos = 0;
 	m_iLinksPos = 0;
@@ -21,31 +23,28 @@ FileDownload::FileDownload()
 	UpdateProgress();
 
 	// Workaround: For some reason, the first download sometimes corrupts;
-	// by opening and closing the RageFile, this problem does not occur.
+	// by opening and closing the RageFile, this problem does not occur. 
 	// Go figure?
-
 	// XXX: This is a really dirty work around! Why does RageFile do this?
-
-	// It's always some strange number of bytes at the end of the
-	// file when it corrupts.
-	m_fOutputFile.Open( "Packages/dummy.txt", RageFile::WRITE );
+	// It's always some strange number of bytes at the end of the file when it corrupts.
+	m_fOutputFile.Open("Packages/dummy.txt", RageFile::WRITE);
 	m_fOutputFile.Close();
 }
 
-FileDownload::~FileDownload()
+FileTransfer::~FileTransfer()
 {
 	m_fOutputFile.Close();
 }
 
-RString FileDownload::Update( float fDeltaTime )
+RString FileTransfer::Update( float fDeltaTime )
 {
 	HTTPUpdate();
 
 	m_fLastUpdate += fDeltaTime;
-	if ( m_fLastUpdate >= 1.0 )
+	if (m_fLastUpdate >= 1.0)
 	{
-		if ( m_bIsDownloading && m_bGotHeader )
-			m_sStatus = ssprintf( "DL @ %d KB/s", int((m_iDownloaded-m_bytesLastUpdate)/1024) );
+		if (m_bIsDownloading && m_bGotHeader)
+			m_sStatus = ssprintf("DL @ %d KB/s", int((m_iDownloaded-m_bytesLastUpdate)/1024));
 
 		m_bytesLastUpdate = m_iDownloaded;
 		UpdateProgress();
@@ -55,7 +54,7 @@ RString FileDownload::Update( float fDeltaTime )
 	return m_sStatus;
 }
 
-void FileDownload::UpdateProgress()
+void FileTransfer::UpdateProgress()
 {
 	float DownloadedRatio;
 
@@ -65,7 +64,7 @@ void FileDownload::UpdateProgress()
 		DownloadedRatio = float(m_iDownloaded) / float(m_iTotalBytes);
 }
 
-void FileDownload::CancelDownload( )
+void FileTransfer::Cancel()
 {
 	m_wSocket.close();
 	m_bIsDownloading = false;
@@ -74,10 +73,22 @@ void FileDownload::CancelDownload( )
 	m_fOutputFile.Close();
 	m_sStatus = "Failed.";
 	m_sBUFFER = "";
-	FILEMAN->Remove( "Packages/" + m_sEndName );
+	FILEMAN->Remove("Packages/" + m_sEndName);
 }
 
-void FileDownload::StartDownload( const RString &sURL, const RString &sDestFile )
+void FileTransfer::StartDownload( const RString &sURL, const RString &sDestFile )
+{
+	StartTransfer( download, sURL, "", sDestFile );
+}
+
+void FileTransfer::StartUpload( const RString &sURL, const RString &sSrcFile, const RString &sDestFile )
+{
+	StartTransfer( upload, sURL, sSrcFile, sDestFile );
+}
+
+extern Preference<RString> g_sCookie;
+
+void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const RString &sSrcFile, const RString &sDestFile )
 {
 	RString Proto;
 	RString Server;
@@ -87,16 +98,12 @@ void FileDownload::StartDownload( const RString &sURL, const RString &sDestFile 
 	if( !ParseHTTPAddress( sURL, Proto, Server, Port, sAddress ) )
 	{
 		m_sStatus = "Invalid URL.";
+		m_bFinished = true;
 		UpdateProgress();
 		return;
 	}
 
-	//Determine if this is a website, or a package?
-	//Criteria: does it end with *zip?
-	if( sAddress.Right(3).CompareNoCase("zip") == 0 )
-		m_bIsPackage=true;
-	else
-		m_bIsPackage = false;
+	m_bSavingFile = sDestFile != "";
 
 	m_sBaseAddress = "http://" + Server;
 	if( Port != 80 )
@@ -113,24 +120,15 @@ void FileDownload::StartDownload( const RString &sURL, const RString &sDestFile 
 		m_sEndName = "";
 	}
 
-	//Open the file...
+	// Open the file...
 
-	//First find out if a file by this name already exists
-	//if so, then we gotta ditch out.
-	//XXX: This should be fixed by a prompt or something?
+	// First find out if a file by this name already exists if so, then we gotta
+	// ditch out.
+	// XXX: This should be fixed by a prompt or something?
 
-	//if we are not talking about a file, let's not worry
-	if( m_sEndName != "" && m_bIsPackage )
+	// if we are not talking about a file, let's not worry
+	if( m_sEndName != "" && m_bSavingFile )
 	{
-		vector<RString> AddTo;
-		GetDirListing( "Packages/"+m_sEndName, AddTo, false, false );
-		if ( AddTo.size() > 0 )
-		{
-			m_sStatus = "File Already Exists";
-			UpdateProgress();
-			return;
-		}
-
 		if( !m_fOutputFile.Open( sDestFile, RageFile::WRITE | RageFile::STREAMED ) )
 		{
 			m_sStatus = m_fOutputFile.GetError();
@@ -138,7 +136,7 @@ void FileDownload::StartDownload( const RString &sURL, const RString &sDestFile 
 			return;
 		}
 	}
-	//Continue...
+	// Continue...
 
 	sAddress = URLEncode( sAddress );
 
@@ -157,15 +155,64 @@ void FileDownload::StartDownload( const RString &sURL, const RString &sDestFile 
 		return;
 	}
 
-	//Produce HTTP header
+	// Produce HTTP header
+	RString sAction;
+	switch( type )
+	{
+	case upload: sAction = "POST"; break;
+	case download: sAction = "GET"; break;
+	}
 
-	RString Header="";
+	vector<RString> vsHeaders;
+	vsHeaders.push_back( sAction+" "+sAddress+" HTTP/1.0" );
+	vsHeaders.push_back( "Host: " + Server );
+	vsHeaders.push_back( "Cookie: " + g_sCookie.Get() );
+	vsHeaders.push_back( "Connection: closed" );
+	string sBoundary = "--ZzAaB03x";
+	vsHeaders.push_back( "Content-Type: multipart/form-data; boundary=" + sBoundary );
+	RString sRequestPayload;
+	if( type == upload )
+	{
+		RageFile f;
+		if( !f.Open( sSrcFile ) )
+			FAIL_M( f.GetError() );
+		sRequestPayload.reserve( f.GetFileSize() );
+		int iBytesRead = f.Read( sRequestPayload );
+		if( iBytesRead == -1 )
+			FAIL_M( f.GetError() );
 
-	Header = "GET "+sAddress+" HTTP/1.0\r\n";
-	Header+= "Host: " + Server + "\r\n";
-	Header+= "Connection: closed\r\n\r\n";
+		sRequestPayload = "--" + sBoundary + "\r\n" + 
+			"Content-Disposition: form-data; name=\"name\"\r\n" +
+			"\r\n" +
+			"Chris\r\n" +
+			"--" + sBoundary + "\r\n" + 
+			"Content-Disposition: form-data; name=\"userfile\"; filename=\"" + Basename(sSrcFile) + "\"\r\n" +
+			"Content-Type: application/zip\r\n" + 
+			"\r\n" +
+			sRequestPayload + "\r\n" +
+			"--" + sBoundary + "--";
+	}
+	/*
+	if( sRequestPayload.size() > 0 )
+	{
+		sHeader += "Content-Type: application/octet-stream\r\n";
+		sHeader += "Content-Length: multipart/form-data; boundary=" + sBoundary + "\r\n";
+		//sHeader += "Content-Length: " + ssprintf("%d",sRequestPayload.size()) + "\r\n";
+	}
+	*/
 
-	m_wSocket.SendData( Header.c_str(), Header.length() );
+	vsHeaders.push_back( "Content-Length: " + ssprintf("%d",sRequestPayload.size()) );
+
+	RString sHeader;
+	FOREACH_CONST( RString, vsHeaders, h )
+		sHeader += *h + "\r\n";
+	sHeader += "\r\n";
+
+	m_wSocket.SendData( sHeader.c_str(), sHeader.length() );
+	m_wSocket.SendData( "\r\n" );
+
+	m_wSocket.SendData( sRequestPayload.GetBuffer(), sRequestPayload.size() );
+
 	m_sStatus = "Header Sent.";
 	m_wSocket.blocking = false;
 	m_bIsDownloading = true;
@@ -187,14 +234,13 @@ static size_t FindEndOfHeaders( const RString &buf )
 		return string::npos;
 }
 
-void FileDownload::HTTPUpdate()
+void FileTransfer::HTTPUpdate()
 {
 	if( !m_bIsDownloading )
 		return;
 
 	int BytesGot=0;
-	//Keep this as a code block
-	//as there may be need to "if" it out some time.
+	// Keep this as a code block, as there may be need to "if" it out some time.
 	/* If you need a conditional for a large block of code, stick it in
 	 * a function and return. */
 	while(1)
@@ -211,7 +257,7 @@ void FileDownload::HTTPUpdate()
 	if( !m_bGotHeader )
 	{
 		m_sStatus = "Waiting for header.";
-		//We don't know if we are using unix-style or dos-style
+		// We don't know if we are using unix-style or dos-style
 		size_t iHeaderEnd = FindEndOfHeaders( m_sBUFFER );
 		if( iHeaderEnd == m_sBUFFER.npos )
 			return;
@@ -235,20 +281,20 @@ void FileDownload::HTTPUpdate()
 		if( i != string::npos )
 			m_iTotalBytes = atoi(m_sBUFFER.substr(i+16,j-i).c_str());
 		else
-			m_iTotalBytes = -1;	//We don't know, so go until disconnect
+			m_iTotalBytes = -1;	// We don't know, so go until disconnect
 
 		m_bGotHeader = true;
 		m_sBUFFER.erase( 0, iHeaderEnd );
 	}
 
-	if( m_bIsPackage )
+	if( m_bSavingFile )
 	{
 		m_iDownloaded += m_sBUFFER.length();
 		m_fOutputFile.Write( m_sBUFFER );
 
-		// HACK: We're ending up with incomplete files after close() if we don't flush here.  Why?
+		// HACK: We're ending up with incomplete files after close() if we don't flush here. Why?
 		m_fOutputFile.Flush();
-		
+
 		m_sBUFFER = "";
 	}
 	else
@@ -260,8 +306,8 @@ void FileDownload::HTTPUpdate()
 					//We have the full doc. (And we knew how big it was)
 		( m_iTotalBytes == -1 && 
 			( m_wSocket.state == EzSockets::skERROR || m_wSocket.state == EzSockets::skDISCONNECTED ) ) )
-				//We didn't know how big it was, and were disconnected
-				//So that means we have it all.
+				// We didn't know how big it was, and were disconnected
+				// So that means we have it all.
 	{
 		m_wSocket.close();
 		m_bIsDownloading = false;
@@ -275,7 +321,7 @@ void FileDownload::HTTPUpdate()
 		}
 		else
 		{
-			if( m_bIsPackage && m_iResponseCode < 300 )
+			if( m_bSavingFile && m_iResponseCode < 300 )
 			{
 				RString sZipFile = m_fOutputFile.GetRealPath();
 				m_fOutputFile.Close();
@@ -286,7 +332,7 @@ void FileDownload::HTTPUpdate()
 	}
 }
 
-bool FileDownload::ParseHTTPAddress( const RString &URL, RString &sProto, RString &sServer, int &iPort, RString &sAddress )
+bool FileTransfer::ParseHTTPAddress( const RString &URL, RString &sProto, RString &sServer, int &iPort, RString &sAddress )
 {
 	// [PROTO://]SERVER[:PORT][/URL]
 
@@ -316,9 +362,16 @@ bool FileDownload::ParseHTTPAddress( const RString &URL, RString &sProto, RStrin
 	return true;
 }
 
-bool FileDownload::IsFinished()
+void FileTransfer::Finish()
 {
-	return m_bFinished;
+	while( true )
+	{
+		float fSleepSeconds = 0.1f;
+		this->Update( fSleepSeconds );
+		usleep( int( fSleepSeconds * 1000000.0 ) );
+		if( this->IsFinished() )
+			break;
+	}
 }
 
 #endif
