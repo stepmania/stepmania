@@ -370,7 +370,7 @@ RString StepMania::GetInitialScreen()
 	return INITIAL_SCREEN.GetValue();
 }
 ThemeMetric<RString>	SELECT_MUSIC_SCREEN	("Common","SelectMusicScreen");
-RString StepMania::GetInitialScreen()
+RString StepMania::GetSelectMusicScreen()
 {
 	return SELECT_MUSIC_SCREEN.GetValue();
 }
@@ -1042,17 +1042,9 @@ int main(int argc, char* argv[])
 	GAMESTATE	= new GameState;
 
 	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
-	LoadingWindow *pLoadingWindow = NULL;
-	switch( runmode )
-	{
-	case RunMode_Normal:
-		pLoadingWindow = LoadingWindow::Create();
-		if( pLoadingWindow == NULL )
-			RageException::Throw( "%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str() );
-		break;
-	default:
-		;	// no loading window for other RunModes
-	}
+	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
+	if(pLoadingWindow == NULL)
+		RageException::Throw("%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str());
 
 	srand( time(NULL) ); // seed number generator
 
