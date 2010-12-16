@@ -1,7 +1,7 @@
 sm-ssc Changelog
 ________________________________________________________________________________
-The sm-ssc changelog mainly deals with source code-related changes, as theme
-changes happen at a rapid pace.
+The sm-ssc changelog mostly deals with source code-related changes,
+as theme changes happen at a rapid pace.
 
 Changes are grouped by date.
 Not all changes are documented, for various reasons.
@@ -9,9 +9,25 @@ Not all changes are documented, for various reasons.
 supported but exist anyways.)
 _____________________________________________________________________________
 
+================================================================================
+sm-ssc v1.2 | 201012xx
+--------------------------------------------------------------------------------
+
+20101215
+--------
+* Transplanted file download code from SM4 into sm-ssc.
+  sm-ssc can now handle the stepmania:// url protocol. [Chris Danford, freem]
+
 20101214
 --------
-* [RollingNumbers] Added Load(sMetricsGroup) Lua binding.
+* [RollingNumbers] Added Load(sMetricsGroup) Lua binding. [freem]
+* Modifications to pump mode spacing. [Daisuke Master]
+* Add eval song data for songs with no banner. [Midiman]
+
+20101213
+--------
+* [EditMenu] Enable the EditMenu to be themed more extensively. [freem]
+  Splits out the rows into Label and Value.
 
 20101212
 --------
@@ -33,6 +49,10 @@ _____________________________________________________________________________
   banner is changed.
   Label#GainFocus/LoseFocusCommand and Value#GainFocus/LoseFocusCommand - runs
   when the Label and Value gain/lose focus.
+
+20101128
+--------
+* Increased default scrolling speed. Modifies how the speed mods work. [shakesoda]
 
 ================================================================================
 sm-ssc v1.1 | 20101120
