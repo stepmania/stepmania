@@ -225,6 +225,12 @@ Section "Main Section" SecMain
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\StepMania.exe,1"
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\StepMania.exe" "%1"'
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
+
+	; url protocol handler
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania" "" "StepMania protocol handler"
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania" "URL Protocol" ""
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania\DefaultIcon" "" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania\shell\open\command" "" '"$INSTDIR\Program\${PRODUCT_FAMILY}.exe" "%1"'
 !endif
 
 !ifdef INSTALL_NON_PCK_FILES
