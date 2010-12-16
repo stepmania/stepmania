@@ -369,6 +369,11 @@ RString StepMania::GetInitialScreen()
 		return PREFSMAN->m_sTestInitialScreen;
 	return INITIAL_SCREEN.GetValue();
 }
+ThemeMetric<RString>	SELECT_MUSIC_SCREEN	("Common","SelectMusicScreen");
+RString StepMania::GetInitialScreen()
+{
+	return SELECT_MUSIC_SCREEN.GetValue();
+}
 
 #if defined(WIN32)
 static Preference<int> g_iLastSeenMemory( "LastSeenMemory", 0 );
@@ -959,25 +964,6 @@ int main(int argc, char* argv[])
 
 	SetCommandlineArguments( argc, argv );
 
-
-	enum RunMode
-	{ 
-		RunMode_Normal, 
-		RunMode_Install, 
-		RunMode_ExportNsisStrings, 
-		RunMode_ExportLuaInformation,
-		RunMode_DisplayVersion,
-	};
-	RunMode runmode = RunMode_Normal;
-	if( CommandLineActions::AnyPackageFilesInCommandLine() )
-		runmode = RunMode_Install;
-	else if( GetCommandlineArgument("ExportNsisStrings") )
-		runmode = RunMode_ExportNsisStrings;
-	else if( GetCommandlineArgument("ExportLuaInformation") )
-		runmode = RunMode_ExportLuaInformation;
-	else if( GetCommandlineArgument("version") )
-		runmode = RunMode_DisplayVersion;
-
 	// Set up arch hooks first.  This may set up crash handling.
 	HOOKS = ArchHooks::Create();
 	HOOKS->Init();
@@ -990,7 +976,6 @@ int main(int argc, char* argv[])
 	bool bPortable = DoesFileExist("Portable.ini");
 	if( !bPortable )
 		FILEMAN->MountUserFilesystems();
-
 
 	// Set this up next. Do this early, since it's needed for RageException::Throw.
 	LOG		= new RageLog;
@@ -1091,36 +1076,7 @@ int main(int argc, char* argv[])
 	// Switch to the last used game type, and set up the theme and announcer.
 	SwitchToLastPlayedGame();
 
-	// Handle special RunModes.  Some of these depend on ThemeManager being loaded above in SwitchToLastPlayedGame.
-	switch( runmode )
-	{
-	DEFAULT_FAIL( runmode );
-	case RunMode_Normal:
-		break;
-	case RunMode_Install:
-	case RunMode_ExportNsisStrings:
-	case RunMode_ExportLuaInformation:
-	case RunMode_DisplayVersion:
-		THEME->SwitchThemeAndLanguage( "default", PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
-		switch( runmode )
-		{
-		DEFAULT_FAIL( runmode );
-		case RunMode_Install:
-			CommandLineActions::Install();
-			break;
-		case RunMode_ExportNsisStrings:
-			CommandLineActions::Nsis();
-			break;
-		case RunMode_ExportLuaInformation:
-			CommandLineActions::LuaInformation();
-			break;
-		case RunMode_DisplayVersion:
-			CommandLineActions::Version();
-			break;
-		};
-		exit(0);
-	}
-
+	CommandLineActions::Handle(pLoadingWindow);
 
 	{
 		/* Now that THEME is loaded, load the icon for the current theme into
