@@ -1,30 +1,17 @@
-#ifndef DIALOG_BOX_H
-#define DIALOG_BOX_H
+#ifndef ARCH_PLATFORM_H
+#define ARCH_PLATFORM_H
 
-namespace Dialog
-{
-	/* ID can be used to identify a class of messages, for "don't display this
-	 * dialog"-type prompts. */
-	void Init();
-	void Shutdown();
-
-	void SetWindowed( bool bWindowed );
-
-	enum Result { ok, cancel, abort, retry, ignore };
-	void Error( RString sError, RString sID = "" );
-	void OK( RString sMessage, RString sID = "" );
-	Result OKCancel( RString sMessage, RString sID = "" );
-	Result AbortRetryIgnore( RString sMessage, RString sID = "" );
-	Result AbortRetry( RString sMessage, RString sID = "" );
-
-	/* for DialogDrivers */
-	void IgnoreMessage( RString sID );
-}
+// In here, you define which APIs are guaranteed to be available on which OSes.
+// Don't ever actually #include anything here -- that's for */Selector_*.h.
+#if defined(_WINDOWS)
+#define HAVE_DIRECTX
+#define HAVE_FFMPEG
+#endif
 
 #endif
 
 /*
- * (c) 2003-2004 Glenn Maynard, Chris Danford
+ * (c) 2002-2005 Glenn Maynard, Ben Anderson
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -1868,7 +1868,15 @@
 				Name="arch"
 				>
 				<File
+					RelativePath=".\arch\arch.h"
+					>
+				</File>
+				<File
 					RelativePath="arch\arch_default.h"
+					>
+				</File>
+				<File
+					RelativePath=".\arch\arch_platform.h"
 					>
 				</File>
 				<File
@@ -2300,6 +2308,10 @@
 					</File>
 					<File
 						RelativePath="arch\Dialog\DialogDriver_Win32.h"
+						>
+					</File>
+					<File
+						RelativePath=".\arch\Dialog\Selector_Dialog.h"
 						>
 					</File>
 				</Filter>

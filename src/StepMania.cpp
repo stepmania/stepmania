@@ -989,7 +989,7 @@ int main(int argc, char* argv[])
 	 * so ArchHooks can use a preference to turn this off.  We want to do this before ApplyLogPreferences,
 	 * so if we exit because of another instance, we don't try to clobber its log.  We also want to
 	 * do this before opening the loading window, so if we give focus away, we don't flash the window. */
-	if( !g_bAllowMultipleInstances.Get() && HOOKS->CheckForMultipleInstances() )
+	if(!g_bAllowMultipleInstances.Get() && HOOKS->CheckForMultipleInstances(argc, argv))
 	{
 		ShutdownGame();
 		return 0;

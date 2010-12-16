@@ -1,30 +1,52 @@
-#ifndef DIALOG_BOX_H
-#define DIALOG_BOX_H
+#ifndef ARCH_H
+#define ARCH_H
 
-namespace Dialog
-{
-	/* ID can be used to identify a class of messages, for "don't display this
-	 * dialog"-type prompts. */
-	void Init();
-	void Shutdown();
+#include "RageTextureID.h"
 
-	void SetWindowed( bool bWindowed );
+// Put renderers switch here, makes things cleaner
+#if defined(_WINDOWS)
+#define SUPPORT_OPENGL
+#define SUPPORT_D3D
+#elif defined(_XBOX)
+#define SUPPORT_D3D
+#else
+#define SUPPORT_OPENGL
+#endif
 
-	enum Result { ok, cancel, abort, retry, ignore };
-	void Error( RString sError, RString sID = "" );
-	void OK( RString sMessage, RString sID = "" );
-	Result OKCancel( RString sMessage, RString sID = "" );
-	Result AbortRetryIgnore( RString sMessage, RString sID = "" );
-	Result AbortRetry( RString sMessage, RString sID = "" );
+// Include this file if you need to create an instance of a driver object.
+class ArchHooks;
+ArchHooks *MakeArchHooks();
 
-	/* for DialogDrivers */
-	void IgnoreMessage( RString sID );
-}
+class DialogDriver;
+DialogDriver *MakeDialogDriver();
+
+class InputHandler;
+void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add );
+
+class LightsDriver;
+void MakeLightsDrivers( const RString &drivers, vector<LightsDriver *> &Add );
+
+class LoadingWindow;
+LoadingWindow *MakeLoadingWindow();
+
+#if defined(SUPPORT_OPENGL)
+class LowLevelWindow;
+LowLevelWindow *MakeLowLevelWindow();
+#endif
+
+class MemoryCardDriver;
+MemoryCardDriver *MakeMemoryCardDriver();
+
+class RageMovieTexture;
+RageMovieTexture *MakeRageMovieTexture( RageTextureID ID );
+
+class RageSoundDriver;
+RageSoundDriver *MakeRageSoundDriver( const RString &drivers );
 
 #endif
 
 /*
- * (c) 2003-2004 Glenn Maynard, Chris Danford
+ * (c) 2002-2005 Glenn Maynard, Ben Anderson
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

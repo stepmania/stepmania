@@ -1,30 +1,22 @@
-#ifndef DIALOG_BOX_H
-#define DIALOG_BOX_H
+#ifndef SELECTOR_DIALOG
+#define SELECTOR_DIALOG
 
-namespace Dialog
-{
-	/* ID can be used to identify a class of messages, for "don't display this
-	 * dialog"-type prompts. */
-	void Init();
-	void Shutdown();
+#include "arch/arch_platform.h"
 
-	void SetWindowed( bool bWindowed );
+// Dialog drivers selector.
+#if defined(WIN32)
+#include "DialogDriver_Win32.h"
 
-	enum Result { ok, cancel, abort, retry, ignore };
-	void Error( RString sError, RString sID = "" );
-	void OK( RString sMessage, RString sID = "" );
-	Result OKCancel( RString sMessage, RString sID = "" );
-	Result AbortRetryIgnore( RString sMessage, RString sID = "" );
-	Result AbortRetry( RString sMessage, RString sID = "" );
+#elif defined(MACOSX)
+#include "DialogDriver_Cocoa.h"
+#endif
 
-	/* for DialogDrivers */
-	void IgnoreMessage( RString sID );
-}
+#include "DialogDriver.h" // DialogDriver_Null is in here
 
 #endif
 
 /*
- * (c) 2003-2004 Glenn Maynard, Chris Danford
+ * (c) 2005 Ben Anderson.
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
