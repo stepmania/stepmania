@@ -12,6 +12,11 @@
 #include "arch/Dialog/Dialog.h"
 #include "RageFileManager.h"
 #include "SpecialFiles.h"
+#include "FileDownload.h"
+#include "arch/LoadingWindow/LoadingWindow.h"
+#include "Preference.h"
+#include "JsonUtil.h"
+#include "ScreenInstallOverlay.h"
 
 // only used for Version()
 #if defined(_WINDOWS)
@@ -21,154 +26,52 @@
 
 const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
 
-static const RString TEMP_ZIP_MOUNT_POINT = "/@temp-zip/";
+vector<CommandLineActions::CommandLineArgs> CommandLineActions::ToProcess;
 
-static bool IsPackageFile( RString sFile )
-{
-	RString sOsDir, sFilename, sExt;
-	splitpath( sFile, sOsDir, sFilename, sExt );
-
-	return sExt.EqualsNoCase(".smzip")  ||  sExt.EqualsNoCase(".zip");
-}
-
-static void GetPackageFilesToInstall( vector<RString> &vs )
-{
-	int argc;
-	char **argv;
-	GetCommandLineArguments( argc, argv );
-
-	for( int i = 1; i<argc; ++i )
-		vs.push_back( argv[i] );
-
-	bool bFoundOne = false;
-	FOREACH( RString, vs, s )
-	{
-		if( IsPackageFile(*s) )
-		{
-			bFoundOne = true;
-			break;
-		}
-	}
-	if( !bFoundOne )
-		vs.clear();
-}
-
-bool CommandLineActions::AnyPackageFilesInCommandLine()
-{
-	vector<RString> vs;
-	GetPackageFilesToInstall( vs );
-	return !vs.empty();
-}
-
-
-struct FileCopyResult
-{
-	FileCopyResult( RString _sFile, RString _sComment ) : sFile(_sFile), sComment(_sComment) {}
-	RString sFile, sComment;
-};
-
-void CommandLineActions::Install()
-{
-	vector<FileCopyResult> vSucceeded;
-	vector<FileCopyResult> vFailed;
-
-	vector<RString> vs;
-	GetPackageFilesToInstall( vs );
-	FOREACH_CONST( RString, vs, s )
-	{
-		if( !IsPackageFile(*s) )
-		{
-			vFailed.push_back( FileCopyResult(*s,"wrong file extension") );
-			continue;
-		}
-
-		RString sOsDir, sFilename, sExt;
-		splitpath( *s, sOsDir, sFilename, sExt );
-
-		FILEMAN->Mount( "dir", sOsDir, TEMP_ZIP_MOUNT_POINT );
-
-		// TODO: Validate that this zip contains files for this version of StepMania
-
-		bool bFileExists = DoesFileExist( SpecialFiles::USER_PACKAGES_DIR + sFilename + sExt );
-		if( FileCopy( TEMP_ZIP_MOUNT_POINT + sFilename + sExt, SpecialFiles::USER_PACKAGES_DIR + sFilename + sExt ) )
-			vSucceeded.push_back( FileCopyResult(*s,bFileExists ? "overwrote existing file" : "") );
-		else
-			vFailed.push_back( FileCopyResult(*s,ssprintf("error copying file to '%s'",sOsDir.c_str())) );
-
-		FILEMAN->Unmount( "dir", sOsDir, TEMP_ZIP_MOUNT_POINT );
-	}
-	if( vSucceeded.empty()  &&  vFailed.empty() )
-	{
-		Dialog::OK( "Install: no files specified" );
-		return;
-	}
-
-
-	RString sMessage;
-	for( int i=0; i<2; i++ )
-	{
-		const vector<FileCopyResult> &v = (i==0) ? vSucceeded : vFailed;
-		if( !v.empty() )
-		{
-			sMessage += (i==0) ? "Install succeeded for:\n" : "Install failed for:\n";
-			FOREACH_CONST( FileCopyResult, v, iter )
-			{
-				sMessage += "  - " + iter->sFile;
-				if( !iter->sComment.empty() )
-					sMessage += " : " + iter->sComment;
-				sMessage += "\n";
-			}
-			sMessage += "\n";
-		}
-	}
-	Dialog::OK( sMessage );
-}
-
-void CommandLineActions::Nsis()
+static void Nsis()
 {
 	RageFile out;
-	if( !out.Open( "nsis_strings_temp.inc", RageFile::WRITE ) )
-		RageException::Throw( "Error opening file for write." );
+	if(!out.Open("nsis_strings_temp.inc", RageFile::WRITE))
+		RageException::Throw("Error opening file for write.");
 
 	vector<RString> vs;
-	GetDirListing( INSTALLER_LANGUAGES_DIR + "*.ini", vs, false, false );
-	FOREACH_CONST( RString, vs, s )
+	GetDirListing(INSTALLER_LANGUAGES_DIR + "*.ini", vs, false, false);
+	FOREACH_CONST(RString, vs, s)
 	{
 		RString sThrowAway, sLangCode;
-		splitpath( *s, sThrowAway, sLangCode, sThrowAway );
-		const LanguageInfo *pLI = GetLanguageInfo( sLangCode );
+		splitpath(*s, sThrowAway, sLangCode, sThrowAway);
+		const LanguageInfo *pLI = GetLanguageInfo(sLangCode);
 
 		RString sLangNameUpper = pLI->szEnglishName;
 		sLangNameUpper.MakeUpper();
 
 		IniFile ini;
-		if( !ini.ReadFile( INSTALLER_LANGUAGES_DIR + *s ) )
-			RageException::Throw( "Error opening file for read." );
-		FOREACH_CONST_Child( &ini, child )
+		if(!ini.ReadFile(INSTALLER_LANGUAGES_DIR + *s))
+			RageException::Throw("Error opening file for read.");
+		FOREACH_CONST_Child(&ini, child)
 		{
-			FOREACH_CONST_Attr( child, attr )
+			FOREACH_CONST_Attr(child, attr)
 			{
 				RString sName = attr->first;
 				RString sValue = attr->second->GetValue<RString>();
-				sValue.Replace( "\\n", "$\\n" );
-				RString sLine = ssprintf( "LangString %s ${LANG_%s} \"%s\"", sName.c_str(), sLangNameUpper.c_str(), sValue.c_str() );
-				out.PutLine( sLine );
+				sValue.Replace("\\n", "$\\n");
+				RString sLine = ssprintf("LangString %s ${LANG_%s} \"%s\"", sName.c_str(), sLangNameUpper.c_str(), sValue.c_str());
+				out.PutLine(sLine);
 			}
 		}
 	}
 }
-
-void CommandLineActions::LuaInformation()
+static void LuaInformation()
 {
 	XNode *pNode = LuaHelpers::GetLuaInformation();
-	pNode->AppendAttr( "xmlns", "http://www.stepmania.com" );
-	pNode->AppendAttr( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-	pNode->AppendAttr( "xsi:schemaLocation", "http://www.stepmania.com Lua.xsd" );
+	pNode->AppendAttr("xmlns", "http://www.stepmania.com");
+	pNode->AppendAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+	pNode->AppendAttr("xsi:schemaLocation", "http://www.stepmania.com Lua.xsd");
 
-	pNode->AppendChild( "Version", PRODUCT_ID_VER );
-	pNode->AppendChild( "Date", DateTime::GetNowDate().GetString() );
+	pNode->AppendChild("Version", PRODUCT_ID_VER);
+	pNode->AppendChild("Date", DateTime::GetNowDate().GetString());
 
-	XmlFileUtil::SaveToFile( pNode, "Lua.xml", "Lua.xsl" );
+	XmlFileUtil::SaveToFile(pNode, "Lua.xml", "Lua.xsl");
 
 	delete pNode;
 }
@@ -179,26 +82,53 @@ extern const char *const version_date;
 extern const char *const version_time;
 #endif
 
-void CommandLineActions::Version()
+static void Version()
 {
 	/* HACK: This is only needed on Windows.
 	Mac and Linux print out version information on the command line regardless
 	of any preferences (tested by shakesoda on Mac). -aj */
-	#if defined(WIN32) && !defined(_XBOX)
-		RString sProductID = ssprintf( "%s", PRODUCT_ID_VER );
+	#if defined(WIN32)
+		RString sProductID = ssprintf("%s", PRODUCT_ID_VER);
 		RString sVersion = "(sm-ssc was built without HAVE_VERSION_INFO)";
 		#if defined(HAVE_VERSION_INFO)
-			sVersion = ssprintf( "build %lu\nCompile Date: %s @ %s", version_num, version_date, version_time );
+			sVersion = ssprintf("build %lu\nCompile Date: %s @ %s", version_num, version_date, version_time);
 		#endif // HAVE_VERSION_INFO
 
 		AllocConsole();
-		freopen( "CONOUT$","wb", stdout );
-		freopen( "CONOUT$","wb", stderr );
+		freopen("CONOUT$","wb", stdout);
+		freopen("CONOUT$","wb", stderr);
 
-		fprintf(stdout, "Version Information:\n%s %s\n", sProductID.c_str(), sVersion.c_str() );
-		fprintf(stdout, "Press any key to exit." );
+		fprintf(stdout, "Version Information:\n%s %s\n", sProductID.c_str(), sVersion.c_str());
+		fprintf(stdout, "Press any key to exit.");
 		_getch();
-	#endif // WIN32 && !_XBOX
+	#endif // WIN32
+}
+
+void CommandLineActions::Handle(LoadingWindow* pLW)
+{
+	CommandLineArgs args;
+	for(int i=0; i<g_argc; ++i)
+		args.argv.push_back(g_argv[i]);
+	ToProcess.push_back(args);
+
+	bool bExitAfter = false;
+	if( GetCommandlineArgument("ExportNsisStrings") )
+	{
+		Nsis();
+		bExitAfter = true;
+	}
+	if( GetCommandlineArgument("ExportLuaInformation") )
+	{
+		LuaInformation();
+		bExitAfter = true;
+	}
+	if( GetCommandlineArgument("version") )
+	{
+		Version();
+		bExitAfter = true;
+	}
+	if( bExitAfter )
+		exit(0);
 }
 
 /*
