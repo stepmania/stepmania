@@ -60,6 +60,7 @@ ScreenGameplayShared.cpp ScreenGameplayShared.h \
 ScreenGameplaySyncMachine.cpp ScreenGameplaySyncMachine.h \
 ScreenHighScores.cpp ScreenHighScores.h \
 ScreenHowToPlay.cpp ScreenHowToPlay.h \
+ScreenInstallOverlay.cpp ScreenInstallOverlay.h \
 ScreenInstructions.cpp ScreenInstructions.h \
 ScreenJukebox.cpp ScreenJukebox.h \
 ScreenMapControllers.cpp ScreenMapControllers.h \
@@ -124,6 +125,7 @@ DateTime.cpp DateTime.h \
 Difficulty.cpp Difficulty.h \
 DisplayResolutions.h \
 EnumHelper.cpp EnumHelper.h \
+FileDownload.cpp FileDownload.h \
 Font.cpp Font.h \
 FontCharAliases.cpp FontCharAliases.h \
 FontCharmaps.cpp FontCharmaps.h Game.cpp Game.h GameCommand.cpp GameCommand.h \
@@ -134,6 +136,7 @@ GameInput.cpp GameInput.h Grade.cpp Grade.h \
 HighScore.cpp HighScore.h \
 InputEventPlus.h \
 Inventory.cpp Inventory.h \
+JsonUtil.cpp JsonUtil.h \
 LocalizedString.cpp LocalizedString.h \
 LuaReference.cpp LuaReference.h \
 LuaExpressionTransform.cpp LuaExpressionTransform.h \
@@ -367,6 +370,9 @@ lua-5.1/src/lmem.h lua-5.1/src/lobject.h lua-5.1/src/lopcodes.h lua-5.1/src/lpar
 lua-5.1/src/lstring.h lua-5.1/src/ltable.h lua-5.1/src/ltm.h lua-5.1/src/luaconf.h lua-5.1/src/lua.h lua-5.1/src/lualib.h \
 lua-5.1/src/lundump.h lua-5.1/src/lvm.h lua-5.1/src/lzio.h
 
+jsoncpp = jsoncpp/src/lib_json/json_reader.cpp jsoncpp/src/lib_json/json_value.cpp \
+jsoncpp/src/lib_json/json_writer.cpp
+
 RageFile = \
 RageFileBasic.cpp RageFileBasic.h \
 RageFile.cpp RageFile.h RageFileDriver.cpp RageFileDriver.h RageFileManager.cpp RageFileManager.h \
@@ -378,7 +384,7 @@ RageFileDriverReadAhead.cpp RageFileDriverReadAhead.h \
 RageFileDriverSlice.cpp RageFileDriverSlice.h \
 RageFileDriverTimeout.cpp RageFileDriverTimeout.h
 
-Rage = $(PCRE) $(Lua) $(RageFile) $(RageSoundFileReaders) \
+Rage = $(PCRE) $(Lua) $(jsoncpp) $(RageFile) $(RageSoundFileReaders) \
 RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h \
 RageDisplay_OGL_Helpers.cpp RageDisplay_OGL_Helpers.h glext.h \
 RageDisplay_Null.cpp RageDisplay_Null.h RageException.cpp RageException.h RageInput.cpp RageInput.h \

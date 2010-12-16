@@ -50,7 +50,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -157,7 +157,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -261,7 +261,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
@@ -368,7 +368,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1\include&quot;;ffmpeg\modern_working\include;BaseClasses;jsoncpp/include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -586,6 +586,14 @@
 			</File>
 			<File
 				RelativePath="ScreenHowToPlay.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenInstallOverlay.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenInstallOverlay.h"
 				>
 			</File>
 			<File
@@ -1201,6 +1209,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FileDownload.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FileDownload.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Font.cpp"
 				>
 			</File>
@@ -1302,6 +1318,14 @@
 			</File>
 			<File
 				RelativePath="Inventory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\JsonUtil.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\JsonUtil.h"
 				>
 			</File>
 			<File
@@ -5045,6 +5069,46 @@
 					<File
 						RelativePath=".\lua-5.1\src\lzio.h"
 						>
+					</File>
+				</Filter>
+				<Filter
+					Name="jsoncpp"
+					>
+					<File
+						RelativePath=".\jsoncpp\src\lib_json\json_reader.cpp"
+						>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\jsoncpp\src\lib_json\json_value.cpp"
+						>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\jsoncpp\src\lib_json\json_writer.cpp"
+						>
+						<FileConfiguration
+							Name="Release-SSE2|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 				</Filter>
 			</Filter>
