@@ -13,7 +13,7 @@ public:
 	void DumpDebugInfo();
 	void RestartProgram();
 	RString GetMachineId() const;
-	bool CheckForMultipleInstances();
+	bool CheckForMultipleInstances(int argc, char* argv[]);
 
 	void SetTime( tm newtime );
 

@@ -81,7 +81,6 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 	}
 }
 
-
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.

@@ -11,6 +11,7 @@ public:
 
 	virtual void Error( RString sMessage, RString sID ) { printf("Error: %s\n", sMessage.c_str()); }
 	virtual void OK( RString sMessage, RString sID ) {}
+	virtual Dialog::Result OKCancel( RString sMessage, RString sID ) { return Dialog::ok; }
 	virtual Dialog::Result AbortRetryIgnore( RString sMessage, RString sID ) { return Dialog::ignore; } 
 	virtual Dialog::Result AbortRetry( RString sMessage, RString sID ) { return Dialog::abort; } 
 
@@ -18,6 +19,7 @@ public:
 	virtual ~DialogDriver() { }
 };
 class DialogDriver_Null : public DialogDriver { };
+#define USE_DIALOG_DRIVER_NULL
 
 typedef DialogDriver *(*CreateDialogDriverFn)();
 struct RegisterDialogDriver
@@ -27,7 +29,6 @@ struct RegisterDialogDriver
 };
 #define REGISTER_DIALOG_DRIVER_CLASS( name ) \
 	static RegisterDialogDriver register_##name( #name, CreateClass<DialogDriver_##name, DialogDriver> )
-
 
 #endif
 

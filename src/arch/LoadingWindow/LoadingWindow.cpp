@@ -11,7 +11,7 @@ LoadingWindow *LoadingWindow::Create()
 #if defined(UNIX) && !defined(HAVE_GTK)
 	return new LoadingWindow_Null;
 #endif
-	/* Don't load NULL by default. */
+	// Don't load NULL by default.
 	const RString drivers = "xbox,win32,macosx,gtk";
 	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
@@ -39,7 +39,6 @@ LoadingWindow *LoadingWindow::Create()
 #endif
 		if( !DriversToTry[i].CompareNoCase("Null") )	ret = new LoadingWindow_Null;
 
-			
 		if( ret == NULL )
 			continue;
 
@@ -50,10 +49,10 @@ LoadingWindow *LoadingWindow::Create()
 			SAFE_DELETE( ret );
 		}
 	}
-	
+
 	if( ret )
 		LOG->Info( "Loading window: %s", Driver.c_str() );
-	
+
 	return ret;
 }
 

@@ -13,6 +13,7 @@ namespace Dialog
 	enum Result { abort, retry, ignore };
 	void Error( RString sError, RString sID = "" );
 	void OK( RString sMessage, RString sID = "" );
+	Result OKCancel( RString sMessage, RString sID = "" );
 	Result AbortRetryIgnore( RString sMessage, RString sID = "" );
 	Result AbortRetry( RString sMessage, RString sID = "" );
 

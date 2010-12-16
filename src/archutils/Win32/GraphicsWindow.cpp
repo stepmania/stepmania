@@ -11,6 +11,7 @@
 #include "archutils/Win32/ErrorStrings.h"
 #include "archutils/Win32/WindowIcon.h"
 #include "archutils/Win32/GetFileInformation.h"
+#include "CommandLineActions.h"
 
 #include <set>
 
@@ -25,7 +26,7 @@ static HICON g_hIcon = NULL;
 static bool m_bWideWindowClass;
 static bool g_bD3D = false;
 
-/* If we're fullscreen, this is the mode we set. */
+// If we're fullscreen, this is the mode we set.
 static DEVMODE g_FullScreenDevMode;
 static bool g_bRecreatingVideoMode = false;
 
@@ -58,108 +59,117 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 
 	switch( msg )
 	{
-	case WM_ACTIVATE:
-	{
-		const bool bInactive = (LOWORD(wParam) == WA_INACTIVE);
-		const bool bMinimized = (HIWORD(wParam) != 0);
-		const bool bHadFocus = g_bHasFocus;
-		g_bHasFocus = !bInactive && !bMinimized;
-		LOG->Trace( "WM_ACTIVATE (%i, %i): %s", bInactive, bMinimized, g_bHasFocus? "has focus":"doesn't have focus" );
-		if( !g_bHasFocus )
+		case WM_ACTIVATE:
 		{
-			RString sName = GetNewWindow();
-			static set<RString> sLostFocusTo;
-			sLostFocusTo.insert( sName );
-			RString sStr;
-			for( set<RString>::const_iterator it = sLostFocusTo.begin(); it != sLostFocusTo.end(); ++it )
-				sStr += (sStr.size()?", ":"") + *it;
-
-			LOG->MapLog( "LOST_FOCUS", "Lost focus to: %s", sStr.c_str() );
-		}
-
-		if( !g_bD3D && !g_CurrentParams.windowed && !g_bRecreatingVideoMode )
-		{
-			/* In OpenGL (not D3D), it's our job to unset and reset the full-screen video mode
-			 * when we focus changes, and to hide and show the window.  Hiding is done in WM_KILLFOCUS,
-			 * because that's where most other apps seem to do it. */
-			if( g_bHasFocus && !bHadFocus )
+			const bool bInactive = (LOWORD(wParam) == WA_INACTIVE);
+			const bool bMinimized = (HIWORD(wParam) != 0);
+			const bool bHadFocus = g_bHasFocus;
+			g_bHasFocus = !bInactive && !bMinimized;
+			LOG->Trace( "WM_ACTIVATE (%i, %i): %s", bInactive, bMinimized, g_bHasFocus? "has focus":"doesn't have focus" );
+			if( !g_bHasFocus )
 			{
-				ChangeDisplaySettings( &g_FullScreenDevMode, CDS_FULLSCREEN );
-				ShowWindow( g_hWndMain, SW_SHOWNORMAL );
+				RString sName = GetNewWindow();
+				static set<RString> sLostFocusTo;
+				sLostFocusTo.insert( sName );
+				RString sStr;
+				for( set<RString>::const_iterator it = sLostFocusTo.begin(); it != sLostFocusTo.end(); ++it )
+					sStr += (sStr.size()?", ":"") + *it;
+
+				LOG->MapLog( "LOST_FOCUS", "Lost focus to: %s", sStr.c_str() );
 			}
-			else if( !g_bHasFocus && bHadFocus )
+
+			if( !g_bD3D && !g_CurrentParams.windowed && !g_bRecreatingVideoMode )
 			{
-				ChangeDisplaySettings( NULL, 0 );
+				/* In OpenGL (not D3D), it's our job to unset and reset the full-screen video mode
+				 * when we focus changes, and to hide and show the window.  Hiding is done in WM_KILLFOCUS,
+				 * because that's where most other apps seem to do it. */
+				if( g_bHasFocus && !bHadFocus )
+				{
+					ChangeDisplaySettings( &g_FullScreenDevMode, CDS_FULLSCREEN );
+					ShowWindow( g_hWndMain, SW_SHOWNORMAL );
+				}
+				else if( !g_bHasFocus && bHadFocus )
+				{
+					ChangeDisplaySettings( NULL, 0 );
+				}
 			}
-		}
 
-		return 0;
-	}
-	case WM_KILLFOCUS:
-		if( !g_bD3D && !g_CurrentParams.windowed && !g_bRecreatingVideoMode )
-			ShowWindow( g_hWndMain, SW_SHOWMINNOACTIVE );
-		break;
-
-	/* Is there any reason we should care what size the user resizes the window to? */
-//	case WM_GETMINMAXINFO:
-
-	case WM_SETCURSOR:
-		if( !g_CurrentParams.windowed )
-		{
-			SetCursor( NULL );
-			return 1;
-		}
-		break;
-
-	case WM_SYSCOMMAND:
-		switch( wParam&0xFFF0 )
-		{
-		case SC_MONITORPOWER:
-		case SC_SCREENSAVE:
 			return 0;
 		}
-		break;
-
-	case WM_PAINT:
-	{
-		PAINTSTRUCT ps;
-		BeginPaint( hWnd, &ps );
-		EndPaint( hWnd, &ps );
-		break;
-	}
-
-	case WM_KEYDOWN:
-	case WM_KEYUP:
-	case WM_SYSKEYDOWN:
-	case WM_SYSKEYUP:
-		/* We handle all input ourself, via DirectInput. */
-		return 0;
-
-	case WM_CLOSE:
-		LOG->Trace("WM_CLOSE: shutting down");
-		ArchHooks::SetUserQuit();
-		return 0;
-
-	case WM_WINDOWPOSCHANGED:
-	{
-		/* If we're fullscreen and don't have focus, our window is hidden, so GetClientRect
-		 * isn't meaningful. */
-		if( !g_CurrentParams.windowed && !g_bHasFocus )
+		case WM_KILLFOCUS:
+			if( !g_bD3D && !g_CurrentParams.windowed && !g_bRecreatingVideoMode )
+				ShowWindow( g_hWndMain, SW_SHOWMINNOACTIVE );
 			break;
 
-		RECT rect;
-		GetClientRect( hWnd, &rect );
+		/* Is there any reason we should care what size the user resizes the window to? */
+	//	case WM_GETMINMAXINFO:
 
-		int iWidth = rect.right - rect.left;
-		int iHeight = rect.bottom - rect.top;
-		if( g_CurrentParams.width != iWidth || g_CurrentParams.height != iHeight )
+		case WM_SETCURSOR:
+			if( !g_CurrentParams.windowed )
+			{
+				SetCursor( NULL );
+				return 1;
+			}
+			break;
+
+		case WM_SYSCOMMAND:
+			switch( wParam&0xFFF0 )
+			{
+			case SC_MONITORPOWER:
+			case SC_SCREENSAVE:
+				return 0;
+			}
+			break;
+
+		case WM_PAINT:
 		{
-			g_CurrentParams.width = iWidth;
-			g_CurrentParams.height = iHeight;
-			g_bResolutionChanged = true;
+			PAINTSTRUCT ps;
+			BeginPaint( hWnd, &ps );
+			EndPaint( hWnd, &ps );
+			break;
 		}
-		break;
-	}
+
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+		case WM_SYSKEYDOWN:
+		case WM_SYSKEYUP:
+			/* We handle all input ourself, via DirectInput. */
+			return 0;
+
+		case WM_CLOSE:
+			LOG->Trace("WM_CLOSE: shutting down");
+			ArchHooks::SetUserQuit();
+			return 0;
+
+		case WM_WINDOWPOSCHANGED:
+		{
+			/* If we're fullscreen and don't have focus, our window is hidden, so GetClientRect
+			 * isn't meaningful. */
+			if( !g_CurrentParams.windowed && !g_bHasFocus )
+				break;
+
+			RECT rect;
+			GetClientRect( hWnd, &rect );
+
+			int iWidth = rect.right - rect.left;
+			int iHeight = rect.bottom - rect.top;
+			if( g_CurrentParams.width != iWidth || g_CurrentParams.height != iHeight )
+			{
+				g_CurrentParams.width = iWidth;
+				g_CurrentParams.height = iHeight;
+				g_bResolutionChanged = true;
+			}
+			break;
+		}
+		case WM_COPYDATA:
+		{
+			PCOPYDATASTRUCT pMyCDS = (PCOPYDATASTRUCT) lParam;
+			RString sCommandLine( (char*)pMyCDS->lpData, pMyCDS->cbData );
+			CommandLineActions::CommandLineArgs args;
+			split( sCommandLine, "|", args.argv, false );
+			CommandLineActions::ToProcess.push_back( args );
+			break;
+		}
 	}
 
 	CHECKPOINT_M( ssprintf("%p, %u, %08x, %08x", hWnd, msg, wParam, lParam) );

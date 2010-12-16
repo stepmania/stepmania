@@ -8,7 +8,7 @@ RegisterDialogDriver::RegisterDialogDriver( const istring &sName, CreateDialogDr
 {
 	if( g_pRegistrees == NULL )
 		g_pRegistrees = new map<istring, CreateDialogDriverFn>;
-	
+
 	ASSERT( g_pRegistrees->find(sName) == g_pRegistrees->end() );
 	(*g_pRegistrees)[sName] = pfn;
 }
@@ -20,20 +20,20 @@ DialogDriver *DialogDriver::Create()
 	RString sDrivers = "win32,macosx,null";
 	vector<RString> asDriversToTry;
 	split( sDrivers, ",", asDriversToTry, true );
-	
+
 	ASSERT( asDriversToTry.size() != 0 );
-	
+
 	FOREACH_CONST( RString, asDriversToTry, Driver )
 	{
 		map<istring, CreateDialogDriverFn>::const_iterator iter = RegisterDialogDriver::g_pRegistrees->find( istring(*Driver) );
-		
+
 		if( iter == RegisterDialogDriver::g_pRegistrees->end() )
 			continue;
-		
+
 		DialogDriver *pRet = (iter->second)();
 		DEBUG_ASSERT( pRet );
 		const RString sError = pRet->Init();
-		
+
 		if( sError.empty() )
 			return pRet;
 		if( LOG )
