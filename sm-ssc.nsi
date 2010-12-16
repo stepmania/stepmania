@@ -225,12 +225,13 @@ Section "Main Section" SecMain
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\StepMania.exe,1"
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\StepMania.exe" "%1"'
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
+!endif
 
-	; url protocol handler
+!ifdef ASSOCIATE_SMURL
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania" "" "StepMania protocol handler"
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania" "URL Protocol" ""
-	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania\DefaultIcon" "" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
-	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania\shell\open\command" "" '"$INSTDIR\Program\${PRODUCT_FAMILY}.exe" "%1"'
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania\DefaultIcon" "" "$INSTDIR\Program\StepMania.exe"
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania\shell\open\command" "" '"$INSTDIR\Program\StepMania.exe" "%1"'
 !endif
 
 !ifdef INSTALL_NON_PCK_FILES
@@ -393,6 +394,9 @@ Section "Main Section" SecMain
 	;File "Program\tools.exe" ; to be replaced eventually
 !endif
 !ifdef ASSOCIATE_SMZIP
+	Call RefreshShellIcons
+!endif
+!ifdef ASSOCIATE_SMURL
 	Call RefreshShellIcons
 !endif
 !ifdef INSTALL_PROGRAM_LIBRARIES
@@ -680,6 +684,10 @@ Section "Uninstall"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip"
 !endif
 
+!ifdef ASSOCIATE_SMURL
+	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\stepmania"
+!endif
+
 !ifdef INSTALL_NON_PCK_FILES
 	Delete "$INSTDIR\Announcers\instructions.txt"
 	RMDir "$INSTDIR\Announcers"
@@ -769,6 +777,9 @@ Section "Uninstall"
 	Delete "$INSTDIR\Program\Texture Font Generator.exe"
 !endif
 !ifdef ASSOCIATE_SMZIP
+	Call un.RefreshShellIcons
+!endif
+!ifdef ASSOCIATE_SMURL
 	Call un.RefreshShellIcons
 !endif
 !ifdef INSTALL_PROGRAM_LIBRARIES
