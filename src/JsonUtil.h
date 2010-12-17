@@ -4,7 +4,7 @@
 #define JsonUtil_H
 
 class RageFileBasic;
-#include "json/value.h"
+#include "jsoncpp/include/json/value.h"
 
 namespace JsonUtil
 {
