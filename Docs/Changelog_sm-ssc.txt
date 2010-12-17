@@ -13,6 +13,10 @@ _____________________________________________________________________________
 sm-ssc v1.2 | 201012xx
 --------------------------------------------------------------------------------
 
+20101217
+--------
+* [Sprite] Added SetAllStateDelays(fDelay) Lua binding. [freem]
+
 20101215
 --------
 * Transplanted file download code from SM4 into sm-ssc.
