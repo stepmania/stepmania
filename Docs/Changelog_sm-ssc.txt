@@ -16,6 +16,7 @@ sm-ssc v1.2 | 201012xx
 20101217
 --------
 * [Sprite] Added SetAllStateDelays(fDelay) Lua binding. [freem]
+* [MusicWheelItem] Added metric commands to NormalPart/ColorPart. [freem]
 
 20101215
 --------
