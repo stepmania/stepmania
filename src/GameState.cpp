@@ -2448,6 +2448,13 @@ public:
 	DEFINE_METHOD( GetCurMusicSeconds,	m_fMusicSeconds )
 
 	DEFINE_METHOD( GetWorkoutGoalComplete,		m_bWorkoutGoalComplete )
+	static int GetCharacter( T* p, lua_State *L )				{ p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)]->PushSelf(L); return 1; }
+	static int SetCharacter( T* p, lua_State *L ){
+		Character* c = CHARMAN->GetCharacterFromID(SArg(2));
+		if (c)
+			p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)] = c;
+		return 0;
+	}
 
 	LunaGameState()
 	{
@@ -2543,6 +2550,8 @@ public:
 		ADD_METHOD( UnjoinPlayer );
 		ADD_METHOD( GetSongPercent );
 		ADD_METHOD( GetCurMusicSeconds );
+		ADD_METHOD( GetCharacter );
+		ADD_METHOD( SetCharacter );
 	}
 };
 

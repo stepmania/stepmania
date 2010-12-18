@@ -16,6 +16,9 @@ sm-ssc v1.2 | 201012xx
 20101218
 --------
 * [MusicWheelItem] Add OverPart. [freem]
+* [Profile] SetCharacter(sCharID) Lua binding added. [freem]
+* [GameState] GetCharacter(PlayerNumber) and SetCharacter(PlayerNumber,sCharID)
+  Lua bindings added. [freem]
 
 20101217
 --------
