@@ -68,6 +68,14 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
+		m_sprOverPart[i].Load( THEME->GetPathG(sType,MusicWheelItemTypeToString(i)+" OverPart") );
+		m_sprOverPart[i]->SetName( MusicWheelItemTypeToString(i)+"OverPart" );
+		ActorUtil::LoadAllCommands(m_sprOverPart[i],"MusicWheelItem");
+		this->AddChild( m_sprOverPart[i] );
+	}
+
+	FOREACH_ENUM( MusicWheelItemType, i )
+	{
 		m_pText[i] = NULL;
 
 		// Don't init text for Type_Song.  It uses a TextBanner.
@@ -132,6 +140,12 @@ MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
+		m_sprOverPart[i] = cpy.m_sprOverPart[i];
+		this->AddChild( m_sprOverPart[i] );
+	}
+
+	FOREACH_ENUM( MusicWheelItemType, i )
+	{
 		if( cpy.m_pText[i] == NULL )
 		{
 			m_pText[i] = NULL;
@@ -170,6 +184,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 	{
 		m_sprColorPart[i]->SetVisible( false );
 		m_sprNormalPart[i]->SetVisible( false );
+		m_sprOverPart[i]->SetVisible( false );
 	}
 	m_TextBanner.SetVisible( false );
 	FOREACH_ENUM( MusicWheelItemType, i )
@@ -246,6 +261,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 	m_sprColorPart[type]->SetVisible( true );
 	m_sprColorPart[type]->SetDiffuse( pWID->m_color );
 	m_sprNormalPart[type]->SetVisible( true );
+	m_sprOverPart[type]->SetVisible( true );
 	BitmapText *bt = m_pText[type];
 	if( bt )
 	{
