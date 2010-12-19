@@ -2528,14 +2528,14 @@ void Player::UpdateJudgedRows()
 		{
 			int iRow = iter.Row();
 
+			// if row is within a warp section, ignore it. -aj
+			if( iRow >= GAMESTATE->m_iWarpBeginRow &&
+				iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+				continue;
+
 			if( iLastSeenRow != iRow )
 			{
 				iLastSeenRow = iRow;
-
-				// if row is within a warp section, ignore it. -aj
-				if( iRow >= GAMESTATE->m_iWarpBeginRow &&
-					iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
-					continue;
 
 				// crossed a nonempty row
 				if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow) )
@@ -2989,6 +2989,11 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 	bNoCheating = false;
 #endif
 
+	// more warp hackery. -aj
+	if( row >= (unsigned)GAMESTATE->m_iWarpBeginRow &&
+		row <= (unsigned)(GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+		return;
+
 	// don't accumulate combo if AutoPlay is on.
 	if( bNoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 		return;
@@ -3036,6 +3041,11 @@ void Player::HandleHoldScore( const TapNote &tn )
 #ifdef DEBUG
 	bNoCheating = false;
 #endif
+
+	// more warp hackery. -aj
+	if( row >= (unsigned)GAMESTATE->m_iWarpBeginRow &&
+		row <= (unsigned)(GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+		return;
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
 		bNoCheating = false;
