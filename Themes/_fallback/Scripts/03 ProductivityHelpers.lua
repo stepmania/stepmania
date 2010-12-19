@@ -63,7 +63,12 @@ Condition = {
 		return GAMESTATE:PlayerIsUsingModifier( pnPlayer, sModifier );
 	end,
 }
-
+--[[ 3.9 Functions ]]
+Game = {
+	GetStage = function()
+	
+	end,
+}
 --[[ Aliases ]]
 
 -- Blend Modes
@@ -234,6 +239,13 @@ end
 
 function pname(pn)
 	return ToEnumShortString(pn)
+end
+
+function math.round(num, pre)
+	if pre and pre < 0 then pre = 0 end
+	local mult = 10^(pre or 0) 
+	if num >= 0 then return math.floor(num*mult+.5)/mult 
+	else return math.ceil(num*mult-.5)/mult end
 end
 
 --[[ end helper functions ]]

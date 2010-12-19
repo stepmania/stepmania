@@ -1,13 +1,21 @@
 #ifndef CommandLineActions_H
 #define CommandLineActions_H
 
+class LoadingWindow;
+
 namespace CommandLineActions
 {
-	bool AnyPackageFilesInCommandLine();
-	void Install();
-	void Nsis();
-	void LuaInformation();
-	void Version();
+	void Handle(LoadingWindow* pLW);	// perform a utility action, then exit
+
+	class CommandLineArgs
+	{
+	public:
+		vector<RString> argv;
+	};
+	// a list of command line arguemnts to process while the game is running.
+	// These args could have come from this process or passed to this process
+	// from another process.
+	extern vector<CommandLineArgs> ToProcess;
 }
 
 #endif

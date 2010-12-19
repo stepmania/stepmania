@@ -7,7 +7,7 @@
 #import "arch/ArchHooks/ArchHooks.h"
 
 #import <Cocoa/Cocoa.h>
-#import <OpenGl/OpenGl.h>
+#import <OpenGL/OpenGL.h>
 #import <OpenGL/gl.h>
 #import <mach-o/dyld.h>
 

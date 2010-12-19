@@ -1,13 +1,96 @@
 sm-ssc Changelog
 ________________________________________________________________________________
-The sm-ssc changelog mainly deals with source code-related changes, as theme
-changes happen at a rapid pace.
+The sm-ssc changelog mostly deals with source code-related changes,
+as theme changes happen at a rapid pace.
 
 Changes are grouped by date.
 Not all changes are documented, for various reasons.
 (Some changes were later reverted, other changes relate to things that aren't
 supported but exist anyways.)
 _____________________________________________________________________________
+
+================================================================================
+sm-ssc v1.2 | 201012xx
+--------------------------------------------------------------------------------
+
+20101218
+--------
+* [MusicWheelItem] Add OverPart. [freem]
+* [Profile] SetCharacter(sCharID) Lua binding added. [freem]
+* [GameState] GetCharacter(PlayerNumber) and SetCharacter(PlayerNumber,sCharID)
+  Lua bindings added. [freem]
+
+20101217
+--------
+* [Sprite] Added SetAllStateDelays(fDelay) Lua binding. [freem]
+* [MusicWheelItem] Added metric commands to NormalPart/ColorPart. [freem]
+
+20101215
+--------
+* Transplanted file download code from SM4 into sm-ssc.
+  sm-ssc can now handle the stepmania:// url protocol. [Chris Danford, freem]
+
+20101214
+--------
+* [RollingNumbers] Added Load(sMetricsGroup) Lua binding. [freem]
+* Modifications to pump mode spacing. [Daisuke Master]
+* Add eval song data for songs with no banner. [Midiman]
+
+20101213
+--------
+* [EditMenu] Enable the EditMenu to be themed more extensively. [freem]
+  Splits out the rows into Label and Value.
+
+20101212
+--------
+* [MusicWheelItem] Gave NormalPart/ColorPart names, so metrics can be used to
+  manipulate them. [freem]
+* [MusicWheelItem] add Color param to SetMessage. [freem]
+* Added --with-sse2 configure flag for SSE2 heuristic optimizations. [vyhd]
+* Added 03 IniFile to start building new userprefs/themeprefs API. [vyhd]
+* [EditMenu] Converted old non-specific metrics to more specific metrics. [freem]
+  {Metric Changes}
+  SongBannerWidth,SongBannerHeight -> SongBannerOnCommand
+  GroupBannerWidth,GroupBannerHeight -> GroupBannerOnCommand
+  RowLabelsX -> Label#X
+  RowLabelOnCommand -> Label#OnCommand
+  RowValue#X -> Value#X
+  RowValueOnCommand -> Row#OnCommand
+  {Metric Additions}
+  SongBannerChangeCommand/GroupBannerChangeCommand - runs when song/group
+  banner is changed.
+  Label#GainFocus/LoseFocusCommand and Value#GainFocus/LoseFocusCommand - runs
+  when the Label and Value gain/lose focus.
+
+20101128
+--------
+* Increased default scrolling speed. Modifies how the speed mods work. [shakesoda]
+
+================================================================================
+sm-ssc v1.1 | 20101120
+--------------------------------------------------------------------------------
+
+20100929
+--------
+* Fix issues with RequireStepOnHoldHeads not working properly if the W5
+  window is zero. [FSX]
+
+20100925
+--------
+* Add SetScore Lua binding to PlayerStageStats. [FSX]
+* Don't increase combo on AvoidMine if AvoidMineIncrementsCombo is false. [FSX]
+* Change build.sh to use ffmpeg 0.6 under Linux. [FSX]
+
+20100913
+--------
+* Attempt to fix issues with full combos occuring when checkpoints
+  have been missed. [FSX]
+* Fix NotesLoaderKSF. [Daisuke Master]
+
+20100912
+--------
+* Add a hack allowing all courses to play, regardless of missing noteskins [wolfman2000]
+* Restore ITG behavior, allow survivals to be won. [wolfman2000]
 
 ================================================================================
 sm-ssc v1.0 "final" | 20100910

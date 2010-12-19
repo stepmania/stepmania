@@ -97,7 +97,6 @@ private:
 	StepsDisplay	m_StepsDisplay;
 	StepsDisplay	m_StepsDisplaySource;
 
-
 	struct StepsAndDifficulty
 	{
 		StepsAndDifficulty( Steps *s, Difficulty d ) { pSteps = s; dc = d; }
@@ -122,16 +121,6 @@ private:
 	ThemeMetric1D<float> ARROWS_X;
 	ThemeMetric<apActorCommands> ARROWS_ENABLED_COMMAND;
 	ThemeMetric<apActorCommands> ARROWS_DISABLED_COMMAND;
-	// todo: remove these next 4 metrics in favor of commands -aj
-	ThemeMetric<float> SONG_BANNER_WIDTH;
-	ThemeMetric<float> SONG_BANNER_HEIGHT;
-	ThemeMetric<float> GROUP_BANNER_WIDTH;
-	ThemeMetric<float> GROUP_BANNER_HEIGHT;
-	// </todo>
-	ThemeMetric<float> ROW_LABELS_X;
-	ThemeMetric<apActorCommands> ROW_LABEL_ON_COMMAND;
-	ThemeMetric1D<float> ROW_VALUE_X;
-	ThemeMetric<apActorCommands> ROW_VALUE_ON_COMMAND;
 	ThemeMetric1D<float> ROW_Y;
 public:
 	ThemeMetric<EditMode> EDIT_MODE;

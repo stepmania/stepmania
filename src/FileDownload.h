@@ -1,33 +1,40 @@
-/* FileDownload - Downloads a file from the Internet. */
-#ifndef ScreenPackages_H
-#define ScreenPackages_H
+#ifndef FileTransfer_H
+#define FileTransfer_H
 
 #if !defined(WITHOUT_NETWORKING)
 
-#include "EzSockets.h"
+#include "ezsockets.h"
 #include "RageFile.h"
 
-class FileDownload
+class FileTransfer
 {
 public:
-	FileDownload();
-	~FileDownload();
+	FileTransfer();
+	~FileTransfer();
 
-	void StartDownload( const RString &sURL, const RString &sDestFile );
-	void CancelDownload( );
+	void StartDownload(const RString &sURL, const RString &sDestFile);
+	void StartUpload(const RString &sURL, const RString &sSrcFile, const RString &sDestFile);
+
+	void Cancel();
 	RString Update(float fDeltaTime);
-	bool IsFinished();
+	bool IsFinished() const { return m_bFinished; }
+	void Finish();
+	int GetResponseCode() const { return m_iResponseCode; }
+	RString GetResponse() const { return m_sBUFFER; }
+	RString GetStatus() const { return m_sStatus; }
 private:
+	enum TransferType { download, upload };
+	void StartTransfer(TransferType type, const RString &sURL, const RString &sSrcFile, const RString &sDestFile);
 	int m_iPackagesPos;
 	int m_iLinksPos;
 
 	int m_iDLorLST;
 
 	// HTTP portion
-	void HTTPUpdate( );
+	void HTTPUpdate();
 
 	// True if proper string, false if improper
-	bool ParseHTTPAddress( const RString & URL, RString & Proto, RString & Server, int & Port, RString & Addy );
+	bool ParseHTTPAddress(const RString & URL, RString & Proto, RString & Server, int & Port, RString & Addy);
 
 	void	UpdateProgress();
 
@@ -43,10 +50,10 @@ private:
 
 	RageFile	m_fOutputFile;
 	RString	m_sEndName;
-	bool	m_bIsPackage;
+	bool	m_bSavingFile;
 
 	RString m_sBaseAddress;
-	// HTTP Header information response
+	// HTTP Header information responce
 	long	m_iTotalBytes;
 	long	m_iDownloaded;
 

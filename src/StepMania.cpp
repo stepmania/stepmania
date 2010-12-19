@@ -369,6 +369,11 @@ RString StepMania::GetInitialScreen()
 		return PREFSMAN->m_sTestInitialScreen;
 	return INITIAL_SCREEN.GetValue();
 }
+ThemeMetric<RString>	SELECT_MUSIC_SCREEN	("Common","SelectMusicScreen");
+RString StepMania::GetSelectMusicScreen()
+{
+	return SELECT_MUSIC_SCREEN.GetValue();
+}
 
 #if defined(WIN32)
 static Preference<int> g_iLastSeenMemory( "LastSeenMemory", 0 );
@@ -959,25 +964,6 @@ int main(int argc, char* argv[])
 
 	SetCommandlineArguments( argc, argv );
 
-
-	enum RunMode
-	{ 
-		RunMode_Normal, 
-		RunMode_Install, 
-		RunMode_ExportNsisStrings, 
-		RunMode_ExportLuaInformation,
-		RunMode_DisplayVersion,
-	};
-	RunMode runmode = RunMode_Normal;
-	if( CommandLineActions::AnyPackageFilesInCommandLine() )
-		runmode = RunMode_Install;
-	else if( GetCommandlineArgument("ExportNsisStrings") )
-		runmode = RunMode_ExportNsisStrings;
-	else if( GetCommandlineArgument("ExportLuaInformation") )
-		runmode = RunMode_ExportLuaInformation;
-	else if( GetCommandlineArgument("version") )
-		runmode = RunMode_DisplayVersion;
-
 	// Set up arch hooks first.  This may set up crash handling.
 	HOOKS = ArchHooks::Create();
 	HOOKS->Init();
@@ -991,7 +977,6 @@ int main(int argc, char* argv[])
 	if( !bPortable )
 		FILEMAN->MountUserFilesystems();
 
-
 	// Set this up next. Do this early, since it's needed for RageException::Throw.
 	LOG		= new RageLog;
 
@@ -1004,7 +989,7 @@ int main(int argc, char* argv[])
 	 * so ArchHooks can use a preference to turn this off.  We want to do this before ApplyLogPreferences,
 	 * so if we exit because of another instance, we don't try to clobber its log.  We also want to
 	 * do this before opening the loading window, so if we give focus away, we don't flash the window. */
-	if( !g_bAllowMultipleInstances.Get() && HOOKS->CheckForMultipleInstances() )
+	if(!g_bAllowMultipleInstances.Get() && HOOKS->CheckForMultipleInstances(argc, argv))
 	{
 		ShutdownGame();
 		return 0;
@@ -1057,17 +1042,9 @@ int main(int argc, char* argv[])
 	GAMESTATE	= new GameState;
 
 	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
-	LoadingWindow *pLoadingWindow = NULL;
-	switch( runmode )
-	{
-	case RunMode_Normal:
-		pLoadingWindow = LoadingWindow::Create();
-		if( pLoadingWindow == NULL )
-			RageException::Throw( "%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str() );
-		break;
-	default:
-		;	// no loading window for other RunModes
-	}
+	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
+	if(pLoadingWindow == NULL)
+		RageException::Throw("%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str());
 
 	srand( time(NULL) ); // seed number generator
 
@@ -1091,36 +1068,7 @@ int main(int argc, char* argv[])
 	// Switch to the last used game type, and set up the theme and announcer.
 	SwitchToLastPlayedGame();
 
-	// Handle special RunModes.  Some of these depend on ThemeManager being loaded above in SwitchToLastPlayedGame.
-	switch( runmode )
-	{
-	DEFAULT_FAIL( runmode );
-	case RunMode_Normal:
-		break;
-	case RunMode_Install:
-	case RunMode_ExportNsisStrings:
-	case RunMode_ExportLuaInformation:
-	case RunMode_DisplayVersion:
-		THEME->SwitchThemeAndLanguage( "default", PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
-		switch( runmode )
-		{
-		DEFAULT_FAIL( runmode );
-		case RunMode_Install:
-			CommandLineActions::Install();
-			break;
-		case RunMode_ExportNsisStrings:
-			CommandLineActions::Nsis();
-			break;
-		case RunMode_ExportLuaInformation:
-			CommandLineActions::LuaInformation();
-			break;
-		case RunMode_DisplayVersion:
-			CommandLineActions::Version();
-			break;
-		};
-		exit(0);
-	}
-
+	CommandLineActions::Handle(pLoadingWindow);
 
 	{
 		/* Now that THEME is loaded, load the icon for the current theme into

@@ -51,6 +51,7 @@ private:
 
 	AutoActor		m_sprColorPart[NUM_MusicWheelItemType];
 	AutoActor		m_sprNormalPart[NUM_MusicWheelItemType];
+	AutoActor		m_sprOverPart[NUM_MusicWheelItemType];
 
 	TextBanner		m_TextBanner;	// used by Type_Song instead of m_pText
 	BitmapText		*m_pText[NUM_MusicWheelItemType];

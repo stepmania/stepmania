@@ -32,11 +32,9 @@ public:
 	 */
 	virtual RString GetMachineId() const { return RString(); }
 
-	/*
-	 * If this is a second instance, return true.  Optionally, give focus to the existing
-	 * window.
-	 */
-	virtual bool CheckForMultipleInstances() { return false; }
+	/* If this is a second instance, return true.
+	 * Optionally, give focus to the existing window. */
+	virtual bool CheckForMultipleInstances(int argc, char* argv[]) { return false; }
 
 	virtual void SetTime( tm newtime ) { }
 

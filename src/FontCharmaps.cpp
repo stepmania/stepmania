@@ -195,7 +195,7 @@ static const wchar_t map_korean_jamo[] =
 	0
 };
 
-/* 5x3 Numbers. "0123456789%. :x" */
+/* 5x3 Numbers. "01234 56789 %. :x" */
 static const wchar_t map_numbers[] = {
 	0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 
 	0x0035, 0x0036, 0x0037, 0x0038, 0x0039,

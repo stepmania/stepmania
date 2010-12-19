@@ -8,6 +8,7 @@ class DialogDriver_Win32: public DialogDriver
 public:
 	void Error( RString sMessage, RString sID );
 	void OK( RString sMessage, RString sID );
+	Dialog::Result OKCancel( RString sMessage, RString sID );
 	Dialog::Result AbortRetryIgnore( RString sMessage, RString sID );
 	Dialog::Result AbortRetry( RString sMessage, RString sID );
 };

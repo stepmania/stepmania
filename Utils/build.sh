@@ -64,7 +64,7 @@ usage () {
 }
 
 version () {
-	echo 'build.sh (StepMania) 2.61'
+	echo 'build.sh (StepMania) 2.61a'
 	echo 'Copyright (C) 2006-2009 Steve Checkoway'
 	echo 'StepMania is Copyright (C) 2001-2009 Chris Danford et al.'
 	echo 'sm-ssc is Copyright (C) 2009-2010 the spinal shark collective'
@@ -111,7 +111,7 @@ if [ ! -d $ffmpeg ]; then
 	if which bzip2 &>/dev/null; then
 		zipcommand=jxf
 		ffmarc=ffmpeg-$version.tar.bz2
-	elif which gzip &>/dev/null
+	elif which gzip &>/dev/null; then
 		zipcommand=zxf
 		ffmarc=ffmpeg-$version.tar.gz	
 	else
@@ -132,7 +132,7 @@ if [ ! -d $ffmpeg ]; then
 fi
 
 if [ -n "$s_download" ]; then exit 0; fi
-args='--disable-shared --enable-static --disable-debug --disable-vhook
+args='--disable-shared --enable-static --disable-debug
 --enable-memalign-hack --disable-network --enable-small
 --disable-encoders --disable-ffmpeg --disable-ffserver
 --disable-ffplay --disable-muxers --enable-demuxer=avi

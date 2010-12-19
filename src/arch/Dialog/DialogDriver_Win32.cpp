@@ -57,7 +57,7 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 			SetWindowText( GetDlgItem(hWnd, IDC_MESSAGE), sMessage );
 
 			// Focus is on any of the controls in the dialog by default.
-			// I'm not sure why.  Set focus to the button manually. -Chris
+			// I'm not sure why. Set focus to the button manually. -Chris
 			SetFocus( GetDlgItem(hWnd, IDOK) );
 		}
 		break;
@@ -72,7 +72,7 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 		{
 		case IDOK:
 			g_bHush = !!IsDlgButtonChecked( hWnd, IDC_HUSH );
-			/* fall through */
+			// fall through
 		case IDCANCEL:
 			EndDialog( hWnd, 0 );
 			break;
@@ -110,6 +110,30 @@ void DialogDriver_Win32::OK( RString sMessage, RString sID )
 #endif
 	if( g_bAllowHush && g_bHush )
 		Dialog::IgnoreMessage( sID );
+}
+
+Dialog::Result DialogDriver_Win32::OKCancel( RString sMessage, RString sID )
+{
+	g_bAllowHush = sID != "";
+	g_sMessage = sMessage;
+	AppInstance handle;
+
+#if !defined(SMPACKAGE)
+	//DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_OK), ::GetHwnd(), OKWndProc );
+	int result = ::MessageBox( NULL, sMessage, GetWindowTitle(), MB_OKCANCEL );
+#else
+	int result = ::AfxMessageBox( ConvertUTF8ToACP(sMessage).c_str(), MB_OKCANCEL, 0 );
+#endif
+	if( g_bAllowHush && g_bHush )
+		Dialog::IgnoreMessage( sID );
+
+	switch( result )
+	{
+	case IDOK:
+		return Dialog::ok;
+	default:
+		return Dialog::cancel;
+	}
 }
 
 #if !defined(SMPACKAGE)
@@ -159,7 +183,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			break;
 		case IDC_BUTTON_RESTART:
 			Win32RestartProgram();
-			/* not reached */
+			// not reached
 			ASSERT( 0 );
 			EndDialog( hWnd, 0 );
 			break;

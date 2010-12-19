@@ -92,7 +92,7 @@ RString ArchHooks_Win32::GetMachineId() const
 	return RString();
 }
 
-bool ArchHooks_Win32::CheckForMultipleInstances()
+bool ArchHooks_Win32::CheckForMultipleInstances(int argc, char* argv[])
 {
 	if( !g_bIsMultipleInstance )
 		return false;
@@ -117,6 +117,21 @@ bool ArchHooks_Win32::CheckForMultipleInstances()
 			SetForegroundWindow( data.hResult );
 		else
 			SetForegroundWindow( hWnd );
+
+		// Send the command line to the existing window.
+		vector<RString> vsArgs;
+		for( int i=0; i<argc; i++ )
+			vsArgs.push_back( argv[i] );
+		RString sAllArgs = join("|", vsArgs);
+		COPYDATASTRUCT cds;
+		cds.dwData = 0;
+		cds.cbData = sAllArgs.size();
+		cds.lpData = (void*)sAllArgs.data();
+		SendMessage( 
+			(HWND)hWnd, // HWND hWnd = handle of destination window
+			WM_COPYDATA,
+			(WPARAM)NULL, // HANDLE OF SENDING WINDOW
+			(LPARAM)&cds ); // 2nd msg parameter = pointer to COPYDATASTRUCT
 	}
 
 	return true;

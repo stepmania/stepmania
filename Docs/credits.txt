@@ -6,8 +6,10 @@ sm-ssc credits (in no particular order)
 ==the spinal shark collective==
 AJ Kelly
  * Main programming
- * UserPreferences and some other scripts
- * small theme edits here and there
+ * UserPreferences and some other Lua scripts
+ * Some small theme edits here and there
+ * Noteskins (retro, retrobar*)
+ * Windows project file maintainer
 
 Midiman
  * Did most of the work on _fallback and default themes
@@ -16,8 +18,35 @@ Midiman
 
 shakesoda
  * Programming
- * Noteskins (kb7 default)
+ * Noteskins (delta, gamma, port of orbital to kb7)
  * Theme edits
+ * Mac OS X primary maintainer
+
+==sm-ssc Team==
+(in no particular order)
+
+Aldo_MX
+ * Code (Pump it Up delays, among others), ideas, and support.
+
+cerbo
+ * [SongManager] SetPreferredSongs() and SetPreferredCourses() Lua bindings
+
+Daisuke Master
+ * Programming
+ * Pump/simple and Pump/complex noteskins
+ * /Docs/Themerdocs/Noteskin elements Reference.txt
+ * Taking advantage of sm-ssc's new features :)
+
+FSX
+ * Various fixes. (see Changelog_sm-ssc.txt for more details)
+
+Nicole Reid (okeeblow)
+ * Tested building sm-ssc on FreeBSD, provided fixes.
+
+Wolfman
+ * [Player] PercentUntilColorCombo metric
+ * Mac OS X maintainer
+ * Various fixes/changes. (see Changelog_sm-ssc.txt for more details)
 
 ==other contributors==
 (in no particular order, aside from having SM team at the top)
@@ -25,21 +54,6 @@ shakesoda
 StepMania Team
  * Keeping StepMania 5 alive with changes, and providing a nice codebase for
    us to work with.
-
-Aldo_MX
- * Code (Pump it Up delays, among others), ideas, and support.
-
-Nicole Reid (okeeblow)
- * Tested building sm-ssc on FreeBSD, provided fixes.
-
-Wolfman
- * [Player] PercentUntilColorCombo metric
-
-Daisuke Master
- * Programming
- * Pump/simple and Pump/complex noteskins
- * /Docs/Themerdocs/Noteskin elements Reference.txt
- * Taking advantage of sm-ssc's new features :)
 
 Kaox
  * Pump/default noteskin
@@ -74,11 +88,6 @@ galopin
  * Pump it Up Exceed PlayStation 2 USB dance mat support patch
  (stepmania-devs mailing list 20091213 11:27 -0800 [Pacific Standard Time])
 
-FSX
- * [Player] ScoreMissedHoldsAndRolls metric
- * [ScoreKeeperNormal] Patch for fixing "the" combo bug (untested)
- (http://www.pastie.org/868201.txt)
-
 Henke37
  * [MovieTexture_FFMpeg] Stutter fix
  (http://www.pasteall.org/11353/diff)
@@ -96,9 +105,6 @@ gholms
 juanelote
  * [SongManager] GetSongGroupByIndex function
  * [MusicWheel] JumpToNextGroup/JumpToPrevGroup logic modifications
-
-cerbo
- * [SongManager] SetPreferredSongs() and SetPreferredCourses() Lua bindings
 
 ==the beta testers==
 [SSC Beta Testing Team]

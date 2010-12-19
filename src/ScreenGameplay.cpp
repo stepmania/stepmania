@@ -2174,8 +2174,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			if( m_PauseController == GameController_Invalid || m_PauseController == input.GameI.controller )
 			{
 				// IMO, it's better to have this configurable. -DaisuMaster
-				if( UNPAUSE_WITH_START )
-					this->PauseGame( false );
+				if( UNPAUSE_WITH_START ) this->PauseGame( false );
 			}
 		}
 		return;

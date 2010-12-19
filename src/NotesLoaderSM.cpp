@@ -237,11 +237,15 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 							fDeltaBeat,(fNextPositiveBPM/60.0f),abs(fNewBPM/60.0f),BeatToNoteRow(fNextPositiveBeat),BeatToNoteRow(fBeat))
 						);
 						*/
+
+						out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+
 						continue;
 					}
 					else
 					{
 						// last BPM is a negative one? ugh. -aj (MAX_NOTE_ROW exists btw)
+						out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
 					}
 				}
 

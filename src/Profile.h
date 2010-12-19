@@ -67,6 +67,7 @@ public:
 	// smart accessors
 	RString GetDisplayNameOrHighScoreName() const;
 	Character *GetCharacter() const;
+	void SetCharacter(const RString sCharacterID);
 	RString GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
 	RString GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
 	int GetCalculatedWeightPounds() const;	// returns a default value if m_iWeightPounds isn't set

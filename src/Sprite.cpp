@@ -1152,6 +1152,7 @@ public:
 		return 0;
 	}
 	static int GetNumStates( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumStates() ); return 1; }
+	static int SetAllStateDelays( T* p, lua_State *L ) { p->SetAllStateDelays(FArg(1)); return 0; }
 
 	LunaSprite()
 	{
@@ -1172,6 +1173,7 @@ public:
 		ADD_METHOD( GetTexture );
 		ADD_METHOD( SetEffectMode );
 		ADD_METHOD( GetNumStates );
+		ADD_METHOD( SetAllStateDelays );
 	}
 };
 

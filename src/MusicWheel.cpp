@@ -85,7 +85,7 @@ void MusicWheel::Load( RString sType )
 	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
 	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
 	SECTION_COLORS			.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
-	
+
 	WheelBase::Load( sType );
 
 	SONGMAN->UpdateRankingCourses();
@@ -93,7 +93,7 @@ void MusicWheel::Load( RString sType )
 	m_soundChangeSort.Load(	THEME->GetPathS(sType,"sort") );
 	m_soundExpand.Load(	THEME->GetPathS(sType,"expand"), true );
 
-	/* Update for SORT_MOST_PLAYED. */
+	// Update for SORT_MOST_PLAYED.
 	SONGMAN->UpdatePopular();
 
 	/* Sort SONGMAN's songs by CompareSongPointersByTitle, so we can do other sorts (with
@@ -106,8 +106,8 @@ void MusicWheel::BeginScreen()
 {
 	RageTimer timer;
 	RString times;
-	/* Build all of the wheel item data.  Do this after selecting
-	 * the extra stage, so it knows to always display it. */
+	/* Build all of the wheel item data. Do this after selecting the extra stage,
+	 * so it knows to always display it. */
 	FOREACH_ENUM( SortOrder, so )
 	{
 		BuildWheelItemDatas( m_WheelItemDatas[so], so );

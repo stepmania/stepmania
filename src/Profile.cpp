@@ -201,6 +201,12 @@ Character *Profile::GetCharacter() const
 	return CHARMAN->GetDefaultCharacter();
 }
 
+void Profile::SetCharacter(const RString sCharacterID)
+{
+	if(CHARMAN->GetCharacterFromID(sCharacterID))
+		m_sCharacterID = sCharacterID;
+}
+
 static RString FormatCalories( float fCals )
 {
 	return Commify((int)fCals) + " Cal";
@@ -1957,6 +1963,7 @@ public:
 	}
 
 	static int GetCharacter( T* p, lua_State *L )			{ p->GetCharacter()->PushSelf(L); return 1; }
+	static int SetCharacter( T* p, lua_State *L )			{ p->SetCharacter(SArg(1)); return 0; }
 	static int GetWeightPounds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iWeightPounds ); return 1; }
 	static int SetWeightPounds( T* p, lua_State *L )		{ p->m_iWeightPounds = IArg(1); return 0; }
 	static int GetGoalType( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_GoalType ); return 1; }
@@ -2030,6 +2037,7 @@ public:
 		ADD_METHOD( GetDisplayName );
 		ADD_METHOD( GetHighScoreList );
 		ADD_METHOD( GetCharacter );
+		ADD_METHOD( SetCharacter );
 		ADD_METHOD( GetWeightPounds );
 		ADD_METHOD( SetWeightPounds );
 		ADD_METHOD( GetGoalType );
