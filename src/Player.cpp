@@ -2990,8 +2990,8 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 #endif
 
 	// more warp hackery. -aj
-	if( row >= (unsigned)GAMESTATE->m_iWarpBeginRow &&
-		row <= (unsigned)(GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+	if( iRow >= (unsigned)GAMESTATE->m_iWarpBeginRow &&
+		iRow <= (unsigned)(GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
 		return;
 
 	// don't accumulate combo if AutoPlay is on.
@@ -3041,11 +3041,6 @@ void Player::HandleHoldScore( const TapNote &tn )
 #ifdef DEBUG
 	bNoCheating = false;
 #endif
-
-	// more warp hackery. -aj
-	if( row >= (unsigned)GAMESTATE->m_iWarpBeginRow &&
-		row <= (unsigned)(GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
-		return;
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
 		bNoCheating = false;
