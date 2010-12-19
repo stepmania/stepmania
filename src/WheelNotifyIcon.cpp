@@ -13,6 +13,7 @@
  */
 
 static ThemeMetric<bool>	SHOW_TRAINING	("WheelNotifyIcon","ShowTraining");
+static ThemeMetric<bool>	BLINK_BEST_ICON	("WheelNotifyIcon","BlinkPlayersBest");
 
 WheelNotifyIcon::WheelNotifyIcon()
 {
@@ -49,15 +50,16 @@ void WheelNotifyIcon::SetFlags( Flags flags )
 		m_vIconsToShow.push_back( training );
 
 
-	// HACK: Make players best blink if it's the only icon
-	// TODO: metric this. use m_bPlayersBestHack as variable name, lol -aj
-	if( m_vIconsToShow.size() == 1 )
+	// If BLINK_BEST_ICON, make player's best icon blink if it's the only icon.
+	if( m_vIconsToShow.size() == 1 && BLINK_BEST_ICON )
 	{
 		if( m_vIconsToShow[0] >= best1  &&  m_vIconsToShow[0] <= best3 )
 			m_vIconsToShow.push_back( empty );
 	}
 
-	m_vIconsToShow.resize( min(m_vIconsToShow.size(),2u) );	// crop to most important 2
+	// crop to most important 2
+	// todo: Let themer handle this? -aj
+	m_vIconsToShow.resize( min(m_vIconsToShow.size(),2u) );
 
 	// Broadcast Set message so items can react. (futures) -aj
 	//Message msg("Set");
