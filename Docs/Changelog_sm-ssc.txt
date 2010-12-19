@@ -15,7 +15,9 @@ sm-ssc v1.2 | 201012xx
 
 20101219
 --------
-* [WheelNotifyIcon] add BlinkPlayersBest metric [freem]
+* [WheelNotifyIcon] add BlinkPlayersBest metric. [freem]
+* Added GetDateTimeString function. [freem]
+  (returns date in "YYYY-MM-DD HH:MM:SS" format)
 
 20101218
 --------

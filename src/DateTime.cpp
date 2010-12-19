@@ -73,9 +73,7 @@ void DateTime::StripTime()
 	tm_sec = 0;
 }
 
-//
 // Common SQL/XML format: "YYYY-MM-DD HH:MM:SS"
-//
 RString DateTime::GetString() const
 {
 	RString s = ssprintf( "%d-%02d-%02d",
@@ -314,6 +312,7 @@ LuaFunction( Second, GetLocalTime().tm_sec );
 LuaFunction( Year, GetLocalTime().tm_year+1900 );
 LuaFunction( Weekday, GetLocalTime().tm_wday );
 LuaFunction( DayOfYear, GetLocalTime().tm_yday );
+LuaFunction( GetDateTimeString, GetString() );
 
 /*
  * (c) 2001-2004 Chris Danford
