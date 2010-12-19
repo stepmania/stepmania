@@ -18,6 +18,7 @@ sm-ssc v1.2 | 201012xx
 * [WheelNotifyIcon] add BlinkPlayersBest metric. [freem]
 * [GameCommand] Add GetScreen, GetSteps, GetCourse, GetTrail, and GetCharacter
   Lua bindings. [freem]
+* [StreamDisplay] Remove UseThreePartMethod.
 
 20101218
 --------

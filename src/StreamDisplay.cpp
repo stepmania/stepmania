@@ -33,12 +33,7 @@ void StreamDisplay::Load( const RString &_sMetricsGroup )
 
 	float fTextureCoordScaleX = THEME->GetMetricF(sMetricsGroup,"TextureCoordScaleX");
 	int iNumPills = THEME->GetMetricF(sMetricsGroup,"NumPills");
-	m_bUsingThreePart = THEME->GetMetricB(sMetricsGroup,"UseThreePartMethod");
 	m_bAlwaysBounce = THEME->GetMetricB(sMetricsGroup,"AlwaysBounceNormalBar");
-
-	// three part method only uses 3 pills
-	if(iNumPills != 3)
-		m_bUsingThreePart = false;
 
 	FOREACH_ENUM( StreamType, st )
 	{
@@ -48,34 +43,14 @@ void StreamDisplay::Load( const RString &_sMetricsGroup )
 		{
 			Sprite *pSpr = new Sprite;
 
-			if( m_bUsingThreePart )
-			{
-				pSpr->Load( THEME->GetPathG( sMetricsGroup, ssprintf("%s part%d",StreamTypeToString(st).c_str(),i) ) );
-				
-				if(pSpr->GetNumStates() > 1)
-				{
-					pSpr->SetAllStateDelays( THEME->GetMetricF( sMetricsGroup, ssprintf("%spart%ddelay",StreamTypeToString(st).c_str(),i) ) );
-				}
-			}
-			else
-				pSpr->Load( THEME->GetPathG( sMetricsGroup, StreamTypeToString(st) ) );
+			pSpr->Load( THEME->GetPathG( sMetricsGroup, StreamTypeToString(st) ) );
 			m_vpSprPill[st].push_back( pSpr );
 
-			if( !m_bUsingThreePart )
-			{
-				m_transformPill.TransformItemDirect( *pSpr, -1, i, iNumPills );
-				float f = 1 / fTextureCoordScaleX;
-				pSpr->SetCustomTextureRect( RectF(f*i,0,f*(i+1),1) );
-			}
+			m_transformPill.TransformItemDirect( *pSpr, -1, i, iNumPills );
+			float f = 1 / fTextureCoordScaleX;
+			pSpr->SetCustomTextureRect( RectF(f*i,0,f*(i+1),1) );
 
 			this->AddChild( pSpr );
-		}
-
-		if( m_bUsingThreePart )
-		{
-			m_fThreePartWidth = THEME->GetMetricF( sMetricsGroup, "ThreePartWidth" );
-			// first element positioned depending on metric width specified
-			m_vpSprPill[st][0]->AddX( -(m_fThreePartWidth/2 + m_vpSprPill[st][0]->GetZoomedWidth()/2) );			
 		}
 	}
 }
@@ -131,28 +106,9 @@ void StreamDisplay::Update( float fDeltaSecs )
 
 			// XXX scale by current song speed
 
-			if( !m_bUsingThreePart ) // usual lifebar
-			{
-				pSpr->SetCropRight( 1.0f - fPercentFilledThisPill );
-				pSpr->SetTexCoordVelocity( -1, 0 );
-			}
-			else // using the three-part method
-			{
+			pSpr->SetCropRight( 1.0f - fPercentFilledThisPill );
+			pSpr->SetTexCoordVelocity( -1, 0 );
 
-				if( i==1 ) // middle pill
-				{
-					float fMiddleWidth = m_fThreePartWidth * m_fTrailingPercent;
-					pSpr->ZoomToWidth( fMiddleWidth );
-
-					float fMiddleX = m_vpSprPill[st][0]->GetX() + ( fMiddleWidth/2 ) + ( m_vpSprPill[st][0]->GetZoomedWidth()/2 );
-					pSpr->SetX( fMiddleX );
-				}
-				else if( i!=0 ) // last pill
-				{
-					float fEndX = m_vpSprPill[st][1]->GetX() + ( m_vpSprPill[st][1]->GetZoomedWidth()/2 ) + ( pSpr->GetZoomedWidth()/2 );
-					pSpr->SetX( fEndX );
-				}
-			}
 			// Optimization: Don't draw pills that are covered up
 			switch( st )
 			{
