@@ -120,12 +120,16 @@ public:
 	static int GetName( T* p, lua_State *L )		{ LuaHelpers::Push( L, (RString) p->m_szName ); return 1; }
 	DEFINE_METHOD( GetStyleType,		m_StyleType )
 	DEFINE_METHOD( GetStepsType,		m_StepsType )
+	DEFINE_METHOD( ColumnsPerPlayer,	m_iColsPerPlayer )
+	DEFINE_METHOD( NeedsZoomOutWith2Players,	m_bNeedsZoomOutWith2Players )
 
 	LunaStyle()
 	{
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetStyleType );
 		ADD_METHOD( GetStepsType );
+		ADD_METHOD( ColumnsPerPlayer );
+		ADD_METHOD( NeedsZoomOutWith2Players );
 	}
 };
 

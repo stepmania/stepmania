@@ -19,6 +19,7 @@ sm-ssc v1.2 | 201012xx
 * [GameCommand] Add GetScreen, GetSteps, GetCourse, GetTrail, and GetCharacter
   Lua bindings. [freem]
 * [StreamDisplay] Remove UseThreePartMethod.
+* [Style] Add ColumnsPerPlayer and NeedsZoomOutWith2Players bindings. [freem]
 
 20101218
 --------
