@@ -63,7 +63,7 @@ void GrooveRadar::TweenOnScreen()
 	{
 		m_sprRadarLabels[c].SetX( LABEL_OFFSET_X(c) );
 		m_sprRadarLabels[c].PlayCommand( "PreDelayOn" );
-		m_sprRadarLabels[c].BeginTweening( LABEL_ON_DELAY*c );	// sleep
+		m_sprRadarLabels[c].BeginTweening( LABEL_ON_DELAY*c ); // sleep
 		m_sprRadarLabels[c].PlayCommand( "PostDelayOn" );
 	}
 
@@ -83,9 +83,8 @@ void GrooveRadar::TweenOffScreen()
 	{
 		m_sprRadarLabels[c].StopTweening();
 		m_sprRadarLabels[c].BeginTweening( 0.2f );
-		/* Make sure we undo glow.  We do this at the end of TweenIn,
-		 * but we might tween off before we complete tweening in, and
-		 * the glow can remain. */
+		/* Make sure we undo glow. We do this at the end of TweenIn, but we might
+		 * tween off before we complete tweening in, and the glow can remain. */
 		m_sprRadarLabels[c].SetGlow( RageColor(1,1,1,0) );
 		m_sprRadarLabels[c].SetDiffuse( RageColor(1,1,1,0) );
 	}
@@ -108,7 +107,7 @@ void GrooveRadar::SetFromRadarValues( PlayerNumber pn, const RadarValues &rv )
 	m_GrooveRadarValueMap[pn].SetFromSteps( rv );
 }
 
-void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps )	// NULL means no Song
+void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps ) // NULL means no Song
 {
 	if( pSteps == NULL )
 	{
@@ -119,7 +118,6 @@ void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps )	// NULL means n
 	const RadarValues &rv = pSteps->GetRadarValues( pn );
 	m_GrooveRadarValueMap[pn].SetFromSteps( rv );
 }
-
 
 GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 {
@@ -146,7 +144,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromSteps( const RadarValues &rv )
 		const float fValueCurrent = m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew;
 		m_fValuesOld[c] = fValueCurrent;
 		m_fValuesNew[c] = rv[c];
-	}	
+	}
 
 	if( !m_bValuesVisible ) // the values WERE invisible
 		m_PercentTowardNew = 1;

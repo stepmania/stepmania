@@ -1965,7 +1965,7 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 }
 
 /* The user may be set to prefer a difficulty that isn't always shown; typically,
- * Difficulty_Edit.  Return the closest shown difficulty <= m_PreferredDifficulty. */
+ * Difficulty_Edit. Return the closest shown difficulty <= m_PreferredDifficulty. */
 Difficulty GameState::GetClosestShownDifficulty( PlayerNumber pn ) const
 {
 	const vector<Difficulty> &v = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
