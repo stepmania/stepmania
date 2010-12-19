@@ -20,7 +20,6 @@ StreamDisplay::StreamDisplay()
 	m_fVelocity = 0;
 	m_fPassingAlpha = 0;
 	m_fHotAlpha = 0;
-	m_fThreePartWidth = 0;
 	m_bAlwaysBounce = false;
 }
 

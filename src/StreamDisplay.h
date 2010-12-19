@@ -15,7 +15,6 @@ enum StreamType
 	NUM_StreamType,
 };
 
-
 class StreamDisplay : public ActorFrame
 {
 public:
@@ -43,7 +42,6 @@ private:
 	float m_fPassingAlpha;
 	float m_fHotAlpha;
 
-	float m_fThreePartWidth;
 	bool m_bAlwaysBounce;
 };
 
