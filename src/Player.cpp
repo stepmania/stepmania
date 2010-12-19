@@ -2488,6 +2488,10 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if( !NeedsTapJudging(tn) )
 			continue;
 
+		// warp hackery
+		if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+			continue;
+
 		if( tn.type == TapNote::mine )
 		{
 			tn.result.tns = TNS_AvoidMine;
