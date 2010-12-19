@@ -312,7 +312,6 @@ LuaFunction( Second, GetLocalTime().tm_sec );
 LuaFunction( Year, GetLocalTime().tm_year+1900 );
 LuaFunction( Weekday, GetLocalTime().tm_wday );
 LuaFunction( DayOfYear, GetLocalTime().tm_yday );
-LuaFunction( GetDateTimeString, GetString() );
 
 /*
  * (c) 2001-2004 Chris Danford
