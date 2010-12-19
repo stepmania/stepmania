@@ -20,6 +20,7 @@ sm-ssc v1.2 | 201012xx
   Lua bindings. [freem]
 * [StreamDisplay] Remove UseThreePartMethod.
 * [Style] Add ColumnsPerPlayer and NeedsZoomOutWith2Players bindings. [freem]
+* [Profile] Add GetLastUsedHighScoreName Lua binding. [freem]
 
 20101218
 --------
