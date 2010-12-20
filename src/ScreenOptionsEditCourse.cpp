@@ -394,7 +394,10 @@ void ScreenOptionsEditCourse::SetCurrentSong()
 			if( index != 0 )
 				pSong = m_vpSongs[ index - 1 ];
 		}
-		GAMESTATE->m_pCurSong.Set( pSong );
+		if ( pSong != NULL )
+		{
+			GAMESTATE->m_pCurSong.Set( pSong );
+		}
 	}
 }
 

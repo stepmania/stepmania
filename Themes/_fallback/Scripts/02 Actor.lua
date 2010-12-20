@@ -141,7 +141,7 @@ function Actor:bezier(...)
    for i=3,c do
       b[#b+1] = a[i]
    end
-   a[1]:tween(a[2], "TweenMode_Bezier", b)
+   self:tween(a[2], "TweenMode_Bezier", b)
 end	 
 
 -- (c) 2006 Glenn Maynard
