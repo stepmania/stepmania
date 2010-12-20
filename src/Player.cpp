@@ -2488,6 +2488,10 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if( !NeedsTapJudging(tn) )
 			continue;
 
+		// warp hackery
+		if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+			continue;
+
 		if( tn.type == TapNote::mine )
 		{
 			tn.result.tns = TNS_AvoidMine;
@@ -2524,14 +2528,14 @@ void Player::UpdateJudgedRows()
 		{
 			int iRow = iter.Row();
 
+			// if row is within a warp section, ignore it. -aj
+			if( iRow >= GAMESTATE->m_iWarpBeginRow &&
+				iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+				continue;
+
 			if( iLastSeenRow != iRow )
 			{
 				iLastSeenRow = iRow;
-
-				// if row is within a warp section, ignore it. -aj
-				if( iRow >= GAMESTATE->m_iWarpBeginRow &&
-					iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
-					continue;
 
 				// crossed a nonempty row
 				if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow) )
@@ -2984,6 +2988,11 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 #ifdef DEBUG
 	bNoCheating = false;
 #endif
+
+	// more warp hackery. -aj
+	if( iRow >= (unsigned)GAMESTATE->m_iWarpBeginRow &&
+		iRow <= (unsigned)(GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+		return;
 
 	// don't accumulate combo if AutoPlay is on.
 	if( bNoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )

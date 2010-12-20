@@ -13,6 +13,15 @@ _____________________________________________________________________________
 sm-ssc v1.2 | 201012xx
 --------------------------------------------------------------------------------
 
+20101219
+--------
+* [WheelNotifyIcon] add BlinkPlayersBest metric. [freem]
+* [GameCommand] Add GetScreen, GetSteps, GetCourse, GetTrail, and GetCharacter
+  Lua bindings. [freem]
+* [StreamDisplay] Remove UseThreePartMethod.
+* [Style] Add ColumnsPerPlayer and NeedsZoomOutWith2Players bindings. [freem]
+* [Profile] Add GetLastUsedHighScoreName Lua binding. [freem]
+
 20101218
 --------
 * [MusicWheelItem] Add OverPart. [freem]
