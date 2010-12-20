@@ -8,7 +8,7 @@
 #include "DialogDriver_Win32.h"
 
 #elif defined(MACOSX)
-#include "DialogDriver_Cocoa.h"
+#include "DialogDriver_MacOSX.h"
 #endif
 
 #include "DialogDriver.h" // DialogDriver_Null is in here
