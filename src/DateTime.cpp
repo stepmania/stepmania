@@ -73,9 +73,7 @@ void DateTime::StripTime()
 	tm_sec = 0;
 }
 
-//
 // Common SQL/XML format: "YYYY-MM-DD HH:MM:SS"
-//
 RString DateTime::GetString() const
 {
 	RString s = ssprintf( "%d-%02d-%02d",
