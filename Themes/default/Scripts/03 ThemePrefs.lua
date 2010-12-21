@@ -21,6 +21,9 @@ function InitUserPrefs()
 	if GetUserPref("UserPrefGameplayShowScore") == nil then
 		SetUserPref("UserPrefGameplayShowScore", false);
 	end;
+	if GetUserPref("UserPrefSpecialScoringMode") == nil then
+		SetUserPref("UserPrefSpecialScoringMode", 1);
+	end;
 	if GetUserPrefB("UserPrefShowLotsaOptions") == nil then
 		SetUserPref("UserPrefShowLotsaOptions", true);
 	end;
@@ -222,6 +225,34 @@ function UserPrefShowLotsaOptions()
 				val = false;
 			end;
 			WritePrefToFile("UserPrefShowLotsaOptions",val);
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end
+
+function UserPrefSpecialScoringMode()
+	local t = {
+		Name = "UserPrefSpecialScoringMode";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = { 'DDR 1st', 'DDR 3rd', 'DDR 4th', 'DDR SuperNOVA' };
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("UserPrefSpecialScoringMode") ~= nil then
+				list[GetUserPref("UserPrefSpecialScoringMode")] = true;
+			else
+				WritePrefToFile("UserPrefSpecialScoringMode",1);
+				list[1] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			local val;
+			for k,v in ipairs(list) do if v then val = k end end; 
+			WritePrefToFile("UserPrefSpecialScoringMode",val);
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
