@@ -40,7 +40,7 @@ public:
 	virtual bool AllowLateJoin() const { return true; }
 
 	// sm-ssc additions:
-	int GetSelectionIndexOfPlayer(PlayerNumber pn){ return GetSelectionIndex(pn); }
+	int GetPlayerSelectionIndex(PlayerNumber pn){ return GetSelectionIndex(pn); }
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
