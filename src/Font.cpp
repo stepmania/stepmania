@@ -223,9 +223,7 @@ int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 
 Font::Font()
 {
-	//LOG->Trace( "Font::LoadFromFontName(%s)", sASCIITexturePath.c_str() );
-
-	m_iRefCount = 1;
+	m_iRefCount = 0;
 	m_pDefault = NULL;
 	m_bRightToLeft = false;
 	// [sm-ssc] don't show strokes by default
@@ -239,10 +237,11 @@ Font::~Font()
 
 void Font::Unload()
 {
+	LOG->Trace("Font:Unload '%s'",path.c_str());
 	for( unsigned i = 0; i < m_apPages.size(); ++i )
 		delete m_apPages[i];
 	m_apPages.clear();
-	
+
 	m_iCharToGlyph.clear();
 	m_pDefault = NULL;
 
@@ -656,6 +655,8 @@ void Font::Load( const RString &sIniPath, RString sChars )
 {
 	ASSERT_M( !GetExtension(sIniPath).CompareNoCase("ini"), sIniPath );
 
+	LOG->Trace( "Font: Loading new font '%s'",sIniPath.c_str());
+
 	// Check for recursion (recursive imports).
 	for( unsigned i = 0; i < LoadStack.size(); ++i )
 	{
@@ -725,9 +726,9 @@ void Font::Load( const RString &sIniPath, RString sChars )
 				continue;
 			}
 
-			Font subfont;
-			subfont.Load(path, "");
-			MergeFont(subfont);
+			Font *subfont=FONT->LoadFont(path,"");
+			MergeFont(*subfont);
+			FONT->UnloadFont(subfont);
 		}
 	}
 

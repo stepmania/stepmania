@@ -67,6 +67,7 @@
 #include "SongManager.h"
 #include "RageTextureManager.h"
 #include "ThemeManager.h"
+#include "FontManager.h"
 #include "Screen.h"
 #include "ScreenDimensions.h"
 #include "Foreach.h"
@@ -75,6 +76,7 @@
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
 static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
+static Preference<bool> g_bPruneFonts( "PruneFonts", true );
 
 // Screen registration
 static map<RString,CreateScreenFn>	*g_pmapRegistrees = NULL;
@@ -566,6 +568,11 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 		}
 	}
 
+	// Prune any unused fonts now that we have had a chance to reference the fonts
+	if(g_bPruneFonts) {
+		FONT->PruneFonts();
+	}
+
 	TEXTUREMAN->DiagnosticOutput();
 }
 
@@ -660,19 +667,17 @@ void ScreenManager::LoadDelayedScreen()
 	 * cleanup, so it doesn't get deleted by cleanup. */
 	bool bLoaded = ActivatePreparedScreenAndBackground( sScreenName );
 
-	vector<Actor*> apActorsToDelete;
-	if( g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end() )
-	{
-		/* It's time to delete all old prepared screens. Depending on DelayedScreenLoad,
-		 * we can either delete the screens before or after we load the new screen.
-		 * Either way, we must remove them from the prepared list before we prepare
-		 * new screens.
-		 * If DelayedScreenLoad is true, delete them now; this lowers memory
-		 * requirements, but results in redundant loads as we unload common data. */
-		if( g_bDelayedScreenLoad )
-			DeletePreparedScreens();
-		else
-			GrabPreparedActors( apActorsToDelete );
+	bool deletePrepared=g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end();
+	
+	/* It's time to delete all old prepared screens. Depending on DelayedScreenLoad,
+	 * we can either delete the screens before or after we load the new screen.
+	 * Either way, we must remove them from the prepared list before we prepare
+	 * new screens. 
+	 * If DelayedScreenLoad is true, delete them now; this lowers memory
+	 * requirements, but results in redundant loads as we unload common data. */
+	if( deletePrepared && g_bDelayedScreenLoad ) {
+		DeletePreparedScreens();
+		deletePrepared=false;
 	}
 
 	// If the screen wasn't already prepared, load it.
@@ -689,12 +694,9 @@ void ScreenManager::LoadDelayedScreen()
 		ASSERT( bLoaded );
 	}
 
-	if( !apActorsToDelete.empty() )
+	if( deletePrepared )
 	{
-		BeforeDeleteScreen();
-		FOREACH( Actor*, apActorsToDelete, a )
-			SAFE_DELETE( *a );
-		AfterDeleteScreen();
+		DeletePreparedScreens();
 	}
 
 	MESSAGEMAN->Broadcast( Message_ScreenChanged );
