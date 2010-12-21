@@ -392,7 +392,7 @@ try_again:
 		return false; // went full circle and none found
 	seen.insert( iSwitchToIndex );
 
-	if( !m_aGameCommands[iSwitchToIndex].IsPlayable() )
+	if( !m_aGameCommands[iSwitchToIndex].IsPlayable() && !DO_SWITCH_ANYWAYS )
 		goto try_again;
 
 	return ChangeSelection( pn, dir, iSwitchToIndex );
