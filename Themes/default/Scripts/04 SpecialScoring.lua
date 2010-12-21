@@ -18,7 +18,7 @@ end;
 r[2] = function(params, pss)
 	local totalSteps = GAMESTATE:GetCurrentSteps(params.Player):GetRadarValues():GetValue('RadarCategory_TapsAndHolds');
 	local baseScore = math.round(1000000/((totalSteps*(totalSteps+1))/2));
-	local curStep = pss:GetRadarActual:GetValue('RadarCategory_TapsAndHolds');
+	local curStep = pss:GetRadarActual():GetValue('RadarCategory_TapsAndHolds');
 	local endBonus = (curStep == totalSteps) and (1000000-math.round(1000000/(totalSteps*(totalSteps+1)/2))*(totalSteps*(totalSteps+1)/2)) or 0;
 	local multLookup = { ['TapNoteScore_W1']=10, ['TapNoteScore_W2']=10, ['TapNoteScore_W3']=5 };
 	setmetatable(multLookup, ZeroIfNotFound);
