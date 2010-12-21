@@ -52,6 +52,8 @@ static const char *MessageIDNames[] = {
 	"MenuLeftP2",
 	"MenuRightP1",
 	"MenuRightP2",
+	"MenuStartP1",
+	"MenuStartP2",
 	"MenuSelectionChanged",
 	"PlayerJoined",
 	"PlayerUnjoined",

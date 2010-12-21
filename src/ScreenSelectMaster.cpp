@@ -785,7 +785,6 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 		return;
 	}
 
-
 	const GameCommand &mc = m_aGameCommands[m_iChoice[pn]];
 
 	/* If no options are playable, then we're just waiting for one to become available.
@@ -802,6 +801,11 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	if( mc.m_sScreen.empty() )
 	{
 		mc.ApplyToAllPlayers();
+		// We want to be able to broadcast a Start message to the theme, in
+		// case a themer wants to handle something. -aj
+		// TODO: Find a way to differentiate this from the message below, for
+		// less ambiguousness?
+		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuStartP1+pn) );
 		return;
 	}
 
@@ -825,7 +829,11 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	}
 
 	if( bAllDone )
+	{
+		// broadcast MenuStart just like MenuLeft/Right/etc.
+		MESSAGEMAN->Broadcast( (MessageID)(Message_MenuStartP1+pn) );
 		this->PostScreenMessage( SM_BeginFadingOut, fSecs );// tell our owner it's time to move on
+	}
 }
 
 /* We want all items to always run OnCommand and either GainFocus or LoseFocus

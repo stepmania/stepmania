@@ -13,6 +13,13 @@ _____________________________________________________________________________
 sm-ssc v1.2 | 201012xx
 --------------------------------------------------------------------------------
 
+20101220
+--------
+* [Actor] Add bezier (_fallback/02 Actor.lua) [FSX]
+* [MessageManager] Added MenuStartP1 and MenuStartP2 messages.  [freem]
+* [ScreenSelectMaster] Broadcast MenuStartP# messages; allow themers to handle
+  the MenuStartP# message on screenless items. [freem]
+
 20101219
 --------
 * [WheelNotifyIcon] add BlinkPlayersBest metric. [freem]
