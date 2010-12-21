@@ -38,6 +38,6 @@ end;
 --DDR SuperNOVA(-esque) scoring
 -----------------------------------------------------------
 r[4] = function(params, pss)
-	pss:SetScore(pss:GetPercentDancePoints()*1000000);
+	pss:SetScore(math.round(pss:GetActualDancePoints()/pss:GetPossibleDancePoints()*1000000));
 end;
 SpecialScoring = r;
