@@ -31,7 +31,7 @@ end;
 r[3] = function(params, pss)
 	local scoreLookupTable = { ['TapNoteScore_W1']=777, ['TapNoteScore_W2']=777, ['TapNoteScore_W3']=555 };
 	setmetatable(scoreLookupTable, ZeroIfNotFound); 
-	local comboBonusForThisStep = pss:GetCurCombo()*333;
+	local comboBonusForThisStep = pss:GetCurrentCombo()*333;
 	pss:SetScore(pss:GetScore()+scoreLookupTable[params.TapNoteScore]+comboBonusForThisStep);
 end;
 -----------------------------------------------------------
