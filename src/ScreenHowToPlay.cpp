@@ -82,6 +82,7 @@ void ScreenHowToPlay::Init()
 		m_pmDancePad = new Model;
 		m_pmDancePad->SetName( "Pad" );
 		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) );
+		// xxx: hardcoded rotation -freem
 		m_pmDancePad->SetRotationX( 35 );
 		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pmDancePad );
 	}
@@ -109,7 +110,8 @@ void ScreenHowToPlay::Init()
 			m_pmCharacter->LoadMilkshapeAsciiBones( "rest",rndchar->GetRestAnimationPath() );
 			m_pmCharacter->SetDefaultAnimation( "rest" );
 			m_pmCharacter->PlayAnimation( "rest" );				// Stay bouncing after a step has finished animating.
-			
+
+			// xxx: hardcoded rotation -freem
 			m_pmCharacter->SetRotationX( 40 );
 			m_pmCharacter->SetCullMode( CULL_NONE );	// many of the models floating around have the vertex order flipped
 			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pmCharacter );
@@ -126,12 +128,11 @@ void ScreenHowToPlay::Init()
 		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pLifeMeterBar );
 		m_pLifeMeterBar->FillForHowToPlay( NUM_W2S, NUM_MISSES );
 
-
 		SMLoader::LoadFromSMFile( THEME->GetPathO(m_sName, "steps"), m_Song, false );
 		m_Song.AddAutoGenNotes();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
-		
+
 		Steps *pSteps = SongUtil::GetStepsByDescription( &m_Song, pStyle->m_StepsType, "" );
 		ASSERT_M( pSteps != NULL, ssprintf("%i", pStyle->m_StepsType) );
 
