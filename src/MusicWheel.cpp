@@ -629,6 +629,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 						iSectionCount = j-i;
 
 						// new section, make a section item
+						// todo: preferred sort section color handling? -aj
 						RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
 						// In certain situations (e.g. simulating Pump it Up), themes may
