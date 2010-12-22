@@ -460,6 +460,7 @@ void Model::DrawPrimitives()
 void Model::DrawMesh( int i ) const
 {
 	const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
+	ASSERT(pMesh);
 
 	// apply mesh-specific bone (if any)
 	if( pMesh->m_iBoneIndex != -1 )

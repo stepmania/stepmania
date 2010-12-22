@@ -13,6 +13,10 @@ _____________________________________________________________________________
 sm-ssc v1.2 | 201012xx
 --------------------------------------------------------------------------------
 
+20101222
+--------
+* Attempt to fix crashes with models on certain video cards. [freem]
+
 20101221
 --------
 * SM5SVN r28586: Only unload fonts if not used by the next screen. [shakesoda]
