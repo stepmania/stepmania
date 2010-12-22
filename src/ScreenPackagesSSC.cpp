@@ -4,7 +4,6 @@
 #include "RageDisplay.h"
 #include "RageLog.h"
 #include "ScreenManager.h"
-//#include "jsonxx.h"
 
 REGISTER_SCREEN_CLASS( ScreenPackagesSSC );
 
