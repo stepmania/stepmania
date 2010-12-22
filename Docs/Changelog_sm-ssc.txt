@@ -17,8 +17,6 @@ sm-ssc v1.2 | 201012xx
 --------
 * SM5SVN r28586: Only unload fonts if not used by the next screen. [shakesoda]
 * [ScreenSelectMaster] Fix DoSwitchAnyways to actually work again.
-* [Screen] Added SetNextScreenName(string) and SetPrevScreenName(string)
-  Lua bindings. [freem]
 * [ScreenInstallOverlay] Installs won't jump to SelMusic on Gameplay or System
   Menus (e.g. Edit Mode) anymore on download completion. [freem]
 

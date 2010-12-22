@@ -97,8 +97,6 @@ protected:
 public:
 	RString GetNextScreenName() const;
 	RString GetPrevScreen() const;
-	void SetNextScreen(RString sNextScreen){ m_sNextScreen = sNextScreen; };
-	void SetPrevScreen(RString sPrevScreen){ m_sPrevScreen = sPrevScreen; };
 
 	// let subclass override if they want
 	virtual void MenuUp(	const InputEventPlus &input ) { }

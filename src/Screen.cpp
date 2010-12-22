@@ -81,17 +81,16 @@ void Screen::BeginScreen()
 	m_bRunning = true;
 	m_bFirstUpdate = true;
 
-	/* Screens set these when they determine their next screen dynamically.  Reset them
+	/* Screens set these when they determine their next screen dynamically. Reset them
 	 * here, so a reused screen doesn't inherit these from the last time it was used. */
 	m_sNextScreen = RString();
-	m_sPrevScreen = RString();
-	
+
 	m_fLockInputSecs = 0;
 
 	this->RunCommands( THEME->GetMetricA(m_sName, "ScreenOnCommand") );
 
 	if( m_fLockInputSecs == 0 )
-		m_fLockInputSecs = 0.0001f;     // always lock for a tiny amount of time so that we throw away any queued inputs during the load.
+		m_fLockInputSecs = 0.0001f; // always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 
 	this->PlayCommand( "Begin" );
 }
@@ -108,33 +107,28 @@ void Screen::Update( float fDeltaTime )
 	
 	m_fLockInputSecs = max( 0, m_fLockInputSecs-fDeltaTime );
 
-	/*
-	 * We need to ensure two things:
-	 * 1. Messages must be sent in the order of delay.  If two messages are sent
-	 *    simultaneously, one with a .001 delay and another with a .002 delay, the
-	 *    .001 delay message must be sent first.
+	/* We need to ensure two things:
+	 * 1. Messages must be sent in the order of delay. If two messages are sent
+	 *    simultaneously, one with a .001 delay and another with a .002 delay,
+	 *    the .001 delay message must be sent first.
 	 * 2. Messages to be delivered simultaneously must be sent in the order queued.
 	 * 
-	 * Sort by time to ensure #1; use a stable sort to ensure #2.
-	 */
+	 * Sort by time to ensure #1; use a stable sort to ensure #2. */
 	stable_sort(m_QueuedMessages.begin(), m_QueuedMessages.end(), SortMessagesByDelayRemaining);
 
-	/* Update the times of queued ScreenMessages. */
+	// Update the times of queued ScreenMessages.
 	for( unsigned i=0; i<m_QueuedMessages.size(); i++ )
 	{
 		/* Hack:
-		 *
 		 * If we simply subtract time and then send messages, we have a problem.
 		 * Messages are queued to arrive at specific times, and those times line
-		 * up with things like tweens finishing.  If we send the message at the
+		 * up with things like tweens finishing. If we send the message at the
 		 * exact time given, then it'll be on the same cycle that would be rendering
-		 * the last frame of a tween (such as an object going off the screen).  However,
-		 * when we send the message, we're likely to set up a new screen, which
-		 * causes everything to stop in place; this results in actors occasionally
-		 * not quite finishing their tweens.
-		 *
-		 * Let's delay all messages that have a non-zero time an extra frame. 
-		 */
+		 * the last frame of a tween (such as an object going off the screen).
+		 * However, when we send the message, we're likely to set up a new screen,
+		 * which causes everything to stop in place; this results in actors
+		 * occasionally not quite finishing their tweens.
+		 * Let's delay all messages that have a non-zero time an extra frame. */
 		if( m_QueuedMessages[i].fDelayRemaining > 0.0001f )
 		{
 			m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
@@ -146,8 +140,8 @@ void Screen::Update( float fDeltaTime )
 		}
 	}
 
-	/* Now dispatch messages.  If the number of messages on the queue changes
-	 * within HandleScreenMessage, someone cleared messages on the queue.  This
+	/* Now dispatch messages. If the number of messages on the queue changes
+	 * within HandleScreenMessage, someone cleared messages on the queue. This
 	 * means we have no idea where 'i' is, so start over. Since we applied time
 	 * already, this won't cause messages to be mistimed. */
 	for( unsigned i=0; i<m_QueuedMessages.size(); i++ )
@@ -155,7 +149,7 @@ void Screen::Update( float fDeltaTime )
 		if( m_QueuedMessages[i].fDelayRemaining > 0.0f )
 			continue; /* not yet */
 
-		/* Remove the message from the list. */
+		// Remove the message from the list.
 		const ScreenMessage SM = m_QueuedMessages[i].SM;
 		m_QueuedMessages.erase( m_QueuedMessages.begin()+i );
 		i--;
@@ -172,10 +166,10 @@ void Screen::Update( float fDeltaTime )
 	}
 }
 
-/* ScreenManager sends input here first.  Overlay screens can use it to get a first
- * pass at input.  Return true if the input was handled and should not be passed
- * to lower screens, or false if not handled.  If true is returned, Input() will
- * not be called, either.  Normal screens should not overload this function. */
+/* ScreenManager sends input here first. Overlay screens can use it to get a first
+ * pass at input. Return true if the input was handled and should not be passed
+ * to lower screens, or false if not handled. If true is returned, Input() will
+ * not be called, either. Normal screens should not overload this function. */
 bool Screen::OverlayInput( const InputEventPlus &input )
 {
 	return false;
@@ -207,7 +201,7 @@ void Screen::Input( const InputEventPlus &input )
 	case GAME_BUTTON_MENUDOWN:	this->MenuDown	( input );	return;
 	case GAME_BUTTON_MENULEFT:	this->MenuLeft	( input );	return;
 	case GAME_BUTTON_MENURIGHT:	this->MenuRight	( input );	return;
-	case GAME_BUTTON_BACK:	
+	case GAME_BUTTON_BACK:
 		// Don't make the user hold the back button if they're pressing escape and escape is the back button.
 		if( !PREFSMAN->m_bDelayedBack || input.type==IET_REPEAT || (input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_ESC) )
 			this->MenuBack( input );
@@ -244,6 +238,7 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 
 RString Screen::GetNextScreenName() const
 {
+	LOG->Trace("[Screen::GetNextScreenName]: m_sNextScreen = %s",m_sNextScreen.c_str());
 	if( !m_sNextScreen.empty() )
 		return m_sNextScreen;
 	return NEXT_SCREEN;
@@ -251,6 +246,7 @@ RString Screen::GetNextScreenName() const
 
 RString Screen::GetPrevScreen() const
 {
+	LOG->Trace("[Screen::GetPrevScreen]: m_sPrevScreen = %s",m_sPrevScreen.c_str());
 	if( !m_sPrevScreen.empty() )
 		return m_sPrevScreen;
 	return PREV_SCREEN;
@@ -286,8 +282,6 @@ class LunaScreen: public Luna<Screen>
 public:
 	static int GetNextScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetNextScreenName() ); return 1; }
 	static int GetPrevScreenName( T* p, lua_State *L ) { lua_pushstring(L, p->GetPrevScreen() ); return 1; }
-	static int SetNextScreenName( T* p, lua_State *L ) { p->SetNextScreen(SArg(1)); return 0; }
-	static int SetPrevScreenName( T* p, lua_State *L ) { p->SetPrevScreen(SArg(1)); return 0; }
 	static int lockinput( T* p, lua_State *L ) { p->SetLockInputSecs(FArg(1)); return 0; }
 	DEFINE_METHOD( GetScreenType,	GetScreenType() )
 
@@ -303,8 +297,6 @@ public:
 	{
 		ADD_METHOD( GetNextScreenName );
 		ADD_METHOD( GetPrevScreenName );
-		ADD_METHOD( SetNextScreenName );
-		ADD_METHOD( SetPrevScreenName );
 		ADD_METHOD( PostScreenMessage );
 		ADD_METHOD( lockinput );
 		ADD_METHOD( GetScreenType );
