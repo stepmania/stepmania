@@ -370,7 +370,9 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 			sInitialScreen = StepMania::GetInitialScreen();
 		}
 
-		SCREENMAN->SetNewScreen( sInitialScreen );
+		Screen *curScreen = SCREENMAN->GetTopScreen();
+		if(curScreen->GetScreenType() == game_menu || curScreen->GetScreenType() == attract)
+			SCREENMAN->SetNewScreen( sInitialScreen );
 	}
 }
 
