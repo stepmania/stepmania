@@ -157,11 +157,9 @@
 		AA29CD810558741A00961A51 /* FadingBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8A04770E7C005F316C /* FadingBanner.cpp */; };
 		AA29CD820558741A00961A51 /* GradeDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8C04770E7C005F316C /* GradeDisplay.cpp */; };
 		AA29CD840558741A00961A51 /* GrooveRadar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9004770E7C005F316C /* GrooveRadar.cpp */; };
-		AA29CD850558741A00961A51 /* GroupList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9204770E7C005F316C /* GroupList.cpp */; };
 		AA29CD860558741A00961A51 /* HelpDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9404770E7C005F316C /* HelpDisplay.cpp */; };
 		AA29CD890558741A00961A51 /* MenuTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9A04770E7C005F316C /* MenuTimer.cpp */; };
 		AA29CD8A0558741A00961A51 /* MeterDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */; };
-		AA29CD8C0558741A00961A51 /* MusicList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA004770E7C005F316C /* MusicList.cpp */; };
 		AA29CD8E0558741A00961A51 /* MusicWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA404770E7C005F316C /* MusicWheel.cpp */; };
 		AA29CD8F0558741A00961A51 /* MusicWheelItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */; };
 		AA29CD920558741A00961A51 /* OptionsCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAC04770E7C005F316C /* OptionsCursor.cpp */; };
@@ -373,11 +371,9 @@
 		AA40D1F809A08D650068C0D5 /* FadingBanner.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE8B04770E7C005F316C /* FadingBanner.h */; };
 		AA40D1F909A08D650068C0D5 /* GradeDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE8D04770E7C005F316C /* GradeDisplay.h */; };
 		AA40D1FA09A08D650068C0D5 /* GrooveRadar.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9104770E7C005F316C /* GrooveRadar.h */; };
-		AA40D1FB09A08D650068C0D5 /* GroupList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9304770E7C005F316C /* GroupList.h */; };
 		AA40D1FC09A08D650068C0D5 /* HelpDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9504770E7C005F316C /* HelpDisplay.h */; };
 		AA40D1FD09A08D650068C0D5 /* MenuTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9B04770E7C005F316C /* MenuTimer.h */; };
 		AA40D1FE09A08D650068C0D5 /* MeterDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9D04770E7C005F316C /* MeterDisplay.h */; };
-		AA40D20009A08D650068C0D5 /* MusicList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA104770E7C005F316C /* MusicList.h */; };
 		AA40D20209A08D650068C0D5 /* MusicWheel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA504770E7C005F316C /* MusicWheel.h */; };
 		AA40D20309A08D650068C0D5 /* MusicWheelItem.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA704770E7C005F316C /* MusicWheelItem.h */; };
 		AA40D20609A08D650068C0D5 /* OptionsCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEAD04770E7C005F316C /* OptionsCursor.h */; };
@@ -711,11 +707,9 @@
 		AA40D3BA09A08D650068C0D5 /* FadingBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8A04770E7C005F316C /* FadingBanner.cpp */; };
 		AA40D3BB09A08D650068C0D5 /* GradeDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8C04770E7C005F316C /* GradeDisplay.cpp */; };
 		AA40D3BC09A08D650068C0D5 /* GrooveRadar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9004770E7C005F316C /* GrooveRadar.cpp */; };
-		AA40D3BD09A08D650068C0D5 /* GroupList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9204770E7C005F316C /* GroupList.cpp */; };
 		AA40D3BE09A08D650068C0D5 /* HelpDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9404770E7C005F316C /* HelpDisplay.cpp */; };
 		AA40D3BF09A08D650068C0D5 /* MenuTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9A04770E7C005F316C /* MenuTimer.cpp */; };
 		AA40D3C009A08D650068C0D5 /* MeterDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */; };
-		AA40D3C209A08D650068C0D5 /* MusicList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA004770E7C005F316C /* MusicList.cpp */; };
 		AA40D3C409A08D650068C0D5 /* MusicWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA404770E7C005F316C /* MusicWheel.cpp */; };
 		AA40D3C509A08D650068C0D5 /* MusicWheelItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */; };
 		AA40D3C809A08D650068C0D5 /* OptionsCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAC04770E7C005F316C /* OptionsCursor.cpp */; };
@@ -2165,16 +2159,12 @@
 		AA6EFE8D04770E7C005F316C /* GradeDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = GradeDisplay.h; path = ../src/GradeDisplay.h; sourceTree = "<group>"; };
 		AA6EFE9004770E7C005F316C /* GrooveRadar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = GrooveRadar.cpp; path = ../src/GrooveRadar.cpp; sourceTree = "<group>"; };
 		AA6EFE9104770E7C005F316C /* GrooveRadar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = GrooveRadar.h; path = ../src/GrooveRadar.h; sourceTree = "<group>"; };
-		AA6EFE9204770E7C005F316C /* GroupList.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = GroupList.cpp; path = ../src/GroupList.cpp; sourceTree = "<group>"; };
-		AA6EFE9304770E7C005F316C /* GroupList.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = GroupList.h; path = ../src/GroupList.h; sourceTree = "<group>"; };
 		AA6EFE9404770E7C005F316C /* HelpDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = HelpDisplay.cpp; path = ../src/HelpDisplay.cpp; sourceTree = "<group>"; };
 		AA6EFE9504770E7C005F316C /* HelpDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = HelpDisplay.h; path = ../src/HelpDisplay.h; sourceTree = "<group>"; };
 		AA6EFE9A04770E7C005F316C /* MenuTimer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MenuTimer.cpp; path = ../src/MenuTimer.cpp; sourceTree = "<group>"; };
 		AA6EFE9B04770E7C005F316C /* MenuTimer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MenuTimer.h; path = ../src/MenuTimer.h; sourceTree = "<group>"; };
 		AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MeterDisplay.cpp; path = ../src/MeterDisplay.cpp; sourceTree = "<group>"; };
 		AA6EFE9D04770E7C005F316C /* MeterDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MeterDisplay.h; path = ../src/MeterDisplay.h; sourceTree = "<group>"; };
-		AA6EFEA004770E7C005F316C /* MusicList.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicList.cpp; path = ../src/MusicList.cpp; sourceTree = "<group>"; };
-		AA6EFEA104770E7C005F316C /* MusicList.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MusicList.h; path = ../src/MusicList.h; sourceTree = "<group>"; };
 		AA6EFEA404770E7C005F316C /* MusicWheel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicWheel.cpp; path = ../src/MusicWheel.cpp; sourceTree = "<group>"; };
 		AA6EFEA504770E7C005F316C /* MusicWheel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MusicWheel.h; path = ../src/MusicWheel.h; sourceTree = "<group>"; };
 		AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicWheelItem.cpp; path = ../src/MusicWheelItem.cpp; sourceTree = "<group>"; };
@@ -3920,8 +3910,6 @@
 				AAFF551E0549F39700D02EE9 /* GraphDisplay.h */,
 				AA6EFE9004770E7C005F316C /* GrooveRadar.cpp */,
 				AA6EFE9104770E7C005F316C /* GrooveRadar.h */,
-				AA6EFE9204770E7C005F316C /* GroupList.cpp */,
-				AA6EFE9304770E7C005F316C /* GroupList.h */,
 				AA6EFE9404770E7C005F316C /* HelpDisplay.cpp */,
 				AA6EFE9504770E7C005F316C /* HelpDisplay.h */,
 				AA729C460599B54D00779F33 /* MemoryCardDisplay.cpp */,
@@ -3934,8 +3922,6 @@
 				AA11A20C0DC5A1B0006BD8AC /* ModIcon.h */,
 				AA11A20D0DC5A1B0006BD8AC /* ModIconRow.cpp */,
 				AA11A20E0DC5A1B0006BD8AC /* ModIconRow.h */,
-				AA6EFEA004770E7C005F316C /* MusicList.cpp */,
-				AA6EFEA104770E7C005F316C /* MusicList.h */,
 				AA6EFEA404770E7C005F316C /* MusicWheel.cpp */,
 				AA6EFEA504770E7C005F316C /* MusicWheel.h */,
 				AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */,
@@ -4995,11 +4981,9 @@
 				AA40D1F809A08D650068C0D5 /* FadingBanner.h in Headers */,
 				AA40D1F909A08D650068C0D5 /* GradeDisplay.h in Headers */,
 				AA40D1FA09A08D650068C0D5 /* GrooveRadar.h in Headers */,
-				AA40D1FB09A08D650068C0D5 /* GroupList.h in Headers */,
 				AA40D1FC09A08D650068C0D5 /* HelpDisplay.h in Headers */,
 				AA40D1FD09A08D650068C0D5 /* MenuTimer.h in Headers */,
 				AA40D1FE09A08D650068C0D5 /* MeterDisplay.h in Headers */,
-				AA40D20009A08D650068C0D5 /* MusicList.h in Headers */,
 				AA40D20209A08D650068C0D5 /* MusicWheel.h in Headers */,
 				AA40D20309A08D650068C0D5 /* MusicWheelItem.h in Headers */,
 				AA40D20609A08D650068C0D5 /* OptionsCursor.h in Headers */,
@@ -5825,11 +5809,9 @@
 				AA29CD810558741A00961A51 /* FadingBanner.cpp in Sources */,
 				AA29CD820558741A00961A51 /* GradeDisplay.cpp in Sources */,
 				AA29CD840558741A00961A51 /* GrooveRadar.cpp in Sources */,
-				AA29CD850558741A00961A51 /* GroupList.cpp in Sources */,
 				AA29CD860558741A00961A51 /* HelpDisplay.cpp in Sources */,
 				AA29CD890558741A00961A51 /* MenuTimer.cpp in Sources */,
 				AA29CD8A0558741A00961A51 /* MeterDisplay.cpp in Sources */,
-				AA29CD8C0558741A00961A51 /* MusicList.cpp in Sources */,
 				AA29CD8E0558741A00961A51 /* MusicWheel.cpp in Sources */,
 				AA29CD8F0558741A00961A51 /* MusicWheelItem.cpp in Sources */,
 				AA29CD920558741A00961A51 /* OptionsCursor.cpp in Sources */,
@@ -6236,11 +6218,9 @@
 				AA40D3BA09A08D650068C0D5 /* FadingBanner.cpp in Sources */,
 				AA40D3BB09A08D650068C0D5 /* GradeDisplay.cpp in Sources */,
 				AA40D3BC09A08D650068C0D5 /* GrooveRadar.cpp in Sources */,
-				AA40D3BD09A08D650068C0D5 /* GroupList.cpp in Sources */,
 				AA40D3BE09A08D650068C0D5 /* HelpDisplay.cpp in Sources */,
 				AA40D3BF09A08D650068C0D5 /* MenuTimer.cpp in Sources */,
 				AA40D3C009A08D650068C0D5 /* MeterDisplay.cpp in Sources */,
-				AA40D3C209A08D650068C0D5 /* MusicList.cpp in Sources */,
 				AA40D3C409A08D650068C0D5 /* MusicWheel.cpp in Sources */,
 				AA40D3C509A08D650068C0D5 /* MusicWheelItem.cpp in Sources */,
 				AA40D3C809A08D650068C0D5 /* OptionsCursor.cpp in Sources */,
