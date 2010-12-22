@@ -2511,14 +2511,6 @@
 				>
 			</File>
 			<File
-				RelativePath="GroupList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="GroupList.h"
-				>
-			</File>
-			<File
 				RelativePath="HelpDisplay.cpp"
 				>
 			</File>
@@ -2556,14 +2548,6 @@
 			</File>
 			<File
 				RelativePath=".\ModIconRow.h"
-				>
-			</File>
-			<File
-				RelativePath="MusicList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="MusicList.h"
 				>
 			</File>
 			<File

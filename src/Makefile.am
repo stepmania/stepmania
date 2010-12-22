@@ -320,11 +320,11 @@ DifficultyList.cpp DifficultyList.h \
 DualScrollBar.cpp DualScrollBar.h \
 EditMenu.cpp EditMenu.h FadingBanner.cpp FadingBanner.h \
 GradeDisplay.cpp GradeDisplay.h GraphDisplay.cpp GraphDisplay.h \
-GrooveRadar.cpp GrooveRadar.h GroupList.cpp GroupList.h HelpDisplay.cpp HelpDisplay.h \
+GrooveRadar.cpp GrooveRadar.h HelpDisplay.cpp HelpDisplay.h \
 MemoryCardDisplay.cpp MemoryCardDisplay.h \
 MenuTimer.cpp MenuTimer.h \
 ModIcon.cpp ModIcon.h ModIconRow.cpp ModIconRow.h \
-MusicList.cpp MusicList.h MusicWheel.cpp MusicWheel.h \
+MusicWheel.cpp MusicWheel.h \
 MusicWheelItem.cpp MusicWheelItem.h \
 OptionRow.cpp OptionRow.h OptionsCursor.cpp OptionsCursor.h \
 PaneDisplay.cpp PaneDisplay.h ScrollBar.cpp ScrollBar.h \
