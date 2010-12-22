@@ -86,6 +86,7 @@ protected:
 
 	// If left blank, the NextScreen metric will be used.
 	RString m_sNextScreen;
+	RString m_sPrevScreen;
 	ScreenMessage m_smSendOnPop;
 
 	float m_fLockInputSecs;
@@ -96,6 +97,8 @@ protected:
 public:
 	RString GetNextScreenName() const;
 	RString GetPrevScreen() const;
+	void SetNextScreen(RString sNextScreen){ m_sNextScreen = sNextScreen; };
+	void SetPrevScreen(RString sPrevScreen){ m_sPrevScreen = sPrevScreen; };
 
 	// let subclass override if they want
 	virtual void MenuUp(	const InputEventPlus &input ) { }

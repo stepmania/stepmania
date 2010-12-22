@@ -17,6 +17,8 @@ sm-ssc v1.2 | 201012xx
 --------
 * SM5SVN r28586: Only unload fonts if not used by the next screen. [shakesoda]
 * [ScreenSelectMaster] Fix DoSwitchAnyways to actually work again.
+* [Screen] Added SetNextScreenName(string) and SetPrevScreenName(string)
+  Lua bindings. [freem]
 
 20101220
 --------
