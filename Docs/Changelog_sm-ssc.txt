@@ -13,6 +13,10 @@ _____________________________________________________________________________
 sm-ssc v1.2 | 201012xx
 --------------------------------------------------------------------------------
 
+20101222
+--------
+* Added Shift+Ctrl+F2 shortcut for reloading overlay screens (and metrics) [freem]
+
 20101221
 --------
 * SM5SVN r28586: Only unload fonts if not used by the next screen. [shakesoda]

@@ -307,6 +307,28 @@ void ScreenManager::ThemeChanged()
 	this->RefreshCreditsMessages();
 }
 
+void ScreenManager::ReloadOverlayScreens()
+{
+	// unload overlay screens
+	for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
+		SAFE_DELETE( g_OverlayScreens[i] );
+	g_OverlayScreens.clear();
+
+	// reload overlay screens
+	RString sOverlays = THEME->GetMetric( "Common","OverlayScreens" );
+	vector<RString> asOverlays;
+	split( sOverlays, ",", asOverlays );
+	for( unsigned i=0; i<asOverlays.size(); i++ )
+	{
+		Screen *pScreen = MakeNewScreen( asOverlays[i] );
+		LuaThreadVariable var2( "LoadingScreen", pScreen->GetName() );
+		pScreen->BeginScreen();
+		g_OverlayScreens.push_back( pScreen );
+	}
+
+	this->RefreshCreditsMessages();
+}
+
 Screen *ScreenManager::GetTopScreen()
 {
 	if( g_ScreenStack.empty() )

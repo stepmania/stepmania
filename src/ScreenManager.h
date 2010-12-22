@@ -46,7 +46,7 @@ public:
 
 	void RefreshCreditsMessages();
 	void ThemeChanged();
-
+	void ReloadOverlayScreens();
 
 	/* Return true if the given screen is in the main screen stack, but not the
 	 * bottommost screen. If true, the screen should usually exit by popping
