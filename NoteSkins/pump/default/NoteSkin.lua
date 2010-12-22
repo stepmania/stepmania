@@ -76,7 +76,6 @@ local function func()
 		ElementToLoad = sElement
 	end
 	
-	--update: ahora receptor también
 	if sElement == "Explosion"
 	or sElement == "Tap Lift"
 	or sElement == "Tap Mine"
@@ -85,7 +84,6 @@ local function func()
 		sButton = "UpLeft"
 	end
 	local path = NOTESKIN:GetPath(Noteskin.ButtonRedirs[sButton],ElementToLoad)
-	--Graficos separados para holds y rolls
 	--if string.find(sElement,"Hold") or string.find(sElement,"Roll") then
 	if ( string.find(sElement,"Hold") or string.find(sElement,"Roll") ) and not ( string.find(sElement,"Head") or string.find(sElement,"Tail") ) then
 	--if ( string.find(sElement,"Hold") or string.find(sElement,"Roll") ) and ( string.find(sElement,"Body") ) then
