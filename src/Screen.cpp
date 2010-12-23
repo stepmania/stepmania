@@ -238,7 +238,6 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 
 RString Screen::GetNextScreenName() const
 {
-	LOG->Trace("[Screen::GetNextScreenName]: m_sNextScreen = %s",m_sNextScreen.c_str());
 	if( !m_sNextScreen.empty() )
 		return m_sNextScreen;
 	return NEXT_SCREEN;
@@ -246,7 +245,6 @@ RString Screen::GetNextScreenName() const
 
 RString Screen::GetPrevScreen() const
 {
-	LOG->Trace("[Screen::GetPrevScreen]: m_sPrevScreen = %s",m_sPrevScreen.c_str());
 	if( !m_sPrevScreen.empty() )
 		return m_sPrevScreen;
 	return PREV_SCREEN;
