@@ -240,6 +240,12 @@ void FadingBanner::LoadRandom()
 	m_Banner[m_iIndexLatest].LoadRandom();
 }
 
+void FadingBanner::LoadFromSortOrder( SortOrder so )
+{
+	BeforeChange();
+	m_Banner[m_iIndexLatest].LoadFromSortOrder(so);
+}
+
 void FadingBanner::LoadFallback()
 {
 	BeforeChange();

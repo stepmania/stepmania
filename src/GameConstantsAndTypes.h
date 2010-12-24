@@ -105,7 +105,6 @@ const RString& PlayModeToLocalizedString( PlayMode pm );
 PlayMode StringToPlayMode( const RString& s );
 LuaDeclareType( PlayMode );
 
-// ziup2 has SortOrder_PinnedMeter (¿qef?)
 enum SortOrder 
 {
 	// song sorts

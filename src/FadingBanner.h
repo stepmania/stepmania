@@ -27,6 +27,7 @@ public:
 	void LoadBannerFromUnlockEntry( const UnlockEntry* pUE );
 	void LoadRoulette();
 	void LoadRandom();
+	void LoadFromSortOrder( SortOrder so );
 	void LoadFallback();
 	void LoadCourseFallback();
 

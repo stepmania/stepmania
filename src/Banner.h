@@ -5,6 +5,7 @@
 
 #include "Sprite.h"
 #include "RageTextureID.h"
+#include "GameConstantsAndTypes.h"
 class Song;
 class Course;
 class Character;
@@ -34,6 +35,7 @@ public:
 	void LoadBackgroundFromUnlockEntry( const UnlockEntry* pUE );
 	void LoadRoulette();
 	void LoadRandom();
+	void LoadFromSortOrder( SortOrder so );
 	void LoadFallback();
 	void LoadFallbackBG();
 	void LoadCourseFallback();

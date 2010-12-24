@@ -13,6 +13,11 @@ _____________________________________________________________________________
 sm-ssc v1.2 | 201012xx
 --------------------------------------------------------------------------------
 
+20101223
+--------
+* Added Banners for most SortOrders. (Group is excluded (song group banners
+  still work), as is Recent (which has no sections).) [freem]
+
 20101222
 --------
 * Added Shift+Ctrl+F2 shortcut for reloading overlay screens (and metrics) [freem]

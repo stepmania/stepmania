@@ -220,6 +220,20 @@ void Banner::LoadRandom()
 	m_bScrolling = (bool)SCROLL_ROULETTE;
 }
 
+void Banner::LoadFromSortOrder( SortOrder so )
+{
+	if( so == NULL || so == SortOrder_Invalid )
+	{
+		LoadFallback();
+	}
+	else
+	{
+		if( so != SORT_GROUP && so != SORT_RECENT )
+			Load( THEME->GetPathG("Banner",ssprintf("%s",SortOrderToString(so).c_str())) );
+	}
+	m_bScrolling = false;
+}
+
 // lua start
 #include "LuaBinding.h"
 
@@ -274,6 +288,16 @@ public:
 		p->LoadFromSongGroup( SArg(1) );
 		return 0;
 	}
+	static int LoadFromSortOrder( T* p, lua_State *L )
+	{
+		if( lua_isnil(L,1) ) { p->LoadFromSortOrder( SortOrder_Invalid ); }
+		else
+		{
+			SortOrder so = Enum::Check<SortOrder>(L, 1);
+			p->LoadFromSortOrder( so );
+		}
+		return 0;
+	}
 
 	LunaBanner()
 	{
@@ -287,6 +311,7 @@ public:
 		ADD_METHOD( LoadBannerFromUnlockEntry );
 		ADD_METHOD( LoadBackgroundFromUnlockEntry );
 		ADD_METHOD( LoadFromSongGroup );
+		ADD_METHOD( LoadFromSortOrder );
 	}
 };
 

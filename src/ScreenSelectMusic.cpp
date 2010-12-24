@@ -1691,31 +1691,44 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		switch( m_MusicWheel.GetSelectedType() )
 		{
-		case TYPE_SECTION:
-			g_sBannerPath = SONGMAN->GetSongGroupBannerPath( m_MusicWheel.GetSelectedSection() );
-			if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-				m_sSampleMusicToPlay = m_sSectionMusicPath;
-			break;
-		case TYPE_SORT:
-			bWantBanner = false; // we load it ourself
-			m_Banner.LoadMode();
-			if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-				m_sSampleMusicToPlay = m_sSortMusicPath;
-			break;
-		case TYPE_ROULETTE:
-			bWantBanner = false; // we load it ourself
-			m_Banner.LoadRoulette();
-			if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-				m_sSampleMusicToPlay = m_sRouletteMusicPath;
-			break;
-		case TYPE_RANDOM:
-			bWantBanner = false; // we load it ourself
-			m_Banner.LoadRandom();
-			//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-			m_sSampleMusicToPlay = m_sRandomMusicPath;
-			break;
-		default:
-			ASSERT(0);
+			case TYPE_SECTION:
+				// reduce scope
+				{
+					SortOrder curSort = GAMESTATE->m_SortOrder;
+					if( curSort == SORT_GROUP)
+					{
+						g_sBannerPath = SONGMAN->GetSongGroupBannerPath( m_MusicWheel.GetSelectedSection() );
+					}
+					else
+					{
+						bWantBanner = false; // we load it ourself
+						m_Banner.LoadFromSortOrder(curSort);
+					}
+
+					if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+						m_sSampleMusicToPlay = m_sSectionMusicPath;
+				}
+				break;
+			case TYPE_SORT:
+				bWantBanner = false; // we load it ourself
+				m_Banner.LoadMode();
+				if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+					m_sSampleMusicToPlay = m_sSortMusicPath;
+				break;
+			case TYPE_ROULETTE:
+				bWantBanner = false; // we load it ourself
+				m_Banner.LoadRoulette();
+				if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+					m_sSampleMusicToPlay = m_sRouletteMusicPath;
+				break;
+			case TYPE_RANDOM:
+				bWantBanner = false; // we load it ourself
+				m_Banner.LoadRandom();
+				//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+				m_sSampleMusicToPlay = m_sRandomMusicPath;
+				break;
+			default:
+				ASSERT(0);
 		}
 		// override this if the sample music mode wants to.
 		/*
