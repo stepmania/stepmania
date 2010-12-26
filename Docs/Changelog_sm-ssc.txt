@@ -17,7 +17,7 @@ sm-ssc v1.2 | 201012xx
 --------
 * [ScreenEdit] Added GetEditState Lua binding. [freem]
 * [ScreenNetSelectMusic] StepsDisplay changed to load from StepsDisplayNet. [freem]
-* [RoomWheel] Added OverPart (just like in MusicWheel). [freem]
+* [RoomWheelItem] Added OverPart (just like in MusicWheelItem). [freem]
 * [SongManager] Added GetSongRank(Song) Lua binding. [freem]
 
 20101225
@@ -42,10 +42,10 @@ sm-ssc v1.2 | 201012xx
 
 20101220
 --------
-* [Actor] Add bezier (_fallback/02 Actor.lua) [FSX]
-* [MessageManager] Added MenuStartP1 and MenuStartP2 messages.  [freem]
+* [Actor] Add bezier. (_fallback/02 Actor.lua) [FSX]
+* [MessageManager] Added MenuStartP1 and MenuStartP2 messages. [freem]
 * [ScreenSelectMaster] Broadcast MenuStartP# messages; allow themers to handle
-  the MenuStartP# message on screenless items. [freem]
+  the MenuStartP# messageitems. [freem]
 
 20101219
 --------
