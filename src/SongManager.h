@@ -102,6 +102,7 @@ public:
 	Course* GetRandomCourse();
 	// sm-ssc addition:
 	RString GetSongGroupByIndex(unsigned index) { return m_sSongGroupNames[index]; }
+	int GetSongRank(Song* pSong);
 
 	void GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot ) const;
 	Song *GetSongFromSteps( Steps *pSteps ) const;

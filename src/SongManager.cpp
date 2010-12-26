@@ -163,7 +163,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 			break;
 
 	if( j != m_sSongGroupNames.size() )
-		return; /* the group is already added */
+		return; // the group is already added
 
 	// Look for a group banner in this group folder
 	vector<RString> arrayGroupBanners;
@@ -221,7 +221,7 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 static LocalizedString LOADING_SONGS ( "SongManager", "Loading songs..." );
 void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 {
-	/* Make sure sDir has a trailing slash. */
+	// Make sure sDir has a trailing slash.
 	if( sDir.Right(1) != "/" )
 		sDir += "/";
 
@@ -255,7 +255,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 		{
 			RString sSongDirName = arraySongDirs[j];
 
-			// this is a song directory.  Load a new song!
+			// this is a song directory. Load a new song.
 			if( ld )
 			{
 				ld->SetText( LOADING_SONGS.GetValue()+ssprintf("\n%s\n%s",
@@ -266,11 +266,11 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 			Song* pNewSong = new Song;
 			if( !pNewSong->LoadFromSongDir( sSongDirName ) )
 			{
-				/* The song failed to load. */
+				// The song failed to load.
 				delete pNewSong;
 				continue;
 			}
-			
+
 			m_pSongs.push_back( pNewSong );
 			index_entry.push_back( pNewSong );
 			loaded++;
@@ -278,16 +278,16 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 
 		LOG->Trace("Loaded %i songs from \"%s\"", loaded, (sDir+sGroupDirName).c_str() );
 
-		/* Don't add the group name if we didn't load any songs in this group. */
+		// Don't add the group name if we didn't load any songs in this group.
 		if(!loaded) continue;
 
-		/* Add this group to the group array. */
+		// Add this group to the group array.
 		AddGroup(sDir, sGroupDirName);
 
-		// Cache and load the group banner. (and background if it has one)
+		// Cache and load the group banner. (and background if it has one -aj)
 		BANNERCACHE->CacheBanner( GetSongGroupBannerPath(sGroupDirName) );
 
-		/* Load the group sym links (if any)*/
+		// Load the group sym links (if any)
 		LoadGroupSymLinks(sDir, sGroupDirName);
 	}
 
@@ -308,7 +308,7 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 		MsdFile		msdF;
 		msdF.ReadFile( sDir+sGroupFolder+"/"+arraySymLinks[s].c_str(), false );  // don't unescape
 		RString	sSymDestination = msdF.GetParam(0,1);	// Should only be 1 vale&param...period.
-		
+
 		Song* pNewSong = new Song;
 		if( !pNewSong->LoadFromSongDir( sSymDestination ) )
 		{
@@ -802,11 +802,11 @@ void SongManager::InitAutogenCourses()
 	CourseUtil::AutogenEndlessFromGroup( "", Difficulty_Medium, *pCourse );
 	m_pCourses.push_back( pCourse );
 
-	/* Generate Oni courses from artists.  Only create courses if we have at least
+	/* Generate Oni courses from artists. Only create courses if we have at least
 	 * four songs from an artist; create 3- and 4-song courses. */
 	{
-		/* We normally sort by translit artist.  However, display artist is more
-		 * consistent.  For example, transliterated Japanese names are alternately
+		/* We normally sort by translit artist. However, display artist is more
+		 * consistent. For example, transliterated Japanese names are alternately
 		 * spelled given- and family-name first, but display titles are more consistent. */
 		vector<Song*> apSongs = this->GetAllSongs();
 		SongUtil::SortSongPointerArrayByDisplayArtist( apSongs );
@@ -827,8 +827,8 @@ void SongManager::InitAutogenCourses()
 				continue;
 			}
 
-			/* Different artist, or we're at the end.  If we have enough entries for
-			 * the last artist, add it.  Skip blanks and "Unknown artist". */
+			/* Different artist, or we're at the end. If we have enough entries for
+			 * the last artist, add it. Skip blanks and "Unknown artist". */
 			if( iCurArtistCount >= 3 && sCurArtistTranslit != "" &&
 				sCurArtistTranslit.CompareNoCase("Unknown artist") &&
 				sCurArtist.CompareNoCase("Unknown artist") )
@@ -952,8 +952,8 @@ void SongManager::InvalidateCachedTrails()
 	}
 }
 
-/* Called periodically to wipe out cached NoteData.  This is called when we change
- * screens. */
+/* Called periodically to wipe out cached NoteData. This is called when we
+ * change screens. */
 void SongManager::Cleanup()
 {
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
@@ -968,9 +968,9 @@ void SongManager::Cleanup()
 	}
 }
 
-/* Flush all Song*, Steps* and Course* caches.  This is when a Song or its Steps
- * are removed or changed.  This doesn't touch GAMESTATE and StageStats
- * pointers.  Currently, the only time Steps are altered independently of the
+/* Flush all Song*, Steps* and Course* caches. This is when a Song or its Steps
+ * are removed or changed. This doesn't touch GAMESTATE and StageStats
+ * pointers. Currently, the only time Steps are altered independently of the
  * Courses and Songs is in Edit Mode, which updates the other pointers it needs. */
 void SongManager::Invalidate( const Song *pStaleSong )
 {
@@ -1000,7 +1000,7 @@ void SongManager::SetPreferences()
 {
 	for( unsigned int i=0; i<m_pSongs.size(); i++ )
 	{
-		/* PREFSMAN->m_bAutogenSteps may have changed. */
+		// PREFSMAN->m_bAutogenSteps may have changed.
 		m_pSongs[i]->RemoveAutoGenNotes();
 		m_pSongs[i]->AddAutoGenNotes();
 	}
@@ -1118,7 +1118,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredG
 	const RString sCourseSuffix = sPreferredGroup + (bExtra2 ? "/extra2.crs" : "/extra1.crs");
 	RString sCoursePath = SpecialFiles::SONGS_DIR + sCourseSuffix;
 
-	/* Couldn't find course in DWI path or alternative song folders */
+	// Couldn't find course in DWI path or alternative song folders
 	if( !DoesFileExist(sCoursePath) )
 	{
 		sCoursePath = ADDITIONAL_SONGS_DIR + sCourseSuffix;
@@ -1139,20 +1139,20 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredG
 	return true;
 }
 
-/* Return true if n1 < n2. */
+// Return true if n1 < n2.
 bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 {
-	/* Equate CHALLENGE to HARD. */
+	// Equate CHALLENGE to HARD.
 	Difficulty d1 = min(n1->GetDifficulty(), Difficulty_Hard);
 	Difficulty d2 = min(n2->GetDifficulty(), Difficulty_Hard);
 
 	if(d1 < d2) return true;
 	if(d1 > d2) return false;
-	/* n1 difficulty == n2 difficulty */
+	// n1 difficulty == n2 difficulty 
 
 	if(StepsUtil::CompareNotesPointersByMeter(n1,n2)) return true;
 	if(StepsUtil::CompareNotesPointersByMeter(n2,n1)) return false;
-	/* n1 meter == n2 meter */
+	// n1 meter == n2 meter
 
 	return StepsUtil::CompareNotesPointersByRadarValues(n1,n2);
 }
@@ -1164,7 +1164,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 	{
 		if( GAMESTATE->m_pCurSong == NULL )
 		{
-			/* This normally shouldn't happen, but it's helpful to permit it for testing. */
+			// This normally shouldn't happen, but it's helpful to permit it for testing.
 			LOG->Warn( "GetExtraStageInfo() called in GROUP_ALL, but GAMESTATE->m_pCurSong == NULL" );
 			GAMESTATE->m_pCurSong.Set( GetRandomSong() );
 		}
@@ -1315,22 +1315,18 @@ Course* SongManager::GetCourseFromName( RString sName ) const
 }
 
 
-/*
- * GetSongDir() contains a path to the song, possibly a full path, eg:
+/* GetSongDir() contains a path to the song, possibly a full path, eg:
  * Songs\Group\SongName                   or 
  * My Other Song Folder\Group\SongName    or
  * c:\Corny J-pop\Group\SongName
  *
- * Most course group names are "Group\SongName", so we want to
- * match against the last two elements. Let's also support
- * "SongName" alone, since the group is only important when it's
- * potentially ambiguous.
+ * Most course group names are "Group\SongName", so we want to match against the
+ * last two elements. Let's also support "SongName" alone, since the group is
+ * only important when it's potentially ambiguous.
  *
- * Let's *not* support "Songs\Group\SongName" in course files.
- * That's probably a common error, but that would result in
- * course files floating around that only work for people who put
- * songs in "Songs"; we don't want that.
- */
+ * Let's *not* support "Songs\Group\SongName" in course files. That's probably
+ * a common error, but that would result in course files floating around that
+ * only work for people who put songs in "Songs"; we don't want that. */
 
 Song *SongManager::FindSong( RString sPath ) const
 {
@@ -1605,8 +1601,8 @@ void SongManager::SortSongs()
 
 void SongManager::UpdateRankingCourses()
 {
-	/* Updating the ranking courses data is fairly expensive
-	 * since it involves comparing strings.  Do so sparingly. */
+	/* Updating the ranking courses data is fairly expensive since it involves
+	 * comparing strings. Do so sparingly. */
 	vector<RString> RankingCourses;
 	split( THEME->GetMetric("ScreenRanking","CoursesToShow"),",", RankingCourses);
 
@@ -1774,6 +1770,11 @@ int FindCourseIndexOfSameMode( T begin, T end, const Course *p )
 	return -1;
 }
 
+int SongManager::GetSongRank(Song* pSong)
+{
+	const int index = FindIndex( m_pPopularSongs.begin(), m_pPopularSongs.end(), pSong );
+	return index; // -1 means we didn't find it
+}
 
 // lua start
 #include "LuaBinding.h"
@@ -1844,22 +1845,17 @@ public:
 	DEFINE_METHOD( GetSongGroupColor, GetSongGroupColor( SArg(1) ) )
 	DEFINE_METHOD( GetCourseColor, GetCourseColor( Luna<Course>::check(L,1) ) )
 
-	// this binding has ABYSMAL performance, most likely due to the whole "hey
-	// let's keep repopulating the vector every time this is called" thing.
-	// gg whitehouse maybe if you included global variables in your terror
-	// alerts this wouldn't have happened ffffffffffffff -aj
-	/*
 	static int GetSongRank( T* p, lua_State *L )
 	{
 		Song *pSong = Luna<Song>::check(L,1);
-		vector<Song*> apPopularSongs;
-		p->GetPopularSongs(apPopularSongs,GROUP_ALL);
-		const int index = FindIndex( apPopularSongs.begin(), apPopularSongs.end(), pSong );
+		int index = p->GetSongRank(pSong);
 		if( index != -1 )
 			lua_pushnumber(L, index+1);
-		else lua_pushnil(L);
+		else
+			lua_pushnil(L);
 		return 1;
 	}
+	/*
 	static int GetSongRankFromProfile( T* p, lua_State *L )
 	{
 		// it's like the above but also takes in a ProfileSlot as well.
@@ -1904,7 +1900,7 @@ public:
 		ADD_METHOD( GetSongColor );
 		ADD_METHOD( GetSongGroupColor );
 		ADD_METHOD( GetCourseColor );
-		//ADD_METHOD( GetSongRank );
+		ADD_METHOD( GetSongRank );
 		ADD_METHOD( GetSongGroupNames );
 		ADD_METHOD( GetSongsInGroup );
 		ADD_METHOD( ShortenGroupName );

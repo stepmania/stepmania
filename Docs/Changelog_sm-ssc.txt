@@ -18,6 +18,7 @@ sm-ssc v1.2 | 201012xx
 * [ScreenEdit] Added GetEditState Lua binding. [freem]
 * [ScreenNetSelectMusic] StepsDisplay changed to load from StepsDisplayNet. [freem]
 * [RoomWheel] Added OverPart (just like in MusicWheel). [freem]
+* [SongManager] Added GetSongRank(Song) Lua binding. [freem]
 
 20101225
 --------
