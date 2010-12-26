@@ -24,8 +24,11 @@ void ScreenGameplaySyncMachine::Init()
 	m_Song.TidyUpData();
 
 	GAMESTATE->m_pCurSong.Set( &m_Song );
-	Steps *pSteps = SongUtil::GetOneSteps( &m_Song );
-	ASSERT( pSteps );
+	// needs proper StepsType - freem
+	vector<Steps*> vpSteps;
+	SongUtil::GetPlayableSteps( &m_Song, vpSteps );
+	ASSERT(vpSteps.size() > 0);
+	Steps *pSteps = vpSteps[0];
 	GAMESTATE->m_pCurSteps[0].Set( pSteps );
 
 	GamePreferences::m_AutoPlay.Set( PC_HUMAN );

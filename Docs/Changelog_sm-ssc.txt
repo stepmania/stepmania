@@ -19,6 +19,9 @@ sm-ssc v1.2 | 201012xx
 * [ScreenNetSelectMusic] StepsDisplay changed to load from StepsDisplayNet. [freem]
 * [RoomWheelItem] Added OverPart (just like in MusicWheelItem). [freem]
 * [SongManager] Added GetSongRank(Song) Lua binding. [freem]
+* Changed Steps picking logic in ScreenGameplaySyncMachine; now playable Steps
+  are chosen, instead of whatever NoteData happens to be first.
+  Also added pump-single data to ScreenGameplaySyncMachine music.sm. [freem]
 
 20101225
 --------
