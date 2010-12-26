@@ -188,7 +188,7 @@ PrefsManager::PrefsManager() :
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
 	m_bMenuTimer		( "MenuTimer",			false ),
 
-	m_fLifeDifficultyScale	( "LifeDifficultyScale",	.0f ),
+	m_fLifeDifficultyScale	( "LifeDifficultyScale",	1.0f ),
 
 
 	m_iRegenComboAfterMiss		( "RegenComboAfterMiss",	5 ),
