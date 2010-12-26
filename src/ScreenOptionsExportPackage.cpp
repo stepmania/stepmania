@@ -25,6 +25,8 @@ void ScreenOptionsExportPackage::Init()
 void ScreenOptionsExportPackage::BeginScreen()
 {
 	// Fill m_vsPossibleDirsToExport
+	// todo: split these out over multiple screens so the scroller
+	// isn't so overloaded. -freem
 	{
 		// Add themes
 		{

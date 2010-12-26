@@ -65,7 +65,7 @@ void ScreenNetSelectMusic::Init()
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 
 		m_StepsDisplays[p].SetName( ssprintf("StepsDisplayP%d",p+1) );
-		m_StepsDisplays[p].Load( "StepsDisplay", NULL );
+		m_StepsDisplays[p].Load( "StepsDisplayNet", NULL );
 		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_StepsDisplays[p] );
 		this->AddChild( &m_StepsDisplays[p] );
 	}

@@ -56,6 +56,7 @@ RoomWheelItem::RoomWheelItem( const RoomWheelItem &cpy ):
 	WheelItemBase( cpy ),
 	m_sprNormalPart( cpy.m_sprNormalPart ),
 	m_sprColorPart( cpy.m_sprColorPart ),
+	m_sprOverPart( cpy.m_sprOverPart ),
 	m_text( cpy.m_text ),
 	m_Desc( cpy.m_Desc )
 {
@@ -63,6 +64,7 @@ RoomWheelItem::RoomWheelItem( const RoomWheelItem &cpy ):
 	{
 		this->AddChild( m_sprNormalPart );
 		this->AddChild( m_sprColorPart );
+		this->AddChild( m_sprOverPart );
 		this->AddChild( &m_text );
 		this->AddChild( &m_Desc );
 	}
@@ -106,6 +108,9 @@ void RoomWheelItem::Load( RString sType )
 	m_Desc.SetXY( DESC_X, DESC_Y);
 	m_Desc.PlayCommand( "On" );
 	this->AddChild( &m_Desc );
+
+	m_sprOverPart.Load( THEME->GetPathG(sType,"OverPart") );
+	this->AddChild( m_sprOverPart );
 }
 
 void RoomWheel::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas )
