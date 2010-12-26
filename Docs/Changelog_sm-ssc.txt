@@ -13,6 +13,14 @@ _____________________________________________________________________________
 sm-ssc v1.2 | 201012xx
 --------------------------------------------------------------------------------
 
+20101226
+--------
+* [ScreenEdit] Added GetEditState Lua binding. [freem]
+
+20101225
+--------
+* Fixed Life difficulty scale being 0. [Daisuke Master]
+
 20101223
 --------
 * Added Banners for most SortOrders. (Group is excluded (song group banners

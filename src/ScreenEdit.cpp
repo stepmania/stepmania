@@ -89,6 +89,7 @@ static const char *EditStateNames[] = {
 	"Playing"
 };
 XToString( EditState );
+LuaXType( EditState );
 
 #if defined(XBOX)
 void ScreenEdit::InitEditMappings()
@@ -3918,6 +3919,21 @@ void ScreenEdit::DoHelp()
 
 	EditMiniMenu( &g_EditHelp );
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaScreenEdit: public Luna<ScreenEdit>
+{
+public:
+	DEFINE_METHOD( GetEditState, GetEditState() )
+	LunaScreenEdit()
+	{
+		ADD_METHOD( GetEditState );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScreenEdit, ScreenWithMenuElements )
 
 /*
  * (c) 2001-2004 Chris Danford

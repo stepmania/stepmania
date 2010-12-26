@@ -18,6 +18,7 @@
 #include "GameInput.h"
 #include "GameplayAssist.h"
 #include "AutoKeysounds.h"
+#include "EnumHelper.h"
 
 #include <map>
 
@@ -33,6 +34,8 @@ enum EditState
 	NUM_EditState,
 	EditState_Invalid
 };
+const RString& EditStateToString( EditState es );
+LuaDeclareType( EditState );
 
 enum EditButton
 {
@@ -188,6 +191,11 @@ public:
 
 	void SetDirty( bool bDirty ) { m_bDirty = bDirty; }
 	bool IsDirty() const { return m_bDirty; }
+
+	EditState GetEditState(){ return m_EditState; }
+
+	// Lua
+	virtual void PushSelf( lua_State *L );
 
 protected:
 	virtual ScreenType GetScreenType() const { return m_EditState==STATE_PLAYING ? gameplay : ScreenWithMenuElements::GetScreenType(); }
