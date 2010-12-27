@@ -22,6 +22,11 @@ sm-ssc v1.2 | 201012xx
 * Changed Steps picking logic in ScreenGameplaySyncMachine; now playable Steps
   are chosen, instead of whatever NoteData happens to be first.
   Also added pump-single data to ScreenGameplaySyncMachine music.sm. [freem]
+* [Banner, FadingBanner] Various changes: [freem]
+  * Removed (now unused) All Music banner.
+  * Fixed swapped ScrollRandom and ScrollRoulette metrics.
+  * Added GetScrolling(), GetPercentScrolling() and SetScrolling(bool,float)
+    Lua bindings.
 
 20101225
 --------

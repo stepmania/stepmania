@@ -25,7 +25,6 @@ public:
 	virtual void Update( float fDeltaTime );
 
 	void LoadFromSong( Song* pSong );		// NULL means no song
-	void LoadAllMusic();
 	void LoadMode();
 	void LoadFromSongGroup( RString sSongGroup );
 	void LoadFromCourse( const Course *pCourse );
@@ -42,6 +41,7 @@ public:
 	void LoadFallbackCharacterIcon();
 
 	void SetScrolling( bool bScroll, float Percent = 0 );
+	void GetScrolling() const { return m_bScrolling; }
 	float ScrollingPercent() const { return m_fPercentScrolling; }
 
 	// Lua

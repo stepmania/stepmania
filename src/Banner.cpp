@@ -15,7 +15,7 @@
 
 REGISTER_ACTOR_CLASS( Banner )
 
-ThemeMetric<bool> SCROLL_RANDOM		("Banner","ScrollRandom");
+ThemeMetric<bool> SCROLL_RANDOM	("Banner","ScrollRandom");
 ThemeMetric<bool> SCROLL_ROULETTE	("Banner","ScrollRoulette");
 
 Banner::Banner()
@@ -24,7 +24,7 @@ Banner::Banner()
 	m_fPercentScrolling = 0;
 }
 
-/* Ugly: if sIsBanner is false, we're actually loading something other than a banner. */
+// Ugly: if sIsBanner is false, we're actually loading something other than a banner.
 void Banner::Load( RageTextureID ID, bool bIsBanner )
 {
 	if( ID.filename == "" )
@@ -86,10 +86,10 @@ void Banner::Update( float fDeltaTime )
  
 		float fTexCoords[8] = 
 		{
-			0+m_fPercentScrolling, pTextureRect->top,	// top left
+			0+m_fPercentScrolling, pTextureRect->top,		// top left
 			0+m_fPercentScrolling, pTextureRect->bottom,	// bottom left
 			1+m_fPercentScrolling, pTextureRect->bottom,	// bottom right
-			1+m_fPercentScrolling, pTextureRect->top,	// top right
+			1+m_fPercentScrolling, pTextureRect->top,		// top right
 		};
 		Sprite::SetCustomTextureCoords( fTexCoords );
 	}
@@ -100,22 +100,16 @@ void Banner::SetScrolling( bool bScroll, float Percent)
 	m_bScrolling = bScroll;
 	m_fPercentScrolling = Percent;
 
-	/* Set up the texture coord rects for the current state. */
+	// Set up the texture coord rects for the current state.
 	Update(0);
 }
 
-void Banner::LoadFromSong( Song* pSong )		// NULL means no song
+void Banner::LoadFromSong( Song* pSong ) // NULL means no song
 {
-	if( pSong == NULL )				LoadFallback();
-	else if( pSong->HasBanner() )			Load( pSong->GetBannerPath() );
-	else						LoadFallback();
+	if( pSong == NULL )	LoadFallback();
+	else if( pSong->HasBanner() ) Load( pSong->GetBannerPath() );
+	else					LoadFallback();
 
-	m_bScrolling = false;
-}
-
-void Banner::LoadAllMusic()
-{
-	Load( THEME->GetPathG("Banner","All") );
 	m_bScrolling = false;
 }
 
@@ -211,13 +205,13 @@ void Banner::LoadFallbackCharacterIcon()
 void Banner::LoadRoulette()
 {
 	Load( THEME->GetPathG("Banner","roulette") );
-	m_bScrolling = (bool)SCROLL_RANDOM;
+	m_bScrolling = (bool)SCROLL_ROULETTE;
 }
 
 void Banner::LoadRandom()
 {
 	Load( THEME->GetPathG("Banner","random") );
-	m_bScrolling = (bool)SCROLL_ROULETTE;
+	m_bScrolling = (bool)SCROLL_RANDOM;
 }
 
 void Banner::LoadFromSortOrder( SortOrder so )
@@ -298,6 +292,9 @@ public:
 		}
 		return 0;
 	}
+	static int GetScrolling( T* p, lua_State *L ){ lua_pushboolean( L, p->GetScrolling() ); return 1; }
+	static int GetPercentScrolling( T* p, lua_State *L ){ lua_pushnumber( L, p->ScrollingPercent() ); return 1; }
+	static int SetScrolling( T* p, lua_State *L ){ p->SetScrolling( BArg(1), FArg(2) ); return 0; }
 
 	LunaBanner()
 	{

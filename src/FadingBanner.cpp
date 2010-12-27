@@ -181,12 +181,6 @@ void FadingBanner::LoadFromSong( const Song* pSong )
 		LoadFromCachedBanner( sPath );
 }
 
-void FadingBanner::LoadAllMusic()
-{
-	BeforeChange();
-	m_Banner[m_iIndexLatest].LoadAllMusic();
-}
-
 void FadingBanner::LoadMode()
 {
 	BeforeChange();
