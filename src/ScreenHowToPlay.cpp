@@ -20,9 +20,10 @@
 
 static const ThemeMetric<int>		NUM_W2S		("ScreenHowToPlay","NumW2s");
 static const ThemeMetric<int>		NUM_MISSES	("ScreenHowToPlay","NumMisses");
-static const ThemeMetric<bool>		USE_CHARACTER	("ScreenHowToPlay","UseCharacter");
-static const ThemeMetric<bool>		USE_PAD		("ScreenHowToPlay","UsePad");
-static const ThemeMetric<bool>		USE_PLAYER	("ScreenHowToPlay","UsePlayer");
+static const ThemeMetric<bool>	USE_CHARACTER	("ScreenHowToPlay","UseCharacter");
+static const ThemeMetric<bool>	USE_PAD		("ScreenHowToPlay","UsePad");
+static const ThemeMetric<bool>	USE_PLAYER	("ScreenHowToPlay","UsePlayer");
+static const ThemeMetric<RString>	CHARACTER_NAME("ScreenHowToPlay","CharacterName");
 
 enum Animation
 {
@@ -46,7 +47,6 @@ static const RString anims[NUM_ANIMATIONS] =
 	"BeginnerHelper_step-right.bones.txt",
 	"BeginnerHelper_step-jumplr.bones.txt"
 };
-
 
 static RString GetAnimPath( Animation a )
 {
@@ -86,34 +86,38 @@ void ScreenHowToPlay::Init()
 		m_pmDancePad->SetRotationX( 35 );
 		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pmDancePad );
 	}
-	
+
 	// Display random character
 	vector<Character*> vpCharacters;
 	CHARMAN->GetCharacters( vpCharacters );
 	if( (bool)USE_CHARACTER && vpCharacters.size() && HaveAllCharAnimations() )
 	{
-		Character* rndchar = CHARMAN->GetRandomCharacter();
+		Character* displayChar;
+		if( !CHARACTER_NAME.GetValue().empty() && CHARMAN->GetCharacterFromID(CHARACTER_NAME) )
+			displayChar = CHARMAN->GetCharacterFromID(CHARACTER_NAME);
+		else
+			displayChar = CHARMAN->GetRandomCharacter();
 
-		RString sModelPath = rndchar->GetModelPath();
+		RString sModelPath = displayChar->GetModelPath();
 		if( sModelPath != "" )
 		{
 			m_pmCharacter = new Model;
 			m_pmCharacter->SetName( "Character" );
-			m_pmCharacter->LoadMilkshapeAscii( rndchar->GetModelPath() );
+			m_pmCharacter->LoadMilkshapeAscii( displayChar->GetModelPath() );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-LEFT", GetAnimPath( ANIM_LEFT ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-DOWN", GetAnimPath( ANIM_DOWN ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-UP", GetAnimPath( ANIM_UP ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-RIGHT", GetAnimPath( ANIM_RIGHT ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-JUMPLR", GetAnimPath( ANIM_JUMPLR ) );
-			RString sRestFile = rndchar->GetRestAnimationPath();
+			RString sRestFile = displayChar->GetRestAnimationPath();
 			ASSERT( !sRestFile.empty() );
-			m_pmCharacter->LoadMilkshapeAsciiBones( "rest",rndchar->GetRestAnimationPath() );
+			m_pmCharacter->LoadMilkshapeAsciiBones( "rest",displayChar->GetRestAnimationPath() );
 			m_pmCharacter->SetDefaultAnimation( "rest" );
-			m_pmCharacter->PlayAnimation( "rest" );				// Stay bouncing after a step has finished animating.
+			m_pmCharacter->PlayAnimation( "rest" ); // Stay bouncing after a step has finished animating.
 
 			// xxx: hardcoded rotation -freem
 			m_pmCharacter->SetRotationX( 40 );
-			m_pmCharacter->SetCullMode( CULL_NONE );	// many of the models floating around have the vertex order flipped
+			m_pmCharacter->SetCullMode( CULL_NONE ); // many of the models floating around have the vertex order flipped
 			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pmCharacter );
 		}
 	}
@@ -189,6 +193,7 @@ ScreenHowToPlay::~ScreenHowToPlay()
 
 void ScreenHowToPlay::Step()
 {
+// xxx: assumes dance. -freem
 #define ST_LEFT		0x01
 #define ST_DOWN		0x02
 #define ST_UP		0x04
@@ -251,9 +256,9 @@ void ScreenHowToPlay::Update( float fDelta )
 			iLastNoteRowCounted = iCurNoteRow;
 		}
 
-		// once we hit the number of perfects we want, we want to fail.
-		// switch the controller to HUMAN. since we aren't taking input,
-		// the steps will always be misses.
+		// Once we hit the number of perfects we want, we want to fail. Switch
+		// the controller to HUMAN. Since we aren't taking input, the steps will
+		// always be misses.
 		if( m_iW2s > m_iNumW2s )
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 
@@ -268,7 +273,7 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GainFocus )
 	{
-		/* We do this ourself. */
+		// We do this ourself.
 		SOUND->HandleSongTimer( false );
 	}
 	else if( SM == SM_LoseFocus )
@@ -281,7 +286,6 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	ScreenAttract::HandleScreenMessage( SM );
 }
-
 
 // lua start
 #include "LuaBinding.h"

@@ -13,6 +13,11 @@ _____________________________________________________________________________
 sm-ssc v1.2 | 201012xx
 --------------------------------------------------------------------------------
 
+20101227
+--------
+* [ScreenHowToPlay] Added CharacterName metric, which will force the Character
+  that shows up. [freem]
+
 20101226
 --------
 * [ScreenEdit] Added GetEditState Lua binding. [freem]
