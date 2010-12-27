@@ -37,6 +37,8 @@ public:
 	virtual void UpdateInternal( float fDeltaTime );
 	virtual void DrawPrimitives();
 
+	int GetLatestIndex(){ return m_iIndexLatest; }
+
 	// Lua
 	void PushSelf( lua_State *L );
 

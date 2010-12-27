@@ -25,8 +25,9 @@ sm-ssc v1.2 | 201012xx
 * [Banner, FadingBanner] Various changes: [freem]
   * Removed (now unused) All Music banner.
   * Fixed swapped ScrollRandom and ScrollRoulette metrics.
-  * Added GetScrolling(), GetPercentScrolling() and SetScrolling(bool,float)
-    Lua bindings.
+* [Banner] Added GetScrolling(), GetPercentScrolling() and
+  SetScrolling(bool,float) Lua bindings.
+* [FadingBanner] Added GetLatestIndex() Lua binding. [freem]
 
 20101225
 --------
