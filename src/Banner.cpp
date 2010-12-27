@@ -293,8 +293,8 @@ public:
 		return 0;
 	}
 	static int GetScrolling( T* p, lua_State *L ){ lua_pushboolean( L, p->GetScrolling() ); return 1; }
-	static int GetPercentScrolling( T* p, lua_State *L ){ lua_pushnumber( L, p->ScrollingPercent() ); return 1; }
 	static int SetScrolling( T* p, lua_State *L ){ p->SetScrolling( BArg(1), FArg(2) ); return 0; }
+	static int GetPercentScrolling( T* p, lua_State *L ){ lua_pushnumber( L, p->ScrollingPercent() ); return 1; }
 
 	LunaBanner()
 	{
@@ -309,6 +309,9 @@ public:
 		ADD_METHOD( LoadBackgroundFromUnlockEntry );
 		ADD_METHOD( LoadFromSongGroup );
 		ADD_METHOD( LoadFromSortOrder );
+		ADD_METHOD( GetScrolling );
+		ADD_METHOD( SetScrolling );
+		ADD_METHOD( GetPercentScrolling );
 	}
 };
 
