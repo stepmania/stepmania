@@ -13,6 +13,11 @@ _____________________________________________________________________________
 sm-ssc v1.2 | 201012xx
 --------------------------------------------------------------------------------
 
+20101228
+--------
+* [ScreenHowToPlay] Have Character ignore the Miss steps instead of trying to
+  hit them. [freem]
+
 20101227
 --------
 * [ScreenHowToPlay] Added CharacterName metric, which will force the Character

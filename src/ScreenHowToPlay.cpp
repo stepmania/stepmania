@@ -82,12 +82,12 @@ void ScreenHowToPlay::Init()
 		m_pmDancePad = new Model;
 		m_pmDancePad->SetName( "Pad" );
 		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) );
-		// xxx: hardcoded rotation -freem
+		// xxx: hardcoded rotation. can be undone, but still. -freem
 		m_pmDancePad->SetRotationX( 35 );
 		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pmDancePad );
 	}
 
-	// Display random character
+	// Display a character
 	vector<Character*> vpCharacters;
 	CHARMAN->GetCharacters( vpCharacters );
 	if( (bool)USE_CHARACTER && vpCharacters.size() && HaveAllCharAnimations() )
@@ -115,13 +115,13 @@ void ScreenHowToPlay::Init()
 			m_pmCharacter->SetDefaultAnimation( "rest" );
 			m_pmCharacter->PlayAnimation( "rest" ); // Stay bouncing after a step has finished animating.
 
-			// xxx: hardcoded rotation -freem
+			// xxx: hardcoded rotation. can be undone, but still. -freem
 			m_pmCharacter->SetRotationX( 40 );
 			m_pmCharacter->SetCullMode( CULL_NONE ); // many of the models floating around have the vertex order flipped
 			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pmCharacter );
 		}
 	}
-	
+
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
 
 	if( USE_PLAYER )
@@ -221,7 +221,7 @@ void ScreenHowToPlay::Step()
 		case ST_JUMPUD:
 			// Until I can get an UP+DOWN jump animation, this will have to do.
 			m_pmCharacter->PlayAnimation( "Step-JUMPLR", 1.8f );
-			
+
 			m_pmCharacter->StopTweening();
 			m_pmCharacter->BeginTweening( GAMESTATE->m_fCurBPS /8, TWEEN_LINEAR );
 			m_pmCharacter->SetRotationY( 90 );
@@ -262,8 +262,14 @@ void ScreenHowToPlay::Update( float fDelta )
 		if( m_iW2s > m_iNumW2s )
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 
+		// Per the above code, we don't always want the character stepping.
+		// If they try to make all of the steps in the miss part, they look
+		// silly. Have then stand still instead. - freem
 		if ( m_pmCharacter )
-			Step();
+		{
+			if( m_iW2s <= m_iNumW2s )
+				Step();
+		}
 	}
 
 	ScreenAttract::Update( fDelta );
