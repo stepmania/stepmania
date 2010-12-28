@@ -290,7 +290,6 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 			if( !bIsLastBPMSegment && m_WarpSegments[j].m_iStartRow > iStartRowNextSegment )
 				continue;
 
-			// are these wrong? am I second guessing myself?
 			/*
 			const int iRowsBeatsSinceStartOfSegment = m_WarpSegments[j].m_iStartRow - iStartRowThisSegment;
 			const float fBeatsSinceStartOfSegment = NoteRowToBeat(iRowsBeatsSinceStartOfSegment);
@@ -307,6 +306,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 				// this WarpSegment IS the current segment.
 				// don't know how to properly handle beatout -aj
 				//fBeatOut = NoteRowToBeat(m_WarpSegments[j].m_iStartRow);
+				fBeatOut = fStartBeatThisSegment + fElapsedTime*fBPS;
 				fBPSOut = m_BPMSegments[i+1].m_fBPS;
 				bFreezeOut = false;
 				bDelayOut = false;
