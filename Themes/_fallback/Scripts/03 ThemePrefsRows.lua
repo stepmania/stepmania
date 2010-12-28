@@ -3,8 +3,11 @@ ThemePrefsRows: you give it the choices, values, and params, and it'll
 generate the rest; quirky behavior to be outlined below. Documentation
 will be provided once this system is stabilized.
 
-v0.6: Dec. 27, 2010. Fix Choices not necessarily being strings.
-v0.5: Dec. 15, 2010. Initial version. Not very well tested.
+v0.5.2: Dec. 28, 2010. Throw an error for default/value type mismatches.
+v0.5.1: Dec. 27, 2010. Fix Choices not necessarily being strings.
+v0.5.0: Dec. 15, 2010. Initial version. Not very well tested.
+
+vyhd wrote this for sm-ssc
 --]]
 
 -- unless overridden, these parameters will be used for the OptionsRow
@@ -23,7 +26,12 @@ local DefaultParams =
 	SaveSelections = nil,
 }
 
-local function DefaultLoadSelections( pref, default, choices, values )
+-- local alias to simplify error reporting
+local GetString( name )
+	return THEME:GetString( "ThemePrefsRows", name )
+end
+
+local function DefaultLoad( pref, default, choices, values )
 	return function(self, list, pn)
 		local val = ThemePrefs.Get( pref )
 
@@ -37,13 +45,13 @@ local function DefaultLoadSelections( pref, default, choices, values )
 			if values[i] == default then list[i] = true return end
 		end
 
-		-- set to the first value and throw a warning
-		Warn( ("LoadSelections: preference \"%s\"'s default not in Values"):format(pref) )
+		-- set to the first value and output a warning
+		Warn( GetString("NoDefaultInValues"):format(pref) )
 		list[1] = true
 	end
 end
 
-local function DefaultSaveSelections( pref, choices, values )
+local function DefaultSave( pref, choices, values )
 	local msg = "ThemePrefChanged"
 	local params = { Name = pref }
 
@@ -55,14 +63,31 @@ local function DefaultSaveSelections( pref, choices, values )
 	end
 end
 
+-- This function checks for mismatches between the default value and the
+-- values table passed to the ThemePrefRow, e.g. it will return false if
+-- you have a boolean default and an integer value. I'm somewhat stricter
+-- about types than Lua is because I don't like the unpredictability and
+-- complexity of coercing values transparently in a bunch of places.
+local function TypesMatch( Values, Default )
+	local DefaultType = type(Default)
+
+	for i, value in ipairs(Values) do
+		local ValueType = type(value)
+		if ValueType ~= DefaultType then
+			Warn( GetString("TypeMismatch"):format(DefaultType, i, ValueType) )
+			return false
+		end
+	end
+
+	return true
+end
 
 local function CreateThemePrefRow( pref, tbl )
-	Trace( "CreateThemePrefRow( " .. pref .. " )" )
-
 	-- can't make an option handler without options
 	if not tbl.Choices then return nil end
 
 	local Choices = tbl.Choices
+	local Default = tbl.Default
 	local Values = tbl.Values and tbl.Values or Choices
 	local Params = tbl.Params and tbl.Params or { }
 
@@ -70,6 +95,15 @@ local function CreateThemePrefRow( pref, tbl )
 	for i, str in ipairs(Choices) do
 		Choices[i] = tostring( Chances[i] )
 	end
+
+	-- check to see that Values and Choices have the same length
+	if #Choices ~= #Values then
+		Warn( GetString("ChoicesSizeMismatch") )
+		return nil
+	end
+
+	-- check to see that everything in Values matches the type of Default
+	if not TypesMatch( Values, Default ) then return nil end
 
 	-- set the name and choices here; we'll do the rest below
 	local Handler = { Name = pref, Choices = Choices }
@@ -83,11 +117,11 @@ local function CreateThemePrefRow( pref, tbl )
 
 	-- if we don't have LoadSelections and SaveSelections, make them
 	if not Handler.LoadSelections then
-		Handler.LoadSelections = DefaultLoadSelections( pref, tbl.Default, Choices, Values )
+		Handler.LoadSelections = DefaultLoad( pref, Default, Choices, Values )
 	end
 
 	if not Handler.SaveSelections then
-		Handler.SaveSelections = DefaultSaveSelections( pref, Choices, Values )
+		Handler.SaveSelections = DefaultSave( pref, Choices, Values )
 	end
 
 	return Handler
@@ -125,7 +159,6 @@ ThemePrefRow = ThemePrefsRows.GetRow
 ThemePrefs.InitAll = function( prefs )
 	Trace( "ThemePrefs.InitAll( prefs )" )
 
-	-- HACK: for now, don't worry about extraneous file I/O
 	ThemePrefs.Init( prefs, true )
 	ThemePrefsRows.Init( prefs )
 end
