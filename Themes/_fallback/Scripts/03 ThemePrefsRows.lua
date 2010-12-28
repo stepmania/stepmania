@@ -3,6 +3,7 @@ ThemePrefsRows: you give it the choices, values, and params, and it'll
 generate the rest; quirky behavior to be outlined below. Documentation
 will be provided once this system is stabilized.
 
+v0.6: Dec. 27, 2010. Fix Choices not necessarily being strings.
 v0.5: Dec. 15, 2010. Initial version. Not very well tested.
 --]]
 
@@ -64,6 +65,11 @@ local function CreateThemePrefRow( pref, tbl )
 	local Choices = tbl.Choices
 	local Values = tbl.Values and tbl.Values or Choices
 	local Params = tbl.Params and tbl.Params or { }
+
+	-- if the choices aren't strings, make them strings now
+	for i, str in ipairs(Choices) do
+		Choices[i] = tostring( Chances[i] )
+	end
 
 	-- set the name and choices here; we'll do the rest below
 	local Handler = { Name = pref, Choices = Choices }
