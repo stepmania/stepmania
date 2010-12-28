@@ -202,7 +202,7 @@ FontPage::~FontPage()
 int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
 {
 	int iLineWidth = 0;
-	
+
 	for( unsigned i=0; i<szLine.size(); i++ )
 		iLineWidth += GetGlyph(szLine[i]).m_iHadvance;
 
