@@ -248,11 +248,14 @@ public:
 			}
 			break;
 		}
-		bool bFinsihed = m_DownloadState == packages  &&  
+		bool bFinished = m_DownloadState == packages  &&  
 			m_vsQueuedPackageUrls.empty() && 
 			m_pTransfer == NULL;
-		if( bFinsihed )
+		if( bFinished )
 		{
+			Message msg( "DownloadFinished" );
+			MESSAGEMAN->Broadcast(msg);
+
 			playAfterLaunchInfo = m_playAfterLaunchInfo;
 			return true;
 		}
