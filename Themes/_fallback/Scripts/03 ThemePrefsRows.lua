@@ -93,7 +93,7 @@ local function CreateThemePrefRow( pref, tbl )
 
 	-- if the choices aren't strings, make them strings now
 	for i, str in ipairs(Choices) do
-		Choices[i] = tostring( Chances[i] )
+		Choices[i] = tostring( Choices[i] )
 	end
 
 	-- check to see that Values and Choices have the same length
