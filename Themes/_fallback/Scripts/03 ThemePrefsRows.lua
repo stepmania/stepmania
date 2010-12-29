@@ -27,7 +27,7 @@ local DefaultParams =
 }
 
 -- local alias to simplify error reporting
-local GetString( name )
+local function GetString( name )
 	return THEME:GetString( "ThemePrefsRows", name )
 end
 
