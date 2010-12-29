@@ -84,7 +84,7 @@ void ScreenHowToPlay::Init()
 		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) );
 		// xxx: hardcoded rotation. can be undone, but still. -freem
 		m_pmDancePad->SetRotationX( 35 );
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pmDancePad );
+		ActorUtil::LoadAllCommandsAndSetXY( m_pmDancePad, m_sName );
 	}
 
 	// Display a character
@@ -118,7 +118,7 @@ void ScreenHowToPlay::Init()
 			// xxx: hardcoded rotation. can be undone, but still. -freem
 			m_pmCharacter->SetRotationX( 40 );
 			m_pmCharacter->SetCullMode( CULL_NONE ); // many of the models floating around have the vertex order flipped
-			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pmCharacter );
+			ActorUtil::LoadAllCommandsAndSetXY( m_pmCharacter, m_sName );
 		}
 	}
 
@@ -129,7 +129,7 @@ void ScreenHowToPlay::Init()
 		m_pLifeMeterBar = new LifeMeterBar;
 		m_pLifeMeterBar->SetName("LifeMeterBar");
 		m_pLifeMeterBar->Load( GAMESTATE->m_pPlayerState[PLAYER_1], &STATSMAN->m_CurStageStats.m_player[PLAYER_1] );
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pLifeMeterBar );
+		ActorUtil::LoadAllCommandsAndSetXY( m_pLifeMeterBar, m_sName );
 		m_pLifeMeterBar->FillForHowToPlay( NUM_W2S, NUM_MISSES );
 
 		SMLoader::LoadFromSMFile( THEME->GetPathO(m_sName, "steps"), m_Song, false );
@@ -162,7 +162,7 @@ void ScreenHowToPlay::Init()
 		m_Player.Load( m_NoteData );
 		m_Player->SetName( "Player" );
 		this->AddChild( m_Player );
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_Player );
+		ActorUtil::LoadAllCommandsAndSetXY( m_Player, m_sName );
 
 		// Don't show judgement
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fBlind, 1.0f );

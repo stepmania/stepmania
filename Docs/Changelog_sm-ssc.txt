@@ -13,6 +13,12 @@ _____________________________________________________________________________
 sm-ssc v1.2 | 201012xx
 --------------------------------------------------------------------------------
 
+20101229
+--------
+* [ScreenHowToPlay] Replaced LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND macro
+  calls with ActorUtil::LoadAllCommandsAndSetXY(). Fixes an odd bug I ran into
+  during the porting of DDR 5th Mix. [freem]
+
 20101228
 --------
 * [ScreenHowToPlay] Have Character ignore the Miss steps instead of trying to
