@@ -13,6 +13,7 @@
 #include "CommonMetrics.h"
 
 #define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
+// deprecated, but no solution to replace them exists yet:
 #define GRADE_TIER02_IS_ALL_W2S	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllW2s")
 #define GRADE_TIER01_IS_ALL_W2S THEME->GetMetricB("PlayerStageStats","GradeTier01IsAllW2s")
 #define GRADE_TIER02_IS_FULL_COMBO THEME->GetMetricB("PlayerStageStats","GradeTier02IsFullCombo")
@@ -76,7 +77,7 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	m_iActualDancePoints += other.m_iActualDancePoints;
 	m_iCurPossibleDancePoints += other.m_iCurPossibleDancePoints;
 	m_iPossibleGradePoints += other.m_iPossibleGradePoints;
-	
+
 	for( int t=0; t<NUM_TapNoteScore; t++ )
 		m_iTapNoteScores[t] += other.m_iTapNoteScores[t];
 	for( int h=0; h<NUM_HoldNoteScore; h++ )
@@ -180,12 +181,13 @@ Grade PlayerStageStats::GetGrade() const
 
 	//LOG->Trace( "GetGrade: fActual: %f, fPossible: %d", fActual, m_iPossibleGradePoints );
 
-
 	float fPercent = (m_iPossibleGradePoints == 0) ? 0 : fActual / m_iPossibleGradePoints;
 
 	Grade grade = GetGradeFromPercent( fPercent );
 
 	//LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER02_IS_ALL_W2S );
+
+	// todo: move all these conditions to Lua. -aj
 	if( GRADE_TIER02_IS_ALL_W2S )
 	{
 		if( FullComboOfScore(TNS_W1) )
@@ -260,9 +262,6 @@ float PlayerStageStats::GetPercentDancePoints() const
 float PlayerStageStats::GetCurMaxPercentDancePoints() const
 {
 	if ( m_iPossibleDancePoints == 0 )
-
-
-
 		return 0; // div/0
 
 	if ( m_iCurPossibleDancePoints == m_iPossibleDancePoints )
@@ -403,13 +402,12 @@ float PlayerStageStats::GetLifeRecordLerpAt( float fStepsSecond ) const
 	if( later == m_fLifeRecord.end() )
 		return earlier->second;
 
-	if( earlier->first == later->first )	// two samples from the same time.  Don't divide by zero in SCALE
+	if( earlier->first == later->first ) // two samples from the same time.  Don't divide by zero in SCALE
 		return earlier->second;
 
 	// earlier <= pos <= later
 	return SCALE( fStepsSecond, earlier->first, later->first, earlier->second, later->second );
 }
-
 
 void PlayerStageStats::GetLifeRecord( float *fLifeOut, int iNumSamples, float fStepsEndSecond ) const
 {
@@ -767,7 +765,6 @@ public:
 
 LUA_REGISTER_CLASS( PlayerStageStats )
 // lua end
-
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

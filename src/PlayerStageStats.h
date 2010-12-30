@@ -123,7 +123,6 @@ public:
 	void PushSelf( lua_State *L );
 };
 
-
 #endif
 
 /*
