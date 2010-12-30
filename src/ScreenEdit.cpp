@@ -3844,6 +3844,7 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Lay mine",					EDIT_BUTTON_LAY_MINE_OR_ROLL ),
 	EditHelpLine( "Lay lift",					EDIT_BUTTON_LAY_LIFT ),
 	EditHelpLine( "Add to/remove from right half",			EDIT_BUTTON_RIGHT_SIDE ),
+	EditHelpLine( "Switch player (Routine only)",	EDIT_BUTTON_SWITCH_PLAYERS ),
 };
 
 static bool IsMapped( EditButton eb, const MapEditToDI &editmap )
