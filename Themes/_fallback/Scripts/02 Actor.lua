@@ -137,7 +137,7 @@ function Actor:bezier(...)
    local a = {...}
    local b = {}
    local c = 0
-   assert((a == 10 or a == 6), "bad number of arguments for Actor:bezier()")
+   assert((a == 9 or a == 5), "bad number of arguments for Actor:bezier()")
    for i=3,c do
       b[#b+1] = a[i]
    end
