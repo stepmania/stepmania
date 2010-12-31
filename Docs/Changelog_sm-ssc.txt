@@ -13,9 +13,13 @@ _____________________________________________________________________________
 sm-ssc v1.2 | 201012xx
 --------------------------------------------------------------------------------
 
+20101231
+--------
+* [ScreenGameplay] Fixed "Gameplay ### combo" announcer messages. [neothe0ne]
+
 20101230
 --------
-* [StepsDisplay] Make the StepsType react to SetMessage as well. [freme]
+* [StepsDisplay] Make the StepsType react to SetMessage as well. [freem]
 
 20101229
 --------
