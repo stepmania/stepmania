@@ -260,6 +260,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 			RString sStepsType = GAMEMAN->GetStepsTypeInfo(params.st).szName;
 			m_sprStepsType.Load( THEME->GetPathG(m_sMetricsGroup,"StepsType "+sStepsType) );
 			*/
+			m_sprStepsType->HandleMessage( msg );
 		}
 	}
 

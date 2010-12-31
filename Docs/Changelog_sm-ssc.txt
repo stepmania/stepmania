@@ -13,6 +13,10 @@ _____________________________________________________________________________
 sm-ssc v1.2 | 201012xx
 --------------------------------------------------------------------------------
 
+20101230
+--------
+* [StepsDisplay] Make the StepsType react to SetMessage as well. [freme]
+
 20101229
 --------
 * [ScreenHowToPlay] Replaced LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND macro
