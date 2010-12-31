@@ -2578,7 +2578,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM >= SM_100Combo && SM <= SM_1000Combo )
 	{
-		int iCombo = ((SM - 100) + 1)*100;
+		int iCombo = (SM-SM_100Combo+1) * 100;
 		PlayAnnouncer( ssprintf("gameplay %d combo",iCombo), 2 );
 	}
 	else if( SM == SM_ComboStopped )
