@@ -1,3 +1,6 @@
+[IMPORTANT INSTALL NOTE]
+If you are using Windows Vista or Windows 7, please do not install StepMania SSC into the Program Files directory.
+
 [Using Google Chrome?]
 If you are using Google Chrome as your primary web browser, you will have to perform some extra steps to get stepmania:// URI handling to work:
 
@@ -12,6 +15,3 @@ Add your protocol to the 'Local State' file under the 'protocol_handler' section
 	"stepmania": false,
 	...
 	}
-
-[IMPORTANT INSTALL NOTE]
-If you are using Windows Vista or Windows 7, please do not install StepMania SSC into the Program Files directory.
