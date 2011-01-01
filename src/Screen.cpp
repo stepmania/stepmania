@@ -42,6 +42,7 @@ bool Screen::SortMessagesByDelayRemaining( const Screen::QueuedScreenMessage &m1
 void Screen::Init()
 {
 	ALLOW_OPERATOR_MENU_BUTTON.Load( m_sName, "AllowOperatorMenuButton" );
+	HANDLE_BACK_BUTTON.Load( m_sName, "HandleBackButton" );
 	REPEAT_RATE.Load( m_sName, "RepeatRate" );
 	REPEAT_DELAY.Load( m_sName, "RepeatDelay" );
 	LIGHTS_MODE.Load( m_sName, "LightsMode" );
@@ -204,7 +205,10 @@ void Screen::Input( const InputEventPlus &input )
 	case GAME_BUTTON_BACK:
 		// Don't make the user hold the back button if they're pressing escape and escape is the back button.
 		if( !PREFSMAN->m_bDelayedBack || input.type==IET_REPEAT || (input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_ESC) )
-			this->MenuBack( input );
+		{
+			if( HANDLE_BACK_BUTTON )
+				this->MenuBack( input );
+		}
 		return;
 	case GAME_BUTTON_START:	this->MenuStart	( input );	return;
 	case GAME_BUTTON_SELECT:this->MenuSelect( input );	return;

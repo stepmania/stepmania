@@ -10,12 +10,13 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.2 | 201012xx
+sm-ssc v1.2 | 201101xx
 --------------------------------------------------------------------------------
 
-20101231
+20110101
 --------
-* [ScreenGameplay] Fixed "Gameplay ### combo" announcer messages. [neothe0ne]
+* [Screen] Added HandleBackButton metric; useful for custom menus that need to
+  use the Back button for more user-friendly canceling. [freem]
 
 20101230
 --------

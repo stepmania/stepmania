@@ -80,6 +80,7 @@ protected:
 	InputQueueCodeSet	m_Codes;
 
 	ThemeMetric<bool>	ALLOW_OPERATOR_MENU_BUTTON;
+	ThemeMetric<bool>	HANDLE_BACK_BUTTON;
 	ThemeMetric<float>	REPEAT_RATE;
 	ThemeMetric<float>	REPEAT_DELAY;
 	ThemeMetric<LightsMode> LIGHTS_MODE;
