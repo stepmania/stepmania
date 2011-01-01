@@ -41,6 +41,14 @@ end;
 r[4] = function(params, pss)
 	local dp = pss:GetPossibleDancePoints();
 	if dp == 0 then pss:SetScore(0) return nil end
-	pss:SetScore(math.round((pss:GetActualDancePoints()/dp)*1000000);
+	pss:SetScore(math.round((pss:GetActualDancePoints()/dp)*1000000));
+end;
+-----------------------------------------------------------
+--DDR SuperNOVA 2(-esque) scoring
+-----------------------------------------------------------
+r[5] = function(params, pss)
+	local dp = pss:GetPossibleDancePoints();
+	if dp == 0 then pss:SetScore(0) return nil end
+	pss:SetScore(math.round((pss:GetActualDancePoints()/dp)*100000)*10);
 end;
 SpecialScoring = r;
