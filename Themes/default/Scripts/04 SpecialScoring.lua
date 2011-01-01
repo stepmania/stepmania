@@ -17,6 +17,7 @@ end;
 -----------------------------------------------------------
 r[2] = function(params, pss)
 	local totalSteps = GAMESTATE:GetCurrentSteps(params.Player):GetRadarValues():GetValue('RadarCategory_TapsAndHolds');
+	if totalSteps == 0 then pss:SetScore(0) return nil end
 	local baseScore = math.round(1000000/((totalSteps*(totalSteps+1))/2));
 	local curStep = pss:GetRadarActual():GetValue('RadarCategory_TapsAndHolds');
 	local endBonus = (curStep == totalSteps) and (1000000-math.round(1000000/(totalSteps*(totalSteps+1)/2))*(totalSteps*(totalSteps+1)/2)) or 0;
@@ -38,6 +39,8 @@ end;
 --DDR SuperNOVA(-esque) scoring
 -----------------------------------------------------------
 r[4] = function(params, pss)
-	pss:SetScore(math.round(pss:GetActualDancePoints()/pss:GetPossibleDancePoints()*1000000));
+	local dp = pss:GetPossibleDancePoints();
+	if dp == 0 then pss:SetScore(0) return nil end
+	pss:SetScore(math.round((pss:GetActualDancePoints()/dp)*1000000);
 end;
 SpecialScoring = r;
