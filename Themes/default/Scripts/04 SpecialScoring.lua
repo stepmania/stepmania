@@ -16,7 +16,7 @@ end;
 --DDR 3rd Mix and USA Scoring
 -----------------------------------------------------------
 r['DDR 3rdMIX'] = function(params, pss)
-	local totalSteps = GAMESTATE:GetCurrentSteps(params.Player):GetRadarValues():GetValue('RadarCategory_TapsAndHolds');
+	local totalSteps = pss:GetRadarPossible():GetValue('RadarCategory_TapsAndHolds');
 	if totalSteps == 0 then pss:SetScore(0) return nil end
 	local baseScore = math.round(1000000/((totalSteps*(totalSteps+1))/2));
 	local curStep = pss:GetRadarActual():GetValue('RadarCategory_TapsAndHolds');
