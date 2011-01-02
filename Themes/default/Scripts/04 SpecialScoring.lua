@@ -1,7 +1,7 @@
 --Special Scoring types.
 local r = {};
 --the following metatable makes any missing value in a table 0 instead of nil.
-local ZeroIfNotFound = { _index = function() return 0 end; };
+local ZeroIfNotFound = { __index = function() return 0 end; };
 -----------------------------------------------------------
 --DDR 1st Mix and 2nd Mix Scoring
 -----------------------------------------------------------
