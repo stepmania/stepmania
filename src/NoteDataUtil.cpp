@@ -454,7 +454,8 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 			 occuring to begin with, but at this time, I am unsure how to deal with it.
 			 Hopefully this hack can be removed soon. -- Jason "Wolfman2000" Felds
 			 */
-			if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_TwoPlayersSharedSides 
+			const Style *curStyle = GAMESTATE->GetCurrentStyle();
+			if( (curStyle == NULL || curStyle->m_StyleType == StyleType_TwoPlayersSharedSides )
 				&& int( tn.pn ) > NUM_PlayerNumber )
 			{
 				tn.pn = PLAYER_1;
