@@ -5,7 +5,7 @@ local ZeroIfNotFound = { _index = function() return 0 end; };
 -----------------------------------------------------------
 --DDR 1st Mix and 2nd Mix Scoring
 -----------------------------------------------------------
-r[1] = function(params, pss)
+r['DDR 1stMIX'] = function(params, pss)
 	local dCombo = math.floor(pss:GetCurrentCombo()/4);
 	local bScore = (m^2+1) * 100;
 	local multLookup = { ['TapNoteScore_W1']=3, ['TapNoteScore_W2']=3, ['TapNoteScore_W3']=1 };
@@ -15,7 +15,7 @@ end;
 -----------------------------------------------------------
 --DDR 3rd Mix and USA Scoring
 -----------------------------------------------------------
-r[2] = function(params, pss)
+r['DDR 3rdMIX'] = function(params, pss)
 	local totalSteps = GAMESTATE:GetCurrentSteps(params.Player):GetRadarValues():GetValue('RadarCategory_TapsAndHolds');
 	if totalSteps == 0 then pss:SetScore(0) return nil end
 	local baseScore = math.round(1000000/((totalSteps*(totalSteps+1))/2));
@@ -29,7 +29,7 @@ end;
 -----------------------------------------------------------
 --DDR 4th Mix/Extra Mix/Konamix/GB3/DDRPC Scoring
 -----------------------------------------------------------
-r[3] = function(params, pss)
+r['DDR 4thMIX'] = function(params, pss)
 	local scoreLookupTable = { ['TapNoteScore_W1']=777, ['TapNoteScore_W2']=777, ['TapNoteScore_W3']=555 };
 	setmetatable(scoreLookupTable, ZeroIfNotFound); 
 	local comboBonusForThisStep = pss:GetCurrentCombo()*333;
@@ -38,7 +38,7 @@ end;
 -----------------------------------------------------------
 --DDR SuperNOVA(-esque) scoring
 -----------------------------------------------------------
-r[4] = function(params, pss)
+r['DDR SuperNOVA'] = function(params, pss)
 	local dp = pss:GetPossibleDancePoints();
 	if dp == 0 then pss:SetScore(0) return nil end
 	pss:SetScore(math.round((pss:GetActualDancePoints()/dp)*1000000));
@@ -46,7 +46,7 @@ end;
 -----------------------------------------------------------
 --DDR SuperNOVA 2(-esque) scoring
 -----------------------------------------------------------
-r[5] = function(params, pss)
+r['DDR SuperNOVA 2'] = function(params, pss)
 	local dp = pss:GetPossibleDancePoints();
 	if dp == 0 then pss:SetScore(0) return nil end
 	pss:SetScore(math.round((pss:GetActualDancePoints()/dp)*100000)*10);

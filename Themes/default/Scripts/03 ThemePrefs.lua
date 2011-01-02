@@ -243,18 +243,17 @@ function UserPrefSpecialScoringMode()
 		Choices = { 'DDR 1stMIX', 'DDR 3rdMIX', 'DDR 4thMIX', 'DDR SuperNOVA', 'DDR SuperNOVA 2' };
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefSpecialScoringMode") ~= nil then
-				list[GetUserPref("UserPrefSpecialScoringMode")] = true;
+				local theValue = ReadPrefFromFile("UserPrefSpecialScoringMode");
+				local success = false;				
+				for k,v in ipairs(t.Choices) do if v == theValue then list[k] = true success = true break end end;
+				if success = false then list[1] = true end;
 			else
-				WritePrefToFile("UserPrefSpecialScoringMode",1);
+				WritePrefToFile("UserPrefSpecialScoringMode", 'DDR 1stMIX');
 				list[1] = true;
 			end;
 		end;
 		SaveSelections = function(self, list, pn)
-			local val;
-			for k,v in ipairs(list) do if v then val = k end end; 
-			WritePrefToFile("UserPrefSpecialScoringMode",val);
-			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
-			THEME:ReloadMetrics();
+			for k,v in ivalues(list) do if v then WritePrefToFile("UserPrefSpecialScoringMode", t.Choices[k]) break end end;
 		end;
 	};
 	setmetatable( t, t );
