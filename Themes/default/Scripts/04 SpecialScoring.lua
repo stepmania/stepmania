@@ -7,7 +7,7 @@ local ZeroIfNotFound = { __index = function() return 0 end; };
 -----------------------------------------------------------
 r['DDR 1stMIX'] = function(params, pss)
 	local dCombo = math.floor(pss:GetCurrentCombo()/4);
-	local bScore = (m^2+1) * 100;
+	local bScore = (dCombo^2+1) * 100;
 	local multLookup = { ['TapNoteScore_W1']=3, ['TapNoteScore_W2']=3, ['TapNoteScore_W3']=1 };
 	setmetatable(multLookup, ZeroIfNotFound);
 	pss:SetScore(pss:GetScore()+(bScore*multLookup[params.TapNoteScore]));
