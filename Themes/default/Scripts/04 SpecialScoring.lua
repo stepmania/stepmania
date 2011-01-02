@@ -13,20 +13,6 @@ r['DDR 1stMIX'] = function(params, pss)
 	pss:SetScore(pss:GetScore()+(bScore*multLookup[params.TapNoteScore]));
 end;
 -----------------------------------------------------------
---DDR 3rd Mix and USA Scoring
------------------------------------------------------------
-r['DDR 3rdMIX'] = function(params, pss)
-	local totalSteps = pss:GetRadarPossible():GetValue('RadarCategory_TapsAndHolds');
-	if totalSteps == 0 then pss:SetScore(0) return nil end
-	local baseScore = math.round(1000000/((totalSteps*(totalSteps+1))/2));
-	local curStep = pss:GetRadarActual():GetValue('RadarCategory_TapsAndHolds');
-	local endBonus = (curStep == totalSteps) and (1000000-math.round(1000000/(totalSteps*(totalSteps+1)/2))*(totalSteps*(totalSteps+1)/2)) or 0;
-	local multLookup = { ['TapNoteScore_W1']=10, ['TapNoteScore_W2']=10, ['TapNoteScore_W3']=5 };
-	setmetatable(multLookup, ZeroIfNotFound);
-	local thisScore = multLookup[params.TapNoteScore] * (baseScore * curStep + endBonus);
-	pss:SetScore(pss:GetScore()+thisScore);
-end;
------------------------------------------------------------
 --DDR 4th Mix/Extra Mix/Konamix/GB3/DDRPC Scoring
 -----------------------------------------------------------
 r['DDR 4thMIX'] = function(params, pss)
