@@ -246,7 +246,7 @@ function UserPrefSpecialScoringMode()
 				local theValue = ReadPrefFromFile("UserPrefSpecialScoringMode");
 				local success = false;				
 				for k,v in ipairs(t.Choices) do if v == theValue then list[k] = true success = true break end end;
-				if success = false then list[1] = true end;
+				if success == false then list[1] = true end;
 			else
 				WritePrefToFile("UserPrefSpecialScoringMode", 'DDR 1stMIX');
 				list[1] = true;
