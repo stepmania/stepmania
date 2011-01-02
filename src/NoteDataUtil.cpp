@@ -448,7 +448,7 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 			TapNote tn = iter->second;
 			unsigned index = int( tn.pn );
 
-			ASSERT_M( index < NUM_PlayerNumber, ssprintf("index %u < NUM_PlayerNumber %i",index,NUM_PlayerNumber) );
+			ASSERT_M( index < NUM_PlayerNumber, ssprintf("We have a note not assigned to a player. The note in question is on beat %f, column %i.", NoteRowToBeat(row), t + 1) );
 			tn.pn = PLAYER_INVALID;
 			out[index].SetTapNote( t, row, tn );
 		}
