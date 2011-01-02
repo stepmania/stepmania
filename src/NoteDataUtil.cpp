@@ -5,6 +5,7 @@
 #include "RageLog.h"
 #include "PlayerOptions.h"
 #include "Song.h"
+#include "Style.h"
 #include "GameState.h"
 #include "RadarValues.h"
 #include "Foreach.h"
@@ -446,6 +447,18 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 		{
 			int row = iter->first;
 			TapNote tn = iter->second;
+			/*
+			 XXX: This code is (hopefully) a temporary hack to make sure that
+			 routine charts don't have any notes without players assigned to them.
+			 I suspect this is due to a related bug that these problems were
+			 occuring to begin with, but at this time, I am unsure how to deal with it.
+			 Hopefully this hack can be removed soon. -- Jason "Wolfman2000" Felds
+			 */
+			if( GAMESTATE->GetCurrentStyle()->m_StyleType == StyleType_TwoPlayersSharedSides 
+				&& int( tn.pn ) > NUM_PlayerNumber )
+			{
+				tn.pn = PLAYER_1;
+			}
 			unsigned index = int( tn.pn );
 
 			ASSERT_M( index < NUM_PlayerNumber, ssprintf("We have a note not assigned to a player. The note in question is on beat %f, column %i.", NoteRowToBeat(row), t + 1) );
