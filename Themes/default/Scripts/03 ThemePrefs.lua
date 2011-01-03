@@ -240,7 +240,7 @@ function UserPrefSpecialScoringMode()
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = true;
 		ExportOnChange = false;
-		Choices = { 'DDR 1stMIX', 'DDR 4thMIX', 'DDR SuperNOVA', 'DDR SuperNOVA 2' };
+		Choices = { 'DDR 1stMIX', 'DDR 4thMIX', 'DDR SuperNOVA', 'DDR SuperNOVA 2', '[SSC] Radar Master' };
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefSpecialScoringMode") ~= nil then
 				local theValue = ReadPrefFromFile("UserPrefSpecialScoringMode");
