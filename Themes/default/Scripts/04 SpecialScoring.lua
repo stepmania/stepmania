@@ -50,7 +50,7 @@ r['[SSC] Radar Master'] = function(params, pss)
 	};
 	local totalRadar = 0;
 	local finalScore = 0;
-	for k,v in ipairs(masterTable) do
+	for k,v in pairs(masterTable) do
 		local firstRadar = pss:GetRadarPossible():GetValue(k);
 		if firstRadar == 0 then
 			masterTable[k] = nil;
@@ -59,9 +59,12 @@ r['[SSC] Radar Master'] = function(params, pss)
 			totalRadar = totalRadar + v[1];
 		end;
 	end;
-	for k,v in ipairs(masterTable) do
+	--two loops are needed because we need to calculate totalRadar
+	--to actually calculate any part of the score
+	for k,v in pairs(masterTable) do
 		local curPortion = pss:GetRadarActual():GetValue(k) / v;
 		finalScore = finalScore + curPortion*(500000000*(v/totalRadar));
 	end;
+	pss:SetScore(finalScore);
 end;	 
 SpecialScoring = r;
