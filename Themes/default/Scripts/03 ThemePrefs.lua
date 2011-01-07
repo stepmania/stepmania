@@ -234,18 +234,19 @@ function UserPrefShowLotsaOptions()
 end
 
 function UserPrefSpecialScoringMode()
+	local baseChoices = { 'DDR 1stMIX', 'DDR 4thMIX', 'DDR SuperNOVA', 'DDR SuperNOVA 2' }; --'[SSC] Radar Master'
 	local t = {
 		Name = "UserPrefSpecialScoringMode";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = true;
 		ExportOnChange = false;
-		Choices = { 'DDR 1stMIX', 'DDR 4thMIX', 'DDR SuperNOVA', 'DDR SuperNOVA 2' }; --'[SSC] Radar Master'
+		Choices = baseChoices;
 		LoadSelections = function(self, list, pn)
 			if ReadPrefFromFile("UserPrefSpecialScoringMode") ~= nil then
 				local theValue = ReadPrefFromFile("UserPrefSpecialScoringMode");
 				local success = false;				
-				for k,v in ipairs(t.Choices) do if v == theValue then list[k] = true success = true break end end;
+				for k,v in ipairs(baseChoices) do if v == theValue then list[k] = true success = true break end end;
 				if success == false then list[1] = true end;
 			else
 				WritePrefToFile("UserPrefSpecialScoringMode", 'DDR 1stMIX');
@@ -253,7 +254,7 @@ function UserPrefSpecialScoringMode()
 			end;
 		end;
 		SaveSelections = function(self, list, pn)
-			for k,v in ivalues(list) do if v then WritePrefToFile("UserPrefSpecialScoringMode", t.Choices[k]) break end end;
+			for k,v in ipairs(list) do if v then WritePrefToFile("UserPrefSpecialScoringMode", baseChoices[k]) break end end;
 		end;
 	};
 	setmetatable( t, t );

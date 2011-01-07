@@ -19,7 +19,7 @@ r['DDR 4thMIX'] = function(params, pss)
 	local scoreLookupTable = { ['TapNoteScore_W1']=777, ['TapNoteScore_W2']=777, ['TapNoteScore_W3']=555 };
 	setmetatable(scoreLookupTable, ZeroIfNotFound); 
 	local comboBonusForThisStep = (pss:GetCurrentCombo()+1)*333;
-	pss:SetScore(pss:GetScore()+scoreLookupTable[params.TapNoteScore]+comboBonusForThisStep);
+	pss:SetScore(pss:GetScore()+scoreLookupTable[params.TapNoteScore]+(scoreLookupTable[params.TapNoteScore] and comboBonusForThisStep or 0));
 end;
 -----------------------------------------------------------
 --DDR SuperNOVA(-esque) scoring
@@ -39,6 +39,7 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 end;
 -----------------------------------------------------------
 --Radar Master (doesn't work in 1.2, disabled)
+--don't try to "fix it up", either. you *cannot* make it work in 1.2.
 -----------------------------------------------------------
 --[[r['[SSC] Radar Master'] = function(params, pss)
 	local masterTable = {
