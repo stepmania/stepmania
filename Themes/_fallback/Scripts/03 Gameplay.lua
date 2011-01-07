@@ -151,7 +151,7 @@ function RoutineSkinP1()
 	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Combo = {
 		dance = "midi-routine-p1",
-		pump = "default",
+		pump = "cmd-routine-p1",
 		beat = "default",
 		kb7 = "default",
 		para = "default",
@@ -164,7 +164,7 @@ function RoutineSkinP2()
 	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Combo = {
 		dance = "midi-routine-p2",
-		pump = "simple",
+		pump = "cmd-routine-p2",
 		beat = "default",
 		kb7 = "retrobar",
 		para = "default",
