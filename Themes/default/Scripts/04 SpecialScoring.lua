@@ -38,9 +38,9 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 	pss:SetScore(math.round((pss:GetActualDancePoints()/dp)*100000)*10);
 end;
 -----------------------------------------------------------
---Radar Master
+--Radar Master (doesn't work in 1.2, disabled)
 -----------------------------------------------------------
-r['[SSC] Radar Master'] = function(params, pss)
+--[[r['[SSC] Radar Master'] = function(params, pss)
 	local masterTable = {
 		['RadarCategory_Stream'] = 0,
 		['RadarCategory_Voltage'] = 0,
@@ -51,12 +51,12 @@ r['[SSC] Radar Master'] = function(params, pss)
 	local totalRadar = 0;
 	local finalScore = 0;
 	for k,v in pairs(masterTable) do
-		local firstRadar = pss:GetRadarPossible():GetValue(k);
+		local firstRadar = GAMESTATE:GetCurrentSteps(params.Player):GetRadarValues(params.Player):GetValue(k);
 		if firstRadar == 0 then
 			masterTable[k] = nil;
 		else
-			v = pss:GetRadarPossible():GetValue(k);
-			totalRadar = totalRadar + v[1];
+			masterTable[k] = firstRadar;
+			totalRadar = totalRadar + firstRadar;
 		end;
 	end;
 	--two loops are needed because we need to calculate totalRadar
@@ -66,5 +66,5 @@ r['[SSC] Radar Master'] = function(params, pss)
 		finalScore = finalScore + curPortion*(500000000*(v/totalRadar));
 	end;
 	pss:SetScore(finalScore);
-end;	 
+end;]]	 
 SpecialScoring = r;
