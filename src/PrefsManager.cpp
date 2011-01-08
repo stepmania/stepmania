@@ -157,7 +157,6 @@ PrefsManager::PrefsManager() :
 
 	m_sAnnouncer		( "Announcer",			"" ),
 	m_sTheme		( "Theme",			SpecialFiles::BASE_THEME_NAME ),
-	m_sDefaultTheme		( "DefaultTheme",				"default" ),
 	m_sDefaultModifiers	( "DefaultModifiers",		"" ), 
 
 	m_bWindowed		( "Windowed",			true ),
@@ -257,6 +256,7 @@ PrefsManager::PrefsManager() :
 	m_sAdditionalSongFolders	( "AdditionalSongFolders",		"" ),
 	m_sAdditionalCourseFolders	( "AdditionalCourseFolders",		"" ),
 	m_sAdditionalFolders		( "AdditionalFolders",			"" ),
+	m_sDefaultTheme			( "DefaultTheme",			"default" ),
 	m_sLastSeenVideoDriver		( "LastSeenVideoDriver",		"" ),
 	m_sVideoRenderers		( "VideoRenderers",			"" ),	// StepMania.cpp sets these on first run:
 	m_bSmoothLines			( "SmoothLines",			false ),

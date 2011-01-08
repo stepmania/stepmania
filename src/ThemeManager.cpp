@@ -97,7 +97,7 @@ void ThemeManager::Subscribe( IThemeMetric *p )
 {
 	g_Subscribers.Subscribe( p );
 
-	// It's ThemeManager's responsibility to make sure all of it's subscribers
+	// It's ThemeManager's responsibility to make sure all of its subscribers
 	// are updated with current data.  If a metric is created after 
 	// a theme is loaded, ThemeManager should update it right away (not just
 	// when the theme changes).
@@ -450,11 +450,21 @@ void ThemeManager::RunLuaScripts( const RString &sMask )
 {
 	/* Run all script files with the given mask in Lua for all themes.  Start
 	 * from the deepest fallback theme and work outwards. */
+
+	/* TODO: verify whether this final check is necessary. */
+	const RString sCurThemeName = m_sCurThemeName;
+
 	deque<Theme>::const_iterator iter = g_vThemes.end();
 	do
 	{
 		--iter;
-		const RString &sThemeDir = GetThemeDirFromName( iter->sThemeName );
+
+		/* HACK: pretend to be the theme these are under by setting m_sCurThemeName
+		 * to the name of the theme whose scripts are currently running; if those
+		 * scripts call GetThemeName(), it'll return the theme the script is in. */
+
+		m_sCurThemeName = iter->sThemeName;
+		const RString &sThemeDir = GetThemeDirFromName( m_sCurThemeName );
 
 		vector<RString> asElementPaths;
 		// get files from directories
@@ -489,6 +499,13 @@ void ThemeManager::RunLuaScripts( const RString &sMask )
 		}
 	}
 	while( iter != g_vThemes.begin() );
+
+	/* TODO: verify whether this final check is necessary. */
+	if( sCurThemeName != m_sCurThemeName )
+	{
+		LOG->Warn( "ThemeManager: theme name was not restored after RunLuaScripts" );
+		m_sCurThemeName = sCurThemeName;
+	}
 }
 
 void ThemeManager::UpdateLuaGlobals()
