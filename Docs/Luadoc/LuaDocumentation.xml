@@ -510,11 +510,17 @@
 	<Function name='baserotationz' return='void' arguments='float rot'>
 		Sets the Actor's base Z rotation to <code>rot</code>.
 	</Function>
+	<Function name='basezoom' sm-ssc='true' return='void' arguments='float zoom'>
+		Sets the Actor's base zoom to <code>zoom</code>.
+	</Function>
 	<Function name='basezoomx' return='void' arguments='float zoom'>
 		Sets the Actor's base X zoom to <code>zoom</code>.
 	</Function>
 	<Function name='basezoomy' return='void' arguments='float zoom'>
 		Sets the Actor's base Y zoom to <code>zoom</code>.
+	</Function>
+	<Function name='basezoomz' sm-ssc='true' return='void' arguments='float zoom'>
+		Sets the Actor's base Z zoom to <code>zoom</code>.
 	</Function>
 	<Function name='blend' return='void' arguments='BlendMode mode'>
 		Sets the Actor to use the specified blend mode.
@@ -657,7 +663,7 @@
 	<Function name='GetEffectDelta' return='float' arguments=''>
 		Returns the Actor's current effect delta.
 	</Function>
-	<Function name='geteffectfagnitude' return='float' arguments=''>
+	<Function name='geteffectmagnitude' return='float' arguments=''>
 		Returns the Actor's current effect magnitude as three floats (not one; I hate Lua.xsd).
 	</Function>
 	<Function name='GetGlow' sm-ssc='true' return='color' arguments=''>
@@ -711,6 +717,9 @@
 	<Function name='halign' return='void' arguments='float fAlign'>
 		Set the fractional horizontal alignment of the Actor according to <code>fAlign</code> which should be a float in the range 0..1. An alignment of 0 is left aligned while an alignment of 1 is right aligned. See <Link function='horizalign' /> for the common case.
 	</Function>
+	<Function name='hibernate' return='void' arguments='float fTime'>
+		Hides the Actor for the specified amount of time.
+	</Function>
 	<Function name='hidden' return='void' theme='_fallback' arguments='bool b'>
 		[Deprecated] Compatibility alias for the hidden command, which was removed in sm-ssc. Use <Link function='visible' /> instead.
 	</Function>
@@ -731,6 +740,12 @@
 	</Function>
 	<Function name='name' return='void' arguments='string sName'>
 		Sets the Actor's name to <code>sName</code>.
+	</Function>
+	<Function name='pause' return='void' arguments=''>
+		Stops the Actor's movement. (Usually used for Sprites or Models.)
+	</Function>
+	<Function name='play' return='void' arguments=''>
+		Starts the Actor's movement. (Usually used for Sprites or Models.)
 	</Function>
 	<Function name='playcommand' return='void' arguments='string sCommandName'>
 		Plays a command named <code>sCommandName</code>.
@@ -862,6 +877,9 @@
 		Zooms the Actor to <code>zoom</code> scale on the Z axis.
 	</Function>
 	<!-- addons from scripts that come with sm-ssc (non-compat) -->
+	<Function name='bezier' theme='_fallback' return='void' arguments=''>
+		[02 Actor.lua]
+	</Function>
 	<Function name='CenterX' theme='_fallback' return='void' arguments=''>
 		[03 ProductivityHelpers.lua] Centers an Actor on the X axis. (equivalent to <code>x,SCREEN_CENTER_X</code>)
 	</Function>
@@ -1101,6 +1119,12 @@
 	</Function>
 </Class>
 <Class name='Banner'>
+	<Function name='GetScrolling' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the Banner is currently scrolling.
+	</Function>
+	<Function name='GetPercentScrolling' sm-ssc='true' return='float' arguments=''>
+		<!-- todo -->
+	</Function>
 	<Function name='LoadBackgroundFromUnlockEntry' return='void' arguments='UnlockEntry pUE'>
 		Loads the background from an UnlockEntry.
 	</Function>
@@ -1122,6 +1146,9 @@
 	<Function name='LoadFromSongGroup' return='void' arguments='string s'>
 		Loads a Banner from a specified Song Group.
 	</Function>
+	<Function name='LoadFromSortOrder' return='void' arguments='SortOrder so'>
+		Loads a Banner from a specified SortOrder.
+	</Function>
 	<Function name='LoadIconFromCharacter' return='void' arguments='Character pCharacter'>
 		Loads an icon from the specified Character.
 	</Function>
@@ -1130,6 +1157,9 @@
 	</Function>
 	<Function name='ScaleToClipped' return='void' arguments='float fWidth, float fHeight'>
 		See <Link class='Sprite' function='scaletoclipped' />.
+	</Function>
+	<Function name='SetScrolling' sm-ssc='true' return='void' arguments='bool bScroll'>
+		<!-- todo -->
 	</Function>
 </Class>
 <Class name='BitmapText'>
@@ -1413,6 +1443,12 @@
 	</Function>
 </Class>
 <Class name='GameCommand'>
+	<Function name='GetCharacter' sm-ssc='true' return='Character' arguments=''>
+		Returns any Character associated with this item (or <code>nil</code> if there isn't one).
+	</Function>
+	<Function name='GetCourse' sm-ssc='true' return='Course' arguments=''>
+		Returns any Course that may have been set.
+	</Function>
 	<Function name='GetIndex' return='int' arguments=''>
 		Returns the index of this item.
 	</Function>
@@ -1425,17 +1461,26 @@
 	<Function name='GetProfileID' return='string' arguments=''>
 		Returns any Profile ID that may have been set.
 	</Function>
+	<Function name='GetScreen' sm-ssc='true' return='string' arguments=''>
+		Returns any screen that may have been set as a string.
+	</Function>
 	<Function name='GetSong' return='Song' arguments=''>
 		Returns any Song that may have been set.
 	</Function>
 	<Function name='GetSongGroup' return='string' arguments=''>
 		Returns the name of any song group that may have been set.
 	</Function>
+	<Function name='GetSteps' sm-ssc='true' return='Steps' arguments=''>
+		Returns any Steps that may have been set.
+	</Function>
 	<Function name='GetStyle' return='Style' arguments=''>
 		Returns any Style that may have been set.
 	</Function>
 	<Function name='GetText' return='string' arguments=''>
 		Returns the display text.
+	</Function>
+	<Function name='GetTrail' sm-ssc='true' return='Trail' arguments=''>
+		Returns any Trail that may have been set.
 	</Function>
 	<Function name='GetUrl' sm-ssc='true' return='string' arguments=''>
 		Returns any Url that may have been set.
@@ -1478,6 +1523,9 @@
 	</Function>
 	<Function name='Env' return='table' arguments=''>
 		Returns the environment table. See <Link class='GameCommand' />.
+	</Function>
+	<Function name='GetCharacter' sm-ssc='true' return='Character' arguments='PlayerNumber pn'>
+		Returns the current <Link class='Character' /> for the specified <Link class='ENUM' function='PlayerNumber' />.
 	</Function>
 	<Function name='GetCoinMode' return='CoinMode'>
 		Returns the current <Link class='ENUM' function='CoinMode' />.
@@ -1710,6 +1758,9 @@
 	<Function name='SaveLocalData' return='void' arguments=''>
 		Saves the bookkeeping and machine profile data.
 	</Function>
+	<Function name='SetCharacter' sm-ssc='true' return='void' arguments='PlayerNumber pn, string sCharID'>
+		Sets the current <Link class='Character' /> for the specified <Link class='ENUM' function='PlayerNumber' />.
+	</Function>
 	<Function name='SetCurrentCourse' return='void' arguments='Course course'>
 		Sets the current Course to <code>course</code>.
 	</Function>
@@ -1859,6 +1910,9 @@
 <Class name='LifeMeterBattery'>
 	<Function name='GetLivesLeft' sm-ssc='true' return='int' arguments=''>
 		Returns the number of lives remaining.
+	</Function>
+	<Function name='GetTotalLives' sm-ssc='true' return='int' arguments=''>
+		
 	</Function>
 </Class>
 <Class name='MemoryCardManager'>
@@ -2109,6 +2163,9 @@
 	<Function name='IsDisqualified' return='bool' arguments=''>
 		Returns <code>true</code> if the player was disqualified from ranking.
 	</Function>
+	<Function name='SetScore' sm-ssc='true' return='void' arguments='int iScore'>
+		Sets the Player's score to <code>iScore</code>.
+	</Function>
 </Class>
 <Class name='PlayerState'>
 	<Function name='GetHealthState' sm-ssc='true' return='HealthState' arguments=''>
@@ -2249,6 +2306,9 @@
 	</Function>
 	<Function name='IsCodeUnlocked' return='bool' arguments='string sUnlockEntryID'>
 		Returns <code>true</code> if the specified code <code>sUnlockEntryID</code> is unlocked.
+	</Function>
+	<Function name='SetCharacter' sm-ssc='true' return='void' arguments='string sCharID'>
+		Sets the current <Link class='Character' /> for the Profile.
 	</Function>
 	<Function name='SetGoalCalories' return='void' arguments='int iCals'>
 		Sets the goal to <code>iCals</code> calories.
@@ -2414,6 +2474,9 @@
 	</Function>
 </Class>
 <Class name='RollingNumbers'>
+	<Function name='Load' sm-ssc='true' return='void' arguments='string sGroupName'>
+		Loads the metrics for this RollingNumbers from <code>sGroupName</code>.
+	</Function>
 	<Function name='targetnumber' return='void' arguments='float f'>
 		Sets the target number to <code>f</code>.
 	</Function>
@@ -2430,6 +2493,11 @@
 	</Function>
 	<Function name='PostScreenMessage' return='void' arguments='string sScreenMsg'>
 		Posts a message with the text <code>sScreenMsg</code> to the Screen.
+	</Function>
+</Class>
+<Class name='ScreenEdit'>
+	<Function name='GetEditState' sm-ssc='true' return='EditState' arguments=''>
+		Returns the current <Link class='ENUM' function='EditState' />.
 	</Function>
 </Class>
 <Class name='ScreenEvaluation'>
@@ -2737,7 +2805,7 @@
 		Returns an array of all the installed songs.
 	</Function>
 	<Function name='GetCourseColor' return='color' arguments='Course c'>
-		Returns the course color of course <code>c</code>.
+		Returns the course color of Course <code>c</code>.
 	</Function>
 	<Function name='GetExtraStageInfo' return='various' arguments='bool bExtra2, Style s'>
 		Returns the extra stage info (Song, Steps) for the specified Style <code>s</code>. (If <code>bExtra2</code> is true, it will use the second Extra Stage data instead of the first. Again, Lua.xsd sucks)
@@ -2773,7 +2841,7 @@
 		Returns a random song.
 	</Function>
 	<Function name='GetSongColor' return='color' arguments='Song s'>
-		Returns the song color of song <code>s</code>.
+		Returns the song color of Song <code>s</code>.
 	</Function>
 	<Function name='GetSongFromSteps' return='Song' arguments='Steps st'>
 		Returns a Song given a set of Steps <code>st</code>.
@@ -2784,6 +2852,9 @@
 	<!-- sm-ssc additions: -->
 	<Function name='GetSongGroupNames' sm-ssc='true' return='{string}' arguments=''>
 		Returns a table containing all of the song group names.
+	</Function>
+	<Function name='GetSongRank' sm-ssc='true' return='int' arguments='Song s'>
+		Returns the rank (popularity) of Song <code>s</code>.
 	</Function>
 	<Function name='GetSongsInGroup' sm-ssc='true' return='{Song}' arguments='string sGroupName'>
 		Returns a table containing all of the songs in group <code>sGroupName</code>.
@@ -2871,6 +2942,9 @@
 	</Function>
 	<Function name='cropto' theme='_fallback' return='void' arguments='float fWidth, float fHeight'>
 		[01 alias.lua] Alias for CropTo.
+	</Function>
+	<Function name='SetAllStateDelays' sm-ssc='true' return='void' arguments='float fRate'>
+		Sets all the state delays to <code>fRate</code>. Useful for Sprites that need to change by BPM (e.g. Tran from DDR 5th Mix, the cube from DS EuroMix 2).
 	</Function>
 </Class>
 <Class name='StageStats'>
@@ -2983,6 +3057,9 @@
 	</Function>
 </Class>
 <Class name='Style'>
+	<Function name='ColumnsPerPlayer' sm-ssc='true' return='int' arguments=''>
+		Returns the number of total tracks this Style contains (e.g. 4 for dance-versus, but 8 for dance-double).
+	</Function>
 	<Function name='GetName' return='string' arguments=''>
 		Returns the name of the Style.
 	</Function>
@@ -2991,6 +3068,9 @@
 	</Function>
 	<Function name='GetStyleType' return='StyleType' arguments=''>
 		Returns the StyleType for this Style.
+	</Function>
+	<Function name='NeedsZoomOutWith2Players' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the Style needs to be zoomed out with two players.
 	</Function>
 </Class>
 <Class name='TextBanner'>
@@ -3093,7 +3173,7 @@
 	<Function name='GetDifficulty' return='Difficulty' arguments=''>
 		Returns the Trail's difficulty.
 	</Function>
-	<Function name='GetEntries' sm-ssc='true' return='{TrailEntry}' arguments=''>
+	<Function name='GetTrailEntries' sm-ssc='true' return='{TrailEntry}' arguments=''>
 		Returns a table of TrailEntry items.
 	</Function>
 	<Function name='GetMeter' return='int' arguments=''>
@@ -3120,7 +3200,7 @@
 		Returns the Steps used in this TrailEntry.
 	</Function>
 	<Function name='IsSecret' sm-ssc='true' return='bool' arguments=''>
-		(why'd I think this was a good idea when we have CourseEntry:IsSecret?)
+		(why'd I think this was a good idea when we have <Link class='CourseEntry' function='IsSecret' />?)
 	</Function>
 </Class>
 <Class name='UnlockEntry'>
