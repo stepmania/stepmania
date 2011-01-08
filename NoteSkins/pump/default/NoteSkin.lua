@@ -58,6 +58,15 @@ Noteskin.BaseRotY = {
 	DownRight = 180;
 }
 
+--[[--------------------------------------------------------------------------
+DONT EDIT THE FUNCTION, DON'T COPY AND PASTE THE WHOLE NOTESKIN.LUA
+JUST MAKE A NEW ONE AND GRAB WHATEVER IS USEFUL FOR YOUR NOTESKIN.
+phew~
+
+See cmd-routine-p* noteskin.lua for a simple and clear example on
+how to do this properly, notice how the rest of the noteskins just
+have graphics and at least a metrics.ini with few things
+--]]--------------------------------------------------------------------------
 local function func()
 	local sButton = Var "Button"
 	local sElement = Var "Element"
