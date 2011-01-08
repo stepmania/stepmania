@@ -331,8 +331,12 @@ Section "Main Section" SecMain
 	; install pump noteskins
 	SetOutPath "$INSTDIR\NoteSkins\pump"
 	File /r /x CVS /x .svn "NoteSkins\pump\cmd"
+	File /r /x CVS /x .svn "NoteSkins\pump\cmd-routine-p1"
+	File /r /x CVS /x .svn "NoteSkins\pump\cmd-routine-p2"
 	File /r /x CVS /x .svn "NoteSkins\pump\complex"
 	File /r /x CVS /x .svn "NoteSkins\pump\default"
+	File /r /x CVS /x .svn "NoteSkins\pump\frame5p"
+	File /r /x CVS /x .svn "NoteSkins\pump\newextra"
 	File /r /x CVS /x .svn "NoteSkins\pump\simple"
 	SetOutPath "$INSTDIR"
 
