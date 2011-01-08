@@ -59,7 +59,7 @@ Kaox
  * Pump/default noteskin
 
 cesarmades
- * Pump/cmd noteskin
+ * Pump/cmd-* noteskins
 
 David Santamaría Rogado (howl)
  * Various patches (see Changelog_sm-ssc.txt for more details and links)
@@ -105,6 +105,9 @@ gholms
 juanelote
  * [SongManager] GetSongGroupByIndex function
  * [MusicWheel] JumpToNextGroup/JumpToPrevGroup logic modifications
+
+NitroX72
+ * Pump/frame noteskin
 
 ==the beta testers==
 [SSC Beta Testing Team]

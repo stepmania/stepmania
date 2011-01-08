@@ -1,7 +1,7 @@
 sm-ssc Changelog
 ________________________________________________________________________________
 The sm-ssc changelog mostly deals with source code-related changes,
-as theme changes happen at a rapid pace.
+as theme changes happen at a faster pace.
 
 Changes are grouped by date.
 Not all changes are documented, for various reasons.
@@ -12,6 +12,16 @@ _____________________________________________________________________________
 ================================================================================
 sm-ssc v1.2 | 201101xx
 --------------------------------------------------------------------------------
+
+20110106
+--------
+* [SpecialScoring] Fix some minor issues [FSX]
+* New pump routine noteskins [cesarmades]
+* [SongManager] Check the root Songs/ folder for extra stage course files. [freem]
+
+20110102
+--------
+* Fix routine mode saving in the editor. [Wolfman2000]
 
 20110101
 --------

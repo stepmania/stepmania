@@ -1176,9 +1176,14 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->GetSongDir().c_str():"",
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"") );
 
+	// Check preferred group
 	if( GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pStepsOut) )
 		return;
-	
+
+	// Optionally, check the Songs folder for extra1/2.crs files.
+	if( GetExtraStageInfoFromCourse(bExtra2, "", pSongOut, pStepsOut) )
+		return;
+
 	// Choose a hard song for the extra stage
 	Song*	pExtra1Song = NULL;		// the absolute hardest Song and Steps.  Use this for extra stage 1.
 	Steps*	pExtra1Notes = NULL;
