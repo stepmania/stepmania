@@ -10,14 +10,17 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.2 | 201101xx
+sm-ssc v1.2 | 20110107
 --------------------------------------------------------------------------------
+
+20110107
+--------
+* [SongManager] Check the root Songs/ folder for extra stage course files. [freem]
 
 20110106
 --------
 * [SpecialScoring] Fix some minor issues [FSX]
 * New pump routine noteskins [cesarmades]
-* [SongManager] Check the root Songs/ folder for extra stage course files. [freem]
 
 20110102
 --------
