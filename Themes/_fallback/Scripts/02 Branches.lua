@@ -26,6 +26,11 @@ function SelectMusicOrCourse()
 	end
 end
 
+-- functions used for Routine mode
+function IsRoutine()
+	return GAMESTATE:GetCurrentStyle() and GAMESTATE:GetCurrentStyle():GetStyleType() == "StyleType_TwoPlayersSharedSides";
+end
+
 Branch = {
 	Init = function()
 		if GAMESTATE:GetCoinMode() == 'CoinMode_Home' then
@@ -155,6 +160,12 @@ Branch = {
 			return "ScreenStageInformation"
 		end
 	end,
+	GameplayScreen = function()
+		if IsRoutine() then
+			return "ScreenGameplayShared"
+		end
+		return "ScreenGameplay"
+	end
 	AfterGameplay = function()
 		-- pick an evaluation screen based on settings.
 		if IsNetSMOnline() then
