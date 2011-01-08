@@ -223,7 +223,7 @@ int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 
 Font::Font()
 {
-	m_iRefCount = 0;
+	m_iRefCount = 1;
 	m_pDefault = NULL;
 	m_bRightToLeft = false;
 	// [sm-ssc] don't show strokes by default
