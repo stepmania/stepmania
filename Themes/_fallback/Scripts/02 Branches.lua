@@ -165,7 +165,7 @@ Branch = {
 			return "ScreenGameplayShared"
 		end
 		return "ScreenGameplay"
-	end
+	end,
 	AfterGameplay = function()
 		-- pick an evaluation screen based on settings.
 		if IsNetSMOnline() then
