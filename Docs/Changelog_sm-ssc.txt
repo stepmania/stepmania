@@ -15,8 +15,11 @@ sm-ssc v1.2 | 20110107
 
 20110107
 --------
+* Fix PrefsManager init list not being in order [vyhd]
+* Add hack to ThemeManager to make GetThemeName() work intuitively for Scripts dirs [vyhd]
 * [SongManager] Check the root Songs/ folder for extra stage course files. [freem]
 * Make routine mode use ScreenGameplayShared instead of ScreenGameplay. [freem]
+* Make pump-routine spacing the same as pump-double spacing. [FSX] 
 
 20110106
 --------
