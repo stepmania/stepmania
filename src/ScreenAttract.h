@@ -16,16 +16,14 @@ public:
 	static void AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen );
 	static void GoToStartScreen( RString sScreenName );
 	static void SetAttractVolume( bool bInAttract );
-	
+
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void Cancel( ScreenMessage smSendWhenDone );
 
 	virtual ScreenType GetScreenType() const { return attract; }
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 protected:
@@ -33,7 +31,6 @@ protected:
 	ThemeMetric<bool> RESET_GAME_STATE;
 	ThemeMetric<bool> ATTRACT_VOLUME;
 };
-
 
 #endif
 

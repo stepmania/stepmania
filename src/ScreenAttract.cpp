@@ -50,13 +50,13 @@ void ScreenAttract::SetAttractVolume( bool bInAttract )
 	if( bInAttract )
 	{
 		if( GAMESTATE->IsTimeToPlayAttractSounds() )
-			SOUNDMAN->SetVolumeOfNonCriticalSounds( g_fSoundVolumeAttract );  // unmute attract sounds
+			SOUNDMAN->SetVolumeOfNonCriticalSounds( g_fSoundVolumeAttract ); // unmute attract sounds
 		else
-			SOUNDMAN->SetVolumeOfNonCriticalSounds( 0.0f );  // mute attract sounds
+			SOUNDMAN->SetVolumeOfNonCriticalSounds( 0.0f ); // mute attract sounds
 	}
 	else
 	{
-		SOUNDMAN->SetVolumeOfNonCriticalSounds( 1.0f );  // unmute all sounds
+		SOUNDMAN->SetVolumeOfNonCriticalSounds( 1.0f ); // unmute all sounds
 	}
 }
 
@@ -93,7 +93,7 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 			if( pScreen->IsTransitioning() )
 				return;
 
-			/* HandleGlobalInputs() already played the coin sound.  Don't play it again. */
+			// HandleGlobalInputs() already played the coin sound. Don't play it again.
 			if( input.MenuI != GAME_BUTTON_COIN )
 				SCREENMAN->PlayStartSound();
 
@@ -138,9 +138,10 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
-		/* Look at the def of the screen we're going to; if it has a music theme element
-		 * and it's the same as the one we're playing now, don't stop.  However, if we're
-		 * going to interrupt it when we fade in, stop the old music before we fade out. */
+		/* Look at the def of the screen we're going to; if it has a music theme
+		 * element and it's the same as the one we're playing now, don't stop.
+		 * However, if we're going to interrupt it when we fade in, stop the old
+		 * music before we fade out. */
 		bool bMusicChanging = false;
 		if( PLAY_MUSIC )
 			bMusicChanging = THEME->GetPathS(m_sName,"music") != THEME->GetPathS(GetNextScreenName(),"music",true);	// GetPath optional on the next screen because it may not have music.
@@ -160,7 +161,6 @@ void ScreenAttract::GoToStartScreen( RString sScreenName )
 {
 	SCREENMAN->SetNewScreen( START_SCREEN(sScreenName) );
 }
-
 
 // lua start
 #include "LuaBinding.h"
