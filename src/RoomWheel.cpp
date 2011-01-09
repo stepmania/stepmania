@@ -63,7 +63,6 @@ RoomWheelItem::RoomWheelItem( const RoomWheelItem &cpy ):
 
 void RoomWheelItem::Load( RString sType )
 {
-
 	// colorpart gets added first in MusicWheelItem, so follow that here.
 	m_sprColorPart.Load( THEME->GetPathG(sType,"ColorPart") );
 	this->AddChild( m_sprColorPart );
@@ -141,7 +140,6 @@ void RoomWheel::RemoveItem( int index )
 	RebuildWheelItems();
 }
 
-
 static LocalizedString ENTER_ROOM_NAME( "RoomWheel", "Enter room name" );
 bool RoomWheel::Select()
 {
@@ -193,7 +191,6 @@ unsigned int RoomWheel::GetNumItems() const
 {
 	return m_CurWheelItemData.size() - m_offset;
 }
-
 
 /*
  * (c) 2004 Josh Allen
