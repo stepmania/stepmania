@@ -57,7 +57,6 @@ inline bool IsJoystick( InputDevice id ) { return DEVICE_JOY1 <= id && id < DEVI
 inline bool IsPump( InputDevice id ) { return DEVICE_PUMP1 <= id && id < DEVICE_PUMP1+NUM_PUMPS; }
 //inline bool IsMouse( InputDevice id ) { return id == DEVICE_MOUSE; }
 
-
 struct InputDeviceInfo
 {
 	InputDeviceInfo( InputDevice id_, RString sDesc_ )
@@ -76,7 +75,6 @@ struct InputDeviceInfo
 	}
 };
 
-
 enum InputDeviceState
 {
 	InputDeviceState_Connected,	// has an InputHandler and controller is plugged in
@@ -88,11 +86,10 @@ enum InputDeviceState
 };
 const RString& InputDeviceStateToString( InputDeviceState ids );
 
-
-/* Only raw, unshifted keys go in this table; this doesn't include internationalized
- * keyboards, only keys that we might actually want to test for programmatically.  Any
- * other keys are mapped to KEY_OTHER_0 and up.  (If we want to support real international
- * input, stick a wchar_t in DeviceInput.)  */
+/* Only raw, unshifted keys go in this table; this doesn't include
+ * internationalized keyboards, only keys that we might actually want to test
+ * for programmatically. Any other keys are mapped to KEY_OTHER_0 and up. (If we
+ * want to support real international input, stick a wchar_t in DeviceInput.)  */
  
 enum DeviceButton
 {
@@ -262,17 +259,17 @@ enum DeviceButton
 	KEY_KP_ENTER,
 
 	KEY_OTHER_0,
-	/* ... */
+	// ...
 	KEY_LAST_OTHER=511,
 
-	/* Joystick inputs.  We try to have enough input names so any input on a reasonable
-	 * joystick has an obvious mapping, but keep it generic and don't try to handle odd
-	 * special cases.  For example, many controllers have two sticks, so the JOY_LEFT_2, etc.
-	 * pairs are useful for many types of sticks. */
-	/* Standard axis: */
+	/* Joystick inputs. We try to have enough input names so any input on a
+	 * reasonable joystick has an obvious mapping, but keep it generic and don't
+	 * try to handle odd special cases. For example, many controllers have two
+	 * sticks, so the JOY_LEFT_2, etc. pairs are useful for many types of sticks. */
+	// Standard axis:
 	JOY_LEFT, JOY_RIGHT, JOY_UP, JOY_DOWN,
 
-	/* Secondary sticks: */
+	// Secondary sticks:
 	JOY_LEFT_2, JOY_RIGHT_2, JOY_UP_2, JOY_DOWN_2,
 
 	JOY_Z_UP, JOY_Z_DOWN,
@@ -280,7 +277,7 @@ enum DeviceButton
 	JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN, 
 	JOY_AUX_1, JOY_AUX_2, JOY_AUX_3, JOY_AUX_4,
 
-	/* Buttons: */
+	// Buttons:
 	JOY_BUTTON_1,	JOY_BUTTON_2,	JOY_BUTTON_3,	JOY_BUTTON_4,	JOY_BUTTON_5,
 	JOY_BUTTON_6,	JOY_BUTTON_7,	JOY_BUTTON_8,	JOY_BUTTON_9,	JOY_BUTTON_10,
 	JOY_BUTTON_11,	JOY_BUTTON_12,	JOY_BUTTON_13,	JOY_BUTTON_14,	JOY_BUTTON_15,
@@ -292,15 +289,15 @@ enum DeviceButton
 	MIDI_FIRST = 600,
 	MIDI_LAST = 699,
 
-	/* Mouse: */
+	// Mouse:
 	/*
 	MOUSE_LEFT = 700,
 	MOUSE_RIGHT,
 	MOUSE_MIDDLE,
-	MOUSE_FORWARD, // for mice with forward and backwards buttons
-	MOUSE_BACK,
-	MOUSE_WHEELUP, // wheel mice
-	MOUSE_WHEELDOWN,
+	// for mice with forward and backwards buttons
+	MOUSE_FORWARD, MOUSE_BACK,
+	// wheel mice
+	MOUSE_WHEELUP, MOUSE_WHEELDOWN,
 	*/
 
 	NUM_DeviceButton,
@@ -316,12 +313,12 @@ public:
 	InputDevice device;
 	DeviceButton button;
 
-	/* This is usually 0 or 1.  Analog joystick inputs can set this to a percentage (0..1).
-	 * This should be 0 for analog axes within the dead zone. */
+	/* This is usually 0 or 1. Analog joystick inputs can set this to a percentage
+	 * (0..1). This should be 0 for analog axes within the dead zone. */
 	float level;
 
-	/* Whether this button is pressed.  This is level with a threshold and debouncing
-	 * applied. */
+	/* Whether this button is pressed. This is level with a threshold and
+	 * debouncing applied. */
 	bool bDown;
 
 	RageTimer ts;
@@ -333,8 +330,8 @@ public:
 
 	bool operator==( const DeviceInput &other ) const
 	{ 
-		/* Return true if we represent the same button on the same device.  Don't
-		 * compare level or ts. */
+		/* Return true if we represent the same button on the same device.
+		 * Don't compare level or ts. */
 		return device == other.device  &&  button == other.button;
 	}
 	bool operator!=( const DeviceInput &other ) const
@@ -343,8 +340,8 @@ public:
 	}
 	bool operator<( const DeviceInput &other ) const
 	{ 
-		/* Return true if we represent the same button on the same device.  Don't
-		 * compare level or ts. */
+		/* Return true if we represent the same button on the same device.
+		 * Don't compare level or ts. */
 		if( device != other.device )
 			return device < other.device;
 		return button < other.button;
