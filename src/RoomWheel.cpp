@@ -77,7 +77,6 @@ void RoomWheelItem::Load( RString sType )
 	this->AddChild( &m_text );
 
 	m_Desc.SetName( "Description" );
-	ActorUtil::LoadAllCommands( m_Desc, "RoomWheelItem" );
 	m_Desc.LoadFromFont( THEME->GetPathF("RoomWheel","text") );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_Desc );
 	this->AddChild( &m_Desc );
