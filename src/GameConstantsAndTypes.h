@@ -79,6 +79,7 @@ enum StepsType
 	StepsType_techno_single8,
 	StepsType_techno_double4,
 	StepsType_techno_double5,
+	StepsType_techno_double8,
 	StepsType_popn_five,
 	StepsType_popn_nine,
 	StepsType_guitar_five,
