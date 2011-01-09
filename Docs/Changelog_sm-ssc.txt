@@ -15,9 +15,11 @@ sm-ssc in development | 20110???
 
 20110109
 --------
-* Add alternatives to Page Up and Page Down in the editor, mainly for
-  laptop users. [Wolfman2000]
+* Add the semicolon and apostrophe keys as alternatives to the Page Up and Page
+  Down keys in the editor, mainly for laptop users. [Wolfman2000]
 * Removed Song sample length limitations. [freem]
+* Removed hard-coded values from the Step Editor. Now TimeSignatures are used
+  in place of these former constants. [Wolfman2000]
 
 ================================================================================
 sm-ssc v1.2 | 20110107
