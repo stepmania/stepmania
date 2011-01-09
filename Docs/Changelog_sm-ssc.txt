@@ -17,6 +17,7 @@ sm-ssc in development | 20110???
 --------
 * Add alternatives to Page Up and Page Down in the editor, mainly for
   laptop users. [Wolfman2000]
+* Removed Song sample length limitations. [freem]
 
 ================================================================================
 sm-ssc v1.2 | 20110107

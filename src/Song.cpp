@@ -407,7 +407,7 @@ void Song::TidyUpData()
 		}
 	}
 
-	/* This must be done before radar calculation. */
+	// This must be done before radar calculation.
 	if( HasMusic() )
 	{
 		RString error;
@@ -418,7 +418,7 @@ void Song::TidyUpData()
 		{
 			LOG->UserLog( "Sound file", GetMusicPath(), "couldn't be opened: %s", error.c_str() );
 
-			/* Don't use this file. */
+			// Don't use this file.
 			m_sMusicFile = "";
 		}
 		else if ( Sample != NULL )
@@ -428,7 +428,7 @@ void Song::TidyUpData()
 
 			if( m_fMusicLengthSeconds < 0 )
 			{
-				/* It failed; bad file or something.  It's already logged a warning. */
+				// It failed; bad file or something. It's already logged a warning.
 				m_fMusicLengthSeconds = 100; // guess
 			}
 			else if( m_fMusicLengthSeconds == 0 )
@@ -490,13 +490,10 @@ void Song::TidyUpData()
 			m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( (float)iBeat );
 		}
 	}
-	
 
-	/* Some DWIs have lengths in ms when they meant seconds, eg. #SAMPLELENGTH:10;.
-	 * If the sample length is way too short, change it. */
-	// oh also this means that if you try to have a sample length longer
-	// than 30 seconds, it won't work. -aj
-	if( m_fMusicSampleLengthSeconds < 3 || m_fMusicSampleLengthSeconds > 30 )
+	// The old logic meant that you couldn't have sample lengths that go forever,
+	// e.g. those in Donkey Konga. I never liked that. -freem
+	if( m_fMusicSampleLengthSeconds <= 0.00f )
 		m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 
 	// Here's the problem:  We have a directory full of images.  We want to determine which 
