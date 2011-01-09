@@ -22,7 +22,7 @@ function InitUserPrefs()
 		SetUserPref("UserPrefGameplayShowScore", false);
 	end;
 	if GetUserPref("UserPrefSpecialScoringMode") == nil then
-		SetUserPref("UserPrefSpecialScoringMode", 1);
+		SetUserPref("UserPrefSpecialScoringMode", 'DDR 1st Mix');
 	end;
 	if GetUserPrefB("UserPrefShowLotsaOptions") == nil then
 		SetUserPref("UserPrefShowLotsaOptions", true);
