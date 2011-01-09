@@ -20,6 +20,10 @@ sm-ssc in development | 20110???
 * Removed Song sample length limitations. [freem]
 * Removed hard-coded values from the Step Editor. Now TimeSignatures are used
   in place of these former constants. [Wolfman2000]
+* [RoomWheel] Various metrics changes: [freem]
+  * Removed TextWidth/DescWidth metrics.
+  * "Desc" is now "Description". (DescX -> DescriptionX)
+  * Removed hardcoded commands (shadowlength,0;maxwidth,[max width metric];halign,0).
 
 ================================================================================
 sm-ssc v1.2 | 20110107

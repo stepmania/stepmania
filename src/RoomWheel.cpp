@@ -12,15 +12,6 @@ AutoScreenMessage( SM_BackFromRoomName )
 AutoScreenMessage( SM_RoomInfoRetract )
 AutoScreenMessage( SM_RoomInfoDeploy )
 
-ThemeMetric<float>		TEXT_X;
-ThemeMetric<float>		TEXT_Y;
-ThemeMetric<float>		TEXT_WIDTH;
-ThemeMetric<apActorCommands>	TEXT_ON_COMMAND;
-
-ThemeMetric<float>	DESC_X;
-ThemeMetric<float>	DESC_Y;
-ThemeMetric<float>	DESC_WIDTH;
-
 RoomWheel::~RoomWheel()
 {
 	FOREACH( WheelItemBaseData*, m_CurWheelItemData, i )
@@ -80,33 +71,15 @@ void RoomWheelItem::Load( RString sType )
 	m_sprNormalPart.Load( THEME->GetPathG(sType,"NormalPart") );
 	this->AddChild( m_sprNormalPart );
 
-	TEXT_X			.Load(sType,"TextX");
-	TEXT_Y			.Load(sType,"TextY");
-	TEXT_ON_COMMAND	.Load(sType,"TextOnCommand");
-	TEXT_WIDTH	.Load(sType,"TextWidth");
-
+	m_text.SetName( "Text" );
 	m_text.LoadFromFont( THEME->GetPathF(sType,"text") );
-	//m_text.SetShadowLength( 0 );
-	m_text.SetXY( TEXT_X, TEXT_Y );
-	m_text.RunCommands( TEXT_ON_COMMAND );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_text );
 	this->AddChild( &m_text );
-	m_text.SetHorizAlign( align_left );
-	m_text.SetMaxWidth(TEXT_WIDTH);
 
-	/*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
-
-	DESC_X		.Load(sType,"DescX");
-	DESC_Y		.Load(sType,"DescY");
-	DESC_WIDTH	.Load(sType,"DescWidth");
-
-	m_Desc.SetName( "Desc" );
+	m_Desc.SetName( "Description" );
 	ActorUtil::LoadAllCommands( m_Desc, "RoomWheelItem" );
 	m_Desc.LoadFromFont( THEME->GetPathF("RoomWheel","text") );
-	m_Desc.SetHorizAlign( align_left );
-	m_Desc.SetShadowLength( 0 );
-	m_Desc.SetMaxWidth( DESC_WIDTH );
-	m_Desc.SetXY( DESC_X, DESC_Y);
-	m_Desc.PlayCommand( "On" );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_Desc );
 	this->AddChild( &m_Desc );
 
 	m_sprOverPart.Load( THEME->GetPathG(sType,"OverPart") );
