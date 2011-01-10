@@ -79,6 +79,6 @@ r['MIGS'] = function(params,pss)
 		curScore = curScore + ( pss:GetTapNoteScores(k) * v );
 	end;
 	curScore = curScore + ( pss:GetHoldNoteScores('HoldNoteScore_Held') * 6 );
-	pss:SetScore(clamp(curScore,0,math.big));
+	pss:SetScore(clamp(curScore,0,math.huge));
 end;
 SpecialScoring = r;
