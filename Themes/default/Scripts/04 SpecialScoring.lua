@@ -67,5 +67,18 @@ end;
 		finalScore = finalScore + curPortion*(500000000*(v/totalRadar));
 	end;
 	pss:SetScore(finalScore);
-end;]]	 
+end;]]
+------------------------------------------------------------
+--Marvelous Incorporated Grading System (or MIGS for short)
+--basically like DP scoring with locked DP values
+------------------------------------------------------------
+r['MIGS'] = function(params,pss)
+	local curScore = 0;
+	local tapScoreTable = { ['TapNoteScore_W1'] = 3, ['TapNoteScore_W2'] = 2, ['TapNoteScore_W3'] = 1, ['TapNoteScore_W5'] = -4, ['TapNoteScore_Miss'] = -8 };
+	for k,v in pairs(tapScoreTable) do
+		curScore = curScore + ( pss:GetTapNoteScores(k) * v );
+	end;
+	curScore = curScore + ( pss:GetHoldNoteScores('HoldNoteScore_Held') * 6 );
+	pss:SetScore(clamp(curScore,0,math.big));
+end;
 SpecialScoring = r;
