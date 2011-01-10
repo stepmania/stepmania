@@ -381,6 +381,8 @@ void Song::TidyUpData()
 		if( !m_sInstrumentTrackFile[i].empty() )
 			FixupPath( m_sInstrumentTrackFile[i], m_sSongDir );
 	FixupPath( m_sBannerFile, m_sSongDir );
+	//FixupPath( m_sAlbumArtFile, m_sSongDir );
+	//FixupPath( m_sDiscFile, m_sSongDir );
 	FixupPath( m_sLyricsFile, m_sSongDir );
 	FixupPath( m_sBackgroundFile, m_sSongDir );
 	FixupPath( m_sCDTitleFile, m_sSongDir );
@@ -512,8 +514,8 @@ void Song::TidyUpData()
 		vector<RString> arrayPossibleBanners;
 		GetImageDirListing( m_sSongDir + "*banner*", arrayPossibleBanners );
 
-		/* Some people do things differently for the sake of being different.  Don't
-		 * match eg. abnormal, numbness. */
+		/* Some people do things differently for the sake of being different.
+		 * Don't match eg. abnormal, numbness. */
 		GetImageDirListing( m_sSongDir + "* BN", arrayPossibleBanners );
 
 		if( !arrayPossibleBanners.empty() )
@@ -557,14 +559,14 @@ void Song::TidyUpData()
 	for( unsigned i=0; i<arrayImages.size(); i++ )	// foreach image
 	{
 		if( HasBanner() && HasCDTitle() && HasBackground() )
-			break; /* done */
+			break; // done
 
 		// ignore DWI "-char" graphics
 		RString sLower = arrayImages[i];
 		sLower.MakeLower();
 		if( BlacklistedImages.find(sLower) != BlacklistedImages.end() )
 			continue;	// skip
-		
+
 		// Skip any image that we've already classified
 
 		if( HasBanner()  &&  stricmp(m_sBannerFile, arrayImages[i])==0 )
@@ -578,7 +580,7 @@ void Song::TidyUpData()
 
 		RString sPath = m_sSongDir + arrayImages[i];
 
-		/* We only care about the dimensions. */
+		// We only care about the dimensions.
 		RString error;
 		RageSurface *img = RageSurfaceUtils::LoadFile( sPath, error, true );
 		if( !img )
@@ -609,22 +611,22 @@ void Song::TidyUpData()
 			continue;
 		}
 
-		/* Some songs have overlarge banners.  Check if the ratio is reasonable (over
-		 * 2:1; usually over 3:1), and large (not a cdtitle). */
+		/* Some songs have overlarge banners. Check if the ratio is reasonable
+		 * (over 2:1; usually over 3:1), and large (not a cdtitle). */
 		if( !HasBanner() && width > 200 && float(width) / height > 2.0f )
 		{
 			m_sBannerFile = arrayImages[i];
 			continue;
 		}
 
-		/* Agh.  DWI's inline title images are triggering this, resulting in kanji,
-		 * etc., being used as a CDTitle for songs with none.  Some sample data
-		 * from random incarnations:
+		/* Agh. DWI's inline title images are triggering this, resulting in
+		 * kanji, etc., being used as a CDTitle for songs with none. Some
+		 * sample data from random incarnations:
 		 *   42x50 35x50 50x50 144x49
 		 * It looks like ~50 height is what people use to align to DWI's font.
 		 *
-		 * My tallest CDTitle is 44.  Let's cut off in the middle and hope for
-		 * the best. */
+		 * My tallest CDTitle is 44. Let's cut off in the middle and hope for
+		 * the best. -(who? -aj) */
 		/* The proper size of a CDTitle is 64x48 or sometihng. Simfile artists
 		 * typically don't give a shit about this (see Cetaka's fucking banner
 		 * -sized CDTitle). This is also subverted in certain designs (beta
@@ -639,7 +641,7 @@ void Song::TidyUpData()
 		}
 	}
 
-	/* These will be written to cache, for Song::LoadFromSongDir to use later. */
+	// These will be written to cache, for Song::LoadFromSongDir to use later.
 	m_bHasMusic = HasMusic();
 	m_bHasBanner = HasBanner();
 	m_bHasBackground = HasBackground();
@@ -667,8 +669,9 @@ void Song::TidyUpData()
 	}
 
 
-	/* Don't allow multiple Steps of the same StepsType and Difficulty (except for edits).
-	 * We should be able to use difficulty names as unique identifiers for steps. */
+	/* Don't allow multiple Steps of the same StepsType and Difficulty (except
+	 * for edits). We should be able to use difficulty names as unique
+	 * identifiers for steps. */
 	SongUtil::AdjustDuplicateSteps( this );
 
 	{
@@ -676,11 +679,11 @@ void Song::TidyUpData()
 		 * but instead points to the file we should write changed files to,
 		 * and will always be an .SM.
 		 *
-		 * This is a little tricky.  We can't always use the song title directly,
-		 * since it might contain characters we can't store in filenames.  Two
+		 * This is a little tricky. We can't always use the song title directly,
+		 * since it might contain characters we can't store in filenames. Two
 		 * easy options: we could manually filter out invalid characters, or we
 		 * could use the name of the directory, which is always a valid filename
-		 * and should always be the same as the song.  The former might not catch
+		 * and should always be the same as the song. The former might not catch
 		 * everything--filename restrictions are platform-specific; we might even
 		 * be on an 8.3 filesystem, so let's do the latter.
 		 *
@@ -688,12 +691,11 @@ void Song::TidyUpData()
 		 * but not KSFs and BMSs.
 		 *
 		 * So, let's do this (by priority):
-		 * 1. If there's an .SM file, use that filename.  No reason to use anything
+		 * 1. If there's an .SM file, use that filename. No reason to use anything
 		 *    else; it's the filename in use.
 		 * 2. If there's a .DWI, use it with a changed extension.
 		 * 3. Otherwise, use the name of the directory, since it's definitely a valid
-		 *    filename, and should always be the title of the song (unlike KSFs).
-		 */
+		 *    filename, and should always be the title of the song (unlike KSFs). */
 		m_sSongFileName = m_sSongDir;
 		vector<RString> asFileNames;
 		GetDirListing( m_sSongDir+"*.sm", asFileNames );
@@ -710,7 +712,7 @@ void Song::TidyUpData()
 		}
 	}
 
-	/* If no time signature specified, assume 4/4 time for the whole song. */
+	// If no time signature specified, assume 4/4 time for the whole song.
 	if( m_Timing.m_vTimeSignatureSegments.empty() )
 	{
 		TimeSignatureSegment seg;
@@ -733,7 +735,7 @@ void Song::TranslateTitles()
 
 void Song::ReCalculateRadarValuesAndLastBeat()
 {
-	float fFirstBeat = FLT_MAX; /* inf */
+	float fFirstBeat = FLT_MAX; // inf
 	float fLastBeat = m_fSpecifiedLastBeat; // Make sure we're at least as long as the specified amount.
 
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )
@@ -762,8 +764,8 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		NoteData tempNoteData;
 		pSteps->GetNoteData( tempNoteData );
 
-		/* Many songs have stray, empty song patterns.  Ignore them, so
-		 * they don't force the first beat of the whole song to 0. */
+		/* Many songs have stray, empty song patterns. Ignore them, so they
+		 * don't force the first beat of the whole song to 0. */
 		if( tempNoteData.GetLastRow() == 0 )
 			continue;
 
@@ -775,7 +777,7 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 	m_fLastBeat = fLastBeat;
 }
 
-/* Return whether the song is playable in the given style. */
+// Return whether the song is playable in the given style.
 bool Song::SongCompleteForStyle( const Style *st ) const
 {
 	return HasStepsType( st->m_StepsType );
@@ -798,14 +800,14 @@ void Song::Save()
 	ReCalculateRadarValuesAndLastBeat();
 	TranslateTitles();
 
-	/* Save the new files.  These calls make backups on their own. */
+	// Save the new files. These calls make backups on their own.
 	if( !SaveToSMFile(GetSongFilePath(), false) )
 		return;
 	SaveToDWIFile();
 	SaveToCacheFile();
 
-	/* We've safely written our files and created backups.  Rename non-SM and non-DWI
-	 * files to avoid confusion. */
+	/* We've safely written our files and created backups. Rename non-SM and
+	 * non-DWI files to avoid confusion. */
 	vector<RString> arrayOldFileNames;
 	GetDirListing( m_sSongDir + "*.bms", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.pms", arrayOldFileNames );
@@ -819,7 +821,7 @@ void Song::Save()
 		if( !FileCopy( sOldPath, sNewPath ) )
 		{
 			LOG->UserLog( "Song file", sOldPath, "couldn't be backed up." );
-			/* Don't remove. */
+			// Don't remove.
 		}
 		else
 			FILEMAN->Remove( sOldPath );
@@ -831,7 +833,7 @@ bool Song::SaveToSMFile( RString sPath, bool bSavingCache )
 {
 	LOG->Trace( "Song::SaveToSMFile('%s')", sPath.c_str() );
 
-	/* If the file exists, make a backup. */
+	// If the file exists, make a backup.
 	if( !bSavingCache && IsAFile(sPath) )
 		FileCopy( sPath, sPath + ".old" );
 
@@ -875,7 +877,7 @@ bool Song::SaveToSMFile( RString sPath, bool bSavingCache )
 
 	if( !bSavingCache )
 	{
-		/* Mark these steps saved to disk. */
+		// Mark these steps saved to disk.
 		FOREACH( Steps*, vpStepsToSave, s )
 			(*s)->SetSavedToDisk( true );
 	}
@@ -901,7 +903,7 @@ bool Song::SaveToDWIFile()
 	const RString sPath = SetExtension( GetSongFilePath(), "dwi" );
 	LOG->Trace( "Song::SaveToDWIFile(%s)", sPath.c_str() );
 
-	/* If the file exists, make a backup. */
+	// If the file exists, make a backup.
 	if( IsAFile(sPath) )
 		FileCopy( sPath, sPath + ".old" );
 
@@ -962,7 +964,7 @@ void Song::AddAutoGenNotes()
 
 void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 {
-//	int iNumTracksOfTo = GAMEMAN->StepsTypeToNumTracks(ntTo);
+	// int iNumTracksOfTo = GAMEMAN->StepsTypeToNumTracks(ntTo);
 
 	for( unsigned int j=0; j<m_vpSteps.size(); j++ )
 	{
@@ -1011,16 +1013,16 @@ void Song::RemoveAutoGenNotes()
 
 bool Song::IsEasy( StepsType st ) const
 {
-	/* Very fast songs and songs with wide tempo changes are hard for new players,
-	 * even if they have beginner steps. */
+	/* Very fast songs and songs with wide tempo changes are hard for new
+	 * players, even if they have beginner steps. */
 	DisplayBpms bpms;
 	this->GetDisplayBpms(bpms);
 	if( bpms.GetMax() >= 250 || bpms.GetMax() - bpms.GetMin() >= 75 )
 		return false;
 
-	/* The easy marker indicates which songs a beginner, having selected "beginner",
-	 * can play and actually get a very easy song: if there are actual beginner
-	 * steps, or if the light steps are 1- or 2-foot. */
+	/* The easy marker indicates which songs a beginner, having selected
+	 * "beginner", can play and actually get a very easy song: if there are
+	 * actual beginner steps, or if the light steps are 1- or 2-foot. */
 	const Steps* pBeginnerNotes = SongUtil::GetStepsByDifficulty( this, st, Difficulty_Beginner );
 	if( pBeginnerNotes )
 		return true;
@@ -1034,11 +1036,11 @@ bool Song::IsEasy( StepsType st ) const
 
 bool Song::IsTutorial() const
 {
-	// A Song is a tutorial song is it has only Beginner steps.
+	// A Song is considered a Tutorial if it has only Beginner steps.
 	FOREACH_CONST( Steps*, m_vpSteps, s )
 	{
 		if( (*s)->m_StepsType == StepsType_lights_cabinet )
-			continue;	// ignore
+			continue; // ignore
 		if( (*s)->GetDifficulty() != Difficulty_Beginner )
 			return false;
 	}
@@ -1057,7 +1059,7 @@ bool Song::HasEdits( StepsType st ) const
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -1072,10 +1074,10 @@ bool Song::NormallyDisplayed() const
 bool Song::ShowInDemonstrationAndRanking() const { return !IsTutorial() && NormallyDisplayed(); }
 
 
-/* Hack: see Song::TidyUpData comments. */
+// Hack: see Song::TidyUpData comments.
 bool Song::HasMusic() const
 {
-	/* If we have keys, we always have music. */
+	// If we have keys, we always have music.
 	if( m_vsKeysoundFile.size() != 0 )
 		return true;
 
@@ -1124,31 +1126,30 @@ RString GetSongAssetPath( RString sPath, const RString &sSongPath )
 	if( sPath == "" )
 		return RString();
 
-	/* If there's no path in the file, the file is in the same directory
-	 * as the song.  (This is the preferred configuration.) */
+	/* If there's no path in the file, the file is in the same directory as the
+	 * song. (This is the preferred configuration.) */
 	if( sPath.find('/') == string::npos )
 		return sSongPath+sPath;
 
-	/* The song contains a path; treat it as relative to the top SM directory. */
+	// The song contains a path; treat it as relative to the top SM directory.
 	if( sPath.Left(3) == "../" )
 	{
-		/* The path begins with "../".  Resolve it wrt. the song directory. */
+		// The path begins with "../".  Resolve it wrt. the song directory.
 		sPath = sSongPath + sPath;
 	}
 
 	CollapsePath( sPath );
 
 	/* If the path still begins with "../", then there were an unreasonable number
-	 * of them at the beginning of the path.  Ignore the path entirely. */
+	 * of them at the beginning of the path. Ignore the path entirely. */
 	if( sPath.Left(3) == "../" )
 		return RString();
 
 	return sPath;
 }
 
-
-/* Note that supplying a path relative to the top-level directory is only for compatibility
- * with DWI.  We prefer paths relative to the song directory. */
+/* Note that supplying a path relative to the top-level directory is only for
+ * compatibility with DWI. We prefer paths relative to the song directory. */
 RString Song::GetMusicPath() const
 {
 	return GetSongAssetPath( m_sMusicFile, m_sSongDir );
@@ -1196,7 +1197,6 @@ RString Song::GetDisplayArtist() const
 	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitArtist();
 	return m_sArtist;
 }
-
 
 RString Song::GetDisplayFullTitle() const
 {
@@ -1267,7 +1267,7 @@ bool Song::Matches(RString sGroup, RString sSong) const
 	sDir.Replace("\\","/");
 	vector<RString> bits;
 	split( sDir, "/", bits );
-	ASSERT(bits.size() >= 2); /* should always have at least two parts */
+	ASSERT(bits.size() >= 2); // should always have at least two parts
 	const RString &sLastBit = bits[bits.size()-1];
 
 	// match on song dir or title (ala DWI)
@@ -1279,8 +1279,8 @@ bool Song::Matches(RString sGroup, RString sSong) const
 	return false;
 }
 
-/* If apInUse is set, it contains a list of steps which are in use elsewhere, and
- * should not be deleted. */
+/* If apInUse is set, it contains a list of steps which are in use elsewhere,
+ * and should not be deleted. */
 void Song::FreeAllLoadedFromProfile( ProfileSlot slot, const set<Steps*> *setInUse )
 {
 	/* DeleteSteps will remove and recreate autogen notes, which may reorder

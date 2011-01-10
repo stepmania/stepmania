@@ -141,10 +141,12 @@ public:
 	float	m_fSpecifiedBPMMin;
 	float	m_fSpecifiedBPMMax;	// if a range, then Min != Max
 
-	RString	m_sBannerFile;
+	RString m_sBannerFile;			// typically a 16:5 ratio graphic (e.g. 256x80)
+	//RString m_sAlbumArtFile;	// typically square (e.g. 256x256)
+	//RString m_sDiscFile;		// typically rectangular (e.g. 256x192)
 	RString m_sLyricsFile;
-	RString	m_sBackgroundFile;
-	RString	m_sCDTitleFile;
+	RString m_sBackgroundFile;
+	RString m_sCDTitleFile;
 
 	AttackArray m_Attacks;
 	vector<RString>	m_sAttackString;
