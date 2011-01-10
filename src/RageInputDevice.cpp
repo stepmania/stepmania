@@ -1,7 +1,5 @@
-/*
- * Define all of the input devices we know about.  This is the public
- * interface for describing input devices.
- */
+/* Define all of the input devices we know about. This is the public interface
+ * for describing input devices. */
 
 #include "global.h"
 #include "RageInputDevice.h"
@@ -106,7 +104,7 @@ static void InitNames()
 	g_mapNamesToString[JOY_UP] = "Up1";
 	g_mapNamesToString[JOY_DOWN] = "Down1";
 
-	/* Secondary sticks: */
+	// Secondary sticks:
 	g_mapNamesToString[JOY_LEFT_2] = "Left2";
 	g_mapNamesToString[JOY_RIGHT_2] = "Right2";
 	g_mapNamesToString[JOY_UP_2] = "Up2";
@@ -143,13 +141,13 @@ static void InitNames()
 		g_mapStringToNames[m->second] = m->first;
 }
 
-/* Return a reversible representation of a DeviceButton.  This is not affected
+/* Return a reversible representation of a DeviceButton. This is not affected
  * by InputDrivers, localization or the keyboard language. */
 RString DeviceButtonToString( DeviceButton key )
 {
 	InitNames();
 
-	/* All printable ASCII except for uppercase alpha characters line up. */
+	// All printable ASCII except for uppercase alpha characters line up.
 	if( key >= 33 && key < 127 &&
 		!(key >= 'A' && key <= 'Z' ) )
 		return ssprintf( "%c", key );
@@ -194,7 +192,6 @@ DeviceButton StringToDeviceButton( const RString& s )
 	return DeviceButton_Invalid;
 }
 
-	
 static const char *InputDeviceNames[] = {
 	"Key",
 	"Joy1",
@@ -237,7 +234,7 @@ static const char *InputDeviceNames[] = {
 XToString( InputDevice );
 StringToX( InputDevice );
 
-/* Return a reversible representation of a DeviceInput.  This is not affected by
+/* Return a reversible representation of a DeviceInput. This is not affected by
  * InputDrivers, localization or the keyboard language. */
 RString DeviceInput::ToString() const
 {

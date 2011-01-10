@@ -26,7 +26,7 @@ void InputHandler_MacOSX_HID::QueueCallback( void *target, int result, void *ref
 	AbsoluteTime zeroTime = { 0, 0 };
 	HIDDevice *dev = This->m_vDevices[int( refcon )];
 	vector<DeviceInput> vPresses;
-	
+
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
 	{
 		if( event.longValueSize != 0 && event.longValue != NULL )
@@ -51,10 +51,10 @@ static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *s
 int InputHandler_MacOSX_HID::Run( void *data )
 {
 	InputHandler_MacOSX_HID *This = (InputHandler_MacOSX_HID *)data;
-	
+
 	This->m_LoopRef = CFRunLoopGetCurrent();
 	CFRetain( This->m_LoopRef );
-	
+
 	This->StartDevices();
 	{
 		const RString sError = SetThreadPrecedence( 1.0f );
@@ -70,7 +70,7 @@ int InputHandler_MacOSX_HID::Run( void *data )
 								  false, 0, RunLoopStarted, &context);
 		CFRunLoopAddObserver( This->m_LoopRef, o, kCFRunLoopDefaultMode );
 	}
-	
+
 	/* Add a source for ending the run loop. This serves two purposes:
 	 * 1. it provides a way to terminate the run loop when IH_MacOSX_HID exists, and
 	 * 2. it ensures that CFRunLoopRun() doesn't return immediately if there are no other sources. */
@@ -81,10 +81,10 @@ int InputHandler_MacOSX_HID::Run( void *data )
 		void (*perform)(void *) = (void (*)(void *))CFRunLoopStop;
 		// { version, info, retain, release, copyDescription, equal, hash, schedule, cancel, perform }
 		CFRunLoopSourceContext context = { 0, info, NULL, NULL, NULL, NULL, NULL, NULL, NULL, perform };
-		
+
 		// Pass 1 so that it is called after all inputs have been handled (they will have order = 0)
 		This->m_SourceRef = CFRunLoopSourceCreate( kCFAllocatorDefault, 1, &context );
-		
+
 		CFRunLoopAddSource( This->m_LoopRef, This->m_SourceRef, kCFRunLoopDefaultMode );
 	}
 	CFRunLoopRun();
@@ -95,7 +95,7 @@ int InputHandler_MacOSX_HID::Run( void *data )
 void InputHandler_MacOSX_HID::DeviceAdded( void *refCon, io_iterator_t )
 {
 	InputHandler_MacOSX_HID *This = (InputHandler_MacOSX_HID *)refCon;
-	
+
 	LockMut( This->m_ChangeLock );
 	This->m_bChanged = true;
 }
@@ -105,7 +105,7 @@ void InputHandler_MacOSX_HID::DeviceChanged( void *refCon, io_service_t service,
 	if( messageType == kIOMessageServiceIsTerminated )
 	{
 		InputHandler_MacOSX_HID *This = (InputHandler_MacOSX_HID *)refCon;
-		
+
 		LockMut( This->m_ChangeLock );
 		This->m_bChanged = true;
 	}
@@ -115,13 +115,13 @@ void InputHandler_MacOSX_HID::DeviceChanged( void *refCon, io_service_t service,
 void InputHandler_MacOSX_HID::StartDevices()
 {
 	int n = 0;
-	
+
 	ASSERT( m_LoopRef );
 	FOREACH( HIDDevice *, m_vDevices, i )
 		(*i)->StartQueue( m_LoopRef, InputHandler_MacOSX_HID::QueueCallback, this, n++ );
-	
+
 	CFRunLoopSourceRef runLoopSource = IONotificationPortGetRunLoopSource( m_NotifyPort );
-	
+
 	CFRunLoopAddSource( m_LoopRef, runLoopSource, kCFRunLoopDefaultMode );
 }
 
@@ -138,7 +138,7 @@ InputHandler_MacOSX_HID::~InputHandler_MacOSX_HID()
 		CFRelease( m_LoopRef );
 		LOG->Trace( "Input handler thread shut down." );
 	}
-	
+
 	FOREACH( io_iterator_t, m_vIters, i )
 		IOObjectRelease( *i );
 	IONotificationPortDestroy( m_NotifyPort );
@@ -148,20 +148,20 @@ static CFDictionaryRef GetMatchingDictionary( int usagePage, int usage )
 {
 	// Build the matching dictionary.
 	CFMutableDictionaryRef dict;
-	
+
 	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == NULL )
 		FAIL_M( "Couldn't create a matching dictionary." );
 	// Refine the search by only looking for joysticks
 	CFNumberRef usagePageRef = CFInt( usagePage );
 	CFNumberRef usageRef = CFInt( usage );
-	
+
 	CFDictionarySetValue( dict, CFSTR(kIOHIDPrimaryUsagePageKey), usagePageRef );
 	CFDictionarySetValue( dict, CFSTR(kIOHIDPrimaryUsageKey), usageRef );
-	
+
 	// Cleanup after ourselves
 	CFRelease( usagePageRef );
 	CFRelease( usageRef );
-	
+
 	return dict;
 }
 
@@ -182,28 +182,28 @@ void InputHandler_MacOSX_HID::AddDevices( int usagePage, int usage, InputDevice 
 	io_iterator_t iter;
 	CFDictionaryRef dict = GetMatchingDictionary( usagePage, usage );
 	kern_return_t ret = IOServiceAddMatchingNotification( m_NotifyPort, kIOFirstMatchNotification, dict,
-							      InputHandler_MacOSX_HID::DeviceAdded, this, &iter );
+						InputHandler_MacOSX_HID::DeviceAdded, this, &iter );
 	io_object_t device;
 
 	if( ret != KERN_SUCCESS )
 		return;
-	
+
 	m_vIters.push_back( iter );
-	
+
 	// Iterate over the devices and add them
 	while( (device = IOIteratorNext(iter)) )
 	{
 		LOG->Trace( "\tFound device %d", id );
 		HIDDevice *dev = MakeDevice( id );
 		int num;
-		
+
 		if( !dev )
 		{
 			LOG->Trace( "\t\tInvalid id, deleting device" );
 			IOObjectRelease( device );
 			continue;
 		}
-		
+
 		if( !dev->Open(device) || (num = dev->AssignIDs(id)) == -1 )
 		{
 			LOG->Trace( "\tFailed top open or assign id, deleting device" );
@@ -212,13 +212,13 @@ void InputHandler_MacOSX_HID::AddDevices( int usagePage, int usage, InputDevice 
 			continue;
 		}
 		io_iterator_t i;
-		
+
 		enum_add( id, num );
 		m_vDevices.push_back( dev );
 		
 		ret = IOServiceAddInterestNotification( m_NotifyPort, device, kIOGeneralInterest,
 							InputHandler_MacOSX_HID::DeviceChanged, this, &i );
-		
+
 		if( ret == KERN_SUCCESS )
 			m_vIters.push_back( i );
 		else
@@ -233,7 +233,7 @@ InputHandler_MacOSX_HID::InputHandler_MacOSX_HID() : m_Sem( "Input thread starte
 
 	// Set up the notify ports.
 	m_NotifyPort = IONotificationPortCreate( kIOMasterPortDefault );
-	
+
 	// Add devices.
 	LOG->Trace( "Finding keyboards" );
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard, id );
@@ -245,7 +245,7 @@ InputHandler_MacOSX_HID::InputHandler_MacOSX_HID() : m_Sem( "Input thread starte
 	id = DEVICE_PUMP1;
 	AddDevices( kHIDPage_VendorDefinedStart, 0x0001, id ); // Pump pads use the first vendor specific usage page.
 	m_bChanged = false;
-	
+
 	if( PREFSMAN->m_bThreadedInput )
 	{
 		m_InputThread.SetName( "Input thread" );
@@ -353,7 +353,7 @@ RString InputHandler_MacOSX_HID::GetDeviceSpecificInputString( const DeviceInput
 		case JOY_BUTTON_11: return "P2 DR";
 		}
 	}
-	
+
 	return InputHandler::GetDeviceSpecificInputString( di );
 }
 
@@ -383,7 +383,7 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 		case KEY_PGDN:
 		case KEY_NUMLOCK:
 		case KEY_KP_ENTER:
-			return L'\0';		
+			return L'\0';
 	}
 
 	// Find the USB key code for this DeviceButton
@@ -394,12 +394,14 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 		if( bUseCurrentKeyModifiers )
 			modifiers = GetCurrentKeyModifiers();
 
+		// todo: handle Caps Lock -freem
+
 		SInt16 iCurrentKeyScript = GetScriptManagerVariable( smKeyScript );
 		SInt16 iCurrentKeyLayoutID = GetScriptVariable( iCurrentKeyScript, smScriptKeys );
 		static SInt16 iLastKeyLayoutID = !iCurrentKeyLayoutID; // Just be different.
 		static UInt32 iDeadKeyState;
 		static UCKeyboardLayout **KeyLayout;
-		
+
 		if( iCurrentKeyLayoutID != iLastKeyLayoutID )
 		{
 			iDeadKeyState = 0;
@@ -415,24 +417,24 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 			OSStatus status = UCKeyTranslate( *KeyLayout, iMacVirtualKey, kUCKeyActionDown, modifiers,
 							  keyboardType, 0, &iDeadKeyState, ARRAYLEN(unicodeInputString),
 							  &length, unicodeInputString );
-			
+
 			if( status )
 				return L'\0';
-			
+
 			CFStringRef inputString = CFStringCreateWithCharacters( NULL, unicodeInputString, length );
 			char utf8InputString[7]; // Max size is 6 (although really only 4 are used) + null.
-			
+
 			if( !CFStringGetCString(inputString, utf8InputString, 7, kCFStringEncodingUTF8) )
 			{
 				CFRelease( inputString );
 				return L'\0';
 			}
-			
+
 			wchar_t ch = utf8_get_char( utf8InputString );
 			
 			CFRelease( inputString );
 			return ch == INVALID_CHAR ? L'\0' : ch;
-			
+
 		}
 		else
 		{
@@ -440,7 +442,7 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 			static unsigned long state = 0;
 			static Ptr keymap = NULL;
 			Ptr new_keymap;
-			
+
 			new_keymap = (Ptr)GetScriptManagerVariable(smKCHRCache);
 			if( new_keymap != keymap )
 			{
@@ -451,7 +453,7 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 			return KeyTranslate( keymap, UInt16(iMacVirtualKey)|modifiers, &state ) & 0xFF;
 		}
 	}
-	
+
 	return InputHandler::DeviceButtonToChar( button, bUseCurrentKeyModifiers );
 }
 

@@ -733,6 +733,7 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
 			ZERO( keys );
 			if( bUseCurrentKeyModifiers )
 				GetKeyboardState(keys);
+			// todo: handle Caps Lock -freem
 			wchar_t c = ScancodeAndKeysToChar( i->ofs, keys );
 			if( c )
 				return c;
