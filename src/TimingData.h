@@ -54,7 +54,11 @@ struct StopSegment
 		return true;
 	}
 	bool operator!=( const StopSegment &other ) const { return !operator==(other); }
-	bool operator<( const StopSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	bool operator<( const StopSegment &other ) const
+	{
+		return	( m_iStartRow < other.m_iStartRow ) ||
+		( m_iStartRow == other.m_iStartRow && m_bDelay );
+	}
 };
 
 /* This only supports simple time signatures. The upper number (called the numerator here, though this isn't
