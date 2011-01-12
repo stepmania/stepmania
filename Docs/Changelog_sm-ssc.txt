@@ -13,6 +13,10 @@ _____________________________________________________________________________
 sm-ssc v1.2.1 | 20110???
 --------------------------------------------------------------------------------
 
+20110112
+--------
+* [NetworkSyncManager] Added CloseConnection() Lua binding. [freem]
+
 20110111
 --------
 * [ScreenManager] Added ReloadOverlayScreens() Lua binding. [freem]

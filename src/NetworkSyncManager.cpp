@@ -839,12 +839,14 @@ LuaFunction( ConnectToServer, 		ConnectToServer( ( RString(SArg(1)).length()==0 
 #endif
 
 static bool ReportStyle() { NSMAN->ReportStyle(); return true; }
+static bool CloseNetworkConnection() { NSMAN->CloseConnection(); return true; }
 
 LuaFunction( IsSMOnlineLoggedIn,	NSMAN->isSMOLoggedIn[Enum::Check<PlayerNumber>(L, 1)] )
 LuaFunction( IsNetConnected,		NSMAN->useSMserver )
 LuaFunction( IsNetSMOnline,			NSMAN->isSMOnline )
 LuaFunction( ReportStyle,			ReportStyle() )
 LuaFunction( GetServerName,			NSMAN->GetServerName() )
+LuaFunction( CloseConnection,		CloseNetworkConnection() )
 
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen
