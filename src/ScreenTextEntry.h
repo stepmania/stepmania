@@ -58,6 +58,26 @@ public:
 		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCancel, true );
 	}
 
+	struct TextEntrySettings {
+		TextEntrySettings() { }
+		ScreenMessage smSendOnPop;
+		RString sQuestion;
+		RString sInitialAnswer;
+		int iMaxInputLength;
+		bool bPassword; // (optional)
+		LuaReference Validate; // (RString sAnswer, RString sErrorOut; optional)
+		LuaReference OnOK; // (RString sAnswer; optional)
+		LuaReference OnCancel; // (optional)
+		LuaReference ValidateAppend; // (RString sAnswerBeforeChar, RString sAppend; optional)
+		LuaReference FormatAnswerForDisplay; // (RString sAnswer; optional)
+
+		// see BitmapText.cpp Attribute::FromStack()  and
+		// OptionRowHandler.cpp LoadInternal() for ideas on how to implement the
+		// main part, and ImportOption() from OptionRowHandler.cpp for functions.
+		void FromStack( lua_State *L );
+	};
+	void LoadFromTextEntrySettings( const TextEntrySettings &settings );
+
 	static bool FloatValidate( const RString &sAnswer, RString &sErrorOut );
 
 	virtual void Init();
@@ -68,6 +88,9 @@ public:
 
 	static RString s_sLastAnswer;
 	static bool s_bCancelledLast;
+
+	// Lua
+	virtual void PushSelf( lua_State *L );
 
 protected:
 	void TryAppendToAnswer( RString s );
@@ -81,16 +104,16 @@ private:
 
 	void UpdateAnswerText();
 
-	wstring			m_sAnswer;
-	bool			m_bShowAnswerCaret;
+	wstring		m_sAnswer;
+	bool		m_bShowAnswerCaret;
 
-	BitmapText		m_textQuestion;
-	BitmapText		m_textAnswer;
+	BitmapText	m_textQuestion;
+	BitmapText	m_textAnswer;
 
-	RageSound		m_sndType;
-	RageSound		m_sndBackspace;
+	RageSound	m_sndType;
+	RageSound	m_sndBackspace;
 
-	RageTimer		m_timerToggleCursor;
+	RageTimer	m_timerToggleCursor;
 };
 
 class ScreenTextEntryVisual: public ScreenTextEntry
@@ -107,20 +130,20 @@ protected:
 
 	virtual void TextEnteredDirectly();
 
-	virtual void MenuLeft( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MoveX(-1); }
-	virtual void MenuRight( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MoveX(+1); }
-	virtual void MenuUp( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MoveY(-1); }
-	virtual void MenuDown( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MoveY(+1); }
+	virtual void MenuLeft( const InputEventPlus &input ) { if(input.type==IET_FIRST_PRESS) MoveX(-1); }
+	virtual void MenuRight( const InputEventPlus &input ) { if(input.type==IET_FIRST_PRESS) MoveX(+1); }
+	virtual void MenuUp( const InputEventPlus &input ) { if(input.type==IET_FIRST_PRESS) MoveY(-1); }
+	virtual void MenuDown( const InputEventPlus &input ) { if(input.type==IET_FIRST_PRESS) MoveY(+1); }
 
 	virtual void MenuStart( const InputEventPlus &input );
 
 	int			m_iFocusX;
-	KeyboardRow		m_iFocusY;
+	KeyboardRow m_iFocusY;
 
-	AutoActor		m_sprCursor;
-	BitmapText		*m_ptextKeys[NUM_KeyboardRow][KEYS_PER_ROW];
+	AutoActor	m_sprCursor;
+	BitmapText	*m_ptextKeys[NUM_KeyboardRow][KEYS_PER_ROW];
 
-	RageSound		m_sndChange;
+	RageSound	m_sndChange;
 
 	ThemeMetric<float>	ROW_START_X;
 	ThemeMetric<float>	ROW_START_Y;
