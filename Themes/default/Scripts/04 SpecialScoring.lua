@@ -25,17 +25,23 @@ end;
 --DDR SuperNOVA(-esque) scoring
 -----------------------------------------------------------
 r['DDR SuperNOVA'] = function(params, pss)
-	local dp = pss:GetPossibleDancePoints();
-	if dp == 0 then pss:SetScore(0) return nil end
-	pss:SetScore(math.round((pss:GetActualDancePoints()/dp)*1000000));
+	local multLookup = { ['TapNoteScore_W1'] = 1, ['TapNoteScore_W2'] = 1, ['TapNoteScore_W3'] = 0.5 };
+	setmetatable(multLookup, ZeroIfNotFound);
+	local radarValues = GAMESTATE:GetCurrentSteps(params.Player):GetRadarValues(params.Player);
+	local totalItems = radarValues:GetValue('RadarCategory_TapsAndHolds') + radarValues:GetValue('RadarCategory_Holds') + radarValues:GetValue('RadarCategory_Rolls'); 
+	local buildScore = (10000000 / totalItems * multLookup[params.TapNoteScore]) + (10000000 / totalItems * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0));
+	pss:SetScore(pss:GetScore() + math.round(buildScore));
 end;
 -----------------------------------------------------------
 --DDR SuperNOVA 2(-esque) scoring
 -----------------------------------------------------------
 r['DDR SuperNOVA 2'] = function(params, pss)
-	local dp = pss:GetPossibleDancePoints();
-	if dp == 0 then pss:SetScore(0) return nil end
-	pss:SetScore(math.round((pss:GetActualDancePoints()/dp)*100000)*10);
+	local multLookup = { ['TapNoteScore_W1'] = 1, ['TapNoteScore_W2'] = 1, ['TapNoteScore_W3'] = 0.5 };
+	setmetatable(multLookup, ZeroIfNotFound);
+	local radarValues = GAMESTATE:GetCurrentSteps(params.Player):GetRadarValues(params.Player);
+	local totalItems = radarValues:GetValue('RadarCategory_TapsAndHolds') + radarValues:GetValue('RadarCategory_Holds') + radarValues:GetValue('RadarCategory_Rolls'); 
+	local buildScore = (100000 / totalItems * multLookup[params.TapNoteScore] - ((params.TapNoteScore == 'TapNoteScore_W2' and (PREFSMAN:GetPreference("AllowW1") ~= 'AllowW1_Never' or not (GAMESTATE:IsCourseMode() and PREFSMAN:GetPreference("AllowW1") == 'AllowW1_CoursesOnly'))) and 10 or 0)) + (100000 / totalItems * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0));
+	pss:SetScore(pss:GetScore() + (math.round(buildScore) * 10));
 end;
 -----------------------------------------------------------
 --Radar Master (doesn't work in 1.2, disabled)

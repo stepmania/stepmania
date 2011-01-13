@@ -10,11 +10,13 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.2.1 | 20110???
+sm-ssc v1.2.1 | 2011011?
 --------------------------------------------------------------------------------
 
 20110112
 --------
+* [SpecialScoring] MIGS scoring, improved SN and SN2 scoring. [FSX]
+* [RageFile] Added ReadBytes() Lua binding. [FSX]
 * [NetworkSyncManager] Added CloseConnection() Lua binding. [freem]
 * [ScreenTextEntry] Added Load(TextEntrySettings) Lua binding. [freem]
   TextEntrySettings is implemented similar to the Attributes in BitmapText.
