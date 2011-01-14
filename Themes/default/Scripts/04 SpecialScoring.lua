@@ -3,6 +3,27 @@ local r = {};
 local DisabledScoringModes = { 'DDR Extreme', '[SSC] Radar Master' };
 --the following metatable makes any missing value in a table 0 instead of nil.
 local ZeroIfNotFound = { __index = function() return 0 end; };
+
+-- Retrieve the amount of taps/holds/rolls involved. Used for some formulas.
+function GetTotalItems(radars)
+	return radars:GetValue('RadarCategory_TapsAndHolds') 
+		+ radars:GetValue('RadarCategory_Holds') 
+		+ radars:GetValue('RadarCategory_Rolls');
+end;
+
+-- Determine whether marvelous timing is to be considered.
+function IsW1Allowed(tapScore)
+	return tapScore == 'TapNoteScore_W2'
+		and (PREFSMAN:GetPreference("AllowW1") ~= 'AllowW1_Never' 
+		or not (GAMESTATE:IsCourseMode() and 
+		PREFSMAN:GetPreference("AllowW1") == 'AllowW1_CoursesOnly'));
+end;
+
+-- Get the radar values directly. The individual steps aren't used much.
+function GetDirectRadar(player)
+	return GAMESTATE:GetCurrentSteps(player):GetRadarValues(player);
+end;
+
 -----------------------------------------------------------
 --DDR 1st Mix and 2nd Mix Scoring
 -----------------------------------------------------------
@@ -37,9 +58,7 @@ r['DDR Extreme'] = function(params, pss)
 	local baseScore = (steps:IsAnEdit() and 
 		5 or steps:GetMeter()) * 10000000;
 	local currentStep = 0; -- TODO: Get current step/hold.
-	local totalItems = radarValues:GetValue('RadarCategory_TapsAndHolds') 
-		+ radarValues:GetValue('RadarCategory_Holds') 
-		+ radarValues:GetValue('RadarCategory_Rolls');
+	local totalItems = GetTotalItems(radarValues);
 	local singleStep = (1 + totalItems) * totalItems / 2;
 	local stepLast = math.floor(baseScore / singleStep) * currentStep);
 	local judgeScore = 0;
@@ -47,10 +66,7 @@ r['DDR Extreme'] = function(params, pss)
 		judgeScore = judgmentBase['TapNoteScore_W1'];
 	else
 		judgeScore = judgmentBase[params.TapNoteScore];
-		if (params.TapNoteScore == 'TapNoteScore_W2'
-			and (PREFSMAN:GetPreference("AllowW1") ~= 'AllowW1_Never' 
-			or not (GAMESTATE:IsCourseMode() and 
-			PREFSMAN:GetPreference("AllowW1") == 'AllowW1_CoursesOnly'))) then
+		if (IsW1Allowed(params.TapNoteScore)) then
 			judgeScore = judgmentBase['TapNoteScore_W1'];
 		end;
 	end;
@@ -64,8 +80,8 @@ end;
 r['DDR SuperNOVA'] = function(params, pss)
 	local multLookup = { ['TapNoteScore_W1'] = 1, ['TapNoteScore_W2'] = 1, ['TapNoteScore_W3'] = 0.5 };
 	setmetatable(multLookup, ZeroIfNotFound);
-	local radarValues = GAMESTATE:GetCurrentSteps(params.Player):GetRadarValues(params.Player);
-	local totalItems = radarValues:GetValue('RadarCategory_TapsAndHolds') + radarValues:GetValue('RadarCategory_Holds') + radarValues:GetValue('RadarCategory_Rolls'); 
+	local radarValues = GetDirectRadar(params.Player);
+	local totalItems = GetTotalItems(radarValues); 
 	local buildScore = (10000000 / totalItems * multLookup[params.TapNoteScore]) + (10000000 / totalItems * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0));
 	pss:SetScore(pss:GetScore() + math.round(buildScore));
 end;
@@ -75,9 +91,9 @@ end;
 r['DDR SuperNOVA 2'] = function(params, pss)
 	local multLookup = { ['TapNoteScore_W1'] = 1, ['TapNoteScore_W2'] = 1, ['TapNoteScore_W3'] = 0.5 };
 	setmetatable(multLookup, ZeroIfNotFound);
-	local radarValues = GAMESTATE:GetCurrentSteps(params.Player):GetRadarValues(params.Player);
-	local totalItems = radarValues:GetValue('RadarCategory_TapsAndHolds') + radarValues:GetValue('RadarCategory_Holds') + radarValues:GetValue('RadarCategory_Rolls'); 
-	local buildScore = (100000 / totalItems * multLookup[params.TapNoteScore] - ((params.TapNoteScore == 'TapNoteScore_W2' and (PREFSMAN:GetPreference("AllowW1") ~= 'AllowW1_Never' or not (GAMESTATE:IsCourseMode() and PREFSMAN:GetPreference("AllowW1") == 'AllowW1_CoursesOnly'))) and 10 or 0)) + (100000 / totalItems * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0));
+	local radarValues = GetDirectRadar(params.Player);
+	local totalItems = GetTotalItems(radarValues); 
+	local buildScore = (100000 / totalItems * multLookup[params.TapNoteScore] - (IsW1Allowed(params.TapNoteScore) and 10 or 0)) + (100000 / totalItems * (params.HoldNoteScore == 'HoldNoteScore_Held' and 1 or 0));
 	pss:SetScore(pss:GetScore() + (math.round(buildScore) * 10));
 end;
 -----------------------------------------------------------
@@ -95,7 +111,7 @@ r['[SSC] Radar Master'] = function(params, pss)
 	local totalRadar = 0;
 	local finalScore = 0;
 	for k,v in pairs(masterTable) do
-		local firstRadar = GAMESTATE:GetCurrentSteps(params.Player):GetRadarValues(params.Player):GetValue(k);
+		local firstRadar = GetDirectRadar(params.Player):GetValue(k);
 		if firstRadar == 0 then
 			masterTable[k] = nil;
 		else
