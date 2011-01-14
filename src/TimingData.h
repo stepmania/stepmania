@@ -27,6 +27,15 @@ struct BPMSegment
 	}
 	bool operator!=( const BPMSegment &other ) const { return !operator==(other); }
 	bool operator<( const BPMSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	bool operator<=( const BPMSegment &other ) const
+	{
+		return ( operator<(other) || operator==(other) );
+	}
+	bool operator>( const BPMSegment &other ) const { return m_iStartRow > other.m_iStartRow; }
+	bool operator>=( const BPMSegment &other ) const
+	{
+		return ( operator>(other) || operator==(other) );
+	}
 };
 
 struct StopSegment 
@@ -101,6 +110,15 @@ struct TimeSignatureSegment
 	}
 	bool operator!=( const TimeSignatureSegment &other ) const { return !operator==(other); }
 	bool operator<( const TimeSignatureSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	bool operator<= (const TimeSignatureSegment &other ) const
+	{
+		return ( operator<(other) || operator==(other) );
+	}
+	bool operator>( const TimeSignatureSegment &other ) const { return m_iStartRow > other.m_iStartRow; }
+	bool operator>= (const TimeSignatureSegment &other ) const
+	{
+		return ( operator>(other) || operator==(other) );
+	}
 };
 
 /* A warp segment is used to replicate the effects of Negative BPMs without
@@ -122,6 +140,15 @@ struct WarpSegment
 	}
 	bool operator!=( const WarpSegment &other ) const { return !operator==(other); }
 	bool operator<( const WarpSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	bool operator<=( const WarpSegment &other ) const
+	{
+		return ( operator<(other) || operator==(other) );
+	}
+	bool operator>( const WarpSegment &other ) const { return m_iStartRow > other.m_iStartRow; }
+	bool operator>=( const WarpSegment &other ) const
+	{
+		return ( operator>(other) || operator==(other) );
+	}
 };
 
 class TimingData
