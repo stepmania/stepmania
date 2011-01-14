@@ -23,6 +23,42 @@ r['DDR 4thMIX'] = function(params, pss)
 	pss:SetScore(pss:GetScore()+scoreLookupTable[params.TapNoteScore]+(scoreLookupTable[params.TapNoteScore] and comboBonusForThisStep or 0));
 end;
 -----------------------------------------------------------
+--DDR MAX2/Extreme Scoring
+-----------------------------------------------------------
+r['DDR Extreme'] = function(params, pss)
+	local judgmentBase = {
+		['TapNoteScore_W1'] = 10,
+		['TapNoteScore_W2'] = 9,
+		['TapNoteScore_W3'] = 5
+	};
+	setmetatable(judgmentBase, ZeroIfNotFound);
+	local steps = GAMESTATE:GetCurrentSteps(params.Player);
+	local radarValues = steps:GetRadarValues(params.Player);
+	local baseScore = (steps:IsAnEdit() and 
+		5 or steps:GetMeter()) * 10000000;
+	local currentStep = 0; -- TODO: Get current step/hold.
+	local totalItems = radarValues:GetValue('RadarCategory_TapsAndHolds') 
+		+ radarValues:GetValue('RadarCategory_Holds') 
+		+ radarValues:GetValue('RadarCategory_Rolls');
+	local singleStep = (1 + totalItems) * totalItems / 2;
+	local stepLast = math.floor(baseScore / singleStep) * currentStep);
+	local judgeScore = 0;
+	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
+		judgeScore = judgmentBase['TapNoteScore_W1'];
+	else
+		judgeScore = judgmentBase[params.TapNoteScore];
+		if (params.TapNoteScore == 'TapNoteScore_W2'
+			and (PREFSMAN:GetPreference("AllowW1") ~= 'AllowW1_Never' 
+			or not (GAMESTATE:IsCourseMode() and 
+			PREFSMAN:GetPreference("AllowW1") == 'AllowW1_CoursesOnly'))) then
+			judgeScore = judgmentBase['TapNoteScore_W1'];
+		end;
+	end;
+	local stepScore = judgeScore * stepLast;
+	
+	pss:SetScore(pss:GetScore() + stepScore);
+end;
+-----------------------------------------------------------
 --DDR SuperNOVA(-esque) scoring
 -----------------------------------------------------------
 r['DDR SuperNOVA'] = function(params, pss)
