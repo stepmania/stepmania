@@ -49,7 +49,7 @@ public:
 	int		m_iMaxCombo;
 	int		m_iCurMissCombo;
 	int		m_iCurScoreMultiplier;
-	int		m_iScore;
+	unsigned long int m_iScore;
 	int		m_iCurMaxScore;
 	int		m_iMaxScore;
 	RadarValues	m_radarPossible;	// filled in by ScreenGameplay on start of notes

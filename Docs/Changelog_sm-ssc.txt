@@ -15,6 +15,8 @@ sm-ssc v1.2.1 | 2011011?
 
 20110112
 --------
+* [PlayerStageStats] Change score to an unsigned long from a signed int. [FSX]
+* Noteskin changes. [Daisuke Master]
 * [SpecialScoring] MIGS scoring, improved SN and SN2 scoring. [FSX]
 * [RageFile] Added ReadBytes() Lua binding. [FSX]
 * [NetworkSyncManager] Added CloseConnection() Lua binding. [freem]
