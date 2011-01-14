@@ -60,7 +60,7 @@ r['DDR Extreme'] = function(params, pss)
 	local currentStep = 0; -- TODO: Get current step/hold.
 	local totalItems = GetTotalItems(radarValues);
 	local singleStep = (1 + totalItems) * totalItems / 2;
-	local stepLast = math.floor(baseScore / singleStep) * currentStep);
+	local stepLast = math.floor(baseScore / singleStep) * currentStep;
 	local judgeScore = 0;
 	if (params.HoldNoteScore == 'HoldNoteScore_Held') then
 		judgeScore = judgmentBase['TapNoteScore_W1'];
@@ -141,7 +141,7 @@ r['MIGS'] = function(params,pss)
 	pss:SetScore(clamp(curScore,0,math.huge));
 end;
 SpecialScoring = {};
-setmetatable(SpecialScoring), { 
+setmetatable(SpecialScoring, { 
 	__metatable = { "Letting you change the metatable sort of defeats the purpose." };
 	__index = function(tbl, key)
 			for v in ivalues(DisabledScoringModes) do
@@ -149,5 +149,5 @@ setmetatable(SpecialScoring), {
 			end;
 			return r[key];
 		end;
-	};
+	}
 );
