@@ -54,10 +54,24 @@ struct StopSegment
 		return true;
 	}
 	bool operator!=( const StopSegment &other ) const { return !operator==(other); }
+	// Delays need to come before stops to not render them pointless.
 	bool operator<( const StopSegment &other ) const
 	{
-		return	( m_iStartRow < other.m_iStartRow ) ||
-		( m_iStartRow == other.m_iStartRow && m_bDelay );
+		return ( m_iStartRow < other.m_iStartRow ) ||
+		( m_iStartRow == other.m_iStartRow && m_bDelay && !other.m_bDelay );
+	}
+	bool operator<=( const StopSegment &other ) const
+	{
+		return ( operator<(other) || operator==(other) );
+	}
+	bool operator>( const StopSegment &other ) const
+	{
+		return ( m_iStartRow > other.m_iStartRow ) ||
+		( m_iStartRow == other.m_iStartRow && !m_bDelay && other.m_bDelay );
+	}
+	bool operator>=( const StopSegment &other ) const
+	{
+		return ( operator>(other) || operator==(other) );
 	}
 };
 
