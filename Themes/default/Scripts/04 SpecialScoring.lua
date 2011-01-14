@@ -1,5 +1,6 @@
 --Special Scoring types.
 local r = {};
+local DisabledScoringModes = { 'DDR Extreme', '[SSC] Radar Master' };
 --the following metatable makes any missing value in a table 0 instead of nil.
 local ZeroIfNotFound = { __index = function() return 0 end; };
 -----------------------------------------------------------
@@ -47,7 +48,7 @@ end;
 --Radar Master (doesn't work in 1.2, disabled)
 --don't try to "fix it up", either. you *cannot* make it work in 1.2.
 -----------------------------------------------------------
---[[r['[SSC] Radar Master'] = function(params, pss)
+r['[SSC] Radar Master'] = function(params, pss)
 	local masterTable = {
 		['RadarCategory_Stream'] = 0,
 		['RadarCategory_Voltage'] = 0,
@@ -73,7 +74,7 @@ end;
 		finalScore = finalScore + curPortion*(500000000*(v/totalRadar));
 	end;
 	pss:SetScore(finalScore);
-end;]]
+end;
 ------------------------------------------------------------
 --Marvelous Incorporated Grading System (or MIGS for short)
 --basically like DP scoring with locked DP values
@@ -87,4 +88,14 @@ r['MIGS'] = function(params,pss)
 	curScore = curScore + ( pss:GetHoldNoteScores('HoldNoteScore_Held') * 6 );
 	pss:SetScore(clamp(curScore,0,math.huge));
 end;
-SpecialScoring = r;
+SpecialScoring = {};
+setmetatable(SpecialScoring), { 
+	__metatable = { "Letting you change the metatable sort of defeats the purpose." };
+	__index = function(tbl, key)
+			for v in ivalues(DisabledScoringModes) do
+				if key == v then return r['DDR 1stMIX']; end;
+			end;
+			return r[key];
+		end;
+	};
+);
