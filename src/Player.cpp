@@ -139,7 +139,8 @@ ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTap
 ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" ); // sm-ssc addition
 ThemeMetric<float> PERCENT_UNTIL_COLOR_COMBO ( "Player", "PercentUntilColorCombo" );
 ThemeMetric<int> COMBO_STOPPED_AT ( "Player", "ComboStoppedAt" );
-ThemeMetric<float> ATTACK_RUN_TIME_DEFAULT ( "Player", "AttackRunTimeDefault" );
+ThemeMetric<float> ATTACK_RUN_TIME_RANDOM ( "Player", "AttackRunTimeRandom" );
+ThemeMetric<float> ATTACK_RUN_TIME_MINE ( "Player", "AttackRunTimeMine" );
 
 float Player::GetWindowSeconds( TimingWindow tw )
 {
@@ -643,7 +644,7 @@ void Player::Update( float fDeltaTime )
 		{
 			float fCurrentGameTime = STATSMAN->m_CurStageStats.m_fGameplaySeconds;
 
-			const float fAttackRunTime = ATTACK_RUN_TIME_DEFAULT;
+			const float fAttackRunTime = ATTACK_RUN_TIME_RANDOM;
 
 			// Don't start until 1 seconds into game, minimum
 			if( fCurrentGameTime > 1.0f )
@@ -2617,8 +2618,7 @@ void Player::UpdateJudgedRows()
 			 * etc.) are still applied. */
 			if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_bTransforms[PlayerOptions::TRANSFORM_ATTACKMINES] )
 			{
-				// Should we hardcode this, or make it a preference/theme metric? ~ Mike
-				const float fAttackRunTime = 7.0f;
+				const float fAttackRunTime = ATTACK_RUN_TIME_MINE;
 
 				Attack attMineAttack;
 				attMineAttack.sModifiers = ApplyRandomAttack();
