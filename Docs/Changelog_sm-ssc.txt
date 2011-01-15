@@ -22,6 +22,7 @@ sm-ssc v1.2.1 | 2011011?
   default is 50, as it was before. [Wolfman2000]
 * [Player] Allow the default attack times for both random and mine attacks
   to be changed. [Wolfman2000]
+* [NoteField] Allow for adjustable fade fail time (for AJ). [Wolfman2000]
 
 20110112
 --------

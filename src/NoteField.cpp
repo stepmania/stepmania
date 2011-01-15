@@ -27,6 +27,7 @@ static ThemeMetric<float> BAR_MEASURE_ALPHA( "NoteField", "BarMeasureAlpha" );
 static ThemeMetric<float> BAR_4TH_ALPHA( "NoteField", "Bar4thAlpha" );
 static ThemeMetric<float> BAR_8TH_ALPHA( "NoteField", "Bar8thAlpha" );
 static ThemeMetric<float> BAR_16TH_ALPHA( "NoteField", "Bar16thAlpha" );
+static ThemeMetric<float> FADE_FAIL_TIME( "NoteField", "FadeFailTime" );
 
 static RString RoutineNoteSkinName( size_t i ) { return ssprintf("RoutineNoteSkinP%i",int(i+1)); }
 static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
@@ -264,9 +265,8 @@ void NoteField::Update( float fDeltaTime )
 	cur->m_ReceptorArrowRow.Update( fDeltaTime );
 	cur->m_GhostArrowRow.Update( fDeltaTime );
 
-	// TODO: make fade time of 1.5 seconds metricable instead? -aj
 	if( m_fPercentFadeToFail >= 0 )
-		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5f, 1 );	// take 1.5 seconds to totally fade
+		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/FADE_FAIL_TIME, 1 );
 
 	// Update fade to failed
 	m_pCurDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_fPercentFadeToFail );
