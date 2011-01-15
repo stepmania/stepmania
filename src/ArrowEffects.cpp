@@ -16,6 +16,7 @@
 
 static ThemeMetric<float>	ARROW_SPACING( "ArrowEffects", "ArrowSpacing" );
 static ThemeMetric<bool>	HIDDEN_SUDDEN_PAST_RECEPTOR( "ArrowEffects", "DrawHiddenNotesAfterReceptor");
+static ThemeMetric<float>	BLINK_MOD_FREQUENCY( "ArrowEffects", "BlinkModFrequency" );
 
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
@@ -572,7 +573,7 @@ float ArrowGetPercentVisible( const PlayerState* pPlayerState, float fYPosWithou
 	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] != 0 )
 	{
 		float f = RageFastSin(RageTimer::GetTimeSinceStartFast()*10);
-		f = Quantize( f, 0.3333f );
+		f = Quantize( f, BLINK_MOD_FREQUENCY );
 		fVisibleAdjust += SCALE( f, 0, 1, -1, 0 );
 	}
 	if( fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] != 0 )
