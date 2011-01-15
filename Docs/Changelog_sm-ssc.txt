@@ -16,7 +16,8 @@ sm-ssc v1.2.1 | 2011011?
 20110115
 --------
 * [ArrowEffects] Allow modifying modifier characteristics in the metrics.
-  At present, Blink, Brake, and Boost can have modifications. [Wolfman2000]
+  At present, Blink, Boost, Brake, and Wave can have modifications.
+  [Wolfman2000]
 
 20110112
 --------

@@ -21,6 +21,8 @@ static ThemeMetric<float>	BOOST_MOD_MIN_CLAMP( "ArrowEffects", "BoostModMinClamp
 static ThemeMetric<float>	BOOST_MOD_MAX_CLAMP( "ArrowEffects", "BoostModMaxClamp" );
 static ThemeMetric<float>	BRAKE_MOD_MIN_CLAMP( "ArrowEffects", "BrakeModMinClamp" );
 static ThemeMetric<float>	BRAKE_MOD_MAX_CLAMP( "ArrowEffects", "BrakeModMaxClamp" );
+static ThemeMetric<float>	WAVE_MOD_MAGNITUDE( "ArrowEffects", "WaveModMagnitude" );
+static ThemeMetric<float>	WAVE_MOD_HEIGHT( "ArrowEffects", "WaveModHeight" );
 
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
@@ -232,7 +234,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		fYAdjust += fBrakeYAdjust;
 	}
 	if( fAccels[PlayerOptions::ACCEL_WAVE] != 0 )
-		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * 20.0f*RageFastSin( fYOffset/38.0f );
+		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * WAVE_MOD_MAGNITUDE *RageFastSin( fYOffset/WAVE_MOD_HEIGHT );
 
 	fYOffset += fYAdjust;
 
