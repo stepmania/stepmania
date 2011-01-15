@@ -139,6 +139,7 @@ ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTap
 ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" ); // sm-ssc addition
 ThemeMetric<float> PERCENT_UNTIL_COLOR_COMBO ( "Player", "PercentUntilColorCombo" );
 ThemeMetric<int> COMBO_STOPPED_AT ( "Player", "ComboStoppedAt" );
+ThemeMetric<float> ATTACK_RUN_TIME_DEFAULT ( "Player", "AttackRunTimeDefault" );
 
 float Player::GetWindowSeconds( TimingWindow tw )
 {
@@ -642,8 +643,7 @@ void Player::Update( float fDeltaTime )
 		{
 			float fCurrentGameTime = STATSMAN->m_CurStageStats.m_fGameplaySeconds;
 
-			// Should we hardcode this, or make it a preference/theme metric? ~ Mike
-			const float fAttackRunTime = 6.0f;
+			const float fAttackRunTime = ATTACK_RUN_TIME_DEFAULT;
 
 			// Don't start until 1 seconds into game, minimum
 			if( fCurrentGameTime > 1.0f )
