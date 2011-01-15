@@ -35,7 +35,7 @@ void BPMDisplay::Load()
 	SEPARATOR.Load( m_sName, "Separator" );
 	SHOW_QMARKS.Load( m_sName, "ShowQMarksInRandomCycle" );
 	NO_BPM_TEXT.Load( m_sName, "NoBpmText" );
-	//QUESTIONMARKS_TEXT.Load( m_sName, "QuestionMarksText" );
+	QUESTIONMARKS_TEXT.Load( m_sName, "QuestionMarksText" );
 	RANDOM_TEXT.Load( m_sName, "RandomText" );
 	VARIOUS_TEXT.Load( m_sName, "VariousText" );
 
@@ -75,10 +75,8 @@ void BPMDisplay::Update( float fDeltaTime )
 		if(m_fBPMTo == -1)
 		{
 			m_fBPMFrom = -1;
-
-			// todo: allow themer to customize "xxx" string -aj
 			if( (bool)SHOW_QMARKS )
-				SetText( (RandomFloat(0,1)>0.90f) ? RString("xxx") : ssprintf("%03.0f",RandomFloat(0,999)) );
+				SetText( (RandomFloat(0,1)>0.90f) ? (RString)QUESTIONMARKS_TEXT : ssprintf("%03.0f",RandomFloat(0,999)) );
 			else
 				SetText( ssprintf("%03.0f",RandomFloat(0,999)) );
 		}
