@@ -138,6 +138,7 @@ ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsComb
 ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
 ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" ); // sm-ssc addition
 ThemeMetric<float> PERCENT_UNTIL_COLOR_COMBO ( "Player", "PercentUntilColorCombo" );
+ThemeMetric<int> COMBO_STOPPED_AT ( "Player", "ComboStoppedAt" );
 
 float Player::GetWindowSeconds( TimingWindow tw )
 {
@@ -581,7 +582,7 @@ void Player::Load()
 void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
 {
 	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-	if( iOldCombo > 50 && iCurCombo < 50 )
+	if( iOldCombo > COMBO_STOPPED_AT && iCurCombo < COMBO_STOPPED_AT )
 	{
 		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 	}

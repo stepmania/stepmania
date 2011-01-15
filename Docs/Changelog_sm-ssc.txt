@@ -18,6 +18,8 @@ sm-ssc v1.2.1 | 2011011?
 * [ArrowEffects] Allow modifying modifier characteristics in the metrics.
   At present, Blink, Boost, Brake, and Wave can have modifications.
   [Wolfman2000]
+* [Player] Allow Combo Stopped message to be flexible via metrics. The
+  default is 50, as it was before. [Wolfman2000]
 
 20110112
 --------
