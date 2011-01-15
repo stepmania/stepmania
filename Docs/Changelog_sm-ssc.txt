@@ -24,6 +24,7 @@ sm-ssc v1.2.1 | 2011011?
   to be changed. [Wolfman2000]
 * [NoteField] Allow for adjustable fade fail time (for AJ). [Wolfman2000]
 * [MenuTimer] Allow the hurry up transition to be adjusted. [Wolfman2000]
+* [MusicWheel] Added RouletteColor, RandomColor, and PortalColor metrics. [freem]
 
 20110112
 --------

@@ -88,6 +88,9 @@ protected:
 	ThemeMetric<bool>		USE_SECTIONS_WITH_PREFERRED_GROUP;
 	ThemeMetric<bool>		HIDE_INACTIVE_SECTIONS;
 	ThemeMetric<bool>		REMIND_WHEEL_POSITIONS;
+	ThemeMetric<RageColor>	ROULETTE_COLOR;
+	ThemeMetric<RageColor>	RANDOM_COLOR;
+	ThemeMetric<RageColor>	PORTAL_COLOR;
 	vector <int> m_viWheelPositions;
 };
 
