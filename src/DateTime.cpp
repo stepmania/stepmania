@@ -42,6 +42,20 @@ bool DateTime::operator==( const DateTime& other ) const
 	return true;
 }
 
+bool DateTime::operator>( const DateTime& other ) const
+{
+#define COMPARE( v ) if(v!=other.v) return v>other.v;
+	COMPARE( tm_year );
+	COMPARE( tm_mon );
+	COMPARE( tm_mday );
+	COMPARE( tm_hour );
+	COMPARE( tm_min );
+	COMPARE( tm_sec );
+#undef COMPARE
+	// they're equal
+	return false;
+}
+
 DateTime DateTime::GetNowDateTime()
 {
 	time_t now = time(NULL);

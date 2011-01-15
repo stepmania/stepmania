@@ -45,6 +45,7 @@ struct DateTime
 	void Init();
 
 	bool operator<( const DateTime& other ) const;
+	bool operator>( const DateTime& other ) const;
 	bool operator==( const DateTime& other ) const;
 	bool operator!=( const DateTime& other ) const { return !operator==(other); }
 
