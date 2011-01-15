@@ -1,0 +1,47 @@
+$INFORMATION:maintitle:subtitle:artist:genre:credit;
+$TRANSLITS:main:sub:artist;
+$GRAPHICS:banner:background:disc:cdtitle;
+$MUSIC:music-file:base-track:intro-file:lyrics;
+// should be used if a intro file is not defined
+$SAMPLEPREVIEW:start:length;
+$DISPLAYBPM:[from:to]|[one]|[show yes/no];
+$BGCHANGES:
+	beat=file:p,r,o,p,s
+;
+$FGCHANGES:;
+$KEYSOUNDS:;
+
+// cache tags here
+$CACHE:
+	firstbeat:
+	lastbeat:
+	songfilename:
+	hasmusic:
+	hasbanner
+;
+
+// note data
+#NOTEDATA#
+$META:
+	STEPSTYPE=stepstype:
+	DIFFICULTY=difficulty:
+	DESCRIPTION=description:
+	METER=meter:
+	RADARVALUES=r,a,d,a,r,v,a,l,u,e,s;
+$TIMINGDATA:
+	BPM=bpms:
+	SPEED=speed:
+	STOPS=stops:
+	DELAYS=delays:
+	TIMESIGNATURES=timesigs;
+$NOTES:
+00000
+00000
+00000
+00000
+,
+00000
+00000
+00000
+00000
+;

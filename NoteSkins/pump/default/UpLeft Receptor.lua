@@ -19,20 +19,26 @@ return Def.ActorFrame {
 	
 	-- LAYERS --
 	NOTESKIN:LoadActor("Center", "Outline Receptor")..{
-		Name="Outline";
-		Condition=Var "Button" == "Center";
+		Name="Outline Full";
+		Condition=Var "Button" == "Center" and GAMESTATE:GetCurrentStyle():GetStepsType() ~= 'StepsType_Pump_Halfdouble';
 		--InitCommand=cmd(x,96);
 	};
+	NOTESKIN:LoadActor("DownLeft", "Outline Receptor")..{
+		Name="Outline Half";
+		Condition=Var "Button" == "DownLeft" and GAMESTATE:GetCurrentStyle():GetStepsType() == 'StepsType_Pump_Halfdouble';
+		--InitCommand=cmd(x,96);
+	};
+	
 	NOTESKIN:LoadActor(Var "Button", "Ready Receptor")..{
 		Name="Base";
 		Frames = { { Frame = 0 } };
-		--PressCommand=cmd(finishtweening;glow,1,1,1,1;linear,0.1;glow,1,1,1,0);
+		PressCommand=cmd(finishtweening;linear,0.05;zoom,0.9;linear,0.1;zoom,1);
 	};
 	NOTESKIN:LoadActor(Var "Button", "Ready Receptor")..{
 		Name="Glow";
 		Frames = { { Frame = 1 } };
 		InitCommand=cmd(blend,'BlendMode_Add');
-		--PressCommand=cmd(finishtweening;linear,0.05;zoom,0.9;linear,0.1;zoom,1);
+		PressCommand=cmd(finishtweening;linear,0.05;zoom,0.9;linear,0.1;zoom,1);
 	};
 	--[[
 	NOTESKIN:LoadActor(Var "Button", "Ready Receptor")..{

@@ -43,6 +43,7 @@ src/verstub.cpp
 nsis_strings_temp.inc
 Data/SpeedMods.txt
 Program/StepMania*.lib
+crashinfo.txt
 
 syntax: regexp
 .*\#.*\#$
