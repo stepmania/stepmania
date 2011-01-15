@@ -47,6 +47,7 @@ void MenuTimer::Load( RString sMetricsGroup )
 	WARNING_START.Load(sMetricsGroup,"WarningStart");
 	WARNING_BEEP_START.Load(sMetricsGroup,"WarningBeepStart");
 	MAX_STALL_SECONDS.Load(sMetricsGroup,"MaxStallSeconds");
+	HURRY_UP_TRANSITION.Load(sMetricsGroup,"HurryUpTransition");
 
 	// clear warning commands out if they already exist. -aj
 	if(WARNING_COMMAND)
@@ -90,7 +91,7 @@ void MenuTimer::Update( float fDeltaTime )
 	if( fOldSecondsLeft == fNewSecondsLeft )
 		return;
 
-	if( fOldSecondsLeft > 5.5  &&  fNewSecondsLeft < 5.5 )	// transition to below 5.5
+	if( fOldSecondsLeft > HURRY_UP_TRANSITION  &&  fNewSecondsLeft < HURRY_UP_TRANSITION )
 		SOUND->PlayOnceFromAnnouncer( "hurry up" );
 
 
