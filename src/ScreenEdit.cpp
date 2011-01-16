@@ -509,7 +509,9 @@ static MenuDef g_MainMenu(
 	MenuRowDef( ScreenEdit::edit_bpm,			"Edit BPM change",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_stop,			"Edit stop",			true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_delay,			"Edit delay",			true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::edit_time_signature,		"Edit time signature",		true, EditMode_Full, true, true, 0, NULL ),
+	//MenuRowDef( ScreenEdit::edit_time_signature,		"Edit time signature",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::edit_time_signature_numerator,	"Edit time signature (top)",	true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::edit_time_signature_denominator,"Edit time signature (bottom)",	true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::play_preview_music,		"Play preview music",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::exit,				"Exit Edit Mode",		true, EditMode_Practice, true, true, 0, NULL )
 );
@@ -2580,7 +2582,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iNum = atoi( ScreenTextEntry::s_sLastAnswer );
 		if( iNum > 0 )
 		{
-			m_pSong->m_Timing.SetTimeSignatureAtBeat( GAMESTATE->m_fSongBeat, iNum, 99 );
+			m_pSong->m_Timing.SetTimeSignatureNumeratorAtBeat( GAMESTATE->m_fSongBeat, iNum );
 		}
 		SetDirty( true );
 	}
@@ -3117,7 +3119,11 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				10
 				);
 			break;
-		case edit_time_signature:
+		/* 
+		 The following code does not work due to problems with having two
+		 ScreenTextEntry's at the same time. A proper fix is not known
+		 at the time of this comment. -wolfman2000
+		 case edit_time_signature:
 			// These need to be in reverse order due to the stack nature.
 			ScreenTextEntry::TextEntry(
 				SM_BackFromTimeSignatureDenominatorChange,
@@ -3129,6 +3135,23 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				SM_BackFromTimeSignatureNumeratorChange,
 				ENTER_TIME_SIGNATURE_NUMERATOR_VALUE,
 				ssprintf( "%d", m_pSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat ).m_iNumerator ),
+				3
+			);
+			break;
+		 */
+		case edit_time_signature_numerator:
+			ScreenTextEntry::TextEntry(
+				SM_BackFromTimeSignatureNumeratorChange,
+				ENTER_TIME_SIGNATURE_NUMERATOR_VALUE,
+				ssprintf( "%d", m_pSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat ).m_iNumerator ),
+				3
+			);
+			break;
+		case edit_time_signature_denominator:
+			ScreenTextEntry::TextEntry(
+				SM_BackFromTimeSignatureDenominatorChange,
+				ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE,
+				ssprintf( "%d", m_pSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat ).m_iDenominator ),
 				3
 			);
 			break;
