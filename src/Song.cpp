@@ -381,7 +381,7 @@ void Song::TidyUpData()
 		if( !m_sInstrumentTrackFile[i].empty() )
 			FixupPath( m_sInstrumentTrackFile[i], m_sSongDir );
 	FixupPath( m_sBannerFile, m_sSongDir );
-	//FixupPath( m_sAlbumArtFile, m_sSongDir );
+	//FixupPath( m_sJacketFile, m_sSongDir );
 	//FixupPath( m_sDiscFile, m_sSongDir );
 	FixupPath( m_sLyricsFile, m_sSongDir );
 	FixupPath( m_sBackgroundFile, m_sSongDir );
@@ -534,6 +534,39 @@ void Song::TidyUpData()
 			m_sBackgroundFile = arrayPossibleBGs[0];
 	}
 
+	/*
+	if( !HasJacket() )
+	{
+		// find an image with "jacket" or "albumart" in the filename.
+		vector<RString> arrayPossibleJackets;
+		GetImageDirListing( m_sSongDir + "jk_*", arrayPossibleJackets );
+		//GetImageDirListing( m_sSongDir + "*_jk", arrayPossibleJackets );
+		GetImageDirListing( m_sSongDir + "*jacket*", arrayPossibleJackets );
+		GetImageDirListing( m_sSongDir + "*albumart*", arrayPossibleJackets );
+		if( !arrayPossibleJackets.empty() )
+			m_sBackgroundFile = arrayPossibleJackets[0];
+	}
+	*/
+
+	/*
+	if( !HasDisc() )
+	{
+		// disc means the rectangular-style graphic.
+	}
+	*/
+
+	/*
+	if( !HasCDImage() )
+	{
+		// CD image, a la ddr 1st-3rd
+		// find an image with "cd" at the end of the filename.
+		vector<RString> arrayPossibleCDImages;
+		GetImageDirListing( m_sSongDir + "* CD", arrayPossibleCDImages );
+		if( !arrayPossibleCDImages.empty() )
+			m_sCDTFile = arrayPossibleCDImages[0];
+	}
+	*/
+
 	if( !HasCDTitle() )
 	{
 		// find an image with "cdtitle" in the file name
@@ -577,6 +610,8 @@ void Song::TidyUpData()
 
 		if( HasCDTitle()  &&  stricmp(m_sCDTitleFile, arrayImages[i])==0 )
 			continue;	// skip
+
+		// todo: add checks for Jacket, Disc, and CDImage -aj
 
 		RString sPath = m_sSongDir + arrayImages[i];
 
@@ -639,6 +674,8 @@ void Song::TidyUpData()
 			m_sCDTitleFile = arrayImages[i];
 			continue;
 		}
+
+		// todo: add checks for Jacket, Disc, and CDImage -aj
 	}
 
 	// These will be written to cache, for Song::LoadFromSongDir to use later.
@@ -1101,6 +1138,7 @@ bool Song::HasBGChanges() const
 	return false;
 }
 bool Song::HasAttacks() const		{return !m_Attacks.empty(); }
+// todo: add checks for Jacket, Disc, and CDImage -aj
 
 const vector<BackgroundChange> &Song::GetBackgroundChanges( BackgroundLayer bl ) const
 {
@@ -1179,6 +1217,8 @@ RString Song::GetBackgroundPath() const
 {
 	return GetSongAssetPath( m_sBackgroundFile, m_sSongDir );
 }
+
+// todo: add checks for Jacket, Disc, and CDImage -aj
 
 RString Song::GetDisplayMainTitle() const
 {
