@@ -90,6 +90,17 @@ struct StopSegment
 struct TimeSignatureSegment 
 {
 	TimeSignatureSegment() : m_iStartRow(-1), m_iNumerator(4), m_iDenominator(4)  { }
+	TimeSignatureSegment( int r, int n ) {
+		m_iStartRow = max( 0, r );
+		m_iNumerator = n;
+		m_iDenominator = 64; // Hope we don't need this many.
+	}
+	TimeSignatureSegment( int r, int n, int d ) {
+		m_iStartRow = max( 0, r );
+		m_iNumerator = n;
+		m_iDenominator = d;
+	}
+	
 	int m_iStartRow;
 	int m_iNumerator;
 	int m_iDenominator;
@@ -165,6 +176,8 @@ public:
 	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds ); }
 	void SetStopAtBeat( float fBeat, float fSeconds, bool bDelay ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, bDelay ); } // (sm-ssc)
 	float GetStopAtRow( int iNoteRow, bool &bDelayOut ) const;
+	void SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominator );
+	void SetTimeSignatureAtRow( float fBeat, int iNumerator, int iDenominator ) { SetTimeSignatureAtRow( BeatToNoteRow(fBeat), iNumerator, iDenominator ); }
 	int GetWarpToRow( int iWarpBeginRow ) const;
 	void SetDelayAtRow( int iNoteRow, float fSeconds ); // sm-ssc
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
