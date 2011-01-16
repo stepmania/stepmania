@@ -2580,7 +2580,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iNum = atoi( ScreenTextEntry::s_sLastAnswer );
 		if( iNum > 0 )
 		{
-			
+			m_pSong->m_Timing.SetTimeSignatureAtBeat( GAMESTATE->m_fSongBeat, iNum, 99 );
 		}
 		SetDirty( true );
 	}
@@ -2589,7 +2589,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iDen = atoi( ScreenTextEntry::s_sLastAnswer );
 		if( iDen > 0)
 		{
-			
+			m_pSong->m_Timing.SetTimeSignatureDenominatorAtBeat( GAMESTATE->m_fSongBeat, iDen );
 		}
 		SetDirty( true );
 	}
@@ -3118,16 +3118,17 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				);
 			break;
 		case edit_time_signature:
-			ScreenTextEntry::TextEntry(
-				SM_BackFromTimeSignatureNumeratorChange,
-				ENTER_TIME_SIGNATURE_NUMERATOR_VALUE,
-				ssprintf( "%d", m_pSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat ).m_iNumerator ),
-				3
-			);
+			// These need to be in reverse order due to the stack nature.
 			ScreenTextEntry::TextEntry(
 				SM_BackFromTimeSignatureDenominatorChange,
 				ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE,
 				ssprintf( "%d", m_pSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat ).m_iDenominator ),
+				3
+			);
+			ScreenTextEntry::TextEntry(
+				SM_BackFromTimeSignatureNumeratorChange,
+				ENTER_TIME_SIGNATURE_NUMERATOR_VALUE,
+				ssprintf( "%d", m_pSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat ).m_iNumerator ),
 				3
 			);
 			break;
