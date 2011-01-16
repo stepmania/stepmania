@@ -507,6 +507,7 @@ static MenuDef g_MainMenu(
 	MenuRowDef( ScreenEdit::edit_bpm,			"Edit BPM change",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_stop,			"Edit stop",			true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_delay,			"Edit delay",			true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::edit_time_signature,		"Edit time signature",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::play_preview_music,		"Play preview music",		true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::exit,				"Exit Edit Mode",		true, EditMode_Practice, true, true, 0, NULL )
 );
@@ -3092,6 +3093,9 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				ssprintf( "%.4f", m_pSong->m_Timing.GetStopAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat), bThrowaway ) ),
 				10
 				);
+			break;
+		case edit_time_signature:
+			// TODO: Actually implement this.
 			break;
 		case play_preview_music:
 			PlayPreviewMusic();

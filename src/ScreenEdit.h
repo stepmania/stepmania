@@ -313,6 +313,7 @@ public:
 		edit_bpm,
 		edit_stop,
 		edit_delay,
+		edit_time_signature,
 		play_preview_music,
 		exit,
 		save_on_exit,
