@@ -74,6 +74,8 @@ AutoScreenMessage( SM_DoRevertFromDisk );
 AutoScreenMessage( SM_BackFromBPMChange );
 AutoScreenMessage( SM_BackFromStopChange );
 AutoScreenMessage( SM_BackFromDelayChange );
+AutoScreenMessage( SM_BackFromTimeSignatureNumeratorChange );
+AutoScreenMessage( SM_BackFromTimeSignatureDenominatorChange );
 AutoScreenMessage( SM_DoSaveAndExit );
 AutoScreenMessage( SM_DoExit );
 AutoScreenMessage( SM_SaveSuccessful );
@@ -2573,6 +2575,24 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			m_pSong->m_Timing.SetStopAtBeat( GAMESTATE->m_fSongBeat, fDelay, true );
 		SetDirty( true );
 	}
+	else if( SM == SM_BackFromTimeSignatureNumeratorChange )
+	{
+		int iNum = atoi( ScreenTextEntry::s_sLastAnswer );
+		if( iNum > 0 )
+		{
+			
+		}
+		SetDirty( true );
+	}
+	else if ( SM == SM_BackFromTimeSignatureDenominatorChange )
+	{
+		int iDen = atoi( ScreenTextEntry::s_sLastAnswer );
+		if( iDen > 0)
+		{
+			
+		}
+		SetDirty( true );
+	}
 	else if( SM == SM_BackFromBGChange )
 	{
 		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
@@ -2882,6 +2902,9 @@ static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want 
 static LocalizedString ENTER_BPM_VALUE			( "ScreenEdit", "Enter a new BPM value." );
 static LocalizedString ENTER_STOP_VALUE			( "ScreenEdit", "Enter a new Stop value." );
 static LocalizedString ENTER_DELAY_VALUE			( "ScreenEdit", "Enter a new Delay value." );
+static LocalizedString ENTER_TIME_SIGNATURE_NUMERATOR_VALUE	( "ScreenEdit", "Enter a new Time Signature numerator value." );
+static LocalizedString ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE	( "ScreenEdit", "Enter a new Time Signature denominator value." );
+
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
 	switch( c )
@@ -3095,7 +3118,18 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				);
 			break;
 		case edit_time_signature:
-			// TODO: Actually implement this.
+			ScreenTextEntry::TextEntry(
+				SM_BackFromTimeSignatureNumeratorChange,
+				ENTER_TIME_SIGNATURE_NUMERATOR_VALUE,
+				ssprintf( "%d", m_pSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat ).m_iNumerator ),
+				3
+			);
+			ScreenTextEntry::TextEntry(
+				SM_BackFromTimeSignatureDenominatorChange,
+				ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE,
+				ssprintf( "%d", m_pSong->m_Timing.GetTimeSignatureSegmentAtBeat( GAMESTATE->m_fSongBeat ).m_iDenominator ),
+				3
+			);
 			break;
 		case play_preview_music:
 			PlayPreviewMusic();
