@@ -178,6 +178,10 @@ public:
 	float GetStopAtRow( int iNoteRow, bool &bDelayOut ) const;
 	void SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominator );
 	void SetTimeSignatureAtBeat( float fBeat, int iNumerator, int iDenominator ) { SetTimeSignatureAtRow( BeatToNoteRow(fBeat), iNumerator, iDenominator ); }
+	void SetTimeSignatureNumeratorAtRow( int iRow, int iNumerator );
+	void SetTimeSignatureNumeratorAtBeat( float fBeat, int iNumerator ) { SetTimeSignatureNumeratorAtRow( BeatToNoteRow(fBeat), iNumerator); }
+	void SetTimeSignatureDenominatorAtRow( int iRow, int iDenominator );
+	void SetTimeSignatureDenominatorAtBeat( float fBeat, int iDenominator ) { SetTimeSignatureDenominatorAtRow( BeatToNoteRow(fBeat), iDenominator); }
 	int GetWarpToRow( int iWarpBeginRow ) const;
 	void SetDelayAtRow( int iNoteRow, float fSeconds ); // sm-ssc
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );

@@ -141,6 +141,16 @@ void TimingData::SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominat
 	}
 }
 
+void TimingData::SetTimeSignatureNumeratorAtRow( int iRow, int iNumerator )
+{
+	SetTimeSignatureAtRow( iRow, iNumerator, GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iRow ) ).m_iDenominator );
+}
+
+void TimingData::SetTimeSignatureDenominatorAtRow( int iRow, int iDenominator )
+{
+	SetTimeSignatureAtRow( iRow, GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iRow ) ).m_iNumerator, iDenominator );
+}
+
 /*
 void TimingData::SetWarpAtRow( int iRowAt, float fLengthBeats )
 {
