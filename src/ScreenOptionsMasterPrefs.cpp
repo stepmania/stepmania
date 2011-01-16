@@ -610,7 +610,7 @@ static void SoundVolumeAttract( int &sel, bool ToSel, const ConfOption *pConfOpt
 
 static void VisualDelaySeconds( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const float mapping[] = { -0.125f,-0.1f,-0.075f,-0.05f,0.025f,0.0f,0.025f,0.05f,0.075f,0.1f,0.125f };
+	const float mapping[] = { -0.125f,-0.1f,-0.075f,-0.05f,-0.025f,0.0f,0.025f,0.05f,0.075f,0.1f,0.125f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
