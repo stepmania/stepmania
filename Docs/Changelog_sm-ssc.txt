@@ -13,7 +13,12 @@ _____________________________________________________________________________
 sm-ssc v1.2.1 | 2011011?
 --------------------------------------------------------------------------------
 
+20110118
+--------
+* [ScreenEdit] Move editing Timing Data to their own mini menu. [Wolfman2000]
+
 20110116
+--------
 * [ScreenEdit] Allow editing TimeSignatureSegments one fractional half at
   a time. [Wolfman2000]
 
