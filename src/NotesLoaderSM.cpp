@@ -308,6 +308,39 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				out.AddTimeSignatureSegment( seg );
 			}
 		}
+		
+		else if( sValueName=="TICKCOUNTS" )
+		{
+			vector<RString> arrayTickcountExpressions;
+			split( sParams[1], ",", arrayTickcountExpressions );
+			
+			for( unsigned f=0; f<arrayTickcountExpressions.size(); f++ )
+			{
+				vector<RString> arrayTickcountValues;
+				split( arrayTickcountExpressions[f], "=", arrayTickcountValues );
+				if( arrayTickcountValues.size() != 2 )
+				{
+					// XXX: Hard to tell which file caused this.
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
+						     sValueName.c_str(), arrayTickcountExpressions[f].c_str() );
+					continue;
+				}
+				
+				const float fTickcountBeat = StringToFloat( arrayTickcountValues[0] );
+				const int iTicks = atoi( arrayTickcountValues[1] );
+				TickcountSegment new_seg( BeatToNoteRow(fTickcountBeat), iTicks );
+				
+				if(iTicks >= 1 && iTicks <= ROWS_PER_BEAT ) // Constants
+				{
+					// LOG->Trace( "Adding a tickcount segment: beat: %f, ticks = %d", fTickcountBeat, iTicks );
+					out.AddTickcountSegment( new_seg );
+				}
+				else
+				{
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid tickcount at beat %f, ticks %d.", fTickcountBeat, iTicks );
+				}
+			}
+		}
 
 		// warps (replacement for Negative BPM and Negative Stops)
 		/*

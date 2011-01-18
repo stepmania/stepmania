@@ -34,7 +34,7 @@
 #include <set>
 #include <float.h>
 
-const int FILE_CACHE_VERSION = 161;	// increment this to invalidate cache
+const int FILE_CACHE_VERSION = 162;	// increment this to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
@@ -757,6 +757,19 @@ void Song::TidyUpData()
 		seg.m_iNumerator = 4;
 		seg.m_iDenominator = 4;
 		m_Timing.m_vTimeSignatureSegments.push_back( seg );
+	}
+	
+	/*
+	 * Likewise, if no tickcount signature is specified, assume 2 ticks
+	 * per beat for the entire song. The default of 2 is chosen more
+	 * for compatibility with the Pump Pro series than anything else.
+	 */
+	if( m_Timing.m_TickcountSegments.empty() )
+	{
+		TickcountSegment seg;
+		seg.m_iStartRow = 0;
+		seg.m_iTicks = 2;
+		m_Timing.m_TickcountSegments.push_back( seg );
 	}
 }
 

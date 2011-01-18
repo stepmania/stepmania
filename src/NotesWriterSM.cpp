@@ -162,6 +162,18 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 	f.PutLine( ";" );
 
+	ASSERT( !out.m_Timing.m_TickcountSegments.empty() );
+	f.Write( "#TICKCOUNTS:" );
+	for( unsigned i=0; i<out.m_Timing.m_TickcountSegments.size(); i++ )
+	{
+		const TickcountSegment &ts = out.m_Timing.m_TickcountSegments[i];
+		
+		f.PutLine( ssprintf( "%.6f=%d", NoteRowToBeat(ts.m_iStartRow), ts.m_iTicks ) );
+		if( i != out.m_Timing.m_TickcountSegments.size()-1 )
+			f.Write( "," );
+	}
+	f.PutLine( ";" );
+	
 	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )
