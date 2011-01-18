@@ -94,6 +94,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 	out.m_BPMSegments.clear();
 	out.m_StopSegments.clear();
 	out.m_WarpSegments.clear();
+	out.m_vTimeSignatureSegments.clear();
 
 	vector<WarpSegment> arrayWarpsFromNegativeBPMs;
 	//vector<WarpSegment> arrayWarpsFromNegativeStops;
