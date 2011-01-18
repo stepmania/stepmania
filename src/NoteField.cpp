@@ -422,6 +422,11 @@ static ThemeMetric<bool> STOP_IS_LEFT_SIDE ( "NoteField", "StopIsLeftSide" );
 static ThemeMetric<bool> DELAY_IS_LEFT_SIDE ( "NoteField", "DelayIsLeftSide" );
 static ThemeMetric<bool> TIME_SIGNATURE_IS_LEFT_SIDE ( "NoteField", "TimeSignatureIsLeftSide" );
 static ThemeMetric<bool> TICKCOUNT_IS_LEFT_SIDE ( "NoteField", "TickcountIsLeftSide" );
+static ThemeMetric<float> BPM_OFFSETX ( "NoteField", "BPMOffsetX" );
+static ThemeMetric<float> STOP_OFFSETX ( "NoteField", "StopOffsetX" );
+static ThemeMetric<float> DELAY_OFFSETX ( "NoteField", "DelayOffsetX" );
+static ThemeMetric<float> TIME_SIGNATURE_OFFSETX ( "NoteField", "TimeSignatureOffsetX" );
+static ThemeMetric<float> TICKCOUNT_OFFSETX ( "NoteField", "TickcountOffsetX" );
 
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
@@ -429,7 +434,7 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 	const float xBase	= GetWidth()/2.f;
-	const float xOffset	= 60 * fZoom;
+	const float xOffset	= BPM_OFFSETX * fZoom;
 
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( align_right );
@@ -446,7 +451,7 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs, const floa
  	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 	const float xBase	= GetWidth()/2.f;
-	const float xOffset	= (bDelay ? 10 : 10) * fZoom;
+	const float xOffset	= (bDelay ? DELAY_OFFSETX : STOP_OFFSETX) * fZoom;
 
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( align_right );
@@ -471,7 +476,7 @@ void NoteField::DrawTimeSignatureText( const float fBeat, int iNumerator, int iD
  	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 	const float xBase	= GetWidth()/2.f;
-	const float xOffset	= 30 * fZoom;
+	const float xOffset	= TIME_SIGNATURE_OFFSETX * fZoom;
 
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( align_right );
@@ -488,7 +493,7 @@ void NoteField::DrawTickcountText( const float fBeat, int iTicks )
  	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 	const float xBase	= GetWidth()/2.f;
-	const float xOffset	= 10 * fZoom;
+	const float xOffset	= TICKCOUNT_OFFSETX * fZoom;
 	
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( align_left );
