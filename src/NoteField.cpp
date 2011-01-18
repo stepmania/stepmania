@@ -412,6 +412,12 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 
 // todo: add DrawWarpAreaBG? -aj
 
+static ThemeMetric<RageColor> BPM_COLOR ( "NoteField", "BPMColor" );
+static ThemeMetric<RageColor> STOP_COLOR ( "NoteField", "StopColor" );
+static ThemeMetric<RageColor> DELAY_COLOR ( "NoteField", "DelayColor" );
+static ThemeMetric<RageColor> TIME_SIGNATURE_COLOR ( "NoteField", "TimeSignatureColor" );
+static ThemeMetric<RageColor> TICKCOUNT_COLOR ( "NoteField", "TickcountColor" );
+
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
@@ -420,7 +426,7 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( align_right );
-	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
+	m_textMeasureNumber.SetDiffuse( BPM_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fBPM) );
 	m_textMeasureNumber.SetXY( -GetWidth()/2 - 60*fZoom, fYPos );
@@ -436,9 +442,9 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs, const floa
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( align_right );
 	if(bDelay)
-		m_textMeasureNumber.SetDiffuse( RageColor(0,0.8f,0.8f,1) );
+		m_textMeasureNumber.SetDiffuse( DELAY_COLOR );
 	else
-		m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
+		m_textMeasureNumber.SetDiffuse( STOP_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
 	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 10*fZoom, fYPos );
@@ -453,7 +459,7 @@ void NoteField::DrawTimeSignatureText( const float fBeat, int iNumerator, int iD
 
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( align_right );
-	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
+	m_textMeasureNumber.SetDiffuse( TIME_SIGNATURE_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%d\n--\n%d", iNumerator, iDenominator) );
 	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 30*fZoom, fYPos );
@@ -468,7 +474,7 @@ void NoteField::DrawTickcountText( const float fBeat, int iTicks )
 	
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( align_left );
-	m_textMeasureNumber.SetDiffuse( RageColor(0,1,0,1) );
+	m_textMeasureNumber.SetDiffuse( TICKCOUNT_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%d", iTicks) );
 	m_textMeasureNumber.SetXY( GetWidth()/2.f + 10*fZoom, fYPos );
