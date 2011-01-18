@@ -207,10 +207,10 @@ public:
 	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds ); }
 	void SetStopAtBeat( float fBeat, float fSeconds, bool bDelay ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, bDelay ); } // (sm-ssc)
 	float GetStopAtRow( int iNoteRow, bool &bDelayOut ) const;
-	float GetStopAtRow( int iRow );
-	float GetStopAtBeat( float fBeat ) { return GetStopAtRow( BeatToNoteRow(fBeat) ); }
-	float GetDelayAtRow( int iRow );
-	float GetDelayAtBeat( float fBeat ) { return GetDelayAtRow( BeatToNoteRow(fBeat) ); }
+	float GetStopAtRow( int iRow ) const;
+	float GetStopAtBeat( float fBeat ) const { return GetStopAtRow( BeatToNoteRow(fBeat) ); }
+	float GetDelayAtRow( int iRow ) const;
+	float GetDelayAtBeat( float fBeat ) const { return GetDelayAtRow( BeatToNoteRow(fBeat) ); }
 	void SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominator );
 	void SetTimeSignatureAtBeat( float fBeat, int iNumerator, int iDenominator ) { SetTimeSignatureAtRow( BeatToNoteRow(fBeat), iNumerator, iDenominator ); }
 	void SetTimeSignatureNumeratorAtRow( int iRow, int iNumerator );
@@ -221,26 +221,26 @@ public:
 	void SetDelayAtRow( int iNoteRow, float fSeconds ); // sm-ssc
 	void SetTickcountAtRow( int iRow, int iTicks );
 	void SetTickcountAtBeat( float fBeat, int iTicks ) { SetTickcountAtRow( BeatToNoteRow( fBeat ), iTicks ); }
-	int GetTickcountAtRow( int iRow );
-	int GetTickcountAtBeat( float fBeat ) { return GetTickcountAtRow( BeatToNoteRow(fBeat) ); }
+	int GetTickcountAtRow( int iRow ) const;
+	int GetTickcountAtBeat( float fBeat ) const { return GetTickcountAtRow( BeatToNoteRow(fBeat) ); }
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	void AddBPMSegment( const BPMSegment &seg );
 	void AddStopSegment( const StopSegment &seg );
 	void AddTimeSignatureSegment( const TimeSignatureSegment &seg );
 	void AddWarpSegment( const WarpSegment &seg );
 	void AddTickcountSegment( const TickcountSegment &seg );
-	int GetBPMSegmentIndexAtBeat( float fBeat );
-	int GetTimeSignatureSegmentIndexAtRow( int iRow );
-	int GetTimeSignatureSegmentIndexAtBeat( float fBeat ) { return GetTimeSignatureSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
+	int GetBPMSegmentIndexAtBeat( float fBeat ) const;
+	int GetTimeSignatureSegmentIndexAtRow( int iRow ) const;
+	int GetTimeSignatureSegmentIndexAtBeat( float fBeat ) const { return GetTimeSignatureSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
 	TimeSignatureSegment& GetTimeSignatureSegmentAtRow( int iRow );
 	TimeSignatureSegment& GetTimeSignatureSegmentAtBeat( float fBeat ) { return GetTimeSignatureSegmentAtRow( BeatToNoteRow(fBeat) ); }
 	int GetTimeSignatureNumeratorAtRow( int iRow );
 	int GetTimeSignatureNumeratorAtBeat( float fBeat ) { return GetTimeSignatureNumeratorAtRow( BeatToNoteRow(fBeat) ); }
 	int GetTimeSignatureDenominatorAtRow( int iRow );
-	int GetTimeSignatureDenominatorAtBeat( float fBeat ) { return GetTimeSignatureDenominatorAtRow( BeatToNoteRow(fBeat) ); }
+ 	int GetTimeSignatureDenominatorAtBeat( float fBeat ) { return GetTimeSignatureDenominatorAtRow( BeatToNoteRow(fBeat) ); }
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat );
-	int GetTickcountSegmentIndexAtRow( int iRow );
-	int GetTickcountSegmentIndexAtBeat( float fBeat ) { return GetTickcountSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
+	int GetTickcountSegmentIndexAtRow( int iRow ) const;
+	int GetTickcountSegmentIndexAtBeat( float fBeat ) const { return GetTickcountSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
 	TickcountSegment& GetTickcountSegmentAtRow( int iRow );
 	TickcountSegment& GetTickcountSegmentAtBeat( float fBeat ) { return GetTickcountSegmentAtRow( BeatToNoteRow(fBeat) ); }
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;

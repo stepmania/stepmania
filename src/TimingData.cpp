@@ -201,7 +201,7 @@ float TimingData::GetStopAtRow( int iNoteRow, bool &bDelayOut ) const
 	return 0;
 }
 
-float TimingData::GetStopAtRow( int iRow )
+float TimingData::GetStopAtRow( int iRow ) const
 {
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
@@ -212,7 +212,7 @@ float TimingData::GetStopAtRow( int iRow )
 }
 
 
-float TimingData::GetDelayAtRow( int iRow )
+float TimingData::GetDelayAtRow( int iRow ) const
 {
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
@@ -284,7 +284,7 @@ float TimingData::GetBPMAtBeat( float fBeat ) const
 	return m_BPMSegments[i].GetBPM();
 }
 
-int TimingData::GetBPMSegmentIndexAtBeat( float fBeat )
+int TimingData::GetBPMSegmentIndexAtBeat( float fBeat ) const
 {
 	int iIndex = BeatToNoteRow( fBeat );
 	int i;
@@ -294,7 +294,7 @@ int TimingData::GetBPMSegmentIndexAtBeat( float fBeat )
 	return i;
 }
 
-int TimingData::GetTimeSignatureSegmentIndexAtRow( int iRow )
+int TimingData::GetTimeSignatureSegmentIndexAtRow( int iRow ) const
 {
 	int i;
 	for (i=0; i < (int)(m_vTimeSignatureSegments.size()) - 1; i++ )
@@ -332,7 +332,7 @@ BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )
 	return m_BPMSegments[i];
 }
 
-int TimingData::GetTickcountSegmentIndexAtRow( int iRow )
+int TimingData::GetTickcountSegmentIndexAtRow( int iRow ) const
 {
 	int i;
 	for (i=0; i < (int)(m_TickcountSegments.size()) - 1; i++ )
@@ -351,7 +351,7 @@ TickcountSegment& TimingData::GetTickcountSegmentAtRow( int iRow )
 	return m_TickcountSegments[i];
 }
 
-int TimingData::GetTickcountAtRow( int iRow )
+int TimingData::GetTickcountAtRow( int iRow ) const
 {
 	return m_TickcountSegments[GetTickcountSegmentIndexAtRow( iRow )].m_iTicks;
 }
