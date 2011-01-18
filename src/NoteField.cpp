@@ -437,7 +437,7 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 	const float xOffset	= BPM_OFFSETX * fZoom;
 
 	m_textMeasureNumber.SetZoom( fZoom );
-	m_textMeasureNumber.SetHorizAlign( align_right );
+	m_textMeasureNumber.SetHorizAlign( BPM_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( BPM_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fBPM) );
@@ -454,14 +454,15 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs, const floa
 	const float xOffset	= (bDelay ? DELAY_OFFSETX : STOP_OFFSETX) * fZoom;
 
 	m_textMeasureNumber.SetZoom( fZoom );
-	m_textMeasureNumber.SetHorizAlign( align_right );
 	if(bDelay)
 	{
+		m_textMeasureNumber.SetHorizAlign( DELAY_IS_LEFT_SIDE ? align_right : align_left );
 		m_textMeasureNumber.SetDiffuse( DELAY_COLOR );
 		m_textMeasureNumber.SetXY( (DELAY_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	}
 	else
 	{
+		m_textMeasureNumber.SetHorizAlign( STOP_IS_LEFT_SIDE ? align_right : align_left );
 		m_textMeasureNumber.SetDiffuse( STOP_COLOR );
 		m_textMeasureNumber.SetXY( (STOP_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	}
@@ -479,7 +480,7 @@ void NoteField::DrawTimeSignatureText( const float fBeat, int iNumerator, int iD
 	const float xOffset	= TIME_SIGNATURE_OFFSETX * fZoom;
 
 	m_textMeasureNumber.SetZoom( fZoom );
-	m_textMeasureNumber.SetHorizAlign( align_right );
+	m_textMeasureNumber.SetHorizAlign( TIME_SIGNATURE_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( TIME_SIGNATURE_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%d\n--\n%d", iNumerator, iDenominator) );
@@ -496,7 +497,7 @@ void NoteField::DrawTickcountText( const float fBeat, int iTicks )
 	const float xOffset	= TICKCOUNT_OFFSETX * fZoom;
 	
 	m_textMeasureNumber.SetZoom( fZoom );
-	m_textMeasureNumber.SetHorizAlign( align_left );
+	m_textMeasureNumber.SetHorizAlign( TICKCOUNT_IS_LEFT_SIDE ? align_right : align_left );
 	m_textMeasureNumber.SetDiffuse( TICKCOUNT_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%d", iTicks) );
