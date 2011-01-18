@@ -310,12 +310,7 @@ public:
 		revert_from_disk,
 		options,
 		edit_song_info,
-		edit_bpm,
-		edit_stop,
-		edit_delay,
-		// edit_time_signature,
-		edit_time_signature_numerator,
-		edit_time_signature_denominator,
+		edit_timing_data,
 		play_preview_music,
 		exit,
 		save_on_exit,
@@ -442,6 +437,19 @@ public:
 		NUM_SONG_INFORMATION_CHOICES
 	};
 	void HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers );
+	
+	enum TimingDataInformationChoice
+	{
+		bpm,
+		stop,
+		delay,
+//		time_signature,
+		time_signature_numerator,
+		time_signature_denominator,
+		NUM_TIMING_DATA_INFORMATION_CHOICES
+	};
+	
+	void HandleTimingDataInformationChoice ( TimingDataInformationChoice c, const vector<int> &iAnswers );
 
 	enum BGChangeChoice
 	{
