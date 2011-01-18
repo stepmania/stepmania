@@ -128,6 +128,7 @@ ThemeMetric<float> MAX_HOLD_LIFE		( "Player", "MaxHoldLife" ); // sm-ssc additio
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
 ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
+ThemeMetric<bool> CHECKPOINTS_USE_TICKCOUNTS ( "Player", "CheckpointsUseTickcounts" );
 ThemeMetric<bool> CHECKPOINTS_USE_TIME_SIGNATURES ( "Player", "CheckpointsUseTimeSignatures" );
 ThemeMetric<bool> CHECKPOINTS_FLASH_ON_HOLD ( "Player", "CheckpointsFlashOnHold" ); // sm-ssc addition
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
@@ -2779,7 +2780,11 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	if( HOLD_CHECKPOINTS )
 	{
 		int iCheckpointFrequencyRows = ROWS_PER_BEAT/2;
-		if( CHECKPOINTS_USE_TIME_SIGNATURES )
+		if( CHECKPOINTS_USE_TICKCOUNTS )
+		{
+			iCheckpointFrequencyRows = ROWS_PER_BEAT / GAMESTATE->m_pCurSong->m_Timing.GetTickcountAtRow( iLastRowCrossed );
+		}
+		else if( CHECKPOINTS_USE_TIME_SIGNATURES )
 		{
 			TimeSignatureSegment tSignature = GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iLastRowCrossed ) );
 
