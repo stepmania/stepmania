@@ -460,6 +460,21 @@ void NoteField::DrawTimeSignatureText( const float fBeat, int iNumerator, int iD
 	m_textMeasureNumber.Draw();
 }
 
+void NoteField::DrawTickcountText( const float fBeat, int iTicks )
+{
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+ 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
+	
+	m_textMeasureNumber.SetZoom( fZoom );
+	m_textMeasureNumber.SetHorizAlign( align_left );
+	m_textMeasureNumber.SetDiffuse( RageColor(0,1,0,1) );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
+	m_textMeasureNumber.SetText( ssprintf("%d", iTicks) );
+	m_textMeasureNumber.SetXY( GetWidth()/2.f + 10*fZoom, fYPos );
+	m_textMeasureNumber.Draw();
+}
+
 void NoteField::DrawAttackText( const float fBeat, const Attack &attack )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
@@ -710,6 +725,19 @@ void NoteField::DrawPrimitives()
 				float fBeat = NoteRowToBeat(vTimeSignatureSegments[i].m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
 					DrawTimeSignatureText( fBeat, vTimeSignatureSegments[i].m_iNumerator, vTimeSignatureSegments[i].m_iDenominator );
+			}
+		}
+		
+		// Tickcount text
+		const vector<TickcountSegment> &tTickcountSegments = GAMESTATE->m_pCurSong->m_Timing.m_TickcountSegments;
+		for( unsigned i=0; i<tTickcountSegments.size(); i++ )
+		{
+			if( tTickcountSegments[i].m_iStartRow >= iFirstRowToDraw &&
+			    tTickcountSegments[i].m_iStartRow <= iLastRowToDraw)
+			{
+				float fBeat = NoteRowToBeat(tTickcountSegments[i].m_iStartRow);
+				if( IS_ON_SCREEN(fBeat) )
+					DrawTickcountText( fBeat, tTickcountSegments[i].m_iTicks );
 			}
 		}
 
