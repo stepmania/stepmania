@@ -103,7 +103,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	{
 		const BPMSegment &bs = out.m_Timing.m_BPMSegments[i];
 
-		f.Write( ssprintf( "%.6f=%.6f", NoteRowToBeat(bs.m_iStartRow), bs.GetBPM() ) );
+		f.PutLine( ssprintf( "%.6f=%.6f", NoteRowToBeat(bs.m_iStartRow), bs.GetBPM() ) );
 		if( i != out.m_Timing.m_BPMSegments.size()-1 )
 			f.Write( "," );
 	}
