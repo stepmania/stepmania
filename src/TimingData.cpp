@@ -201,6 +201,27 @@ float TimingData::GetStopAtRow( int iNoteRow, bool &bDelayOut ) const
 	return 0;
 }
 
+float TimingData::GetStopAtRow( int iRow )
+{
+	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
+	{
+		if ( !m_StopSegments[i].m_bDelay && m_StopSegments[i].m_iStartRow == iRow )
+			return m_StopSegments[i].m_fStopSeconds;
+	}
+	return 0;
+}
+
+
+float TimingData::GetDelayAtRow( int iRow )
+{
+	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
+	{
+		if ( m_StopSegments[i].m_bDelay && m_StopSegments[i].m_iStartRow == iRow )
+			return m_StopSegments[i].m_fStopSeconds;
+	}
+	return 0;
+}
+
 int TimingData::GetWarpToRow( int iWarpBeginRow ) const
 {
 	for( unsigned i=0; i<m_WarpSegments.size(); i++ )
@@ -273,14 +294,32 @@ int TimingData::GetBPMSegmentIndexAtBeat( float fBeat )
 	return i;
 }
 
-const TimeSignatureSegment& TimingData::GetTimeSignatureSegmentAtBeat( float fBeat ) const
+int TimingData::GetTimeSignatureSegmentIndexAtRow( int iRow )
 {
-	int iIndex = BeatToNoteRow( fBeat );
+	int i;
+	for (i=0; i < (int)(m_vTimeSignatureSegments.size()) - 1; i++ )
+		if( m_vTimeSignatureSegments[i+1].m_iStartRow > iRow )
+			break;
+	return i;
+}
+
+TimeSignatureSegment& TimingData::GetTimeSignatureSegmentAtRow( int iRow )
+{
 	unsigned i;
 	for( i=0; i<m_vTimeSignatureSegments.size()-1; i++ )
-		if( m_vTimeSignatureSegments[i+1].m_iStartRow > iIndex )
+		if( m_vTimeSignatureSegments[i+1].m_iStartRow > iRow )
 			break;
 	return m_vTimeSignatureSegments[i];
+}
+
+int TimingData::GetTimeSignatureNumeratorAtRow( int iRow )
+{
+	return GetTimeSignatureSegmentAtRow( iRow ).m_iNumerator;
+}
+
+int TimingData::GetTimeSignatureDenominatorAtRow( int iRow )
+{
+	return GetTimeSignatureSegmentAtRow( iRow ).m_iDenominator;
 }
 
 BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )

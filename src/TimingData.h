@@ -207,6 +207,10 @@ public:
 	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds ); }
 	void SetStopAtBeat( float fBeat, float fSeconds, bool bDelay ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, bDelay ); } // (sm-ssc)
 	float GetStopAtRow( int iNoteRow, bool &bDelayOut ) const;
+	float GetStopAtRow( int iRow );
+	float GetStopAtBeat( float fBeat ) { return GetStopAtRow( BeatToNoteRow(fBeat) ); }
+	float GetDelayAtRow( int iRow );
+	float GetDelayAtBeat( float fBeat ) { return GetDelayAtRow( BeatToNoteRow(fBeat) ); }
 	void SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominator );
 	void SetTimeSignatureAtBeat( float fBeat, int iNumerator, int iDenominator ) { SetTimeSignatureAtRow( BeatToNoteRow(fBeat), iNumerator, iDenominator ); }
 	void SetTimeSignatureNumeratorAtRow( int iRow, int iNumerator );
@@ -226,7 +230,14 @@ public:
 	void AddWarpSegment( const WarpSegment &seg );
 	void AddTickcountSegment( const TickcountSegment &seg );
 	int GetBPMSegmentIndexAtBeat( float fBeat );
-	const TimeSignatureSegment& GetTimeSignatureSegmentAtBeat( float fBeat ) const;
+	int GetTimeSignatureSegmentIndexAtRow( int iRow );
+	int GetTimeSignatureSegmentIndexAtBeat( float fBeat ) { return GetTimeSignatureSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
+	TimeSignatureSegment& GetTimeSignatureSegmentAtRow( int iRow );
+	TimeSignatureSegment& GetTimeSignatureSegmentAtBeat( float fBeat ) { return GetTimeSignatureSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	int GetTimeSignatureNumeratorAtRow( int iRow );
+	int GetTimeSignatureNumeratorAtBeat( float fBeat ) { return GetTimeSignatureNumeratorAtRow( BeatToNoteRow(fBeat) ); }
+	int GetTimeSignatureDenominatorAtRow( int iRow );
+	int GetTimeSignatureDenominatorAtBeat( float fBeat ) { return GetTimeSignatureDenominatorAtRow( BeatToNoteRow(fBeat) ); }
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat );
 	int GetTickcountSegmentIndexAtRow( int iRow );
 	int GetTickcountSegmentIndexAtBeat( float fBeat ) { return GetTickcountSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
