@@ -47,6 +47,11 @@ void TimingData::AddWarpSegment( const WarpSegment &seg )
 	m_WarpSegments.insert( upper_bound(m_WarpSegments.begin(), m_WarpSegments.end(), seg), seg );
 }
 
+void TimingData::AddTickcountSegment( const TickcountSegment &seg )
+{
+	m_TickcountSegments.insert( upper_bound(m_TickcountSegments.begin(), m_TickcountSegments.end(), seg), seg );
+}
+
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
 void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 {
@@ -84,7 +89,7 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 		if( m_StopSegments[i].m_iStartRow == iRow )
 			break;
 
-	if( i == m_StopSegments.size() )	// there is no BPMSegment at the current beat
+	if( i == m_StopSegments.size() )	// there is no StopSegment at the current beat
 	{
 		// create a new StopSegment
 		if( fSeconds > 0 || PREFSMAN->m_bQuirksMode )
@@ -157,6 +162,29 @@ void TimingData::SetWarpAtRow( int iRowAt, float fLengthBeats )
 	// todo: code this -aj
 }
 */
+
+/* Change an existing Tickcount segment, merge identical segments together or insert a new one. */
+void TimingData::SetTickcountAtRow( int iRow, int iTicks )
+{
+	unsigned i;
+	for( i=0; i<m_TickcountSegments.size(); i++ )
+		if( m_TickcountSegments[i].m_iStartRow >= iRow )
+			break;
+	
+	if( i == m_TickcountSegments.size() || m_TickcountSegments[i].m_iStartRow != iRow )
+	{
+		// No TickcountSegment here. Make a new segment if required.
+		if( i == 0 || m_TickcountSegments[i-1].m_iTicks != iTicks )
+			AddTickcountSegment( TickcountSegment(iRow, iTicks ) );
+	}
+	else	// TickcountSegment being modified is m_TickcountSegments[i]
+	{
+		if( i > 0  && m_TickcountSegments[i-1].m_iTicks == iTicks )
+			m_TickcountSegments.erase( m_TickcountSegments.begin()+i, m_TickcountSegments.begin()+i+1 );
+		else
+			m_TickcountSegments[i].m_iTicks = iTicks;
+	}
+}
 
 float TimingData::GetStopAtRow( int iNoteRow, bool &bDelayOut ) const
 {
@@ -263,6 +291,30 @@ BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )
 
 	int i = GetBPMSegmentIndexAtBeat( fBeat );
 	return m_BPMSegments[i];
+}
+
+int TimingData::GetTickcountSegmentIndexAtRow( int iRow )
+{
+	int i;
+	for (i=0; i < (int)(m_TickcountSegments.size()) - 1; i++ )
+		if( m_TickcountSegments[i+1].m_iStartRow > iRow )
+			break;
+	return i;
+}
+
+TickcountSegment& TimingData::GetTickcountSegmentAtRow( int iRow )
+{
+	static TickcountSegment empty;
+	if( m_TickcountSegments.empty() )
+		return empty;
+	
+	int i = GetTickcountSegmentIndexAtBeat( iRow );
+	return m_TickcountSegments[i];
+}
+
+int TimingData::GetTickcountAtRow( int iRow )
+{
+	return m_TickcountSegments[GetTickcountSegmentIndexAtRow( iRow )].m_iTicks;
 }
 
 void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &fWarpLengthOut ) const

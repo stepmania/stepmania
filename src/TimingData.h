@@ -162,6 +162,37 @@ struct WarpSegment
 	}
 };
 
+/*
+ * A tickcount segment is used to better replicate the checkpoint hold
+ * system used by various based video games. The number is used to 
+ * represent how many ticks can be counted in one beat.
+ */
+struct TickcountSegment
+{
+	TickcountSegment() : m_iStartRow(-1), m_iTicks(2) { }
+	TickcountSegment( int s, int t ){ m_iStartRow = max( 0, s ); m_iTicks = max( 1, t ); }
+	int m_iStartRow;
+	int m_iTicks;
+	
+	bool operator==( const TickcountSegment &other ) const
+	{
+		COMPARE( m_iStartRow );
+		COMPARE( m_iTicks );
+		return true;
+	}
+	bool operator!=( const TickcountSegment &other ) const { return !operator==(other); }
+	bool operator<( const TickcountSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	bool operator<=( const TickcountSegment &other ) const
+	{
+		return ( operator<(other) || operator==(other) );
+	}
+	bool operator>( const TickcountSegment &other ) const { return m_iStartRow > other.m_iStartRow; }
+	bool operator>=( const TickcountSegment &other ) const
+	{
+		return ( operator>(other) || operator==(other) );
+	}
+};
+
 class TimingData
 {
 public:
@@ -184,14 +215,23 @@ public:
 	void SetTimeSignatureDenominatorAtBeat( float fBeat, int iDenominator ) { SetTimeSignatureDenominatorAtRow( BeatToNoteRow(fBeat), iDenominator); }
 	int GetWarpToRow( int iWarpBeginRow ) const;
 	void SetDelayAtRow( int iNoteRow, float fSeconds ); // sm-ssc
+	void SetTickcountAtRow( int iRow, int iTicks );
+	void SetTickcountAtBeat( float fBeat, int iTicks ) { SetTickcountAtRow( BeatToNoteRow( fBeat ), iTicks ); }
+	int GetTickcountAtRow( int iRow );
+	int GetTickcountAtBeat( float fBeat ) { return GetTickcountAtRow( BeatToNoteRow(fBeat) ); }
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	void AddBPMSegment( const BPMSegment &seg );
 	void AddStopSegment( const StopSegment &seg );
 	void AddTimeSignatureSegment( const TimeSignatureSegment &seg );
 	void AddWarpSegment( const WarpSegment &seg );
+	void AddTickcountSegment( const TickcountSegment &seg );
 	int GetBPMSegmentIndexAtBeat( float fBeat );
 	const TimeSignatureSegment& GetTimeSignatureSegmentAtBeat( float fBeat ) const;
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat );
+	int GetTickcountSegmentIndexAtRow( int iRow );
+	int GetTickcountSegmentIndexAtBeat( float fBeat ) { return GetTickcountSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
+	TickcountSegment& GetTickcountSegmentAtRow( int iRow );
+	TickcountSegment& GetTickcountSegmentAtBeat( float fBeat ) { return GetTickcountSegmentAtRow( BeatToNoteRow(fBeat) ); }
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
 
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &fWarpLengthOut ) const;
@@ -231,6 +271,12 @@ public:
 		COMPARE( m_WarpSegments.size() );
 		for( unsigned i=0; i<m_WarpSegments.size(); i++ )
 			COMPARE( m_WarpSegments[i] );
+		COMPARE( m_vTimeSignatureSegments.size() );
+		for( unsigned i=0; i<m_vTimeSignatureSegments.size(); i++)
+			COMPARE( m_vTimeSignatureSegments[i] );
+		COMPARE( m_TickcountSegments.size() );
+		for( unsigned i=0; i<m_TickcountSegments.size(); i++ )
+			COMPARE( m_TickcountSegments[i] );
 		COMPARE( m_fBeat0OffsetInSeconds );
 		return true;
 	}
@@ -244,10 +290,12 @@ public:
 	void PushSelf( lua_State *L );
 
 	RString					m_sFile;		// informational only
-	vector<BPMSegment>		m_BPMSegments;	// this must be sorted before gameplay
-	vector<StopSegment>		m_StopSegments;	// this must be sorted before gameplay
-	vector<TimeSignatureSegment>	m_vTimeSignatureSegments;	// this must be sorted before gameplay
-	vector<WarpSegment> m_WarpSegments; // this must be sorted before gameplay
+	// All of the following vectors must be sorted before gameplay.
+	vector<BPMSegment>		m_BPMSegments;
+	vector<StopSegment>		m_StopSegments;
+	vector<TimeSignatureSegment>	m_vTimeSignatureSegments;
+	vector<WarpSegment>		m_WarpSegments;
+	vector<TickcountSegment>	m_TickcountSegments;
 	float	m_fBeat0OffsetInSeconds;
 	bool	m_bHasNegativeBpms; // only used for Lua bindings in Song (to be moved to TimingData later)
 };
