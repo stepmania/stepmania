@@ -493,12 +493,12 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 	sort( vBPMS.begin(), vBPMS.end() );
 	sort( vSS.begin(), vSS.end() );
 	sort( vWS.begin(), vWS.end() );
-	sort( vTTS.begin(), vTTS.end() );
+	sort( vTSS.begin(), vTSS.end() );
 	sort( vTS.begin(), vTS.end() );
 	ASSERT_M( vBPMS == m_BPMSegments, "The BPM segments were not sorted!" );
 	ASSERT_M( vSS == m_StopSegments, "The Stop segments were not sorted!" );
 	ASSERT_M( vWS == m_WarpSegments, "The Warp segments were not sorted!" );
-	ASSERT_M( vTTS == m_vTimeSignatureSegments, "The Time Signature segments were not sorted!" );
+	ASSERT_M( vTSS == m_vTimeSignatureSegments, "The Time Signature segments were not sorted!" );
 	ASSERT_M( vTS == m_TickcountSegments, "The Tickcount segments were not sorted!" );
 	FAIL_M( ssprintf("Failed to find the appropriate segment for elapsed time %f.", fTime) );
 }
@@ -606,6 +606,22 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 			continue;
 		stop.m_iStartRow += iRowsToAdd;
 	}
+	
+	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
+	{
+		TimeSignatureSegment &time = m_vTimeSignatureSegments[i];
+		if( time.m_iStartRow < iStartRow )
+			continue;
+		time.m_iStartRow += iRowsToAdd;
+	}
+	
+	for( unsigned i = 0; i < m_TickcountSegments.size(); i++ )
+	{
+		TickcountSegment &tick = m_TickcountSegments[i];
+		if( tick.m_iStartRow < iStartRow )
+			continue;
+		tick.m_iStartRow += iRowsToAdd;
+	}
 
 	if( iStartRow == 0 )
 	{
@@ -662,6 +678,50 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 
 		// After deleted region:
 		stop.m_iStartRow -= iRowsToDelete;
+	}
+	
+	for( unsigned i = 0; i < m_vTimeSignatureSegments.size(); i++ )
+	{
+		TimeSignatureSegment &time = m_vTimeSignatureSegments[i];
+		
+		// Before deleted region:
+		if( time.m_iStartRow < iStartRow )
+			continue;
+		
+		// Inside deleted region:
+		if( time.m_iStartRow < iStartRow+iRowsToDelete )
+		{
+			m_vTimeSignatureSegments.erase( 
+				m_vTimeSignatureSegments.begin()+i, 
+				m_vTimeSignatureSegments.begin()+i+1 );
+			--i;
+			continue;
+		}
+		
+		// After deleted region:
+		
+		
+		time.m_iStartRow -= iRowsToDelete;
+	}
+	
+	for( unsigned i = 0; i < m_TickcountSegments.size(); i++ )
+	{
+		TickcountSegment &tick = m_TickcountSegments[i];
+		
+		// Before deleted region:
+		if( tick.m_iStartRow < iStartRow )
+			continue;
+		
+		// Inside deleted region:
+		if( tick.m_iStartRow < iStartRow+iRowsToDelete )
+		{
+			m_TickcountSegments.erase( m_TickcountSegments.begin()+i, m_TickcountSegments.begin()+i+1 );
+			--i;
+			continue;
+		}
+		
+		// After deleted region:
+		tick.m_iStartRow -= iRowsToDelete;
 	}
 
 	this->SetBPMAtRow( iStartRow, fNewBPM );
