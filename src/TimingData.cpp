@@ -488,12 +488,18 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 	vector<BPMSegment> vBPMS = m_BPMSegments;
 	vector<StopSegment> vSS = m_StopSegments;
 	vector<WarpSegment> vWS = m_WarpSegments;
+	vector<TimeSignatureSegment> vTSS = m_vTimeSignatureSegments;
+	vector<TickcountSegment> vTS = m_TickcountSegments;
 	sort( vBPMS.begin(), vBPMS.end() );
 	sort( vSS.begin(), vSS.end() );
 	sort( vWS.begin(), vWS.end() );
+	sort( vTTS.begin(), vTTS.end() );
+	sort( vTS.begin(), vTS.end() );
 	ASSERT_M( vBPMS == m_BPMSegments, "The BPM segments were not sorted!" );
 	ASSERT_M( vSS == m_StopSegments, "The Stop segments were not sorted!" );
 	ASSERT_M( vWS == m_WarpSegments, "The Warp segments were not sorted!" );
+	ASSERT_M( vTTS == m_vTimeSignatureSegments, "The Time Signature segments were not sorted!" );
+	ASSERT_M( vTS == m_TickcountSegments, "The Tickcount segments were not sorted!" );
 	FAIL_M( ssprintf("Failed to find the appropriate segment for elapsed time %f.", fTime) );
 }
 
