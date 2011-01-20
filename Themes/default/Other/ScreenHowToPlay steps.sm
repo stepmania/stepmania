@@ -6,7 +6,7 @@
 // a song file here.
 #TITLE:ScreenHowToPlay steps;
 #ARTIST:foo;
-#BPMS:0.000=100.000
+#BPMS:0.000=100.000;
 #STOPS:16=2,18=2,20=2,22=2;
 
 #NOTES:
