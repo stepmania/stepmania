@@ -551,14 +551,17 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 
 	FOREACH( PlayerNumber, vpns, p )
 	{
-		if( SHOW_CURSOR )
+		if( GAMESTATE->IsHumanPlayer(*p) )
 		{
-			m_sprCursor[*p]->HandleMessage( msg );
-			m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
-		}
+			if( SHOW_CURSOR )
+			{
+				m_sprCursor[*p]->HandleMessage( msg );
+				m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
+			}
 
-		if( SHOW_SCROLLER )
-			m_vsprScroll[*p][m_iChoice[*p]]->HandleMessage( msg );
+			if( SHOW_SCROLLER )
+				m_vsprScroll[*p][m_iChoice[*p]]->HandleMessage( msg );
+		}
 	}
 
 	if( newPage == PAGE_2 )
@@ -649,8 +652,11 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 
 		if( SHOW_CURSOR )
 		{
-			m_sprCursor[*p]->PlayCommand( "Change" );
-			m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
+			if( GAMESTATE->IsHumanPlayer(*p) )
+			{
+				m_sprCursor[*p]->PlayCommand( "Change" );
+				m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
+			}
 		}
 
 		if( SHOW_SCROLLER )
@@ -880,7 +886,8 @@ void ScreenSelectMaster::TweenOnScreen()
 	{
 		FOREACH( PlayerNumber, vpns, p )
 		{
-			m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
+			if( GAMESTATE->IsHumanPlayer(*p) )
+				m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
 		}
 	}
 

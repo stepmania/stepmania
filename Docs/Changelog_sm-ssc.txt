@@ -13,6 +13,10 @@ _____________________________________________________________________________
 sm-ssc v1.2.1 | 2011011?
 --------------------------------------------------------------------------------
 
+20110130
+--------
+* [ScreenSelectMaster] Only run cursor commands on players if they exist. [AJ]
+
 20110118
 --------
 * [ScreenEdit] Move editing Timing Data to their own mini menu. [Wolfman2000]
