@@ -223,7 +223,7 @@ void ScreenSelectMaster::Init()
 				}
 
 				m_mapCurrentChoiceToNextChoice[dir][c] = c + add;
-				/* Always wrap around MenuDir_Auto. */
+				// Always wrap around MenuDir_Auto.
 				if( dir == MenuDir_Auto || (bool)WRAP_CURSOR )
 					wrap( m_mapCurrentChoiceToNextChoice[dir][c], m_aGameCommands.size() );
 				else
