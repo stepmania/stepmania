@@ -479,7 +479,7 @@ void ScreenNetSelectMusic::StartSelectedSong()
 
 	GAMESTATE->m_PreferredSortOrder = GAMESTATE->m_SortOrder;
 	GAMESTATE->m_pPreferredSong = pSong;
-	
+
 	//force event mode
 	GAMESTATE->m_bTemporaryEventMode = true;
 
