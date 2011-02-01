@@ -1553,6 +1553,11 @@ public:
 		lua_pushboolean( L, temp.BpmIsConstant() );
 		return 1;
 	}
+	static int IsDisplayBpmRandom( T* p, lua_State *L )
+	{
+		lua_pushboolean( L, p->m_DisplayBPMType == Song::DISPLAY_RANDOM );
+		return 1;
+	}
 
 	LunaSong()
 	{
@@ -1601,6 +1606,7 @@ public:
 		ADD_METHOD( GetDisplayBpms );
 		ADD_METHOD( IsDisplayBpmSecret );
 		ADD_METHOD( IsDisplayBpmConstant );
+		ADD_METHOD( IsDisplayBpmRandom );
 	}   
 };
 
