@@ -327,7 +327,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				}
 				
 				const float fTickcountBeat = StringToFloat( arrayTickcountValues[0] );
-				const int iTicks = atoi( arrayTickcountValues[1] );
+				int iTicks = atoi( arrayTickcountValues[1] );
 				// you're lazy, let SM do the work for you... -DaisuMaster
 				if( iTicks < 1) iTicks = 1;
 				if( iTicks > ROWS_PER_BEAT ) iTicks = ROWS_PER_BEAT;
