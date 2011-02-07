@@ -328,16 +328,23 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				
 				const float fTickcountBeat = StringToFloat( arrayTickcountValues[0] );
 				const int iTicks = atoi( arrayTickcountValues[1] );
+				// you're lazy, let SM do the work for you... -DaisuMaster
+				if( iTicks < 1) iTicks = 1;
+				if( iTicks > ROWS_PER_BEAT ) iTicks = ROWS_PER_BEAT;
+
 				TickcountSegment new_seg( BeatToNoteRow(fTickcountBeat), iTicks );
-				
+				out.AddTickcountSegment( new_seg );
+
 				if(iTicks >= 1 && iTicks <= ROWS_PER_BEAT ) // Constants
 				{
 					// LOG->Trace( "Adding a tickcount segment: beat: %f, ticks = %d", fTickcountBeat, iTicks );
-					out.AddTickcountSegment( new_seg );
+					//out.AddTickcountSegment( new_seg );
 				}
 				else
 				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid tickcount at beat %f, ticks %d.", fTickcountBeat, iTicks );
+					//LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid tickcount at beat %f, ticks %d.", fTickcountBeat, iTicks );
+					//LOG->UserLog( "Song file", "(UNKNOWN)", "Clamping tickcount value to %d at beat %f.", iTicks, fTickcountBeat);
+					//etc
 				}
 			}
 		}

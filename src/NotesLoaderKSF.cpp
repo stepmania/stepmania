@@ -9,55 +9,6 @@
 #include "Song.h"
 #include "Steps.h"
 
-#if 0
-static void RemoveHoles( NoteData &out, const Song &song )
-{
-	// Start at the second BPM segment; the first one is already aligned.
-	for( unsigned seg = 1; seg < song.m_Timing.m_BPMSegments.size(); ++seg )
-	{
-//		const float FromBeat = song.m_Timing.m_BPMSegments[seg].m_fStartBeat;
-		const float FromBeat = song.m_Timing.m_BPMSegments[seg].m_fStartBeat * song.m_BPMSegments[seg].m_fBPM / song.m_BPMSegments[0].m_fBPM;
-		const int FromRow = (int) BeatToNoteRow(FromBeat);
-		const int ToRow = (int) BeatToNoteRow(song.m_Timing.m_BPMSegments[seg].m_fStartBeat);
-
-		LOG->Trace("from %f (%i) to (%i)", FromBeat, FromRow, ToRow);
-//		const int ToRow = lrintf(FromRow * song.m_Timing.m_BPMSegments[0].m_fBPM / song.m_BPMSegments[seg].m_fBPM);
-//		const int Rows = out.GetLastRow() - FromRow + 1;
-//		int LastRow;
-//		if(seg+1 < song.m_Timing.m_BPMSegments().size())
-//			LastRow = (int) NoteRowToBeat( song.m_Timing.m_BPMSegments[seg+1].m_fStartBeat ) - 1;
-//		else
-//			LastRow = out.GetLastRow();
-		NoteData tmp;
-		tmp.SetNumTracks( out.GetNumTracks() );
-		tmp.CopyRange( &out, FromRow, MAX_NOTE_ROW );
-		out.ClearRange( FromRow, MAX_NOTE_ROW );
-		out.CopyRange( &tmp, 0, MAX_NOTE_ROW, ToRow );
-	}
-
-/*
-	for( t = 0; t < notedata.GetNumTracks(); ++t )
-	{
-		const float CurBPM = song.GetBPMAtBeat( NoteRowToBeat(row) );
-		song.m_Timing.m_BPMSegments.size()
-		for( int row = 0; row <= notedata.GetLastRow(); ++row )
-		{
-			TapNote tn = notedata.GetTapNote(t, row);
-			if( tn == TAP_EMPTY )
-				continue;
-
-			const int RealRow = lrintf(row * OrigBPM / CurBPM);
-			if( RealRow == row )
-				continue;
-			LOG->Trace("from %i to %i", row, RealRow);
-			notedata.SetTapNote( t, RealRow, tn );
-			notedata.SetTapNote( t, row, TAP_EMPTY );
-		}
-	}
-*/
-}
-#endif
-
 static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song, bool bKIUCompliant )
 {
 	LOG->Trace( "Steps::LoadFromKSFFile( '%s' )", sPath.c_str() );
@@ -317,10 +268,6 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 		fCurBeat = prevBeat + 1.0f / iTickCount;
 	}
 
-	// We need to remove holes where the BPM increases.
-//	if( song.m_Timing.m_BPMSegments.size() > 1 )
-//		RemoveHoles( notedata, song );
-
 	out.SetNoteData( notedata );
 
 	out.TidyUpData();
@@ -454,13 +401,13 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			 * actual steps. */
 			iTickCount = atoi( sParams[1] );
 			iTickCount = iTickCount > 0 ? iTickCount : 2; // again, Direct Move uses 4 as a default.
-			// add a time signature for those using the [Player]
+			// add a tickcount for those using the [Player]
 			// CheckpointsUseTimeSignatures metric. -aj
-			TimeSignatureSegment seg;
-			seg.m_iStartRow = BeatToNoteRow(0.0f);
-			seg.m_iNumerator = iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount;
-			seg.m_iDenominator = 4; 
-			out.m_Timing.AddTimeSignatureSegment( seg );
+			// It's not with timesigs now -DaisuMaster
+			TickcountSegment tcs;
+			tcs.m_iStartRow = BeatToNoteRow(0.0f);
+			tcs.m_iTicks = iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount;
+			out.m_Timing.AddTickcountSegment( tcs );
 		}
 		else if ( 0==stricmp(sValueName,"STEP") )
 		{
@@ -505,7 +452,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		}
 	}
 
-	//intro length in piu mixes is normally 7 seconds
+	//intro length in piu mixes is generally 7 seconds
 	out.m_fMusicSampleLengthSeconds = 7.0f;
 
 	/* BPM Change checks are done here.  If bKIUCompliant, it's short and sweet.
@@ -563,12 +510,11 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				if (BeginsWith(NoteRowString, "|T")) 
 				{
 					iTickCount = (int)numTemp;
-					TimeSignatureSegment seg;
-					seg.m_iStartRow = BeatToNoteRow(fCurBeat);
-					seg.m_iNumerator = iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount;
-					seg.m_iDenominator = 4;
-					out.m_Timing.AddTimeSignatureSegment( seg );
-					
+					TickcountSegment tcs;
+					tcs.m_iStartRow = BeatToNoteRow(fCurBeat);
+					tcs.m_iTicks = iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount;
+					out.m_Timing.AddTickcountSegment( tcs );
+
 					continue;
 				}
 				else if (BeginsWith(NoteRowString, "|B")) 
