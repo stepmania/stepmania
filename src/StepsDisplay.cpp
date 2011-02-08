@@ -213,6 +213,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 
 	if( m_bShowTicks )
 	{
+		// todo: let themers handle the logic of tick text. -aj
 		char on = char('1');
 		char off = '0';
 
@@ -233,6 +234,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 		}
 		else
 		{
+			// todo: allow themer to specify a format string? -aj
 			const RString sMeter = ssprintf( "%i", params.iMeter );
 			m_textMeter.SetText( sMeter );
 			m_textMeter.HandleMessage( msg );
