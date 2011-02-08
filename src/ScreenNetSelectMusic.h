@@ -30,6 +30,7 @@ protected:
 	virtual void MenuDown( const InputEventPlus &input );
 	virtual void MenuRight( const InputEventPlus &input );
 	virtual void MenuBack( const InputEventPlus &input );
+	bool LeftAndRightPressed( const PlayerNumber pn );
 
 	virtual void Update( float fDeltaTime );
 

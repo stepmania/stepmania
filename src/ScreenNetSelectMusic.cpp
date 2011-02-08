@@ -309,15 +309,17 @@ done:
 	ScreenNetSelectBase::HandleScreenMessage( SM );
 }
 
+bool ScreenNetSelectMusic::LeftAndRightPressed( const PlayerNumber pn )
+{
+	return INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn )
+		&& INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn );
+}
+
 void ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 
-	bool bLeftPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn );
-	bool bRightPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn );
-	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
-
-	if( bLeftAndRightPressed )
+	if( LeftAndRightPressed(pn) )
 		m_MusicWheel.ChangeSort( SORT_MODE_MENU );
 	else
 		m_MusicWheel.Move( -1 );
@@ -327,11 +329,7 @@ void ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 
-	bool bLeftPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn );
-	bool bRightPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn );
-	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
-
-	if( bLeftAndRightPressed )
+	if( LeftAndRightPressed(pn) )
 		m_MusicWheel.ChangeSort( SORT_MODE_MENU );
 	else
 		m_MusicWheel.Move( +1 );
