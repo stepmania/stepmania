@@ -139,10 +139,10 @@ void MenuTimer::Disable()
 
 void MenuTimer::Stall()
 {
-	/* Max amount of stall time we'll use: */
+	// Max amount of stall time we'll use:
 	const float Amt = min( 0.5f, m_fStallSecondsLeft );
 
-	/* Amount of stall time to add: */
+	// Amount of stall time to add:
 	const float ToAdd = Amt - m_fStallSeconds;
 
 	m_fStallSeconds += ToAdd;
@@ -184,7 +184,7 @@ void MenuTimer::SetText( float fSeconds )
 
 		RString sText;
 		LuaHelpers::Pop( L, sText );
-		
+
 		m_text[i].SetText( sText );
 	}
 
@@ -197,11 +197,11 @@ void MenuTimer::SetText( float fSeconds )
 class LunaMenuTimer: public Luna<MenuTimer>
 {
 public:
-	static int setseconds( T* p, lua_State *L )		{ p->SetSeconds(FArg(1)); return 0; }
-	static int GetSeconds( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetSeconds() ); return 1; }
-	static int pause( T* p, lua_State *L )			{ p->Pause(); return 0; }
+	static int setseconds( T* p, lua_State *L )	{ p->SetSeconds(FArg(1)); return 0; }
+	static int GetSeconds( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSeconds() ); return 1; }
+	static int pause( T* p, lua_State *L )		{ p->Pause(); return 0; }
 	static int stop( T* p, lua_State *L )			{ p->Stop(); return 0; }
-	static int silent( T* p, lua_State *L )			{ p->EnableSilent(BArg(1)); return 0; }
+	static int silent( T* p, lua_State *L )		{ p->EnableSilent(BArg(1)); return 0; }
 	static int stealth( T* p, lua_State *L )		{ p->EnableStealth(BArg(1)); return 0; }
 
 	LunaMenuTimer()
