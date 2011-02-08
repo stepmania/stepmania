@@ -21,7 +21,6 @@
 
 REGISTER_SCREEN_CLASS( ScreenOptionsManageCourses );
 
-
 struct StepsTypeAndDifficulty
 {
 	StepsType st;
@@ -50,8 +49,6 @@ static void SetNextCombination()
 
 	GAMESTATE->m_stEdit.Set( curVal.st );
 	GAMESTATE->m_cdEdit.Set( curVal.cd );
-	// XXX Testing.
-	SCREENMAN->SystemMessage( ssprintf("%s, %s", GAMEMAN->GetStepsTypeInfo(curVal.st).szName, DifficultyToString(curVal.cd).c_str()) );
 
 	EditCourseUtil::UpdateAndSetTrail();
 }
@@ -69,12 +66,11 @@ void ScreenOptionsManageCourses::Init()
 }
 
 void ScreenOptionsManageCourses::BeginScreen()
-{	
+{
 	vector<const Style*> vpStyles;
 	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vpStyles );
 	const Style *pStyle = vpStyles[0];
 	GAMESTATE->SetCurrentStyle( pStyle );
-
 
 	if( GAMESTATE->m_stEdit == StepsType_Invalid  ||
 	    GAMESTATE->m_cdEdit == Difficulty_Invalid )
@@ -82,15 +78,15 @@ void ScreenOptionsManageCourses::BeginScreen()
 		SetNextCombination();
 	}
 
-
-	// Remember the current course.  All Course pointers will be invalidated when we load the machine profile below.
+	// Remember the current course. All Course pointers will be invalidated when
+	// we load the machine profile below.
 	CourseID cidLast;
 	cidLast.FromCourse( GAMESTATE->m_pCurCourse );
 
 	vector<OptionRowHandler*> vHands;
-	
+
 	int iIndex = 0;
-	
+
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
@@ -101,7 +97,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( "" );
 		iIndex++;
-	}	
+	}
 
 	m_vpCourses.clear();
 	// XXX: Why are we flushing here?
@@ -119,12 +115,12 @@ void ScreenOptionsManageCourses::BeginScreen()
 		SONGMAN->GetAllCourses( m_vpCourses, false );
 		break;
 	}
-	
+
 	FOREACH_CONST( Course*, m_vpCourses, p )
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
-		
+
 		def.m_sName = (*p)->GetDisplayFullTitle();
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Select Course";
@@ -133,11 +129,11 @@ void ScreenOptionsManageCourses::BeginScreen()
 		def.m_bAllowThemeItems = false;	// already themed
 		iIndex++;
 	}
-	
+
 	ScreenOptions::InitMenu( vHands );
-	
+
 	ScreenOptions::BeginScreen();
-	
+
 	// select the last chosen course
 	GAMESTATE->m_pCurCourse.Set( cidLast.ToCourse() );
 	if( GAMESTATE->m_pCurCourse )
@@ -172,12 +168,12 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			EditCourseUtil::UpdateAndSetTrail();
 
 			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN );
-			return;	// don't call base
+			return; // don't call base
 		}
 		else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
 		{
 			this->HandleScreenMessage( SM_GoToPrevScreen );
-			return;	// don't call base
+			return; // don't call base
 		}
 		else
 		{
@@ -195,12 +191,12 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 
 	ScreenOptions::HandleScreenMessage( SM );
 }
-	
+
 void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 {
 	Course *pCourse = GetCourseWithFocus();
 	Trail *pTrail = pCourse ? pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit ) : NULL;
-	
+
 	GAMESTATE->m_pCurCourse.Set( pCourse );
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 
@@ -213,7 +209,6 @@ void ScreenOptionsManageCourses::MenuSelect( const InputEventPlus &input )
 		return;
 	SetNextCombination();
 	m_soundDifficultyChanged.Play();
-
 }
 
 static LocalizedString YOU_HAVE_MAX( "ScreenOptionsManageCourses", "You have %d, the maximum number allowed." );
@@ -269,7 +264,7 @@ Course *ScreenOptionsManageCourses::GetCourseWithFocus() const
 		return NULL;
 	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
 		return NULL;
-	
+
 	// a course
 	int index = iCurRow - 1;
 	return m_vpCourses[index];
