@@ -24,7 +24,7 @@ sm-ssc v1.2.1 | 201102??
 20110118
 --------
 * [ScreenEdit] Move editing Timing Data to their own mini menu. [Wolfman2000]
-* [All Over] Implement #TICKCOUNTS tag for better checkpoint behavior.
+* Implement #TICKCOUNTS tag for better checkpoint behavior.
   This officially deprecates the CheckpointsUseTimeSignatures metric for
   the CheckpointsUseTickcounts metric. [Wolfman2000]
 * [NoteField] Add metrics for more flexible TimingData labels. [Wolfman2000]
