@@ -1270,10 +1270,6 @@ void StepMania::ClearCredits()
 /* Returns true if the key has been handled and should be discarded, false if
  * the key should be sent on to screens. */
 static LocalizedString SERVICE_SWITCH_PRESSED ( "StepMania", "Service switch pressed" );
-// xxx: Okay, these probably shouldn't be here, but I wanted them to be
-// localized and this was the place to do it since this is where the control
-// structure is placed... apologies to those who like properly structured
-// language files. I like compatibility. -aj
 static LocalizedString RELOADED_METRICS( "ThemeManager", "Reloaded metrics" );
 static LocalizedString RELOADED_METRICS_AND_TEXTURES( "ThemeManager", "Reloaded metrics and textures" );
 static LocalizedString RELOADED_SCRIPTS( "ThemeManager", "Reloaded scripts" );
