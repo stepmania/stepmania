@@ -7,6 +7,7 @@
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "GameState.h"
+#include "CodeDetector.h"
 #include "Style.h"
 #include "Steps.h"
 #include "RageTimer.h"
@@ -44,6 +45,7 @@ void ScreenNetSelectMusic::Init()
 	ScreenNetSelectBase::Init();
 
 	SAMPLE_MUSIC_PREVIEW_MODE.Load( m_sName, "SampleMusicPreviewMode" );
+	CODES.Load( m_sName, "Codes" );
 
 	FOREACH_EnabledPlayer (p)
 	{
@@ -56,7 +58,7 @@ void ScreenNetSelectMusic::Init()
 		this->AddChild( &m_DifficultyIcon[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
 		*/
-		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
+		m_Difficulty[p] = GAMESTATE->m_PreferredDifficulty[p];
 
 		m_StepsDisplays[p].SetName( ssprintf("StepsDisplayP%d",p+1) );
 		m_StepsDisplays[p].Load( "StepsDisplayNet", NULL );
@@ -101,6 +103,8 @@ void ScreenNetSelectMusic::Init()
 
 	m_bInitialSelect = false;
 	m_bAllowInput = false;
+
+	ZERO( m_iSelection );
 }
 
 void ScreenNetSelectMusic::Input( const InputEventPlus &input )
@@ -145,6 +149,18 @@ void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 		m_MusicWheel.Move(+1);
 	}
 
+	// todo: handle input here instead of in Menu* functions -aj
+	if( input.MenuI == GAME_BUTTON_SELECT && input.type != IET_REPEAT )
+	{
+		NSMAN->ReportNSSOnOff(3);
+		GAMESTATE->m_EditMode = EditMode_Full;
+		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
+	}
+
+	// handle CodeDetector
+	if( input.type == IET_FIRST_PRESS && DetectCodes(input) )
+		return;
+
 	ScreenNetSelectBase::Input( input );
 }
 
@@ -169,9 +185,9 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_ChangeSong )
 	{
-		//First check to see if this song is already selected.
-		//This is so that if you multiple copies of the "same" song
-		//you can chose which copy to play.
+		/* First check to see if this song is already selected. This is so that
+		 * if you have multiple copies of the "same" song, you can choose which
+		 * copy to play. */
 		Song* CurSong = m_MusicWheel.GetSelectedSong();
 
 		if(CurSong != NULL )
@@ -302,6 +318,14 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 	}
+	else if( SM == SM_GainFocus )
+	{
+		CodeDetector::RefreshCacheItems( CODES );
+	}
+	else if( SM == SM_LoseFocus )
+	{
+		CodeDetector::RefreshCacheItems(); // reset for other screens
+	}
 
 done:
 	// Must be at end, as so it is last resort for SMOnline packets.
@@ -309,94 +333,68 @@ done:
 	ScreenNetSelectBase::HandleScreenMessage( SM );
 }
 
-bool ScreenNetSelectMusic::LeftAndRightPressed( const PlayerNumber pn )
+void ScreenNetSelectMusic::ChangeSteps( const InputEventPlus &input, int dir )
 {
-	return INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn )
-		&& INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn );
+	if( GAMESTATE->m_pCurSong == NULL )
+		return;
+
+	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+	m_vpSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
+
+	if( m_vpSteps.size() == 0 )
+		m_Difficulty[input.pn] = NUM_Difficulty;
+	else
+	{
+		m_iSelection[input.pn] += dir;
+		wrap( m_iSelection[input.pn], m_vpSteps.size() );
+
+		Steps *pSteps = m_vpSteps[m_iSelection[input.pn]];
+		m_Difficulty[input.pn] = (Difficulty)pSteps->GetDifficulty();
+		GAMESTATE->ChangePreferredDifficultyAndStepsType( input.pn, m_Difficulty[input.pn], st );
+	}
+
+	UpdateDifficulty( input.pn );
+}
+
+bool ScreenNetSelectMusic::DetectCodes( const InputEventPlus &input )
+{
+	if( CodeDetector::EnteredPrevSteps(input.GameI.controller) )
+	{
+		ChangeSteps( input, -1 );
+	}
+	else if( CodeDetector::EnteredNextSteps(input.GameI.controller) )
+	{
+		ChangeSteps( input, +1 );
+	}
+	else if( CodeDetector::EnteredModeMenu(input.GameI.controller) )
+	{
+		m_MusicWheel.ChangeSort( SORT_MODE_MENU );
+	}
+	// todo: support NextGroup/PrevGroup
+	else if( CodeDetector::EnteredCloseFolder(input.GameI.controller) )
+	{
+		RString sCurSection = m_MusicWheel.GetSelectedSection();
+		m_MusicWheel.SelectSection(sCurSection);
+		m_MusicWheel.SetOpenSection("");
+		MusicChanged();
+	}
+	else
+	{
+		return false;
+	}
+	return true;
 }
 
 void ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
 {
-	PlayerNumber pn = input.pn;
-
-	if( LeftAndRightPressed(pn) )
-		m_MusicWheel.ChangeSort( SORT_MODE_MENU );
-	else
-		m_MusicWheel.Move( -1 );
+	MESSAGEMAN->Broadcast( "PreviousSong" );
+	m_MusicWheel.Move( -1 );
 }
 
 void ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
 {
-	PlayerNumber pn = input.pn;
-
-	if( LeftAndRightPressed(pn) )
-		m_MusicWheel.ChangeSort( SORT_MODE_MENU );
-	else
-		m_MusicWheel.Move( +1 );
-}
-
-void ScreenNetSelectMusic::MenuUp( const InputEventPlus &input )
-{
-	NSMAN->ReportNSSOnOff(3);
-	GAMESTATE->m_EditMode = EditMode_Full;
-	SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
-}
-
-void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
-{
-	/* Tricky: If we have a player on player 2, and there is only player 2,
-	 * allow them to use player 1's controls to change their difficulty. */
-	/* Why?  Nothing else allows that. (-who?) */
-	// I agree, that's a stupid idea -aj
-
-	PlayerNumber pn = input.pn;
-	if( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) && 
-		!GAMESTATE->IsPlayerEnabled( PLAYER_1 ) )
-		pn = PLAYER_2;
-
-	if( GAMESTATE->m_pCurSong == NULL )
-		return;
-	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-	vector <Steps *> MultiSteps;
-	MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
-	if(MultiSteps.size() == 0)
-		m_DC[pn] = NUM_Difficulty;
-	else
-	{
-		int i;
-
-		bool dcs[NUM_Difficulty];
-
-		for( i=0; i<NUM_Difficulty; ++i )
-			dcs[i] = false;
-
-		for( i=0; i<(int)MultiSteps.size(); ++i )
-			dcs[MultiSteps[i]->GetDifficulty()] = true;
-
-		for( i=0; i<NUM_Difficulty; ++i )
-		{
-			if( (dcs[i]) && (i > m_DC[pn]) )
-			{
-				m_DC[pn] = (Difficulty)i;
-				break;
-			}
-		}
-		// If failed to go up, loop
-		if( i == NUM_Difficulty )
-		{
-			for(i = 0;i<NUM_Difficulty;i++)
-			{
-				if(dcs[i])
-				{
-					m_DC[pn] = (Difficulty)i;
-					break;
-				}
-			}
-		}
-
-	}
-	UpdateDifficulties( pn );
-	GAMESTATE->m_PreferredDifficulty[pn].Set( m_DC[pn] );
+	MESSAGEMAN->Broadcast( "NextSong" );
+	m_MusicWheel.Move( +1 );
 }
 
 void ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
@@ -463,8 +461,8 @@ void ScreenNetSelectMusic::StartSelectedSong()
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType; //StepsType_dance_single;
 	FOREACH_EnabledPlayer (pn)
 	{
-		GAMESTATE->m_PreferredDifficulty[pn].Set( m_DC[pn] );
-		Steps *pSteps = SongUtil::GetStepsByDifficulty(pSong, st, m_DC[pn]);
+		GAMESTATE->m_PreferredDifficulty[pn].Set( m_Difficulty[pn] );
+		Steps *pSteps = SongUtil::GetStepsByDifficulty(pSong, st, m_Difficulty[pn]);
 		GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 	}
 
@@ -478,33 +476,19 @@ void ScreenNetSelectMusic::StartSelectedSong()
 	StartTransitioningScreen( SM_GoToNextScreen );
 }
 
-void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
+void ScreenNetSelectMusic::UpdateDifficulty( PlayerNumber pn )
 {
 	if( GAMESTATE->m_pCurSong == NULL )
 	{
-		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid ); 
-		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
+		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid );
 		return;
 	}
 
-	if( m_DC[pn] < Difficulty_Edit && m_DC[pn] >= Difficulty_Beginner )
-	{
-		/*
-		m_DifficultyIcon[pn].SetPlayer( pn );
-		m_DifficultyIcon[pn].SetFromDifficulty( m_DC[pn] );
-		*/
-	}
-	else
-	{
-		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
-	}
-
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-
-	Steps * pSteps = SongUtil::GetStepsByDifficulty( GAMESTATE->m_pCurSong, st, m_DC[pn] );
+	Steps* pSteps = SongUtil::GetStepsByDifficulty( GAMESTATE->m_pCurSong, st, m_Difficulty[pn] );
 	GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 
-	if( ( m_DC[pn] < NUM_Difficulty ) && ( m_DC[pn] >= Difficulty_Beginner ) )
+	if( ( m_Difficulty[pn] < NUM_Difficulty ) && ( m_Difficulty[pn] >= Difficulty_Beginner ) )
 		m_StepsDisplays[pn].SetFromSteps( pSteps );
 	else
 		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid );
@@ -516,7 +500,7 @@ void ScreenNetSelectMusic::MusicChanged()
 	{
 		m_BPMDisplay.NoBPM();
 		FOREACH_EnabledPlayer (pn)
-			UpdateDifficulties( pn );
+			UpdateDifficulty( pn );
 
 		SOUND->StopMusic();
 		// todo: handle playing section music correctly. -aj
@@ -525,14 +509,17 @@ void ScreenNetSelectMusic::MusicChanged()
 	} 
 	m_BPMDisplay.SetBpmFromSong( GAMESTATE->m_pCurSong );
 
-	FOREACH_EnabledPlayer (pn)
+	SongUtil::GetPlayableSteps( GAMESTATE->m_pCurSong, m_vpSteps );
+
+	FOREACH_EnabledPlayer(pn)
 	{
-		m_DC[pn] = GAMESTATE->m_PreferredDifficulty[pn];
+		// xxx: using the old difficulty reset code -aj
+		m_Difficulty[pn] = GAMESTATE->m_PreferredDifficulty[pn];
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-		vector <Steps *> MultiSteps;
+		vector<Steps*> MultiSteps;
 		MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
 		if(MultiSteps.size() == 0)
-			m_DC[pn] = NUM_Difficulty;
+			m_Difficulty[pn] = NUM_Difficulty;
 		else
 		{
 			int i;
@@ -550,17 +537,17 @@ void ScreenNetSelectMusic::MusicChanged()
 				if( dcs[i] )
 				{
 					Target = (Difficulty)i;
-					if( i >= m_DC[pn] )
+					if( i >= m_Difficulty[pn] )
 					{
-						m_DC[pn] = (Difficulty)i;
+						m_Difficulty[pn] = (Difficulty)i;
 						break;
 					}
 				}
 
 			if( i == NUM_Difficulty )
-				m_DC[pn] = Target;
+				m_Difficulty[pn] = Target;
 		}
-		UpdateDifficulties( pn );
+		UpdateDifficulty( pn );
 	}
 
 	// Copied from ScreenSelectMusic

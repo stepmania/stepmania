@@ -25,23 +25,27 @@ public:
 
 protected:
 	virtual void MenuStart( const InputEventPlus &input );
-	virtual void MenuLeft( const InputEventPlus &input );
-	virtual void MenuUp( const InputEventPlus &input );
-	virtual void MenuDown( const InputEventPlus &input );
-	virtual void MenuRight( const InputEventPlus &input );
 	virtual void MenuBack( const InputEventPlus &input );
-	bool LeftAndRightPressed( const PlayerNumber pn );
+	virtual void MenuLeft( const InputEventPlus &input );
+	virtual void MenuRight( const InputEventPlus &input );
+	bool DetectCodes( const InputEventPlus &input );
 
 	virtual void Update( float fDeltaTime );
 
+	void ChangeSteps( const InputEventPlus &input, int dir );
 	void MusicChanged();
 
 	void TweenOffScreen();
+
+	vector<Steps*>	m_vpSteps;
+	int				m_iSelection[NUM_PLAYERS];
 
 	ThemeMetric<SampleMusicPreviewMode> SAMPLE_MUSIC_PREVIEW_MODE;
 	RString m_sSectionMusicPath;
 	RString m_sRouletteMusicPath;
 	RString m_sRandomMusicPath;
+
+	ThemeMetric<RString>	CODES;
 
 private:
 	MusicWheel m_MusicWheel;
@@ -49,9 +53,9 @@ private:
 	// todo: replace difficulty icons with StepsDisplay -aj
 	//Difficulty Icon(s)
 	//DifficultyIcon m_DifficultyIcon[NUM_PLAYERS];
-	Difficulty m_DC[NUM_PLAYERS];
+	Difficulty m_Difficulty[NUM_PLAYERS];
 
-	void UpdateDifficulties( PlayerNumber pn );
+	void UpdateDifficulty( PlayerNumber pn );
 	StepsDisplay m_StepsDisplays[NUM_PLAYERS];
 
 	RageSound m_soundChangeOpt;
@@ -61,7 +65,7 @@ private:
 	BPMDisplay m_BPMDisplay;
 	ModIconRow m_ModIconRow[NUM_PLAYERS];
 
-	Song * m_cSong;
+	Song* m_cSong;
 
 	bool m_bInitialSelect;
 	bool m_bAllowInput;
