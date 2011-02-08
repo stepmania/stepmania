@@ -21,29 +21,7 @@ public:
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void UpdateSongsListPos();
-	void UpdateGroupsListPos();
-	void UpdateSongsList();
-	void UpdateTextInput();
-
 	void StartSelectedSong();
-
-private:
-	int	m_iSongNum;
-	int	m_iShowSongs;	//The number of songs to display to each side
-	int	m_iGroupNum;
-	int	m_iShowGroups;	//The number of groups to display to each side
-
-	enum NetScreenSelectModes
-	{
-		SelectGroup = 0,
-		SelectSong,
-		SelectDifficulty,
-		SelectOptions,
-		SelectModes,
-	};
-
-	NetScreenSelectModes m_SelectMode;
 
 protected:
 	virtual void MenuStart( const InputEventPlus &input );
@@ -67,7 +45,7 @@ protected:
 private:
 	MusicWheel m_MusicWheel;
 
-	// todo: replace difficulty icons with StepsDisplay out the ass
+	// todo: replace difficulty icons with StepsDisplay -aj
 	//Difficulty Icon(s)
 	//DifficultyIcon m_DifficultyIcon[NUM_PLAYERS];
 	Difficulty m_DC[NUM_PLAYERS];
@@ -78,6 +56,7 @@ private:
 	RageSound m_soundChangeOpt;
 	RageSound m_soundChangeSel;
 
+	// todo: do these theme-side instead. -aj
 	BPMDisplay m_BPMDisplay;
 	ModIconRow m_ModIconRow[NUM_PLAYERS];
 
