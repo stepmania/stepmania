@@ -126,11 +126,11 @@ void ScreenSelectMusic::Init()
 		-- Midiman 
 	*/
 	m_sSectionMusicPath =		THEME->GetPathS(m_sName,"section music");
-	m_sSortMusicPath =		THEME->GetPathS(m_sName,"sort music");
+	m_sSortMusicPath =			THEME->GetPathS(m_sName,"sort music");
 	m_sRouletteMusicPath =		THEME->GetPathS(m_sName,"roulette music");
 	m_sRandomMusicPath =		THEME->GetPathS(m_sName,"random music");
 	m_sCourseMusicPath =		THEME->GetPathS(m_sName,"course music");
-	m_sLoopMusicPath =		THEME->GetPathS(m_sName,"loop music");
+	m_sLoopMusicPath =			THEME->GetPathS(m_sName,"loop music");
 	m_sFallbackCDTitlePath =	THEME->GetPathG(m_sName,"fallback cdtitle");
 
 
