@@ -473,7 +473,7 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 
 		// this BPMSegment is NOT the current segment.
 		fElapsedTime -= fSecondsInThisSegment;
-		// xxx: negative testing
+		// xxx: negative testing [aj]
 		/*
 		//if(fBPS < 0.0f)
 		if( (fStartBeatNextSegment >= 445.490f && fStartBeatNextSegment <= 453.72f) || fBPS < 0.0f )
