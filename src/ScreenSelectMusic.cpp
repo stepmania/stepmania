@@ -392,7 +392,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,false);
 	MakeUpper( &c, 1 );
 
-	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
+	if( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{
 		// Only allow changing the sort order if the wheel is not locked
 		// and we're not in course mode. -aj
