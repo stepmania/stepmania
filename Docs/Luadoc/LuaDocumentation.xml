@@ -618,7 +618,7 @@
 	<Function name='effectperiod' return='void' arguments='float fTime'>
 		Set the Actor's effect period to <code>fTime</code>.
 	</Function>
-	<Function name='effecttiming' return='void' arguments='float fRampUp, float fAtHalf, float fRampDown, float fAtZero'>
+	<Function name='effecttiming' return='void' arguments='float fRampUp, float fHoldAtHalf, float fRampDown, float fHoldAtZero'>
 		Set the Actor's effect timing.
 	</Function>
 	<Function name='fadebottom' return='void' arguments='float percent'>
