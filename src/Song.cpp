@@ -414,8 +414,9 @@ void Song::TidyUpData()
 	{
 		RString error;
 		RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile( GetMusicPath(), error );
-		/* XXX: Checking if the music file exists eliminates a warning originating from BMS files
-		 * (which have no music file, per se) but it's something of a hack. */
+		/* XXX: Checking if the music file exists eliminates a warning
+		 * originating from BMS files (which have no music file, per se)
+		 * but it's something of a hack. */
 		if( Sample == NULL && m_sMusicFile != "" )
 		{
 			LOG->UserLog( "Sound file", GetMusicPath(), "couldn't be opened: %s", error.c_str() );
