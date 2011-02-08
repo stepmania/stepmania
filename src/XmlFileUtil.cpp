@@ -25,7 +25,6 @@ bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, RageFileBasic &f )
 	return false;
 }
 
-
 bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, const RString &sFile )
 {
 	RageFile f;
@@ -48,7 +47,7 @@ bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, const RString &sFile )
 static const char chXMLTagOpen		= '<';
 static const char chXMLTagClose		= '>';
 static const char chXMLQuestion		= '?';	// used in checking for meta tags: "<?TAG ... ?/>"
-static const char chXMLTagPre		= '/';
+static const char chXMLTagPre			= '/';
 static const char chXMLExclamation	= '!';
 static const char chXMLDash			= '-';
 
@@ -82,7 +81,6 @@ static void InitEntities()
 	}
 }
 
-
 // skip spaces
 static void tcsskip( const RString &s, RString::size_type &i )
 {
@@ -106,7 +104,6 @@ static void SetString( const RString &s, int iStart, int iEnd, RString* ps, bool
 
 	ps->assign( s, iStart, len );
 }
-
 
 // attr1="value1" attr2='value2' attr3=value3 />
 //                                            ^- return pointer
@@ -138,16 +135,16 @@ RString::size_type LoadAttributes( XNode *pNode, const RString &xml, RString &sE
 				sErrorOut = ssprintf( "<%s> attribute has error ", pNode->GetName().c_str() );
 			return string::npos;
 		}
-		
+
 		// XML Attr Name
 		RString sName;
 		SetString( xml, iOffset, iEnd, &sName );
-		
+
 		// add new attribute
 		DEBUG_ASSERT( sName.size() );
 		XNodeValue *pAttr = pNode->AppendAttr( sName );
 		iOffset = iEnd;
-		
+
 		// XML Attr Value
 		tcsskip( xml, iOffset );
 
@@ -170,7 +167,7 @@ RString::size_type LoadAttributes( XNode *pNode, const RString &xml, RString &sE
 			else
 			{
 				// XXX: This is invalid XML, should we be accepting it? -- Steve
-				//attr= value> 
+				//attr= value>
 				// none quote mode
 				iEnd = xml.find_first_of( " >", iOffset );
 			}
@@ -220,12 +217,12 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 	if( xml[iOffset+1] == chXMLTagPre )
 		return iOffset;
 
-	/* <!-- */
+	// <!--
 	if( !xml.compare(iOffset+1, 3, "!--") )
 	{
 		iOffset += 4;
 
-		/* Find the close tag. */
+		// Find the close tag.
 		RString::size_type iEnd = xml.find( "-->", iOffset );
 		if( iEnd == string::npos )
 		{
@@ -301,7 +298,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 			// error cos not exist CloseTag </TAG>
 			return string::npos;
 		}
-		
+
 		RString sValue;
 		SetString( xml, iOffset, iEnd, &sValue, true );
 
@@ -315,7 +312,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 	while( iOffset < xml.size() )
 	{
 		XNode *node = new XNode;
-		
+
 		iOffset = LoadInternal( node, xml, sErrorOut, iOffset );
 		if( iOffset == string::npos )
 		{
@@ -340,7 +337,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 		{
 			// </Close>
 			iOffset += 2; // C
-			
+
 			tcsskip( xml, iOffset );
 			if( iOffset >= xml.size()  )
 				continue;
@@ -384,7 +381,7 @@ RString::size_type LoadInternal( XNode *pNode, const RString &xml, RString &sErr
 						sErrorOut = ssprintf( "it must be closed with </%s>", pNode->GetName().c_str() );
 					return string::npos;
 				}
-				
+
 				RString sValue;
 				SetString( xml, iOffset, iEnd, &sValue, true );
 
@@ -434,14 +431,14 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 	{
 		// <TAG Attr1="Val1"> and get child
 		WRITE( ">" );
-			
+
 		if( !pNode->m_childs.empty() )
 			iTabBase++;
 
 		FOREACH_CONST_Child( pNode, p )
 			if( !GetXMLInternal( p, f, bWriteTabs, iTabBase ) )
 				return false;
-		
+
 		// Text Value
 		const XNodeValue *pText = pNode->GetAttr( XNode::TEXT_ATTRIBUTE );
 		if( pText != NULL )
@@ -587,7 +584,7 @@ namespace
 		}
 		else if( sExpression.size() > 0 && sExpression[0] == '@' )
 		{
-			/* This is a raw string. */
+			// This is a raw string.
 			sExpression.erase( 0, 1 );
 			LuaHelpers::Push( L, sExpression );
 		}
@@ -632,7 +629,7 @@ namespace
 	{
 		XNode *pNode = new XNode( sName );
 
-		/* Set the value of the node to the table. */
+		// Set the value of the node to the table.
 		{
 			XNodeLuaValue *pValue = new XNodeLuaValue;
 			lua_pushvalue( L, -1 );
@@ -640,12 +637,12 @@ namespace
 			pNode->AppendAttrFrom( XNode::TEXT_ATTRIBUTE, pValue );
 		}
 
-		/* Iterate over the table, pulling out attributes and tables to process. */
+		// Iterate over the table, pulling out attributes and tables to process.
 		vector<RString> NodeNamesToAdd;
 		vector<LuaReference> NodesToAdd;
 
-		/* Add array elements first, in array order, so iterating over the XNode keeps the
-		 * array in order. */
+		/* Add array elements first, in array order, so iterating over the XNode
+		 * keeps the array in order. */
 		FOREACH_LUATABLEI( L, -1, i )
 		{
 			if( !lua_istable(L, -1) )
@@ -658,13 +655,13 @@ namespace
 		int iLen = NodeNamesToAdd.size();
 		FOREACH_LUATABLE( L, -1 )
 		{
-			/* If this entry is a table, add it recursively. */
+			// If this entry is a table, add it recursively.
 			if( lua_istable(L, -2) )
 			{
 				if( lua_isnumber(L, -1) )
 				{
-					/* If this number is an integer, and between [1,iLen], then we added
-					 * this one already above. */
+					/* If this number is an integer, and between [1,iLen], then
+					 * we added this one already above. */
 					lua_Number f = lua_tonumber( L, -1 );
 					int i;
 					lua_number2int(i, f);
@@ -683,20 +680,20 @@ namespace
 			RString sName;
 			LuaHelpers::Pop( L, sName );
 
-			/* Otherwise, add an attribute. */
+			// Otherwise, add an attribute.
 			XNodeLuaValue *pValue = new XNodeLuaValue;
 			pValue->SetValueFromStack( L );
 			pNode->AppendAttrFrom( sName, pValue );
 		}
 		lua_pop( L, 1 );
 
-		/* Recursively process tables. */
+		// Recursively process tables.
 		for( size_t i = 0; i < NodesToAdd.size(); ++i )
 		{
 			const RString &sNodeName = NodeNamesToAdd[i];
 			LuaReference &NodeToAdd = NodesToAdd[i];
 
-			/* Check if the table is on the stack. */
+			// Check if the table is on the stack.
 			ProcessedTables.PushSelf( L );
 			NodeToAdd.PushSelf( L ); // push table
 			lua_gettable( L, -2 );
@@ -706,7 +703,7 @@ namespace
 			if( bSawThisTableAlready )
 				continue;
 
-			/* Add the table to the stack. */
+			// Add the table to the stack.
 			ProcessedTables.PushSelf( L );
 			NodeToAdd.PushSelf( L );
 			lua_pushboolean( L, true );
@@ -718,7 +715,7 @@ namespace
 			if( pNewNode )
 				pNode->AppendChild( pNewNode );
 
-			/* Remove the table from the stack. */
+			// Remove the table from the stack.
 			ProcessedTables.PushSelf( L );
 			NodeToAdd.PushSelf( L );
 			lua_pushnil( L );
@@ -731,19 +728,18 @@ namespace
 
 }
 
-/*
- * Pop a table off of the stack, and return an XNode tree referring recursively
+/* Pop a table off of the stack, and return an XNode tree referring recursively
  * to entries in the table.
  *
  * The table may not contain table cycles; if a cycle is detected, only the first
  * table seen will have a corresponding XNode.
  *
- * Users of the resulting XNode may access the original table via PushValue.
- */
+ * Users of the resulting XNode may access the original table via PushValue. */
 XNode *XmlFileUtil::XNodeFromTable( lua_State *L )
 {
-	/* Maintain a set of references that we've created.  Tables may loop; XNode trees may
-	 * not.  If we encounter a cycle, skip creating an XNode for that node. */
+	/* Maintain a set of references that we've created. Tables may loop; XNode
+	 * trees may not. If we encounter a cycle, skip creating an XNode for
+	 * that node. */
 	LuaReference ProcessedTables;
 	lua_newtable( L );
 	ProcessedTables.SetFromStack( L );
@@ -751,7 +747,7 @@ XNode *XmlFileUtil::XNodeFromTable( lua_State *L )
 	return XNodeFromTableRecursive( L, "Layer", ProcessedTables );
 }
 
-/* Move nodes from pFrom into pTo which don't already exist in pTo.  For
+/* Move nodes from pFrom into pTo which don't already exist in pTo. For
  * efficiency, nodes will be moved, not copied, so pFrom will be modified.
  * On return, the contents of pFrom will be undefined and should be deleted. */
 void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
@@ -760,14 +756,14 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 	 * with the possibility of duplicate child names. */
 	vector<XNodes::iterator> aToMove;
 
-	/* Iterate over each section in pFrom. */
+	// Iterate over each section in pFrom.
 	XNodes::iterator it = pFrom->m_childs.begin();
 	while( it != pFrom->m_childs.end() )
 	{
 		XNodes::iterator next = it;
 		++next;
 
-		/* If this node doesn't exist in pTo, just move the whole node. */
+		// If this node doesn't exist in pTo, just move the whole node.
 		XNode *pSectionNode = *it;
 		XNode *pChildNode = pTo->GetChild( pSectionNode->GetName() );
 		if( pChildNode == NULL )
@@ -778,7 +774,7 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 		{
 			FOREACH_Attr( pSectionNode, it2 )
 			{
-				/* Don't overwrite existing nodes. */
+				// Don't overwrite existing nodes.
 				pChildNode->AppendAttrFrom( it2->first, it2->second->Copy(), false );
 			}
 		}
