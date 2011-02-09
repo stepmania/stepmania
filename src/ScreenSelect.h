@@ -23,14 +23,9 @@ public:
 
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;
-	virtual void UpdateSelectableChoices() = 0;		// derived screens must handle this
+	virtual void UpdateSelectableChoices() = 0; // derived screens must handle this
 
-	vector<GameCommand>	m_aGameCommands;		// derived classes should look here for what choices are available
-#if defined(SSC_FUTURES)
-	// this is gonna become awkward... -aj
-#else
-	vector<GameCommand>	m_aGameCommandsB; // only used if the theme requires a second list
-#endif
+	vector<GameCommand>	m_aGameCommands; // derived classes should look here for what choices are available
 
 	vector<RString>		m_asSubscribedMessages;
 
