@@ -18,6 +18,7 @@ sm-ssc v1.2.1 | 201102??
 * [ScreenNetSelectMusic] Reworked the input on this screen. [AJ]
   Left and Right still move the wheel. Up and Down now change the difficulty
   using CodeDetector. The Options menu is now accessed with the Select button.
+* [ScreenNetSelectMusic] Added MusicWheelType metric. [AJ]
 
 20110201
 --------
