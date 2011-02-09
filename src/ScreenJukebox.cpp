@@ -42,7 +42,6 @@ void ScreenJukebox::SetSong()
 	if ( vSongs.size() == 0 )
 		vSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
 
-
 	// Calculate what difficulties to show
 	vector<Difficulty> vDifficultiesToShow;
 	if( m_bDemonstration )
@@ -186,9 +185,8 @@ void ScreenJukebox::Init()
 	int Benchmark = 0;
 	if( Benchmark )
 	{
-		/* Note that you also need to make sure you benchmark with the
-		 * same notes. I (who? -aj) use a copy of Maxx Unlimited with only heavy notes
-		 * included.*/
+		/* Note that you also need to make sure you benchmark with the same notes.
+		 * I (who? -aj) use a copy of Maxx Unlimited with only heavy notes included.*/
 		FOREACH_EnabledPlayer( p )
 		{
 			/* Lots and lots of arrows. This might even bias to arrows a little
@@ -206,6 +204,7 @@ void ScreenJukebox::Init()
 		// Reset score between songs.
 		STATSMAN->m_CurStageStats.m_player[p].ResetScoreForLesson();
 
+		// This eats any noteskins that may have been set in ScreenJukeboxMenu. -aj
 		if( GAMESTATE->m_bJukeboxUsesModifiers )
 		{
 			PlayerOptions po;
