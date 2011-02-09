@@ -23,6 +23,7 @@ static ThemeMetric<float>	BRAKE_MOD_MIN_CLAMP( "ArrowEffects", "BrakeModMinClamp
 static ThemeMetric<float>	BRAKE_MOD_MAX_CLAMP( "ArrowEffects", "BrakeModMaxClamp" );
 static ThemeMetric<float>	WAVE_MOD_MAGNITUDE( "ArrowEffects", "WaveModMagnitude" );
 static ThemeMetric<float>	WAVE_MOD_HEIGHT( "ArrowEffects", "WaveModHeight" );
+static ThemeMetric<bool>	QUANTIZE_ARROW_Y( "ArrowEffects", "QuantizeArrowYPosition");
 
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
@@ -318,9 +319,8 @@ float ArrowEffects::GetYPos( const PlayerState* pPlayerState, int iCol, float fY
 	// In beware's DDR Extreme-focused fork of StepMania 3.9, this value is
 	// floored, making arrows show on integer Y coordinates. Supposedly it makes
 	// the arrows look better, but testing needs to be done.
-	// todo: make this a noteskin metric ("QuantizeArrowYPosition") -aj
-	return f;
-	//return floor(f);
+	// todo: make this a noteskin metric instead of a theme metric? -aj
+	return QUANTIZE_ARROW_Y ? floor(f) : f;
 }
 
 float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCol, float YPos, float fYReverseOffsetPixels )

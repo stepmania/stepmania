@@ -18,6 +18,7 @@ sm-ssc v1.2.1 | 201102??
 * [ScreenOptionsMemoryCard] Added three strings: "(no label)", "size ???", and
   "%dMB". [AJ]
 * [ScreenSelectMusic] Added RouletteTimerSeconds metric. [AJ]
+* [ArrowEffects] Added QuantizeArrowYPosition metric. [AJ]
 
 20110208
 --------
