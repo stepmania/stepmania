@@ -73,6 +73,7 @@ protected:
 	ThemeMetric<SampleMusicPreviewMode> SAMPLE_MUSIC_PREVIEW_MODE;
 	ThemeMetric<float>		SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS;
 	ThemeMetric<bool>		DO_ROULETTE_ON_MENU_TIMER;
+	ThemeMetric<float>		ROULETTE_TIMER_SECONDS;
 	ThemeMetric<bool>		ALIGN_MUSIC_BEATS;
 	ThemeMetric<RString>	CODES;
 	ThemeMetric<RString>	MUSIC_WHEEL_TYPE;

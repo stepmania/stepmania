@@ -76,6 +76,7 @@ void ScreenSelectMusic::Init()
 	SAMPLE_MUSIC_PREVIEW_MODE.Load( m_sName, "SampleMusicPreviewMode" );
 	SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS.Load( m_sName, "SampleMusicFallbackFadeInSeconds" );
 	DO_ROULETTE_ON_MENU_TIMER.Load( m_sName, "DoRouletteOnMenuTimer" );
+	ROULETTE_TIMER_SECONDS.Load( m_sName, "RouletteTimerSeconds" );
 	ALIGN_MUSIC_BEATS.Load( m_sName, "AlignMusicBeat" );
 	CODES.Load( m_sName, "Codes" );
 	MUSIC_WHEEL_TYPE.Load( m_sName, "MusicWheelType" );
@@ -1068,15 +1069,13 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		if( m_MusicWheel.IsRouletting() )
 		{
 			MenuStart( InputEventPlus() );
-			// todo: make this value a metric -aj
-			m_MenuTimer->SetSeconds( 15 );
+			m_MenuTimer->SetSeconds( ROULETTE_TIMER_SECONDS );
 			m_MenuTimer->Start();
 		}
 		else if( DO_ROULETTE_ON_MENU_TIMER  &&  m_MusicWheel.GetSelectedSong() == NULL  &&  m_MusicWheel.GetSelectedCourse() == NULL )
 		{
 			m_MusicWheel.StartRoulette();
-			// todo: make this value a metric -aj
-			m_MenuTimer->SetSeconds( 15 );
+			m_MenuTimer->SetSeconds( ROULETTE_TIMER_SECONDS );
 			m_MenuTimer->Start();
 		}
 		else

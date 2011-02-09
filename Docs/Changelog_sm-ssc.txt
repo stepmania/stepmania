@@ -13,6 +13,12 @@ _____________________________________________________________________________
 sm-ssc v1.2.1 | 201102??
 --------------------------------------------------------------------------------
 
+20110209
+--------
+* [ScreenOptionsMemoryCard] Added three strings: "(no label)", "size ???", and
+  "%dMB". [AJ]
+* [ScreenSelectMusic] Added RouletteTimerSeconds metric. [AJ]
+
 20110208
 --------
 * [ScreenNetSelectMusic] Reworked the input on this screen. [AJ]
