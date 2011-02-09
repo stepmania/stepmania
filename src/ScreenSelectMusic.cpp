@@ -1673,20 +1673,19 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		g_sCDTitlePath = ""; // none
 
-		if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+		if( SAMPLE_MUSIC_PREVIEW_MODE == SampleMusicPreviewMode_LastSong )
 		{
-			m_fSampleStartSeconds = 0;
-			m_fSampleLengthSeconds = -1;
-		}
-		else
-		{
-			// HACK: Make random music work in LastSong mode (IDK if this is
-			// accurate or not) -aj
+			// HACK: Make random music work in LastSong mode. -aj
 			if( m_sSampleMusicToPlay == m_sRandomMusicPath )
 			{
 				m_fSampleStartSeconds = 0;
 				m_fSampleLengthSeconds = -1;
 			}
+		}
+		else
+		{
+			m_fSampleStartSeconds = 0;
+			m_fSampleLengthSeconds = -1;
 		}
 
 		switch( m_MusicWheel.GetSelectedType() )
