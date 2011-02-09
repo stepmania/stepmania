@@ -1,4 +1,4 @@
-Noteskin elements Reference:
+[Noteskin Elements Reference]
 { Taps }
 button Tap Note
 button Tap Mine
@@ -35,6 +35,8 @@ button Roll Body Inactive
 button Roll Bottomcap Inactive
 button Roll Tail Inactive
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 { button }
 --dance--
 Left
@@ -50,6 +52,15 @@ UpRight
 Center
 DownLeft
 DownRight
+
+--kb7--
+Key1
+Key2
+Key3
+Key4
+Key5
+Key6
+Key7
 
 --ez2--
 FootUpLeft
@@ -68,7 +79,14 @@ UpRight
 Right
 
 --ds3ddx--
-
+HandLeft
+FootDownLeft
+FootUpLeft
+HandUp
+HandDown
+FootUpRight
+FootDownRight
+HandRight
 
 --beat--
 Key1
@@ -82,11 +100,32 @@ Scratch up
 Scratch down
 
 --maniax--
-
+HandUpLeft
+HandUpRight
+HandLrLeft
+HandLrRight
 
 --techno--
+Left
+Right
+Up
+Down
+UpLeft
+UpRight
+Center
+DownLeft
+DownRight
 
 --popn--
+Left White
+Left Yellow
+Left Green
+Left Blue
+Red
+Right Blue
+Right Green
+Right Yellow
+Right White
 
 --guitar-- (not enabled yet)
 Fret1
@@ -96,3 +135,11 @@ Fret4
 Fret5
 
 --lights-- (rofl)
+MarqueeUpLeft
+MarqueeUpRight
+MarqueeLrLeft
+MarqueeLrRight
+ButtonsLeft
+ButtonsRight
+BassLeft
+BassRight
