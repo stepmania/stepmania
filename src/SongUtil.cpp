@@ -649,9 +649,9 @@ void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, S
 	{
 		RString val = GetSectionNameFromSongAndSort( vpSongsInOut[i], so );
 
-		/* Make sure 0-9 comes first and OTHER comes last. */
+		// Make sure 0-9 comes first and OTHER comes last.
 		if( val == "0-9" )			val = "0";
-		else if( val == sOther )    val = "2";
+		else if( val == sOther )	val = "2";
 		else						val = "1" + MakeSortString(val);
 
 		g_mapSongSortVal[vpSongsInOut[i]] = val;
@@ -666,25 +666,20 @@ void SongUtil::SortSongPointerArrayByStepsTypeAndMeter( vector<Song*> &vpSongsIn
 	g_mapSongSortVal.clear();
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 	{
-		/* Ignore locked steps. */
+		// Ignore locked steps.
 		const Steps* pSteps = GetClosestNotes( vpSongsInOut[i], st, dc, true );
 		RString &s = g_mapSongSortVal[vpSongsInOut[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 
-		/* 
-		 * pSteps may not be exactly the difficulty we want; for example, we may
-		 * be sorting by Hard difficulty and a song may have no Hard steps.
-		 *
+		/* pSteps may not be exactly the difficulty we want; for example, we
+		 * may be sorting by Hard difficulty and a song may have no Hard steps.
 		 * In this case, we can end up with unintuitive ties; for example, pSteps
 		 * may be Medium with a meter of 5, which will sort it among the 5-meter
 		 * Hard songs.  Break the tie, by adding the difficulty to the sort as
-		 * well.  That way, we'll always put Medium 5s before Hard 5s.  If all
-		 * songs are using the preferred difficulty (dc), this will be a no-op.
-		 */
+		 * well. That way, we'll always put Medium 5s before Hard 5s. If all
+		 * songs are using the preferred difficulty (dc), this will be a no-op. */
 		s += ssprintf( "%c", (pSteps? pSteps->GetDifficulty():0) + '0' );
 
-		// ???: will this cause a crash with player 2 only? -aj
-		// no, but I'm not sure if it causes problems either...
 		if( PREFSMAN->m_bSubSortByNumSteps )
 			s += ssprintf("%06.0f",pSteps ? pSteps->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds] : 0);
 	}
@@ -775,7 +770,7 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 	FOREACH_CONST( Steps*, v, s )
 	{
 		if( pSteps == *s )
-			continue;	// don't compare name against ourself
+			continue; // don't compare name against ourself
 
 		if( (*s)->GetDescription() == sAnswer )
 		{
@@ -792,11 +787,11 @@ bool SongUtil::ValidateCurrentStepsDescription( const RString &sAnswer, RString 
 	if( sAnswer.empty() )
 		return true;
 
-	/* Don't allow duplicate edit names within the same StepsType; edit names uniquely
-	 * identify the edit. */
+	/* Don't allow duplicate edit names within the same StepsType; edit names
+	 * uniquely identify the edit. */
 	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 
-	/* If unchanged: */
+	// If unchanged:
 	if( pSteps->GetDescription() == sAnswer )
 		return true;
 
@@ -867,8 +862,8 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 	FOREACH( const Style*, vpPossibleStyles, s )
 		vStepsTypes.insert( (*s)->m_StepsType );
 
-	/* filter out hidden StepsTypes, and remove steps that we don't
-	 * have enough stages left to play. */
+	/* filter out hidden StepsTypes, and remove steps that we don't have enough
+	 * stages left to play. */
 	// this being const may have caused some problems... -aj
 	const vector<StepsType> &vstToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
 	FOREACHS( StepsType, vStepsTypes, st )
@@ -989,8 +984,8 @@ Song *SongID::ToSong() const
 	Song *pRet = NULL;
 	if( !m_Cache.Get(&pRet) )
 	{
-		// HACK for backwards compatibility:
-		// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
+		// HACK for backwards compatibility: Re-add the leading "/".
+		// 2005/05/21 file layer changes added a leading slash.
 		RString sDir2 = sDir;
 		if( sDir2.Left(1) != "/" )
 			sDir2 = "/" + sDir2;
@@ -1005,9 +1000,7 @@ Song *SongID::ToSong() const
 XNode* SongID::CreateNode() const
 {
 	XNode* pNode = new XNode( "Song" );
-
 	pNode->AppendAttr( "Dir", sDir );
-
 	return pNode;
 }
 
@@ -1059,7 +1052,6 @@ namespace
 }
 
 LUA_REGISTER_NAMESPACE( SongUtil )
-
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
