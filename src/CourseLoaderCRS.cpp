@@ -99,6 +99,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				out.m_iCustomMeter[cd] = max( atoi(sParams[2]), 0 );
 			}
 		}
+		// todo: add COMBO and COMBOMODE? -aj
 
 		else if( 0 == stricmp(sValueName, "MODS") )
 		{
