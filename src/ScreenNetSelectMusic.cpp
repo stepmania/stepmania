@@ -46,18 +46,10 @@ void ScreenNetSelectMusic::Init()
 
 	SAMPLE_MUSIC_PREVIEW_MODE.Load( m_sName, "SampleMusicPreviewMode" );
 	CODES.Load( m_sName, "Codes" );
+	MUSIC_WHEEL_TYPE.Load( m_sName, "MusicWheelType" );
 
 	FOREACH_EnabledPlayer (p)
 	{
-		/*
-		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
-		m_DifficultyIcon[p].Load( THEME->GetPathG( "ScreenSelectMusic",
-												   ssprintf("difficulty icons 1x%d",
-															NUM_Difficulty)) );
-		LOAD_ALL_COMMANDS_AND_SET_XY( m_DifficultyIcon[p] );
-		this->AddChild( &m_DifficultyIcon[p] );
-		ON_COMMAND( m_DifficultyIcon[p] );
-		*/
 		m_Difficulty[p] = GAMESTATE->m_PreferredDifficulty[p];
 
 		m_StepsDisplays[p].SetName( ssprintf("StepsDisplayP%d",p+1) );
@@ -67,7 +59,7 @@ void ScreenNetSelectMusic::Init()
 	}
 
 	m_MusicWheel.SetName( "MusicWheel" );
-	m_MusicWheel.Load( "OnlineMusicWheel" );
+	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_MusicWheel );
 	m_MusicWheel.BeginScreen();
 	ON_COMMAND( m_MusicWheel );
@@ -154,6 +146,7 @@ void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 	{
 		NSMAN->ReportNSSOnOff(3);
 		GAMESTATE->m_EditMode = EditMode_Full;
+		// todo: allow themers to define options screen -aj
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
 	}
 
@@ -445,7 +438,6 @@ void ScreenNetSelectMusic::TweenOffScreen()
 	FOREACH_EnabledPlayer (pn)
 	{
 		OFF_COMMAND( m_StepsDisplays[pn] );
-		//OFF_COMMAND( m_DifficultyIcon[pn] );
 		OFF_COMMAND( m_ModIconRow[pn] );
 	}
 
@@ -504,7 +496,12 @@ void ScreenNetSelectMusic::MusicChanged()
 
 		SOUND->StopMusic();
 		// todo: handle playing section music correctly. -aj
-		// SOUND->PlayMusic( m_sSectionMusicPath, NULL, true, 0, -1 );
+		/*
+		if(SOUND->GetMusicPath().CompareNoCase(m_sSectionMusicPath))
+		{
+			SOUND->PlayMusic( m_sSectionMusicPath, NULL, true, 0, -1 );
+		}
+		*/
 		return;
 	} 
 	m_BPMDisplay.SetBpmFromSong( GAMESTATE->m_pCurSong );
@@ -513,7 +510,7 @@ void ScreenNetSelectMusic::MusicChanged()
 
 	FOREACH_EnabledPlayer(pn)
 	{
-		// xxx: using the old difficulty reset code -aj
+		// Wondering if this can be simplified... -aj
 		m_Difficulty[pn] = GAMESTATE->m_PreferredDifficulty[pn];
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 		vector<Steps*> MultiSteps;
@@ -555,7 +552,7 @@ void ScreenNetSelectMusic::MusicChanged()
 	SOUND->StopMusic();
 	if( GAMESTATE->m_pCurSong->HasMusic() )
 	{
-		if(SOUND->GetMusicPath().CompareNoCase(GAMESTATE->m_pCurSong->GetMusicPath())) // dont play the same sound over and over
+		if(SOUND->GetMusicPath().CompareNoCase(GAMESTATE->m_pCurSong->GetMusicPath())) // don't play the same sound over and over
 		{
 			SOUND->StopMusic();
 			SOUND->PlayMusic(

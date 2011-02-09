@@ -46,17 +46,14 @@ protected:
 	RString m_sRandomMusicPath;
 
 	ThemeMetric<RString>	CODES;
+	ThemeMetric<RString>	MUSIC_WHEEL_TYPE;
 
 private:
 	MusicWheel m_MusicWheel;
 
-	// todo: replace difficulty icons with StepsDisplay -aj
-	//Difficulty Icon(s)
-	//DifficultyIcon m_DifficultyIcon[NUM_PLAYERS];
 	Difficulty m_Difficulty[NUM_PLAYERS];
-
-	void UpdateDifficulty( PlayerNumber pn );
 	StepsDisplay m_StepsDisplays[NUM_PLAYERS];
+	void UpdateDifficulty( PlayerNumber pn );
 
 	RageSound m_soundChangeOpt;
 	RageSound m_soundChangeSel;
