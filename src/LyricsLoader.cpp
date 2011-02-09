@@ -8,8 +8,9 @@
 
 #include <map>
 
-// TODO: Use marker for default color instead of a specific color that may accidentally get written back into a lyrics file.
-#define LYRICS_DEFAULT_COLOR      THEME->GetMetricC("ScreenGameplay","LyricDisplayDefaultColor")
+// TODO: Use a marker for default color instead of a specific color that may
+// accidentally get written back into a lyrics file.
+#define LYRICS_DEFAULT_COLOR	THEME->GetMetricC("ScreenGameplay","LyricDisplayDefaultColor")
 
 static int CompareLyricSegments(const LyricSegment &seg1, const LyricSegment &seg2)
 {
@@ -78,11 +79,13 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 			continue;
 		}
 
-		// todo: handle [offset:xxxx] (where xxxx is in milliseconds) tag? -aj
+		// todo: handle [offset:xxxx] tag? -aj (xxxx is milliseconds)
+		// offsets each timestamp after the offset by that amount.
+		//float fLyricOffset = 0.0f;
 
 		{
-			/* If we've gotten this far, and no other statement caught
-			* this value before this does, assume it's a time value. */
+			/* If we've gotten this far, and no other statement caught this
+			 * value before this does, assume it's a time value. */
 
 			LyricSegment seg;
 			seg.m_Color = CurrentColor;
