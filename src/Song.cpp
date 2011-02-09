@@ -38,9 +38,9 @@ const int FILE_CACHE_VERSION = 162;	// increment this to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
-static Preference<float>	g_fLongVerSongSeconds( "LongVerSongSeconds",		60*2.5f );
-static Preference<float>	g_fMarathonVerSongSeconds( "MarathonVerSongSeconds",	60*5.f );
-static Preference<bool>		g_BackUpAllSongSaves( "BackUpAllSongSaves",		false );
+static Preference<float>	g_fLongVerSongSeconds( "LongVerSongSeconds", 60*2.5f );
+static Preference<float>	g_fMarathonVerSongSeconds( "MarathonVerSongSeconds", 60*5.f );
+static Preference<bool>	g_BackUpAllSongSaves( "BackUpAllSongSaves", false );
 
 static const char *InstrumentTrackNames[] = {
 	"Guitar",
@@ -91,7 +91,7 @@ void Song::DetachSteps()
 		m_vpStepsByType[st].clear();
 }
 
-/* Reset to an empty song. */
+// Reset to an empty song.
 void Song::Reset()
 {
 	FOREACH( Steps*, m_vpSteps, s )
@@ -166,23 +166,20 @@ RString Song::GetCacheFilePath() const
 	return SongCacheIndex::GetCacheFilePath( "Songs", m_sSongDir );
 }
 
-/* Get a path to the SM containing data for this song.  It might
- * be a cache file. */
+// Get a path to the SM containing data for this song. It might be a cache file.
 const RString &Song::GetSongFilePath() const
 {
 	ASSERT( !m_sSongFileName.empty() );
 	return m_sSongFileName;
 }
 
-/* Hack: This should be a parameter to TidyUpData, but I don't want to
- * pull in <set> into Song.h, which is heavily used. */
+/* Hack: This should be a parameter to TidyUpData, but I don't want to pull in
+ * <set> into Song.h, which is heavily used. */
 static set<RString> BlacklistedImages;
 
-/*
- * If PREFSMAN->m_bFastLoad is true, always load from cache if possible. Don't read
- * the contents of sDir if we can avoid it.  That means we can't call HasMusic(),
- * HasBanner() or GetHashForDirectory().
- *
+/* If PREFSMAN->m_bFastLoad is true, always load from cache if possible.
+ * Don't read the contents of sDir if we can avoid it. That means we can't call
+ * HasMusic(), HasBanner() or GetHashForDirectory().
  * If true, check the directory hash and reload the song from scratch if it's changed.
  */
 bool Song::LoadFromSongDir( RString sDir )
@@ -204,9 +201,7 @@ bool Song::LoadFromSongDir( RString sDir )
 	m_sGroupName = sDirectoryParts[sDirectoryParts.size()-3];	// second from last item
 	ASSERT( m_sGroupName != "" );
 
-	//
-	// First look in the cache for this song (without loading NoteData)
-	//
+	// First, look in the cache for this song (without loading NoteData)
 	unsigned uCacheHash = SONGINDEX->GetCacheHash(m_sSongDir);
 	bool bUseCache = true;
 	RString sCacheFilePath = GetCacheFilePath();
@@ -224,11 +219,9 @@ bool Song::LoadFromSongDir( RString sDir )
 	}
 	else
 	{
-		//
 		// There was no entry in the cache for this song, or it was out of date.
 		// Let's load it from a file, then write a cache entry.
-		//
-		
+
 		if( !NotesLoader::LoadFromDir(sDir, *this, BlacklistedImages) )
 		{
 			LOG->UserLog( "Song", sDir, "has no SM, DWI, BMS, or KSF files." );
@@ -254,27 +247,25 @@ bool Song::LoadFromSongDir( RString sDir )
 			sCacheFilePath = RString();
 	}
 
-
-	
 	FOREACH( Steps*, m_vpSteps, s )
 	{
 		(*s)->SetFilename( sCacheFilePath );
 
-		/* Compress all Steps.  During initial caching, this will remove cached NoteData;
-		 * during cached loads, this will just remove cached SMData. */
+		/* Compress all Steps. During initial caching, this will remove cached
+		 * NoteData; during cached loads, this will just remove cached SMData. */
 		(*s)->Compress();
 	}
 
-	/* Load the cached banners, if it's not loaded already. */
+	// Load the cached banners, if it's not loaded already.
 	if( PREFSMAN->m_BannerCache == BNCACHE_LOW_RES_PRELOAD && m_bHasBanner )
 		BANNERCACHE->LoadBanner( GetBannerPath() );
-	/* Load the cached background, if it's not loaded already. */
+	// Load the cached background, if it's not loaded already.
 	/*
 	if( PREFSMAN->m_BackgroundCache == BGCACHE_LOW_RES_PRELOAD && m_bHasBackground )
 		BACKGROUNDCACHE->LoadBackground( GetBackgroundPath() );
 	*/
 
-	/* Add AutoGen pointers.  (These aren't cached.) */
+	// Add AutoGen pointers. (These aren't cached.)
 	AddAutoGenNotes();
 
 	if( !m_bHasMusic )
@@ -356,25 +347,25 @@ static void GetImageDirListing( RString sPath, vector<RString> &AddTo )
 	GetDirListing( sPath + ".gif", AddTo, false, false );
 }
 
-/* Fix up song paths.  If there's a leading "./", be sure to keep it: it's
+/* Fix up song paths. If there's a leading "./", be sure to keep it: it's
  * a signal that the path is from the root directory, not the song directory.
  * Other than a leading "./", song paths must never contain "." or "..". */
 void FixupPath( RString &path, const RString &sSongPath )
 {
-	/* Replace backslashes with slashes in all paths. */	
+	// Replace backslashes with slashes in all paths.
 	FixSlashesInPlace( path );
 
 	/* Many imported files contain erroneous whitespace before or after
-	 * filenames.  Paths usually don't actually start or end with spaces,
+	 * filenames. Paths usually don't actually start or end with spaces,
 	 * so let's just remove it. */
 	Trim( path );
 }
 
-/* Songs in BlacklistImages will never be autodetected as song images. */
+// Songs in BlacklistImages will never be autodetected as song images.
 void Song::TidyUpData()
 {
-	/* We need to do this before calling any of HasMusic, HasHasCDTitle, etc. */
-	ASSERT_M( m_sSongDir.Left(3) != "../", m_sSongDir ); /* meaningless */
+	// We need to do this before calling any of HasMusic, HasHasCDTitle, etc.
+	ASSERT_M( m_sSongDir.Left(3) != "../", m_sSongDir ); // meaningless
 	FixupPath( m_sSongDir, "" );
 	FixupPath( m_sMusicFile, m_sSongDir );
 	FOREACH_ENUM( InstrumentTrack, i )
@@ -399,7 +390,8 @@ void Song::TidyUpData()
 		{
 			int idx = 0;
 			/* If the first song is "intro", and we have more than one available,
-			 * don't use it--it's probably a KSF intro music file, which we don't support. */
+			 * don't use it--it's probably a KSF intro music file, which we don't
+			 * (yet) support. */
 			if( arrayPossibleMusic.size() > 1 &&
 				!arrayPossibleMusic[0].Left(5).CompareNoCase("intro") )
 				++idx;
@@ -442,7 +434,7 @@ void Song::TidyUpData()
 	}
 	else	// ! HasMusic()
 	{
-		m_fMusicLengthSeconds = 100;		// guess
+		m_fMusicLengthSeconds = 100; // guess
 		LOG->UserLog( "Song", GetSongDir(), "has no music file; guessing at %f seconds", m_fMusicLengthSeconds );
 	}
 
@@ -460,7 +452,7 @@ void Song::TidyUpData()
 	Trim( m_sSubTitle );
 	Trim( m_sArtist );
 
-	/* Fall back on the song directory name. */
+	// Fall back on the song directory name.
 	if( m_sMainTitle == "" )
 		NotesLoader::GetMainAndSubTitlesFromFullTitle( Basename(this->GetSongDir()), m_sMainTitle, m_sSubTitle );
 
@@ -474,8 +466,8 @@ void Song::TidyUpData()
 
 		m_Timing.AddBPMSegment( BPMSegment(0, 60) );
 	}
-	
-	/* Make sure the first BPM segment starts at beat 0. */
+
+	// Make sure the first BPM segment starts at beat 0.
 	if( m_Timing.m_BPMSegments[0].m_iStartRow != 0 )
 		m_Timing.m_BPMSegments[0].m_iStartRow = 0;
 
@@ -499,16 +491,17 @@ void Song::TidyUpData()
 	if( m_fMusicSampleLengthSeconds <= 0.00f )
 		m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 
-	// Here's the problem:  We have a directory full of images.  We want to determine which 
-	// image is the banner, which is the background, and which is the CDTitle.
+	// Here's the problem:  We have a directory full of images. We want to
+	// determine which image is the banner, which is the background, and which
+	// is the CDTitle.
 
 	CHECKPOINT_M( "Looking for images..." );
 
 	// First, check the file name for hints.
 	if( !HasBanner() )
 	{
-		/* If a nonexistant banner file is specified, and we can't find a replacement,
-		 * don't wipe out the old value. */
+		/* If a nonexistant banner file is specified, and we can't find a
+		 * replacement, don't wipe out the old value. */
 //		m_sBannerFile = "";
 
 		// find an image with "banner" in the file name
@@ -541,30 +534,29 @@ void Song::TidyUpData()
 		// find an image with "jacket" or "albumart" in the filename.
 		vector<RString> arrayPossibleJackets;
 		GetImageDirListing( m_sSongDir + "jk_*", arrayPossibleJackets );
-		//GetImageDirListing( m_sSongDir + "*_jk", arrayPossibleJackets );
 		GetImageDirListing( m_sSongDir + "*jacket*", arrayPossibleJackets );
 		GetImageDirListing( m_sSongDir + "*albumart*", arrayPossibleJackets );
 		if( !arrayPossibleJackets.empty() )
-			m_sBackgroundFile = arrayPossibleJackets[0];
-	}
-	*/
-
-	/*
-	if( !HasDisc() )
-	{
-		// disc means the rectangular-style graphic.
+			m_sJacketFile = arrayPossibleJackets[0];
 	}
 	*/
 
 	/*
 	if( !HasCDImage() )
 	{
-		// CD image, a la ddr 1st-3rd
+		// CD image, a la ddr 1st-3rd (not to be confused with CDTitles)
 		// find an image with "cd" at the end of the filename.
 		vector<RString> arrayPossibleCDImages;
 		GetImageDirListing( m_sSongDir + "* CD", arrayPossibleCDImages );
 		if( !arrayPossibleCDImages.empty() )
-			m_sCDTFile = arrayPossibleCDImages[0];
+			m_sCDFile = arrayPossibleCDImages[0];
+	}
+	*/
+
+	/*
+	if( !HasDisc() )
+	{
+		// a rectangular graphic, not to be confused with CDImage above.
 	}
 	*/
 
