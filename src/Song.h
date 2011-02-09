@@ -93,10 +93,9 @@ public:
 	// Directory this song data came from:
 	const RString &GetSongDir() const { return m_sSongDir; }
 
-	/* Filename associated with this file. This will always have
-	 * an .SM extension. If we loaded an .SM, this will point to 
-	 * it, but if we loaded any other type, this will point to a
-	 * generated .SM filename. */
+	/* Filename associated with this file. This will always have an .SM extension.
+	 * If we loaded an .SM, this will point to it, but if we loaded any other
+	 * type, this will point to a generated .SM filename. */
 	RString m_sSongFileName;
 
 	RString m_sGroupName;
@@ -144,7 +143,7 @@ public:
 	RString m_sBannerFile;		// typically a 16:5 ratio graphic (e.g. 256x80)
 	//RString m_sJacketFile;	// typically square (e.g. 192x192, 256x256)
 	//RString m_sDiscFile;		// rectangular (e.g. 256x192 [Pump], 200x150 [MGD3])
-	//RString m_sCDFile;		// square (e.g. 128x128 [DDR 3rd])
+	//RString m_sCDFile;		// square (e.g. 128x128 [DDR 1st-3rd])
 	RString m_sLyricsFile;
 	RString m_sBackgroundFile;
 	RString m_sCDTitleFile;
