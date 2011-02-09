@@ -18,8 +18,8 @@
 
 static RString BackgroundChangeToString( const BackgroundChange &bgc )
 {
-	// TODO: Technically we need to double-escape the filename (because it might contain '=') and then
-	// unescape the value returned by the MsdFile.
+	// TODO: Technically we need to double-escape the filename (because it might
+	// contain '=') and then unescape the value returned by the MsdFile.
 	RString s = ssprintf( 
 		"%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s=%s=%s", 
 		bgc.m_fStartBeat, 

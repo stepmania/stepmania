@@ -2606,7 +2606,7 @@ static const Game g_Game_Popn =
 
 /** Guitar5 ******************************************************************/
 //ThemeMetric<int>	GUITAR5_COL_SPACING	("ColumnSpacing","Guitar5");
-static const int GUITAR5_COL_SPACING = 48; // todo: get a proper value? -aj
+static const int GUITAR5_COL_SPACING = 48;
 
 static const Style g_Style_Guitar_Five =
 {	// STYLE_GUITAR_FIVE
@@ -3051,7 +3051,7 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 	sStepsType.MakeLower();
 
 	// TODO: Format specific hacks should be moved into the file loader for that format.
-	// If i'm assuming this correctly, these only apply to .sm files: -aj
+	// If i'm assuming this correctly, these two only apply to .sm files: -aj
 
 	// HACK: We eliminated "ez2-single-hard", but we should still handle it.
 	if( sStepsType == "ez2-single-hard" )

@@ -69,7 +69,7 @@ void ModIcon::Set( const RString &_sText )
 	m_sprEmpty->SetVisible( bVacant );
 
 	m_text.SetText( sText );
-	// This line  makes Lua option rows crash: -aj
+	// This line makes Lua option rows crash: -aj
 	m_text.CropToWidth( CROP_TEXT_TO_WIDTH );
 }
 

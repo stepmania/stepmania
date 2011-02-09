@@ -77,7 +77,7 @@ static const OptionColumnEntry g_OptionColumnEntries[] =
 	{"Brake",		0},
 	{"Wave",		0},
 	{"Expand",		0},
-	{"Boomerang",		0},
+	{"Boomerang",	0},
 	//--------------------//
 	{"Drunk",		1},
 	{"Dizzy",		1},
@@ -89,13 +89,13 @@ static const OptionColumnEntry g_OptionColumnEntries[] =
 	{"Sudden",		2},
 	{"Stealth",		2},
 	{"Blink",		2},
-	{"RandomVanish", 	2},
+	{"RandomVanish",2},
 	//--------------------//
 	{"Mirror",		3},
 	{"Left",		3},
 	{"Right",		3},
 	{"Shuffle",		3},
-	{"SuperShuffle",	3},
+	{"SuperShuffle",3},
 	//--------------------//
 	{"Little",		4},
 	{"NoHolds",		4},
@@ -104,11 +104,11 @@ static const OptionColumnEntry g_OptionColumnEntries[] =
 	//--------------------//
 	{"Reverse",		5},
 	{"Split",		5},
-	{"Alternate",		5},
+	{"Alternate",	5},
 	{"Cross",		5},
-	{"Centered",		5},
+	{"Centered",	5},
 	//--------------------//
-	{"Incoming",		6},
+	{"Incoming",	6},
 	{"Space",		6},
 	{"Hallway",		6},
 	{"Distant",		6},
@@ -116,7 +116,7 @@ static const OptionColumnEntry g_OptionColumnEntries[] =
 
 int OptionToPreferredColumn( RString sOptionText )
 {
-	/* Speedups always go in column 0. digit ... x */
+	// Speedups always go in column 0. digit ... x
 	if( sOptionText.size() > 1 &&
 		isdigit(sOptionText[0])    &&
 		tolower(sOptionText[sOptionText.size()-1]) == 'x' )
@@ -128,7 +128,7 @@ int OptionToPreferredColumn( RString sOptionText )
 		if( g_OptionColumnEntries[i].szString == sOptionText )
 			return g_OptionColumnEntries[i].iSlotIndex;
 
-	/* This warns about C1234 and noteskins. */
+	// This warns about C1234 and noteskins.
 //	LOG->Warn("Unknown option: '%s'", sOptionText.c_str() );
 	return 0;
 }
