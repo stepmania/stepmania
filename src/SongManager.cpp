@@ -1405,7 +1405,7 @@ void SongManager::UpdatePopular()
 	}
 
 	SongUtil::SortSongPointerArrayByTitle( apBestSongs );
-	
+
 	vector<Course*> apBestCourses[NUM_CourseType];
 	FOREACH_ENUM( CourseType, ct )
 	{
