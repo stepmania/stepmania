@@ -293,7 +293,14 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\NoteSkins\dance\retrobar"
 	RMDir /r "$INSTDIR\NoteSkins\dance\retrobar-splithand_whiteblue"
 	; pump
+	RMDir /r "$INSTDIR\NoteSkins\pump\cmd"
+	RMDir /r "$INSTDIR\NoteSkins\pump\cmd-routine-p1"
+	RMDir /r "$INSTDIR\NoteSkins\pump\cmd-routine-p2"
+	RMDir /r "$INSTDIR\NoteSkins\pump\complex"
 	RMDir /r "$INSTDIR\NoteSkins\pump\default"
+	RMDir /r "$INSTDIR\NoteSkins\pump\frame5p"
+	RMDir /r "$INSTDIR\NoteSkins\pump\newextra"
+	RMDir /r "$INSTDIR\NoteSkins\pump\rhythm"
 	RMDir /r "$INSTDIR\NoteSkins\pump\simple"
 	; kb7
 	RMDir /r "$INSTDIR\NoteSkins\kb7\default"
@@ -337,6 +344,7 @@ Section "Main Section" SecMain
 	File /r /x CVS /x .svn "NoteSkins\pump\default"
 	File /r /x CVS /x .svn "NoteSkins\pump\frame5p"
 	File /r /x CVS /x .svn "NoteSkins\pump\newextra"
+	File /r /x CVS /x .svn "NoteSkins\pump\rhythm"
 	File /r /x CVS /x .svn "NoteSkins\pump\simple"
 	SetOutPath "$INSTDIR"
 
