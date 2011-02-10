@@ -32,7 +32,10 @@ r['DDR 1stMIX'] = function(params, pss)
 	local bScore = (dCombo^2+1) * 100;
 	local multLookup = { ['TapNoteScore_W1']=3, ['TapNoteScore_W2']=3, ['TapNoteScore_W3']=1 };
 	setmetatable(multLookup, ZeroIfNotFound);
-	pss:SetScore(pss:GetScore()+(bScore*multLookup[params.TapNoteScore]));
+	--if score increases above the boundaries of a 32-bit signed
+	--(about 2.15 billion), it stops increasing. Conveniently,
+	--1st Mix clamped score as well.
+	pss:SetScore(clamp(pss:GetScore()+(bScore*multLookup[params.TapNoteScore]),0,999999999));
 end;
 -----------------------------------------------------------
 --DDR 4th Mix/Extra Mix/Konamix/GB3/DDRPC Scoring
@@ -41,10 +44,11 @@ r['DDR 4thMIX'] = function(params, pss)
 	local scoreLookupTable = { ['TapNoteScore_W1']=777, ['TapNoteScore_W2']=777, ['TapNoteScore_W3']=555 };
 	setmetatable(scoreLookupTable, ZeroIfNotFound); 
 	local comboBonusForThisStep = (pss:GetCurrentCombo()+1)*333;
-	pss:SetScore(pss:GetScore()+scoreLookupTable[params.TapNoteScore]+(scoreLookupTable[params.TapNoteScore] and comboBonusForThisStep or 0));
+	pss:SetScore(clamp(pss:GetScore()+scoreLookupTable[params.TapNoteScore]+(scoreLookupTable[params.TapNoteScore] and comboBonusForThisStep or 0),0,999999999));
 end;
 -----------------------------------------------------------
 --DDR MAX2/Extreme Scoring
+--This scoring system doesn't work and is locked out.
 -----------------------------------------------------------
 r['DDR Extreme'] = function(params, pss)
 	local judgmentBase = {
@@ -97,8 +101,8 @@ r['DDR SuperNOVA 2'] = function(params, pss)
 	pss:SetScore(pss:GetScore() + (math.round(buildScore) * 10));
 end;
 -----------------------------------------------------------
---Radar Master (doesn't work in 1.2, disabled)
---don't try to "fix it up", either. you *cannot* make it work in 1.2.
+--Radar Master (doesn't work in 1.2.1, disabled)
+--don't try to "fix it up", either. you *cannot* make it work in 1.2.1.
 -----------------------------------------------------------
 r['[SSC] Radar Master'] = function(params, pss)
 	local masterTable = {
