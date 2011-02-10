@@ -28,32 +28,30 @@ protected:
 	virtual void MenuBack( const InputEventPlus &input );
 	virtual void MenuLeft( const InputEventPlus &input );
 	virtual void MenuRight( const InputEventPlus &input );
-	bool DetectCodes( const InputEventPlus &input );
+	virtual void MenuUp( const InputEventPlus &input );
+	virtual void MenuDown( const InputEventPlus &input );
+	bool LeftAndRightPressed( const PlayerNumber pn );
 
 	virtual void Update( float fDeltaTime );
 
-	void ChangeSteps( const InputEventPlus &input, int dir );
 	void MusicChanged();
 
 	void TweenOffScreen();
-
-	vector<Steps*>	m_vpSteps;
-	int				m_iSelection[NUM_PLAYERS];
 
 	ThemeMetric<SampleMusicPreviewMode> SAMPLE_MUSIC_PREVIEW_MODE;
 	RString m_sSectionMusicPath;
 	RString m_sRouletteMusicPath;
 	RString m_sRandomMusicPath;
 
-	ThemeMetric<RString>	CODES;
 	ThemeMetric<RString>	MUSIC_WHEEL_TYPE;
 
 private:
 	MusicWheel m_MusicWheel;
 
-	Difficulty m_Difficulty[NUM_PLAYERS];
 	StepsDisplay m_StepsDisplays[NUM_PLAYERS];
-	void UpdateDifficulty( PlayerNumber pn );
+	Difficulty m_DC[NUM_PLAYERS];
+
+	void UpdateDifficulties( PlayerNumber pn );
 
 	RageSound m_soundChangeOpt;
 	RageSound m_soundChangeSel;
@@ -62,7 +60,7 @@ private:
 	BPMDisplay m_BPMDisplay;
 	ModIconRow m_ModIconRow[NUM_PLAYERS];
 
-	Song* m_cSong;
+	Song * m_cSong;
 
 	bool m_bInitialSelect;
 	bool m_bAllowInput;

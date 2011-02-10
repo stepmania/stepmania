@@ -10,8 +10,12 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.2.1 | 201102??
+sm-ssc v1.2.1 | 2011021?
 --------------------------------------------------------------------------------
+
+20110210
+--------
+* Had to go back on the ScreenNetSelectMusic controls commit. My apologies. [AJ]
 
 20110209
 --------
@@ -22,9 +26,6 @@ sm-ssc v1.2.1 | 201102??
 
 20110208
 --------
-* [ScreenNetSelectMusic] Reworked the input on this screen. [AJ]
-  Left and Right still move the wheel. Up and Down now change the difficulty
-  using CodeDetector. The Options menu is now accessed with the Select button.
 * [ScreenNetSelectMusic] Added MusicWheelType metric. [AJ]
 
 20110201
