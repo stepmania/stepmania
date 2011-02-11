@@ -123,6 +123,9 @@ public:
 	// "title subtitle"
 	RString GetDisplayFullTitle() const;
 	RString GetTranslitFullTitle() const;
+	
+	// allow versioning with the song.
+	float	m_fVersion;
 
 	RString m_sGenre;
 

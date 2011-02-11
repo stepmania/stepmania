@@ -212,6 +212,11 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					out.m_sArtistTranslit = sParams[1];
 				}
 				
+				else if( sValueName=="VERSION" )
+				{
+					out.m_fVersion = StringToFloat( sParams[1] );
+				}
+				
 				else if( sValueName=="GENRE" )
 				{
 					out.m_sGenre = sParams[1];

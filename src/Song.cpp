@@ -52,6 +52,8 @@ static const char *InstrumentTrackNames[] = {
 XToString( InstrumentTrack );
 StringToX( InstrumentTrack );
 
+const static float VERSION_NUMBER = 0.5f;
+
 Song::Song()
 {
 	FOREACH_BackgroundLayer( i )
@@ -59,6 +61,7 @@ Song::Song()
 	m_ForegroundChanges = AutoPtrCopyOnWrite<VBackgroundChange>(new VBackgroundChange);
 
 	m_LoadedFromProfile = ProfileSlot_Invalid;
+	m_fVersion = VERSION_NUMBER;
 	m_fMusicSampleStartSeconds = -1;
 	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 	m_fMusicLengthSeconds = 0;
