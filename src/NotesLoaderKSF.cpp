@@ -30,9 +30,10 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 	{
 		const MsdFile::value_t &sParams = msd.GetValue( i );
 		RString sValueName = sParams[0];
+		sValueName.MakeUpper();
 
 		// handle the data
-		if( 0==stricmp(sValueName,"TICKCOUNT") )
+		if( sValueName=="TICKCOUNT" )
 		{
 			iTickCount = atoi( sParams[1] );
 			if( iTickCount <= 0 )
@@ -41,18 +42,18 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song,
 				return false;
 			}
 		}
-		else if( 0==stricmp(sValueName,"STEP") )
+		else if( sValueName=="STEP" )
 		{
 			RString theSteps = sParams[1];
 			TrimLeft( theSteps );
 			split( theSteps, "\n", vNoteRows, true );
 		}
-		else if( 0==stricmp(sValueName,"DIFFICULTY") )
+		else if( sValueName=="DIFFICULTY" )
 		{
 			out.SetMeter( max(atoi(sParams[1]), 0) );
 		}
 		// new cases from Aldo_MX's fork:
-		else if( 0==stricmp(sValueName,"PLAYER") )
+		else if( sValueName=="PLAYER" )
 		{
 			RString sPlayer = sParams[1];
 			sPlayer.MakeLower();
@@ -349,52 +350,53 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 		RString sValueName = sParams[0];
+		sValueName.MakeUpper();
 
 		// handle the data
-		if( 0==stricmp(sValueName,"TITLE") )
+		if( sValueName=="TITLE" )
 			LoadTags(sParams[1], out);
-		else if( 0==stricmp(sValueName,"BPM") )
+		else if( sValueName=="BPM" )
 		{
 			BPM1 = StringToFloat(sParams[1]);
 			out.AddBPMSegment( BPMSegment(0, BPM1) );
 		}
-		else if( 0==stricmp(sValueName,"BPM2") )
+		else if( sValueName=="BPM2" )
 		{
 			bKIUCompliant = true;
 			BPM2 = StringToFloat( sParams[1] );
 		}
-		else if( 0==stricmp(sValueName,"BPM3") )
+		else if( sValueName=="BPM3" )
 		{
 			bKIUCompliant = true;
 			BPM3 = StringToFloat( sParams[1] );
 		}
-		else if( 0==stricmp(sValueName,"BUNKI") )
+		else if( sValueName=="BUNKI" )
 		{
 			bKIUCompliant = true;
 			BPMPos2 = StringToFloat( sParams[1] ) / 100.0f;
 		}
-		else if( 0==stricmp(sValueName,"BUNKI2") )
+		else if( sValueName=="BUNKI2" )
 		{
 			bKIUCompliant = true;
 			BPMPos3 = StringToFloat( sParams[1] ) / 100.0f;
 		}
-		else if( 0==stricmp(sValueName,"STARTTIME") )
+		else if( sValueName=="STARTTIME" )
 		{
 			SMGap1 = -StringToFloat( sParams[1] )/100;
 			out.m_Timing.m_fBeat0OffsetInSeconds = SMGap1;
 		}
 		// This is currently required for more accurate KIU BPM changes.  
-		else if( 0==stricmp(sValueName,"STARTTIME2") )
+		else if( sValueName=="STARTTIME2" )
 		{
 			bKIUCompliant = true;
 			SMGap2 = -StringToFloat( sParams[1] )/100;
 		}
-		else if ( 0==stricmp(sValueName,"STARTTIME3") )
+		else if ( sValueName=="STARTTIME3" )
 		{
 			// STARTTIME3 only ensures this is a KIU compliant simfile.
 			bKIUCompliant = true;
 		}
-		else if ( 0==stricmp(sValueName,"TICKCOUNT") )
+		else if ( sValueName=="TICKCOUNT" )
 		{
 			/* TICKCOUNT will be used below if there are DM compliant BPM changes
 			 * and stops. It will be called again in LoadFromKSFFile for the
@@ -409,7 +411,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			tcs.m_iTicks = iTickCount > ROWS_PER_BEAT ? ROWS_PER_BEAT : iTickCount;
 			out.m_Timing.AddTickcountSegment( tcs );
 		}
-		else if ( 0==stricmp(sValueName,"STEP") )
+		else if ( sValueName=="STEP" )
 		{
 			/* STEP will always be the last header in a KSF file by design. Due to
 			 * the Direct Move syntax, it is best to get the rows of notes here. */
@@ -418,29 +420,29 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 			split( theSteps, "\n", vNoteRows, true );
 		}
 
-		else if( 0==stricmp(sValueName,"DIFFICULTY") )
+		else if( sValueName=="DIFFICULTY" )
 		{
 			/* DIFFICULTY is handled only in LoadFromKSFFile.  Ignore it here. */
 			continue;
 		}
 		// New cases noted in Aldo_MX's code:
-		else if( 0==stricmp(sValueName,"MUSICINTRO") || 0==stricmp(sValueName,"INTRO") )
+		else if( sValueName=="MUSICINTRO" || sValueName=="INTRO" )
 		{
 			out.m_fMusicSampleStartSeconds = HHMMSSToSeconds( sParams[1] );
 		}
-		else if( 0==stricmp(sValueName,"TITLEFILE") )
+		else if( sValueName=="TITLEFILE" )
 		{
 			out.m_sBackgroundFile = sParams[1];
 		}
-		else if( 0==stricmp(sValueName,"DISCFILE") )
+		else if( sValueName=="DISCFILE" )
 		{
 			out.m_sBannerFile = sParams[1];
 		}
-		else if( 0==stricmp(sValueName,"SONGFILE") )
+		else if( sValueName=="SONGFILE" )
 		{
 			out.m_sMusicFile = sParams[1];
 		}
-		//else if( 0==stricmp(sValueName,"INTROFILE") )
+		//else if( sValueName=="INTROFILE" )
 		//{
 		//	nothing to add...
 		//}
