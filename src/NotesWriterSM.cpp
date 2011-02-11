@@ -239,7 +239,7 @@ static RString JoinLineList( vector<RString> &lines )
 	return join( "\r\n", lines.begin()+j, lines.end() );
 }
 
-static RString GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCache )
+static RString GetSMNotesTag( const Song &song, const Steps &in )
 {
 	vector<RString> lines;
 
@@ -271,15 +271,11 @@ static RString GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCac
 	return JoinLineList( lines );
 }
 
-bool NotesWriterSM::Write( RString sPath, const Song &out, const vector<Steps*>& vpStepsToSave, bool bSavingCache )
+bool NotesWriterSM::Write( RString sPath, const Song &out )
 {
 	int flags = RageFile::WRITE;
 
-	/* If we're not saving cache, we're saving real data, so enable SLOW_FLUSH
-	 * to prevent data loss.  If we're saving cache, this will slow things down
-	 * too much. */
-	if( !bSavingCache )
-		flags |= RageFile::SLOW_FLUSH;
+	flags |= RageFile::SLOW_FLUSH;
 
 	RageFile f;
 	if( !f.Open( sPath, flags ) )
@@ -289,23 +285,13 @@ bool NotesWriterSM::Write( RString sPath, const Song &out, const vector<Steps*>&
 	}
 
 	WriteGlobalTags( f, out );
-	if( bSavingCache )
-	{
-		f.PutLine( ssprintf( "// cache tags:" ) );
-		f.PutLine( ssprintf( "#FIRSTBEAT:%.3f;", out.m_fFirstBeat ) );
-		f.PutLine( ssprintf( "#LASTBEAT:%.3f;", out.m_fLastBeat ) );
-		f.PutLine( ssprintf( "#SONGFILENAME:%s;", out.m_sSongFileName.c_str() ) );
-		f.PutLine( ssprintf( "#HASMUSIC:%i;", out.m_bHasMusic ) );
-		f.PutLine( ssprintf( "#HASBANNER:%i;", out.m_bHasBanner ) );
-		f.PutLine( ssprintf( "#MUSICLENGTH:%.3f;", out.m_fMusicLengthSeconds ) );
-		f.PutLine( ssprintf( "// end cache tags" ) );
-	}
 
 	// Save specified Steps to this file
+	const vector<Steps*>& vpStepsToSave = out.GetAllSteps();
 	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
 	{
 		const Steps* pSteps = *s;
-		RString sTag = GetSMNotesTag( out, *pSteps, bSavingCache );
+		RString sTag = GetSMNotesTag( out, *pSteps );
 		f.PutLine( sTag );
 	}
 	if( f.Flush() == -1 )
@@ -325,7 +311,7 @@ void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps,
 	if( asParts.size() )
 		sDir = join( "/", asParts.begin()+1, asParts.end() );
 	sOut += ssprintf( "#SONG:%s;\r\n", sDir.c_str() );
-	sOut += GetSMNotesTag( *pSong, *pSteps, false );
+	sOut += GetSMNotesTag( *pSong, *pSteps );
 }
 
 RString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
