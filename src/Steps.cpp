@@ -322,7 +322,7 @@ void Steps::DeAutogen( bool bCopyNoteData )
 	m_Difficulty		= Real()->m_Difficulty;
 	m_iMeter		= Real()->m_iMeter;
 	copy( Real()->m_CachedRadarValues, Real()->m_CachedRadarValues + NUM_PLAYERS, m_CachedRadarValues );
-
+	m_sCredit		= Real()->m_sCredit;
 	parent = NULL;
 
 	if( bCopyNoteData )
@@ -364,6 +364,12 @@ void Steps::SetDifficultyAndDescription( Difficulty dc, RString sDescription )
 	m_sDescription = sDescription;
 	if( GetDifficulty() == Difficulty_Edit )
 		MakeValidEditDescription( m_sDescription );
+}
+
+void Steps::SetCredit( RString sCredit )
+{
+	DeAutogen();
+	m_sCredit = sCredit;
 }
 
 bool Steps::MakeValidEditDescription( RString &sPreferredDescription )

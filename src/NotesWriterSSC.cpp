@@ -276,7 +276,7 @@ static RString GetSSCNotesTag( const Song &song, const Steps &in, bool bSavingCa
 	}
 	lines.push_back( ssprintf( "#RADARVALUES:%s:", join(",",asRadarValues).c_str() ) );
 
-	lines.push_back( "#CREDIT:;" ); // will be done later.
+	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
 	
 	// TODO: Remove this block, uncommon below block for Split Timing. -Wolfman2000
 	lines.push_back( "#BPMS:;" );

@@ -717,7 +717,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				
 				else if( sValueName=="CREDIT" )
 				{
-					; // Not implemented yet, but should be.
+					pNewNotes->SetCredit( sParams[1] );
 				}
 				
 				else if( sValueName=="NOTES" )
