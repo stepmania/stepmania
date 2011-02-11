@@ -1,4 +1,4 @@
-﻿#TITLE:Sync;
+#TITLE:Sync;
 #SUBTITLE:;
 #ARTIST:Unknown artist;
 #TITLETRANSLIT:;
@@ -20,17 +20,14 @@
 #BGCHANGES:;
 #KEYSOUNDS:;
 
-//---------------dance-single - blank----------------
+#NOTEDATA:;
+#STEPSTYPE:dance-single:;
+#DESCRIPTION:blank;
+#DIFFICULTY:Beginner;
+#METER:1;
+#RADARVALUES:0.302,0.205,0.000,0.000,0.000;
 #NOTES:
-     dance-single:
-     blank:
-     Beginner:
-     1:
-     0.302,0.205,0.000,0.000,0.000:
   // measure 1
-0000
-0000
-0000
 0000
 ,  // measure 2
 1000
@@ -97,17 +94,14 @@
 0001
 ;
 
-//---------------dance-single - blank----------------
+#NOTEDATA:;
+#STEPSTYPE:pump-single;
+#DESCRIPTION:blank;
+#DIFFICULTY:Beginner;
+#METER:1;
+#RADARVALUES:0.302,0.205,0.000,0.000,0.000;
 #NOTES:
-     pump-single:
-     blank:
-     Beginner:
-     1:
-     0.302,0.205,0.000,0.000,0.000:
   // measure 1
-00000
-00000
-00000
 00000
 ,  // measure 2
 10000
