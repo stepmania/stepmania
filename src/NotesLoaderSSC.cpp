@@ -1000,6 +1000,8 @@ bool SSCLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool 
 bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
 {
 	Song* pSong = NULL;
+	Steps* pNewNotes;
+	bool bSSCFormat = false;
 	
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -1033,17 +1035,91 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 				return false;
 			}
 		}
+		else if( sValueName=="NOTEDATA" )
+		{
+			pNewNotes = new Steps;
+			bSSCFormat = true;
+		}
+		if( sValueName=="STEPSTYPE" )
+		{
+			pNewNotes->m_StepsType = GAMEMAN->StringToStepsType( sParams[1] );
+			bSSCFormat = true;
+		}
+		
+		else if( sValueName=="DESCRIPTION" )
+		{
+			pNewNotes->SetDescription( sParams[1] );
+			bSSCFormat = true;
+		}
+		
+		else if( sValueName=="DIFFICULTY" )
+		{
+			pNewNotes->SetDifficulty( DwiCompatibleStringToDifficulty( sParams[1] ) );
+			bSSCFormat = true;
+		}
+		
+		else if( sValueName=="METER" )
+		{
+			pNewNotes->SetMeter( atoi( sParams[1] ) );
+			bSSCFormat = true;
+		}
+		
+		else if( sValueName=="RADARVALUES" )
+		{
+			vector<RString> saValues;
+			split( sParams[1], ",", saValues, true );
+			if( saValues.size() == NUM_RadarCategory * NUM_PLAYERS )
+			{
+				RadarValues v[NUM_PLAYERS];
+				FOREACH_PlayerNumber( pn )
+				FOREACH_ENUM( RadarCategory, rc )
+				v[pn][rc] = StringToFloat( saValues[pn*NUM_RadarCategory + rc] );
+				pNewNotes->SetCachedRadarValues( v );
+			}
+			bSSCFormat = true;
+		}
+		
+		else if( sValueName=="CREDIT" )
+		{
+			pNewNotes->SetCredit( sParams[1] );
+			bSSCFormat = true;
+		}
+		
+		// TimingData for Steps isn't set yet, but still prepare for it.
+		else if( sValueName=="BPMS" )
+		{
+			bSSCFormat = true;
+		}
+		else if( sValueName=="STOPS" )
+		{
+			bSSCFormat = true;
+		}
+		else if( sValueName=="DELAYS" )
+		{
+			bSSCFormat = true;
+		}
+		else if( sValueName=="TIMESIGNATURES" )
+		{
+			bSSCFormat = true;
+		}
+		else if( sValueName=="TICKCOUNTS" )
+		{
+			bSSCFormat = true;
+		}
+		else if( sValueName=="COMBOS" )
+		{
+			bSSCFormat = true;
+		}
 		
 		else if( sValueName=="NOTES" )
 		{
-			// TODO: deal with transferring the timing data if required.
 			if( pSong == NULL )
 			{
 				LOG->UserLog( "Edit file", sEditFilePath, "doesn't have a #SONG tag preceeding the first #NOTES tag." );
 				return false;
 			}
 			
-			if( iNumParams < 7 )
+			if ( !bSSCFormat && iNumParams < 7 )
 			{
 				LOG->UserLog( "Edit file", sEditFilePath, "has %d fields in a #NOTES tag, but should have at least 7.", iNumParams );
 				continue;
@@ -1052,10 +1128,19 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 			if( !bAddStepsToSong )
 				return true;
 			
-			Steps* pNewNotes = new Steps;
-			LoadFromSMTokens( 
-					 sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
-					 *pNewNotes);
+			if( bSSCFormat )
+			{
+				pNewNotes->SetSMNoteData( sParams[1] );
+				pNewNotes->TidyUpData();
+				pSong->AddSteps( pNewNotes );
+			}
+			else
+			{
+				pNewNotes = new Steps;
+				LoadFromSMTokens( 
+						 sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
+						 *pNewNotes);
+			}
 			
 			pNewNotes->SetLoadedFromProfile( slot );
 			pNewNotes->SetDifficulty( Difficulty_Edit );
