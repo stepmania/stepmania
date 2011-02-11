@@ -97,7 +97,8 @@ void SongUtil::GetSteps(
 	Difficulty dc, 
 	int iMeterLow, 
 	int iMeterHigh, 
-	const RString &sDescription, 
+	const RString &sDescription,
+	const RString &sCredit,
 	bool bIncludeAutoGen, 
 	unsigned uHash,
 	int iMaxToGet 
@@ -118,6 +119,8 @@ void SongUtil::GetSteps(
 		if( iMeterHigh != -1 && iMeterHigh < pSteps->GetMeter() )
 			continue;
 		if( sDescription.size() && sDescription != pSteps->GetDescription() )
+			continue;
+		if( sCredit.size() && sCredit != pSteps->GetCredit() )
 			continue;
 		if( uHash != 0 && uHash != pSteps->GetHash() )
 			continue;
@@ -141,13 +144,14 @@ Steps* SongUtil::GetOneSteps(
 	Difficulty dc, 
 	int iMeterLow, 
 	int iMeterHigh, 
-	const RString &sDescription, 
+	const RString &sDescription,
+	const RString &sCredit,
 	unsigned uHash,
 	bool bIncludeAutoGen
 	)
 {
 	vector<Steps*> vpSteps;
-	GetSteps( pSong, vpSteps, st, dc, iMeterLow, iMeterHigh, sDescription, bIncludeAutoGen, uHash, 1 );	// get max 1
+	GetSteps( pSong, vpSteps, st, dc, iMeterLow, iMeterHigh, sDescription, sCredit, bIncludeAutoGen, uHash, 1 );	// get max 1
 	if( vpSteps.empty() )
 		return NULL;
 	else
@@ -193,10 +197,20 @@ Steps* SongUtil::GetStepsByMeter( const Song *pSong, StepsType st, int iMeterLow
 Steps* SongUtil::GetStepsByDescription( const Song *pSong, StepsType st, RString sDescription )
 {
 	vector<Steps*> vNotes;
-	GetSteps( pSong, vNotes, st, Difficulty_Invalid, -1, -1, sDescription );
+	GetSteps( pSong, vNotes, st, Difficulty_Invalid, -1, -1, sDescription, "" );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 
+		return vNotes[0];
+}
+
+Steps* SongUtil::GetStepsByCredit( const Song *pSong, StepsType st, RString sCredit )
+{
+	vector<Steps*> vNotes;
+	GetSteps(pSong, vNotes, st, Difficulty_Invalid, -1, -1, "", sCredit );
+	if( vNotes.size() == 0 )
+		return NULL;
+	else
 		return vNotes[0];
 }
 
@@ -800,6 +814,29 @@ bool SongUtil::ValidateCurrentStepsDescription( const RString &sAnswer, RString 
 		return SongUtil::ValidateCurrentEditStepsDescription( sAnswer, sErrorOut );
 	}
 
+	return true;
+}
+
+static LocalizedString AUTHOR_NAME_CANNOT_CONTAIN( "SongUtil", "The step author's name cannot contain any of the following characters: %s" );
+
+bool SongUtil::ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErrorOut )
+{
+	if( sAnswer.empty() )
+		return true;
+	
+	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	// If unchanged:
+	if( pSteps->GetCredit() == sAnswer )
+		return true;
+	
+	// Borrow from EditDescription testing. Perhaps this should be abstracted? -Wolfman2000
+	static const RString sInvalidChars = "\\/:*?\"<>|";
+	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	{
+		sErrorOut = ssprintf( AUTHOR_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		return false;
+	}
+	
 	return true;
 }
 
