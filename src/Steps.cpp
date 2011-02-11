@@ -404,6 +404,7 @@ public:
 	DEFINE_METHOD( GetStepsType,	m_StepsType )
 	DEFINE_METHOD( GetDifficulty,	GetDifficulty() )
 	DEFINE_METHOD( GetDescription,	GetDescription() )
+	DEFINE_METHOD( GetAuthorCredit, GetCredit() )
 	DEFINE_METHOD( GetMeter,	GetMeter() )
 	DEFINE_METHOD( GetFilename,	GetFilename() )
 	DEFINE_METHOD( IsAutogen,	IsAutogen() )
@@ -434,6 +435,7 @@ public:
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( GetDifficulty );
 		ADD_METHOD( GetDescription );
+		ADD_METHOD( GetAuthorCredit );
 		ADD_METHOD( GetMeter );
 		ADD_METHOD( GetFilename );
 		ADD_METHOD( GetRadarValues );
