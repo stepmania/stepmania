@@ -483,7 +483,7 @@ bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, R
 }
 
 /*
- * (c) 2011 spinal shark collective
+ * (c) 2011 Jason Felds
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
