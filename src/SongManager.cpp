@@ -15,7 +15,7 @@
 #include "MsdFile.h"
 #include "NoteSkinManager.h"
 #include "NotesLoaderDWI.h"
-#include "NotesLoaderSM.h"
+#include "NotesLoaderSSC.h"
 #include "PrefsManager.h"
 #include "Profile.h"
 #include "ProfileManager.h"
@@ -1653,7 +1653,7 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 		{
 			RString fn = vsFiles[i];
 
-			SMLoader::LoadEditFromFile( fn, slot, true );
+			SSCLoader::LoadEditFromFile( fn, slot, true );
 		}
 	}
 }

@@ -1,4 +1,4 @@
-/* NotesWriterSM - Writes a Song to an .SSC file. */
+/* NotesWriterSSC - Writes a Song to an .SSC file. */
 
 #ifndef NOTES_WRITER_SSC_H
 #define NOTES_WRITER_SSC_H

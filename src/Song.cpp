@@ -25,8 +25,10 @@
 #include "SpecialFiles.h"
 #include "NotesLoader.h"
 #include "NotesLoaderSM.h"
+#include "NotesLoaderSSC.h"
 #include "NotesWriterDWI.h"
 #include "NotesWriterSM.h"
+#include "NotesWriterSSC.h"
 #include "UnlockManager.h"
 #include "LyricsLoader.h"
 
@@ -34,7 +36,7 @@
 #include <set>
 #include <float.h>
 
-const int FILE_CACHE_VERSION = 162;	// increment this to invalidate cache
+const int FILE_CACHE_VERSION = 163;	// increment this to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
@@ -214,8 +216,8 @@ bool Song::LoadFromSongDir( RString sDir )
 	if( bUseCache )
 	{
 //		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
-		SMLoader::LoadFromSMFile( sCacheFilePath, *this, true );
-		SMLoader::TidyUpData( *this, true );
+		SSCLoader::LoadFromSSCFile( sCacheFilePath, *this, true );
+		SSCLoader::TidyUpData( *this, true );
 	}
 	else
 	{
@@ -844,9 +846,10 @@ void Song::Save()
 	TranslateTitles();
 
 	// Save the new files. These calls make backups on their own.
-	if( !SaveToSMFile(GetSongFilePath(), false) )
+	if( !SaveToSSCFile(GetSongFilePath(), false) )
 		return;
-	SaveToDWIFile();
+	SaveToSMFile();
+	//SaveToDWIFile();
 	SaveToCacheFile();
 
 	/* We've safely written our files and created backups. Rename non-SM and
@@ -871,10 +874,21 @@ void Song::Save()
 	}
 }
 
-
-bool Song::SaveToSMFile( RString sPath, bool bSavingCache )
+bool Song::SaveToSMFile()
 {
-	LOG->Trace( "Song::SaveToSMFile('%s')", sPath.c_str() );
+	const RString sPath = SetExtension( GetSongFilePath(), "sm" );
+	LOG->Trace( "Song::SaveToSMFile(%s)", sPath.c_str() );
+	
+	// If the file exists, make a backup.
+	if( IsAFile(sPath) )
+		FileCopy( sPath, sPath + ".old" );
+	return NotesWriterSM::Write( sPath, *this );
+
+}
+
+bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
+{
+	LOG->Trace( "Song::SaveToSSCFile('%s')", sPath.c_str() );
 
 	// If the file exists, make a backup.
 	if( !bSavingCache && IsAFile(sPath) )
@@ -894,7 +908,7 @@ bool Song::SaveToSMFile( RString sPath, bool bSavingCache )
 		vpStepsToSave.push_back( pSteps );
 	}
 
-	if( !NotesWriterSM::Write(sPath, *this, vpStepsToSave, bSavingCache) )
+	if( !NotesWriterSSC::Write(sPath, *this, vpStepsToSave, bSavingCache) )
 		return false;
 
 	if( !bSavingCache && g_BackUpAllSongSaves.Get() )
@@ -932,7 +946,7 @@ bool Song::SaveToCacheFile()
 {
 	SONGINDEX->AddCacheIndex(m_sSongDir, GetHashForDirectory(m_sSongDir));
 	const RString sPath = GetCacheFilePath();
-	if( !SaveToSMFile(sPath, true) )
+	if( !SaveToSSCFile(sPath, true) )
 		return false;
 
 	FOREACH( Steps*, m_vpSteps, pSteps )

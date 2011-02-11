@@ -1,6 +1,6 @@
 #include "global.h"
 #include "ScreenGameplaySyncMachine.h"
-#include "NotesLoaderSM.h"
+#include "NotesLoaderSSC.h"
 #include "GameState.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
@@ -19,7 +19,7 @@ void ScreenGameplaySyncMachine::Init()
 	AdjustSync::ResetOriginalSyncData();
 
 	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music.sm");
-	SMLoader::LoadFromSMFile( sFile, m_Song );
+	SSCLoader::LoadFromSSCFile( sFile, m_Song );
 	m_Song.SetSongDir( Dirname(sFile) );
 	m_Song.TidyUpData();
 
