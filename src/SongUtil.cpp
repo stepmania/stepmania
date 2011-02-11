@@ -293,7 +293,7 @@ static RString RemoveInitialWhitespace( RString s )
 void SongUtil::DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps )
 {
 	/* vSteps have the same StepsType and Difficulty.  Delete them if they have the
-	 * same m_sDescription, m_iMeter and SMNoteData. */
+	 * same m_sDescription, m_sCredit, m_iMeter and SMNoteData. */
 	CHECKPOINT;
 	for( unsigned i=0; i<vSteps.size(); i++ )
 	{
@@ -307,6 +307,8 @@ void SongUtil::DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps )
 
 			if( s1->GetDescription() != s2->GetDescription() )
 				continue;
+			if( s1->GetCredit() != s2->GetCredit() )
+				continue;
 			if( s1->GetMeter() != s2->GetMeter() )
 				continue;
 			/* Compare, ignoring whitespace. */
@@ -317,8 +319,8 @@ void SongUtil::DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps )
 			if( RemoveInitialWhitespace(sSMNoteData1) != RemoveInitialWhitespace(sSMNoteData2) )
 				continue;
 
-			LOG->Trace("Removed %p duplicate steps in song \"%s\" with description \"%s\" and meter \"%i\"",
-				s2, pSong->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
+			LOG->Trace("Removed %p duplicate steps in song \"%s\" with description \"%s\", step author \"%s\", and meter \"%i\"",
+				s2, pSong->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetCredit().c_str(), s1->GetMeter() );
 				
 			pSong->DeleteSteps( s2, false );
 
