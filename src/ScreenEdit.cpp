@@ -542,6 +542,7 @@ static MenuDef g_StepsInformation(
 	// xxx: this giant list of numbers SUUUUUUUUUUCKS -aj
 	MenuRowDef( ScreenEdit::meter,		"Meter",		true, EditMode_Practice, true, false, 0, "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25" ),
 	MenuRowDef( ScreenEdit::description,	"Description",		true, EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::step_credit,	"Step Author",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::predict_meter,	"Predicted Meter",	false, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::tap_notes,	"Tap Steps",		false, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::jumps,		"Jumps",		false, EditMode_Full, true, true, 0, NULL ),
@@ -2862,6 +2863,12 @@ static void ChangeDescription( const RString &sNew )
 	pSteps->SetDescription(sNew);
 }
 
+static void ChangeStepCredit( const RString &sNew )
+{
+	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	pSteps->SetCredit(sNew);
+}
+
 static void ChangeMainTitle( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
@@ -3003,6 +3010,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[predict_meter].SetOneUnthemedChoice( ssprintf("%.2f",pSteps->PredictMeter()) );
 				g_StepsInformation.rows[description].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
 				g_StepsInformation.rows[description].SetOneUnthemedChoice( pSteps->GetDescription() );
+				g_StepsInformation.rows[step_credit].bEnabled = (EDIT_MODE.GetValue() >= EditMode_Full);
+				g_StepsInformation.rows[step_credit].SetOneUnthemedChoice( pSteps->GetCredit() );
 				g_StepsInformation.rows[tap_notes].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumTapNotes()) );
 				g_StepsInformation.rows[jumps].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumJumps()) );
 				g_StepsInformation.rows[hands].SetOneUnthemedChoice( ssprintf("%d", m_NoteDataEdit.GetNumHands()) );
@@ -3466,6 +3475,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 }
 
 static LocalizedString ENTER_NEW_DESCRIPTION( "ScreenEdit", "Enter a new description." );
+static LocalizedString ENTER_NEW_STEP_AUTHOR( "ScreenEdit", "Enter the author who made this step pattern." );
 void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
@@ -3486,6 +3496,17 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 			SongUtil::ValidateCurrentStepsDescription,
 			ChangeDescription, 
 			NULL 
+			);
+		break;
+	case step_credit:
+		ScreenTextEntry::TextEntry(
+			SM_None,
+			ENTER_NEW_STEP_AUTHOR,
+			m_pSteps->GetCredit(),
+			255,
+			SongUtil::ValidateCurrentStepsCredit,
+			ChangeStepCredit,
+			NULL
 			);
 		break;
 	}
