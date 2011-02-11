@@ -20,7 +20,6 @@
      <Link class='ENUM' function='CoinMode' /> -> CoinMode
   -->
 
-
 <Documentation xmlns='http://www.stepmania.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.stepmania.com Lua.xsd'>
 <!-- Global functions -->
 <GlobalFunctions>
@@ -47,6 +46,9 @@
 	</Function>
 	<Function name='clamp' return='float' arguments='float fValue, float fLow, float fHigh'>
 		CLAMP is an all-female Japanese mangaka group that formed in the mid 1980s. Erm, I mean... Clamps <code>fValue</code> between <code>fLow</code> and <code>fHigh</code>.
+	</Function>
+	<Function name='CloseConnection' sm-ssc='true' return='void' arguments=''>
+		Closes any connection to an online server.
 	</Function>
 	<Function name='collectgarbage' return='void' arguments='string opt, float arg'>
 		A generic interface to Lua's garbage collector. Performs different functions based on the value of <code>opt</code>.
@@ -618,7 +620,7 @@
 	<Function name='effectperiod' return='void' arguments='float fTime'>
 		Set the Actor's effect period to <code>fTime</code>.
 	</Function>
-	<Function name='effecttiming' return='void' arguments='float fRampUp, float fHoldAtHalf, float fRampDown, float fHoldAtZero'>
+	<Function name='effecttiming' return='void' arguments='float fRampUp, float fAtHalf, float fRampDown, float fAtZero'>
 		Set the Actor's effect timing.
 	</Function>
 	<Function name='fadebottom' return='void' arguments='float percent'>
@@ -1252,6 +1254,9 @@
 	</Function>
 	<Function name='GetDanceAnimationPath' sm-ssc='true' return='string' arguments=''>
 		Returns the path of the dancing animation of this character.
+	</Function>
+	<Function name='GetDisplayName' sm-ssc='true' return='string' arguments=''>
+		Returns the character's display name.
 	</Function>
 	<Function name='GetIconPath' return='string' arguments=''>
 		Returns the path to the character's icon.
@@ -2413,6 +2418,9 @@
 	<Function name='Read' return='string' arguments=''>
 		Returns a string containing the entire contents of the file.
 	</Function>
+	<Function name='ReadBytes' sm-ssc='true' return='string' arguments='int length'>
+		Returns <code>length</code> bytes from the RageFile's current position.
+	</Function>
 	<Function name='Seek' return='int' arguments=''>
 		Seeks to a position in the file and returns the new position.
 	</Function>
@@ -2543,6 +2551,9 @@
 	<Function name='GetTopScreen' return='Screen' arguments=''>
 		Gets the screen at the top of the screen stack.
 	</Function>
+	<Function name='ReloadOverlayScreens' sm-ssc='true' return='void' arguments=''>
+		Reloads any loaded overlay screens.
+	</Function>
 	<Function name='ScreenClassExists' return='bool' arguments='string s'>
 		Returns <code>true</code> if screen class <code>s</code> exists.
 	</Function>
@@ -2649,6 +2660,14 @@
 		Sets the profile index of Player <code>pn</code> to <code>iProfileIndex</code>.
 	</Function>
 </Class>
+<Class name='ScreenTextEntry'>
+	<Description>
+		See the Changelog for details on TextEntrySetting's format.
+	</Description>
+	<Function name='Load' sm-ssc='true' return='void' arguments='TextEntrySettings args'>
+		Sets up a ScreenTextEntry's values.
+	</Function>
+</Class>
 <Class name='ScreenWithMenuElements'>
 	<Function name='Cancel' return='void' arguments=''>
 		Tells the screen to go to the previous screen.
@@ -2748,8 +2767,8 @@
 	<Function name='HasCDTitle' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the song has a CDTitle.
 	</Function>
-	<Function name='HasEdits' sm-ssc='true' return='bool' arguments='StepsType st'>
-		Returns <code>true</code> if the song has edits for the specified StepsType.
+	<Function name='HasEdits' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the song has edits.
 	</Function>
 	<Function name='HasLyrics' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the song has lyrics.
@@ -2765,6 +2784,9 @@
 	</Function>
 	<Function name='IsDisplayBpmConstant' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the song's DisplayBPM is constant.
+	</Function>
+	<Function name='IsDisplayBpmRandom' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the song's DisplayBPM is random.
 	</Function>
 	<Function name='IsDisplayBpmSecret' sm-ssc='true' return='bool' arguments=''>
 		Returns <code>true</code> if the song's DisplayBPM is secret.

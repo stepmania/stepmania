@@ -10,6 +10,7 @@
 		<Function name='Brightness'/>
 		<Function name='Center1Player'/>
 		<Function name='CheckpointsTapsSeparateJudgment'/>
+		<Function name='CloseConnection'/>
 		<Function name='Color'/>
 		<Function name='ColorDarkTone'/>
 		<Function name='ColorLightTone'/>
@@ -47,6 +48,7 @@
 		<Function name='GetCustomDifficulty'/>
 		<Function name='GetDefaultArrowSpacing'/>
 		<Function name='GetDefaultOptionLines'/>
+		<Function name='GetDirectRadar'/>
 		<Function name='GetEditModeSubScreens'/>
 		<Function name='GetExtraColorThreshold'/>
 		<Function name='GetGamePref'/>
@@ -67,6 +69,7 @@
 		<Function name='GetThemeAspectRatio'/>
 		<Function name='GetThemePref'/>
 		<Function name='GetTimingDifficulty'/>
+		<Function name='GetTotalItems'/>
 		<Function name='GetUnlockEntryIndexToCelebrate'/>
 		<Function name='GetUserPref'/>
 		<Function name='GetUserPrefB'/>
@@ -94,6 +97,7 @@
 		<Function name='IsRoutine'/>
 		<Function name='IsSMOnlineLoggedIn'/>
 		<Function name='IsUsingWideScreen'/>
+		<Function name='IsW1Allowed'/>
 		<Function name='JudgmentLineToColor'/>
 		<Function name='JudgmentLineToLocalizedString'/>
 		<Function name='JudgmentLineToStrokeColor'/>
@@ -558,6 +562,7 @@
 			<Function name='GetCharacterDir'/>
 			<Function name='GetCharacterID'/>
 			<Function name='GetDanceAnimationPath'/>
+			<Function name='GetDisplayName'/>
 			<Function name='GetIconPath'/>
 			<Function name='GetModelPath'/>
 			<Function name='GetRestAnimationPath'/>
@@ -989,6 +994,7 @@
 			<Function name='Open'/>
 			<Function name='PutLine'/>
 			<Function name='Read'/>
+			<Function name='ReadBytes'/>
 			<Function name='Seek'/>
 			<Function name='Tell'/>
 			<Function name='Write'/>
@@ -1047,6 +1053,7 @@
 		<Class name='ScreenManager'>
 			<Function name='AddNewScreenToTop'/>
 			<Function name='GetTopScreen'/>
+			<Function name='ReloadOverlayScreens'/>
 			<Function name='ScreenClassExists'/>
 			<Function name='ScreenIsPrepped'/>
 			<Function name='SetNewScreen'/>
@@ -1094,6 +1101,9 @@
 			<Function name='GetProfileIndex'/>
 			<Function name='SetProfileIndex'/>
 		</Class>
+		<Class base='ScreenWithMenuElements' name='ScreenTextEntry'>
+			<Function name='Load'/>
+		</Class>
 		<Class base='Screen' name='ScreenWithMenuElements'>
 			<Function name='Cancel'/>
 		</Class>
@@ -1136,6 +1146,7 @@
 			<Function name='HasStepsType'/>
 			<Function name='HasStepsTypeAndDifficulty'/>
 			<Function name='IsDisplayBpmConstant'/>
+			<Function name='IsDisplayBpmRandom'/>
 			<Function name='IsDisplayBpmSecret'/>
 			<Function name='IsEasy'/>
 			<Function name='IsEnabled'/>
@@ -1848,10 +1859,11 @@
 			<EnumValue name='&apos;StepsType_Techno_Single8&apos;' value='25'/>
 			<EnumValue name='&apos;StepsType_Techno_Double4&apos;' value='26'/>
 			<EnumValue name='&apos;StepsType_Techno_Double5&apos;' value='27'/>
-			<EnumValue name='&apos;StepsType_Pnm_Five&apos;' value='28'/>
-			<EnumValue name='&apos;StepsType_Pnm_Nine&apos;' value='29'/>
-			<EnumValue name='&apos;StepsType_Guitar_Five&apos;' value='30'/>
-			<EnumValue name='&apos;StepsType_Lights_Cabinet&apos;' value='31'/>
+			<EnumValue name='&apos;StepsType_Techno_Double8&apos;' value='28'/>
+			<EnumValue name='&apos;StepsType_Pnm_Five&apos;' value='29'/>
+			<EnumValue name='&apos;StepsType_Pnm_Nine&apos;' value='30'/>
+			<EnumValue name='&apos;StepsType_Guitar_Five&apos;' value='31'/>
+			<EnumValue name='&apos;StepsType_Lights_Cabinet&apos;' value='32'/>
 		</Enum>
 		<Enum name='StyleType'>
 			<EnumValue name='&apos;StyleType_OnePlayerOneSide&apos;' value='0'/>
@@ -1920,16 +1932,16 @@
 		</Enum>
 	</Enums>
 	<Constants>
-		<Constant name='ASPECT_SCALE_FACTOR' value='854'/>
+		<Constant name='ASPECT_SCALE_FACTOR' value='640'/>
 		<Constant name='NUM_PLAYERS' value='2'/>
 		<Constant name='SCREEN_BOTTOM' value='480'/>
-		<Constant name='SCREEN_CENTER_X' value='427'/>
+		<Constant name='SCREEN_CENTER_X' value='320'/>
 		<Constant name='SCREEN_CENTER_Y' value='240'/>
 		<Constant name='SCREEN_HEIGHT' value='480'/>
 		<Constant name='SCREEN_LEFT' value='0'/>
-		<Constant name='SCREEN_RIGHT' value='854'/>
+		<Constant name='SCREEN_RIGHT' value='640'/>
 		<Constant name='SCREEN_TOP' value='0'/>
-		<Constant name='SCREEN_WIDTH' value='854'/>
+		<Constant name='SCREEN_WIDTH' value='640'/>
 		<Constant name='PLAYER_1' value='&apos;PlayerNumber_P1&apos;'/>
 		<Constant name='PLAYER_2' value='&apos;PlayerNumber_P2&apos;'/>
 		<Constant name='_VERSION' value='&apos;Lua 5.1&apos;'/>
@@ -1941,6 +1953,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc v1.2</Version>
-	<Date>2011-01-08</Date>
+	<Version>sm-ssc v1.2.1</Version>
+	<Date>2011-02-10</Date>
 </Lua>
