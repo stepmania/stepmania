@@ -4,7 +4,7 @@
 #include "GameManager.h"
 #include "MsdFile.h" // No JSON here.
 #include "NoteTypes.h"
-#include "NotesLoaderSM.h" // edit file holdover.
+#include "NotesLoaderSM.h" // For loading SM style edits.
 #include "RageFileManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
@@ -14,62 +14,6 @@
 #include "PrefsManager.h"
 
 const int MAX_EDIT_STEPS_SIZE_BYTES = 60*1024; // 60 KB
-
-// Holdover from .sm format, mainly to make edits behave.
-static void LoadFromSMTokens( 
-			     RString sStepsType, 
-			     RString sDescription,
-			     RString sDifficulty,
-			     RString sMeter,
-			     RString sRadarValues,
-			     RString sNoteData,
-			     Steps &out
-			     )
-{
-	// we're loading from disk, so this is by definition already saved:
-	out.SetSavedToDisk( true );
-	
-	Trim( sStepsType );
-	Trim( sDescription );
-	Trim( sDifficulty );
-	Trim( sNoteData );
-	
-	//	LOG->Trace( "Steps::LoadFromSMTokens()" );
-	
-	// insert stepstype hacks from GameManager.cpp here? -aj
-	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
-	out.SetDescription( sDescription );
-	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDifficulty) );
-	
-	// Handle hacks that originated back when StepMania didn't have
-	// Difficulty_Challenge. (At least v1.64, possibly v3.0 final...)
-	if( out.GetDifficulty() == Difficulty_Hard )
-	{
-		// HACK: SMANIAC used to be Difficulty_Hard with a special description.
-		if( sDescription.CompareNoCase("smaniac") == 0 ) 
-			out.SetDifficulty( Difficulty_Challenge );
-		
-		// HACK: CHALLENGE used to be Difficulty_Hard with a special description.
-		if( sDescription.CompareNoCase("challenge") == 0 ) 
-			out.SetDifficulty( Difficulty_Challenge );
-	}
-	
-	out.SetMeter( atoi(sMeter) );
-	vector<RString> saValues;
-	split( sRadarValues, ",", saValues, true );
-	if( saValues.size() == NUM_RadarCategory * NUM_PLAYERS )
-	{
-		RadarValues v[NUM_PLAYERS];
-		FOREACH_PlayerNumber( pn )
-		FOREACH_ENUM( RadarCategory, rc )
-		v[pn][rc] = StringToFloat( saValues[pn*NUM_RadarCategory + rc] );
-		out.SetCachedRadarValues( v );
-	}
-	
-	out.SetSMNoteData( sNoteData );
-	
-	out.TidyUpData();
-}
 
 bool LoadFromBGSSCChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
 {
@@ -1137,7 +1081,7 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 			else
 			{
 				pNewNotes = new Steps;
-				LoadFromSMTokens( 
+				SMLoader::LoadFromSMTokens( 
 						 sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
 						 *pNewNotes);
 			}

@@ -14,7 +14,7 @@
 
 const int MAX_EDIT_STEPS_SIZE_BYTES		= 60*1024;	// 60KB
 
-static void LoadFromSMTokens( 
+void SMLoader::LoadFromSMTokens( 
 			     RString sStepsType, 
 			     RString sDescription,
 			     RString sDifficulty,
