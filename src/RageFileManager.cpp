@@ -838,8 +838,8 @@ RageFileBasic *RageFileManager::OpenForWriting( const RString &sPath, int mode, 
 	 *
 	 * The purpose of this is to create files in the expected place.  For example, if we
 	 * have both C:/games/StepMania and C:/games/DWI loaded, and we're writing
-	 * "Songs/Music/Waltz/waltz.sm", and the song was loaded out of
-	 * "C:/games/DWI/Songs/Music/Waltz/waltz.dwi", we want to write the new SM into the
+	 * "Songs/Music/Waltz/waltz.ssc", and the song was loaded out of
+	 * "C:/games/DWI/Songs/Music/Waltz/waltz.dwi", we want to write the new SSC into the
 	 * same directory (if possible).  Don't split up files in the same directory any
 	 * more than we have to.
 	 *

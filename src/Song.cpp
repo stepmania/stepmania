@@ -709,7 +709,7 @@ void Song::TidyUpData()
 	{
 		/* Generated filename; this doesn't always point to a loadable file,
 		 * but instead points to the file we should write changed files to,
-		 * and will always be an .SM.
+		 * and will always be a .SSC.
 		 *
 		 * This is a little tricky. We can't always use the song title directly,
 		 * since it might contain characters we can't store in filenames. Two
@@ -723,23 +723,32 @@ void Song::TidyUpData()
 		 * but not KSFs and BMSs.
 		 *
 		 * So, let's do this (by priority):
-		 * 1. If there's an .SM file, use that filename. No reason to use anything
+		 * 1. If there's a .SSC file, use that filename. No reason to use anything
 		 *    else; it's the filename in use.
-		 * 2. If there's a .DWI, use it with a changed extension.
-		 * 3. Otherwise, use the name of the directory, since it's definitely a valid
+		 * 2. If there's an .SM, use it with a changed extension.
+		 * 3. If there's a .DWI, use it with a changed extension.
+		 * 4. Otherwise, use the name of the directory, since it's definitely a valid
 		 *    filename, and should always be the title of the song (unlike KSFs). */
 		m_sSongFileName = m_sSongDir;
 		vector<RString> asFileNames;
-		GetDirListing( m_sSongDir+"*.sm", asFileNames );
+		GetDirListing( m_sSongDir+"*.ssc", asFileNames );
 		if( !asFileNames.empty() )
+		{
 			m_sSongFileName += asFileNames[0];
-		else {
-			GetDirListing( m_sSongDir+"*.dwi", asFileNames );
-			if( !asFileNames.empty() ) {
-				m_sSongFileName += SetExtension( asFileNames[0], "sm" );
-			} else {
-				m_sSongFileName += Basename(m_sSongDir);
-				m_sSongFileName += ".sm";
+		}
+		else
+		{
+			GetDirListing( m_sSongDir+"*.sm", asFileNames );
+			if( !asFileNames.empty() )
+				m_sSongFileName += SetExtension( asFileNames[0], "ssc" );
+			else {
+				GetDirListing( m_sSongDir+"*.dwi", asFileNames );
+				if( !asFileNames.empty() ) {
+					m_sSongFileName += SetExtension( asFileNames[0], "ssc" );
+				} else {
+					m_sSongFileName += Basename(m_sSongDir);
+					m_sSongFileName += ".ssc";
+				}
 			}
 		}
 	}
