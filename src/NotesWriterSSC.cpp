@@ -280,10 +280,10 @@ static RString GetSSCNotesTag( const Song &song, const Steps &in, bool bSavingCa
 	// TODO: Remove this block, uncommon below block for Split Timing. -Wolfman2000
 	lines.push_back( "#BPMS:;" );
 	lines.push_back( "#STOPS:;" );
-	lines.push_back( "DELAYS:;" );
-	lines.push_back( "TIMESIGNATURES:;" );
-	lines.push_back( "TICKCOUNTS:;" );
-	// lines.push_back( "COMBOS:;" );
+	lines.push_back( "#DELAYS:;" );
+	lines.push_back( "#TIMESIGNATURES:;" );
+	lines.push_back( "#TICKCOUNTS:;" );
+	// lines.push_back( "#COMBOS:;" );
 	
 	/*
 	vector<RString> asBPMValues;
