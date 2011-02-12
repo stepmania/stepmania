@@ -24,6 +24,14 @@ static ThemeMetric<float>	BRAKE_MOD_MAX_CLAMP( "ArrowEffects", "BrakeModMaxClamp
 static ThemeMetric<float>	WAVE_MOD_MAGNITUDE( "ArrowEffects", "WaveModMagnitude" );
 static ThemeMetric<float>	WAVE_MOD_HEIGHT( "ArrowEffects", "WaveModHeight" );
 static ThemeMetric<float>	BOOMERANG_PEAK_PERCENTAGE( "ArrowEffects", "BoomerangPeakPercentage" );
+static ThemeMetric<float>	EXPAND_MULTIPLIER_FREQUENCY( "ArrowEffects", "ExpandMultiplierFrequency" );
+static ThemeMetric<float>	EXPAND_MULTIPLIER_SCALE_FROM_LOW( "ArrowEffects", "ExpandMultiplierScaleFromLow" );
+static ThemeMetric<float>	EXPAND_MULTIPLIER_SCALE_FROM_HIGH( "ArrowEffects", "ExpandMultiplierScaleFromHigh" );
+static ThemeMetric<float>	EXPAND_MULTIPLIER_SCALE_TO_LOW( "ArrowEffects", "ExpandMultiplierScaleToLow" );
+static ThemeMetric<float>	EXPAND_MULTIPLIER_SCALE_TO_HIGH( "ArrowEffects", "ExpandMultiplierScaleToHigh" );
+static ThemeMetric<float>	EXPAND_SPEED_SCALE_FROM_LOW( "ArrowEffects", "ExpandSpeedScaleFromLow" );
+static ThemeMetric<float>	EXPAND_SPEED_SCALE_FROM_HIGH( "ArrowEffects", "ExpandSpeedScaleFromHigh" );
+static ThemeMetric<float>	EXPAND_SPEED_SCALE_TO_LOW( "ArrowEffects", "ExpandSpeedScaleToLow" );
 static ThemeMetric<bool>	QUANTIZE_ARROW_Y( "ArrowEffects", "QuantizeArrowYPosition");
 
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
@@ -271,8 +279,12 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] != 0 )
 	{
-		float fExpandMultiplier = SCALE( RageFastCos(g_fExpandSeconds*3), -1, 1, 0.75f, 1.75f );
-		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 0.f, 1.f, 1.f, fExpandMultiplier );
+		float fExpandMultiplier = SCALE( RageFastCos(g_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY), 
+						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
+						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
+		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 
+				      EXPAND_SPEED_SCALE_FROM_LOW, EXPAND_SPEED_SCALE_FROM_HIGH,
+				      EXPAND_SPEED_SCALE_TO_LOW, fExpandMultiplier );
 	}
 
 	fYOffset *= fScrollSpeed;
