@@ -716,35 +716,166 @@ public:
 	 */
 	void AddStopSegment( const StopSegment &seg );
 	
-	
-	void SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominator );
-	void SetTimeSignatureAtBeat( float fBeat, int iNumerator, int iDenominator ) { SetTimeSignatureAtRow( BeatToNoteRow(fBeat), iNumerator, iDenominator ); }
-	void SetTimeSignatureNumeratorAtRow( int iRow, int iNumerator );
-	void SetTimeSignatureNumeratorAtBeat( float fBeat, int iNumerator ) { SetTimeSignatureNumeratorAtRow( BeatToNoteRow(fBeat), iNumerator); }
-	void SetTimeSignatureDenominatorAtRow( int iRow, int iDenominator );
-	void SetTimeSignatureDenominatorAtBeat( float fBeat, int iDenominator ) { SetTimeSignatureDenominatorAtRow( BeatToNoteRow(fBeat), iDenominator); }
-	
-	int GetWarpToRow( int iWarpBeginRow ) const;
-	void SetTickcountAtRow( int iRow, int iTicks );
-	void SetTickcountAtBeat( float fBeat, int iTicks ) { SetTickcountAtRow( BeatToNoteRow( fBeat ), iTicks ); }
-	int GetTickcountAtRow( int iRow ) const;
-	int GetTickcountAtBeat( float fBeat ) const { return GetTickcountAtRow( BeatToNoteRow(fBeat) ); }
-	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
-	void AddTimeSignatureSegment( const TimeSignatureSegment &seg );
-	void AddWarpSegment( const WarpSegment &seg );
-	void AddTickcountSegment( const TickcountSegment &seg );
-	int GetTimeSignatureSegmentIndexAtRow( int iRow ) const;
-	int GetTimeSignatureSegmentIndexAtBeat( float fBeat ) const { return GetTimeSignatureSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
-	TimeSignatureSegment& GetTimeSignatureSegmentAtRow( int iRow );
-	TimeSignatureSegment& GetTimeSignatureSegmentAtBeat( float fBeat ) { return GetTimeSignatureSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Retrieve the Time Signature's numerator at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the numerator.
+	 */
 	int GetTimeSignatureNumeratorAtRow( int iRow );
+	/**
+	 * @brief Retrieve the Time Signature's numerator at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the numerator.
+	 */
 	int GetTimeSignatureNumeratorAtBeat( float fBeat ) { return GetTimeSignatureNumeratorAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Retrieve the Time Signature's denominator at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the denominator.
+	 */
 	int GetTimeSignatureDenominatorAtRow( int iRow );
- 	int GetTimeSignatureDenominatorAtBeat( float fBeat ) { return GetTimeSignatureDenominatorAtRow( BeatToNoteRow(fBeat) ); }
-	int GetTickcountSegmentIndexAtRow( int iRow ) const;
-	int GetTickcountSegmentIndexAtBeat( float fBeat ) const { return GetTickcountSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
-	TickcountSegment& GetTickcountSegmentAtRow( int iRow );
+ 	/**
+	 * @brief Retrieve the Time Signature's denominator at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the denominator.
+	 */
+	int GetTimeSignatureDenominatorAtBeat( float fBeat ) { return GetTimeSignatureDenominatorAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Set the row to have the new Time Signature.
+	 * @param iNoteRow the row to have the new Time Signature.
+	 * @param iNumerator the numerator.
+	 * @param iDenominator the denominator.
+	 */
+	void SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominator );
+	/**
+	 * @brief Set the beat to have the new Time Signature.
+	 * @param fBeat the beat to have the new Time Signature.
+	 * @param iNumerator the numerator.
+	 * @param iDenominator the denominator.
+	 */
+	void SetTimeSignatureAtBeat( float fBeat, int iNumerator, int iDenominator ) { SetTimeSignatureAtRow( BeatToNoteRow(fBeat), iNumerator, iDenominator ); }
+	/**
+	 * @brief Set the row to have the new Time Signature numerator.
+	 * @param iNoteRow the row to have the new Time Signature numerator.
+	 * @param iNumerator the numerator.
+	 */
+	void SetTimeSignatureNumeratorAtRow( int iRow, int iNumerator );
+	/**
+	 * @brief Set the beat to have the new Time Signature numerator.
+	 * @param fBeat the beat to have the new Time Signature numerator.
+	 * @param iNumerator the numerator.
+	 */
+	void SetTimeSignatureNumeratorAtBeat( float fBeat, int iNumerator ) { SetTimeSignatureNumeratorAtRow( BeatToNoteRow(fBeat), iNumerator); }
+	/**
+	 * @brief Set the row to have the new Time Signature denominator.
+	 * @param iNoteRow the row to have the new Time Signature denominator.
+	 * @param iDenominator the denominator.
+	 */
+	void SetTimeSignatureDenominatorAtRow( int iRow, int iDenominator );
+	/**
+	 * @brief Set the beat to have the new Time Signature denominator.
+	 * @param fBeat the beat to have the new Time Signature denominator.
+	 * @param iDenominator the denominator.
+	 */
+	void SetTimeSignatureDenominatorAtBeat( float fBeat, int iDenominator ) { SetTimeSignatureDenominatorAtRow( BeatToNoteRow(fBeat), iDenominator); }
+	/**
+	 * @brief Retrieve the TimeSignatureSegment at the specified row.
+	 * @param iNoteRow the row that has a TimeSignatureSegment.
+	 * @return the TimeSignatureSegment in question.
+	 */
+	TimeSignatureSegment& GetTimeSignatureSegmentAtRow( int iRow );
+	/**
+	 * @brief Retrieve the TimeSignatureSegment at the specified beat.
+	 * @param fBeat the beat that has a TimeSignatureSegment.
+	 * @return the TimeSignatureSegment in question.
+	 */
+	TimeSignatureSegment& GetTimeSignatureSegmentAtBeat( float fBeat ) { return GetTimeSignatureSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Retrieve the index of the TimeSignatureSegments at the specified row.
+	 * @param iNoteRow the row that has a TimeSignatureSegment.
+	 * @return the TimeSignatureSegment's index in question.
+	 */
+	int GetTimeSignatureSegmentIndexAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the index of the TimeSignatureSegments at the specified beat.
+	 * @param fBeat the beat that has a TimeSignatureSegment.
+	 * @return the TimeSignatureSegment's index in question.
+	 */
+	int GetTimeSignatureSegmentIndexAtBeat( float fBeat ) const { return GetTimeSignatureSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Add the TimeSignatureSegment to the TimingData.
+	 * @param seg the new TimeSignatureSegment.
+	 */
+	void AddTimeSignatureSegment( const TimeSignatureSegment &seg );
+	
+	/**
+	 * @brief Determine the row to warp to.
+	 * @param The row you start on.
+	 * @return the row you warp to.
+	 */
+	int GetWarpToRow( int iWarpBeginRow ) const;
+	/**
+	 * @brief Add the WarpSegment to the TimingData.
+	 * @param seg the new WarpSegment.
+	 */
+	void AddWarpSegment( const WarpSegment &seg );
+	
+	/**
+	 * @brief Retrieve the Tickcount at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the Tickcount.
+	 */
+	int GetTickcountAtRow( int iNoteRow ) const;
+	/**
+	 * @brief Retrieve the Tickcount at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the Tickcount.
+	 */
+	int GetTickcountAtBeat( float fBeat ) const { return GetTickcountAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Set the row to have the new tickcount.
+	 * @param iNoteRow the row to have the new tickcount.
+	 * @param iTicks the tickcount.
+	 */
+	void SetTickcountAtRow( int iNoteRow, int iTicks );
+	/**
+	 * @brief Set the beat to have the new tickcount.
+	 * @param fBeat the beat to have the new tickcount.
+	 * @param iTicks the tickcount.
+	 */
+	void SetTickcountAtBeat( float fBeat, int iTicks ) { SetTickcountAtRow( BeatToNoteRow( fBeat ), iTicks ); }
+	/**
+	 * @brief Retrieve the TickcountSegment at the specified row.
+	 * @param iNoteRow the row that has a TickcountSegment.
+	 * @return the TickcountSegment in question.
+	 */
+	TickcountSegment& GetTickcountSegmentAtRow( int iNoteRow );
+	/**
+	 * @brief Retrieve the TickcountSegment at the specified beat.
+	 * @param fBeat the beat that has a TickcountSegment.
+	 * @return the TickcountSegment in question.
+	 */
 	TickcountSegment& GetTickcountSegmentAtBeat( float fBeat ) { return GetTickcountSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Retrieve the index of the TickcountSegments at the specified row.
+	 * @param iNoteRow the row that has a TickcountSegment.
+	 * @return the TickcountSegment's index in question.
+	 */
+	int GetTickcountSegmentIndexAtRow( int iRow ) const;
+	/**
+	 * @brief Retrieve the index of the TickcountSegments at the specified beat.
+	 * @param fBeat the beat that has a TickcountSegment.
+	 * @return the TickcountSegment's index in question.
+	 */
+	int GetTickcountSegmentIndexAtBeat( float fBeat ) const { return GetTickcountSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Add the TickcountSegment to the TimingData.
+	 * @param seg the new TickcountSegment.
+	 */
+	void AddTickcountSegment( const TickcountSegment &seg );
+	
+	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
+	
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
 
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut, bool &bDelayOut, int &iWarpBeginOut, float &fWarpLengthOut ) const;
