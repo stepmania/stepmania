@@ -1382,7 +1382,7 @@ void NoteDataUtil::Little( NoteData &inout, int iStartIndex, int iEndIndex )
 	}
 }
 
-// Make all all quarter notes into jumps.
+// Make all quarter notes into jumps.
 void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 {
 	/* Start on an even beat. */
