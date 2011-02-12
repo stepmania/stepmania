@@ -21,6 +21,11 @@ sm-ssc v1.?.? | 20110???
 * [ArrowEffects] Allow the Boomerang, Expand, Tipsy, Drunk, Tornado, Beat, and
   Mini modifiers to be customized by metrics. As usual, change at your own
   risk here. [Wolfman2000]
+* Started the process of doxygen'ing the code. Goodness knows we need more
+  documentation on here. For the most part, don't expect comments on
+  particular files, though this may change. [Wolfman2000]
+* [TimingData] Fix getting a Stop or Delay at a row if one of each occupies
+  the same row. This may need some extra testing. [Wolfman2000]
 
 20110211
 --------
