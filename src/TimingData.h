@@ -1,4 +1,4 @@
-/* TimingData - Holds data for translating beats<->seconds. */
+/** @brief TimingData - Holds data for translating beats<->seconds. */
 
 #ifndef TIMING_DATA_H
 #define TIMING_DATA_H
@@ -7,54 +7,149 @@
 #include "PrefsManager.h"
 struct lua_State;
 
+/** @brief Compare a TimingData segment's properties with one another. */
 #define COMPARE(x) if(x!=other.x) return false;
 
+/**
+ * @brief Identifies when a song changes its BPM.
+ */
 struct BPMSegment 
 {
+	/**
+	 * @brief Creates a simple BPM Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
 	BPMSegment() : m_iStartRow(-1), m_fBPS(-1.0f) { }
+	/**
+	 * @brief Creates a BPM Segment with the specified starting row and beats per second.
+	 * @param s the starting row of this segment.
+	 * @param b the beats per second to be turned into beats per minute.
+	 */
 	BPMSegment( int s, float b ) { m_iStartRow = max( 0, s ); SetBPM( b ); }
+	/**
+	 * @brief The row in which the BPMSegment activates.
+	 */
 	int m_iStartRow;
+	/**
+	 * @brief The BPS to use when this row is reached.
+	 */
 	float m_fBPS;
-
+	
+	/**
+	 * @brief Converts the BPS to a BPM.
+	 * @param f The BPM.
+	 */
 	void SetBPM( float f ) { m_fBPS = f / 60.0f; }
+	/**
+	 * @brief Retrieves the BPM from the BPS.
+	 * @return the BPM.
+	 */
 	float GetBPM() const { return m_fBPS * 60.0f; }
 
+	/**
+	 * @brief Compares two BPMSegments to see if they are equal to each other.
+	 * @param other the other BPMSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
 	bool operator==( const BPMSegment &other ) const
 	{
 		COMPARE( m_iStartRow );
 		COMPARE( m_fBPS );
 		return true;
 	}
+	/**
+	 * @brief Compares two BPMSegments to see if they are not equal to each other.
+	 * @param other the other BPMSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
 	bool operator!=( const BPMSegment &other ) const { return !operator==(other); }
-	bool operator<( const BPMSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	/**
+	 * @brief Compares two BPMSegments to see if one is less than the other.
+	 * @param other the other BPMSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const BPMSegment &other ) const
+	{
+		return m_iStartRow < other.m_iStartRow || 
+		( m_iStartRow == other.m_iStartRow && m_fBPS < other.m_fBPS );
+	}
+	/**
+	 * @brief Compares two BPMSegments to see if one is less than or equal to the other.
+	 * @param other the other BPMSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
 	bool operator<=( const BPMSegment &other ) const
 	{
 		return ( operator<(other) || operator==(other) );
 	}
-	bool operator>( const BPMSegment &other ) const { return m_iStartRow > other.m_iStartRow; }
-	bool operator>=( const BPMSegment &other ) const
-	{
-		return ( operator>(other) || operator==(other) );
-	}
+	/**
+	 * @brief Compares two BPMSegments to see if one is greater than the other.
+	 * @param other the other BPMSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const BPMSegment &other ) const { return !operator<=(other); }
+	/**
+	 * @brief Compares two BPMSegments to see if one is greater than or equal to the other.
+	 * @param other the other BPMSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const BPMSegment &other ) const { return !operator<(other); }
 };
-
+/**
+ * @brief Identifies when a song has a stop or a delay.
+ *
+ * It is hopeful that stops and delays can be made into their own segments at some point.
+ */
 struct StopSegment 
 {
+	/**
+	 * @brief Creates a simple Stop Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
 	StopSegment() : m_iStartRow(-1), m_fStopSeconds(-1.0f), m_bDelay(false)  { }
+	/**
+	 * @brief Creates a Stop Segment at the specified row for the specified length of time.
+	 *
+	 * This will not create a dedicated delay segment. Use the third constructor for
+	 * making delays.
+	 * @param s the starting row of this segment.
+	 * @param f the length of time to pause the note scrolling.
+	 */
 	StopSegment( int s, float f ) {
 		m_iStartRow = max( 0, s );
 		m_fStopSeconds = PREFSMAN->m_bQuirksMode ? f : max( 0.0f, f );
-		m_bDelay = false; // no delay by default
+		m_bDelay = false;
 	}
+	/**
+	 * @brief Creates a Stop (or Delay) Segment at the specified row for the specified length of time.
+	 * @param s the starting row of this segment.
+	 * @param f the length of time to pause the note scrolling.
+	 * @param d the flag that makes this Stop Segment a Delay Segment.
+	 */
 	StopSegment( int s, float f, bool d ) {
 		m_iStartRow = max( 0, s );
 		m_fStopSeconds = PREFSMAN->m_bQuirksMode ? f : max( 0.0f, f );
 		m_bDelay = d;
 	}
+	/**
+	 * @brief The row in which the StopSegment activates.
+	 */
 	int m_iStartRow;
+	/**
+	 * @brief The amount of time to complete the pause at the given row.
+	 */
 	float m_fStopSeconds;
-	bool m_bDelay; // if true, treat this stop as a Pump delay instead
-
+	/**
+	 * @brief If true, the Stop Segment is treated as a Delay Segment, similar to the Pump It Up series.
+	 */
+	bool m_bDelay;
+	/**
+	 * @brief Compares two StopSegments to see if they are equal to each other.
+	 * @param other the other StopSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
 	bool operator==( const StopSegment &other ) const
 	{
 		COMPARE( m_iStartRow );
@@ -62,56 +157,115 @@ struct StopSegment
 		COMPARE( m_bDelay );
 		return true;
 	}
+	/**
+	 * @brief Compares two StopSegments to see if they are not equal to each other.
+	 * @param other the other StopSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
 	bool operator!=( const StopSegment &other ) const { return !operator==(other); }
-	// Delays need to come before stops to not render them pointless.
+	/**
+	 * @brief Compares two StopSegments to see if one is less than the other.
+	 *
+	 * It should be observed that Delay Segments have to come before Stop Segments.
+	 * Otherwise, it will act like a Stop Segment with extra time from the Delay at
+	 * the same row.
+	 * @param other the other StopSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
 	bool operator<( const StopSegment &other ) const
 	{
 		return ( m_iStartRow < other.m_iStartRow ) ||
-		( m_iStartRow == other.m_iStartRow && m_bDelay && !other.m_bDelay );
+		( m_iStartRow == other.m_iStartRow && 
+		 ( m_bDelay && !other.m_bDelay || m_fStopSeconds < other.m_fStopSeconds ));
 	}
+	/**
+	 * @brief Compares two StopSegments to see if one is less than or equal to the other.
+	 * @param other the other StopSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
 	bool operator<=( const StopSegment &other ) const
 	{
 		return ( operator<(other) || operator==(other) );
 	}
-	bool operator>( const StopSegment &other ) const
-	{
-		return ( m_iStartRow > other.m_iStartRow ) ||
-		( m_iStartRow == other.m_iStartRow && !m_bDelay && other.m_bDelay );
-	}
-	bool operator>=( const StopSegment &other ) const
-	{
-		return ( operator>(other) || operator==(other) );
-	}
+	/**
+	 * @brief Compares two StopSegments to see if one is greater than the other.
+	 *
+	 * Similar to the less than operator function, stops must come after delays
+	 * to avoid rendering the point of delays pointless.
+	 * @param other the other StopSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const StopSegment &other ) const { return !operator<=(other); }
+	/**
+	 * @brief Compares two StopSegments to see if one is greater than or equal to the other.
+	 * @param other the other StopSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const StopSegment &other ) const { return !operator<(other); }
 };
 
-/* This only supports simple time signatures. The upper number (called the numerator here, though this isn't
+/**
+ * @brief Identifies when a song changes its time signature.
+ *
+ * This only supports simple time signatures. The upper number (called the numerator here, though this isn't
  * properly a fraction) is the number of beats per measure. The lower number (denominator here)
  * is the note value representing one beat. */
 struct TimeSignatureSegment 
 {
+	/**
+	 * @brief Creates a simple Time Signature Segment with default values.
+	 */
 	TimeSignatureSegment() : m_iStartRow(-1), m_iNumerator(4), m_iDenominator(4)  { }
+	/**
+	 * @brief Creates a Time Signature Segment at the given row with a supplied numerator.
+	 * @param r the starting row of the segment.
+	 * @param n the numerator for the segment.
+	 */
 	TimeSignatureSegment( int r, int n ) {
 		m_iStartRow = max( 0, r );
 		m_iNumerator = n;
-		m_iDenominator = 64; // Hope we don't need this many.
+		m_iDenominator = 4;
 	}
+	/**
+	 * @brief Creates a Time Signature Segment at the given row with a supplied numerator & denominator.
+	 * @param r the starting row of the segment.
+	 * @param n the numerator for the segment.
+	 * @param d the denonimator for the segment.
+	 */
 	TimeSignatureSegment( int r, int n, int d ) {
 		m_iStartRow = max( 0, r );
 		m_iNumerator = n;
 		m_iDenominator = d;
 	}
-	
+	/**
+	 * @brief The row in which the TimeSignatureSegment activates.
+	 */
 	int m_iStartRow;
+	/**
+	 * @brief The numerator of the TimeSignatureSegment.
+	 */
 	int m_iNumerator;
+	/**
+	 * @brief The denominator of the TimeSignatureSegment.
+	 */
 	int m_iDenominator;
 
-	/* With BeatToNoteRow(1) rows per beat, then we should have BeatToNoteRow(1)*m_iNumerator
+	/**
+	 * @brief Retrieve the number of note rows per measure within the TimeSignatureSegment.
+	 * 
+	 * With BeatToNoteRow(1) rows per beat, then we should have BeatToNoteRow(1)*m_iNumerator
 	 * beats per measure. But if we assume that every BeatToNoteRow(1) rows is a quarter note,
 	 * and we want the beats to be 1/m_iDenominator notes, then we should have
 	 * BeatToNoteRow(1)*4 is rows per whole note and thus BeatToNoteRow(1)*4/m_iDenominator is
-	 * rows per beat. Multiplying by m_iNumerator gives rows per measure. */
+	 * rows per beat. Multiplying by m_iNumerator gives rows per measure.
+	 * @returns the number of note rows per measure.
+	 */
 	int GetNoteRowsPerMeasure() const { return BeatToNoteRow(1) * 4 * m_iNumerator / m_iDenominator; }
-
+	/**
+	 * @brief Compares two TimeSignatureSegments to see if they are equal to each other.
+	 * @param other the other TimeSignatureSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
 	bool operator==( const TimeSignatureSegment &other ) const
 	{
 		COMPARE( m_iStartRow );
@@ -119,80 +273,214 @@ struct TimeSignatureSegment
 		COMPARE( m_iDenominator );
 		return true;
 	}
+	/**
+	 * @brief Compares two TimeSignatureSegments to see if they are not equal to each other.
+	 * @param other the other TimeSignatureSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
 	bool operator!=( const TimeSignatureSegment &other ) const { return !operator==(other); }
-	bool operator<( const TimeSignatureSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
-	bool operator<= (const TimeSignatureSegment &other ) const
+	/**
+	 * @brief Compares two TimeSignatureSegments to see if one is less than the other.
+	 * @param other the other TimeSignatureSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const TimeSignatureSegment &other ) const
+	{ 
+		return m_iStartRow < other.m_iStartRow ||
+		( m_iStartRow == other.m_iStartRow && 
+		 ( m_iNumerator < other.m_iNumerator || 
+		  ( m_iNumerator == other.m_iNumerator && m_iDenominator < other.m_iDenominator )));
+	}
+	/**
+	 * @brief Compares two TimeSignatureSegments to see if one is less than or equal to the other.
+	 * @param other the other TimeSignatureSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
+	bool operator<=( const TimeSignatureSegment &other ) const
 	{
 		return ( operator<(other) || operator==(other) );
 	}
-	bool operator>( const TimeSignatureSegment &other ) const { return m_iStartRow > other.m_iStartRow; }
-	bool operator>= (const TimeSignatureSegment &other ) const
-	{
-		return ( operator>(other) || operator==(other) );
-	}
+	/**
+	 * @brief Compares two TimeSignatureSegments to see if one is greater than the other.
+	 * @param other the other TimeSignatureSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const TimeSignatureSegment &other ) const { return !operator<=(other); }
+	/**
+	 * @brief Compares two TimeSignatureSegments to see if one is greater than or equal to the other.
+	 * @param other the other TimeSignatureSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>= (const TimeSignatureSegment &other ) const { return !operator<(other); }
 };
 
-/* A warp segment is used to replicate the effects of Negative BPMs without
+/**
+ * @brief Identifies when a song needs to warp to a new beat.
+ *
+ * A warp segment is used to replicate the effects of Negative BPMs without
  * abusing negative BPMs. Negative BPMs should be converted to warp segments.
  * WarpAt=WarpTo is the format, where both are in beats. (Technically they're
  * both rows though.) */
 struct WarpSegment
 {
+	/**
+	 * @brief Creates a simple Warp Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
 	WarpSegment() : m_iStartRow(-1), m_fWarpBeats(-1) { }
+	/**
+	 * @brief Creates a Warp Segment with the specified starting row and row to warp to.
+	 * @param s the starting row of this segment.
+	 * @param r the row to warp to.
+	 */
+	WarpSegment( int s, int r )
+	{
+		m_iStartRow = max( 0, s );
+		m_fWarpBeats = max( 0, NoteRowToBeat( r ) );
+	}
+	/**
+	 * @brief Creates a Warp Segment with the specified starting row and beat to warp to.
+	 * @param s the starting row of this segment.
+	 * @param b the beat to warp to.
+	 */
 	WarpSegment( int s, float b ){ m_iStartRow = max( 0, s ); m_fWarpBeats = max( 0, b ); }
+	/**
+	 * @brief The row in which the WarpSegment activates.
+	 */
 	int m_iStartRow;
+	/**
+	 * @brief The beat to warp to.
+	 */
 	float m_fWarpBeats;
-
+	/**
+	 * @brief Compares two WarpSegments to see if they are equal to each other.
+	 * @param other the other WarpSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
 	bool operator==( const WarpSegment &other ) const
 	{
 		COMPARE( m_iStartRow );
 		COMPARE( m_fWarpBeats );
 		return true;
 	}
+	/**
+	 * @brief Compares two WarpSegments to see if they are not equal to each other.
+	 * @param other the other WarpSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
 	bool operator!=( const WarpSegment &other ) const { return !operator==(other); }
-	bool operator<( const WarpSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	/**
+	 * @brief Compares two WarpSegments to see if one is less than the other.
+	 * @param other the other WarpSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const WarpSegment &other ) const
+	{ 
+		return m_iStartRow < other.m_iStartRow ||
+		( m_iStartRow == other.m_iStartRow && m_fWarpBeats < other.m_fWarpBeats );
+	}
+	/**
+	 * @brief Compares two WarpSegments to see if one is less than or equal to the other.
+	 * @param other the other WarpSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
 	bool operator<=( const WarpSegment &other ) const
 	{
 		return ( operator<(other) || operator==(other) );
 	}
-	bool operator>( const WarpSegment &other ) const { return m_iStartRow > other.m_iStartRow; }
-	bool operator>=( const WarpSegment &other ) const
-	{
-		return ( operator>(other) || operator==(other) );
-	}
+	/**
+	 * @brief Compares two WarpSegments to see if one is greater than the other.
+	 * @param other the other WarpSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const WarpSegment &other ) const { return !operator<=(other); }
+	/**
+	 * @brief Compares two WarpSegments to see if one is greater than or equal to the other.
+	 * @param other the other WarpSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const WarpSegment &other ) const { return !operator<(other); }
 };
 
-/*
+/**
+ * @brief Identifies when a chart is to have a different tickcount value for hold notes.
+ * 
  * A tickcount segment is used to better replicate the checkpoint hold
  * system used by various based video games. The number is used to 
  * represent how many ticks can be counted in one beat.
  */
 struct TickcountSegment
 {
+	/**
+	 * @brief Creates a simple Tickcount Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
 	TickcountSegment() : m_iStartRow(-1), m_iTicks(2) { }
+	/**
+	 * @brief Creates a Tickcount Segment with the specified starting row and beats per second.
+	 * @param s the starting row of this segment.
+	 * @param t the amount of ticks counted per beat.
+	 */
 	TickcountSegment( int s, int t ){ m_iStartRow = max( 0, s ); m_iTicks = max( 1, t ); }
+	/**
+	 * @brief The row in which the TickcountSegment activates.
+	 */
 	int m_iStartRow;
+	/**
+	 * @brief The amount of ticks counted per beat.
+	 */
 	int m_iTicks;
 	
+	/**
+	 * @brief Compares two TickcountSegments to see if they are equal to each other.
+	 * @param other the other TickcountSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
 	bool operator==( const TickcountSegment &other ) const
 	{
 		COMPARE( m_iStartRow );
 		COMPARE( m_iTicks );
 		return true;
 	}
+	/**
+	 * @brief Compares two TickcountSegments to see if they are not equal to each other.
+	 * @param other the other TickcountSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
 	bool operator!=( const TickcountSegment &other ) const { return !operator==(other); }
+	/**
+	 * @brief Compares two TickcountSegments to see if one is less than the other.
+	 * @param other the other TickcountSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
 	bool operator<( const TickcountSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	/**
+	 * @brief Compares two TickcountSegments to see if one is less than or equal to the other.
+	 * @param other the other TickcountSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
 	bool operator<=( const TickcountSegment &other ) const
 	{
 		return ( operator<(other) || operator==(other) );
 	}
-	bool operator>( const TickcountSegment &other ) const { return m_iStartRow > other.m_iStartRow; }
-	bool operator>=( const TickcountSegment &other ) const
-	{
-		return ( operator>(other) || operator==(other) );
-	}
+	/**
+	 * @brief Compares two TickcountSegments to see if one is greater than the other.
+	 * @param other the other TickcountSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const TickcountSegment &other ) const { return !operator<=(other); }
+	/**
+	 * @brief Compares two TickcountSegments to see if one is greater than or equal to the other.
+	 * @param other the other TickcountSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const TickcountSegment &other ) const { return !operator<(other); }
 };
-
+/**
+ * @brief Houses all of the TimingData functions.
+ */
 class TimingData
 {
 public:
@@ -315,8 +603,11 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004 
+ * 
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
