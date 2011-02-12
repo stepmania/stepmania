@@ -14,6 +14,14 @@
 
 #define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYLEN(arr); ++Z ) arr[Z]=1.0f; }
 
+ThemeMetric<float> RANDOM_SPEED_CHANCE		( "PlayerOptions", "RandomSpeedChance" );
+ThemeMetric<float> RANDOM_REVERSE_CHANCE	( "PlayerOptions", "RandomReverseChance" );
+ThemeMetric<float> RANDOM_DARK_CHANCE		( "PlayerOptions", "RandomDarkChance" );
+ThemeMetric<float> RANDOM_ACCEL_CHANCE		( "PlayerOptions", "RandomAccelChance" );
+ThemeMetric<float> RANDOM_EFFECT_CHANCE		( "PlayerOptions", "RandomEffectChance" );
+ThemeMetric<float> RANDOM_HIDDEN_CHANCE		( "PlayerOptions", "RandomHiddenChance" );
+ThemeMetric<float> RANDOM_SUDDEN_CHANCE		( "PlayerOptions", "RandomSuddenChance" );
+
 void PlayerOptions::Init()
 {
 	m_bSetScrollSpeed = false;
@@ -526,22 +534,22 @@ void PlayerOptions::NextPerspective()
 
 void PlayerOptions::ChooseRandomModifiers()
 {
-	if( RandomFloat(0,1)>0.8f )
+	if( RandomFloat(0,1)<RANDOM_SPEED_CHANCE )
 		m_fScrollSpeed = 1.5f;
-	if( RandomFloat(0,1)>0.8f )
+	if( RandomFloat(0,1)<RANDOM_REVERSE_CHANCE )
 		m_fScrolls[SCROLL_REVERSE] = 1;
-	if( RandomFloat(0,1)>0.9f )
+	if( RandomFloat(0,1)<RANDOM_DARK_CHANCE )
 		m_fDark = 1;
 	float f;
 	f = RandomFloat(0,1);
-	if( f>0.66f )
+	if( f<RANDOM_ACCEL_CHANCE )
 		m_fAccels[RandomInt(NUM_ACCELS)] = 1;
-	else if( f>0.33f )
+	else if( f<RANDOM_EFFECT_CHANCE )
 		m_fEffects[RandomInt(NUM_EFFECTS)] = 1;
 	f = RandomFloat(0,1);
-	if( f>0.95f )
+	if( f<RANDOM_HIDDEN_CHANCE )
 		m_fAppearances[APPEARANCE_HIDDEN] = 1;
-	else if( f>0.9f )
+	else if( f<RANDOM_SUDDEN_CHANCE )
 		m_fAppearances[APPEARANCE_SUDDEN] = 1;
 }
 
