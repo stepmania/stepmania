@@ -46,6 +46,8 @@ static ThemeMetric<float>	TORNADO_OFFSET_SCALE_FROM_HIGH( "ArrowEffects", "Torna
 static ThemeMetric<float>	DRUNK_COLUMN_FREQUENCY( "ArrowEffects", "DrunkColumnFrequency" );
 static ThemeMetric<float>	DRUNK_OFFSET_FREQUENCY( "ArrowEffects", "DrunkOffsetFrequency" );
 static ThemeMetric<float>	DRUNK_ARROW_MAGNITUDE( "ArrowEffects", "DrunkArrowMagnitude" );
+static ThemeMetric<float>	BEAT_OFFSET_HEIGHT( "ArrowEffects", "BeatOffsetHeight" );
+static ThemeMetric<float>	BEAT_PI_HEIGHT( "ArrowEffects", "BeatPIHeight" );
 static ThemeMetric<bool>	QUANTIZE_ARROW_Y( "ArrowEffects", "QuantizeArrowYPosition");
 
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
@@ -416,7 +418,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
 	{
-		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / 15.0f + PI/2.0f );
+		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / BEAT_OFFSET_HEIGHT + PI/BEAT_PI_HEIGHT );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	}
 
