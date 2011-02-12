@@ -15,9 +15,12 @@ sm-ssc v1.?.? | 20110???
 
 20110212
 --------
-* Added metrics to allow changing how often random modifiers activate in
-  the proper setting. At this time, the mods to be activated have NOT been
-  changed. [Wolfman2000]
+* [PlayerOptions] Added metrics to allow changing how often random modifiers 
+  activate in the proper setting. At this time, the mods to be activated have 
+  NOT been changed. [Wolfman2000]
+* [ArrowEffects] Allow the Boomerang, Expand, Tipsy, Drunk, Tornado, Beat, and
+  Mini modifiers to be customized by metrics. As usual, change at your own
+  risk here. [Wolfman2000]
 
 20110211
 --------
