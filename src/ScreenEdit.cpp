@@ -3454,8 +3454,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			}
 		case convert_pause_to_beat:
 			{
-				bool bThrowaway; // is it?
-				float fStopSeconds = m_pSong->m_Timing.GetStopAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat), bThrowaway );
+				// TODO: Convert both Delays and Stops at once.
+				float fStopSeconds = m_pSong->m_Timing.GetStopAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat) );
 				m_pSong->m_Timing.SetStopAtBeat( GAMESTATE->m_fSongBeat, 0 );
 
 				float fStopBeats = fStopSeconds * m_pSong->GetBPMAtBeat(GAMESTATE->m_fSongBeat) / 60;
@@ -3581,11 +3581,10 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		break;
 	case stop:
 		// todo: Call a screen with class ScreenTextEntry instead. -aj
-		bool bThrowaway; // is it?
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromStopChange, 
 			ENTER_STOP_VALUE, 
-			ssprintf( "%.4f", m_pSong->m_Timing.GetStopAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat), bThrowaway ) ),
+			ssprintf( "%.4f", m_pSong->m_Timing.GetStopAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat) ) ),
 			10
 			);
 		break;
@@ -3594,7 +3593,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromDelayChange, 
 			ENTER_DELAY_VALUE, 
-			ssprintf( "%.4f", m_pSong->m_Timing.GetStopAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat), bThrowaway ) ),
+			ssprintf( "%.4f", m_pSong->m_Timing.GetDelayAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat) ) ),
 			10
 		);
 		break;

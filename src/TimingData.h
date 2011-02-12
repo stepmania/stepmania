@@ -550,13 +550,11 @@ public:
 	
 	/**
 	 * @brief Retrieve the Stop/Delay at the given row.
-	 *
-	 * Note: This function may need to be fixed: some parts of it are not working.
 	 * @param iNoteRow the row in question.
 	 * @param bDelayOut A flag to determine if we are getting a delay or not.
 	 * @return the time we stop at this row.
 	 */
-	float GetStopAtRow( int iNoteRow, bool &bDelayOut ) const;
+	float GetStopAtRow( int iNoteRow, bool bDelayOut ) const;
 	/**
 	 * @brief Retrieve the Stop/Delay at the given row.
 	 * @param fBeat the beat in question.

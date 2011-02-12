@@ -529,16 +529,14 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				else if (BeginsWith(NoteRowString, "|E"))
 				{
 					// Finally! the |E| tag is working as it should. I can die happy now -DaisuMaster
-					bool bDelay = true;
 					float fCurDelay = 60 / out.m_Timing.GetBPMAtBeat(fCurBeat) * (float)numTemp / iTickCount;
-					fCurDelay += out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat), bDelay);
+					fCurDelay += out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat) );
 					out.m_Timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
 					continue;
 				}
 				else if (BeginsWith(NoteRowString, "|D"))
 				{
-					bool bDelay = true;
-					float fCurDelay = out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat), bDelay);
+					float fCurDelay = out.m_Timing.GetStopAtRow(BeatToNoteRow(fCurBeat) );
 					fCurDelay += (float)numTemp / 1000;
 					out.m_Timing.SetStopAtBeat( fCurBeat, fCurDelay, true );
 					continue;

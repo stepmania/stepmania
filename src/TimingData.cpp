@@ -176,40 +176,27 @@ void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 	}
 }
 
-float TimingData::GetStopAtRow( int iNoteRow, bool &bDelayOut ) const
+float TimingData::GetStopAtRow( int iNoteRow, bool bDelay ) const
 {
-	bDelayOut = false; // not a delay by default
 	for( unsigned i=0; i<m_StopSegments.size(); i++ )
 	{
-		if( m_StopSegments[i].m_iStartRow == iNoteRow )
+		if( m_StopSegments[i].m_bDelay == bDelay && m_StopSegments[i].m_iStartRow == iNoteRow )
 		{
-			bDelayOut = m_StopSegments[i].m_bDelay;
 			return m_StopSegments[i].m_fStopSeconds;
 		}
 	}
-
 	return 0;
 }
 
 float TimingData::GetStopAtRow( int iRow ) const
 {
-	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
-	{
-		if ( !m_StopSegments[i].m_bDelay && m_StopSegments[i].m_iStartRow == iRow )
-			return m_StopSegments[i].m_fStopSeconds;
-	}
-	return 0;
+	return GetStopAtRow( iRow, false );
 }
 
 
 float TimingData::GetDelayAtRow( int iRow ) const
 {
-	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
-	{
-		if ( m_StopSegments[i].m_bDelay && m_StopSegments[i].m_iStartRow == iRow )
-			return m_StopSegments[i].m_fStopSeconds;
-	}
-	return 0;
+	return GetStopAtRow( iRow, true );
 }
 
 int TimingData::GetWarpToRow( int iWarpBeginRow ) const
