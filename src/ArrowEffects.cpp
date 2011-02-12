@@ -448,9 +448,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*fYOffset;
 				}
 				break;
-			default:
-				ASSERT("What the hell kind of styletype are you passing me anyways?");
-				break;
+			DEFAULT_FAIL(pStyle->m_StyleType);
 		}
 	}
 
