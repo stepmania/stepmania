@@ -13,8 +13,20 @@
 #include "Steps.h"
 #include "PrefsManager.h"
 
+/**
+ * @brief A custom .edit file can only be so big before we have to reject it.
+ */
 const int MAX_EDIT_STEPS_SIZE_BYTES = 60*1024; // 60 KB
 
+/**
+ * @brief Attempt to load any background changes in use by this song.
+ * 
+ * This code is right now copied from NotesLoaderSM. There may be a time
+ * when we add to this code, or perhaps just refactor it properly.
+ * @param change a reference to the background change.
+ * @param sBGChangeExpression a reference to the list of changes to be made.
+ * @return its success or failure.
+ */
 bool LoadFromBGSSCChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
 {
 	vector<RString> aBGChangeValues;
