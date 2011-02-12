@@ -266,7 +266,7 @@ inline float RandomFloat()
 }
 
 
-// Returns a float between dLow and dHigh inclusive
+// Returns a float between fLow and fHigh inclusive
 inline float RandomFloat( float fLow, float fHigh )
 {
 	return SCALE( RandomFloat(), 0.0f, 1.0f, fLow, fHigh );
