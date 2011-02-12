@@ -40,6 +40,7 @@ public:
 	Difficulty GetDifficulty() const		{ return Real()->m_Difficulty; }
 	int GetMeter() const				{ return Real()->m_iMeter; }
 	const RadarValues& GetRadarValues( PlayerNumber pn ) const { return Real()->m_CachedRadarValues[pn]; }
+	RString GetCredit() const			{ return Real()->m_sCredit; }
 
 	void SetFilename( RString fn )			{ m_sFilename = fn; }
 	RString GetFilename() const			{ return m_sFilename; }
@@ -48,6 +49,7 @@ public:
 	void SetDifficulty( Difficulty dc )		{ SetDifficultyAndDescription( dc, GetDescription() ); }
 	void SetDescription( RString sDescription ) 	{ SetDifficultyAndDescription( this->GetDifficulty(), sDescription ); }
 	void SetDifficultyAndDescription( Difficulty dc, RString sDescription );
+	void SetCredit( RString sCredit );
 	static bool MakeValidEditDescription( RString &sPreferredDescription );	// return true if was modified
 
 	void SetLoadedFromProfile( ProfileSlot slot )	{ m_LoadedFromProfile = slot; }
@@ -92,10 +94,11 @@ private:
 
 	/* These values are pulled from the autogen source first, if there is one. */
 	mutable unsigned		m_iHash;		// only used if m_Difficulty == Difficulty_Edit
-	RString				m_sDescription;		// Step author, edit name, or something meaningful
+	RString				m_sDescription;		// Edit name, or something meaningful
 	Difficulty			m_Difficulty;		// difficulty classification
 	int				m_iMeter;		// difficulty rating from MIN_METER to MAX_METER
 	RadarValues			m_CachedRadarValues[NUM_PLAYERS];
+	RString				m_sCredit;		// Step author
 };
 
 #endif

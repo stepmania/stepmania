@@ -70,7 +70,8 @@ namespace SongUtil
 		Difficulty dc = Difficulty_Invalid, 
 		int iMeterLow = -1, 
 		int iMeterHigh = -1, 
-		const RString &sDescription = "", 
+		const RString &sDescription = "",
+		const RString &sCredit = "",
 		bool bIncludeAutoGen = true, 
 		unsigned uHash = 0,
 		int iMaxToGet = -1 
@@ -81,15 +82,17 @@ namespace SongUtil
 		Difficulty dc = Difficulty_Invalid, 
 		int iMeterLow = -1, 
 		int iMeterHigh = -1, 
-		const RString &sDescription = "", 
+		const RString &sDescription = "",
+		const RString &sCredit = "",
 		unsigned uHash = 0,
 		bool bIncludeAutoGen = true
 		);
 	Steps* GetStepsByDifficulty(	const Song *pSong, StepsType st, Difficulty dc, bool bIncludeAutoGen = true );
 	Steps* GetStepsByMeter(		const Song *pSong, StepsType st, int iMeterLow, int iMeterHigh );
 	Steps* GetStepsByDescription(	const Song *pSong, StepsType st, RString sDescription );
+	Steps* GetStepsByCredit(	const Song *pSong, StepsType st, RString sCredit );
 	Steps* GetClosestNotes(		const Song *pSong, StepsType st, Difficulty dc, bool bIgnoreLocked=false );
-
+	
 	void AdjustDuplicateSteps( Song *pSong ); // part of TidyUpData
 	void DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps );
 
@@ -115,6 +118,7 @@ namespace SongUtil
 	RString MakeUniqueEditDescription( const Song* pSong, StepsType st, const RString &sPreferredDescription );
 	bool ValidateCurrentEditStepsDescription( const RString &sAnswer, RString &sErrorOut );
 	bool ValidateCurrentStepsDescription( const RString &sAnswer, RString &sErrorOut );
+	bool ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErrorOut );
 
 	void GetAllSongGenres( vector<RString> &vsOut );
 	void FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out );

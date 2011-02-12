@@ -1,6 +1,7 @@
 #include "global.h"
 #include "NotesLoader.h"
 #include "NotesLoaderSM.h"
+#include "NotesLoaderSSC.h"
 #include "NotesLoaderDWI.h"
 #include "NotesLoaderBMS.h"
 #include "NotesLoaderPMS.h"
@@ -30,14 +31,17 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 	vector<RString> list;
 
 	BlacklistedImages.clear();
-	SMLoader::GetApplicableFiles( sPath, list );
+	SSCLoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
 	{
-		if( !SMLoader::LoadFromDir(sPath, out) )
+		if( !SSCLoader::LoadFromDir( sPath, out ) )
 			return false;
-		SMLoader::TidyUpData( out, false );
+		SSCLoader::TidyUpData( out, false );
 		return true;
 	}
+	SMLoader::GetApplicableFiles( sPath, list );
+	if (!list.empty() )
+		return SMLoader::LoadFromDir( sPath, out );
 	DWILoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
 		return DWILoader::LoadFromDir( sPath, out, BlacklistedImages );

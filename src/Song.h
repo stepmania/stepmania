@@ -61,7 +61,7 @@ public:
 	enum SelectionDisplay
 	{ 
 		SHOW_ALWAYS,	// always
-		SHOW_NEVER		// never (unless song hiding is turned off)
+		SHOW_NEVER	// never (unless song hiding is turned off)
 	} m_SelectionDisplay;
 
 	Song();
@@ -78,9 +78,10 @@ public:
 	void ReCalculateRadarValuesAndLastBeat();	// called by TidyUpData, and after saving
 	void TranslateTitles();	// called by TidyUpData
 
-	bool SaveToSMFile( RString sPath, bool bSavingCache );
-	void Save();	// saves SM and DWI
+	bool SaveToSSCFile( RString sPath, bool bSavingCache );
+	void Save();	// saves SSC and SM guaranteed.
 	bool SaveToCacheFile();
+	bool SaveToSMFile();
 	bool SaveToDWIFile();
 
 	const RString &GetSongFilePath() const;
@@ -93,9 +94,10 @@ public:
 	// Directory this song data came from:
 	const RString &GetSongDir() const { return m_sSongDir; }
 
-	/* Filename associated with this file. This will always have an .SM extension.
-	 * If we loaded an .SM, this will point to it, but if we loaded any other
-	 * type, this will point to a generated .SM filename. */
+	/* Filename associated with this file. This will always have a
+	 * .SSC extension. If we loaded a .SSC, this will point to it, 
+	 * but if we loaded any other type, this will point to a 
+	 * generated .SSC filename. */
 	RString m_sSongFileName;
 
 	RString m_sGroupName;
@@ -121,6 +123,9 @@ public:
 	// "title subtitle"
 	RString GetDisplayFullTitle() const;
 	RString GetTranslitFullTitle() const;
+	
+	// allow versioning with the song.
+	float	m_fVersion;
 
 	RString m_sGenre;
 

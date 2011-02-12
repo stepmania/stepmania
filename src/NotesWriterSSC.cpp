@@ -1,7 +1,7 @@
 #include "global.h"
 #include <cerrno>
 #include <cstring>
-#include "NotesWriterSM.h"
+#include "NotesWriterSSC.h"
 #include "BackgroundUtil.h"
 #include "Foreach.h"
 #include "GameManager.h"
@@ -18,8 +18,8 @@
 
 static RString BackgroundChangeToString( const BackgroundChange &bgc )
 {
-	// TODO: Technically we need to double-escape the filename (because it might
-	// contain '=') and then unescape the value returned by the MsdFile.
+	// TODO: Technically we need to double-escape the filename (because it might contain '=') and then
+	// unescape the value returned by the MsdFile.
 	RString s = ssprintf( 
 		"%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s=%s=%s", 
 		bgc.m_fStartBeat, 
@@ -46,6 +46,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ssprintf( "#TITLETRANSLIT:%s;", SmEscape(out.m_sMainTitleTranslit).c_str() ) );
 	f.PutLine( ssprintf( "#SUBTITLETRANSLIT:%s;", SmEscape(out.m_sSubTitleTranslit).c_str() ) );
 	f.PutLine( ssprintf( "#ARTISTTRANSLIT:%s;", SmEscape(out.m_sArtistTranslit).c_str() ) );
+	f.PutLine( ssprintf( "#VERSION:%f;", out.m_fVersion ) );
 	f.PutLine( ssprintf( "#GENRE:%s;", SmEscape(out.m_sGenre).c_str() ) );
 	f.PutLine( ssprintf( "#CREDIT:%s;", SmEscape(out.m_sCredit).c_str() ) );
 	f.PutLine( ssprintf( "#BANNER:%s;", SmEscape(out.m_sBannerFile).c_str() ) );
@@ -174,6 +175,19 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	}
 	f.PutLine( ";" );
 	
+	/*
+	ASSERT( !out.m_Timing.m_ComboSegments.empty() );
+	f.Write( "#COMBOS:" );
+	for( unsigned i=0; i<out.m_Timing.m_ComboSegments.size(); i++ )
+	{
+		const ComboSegment &cs = out.m_Timing.m_ComboSegments[i];
+		
+		f.PutLine( ssprintf( "%.6f=%d", NoteRowToBeat(cs.m_iStartRow), cs.m_iComboFactor ) );
+		if( i != out.m_Timing.m_ComboSegments.size()-1 )
+			f.Write( "," );
+	}
+	f.PutLine( ";" );
+	*/
 	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )
@@ -187,7 +201,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.PutLine( BackgroundChangeToString(*bgc)+"," );
 
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to indicate that
-		 * this file doesn't want a song BG entry added at the end.  See SMLoader::TidyUpData.
+		 * this file doesn't want a song BG entry added at the end.  See SSCLoader::TidyUpData.
 		 * This tag will be removed on load.  Add it at a very high beat, so it won't cause
 		 * problems if loaded in older versions. */
 		if( b==0 && !out.GetBackgroundChanges(b).empty() )
@@ -239,7 +253,7 @@ static RString JoinLineList( vector<RString> &lines )
 	return join( "\r\n", lines.begin()+j, lines.end() );
 }
 
-static RString GetSMNotesTag( const Song &song, const Steps &in )
+static RString GetSSCNotesTag( const Song &song, const Steps &in, bool bSavingCache )
 {
 	vector<RString> lines;
 
@@ -247,11 +261,11 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	// Escape to prevent some clown from making a comment of "\r\n;"
 	lines.push_back( ssprintf("//---------------%s - %s----------------",
 		GAMEMAN->GetStepsTypeInfo(in.m_StepsType).szName, SmEscape(in.GetDescription()).c_str()) );
-	lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
-	lines.push_back( ssprintf( "     %s:", GAMEMAN->GetStepsTypeInfo(in.m_StepsType).szName ) );
-	lines.push_back( ssprintf( "     %s:", SmEscape(in.GetDescription()).c_str() ) );
-	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
-	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
+	lines.push_back( "#NOTEDATA:;" ); // our new separator.
+	lines.push_back( ssprintf( "#STEPSTYPE:%s;", GAMEMAN->GetStepsTypeInfo(in.m_StepsType).szName ) );
+	lines.push_back( ssprintf( "#DESCRIPTION:%s;", SmEscape(in.GetDescription()).c_str() ) );
+	lines.push_back( ssprintf( "#DIFFICULTY:%s;", DifficultyToString(in.GetDifficulty()).c_str() ) );
+	lines.push_back( ssprintf( "#METER:%d;", in.GetMeter() ) );
 	
 	vector<RString> asRadarValues;
 	FOREACH_PlayerNumber( pn )
@@ -260,22 +274,106 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 		FOREACH_ENUM( RadarCategory, rc )
 			asRadarValues.push_back( ssprintf("%.3f", rv[rc]) );
 	}
-	lines.push_back( ssprintf( "     %s:", join(",",asRadarValues).c_str() ) );
+	lines.push_back( ssprintf( "#RADARVALUES:%s:", join(",",asRadarValues).c_str() ) );
 
+	lines.push_back( ssprintf( "#CREDIT:%s;", SmEscape(in.GetCredit()).c_str() ) );
+	
+	// TODO: Remove this block, uncommon below block for Split Timing. -Wolfman2000
+	lines.push_back( "#BPMS:;" );
+	lines.push_back( "#STOPS:;" );
+	lines.push_back( "#DELAYS:;" );
+	lines.push_back( "#TIMESIGNATURES:;" );
+	lines.push_back( "#TICKCOUNTS:;" );
+	// lines.push_back( "#COMBOS:;" );
+	
+	/*
+	vector<RString> asBPMValues;
+	for( unsigned i=0; i<in.m_Timing.m_BPMSegments.size(); i++ )
+	{
+		const BPMSegment &bs = in.m_Timing.m_BPMSegments[i];
+		asBPMValues.push_back( ssprintf("%.6f=%.6f", NoteRowToBeat(bs.m_iStartRow), bs.GetBPM() ) );
+	}
+	lines.push_back( ssprintf( "#BPMS:%s;", join("\n,", asBPMValues).c_str() ) );
+	
+	vector<RString> asStopValues;
+	for( unsigned i=0; i<in.m_Timing.m_StopSegments.size(); i++ )
+	{
+		const StopSegment &fs = in.m_Timing.m_StopSegments[i];
+		
+		if(!fs.m_bDelay)
+		{
+			asStopValues.push_back( ssprintf( "%.6f=%.6f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
+		}
+	}
+	lines.push_back( ssprintf( "#STOPS:%s;", join("\n,", asStopValues).c_str() ) );
+	
+	vector<RString> asDelayValues;
+	for( unsigned i=0; i<in.m_Timing.m_StopSegments.size(); i++ )
+	{
+		const StopSegment &fs = in.m_Timing.m_StopSegments[i];
+		
+		if( fs.m_bDelay )
+		{
+			asDelayValues.push_back( ssprintf( "%.6f=%.6f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
+		}
+	}
+	lines.push_back( ssprintf( "#DELAYS:%s;", join("\n,", asDelayValues).c_str() ) );
+	
+	
+	ASSERT( !in.m_Timing.m_vTimeSignatureSegments.empty() );
+	vector<RString> asTimeSigValues;
+	FOREACH_CONST( TimeSignatureSegment, in.m_Timing.m_vTimeSignatureSegments, iter )
+	{
+		asTimeSigValues.push_back( ssprintf( "%.6f=%d=%d", NoteRowToBeat(iter->m_iStartRow), iter->m_iNumerator, iter->m_iDenominator ) );
+		vector<TimeSignatureSegment>::const_iterator iter2 = iter;
+		iter2++;
+	}
+	lines.push_back( ssprintf( "#TIMESIGNATURES:%s;", join("\n,", asTimeSigValues).c_str() ) );
+	
+	ASSERT( !in.m_Timing.m_TickcountSegments.empty() );
+	vector<RString> asTickValues;
+	for( unsigned i=0; i<in.m_Timing.m_TickcountSegments.size(); i++ )
+	{
+		const TickcountSegment &ts = in.m_Timing.m_TickcountSegments[i];
+		
+		asTickValues.push_back( ssprintf( "%.6f=%d", NoteRowToBeat(ts.m_iStartRow), ts.m_iTicks ) );
+	}
+	lines.push_back( ssprintf( "#TICKCOUNTS:%s;", join("\n,", asTickValues).c_str() ) );
+	
+	ASSERT( !in.m_Timing.m_ComboSegments.empty() );
+	vector<RString> asComboValues;
+	for( unsigned i=0; i<in.m_Timing.m_ComboSegments.size(); i++ )
+	{
+		const ComboSegment &cs = in.m_Timing.m_ComboSegments[i];
+		
+		asComboValues.push_back( ssprintf( "%.6f=%d", NoteRowToBeat(cs.m_iStartRow), cs.m_iComboFactor ) );
+	}
+	lines.push_back( ssprintf( "#COMBOS:%s;", join("\n,", asComboValues).c_str() ) );
+	
+	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );
+	 */
+	
 	RString sNoteData;
 	in.GetSMNoteData( sNoteData );
 
+	lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
+	
+	
 	split( sNoteData, "\n", lines, true );
 	lines.push_back( ";" );
 
 	return JoinLineList( lines );
 }
 
-bool NotesWriterSM::Write( RString sPath, const Song &out )
+bool NotesWriterSSC::Write( RString sPath, const Song &out, const vector<Steps*>& vpStepsToSave, bool bSavingCache )
 {
 	int flags = RageFile::WRITE;
 
-	flags |= RageFile::SLOW_FLUSH;
+	/* If we're not saving cache, we're saving real data, so enable SLOW_FLUSH
+	 * to prevent data loss.  If we're saving cache, this will slow things down
+	 * too much. */
+	if( !bSavingCache )
+		flags |= RageFile::SLOW_FLUSH;
 
 	RageFile f;
 	if( !f.Open( sPath, flags ) )
@@ -285,13 +383,23 @@ bool NotesWriterSM::Write( RString sPath, const Song &out )
 	}
 
 	WriteGlobalTags( f, out );
+	if( bSavingCache )
+	{
+		f.PutLine( ssprintf( "// cache tags:" ) );
+		f.PutLine( ssprintf( "#FIRSTBEAT:%.3f;", out.m_fFirstBeat ) );
+		f.PutLine( ssprintf( "#LASTBEAT:%.3f;", out.m_fLastBeat ) );
+		f.PutLine( ssprintf( "#SONGFILENAME:%s;", out.m_sSongFileName.c_str() ) );
+		f.PutLine( ssprintf( "#HASMUSIC:%i;", out.m_bHasMusic ) );
+		f.PutLine( ssprintf( "#HASBANNER:%i;", out.m_bHasBanner ) );
+		f.PutLine( ssprintf( "#MUSICLENGTH:%.3f;", out.m_fMusicLengthSeconds ) );
+		f.PutLine( ssprintf( "// end cache tags" ) );
+	}
 
 	// Save specified Steps to this file
-	const vector<Steps*>& vpStepsToSave = out.GetAllSteps();
 	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
 	{
 		const Steps* pSteps = *s;
-		RString sTag = GetSMNotesTag( out, *pSteps );
+		RString sTag = GetSSCNotesTag( out, *pSteps, bSavingCache );
 		f.PutLine( sTag );
 	}
 	if( f.Flush() == -1 )
@@ -300,7 +408,7 @@ bool NotesWriterSM::Write( RString sPath, const Song &out )
 	return true;
 }
 
-void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps, RString &sOut )
+void NotesWriterSSC::GetEditFileContents( const Song *pSong, const Steps *pSteps, RString &sOut )
 {
 	sOut = "";
 	RString sDir = pSong->GetSongDir();
@@ -311,10 +419,10 @@ void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps,
 	if( asParts.size() )
 		sDir = join( "/", asParts.begin()+1, asParts.end() );
 	sOut += ssprintf( "#SONG:%s;\r\n", sDir.c_str() );
-	sOut += GetSMNotesTag( *pSong, *pSteps );
+	sOut += GetSSCNotesTag( *pSong, *pSteps, false );
 }
 
-RString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
+RString NotesWriterSSC::GetEditFileName( const Song *pSong, const Steps *pSteps )
 {
 	/* Try to make a unique name. This isn't guaranteed. Edit descriptions are
 	 * case-sensitive, filenames on disk are usually not, and we decimate certain
@@ -331,9 +439,9 @@ RString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
 	return sFile;
 }
 
-static LocalizedString DESTINATION_ALREADY_EXISTS	("NotesWriterSM", "Error renaming file.  Destination file '%s' already exists.");
-static LocalizedString ERROR_WRITING_FILE		("NotesWriterSM", "Error writing file '%s'.");
-bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RString &sErrorOut )
+static LocalizedString DESTINATION_ALREADY_EXISTS	("NotesWriterSSC", "Error renaming file.  Destination file '%s' already exists.");
+static LocalizedString ERROR_WRITING_FILE		("NotesWriterSSC", "Error writing file '%s'.");
+bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RString &sErrorOut )
 {
 	RString sDir = PROFILEMAN->GetProfileDir( ProfileSlot_Machine ) + EDIT_STEPS_SUBDIR;
 
@@ -375,7 +483,7 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
 }
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2011 Jason Felds
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

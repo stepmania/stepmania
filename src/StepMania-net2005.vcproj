@@ -1314,6 +1314,15 @@
 				RelativePath="NotesLoaderSM.h"
 				>
 			</File>
+                        <File
+                                RelativePath="NotesLoaderSSC.cpp"
+				>
+                        </File>
+                        <File
+                                RelativePath="NotesLoaderSSC.h"
+				>
+                        </File>
+
 			<File
 				RelativePath="NotesWriterDWI.cpp"
 				>
@@ -1330,6 +1339,15 @@
 				RelativePath="NotesWriterSM.h"
 				>
 			</File>
+                        <File
+                                RelativePath="NotesWriterSSC.cpp"
+				>
+                        </File>
+                        <File
+                                RelativePath="NotesWriterSSC.h"
+				>
+                        </File>
+
 			<File
 				RelativePath="NoteTypes.cpp"
 				>

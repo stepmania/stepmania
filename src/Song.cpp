@@ -25,8 +25,10 @@
 #include "SpecialFiles.h"
 #include "NotesLoader.h"
 #include "NotesLoaderSM.h"
+#include "NotesLoaderSSC.h"
 #include "NotesWriterDWI.h"
 #include "NotesWriterSM.h"
+#include "NotesWriterSSC.h"
 #include "UnlockManager.h"
 #include "LyricsLoader.h"
 
@@ -34,7 +36,7 @@
 #include <set>
 #include <float.h>
 
-const int FILE_CACHE_VERSION = 162;	// increment this to invalidate cache
+const int FILE_CACHE_VERSION = 163;	// increment this to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
@@ -50,6 +52,8 @@ static const char *InstrumentTrackNames[] = {
 XToString( InstrumentTrack );
 StringToX( InstrumentTrack );
 
+const static float VERSION_NUMBER = 0.5f;
+
 Song::Song()
 {
 	FOREACH_BackgroundLayer( i )
@@ -57,6 +61,7 @@ Song::Song()
 	m_ForegroundChanges = AutoPtrCopyOnWrite<VBackgroundChange>(new VBackgroundChange);
 
 	m_LoadedFromProfile = ProfileSlot_Invalid;
+	m_fVersion = VERSION_NUMBER;
 	m_fMusicSampleStartSeconds = -1;
 	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 	m_fMusicLengthSeconds = 0;
@@ -214,8 +219,8 @@ bool Song::LoadFromSongDir( RString sDir )
 	if( bUseCache )
 	{
 //		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
-		SMLoader::LoadFromSMFile( sCacheFilePath, *this, true );
-		SMLoader::TidyUpData( *this, true );
+		SSCLoader::LoadFromSSCFile( sCacheFilePath, *this, true );
+		SSCLoader::TidyUpData( *this, true );
 	}
 	else
 	{
@@ -707,7 +712,7 @@ void Song::TidyUpData()
 	{
 		/* Generated filename; this doesn't always point to a loadable file,
 		 * but instead points to the file we should write changed files to,
-		 * and will always be an .SM.
+		 * and will always be a .SSC.
 		 *
 		 * This is a little tricky. We can't always use the song title directly,
 		 * since it might contain characters we can't store in filenames. Two
@@ -721,23 +726,32 @@ void Song::TidyUpData()
 		 * but not KSFs and BMSs.
 		 *
 		 * So, let's do this (by priority):
-		 * 1. If there's an .SM file, use that filename. No reason to use anything
+		 * 1. If there's a .SSC file, use that filename. No reason to use anything
 		 *    else; it's the filename in use.
-		 * 2. If there's a .DWI, use it with a changed extension.
-		 * 3. Otherwise, use the name of the directory, since it's definitely a valid
+		 * 2. If there's an .SM, use it with a changed extension.
+		 * 3. If there's a .DWI, use it with a changed extension.
+		 * 4. Otherwise, use the name of the directory, since it's definitely a valid
 		 *    filename, and should always be the title of the song (unlike KSFs). */
 		m_sSongFileName = m_sSongDir;
 		vector<RString> asFileNames;
-		GetDirListing( m_sSongDir+"*.sm", asFileNames );
+		GetDirListing( m_sSongDir+"*.ssc", asFileNames );
 		if( !asFileNames.empty() )
+		{
 			m_sSongFileName += asFileNames[0];
-		else {
-			GetDirListing( m_sSongDir+"*.dwi", asFileNames );
-			if( !asFileNames.empty() ) {
-				m_sSongFileName += SetExtension( asFileNames[0], "sm" );
-			} else {
-				m_sSongFileName += Basename(m_sSongDir);
-				m_sSongFileName += ".sm";
+		}
+		else
+		{
+			GetDirListing( m_sSongDir+"*.sm", asFileNames );
+			if( !asFileNames.empty() )
+				m_sSongFileName += SetExtension( asFileNames[0], "ssc" );
+			else {
+				GetDirListing( m_sSongDir+"*.dwi", asFileNames );
+				if( !asFileNames.empty() ) {
+					m_sSongFileName += SetExtension( asFileNames[0], "ssc" );
+				} else {
+					m_sSongFileName += Basename(m_sSongDir);
+					m_sSongFileName += ".ssc";
+				}
 			}
 		}
 	}
@@ -844,9 +858,10 @@ void Song::Save()
 	TranslateTitles();
 
 	// Save the new files. These calls make backups on their own.
-	if( !SaveToSMFile(GetSongFilePath(), false) )
+	if( !SaveToSSCFile(GetSongFilePath(), false) )
 		return;
-	SaveToDWIFile();
+	SaveToSMFile();
+	//SaveToDWIFile();
 	SaveToCacheFile();
 
 	/* We've safely written our files and created backups. Rename non-SM and
@@ -871,10 +886,21 @@ void Song::Save()
 	}
 }
 
-
-bool Song::SaveToSMFile( RString sPath, bool bSavingCache )
+bool Song::SaveToSMFile()
 {
-	LOG->Trace( "Song::SaveToSMFile('%s')", sPath.c_str() );
+	const RString sPath = SetExtension( GetSongFilePath(), "sm" );
+	LOG->Trace( "Song::SaveToSMFile(%s)", sPath.c_str() );
+	
+	// If the file exists, make a backup.
+	if( IsAFile(sPath) )
+		FileCopy( sPath, sPath + ".old" );
+	return NotesWriterSM::Write( sPath, *this );
+
+}
+
+bool Song::SaveToSSCFile( RString sPath, bool bSavingCache )
+{
+	LOG->Trace( "Song::SaveToSSCFile('%s')", sPath.c_str() );
 
 	// If the file exists, make a backup.
 	if( !bSavingCache && IsAFile(sPath) )
@@ -894,7 +920,7 @@ bool Song::SaveToSMFile( RString sPath, bool bSavingCache )
 		vpStepsToSave.push_back( pSteps );
 	}
 
-	if( !NotesWriterSM::Write(sPath, *this, vpStepsToSave, bSavingCache) )
+	if( !NotesWriterSSC::Write(sPath, *this, vpStepsToSave, bSavingCache) )
 		return false;
 
 	if( !bSavingCache && g_BackUpAllSongSaves.Get() )
@@ -932,7 +958,7 @@ bool Song::SaveToCacheFile()
 {
 	SONGINDEX->AddCacheIndex(m_sSongDir, GetHashForDirectory(m_sSongDir));
 	const RString sPath = GetCacheFilePath();
-	if( !SaveToSMFile(sPath, true) )
+	if( !SaveToSSCFile(sPath, true) )
 		return false;
 
 	FOREACH( Steps*, m_vpSteps, pSteps )

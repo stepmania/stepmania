@@ -1237,6 +1237,7 @@
 		</Class>
 		<Class name='Steps'>
 			<Function name='GetDescription'/>
+			<Function name='GetAuthorCredit'/>
 			<Function name='GetDifficulty'/>
 			<Function name='GetFilename'/>
 			<Function name='GetHash'/>

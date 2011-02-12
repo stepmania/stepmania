@@ -3033,6 +3033,9 @@
 	<Function name='GetDescription' return='string' arguments=''>
 		Returns the Steps description.
 	</Function>
+	<Function name='GetAuthorCredit' return='string' arguments=''>
+		Returns the author that made that particular Steps pattern.
+	</Function>
 	<Function name='GetDifficulty' return='Difficulty' arguments=''>
 		Returns the Steps difficulty.
 	</Function>

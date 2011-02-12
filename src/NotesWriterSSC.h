@@ -1,47 +1,22 @@
-/* MsdFile - Read .SSC, .SM, .DWI, and .MSD files. */
+/* NotesWriterSSC - Writes a Song to an .SSC file. */
 
-#ifndef MSDFILE_H
-#define MSDFILE_H
+#ifndef NOTES_WRITER_SSC_H
+#define NOTES_WRITER_SSC_H
 
-class MsdFile  
+class Song;
+class Steps;
+namespace NotesWriterSSC
 {
-public:
-	/* #param:param:param:param; <- one whole value */
-	struct value_t
-	{
-		vector<RString> params;
-
-		RString operator[]( unsigned i ) const { if( i >= params.size() ) return RString(); return params[i]; }
-	};
-
-	virtual ~MsdFile() { }
-
-	// Returns true if successful, false otherwise.
-	bool ReadFile( RString sFilePath, bool bUnescape );
-	void ReadFromString( const RString &sString, bool bUnescape );
-
-	RString GetError() const { return error; }
-
-	unsigned GetNumValues() const { return values.size(); }
-	unsigned GetNumParams( unsigned val ) const { if( val >= GetNumValues() ) return 0; return values[val].params.size(); }
-	const value_t &GetValue( unsigned val ) const { ASSERT(val < GetNumValues()); return values[val]; }
-	RString GetParam( unsigned val, unsigned par ) const;
-
-
-private:
-	void ReadBuf( const char *buf, int len, bool bUnescape );
-	void AddParam( const char *buf, int len );
-	void AddValue();
-
-	vector<value_t> values;
-	RString error;
-};
+	bool Write( RString sPath, const Song &out, const vector<Steps*>& vpStepsToSave, bool bSavingCache );
+	void GetEditFileContents( const Song *pSong, const Steps *pSteps, RString &sOut );
+	RString GetEditFileName( const Song *pSong, const Steps *pSteps );
+	bool WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RString &sErrorOut );
+}
 
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
- *
+ * (c) 2011 Jason Felds
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
