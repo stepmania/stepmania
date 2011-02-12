@@ -10,6 +10,16 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
+sm-ssc v1.?.? | 20110???
+--------------------------------------------------------------------------------
+
+20110211
+--------
+* Introduced the .ssc file format for future features and expansion. All .sm
+  files will still work, and will still be generated when saved in the editor.
+  At this point, saving to the DWI format is being deprecated. [Wolfman2000]
+
+================================================================================
 sm-ssc v1.2.1 | 20110210
 --------------------------------------------------------------------------------
 
