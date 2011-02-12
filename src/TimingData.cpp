@@ -77,11 +77,6 @@ void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 	}
 }
 
-void TimingData::SetStopAtRow( int iRow, float fSeconds )
-{
-	SetStopAtRow(iRow,fSeconds,false);
-}
-
 void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 {
 	unsigned i;
@@ -107,11 +102,6 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 		else
 			m_StopSegments.erase( m_StopSegments.begin()+i, m_StopSegments.begin()+i+1 );
 	}
-}
-
-void TimingData::SetDelayAtRow( int iRow, float fSeconds )
-{
-	SetStopAtRow(iRow,fSeconds,true);
 }
 
 void TimingData::SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominator )
@@ -274,24 +264,34 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 	}
 }
 
-float TimingData::GetBPMAtBeat( float fBeat ) const
+float TimingData::GetBPMAtRow( int iNoteRow ) const
 {
-	int iIndex = BeatToNoteRow( fBeat );
 	unsigned i;
 	for( i=0; i<m_BPMSegments.size()-1; i++ )
-		if( m_BPMSegments[i+1].m_iStartRow > iIndex )
+		if( m_BPMSegments[i+1].m_iStartRow > iNoteRow )
 			break;
 	return m_BPMSegments[i].GetBPM();
 }
 
-int TimingData::GetBPMSegmentIndexAtBeat( float fBeat ) const
+int TimingData::GetBPMSegmentIndexAtRow( int iNoteRow ) const
 {
-	int iIndex = BeatToNoteRow( fBeat );
-	int i;
-	for( i=0; i<(int)(m_BPMSegments.size())-1; i++ )
-		if( m_BPMSegments[i+1].m_iStartRow > iIndex )
+	unsigned i;
+	for( i=0; i<m_BPMSegments.size()-1; i++ )
+		if( m_BPMSegments[i+1].m_iStartRow > iNoteRow )
 			break;
-	return i;
+	return (int)i;
+}
+
+int TimingData::GetStopSegmentIndexAtRow( int iNoteRow, bool bDelay ) const
+{
+	unsigned i;
+	for( i=0; i<m_StopSegments.size()-1; i++ )
+	{
+		const StopSegment& s = m_StopSegments[i+1];
+		if( s.m_iStartRow > iNoteRow && s.m_bDelay == bDelay )
+			break;
+	}
+	return (int)i;
 }
 
 int TimingData::GetTimeSignatureSegmentIndexAtRow( int iRow ) const
@@ -322,14 +322,24 @@ int TimingData::GetTimeSignatureDenominatorAtRow( int iRow )
 	return GetTimeSignatureSegmentAtRow( iRow ).m_iDenominator;
 }
 
-BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )
+BPMSegment& TimingData::GetBPMSegmentAtRow( int iNoteRow )
 {
 	static BPMSegment empty;
 	if( m_BPMSegments.empty() )
 		return empty;
 
-	int i = GetBPMSegmentIndexAtBeat( fBeat );
+	int i = GetBPMSegmentIndexAtRow( iNoteRow );
 	return m_BPMSegments[i];
+}
+
+StopSegment& TimingData::GetStopSegmentAtRow( int iNoteRow, bool bDelay )
+{
+	static StopSegment empty;
+	if( m_StopSegments.empty() )
+		return empty;
+	
+	int i = GetStopSegmentIndexAtRow( iNoteRow, bDelay );
+	return m_StopSegments[i];
 }
 
 int TimingData::GetTickcountSegmentIndexAtRow( int iRow ) const
