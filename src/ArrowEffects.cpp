@@ -38,6 +38,11 @@ static ThemeMetric<float>	TIPSY_ARROW_MAGNITUDE( "ArrowEffects", "TipsyArrowMagn
 static ThemeMetric<float>	TIPSY_OFFSET_TIMER_FREQUENCY( "ArrowEffects", "TipsyOffsetTimerFrequency" );
 static ThemeMetric<float>	TIPSY_OFFSET_COLUMN_FREQUENCY( "ArrowEffects", "TipsyOffsetColumnFrequency" );
 static ThemeMetric<float>	TIPSY_OFFSET_ARROW_MAGNITUDE( "ArrowEffects", "TipsyOffsetArrowMagnitude" );
+static ThemeMetric<float>	TORNADO_POSITION_SCALE_TO_LOW( "ArrowEffects", "TornadoPositionScaleToLow" );
+static ThemeMetric<float>	TORNADO_POSITION_SCALE_TO_HIGH( "ArrowEffects", "TornadoPositionScaleToHigh" );
+static ThemeMetric<float>	TORNADO_OFFSET_FREQUENCY( "ArrowEffects", "TornadoOffsetFrequency" );
+static ThemeMetric<float>	TORNADO_OFFSET_SCALE_FROM_LOW( "ArrowEffects", "TornadoOffsetScaleFromLow" );
+static ThemeMetric<float>	TORNADO_OFFSET_SCALE_FROM_HIGH( "ArrowEffects", "TornadoOffsetScaleFromHigh" );
 static ThemeMetric<float>	DRUNK_COLUMN_FREQUENCY( "ArrowEffects", "DrunkColumnFrequency" );
 static ThemeMetric<float>	DRUNK_OFFSET_FREQUENCY( "ArrowEffects", "DrunkOffsetFrequency" );
 static ThemeMetric<float>	DRUNK_ARROW_MAGNITUDE( "ArrowEffects", "DrunkArrowMagnitude" );
@@ -381,11 +386,13 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	if( fEffects[PlayerOptions::EFFECT_TORNADO] != 0 )
 	{
 		const float fRealPixelOffset = pCols[iColNum].fXOffset;
-		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum], -1, 1 );
+		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum], 
+						     TORNADO_POSITION_SCALE_TO_LOW, TORNADO_POSITION_SCALE_TO_HIGH );
 		float fRads = acosf( fPositionBetween );
-		fRads += fYOffset * 6 / SCREEN_HEIGHT;
+		fRads += fYOffset * TORNADO_OFFSET_FREQUENCY / SCREEN_HEIGHT;
 
-		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), -1, 1, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
+		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW, TORNADO_OFFSET_SCALE_FROM_HIGH, 
+							 data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
 
 		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
 	}
