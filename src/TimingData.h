@@ -567,7 +567,7 @@ public:
 	 * @param iNoteRow the row in question.
 	 * @return the stop time.
 	 */
-	float GetStopAtRow( int iRow ) const;
+	float GetStopAtRow( int iNoteRow ) const;
 	/**
 	 * @brief Retrieve the stop time at the given beat.
 	 * @param fBeat the beat in question.
@@ -579,7 +579,7 @@ public:
 	 * @param iNoteRow the row in question.
 	 * @return the delay time.
 	 */
-	float GetDelayAtRow( int iRow ) const;
+	float GetDelayAtRow( int iNoteRow ) const;
 	/**
 	 * @brief Retrieve the delay time at the given beat.
 	 * @param fBeat the beat in question.
@@ -610,25 +610,25 @@ public:
 	 */
 	void SetDelayAtRow( int iNoteRow, float fSeconds ) { SetStopAtRow( iNoteRow, fSeconds, true ); }
 	/**
-	 * @brief Set the row to have the new stop time.
-	 * @param iNoteRow the row to have the new stop time.
+	 * @brief Set the beat to have the new stop time.
+	 * @param fBeat to have the new stop time.
 	 * @param fSeconds the new stop time.
 	 */
 	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, false ); }
 	/**
-	 * @brief Set the row to have the new pause time.
+	 * @brief Set the beat to have the new pause time.
 	 *
 	 * This function was added specifically for sm-ssc.
-	 * @param iNoteRow the row to have the new pause time.
+	 * @param fBeat the beat to have the new pause time.
 	 * @param fSeconds the new pause time.
 	 * @param bDelay If true, this is a Delay Segment. Otherwise, it is a StopSegment.
 	 */
 	void SetStopAtBeat( float fBeat, float fSeconds, bool bDelay ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, bDelay ); }
 	/**
-	 * @brief Set the row to have the new delay time.
+	 * @brief Set the beat to have the new delay time.
 	 *
 	 * This function was added specifically for sm-ssc.
-	 * @param iNoteRow the row to have the new delay time.
+	 * @param fBeat the beat to have the new delay time.
 	 * @param fSeconds the new delay time.
 	 */
 	void SetDelayAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds, true ); }
@@ -719,7 +719,7 @@ public:
 	 * @param iNoteRow the row in question.
 	 * @return the numerator.
 	 */
-	int GetTimeSignatureNumeratorAtRow( int iRow );
+	int GetTimeSignatureNumeratorAtRow( int iNoteRow );
 	/**
 	 * @brief Retrieve the Time Signature's numerator at the given beat.
 	 * @param fBeat the beat in question.
@@ -731,7 +731,7 @@ public:
 	 * @param iNoteRow the row in question.
 	 * @return the denominator.
 	 */
-	int GetTimeSignatureDenominatorAtRow( int iRow );
+	int GetTimeSignatureDenominatorAtRow( int iNoteRow );
  	/**
 	 * @brief Retrieve the Time Signature's denominator at the given beat.
 	 * @param fBeat the beat in question.
@@ -744,7 +744,7 @@ public:
 	 * @param iNumerator the numerator.
 	 * @param iDenominator the denominator.
 	 */
-	void SetTimeSignatureAtRow( int iRow, int iNumerator, int iDenominator );
+	void SetTimeSignatureAtRow( int iNoteRow, int iNumerator, int iDenominator );
 	/**
 	 * @brief Set the beat to have the new Time Signature.
 	 * @param fBeat the beat to have the new Time Signature.
@@ -757,7 +757,7 @@ public:
 	 * @param iNoteRow the row to have the new Time Signature numerator.
 	 * @param iNumerator the numerator.
 	 */
-	void SetTimeSignatureNumeratorAtRow( int iRow, int iNumerator );
+	void SetTimeSignatureNumeratorAtRow( int iNoteRow, int iNumerator );
 	/**
 	 * @brief Set the beat to have the new Time Signature numerator.
 	 * @param fBeat the beat to have the new Time Signature numerator.
@@ -769,7 +769,7 @@ public:
 	 * @param iNoteRow the row to have the new Time Signature denominator.
 	 * @param iDenominator the denominator.
 	 */
-	void SetTimeSignatureDenominatorAtRow( int iRow, int iDenominator );
+	void SetTimeSignatureDenominatorAtRow( int iNoteRow, int iDenominator );
 	/**
 	 * @brief Set the beat to have the new Time Signature denominator.
 	 * @param fBeat the beat to have the new Time Signature denominator.
@@ -781,7 +781,7 @@ public:
 	 * @param iNoteRow the row that has a TimeSignatureSegment.
 	 * @return the TimeSignatureSegment in question.
 	 */
-	TimeSignatureSegment& GetTimeSignatureSegmentAtRow( int iRow );
+	TimeSignatureSegment& GetTimeSignatureSegmentAtRow( int iNoteRow );
 	/**
 	 * @brief Retrieve the TimeSignatureSegment at the specified beat.
 	 * @param fBeat the beat that has a TimeSignatureSegment.
@@ -793,7 +793,7 @@ public:
 	 * @param iNoteRow the row that has a TimeSignatureSegment.
 	 * @return the TimeSignatureSegment's index in question.
 	 */
-	int GetTimeSignatureSegmentIndexAtRow( int iRow ) const;
+	int GetTimeSignatureSegmentIndexAtRow( int iNoteRow ) const;
 	/**
 	 * @brief Retrieve the index of the TimeSignatureSegments at the specified beat.
 	 * @param fBeat the beat that has a TimeSignatureSegment.
@@ -808,7 +808,7 @@ public:
 	
 	/**
 	 * @brief Determine the row to warp to.
-	 * @param The row you start on.
+	 * @param iWarpBeginRow The row you start on.
 	 * @return the row you warp to.
 	 */
 	int GetWarpToRow( int iWarpBeginRow ) const;
@@ -859,7 +859,7 @@ public:
 	 * @param iNoteRow the row that has a TickcountSegment.
 	 * @return the TickcountSegment's index in question.
 	 */
-	int GetTickcountSegmentIndexAtRow( int iRow ) const;
+	int GetTickcountSegmentIndexAtRow( int iNoteRow ) const;
 	/**
 	 * @brief Retrieve the index of the TickcountSegments at the specified beat.
 	 * @param fBeat the beat that has a TickcountSegment.
