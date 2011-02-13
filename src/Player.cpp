@@ -3001,8 +3001,8 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 #endif
 
 	// more warp hackery. -aj
-	if( iRow >= (unsigned)GAMESTATE->m_iWarpBeginRow &&
-		iRow <= (unsigned)(GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+	if( iRow >= GAMESTATE->m_iWarpBeginRow &&
+		iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
 		return;
 
 	// don't accumulate combo if AutoPlay is on.
