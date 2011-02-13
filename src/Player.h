@@ -23,6 +23,7 @@ class NoteField;
 class PlayerStageStats;
 class JudgedRows;
 
+// todo: replace these with a Message and MESSAGEMAN? -aj
 AutoScreenMessage( SM_100Combo );
 AutoScreenMessage( SM_200Combo );
 AutoScreenMessage( SM_300Combo );
