@@ -1,4 +1,4 @@
-/* Banner - The song/course's banner displayed in SelectMusic/Course. */
+/** @brief Banner - The song/course's banner displayed in SelectMusic/Course. */
 
 #ifndef BANNER_H
 #define BANNER_H
@@ -11,6 +11,7 @@ class Course;
 class Character;
 class UnlockEntry;
 
+/** @brief The characteristics of a Banner */
 class Banner : public Sprite
 {
 public:
@@ -24,7 +25,11 @@ public:
 
 	virtual void Update( float fDeltaTime );
 
-	void LoadFromSong( Song* pSong );		// NULL means no song
+	/**
+	 * @brief Attempt to load the banner from a song.
+	 * @param pSong the song in question. If NULL, there is no song.
+	 */
+	void LoadFromSong( Song* pSong );
 	void LoadMode();
 	void LoadFromSongGroup( RString sSongGroup );
 	void LoadFromCourse( const Course *pCourse );
@@ -54,8 +59,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
