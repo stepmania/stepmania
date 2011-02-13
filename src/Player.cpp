@@ -1014,9 +1014,9 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		// register as Held, even if you hit the note. This is considered a
 		// major roadblock to adoption, so until a proper fix is found,
 		// DON'T REMOVE THIS HACK! -aj
-		if( iMaxEndRow-iStartRow <= 4 )
+		/*if( iMaxEndRow-iStartRow <= 4 )
 			bInitiatedNote = true;
-		else
+		else*/
 			bInitiatedNote = bSteppedOnHead;
 	}
 	else
