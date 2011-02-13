@@ -7,8 +7,14 @@
 #include "Song.h"
 #include "RageFileDriverMemory.h"
 
+/** @brief Load the difficulty names from CourseLoaderCRS. */
 extern const char *g_CRSDifficultyNames[]; // in CourseLoaderCRS
 
+/**
+ * @brief Get the string of the course difficulty.
+ * @param iVal the course difficulty.
+ * @return the string.
+ */
 static RString DifficultyToCRSString( CourseDifficulty iVal )
 {
 	return g_CRSDifficultyNames[iVal];

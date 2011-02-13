@@ -1,4 +1,4 @@
-/* CourseLoaderCRS - Reads a Course from an .CRS file. */
+/** @brief CourseLoaderCRS - Reads a Course from an .CRS file. */
 
 #ifndef COURSE_LOADER_CRS_H
 #define COURSE_LOADER_CRS_H
@@ -7,19 +7,56 @@
 class Course;
 class MsdFile;
 
+/** @brief The Course Loader handles parsing the .crs files. */
 namespace CourseLoaderCRS
 {
+	/**
+	 * @brief Attempt to load a course file from a particular path.
+	 * @param sPath the path to the file.
+	 * @param out the course file.
+	 * @return its success or failure.
+	 */
 	bool LoadFromCRSFile( const RString &sPath, Course &out );
+	/**
+	 * @brief Attempt to load the course information from the msd context.
+	 * @param sPath the path to the file.
+	 * @param msd the MSD context.
+	 * @param out the course file.
+	 * @param bFromCache true if loading from the cache area.
+	 * @return its success or failure.
+	 */
 	bool LoadFromMsd( const RString &sPath, const MsdFile &msd, Course &out, bool bFromCache );
+	/**
+	 * @brief Attempt to load the course file from the buffer.
+	 * @param sPath the path to the file.
+	 * @param sBuffer the path to the buffer.
+	 * @param out the course file.
+	 * @return its success or failure.
+	 */
 	bool LoadFromBuffer( const RString &sPath, const RString &sBuffer, Course &out );
+	/**
+	 * @brief Attempt to load an edit course from the hard drive.
+	 * @param sEditFilePath a path on the hard drive to check.
+	 * @param slot the Profile of the user with the edit course.
+	 * @return its success or failure.
+	 */
 	bool LoadEditFromFile( const RString &sEditFilePath, ProfileSlot slot );
+	/**
+	 * @brief Attempt to load an edit course from the buffer.
+	 * @param sBuffer the path to the buffer.
+	 * @param sPath the path to the file.
+	 * @param slot the individual's profile.
+	 * @return its success or failure.
+	 */
 	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sPath, ProfileSlot slot );
 }
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

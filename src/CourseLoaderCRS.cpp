@@ -16,8 +16,10 @@
 #include "CourseUtil.h"
 #include <float.h>
 
+/** @brief Edit courses can only be so big before they are rejected. */
 const int MAX_EDIT_COURSE_SIZE_BYTES	= 32*1024;	// 32KB
 
+/** @brief The list of difficulty names for courses. */
 const char *g_CRSDifficultyNames[] =
 {
 	"Beginner",
@@ -28,6 +30,11 @@ const char *g_CRSDifficultyNames[] =
 	"Edit",
 };
 
+/**
+ * @brief Retrieve the course difficulty based on the string name.
+ * @param s the name of the difficulty.
+ * @return the course difficulty.
+ */
 static CourseDifficulty CRSStringToDifficulty( const RString& s )
 {
 	FOREACH_ENUM( Difficulty,i)

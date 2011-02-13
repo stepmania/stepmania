@@ -1,4 +1,4 @@
-/* CourseWriterCRS - Writes a Course to an .CRS file. */
+/** @brief CourseWriterCRS - Writes a Course to an .CRS file. */
 
 #ifndef COURSE_WRITER_CRS_H
 #define COURSE_WRITER_CRS_H
@@ -6,18 +6,44 @@
 class Course;
 class RageFileBasic;
 
+/** @brief The Course Writer handles writing the .crs files. */
 namespace CourseWriterCRS
 {
+	/**
+	 * @brief Write the course to a file.
+	 * @param course the course contents.
+	 * @param f the file being built.
+	 * @param bSavingCache is true if cache information is being saved as well.
+	 * @return its success or failure.
+	 */
 	bool Write( const Course &course, RageFileBasic &f, bool bSavingCache );
+	/**
+	 * @brief Write the course to a file.
+	 * @param course the course contents.
+	 * @param sPath the path to the file.
+	 * @param bSavingCache is true if cache information is being saved as well.
+	 * @return its success or failure.
+	 */
 	bool Write( const Course &course, const RString &sPath, bool bSavingCache );
+	/**
+	 * @brief Retrieve course information from a file for eventual writing.
+	 * @param pCourse the course file.
+	 * @param sOut the path to the file.
+	 */
 	void GetEditFileContents( const Course *pCourse, RString &sOut );
+	/**
+	 * @brief Write the custom course to the machine's hard drive.
+	 * @param pCourse the course file.
+	 */
 	void WriteEditFileToMachine( const Course *pCourse );
 }
 
 #endif
 
-/*
- * (c) 2001-2005 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2005
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
