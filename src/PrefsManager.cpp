@@ -141,9 +141,9 @@ LuaXType( ScoringType );
 	"EndOfSong",
 	"Off",
 };
-XToString( DefualtFailType );
-StringToX( DefualtFailType );
-LuaXType( DefualtFailType ); */
+XToString( DefaultFailType );
+StringToX( DefaultFailType );
+LuaXType( DefaultFailType ); */
 
 bool g_bAutoRestart = false;
 #ifdef DEBUG
