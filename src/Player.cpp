@@ -985,6 +985,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	//LOG->Trace(ssprintf("[Player::UpdateHoldNotes] fLife = %f",fLife));
 
 	bool bSteppedOnHead = true;
+	bool bHeadJudged = true;
 	FOREACH( TrackRowTapNote, vTN, trtn )
 	{
 		TapNote &tn = *trtn->pTN;
@@ -995,7 +996,8 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		// taps was hit before activating this group of holds.
 		/* Something about the logic in this section is causing 192nd steps to
 		 * fail for some odd reason. -aj */
-		bSteppedOnHead &= (tns != TNS_None  &&  tns != TNS_Miss);	// did they step on the start of this hold?
+		bSteppedOnHead &= (tns != TNS_Miss && tns != TNS_None);	// did they step on the start of this hold?
+		bHeadJudged &= (tns != TNS_None);	// has this hold really even started yet?	
 
 		/*
 		if(bSteppedOnHead)
@@ -1018,7 +1020,10 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			bInitiatedNote = bSteppedOnHead;
 	}
 	else
+	{
 		bInitiatedNote = true;
+		bHeadJudged = true;
+	}
 
 	bool bIsHoldingButton = true;
 	FOREACH( TrackRowTapNote, vTN, trtn )
@@ -1058,7 +1063,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		}
 	}
 
-	if( bInitiatedNote && fLife != 0 )
+	if( bInitiatedNote && fLife != 0 && bHeadJudged )
 	{
 		//LOG->Trace("[Player::UpdateHoldNotes] initiated note, fLife != 0");
 		/* This hold note is not judged and we stepped on its head.
@@ -1076,7 +1081,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	}
 
 	// If the song beat is in the range of this hold:
-	if( iStartRow <= iSongRow  &&  iStartRow <= iMaxEndRow )
+	if( iStartRow <= iSongRow  &&  iStartRow <= iMaxEndRow && bHeadJudged )
 	{
 		switch( subType )
 		{
@@ -1157,7 +1162,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	 * which doesn't seem correct. */
 	if( IMMEDIATE_HOLD_LET_GO )
 	{
-		if( bInitiatedNote && fLife == 0 )	// the player has not pressed the button for a long time!
+		if( bInitiatedNote && fLife == 0 && bHeadJudged )	// the player has not pressed the button for a long time!
 		{
 			//LOG->Trace("LetGo from life == 0 (did initiate hold)");
 			hns = HNS_LetGo;
@@ -1165,7 +1170,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	}
 
 	// score hold notes that have passed
-	if( iSongRow >= iMaxEndRow )
+	if( iSongRow >= iMaxEndRow && bHeadJudged )
 	{
 		bool bLetGoOfHoldNote = false;
 
