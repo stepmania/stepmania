@@ -1,4 +1,4 @@
-/* SongManager - Holder for all Songs and Steps. */
+/** @brief SongManager - Holder for all Songs and Steps. */
 
 #ifndef SONGMANAGER_H
 #define SONGMANAGER_H
@@ -21,9 +21,12 @@ struct lua_State;
 #include "RageTexturePreloader.h"
 #include "RageUtil.h"
 
+/** @brief The max number of edit steps a profile can have. */
 const int MAX_EDIT_STEPS_PER_PROFILE	= 200;
+/** @brief The max number of edit courses a profile can have. */
 const int MAX_EDIT_COURSES_PER_PROFILE	= 20;
 
+/** @brief The holder for the Songs and its Steps. */
 class SongManager
 {
 public:
@@ -181,8 +184,10 @@ extern SongManager*	SONGMAN;	// global and accessable from anywhere in our progr
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

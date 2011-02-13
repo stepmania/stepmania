@@ -1,4 +1,4 @@
-/* GameManager - Manages Games and Styles. */
+/** @brief GameManager - Manages Games and Styles. */
 
 #ifndef GAMEMANAGER_H
 #define GAMEMANAGER_H
@@ -10,12 +10,16 @@ struct lua_State;
 #include "GameConstantsAndTypes.h"
 #include "GameInput.h"
 
+/** @brief The collective information about a Steps' Type. */
 struct StepsTypeInfo
 {
 	const char *szName;
+	/** @brief The number of tracks, or columns, of this type. */
 	int iNumTracks;
-	bool bAllowAutogen;	// allow this type to be autogen'd to other types
-	StepsTypeCategory m_StepsTypeCategory;	// what is the most basic StyleType this is used with?
+	/** @brief A flag to determine if we allow this type to be autogen'ed to other types. */
+	bool bAllowAutogen;
+	/** @brief The most basic StyleType that this StpesTypeInfo is used with. */
+	StepsTypeCategory m_StepsTypeCategory;
 	RString GetLocalizedString() const;
 };
 
@@ -55,8 +59,10 @@ extern GameManager*	GAMEMAN;	// global and accessable from anywhere in our progr
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

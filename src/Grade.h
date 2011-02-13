@@ -1,4 +1,4 @@
-/* Grade - Mark the player receives after clearing a song. */
+/** @brief Grade - Mark the player receives after clearing a song. */
 
 #ifndef GRADE_H
 #define GRADE_H
@@ -7,16 +7,21 @@
 #include "EnumHelper.h"
 #include "ThemeMetric.h"
 
+/**
+ * @brief Have a specific number of passing grade tiers.
+ *
+ * TODO: Look into flexible grading tiers. */
 #define NUM_Grade_TierS 20
+/** @brief The list of grading tiers available. */
 enum Grade 
 { 
-	Grade_Tier01,	// = AAAA
-	Grade_Tier02,	// = AAA
-	Grade_Tier03,	// = AA
-	Grade_Tier04,	// = A
-	Grade_Tier05,	// = B
-	Grade_Tier06,	// = C
-	Grade_Tier07,	// = D
+	Grade_Tier01,	/**< Usually an AAAA */
+	Grade_Tier02,	/**< Usually an AAA */
+	Grade_Tier03,	/**< Usually an AA */
+	Grade_Tier04,	/**< Usually an A */
+	Grade_Tier05,	/**< Usually a B */
+	Grade_Tier06,	/**< Usually a C */
+	Grade_Tier07,	/**< Usually a D */
 	Grade_Tier08,
 	Grade_Tier09,
 	Grade_Tier10,
@@ -30,14 +35,20 @@ enum Grade
 	Grade_Tier18,
 	Grade_Tier19,
 	Grade_Tier20,
-	Grade_Failed,	// = E
+	Grade_Failed,	/**< Usually an E */
 	NUM_Grade, 
 	Grade_Invalid,
 };
 #define Grade_NoData Grade_Invalid
 
-/* This is in the header so the test sets don't require Grade.cpp (through PrefsManager),
- * since that pulls in ThemeManager. */
+/**
+ * @brief Convert the grade supplied to a string representation.
+ *
+ * This is in the header so the test sets don't require Grade.cpp (through PrefsManager),
+ * since that pulls in ThemeManager.
+ * @param g the grade to convert.
+ * @return the string reprsentation.
+ */
 static inline RString GradeToString( Grade g )
 {
 	ASSERT_M( (g >= 0 && g<NUM_Grade) || g == Grade_NoData, ssprintf("grade = %d",g) );
@@ -61,8 +72,10 @@ Grade GetNextPossibleGrade( Grade g );
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

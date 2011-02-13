@@ -94,10 +94,9 @@ public:
 	// Directory this song data came from:
 	const RString &GetSongDir() const { return m_sSongDir; }
 
-	/* Filename associated with this file. This will always have a
-	 * .SSC extension. If we loaded a .SSC, this will point to it, 
-	 * but if we loaded any other type, this will point to a 
-	 * generated .SSC filename. */
+	/* Filename associated with this file. This will always have a .SSC
+	 * extension. If we loaded a .SSC, this will point to it, but if we loaded
+	 * any other type, this will point to a generated .SSC filename. */
 	RString m_sSongFileName;
 
 	RString m_sGroupName;
@@ -123,7 +122,7 @@ public:
 	// "title subtitle"
 	RString GetDisplayFullTitle() const;
 	RString GetTranslitFullTitle() const;
-	
+
 	// allow versioning with the song.
 	float	m_fVersion;
 

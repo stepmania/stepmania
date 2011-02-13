@@ -280,7 +280,11 @@ void SongUtil::AdjustDuplicateSteps( Song *pSong )
 		 * These are confusing, and they're ambiguous when passed to GetStepsByID. */
 	}
 }
-
+/**
+ * @brief Remove the initial whitespace characters.
+ * @param s the string to left trim.
+ * @return the trimmed string.
+ */
 static RString RemoveInitialWhitespace( RString s )
 {
 	size_t i = s.find_first_not_of(" \t\r\n");

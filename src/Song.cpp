@@ -36,6 +36,7 @@
 #include <set>
 #include <float.h>
 
+const static float VERSION_NUMBER = 0.51f;
 const int FILE_CACHE_VERSION = 163;	// increment this to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -51,8 +52,6 @@ static const char *InstrumentTrackNames[] = {
 };
 XToString( InstrumentTrack );
 StringToX( InstrumentTrack );
-
-const static float VERSION_NUMBER = 0.5f;
 
 Song::Song()
 {

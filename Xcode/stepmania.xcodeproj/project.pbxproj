@@ -3692,8 +3692,6 @@
 		AA6EFDC804770AF1005F316C /* DataStructures */ = {
 			isa = PBXGroup;
 			children = (
-				EE906F8812BF3C7C00146C96 /* FileDownload.cpp */,
-				EE906F8912BF3C7C00146C96 /* FileDownload.h */,
 				AA84B7050996F8370085EECB /* AdjustSync.cpp */,
 				AA84B7060996F8370085EECB /* AdjustSync.h */,
 				AAFF5541054E736D00D02EE9 /* Attack.cpp */,
@@ -3731,6 +3729,8 @@
 				AA8F136F0624BAB200C6A467 /* EnumHelper.h */,
 				AAE7808506081A000034E65F /* ezsockets.cpp */,
 				AAE7808606081A000034E65F /* ezsockets.h */,
+				EE906F8812BF3C7C00146C96 /* FileDownload.cpp */,
+				EE906F8912BF3C7C00146C96 /* FileDownload.h */,
 				AA6EFDD104770C79005F316C /* Font.cpp */,
 				AA6EFDD204770C79005F316C /* Font.h */,
 				AA6EFDD304770C79005F316C /* FontCharAliases.cpp */,
