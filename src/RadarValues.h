@@ -1,4 +1,4 @@
-/* RadarValues - Cached song statistics. */
+/** @brief RadarValues - Cached song statistics. */
 
 #ifndef RARAR_VALUES_H
 #define RARAR_VALUES_H
@@ -6,11 +6,12 @@
 #include "GameConstantsAndTypes.h"
 #include "ThemeMetric.h"
 
+/** @brief Unknown radar values are given a default value. */
 #define RADAR_VAL_UNKNOWN -1
 
 class XNode;
 struct lua_State;
-
+/** @brief The collection of radar values. */
 struct RadarValues
 {
 	union Values
@@ -40,12 +41,22 @@ struct RadarValues
 	void MakeUnknown();
 	void Zero();
 
+	/**
+	 * @brief Add one set of radar values to another.
+	 * @param other The other set of radar values to add.
+	 * @return the new set of radar values.
+	 */
 	RadarValues& operator+=( const RadarValues& other )
 	{
 		FOREACH_ENUM( RadarCategory, rc )
 			m_Values.f[rc] += other.m_Values.f[rc];
 		return *this;
 	}
+	/**
+	 * @brief Determine if one set of radar values are equal to another.
+	 * @param other The otehr set of radar values.
+	 * @return true if the two sets are equal, false otherwise.
+	 */
 	bool operator==( const RadarValues& other ) const
 	{
 		FOREACH_ENUM( RadarCategory, rc )
@@ -55,6 +66,11 @@ struct RadarValues
 		}
 		return true;
 	}
+	/**
+	 * @brief Determine if one set of radar values are not equal to another.
+	 * @param other The otehr set of radar values.
+	 * @return true if the two sets are not equal, false otherwise.
+	 */
 	bool operator!=( const RadarValues& other ) const
 	{
 		return !operator==( other );
@@ -76,8 +92,10 @@ struct RadarValues
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

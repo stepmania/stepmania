@@ -1,4 +1,4 @@
-/* ScoreKeeper - Abstract class to handle scorekeeping, stat-taking, etc. */
+/** @brief ScoreKeeper - Abstract class to handle scorekeeping, stat-taking, etc. */
 
 #ifndef SCORE_KEEPER_H
 #define SCORE_KEEPER_H
@@ -65,8 +65,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2001-2006 Chris Danford, Glenn Maynard, Steve Checkoway
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard, Steve Checkoway (c) 2001-2006
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

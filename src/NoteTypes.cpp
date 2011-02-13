@@ -33,6 +33,11 @@ XToString( NoteType );
 LuaXType( NoteType )
 XToLocalizedString( NoteType );
 
+/**
+ * @brief Convert the NoteType to a beat representation.
+ * @param nt the NoteType to check.
+ * @return the proper beat.
+ */
 float NoteTypeToBeat( NoteType nt )
 {
 	switch( nt )
@@ -51,10 +56,21 @@ float NoteTypeToBeat( NoteType nt )
 	}
 }
 
-// FIXME: Remove hard-coded beat values and instead look at the time signature in the song.
+/**
+ * @brief The number of beats per measure.
+ *
+ * FIXME: Look at the time signature of the song and use that instead at some point. */
 static const int BEATS_PER_MEASURE = 4;
+/**
+ * @brief The number of rows used in a measure.
+ *
+ * FIXME: Similar to the above, use time signatures and don't force hard-coded values. */
 static const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
 
+/**
+ * @brief Retrieve the proper quantized NoteType for the note.
+ * @param row The row to check for.
+ * @return the quantized NoteType. */
 NoteType GetNoteType( int row )
 { 
 	if(      row % (ROWS_PER_MEASURE/4) == 0)	return NOTE_TYPE_4TH;
@@ -72,7 +88,12 @@ NoteType BeatToNoteType( float fBeat )
 { 
 	return GetNoteType( BeatToNoteRow(fBeat) );
 }
-
+/**
+ * @brief Determine if the row has a particular type of quantized note.
+ * @param row the row in the Steps.
+ * @param t the quantized NoteType to check for.
+ * @return true if the NoteType is t, false otherwise.
+ */
 bool IsNoteOfType( int row, NoteType t )
 { 
 	return GetNoteType(row) == t;

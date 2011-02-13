@@ -1,4 +1,4 @@
-/* NoteTypes - Types for holding tap notes and scores. */
+/** @brief NoteTypes - Types for holding tap notes and scores. */
 
 #ifndef NOTE_TYPES_H
 #define NOTE_TYPES_H
@@ -8,25 +8,30 @@
 
 class XNode;
 
+/** @brief The result of hitting (or missing) a tap note. */
 struct TapNoteResult
 {
+	/** @brief Set up the TapNoteResult with default values. */
 	TapNoteResult() : tns(TNS_None), fTapNoteOffset(0.f), bHidden(false) { }
-
+	/** @brief The TapNoteScore that was achieved by the player. */
 	TapNoteScore	tns;
 
-	/* Offset, in seconds, for a tap grade. Negative numbers mean the note
-	 * was hit early; positive numbers mean it was hit late. These values are
-	 * only meaningful for graded taps (tns >= TNS_W5). */
+	/**
+	 * @brief Offset, in seconds, for a tap grade.
+	 *
+	 * Negative numbers mean the note was hit early; positive numbers mean 
+	 * it was hit late. These values are only meaningful for graded taps
+	 * (tns >= TNS_W5). */
 	float		fTapNoteOffset;
 
-	// If the whole row has been judged, all taps on the row will be set to hidden.
+	/** @brief If the whole row has been judged, all taps on the row will be set to hidden. */
 	bool		bHidden;
 
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 };
-
+/** @brief The result of holding (or letting go of) a hold note. */
 struct HoldNoteResult
 {
 	HoldNoteResult() : hns(HNS_None), fLife(1.f), fOverlappedTime(0), iLastHeldRow(0), iCheckpointsHit(0), iCheckpointsMissed(0), bHeld(false), bActive(false) { }
@@ -34,46 +39,58 @@ struct HoldNoteResult
 
 	HoldNoteScore	hns;
 
-	/* 1.0 means this HoldNote has full life.
-	 * 0.0 means this HoldNote is dead
+	/**
+	 * @brief the current life of the hold.
+	 * 
+	 * 1.0 means this HoldNote has full life.
+	 * 
+	 * 0.0 means this HoldNote is dead.
+	 * 
 	 * When this value hits 0.0 for the first time, m_HoldScore becomes HNS_LetGo.
 	 * If the life is > 0.0 when the HoldNote ends, then m_HoldScore becomes HNS_Held. */
 	float	fLife;
 
-	/* The number of seconds the hold note has overlapped the current beat, or 0
-	 * if it doesn't overlap. */
+	/** @brief The number of seconds the hold note has overlapped the current beat.
+	 *
+	 * This value is 0 if it doesn't overlap. */
 	float	fOverlappedTime;
 
-	/* Last index where fLife was greater than 0. If the tap was missed, this
+	/** @brief Last index where fLife was greater than 0. If the tap was missed, this
 	 * will be the first index of the hold. */
 	int		iLastHeldRow;
 
-	// If checkpoint holds are enabled, the number of checkpoints hit and missed.
+	/** @brief If checkpoint holds are enabled, the number of checkpoints hit. */
 	int		iCheckpointsHit;
+	/** @brief If checkpoint holds are enabled, the number of checkpoints missed. */
 	int		iCheckpointsMissed;
 
-	bool		bHeld;		// Was button held during last update?
-	bool		bActive;	// Is life > 0  &&  overlaps current beat
+	/** @brief Was the button held during the last update? */
+	bool		bHeld;
+	/** @brief Is there life in the hold and does it overlap the current beat? */
+	bool		bActive;
 
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 };
 
+/** @brief The various properties of a tap note. */
 struct TapNote
 {
+	/** @brief What is the TapNote's core type? */
 	enum Type
 	{ 
-		empty, 		// no note here
-		tap,		// step on this
-		hold_head,	// graded like a tap
-		hold_tail,	// in 2sand3s mode, holds are deleted and hold_tail is added
-		mine,		// don't step!
-		lift,		// up
-		attack,
-		autoKeysound,
-		fake,		// not scored for or against
+		empty, 		/**< There is no note here. */
+		tap,		/**< The player simply steps on this. */
+		hold_head,	/**< This is graded like the Tap type, but should be held. */
+		hold_tail,	/**< In 2sand3s mode, holds are deleted and hold_tail is added. */
+		mine,		/**< In most modes, it is suggested to not step on these mines. */
+		lift,		/**< Lift your foot up when it crosses the target area. */
+		attack,		/**< Hitting this note causes an attack to take place. */
+		autoKeysound,	/**< A special sound is played when this note crosses the target area. */
+		fake,		/**< This arrow can't be scored for or against the player. */
  	};
+	/** @brief The list of a TapNote's sub types. */
 	enum SubType
 	{
 		hold_head_hold,
@@ -82,18 +99,24 @@ struct TapNote
 		NUM_SubType,
 		SubType_Invalid
 	};
+	/** @brief The different places a TapNote could come from. */
 	enum Source
 	{
-		original,	// part of the original NoteData
-		addition,	// additional note added by a transform
+		original,	/**< This note is part of the original NoteData. */
+		addition,	/**< This note is additional note added by a transform. */
 	};
-
+	/** @brief The core note type that is about to cross the target area. */
 	Type		type;
-	SubType		subType;		// Only used if type is hold_head.
+	/** @brief The sub type of the note. This is only used if the type is hold_head. */
+	SubType		subType;
+	/** @brief The originating source of the TapNote. */
 	Source		source;
+	/** @brief The result of hitting or missing the TapNote. */
 	TapNoteResult	result;
-	PlayerNumber	pn;			// used in routine mode
-	bool		bHopoPossible;	// set just before gameplay begins
+	/** @brief The Player that is supposed to hit this note. This is mainly for Routine Mode. */
+	PlayerNumber	pn;
+	/** @brief Can this note be hammered on or pulled off? This is set before gameplay begins. */
+	bool		bHopoPossible;
 
 	// used only if Type == attack:
 	RString		sAttackModifiers;
@@ -173,30 +196,42 @@ extern TapNote TAP_ORIGINAL_FAKE;		// 'F'
 extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;
 
-// TODO: Don't have a hard-coded track limit.
+/**
+ * @brief The number of tracks allowed.
+ *
+ * TODO: Don't have a hard-coded track limit.
+ */
 const int MAX_NOTE_TRACKS = 16;
 
-/* This is a divisor for our "fixed-point" time/beat representation. It must be
+/**
+ * @brief The number of rows per beat.
+ *
+ * This is a divisor for our "fixed-point" time/beat representation. It must be
  * evenly divisible by 2, 3, and 4, to exactly represent 8th, 12th and 16th notes. */
 const int ROWS_PER_BEAT	= 48;
 
-// In the editor, enforce a reasonable limit on the number of notes.
+/**
+ * @brief Enforce a maximum number of notes per measure in the step editor.
+ *
+ * TODO: See if there is a way to de-hard-code this number.
+ */
 const int MAX_NOTES_PER_MEASURE = 50;
 
-
+/** @brief The max number of rows allowed for a Steps pattern. */
 const int MAX_NOTE_ROW = (1<<30);
 
+/** @brief The list of quantized note types allowed at present. */
 enum NoteType 
 { 
-	NOTE_TYPE_4TH,	// quarter note
-	NOTE_TYPE_8TH,	// eighth note
-	NOTE_TYPE_12TH,	// quarter note triplet
-	NOTE_TYPE_16TH,	// sixteenth note
-	NOTE_TYPE_24TH,	// eighth note triplet
-	NOTE_TYPE_32ND,	// thirty-second note
-	NOTE_TYPE_48TH, // sixteenth note triplet
-	NOTE_TYPE_64TH,	// sixty-fourth note
-	NOTE_TYPE_192ND,// sixty-fourth note triplet
+	NOTE_TYPE_4TH,	/**< quarter note */
+	NOTE_TYPE_8TH,	/**< eighth note */
+	NOTE_TYPE_12TH,	/**< quarter note triplet */
+	NOTE_TYPE_16TH,	/**< sixteenth note */
+	NOTE_TYPE_24TH,	/**< eighth note triplet */
+	NOTE_TYPE_32ND,	/**< thirty-second note */
+	NOTE_TYPE_48TH, /**< sixteenth note triplet */
+	NOTE_TYPE_64TH,	/**< sixty-fourth note */
+	NOTE_TYPE_192ND,/**< sixty-fourth note triplet */
 	NUM_NoteType,
 	NoteType_Invalid
 };
@@ -225,8 +260,10 @@ inline float NoteRowToBeat( int iRow )			{ return iRow / (float)ROWS_PER_BEAT; }
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

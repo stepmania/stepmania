@@ -397,7 +397,7 @@ void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 
 // lua start
 #include "LuaBinding.h"
-
+/** @brief Allow Lua to have access to the Steps. */
 class LunaSteps: public Luna<Steps>
 {
 public:
