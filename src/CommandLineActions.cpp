@@ -24,6 +24,7 @@
 #include <conio.h>
 #endif
 
+/** @brief The directory where languages should be installed. */
 const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
 
 vector<CommandLineActions::CommandLineArgs> CommandLineActions::ToProcess;
@@ -82,11 +83,14 @@ extern const char *const version_date;
 extern const char *const version_time;
 #endif
 
+/**
+ * @brief Print out version information.
+ *
+ * HACK: This function is primarily needed for Windows users.
+ * Mac OS X and Linux print out version information on the command line
+ * regardless of any preferences (tested by shakesoda on Mac). -aj */
 static void Version()
 {
-	/* HACK: This is only needed on Windows.
-	Mac and Linux print out version information on the command line regardless
-	of any preferences (tested by shakesoda on Mac). -aj */
 	#if defined(WIN32)
 		RString sProductID = ssprintf("%s", PRODUCT_ID_VER);
 		RString sVersion = "(sm-ssc was built without HAVE_VERSION_INFO)";

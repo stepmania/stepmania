@@ -3,25 +3,34 @@
 
 class LoadingWindow;
 
+/** @brief The collection of command line actions. */
 namespace CommandLineActions
 {
-	void Handle(LoadingWindow* pLW);	// perform a utility action, then exit
+	/**
+	 * @brief Perform a utility function, then exit.
+	 * @param pLW the LoadingWindow that is presently not used? */
+	void Handle(LoadingWindow* pLW);
 
+	/** @brief The housing for the command line arguments. */
 	class CommandLineArgs
 	{
 	public:
+		/** @brief the arguments in question. */
 		vector<RString> argv;
 	};
-	// a list of command line arguemnts to process while the game is running.
-	// These args could have come from this process or passed to this process
-	// from another process.
+	/**
+	 * @brief A list of command line arguemnts to process while the game is running.
+	 * These args could have come from this process or passed to this process
+	 * from another process. */
 	extern vector<CommandLineArgs> ToProcess;
 }
 
 #endif
 
-/*
- * (c) 2006 Chris Danford, Steve Checkoway
+/**
+ * @file
+ * @author Chris Danford, Steve Checkoway (c) 2006
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
