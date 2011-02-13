@@ -4,6 +4,7 @@
 #include "GameState.h"
 #include "Steps.h"
 #include "GameManager.h"
+#include "NotesLoaderSM.h"
 #include "NotesLoaderSSC.h"
 #include "GameSoundManager.h"
 #include "Model.h"
@@ -132,7 +133,10 @@ void ScreenHowToPlay::Init()
 		ActorUtil::LoadAllCommandsAndSetXY( m_pLifeMeterBar, m_sName );
 		m_pLifeMeterBar->FillForHowToPlay( NUM_W2S, NUM_MISSES );
 
-		SSCLoader::LoadFromSSCFile( THEME->GetPathO(m_sName, "steps"), m_Song, false );
+		// Allow themers to use .ssc and .sm files. -aj
+		bool bLoadedSSCFile = SSCLoader::LoadFromSSCFile( THEME->GetPathO(m_sName, "steps"), m_Song, false );
+		if( !bLoadedSSCFile )
+			SMLoader::LoadFromSMFile( THEME->GetPathO(m_sName, "steps"), m_Song, false );
 		m_Song.AddAutoGenNotes();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
