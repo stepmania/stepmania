@@ -134,6 +134,17 @@ XToString( ScoringType );
 StringToX( ScoringType );
 LuaXType( ScoringType );
 
+// XXX: Fix fail bug?
+/* static const char *DefaultFailTypeNames[] = {
+	"Immediate",
+	"ImmediateContinue",
+	"EndOfSong",
+	"Off",
+};
+XToString( DefualtFailType );
+StringToX( DefualtFailType );
+LuaXType( DefualtFailType ); */
+
 bool g_bAutoRestart = false;
 #ifdef DEBUG
 # define TRUE_IF_DEBUG true

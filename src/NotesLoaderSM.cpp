@@ -129,6 +129,9 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
 				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
 				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
+				// XXX: Remove Negatives Bug?
+				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
+				new_seg.m_fStopSeconds = fFreezeSeconds;
 
 				if(fFreezeSeconds > 0.0f)
 				{
@@ -169,7 +172,10 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
 
 				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds, true );
-
+				// XXX: Remove Negatives Bug?
+				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
+				new_seg.m_fStopSeconds = fFreezeSeconds;
+				
 				// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 
 				if(fFreezeSeconds > 0.0f)
@@ -198,7 +204,11 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 
 				const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
 				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
-
+				// XXX: Remove Negatives Bug?
+				BPMSegment new_seg;
+				new_seg.m_iStartRow = BeatToNoteRow(fBeat);
+				new_seg.SetBPM( fNewBPM );
+				
 				// convert negative BPMs into Warp segments
 				if( fNewBPM < 0.0f )
 				{
@@ -239,25 +249,25 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 						);
 						*/
 
-						out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+						out.AddBPMSegment( new_seg );
 
 						continue;
 					}
 					else
 					{
 						// last BPM is a negative one? ugh. -aj (MAX_NOTE_ROW exists btw)
-						out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+						out.AddBPMSegment( new_seg );
 					}
 				}
 
 				if(fNewBPM > 0.0f)
-					out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+					out.AddBPMSegment( new_seg );
 				else
 				{
 					out.m_bHasNegativeBpms = true;
 					// only add Negative BPMs in quirks mode -aj
 					if( PREFSMAN->m_bQuirksMode )
-						out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+						out.AddBPMSegment( new_seg );
 					else
 						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
 				}
