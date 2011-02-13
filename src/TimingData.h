@@ -529,7 +529,7 @@ public:
 	 * @param fBeat the beat that has a BPMSegment.
 	 * @return the BPMSegment in question.
 	 */
-	BPMSegment& GetBPMSegmentAtBeat( float fBeat ) { return GetBPMSegmentAtRow( BeatToNoteRow(fBeat)); }
+	BPMSegment& GetBPMSegmentAtBeat( float fBeat ) { return GetBPMSegmentAtRow( (int)BeatToNoteRow(fBeat)); }
 	/**
 	 * @brief Retrieve the index of the BPMSegments at the specified row.
 	 * @param iNoteRow the row that has a BPMSegment.
