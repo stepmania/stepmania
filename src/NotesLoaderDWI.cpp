@@ -37,8 +37,8 @@ enum
  * @brief Turn the individual character to the proper note.
  * @param c The character in question.
  * @param i The player.
- * @param col1Out The first result based on the character.
- * @param col2Out The second result based on the character.
+ * @param note1Out The first result based on the character.
+ * @param note2Out The second result based on the character.
  * @param sPath the path to the file.
  */
 static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Out, const RString &sPath )

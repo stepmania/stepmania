@@ -411,6 +411,7 @@ void Screenshot::LoadFromNode( const XNode* pNode )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the HighScore. */
 class LunaHighScore: public Luna<HighScore>
 {
 public:
@@ -457,6 +458,7 @@ public:
 
 LUA_REGISTER_CLASS( HighScore )
 
+/** @brief Allow Lua to have access to the HighScoreList. */
 class LunaHighScoreList: public Luna<HighScoreList>
 {
 public:

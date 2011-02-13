@@ -1,23 +1,31 @@
-/* Quad - A rectangle shaped actor with color. */
+/** @brief Quad - A rectangle shaped actor with color. */
 
 #ifndef QUAD_H
 #define QUAD_H
 
 #include "Sprite.h"
 
-
+/** @brief the Rectangular Actor with color. */
 class Quad : public Sprite
 {
 public:
+	/** @brief Initialize the quad. */
 	Quad();
+	/**
+	 * @brief Load the quad from the specified node.
+	 * @param pNode the node to load the quad from.
+	 */
 	void LoadFromNode( const XNode* pNode );
+	/** @brief Copy the quad. */
 	virtual Quad *Copy() const;
 };
 
 #endif
 
-/*
- * (c) 2002-2003 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2002-2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

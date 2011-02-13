@@ -289,6 +289,7 @@ void SongBPMDisplay::Update( float fDeltaTime )
 REGISTER_ACTOR_CLASS( SongBPMDisplay )
 
 #include "LuaBinding.h"
+/** @brief Allow Lua to have access to the BPMDisplay. */
 class LunaBPMDisplay: public Luna<BPMDisplay>
 {
 public:

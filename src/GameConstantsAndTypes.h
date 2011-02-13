@@ -192,7 +192,7 @@ const RString& SortOrderToString( SortOrder so );
 const RString& SortOrderToLocalizedString( SortOrder so );
 /**
  * @brief Turn the string into the proper sort order.
- * @param s the string.
+ * @param str the string.
  * @return the sort order based on the string.
  */
 SortOrder StringToSortOrder( const RString& str );
