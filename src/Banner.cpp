@@ -216,7 +216,8 @@ void Banner::LoadRandom()
 
 void Banner::LoadFromSortOrder( SortOrder so )
 {
-	if( so == NULL || so == SortOrder_Invalid )
+	// TODO: See if the check for NULL/PREFERRED(?) is needed.
+	if( so == SortOrder_Invalid )
 	{
 		LoadFallback();
 	}
