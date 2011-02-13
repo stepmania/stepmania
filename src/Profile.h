@@ -1,4 +1,4 @@
-/* Profile - Player data that persists between sessions. Can be stored on a local disk or on a memory card. */
+/** @brief Profile - Player data that persists between sessions. Can be stored on a local disk or on a memory card. */
 
 #ifndef Profile_H
 #define Profile_H
@@ -24,19 +24,25 @@ class Character;
 // Current file versions
 extern const RString STATS_XML;
 
-// Editable data is an INI because the default INI file association on Windows 
-// systems will open the ini file in an editor.  The default association for 
-// XML will open in IE.  Users have a much better chance of discovering how to 
-// edit this data if they don't have to fight against the file associations.
+/**
+ * @brief The filename where one can edit their personal profile data.
+ *
+ * Editable data is an INI because the default INI file association on Windows 
+ * systems will open the ini file in an editor.  The default association for 
+ * XML will open in IE.  Users have a much better chance of discovering how to 
+ * edit this data if they don't have to fight against the file associations. */
 extern const RString EDITABLE_INI;
 
-// The "don't share" file is something that the user should always keep private.
-// They can safely share STATS_XML with STATS_XML's signature so that others
-// can authenticate the STATS_XML data.  However, others can't copy that data
-// to their own profile for use in the game unless they also have the "don't 
-// share" file.  DontShare contains a piece of information that we can 
-// construct using STATS_XML but the user can't construct using STATS_XML.
-// The file contains a signature of the STATS_XML's signature.
+/**
+ * @brief The filename containing the signature for STATS_XML's signature.
+ *
+ *
+ * The "don't share" file is something that the user should always keep private.
+ * They can safely share STATS_XML with STATS_XML's signature so that others
+ * can authenticate the STATS_XML data.  However, others can't copy that data
+ * to their own profile for use in the game unless they also have the "don't 
+ * share" file.  DontShare contains a piece of information that we can 
+ * construct using STATS_XML but the user can't construct using STATS_XML. */
 extern const RString DONT_SHARE_SIG;
 
 extern const RString PUBLIC_KEY_FILE;
@@ -46,6 +52,7 @@ extern const RString EDIT_COURSES_SUBDIR;
 extern const RString LASTGOOD_SUBDIR;
 // extern const RString RIVAL_SUBDIR;
 
+/** @brief The max number of characters that can be used in a profile. */
 const unsigned int PROFILE_MAX_DISPLAY_NAME_LENGTH	= 32;
 
 
@@ -137,7 +144,10 @@ public:
 	map<StyleID,int> m_iNumSongsPlayedByStyle;
 	int m_iNumSongsPlayedByDifficulty[NUM_Difficulty];
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
-	/* This stat counts once per song, even if two players are active. */
+	/**
+	 * @brief Count the total number of songs played.
+	 * 
+	 * This stat counts once per song, even if two players are active. */
 	int m_iNumTotalSongsPlayed;
 	int m_iNumStagesPassedByPlayMode[NUM_PlayMode];
 	int m_iNumStagesPassedByGrade[NUM_Grade];
@@ -206,13 +216,15 @@ public:
 	int GetNextScreenshotIndex() { return m_vScreenshots.size(); }
 
 
-	// Calorie Data
-	// Why track calories in a map, and not in a static sized array like 
-	// Bookkeeping?  The machine's clock is not guaranteed to be set correctly.
-	// If calorie array is in a static sized array, playing on a machine with 
-	// a mis-set clock could wipe out all your past data.  With this scheme, 
-	// the worst that could happen is that playing on a mis-set machine will 
-	// insert some garbage entries into the map.
+	/**
+	 * @brief The basics for Calorie Data
+	 *
+	 * Why track calories in a map, and not in a static sized array like 
+	 * Bookkeeping?  The machine's clock is not guaranteed to be set correctly.
+	 * If calorie array is in a static sized array, playing on a machine with 
+	 * a mis-set clock could wipe out all your past data.  With this scheme, 
+	 * the worst that could happen is that playing on a mis-set machine will 
+	 * insert some garbage entries into the map. */
 	struct Calories
 	{
 		Calories() { fCals = 0; }
@@ -315,8 +327,10 @@ private:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -28,7 +28,9 @@
 
 const RString STATS_XML            = "Stats.xml";
 const RString STATS_XML_GZ         = "Stats.xml.gz";
+/** @brief The filename for where one can edit their personal profile information. */
 const RString EDITABLE_INI         = "Editable.ini";
+/** @brief The filename containing the signature for STATS_XML's signature. */
 const RString DONT_SHARE_SIG       = "DontShare.sig";
 const RString PUBLIC_KEY_FILE      = "public.key";
 const RString SCREENSHOTS_SUBDIR   = "Screenshots/";

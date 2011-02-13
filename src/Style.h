@@ -1,4 +1,4 @@
-/* Style - A data structure that holds the definition for one of a Game's styles. */
+/** @brief Style - A data structure that holds the definition for one of a Game's styles. */
 
 #ifndef STYLE_H
 #define STYLE_H
@@ -8,8 +8,9 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 
-
+/** @brief Each style can have a maximum amount of columns to work with. */
 const int MAX_COLS_PER_PLAYER = MAX_NOTE_TRACKS;
+/** @brief Provide a default value for an invalid column. */
 static const int Column_Invalid = -1;
 
 class NoteData;
@@ -19,41 +20,68 @@ struct lua_State;
 class Style
 {
 public:
-	bool m_bUsedForGameplay;		// Can be used only for gameplay?
-	bool m_bUsedForEdit;			// Can be used for editing?
-	bool m_bUsedForDemonstration;	// Can be used for demonstration?
-	bool m_bUsedForHowToPlay;		// Can be used for HowToPlay?
+	/** @brief Can this style be used for gameplay purposes? */
+	bool m_bUsedForGameplay;
+	/** @brief Can this style be used for making edits? */
+	bool m_bUsedForEdit;
+	/** @brief Can this style be used in a demonstration? */
+	bool m_bUsedForDemonstration;
+	/** @brief Can this style be used to explain how to play the game? */
+	bool m_bUsedForHowToPlay;
 
-	// The name of the style. (This is currently unused.)
+	/**
+	 * @brief The name of the style.
+	 *
+	 * At this time, it is currently unused. */
 	const char *		m_szName;
 
-	/* Steps format used for each player. For example, "dance versus" reads
-	 * the Steps with the tag "dance-single". */
+	/**
+	 * @brief Steps format used for each player.
+	 * 
+	 * For example, "dance versus" reads the Steps with the tag "dance-single". */
 	StepsType		m_StepsType;
 
+	/** @brief Style format used for each player. */
 	StyleType		m_StyleType;
 
-	int			m_iColsPerPlayer;	// number of total tracks this style expects (e.g. 4 for versus, but 8 for double)
+	/**
+	 * @brief The number of total tracks/columns this style expects.
+	 *
+	 * As an example, 4 is expected for ITG style versus, but 8 for ITG style double. */
+	int			m_iColsPerPlayer;
+	/** @brief Some general column infromation */
 	struct ColumnInfo 
 	{ 
-		int   track;			// take note data from this track
-		float fXOffset;		// x position of the column relative to player center
-		const char	*pzName;	// name of this column, or NULL to use the name of a button mapped to it
+		int   track;		/**< Take note data from this track. */
+		float fXOffset;		/**< This is the x position of the column relative to the player's center. */
+		const char *pzName;	/**< The name of the column, or NULL to use the button name mapped to it. */
 	};
 
-	ColumnInfo		m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];	// maps each players' column to a track in the NoteData
+	/** @brief Map each players' colun to a track in the NoteData. */
+	ColumnInfo		m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 
 	/* This maps from game inputs to columns. More than one button may map to a
 	 * single column. */
 	enum { NO_MAPPING = -1, END_MAPPING = -2 };
-	int			m_iInputColumn[NUM_GameController][NUM_GameButton]; // maps each input to a column, or GameButton_Invalid
+	/** @brief Map each input to a column, or GameButton_Invalid. */
+	int			m_iInputColumn[NUM_GameController][NUM_GameButton];
 	int			m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+	/** @brief Does this style need to be zoomed out with two players due to too many columns? */
 	bool		m_bNeedsZoomOutWith2Players;
+	/** @brief Can this style use the BeginnerHelper for assisting new people to the game? */
 	bool		m_bCanUseBeginnerHelper;
-	bool		m_bLockDifficulties; // used in couple Styles
+	/** 
+	 * @brief Should difficulty selection be locked when using this style?
+	 *
+	 * This is primarily for Couple and Routine styles. */
+	bool		m_bLockDifficulties;
 
 	GameInput StyleInputToGameInput( int iCol, PlayerNumber pn ) const;
-	// Returns Column_Invalid if the input is an invalid column, such as UL corner in 4 pad mode
+	/**
+	 * @brief Retrieve the column based on the game input.
+	 * @param GameI the game input.
+	 * @return the Column number of the style, or Column_Invalid if it's an invalid column.
+	 * Examples of this include getting the upper left hand corner in a traditional four panel mode. */
 	int GameInputToColumn( const GameInput &GameI ) const;
 	RString ColToButtonName( int iCol ) const;
 
@@ -68,8 +96,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2002 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2002
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

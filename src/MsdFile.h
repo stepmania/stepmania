@@ -10,7 +10,7 @@ public:
 	/**
 	 * @brief The list of params found in the files.
 	 *
-	 * Note that #param:param:param:parm; is one whole value. */
+	 * Note that #param:param:param:param; is one whole value. */
 	struct value_t
 	{
 		/** @brief The list of parameters. */
