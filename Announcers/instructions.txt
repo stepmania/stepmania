@@ -1,1 +1,50 @@
 Place announcer folders in this directory.
+
+[Announcer format]
+sm-ssc's announcers look for certain names. These can either be a single sound,
+or a folder containing many sounds (of which one is picked at random).
+
+[Announcer calls]
+Grouped by Screen/Element that calls them, though only the sound/folder name for
+each item is important.
+
+ScreenWithMenuElements
+* (ScreenName) intro
+
+ScreenTitleMenu
+* title menu game name
+
+ScreenSelect
+* (ScreenName) IdleComment
+
+ScreenSelectMusic
+* select music intro
+* select music comment general
+* select music comment hard
+* select music comment new
+* select music comment repeat
+* select course comment general
+
+ScreenGameplay
+* gameplay intro
+* gameplay ready
+* gameplay here we go normal
+* gameplay here we go final
+* gameplay here we go extra
+* gameplay comment hot
+* gameplay comment danger
+* gameplay comment good
+* gameplay comment oni
+* gameplay (100-1000) combo
+* gameplay combo stopped
+* gameplay combo overflow
+* gameplay battle trick level(1-3)
+* gameplay battle damage level(1-3)
+* gameplay extra
+* gameplay cleared
+* gameplay failed
+* gameplay oni failed
+* gameplay oni failed halfway
+
+MenuTimer
+* hurry up
