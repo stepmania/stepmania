@@ -119,12 +119,10 @@ InputHandler_DInput::InputHandler_DInput()
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	// mouse
-	/*
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_MOUSE)" );
 	hr = g_dinput->EnumDevices( DIDEVTYPE_MOUSE, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
-	*/
 
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
