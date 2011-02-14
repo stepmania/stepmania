@@ -29,7 +29,7 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 	{
 	case DIDEVTYPE_KEYBOARD: device.type = device.KEYBOARD; break;
 	case DIDEVTYPE_JOYSTICK: device.type = device.JOYSTICK; break;
-	//case DIDEVTYPE_MOUSE: device.type = device.MOUSE; break;
+	case DIDEVTYPE_MOUSE: device.type = device.MOUSE; break;
 	default: return DIENUM_CONTINUE;
 	}
 
@@ -49,11 +49,9 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 		device.dev = DEVICE_KEYBOARD;
 		break;
 
-	/*
 	case device.MOUSE:
 		device.dev = DEVICE_MOUSE;
 		break;
-	*/
 	}
 
 	Devices.push_back(device);

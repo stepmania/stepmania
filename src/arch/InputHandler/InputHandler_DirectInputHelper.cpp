@@ -92,11 +92,9 @@ bool DIDevice::Open()
 		case JOYSTICK:
 			hr = Device->SetDataFormat( &c_dfDIJoystick );
 			break;
-		/*
 		case MOUSE:
 			hr = Device->SetDataFormat( &c_dfDIMouse );
 			break;
-		*/
 	}
 	if ( hr != DI_OK )
 	{
@@ -122,11 +120,9 @@ bool DIDevice::Open()
 				Inputs.push_back(in);
 			}
 			break;
-		/*
 		case MOUSE:
 			Device->EnumObjects( DIMouse_EnumDevObjectsProc, this, DIDFT_BUTTON | DIDFT_PSHBUTTON );
 			break;
-		*/
 	}
 
 	{
