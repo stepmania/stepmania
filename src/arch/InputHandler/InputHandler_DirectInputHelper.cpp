@@ -322,7 +322,6 @@ static int ConvertScancodeToKey( int scancode )
 
 static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data)
 {
-	/*
 	DIDevice *device = (DIDevice *) data;
 
 	input_t in;
@@ -341,7 +340,6 @@ static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, L
 	}
 
 	device->Inputs.push_back(in);
-	*/
 
 	return DIENUM_CONTINUE;
 }
