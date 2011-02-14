@@ -130,10 +130,10 @@ static void InitNames()
 	g_mapNamesToString[MOUSE_LEFT] = "left mouse button";
 	g_mapNamesToString[MOUSE_RIGHT] = "right mouse button";
 	g_mapNamesToString[MOUSE_MIDDLE] = "middle mouse button";
-	g_mapNamesToString[MOUSE_FORWARD] = "forward mouse button";
-	g_mapNamesToString[MOUSE_BACK] = "back mouse button";
 	g_mapNamesToString[MOUSE_WHEELUP] = "mousewheel up";
 	g_mapNamesToString[MOUSE_WHEELDOWN] = "mousewheel down";
+	g_mapNamesToString[MOUSE_FORWARD] = "forward mouse button";
+	g_mapNamesToString[MOUSE_BACK] = "back mouse button";
 
 	FOREACHM( DeviceButton, RString, g_mapNamesToString, m )
 		g_mapStringToNames[m->second] = m->first;

@@ -297,6 +297,11 @@ enum DeviceButton
 	MOUSE_WHEELUP, MOUSE_WHEELDOWN,
 	// for mice with forward and backwards buttons
 	MOUSE_FORWARD, MOUSE_BACK,
+	// axis
+	MOUSE_X_LEFT, MOUSE_X_RIGHT,
+	MOUSE_Y_UP, MOUSE_Y_DOWN,
+	// mousewheel?
+	MOUSE_Z_UP, MOUSE_Z_DOWN,
 
 	NUM_DeviceButton,
 	DeviceButton_Invalid

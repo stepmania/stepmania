@@ -24,7 +24,6 @@ DIDevice::DIDevice()
 	dev = InputDevice_Invalid;
 	buffered = true;
 	memset(&JoystickInst, 0, sizeof(JoystickInst));
-	memset(&MouseInst, 0, sizeof(MouseInst));
 	Device = NULL;
 }
 
@@ -100,7 +99,7 @@ bool DIDevice::Open()
 			}
 			break;
 		case MOUSE:
-			Device->EnumObjects( DIMouse_EnumDevObjectsProc, this, DIDFT_BUTTON | DIDFT_PSHBUTTON );
+			Device->EnumObjects( DIMouse_EnumDevObjectsProc, this, DIDFT_BUTTON | DIDFT_AXIS );
 			break;
 	}
 
@@ -191,7 +190,7 @@ static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev
 		dilong.dwData = 0;
 		hr = device->Device->SetProperty( DIPROP_DEADZONE, &dilong.diph );
 		if ( hr != DI_OK )
-			return DIENUM_CONTINUE; /* don't use this axis */
+			return DIENUM_CONTINUE; // don't use this axis
 
 		device->axes++;
 	}
@@ -323,20 +322,48 @@ static int ConvertScancodeToKey( int scancode )
 static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data)
 {
 	DIDevice *device = (DIDevice *) data;
+	//HRESULT hr;
 
 	input_t in;
-	// todo: check mask for accuracy -aj
-	const int SupportedMask = DIDFT_BUTTON;
+	const int SupportedMask = DIDFT_BUTTON | DIDFT_AXIS;
 	if(!(dev->dwType & SupportedMask))
 		return DIENUM_CONTINUE; // unsupported
 
 	in.ofs = dev->dwOfs;
 
 	// xxx: does this check for scrollwheels? -aj
-	if(dev->dwType & DIDFT_BUTTON ) {
+	if(dev->dwType & DIDFT_BUTTON)
+	{
 		in.type = in.BUTTON;
 		in.num = device->buttons;
 		device->buttons++;
+	}
+	else if(dev->dwType & DIDFT_AXIS)
+	{
+		LOG->Trace("found a mouse axis");
+		// todo: how to handle this correctly? -aj
+		//DIPROPRANGE diprg;
+
+		in.type = in.AXIS;
+		in.num = device->axes;
+
+		/*
+		diprg.diph.dwSize		= sizeof(diprg);
+		diprg.diph.dwHeaderSize	= sizeof(diprg.diph);
+		diprg.diph.dwObj		= dev->dwOfs;
+		diprg.diph.dwHow		= DIPH_BYOFFSET;
+		diprg.lMin				= -100;
+		diprg.lMax				= 100;
+
+		hr = device->Device->SetProperty( DIPROP_RANGE, &diprg.diph );
+		if ( hr != DI_OK )
+		{
+			LOG->Trace("error setting properties on mouse axis");
+			return DIENUM_CONTINUE; // don't use this axis
+		}
+		*/
+
+		device->axes++;
 	}
 
 	device->Inputs.push_back(in);
