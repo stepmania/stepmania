@@ -122,7 +122,7 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_8,      DANCE_BUTTON_UPRIGHT,   false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_12,     GAME_BUTTON_START,      false )
-       ),
+	   ),
 	AutoMappings(
 		"dance",
 		"4 axis 16 button joystick",
@@ -156,8 +156,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_6,      DANCE_BUTTON_UPRIGHT,   false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_START,      false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"SideWinder Game Pad USB version 1.0",
 		"SideWinder Game Pad USB",
@@ -173,8 +173,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_8,      DANCE_BUTTON_UPRIGHT,   false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_START,      false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"4 axis 12 button joystick with hat switch",
 		"Super Joy Box 5",
@@ -190,7 +190,7 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_8,      DANCE_BUTTON_UPRIGHT,   false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_START,      false )
-       ),
+	   ),
 /*	AutoMappings(
 
 		"dance",
@@ -211,9 +211,9 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 1, JOY_BUTTON_8,      DANCE_BUTTON_UPRIGHT,   false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_START,      false ),
-       ),
+	   ),
 */
-       AutoMappings(
+	   AutoMappings(
 		"dance",
 		"MP-8866 Dual USB Joypad",
 		"Super Dual Box (from DDRGame.com, Feb 2008)",
@@ -224,12 +224,12 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_4,      DANCE_BUTTON_RIGHT,     false ),
 		AutoMappingEntry( 0, JOY_BUTTON_7,      DANCE_BUTTON_UPLEFT,    false ),
 		AutoMappingEntry( 0, JOY_BUTTON_8,      DANCE_BUTTON_UPRIGHT,   false ),
-		       //AutoMappingEntry{ 0, JOY_BUTTON_5,    DANCE_BUTTON_DOWNLEFT,  false ),
-		       //AutoMappingEntry{ 0, JOY_BUTTON_6,    DANCE_BUTTON_DOWNRIGHT, false ),
+			   //AutoMappingEntry{ 0, JOY_BUTTON_5,    DANCE_BUTTON_DOWNLEFT,  false ),
+			   //AutoMappingEntry{ 0, JOY_BUTTON_6,    DANCE_BUTTON_DOWNRIGHT, false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_START,      false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"NTPAD",
 		"NTPAD",
@@ -247,8 +247,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 1, JOY_BUTTON_8,      DANCE_BUTTON_UPRIGHT,   false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_START,      false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"Psx Gamepad",
 		"PSXPAD",
@@ -266,9 +266,9 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 1, JOY_BUTTON_6,      DANCE_BUTTON_UPRIGHT,   false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_START,      false )
-       ),
+	   ),
 	   // TODO: add black and white buttons, as well as other missing inputs -aj
-       AutoMappings(
+	   AutoMappings(
 		"dance",
 		"XBOX Gamepad Plugin V0.01",
 		"X-Box gamepad",
@@ -284,13 +284,13 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_8,      DANCE_BUTTON_UPRIGHT,   false ),	       // R shoulder
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_START,      false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_BACK,       false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"0b43:0003", // The EMS USB2 doesn't provide a model string, so Linux 
-			     // just gives us the VendorID and ModelID in hex.
+				 // just gives us the VendorID and ModelID in hex.
 		"EMS USB2",
-		       // Player 1.
+			   // Player 1.
 		AutoMappingEntry( 0, JOY_BUTTON_16,     DANCE_BUTTON_LEFT,      false ),
 		AutoMappingEntry( 0, JOY_BUTTON_14,     DANCE_BUTTON_RIGHT,     false ),
 		AutoMappingEntry( 0, JOY_BUTTON_13,     DANCE_BUTTON_UP,	       false ),
@@ -305,7 +305,7 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_START,      false ),
 		AutoMappingEntry( 0, JOY_BUTTON_5,      GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_6,      GAME_BUTTON_COIN,       false ),
-		       // Player 2.
+			   // Player 2.
 		AutoMappingEntry( 0, JOY_BUTTON_32,     DANCE_BUTTON_LEFT,      true ),
 		AutoMappingEntry( 0, JOY_BUTTON_30,     DANCE_BUTTON_RIGHT,     true ),
 		AutoMappingEntry( 0, JOY_BUTTON_29,     DANCE_BUTTON_UP,	       true ),
@@ -320,8 +320,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_26,     GAME_BUTTON_START,      true ),
 		AutoMappingEntry( 0, JOY_BUTTON_21,     GAME_BUTTON_BACK,       true ),
 		AutoMappingEntry( 0, JOY_BUTTON_22,     GAME_BUTTON_COIN,       true )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"Dance ", //Notice extra space at end
 		"LevelSix USB Pad (DDR638)",	// "DDR638" is the model number of the pad
@@ -333,8 +333,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_8,      DANCE_BUTTON_UPLEFT,    false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_START,      false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"SmartJoy PLUS Adapter",
 		"SmartJoy PLUS Adapter",
@@ -352,8 +352,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_9,      /* Start	*/     GAME_BUTTON_START,      false ),
 		AutoMappingEntry( 0, JOY_BUTTON_5,      /* R1 */	       GAME_BUTTON_SELECT,     false ),
 		AutoMappingEntry( 0, JOY_BUTTON_6,      /* R2 */	       GAME_BUTTON_COIN,       false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"RedOctane USB Pad|XBOX DDR", // "RedOctane USB Pad" is Ignition 3s and newer Afterburners.  "XBOX DDR" is older Afterburners.
 		"RedOctane Ignition 3 or Afterburner",
@@ -367,8 +367,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_8,      /* O */	       GAME_BUTTON_START,      false ),
 		AutoMappingEntry( 1, JOY_BUTTON_9,      /* Start	*/     GAME_BUTTON_START,      false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     /* Sel */       GAME_BUTTON_BACK,       false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"Joypad to USB converter",
 		"EMS Trio Linker",
@@ -382,8 +382,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_2,      /* O */	       GAME_BUTTON_START,      false ),
 		AutoMappingEntry( 1, JOY_BUTTON_10,     /* Start	*/     GAME_BUTTON_START,      false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      /* Sel */       GAME_BUTTON_BACK,       false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"Positive Gaming Impact USB pad",
 		"Positive Gaming Impact USB pad",
@@ -397,8 +397,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_8,      /* O */	       DANCE_BUTTON_UPRIGHT,      false ),
 		AutoMappingEntry( 1, JOY_BUTTON_9,      /* Start	*/     GAME_BUTTON_START,      false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     /* Sel */       GAME_BUTTON_BACK,       false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"USB Dance Pad",
 		"DDRGame Energy Dance Pad",
@@ -412,8 +412,8 @@ static const AutoMappings g_AutoMappings[] =
 		//AutoMappingEntry{ 0, JOY_BUTTON_4,    DANCE_BUTTON_DOWNRIGHT, false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_START,      false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"Dual USB Vibration Joystick",
 		"PC Multi Hub Double Power Box 4",
@@ -427,8 +427,8 @@ static const AutoMappings g_AutoMappings[] =
 		//AutoMappingEntry{ 0, JOY_BUTTON_4,    DANCE_BUTTON_DOWNRIGHT, false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_START,      false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"dance",
 		"Controller \\(Harmonix Drum Kit for Xbox 360\\)",
 		"Rock Band drum controller (Xbox 360, Windows driver)",
@@ -442,8 +442,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_HAT_DOWN,      GAME_BUTTON_MENUDOWN,   false ),	       // d-pad	down
 		AutoMappingEntry( 0, JOY_BUTTON_8,      GAME_BUTTON_START,      false ),	       // start	button
 		AutoMappingEntry( 0, JOY_BUTTON_7,      GAME_BUTTON_BACK,       false )	       // back button
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"pump",
 		"Pump USB",
 		"Pump USB pad",
@@ -458,8 +458,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_9,      PUMP_BUTTON_CENTER,     true ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     PUMP_BUTTON_DOWNLEFT,   true ),
 		AutoMappingEntry( 0, JOY_BUTTON_11,     PUMP_BUTTON_DOWNRIGHT,  true )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"pump",
 		"GamePad Pro USB ",	// yes, there is a space at the end
 		"GamePad Pro USB",
@@ -474,8 +474,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 1, JOY_BUTTON_1,      PUMP_BUTTON_CENTER,     false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_START,      false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"pump",
 		"Controller \\(Harmonix Drum Kit for Xbox 360\\)",
 		"Rock Band drum controller (Xbox 360, Windows driver)",
@@ -490,8 +490,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_HAT_DOWN,      GAME_BUTTON_MENUDOWN,   false ),	       // d-pad	down
 		AutoMappingEntry( 0, JOY_BUTTON_8,      GAME_BUTTON_START,      false ),	       // start	button
 		AutoMappingEntry( 0, JOY_BUTTON_7,      GAME_BUTTON_BACK,       false )	       // back button
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"para",
 		"ParaParaParadise Controller",
 		"ParaParaParadise Controller",
@@ -504,8 +504,8 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_11,     GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_12,     GAME_BUTTON_MENULEFT,   false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_MENURIGHT,  false )
-       ),
-       AutoMappings(
+	   ),
+	   AutoMappings(
 		"techno",
 		"Dance ", //Notice the extra space at end
 		"LevelSix USB Pad (DDR638)",	// "DDR638" is the model number of the pad
@@ -1075,7 +1075,7 @@ void InputMappings::ReadMappings( const InputScheme *pInputScheme, RString sFile
 		if( !ini.GetValue( "AutoMapping", "DeviceRegex", m_sDeviceRegex ) )
 			Dialog::OK( "Missing AutoMapping::DeviceRegex in '%s'", sFilePath.c_str() );
 
-                if( !ini.GetValue( "AutoMapping", "Description", m_sDescription ) )
+				if( !ini.GetValue( "AutoMapping", "Description", m_sDescription ) )
 			Dialog::OK( "Missing AutoMapping::Description in '%s'", sFilePath.c_str() );
 	}
 
