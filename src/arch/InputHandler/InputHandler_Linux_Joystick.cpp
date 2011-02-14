@@ -36,13 +36,13 @@ InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
 		LOG->Trace( "InputHandler_Linux_Joystick disabled (joystick driver already loaded)" );
 		return;
 	}
-	
+
 	/* We check both eg. /dev/js0 and /dev/input/js0.  If both exist, they're probably
 	 * the same device; keep track of device IDs so we don't open the same joystick
 	 * twice. */
 	set< pair<int,int> > devices;
 	bool bFoundAnyJoysticks = false;
-	
+
 	for(int i = 0; i < NUM_JOYSTICKS; ++i)
 	{
 		struct stat st;
@@ -89,7 +89,7 @@ InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
 		InputHandler_Linux_Event::m_bFoundAnyJoysticks = true;
 	}
 }
-	
+
 InputHandler_Linux_Joystick::~InputHandler_Linux_Joystick()
 {
 	if( m_InputThread.IsCreated() )
@@ -117,7 +117,7 @@ void InputHandler_Linux_Joystick::InputThread()
 		fd_set fdset;
 		FD_ZERO(&fdset);
 		int max_fd = -1;
-		
+
 		for(int i = 0; i < NUM_JOYSTICKS; ++i)
 		{
 			if (fds[i] < 0)
@@ -166,7 +166,7 @@ void InputHandler_Linux_Joystick::InputThread()
 				ButtonPressed( DeviceInput(id, enum_add2(JOY_BUTTON_1, iNum), event.value, now) );
 				break;
 			}
-				
+
 			case JS_EVENT_AXIS: {
 				DeviceButton neg = enum_add2(JOY_LEFT, 2*event.number);
 				DeviceButton pos = enum_add2(JOY_RIGHT, 2*event.number);
@@ -175,7 +175,7 @@ void InputHandler_Linux_Joystick::InputThread()
 				ButtonPressed( DeviceInput(id, pos, max(+l,0), now) );
 				break;
 			}
-				
+
 			default:
 				LOG->Warn("Unexpected packet (type %i) from joystick %i; disabled", event.type, i);
 				close(fds[i]);
