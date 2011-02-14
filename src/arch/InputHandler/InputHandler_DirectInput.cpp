@@ -377,13 +377,13 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 		}
 		break;
 	case device.MOUSE:
-		/*
 		DIMOUSESTATE state;
 
 		HRESULT hr = GetDeviceState(device.Device, sizeof(state), &state);
 		if( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
 			return;
 
+		/*
 		// do button checks here
 		for( unsigned i = 0; i < device.Inputs.size(); ++i )
 		{
