@@ -52,27 +52,6 @@ bool DIDevice::Open()
 		return false;
 	}
 
-	// load mouse
-	/*
-	hr = g_dinput->CreateDevice( MouseInst.guidInstance, &tmpdevice, NULL );
-	if ( hr != DI_OK )
-	{
-		LOG->Info( hr_ssprintf(hr, "OpenDevice: IDirectInput_CreateDevice") );
-		return false;
-	}
-	*/
-	// is this ok? -aj
-	//hr = tmpdevice->QueryInterface( IID_IDirectInputDevice2, (LPVOID *) &Device );
-	/*
-	tmpdevice->Release();
-	if ( hr != DI_OK )
-	{
-		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice::QueryInterface", m_sName.c_str()) );
-		return false;
-	}
-	*/
-
-	// should mouse be foreground? -aj
 	int coop = DISCL_NONEXCLUSIVE | DISCL_BACKGROUND;
 	if( type == KEYBOARD )
 		coop = DISCL_NONEXCLUSIVE | DISCL_FOREGROUND;
