@@ -378,8 +378,8 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 			}
 		}
 		break;
-	/*
 	case device.MOUSE:
+		/*
 		DIMOUSESTATE state;
 
 		HRESULT hr = GetDeviceState(device.Device, sizeof(state), &state);
@@ -400,9 +400,8 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 					break;
 			}
 		}
-
+		*/
 		break;
-	*/
 	}
 }
 
@@ -565,18 +564,18 @@ const float POLL_FOR_JOYSTICK_CHANGES_EVERY_SECONDS = 0.25f;
 
 bool InputHandler_DInput::DevicesChanged()
 {
-	// GetNumJoysticksSlow() blocks DirectInput for a while even if called from a 
-	// different thread, so we can't poll with it.
-	// GetNumHidDevices() is fast, but sometimes the DirectInput joysticks haven't updated by 
-	// the time the HID registry value changes.
-	// So, poll using GetNumHidDevices().   When that changes, poll using GetNumJoysticksSlow() 
-	// for a little while to give DirectInput time to catch up.  On this XP machine, it takes
-	// 2-10 DirectInput polls (0.5-2.5 seconds) to catch a newly installed device after the 
-	// registry value changes, and catches non-new plugged/unplugged devices on the first 
-	// DirectInputPoll.
-	// Note that this "poll for N seconds" method will not work if the Add New Hardware wizard
-	// halts device installation to wait for a driver.  Most of the joysticks people would
-	// want to use don't prompt for a driver though and the wizard adds them pretty quickly.
+	/* GetNumJoysticksSlow() blocks DirectInput for a while even if called from a
+	 * different thread, so we can't poll with it. GetNumHidDevices() is fast,
+	 * but sometimes the DirectInput joysticks haven't updated by  the time the
+	 * HID registry value changes. So, poll using GetNumHidDevices(). When that
+	 * changes, poll using GetNumJoysticksSlow() for a little while to give
+	 * DirectInput time to catch up. On this XP machine (which? -aj), it takes
+	 * 2-10 DirectInput polls (0.5-2.5 seconds) to catch a newly installed device
+	 * after the registry value changes, and catches non-new plugged/unplugged
+	 * devices on the first DirectInputPoll. Note that this "poll for N seconds"
+	 * method will not work if the Add New Hardware wizard halts device
+	 * installation to wait for a driver. Most of the joysticks people would want
+	 * to use don't prompt for a driver though, and the wizard adds them pretty quickly. */
 
 	int iOldNumHidDevices = m_iLastSeenNumHidDevices;
 	m_iLastSeenNumHidDevices = GetNumHidDevices();
