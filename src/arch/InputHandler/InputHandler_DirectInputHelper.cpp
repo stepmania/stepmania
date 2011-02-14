@@ -348,12 +348,12 @@ static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, L
 
 	input_t in;
 	// todo: check mask for accuracy -aj
-	const int SupportedMask = DIDFT_BUTTON | DIDFT_PSHBUTTON;
+	const int SupportedMask = DIDFT_BUTTON;
 	if(!(dev->dwType & SupportedMask))
 		return DIENUM_CONTINUE; // unsupported
 
 	// xxx: does this check for scrollwheels? -aj
-	if(dev->dwType & (DIDFT_BUTTON | DIDFT_PSHBUTTON) ) {
+	if(dev->dwType & DIDFT_BUTTON ) {
 		in.type = in.BUTTON;
 		in.num = device->buttons;
 		device->buttons++;
