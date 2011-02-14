@@ -18,7 +18,7 @@ REGISTER_INPUT_HANDLER_CLASS2( DirectInput, DInput );
 
 static vector<DIDevice> Devices;
 
-/* Number of joysticks found: */
+// Number of joysticks found:
 static int g_iNumJoysticks;
 
 static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, void *pContext )
@@ -120,8 +120,8 @@ InputHandler_DInput::InputHandler_DInput()
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
+	// mouse
 	/*
-	mouse
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_MOUSE)" );
 	hr = g_dinput->EnumDevices( DIDEVTYPE_MOUSE, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
@@ -237,14 +237,14 @@ static int TranslatePOV(DWORD value)
 	if( LOWORD(value) == 0xFFFF )
 		return 0;
 
-	/* Round the value up: */
+	// Round the value up:
 	value += 4500 / 2;
 	value %= 36000;
 	value /= 4500;
 
 	if( value >= 8 )
-		return 0; /* shouldn't happen */
-	
+		return 0; // shouldn't happen
+
 	return HAT_VALS[value];
 }
 
@@ -303,7 +303,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 			if( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
 				return;
 
-			/* Set each known axis, button and POV. */
+			// Set each known axis, button and POV.
 			for( unsigned i = 0; i < device.Inputs.size(); ++i )
 			{
 				const input_t &in = device.Inputs[i];
@@ -382,6 +382,8 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 		break;
 	/*
 	case device.MOUSE:
+		DIMOUSESTATE state;
+		HRESULT hr = GetDeviceState(device.Device, sizeof(state), &state);
 		break;
 	*/
 	}
@@ -524,7 +526,7 @@ void InputHandler_DInput::PollAndAcquireDevices( bool bBuffered )
 
 void InputHandler_DInput::Update()
 {
-	/* Handle polled devices. Handle buffered, too, if there's no input thread to do it. */
+	// Handle polled devices. Handle buffered, too, if there's no input thread to do it.
 	PollAndAcquireDevices( false );
 	if( !m_InputThread.IsCreated() )
 		PollAndAcquireDevices( true );
@@ -682,7 +684,6 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 		HMODULE hModule = GetModuleHandle( "user32.dll" );
 		pToUnicodeEx = (TOUNICODEEX *) GetProcAddress( hModule, "ToUnicodeEx" );
 	}
-
 
 	unsigned short result[2]; // ToAscii writes a max of 2 chars
 	ZERO( result );

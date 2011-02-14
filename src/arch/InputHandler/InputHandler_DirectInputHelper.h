@@ -11,10 +11,10 @@ extern LPDIRECTINPUT g_dinput;
 
 typedef struct input_t
 {
-	/* DirectInput offset for this input type: */
+	// DirectInput offset for this input type:
 	DWORD ofs;
 
-	/* Button, axis or hat: */
+	// Button, axis or hat:
 	enum Type { KEY, BUTTON, AXIS, HAT } type;
 
 	int num;
