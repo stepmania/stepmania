@@ -24,7 +24,7 @@ DIDevice::DIDevice()
 	dev = InputDevice_Invalid;
 	buffered = true;
 	memset(&JoystickInst, 0, sizeof(JoystickInst));
-	//memset(&MouseInst, 0, sizeof(MouseInst));
+	memset(&MouseInst, 0, sizeof(MouseInst));
 	Device = NULL;
 }
 
