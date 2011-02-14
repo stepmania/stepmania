@@ -155,7 +155,7 @@ static void DeleteNoteResource( NoteResource *pRes )
 {
 	ASSERT( pRes != NULL );
 
-	ASSERT_M( pRes->m_iRefCount > 0, ssprintf("%i", pRes->m_iRefCount) );
+	ASSERT_M( pRes->m_iRefCount > 0, ssprintf("RefCount %i > 0", pRes->m_iRefCount) );
 	--pRes->m_iRefCount;
 	if( pRes->m_iRefCount )
 		return;
