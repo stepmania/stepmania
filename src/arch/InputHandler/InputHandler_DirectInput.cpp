@@ -383,7 +383,6 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 		if( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
 			return;
 
-		/*
 		// do button checks here
 		for( unsigned i = 0; i < device.Inputs.size(); ++i )
 		{
@@ -398,7 +397,6 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 					break;
 			}
 		}
-		*/
 		break;
 	}
 }
@@ -447,7 +445,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 					break;
 
 				case in.BUTTON:
-					/*
+					// hope this works...
 					if(dev == DEVICE_MOUSE)
 					{
 						DeviceButton mouseInput = DeviceButton_Invalid;
@@ -469,8 +467,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						ButtonPressed( DeviceInput(dev, mouseInput, !!evtbuf[i].dwData, tm) );
 					}
 					else
-					*/
-					ButtonPressed( DeviceInput(dev, enum_add2(JOY_BUTTON_1, in.num), !!evtbuf[i].dwData, tm) );
+						ButtonPressed( DeviceInput(dev, enum_add2(JOY_BUTTON_1, in.num), !!evtbuf[i].dwData, tm) );
 					break;
 
 				case in.AXIS:
