@@ -456,7 +456,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 							case DIMOFS_BUTTON0: mouseInput = MOUSE_LEFT; break;
 							case DIMOFS_BUTTON1: mouseInput = MOUSE_RIGHT; break;
 							case DIMOFS_BUTTON2: mouseInput = MOUSE_MIDDLE; break;
-							case DIMOFS_BUTTON3: break;
+							//case DIMOFS_BUTTON3: break;
 							// todo: handle directions
 							case DIMOFS_X: break;
 							case DIMOFS_Y: break;
