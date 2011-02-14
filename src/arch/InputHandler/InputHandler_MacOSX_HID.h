@@ -21,7 +21,7 @@ private:
 	IONotificationPortRef m_NotifyPort;
 	RageMutex m_ChangeLock;
 	bool m_bChanged;
-	
+
 	static int Run( void *data );
 	static void DeviceAdded( void *refCon, io_iterator_t iter );
 	static void DeviceChanged( void *refCon, io_service_t service, natural_t messageType, void *arg );
@@ -37,7 +37,6 @@ public:
 	RString GetDeviceSpecificInputString( const DeviceInput &di );
 	wchar_t DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers );
 	static void QueueCallback( void *target, int result, void *refcon, void *sender );
-	
 };
 
 #endif
