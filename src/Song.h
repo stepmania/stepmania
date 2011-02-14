@@ -61,7 +61,7 @@ public:
 	enum SelectionDisplay
 	{ 
 		SHOW_ALWAYS,	// always
-		SHOW_NEVER		// never (unless song hiding is turned off)
+		SHOW_NEVER	// never (unless song hiding is turned off)
 	} m_SelectionDisplay;
 
 	Song();
@@ -78,9 +78,10 @@ public:
 	void ReCalculateRadarValuesAndLastBeat();	// called by TidyUpData, and after saving
 	void TranslateTitles();	// called by TidyUpData
 
-	bool SaveToSMFile( RString sPath, bool bSavingCache );
-	void Save();	// saves SM and DWI
+	bool SaveToSSCFile( RString sPath, bool bSavingCache );
+	void Save();	// saves SSC and SM guaranteed.
 	bool SaveToCacheFile();
+	bool SaveToSMFile();
 	bool SaveToDWIFile();
 
 	const RString &GetSongFilePath() const;
@@ -93,10 +94,9 @@ public:
 	// Directory this song data came from:
 	const RString &GetSongDir() const { return m_sSongDir; }
 
-	/* Filename associated with this file. This will always have
-	 * an .SM extension. If we loaded an .SM, this will point to 
-	 * it, but if we loaded any other type, this will point to a
-	 * generated .SM filename. */
+	/* Filename associated with this file. This will always have a .SSC
+	 * extension. If we loaded a .SSC, this will point to it, but if we loaded
+	 * any other type, this will point to a generated .SSC filename. */
 	RString m_sSongFileName;
 
 	RString m_sGroupName;
@@ -123,6 +123,9 @@ public:
 	RString GetDisplayFullTitle() const;
 	RString GetTranslitFullTitle() const;
 
+	// allow versioning with the song.
+	float	m_fVersion;
+
 	RString m_sGenre;
 
 	// This is read and saved, but never actually used.
@@ -141,10 +144,13 @@ public:
 	float	m_fSpecifiedBPMMin;
 	float	m_fSpecifiedBPMMax;	// if a range, then Min != Max
 
-	RString	m_sBannerFile;
+	RString m_sBannerFile;		// typically a 16:5 ratio graphic (e.g. 256x80)
+	//RString m_sJacketFile;	// typically square (e.g. 192x192, 256x256)
+	//RString m_sCDFile;		// square (e.g. 128x128 [DDR 1st-3rd])
+	//RString m_sDiscFile;		// rectangular (e.g. 256x192 [Pump], 200x150 [MGD3])
 	RString m_sLyricsFile;
-	RString	m_sBackgroundFile;
-	RString	m_sCDTitleFile;
+	RString m_sBackgroundFile;
+	RString m_sCDTitleFile;
 
 	AttackArray m_Attacks;
 	vector<RString>	m_sAttackString;
@@ -152,6 +158,9 @@ public:
 	RString GetMusicPath() const;
 	RString GetInstrumentTrackPath( InstrumentTrack it ) const;
 	RString GetBannerPath() const;
+	//RString GetJacketPath() const;
+	//RString GetCDImagePath() const;
+	//RString GetDiscPath() const;
 	RString	GetLyricsPath() const;
 	RString GetBackgroundPath() const;
 	RString GetCDTitlePath() const;
@@ -163,6 +172,9 @@ public:
 	bool HasInstrumentTrack( InstrumentTrack it ) const;
 	bool HasBanner() const;
 	bool HasBackground() const;
+	//bool HasJacket() const;
+	//bool HasCDImage() const;
+	//bool HasDisc() const;
 	bool HasCDTitle() const;
 	bool HasMovieBackground() const;
 	bool HasBGChanges() const;

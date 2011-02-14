@@ -1,0 +1,17 @@
+-- how to connect to a server with the new ScreenTextEntry Lua bindings
+-- (this is the base code; I'll come up with a full tutorial later.)
+SCREENMAN:AddNewScreenToTop("ScreenTextEntry");
+local serverSettings = {
+	Question = "Connect to server:",
+	MaxInputLength = 255,
+	OnOK = function(answer)
+		if IsNetConnected() then
+			-- close connection before connecting to new server
+			CloseConnection()
+		end
+
+		-- connect to server
+		ConnectToServer(answer)
+	end,
+};
+SCREENMAN:GetTopScreen():Load(serverSettings);

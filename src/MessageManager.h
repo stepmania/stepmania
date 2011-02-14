@@ -49,6 +49,8 @@ enum MessageID
 	Message_MenuLeftP2,
 	Message_MenuRightP1,
 	Message_MenuRightP2,
+	Message_MenuStartP1,
+	Message_MenuStartP2,
 	Message_MenuSelectionChanged,
 	Message_PlayerJoined,
 	Message_PlayerUnjoined,

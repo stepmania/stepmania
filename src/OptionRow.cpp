@@ -661,7 +661,7 @@ const BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRo
 	{
 	case LAYOUT_SHOW_ONE_IN_ROW:
 		index = bOneChoice ? 0 : pn;
-		/* If only P2 is enabled, his selections will be in index 0. */
+		// If only P2 is enabled, his selections will be in index 0.
 		if( m_textItems.size() == 1 )
 			index = 0;
 		break;
@@ -685,14 +685,13 @@ void OptionRow::GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, i
 	iYOut = lrintf( m_Frame.GetDestY() );
 }
 
-
 int OptionRow::GetOneSelection( PlayerNumber pn, bool bAllowFail ) const
 {
 	for( unsigned i=0; i<m_vbSelected[pn].size(); i++ )
 		if( m_vbSelected[pn][i] )
 			return i;
 
-	ASSERT( bAllowFail );	// shouldn't call this if not expecting one to be selected
+	ASSERT( bAllowFail ); // shouldn't call this if not expecting one to be selected
 	return -1;
 }
 
@@ -761,14 +760,12 @@ void OptionRow::ResetFocusFromSelection( PlayerNumber pn )
 	switch( m_pHand->m_Def.m_selectType )
 	{
 	case SELECT_ONE:
-		/* Import the focus from the selected option. */
+		// Import the focus from the selected option.
 		iSelection = GetOneSelection( pn, true );
 		break;
 	}
 
-	//
 	// HACK: Set focus to one item in the row, which is "go down"
-	//
 	if( m_bFirstItemGoesDown )
 		iSelection = 0;
 
@@ -809,12 +806,14 @@ void OptionRow::SetExitText( RString sExitText )
 void OptionRow::Reload()
 {
 	// TODO: Nothing uses this yet and it causes skips when changing options.
-	//if( m_pHand->m_Def.m_bExportOnChange )
-	//{
-	//	bool bRowHasFocus[NUM_PLAYERS];
-	//	ZERO( bRowHasFocus );
-	//	ExportOptions( vpns, bRowHasFocus );
-	//}
+	/*
+	if( m_pHand->m_Def.m_bExportOnChange )
+	{
+		bool bRowHasFocus[NUM_PLAYERS];
+		ZERO( bRowHasFocus );
+		ExportOptions( vpns, bRowHasFocus );
+	}
+	*/
 
 	switch( m_pHand->Reload() )
 	{
@@ -841,14 +840,15 @@ void OptionRow::Reload()
 		break;
 	}
 
-
 	// TODO: Nothing uses this yet and it causes skips when changing options.
-	//if( m_pHand->m_Def.m_bExportOnChange )
-	//{
-	//	bool bRowHasFocus[NUM_PLAYERS];
-	//	ZERO( bRowHasFocus );
-	//	ExportOptions( vpns, bRowHasFocus );
-	//}
+	/*
+	if( m_pHand->m_Def.m_bExportOnChange )
+	{
+		bool bRowHasFocus[NUM_PLAYERS];
+		ZERO( bRowHasFocus );
+		ExportOptions( vpns, bRowHasFocus );
+	}
+	*/
 }
 
 void OptionRow::HandleMessage( const Message &msg )
@@ -866,8 +866,8 @@ void OptionRow::HandleMessage( const Message &msg )
 }
 
 
-/* Hack: the NextRow entry is never set, and should be transparent.  Remove
- * it, and readd it below. */
+/* Hack: the NextRow entry is never set, and should be transparent.
+ * Remove it, and readd it below. */
 #define ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( vbSelected ) \
 	if( GetFirstItemGoesDown() ) \
 		vbSelected.erase( vbSelected.begin() );
@@ -889,7 +889,7 @@ void OptionRow::ImportOptions( const vector<PlayerNumber> &vpns )
 		ASSERT( m_vbSelected[p].size() == m_pHand->m_Def.m_vsChoices.size() );
 		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
 	}
-	
+
 	m_pHand->ImportOption( this, vpns, m_vbSelected );
 
 	FOREACH_CONST( PlayerNumber, vpns, iter )
@@ -906,7 +906,7 @@ int OptionRow::ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocu
 	ASSERT( m_pHand->m_Def.m_vsChoices.size() > 0 );
 
 	int iChangeMask = 0;
-	
+
 	FOREACH_CONST( PlayerNumber, vpns, iter )
 	{
 		PlayerNumber p = *iter;
@@ -916,15 +916,14 @@ int OptionRow::ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocu
 		ASSERT( m_vbSelected[p].size() == m_pHand->m_Def.m_vsChoices.size() );
 		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
 
-		// SELECT_NONE rows get exported if they have focus when the user presses 
-		// Start.
+		// SELECT_NONE rows get exported if they have focus when the user presses Start.
 		int iChoice = GetChoiceInRowWithFocus( p );
 		if( m_pHand->m_Def.m_selectType == SELECT_NONE && bFocus )
 			m_vbSelected[p][iChoice] = true;
 	}
 
 	iChangeMask |= m_pHand->ExportOption( vpns, m_vbSelected );
-	
+
 	FOREACH_CONST( PlayerNumber, vpns, iter )
 	{
 		PlayerNumber p = *iter;
@@ -933,13 +932,12 @@ int OptionRow::ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocu
 		int iChoice = GetChoiceInRowWithFocus( p );
 		if( m_pHand->m_Def.m_selectType == SELECT_NONE && bFocus )
 			m_vbSelected[p][iChoice] = false;
-		
+
 		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
 	}
 
 	return iChangeMask;
 }
-
 
 /*
  * (c) 2001-2004 Chris Danford

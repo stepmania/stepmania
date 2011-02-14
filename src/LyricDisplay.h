@@ -12,7 +12,7 @@ public:
 	LyricDisplay();
 	void Update( float fDeltaTime );
 
-	/* Call when song changes: */
+	// Call when song changes:
 	void Init();
 
 private:

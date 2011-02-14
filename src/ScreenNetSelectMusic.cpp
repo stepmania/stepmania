@@ -24,6 +24,7 @@
 #include "SongUtil.h"
 #include "RageInput.h"
 #include "SongManager.h"
+#include "CodeDetector.h"
 
 AutoScreenMessage( SM_NoSongs )
 AutoScreenMessage( SM_ChangeSong )
@@ -34,58 +35,44 @@ AutoScreenMessage( SM_SongChanged )
 AutoScreenMessage( SM_UsersUpdate )
 AutoScreenMessage( SM_BackFromPlayerOptions )
 
-// todo: metric this?
-const RString AllGroups			= "[ALL MUSIC]";
-
-#define DIFFBG_WIDTH				THEME->GetMetricF(m_sName,"DiffBGWidth")
-#define DIFFBG_HEIGHT				THEME->GetMetricF(m_sName,"DiffBGHeight")
-
 REGISTER_SCREEN_CLASS( ScreenNetSelectMusic );
 
 void ScreenNetSelectMusic::Init()
 {
-	/* Finish any previous stage.  It's OK to call this when we haven't played a stage yet. */
+	// Finish any previous stage. It's OK to call this when we haven't played a stage yet.
 	GAMESTATE->FinishStage();
 
 	ScreenNetSelectBase::Init();
 
 	SAMPLE_MUSIC_PREVIEW_MODE.Load( m_sName, "SampleMusicPreviewMode" );
+	MUSIC_WHEEL_TYPE.Load( m_sName, "MusicWheelType" );
 
 	FOREACH_EnabledPlayer (p)
 	{
-		/*
-		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
-		m_DifficultyIcon[p].Load( THEME->GetPathG( "ScreenSelectMusic",
-												   ssprintf("difficulty icons 1x%d",
-															NUM_Difficulty)) );
-		LOAD_ALL_COMMANDS_AND_SET_XY( m_DifficultyIcon[p] );
-		this->AddChild( &m_DifficultyIcon[p] );
-		ON_COMMAND( m_DifficultyIcon[p] );
-		*/
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 
 		m_StepsDisplays[p].SetName( ssprintf("StepsDisplayP%d",p+1) );
-		m_StepsDisplays[p].Load( "StepsDisplay", NULL );
+		m_StepsDisplays[p].Load( "StepsDisplayNet", NULL );
 		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_StepsDisplays[p] );
 		this->AddChild( &m_StepsDisplays[p] );
 	}
 
 	m_MusicWheel.SetName( "MusicWheel" );
-	m_MusicWheel.Load( "OnlineMusicWheel" );
+	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_MusicWheel );
 	m_MusicWheel.BeginScreen();
 	ON_COMMAND( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
 	this->MoveToHead( &m_MusicWheel );
 
-	// todo: lua me?
+	// todo: handle me theme-side -aj
 	m_BPMDisplay.SetName( "BPMDisplay" );
 	m_BPMDisplay.LoadFromFont( THEME->GetPathF("BPMDisplay","bpm") );
 	m_BPMDisplay.Load();
 	LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
 
-	// todo: lua me
+	// todo: handle me theme-side -aj
 	FOREACH_EnabledPlayer( p )
 	{
 		m_ModIconRow[p].SetName( ssprintf("ModIconsP%d",p+1) );
@@ -114,7 +101,7 @@ void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 	if( !m_bAllowInput || IsTransitioning() )
 		return;
 
-	if ( input.type == IET_RELEASE )
+	if( input.type == IET_RELEASE )
 	{
 		m_MusicWheel.Move(0);
 		return;
@@ -126,21 +113,22 @@ void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 	bool bHoldingCtrl = 
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
-		(!NSMAN->useSMserver);	//If we are disconnected, assume no chatting
+		(!NSMAN->useSMserver); // If we are disconnected, assume no chatting
 
 	wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,false);
 	MakeUpper( &c, 1 );
 
-	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
+	// Ctrl+[A-Z] to go to that letter of the alphabet
+	if( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{
 		SortOrder so = GAMESTATE->m_SortOrder;
-		if ( ( so != SORT_TITLE ) && ( so != SORT_ARTIST ) )
+		if( ( so != SORT_TITLE ) && ( so != SORT_ARTIST ) )
 		{
 			so = SORT_TITLE;
 
 			GAMESTATE->m_PreferredSortOrder = so;
 			GAMESTATE->m_SortOrder.Set( so );
-			//Odd, changing the sort order requires us to call SetOpenSection more than once
+			// Odd, changing the sort order requires us to call SetOpenSection more than once
 			m_MusicWheel.ChangeSort( so );
 			m_MusicWheel.SetOpenSection( ssprintf("%c", c ) );
 		}
@@ -174,14 +162,13 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_ChangeSong )
 	{
-		//First check to see if this song is already selected.
-		//This is so that if you multiple copies of the "same" song
-		//you can chose which copy to play.
+		// First check to see if this song is already selected. This is so that if
+		// you have multiple copies of the "same" song you can chose which copy to play.
 		Song* CurSong = m_MusicWheel.GetSelectedSong();
 
-		if (CurSong != NULL )
+		if(CurSong != NULL )
 
-			if ( ( !CurSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
+			if( ( !CurSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
 					( !CurSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
 					( !CurSong->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
 		{
@@ -192,8 +179,8 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 				NSMAN->m_iSelectMode = 0;
 				NSMAN->SelectUserSong();
 				break;
-			case 2:	//Proper starting of song
-			case 3:	//Blind starting of song
+			case 2:	// Proper starting of song
+			case 3:	// Blind starting of song
 				StartSelectedSong();
 				goto done;
 			}
@@ -204,7 +191,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		for( i=0; i < AllSongs.size(); i++ )
 		{
 			m_cSong = AllSongs[i];
-			if ( ( !m_cSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
+			if( ( !m_cSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
 					( !m_cSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
 					( !m_cSong->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
 					break;
@@ -217,10 +204,10 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		case 3:
 			StartSelectedSong();
 			break;
-		case 2: //We need to do cmd 1 as well here
-			if (haveSong)
+		case 2: // We need to do cmd 1 as well here
+			if(haveSong)
 			{
-				if (!m_MusicWheel.SelectSong( m_cSong ) )
+				if(!m_MusicWheel.SelectSong( m_cSong ) )
 				{
 					m_MusicWheel.ChangeSort( SORT_GROUP );
 					m_MusicWheel.FinishTweening();
@@ -233,10 +220,10 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 				m_MusicWheel.Select();
 			}
 			break;
-		case 1:	//Scroll to song as well
-			if (haveSong)
+		case 1:	// Scroll to song as well
+			if(haveSong)
 			{
-				if (!m_MusicWheel.SelectSong( m_cSong ) )
+				if(!m_MusicWheel.SelectSong( m_cSong ) )
 				{
 					//m_MusicWheel.ChangeSort( SORT_GROUP );
 					//m_MusicWheel.FinishTweening();
@@ -250,16 +237,16 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 				m_MusicWheel.Move(1);
 				m_MusicWheel.Select();
 			}
-			//don't break here
-		case 0:	//See if client has song
-			if (haveSong)
+			// don't break here
+		case 0:	// See if client has song
+			if(haveSong)
 				NSMAN->m_iSelectMode = 0;
 			else
 				NSMAN->m_iSelectMode = 1;
 			NSMAN->SelectUserSong();
 		}
 	}
-	else if( SM == SM_SetWheelSong )	//After we're done the sort on wheel, select song.
+	else if( SM == SM_SetWheelSong ) // After we've done the sort on wheel, select song.
 	{
 		m_MusicWheel.SelectSong( m_cSong );
 	}
@@ -289,7 +276,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_SMOnlinePack )
 	{
-		if ( NSMAN->m_SMOnlinePacket.Read1() == 1 )
+		if( NSMAN->m_SMOnlinePacket.Read1() == 1 )
 		{
 			switch ( NSMAN->m_SMOnlinePacket.Read1() )
 			{
@@ -298,7 +285,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 					RString titleSub;
 					titleSub = NSMAN->m_SMOnlinePacket.ReadNT() + "\n";
 					titleSub += NSMAN->m_SMOnlinePacket.ReadNT();
-					if ( NSMAN->m_SMOnlinePacket.Read1() != 1 )
+					if( NSMAN->m_SMOnlinePacket.Read1() != 1 )
 					{
 						RString SMOnlineSelectScreen = THEME->GetMetric( m_sName, "RoomSelectScreen" );
 						SCREENMAN->SetNewScreen( SMOnlineSelectScreen );
@@ -314,15 +301,17 @@ done:
 	ScreenNetSelectBase::HandleScreenMessage( SM );
 }
 
+bool ScreenNetSelectMusic::LeftAndRightPressed( const PlayerNumber pn )
+{
+	return INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn )
+		&& INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn );
+}
+
 void ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 
-	bool bLeftPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn );
-	bool bRightPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn );
-	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
-
-	if ( bLeftAndRightPressed )
+	if( LeftAndRightPressed(pn) )
 		m_MusicWheel.ChangeSort( SORT_MODE_MENU );
 	else
 		m_MusicWheel.Move( -1 );
@@ -332,12 +321,8 @@ void ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
 
-	bool bLeftPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_LEFT, pn );
-	bool bRightPressed = INPUTMAPPER->IsBeingPressed( GAME_BUTTON_RIGHT, pn );
-	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
-
-	if ( bLeftAndRightPressed )
-		m_MusicWheel.ChangeSort( SORT_MODE_MENU );		
+	if( LeftAndRightPressed(pn) )
+		m_MusicWheel.ChangeSort( SORT_MODE_MENU );
 	else
 		m_MusicWheel.Move( +1 );
 }
@@ -357,16 +342,16 @@ void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 	// I agree, that's a stupid idea -aj
 
 	PlayerNumber pn = input.pn;
-	if ( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) && 
+	if( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) && 
 		!GAMESTATE->IsPlayerEnabled( PLAYER_1 ) )
 		pn = PLAYER_2;
 
-	if ( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == NULL )
 		return;
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 	vector <Steps *> MultiSteps;
 	MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
-	if (MultiSteps.size() == 0)
+	if(MultiSteps.size() == 0)
 		m_DC[pn] = NUM_Difficulty;
 	else
 	{
@@ -374,26 +359,26 @@ void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 
 		bool dcs[NUM_Difficulty];
 
-		for ( i=0; i<NUM_Difficulty; ++i )
+		for( i=0; i<NUM_Difficulty; ++i )
 			dcs[i] = false;
 
-		for ( i=0; i<(int)MultiSteps.size(); ++i )
+		for( i=0; i<(int)MultiSteps.size(); ++i )
 			dcs[MultiSteps[i]->GetDifficulty()] = true;
 
-		for ( i=0; i<NUM_Difficulty; ++i )
+		for( i=0; i<NUM_Difficulty; ++i )
 		{
-			if ( (dcs[i]) && (i > m_DC[pn]) )
+			if( (dcs[i]) && (i > m_DC[pn]) )
 			{
 				m_DC[pn] = (Difficulty)i;
 				break;
 			}
 		}
 		// If failed to go up, loop
-		if ( i == NUM_Difficulty )
+		if( i == NUM_Difficulty )
 		{
-			for (i = 0;i<NUM_Difficulty;i++)
+			for(i = 0;i<NUM_Difficulty;i++)
 			{
-				if (dcs[i])
+				if(dcs[i])
 				{
 					m_DC[pn] = (Difficulty)i;
 					break;
@@ -413,23 +398,22 @@ void ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
 	if( !bResult )
 		return;
 
-	if ( m_MusicWheel.GetSelectedType() != TYPE_SONG )
+	if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
 		return;
 
 	Song * pSong = m_MusicWheel.GetSelectedSong();
 
-	if ( pSong == NULL )
+	if( pSong == NULL )
 		return;
 
 	GAMESTATE->m_pCurSong.Set( pSong );
 
-	if ( NSMAN->useSMserver )
+	if( NSMAN->useSMserver )
 	{
-		//int j = m_iSongNum % m_vSongs.size();
 		NSMAN->m_sArtist = pSong->GetTranslitArtist();
 		NSMAN->m_sMainTitle = pSong->GetTranslitMainTitle();
 		NSMAN->m_sSubTitle = pSong->GetTranslitSubTitle();
-		NSMAN->m_iSelectMode = 2; //Command for user selecting song
+		NSMAN->m_iSelectMode = 2; // Command for user selecting song
 		NSMAN->SelectUserSong ();
 	}
 	else
@@ -443,7 +427,6 @@ void ScreenNetSelectMusic::MenuBack( const InputEventPlus &input )
 
 	Cancel( SM_GoToPrevScreen );
 }
-
 
 void ScreenNetSelectMusic::TweenOffScreen()
 {
@@ -479,8 +462,8 @@ void ScreenNetSelectMusic::StartSelectedSong()
 
 	GAMESTATE->m_PreferredSortOrder = GAMESTATE->m_SortOrder;
 	GAMESTATE->m_pPreferredSong = pSong;
-	
-	//force event mode
+
+	// force event mode
 	GAMESTATE->m_bTemporaryEventMode = true;
 
 	TweenOffScreen();
@@ -489,23 +472,11 @@ void ScreenNetSelectMusic::StartSelectedSong()
 
 void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 {
-	if ( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == NULL )
 	{
 		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid ); 
-		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
+		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	// It will blank it out 
 		return;
-	}
-
-	if ( m_DC[pn] < Difficulty_Edit && m_DC[pn] >= Difficulty_Beginner )
-	{
-		/*
-		m_DifficultyIcon[pn].SetPlayer( pn );
-		m_DifficultyIcon[pn].SetFromDifficulty( m_DC[pn] );
-		*/
-	}
-	else
-	{
-		//m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
 	}
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
@@ -513,7 +484,7 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 	Steps * pSteps = SongUtil::GetStepsByDifficulty( GAMESTATE->m_pCurSong, st, m_DC[pn] );
 	GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 
-	if ( ( m_DC[pn] < NUM_Difficulty ) && ( m_DC[pn] >= Difficulty_Beginner ) )
+	if( ( m_DC[pn] < NUM_Difficulty ) && ( m_DC[pn] >= Difficulty_Beginner ) )
 		m_StepsDisplays[pn].SetFromSteps( pSteps );
 	else
 		m_StepsDisplays[pn].SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, Difficulty_Beginner, CourseType_Invalid );
@@ -521,14 +492,15 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 
 void ScreenNetSelectMusic::MusicChanged()
 {
-	if ( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == NULL )
 	{
 		m_BPMDisplay.NoBPM();
 		FOREACH_EnabledPlayer (pn)
 			UpdateDifficulties( pn );
 
 		SOUND->StopMusic();
-		// xxx: it should play the menu music instead. -aj
+		// todo: handle playing section music correctly. -aj
+		// SOUND->PlayMusic( m_sSectionMusicPath, NULL, true, 0, -1 );
 		return;
 	} 
 	m_BPMDisplay.SetBpmFromSong( GAMESTATE->m_pCurSong );
@@ -539,7 +511,7 @@ void ScreenNetSelectMusic::MusicChanged()
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 		vector <Steps *> MultiSteps;
 		MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
-		if (MultiSteps.size() == 0)
+		if(MultiSteps.size() == 0)
 			m_DC[pn] = NUM_Difficulty;
 		else
 		{
@@ -548,24 +520,24 @@ void ScreenNetSelectMusic::MusicChanged()
 
 			bool dcs[NUM_Difficulty];
 
-			for ( i=0; i<NUM_Difficulty; ++i )
+			for( i=0; i<NUM_Difficulty; ++i )
 				dcs[i] = false;
 
-			for ( i=0; i<(int)MultiSteps.size(); ++i )
+			for( i=0; i<(int)MultiSteps.size(); ++i )
 				dcs[MultiSteps[i]->GetDifficulty()] = true;
 
-			for ( i=0; i<NUM_Difficulty; ++i )
-				if ( dcs[i] )
+			for( i=0; i<NUM_Difficulty; ++i )
+				if( dcs[i] )
 				{
 					Target = (Difficulty)i;
-					if ( i >= m_DC[pn] )
+					if( i >= m_DC[pn] )
 					{
 						m_DC[pn] = (Difficulty)i;
 						break;
 					}
 				}
 
-			if ( i == NUM_Difficulty )
+			if( i == NUM_Difficulty )
 				m_DC[pn] = Target;
 		}
 		UpdateDifficulties( pn );
@@ -576,7 +548,8 @@ void ScreenNetSelectMusic::MusicChanged()
 	SOUND->StopMusic();
 	if( GAMESTATE->m_pCurSong->HasMusic() )
 	{
-		if(SOUND->GetMusicPath().CompareNoCase(GAMESTATE->m_pCurSong->GetMusicPath())) // dont play the same sound over and over
+		// don't play the same sound over and over
+		if(SOUND->GetMusicPath().CompareNoCase(GAMESTATE->m_pCurSong->GetMusicPath()))
 		{
 			SOUND->StopMusic();
 			SOUND->PlayMusic(
@@ -591,7 +564,7 @@ void ScreenNetSelectMusic::MusicChanged()
 
 void ScreenNetSelectMusic::Update( float fDeltaTime )
 {
-	if (!m_bInitialSelect)
+	if(!m_bInitialSelect)
 	{
 		m_bInitialSelect = true;
 		SCREENMAN->PostMessageToTopScreen( SM_RefreshWheelLocation, 1.0f );
@@ -599,9 +572,8 @@ void ScreenNetSelectMusic::Update( float fDeltaTime )
 	ScreenNetSelectBase::Update( fDeltaTime );
 }
 
-
 #endif
-		
+
 /*
  * (c) 2004-2005 Charles Lohr
  * All rights reserved.

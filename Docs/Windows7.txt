@@ -1,1 +1,0 @@
-If you are using Windows Vista or Windows 7, please do not install StepMania SSC into the Program Files directory.

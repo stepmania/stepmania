@@ -248,11 +248,14 @@ public:
 			}
 			break;
 		}
-		bool bFinsihed = m_DownloadState == packages  &&  
+		bool bFinished = m_DownloadState == packages  &&  
 			m_vsQueuedPackageUrls.empty() && 
 			m_pTransfer == NULL;
-		if( bFinsihed )
+		if( bFinished )
 		{
+			Message msg( "DownloadFinished" );
+			MESSAGEMAN->Broadcast(msg);
+
 			playAfterLaunchInfo = m_playAfterLaunchInfo;
 			return true;
 		}
@@ -370,7 +373,9 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
 			sInitialScreen = StepMania::GetInitialScreen();
 		}
 
-		SCREENMAN->SetNewScreen( sInitialScreen );
+		Screen *curScreen = SCREENMAN->GetTopScreen();
+		if(curScreen->GetScreenType() == game_menu || curScreen->GetScreenType() == attract)
+			SCREENMAN->SetNewScreen( sInitialScreen );
 	}
 }
 

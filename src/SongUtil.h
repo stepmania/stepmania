@@ -1,4 +1,4 @@
-/* SongUtil - Utility functions that deal with Song. */
+/** @brief SongUtil - Utility functions that deal with Song. */
 
 #ifndef SONG_UTIL_H
 #define SONG_UTIL_H
@@ -13,6 +13,7 @@ class Steps;
 class Profile;
 class XNode;
 
+/** @brief The criteria for dealing with songs. */
 class SongCriteria
 {
 public:
@@ -22,12 +23,26 @@ public:
 	enum Selectable { Selectable_Yes, Selectable_No, Selectable_DontCare } m_Selectable;
 	bool m_bUseSongAllowedList;
 	vector<Song*> m_vpSongAllowedList;
+	/** @brief How many songs does this take max? Don't use this if it's -1. */
 	int m_iMaxStagesForSong;		// don't filter if -1
 	// float m_fMinBPM;		// don't filter if -1
 	// float m_fMaxBPM;		// don't filter if -1
-	enum Tutorial { Tutorial_Yes, Tutorial_No, Tutorial_DontCare } m_Tutorial;
-	enum Locked { Locked_Locked, Locked_Unlocked, Locked_DontCare } m_Locked;
+	/** @brief Is this song used for tutorial purposes? */
+	enum Tutorial
+	{
+		Tutorial_Yes, /**< This song is used for tutorial purposes. */
+		Tutorial_No, /**< This song is not used for tutorial purposes. */
+		Tutorial_DontCare /**< This song can or cannot be used for tutorial purposes. */
+	} m_Tutorial;
+	/** @brief Is this song used for locking/unlocking purposes? */
+	enum Locked 
+	{
+		Locked_Locked, /**< This song is a locked song. */
+		Locked_Unlocked, /**< This song is an unlocked song. */
+		Locked_DontCare /**< This song can or cannot be locked or unlocked. */
+	} m_Locked;
 
+	/** @brief Set up some initial song criteria. */
 	SongCriteria()
 	{
 		m_bUseSongGenreAllowedList = false;
@@ -40,9 +55,20 @@ public:
 		m_Locked = Locked_DontCare;
 	}
 
+	/**
+	 * @brief Determine if the song matches the current criteria.
+	 * @param p the song to compare against the criteria.
+	 * @return true of the song matches the criteria, false otherwise.
+	 */
 	bool Matches( const Song *p ) const;
+	/**
+	 * @brief Determine if two sets of criteria are equivalent.
+	 * @param other the other criteria.
+	 * @return true if the two sets of criteria are equal, false otherwise.
+	 */
 	bool operator==( const SongCriteria &other ) const
 	{
+/** @brief A quick way to match every part of the song criterium. */
 #define X(x) (x == other.x)
 		return 
 			X(m_sGroupName) && 
@@ -58,9 +84,15 @@ public:
 			X(m_Locked);
 #undef X
 	}
+	/**
+	 * @brief Determine if two sets of criteria are not equivalent.
+	 * @param other the other criteria.
+	 * @return true if the two sets of criteria are not equal, false otherwise.
+	 */
 	bool operator!=( const SongCriteria &other ) const { return !operator==( other ); }
 };
 
+/** @brief A set of song utilities to make working with songs easier. */
 namespace SongUtil
 {
 	void GetSteps( 
@@ -70,7 +102,8 @@ namespace SongUtil
 		Difficulty dc = Difficulty_Invalid, 
 		int iMeterLow = -1, 
 		int iMeterHigh = -1, 
-		const RString &sDescription = "", 
+		const RString &sDescription = "",
+		const RString &sCredit = "",
 		bool bIncludeAutoGen = true, 
 		unsigned uHash = 0,
 		int iMaxToGet = -1 
@@ -81,15 +114,17 @@ namespace SongUtil
 		Difficulty dc = Difficulty_Invalid, 
 		int iMeterLow = -1, 
 		int iMeterHigh = -1, 
-		const RString &sDescription = "", 
+		const RString &sDescription = "",
+		const RString &sCredit = "",
 		unsigned uHash = 0,
 		bool bIncludeAutoGen = true
 		);
 	Steps* GetStepsByDifficulty(	const Song *pSong, StepsType st, Difficulty dc, bool bIncludeAutoGen = true );
 	Steps* GetStepsByMeter(		const Song *pSong, StepsType st, int iMeterLow, int iMeterHigh );
 	Steps* GetStepsByDescription(	const Song *pSong, StepsType st, RString sDescription );
+	Steps* GetStepsByCredit(	const Song *pSong, StepsType st, RString sCredit );
 	Steps* GetClosestNotes(		const Song *pSong, StepsType st, Difficulty dc, bool bIgnoreLocked=false );
-
+	
 	void AdjustDuplicateSteps( Song *pSong ); // part of TidyUpData
 	void DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps );
 
@@ -111,10 +146,19 @@ namespace SongUtil
 
 	int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2);
 
+	/**
+	 * @brief Determine if the requested description for an edit is unique.
+	 * @param pSong the song the edit is for.
+	 * @param st the steps type for the edit.
+	 * @param sPreferredDescription the requested description.
+	 * @param pExclude the steps that want the description.
+	 * @return true if it is unique, false otherwise.
+	 */
 	bool IsEditDescriptionUnique( const Song* pSong, StepsType st, const RString &sPreferredDescription, const Steps *pExclude );
 	RString MakeUniqueEditDescription( const Song* pSong, StepsType st, const RString &sPreferredDescription );
 	bool ValidateCurrentEditStepsDescription( const RString &sAnswer, RString &sErrorOut );
 	bool ValidateCurrentStepsDescription( const RString &sAnswer, RString &sErrorOut );
+	bool ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErrorOut );
 
 	void GetAllSongGenres( vector<RString> &vsOut );
 	void FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out );
@@ -156,8 +200,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

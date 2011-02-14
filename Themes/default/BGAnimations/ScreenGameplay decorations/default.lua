@@ -165,4 +165,11 @@ t[#t+1] = Def.ActorFrame {
 	};
 	CreateStops();
 };
+if PREFSMAN:GetPreference("ScoringType") == 'ScoringType_Custom' then
+	t[#t+1] = Def.Actor{
+		JudgmentMessageCommand = function(self, params)
+			SpecialScoring[GetUserPref("UserPrefSpecialScoringMode")](params, STATSMAN:GetCurStageStats():GetPlayerStageStats(params.Player))
+		end;
+	};
+end;
 return t

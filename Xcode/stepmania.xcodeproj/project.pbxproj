@@ -23,6 +23,10 @@
 
 /* Begin PBXBuildFile section */
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
+		2BA7925E1304F20D002BD8E1 /* NotesLoaderSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */; };
+		2BA7925F1304F20D002BD8E1 /* NotesLoaderSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */; };
+		2BA792601304F20D002BD8E1 /* NotesWriterSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */; };
+		2BA792611304F20D002BD8E1 /* NotesWriterSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BA7925D1304F20D002BD8E1 /* NotesWriterSSC.h */; };
 		3659B56F0F902143002B6B68 /* CommandLineActions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3659B56D0F902143002B6B68 /* CommandLineActions.cpp */; };
 		3659B5700F902143002B6B68 /* CommandLineActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3659B56E0F902143002B6B68 /* CommandLineActions.h */; };
 		367D575B0EDE56F200B46814 /* ScreenHighScores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 367D57590EDE56F200B46814 /* ScreenHighScores.cpp */; };
@@ -157,11 +161,9 @@
 		AA29CD810558741A00961A51 /* FadingBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8A04770E7C005F316C /* FadingBanner.cpp */; };
 		AA29CD820558741A00961A51 /* GradeDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8C04770E7C005F316C /* GradeDisplay.cpp */; };
 		AA29CD840558741A00961A51 /* GrooveRadar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9004770E7C005F316C /* GrooveRadar.cpp */; };
-		AA29CD850558741A00961A51 /* GroupList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9204770E7C005F316C /* GroupList.cpp */; };
 		AA29CD860558741A00961A51 /* HelpDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9404770E7C005F316C /* HelpDisplay.cpp */; };
 		AA29CD890558741A00961A51 /* MenuTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9A04770E7C005F316C /* MenuTimer.cpp */; };
 		AA29CD8A0558741A00961A51 /* MeterDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */; };
-		AA29CD8C0558741A00961A51 /* MusicList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA004770E7C005F316C /* MusicList.cpp */; };
 		AA29CD8E0558741A00961A51 /* MusicWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA404770E7C005F316C /* MusicWheel.cpp */; };
 		AA29CD8F0558741A00961A51 /* MusicWheelItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */; };
 		AA29CD920558741A00961A51 /* OptionsCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAC04770E7C005F316C /* OptionsCursor.cpp */; };
@@ -373,11 +375,9 @@
 		AA40D1F809A08D650068C0D5 /* FadingBanner.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE8B04770E7C005F316C /* FadingBanner.h */; };
 		AA40D1F909A08D650068C0D5 /* GradeDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE8D04770E7C005F316C /* GradeDisplay.h */; };
 		AA40D1FA09A08D650068C0D5 /* GrooveRadar.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9104770E7C005F316C /* GrooveRadar.h */; };
-		AA40D1FB09A08D650068C0D5 /* GroupList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9304770E7C005F316C /* GroupList.h */; };
 		AA40D1FC09A08D650068C0D5 /* HelpDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9504770E7C005F316C /* HelpDisplay.h */; };
 		AA40D1FD09A08D650068C0D5 /* MenuTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9B04770E7C005F316C /* MenuTimer.h */; };
 		AA40D1FE09A08D650068C0D5 /* MeterDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9D04770E7C005F316C /* MeterDisplay.h */; };
-		AA40D20009A08D650068C0D5 /* MusicList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA104770E7C005F316C /* MusicList.h */; };
 		AA40D20209A08D650068C0D5 /* MusicWheel.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA504770E7C005F316C /* MusicWheel.h */; };
 		AA40D20309A08D650068C0D5 /* MusicWheelItem.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEA704770E7C005F316C /* MusicWheelItem.h */; };
 		AA40D20609A08D650068C0D5 /* OptionsCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFEAD04770E7C005F316C /* OptionsCursor.h */; };
@@ -711,11 +711,9 @@
 		AA40D3BA09A08D650068C0D5 /* FadingBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8A04770E7C005F316C /* FadingBanner.cpp */; };
 		AA40D3BB09A08D650068C0D5 /* GradeDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8C04770E7C005F316C /* GradeDisplay.cpp */; };
 		AA40D3BC09A08D650068C0D5 /* GrooveRadar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9004770E7C005F316C /* GrooveRadar.cpp */; };
-		AA40D3BD09A08D650068C0D5 /* GroupList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9204770E7C005F316C /* GroupList.cpp */; };
 		AA40D3BE09A08D650068C0D5 /* HelpDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9404770E7C005F316C /* HelpDisplay.cpp */; };
 		AA40D3BF09A08D650068C0D5 /* MenuTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9A04770E7C005F316C /* MenuTimer.cpp */; };
 		AA40D3C009A08D650068C0D5 /* MeterDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */; };
-		AA40D3C209A08D650068C0D5 /* MusicList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA004770E7C005F316C /* MusicList.cpp */; };
 		AA40D3C409A08D650068C0D5 /* MusicWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA404770E7C005F316C /* MusicWheel.cpp */; };
 		AA40D3C509A08D650068C0D5 /* MusicWheelItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */; };
 		AA40D3C809A08D650068C0D5 /* OptionsCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFEAC04770E7C005F316C /* OptionsCursor.cpp */; };
@@ -1633,6 +1631,19 @@
 		AAFF41A60F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFF41A20F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.h */; };
 		EE2153A910A75BEE0074B01B /* NotesLoaderPMS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */; };
 		EE2153AA10A75BEE0074B01B /* NotesLoaderPMS.h in Headers */ = {isa = PBXBuildFile; fileRef = EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */; };
+		EE906F6612BF3A1B00146C96 /* ScreenInstallOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F6412BF3A1B00146C96 /* ScreenInstallOverlay.cpp */; };
+		EE906F6712BF3A1B00146C96 /* ScreenInstallOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F6512BF3A1B00146C96 /* ScreenInstallOverlay.h */; };
+		EE906F7712BF3A6900146C96 /* json_batchallocator.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F7012BF3A6900146C96 /* json_batchallocator.h */; };
+		EE906F7812BF3A6900146C96 /* json_internalarray.inl in Resources */ = {isa = PBXBuildFile; fileRef = EE906F7112BF3A6900146C96 /* json_internalarray.inl */; };
+		EE906F7912BF3A6900146C96 /* json_internalmap.inl in Resources */ = {isa = PBXBuildFile; fileRef = EE906F7212BF3A6900146C96 /* json_internalmap.inl */; };
+		EE906F7A12BF3A6900146C96 /* json_reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F7312BF3A6900146C96 /* json_reader.cpp */; };
+		EE906F7B12BF3A6900146C96 /* json_value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F7412BF3A6900146C96 /* json_value.cpp */; };
+		EE906F7C12BF3A6900146C96 /* json_valueiterator.inl in Resources */ = {isa = PBXBuildFile; fileRef = EE906F7512BF3A6900146C96 /* json_valueiterator.inl */; };
+		EE906F7D12BF3A6900146C96 /* json_writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F7612BF3A6900146C96 /* json_writer.cpp */; };
+		EE906F8212BF3AF800146C96 /* JsonUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F8012BF3AF800146C96 /* JsonUtil.cpp */; };
+		EE906F8312BF3AF800146C96 /* JsonUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F8112BF3AF800146C96 /* JsonUtil.h */; };
+		EE906F8A12BF3C7C00146C96 /* FileDownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE906F8812BF3C7C00146C96 /* FileDownload.cpp */; };
+		EE906F8B12BF3C7C00146C96 /* FileDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = EE906F8912BF3C7C00146C96 /* FileDownload.h */; };
 		EEA7C84310A805A300082E7B /* ScreenPackagesSSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEA7C84110A805A300082E7B /* ScreenPackagesSSC.cpp */; };
 		EEA7C84410A805A300082E7B /* ScreenPackagesSSC.h in Headers */ = {isa = PBXBuildFile; fileRef = EEA7C84210A805A300082E7B /* ScreenPackagesSSC.h */; };
 		EEC7863F0E58208B00F559BC /* StepsDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */; };
@@ -1761,6 +1772,10 @@
 		1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenGameplayNormal.h; path = ../src/ScreenGameplayNormal.h; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderSSC.cpp; path = ../src/NotesLoaderSSC.cpp; sourceTree = SOURCE_ROOT; };
+		2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderSSC.h; path = ../src/NotesLoaderSSC.h; sourceTree = SOURCE_ROOT; };
+		2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesWriterSSC.cpp; path = ../src/NotesWriterSSC.cpp; sourceTree = SOURCE_ROOT; };
+		2BA7925D1304F20D002BD8E1 /* NotesWriterSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesWriterSSC.h; path = ../src/NotesWriterSSC.h; sourceTree = SOURCE_ROOT; };
 		3659B56D0F902143002B6B68 /* CommandLineActions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineActions.cpp; sourceTree = "<group>"; };
 		3659B56E0F902143002B6B68 /* CommandLineActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLineActions.h; sourceTree = "<group>"; };
 		367D57590EDE56F200B46814 /* ScreenHighScores.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenHighScores.cpp; path = ../src/ScreenHighScores.cpp; sourceTree = SOURCE_ROOT; };
@@ -2152,16 +2167,12 @@
 		AA6EFE8D04770E7C005F316C /* GradeDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = GradeDisplay.h; path = ../src/GradeDisplay.h; sourceTree = "<group>"; };
 		AA6EFE9004770E7C005F316C /* GrooveRadar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = GrooveRadar.cpp; path = ../src/GrooveRadar.cpp; sourceTree = "<group>"; };
 		AA6EFE9104770E7C005F316C /* GrooveRadar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = GrooveRadar.h; path = ../src/GrooveRadar.h; sourceTree = "<group>"; };
-		AA6EFE9204770E7C005F316C /* GroupList.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = GroupList.cpp; path = ../src/GroupList.cpp; sourceTree = "<group>"; };
-		AA6EFE9304770E7C005F316C /* GroupList.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = GroupList.h; path = ../src/GroupList.h; sourceTree = "<group>"; };
 		AA6EFE9404770E7C005F316C /* HelpDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = HelpDisplay.cpp; path = ../src/HelpDisplay.cpp; sourceTree = "<group>"; };
 		AA6EFE9504770E7C005F316C /* HelpDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = HelpDisplay.h; path = ../src/HelpDisplay.h; sourceTree = "<group>"; };
 		AA6EFE9A04770E7C005F316C /* MenuTimer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MenuTimer.cpp; path = ../src/MenuTimer.cpp; sourceTree = "<group>"; };
 		AA6EFE9B04770E7C005F316C /* MenuTimer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MenuTimer.h; path = ../src/MenuTimer.h; sourceTree = "<group>"; };
 		AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MeterDisplay.cpp; path = ../src/MeterDisplay.cpp; sourceTree = "<group>"; };
 		AA6EFE9D04770E7C005F316C /* MeterDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MeterDisplay.h; path = ../src/MeterDisplay.h; sourceTree = "<group>"; };
-		AA6EFEA004770E7C005F316C /* MusicList.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicList.cpp; path = ../src/MusicList.cpp; sourceTree = "<group>"; };
-		AA6EFEA104770E7C005F316C /* MusicList.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MusicList.h; path = ../src/MusicList.h; sourceTree = "<group>"; };
 		AA6EFEA404770E7C005F316C /* MusicWheel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicWheel.cpp; path = ../src/MusicWheel.cpp; sourceTree = "<group>"; };
 		AA6EFEA504770E7C005F316C /* MusicWheel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MusicWheel.h; path = ../src/MusicWheel.h; sourceTree = "<group>"; };
 		AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MusicWheelItem.cpp; path = ../src/MusicWheelItem.cpp; sourceTree = "<group>"; };
@@ -2959,6 +2970,19 @@
 		AAFF5542054E736D00D02EE9 /* Attack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Attack.h; path = ../src/Attack.h; sourceTree = "<group>"; };
 		EE2153A710A75BEE0074B01B /* NotesLoaderPMS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotesLoaderPMS.cpp; path = ../src/NotesLoaderPMS.cpp; sourceTree = SOURCE_ROOT; };
 		EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotesLoaderPMS.h; path = ../src/NotesLoaderPMS.h; sourceTree = SOURCE_ROOT; };
+		EE906F6412BF3A1B00146C96 /* ScreenInstallOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenInstallOverlay.cpp; path = ../src/ScreenInstallOverlay.cpp; sourceTree = SOURCE_ROOT; };
+		EE906F6512BF3A1B00146C96 /* ScreenInstallOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenInstallOverlay.h; path = ../src/ScreenInstallOverlay.h; sourceTree = SOURCE_ROOT; };
+		EE906F7012BF3A6900146C96 /* json_batchallocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json_batchallocator.h; path = ../src/jsoncpp/src/lib_json/json_batchallocator.h; sourceTree = SOURCE_ROOT; };
+		EE906F7112BF3A6900146C96 /* json_internalarray.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_internalarray.inl; path = ../src/jsoncpp/src/lib_json/json_internalarray.inl; sourceTree = SOURCE_ROOT; };
+		EE906F7212BF3A6900146C96 /* json_internalmap.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_internalmap.inl; path = ../src/jsoncpp/src/lib_json/json_internalmap.inl; sourceTree = SOURCE_ROOT; };
+		EE906F7312BF3A6900146C96 /* json_reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_reader.cpp; path = ../src/jsoncpp/src/lib_json/json_reader.cpp; sourceTree = SOURCE_ROOT; };
+		EE906F7412BF3A6900146C96 /* json_value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_value.cpp; path = ../src/jsoncpp/src/lib_json/json_value.cpp; sourceTree = SOURCE_ROOT; };
+		EE906F7512BF3A6900146C96 /* json_valueiterator.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json_valueiterator.inl; path = ../src/jsoncpp/src/lib_json/json_valueiterator.inl; sourceTree = SOURCE_ROOT; };
+		EE906F7612BF3A6900146C96 /* json_writer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = json_writer.cpp; path = ../src/jsoncpp/src/lib_json/json_writer.cpp; sourceTree = SOURCE_ROOT; };
+		EE906F8012BF3AF800146C96 /* JsonUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JsonUtil.cpp; path = ../src/JsonUtil.cpp; sourceTree = SOURCE_ROOT; };
+		EE906F8112BF3AF800146C96 /* JsonUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JsonUtil.h; path = ../src/JsonUtil.h; sourceTree = SOURCE_ROOT; };
+		EE906F8812BF3C7C00146C96 /* FileDownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileDownload.cpp; path = ../src/FileDownload.cpp; sourceTree = SOURCE_ROOT; };
+		EE906F8912BF3C7C00146C96 /* FileDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDownload.h; path = ../src/FileDownload.h; sourceTree = SOURCE_ROOT; };
 		EEA7C84110A805A300082E7B /* ScreenPackagesSSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenPackagesSSC.cpp; path = ../src/ScreenPackagesSSC.cpp; sourceTree = SOURCE_ROOT; };
 		EEA7C84210A805A300082E7B /* ScreenPackagesSSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenPackagesSSC.h; path = ../src/ScreenPackagesSSC.h; sourceTree = SOURCE_ROOT; };
 		EEC7863D0E58208B00F559BC /* StepsDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StepsDisplay.cpp; path = ../src/StepsDisplay.cpp; sourceTree = "<group>"; };
@@ -3113,6 +3137,7 @@
 		29B97314FDCFA39411CA2CEA /* SDL App */ = {
 			isa = PBXGroup;
 			children = (
+				EE906F6F12BF3A5B00146C96 /* json */,
 				AAA070B20CE7B3AD005A3060 /* mad-0.15.1b */,
 				AA7C8B920B67467C00FD9940 /* libtomcrypt */,
 				AA7C8A7F0B6744F600FD9940 /* libtommath */,
@@ -3185,8 +3210,6 @@
 		AA6E00090477103E005F316C /* Screens */ = {
 			isa = PBXGroup;
 			children = (
-				36CA531E0F9156860063D59D /* ScreenOptionsEditCourse.cpp */,
-				36CA531F0F9156860063D59D /* ScreenOptionsEditCourse.h */,
 				AA6E000A047711F3005F316C /* Screen.cpp */,
 				AA6E000B047711F3005F316C /* Screen.h */,
 				AA6E0010047711F3005F316C /* ScreenAttract.cpp */,
@@ -3225,6 +3248,8 @@
 				367D575A0EDE56F200B46814 /* ScreenHighScores.h */,
 				AA6E002F047711F3005F316C /* ScreenHowToPlay.cpp */,
 				AA6E0030047711F3005F316C /* ScreenHowToPlay.h */,
+				EE906F6412BF3A1B00146C96 /* ScreenInstallOverlay.cpp */,
+				EE906F6512BF3A1B00146C96 /* ScreenInstallOverlay.h */,
 				AA6E0033047711F3005F316C /* ScreenInstructions.cpp */,
 				AA6E0034047711F3005F316C /* ScreenInstructions.h */,
 				AA6E0037047711F3005F316C /* ScreenJukebox.cpp */,
@@ -3251,6 +3276,10 @@
 				AA42F5E7067068D30013509E /* ScreenNetworkOptions.h */,
 				AA6E004B047711F3005F316C /* ScreenOptions.cpp */,
 				AA6E004C047711F3005F316C /* ScreenOptions.h */,
+				36CA531A0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp */,
+				36CA531B0F91564A0063D59D /* ScreenOptionsCourseOverview.h */,
+				36CA531E0F9156860063D59D /* ScreenOptionsEditCourse.cpp */,
+				36CA531F0F9156860063D59D /* ScreenOptionsEditCourse.h */,
 				AAFAB5BB0889098600767BF7 /* ScreenOptionsEditProfile.cpp */,
 				AAFAB5BC0889098600767BF7 /* ScreenOptionsEditProfile.h */,
 				AAFF41A10F5BD4AD00FFDB67 /* ScreenOptionsExportPackage.cpp */,
@@ -3320,8 +3349,6 @@
 				AA6E0079047711F3005F316C /* ScreenTestFonts.cpp */,
 				AA6E007A047711F3005F316C /* ScreenTestFonts.h */,
 				AAC622FA05389A0500D02EE9 /* ScreenTestInput.cpp */,
-				36CA531A0F91564A0063D59D /* ScreenOptionsCourseOverview.cpp */,
-				36CA531B0F91564A0063D59D /* ScreenOptionsCourseOverview.h */,
 				AAC622FB05389A0500D02EE9 /* ScreenTestInput.h */,
 				AAF7435906110E8D00B19AD1 /* ScreenTestLights.cpp */,
 				AAF7435A06110E8D00B19AD1 /* ScreenTestLights.h */,
@@ -3702,6 +3729,8 @@
 				AA8F136F0624BAB200C6A467 /* EnumHelper.h */,
 				AAE7808506081A000034E65F /* ezsockets.cpp */,
 				AAE7808606081A000034E65F /* ezsockets.h */,
+				EE906F8812BF3C7C00146C96 /* FileDownload.cpp */,
+				EE906F8912BF3C7C00146C96 /* FileDownload.h */,
 				AA6EFDD104770C79005F316C /* Font.cpp */,
 				AA6EFDD204770C79005F316C /* Font.h */,
 				AA6EFDD304770C79005F316C /* FontCharAliases.cpp */,
@@ -3727,6 +3756,8 @@
 				AABBD80605D8E9FC00B44FC2 /* HighScore.cpp */,
 				AABBD80705D8E9FC00B44FC2 /* HighScore.h */,
 				AACFBE3908E7D832005087FC /* InputEventPlus.h */,
+				EE906F8012BF3AF800146C96 /* JsonUtil.cpp */,
+				EE906F8112BF3AF800146C96 /* JsonUtil.h */,
 				AA2FB638091212AF000FD574 /* LifeMeter.cpp */,
 				AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */,
 				AADD1CC3095C233F0088C9DF /* LocalizedString.h */,
@@ -3756,10 +3787,14 @@
 				EE2153A810A75BEE0074B01B /* NotesLoaderPMS.h */,
 				AA6EFDF504770C79005F316C /* NotesLoaderSM.cpp */,
 				AA6EFDF604770C79005F316C /* NotesLoaderSM.h */,
+				2BA7925A1304F20D002BD8E1 /* NotesLoaderSSC.cpp */,
+				2BA7925B1304F20D002BD8E1 /* NotesLoaderSSC.h */,
 				AA6EFDF704770C79005F316C /* NotesWriterDWI.cpp */,
 				AA6EFDF804770C79005F316C /* NotesWriterDWI.h */,
 				AA6EFDF904770C79005F316C /* NotesWriterSM.cpp */,
 				AA6EFDFA04770C79005F316C /* NotesWriterSM.h */,
+				2BA7925C1304F20D002BD8E1 /* NotesWriterSSC.cpp */,
+				2BA7925D1304F20D002BD8E1 /* NotesWriterSSC.h */,
 				AA6EFDFB04770C79005F316C /* NoteTypes.cpp */,
 				AA6EFDFC04770C79005F316C /* NoteTypes.h */,
 				AA80C75707F20D6600C99272 /* OptionRowHandler.cpp */,
@@ -3887,8 +3922,6 @@
 				AAFF551E0549F39700D02EE9 /* GraphDisplay.h */,
 				AA6EFE9004770E7C005F316C /* GrooveRadar.cpp */,
 				AA6EFE9104770E7C005F316C /* GrooveRadar.h */,
-				AA6EFE9204770E7C005F316C /* GroupList.cpp */,
-				AA6EFE9304770E7C005F316C /* GroupList.h */,
 				AA6EFE9404770E7C005F316C /* HelpDisplay.cpp */,
 				AA6EFE9504770E7C005F316C /* HelpDisplay.h */,
 				AA729C460599B54D00779F33 /* MemoryCardDisplay.cpp */,
@@ -3901,8 +3934,6 @@
 				AA11A20C0DC5A1B0006BD8AC /* ModIcon.h */,
 				AA11A20D0DC5A1B0006BD8AC /* ModIconRow.cpp */,
 				AA11A20E0DC5A1B0006BD8AC /* ModIconRow.h */,
-				AA6EFEA004770E7C005F316C /* MusicList.cpp */,
-				AA6EFEA104770E7C005F316C /* MusicList.h */,
 				AA6EFEA404770E7C005F316C /* MusicWheel.cpp */,
 				AA6EFEA504770E7C005F316C /* MusicWheel.h */,
 				AA6EFEA604770E7C005F316C /* MusicWheelItem.cpp */,
@@ -4862,6 +4893,20 @@
 			path = "../src/lua-5.1";
 			sourceTree = "<group>";
 		};
+		EE906F6F12BF3A5B00146C96 /* json */ = {
+			isa = PBXGroup;
+			children = (
+				EE906F7012BF3A6900146C96 /* json_batchallocator.h */,
+				EE906F7112BF3A6900146C96 /* json_internalarray.inl */,
+				EE906F7212BF3A6900146C96 /* json_internalmap.inl */,
+				EE906F7312BF3A6900146C96 /* json_reader.cpp */,
+				EE906F7412BF3A6900146C96 /* json_value.cpp */,
+				EE906F7512BF3A6900146C96 /* json_valueiterator.inl */,
+				EE906F7612BF3A6900146C96 /* json_writer.cpp */,
+			);
+			name = json;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -4877,6 +4922,12 @@
 				EEA7C84410A805A300082E7B /* ScreenPackagesSSC.h in Headers */,
 				36C6888411297FFE00453295 /* RageFileDriverReadAhead.h in Headers */,
 				36C6888611297FFE00453295 /* RageFileManager_ReadAhead.h in Headers */,
+				EE906F6712BF3A1B00146C96 /* ScreenInstallOverlay.h in Headers */,
+				EE906F7712BF3A6900146C96 /* json_batchallocator.h in Headers */,
+				EE906F8312BF3AF800146C96 /* JsonUtil.h in Headers */,
+				EE906F8B12BF3C7C00146C96 /* FileDownload.h in Headers */,
+				2BA7925F1304F20D002BD8E1 /* NotesLoaderSSC.h in Headers */,
+				2BA792611304F20D002BD8E1 /* NotesWriterSSC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4944,11 +4995,9 @@
 				AA40D1F809A08D650068C0D5 /* FadingBanner.h in Headers */,
 				AA40D1F909A08D650068C0D5 /* GradeDisplay.h in Headers */,
 				AA40D1FA09A08D650068C0D5 /* GrooveRadar.h in Headers */,
-				AA40D1FB09A08D650068C0D5 /* GroupList.h in Headers */,
 				AA40D1FC09A08D650068C0D5 /* HelpDisplay.h in Headers */,
 				AA40D1FD09A08D650068C0D5 /* MenuTimer.h in Headers */,
 				AA40D1FE09A08D650068C0D5 /* MeterDisplay.h in Headers */,
-				AA40D20009A08D650068C0D5 /* MusicList.h in Headers */,
 				AA40D20209A08D650068C0D5 /* MusicWheel.h in Headers */,
 				AA40D20309A08D650068C0D5 /* MusicWheelItem.h in Headers */,
 				AA40D20609A08D650068C0D5 /* OptionsCursor.h in Headers */,
@@ -5597,6 +5646,9 @@
 				AA29CD3E0558741A00961A51 /* smicon.icns in Resources */,
 				AAF6A2F909B695BA00D5C614 /* Localizable.strings in Resources */,
 				AA1DE9580C5468CE00D59F20 /* Hardware.plist in Resources */,
+				EE906F7812BF3A6900146C96 /* json_internalarray.inl in Resources */,
+				EE906F7912BF3A6900146C96 /* json_internalmap.inl in Resources */,
+				EE906F7C12BF3A6900146C96 /* json_valueiterator.inl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5770,11 +5822,9 @@
 				AA29CD810558741A00961A51 /* FadingBanner.cpp in Sources */,
 				AA29CD820558741A00961A51 /* GradeDisplay.cpp in Sources */,
 				AA29CD840558741A00961A51 /* GrooveRadar.cpp in Sources */,
-				AA29CD850558741A00961A51 /* GroupList.cpp in Sources */,
 				AA29CD860558741A00961A51 /* HelpDisplay.cpp in Sources */,
 				AA29CD890558741A00961A51 /* MenuTimer.cpp in Sources */,
 				AA29CD8A0558741A00961A51 /* MeterDisplay.cpp in Sources */,
-				AA29CD8C0558741A00961A51 /* MusicList.cpp in Sources */,
 				AA29CD8E0558741A00961A51 /* MusicWheel.cpp in Sources */,
 				AA29CD8F0558741A00961A51 /* MusicWheelItem.cpp in Sources */,
 				AA29CD920558741A00961A51 /* OptionsCursor.cpp in Sources */,
@@ -6113,6 +6163,14 @@
 				EEA7C84310A805A300082E7B /* ScreenPackagesSSC.cpp in Sources */,
 				36C6888311297FFE00453295 /* RageFileDriverReadAhead.cpp in Sources */,
 				36C6888511297FFE00453295 /* RageFileManager_ReadAhead.cpp in Sources */,
+				EE906F6612BF3A1B00146C96 /* ScreenInstallOverlay.cpp in Sources */,
+				EE906F7A12BF3A6900146C96 /* json_reader.cpp in Sources */,
+				EE906F7B12BF3A6900146C96 /* json_value.cpp in Sources */,
+				EE906F7D12BF3A6900146C96 /* json_writer.cpp in Sources */,
+				EE906F8212BF3AF800146C96 /* JsonUtil.cpp in Sources */,
+				EE906F8A12BF3C7C00146C96 /* FileDownload.cpp in Sources */,
+				2BA7925E1304F20D002BD8E1 /* NotesLoaderSSC.cpp in Sources */,
+				2BA792601304F20D002BD8E1 /* NotesWriterSSC.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6175,11 +6233,9 @@
 				AA40D3BA09A08D650068C0D5 /* FadingBanner.cpp in Sources */,
 				AA40D3BB09A08D650068C0D5 /* GradeDisplay.cpp in Sources */,
 				AA40D3BC09A08D650068C0D5 /* GrooveRadar.cpp in Sources */,
-				AA40D3BD09A08D650068C0D5 /* GroupList.cpp in Sources */,
 				AA40D3BE09A08D650068C0D5 /* HelpDisplay.cpp in Sources */,
 				AA40D3BF09A08D650068C0D5 /* MenuTimer.cpp in Sources */,
 				AA40D3C009A08D650068C0D5 /* MeterDisplay.cpp in Sources */,
-				AA40D3C209A08D650068C0D5 /* MusicList.cpp in Sources */,
 				AA40D3C409A08D650068C0D5 /* MusicWheel.cpp in Sources */,
 				AA40D3C509A08D650068C0D5 /* MusicWheelItem.cpp in Sources */,
 				AA40D3C809A08D650068C0D5 /* OptionsCursor.cpp in Sources */,
@@ -7075,6 +7131,7 @@
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../src/jsoncpp/include";
 			};
 			name = Debug;
 		};
@@ -7606,6 +7663,7 @@
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../src/jsoncpp/include";
 			};
 			name = PerformanceDebug;
 		};
@@ -7936,6 +7994,7 @@
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../src/jsoncpp/include";
 			};
 			name = Native;
 		};
@@ -8061,6 +8120,7 @@
 				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(PRODUCT_NAME)/$(CONFIGURATION)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../src/jsoncpp/include";
 			};
 			name = Universal;
 		};

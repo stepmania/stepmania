@@ -248,6 +248,22 @@ void ScreenPrompt::TweenOffScreen()
 	ScreenWithMenuElements::TweenOffScreen();
 }
 
+// lua start
+/*
+#include "LuaBinding.h"
+class LunaScreenPrompt: public Luna<ScreenPrompt>
+{
+public:
+
+	LunaScreenPrompt()
+	{
+		
+	}
+};
+LUA_REGISTER_DERIVED_CLASS( ScreenPrompt, ScreenWithMenuElements )
+*/
+// lua end
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

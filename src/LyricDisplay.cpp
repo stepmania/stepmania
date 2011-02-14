@@ -40,7 +40,7 @@ void LyricDisplay::Update( float fDeltaTime )
 	if( GAMESTATE->m_pCurSong == NULL )
 		return;
 
-	/* If the song has changed (in a course), reset. */
+	// If the song has changed (in a course), reset.
 	if( GAMESTATE->m_fMusicSeconds < m_fLastSecond )
 		Init();
 	m_fLastSecond = GAMESTATE->m_fMusicSeconds;
@@ -54,7 +54,7 @@ void LyricDisplay::Update( float fDeltaTime )
 	if( GAMESTATE->m_fMusicSeconds < fStartTime )
 		return;
 
-	/* Clamp this lyric to the beginning of the next or the end of the music. */
+	// Clamp this lyric to the beginning of the next or the end of the music.
 	float fEndTime;
 	if( m_iCurLyricNumber+1 < GAMESTATE->m_pCurSong->m_LyricSegments.size() )
 		fEndTime = pSong->m_LyricSegments[m_iCurLyricNumber+1].m_fStartTime;
@@ -65,7 +65,7 @@ void LyricDisplay::Update( float fDeltaTime )
 	const float fTweenBufferTime = IN_LENGTH.GetValue() + OUT_LENGTH.GetValue();
 
 	/* If it's negative, two lyrics are so close together that there's no time
-	 * to tween properly.  Lyrics should never be this brief, anyway, so just
+	 * to tween properly. Lyrics should never be this brief, anyway, so just
 	 * skip it. */
 	float fShowLength = max( fDistance - fTweenBufferTime, 0.0f );
 

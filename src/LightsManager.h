@@ -61,7 +61,7 @@ class LightsManager
 public:
 	LightsManager();
 	~LightsManager();
-	
+
 	void Update( float fDeltaTime );
 	bool IsEnabled() const;
 
@@ -104,7 +104,6 @@ private:
 	CabinetLight	m_clTestManualCycleCurrent;
 	int				m_iControllerTestManualCycleCurrent;
 };
-
 
 extern LightsManager*	LIGHTSMAN;	// global and accessable from anywhere in our program
 

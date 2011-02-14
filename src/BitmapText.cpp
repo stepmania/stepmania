@@ -136,7 +136,6 @@ void BitmapText::LoadFromNode( const XNode* pNode )
 	Actor::LoadFromNode( pNode );
 }
 
-
 bool BitmapText::LoadFromFont( const RString& sFontFilePath )
 {
 	CHECKPOINT_M( ssprintf("BitmapText::LoadFromFont(%s)", sFontFilePath.c_str()) );
@@ -155,7 +154,6 @@ bool BitmapText::LoadFromFont( const RString& sFontFilePath )
 
 	return true;
 }
-
 
 bool BitmapText::LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars )
 {
@@ -345,7 +343,7 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 			else
 				DISPLAY->SetTexture( TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureMain->GetTexHandle() );
 
-			/* Don't bother setting texture render states for text.  We never go outside of 0..1. */
+			/* Don't bother setting texture render states for text. We never go outside of 0..1. */
 			/* We should call SetTextureRenderStates because it does more than just setting 
 			 * the texture wrapping state. If setting the wrapping state is found to be slow, 
 			 * there should probably be a "don't care" texture wrapping mode set in Actor. -Chris */
@@ -360,8 +358,8 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 	}
 }
 
-/* sText is UTF-8.  If not all of the characters in sText are available in the
- * font, sAlternateText will be used instead.  If there are unavailable characters
+/* sText is UTF-8. If not all of the characters in sText are available in the
+ * font, sAlternateText will be used instead. If there are unavailable characters
  * in sAlternateText, too, just use sText. */
 void BitmapText::SetText( const RString& _sText, const RString& _sAlternateText, int iWrapWidthPixels )
 {
@@ -396,13 +394,13 @@ void BitmapText::SetTextInternal()
 	}
 	else
 	{
-		// Break sText into lines that don't exceed iWrapWidthPixels
-		// (if only one word fits on the line, it may be larger than iWrapWidthPixels).
+		// Break sText into lines that don't exceed iWrapWidthPixels. (if only
+		// one word fits on the line, it may be larger than iWrapWidthPixels).
 
 		// This does not work in all languages:
 		/* "...I can add Japanese wrapping, at least. We could handle hyphens
 		 * and soft hyphens and pretty easily, too." -glenn */
-		// TODO: Move this wrapping logic into Font
+		// TODO: Move this wrapping logic into Font.
 		vector<RString> asLines;
 		split( m_sText, "\n", asLines, false );
 
@@ -695,15 +693,9 @@ void BitmapText::DrawPrimitives()
 		/* Draw glow using the base texture and the glow texture. Otherwise,
 		 * glow looks too tame on BitmapText that has a stroke. - Chris Danford */
 		/* This doesn't work well if the font is using an invisible stroke, as
-		 * the invisible stroke will glow as well. Time for TextGlowMode. -aj */
-		if(m_TextGlowMode == TextGlowMode_Inner || m_TextGlowMode == TextGlowMode_Both)
-		{
-			DrawChars( false );
-		}
-		if(m_TextGlowMode == TextGlowMode_Stroke || m_TextGlowMode == TextGlowMode_Both)
-		{
-			DrawChars( true );
-		}
+		 * the invisible stroke will glow as well. Time for TextGlowMode.
+		 * Only draw the strokes if the glow mode is not inner only. -aj */
+		DrawChars(m_TextGlowMode != TextGlowMode_Inner);
 	}
 }
 
@@ -813,11 +805,11 @@ public:
 	{
 		RString s = SArg(1);
 		RString sAlt;
-		// XXX: Lua strings should simply use "\n" natively.  However, some
-		// settext calls may be made from GetMetric() calls to other strings,
-		// and it's confusing for :: to work in some strings and not others.
-		// Eventually, all strings should be Lua expressions, but until then
-		// continue to support this.
+		/* XXX: Lua strings should simply use "\n" natively. However, some
+		 * settext calls may be made from GetMetric() calls to other strings, and
+		 * it's confusing for :: to work in some strings and not others.
+		 * Eventually, all strings should be Lua expressions, but until then,
+		 * continue to support this. */
 		s.Replace("::","\n");
 		FontCharAliases::ReplaceMarkers( s );
 
@@ -863,6 +855,8 @@ public:
 		ADD_METHOD( strokecolor );
 		ADD_METHOD( uppercase );
 		ADD_METHOD( textglowmode );
+		//ADD_METHOD( LoadFromFont );
+		//ADD_METHOD( LoadFromTextureAndChars );
 	}
 };
 

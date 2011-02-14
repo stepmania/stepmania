@@ -338,8 +338,6 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 		pActor->Update(fDeltaTime);
 	}
 
-	// todo: update lighting? -aj
-
 	if( unlikely(!m_UpdateFunction.IsNil()) )
 	{
 		Lua *L = LUA->Get();

@@ -35,6 +35,9 @@ public:
 	static PromptAnswer s_LastAnswer;
 	static bool s_bCancelledLast;
 
+	// Lua
+	//virtual void PushSelf( lua_State *L );
+
 protected:
 	bool CanGoLeft() { return m_Answer > 0; }
 	bool CanGoRight();

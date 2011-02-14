@@ -21,37 +21,16 @@ public:
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void UpdateSongsListPos();
-	void UpdateGroupsListPos();
-	void UpdateSongsList();
-	void UpdateTextInput();
-
 	void StartSelectedSong();
-
-private:
-	int	m_iSongNum;
-	int	m_iShowSongs;	//The number of songs to display to each side
-	int	m_iGroupNum;
-	int	m_iShowGroups;	//The number of groups to display to each side
-
-	enum NetScreenSelectModes
-	{
-		SelectGroup = 0,
-		SelectSong,
-		SelectDifficulty,
-		SelectOptions,
-		SelectModes,
-	};
-
-	NetScreenSelectModes m_SelectMode;
 
 protected:
 	virtual void MenuStart( const InputEventPlus &input );
+	virtual void MenuBack( const InputEventPlus &input );
 	virtual void MenuLeft( const InputEventPlus &input );
+	virtual void MenuRight( const InputEventPlus &input );
 	virtual void MenuUp( const InputEventPlus &input );
 	virtual void MenuDown( const InputEventPlus &input );
-	virtual void MenuRight( const InputEventPlus &input );
-	virtual void MenuBack( const InputEventPlus &input );
+	bool LeftAndRightPressed( const PlayerNumber pn );
 
 	virtual void Update( float fDeltaTime );
 
@@ -64,20 +43,20 @@ protected:
 	RString m_sRouletteMusicPath;
 	RString m_sRandomMusicPath;
 
+	ThemeMetric<RString>	MUSIC_WHEEL_TYPE;
+
 private:
 	MusicWheel m_MusicWheel;
 
-	// todo: replace difficulty icons with StepsDisplay out the ass
-	//Difficulty Icon(s)
-	//DifficultyIcon m_DifficultyIcon[NUM_PLAYERS];
+	StepsDisplay m_StepsDisplays[NUM_PLAYERS];
 	Difficulty m_DC[NUM_PLAYERS];
 
 	void UpdateDifficulties( PlayerNumber pn );
-	StepsDisplay m_StepsDisplays[NUM_PLAYERS];
 
 	RageSound m_soundChangeOpt;
 	RageSound m_soundChangeSel;
 
+	// todo: do these theme-side instead. -aj
 	BPMDisplay m_BPMDisplay;
 	ModIconRow m_ModIconRow[NUM_PLAYERS];
 

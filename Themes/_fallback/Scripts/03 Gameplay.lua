@@ -147,6 +147,32 @@ function FailCombo()
 	return Combo[sGame]
 end
 
+function RoutineSkinP1()
+	sGame = GAMESTATE:GetCurrentGame():GetName()
+	local Combo = {
+		dance = "midi-routine-p1",
+		pump = "cmd-routine-p1",
+		beat = "default",
+		kb7 = "default",
+		para = "default",
+		guitar = "default"
+	}
+	return Combo[sGame]
+end
+
+function RoutineSkinP2()
+	sGame = GAMESTATE:GetCurrentGame():GetName()
+	local Combo = {
+		dance = "midi-routine-p2",
+		pump = "cmd-routine-p2",
+		beat = "default",
+		kb7 = "retrobar",
+		para = "default",
+		guitar = "default"
+	}
+	return Combo[sGame]
+end
+
 -- todo: use tables for some of these -aj
 function HoldTiming()
 	if GAMESTATE:GetCurrentGame():GetName() == "pump" then

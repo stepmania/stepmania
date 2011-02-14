@@ -25,7 +25,7 @@ void ScreenSelectLanguage::Init()
 			gc.m_sText = THEME->GetString("NativeLanguageNames", pLI->szEnglishName);
 		else
 			gc.m_sText = *s;
-		
+
 		m_aGameCommands.push_back( gc );
 	}
 

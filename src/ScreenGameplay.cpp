@@ -1856,7 +1856,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		case PLAY_MODE_RAVE:
 			if( GAMESTATE->OneIsHot() )
 				PlayAnnouncer( "gameplay comment hot", SECONDS_BETWEEN_COMMENTS );
-			else if( GAMESTATE->AllAreInDangerOrWorse() )	
+			else if( GAMESTATE->AllAreInDangerOrWorse() )
 				PlayAnnouncer( "gameplay comment danger", SECONDS_BETWEEN_COMMENTS );
 			else
 				PlayAnnouncer( "gameplay comment good", SECONDS_BETWEEN_COMMENTS );
@@ -2578,7 +2578,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM >= SM_100Combo && SM <= SM_1000Combo )
 	{
-		int iCombo = (SM-SM_100Combo+1)*100;
+		int iCombo = ( SM-(SM_100Combo+1) ) * 100;
 		PlayAnnouncer( ssprintf("gameplay %d combo",iCombo), 2 );
 	}
 	else if( SM == SM_ComboStopped )

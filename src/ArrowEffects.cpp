@@ -16,6 +16,41 @@
 
 static ThemeMetric<float>	ARROW_SPACING( "ArrowEffects", "ArrowSpacing" );
 static ThemeMetric<bool>	HIDDEN_SUDDEN_PAST_RECEPTOR( "ArrowEffects", "DrawHiddenNotesAfterReceptor");
+static ThemeMetric<float>	BLINK_MOD_FREQUENCY( "ArrowEffects", "BlinkModFrequency" );
+static ThemeMetric<float>	BOOST_MOD_MIN_CLAMP( "ArrowEffects", "BoostModMinClamp" );
+static ThemeMetric<float>	BOOST_MOD_MAX_CLAMP( "ArrowEffects", "BoostModMaxClamp" );
+static ThemeMetric<float>	BRAKE_MOD_MIN_CLAMP( "ArrowEffects", "BrakeModMinClamp" );
+static ThemeMetric<float>	BRAKE_MOD_MAX_CLAMP( "ArrowEffects", "BrakeModMaxClamp" );
+static ThemeMetric<float>	WAVE_MOD_MAGNITUDE( "ArrowEffects", "WaveModMagnitude" );
+static ThemeMetric<float>	WAVE_MOD_HEIGHT( "ArrowEffects", "WaveModHeight" );
+static ThemeMetric<float>	BOOMERANG_PEAK_PERCENTAGE( "ArrowEffects", "BoomerangPeakPercentage" );
+static ThemeMetric<float>	EXPAND_MULTIPLIER_FREQUENCY( "ArrowEffects", "ExpandMultiplierFrequency" );
+static ThemeMetric<float>	EXPAND_MULTIPLIER_SCALE_FROM_LOW( "ArrowEffects", "ExpandMultiplierScaleFromLow" );
+static ThemeMetric<float>	EXPAND_MULTIPLIER_SCALE_FROM_HIGH( "ArrowEffects", "ExpandMultiplierScaleFromHigh" );
+static ThemeMetric<float>	EXPAND_MULTIPLIER_SCALE_TO_LOW( "ArrowEffects", "ExpandMultiplierScaleToLow" );
+static ThemeMetric<float>	EXPAND_MULTIPLIER_SCALE_TO_HIGH( "ArrowEffects", "ExpandMultiplierScaleToHigh" );
+static ThemeMetric<float>	EXPAND_SPEED_SCALE_FROM_LOW( "ArrowEffects", "ExpandSpeedScaleFromLow" );
+static ThemeMetric<float>	EXPAND_SPEED_SCALE_FROM_HIGH( "ArrowEffects", "ExpandSpeedScaleFromHigh" );
+static ThemeMetric<float>	EXPAND_SPEED_SCALE_TO_LOW( "ArrowEffects", "ExpandSpeedScaleToLow" );
+static ThemeMetric<float>	TIPSY_TIMER_FREQUENCY( "ArrowEffects", "TipsyTimerFrequency" );
+static ThemeMetric<float>	TIPSY_COLUMN_FREQUENCY( "ArrowEffects", "TipsyColumnFrequency" );
+static ThemeMetric<float>	TIPSY_ARROW_MAGNITUDE( "ArrowEffects", "TipsyArrowMagnitude" );
+static ThemeMetric<float>	TIPSY_OFFSET_TIMER_FREQUENCY( "ArrowEffects", "TipsyOffsetTimerFrequency" );
+static ThemeMetric<float>	TIPSY_OFFSET_COLUMN_FREQUENCY( "ArrowEffects", "TipsyOffsetColumnFrequency" );
+static ThemeMetric<float>	TIPSY_OFFSET_ARROW_MAGNITUDE( "ArrowEffects", "TipsyOffsetArrowMagnitude" );
+static ThemeMetric<float>	TORNADO_POSITION_SCALE_TO_LOW( "ArrowEffects", "TornadoPositionScaleToLow" );
+static ThemeMetric<float>	TORNADO_POSITION_SCALE_TO_HIGH( "ArrowEffects", "TornadoPositionScaleToHigh" );
+static ThemeMetric<float>	TORNADO_OFFSET_FREQUENCY( "ArrowEffects", "TornadoOffsetFrequency" );
+static ThemeMetric<float>	TORNADO_OFFSET_SCALE_FROM_LOW( "ArrowEffects", "TornadoOffsetScaleFromLow" );
+static ThemeMetric<float>	TORNADO_OFFSET_SCALE_FROM_HIGH( "ArrowEffects", "TornadoOffsetScaleFromHigh" );
+static ThemeMetric<float>	DRUNK_COLUMN_FREQUENCY( "ArrowEffects", "DrunkColumnFrequency" );
+static ThemeMetric<float>	DRUNK_OFFSET_FREQUENCY( "ArrowEffects", "DrunkOffsetFrequency" );
+static ThemeMetric<float>	DRUNK_ARROW_MAGNITUDE( "ArrowEffects", "DrunkArrowMagnitude" );
+static ThemeMetric<float>	BEAT_OFFSET_HEIGHT( "ArrowEffects", "BeatOffsetHeight" );
+static ThemeMetric<float>	BEAT_PI_HEIGHT( "ArrowEffects", "BeatPIHeight" );
+static ThemeMetric<float>	MINI_PERCENT_BASE( "ArrowEffects", "MiniPercentBase" );
+static ThemeMetric<float>	MINI_PERCENT_GATE( "ArrowEffects", "MiniPercentGate" );
+static ThemeMetric<bool>	QUANTIZE_ARROW_Y( "ArrowEffects", "QuantizeArrowYPosition");
 
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
@@ -213,7 +248,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		float fNewYOffset = fYOffset * 1.5f / ((fYOffset+fEffectHeight/1.2f)/fEffectHeight); 
 		float fAccelYAdjust =	fAccels[PlayerOptions::ACCEL_BOOST] * (fNewYOffset - fYOffset);
 		// TRICKY: Clamp this value, or else BOOST+BOOMERANG will draw a ton of arrows on the screen.
-		CLAMP( fAccelYAdjust, -400.f, 400.f );
+		CLAMP( fAccelYAdjust, BOOST_MOD_MIN_CLAMP, BOOST_MOD_MAX_CLAMP );
 		fYAdjust += fAccelYAdjust;
 	}
 	if( fAccels[PlayerOptions::ACCEL_BRAKE] != 0 )
@@ -223,18 +258,18 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		float fNewYOffset = fYOffset * fScale; 
 		float fBrakeYAdjust = fAccels[PlayerOptions::ACCEL_BRAKE] * (fNewYOffset - fYOffset);
 		// TRICKY: Clamp this value the same way as BOOST so that in BOOST+BRAKE, BRAKE doesn't overpower BOOST
-		CLAMP( fBrakeYAdjust, -400.f, 400.f );
+		CLAMP( fBrakeYAdjust, BRAKE_MOD_MIN_CLAMP, BRAKE_MOD_MAX_CLAMP );
 		fYAdjust += fBrakeYAdjust;
 	}
 	if( fAccels[PlayerOptions::ACCEL_WAVE] != 0 )
-		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * 20.0f*RageFastSin( fYOffset/38.0f );
+		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * WAVE_MOD_MAGNITUDE *RageFastSin( fYOffset/WAVE_MOD_HEIGHT );
 
 	fYOffset += fYAdjust;
 
 	// Factor in boomerang
 	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0 )
 	{
-		float fPeakAtYOffset = SCREEN_HEIGHT * 0.75f;	// zero point of boomerang function
+		float fPeakAtYOffset = SCREEN_HEIGHT * BOOMERANG_PEAK_PERCENTAGE;	// zero point of boomerang function
 		fPeakYOffsetOut = (-1*fPeakAtYOffset*fPeakAtYOffset/SCREEN_HEIGHT) + 1.5f*fPeakAtYOffset;
 		bIsPastPeakOut = fYOffset < fPeakAtYOffset;
 
@@ -262,8 +297,12 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] != 0 )
 	{
-		float fExpandMultiplier = SCALE( RageFastCos(g_fExpandSeconds*3), -1, 1, 0.75f, 1.75f );
-		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 0.f, 1.f, 1.f, fExpandMultiplier );
+		float fExpandMultiplier = SCALE( RageFastCos(g_fExpandSeconds*EXPAND_MULTIPLIER_FREQUENCY), 
+						EXPAND_MULTIPLIER_SCALE_FROM_LOW, EXPAND_MULTIPLIER_SCALE_FROM_HIGH,
+						EXPAND_MULTIPLIER_SCALE_TO_LOW, EXPAND_MULTIPLIER_SCALE_TO_HIGH );
+		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 
+				      EXPAND_SPEED_SCALE_FROM_LOW, EXPAND_SPEED_SCALE_FROM_HIGH,
+				      EXPAND_SPEED_SCALE_TO_LOW, fExpandMultiplier );
 	}
 
 	fYOffset *= fScrollSpeed;
@@ -306,14 +345,15 @@ float ArrowEffects::GetYPos( const PlayerState* pPlayerState, int iCol, float fY
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_TIPSY] != 0 )
-		f += fEffects[PlayerOptions::EFFECT_TIPSY] * ( RageFastCos( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*1.8f) * ARROW_SIZE*0.4f );
+		f += fEffects[PlayerOptions::EFFECT_TIPSY] 
+			* ( RageFastCos( RageTimer::GetTimeSinceStartFast()*TIPSY_TIMER_FREQUENCY 
+					+ iCol*TIPSY_COLUMN_FREQUENCY) * ARROW_SIZE*TIPSY_ARROW_MAGNITUDE );
 
 	// In beware's DDR Extreme-focused fork of StepMania 3.9, this value is
 	// floored, making arrows show on integer Y coordinates. Supposedly it makes
 	// the arrows look better, but testing needs to be done.
-	// todo: make this a noteskin metric ("QuantizeArrowYPosition") -aj
-	return f;
-	//return floor(f);
+	// todo: make this a noteskin metric instead of a theme metric? -aj
+	return QUANTIZE_ARROW_Y ? floor(f) : f;
 }
 
 float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCol, float YPos, float fYReverseOffsetPixels )
@@ -322,7 +362,9 @@ float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCo
 
 	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 	if( fEffects[PlayerOptions::EFFECT_TIPSY] != 0 )
-		f -= fEffects[PlayerOptions::EFFECT_TIPSY] * ( RageFastCos( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*2.f) * ARROW_SIZE*0.4f );
+		f -= fEffects[PlayerOptions::EFFECT_TIPSY] 
+			* ( RageFastCos( RageTimer::GetTimeSinceStartFast()*TIPSY_OFFSET_TIMER_FREQUENCY 
+					+ iCol*TIPSY_OFFSET_COLUMN_FREQUENCY) * ARROW_SIZE*TIPSY_OFFSET_ARROW_MAGNITUDE );
 
 	float fShift, fScale;
 	ArrowGetReverseShiftAndScale( pPlayerState, iCol, fYReverseOffsetPixels, fShift, fScale );
@@ -348,17 +390,21 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	if( fEffects[PlayerOptions::EFFECT_TORNADO] != 0 )
 	{
 		const float fRealPixelOffset = pCols[iColNum].fXOffset;
-		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum], -1, 1 );
+		const float fPositionBetween = SCALE( fRealPixelOffset, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum], 
+						     TORNADO_POSITION_SCALE_TO_LOW, TORNADO_POSITION_SCALE_TO_HIGH );
 		float fRads = acosf( fPositionBetween );
-		fRads += fYOffset * 6 / SCREEN_HEIGHT;
+		fRads += fYOffset * TORNADO_OFFSET_FREQUENCY / SCREEN_HEIGHT;
 
-		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), -1, 1, data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
+		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), TORNADO_OFFSET_SCALE_FROM_LOW, TORNADO_OFFSET_SCALE_FROM_HIGH, 
+							 data.m_fMinTornadoX[iColNum], data.m_fMaxTornadoX[iColNum] );
 
 		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
 	}
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] != 0 )
-		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( RageFastCos( RageTimer::GetTimeSinceStartFast() + iColNum*0.2f + fYOffset*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * 
+			( RageFastCos( RageTimer::GetTimeSinceStartFast() + iColNum*DRUNK_COLUMN_FREQUENCY
+				      + fYOffset*DRUNK_OFFSET_FREQUENCY/SCREEN_HEIGHT) * ARROW_SIZE*DRUNK_ARROW_MAGNITUDE );
 	if( fEffects[PlayerOptions::EFFECT_FLIP] != 0 )
 	{
 		const int iFirstCol = 0;
@@ -374,7 +420,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
 	{
-		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / 15.0f + PI/2.0f );
+		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / BEAT_OFFSET_HEIGHT + PI/BEAT_PI_HEIGHT );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	}
 
@@ -406,9 +452,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*fYOffset;
 				}
 				break;
-			default:
-				ASSERT("What the hell kind of styletype are you passing me anyways?");
-				break;
+			DEFAULT_FAIL(pStyle->m_StyleType);
 		}
 	}
 
@@ -418,7 +462,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	{
 		// Allow Mini to pull tracks together, but not to push them apart.
 		float fMiniPercent = fEffects[PlayerOptions::EFFECT_MINI];
-		fMiniPercent = min( powf(0.5f, fMiniPercent), 1.0f );
+		fMiniPercent = min( powf(MINI_PERCENT_BASE, fMiniPercent), (float)MINI_PERCENT_GATE );
 		fPixelOffsetFromCenter *= fMiniPercent;
 	}
 
@@ -572,7 +616,7 @@ float ArrowGetPercentVisible( const PlayerState* pPlayerState, float fYPosWithou
 	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] != 0 )
 	{
 		float f = RageFastSin(RageTimer::GetTimeSinceStartFast()*10);
-		f = Quantize( f, 0.3333f );
+		f = Quantize( f, BLINK_MOD_FREQUENCY );
 		fVisibleAdjust += SCALE( f, 0, 1, -1, 0 );
 	}
 	if( fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] != 0 )

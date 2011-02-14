@@ -115,6 +115,16 @@ enum ScoringType
 	ScoringType_Invalid
 };
 
+enum DefaultFailType
+{
+	FAIL_IMMEDIATE,
+	FAIL_IMMEDIATECONTINUE,
+	FAIL_ENDOFSONG,
+	FAIL_OFF,
+	NUM_DefaultFailType,
+	DefaultFailType_Invalid
+};
+
 class PrefsManager
 {
 public:
@@ -279,6 +289,7 @@ public:
 	Preference<RString>	m_sCoursesToShowRanking;
 
 	Preference<bool>	m_bQuirksMode; // enable quirky behavior desired by users of microsoft stepmania explorer 6.9
+	// Preference<RString> m_sDefaultFailType; // XXX: Fix fail bug?
 
 	// Debug:
 	Preference<bool>	m_bLogToDisk;

@@ -1457,6 +1457,14 @@
 				>
 			</File>
 			<File
+				RelativePath="NotesLoaderSSC.cpp"
+				>
+			</File>
+			<File
+				RelativePath="NotesLoaderSSC.h"
+				>
+			</File>
+			<File
 				RelativePath="NotesWriterDWI.cpp"
 				>
 			</File>
@@ -1472,6 +1480,15 @@
 				RelativePath="NotesWriterSM.h"
 				>
 			</File>
+                        <File
+                                RelativePath="NotesWriterSSC.cpp"
+				>
+                        </File>
+                        <File
+                                RelativePath="NotesWriterSSC.h"
+				>
+                        </File>
+
 			<File
 				RelativePath="NoteTypes.cpp"
 				>
@@ -2713,14 +2730,6 @@
 				>
 			</File>
 			<File
-				RelativePath="GroupList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="GroupList.h"
-				>
-			</File>
-			<File
 				RelativePath="HelpDisplay.cpp"
 				>
 			</File>
@@ -2758,14 +2767,6 @@
 			</File>
 			<File
 				RelativePath=".\ModIconRow.h"
-				>
-			</File>
-			<File
-				RelativePath="MusicList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="MusicList.h"
 				>
 			</File>
 			<File

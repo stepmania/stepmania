@@ -12,15 +12,6 @@ AutoScreenMessage( SM_BackFromRoomName )
 AutoScreenMessage( SM_RoomInfoRetract )
 AutoScreenMessage( SM_RoomInfoDeploy )
 
-ThemeMetric<float>		TEXT_X;
-ThemeMetric<float>		TEXT_Y;
-ThemeMetric<float>		TEXT_WIDTH;
-ThemeMetric<apActorCommands>	TEXT_ON_COMMAND;
-
-ThemeMetric<float>	DESC_X;
-ThemeMetric<float>	DESC_Y;
-ThemeMetric<float>	DESC_WIDTH;
-
 RoomWheel::~RoomWheel()
 {
 	FOREACH( WheelItemBaseData*, m_CurWheelItemData, i )
@@ -56,6 +47,7 @@ RoomWheelItem::RoomWheelItem( const RoomWheelItem &cpy ):
 	WheelItemBase( cpy ),
 	m_sprNormalPart( cpy.m_sprNormalPart ),
 	m_sprColorPart( cpy.m_sprColorPart ),
+	m_sprOverPart( cpy.m_sprOverPart ),
 	m_text( cpy.m_text ),
 	m_Desc( cpy.m_Desc )
 {
@@ -63,6 +55,7 @@ RoomWheelItem::RoomWheelItem( const RoomWheelItem &cpy ):
 	{
 		this->AddChild( m_sprNormalPart );
 		this->AddChild( m_sprColorPart );
+		this->AddChild( m_sprOverPart );
 		this->AddChild( &m_text );
 		this->AddChild( &m_Desc );
 	}
@@ -70,7 +63,6 @@ RoomWheelItem::RoomWheelItem( const RoomWheelItem &cpy ):
 
 void RoomWheelItem::Load( RString sType )
 {
-
 	// colorpart gets added first in MusicWheelItem, so follow that here.
 	m_sprColorPart.Load( THEME->GetPathG(sType,"ColorPart") );
 	this->AddChild( m_sprColorPart );
@@ -78,34 +70,18 @@ void RoomWheelItem::Load( RString sType )
 	m_sprNormalPart.Load( THEME->GetPathG(sType,"NormalPart") );
 	this->AddChild( m_sprNormalPart );
 
-	TEXT_X			.Load(sType,"TextX");
-	TEXT_Y			.Load(sType,"TextY");
-	TEXT_ON_COMMAND	.Load(sType,"TextOnCommand");
-	TEXT_WIDTH	.Load(sType,"TextWidth");
-
+	m_text.SetName( "Text" );
 	m_text.LoadFromFont( THEME->GetPathF(sType,"text") );
-	//m_text.SetShadowLength( 0 );
-	m_text.SetXY( TEXT_X, TEXT_Y );
-	m_text.RunCommands( TEXT_ON_COMMAND );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_text );
 	this->AddChild( &m_text );
-	m_text.SetHorizAlign( align_left );
-	m_text.SetMaxWidth(TEXT_WIDTH);
 
-	/*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
-
-	DESC_X		.Load(sType,"DescX");
-	DESC_Y		.Load(sType,"DescY");
-	DESC_WIDTH	.Load(sType,"DescWidth");
-
-	m_Desc.SetName( "Desc" );
-	ActorUtil::LoadAllCommands( m_Desc, "RoomWheelItem" );
+	m_Desc.SetName( "Description" );
 	m_Desc.LoadFromFont( THEME->GetPathF("RoomWheel","text") );
-	m_Desc.SetHorizAlign( align_left );
-	m_Desc.SetShadowLength( 0 );
-	m_Desc.SetMaxWidth( DESC_WIDTH );
-	m_Desc.SetXY( DESC_X, DESC_Y);
-	m_Desc.PlayCommand( "On" );
+	LOAD_ALL_COMMANDS_AND_SET_XY( m_Desc );
 	this->AddChild( &m_Desc );
+
+	m_sprOverPart.Load( THEME->GetPathG(sType,"OverPart") );
+	this->AddChild( m_sprOverPart );
 }
 
 void RoomWheel::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas )
@@ -164,7 +140,6 @@ void RoomWheel::RemoveItem( int index )
 	RebuildWheelItems();
 }
 
-
 static LocalizedString ENTER_ROOM_NAME( "RoomWheel", "Enter room name" );
 bool RoomWheel::Select()
 {
@@ -216,7 +191,6 @@ unsigned int RoomWheel::GetNumItems() const
 {
 	return m_CurWheelItemData.size() - m_offset;
 }
-
 
 /*
  * (c) 2004 Josh Allen

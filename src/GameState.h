@@ -1,4 +1,4 @@
-/* GameState - Holds game data that is not saved between sessions. */
+/** @brief GameState - Holds game data that is not saved between sessions. */
 
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
@@ -36,8 +36,10 @@ class Trail;
 class GameState
 {
 public:
+	/** @brief Set up the GameState with initial values. */
 	GameState();
 	~GameState();
+	/** @brief Reset the GameState back to initial values. */
 	void Reset();
 	void ResetPlayer( PlayerNumber pn );
 	void ApplyCmdline(); // called by Reset
@@ -63,11 +65,21 @@ public:
 	void SetCurGame( const Game *pGame );	// Call this instead of m_pCurGame.Set to make sure PREFSMAN->m_sCurrentGame stays in sync
 	BroadcastOnChangePtr<const Game>	m_pCurGame;
 	BroadcastOnChangePtr<const Style>	m_pCurStyle;
+	/** @brief Determine which side is joined.
+	 *
+	 * The left side is player 1, and the right side is player 2. */
 	bool					m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
 	MultiPlayerStatus			m_MultiPlayerStatus[NUM_MultiPlayer];
 	BroadcastOnChange<PlayMode>		m_PlayMode;			// many screens display different info depending on this value
-	BroadcastOnChange<int>			m_iCoins;			// not "credits"
-	PlayerNumber				m_MasterPlayerNumber;		// used in Styles where one player controls both sides
+	/**
+	 * @brief The number of coins presently in the machine.
+	 *
+	 * Note that coins are not "credits". One may have to put in two coins 
+	 * to get one credit, only to have to put in another four coins to get
+	 * the three credits needed to begin the game. */
+	BroadcastOnChange<int>			m_iCoins;
+	/** @brief The player number used with Styles where one player controls both sides. */
+	PlayerNumber				m_MasterPlayerNumber;
 	bool					m_bMultiplayer;
 	int					m_iNumMultiplayerNoteFields;
 	bool DifficultiesLocked() const;
@@ -86,7 +98,10 @@ public:
 	int				m_iGameSeed, m_iStageSeed;
 	RString				m_sStageGUID;
 
-	bool		PlayersCanJoin() const;	// true if it's not too late for a player to join
+	/**
+	 * @brief Determine if a second player can join in at this time.
+	 * @return true if a player can still enter the game, false otherwise. */
+	bool		PlayersCanJoin() const;
 	int 		GetCoinsNeededToJoin() const;
 	bool		EnoughCreditsToJoin() const { return m_iCoins >= GetCoinsNeededToJoin(); }
 	int		GetNumSidesJoined() const;
@@ -127,9 +142,15 @@ public:
 	bool				m_bDemonstrationOrJukebox;	// ScreenGameplay does special stuff when this is true
 	bool				m_bJukeboxUsesModifiers;
 	int				m_iNumStagesOfThisSong;
-	// Increases every stage, doesn't reset when player continues.  It's cosmetic and not used in Stage or Screen branching logic.
+	/**
+	 * @brief Increase this every stage while not resetting on a continue.
+	 *
+	 * This is cosmetic: it's not use for Stage or Screen branching logic. */
 	int				m_iCurrentStageIndex;
-	// Num stages available for player.  Resets when player joins/continues.
+	/**
+	 * @brief The number of stages available for the players.
+	 *
+	 * This resets whenever a player joins or continues. */
 	int				m_iPlayerStageTokens[NUM_PLAYERS];
 
 	static int GetNumStagesMultiplierForSong( const Song* pSong );
@@ -182,8 +203,10 @@ public:
 	float		m_fCurBPS;
 	float		m_fLightSongBeat; // g_fLightsFalloffSeconds ahead
 	//bool		m_bStop;	// in the middle of a stop (freeze or delay)
-	bool		m_bFreeze;	// in the middle of a freeze
-	bool		m_bDelay;	// in the middle of a delay
+	/** @brief A flag to determine if we're in the middle of a freeze/stop. */
+	bool		m_bFreeze;
+	/** @brief A flag to determine if we're in the middle of a delay (Pump style stop). */
+	bool		m_bDelay;
 	// used for warping:
 	int			m_iWarpBeginRow;
 	float		m_fWarpLength;
@@ -229,11 +252,13 @@ public:
 	bool	m_bGoalComplete[NUM_PLAYERS];
 	bool	m_bWorkoutGoalComplete;
 
-	void RemoveAllActiveAttacks();	// called on end of song
+	/** @brief Primarily called at the end of a song to stop all attacks. */
+	void RemoveAllActiveAttacks();
 	PlayerNumber GetBestPlayer() const;
 	StageResult GetStageResult( PlayerNumber pn ) const;
 
-	void ResetStageStatistics();	// Call this when it's time to play a new stage.
+	/** @brief Call this function when it's time to play a new stage. */
+	void ResetStageStatistics();
 
 	// Options stuff
 	ModsGroup<SongOptions>	m_SongOptions;
@@ -291,6 +316,7 @@ public:
 	void VisitAttractScreen( const RString sScreenName );
 
 	// PlayerState
+	/** @brief Allow access to each player's PlayerState. */
 	PlayerState* m_pPlayerState[NUM_PLAYERS];
 	PlayerState* m_pMultiPlayerState[NUM_MultiPlayer];
 
@@ -346,8 +372,10 @@ extern GameState*	GAMESTATE;	// global and accessable from anywhere in our progr
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard, Chris Gomez
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard, Chris Gomez (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

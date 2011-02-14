@@ -1,7 +1,7 @@
 sm-ssc Changelog
 ________________________________________________________________________________
 The sm-ssc changelog mostly deals with source code-related changes,
-as theme changes happen at a rapid pace.
+as theme changes happen at a faster pace.
 
 Changes are grouped by date.
 Not all changes are documented, for various reasons.
@@ -10,8 +10,231 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.2 | 201012xx
+sm-ssc v1.2.2 | 201102??
 --------------------------------------------------------------------------------
+
+20110213
+--------
+* Life Difficulty 4 is now as difficult as Life 6 was. [AJ]
+  Change name of the life difficulty options:
+  Old: 1,   2,   3,   4,   5,   6,    7
+  New: 1.2, 1.0, 0.8, 0.6, 0.4, 0.33, 0.25
+
+20110212
+--------
+* [PlayerOptions] Added metrics to allow changing how often random modifiers 
+  activate in the proper setting. At this time, the mods to be activated have 
+  NOT been changed. [Wolfman2000]
+* [ArrowEffects] Allow the Boomerang, Expand, Tipsy, Drunk, Tornado, Beat, and
+  Mini modifiers to be customized by metrics. As usual, change at your own
+  risk here. [Wolfman2000]
+* Started the process of doxygen'ing the code. Goodness knows we need more
+  documentation on here. For the most part, don't expect comments on
+  particular files, though this may change. [Wolfman2000]
+* [TimingData] Fix getting a Stop or Delay at a row if one of each occupies
+  the same row. This may need some extra testing. [Wolfman2000]
+
+20110211
+--------
+* Introduced the .ssc file format for future features and expansion. All .sm
+  files will still work, and will still be generated when saved in the editor.
+  At this point, saving to the DWI format is being deprecated. [Wolfman2000]
+
+================================================================================
+sm-ssc v1.2.1 | 20110210
+--------------------------------------------------------------------------------
+
+20110210
+--------
+* Had to go back on the ScreenNetSelectMusic controls commit. My apologies. [AJ]
+
+20110209
+--------
+* [ScreenOptionsMemoryCard] Added three strings: "(no label)", "size ???", and
+  "%dMB". [AJ]
+* [ScreenSelectMusic] Added RouletteTimerSeconds metric. [AJ]
+* [ArrowEffects] Added QuantizeArrowYPosition metric. [AJ]
+
+20110208
+--------
+* [ScreenNetSelectMusic] Added MusicWheelType metric. [AJ]
+
+20110201
+--------
+* [Song] Added IsDisplayBpmRandom Lua binding. [AJ]
+
+20110130
+--------
+* [ScreenSelectMaster] Only run cursor commands on players if they exist. [AJ]
+
+20110118
+--------
+* [ScreenEdit] Move editing Timing Data to their own mini menu. [Wolfman2000]
+* Implement #TICKCOUNTS tag for better checkpoint behavior.
+  This officially deprecates the CheckpointsUseTimeSignatures metric for
+  the CheckpointsUseTickcounts metric. [Wolfman2000]
+* [NoteField] Add metrics for more flexible TimingData labels. [Wolfman2000]
+
+20110116
+--------
+* [ScreenEdit] Allow editing TimeSignatureSegments one fractional half at
+  a time. [Wolfman2000]
+
+20110115
+--------
+* [ArrowEffects] Allow modifying modifier characteristics in the metrics.
+  At present, Blink, Boost, Brake, and Wave can have modifications.
+  [Wolfman2000]
+* [Player] Allow Combo Stopped message to be flexible via metrics. The
+  default is 50, as it was before. [Wolfman2000]
+* [Player] Allow the default attack times for both random and mine attacks
+  to be changed. [Wolfman2000]
+* [NoteField] Allow for adjustable fade fail time (for AJ). [Wolfman2000]
+* [MenuTimer] Allow the hurry up transition to be adjusted. [Wolfman2000]
+* [MusicWheel] Added RouletteColor, RandomColor, and PortalColor metrics. [freem]
+* Fix a bug with VisualDelaySeconds where choosing -1 would lead to it being +1. [freem]
+
+20110112
+--------
+* [PlayerStageStats] Change score to an unsigned long from a signed int. [FSX]
+* Noteskin changes. [Daisuke Master]
+* [SpecialScoring] MIGS scoring, improved SN and SN2 scoring. [FSX]
+* [RageFile] Added ReadBytes() Lua binding. [FSX]
+* [NetworkSyncManager] Added CloseConnection() Lua binding. [freem]
+* [ScreenTextEntry] Added Load(TextEntrySettings) Lua binding. [freem]
+  TextEntrySettings is implemented similar to the Attributes in BitmapText.
+local teSettings = {
+	SendOnPop = "",		-- ScreenMessage to send on pop (optional, "SM_None" if omitted)
+	Question = "",		-- The question to display
+	InitialAnswer = "",	-- Initial answer text
+	MaxInputLength = 0,	-- Maximum amount of characters
+	Password = false,	-- Mask character input (optional)
+	Validate = nil,		-- Validation function; function(answer, errorOut), must return boolean, string.
+	OnOK = nil,			-- On OK; function(answer)
+	OnCancel = nil,		-- On Cancel; function()
+	ValidateAppend = nil,	-- Validate appending a character; function(answer,append), must return boolean
+	FormatAnswerForDisplay = nil,	-- Format answer for display; function(answer), must return string
+};
+
+20110111
+--------
+* [ScreenManager] Added ReloadOverlayScreens() Lua binding. [freem]
+
+20110110
+--------
+* [Character] Added GetDisplayName Lua binding. [freem]
+* Make sure that DELAYS come first if STOPS share the same beat. [Wolfman2000]
+
+20110109
+--------
+* Add the semicolon and apostrophe keys as alternatives to the Page Up and Page
+  Down keys in the editor, mainly for laptop users. [Wolfman2000]
+* Removed Song sample length limitations. [freem]
+* Removed hard-coded values from the Step Editor. Now TimeSignatures are used
+  in place of these former constants. [Wolfman2000]
+* [RoomWheel] Various metrics changes: [freem]
+  * Removed TextWidth/DescWidth metrics.
+  * "Desc" is now "Description". (DescX -> DescriptionX)
+  * Removed hardcoded commands (shadowlength,0;maxwidth,[max width metric];halign,0).
+
+================================================================================
+sm-ssc v1.2 | 20110107
+--------------------------------------------------------------------------------
+
+20110107
+--------
+* Fix PrefsManager init list not being in order [vyhd]
+* Add hack to ThemeManager to make GetThemeName() work intuitively for Scripts dirs [vyhd]
+* [SongManager] Check the root Songs/ folder for extra stage course files. [freem]
+* Make routine mode use ScreenGameplayShared instead of ScreenGameplay. [freem]
+* Make pump-routine spacing the same as pump-double spacing. [FSX] 
+
+20110106
+--------
+* [SpecialScoring] Fix some minor issues [FSX]
+* New pump routine noteskins [cesarmades]
+
+20110102
+--------
+* Fix routine mode saving in the editor. [Wolfman2000]
+
+20110101
+--------
+* [Screen] Added HandleBackButton metric; useful for custom menus that need to
+  use the Back button for more user-friendly canceling. [freem]
+
+20101230
+--------
+* [StepsDisplay] Make the StepsType react to SetMessage as well. [freem]
+
+20101229
+--------
+* [ScreenHowToPlay] Replaced LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND macro
+  calls with ActorUtil::LoadAllCommandsAndSetXY(). Fixes an odd bug I ran into
+  during the porting of DDR 5th Mix. [freem]
+* [ScreenInstallOverlay] Added bare DownloadFinished message. [freem]
+
+20101228
+--------
+* [ScreenHowToPlay] Have Character ignore the Miss steps instead of trying to
+  hit them. [freem]
+
+20101227
+--------
+* [ScreenHowToPlay] Added CharacterName metric, which will force the Character
+  that shows up. [freem]
+
+20101226
+--------
+* [ScreenEdit] Added GetEditState Lua binding. [freem]
+* [ScreenNetSelectMusic] StepsDisplay changed to load from StepsDisplayNet. [freem]
+* [RoomWheelItem] Added OverPart (just like in MusicWheelItem). [freem]
+* [SongManager] Added GetSongRank(Song) Lua binding. [freem]
+* Changed Steps picking logic in ScreenGameplaySyncMachine; now playable Steps
+  are chosen, instead of whatever NoteData happens to be first.
+  Also added pump-single data to ScreenGameplaySyncMachine music.sm. [freem]
+* [Banner, FadingBanner] Various changes: [freem]
+  * Removed (now unused) All Music banner.
+  * Fixed swapped ScrollRandom and ScrollRoulette metrics.
+* [Banner] Added GetScrolling(), GetPercentScrolling() and
+  SetScrolling(bool,float) Lua bindings.
+* [FadingBanner] Added GetLatestIndex() Lua binding. [freem]
+
+20101225
+--------
+* Fixed Life difficulty scale being 0. [Daisuke Master]
+
+20101223
+--------
+* Added Banners for most SortOrders. (Group is excluded (song group banners
+  still work), as is Recent (which has no sections).) [freem]
+
+20101222
+--------
+* Added Shift+Ctrl+F2 shortcut for reloading overlay screens (and metrics) [freem]
+
+20101221
+--------
+* SM5SVN r28586: Only unload fonts if not used by the next screen. [shakesoda]
+* [ScreenSelectMaster] Fix DoSwitchAnyways to actually work again.
+* [ScreenInstallOverlay] Installs won't jump to SelMusic on Gameplay or System
+  Menus (e.g. Edit Mode) anymore on download completion. [freem]
+
+20101220
+--------
+* [Actor] Add bezier. (_fallback/02 Actor.lua) [FSX]
+* [MessageManager] Added MenuStartP1 and MenuStartP2 messages. [freem]
+* [ScreenSelectMaster] Broadcast MenuStartP# messages; allow themers to handle
+  the MenuStartP# messageitems. [freem]
+
+20101219
+--------
+* [WheelNotifyIcon] add BlinkPlayersBest metric. [freem]
+* [GameCommand] Add GetScreen, GetSteps, GetCourse, GetTrail, and GetCharacter
+  Lua bindings. [freem]
+* [StreamDisplay] Remove UseThreePartMethod.
+* [Style] Add ColumnsPerPlayer and NeedsZoomOutWith2Players bindings. [freem]
+* [Profile] Add GetLastUsedHighScoreName Lua binding. [freem]
 
 20101218
 --------

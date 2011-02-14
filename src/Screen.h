@@ -80,12 +80,14 @@ protected:
 	InputQueueCodeSet	m_Codes;
 
 	ThemeMetric<bool>	ALLOW_OPERATOR_MENU_BUTTON;
+	ThemeMetric<bool>	HANDLE_BACK_BUTTON;
 	ThemeMetric<float>	REPEAT_RATE;
 	ThemeMetric<float>	REPEAT_DELAY;
 	ThemeMetric<LightsMode> LIGHTS_MODE;
 
 	// If left blank, the NextScreen metric will be used.
 	RString m_sNextScreen;
+	RString m_sPrevScreen;
 	ScreenMessage m_smSendOnPop;
 
 	float m_fLockInputSecs;

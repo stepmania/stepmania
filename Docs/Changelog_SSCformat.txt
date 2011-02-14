@@ -1,0 +1,17 @@
+.ssc Format Changelog
+________________________________________________________________________________
+In case anyone else wishes to implement the .ssc format in their own simulator,
+a changelog is provided here between each version.
+
+Notice: .ssc is not a finalized format at the moment. There are plans for a
+change to JSON, but it is unsure if this will be done.
+
+Implement .ssc at your own risk.
+________________________________________________________________________________
+
+[v0.51] - AJ
+* Move VERSION tag to the first line.
+* Limit VERSION tag to two decimal places.
+
+[v0.5] - Wolfman2000
+* Initial MSD-based version.

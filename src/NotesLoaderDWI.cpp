@@ -15,6 +15,7 @@
 
 static std::map<int,int> g_mapDanceNoteToNoteDataColumn;
 
+/** @brief The different types of core DWI arrows and pads. */
 enum
 {
 	DANCE_NOTE_NONE = 0,
@@ -32,6 +33,14 @@ enum
 	DANCE_NOTE_PAD2_RIGHT
 };
 
+/**
+ * @brief Turn the individual character to the proper note.
+ * @param c The character in question.
+ * @param i The player.
+ * @param note1Out The first result based on the character.
+ * @param note2Out The second result based on the character.
+ * @param sPath the path to the file.
+ */
 static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Out, const RString &sPath )
 {
 	switch( c )
@@ -79,6 +88,14 @@ static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Ou
 	}
 }
 
+/**
+ * @brief Determine the note column[s] to place notes.
+ * @param c The character in question.
+ * @param i The player.
+ * @param col1Out The first result based on the character.
+ * @param col2Out The second result based on the character.
+ * @param sPath the path to the file.
+ */
 static void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out, const RString &sPath )
 {
 	int note1, note2;
@@ -95,11 +112,18 @@ static void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2O
 		col2Out = -1;
 }
 
-/* Ack.  DWI used to use <...> to indicate 1/192nd notes; at some
+/**
+ * @brief Determine if the note in question is a 192nd note.
+ *
+ * DWI used to use <...> to indicate 1/192nd notes; at some
  * point, <...> was changed to indicate jumps, and `' was used for
  * 1/192nds.  So, we have to do a check to figure out what it really
  * means.  If it contains 0s, it's most likely 192nds; otherwise,
- * it's most likely a jump.  Search for a 0 before the next >: */
+ * it's most likely a jump.  Search for a 0 before the next >: 
+ * @param sStepData the step data.
+ * @param pos the position of the step data.
+ * @return true if it's a 192nd note, false otherwise.
+ */
 static bool Is192( const RString &sStepData, size_t pos )
 {
 	while( pos < sStepData.size() )
@@ -113,9 +137,20 @@ static bool Is192( const RString &sStepData, size_t pos )
 	
 	return false;
 }
-
+/** @brief All DWI files use 4 beats per measure. */
 const int BEATS_PER_MEASURE = 4;
 
+/**
+ * @brief Look through the notes tag to extract the data.
+ * @param sMode the steps type.
+ * @param sDescription the difficulty.
+ * @param sNumFeet the meter.
+ * @param sStepData1 the guaranteed step data.
+ * @param sStepData2 used if sMode is double or couple.
+ * @param out the step data.
+ * @param sPath the path to the file.
+ * @return the success or failure of the operation.
+ */
 static bool LoadFromDWITokens( 
 	RString sMode, 
 	RString sDescription,
@@ -336,8 +371,16 @@ static bool LoadFromDWITokens(
 	return true;
 }
 
-/* This value can be in either "HH:MM:SS.sssss", "MM:SS.sssss", "SSS.sssss"
- * or milliseconds. */
+/**
+ * @brief Turn the DWI style timestamp into a compatible time for our system.
+ *
+ * This value can be in either "HH:MM:SS.sssss", "MM:SS.sssss", "SSS.sssss"
+ * or milliseconds.
+ * @param arg1 Either hours, minutes, or seconds, depending on other args.
+ * @param arg2 Either minutes or seconds, depending on other args.
+ * @param arg3 Seconds if not empty.
+ * @return the proper timestamp.
+ */
 static float ParseBrokenDWITimestamp( const RString &arg1, const RString &arg2, const RString &arg3 )
 {
 	if( arg1.empty() )

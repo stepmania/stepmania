@@ -1,4 +1,4 @@
-/* HighScore - Player scoring data that persists between sessions. */
+/** @brief HighScore - Player scoring data that persists between sessions. */
 
 #ifndef HIGH_SCORE_H
 #define HIGH_SCORE_H
@@ -13,17 +13,37 @@ struct RadarValues;
 struct lua_State;
 
 struct HighScoreImpl;
+/** @brief The high score that is earned by a player. */
 struct HighScore
 {
 	HighScore();
 
+	/**
+	 * @brief Retrieve the name of the player that set the high score.
+	 * @return the name of the player. */
 	RString	GetName() const;
+	/**
+	 * @brief Retrieve the grade earned from this score.
+	 * @return the grade.
+	 */
 	Grade GetGrade() const;
+	/**
+	 * @brief Retrieve the score earned.
+	 * @return the score. */
 	int GetScore() const;
+	/**
+	 * @brief Determine if any judgments were tallied during this run.
+	 * @return true if no judgments were recorded, false otherwise. */
 	bool IsEmpty() const;
 	float GetPercentDP() const;
+	/**
+	 * @brief Determine how many seconds the player had left in Survival mode.
+	 * @return the number of seconds left. */
 	float GetSurviveSeconds() const;
 	float GetSurvivalSeconds() const;
+	/**
+	 * @brief Get the modifiers used for this run.
+	 * @return the modifiers. */
 	RString GetModifiers() const;
 	DateTime GetDateTime() const;
 	RString GetPlayerGuid() const;
@@ -33,6 +53,9 @@ struct HighScore
 	int GetHoldNoteScore( HoldNoteScore tns ) const;
 	const RadarValues &GetRadarValues() const;
 	float GetLifeRemainingSeconds() const;
+	/**
+	 * @brief Determine if this score was from a situation that would cause disqualification.
+	 * @return true if the score would be disqualified, false otherwise. */
 	bool GetDisqualified() const;
 
 	void SetName( const RString &sName );
@@ -70,6 +93,7 @@ private:
 	HiddenPtr<HighScoreImpl> m_Impl;
 };
 
+/** @brief The list of high scores */
 struct HighScoreList
 {
 public:
@@ -110,10 +134,14 @@ private:
 
 };
 
+/** @brief the picture taken of the high score. */
 struct Screenshot
 {
-	RString sFileName;	// no directory part - just the file name
-	RString sMD5;		// MD5 hash of the screenshot file
+	/** @brief the filename of the screen shot. There is no directory part. */
+	RString sFileName;
+	/** @brief The MD5 hash of the screen shot file above. */
+	RString sMD5;
+	/** @brief The actual high score in question. */
 	HighScore highScore;
 
 	XNode* CreateNode() const;
@@ -122,8 +150,10 @@ struct Screenshot
 
 #endif
 
-/*
- * (c) 2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

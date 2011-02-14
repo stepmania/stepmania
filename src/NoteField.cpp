@@ -27,6 +27,7 @@ static ThemeMetric<float> BAR_MEASURE_ALPHA( "NoteField", "BarMeasureAlpha" );
 static ThemeMetric<float> BAR_4TH_ALPHA( "NoteField", "Bar4thAlpha" );
 static ThemeMetric<float> BAR_8TH_ALPHA( "NoteField", "Bar8thAlpha" );
 static ThemeMetric<float> BAR_16TH_ALPHA( "NoteField", "Bar16thAlpha" );
+static ThemeMetric<float> FADE_FAIL_TIME( "NoteField", "FadeFailTime" );
 
 static RString RoutineNoteSkinName( size_t i ) { return ssprintf("RoutineNoteSkinP%i",int(i+1)); }
 static ThemeMetric1D<RString> ROUTINE_NOTESKIN( "NoteField", RoutineNoteSkinName, NUM_PLAYERS );
@@ -264,9 +265,8 @@ void NoteField::Update( float fDeltaTime )
 	cur->m_ReceptorArrowRow.Update( fDeltaTime );
 	cur->m_GhostArrowRow.Update( fDeltaTime );
 
-	// TODO: make fade time of 1.5 seconds metricable instead? -aj
 	if( m_fPercentFadeToFail >= 0 )
-		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5f, 1 );	// take 1.5 seconds to totally fade
+		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/FADE_FAIL_TIME, 1 );
 
 	// Update fade to failed
 	m_pCurDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_fPercentFadeToFail );
@@ -412,18 +412,36 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 
 // todo: add DrawWarpAreaBG? -aj
 
+static ThemeMetric<RageColor> BPM_COLOR ( "NoteField", "BPMColor" );
+static ThemeMetric<RageColor> STOP_COLOR ( "NoteField", "StopColor" );
+static ThemeMetric<RageColor> DELAY_COLOR ( "NoteField", "DelayColor" );
+static ThemeMetric<RageColor> TIME_SIGNATURE_COLOR ( "NoteField", "TimeSignatureColor" );
+static ThemeMetric<RageColor> TICKCOUNT_COLOR ( "NoteField", "TickcountColor" );
+static ThemeMetric<bool> BPM_IS_LEFT_SIDE ( "NoteField", "BPMIsLeftSide" );
+static ThemeMetric<bool> STOP_IS_LEFT_SIDE ( "NoteField", "StopIsLeftSide" );
+static ThemeMetric<bool> DELAY_IS_LEFT_SIDE ( "NoteField", "DelayIsLeftSide" );
+static ThemeMetric<bool> TIME_SIGNATURE_IS_LEFT_SIDE ( "NoteField", "TimeSignatureIsLeftSide" );
+static ThemeMetric<bool> TICKCOUNT_IS_LEFT_SIDE ( "NoteField", "TickcountIsLeftSide" );
+static ThemeMetric<float> BPM_OFFSETX ( "NoteField", "BPMOffsetX" );
+static ThemeMetric<float> STOP_OFFSETX ( "NoteField", "StopOffsetX" );
+static ThemeMetric<float> DELAY_OFFSETX ( "NoteField", "DelayOffsetX" );
+static ThemeMetric<float> TIME_SIGNATURE_OFFSETX ( "NoteField", "TimeSignatureOffsetX" );
+static ThemeMetric<float> TICKCOUNT_OFFSETX ( "NoteField", "TickcountOffsetX" );
+
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
+	const float xBase	= GetWidth()/2.f;
+	const float xOffset	= BPM_OFFSETX * fZoom;
 
 	m_textMeasureNumber.SetZoom( fZoom );
-	m_textMeasureNumber.SetHorizAlign( align_right );
-	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
+	m_textMeasureNumber.SetHorizAlign( BPM_IS_LEFT_SIDE ? align_right : align_left );
+	m_textMeasureNumber.SetDiffuse( BPM_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fBPM) );
-	m_textMeasureNumber.SetXY( -GetWidth()/2 - 60*fZoom, fYPos );
+	m_textMeasureNumber.SetXY( (BPM_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -432,16 +450,24 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs, const floa
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
  	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
+	const float xBase	= GetWidth()/2.f;
+	const float xOffset	= (bDelay ? DELAY_OFFSETX : STOP_OFFSETX) * fZoom;
 
 	m_textMeasureNumber.SetZoom( fZoom );
-	m_textMeasureNumber.SetHorizAlign( align_right );
 	if(bDelay)
-		m_textMeasureNumber.SetDiffuse( RageColor(0,0.8f,0.8f,1) );
+	{
+		m_textMeasureNumber.SetHorizAlign( DELAY_IS_LEFT_SIDE ? align_right : align_left );
+		m_textMeasureNumber.SetDiffuse( DELAY_COLOR );
+		m_textMeasureNumber.SetXY( (DELAY_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
+	}
 	else
-		m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
+	{
+		m_textMeasureNumber.SetHorizAlign( STOP_IS_LEFT_SIDE ? align_right : align_left );
+		m_textMeasureNumber.SetDiffuse( STOP_COLOR );
+		m_textMeasureNumber.SetXY( (STOP_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
+	}
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
-	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 10*fZoom, fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -450,13 +476,32 @@ void NoteField::DrawTimeSignatureText( const float fBeat, int iNumerator, int iD
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
  	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
+	const float xBase	= GetWidth()/2.f;
+	const float xOffset	= TIME_SIGNATURE_OFFSETX * fZoom;
 
 	m_textMeasureNumber.SetZoom( fZoom );
-	m_textMeasureNumber.SetHorizAlign( align_right );
-	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
+	m_textMeasureNumber.SetHorizAlign( TIME_SIGNATURE_IS_LEFT_SIDE ? align_right : align_left );
+	m_textMeasureNumber.SetDiffuse( TIME_SIGNATURE_COLOR );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%d\n--\n%d", iNumerator, iDenominator) );
-	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 30*fZoom, fYPos );
+	m_textMeasureNumber.SetXY( (TIME_SIGNATURE_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
+	m_textMeasureNumber.Draw();
+}
+
+void NoteField::DrawTickcountText( const float fBeat, int iTicks )
+{
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+ 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
+	const float xBase	= GetWidth()/2.f;
+	const float xOffset	= TICKCOUNT_OFFSETX * fZoom;
+	
+	m_textMeasureNumber.SetZoom( fZoom );
+	m_textMeasureNumber.SetHorizAlign( TICKCOUNT_IS_LEFT_SIDE ? align_right : align_left );
+	m_textMeasureNumber.SetDiffuse( TICKCOUNT_COLOR );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
+	m_textMeasureNumber.SetText( ssprintf("%d", iTicks) );
+	m_textMeasureNumber.SetXY( (TICKCOUNT_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -710,6 +755,19 @@ void NoteField::DrawPrimitives()
 				float fBeat = NoteRowToBeat(vTimeSignatureSegments[i].m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
 					DrawTimeSignatureText( fBeat, vTimeSignatureSegments[i].m_iNumerator, vTimeSignatureSegments[i].m_iDenominator );
+			}
+		}
+		
+		// Tickcount text
+		const vector<TickcountSegment> &tTickcountSegments = GAMESTATE->m_pCurSong->m_Timing.m_TickcountSegments;
+		for( unsigned i=0; i<tTickcountSegments.size(); i++ )
+		{
+			if( tTickcountSegments[i].m_iStartRow >= iFirstRowToDraw &&
+			    tTickcountSegments[i].m_iStartRow <= iLastRowToDraw)
+			{
+				float fBeat = NoteRowToBeat(tTickcountSegments[i].m_iStartRow);
+				if( IS_ON_SCREEN(fBeat) )
+					DrawTickcountText( fBeat, tTickcountSegments[i].m_iTicks );
 			}
 		}
 

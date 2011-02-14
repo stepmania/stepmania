@@ -1270,13 +1270,10 @@ void StepMania::ClearCredits()
 /* Returns true if the key has been handled and should be discarded, false if
  * the key should be sent on to screens. */
 static LocalizedString SERVICE_SWITCH_PRESSED ( "StepMania", "Service switch pressed" );
-// xxx: Okay, these probably shouldn't be here, but I wanted them to be
-// localized and this was the place to do it since this is where the control
-// structure is placed... apologies to those who like properly structured
-// language files. I like compatibility. -aj
 static LocalizedString RELOADED_METRICS( "ThemeManager", "Reloaded metrics" );
 static LocalizedString RELOADED_METRICS_AND_TEXTURES( "ThemeManager", "Reloaded metrics and textures" );
 static LocalizedString RELOADED_SCRIPTS( "ThemeManager", "Reloaded scripts" );
+static LocalizedString RELOADED_OVERLAY_SCREENS( "ThemeManager", "Reloaded overlay screens" );
 bool HandleGlobalInputs( const InputEventPlus &input )
 {
 	// None of the globals keys act on types other than FIRST_PRESS
@@ -1312,22 +1309,32 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	// re-added for StepMania 3.9 veterans, plus it's just plain old faster
 	// than the debug menu. However, this is without the LShift capability
 	// that was in 3.9; if we get enough requests, we'll re-add it, but meh. -aj
+	bool bIsShiftHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT), &input.InputList) ||
+		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT), &input.InputList);
+	bool bIsCtrlHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL), &input.InputList) ||
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL), &input.InputList);
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F2) )
 	{
-		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT), &input.InputList) ||
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT), &input.InputList))
+		if( bIsShiftHeld && !bIsCtrlHeld )
 		{
 			// Shift+F2: refresh metrics and CodeDetector cache only
 			THEME->ReloadMetrics();
 			CodeDetector::RefreshCacheItems();
 			SCREENMAN->SystemMessage( RELOADED_METRICS );
 		}
-		else if(INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL), &input.InputList) ||
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL), &input.InputList))
+		else if( bIsCtrlHeld && !bIsShiftHeld )
 		{
 			// Ctrl+F2: reload scripts only
 			THEME->UpdateLuaGlobals();
 			SCREENMAN->SystemMessage( RELOADED_SCRIPTS );
+		}
+		else if( bIsCtrlHeld && bIsShiftHeld )
+		{
+			// Shift+Ctrl+F2: reload overlay screens (and metrics, since themers
+			// are likely going to do this after changing metrics and be lazy.)
+			THEME->ReloadMetrics();
+			SCREENMAN->ReloadOverlayScreens();
+			SCREENMAN->SystemMessage( RELOADED_OVERLAY_SCREENS );
 		}
 		else
 		{

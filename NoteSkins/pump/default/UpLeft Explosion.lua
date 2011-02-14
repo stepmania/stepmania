@@ -38,23 +38,7 @@ return Def.ActorFrame {
 	};
 	--thing...
 	Def.Quad {
-		InitCommand=cmd(zoomto,60,4800;diffusealpha,0);
+		InitCommand=cmd(zoomto,50,5000;diffusealpha,0);
 		HitMineCommand=cmd(finishtweening;diffusealpha,1;linear,0.3;diffusealpha,0);
 	};
-	--[[Def.Quad {
-		InitCommand=function(self)
-			local style = GAMESTATE:GetCurrentStyle()GetStyleType()
-			local maxzoom = SCREEN_WIDTH
-			if style == 'StyleType_OnePlayerTwoSides' then
-				maxzoom = 320
-			end
-			
-			self:diffuse(1,1,1,0);
-			self:zoomx(maxzoom);
-			self:zoomy(SCREEN_HEIGHT*5)
-		end;
-		--cmd(diffuse,1,1,1,0;zoomy,SCREEN_HEIGHT*100);
-		HitMineCommand=function(self) MESSAGEMAN:BroadCast("AMineWasHit"); end;
-		--cmd(finishtweening;diffusealpha,1;linear,0.3;diffusealpha,0);
-	};]]
 }

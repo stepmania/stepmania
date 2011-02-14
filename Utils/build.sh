@@ -2,12 +2,21 @@
 
 verbose=0
 msg=
+notify=0
+if which notify-send  >/dev/null 2>&1; then
+	#Comment the following line out to disable notify.
+	notify=1
+fi
+
 message () {
 	msg=$1
 	if [ $verbose -gt 0 ]; then
 		echo "$msg..."
 	else
 		echo -n "$msg..."
+	fi
+	if [ $notify -gt 0 ]; then
+		notify-send "sm-ssc build script" "$msg..."
 	fi
 }
 
@@ -16,6 +25,9 @@ success () {
 		echo "$msg...okay."
 	else
 		echo okay.
+	fi
+	if [ $notify -gt 0 ]; then
+		notify send "sm-ssc build script" "$msg...okay."
 	fi
 }
 
@@ -30,6 +42,9 @@ failure () {
 	else
 		echo failed$error
 	fi
+	if [ $notify -gt 0 ]; then
+		notify-send "sm-ssc build script failed" "$msg...failed$error"
+	fi;
 	echo "Consider passing --verbose to $0. Pass --help for details."
 	exit 1
 }
@@ -64,10 +79,10 @@ usage () {
 }
 
 version () {
-	echo 'build.sh (StepMania) 2.61a'
+	echo 'build.sh (StepMania) 2.62'
 	echo 'Copyright (C) 2006-2009 Steve Checkoway'
 	echo 'StepMania is Copyright (C) 2001-2009 Chris Danford et al.'
-	echo 'sm-ssc is Copyright (C) 2009-2010 the spinal shark collective'
+	echo 'sm-ssc is Copyright (C) 2009-2011 the spinal shark collective'
 	exit 0
 }
 
@@ -103,7 +118,7 @@ while [ $# -gt 0 ]; do
 		*)		usage 1			;;
 	esac
 done
-version=0.6
+version=0.6.1
 ffmpeg=ffmpeg-$version
 directory=http://ffmpeg.org/releases
 if [ ! -d $ffmpeg ]; then

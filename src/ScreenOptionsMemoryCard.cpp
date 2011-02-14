@@ -9,7 +9,6 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 
-
 REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );
 
 void ScreenOptionsMemoryCard::Init()
@@ -42,22 +41,24 @@ bool ScreenOptionsMemoryCard::UpdateCurrentUsbStorageDevices()
 	return aOldDevices != m_CurrentUsbStorageDevices;
 }
 
+static LocalizedString NO_LABEL ("ScreenOptionsMemoryCard", "(no label)" );
+static LocalizedString SIZE_UNKNOWN ("ScreenOptionsMemoryCard", "size ???" );
+static LocalizedString VOLUME_SIZE ("ScreenOptionsMemoryCard", "%dMB" );
 void ScreenOptionsMemoryCard::CreateMenu()
 {
 	vector<OptionRowHandler*> vHands;
 
 	FOREACH_CONST( UsbStorageDevice, m_CurrentUsbStorageDevices, iter )
 	{
-		// TODO: Make these strings themable
 		vector<RString> vs;
 		if( iter->sVolumeLabel.empty() )
-			vs.push_back( "(no label)" );
+			vs.push_back( NO_LABEL );
 		else
 			vs.push_back( iter->sVolumeLabel );
 		if( iter->iVolumeSizeMB == 0 )
-			vs.push_back( "size ???" );
+			vs.push_back( SIZE_UNKNOWN );
 		else
-			vs.push_back( ssprintf("%dMB",iter->iVolumeSizeMB) );
+			vs.push_back( ssprintf(RString(VOLUME_SIZE).c_str(),iter->iVolumeSizeMB) );
 
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 

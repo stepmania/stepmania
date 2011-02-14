@@ -3,12 +3,16 @@ ThemePrefs: handles the underlying structure for ThemePrefs, so any themes
 built off of this can simply declare their prefs and default values, and
 access them through this system.
 
-v0.7: Dec. 15, 2010. Initial version.
+v0.7.1: Dec. 28, 2010. Added language support.
+v0.7.0: Dec. 15, 2010. Initial version.
+
+vyhd wrote this for sm-ssc. <3 you guys
 --]]
 
--- If we don't have IniFile, we can't read to or write from disk
-if not IniFile then
-	Warn( "ThemePrefs: IniFile missing. Can't read/write from disk :(" )
+-- local function to handle themed error strings
+-- (and to ensure we're getting all of them from the same section)
+local function GetString( name )
+	return THEME:GetString( "ThemePrefs", name )
 end
 
 function PrintTable( tbl )
@@ -74,6 +78,9 @@ ThemePrefs =
 	-- Only read from disk once, when _fallback calls this; we just
 	-- need the base set once to add prefs onto.
 	Init = function( prefs, bLoadFromDisk )
+		-- If we don't have IniFile, we can't read/write from/to disk
+		if not IniFile then Warn( GetString("IniFileMissing") ) end
+
 		Trace( ("ThemePrefs.Init(prefs, %s)"):format(tostring(bLoadFromDisk)) )
 		if bLoadFromDisk then
 			Trace( "ThemePrefs.Init: loading from disk" )
@@ -83,20 +90,20 @@ ThemePrefs =
 		Trace( "ThemePrefs.Init: not loading from disk" )
 
 		-- create the section if it doesn't exist
-		local name = GetThemeName()
-		PrefsTable[name] = PrefsTable[name] and PrefsTable[name] or { }
+		local section = GetThemeName()
+		PrefsTable[section] = PrefsTable[section] and PrefsTable[section] or { }
 
-		Trace( "Using section " .. name )
+		Trace( "Using section " .. section )
 
 		-- if the key doesn't exist, add it with our default value
 		for k, tbl in pairs(prefs) do
-			if not PrefsTable[name][k] then
+			if not PrefsTable[section][k] then
 				Trace( k .. " doesn't exist, creating" )
-				PrefsTable[name][k] = tbl.Default
+				PrefsTable[section][k] = tbl.Default
 			end
 		end
 
-		PrintTable( PrefsTable[name] )
+		PrintTable( PrefsTable[section] )
 	end,
 
 	Load = function()
@@ -117,7 +124,7 @@ ThemePrefs =
 		Trace( ("ThemePrefs.Get(%s)"):format(name) )
 		local tbl = ResolveTable(name)
 		if tbl then return tbl[name] end
-		Warn( ("GetThemePref: unknown preference \"%s\""):format(name) )
+		Warn( "Get: "..GetString("UnknownPreference"):format(name) )
 		return nil
 	end,
 
@@ -125,7 +132,7 @@ ThemePrefs =
 		Trace( ("ThemePrefs.Set(%s, %s)"):format(name, tostring(value)) )
 		local tbl = ResolveTable(name)
 		if tbl then tbl[name] = value; NeedsSaved = true; return end
-		Warn( ("SetThemePref: unknown preference \"%s\""):format(name) )
+		Warn( "Set: "..GetString("UnknownPreference"):format(name) )
 	end,
 };
 

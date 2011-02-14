@@ -181,12 +181,6 @@ void FadingBanner::LoadFromSong( const Song* pSong )
 		LoadFromCachedBanner( sPath );
 }
 
-void FadingBanner::LoadAllMusic()
-{
-	BeforeChange();
-	m_Banner[m_iIndexLatest].LoadAllMusic();
-}
-
 void FadingBanner::LoadMode()
 {
 	BeforeChange();
@@ -240,6 +234,12 @@ void FadingBanner::LoadRandom()
 	m_Banner[m_iIndexLatest].LoadRandom();
 }
 
+void FadingBanner::LoadFromSortOrder( SortOrder so )
+{
+	BeforeChange();
+	m_Banner[m_iIndexLatest].LoadFromSortOrder(so);
+}
+
 void FadingBanner::LoadFallback()
 {
 	BeforeChange();
@@ -251,7 +251,6 @@ void FadingBanner::LoadCourseFallback()
 	BeforeChange();
 	m_Banner[m_iIndexLatest].LoadCourseFallback();
 }
-
 
 // lua start
 #include "LuaBinding.h"
@@ -286,6 +285,7 @@ public:
 		return 0;
 	}
 	static int LoadFromSongGroup( T* p, lua_State *L )	{ p->LoadFromSongGroup( SArg(1) ); return 0; }
+	static int GetLatestIndex( T* p, lua_State *L ){ lua_pushnumber( L, p->GetLatestIndex() ); return 1; }
 
 	LunaFadingBanner()
 	{
@@ -296,6 +296,7 @@ public:
 		ADD_METHOD( LoadFromCourse );
 		ADD_METHOD( LoadIconFromCharacter );
 		ADD_METHOD( LoadCardFromCharacter );
+		ADD_METHOD( GetLatestIndex );
 	}
 };
 

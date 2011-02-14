@@ -28,7 +28,9 @@
 
 const RString STATS_XML            = "Stats.xml";
 const RString STATS_XML_GZ         = "Stats.xml.gz";
+/** @brief The filename for where one can edit their personal profile information. */
 const RString EDITABLE_INI         = "Editable.ini";
+/** @brief The filename containing the signature for STATS_XML's signature. */
 const RString DONT_SHARE_SIG       = "DontShare.sig";
 const RString PUBLIC_KEY_FILE      = "public.key";
 const RString SCREENSHOTS_SUBDIR   = "Screenshots/";
@@ -1939,6 +1941,7 @@ class LunaProfile: public Luna<Profile>
 {
 public:
 	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName ); return 1; }
+	static int GetLastUsedHighScoreName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastUsedHighScoreName ); return 1; }
 	static int GetHighScoreList( T* p, lua_State *L )
 	{
 		if( LuaBinding::CheckLuaObjectType(L, 1, "Song") )
@@ -2035,6 +2038,7 @@ public:
 	LunaProfile()
 	{
 		ADD_METHOD( GetDisplayName );
+		ADD_METHOD( GetLastUsedHighScoreName );
 		ADD_METHOD( GetHighScoreList );
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );

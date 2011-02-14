@@ -18,6 +18,7 @@
 #include "GameInput.h"
 #include "GameplayAssist.h"
 #include "AutoKeysounds.h"
+#include "EnumHelper.h"
 
 #include <map>
 
@@ -33,6 +34,8 @@ enum EditState
 	NUM_EditState,
 	EditState_Invalid
 };
+const RString& EditStateToString( EditState es );
+LuaDeclareType( EditState );
 
 enum EditButton
 {
@@ -189,6 +192,11 @@ public:
 	void SetDirty( bool bDirty ) { m_bDirty = bDirty; }
 	bool IsDirty() const { return m_bDirty; }
 
+	EditState GetEditState(){ return m_EditState; }
+
+	// Lua
+	virtual void PushSelf( lua_State *L );
+
 protected:
 	virtual ScreenType GetScreenType() const { return m_EditState==STATE_PLAYING ? gameplay : ScreenWithMenuElements::GetScreenType(); }
 
@@ -302,9 +310,7 @@ public:
 		revert_from_disk,
 		options,
 		edit_song_info,
-		edit_bpm,
-		edit_stop,
-		edit_delay,
+		edit_timing_data,
 		play_preview_music,
 		exit,
 		save_on_exit,
@@ -401,6 +407,7 @@ public:
 		difficulty,
 		meter,
 		description,
+		step_credit,
 		predict_meter,
 		tap_notes,
 		jumps,
@@ -431,6 +438,20 @@ public:
 		NUM_SONG_INFORMATION_CHOICES
 	};
 	void HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers );
+	
+	enum TimingDataInformationChoice
+	{
+		bpm,
+		stop,
+		delay,
+//		time_signature,
+		time_signature_numerator,
+		time_signature_denominator,
+		tickcount,
+		NUM_TIMING_DATA_INFORMATION_CHOICES
+	};
+	
+	void HandleTimingDataInformationChoice ( TimingDataInformationChoice c, const vector<int> &iAnswers );
 
 	enum BGChangeChoice
 	{

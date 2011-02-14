@@ -852,6 +852,8 @@ bool GameCommand::IsZero() const
 // lua start
 #include "LuaBinding.h"
 #include "Game.h"
+#include "Steps.h"
+#include "Character.h"
 
 class LunaGameCommand: public Luna<GameCommand>
 {
@@ -861,8 +863,13 @@ public:
 	static int GetIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iIndex ); return 1; }
 	static int GetMultiPlayer( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MultiPlayer); return 1; }
 	static int GetStyle( T* p, lua_State *L )	{ if(p->m_pStyle==NULL) lua_pushnil(L); else {Style *pStyle = (Style*)p->m_pStyle; pStyle->PushSelf(L);} return 1; }
+	static int GetScreen( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sScreen ); return 1; }
 	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID ); return 1; }
 	static int GetSong( T* p, lua_State *L )	{ if(p->m_pSong==NULL) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
+	static int GetSteps( T* p, lua_State *L )	{ if(p->m_pSteps==NULL) lua_pushnil(L); else p->m_pSteps->PushSelf(L); return 1; }
+	static int GetCourse( T* p, lua_State *L )	{ if(p->m_pCourse==NULL) lua_pushnil(L); else p->m_pCourse->PushSelf(L); return 1; }
+	static int GetTrail( T* p, lua_State *L )	{ if(p->m_pTrail==NULL) lua_pushnil(L); else p->m_pTrail->PushSelf(L); return 1; }
+	static int GetCharacter( T* p, lua_State *L )	{ if(p->m_pCharacter==NULL) lua_pushnil(L); else p->m_pCharacter->PushSelf(L); return 1; }
 	static int GetSongGroup( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sSongGroup ); return 1; }
 	static int GetUrl( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sUrl ); return 1; }
 
@@ -873,9 +880,18 @@ public:
 		ADD_METHOD( GetIndex );
 		ADD_METHOD( GetMultiPlayer );
 		ADD_METHOD( GetStyle );
+		//ADD_METHOD( GetDifficulty );
+		//ADD_METHOD( GetCourseDifficulty );
+		ADD_METHOD( GetScreen );
+		//ADD_METHOD( GetPlayMode );
 		ADD_METHOD( GetProfileID );
 		ADD_METHOD( GetSong );
+		ADD_METHOD( GetSteps );
+		ADD_METHOD( GetCourse );
+		ADD_METHOD( GetTrail );
+		ADD_METHOD( GetCharacter );
 		ADD_METHOD( GetSongGroup );
+		//ADD_METHOD( GetSortOrder );
 		ADD_METHOD( GetUrl );
 	}
 };

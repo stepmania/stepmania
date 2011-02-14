@@ -19,7 +19,6 @@ public:
 	 * resolution banner, set bLowResToHighRes to true. */
 	void Load( RageTextureID ID, bool bLowResToHighRes=false );
 	void LoadFromSong( const Song* pSong );		// NULL means no song
-	void LoadAllMusic();
 	void LoadMode();
 	void LoadFromSongGroup( RString sSongGroup );
 	void LoadFromCourse( const Course* pCourse );
@@ -27,6 +26,7 @@ public:
 	void LoadBannerFromUnlockEntry( const UnlockEntry* pUE );
 	void LoadRoulette();
 	void LoadRandom();
+	void LoadFromSortOrder( SortOrder so );
 	void LoadFallback();
 	void LoadCourseFallback();
 
@@ -37,6 +37,8 @@ public:
 	virtual void UpdateInternal( float fDeltaTime );
 	virtual void DrawPrimitives();
 
+	int GetLatestIndex(){ return m_iIndexLatest; }
+
 	// Lua
 	void PushSelf( lua_State *L );
 
@@ -44,11 +46,11 @@ protected:
 	void BeforeChange( bool bLowResToHighRes=false );
 
 	static const int NUM_BANNERS = 5;
-	Banner		m_Banner[NUM_BANNERS];
+	Banner	m_Banner[NUM_BANNERS];
 	int		m_iIndexLatest;
 
-	bool		m_bMovingFast;
-	bool		m_bSkipNextBannerUpdate;
+	bool	m_bMovingFast;
+	bool	m_bSkipNextBannerUpdate;
 };
 
 #endif

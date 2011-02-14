@@ -22,7 +22,7 @@ static LocalizedString DISCONNECTED		( "ScreenNetworkOptions", "Disconnected fro
 static LocalizedString ENTER_NETWORK_ADDRESS	( "ScreenNetworkOptions", "Enter a network address." );
 static LocalizedString CONNECT_TO_YOURSELF	( "ScreenNetworkOptions", "Use 127.0.0.1 to connect to yourself." );
 
-enum
+enum NetworkOptionRow
 {
 	PO_CONNECTION,
 	PO_SCOREBOARD,
@@ -30,7 +30,7 @@ enum
 	NUM_NETWORK_OPTIONS_LINES
 };
 
-enum
+enum DisplayScoreboard
 {
 	NO_SCOREBOARD_OFF=0,
 	NO_SCOREBOARD_ON
@@ -128,7 +128,7 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 			PREFSMAN->m_bEnableScoreboard.Set(false);
 		break;
 	/*
-	case PO_SERVERS:
+	case NetworkOptionRow::PO_SERVERS:
 		if ( !AllServers.empty() )
 		{
 			string sNewName = AllServers[m_pRows[GetCurrentRow()]->GetOneSharedSelection()].Address;

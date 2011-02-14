@@ -17,7 +17,6 @@ bool Character::Load( RString sCharDir )
 		sCharDir += "/";
 	m_sCharDir = sCharDir;
 
-
 	// save ID
 	{
 		vector<RString> as;
@@ -61,7 +60,7 @@ bool Character::Load( RString sCharDir )
 
 	// get optional display name
 	ini.GetValue( "Character", "DisplayName", m_sDisplayName );
-	
+
 	// get optional InitCommand
 	RString s;
 	ini.GetValue( "Character", "InitCommand", s );
@@ -69,7 +68,6 @@ bool Character::Load( RString sCharDir )
 
 	return true;
 }
-
 
 RString GetRandomFileInDir( RString sDir )
 {
@@ -80,7 +78,6 @@ RString GetRandomFileInDir( RString sDir )
 	else
 		return asFiles[RandomInt(asFiles.size())];
 }
-
 
 RString Character::GetModelPath() const
 {
@@ -214,6 +211,7 @@ public:
 	static int GetDanceAnimationPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetDanceAnimationPath() ); return 1; }
 	static int GetCharacterDir( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sCharDir ); return 1; }
 	static int GetCharacterID( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sCharacterID ); return 1; }
+	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->GetDisplayName() ); return 1; }
 
 	LunaCharacter()
 	{
@@ -228,6 +226,7 @@ public:
 		ADD_METHOD( GetDanceAnimationPath );
 		ADD_METHOD( GetCharacterDir );
 		ADD_METHOD( GetCharacterID );
+		ADD_METHOD( GetDisplayName );
 	}
 };
 

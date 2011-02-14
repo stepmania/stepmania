@@ -15,7 +15,7 @@
 #include "PlayerState.h"
 #include "LocalizedString.h"
 #include "StepMania.h"
-#include "NotesLoaderSM.h"
+#include "NotesLoaderSSC.h"
 
 static LocalizedString BOOKKEEPING_DATA_CLEARED( "ScreenServiceAction", "Bookkeeping data cleared." );
 static RString ClearBookkeepingData()
@@ -197,7 +197,7 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 				iNumErrored++;
 
 			// Test whether the song we need for this edit is present and ignore this edit if not present.
-			if( !SMLoader::LoadEditFromFile( sFromDir+*i, ProfileSlot_Machine, false ) )
+			if( !SSCLoader::LoadEditFromFile( sFromDir+*i, ProfileSlot_Machine, false ) )
 			{
 				iNumIgnored++;
 				continue;

@@ -351,6 +351,14 @@ public:
 		return 1;
 	}
 	
+	static int ReadBytes( T* p, lua_State *L )
+	{
+		RString string;
+		p->Read( string, IArg(1) );
+		lua_pushstring( L, string );
+		return 1;
+	}
+
 	static int Seek( T* p, lua_State *L )
 	{
 		lua_pushinteger( L, p->Seek( IArg(1) ) );
@@ -403,6 +411,7 @@ public:
 		ADD_METHOD( Close );
 		ADD_METHOD( Write );
 		ADD_METHOD( Read );
+		ADD_METHOD( ReadBytes );
 		ADD_METHOD( Seek );
 		ADD_METHOD( Tell );
 		ADD_METHOD( GetLine );

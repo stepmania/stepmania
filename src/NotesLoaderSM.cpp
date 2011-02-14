@@ -14,7 +14,7 @@
 
 const int MAX_EDIT_STEPS_SIZE_BYTES		= 60*1024;	// 60KB
 
-static void LoadFromSMTokens( 
+void SMLoader::LoadFromSMTokens( 
 			     RString sStepsType, 
 			     RString sDescription,
 			     RString sDifficulty,
@@ -94,6 +94,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 	out.m_BPMSegments.clear();
 	out.m_StopSegments.clear();
 	out.m_WarpSegments.clear();
+	out.m_vTimeSignatureSegments.clear();
 
 	vector<WarpSegment> arrayWarpsFromNegativeBPMs;
 	//vector<WarpSegment> arrayWarpsFromNegativeStops;
@@ -128,6 +129,9 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
 				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
 				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
+				// XXX: Remove Negatives Bug?
+				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
+				new_seg.m_fStopSeconds = fFreezeSeconds;
 
 				if(fFreezeSeconds > 0.0f)
 				{
@@ -168,7 +172,10 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				const float fFreezeSeconds = StringToFloat( arrayDelayValues[1] );
 
 				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds, true );
-
+				// XXX: Remove Negatives Bug?
+				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
+				new_seg.m_fStopSeconds = fFreezeSeconds;
+				
 				// LOG->Trace( "Adding a delay segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 
 				if(fFreezeSeconds > 0.0f)
@@ -197,7 +204,11 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 
 				const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
 				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
-
+				// XXX: Remove Negatives Bug?
+				BPMSegment new_seg;
+				new_seg.m_iStartRow = BeatToNoteRow(fBeat);
+				new_seg.SetBPM( fNewBPM );
+				
 				// convert negative BPMs into Warp segments
 				if( fNewBPM < 0.0f )
 				{
@@ -238,25 +249,25 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 						);
 						*/
 
-						out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+						out.AddBPMSegment( new_seg );
 
 						continue;
 					}
 					else
 					{
 						// last BPM is a negative one? ugh. -aj (MAX_NOTE_ROW exists btw)
-						out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+						out.AddBPMSegment( new_seg );
 					}
 				}
 
 				if(fNewBPM > 0.0f)
-					out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+					out.AddBPMSegment( new_seg );
 				else
 				{
 					out.m_bHasNegativeBpms = true;
 					// only add Negative BPMs in quirks mode -aj
 					if( PREFSMAN->m_bQuirksMode )
-						out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+						out.AddBPMSegment( new_seg );
 					else
 						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
 				}
@@ -305,6 +316,46 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				}
 
 				out.AddTimeSignatureSegment( seg );
+			}
+		}
+		
+		else if( sValueName=="TICKCOUNTS" )
+		{
+			vector<RString> arrayTickcountExpressions;
+			split( sParams[1], ",", arrayTickcountExpressions );
+			
+			for( unsigned f=0; f<arrayTickcountExpressions.size(); f++ )
+			{
+				vector<RString> arrayTickcountValues;
+				split( arrayTickcountExpressions[f], "=", arrayTickcountValues );
+				if( arrayTickcountValues.size() != 2 )
+				{
+					// XXX: Hard to tell which file caused this.
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
+						     sValueName.c_str(), arrayTickcountExpressions[f].c_str() );
+					continue;
+				}
+				
+				const float fTickcountBeat = StringToFloat( arrayTickcountValues[0] );
+				int iTicks = atoi( arrayTickcountValues[1] );
+				// you're lazy, let SM do the work for you... -DaisuMaster
+				if( iTicks < 1) iTicks = 1;
+				if( iTicks > ROWS_PER_BEAT ) iTicks = ROWS_PER_BEAT;
+
+				TickcountSegment new_seg( BeatToNoteRow(fTickcountBeat), iTicks );
+				out.AddTickcountSegment( new_seg );
+
+				if(iTicks >= 1 && iTicks <= ROWS_PER_BEAT ) // Constants
+				{
+					// LOG->Trace( "Adding a tickcount segment: beat: %f, ticks = %d", fTickcountBeat, iTicks );
+					//out.AddTickcountSegment( new_seg );
+				}
+				else
+				{
+					//LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid tickcount at beat %f, ticks %d.", fTickcountBeat, iTicks );
+					//LOG->UserLog( "Song file", "(UNKNOWN)", "Clamping tickcount value to %d at beat %f.", iTicks, fTickcountBeat);
+					//etc
+				}
 			}
 		}
 
@@ -712,120 +763,10 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache 
 			out.AddSteps( pNewNotes );
 		}
 		/*
-		else if( sValueName=="OFFSET" )
-		{
-			out.m_Timing.m_fBeat0OffsetInSeconds = StringToFloat( sParams[1] );
-		}
-		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
-		{
-			vector<RString> arrayFreezeExpressions;
-			split( sParams[1], ",", arrayFreezeExpressions );
-
-			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
-			{
-				vector<RString> arrayFreezeValues;
-				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
-				if( arrayFreezeValues.size() != 2 )
-				{
-					// XXX: Hard to tell which file caused this.
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
-					continue;
-				}
-
-				const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
-				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
-
-				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
-
-				//				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-
-				out.m_Timing.AddStopSegment( new_seg );
-			}
-		}
-
-		else if( sValueName=="BPMS" )
-		{
-			vector<RString> arrayBPMChangeExpressions;
-			split( sParams[1], ",", arrayBPMChangeExpressions );
-
-			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
-			{
-				vector<RString> arrayBPMChangeValues;
-				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-				// XXX: Hard to tell which file caused this.
-				if( arrayBPMChangeValues.size() != 2 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
-						sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
-					continue;
-				}
-
-				const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
-				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
-
-				if( PREFSMAN->m_bQuirksMode )
-				{
-					// in quirks mode, accept all BPMs, not just positives.
-					// xxx: make this work for decent simfiles only? -aj
-					out.m_Timing.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
-				}
-				else
-				{
-					if( fNewBPM > 0.0f )
-						out.m_Timing.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
-					else
-						LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
-				}
-			}
-		}
-
-		else if( sValueName=="TIMESIGNATURES" )
-		{
-			vector<RString> vs1;
-			split( sParams[1], ",", vs1 );
-
-			FOREACH_CONST( RString, vs1, s1 )
-			{
-				vector<RString> vs2;
-				split( *s1, "=", vs2 );
-
-				if( vs2.size() < 3 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with %i values.", (int)vs2.size() );
-					continue;
-				}
-
-				const float fBeat = StringToFloat( vs2[0] );
-
-				TimeSignatureSegment seg;
-				seg.m_iStartRow = BeatToNoteRow(fBeat);
-				seg.m_iNumerator = atoi( vs2[1] ); 
-				seg.m_iDenominator = atoi( vs2[2] ); 
-
-				if( fBeat < 0 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f.", fBeat );
-					continue;
-				}
-
-				if( seg.m_iNumerator < 1 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iNumerator %i.", fBeat, seg.m_iNumerator );
-					continue;
-				}
-
-				if( seg.m_iDenominator < 1 )
-				{
-					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid time signature change with beat %f, iDenominator %i.", fBeat, seg.m_iDenominator );
-					continue;
-				}
-
-				out.m_Timing.AddTimeSignatureSegment( seg );
-			}
-		}
-		*/
-		else if( sValueName=="OFFSET" || sValueName=="BPMS" || sValueName=="STOPS" || sValueName=="FREEZES" || sValueName=="DELAYS" || sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK" )
+		 * We used to check for timing data in this section. That has
+		 * since been moved to a dedicated function.
+		 */
+		else if( sValueName=="OFFSET" || sValueName=="BPMS" || sValueName=="STOPS" || sValueName=="FREEZES" || sValueName=="DELAYS" || sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK" || sValueName=="TICKCOUNTS" )
 			;
 		else
 			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );

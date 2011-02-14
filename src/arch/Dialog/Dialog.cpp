@@ -30,7 +30,7 @@ DialogDriver *MakeDialogDriver()
 		sDriver = asDriversToTry[i];
 
 #ifdef USE_DIALOG_DRIVER_COCOA
-		if( !asDriversToTry[i].CompareNoCase("Cocoa") )	pRet = new DialogDriver_Cocoa;
+		if( !asDriversToTry[i].CompareNoCase("Cocoa") )	pRet = new DialogDriver_MacOSX;
 #endif
 #ifdef USE_DIALOG_DRIVER_WIN32
 		if( !asDriversToTry[i].CompareNoCase("Win32") )	pRet = new DialogDriver_Win32;

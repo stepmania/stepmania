@@ -32,7 +32,7 @@ enum
 	TRACK_14,
 	TRACK_15,
 	TRACK_16,
-	// BMS reader needs 16 tracks for beat-double7
+	// 16 tracks needed for beat-double7 and techno-double8
 };
 
 RString StepsTypeInfo::GetLocalizedString() const
@@ -81,6 +81,7 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	{ "techno-single8",	8,	true,	StepsTypeCategory_Single },
 	{ "techno-double4",	8,	true,	StepsTypeCategory_Double },
 	{ "techno-double5",	10,	true,	StepsTypeCategory_Double },
+	{ "techno-double8",	16,	true,	StepsTypeCategory_Double },
 	// pop'n music
 	{ "pnm-five",		5,	true,	StepsTypeCategory_Single },	// called "pnm" for backward compat
 	{ "pnm-nine",		9,	true,	StepsTypeCategory_Single },	// called "pnm" for backward compat
@@ -814,28 +815,28 @@ static const Style g_Style_Pump_Routine =
 	10,				// m_iColsPerPlayer
 	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 		{	// PLAYER_1
-			{ TRACK_1,	-PUMP_COL_SPACING*4.6f-4, NULL },
-			{ TRACK_2,	-PUMP_COL_SPACING*3.6f-4, NULL },
-			{ TRACK_3,	-PUMP_COL_SPACING*2.6f-4, NULL },
-			{ TRACK_4,	-PUMP_COL_SPACING*1.6f-4, NULL },
-			{ TRACK_5,	-PUMP_COL_SPACING*0.6f-4, NULL },
-			{ TRACK_6,	+PUMP_COL_SPACING*0.6f+4, NULL },
-			{ TRACK_7,	+PUMP_COL_SPACING*1.6f+4, NULL },
-			{ TRACK_8,	+PUMP_COL_SPACING*2.6f+4, NULL },
-			{ TRACK_9,	+PUMP_COL_SPACING*3.6f+4, NULL },
-			{ TRACK_10,	+PUMP_COL_SPACING*4.6f+4, NULL },
+			{ TRACK_1,	-PUMP_COL_SPACING*4.5f-4, NULL },
+			{ TRACK_2,	-PUMP_COL_SPACING*3.5f-4, NULL },
+			{ TRACK_3,	-PUMP_COL_SPACING*2.5f-4, NULL },
+			{ TRACK_4,	-PUMP_COL_SPACING*1.5f-4, NULL },
+			{ TRACK_5,	-PUMP_COL_SPACING*0.5f-4, NULL },
+			{ TRACK_6,	+PUMP_COL_SPACING*0.5f+4, NULL },
+			{ TRACK_7,	+PUMP_COL_SPACING*1.5f+4, NULL },
+			{ TRACK_8,	+PUMP_COL_SPACING*2.5f+4, NULL },
+			{ TRACK_9,	+PUMP_COL_SPACING*3.5f+4, NULL },
+			{ TRACK_10,	+PUMP_COL_SPACING*4.5f+4, NULL },
 		},
 		{	// PLAYER_2
-			{ TRACK_1,	-PUMP_COL_SPACING*4.6f-4, NULL },
-			{ TRACK_2,	-PUMP_COL_SPACING*3.6f-4, NULL },
-			{ TRACK_3,	-PUMP_COL_SPACING*2.6f-4, NULL },
-			{ TRACK_4,	-PUMP_COL_SPACING*1.6f-4, NULL },
-			{ TRACK_5,	-PUMP_COL_SPACING*0.6f-4, NULL },
-			{ TRACK_6,	+PUMP_COL_SPACING*0.6f+4, NULL },
-			{ TRACK_7,	+PUMP_COL_SPACING*1.6f+4, NULL },
-			{ TRACK_8,	+PUMP_COL_SPACING*2.6f+4, NULL },
-			{ TRACK_9,	+PUMP_COL_SPACING*3.6f+4, NULL },
-			{ TRACK_10,	+PUMP_COL_SPACING*4.6f+4, NULL },
+			{ TRACK_1,	-PUMP_COL_SPACING*4.5f-4, NULL },
+			{ TRACK_2,	-PUMP_COL_SPACING*3.5f-4, NULL },
+			{ TRACK_3,	-PUMP_COL_SPACING*2.5f-4, NULL },
+			{ TRACK_4,	-PUMP_COL_SPACING*1.5f-4, NULL },
+			{ TRACK_5,	-PUMP_COL_SPACING*0.5f-4, NULL },
+			{ TRACK_6,	+PUMP_COL_SPACING*0.5f+4, NULL },
+			{ TRACK_7,	+PUMP_COL_SPACING*1.5f+4, NULL },
+			{ TRACK_8,	+PUMP_COL_SPACING*2.5f+4, NULL },
+			{ TRACK_9,	+PUMP_COL_SPACING*3.5f+4, NULL },
+			{ TRACK_10,	+PUMP_COL_SPACING*4.5f+4, NULL },
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
@@ -2301,6 +2302,66 @@ static const Style g_Style_Techno_Double5 =
 		},
 	},
 	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
+		{ 1, 6, 4, 3, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
+		{ 1, 6, 4, 3, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+	},
+	false, // m_bNeedsZoomOutWith2Players
+	false, // m_bCanUseBeginnerHelper
+	false, // m_bLockDifficulties
+};
+
+static const Style g_Style_Techno_Double8 =
+{	// STYLE_TECHNO_DOUBLE8
+	true,				// m_bUsedForGameplay
+	true,				// m_bUsedForEdit
+	false,				// m_bUsedForDemonstration
+	false,				// m_bUsedForHowToPlay
+	"double8",			// m_szName
+	StepsType_techno_double8,	// m_StepsType
+	StyleType_OnePlayerTwoSides,		// m_StyleType
+	16,				// m_iColsPerPlayer
+	{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_1,	-TECHNO_VERSUS_COL_SPACING*7.5f, NULL },
+			{ TRACK_2,	-TECHNO_VERSUS_COL_SPACING*6.5f, NULL },
+			{ TRACK_3,	-TECHNO_VERSUS_COL_SPACING*5.5f, NULL },
+			{ TRACK_4,	-TECHNO_VERSUS_COL_SPACING*4.5f, NULL },
+			{ TRACK_5,	-TECHNO_VERSUS_COL_SPACING*3.5f, NULL },
+			{ TRACK_6,	-TECHNO_VERSUS_COL_SPACING*2.5f, NULL },
+			{ TRACK_7,	-TECHNO_VERSUS_COL_SPACING*1.5f, NULL },
+			{ TRACK_8,	-TECHNO_VERSUS_COL_SPACING*0.5f, NULL },
+			{ TRACK_9,	+TECHNO_VERSUS_COL_SPACING*0.5f, NULL },
+			{ TRACK_10,	+TECHNO_VERSUS_COL_SPACING*1.5f, NULL },
+			{ TRACK_11,	+TECHNO_VERSUS_COL_SPACING*2.5f, NULL },
+			{ TRACK_12,	+TECHNO_VERSUS_COL_SPACING*3.5f, NULL },
+			{ TRACK_13,	+TECHNO_VERSUS_COL_SPACING*4.5f, NULL },
+			{ TRACK_14,	+TECHNO_VERSUS_COL_SPACING*5.5f, NULL },
+			{ TRACK_15,	+TECHNO_VERSUS_COL_SPACING*6.5f, NULL },
+			{ TRACK_16,	+TECHNO_VERSUS_COL_SPACING*7.5f, NULL },
+		},
+		{	// PLAYER_2
+			{ TRACK_1,	-TECHNO_VERSUS_COL_SPACING*7.5f, NULL },
+			{ TRACK_2,	-TECHNO_VERSUS_COL_SPACING*6.5f, NULL },
+			{ TRACK_3,	-TECHNO_VERSUS_COL_SPACING*5.5f, NULL },
+			{ TRACK_4,	-TECHNO_VERSUS_COL_SPACING*4.5f, NULL },
+			{ TRACK_5,	-TECHNO_VERSUS_COL_SPACING*3.5f, NULL },
+			{ TRACK_6,	-TECHNO_VERSUS_COL_SPACING*2.5f, NULL },
+			{ TRACK_7,	-TECHNO_VERSUS_COL_SPACING*1.5f, NULL },
+			{ TRACK_8,	-TECHNO_VERSUS_COL_SPACING*0.5f, NULL },
+			{ TRACK_9,	+TECHNO_VERSUS_COL_SPACING*0.5f, NULL },
+			{ TRACK_10,	+TECHNO_VERSUS_COL_SPACING*1.5f, NULL },
+			{ TRACK_11,	+TECHNO_VERSUS_COL_SPACING*2.5f, NULL },
+			{ TRACK_12,	+TECHNO_VERSUS_COL_SPACING*3.5f, NULL },
+			{ TRACK_13,	+TECHNO_VERSUS_COL_SPACING*4.5f, NULL },
+			{ TRACK_14,	+TECHNO_VERSUS_COL_SPACING*5.5f, NULL },
+			{ TRACK_15,	+TECHNO_VERSUS_COL_SPACING*6.5f, NULL },
+			{ TRACK_16,	+TECHNO_VERSUS_COL_SPACING*7.5f, NULL },
+		},
+	},
+	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
 		{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING,
 			1, 3, 2, 0, 4, Style::END_MAPPING },
 		{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING,
@@ -2324,6 +2385,7 @@ static const Style *g_apGame_Techno_Styles[] =
 	&g_Style_Techno_Versus8,
 	&g_Style_Techno_Double4,
 	&g_Style_Techno_Double5,
+	&g_Style_Techno_Double8,
 	NULL
 };
 
@@ -2544,7 +2606,7 @@ static const Game g_Game_Popn =
 
 /** Guitar5 ******************************************************************/
 //ThemeMetric<int>	GUITAR5_COL_SPACING	("ColumnSpacing","Guitar5");
-static const int GUITAR5_COL_SPACING = 48; // todo: get a proper value? -aj
+static const int GUITAR5_COL_SPACING = 48;
 
 static const Style g_Style_Guitar_Five =
 {	// STYLE_GUITAR_FIVE
@@ -2989,7 +3051,7 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 	sStepsType.MakeLower();
 
 	// TODO: Format specific hacks should be moved into the file loader for that format.
-	// If i'm assuming this correctly, these only apply to .sm files: -aj
+	// If i'm assuming this correctly, these two only apply to .sm files: -aj
 
 	// HACK: We eliminated "ez2-single-hard", but we should still handle it.
 	if( sStepsType == "ez2-single-hard" )

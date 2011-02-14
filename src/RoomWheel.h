@@ -30,6 +30,7 @@ public:
 private:
 	AutoActor	m_sprNormalPart;
 	AutoActor	m_sprColorPart;
+	AutoActor	m_sprOverPart;
 	BitmapText	m_text;
 	BitmapText	m_Desc;
 };

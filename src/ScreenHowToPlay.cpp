@@ -5,6 +5,7 @@
 #include "Steps.h"
 #include "GameManager.h"
 #include "NotesLoaderSM.h"
+#include "NotesLoaderSSC.h"
 #include "GameSoundManager.h"
 #include "Model.h"
 #include "ThemeMetric.h"
@@ -20,9 +21,10 @@
 
 static const ThemeMetric<int>		NUM_W2S		("ScreenHowToPlay","NumW2s");
 static const ThemeMetric<int>		NUM_MISSES	("ScreenHowToPlay","NumMisses");
-static const ThemeMetric<bool>		USE_CHARACTER	("ScreenHowToPlay","UseCharacter");
-static const ThemeMetric<bool>		USE_PAD		("ScreenHowToPlay","UsePad");
-static const ThemeMetric<bool>		USE_PLAYER	("ScreenHowToPlay","UsePlayer");
+static const ThemeMetric<bool>	USE_CHARACTER	("ScreenHowToPlay","UseCharacter");
+static const ThemeMetric<bool>	USE_PAD		("ScreenHowToPlay","UsePad");
+static const ThemeMetric<bool>	USE_PLAYER	("ScreenHowToPlay","UsePlayer");
+static const ThemeMetric<RString>	CHARACTER_NAME("ScreenHowToPlay","CharacterName");
 
 enum Animation
 {
@@ -46,7 +48,6 @@ static const RString anims[NUM_ANIMATIONS] =
 	"BeginnerHelper_step-right.bones.txt",
 	"BeginnerHelper_step-jumplr.bones.txt"
 };
-
 
 static RString GetAnimPath( Animation a )
 {
@@ -82,40 +83,46 @@ void ScreenHowToPlay::Init()
 		m_pmDancePad = new Model;
 		m_pmDancePad->SetName( "Pad" );
 		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) );
+		// xxx: hardcoded rotation. can be undone, but still. -freem
 		m_pmDancePad->SetRotationX( 35 );
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pmDancePad );
+		ActorUtil::LoadAllCommandsAndSetXY( m_pmDancePad, m_sName );
 	}
-	
-	// Display random character
+
+	// Display a character
 	vector<Character*> vpCharacters;
 	CHARMAN->GetCharacters( vpCharacters );
 	if( (bool)USE_CHARACTER && vpCharacters.size() && HaveAllCharAnimations() )
 	{
-		Character* rndchar = CHARMAN->GetRandomCharacter();
+		Character* displayChar;
+		if( !CHARACTER_NAME.GetValue().empty() && CHARMAN->GetCharacterFromID(CHARACTER_NAME) )
+			displayChar = CHARMAN->GetCharacterFromID(CHARACTER_NAME);
+		else
+			displayChar = CHARMAN->GetRandomCharacter();
 
-		RString sModelPath = rndchar->GetModelPath();
+		RString sModelPath = displayChar->GetModelPath();
 		if( sModelPath != "" )
 		{
 			m_pmCharacter = new Model;
 			m_pmCharacter->SetName( "Character" );
-			m_pmCharacter->LoadMilkshapeAscii( rndchar->GetModelPath() );
+			m_pmCharacter->LoadMilkshapeAscii( displayChar->GetModelPath() );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-LEFT", GetAnimPath( ANIM_LEFT ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-DOWN", GetAnimPath( ANIM_DOWN ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-UP", GetAnimPath( ANIM_UP ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-RIGHT", GetAnimPath( ANIM_RIGHT ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-JUMPLR", GetAnimPath( ANIM_JUMPLR ) );
-			RString sRestFile = rndchar->GetRestAnimationPath();
+			RString sRestFile = displayChar->GetRestAnimationPath();
 			ASSERT( !sRestFile.empty() );
-			m_pmCharacter->LoadMilkshapeAsciiBones( "rest",rndchar->GetRestAnimationPath() );
+			m_pmCharacter->LoadMilkshapeAsciiBones( "rest",displayChar->GetRestAnimationPath() );
 			m_pmCharacter->SetDefaultAnimation( "rest" );
-			m_pmCharacter->PlayAnimation( "rest" );				// Stay bouncing after a step has finished animating.
-			
+			m_pmCharacter->PlayAnimation( "rest" ); // Stay bouncing after a step has finished animating.
+
+			// xxx: hardcoded rotation. can be undone, but still. -freem
 			m_pmCharacter->SetRotationX( 40 );
-			m_pmCharacter->SetCullMode( CULL_NONE );	// many of the models floating around have the vertex order flipped
-			LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pmCharacter );
+			m_pmCharacter->SetCullMode( CULL_NONE ); // many of the models floating around have the vertex order flipped
+			ActorUtil::LoadAllCommandsAndSetXY( m_pmCharacter, m_sName );
 		}
 	}
-	
+
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
 
 	if( USE_PLAYER )
@@ -123,17 +130,20 @@ void ScreenHowToPlay::Init()
 		m_pLifeMeterBar = new LifeMeterBar;
 		m_pLifeMeterBar->SetName("LifeMeterBar");
 		m_pLifeMeterBar->Load( GAMESTATE->m_pPlayerState[PLAYER_1], &STATSMAN->m_CurStageStats.m_player[PLAYER_1] );
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_pLifeMeterBar );
+		ActorUtil::LoadAllCommandsAndSetXY( m_pLifeMeterBar, m_sName );
 		m_pLifeMeterBar->FillForHowToPlay( NUM_W2S, NUM_MISSES );
 
-
-		SMLoader::LoadFromSMFile( THEME->GetPathO(m_sName, "steps"), m_Song, false );
+		// Allow themers to use .ssc and .sm files. -aj
+		bool bLoadedSSCFile = SSCLoader::LoadFromSSCFile( THEME->GetPathO(m_sName, "steps"), m_Song, false );
+		if( !bLoadedSSCFile )
+			SMLoader::LoadFromSMFile( THEME->GetPathO(m_sName, "steps"), m_Song, false );
 		m_Song.AddAutoGenNotes();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
-		
+
 		Steps *pSteps = SongUtil::GetStepsByDescription( &m_Song, pStyle->m_StepsType, "" );
-		ASSERT_M( pSteps != NULL, ssprintf("%i", pStyle->m_StepsType) );
+		// todo: make StepsType human readable. -aj
+		ASSERT_M( pSteps != NULL, ssprintf("StepsType %i is NULL", pStyle->m_StepsType) );
 
 		NoteData tempNoteData;
 		pSteps->GetNoteData( tempNoteData );
@@ -157,7 +167,7 @@ void ScreenHowToPlay::Init()
 		m_Player.Load( m_NoteData );
 		m_Player->SetName( "Player" );
 		this->AddChild( m_Player );
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( m_Player );
+		ActorUtil::LoadAllCommandsAndSetXY( m_Player, m_sName );
 
 		// Don't show judgement
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fBlind, 1.0f );
@@ -188,6 +198,7 @@ ScreenHowToPlay::~ScreenHowToPlay()
 
 void ScreenHowToPlay::Step()
 {
+// xxx: assumes dance. -freem
 #define ST_LEFT		0x01
 #define ST_DOWN		0x02
 #define ST_UP		0x04
@@ -215,7 +226,7 @@ void ScreenHowToPlay::Step()
 		case ST_JUMPUD:
 			// Until I can get an UP+DOWN jump animation, this will have to do.
 			m_pmCharacter->PlayAnimation( "Step-JUMPLR", 1.8f );
-			
+
 			m_pmCharacter->StopTweening();
 			m_pmCharacter->BeginTweening( GAMESTATE->m_fCurBPS /8, TWEEN_LINEAR );
 			m_pmCharacter->SetRotationY( 90 );
@@ -250,14 +261,20 @@ void ScreenHowToPlay::Update( float fDelta )
 			iLastNoteRowCounted = iCurNoteRow;
 		}
 
-		// once we hit the number of perfects we want, we want to fail.
-		// switch the controller to HUMAN. since we aren't taking input,
-		// the steps will always be misses.
+		// Once we hit the number of perfects we want, we want to fail. Switch
+		// the controller to HUMAN. Since we aren't taking input, the steps will
+		// always be misses.
 		if( m_iW2s > m_iNumW2s )
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 
+		// Per the above code, we don't always want the character stepping.
+		// If they try to make all of the steps in the miss part, they look
+		// silly. Have then stand still instead. - freem
 		if ( m_pmCharacter )
-			Step();
+		{
+			if( m_iW2s <= m_iNumW2s )
+				Step();
+		}
 	}
 
 	ScreenAttract::Update( fDelta );
@@ -267,7 +284,7 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GainFocus )
 	{
-		/* We do this ourself. */
+		// We do this ourself.
 		SOUND->HandleSongTimer( false );
 	}
 	else if( SM == SM_LoseFocus )
@@ -280,7 +297,6 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	ScreenAttract::HandleScreenMessage( SM );
 }
-
 
 // lua start
 #include "LuaBinding.h"

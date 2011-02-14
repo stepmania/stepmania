@@ -53,6 +53,7 @@ protected:
 	ThemeMetric<int>		WARNING_START;
 	ThemeMetric<int>		WARNING_BEEP_START;
 	ThemeMetric<float>		MAX_STALL_SECONDS;
+	ThemeMetric<float>		HURRY_UP_TRANSITION;
 	ThemeMetric1D<apActorCommands>	*WARNING_COMMAND;
 };
 

@@ -20,7 +20,7 @@
 #include "NoteData.h"
 #include "GameManager.h"
 #include "NoteDataUtil.h"
-#include "NotesLoaderSM.h"
+#include "NotesLoaderSSC.h"
 
 #include <algorithm>
 
@@ -231,7 +231,7 @@ void Steps::Decompress() const
 	{
 		/* We have data on disk and not in memory.  Load it. */
 		Song s;
-		if( !SMLoader::LoadFromSMFile(m_sFilename, s, true) )
+		if( !SSCLoader::LoadFromSSCFile(m_sFilename, s, true) )
 		{
 			LOG->Warn( "Couldn't load \"%s\"", m_sFilename.c_str() );
 			return;
@@ -322,7 +322,7 @@ void Steps::DeAutogen( bool bCopyNoteData )
 	m_Difficulty		= Real()->m_Difficulty;
 	m_iMeter		= Real()->m_iMeter;
 	copy( Real()->m_CachedRadarValues, Real()->m_CachedRadarValues + NUM_PLAYERS, m_CachedRadarValues );
-
+	m_sCredit		= Real()->m_sCredit;
 	parent = NULL;
 
 	if( bCopyNoteData )
@@ -366,6 +366,12 @@ void Steps::SetDifficultyAndDescription( Difficulty dc, RString sDescription )
 		MakeValidEditDescription( m_sDescription );
 }
 
+void Steps::SetCredit( RString sCredit )
+{
+	DeAutogen();
+	m_sCredit = sCredit;
+}
+
 bool Steps::MakeValidEditDescription( RString &sPreferredDescription )
 {
 	if( int(sPreferredDescription.size()) > MAX_EDIT_STEPS_DESCRIPTION_LENGTH )
@@ -391,13 +397,14 @@ void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 
 // lua start
 #include "LuaBinding.h"
-
+/** @brief Allow Lua to have access to the Steps. */
 class LunaSteps: public Luna<Steps>
 {
 public:
 	DEFINE_METHOD( GetStepsType,	m_StepsType )
 	DEFINE_METHOD( GetDifficulty,	GetDifficulty() )
 	DEFINE_METHOD( GetDescription,	GetDescription() )
+	DEFINE_METHOD( GetAuthorCredit, GetCredit() )
 	DEFINE_METHOD( GetMeter,	GetMeter() )
 	DEFINE_METHOD( GetFilename,	GetFilename() )
 	DEFINE_METHOD( IsAutogen,	IsAutogen() )
@@ -428,6 +435,7 @@ public:
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( GetDifficulty );
 		ADD_METHOD( GetDescription );
+		ADD_METHOD( GetAuthorCredit );
 		ADD_METHOD( GetMeter );
 		ADD_METHOD( GetFilename );
 		ADD_METHOD( GetRadarValues );

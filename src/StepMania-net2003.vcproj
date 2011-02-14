@@ -987,6 +987,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="NotesLoaderSM.h">
 			</File>
 			<File
+				RelativePath="NotesLoaderSSC.cpp">
+			</File>
+			<File
+				RelativePath="NotesLoaderSSC.h">
+			</File>
+			<File
 				RelativePath="NotesWriterDWI.cpp">
 			</File>
 			<File
@@ -997,6 +1003,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="NotesWriterSM.h">
+			</File>
+			<File
+				RelativePath="NotesWriterSSC.cpp">
+			</File>
+			<File
+				RelativePath="NotesWriterSSC.h">
 			</File>
 			<File
 				RelativePath="NoteTypes.cpp">
@@ -1347,12 +1359,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="GrooveRadar.h">
 			</File>
 			<File
-				RelativePath="GroupList.cpp">
-			</File>
-			<File
-				RelativePath="GroupList.h">
-			</File>
-			<File
 				RelativePath="HelpDisplay.cpp">
 			</File>
 			<File
@@ -1381,12 +1387,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\ModIconRow.h">
-			</File>
-			<File
-				RelativePath="MusicList.cpp">
-			</File>
-			<File
-				RelativePath="MusicList.h">
 			</File>
 			<File
 				RelativePath=".\MusicWheel.cpp">

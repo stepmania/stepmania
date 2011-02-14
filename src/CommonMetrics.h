@@ -1,4 +1,4 @@
-/* CommonMetrics - Definitions of metrics that are in the "Common" group */
+/** @brief CommonMetrics - Definitions of metrics that are in the "Common" group */
 
 #ifndef COMMON_METRICS_H
 #define COMMON_METRICS_H
@@ -42,19 +42,25 @@ private:
 };
 
 
-// Metrics
+/** @brief The common metrics that are used throughout. */
 namespace CommonMetrics
 {
 	extern ThemeMetric<RString>			FIRST_ATTRACT_SCREEN;
 	extern ThemeMetric<RString>			DEFAULT_MODIFIERS;
-	extern LocalizedString					WINDOW_TITLE;
+	/** @brief the phrase that appears on the title bar. */
+	extern LocalizedString				WINDOW_TITLE;
 	extern ThemeMetric<int>				MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
-	extern ThemeMetric<float>				TICK_EARLY_SECONDS;
+	extern ThemeMetric<float>			TICK_EARLY_SECONDS;
+	/** @brief the name of the default noteskin. */
 	extern ThemeMetric<RString>			DEFAULT_NOTESKIN_NAME;
-	extern ThemeMetricDifficultiesToShow	DIFFICULTIES_TO_SHOW;
+	/** @brief Which difficulties are to be shown? */
+	extern ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
+	/** @brief Which course difficulties are to be shown? */
 	extern ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
+	/** @brief Which step types are to be shown? */
 	extern ThemeMetricStepsTypesToShow		STEPS_TYPES_TO_SHOW;
-	extern ThemeMetric<bool>				AUTO_SET_STYLE;
+	extern ThemeMetric<bool>			AUTO_SET_STYLE;
+	/** @brief How many decimal places are used? */
 	extern ThemeMetric<int>				PERCENT_SCORE_DECIMAL_PLACES;
 
 	RString LocalizeOptionItem( const RString &s, bool bOptional );
@@ -62,8 +68,10 @@ namespace CommonMetrics
 
 #endif
 
-/*
- * (c) 2003-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

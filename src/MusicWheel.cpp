@@ -86,6 +86,10 @@ void MusicWheel::Load( RString sType )
 	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
 	SECTION_COLORS			.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
 
+	ROULETTE_COLOR				.Load(sType,"RouletteColor");
+	RANDOM_COLOR				.Load(sType,"RandomColor");
+	PORTAL_COLOR				.Load(sType,"PortalColor");
+
 	WheelBase::Load( sType );
 
 	SONGMAN->UpdateRankingCourses();
@@ -629,6 +633,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 						iSectionCount = j-i;
 
 						// new section, make a section item
+						// todo: preferred sort section color handling? -aj
 						RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
 						// In certain situations (e.g. simulating Pump it Up), themes may
@@ -644,7 +649,7 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 			if( so != SORT_ROULETTE )
 			{
 				if( SHOW_ROULETTE )
-					arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1), 0) );
+					arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_ROULETTE, NULL, "", NULL, ROULETTE_COLOR, 0) );
 
 				// Only add TYPE_PORTAL if there's at least one song on the list.
 				bool bFoundAnySong = false;
@@ -653,10 +658,10 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 						bFoundAnySong = true;
 
 				if( SHOW_RANDOM && bFoundAnySong )
-					arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1), 0) );
+					arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_RANDOM, NULL, "", NULL, RANDOM_COLOR, 0) );
 
 				if( SHOW_PORTAL && bFoundAnySong )
-					arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_PORTAL, NULL, "", NULL, RageColor(1,0,0,1), 0) );
+					arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_PORTAL, NULL, "", NULL, PORTAL_COLOR, 0) );
 			}
 
 			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )

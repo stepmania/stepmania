@@ -97,7 +97,8 @@ void SongUtil::GetSteps(
 	Difficulty dc, 
 	int iMeterLow, 
 	int iMeterHigh, 
-	const RString &sDescription, 
+	const RString &sDescription,
+	const RString &sCredit,
 	bool bIncludeAutoGen, 
 	unsigned uHash,
 	int iMaxToGet 
@@ -118,6 +119,8 @@ void SongUtil::GetSteps(
 		if( iMeterHigh != -1 && iMeterHigh < pSteps->GetMeter() )
 			continue;
 		if( sDescription.size() && sDescription != pSteps->GetDescription() )
+			continue;
+		if( sCredit.size() && sCredit != pSteps->GetCredit() )
 			continue;
 		if( uHash != 0 && uHash != pSteps->GetHash() )
 			continue;
@@ -141,13 +144,14 @@ Steps* SongUtil::GetOneSteps(
 	Difficulty dc, 
 	int iMeterLow, 
 	int iMeterHigh, 
-	const RString &sDescription, 
+	const RString &sDescription,
+	const RString &sCredit,
 	unsigned uHash,
 	bool bIncludeAutoGen
 	)
 {
 	vector<Steps*> vpSteps;
-	GetSteps( pSong, vpSteps, st, dc, iMeterLow, iMeterHigh, sDescription, bIncludeAutoGen, uHash, 1 );	// get max 1
+	GetSteps( pSong, vpSteps, st, dc, iMeterLow, iMeterHigh, sDescription, sCredit, bIncludeAutoGen, uHash, 1 );	// get max 1
 	if( vpSteps.empty() )
 		return NULL;
 	else
@@ -193,10 +197,20 @@ Steps* SongUtil::GetStepsByMeter( const Song *pSong, StepsType st, int iMeterLow
 Steps* SongUtil::GetStepsByDescription( const Song *pSong, StepsType st, RString sDescription )
 {
 	vector<Steps*> vNotes;
-	GetSteps( pSong, vNotes, st, Difficulty_Invalid, -1, -1, sDescription );
+	GetSteps( pSong, vNotes, st, Difficulty_Invalid, -1, -1, sDescription, "" );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 
+		return vNotes[0];
+}
+
+Steps* SongUtil::GetStepsByCredit( const Song *pSong, StepsType st, RString sCredit )
+{
+	vector<Steps*> vNotes;
+	GetSteps(pSong, vNotes, st, Difficulty_Invalid, -1, -1, "", sCredit );
+	if( vNotes.size() == 0 )
+		return NULL;
+	else
 		return vNotes[0];
 }
 
@@ -266,7 +280,11 @@ void SongUtil::AdjustDuplicateSteps( Song *pSong )
 		 * These are confusing, and they're ambiguous when passed to GetStepsByID. */
 	}
 }
-
+/**
+ * @brief Remove the initial whitespace characters.
+ * @param s the string to left trim.
+ * @return the trimmed string.
+ */
 static RString RemoveInitialWhitespace( RString s )
 {
 	size_t i = s.find_first_not_of(" \t\r\n");
@@ -279,7 +297,7 @@ static RString RemoveInitialWhitespace( RString s )
 void SongUtil::DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps )
 {
 	/* vSteps have the same StepsType and Difficulty.  Delete them if they have the
-	 * same m_sDescription, m_iMeter and SMNoteData. */
+	 * same m_sDescription, m_sCredit, m_iMeter and SMNoteData. */
 	CHECKPOINT;
 	for( unsigned i=0; i<vSteps.size(); i++ )
 	{
@@ -293,6 +311,8 @@ void SongUtil::DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps )
 
 			if( s1->GetDescription() != s2->GetDescription() )
 				continue;
+			if( s1->GetCredit() != s2->GetCredit() )
+				continue;
 			if( s1->GetMeter() != s2->GetMeter() )
 				continue;
 			/* Compare, ignoring whitespace. */
@@ -303,8 +323,8 @@ void SongUtil::DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps )
 			if( RemoveInitialWhitespace(sSMNoteData1) != RemoveInitialWhitespace(sSMNoteData2) )
 				continue;
 
-			LOG->Trace("Removed %p duplicate steps in song \"%s\" with description \"%s\" and meter \"%i\"",
-				s2, pSong->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
+			LOG->Trace("Removed %p duplicate steps in song \"%s\" with description \"%s\", step author \"%s\", and meter \"%i\"",
+				s2, pSong->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetCredit().c_str(), s1->GetMeter() );
 				
 			pSong->DeleteSteps( s2, false );
 
@@ -649,9 +669,9 @@ void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, S
 	{
 		RString val = GetSectionNameFromSongAndSort( vpSongsInOut[i], so );
 
-		/* Make sure 0-9 comes first and OTHER comes last. */
+		// Make sure 0-9 comes first and OTHER comes last.
 		if( val == "0-9" )			val = "0";
-		else if( val == sOther )    val = "2";
+		else if( val == sOther )	val = "2";
 		else						val = "1" + MakeSortString(val);
 
 		g_mapSongSortVal[vpSongsInOut[i]] = val;
@@ -666,25 +686,20 @@ void SongUtil::SortSongPointerArrayByStepsTypeAndMeter( vector<Song*> &vpSongsIn
 	g_mapSongSortVal.clear();
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 	{
-		/* Ignore locked steps. */
+		// Ignore locked steps.
 		const Steps* pSteps = GetClosestNotes( vpSongsInOut[i], st, dc, true );
 		RString &s = g_mapSongSortVal[vpSongsInOut[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 
-		/* 
-		 * pSteps may not be exactly the difficulty we want; for example, we may
-		 * be sorting by Hard difficulty and a song may have no Hard steps.
-		 *
+		/* pSteps may not be exactly the difficulty we want; for example, we
+		 * may be sorting by Hard difficulty and a song may have no Hard steps.
 		 * In this case, we can end up with unintuitive ties; for example, pSteps
 		 * may be Medium with a meter of 5, which will sort it among the 5-meter
 		 * Hard songs.  Break the tie, by adding the difficulty to the sort as
-		 * well.  That way, we'll always put Medium 5s before Hard 5s.  If all
-		 * songs are using the preferred difficulty (dc), this will be a no-op.
-		 */
+		 * well. That way, we'll always put Medium 5s before Hard 5s. If all
+		 * songs are using the preferred difficulty (dc), this will be a no-op. */
 		s += ssprintf( "%c", (pSteps? pSteps->GetDifficulty():0) + '0' );
 
-		// ???: will this cause a crash with player 2 only? -aj
-		// no, but I'm not sure if it causes problems either...
 		if( PREFSMAN->m_bSubSortByNumSteps )
 			s += ssprintf("%06.0f",pSteps ? pSteps->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds] : 0);
 	}
@@ -775,7 +790,7 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 	FOREACH_CONST( Steps*, v, s )
 	{
 		if( pSteps == *s )
-			continue;	// don't compare name against ourself
+			continue; // don't compare name against ourself
 
 		if( (*s)->GetDescription() == sAnswer )
 		{
@@ -792,11 +807,11 @@ bool SongUtil::ValidateCurrentStepsDescription( const RString &sAnswer, RString 
 	if( sAnswer.empty() )
 		return true;
 
-	/* Don't allow duplicate edit names within the same StepsType; edit names uniquely
-	 * identify the edit. */
+	/* Don't allow duplicate edit names within the same StepsType; edit names
+	 * uniquely identify the edit. */
 	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 
-	/* If unchanged: */
+	// If unchanged:
 	if( pSteps->GetDescription() == sAnswer )
 		return true;
 
@@ -805,6 +820,29 @@ bool SongUtil::ValidateCurrentStepsDescription( const RString &sAnswer, RString 
 		return SongUtil::ValidateCurrentEditStepsDescription( sAnswer, sErrorOut );
 	}
 
+	return true;
+}
+
+static LocalizedString AUTHOR_NAME_CANNOT_CONTAIN( "SongUtil", "The step author's name cannot contain any of the following characters: %s" );
+
+bool SongUtil::ValidateCurrentStepsCredit( const RString &sAnswer, RString &sErrorOut )
+{
+	if( sAnswer.empty() )
+		return true;
+	
+	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	// If unchanged:
+	if( pSteps->GetCredit() == sAnswer )
+		return true;
+	
+	// Borrow from EditDescription testing. Perhaps this should be abstracted? -Wolfman2000
+	static const RString sInvalidChars = "\\/:*?\"<>|";
+	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	{
+		sErrorOut = ssprintf( AUTHOR_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		return false;
+	}
+	
 	return true;
 }
 
@@ -867,8 +905,8 @@ void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 	FOREACH( const Style*, vpPossibleStyles, s )
 		vStepsTypes.insert( (*s)->m_StepsType );
 
-	/* filter out hidden StepsTypes, and remove steps that we don't
-	 * have enough stages left to play. */
+	/* filter out hidden StepsTypes, and remove steps that we don't have enough
+	 * stages left to play. */
 	// this being const may have caused some problems... -aj
 	const vector<StepsType> &vstToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
 	FOREACHS( StepsType, vStepsTypes, st )
@@ -989,8 +1027,8 @@ Song *SongID::ToSong() const
 	Song *pRet = NULL;
 	if( !m_Cache.Get(&pRet) )
 	{
-		// HACK for backwards compatibility:
-		// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
+		// HACK for backwards compatibility: Re-add the leading "/".
+		// 2005/05/21 file layer changes added a leading slash.
 		RString sDir2 = sDir;
 		if( sDir2.Left(1) != "/" )
 			sDir2 = "/" + sDir2;
@@ -1005,9 +1043,7 @@ Song *SongID::ToSong() const
 XNode* SongID::CreateNode() const
 {
 	XNode* pNode = new XNode( "Song" );
-
 	pNode->AppendAttr( "Dir", sDir );
-
 	return pNode;
 }
 
@@ -1059,7 +1095,6 @@ namespace
 }
 
 LUA_REGISTER_NAMESPACE( SongUtil )
-
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

@@ -1,4 +1,4 @@
-/* RageUtil - Miscellaneous helper macros and functions. */
+/** @brief RageUtil - Miscellaneous helper macros and functions. */
 
 #ifndef RAGE_UTIL_H
 #define RAGE_UTIL_H
@@ -7,12 +7,16 @@
 #include <vector>
 class RageFileDriver;
 
+/** @brief Safely delete pointers. */
 #define SAFE_DELETE(p)       do { delete (p);     (p)=NULL; } while( false )
+/** @brief Safely delete array pointers. */
 #define SAFE_DELETE_ARRAY(p) do { delete[] (p);   (p)=NULL; } while( false )
 
+/** @brief Zero out the memory. */
 #define ZERO(x)	memset(&(x), 0, sizeof(x))
+/** @brief Copy from a to b. */
 #define COPY(a,b) do { ASSERT(sizeof(a)==sizeof(b)); memcpy(&(a), &(b), sizeof(a)); } while( false )
-
+/** @brief Get the length of the array. */
 #define ARRAYLEN(a) (sizeof(a) / sizeof((a)[0]))
 
 /* Common harmless mismatches.  All min(T,T) and max(T,T) cases are handled
@@ -26,13 +30,19 @@ inline unsigned long min( unsigned long a, unsigned int b ) { return a < b? a:b;
 inline unsigned long max( unsigned int a, unsigned long b ) { return a > b? a:b; }
 inline unsigned long max( unsigned long a, unsigned int b ) { return a > b? a:b; }
 
+/** @brief If outside the range from low to high, bring it within range. */
 #define clamp(val,low,high)		( max( (low), min((val),(high)) ) )
 
-// Scales x so that l1 corresponds to l2 and h1 corresponds to h2.  Does not modify x, MUST assign the result to something!
-// Do the multiply before the divide to that integer scales have more precision.
+/**
+ * @brief Scales x so that l1 corresponds to l2 and h1 corresponds to h2.
+ *
+ * This does not modify x, so it MUST assign the result to something!
+ * Do the multiply before the divide to that integer scales have more precision.
+ *
+ * One such example: SCALE(x, 0, 1, L, H); interpolate between L and H.
+ */
 #define SCALE(x, l1, h1, l2, h2)	(((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
 
-// Like SCALE(x, 0, 1, L, H); interpolate between L and H.
 template<typename T, typename U>
 inline U lerp( T x, U l, U h )
 {
@@ -259,14 +269,21 @@ typedef MersenneTwister RandomGen;
 
 extern RandomGen g_RandomNumberGenerator;
 
-// [0.0f,1.0f)
+/**
+ * @brief Generate a random float between 0 inclusive and 1 exclusive.
+ * @return the random float.
+ */
 inline float RandomFloat()
 {
 	return g_RandomNumberGenerator() / 2147483648.0f;
 }
 
-
-// Returns a float between dLow and dHigh inclusive
+/**
+ * @brief Return a float between the low and high values.
+ * @param fLow the low value, inclusive.
+ * @param fHigh the high value, inclusive.
+ * @return the random float.
+ */
 inline float RandomFloat( float fLow, float fHigh )
 {
 	return SCALE( RandomFloat(), 0.0f, 1.0f, fLow, fHigh );
@@ -639,8 +656,10 @@ void GetConnectsDisconnects( const vector<T> &before, const vector<T> &after, ve
 
 #endif
 
-/*
- * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2005
+ * @section LICENSE
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

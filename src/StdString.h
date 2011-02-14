@@ -1,4 +1,4 @@
-/* StdString - std::string convenience wrapper. */
+/** @brief StdString - std::string convenience wrapper. */
 
 // =============================================================================
 //  FILE:  StdString.h
@@ -155,7 +155,17 @@ namespace StdString
 /* Our strings are UTF-8; instead of having to play around with locales,
  * let's just manually toupper ASCII only.  If we really want to play with
  * Unicode cases, we can do it ourself in RageUtil. */
+/**
+ * @brief Turn the character into its uppercase equivalent.
+ * @param ch the character to convert.
+ * @return the converted character.
+ */
 inline char sstoupper(char ch)		{ return (ch >= 'a' && ch <= 'z')? char(ch + 'A' - 'a'): ch; }
+/**
+ * @brief Turn the character into its lowercase equivalent.
+ * @param ch the character to convert.
+ * @return the converted character.
+ */
 inline char sstolower(char ch)		{ return (ch >= 'A' && ch <= 'Z')? char(ch + 'a' - 'A'): ch; }
 
 // -----------------------------------------------------------------------------
@@ -164,6 +174,11 @@ inline char sstolower(char ch)		{ return (ch >= 'A' && ch <= 'Z')? char(ch + 'a'
 typedef std::string::size_type		SS_SIZETYPE; // just for shorthand, really
 typedef std::string::pointer		SS_PTRTYPE;  
 
+/**
+ * @brief Assign one string to another.
+ * @param sDst the destination string.
+ * @param sSrc the source string.
+ */
 inline void	ssasn(std::string& sDst, const std::string& sSrc)
 {
 	if ( sDst.c_str() != sSrc.c_str() )
@@ -172,6 +187,11 @@ inline void	ssasn(std::string& sDst, const std::string& sSrc)
 		sDst.assign(sSrc);
 	}
 }
+/**
+ * @brief Assign one string to another.
+ * @param sDst the destination string.
+ * @param pA the source string.
+ */
 inline void	ssasn(std::string& sDst, PCSTR pA)
 {
 #if defined(HAVE_ASSIGN_FIX)
@@ -196,6 +216,11 @@ inline void	ssasn(std::string& sDst, PCSTR pA)
 		sDst.assign(pA);
 #endif
 }
+/**
+ * @brief Erase the destination string.
+ * @param sDst the destination string.
+ * @param nNull the null value.
+ */
 inline void ssasn(std::string& sDst, const int nNull)
 {
 	sDst.erase();
@@ -206,10 +231,20 @@ inline void ssasn(std::string& sDst, const int nNull)
 // -----------------------------------------------------------------------------
 // ssadd: string object concatenation -- add second argument to first
 // -----------------------------------------------------------------------------
+/**
+ * @brief Concatenate one string with another.
+ * @param sDst the original string.
+ * @param sSrc the string being added.
+ */
 inline void	ssadd(std::string& sDst, const std::string& sSrc)
 {
 	sDst += sSrc;
 }
+/**
+ * @brief Concatenate one string with another.
+ * @param sDst the original string.
+ * @param pA the string being added.
+ */
 inline void	ssadd(std::string& sDst, PCSTR pA)
 {
 	// If the string being added is our internal string or a part of our
@@ -233,20 +268,26 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 // -----------------------------------------------------------------------------
 // ssicmp: comparison (case insensitive )
 // -----------------------------------------------------------------------------
-	template<typename CT>
-	inline int ssicmp(const CT* pA1, const CT* pA2)
+/**
+ * @brief Perform a case insensitive comparison of the two strings.
+ * @param pA1 the first string.
+ * @param pA2 the second string.
+ * @return >0 if pA1 > pA2, <0 if pA1 < pA2, or 0 otherwise.
+ */
+template<typename CT>
+inline int ssicmp(const CT* pA1, const CT* pA2)
+{
+	CT f;
+	CT l;
+
+	do 
 	{
-		CT f;
-		CT l;
+		f = sstolower(*(pA1++));
+		l = sstolower(*(pA2++));
+	} while ( (f) && (f == l) );
 
-		do 
-		{
-			f = sstolower(*(pA1++));
-			l = sstolower(*(pA2++));
-		} while ( (f) && (f == l) );
-
-		return (int)(f - l);
-	}
+	return (int)(f - l);
+}
 
 // -----------------------------------------------------------------------------
 // ssupr/sslwr: Uppercase/Lowercase conversion functions
@@ -266,22 +307,22 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 	}
 #endif
 
-	inline void sslwr(char *pT, size_t nLen)
-	{
-		MakeLower( pT, nLen );
-	}
-	inline void ssupr(char *pT, size_t nLen)
-	{
-		MakeUpper( pT, nLen );
-	}
-	inline void sslwr(wchar_t *pT, size_t nLen)
-	{
-		MakeLower( pT, nLen );
-	}
-	inline void ssupr(wchar_t *pT, size_t nLen)
-	{
-		MakeUpper( pT, nLen );
-	}
+inline void sslwr(char *pT, size_t nLen)
+{
+	MakeLower( pT, nLen );
+}
+inline void ssupr(char *pT, size_t nLen)
+{
+	MakeUpper( pT, nLen );
+}
+inline void sslwr(wchar_t *pT, size_t nLen)
+{
+	MakeLower( pT, nLen );
+}
+inline void ssupr(wchar_t *pT, size_t nLen)
+{
+	MakeUpper( pT, nLen );
+}
 
 #if defined(WIN32)
 #define vsnprintf _vsnprintf
@@ -307,6 +348,12 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 template<typename CT>
 class CStdStr;
 
+/**
+ * @brief Another way to concatenate two strings together.
+ * @param str1 the original string.
+ * @param str2 the string to be added.
+ * @return the longer string.
+ */
 template<typename CT>
 inline
 CStdStr<CT> operator+(const  CStdStr<CT>& str1, const  CStdStr<CT>& str2)
@@ -315,7 +362,12 @@ CStdStr<CT> operator+(const  CStdStr<CT>& str1, const  CStdStr<CT>& str2)
 	strRet.append(str2);
 	return strRet;
 }
-
+/**
+ * @brief Another way to concatenate two strings together.
+ * @param str the original string.
+ * @param t the string to be added.
+ * @return the longer string.
+ */	
 template<typename CT>	
 inline
 CStdStr<CT> operator+(const  CStdStr<CT>& str, CT t)
@@ -327,14 +379,24 @@ CStdStr<CT> operator+(const  CStdStr<CT>& str, CT t)
 	strRet.append(1, t);				// 2
 	return strRet;
 }
-
+/**
+ * @brief Another way to concatenate two strings together.
+ * @param str the original string.
+ * @param pA the string to be added.
+ * @return the longer string.
+ */
 template<typename CT>
 inline
 CStdStr<CT> operator+(const  CStdStr<CT>& str, PCSTR pA)
 {
 	return CStdStr<CT>(str) + CStdStr<CT>(pA);
 }
-
+/**
+ * @brief Another way to concatenate two strings together.
+ * @param pA the original string.
+ * @param str the string to be added.
+ * @return the longer string.
+ */	
 template<typename CT>
 inline
 CStdStr<CT> operator+(PCSTR pA, const  CStdStr<CT>& str)
@@ -345,7 +407,7 @@ CStdStr<CT> operator+(PCSTR pA, const  CStdStr<CT>& str)
 }
 
 
-
+/** @brief Our wrapper for std::string. */
 template<typename CT>
 class CStdStr : public std::basic_string<CT>
 {
@@ -732,7 +794,7 @@ public:
 // =============================================================================
 
 //	Now typedef our class names based upon this humongous template
-
+/** @brief Typedef the class names based on the template */
 typedef CStdStr<char>		CStdStringA;	// a better std::string
 #define CStdString				CStdStringA
 
@@ -783,7 +845,10 @@ struct StdStringEqualsNoCase
 
 #endif	// #ifndef STDSTRING_H
 
-/*
+/**
+ * @file
+ * @author Joseph M. O'Leary (c) 1999
+ * @section LICENSE
  * COPYRIGHT:
  *	1999 Joseph M. O'Leary.  This code is free.  Use it anywhere you want.
  *	Rewrite it, restructure it, whatever.  Please don't blame me if it makes

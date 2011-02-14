@@ -22,7 +22,9 @@ FontManager::~FontManager()
 	{
 		const FontName &fn = i->first;
 		Font* pFont = i->second;
-		LOG->Trace( "FONT LEAK: '%s', RefCount = %d.", fn.first.c_str(), pFont->m_iRefCount );
+		if(pFont->m_iRefCount>0) {
+			LOG->Trace( "FONT LEAK: '%s', RefCount = %d.", fn.first.c_str(), pFont->m_iRefCount );
+		}
 		delete pFont;
 	}
 }
@@ -38,6 +40,9 @@ void FontManager::ReloadFonts()
 
 Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sChars )
 {
+	PruneFonts();
+
+	Font *pFont;
 	// Convert the path to lowercase so that we don't load duplicates.
 	// Really, this does not solve the duplicate problem.  We could have two copies
 	// of the same bitmap if there are equivalent but different paths
@@ -48,15 +53,16 @@ Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sCha
 	map<FontName, Font*>::iterator p = g_mapPathToFont.find( NewName );
 	if( p != g_mapPathToFont.end() )
 	{
-		Font *pFont=p->second;
-		pFont->m_iRefCount++;
-		return pFont;
+		pFont=p->second;
+	}
+	else {
+		pFont= new Font;
+		pFont->Load(sFontOrTextureFilePath, sChars);
+		g_mapPathToFont[NewName] = pFont;
 	}
 
-	Font *f = new Font;
-	f->Load(sFontOrTextureFilePath, sChars);
-	g_mapPathToFont[NewName] = f;
-	return f;
+	++pFont->m_iRefCount;
+	return pFont;
 }
 
 Font *FontManager::CopyFont( Font *pFont )
@@ -75,17 +81,27 @@ void FontManager::UnloadFont( Font *fp )
 		if(i->second != fp)
 			continue;
 
+		ASSERT_M(fp->m_iRefCount>0,"Attempting to unload a font with zero ref count!");
+
 		i->second->m_iRefCount--;
 
-		if( fp->m_iRefCount == 0 )
-		{
-			delete i->second;		// free the texture
-			g_mapPathToFont.erase( i );	// and remove the key in the map
-		}
 		return;
 	}
-	
+
 	FAIL_M( ssprintf("Unloaded an unknown font (%p)", fp) );
+}
+
+void FontManager::PruneFonts() {
+	for( std::map<FontName, Font*>::iterator i = g_mapPathToFont.begin();i != g_mapPathToFont.end();) {
+		Font *fp=i->second;
+		if(fp->m_iRefCount==0) {
+			delete fp;
+			g_mapPathToFont.erase(i);
+			i = g_mapPathToFont.end();
+		} else {
+			++i;
+		}
+	}
 }
 
 /*

@@ -99,9 +99,7 @@ public:
 
 	static RString GetBlankGraphicPath();
 
-	//
 	// For self-registering metrics
-	//
 	static void Subscribe( IThemeMetric *p );
 	static void Unsubscribe( IThemeMetric *p );
 
@@ -113,7 +111,7 @@ protected:
 	void LoadThemeMetrics( const RString &sThemeName, const RString &sLanguage_ );
 	RString GetMetricRaw( const IniFile &ini, const RString &sMetricsGroup, const RString &sValueName );
 	bool GetMetricRawRecursive( const IniFile &ini, const RString &sMetricsGroup, const RString &sValueName, RString &sRet );
-	
+
 	bool GetPathInfoToAndFallback( PathInfo &out, ElementCategory category, const RString &sMetricsGroup, const RString &sFile );
 	bool GetPathInfoToRaw( PathInfo &out, const RString &sThemeName, ElementCategory category, const RString &sMetricsGroup, const RString &sFile );
 	static RString GetThemeDirFromName( const RString &sThemeName );

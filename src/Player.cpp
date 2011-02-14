@@ -128,6 +128,7 @@ ThemeMetric<float> MAX_HOLD_LIFE		( "Player", "MaxHoldLife" ); // sm-ssc additio
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
 ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
+ThemeMetric<bool> CHECKPOINTS_USE_TICKCOUNTS ( "Player", "CheckpointsUseTickcounts" );
 ThemeMetric<bool> CHECKPOINTS_USE_TIME_SIGNATURES ( "Player", "CheckpointsUseTimeSignatures" );
 ThemeMetric<bool> CHECKPOINTS_FLASH_ON_HOLD ( "Player", "CheckpointsFlashOnHold" ); // sm-ssc addition
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
@@ -138,6 +139,9 @@ ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsComb
 ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
 ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" ); // sm-ssc addition
 ThemeMetric<float> PERCENT_UNTIL_COLOR_COMBO ( "Player", "PercentUntilColorCombo" );
+ThemeMetric<int> COMBO_STOPPED_AT ( "Player", "ComboStoppedAt" );
+ThemeMetric<float> ATTACK_RUN_TIME_RANDOM ( "Player", "AttackRunTimeRandom" );
+ThemeMetric<float> ATTACK_RUN_TIME_MINE ( "Player", "AttackRunTimeMine" );
 
 float Player::GetWindowSeconds( TimingWindow tw )
 {
@@ -581,7 +585,7 @@ void Player::Load()
 void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
 {
 	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-	if( iOldCombo > 50 && iCurCombo < 50 )
+	if( iOldCombo > COMBO_STOPPED_AT && iCurCombo < COMBO_STOPPED_AT )
 	{
 		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 	}
@@ -641,8 +645,7 @@ void Player::Update( float fDeltaTime )
 		{
 			float fCurrentGameTime = STATSMAN->m_CurStageStats.m_fGameplaySeconds;
 
-			// Should we hardcode this, or make it a preference/theme metric? ~ Mike
-			const float fAttackRunTime = 6.0f;
+			const float fAttackRunTime = ATTACK_RUN_TIME_RANDOM;
 
 			// Don't start until 1 seconds into game, minimum
 			if( fCurrentGameTime > 1.0f )
@@ -982,6 +985,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	//LOG->Trace(ssprintf("[Player::UpdateHoldNotes] fLife = %f",fLife));
 
 	bool bSteppedOnHead = true;
+	bool bHeadJudged = true;
 	FOREACH( TrackRowTapNote, vTN, trtn )
 	{
 		TapNote &tn = *trtn->pTN;
@@ -992,7 +996,8 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		// taps was hit before activating this group of holds.
 		/* Something about the logic in this section is causing 192nd steps to
 		 * fail for some odd reason. -aj */
-		bSteppedOnHead &= (tns != TNS_None  &&  tns != TNS_Miss);	// did they step on the start of this hold?
+		bSteppedOnHead &= (tns != TNS_Miss && tns != TNS_None);	// did they step on the start of this hold?
+		bHeadJudged &= (tns != TNS_None);	// has this hold really even started yet?	
 
 		/*
 		if(bSteppedOnHead)
@@ -1009,13 +1014,16 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		// register as Held, even if you hit the note. This is considered a
 		// major roadblock to adoption, so until a proper fix is found,
 		// DON'T REMOVE THIS HACK! -aj
-		if( iMaxEndRow-iStartRow <= 4 )
+		/*if( iMaxEndRow-iStartRow <= 4 )
 			bInitiatedNote = true;
-		else
+		else*/
 			bInitiatedNote = bSteppedOnHead;
 	}
 	else
+	{
 		bInitiatedNote = true;
+		bHeadJudged = true;
+	}
 
 	bool bIsHoldingButton = true;
 	FOREACH( TrackRowTapNote, vTN, trtn )
@@ -1055,7 +1063,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		}
 	}
 
-	if( bInitiatedNote && fLife != 0 )
+	if( bInitiatedNote && fLife != 0 && bHeadJudged )
 	{
 		//LOG->Trace("[Player::UpdateHoldNotes] initiated note, fLife != 0");
 		/* This hold note is not judged and we stepped on its head.
@@ -1073,7 +1081,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	}
 
 	// If the song beat is in the range of this hold:
-	if( iStartRow <= iSongRow  &&  iStartRow <= iMaxEndRow )
+	if( iStartRow <= iSongRow  &&  iStartRow <= iMaxEndRow && bHeadJudged )
 	{
 		switch( subType )
 		{
@@ -1154,7 +1162,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	 * which doesn't seem correct. */
 	if( IMMEDIATE_HOLD_LET_GO )
 	{
-		if( bInitiatedNote && fLife == 0 )	// the player has not pressed the button for a long time!
+		if( bInitiatedNote && fLife == 0 && bHeadJudged )	// the player has not pressed the button for a long time!
 		{
 			//LOG->Trace("LetGo from life == 0 (did initiate hold)");
 			hns = HNS_LetGo;
@@ -1162,7 +1170,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	}
 
 	// score hold notes that have passed
-	if( iSongRow >= iMaxEndRow )
+	if( iSongRow >= iMaxEndRow && bHeadJudged )
 	{
 		bool bLetGoOfHoldNote = false;
 
@@ -2488,6 +2496,10 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if( !NeedsTapJudging(tn) )
 			continue;
 
+		// warp hackery
+		if( iter.Row() >= GAMESTATE->m_iWarpBeginRow && iter.Row() <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+			continue;
+
 		if( tn.type == TapNote::mine )
 		{
 			tn.result.tns = TNS_AvoidMine;
@@ -2524,14 +2536,14 @@ void Player::UpdateJudgedRows()
 		{
 			int iRow = iter.Row();
 
+			// if row is within a warp section, ignore it. -aj
+			if( iRow >= GAMESTATE->m_iWarpBeginRow &&
+				iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+				continue;
+
 			if( iLastSeenRow != iRow )
 			{
 				iLastSeenRow = iRow;
-
-				// if row is within a warp section, ignore it. -aj
-				if( iRow >= GAMESTATE->m_iWarpBeginRow &&
-					iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
-					continue;
 
 				// crossed a nonempty row
 				if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow) )
@@ -2612,8 +2624,7 @@ void Player::UpdateJudgedRows()
 			 * etc.) are still applied. */
 			if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_bTransforms[PlayerOptions::TRANSFORM_ATTACKMINES] )
 			{
-				// Should we hardcode this, or make it a preference/theme metric? ~ Mike
-				const float fAttackRunTime = 7.0f;
+				const float fAttackRunTime = ATTACK_RUN_TIME_MINE;
 
 				Attack attMineAttack;
 				attMineAttack.sModifiers = ApplyRandomAttack();
@@ -2774,7 +2785,11 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 	if( HOLD_CHECKPOINTS )
 	{
 		int iCheckpointFrequencyRows = ROWS_PER_BEAT/2;
-		if( CHECKPOINTS_USE_TIME_SIGNATURES )
+		if( CHECKPOINTS_USE_TICKCOUNTS )
+		{
+			iCheckpointFrequencyRows = ROWS_PER_BEAT / GAMESTATE->m_pCurSong->m_Timing.GetTickcountAtRow( iLastRowCrossed );
+		}
+		else if( CHECKPOINTS_USE_TIME_SIGNATURES )
 		{
 			TimeSignatureSegment tSignature = GAMESTATE->m_pCurSong->m_Timing.GetTimeSignatureSegmentAtBeat( NoteRowToBeat( iLastRowCrossed ) );
 
@@ -2984,6 +2999,11 @@ void Player::HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumH
 #ifdef DEBUG
 	bNoCheating = false;
 #endif
+
+	// more warp hackery. -aj
+	if( iRow >= GAMESTATE->m_iWarpBeginRow &&
+		iRow <= (GAMESTATE->m_iWarpBeginRow + BeatToNoteRow(GAMESTATE->m_fWarpLength)) )
+		return;
 
 	// don't accumulate combo if AutoPlay is on.
 	if( bNoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )

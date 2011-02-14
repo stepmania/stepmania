@@ -118,7 +118,7 @@ ________________________________________________________________________________
 0x05 (005) Game Status Update
 
 The payload changes between protocols, and it will likely have to change again
-to acconut for some more StepIDs.
+to account for some more StepIDs.
 
 Payload:
 [Size] [Description]
@@ -155,7 +155,7 @@ Payload:
 		32767 would be DEAD on the note
 		If the user is hitting late, the # will be higher.
 		It if the user is exactly 0.25 seconds off, the number will be
-		different by 500. With this pattern 0.5 gives a difference of 1000.
+		different by 500. With this pattern 0.5 seconds gives a difference of 1000.
 
 Expected response: None
 ________________________________________________________________________________

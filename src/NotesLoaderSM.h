@@ -12,6 +12,9 @@ class TimingData;
 
 namespace SMLoader
 {
+	void LoadFromSMTokens( RString sStepsType, RString sDescription, RString sDifficulty,
+			      RString sMeter, RString sRadarValues, RString sNoteData, Steps &out );
+	
 	bool LoadFromDir( const RString &sPath, Song &out );
 	void TidyUpData( Song &song, bool bFromCache );
 

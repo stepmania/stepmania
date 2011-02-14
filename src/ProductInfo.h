@@ -1,30 +1,48 @@
-/* ProductInfo - Branding strings. Don't forget to also change ProductInfo.inc! */
+/** @brief ProductInfo - Branding strings. Don't forget to also change ProductInfo.inc! */
 
 #ifndef PRODUCT_INFO_H
 #define PRODUCT_INFO_H
 
-// A friendly string to refer to the product in crash dialogs, etc - i.e. "StepMania" not "StepMania4"
+/**
+ * @brief A friendly string to refer to the product in crash dialogs, etc.
+ *
+ * As an example, use "StepMania" here, not "StepMania4".
+ */
 #define PRODUCT_FAMILY_BARE sm-ssc
 
-// A unique name for each application that you might want installed side-by-side with other applications - i.e. "StepMania4" not "StepMania" (would conflict with StepMania 3.x)
+/**
+ * @brief A unique name for each application that you might want installed side-by-side with other applications.
+ *
+ * As an example, use "StepMania4" here, not "StepMania". 
+ * It would cause a conflict with older versions such as StepMania 3.X.
+ */
 #define PRODUCT_ID_BARE sm-ssc
 
-/* Version info displayed to the user.
+/**
+ * @brief Version info displayed to the user.
+ *
  * These are the 'official' version designations:
+ * <ul>
+ * <li>"experimental: pre-release versions.</li>
  * 
- * "experimental: pre-release versions
- * "private beta v0.0": hmm, think about it for a second there.
- * ==Public versions==
- * "v0.0 alpha #": Alpha versions (bug squashing, polishing until we reach beta)
- * "v0.0 beta #": Beta versions (bug squashing, _focus_ is on high priority bugs)
- * "v0.0 rc#": Release Candidates (if there are no problems, move on to final)
- * "v0.0": Final Releases
-*/
+ * <li>"private beta v0.0": hmm, think about it for a second there.</li>
+ * 
+ * <li>==Public versions==
+ *   - "v0.0 alpha #": Alpha versions (bug squashing, polishing until we reach beta)
+ *   - "v0.0 beta #": Beta versions (bug squashing, _focus_ is on high priority bugs)
+ *   - "v0.0 rc#": Release Candidates (if there are no problems, move on to final)
+ *   - "v0.0": Final Releases
+ * </li></ul>
+ */
 #ifndef PRODUCT_VER_BARE
-#define PRODUCT_VER_BARE v1.1
+#define PRODUCT_VER_BARE v1.2.1
 #endif
 
-// A unique ID for a build of an application.  This is used in crash reports and in the network code's version handling 
+/**
+ * @brief A unique ID for a build of an application.
+ *
+ * This is used in crash reports and in the network code's version handling.
+ */
 #define PRODUCT_ID_VER_BARE PRODUCT_ID_BARE PRODUCT_VER_BARE
 
 // These cannot be #undef'd so make them unlikely to conflict with anything
@@ -37,14 +55,17 @@
 #define PRODUCT_ID_VER		PRODUCT_XSTRINGIFY(PRODUCT_ID_VER_BARE)
 
 #define VIDEO_TROUBLESHOOTING_URL "http://www.stepmania.com/stepmania/mediawiki.php?title=Video_Driver_Troubleshooting"
+/** @brief The URL to report bugs on the program. */
 #define REPORT_BUG_URL "http://ssc.ajworld.net/sm-ssc/bugtracker/"
 
 #define CAN_INSTALL_PACKAGES true
 
 #endif
 
-/*
- * (c) 2003-2005 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003-2005
+ * @section LICENSE
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

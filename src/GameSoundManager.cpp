@@ -6,7 +6,7 @@
 #include "RageUtil.h"
 #include "GameState.h"
 #include "TimingData.h"
-#include "NotesLoaderSM.h"
+#include "NotesLoaderSSC.h"
 #include "PrefsManager.h"
 #include "RageDisplay.h"
 #include "AnnouncerManager.h"
@@ -141,7 +141,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 	{
 		LOG->Trace( "Found '%s'", ToPlay.m_sTimingFile.c_str() );
 		Song song;
-		if( SMLoader::LoadFromSMFile(ToPlay.m_sTimingFile, song) )
+		if( SSCLoader::LoadFromSSCFile(ToPlay.m_sTimingFile, song) )
 		{
 			ToPlay.HasTiming = true;
 			ToPlay.m_TimingData = song.m_Timing;

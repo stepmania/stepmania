@@ -674,9 +674,7 @@ void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pS
 	GetMachineProfile()->IncrementStepsPlayCount( pSong, pSteps );
 }
 
-//
 // Course stats
-//
 void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
 	HighScore hs = hs_;
@@ -686,7 +684,7 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 	iMachineIndexOut = -1;
 
 	// In event mode, set the score's name immediately to the Profile's last
-	// used name.  If no profile last used name exists, use "EVNT".
+	// used name. If no profile last used name exists, use "EVNT".
 	if( GAMESTATE->IsEventMode() )
 	{
 		Profile* pProfile = GetProfile(pn);
@@ -700,10 +698,7 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 		hs.SetName( RANKING_TO_FILL_IN_MARKER[pn] );
 	}
 
-
-	//
 	// save high score
-	//
 	if( IsPersistentProfile(pn) )
 		GetProfile(pn)->AddCourseHighScore( pCourse, pTrail, hs, iPersonalIndexOut );
 	if( hs.GetPercentDP() >= PREFSMAN->m_fMinPercentageForMachineCourseHighScore )
@@ -724,10 +719,7 @@ void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, const Trai
 	GetMachineProfile()->IncrementCoursePlayCount( pCourse, pTrail );
 }
 
-
-//
 // Category stats
-//
 void ProfileManager::AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
 	HighScore hs = hs_;
@@ -804,7 +796,6 @@ int ProfileManager::GetNumLocalProfiles() const
 	return g_vLocalProfile.size();
 }
 
-
 // lua start
 #include "LuaBinding.h"
 
@@ -828,7 +819,6 @@ public:
 	static int GetLocalProfileIDFromIndex( T* p, lua_State *L )	{ lua_pushstring(L, p->GetLocalProfileIDFromIndex(IArg(1)) ); return 1; }
 	static int GetLocalProfileIndexFromID( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetLocalProfileIndexFromID(SArg(1)) ); return 1; }
 	static int GetNumLocalProfiles( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumLocalProfiles() ); return 1; }
-	//static int GetProfileDirectoryForPlayer( T* p, lua_State *L )	{ lua_pushstring(L, m_sProfileDir[Enum::Check<PlayerNumber>(L, 1)] ) return 1; }
 	static int GetProfileDir( T* p, lua_State *L ) { lua_pushstring(L, p->GetProfileDir(Enum::Check<ProfileSlot>(L, 1)) ); return 1; }
 	static int IsSongNew( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsSongNew(Luna<Song>::check(L,1)) ); return 1; }
 
@@ -843,8 +833,7 @@ public:
 		ADD_METHOD( GetLocalProfileIDFromIndex );
 		ADD_METHOD( GetLocalProfileIndexFromID );
 		ADD_METHOD( GetNumLocalProfiles );
-		//ADD_METHOD( GetProfileDirectoryForPlayer ); // uses PlayerNumber
-		ADD_METHOD( GetProfileDir ); // uses ProfileSlot
+		ADD_METHOD( GetProfileDir );
 		ADD_METHOD( IsSongNew );
 	}
 };

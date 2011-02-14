@@ -1,6 +1,6 @@
 #include "global.h"
 #include "ScreenGameplaySyncMachine.h"
-#include "NotesLoaderSM.h"
+#include "NotesLoaderSSC.h"
 #include "GameState.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
@@ -18,14 +18,17 @@ void ScreenGameplaySyncMachine::Init()
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
 	AdjustSync::ResetOriginalSyncData();
 
-	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music.sm");
-	SMLoader::LoadFromSMFile( sFile, m_Song );
+	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music");
+	SSCLoader::LoadFromSSCFile( sFile, m_Song );
 	m_Song.SetSongDir( Dirname(sFile) );
 	m_Song.TidyUpData();
 
 	GAMESTATE->m_pCurSong.Set( &m_Song );
-	Steps *pSteps = SongUtil::GetOneSteps( &m_Song );
-	ASSERT( pSteps );
+	// needs proper StepsType - freem
+	vector<Steps*> vpSteps;
+	SongUtil::GetPlayableSteps( &m_Song, vpSteps );
+	ASSERT(vpSteps.size() > 0);
+	Steps *pSteps = vpSteps[0];
 	GAMESTATE->m_pCurSteps[0].Set( pSteps );
 
 	GamePreferences::m_AutoPlay.Set( PC_HUMAN );

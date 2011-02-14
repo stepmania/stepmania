@@ -9,8 +9,10 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
-#define __STDC_LIMIT_MACROS // for INT8_MIN, etc
-#define __STDC_CONSTANT_MACROS // for INT64_C, etc
+/** @brief This macro is for INT8_MIN, etc. */
+#define __STDC_LIMIT_MACROS
+/** @brief This macro is for INT64_C, etc. */
+#define __STDC_CONSTANT_MACROS
 
 /* Platform-specific fixes. */
 #if defined(WIN32)
@@ -33,7 +35,9 @@
 #elif defined(HAVE_MACHINE_ENDIAN_H)
 #include <machine/endian.h>
 #else
+/** @brief The macro for little endian order. */
 #define LITTLE_ENDIAN 1234
+/** @brief The macro for big endian order. */
 #define BIG_ENDIAN 4321
 #if defined(ENDIAN_LITTLE)
 #define BYTE_ORDER LITTLE_ENDIAN
@@ -78,7 +82,7 @@ using namespace std;
 #undef ASSERT
 #endif
 
-/* RageThreads defines (don't pull in all of RageThreads.h here) */
+/** @brief RageThreads defines (don't pull in all of RageThreads.h here) */
 namespace Checkpoints
 {
 	void SetCheckpoint( const char *file, int line, const char *message );
@@ -87,10 +91,12 @@ namespace Checkpoints
 #define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
 
 
-/* Define a macro to tell the compiler that a function doesn't return.  This just
- * improves compiler warnings.  This should be placed near the beginning of the
- * function prototype (although it looks better near the end, VC only accepts it
- * at the beginning). */
+/**
+ * @brief Define a macro to tell the compiler that a function doesn't return.
+ *
+ * This just improves compiler warnings.  This should be placed near the 
+ * beginning of the function prototype (although it looks better near the end,
+ * VC only accepts it at the beginning). */
 #if defined(_MSC_VER)
 #define NORETURN __declspec(noreturn)
 #elif defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 5))
@@ -111,7 +117,7 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
 #define ASSERT(COND) ASSERT_M((COND), "Assertion '" #COND "' failed")
 #endif
 
-/* Use this to catch switching on invalid values */
+/** @brief Use this to catch switching on invalid values */
 #define DEFAULT_FAIL(i) 	default: FAIL_M( ssprintf("%s = %i", #i, (i)) )
 
 void ShowWarningOrTrace( const char *file, int line, const char *message, bool bWarning ); // don't pull in LOG here
@@ -144,7 +150,7 @@ template<int> struct CompileAssertDecl { };
 #define COMPILE_ASSERT(COND) typedef CompileAssertDecl< sizeof(CompileAssert<!!(COND)>) > CompileAssertInst
 
 #if defined(__GNUC__)
-/* Define a macro to tell the compiler that a function has printf() semantics, to aid warning output. */
+/** @brief Define a macro to tell the compiler that a function has printf() semantics, to aid warning output. */
 #define PRINTF(a,b) __attribute__((format(__printf__,a,b)))
 #define CONST_FUNCTION __attribute__((const))
 #else
@@ -159,14 +165,16 @@ template<int> struct CompileAssertDecl { };
 #endif
 
 
-/* Use CStdString: */
+/** @brief Use RStrings throughout the program. */
 #include "StdString.h"
 typedef StdString::CStdString RString;
 
 #include "RageException.h"
 
 #if !defined(WIN32)
+/** @brief Define stricmp to be strcasecmp. */
 #define stricmp strcasecmp
+/** @brief Define strnicmp to be strncasecmp. */
 #define strnicmp strncasecmp
 #endif
 
@@ -174,6 +182,7 @@ typedef StdString::CStdString RString;
 #include <cmath>
 
 #ifndef M_PI
+/** @brief Define Pi to many digits. */
 #define M_PI 3.1415926535897932384626433832795
 #endif
 
@@ -225,8 +234,10 @@ inline float strtof( const char *s, char **se ) { return (float) strtod( s, se )
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

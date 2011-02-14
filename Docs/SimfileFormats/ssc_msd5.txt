@@ -1,0 +1,59 @@
+// sm-ssc step chart/msd5 hacky file format doc.
+// based off of .sm, which was based off of DWI's modified MSD format.
+#TITLE:;
+#SUBTITLE:;
+#ARTIST:;
+#TITLETRANSLIT:;
+#SUBTITLETRANSLIT:;
+#ARTISTTRANSLIT:;
+#GENRE:;
+#CREDIT:;
+#BANNER:;
+#BACKGROUND:;
+#LYRICSPATH:;
+#CDTITLE:;
+#MUSIC:;
+#INSTRUMENTTRACK:;
+#MUSICLENGTH:;
+#OFFSET:;
+#STOPS:;
+#DELAYS:;
+#BPMS:;
+#TIMESIGNATURES:;
+#LASTBEATHINT:;
+#SAMPLESTART:;
+#SAMPLELENGTH:;
+#DISPLAYBPM:[xxx][xxx:xxx]|[*];
+#SELECTABLE:;
+#BGCHANGES:;
+#FGCHANGES:;
+#KEYSOUNDS:;
+#ATTACKS:;
+
+// stored in cache
+#FIRSTBEAT:;			// calculated
+#LASTBEAT:;			// calculated
+#SONGFILENAME:;
+#MUSICBYTES:;			// ignored by loader
+#HASMUSIC:;
+#HASBANNER:;
+
+// begin
+#NOTEDATA# // marks a new note data section
+// information from #NOTES moved here
+#STEPSTYPE:;
+#DESCRIPTION:;
+#DIFFICULTY:;
+#METER:;
+#RADARVALUES:;
+#CREDIT:;
+
+// steps-based timingdata
+#STOPS:;
+#DELAYS:;
+#BPMS:;
+#TIMESIGNATURES:;
+#LASTBEATHINT:;
+
+// actual step data
+#NOTES:;

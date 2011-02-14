@@ -76,6 +76,7 @@ void ScreenSelectMusic::Init()
 	SAMPLE_MUSIC_PREVIEW_MODE.Load( m_sName, "SampleMusicPreviewMode" );
 	SAMPLE_MUSIC_FALLBACK_FADE_IN_SECONDS.Load( m_sName, "SampleMusicFallbackFadeInSeconds" );
 	DO_ROULETTE_ON_MENU_TIMER.Load( m_sName, "DoRouletteOnMenuTimer" );
+	ROULETTE_TIMER_SECONDS.Load( m_sName, "RouletteTimerSeconds" );
 	ALIGN_MUSIC_BEATS.Load( m_sName, "AlignMusicBeat" );
 	CODES.Load( m_sName, "Codes" );
 	MUSIC_WHEEL_TYPE.Load( m_sName, "MusicWheelType" );
@@ -126,11 +127,11 @@ void ScreenSelectMusic::Init()
 		-- Midiman 
 	*/
 	m_sSectionMusicPath =		THEME->GetPathS(m_sName,"section music");
-	m_sSortMusicPath =		THEME->GetPathS(m_sName,"sort music");
+	m_sSortMusicPath =			THEME->GetPathS(m_sName,"sort music");
 	m_sRouletteMusicPath =		THEME->GetPathS(m_sName,"roulette music");
 	m_sRandomMusicPath =		THEME->GetPathS(m_sName,"random music");
 	m_sCourseMusicPath =		THEME->GetPathS(m_sName,"course music");
-	m_sLoopMusicPath =		THEME->GetPathS(m_sName,"loop music");
+	m_sLoopMusicPath =			THEME->GetPathS(m_sName,"loop music");
 	m_sFallbackCDTitlePath =	THEME->GetPathG(m_sName,"fallback cdtitle");
 
 
@@ -392,7 +393,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,false);
 	MakeUpper( &c, 1 );
 
-	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
+	if( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{
 		// Only allow changing the sort order if the wheel is not locked
 		// and we're not in course mode. -aj
@@ -1035,14 +1036,11 @@ void ScreenSelectMusic::HandleMessage( const Message &msg )
 		ASSERT( b );
 
 		// load player profiles
-		// (this could be a possible cause of the screenshot bug. I'm not sure. -aj)
-		/*
 		if( GAMESTATE->HaveProfileToLoad() )
 		{
 			GAMESTATE->LoadProfiles( true ); // I guess you could always load edits here...
 			SCREENMAN->ZeroNextUpdate(); // be kind, don't skip frames if you can avoid it
 		}
-		*/
 
 		m_iSelection[pn] = iSel;
 		if( GAMESTATE->IsCourseMode() )
@@ -1071,15 +1069,13 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		if( m_MusicWheel.IsRouletting() )
 		{
 			MenuStart( InputEventPlus() );
-			// todo: make this value a metric -aj
-			m_MenuTimer->SetSeconds( 15 );
+			m_MenuTimer->SetSeconds( ROULETTE_TIMER_SECONDS );
 			m_MenuTimer->Start();
 		}
 		else if( DO_ROULETTE_ON_MENU_TIMER  &&  m_MusicWheel.GetSelectedSong() == NULL  &&  m_MusicWheel.GetSelectedCourse() == NULL )
 		{
 			m_MusicWheel.StartRoulette();
-			// todo: make this value a metric -aj
-			m_MenuTimer->SetSeconds( 15 );
+			m_MenuTimer->SetSeconds( ROULETTE_TIMER_SECONDS );
 			m_MenuTimer->Start();
 		}
 		else
@@ -1673,49 +1669,61 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		g_sCDTitlePath = ""; // none
 
-		if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+		if( SAMPLE_MUSIC_PREVIEW_MODE == SampleMusicPreviewMode_LastSong )
 		{
-			m_fSampleStartSeconds = 0;
-			m_fSampleLengthSeconds = -1;
-		}
-		else
-		{
-			// HACK: Make random music work in LastSong mode (IDK if this is
-			// accurate or not) -aj
+			// HACK: Make random music work in LastSong mode. -aj
 			if( m_sSampleMusicToPlay == m_sRandomMusicPath )
 			{
 				m_fSampleStartSeconds = 0;
 				m_fSampleLengthSeconds = -1;
 			}
 		}
+		else
+		{
+			m_fSampleStartSeconds = 0;
+			m_fSampleLengthSeconds = -1;
+		}
 
 		switch( m_MusicWheel.GetSelectedType() )
 		{
-		case TYPE_SECTION:
-			g_sBannerPath = SONGMAN->GetSongGroupBannerPath( m_MusicWheel.GetSelectedSection() );
-			if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-				m_sSampleMusicToPlay = m_sSectionMusicPath;
-			break;
-		case TYPE_SORT:
-			bWantBanner = false; // we load it ourself
-			m_Banner.LoadMode();
-			if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-				m_sSampleMusicToPlay = m_sSortMusicPath;
-			break;
-		case TYPE_ROULETTE:
-			bWantBanner = false; // we load it ourself
-			m_Banner.LoadRoulette();
-			if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-				m_sSampleMusicToPlay = m_sRouletteMusicPath;
-			break;
-		case TYPE_RANDOM:
-			bWantBanner = false; // we load it ourself
-			m_Banner.LoadRandom();
-			//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
-			m_sSampleMusicToPlay = m_sRandomMusicPath;
-			break;
-		default:
-			ASSERT(0);
+			case TYPE_SECTION:
+				// reduce scope
+				{
+					SortOrder curSort = GAMESTATE->m_SortOrder;
+					if( curSort == SORT_GROUP)
+					{
+						g_sBannerPath = SONGMAN->GetSongGroupBannerPath( m_MusicWheel.GetSelectedSection() );
+					}
+					else
+					{
+						bWantBanner = false; // we load it ourself
+						m_Banner.LoadFromSortOrder(curSort);
+					}
+
+					if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+						m_sSampleMusicToPlay = m_sSectionMusicPath;
+				}
+				break;
+			case TYPE_SORT:
+				bWantBanner = false; // we load it ourself
+				m_Banner.LoadMode();
+				if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+					m_sSampleMusicToPlay = m_sSortMusicPath;
+				break;
+			case TYPE_ROULETTE:
+				bWantBanner = false; // we load it ourself
+				m_Banner.LoadRoulette();
+				if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+					m_sSampleMusicToPlay = m_sRouletteMusicPath;
+				break;
+			case TYPE_RANDOM:
+				bWantBanner = false; // we load it ourself
+				m_Banner.LoadRandom();
+				//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+				m_sSampleMusicToPlay = m_sRandomMusicPath;
+				break;
+			default:
+				ASSERT(0);
 		}
 		// override this if the sample music mode wants to.
 		/*

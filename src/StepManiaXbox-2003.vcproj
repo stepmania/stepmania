@@ -1555,12 +1555,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="GrooveRadar.h">
 			</File>
 			<File
-				RelativePath="GroupList.cpp">
-			</File>
-			<File
-				RelativePath="GroupList.h">
-			</File>
-			<File
 				RelativePath="HelpDisplay.cpp">
 			</File>
 			<File
@@ -1589,12 +1583,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\ModIconRow.h">
-			</File>
-			<File
-				RelativePath=".\MusicList.cpp">
-			</File>
-			<File
-				RelativePath=".\MusicList.h">
 			</File>
 			<File
 				RelativePath=".\MusicWheel.cpp">

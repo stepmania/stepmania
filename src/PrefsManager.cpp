@@ -134,6 +134,17 @@ XToString( ScoringType );
 StringToX( ScoringType );
 LuaXType( ScoringType );
 
+// XXX: Fix fail bug?
+/* static const char *DefaultFailTypeNames[] = {
+	"Immediate",
+	"ImmediateContinue",
+	"EndOfSong",
+	"Off",
+};
+XToString( DefaultFailType );
+StringToX( DefaultFailType );
+LuaXType( DefaultFailType ); */
+
 bool g_bAutoRestart = false;
 #ifdef DEBUG
 # define TRUE_IF_DEBUG true
@@ -157,7 +168,6 @@ PrefsManager::PrefsManager() :
 
 	m_sAnnouncer		( "Announcer",			"" ),
 	m_sTheme		( "Theme",			SpecialFiles::BASE_THEME_NAME ),
-	m_sDefaultTheme		( "DefaultTheme",				"default" ),
 	m_sDefaultModifiers	( "DefaultModifiers",		"" ), 
 
 	m_bWindowed		( "Windowed",			true ),
@@ -188,7 +198,7 @@ PrefsManager::PrefsManager() :
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
 	m_bMenuTimer		( "MenuTimer",			false ),
 
-	m_fLifeDifficultyScale	( "LifeDifficultyScale",	.0f ),
+	m_fLifeDifficultyScale	( "LifeDifficultyScale",	1.0f ),
 
 
 	m_iRegenComboAfterMiss		( "RegenComboAfterMiss",	5 ),
@@ -257,6 +267,7 @@ PrefsManager::PrefsManager() :
 	m_sAdditionalSongFolders	( "AdditionalSongFolders",		"" ),
 	m_sAdditionalCourseFolders	( "AdditionalCourseFolders",		"" ),
 	m_sAdditionalFolders		( "AdditionalFolders",			"" ),
+	m_sDefaultTheme			( "DefaultTheme",			"default" ),
 	m_sLastSeenVideoDriver		( "LastSeenVideoDriver",		"" ),
 	m_sVideoRenderers		( "VideoRenderers",			"" ),	// StepMania.cpp sets these on first run:
 	m_bSmoothLines			( "SmoothLines",			false ),

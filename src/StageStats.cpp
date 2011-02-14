@@ -202,7 +202,7 @@ void StageStats::FinalizeScores( bool bSummary )
 		m_multiPlayer[mp].m_HighScore = FillInHighScore( m_multiPlayer[mp], *GAMESTATE->m_pMultiPlayerState[mp], "", sPlayerGuid );
 	}
 
-	// todo: check if player was CPU autoplay here? -aj
+	// todo: don't save scores in autoplay -aj
 	FOREACH_HumanPlayer( p )
 	{
 		const HighScore &hs = m_player[p].m_HighScore;

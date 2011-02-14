@@ -69,6 +69,8 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
 
+		// todo: handle Caps Lock -freem
+
 		if( bHoldingShift && !bHoldingCtrl )
 		{
 			MakeUpper( &c, 1 );

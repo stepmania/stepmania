@@ -936,7 +936,7 @@ void GameState::ResetStageStatistics()
 		m_vLastPeakComboAwards[p].clear();
 	}
 
-	// Reset the round seed.  Do this here and not in FinishStage so that players
+	// Reset the round seed. Do this here and not in FinishStage so that players
 	// get new shuffle patterns if they Back out of gameplay and play again.
 	m_iStageSeed = rand();
 }
@@ -961,23 +961,15 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	ASSERT_M( m_fSongBeat > -2000, ssprintf("Song beat %f at %f seconds", m_fSongBeat, fPositionSeconds) );
 
 	//if( m_iWarpBeginRow != -1 || m_iWarpEndRow == -1 )
-	if( m_iWarpBeginRow != -1 && m_fWarpLength > 0.f )
+	if( m_iWarpBeginRow != -1 && m_fWarpLength > 0.0f )
 	{
-		// we got a warp in this section.
+		// There is a warp in this section.
 		LOG->Trace("warp at %i lasts for %f, jumps to %i",m_iWarpBeginRow,m_fWarpLength,m_iWarpBeginRow+BeatToNoteRow(m_fWarpLength));
 		//fPositionSeconds += (m_fWarpLength * m_fCurBPS);
 	}
-	/*
-	// xxx testing: only do this on monotune survivor
-	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
-		LOG->Trace( ssprintf("[GameState::UpdateSongPosition] m_fMusicSeconds before = %f",m_fMusicSeconds) );
-	*/
+
 	m_fMusicSeconds = fPositionSeconds;
-	/*
-	// xxx testing: only do this on monotune survivor
-	if( m_pCurSong && m_pCurSong->GetDisplayFullTitle() == "monotune survivor" )
-		LOG->Trace( ssprintf("[GameState::UpdateSongPosition] m_fMusicSeconds after = %f",m_fMusicSeconds) );
-	*/
+
 	m_fLightSongBeat = timing.GetBeatFromElapsedTime( fPositionSeconds + g_fLightsAheadSeconds );
 
 	m_fSongBeatNoOffset = timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
@@ -1965,7 +1957,7 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 }
 
 /* The user may be set to prefer a difficulty that isn't always shown; typically,
- * Difficulty_Edit.  Return the closest shown difficulty <= m_PreferredDifficulty. */
+ * Difficulty_Edit. Return the closest shown difficulty <= m_PreferredDifficulty. */
 Difficulty GameState::GetClosestShownDifficulty( PlayerNumber pn ) const
 {
 	const vector<Difficulty> &v = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();

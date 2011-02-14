@@ -32,9 +32,11 @@ src/libtomcrypt/build-*
 src/libtomcrypt/Release-*
 src/libtommath/build-*
 src/libtommath/Release-*
+src/*.old
 ver.cpp
 lib*_link.a
 Data/UserPrefs
+Data/GamePrefs/*.cfg
 PBProject/Hardware.plist
 Themes/pump
 Themes/optical-release
@@ -42,6 +44,8 @@ src/version.bin
 src/verstub.cpp
 nsis_strings_temp.inc
 Data/SpeedMods.txt
+Program/StepMania*.lib
+crashinfo.txt
 
 syntax: regexp
 .*\#.*\#$

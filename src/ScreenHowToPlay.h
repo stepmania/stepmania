@@ -14,24 +14,21 @@ public:
 	ScreenHowToPlay();
 	virtual void Init();
 	~ScreenHowToPlay();
-	
+
 	virtual void Update( float fDelta );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
-
-
 	LifeMeterBar	*m_pLifeMeterBar;
+
 protected:
 	virtual void Step();
 	PlayerPlus	m_Player;
 	Model		*m_pmCharacter;
 	Model		*m_pmDancePad;
-	int		m_iW2s;
-	int		m_iNumW2s;
+	int			m_iW2s;
+	int			m_iNumW2s;
 	Song		m_Song;
 	NoteData	m_NoteData;
 	float		m_fFakeSecondsIntoSong;

@@ -1,4 +1,4 @@
-/* PlayerState - Holds per-player game state. */
+/** @brief PlayerState - Holds per-player game state. */
 
 #ifndef PlayerState_H
 #define PlayerState_H
@@ -11,37 +11,68 @@
 #include "SampleHistory.h"
 struct lua_State;
 
+/** @brief The player's indivdual state. */
 class PlayerState
 {
 public:
+	/** @brief Set up the PlayerState with initial values. */
 	PlayerState();
+	/** @brief Reset the PlayerState with the initial values. */
 	void Reset();
+	/** 
+	 * @brief Update the PlayerState based on the present time.
+	 * @param fDelta the current time. */
 	void Update( float fDelta );
 
-	// TODO: Remove use of PlayerNumber.  All data about the player should live 
-	// in PlayerState and callers should not use PlayerNumber to index into 
-	// GameState.
+	/**
+	 * @brief The PlayerNumber assigned to this Player: usually 1 or 2.
+	 *
+	 * TODO: Remove use of PlayerNumber.  All data about the player should live 
+	 * in PlayerState and callers should not use PlayerNumber to index into 
+	 * GameState. */
 	PlayerNumber	m_PlayerNumber;
+	
 	MultiPlayer		m_mp;
 
+	/**
+	 * @brief Change the PlayerOptions to their default.
+	 * @param l the level of mods to reset.
+	 */
 	void ResetToDefaultPlayerOptions( ModsLevel l );
+	/** @brief The PlayerOptions presently in use by the Player. */
 	ModsGroup<PlayerOptions>	m_PlayerOptions;
 
-	// Used in Gameplay
-	mutable float		m_fLastDrawnBeat;	// Set by NoteField.  Used to push note-changing modifers back so that notes doesn't pop.
-
+	/**
+	 * @brief Used to push note-changing modifiers back so that notes don't pop.
+	 *
+	 * This is used during gameplay and set by NoteField. */
+	mutable float		m_fLastDrawnBeat;
+	/** @brief The Player's HealthState in general terms. */
 	HealthState		m_HealthState;
 
-	float		m_fLastStrumMusicSeconds;	// Set to the MusicSeconds of when the a strum button was pressed.  If -1, the strum window has passed.
-	float		m_fLastHopoNoteMusicSeconds;	// Set to the MusicSeconds of the last note successfully strummed or hammered in a hopochain, -1, then there is no current hopo chain
-	int			m_iLastHopoNoteCol;			// if -1, then there is no current hopo chain
+	/**
+	 * @brief Set to the MusicSeconds of when the a strum button was pressed. 
+	 *
+	 * If -1, the strum window has passed. */
+	float		m_fLastStrumMusicSeconds;
+	/**
+	 * @brief Set to the MusicSeconds of the last note successfully strummed or hammered in a hopochain.
+	 *
+	 * If -1, then there is no current hopo chain. */
+	float		m_fLastHopoNoteMusicSeconds;
+	/**
+	 * @brief Set to the column in the current hopo chain.
+	 *
+	 * If -1, then there is no current hopo chain. */
+	int			m_iLastHopoNoteCol;
 
+	/** @brief Reset the hopo state to its default. */
 	void ClearHopoState()
 	{
 		m_fLastHopoNoteMusicSeconds = -1;
 		m_iLastHopoNoteCol = -1;
 	}
-
+	/** @brief The type of person/machine controlling the Player. */
 	PlayerController	m_PlayerController;
 
 	SampleHistory m_EffectHistory;
@@ -80,8 +111,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Chris Gomez
+/**
+ * @file
+ * @author Chris Danford, Chris Gomez (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

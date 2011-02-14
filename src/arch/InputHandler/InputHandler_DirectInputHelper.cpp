@@ -16,6 +16,7 @@ LPDIRECTINPUT g_dinput = NULL;
 
 static int ConvertScancodeToKey( int scancode );
 static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data);
+static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data);
 
 DIDevice::DIDevice()
 {
@@ -23,6 +24,7 @@ DIDevice::DIDevice()
 	dev = InputDevice_Invalid;
 	buffered = true;
 	memset(&JoystickInst, 0, sizeof(JoystickInst));
+	//memset(&MouseInst, 0, sizeof(MouseInst));
 	Device = NULL;
 }
 
@@ -34,13 +36,14 @@ bool DIDevice::Open()
 	buffered = true;
 
 	LPDIRECTINPUTDEVICE tmpdevice;
+
+	// load joystick
 	HRESULT hr = g_dinput->CreateDevice( JoystickInst.guidInstance, &tmpdevice, NULL );
 	if ( hr != DI_OK )
 	{
 		LOG->Info( hr_ssprintf(hr, "OpenDevice: IDirectInput_CreateDevice") );
 		return false;
 	}
-
 	hr = tmpdevice->QueryInterface( IID_IDirectInputDevice2, (LPVOID *) &Device );
 	tmpdevice->Release();
 	if ( hr != DI_OK )
@@ -49,6 +52,27 @@ bool DIDevice::Open()
 		return false;
 	}
 
+	// load mouse
+	/*
+	hr = g_dinput->CreateDevice( MouseInst.guidInstance, &tmpdevice, NULL );
+	if ( hr != DI_OK )
+	{
+		LOG->Info( hr_ssprintf(hr, "OpenDevice: IDirectInput_CreateDevice") );
+		return false;
+	}
+	*/
+	// is this ok? -aj
+	//hr = tmpdevice->QueryInterface( IID_IDirectInputDevice2, (LPVOID *) &Device );
+	/*
+	tmpdevice->Release();
+	if ( hr != DI_OK )
+	{
+		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice::QueryInterface", m_sName.c_str()) );
+		return false;
+	}
+	*/
+
+	// should mouse be foreground? -aj
 	int coop = DISCL_NONEXCLUSIVE | DISCL_BACKGROUND;
 	if( type == KEYBOARD )
 		coop = DISCL_NONEXCLUSIVE | DISCL_FOREGROUND;
@@ -60,7 +84,20 @@ bool DIDevice::Open()
 		return false;
 	}
 
-	hr = Device->SetDataFormat( type == JOYSTICK? &c_dfDIJoystick: &c_dfDIKeyboard );
+	switch(type)
+	{
+		case KEYBOARD:
+			hr = Device->SetDataFormat( &c_dfDIKeyboard );
+			break;
+		case JOYSTICK:
+			hr = Device->SetDataFormat( &c_dfDIJoystick );
+			break;
+		/*
+		case MOUSE:
+			hr = Device->SetDataFormat( &c_dfDIMouse );
+			break;
+		*/
+	}
 	if ( hr != DI_OK )
 	{
 		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2::SetDataFormat", m_sName.c_str()) );
@@ -69,26 +106,27 @@ bool DIDevice::Open()
 
 	switch( type )
 	{
-	case JOYSTICK:
-		Device->EnumObjects( DIJoystick_EnumDevObjectsProc, this, DIDFT_BUTTON | DIDFT_AXIS | DIDFT_POV);
-		break;
-	case KEYBOARD:
-		/* Always 256-button. */
-		for( int b = 0; b < 256; ++b )
-		{
-			input_t in;
-			in.type = in.KEY;
+		case JOYSTICK:
+			Device->EnumObjects( DIJoystick_EnumDevObjectsProc, this, DIDFT_BUTTON | DIDFT_AXIS | DIDFT_POV);
+			break;
+		case KEYBOARD:
+			// Always 256-button.
+			for( int b = 0; b < 256; ++b )
+			{
+				input_t in;
+				in.type = in.KEY;
 
-			in.num = ConvertScancodeToKey(b);
-			in.ofs = b;
-			buttons++;
-			Inputs.push_back(in);
-		}
-		break;
-	/*
-	case MOUSE:
-		break;
-	*/
+				in.num = ConvertScancodeToKey(b);
+				in.ofs = b;
+				buttons++;
+				Inputs.push_back(in);
+			}
+			break;
+		/*
+		case MOUSE:
+			Device->EnumObjects( DIMouse_EnumDevObjectsProc, this, DIDFT_BUTTON | DIDFT_PSHBUTTON );
+			break;
+		*/
 	}
 
 	{
@@ -137,7 +175,7 @@ static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev
 	input_t in;
 	const int SupportedMask = DIDFT_BUTTON | DIDFT_POV | DIDFT_AXIS;
 	if(!(dev->dwType & SupportedMask))
-	    return DIENUM_CONTINUE; // unsupported
+		return DIENUM_CONTINUE; // unsupported
 
 	in.ofs = dev->dwOfs;
 
@@ -307,8 +345,32 @@ static int ConvertScancodeToKey( int scancode )
 	};
 }
 
+static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data)
+{
+	/*
+	DIDevice *device = (DIDevice *) data;
+
+	input_t in;
+	// todo: check mask for accuracy -aj
+	const int SupportedMask = DIDFT_BUTTON | DIDFT_PSHBUTTON;
+	if(!(dev->dwType & SupportedMask))
+		return DIENUM_CONTINUE; // unsupported
+
+	// xxx: does this check for scrollwheels? -aj
+	if(dev->dwType & (DIDFT_BUTTON | DIDFT_PSHBUTTON) ) {
+		in.type = in.BUTTON;
+		in.num = device->buttons;
+		device->buttons++;
+	}
+
+	device->Inputs.push_back(in);
+	*/
+
+	return DIENUM_CONTINUE;
+}
+
 /*
- * (c) 2003-2004 Glenn Maynard
+ * (c) 2003-2011 Glenn Maynard, AJ Kelly
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

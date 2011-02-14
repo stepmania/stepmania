@@ -42,10 +42,6 @@ void CourseContentsList::SetFromGameState()
 {
 	RemoveAllChildren();
 
-	// FIXME: Is there a better way to handle when players don't have 
-	// the same number of TrailEntries?
-	// They have to have the same number, and of the same songs, or gameplay
-	// isn't going to line up.
 	if( GAMESTATE->m_MasterPlayerNumber == PlayerNumber_Invalid )
 		return;
 	const Trail *pMasterTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];

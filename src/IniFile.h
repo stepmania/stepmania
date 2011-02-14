@@ -1,4 +1,4 @@
-/* IniFile - Reading and writing .INI files. */
+/** @brief IniFile - Reading and writing .INI files. */
 
 #ifndef INIFILE_H
 #define INIFILE_H
@@ -7,14 +7,20 @@
 using namespace std;
 
 class RageFileBasic;
-
+/** @brief The functions to read and write .INI files. */
 class IniFile : public XNode
 {
 public:
+	/** @brief Set up an INI file with the defaults. */
 	IniFile();
 
-	// Retrieve the filename of the last file loaded.
+	/**
+	 * @brief Retrieve the filename of the last file loaded.
+	 * @return the filename. */
 	RString GetPath() const { return m_sPath; }
+	/**
+	 * @brief Retrieve any errors that have occurred.
+	 * @return the latest error. */
 	const RString &GetError() const { return m_sError; }
 
 	bool ReadFile( const RString &sPath );
@@ -42,9 +48,15 @@ public:
 	bool DeleteKey( const RString &keyname );
 	bool DeleteValue( const RString &keyname, const RString &valuename );
 
-	/* Rename a key. For example, call RenameKey("foo", "main") after
-	 * reading an INI where [foo] is an alias to [main].  If to already
-	 * exists, nothing happens. */
+	/**
+	 * @brief Rename a key.
+	 *
+	 * For example, call RenameKey("foo", "main") after reading an INI 
+	 * where [foo] is an alias to [main].  If to already exists, 
+	 * nothing happens. 
+	 * @param from the key to rename.
+	 * @param to the new key name.
+	 * @return its success or failure. */
 	bool RenameKey( const RString &from, const RString &to );
 
 private:
@@ -55,9 +67,10 @@ private:
 
 #endif
 
-/*
- * (c) 2001-2004 Adam Clauss, Chris Danford
- *
+/**
+ * @file
+ * @author Adam Clauss, Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

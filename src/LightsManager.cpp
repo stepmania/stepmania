@@ -120,7 +120,7 @@ LightsManager::~LightsManager()
 	m_vpDrivers.clear();
 }
 
-// XXX: make themable
+// XXX: Allow themer to change these. (rewritten; who wrote original? -aj)
 static const float g_fLightEffectRiseSeconds = 0.075f;
 static const float g_fLightEffectFalloffSeconds = 0.35f;
 static const float g_fCoinPulseTime = 0.100f; 
@@ -453,7 +453,7 @@ void LightsManager::ChangeTestCabinetLight( int iDir )
 void LightsManager::ChangeTestGameButtonLight( int iDir )
 {
 	m_clTestManualCycleCurrent = CabinetLight_Invalid;
-	
+
 	vector<GameInput> vGI;
 	GetUsedGameInputs( vGI );
 
@@ -473,9 +473,9 @@ CabinetLight LightsManager::GetFirstLitCabinetLight()
 
 GameInput LightsManager::GetFirstLitGameButtonLight()
 {
-	FOREACH_ENUM( GameController,  gc )
+	FOREACH_ENUM( GameController, gc )
 	{
-		FOREACH_ENUM( GameButton,  gb )
+		FOREACH_ENUM( GameButton, gb )
 		{
 			if( m_LightsState.m_bGameButtonLights[gc][gb] )
 				return GameInput( gc, gb );
@@ -488,7 +488,6 @@ bool LightsManager::IsEnabled() const
 {
 	return m_vpDrivers.size() >= 1 || PREFSMAN->m_bDebugLights;
 }
-
 
 /*
  * (c) 2003-2004 Chris Danford
