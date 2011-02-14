@@ -127,7 +127,6 @@ static void InitNames()
 	g_mapNamesToString[JOY_AUX_3] = "Aux3";
 	g_mapNamesToString[JOY_AUX_4] = "Aux4";
 
-	/*
 	g_mapNamesToString[MOUSE_LEFT] = "left mouse button";
 	g_mapNamesToString[MOUSE_RIGHT] = "right mouse button";
 	g_mapNamesToString[MOUSE_MIDDLE] = "middle mouse button";
@@ -135,7 +134,6 @@ static void InitNames()
 	g_mapNamesToString[MOUSE_BACK] = "back mouse button";
 	g_mapNamesToString[MOUSE_WHEELUP] = "mousewheel up";
 	g_mapNamesToString[MOUSE_WHEELDOWN] = "mousewheel down";
-	*/
 
 	FOREACHM( DeviceButton, RString, g_mapNamesToString, m )
 		g_mapStringToNames[m->second] = m->first;
@@ -229,7 +227,7 @@ static const char *InputDeviceNames[] = {
 	"Pump1",
 	"Pump2",
 	"Midi",
-	//"Mouse",
+	"Mouse",
 };
 XToString( InputDevice );
 StringToX( InputDevice );
