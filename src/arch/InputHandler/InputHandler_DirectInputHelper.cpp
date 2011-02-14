@@ -16,7 +16,7 @@ LPDIRECTINPUT g_dinput = NULL;
 
 static int ConvertScancodeToKey( int scancode );
 static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data);
-//static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data);
+static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data);
 
 DIDevice::DIDevice()
 {
@@ -24,6 +24,7 @@ DIDevice::DIDevice()
 	dev = InputDevice_Invalid;
 	buffered = true;
 	memset(&JoystickInst, 0, sizeof(JoystickInst));
+	//memset(&MouseInst, 0, sizeof(MouseInst));
 	Device = NULL;
 }
 
@@ -51,8 +52,27 @@ bool DIDevice::Open()
 		return false;
 	}
 
-	// todo: load mouse
+	// load mouse
+	/*
+	hr = g_dinput->CreateDevice( MouseInst.guidInstance, &tmpdevice, NULL );
+	if ( hr != DI_OK )
+	{
+		LOG->Info( hr_ssprintf(hr, "OpenDevice: IDirectInput_CreateDevice") );
+		return false;
+	}
+	*/
+	// is this ok? -aj
+	//hr = tmpdevice->QueryInterface( IID_IDirectInputDevice2, (LPVOID *) &Device );
+	/*
+	tmpdevice->Release();
+	if ( hr != DI_OK )
+	{
+		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice::QueryInterface", m_sName.c_str()) );
+		return false;
+	}
+	*/
 
+	// should mouse be foreground? -aj
 	int coop = DISCL_NONEXCLUSIVE | DISCL_BACKGROUND;
 	if( type == KEYBOARD )
 		coop = DISCL_NONEXCLUSIVE | DISCL_FOREGROUND;
@@ -86,27 +106,27 @@ bool DIDevice::Open()
 
 	switch( type )
 	{
-	case JOYSTICK:
-		Device->EnumObjects( DIJoystick_EnumDevObjectsProc, this, DIDFT_BUTTON | DIDFT_AXIS | DIDFT_POV);
-		break;
-	case KEYBOARD:
-		// Always 256-button.
-		for( int b = 0; b < 256; ++b )
-		{
-			input_t in;
-			in.type = in.KEY;
+		case JOYSTICK:
+			Device->EnumObjects( DIJoystick_EnumDevObjectsProc, this, DIDFT_BUTTON | DIDFT_AXIS | DIDFT_POV);
+			break;
+		case KEYBOARD:
+			// Always 256-button.
+			for( int b = 0; b < 256; ++b )
+			{
+				input_t in;
+				in.type = in.KEY;
 
-			in.num = ConvertScancodeToKey(b);
-			in.ofs = b;
-			buttons++;
-			Inputs.push_back(in);
-		}
-		break;
-	/*
-	case MOUSE:
-		Device->EnumObjects( DIMouse_EnumDevObjectsProc, this, DIDFT_BUTTON );
-		break;
-	*/
+				in.num = ConvertScancodeToKey(b);
+				in.ofs = b;
+				buttons++;
+				Inputs.push_back(in);
+			}
+			break;
+		/*
+		case MOUSE:
+			Device->EnumObjects( DIMouse_EnumDevObjectsProc, this, DIDFT_BUTTON | DIDFT_PSHBUTTON );
+			break;
+		*/
 	}
 
 	{
@@ -325,32 +345,29 @@ static int ConvertScancodeToKey( int scancode )
 	};
 }
 
-/*
 static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data)
 {
+	/*
 	DIDevice *device = (DIDevice *) data;
 
 	input_t in;
 	// todo: check mask for accuracy -aj
-	const int SupportedMask = DIDFT_BUTTON;
+	const int SupportedMask = DIDFT_BUTTON | DIDFT_PSHBUTTON;
 	if(!(dev->dwType & SupportedMask))
 		return DIENUM_CONTINUE; // unsupported
 
 	// xxx: does this check for scrollwheels? -aj
-	if(dev->dwType & DIDFT_BUTTON) {
-		if( device->buttons == 10 )
-			return DIENUM_CONTINUE; // too many buttons
-
+	if(dev->dwType & (DIDFT_BUTTON | DIDFT_PSHBUTTON) ) {
 		in.type = in.BUTTON;
 		in.num = device->buttons;
 		device->buttons++;
 	}
 
 	device->Inputs.push_back(in);
+	*/
 
 	return DIENUM_CONTINUE;
 }
-*/
 
 /*
  * (c) 2003-2011 Glenn Maynard, AJ Kelly

@@ -294,10 +294,10 @@ enum DeviceButton
 	MOUSE_LEFT = 700,
 	MOUSE_RIGHT,
 	MOUSE_MIDDLE,
-	// for mice with forward and backwards buttons
-	MOUSE_FORWARD, MOUSE_BACK,
 	// wheel mice
 	MOUSE_WHEELUP, MOUSE_WHEELDOWN,
+	// for mice with forward and backwards buttons
+	MOUSE_FORWARD, MOUSE_BACK,
 	*/
 
 	NUM_DeviceButton,
@@ -354,6 +354,7 @@ public:
 	void MakeInvalid() { device = InputDevice_Invalid; };
 
 	bool IsJoystick() const { return ::IsJoystick(device); }
+	//bool IsMouse() const { return ::IsMouse(device); }
 };
 
 typedef vector<DeviceInput> DeviceInputList;

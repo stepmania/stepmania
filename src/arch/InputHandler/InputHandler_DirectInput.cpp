@@ -37,12 +37,6 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 
 	switch( device.type )
 	{
-	/*
-	case device.MOUSE:
-		device.dev = DEVICE_MOUSE;
-		break;
-	*/
-
 	case device.JOYSTICK:
 		if( g_iNumJoysticks == NUM_JOYSTICKS )
 			return DIENUM_CONTINUE;
@@ -54,6 +48,12 @@ static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, 
 	case device.KEYBOARD:
 		device.dev = DEVICE_KEYBOARD;
 		break;
+
+	/*
+	case device.MOUSE:
+		device.dev = DEVICE_MOUSE;
+		break;
+	*/
 	}
 
 	Devices.push_back(device);
@@ -383,7 +383,26 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 	/*
 	case device.MOUSE:
 		DIMOUSESTATE state;
+
 		HRESULT hr = GetDeviceState(device.Device, sizeof(state), &state);
+		if( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
+			return;
+
+		// do button checks here
+		for( unsigned i = 0; i < device.Inputs.size(); ++i )
+		{
+			const input_t &in = device.Inputs[i];
+			const InputDevice dev = device.dev;
+
+			switch(in.type)
+			{
+				case in.BUTTON:
+					DeviceInput di( dev, enum_add2(MOUSE_LEFT, in.num), !!state.rgbButtons[in.ofs - DIMOFS_BUTTON0], tm );
+					ButtonPressed( di );
+					break;
+			}
+		}
+
 		break;
 	*/
 	}
@@ -415,6 +434,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 		return;
 	}
 
+	// todo: update for mouse? -aj
 	for( int i = 0; i < (int) numevents; ++i )
 	{
 		for(unsigned j = 0; j < device.Inputs.size(); ++j)
@@ -428,38 +448,33 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 			switch( in.type )
 			{
 				case in.KEY:
-					/*
-					switch( in.num )
-					{
-						// "Joystick with Keyboard" hack
-					case 115:	//s
-						ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_UP, !!(evtbuf[i].dwData & 0x80), tm) );
-						break;
-					case 120:	//x
-						ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_DOWN, !!(evtbuf[i].dwData & 0x80), tm) );
-						break;
-					case 122:	//z
-						ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_LEFT, !!(evtbuf[i].dwData & 0x80), tm) );
-						break;
-					case 99:	//c
-						ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_RIGHT, !!(evtbuf[i].dwData & 0x80), tm) );
-						break;
-					case 100:	//d
-						ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_1, !!(evtbuf[i].dwData & 0x80), tm) );
-						break;
-					case 101:	//e
-						ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_2, !!(evtbuf[i].dwData & 0x80), tm) );
-						break;
-					default:
-						*/
-						ButtonPressed( DeviceInput(dev, (DeviceButton) in.num, !!(evtbuf[i].dwData & 0x80), tm) );
-						/*
-						break;
-					}
-					*/
+					ButtonPressed( DeviceInput(dev, (DeviceButton) in.num, !!(evtbuf[i].dwData & 0x80), tm) );
 					break;
 
 				case in.BUTTON:
+					/*
+					if(dev == DEVICE_MOUSE)
+					{
+						DeviceButton mouseInput = DeviceButton_Invalid;
+						switch(in.ofs)
+						{
+							case DIMOFS_BUTTON0: mouseInput = MOUSE_LEFT; break;
+							case DIMOFS_BUTTON1: mouseInput = MOUSE_RIGHT; break;
+							case DIMOFS_BUTTON2: mouseInput = MOUSE_MIDDLE; break;
+							case DIMOFS_BUTTON3: break;
+							// todo: handle directions
+							case DIMOFS_X: break;
+							case DIMOFS_Y: break;
+							case DIMOFS_Z: break;
+							default: LOG->MapLog( "unknown input", 
+								 "Mouse '%s' is returning an unknown mouse offset, %i",
+								 device.m_sName.c_str(), in.ofs );
+								continue;
+						}
+						ButtonPressed( DeviceInput(dev, mouseInput, !!evtbuf[i].dwData, tm) );
+					}
+					else
+					*/
 					ButtonPressed( DeviceInput(dev, enum_add2(JOY_BUTTON_1, in.num), !!evtbuf[i].dwData, tm) );
 					break;
 

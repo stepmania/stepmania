@@ -23,11 +23,12 @@ typedef struct input_t
 struct DIDevice
 {
 	DIDEVICEINSTANCE JoystickInst;
+	DIDEVICEINSTANCE MouseInst;
 	LPDIRECTINPUTDEVICE2 Device;
 	RString m_sName;
 
-	enum { KEYBOARD, JOYSTICK } type;
-	//enum { KEYBOARD, JOYSTICK, MOUSE } type;
+	//enum { KEYBOARD, JOYSTICK } type;
+	enum { KEYBOARD, JOYSTICK, MOUSE } type;
 
 	bool buffered;
 	int buttons, axes, hats;
