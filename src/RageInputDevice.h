@@ -289,16 +289,14 @@ enum DeviceButton
 	MIDI_FIRST = 600,
 	MIDI_LAST = 699,
 
-	// Mouse:
+	// Mouse buttons
 	MOUSE_LEFT = 700,
 	MOUSE_RIGHT,
 	MOUSE_MIDDLE,
-	// for mice with forward and backwards buttons
-	MOUSE_FORWARD, MOUSE_BACK,
 	// axis
 	MOUSE_X_LEFT, MOUSE_X_RIGHT,
 	MOUSE_Y_UP, MOUSE_Y_DOWN,
-	// mousewheel?
+	// Mouse wheel (z axis)
 	MOUSE_WHEELUP, MOUSE_WHEELDOWN,
 
 	NUM_DeviceButton,

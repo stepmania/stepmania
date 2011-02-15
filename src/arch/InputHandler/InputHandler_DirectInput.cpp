@@ -262,8 +262,8 @@ static HRESULT GetDeviceState( LPDIRECTINPUTDEVICE2 dev, int size, void *ptr )
 	return hr;
 }
 
-/* This doesn't take a timestamp; instead, we let InputHandler::ButtonPressed figure
- * it out.  Be sure to call InputHandler::Update() between each poll. */
+/* This doesn't take a timestamp; instead, we let InputHandler::ButtonPressed
+ * figure it out. Be sure to call InputHandler::Update() between each poll. */
 void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 {
 	switch( device.type )
@@ -403,17 +403,16 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 					switch( in.ofs )
 					{
 						case DIMOFS_X:
-							LOG->Trace("mouse X axis changed (polled)");
 							neg = MOUSE_X_LEFT; pos = MOUSE_X_RIGHT;
 							val = state.lX;
+							LOG->Trace("mouse x: %d",val);
 							break;
 						case DIMOFS_Y:
-							LOG->Trace("mouse Y axis changed (polled)");
 							neg = MOUSE_Y_UP; pos = MOUSE_Y_DOWN;
 							val = state.lY;
+							LOG->Trace("mouse y: %d",val);
 							break;
 						case DIMOFS_Z:
-							LOG->Trace("mouse Z axis changed (polled)");
 							neg = MOUSE_WHEELUP; pos = MOUSE_WHEELDOWN;
 							val = state.lZ;
 							break;
@@ -489,7 +488,6 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 							case DIMOFS_BUTTON0: mouseInput = MOUSE_LEFT; break;
 							case DIMOFS_BUTTON1: mouseInput = MOUSE_RIGHT; break;
 							case DIMOFS_BUTTON2: mouseInput = MOUSE_MIDDLE; break;
-							//case DIMOFS_BUTTON3: break;
 							default: LOG->MapLog( "unknown input", 
 								 "Mouse '%s' is returning an unknown mouse offset [button], %i",
 								 device.m_sName.c_str(), in.ofs );
@@ -506,31 +504,31 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 					DeviceButton up = DeviceButton_Invalid, down = DeviceButton_Invalid;
 					if(dev == DEVICE_MOUSE)
 					{
+						// xxx: mouse position doesn't work here yet -aj
+						float l = int(evtbuf[i].dwData);
 						switch(in.ofs)
 						{
 							case DIMOFS_X:
-								LOG->Trace("mouse X axis changed (buffered)");
-								// todo: update cursor position -aj
 								up = MOUSE_X_LEFT; down = MOUSE_X_RIGHT;
+								//cursorX += l;
+								LOG->Trace("dwData for mouse x: %f",l);
 								break;
 							case DIMOFS_Y:
-								LOG->Trace("mouse Y axis changed (buffered)");
-								// todo: update cursor position -aj
 								up = MOUSE_Y_UP; down = MOUSE_Y_DOWN;
-								//INPUTFILTER->UpdateCursorLocation(0, evtbuf[i].dwData);
+								//cursorY += l;
+								LOG->Trace("dwData for mouse y: %f",l);
 								break;
 							case DIMOFS_Z:
-								LOG->Trace("mouse Z axis changed (buffered)");
 								up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
+								l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
+								ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
+								ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
 								break;
 							default: LOG->MapLog( "unknown input", 
 										 "Mouse '%s' is returning an unknown mouse offset [axis], %i",
 										 device.m_sName.c_str(), in.ofs );
 								continue;
 						}
-						float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
-						ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
-						ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
 					}
 					else
 					{

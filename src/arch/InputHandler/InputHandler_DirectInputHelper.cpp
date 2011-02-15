@@ -99,7 +99,7 @@ bool DIDevice::Open()
 			}
 			break;
 		case MOUSE:
-			Device->EnumObjects( DIMouse_EnumDevObjectsProc, this, DIDFT_BUTTON | DIDFT_AXIS );
+			Device->EnumObjects( DIMouse_EnumDevObjectsProc, this, DIDFT_BUTTON | DIDFT_AXIS | DIDFT_ANYINSTANCE );
 			break;
 	}
 
@@ -325,7 +325,7 @@ static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, L
 	//HRESULT hr;
 
 	input_t in;
-	const int SupportedMask = DIDFT_BUTTON | DIDFT_AXIS;
+	const int SupportedMask = DIDFT_BUTTON | DIDFT_AXIS | DIDFT_ANYINSTANCE;
 	if(!(dev->dwType & SupportedMask))
 		return DIENUM_CONTINUE; // unsupported
 
@@ -342,26 +342,8 @@ static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, L
 	{
 		LOG->Trace("found a mouse axis");
 		// todo: how to handle this correctly? -aj
-		//DIPROPRANGE diprg;
-
 		in.type = in.AXIS;
 		in.num = device->axes;
-
-		/*
-		diprg.diph.dwSize		= sizeof(diprg);
-		diprg.diph.dwHeaderSize	= sizeof(diprg.diph);
-		diprg.diph.dwObj		= dev->dwOfs;
-		diprg.diph.dwHow		= DIPH_BYOFFSET;
-		diprg.lMin				= -100;
-		diprg.lMax				= 100;
-
-		hr = device->Device->SetProperty( DIPROP_RANGE, &diprg.diph );
-		if ( hr != DI_OK )
-		{
-			LOG->Trace("error setting properties on mouse axis");
-			return DIENUM_CONTINUE; // don't use this axis
-		}
-		*/
 
 		device->axes++;
 	}
