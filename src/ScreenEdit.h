@@ -407,6 +407,7 @@ public:
 		difficulty,
 		meter,
 		description,
+		chartstyle,
 		step_credit,
 		predict_meter,
 		tap_notes,

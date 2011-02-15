@@ -13,6 +13,10 @@ _____________________________________________________________________________
 sm-ssc v1.2.2 | 201102??
 --------------------------------------------------------------------------------
 
+20110214
+--------
+* Added #CHARTSTYLE to .ssc format, mainly meant for Pad/Keyboard distinctions. [AJ]
+
 20110213
 --------
 * Life Difficulty 4 is now as difficult as Life 6 was. [AJ]
