@@ -340,7 +340,6 @@ static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, L
 	}
 	else if(dev->dwType & DIDFT_AXIS)
 	{
-		LOG->Trace("found a mouse axis");
 		// todo: how to handle this correctly? -aj
 		in.type = in.AXIS;
 		in.num = device->axes;

@@ -320,12 +320,18 @@ public:
 	 * debouncing applied. */
 	bool bDown;
 
+	// Mouse coordinates
+	unsigned x;
+	unsigned y;
+
 	RageTimer ts;
 
 	DeviceInput(): device(InputDevice_Invalid), button(DeviceButton_Invalid), level(0), bDown(false), ts(RageZeroTimer) { }
 	DeviceInput( InputDevice d, DeviceButton b, float l=0 ): device(d), button(b), level(l), bDown(l > 0.5f), ts(RageZeroTimer) { }
 	DeviceInput( InputDevice d, DeviceButton b, float l, const RageTimer &t ):
 		device(d), button(b), level(l), bDown(level > 0.5f), ts(t) { }
+	DeviceInput( InputDevice d, DeviceButton b, const RageTimer &t, unsigned xPos=0, unsigned yPos=0 ):
+		device(d), button(b), x(xPos), y(yPos), bDown(false), ts(t) { }
 
 	bool operator==( const DeviceInput &other ) const
 	{ 
