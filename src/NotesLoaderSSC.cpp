@@ -634,6 +634,11 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					pNewNotes->m_StepsType = GAMEMAN->StringToStepsType( sParams[1] );
 				}
 
+				else if( sValueName=="CHARTSTYLE" )
+				{
+					pNewNotes->SetChartStyle( sParams[1] );
+				}
+
 				else if( sValueName=="DESCRIPTION" )
 				{
 					pNewNotes->SetDescription( sParams[1] );
@@ -987,6 +992,12 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 		if( sValueName=="STEPSTYPE" )
 		{
 			pNewNotes->m_StepsType = GAMEMAN->StringToStepsType( sParams[1] );
+			bSSCFormat = true;
+		}
+
+		else if( sValueName=="CHARTSTYLE" )
+		{
+			pNewNotes->SetChartStyle( sParams[1] );
 			bSSCFormat = true;
 		}
 

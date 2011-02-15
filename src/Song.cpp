@@ -36,8 +36,9 @@
 #include <set>
 #include <float.h>
 
-const static float VERSION_NUMBER = 0.51f;
-const int FILE_CACHE_VERSION = 163;	// increment this to invalidate cache
+/** @brief: The version of the .ssc file format. */
+const static float VERSION_NUMBER = 0.52f;
+const int FILE_CACHE_VERSION = 164;	// increment this to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 

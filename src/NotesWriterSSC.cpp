@@ -262,6 +262,7 @@ static RString GetSSCNotesTag( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( "#NOTEDATA:;" ); // our new separator.
 	lines.push_back( ssprintf( "#STEPSTYPE:%s;", GAMEMAN->GetStepsTypeInfo(in.m_StepsType).szName ) );
 	lines.push_back( ssprintf( "#DESCRIPTION:%s;", SmEscape(in.GetDescription()).c_str() ) );
+	lines.push_back( ssprintf( "#CHARTSTYLE:%s;", SmEscape(in.GetChartStyle()).c_str() ) );
 	lines.push_back( ssprintf( "#DIFFICULTY:%s;", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	lines.push_back( ssprintf( "#METER:%d;", in.GetMeter() ) );
 
