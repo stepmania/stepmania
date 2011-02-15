@@ -34,7 +34,6 @@ InputMapper::InputMapper()
 	m_pInputScheme = NULL;
 }
 
-
 InputMapper::~InputMapper()
 {
 	SaveMappingsToDisk();

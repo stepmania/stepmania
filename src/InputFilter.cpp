@@ -397,6 +397,11 @@ void InputFilter::GetPressedButtons( vector<DeviceInput> &array ) const
 	array = g_CurrentState;
 }
 
+void InputFilter::UpdateCursorLocation()
+{
+	// todo
+}
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

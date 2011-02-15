@@ -7,15 +7,15 @@
 
 enum InputEventType
 {
-	/* The device was just pressed. */
+	// The device was just pressed.
 	IET_FIRST_PRESS,
 
-	/* The device is auto-repeating.  This event is guaranteed to be sent only between
-	 * IET_FIRST_PRESS and IET_RELEASE pairs. */
+	/* The device is auto-repeating. This event is guaranteed to be sent only
+	 * between IET_FIRST_PRESS and IET_RELEASE pairs. */
 	IET_REPEAT,
 
-	/* The device is no longer pressed.  Exactly one IET_RELEASE event will be sent
-	 * for each IET_FIRST_PRESS. */
+	/* The device is no longer pressed. Exactly one IET_RELEASE event will be
+	 * sent for each IET_FIRST_PRESS. */
 	IET_RELEASE,
 
 	NUM_InputEventType,
@@ -29,7 +29,7 @@ struct InputEvent
 	DeviceInput di;
 	InputEventType type;
 
-	/* A list of all buttons that were pressed at the time of this event: */
+	// A list of all buttons that were pressed at the time of this event:
 	DeviceInputList m_ButtonState;
 };
 
@@ -62,6 +62,9 @@ public:
 	void GetInputEvents( vector<InputEvent> &aEventOut );
 	void GetPressedButtons( vector<DeviceInput> &array ) const;
 
+	// cursor
+	void UpdateCursorLocation();
+
 private:
 	void CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now );
 	void ReportButtonChange( const DeviceInput &di, InputEventType t );
@@ -71,9 +74,7 @@ private:
 	RageMutex *queuemutex;
 };
 
-
 extern InputFilter*	INPUTFILTER;	// global and accessable from anywhere in our program
-
 
 #endif
 

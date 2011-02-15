@@ -22,7 +22,7 @@ RString hr_ssprintf( int hr, const char *fmt, ... )
 #ifdef _XBOX
 	char szError[1024] = "";
 	D3DXGetErrorString( hr, szError, sizeof(szError) );
-#else	
+#else
 	const char *szError = DXGetErrorString8( hr );
 #endif
 

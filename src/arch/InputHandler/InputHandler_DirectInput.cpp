@@ -425,7 +425,8 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 
 					if( neg != DeviceButton_Invalid )
 					{
-						float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
+						//float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
+						float l = val;
 						ButtonPressed( DeviceInput(dev, neg, max(-l,0), tm) );
 						ButtonPressed( DeviceInput(dev, pos, max(+l,0), tm) );
 					}
@@ -509,11 +510,14 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 						{
 							case DIMOFS_X:
 								LOG->Trace("mouse X axis changed (buffered)");
+								// todo: update cursor position -aj
 								up = MOUSE_X_LEFT; down = MOUSE_X_RIGHT;
 								break;
 							case DIMOFS_Y:
 								LOG->Trace("mouse Y axis changed (buffered)");
+								// todo: update cursor position -aj
 								up = MOUSE_Y_UP; down = MOUSE_Y_DOWN;
+								//INPUTFILTER->UpdateCursorLocation(0, evtbuf[i].dwData);
 								break;
 							case DIMOFS_Z:
 								LOG->Trace("mouse Z axis changed (buffered)");
@@ -524,6 +528,9 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 										 device.m_sName.c_str(), in.ofs );
 								continue;
 						}
+						float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
+						ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
+						ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
 					}
 					else
 					{
@@ -532,7 +539,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 							// joystick
 							case DIJOFS_X:  up = JOY_LEFT; down = JOY_RIGHT; break;
 							case DIJOFS_Y:  up = JOY_UP; down = JOY_DOWN; break;
-							case DIJOFS_Z: up = JOY_Z_UP; down = JOY_Z_DOWN; break;
+							case DIJOFS_Z:  up = JOY_Z_UP; down = JOY_Z_DOWN; break;
 							case DIJOFS_RX: up = JOY_ROT_UP; down = JOY_ROT_DOWN; break;
 							case DIJOFS_RY: up = JOY_ROT_LEFT; down = JOY_ROT_RIGHT; break;
 							case DIJOFS_RZ: up = JOY_ROT_Z_UP; down = JOY_ROT_Z_DOWN; break;
@@ -543,11 +550,10 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 										 device.m_sName.c_str(), in.ofs );
 								continue;
 						}
+						float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
+						ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
+						ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
 					}
-
-					float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
-					ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
-					ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
 					break;
 				}
 				case in.HAT:

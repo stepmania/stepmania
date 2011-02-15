@@ -100,9 +100,9 @@ struct AutoMappings
 #undef PUSH
 	}
 
-	/* Strings used by automatic joystick mappings. */
-	RString m_sGame;	// only used
-	RString m_sDriverRegex;	// reported by InputHandler
+	// Strings used by automatic joystick mappings.
+	RString m_sGame;			// only used
+	RString m_sDriverRegex;		// reported by InputHandler
 	RString m_sControllerName;	// the product name of the controller
 
 	vector<AutoMappingEntry> m_vMaps;
@@ -118,7 +118,7 @@ public:
 		const char	*m_szName;	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
 		GameButton	m_SecondaryMenuButton;
 	};
-	/* Data for each Game-specific GameButton.  This starts at GAME_BUTTON_NEXT. */
+	// Data for each Game-specific GameButton. This starts at GAME_BUTTON_NEXT.
 	GameButtonInfo m_GameButtonInfo[NUM_GameButton];
 	const AutoMappings *m_pAutoMappings;
 
@@ -211,9 +211,7 @@ protected:
 	const InputScheme *m_pInputScheme;
 };
 
-
 extern InputMapper*	INPUTMAPPER;	// global and accessable from anywhere in our program
-
 
 #endif
 
