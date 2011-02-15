@@ -23,8 +23,8 @@ struct ButtonState
 	// The time that we actually reported the last event (used for debouncing).
 	RageTimer m_LastReportTime;
 
-	// The timestamp of the last reported change.  Unlike m_BeingHeldTime, this
-	// value is debounced along with the input state.  (This is the same as
+	// The timestamp of the last reported change. Unlike m_BeingHeldTime, this
+	// value is debounced along with the input state. (This is the same as
 	// m_fSecsHeld, except this isn't affected by Update scaling.)
 	RageTimer m_LastInputTime;
 };
@@ -45,9 +45,9 @@ struct DeviceButtonPair
 namespace
 {
 	/* Maintain a set of all interesting buttons: buttons which are being held
-	 * down, or which were held down and need a RELEASE event.  We use this to
+	 * down, or which were held down and need a RELEASE event. We use this to
 	 * optimize InputFilter::Update, so we don't have to process every button
-	 * we know about when most of them aren't in use.  This set is protected
+	 * we know about when most of them aren't in use. This set is protected
 	 * by queuemutex. */
 	typedef map<DeviceButtonPair, ButtonState> ButtonStateMap;
 	ButtonStateMap g_ButtonStates;
@@ -64,22 +64,19 @@ namespace
 	set<DeviceInput> g_DisableRepeat;
 }
 
-/*
- * Some input devices require debouncing.  Do this on both press and release.  After
- * reporting a change in state, don't report another for the debounce period.  If a
- * button is reported pressed, report it.  If the button is immediately reported
- * released, wait a period before reporting it; if the button is repressed during
- * that time, the release is never reported.
- *
+/* Some input devices require debouncing. Do this on both press and release.
+ * After reporting a change in state, don't report another for the debounce
+ * period. If a button is reported pressed, report it. If the button is
+ * immediately reported released, wait a period before reporting it; if the
+ * button is repressed during that time, the release is never reported.
  * The detail is important: if a button is pressed for 1ms and released, we must
- * always report it, even if the debounce period is 10ms, since it might be a coin
- * counter with a very short signal.  The only time we discard events is if a button
- * is pressed, released and then pressed again quickly.
+ * always report it, even if the debounce period is 10ms, since it might be a
+ * coin counter with a very short signal. The only time we discard events is if
+ * a button is pressed, released and then pressed again quickly.
  *
- * This delay in events is ordinarily not noticable, because the we report initial
+ * This delay in events is ordinarily not noticable, because we report initial
  * presses and releases immediately.  However, if a real press is ever delayed,
- * this won't cause timing problems, because the event timestamp is preserved.
- */
+ * this won't cause timing problems, because the event timestamp is preserved. */
 static Preference<float> g_fInputDebounceTime( "InputDebounceTime", 0 );
 
 InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our program
@@ -148,7 +145,7 @@ void InputFilter::ButtonPressed( const DeviceInput &di )
 
 	ButtonState &bs = GetButtonState( di );
 
-	/* Flush any delayed input, like Update() (in case Update() isn't being called). */
+	// Flush any delayed input, like Update() (in case Update() isn't being called).
 	RageTimer now;
 	CheckButtonChange( bs, di, now );
 
@@ -161,7 +158,7 @@ void InputFilter::ButtonPressed( const DeviceInput &di )
 		bs.m_BeingHeldTime = di.ts;
 	}
 
-	/* Try to report presses immediately. */
+	// Try to report presses immediately.
 	MakeButtonStateList( g_CurrentState );
 	CheckButtonChange( bs, di, now );
 }
@@ -173,7 +170,7 @@ void InputFilter::SetButtonComment( const DeviceInput &di, const RString &sComme
 	bs.m_sComment = sComment;
 }
 
-/* Release all buttons on the given device. */
+/** @brief Release all buttons on the given device. */
 void InputFilter::ResetDevice( InputDevice device )
 {
 	LockMut(*queuemutex);
@@ -188,7 +185,7 @@ void InputFilter::ResetDevice( InputDevice device )
 	}
 }
 
-/* Check for reportable presses. */
+/** @brief Check for reportable presses. */
 void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now )
 {
 	if( bs.m_BeingHeld == bs.m_bLastReportedHeld )
@@ -222,13 +219,11 @@ void InputFilter::ReportButtonChange( const DeviceInput &di, InputEventType t )
 	ie.type = t;
 	ie.di = di;
 
-	/*
-	 * Include a list of all buttons that were pressed at the time of this event.  We
-	 * can create this efficiently using g_ButtonStates.  Use a vector and not a
-	 * map, for efficiency; most code will not use this information.  Iterating over
-	 * g_ButtonStates will be in DeviceInput order, so users can binary search this
-	 * list (eg. std::lower_bound).
-	 */
+	/* Include a list of all buttons that were pressed at the time of this event.
+	 * We can create this efficiently using g_ButtonStates. Use a vector and not
+	 * a map, for efficiency; most code will not use this information. Iterating
+	 * over g_ButtonStates will be in DeviceInput order, so users can binary
+	 * search this list (eg. std::lower_bound). */
 	ie.m_ButtonState = g_CurrentState;
 }
 
@@ -251,8 +246,8 @@ void InputFilter::Update( float fDeltaTime )
 
 	INPUTMAN->Update();
 
-	/* Make sure that nothing gets inserted while we do this, to prevent
-	 * things like "key pressed, key release, key repeat". */
+	/* Make sure that nothing gets inserted while we do this, to prevent things
+	 * like "key pressed, key release, key repeat". */
 	LockMut(*queuemutex);
 
 	DeviceInput di( InputDevice_Invalid, DeviceButton_Invalid, 1.0f, now );
@@ -260,28 +255,28 @@ void InputFilter::Update( float fDeltaTime )
 	MakeButtonStateList( g_CurrentState );
 
 	vector<ButtonStateMap::iterator> ButtonsToErase;
-	
+
 	FOREACHM( DeviceButtonPair, ButtonState, g_ButtonStates, b )
 	{
 		di.device = b->first.device;
 		di.button = b->first.button;
 		ButtonState &bs = b->second;
 
-		/* Generate IET_FIRST_PRESS and IET_RELEASE events that were delayed. */
+		// Generate IET_FIRST_PRESS and IET_RELEASE events that were delayed.
 		CheckButtonChange( bs, di, now );
 
-		/* Generate IET_REPEAT events. */
+		// Generate IET_REPEAT events.
 		if( !bs.m_bLastReportedHeld )
 		{
-			// If the key isn't pressed, and hasn't been pressed for a while (so debouncing
-			// isn't interested in it), purge the entry.
+			// If the key isn't pressed, and hasn't been pressed for a while
+			// (so debouncing isn't interested in it), purge the entry.
 			if( now - bs.m_LastReportTime > g_fInputDebounceTime &&
 				 bs.m_DeviceInput.level == 0.0f )
 				ButtonsToErase.push_back( b );
 			continue;
 		}
 
-		/* If repeats are disabled for this button, skip. */
+		// If repeats are disabled for this button, skip.
 		if( g_DisableRepeat.find(di) != g_DisableRepeat.end() )
 			continue;
 
@@ -306,9 +301,9 @@ void InputFilter::Update( float fDeltaTime )
 			fRepeatTime = ftruncf( fNewHoldTime, g_fTimeBetweenRepeats );
 		}
 
-		/* Set the timestamp to the exact time of the repeat.  This way,
-		 * as long as tab/` aren't being used, the timestamp will always
-		 * increase steadily during repeats. */
+		/* Set the timestamp to the exact time of the repeat. This way, as long
+		 * as tab/` aren't being used, the timestamp will always increase steadily
+		 * during repeats. */
 		di.ts = bs.m_LastInputTime + fRepeatTime;
 
 		ReportButtonChange( di, IET_REPEAT );
@@ -371,12 +366,12 @@ void InputFilter::ResetKeyRepeat( const DeviceInput &di )
 	GetButtonState( di ).m_fSecsHeld = 0;
 }
 
-/* Stop repeating the specified key until released. */
+/** @brief Stop repeating the specified key until released. */
 void InputFilter::RepeatStopKey( const DeviceInput &di )
 {
 	LockMut(*queuemutex);
 
-	/* If the button is up, do nothing. */
+	// If the button is up, do nothing.
 	ButtonState &bs = GetButtonState( di );
 	if( !bs.m_bLastReportedHeld )
 		return;

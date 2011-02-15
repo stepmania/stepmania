@@ -36,7 +36,7 @@
 #include <set>
 #include <float.h>
 
-/** @brief: The version of the .ssc file format. */
+/** @brief The version of the .ssc file format. */
 const static float VERSION_NUMBER = 0.52f;
 const int FILE_CACHE_VERSION = 164;	// increment this to invalidate cache
 
