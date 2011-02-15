@@ -402,15 +402,21 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 					int val = 0;
 					switch( in.ofs )
 					{
-						case DIMOFS_X:  neg = MOUSE_X_LEFT; pos = MOUSE_X_RIGHT;
-										val = state.lX;
-										break;
-						case DIMOFS_Y:  neg = MOUSE_Y_UP; pos = MOUSE_Y_DOWN;
-										val = state.lY;
-										break;
-						case DIMOFS_Z:  neg = MOUSE_Z_UP; pos = MOUSE_Z_DOWN;
-										val = state.lZ;
-										break;
+						case DIMOFS_X:
+							LOG->Trace("mouse X axis changed (polled)");
+							neg = MOUSE_X_LEFT; pos = MOUSE_X_RIGHT;
+							val = state.lX;
+							break;
+						case DIMOFS_Y:
+							LOG->Trace("mouse Y axis changed (polled)");
+							neg = MOUSE_Y_UP; pos = MOUSE_Y_DOWN;
+							val = state.lY;
+							break;
+						case DIMOFS_Z:
+							LOG->Trace("mouse Z axis changed (polled)");
+							neg = MOUSE_WHEELUP; pos = MOUSE_WHEELDOWN;
+							val = state.lZ;
+							break;
 						default: LOG->MapLog( "unknown input", 
 											"Mouse '%s' is returning an unknown mouse offset, %i",
 											device.m_sName.c_str(), in.ofs );
@@ -501,11 +507,20 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 					{
 						switch(in.ofs)
 						{
-							case DIMOFS_X: up = MOUSE_X_LEFT; down = MOUSE_X_RIGHT; break;
-							case DIMOFS_Y: up = MOUSE_Y_UP; down = MOUSE_Y_DOWN; break;
-							case DIMOFS_Z: up = MOUSE_Z_UP; down = MOUSE_Z_DOWN; break;
+							case DIMOFS_X:
+								LOG->Trace("mouse X axis changed (buffered)");
+								up = MOUSE_X_LEFT; down = MOUSE_X_RIGHT;
+								break;
+							case DIMOFS_Y:
+								LOG->Trace("mouse Y axis changed (buffered)");
+								up = MOUSE_Y_UP; down = MOUSE_Y_DOWN;
+								break;
+							case DIMOFS_Z:
+								LOG->Trace("mouse Z axis changed (buffered)");
+								up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
+								break;
 							default: LOG->MapLog( "unknown input", 
-										 "Controller '%s' is returning an unknown mouse offset [axis], %i",
+										 "Mouse '%s' is returning an unknown mouse offset [axis], %i",
 										 device.m_sName.c_str(), in.ofs );
 								continue;
 						}
