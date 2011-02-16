@@ -28,6 +28,7 @@ namespace ScreenDimensions
 #define FullScreenRectF RectF(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM)
 
 // XXX: doesn't always have to be 64. -aj
+// Referenced in ArrowEffects, GameManager, NoteField, SnapDisplay.
 #define	ARROW_SIZE	(64)
 
 #endif
