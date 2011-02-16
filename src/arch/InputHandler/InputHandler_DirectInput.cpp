@@ -405,12 +405,10 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 						case DIMOFS_X:
 							neg = MOUSE_X_LEFT; pos = MOUSE_X_RIGHT;
 							val = state.lX;
-							LOG->Trace("mouse x: %d",val);
 							break;
 						case DIMOFS_Y:
 							neg = MOUSE_Y_UP; pos = MOUSE_Y_DOWN;
 							val = state.lY;
-							LOG->Trace("mouse y: %d",val);
 							break;
 						case DIMOFS_Z:
 							neg = MOUSE_WHEELUP; pos = MOUSE_WHEELDOWN;
@@ -424,8 +422,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 
 					if( neg != DeviceButton_Invalid )
 					{
-						//float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
-						float l = val;
+						float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
 						ButtonPressed( DeviceInput(dev, neg, max(-l,0), tm) );
 						ButtonPressed( DeviceInput(dev, pos, max(+l,0), tm) );
 					}
@@ -520,7 +517,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 								break;
 							case DIMOFS_Z:
 								up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
-								l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
+								l = SCALE( int(evtbuf[i].dwData), -120.0f, 120.0f, -1.0f, 1.0f );
 								ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
 								ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
 								break;
