@@ -123,7 +123,6 @@ public:
 	bool IsCpuPlayer( PlayerNumber pn ) const;
 	bool AnyPlayersAreCpu() const;
 
-
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; // not Rave
 
@@ -214,10 +213,17 @@ public:
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
 	// Metricable noteskin things
-	// void LoadNoteSkinMetrics( PlayerNumber pn );
-	// int m_iRowSpacing;
-	// int m_iColSpacing;
-	// int m_iArrowSize;
+	/*
+	void LoadNoteSkinMetrics( PlayerNumber pn );
+	int			m_iNoteSkinColSpacing[NUM_PLAYERS];
+	int			m_iNoteSkinArrowSize[NUM_PLAYERS];
+	*/
+	// not sure I want to let noteskins change row spacing, as that changes how
+	// the speed mods work... -aj
+	//int			m_iNoteSkinRowSpacing[NUM_PLAYERS];
+	// what are these for, exactly? -aj
+	//bool		m_bNoteSkinOverrideDim[NUM_PLAYERS];
+	//bool		m_bNoteSkinOverrideBright[NUM_PLAYERS];
 
 	float		m_fMusicSecondsVisible;
 	float		m_fSongBeatVisible;
