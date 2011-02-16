@@ -419,6 +419,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 	}
 
+	// todo: use mousewheel to scroll MusicWheel -aj
+
 	// debugging?
 	// I just like being able to see untransliterated titles occasionally.
 	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F9 )
