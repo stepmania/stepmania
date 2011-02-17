@@ -43,10 +43,10 @@ Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sCha
 	PruneFonts();
 
 	Font *pFont;
-	// Convert the path to lowercase so that we don't load duplicates.
-	// Really, this does not solve the duplicate problem.  We could have two copies
-	// of the same bitmap if there are equivalent but different paths
-	// (e.g. "graphics\blah.png" and "..\stepmania\graphics\blah.png" ).
+	/* Convert the path to lowercase so that we don't load duplicates. Really,
+	 * this does not solve the duplicate problem. We could have two copies of
+	 * the same bitmap if there are equivalent but different paths
+	 * (e.g. "graphics\blah.png" and "..\stepmania\graphics\blah.png" ). */
 
 	CHECKPOINT_M( ssprintf("FontManager::LoadFont(%s).", sFontOrTextureFilePath.c_str()) );
 	const FontName NewName( sFontOrTextureFilePath, sChars );
@@ -54,6 +54,8 @@ Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sCha
 	if( p != g_mapPathToFont.end() )
 	{
 		pFont=p->second;
+		// reload in case metrics may have changed
+		pFont->Load(sFontOrTextureFilePath, sChars);
 	}
 	else {
 		pFont= new Font;
@@ -61,7 +63,7 @@ Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sCha
 		g_mapPathToFont[NewName] = pFont;
 	}
 
-	++pFont->m_iRefCount;
+	pFont->m_iRefCount++;
 	return pFont;
 }
 
