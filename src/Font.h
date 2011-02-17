@@ -1,4 +1,4 @@
-/* Font - stores a font, used by BitmapText. */
+/** @brief Font - stores a font, used by BitmapText. */
 
 #ifndef FONT_H
 #define FONT_H
@@ -12,13 +12,17 @@ class FontPage;
 class RageTexture;
 class IniFile;
 
+/** @brief The textures used by the font. */
 struct FontPageTextures
 {
+	/** @brief The primary texture drawn underneath Main. */
 	RageTexture *m_pTextureMain;
-	/* an optional texture drawn underneath Main that can help to acheive
-	 * complicated layer styles. */
+	/** @brief an optional texture drawn underneath Main.
+	 *
+	 * This can help to acheive complicated layer styles. */
 	RageTexture *m_pTextureStroke;
 
+	/** @brief Set up the initial textures. */
 	FontPageTextures()
 	{
 		m_pTextureMain = NULL;
@@ -26,25 +30,31 @@ struct FontPageTextures
 	}
 };
 
+/** @brief The components of a glyph (not technically a character). */
 struct glyph
 {
+	/** @brief the FontPage that is needed. */
 	FontPage *m_pPage;
+	/** @brief the textures for the glyph. */
 	FontPageTextures m_FontPageTextures;
 	FontPageTextures *GetFontPageTextures() const { return const_cast<FontPageTextures *>(&m_FontPageTextures); }
 
-	// Number of pixels to advance horizontally after drawing this character.
+	/** @brief Number of pixels to advance horizontally after drawing this character. */
 	int m_iHadvance;
 
-	// Size of the actual rendered character.
-	float m_fWidth, m_fHeight;
+	/** @brief Width of the actual rendered character. */
+	float m_fWidth;
+	/** @brief Height of the actual rendered character. */
+	float m_fHeight;
 
-	// Number of pixels to offset this character when rendering.
+	/** @brief Number of pixels to offset this character when rendering. */
 	float m_fHshift; // , m_fVshift;
 
-	// Texture coordinate rect.
+	/** @brief Texture coordinate rect. */
 	RectF m_TexRect;
 };
 
+/** @brief The settings used for the FontPage. */
 struct FontPageSettings
 {
 	RString m_sTexturePath;
@@ -64,6 +74,7 @@ struct FontPageSettings
 	// If a value is missing, the width of the texture frame is used.
 	map<int,int> m_mapGlyphWidths;
 
+	/** @brief The initial settings for the FontPage. */
 	FontPageSettings():
 		m_iDrawExtraPixelsLeft(0), m_iDrawExtraPixelsRight(0),
 		m_iAddToAllWidths(0), 
@@ -76,8 +87,13 @@ struct FontPageSettings
 		m_sTextureHints("default")
 	{ }
 
-	/* Map a range from a character map to glyphs. If cnt is -1, map the
-	 * whole map. Returns "" or an error message. */
+	/**
+	 * @briefMap a range from a character map to glyphs.
+	 * @param sMapping the intended mapping.
+	 * @param iMapOffset the number of maps to offset.
+	 * @param iGlyphOffset the number of glyphs to offset.
+	 * @param iCount the range to map. If -1, the range is the entire map.
+	 * @return the empty string on success, or an error message on failure. */
 	RString MapRange( RString sMapping, int iMapOffset, int iGlyphOffset, int iCount );
 };
 
@@ -96,14 +112,15 @@ public:
 	int GetCenter() const { return m_iHeight/2; }
 
 	// Remember these only for GetLineWidthInSourcePixels.
-	int m_iDrawExtraPixelsLeft, m_iDrawExtraPixelsRight;
+	int m_iDrawExtraPixelsLeft,
+	m_iDrawExtraPixelsRight;
 
 	FontPageTextures m_FontPageTextures;
 
 	// XXX: remove?
 	RString m_sTexturePath;
 
-	// All glyphs in this list will point to m_pTexture.
+	/** @brief All glyphs in this list will point to m_pTexture. */
 	vector<glyph> m_aGlyphs;
 
 	map<wchar_t,int> m_iCharToGlyphNo;
@@ -178,14 +195,17 @@ private:
 	RString GetPageNameFromFileName( const RString &sFilename );
 };
 
-/* Last private-use Unicode character: */
-/* This is in the header to reduce file dependencies. */
+/**
+ * @brief Last private-use Unicode character:
+ * 
+ * This is in the header to reduce file dependencies. */
 const wchar_t FONT_DEFAULT_GLYPH = 0xF8FF;
 
 #endif
 
-/*
- * (c) 2001-2004 Glenn Maynard, Chris Danford
+/**
+ * @file
+ * @author Glenn Maynard, Chris Danford (c) 2001-2004
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
