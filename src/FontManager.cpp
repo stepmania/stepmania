@@ -54,8 +54,7 @@ Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sCha
 	if( p != g_mapPathToFont.end() )
 	{
 		pFont=p->second;
-		// reload in case metrics may have changed
-		pFont->Load(sFontOrTextureFilePath, sChars);
+		pFont->m_iRefCount++;
 	}
 	else {
 		pFont= new Font;
@@ -63,7 +62,6 @@ Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sCha
 		g_mapPathToFont[NewName] = pFont;
 	}
 
-	pFont->m_iRefCount++;
 	return pFont;
 }
 

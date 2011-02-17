@@ -726,9 +726,10 @@ void Font::Load( const RString &sIniPath, RString sChars )
 				continue;
 			}
 
-			Font *subfont=FONT->LoadFont(path,"");
-			MergeFont(*subfont);
-			FONT->UnloadFont(subfont);
+			Font subfont;
+			subfont.Load(path,"");
+			MergeFont(subfont);
+			//FONT->UnloadFont(subfont);
 		}
 	}
 
