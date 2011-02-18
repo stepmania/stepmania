@@ -16,7 +16,6 @@
 #include "ThemeMetric.h"
 #include "ScreenDimensions.h"
 
-
 const int MAX_WHEEL_SOUND_SPEED = 15;
 AutoScreenMessage( SM_SongChanged ) // TODO: Replace this with a Message and MESSAGEMAN
 
@@ -88,7 +87,7 @@ void WheelBase::BeginScreen()
 
 void WheelBase::SetItemPosition( Actor &item, float fPosOffsetsFromMiddle )
 {
-	/* Don't supply and item index or num items. The number of items can be so 
+	/* Don't supply and item index or num items. The number of items can be so
 	 * large that transforms that depend on such large numbers are likely to break. */
 	int iItemIndex = 0; // dummy
 	int iNumItems = 1; // dummy
@@ -161,8 +160,8 @@ void WheelBase::Update( float fDeltaTime )
 			pDisplay->m_colorLocked = RageColor(0,0,0,0);
 	}
 
-	//Moved to CommonUpdateProcedure, seems to work fine
-	//Revert if it happens to break something
+	// Moved to CommonUpdateProcedure, seems to work fine. Revert if it happens
+	// to break something.
 	UpdateScrollbar();
 
 	if( m_Moving )
@@ -178,9 +177,8 @@ void WheelBase::Update( float fDeltaTime )
 
 	if( m_WheelState == STATE_LOCKED )
 	{
-		/* Do this in at most .1 sec chunks, so we don't get weird if we
-		 * stop for some reason (and so it behaves the same when being
-		 * single stepped). */
+		/* Do this in at most .1 sec chunks, so we don't get weird if we stop
+		 * for some reason (and so it behaves the same when being single stepped). */
 		float fTime = fDeltaTime;
 		while( fTime > 0 )
 		{
@@ -207,13 +205,12 @@ void WheelBase::Update( float fDeltaTime )
 
 	if( IsMoving() )
 	{
-		/* We're automatically moving. Move linearly, and don't clamp
-		 * to the selection. */
+		// We're automatically moving. Move linearly, and don't clamp to the selection.
 		float fSpinSpeed = m_SpinSpeed*m_Moving;
 		m_fPositionOffsetFromSelection -= fSpinSpeed*fDeltaTime;
 
-		/* Make sure that we don't go further than 1 away, in case the
-		 * speed is very high or we miss a lot of frames. */
+		/* Make sure that we don't go further than 1 away, in case the speed is
+		 * very high or we miss a lot of frames. */
 		m_fPositionOffsetFromSelection  = clamp(m_fPositionOffsetFromSelection, -1.0f, 1.0f);
 
 		// If it passed the selection, move again.
@@ -285,10 +282,10 @@ bool WheelBase::Select()	// return true if this selection can end the screen
 	case TYPE_SECTION:
 		{
 			RString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sText;
-			if( m_sExpandedSectionName == sThisItemSectionName )	// already expanded
-				SetOpenSection( "" );				// collapse it
-			else							// already collapsed
-				SetOpenSection( sThisItemSectionName );		// expand it
+			if( m_sExpandedSectionName == sThisItemSectionName ) // already expanded
+				SetOpenSection( "" ); // collapse it
+			else // already collapsed
+				SetOpenSection( sThisItemSectionName ); // expand it
 
 			m_soundExpand.Play();
 		}
@@ -375,7 +372,7 @@ void WheelBase::Move(int n)
 	m_TimeBeforeMovingBegins = 1/4.0f;
 	m_SpinSpeed = float(PREFSMAN->m_iMusicWheelSwitchSpeed);
 	m_Moving = n;
-	
+
 	if( m_Moving )
 		ChangeMusic(m_Moving);
 }
@@ -528,8 +525,7 @@ public:
 	static int SetOpenSection( T* p, lua_State *L ){ p->SetOpenSection( SArg(1) ); return 0; }
 	// evil shit
 	//static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); return 0; }
-	//static int ChangeMusic( T* p, lua_State *L ){ p->ChangeMusic( IArg(1) ); return 0; }
-	//static int ChangeMusicUnlessLocked( T* p, lua_State *L ){ p->ChangeMusicUnlessLocked( IArg(1) ); return 0; }
+	//static int ChangeMusic( T* p, lua_State *L ){ p->ChangeMusicUnlessLocked( IArg(1) ); return 0; }
 
 	LunaWheelBase()
 	{
@@ -540,7 +536,6 @@ public:
 		// evil shit
 		//ADD_METHOD( Move );
 		//ADD_METHOD( ChangeMusic );
-		//ADD_METHOD( ChangeMusicUnlessLocked );
 	}
 };
 
