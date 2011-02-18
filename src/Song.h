@@ -1,4 +1,4 @@
-/* Song - Holds all music metadata and steps for one song. */
+/** @brief Song - Holds all music metadata and steps for one song. */
 
 #ifndef SONG_H
 #define SONG_H
@@ -260,8 +260,10 @@ private:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
