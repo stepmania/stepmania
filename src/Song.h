@@ -35,6 +35,7 @@ enum BackgroundLayer
 /** @brief A custom foreach loop for the different background layers. */
 #define FOREACH_BackgroundLayer( bl ) FOREACH_ENUM( BackgroundLayer, bl )
 
+/** @brief The different instrument tracks for band type games. */
 enum InstrumentTrack
 {
 	InstrumentTrack_Guitar,
@@ -59,11 +60,11 @@ class Song
 public:
 	void SetSongDir( const RString sDir ) { m_sSongDir = sDir; }
 
-	// Set when this song should be displayed in the music wheel:
+	/** @brief When should this song should be displayed in the music wheel? */
 	enum SelectionDisplay
 	{ 
-		SHOW_ALWAYS,	// always
-		SHOW_NEVER	// never (unless song hiding is turned off)
+		SHOW_ALWAYS,	/**< always show on the wheel. */
+		SHOW_NEVER	/**< never show on the wheel (unless song hiding is turned off). */
 	} m_SelectionDisplay;
 
 	Song();
