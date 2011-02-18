@@ -1,4 +1,4 @@
-/* ActorMultiTexture - A texture created from multiple textures. */
+/** @brief ActorMultiTexture - A texture created from multiple textures. */
 
 #ifndef ACTOR_MULTI_TEXTURE_H
 #define ACTOR_MULTI_TEXTURE_H
@@ -45,8 +45,10 @@ private:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

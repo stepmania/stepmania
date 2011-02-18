@@ -1,4 +1,4 @@
-/* ActorFrame - A container for other actors. */
+/** @brief ActorFrame - A container for other actors. */
 
 #ifndef ACTORFRAME_H
 #define ACTORFRAME_H
@@ -12,6 +12,7 @@ public:
 	ActorFrame( const ActorFrame &cpy );
 	virtual ~ActorFrame();
 
+	/** @brief Set up the initial state. */
 	virtual void InitState();
 	void LoadFromNode( const XNode* pNode );
 	virtual ActorFrame *Copy() const;
@@ -23,8 +24,17 @@ public:
 	vector<Actor*> GetChildren() { return m_SubActors; }
 	int GetNumChildren() const { return m_SubActors.size(); }
 
+	/** @brief Remove all of the children from the frame. */
 	void RemoveAllChildren();
+	/** 
+	 * @brief Move a particular actor to the tail.
+	 * @param pActor the actor to go to the tail.
+	 */
 	void MoveToTail( Actor* pActor );
+	/**
+	 * @brief Move a particular actor to the head.
+	 * @param pActor the actor to go to the head.
+	 */
 	void MoveToHead( Actor* pActor );
 	void SortByDrawOrder();
 	void SetDrawByZPosition( bool b );
@@ -73,7 +83,7 @@ public:
 
 	virtual void SetPropagateCommands( bool b );
 
-	// Amount of time until all tweens (and all children's tweens) have stopped:
+	/** @brief Amount of time until all tweens (and all children's tweens) have stopped: */
 	virtual float GetTweenTimeLeft() const;
 
 	virtual void HandleMessage( const Message &msg );
@@ -95,7 +105,11 @@ protected:
 	float m_fFOV;	// -1 = no change
 	float m_fVanishX;
 	float m_fVanishY;
-	bool m_bOverrideLighting;	// if true, set lighting to m_bLighting
+	/**
+	 * @brief A flad to see if an override for the lighting is needed.
+	 *
+	 * If true, set lightning to m_bLightning. */
+	bool m_bOverrideLighting;
 	bool m_bLighting;
 
 	// lighting variables
@@ -115,8 +129,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
