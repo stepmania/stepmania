@@ -18,7 +18,9 @@ class StepsID;
 struct lua_State;
 struct BackgroundChange;
 
+/** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
+/** @brief How many edits for this song can be available? */
 const int MAX_EDITS_PER_SONG			= 5*NUM_ProfileSlot;
 
 extern const int FILE_CACHE_VERSION;
@@ -47,11 +49,12 @@ enum InstrumentTrack
 const RString& InstrumentTrackToString( InstrumentTrack it );
 InstrumentTrack StringToInstrumentTrack( const RString& s );
 
+/** @brief The collection of lyrics for the Song. */
 struct LyricSegment
 {
-	float	m_fStartTime;
-	RString m_sLyric;
-	RageColor m_Color;
+	float	m_fStartTime; /** @brief When does the lyric show up? */
+	RString m_sLyric; /** @brief The lyrics themselves. */
+	RageColor m_Color; /** @brief The color of the lyrics. */
 };
 
 class Song
@@ -81,9 +84,19 @@ public:
 	// This one takes the effort to reuse Steps pointers as best as it can
 	bool ReloadFromSongDir( RString sDir );
 
-	void TidyUpData();	// call after loading to clean up invalid data
-	void ReCalculateRadarValuesAndLastBeat();	// called by TidyUpData, and after saving
-	void TranslateTitles();	// called by TidyUpData
+	/** @brief Call this after loading a song to clean up invalid data. */
+	void TidyUpData();
+	
+	/**
+	 * @brief Get the new radar values, and determine the last beat at the same time.
+	 *
+	 * This is called by TidyUpData, after saving the Song. */
+	void ReCalculateRadarValuesAndLastBeat();
+	/**
+	 * @brief Translate any titles that aren't in english.
+	 *
+	 * This is called by TidyUpData. */
+	void TranslateTitles();	
 
 	/**
 	 * @brief Save to the new SSC file format.
@@ -93,8 +106,17 @@ public:
 	bool SaveToSSCFile( RString sPath, bool bSavingCache );
 	/** @brief Save to the SSC and SM files no matter what. */
 	void Save();
+	/** 
+	  * @brief Save the current Song to a cache file using the preferred format.
+	  * @return its success or failure. */
 	bool SaveToCacheFile();
+	/**
+	 * @brief Save the current Song to a SM file.
+	 * @return its success or failure. */
 	bool SaveToSMFile();
+	/** 
+	 * @brief Save the current Song to a DWI file if possible.
+	 * @return its success or failure. */
 	bool SaveToDWIFile();
 
 	const RString &GetSongFilePath() const;
@@ -275,11 +297,13 @@ public:
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
 
-	// An array of keysound file names (e.g. "beep.wav").
-	// The index in this array corresponds to the index in TapNote.  If you 
-	// change the index in here, you must change all NoteData too.
-	// Any note that doesn't have a value in the range of this array
-	// means "this note doesn't have a keysound".
+	/**
+	 * @brief An array of keysound file names (e.g. "beep.wav").
+	 *
+	 * The index in this array corresponds to the index in TapNote.  If you 
+	 * change the index in here, you must change all NoteData too.
+	 * Any note that doesn't have a value in the range of this array
+	 * means "this note doesn't have a keysound". */
 	vector<RString> m_vsKeysoundFile;
 
 	CachedObject<Song> m_CachedObject;

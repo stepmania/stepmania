@@ -38,13 +38,18 @@
 
 /** @brief The version of the .ssc file format. */
 const static float VERSION_NUMBER = 0.52f;
-const int FILE_CACHE_VERSION = 164;	// increment this to invalidate cache
+/**
+ * @brief The internal version of the cache for StepMania.
+ *
+ * Increment this value to invalidate the current cache. */
+const int FILE_CACHE_VERSION = 164;
 
+/** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
 static Preference<float>	g_fLongVerSongSeconds( "LongVerSongSeconds", 60*2.5f );
 static Preference<float>	g_fMarathonVerSongSeconds( "MarathonVerSongSeconds", 60*5.f );
-static Preference<bool>	g_BackUpAllSongSaves( "BackUpAllSongSaves", false );
+static Preference<bool>		g_BackUpAllSongSaves( "BackUpAllSongSaves", false );
 
 static const char *InstrumentTrackNames[] = {
 	"Guitar",
