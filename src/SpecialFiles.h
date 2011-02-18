@@ -3,10 +3,20 @@
 #ifndef SpecialFiles_H
 #define SpecialFiles_H
 
+/** @brief The listing of the special files and directories in use. */
 namespace SpecialFiles
 {
-	extern const RString USER_PACKAGES_DIR;	// user packages should be a separate dir from system packages so that we can write to it (installing a package)
-	extern const RString PACKAGES_DIR;	// system packages (not user packages)
+	/**
+	 * @brief The user packages directory.
+	 *
+	 * This should be separate from system packages so that
+	 * we can write to it (installing a package).
+	 */
+	extern const RString USER_PACKAGES_DIR;
+	/** @brief The system packages directory.
+	 *
+	 * This is not the user packages directory. */
+	extern const RString PACKAGES_DIR;
 	extern const RString KEYMAPS_PATH;
 	extern const RString PREFERENCES_INI_PATH;
 	extern const RString THEMES_DIR;
@@ -25,8 +35,10 @@ namespace SpecialFiles
 
 #endif
 
-/*
- * (c) 2003-2005 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003-2005
+ * @section LICENSE
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
