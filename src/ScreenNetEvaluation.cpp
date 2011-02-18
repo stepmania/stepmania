@@ -190,14 +190,12 @@ void ScreenNetEvaluation::UpdateStats()
 	if( THEME->GetMetricB(m_sName,"ShowScoreArea") )
 		m_textScore[m_pActivePlayer].SetTargetNumber( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score );
 
-	//Values greater than 6 will cause a crash
-	/*
+	//Values greater than 6 will cause a crash/*
 	if( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty < 6 )
 	{
 		m_DifficultyIcon[m_pActivePlayer].SetPlayer( m_pActivePlayer );
 		m_DifficultyIcon[m_pActivePlayer].SetFromDifficulty( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
 	}
-	*/
 
 	for( int j=0; j<NETNUMTAPSCORES; ++j )
 	{
