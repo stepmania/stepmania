@@ -146,10 +146,15 @@ public:
 
 	bool FontCompleteForString( const wstring &str ) const;
 
-	// Add a FontPage to this font.
+	/**
+	 * @brief Add a FontPage to this font.
+	 * @param fp the FontPage to be added.
+	 */
 	void AddPage(FontPage *fp);
 
-	// Steal all of a font's pages.
+	/**
+	 * @brief Steal all of a font's pages.
+	 * @param f the font whose pages we are stealing. */
 	void MergeFont(Font &f);
 
 	void Load(const RString &sFontOrTextureFilePath, RString sChars);
@@ -169,25 +174,31 @@ public:
 	const RageColor &GetDefaultStrokeColor() const { return m_DefaultStrokeColor; };
 
 private:
-	// List of pages and fonts that we use (and are responsible for freeing).
+	/** @brief List of pages and fonts that we use (and are responsible for freeing). */
 	vector<FontPage *> m_apPages;
 
-	/* This is the primary fontpage of this font; font-wide height, center,
-	 * etc. is pulled from it. (This is one of pages[].) */
+	/**
+	 * @brief This is the primary fontpage of this font.
+	 * 
+	 * The font-wide height, center, etc. is pulled from it. 
+	 * (This is one of pages[].) */
 	FontPage *m_pDefault;
 
-	// Map from characters to glyphs. (Each glyph* is part of one of pages[].)
+	/** @brief Map from characters to glyphs. */
 	map<wchar_t,glyph*> m_iCharToGlyph;
+	/** @brief Each glyph is part of one of the pages[]. */
 	glyph *m_iCharToGlyphCache[128];
 
-	// True for Hebrew, Arabic, Urdu fonts.
-	// This will also change the way glyphs from the default FontPage are rendered. 
-	// There may be a better way to handle this.
+	/**
+	 * @brief True for Hebrew, Arabic, Urdu fonts.
+	 *
+	 * This will also change the way glyphs from the default FontPage are rendered. 
+	 * There may be a better way to handle this. */
 	bool m_bRightToLeft;
 
 	RageColor m_DefaultStrokeColor;
 
-	// We keep this around only for reloading.
+	/** @brief We keep this around only for reloading. */
 	RString m_sChars;
 
 	void LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RString &sTexturePath, const RString &PageName, RString sChars );

@@ -1,4 +1,4 @@
-/* Actor - Base class for all objects that appear on the screen. */
+/** @brief Actor - Base class for all objects that appear on the screen. */
 
 #ifndef ACTOR_H
 #define ACTOR_H
@@ -16,42 +16,54 @@ class LuaClass;
 
 typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
 
-// background
+/** @brief The background layer. */
 #define DRAW_ORDER_BEFORE_EVERYTHING		-200
-// underlay
+/** @brief The underlay layer. */
 #define DRAW_ORDER_UNDERLAY			-100
-// decorations
-#define DRAW_ORDER_DECORATIONS		0
-// normal screen elements go here
+/** @brief The decorations layer. */
+#define DRAW_ORDER_DECORATIONS			   0
+/** @brief The overlay layer.
+ *
+ * Normal screen elements go here. */
 #define DRAW_ORDER_OVERLAY			+100
+/** @brief The transitions layer. */
 #define DRAW_ORDER_TRANSITIONS			+200
+/** @brief The over everything layer. */
 #define DRAW_ORDER_AFTER_EVERYTHING		+300
 
+/** @brief The different horizontal alignments. */
 enum HorizAlign
 {
-	HorizAlign_Left,
-	HorizAlign_Center,
-	HorizAlign_Right,
-	NUM_HorizAlign,
+	HorizAlign_Left, /**< Align to the left. */
+	HorizAlign_Center, /**< Align to the center. */
+	HorizAlign_Right, /**< Align to the right. */
+	NUM_HorizAlign, /**< The number of horizontal alignments. */
 	HorizAlign_Invalid
 };
 LuaDeclareType( HorizAlign );
 
+/** @brief The different vertical alignments. */
 enum VertAlign
 {
-	VertAlign_Top,
-	VertAlign_Middle,
-	VertAlign_Bottom,
-	NUM_VertAlign,
+	VertAlign_Top, /**< Align to the top. */
+	VertAlign_Middle, /**< Align to the middle. */
+	VertAlign_Bottom, /**< Align to the bottom. */
+	NUM_VertAlign, /**< The number of vertical alignments. */
 	VertAlign_Invalid
 };
 LuaDeclareType( VertAlign );
 
+/** @brief The left horizontal alignment constant. */
 #define align_left 0.0f
+/** @brief The center horizontal alignment constant. */
 #define align_center 0.5f
+/** @brief The right horizontal alignment constant. */
 #define align_right 1.0f
+/** @brief The top vertical alignment constant. */
 #define align_top 0.0f
+/** @brief The middle vertical alignment constant. */
 #define align_middle 0.5f
+/** @brief The bottom vertical alignment constant. */
 #define align_bottom 1.0f
 
 class Actor : public MessageSubscriber
@@ -67,8 +79,11 @@ public:
 	static void SetBGMTime( float fTime, float fBeat, float fTimeNoOffset, float fBeatNoOffset );
 	static void SetBGMLight( int iLightNumber, float fCabinetLights );
 
-	// todo: split out into diffuse effects and translation effects, or
-	// create an effect stack instead. -aj
+	/**
+	 * @brief The list of the different effects.
+	 *
+	 * todo: split out into diffuse effects and translation effects, or
+	 * create an effect stack instead. -aj */
 	enum Effect { no_effect,
 			// diffuse effects
 			diffuse_blink, diffuse_shift, diffuse_ramp,
@@ -99,8 +114,16 @@ public:
 		RageVector4	quat;
 		RageVector3	scale;
 		float		fSkewX, fSkewY;
-		RectF		crop;	// 0 = no cropping, 1 = fully cropped
-		RectF		fade;	// 0 = no fade
+		/**
+		 * @brief The amount of cropping involved.
+		 *
+		 * If 0, there is no cropping. If 1, it's fully cropped. */
+		RectF		crop;
+		/**
+		 * @brief The amount of fading involved.
+		 *
+		 * If 0, there is no fade. If 1, it's fully faded. */
+		RectF		fade;
 		RageColor	diffuse[4];
 		RageColor	glow;
 		float		aux;
@@ -417,9 +440,12 @@ protected:
 		TweenInfo &operator=( const TweenInfo &rhs );
 
 		ITween		*m_pTween;
-		float		m_fTimeLeftInTween;	// how far into the tween are we?
-		float		m_fTweenTime;		// seconds between Start and End positions/zooms
-		RString		m_sCommandName;		// command to execute when this TweenState goes into effect
+		/** @brief How far into the tween are we? */
+		float		m_fTimeLeftInTween;
+		/** @brief The number of seconds between Start and End positions/zooms. */
+		float		m_fTweenTime;
+		/** @brief The command to execute when this TweenState goes into effect. */
+		RString		m_sCommandName;
 	};
 
 	RageVector3	m_baseRotation;
@@ -436,14 +462,20 @@ protected:
 	};
 	vector<TweenStateAndInfo *>	m_Tweens;
 
-	// Temporary variables that are filled just before drawing
+	/** @brief Temporary variables that are filled just before drawing */
 	TweenState *m_pTempState;
 
 	bool	m_bFirstUpdate;
 
 	// Stuff for alignment
-	float	m_fHorizAlign; /* 0.0 left 0.5 center 1.0 right */
-	float	m_fVertAlign;  /* 0.0 top  0.5 center 1.0 bottom */
+	/** @brief The particular horizontal alignment.
+	 *
+	 * Use the defined constant values for best effect. */
+	float	m_fHorizAlign;
+	/** @brief The particular vertical alignment.
+	 *
+	 * Use the defined constant values for best effect. */
+	float	m_fVertAlign;
 
 
 	// Stuff for effects
@@ -480,7 +512,10 @@ protected:
 	float		m_fShadowLengthX;
 	float		m_fShadowLengthY;
 	RageColor	m_ShadowColor;
-	int		m_iDrawOrder;		// lower first
+	/** @brief The draw order priority.
+	 *
+	 * The lower this number is, the sooner it is drawn. */
+	int		m_iDrawOrder;
 
 	// render states
 	BlendMode	m_BlendMode;
@@ -490,7 +525,11 @@ protected:
 	bool		m_bTextureFiltering;
 	bool		m_bClearZBuffer;
 	bool		m_bZWrite;
-	float		m_fZBias; // 0 = no bias; 1 = full bias
+	/**
+	 * @brief The amount of bias.
+	 *
+	 * If 0, there is no bias. If 1, there is a full bias. */
+	float		m_fZBias;
 
 	// global state
 	static float g_fCurrentBGMTime, g_fCurrentBGMBeat;
@@ -503,8 +542,10 @@ private:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
