@@ -1,4 +1,4 @@
-/* ScreenGameplay - The music plays, the notes scroll, and the Player is pressing buttons. */
+/** @brief ScreenGameplay - The music plays, the notes scroll, and the Player is pressing buttons. */
 
 #ifndef SCREEN_GAMEPLAY_H
 #define SCREEN_GAMEPLAY_H
@@ -46,11 +46,15 @@ public:
 	void Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty );
 	void LoadDummyP1( int iDummyIndex, int iAddToDifficulty );
 
+	/** @brief The player has lost all of their lives: show the special game over. */
 	void ShowOniGameOver();
 	MultiPlayer GetPlayerStateAndStageStatsIndex()	{ return m_pn == PLAYER_INVALID ? m_mp : (MultiPlayer)m_pn; }
 	PlayerState *GetPlayerState();
 	PlayerStageStats *GetPlayerStageStats();
 	PlayerNumber GetStepsAndTrailIndex()		{ return m_pn == PLAYER_INVALID ? PLAYER_1 : m_pn; }
+	/**
+	 * @brief Determine if the player information is enabled.
+	 * @return its success or failure. */
 	bool IsEnabled();
 	bool IsMultiPlayer() const { return m_mp != MultiPlayer_Invalid; }
 	RString GetName() const
@@ -66,13 +70,13 @@ public:
 	// Lua
 	void PushSelf( lua_State *L );
 
-	PlayerNumber	m_pn;
-	MultiPlayer	m_mp;
-	bool		m_bIsDummy;
+	PlayerNumber		m_pn;
+	MultiPlayer		m_mp;
+	bool			m_bIsDummy;
 	int			m_iDummyIndex;
 	int			m_iAddToDifficulty;	// if > 0, use the Nth harder Steps
-	bool		m_bPlayerEnabled; // IsEnabled cache for iterators
-	PlayerState	m_PlayerStateDummy;
+	bool			m_bPlayerEnabled; // IsEnabled cache for iterators
+	PlayerState		m_PlayerStateDummy;
 	PlayerStageStats	m_PlayerStageStatsDummy;
 	SoundEffectControl	m_SoundEffectControl;
 
@@ -83,8 +87,8 @@ public:
 	BitmapText		*m_ptextCourseSongNumber;
 	BitmapText		*m_ptextStepsDescription;
 
-	ScoreDisplay	*m_pPrimaryScoreDisplay;
-	ScoreDisplay	*m_pSecondaryScoreDisplay;
+	ScoreDisplay		*m_pPrimaryScoreDisplay;
+	ScoreDisplay		*m_pSecondaryScoreDisplay;
 	ScoreKeeper		*m_pPrimaryScoreKeeper;
 	ScoreKeeper		*m_pSecondaryScoreKeeper;
 	BitmapText		*m_ptextPlayerOptions;
@@ -93,7 +97,10 @@ public:
 	NoteData		m_NoteData;
 	Player			*m_pPlayer;
 
-	// used in PLAY_MODE_BATTLE
+	/**
+	 * @brief The inventory of attacks.
+	 *
+	 * This is mainly used in PLAY_MODE_BATTLE. */
 	Inventory		*m_pInventory;
 
 	StepsDisplay	*m_pStepsDisplay;
@@ -190,7 +197,11 @@ protected:
 	bool			m_bPaused;
 
 	GameController		m_PauseController;
-	vector<Song*>		m_apSongsQueue;					// size may be >1 if playing a course
+	/**
+	 * @brief The songs left to play.
+	 *
+	 * The size can be greater than 1 if playing a course. */
+	vector<Song*>		m_apSongsQueue;
 
 	float			m_fTimeSinceLastDancingComment;	// this counter is only running while STATE_DANCING
 
@@ -199,7 +210,8 @@ protected:
 	Background		*m_pSongBackground;
 	Foreground		*m_pSongForeground;
 
-	Transition		m_NextSong;	// shows between songs in a course
+	/** @brief Used between songs in a course to show the next song. */
+	Transition		m_NextSong;
 
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 
@@ -218,7 +230,11 @@ protected:
 	Transition		m_Failed;
 	Transition		m_Toasty;	// easter egg
 
-	BitmapText		m_textSurviveTime;	// used in extra stage.  TODO: Move this into a BGA
+	/**
+	 * @brief How much time has the player survived in the extra stage?
+	 *
+	 * TODO: Move this into a BGA. */
+	BitmapText		m_textSurviveTime;
 
 
 	AutoKeysounds		m_AutoKeysounds;
@@ -258,8 +274,10 @@ vector<PlayerInfo>::iterator GetNextVisiblePlayerInfo		( vector<PlayerInfo>::ite
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

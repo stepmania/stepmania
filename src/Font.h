@@ -88,7 +88,7 @@ struct FontPageSettings
 	{ }
 
 	/**
-	 * @briefMap a range from a character map to glyphs.
+	 * @brief Map a range from a character map to glyphs.
 	 * @param sMapping the intended mapping.
 	 * @param iMapOffset the number of maps to offset.
 	 * @param iGlyphOffset the number of glyphs to offset.
