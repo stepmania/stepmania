@@ -23,6 +23,7 @@ const int MAX_EDITS_PER_SONG			= 5*NUM_ProfileSlot;
 
 extern const int FILE_CACHE_VERSION;
 
+/** @brief The different background layers available. */
 enum BackgroundLayer
 {
 	BACKGROUND_LAYER_1,
@@ -31,6 +32,7 @@ enum BackgroundLayer
 	NUM_BackgroundLayer,
 	BACKGROUND_LAYER_Invalid
 };
+/** @brief A custom foreach loop for the different background layers. */
 #define FOREACH_BackgroundLayer( bl ) FOREACH_ENUM( BackgroundLayer, bl )
 
 enum InstrumentTrack
