@@ -129,6 +129,7 @@ public:
 		float		aux;
 	};
 
+	/** @brief Various values an Actor's effect can be tied to. */
 	enum EffectClock
 	{
 		CLOCK_TIMER,
