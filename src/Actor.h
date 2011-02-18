@@ -129,6 +129,7 @@ public:
 		float		aux;
 	};
 
+	/** @brief Various values an Actor's effect can be tied to. */
 	enum EffectClock
 	{
 		CLOCK_TIMER,
@@ -185,7 +186,7 @@ public:
 	void  SetWidth( float width )			{ m_size.x = width; }
 	void  SetHeight( float height )			{ m_size.y = height; }
 
-	// Base
+	// Base values
 	float GetBaseZoomX() const			{ return m_baseScale.x;	}
 	void  SetBaseZoomX( float zoom )		{ m_baseScale.x = zoom;	}
 	float GetBaseZoomY() const			{ return m_baseScale.y;	}
@@ -198,7 +199,6 @@ public:
 	void  SetBaseRotationZ( float rot )		{ m_baseRotation.z = rot; }
 	void  SetBaseRotation( const RageVector3 &rot )	{ m_baseRotation = rot; }
 	virtual void  SetBaseAlpha( float fAlpha )	{ m_fBaseAlpha = fAlpha; }
-
 
 	float GetZoom() const				{ return DestTweenState().scale.x; }	// not accurate in some cases
 	float GetZoomX() const				{ return DestTweenState().scale.x; }
