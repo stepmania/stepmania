@@ -85,6 +85,11 @@ public:
 	void ReCalculateRadarValuesAndLastBeat();	// called by TidyUpData, and after saving
 	void TranslateTitles();	// called by TidyUpData
 
+	/**
+	 * @brief Save to the new SSC file format.
+	 * @param sPath the path where we're saving the file.
+	 * @param bSavingCache a flag to determine if we're saving cache data.
+	 */
 	bool SaveToSSCFile( RString sPath, bool bSavingCache );
 	/** @brief Save to the SSC and SM files no matter what. */
 	void Save();
@@ -96,15 +101,23 @@ public:
 	RString GetCacheFilePath() const;
 
 	void AddAutoGenNotes();
-	void AutoGen( StepsType ntTo, StepsType ntFrom );	// create Steps of type ntTo from Steps of type ntFrom
+	/**
+	 * @brief Automatically generate steps from one type to another.
+	 * @param ntTo the StepsType we're making.
+	 * @param ntFrom the StepsType we're generating from.
+	 */
+	void AutoGen( StepsType ntTo, StepsType ntFrom );
 	void RemoveAutoGenNotes();
 
 	// Directory this song data came from:
 	const RString &GetSongDir() const { return m_sSongDir; }
 
-	/* Filename associated with this file. This will always have a .SSC
-	 * extension. If we loaded a .SSC, this will point to it, but if we loaded
-	 * any other type, this will point to a generated .SSC filename. */
+	/**
+	 * @brief Filename associated with this file.
+	 *
+	 * This will always have a .SSC extension. If we loaded a .SSC, 
+	 * this will point to it, but if we loaded any other type,
+	 * this will point to a generated .SSC filename. */
 	RString m_sSongFileName;
 
 	RString m_sGroupName;
@@ -131,12 +144,15 @@ public:
 	RString GetDisplayFullTitle() const;
 	RString GetTranslitFullTitle() const;
 
-	// allow versioning with the song.
+	/** @brief The version of the song/file. */
 	float	m_fVersion;
 
 	RString m_sGenre;
 
-	// This is read and saved, but never actually used.
+	/**
+	 * @brief The person who worked with the song file who should be credited.
+	 *
+	 * This is read and saved, but never actually used. */
 	RString	m_sCredit;
 
 	RString	m_sMusicFile;
@@ -156,6 +172,7 @@ public:
 	//RString m_sJacketFile;	// typically square (e.g. 192x192, 256x256)
 	//RString m_sCDFile;		// square (e.g. 128x128 [DDR 1st-3rd])
 	//RString m_sDiscFile;		// rectangular (e.g. 256x192 [Pump], 200x150 [MGD3])
+	/** @brief The location of the lyrics file, if it exists. */
 	RString m_sLyricsFile;
 	RString m_sBackgroundFile;
 	RString m_sCDTitleFile;
@@ -204,7 +221,11 @@ public:
 	const vector<BackgroundChange>	&GetForegroundChanges() const;
 	vector<BackgroundChange>	&GetForegroundChanges();
 
-	vector<LyricSegment>			m_LyricSegments;	// this must be sorted before gameplay
+	/**
+	 * @brief The list of LyricSegments.
+	 *
+	 * This must be sorted before gameplay. */
+	vector<LyricSegment>			m_LyricSegments;
 
 	void AddBPMSegment( const BPMSegment &seg ) { m_Timing.AddBPMSegment( seg ); }
 	void AddStopSegment( const StopSegment &seg ) { m_Timing.AddStopSegment( seg ); }
@@ -240,7 +261,12 @@ public:
 	bool NormallyDisplayed() const;
 	bool ShowInDemonstrationAndRanking() const;
 
-	void AddSteps( Steps* pSteps ); // we are responsible for deleting the memory pointed to by pSteps!
+	/**
+	 * @brief Add the chosen Steps to the Song.
+	 *
+	 * We are responsible for deleting the memory pointed to by pSteps!
+	 * @param pSteps the new steps. */
+	void AddSteps( Steps* pSteps );
 	void DeleteSteps( const Steps* pSteps, bool bReAutoGen = true );
 
 	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid, const set<Steps*> *setInUse = NULL );
