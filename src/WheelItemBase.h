@@ -20,7 +20,8 @@ enum WheelItemDataType
 	TYPE_RANDOM,
 	TYPE_PORTAL,
 	TYPE_COURSE,
-	TYPE_SORT
+	TYPE_SORT/*,
+	TYPE_CUSTOM*/
 };
 
 struct WheelItemBaseData
