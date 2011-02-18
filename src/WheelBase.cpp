@@ -41,15 +41,15 @@ void WheelBase::Load( RString sType )
 	m_iSwitchesLeftInSpinDown = 0;
 	m_Moving = 0;
 
-	SWITCH_SECONDS			.Load(sType,"SwitchSeconds");
-	LOCKED_INITIAL_VELOCITY		.Load(sType,"LockedInitialVelocity");
-	SCROLL_BAR_HEIGHT		.Load(sType,"ScrollBarHeight");
+	SWITCH_SECONDS.Load(sType,"SwitchSeconds");
+	LOCKED_INITIAL_VELOCITY.Load(sType,"LockedInitialVelocity");
+	SCROLL_BAR_HEIGHT.Load(sType,"ScrollBarHeight");
 	m_exprItemTransformFunction.SetFromReference( THEME->GetMetricR(sType,"ItemTransformFunction") );
-	NUM_WHEEL_ITEMS_TO_DRAW		.Load(sType,"NumWheelItems");
-	WHEEL_ITEM_LOCKED_COLOR		.Load(sType,"WheelItemLockedColor");
+	NUM_WHEEL_ITEMS_TO_DRAW.Load(sType,"NumWheelItems");
+	WHEEL_ITEM_LOCKED_COLOR.Load(sType,"WheelItemLockedColor");
 
-	m_soundChangeMusic.Load(	THEME->GetPathS(sType,"change"), true );
-	m_soundLocked.Load(		THEME->GetPathS(sType,"locked"), true );
+	m_soundChangeMusic.Load(THEME->GetPathS(sType,"change"), true);
+	m_soundLocked.Load(THEME->GetPathS(sType,"locked"), true);
 
 	WheelItemBase *pTempl = MakeItem();
 	ActorUtil::LoadAllCommands( *pTempl, m_sName );
@@ -525,22 +525,22 @@ public:
 	}
 	static int IsSettled( T* p, lua_State *L ){ lua_pushboolean( L, p->IsSettled() ); return 1; }
 	static int IsLocked( T* p, lua_State *L ){ lua_pushboolean( L, p->WheelIsLocked() ); return 1; }
+	static int SetOpenSection( T* p, lua_State *L ){ p->SetOpenSection( SArg(1) ); return 0; }
 	// evil shit
 	//static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); return 0; }
 	//static int ChangeMusic( T* p, lua_State *L ){ p->ChangeMusic( IArg(1) ); return 0; }
 	//static int ChangeMusicUnlessLocked( T* p, lua_State *L ){ p->ChangeMusicUnlessLocked( IArg(1) ); return 0; }
-	//static int SetOpenSection( T* p, lua_State *L ){ p->SetOpenSection( SArg(1) ); return 0; }
 
 	LunaWheelBase()
 	{
 		ADD_METHOD( GetWheelItem );
 		ADD_METHOD( IsSettled );
 		ADD_METHOD( IsLocked );
+		ADD_METHOD( SetOpenSection );
 		// evil shit
 		//ADD_METHOD( Move );
 		//ADD_METHOD( ChangeMusic );
 		//ADD_METHOD( ChangeMusicUnlessLocked );
-		//ADD_METHOD( SetOpenSection );
 	}
 };
 
