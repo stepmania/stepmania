@@ -72,7 +72,11 @@ public:
 	void Reset();
 	void DetachSteps();
 
-	// This one assumes the song is currently empty
+	/**
+	 * @brief Load a song from the chosen directory.
+	 *
+	 * This assumes that there is no song present right now.
+	 * @param sDir the song directory from which to load. */
 	bool LoadFromSongDir( RString sDir );
 	// This one takes the effort to reuse Steps pointers as best as it can
 	bool ReloadFromSongDir( RString sDir );
@@ -82,7 +86,8 @@ public:
 	void TranslateTitles();	// called by TidyUpData
 
 	bool SaveToSSCFile( RString sPath, bool bSavingCache );
-	void Save();	// saves SSC and SM guaranteed.
+	/** @brief Save to the SSC and SM files no matter what. */
+	void Save();
 	bool SaveToCacheFile();
 	bool SaveToSMFile();
 	bool SaveToDWIFile();
