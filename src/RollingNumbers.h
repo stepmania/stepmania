@@ -1,4 +1,4 @@
-/* RollingNumbers - animates from one number to another by scrolling its digits. */
+/** @brief RollingNumbers - animates from one number to another by scrolling its digits. */
 
 #ifndef RollingNumbers_H
 #define RollingNumbers_H
@@ -17,6 +17,9 @@ public:
 	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
 
+	/** 
+	 * @brief Set the new target number to be reached.
+	 * @param fTargetNumber the new target number. */
 	void SetTargetNumber( float fTargetNumber );
 
 	void UpdateText();
@@ -30,15 +33,20 @@ private:
 	ThemeMetric<bool> COMMIFY;
 	ThemeMetric<RageColor> LEADING_ZERO_MULTIPLY_COLOR;
 
-	float	m_fCurrentNumber;	// currently showing this
-	float	m_fTargetNumber;	// approach this
-	float	m_fScoreVelocity;	// approach target at this speed
+	/** @brief The currently showing number. */
+	float	m_fCurrentNumber;
+	/** @brief The number we are trying to approach. */
+	float	m_fTargetNumber;
+	/** @brief The speed we are trying to reach the target number. */
+	float	m_fScoreVelocity;
 };
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
