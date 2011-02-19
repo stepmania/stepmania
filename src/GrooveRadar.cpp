@@ -54,31 +54,6 @@ void GrooveRadar::LoadFromNode( const XNode* pNode )
 	ActorFrame::LoadFromNode( pNode );
 }
 
-void GrooveRadar::TweenOnScreen()
-{
-	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
-	{
-		//m_sprRadarLabels[c].SetX( LABEL_OFFSET_X(c) );
-		m_sprRadarLabels[c].PlayCommand( "PreDelayOn" );
-		m_sprRadarLabels[c].BeginTweening( LABEL_ON_DELAY*c ); // sleep
-		m_sprRadarLabels[c].PlayCommand( "PostDelayOn" );
-	}
-}
-
-void GrooveRadar::TweenOffScreen()
-{
-	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
-	{
-		m_sprRadarLabels[c].StopTweening();
-		// xxx: hardcoded time -aj
-		m_sprRadarLabels[c].BeginTweening( 0.2f );
-		/* Make sure we undo glow. We do this at the end of TweenIn, but we might
-		 * tween off before we complete tweening in, and the glow can remain. */
-		m_sprRadarLabels[c].SetGlow( RageColor(1,1,1,0) );
-		m_sprRadarLabels[c].SetDiffuse( RageColor(1,1,1,0) );
-	}
-}
-
 void GrooveRadar::SetEmpty( PlayerNumber pn )
 {
 	SetFromSteps( pn, NULL );
@@ -152,6 +127,8 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
 	RageSpriteVertex v[12]; // needed to draw 5 fan primitives and 10 strip primitives
 
+	// xxx: We could either make the values invisible or draw a dot
+	// (simulating real DDR). TODO: Make that choice up to the themer. -aj
 	if( !m_bValuesVisible )
 		return;
 

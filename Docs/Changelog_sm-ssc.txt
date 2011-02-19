@@ -19,6 +19,7 @@ sm-ssc v1.2.2 | 201102??
 * [GrooveRadar] Changed "Label#OffsetX/Y" metrics to "Label#X/Y". [AJ]
 * [GrooveRadar] Fixed RadarFrame from not running commands on RadarFrame base. [AJ]
 * [GrooveRadar] Removed RadarFrameTweenOnScreen and RadarFrameTweenOffScreen metrics. (Themers: Use RadarFrameOnCommand and RadarFrameOffCommand instead) [AJ]
+* [GrooveRadar] Removed non-working PreDelayOnCommand, PostDelayOnCommand. (Themers: Use Label#OnCommand and Label#OffCommand instead.) [AJ]
 
 20110218
 --------

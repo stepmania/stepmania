@@ -22,9 +22,6 @@ public:
 	void SetFromRadarValues( PlayerNumber pn, const RadarValues &rv );
 	void SetFromSteps( PlayerNumber pn, Steps* pSteps );	// NULL means no Steps
 
-	void TweenOnScreen();
-	void TweenOffScreen();
-
 	// Lua
 	void PushSelf( lua_State *L );
 
