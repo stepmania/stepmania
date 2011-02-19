@@ -28,7 +28,7 @@ namespace NotesWriterSSC
 	 * @return the name of the edit file. */
 	RString GetEditFileName( const Song *pSong, const Steps *pSteps );
 	/**
-	 * @param Write the edit file to the machine for future use.
+	 * @brief Write the edit file to the machine for future use.
 	 * @param pSong the Song in question.
 	 * @param pSteps the Steps in question.
 	 * @param sErrorOut any error messages that may have occurred.

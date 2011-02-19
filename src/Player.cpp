@@ -1668,7 +1668,7 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			// Since this is being called every frame, let's not check the whole array every time.
 			// Instead, only check 1 beat back.  Even 1 is overkill.
 			const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
-			NoteData::iterator begin, end;
+			NoteData::TrackMap::iterator begin, end;
 			m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
 			for( ; begin != end; ++begin )
 			{
@@ -1756,7 +1756,7 @@ void Player::ScoreAllActiveHoldsLetGo()
 			// Since this is being called every frame, let's not check the whole array every time.
 			// Instead, only check 1 beat back.  Even 1 is overkill.
 			const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
-			NoteData::iterator begin, end;
+			NoteData::TrackMap::iterator begin, end;
 			m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
 			for( ; begin != end; ++begin )
 			{
@@ -1807,7 +1807,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		// Instead, only check 1 beat back.  Even 1 is overkill.
 		// Just update the life here and let Update judge the roll.
 		const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
-		NoteData::iterator begin, end;
+		NoteData::TrackMap::iterator begin, end;
 		m_NoteData.GetTapNoteRangeInclusive( col, iStartCheckingAt, iSongRow+1, begin, end );
 		for( ; begin != end; ++begin )
 		{

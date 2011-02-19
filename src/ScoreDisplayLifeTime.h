@@ -6,7 +6,7 @@
 #include "AutoActor.h"
 
 /**
- * @breif Display a updating count of life time remaining.
+ * @brief Display a updating count of life time remaining.
  * 
  * This is mainly used for Survival mode. */
 class ScoreDisplayLifeTime : public ScoreDisplay

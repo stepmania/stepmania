@@ -267,6 +267,7 @@ static RString JoinLineList( vector<RString> &lines )
  * @brief Retrieve the individual batches of NoteData.
  * @param song the Song in question.
  * @param in the Steps in question.
+ * @param bSavingCache a flag to see if we're saving certain cache data.
  * @return the NoteData in RString form. */
 static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCache )
 {

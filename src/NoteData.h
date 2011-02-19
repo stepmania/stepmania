@@ -115,8 +115,27 @@ public:
 	inline const_iterator FindTapNote( unsigned iTrack, int iRow ) const { return m_TapNotes[iTrack].find( iRow ); }
 	void RemoveTapNote( unsigned iTrack, iterator it )		{ m_TapNotes[iTrack].erase( it ); }
 
-	/* Return an iterator range including exactly iStartRow to iEndRow. */
-	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, const_iterator &begin, const_iterator &end ) const;
+	/**
+	 * @brief Return an iterator range for [rowBegin,rowEnd).
+	 *
+	 * This can be used to efficiently iterate trackwise over a range of notes.  
+	 * It's like FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE, except it only requires 
+	 * two map searches (iterating is constant time), but the iterators will
+	 * become invalid if the notes they represent disappear, so you need to 
+	 * pay attention to how you modify the data.
+	 * @param iTrack the column to use.
+	 * @param iStartRow the starting point.
+	 * @param iEndRow the ending point.
+	 * @param begin the eventual beginning point of the range.
+	 * @param end the eventual end point of the range. */
+	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &begin, TrackMap::const_iterator &end ) const;
+	/**
+	 * @brief Return a constant iterator range for [rowBegin,rowEnd).
+	 * @param iTrack the column to use.
+	 * @param iStartRow the starting point.
+	 * @param iEndRow the ending point.
+	 * @param begin the eventual beginning point of the range.
+	 * @param end the eventual end point of the range. */
 	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end );
 	all_tracks_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow, bool bInclusive = false )
 	{
@@ -137,13 +156,13 @@ public:
 
 	/* Return an iterator range include iStartRow to iEndRow.  Extend the range to include
 	 * hold notes overlapping the boundary. */
-	void GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, const_iterator &begin, const_iterator &end, bool bIncludeAdjacent=false ) const;
-	void GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, iterator &begin, iterator &end, bool bIncludeAdjacent=false );
+	void GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &begin, TrackMap::const_iterator &end, bool bIncludeAdjacent=false ) const;
+	void GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end, bool bIncludeAdjacent=false );
 
 	/* Return an iterator range include iStartRow to iEndRow.  Shrink the range to exclude
 	 * hold notes overlapping the boundary. */
-	void GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, const_iterator &begin, const_iterator &end ) const;
-	void GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, iterator &begin, iterator &end );
+	void GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &begin, TrackMap::const_iterator &end ) const;
+	void GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end );
 
 
 	/* Returns the row of the first TapNote on the track that has a row greater than rowInOut. */
