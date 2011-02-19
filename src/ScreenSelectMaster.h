@@ -16,6 +16,7 @@ enum MenuDir
 	MenuDir_Auto, // when players join and the selection becomes invalid
 	NUM_MenuDir,
 };
+/** @brief A special foreach loop through the different menu directions. */
 #define FOREACH_MenuDir( md ) FOREACH_ENUM( MenuDir, md )
 const RString& MenuDirToString( MenuDir md );
 

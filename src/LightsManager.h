@@ -23,6 +23,7 @@ enum CabinetLight
 	NUM_CabinetLight,
 	CabinetLight_Invalid
 };
+/** @brief Loop through each CabinetLight on the machine. */
 #define FOREACH_CabinetLight( i ) FOREACH_ENUM( CabinetLight, i )
 const RString& CabinetLightToString( CabinetLight cl );
 CabinetLight StringToCabinetLight( const RString& s);

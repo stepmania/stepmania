@@ -15,6 +15,7 @@
 #include "RageMath.h"
 
 const RString& NoteNotePartToString( NotePart i );
+/** @brief A foreach loop going through the different NoteParts. */
 #define FOREACH_NotePart( i ) FOREACH_ENUM( NotePart, i )
 
 static const char *NotePartNames[] = {

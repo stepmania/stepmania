@@ -37,6 +37,7 @@ static const char *StepsEditActionNames[] = {
 	"Delete",
 };
 XToString( StepsEditAction );
+/** @brief Loop through each StepsEditAction. */
 #define FOREACH_StepsEditAction( i ) FOREACH_ENUM( StepsEditAction, i )
 
 static MenuDef g_TempMenu(

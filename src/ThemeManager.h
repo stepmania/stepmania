@@ -21,6 +21,7 @@ enum ElementCategory
 	NUM_ElementCategory,
 	ElementCategory_Invalid
 };
+/** @brief A special foreach loop going through each ElementCategory. */
 #define FOREACH_ElementCategory( ec ) FOREACH_ENUM( ElementCategory, ec )
 const RString& ElementCategoryToString( ElementCategory ec );
 ElementCategory StringToElementCategory( const RString& s );

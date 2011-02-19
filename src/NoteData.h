@@ -1,5 +1,3 @@
-/* NoteData - Holds data about the notes that the player is supposed to hit. */
-
 #ifndef NOTE_DATA_H
 #define NOTE_DATA_H
 
@@ -8,17 +6,24 @@
 #include <set>
 #include <iterator>
 
+/** @brief Act on each non empty row in the specific track. */
 #define FOREACH_NONEMPTY_ROW_IN_TRACK( nd, track, row ) \
 	for( int row = -1; (nd).GetNextTapNoteRowForTrack(track,row); )
+/** @brief Act on each non empty row in the specified track within the specified range. */
 #define FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( nd, track, row, start, last ) \
 	for( int row = start-1; (nd).GetNextTapNoteRowForTrack(track,row) && row < (last); )
+/** @brief Act on each non empty row in the specified track within the specified range, 
+ going in reverse order. */
 #define FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( nd, track, row, start, last ) \
 	for( int row = last; (nd).GetPrevTapNoteRowForTrack(track,row) && row >= (start); )
+/** @brief Act on each non empty row for all of the tracks. */
 #define FOREACH_NONEMPTY_ROW_ALL_TRACKS( nd, row ) \
 	for( int row = -1; (nd).GetNextTapNoteRowForAllTracks(row); )
+/** @brief Act on each non empty row for all of the tracks within the specified range. */
 #define FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, row, start, last ) \
 	for( int row = start-1; (nd).GetNextTapNoteRowForAllTracks(row) && row < (last); )
 
+/** @brief Holds data about the notes that the player is supposed to hit. */
 class NoteData
 {
 public:

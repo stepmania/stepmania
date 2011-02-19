@@ -23,6 +23,7 @@ enum EditMenuRow
 	ROW_ACTION, 
 	NUM_EditMenuRow 
 };
+/** @brief Loop through each EditMenuRow. */
 #define FOREACH_EditMenuRow( r ) FOREACH_ENUM( EditMenuRow, r )
 const RString& EditMenuRowToString( EditMenuRow r );
 const RString& EditMenuRowToLocalizedString( EditMenuRow r );

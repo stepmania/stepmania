@@ -662,6 +662,7 @@ enum CourseType
 	NUM_CourseType,
 	CourseType_Invalid
 };
+/** @brief A special iterator for handling the CourseTypes. */
 #define FOREACH_CourseType( i ) FOREACH_ENUM( CourseType, i )
 const RString& CourseTypeToString( CourseType i );
 const RString& CourseTypeToLocalizedString( CourseType i );

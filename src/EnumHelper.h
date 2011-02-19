@@ -10,7 +10,9 @@ extern "C"
 #include "lua-5.1/src/lua.h"
 }
 
+/** @brief A general foreach loop for enumerators, going up to a max value. */
 #define FOREACH_ENUM_N( e, max, var )	for( e var=(e)0; var<max; enum_add<e>( var, +1 ) )
+/** @brief A general foreach loop for enumerators. */
 #define FOREACH_ENUM( e, var )	for( e var=(e)0; var<NUM_##e; enum_add<e>( var, +1 ) )
 
 int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const char *szType, bool bAllowInvalid );
@@ -126,8 +128,10 @@ namespace LuaHelpers { template<> void Push<X>( lua_State *L, const X &Object ) 
 
 #endif
 
-/*
- * (c) 2004-2006 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2004-2006
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

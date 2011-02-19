@@ -48,8 +48,9 @@ enum InputDevice
 	DEVICE_MIDI,
 	DEVICE_MOUSE,
 	NUM_InputDevice,		// leave this at the end
-	InputDevice_Invalid			// means this is NULL
+	InputDevice_Invalid		// means this is NULL
 };
+/** @brief A special foreach loop for each input device. */
 #define FOREACH_InputDevice( i ) FOREACH_ENUM( InputDevice, i )
 const RString& InputDeviceToString( InputDevice i );
 InputDevice StringToInputDevice( const RString& s );

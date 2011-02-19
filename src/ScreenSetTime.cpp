@@ -18,6 +18,7 @@ static const char *SetTimeSelectionNames[] = {
 	"Second", 
 };
 XToString( SetTimeSelection );
+/** @brief A foreach iterator through the time selections. */
 #define FOREACH_SetTimeSelection( s ) FOREACH_ENUM( SetTimeSelection, s )
 
 const float g_X[NUM_SetTimeSelection] =

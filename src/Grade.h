@@ -68,6 +68,7 @@ LuaDeclareType( Grade );
 extern ThemeMetric<int> NUM_GRADE_TIERS_USED;
 #define NUM_POSSIBLE_GRADES	(NUM_GRADE_TIERS_USED+1)
 Grade GetNextPossibleGrade( Grade g );
+/** @brief Loop through each possible Grade. */
 #define FOREACH_PossibleGrade( g )	for( Grade g = (Grade)(0); g != Grade_Invalid; g = GetNextPossibleGrade(g) )
 
 #endif

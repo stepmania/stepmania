@@ -74,6 +74,7 @@ enum NSScoreBoardColumn
 	NUM_NSScoreBoardColumn,
 	NSScoreBoardColumn_Invalid
 };
+/** @brief A special foreach loop going through each NSScoreBoardColumn. */
 #define FOREACH_NSScoreBoardColumn( sc ) FOREACH_ENUM( NSScoreBoardColumn, sc )
 
 struct NetServerInfo
