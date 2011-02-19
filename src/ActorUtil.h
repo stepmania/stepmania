@@ -1,5 +1,3 @@
-/* ActorUtil - Utility functions for creating and manipulating Actors. */
-
 #ifndef ActorUtil_H
 #define ActorUtil_H
 
@@ -43,6 +41,7 @@ enum FileType
 };
 const RString& FileTypeToString( FileType ft );
 
+/** @brief Utility functions for creating and manipulating Actors. */
 namespace ActorUtil
 {
 	// Every screen should register its class at program initialization.

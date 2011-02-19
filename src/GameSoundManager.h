@@ -1,5 +1,3 @@
-/* GameSoundManager - High-level sound utilities. */
-
 #ifndef RAGE_SOUNDS_H
 #define RAGE_SOUNDS_H
 
@@ -8,7 +6,7 @@
 class TimingData;
 class RageSound;
 struct lua_State;
-
+/** @brief High-level sound utilities. */
 class GameSoundManager
 {
 public:

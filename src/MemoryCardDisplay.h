@@ -1,5 +1,3 @@
-/* MemoryCardDisplay - A graphic displaying the state of memory cards. */
-
 #ifndef MEMORY_CARD_DISPLAY_H
 #define MEMORY_CARD_DISPLAY_H
 
@@ -7,7 +5,7 @@
 #include "PlayerNumber.h"
 #include "Sprite.h"
 #include "ActorFrame.h"
-
+/** @brief A graphic displaying the state of memory cards. */
 class MemoryCardDisplay : public ActorFrame
 {
 public:

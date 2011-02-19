@@ -42,7 +42,9 @@
 #include "LocalizedString.h"
 #include "AdjustSync.h"
 
-// Helper class to ensure that each row is only judged once without taking too much memory.
+/**
+ * @brief Helper class to ensure that each row is only judged once without taking too much memory.
+ */
 class JudgedRows
 {
 	vector<bool> m_vRows;

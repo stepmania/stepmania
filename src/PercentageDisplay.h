@@ -1,5 +1,3 @@
-/* PercentageDisplay - An Actor that displays a percentage. */
-
 #ifndef PERCENTAGE_DISPLAY_H
 #define PERCENTAGE_DISPLAY_H
 
@@ -11,6 +9,7 @@
 
 class PlayerState;
 
+/** @brief An Actor that displays a percentage. */
 class PercentageDisplay: public ActorFrame
 {
 public:

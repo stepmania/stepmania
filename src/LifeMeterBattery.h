@@ -1,5 +1,3 @@
-/* LifeMeterBattery - Battery life meter used in Oni mode. */
-
 #ifndef LIFEMETERBATTERY_H
 #define LIFEMETERBATTERY_H
 
@@ -10,7 +8,7 @@
 #include "PercentageDisplay.h"
 #include "ThemeMetric.h"
 
-
+/** @brief Battery life meter used in Oni mode. */
 class LifeMeterBattery : public LifeMeter
 {
 public:
