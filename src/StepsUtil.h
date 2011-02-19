@@ -11,19 +11,43 @@ class Profile;
 class XNode;
 class SongCriteria;
 
+/** @brief the criteria for finding certain Steps. */
 class StepsCriteria
 {
 public:
-	Difficulty m_difficulty;	// don't filter if Difficulty_Invalid
-	int m_iLowMeter;		// don't filter if -1
-	int m_iHighMeter;		// don't filter if -1
+	/**
+	 * @brief the Difficulty to search for.
+	 *
+	 * Don't filter here if the Difficulty is Difficulty_Invalid. */
+	Difficulty m_difficulty;
+	/**
+	 * @brief The lowest meter to search for.
+	 *
+	 * Don't filter here if the meter is -1. */
+	int m_iLowMeter;
+	/**
+	 * @brief The highest meter to search for.
+	 *
+	 * Don't filter here if the meter is -1. */
+	int m_iHighMeter;
 	// Currently, Songs have BPM since TimingData is by Song. These are just
 	// here for the inevitable chart-based BPMs future. -aj
 	// float m_fLowBPM;		// don't filter if -1
 	// float m_fHighBPM;		// don't filter if -1
-	StepsType m_st;			// don't filter if StepsType_Invalid
-	enum Locked { Locked_Locked, Locked_Unlocked, Locked_DontCare } m_Locked;
+	/**
+	 * @brief the step type to search for.
+	 *
+	 * Don't filter here if the StepsType is StepsType_Invalid. */
+	StepsType m_st;
+	/** @brief Check a song's locked status for searching. */
+	enum Locked
+	{ 
+		Locked_Locked,		/**< We want songs that are locked. */
+		Locked_Unlocked,	/**< We want songs that are unlocked. */
+		Locked_DontCare		/**< We don't care if the songs are locked or not. */
+	} m_Locked;
 
+	/** @brief Set up the initial criteria. */
 	StepsCriteria()
 	{
 		m_difficulty = Difficulty_Invalid;
@@ -45,6 +69,7 @@ public:
 	bool operator!=( const StepsCriteria &other ) const { return !operator==( other ); }
 };
 
+/** @brief A Song and one of its Steps. */
 class SongAndSteps
 {
 public:
@@ -56,6 +81,7 @@ public:
 	bool operator<( const SongAndSteps& other ) const { if( pSong!=other.pSong ) return pSong<other.pSong; return pSteps<other.pSteps; }
 };
 
+/** @brief Utility functions for working with Steps. */
 namespace StepsUtil
 {
 	void GetAllMatching( const SongCriteria &soc, const StepsCriteria &stc, vector<SongAndSteps> &out );	// look up in SONGMAN
@@ -103,8 +129,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

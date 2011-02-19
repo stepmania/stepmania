@@ -1,5 +1,3 @@
-/* Trail - A queue of Songs and Steps that are generated from a Course. */
-
 #ifndef TRAIL_H
 #define TRAIL_H
 
@@ -12,6 +10,7 @@ class Song;
 class Steps;
 struct lua_State;
 
+/** @brief One such Song and Step in the entire Trail. */
 struct TrailEntry
 {
 	TrailEntry(): 
@@ -29,7 +28,11 @@ struct TrailEntry
 	Steps*		pSteps;
 	RString		Modifiers;
 	AttackArray	Attacks;
-	bool		bSecret;	// show "???"
+	/**
+	 * @brief Is this Song and its Step meant to be a secret?
+	 *
+	 * If so, it will show text such as "???" to indicate that it's a mystery. */
+	bool		bSecret;
 
 	/* These represent the meter and difficulty used by the course to pick the
 	 * steps; if you want the real difficulty and meter, look at pSteps. */
@@ -44,6 +47,7 @@ struct TrailEntry
 	void PushSelf( lua_State *L );
 };
 
+/** @brief A queue of Songs and Steps that are generated from a Course. */
 class Trail
 {
 public:
@@ -85,8 +89,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
