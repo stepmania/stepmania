@@ -10,6 +10,8 @@
 #include "ThemeMetric.h"
 #include "CommonMetrics.h"
 #include "ActorUtil.h"
+// I feel weird about this coupling, but it has to be done. -aj
+#include "GameState.h"
 
 REGISTER_ACTOR_CLASS(GrooveRadar);
 
@@ -106,7 +108,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromSteps( const RadarValues &rv )
 	if( !m_bValuesVisible ) // the values WERE invisible
 		m_PercentTowardNew = 1;
 	else
-		m_PercentTowardNew = 0;	
+		m_PercentTowardNew = 0;
 }
 
 void GrooveRadar::GrooveRadarValueMap::Update( float fDeltaTime )
@@ -157,8 +159,6 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	DISPLAY->DrawFan( v, NUM_SHOWN_RADAR_CATEGORIES+2 );
 
 	// use a line loop to draw the thick line
-	// TODO: If two players are active and their RadarValues are the same,
-	// only draw the line from P1's radar. -aj
 	for( int i=0; i<=NUM_SHOWN_RADAR_CATEGORIES; i++ )
 	{
 		const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
@@ -205,15 +205,11 @@ public:
 		return 0;
 	}
 	static int SetEmpty( T* p, lua_State *L )		{ p->SetEmpty( Enum::Check<PlayerNumber>(L, 1) ); return 0; }
-	static int tweenonscreen( T* p, lua_State *L )		{ p->TweenOnScreen(); return 0; }
-	static int tweenoffscreen( T* p, lua_State *L )		{ p->TweenOffScreen(); return 0; }
 
 	LunaGrooveRadar()
 	{
 		ADD_METHOD( SetFromRadarValues );
 		ADD_METHOD( SetEmpty );
-		ADD_METHOD( tweenonscreen );
-		ADD_METHOD( tweenoffscreen );
 	}
 };
 
