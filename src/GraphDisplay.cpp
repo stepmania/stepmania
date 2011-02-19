@@ -13,7 +13,7 @@
 #include "XmlFile.h"
 
 //#define DIVIDE_LINE_WIDTH			THEME->GetMetricI(m_sName,"TexturedBottomHalf")
-REGISTER_ACTOR_CLASS( GraphDisplay )
+REGISTER_ACTOR_CLASS( GraphDisplay );
 
 enum { VALUE_RESOLUTION=100 };
 
@@ -108,7 +108,7 @@ private:
 	vector<RageSpriteVertex> m_Quads;
 	vector<RageSpriteVertex> m_pCircles;
 };
-REGISTER_ACTOR_CLASS( GraphLine )
+REGISTER_ACTOR_CLASS( GraphLine );
 
 class GraphBody: public Actor
 {

@@ -9,7 +9,7 @@
 #include "LuaManager.h"
 #include "RageLog.h"
 
-REGISTER_ACTOR_CLASS( ScoreDisplayAliveTime )
+REGISTER_ACTOR_CLASS( ScoreDisplayAliveTime );
 
 
 ScoreDisplayAliveTime::ScoreDisplayAliveTime()

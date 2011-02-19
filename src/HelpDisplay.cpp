@@ -5,7 +5,7 @@
 #include "ThemeManager.h"
 #include "ActorUtil.h"
 
-REGISTER_ACTOR_CLASS( HelpDisplay )
+REGISTER_ACTOR_CLASS( HelpDisplay );
 
 HelpDisplay::HelpDisplay()
 {

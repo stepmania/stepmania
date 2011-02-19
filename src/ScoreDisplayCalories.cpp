@@ -10,7 +10,7 @@
 #include "StatsManager.h"
 #include "LuaManager.h"
 
-REGISTER_ACTOR_CLASS( ScoreDisplayCalories )
+REGISTER_ACTOR_CLASS( ScoreDisplayCalories );
 
 ScoreDisplayCalories::ScoreDisplayCalories()
 {

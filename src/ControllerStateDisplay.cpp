@@ -27,7 +27,7 @@ static const GameButton ControllerStateButtonToGameButton[] = {
 	PUMP_BUTTON_DOWNRIGHT,
 };
 
-REGISTER_ACTOR_CLASS( ControllerStateDisplay )
+REGISTER_ACTOR_CLASS( ControllerStateDisplay );
 
 ControllerStateDisplay::ControllerStateDisplay()
 {

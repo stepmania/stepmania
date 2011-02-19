@@ -10,7 +10,7 @@
 #include "RageUtil.h"
 #include "Steps.h"
 
-REGISTER_ACTOR_CLASS( CourseContentsList )
+REGISTER_ACTOR_CLASS( CourseContentsList );
 
 CourseContentsList::~CourseContentsList()
 {

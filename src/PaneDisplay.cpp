@@ -55,7 +55,7 @@ static const Content_t g_Contents[NUM_PaneCategory] =
 	{ NEED_NOTES|NEED_PROFILE, "score" }, // ProfileHighScore
 };
 
-REGISTER_ACTOR_CLASS( PaneDisplay )
+REGISTER_ACTOR_CLASS( PaneDisplay );
 
 void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 {

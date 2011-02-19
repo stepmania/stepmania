@@ -11,7 +11,7 @@
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
 
-REGISTER_ACTOR_CLASS( FadingBanner )
+REGISTER_ACTOR_CLASS( FadingBanner );
 
 /* Allow fading from one banner to another. We can handle two fades at once;
  * this is used to fade from an old banner to a low-quality banner to a high-

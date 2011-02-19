@@ -2,7 +2,7 @@
 #include "ActorProxy.h"
 #include "ActorUtil.h"
 
-REGISTER_ACTOR_CLASS( ActorProxy )
+REGISTER_ACTOR_CLASS( ActorProxy );
 
 ActorProxy::ActorProxy()
 {

@@ -5,7 +5,7 @@
 #include "ActorUtil.h"
 #include "LuaManager.h"
 #include "ThemeManager.h"
-REGISTER_ACTOR_CLASS( RollingNumbers )
+REGISTER_ACTOR_CLASS( RollingNumbers );
 
 RollingNumbers::RollingNumbers()
 {

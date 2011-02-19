@@ -6,7 +6,7 @@
 #include "ActorUtil.h"
 #include "ThemeManager.h"
 
-REGISTER_ACTOR_CLASS( GradeDisplay )
+REGISTER_ACTOR_CLASS( GradeDisplay );
 
 void GradeDisplay::Load( RString sMetricsGroup )
 {

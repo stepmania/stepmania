@@ -12,7 +12,7 @@
 #include "XmlFile.h"
 #include "LuaManager.h"
 
-REGISTER_ACTOR_CLASS(DifficultyIcon)
+REGISTER_ACTOR_CLASS(DifficultyIcon);
 
 DifficultyIcon::DifficultyIcon()
 {

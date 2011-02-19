@@ -14,7 +14,7 @@
 #include "LuaBinding.h"
 #include "LuaManager.h"
 
-REGISTER_ACTOR_CLASS( Sprite )
+REGISTER_ACTOR_CLASS( Sprite );
 
 
 Sprite::Sprite()

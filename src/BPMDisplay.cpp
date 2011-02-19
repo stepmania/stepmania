@@ -12,7 +12,7 @@
 
 #include <limits.h>
 
-REGISTER_ACTOR_CLASS( BPMDisplay )
+REGISTER_ACTOR_CLASS( BPMDisplay );
 
 BPMDisplay::BPMDisplay()
 {
@@ -286,7 +286,7 @@ void SongBPMDisplay::Update( float fDeltaTime )
 	BPMDisplay::Update( fDeltaTime );
 }
 
-REGISTER_ACTOR_CLASS( SongBPMDisplay )
+REGISTER_ACTOR_CLASS( SongBPMDisplay );
 
 #include "LuaBinding.h"
 /** @brief Allow Lua to have access to the BPMDisplay. */

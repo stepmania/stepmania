@@ -7,7 +7,7 @@
 #include "ActorUtil.h"
 #include "XmlFile.h"
 
-REGISTER_ACTOR_CLASS( HoldJudgment )
+REGISTER_ACTOR_CLASS( HoldJudgment );
 
 HoldJudgment::HoldJudgment()
 {

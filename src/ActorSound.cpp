@@ -5,7 +5,7 @@
 #include "XmlFile.h"
 #include "RageUtil.h"
 
-REGISTER_ACTOR_CLASS_WITH_NAME( ActorSound, Sound )
+REGISTER_ACTOR_CLASS_WITH_NAME( ActorSound, Sound );
 
 void ActorSound::Load( const RString &sPath )
 {

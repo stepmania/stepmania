@@ -11,7 +11,7 @@
 #include "CommonMetrics.h"
 #include "ActorUtil.h"
 
-REGISTER_ACTOR_CLASS(GrooveRadar)
+REGISTER_ACTOR_CLASS(GrooveRadar);
 
 #define		LABEL_OFFSET_X( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
 #define 	LABEL_OFFSET_Y( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))

@@ -10,7 +10,7 @@
 #include "LuaManager.h"
 #include "Foreach.h"
 
-REGISTER_ACTOR_CLASS( ModIconRow )
+REGISTER_ACTOR_CLASS( ModIconRow );
 
 ModIconRow::ModIconRow()
 {

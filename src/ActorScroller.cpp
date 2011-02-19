@@ -12,8 +12,8 @@
  * We don't want classes that derive from ActorFrame to auto delete their 
  * children. The name "ActorFrame" is widely used in Lua, so we'll have
  * that string instead create an ActorFrameAutoDeleteChildren object. */
-//REGISTER_ACTOR_CLASS( ActorScroller )
-REGISTER_ACTOR_CLASS_WITH_NAME( ActorScrollerAutoDeleteChildren, ActorScroller )
+//REGISTER_ACTOR_CLASS( ActorScroller );
+REGISTER_ACTOR_CLASS_WITH_NAME( ActorScrollerAutoDeleteChildren, ActorScroller );
 ActorScroller *ActorScroller::Copy() const { return new ActorScroller(*this); }
 
 

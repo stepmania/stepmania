@@ -14,7 +14,7 @@
 #include "LuaBinding.h"
 #include "PrefsManager.h"
 
-REGISTER_ACTOR_CLASS( Model )
+REGISTER_ACTOR_CLASS( Model );
 
 static const float FRAMES_PER_SECOND = 30;
 static const RString DEFAULT_ANIMATION_NAME = "default";

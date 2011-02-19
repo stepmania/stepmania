@@ -27,7 +27,7 @@ public:
 	HiddenActor() { SetVisible(false); }
 	virtual HiddenActor *Copy() const;
 };
-REGISTER_ACTOR_CLASS_WITH_NAME( HiddenActor, Actor )
+REGISTER_ACTOR_CLASS_WITH_NAME( HiddenActor, Actor );
 
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 float Actor::g_fCurrentBGMTimeNoOffset = 0, Actor::g_fCurrentBGMBeatNoOffset = 0;

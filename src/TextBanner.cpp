@@ -5,7 +5,7 @@
 #include "ThemeManager.h"
 #include "XmlFile.h"
 
-REGISTER_ACTOR_CLASS( TextBanner )
+REGISTER_ACTOR_CLASS( TextBanner );
 
 void TextBanner::LoadFromNode( const XNode* pNode )
 {

@@ -8,7 +8,7 @@
 
 const int MinComboSizeToShow = 5;
 
-REGISTER_ACTOR_CLASS( ComboGraph )
+REGISTER_ACTOR_CLASS( ComboGraph );
 
 ComboGraph::ComboGraph()
 {

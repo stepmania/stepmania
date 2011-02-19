@@ -13,7 +13,7 @@
 #include "LuaBinding.h"
 #include "LuaManager.h"
 
-REGISTER_ACTOR_CLASS( ActorMultiTexture )
+REGISTER_ACTOR_CLASS( ActorMultiTexture );
 
 
 ActorMultiTexture::ActorMultiTexture()

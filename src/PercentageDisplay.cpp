@@ -12,7 +12,7 @@
 #include "Course.h"
 
 
-REGISTER_ACTOR_CLASS( PercentageDisplay )
+REGISTER_ACTOR_CLASS( PercentageDisplay );
 
 PercentageDisplay::PercentageDisplay()
 {
