@@ -77,13 +77,6 @@ void GrooveRadar::TweenOffScreen()
 		m_sprRadarLabels[c].SetGlow( RageColor(1,1,1,0) );
 		m_sprRadarLabels[c].SetDiffuse( RageColor(1,1,1,0) );
 	}
-
-	m_Frame.PlayCommand("TweenOffScreen");
-	/*
-	m_Frame.BeginTweening( 0.6f );
-	m_Frame.SetRotationZ( 180*4 );
-	m_Frame.SetZoom( 0 );
-	*/
 }
 
 void GrooveRadar::SetEmpty( PlayerNumber pn )
