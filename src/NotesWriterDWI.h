@@ -1,18 +1,24 @@
-/* NotesWriterDWI - Writes a Song to a .DWI file. */
-
 #ifndef NOTES_WRITER_DWI_H
 #define NOTES_WRITER_DWI_H
 
 class Song;
+/** @brief Writes a Song to a .DWI file. */
 namespace NotesWriterDWI
 {
+	/**
+	 * @brief Write the song out to a file.
+	 * @param sPath the path to write the file.
+	 * @param out the Song to be written out.
+	 * @return its success or failure. */
 	bool Write( RString sPath, const Song &out );
 }
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

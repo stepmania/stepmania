@@ -223,6 +223,7 @@ public:
 	void LoadFromNode( const XNode* pNode );
 };
 
+/** @brief Allow a quick way to swap notedata. */
 namespace std
 {
 	template<> inline void swap<NoteData>( NoteData &nd1, NoteData &nd2 ) { nd1.swap( nd2 ); }

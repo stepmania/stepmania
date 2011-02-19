@@ -1,14 +1,15 @@
-/* AdjustSync - Allows for adjusting the sync of a song. */
 #ifndef AdjustSync_H
 #define AdjustSync_H
 
-/* This class defines two ways of adjusting the sync of a song.
+class TimingData;
+/** 
+ * @brief Allows for adjusting the sync of a song.
+ *
+ * This class defines two ways of adjusting the sync of a song.
  * The first adjusts only the offset, "on the fly". It can adjust either the
  * song itself or the machine. The other style adjusts both the BPM and the
- * offset of the song, but it needs more data. */
-
-class TimingData;
-
+ * offset of the song, but it needs more data.
+ */
 class AdjustSync
 {
 public:
@@ -49,8 +50,10 @@ public:
 
 #endif
 
-/*
- * (c) 2003-2006 Chris Danford, John Bauer
+/**
+ * @file
+ * @author Chris Danford, John Bauer (c) 2003-2006
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

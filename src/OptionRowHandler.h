@@ -1,5 +1,3 @@
-/* OptionRowHandler - Shows PlayerOptions and SongOptions in icon form. */
-
 #ifndef OptionRowHandler_H
 #define OptionRowHandler_H
 
@@ -84,6 +82,7 @@ struct OptionRowDefinition
 	}
 };
 
+/** @brief Shows PlayerOptions and SongOptions in icon form. */
 class OptionRowHandler
 {
 public:
@@ -130,7 +129,7 @@ public:
 	virtual RString GetScreen( int iChoice ) const { return RString(); }
 };
 
-
+/** @brief Utilities for the OptionRowHandlers. */
 namespace OptionRowHandlerUtil
 {
 	OptionRowHandler* Make( const Commands &cmds );

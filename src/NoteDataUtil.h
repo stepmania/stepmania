@@ -1,5 +1,3 @@
-/* NoteDataUtil - Utility functions that deal with NoteData. */
-
 #ifndef NOTEDATAUTIL_H
 #define NOTEDATAUTIL_H
 
@@ -12,10 +10,12 @@ class NoteData;
 class Song;
 struct AttackArray;
 
-/* Utils for NoteData.  Things should go in here if they can be (cleanly and
- * efficiently) implemented using only NoteData's primitives; this improves
- * abstraction and makes it much easier to change NoteData internally in
- * the future. */
+/**
+ * @brief Utility functions that deal with NoteData.
+ *
+ * Things should go in here if they can be (cleanly and efficiently)
+ * implemented using only NoteData's primitives; this improves abstraction 
+ * and makes it much easier to change NoteData internally in the future. */
 namespace NoteDataUtil
 {
 	NoteType GetSmallestNoteTypeForMeasure( const NoteData &nd, int iMeasureIndex );
@@ -74,7 +74,9 @@ namespace NoteDataUtil
 	void Twister( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 
-	// Change all TAP_ADDITION_TAPs to TAP_ORIGINAL_TAPs.
+	/**
+	 * @brief Convert all taps added via transforms into original style tap notes.
+	 * @param inout the NoteData to convert. */
 	void ConvertAdditionsToRegular( NoteData &inout );
 
 	void Backwards( NoteData &inout );
@@ -100,7 +102,8 @@ namespace NoteDataUtil
 	bool RowPassesValidMask( NoteData &inout, int row, const bool bValidMask[] );
 
 	void TransformNoteData( NoteData &nd, const AttackArray &aa, StepsType st, Song* pSong );
-	void TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, 
+			       int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void AddTapAttacks( NoteData &nd, Song* pSong );
 
 	// void Scale( NoteData &nd, float fScale );
