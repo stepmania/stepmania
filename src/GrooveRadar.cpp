@@ -13,8 +13,6 @@
 
 REGISTER_ACTOR_CLASS(GrooveRadar);
 
-#define		LABEL_OFFSET_X( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
-#define 	LABEL_OFFSET_Y( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
 static const ThemeMetric<float>			LABEL_ON_DELAY				("GrooveRadar","LabelOnDelay");
 static const ThemeMetric<float>			RADAR_EDGE_WIDTH			("GrooveRadar","EdgeWidth");
 static const ThemeMetric<float>			RADAR_CENTER_ALPHA			("GrooveRadar","CenterAlpha");
@@ -42,12 +40,11 @@ GrooveRadar::GrooveRadar()
 
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
-		m_sprRadarLabels[c].SetName( "Label" );
+		m_sprRadarLabels[c].SetName( ssprintf("Label%i",c+1) );
 		m_sprRadarLabels[c].Load( THEME->GetPathG("GrooveRadar","labels 1x5") );
 		m_sprRadarLabels[c].StopAnimating();
 		m_sprRadarLabels[c].SetState( c );
-		m_sprRadarLabels[c].SetXY( LABEL_OFFSET_X(c), LABEL_OFFSET_Y(c) );
-		ActorUtil::LoadAllCommands( m_sprRadarLabels[c], "GrooveRadar" );
+		ActorUtil::LoadAllCommandsAndSetXY( m_sprRadarLabels[c], "GrooveRadar" );
 		this->AddChild( &m_sprRadarLabels[c] );
 	}
 }
@@ -61,7 +58,7 @@ void GrooveRadar::TweenOnScreen()
 {
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
-		m_sprRadarLabels[c].SetX( LABEL_OFFSET_X(c) );
+		//m_sprRadarLabels[c].SetX( LABEL_OFFSET_X(c) );
 		m_sprRadarLabels[c].PlayCommand( "PreDelayOn" );
 		m_sprRadarLabels[c].BeginTweening( LABEL_ON_DELAY*c ); // sleep
 		m_sprRadarLabels[c].PlayCommand( "PostDelayOn" );
@@ -82,6 +79,7 @@ void GrooveRadar::TweenOffScreen()
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
 		m_sprRadarLabels[c].StopTweening();
+		// xxx: hardcoded time -aj
 		m_sprRadarLabels[c].BeginTweening( 0.2f );
 		/* Make sure we undo glow. We do this at the end of TweenIn, but we might
 		 * tween off before we complete tweening in, and the glow can remain. */
@@ -191,15 +189,15 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		const float fX = RageFastCos(fRotation) * fDistFromCenter;
 		const float fY = -RageFastSin(fRotation) * fDistFromCenter;
 
-		v[1+i].p = RageVector3( fX, fY,	0 );
+		v[1+i].p = RageVector3( fX, fY, 0 );
 		v[1+i].c = v[1].c;
 	}
 
 	DISPLAY->DrawFan( v, NUM_SHOWN_RADAR_CATEGORIES+2 );
 
 	// use a line loop to draw the thick line
-	// TODO: If two players are active, and their RadarValues are the same, draw
-	// the inside of P2's Radar with the line from P1's radar -aj
+	// TODO: If two players are active and their RadarValues are the same,
+	// only draw the line from P1's radar. -aj
 	for( int i=0; i<=NUM_SHOWN_RADAR_CATEGORIES; i++ )
 	{
 		const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
@@ -213,8 +211,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		v[i].c = this->m_pTempState->diffuse[0];
 	}
 
-	// TODO: Add this back in.  -Chris
-	// TODO: Add this back in as a theme metric. -aj
+	// TODO: Add this back in -Chris
 //	switch( PREFSMAN->m_iPolygonRadar )
 //	{
 //	case 0:		DISPLAY->DrawLoop_LinesAndPoints( v, NUM_SHOWN_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );	break;

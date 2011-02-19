@@ -16,6 +16,7 @@ sm-ssc v1.2.2 | 201102??
 20110219
 --------
 * [BPMDisplay] Added FormatString metric. [AJ]
+* [GrooveRadar] Changed "Label#OffsetX/Y" metrics to "Label#X/Y". [AJ]
 
 20110218
 --------
