@@ -1,10 +1,8 @@
-/* BMSLoader - reads a Song from a set of .BMS files. */
-
 #ifndef NOTES_LOADER_BMS_H
 #define NOTES_LOADER_BMS_H
 
 class Song;
-
+/** @brief Reads a Song from a set of .BMS files. */
 namespace BMSLoader
 {
 	void GetApplicableFiles( const RString &sPath, vector<RString> &out );

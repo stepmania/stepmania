@@ -1,5 +1,3 @@
-/* BackgroundUtil - Shared background-related routines. */
-
 #ifndef BackgroundUtil_H
 #define BackgroundUtil_H
 
@@ -61,7 +59,7 @@ struct BackgroundChange
 
 	RString GetTextDescription() const;
 };
-
+/** @brief Shared background-related routines. */
 namespace BackgroundUtil
 {
 	void SortBackgroundChangesArray( vector<BackgroundChange> &vBackgroundChanges );

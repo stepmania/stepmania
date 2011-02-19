@@ -1,5 +1,3 @@
-/* CachedObject - cached object pointers with automatic invalidation. */
-
 #ifndef RAGE_UTIL_CACHED_OBJECT_H
 #define RAGE_UTIL_CACHED_OBJECT_H
 
@@ -7,13 +5,15 @@
 
 template<typename T>
 class CachedObjectPointer;
-
+/** @brief Utilities for working with the 
+ <a class="el" href="class_cachedobject.html">CachedObjects</a>. */
 namespace CachedObjectHelpers
 {
 	void Lock();
 	void Unlock();
 }
 
+/** @brief Cached object pointers with automatic invalidation. */
 template<typename T>
 class CachedObject
 {

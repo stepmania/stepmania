@@ -27,7 +27,7 @@ struct EnumTraits
 };
 template<typename T> LuaReference EnumTraits<T>::StringToEnum;
 template<typename T> LuaReference EnumTraits<T>::EnumToString;
-
+/** @brief Lua helpers for Enumerators. */
 namespace Enum
 {
 	template<typename T>

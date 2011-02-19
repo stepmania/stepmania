@@ -1,8 +1,6 @@
-/* RageSoundUtil - simple utilities that operate on sound buffers. */
-
 #ifndef RAGE_SOUND_UTIL_H
 #define RAGE_SOUND_UTIL_H
-
+/** @brief Simple utilities that operate on sound buffers. */
 namespace RageSoundUtil
 {
 	void Attenuate( float *pBuf, int iSamples, float fVolume );

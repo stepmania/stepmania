@@ -562,7 +562,10 @@ bool MidiFileIn :: readVariableLength( unsigned long *value )
 
 	return true;
 } 
-
+/**
+ * @brief Utilities for working with the Guitar mode.
+ *
+ * Is this going to be kept in sm-ssc? */
 namespace Guitar
 {
 	enum GuitarDifficulty { easy, medium, hard, expert, NUM_GuitarDifficulty };

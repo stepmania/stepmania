@@ -83,7 +83,7 @@ private:
 	int		m_Mode;
 };
 
-/* Convenience wrappers for reading binary files. */
+/** @brief Convenience wrappers for reading binary files. */
 namespace FileReading
 {
 	/* On error, these set sError to the error message.  If sError is already

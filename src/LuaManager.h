@@ -47,6 +47,7 @@ private:
 extern LuaManager *LUA;
 
 
+/** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {
 	/* Load the given script with the given name. On success, the resulting

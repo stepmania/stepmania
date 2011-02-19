@@ -1,10 +1,8 @@
-/* KSFLoader - Reads a Song from a set of .KSF files. */
-
 #ifndef NOTES_LOADER_KSF_H
 #define NOTES_LOADER_KSF_H
 
 class Song;
-
+/** @brief Reads a Song from a set of .KSF files. */
 namespace KSFLoader
 {
 	void GetApplicableFiles( const RString &sPath, vector<RString> &out );

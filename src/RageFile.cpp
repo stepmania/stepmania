@@ -424,7 +424,7 @@ public:
 };
 
 LUA_REGISTER_CLASS( RageFile )
-
+/** @brief Utilities for working with RageFiles. */
 namespace RageFileUtil
 {
 	int CreateRageFile( lua_State *L )

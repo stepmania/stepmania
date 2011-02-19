@@ -2,7 +2,7 @@
 #define RAGE_FILE_MANAGER_READAHEAD_H
 
 #include "RageFileBasic.h"
-
+/** @brief Utilities for reading the RageFiles. */
 namespace RageFileManagerReadAhead
 {
 	void Init();

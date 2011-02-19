@@ -17,14 +17,14 @@ extern const ScreenMessage SM_LoseFocus;
 extern const ScreenMessage SM_Pause;
 extern const ScreenMessage SM_Success;
 extern const ScreenMessage SM_Failure;
-
+/** @brief Helpers for the ScreenMessages. */
 namespace ScreenMessageHelpers
 {
 	ScreenMessage ToScreenMessage( const RString & Name );
 	RString	ScreenMessageToString( ScreenMessage SM );
 };
 
-// Automatically generate a unique ScreenMessage value
+/** @brief Automatically generate a unique ScreenMessage value */
 #define AutoScreenMessage( x ) \
 	const ScreenMessage x = ScreenMessageHelpers::ToScreenMessage( #x )
 

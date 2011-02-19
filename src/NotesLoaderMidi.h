@@ -1,10 +1,8 @@
-/* MidiLoader - Reads a Song from a .mid file. */
-
 #ifndef NotesLoaderMidi_H
 #define NotesLoaderMidi_H
 
 class Song;
-
+/** @brief Reads a Song from a .mid file. */
 namespace MidiLoader
 {
 	void GetApplicableFiles( const RString &sPath, vector<RString> &out );

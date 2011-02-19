@@ -73,7 +73,7 @@ RString RageColor::NormalizeColorString( RString sColor )
 		return "";
 	return c.ToString();
 }
-
+/** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {
 	template<> bool FromStack<RageColor>( lua_State *L, RageColor &Object, int iOffset )

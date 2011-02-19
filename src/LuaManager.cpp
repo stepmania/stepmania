@@ -33,6 +33,7 @@ static Impl *pImpl = NULL;
 	#pragma warning (disable : 4611)
 #endif
 
+/** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {
 	template<> void Push<bool>( lua_State *L, const bool &Object );
@@ -70,6 +71,7 @@ void LuaManager::UnsetGlobal( const RString &sName )
 	Release( L );
 }
 
+/** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {
 	template<> void Push<bool>( lua_State *L, const bool &Object ) { lua_pushboolean( L, Object ); }

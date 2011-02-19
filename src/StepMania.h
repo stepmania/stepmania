@@ -7,6 +7,7 @@ class VideoModeParams;
 
 int main( int argc, char* argv[] );
 
+/** @brief Utility functions for controlling the whole game. */
 namespace StepMania
 {
 	void ApplyGraphicOptions();

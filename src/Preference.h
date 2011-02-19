@@ -121,6 +121,7 @@ private:
 	void (*m_pfnValidate)(T& val);
 };
 
+/** @brief Utilities for working with Lua. */
 namespace LuaHelpers { template<typename T> void Push( lua_State *L, const Preference<T> &Object ) { LuaHelpers::Push<T>( L, Object.Get() ); } }
 
 template <class T>

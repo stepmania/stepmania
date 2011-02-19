@@ -5,6 +5,7 @@
 
 struct RageSurface;
 class RageFile;
+/** @brief Utility functions for the RageSurfaces. */
 namespace RageSurfaceUtils
 {
 	bool SaveBMP( RageSurface *surface, RageFile &f );

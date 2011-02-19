@@ -10,7 +10,8 @@ class Song;
 class Steps;
 struct lua_State;
 
-/** @brief One such Song and Step in the entire Trail. */
+/** @brief One such Song and 
+ * <a class="el" href="class_steps.html">Step</a> in the entire Trail. */
 struct TrailEntry
 {
 	TrailEntry(): 
@@ -24,9 +25,13 @@ struct TrailEntry
 	}
 	void GetAttackArray( AttackArray &out ) const;
 
+	/** @brief The Song involved in the entry. */
 	Song*		pSong;
+	/** @brief The <a class="el" href="class_steps.html">Step</a> involved in the entry. */
 	Steps*		pSteps;
+	/** @brief The Modifiers applied for the whole Song. */
 	RString		Modifiers;
+	/** @brief The Attacks that will take place durring the Song. */
 	AttackArray	Attacks;
 	/**
 	 * @brief Is this Song and its Step meant to be a secret?
