@@ -25,8 +25,8 @@ GrooveRadar::GrooveRadar()
 {
 	m_sprRadarBase.Load( THEME->GetPathG("GrooveRadar","base") );
 	m_Frame.AddChild( m_sprRadarBase );
-	LOAD_ALL_COMMANDS( m_Frame );
 	m_Frame.SetName( "RadarFrame" );
+	ActorUtil::LoadAllCommands( m_Frame, "GrooveRadar" );
 
 	FOREACH_PlayerNumber( p )
 	{
