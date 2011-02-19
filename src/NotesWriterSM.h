@@ -16,7 +16,7 @@ namespace NotesWriterSM
 	 * @brief Get some contents about the edit file first.
 	 * @param pSong the Song in question.
 	 * @param pSteps the Steps in question.
-	 * @param sOut unused?
+	 * @param sOut the start of the file contents.
 	 */
 	void GetEditFileContents( const Song *pSong, const Steps *pSteps, RString &sOut );
 	/**

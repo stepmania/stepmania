@@ -16,6 +16,10 @@
 #include "Song.h"
 #include "Steps.h"
 
+/**
+ * @brief Turn the BackgroundChange into a string.
+ * @param bgc the BackgroundChange in question.
+ * @return the converted string. */
 static RString BackgroundChangeToString( const BackgroundChange &bgc )
 {
 	// TODO: Technically we need to double-escape the filename (because it might contain '=') and then
@@ -37,6 +41,10 @@ static RString BackgroundChangeToString( const BackgroundChange &bgc )
 	return s;
 }
 
+/**
+ * @brief Write out the common tags for .SM files.
+ * @param f the file in question.
+ * @param out the Song in question. */
 static void WriteGlobalTags( RageFile &f, const Song &out )
 {
 	f.PutLine( ssprintf( "#VERSION:%.2f;", out.m_fVersion ) );
@@ -238,6 +246,10 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ";" );
 }
 
+/**
+ * @brief Turn a vector of lines into a single line joined by newline characters.
+ * @param lines the list of lines to join.
+ * @return the joined lines. */
 static RString JoinLineList( vector<RString> &lines )
 {
 	for( unsigned i = 0; i < lines.size(); ++i )
@@ -251,7 +263,12 @@ static RString JoinLineList( vector<RString> &lines )
 	return join( "\r\n", lines.begin()+j, lines.end() );
 }
 
-static RString GetSSCNotesTag( const Song &song, const Steps &in, bool bSavingCache )
+/**
+ * @brief Retrieve the individual batches of NoteData.
+ * @param song the Song in question.
+ * @param in the Steps in question.
+ * @return the NoteData in RString form. */
+static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCache )
 {
 	vector<RString> lines;
 
@@ -396,7 +413,7 @@ bool NotesWriterSSC::Write( RString sPath, const Song &out, const vector<Steps*>
 	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
 	{
 		const Steps* pSteps = *s;
-		RString sTag = GetSSCNotesTag( out, *pSteps, bSavingCache );
+		RString sTag = GetSSCNoteData( out, *pSteps, bSavingCache );
 		f.PutLine( sTag );
 	}
 	if( f.Flush() == -1 )
@@ -416,7 +433,7 @@ void NotesWriterSSC::GetEditFileContents( const Song *pSong, const Steps *pSteps
 	if( asParts.size() )
 		sDir = join( "/", asParts.begin()+1, asParts.end() );
 	sOut += ssprintf( "#SONG:%s;\r\n", sDir.c_str() );
-	sOut += GetSSCNotesTag( *pSong, *pSteps, false );
+	sOut += GetSSCNoteData( *pSong, *pSteps, false );
 }
 
 RString NotesWriterSSC::GetEditFileName( const Song *pSong, const Steps *pSteps )
