@@ -13,9 +13,13 @@ _____________________________________________________________________________
 sm-ssc v1.2.2 | 201102??
 --------------------------------------------------------------------------------
 
+20110219
+--------
+* [BPMDisplay] Added FormatString metric. [AJ]
+
 20110218
 --------
-* [WheelBase] Added SetOpenSection Lua binding [AJ]
+* [WheelBase] Added SetOpenSection Lua binding. [AJ]
 
 20110217
 --------
