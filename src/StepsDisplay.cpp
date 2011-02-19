@@ -127,12 +127,7 @@ void StepsDisplay::SetFromGameState( PlayerNumber pn )
 		if( pTrail )
 			SetFromTrail( pTrail );
 		else
-		{
-			// why was it pTrail->m_CourseType as the last argument when pTrail
-			// can't possibly exist here? -aj
-			//pTrail = GAMESTATE->m_pPreferredCourse->GetTrail(GAMESTATE->m_PreferredStepsType, GAMESTATE->m_PreferredCourseDifficulty[pn]);
 			SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType_Invalid, 0, GAMESTATE->m_PreferredCourseDifficulty[pn], CourseType_Invalid );
-		}
 	}
 	else
 	{
