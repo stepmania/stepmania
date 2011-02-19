@@ -198,6 +198,8 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	DISPLAY->DrawFan( v, NUM_SHOWN_RADAR_CATEGORIES+2 );
 
 	// use a line loop to draw the thick line
+	// TODO: If two players are active, and their RadarValues are the same, draw
+	// the inside of P2's Radar with the line from P1's radar -aj
 	for( int i=0; i<=NUM_SHOWN_RADAR_CATEGORIES; i++ )
 	{
 		const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
