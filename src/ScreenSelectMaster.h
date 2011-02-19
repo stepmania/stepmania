@@ -20,6 +20,7 @@ enum MenuDir
 #define FOREACH_MenuDir( md ) FOREACH_ENUM( MenuDir, md )
 const RString& MenuDirToString( MenuDir md );
 
+/** @brief The master Screen for many children Screens. */
 class ScreenSelectMaster : public ScreenSelect
 {
 public:

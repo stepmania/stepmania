@@ -1,5 +1,3 @@
-/* NetworkSyncManager - Uses ezsockets for primitive song syncing and score reporting. */
-
 #ifndef NetworkSyncManager_H
 #define NetworkSyncManager_H
 
@@ -107,7 +105,7 @@ public:
 
 	void ClearPacket();
 };
-
+/** @brief Uses ezsockets for primitive song syncing and score reporting. */
 class NetworkSyncManager 
 {
 public:

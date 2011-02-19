@@ -1,5 +1,3 @@
-/* LightsManager - Control lights. */
-
 #ifndef LightsManager_H
 #define LightsManager_H
 
@@ -56,7 +54,7 @@ struct LightsState
 };
 
 class LightsDriver;
-
+/** @brief Control lights. */
 class LightsManager
 {
 public:

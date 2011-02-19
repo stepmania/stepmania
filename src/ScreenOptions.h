@@ -1,5 +1,3 @@
-/** @brief ScreenOptions - A grid of options; the selected option is drawn with a highlight rectangle. */
-
 #ifndef SCREENOPTIONS_H
 #define SCREENOPTIONS_H
 
@@ -30,6 +28,7 @@ InputMode StringToInputMode( const RString& str );
 #define FOREACH_OptionsPlayer( pn ) \
 	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID && (m_InputMode==INPUTMODE_INDIVIDUAL || pn==0); pn=GetNextHumanPlayer(pn) )
 
+/** @brief A grid of options; the selected option is drawn with a highlight rectangle. */
 class ScreenOptions : public ScreenWithMenuElements
 {
 public:

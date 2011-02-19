@@ -1,5 +1,3 @@
-/** @brief ITween - Interface for simple interpolation. */
-
 #ifndef TWEEN_H
 #define TWEEN_H
 

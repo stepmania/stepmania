@@ -15,9 +15,6 @@ extern "C"
 #include "lua-5.1/src/lauxlib.h"
 }
 
-class LuaManager;
-extern LuaManager *LUA;
-
 class LuaManager
 {
 public:
@@ -46,6 +43,8 @@ public:
 private:
 	lua_State *m_pLuaMain;
 };
+
+extern LuaManager *LUA;
 
 
 namespace LuaHelpers

@@ -1,5 +1,3 @@
-/* EditMenu - UI on Edit Menu screen. Create Steps, delete Steps, or launch Steps in editor. */
-
 #ifndef EDIT_MENU_H
 #define EDIT_MENU_H
 
@@ -43,6 +41,10 @@ const RString& EditMenuActionToLocalizedString( EditMenuAction ema );
 
 const int NUM_ARROWS = 2;
 
+/**
+ * @brief UI on Edit Menu screen. 
+ *
+ * Create Steps, delete Steps, or launch Steps in editor. */
 class EditMenu: public ActorFrame 
 {
 public:

@@ -1,5 +1,3 @@
-/* Course - A queue of songs and notes. */
-
 #ifndef COURSE_H
 #define COURSE_H
 
@@ -79,7 +77,7 @@ public:
 	void PushSelf( lua_State *L );
 };
 
-
+/** @brief A queue of songs and notes. */
 class Course
 {
 public:

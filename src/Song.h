@@ -1,5 +1,3 @@
-/** @brief Song - Holds all music metadata and steps for one song. */
-
 #ifndef SONG_H
 #define SONG_H
 
@@ -57,6 +55,7 @@ struct LyricSegment
 	RageColor m_Color; /** @brief The color of the lyrics. */
 };
 
+/** @brief Holds all music metadata and steps for one song. */
 class Song
 {
 	RString m_sSongDir;

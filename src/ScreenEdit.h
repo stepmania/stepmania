@@ -1,5 +1,3 @@
-/* ScreenEdit - Edit, record, playback, and synchronize notes. */
-
 #ifndef SCREEN_EDIT_H
 #define SCREEN_EDIT_H
 
@@ -171,7 +169,7 @@ struct MapEditButtonToMenuButton
 				button[e][slot] = GameButton_Invalid;
 	}
 };
-
+/** @brief Edit, record, playback, and synchronize notes. */
 class ScreenEdit : public ScreenWithMenuElements
 {
 public:

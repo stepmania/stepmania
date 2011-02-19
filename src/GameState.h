@@ -1,5 +1,3 @@
-/** @brief GameState - Holds game data that is not saved between sessions. */
-
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
@@ -33,6 +31,7 @@ class Style;
 class TimingData;
 class Trail;
 
+/** @brief Holds game data that is not saved between sessions. */
 class GameState
 {
 public:

@@ -1,5 +1,3 @@
-/* InputMapper - Holds user-chosen input preferences and saves it between sessions. */
-
 #ifndef INPUT_MAPPER_H
 #define INPUT_MAPPER_H
 
@@ -151,7 +149,7 @@ public:
 	void ClearFromInputMap( const DeviceInput &DeviceI );
 	bool ClearFromInputMap( const GameInput &GameI, int iSlotIndex );
 };
-
+/** @brief Holds user-chosen input preferences and saves it between sessions. */
 class InputMapper
 {
 public:
