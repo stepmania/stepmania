@@ -1,5 +1,3 @@
-/* OptionsCursor - A cursor for ScreenOptions. */
-
 #ifndef OPTIONS_CURSOR_H
 #define OPTIONS_CURSOR_H
 
@@ -7,7 +5,7 @@
 #include "ActorFrame.h"
 #include "PlayerNumber.h"
 #include "AutoActor.h"
-
+/** @brief A cursor for ScreenOptions. */
 class OptionsCursor : public ActorFrame
 {
 public:

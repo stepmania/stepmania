@@ -1,12 +1,10 @@
-/* ScoreKeeperRave - Launches attacks in PLAY_MODE_RAVE. */
-
 #ifndef SCORE_KEEPER_RAVE_H
 #define SCORE_KEEPER_RAVE_H
 
 #include "ScoreKeeper.h"
 #include "GameConstantsAndTypes.h"
 
-
+/** @Brief Launches attacks in PLAY_MODE_RAVE. */
 class ScoreKeeperRave : public ScoreKeeper
 {
 public:
