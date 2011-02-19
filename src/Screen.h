@@ -14,7 +14,11 @@
 class InputEventPlus;
 class Screen;
 typedef Screen* (*CreateScreenFn)(const RString& sClassName);
-// Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
+/**
+ * @brief Allow registering the screen for easier access.
+ *
+ * Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
+ */
 struct RegisterScreenClass { RegisterScreenClass( const RString &sClassName, CreateScreenFn pfn ); };
 #define REGISTER_SCREEN_CLASS( className ) \
 	static Screen* Create##className( const RString &sName ) { LuaThreadVariable var( "LoadingScreen", sName ); Screen *pRet = new className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
@@ -60,6 +64,10 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	void SetLockInputSecs( float f ) { m_fLockInputSecs = f; }
 
+	/**
+	 * @brief Put the specified message onto the screen for a specified time.
+	 * @param SM the message to put on the screen.
+	 * @param fDelay The length of time it stays up. */
 	void PostScreenMessage( const ScreenMessage SM, float fDelay );
 	/** @brief Clear the entire message queue. */
 	void ClearMessageQueue();
