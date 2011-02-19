@@ -24,6 +24,7 @@ Thumbs.db
 *.mode1v3
 *.exe
 *.vdi
+Docs/doxygen
 PBProject/build
 Xcode/build
 src/build-*
