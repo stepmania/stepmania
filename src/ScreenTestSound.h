@@ -5,6 +5,7 @@
 #include "BitmapText.h"
 #include "RageSound.h"
 
+/** @brief The number of sounds allowed for testing. */
 const int nsounds = 5;
 
 class ScreenTestSound : public Screen
@@ -31,8 +32,10 @@ public:
 
 #endif
 
-/*
- * (c) 2003 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

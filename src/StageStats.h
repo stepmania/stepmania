@@ -1,5 +1,3 @@
-/* StageStats - Contains statistics for one stage of play - either one song, or a whole course. */
-
 #ifndef StageStats_H
 #define StageStats_H
 
@@ -9,7 +7,10 @@ class Song;
 class Style;
 struct lua_State;
 
-
+/** 
+ * @brief Contains statistics for one stage of play.
+ *
+ * This is either one song, or a whole course. */
 class StageStats
 {
 public:
@@ -34,13 +35,24 @@ public:
 	vector<Song*>	m_vpPossibleSongs;
 
 	EarnedExtraStage m_EarnedExtraStage;
-	bool	m_bGaveUp;	// exited gameplay by giving up
-	bool	m_bUsedAutoplay;	// used autoplay at any point during gameplay
+	/** @brief Was the gameplay exited by the Player giving up? */
+	bool	m_bGaveUp;
+	/** @brief Did the PLayer use Autoplay at any point during gameplay? */
+	bool	m_bUsedAutoplay;
 
 	// TODO: These are updated in ScreenGameplay::Update based on fDelta.  
 	// They should be made more accurate.
-	float	m_fGameplaySeconds;		// how many seconds before gameplay ended. Updated by Gameplay, not scaled by music rate.
-	float	m_fStepsSeconds;		// this is <= fGameplaySeconds unless the song has steps past the end
+	/**
+	 * @brief How many seconds were there before gameplay ended?
+	 *
+	 * This is updated by Gameplay, and not scaled by the music rate. */
+	float	m_fGameplaySeconds;
+	/**
+	 * @brief How many seconds are we in a song?
+	 *
+	 * This is equivalent to m_fGameplaySeconds unless the song has steps past the end. */
+	float	m_fStepsSeconds;
+	/** @brief How fast was the music going compared to normal? */
 	float	m_fMusicRate;
 
 	// Total number of seconds between first beat and last beat for every song.
@@ -50,6 +62,10 @@ public:
 	PlayerStageStats m_multiPlayer[NUM_MultiPlayer];
 
 	void FinalizeScores( bool bSummary );
+	/**
+	 * @brief Determine if the PlayerNumber has a high score.
+	 * @param pn the PlayerNumber in question.
+	 * @return true if the PlayerNumber has a high score, false otherwise. */
 	bool PlayerHasHighScore( PlayerNumber pn ) const;
 	int GetMinimumMissCombo() const;
 
@@ -59,8 +75,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

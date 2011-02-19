@@ -1,5 +1,3 @@
-/* InputQueue - Stores a list of the most recently pressed MenuInputs for each player. */
-
 #ifndef INPUT_QUEUE_H
 #define INPUT_QUEUE_H
 
@@ -9,6 +7,7 @@
 class InputEventPlus;
 class RageTimer;
 
+/** @brief Stores a list of the most recently pressed MenuInputs for each player. */
 class InputQueue
 {
 public:
