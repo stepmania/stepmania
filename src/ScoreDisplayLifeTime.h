@@ -1,5 +1,3 @@
-/* ScoreDisplayLifeTime - Display a updating count of life time remaining. */
-
 #ifndef ScoreDisplayLifeTime_H
 #define ScoreDisplayLifeTime_H
 
@@ -7,6 +5,10 @@
 #include "BitmapText.h"
 #include "AutoActor.h"
 
+/**
+ * @breif Display a updating count of life time remaining.
+ * 
+ * This is mainly used for Survival mode. */
 class ScoreDisplayLifeTime : public ScoreDisplay
 {
 public:

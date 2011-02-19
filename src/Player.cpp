@@ -91,8 +91,10 @@ public:
 
 RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides )	{ return "AttackDisplayXOffset" + (both_sides ? RString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 
-/* Distance to search for a note in Step(), in seconds. */
-// TODO: This should be calculated based on the max size of the current judgment windows.
+/**
+ * @brief Distance to search for a note in Step(), in seconds.
+ *
+ * TODO: This should be calculated based on the max size of the current judgment windows. */
 static const float StepSearchDistance = 1.0f;
 
 void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, float &defaultValueOut )

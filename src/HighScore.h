@@ -1,5 +1,3 @@
-/** @brief HighScore - Player scoring data that persists between sessions. */
-
 #ifndef HIGH_SCORE_H
 #define HIGH_SCORE_H
 
@@ -13,7 +11,9 @@ struct RadarValues;
 struct lua_State;
 
 struct HighScoreImpl;
-/** @brief The high score that is earned by a player. */
+/** @brief The high score that is earned by a player.
+ *
+ * This is scoring data that is persisted between sessions. */
 struct HighScore
 {
 	HighScore();

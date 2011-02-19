@@ -1,5 +1,3 @@
-/* Player - Accepts input, knocks down TapNotes that were stepped on, and keeps score for the player. */
-
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -37,6 +35,7 @@ AutoScreenMessage( SM_1000Combo );
 AutoScreenMessage( SM_ComboStopped );
 AutoScreenMessage( SM_ComboContinuing );
 
+/** @brief Accepts input, knocks down TapNotes that were stepped on, and keeps score for the player. */
 class Player: public ActorFrame
 {
 public:
@@ -145,7 +144,9 @@ protected:
 
 	bool			m_bLoaded;
 
+	/** @brief The player's present state. */
 	PlayerState		*m_pPlayerState;
+	/** @brief The player's present stage stats. */
 	PlayerStageStats	*m_pPlayerStageStats;
 	float			m_fNoteFieldHeight;
 
