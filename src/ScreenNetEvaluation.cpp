@@ -226,6 +226,7 @@ void ScreenNetEvaluation::UpdateStats()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenNetEvaluation. */ 
 class LunaScreenNetEvaluation: public Luna<ScreenNetEvaluation>
 {
 public:

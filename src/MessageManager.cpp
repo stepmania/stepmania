@@ -273,6 +273,7 @@ void MessageSubscriber::UnsubscribeAll()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the MessageManager. */ 
 class LunaMessageManager: public Luna<MessageManager>
 {
 public:

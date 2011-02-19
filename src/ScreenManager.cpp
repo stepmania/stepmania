@@ -866,6 +866,7 @@ void ScreenManager::PlaySharedBackgroundOffCommand()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenManager. */ 
 class LunaScreenManager: public Luna<ScreenManager>
 {
 public:

@@ -176,6 +176,7 @@ RString RageInput::GetDisplayDevicesString() const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the RageInput. */ 
 class LunaRageInput: public Luna<RageInput>
 {
 public:

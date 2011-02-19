@@ -213,6 +213,7 @@ bool ScreenSelectProfile::Finish(){
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenSelectProfile. */ 
 class LunaScreenSelectProfile: public Luna<ScreenSelectProfile>
 {
 public:

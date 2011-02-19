@@ -451,6 +451,7 @@ void ActorFrame::SetDrawByZPosition( bool b )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ActorFrame. */ 
 class LunaActorFrame : public Luna<ActorFrame>
 {
 public:

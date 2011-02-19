@@ -176,6 +176,7 @@ void ModIconRow::SetFromGameState()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ModIconRow. */ 
 class LunaModIconRow: public Luna<ModIconRow>
 {
 public:

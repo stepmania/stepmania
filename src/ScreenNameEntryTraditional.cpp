@@ -238,6 +238,7 @@ bool ScreenNameEntryTraditional::Backspace( PlayerNumber pn )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenNameEntryTraditional. */ 
 class LunaScreenNameEntryTraditional: public Luna<ScreenNameEntryTraditional>
 {
 public:

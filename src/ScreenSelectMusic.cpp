@@ -1856,6 +1856,7 @@ void ScreenSelectMusic::AfterMusicChange()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenSelectMusic. */ 
 class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
 {
 public:

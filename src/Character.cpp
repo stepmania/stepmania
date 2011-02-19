@@ -198,6 +198,7 @@ void Character::UndemandGraphics()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Character. */ 
 class LunaCharacter: public Luna<Character>
 {
 public:

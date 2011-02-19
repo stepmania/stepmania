@@ -3240,6 +3240,7 @@ RString Player::ApplyRandomAttack()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Player. */ 
 class LunaPlayer: public Luna<Player>
 {
 public:

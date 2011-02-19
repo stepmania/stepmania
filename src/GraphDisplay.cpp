@@ -275,6 +275,7 @@ void GraphDisplay::UpdateVerts()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the GraphDisplay. */ 
 class LunaGraphDisplay: public Luna<GraphDisplay>
 {
 public:

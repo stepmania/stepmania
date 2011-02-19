@@ -2174,6 +2174,7 @@ MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp )
 #include "LuaBinding.h"
 #include "Game.h"
 
+/** @brief Allow Lua to have access to the GameState. */ 
 class LunaGameState: public Luna<GameState>
 {
 public:

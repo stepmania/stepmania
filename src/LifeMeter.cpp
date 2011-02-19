@@ -19,6 +19,7 @@ LifeMeter *LifeMeter::MakeLifeMeter( SongOptions::LifeType t )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the LifeMeter. */ 
 class LunaLifeMeter: public Luna<LifeMeter>
 {
 public:

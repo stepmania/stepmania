@@ -730,6 +730,7 @@ void ScreenEvaluation::HandleMenuStart()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenEvaluation. */ 
 class LunaScreenEvaluation: public Luna<ScreenEvaluation>
 {
 public:

@@ -658,6 +658,7 @@ void UnlockManager::GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vecto
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the UnlockEntry. */ 
 class LunaUnlockEntry: public Luna<UnlockEntry>
 {
 public:
@@ -718,6 +719,7 @@ public:
 
 LUA_REGISTER_CLASS( UnlockEntry )
 
+/** @brief Allow Lua to have access to the UnlockManager. */ 
 class LunaUnlockManager: public Luna<UnlockManager>
 {
 public:

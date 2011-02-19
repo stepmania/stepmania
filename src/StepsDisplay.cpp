@@ -267,6 +267,7 @@ void StepsDisplay::SetInternal( const SetParams &params )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the StepsDisplay. */ 
 class LunaStepsDisplay: public Luna<StepsDisplay>
 {
 public:

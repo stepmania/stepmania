@@ -379,6 +379,7 @@ void StepsDisplayList::HandleMessage( const Message &msg )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the StepsDisplayList. */ 
 class LunaStepsDisplayList: public Luna<StepsDisplayList>
 {
 public:

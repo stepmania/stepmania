@@ -187,6 +187,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the GrooveRadar. */ 
 class LunaGrooveRadar: public Luna<GrooveRadar>
 {
 public:

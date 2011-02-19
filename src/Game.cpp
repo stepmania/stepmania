@@ -42,6 +42,7 @@ const Game::PerButtonInfo *Game::GetPerButtonInfo( GameButton gb ) const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Game. */ 
 class LunaGame: public Luna<Game>
 {
 public:

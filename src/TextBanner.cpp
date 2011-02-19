@@ -86,6 +86,7 @@ void TextBanner::SetFromSong( const Song *pSong )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the TextBanner. */ 
 class LunaTextBanner: public Luna<TextBanner>
 {
 public:

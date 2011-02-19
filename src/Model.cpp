@@ -769,6 +769,7 @@ bool Model::MaterialsNeedNormals() const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Model. */ 
 class LunaModel: public Luna<Model>
 {
 public:

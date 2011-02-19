@@ -25,6 +25,7 @@ void ScreenProfileSave::Continue()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenProfileSave. */ 
 class LunaScreenProfileSave: public Luna<ScreenProfileSave>
 {
 public:

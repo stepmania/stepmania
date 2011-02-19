@@ -232,6 +232,7 @@ void Banner::LoadFromSortOrder( SortOrder so )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Banner. */ 
 class LunaBanner: public Luna<Banner>
 {
 public:

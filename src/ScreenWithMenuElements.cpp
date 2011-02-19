@@ -364,7 +364,7 @@ void ScreenWithMenuElementsSimple::MenuBack( const InputEventPlus &input )
 
 // lua start
 #include "LuaBinding.h"
-
+/** @brief Allow Lua to have access to the ScreenWithMenuElements. */ 
 class LunaScreenWithMenuElements: public Luna<ScreenWithMenuElements>
 {
 public:
@@ -378,6 +378,7 @@ public:
 
 LUA_REGISTER_DERIVED_CLASS( ScreenWithMenuElements, Screen )
 
+/** @brief Allow Lua to have access to the ScreenWithMenuElementsSimple. */ 
 class LunaScreenWithMenuElementsSimple: public Luna<ScreenWithMenuElementsSimple>
 {
 public:

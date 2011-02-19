@@ -75,6 +75,7 @@ void RageTextureRenderTarget::FinishRenderingTo()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the RageTextureRenderTarget. */ 
 class LunaRageTextureRenderTarget: public Luna<RageTextureRenderTarget>
 {
 public:

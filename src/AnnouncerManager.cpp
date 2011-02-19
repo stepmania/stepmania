@@ -166,6 +166,7 @@ void AnnouncerManager::NextAnnouncer()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the AnnouncerManager. */ 
 class LunaAnnouncerManager: public Luna<AnnouncerManager>
 {
 public:

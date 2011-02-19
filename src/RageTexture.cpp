@@ -68,6 +68,7 @@ const RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the RageTexture. */ 
 class LunaRageTexture: public Luna<RageTexture>
 {
 public:

@@ -88,6 +88,7 @@ int CourseEntry::GetNumModChanges() const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the CourseEntry. */ 
 class LunaCourseEntry: public Luna<CourseEntry>
 {
 public:
@@ -1045,6 +1046,7 @@ bool Course::Matches( RString sGroup, RString sCourse ) const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Course. */ 
 class LunaCourse: public Luna<Course>
 {
 public:

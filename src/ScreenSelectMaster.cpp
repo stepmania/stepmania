@@ -942,6 +942,7 @@ float ScreenSelectMaster::GetCursorY( PlayerNumber pn )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenSelectMaster. */ 
 class LunaScreenSelectMaster: public Luna<ScreenSelectMaster>
 {
 public:

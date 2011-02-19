@@ -1937,6 +1937,7 @@ RString Profile::MakeFileNameNoExtension( RString sFileNameBeginning, int iIndex
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Profile. */ 
 class LunaProfile: public Luna<Profile>
 {
 public:

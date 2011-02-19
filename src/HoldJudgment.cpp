@@ -95,6 +95,7 @@ void HoldJudgment::HandleMessage( const Message &msg )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the HoldJudgment. */ 
 class LunaHoldJudgment: public Luna<HoldJudgment>
 {
 public:

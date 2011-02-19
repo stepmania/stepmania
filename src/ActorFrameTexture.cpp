@@ -67,6 +67,7 @@ void ActorFrameTexture::DrawPrimitives()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ActorFrameTexture. */ 
 class LunaActorFrameTexture : public Luna<ActorFrameTexture>
 {
 public:

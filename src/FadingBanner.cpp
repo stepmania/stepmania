@@ -255,6 +255,7 @@ void FadingBanner::LoadCourseFallback()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the FadingBanner. */ 
 class LunaFadingBanner: public Luna<FadingBanner>
 {
 public:

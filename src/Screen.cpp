@@ -279,6 +279,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Screen. */ 
 class LunaScreen: public Luna<Screen>
 {
 public:

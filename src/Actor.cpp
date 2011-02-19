@@ -1307,6 +1307,7 @@ Actor::TweenInfo &Actor::TweenInfo::operator=( const TweenInfo &rhs )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Actor. */ 
 class LunaActor : public Luna<Actor>
 {
 public:

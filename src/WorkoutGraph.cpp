@@ -118,6 +118,7 @@ void WorkoutGraph::SetFromGameStateAndHighlightSong( int iSongIndex )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the WorkoutGraph. */ 
 class LunaWorkoutGraph: public Luna<WorkoutGraph>
 {
 public:

@@ -309,6 +309,7 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ActorScroller. */ 
 class LunaActorScroller: public Luna<ActorScroller>
 {
 public:

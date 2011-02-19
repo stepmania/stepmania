@@ -150,6 +150,7 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenPlayerOptions. */ 
 class LunaScreenPlayerOptions: public Luna<ScreenPlayerOptions>
 {
 public:

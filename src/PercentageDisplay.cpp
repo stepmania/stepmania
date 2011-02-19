@@ -207,6 +207,7 @@ bool PercentageDisplay::ShowDancePointsNotPercentage() const
 
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the PercentageDisplay. */ 
 class LunaPercentageDisplay: public Luna<PercentageDisplay>
 {
 public:

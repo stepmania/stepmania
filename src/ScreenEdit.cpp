@@ -4066,6 +4066,7 @@ void ScreenEdit::DoHelp()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenEdit. */ 
 class LunaScreenEdit: public Luna<ScreenEdit>
 {
 public:

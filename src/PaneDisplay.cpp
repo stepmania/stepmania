@@ -276,6 +276,7 @@ void PaneDisplay::SetFromGameState()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the PaneDisplay. */ 
 class LunaPaneDisplay: public Luna<PaneDisplay>
 {
 public:

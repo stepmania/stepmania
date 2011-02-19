@@ -1457,6 +1457,7 @@ bool Song::IsMarathon() const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Song. */ 
 class LunaSong: public Luna<Song>
 {
 public:

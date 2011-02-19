@@ -134,6 +134,7 @@ bool ActorMultiTexture::EarlyAbortDraw() const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ActorMultiTexture. */ 
 class LunaActorMultiTexture: public Luna<ActorMultiTexture>
 {
 public:

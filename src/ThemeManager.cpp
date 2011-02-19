@@ -1237,6 +1237,7 @@ RString ThemeManager::GetBlankGraphicPath()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ThemeManager. */ 
 class LunaThemeManager: public Luna<ThemeManager>
 {
 public:

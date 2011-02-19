@@ -95,6 +95,7 @@ void DifficultyIcon::SetFromDifficulty( Difficulty dc )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the DifficultyIcon. */ 
 class LunaDifficultyIcon: public Luna<DifficultyIcon>
 {
 public:

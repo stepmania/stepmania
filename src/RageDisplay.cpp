@@ -994,6 +994,8 @@ void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormal
 
 // lua start
 #include "LuaBinding.h"
+
+/** @brief Allow Lua to have access to the RageDisplay. */ 
 class LunaRageDisplay: public Luna<RageDisplay>
 {
 public:

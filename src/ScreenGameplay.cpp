@@ -2838,6 +2838,7 @@ bool ScreenGameplay::LoadReplay()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenGameplay. */ 
 class LunaScreenGameplay: public Luna<ScreenGameplay>
 {
 public:
@@ -2896,6 +2897,7 @@ public:
 LUA_REGISTER_DERIVED_CLASS( ScreenGameplay, ScreenWithMenuElements )
 
 
+/** @brief Allow Lua to have access to the PlayerInfo. */ 
 class LunaPlayerInfo: public Luna<PlayerInfo>
 {
 public:

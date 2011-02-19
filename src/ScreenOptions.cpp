@@ -1277,6 +1277,7 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenOptions. */ 
 class LunaScreenOptions: public Luna<ScreenOptions>
 {
 public:

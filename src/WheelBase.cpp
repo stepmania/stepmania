@@ -506,6 +506,7 @@ int WheelBase::FirstVisibleIndex()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the WheelBase. */ 
 class LunaWheelBase: public Luna<WheelBase>
 {
 public:

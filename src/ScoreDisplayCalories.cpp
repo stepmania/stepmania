@@ -72,6 +72,7 @@ void ScoreDisplayCalories::UpdateNumber()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScoreDisplayCalories. */ 
 class LunaScoreDisplayCalories: public Luna<ScoreDisplayCalories>
 {
 public:

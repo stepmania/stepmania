@@ -1036,6 +1036,7 @@ unsigned int GetHashForDirectory( const RString &sDir )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the RageFileManager. */ 
 class LunaRageFileManager: public Luna<RageFileManager>
 {
 public:

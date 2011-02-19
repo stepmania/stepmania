@@ -794,6 +794,8 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 
 // lua start
 #include "FontCharAliases.h"
+
+/** @brief Allow Lua to have access to the BitmapText. */ 
 class LunaBitmapText: public Luna<BitmapText>
 {
 public:

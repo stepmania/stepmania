@@ -331,6 +331,7 @@ int StageStats::GetMinimumMissCombo() const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the StageStats. */ 
 class LunaStageStats: public Luna<StageStats>
 {
 public:

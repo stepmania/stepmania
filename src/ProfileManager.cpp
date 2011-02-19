@@ -799,6 +799,7 @@ int ProfileManager::GetNumLocalProfiles() const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ProfileManager. */ 
 class LunaProfileManager: public Luna<ProfileManager>
 {
 public:

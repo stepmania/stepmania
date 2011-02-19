@@ -62,6 +62,8 @@ void HelpDisplay::Update( float fDeltaTime )
 
 #include "LuaBinding.h"
 #include "FontCharAliases.h"
+
+/** @brief Allow Lua to have access to the HelpDisplay. */ 
 class LunaHelpDisplay: public Luna<HelpDisplay>
 {
 public:

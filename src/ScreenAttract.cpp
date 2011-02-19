@@ -165,6 +165,7 @@ void ScreenAttract::GoToStartScreen( RString sScreenName )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenAttract. */ 
 class LunaScreenAttract: public Luna<ScreenAttract>
 {
 public:

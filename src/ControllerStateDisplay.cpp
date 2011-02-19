@@ -95,7 +95,8 @@ void ControllerStateDisplay::Update( float fDelta )
 	}
 }
 
-// lua start
+
+/** @brief Allow Lua to have access to the ControllerStateDisplay. */ 
 class LunaControllerStateDisplay: public Luna<ControllerStateDisplay>
 {
 public:

@@ -99,6 +99,7 @@ void RollingNumbers::UpdateText()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the RollingNumbers. */ 
 class LunaRollingNumbers: public Luna<RollingNumbers>
 {
 public:

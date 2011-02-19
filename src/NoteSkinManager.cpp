@@ -444,6 +444,7 @@ RString NoteSkinManager::GetPathFromDirAndFile( const RString &sDir, const RStri
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the NoteSkinManager. */ 
 class LunaNoteSkinManager: public Luna<NoteSkinManager>
 {
 public:

@@ -33,6 +33,7 @@ void ActorProxy::LoadFromNode( const XNode* pNode )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ActorProxy. */ 
 class LunaActorProxy: public Luna<ActorProxy>
 {
 public:

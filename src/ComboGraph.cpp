@@ -112,6 +112,7 @@ void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ComboGraph. */ 
 class LunaComboGraph: public Luna<ComboGraph>
 {
 public:
