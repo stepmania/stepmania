@@ -1,5 +1,3 @@
-/** @brief Actor - Base class for all objects that appear on the screen. */
-
 #ifndef ACTOR_H
 #define ACTOR_H
 
@@ -65,10 +63,11 @@ LuaDeclareType( VertAlign );
 #define align_middle 0.5f
 /** @brief The bottom vertical alignment constant. */
 #define align_bottom 1.0f
-
+/** @brief Base class for all objects that appear on the screen. */
 class Actor : public MessageSubscriber
 {
 public:
+	/** @brief Set up the Actor with its initial settings. */
 	Actor();
 	Actor( const Actor &cpy );
 	virtual ~Actor();
@@ -158,9 +157,21 @@ public:
 	virtual void UpdateInternal( float fDeltaTime );	// override this
 	void UpdateTweening( float fDeltaTime );
 
+	/**
+	 * @brief Retrieve the Actor's name.
+	 * @return the Actor's name. */
 	const RString &GetName() const			{ return m_sName; }
+	/**
+	 * @brief Set the Actor's name to a new one.
+	 * @param sName the new name for the Actor. */
 	virtual void SetName( const RString &sName )	{ m_sName = sName; }
+	/**
+	 * @brief Give this Actor a new parent.
+	 * @param pParent the new parent Actor. */
 	void SetParent( Actor *pParent );
+	/**
+	 * @brief Retrieve the Actor's parent.
+	 * @return the Actor's parent. */
 	Actor *GetParent() { return m_pParent; }
 	RString GetLineage() const;
 

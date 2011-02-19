@@ -1,4 +1,3 @@
-/* GraphDisplay - A graph of the player's life over the course of Gameplay, used on Evaluation. */
 #ifndef GRAPH_DISPLAY_H
 #define GRAPH_DISPLAY_H
 
@@ -9,6 +8,7 @@ class StageStats;
 class PlayerStageStats;
 class GraphLine;
 class GraphBody;
+/** @brief A graph of the player's life over the course of Gameplay, used on Evaluation. */
 class GraphDisplay: public ActorFrame
 {
 public:

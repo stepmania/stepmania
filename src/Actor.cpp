@@ -18,7 +18,10 @@
 
 static Preference<bool> g_bShowMasks("ShowMasks", false);
 
-/* It's useful to be able to construct a basic Actor in XML, in
+/**
+ * @brief Set up a hidden Actor that won't be drawn.
+ *
+ * It's useful to be able to construct a basic Actor in XML, in
  * order to simply delay a Transition, or receive and send broadcasts.
  * Since these actors will never draw, set them hidden by default. */
 class HiddenActor: public Actor

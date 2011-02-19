@@ -1,5 +1,3 @@
-/** @brief Grade - Mark the player receives after clearing a song. */
-
 #ifndef GRADE_H
 #define GRADE_H
 
@@ -7,12 +5,10 @@
 #include "EnumHelper.h"
 #include "ThemeMetric.h"
 
-/**
- * @brief Have a specific number of passing grade tiers.
+/** @brief The list of grading tiers available.
  *
- * TODO: Look into flexible grading tiers. */
-#define NUM_Grade_TierS 20
-/** @brief The list of grading tiers available. */
+ * TODO: Look into a more flexible system without a fixed number of grades. -Wolfman2000
+ */
 enum Grade 
 { 
 	Grade_Tier01,	/**< Usually an AAAA */
@@ -39,6 +35,7 @@ enum Grade
 	NUM_Grade, 
 	Grade_Invalid,
 };
+/** @brief Have an alternative for if there is no data for grading. */
 #define Grade_NoData Grade_Invalid
 
 /**
@@ -61,15 +58,32 @@ static inline RString GradeToString( Grade g )
 	}
 }
 
-RString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibility.  Used in announcer
+/**
+ * @brief Convert to the old version styled grade strings.
+ *
+ * This is mainly for backward compatibility purposes, but the announcer
+ * also uses it. Think "AAA", "B", etc.
+ * @param g the current Grade.
+ * @return the old styled grade string. */
+RString GradeToOldString( Grade g );
 RString GradeToLocalizedString( Grade g );
+/**
+ * @brief Convert the given RString into a proper Grade.
+ * @param s the string to convert.
+ * @return the expected Grade.
+ */
 Grade StringToGrade( const RString &s );
 LuaDeclareType( Grade );
 extern ThemeMetric<int> NUM_GRADE_TIERS_USED;
 #define NUM_POSSIBLE_GRADES	(NUM_GRADE_TIERS_USED+1)
+/**
+ * @brief Step through the enumerator one at a time to get the next Grade.
+ * @param g the current Grade.
+ * @return the next Grade. */
 Grade GetNextPossibleGrade( Grade g );
 /** @brief Loop through each possible Grade. */
-#define FOREACH_PossibleGrade( g )	for( Grade g = (Grade)(0); g != Grade_Invalid; g = GetNextPossibleGrade(g) )
+#define FOREACH_PossibleGrade( g ) \
+for( Grade g = (Grade)(0); g != Grade_Invalid; g = GetNextPossibleGrade(g) )
 
 #endif
 
