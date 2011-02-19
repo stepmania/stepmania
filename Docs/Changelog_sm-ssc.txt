@@ -18,6 +18,7 @@ sm-ssc v1.2.2 | 201102??
 * [BPMDisplay] Added FormatString metric. [AJ]
 * [GrooveRadar] Changed "Label#OffsetX/Y" metrics to "Label#X/Y". [AJ]
 * [GrooveRadar] Fixed RadarFrame from not running commands on RadarFrame base. [AJ]
+* [GrooveRadar] Removed RadarFrameTweenOnScreen and RadarFrameTweenOffScreen metrics. (Themers: Use RadarFrameOnCommand and RadarFrameOffCommand instead) [AJ]
 
 20110218
 --------

@@ -63,15 +63,6 @@ void GrooveRadar::TweenOnScreen()
 		m_sprRadarLabels[c].BeginTweening( LABEL_ON_DELAY*c ); // sleep
 		m_sprRadarLabels[c].PlayCommand( "PostDelayOn" );
 	}
-
-	m_Frame.PlayCommand("TweenOnScreen");
-	/*
-	m_Frame.SetZoom( 0.5f );
-	m_Frame.SetRotationZ( 720 );
-	m_Frame.BeginTweening( 0.6f );
-	m_Frame.SetZoom( 1 );
-	m_Frame.SetRotationZ( 0 );
-	*/
 }
 
 void GrooveRadar::TweenOffScreen()
