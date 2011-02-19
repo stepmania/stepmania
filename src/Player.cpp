@@ -1255,13 +1255,13 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				//LOG->Trace("initiated note and let go :(");
 			}
 		}
-		else
+		else if( SCORE_MISSED_HOLDS_AND_ROLLS )
 		{
-			//LOG->Trace("did not initiate note");
-			if( !bInitiatedNote && !SCORE_MISSED_HOLDS_AND_ROLLS )
-				hns = HNS_None;
-			else
-				hns = HNS_LetGo;
+			hns = HNS_LetGo;
+		}
+		else 
+		{
+			hns = HNS_None;
 		}
 	}
 
