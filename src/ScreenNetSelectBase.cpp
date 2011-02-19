@@ -26,9 +26,9 @@
 #define USER_SPACING_X				THEME->GetMetricF(m_sName,"UserSpacingX")
 #define USER_ADD_Y					THEME->GetMetricF(m_sName,"UserLine2Y")
 
-AutoScreenMessage( SM_AddToChat )
-AutoScreenMessage( SM_UsersUpdate )
-AutoScreenMessage( SM_SMOnlinePack )
+AutoScreenMessage( SM_AddToChat );
+AutoScreenMessage( SM_UsersUpdate );
+AutoScreenMessage( SM_SMOnlinePack );
 
 REGISTER_SCREEN_CLASS( ScreenNetSelectBase );
 

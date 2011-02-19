@@ -43,7 +43,7 @@ void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers 
 #include "PlayerState.h"
 #include "CryptManager.h"
 
-AutoScreenMessage( SM_AddToChat )
+AutoScreenMessage( SM_AddToChat );
 AutoScreenMessage( SM_ChangeSong );
 AutoScreenMessage( SM_GotEval );
 AutoScreenMessage( SM_UsersUpdate );

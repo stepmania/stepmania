@@ -16,11 +16,11 @@ static LocalizedString NEW_PROFILE_DEFAULT_NAME( "ScreenOptionsManageProfiles", 
 
 #define SHOW_CREATE_NEW (!PROFILEMAN->FixedProfiles())
 
-AutoScreenMessage( SM_BackFromEnterNameForNew )
-AutoScreenMessage( SM_BackFromRename )
-AutoScreenMessage( SM_BackFromDeleteConfirm )
-AutoScreenMessage( SM_BackFromClearConfirm )
-AutoScreenMessage( SM_BackFromContextMenu )
+AutoScreenMessage( SM_BackFromEnterNameForNew );
+AutoScreenMessage( SM_BackFromRename );
+AutoScreenMessage( SM_BackFromDeleteConfirm );
+AutoScreenMessage( SM_BackFromClearConfirm );
+AutoScreenMessage( SM_BackFromContextMenu );
 
 enum ProfileAction
 {

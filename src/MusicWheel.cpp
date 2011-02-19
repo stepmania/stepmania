@@ -30,7 +30,7 @@ static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );
 static RString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",int(i+1)); }
 static RString CHOICE_NAME( RString s )		{ return ssprintf("Choice%s",s.c_str()); }
 
-AutoScreenMessage( SM_SongChanged ) // TODO: Replace this with a Message and MESSAGEMAN
+AutoScreenMessage( SM_SongChanged ); // TODO: Replace this with a Message and MESSAGEMAN
 AutoScreenMessage( SM_SortOrderChanging );
 AutoScreenMessage( SM_SortOrderChanged );
 

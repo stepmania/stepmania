@@ -26,7 +26,7 @@ namespace ScreenMessageHelpers
 
 // Automatically generate a unique ScreenMessage value
 #define AutoScreenMessage( x ) \
-	const ScreenMessage x = ScreenMessageHelpers::ToScreenMessage( #x );
+	const ScreenMessage x = ScreenMessageHelpers::ToScreenMessage( #x )
 
 
 #endif

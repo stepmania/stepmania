@@ -74,7 +74,7 @@ XToString( DetailLine );
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
-AutoScreenMessage( SM_PlayCheer )
+AutoScreenMessage( SM_PlayCheer );
 
 REGISTER_SCREEN_CLASS( ScreenEvaluation );
 void ScreenEvaluation::Init()

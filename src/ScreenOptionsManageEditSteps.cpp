@@ -20,9 +20,9 @@
 #include "SpecialFiles.h"
 #include "NotesWriterSM.h"
 
-AutoScreenMessage( SM_BackFromRename )
-AutoScreenMessage( SM_BackFromDelete )
-AutoScreenMessage( SM_BackFromContextMenu )
+AutoScreenMessage( SM_BackFromRename );
+AutoScreenMessage( SM_BackFromDelete );
+AutoScreenMessage( SM_BackFromContextMenu );
 
 enum StepsEditAction
 {

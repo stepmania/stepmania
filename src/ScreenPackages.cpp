@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include "LocalizedString.h"
 
-AutoScreenMessage( SM_BackFromURL )
+AutoScreenMessage( SM_BackFromURL );
 
 REGISTER_SCREEN_CLASS( ScreenPackages );
 

@@ -36,7 +36,7 @@ enum DisplayScoreboard
 	NO_SCOREBOARD_ON
 };
 
-AutoScreenMessage( SM_DoneConnecting )
+AutoScreenMessage( SM_DoneConnecting );
 
 Preference<RString> g_sLastServer( "LastConnectedServer",	"" );
 

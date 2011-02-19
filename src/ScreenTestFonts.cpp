@@ -11,7 +11,9 @@
 static const float LineWidth = 400;
 static const float LineHeight = 50;
 
+/** @brief A quick way of getting a font metric. */
 #define FONT( i )			THEME->GetMetric (m_sName,ssprintf("Font%i",i))
+/** @brief A quick way of getting a particular string. */
 #define TEXT( i )			THEME->GetString (m_sName,ssprintf("Text%i",i))
 
 static RString g_sCustomText;
@@ -21,7 +23,7 @@ static void ChangeText( const RString &sText )
 	g_sCustomText = sText;
 }
 
-AutoScreenMessage( SM_ChangeText )
+AutoScreenMessage( SM_ChangeText );
 
 void ScreenTestFonts::HandleScreenMessage( const ScreenMessage SM )
 {

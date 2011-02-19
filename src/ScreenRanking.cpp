@@ -15,8 +15,8 @@ static const char *RankingTypeNames[] = {
 XToString( RankingType );
 LuaXType( RankingType );
 
-AutoScreenMessage( SM_ShowNextPage )
-AutoScreenMessage( SM_HidePage )
+AutoScreenMessage( SM_ShowNextPage );
+AutoScreenMessage( SM_HidePage );
 
 REGISTER_SCREEN_CLASS( ScreenRanking );
 

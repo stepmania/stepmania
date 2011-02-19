@@ -22,7 +22,7 @@ static const char *MenuDirNames[] = {
 };
 XToString( MenuDir );
 
-AutoScreenMessage( SM_PlayPostSwitchPage )
+AutoScreenMessage( SM_PlayPostSwitchPage );
 
 static RString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetXFromIcon",int(p+1)); }
 static RString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetYFromIcon",int(p+1)); }

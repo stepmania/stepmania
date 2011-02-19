@@ -71,19 +71,19 @@ static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","Initi
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 static ThemeMetric<RString> SCORE_KEEPER_CLASS		("ScreenGameplay","ScoreKeeperClass");
 
-AutoScreenMessage( SM_PlayGo )
+AutoScreenMessage( SM_PlayGo );
 
 // received while STATE_DANCING
-AutoScreenMessage( SM_LoadNextSong )
-AutoScreenMessage( SM_StartLoadingNextSong )
+AutoScreenMessage( SM_LoadNextSong );
+AutoScreenMessage( SM_StartLoadingNextSong );
 
 // received while STATE_OUTRO
-AutoScreenMessage( SM_DoPrevScreen )
-AutoScreenMessage( SM_DoNextScreen )
+AutoScreenMessage( SM_DoPrevScreen );
+AutoScreenMessage( SM_DoNextScreen );
 
 // received while STATE_INTRO
-AutoScreenMessage( SM_StartHereWeGo )
-AutoScreenMessage( SM_StopHereWeGo )
+AutoScreenMessage( SM_StartHereWeGo );
+AutoScreenMessage( SM_StopHereWeGo );
 
 AutoScreenMessage( SM_BattleTrickLevel1 );
 AutoScreenMessage( SM_BattleTrickLevel2 );

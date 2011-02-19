@@ -14,7 +14,7 @@
 
 class OptionRowHandler;
 
-AutoScreenMessage( SM_ExportOptions )
+AutoScreenMessage( SM_ExportOptions );
 
 /** @brief The list of input modes for the given row. */
 enum InputMode 
