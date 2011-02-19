@@ -12,6 +12,7 @@ tests/*.err
 *.idb
 *.pdb
 *.exp
+___*
 .hg
 .hgignore
 .hgtags
