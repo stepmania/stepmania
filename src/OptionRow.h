@@ -116,21 +116,21 @@ public:
 protected:
 	RString GetRowTitle() const;
 
-	const OptionRowType	*m_pParentType;
-	RowType			m_RowType;
-	OptionRowHandler*	m_pHand;
+	const OptionRowType *m_pParentType;
+	RowType m_RowType;
+	OptionRowHandler* m_pHand;
 
-	ActorFrame		m_Frame;
+	ActorFrame m_Frame;
 
-	vector<BitmapText *>	m_textItems;			// size depends on m_bRowIsLong and which players are joined
+	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
 	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 
-	Actor			*m_sprFrame;
-	BitmapText		*m_textTitle;
-	ModIcon			*m_ModIcons[NUM_PLAYERS];
+	Actor		*m_sprFrame;
+	BitmapText	*m_textTitle;
+	ModIcon		*m_ModIcons[NUM_PLAYERS];
 
-	bool			m_bFirstItemGoesDown;
-	bool			m_bRowHasFocus[NUM_PLAYERS];
+	bool		m_bFirstItemGoesDown;
+	bool		m_bRowHasFocus[NUM_PLAYERS];
 
 	int			m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
 	// Only one will true at a time if m_pHand->m_Def.bMultiSelect

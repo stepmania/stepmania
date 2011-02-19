@@ -17,7 +17,7 @@ const RString EXIT_NAME = "Exit";
 RString OptionRow::GetThemedItemText( int iChoice ) const
 {
 	RString s = m_pHand->GetThemedItemText( iChoice );
-	
+
 	// HACK: Always theme the NEXT_ROW and EXIT items.
 	if( m_bFirstItemGoesDown  &&  iChoice == 0 )
 		s = CommonMetrics::LocalizeOptionItem( NEXT_ROW_NAME, false ); 
