@@ -508,12 +508,12 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 							case DIMOFS_X:
 								up = MOUSE_X_LEFT; down = MOUSE_X_RIGHT;
 								//cursorX += l;
-								LOG->Trace("dwData for mouse x: %f",l);
+								//LOG->Trace("dwData for mouse x: %f",l);
 								break;
 							case DIMOFS_Y:
 								up = MOUSE_Y_UP; down = MOUSE_Y_DOWN;
 								//cursorY += l;
-								LOG->Trace("dwData for mouse y: %f",l);
+								//LOG->Trace("dwData for mouse y: %f",l);
 								break;
 							case DIMOFS_Z:
 								up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;
