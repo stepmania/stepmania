@@ -393,25 +393,25 @@ function GetDefaultArrowSpacing()
 		80,		-- Pro
 		128,	-- New
 	};
-	return GetGamePrefB("AdjustSpeed") and rates[3] or rates[1];
+	return GetUserPrefB("AdjustSpeed") and rates[3] or rates[1];
 end;
-function GamePrefAdjustSpeed()
+function UserPrefAdjustSpeed()
 	local t = {
-		Name = "GamePrefAdjustSpeed";
+		Name = "UserPrefAdjustSpeed";
 		LayoutType = "ShowAllInRow";
 		SelectType = "SelectOne";
 		OneChoiceForAllPlayers = true;
 		ExportOnChange = false;
 		Choices = { 'Normal','Fast' };
 		LoadSelections = function(self, list, pn)
-			if ReadGamePrefFromFile("AdjustSpeed") ~= nil then
-				if GetGamePrefB("AdjustSpeed") then
+			if ReadUserPrefFromFile("AdjustSpeed") ~= nil then
+				if GetUserPrefB("AdjustSpeed") then
 					list[2] = true;
 				else
 					list[1] = true;
 				end;
 			else
-				WriteGamePrefToFile("AdjustSpeed",true);
+				WriteUserPrefToFile("AdjustSpeed",true);
 				list[2] = true;
 			end;
 		end;
@@ -422,7 +422,7 @@ function GamePrefAdjustSpeed()
 			else
 				val = false;
 			end;
-			WriteGamePrefToFile("AdjustSpeed",val);
+			WriteUserPrefToFile("AdjustSpeed",val);
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
