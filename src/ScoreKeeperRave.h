@@ -4,7 +4,7 @@
 #include "ScoreKeeper.h"
 #include "GameConstantsAndTypes.h"
 
-/** @Brief Launches attacks in PLAY_MODE_RAVE. */
+/** @brief Launches attacks in PLAY_MODE_RAVE. */
 class ScoreKeeperRave : public ScoreKeeper
 {
 public:
