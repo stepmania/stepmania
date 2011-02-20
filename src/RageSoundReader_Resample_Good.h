@@ -29,7 +29,7 @@ public:
 
 	/**
 	 * @brief Retrieve the exact rate.
-	 * @param the exact rate. */
+	 * @return the exact rate. */
 	float GetRate() const;
 
 	int GetSampleRate() const { return m_iSampleRate; }
