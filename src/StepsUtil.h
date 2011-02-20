@@ -75,10 +75,11 @@ public:
 #define X(x) (x == other.x)
 		return X(m_difficulty) && X(m_iLowMeter) && X(m_iHighMeter) && X(m_st) && X(m_Locked);
 #undef X
-	}/**
-	  * @brief Compare two StepsCriteria to see if they are not equal.
-	  * @param other the StepsCriteria we are checking against.
-	  * @return true if they are not equal, false otherwise. */
+	}
+	/**
+	 * @brief Compare two StepsCriteria to see if they are not equal.
+	 * @param other the StepsCriteria we are checking against.
+	 * @return true if they are not equal, false otherwise. */
 	bool operator!=( const StepsCriteria &other ) const { return !operator==( other ); }
 };
 
@@ -91,7 +92,7 @@ public:
 	/** @brief the Steps we're using. */
 	Steps *pSteps;
 	/** @brief Set up a blank Song and 
-	 
+	 * <a class="el" href="class_steps.html">Step</a>. */
 	SongAndSteps() : pSong(NULL), pSteps(NULL) { }
 	/**
 	 * @brief Set up the specified Song and 
@@ -99,7 +100,15 @@ public:
 	 * @param pSong_ the new Song.
 	 * @param pSteps_ the new <a class="el" href="class_steps.html">Step</a>. */
 	SongAndSteps( Song *pSong_, Steps *pSteps_ ) : pSong(pSong_), pSteps(pSteps_) { }
+	/**
+	 * @brief Compare two sets of Songs and Steps to see if they are equal.
+	 * @param other the other set of SongAndSteps.
+	 * @return true if the two sets of Songs and Steps are equal, false otherwise. */
 	bool operator==( const SongAndSteps& other ) const { return pSong==other.pSong && pSteps==other.pSteps; }
+	/**
+	 * @brief Compare two sets of Songs and Steps to see if they are not equal.
+	 * @param other the other set of SongAndSteps.
+	 * @return true if the two sets of Songs and Steps are not equal, false otherwise. */
 	bool operator<( const SongAndSteps& other ) const { if( pSong!=other.pSong ) return pSong<other.pSong; return pSteps<other.pSteps; }
 };
 
