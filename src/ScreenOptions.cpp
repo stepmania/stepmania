@@ -134,7 +134,7 @@ void ScreenOptions::Init()
 	// init line line highlights
 	FOREACH_PlayerNumber( p )
 	{
-		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName,"line highlight") );
+		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName,"LineHighlight") );
 		m_sprLineHighlight[p]->SetName( "LineHighlight" );
 		m_sprLineHighlight[p]->SetX( LINE_HIGHLIGHT_X );
 		LOAD_ALL_COMMANDS( m_sprLineHighlight[p] );
@@ -406,8 +406,7 @@ void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 		}
 	}
 
-
-	/* XXX: hack to not display text in the song options menu */
+	// XXX: hack to not display text in the song options menu
 	if( def.m_bOneChoiceForAllPlayers )
 		sIcon = "";
 
@@ -462,7 +461,6 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 		cursor.SetBarWidth( iWidth );
 	}
 
-
 	bool bCanGoLeft = false;
 	bool bCanGoRight = false;
 	switch( row.GetRowDef().m_layoutType  )
@@ -476,12 +474,12 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	}
 	cursor.SetCanGo( bCanGoLeft, bCanGoRight );
 
-
 	if( GAMESTATE->IsHumanPlayer(pn) )
 	{
 		COMMAND( m_sprLineHighlight[pn], "Change" );
 		if( row.GetRowType() == OptionRow::RowType_Exit )
 			COMMAND( m_sprLineHighlight[pn], "ChangeToExit" );
+
 		m_sprLineHighlight[pn]->SetY( (float)iY );
 	}
 }
@@ -530,9 +528,9 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BeginFadingOut )
 	{
 		if( IsTransitioning() )
-			return; /* already transitioning */
+			return; // already transitioning
 
-		/* If the selected option sets a screen, honor it. */
+		// If the selected option sets a screen, honor it.
 		RString sThisScreen = GetNextScreenForFocusedItem( GAMESTATE->m_MasterPlayerNumber );
 		if( sThisScreen != "" )
 			m_sNextScreen = sThisScreen;
@@ -551,7 +549,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		vector<PlayerNumber> vpns;
 		FOREACH_HumanPlayer( p )
 			vpns.push_back( p );
-		for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
+		for( unsigned r=0; r<m_pRows.size(); r++ ) // foreach row
 		{
 			if( m_pRows[r]->GetRowType() == OptionRow::RowType_Exit )
 				continue;
@@ -572,7 +570,7 @@ void ScreenOptions::PositionRows( bool bTween )
 
 	int first_start, first_end, second_start, second_end;
 
-	/* Choices for each player.  If only one player is active, it's the same for both. */
+	// Choices for each player. If only one player is active, it's the same for both.
 	int P1Choice = GAMESTATE->IsHumanPlayer(PLAYER_1)? m_iCurrentRow[PLAYER_1]: m_iCurrentRow[PLAYER_2];
 	int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? m_iCurrentRow[PLAYER_2]: m_iCurrentRow[PLAYER_1];
 
@@ -583,7 +581,7 @@ void ScreenOptions::PositionRows( bool bTween )
 	{
 		pSeparateExitRow = Rows.back();
 
-		/* Remove the exit row for purposes of positioning everything else. */
+		// Remove the exit row for purposes of positioning everything else.
 		if( P1Choice == (int) Rows.size()-1 )
 			--P1Choice;
 		if( P2Choice == (int) Rows.size()-1 )
@@ -595,24 +593,24 @@ void ScreenOptions::PositionRows( bool bTween )
 	const bool BothPlayersActivated = GAMESTATE->IsHumanPlayer(PLAYER_1) && GAMESTATE->IsHumanPlayer(PLAYER_2);
 	if( m_InputMode == INPUTMODE_SHARE_CURSOR || !BothPlayersActivated )
 	{
-		/* Simply center the cursor. */
+		// Simply center the cursor.
 		first_start = max( P1Choice - halfsize, 0 );
 		first_end = first_start + total;
 		second_start = second_end = first_end;
 	}
 	else
 	{
-		/* First half: */
+		// First half:
 		const int earliest = min( P1Choice, P2Choice );
 		first_start = max( earliest - halfsize/2, 0 );
 		first_end = first_start + halfsize;
 
-		/* Second half: */
+		// Second half:
 		const int latest = max( P1Choice, P2Choice );
 
 		second_start = max( latest - halfsize/2, 0 );
 
-		/* Don't overlap. */
+		// Don't overlap.
 		second_start = max( second_start, first_end );
 
 		second_end = second_start + halfsize;
@@ -627,19 +625,19 @@ void ScreenOptions::PositionRows( bool bTween )
 	{
 		const int sum = (first_end - first_start) + (second_end - second_start);
 		if( sum >= (int) Rows.size() || sum >= total)
-			break; /* nothing more to display, or no room */
+			break; // nothing more to display, or no room
 
 		/* First priority: expand the top of the second half until it meets
 		 * the first half. */
 		if( second_start > first_end )
 			second_start--;
-		/* Otherwise, expand either end. */
+		// Otherwise, expand either end.
 		else if( first_start > 0 )
 			first_start--;
 		else if( second_end < (int) Rows.size() )
 			second_end++;
 		else
-			ASSERT(0); /* do we have room to grow or don't we? */
+			ASSERT(0); // do we have room to grow or don't we?
 	}
 
 	int pos = 0;
@@ -1006,12 +1004,11 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumChoices <= 1 )	// 1 or 0
 	{
-		/* There are no other options on the row; move up or down instead of left and right.
-		 * This allows navigating the options menu with left/right/start.
-		 *
+		/* There are no other options on the row; move up or down instead of
+		 * left and right. This allows navigating the options menu with
+		 * left/right/start.
 		 * XXX: Only allow repeats if the opposite key isn't pressed; otherwise,
-		 * holding both directions will repeat in place continuously,
-		 * which is weird. */
+		 * holding both directions will repeat in place continuously, which is weird. */
 		if( MoveRowRelative(pn, iDelta, bRepeat) )
 		{
 			if( iDelta < 0 )
@@ -1022,7 +1019,7 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 		return;
 	}
 
-	if( iNumChoices <= 1 )	// nowhere to move
+	if( iNumChoices <= 1 ) // nowhere to move
 		return;
 
 	if( bRepeat && !ALLOW_REPEATING_CHANGE_VALUE_INPUT )
@@ -1083,7 +1080,7 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 		else
 		{
 			if( row.GetRowDef().m_selectType == SELECT_MULTIPLE )
-				;	// do nothing.  User must press Start to toggle the selection.
+				;	// do nothing. User must press Start to toggle the selection.
 			else
 				row.SetOneSelection( p, iNewChoiceWithFocus );
 		}
@@ -1271,23 +1268,42 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 			m_SoundPrevRow.Play();
 		else
 			m_SoundNextRow.Play();
+
+		const OptionRow &row = *m_pRows[m_iCurrentRow[pn]];
+		Message msg( "Change" );
+		msg.SetParam( "RowIndex", GetCurrentRow(pn) );
+		msg.SetParam( "ChangedToExit", row.GetRowType() == OptionRow::RowType_Exit );
+		// This isn't working too well... -aj
+		//msg.SetParam( "PlayerNumber", pn );
+		MESSAGEMAN->Broadcast( msg );
 	}
 }
 
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ScreenOptions. */ 
+/** @brief Allow Lua to have access to ScreenOptions. */ 
 class LunaScreenOptions: public Luna<ScreenOptions>
 {
 public:
-	static int GetCurrentRow( T* p, lua_State *L ) { lua_pushnumber( L, p->GetCurrentRow(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	static int AllAreOnLastRow( T* p, lua_State *L ) { lua_pushboolean( L, p->AllAreOnLastRow() ); return 1; }
+	static int FocusedItemEndsScreen( T* p, lua_State *L ) { lua_pushboolean( L, p->FocusedItemEndsScreen(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
+	static int GetCurrentRowIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->GetCurrentRow(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
+	static int GetOptionRow( T* p, lua_State *L ) {
+		OptionRow* pOptRow = p->GetRow( IArg(1) );
+		if( pOptRow )
+			pOptRow->PushSelf(L);
+		else
+			lua_pushnil( L );
+		return 1;
+	}
 
 	LunaScreenOptions()
 	{
-		ADD_METHOD( GetCurrentRow );
 		ADD_METHOD( AllAreOnLastRow );
+		ADD_METHOD( FocusedItemEndsScreen );
+		ADD_METHOD( GetCurrentRowIndex );
+		ADD_METHOD( GetOptionRow );
 	}
 };
 
