@@ -1193,6 +1193,13 @@ bool ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow )
 
 		AfterChangeRow( p );
 		bChanged = true;
+
+		const OptionRow &row = *m_pRows[iRow];
+		Message msg( "ChangeRow" );
+		msg.SetParam( "PlayerNumber", p );
+		msg.SetParam( "RowIndex", GetCurrentRow(p) );
+		msg.SetParam( "ChangedToExit", row.GetRowType() == OptionRow::RowType_Exit );
+		MESSAGEMAN->Broadcast( msg );
 	}
 
 	return bChanged;
@@ -1268,14 +1275,6 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 			m_SoundPrevRow.Play();
 		else
 			m_SoundNextRow.Play();
-
-		const OptionRow &row = *m_pRows[m_iCurrentRow[pn]];
-		Message msg( "Change" );
-		msg.SetParam( "RowIndex", GetCurrentRow(pn) );
-		msg.SetParam( "ChangedToExit", row.GetRowType() == OptionRow::RowType_Exit );
-		// This isn't working too well... -aj
-		//msg.SetParam( "PlayerNumber", pn );
-		MESSAGEMAN->Broadcast( msg );
 	}
 }
 

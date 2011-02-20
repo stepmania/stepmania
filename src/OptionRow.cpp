@@ -732,7 +732,7 @@ int OptionRow::GetChoiceInRowWithFocus( PlayerNumber pn ) const
 	if( m_pHand->m_Def.m_vsChoices.empty() )
 		return -1;
 	int iChoice = m_iChoiceInRowWithFocus[pn];
-	return iChoice; 
+	return iChoice;
 }
 
 int OptionRow::GetChoiceInRowWithFocusShared() const
