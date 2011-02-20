@@ -68,13 +68,18 @@ public:
 		RowType_Normal,
 		RowType_Exit
 	};
+	LuaDeclareType( RowType );
+
 	void InitText( RowType type );
 	void AfterImportOptions( PlayerNumber pn );
+
+	RString GetRowTitle() const;
 
 	void ChoicesChanged( RowType type );
 	void PositionUnderlines( PlayerNumber pn );
 	void PositionIcons( PlayerNumber pn );
 	void UpdateText( PlayerNumber pn );
+	bool GetRowHasFocus( PlayerNumber pn ) const { return m_bRowHasFocus[pn]; }
 	void SetRowHasFocus( PlayerNumber pn, bool bRowHasFocus );
 	void UpdateEnabledDisabled();
 
@@ -113,9 +118,10 @@ public:
 	// Messages
 	virtual void HandleMessage( const Message &msg );
 
-protected:
-	RString GetRowTitle() const;
+	// Lua
+	void PushSelf( lua_State *L );
 
+protected:
 	const OptionRowType *m_pParentType;
 	RowType m_RowType;
 	OptionRowHandler* m_pHand;
