@@ -9,6 +9,7 @@
 #include "LuaManager.h"
 #include "RageUtil.h"
 
+/** @brief The general interface for reading ThemeMetrics. */
 class IThemeMetric
 {
 public:
@@ -27,12 +28,20 @@ struct ThemeMetricTypeTraits
 template<> struct ThemeMetricTypeTraits<LuaReference> { enum { Callable = 0 }; };
 template<> struct ThemeMetricTypeTraits<apActorCommands> { enum { Callable = 0 }; };
 
+/** @brief The theme specific data.
+ *
+ * Each piece of data is to correspond to a type. */
 template <class T>
 class ThemeMetric : public IThemeMetric
 {
 protected:
+	/** @brief the metric's group.
+	 *
+	 * In metrics.ini, it is usually done as such: [GroupName] */
 	RString		m_sGroup;
+	/** @brief the metric's name. */
 	RString		m_sName;
+	/** @brief the metric's value. */
 	LuaReference	m_Value;
 	mutable T	m_currentValue;
 	bool		m_bCallEachTime;
@@ -63,7 +72,10 @@ public:
 	{
 		ThemeManager::Unsubscribe( this );
 	}
-
+	/**
+	 * @brief Load the chosen metric from the .ini file.
+	 * @param sGroup the group the metric is in.
+	 * @param sName the name of the metric. */
 	void Load( const RString &sGroup, const RString& sName )
 	{
 		m_sGroup = sGroup;
@@ -76,7 +88,8 @@ public:
 		m_sGroup = sGroup;
 		Read();
 	}
-
+	/**
+	 * @brief Actually read the metric and get its data. */
 	void Read()
 	{
 		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
@@ -109,10 +122,18 @@ public:
 		m_Value.Unset();
 	}
 
-
+	/**
+	 * @brief Retrieve the metric's name.
+	 * @return the metric's name. */
 	const RString &GetName() const { return m_sName; }
+	/**
+	 * @brief Retrieve the metric's group.
+	 * @return the metric's group. */
 	const RString &GetGroup() const { return m_sGroup; }
 	
+	/**
+	 * @brief Retrieve the metric's value.
+	 * @return the metric's value. */
 	const T& GetValue() const
 	{
 		ASSERT( m_sName != "" );
@@ -271,8 +292,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Chris Gomez
+/**
+ * @file
+ * @author Chris Danford, Chris Gomez (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
