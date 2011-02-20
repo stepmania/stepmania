@@ -73,9 +73,18 @@ public:
 class SongAndSteps
 {
 public:
+	/** @brief the Song we're using. */
 	Song *pSong;
+	/** @brief the Steps we're using. */
 	Steps *pSteps;
+	/** @brief Set up a blank Song and 
+	 
 	SongAndSteps() : pSong(NULL), pSteps(NULL) { }
+	/**
+	 * @brief Set up the specified Song and 
+	 * <a class="el" href="class_steps.html">Step</a>.
+	 * @param pSong_ the new Song.
+	 * @param pSteps_ the new <a class="el" href="class_steps.html">Step</a>. */
 	SongAndSteps( Song *pSong_, Steps *pSteps_ ) : pSong(pSong_), pSteps(pSteps_) { }
 	bool operator==( const SongAndSteps& other ) const { return pSong==other.pSong && pSteps==other.pSteps; }
 	bool operator<( const SongAndSteps& other ) const { if( pSong!=other.pSong ) return pSong<other.pSong; return pSteps<other.pSteps; }
