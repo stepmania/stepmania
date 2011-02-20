@@ -221,7 +221,7 @@ RString OptionRow::GetRowTitle() const
 			}
 
 			if( bpms.IsSecret() )
-				sTitle += ssprintf( " (??" "?)" ); /* split so gcc doesn't think this is a trigraph */
+				sTitle += ssprintf( " (??" "?)" ); // split so gcc doesn't think this is a trigraph
 			else if( bpms.BpmIsConstant() )
 				sTitle += ssprintf( " (%.0f)", bpms.GetMin() );
 			else
@@ -232,8 +232,8 @@ RString OptionRow::GetRowTitle() const
 	return sTitle;
 }
 
-/* Set up text, underlines and titles for options.  This can be called
- * as soon as m_pHand->m_Def is available. */
+/* Set up text, underlines and titles for options. This can be called as soon as
+ * m_pHand->m_Def is available. */
 void OptionRow::InitText( RowType type )
 {
 	/* If we have elements already, we're being updated from a new set of options.
@@ -278,7 +278,7 @@ void OptionRow::InitText( RowType type )
 		BitmapText bt( m_pParentType->m_textItem );
 		bt.PlayCommand( "On" );
 
-		/* Figure out the width of the row. */
+		// Figure out the width of the row.
 		float fWidth = 0;
 		for( unsigned c=0; c<m_pHand->m_Def.m_vsChoices.size(); c++ )
 		{
@@ -291,7 +291,7 @@ void OptionRow::InitText( RowType type )
 				fWidth += m_pParentType->ITEMS_GAP_X;
 		}
 
-		/* Try to fit everything on one line. */
+		// Try to fit everything on one line.
 		float fTotalWidth = m_pParentType->ITEMS_END_X - m_pParentType->ITEMS_START_X;
 		if( fWidth > fTotalWidth ) 
 		{
@@ -303,9 +303,7 @@ void OptionRow::InitText( RowType type )
 		}
 	}
 
-	//
 	// load m_textItems
-	//
 	switch( m_pHand->m_Def.m_layoutType )
 	{
 	case LAYOUT_SHOW_ONE_IN_ROW:
@@ -389,8 +387,8 @@ void OptionRow::InitText( RowType type )
 		for( unsigned c=0; c<m_Underline[p].size(); c++ )
 			m_Frame.AddChild( m_Underline[p][c] );
 
-	// This is set in OptionRow::AfterImportOptions, so if we're reused with a different
-	// song selected, SHOW_BPM_IN_SPEED_TITLE will show the new BPM.
+	// This is set in OptionRow::AfterImportOptions, so if we're reused with a
+	// different song selected, SHOW_BPM_IN_SPEED_TITLE will show the new BPM.
 	//m_textTitle->SetText( GetRowTitle() );
 	m_textTitle->PlayCommand( "On" );
 
@@ -403,9 +401,8 @@ void OptionRow::InitText( RowType type )
 /* After importing options, choose which item is focused. */
 void OptionRow::AfterImportOptions( PlayerNumber pn )
 {
-	/* We load items for both players on start, since we don't know at that point
-	 * which players will be joined when we're displayed.  Hide items for inactive
-	 * players. */
+	/* We load items for both players on start, since we don't know which players
+	 * will be joined when we're displayed. Hide items for inactive players. */
 	if( m_pHand->m_Def.m_layoutType == LAYOUT_SHOW_ONE_IN_ROW &&
 		!m_pHand->m_Def.m_bOneChoiceForAllPlayers )
 		m_textItems[pn]->SetVisible( GAMESTATE->IsHumanPlayer(pn) );
@@ -415,7 +412,7 @@ void OptionRow::AfterImportOptions( PlayerNumber pn )
 		for( unsigned c=0; c<m_Underline[pn].size(); c++ )
 			m_Underline[pn][c]->SetVisible( false );
 
-	// Make all selections the same if bOneChoiceForAllPlayers
+	// Make all selections the same if bOneChoiceForAllPlayers.
 	// Hack: we only import active players, so if only player 2 is imported,
 	// we need to copy p2 to p1, not p1 to p2.
 	if( m_pHand->m_Def.m_bOneChoiceForAllPlayers )
@@ -430,7 +427,7 @@ void OptionRow::AfterImportOptions( PlayerNumber pn )
 	switch( m_pHand->m_Def.m_selectType )
 	{
 	case SELECT_ONE:
-		/* Make sure the row actually has a selection. */
+		// Make sure the row actually has a selection.
 		int iSelection = GetOneSelection(pn, true);
 		if( iSelection == -1 )
 		{
@@ -468,11 +465,11 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 			{
 				if( m_bRowHasFocus[pn] )	fAlpha = m_pParentType->COLOR_SELECTED.GetValue().a;
 				else if( bRowEnabled )		fAlpha = m_pParentType->COLOR_NOT_SELECTED.GetValue().a;
-				else				fAlpha = m_pParentType->COLOR_DISABLED.GetValue().a;
+				else						fAlpha = m_pParentType->COLOR_DISABLED.GetValue().a;
 			}
 		}
 
-		/* Don't tween X movement and color changes. */
+		// Don't tween X movement and color changes.
 		ul.StopTweening();
 
 		int iWidth, iX, iY;
@@ -501,7 +498,7 @@ void OptionRow::PositionIcons( PlayerNumber pn )
 	pIcon->SetX( m_pParentType->MOD_ICON_X.GetValue(pn) );
 }
 
-/* This is called when the focus changes, to update "long row" text. */
+// This is called when the focus changes, to update "long row" text.
 void OptionRow::UpdateText( PlayerNumber p )
 {
 	switch( m_pHand->m_Def.m_layoutType )
@@ -551,10 +548,10 @@ void OptionRow::UpdateEnabledDisabled()
 	bool bThisRowHasFocusByAll = true;
 	FOREACH_HumanPlayer( p )
 		bThisRowHasFocusByAll &= m_bRowHasFocus[p];
-	
+
 	bool bRowEnabled = !m_pHand->m_Def.m_vEnabledForPlayers.empty();
-	
-	/* Don't tween selection colors at all. */
+
+	// Don't tween selection colors at all.
 	RString sCmdName;
 	if( bThisRowHasFocusByAny )	sCmdName = "GainFocus";
 	else if( bRowEnabled )		sCmdName = "LoseFocus";
@@ -601,7 +598,7 @@ void OptionRow::UpdateEnabledDisabled()
 			m_textItems[j]->BeginTweening( m_pParentType->TWEEN_SECONDS );
 			m_textItems[j]->SetDiffuse( color );
 		}
-		
+
 		break;
 	case LAYOUT_SHOW_ONE_IN_ROW:
 		FOREACH_HumanPlayer( pn )
@@ -612,7 +609,7 @@ void OptionRow::UpdateEnabledDisabled()
 			{
 				if( m_bRowHasFocus[pn] )	color = m_pParentType->COLOR_SELECTED;
 				else if( bRowEnabled )		color = m_pParentType->COLOR_NOT_SELECTED;
-				else				color = m_pParentType->COLOR_DISABLED;
+				else						color = m_pParentType->COLOR_DISABLED;
 			}
 
 			unsigned item_no = m_pHand->m_Def.m_bOneChoiceForAllPlayers ? 0 : pn;
@@ -938,6 +935,35 @@ int OptionRow::ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocu
 
 	return iChangeMask;
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaOptionRow: public Luna<OptionRow>
+{
+public:
+	DEFINE_METHOD( FirstItemGoesDown, GetFirstItemGoesDown() )
+	static int GetChoiceInRowWithFocus( T* p, lua_State *L ) { lua_pushnumber( L, p->GetChoiceInRowWithFocus(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
+	static int GetName( T* p, lua_State *L ) { lua_pushstring( L, p->GetHandler()->m_Def.m_sName ); return 1; }
+	static int GetNumChoices( T* p, lua_State *L ) { lua_pushnumber( L, p->GetHandler()->m_Def.m_vsChoices.size() ); return 1; }
+	DEFINE_METHOD( GetRowTitle, GetRowTitle() )
+	static int HasFocus( T* p, lua_State *L ) { lua_pushboolean( L, p->GetRowHasFocus(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
+	static int OneChoiceForAllPlayers( T* p, lua_State *L ) { lua_pushboolean( L, p->GetHandler()->m_Def.m_bOneChoiceForAllPlayers ); return 1; }
+
+	LunaOptionRow()
+	{
+		ADD_METHOD( FirstItemGoesDown );
+		ADD_METHOD( GetChoiceInRowWithFocus );
+		ADD_METHOD( GetName );
+		ADD_METHOD( GetNumChoices );
+		ADD_METHOD( GetRowTitle );
+		ADD_METHOD( HasFocus );
+		ADD_METHOD( OneChoiceForAllPlayers );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( OptionRow, ActorFrame )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford
