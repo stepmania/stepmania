@@ -45,7 +45,7 @@ public:
 		Locked_Locked,		/**< We want songs that are locked. */
 		Locked_Unlocked,	/**< We want songs that are unlocked. */
 		Locked_DontCare		/**< We don't care if the songs are locked or not. */
-	} m_Locked;
+	} /** @brief The Song's locked status. */ m_Locked;
 
 	/** @brief Set up the initial criteria. */
 	StepsCriteria()
@@ -59,13 +59,26 @@ public:
 		m_Locked = Locked_DontCare;
 	}
 
+	/**
+	 * @brief Determine if the Song and Steps match our criteria.
+	 * @param pSong the Song to check for.
+	 * @param pSteps the <a class="el" href="class_steps.html">Step</a> to check for.
+	 * @return true if it matches, false otherwise.
+	 */
 	bool Matches( const Song *pSong, const Steps *pSteps ) const;
+	/**
+	 * @brief Compare two StepsCriteria to see if they are equal.
+	 * @param other the StepsCriteria we are checking against.
+	 * @return true if they are equal, false otherwise. */
 	bool operator==( const StepsCriteria &other ) const
 	{
 #define X(x) (x == other.x)
 		return X(m_difficulty) && X(m_iLowMeter) && X(m_iHighMeter) && X(m_st) && X(m_Locked);
 #undef X
-	}
+	}/**
+	  * @brief Compare two StepsCriteria to see if they are not equal.
+	  * @param other the StepsCriteria we are checking against.
+	  * @return true if they are not equal, false otherwise. */
 	bool operator!=( const StepsCriteria &other ) const { return !operator==( other ); }
 };
 
