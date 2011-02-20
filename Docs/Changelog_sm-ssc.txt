@@ -20,6 +20,15 @@ sm-ssc v1.2.2 | 201102??
 * [GrooveRadar] Fixed RadarFrame from not running commands on RadarFrame base. [AJ]
 * [GrooveRadar] Removed RadarFrameTweenOnScreen and RadarFrameTweenOffScreen metrics. (Themers: Use RadarFrameOnCommand and RadarFrameOffCommand instead) [AJ]
 * [GrooveRadar] Removed non-working PreDelayOnCommand, PostDelayOnCommand. (Themers: Use Label#OnCommand and Label#OffCommand instead.) [AJ]
+* [ScreenOptions] Renamed "GetCurrentRow" Lua binding to "GetCurrentRowIndex". [AJ]
+* [OptionRow] Added FirstItemGoesDown(), GetChoiceInRowWithFocus(PlayerNumber),
+  GetName(), GetNumChoices(), GetRowTitle(), HasFocus(PlayerNumber),
+  and OneChoiceForAllPlayers() Lua bindings. [AJ]
+* [ScreenOptions] Added Change message (params: RowIndex, ChangedToExit). [AJ]
+* [ScreenOptions] Added FocusedItemEndsScreen(PlayerNumber) and GetOptionRow(int)
+  Lua bindings. [AJ]
+* [ScreenPlayerOptions] now derives from ScreenOptions, allowing it to get the
+  new ScreenOptions bindings. [AJ]
 
 20110218
 --------
