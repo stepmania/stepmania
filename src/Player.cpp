@@ -131,14 +131,43 @@ ThemeMetric<float> INITIAL_HOLD_LIFE		( "Player", "InitialHoldLife" );
 ThemeMetric<float> MAX_HOLD_LIFE		( "Player", "MaxHoldLife" ); // sm-ssc addition
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
+/**
+ * @brief Does StepMania use checkpoint judgments when interacting with holds?
+ *
+ * If set to true, checkpoint judgments are in use, similar to the Pump It Up
+ * series. If set to false, no such judgments are used. */
 ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
+/**
+ * @brief If using checkpoints, are the song's TickcountSegments used?
+ *
+ * If set to true, the checkpoints rely on the data found in the TickcountSegments.
+ * This is used via the #%TICKCOUNTS tag. */
 ThemeMetric<bool> CHECKPOINTS_USE_TICKCOUNTS ( "Player", "CheckpointsUseTickcounts" );
+/**
+ * @brief If using checkpoints, are the song's TimeSignatureSegments used?
+ *
+ * If set to true AND CheckpointsUseTickcounts is set to false, the TimeSignatureSegments
+ * are used to determine how often the checkpoints are found.
+ *
+ * It should be noted that this is a deprecated metric. */
 ThemeMetric<bool> CHECKPOINTS_USE_TIME_SIGNATURES ( "Player", "CheckpointsUseTimeSignatures" );
 ThemeMetric<bool> CHECKPOINTS_FLASH_ON_HOLD ( "Player", "CheckpointsFlashOnHold" ); // sm-ssc addition
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
+/**
+ * @brief Must a Player step on a hold head for a hold to activate?
+ *
+ * If set to true, the Player must step on a hold head in order for the hold to activate.
+ * If set to false, merely holding your foot down as the hold head approaches will suffice. */
 ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads" );
 ThemeMetric<bool> REQUIRE_STEP_ON_MINES	( "Player", "RequireStepOnMines" );
 //ThemeMetric<bool> HOLD_TRIGGERS_TAP_NOTES	( "Player", "HoldTriggersTapNotes" ); // parastar stuff; leave in though
+/**
+ * @brief Does repeatedly stepping on a roll to keep it alive increment the combo?
+ *
+ * If set to true, repeatedly stepping on a roll will increment the combo.
+ * If set to false, only the roll head causes the combo to be incremented.
+ *
+ * For those wishing to make a theme very accurate to In The Groove 2, set this to false. */
 ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
 ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
 ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" ); // sm-ssc addition
