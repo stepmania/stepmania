@@ -115,9 +115,33 @@ public:
 /** @brief Utility functions for working with Steps. */
 namespace StepsUtil
 {
+	/**
+	 * @brief Retrieve all of the Steps that match the criteria.
+	 * @param soc the SongCriteria to look for.
+	 * @param stc the StepsCriteria to look for.
+	 * @param out the SongsAndSteps that match.
+	 */
 	void GetAllMatching( const SongCriteria &soc, const StepsCriteria &stc, vector<SongAndSteps> &out );	// look up in SONGMAN
+	/**
+	 * @brief Retrieve all of the Steps that match the criteria.
+	 * @param pSong the Song we're checking in.
+	 * @param stc the StepsCriteria to look for.
+	 * @param out the SongsAndSteps that match.
+	 */
 	void GetAllMatching( Song *pSong, const StepsCriteria &stc, vector<SongAndSteps> &out );
+	/**
+	 * @brief Is there a <a class="el" href="class_steps.html">Step</a>
+	 * that matches the criteria?
+	 * @param soc the SongCriteria to look for.
+	 * @param stc the StepsCriteria to look for.
+	 * @return true if we find a match, false otherwise. */
 	bool HasMatching( const SongCriteria &soc, const StepsCriteria &stc );
+	/**
+	 * @brief Is there a <a class="el" href="class_steps.html">Step</a>
+	 * that matches the criteria?
+	 * @param pSong the Song we're checking in.
+	 * @param stc the StepsCriteria to look for.
+	 * @return true if we find a match, false otherwise. */
 	bool HasMatching( const Song *pSong, const StepsCriteria &stc );
 
 	bool CompareNotesPointersByRadarValues(const Steps* pSteps1, const Steps* pSteps2);
