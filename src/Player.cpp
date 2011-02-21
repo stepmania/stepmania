@@ -159,6 +159,11 @@ ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
  * If set to true, the Player must step on a hold head in order for the hold to activate.
  * If set to false, merely holding your foot down as the hold head approaches will suffice. */
 ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads" );
+/**
+ * @brief Must a Player step on a mine for it to activate?
+ *
+ * If set to true, the Player must step on a mine for it to blow up.
+ * If set to false, merely holding your foot down as the mine approaches will suffice. */
 ThemeMetric<bool> REQUIRE_STEP_ON_MINES	( "Player", "RequireStepOnMines" );
 //ThemeMetric<bool> HOLD_TRIGGERS_TAP_NOTES	( "Player", "HoldTriggersTapNotes" ); // parastar stuff; leave in though
 /**
@@ -434,7 +439,10 @@ void Player::Init(
 
 	m_fActiveRandomAttackStart = -1.0f;
 }
-
+/**
+ * @brief Determine if a TapNote needs a tap note style judgment.
+ * @param tn the TapNote in question.
+ * @return true if it does, false otherwise. */
 static bool NeedsTapJudging( const TapNote &tn )
 {
 	switch( tn.type )
@@ -453,6 +461,10 @@ static bool NeedsTapJudging( const TapNote &tn )
 	}
 }
 
+/**
+ * @brief Determine if a TapNote needs a hold note style judgment.
+ * @param tn the TapNote in question.
+ * @return true if it does, false otherwise. */
 static bool NeedsHoldJudging( const TapNote &tn )
 {
 	switch( tn.type )
