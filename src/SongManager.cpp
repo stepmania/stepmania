@@ -186,11 +186,13 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 		if( !arrayGroupBanners.empty() )
 			sBannerPath = sDir+arrayGroupBanners[0];
 	}
-	
-	// Group backgrounds are a bit trickier, and usually don't exist.
-	// However, for Background wheels, we support them. -aj
-	// background files MUST end in "-bg".ext in order to distinguish them.
-	// Yes hardcoding it sucks sometimes, but this is to keep my sanity. -aj
+
+	/* Other group graphics are a bit trickier, and usually don't exist.
+	 * A themer has a few options, namely checking the aspect ratio and
+	 * operating on it. -aj
+	 * TODO: Once the files are implemented in Song, bring the extensions
+	 * from there into here. -aj */
+	// Group background
 /*
 	vector<RString> arrayGroupBackgrounds;
 	GetDirListing( sDir+sGroupDirName+"/*-bg.png", arrayGroupBanners );
@@ -212,8 +214,10 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 			sBackgroundPath = sDir+arrayGroupBackgrounds[0];
 	}
 */
+	/*
 	LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(), 
 				sBannerPath != ""? sBannerPath.c_str():"(none)" );
+	*/
 	m_sSongGroupNames.push_back( sGroupDirName );
 	m_sSongGroupBannerPaths.push_back( sBannerPath );
 	//m_sSongGroupBackgroundPaths.push_back( sBackgroundPath );
