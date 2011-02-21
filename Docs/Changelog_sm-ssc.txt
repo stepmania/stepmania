@@ -17,6 +17,7 @@ sm-ssc v1.2.3 | 201102??
 --------
 * Reverted ArrowSpacing back to 64 (which was the previous value).
   Please re-adjust your speed mods accordingly. [AJ]
+* [OptionRow] Added GetLayoutType() and GetSelectType() Lua bindings. [AJ]
 
 ================================================================================
 sm-ssc v1.2.2 | 20110220

@@ -36,6 +36,7 @@ static const char *SelectTypeNames[] = {
 };
 XToString( SelectType );
 StringToX( SelectType );
+LuaXType( SelectType );
 
 static const char *LayoutTypeNames[] = {
 	"ShowAllInRow",
@@ -43,6 +44,7 @@ static const char *LayoutTypeNames[] = {
 };
 XToString( LayoutType );
 StringToX( LayoutType );
+LuaXType( LayoutType );
 
 RString OptionRowHandler::OptionTitle() const
 {
