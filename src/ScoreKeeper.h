@@ -1,15 +1,9 @@
-/** @brief ScoreKeeper - Abstract class to handle scorekeeping, stat-taking, etc. */
-
 #ifndef SCORE_KEEPER_H
 #define SCORE_KEEPER_H
 
-/*
- * Stat handling is in here because that can differ between games, too; for
- * example, some games count double taps as a single note in scoring and
- * some count per-tap.
- *
- * Results are injected directly into the PlayerStageStats.
- */
+/* Stat handling is in here because that can differ between games, too; for
+ * example, some games count double taps as a single note in scoring and some
+ * count per-tap. Results are injected directly into the PlayerStageStats. */
 
 #include "GameConstantsAndTypes.h"
 
@@ -22,6 +16,7 @@ class PlayerStageStats;
 struct TapNote;
 struct AttackArray;
 
+/** @brief Abstract class to handle scorekeeping, stat-taking, etc. */
 class ScoreKeeper
 {
 public:
@@ -31,7 +26,7 @@ protected:
 	PlayerState		*m_pPlayerState;
 	PlayerStageStats	*m_pPlayerStageStats;
 
-	/* Common toggles that this class handles directly: */
+	// Common toggles that this class handles directly:
 
 	/* If true, doubles count as 2+ in stat counts; if false, doubles count as
 	 * only one. */ /* (not yet) */
@@ -48,7 +43,7 @@ public:
 	virtual void DrawPrimitives() { }
 	virtual void Update( float fDelta ) { }
 
-	/* Note that pNoteData will include any transformations due to modifiers. */
+	// Note that pNoteData will include any transformations due to modifiers.
 	virtual void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData ) { };	// before a song plays (called multiple times if course)
 
 	// HandleTap* is called before HandleTapRow*

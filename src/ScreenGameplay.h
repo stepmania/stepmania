@@ -110,7 +110,7 @@ public:
 	ScoreDisplay		*m_pSecondaryScoreDisplay;
 	/** @brief The primary ScoreKeeper for keeping track of the score. */
 	ScoreKeeper		*m_pPrimaryScoreKeeper;
-	/** @brief The secondary ScoreKeeper for keeping track of the score. */
+	/** @brief The secondary ScoreKeeper. Only used in PLAY_MODE_RAVE. */
 	ScoreKeeper		*m_pSecondaryScoreKeeper;
 	/** @brief The current PlayerOptions that are activated. */
 	BitmapText		*m_ptextPlayerOptions;
@@ -127,7 +127,7 @@ public:
 	 * This is mainly used in PLAY_MODE_BATTLE. */
 	Inventory		*m_pInventory;
 
-	StepsDisplay		*m_pStepsDisplay;
+	StepsDisplay	*m_pStepsDisplay;
 
 	AutoActor		m_sprOniGameOver;
 };
@@ -172,6 +172,7 @@ protected:
 	virtual bool UseSongBackgroundAndForeground() const { return true; }
 
 	ThemeMetric<RString> PLAYER_TYPE;
+	ThemeMetric<RString> SCORE_DISPLAY_TYPE;
 	ThemeMetric<apActorCommands> PLAYER_INIT_COMMAND;
 	LocalizedString GIVE_UP_START_TEXT;
 	LocalizedString GIVE_UP_BACK_TEXT;

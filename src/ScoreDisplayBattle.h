@@ -1,5 +1,3 @@
-/* ScoreDisplayRave - ScoreDisplay implementation for PLAY_MODE_BATTLE. */
-
 #ifndef SCORE_DISPLAY_BATTLE_H
 #define SCORE_DISPLAY_BATTLE_H
 
@@ -8,7 +6,7 @@
 #include "Sprite.h"
 #include "RageTexturePreloader.h"
 
-
+/** @brief ScoreDisplay implementation for PLAY_MODE_BATTLE. */
 class ScoreDisplayBattle : public ScoreDisplay
 {
 public:

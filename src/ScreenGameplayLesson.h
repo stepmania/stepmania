@@ -1,11 +1,10 @@
-/* ScreenGameplayLesson - Shows some explanation pages, then allows 3 tries to pass a song. */
-
 #ifndef ScreenGameplayLesson_H
 #define ScreenGameplayLesson_H
 
 #include "ScreenGameplayNormal.h"
 class CourseEntry;
 
+/** @brief Shows some explanation pages, then allows 3 tries to pass a song. */
 class ScreenGameplayLesson : public ScreenGameplayNormal
 {
 public:

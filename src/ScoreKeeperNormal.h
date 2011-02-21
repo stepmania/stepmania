@@ -13,6 +13,7 @@ struct RadarValues;
 
 AutoScreenMessage( SM_PlayToasty );
 
+/** @brief The default ScoreKeeper implementation. */
 class ScoreKeeperNormal: public ScoreKeeper
 {
 	void AddScoreInternal( TapNoteScore score );

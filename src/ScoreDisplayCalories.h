@@ -1,12 +1,10 @@
-/* ScoreDisplayCalories - Shows calorie score during gameplay and some menus. */
-
 #ifndef ScoreDisplayCalories_H
 #define ScoreDisplayCalories_H
 
 #include "RollingNumbers.h"
 #include "PlayerNumber.h"
 
-
+/** @brief Shows calorie score during gameplay and some menus. */
 class ScoreDisplayCalories : public RollingNumbers
 {
 public:

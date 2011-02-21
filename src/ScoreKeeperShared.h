@@ -4,6 +4,7 @@
 #include "ScoreKeeperNormal.h"
 #include "PlayerNumber.h"
 
+/** @brief ScoreKeeper for Routine mode. */
 class ScoreKeeperShared : public ScoreKeeperNormal
 {
 public:
