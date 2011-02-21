@@ -387,49 +387,6 @@ function GamePrefComboUnderField()
 	return t;
 end
 
-function GetDefaultArrowSpacing()
-	local rates = {
-		64,		-- Default
-		80,		-- Pro
-		128,	-- New
-	};
-	return GetUserPrefB("AdjustSpeed") and rates[3] or rates[1];
-end;
-function UserPrefAdjustSpeed()
-	local t = {
-		Name = "UserPrefAdjustSpeed";
-		LayoutType = "ShowAllInRow";
-		SelectType = "SelectOne";
-		OneChoiceForAllPlayers = true;
-		ExportOnChange = false;
-		Choices = { 'Normal','Fast' };
-		LoadSelections = function(self, list, pn)
-			if ReadUserPrefFromFile("AdjustSpeed") ~= nil then
-				if GetUserPrefB("AdjustSpeed") then
-					list[2] = true;
-				else
-					list[1] = true;
-				end;
-			else
-				WriteUserPrefToFile("AdjustSpeed",true);
-				list[2] = true;
-			end;
-		end;
-		SaveSelections = function(self, list, pn)
-			local val;
-			if list[2] then
-				val = true;
-			else
-				val = false;
-			end;
-			WriteUserPrefToFile("AdjustSpeed",val);
-			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
-			THEME:ReloadMetrics();
-		end;
-	};
-	setmetatable( t, t );
-	return t;
-end
 function GamePrefAutoSetStyle()
 	local t = {
 		Name = "GamePrefAutoSetStyle";
