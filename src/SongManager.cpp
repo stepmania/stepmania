@@ -16,6 +16,7 @@
 #include "NoteSkinManager.h"
 #include "NotesLoaderDWI.h"
 #include "NotesLoaderSSC.h"
+#include "NotesLoaderSM.h"
 #include "PrefsManager.h"
 #include "Profile.h"
 #include "ProfileManager.h"
@@ -460,10 +461,8 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 	}
 	else
 	{
-
-		/* XXX:
-		 * Previously, this matched all notes, which set a song to "extra" if
-		 * it had any 10-foot steps at all, even edits or doubles.
+		/* XXX: Previously, this matched all notes, which set a song to "extra"
+		 * if it had any 10-foot steps at all, even edits or doubles.
 		 *
 		 * For now, only look at notes for the current note type. This means
 		 * that if a song has 10-foot steps on Doubles, it'll only show up red
@@ -471,8 +470,7 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 		 * in the song scroll, which is a little odd but harmless. 
 		 *
 		 * XXX: Ack. This means this function can only be called when we have
-		 * a style set up, which is too restrictive.  How to handle this?
-		 */
+		 * a style set up, which is too restrictive. How to handle this? */
 		//const StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 		const vector<Steps*>& vpSteps = pSong->GetAllSteps();
 		for( unsigned i=0; i<vpSteps.size(); i++ )
@@ -1656,7 +1654,11 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 		{
 			RString fn = vsFiles[i];
 
-			SSCLoader::LoadEditFromFile( fn, slot, true );
+			bool bLoadedFromSSC = SSCLoader::LoadEditFromFile( fn, slot, true );
+			// If we don't load the edit from a .ssc-style .edit, then we should
+			// also try the .sm-style edit file. -aj
+			if( !bLoadedFromSSC )
+				SMLoader::LoadEditFromFile( fn, slot, true );
 		}
 	}
 }
