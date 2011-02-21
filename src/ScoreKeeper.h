@@ -1,10 +1,6 @@
 #ifndef SCORE_KEEPER_H
 #define SCORE_KEEPER_H
 
-/* Stat handling is in here because that can differ between games, too; for
- * example, some games count double taps as a single note in scoring and some
- * count per-tap. Results are injected directly into the PlayerStageStats. */
-
 #include "GameConstantsAndTypes.h"
 
 class NoteData;
@@ -16,7 +12,12 @@ class PlayerStageStats;
 struct TapNote;
 struct AttackArray;
 
-/** @brief Abstract class to handle scorekeeping, stat-taking, etc. */
+/**
+ * @brief Abstract class to handle scorekeeping, stat-taking, etc.
+ * 
+ * Stat handling is in here because that can differ between games, too; for
+ * example, some games count double taps as a single note in scoring and some
+ * count per-tap. Results are injected directly into the PlayerStageStats. */
 class ScoreKeeper
 {
 public:
