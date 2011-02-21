@@ -39,7 +39,6 @@
 		<Function name='FormatNumberAndSuffix'/>
 		<Function name='FormatPercentScore'/>
 		<Function name='GameCompatibleModes'/>
-		<Function name='GamePrefAdjustSpeed'/>
 		<Function name='GamePrefAutoSetStyle'/>
 		<Function name='GamePrefComboOnRolls'/>
 		<Function name='GamePrefComboUnderField'/>
@@ -1964,6 +1963,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc v1.2.1</Version>
-	<Date>2011-02-20</Date>
+	<Version>sm-ssc v1.2.2</Version>
+	<Date>2011-02-21</Date>
 </Lua>
