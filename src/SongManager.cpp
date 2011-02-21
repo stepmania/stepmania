@@ -142,7 +142,6 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 	LOG->Trace( "Found %d songs in %f seconds.", (int)m_pSongs.size(), tm.GetDeltaTime() );
 }
 
-
 static LocalizedString FOLDER_CONTAINS_MUSIC_FILES( "SongManager", "The folder \"%s\" appears to be a song folder.  All song folders must reside in a group folder.  For example, \"Songs/Originals/My Song\"." );
 void SongManager::SanityCheckGroupDir( RString sDir ) const
 {
@@ -299,8 +298,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	LoadEnabledSongsFromPref();
 }
 
-// Instead of "symlinks", songs should have membership in multiple groups.
-// -Chris
+// Instead of "symlinks", songs should have membership in multiple groups. -Chris
 void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 {
 	// Find all symlink files in this folder
@@ -310,9 +308,9 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 	SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupFolder];
 	for( unsigned s=0; s< arraySymLinks.size(); s++ )	// for each symlink in this dir, add it in as a song.
 	{
-		MsdFile		msdF;
+		MsdFile msdF;
 		msdF.ReadFile( sDir+sGroupFolder+"/"+arraySymLinks[s].c_str(), false );  // don't unescape
-		RString	sSymDestination = msdF.GetParam(0,1);	// Should only be 1 vale&param...period.
+		RString	sSymDestination = msdF.GetParam(0,1); // Should only be 1 value & param...period.
 
 		Song* pNewSong = new Song;
 		if( !pNewSong->LoadFromSongDir( sSymDestination ) )
