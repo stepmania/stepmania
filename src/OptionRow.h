@@ -68,7 +68,6 @@ public:
 		RowType_Normal,
 		RowType_Exit
 	};
-	LuaDeclareType( RowType );
 
 	void InitText( RowType type );
 	void AfterImportOptions( PlayerNumber pn );
