@@ -45,9 +45,13 @@ private:
 /** @brief The common metrics that are used throughout. */
 namespace CommonMetrics
 {
+	/** @brief The first screen in the attract loop. */
 	extern ThemeMetric<RString>		FIRST_ATTRACT_SCREEN;
+	/** @brief The screen that appears when pressing the operator button. */
+	//extern ThemeMetric<RString>		OPERATOR_MENU_SCREEN;
+	/** @brief The default modifiers to apply. */
 	extern ThemeMetric<RString>		DEFAULT_MODIFIERS;
-	/** @brief the phrase that appears on the title bar. */
+	/** @brief The caption on the title bar. */
 	extern LocalizedString				WINDOW_TITLE;
 	/** @brief How many entries should be shown before showing "Various" instead. */
 	extern ThemeMetric<int>			MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
@@ -59,7 +63,11 @@ namespace CommonMetrics
 	extern ThemeMetricDifficultiesToShow	DIFFICULTIES_TO_SHOW;
 	/** @brief Which course difficulties are to be shown? */
 	extern ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
-	/** @brief Which step types are to be shown? */
+	/**
+	 * @brief Which step types are to be shown?
+	 *
+	 * This metric (StepsTypesToHide) takes a list of StepsTypes to hide and
+	 * returns a list of StepsTypes to show. */
 	extern ThemeMetricStepsTypesToShow	STEPS_TYPES_TO_SHOW;
 	/** @brief Does the player need to explicitly set a style? */
 	extern ThemeMetric<bool>			AUTO_SET_STYLE;
