@@ -6,7 +6,6 @@ function InitGamePrefs()
 		{ "NotePosition",	true },
 		{ "ComboOnRolls",	false },
 		{ "ComboUnderField",	true },
-		{ "AdjustSpeed",	false },
 	};
 
 	for idx,pref in ipairs(Prefs) do

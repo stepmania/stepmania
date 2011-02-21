@@ -48,7 +48,7 @@ namespace CommonMetrics
 	/** @brief The first screen in the attract loop. */
 	extern ThemeMetric<RString>		FIRST_ATTRACT_SCREEN;
 	/** @brief The screen that appears when pressing the operator button. */
-	//extern ThemeMetric<RString>		OPERATOR_MENU_SCREEN;
+	extern ThemeMetric<RString>		OPERATOR_MENU_SCREEN;
 	/** @brief The default modifiers to apply. */
 	extern ThemeMetric<RString>		DEFAULT_MODIFIERS;
 	/** @brief The caption on the title bar. */

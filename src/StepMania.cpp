@@ -1291,7 +1291,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED );
 			SCREENMAN->PopAllScreens();
 			GAMESTATE->Reset();
-			SCREENMAN->SetNewScreen( "ScreenOptionsService" );
+			SCREENMAN->SetNewScreen( CommonMetrics::OPERATOR_MENU_SCREEN );
 		}
 		return true;
 

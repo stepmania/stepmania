@@ -19,6 +19,7 @@ sm-ssc v1.2.3 | 201102??
   Please re-adjust your speed mods accordingly. [AJ]
 * [OptionRow] Added GetLayoutType() and GetSelectType() Lua bindings. [AJ]
 * Fix .sm-style edits not being loaded. [AJ]
+* [Common] Added OperatorMenuScreen metric. [AJ]
 
 ================================================================================
 sm-ssc v1.2.2 | 20110220
