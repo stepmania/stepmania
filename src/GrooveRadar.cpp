@@ -15,7 +15,6 @@
 
 REGISTER_ACTOR_CLASS(GrooveRadar);
 
-static const ThemeMetric<float>			LABEL_ON_DELAY				("GrooveRadar","LabelOnDelay");
 static const ThemeMetric<float>			RADAR_EDGE_WIDTH			("GrooveRadar","EdgeWidth");
 static const ThemeMetric<float>			RADAR_CENTER_ALPHA			("GrooveRadar","CenterAlpha");
 
