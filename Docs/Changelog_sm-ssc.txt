@@ -13,6 +13,12 @@ _____________________________________________________________________________
 sm-ssc v1.2.3 | 201102??
 --------------------------------------------------------------------------------
 
+20110222
+--------
+* [ScreenEdit] Display the Player Number for Routine mode. [Wolfman2000]
+* [ScreenEdit] Add format string metrics for the right hand side of the editor.
+  [Wolfman2000]
+
 20110221
 --------
 * Reverted ArrowSpacing back to 64 (which was the previous value).
