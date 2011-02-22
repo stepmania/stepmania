@@ -1016,6 +1016,7 @@ static LocalizedString SNAP_TO("ScreenEdit", "Snap to");
 static LocalizedString NOTES("ScreenEdit", "%s notes");
 static LocalizedString SELECTION_BEAT("ScreenEdit", "Selection beat");
 static LocalizedString DIFFICULTY("ScreenEdit", "Difficulty");
+static LocalizedString ROUTINE_PLAYER("ScreenEdit", "Routine Player");
 static LocalizedString DESCRIPTION("ScreenEdit", "Description");
 static LocalizedString CHART_STYLE("ScreenEdit", "Chart Style");
 static LocalizedString MAIN_TITLE("ScreenEdit", "Main title");
@@ -1079,6 +1080,8 @@ void ScreenEdit::UpdateTextInfo()
 		break;
 	case EditMode_Full:
 		sText += ssprintf( "%s:\n  %s\n",	DIFFICULTY.GetValue().c_str(), DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
+		if ( m_InputPlayerNumber != PLAYER_INVALID )
+			sText += ssprintf( "%s:\n  %d\n", ROUTINE_PLAYER.GetValue().c_str(), m_InputPlayerNumber + 1 );
 		sText += ssprintf( "%s:\n  %s\n",	DESCRIPTION.GetValue().c_str(), m_pSteps->GetDescription().c_str() );
 		sText += ssprintf( "%s:\n  %s\n",	CHART_STYLE.GetValue().c_str(), m_pSteps->GetChartStyle().c_str() );
 		sText += ssprintf( "%s:\n  %s\n",	MAIN_TITLE.GetValue().c_str(), m_pSong->m_sMainTitle.c_str() );
