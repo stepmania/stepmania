@@ -1312,7 +1312,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	bool bIsShiftHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT), &input.InputList) ||
 		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT), &input.InputList);
 	bool bIsCtrlHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL), &input.InputList) ||
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL), &input.InputList);
+		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL), &input.InputList);
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F2) )
 	{
 		if( bIsShiftHeld && !bIsCtrlHeld )
