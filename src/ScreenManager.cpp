@@ -81,6 +81,7 @@ static Preference<bool> g_bPruneFonts( "PruneFonts", true );
 // Screen registration
 static map<RString,CreateScreenFn>	*g_pmapRegistrees = NULL;
 
+/** @brief Utility functions for the ScreenManager. */
 namespace ScreenManagerUtil
 {
 	// in draw order first to last
@@ -865,6 +866,7 @@ void ScreenManager::PlaySharedBackgroundOffCommand()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenManager. */ 
 class LunaScreenManager: public Luna<ScreenManager>
 {
 public:

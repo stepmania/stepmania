@@ -1,10 +1,8 @@
-/* PMSLoader - reads a Song from a set of .PMS files. */
-
 #ifndef NOTES_LOADER_PMS_H
 #define NOTES_LOADER_PMS_H
 
 class Song;
-
+/** @brief Reads a Song from a set of .PMS files. */
 namespace PMSLoader
 {
 	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
@@ -13,8 +11,10 @@ namespace PMSLoader
 
 #endif
 
-/*
- * (c) 2001-2003 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

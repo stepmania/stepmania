@@ -539,7 +539,7 @@ void ScreenTextEntry::LoadFromTextEntrySettings( const TextEntrySettings &settin
 	BeginScreen();
 }
 
-// lua start
+/** @brief Allow Lua to have access to the ScreenTextEntry. */
 class LunaScreenTextEntry: public Luna<ScreenTextEntry>
 {
 public:

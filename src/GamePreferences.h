@@ -3,7 +3,7 @@
 
 #include "Preference.h"
 #include "GameConstantsAndTypes.h"
-
+/** @brief Quick access to other variables. */
 namespace GamePreferences
 {
 	extern Preference<CoinMode> m_CoinMode;

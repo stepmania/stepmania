@@ -11,7 +11,7 @@
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
 
-REGISTER_ACTOR_CLASS( FadingBanner )
+REGISTER_ACTOR_CLASS( FadingBanner );
 
 /* Allow fading from one banner to another. We can handle two fades at once;
  * this is used to fade from an old banner to a low-quality banner to a high-
@@ -255,6 +255,7 @@ void FadingBanner::LoadCourseFallback()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the FadingBanner. */ 
 class LunaFadingBanner: public Luna<FadingBanner>
 {
 public:

@@ -1,5 +1,3 @@
-/* ModIcon - Shows PlayerOptions and SongOptions in icon form. */
-
 #ifndef ModIcon_H
 #define ModIcon_H
 
@@ -8,7 +6,7 @@
 #include "BitmapText.h"
 #include "PlayerNumber.h"
 #include "ThemeMetric.h"
-
+/** @brief Shows PlayerOptions and SongOptions in icon form. */
 class ModIcon : public ActorFrame
 {
 public:

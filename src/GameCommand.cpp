@@ -855,6 +855,7 @@ bool GameCommand::IsZero() const
 #include "Steps.h"
 #include "Character.h"
 
+/** @brief Allow Lua to have access to the GameCommand. */ 
 class LunaGameCommand: public Luna<GameCommand>
 {
 public:

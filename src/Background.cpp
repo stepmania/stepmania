@@ -370,7 +370,6 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 	}
 	ASSERT( !sEffectFile.empty() );
 
-
 	Actor *pActor = ActorUtil::MakeActor( sEffectFile );
 
 	ASSERT( pActor );
@@ -390,7 +389,7 @@ BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const R
 	// Set to not show any BGChanges, whether scripted or random
 	if( GAMESTATE->m_SongOptions.GetCurrent().m_bStaticBackground )
 		return BackgroundDef();
-	
+
 	if( RandomBGAnimations.empty() )
 		return BackgroundDef();
 
@@ -430,7 +429,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 
 		for( int i=max(iter->m_iStartRow,iStartRow); i<min(iEndRow,iSegmentEndRow); i+=4*iter->GetNoteRowsPerMeasure() )
 		{
-			// Don't fade.  It causes frame rate dip, especially on slower machines.
+			// Don't fade. It causes frame rate dip, especially on slower machines.
 			BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations, this );
 			if( !bd.IsEmpty() )
 			{
@@ -458,12 +457,12 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 		}
 
 		if( !bAtBeginningOfMeasure )
-			continue;	// skip
-		
+			continue; // skip
+
 		// start so that we don't create a BGChange right on top of fEndBeat
 		bool bInRange = bpmseg.m_iStartRow >= iStartRow && bpmseg.m_iStartRow < iEndRow;
 		if( !bInRange )
-			continue;	// skip
+			continue; // skip
 
 		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations, this );
 		if( !bd.IsEmpty() )
@@ -487,9 +486,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	if( g_fBGBrightness == 0.0f )
 		return;
 
-	//
-	// Choose a bunch of background that we'll use for the random file marker
-	//
+	// Choose a bunch of backgrounds that we'll use for the random file marker
 	{
 		vector<RString> vsThrowAway, vsNames;
 		switch( g_RandomBackgroundMode )

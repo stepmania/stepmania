@@ -10,12 +10,11 @@
 #include "ThemeMetric.h"
 #include "CommonMetrics.h"
 #include "ActorUtil.h"
+// I feel weird about this coupling, but it has to be done. -aj
+#include "GameState.h"
 
-REGISTER_ACTOR_CLASS(GrooveRadar)
+REGISTER_ACTOR_CLASS(GrooveRadar);
 
-#define		LABEL_OFFSET_X( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
-#define 	LABEL_OFFSET_Y( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
-static const ThemeMetric<float>			LABEL_ON_DELAY				("GrooveRadar","LabelOnDelay");
 static const ThemeMetric<float>			RADAR_EDGE_WIDTH			("GrooveRadar","EdgeWidth");
 static const ThemeMetric<float>			RADAR_CENTER_ALPHA			("GrooveRadar","CenterAlpha");
 
@@ -27,8 +26,8 @@ GrooveRadar::GrooveRadar()
 {
 	m_sprRadarBase.Load( THEME->GetPathG("GrooveRadar","base") );
 	m_Frame.AddChild( m_sprRadarBase );
-	LOAD_ALL_COMMANDS( m_Frame );
 	m_Frame.SetName( "RadarFrame" );
+	ActorUtil::LoadAllCommands( m_Frame, "GrooveRadar" );
 
 	FOREACH_PlayerNumber( p )
 	{
@@ -42,12 +41,11 @@ GrooveRadar::GrooveRadar()
 
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
-		m_sprRadarLabels[c].SetName( "Label" );
+		m_sprRadarLabels[c].SetName( ssprintf("Label%i",c+1) );
 		m_sprRadarLabels[c].Load( THEME->GetPathG("GrooveRadar","labels 1x5") );
 		m_sprRadarLabels[c].StopAnimating();
 		m_sprRadarLabels[c].SetState( c );
-		m_sprRadarLabels[c].SetXY( LABEL_OFFSET_X(c), LABEL_OFFSET_Y(c) );
-		ActorUtil::LoadAllCommands( m_sprRadarLabels[c], "GrooveRadar" );
+		ActorUtil::LoadAllCommandsAndSetXY( m_sprRadarLabels[c], "GrooveRadar" );
 		this->AddChild( &m_sprRadarLabels[c] );
 	}
 }
@@ -55,46 +53,6 @@ GrooveRadar::GrooveRadar()
 void GrooveRadar::LoadFromNode( const XNode* pNode )
 {
 	ActorFrame::LoadFromNode( pNode );
-}
-
-void GrooveRadar::TweenOnScreen()
-{
-	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
-	{
-		m_sprRadarLabels[c].SetX( LABEL_OFFSET_X(c) );
-		m_sprRadarLabels[c].PlayCommand( "PreDelayOn" );
-		m_sprRadarLabels[c].BeginTweening( LABEL_ON_DELAY*c ); // sleep
-		m_sprRadarLabels[c].PlayCommand( "PostDelayOn" );
-	}
-
-	m_Frame.PlayCommand("TweenOnScreen");
-	/*
-	m_Frame.SetZoom( 0.5f );
-	m_Frame.SetRotationZ( 720 );
-	m_Frame.BeginTweening( 0.6f );
-	m_Frame.SetZoom( 1 );
-	m_Frame.SetRotationZ( 0 );
-	*/
-}
-
-void GrooveRadar::TweenOffScreen()
-{
-	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
-	{
-		m_sprRadarLabels[c].StopTweening();
-		m_sprRadarLabels[c].BeginTweening( 0.2f );
-		/* Make sure we undo glow. We do this at the end of TweenIn, but we might
-		 * tween off before we complete tweening in, and the glow can remain. */
-		m_sprRadarLabels[c].SetGlow( RageColor(1,1,1,0) );
-		m_sprRadarLabels[c].SetDiffuse( RageColor(1,1,1,0) );
-	}
-
-	m_Frame.PlayCommand("TweenOffScreen");
-	/*
-	m_Frame.BeginTweening( 0.6f );
-	m_Frame.SetRotationZ( 180*4 );
-	m_Frame.SetZoom( 0 );
-	*/
 }
 
 void GrooveRadar::SetEmpty( PlayerNumber pn )
@@ -149,7 +107,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromSteps( const RadarValues &rv )
 	if( !m_bValuesVisible ) // the values WERE invisible
 		m_PercentTowardNew = 1;
 	else
-		m_PercentTowardNew = 0;	
+		m_PercentTowardNew = 0;
 }
 
 void GrooveRadar::GrooveRadarValueMap::Update( float fDeltaTime )
@@ -170,6 +128,8 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
 	RageSpriteVertex v[12]; // needed to draw 5 fan primitives and 10 strip primitives
 
+	// xxx: We could either make the values invisible or draw a dot
+	// (simulating real DDR). TODO: Make that choice up to the themer. -aj
 	if( !m_bValuesVisible )
 		return;
 
@@ -191,7 +151,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		const float fX = RageFastCos(fRotation) * fDistFromCenter;
 		const float fY = -RageFastSin(fRotation) * fDistFromCenter;
 
-		v[1+i].p = RageVector3( fX, fY,	0 );
+		v[1+i].p = RageVector3( fX, fY, 0 );
 		v[1+i].c = v[1].c;
 	}
 
@@ -211,8 +171,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		v[i].c = this->m_pTempState->diffuse[0];
 	}
 
-	// TODO: Add this back in.  -Chris
-	// TODO: Add this back in as a theme metric. -aj
+	// TODO: Add this back in -Chris
 //	switch( PREFSMAN->m_iPolygonRadar )
 //	{
 //	case 0:		DISPLAY->DrawLoop_LinesAndPoints( v, NUM_SHOWN_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );	break;
@@ -227,6 +186,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the GrooveRadar. */ 
 class LunaGrooveRadar: public Luna<GrooveRadar>
 {
 public:
@@ -245,15 +205,11 @@ public:
 		return 0;
 	}
 	static int SetEmpty( T* p, lua_State *L )		{ p->SetEmpty( Enum::Check<PlayerNumber>(L, 1) ); return 0; }
-	static int tweenonscreen( T* p, lua_State *L )		{ p->TweenOnScreen(); return 0; }
-	static int tweenoffscreen( T* p, lua_State *L )		{ p->TweenOffScreen(); return 0; }
 
 	LunaGrooveRadar()
 	{
 		ADD_METHOD( SetFromRadarValues );
 		ADD_METHOD( SetEmpty );
-		ADD_METHOD( tweenonscreen );
-		ADD_METHOD( tweenoffscreen );
 	}
 };
 

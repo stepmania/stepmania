@@ -345,6 +345,7 @@ void StatsManager::GetStepsInUse( set<Steps*> &apInUseOut ) const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the StatsManager. */ 
 class LunaStatsManager: public Luna<StatsManager>
 {
 public:

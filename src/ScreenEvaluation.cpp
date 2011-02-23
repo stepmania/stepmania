@@ -74,7 +74,7 @@ XToString( DetailLine );
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
-AutoScreenMessage( SM_PlayCheer )
+AutoScreenMessage( SM_PlayCheer );
 
 REGISTER_SCREEN_CLASS( ScreenEvaluation );
 void ScreenEvaluation::Init()
@@ -730,6 +730,7 @@ void ScreenEvaluation::HandleMenuStart()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenEvaluation. */ 
 class LunaScreenEvaluation: public Luna<ScreenEvaluation>
 {
 public:

@@ -16,6 +16,10 @@
 #include "Song.h"
 #include "Steps.h"
 
+/**
+ * @brief Turn the BackgroundChange into a string.
+ * @param bgc the BackgroundChange in question.
+ * @return the converted string. */
 static RString BackgroundChangeToString( const BackgroundChange &bgc )
 {
 	// TODO: Technically we need to double-escape the filename (because it might
@@ -37,9 +41,12 @@ static RString BackgroundChangeToString( const BackgroundChange &bgc )
 	return s;
 }
 
+/**
+ * @brief Write out the common tags for .SM files.
+ * @param f the file in question.
+ * @param out the Song in question. */
 static void WriteGlobalTags( RageFile &f, const Song &out )
 {
-	//f.PutLine( ssprintf( "#SMVERSION:;", SmEscape(RString("ssc-v1.0")).c_str() ) );
 	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
 	f.PutLine( ssprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
 	f.PutLine( ssprintf( "#ARTIST:%s;", SmEscape(out.m_sArtist).c_str() ) );
@@ -58,7 +65,8 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		vector<RString> vs;
 		FOREACH_ENUM( InstrumentTrack, it )
 			if( out.HasInstrumentTrack(it) )
-				vs.push_back( InstrumentTrackToString(it) + "=" + out.m_sInstrumentTrackFile[it] );
+				vs.push_back( InstrumentTrackToString(it) + 
+					     "=" + out.m_sInstrumentTrackFile[it] );
 		if( !vs.empty() )
 		{
 			RString s = join( ",", vs );
@@ -90,7 +98,8 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 		if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
 			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
 		else
-			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
+			f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;", 
+					    out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
 		break;
 	case Song::DISPLAY_RANDOM:
 		f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
@@ -154,7 +163,8 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.Write( "#TIMESIGNATURES:" );
 	FOREACH_CONST( TimeSignatureSegment, out.m_Timing.m_vTimeSignatureSegments, iter )
 	{
-		f.PutLine( ssprintf( "%.6f=%d=%d", NoteRowToBeat(iter->m_iStartRow), iter->m_iNumerator, iter->m_iDenominator ) );
+		f.PutLine( ssprintf( "%.6f=%d=%d", NoteRowToBeat(iter->m_iStartRow), 
+				    iter->m_iNumerator, iter->m_iDenominator ) );
 		vector<TimeSignatureSegment>::const_iterator iter2 = iter;
 		iter2++;
 		if( iter2 != out.m_Timing.m_vTimeSignatureSegments.end() )
@@ -226,6 +236,10 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ";" );
 }
 
+/**
+ * @brief Turn a vector of lines into a single line joined by newline characters.
+ * @param lines the list of lines to join.
+ * @return the joined lines. */
 static RString JoinLineList( vector<RString> &lines )
 {
 	for( unsigned i = 0; i < lines.size(); ++i )
@@ -239,6 +253,11 @@ static RString JoinLineList( vector<RString> &lines )
 	return join( "\r\n", lines.begin()+j, lines.end() );
 }
 
+/**
+ * @brief Retrieve the notes from the #NOTES tag.
+ * @param song the Song in question.
+ * @param in the Steps in question.
+ * @return the #NOTES tag. */
 static RString GetSMNotesTag( const Song &song, const Steps &in )
 {
 	vector<RString> lines;

@@ -36,14 +36,20 @@
 #include <set>
 #include <float.h>
 
-const static float VERSION_NUMBER = 0.51f;
-const int FILE_CACHE_VERSION = 163;	// increment this to invalidate cache
+/** @brief The version of the .ssc file format. */
+const static float VERSION_NUMBER = 0.52f;
+/**
+ * @brief The internal version of the cache for StepMania.
+ *
+ * Increment this value to invalidate the current cache. */
+const int FILE_CACHE_VERSION = 164;
 
+/** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
 static Preference<float>	g_fLongVerSongSeconds( "LongVerSongSeconds", 60*2.5f );
 static Preference<float>	g_fMarathonVerSongSeconds( "MarathonVerSongSeconds", 60*5.f );
-static Preference<bool>	g_BackUpAllSongSaves( "BackUpAllSongSaves", false );
+static Preference<bool>		g_BackUpAllSongSaves( "BackUpAllSongSaves", false );
 
 static const char *InstrumentTrackNames[] = {
 	"Guitar",
@@ -1451,6 +1457,7 @@ bool Song::IsMarathon() const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Song. */ 
 class LunaSong: public Luna<Song>
 {
 public:

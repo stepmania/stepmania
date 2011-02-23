@@ -1,4 +1,4 @@
-/* Sprite - A bitmap Actor that animates and moves around. */
+/** @brief Sprite - A bitmap Actor that animates and moves around. */
 
 #ifndef SPRITE_H
 #define SPRITE_H
@@ -61,8 +61,12 @@ public:
 	void SetEffectMode( EffectMode em ) { m_EffectMode = em; }
 
 	void SetTexCoordVelocity(float fVelX, float fVelY);
-	// Scale the Sprite maintaining the aspect ratio so that it fits 
-	// within (fWidth,fHeight) and is clipped to (fWidth,fHeight).
+	/**
+	 * @brief Scale the Sprite while maintaining the aspect ratio.
+	 *
+	 * It has to fit within and become clipped to the given parameters.
+	 * @param fWidth the new width.
+	 * @param fHeight the new height. */
 	void ScaleToClipped( float fWidth, float fHeight );
 	void CropTo( float fWidth, float fHeight );
 	static bool IsDiagonalBanner( int iWidth, int iHeight );
@@ -82,14 +86,17 @@ private:
 
 	RageTexture* m_pTexture;
 
+	/** @brief The Sprite's present state. */
 	struct State
 	{
 		RectF rect;
-		float fDelay;	// "seconds to show"
+		/** @brief The number of "seconds to show". */
+		float fDelay;
 	};
 	vector<State> m_States;
 	int		m_iCurState;
-	float	m_fSecsIntoState;	// number of seconds that have elapsed since we switched to this frame
+	/** @brief The number of seconds that have elapsed since we switched to this frame. */
+	float	m_fSecsIntoState;
 
 	EffectMode m_EffectMode;
 	bool m_bUsingCustomTexCoords;
@@ -106,8 +113,10 @@ private:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

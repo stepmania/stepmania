@@ -1,5 +1,3 @@
-/** @brief CourseUtil - Utility functions that deal with Course. */
-
 #ifndef COURSEUTIL_H
 #define COURSEUTIL_H
 
@@ -13,6 +11,7 @@ class XNode;
 class CourseEntry;
 class Song;
 
+/** @brief Utility functions that deal with Courses. */
 namespace CourseUtil
 {
 	void SortCoursePointerArrayByDifficulty( vector<Course*> &vpCoursesInOut );
@@ -43,6 +42,7 @@ namespace CourseUtil
 	//RString GetSectionNameFromCourseAndSort( const Course *pCourse, SortOrder so );
 };
 
+/** @brief Utility functions that deal with Edit Courses. */
 namespace EditCourseUtil
 {
 	void UpdateAndSetTrail();

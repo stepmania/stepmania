@@ -57,9 +57,9 @@ static LocalizedString ERROR_DELETING_FILE      ("ScreenOptionsCourseOverview", 
 static LocalizedString COURSE_WILL_BE_LOST      ("ScreenOptionsCourseOverview", "This course will be lost permanently.");
 static LocalizedString CONTINUE_WITH_DELETE     ("ScreenOptionsCourseOverview", "Continue with delete?");
 
-AutoScreenMessage( SM_BackFromEnterName )
-AutoScreenMessage( SM_BackFromRename )
-AutoScreenMessage( SM_BackFromDelete )
+AutoScreenMessage( SM_BackFromEnterName );
+AutoScreenMessage( SM_BackFromRename );
+AutoScreenMessage( SM_BackFromDelete );
 
 void ScreenOptionsCourseOverview::Init()
 {

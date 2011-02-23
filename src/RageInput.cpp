@@ -6,7 +6,7 @@
 #include "Preference.h"
 #include "LuaManager.h"
 
-RageInput*		INPUTMAN	= NULL;		// globally accessable input device
+RageInput* INPUTMAN = NULL; // globally accessable input device
 
 static Preference<RString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
 
@@ -38,7 +38,7 @@ RageInput::RageInput()
 
 RageInput::~RageInput()
 {
-	/* Delete optional devices. */
+	// Delete optional devices.
 	for( unsigned i = 0; i < m_InputHandlers.size(); ++i )
 		delete m_InputHandlers[i].m_pDevice;
 	m_InputHandlers.clear();
@@ -55,28 +55,28 @@ void RageInput::LoadDrivers()
 	m_InputHandlers.clear();
 	g_mapDeviceToHandler.clear();
 
-	/* Init optional devices. */
+	// Init optional devices.
 	vector<InputHandler *> apDevices;
 
 	InputHandler::Create( g_sInputDrivers, apDevices );
 	for( unsigned i = 0; i < apDevices.size(); ++i )
 		AddHandler( apDevices[i] );
 
-	/* If no input devices are loaded, the user won't be able to input anything. */
+	// If no input devices are loaded, the user won't be able to input anything.
 	if( apDevices.size() == 0 )
 		LOG->Warn( "No input devices were loaded." );
 }
 
 void RageInput::Update()
 {
-	/* Update optional devices. */
+	// Update optional devices.
 	for( unsigned i = 0; i < m_InputHandlers.size(); ++i )
 		m_InputHandlers[i].m_pDevice->Update();
 }
 
 bool RageInput::DevicesChanged()
 {
-	/* Update optional devices. */
+	// Update optional devices.
 	for( unsigned i = 0; i < m_InputHandlers.size(); ++i )
 	{
 		if( m_InputHandlers[i].m_pDevice->DevicesChanged() )
@@ -111,7 +111,7 @@ void RageInput::AddHandler( InputHandler *pHandler )
 		g_mapDeviceToHandler[idi->id] = pHandler;
 }
 
-/* Return the first InputDriver for the requested InputDevice. */
+/** @brief Return the first InputDriver for the requested InputDevice. */
 InputHandler *RageInput::GetHandlerForDevice( const InputDevice id )
 {
 	map<InputDevice, InputHandler *>::iterator it = g_mapDeviceToHandler.find(id);
@@ -176,6 +176,7 @@ RString RageInput::GetDisplayDevicesString() const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to RageInput. */ 
 class LunaRageInput: public Luna<RageInput>
 {
 public:

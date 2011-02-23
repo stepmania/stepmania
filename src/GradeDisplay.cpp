@@ -6,7 +6,7 @@
 #include "ActorUtil.h"
 #include "ThemeManager.h"
 
-REGISTER_ACTOR_CLASS( GradeDisplay )
+REGISTER_ACTOR_CLASS( GradeDisplay );
 
 void GradeDisplay::Load( RString sMetricsGroup )
 {
@@ -36,6 +36,7 @@ void GradeDisplay::SetGrade( Grade grade )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the GradeDisplay. */ 
 class LunaGradeDisplay: public Luna<GradeDisplay>
 {
 public:

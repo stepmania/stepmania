@@ -158,6 +158,7 @@ RString LuaReference::Serialize() const
 	return sRet;
 }
 
+/** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {
 	template<> bool FromStack<LuaReference>( lua_State *L, LuaReference &Object, int iOffset )
@@ -200,6 +201,7 @@ void LuaTable::Get( Lua *L, const RString &sKey )
 	lua_remove( L, -2 ); // remove self
 }
 
+/** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {
 	template<> void Push<LuaReference>( lua_State *L, const LuaReference &Object ) 

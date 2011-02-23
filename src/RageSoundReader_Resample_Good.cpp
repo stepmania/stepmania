@@ -396,7 +396,7 @@ int PolyphaseFilter::NumInputsForOutputSamples( const State &State, int iOut, in
 
 	return iIn;
 }
-
+/** @brief Utilities for working with the PolyphaseFilter cache. */
 namespace PolyphaseFilterCache
 {
 	/* Cache filter data, and reuse it without copying.  All operations after creation

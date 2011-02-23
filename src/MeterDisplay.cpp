@@ -8,8 +8,8 @@
 #include "RageLog.h"
 #include "LuaManager.h"
 
-REGISTER_ACTOR_CLASS(MeterDisplay)
-REGISTER_ACTOR_CLASS(SongMeterDisplay)
+REGISTER_ACTOR_CLASS(MeterDisplay);
+REGISTER_ACTOR_CLASS(SongMeterDisplay);
 
 MeterDisplay::MeterDisplay()
 {

@@ -1,5 +1,3 @@
-/* NoteDisplay - Draws TapNotes and HoldNotes. */
-
 #ifndef NOTE_DISPLAY_H
 #define NOTE_DISPLAY_H
 
@@ -56,6 +54,7 @@ enum HoldType
 	NUM_HoldType,
 	HoldType_Invalid
 };
+/** @brief Loop through each HoldType. */
 #define FOREACH_HoldType( i ) FOREACH_ENUM( HoldType, i )
 const RString &HoldTypeToString( HoldType ht );
 
@@ -66,10 +65,11 @@ enum ActiveType
 	NUM_ActiveType,
 	ActiveType_Invalid
 };
+/** @brief Loop through each ActiveType. */
 #define FOREACH_ActiveType( i ) FOREACH_ENUM( ActiveType, i )
 const RString &ActiveTypeToString( ActiveType at );
 
-
+/** @brief Draws TapNotes and HoldNotes. */
 class NoteDisplay
 {
 public:

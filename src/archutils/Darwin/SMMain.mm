@@ -164,14 +164,14 @@ static void SetupMenus( void )
 	NSString *sQuit =            NSLocalizedString( @"Quit " PRODUCT_FAMILY,  @"Menu item" );
 	NSString *sMinimize =        NSLocalizedString( @"Minimize",              @"Menu item" );
 	NSString *sEnterFullScreen = NSLocalizedString( @"Enter Full Screen",     @"Menu item" );
-	
+
 	NSMenu *mainMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
 	NSMenu *appMenu = [[[NSMenu alloc] initWithTitle:@PRODUCT_FAMILY] autorelease];
 	NSMenu *windowMenu = [[[NSMenu alloc] initWithTitle:sWindow] autorelease];
 	NSMenuItem *hideOthers = MenuItem( sHideOthers, @selector(hideOtherApplications:), @"h" );
-	
+
 	[hideOthers setKeyEquivalentModifierMask:NSAlternateKeyMask | NSCommandKeyMask ];
-	
+
 	[appMenu addItem:MenuItem( sAbout, @selector(orderFrontStandardAboutPanel:), @"" )];
 	[appMenu addItem:[NSMenuItem separatorItem]];
 	[appMenu addItem:MenuItem( sHide, @selector(hide:), @"h" )];
@@ -179,19 +179,19 @@ static void SetupMenus( void )
 	[appMenu addItem:MenuItem( sShowAll, @selector(unhideAllApplications:), @"" )];
 	[appMenu addItem:[NSMenuItem separatorItem]];
 	[appMenu addItem:MenuItem( sQuit, @selector(terminate:), @"q" )];
-	
+
 	[windowMenu addItem:MenuItem( sMinimize, @selector(performMiniaturize:), @"m" )];
 	[windowMenu addItem:[NSMenuItem separatorItem]];
-	
+
 	// Add a Full Screen item.
 	NSMenuItem *item = MenuItem( sEnterFullScreen, @selector(fullscreen:), @"\n" );
-	
+
 	[item setKeyEquivalentModifierMask:NSAlternateKeyMask]; // opt-enter
 	[windowMenu addItem:item];
-	
+
 	[[mainMenu addItemWithTitle:[appMenu title] action:NULL keyEquivalent:@""] setSubmenu:appMenu];
 	[[mainMenu addItemWithTitle:[windowMenu title] action:NULL keyEquivalent:@""] setSubmenu:windowMenu];
-	
+
 	[NSApp setMainMenu:mainMenu];
 	[NSApp setAppleMenu:appMenu]; // This isn't the apple menu, but it doesn't work without this.
 	[NSApp setWindowsMenu:windowMenu];
@@ -202,22 +202,22 @@ static void SetupMenus( void )
 int main( int argc, char **argv )
 {
 	RageThreadRegister guiThread( "GUI thread" );
-	NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
-	SMMain			*sm;
-	
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	SMMain *sm;
+
 	// Ensure the application object is initialised, this sets NSApp.
 	[SMApplication sharedApplication];
-	
+
 	// Set up NSException handler.
 	NSSetUncaughtExceptionHandler( HandleNSException );
-	
+
 	// Set up the menubar.
 	SetupMenus();
-	
+
 	// Create SMMain and make it the app delegate.
 	sm = [[SMMain alloc] initWithArgc:argc argv:argv];
 	[NSApp setDelegate:sm];
-	
+
 	[pool release];
 	// Start the main event loop.
 	[NSApp run];
@@ -249,4 +249,3 @@ int main( int argc, char **argv )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-

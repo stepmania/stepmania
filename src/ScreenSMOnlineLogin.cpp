@@ -17,9 +17,9 @@
 
 REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
-AutoScreenMessage( SM_SMOnlinePack )
-AutoScreenMessage( SM_PasswordDone )
-AutoScreenMessage( SM_NoProfilesDefined )
+AutoScreenMessage( SM_SMOnlinePack );
+AutoScreenMessage( SM_PasswordDone );
+AutoScreenMessage( SM_NoProfilesDefined );
 
 static LocalizedString DEFINE_A_PROFILE( "ScreenSMOnlineLogin", "You must define a Profile." );
 void ScreenSMOnlineLogin::Init()

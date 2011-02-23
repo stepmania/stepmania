@@ -43,6 +43,8 @@ bool TrailEntry::ContainsTransformOrTurn() const
 
 // lua start
 #include "LuaBinding.h"
+
+/** @brief Allow Lua to have access to the TrailEntry. */ 
 class LunaTrailEntry: public Luna<TrailEntry>
 {
 public:
@@ -222,6 +224,7 @@ bool Trail::ContainsSong( const Song *pSong ) const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Trail. */ 
 class LunaTrail: public Luna<Trail>
 {
 public:

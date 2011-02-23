@@ -87,7 +87,9 @@ namespace Checkpoints
 {
 	void SetCheckpoint( const char *file, int line, const char *message );
 }
+/** @brief Set a checkpoint with no message. */
 #define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, NULL))
+/** @brief Set a checkpoint with a specified message. */
 #define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
 
 
@@ -105,12 +107,24 @@ namespace Checkpoints
 #define NORETURN
 #endif
 
+/**
+ * @brief A crash has occured, and we're not getting out of it easily.
+ *
+ * For most users, this will result in a crashinfo.txt file being generated.
+ * For anyone that is using a debug build, a debug break will be thrown to
+ * allow viewing the current process.
+ * @param reason the crash reason as determined by prior function calls.
+ * @return nothing: there is no escape without quitting the program.
+ */
 void NORETURN sm_crash( const char *reason = "Internal error" );
 
-/* Assertion that sets an optional message and brings up the crash handler, so
- * we get a backtrace.  This should probably be used instead of throwing an
- * exception in most cases we expect never to happen (but not in cases that
- * we do expect, such as DSound init failure.) */
+/**
+ * @brief Assertion that sets an optional message and brings up the crash 
+ * handler, so we get a backtrace.
+ * 
+ * This should probably be used instead of throwing an exception in most 
+ * cases we expect never to happen (but not in cases that we do expect, 
+ * such as DSound init failure.) */
 #define FAIL_M(MESSAGE) do { CHECKPOINT_M(MESSAGE); sm_crash(MESSAGE); } while(0)
 #define ASSERT_M(COND, MESSAGE) do { if(unlikely(!(COND))) { FAIL_M(MESSAGE); } } while(0)
 #if !defined(CO_EXIST_WITH_MFC)
@@ -130,7 +144,9 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 #define DEBUG_ASSERT(x)		ASSERT(x)
 #define DEBUG_ASSERT_M(x,y)	ASSERT_M(x,y)
 #else
+/** @brief A dummy define to keep things going smoothly. */
 #define DEBUG_ASSERT(x)
+/** @brief A dummy define to keep things going smoothly. */
 #define DEBUG_ASSERT_M(x,y)
 #endif
 
@@ -150,23 +166,28 @@ template<int> struct CompileAssertDecl { };
 #define COMPILE_ASSERT(COND) typedef CompileAssertDecl< sizeof(CompileAssert<!!(COND)>) > CompileAssertInst
 
 #if defined(__GNUC__)
-/** @brief Define a macro to tell the compiler that a function has printf() semantics, to aid warning output. */
+/** @brief Define a macro to tell the compiler that a function has printf()
+ * semantics, to aid warning output. */
 #define PRINTF(a,b) __attribute__((format(__printf__,a,b)))
 #define CONST_FUNCTION __attribute__((const))
 #else
+/** @brief A dummy define to keep things going smoothly. */
 #define PRINTF(a,b)
+/** @brief A dummy define to keep things going smoothly. */
 #define CONST_FUNCTION
 #endif
 
 #if defined(__GNUC__)
 #define SM_ALIGN(n) __attribute__((aligned(n)))
 #else
+/** @brief A dummy define to keep things going smoothly. */
 #define SM_ALIGN(n)
 #endif
 
 
-/** @brief Use RStrings throughout the program. */
+
 #include "StdString.h"
+/** @brief Use RStrings throughout the program. */
 typedef StdString::CStdString RString;
 
 #include "RageException.h"

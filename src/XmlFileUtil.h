@@ -1,5 +1,3 @@
-/* XmlFileUtil - A little graphic to the left of the song's text banner in the MusicWheel. */
-
 #ifndef XML_FILE_UTIL_H
 #define XML_FILE_UTIL_H
 
@@ -7,6 +5,10 @@ class RageFileBasic;
 class XNode;
 struct lua_State;
 
+/** 
+ * @brief A little graphic to the left of the song's text banner in the MusicWheel.
+ *
+ * This is designed to help work with XML files. */
 namespace XmlFileUtil
 {
 	bool LoadFromFileShowErrors( XNode &xml, const RString &sFile );
@@ -27,8 +29,10 @@ namespace XmlFileUtil
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

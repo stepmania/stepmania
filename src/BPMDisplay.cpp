@@ -12,7 +12,7 @@
 
 #include <limits.h>
 
-REGISTER_ACTOR_CLASS( BPMDisplay )
+REGISTER_ACTOR_CLASS( BPMDisplay );
 
 BPMDisplay::BPMDisplay()
 {
@@ -38,6 +38,7 @@ void BPMDisplay::Load()
 	QUESTIONMARKS_TEXT.Load( m_sName, "QuestionMarksText" );
 	RANDOM_TEXT.Load( m_sName, "RandomText" );
 	VARIOUS_TEXT.Load( m_sName, "VariousText" );
+	BPM_FORMAT_STRING.Load( m_sName, "FormatString" );
 
 	RunCommands( SET_NORMAL_COMMAND );
 }
@@ -76,9 +77,9 @@ void BPMDisplay::Update( float fDeltaTime )
 		{
 			m_fBPMFrom = -1;
 			if( (bool)SHOW_QMARKS )
-				SetText( (RandomFloat(0,1)>0.90f) ? (RString)QUESTIONMARKS_TEXT : ssprintf("%03.0f",RandomFloat(0,999)) );
+				SetText( (RandomFloat(0,1)>0.90f) ? (RString)QUESTIONMARKS_TEXT : ssprintf((RString)BPM_FORMAT_STRING,RandomFloat(0,999)) );
 			else
-				SetText( ssprintf("%03.0f",RandomFloat(0,999)) );
+				SetText( ssprintf((RString)BPM_FORMAT_STRING, RandomFloat(0,999)) );
 		}
 		else if(m_fBPMFrom == -1)
 		{
@@ -89,7 +90,7 @@ void BPMDisplay::Update( float fDeltaTime )
 	if( m_fBPMTo != -1)
 	{
 		const float fActualBPM = GetActiveBPM();
-		SetText( ssprintf("%03.0f", fActualBPM) );
+		SetText( ssprintf((RString)BPM_FORMAT_STRING, fActualBPM) );
 	}
 }
 
@@ -286,7 +287,7 @@ void SongBPMDisplay::Update( float fDeltaTime )
 	BPMDisplay::Update( fDeltaTime );
 }
 
-REGISTER_ACTOR_CLASS( SongBPMDisplay )
+REGISTER_ACTOR_CLASS( SongBPMDisplay );
 
 #include "LuaBinding.h"
 /** @brief Allow Lua to have access to the BPMDisplay. */

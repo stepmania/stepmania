@@ -13,7 +13,7 @@
 #include "UnlockManager.h"
 #include "PrefsManager.h"
 
-REGISTER_ACTOR_CLASS( Banner )
+REGISTER_ACTOR_CLASS( Banner );
 
 ThemeMetric<bool> SCROLL_RANDOM	("Banner","ScrollRandom");
 ThemeMetric<bool> SCROLL_ROULETTE	("Banner","ScrollRoulette");
@@ -232,6 +232,7 @@ void Banner::LoadFromSortOrder( SortOrder so )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Banner. */ 
 class LunaBanner: public Luna<Banner>
 {
 public:

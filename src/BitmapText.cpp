@@ -11,7 +11,7 @@
 #include "LuaBinding.h"
 #include "Foreach.h"
 
-REGISTER_ACTOR_CLASS( BitmapText )
+REGISTER_ACTOR_CLASS( BitmapText );
 
 /* XXX: Changing a whole array of diffuse colors every frame (several times) is
  * a waste, when we're usually setting them all to the same value. Rainbow and
@@ -794,6 +794,8 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 
 // lua start
 #include "FontCharAliases.h"
+
+/** @brief Allow Lua to have access to the BitmapText. */ 
 class LunaBitmapText: public Luna<BitmapText>
 {
 public:

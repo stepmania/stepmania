@@ -1,5 +1,3 @@
-/* SMLoader - Reads a Song from an .SM file. */
-
 #ifndef NotesLoaderSM_H
 #define NotesLoaderSM_H
 
@@ -9,7 +7,7 @@ class MsdFile;
 class Song;
 class Steps;
 class TimingData;
-
+/** @brief Reads a Song from an .SM file. */
 namespace SMLoader
 {
 	void LoadFromSMTokens( RString sStepsType, RString sDescription, RString sDifficulty,
@@ -29,8 +27,10 @@ namespace SMLoader
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

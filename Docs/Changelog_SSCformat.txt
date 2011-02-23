@@ -9,6 +9,9 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
+[v0.52] - AJ
+* Add CHARTSTYLE tag to NoteData section.
+
 [v0.51] - AJ
 * Move VERSION tag to the first line.
 * Limit VERSION tag to two decimal places.

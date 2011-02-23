@@ -1,5 +1,3 @@
-/* ActorUtil - Utility functions for creating and manipulating Actors. */
-
 #ifndef ActorUtil_H
 #define ActorUtil_H
 
@@ -13,14 +11,21 @@ typedef Actor* (*CreateActorFn)();
 template<typename T>
 Actor *CreateActor() { return new T; }
 
-// Each Actor class should have a REGISTER_ACTOR_CLASS in its CPP file.
+/**
+ * @brief Register the requested Actor with the specified external name.
+ *
+ * This should be called manually only if needed. */
 #define REGISTER_ACTOR_CLASS_WITH_NAME( className, externalClassName ) \
 	struct Register##className { \
 		Register##className() { ActorUtil::Register(#externalClassName, CreateActor<className>); } \
 	}; \
-	static Register##className register##className; \
-	className *className::Copy() const { return new className(*this); }
+	className *className::Copy() const { return new className(*this); } \
+	static Register##className register##className
 
+/**
+ * @brief Register the requested Actor so that it's more accessible.
+ *
+ * Each Actor class should have a REGISTER_ACTOR_CLASS in its CPP file. */ 
 #define REGISTER_ACTOR_CLASS( className ) REGISTER_ACTOR_CLASS_WITH_NAME( className, className )
 
 enum FileType
@@ -36,6 +41,7 @@ enum FileType
 };
 const RString& FileTypeToString( FileType ft );
 
+/** @brief Utility functions for creating and manipulating Actors. */
 namespace ActorUtil
 {
 	// Every screen should register its class at program initialization.

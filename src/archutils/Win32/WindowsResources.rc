@@ -198,12 +198,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "the spinal shark collective\nhttp://ssc.ajworld.net/"
             VALUE "FileDescription", "sm-ssc"
-            VALUE "FileVersion", "1, 0, 0, 0"
-            VALUE "InternalName", "sm-ssc3"
-            VALUE "LegalCopyright", "Copyright © 2001-2009"
+            VALUE "FileVersion", "1, 2, 2, 0"
+            VALUE "InternalName", "sm-ssc"
+            VALUE "LegalCopyright", "Copyright © 2001-2011"
             VALUE "OriginalFilename", "StepMania.exe"
             VALUE "ProductName", "sm-ssc"
-            VALUE "ProductVersion", "1, 0, 0, 0"
+            VALUE "ProductVersion", "1, 2, 2, 0"
         END
     END
     BLOCK "VarFileInfo"

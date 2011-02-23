@@ -55,24 +55,24 @@ public:
 typedef map<RString,XNodeValue*> XAttrs;
 class XNode;
 typedef vector<XNode*> XNodes;
-
+/** @brief Loop through each node. */
 #define FOREACH_Attr( pNode, Var ) \
 	for( XAttrs::iterator Var = (pNode)->m_attrs.begin(); \
 		Var != (pNode)->m_attrs.end(); \
 		++Var )
-
+/** @brief Loop through each node, using a constant iterator. */
 #define FOREACH_CONST_Attr( pNode, Var ) \
 	for( XAttrs::const_iterator Var = (pNode)->m_attrs.begin(); \
 		Var != (pNode)->m_attrs.end(); \
 		++Var )
-
+/** @brief Loop through each child. */
 #define FOREACH_Child( pNode, Var ) \
 	XNode *Var = NULL; \
 	for( XNodes::iterator Var##Iter = (pNode)->m_childs.begin(); \
 		Var = (Var##Iter != (pNode)->m_childs.end())? *Var##Iter:NULL, \
 		Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter )
-
+/** @brief Loop through each child, using a constant iterator. */
 #define FOREACH_CONST_Child( pNode, Var ) \
 	const XNode *Var = NULL; \
 	for( XNodes::const_iterator Var##Iter = (pNode)->m_childs.begin(); \

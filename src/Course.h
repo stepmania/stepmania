@@ -1,5 +1,3 @@
-/* Course - A queue of songs and notes. */
-
 #ifndef COURSE_H
 #define COURSE_H
 
@@ -33,6 +31,7 @@ enum SongSort
 	SongSort_LowestGrades,
 	NUM_SongSort,
 };
+/** @brief Loop through the various Song Sorts. */
 #define FOREACH_SongSort( i ) FOREACH_ENUM( SongSort, i )
 const RString& SongSortToString( SongSort ss );
 const RString& SongSortToLocalizedString( SongSort ss );
@@ -78,7 +77,7 @@ public:
 	void PushSelf( lua_State *L );
 };
 
-
+/** @brief A queue of songs and notes. */
 class Course
 {
 public:

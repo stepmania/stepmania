@@ -16,12 +16,11 @@
 #include "CommonMetrics.h"
 #include "GameLoop.h"
 
-#define LINE_NAMES				THEME->GetMetric (m_sName,"LineNames")
-#define LINE(sLineName)				THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
-#define FORCE_ALL_PLAYERS			THEME->GetMetricB(m_sName,"ForceAllPlayers")
-#define INPUT_MODE				THEME->GetMetric (m_sName,"InputMode")
-#define NAVIGATION_MODE				THEME->GetMetric (m_sName,"NavigationMode")
-
+#define LINE_NAMES			THEME->GetMetric (m_sName,"LineNames")
+#define LINE(sLineName)		THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
+#define FORCE_ALL_PLAYERS	THEME->GetMetricB(m_sName,"ForceAllPlayers")
+#define INPUT_MODE			THEME->GetMetric (m_sName,"InputMode")
+#define NAVIGATION_MODE		THEME->GetMetric (m_sName,"NavigationMode")
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
 
@@ -64,7 +63,6 @@ void ScreenOptionsMaster::Init()
 	}
 
 	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
-
 
 	InitMenu( OptionRowHandlers );
 }
@@ -109,9 +107,9 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 
 		if( m_iChangeMask & OPT_APPLY_ASPECT_RATIO )
 		{
-			THEME->UpdateLuaGlobals();	// This needs to be done before resetting the projection matrix below
+			THEME->UpdateLuaGlobals();		// This needs to be done before resetting the projection matrix below
 			THEME->ReloadSubscribers();	// SCREEN_* has changed, so re-read all subscribing ThemeMetrics
-			SCREENMAN->ThemeChanged();	// recreate ScreenSystemLayer and SharedBGA
+			SCREENMAN->ThemeChanged();		// recreate ScreenSystemLayer and SharedBGA
 		}
 
 		/* If the theme changes, we need to reset RageDisplay to apply the new window
@@ -131,7 +129,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 
 		if( m_iChangeMask & OPT_SAVE_PREFERENCES )
 		{
-			/* Save preferences. */
+			// Save preferences.
 			LOG->Trace("ROW_CONFIG used; saving ...");
 			PREFSMAN->SavePrefsToDisk();
 		}

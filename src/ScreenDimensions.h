@@ -1,4 +1,4 @@
-/* ScreenDimensions - defines for screen resolutions. */
+/** @brief ScreenDimensions - defines for screen resolutions. */
 
 #ifndef SCREEN_DIMENSIONS_H
 #define SCREEN_DIMENSIONS_H
@@ -27,12 +27,20 @@ namespace ScreenDimensions
 
 #define FullScreenRectF RectF(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM)
 
+/**
+ * @brief The size of the arrows.
+ *
+ * This is referenced in ArrowEffects, GameManager, NoteField, and SnapDisplay.
+ * XXX: doesn't always have to be 64. -aj
+ */
 #define	ARROW_SIZE	(64)
 
 #endif
 
-/*
- * (c) 2001-2002 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2002
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

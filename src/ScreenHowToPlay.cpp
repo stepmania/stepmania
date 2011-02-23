@@ -169,7 +169,7 @@ void ScreenHowToPlay::Init()
 		this->AddChild( m_Player );
 		ActorUtil::LoadAllCommandsAndSetXY( m_Player, m_sName );
 
-		// Don't show judgement
+		// Don't show judgment
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fBlind, 1.0f );
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_bDemonstrationOrJukebox = true;
@@ -301,6 +301,7 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenHowToPlay. */ 
 class LunaScreenHowToPlay: public Luna<ScreenHowToPlay>
 {
 public:

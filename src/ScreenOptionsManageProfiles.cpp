@@ -16,11 +16,11 @@ static LocalizedString NEW_PROFILE_DEFAULT_NAME( "ScreenOptionsManageProfiles", 
 
 #define SHOW_CREATE_NEW (!PROFILEMAN->FixedProfiles())
 
-AutoScreenMessage( SM_BackFromEnterNameForNew )
-AutoScreenMessage( SM_BackFromRename )
-AutoScreenMessage( SM_BackFromDeleteConfirm )
-AutoScreenMessage( SM_BackFromClearConfirm )
-AutoScreenMessage( SM_BackFromContextMenu )
+AutoScreenMessage( SM_BackFromEnterNameForNew );
+AutoScreenMessage( SM_BackFromRename );
+AutoScreenMessage( SM_BackFromDeleteConfirm );
+AutoScreenMessage( SM_BackFromClearConfirm );
+AutoScreenMessage( SM_BackFromContextMenu );
 
 enum ProfileAction
 {
@@ -42,6 +42,7 @@ static const char *ProfileActionNames[] = {
 };
 XToString( ProfileAction );
 XToLocalizedString( ProfileAction );
+/** @brief Loop through each ProfileAction. */
 #define FOREACH_ProfileAction( i ) FOREACH_ENUM( ProfileAction, i )
 
 static MenuDef g_TempMenu(

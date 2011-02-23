@@ -37,6 +37,7 @@ void ScreenProfileLoad::Continue()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenProfileLoad. */ 
 class LunaScreenProfileLoad: public Luna<ScreenProfileLoad>
 {
 public:

@@ -78,6 +78,12 @@ enum MessageID
 	Message_LifeMeterChangedP1,
 	Message_LifeMeterChangedP2,
 	Message_UpdateScreenHeader,
+	// should these be here? -aj
+	Message_LeftClick,
+	Message_RightClick,
+	Message_MiddleClick,
+	Message_MouseWheelUp,
+	Message_MouseWheelDown,
 	NUM_MessageID,	// leave this at the end
 	MessageID_Invalid
 };
@@ -207,7 +213,14 @@ public:
 	bool operator != ( const T &other ) const { return val != other; }
 };
 
-namespace LuaHelpers { template<class T> void Push( lua_State *L, const BroadcastOnChange<T> &Object ) { LuaHelpers::Push<T>( L, Object.Get() ); } }
+/** @brief Utilities for working with Lua. */
+namespace LuaHelpers
+{
+	template<class T> void Push( lua_State *L, const BroadcastOnChange<T> &Object ) 
+	{ 
+		LuaHelpers::Push<T>( L, Object.Get() );
+	} 
+}
 
 template<class T, int N>
 class BroadcastOnChange1D

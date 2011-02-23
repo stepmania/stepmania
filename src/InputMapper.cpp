@@ -34,7 +34,6 @@ InputMapper::InputMapper()
 	m_pInputScheme = NULL;
 }
 
-
 InputMapper::~InputMapper()
 {
 	SaveMappingsToDisk();
@@ -559,9 +558,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 	vector<InputDeviceInfo> vDevices;
 	INPUTMAN->GetDevicesAndDescriptions(vDevices);
 
-	//
 	// fill vector with all auto mappings
-	//
 	vector<AutoMappings> vAutoMappings;
 	{
 		// file automaps - Add these first so that they can match before the hard-coded mappings

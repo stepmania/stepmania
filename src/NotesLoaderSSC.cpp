@@ -634,6 +634,11 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					pNewNotes->m_StepsType = GAMEMAN->StringToStepsType( sParams[1] );
 				}
 
+				else if( sValueName=="CHARTSTYLE" )
+				{
+					pNewNotes->SetChartStyle( sParams[1] );
+				}
+
 				else if( sValueName=="DESCRIPTION" )
 				{
 					pNewNotes->SetDescription( sParams[1] );
@@ -946,7 +951,7 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 	Song* pSong = NULL;
 	Steps* pNewNotes;
 	bool bSSCFormat = false;
-	
+
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		int iNumParams = msd.GetNumParams(i);
@@ -962,23 +967,24 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 				LOG->UserLog( "Edit file", sEditFilePath, "has more than one #SONG tag." );
 				return false;
 			}
-			
+
 			RString sSongFullTitle = sParams[1];
 			sSongFullTitle.Replace( '\\', '/' );
-			
+
 			pSong = SONGMAN->FindSong( sSongFullTitle );
 			if( pSong == NULL )
 			{
 				LOG->UserLog( "Edit file", sEditFilePath, "requires a song \"%s\" that isn't present.", sSongFullTitle.c_str() );
 				return false;
 			}
-			
+
 			if( pSong->GetNumStepsLoadedFromProfile(slot) >= MAX_EDITS_PER_SONG_PER_PROFILE )
 			{
 				LOG->UserLog( "Song file", sSongFullTitle, "already has the maximum number of edits allowed for ProfileSlotP%d.", slot+1 );
 				return false;
 			}
 		}
+
 		else if( sValueName=="NOTEDATA" )
 		{
 			pNewNotes = new Steps;
@@ -987,6 +993,12 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 		if( sValueName=="STEPSTYPE" )
 		{
 			pNewNotes->m_StepsType = GAMEMAN->StringToStepsType( sParams[1] );
+			bSSCFormat = true;
+		}
+
+		else if( sValueName=="CHARTSTYLE" )
+		{
+			pNewNotes->SetChartStyle( sParams[1] );
 			bSSCFormat = true;
 		}
 
@@ -1096,7 +1108,7 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 				SAFE_DELETE( pNewNotes );
 				return false;
 			}
-			
+
 			pSong->AddSteps( pNewNotes );
 			return true; // Only allow one Steps per edit file!
 		}
@@ -1106,7 +1118,9 @@ bool SSCLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePat
 		}
 	}
 
-	return true;
+	//return true;
+	// only load a SSC edit if it passes the checks. -aj
+	return bSSCFormat;
 }
 
 void SSCLoader::TidyUpData( Song &song, bool bFromCache )

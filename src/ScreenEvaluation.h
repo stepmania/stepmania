@@ -1,5 +1,3 @@
-/* ScreenEvaluation - Shows the player their score after gameplay has ended. */
-
 #ifndef SCREEN_EVALUATION_H
 #define SCREEN_EVALUATION_H
 
@@ -14,31 +12,38 @@
 #include "ThemeMetric.h"
 #include "RollingNumbers.h"
 
-const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
+/**
+ * @brief How many songs are shown at the end?
+ *
+ * In the traditional summary, only the last three stages are shown.
+ * If any extra stages are passed, those get shown as well. */
+const int MAX_SONGS_TO_SHOW = 5;
+/** @brief The different judgment lines shown. */
 enum JudgmentLine
 {
-	JudgmentLine_W1,
-	JudgmentLine_W2,
-	JudgmentLine_W3,
-	JudgmentLine_W4,
-	JudgmentLine_W5,
-	JudgmentLine_Miss,
-	JudgmentLine_Held,
-	JudgmentLine_MaxCombo,
-	NUM_JudgmentLine,
+	JudgmentLine_W1,	/**< The line showing absolutely perfect hits. */
+	JudgmentLine_W2,	/**< The line showing just-a-smidge-off perfect hits. */
+	JudgmentLine_W3,	/**< The line showing almost perfect hits. */
+	JudgmentLine_W4,	/**< The line showing hits that were not that good. */
+	JudgmentLine_W5,	/**< The line showing hits that were almost missed. */
+	JudgmentLine_Miss,	/**< The line showing missed notes. */
+	JudgmentLine_Held,	/**< The line showing held down notes. */
+	JudgmentLine_MaxCombo,	/**< The line showing the player's max combo. */
+	NUM_JudgmentLine,	/**< The number of judgment lines available. */
 	JudgmentLine_Invalid
 };
+/** @brief The number of details based on the radar categories. */
 enum DetailLine
 {
-	DetailLine_NumSteps,
-	DetailLine_Jumps, 
-	DetailLine_Holds, 
-	DetailLine_Mines, 
-	DetailLine_Hands, 
-	DetailLine_Rolls, 
-	NUM_DetailLine 
+	DetailLine_NumSteps,	/**< The number of steps hit. */
+	DetailLine_Jumps,	/**< The number of jumps hit together. */
+	DetailLine_Holds,	/**< The number of holds held. */
+	DetailLine_Mines,	/**< The number of mines avoided. */
+	DetailLine_Hands,	/**< The number of hands hit (somehow) */
+	DetailLine_Rolls,	/**< The number of rolls hit repeatedly. */
+	NUM_DetailLine		/**< The nuber of detailed lines. */
 };
-
+/** @brief Shows the player their score after gameplay has ended. */
 class ScreenEvaluation : public ScreenWithMenuElements
 {
 public:
@@ -69,7 +74,7 @@ protected:
 
 	// grade area
 	AutoActor		m_sprGradeFrame[NUM_PLAYERS];
-	GradeDisplay	m_Grades[NUM_PLAYERS];
+	GradeDisplay		m_Grades[NUM_PLAYERS];
 
 	// points area
 	bool			m_bNewSongsUnlocked;
@@ -91,7 +96,7 @@ protected:
 
 	// judgment area
 	AutoActor		m_sprSharedJudgmentLineLabels[NUM_JudgmentLine];
-	RollingNumbers	m_textJudgmentLineNumber[NUM_JudgmentLine][NUM_PLAYERS];
+	RollingNumbers		m_textJudgmentLineNumber[NUM_JudgmentLine][NUM_PLAYERS];
 
 	// stats area
 	AutoActor		m_sprDetailFrame[NUM_PLAYERS];
@@ -99,7 +104,7 @@ protected:
 
 	// score area
 	AutoActor		m_sprScoreLabel;
-	RollingNumbers	m_textScore[NUM_PLAYERS];
+	RollingNumbers		m_textScore[NUM_PLAYERS];
 
 	// time area
 	AutoActor		m_sprTimeLabel;
@@ -108,14 +113,16 @@ protected:
 	RageSound		m_soundStart;	// sound played if the player passes or fails
 
 	ThemeMetric<bool>	SUMMARY;
-
+	/** @brief Did a player save a screenshot of their score? */
 	bool			m_bSavedScreenshot[NUM_PLAYERS];
 };
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

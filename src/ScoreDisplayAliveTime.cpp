@@ -9,7 +9,7 @@
 #include "LuaManager.h"
 #include "RageLog.h"
 
-REGISTER_ACTOR_CLASS( ScoreDisplayAliveTime )
+REGISTER_ACTOR_CLASS( ScoreDisplayAliveTime );
 
 
 ScoreDisplayAliveTime::ScoreDisplayAliveTime()
@@ -68,6 +68,7 @@ void ScoreDisplayAliveTime::UpdateNumber()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScoreDisplayAliveTime. */ 
 class LunaScoreDisplayAliveTime: public Luna<ScoreDisplayAliveTime>
 {
 public:

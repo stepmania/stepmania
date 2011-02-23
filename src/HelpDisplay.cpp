@@ -5,7 +5,7 @@
 #include "ThemeManager.h"
 #include "ActorUtil.h"
 
-REGISTER_ACTOR_CLASS( HelpDisplay )
+REGISTER_ACTOR_CLASS( HelpDisplay );
 
 HelpDisplay::HelpDisplay()
 {
@@ -62,6 +62,8 @@ void HelpDisplay::Update( float fDeltaTime )
 
 #include "LuaBinding.h"
 #include "FontCharAliases.h"
+
+/** @brief Allow Lua to have access to the HelpDisplay. */ 
 class LunaHelpDisplay: public Luna<HelpDisplay>
 {
 public:

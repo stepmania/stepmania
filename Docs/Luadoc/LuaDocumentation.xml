@@ -2038,6 +2038,29 @@
 		Returns a table of noteskin names for the current gametype.
 	</Function>
 </Class>
+<Class name='OptionRow'>
+	<Function name='FirstItemGoesDown' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if the first item in the row goes down.
+	</Function>
+	<Function name='GetChoiceInRowWithFocus' sm-ssc='true' return='int' arguments='PlayerNumber pn'>
+		Returns an index of the choice in the row that player <code>pn</code> is on.
+	</Function>
+	<Function name='GetName' sm-ssc='true' return='string' arguments=''>
+		Returns the name of the OptionRow.
+	</Function>
+	<Function name='GetNumChoices' sm-ssc='true' return='int' arguments=''>
+		Returns the number of choices in this OptionRow.
+	</Function>
+	<Function name='GetRowTitle' sm-ssc='true' return='string' arguments=''>
+		Returns the row title string.
+	</Function>
+	<Function name='HasFocus' sm-ssc='true' return='bool' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if this row is focused by player <code>pn</code>.
+	</Function>
+	<Function name='OneChoiceForAllPlayers' sm-ssc='true' return='bool' arguments=''>
+		Returns <code>true</code> if this row forces one choice on all players.
+	</Function>
+</Class>
 <Class name='PaneDisplay'>
 	<Function name='SetFromGameState' return='void' arguments=''>
 		Sets the PaneDisplay from the GameState.
@@ -2604,8 +2627,14 @@
 	<Function name='AllAreOnLastRow' return='bool' sm-ssc='true' arguments=''>
 		Returns <code>true</code> if all active players are on the last options row.
 	</Function>
-	<Function name='GetCurrentRow' return='int' arguments='PlayerNumber pn'>
-		Returns the current row that player <code>pn</code> is on.
+	<Function name='FocusedItemEndsScreen' return='bool' sm-ssc='true' arguments='PlayerNumber pn'>
+		Returns <code>true</code> if the specified player is on an items that ends the screen.
+	</Function>
+	<Function name='GetCurrentRowIndex' renamed='true' return='int' arguments='PlayerNumber pn'>
+		Returns the current row that player <code>pn</code> is on. (Was previously <code>GetCurrentRow</code>.)
+	</Function>
+	<Function name='GetOptionRow' sm-ssc='true' return='OptionRow' arguments='int iRow'>
+		Returns the specified OptionRow.
 	</Function>
 </Class>
 <Class name='ScreenPlayerOptions'>
@@ -3324,6 +3353,9 @@
 	</Function>
 	<Function name='Move' sm-ssc='true' return='void' arguments='int n'>
 		Moves the wheel by <code>n</code>.
+	</Function>
+	<Function name='SetOpenSection' sm-ssc='true' return='void' arguments='string sSection'>
+		Attempts to set the open section to <code>sSection</code>.
 	</Function>
 </Class>
 <Class name='WorkoutGraph'>

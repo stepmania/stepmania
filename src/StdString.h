@@ -1,5 +1,3 @@
-/** @brief StdString - std::string convenience wrapper. */
-
 // =============================================================================
 //  FILE:  StdString.h
 //  AUTHOR:	Joe O'Leary (with outside help noted in comments)
@@ -122,29 +120,29 @@ void MakeLower( char *p, size_t iLen );
 void MakeUpper( wchar_t *p, size_t iLen );
 void MakeLower( wchar_t *p, size_t iLen );
 
-// =============================================================================
-// INLINE FUNCTIONS ON WHICH CSTDSTRING RELIES
-//
-// Usually for generic text mapping, we rely on preprocessor macro definitions
-// to map to string functions.  However the CStdStr<> template cannot use
-// macro-based generic text mappings because its character types do not get
-// resolved until template processing which comes AFTER macro processing.  In
-// other words, UNICODE is of little help to us in the CStdStr template
-//
-// Therefore, to keep the CStdStr declaration simple, we have these inline
-// functions.  The template calls them often.  Since they are inline (and NOT
-// exported when this is built as a DLL), they will probably be resolved away
-// to nothing. 
-//
-// Without these functions, the CStdStr<> template would probably have to broken
-// out into two, almost identical classes.  Either that or it would be a huge,
-// convoluted mess, with tons of "if" statements all over the place checking the
-// size of template parameter CT.
-// 
-// In several cases, you will see two versions of each function.  One version is
-// the more portable, standard way of doing things, while the other is the
-// non-standard, but often significantly faster Visual C++ way.
-// =============================================================================
+/**
+ * @brief Inline functions on which CStdString relies on.
+ *
+ * Usually for generic text mapping, we rely on preprocessor macro definitions
+ * to map to string functions.  However the CStdStr<> template cannot use
+ * macro-based generic text mappings because its character types do not get
+ * resolved until template processing which comes AFTER macro processing.  In
+ * other words, UNICODE is of little help to us in the CStdStr template.
+ *
+ * Therefore, to keep the CStdStr declaration simple, we have these inline
+ * functions.  The template calls them often.  Since they are inline (and NOT
+ * exported when this is built as a DLL), they will probably be resolved away
+ * to nothing. 
+ *
+ * Without these functions, the CStdStr<> template would probably have to broken
+ * out into two, almost identical classes.  Either that or it would be a huge,
+ * convoluted mess, with tons of "if" statements all over the place checking the
+ * size of template parameter CT.
+ * 
+ * In several cases, you will see two versions of each function.  One version is
+ * the more portable, standard way of doing things, while the other is the
+ * non-standard, but often significantly faster Visual C++ way.
+ */
 namespace StdString
 {
 // -----------------------------------------------------------------------------

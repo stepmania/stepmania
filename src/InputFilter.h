@@ -7,15 +7,15 @@
 
 enum InputEventType
 {
-	/* The device was just pressed. */
+	// The device was just pressed.
 	IET_FIRST_PRESS,
 
-	/* The device is auto-repeating.  This event is guaranteed to be sent only between
-	 * IET_FIRST_PRESS and IET_RELEASE pairs. */
+	/* The device is auto-repeating. This event is guaranteed to be sent only
+	 * between IET_FIRST_PRESS and IET_RELEASE pairs. */
 	IET_REPEAT,
 
-	/* The device is no longer pressed.  Exactly one IET_RELEASE event will be sent
-	 * for each IET_FIRST_PRESS. */
+	/* The device is no longer pressed. Exactly one IET_RELEASE event will be
+	 * sent for each IET_FIRST_PRESS. */
 	IET_RELEASE,
 
 	NUM_InputEventType,
@@ -29,8 +29,14 @@ struct InputEvent
 	DeviceInput di;
 	InputEventType type;
 
-	/* A list of all buttons that were pressed at the time of this event: */
+	// A list of all buttons that were pressed at the time of this event:
 	DeviceInputList m_ButtonState;
+};
+
+struct MouseCoordinates
+{
+	float fX;
+	float fY;
 };
 
 class RageMutex;
@@ -62,6 +68,14 @@ public:
 	void GetInputEvents( vector<InputEvent> &aEventOut );
 	void GetPressedButtons( vector<DeviceInput> &array ) const;
 
+	// cursor
+	void UpdateCursorLocation(float _fX, float _fY);
+	float GetCursorX(){ return m_MouseCoords.fX; }
+	float GetCursorY(){ return m_MouseCoords.fY; }
+
+	// Lua
+	void PushSelf( lua_State *L );
+
 private:
 	void CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now );
 	void ReportButtonChange( const DeviceInput &di, InputEventType t );
@@ -69,11 +83,10 @@ private:
 
 	vector<InputEvent> queue;
 	RageMutex *queuemutex;
+	MouseCoordinates m_MouseCoords;
 };
 
-
 extern InputFilter*	INPUTFILTER;	// global and accessable from anywhere in our program
-
 
 #endif
 

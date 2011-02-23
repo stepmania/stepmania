@@ -24,8 +24,8 @@ static const RString TEMP_FILE_NAME = "--temp--";
 #define EXPLANATION_TEXT( row )	THEME->GetString(m_sName,"Explanation"+EditMenuRowToString(row))
 #define EDIT_MENU_TYPE			THEME->GetMetric(m_sName,"EditMenuType")
 
-AutoScreenMessage( SM_RefreshSelector )
-AutoScreenMessage( SM_BackFromEditDescription )
+AutoScreenMessage( SM_RefreshSelector );
+AutoScreenMessage( SM_BackFromEditDescription );
 
 REGISTER_SCREEN_CLASS( ScreenEditMenu );
 

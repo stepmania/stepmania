@@ -38,15 +38,16 @@ static const char *SelectionStateNames[] = {
 };
 XToString( SelectionState );
 
+/** @brief The maximum number of digits for the ScoreDisplay. */
 const int NUM_SCORE_DIGITS = 9;
 
 #define SHOW_OPTIONS_MESSAGE_SECONDS		THEME->GetMetricF( m_sName, "ShowOptionsMessageSeconds" )
 
-AutoScreenMessage( SM_AllowOptionsMenuRepeat )
-AutoScreenMessage( SM_SongChanged )
-AutoScreenMessage( SM_SortOrderChanging )
-AutoScreenMessage( SM_SortOrderChanged )
-AutoScreenMessage( SM_BackFromPlayerOptions )
+AutoScreenMessage( SM_AllowOptionsMenuRepeat );
+AutoScreenMessage( SM_SongChanged );
+AutoScreenMessage( SM_SortOrderChanging );
+AutoScreenMessage( SM_SortOrderChanged );
+AutoScreenMessage( SM_BackFromPlayerOptions );
 
 static RString g_sCDTitlePath;
 static bool g_bWantFallbackCdTitle;
@@ -418,6 +419,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			return;
 		}
 	}
+
+	// todo: use mousewheel to scroll MusicWheel -aj
 
 	// debugging?
 	// I just like being able to see untransliterated titles occasionally.
@@ -1853,6 +1856,7 @@ void ScreenSelectMusic::AfterMusicChange()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenSelectMusic. */ 
 class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
 {
 public:

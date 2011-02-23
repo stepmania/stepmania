@@ -1,5 +1,3 @@
-/* ProfileManager - Interface to machine and memory card profiles. */
-
 #ifndef ProfileManager_H
 #define ProfileManager_H
 
@@ -17,7 +15,7 @@ class Course;
 class Trail;
 struct HighScore;
 struct lua_State;
-
+/** @brief Interface to machine and memory card profiles. */
 class ProfileManager
 {
 public:

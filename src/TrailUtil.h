@@ -10,9 +10,19 @@ class Trail;
 class Course;
 class XNode;
 
+/** @brief Utility functions for dealing with the Trail. */
 namespace TrailUtil
 {
+	/**
+	 * @brief Retrieve the number of 
+	 * <a class="el" href="class_song.html">Songs</a> in the Trail.
+	 * @param pTrail the Trail itself.
+	 * @return the number of <a class="el" href="class_song.html">Songs</a>. */
 	int GetNumSongs( const Trail *pTrail );
+	/**
+	 * @brief Retrieve how long the Trail will last in seconds.
+	 * @param pTrail the Trail itself.
+	 * @return the total run time of the Trail. */
 	float GetTotalSeconds( const Trail *pTrail );
 };
 

@@ -6,7 +6,6 @@ function InitGamePrefs()
 		{ "NotePosition",	true },
 		{ "ComboOnRolls",	false },
 		{ "ComboUnderField",	true },
-		{ "AdjustSpeed",	false },
 	};
 
 	for idx,pref in ipairs(Prefs) do
@@ -387,49 +386,6 @@ function GamePrefComboUnderField()
 	return t;
 end
 
-function GetDefaultArrowSpacing()
-	local rates = {
-		64,		-- Default
-		80,		-- Pro
-		128,	-- New
-	};
-	return GetGamePrefB("AdjustSpeed") and rates[3] or rates[1];
-end;
-function GamePrefAdjustSpeed()
-	local t = {
-		Name = "GamePrefAdjustSpeed";
-		LayoutType = "ShowAllInRow";
-		SelectType = "SelectOne";
-		OneChoiceForAllPlayers = true;
-		ExportOnChange = false;
-		Choices = { 'Normal','Fast' };
-		LoadSelections = function(self, list, pn)
-			if ReadGamePrefFromFile("AdjustSpeed") ~= nil then
-				if GetGamePrefB("AdjustSpeed") then
-					list[2] = true;
-				else
-					list[1] = true;
-				end;
-			else
-				WriteGamePrefToFile("AdjustSpeed",true);
-				list[2] = true;
-			end;
-		end;
-		SaveSelections = function(self, list, pn)
-			local val;
-			if list[2] then
-				val = true;
-			else
-				val = false;
-			end;
-			WriteGamePrefToFile("AdjustSpeed",val);
-			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
-			THEME:ReloadMetrics();
-		end;
-	};
-	setmetatable( t, t );
-	return t;
-end
 function GamePrefAutoSetStyle()
 	local t = {
 		Name = "GamePrefAutoSetStyle";

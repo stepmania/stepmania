@@ -7,7 +7,7 @@
 
 class RageSoundResampler_Polyphase;
 
-/* This class changes the sampling rate of a sound. */
+/** @brief This class changes the sampling rate of a sound. */
 class RageSoundReader_Resample_Good: public RageSoundReader_Filter
 {
 public:
@@ -22,10 +22,14 @@ public:
 	int GetNextSourceFrame() const;
 	float GetStreamToSourceRatio() const;
 
-	/* Change the rate of a sound without changing the sample rate. */
+	/**
+	 * @brief Change the rate of a sound without changing the sample rate.
+	 * @param fRatio the ratio for changing. */
 	void SetRate( float fRatio );
 
-	/* SetRate() will be rounded.  Get the exact rate. */
+	/**
+	 * @brief Retrieve the exact rate.
+	 * @return the exact rate. */
 	float GetRate() const;
 
 	int GetSampleRate() const { return m_iSampleRate; }

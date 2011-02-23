@@ -1,5 +1,3 @@
-/* GradeDisplay - Grade shown on ScreenEvaluation. */
-
 #ifndef GRADE_DISPLAY_H
 #define GRADE_DISPLAY_H
 
@@ -8,7 +6,7 @@
 #include "PlayerNumber.h"
 #include "AutoActor.h"
 struct lua_State;
-
+/** @brief Grade shown on ScreenEvaluation. */
 class GradeDisplay : public ActorFrame
 {
 public:

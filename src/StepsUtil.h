@@ -11,19 +11,43 @@ class Profile;
 class XNode;
 class SongCriteria;
 
+/** @brief the criteria for finding certain Steps. */
 class StepsCriteria
 {
 public:
-	Difficulty m_difficulty;	// don't filter if Difficulty_Invalid
-	int m_iLowMeter;		// don't filter if -1
-	int m_iHighMeter;		// don't filter if -1
+	/**
+	 * @brief the Difficulty to search for.
+	 *
+	 * Don't filter here if the Difficulty is Difficulty_Invalid. */
+	Difficulty m_difficulty;
+	/**
+	 * @brief The lowest meter to search for.
+	 *
+	 * Don't filter here if the meter is -1. */
+	int m_iLowMeter;
+	/**
+	 * @brief The highest meter to search for.
+	 *
+	 * Don't filter here if the meter is -1. */
+	int m_iHighMeter;
 	// Currently, Songs have BPM since TimingData is by Song. These are just
 	// here for the inevitable chart-based BPMs future. -aj
 	// float m_fLowBPM;		// don't filter if -1
 	// float m_fHighBPM;		// don't filter if -1
-	StepsType m_st;			// don't filter if StepsType_Invalid
-	enum Locked { Locked_Locked, Locked_Unlocked, Locked_DontCare } m_Locked;
+	/**
+	 * @brief the step type to search for.
+	 *
+	 * Don't filter here if the StepsType is StepsType_Invalid. */
+	StepsType m_st;
+	/** @brief Check a song's locked status for searching. */
+	enum Locked
+	{ 
+		Locked_Locked,		/**< We want songs that are locked. */
+		Locked_Unlocked,	/**< We want songs that are unlocked. */
+		Locked_DontCare		/**< We don't care if the songs are locked or not. */
+	} /** @brief The Song's locked status. */ m_Locked;
 
+	/** @brief Set up the initial criteria. */
 	StepsCriteria()
 	{
 		m_difficulty = Difficulty_Invalid;
@@ -35,32 +59,89 @@ public:
 		m_Locked = Locked_DontCare;
 	}
 
+	/**
+	 * @brief Determine if the Song and Steps match our criteria.
+	 * @param pSong the Song to check for.
+	 * @param pSteps the <a class="el" href="class_steps.html">Step</a> to check for.
+	 * @return true if it matches, false otherwise.
+	 */
 	bool Matches( const Song *pSong, const Steps *pSteps ) const;
+	/**
+	 * @brief Compare two StepsCriteria to see if they are equal.
+	 * @param other the StepsCriteria we are checking against.
+	 * @return true if they are equal, false otherwise. */
 	bool operator==( const StepsCriteria &other ) const
 	{
 #define X(x) (x == other.x)
 		return X(m_difficulty) && X(m_iLowMeter) && X(m_iHighMeter) && X(m_st) && X(m_Locked);
 #undef X
 	}
+	/**
+	 * @brief Compare two StepsCriteria to see if they are not equal.
+	 * @param other the StepsCriteria we are checking against.
+	 * @return true if they are not equal, false otherwise. */
 	bool operator!=( const StepsCriteria &other ) const { return !operator==( other ); }
 };
 
+/** @brief A Song and one of its Steps. */
 class SongAndSteps
 {
 public:
+	/** @brief the Song we're using. */
 	Song *pSong;
+	/** @brief the Steps we're using. */
 	Steps *pSteps;
+	/** @brief Set up a blank Song and 
+	 * <a class="el" href="class_steps.html">Step</a>. */
 	SongAndSteps() : pSong(NULL), pSteps(NULL) { }
+	/**
+	 * @brief Set up the specified Song and 
+	 * <a class="el" href="class_steps.html">Step</a>.
+	 * @param pSong_ the new Song.
+	 * @param pSteps_ the new <a class="el" href="class_steps.html">Step</a>. */
 	SongAndSteps( Song *pSong_, Steps *pSteps_ ) : pSong(pSong_), pSteps(pSteps_) { }
+	/**
+	 * @brief Compare two sets of Songs and Steps to see if they are equal.
+	 * @param other the other set of SongAndSteps.
+	 * @return true if the two sets of Songs and Steps are equal, false otherwise. */
 	bool operator==( const SongAndSteps& other ) const { return pSong==other.pSong && pSteps==other.pSteps; }
+	/**
+	 * @brief Compare two sets of Songs and Steps to see if they are not equal.
+	 * @param other the other set of SongAndSteps.
+	 * @return true if the two sets of Songs and Steps are not equal, false otherwise. */
 	bool operator<( const SongAndSteps& other ) const { if( pSong!=other.pSong ) return pSong<other.pSong; return pSteps<other.pSteps; }
 };
 
+/** @brief Utility functions for working with Steps. */
 namespace StepsUtil
 {
+	/**
+	 * @brief Retrieve all of the Steps that match the criteria.
+	 * @param soc the SongCriteria to look for.
+	 * @param stc the StepsCriteria to look for.
+	 * @param out the SongsAndSteps that match.
+	 */
 	void GetAllMatching( const SongCriteria &soc, const StepsCriteria &stc, vector<SongAndSteps> &out );	// look up in SONGMAN
+	/**
+	 * @brief Retrieve all of the Steps that match the criteria.
+	 * @param pSong the Song we're checking in.
+	 * @param stc the StepsCriteria to look for.
+	 * @param out the SongsAndSteps that match.
+	 */
 	void GetAllMatching( Song *pSong, const StepsCriteria &stc, vector<SongAndSteps> &out );
+	/**
+	 * @brief Is there a <a class="el" href="class_steps.html">Step</a>
+	 * that matches the criteria?
+	 * @param soc the SongCriteria to look for.
+	 * @param stc the StepsCriteria to look for.
+	 * @return true if we find a match, false otherwise. */
 	bool HasMatching( const SongCriteria &soc, const StepsCriteria &stc );
+	/**
+	 * @brief Is there a <a class="el" href="class_steps.html">Step</a>
+	 * that matches the criteria?
+	 * @param pSong the Song we're checking in.
+	 * @param stc the StepsCriteria to look for.
+	 * @return true if we find a match, false otherwise. */
 	bool HasMatching( const Song *pSong, const StepsCriteria &stc );
 
 	bool CompareNotesPointersByRadarValues(const Steps* pSteps1, const Steps* pSteps2);
@@ -103,8 +184,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

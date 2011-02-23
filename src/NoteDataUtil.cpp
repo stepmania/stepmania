@@ -831,7 +831,7 @@ void NoteDataUtil::RemoveHoldNotes( NoteData &in, int iStartIndex, int iEndIndex
 	// turn all the HoldNotes into TapNotes
 	for( int t=0; t<in.GetNumTracks(); ++t )
 	{
-		NoteData::iterator begin, end;
+		NoteData::TrackMap::iterator begin, end;
 		in.GetTapNoteRangeInclusive( t, iStartIndex, iEndIndex, begin, end );
 		for( ; begin != end; ++begin )
 		{
@@ -847,7 +847,7 @@ void NoteDataUtil::ChangeRollsToHolds( NoteData &in, int iStartIndex, int iEndIn
 {
 	for( int t=0; t<in.GetNumTracks(); ++t )
 	{
-		NoteData::iterator begin, end;
+		NoteData::TrackMap::iterator begin, end;
 		in.GetTapNoteRangeInclusive( t, iStartIndex, iEndIndex, begin, end );
 		for( ; begin != end; ++begin )
 		{
@@ -863,7 +863,7 @@ void NoteDataUtil::ChangeHoldsToRolls( NoteData &in, int iStartIndex, int iEndIn
 {
 	for( int t=0; t<in.GetNumTracks(); ++t )
 	{
-		NoteData::iterator begin, end;
+		NoteData::TrackMap::iterator begin, end;
 		in.GetTapNoteRangeInclusive( t, iStartIndex, iEndIndex, begin, end );
 		for( ; begin != end; ++begin )
 		{

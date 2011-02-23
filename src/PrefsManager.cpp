@@ -521,6 +521,7 @@ RString PrefsManager::GetPreferencesSection() const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the PrefsManager. */ 
 class LunaPrefsManager: public Luna<PrefsManager>
 {
 public:

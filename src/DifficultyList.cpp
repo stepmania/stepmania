@@ -24,7 +24,7 @@
 // "magic" 6. -aj
 #define MAX_METERS (NUM_Difficulty * 6) + MAX_EDITS_PER_SONG
 
-REGISTER_ACTOR_CLASS( StepsDisplayList )
+REGISTER_ACTOR_CLASS( StepsDisplayList );
 
 StepsDisplayList::StepsDisplayList()
 {
@@ -379,6 +379,7 @@ void StepsDisplayList::HandleMessage( const Message &msg )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the StepsDisplayList. */ 
 class LunaStepsDisplayList: public Luna<StepsDisplayList>
 {
 public:

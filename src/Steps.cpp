@@ -319,6 +319,7 @@ void Steps::DeAutogen( bool bCopyNoteData )
 		Decompress();	// fills in m_pNoteData with sliding window transform
 
 	m_sDescription		= Real()->m_sDescription;
+	m_sChartStyle		= Real()->m_sChartStyle;
 	m_Difficulty		= Real()->m_Difficulty;
 	m_iMeter		= Real()->m_iMeter;
 	copy( Real()->m_CachedRadarValues, Real()->m_CachedRadarValues + NUM_PLAYERS, m_CachedRadarValues );
@@ -370,6 +371,12 @@ void Steps::SetCredit( RString sCredit )
 {
 	DeAutogen();
 	m_sCredit = sCredit;
+}
+
+void Steps::SetChartStyle( RString sChartStyle )
+{
+	DeAutogen();
+	m_sChartStyle = sChartStyle;
 }
 
 bool Steps::MakeValidEditDescription( RString &sPreferredDescription )

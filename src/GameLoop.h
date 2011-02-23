@@ -1,8 +1,6 @@
-/* GameLoop - Main rendering and update loop. */
-
 #ifndef GAME_LOOP_H
 #define GAME_LOOP_H
-
+/** @brief Main rendering and update loop. */
 namespace GameLoop
 {
 	void RunGameLoop();

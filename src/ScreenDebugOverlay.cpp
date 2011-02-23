@@ -163,7 +163,7 @@ static LocalizedString DEBUG_MENU( "ScreenDebugOverlay", "Debug Menu" );
 void ScreenDebugOverlay::Init()
 {
 	Screen::Init();
-	
+
 	// Init debug mappings
 	// TODO: Arch-specific?
 	{
@@ -539,7 +539,6 @@ void ChangeVisualDelay( float fDelta )
 	pRet->Set( fSecs );
 }
 
-
 // DebugLines
 static LocalizedString AUTO_PLAY		( "ScreenDebugOverlay", "AutoPlay" );
 static LocalizedString ASSIST			( "ScreenDebugOverlay", "Assist" );
@@ -578,7 +577,6 @@ static LocalizedString CPU				( "ScreenDebugOverlay", "CPU" );
 static LocalizedString SONG			( "ScreenDebugOverlay", "Song" );
 static LocalizedString MACHINE			( "ScreenDebugOverlay", "Machine" );
 static LocalizedString SYNC_TEMPO		( "ScreenDebugOverlay", "Tempo" );
-
 
 class DebugLineAutoplay : public IDebugLine
 {

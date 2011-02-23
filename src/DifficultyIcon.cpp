@@ -12,7 +12,7 @@
 #include "XmlFile.h"
 #include "LuaManager.h"
 
-REGISTER_ACTOR_CLASS(DifficultyIcon)
+REGISTER_ACTOR_CLASS(DifficultyIcon);
 
 DifficultyIcon::DifficultyIcon()
 {
@@ -95,6 +95,7 @@ void DifficultyIcon::SetFromDifficulty( Difficulty dc )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the DifficultyIcon. */ 
 class LunaDifficultyIcon: public Luna<DifficultyIcon>
 {
 public:

@@ -1,5 +1,3 @@
-/* NetworkSyncManager - Uses ezsockets for primitive song syncing and score reporting. */
-
 #ifndef NetworkSyncManager_H
 #define NetworkSyncManager_H
 
@@ -74,6 +72,7 @@ enum NSScoreBoardColumn
 	NUM_NSScoreBoardColumn,
 	NSScoreBoardColumn_Invalid
 };
+/** @brief A special foreach loop going through each NSScoreBoardColumn. */
 #define FOREACH_NSScoreBoardColumn( sc ) FOREACH_ENUM( NSScoreBoardColumn, sc )
 
 struct NetServerInfo
@@ -106,7 +105,7 @@ public:
 
 	void ClearPacket();
 };
-
+/** @brief Uses ezsockets for primitive song syncing and score reporting. */
 class NetworkSyncManager 
 {
 public:

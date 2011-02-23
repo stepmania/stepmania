@@ -430,6 +430,7 @@ RString CryptManager::GenerateRandomUUID()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the CryptManager. */ 
 class LunaCryptManager: public Luna<CryptManager>
 {
 public:

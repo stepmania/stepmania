@@ -8,9 +8,9 @@
 #include "ScreenManager.h"
 #include "ActorUtil.h"
 
-AutoScreenMessage( SM_BackFromRoomName )
-AutoScreenMessage( SM_RoomInfoRetract )
-AutoScreenMessage( SM_RoomInfoDeploy )
+AutoScreenMessage( SM_BackFromRoomName );
+AutoScreenMessage( SM_RoomInfoRetract );
+AutoScreenMessage( SM_RoomInfoDeploy );
 
 RoomWheel::~RoomWheel()
 {

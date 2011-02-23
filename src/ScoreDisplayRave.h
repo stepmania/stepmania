@@ -1,5 +1,3 @@
-/* ScoreDisplayRave - ScoreDisplay implementation for PLAY_MODE_RAVE. */
-
 #ifndef SCORE_DISPLAY_RAVE_H
 #define SCORE_DISPLAY_RAVE_H
 
@@ -9,7 +7,7 @@
 #include "BitmapText.h"
 #include "AutoActor.h"
 
-
+/** @brief ScoreDisplay implementation for PLAY_MODE_RAVE. */
 class ScoreDisplayRave : public ScoreDisplay
 {
 public:

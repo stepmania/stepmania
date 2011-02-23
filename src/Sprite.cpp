@@ -14,7 +14,7 @@
 #include "LuaBinding.h"
 #include "LuaManager.h"
 
-REGISTER_ACTOR_CLASS( Sprite )
+REGISTER_ACTOR_CLASS( Sprite );
 
 
 Sprite::Sprite()
@@ -1084,6 +1084,7 @@ void Sprite::AddImageCoords( float fX, float fY )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Sprite. */ 
 class LunaSprite: public Luna<Sprite>
 {
 public:

@@ -10,8 +10,56 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.2.2 | 201102??
+sm-ssc v1.2.3 | 201102??
 --------------------------------------------------------------------------------
+
+20110222
+--------
+* [ScreenEdit] Display the Player Number for Routine mode. [Wolfman2000]
+* [ScreenEdit] Add format string metrics for the right hand side of the editor.
+  [Wolfman2000]
+* [ScreenGameplaySyncMachine] Allow themes to use either .ssc or .sm files. [AJ]
+
+20110221
+--------
+* Reverted ArrowSpacing back to 64 (which was the previous value).
+  Please re-adjust your speed mods accordingly. [AJ]
+* [OptionRow] Added GetLayoutType() and GetSelectType() Lua bindings. [AJ]
+* Fix .sm-style edits not being loaded. [AJ]
+* [Common] Added OperatorMenuScreen metric. [AJ]
+
+================================================================================
+sm-ssc v1.2.2 | 20110220
+--------------------------------------------------------------------------------
+
+20110219
+--------
+* [BPMDisplay] Added FormatString metric. [AJ]
+* [GrooveRadar] Changed "Label#OffsetX/Y" metrics to "Label#X/Y". [AJ]
+* [GrooveRadar] Fixed RadarFrame from not running commands on RadarFrame base. [AJ]
+* [GrooveRadar] Removed RadarFrameTweenOnScreen and RadarFrameTweenOffScreen metrics. (Themers: Use RadarFrameOnCommand and RadarFrameOffCommand instead) [AJ]
+* [GrooveRadar] Removed non-working PreDelayOnCommand, PostDelayOnCommand. (Themers: Use Label#OnCommand and Label#OffCommand instead.) [AJ]
+* [ScreenOptions] Renamed "GetCurrentRow" Lua binding to "GetCurrentRowIndex". [AJ]
+* [OptionRow] Added FirstItemGoesDown(), GetChoiceInRowWithFocus(PlayerNumber),
+  GetName(), GetNumChoices(), GetRowTitle(), HasFocus(PlayerNumber),
+  and OneChoiceForAllPlayers() Lua bindings. [AJ]
+* [ScreenOptions] Added Change message (params: RowIndex, ChangedToExit). [AJ]
+* [ScreenOptions] Added FocusedItemEndsScreen(PlayerNumber) and GetOptionRow(int)
+  Lua bindings. [AJ]
+* [ScreenPlayerOptions] now derives from ScreenOptions, allowing it to get the
+  new ScreenOptions bindings. [AJ]
+
+20110218
+--------
+* [WheelBase] Added SetOpenSection Lua binding. [AJ]
+
+20110217
+--------
+* Allowed refreshing of Fonts again. [AJ]
+
+20110214
+--------
+* Added #CHARTSTYLE to .ssc format, mainly meant for Pad/Keyboard distinctions. [AJ]
 
 20110213
 --------

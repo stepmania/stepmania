@@ -781,6 +781,7 @@ float GameSoundManager::GetPlayerBalance( PlayerNumber pn )
 
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the GameSoundManager. */ 
 class LunaGameSoundManager: public Luna<GameSoundManager>
 {
 public:

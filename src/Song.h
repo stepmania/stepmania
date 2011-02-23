@@ -1,5 +1,3 @@
-/* Song - Holds all music metadata and steps for one song. */
-
 #ifndef SONG_H
 #define SONG_H
 
@@ -18,11 +16,14 @@ class StepsID;
 struct lua_State;
 struct BackgroundChange;
 
+/** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
+/** @brief How many edits for this song can be available? */
 const int MAX_EDITS_PER_SONG			= 5*NUM_ProfileSlot;
 
 extern const int FILE_CACHE_VERSION;
 
+/** @brief The different background layers available. */
 enum BackgroundLayer
 {
 	BACKGROUND_LAYER_1,
@@ -31,8 +32,10 @@ enum BackgroundLayer
 	NUM_BackgroundLayer,
 	BACKGROUND_LAYER_Invalid
 };
+/** @brief A custom foreach loop for the different background layers. */
 #define FOREACH_BackgroundLayer( bl ) FOREACH_ENUM( BackgroundLayer, bl )
 
+/** @brief The different instrument tracks for band type games. */
 enum InstrumentTrack
 {
 	InstrumentTrack_Guitar,
@@ -44,24 +47,26 @@ enum InstrumentTrack
 const RString& InstrumentTrackToString( InstrumentTrack it );
 InstrumentTrack StringToInstrumentTrack( const RString& s );
 
+/** @brief The collection of lyrics for the Song. */
 struct LyricSegment
 {
-	float	m_fStartTime;
-	RString m_sLyric;
-	RageColor m_Color;
+	float	m_fStartTime; /** @brief When does the lyric show up? */
+	RString m_sLyric; /** @brief The lyrics themselves. */
+	RageColor m_Color; /** @brief The color of the lyrics. */
 };
 
+/** @brief Holds all music metadata and steps for one song. */
 class Song
 {
 	RString m_sSongDir;
 public:
 	void SetSongDir( const RString sDir ) { m_sSongDir = sDir; }
 
-	// Set when this song should be displayed in the music wheel:
+	/** @brief When should this song should be displayed in the music wheel? */
 	enum SelectionDisplay
 	{ 
-		SHOW_ALWAYS,	// always
-		SHOW_NEVER	// never (unless song hiding is turned off)
+		SHOW_ALWAYS,	/**< always show on the wheel. */
+		SHOW_NEVER	/**< never show on the wheel (unless song hiding is turned off). */
 	} m_SelectionDisplay;
 
 	Song();
@@ -69,34 +74,71 @@ public:
 	void Reset();
 	void DetachSteps();
 
-	// This one assumes the song is currently empty
+	/**
+	 * @brief Load a song from the chosen directory.
+	 *
+	 * This assumes that there is no song present right now.
+	 * @param sDir the song directory from which to load. */
 	bool LoadFromSongDir( RString sDir );
 	// This one takes the effort to reuse Steps pointers as best as it can
 	bool ReloadFromSongDir( RString sDir );
 
-	void TidyUpData();	// call after loading to clean up invalid data
-	void ReCalculateRadarValuesAndLastBeat();	// called by TidyUpData, and after saving
-	void TranslateTitles();	// called by TidyUpData
+	/** @brief Call this after loading a song to clean up invalid data. */
+	void TidyUpData();
+	
+	/**
+	 * @brief Get the new radar values, and determine the last beat at the same time.
+	 *
+	 * This is called by TidyUpData, after saving the Song. */
+	void ReCalculateRadarValuesAndLastBeat();
+	/**
+	 * @brief Translate any titles that aren't in english.
+	 *
+	 * This is called by TidyUpData. */
+	void TranslateTitles();	
 
+	/**
+	 * @brief Save to the new SSC file format.
+	 * @param sPath the path where we're saving the file.
+	 * @param bSavingCache a flag to determine if we're saving cache data.
+	 */
 	bool SaveToSSCFile( RString sPath, bool bSavingCache );
-	void Save();	// saves SSC and SM guaranteed.
+	/** @brief Save to the SSC and SM files no matter what. */
+	void Save();
+	/** 
+	  * @brief Save the current Song to a cache file using the preferred format.
+	  * @return its success or failure. */
 	bool SaveToCacheFile();
+	/**
+	 * @brief Save the current Song to a SM file.
+	 * @return its success or failure. */
 	bool SaveToSMFile();
+	/** 
+	 * @brief Save the current Song to a DWI file if possible.
+	 * @return its success or failure. */
 	bool SaveToDWIFile();
 
 	const RString &GetSongFilePath() const;
 	RString GetCacheFilePath() const;
 
 	void AddAutoGenNotes();
-	void AutoGen( StepsType ntTo, StepsType ntFrom );	// create Steps of type ntTo from Steps of type ntFrom
+	/**
+	 * @brief Automatically generate steps from one type to another.
+	 * @param ntTo the StepsType we're making.
+	 * @param ntFrom the StepsType we're generating from.
+	 */
+	void AutoGen( StepsType ntTo, StepsType ntFrom );
 	void RemoveAutoGenNotes();
 
 	// Directory this song data came from:
 	const RString &GetSongDir() const { return m_sSongDir; }
 
-	/* Filename associated with this file. This will always have a .SSC
-	 * extension. If we loaded a .SSC, this will point to it, but if we loaded
-	 * any other type, this will point to a generated .SSC filename. */
+	/**
+	 * @brief Filename associated with this file.
+	 *
+	 * This will always have a .SSC extension. If we loaded a .SSC, 
+	 * this will point to it, but if we loaded any other type,
+	 * this will point to a generated .SSC filename. */
 	RString m_sSongFileName;
 
 	RString m_sGroupName;
@@ -123,12 +165,15 @@ public:
 	RString GetDisplayFullTitle() const;
 	RString GetTranslitFullTitle() const;
 
-	// allow versioning with the song.
+	/** @brief The version of the song/file. */
 	float	m_fVersion;
 
 	RString m_sGenre;
 
-	// This is read and saved, but never actually used.
+	/**
+	 * @brief The person who worked with the song file who should be credited.
+	 *
+	 * This is read and saved, but never actually used. */
 	RString	m_sCredit;
 
 	RString	m_sMusicFile;
@@ -148,6 +193,7 @@ public:
 	//RString m_sJacketFile;	// typically square (e.g. 192x192, 256x256)
 	//RString m_sCDFile;		// square (e.g. 128x128 [DDR 1st-3rd])
 	//RString m_sDiscFile;		// rectangular (e.g. 256x192 [Pump], 200x150 [MGD3])
+	/** @brief The location of the lyrics file, if it exists. */
 	RString m_sLyricsFile;
 	RString m_sBackgroundFile;
 	RString m_sCDTitleFile;
@@ -196,7 +242,11 @@ public:
 	const vector<BackgroundChange>	&GetForegroundChanges() const;
 	vector<BackgroundChange>	&GetForegroundChanges();
 
-	vector<LyricSegment>			m_LyricSegments;	// this must be sorted before gameplay
+	/**
+	 * @brief The list of LyricSegments.
+	 *
+	 * This must be sorted before gameplay. */
+	vector<LyricSegment>			m_LyricSegments;
 
 	void AddBPMSegment( const BPMSegment &seg ) { m_Timing.AddBPMSegment( seg ); }
 	void AddStopSegment( const StopSegment &seg ) { m_Timing.AddStopSegment( seg ); }
@@ -232,7 +282,12 @@ public:
 	bool NormallyDisplayed() const;
 	bool ShowInDemonstrationAndRanking() const;
 
-	void AddSteps( Steps* pSteps ); // we are responsible for deleting the memory pointed to by pSteps!
+	/**
+	 * @brief Add the chosen Steps to the Song.
+	 *
+	 * We are responsible for deleting the memory pointed to by pSteps!
+	 * @param pSteps the new steps. */
+	void AddSteps( Steps* pSteps );
 	void DeleteSteps( const Steps* pSteps, bool bReAutoGen = true );
 
 	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid, const set<Steps*> *setInUse = NULL );
@@ -241,11 +296,13 @@ public:
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
 
-	// An array of keysound file names (e.g. "beep.wav").
-	// The index in this array corresponds to the index in TapNote.  If you 
-	// change the index in here, you must change all NoteData too.
-	// Any note that doesn't have a value in the range of this array
-	// means "this note doesn't have a keysound".
+	/**
+	 * @brief An array of keysound file names (e.g. "beep.wav").
+	 *
+	 * The index in this array corresponds to the index in TapNote.  If you 
+	 * change the index in here, you must change all NoteData too.
+	 * Any note that doesn't have a value in the range of this array
+	 * means "this note doesn't have a keysound". */
 	vector<RString> m_vsKeysoundFile;
 
 	CachedObject<Song> m_CachedObject;
@@ -260,8 +317,10 @@ private:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

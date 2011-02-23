@@ -1,5 +1,3 @@
-/* NoteDataWithScoring - NoteData with scores for each TapNote and HoldNote. */
-
 #ifndef NOTE_DATA_WITH_SCORING_H
 #define NOTE_DATA_WITH_SCORING_H
 
@@ -12,6 +10,7 @@ class PlayerStageStats;
 class NoteData;
 struct TapNote;
 
+/** @brief NoteData with scores for each TapNote and HoldNote. */
 namespace NoteDataWithScoring
 {
 	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow );

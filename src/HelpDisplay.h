@@ -1,12 +1,10 @@
-/* HelpDisplay - A BitmapText that cycles through messages. */
-
 #ifndef HELP_DISPLAY_H
 #define HELP_DISPLAY_H
 
 #include "BitmapText.h"
 
 struct lua_State;
-
+/** @brief A BitmapText that cycles through messages. */
 class HelpDisplay : public BitmapText
 {
 public:

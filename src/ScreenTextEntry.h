@@ -1,5 +1,3 @@
-/* ScreenTextEntry - Displays a text entry box over the top of another screen. */
-
 #ifndef SCREEN_TEXT_ENTRY_H
 #define SCREEN_TEXT_ENTRY_H
 
@@ -9,20 +7,34 @@
 #include "ThemeMetric.h"
 #include "InputEventPlus.h"
 
+/** @brief The list of possible keyboard rows. */
 enum KeyboardRow
 {
-	R1, R2, R3, R4, R5, R6, R7,
+	R1, 
+	R2, 
+	R3, 
+	R4, 
+	R5, 
+	R6, 
+	R7,
 	KEYBOARD_ROW_SPECIAL,
 	NUM_KeyboardRow,
 	KeyboardRow_Invalid
 };
+/** @brief A special foreach loop for the KeyboardRow enum. */
 #define FOREACH_KeyboardRow( i ) FOREACH_ENUM( KeyboardRow, i )
+/** @brief The maximum number of keys per row. */
 const int KEYS_PER_ROW = 13;
+/** @brief The list of very special keys inside some rows. */
 enum KeyboardRowSpecialKey
 {
-	SPACEBAR=2, BACKSPACE=5, CANCEL=8, DONE=11
+	SPACEBAR=2, /**< The space bar key. */
+	BACKSPACE=5, /**< The backspace key. */
+	CANCEL=8,
+	DONE=11
 };
 
+/** @brief Displays a text entry box over the top of another screen. */
 class ScreenTextEntry : public ScreenWithMenuElements
 {
 public:
@@ -64,7 +76,10 @@ public:
 		RString sQuestion;
 		RString sInitialAnswer;
 		int iMaxInputLength;
-		bool bPassword; // (optional)
+		/** @brief Is there a password involved with this setting?
+		 *
+		 * This parameter doesn't have to be used. */
+		bool bPassword;
 		LuaReference Validate; // (RString sAnswer, RString sErrorOut; optional)
 		LuaReference OnOK; // (RString sAnswer; optional)
 		LuaReference OnCancel; // (optional)

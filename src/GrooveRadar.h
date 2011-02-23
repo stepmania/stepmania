@@ -1,5 +1,3 @@
-/* GrooveRadar - The song's GrooveRadar displayed in SelectMusic. */
-
 #ifndef GROOVE_RADAR_H
 #define GROOVE_RADAR_H
 
@@ -10,7 +8,7 @@
 #include "GameConstantsAndTypes.h"
 class Steps;
 struct RadarValues;
-
+/** @brief The song's GrooveRadar displayed in SelectMusic. */
 class GrooveRadar : public ActorFrame
 {
 public:
@@ -22,15 +20,14 @@ public:
 	void SetFromRadarValues( PlayerNumber pn, const RadarValues &rv );
 	void SetFromSteps( PlayerNumber pn, Steps* pSteps );	// NULL means no Steps
 
-	void TweenOnScreen();
-	void TweenOffScreen();
-
 	// Lua
 	void PushSelf( lua_State *L );
 
 protected:
-
-	// the value map must be a separate Actor so we can tween it separately from the labels
+	/**
+	 * @brief The companion ValueMap to the GrooveRadar.
+	 *
+	 * This must be a separate Actor so that it can be tweened separately from the labels. */
 	class GrooveRadarValueMap : public ActorFrame
 	{
 	public:

@@ -114,6 +114,7 @@ RString Style::ColToButtonName( int iCol ) const
 // Lua bindings
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Style. */ 
 class LunaStyle: public Luna<Style>
 {
 public:

@@ -1,13 +1,14 @@
-/* ScoreDisplayAliveTime - Display a constantly updating figure of time the player is alive. */
-// TODO: Merge this with ScoreDisplayOni
-
 #ifndef ScoreDisplayAliveTime_H
 #define ScoreDisplayAliveTime_H
 
 #include "BitmapText.h"
 #include "PlayerNumber.h"
 
-
+/**
+ * @brief Display a constantly updating figure of time the player is alive.
+ *
+ * TODO: Merge this with ScoreDisplayOni
+ */
 class ScoreDisplayAliveTime : public BitmapText
 {
 public:

@@ -562,7 +562,10 @@ bool MidiFileIn :: readVariableLength( unsigned long *value )
 
 	return true;
 } 
-
+/**
+ * @brief Utilities for working with the Guitar mode.
+ *
+ * Is this going to be kept in sm-ssc? */
 namespace Guitar
 {
 	enum GuitarDifficulty { easy, medium, hard, expert, NUM_GuitarDifficulty };
@@ -845,9 +848,9 @@ skip_track:
 						// on this row, then make the sustain note shorter so that it doesn't end on 
 						// the same row as the tap note we're about to add.  NoteData cannot handle a 
 						// hold note ending on the same row as a tap note.
-						NoteData::iterator begin, end;
+						NoteData::TrackMap::iterator begin, end;
 						noteData.GetTapNoteRangeInclusive( nnt, MidiCountToNoteRow(count), MidiCountToNoteRow(count), begin, end, true );
-						for( NoteData::iterator iter = begin; iter != end; iter++ )
+						for( NoteData::TrackMap::iterator iter = begin; iter != end; iter++ )
 						{
 //							if( gd == expert  &&  fBeat >= 27*4-2  &&  nnt == green )
 //								LOG->Trace( "shortening hold at %f, length %d", fBeat, length );

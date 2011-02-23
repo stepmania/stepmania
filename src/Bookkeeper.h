@@ -1,5 +1,3 @@
-/* Bookkeeper - coin tracking. */
-
 #ifndef Bookkeeper_H
 #define Bookkeeper_H
 
@@ -7,6 +5,7 @@
 #include <map>
 class XNode;
 
+/** @brief Track when coins were put into the machine. */
 class Bookkeeper
 {
 public:
@@ -30,12 +29,26 @@ public:
 	void WriteToDisk();
 
 private:
+	/** @brief A simple way of handling the date. */
 	struct Date
 	{
-		int m_iHour; // 0 = midnight
-		int m_iDayOfYear; // 0 = Jan 1
-		int m_iYear; // eg. 2005
+		/**
+		 * @brief The hour of the date.
+		 *
+		 * The value 0 is defined to be midnight. */
+		int m_iHour;
+		/**
+		 * @brief The day of the year of the date.
+		 *
+		 * The value 0 is defined to be January 1st. */
+		int m_iDayOfYear;
+		/** @brief The year of the date (e.g., 2005). */
+		int m_iYear;
+		/** @brief Set up a date with initial values. */
 		Date() { m_iHour = m_iDayOfYear = m_iYear = 0; }
+		/**
+		 * @brief Set up a date based on the given time.
+		 * @param time the time to turn into a Date. */
 		Date( tm time ) { Set(time); }
 		void Set( time_t t );
 		void Set( tm pTime );
@@ -53,8 +66,10 @@ extern Bookkeeper*	BOOKKEEPER;	// global and accessable from anywhere in our pro
 
 #endif
 
-/*
- * (c) 2003-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

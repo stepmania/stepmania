@@ -1,5 +1,3 @@
-/* InputMapper - Holds user-chosen input preferences and saves it between sessions. */
-
 #ifndef INPUT_MAPPER_H
 #define INPUT_MAPPER_H
 
@@ -33,14 +31,12 @@ struct AutoMappingEntry
 	int m_iSlotIndex;
 	DeviceButton m_deviceButton;
 	GameButton m_gb; // GameButton_Invalid means unmap this button
-	/*
-	 * If this is true, this is an auxilliary mapping assigned to the second
-	 * player.  If two of the same device are found, and the device has secondary
-	 * entries, the later entries take precedence.  This way, if a Pump pad is
-	 * found, it'll map P1 to the primary pad and P2 to the secondary pad.
-	 * (We can't tell if a slave pad is actually there.)  Then, if a second primary
-	 * is found (DEVICE_PUMP2), 2P will be mapped to it. 
-	 */
+	/* If this is true, this is an auxilliary mapping assigned to the second
+	 * player. If two of the same device are found, and the device has secondary
+	 * entries, the later entries take precedence. This way, if a Pump pad is
+	 * found, it'll map P1 to the primary pad and P2 to the secondary pad. (We
+	 * can't tell if a slave pad is actually there.) Then, if a second primary
+	 * is found (DEVICE_PUMP2), 2P will be mapped to it. */
 	bool m_bSecondController;
 };
 
@@ -100,9 +96,9 @@ struct AutoMappings
 #undef PUSH
 	}
 
-	/* Strings used by automatic joystick mappings. */
-	RString m_sGame;	// only used
-	RString m_sDriverRegex;	// reported by InputHandler
+	// Strings used by automatic joystick mappings.
+	RString m_sGame;			// only used
+	RString m_sDriverRegex;		// reported by InputHandler
 	RString m_sControllerName;	// the product name of the controller
 
 	vector<AutoMappingEntry> m_vMaps;
@@ -118,7 +114,7 @@ public:
 		const char	*m_szName;	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
 		GameButton	m_SecondaryMenuButton;
 	};
-	/* Data for each Game-specific GameButton.  This starts at GAME_BUTTON_NEXT. */
+	// Data for each Game-specific GameButton. This starts at GAME_BUTTON_NEXT.
 	GameButtonInfo m_GameButtonInfo[NUM_GameButton];
 	const AutoMappings *m_pAutoMappings;
 
@@ -129,6 +125,7 @@ public:
 	const GameButtonInfo *GetGameButtonInfo( GameButton gb ) const;
 	const char *GetGameButtonName( GameButton gb ) const;
 };
+/** @brief A special foreach loop to handle the various GameButtons. */
 #define FOREACH_GameButtonInScheme( s, var )	for( GameButton var=(GameButton)0; var<s->m_iButtonsPerController; enum_add<GameButton>( var, +1 ) )
 
 class InputMappings
@@ -150,7 +147,7 @@ public:
 	void ClearFromInputMap( const DeviceInput &DeviceI );
 	bool ClearFromInputMap( const GameInput &GameI, int iSlotIndex );
 };
-
+/** @brief Holds user-chosen input preferences and saves it between sessions. */
 class InputMapper
 {
 public:
@@ -175,7 +172,7 @@ public:
 	bool CheckForChangedInputDevicesAndRemap( RString &sMessageOut );
 
 	bool IsMapped( const DeviceInput &DeviceI ) const;
-	
+
 	bool DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI ) const;	// return true if there is a mapping from device to pad
 	bool GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI ) const;	// return true if there is a mapping from pad to device
 
@@ -211,9 +208,7 @@ protected:
 	const InputScheme *m_pInputScheme;
 };
 
-
 extern InputMapper*	INPUTMAPPER;	// global and accessable from anywhere in our program
-
 
 #endif
 

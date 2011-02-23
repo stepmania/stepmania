@@ -1,11 +1,9 @@
-/* ScoreKeeperGuitar -  */
-
 #ifndef ScoreKeeperGuitar_H
 #define ScoreKeeperGuitar_H
 
 #include "ScoreKeeperNormal.h"
 
-
+/** @brief ScoreKeeper implementation for the guitar gametype. */
 class ScoreKeeperGuitar : public ScoreKeeperNormal
 {
 public:
@@ -15,7 +13,8 @@ public:
 	void HandleHoldActiveSeconds( float fMusicSecondsHeld );
 	virtual void AddTapRowScore( TapNoteScore score, const NoteData &nd, int iRow );
 protected:
-	float m_fMusicSecondsHeldRemainder;	// seconds from a hold note that have not yet been counted toward CurScore
+	/** @brief seconds from a hold note that have not yet been counted toward CurScore. */
+	float m_fMusicSecondsHeldRemainder;
 };
 
 #endif

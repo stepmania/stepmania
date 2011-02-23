@@ -32,6 +32,7 @@ protected:
 	static int PushEqual( lua_State *L );
 };
 
+/** @brief Allow the binding of Lua to various classes. */
 template <typename Type>
 class Luna: public LuaBinding
 {

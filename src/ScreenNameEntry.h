@@ -1,5 +1,3 @@
-/* ScreenNameEntry - Enter a name for a new high score. */
-
 #ifndef SCREEN_NAME_ENTRY_H
 #define SCREEN_NAME_ENTRY_H
 
@@ -7,7 +5,7 @@
 #include "BitmapText.h"
 #include "ReceptorArrowRow.h"
 #include "RageSound.h"
-
+/** @brief Enter a name for a new high score. */
 class ScreenNameEntry : public ScreenWithMenuElements
 {
 public:

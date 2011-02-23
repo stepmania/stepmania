@@ -7,6 +7,7 @@
 #include "RageFile.h"
 
 #undef FAR /* fix for VC */
+/** @brief A helper to get the jpeg lib. */
 namespace jpeg
 {
 	extern "C"

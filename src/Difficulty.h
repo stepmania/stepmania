@@ -26,6 +26,7 @@ Difficulty DwiCompatibleStringToDifficulty( const RString& sDC );
 
 typedef Difficulty CourseDifficulty;
 const int NUM_CourseDifficulty = NUM_Difficulty;
+/** @brief Loop through the shown course difficulties. */
 #define FOREACH_ShownCourseDifficulty( cd ) for( Difficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); cd!=Difficulty_Invalid; cd=GetNextShownCourseDifficulty(cd) )
 
 const RString& CourseDifficultyToLocalizedString( Difficulty dc );

@@ -778,6 +778,7 @@ void TimingData::NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, i
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the TimingData. */ 
 class LunaTimingData: public Luna<TimingData>
 {
 public:

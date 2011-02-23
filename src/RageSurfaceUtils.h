@@ -8,6 +8,7 @@ struct RageSurfacePalette;
 struct RageSurfaceFormat;
 struct RageSurface;
 
+/** @brief Utility functions for the RageSurfaces. */
 namespace RageSurfaceUtils
 {
 	uint32_t decodepixel( const uint8_t *p, int bpp );

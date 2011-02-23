@@ -713,6 +713,7 @@ void MemoryCardManager::UnPauseMountingThread()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the MemoryCardManager. */ 
 class LunaMemoryCardManager: public Luna<MemoryCardManager>
 {
 public:

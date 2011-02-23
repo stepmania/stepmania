@@ -10,8 +10,8 @@
 #include "OptionRowHandler.h"
 #include "PrefsManager.h"
 
-AutoScreenMessage( SM_GoToOK )
-AutoScreenMessage( SM_GoToCancel )
+AutoScreenMessage( SM_GoToOK );
+AutoScreenMessage( SM_GoToCancel );
 
 bool ScreenMiniMenu::s_bCancelled = false;
 int	ScreenMiniMenu::s_iLastRowCode = -1;

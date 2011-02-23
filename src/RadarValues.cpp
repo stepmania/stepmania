@@ -91,6 +91,7 @@ void RadarValues::FromString( RString sRadarValues )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the RadarValues. */ 
 class LunaRadarValues: public Luna<RadarValues>
 {
 public:

@@ -1,5 +1,3 @@
-/* ScreenOptions - A grid of options; the selected option is drawn with a highlight rectangle. */
-
 #ifndef SCREENOPTIONS_H
 #define SCREENOPTIONS_H
 
@@ -14,20 +12,23 @@
 
 class OptionRowHandler;
 
-AutoScreenMessage( SM_ExportOptions )
+AutoScreenMessage( SM_ExportOptions );
 
+/** @brief The list of input modes for the given row. */
 enum InputMode 
 { 
-	INPUTMODE_INDIVIDUAL,		// each player controls their own cursor
-	INPUTMODE_SHARE_CURSOR,		// both players control the same cursor
-	NUM_InputMode,
+	INPUTMODE_INDIVIDUAL,		/**< each player controls their own cursor */
+	INPUTMODE_SHARE_CURSOR,		/**< both players control the same cursor */
+	NUM_InputMode,			/**< The number of input modes available. */
 	InputMode_Invalid
 };
 InputMode StringToInputMode( const RString& str );
 
+/** @brief A custom foreach loop for the player options for each player. */
 #define FOREACH_OptionsPlayer( pn ) \
 	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID && (m_InputMode==INPUTMODE_INDIVIDUAL || pn==0); pn=GetNextHumanPlayer(pn) )
 
+/** @brief A grid of options; the selected option is drawn with a highlight rectangle. */
 class ScreenOptions : public ScreenWithMenuElements
 {
 public:
@@ -84,14 +85,16 @@ protected:
 
 	int GetCurrentRow( PlayerNumber pn = PLAYER_1 ) const { return m_iCurrentRow[pn]; }
 	bool AllAreOnLastRow() const;
+	OptionRow* GetRow( int iRow ) const { return m_pRows[iRow]; }
 
 protected:	// derived classes need access to these
 	enum Navigation { NAV_THREE_KEY, NAV_THREE_KEY_MENU, NAV_THREE_KEY_ALT, NAV_FIVE_KEY, NAV_TOGGLE_THREE_KEY, NAV_TOGGLE_FIVE_KEY };
 	void SetNavigation( Navigation nav ) { m_OptionsNavigation = nav; }
 	void SetInputMode( InputMode im ) { m_InputMode = im; }
 
-	// Map menu lines to m_OptionRow entries.
+	/** @brief Map menu lines to m_OptionRow entries. */
 	vector<OptionRow*>	m_pRows;
+	/** @brief The current row each player is on. */
 	int			m_iCurrentRow[NUM_PLAYERS];
 
 	OptionRowType	m_OptionRowTypeNormal;
@@ -103,9 +106,10 @@ protected:	// derived classes need access to these
 	int				m_iFocusX[NUM_PLAYERS];
 	bool			m_bWasOnExit[NUM_PLAYERS];
 
-	// TRICKY: People hold Start to get to PlayerOptions, then 
-	// the repeat events cause them to zip to the bottom.  So, ignore
-	// Start repeat events until we've seen one first pressed event.
+	/** @brief True if at least one player pressed Start after selecting the song.
+	 * TRICKY: People hold Start to get to PlayerOptions, then the repeat events
+	 * cause them to zip to the bottom. So, ignore Start repeat events until
+	 * we've seen one first pressed event. */
 	bool			m_bGotAtLeastOneStartPressed[NUM_PLAYERS];
 
 	// actors
@@ -149,8 +153,10 @@ protected:	// derived classes need access to these
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004 
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

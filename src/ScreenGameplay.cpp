@@ -71,19 +71,19 @@ static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","Initi
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 static ThemeMetric<RString> SCORE_KEEPER_CLASS		("ScreenGameplay","ScoreKeeperClass");
 
-AutoScreenMessage( SM_PlayGo )
+AutoScreenMessage( SM_PlayGo );
 
 // received while STATE_DANCING
-AutoScreenMessage( SM_LoadNextSong )
-AutoScreenMessage( SM_StartLoadingNextSong )
+AutoScreenMessage( SM_LoadNextSong );
+AutoScreenMessage( SM_StartLoadingNextSong );
 
 // received while STATE_OUTRO
-AutoScreenMessage( SM_DoPrevScreen )
-AutoScreenMessage( SM_DoNextScreen )
+AutoScreenMessage( SM_DoPrevScreen );
+AutoScreenMessage( SM_DoNextScreen );
 
 // received while STATE_INTRO
-AutoScreenMessage( SM_StartHereWeGo )
-AutoScreenMessage( SM_StopHereWeGo )
+AutoScreenMessage( SM_StartHereWeGo );
+AutoScreenMessage( SM_StopHereWeGo );
 
 AutoScreenMessage( SM_BattleTrickLevel1 );
 AutoScreenMessage( SM_BattleTrickLevel2 );
@@ -352,7 +352,6 @@ void ScreenGameplay::Init()
 	GIVING_UP_GOES_TO_PREV_SCREEN.Load(	m_sName, "GivingUpGoesToPrevScreen" );
 	FAIL_ON_MISS_COMBO.Load(		m_sName, "FailOnMissCombo" );
 	ALLOW_CENTER_1_PLAYER.Load(		m_sName, "AllowCenter1Player" );
-	USE_ALTERNATIVE_INPUT.Load(		m_sName, "UseAlternativeInput");
 	// configurable:
 	UNPAUSE_WITH_START.Load(		m_sName, "UnpauseWithStart");
 
@@ -763,38 +762,6 @@ void ScreenGameplay::Init()
 	LoadNextSong();
 
 	m_GiveUpTimer.SetZero();
-
-	if( USE_ALTERNATIVE_INPUT ) // using alternative input
-	{
-		int iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
-		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
-		{
-			for( int col=0; col < iNumCols; ++col )
-			{
-				// TODO: Remove use of PlayerNumber.
-				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( col, pi->m_pn );
-
-				ThemeMetric<RString> tmpMetric;
-				tmpMetric.Load( m_sName,ssprintf( "AltInp%s%s",GAMESTATE->GetCurrentStyle()->m_szName,GameI.ToString( INPUTMAPPER->GetInputScheme() ).c_str() ) );
-
-				if(tmpMetric.GetValue() != "")
-				{
-					GameInput GameIAlt;
-					GameIAlt.FromString( INPUTMAPPER->GetInputScheme(),tmpMetric.GetValue() );
-
-					AlternateMapping tmpMap;
-					tmpMap.inpMain = GameI;
-					tmpMap.inpAlt = GameIAlt;
-					m_vAlterMap.push_back( tmpMap );
-
-					FOREACH( PlayerInfo, m_vPlayerInfo, pi )
-					{
-						pi->m_pPlayer->m_vAlterMap.push_back( tmpMap );
-					}
-				}
-			}
-		}
-	}
 }
 
 bool ScreenGameplay::Center1Player() const
@@ -2253,23 +2220,12 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			return;
 		}
 	}
-	
+
 	bool bRelease = input.type == IET_RELEASE;
 	if( !input.GameI.IsValid() )
 		return;
-	
+
 	int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
- 
-	if( USE_ALTERNATIVE_INPUT ) // using alternative input
-	{
-		for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
-		{
-			if( m_vAlterMap[i].inpAlt == input.GameI )
-			{
-				iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( m_vAlterMap[i].inpMain );
-			}
-		}
-	}
 
 	// Don't pass on any inputs to Player that aren't a press or a release.
 	switch( input.type )
@@ -2838,6 +2794,7 @@ bool ScreenGameplay::LoadReplay()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenGameplay. */ 
 class LunaScreenGameplay: public Luna<ScreenGameplay>
 {
 public:
@@ -2896,6 +2853,7 @@ public:
 LUA_REGISTER_DERIVED_CLASS( ScreenGameplay, ScreenWithMenuElements )
 
 
+/** @brief Allow Lua to have access to the PlayerInfo. */ 
 class LunaPlayerInfo: public Luna<PlayerInfo>
 {
 public:

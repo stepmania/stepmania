@@ -1,5 +1,3 @@
-/* OptionRowHandler - Shows PlayerOptions and SongOptions in icon form. */
-
 #ifndef OptionRowHandler_H
 #define OptionRowHandler_H
 
@@ -21,6 +19,7 @@ enum SelectType
 };
 const RString& SelectTypeToString( SelectType pm );
 SelectType StringToSelectType( const RString& s );
+LuaDeclareType( SelectType );
 
 enum LayoutType
 {
@@ -31,6 +30,7 @@ enum LayoutType
 };
 const RString& LayoutTypeToString( LayoutType pm );
 LayoutType StringToLayoutType( const RString& s );
+LuaDeclareType( LayoutType );
 
 struct OptionRowDefinition
 {
@@ -46,7 +46,7 @@ struct OptionRowDefinition
 	bool	m_bAllowThemeItems;	// Should be true for dynamic strings.
 	bool	m_bAllowThemeTitle;	// Should be true for dynamic strings.
 	bool	m_bAllowExplanation;	// if false, ignores ScreenOptions::SHOW_EXPLANATIONS.  Should be true for dynamic strings.
-	bool	m_bShowChoicesListOnSelect;
+	bool	m_bShowChoicesListOnSelect; // (currently unused)
 
 	bool IsEnabledForPlayer( PlayerNumber pn ) const 
 	{
@@ -84,6 +84,7 @@ struct OptionRowDefinition
 	}
 };
 
+/** @brief Shows PlayerOptions and SongOptions in icon form. */
 class OptionRowHandler
 {
 public:
@@ -107,18 +108,15 @@ public:
 
 	virtual void LoadInternal( const Commands &cmds ) { }
 
-	/*
-	 * We may re-use OptionRowHandlers.  This is called before each
-	 * use.  If the contents of the row are dependent on external
-	 * state (for example, the current song), clear the row contents
-	 * and reinitialize them.  As an optimization, rows which do not
-	 * change can be initialized just once and left alone.
-	 *
+	/* We may re-use OptionRowHandlers. This is called before each use. If the
+	 * contents of the row are dependent on external state (for example, the
+	 * current song), clear the row contents and reinitialize them. As an
+	 * optimization, rows which do not change can be initialized just once and
+	 * left alone.
 	 * If the row has been reinitialized, return RELOAD_CHANGED_ALL, and the
-	 * graphic elements will also be reinitialized.  If only m_vEnabledForPlayers
-	 * has been changed, return RELOAD_CHANGED_ENABLED.  If the row is static, and
-	 * nothing has changed, return RELOAD_CHANGED_NONE.
-	 */
+	 * graphic elements will also be reinitialized. If only m_vEnabledForPlayers
+	 * has been changed, return RELOAD_CHANGED_ENABLED. If the row is static, and
+	 * nothing has changed, return RELOAD_CHANGED_NONE. */
 	enum ReloadChanged { RELOAD_CHANGED_NONE, RELOAD_CHANGED_ENABLED, RELOAD_CHANGED_ALL };
 	virtual ReloadChanged Reload() { return RELOAD_CHANGED_NONE; }
 
@@ -130,7 +128,7 @@ public:
 	virtual RString GetScreen( int iChoice ) const { return RString(); }
 };
 
-
+/** @brief Utilities for the OptionRowHandlers. */
 namespace OptionRowHandlerUtil
 {
 	OptionRowHandler* Make( const Commands &cmds );

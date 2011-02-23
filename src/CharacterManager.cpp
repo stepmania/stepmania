@@ -120,6 +120,7 @@ Character* CharacterManager::GetCharacterFromID( RString sCharacterID )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the CharacterManager. */ 
 class LunaCharacterManager: public Luna<CharacterManager>
 {
 public:

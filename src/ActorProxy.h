@@ -1,12 +1,10 @@
-/* ActorProxy - renders another actor. */
-
 #ifndef ACTOR_PROXY_H
 #define ACTOR_PROXY_H
 
 #include "Actor.h"
 
 struct lua_State;
-
+/** @brief Rendrs another actor. */
 class ActorProxy: public Actor
 {
 public:

@@ -15,9 +15,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	bool GetGoToOptions() const { return m_bGoToOptions; }
 
-	//
 	// Lua
-	//
 	virtual void PushSelf( lua_State *L );
 
 private:

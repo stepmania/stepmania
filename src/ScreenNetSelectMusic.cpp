@@ -26,14 +26,14 @@
 #include "SongManager.h"
 #include "CodeDetector.h"
 
-AutoScreenMessage( SM_NoSongs )
-AutoScreenMessage( SM_ChangeSong )
-AutoScreenMessage( SM_SMOnlinePack )
-AutoScreenMessage( SM_SetWheelSong )
-AutoScreenMessage( SM_RefreshWheelLocation )
-AutoScreenMessage( SM_SongChanged )
-AutoScreenMessage( SM_UsersUpdate )
-AutoScreenMessage( SM_BackFromPlayerOptions )
+AutoScreenMessage( SM_NoSongs );
+AutoScreenMessage( SM_ChangeSong );
+AutoScreenMessage( SM_SMOnlinePack );
+AutoScreenMessage( SM_SetWheelSong );
+AutoScreenMessage( SM_RefreshWheelLocation );
+AutoScreenMessage( SM_SongChanged );
+AutoScreenMessage( SM_UsersUpdate );
+AutoScreenMessage( SM_BackFromPlayerOptions );
 
 REGISTER_SCREEN_CLASS( ScreenNetSelectMusic );
 

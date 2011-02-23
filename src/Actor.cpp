@@ -18,7 +18,10 @@
 
 static Preference<bool> g_bShowMasks("ShowMasks", false);
 
-/* It's useful to be able to construct a basic Actor in XML, in
+/**
+ * @brief Set up a hidden Actor that won't be drawn.
+ *
+ * It's useful to be able to construct a basic Actor in XML, in
  * order to simply delay a Transition, or receive and send broadcasts.
  * Since these actors will never draw, set them hidden by default. */
 class HiddenActor: public Actor
@@ -27,7 +30,7 @@ public:
 	HiddenActor() { SetVisible(false); }
 	virtual HiddenActor *Copy() const;
 };
-REGISTER_ACTOR_CLASS_WITH_NAME( HiddenActor, Actor )
+REGISTER_ACTOR_CLASS_WITH_NAME( HiddenActor, Actor );
 
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 float Actor::g_fCurrentBGMTimeNoOffset = 0, Actor::g_fCurrentBGMBeatNoOffset = 0;
@@ -1307,6 +1310,7 @@ Actor::TweenInfo &Actor::TweenInfo::operator=( const TweenInfo &rhs )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Actor. */ 
 class LunaActor : public Luna<Actor>
 {
 public:

@@ -1,8 +1,6 @@
-/* RageFileManager - File utilities and high-level manager for RageFile objects. */
-
 #ifndef RAGE_FILE_MANAGER_H
 #define RAGE_FILE_MANAGER_H
-
+/** @brief Constants for working with the RageFileManager. */
 namespace RageFileManagerUtil
 {
 	extern RString sInitialWorkingDirectory;
@@ -12,7 +10,7 @@ namespace RageFileManagerUtil
 class RageFileDriver;
 class RageFileBasic;
 struct lua_State;
-
+/** @brief File utilities and high-level manager for RageFile objects. */
 class RageFileManager
 {
 public:

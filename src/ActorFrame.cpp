@@ -16,8 +16,8 @@
  * children.  The name "ActorFrame" is widely used in Lua, so we'll have
  * that string instead create an ActorFrameAutoDeleteChildren object.
  */
-//REGISTER_ACTOR_CLASS( ActorFrame )
-REGISTER_ACTOR_CLASS_WITH_NAME( ActorFrameAutoDeleteChildren, ActorFrame )
+//REGISTER_ACTOR_CLASS( ActorFrame );
+REGISTER_ACTOR_CLASS_WITH_NAME( ActorFrameAutoDeleteChildren, ActorFrame );
 ActorFrame *ActorFrame::Copy() const { return new ActorFrame(*this); }
 
 
@@ -451,6 +451,7 @@ void ActorFrame::SetDrawByZPosition( bool b )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ActorFrame. */ 
 class LunaActorFrame : public Luna<ActorFrame>
 {
 public:

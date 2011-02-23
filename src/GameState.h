@@ -1,5 +1,3 @@
-/** @brief GameState - Holds game data that is not saved between sessions. */
-
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
@@ -33,6 +31,7 @@ class Style;
 class TimingData;
 class Trail;
 
+/** @brief Holds game data that is not saved between sessions. */
 class GameState
 {
 public:
@@ -122,7 +121,6 @@ public:
 	PlayerNumber GetFirstDisabledPlayer() const;
 	bool IsCpuPlayer( PlayerNumber pn ) const;
 	bool AnyPlayersAreCpu() const;
-
 
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; // not Rave
@@ -214,10 +212,17 @@ public:
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
 	// Metricable noteskin things
-	// void LoadNoteSkinMetrics( PlayerNumber pn );
-	// int m_iRowSpacing;
-	// int m_iColSpacing;
-	// int m_iArrowSize;
+	/*
+	void LoadNoteSkinMetrics( PlayerNumber pn );
+	int			m_iNoteSkinColSpacing[NUM_PLAYERS];
+	int			m_iNoteSkinArrowSize[NUM_PLAYERS];
+	*/
+	// not sure I want to let noteskins change row spacing, as that changes how
+	// the speed mods work... -aj
+	//int			m_iNoteSkinRowSpacing[NUM_PLAYERS];
+	// what are these for, exactly? -aj
+	//bool		m_bNoteSkinOverrideDim[NUM_PLAYERS];
+	//bool		m_bNoteSkinOverrideBright[NUM_PLAYERS];
 
 	float		m_fMusicSecondsVisible;
 	float		m_fSongBeatVisible;
@@ -358,15 +363,20 @@ PlayerNumber GetNextHumanPlayer( PlayerNumber pn );
 PlayerNumber GetNextEnabledPlayer( PlayerNumber pn );
 PlayerNumber GetNextCpuPlayer( PlayerNumber pn );
 PlayerNumber GetNextPotentialCpuPlayer( PlayerNumber pn );
-
-#define FOREACH_HumanPlayer( pn ) for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextHumanPlayer(pn) )
-#define FOREACH_EnabledPlayer( pn ) for( PlayerNumber pn=GetNextEnabledPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextEnabledPlayer(pn) )
-#define FOREACH_CpuPlayer( pn ) for( PlayerNumber pn=GetNextCpuPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextCpuPlayer(pn) )
-#define FOREACH_PotentialCpuPlayer( pn ) for( PlayerNumber pn=GetNextPotentialCpuPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextPotentialCpuPlayer(pn) )
-
-
 MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp );
+
+/** @brief A foreach loop to act on each human Player. */
+#define FOREACH_HumanPlayer( pn ) for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextHumanPlayer(pn) )
+/** @brief A foreach loop to act on each enabled Player. */
+#define FOREACH_EnabledPlayer( pn ) for( PlayerNumber pn=GetNextEnabledPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextEnabledPlayer(pn) )
+/** @brief A foreach loop to act on each CPU Player. */
+#define FOREACH_CpuPlayer( pn ) for( PlayerNumber pn=GetNextCpuPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextCpuPlayer(pn) )
+/** @brief A foreach loop to act on each potential CPU Player. */
+#define FOREACH_PotentialCpuPlayer( pn ) for( PlayerNumber pn=GetNextPotentialCpuPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextPotentialCpuPlayer(pn) )
+/** @brief A foreach loop to act on each Player in MultiPlayer. */
 #define FOREACH_EnabledMultiPlayer( mp ) for( MultiPlayer mp=GetNextEnabledMultiPlayer((MultiPlayer)-1); mp!=MultiPlayer_Invalid; mp=GetNextEnabledMultiPlayer(mp) )
+
+
 
 extern GameState*	GAMESTATE;	// global and accessable from anywhere in our program
 

@@ -1291,7 +1291,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED );
 			SCREENMAN->PopAllScreens();
 			GAMESTATE->Reset();
-			SCREENMAN->SetNewScreen( "ScreenOptionsService" );
+			SCREENMAN->SetNewScreen( CommonMetrics::OPERATOR_MENU_SCREEN );
 		}
 		return true;
 
@@ -1432,7 +1432,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 void HandleInputEvents(float fDeltaTime)
 {
 	INPUTFILTER->Update( fDeltaTime );
-	
+
 	/* Hack: If the topmost screen hasn't been updated yet, don't process input, since
 	 * we must not send inputs to a screen that hasn't at least had one update yet. (The
 	 * first Update should be the very first thing a screen gets.)  We'll process it next
@@ -1455,6 +1455,7 @@ void HandleInputEvents(float fDeltaTime)
 		swap( input.InputList, ieArray[i].m_ButtonState );
 
 		// hack for testing (MultiPlayer) with only one joystick
+		/*
 		if( input.DeviceI.IsJoystick() )
 		{
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT) ) )
@@ -1468,6 +1469,7 @@ void HandleInputEvents(float fDeltaTime)
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL) ) )
 				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 16);
 		}
+		*/
 
 		INPUTMAPPER->DeviceToGame( input.DeviceI, input.GameI );
 

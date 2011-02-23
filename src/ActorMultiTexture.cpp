@@ -13,7 +13,7 @@
 #include "LuaBinding.h"
 #include "LuaManager.h"
 
-REGISTER_ACTOR_CLASS( ActorMultiTexture )
+REGISTER_ACTOR_CLASS( ActorMultiTexture );
 
 
 ActorMultiTexture::ActorMultiTexture()
@@ -134,6 +134,7 @@ bool ActorMultiTexture::EarlyAbortDraw() const
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ActorMultiTexture. */ 
 class LunaActorMultiTexture: public Luna<ActorMultiTexture>
 {
 public:

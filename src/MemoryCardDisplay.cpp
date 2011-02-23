@@ -6,7 +6,7 @@
 #include "XmlFile.h"
 #include "ActorUtil.h"
 
-REGISTER_ACTOR_CLASS( MemoryCardDisplay )
+REGISTER_ACTOR_CLASS( MemoryCardDisplay );
 
 MemoryCardDisplay::MemoryCardDisplay()
 {

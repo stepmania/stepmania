@@ -240,6 +240,7 @@ void LifeMeterBattery::Update( float fDeltaTime )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the LifeMeterBattery. */ 
 class LunaLifeMeterBattery: public Luna<LifeMeterBattery>
 {
 public:

@@ -1,29 +1,37 @@
-/* ActiveAttackList - Shows currently active player modifiers during gameplay. */
 #ifndef ACTIVE_ATTACK_LIST_H
 #define ACTIVE_ATTACK_LIST_H
 
 #include "BitmapText.h"
 class PlayerState;
 
+/** @brief Shows currently active Player modifiers during gameplay. */
 class ActiveAttackList : public BitmapText
 {
 public:
+	/** @brief The constructor that does nothing. */
 	ActiveAttackList();
-
+	/**
+	 * @brief Set up the PlayerState.
+	 * @param pPlayerState the PlayerState involved with the attacks. */
 	void Init( const PlayerState* pPlayerState );
-
+	/**
+	 * @brief Look into updating the list.
+	 * @param fDelta the present time. */
 	virtual void Update( float fDelta );
-
+	/** @brief Refresh the list of attacks. */ 
 	void Refresh();
 
 protected:
+	/** @brief the PlayerState of the Player who is dealing with the attack list. */
 	const PlayerState* m_pPlayerState;
 };
 
 #endif
 
-/*
- * (c) 2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -5,7 +5,7 @@
 #include "ThemeManager.h"
 #include "XmlFile.h"
 
-REGISTER_ACTOR_CLASS( TextBanner )
+REGISTER_ACTOR_CLASS( TextBanner );
 
 void TextBanner::LoadFromNode( const XNode* pNode )
 {
@@ -86,6 +86,7 @@ void TextBanner::SetFromSong( const Song *pSong )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the TextBanner. */ 
 class LunaTextBanner: public Luna<TextBanner>
 {
 public:

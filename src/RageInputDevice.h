@@ -46,16 +46,17 @@ enum InputDevice
 	DEVICE_PUMP1,
 	DEVICE_PUMP2,
 	DEVICE_MIDI,
-	//DEVICE_MOUSE,
+	DEVICE_MOUSE,
 	NUM_InputDevice,		// leave this at the end
-	InputDevice_Invalid			// means this is NULL
+	InputDevice_Invalid		// means this is NULL
 };
+/** @brief A special foreach loop for each input device. */
 #define FOREACH_InputDevice( i ) FOREACH_ENUM( InputDevice, i )
 const RString& InputDeviceToString( InputDevice i );
 InputDevice StringToInputDevice( const RString& s );
 inline bool IsJoystick( InputDevice id ) { return DEVICE_JOY1 <= id && id < DEVICE_JOY1+NUM_JOYSTICKS; }
 inline bool IsPump( InputDevice id ) { return DEVICE_PUMP1 <= id && id < DEVICE_PUMP1+NUM_PUMPS; }
-//inline bool IsMouse( InputDevice id ) { return id == DEVICE_MOUSE; }
+inline bool IsMouse( InputDevice id ) { return id == DEVICE_MOUSE; }
 
 struct InputDeviceInfo
 {
@@ -289,16 +290,15 @@ enum DeviceButton
 	MIDI_FIRST = 600,
 	MIDI_LAST = 699,
 
-	// Mouse:
-	/*
+	// Mouse buttons
 	MOUSE_LEFT = 700,
 	MOUSE_RIGHT,
 	MOUSE_MIDDLE,
-	// wheel mice
+	// axis
+	MOUSE_X_LEFT, MOUSE_X_RIGHT,
+	MOUSE_Y_UP, MOUSE_Y_DOWN,
+	// Mouse wheel (z axis)
 	MOUSE_WHEELUP, MOUSE_WHEELDOWN,
-	// for mice with forward and backwards buttons
-	MOUSE_FORWARD, MOUSE_BACK,
-	*/
 
 	NUM_DeviceButton,
 	DeviceButton_Invalid
@@ -321,12 +321,18 @@ public:
 	 * debouncing applied. */
 	bool bDown;
 
+	// Mouse coordinates
+	unsigned x;
+	unsigned y;
+
 	RageTimer ts;
 
 	DeviceInput(): device(InputDevice_Invalid), button(DeviceButton_Invalid), level(0), bDown(false), ts(RageZeroTimer) { }
 	DeviceInput( InputDevice d, DeviceButton b, float l=0 ): device(d), button(b), level(l), bDown(l > 0.5f), ts(RageZeroTimer) { }
 	DeviceInput( InputDevice d, DeviceButton b, float l, const RageTimer &t ):
 		device(d), button(b), level(l), bDown(level > 0.5f), ts(t) { }
+	DeviceInput( InputDevice d, DeviceButton b, const RageTimer &t, unsigned xPos=0, unsigned yPos=0 ):
+		device(d), button(b), x(xPos), y(yPos), bDown(false), ts(t) { }
 
 	bool operator==( const DeviceInput &other ) const
 	{ 
@@ -354,7 +360,7 @@ public:
 	void MakeInvalid() { device = InputDevice_Invalid; };
 
 	bool IsJoystick() const { return ::IsJoystick(device); }
-	//bool IsMouse() const { return ::IsMouse(device); }
+	bool IsMouse() const { return ::IsMouse(device); }
 };
 
 typedef vector<DeviceInput> DeviceInputList;

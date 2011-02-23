@@ -30,6 +30,7 @@
 /* Not in glext.h: */
 typedef bool (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
 
+/** @brief Utilities for working with the RageDisplay. */
 namespace RageDisplay_OGL_Helpers
 {
 	void Init();

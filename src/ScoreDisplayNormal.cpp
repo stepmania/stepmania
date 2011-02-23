@@ -9,7 +9,6 @@
 #include "CommonMetrics.h"
 #include "ActorUtil.h"
 
-
 ScoreDisplayNormal::ScoreDisplayNormal()
 {
 	LOG->Trace( "ScoreDisplayNormal::ScoreDisplayNormal()" );
@@ -20,7 +19,6 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	m_sprFrame->SetName( "Frame" );
 	ActorUtil::LoadAllCommandsAndSetXY( m_sprFrame, sType );
 	this->AddChild( m_sprFrame );
-
 
 	// init the text
 	m_text.LoadFromFont( THEME->GetPathF("ScoreDisplayNormal","Text") );

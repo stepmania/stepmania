@@ -5,7 +5,7 @@
 
 #include "ScreenWithMenuElements.h"
 
-AutoScreenMessage( SM_GoToStartScreen )
+AutoScreenMessage( SM_GoToStartScreen );
 
 class ScreenAttract : public ScreenWithMenuElements
 {

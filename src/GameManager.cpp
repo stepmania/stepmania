@@ -3103,6 +3103,7 @@ const Style* GameManager::GameAndStringToStyle( const Game *game, RString sStyle
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the GameManager. */ 
 class LunaGameManager: public Luna<GameManager>
 {
 public:

@@ -126,7 +126,7 @@ void DynamicActorScroller::ConfigureActor( Actor *pActor, int iItem )
 	LUA->Release(L);
 }
 
-REGISTER_ACTOR_CLASS_WITH_NAME( DynamicActorScrollerAutoDeleteChildren, DynamicActorScroller )
+REGISTER_ACTOR_CLASS_WITH_NAME( DynamicActorScrollerAutoDeleteChildren, DynamicActorScroller );
 
 /*
  * (c) 2005 Glenn Maynard

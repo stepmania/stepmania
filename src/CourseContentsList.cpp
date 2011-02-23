@@ -10,7 +10,7 @@
 #include "RageUtil.h"
 #include "Steps.h"
 
-REGISTER_ACTOR_CLASS( CourseContentsList )
+REGISTER_ACTOR_CLASS( CourseContentsList );
 
 CourseContentsList::~CourseContentsList()
 {
@@ -145,6 +145,7 @@ void CourseContentsList::SetItemFromGameState( Actor *pActor, int iCourseEntryIn
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the CourseContentsList. */ 
 class LunaCourseContentsList: public Luna<CourseContentsList>
 {
 public:

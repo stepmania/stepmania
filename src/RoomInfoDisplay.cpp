@@ -5,8 +5,8 @@
 #include "NetworkSyncManager.h"
 #include "LocalizedString.h"
 
-AutoScreenMessage( SM_RoomInfoRetract )
-AutoScreenMessage( SM_RoomInfoDeploy )
+AutoScreenMessage( SM_RoomInfoRetract );
+AutoScreenMessage( SM_RoomInfoDeploy );
 
 static LocalizedString LAST_ROUND_INFO ( "RoomInfoDisplay", "Last Round Info:" );
 static LocalizedString ROOM_NAME ( "RoomInfoDisplay", "Room Name:" );

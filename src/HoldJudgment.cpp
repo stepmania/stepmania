@@ -7,7 +7,7 @@
 #include "ActorUtil.h"
 #include "XmlFile.h"
 
-REGISTER_ACTOR_CLASS( HoldJudgment )
+REGISTER_ACTOR_CLASS( HoldJudgment );
 
 HoldJudgment::HoldJudgment()
 {
@@ -95,6 +95,7 @@ void HoldJudgment::HandleMessage( const Message &msg )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the HoldJudgment. */ 
 class LunaHoldJudgment: public Luna<HoldJudgment>
 {
 public:

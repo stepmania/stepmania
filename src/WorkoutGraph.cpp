@@ -14,7 +14,7 @@
 
 const int MAX_METERS_TO_SHOW = 50;
 
-REGISTER_ACTOR_CLASS( WorkoutGraph )
+REGISTER_ACTOR_CLASS( WorkoutGraph );
 
 WorkoutGraph::WorkoutGraph()
 {
@@ -118,6 +118,7 @@ void WorkoutGraph::SetFromGameStateAndHighlightSong( int iSongIndex )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the WorkoutGraph. */ 
 class LunaWorkoutGraph: public Luna<WorkoutGraph>
 {
 public:

@@ -1,5 +1,3 @@
-/* ScreenEdit - Edit, record, playback, and synchronize notes. */
-
 #ifndef SCREEN_EDIT_H
 #define SCREEN_EDIT_H
 
@@ -136,6 +134,7 @@ enum EditButton
 	NUM_EditButton, // leave this at the end
 	EditButton_Invalid
 };
+/** @brief A special foreach loop for the different edit buttons. */
 #define FOREACH_EditButton( e ) FOREACH_ENUM( EditButton, e )
 const int NUM_EDIT_TO_DEVICE_SLOTS = 2;
 const int NUM_EDIT_TO_MENU_SLOTS = 2;
@@ -170,7 +169,7 @@ struct MapEditButtonToMenuButton
 				button[e][slot] = GameButton_Invalid;
 	}
 };
-
+/** @brief Edit, record, playback, and synchronize notes. */
 class ScreenEdit : public ScreenWithMenuElements
 {
 public:
@@ -407,6 +406,7 @@ public:
 		difficulty,
 		meter,
 		description,
+		chartstyle,
 		step_credit,
 		predict_meter,
 		tap_notes,

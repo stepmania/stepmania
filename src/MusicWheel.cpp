@@ -30,7 +30,7 @@ static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );
 static RString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",int(i+1)); }
 static RString CHOICE_NAME( RString s )		{ return ssprintf("Choice%s",s.c_str()); }
 
-AutoScreenMessage( SM_SongChanged ) // TODO: Replace this with a Message and MESSAGEMAN
+AutoScreenMessage( SM_SongChanged ); // TODO: Replace this with a Message and MESSAGEMAN
 AutoScreenMessage( SM_SortOrderChanging );
 AutoScreenMessage( SM_SortOrderChanged );
 
@@ -1048,11 +1048,6 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 	case TYPE_PORTAL:
 		break;
 	case TYPE_SORT:
-		/*
-		LOG->Trace("New sort order selected: %s - %s", 
-			GetCurWheelItemData(m_iSelection)->m_sLabel.c_str(), 
-			SortOrderToString(GetCurWheelItemData(m_iSelection)->m_pAction->m_SortOrder).c_str() );
-		*/
 		GetCurWheelItemData(m_iSelection)->m_pAction->ApplyToAllPlayers();
 		ChangeSort( GAMESTATE->m_PreferredSortOrder );
 		m_sLastModeMenuItem = GetCurWheelItemData(m_iSelection)->m_pAction->m_sName;

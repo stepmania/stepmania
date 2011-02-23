@@ -1,5 +1,3 @@
-/* ScoreDisplayNormal - Shows point score during gameplay and some menus. */
-
 #ifndef SCORE_DISPLAY_NORMAL_H
 #define SCORE_DISPLAY_NORMAL_H
 
@@ -7,6 +5,7 @@
 #include "RollingNumbers.h"
 #include "AutoActor.h"
 
+/** @brief Shows point score during gameplay and some menus. */
 class ScoreDisplayNormal : public ScoreDisplay
 {
 public:

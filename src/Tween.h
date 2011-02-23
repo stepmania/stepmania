@@ -1,5 +1,3 @@
-/* ITween - Interface for simple interpolation. */
-
 #ifndef TWEEN_H
 #define TWEEN_H
 
@@ -8,22 +6,29 @@
 struct lua_State;
 typedef lua_State Lua;
 
+/** @brief The different tweening types available. */
 enum TweenType
 { 
-	TWEEN_LINEAR, 
-	TWEEN_ACCELERATE, 
-	TWEEN_DECELERATE, 
-	TWEEN_SPRING,
-	TWEEN_BEZIER,
-	NUM_TweenType,
+	TWEEN_LINEAR, /**< A linear tween. */
+	TWEEN_ACCELERATE, /**< An accelerating tween. */
+	TWEEN_DECELERATE, /**< A decelerating tween. */
+	TWEEN_SPRING, /**< A spring tween. */
+	TWEEN_BEZIER, /**< A bezier tween. */
+	NUM_TweenType, /**< The number of tween types. */
 	TweenType_Invalid
 };
+/** @brief A custom foreach loop iterating through the tween types. */
 #define FOREACH_TweenType( tt ) FOREACH_ENUM( TweenType, tt )
 LuaDeclareType( TweenType );
 
+/** 
+ * @brief The interface for simple interpolation.
+ *
+ * Funny enough, this is a class. */
 class ITween
 {
 public:
+	/** @brief Create the initial interface. */
 	virtual ~ITween() { }
 	virtual float Tween( float f ) const = 0;
 	virtual ITween *Copy() const = 0;
@@ -34,8 +39,10 @@ public:
 
 #endif
 
-/*
- * (c) 2006 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2006
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -1,5 +1,3 @@
-/* ScoreDisplayOni - Shows time into course. */
-
 #ifndef SCORE_DISPLAY_ONI_H
 #define SCORE_DISPLAY_ONI_H
 
@@ -7,6 +5,7 @@
 #include "BitmapText.h"
 #include "Sprite.h"
 
+/** @brief Shows time into course. */
 class ScoreDisplayOni : public ScoreDisplay
 {
 public:

@@ -55,7 +55,7 @@ static const Content_t g_Contents[NUM_PaneCategory] =
 	{ NEED_NOTES|NEED_PROFILE, "score" }, // ProfileHighScore
 };
 
-REGISTER_ACTOR_CLASS( PaneDisplay )
+REGISTER_ACTOR_CLASS( PaneDisplay );
 
 void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 {
@@ -276,6 +276,7 @@ void PaneDisplay::SetFromGameState()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the PaneDisplay. */ 
 class LunaPaneDisplay: public Luna<PaneDisplay>
 {
 public:

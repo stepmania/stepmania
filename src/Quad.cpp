@@ -3,7 +3,7 @@
 #include "ActorUtil.h"
 #include "RageTextureManager.h"
 
-REGISTER_ACTOR_CLASS( Quad )
+REGISTER_ACTOR_CLASS( Quad );
 
 Quad::Quad()
 {

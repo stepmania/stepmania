@@ -5,7 +5,7 @@
 #include "ActorUtil.h"
 #include "LuaManager.h"
 #include "ThemeManager.h"
-REGISTER_ACTOR_CLASS( RollingNumbers )
+REGISTER_ACTOR_CLASS( RollingNumbers );
 
 RollingNumbers::RollingNumbers()
 {
@@ -99,6 +99,7 @@ void RollingNumbers::UpdateText()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the RollingNumbers. */ 
 class LunaRollingNumbers: public Luna<RollingNumbers>
 {
 public:

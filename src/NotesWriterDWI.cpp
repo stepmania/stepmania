@@ -11,98 +11,11 @@
 #include "Song.h"
 #include "Steps.h"
 
-static RString OptimizeDWIString( RString holds, RString taps );
-
-/* Output is an angle bracket expression without angle brackets, eg. "468". */
-static RString NotesToDWIString( const TapNote tnCols[6] )
-{
-	const char dirs[] = { '4', 'C', '2', '8', 'D', '6' };
-	RString taps, holds, ret;
-	for( int col = 0; col < 6; ++col )
-	{
-		switch( tnCols[col].type )
-		{
-		case TapNote::empty:
-		case TapNote::mine:
-			continue;
-		}
-
-		if( tnCols[col].type == TapNote::hold_head )
-			holds += dirs[col];
-		else
-			taps += dirs[col];
-	}
-
-	if( holds.size() + taps.size() == 0 )
-		return "0";
-
-//	RString combine = taps;
-//	for( unsigned i = 0; i < holds.size(); ++i )
-//		combine += ssprintf("%c!%c", holds[i], holds[i]);
-
-//	if( holds.size() + taps.size() > 1 )
-//		combine = ssprintf("<%s>", combine.c_str() );
-
-//	return combine;
-
-	/* More than one. */
-	return OptimizeDWIString( holds, taps );
-/*	struct DWICharLookup {
-		char c;
-		bool bCol[6];	
-	} const lookup[] = {
-		{ '0', { 0, 0, 0, 0, 0, 0 } },
-		{ '1', { 1, 0, 1, 0, 0, 0 } },
-		{ '2', { 0, 0, 1, 0, 0, 0 } },
-		{ '3', { 0, 0, 1, 0, 0, 1 } },
-		{ '4', { 1, 0, 0, 0, 0, 0 } },
-		{ '6', { 0, 0, 0, 0, 0, 1 } },
-		{ '7', { 1, 0, 0, 1, 0, 0 } },
-		{ '8', { 0, 0, 0, 1, 0, 0 } },
-		{ '9', { 0, 0, 0, 1, 0, 1 } },
-		{ 'A', { 0, 0, 1, 1, 0, 0 } },
-		{ 'B', { 1, 0, 0, 0, 0, 1 } },
-		{ 'C', { 0, 1, 0, 0, 0, 0 } },
-		{ 'D', { 0, 0, 0, 0, 1, 0 } },
-		{ 'E', { 1, 1, 0, 0, 0, 0 } },
-		{ 'F', { 0, 1, 1, 0, 0, 0 } },
-		{ 'G', { 0, 1, 0, 1, 0, 0 } },
-		{ 'H', { 0, 1, 0, 0, 0, 1 } },
-		{ 'I', { 1, 0, 0, 0, 1, 0 } },
-		{ 'J', { 0, 0, 1, 0, 1, 0 } },
-		{ 'K', { 0, 0, 0, 1, 1, 0 } },
-		{ 'L', { 0, 0, 0, 0, 1, 1 } },
-		{ 'M', { 0, 1, 0, 0, 1, 0 } },
-	};
-	const int iNumLookups = sizeof(lookup) / sizeof(*lookup);
-
-	for( int i=0; i<iNumLookups; i++ )
-	{
-		const DWICharLookup& l = lookup[i];
-		if( l.bCol[0]==bCol1 && l.bCol[1]==bCol2 && l.bCol[2]==bCol3 && l.bCol[3]==bCol4 && l.bCol[4]==bCol5 && l.bCol[5]==bCol6 )
-			return l.c;
-	}
-	LOG->Warn( "Failed to find the DWI character for the row %d %d %d %d %d %d", bCol1, bCol2, bCol3, bCol4, bCol5, bCol6 );
-	return '0';*/
-}
-
-static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4, TapNote tnCol5, TapNote tnCol6 )
-{
-	TapNote tnCols[6];
-	tnCols[0] = tnCol1;
-	tnCols[1] = tnCol2;
-	tnCols[2] = tnCol3;
-	tnCols[3] = tnCol4;
-	tnCols[4] = tnCol5;
-	tnCols[5] = tnCol6;
-	return NotesToDWIString( tnCols );
-}
-
-static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4 )
-{
-	return NotesToDWIString( tnCol1, TAP_EMPTY, tnCol2, tnCol3, TAP_EMPTY, tnCol4 );
-}
-
+/**
+ * @brief Optimize an individual pair of characters whenever possible.
+ * @param c1 the first character.
+ * @param c2 the second character.
+ * @return the one singular character. */
 static char OptimizeDWIPair( char c1, char c2 )
 {
 	typedef pair<char,char> cpair;
@@ -128,16 +41,21 @@ static char OptimizeDWIPair( char c1, char c2 )
 		joins[ cpair('8', 'D') ] = 'K';
 		joins[ cpair('6', 'D') ] = 'L';
 	}
-
+	
 	if( c1 > c2 )
 		swap( c1, c2 );
-
+	
 	map< cpair, char >::const_iterator it = joins.find( cpair(c1, c2) );
 	ASSERT( it != joins.end() );
-
+	
 	return it->second;
 }
 
+/**
+ * @brief Shrink the file contents as best as possible.
+ * @param holds the holds in the file.
+ * @param taps the taps in the file.
+ * @return the optimized string. */
 RString OptimizeDWIString( RString holds, RString taps )
 {
 	/* First, sort the holds and taps in ASCII order.  This puts 2468 first.
@@ -145,17 +63,17 @@ RString OptimizeDWIString( RString holds, RString taps )
 	 * do eg. 1D, not 2I. */
 	sort( holds.begin(), holds.end() );
 	sort( taps.begin(), taps.end() );
-
+	
 	/* Combine characters as much as possible. */
 	RString comb_taps, comb_holds;
-
+	
 	/* 24 -> 1 */
 	while( taps.size() > 1 )
 	{
 		comb_taps += OptimizeDWIPair( taps[0], taps[1] );
 		taps.erase(0, 2);
 	}
-
+	
 	/* 2!24!4 -> 1!1 */
 	while( holds.size() > 1 )
 	{
@@ -163,10 +81,10 @@ RString OptimizeDWIString( RString holds, RString taps )
 		holds.erase(0, 2);
 		comb_holds += ssprintf( "%c!%c", to, to );
 	}
-
+	
 	ASSERT( taps.size() <= 1 );
 	ASSERT( holds.size() <= 1 );
-
+	
 	/* 24!4 -> 1!4 */
 	while( holds.size() == 1 && taps.size() == 1 )
 	{
@@ -175,7 +93,7 @@ RString OptimizeDWIString( RString holds, RString taps )
 		taps.erase(0, 1);
 		holds.erase(0, 1);
 	}
-
+	
 	/* Now we have at most one single tap and one hold remaining, and any
 	 * number of taps and holds in comb_taps and comb_holds. */
 	RString ret;
@@ -184,15 +102,85 @@ RString OptimizeDWIString( RString holds, RString taps )
 	if( holds.size() == 1 )
 		ret += ssprintf( "%c!%c", holds[0], holds[0] );
 	ret += comb_holds;
-
+	
 	if( ret.size() == 1 || (ret.size() == 3 && ret[1] == '!') )
 		return ret;
 	else
 		return ssprintf( "<%s>", ret.c_str() );
 }
 
+/**
+ * @brief Turn the Notes into a DWI string without angle brackets whenever possible.
+ * @param tnCols the columns of TapNotes in question.
+ * @return the DWI'ed string. */
+static RString NotesToDWIString( const TapNote tnCols[6] )
+{
+	const char dirs[] = { '4', 'C', '2', '8', 'D', '6' };
+	RString taps, holds, ret;
+	for( int col = 0; col < 6; ++col )
+	{
+		switch( tnCols[col].type )
+		{
+		case TapNote::empty:
+		case TapNote::mine:
+			continue;
+		}
+
+		if( tnCols[col].type == TapNote::hold_head )
+			holds += dirs[col];
+		else
+			taps += dirs[col];
+	}
+
+	if( holds.size() + taps.size() == 0 )
+		return "0";
+
+	/* More than one. */
+	return OptimizeDWIString( holds, taps );
+}
+
+/**
+ * @brief Turn the Notes into a DWI string without angle brackets whenever possible.
+ * @param tnCol1 the first column.
+ * @param tnCol2 the second column.
+ * @param tnCol3 the third column.
+ * @param tnCol4 the fourth column.
+ * @param tnCol5 the fifth column.
+ * @param tnCol6 the sisth column.
+ * @return the DWI'ed string. */
+static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, 
+				 TapNote tnCol4, TapNote tnCol5, TapNote tnCol6 )
+{
+	TapNote tnCols[6];
+	tnCols[0] = tnCol1;
+	tnCols[1] = tnCol2;
+	tnCols[2] = tnCol3;
+	tnCols[3] = tnCol4;
+	tnCols[4] = tnCol5;
+	tnCols[5] = tnCol6;
+	return NotesToDWIString( tnCols );
+}
+
+/**
+ * @brief Turn the Notes into a DWI string without angle brackets whenever possible.
+ * @param tnCol1 the first column.
+ * @param tnCol2 the second column.
+ * @param tnCol3 the third column.
+ * @param tnCol4 the fourth column.
+ * @return the DWI'ed string. */
+static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4 )
+{
+	return NotesToDWIString( tnCol1, TAP_EMPTY, tnCol2, tnCol3, TAP_EMPTY, tnCol4 );
+}
+
+/** @brief The number of beats per measure for a DWI file. */
 static const int BEATS_PER_MEASURE = 4;
 
+/**
+ * @brief Write out the notes for a DWI file.
+ * @param f the file to write out to.
+ * @param out the Steps in question.
+ * @param start the starting position. */
 static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 {
 	NoteData notedata;
@@ -315,6 +303,11 @@ static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 	}
 }
 
+/**
+ * @brief Attempt to write a DWI's #NOTES tag.
+ * @param f the file to write out to.
+ * @param out the Steps in question.
+ * @return its success or failure. */
 static bool WriteDWINotesTag( RageFile &f, const Steps &out )
 {
 	if( out.GetDifficulty() == Difficulty_Edit )

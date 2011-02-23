@@ -81,6 +81,12 @@ static const char *MessageIDNames[] = {
 	"LifeMeterChangedP1",
 	"LifeMeterChangedP2",
 	"UpdateScreenHeader",
+	// should these be here? -aj
+	"LeftClick",
+	"RightClick",
+	"MiddleClick",
+	"MouseWheelUp",
+	"MouseWheelDown",
 };
 XToString( MessageID );
 
@@ -273,6 +279,7 @@ void MessageSubscriber::UnsubscribeAll()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the MessageManager. */ 
 class LunaMessageManager: public Luna<MessageManager>
 {
 public:

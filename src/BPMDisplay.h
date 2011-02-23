@@ -94,6 +94,8 @@ protected:
 	ThemeMetric<RString> RANDOM_TEXT;
 	/** @brief The text used as one possible option for random BPM. */
 	ThemeMetric<RString> QUESTIONMARKS_TEXT;
+	/** @brief The format string used for the numbers. */
+	ThemeMetric<RString> BPM_FORMAT_STRING;
 
 	/** @brief The lowest valued BPM. */
 	float m_fBPMFrom;

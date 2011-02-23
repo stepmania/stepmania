@@ -668,6 +668,7 @@ LuaFunction( FormatPercentScore,	PlayerStageStats::FormatPercentScore( FArg(1) )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the PlayerStageStats. */ 
 class LunaPlayerStageStats: public Luna<PlayerStageStats>
 {
 public:

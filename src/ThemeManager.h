@@ -1,5 +1,3 @@
-/* ThemeManager - Manages theme paths and metrics. */
-
 #ifndef THEMEMANAGER_H
 #define THEMEMANAGER_H
 
@@ -21,12 +19,13 @@ enum ElementCategory
 	NUM_ElementCategory,
 	ElementCategory_Invalid
 };
+/** @brief A special foreach loop going through each ElementCategory. */
 #define FOREACH_ElementCategory( ec ) FOREACH_ENUM( ElementCategory, ec )
 const RString& ElementCategoryToString( ElementCategory ec );
 ElementCategory StringToElementCategory( const RString& s );
 
 struct Theme;
-
+/** @brief Manages theme paths and metrics. */
 class ThemeManager
 {
 public:

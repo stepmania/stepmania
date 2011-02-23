@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ScreenGameplaySyncMachine.h"
 #include "NotesLoaderSSC.h"
+#include "NotesLoaderSM.h"
 #include "GameState.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
@@ -19,7 +20,11 @@ void ScreenGameplaySyncMachine::Init()
 	AdjustSync::ResetOriginalSyncData();
 
 	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music");
-	SSCLoader::LoadFromSSCFile( sFile, m_Song );
+	// Allow themers to use .ssc and .sm files. -aj
+	bool bLoadedSSCFile = SSCLoader::LoadFromSSCFile( sFile, m_Song );
+	if( !bLoadedSSCFile )
+		SMLoader::LoadFromSMFile( sFile, m_Song );
+
 	m_Song.SetSongDir( Dirname(sFile) );
 	m_Song.TidyUpData();
 
@@ -27,7 +32,7 @@ void ScreenGameplaySyncMachine::Init()
 	// needs proper StepsType - freem
 	vector<Steps*> vpSteps;
 	SongUtil::GetPlayableSteps( &m_Song, vpSteps );
-	ASSERT(vpSteps.size() > 0);
+	ASSERT_M(vpSteps.size() > 0, "No playable steps for ScreenGameplaySyncMachine");
 	Steps *pSteps = vpSteps[0];
 	GAMESTATE->m_pCurSteps[0].Set( pSteps );
 

@@ -46,7 +46,7 @@ public:
 	 * @brief Used to push note-changing modifiers back so that notes don't pop.
 	 *
 	 * This is used during gameplay and set by NoteField. */
-	mutable float		m_fLastDrawnBeat;
+	mutable float	m_fLastDrawnBeat;
 	/** @brief The Player's HealthState in general terms. */
 	HealthState		m_HealthState;
 

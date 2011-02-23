@@ -16,6 +16,7 @@
 #include "NoteSkinManager.h"
 #include "NotesLoaderDWI.h"
 #include "NotesLoaderSSC.h"
+#include "NotesLoaderSM.h"
 #include "PrefsManager.h"
 #include "Profile.h"
 #include "ProfileManager.h"
@@ -142,7 +143,6 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 	LOG->Trace( "Found %d songs in %f seconds.", (int)m_pSongs.size(), tm.GetDeltaTime() );
 }
 
-
 static LocalizedString FOLDER_CONTAINS_MUSIC_FILES( "SongManager", "The folder \"%s\" appears to be a song folder.  All song folders must reside in a group folder.  For example, \"Songs/Originals/My Song\"." );
 void SongManager::SanityCheckGroupDir( RString sDir ) const
 {
@@ -186,11 +186,13 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 		if( !arrayGroupBanners.empty() )
 			sBannerPath = sDir+arrayGroupBanners[0];
 	}
-	
-	// Group backgrounds are a bit trickier, and usually don't exist.
-	// However, for Background wheels, we support them. -aj
-	// background files MUST end in "-bg".ext in order to distinguish them.
-	// Yes hardcoding it sucks sometimes, but this is to keep my sanity. -aj
+
+	/* Other group graphics are a bit trickier, and usually don't exist.
+	 * A themer has a few options, namely checking the aspect ratio and
+	 * operating on it. -aj
+	 * TODO: Once the files are implemented in Song, bring the extensions
+	 * from there into here. -aj */
+	// Group background
 /*
 	vector<RString> arrayGroupBackgrounds;
 	GetDirListing( sDir+sGroupDirName+"/*-bg.png", arrayGroupBanners );
@@ -212,8 +214,10 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 			sBackgroundPath = sDir+arrayGroupBackgrounds[0];
 	}
 */
+	/*
 	LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(), 
 				sBannerPath != ""? sBannerPath.c_str():"(none)" );
+	*/
 	m_sSongGroupNames.push_back( sGroupDirName );
 	m_sSongGroupBannerPaths.push_back( sBannerPath );
 	//m_sSongGroupBackgroundPaths.push_back( sBackgroundPath );
@@ -295,8 +299,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	LoadEnabledSongsFromPref();
 }
 
-// Instead of "symlinks", songs should have membership in multiple groups.
-// -Chris
+// Instead of "symlinks", songs should have membership in multiple groups. -Chris
 void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 {
 	// Find all symlink files in this folder
@@ -306,9 +309,9 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 	SongPointerVector& index_entry = m_mapSongGroupIndex[sGroupFolder];
 	for( unsigned s=0; s< arraySymLinks.size(); s++ )	// for each symlink in this dir, add it in as a song.
 	{
-		MsdFile		msdF;
+		MsdFile msdF;
 		msdF.ReadFile( sDir+sGroupFolder+"/"+arraySymLinks[s].c_str(), false );  // don't unescape
-		RString	sSymDestination = msdF.GetParam(0,1);	// Should only be 1 vale&param...period.
+		RString	sSymDestination = msdF.GetParam(0,1); // Should only be 1 value & param...period.
 
 		Song* pNewSong = new Song;
 		if( !pNewSong->LoadFromSongDir( sSymDestination ) )
@@ -458,10 +461,8 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 	}
 	else
 	{
-
-		/* XXX:
-		 * Previously, this matched all notes, which set a song to "extra" if
-		 * it had any 10-foot steps at all, even edits or doubles.
+		/* XXX: Previously, this matched all notes, which set a song to "extra"
+		 * if it had any 10-foot steps at all, even edits or doubles.
 		 *
 		 * For now, only look at notes for the current note type. This means
 		 * that if a song has 10-foot steps on Doubles, it'll only show up red
@@ -469,8 +470,7 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 		 * in the song scroll, which is a little odd but harmless. 
 		 *
 		 * XXX: Ack. This means this function can only be called when we have
-		 * a style set up, which is too restrictive.  How to handle this?
-		 */
+		 * a style set up, which is too restrictive. How to handle this? */
 		//const StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 		const vector<Steps*>& vpSteps = pSong->GetAllSteps();
 		for( unsigned i=0; i<vpSteps.size(); i++ )
@@ -1654,7 +1654,11 @@ void SongManager::LoadStepEditsFromProfileDir( const RString &sProfileDir, Profi
 		{
 			RString fn = vsFiles[i];
 
-			SSCLoader::LoadEditFromFile( fn, slot, true );
+			bool bLoadedFromSSC = SSCLoader::LoadEditFromFile( fn, slot, true );
+			// If we don't load the edit from a .ssc-style .edit, then we should
+			// also try the .sm-style edit file. -aj
+			if( !bLoadedFromSSC )
+				SMLoader::LoadEditFromFile( fn, slot, true );
 		}
 	}
 }
@@ -1785,6 +1789,7 @@ int SongManager::GetSongRank(Song* pSong)
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the SongManager. */ 
 class LunaSongManager: public Luna<SongManager>
 {
 public:

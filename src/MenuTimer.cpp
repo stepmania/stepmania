@@ -194,6 +194,7 @@ void MenuTimer::SetText( float fSeconds )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the MenuTimer. */ 
 class LunaMenuTimer: public Luna<MenuTimer>
 {
 public:

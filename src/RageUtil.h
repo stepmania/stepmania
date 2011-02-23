@@ -615,6 +615,7 @@ int GetFileSizeInBytes( const RString &sFilePath );
 void FixSlashesInPlace( RString &sPath );
 void CollapsePath( RString &sPath, bool bRemoveLeadingDot=false );
 
+/** @brief Utilities for converting the RStrings. */
 namespace StringConversion
 {
 	template<typename T>

@@ -1,5 +1,3 @@
-/* PrefsManager - Holds user-chosen preferences that are saved between sessions. */
-
 #ifndef PREFSMANAGER_H
 #define PREFSMANAGER_H
 
@@ -7,6 +5,9 @@
 
 class IniFile;
 
+/** @brief How many songs can be played during a normal game max?
+ *
+ * This assumes no extra stages, no event mode, no course modes. */
 const int MAX_SONGS_PER_PLAY = 7;
 
 enum MusicWheelUsesSections
@@ -125,6 +126,7 @@ enum DefaultFailType
 	DefaultFailType_Invalid
 };
 
+/** @brief Holds user-chosen preferences that are saved between sessions. */
 class PrefsManager
 {
 public:

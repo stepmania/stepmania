@@ -647,6 +647,7 @@ void RageSound::SetStopModeFromString( const RString &sStopMode )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the RageSound. */ 
 class LunaRageSound: public Luna<RageSound>
 {
 public:

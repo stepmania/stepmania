@@ -12,7 +12,7 @@ public:
 
 private:
 	int m_iChangeMask;
-	
+
 protected:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 

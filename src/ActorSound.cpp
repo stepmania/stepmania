@@ -5,7 +5,7 @@
 #include "XmlFile.h"
 #include "RageUtil.h"
 
-REGISTER_ACTOR_CLASS_WITH_NAME( ActorSound, Sound )
+REGISTER_ACTOR_CLASS_WITH_NAME( ActorSound, Sound );
 
 void ActorSound::Load( const RString &sPath )
 {
@@ -53,6 +53,7 @@ void ActorSound::LoadFromNode( const XNode* pNode )
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ActorSound. */ 
 class LunaActorSound: public Luna<ActorSound>
 {
 public:

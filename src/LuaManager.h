@@ -15,9 +15,6 @@ extern "C"
 #include "lua-5.1/src/lauxlib.h"
 }
 
-class LuaManager;
-extern LuaManager *LUA;
-
 class LuaManager
 {
 public:
@@ -47,7 +44,10 @@ private:
 	lua_State *m_pLuaMain;
 };
 
+extern LuaManager *LUA;
 
+
+/** @brief Utilities for working with Lua. */
 namespace LuaHelpers
 {
 	/* Load the given script with the given name. On success, the resulting
@@ -157,19 +157,21 @@ private:
 	LuaReference *m_pOldValue;
 };
 
-/* Iterate over all elements in the table. For safety reasons, the key is pushed onto
- * the stack and can be read (safely) as a string and popped or altered in any way.
- * Stack management is handled automatically. That is, you need not remove all stack
- * elements above the key. Once the loop exits normally, the top of the stack will be
- * where it was before. If you break out of the loop early, you need to handle that
- * explicitly. */
+/**
+ * @brief Iterate over all elements in the table.
+ * 
+ * For safety reasons, the key is pushed onto the stack and can be read (safely) 
+ * as a string and popped or altered in any way. Stack management is handled 
+ * automatically. That is, you need not remove all stack elements above the key. 
+ * Once the loop exits normally, the top of the stack will be where it was before. 
+ * If you break out of the loop early, you need to handle that explicitly. */
 #define FOREACH_LUATABLE(L,index) \
 for( const int UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
      UNIQUE_NAME(top) = (lua_pushnil(L),lua_gettop(L)); \
      lua_next(L, UNIQUE_NAME(tab)) && (lua_pushvalue(L,-2),true); \
      lua_settop(L,UNIQUE_NAME(top)) )
 
-/* Iterate over the array elements of a table. */
+/** @brief Iterate over the array elements of a table. */
 #define FOREACH_LUATABLEI(L, index, i) \
 	for( int UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
 		UNIQUE_NAME(top) = lua_gettop(L), i = 1; \

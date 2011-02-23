@@ -12,11 +12,18 @@ public:
 	virtual ~ActorFrameTexture();
 	virtual ActorFrameTexture *Copy() const;
 
-	/* Set the texture name, which can be used with RageTextureManager (and users,
-	 * eg. Sprite) to load the texture.  If no name is supplied, a unique one will
-	 * be generated.  In that case, the only way to access the texture is via
-	 * GetTextureName. */
+	/**
+	 * @brief Set the texture name. 
+	 *
+	 * This can be used with RageTextureManager (and users, eg. Sprite)
+	 * to load the texture.  If no name is supplied, a unique one will
+	 * be generated.  In that case, the only way to access the texture 
+	 * is via GetTextureName.
+	 * @param sName the new name. */
 	void SetTextureName( const RString &sName ) { m_sTextureName = sName; }
+	/**
+	 * @brief Retrieve the texture name.
+	 * @return the texture name. */
 	RString GetTextureName() const { return m_sTextureName; }
 	RageTextureRenderTarget *GetTexture() { return m_pRenderTarget; }
 
@@ -52,8 +59,10 @@ public:
 
 #endif
 
-/*
- * (c) 2006 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2006
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

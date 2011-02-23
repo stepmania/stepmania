@@ -7,6 +7,7 @@
 
 ScoreDisplayPercentage::ScoreDisplayPercentage()
 {
+	// todo: allow ScoreDisplayPercentage to have its own frame? -aj
 	m_sprFrame.Load( THEME->GetPathG("ScoreDisplayNormal","frame") );
 	this->AddChild( m_sprFrame );
 
@@ -18,11 +19,8 @@ void ScoreDisplayPercentage::Init( const PlayerState* pPlayerState, const Player
 {
 	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
 
-	m_Percent.Load( 
-		pPlayerState, 
-		pPlayerStageStats, 
-		"ScoreDisplayPercentage Percent",
-		true );
+	m_Percent.Load( pPlayerState, pPlayerStageStats,
+		"ScoreDisplayPercentage Percent", true );
 }
 
 /*

@@ -52,7 +52,7 @@ void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 	if( rowBegin == rowEnd )
 		return;
 
-	iterator begin, end;
+	NoteData::TrackMap::iterator begin, end;
 	GetTapNoteRangeInclusive( iTrack, rowBegin, rowEnd, begin, end );
 
 	if( begin != end && begin->first < rowBegin && begin->first + begin->second.iDuration > rowEnd )
@@ -86,7 +86,7 @@ void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 
 	if( begin != end )
 	{
-		iterator prev = end;
+		NoteData::TrackMap::iterator prev = end;
 		--prev;
 		TapNote tn = begin->second;
 		int iRow = prev->first;
@@ -138,7 +138,7 @@ void NoteData::CopyRange( const NoteData& from, int rowFromBegin, int rowFromEnd
 
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		const_iterator begin, end;
+		NoteData::TrackMap::const_iterator begin, end;
 		from.GetTapNoteRangeInclusive( t, rowFromBegin, rowFromEnd, begin, end );
 		for( ; begin != end; ++begin )
 		{
@@ -307,7 +307,7 @@ void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 	ASSERT_M( iEndRow >= iStartRow, ssprintf("EndRow %d < StartRow %d",iEndRow,iStartRow) );
 
 	/* Include adjacent (non-overlapping) hold notes, since we need to merge with them. */
-	iterator begin, end;
+	NoteData::TrackMap::iterator begin, end;
 	GetTapNoteRangeInclusive( iTrack, iStartRow, iEndRow, begin, end, true );
 
 	// Look for other hold notes that overlap and merge them into add.
@@ -590,7 +590,7 @@ int NoteData::GetNumHoldNotes( int iStartIndex, int iEndIndex ) const
 	int iNumHolds = 0;
 	for( int t=0; t<GetNumTracks(); ++t )
 	{
-		const_iterator begin, end;
+		NoteData::TrackMap::const_iterator begin, end;
 		GetTapNoteRangeExclusive( t, iStartIndex, iEndIndex, begin, end );
 		for( ; begin != end; ++begin )
 		{
@@ -608,7 +608,7 @@ int NoteData::GetNumRolls( int iStartIndex, int iEndIndex ) const
 	int iNumRolls = 0;
 	for( int t=0; t<GetNumTracks(); ++t )
 	{
-		const_iterator begin, end;
+		NoteData::TrackMap::const_iterator begin, end;
 		GetTapNoteRangeExclusive( t, iStartIndex, iEndIndex, begin, end );
 		for( ; begin != end; ++begin )
 		{
@@ -641,7 +641,7 @@ int NoteData::GetNumMinefields( int iStartIndex, int iEndIndex ) const
 	int iNumMinefields = 0;
 	for( int t=0; t<GetNumTracks(); ++t )
 	{
-		const_iterator begin, end;
+		NoteData::TrackMap::const_iterator begin, end;
 		GetTapNoteRangeExclusive( t, iStartIndex, iEndIndex, begin, end );
 		for( ; begin != end; ++begin )
 		{
@@ -759,11 +759,6 @@ bool NoteData::GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const
 	return true;
 }
 
-/* Return an iterator range for [rowBegin,rowEnd).  This can be used to efficiently
- * iterate trackwise over a range of notes.  It's like FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE,
- * except it only requires two map searches (iterating is constant time), but the iterators will
- * become invalid if the notes they represent disappear, so you need to pay attention to
- * how you modify the data. */
 void NoteData::GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end )
 {
 	ASSERT_M( iTrack < GetNumTracks(), ssprintf("%i,%i", iTrack, GetNumTracks())  );
@@ -794,7 +789,7 @@ void NoteData::GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap
 /* Include hold notes that overlap the edges.  If a hold note completely surrounds the given
  * range, included it, too.  If bIncludeAdjacent is true, also include hold notes adjacent to,
  * but not overlapping, the edge. */
-void NoteData::GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, iterator &begin, iterator &end, bool bIncludeAdjacent )
+void NoteData::GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end, bool bIncludeAdjacent )
 {
 	GetTapNoteRange( iTrack, iStartRow, iEndRow, begin, end );
 
@@ -827,7 +822,7 @@ void NoteData::GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow,
 	}
 }
 
-void NoteData::GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, iterator &begin, iterator &end )
+void NoteData::GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end )
 {
 	GetTapNoteRange( iTrack, iStartRow, iEndRow, begin, end );
 

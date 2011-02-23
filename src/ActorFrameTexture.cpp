@@ -4,7 +4,7 @@
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
 
-REGISTER_ACTOR_CLASS_WITH_NAME( ActorFrameTextureAutoDeleteChildren, ActorFrameTexture )
+REGISTER_ACTOR_CLASS_WITH_NAME( ActorFrameTextureAutoDeleteChildren, ActorFrameTexture );
 ActorFrameTexture *ActorFrameTexture::Copy() const { return new ActorFrameTexture(*this); }
 
 ActorFrameTexture::ActorFrameTexture()
@@ -67,6 +67,7 @@ void ActorFrameTexture::DrawPrimitives()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ActorFrameTexture. */ 
 class LunaActorFrameTexture : public Luna<ActorFrameTexture>
 {
 public:

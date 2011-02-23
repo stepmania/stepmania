@@ -2,6 +2,7 @@
 #define RAGE_SURFACE_LOAD_H
 
 struct RageSurface;
+/** @brief Utility functions for the RageSurfaces. */
 namespace RageSurfaceUtils
 {
 	enum OpenResult

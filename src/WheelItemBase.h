@@ -1,5 +1,3 @@
-/* WheelItemBase - An item on the wheel. */
-
 #ifndef WHEEL_ITEM_BASE_H
 #define WHEEL_ITEM_BASE_H
 
@@ -10,17 +8,18 @@
 #include "AutoActor.h"
 
 struct WheelItemBaseData;
-
+/** @brief The different types of Wheel Items. */
 enum WheelItemDataType 
 {
-	TYPE_GENERIC,
-	TYPE_SECTION,
-	TYPE_SONG,
-	TYPE_ROULETTE,
-	TYPE_RANDOM,
-	TYPE_PORTAL,
-	TYPE_COURSE,
-	TYPE_SORT
+	TYPE_GENERIC,	/**< A generic item on the Wheel. */
+	TYPE_SECTION,	/**< A general section on the Wheel. */
+	TYPE_SONG,	/**< A Song on the Wheel. */
+	TYPE_ROULETTE,	/**< The roulette section on the Wheel. */
+	TYPE_RANDOM,	/**< The random section on the Wheel. */
+	TYPE_PORTAL,	/**< The portal section on the Wheel. */
+	TYPE_COURSE,	/**< A Course on the Wheel. */
+	TYPE_SORT,	/**< A generic sorting item on the Wheel. */
+	//TYPE_CUSTOM
 };
 
 struct WheelItemBaseData
@@ -32,7 +31,7 @@ struct WheelItemBaseData
 	RString		m_sText;
 	RageColor	m_color;	// either text color or section background color
 };
-
+/** @brief An item on the wheel. */
 class WheelItemBase : public ActorFrame
 {
 public:

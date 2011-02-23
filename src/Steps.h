@@ -68,6 +68,11 @@ public:
 	 */
 	RString GetDescription() const			{ return Real()->m_sDescription; }
 	/**
+	 * @brief Retrieve the ChartStyle used for this chart.
+	 * @return the description used for this chart.
+	 */
+	RString GetChartStyle() const			{ return Real()->m_sChartStyle; }
+	/**
 	 * @brief Retrieve the difficulty used for this edit.
 	 * @return the difficulty used for this edit.
 	 */
@@ -92,6 +97,7 @@ public:
 	void SetDescription( RString sDescription ) 	{ SetDifficultyAndDescription( this->GetDifficulty(), sDescription ); }
 	void SetDifficultyAndDescription( Difficulty dc, RString sDescription );
 	void SetCredit( RString sCredit );
+	void SetChartStyle( RString sChartStyle );
 	static bool MakeValidEditDescription( RString &sPreferredDescription );	// return true if was modified
 
 	void SetLoadedFromProfile( ProfileSlot slot )	{ m_LoadedFromProfile = slot; }
@@ -146,6 +152,8 @@ private:
 	/** @brief The name of the edit, or some other useful description.
 	 This used to also contain the step author's name. */
 	RString				m_sDescription;
+	/** @brief The style of the chart. (e.g. "Pad", "Keyboard") */
+	RString				m_sChartStyle;
 	/** @brief The difficulty that these steps are assigned to. */
 	Difficulty			m_Difficulty;
 	/** @brief The numeric difficulty of the Steps, ranging from MIN_METER to MAX_METER. */

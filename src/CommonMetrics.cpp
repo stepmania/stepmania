@@ -8,15 +8,16 @@
 #include "ProductInfo.h"
 #include "LuaManager.h"
 
-ThemeMetric<RString>			CommonMetrics::FIRST_ATTRACT_SCREEN		("Common","FirstAttractScreen");
-ThemeMetric<RString>			CommonMetrics::DEFAULT_MODIFIERS		("Common","DefaultModifiers" );
-LocalizedString				CommonMetrics::WINDOW_TITLE			("Common","WindowTitle");
+ThemeMetric<RString>		CommonMetrics::OPERATOR_MENU_SCREEN		("Common","OperatorMenuScreen");
+ThemeMetric<RString>		CommonMetrics::FIRST_ATTRACT_SCREEN		("Common","FirstAttractScreen");
+ThemeMetric<RString>		CommonMetrics::DEFAULT_MODIFIERS		("Common","DefaultModifiers" );
+LocalizedString				CommonMetrics::WINDOW_TITLE				("Common","WindowTitle");
 ThemeMetric<int>			CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS("Common","MaxCourseEntriesBeforeShowVarious");
 ThemeMetric<float>			CommonMetrics::TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
-ThemeMetric<RString>			CommonMetrics::DEFAULT_NOTESKIN_NAME		("Common","DefaultNoteSkinName");
-ThemeMetricDifficultiesToShow		CommonMetrics::DIFFICULTIES_TO_SHOW		("Common","DifficultiesToShow");
+ThemeMetric<RString>		CommonMetrics::DEFAULT_NOTESKIN_NAME	("Common","DefaultNoteSkinName");
+ThemeMetricDifficultiesToShow	CommonMetrics::DIFFICULTIES_TO_SHOW		("Common","DifficultiesToShow");
 ThemeMetricCourseDifficultiesToShow	CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW	("Common","CourseDifficultiesToShow");
-ThemeMetricStepsTypesToShow		CommonMetrics::STEPS_TYPES_TO_SHOW		("Common","StepsTypesToHide");	// This metric takes a list of StepsTypes to hide and returns a list of StepsTypes to show
+ThemeMetricStepsTypesToShow	CommonMetrics::STEPS_TYPES_TO_SHOW		("Common","StepsTypesToHide");
 ThemeMetric<bool>			CommonMetrics::AUTO_SET_STYLE			("Common","AutoSetStyle");
 ThemeMetric<int>			CommonMetrics::PERCENT_SCORE_DECIMAL_PLACES	("Common","PercentScoreDecimalPlaces");
 
@@ -78,7 +79,6 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 	}
 }
 const vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() const { return m_v; }
-
 
 static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRemove )
 {

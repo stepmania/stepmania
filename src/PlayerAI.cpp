@@ -18,17 +18,16 @@ struct TapScoreDistribution
 		for( int i=0; i<=TNS_W1; i++ )
 		{
 			fCumulativePercent += fPercent[i];
-			if( fRand <= fCumulativePercent+1e-4 ) /* rounding error */
+			if( fRand <= fCumulativePercent+1e-4 ) // rounding error
 				return (TapNoteScore)i;
 		}
-		ASSERT_M( 0, ssprintf("%f,%f",fRand,fCumulativePercent) );	// the fCumulativePercents must sum to 1.0, so we should never get here!
+		// the fCumulativePercents must sum to 1.0, so we should never get here!
+		ASSERT_M( 0, ssprintf("%f,%f",fRand,fCumulativePercent) );
 		return TNS_W1;
 	}
-
 };
 
 static TapScoreDistribution g_Distributions[NUM_SKILL_LEVELS];
-
 
 void PlayerAI::InitFromDisk()
 {
@@ -68,7 +67,6 @@ void PlayerAI::InitFromDisk()
 	}
 }
 
-
 TapNoteScore PlayerAI::GetTapNoteScore( const PlayerState* pPlayerState )
 {
 	if( pPlayerState->m_PlayerController == PC_AUTOPLAY )
@@ -84,10 +82,10 @@ TapNoteScore PlayerAI::GetTapNoteScore( const PlayerState* pPlayerState )
 
 	int iCpuSkill = pPlayerState->m_iCpuSkill;
 
-	/* If we're in battle mode, reduce the skill based on the number of modifier attacks
-	 * against us.  If we're in demonstration or jukebox mode with modifiers attached,
-	 * don't make demonstration miss a lot. */
-	// xxx: weight certain modifiers (boomerang, tornado) more? (to simulate
+	/* If we're in battle mode, reduce the skill based on the number of modifier
+	 * attacks against us. If we're in demonstration or jukebox mode with
+	 * modifiers attached, don't make demonstration miss a lot. */
+	// Idea: weight certain modifiers (boomerang, tornado) more? (to simulate
 	// readability problems) -aj
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 	{

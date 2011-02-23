@@ -19,7 +19,7 @@ static const int NUM_SCORE_DIGITS = 9;
 
 #define MAX_COMBO_NUM_DIGITS	THEME->GetMetricI("ScreenEvaluation","MaxComboNumDigits")
 
-static AutoScreenMessage( SM_GotEval ) 
+static AutoScreenMessage( SM_GotEval );
 
 REGISTER_SCREEN_CLASS( ScreenNetEvaluation );
 
@@ -133,9 +133,9 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		LOG->Trace( "SMNETCheckpoint" );
 		for( int i=0; i<m_iActivePlayers; ++i )
 		{
-			// Strange occourances because of timing cause these things not to
-			// work right and will sometimes cause a crash.
-			// We should make SURE we won't crash!
+			// Strange occurences because of timing cause these things not to
+			// work right and will sometimes cause a crash. We should make SURE
+			// we won't crash!
 			if ( size_t(i) >= NSMAN->m_EvalPlayerData.size() )
 				break;
 
@@ -152,16 +152,14 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 
 			// Yes, hardcoded (I'd like to leave it that way) -CNLohr (in reference to Grade_Tier03)
 			// Themes can read this differently. The correct solution depends...
-			// TODO: make this a server-side variable, or just find out
-			// the data from the theme? If we find out from the theme, people
-			// will be using different themes so it means nothing. -aj
+			// TODO: make this a server-side variable. -aj
 			if( NSMAN->m_EvalPlayerData[i].grade < Grade_Tier03 )
 				m_textUsers[i].PlayCommand("Tier02OrBetter");
 
 			ON_COMMAND( m_textUsers[i] );
 			LOG->Trace( "SMNETCheckpoint%d", i );
 		}
-		return;	//no need to let ScreenEvaluation get ahold of this.
+		return; // No need to let ScreenEvaluation get a hold of this.
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
@@ -191,13 +189,11 @@ void ScreenNetEvaluation::UpdateStats()
 		m_textScore[m_pActivePlayer].SetTargetNumber( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score );
 
 	//Values greater than 6 will cause a crash
-	/*
 	if( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty < 6 )
 	{
 		m_DifficultyIcon[m_pActivePlayer].SetPlayer( m_pActivePlayer );
 		m_DifficultyIcon[m_pActivePlayer].SetFromDifficulty( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
 	}
-	*/
 
 	for( int j=0; j<NETNUMTAPSCORES; ++j )
 	{
@@ -230,6 +226,7 @@ void ScreenNetEvaluation::UpdateStats()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the ScreenNetEvaluation. */ 
 class LunaScreenNetEvaluation: public Luna<ScreenNetEvaluation>
 {
 public:

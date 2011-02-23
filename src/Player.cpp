@@ -42,7 +42,9 @@
 #include "LocalizedString.h"
 #include "AdjustSync.h"
 
-// Helper class to ensure that each row is only judged once without taking too much memory.
+/**
+ * @brief Helper class to ensure that each row is only judged once without taking too much memory.
+ */
 class JudgedRows
 {
 	vector<bool> m_vRows;
@@ -91,8 +93,10 @@ public:
 
 RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides )	{ return "AttackDisplayXOffset" + (both_sides ? RString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 
-/* Distance to search for a note in Step(), in seconds. */
-// TODO: This should be calculated based on the max size of the current judgment windows.
+/**
+ * @brief Distance to search for a note in Step(), in seconds.
+ *
+ * TODO: This should be calculated based on the max size of the current judgment windows. */
 static const float StepSearchDistance = 1.0f;
 
 void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, float &defaultValueOut )
@@ -127,14 +131,48 @@ ThemeMetric<float> INITIAL_HOLD_LIFE		( "Player", "InitialHoldLife" );
 ThemeMetric<float> MAX_HOLD_LIFE		( "Player", "MaxHoldLife" ); // sm-ssc addition
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
+/**
+ * @brief Does StepMania use checkpoint judgments when interacting with holds?
+ *
+ * If set to true, checkpoint judgments are in use, similar to the Pump It Up
+ * series. If set to false, no such judgments are used. */
 ThemeMetric<bool> HOLD_CHECKPOINTS	( "Player", "HoldCheckpoints" );
+/**
+ * @brief If using checkpoints, are the song's TickcountSegments used?
+ *
+ * If set to true, the checkpoints rely on the data found in the TickcountSegments.
+ * This is used via the #%TICKCOUNTS tag. */
 ThemeMetric<bool> CHECKPOINTS_USE_TICKCOUNTS ( "Player", "CheckpointsUseTickcounts" );
+/**
+ * @brief If using checkpoints, are the song's TimeSignatureSegments used?
+ *
+ * If set to true AND CheckpointsUseTickcounts is set to false, the TimeSignatureSegments
+ * are used to determine how often the checkpoints are found.
+ *
+ * It should be noted that this is a deprecated metric. */
 ThemeMetric<bool> CHECKPOINTS_USE_TIME_SIGNATURES ( "Player", "CheckpointsUseTimeSignatures" );
 ThemeMetric<bool> CHECKPOINTS_FLASH_ON_HOLD ( "Player", "CheckpointsFlashOnHold" ); // sm-ssc addition
 ThemeMetric<bool> IMMEDIATE_HOLD_LET_GO	( "Player", "ImmediateHoldLetGo" );
+/**
+ * @brief Must a Player step on a hold head for a hold to activate?
+ *
+ * If set to true, the Player must step on a hold head in order for the hold to activate.
+ * If set to false, merely holding your foot down as the hold head approaches will suffice. */
 ThemeMetric<bool> REQUIRE_STEP_ON_HOLD_HEADS	( "Player", "RequireStepOnHoldHeads" );
+/**
+ * @brief Must a Player step on a mine for it to activate?
+ *
+ * If set to true, the Player must step on a mine for it to blow up.
+ * If set to false, merely holding your foot down as the mine approaches will suffice. */
 ThemeMetric<bool> REQUIRE_STEP_ON_MINES	( "Player", "RequireStepOnMines" );
 //ThemeMetric<bool> HOLD_TRIGGERS_TAP_NOTES	( "Player", "HoldTriggersTapNotes" ); // parastar stuff; leave in though
+/**
+ * @brief Does repeatedly stepping on a roll to keep it alive increment the combo?
+ *
+ * If set to true, repeatedly stepping on a roll will increment the combo.
+ * If set to false, only the roll head causes the combo to be incremented.
+ *
+ * For those wishing to make a theme very accurate to In The Groove 2, set this to false. */
 ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
 ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
 ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" ); // sm-ssc addition
@@ -401,7 +439,10 @@ void Player::Init(
 
 	m_fActiveRandomAttackStart = -1.0f;
 }
-
+/**
+ * @brief Determine if a TapNote needs a tap note style judgment.
+ * @param tn the TapNote in question.
+ * @return true if it does, false otherwise. */
 static bool NeedsTapJudging( const TapNote &tn )
 {
 	switch( tn.type )
@@ -420,6 +461,10 @@ static bool NeedsTapJudging( const TapNote &tn )
 	}
 }
 
+/**
+ * @brief Determine if a TapNote needs a hold note style judgment.
+ * @param tn the TapNote in question.
+ * @return true if it does, false otherwise. */
 static bool NeedsHoldJudging( const TapNote &tn )
 {
 	switch( tn.type )
@@ -752,17 +797,6 @@ void Player::Update( float fDeltaTime )
 
 		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI );
 
-		if( m_vAlterMap.size() > 0 ) // alternate input is being used
-		{
-			for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
-			{
-				if( m_vAlterMap[i].inpMain == GameI )
-				{
-					bIsHoldingButton = bIsHoldingButton || INPUTMAPPER->IsBeingPressed( m_vAlterMap[i].inpAlt );
-				}
-			}
-		}
-
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
 			if( m_pNoteField )
@@ -1049,17 +1083,6 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			// this previously read as bIsHoldingButton &=
 			// was there a specific reason for this? - Friez
 			bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
-
-			if( m_vAlterMap.size() > 0 ) // alternate input is being used
-			{
-				for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
-				{
-					if( m_vAlterMap[i].inpMain == GameI )
-					{
-						bIsHoldingButton = bIsHoldingButton | INPUTMAPPER->IsBeingPressed( m_vAlterMap[i].inpAlt );
-					}
-				}
-			}
 		}
 	}
 
@@ -1253,13 +1276,13 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				//LOG->Trace("initiated note and let go :(");
 			}
 		}
-		else
+		else if( SCORE_MISSED_HOLDS_AND_ROLLS )
 		{
-			//LOG->Trace("did not initiate note");
-			if( !bInitiatedNote && !SCORE_MISSED_HOLDS_AND_ROLLS )
-				hns = HNS_None;
-			else
-				hns = HNS_LetGo;
+			hns = HNS_LetGo;
+		}
+		else 
+		{
+			hns = HNS_None;
 		}
 	}
 
@@ -1666,7 +1689,7 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			// Since this is being called every frame, let's not check the whole array every time.
 			// Instead, only check 1 beat back.  Even 1 is overkill.
 			const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
-			NoteData::iterator begin, end;
+			NoteData::TrackMap::iterator begin, end;
 			m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
 			for( ; begin != end; ++begin )
 			{
@@ -1754,7 +1777,7 @@ void Player::ScoreAllActiveHoldsLetGo()
 			// Since this is being called every frame, let's not check the whole array every time.
 			// Instead, only check 1 beat back.  Even 1 is overkill.
 			const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
-			NoteData::iterator begin, end;
+			NoteData::TrackMap::iterator begin, end;
 			m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
 			for( ; begin != end; ++begin )
 			{
@@ -1805,7 +1828,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		// Instead, only check 1 beat back.  Even 1 is overkill.
 		// Just update the life here and let Update judge the roll.
 		const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
-		NoteData::iterator begin, end;
+		NoteData::TrackMap::iterator begin, end;
 		m_NoteData.GetTapNoteRangeInclusive( col, iStartCheckingAt, iSongRow+1, begin, end );
 		for( ; begin != end; ++begin )
 		{
@@ -2702,38 +2725,10 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 					float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
 					if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
 						Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
-
-					if( m_vAlterMap.size() > 0 ) // alternate input is being used
-					{
-						for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
-						{
-							if( m_vAlterMap[i].inpMain == GameI )
-							{
-								GameInput GameIB = m_vAlterMap[i].inpAlt;
-								float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameIB, m_pPlayerState->m_mp );
-								if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-										Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );							
-							}
-						}
-					}
 				}
 				else if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
 				{
 					Step( iTrack, -1, now, true, false );
-				}
-				else if( m_vAlterMap.size() > 0 ) // alternate input being used
-				{
-					for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
-					{
-						if( m_vAlterMap[i].inpMain == GameI )
-						{
-							GameInput GameIB = m_vAlterMap[i].inpAlt;
-							if( INPUTMAPPER->IsBeingPressed(GameIB, m_pPlayerState->m_mp) )
-							{
-								Step( iTrack, -1, now, true, false );
-							}
-						}
-					}
 				}
 			}
 			break;
@@ -3236,6 +3231,7 @@ RString Player::ApplyRandomAttack()
 // lua start
 #include "LuaBinding.h"
 
+/** @brief Allow Lua to have access to the Player. */ 
 class LunaPlayer: public Luna<Player>
 {
 public:
