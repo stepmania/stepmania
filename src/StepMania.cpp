@@ -1306,9 +1306,9 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		return false; // Attract needs to know because it goes to TitleMenu on > 1 credit
 	}
 
-	// re-added for StepMania 3.9 veterans, plus it's just plain old faster
-	// than the debug menu. However, this is without the LShift capability
-	// that was in 3.9; if we get enough requests, we'll re-add it, but meh. -aj
+	/* Re-added for StepMania 3.9 theming veterans, plus it's just faster than
+	 * the debug menu. However, in sm-ssc, the Shift button only reloads the
+	 * metrics, unlike in 3.9 (where it saved bookkeeping and machine profile). -aj */
 	bool bIsShiftHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT), &input.InputList) ||
 		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT), &input.InputList);
 	bool bIsCtrlHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL), &input.InputList) ||
