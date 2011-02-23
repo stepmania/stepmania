@@ -262,21 +262,19 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 	}
 #endif
 
-	//
-	// TRICKY:  Some adapters map the PlayStation digital d-pad to both axes and
-	// buttons.  We want buttons to be used for any mappings where possible because
-	// presses of buttons aren't mutually exclusive and presses of axes are (e.g.
-	// can't read presses of both Left and Right simultaneously).  So, when the user
-	// presses a button, we'll wait until the next Update before adding a mapping so
-	// that we get a chance to see all input events the user's press of a panel.
-	// Prefer non-axis events over axis events. 
-	//
+	/* TRICKY: Some adapters map the PlayStation digital d-pad to both axes and
+	 * buttons. We want buttons to be used for any mappings where possible
+	 * because presses of buttons aren't mutually exclusive and presses of axes
+	 * are (e.g. can't read presses of both Left and Right simultaneously). So,
+	 * when the user presses a button, we'll wait until the next Update before
+	 * adding a mapping so that we get a chance to see all input events the 
+	 * user's press of a panel. Prefer non-axis events over axis events. */
 	if( !m_WaitingForPress.IsZero() )
 	{
 		if( input.type != IET_FIRST_PRESS )
 			return;
 
-		/* Don't allow function keys to be mapped. */
+		// Don't allow function keys to be mapped.
 		if( input.DeviceI.device == DEVICE_KEYBOARD && (input.DeviceI.button >= KEY_F1 && input.DeviceI.button <= KEY_F12) )
 		{
 			SCREENMAN->SystemMessage( INVALID_BUTTON );
@@ -303,9 +301,8 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 	{
 		switch( button )
 		{
-		/* We only advertise space as doing this, but most games
-		 * use either backspace or delete, and I find them more
-		 * intuitive, so allow them, too. -gm */
+		/* We only advertise space as doing this, but most games use either delete
+		 * or backspace, and I find them more intuitive, so allow them, too. -gm */
 
 		/* XXX: For some reason that eludes me, this function gets sent an
 		 * KEY_SPACE button press every time the JOY_HAT_UP button is pressed.
@@ -315,7 +312,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 		case KEY_DEL:
 #ifndef _XBOX
 		case KEY_SPACE:
-		case KEY_BACK: /* Clear the selected input mapping. */
+		case KEY_BACK: // Clear the selected input mapping.
 #endif
 			if( m_iCurButton == (int) m_KeysToMap.size() )
 				break; // on exit
@@ -334,7 +331,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 				INPUTMAPPER->SaveMappingsToDisk();
 			}
 			break;
-		case KEY_LEFT: /* Move the selection left, wrapping up. */
+		case KEY_LEFT: // Move the selection left, wrapping up.
 			if( m_iCurButton == (int) m_KeysToMap.size() )
 				break; // on exit
 			if( m_iCurSlot == 0 && m_iCurController == 0 )
@@ -349,7 +346,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			AfterChangeFocus();
 			m_soundChange.Play();
 			break;
-		case KEY_RIGHT:	/* Move the selection right, wrapping down. */
+		case KEY_RIGHT:	// Move the selection right, wrapping down.
 			if( m_iCurButton == (int) m_KeysToMap.size() )
 				break; // on exit
 			if( m_iCurSlot == NUM_CHANGABLE_SLOTS-1 && m_iCurController == NUM_GameController-1 )
@@ -364,7 +361,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			AfterChangeFocus();
 			m_soundChange.Play();
 			break;
-		case KEY_UP: /* Move the selection up. */
+		case KEY_UP: // Move the selection up.
 			if( m_iCurButton == 0 )
 				break;	// can't go up any more
 			BeforeChangeFocus();
@@ -372,7 +369,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			AfterChangeFocus();
 			m_soundChange.Play();
 			break;
-		case KEY_DOWN: /* Move the selection down. */
+		case KEY_DOWN: // Move the selection down.
 			if( m_iCurButton == (int) m_KeysToMap.size() )
 				break;	// can't go down any more
 			BeforeChangeFocus();
@@ -380,16 +377,16 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			AfterChangeFocus();
 			m_soundChange.Play();
 			break;
-		case KEY_ESC: /* Quit the screen. */
+		case KEY_ESC: // Quit the screen.
 			SCREENMAN->PlayStartSound();
-			StartTransitioningScreen( SM_GoToNextScreen );		
+			StartTransitioningScreen( SM_GoToNextScreen );
 			break;
-		case KEY_ENTER: /* Change the selection. */
+		case KEY_ENTER: // Change the selection.
 		case KEY_KP_ENTER:
 			if( m_iCurButton == (int) m_KeysToMap.size() )
 			{
 				SCREENMAN->PlayStartSound();
-				StartTransitioningScreen( SM_GoToNextScreen );		
+				StartTransitioningScreen( SM_GoToNextScreen );
 				break;
 			}
 
@@ -436,7 +433,7 @@ void ScreenMapControllers::AfterChangeFocus()
 void ScreenMapControllers::Refresh()
 {
 	FOREACH_ENUM( GameController,  p )
-	{			
+	{
 		for( unsigned b=0; b<m_KeysToMap.size(); b++ )
 		{
 			const KeyToMap *pKey = &m_KeysToMap[b];
