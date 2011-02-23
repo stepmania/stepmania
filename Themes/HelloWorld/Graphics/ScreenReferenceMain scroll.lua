@@ -13,6 +13,12 @@ local t = Def.ActorFrame{
 		LoseFocusCommand=cmd(stoptweening;decelerate,0.5;diffusealpha,1);
 	};
 
+	LoadActor( THEME:GetPathG("_section", "Reference") )..{
+		InitCommand=cmd(x,-250;y,-24;Real;halign,0);
+		GainFocusCommand=cmd(decelerate,0.5;diffusealpha,0.9);
+		LoseFocusCommand=cmd(stoptweening;decelerate,0.5;diffusealpha,0.45);
+	};
+
 	Def.ActorFrame{
 		LoadFont("_frutiger roman 24px")..{
 			Name="SectionName";
