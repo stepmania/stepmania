@@ -92,11 +92,48 @@ public:
 			wag, bounce, bob, pulse,
 			spin, vibrate
 	};
+
+	/** @brief Various values an Actor's effect can be tied to. */
+	enum EffectClock
+	{
+		CLOCK_TIMER,
+		CLOCK_TIMER_GLOBAL,
+		CLOCK_BGM_TIME,
+		CLOCK_BGM_BEAT,
+		CLOCK_BGM_TIME_NO_OFFSET,
+		CLOCK_BGM_BEAT_NO_OFFSET,
+		CLOCK_LIGHT_1 = 1000,
+		CLOCK_LIGHT_LAST = 1100,
+		NUM_CLOCKS
+	};
+
+	///** @brief What type of Effect this is. */
 	/*
 	enum EffectType {
 		EffectType_Diffuse,
 		EffectType_Translate,
 		Num_EffectType
+	};
+	*/
+
+	// todo: use this instead of the Effect enum -aj
+	/*
+	struct Effect
+	{
+		RString			m_sName;
+		EffectType		m_Type;		// diffuse or translate
+		float			m_fSecsIntoEffect;
+		float			m_fEffectDelta;
+		RageColor		m_effectColor1;
+		RageColor		m_effectColor2;
+		RageVector3		m_vEffectMagnitude;
+		EffectClock		m_EffectClock;
+		// units depend on m_EffectClock
+		float			m_fEffectRampUp;
+		float			m_fEffectHoldAtHalf;
+		float			m_fEffectRampDown;
+		float			m_fEffectHoldAtZero;
+		float			m_fEffectOffset;
 	};
 	*/
 
@@ -126,20 +163,6 @@ public:
 		RageColor	diffuse[4];
 		RageColor	glow;
 		float		aux;
-	};
-
-	/** @brief Various values an Actor's effect can be tied to. */
-	enum EffectClock
-	{
-		CLOCK_TIMER,
-		CLOCK_TIMER_GLOBAL,
-		CLOCK_BGM_TIME,
-		CLOCK_BGM_BEAT,
-		CLOCK_BGM_TIME_NO_OFFSET,
-		CLOCK_BGM_BEAT_NO_OFFSET,
-		CLOCK_LIGHT_1 = 1000,
-		CLOCK_LIGHT_LAST = 1100,
-		NUM_CLOCKS
 	};
 
 	void Draw();						// calls, EarlyAbortDraw, BeginDraw, DrawPrimitives, EndDraw
@@ -307,7 +330,6 @@ public:
 	void ScaleTo( const RectF &rect, StretchType st );
 
 	void StretchTo( const RectF &rect );
-
 
 	// Alignment settings.  These need to be virtual for BitmapText
 	virtual void SetHorizAlign( float f ) { m_fHorizAlign = f; }
@@ -488,7 +510,6 @@ protected:
 	 * Use the defined constant values for best effect. */
 	float	m_fVertAlign;
 
-
 	// Stuff for effects
 #if defined(SSC_FUTURES) // be able to stack effects
 	vector<Effect> m_Effects;
@@ -514,7 +535,6 @@ protected:
 	RageColor	m_effectColor1;
 	RageColor	m_effectColor2;
 	RageVector3	m_vEffectMagnitude;
-
 
 	// other properties
 	bool		m_bVisible;
