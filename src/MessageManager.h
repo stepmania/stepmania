@@ -78,7 +78,6 @@ enum MessageID
 	Message_LifeMeterChangedP1,
 	Message_LifeMeterChangedP2,
 	Message_UpdateScreenHeader,
-	// should these be here? -aj
 	Message_LeftClick,
 	Message_RightClick,
 	Message_MiddleClick,
