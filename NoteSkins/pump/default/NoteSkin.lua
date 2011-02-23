@@ -20,6 +20,7 @@ Noteskin.ElementRedirs = {
 	["Roll Head Active"] = "Roll Head Active";
 	["Roll Head Inactive"] = "Roll Head Active";
 	["Tap Fake"] = "Tap Note";
+	["Tap Lift"] = "Tap Note";
 	--
 	["Hold Topcap Inactive"] = "Hold Topcap Active";
 	["Hold Body Inactive"] = "Hold Body Active";
@@ -94,7 +95,6 @@ local function func()
 	end
 	
 	if sElement == "Explosion"
-	or sElement == "Tap Lift"
 	or sElement == "Tap Mine"
 	or sElement == "Receptor"
 	then
