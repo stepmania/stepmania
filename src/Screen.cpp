@@ -195,7 +195,7 @@ void Screen::Input( const InputEventPlus &input )
 		return; // don't care
 	}
 
-	// Always broadcast clicks -aj
+	// Always broadcast mouse input so themers can grab it. -aj
 	if( input.DeviceI == DeviceInput( DEVICE_MOUSE, MOUSE_LEFT ) )
 		MESSAGEMAN->Broadcast( (MessageID)(Message_LeftClick) );
 	if( input.DeviceI == DeviceInput( DEVICE_MOUSE, MOUSE_RIGHT ) )
