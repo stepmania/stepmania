@@ -8,6 +8,7 @@
 #include "Foreach.h"
 // for mouse stuff: -aj
 #include "PrefsManager.h"
+#include "ScreenDimensions.h"
 
 #include <set>
 struct ButtonState
@@ -410,8 +411,8 @@ void InputFilter::GetPressedButtons( vector<DeviceInput> &array ) const
 
 void InputFilter::UpdateCursorLocation(float _fX, float _fY)
 {
-	m_MouseCoords.fX = clamp(_fX, 0, (PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio));
-	m_MouseCoords.fY = clamp(_fY, 0, PREFSMAN->m_iDisplayHeight);
+	m_MouseCoords.fX = _fX;
+	m_MouseCoords.fY = _fY;
 }
 
 
@@ -422,8 +423,20 @@ void InputFilter::UpdateCursorLocation(float _fX, float _fY)
 class LunaInputFilter: public Luna<InputFilter>
 {
 public:
-	static int GetMouseX( T* p, lua_State *L ){ lua_pushnumber( L, p->GetCursorX() ); return 1; }
-	static int GetMouseY( T* p, lua_State *L ){ lua_pushnumber( L, p->GetCursorY() ); return 1; }
+	static int GetMouseX( T* p, lua_State *L ){
+		float fX = p->GetCursorX();
+		// scale input
+		fX = SCALE( fX, 0, (PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio), SCREEN_LEFT, SCREEN_RIGHT );
+		lua_pushnumber( L, fX );
+		return 1;
+	}
+	static int GetMouseY( T* p, lua_State *L ){
+		float fY = p->GetCursorY();
+		// scale input
+		fY = SCALE( fY, 0, PREFSMAN->m_iDisplayHeight, SCREEN_TOP, SCREEN_BOTTOM );
+		lua_pushnumber( L, fY );
+		return 1;
+	}
 
 	LunaInputFilter()
 	{

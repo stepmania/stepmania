@@ -81,6 +81,12 @@ static const char *MessageIDNames[] = {
 	"LifeMeterChangedP1",
 	"LifeMeterChangedP2",
 	"UpdateScreenHeader",
+	// should these be here? -aj
+	"LeftClick",
+	"RightClick",
+	"MiddleClick",
+	"MouseWheelUp",
+	"MouseWheelDown",
 };
 XToString( MessageID );
 

@@ -195,24 +195,37 @@ void Screen::Input( const InputEventPlus &input )
 		return; // don't care
 	}
 
+	// Always broadcast clicks -aj
+	if( input.DeviceI == DeviceInput( DEVICE_MOUSE, MOUSE_LEFT ) )
+		MESSAGEMAN->Broadcast( (MessageID)(Message_LeftClick) );
+	if( input.DeviceI == DeviceInput( DEVICE_MOUSE, MOUSE_RIGHT ) )
+		MESSAGEMAN->Broadcast( (MessageID)(Message_RightClick) );
+	if( input.DeviceI == DeviceInput( DEVICE_MOUSE, MOUSE_MIDDLE ) )
+		MESSAGEMAN->Broadcast( (MessageID)(Message_MiddleClick) );
+	// Can't do MouseWheelUp and MouseWheelDown at the same time. -aj
+	if( input.DeviceI == DeviceInput( DEVICE_MOUSE, MOUSE_WHEELUP ) )
+		MESSAGEMAN->Broadcast( (MessageID)(Message_MouseWheelUp) );
+	else if( input.DeviceI == DeviceInput( DEVICE_MOUSE, MOUSE_WHEELDOWN ) )
+		MESSAGEMAN->Broadcast( (MessageID)(Message_MouseWheelDown) );
+
 	// default input handler used by most menus
 	switch( input.MenuI )
 	{
-	case GAME_BUTTON_MENUUP:	this->MenuUp	( input );	return;
-	case GAME_BUTTON_MENUDOWN:	this->MenuDown	( input );	return;
-	case GAME_BUTTON_MENULEFT:	this->MenuLeft	( input );	return;
-	case GAME_BUTTON_MENURIGHT:	this->MenuRight	( input );	return;
-	case GAME_BUTTON_BACK:
-		// Don't make the user hold the back button if they're pressing escape and escape is the back button.
-		if( !PREFSMAN->m_bDelayedBack || input.type==IET_REPEAT || (input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_ESC) )
-		{
-			if( HANDLE_BACK_BUTTON )
-				this->MenuBack( input );
-		}
-		return;
-	case GAME_BUTTON_START:	this->MenuStart	( input );	return;
-	case GAME_BUTTON_SELECT:this->MenuSelect( input );	return;
-	case GAME_BUTTON_COIN:	this->MenuCoin	( input );	return;
+		case GAME_BUTTON_MENUUP:	this->MenuUp	( input );	return;
+		case GAME_BUTTON_MENUDOWN:	this->MenuDown	( input );	return;
+		case GAME_BUTTON_MENULEFT:	this->MenuLeft	( input );	return;
+		case GAME_BUTTON_MENURIGHT:	this->MenuRight	( input );	return;
+		case GAME_BUTTON_BACK:
+			// Don't make the user hold the back button if they're pressing escape and escape is the back button.
+			if( !PREFSMAN->m_bDelayedBack || input.type==IET_REPEAT || (input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_ESC) )
+			{
+				if( HANDLE_BACK_BUTTON )
+					this->MenuBack( input );
+			}
+			return;
+		case GAME_BUTTON_START:	this->MenuStart	( input );	return;
+		case GAME_BUTTON_SELECT:this->MenuSelect( input );	return;
+		case GAME_BUTTON_COIN:	this->MenuCoin	( input );	return;
 	}
 }
 
