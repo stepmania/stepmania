@@ -132,6 +132,7 @@ void ScreenTextEntry::Init()
 	this->AddChild( &m_textAnswer );
 
 	m_bShowAnswerCaret = false;
+	//m_iCaretLocation = 0;
 
 	m_sndType.Load( THEME->GetPathS(m_sName,"type"), true );
 	m_sndBackspace.Load( THEME->GetPathS(m_sName,"backspace"), true );
@@ -165,6 +166,8 @@ void ScreenTextEntry::UpdateAnswerText()
 	if( g_pFormatAnswerForDisplay )
 		s = g_pFormatAnswerForDisplay( s );
 
+	// Handle caret drawing
+	//m_iCaretLocation = s.length()
 	if( m_bShowAnswerCaret 	&&  !bAnswerFull )
 		s += ANSWER_CARET; // was '_'
 	else
