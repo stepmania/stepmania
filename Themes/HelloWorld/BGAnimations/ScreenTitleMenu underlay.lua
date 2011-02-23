@@ -54,9 +54,15 @@ return Def.ActorFrame {
 		-- diffusealpha,1 makes the logo fade in when applied here.
 		OnCommand=cmd(linear,0.5;diffusealpha,1;);
 	};
-	
+
 	-- Creative Commons logo, using a local file in the same directory:
 	LoadActor( "creativecommons" )..{
 		InitCommand=cmd(x,SCREEN_LEFT+64;y,SCREEN_BOTTOM-48;Real);
+		OnCommand=cmd(addy,32;cropbottom,1;fadebottom,1;decelerate,0.8;cropbottom,0;fadebottom,0;addy,-32);
+	};
+	-- a cheap reflection effect.
+	LoadActor( "creativecommons" )..{
+		InitCommand=cmd(x,SCREEN_LEFT+64;y,SCREEN_BOTTOM-20;valign,0;zoomy,-0.6;rotationx,-40;diffusealpha,0.6;Real;);
+		OnCommand=cmd(addy,8;croptop,1;fadetop,0;decelerate,0.8;croptop,0;fadetop,1;addy,-8);
 	};
 };
