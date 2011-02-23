@@ -50,3 +50,6 @@ crashinfo.txt
 syntax: regexp
 .*\#.*\#$
 glob:Cache/Banners/AdditionalSongs_Airspace Preview_Derailed_Derailed bn.png
+
+syntax: regexp
+Songs/.+/
