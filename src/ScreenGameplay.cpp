@@ -352,7 +352,6 @@ void ScreenGameplay::Init()
 	GIVING_UP_GOES_TO_PREV_SCREEN.Load(	m_sName, "GivingUpGoesToPrevScreen" );
 	FAIL_ON_MISS_COMBO.Load(		m_sName, "FailOnMissCombo" );
 	ALLOW_CENTER_1_PLAYER.Load(		m_sName, "AllowCenter1Player" );
-	USE_ALTERNATIVE_INPUT.Load(		m_sName, "UseAlternativeInput");
 	// configurable:
 	UNPAUSE_WITH_START.Load(		m_sName, "UnpauseWithStart");
 
@@ -763,38 +762,6 @@ void ScreenGameplay::Init()
 	LoadNextSong();
 
 	m_GiveUpTimer.SetZero();
-
-	if( USE_ALTERNATIVE_INPUT ) // using alternative input
-	{
-		int iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
-		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
-		{
-			for( int col=0; col < iNumCols; ++col )
-			{
-				// TODO: Remove use of PlayerNumber.
-				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( col, pi->m_pn );
-
-				ThemeMetric<RString> tmpMetric;
-				tmpMetric.Load( m_sName,ssprintf( "AltInp%s%s",GAMESTATE->GetCurrentStyle()->m_szName,GameI.ToString( INPUTMAPPER->GetInputScheme() ).c_str() ) );
-
-				if(tmpMetric.GetValue() != "")
-				{
-					GameInput GameIAlt;
-					GameIAlt.FromString( INPUTMAPPER->GetInputScheme(),tmpMetric.GetValue() );
-
-					AlternateMapping tmpMap;
-					tmpMap.inpMain = GameI;
-					tmpMap.inpAlt = GameIAlt;
-					m_vAlterMap.push_back( tmpMap );
-
-					FOREACH( PlayerInfo, m_vPlayerInfo, pi )
-					{
-						pi->m_pPlayer->m_vAlterMap.push_back( tmpMap );
-					}
-				}
-			}
-		}
-	}
 }
 
 bool ScreenGameplay::Center1Player() const
@@ -2253,23 +2220,12 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			return;
 		}
 	}
-	
+
 	bool bRelease = input.type == IET_RELEASE;
 	if( !input.GameI.IsValid() )
 		return;
-	
+
 	int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
- 
-	if( USE_ALTERNATIVE_INPUT ) // using alternative input
-	{
-		for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
-		{
-			if( m_vAlterMap[i].inpAlt == input.GameI )
-			{
-				iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( m_vAlterMap[i].inpMain );
-			}
-		}
-	}
 
 	// Don't pass on any inputs to Player that aren't a press or a release.
 	switch( input.type )

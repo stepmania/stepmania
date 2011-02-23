@@ -31,14 +31,12 @@ struct AutoMappingEntry
 	int m_iSlotIndex;
 	DeviceButton m_deviceButton;
 	GameButton m_gb; // GameButton_Invalid means unmap this button
-	/*
-	 * If this is true, this is an auxilliary mapping assigned to the second
-	 * player.  If two of the same device are found, and the device has secondary
-	 * entries, the later entries take precedence.  This way, if a Pump pad is
-	 * found, it'll map P1 to the primary pad and P2 to the secondary pad.
-	 * (We can't tell if a slave pad is actually there.)  Then, if a second primary
-	 * is found (DEVICE_PUMP2), 2P will be mapped to it. 
-	 */
+	/* If this is true, this is an auxilliary mapping assigned to the second
+	 * player. If two of the same device are found, and the device has secondary
+	 * entries, the later entries take precedence. This way, if a Pump pad is
+	 * found, it'll map P1 to the primary pad and P2 to the secondary pad. (We
+	 * can't tell if a slave pad is actually there.) Then, if a second primary
+	 * is found (DEVICE_PUMP2), 2P will be mapped to it. */
 	bool m_bSecondController;
 };
 
@@ -174,7 +172,7 @@ public:
 	bool CheckForChangedInputDevicesAndRemap( RString &sMessageOut );
 
 	bool IsMapped( const DeviceInput &DeviceI ) const;
-	
+
 	bool DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI ) const;	// return true if there is a mapping from device to pad
 	bool GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI ) const;	// return true if there is a mapping from pad to device
 

@@ -797,17 +797,6 @@ void Player::Update( float fDeltaTime )
 
 		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI );
 
-		if( m_vAlterMap.size() > 0 ) // alternate input is being used
-		{
-			for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
-			{
-				if( m_vAlterMap[i].inpMain == GameI )
-				{
-					bIsHoldingButton = bIsHoldingButton || INPUTMAPPER->IsBeingPressed( m_vAlterMap[i].inpAlt );
-				}
-			}
-		}
-
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
 			if( m_pNoteField )
@@ -1094,17 +1083,6 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			// this previously read as bIsHoldingButton &=
 			// was there a specific reason for this? - Friez
 			bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
-
-			if( m_vAlterMap.size() > 0 ) // alternate input is being used
-			{
-				for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
-				{
-					if( m_vAlterMap[i].inpMain == GameI )
-					{
-						bIsHoldingButton = bIsHoldingButton | INPUTMAPPER->IsBeingPressed( m_vAlterMap[i].inpAlt );
-					}
-				}
-			}
 		}
 	}
 
@@ -2747,38 +2725,10 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 					float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
 					if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
 						Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );
-
-					if( m_vAlterMap.size() > 0 ) // alternate input is being used
-					{
-						for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
-						{
-							if( m_vAlterMap[i].inpMain == GameI )
-							{
-								GameInput GameIB = m_vAlterMap[i].inpAlt;
-								float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameIB, m_pPlayerState->m_mp );
-								if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-										Step( iTrack, -1, now - PREFSMAN->m_fPadStickSeconds, true, false );							
-							}
-						}
-					}
 				}
 				else if( INPUTMAPPER->IsBeingPressed(GameI, m_pPlayerState->m_mp) )
 				{
 					Step( iTrack, -1, now, true, false );
-				}
-				else if( m_vAlterMap.size() > 0 ) // alternate input being used
-				{
-					for( unsigned int i=0; i < m_vAlterMap.size(); ++i )
-					{
-						if( m_vAlterMap[i].inpMain == GameI )
-						{
-							GameInput GameIB = m_vAlterMap[i].inpAlt;
-							if( INPUTMAPPER->IsBeingPressed(GameIB, m_pPlayerState->m_mp) )
-							{
-								Step( iTrack, -1, now, true, false );
-							}
-						}
-					}
 				}
 			}
 			break;

@@ -104,8 +104,6 @@ public:
 
 	void SetSendJudgmentAndComboMessages( bool b ) { m_bSendJudgmentAndComboMessages = b; }
 
-	vector<AlternateMapping> m_vAlterMap;
-
 	// Lua
 	virtual void PushSelf( lua_State *L );
 
