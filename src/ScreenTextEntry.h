@@ -121,6 +121,8 @@ private:
 
 	wstring		m_sAnswer;
 	bool		m_bShowAnswerCaret;
+	// todo: allow Left/Right to change caret location -aj
+	//int			m_iCaretLocation;
 
 	BitmapText	m_textQuestion;
 	BitmapText	m_textAnswer;
