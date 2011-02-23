@@ -18,7 +18,7 @@ sm-ssc v1.2.3 | 201102??
 * [ScreenEdit] Display the Player Number for Routine mode. [Wolfman2000]
 * [ScreenEdit] Add format string metrics for the right hand side of the editor.
   [Wolfman2000]
-* [ScreenGameplaySyncMachine] Allow themes to use either .ssc or .sm files [AJ]
+* [ScreenGameplaySyncMachine] Allow themes to use either .ssc or .sm files. [AJ]
 
 20110221
 --------
