@@ -33,6 +33,12 @@ struct InputEvent
 	DeviceInputList m_ButtonState;
 };
 
+struct MouseCoordinates
+{
+	float fX;
+	float fY;
+};
+
 class RageMutex;
 struct ButtonState;
 class InputFilter
@@ -63,7 +69,12 @@ public:
 	void GetPressedButtons( vector<DeviceInput> &array ) const;
 
 	// cursor
-	void UpdateCursorLocation();
+	void UpdateCursorLocation(float _fX, float _fY);
+	float GetCursorX(){ return m_MouseCoords.fX; }
+	float GetCursorY(){ return m_MouseCoords.fY; }
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	void CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now );
@@ -72,6 +83,7 @@ private:
 
 	vector<InputEvent> queue;
 	RageMutex *queuemutex;
+	MouseCoordinates m_MouseCoords;
 };
 
 extern InputFilter*	INPUTFILTER;	// global and accessable from anywhere in our program

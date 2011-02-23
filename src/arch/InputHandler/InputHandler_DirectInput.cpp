@@ -501,19 +501,20 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 					DeviceButton up = DeviceButton_Invalid, down = DeviceButton_Invalid;
 					if(dev == DEVICE_MOUSE)
 					{
-						// xxx: mouse position doesn't work here yet -aj
 						float l = int(evtbuf[i].dwData);
+						POINT cursorPos;
+						GetCursorPos(&cursorPos);
+						// convert screen coordinates to client
+						ScreenToClient(GraphicsWindow::GetHwnd(), &cursorPos);
 						switch(in.ofs)
 						{
 							case DIMOFS_X:
 								up = MOUSE_X_LEFT; down = MOUSE_X_RIGHT;
-								//cursorX += l;
-								//LOG->Trace("dwData for mouse x: %f",l);
+								INPUTFILTER->UpdateCursorLocation((float)cursorPos.x,(float)cursorPos.y);
 								break;
 							case DIMOFS_Y:
 								up = MOUSE_Y_UP; down = MOUSE_Y_DOWN;
-								//cursorY += l;
-								//LOG->Trace("dwData for mouse y: %f",l);
+								INPUTFILTER->UpdateCursorLocation((float)cursorPos.x,(float)cursorPos.y);
 								break;
 							case DIMOFS_Z:
 								up = MOUSE_WHEELUP; down = MOUSE_WHEELDOWN;

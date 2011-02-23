@@ -14,7 +14,6 @@ static const char *InputDeviceStateNames[] = {
 };
 XToString( InputDeviceState );
 
-
 static map<DeviceButton,RString> g_mapNamesToString;
 static map<RString,DeviceButton> g_mapStringToNames;
 static void InitNames()
@@ -144,8 +143,7 @@ RString DeviceButtonToString( DeviceButton key )
 	InitNames();
 
 	// All printable ASCII except for uppercase alpha characters line up.
-	if( key >= 33 && key < 127 &&
-		!(key >= 'A' && key <= 'Z' ) )
+	if( key >= 33 && key < 127 && !(key >= 'A' && key <= 'Z' ) )
 		return ssprintf( "%c", key );
 
 	if( key >= KEY_OTHER_0 && key < KEY_LAST_OTHER )
@@ -156,6 +154,9 @@ RString DeviceButtonToString( DeviceButton key )
 
 	if( key >= MIDI_FIRST && key <= MIDI_LAST )
 		return ssprintf( "Midi %d", key-MIDI_FIRST );
+
+	if( key >= MOUSE_LEFT && key <= MOUSE_WHEELDOWN )
+		return ssprintf( "Mouse %d", key-MOUSE_LEFT );
 
 	map<DeviceButton,RString>::const_iterator it = g_mapNamesToString.find( key );
 	if( it != g_mapNamesToString.end() )
@@ -180,6 +181,9 @@ DeviceButton StringToDeviceButton( const RString& s )
 
 	if( sscanf(s, "Midi %i", &i) == 1 )
 		return enum_add2( MIDI_FIRST, i );
+
+	if( sscanf(s, "Mouse %i", &i) == 1 )
+		return enum_add2( MOUSE_LEFT, i );
 
 	map<RString,DeviceButton>::const_iterator it = g_mapStringToNames.find( s );
 	if( it != g_mapStringToNames.end() )

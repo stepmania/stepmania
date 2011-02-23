@@ -6,7 +6,7 @@
 #include "Preference.h"
 #include "LuaManager.h"
 
-RageInput*		INPUTMAN	= NULL;		// globally accessable input device
+RageInput* INPUTMAN = NULL; // globally accessable input device
 
 static Preference<RString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
 
@@ -176,7 +176,7 @@ RString RageInput::GetDisplayDevicesString() const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the RageInput. */ 
+/** @brief Allow Lua to have access to RageInput. */ 
 class LunaRageInput: public Luna<RageInput>
 {
 public:

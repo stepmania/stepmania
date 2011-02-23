@@ -6,6 +6,8 @@
 #include "RageThreads.h"
 #include "Preference.h"
 #include "Foreach.h"
+// for mouse stuff: -aj
+#include "PrefsManager.h"
 
 #include <set>
 struct ButtonState
@@ -94,12 +96,26 @@ InputFilter::InputFilter()
 
 	Reset();
 	ResetRepeatRate();
+
+	m_MouseCoords.fX = 0;
+	m_MouseCoords.fY = 0;
+
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "INPUTFILTER" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
 }
 
 InputFilter::~InputFilter()
 {
 	delete queuemutex;
 	g_ButtonStates.clear();
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "INPUTFILTER" );
 }
 
 void InputFilter::Reset()
@@ -392,10 +408,32 @@ void InputFilter::GetPressedButtons( vector<DeviceInput> &array ) const
 	array = g_CurrentState;
 }
 
-void InputFilter::UpdateCursorLocation()
+void InputFilter::UpdateCursorLocation(float _fX, float _fY)
 {
-	// todo
+	m_MouseCoords.fX = clamp(_fX, 0, (PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio));
+	m_MouseCoords.fY = clamp(_fY, 0, PREFSMAN->m_iDisplayHeight);
 }
+
+
+// lua start
+#include "LuaBinding.h"
+
+/** @brief Allow Lua to have access to InputFilter. */ 
+class LunaInputFilter: public Luna<InputFilter>
+{
+public:
+	static int GetMouseX( T* p, lua_State *L ){ lua_pushnumber( L, p->GetCursorX() ); return 1; }
+	static int GetMouseY( T* p, lua_State *L ){ lua_pushnumber( L, p->GetCursorY() ); return 1; }
+
+	LunaInputFilter()
+	{
+		ADD_METHOD( GetMouseX );
+		ADD_METHOD( GetMouseY );
+	}
+};
+
+LUA_REGISTER_CLASS( InputFilter )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford
