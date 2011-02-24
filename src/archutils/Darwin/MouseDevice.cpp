@@ -3,10 +3,6 @@
 
 using __gnu_cxx::hash_map;
 
-Mouse::Mouse() : id( InputDevice_Invalid ),
-{
-}
-
 bool MouseDevice::AddLogicalDevice( int usagePage, int usage )
 {
 	// Mice can either be kHIDUsage_GD_Mouse or kHIDUsage_GD_Pointer...
@@ -16,9 +12,6 @@ bool MouseDevice::AddLogicalDevice( int usagePage, int usage )
 
 void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cookie, const CFDictionaryRef properties )
 {
-	if( usagePage != kHIDPage_GenericDesktop )
-		return;
-
 	if( usagePage == kHIDPage_Button )
 	{
 		const DeviceButton buttonID = enum_add2( MOUSE_LEFT, usage - kHIDUsage_Button_1 );
@@ -30,11 +23,6 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 			LOG->Warn( "Button id too large: %d.", int(buttonID) );
 		break;
 	}
-
-	/*
-	if( UsbKeyToDeviceButton(usage,button) )
-		m_Mapping[cookie] = button;
-	*/
 }
 
 void MouseDevice::Open()
@@ -47,7 +35,11 @@ void MouseDevice::Open()
 
 void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
-	// hmm...
+	hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+	if( iter != m_Mapping.end() )
+	{
+		vPresses.push_back( DeviceInput(DEVICE_MOUSE, iter->second, value, now) );
+	}
 }
 
 void MouseDeviceDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
