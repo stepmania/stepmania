@@ -7,7 +7,7 @@ class InputHandler_Linux_tty: public InputHandler
 {
 	int fd;
 	static void OnCrash(int);
-	
+
 public:
 	void Update();
 	InputHandler_Linux_tty();
