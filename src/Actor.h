@@ -164,8 +164,8 @@ public:
 		EffectType		m_Type; // diffuse, glow, or translate
 		float			m_fSecsIntoEffect;
 		float			m_fEffectDelta;
-		RageColor		m_effectColor1;
-		RageColor		m_effectColor2;
+		RageColor		m_EffectColor1;
+		RageColor		m_EffectColor2;
 		RageVector3		m_vEffectMagnitude;
 		EffectClock		m_EffectClock;
 		// units depend on m_EffectClock
@@ -200,7 +200,12 @@ public:
 		 *
 		 * If 0, there is no fade. If 1, it's fully faded. */
 		RectF		fade;
+		/**
+		 * @brief Four values making up the diffuse in this TweenState.
+		 *
+		 * 0 = UpperLeft, 1 = UpperRight, 2 = LowerLeft, 3 = LowerRight */
 		RageColor	diffuse[4];
+		/** @brief The glow color for this TweenState. */
 		RageColor	glow;
 		float		aux;
 	};
