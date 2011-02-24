@@ -76,7 +76,7 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 
 				bool mouseWheel = (buttonID == MOUSE_WHEELUP || buttonID == MOUSE_WHEELDOWN);
 				if( buttonID <= MOUSE_MIDDLE )
-					mapping[cookie] = buttonID;
+					m_Mapping[cookie] = buttonID;
 				else
 					LOG->Warn( "Button id too large: %d.", int(buttonID) );
 				break;
