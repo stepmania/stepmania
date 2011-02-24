@@ -90,7 +90,10 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 
 void MouseDevice::Open()
 {
-	//const Mouse& m = m_Mouse;
+	const Mouse& m = m_Mouse;
+#define ADD(x) if( m.x ) AddElementToQueue( m.x )
+	ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
+#undef ADD
 	for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
 		AddElementToQueue( i->first );
 }
@@ -98,9 +101,25 @@ void MouseDevice::Open()
 void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
 	// todo: add mouse axis stuff -aj
-	hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
-	if( iter != m_Mapping.end() )
-		vPresses.push_back( DeviceInput(DEVICE_MOUSE, iter->second, value, now) );
+	const Mouse& m = m_Mouse;
+	if( m.x_axis == cookie )
+	{
+		float level = SCALE( value, m.x_min, m.x_max, -1.0f, 1.0f );
+	}
+	else if( m.y_axis == cookie )
+	{
+		float level = SCALE( value, m.x_min, m.x_max, -1.0f, 1.0f );
+	}
+	else if( m.z_axis == cookie )
+	{
+		float level = SCALE( value, m.z_min, m.z_max, -1.0f, 1.0f );
+	}
+	else
+	{
+		hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+		if( iter != m_Mapping.end() )
+			vPresses.push_back( DeviceInput(DEVICE_MOUSE, iter->second, value, now) );
+	}
 }
 
 void MouseDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
