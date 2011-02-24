@@ -40,32 +40,34 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 	switch( usagePage )
 	{
 		case kHIDPage_GenericDesktop:
-			int iMin = 0;
-			IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMinKey)), iMin );
-			int iMax = 0;
-			IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMaxKey)), iMax );
+			{ // ease scope
+				int iMin = 0;
+				IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMinKey)), iMin );
+				int iMax = 0;
+				IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMaxKey)), iMax );
 
-			// based on usage
-			switch( usage )
-			{
-				case kHIDUsage_GD_X:
-					m.x_axis = cookie;
-					m.x_min = iMin;
-					m.x_max = iMax;
-					break;
-				case kHIDUsage_GD_Y:
-					m.y_axis = cookie;
-					m.y_min = iMin;
-					m.y_max = iMax;
-					break;
-				case kHIDUsage_GD_Z:
-					m.z_axis = cookie;
-					m.z_min = iMin;
-					m.z_max = iMax;
-					break;
-				default:
-					//LOG->Warn( "Unknown usagePage usage pair: (kHIDPage_GenericDesktop, %d).", usage );
-					break;
+				// based on usage
+				switch( usage )
+				{
+					case kHIDUsage_GD_X:
+						m.x_axis = cookie;
+						m.x_min = iMin;
+						m.x_max = iMax;
+						break;
+					case kHIDUsage_GD_Y:
+						m.y_axis = cookie;
+						m.y_min = iMin;
+						m.y_max = iMax;
+						break;
+					case kHIDUsage_GD_Z:
+						m.z_axis = cookie;
+						m.z_min = iMin;
+						m.z_max = iMax;
+						break;
+					default:
+						//LOG->Warn( "Unknown usagePage usage pair: (kHIDPage_GenericDesktop, %d).", usage );
+						break;
+				}
 			}
 			break;
 		case kHIDPage_Button:
