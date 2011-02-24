@@ -14,42 +14,39 @@
 #pragma comment(lib, "ws2_32.lib")
 #endif
 
-/*
- * This has an arch-like abstraction layout, since it's intended to become one.
- * It'll be moved out of here as things get polished further.  The Winsock and
+/* This has an arch-like abstraction layout, since it's intended to become one.
+ * It'll be moved out of here as things get polished further. The Winsock and
  * BSD implementations will be kept separate, since while they look similar,
  * they're different in the details, especially when you want to cleanly support
  * cancellation.
  *
  * Design notes:
- *
- *  - Allow cancellation at any time.  The only thing more annoying than a laggy
- *    network, is an application that won't immediately respond to cancelling.
- *    (This is even more important here, since we're using this after a crash.)
- *  - Assume some operations and/or some architectures are going to have problems
- *    doing everything nonblockingly, and do everything in a thread.  This also allows
- *    more complex network interactions, since it doesn't need to maintain an equally
- *    complex state machine.
- *  - When an operation is cancelled or an error occurs, all operations until the
- *    next call to Close() become no-ops.  This allows lenient error checking; it's
- *    guaranteed that further calls to Read or Write will not reset the error state.
- *  - The only function that may be called from another thread without serialization is
- *    Cancel().
+ * - Allow cancellation at any time. The only thing more annoying than a laggy
+ *  network, is an application that won't immediately respond to cancelling.
+ *  (This is even more important here, since we're using this after a crash.)
+ * - Assume some operations and/or some architectures are going to have problems
+ *  doing everything nonblockingly, and do everything in a thread. This also allows
+ *  more complex network interactions, since it doesn't need to maintain an equally
+ *  complex state machine.
+ * - When an operation is cancelled or an error occurs, all operations until the
+ *  next call to Close() become no-ops. This allows lenient error checking; it's
+ *  guaranteed that further calls to Read or Write will not reset the error state.
+ * - The only function that may be called from another thread without serialization is
+ *  Cancel().
  *
  * All calls are blocking, except for:
  *
- *  - Cancel(), which is always nonblocking.  The operation in progress, if any,
- *    will be aborted immediately.  (The only exception here is incomplete
- *    implementations, which may block);
- *  - Close(), if Shutdown() was called first, since the necessary blocking occurs
- *    during Shutdown;
- *  - Close(), if an error or cancellation occurred.
+ * - Cancel(), which is always nonblocking. The operation in progress, if any,
+ *  will be aborted immediately. (The only exception here is incomplete
+ *  implementations, which may block);
+ * - Close(), if Shutdown() was called first, since the necessary blocking occurs
+ *  during Shutdown;
+ * - Close(), if an error or cancellation occurred.
  *
  * Accepting incoming TCP connections is beyond the immediate scope of this interface
  * (that would involve a second listener class, which would be a factory for NetworkStream).
  * UDP is probably within the scope of this class, but there are some outstanding design
- * issues and it's beyond the work I'm doing right now.
- */
+ * issues and it's beyond the work I'm doing right now. */
 
 class NetworkStream
 {
@@ -62,58 +59,44 @@ public:
 	NetworkStream() { }
 	virtual ~NetworkStream() { }
 
-	/*
-	 * Open a connection.  Must be in STATE_IDLE.
-	 */
+	// Open a connection. Must be in STATE_IDLE.
 	virtual void Open( const RString &sHost, int iPort, ConnectionType ct = CONN_TCP ) = 0;
 
-	/*
-	 * Close down a connection.  Returns to STATE_IDLE.
-	 */
+	// Close down a connection. Returns to STATE_IDLE.
 	virtual void Close() = 0;
 
-	/*
-	 * Wait for all sent data to be flushed, and shut down the connection.
-	 */
+	// Wait for all sent data to be flushed, and shut down the connection.
 	virtual void Shutdown() = 0;
 
-	/*
-	 * Read data.  Block until any data is received, then return all data
-	 * available.  Return the number of bytes read.  The return value will
-	 * always be >= 0, unless an error or cancellation occured.
-	 */
+	/* Read data. Block until any data is received, then return all data
+	 * available. Return the number of bytes read. The return value will always
+	 * be >= 0, unless an error or cancellation occured. */
 	virtual int Read( void *pBuffer, size_t iSize ) = 0;
 
-	/*
-	 * Write data to the socket.  (Design note: we always write all of the
-	 * data unless an error or cancellation occurs, and those states are checked
-	 * with GetState().  If that happens, the number of bytes written is
-	 * meaningless, since it may have simply been buffered and never sent.  So,
-	 * this function returns no value.)
-	 */
+	/* Write data to the socket. (Design note: we always write all of the data
+	 * unless an error or cancellation occurs, and those states are checked
+	 * with GetState(). If that happens, the number of bytes written is
+	 * meaningless, since it may have simply been buffered and never sent.
+	 * So, this function returns no value.) */
 	virtual void Write( const void *pBuffer, size_t iSize ) = 0;
 
-	/*
-	 * Cancel the connection.  This operation can clear an error state, aborts
+	/* Cancel the connection. This operation can clear an error state, aborts
 	 * any blocking calls, never fails, and will always result in the socket
 	 * being in STATE_CANCELLED.
-	 *
-	 * This is true even if the state was STATE_IDLE.  For example, the user
+	 * This is true even if the state was STATE_IDLE. For example, the user
 	 * thread may be closing one connection on this object and opening another,
 	 * and the UI thread may call Cancel() in between these operations.
-	 *
 	 * This operation is threadsafe: a socket can be cancelled from any thread
-	 * while another thread is reading or writing.  This is the only function
-	 * that can be called without serialization.
-	 */
+	 * while another thread is reading or writing. This is the only function
+	 * that can be called without serialization. */
 	virtual void Cancel() = 0;
 
 	enum State
 	{
-		/* The stream is closed, and is ready to be opened. */
+		// The stream is closed, and is ready to be opened.
 		STATE_IDLE,
 
-		/* The stream is connected and able to send and receive data. */
+		// The stream is connected and able to send and receive data.
 		STATE_CONNECTED,
 
 		/* The stream has been shut down on either end (either an EOF from
@@ -157,7 +140,7 @@ private:
 	HANDLE m_hResolve;
 	HWND m_hResolveHwnd;
 
-	/* This event is signalled on cancellation, to wake us up if we're blocking. */
+	// This event is signalled on cancellation, to wake us up if we're blocking.
 	HANDLE m_hCompletionEvent;
 
 	RString m_sHost;
@@ -181,7 +164,7 @@ NetworkStream *CreateNetworkStream()
 	return new NetworkStream_Win32;
 }
 
-/* WinSock implementation of NetworkStream. */
+/** @brief WinSock implementation of NetworkStream. */
 NetworkStream_Win32::NetworkStream_Win32():
 	m_Mutex( "NetworkTCPSocket" )
 {
@@ -202,7 +185,7 @@ NetworkStream_Win32::~NetworkStream_Win32()
 }
 
 /* Wait for the specified network event to occur, or cancellation, whichever
- * happens first.  On cancellation, return -1; on error, return the error
+ * happens first. On cancellation, return -1; on error, return the error
  * code; on success, return 0. */
 int NetworkStream_Win32::WaitForCompletionOrCancellation( int iEvent )
 {
@@ -214,11 +197,11 @@ int NetworkStream_Win32::WaitForCompletionOrCancellation( int iEvent )
 
 		m_Mutex.Lock();
 
-		/* This will reset the event.  Do this while we hold the lock. */
+		// This will reset the event. Do this while we hold the lock.
 		WSANETWORKEVENTS events;
 		WSAEnumNetworkEvents( m_Socket, m_hCompletionEvent, &events );
 
-		/* Was the event signalled due to cancellation? */
+		// Was the event signalled due to cancellation?
 		if( m_State == STATE_CANCELLED )
 		{
 			m_Mutex.Unlock();
@@ -227,13 +210,13 @@ int NetworkStream_Win32::WaitForCompletionOrCancellation( int iEvent )
 
 		m_Mutex.Unlock();
 
-		/* If the event didn't actually occur, keep waiting. */
+		// If the event didn't actually occur, keep waiting.
 		if( (events.lNetworkEvents & (1<<iEvent)) )
 			return events.iErrorCode[iEvent];
 
-		/* If the socket was closed while we were waiting, stop.  Note that when the
+		/* If the socket was closed while we were waiting, stop. Note that when the
 		 * connection closes immediately after sending data, we'll receive both this
-		 * message and FD_READ at the same time.  Only do this if the event we really
+		 * message and FD_READ at the same time. Only do this if the event we really
 		 * want hasn't happened yet. */
 		if( (events.lNetworkEvents & (1<<FD_CLOSE_BIT)) )
 			return WSAECONNRESET;
@@ -242,8 +225,8 @@ int NetworkStream_Win32::WaitForCompletionOrCancellation( int iEvent )
 
 RString NetworkStream_Win32::WinSockErrorToString( int iError )
 {
-	/* If iError is -1, we were cancelled and WaitForCompletionOrCancellation returned it.  We won't
-	 * use the error string. */
+	/* If iError is -1, we were cancelled and WaitForCompletionOrCancellation
+	 * returned it. We won't use the error string. */
 	if( iError == -1 )
 		return RString();
 
@@ -321,7 +304,7 @@ void NetworkStream_Win32::SetError( const RString &sError )
 	m_Mutex.Unlock();
 }
 
-/* WSAAsyncGetHostByName returns events through a window. */
+// WSAAsyncGetHostByName returns events through a window.
 #include "MessageWindow.h"
 class ResolveMessageWindow: public MessageWindow
 {
@@ -365,13 +348,13 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 		return;
 	}
 
-	/* Always shut down a stream completely before reusing it. */
+	// Always shut down a stream completely before reusing it.
 	ASSERT_M( m_State == STATE_IDLE, ssprintf("%s:%i: %i", sHost.c_str(), iPort, m_State) );
 
 	m_sHost = sHost;
 	m_iPort = iPort;
-	
-	/* Look up the hostname. */
+
+	// Look up the hostname.
 	hostent *pHost = NULL;
 	char pBuf[MAXGETHOSTSTRUCT];
 	{
@@ -423,21 +406,21 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 			return;
 		}
 
-		/* Set up the completion event to be signalled when these events occur.  This
-		 * also sets the socket to nonblocking. */
+		/* Set up the completion event to be signalled when these events occur.
+		 * This also sets the socket to nonblocking. */
 		WSAEventSelect( m_Socket, m_hCompletionEvent, FD_CONNECT|FD_READ|FD_WRITE|FD_CLOSE );
 
-//		fcntl( m_Socket, O_NONBLOCK, 1 );
+		//fcntl( m_Socket, O_NONBLOCK, 1 );
 
-		/* Start opening the connection. */
+		// Start opening the connection.
 		int iResult = connect(m_Socket, (SOCKADDR *) &addr, sizeof(addr));
 
 		m_Mutex.Unlock();
 
-		/* We expect EINPROGRESS/WSAEWOULDBLOCK. */
+		// We expect EINPROGRESS/WSAEWOULDBLOCK.
 		if( iResult == SOCKET_ERROR )
 		{
-			/* Block until the connection attempt completes. */
+			// Block until the connection attempt completes.
 			int iError = WSAGetLastError();
 			if( iError == WSAEWOULDBLOCK )
 				iError = WaitForCompletionOrCancellation( FD_CONNECT_BIT );
@@ -458,7 +441,7 @@ void NetworkStream_Win32::Close()
 		return;
 	
 	/* If we have an active, stable connection, make sure we flush any data
-	 * completely before closing.  If you don't want to do this, call Cancel()
+	 * completely before closing. If you don't want to do this, call Cancel()
 	 * first. */
 	Shutdown();
 
@@ -488,20 +471,20 @@ void NetworkStream_Win32::Cancel()
 {
 	m_Mutex.Lock();
 
-	/* Mark cancellation. */
+	// Mark cancellation.
 	m_State = STATE_CANCELLED;
 
-	/* If resolving, abort the resolve. */
+	// If resolving, abort the resolve.
 	if( m_hResolve != NULL )
 	{
 		/* When we cancel the request, no message at all will be sent to the window,
-		 * so we need to do it ourself to inform it that it was cancelled.  Be sure
+		 * so we need to do it ourself to inform it that it was cancelled. Be sure
 		 * to only do this on successful cancel. */
 		if( WSACancelAsyncRequest(m_hResolve) == 0 )
 			PostMessage( m_hResolveHwnd, WM_USER+1, 0, 0 );
 	}
 
-	/* Break out if we're waiting in WaitForCompletionOrCancellation(). */
+	// Break out if we're waiting in WaitForCompletionOrCancellation().
 	SetEvent( m_hCompletionEvent );
 
 	m_Mutex.Unlock();
@@ -527,14 +510,14 @@ int NetworkStream_Win32::Read( void *pBuffer, size_t iSize )
 
 		if( iRet == 0 )
 		{
-			/* We hit EOF. */
+			// We hit EOF.
 			break;
 		}
 
 		int iError = WSAGetLastError();
 		if( iError == WSAEWOULDBLOCK )
 		{
-			/* There's no date to read.  If we've already received some data, return it. */
+			// There's no date to read. If we've already received some data, return it.
 			if( iRead > 0 )
 				break;
 
@@ -543,12 +526,12 @@ int NetworkStream_Win32::Read( void *pBuffer, size_t iSize )
 				continue;
 		}
 
-		/* If the other side closed the connection, just return EOF. */
+		// If the other side closed the connection, just return EOF.
 		if( iError == WSAECONNRESET )
 			break;
 
-		/* If we're cancelled or hit an error while reading, do return the data we managed
-		 * to get.  Be sure not to overwrite CANCELLED with ERROR. */
+		/* If we're cancelled or hit an error while reading, do return the data
+		 * we managed to get. Be sure not to overwrite CANCELLED with ERROR. */
 		SetError( ssprintf("Error reading: %s", WinSockErrorToString(iError).c_str() ) );
 		break;
 	}
@@ -586,10 +569,7 @@ void NetworkStream_Win32::Write( const void *pBuffer, size_t iSize )
 	}
 }
 
-/*
- * Send a set of data over HTTP, as a POST form.
- */
-
+/** @brief Send a set of data over HTTP, as a POST form. */
 NetworkPostData::NetworkPostData():
 	m_Mutex( "NetworkPostData" )
 {
@@ -601,10 +581,10 @@ NetworkPostData::~NetworkPostData()
 	delete m_pStream;
 }
 
-/* Create a MIME multipart data block from the given set of fields. */
+/** @brief Create a MIME multipart data block from the given set of fields. */
 void NetworkPostData::CreateMimeData( const map<RString,RString> &mapNameToData, RString &sOut, RString &sMimeBoundaryOut )
 {
-	/* Find a non-conflicting mime boundary. */
+	// Find a non-conflicting mime boundary.
 	while(1)
 	{
 		sMimeBoundaryOut = ssprintf( "--%08i", rand() );
@@ -655,19 +635,17 @@ void NetworkPostData::HttpThread()
 		sBuf += sData;
 
 	/* The "progress" is currently faked; it shows when we've connected, and when
-	 * we've received data.  We send and receive too little data to do more. */
+	 * we've received data. We send and receive too little data to do more. */
 	SetProgress( 0 );
 
-	/*
-	 * Begin connecting.
-	 */
+	// Begin connecting.
 	m_pStream->Open( m_sHost, m_iPort );
 	SetProgress( 0.25f );
 
-	/* Send the form. */
+	// Send the form.
 	m_pStream->Write( sBuf.data(), sBuf.size() );
 
-	/* Read the result. */
+	// Read the result.
 	RString sResult;
 	while( m_pStream->GetState() == NetworkStream::STATE_CONNECTED )
 	{
@@ -683,7 +661,7 @@ void NetworkPostData::HttpThread()
 
 	SetProgress( 1.0f );
 
-	/* Parse the results. */
+	// Parse the results.
 	int iStart = 0, iSize = -1;
 	map<RString,RString> mapHeaders;
 	while( 1 )

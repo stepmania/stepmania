@@ -7,7 +7,6 @@
 #include <windows.h>
 #include <mmsystem.h>
 
-
 static void LogVideoDriverInfo( VideoDriverInfo info )
 {
 	LOG->Info( "Video driver: %s [%s]", info.sDescription.c_str(), info.sProvider.c_str() );
@@ -200,7 +199,6 @@ static void GetWindowsVersionDebugInfo()
 		return;
 	}
 
-
 	RString Ver = ssprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
 	if(ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 	{
@@ -279,7 +277,6 @@ static void GetSoundDriverDebugInfo()
 			caps.dwSupport & WAVECAPS_SAMPLEACCURATE? "":"(INACCURATE)");
 	}
 }
-
 
 void SearchForDebugInfo()
 {

@@ -53,7 +53,7 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 {
 	CHECKPOINT_M( ssprintf("%p, %u, %08x, %08x", hWnd, msg, wParam, lParam) );
 
-	/* Suppress autorun. */
+	// Suppress autorun.
 	if( msg == g_iQueryCancelAutoPlayMessage )
 		return true;
 
@@ -80,8 +80,9 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 
 			if( !g_bD3D && !g_CurrentParams.windowed && !g_bRecreatingVideoMode )
 			{
-				/* In OpenGL (not D3D), it's our job to unset and reset the full-screen video mode
-				 * when we focus changes, and to hide and show the window.  Hiding is done in WM_KILLFOCUS,
+				/* In OpenGL (not D3D), it's our job to unset and reset the
+				 * full-screen video mode when we focus changes, and to hide
+				 * and show the window. Hiding is done in WM_KILLFOCUS,
 				 * because that's where most other apps seem to do it. */
 				if( g_bHasFocus && !bHadFocus )
 				{
@@ -101,7 +102,9 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 				ShowWindow( g_hWndMain, SW_SHOWMINNOACTIVE );
 			break;
 
-		/* Is there any reason we should care what size the user resizes the window to? */
+		/* Is there any reason we should care what size the user resizes
+		 * the window to? (who? -aj)
+		 * Short answer: yes. -aj */
 	//	case WM_GETMINMAXINFO:
 
 		case WM_SETCURSOR:
@@ -115,9 +118,9 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 		case WM_SYSCOMMAND:
 			switch( wParam&0xFFF0 )
 			{
-			case SC_MONITORPOWER:
-			case SC_SCREENSAVE:
-				return 0;
+				case SC_MONITORPOWER:
+				case SC_SCREENSAVE:
+					return 0;
 			}
 			break;
 
@@ -133,7 +136,7 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 		case WM_KEYUP:
 		case WM_SYSKEYDOWN:
 		case WM_SYSKEYUP:
-			/* We handle all input ourself, via DirectInput. */
+			// We handle all input ourself, via DirectInput.
 			return 0;
 
 		case WM_CLOSE:
@@ -143,8 +146,8 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 
 		case WM_WINDOWPOSCHANGED:
 		{
-			/* If we're fullscreen and don't have focus, our window is hidden, so GetClientRect
-			 * isn't meaningful. */
+			/* If we're fullscreen and don't have focus, our window is hidden,
+			 * so GetClientRect isn't meaningful. */
 			if( !g_CurrentParams.windowed && !g_bHasFocus )
 				break;
 
@@ -192,8 +195,7 @@ static void AdjustVideoModeParams( VideoModeParams &p )
 		return;
 	}
 
-	/*
-	 * On a nForce 2 IGP on Windows 98, dm.dmDisplayFrequency sometimes 
+	/* On a nForce 2 IGP on Windows 98, dm.dmDisplayFrequency sometimes 
 	 * (but not always) is 0.
 	 *
 	 * MSDN: When you call the EnumDisplaySettings function, the 
@@ -201,8 +203,7 @@ static void AdjustVideoModeParams( VideoModeParams &p )
 	 * These values represent the display hardware's default refresh rate. 
 	 * This default rate is typically set by switches on a display card or 
 	 * computer motherboard, or by a configuration program that does not 
-	 * use Win32 display functions such as ChangeDisplaySettings.
-	 */
+	 * use Win32 display functions such as ChangeDisplaySettings. */
 	if( !(dm.dmFields & DM_DISPLAYFREQUENCY) ||
 		dm.dmDisplayFrequency == 0 ||
 		dm.dmDisplayFrequency == 1 )
@@ -222,7 +223,7 @@ RString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 {
 	if( p.windowed )
 	{
-		/* We're going windowed.  If we were previously fullscreen, reset. */
+		// We're going windowed. If we were previously fullscreen, reset.
 		ChangeDisplaySettings( NULL, 0 );
 
 		return RString();
@@ -250,7 +251,7 @@ RString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 		ret = ChangeDisplaySettings( &DevMode, CDS_FULLSCREEN );
 	}
 
-	/* XXX: append error */
+	// XXX: append error
 	if( ret != DISP_CHANGE_SUCCESSFUL )
 		return "Couldn't set screen mode";
 
@@ -285,12 +286,12 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 		if( hWnd == NULL )
 			RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
 
-		/* If an old window exists, transfer focus to the new window before deleting
-		 * it, or some other window may temporarily get focus, which can cause it
-		 * to be resized. */
+		/* If an old window exists, transfer focus to the new window before
+		 * deleting it, or some other window may temporarily get focus, which
+		 * can cause it to be resized. */
 		if( g_hWndMain != NULL )
 		{
-			/* While we change to the new window, don't do ChangeDisplaySettings in WM_ACTIVATE. */
+			// While we change to the new window, don't do ChangeDisplaySettings in WM_ACTIVATE.
 			g_bRecreatingVideoMode = true;
 			SetForegroundWindow( hWnd );
 			g_bRecreatingVideoMode = false;
@@ -327,7 +328,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 		SetClassLong( g_hWndMain, GCL_HICON, (LONG) g_hIcon );
 
 	/* The window style may change as a result of switching to or from fullscreen;
-	 * apply it.  Don't change the WS_VISIBLE bit. */
+	 * apply it. Don't change the WS_VISIBLE bit. */
 	int iWindowStyle = GetWindowStyle( p.windowed );
 	if( GetWindowLong( g_hWndMain, GWL_STYLE ) & WS_VISIBLE )
 		iWindowStyle |= WS_VISIBLE;
@@ -342,7 +343,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	const int iWidth = WindowRect.right - WindowRect.left;
 	const int iHeight = WindowRect.bottom - WindowRect.top;
 
-	/* If windowed, center the window. */
+	// If windowed, center the window.
 	int x = 0, y = 0;
 	if( p.windowed )
 	{
@@ -350,8 +351,8 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 		y = GetSystemMetrics(SM_CYSCREEN)/2-iHeight/2;
 	}
 
-	/* Move and resize the window.  SWP_FRAMECHANGED causes the above SetWindowLong
-	 * to take effect. */
+	/* Move and resize the window. SWP_FRAMECHANGED causes the above
+	 * SetWindowLong to take effect. */
 	if( !SetWindowPos( g_hWndMain, HWND_NOTOPMOST, x, y, iWidth, iHeight, SWP_FRAMECHANGED|SWP_SHOWWINDOW ) )
 		LOG->Warn( "%s", werr_ssprintf( GetLastError(), "SetWindowPos" ).c_str() );
 
@@ -368,7 +369,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	}
 }
 
-/* Shut down the window, but don't reset the video mode. */
+/** @brief Shut down the window, but don't reset the video mode. */
 void GraphicsWindow::DestroyGraphicsWindow()
 {
 	if( g_HDC != NULL )
@@ -410,7 +411,7 @@ void GraphicsWindow::DestroyGraphicsWindow()
 
 void GraphicsWindow::Initialize( bool bD3D )
 {
-	/* A few things need to be handled differently for D3D. */
+	// A few things need to be handled differently for D3D.
 	g_bD3D = bD3D;
 
 	AppInstance inst;
@@ -461,13 +462,10 @@ void GraphicsWindow::Shutdown()
 {
 	DestroyGraphicsWindow();
 
-	/*
-	 * Return to the desktop resolution, if needed.
-	 *
-	 * It'd be nice to not do this: Windows will do it when we quit, and if we're
-	 * shutting down OpenGL to try D3D, this will cause extra mode switches.  However,
-	 * we need to do this before displaying dialogs.
-	 */
+	/* Return to the desktop resolution, if needed.
+	 * It'd be nice to not do this: Windows will do it when we quit, and if
+	 * we're shutting down OpenGL to try D3D, this will cause extra mode
+	 * switches. However, we need to do this before displaying dialogs. */
 	ChangeDisplaySettings( NULL, 0 );
 
 	AppInstance inst;
@@ -500,7 +498,7 @@ void GraphicsWindow::Update()
 	{
 		//LOG->Warn( "Changing resolution" );
 
-		/* Let DISPLAY know that our resolution has changed.  (Note that ResolutionChanged()
+		/* Let DISPLAY know that our resolution has changed. (Note that ResolutionChanged()
 		 * can come back here, so reset g_bResolutionChanged first.) */
 		g_bResolutionChanged = false;
 		DISPLAY->ResolutionChanged();
@@ -527,7 +525,6 @@ void GraphicsWindow::GetDisplayResolutions( DisplayResolutions &out )
 		}
 	}
 }
-
 
 /*
  * (c) 2004 Glenn Maynard

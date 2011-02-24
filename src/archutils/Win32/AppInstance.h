@@ -1,5 +1,3 @@
-/* AppInstance - get an HINSTANCE for starting dialog boxes. */
-
 #ifndef APP_INSTANCE_H
 #define APP_INSTANCE_H
 
@@ -7,6 +5,7 @@
 #  include "windows.h"
 #endif
 
+/** @brief get an HINSTANCE for starting dialog boxes. */
 class AppInstance
 {
 public:

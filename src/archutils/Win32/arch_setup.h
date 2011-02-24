@@ -29,14 +29,14 @@
 #pragma warning (disable : 4201) // nonstandard extension used : nameless struct/union (Windows headers do this)
 #pragma warning (disable : 4786) // turn off broken debugger warning
 #pragma warning (disable : 4512) // assignment operator could not be generated (so?)
-/* "unreachable code".  This warning crops up in incorrect places (end of do ... while(0)
+/* "unreachable code". This warning crops up in incorrect places (end of do ... while(0)
  * blocks, try/catch blocks), and I've never found it to be useful. */
 #pragma warning (disable : 4702) // assignment operator could not be generated (so?)
-/* "unreferenced formal parameter"; we *want* that in many cases */
+// "unreferenced formal parameter"; we *want* that in many cases
 #pragma warning (disable : 4100)
 /* "case 'aaa' is not a valid value for switch of enum 'bbb'
  * Actually, this is a valid warning, but we do it all over the
- * place, eg. with ScreenMessages.  Those should be fixed, but later. XXX */
+ * place, eg. with ScreenMessages. Those should be fixed, but later. XXX */
 #pragma warning (disable : 4063)
 #pragma warning (disable : 4127)
 #pragma warning (disable : 4786) /* VC6: identifier was truncated to '255' characters in the debug information */
@@ -44,43 +44,43 @@
 #pragma warning (disable : 4244) // converting of data = possible data loss.  (This pragma should eventually go away)
 #pragma warning (disable : 4355) // 'this' : used in base member initializer list
 
-/* Fix VC breakage. */
+// Fix VC breakage.
 #define PATH_MAX _MAX_PATH
 
-/* Disable false deprecation warnings in VC2005. */
+// Disable false deprecation warnings in VC2005.
 #define _CRT_SECURE_NO_DEPRECATE
 #define _SCL_SECURE_NO_DEPRECATE 
 
-/* Disable false deprecation warnings in VC2008. */
+// Disable false deprecation warnings in VC2008.
 #define _CRT_NONSTDC_NO_WARNINGS
 
 #if defined(_MSC_VER) && _MSC_VER >= 1400 // this is needed in VC8 but breaks VC7
 #define _HAS_EXCEPTIONS 0
 #endif
 
-/* Don't include windows.h everywhere; when we do eventually include it, use these: */
+// Don't include windows.h everywhere; when we do eventually include it, use these:
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
 
-/* Pull in NT-only definitions.  Note that we support Win98 and WinME; you can make
- * NT calls, but be sure to fall back on 9x if they're not supported. */
+/* Pull in NT-only definitions. Note that we support Win98 and WinME; you can 
+ * make NT calls, but be sure to fall back on 9x if they're not supported. */
 #define _WIN32_WINNT 0x0400
 #define _WIN32_IE 0x0400
 
-/* If this isn't defined to 0, VC fails to define things like stat and alloca. */
+// If this isn't defined to 0, VC fails to define things like stat and alloca.
 #define __STDC__ 0
 
 #endif
 
-#include <direct.h> /* has stuff that should be in unistd.h */
-#include <wchar.h> /* needs to be included before our fixes below */
+#include <direct.h> // has stuff that should be in unistd.h
+#include <wchar.h> // needs to be included before our fixes below
 
 #define lstat stat
 #define fsync _commit
 #define isnan _isnan
 #define isfinite _finite
 
-/* mkdir is missing the mode arg */
+// mkdir is missing the mode arg
 #define mkdir(p,m) mkdir(p)
 
 typedef time_t time_t;
@@ -92,9 +92,7 @@ struct tm *my_gmtime_r( const time_t *timep, struct tm *result );
 void my_usleep( unsigned long usec );
 #define usleep my_usleep
 
-
-
-/* Missing stdint types: */
+// Missing stdint types:
 #if !defined(__MINGW32__) // MinGW headers define these for us
 typedef signed char int8_t;
 typedef signed short int16_t;
@@ -116,9 +114,9 @@ static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
 
 #undef min
 #undef max
-#define NOMINMAX /* make sure Windows doesn't try to define this */
+#define NOMINMAX // make sure Windows doesn't try to define this
 
-/* Windows is missing some basic math functions: */
+// Windows is missing some basic math functions:
 // But MinGW isn't.
 #if !defined(__MINGW32__)
 #define NEED_TRUNCF
@@ -132,7 +130,7 @@ static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
 inline long int lrintf( float f )
 {
 	int retval;
-	
+
 	_asm fld f;
 	_asm fistp retval;
 
@@ -140,11 +138,11 @@ inline long int lrintf( float f )
 }
 #endif
 
-/* For RageLog. */
+// For RageLog.
 #define HAVE_VERSION_INFO
 
-/* We implement the crash handler interface (though that interface isn't completely
- * uniform across platforms yet). */
+/* We implement the crash handler interface (though that interface isn't
+ * completely uniform across platforms yet). */
 #if !defined(_XBOX) && !defined(SMPACKAGE)
 #define CRASH_HANDLER
 #endif
@@ -164,7 +162,6 @@ inline long int lrintf( float f )
 #if defined(XBOX)
 #include "ArchUtils/Xbox/arch_setup.h"
 #endif
-
 
 #if defined(__GNUC__) // It might be MinGW or Cygwin(?)
 #include "archutils/Common/gcc_byte_swaps.h"
