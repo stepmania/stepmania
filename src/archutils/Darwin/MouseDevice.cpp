@@ -26,7 +26,7 @@ bool MouseDevice::AddLogicalDevice( int usagePage, int usage )
 			return false;
 	}
 	// Init only a single mouse for now.
-	Mouse();
+	m_Mouse = Mouse();
 	return true;
 }
 
@@ -35,7 +35,7 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 	if( usagePage >= kHIDPage_VendorDefinedStart )
 		return;
 
-	//ASSERT(m_Mouse);
+	ASSERT(m_Mouse);
 	Mouse& m = m_Mouse;
 	int iMin = 0;
 	int iMax = 0;
