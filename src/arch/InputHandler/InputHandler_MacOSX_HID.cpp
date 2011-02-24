@@ -6,6 +6,7 @@
 #include "InputFilter.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 #include "archutils/Darwin/KeyboardDevice.h"
+//#include "archutils/Darwin/MouseDevice.h"
 #include "archutils/Darwin/JoystickDevice.h"
 #include "archutils/Darwin/PumpDevice.h"
 
@@ -63,8 +64,8 @@ int InputHandler_MacOSX_HID::Run( void *data )
 	}
 	// Add an observer for the start of the run loop
 	{
-		/* The function copies the information out of the structure, so the memory pointed
-		 * to by context does not need to persist beyond the function call. */
+		/* The function copies the information out of the structure, so the memory
+		 * pointed to by context does not need to persist beyond the function call. */
 		CFRunLoopObserverContext context = { 0, &This->m_Sem, NULL, NULL, NULL };
 		CFRunLoopObserverRef o = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
 								  false, 0, RunLoopStarted, &context);
@@ -72,11 +73,13 @@ int InputHandler_MacOSX_HID::Run( void *data )
 	}
 
 	/* Add a source for ending the run loop. This serves two purposes:
-	 * 1. it provides a way to terminate the run loop when IH_MacOSX_HID exists, and
-	 * 2. it ensures that CFRunLoopRun() doesn't return immediately if there are no other sources. */
+	 * 1. it provides a way to terminate the run loop when IH_MacOSX_HID exists,
+	 * and 2. it ensures that CFRunLoopRun() doesn't return immediately if
+	 * there are no other sources. */
 	{
-		/* Being a little tricky here, the perform callback takes a void* and returns nothing.
-		 * CFRunLoopStop takes a CFRunLoopRef (a pointer) so cast the function and pass the loop ref. */
+		/* Being a little tricky here, the perform callback takes a void* and
+		 * returns nothing. CFRunLoopStop takes a CFRunLoopRef (a pointer) so
+		 * cast the function and pass the loop ref. */
 		void *info = This->m_LoopRef;
 		void (*perform)(void *) = (void (*)(void *))CFRunLoopStop;
 		// { version, info, retain, release, copyDescription, equal, hash, schedule, cancel, perform }
@@ -170,6 +173,10 @@ static HIDDevice *MakeDevice( InputDevice id )
 {
 	if( id == DEVICE_KEYBOARD )
 		return new KeyboardDevice;
+	/*
+	if( id == DEVICE_MOUSE )
+		return new MouseDevice;
+	*/
 	if( IsJoystick(id) )
 		return new JoystickDevice;
 	if( IsPump(id) )
@@ -215,9 +222,12 @@ void InputHandler_MacOSX_HID::AddDevices( int usagePage, int usage, InputDevice 
 
 		enum_add( id, num );
 		m_vDevices.push_back( dev );
-		
-		ret = IOServiceAddInterestNotification( m_NotifyPort, device, kIOGeneralInterest,
-							InputHandler_MacOSX_HID::DeviceChanged, this, &i );
+
+		ret = IOServiceAddInterestNotification(
+			m_NotifyPort, device, kIOGeneralInterest,
+			InputHandler_MacOSX_HID::DeviceChanged,
+			this, &i
+		);
 
 		if( ret == KERN_SUCCESS )
 			m_vIters.push_back( i );
@@ -237,6 +247,10 @@ InputHandler_MacOSX_HID::InputHandler_MacOSX_HID() : m_Sem( "Input thread starte
 	// Add devices.
 	LOG->Trace( "Finding keyboards" );
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard, id );
+	/*
+	LOG->Trace( "Finding mice" );
+	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Mouse, id );
+	*/
 	LOG->Trace( "Finding joysticks" );
 	id = DEVICE_JOY1;
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick, id );
@@ -431,7 +445,7 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 			}
 
 			wchar_t ch = utf8_get_char( utf8InputString );
-			
+
 			CFRelease( inputString );
 			return ch == INVALID_CHAR ? L'\0' : ch;
 
@@ -456,7 +470,6 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 
 	return InputHandler::DeviceButtonToChar( button, bUseCurrentKeyModifiers );
 }
-
 
 /*
  * (c) 2005, 2006 Steve Checkoway
