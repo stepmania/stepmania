@@ -50,6 +50,8 @@ function ScreenSelectMusic:setupmusicstagemods()
 			GAMESTATE:SetPreferredDifficulty( pn, difficulty )
 			MESSAGEMAN:Broadcast( "PlayerOptionsChanged", {PlayerNumber = pn} )
 		end
+		
+-- 		if PREFSMAN:GetPreference("
 
 		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
 		MESSAGEMAN:Broadcast( "SongOptionsChanged" )
