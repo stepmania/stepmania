@@ -63,6 +63,30 @@ LuaDeclareType( VertAlign );
 #define align_middle 0.5f
 /** @brief The bottom vertical alignment constant. */
 #define align_bottom 1.0f
+
+/*
+enum EffectAction
+{
+	EffectAction_None,			// no_effect
+	EffectAction_DiffuseBlink,	// diffuse_blink
+	EffectAction_DiffuseShift,	// diffuse_shift
+	EffectAction_DiffuseRamp,	// diffuse_ramp
+	EffectAction_Rainbow,		// rainbow
+	EffectAction_GlowBlink,		// glow_blink
+	EffectAction_GlowShift,		// glow_shift
+	EffectAction_GlowRamp,		// glow_ramp
+	EffectAction_Wag,
+	EffectAction_Bounce,
+	EffectAction_Bob,
+	EffectAction_Pulse,
+	EffectAction_Spin,
+	EffectAction_Vibrate,
+	NUM_EffectAction,
+	EffectAction_Invalid
+};
+LuaDeclareType( EffectAction );
+*/
+
 /** @brief Base class for all objects that appear on the screen. */
 class Actor : public MessageSubscriber
 {
@@ -111,8 +135,9 @@ public:
 	/*
 	enum EffectType {
 		EffectType_Diffuse,
+		EffectType_Glow,
 		EffectType_Translate,
-		Num_EffectType,
+		NUM_EffectType,
 		EffectType_Invalid
 	};
 	*/
@@ -121,15 +146,15 @@ public:
 	/*
 	struct Effect
 	{
-		Effect() : m_sName(""), m_Type(EffectType_Invalid), m_fSecsIntoEffect(0),
+		Effect() : m_Action(EffectAction_None), m_Type(EffectType_Invalid), m_fSecsIntoEffect(0),
 				m_fEffectDelta(0), m_fEffectRampUp(0.5f), m_fEffectHoldAtHalf(0),
 				m_fEffectRampDown(0.5f), m_fEffectHoldAtZero(0), m_fEffectOffset(0),
 				m_EffectClock(CLOCK_TIMER), m_vEffectMagnitude(RageVector3(0,0,10)),
 				m_effectColor1(RageColor(1,1,1,1)), m_effectColor2(RageColor(1,1,1,1))
 		{ }
 
-		RString			m_sName;	// "" is equivalent to no_effect
-		EffectType		m_Type;		// diffuse or translate
+		EffectAction	m_Action;
+		EffectType		m_Type; // diffuse, glow, or translate
 		float			m_fSecsIntoEffect;
 		float			m_fEffectDelta;
 		RageColor		m_effectColor1;
