@@ -104,15 +104,17 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 	const Mouse& m = m_Mouse;
 	if( m.x_axis == cookie )
 	{
-		float level = SCALE( value, m.x_min, m.x_max, -1.0f, 1.0f );
+		INPUTFILTER->UpdateCursorLocation((float)m.x_axis,(float)m.y_axis);
 	}
 	else if( m.y_axis == cookie )
 	{
-		float level = SCALE( value, m.x_min, m.x_max, -1.0f, 1.0f );
+		INPUTFILTER->UpdateCursorLocation((float)m.x_axis,(float)m.y_axis);
 	}
 	else if( m.z_axis == cookie )
 	{
 		float level = SCALE( value, m.z_min, m.z_max, -1.0f, 1.0f );
+		ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELUP, max(-l,0), now) );
+		ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELDOWN, max(+l,0), now) );
 	}
 	else
 	{
