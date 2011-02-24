@@ -113,8 +113,8 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 	else if( m.z_axis == cookie )
 	{
 		float level = SCALE( value, m.z_min, m.z_max, -1.0f, 1.0f );
-		ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELUP, max(-l,0), now) );
-		ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELDOWN, max(+l,0), now) );
+		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELUP, max(-level,0), now) );
+		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_MOUSE, MOUSE_WHEELDOWN, max(+level,0), now) );
 	}
 	else
 	{
