@@ -6,7 +6,7 @@
 #include "InputFilter.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 #include "archutils/Darwin/KeyboardDevice.h"
-//#include "archutils/Darwin/MouseDevice.h"
+#include "archutils/Darwin/MouseDevice.h"
 #include "archutils/Darwin/JoystickDevice.h"
 #include "archutils/Darwin/PumpDevice.h"
 
