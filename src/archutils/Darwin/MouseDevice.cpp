@@ -105,7 +105,7 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 		vPresses.push_back( DeviceInput(DEVICE_MOUSE, iter->second, value, now) );
 }
 
-void MouseDeviceDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
+void MouseDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
 {
 	vDevices.push_back( InputDeviceInfo(DEVICE_MOUSE, "Mouse") );
 }

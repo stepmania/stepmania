@@ -22,8 +22,8 @@ private:
 
 protected:
 	bool AddLogicalDevice( int usagePage, int usage );
-	void AddElement( int usagePage, int usage, IOHIDElementCookie cookie, const CFDictionaryRef properties )
-	void Open()
+	void AddElement( int usagePage, int usage, IOHIDElementCookie cookie, const CFDictionaryRef properties );
+	void Open();
 
 	// just in case -aj
 	Mouse GetMouse(){ return m_Mouse; }
