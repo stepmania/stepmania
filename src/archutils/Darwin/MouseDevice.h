@@ -3,15 +3,30 @@
 
 #include "HIDDevice.h"
 
+struct Mouse
+{
+	InputDevice id;
+	IOHIDElementCookie x_axis, y_axis, z_axis;
+	int x_min, x_max;
+	int y_min, y_max;
+	int z_min, z_max;
+
+	Mouse();
+};
+
 class MouseDevice : public HIDDevice
 {
 private:
 	__gnu_cxx::hash_map<IOHIDElementCookie, DeviceButton> m_Mapping;
+	Mouse m_Mouse;
 
 protected:
 	bool AddLogicalDevice( int usagePage, int usage );
 	void AddElement( int usagePage, int usage, IOHIDElementCookie cookie, const CFDictionaryRef properties )
 	void Open()
+
+	// just in case -aj
+	Mouse GetMouse(){ return m_Mouse; }
 
 public:
 	void GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const;
