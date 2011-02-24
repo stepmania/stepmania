@@ -16,7 +16,6 @@ Joystick::Joystick() :	id( InputDevice_Invalid ),
 {
 }
 
-
 bool JoystickDevice::AddLogicalDevice( int usagePage, int usage )
 {
 	if( usagePage != kHIDPage_GenericDesktop )
@@ -136,7 +135,7 @@ void JoystickDevice::Open()
 		ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
 		ADD( x_rot );	ADD( y_rot );	ADD( z_rot );
 		ADD( hat );
-#undef ADD		
+#undef ADD
 		for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
 			AddElementToQueue( j->first );
 	}
@@ -146,7 +145,7 @@ bool JoystickDevice::InitDevice( int vid, int pid )
 {
 	if( vid != 0x0507 || pid != 0x0011 )
 		return true;
-	// It's a Para controller so try to power it on.
+	// It's a Para controller, so try to power it on.
 	uint8_t powerOn = 1;
 	IOReturn ret = SetReport( kIOHIDReportTypeFeature, 0, &powerOn, 1, 10 );
 
