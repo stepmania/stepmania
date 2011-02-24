@@ -45,7 +45,7 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 				IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMinKey)), iMin );
 				int iMax = 0;
 				IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMaxKey)), iMax );
-
+			
 				// based on usage
 				switch( usage )
 				{
