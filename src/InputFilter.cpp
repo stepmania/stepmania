@@ -427,14 +427,14 @@ public:
 	// the window's width/height? -aj
 	static int GetMouseX( T* p, lua_State *L ){
 		float fX = p->GetCursorX();
-		// scale input
+		// Scale input to the theme's dimensions
 		fX = SCALE( fX, 0, (PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio), SCREEN_LEFT, SCREEN_RIGHT );
 		lua_pushnumber( L, fX );
 		return 1;
 	}
 	static int GetMouseY( T* p, lua_State *L ){
 		float fY = p->GetCursorY();
-		// scale input
+		// Scale input to the theme's dimensions
 		fY = SCALE( fY, 0, PREFSMAN->m_iDisplayHeight, SCREEN_TOP, SCREEN_BOTTOM );
 		lua_pushnumber( L, fY );
 		return 1;
