@@ -35,7 +35,7 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 	if( usagePage >= kHIDPage_VendorDefinedStart )
 		return;
 
-	ASSERT(m_Mouse != NULL);
+	//ASSERT(m_Mouse);
 	Mouse& m = m_Mouse;
 	int iMin = 0;
 	int iMax = 0;
