@@ -35,7 +35,7 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 	if( usagePage >= kHIDPage_VendorDefinedStart )
 		return;
 
-	ASSERT(m_Mouse);
+	//ASSERT(m_Mouse);
 	Mouse& m = m_Mouse;
 	int iMin = 0;
 	int iMax = 0;
@@ -91,7 +91,7 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 
 void MouseDevice::Open()
 {
-	//const Mouse& m = m_Mouse;
+	const Mouse& m = m_Mouse;
 	for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
 		AddElementToQueue( i->first );
 }
