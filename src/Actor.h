@@ -112,7 +112,8 @@ public:
 	enum EffectType {
 		EffectType_Diffuse,
 		EffectType_Translate,
-		Num_EffectType
+		Num_EffectType,
+		EffectType_Invalid
 	};
 	*/
 
@@ -120,7 +121,14 @@ public:
 	/*
 	struct Effect
 	{
-		RString			m_sName;
+		Effect() : m_sName(""), m_Type(EffectType_Invalid), m_fSecsIntoEffect(0),
+				m_fEffectDelta(0), m_fEffectRampUp(0.5f), m_fEffectHoldAtHalf(0),
+				m_fEffectRampDown(0.5f), m_fEffectHoldAtZero(0), m_fEffectOffset(0),
+				m_EffectClock(CLOCK_TIMER), m_vEffectMagnitude(RageVector3(0,0,10)),
+				m_effectColor1(RageColor(1,1,1,1)), m_effectColor2(RageColor(1,1,1,1))
+		{ }
+
+		RString			m_sName;	// "" is equivalent to no_effect
 		EffectType		m_Type;		// diffuse or translate
 		float			m_fSecsIntoEffect;
 		float			m_fEffectDelta;
