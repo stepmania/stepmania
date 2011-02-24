@@ -673,7 +673,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 					pNewNotes->SetCredit( sParams[1] );
 				}
 
-				else if( sValueName=="NOTES" )
+				else if( sValueName=="NOTES" || sValueName=="NOTES2" )
 				{
 					state = GETTING_SONG_INFO;
 					//pNewNotes->m_Timing = out.m_Timing;
