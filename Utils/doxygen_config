@@ -3,10 +3,10 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = StepMania
+PROJECT_NAME           = sm-ssc
 PROJECT_NUMBER         = 
 OUTPUT_DIRECTORY       = temp
-CREATE_SUBDIRS         = NO
+CREATE_SUBDIRS         = YES
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = YES
 BRIEF_MEMBER_DESC      = YES
