@@ -423,6 +423,8 @@ void InputFilter::UpdateCursorLocation(float _fX, float _fY)
 class LunaInputFilter: public Luna<InputFilter>
 {
 public:
+	// todo: Should the input be locked to the theme's width/height instead of
+	// the window's width/height? -aj
 	static int GetMouseX( T* p, lua_State *L ){
 		float fX = p->GetCursorX();
 		// scale input
