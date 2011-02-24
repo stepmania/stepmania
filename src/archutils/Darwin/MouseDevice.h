@@ -3,6 +3,15 @@
 
 #include "HIDDevice.h"
 
+struct Mouse
+{
+	InputDevice id;
+	// map cookie to button
+	__gnu_cxx::hash_map<IOHIDElementCookie, DeviceButton> mapping;
+
+	Mouse();
+};
+
 class MouseDevice : public HIDDevice
 {
 private:
@@ -14,6 +23,8 @@ protected:
 	void Open()
 
 public:
+	void GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const;
+	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const;
 	// even more stuff
 };
 
