@@ -68,19 +68,24 @@ LuaDeclareType( VertAlign );
 enum EffectAction
 {
 	EffectAction_None,			// no_effect
+	// [Diffuse]
 	EffectAction_DiffuseBlink,	// diffuse_blink
 	EffectAction_DiffuseShift,	// diffuse_shift
 	EffectAction_DiffuseRamp,	// diffuse_ramp
 	EffectAction_Rainbow,		// rainbow
+	// [Glow]
 	EffectAction_GlowBlink,		// glow_blink
 	EffectAction_GlowShift,		// glow_shift
 	EffectAction_GlowRamp,		// glow_ramp
-	EffectAction_Wag,
-	EffectAction_Bounce,
+	// [Translate]
 	EffectAction_Bob,
-	EffectAction_Pulse,
-	EffectAction_Spin,
+	EffectAction_Bounce,
 	EffectAction_Vibrate,
+	// [Rotate]
+	EffectAction_Spin,
+	EffectAction_Wag,
+	// [Zoom]
+	EffectAction_Pulse,
 	NUM_EffectAction,
 	EffectAction_Invalid
 };
@@ -137,6 +142,8 @@ public:
 		EffectType_Diffuse,
 		EffectType_Glow,
 		EffectType_Translate,
+		EffectType_Rotate,
+		EffectType_Zoom,
 		NUM_EffectType,
 		EffectType_Invalid
 	};
