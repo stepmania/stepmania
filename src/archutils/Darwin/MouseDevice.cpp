@@ -74,7 +74,6 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 			{
 				const DeviceButton buttonID = enum_add2( MOUSE_LEFT, usage - kHIDUsage_Button_1 );
 
-				bool mouseWheel = (buttonID == MOUSE_WHEELUP || buttonID == MOUSE_WHEELDOWN);
 				if( buttonID <= MOUSE_MIDDLE )
 					m_Mapping[cookie] = buttonID;
 				else
