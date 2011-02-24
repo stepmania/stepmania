@@ -412,12 +412,14 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 							val = state.lY;
 							break;
 						case DIMOFS_Z:
-							neg = MOUSE_WHEELUP; pos = MOUSE_WHEELDOWN;
-							val = state.lZ;
+							{
+								neg = MOUSE_WHEELUP; pos = MOUSE_WHEELDOWN;
+								val = state.lZ;
 
-							float l = SCALE( int(val), -120.0f, 120.0f, 0.0f, 1.0f );
-							ButtonPressed( DeviceInput(dev, neg, max(-l,0), tm) );
-							ButtonPressed( DeviceInput(dev, pos, max(+l,0), tm) );
+								float l = SCALE( int(val), -120.0f, 120.0f, 0.0f, 1.0f );
+								ButtonPressed( DeviceInput(dev, neg, max(-l,0), tm) );
+								ButtonPressed( DeviceInput(dev, pos, max(+l,0), tm) );
+							}
 							break;
 						default: LOG->MapLog( "unknown input", 
 											"Mouse '%s' is returning an unknown mouse offset, %i",
