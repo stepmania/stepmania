@@ -37,13 +37,14 @@ void MouseDevice::AddElement( int usagePage, int usage, IOHIDElementCookie cooki
 
 	ASSERT(m_Mouse);
 	Mouse& m = m_Mouse;
-
+	int iMin = 0;
+	int iMax = 0;
 	switch( usagePage )
 	{
 		case kHIDPage_GenericDesktop:
-			int iMin = 0;
+			iMin = 0;
 			IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMinKey)), iMin );
-			int iMax = 0;
+			iMax = 0;
 			IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMaxKey)), iMax );
 
 			// based on usage
