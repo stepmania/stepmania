@@ -65,7 +65,13 @@ public:
 
 	void RefreshAll();
 
-	RString		GetSelectedGroup() const		{ if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; ASSERT(m_iSelection[ROW_GROUP]	< (int)m_sGroups.size()); return m_sGroups[m_iSelection[ROW_GROUP]]; }
+	RString		GetSelectedGroup() const
+	{ 
+		if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; 
+		ASSERT_M(m_iSelection[ROW_GROUP] < m_sGroups.size(),
+			 ssprintf("Group selection %d < Number of groups %d", m_iSelection[ROW_GROUP], (int)m_sGroups.size())); 
+		return m_sGroups[m_iSelection[ROW_GROUP]]; 
+	}
 	Song*		GetSelectedSong() const			{ ASSERT(m_iSelection[ROW_SONG]			< (int)m_pSongs.size());	return m_pSongs[m_iSelection[ROW_SONG]]; }
 	StepsType	GetSelectedStepsType() const		{ ASSERT(m_iSelection[ROW_STEPS_TYPE]		< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]]; }
 	Steps*		GetSelectedSteps() const		{ ASSERT(m_iSelection[ROW_STEPS]		< (int)m_vpSteps.size());	return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; }
