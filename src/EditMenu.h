@@ -68,7 +68,7 @@ public:
 	RString		GetSelectedGroup() const
 	{ 
 		if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; 
-		ASSERT_M(m_iSelection[ROW_GROUP] < m_sGroups.size(),
+		ASSERT_M(m_iSelection[ROW_GROUP] < (int)m_sGroups.size(),
 			 ssprintf("Group selection %d < Number of groups %d", m_iSelection[ROW_GROUP], (int)m_sGroups.size())); 
 		return m_sGroups[m_iSelection[ROW_GROUP]]; 
 	}
