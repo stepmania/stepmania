@@ -14,6 +14,15 @@
 #define DC_X( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterXP%d",choice+1))
 #define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterYP%d",choice+1))
 
+/*
+ * TODO:
+ * - Metrics/Lua for lighting and camera sweeping.
+ * - Ability to load secondary elements i.e. stages.
+ * - Remove support for 2D characters? There's no need for them (Lua can do it).
+ * - Cleanup!
+ *
+ * -- Colby
+ */
 const float CAMERA_REST_DISTANCE = 32.f;
 const float CAMERA_REST_LOOK_AT_HEIGHT = -11.f;
 
@@ -247,7 +256,8 @@ void DancingCharacters::Update( float fDelta )
 		m_fThisCameraStartBeat = (float) iCurBeat;
 		m_fThisCameraEndBeat = float(iCurBeat + 8);
 	}
-
+	/*
+	// is there any of this still around? This block of code is _ugly_. -Colby
 	// update any 2D stuff
 	FOREACH_PlayerNumber( p )
 	{
@@ -286,6 +296,7 @@ void DancingCharacters::Update( float fDelta )
 			}
 		}
 	}
+	*/
 }
 
 void DancingCharacters::Change2DAnimState( PlayerNumber pn, int iState )
@@ -326,6 +337,7 @@ void DancingCharacters::DrawPrimitives()
 		bool bDanger = m_bDrawDangerLight;
 
 		DISPLAY->SetLighting( true );
+		
 		RageColor ambient  = bFailed ? RageColor(0.2f,0.1f,0.1f,1) : (bDanger ? RageColor(0.4f,0.1f,0.1f,1) : RageColor(0.4f,0.4f,0.4f,1));
 		RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(1,0.95f,0.925f,1));
 		RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
@@ -349,12 +361,12 @@ void DancingCharacters::DrawPrimitives()
 
 		DISPLAY->SetLightOff( 0 );
 		DISPLAY->SetLighting( false );
-		
-		DISPLAY->ClearZBuffer();
 	}
 
-
 	DISPLAY->CameraPopMatrix();
+	
+	/*
+	// Ugly! -Colby
 	// now draw any potential 2D stuff
 	FOREACH_PlayerNumber( p )
 	{
@@ -375,6 +387,7 @@ void DancingCharacters::DrawPrimitives()
 		if(m_bgFail[p].IsLoaded() && m_i2DAnimState[p] == AS2D_FAIL)
 			m_bgFail[p]->Draw();
 	}
+	 */
 }
 
 /*
