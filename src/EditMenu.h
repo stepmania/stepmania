@@ -26,13 +26,14 @@ enum EditMenuRow
 const RString& EditMenuRowToString( EditMenuRow r );
 const RString& EditMenuRowToLocalizedString( EditMenuRow r );
 
+/** @brief The different actions one can take on a step. */
 enum EditMenuAction
 {
-	EditMenuAction_Edit,
-	EditMenuAction_Delete,
-	EditMenuAction_Create,
-	EditMenuAction_Practice,
-	NUM_EditMenuAction,
+	EditMenuAction_Edit, /**< Modify the current step for the Song. */
+	EditMenuAction_Delete, /**< Remove the current step from the Song. */
+	EditMenuAction_Create, /**< Create a new step for the Song. */
+	EditMenuAction_Practice, /**< Practice the current step for the Song. */
+	NUM_EditMenuAction, /**< The number of MenuActions available to choose from. */
 	EditMenuAction_Invalid
 };
 #define FOREACH_EditMenuAction( ema ) FOREACH_ENUM( EditMenuAction, ema )
