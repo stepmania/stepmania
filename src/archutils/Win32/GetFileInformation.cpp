@@ -14,14 +14,14 @@
 bool GetFileVersion( RString sFile, RString &sOut )
 {
 	do {
-		/* Cast away const to work around header bug in VC6. */
+		// Cast away const to work around header bug in VC6.
 		DWORD ignore;
 		DWORD iSize = GetFileVersionInfoSize( const_cast<char *>(sFile.c_str()), &ignore );
 		if( !iSize )
 			break;
 
 		RString VersionBuffer( iSize, ' ' );
-		/* Also VC6: */
+		// Also VC6:
 		if( !GetFileVersionInfo( const_cast<char *>(sFile.c_str()), NULL, iSize, VersionBuffer.GetBuffer() ) )
 			break;
 
@@ -47,7 +47,7 @@ bool GetFileVersion( RString sFile, RString &sOut )
 		sOut = RString( str, len-1 );
 	} while(0);
 
-	/* Get the size and date. */
+	// Get the size and date.
 	struct stat st;
 	if( stat( sFile, &st ) != -1 )
 	{
@@ -87,11 +87,12 @@ RString FindSystemFile( RString sFile )
 	return RString();
 }
 
-/* Get the full path of the process running in iProcessID.  On error, false is
+/* Get the full path of the process running in iProcessID. On error, false is
  * returned and an error message is placed in sName. */
 bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 {
-	/* This method works in everything except for NT4, and only uses kernel32.lib functions. */
+	/* This method works in everything except for NT4, and only uses
+	 * kernel32.lib functions. */
 	do {
 		HANDLE hSnap = CreateToolhelp32Snapshot( TH32CS_SNAPMODULE, iProcessID );
 		if( hSnap == NULL )
@@ -115,7 +116,7 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 		sName = werr_ssprintf( GetLastError(), "Module32First" );
 	} while(0);
 
-	/* This method only works in NT/2K/XP. */
+	// This method only works in NT/2K/XP.
 	do {
 		static HINSTANCE hPSApi = NULL;
 		typedef DWORD (WINAPI* pfnGetProcessImageFileNameA)(HANDLE hProcess, LPSTR lpImageFileName, DWORD nSize);

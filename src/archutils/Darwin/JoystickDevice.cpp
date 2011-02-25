@@ -16,7 +16,6 @@ Joystick::Joystick() :	id( InputDevice_Invalid ),
 {
 }
 
-
 bool JoystickDevice::AddLogicalDevice( int usagePage, int usage )
 {
 	if( usagePage != kHIDPage_GenericDesktop )
@@ -113,7 +112,7 @@ void JoystickDevice::AddElement( int usagePage, int usage, IOHIDElementCookie co
 	case kHIDPage_Button:
 	{
 		const DeviceButton buttonID = enum_add2( JOY_BUTTON_1, usage - kHIDUsage_Button_1 );
-	
+
 		if( buttonID <= JOY_BUTTON_32 )
 			js.mapping[cookie] = buttonID;
 		else
@@ -136,7 +135,7 @@ void JoystickDevice::Open()
 		ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
 		ADD( x_rot );	ADD( y_rot );	ADD( z_rot );
 		ADD( hat );
-#undef ADD		
+#undef ADD
 		for( hash_map<IOHIDElementCookie,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
 			AddElementToQueue( j->first );
 	}
@@ -146,10 +145,10 @@ bool JoystickDevice::InitDevice( int vid, int pid )
 {
 	if( vid != 0x0507 || pid != 0x0011 )
 		return true;
-	// It's a Para controller so try to power it on.
+	// It's a Para controller, so try to power it on.
 	uint8_t powerOn = 1;
 	IOReturn ret = SetReport( kIOHIDReportTypeFeature, 0, &powerOn, 1, 10 );
-	
+
 	if( ret )
 		LOG->Warn( "Failed to power on the Para controller: %#08x", ret );
 	return ret == kIOReturnSuccess;
@@ -160,11 +159,11 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 	FOREACH_CONST( Joystick, m_vSticks, i )
 	{
 		const Joystick& js = *i;
-		
+
 		if( js.x_axis == cookie )
 		{
 			float level = SCALE( value, js.x_min, js.x_max, -1.0f, 1.0f );
-			
+
 			vPresses.push_back( DeviceInput(js.id, JOY_LEFT, max(-level, 0.0f), now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_RIGHT, max(level, 0.0f), now) );
 			break;
@@ -172,7 +171,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		else if( js.y_axis == cookie )
 		{
 			float level = SCALE( value, js.y_min, js.y_max, -1.0f, 1.0f );
-			
+
 			vPresses.push_back( DeviceInput(js.id, JOY_UP, max(-level, 0.0f), now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_DOWN, max(level, 0.0f), now) );
 			break;
@@ -180,7 +179,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		else if( js.z_axis == cookie )
 		{
 			float level = SCALE( value, js.z_min, js.z_max, -1.0f, 1.0f );
-			
+
 			vPresses.push_back( DeviceInput(js.id, JOY_Z_UP, max(-level, 0.0f), now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_Z_DOWN, max(level, 0.0f), now) );
 			break;
@@ -188,7 +187,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		else if( js.x_rot == cookie )
 		{
 			float level = SCALE( value, js.rx_min, js.rx_max, -1.0f, 1.0f );
-			
+
 			vPresses.push_back( DeviceInput(js.id, JOY_ROT_LEFT, max(-level, 0.0f), now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_ROT_RIGHT, max(level, 0.0f), now) );
 			break;
@@ -196,7 +195,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		else if( js.y_rot == cookie )
 		{
 			float level = SCALE( value, js.ry_min, js.ry_max, -1.0f, 1.0f );
-			
+
 			vPresses.push_back( DeviceInput(js.id, JOY_ROT_UP, max(-level, 0.0f), now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_ROT_DOWN, max(level, 0.0f), now) );
 			break;
@@ -204,7 +203,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		else if( js.z_rot == cookie )
 		{
 			float level = SCALE( value, js.rz_min, js.rz_max, -1.0f, 1.0f );
-			
+
 			vPresses.push_back( DeviceInput(js.id, JOY_ROT_Z_UP, max(-level, 0.0f), now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_ROT_Z_DOWN, max(level, 0.0f), now) );
 			break;
@@ -212,20 +211,20 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		else if( js.hat == cookie )
 		{
 			float levelUp = 0.f, levelRight = 0.f, levelDown = 0.f, levelLeft = 0.f;
-			
+
 			value -= js.hat_min; // Probably just subtracting 0.
 			if( js.hat_max - js.hat_min == 3 )
 				value *= 2;
 			switch( value )
 			{
-			case 0:	levelUp = 1.f;					break;	// U
+			case 0:	levelUp = 1.f;		break;	// U
 			case 1:	levelUp = 1.f;		levelRight = 1.f;	break;	// UR
-			case 2:				levelRight = 1.f;	break;	// R
+			case 2:	levelRight = 1.f;	break;	// R
 			case 3:	levelDown = 1.f;	levelRight = 1.f;	break;	// DR
-			case 4:	levelDown = 1.f;				break;	// D
+			case 4:	levelDown = 1.f;	break;	// D
 			case 5:	levelDown = 1.f;	levelLeft = 1.f;	break;	// DL
-			case 6:				levelLeft = 1.f;	break;	// L
-			case 7: levelUp = 1.f;		levelLeft = 1.f;	break;	// UL
+			case 6:	levelLeft = 1.f;	break;	// L
+			case 7:	levelUp = 1.f;		levelLeft = 1.f;	break;	// UL
 			}
 			vPresses.push_back( DeviceInput(js.id, JOY_HAT_UP,	levelUp,	now) );
 			vPresses.push_back( DeviceInput(js.id, JOY_HAT_RIGHT,	levelRight,	now) );
@@ -237,7 +236,7 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDEleme
 		{
 			// hash_map<T,U>::operator[] is not const
 			hash_map<IOHIDElementCookie, DeviceButton>::const_iterator iter;
-			
+
 			iter = js.mapping.find( cookie );
 			if( iter != js.mapping.end() )
 			{

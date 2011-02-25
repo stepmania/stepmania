@@ -2,9 +2,9 @@
 #include "CommandLine.h"
 #include <windows.h>
 
-/* Ugh.  Windows doesn't give us the argv[] parser; all it gives is CommandLineToArgvW,
- * which is NT-only, so we have to do this ourself.  Don't be fancy; only handle double
- * quotes. */
+/* Ugh. Windows doesn't give us the argv[] parser; all it gives is
+ * CommandLineToArgvW, which is NT-only, so we have to do this ourself. Don't
+ * be fancy; only handle double quotes. */
 int GetWin32CmdLine( char** &argv )
 {
 	char *pCmdLine = GetCommandLine();
@@ -18,19 +18,19 @@ int GetWin32CmdLine( char** &argv )
 		argv[argc] = pCmdLine+i;
 		++argc;
 
-		/* Skip to the end of this argument. */
+		// Skip to the end of this argument.
 		while( pCmdLine[i] && pCmdLine[i] != ' ' )
 		{
 			if( pCmdLine[i] == '"' )
 			{
-				/* Erase the quote. */
+				// Erase the quote.
 				memmove( pCmdLine+i, pCmdLine+i+1, strlen(pCmdLine+i+1)+1 );
 
-				/* Skip to the close quote. */
+				// Skip to the close quote.
 				while( pCmdLine[i] && pCmdLine[i] != '"' )
 					++i;
 
-				/* Erase the close quote. */
+				// Erase the close quote.
 				if( pCmdLine[i] == '"' )
 					memmove( pCmdLine+i, pCmdLine+i+1, strlen(pCmdLine+i+1)+1 );
 			}

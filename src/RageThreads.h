@@ -1,10 +1,9 @@
-/* RageThread - Thread, mutex, semaphore and event classes. */
-
 #ifndef RAGE_THREADS_H
 #define RAGE_THREADS_H
 
 struct ThreadSlot;
 class RageTimer;
+/** @brief Thread, mutex, semaphore, and event classes. */
 class RageThread
 {
 public:
@@ -49,7 +48,10 @@ private:
 	static bool s_bIsShowingDialog;
 };
 
-/* Register a thread created outside of RageThread.  This gives it a name for RageThread::GetCurrentThreadName,
+/**
+ * @brief Register a thread created outside of RageThread.
+ * 
+ * This gives it a name for RageThread::GetCurrentThreadName,
  * and allocates a slot for checkpoints. */
 class RageThreadRegister
 {
@@ -102,8 +104,10 @@ protected:
 	void MarkLockedMutex();
 };
 
-/* Lock a mutex on construction, unlock it on destruction.  Helps for functions
- * with more than one return path. */
+/**
+ * @brief Lock a mutex on construction, unlock it on destruction.
+ *
+ * Helps for functions with more than one return path. */
 class LockMutex
 {
 	RageMutex &mutex;
@@ -119,8 +123,10 @@ public:
 	~LockMutex();
 	LockMutex(LockMutex &cpy): mutex(cpy.mutex), file(NULL), line(-1), locked_at(cpy.locked_at), locked(true) { mutex.Lock(); }
 
-	/* Unlock the mutex (before this would normally go out of scope).  This can
-	 * only be called once. */
+	/**
+	 * @brief Unlock the mutex (before this would normally go out of scope).
+	 *
+	 * This can only be called once. */
 	void Unlock();
 };
 
@@ -168,8 +174,10 @@ private:
 
 #endif
 
-/*
- * Copyright (c) 2001-2004 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

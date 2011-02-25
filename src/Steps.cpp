@@ -411,6 +411,7 @@ public:
 	DEFINE_METHOD( GetStepsType,	m_StepsType )
 	DEFINE_METHOD( GetDifficulty,	GetDifficulty() )
 	DEFINE_METHOD( GetDescription,	GetDescription() )
+	DEFINE_METHOD( GetChartStyle,	GetChartStyle() )
 	DEFINE_METHOD( GetAuthorCredit, GetCredit() )
 	DEFINE_METHOD( GetMeter,	GetMeter() )
 	DEFINE_METHOD( GetFilename,	GetFilename() )
@@ -439,18 +440,19 @@ public:
 
 	LunaSteps()
 	{
-		ADD_METHOD( GetStepsType );
-		ADD_METHOD( GetDifficulty );
-		ADD_METHOD( GetDescription );
 		ADD_METHOD( GetAuthorCredit );
-		ADD_METHOD( GetMeter );
+		ADD_METHOD( GetChartStyle );
+		ADD_METHOD( GetDescription );
+		ADD_METHOD( GetDifficulty );
 		ADD_METHOD( GetFilename );
-		ADD_METHOD( GetRadarValues );
-		ADD_METHOD( IsAutogen );
-		ADD_METHOD( IsAnEdit );
-		ADD_METHOD( IsAPlayerEdit );
 		ADD_METHOD( GetHash );
+		ADD_METHOD( GetMeter );
+		ADD_METHOD( GetRadarValues );
 		//ADD_METHOD( GetSMNoteData );
+		ADD_METHOD( GetStepsType );
+		ADD_METHOD( IsAnEdit );
+		ADD_METHOD( IsAutogen );
+		ADD_METHOD( IsAPlayerEdit );
 	}
 };
 

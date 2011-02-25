@@ -1,7 +1,7 @@
 #ifndef DEBUG_INFO_HUNT_H
 #define DEBUG_INFO_HUNT_H
 
-/* We want debug information; Windows makes us hunt for it. */
+/** @brief We want debug information; Windows makes us hunt for it. */
 void SearchForDebugInfo();
 
 #endif

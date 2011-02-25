@@ -8,16 +8,15 @@
 #include "arch/Threads/Threads_Win32.h"
 #include "crash.h"
 #include "CrashHandlerInternal.h"
-#include "RageLog.h" /* for RageLog::GetAdditionalLog and Flush */
-#include "RageThreads.h" /* for GetCheckpointLogs */
-#include "PrefsManager.h" /* for g_bAutoRestart */
+#include "RageLog.h" // for RageLog::GetAdditionalLog and Flush
+#include "RageThreads.h" // for GetCheckpointLogs
+#include "PrefsManager.h" // for g_bAutoRestart
 #include "RestartProgram.h"
 
 // WARNING: This is called from crash-time conditions!  No malloc() or new!!!
 
 #define malloc not_allowed_here
 #define new not_allowed_here
-
 
 static void SpliceProgramPath(char *buf, int bufsiz, const char *fn) {
 	char tbuf[MAX_PATH];
@@ -91,7 +90,7 @@ void WriteToChild( HANDLE hPipe, const void *pData, size_t iSize )
 	}
 }
 
-/* Execute the child process.  Return a handle to the process, a writable handle
+/* Execute the child process. Return a handle to the process, a writable handle
  * to its stdin, and a readable handle to its stdout. */
 bool StartChild( HANDLE &hProcess, HANDLE &hToStdin, HANDLE &hFromStdout )
 {
@@ -186,7 +185,8 @@ void RunChild()
 	HANDLE hProcess, hToStdin, hFromStdout;
 	StartChild( hProcess, hToStdin, hFromStdout );
 
-	/* 0. Send a handle of this process to the crash handling process, which it can use to handle symbol lookups. */
+	// 0. Send a handle of this process to the crash handling process, which it
+	// can use to handle symbol lookups.
 	{
 		HANDLE hTargetHandle;
 		DuplicateHandle(
@@ -202,54 +202,54 @@ void RunChild()
 		WriteToChild( hToStdin, &hTargetHandle, sizeof(hTargetHandle) );
 	}
 
-        /* 1. Write the CrashData. */
+	// 1. Write the CrashData.
 	WriteToChild( hToStdin, &g_CrashInfo, sizeof(g_CrashInfo) );
 
-        /* 2. Write info. */
-        const char *p = RageLog::GetInfo();
-        int iSize = strlen( p );
-        WriteToChild( hToStdin, &iSize, sizeof(iSize) );
-        WriteToChild( hToStdin, p, iSize );
+		// 2. Write info.
+		const char *p = RageLog::GetInfo();
+		int iSize = strlen( p );
+		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
+		WriteToChild( hToStdin, p, iSize );
 
-        /* 3. Write AdditionalLog. */
-        p = RageLog::GetAdditionalLog();
-        iSize = strlen( p );
-        WriteToChild( hToStdin, &iSize, sizeof(iSize) );
-        WriteToChild( hToStdin, p, iSize );
+		// 3. Write AdditionalLog.
+		p = RageLog::GetAdditionalLog();
+		iSize = strlen( p );
+		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
+		WriteToChild( hToStdin, p, iSize );
 
-        /* 4. Write RecentLogs. */
-        int cnt = 0;
-        const char *ps[1024];
-        while( cnt < 1024 && (ps[cnt] = RageLog::GetRecentLog( cnt )) != NULL )
-                ++cnt;
+		// 4. Write RecentLogs.
+		int cnt = 0;
+		const char *ps[1024];
+		while( cnt < 1024 && (ps[cnt] = RageLog::GetRecentLog( cnt )) != NULL )
+				++cnt;
 
-        WriteToChild(hToStdin, &cnt, sizeof(cnt));
-        for( int i = 0; i < cnt; ++i )
-        {
-                iSize = strlen(ps[i])+1;
-                WriteToChild( hToStdin, &iSize, sizeof(iSize) );
-                WriteToChild( hToStdin, ps[i], iSize );
-        }
+		WriteToChild(hToStdin, &cnt, sizeof(cnt));
+		for( int i = 0; i < cnt; ++i )
+		{
+				iSize = strlen(ps[i])+1;
+				WriteToChild( hToStdin, &iSize, sizeof(iSize) );
+				WriteToChild( hToStdin, ps[i], iSize );
+		}
 
-        /* 5. Write CHECKPOINTs. */
-        static char buf[1024*32];
-        Checkpoints::GetLogs( buf, sizeof(buf), "$$" );
-        iSize = strlen( buf )+1;
-        WriteToChild( hToStdin, &iSize, sizeof(iSize) );
-        WriteToChild( hToStdin, buf, iSize );
+		// 5. Write CHECKPOINTs.
+		static char buf[1024*32];
+		Checkpoints::GetLogs( buf, sizeof(buf), "$$" );
+		iSize = strlen( buf )+1;
+		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
+		WriteToChild( hToStdin, buf, iSize );
 
-        /* 6. Write the crashed thread's name. */
-        p = RageThread::GetCurrentThreadName();
-        iSize = strlen( p )+1;
-        WriteToChild( hToStdin, &iSize, sizeof(iSize) );
-        WriteToChild( hToStdin, p, iSize );
+		// 6. Write the crashed thread's name.
+		p = RageThread::GetCurrentThreadName();
+		iSize = strlen( p )+1;
+		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
+		WriteToChild( hToStdin, p, iSize );
 
-	/* The parent process needs to access this process briefly.  When it's done, it'll
-	 * close the handle.  Wait until we see that before exiting. */
+	/* The parent process needs to access this process briefly. When it's done,
+	 * it'll close the handle. Wait until we see that before exiting. */
 	while(1)
 	{
 		/* Ugly: the new process can't execute GetModuleFileName on this process,
-		 * since GetModuleFileNameEx might not be available.  Run the requests here. */
+		 * since GetModuleFileNameEx might not be available. Run the requests here. */
 		HMODULE hMod;
 		DWORD iActual;
 		if( !ReadFile( hFromStdout, &hMod, sizeof(hMod), &iActual, NULL) )
@@ -266,23 +266,21 @@ void RunChild()
 
 static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 {
-	/* Flush the log it isn't cut off at the end. */
+	// Flush the log so it isn't cut off at the end.
 	/* 1. We can't do regular file access in the crash handler.
-	 * 2. We can't access LOG itself at all, since it may not be set up or the pointer might
-	 * be munged.  We must only ever use the RageLog:: methods that access static data, that
-	 * we're being very careful to null-terminate as needed.
-	 *
-	 * Logs are rarely important, anyway.  Only info.txt and crashinfo.txt are needed 99%
-	 * of the time. */
+	 * 2. We can't access LOG itself at all, since it may not be set up or the
+	 * pointer might be munged. We must only ever use the RageLog:: methods that
+	 * access static data, that we're being very careful to null-terminate as needed.
+	 * Logs are rarely important, anyway. Only info.txt and crashinfo.txt are
+	 * needed 99% of the time. */
 //	LOG->Flush();
 
-	/* We aren't supposed to receive these exceptions.  For example, if you do
-	 * a floating point divide by zero, you should receive a result of #INF.  Only
-	 * if the floating point exception for _EM_ZERODIVIDE is unmasked does this
-	 * exception occur, and we never unmask it.
-	 *
+	/* We aren't supposed to receive these exceptions. For example, if you do
+	 * a floating point divide by zero, you should receive a result of #INF.
+	 * Only if the floating point exception for _EM_ZERODIVIDE is unmasked
+	 * does this exception occur, and we never unmask it.
 	 * However, once in a while some driver or library turns evil and unmasks an
-	 * exception flag on us.  If this happens, re-mask it and continue execution. */
+	 * exception flag on us. If this happens, re-mask it and continue execution. */
 	switch( pExc->ExceptionRecord->ExceptionCode )
 	{
 	case EXCEPTION_FLT_INVALID_OPERATION:
@@ -298,14 +296,14 @@ static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 	static int InHere = 0;
 	if( InHere > 0 )
 	{
-		/* If we get here, then we've been called recursively, which means we crashed.
-		 * If InHere is greater than 1, then we crashed after writing the crash dump;
-		 * say so. */
+		/* If we get here, then we've been called recursively, which means we
+		 * crashed. If InHere is greater than 1, then we crashed after writing
+		 * the crash dump; say so. */
 		SetUnhandledExceptionFilter(NULL);
 		MessageBox( NULL,
 			InHere == 1?
 			"The error reporting interface has crashed.\n":
-			"The error reporting interface has crashed.  However, crashinfo.txt was"
+			"The error reporting interface has crashed. However, crashinfo.txt was"
 			"written successfully to the program directory.\n",
 			"Fatal Error", MB_OK );
 #ifdef DEBUG
@@ -330,17 +328,17 @@ static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 	if( g_bAutoRestart )
 		Win32RestartProgram();
 
-	/* Now things get more risky.  If we're fullscreen, the window will obscure the
-	 * crash dialog.  Try to hide the window.  Things might blow up here; do this
-	 * after DoSave, so we always write a crash dump. */
+	/* Now things get more risky. If we're fullscreen, the window will obscure
+	 * the crash dialog. Try to hide the window. Things might blow up here; do
+	 * this after DoSave, so we always write a crash dump. */
 	if( GetWindowThreadProcessId( g_hForegroundWnd, NULL ) == GetCurrentThreadId() )
 	{
-		/* The thread that crashed was the thread that created the main window.  Hide
-		 * the window.  This will also restore the video mode, if necessary. */
+		/* The thread that crashed was the thread that created the main window.
+		 * Hide the window. This will also restore the video mode, if necessary. */
 		ShowWindow( g_hForegroundWnd, SW_HIDE );
 	} else {
-		/* A different thread crashed.  Simply kill all other windows.  We can't safely
-		 * call ShowWindow; the main thread might be deadlocked. */
+		/* A different thread crashed. Simply kill all other windows. We can't
+		 * safely call ShowWindow; the main thread might be deadlocked. */
 		RageThread::HaltAllThreads( true );
 		ChangeDisplaySettings( NULL, 0 );
 	}
@@ -349,8 +347,8 @@ static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 
 	SetUnhandledExceptionFilter( NULL );
 
-	/* Forcibly terminate; if we keep going, we'll try to shut down threads and do other
-	 * things that may deadlock, which is confusing for users. */
+	/* Forcibly terminate; if we keep going, we'll try to shut down threads and
+	 * do other things that may deadlock, which is confusing for users. */
 	TerminateProcess( GetCurrentProcess(), 0 );
 
 	return EXCEPTION_EXECUTE_HANDLER;
@@ -358,8 +356,9 @@ static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 
 long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 {
-	/* If the stack overflowed, we have a very limited amount of stack space.  Allocate
-	 * a new stack, and run the exception handler in it, to increase the chances of success. */
+	/* If the stack overflowed, we have a very limited amount of stack space.
+	 * Allocate a new stack, and run the exception handler in it, to increase
+	 * the chances of success. */
 	int iSize = 1024*32;
 	char *pStack = (char *) VirtualAlloc( NULL, iSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE );
 	pStack += iSize;
@@ -419,15 +418,14 @@ static bool IsValidCall(char *buf, int len)
 static bool IsExecutableProtection(DWORD dwProtect) {
 	MEMORY_BASIC_INFORMATION meminfo;
 
-	// Windows NT/2000 allows Execute permissions, but Win9x seems to
-	// rip it off.  So we query the permissions on our own code block,
-	// and use it to determine if READONLY/READWRITE should be
-	// considered 'executable.'
+	// Windows NT/2000 allows Execute permissions, but Win9x seems to rip it
+	// off. So we query the permissions on our own code block, and use it to
+	// determine if READONLY/READWRITE should be considered 'executable.'
 
 	VirtualQuery(IsExecutableProtection, &meminfo, sizeof meminfo);
 
 	switch((unsigned char)dwProtect) {
-	case PAGE_READONLY:				// *sigh* Win9x...
+	case PAGE_READONLY:			// *sigh* Win9x...
 	case PAGE_READWRITE:			// *sigh*
 		return meminfo.Protect==PAGE_READONLY || meminfo.Protect==PAGE_READWRITE;
 
@@ -459,16 +457,17 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 	const void **pLast = buf + size - 1;
 	bool bFirst = true;
 
-	/* The EIP of the position that crashed is normally on the stack, since the exception
-	 * handler was called on the same stack.  However, once in a while, due to stack corruption,
-	 * we might not be able to get any frames from the stack.  Pull it out of pContext->Eip,
-	 * which is always valid, and then discard the first stack frame if it's the same. */
+	/* The EIP of the position that crashed is normally on the stack, since the
+	 * exception handler was called on the same stack. However, once in a while,
+	 * due to stack corruption, we might not be able to get any frames from the
+	 * stack. Pull it out of pContext->Eip, which is always valid, and then
+	 * discard the first stack frame if it's the same. */
 	if( buf+1 != pLast && pContext->Eip != NULL )
 	{
 		*buf = (void *) pContext->Eip;
 		++buf;
 	}
-		
+
 	// Retrieve stack pointers.
 	const char *pStackBase;
 	{
@@ -527,7 +526,7 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 	*buf = NULL;
 }
 
-/* Trigger the crash handler.  This works even in the debugger. */
+// Trigger the crash handler. This works even in the debugger.
 static void NORETURN debug_crash()
 {
 	__try {
@@ -539,26 +538,26 @@ static void NORETURN debug_crash()
 	}
 }
 
-/* Get a stack trace of the current thread and the specified thread.  If
- * iID == GetInvalidThreadId(), then output a stack trace for every thread. */
+/* Get a stack trace of the current thread and the specified thread.
+ * If iID == GetInvalidThreadId(), then output a stack trace for every thread. */
 void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
 {
 	strncpy( g_CrashInfo.m_CrashReason, reason, sizeof(g_CrashInfo.m_CrashReason) );
 	g_CrashInfo.m_CrashReason[ sizeof(g_CrashInfo.m_CrashReason)-1 ] = 0;
 
-	/* Suspend the other thread we're going to backtrace.  (We need to at least suspend
-	 * hThread, for GetThreadContext to work.) */
+	/* Suspend the other thread we're going to backtrace. (We need to at least
+	 * suspend hThread, for GetThreadContext to work.) */
 	RageThread::HaltAllThreads( false );
 
 	if( iID == GetInvalidThreadId() )
 	{
-		/* Backtrace all threads. */
+		// Backtrace all threads.
 		int iCnt = 0;
 		for( int i = 0; RageThread::EnumThreadIDs(i, iID); ++i )
 		{
 			if( iID == GetInvalidThreadId() )
 				continue;
-			
+
 			if( iID == GetCurrentThreadId() )
 				continue;
 

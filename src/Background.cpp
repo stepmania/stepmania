@@ -165,13 +165,13 @@ void BackgroundImpl::Init()
 	m_bInitted = true;
 	m_bDangerAllWasVisible = false;
 	m_StaticBackgroundDef = BackgroundDef();
-	
+
 	if( !USE_STATIC_BG )
 	{
 		m_StaticBackgroundDef.m_sColor1 = "#00000000";
 		m_StaticBackgroundDef.m_sColor2 = "#00000000";
 	}
-	
+
 	// load transitions
 	{
 		ASSERT( m_mapNameToTransition.empty() );
@@ -204,7 +204,7 @@ void BackgroundImpl::Init()
 	FOREACH_HumanPlayer( p )
 	{
 		bOneOrMoreChars = true;
-		// Disable dancing characters if BH will be showing.
+		// Disable dancing characters if Beginner Helper will be showing.
 		if( PREFSMAN->m_bShowBeginnerHelper && BeginnerHelper::CanUse() && 
 			GAMESTATE->m_pCurSteps[p] && GAMESTATE->m_pCurSteps[p]->GetDifficulty() == Difficulty_Beginner )
 			bShowingBeginnerHelper = true;
@@ -285,10 +285,11 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 				continue;
 		}
 
-		// Look for vsFileToResolve[i] in:
-		//  - song's dir
-		//  - RandomMovies dir
-		//  - BGAnimations dir.
+		/* Look for vsFileToResolve[i] in:
+			* song's dir
+			* RandomMovies dir
+			* BGAnimations dir.
+		*/
 		vector<RString> vsPaths, vsThrowAway;
 
 		// Look for BGAnims in the song dir
@@ -403,7 +404,7 @@ BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const R
 		bd.m_sEffect = sEffect;
 
 	map<BackgroundDef,Actor*>::const_iterator iter = m_BGAnimations.find( bd );
-	
+
 	// create the background if it's not already created
 	if( iter == m_BGAnimations.end() )
 	{
@@ -517,7 +518,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			m_RandomBGAnimations.push_back( bd );
 		}
 	}
-		
+
 	/* Song backgrounds (even just background stills) can get very big; never keep them
 	 * in memory. */
 	RageTextureID::TexPolicy OldPolicy = TEXTUREMAN->GetDefaultTexturePolicy();
@@ -594,12 +595,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		BackgroundUtil::SortBackgroundChangesArray( layer.m_aBGChanges );
 	}
 
-
 	Layer &mainlayer = m_Layer[0];
 
-
-	/* If the first BGAnimation isn't negative, add a lead-in image showing the song
-	 * background. */
+	/* If the first BGAnimation isn't negative, add a lead-in image showing
+	 * the song background. */
 	if( mainlayer.m_aBGChanges.empty() || mainlayer.m_aBGChanges.front().m_fStartBeat >= 0 )
 	{
 		BackgroundChange change;
@@ -636,7 +635,6 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		}
 	}
 
-
 	// Look for the random file marker, and replace the segment with LoadFromRandom.
 	for( unsigned i=0; i<mainlayer.m_aBGChanges.size(); i++ )
 	{
@@ -659,7 +657,6 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	for( unsigned i=0; i<mainlayer.m_aBGChanges.size(); i++ )
 		ASSERT( !mainlayer.m_aBGChanges[i].m_def.m_sFile1.empty() );
 
-
 	// Re-sort.
 	BackgroundUtil::SortBackgroundChangesArray( mainlayer.m_aBGChanges );
 
@@ -677,7 +674,7 @@ int BackgroundImpl::Layer::FindBGSegmentForBeat( float fBeat ) const
 		return -1;
 	if( fBeat < m_aBGChanges[0].m_fStartBeat )
 		return -1;
-	
+
 	// assumption: m_aBGChanges are sorted by m_fStartBeat
 	int i;
 	for( i=m_aBGChanges.size()-1; i>=0; i-- )
@@ -689,7 +686,7 @@ int BackgroundImpl::Layer::FindBGSegmentForBeat( float fBeat ) const
 	return i;
 }
 
-/* If the BG segment has changed, move focus to it.  Send Update() calls. */
+/* If the BG segment has changed, move focus to it. Send Update() calls. */
 void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const map<RString,BackgroundTransition> &mapNameToTransition )
 {
 	ASSERT( fCurrentTime != GameState::MUSIC_SECONDS_INVALID );
@@ -702,7 +699,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	int iThrowAway;
 	pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze, bFreeze, iThrowAway, fThrowAway );
 
-	/* Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it. */
+	// Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it.
 	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
 	// Find the BGSegment we're in
@@ -711,7 +708,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	float fDeltaTime = fCurrentTime - fLastMusicSeconds;
 	if( i != -1  &&  i != m_iCurBGChangeIndex )	// we're changing backgrounds
 	{
-//		LOG->Trace( "old bga %d -> new bga %d (%s), %f, %f", m_iCurBGChangeIndex, i, m_aBGChanges[i].GetTextDescription().c_str(), m_aBGChanges[i].m_fStartBeat, fBeat );
+		//LOG->Trace( "old bga %d -> new bga %d (%s), %f, %f", m_iCurBGChangeIndex, i, m_aBGChanges[i].GetTextDescription().c_str(), m_aBGChanges[i].m_fStartBeat, fBeat );
 
 		BackgroundChange oldChange;
 		if( m_iCurBGChangeIndex != -1 )
@@ -739,7 +736,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		if( m_pFadingBGA == m_pCurrentBGA )
 		{
 			m_pFadingBGA = NULL;
-//			LOG->Trace( "bg didn't actually change.  Ignoring." );
+			//LOG->Trace( "bg didn't actually change.  Ignoring." );
 		}
 		else
 		{
@@ -819,11 +816,11 @@ void BackgroundImpl::DrawPrimitives()
 		if( m_pDancingCharacters )
 			m_pDancingCharacters->m_bDrawDangerLight = true;
 	}
-	
-	{	
+
+	{
 		if( m_pDancingCharacters )
 			m_pDancingCharacters->m_bDrawDangerLight = false;
-		
+
 		FOREACH_BackgroundLayer( i )
 		{
 			Layer &layer = m_Layer[i];
@@ -890,8 +887,8 @@ BrightnessOverlay::BrightnessOverlay()
 void BrightnessOverlay::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
-	/* If we're actually playing, then we're past fades, etc; update the background
-	 * brightness to follow Cover. */
+	/* If we're actually playing, then we're past fades, etc; update the
+	 * background brightness to follow Cover. */
 	if( !GAMESTATE->m_bGameplayLeadIn )
 		SetActualBrightness();
 }
@@ -906,7 +903,7 @@ void BrightnessOverlay::SetActualBrightness()
 	// HACK: Always show training in full brightness
 	if( GAMESTATE->m_pCurSong && GAMESTATE->m_pCurSong->IsTutorial() )
 		fBaseBGBrightness = 1.0f;
-	
+
 	fLeftBrightness *= fBaseBGBrightness;
 	fRightBrightness *= fBaseBGBrightness;
 
@@ -939,8 +936,6 @@ void BrightnessOverlay::FadeToActualBrightness()
 	SetActualBrightness();
 }
 
-
-
 Background::Background()				{ m_pImpl = new BackgroundImpl; this->AddChild(m_pImpl); }
 Background::~Background()				{ SAFE_DELETE( m_pImpl ); }
 void Background::Init()					{ m_pImpl->Init(); }
@@ -950,7 +945,6 @@ void Background::FadeToActualBrightness()		{ m_pImpl->FadeToActualBrightness(); 
 void Background::SetBrightness( float fBrightness )	{ m_pImpl->SetBrightness(fBrightness); }
 DancingCharacters* Background::GetDancingCharacters()	{ return m_pImpl->GetDancingCharacters(); }
 void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgroundChangesOut[NUM_BackgroundLayer] ) { m_pImpl->GetLoadedBackgroundChanges(pBackgroundChangesOut); }
-
 
 /*
  * (c) 2001-2004 Chris Danford, Ben Nordstrom

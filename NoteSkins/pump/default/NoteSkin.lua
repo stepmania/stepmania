@@ -118,6 +118,10 @@ local function func()
 		t.BaseRotationZ=Noteskin.BaseRotZ[sButton]
 	end
 	
+	if sElement == "Tap Lift" then
+		t.InitCommand=cmd(pulse;effectclock,"beat";effectmagnitude,1,0.75,0);
+	end
+	
 	return t
 end
 

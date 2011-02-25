@@ -11,7 +11,7 @@ HIDDevice::~HIDDevice()
 	if( m_Queue )
 	{
 		CFRunLoopSourceRef runLoopSource;
-		
+
 		if( m_bRunning )
 		{
 			CALL( m_Queue, stop );
@@ -19,7 +19,7 @@ HIDDevice::~HIDDevice()
 			CFRunLoopSourceInvalidate( runLoopSource );
 			CFRelease( runLoopSource );
 		}
-		
+
 		CALL( m_Queue, dispose );
 		CALL( m_Queue, Release );
 	}
@@ -36,20 +36,20 @@ bool HIDDevice::Open( io_object_t device )
 	CFMutableDictionaryRef properties;
 	kern_return_t result;
 	CFTypeRef object;
-	
+
 	result = IORegistryEntryCreateCFProperties( device, &properties, kCFAllocatorDefault, kNilOptions );
 	if( result != KERN_SUCCESS || !properties )
 	{
 		LOG->Warn( "Couldn't get properties." );
 		return false;
 	}
-	
+
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDProductKey) );
-	
+
 	CFTypeRef vidRef = CFDictionaryGetValue( properties, CFSTR(kIOHIDVendorIDKey) );
 	CFTypeRef pidRef = CFDictionaryGetValue( properties, CFSTR(kIOHIDProductIDKey) );
 	int vid, pid;
-	
+
 	if( !IntValue(vidRef, vid) )
 		vid = 0;
 	if( !IntValue(pidRef, pid) )
@@ -60,7 +60,7 @@ bool HIDDevice::Open( io_object_t device )
 		CFRelease( properties );
 		return false;
 	}
-	
+
 	if( object && CFGetTypeID(object) == CFStringGetTypeID() )
 	{
 		const char *str = CFStringGetCStringPtr( CFStringRef(object), CFStringGetSystemEncoding() );
@@ -69,7 +69,7 @@ bool HIDDevice::Open( io_object_t device )
 	if( m_sDescription == "" )
 		m_sDescription = ssprintf( "%04x:%04x", vid, pid );
 	LOG->Trace( "\t\tDevice description: %s", m_sDescription.c_str() );
-	
+
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey) );
 	if ( !object || CFGetTypeID(object) != CFArrayGetTypeID() )
 	{
@@ -77,19 +77,19 @@ bool HIDDevice::Open( io_object_t device )
 		CFRelease( properties );
 		return false;
 	}
-	
+
 	CFArrayRef logicalDevices = CFArrayRef( object );
 	CFRange r = { 0, CFArrayGetCount(logicalDevices) };
-	
+
 	CFArrayApplyFunction( logicalDevices, r, HIDDevice::AddLogicalDevice, this );
-	
+
 	CFRelease( properties );
-	
+
 	// Create the interface
 	IOCFPlugInInterface **plugInInterface;
 	HRESULT hresult;
 	SInt32 score;
-	
+
 	ret = IOCreatePlugInInterfaceForService( device, kIOHIDDeviceUserClientTypeID,
 						 kIOCFPlugInInterfaceID, &plugInInterface, &score );
 	if( ret != kIOReturnSuccess )
@@ -97,21 +97,21 @@ bool HIDDevice::Open( io_object_t device )
 		PrintIOErr( ret, "Failed to create plugin interface." );
 		return false;
 	}
-	
+
 	// Call a method of the plugin to create the device interface
 	CFUUIDBytes bytes = CFUUIDGetUUIDBytes( kIOHIDDeviceInterfaceID );
-	
+
 	hresult = CALL( plugInInterface, QueryInterface, bytes, (void **)&m_Interface );
-	
+
 	CALL( plugInInterface, Release );
-	
+
 	if( hresult != S_OK )
 	{
 		LOG->Warn( "Couldn't get device interface from plugin interface." );
 		m_Interface = NULL;
 		return false;
 	}
-	
+
 	// open the interface
 	if( (ret = CALL(m_Interface, open, 0)) != kIOReturnSuccess )
 	{
@@ -120,7 +120,7 @@ bool HIDDevice::Open( io_object_t device )
 		m_Interface = NULL;
 		return false;
 	}
-	
+
 	// alloc/create queue
 	m_Queue = CALL( m_Interface, allocQueue );
 	if( !m_Queue )
@@ -128,7 +128,7 @@ bool HIDDevice::Open( io_object_t device )
 		LOG->Warn( "Couldn't allocate a queue." );
 		return false;
 	}
-	
+
 	if( (ret = CALL(m_Queue, create, 0, 32)) != kIOReturnSuccess )
 	{
 		PrintIOErr( ret, "Failed to create the queue." );
@@ -138,7 +138,7 @@ bool HIDDevice::Open( io_object_t device )
 		m_Interface = NULL;
 		return false;
 	}
-	
+
 	Open();
 	LOG->Trace( "\t\tDevice open" );
 	return true;
@@ -149,32 +149,32 @@ void HIDDevice::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback
 	CFRunLoopSourceRef runLoopSource;
 	// This creates a run loop source. It is released in the dtor.
 	IOReturn ret = CALL( m_Queue, createAsyncEventSource, &runLoopSource );
-	
+
 	if( ret != kIOReturnSuccess )
 	{
 		PrintIOErr( ret, "Failed to create async event source." );
 		return;
 	}
-	
+
 	if( !CFRunLoopContainsSource(loopRef, runLoopSource, kCFRunLoopDefaultMode) )
 		CFRunLoopAddSource( loopRef, runLoopSource, kCFRunLoopDefaultMode );
-	
+
 	ret = CALL( m_Queue, setEventCallout, callback, target, (void *)refCon );
-	
+
 	if( ret != kIOReturnSuccess )
 	{
 		PrintIOErr( ret, "Failed to set the call back." );
 		return;
 	}
-	
+
 	// start the queue
 	ret = CALL( m_Queue, start );
-	
+
 	if( ret != kIOReturnSuccess )
 	{
 		CFRunLoopSourceInvalidate( runLoopSource );
 		CFRelease( runLoopSource );
-		
+
 		PrintIOErr( ret, "Failed to start the queue." );
 		return;
 	}
@@ -185,32 +185,32 @@ void HIDDevice::AddLogicalDevice( const void *value, void *context )
 {
 	if( CFGetTypeID(CFTypeRef(value)) != CFDictionaryGetTypeID() )
 		return;
-	
+
 	CFDictionaryRef properties = CFDictionaryRef( value );
 	HIDDevice *This = (HIDDevice *)context;
 	CFTypeRef object;
 	int usage, usagePage;
-	
+
 	// Get usage page
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementUsagePageKey) );
 	if( !IntValue(object, usagePage) )
 		return;
-	
+
 	// Get usage
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementUsageKey) );
 	if( !IntValue(object, usage) )
 		return;
-	
+
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey) );
 	if( !object || CFGetTypeID(object) != CFArrayGetTypeID() )
 		return;
-	
+
 	if( !This->AddLogicalDevice(usagePage, usage) )
 		return;
-	
+
 	CFArrayRef elements = CFArrayRef( object );
 	CFRange r = { 0, CFArrayGetCount(elements) };
-		
+
 	CFArrayApplyFunction( elements, r, HIDDevice::AddElement, This );
 }
 
@@ -218,34 +218,33 @@ void HIDDevice::AddElement( const void *value, void *context )
 {
 	if( CFGetTypeID(CFTypeRef(value)) != CFDictionaryGetTypeID() )
 		return;
-	
+
 	CFDictionaryRef properties = CFDictionaryRef( value );
 	HIDDevice *This = (HIDDevice *)context;
 	CFTypeRef object;
 	int usage, usagePage;
 	long cookie;
-	
+
 	// Recursively add elements
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey) );
 	if( object && CFGetTypeID(object) == CFArrayGetTypeID() )
 	{
 		CFArrayRef elements = CFArrayRef( object );
 		CFRange r = { 0, CFArrayGetCount(elements) };
-		
+
 		CFArrayApplyFunction( elements, r, AddElement, context );
 	}
-	
+
 	// Get usage page
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementUsagePageKey) );
 	if( !IntValue(object, usagePage) )
 		return;
-	
+
 	// Get usage
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementUsageKey) );
 	if( !IntValue(object, usage) )
 		return;
-	
-	
+
 	// Get cookie
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementCookieKey) );
 	if( !LongValue(object, cookie) )

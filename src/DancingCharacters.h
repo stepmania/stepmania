@@ -1,4 +1,3 @@
-/* DancingCharacters - Characters that react to how the players are doing. */
 #ifndef DancingCharacters_H
 #define DancingCharacters_H
 
@@ -9,20 +8,22 @@
 #include "AutoActor.h"
 class Model;
 
+/** @brief The different animation states for the dancer. */
 enum ANIM_STATES_2D
 {
-	AS2D_IDLE = 0,
-	AS2D_MISS,
-	AS2D_GOOD,
-	AS2D_GREAT,
-	AS2D_FEVER,
-	AS2D_FAIL,
-	AS2D_WIN,
-	AS2D_WINFEVER,
-	AS2D_IGNORE, // special case -- so that we can timer to idle again.
-	AS2D_MAXSTATES // leave at end
+	AS2D_IDLE = 0, /**< The dancer is idle. */
+	AS2D_MISS, /**< The dancer just missed a note. */
+	AS2D_GOOD, /**< The dancer is doing a good job. */
+	AS2D_GREAT, /**< The dancer is doing a great job. */
+	AS2D_FEVER, /**< The dancer is on fire! */
+	AS2D_FAIL, /**< The dancer has failed. */
+	AS2D_WIN, /**< The dancer has won. */
+	AS2D_WINFEVER, /**< The dancer has won while on fire. */
+	AS2D_IGNORE, /**< This is a special case -- so that we can timer to idle again. */
+	AS2D_MAXSTATES /**< A count of the maximum number of states. */
 };
 
+/** @brief Characters that react to how the players are doing. */
 class DancingCharacters : public ActorFrame
 {
 public:
@@ -39,6 +40,7 @@ protected:
 
 	Model	*m_pCharacter[NUM_PLAYERS];
 
+	/** @brief How far away is the camera from the dancer? */
 	float	m_CameraDistance;
 	float	m_CameraPanYStart;
 	float	m_CameraPanYEnd;
@@ -65,8 +67,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2003-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

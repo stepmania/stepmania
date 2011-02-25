@@ -1,8 +1,7 @@
-/* Open URLs in a browser. */
-
 #ifndef GOTO_URL_H
 #define GOTO_URL_H
 
+/** @brief Open URLs in a browser. */
 bool GotoURL( RString sUrl );
 
 #endif

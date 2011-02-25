@@ -26,15 +26,17 @@ enum EditMenuRow
 const RString& EditMenuRowToString( EditMenuRow r );
 const RString& EditMenuRowToLocalizedString( EditMenuRow r );
 
+/** @brief The different actions one can take on a step. */
 enum EditMenuAction
 {
-	EditMenuAction_Edit,
-	EditMenuAction_Delete,
-	EditMenuAction_Create,
-	EditMenuAction_Practice,
-	NUM_EditMenuAction,
+	EditMenuAction_Edit, /**< Modify the current step for the Song. */
+	EditMenuAction_Delete, /**< Remove the current step from the Song. */
+	EditMenuAction_Create, /**< Create a new step for the Song. */
+	EditMenuAction_Practice, /**< Practice the current step for the Song. */
+	NUM_EditMenuAction, /**< The number of MenuActions available to choose from. */
 	EditMenuAction_Invalid
 };
+/** @brief Loop through each EditMenuAction. */
 #define FOREACH_EditMenuAction( ema ) FOREACH_ENUM( EditMenuAction, ema )
 const RString& EditMenuActionToString( EditMenuAction ema );
 const RString& EditMenuActionToLocalizedString( EditMenuAction ema );
@@ -65,7 +67,13 @@ public:
 
 	void RefreshAll();
 
-	RString		GetSelectedGroup() const		{ if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; ASSERT(m_iSelection[ROW_GROUP]	< (int)m_sGroups.size()); return m_sGroups[m_iSelection[ROW_GROUP]]; }
+	RString		GetSelectedGroup() const
+	{ 
+		if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; 
+		ASSERT_M((int)m_iSelection[ROW_GROUP] < (int)m_sGroups.size(),
+			 ssprintf("Group selection %d < Number of groups %d", m_iSelection[ROW_GROUP], (int)m_sGroups.size())); 
+		return m_sGroups[m_iSelection[ROW_GROUP]]; 
+	}
 	Song*		GetSelectedSong() const			{ ASSERT(m_iSelection[ROW_SONG]			< (int)m_pSongs.size());	return m_pSongs[m_iSelection[ROW_SONG]]; }
 	StepsType	GetSelectedStepsType() const		{ ASSERT(m_iSelection[ROW_STEPS_TYPE]		< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]]; }
 	Steps*		GetSelectedSteps() const		{ ASSERT(m_iSelection[ROW_STEPS]		< (int)m_vpSteps.size());	return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; }
@@ -94,7 +102,9 @@ private:
 	BitmapText	m_textLabel[NUM_EditMenuRow];
 	BitmapText	m_textValue[NUM_EditMenuRow];
 
+	/** @brief The group's banner. */
 	FadingBanner	m_GroupBanner;
+	/** @brief The Song's banner. */
 	FadingBanner	m_SongBanner;
 	TextBanner	m_SongTextBanner;
 	StepsDisplay	m_StepsDisplay;
@@ -107,7 +117,9 @@ private:
 		Difficulty dc;
 	};
 
+	/** @brief The list of groups. */
 	vector<RString>			m_sGroups;
+	/** @brief The list of Songs in a group. */
 	vector<Song*>			m_pSongs;
 	vector<StepsType>		m_StepsTypes;
 	vector<StepsAndDifficulty>	m_vpSteps;
@@ -120,6 +132,7 @@ private:
 	RageSound m_soundChangeRow;
 	RageSound m_soundChangeValue;
 
+	/** @brief A metric to determine if groups are shown. */
 	ThemeMetric<bool> SHOW_GROUPS;
 	ThemeMetric1D<float> ARROWS_X;
 	ThemeMetric<apActorCommands> ARROWS_ENABLED_COMMAND;
@@ -132,8 +145,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

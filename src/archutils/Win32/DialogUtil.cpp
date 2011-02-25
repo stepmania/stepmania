@@ -15,7 +15,7 @@ static HFONT CreatePointFontIndirect(const LOGFONT* lpLogFont)
 	LOGFONT logFont = *lpLogFont;
 	POINT pt;
 	pt.y = ::GetDeviceCaps(hDC, LOGPIXELSY) * logFont.lfHeight;
-	pt.y /= 720;    // 72 points/inch, 10 decipoints/point
+	pt.y /= 720;	// 72 points/inch * 10 decipoints/point
 	pt.x = 0;
 	::DPtoLP(hDC, &pt, 1);
 	POINT ptOrg = { 0, 0 };

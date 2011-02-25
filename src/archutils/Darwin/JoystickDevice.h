@@ -16,7 +16,7 @@ struct Joystick
 	int ry_min, ry_max;
 	int rz_min, rz_max;
 	int hat_min, hat_max;
-	
+
 	Joystick();
 };
 
@@ -24,19 +24,18 @@ class JoystickDevice : public HIDDevice
 {
 private:
 	vector<Joystick> m_vSticks;
-	
+
 protected:
 	bool AddLogicalDevice( int usagePage, int usage );
 	void AddElement( int usagePage, int usage, IOHIDElementCookie cookie, const CFDictionaryRef properties );
 	void Open();
 	bool InitDevice( int vid, int pid );
-	
+
 public:
 	void GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const;
 	int AssignIDs( InputDevice startID );
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const;
 };
-
 
 #endif
 

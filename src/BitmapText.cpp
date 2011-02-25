@@ -13,17 +13,17 @@
 
 REGISTER_ACTOR_CLASS( BitmapText );
 
-/* XXX: Changing a whole array of diffuse colors every frame (several times) is
- * a waste, when we're usually setting them all to the same value. Rainbow and
- * fading are annoying to optimize, but rarely used. Iterating over every
- * character in Draw() is dumb. */
-
 /* XXX:
  * We need some kind of font modifier string for metrics.  For example,
  * "valign=top;spacing = x+5,y+2"
  *
  * Better, we could go all the way, drop all of the actor-specific font aliases,
  * and do "font=header2;valign=top;...". */
+ 
+ /* XXX: Changing a whole array of diffuse colors every frame (several times) is
+ * a waste, when we're usually setting them all to the same value. Rainbow and
+ * fading are annoying to optimize, but rarely used. Iterating over every
+ * character in Draw() is dumb. */
 #define NUM_RAINBOW_COLORS	THEME->GetMetricI("BitmapText","NumRainbowColors")
 #define RAINBOW_COLOR(n)	THEME->GetMetricC("BitmapText",ssprintf("RainbowColor%i", n+1))
 

@@ -1,12 +1,10 @@
-/** @brief ScreenSelect - Base class for Style, Difficulty, and Mode selection screens. */
-
 #ifndef SCREEN_SELECT_H
 #define SCREEN_SELECT_H
 
 #include "ScreenWithMenuElements.h"
 #include "GameCommand.h"
 #include "ThemeMetric.h"
-
+/** @brief Base class for Style, Difficulty, and Mode selection screens. */
 class ScreenSelect : public ScreenWithMenuElements
 {
 public:

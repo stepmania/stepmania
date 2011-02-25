@@ -73,7 +73,11 @@ public:
 	SortOrder	m_SortOrder;
 	RString		m_sSoundPath;	// "" for no sound
 	vector<RString>	m_vsScreensToPrepare;
-	int		m_iWeightPounds;	// -1 == none specified
+	/**
+	 * @brief What is the player's weight in pounds?
+	 *
+	 * If this value is -1, then no weight was specified. */
+	int		m_iWeightPounds;
 	int		m_iGoalCalories;	// -1 == none specified
 	GoalType	m_GoalType;
 	RString		m_sProfileID;

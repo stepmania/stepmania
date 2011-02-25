@@ -1,5 +1,3 @@
-/* LuaReference - a self-cleaning Lua reference. */
-
 #ifndef LUA_REFERENCE_H
 #define LUA_REFERENCE_H
 
@@ -8,7 +6,7 @@
 
 struct lua_State;
 typedef lua_State Lua;
-
+/** @brief A self-cleaning Lua reference. */
 class LuaReference
 {
 public:
@@ -29,14 +27,21 @@ public:
 	 * On success, return true.  On error, set to nil and return false. */
 	bool SetFromExpression( const RString &sExpression );
 
-	/* Deep-copy tables, detaching this reference from any others. */
+	/** @brief Deep-copy tables, detaching this reference from any others. */
 	void DeepCopy();
 
 	/* Push the referenced object onto the stack.  If not set (or set to nil), push nil. */
 	virtual void PushSelf( Lua *L ) const;
 
-	/* Return true if set.  (SetFromNil() counts as being set.) */
+	/**
+	 * @brief Determine if the reference is set.
+	 *
+	 * SetFromNil() counts as being set.
+	 * @return true if it's set. */
 	bool IsSet() const;
+	/**
+	 * @brief Determine if the reference is nil.
+	 * @return true if it's nil. */
 	bool IsNil() const;
 	void Unset() { Unregister(); }
 
@@ -91,8 +96,10 @@ public:
 
 #endif
 
-/*
- * (c) 2005 Glenn Maynard, Chris Danford
+/**
+ * @file
+ * @author Glenn Maynard, Chris Danford (c) 2005
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

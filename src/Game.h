@@ -1,5 +1,3 @@
-/* Game - Holds information about a particular style of a game (e.g. "single", "double"). */
-
 #ifndef GAMEDEF_H
 #define GAMEDEF_H
 
@@ -27,21 +25,29 @@ class Style;
 // have the flag FLAG_SECONDARY_MENU_*, they will function as MenuLeft and
 // MenuRight as long as "MenuLeft (optional)" and "MenuRight (optional)" are not mapped.
 
+/** @brief Holds information about a particular style of a game (e.g. "single", "double"). */
 class Game
 {
 public:
 	const char *		m_szName;
 	const Style * const*	m_apStyles;
 
-	bool			m_bCountNotesSeparately;	// Count multiple notes in a row as separate notes or as one note
-	bool			m_bAllowHopos;		// allow Hammer-ons and Pull-offs?  Only useful for guitar type input.
+	/** @brief Do we count multiple notes in a row as separate notes, or as one note? */
+	bool			m_bCountNotesSeparately;
+	/** @brief Do we allow for hammer-ons and pull-offs?
+	 *
+	 * This is right now only useful for guitar type input. */
+	bool			m_bAllowHopos;
 	InputScheme		m_InputScheme;
 
 	struct PerButtonInfo
 	{
 		GameButtonType m_gbt;
 	};
-	// Data for each Game-specific GameButton. This starts at GAME_BUTTON_NEXT.
+	/**
+	 * @brief Data for each Game-specific GameButton.
+	 *
+	 * This starts at GAME_BUTTON_NEXT. */
 	PerButtonInfo		m_PerButtonInfo[NUM_GameButton];
 	const PerButtonInfo *GetPerButtonInfo( GameButton gb ) const;
 
@@ -58,8 +64,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2002 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2002
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

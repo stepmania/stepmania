@@ -18,11 +18,12 @@ enum MusicWheelUsesSections
 	NUM_MusicWheelUsesSections, 
 	MusicWheelUsesSections_Invalid
 };
+/** @brief The options for allowing the W1 timing. */
 enum AllowW1
 { 
-	ALLOW_W1_NEVER, 
-	ALLOW_W1_COURSES_ONLY, 
-	ALLOW_W1_EVERYWHERE, 
+	ALLOW_W1_NEVER, /**< The W1 timing is not used. */
+	ALLOW_W1_COURSES_ONLY, /**< The W1 timing is used for courses only. */
+	ALLOW_W1_EVERYWHERE, /**< The W1 timing is used for all modes. */
 	NUM_AllowW1, 
 	AllowW1_Invalid
 };
@@ -290,7 +291,8 @@ public:
 	Preference<RString>	m_sMachineName;
 	Preference<RString>	m_sCoursesToShowRanking;
 
-	Preference<bool>	m_bQuirksMode; // enable quirky behavior desired by users of microsoft stepmania explorer 6.9
+	/** @brief Enable some quirky behavior used by some older versions of StepMania. */
+	Preference<bool>	m_bQuirksMode;
 	// Preference<RString> m_sDefaultFailType; // XXX: Fix fail bug?
 
 	// Debug:
@@ -335,8 +337,10 @@ extern PrefsManager*	PREFSMAN;	// global and accessable from anywhere in our pro
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Chris Gomez
+/**
+ * @file
+ * @author Chris Danford, Chris Gomez (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

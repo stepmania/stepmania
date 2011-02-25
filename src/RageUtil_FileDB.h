@@ -1,5 +1,3 @@
-/* FilenameDB - A container for a file listing. */
-
 #ifndef RAGE_UTIL_FILEDB
 #define RAGE_UTIL_FILEDB
 
@@ -54,7 +52,7 @@ struct File
 	}
 };
 
-/* This represents a directory. */
+/** @brief This represents a directory. */
 struct FileSet
 {
 	set<File> files;
@@ -78,7 +76,7 @@ struct FileSet
 	int GetFileSize( const RString &sPath ) const;
 	int GetFileHash( const RString &sPath ) const;
 };
-
+/** @brief A container for a file listing. */
 class FilenameDB
 {
 public:
@@ -141,8 +139,10 @@ public:
 
 #endif
 
-/*
- * Copyright (c) 2003-2004 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -1,8 +1,7 @@
-/* Win32 crash handling. */
-
 #ifndef CRASH_H
 #define CRASH_H
 #include <windows.h>
+/** @brief Win32 crash handling. */
 namespace CrashHandler
 {
 	extern long __stdcall ExceptionHandler(struct _EXCEPTION_POINTERS *ExceptionInfo);
@@ -12,9 +11,9 @@ namespace CrashHandler
 	void ForceCrash( const char *reason );
 	void ForceDeadlock( RString reason, uint64_t iID );
 
-	/* Inform the crash handler of a foreground window that may be fullscreen.  If
-	 * set, the crash handler will attempt to hide the window or reset the video
-	 * mode. */
+	/* Inform the crash handler of a foreground window that may be fullscreen.
+	 * If set, the crash handler will attempt to hide the window or reset the
+	 * video mode. */
 	void SetForegroundWindow( HWND hWnd );
 
 	void CrashHandlerHandleArgs( int argc, char* argv[] );

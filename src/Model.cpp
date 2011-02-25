@@ -65,6 +65,7 @@ void Model::Load( const RString &sFile )
 
 #define THROW RageException::Throw( "Parse error in \"%s\" at line %d: \"%s\".", sPath.c_str(), iLineNum, sLine.c_str() )
 
+// TODO: Move MS3D loading into its own class. - Colby
 void Model::LoadMilkshapeAscii( const RString &sPath )
 {
 	LoadPieces( sPath, sPath, sPath );
@@ -287,19 +288,18 @@ bool Model::EarlyAbortDraw() const
 
 void Model::DrawCelShaded()
 {
-	this->SetGlow(RageColor(0,0,0,1));
-	this->SetDiffuseAlpha(0);
-	DISPLAY->SetPolygonMode( POLYGON_LINE );
-	DISPLAY->SetLineWidth( 3 );
-	this->SetZWrite( false );
-	this->Draw();
-	this->SetDiffuseAlpha(1);
-	this->SetGlow(RageColor(1,1,1,0));
-	DISPLAY->SetPolygonMode( POLYGON_FILL );
+	// TODO: use shell shader for outline.
 	this->SetZWrite( true );
-	DISPLAY->SetCelShaded( true );
+
+	// First pass: outline/shell
+//	DISPLAY->SetCelShaded(1);
 	this->Draw();
-	DISPLAY->SetCelShaded( false );
+	
+	// Second pass: normal shading
+//	DISPLAY->SetCelShaded(2);
+//	this->Draw();
+	
+//	DISPLAY->SetCelShaded(0)
 }
 
 void Model::DrawPrimitives()
@@ -374,7 +374,7 @@ void Model::DrawPrimitives()
 					}
 
 					// go
-					DrawMesh( i );
+					DrawMesh(i);
 
 					// Turn off environment mapping on tex unit 0.
 					DISPLAY->SetSphereEnvironmentMapping( TextureUnit_1, false );

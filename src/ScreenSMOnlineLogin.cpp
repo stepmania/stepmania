@@ -116,7 +116,16 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 	else if( SM == SM_SMOnlinePack )
 	{
 		LOG->Trace("[ScreenSMOnlineLogin::HandleScreenMessage] SMOnlinePack");
-		sLoginQuestion = YOU_ARE_LOGGING_ON_AS.GetValue() + "\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n" + ENTER_YOUR_PASSWORD.GetValue();
+		if(!GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
+		{
+			LOG->Warn("Invalid player number: %i", m_iPlayer);
+			return;
+		}
+
+		// This can cause problems in certain situations -aj
+		sLoginQuestion = YOU_ARE_LOGGING_ON_AS.GetValue() + "\n"
+			+ GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n" +
+			ENTER_YOUR_PASSWORD.GetValue();
 		int ResponseCode = NSMAN->m_SMOnlinePacket.Read1();
 		if (ResponseCode == 0)
 		{

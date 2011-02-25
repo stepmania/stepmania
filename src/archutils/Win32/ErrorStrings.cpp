@@ -14,11 +14,12 @@ RString werr_ssprintf( int err, const char *fmt, ... )
 		0, err, 0, buf, sizeof(buf), NULL);
 #endif
 
-	/* Why is FormatMessage returning text ending with \r\n? */
+	// Why is FormatMessage returning text ending with \r\n? (who? -aj)
+	// Perhaps it's because you're on Windows, where newlines are \r\n. -aj
 	RString text = buf;
 	text.Replace( "\n", "" );
-	text.Replace( "\r", " " ); /* foo\r\nbar -> foo bar */
-	TrimRight( text ); /* "foo\r\n" -> "foo" */
+	text.Replace( "\r", " " ); // foo\r\nbar -> foo bar
+	TrimRight( text ); // "foo\r\n" -> "foo"
 
 	va_list	va;
 	va_start(va, fmt);

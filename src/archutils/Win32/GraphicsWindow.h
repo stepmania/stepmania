@@ -1,5 +1,3 @@
-/* GraphicsWindow - Sets up a window for OpenGL/D3D. */
-
 #ifndef GRAPHICS_WINDOW_H
 #define GRAPHICS_WINDOW_H
 
@@ -8,19 +6,25 @@
 class VideoModeParams;
 class DisplayResolution;
 
+/** @brief Sets up a window for OpenGL/D3D. */
 namespace GraphicsWindow
 {
-	/* Set up, and create a hidden window.  This only needs to be called once. */
+	/** @brief Set up, and create a hidden window.
+	 *
+	 * This only needs to be called once. */
 	void Initialize( bool bD3D );
 
-	/* Shut down completely. */
+	/** @brief Shut down completely. */
 	void Shutdown();
 
-	/* Set the display mode.  p will not be second-guessed, except to try disabling
-	 * the refresh rate setting. */
+	/** @brief Set the display mode.
+	 *
+	 * p will not be second-guessed, except to try disabling the refresh rate setting. */
 	RString SetScreenMode( const VideoModeParams &p );
 
-	/* Create the window.  This also updates VideoModeParams (returned by GetParams). */
+	/** @brief Create the window.
+	 *
+	 * This also updates VideoModeParams (returned by GetParams). */
 	void CreateGraphicsWindow( const VideoModeParams &p, bool bForceRecreateWindow = false );
 	void DestroyGraphicsWindow();
 

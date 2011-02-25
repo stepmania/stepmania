@@ -6,9 +6,7 @@
 
 class NetworkStream;
 
-/*
- * Send a set of data over HTTP, as a POST form.
- */
+// Send a set of data over HTTP, as a POST form.
 class NetworkPostData
 {
 public:
@@ -17,13 +15,13 @@ public:
 
 	void SetData( const RString &sKey, const RString &sData );
 
-	/* For simplicity, we don't parse URLs here. */
+	// For simplicity, we don't parse URLs here.
 	void Start( const RString &sHost, int iPort, const RString &sPath );
 
-	/* Cancel the running operation, and close the thread. */
+	// Cancel the running operation, and close the thread.
 	void Cancel();
 
-	/* If the operation is unfinished, return false.  Otherwise, close the thread and return true. */
+	// If the operation is unfinished, return false. Otherwise, close the thread and return true.
 	bool IsFinished();
 
 	RString GetStatus() const;
@@ -43,7 +41,7 @@ private:
 	RString m_sStatus;
 	float m_fProgress;
 
-	/* When the thread exists, it owns the rest of the data, regardless of m_Mutex. */
+	// When the thread exists, it owns the rest of the data, regardless of m_Mutex.
 	map<RString, RString> m_Data;
 
 	bool m_bFinished;

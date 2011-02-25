@@ -146,31 +146,31 @@ LuaDeclareType( PlayMode );
 enum SortOrder 
 {
 	// song sorts
-	SORT_PREFERRED,
-	SORT_GROUP, 
-	SORT_TITLE, 
-	SORT_BPM, 
-	SORT_POPULARITY, 
-	SORT_TOP_GRADES,
-	SORT_ARTIST,
-	SORT_GENRE,
-	SORT_BEGINNER_METER,
-	SORT_EASY_METER,
-	SORT_MEDIUM_METER,
-	SORT_HARD_METER,
-	SORT_CHALLENGE_METER,
-	SORT_DOUBLE_EASY_METER,
-	SORT_DOUBLE_MEDIUM_METER,
-	SORT_DOUBLE_HARD_METER,
-	SORT_DOUBLE_CHALLENGE_METER,
+	SORT_PREFERRED, /**< Sort by the user's preferred settings. */
+	SORT_GROUP, /**< Sort by the groups the Songs are in. */
+	SORT_TITLE, /**< Sort by the Song's title. */
+	SORT_BPM, /**< Sort by the Song's BPM. */
+	SORT_POPULARITY, /**< Sort by how popular the Song is. */
+	SORT_TOP_GRADES, /**< Sort by the highest grades earned on a Song. */
+	SORT_ARTIST, /**< Sort by the name of the artist of the Song. */
+	SORT_GENRE, /**< Sort by the Song's genre. */
+	SORT_BEGINNER_METER, /**< Sort by the difficulty of the single beginner meter. */
+	SORT_EASY_METER, /**< Sort by the difficulty of the single easy meter. */
+	SORT_MEDIUM_METER, /**< Sort by the difficulty of the single medium meter. */
+	SORT_HARD_METER, /**< Sort by the difficulty of the single hard meter. */
+	SORT_CHALLENGE_METER, /**< Sort by the difficulty of the single challenge meter. */
+	SORT_DOUBLE_EASY_METER, /**< Sort by the difficulty of the double easy meter. */
+	SORT_DOUBLE_MEDIUM_METER, /**< Sort by the difficulty of the double medium meter. */
+	SORT_DOUBLE_HARD_METER, /**< Sort by the difficulty of the double hard meter. */
+	SORT_DOUBLE_CHALLENGE_METER, /**< Sort by the difficulty of the double challenge meter. */
 	//
-	SORT_MODE_MENU,
+	SORT_MODE_MENU, /**< Have access to the menu for choosing the sort. */
 	// course sorts
-	SORT_ALL_COURSES,
-	SORT_NONSTOP_COURSES,
-	SORT_ONI_COURSES,
-	SORT_ENDLESS_COURSES,
-	SORT_LENGTH,
+	SORT_ALL_COURSES, /**< Sort with all courses available. */
+	SORT_NONSTOP_COURSES, /**< View only the nonstop courses. */
+	SORT_ONI_COURSES, /**< View only the oni/survival courses. */
+	SORT_ENDLESS_COURSES, /**< View only the endless courses. */
+	SORT_LENGTH, /**< Sort the courses by how long they would last. */
 	SORT_ROULETTE,
 	SORT_RECENT,
 	NUM_SortOrder,
@@ -409,6 +409,7 @@ enum StageResult
 
 
 // Battle stuff
+/** @brief The number of inventory slots available for attacks. */
 const int NUM_INVENTORY_SLOTS	= 3;
 enum AttackLevel
 {
@@ -452,13 +453,13 @@ LuaDeclareType( Premium );
 /** @brief The various stage awards that can be given based on excellent play. */
 enum StageAward
 {
-	StageAward_FullComboW3,
-	StageAward_SingleDigitW3,
-	StageAward_OneW3,
-	StageAward_FullComboW2,
-	StageAward_SingleDigitW2,
-	StageAward_OneW2,
-	StageAward_FullComboW1,
+	StageAward_FullComboW3, /**< A full great combo (or equivalent) was earned. */
+	StageAward_SingleDigitW3, /**< A single digit great combo (or equivalent) was earned. */
+	StageAward_OneW3, /**< Only one great (or equivalent) was earned. */
+	StageAward_FullComboW2, /**< A full excellent combo (or equivalent) was earned. */
+	StageAward_SingleDigitW2, /**< A single digit excellent combo (or equivalent) was earned. */
+	StageAward_OneW2, /**< Only one excellent (or equivalent) was earned. */
+	StageAward_FullComboW1, /**< All fantastics (or equivalent) were earned. */
 	StageAward_80PercentW3,
 	StageAward_90PercentW3,
 	StageAward_100PercentW3,
@@ -623,9 +624,9 @@ const RString& StageToLocalizedString( Stage i );
 /** @brief The different possibilities of earning an extra stage. */
 enum EarnedExtraStage
 {
-	EarnedExtraStage_No,
-	EarnedExtraStage_Extra1,
-	EarnedExtraStage_Extra2,
+	EarnedExtraStage_No, /**< No extra stage was earned. */
+	EarnedExtraStage_Extra1, /**< The first extra stage was earned. */
+	EarnedExtraStage_Extra2, /**< The second extra stage (or encore extra stage) was earned. */
 	NUM_EarnedExtraStage,
 	EarnedExtraStage_Invalid
 };
@@ -671,8 +672,10 @@ LuaDeclareType( CourseType );
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Chris Gomez
+/**
+ * @file
+ * @author Chris Danford, Chris Gomez (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -1,5 +1,3 @@
-/* ScreenNameEntryTraditional - Enter a name for a new high score. */
-
 #ifndef SCREEN_NAME_ENTRY_TRADITIONAL_H
 #define SCREEN_NAME_ENTRY_TRADITIONAL_H
 
@@ -7,7 +5,7 @@
 #include "ThemeMetric.h"
 #include "LocalizedString.h"
 #include "InputQueue.h"
-
+/** @brief Enter a name for a new high score. */
 class ScreenNameEntryTraditional: public ScreenWithMenuElements
 {
 public:
@@ -28,7 +26,7 @@ public:
 	bool Finish( PlayerNumber pn );
 	void UpdateSelectionText( PlayerNumber pn );
 	void SelectChar( PlayerNumber pn, const RString &sKey );
-
+	/** @brief How long can the name be for ranking purposes? */
 	ThemeMetric<int>	MAX_RANKING_NAME_LENGTH;
 
 	wstring			m_sSelection[NUM_PLAYERS];
@@ -38,8 +36,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2007 Glenn Maynard, Chris Danford
+/**
+ * @file
+ * @author Glenn Maynard, Chris Danford (c) 2001-2007
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -121,14 +121,14 @@ protected:
 	RString m_sLoopMusicPath;
 	RString m_sFallbackCDTitlePath;
 
-	FadingBanner		m_Banner;
+	FadingBanner	m_Banner;
 	Sprite			m_sprCDTitleFront, m_sprCDTitleBack;
 	Sprite			m_sprHighScoreFrame[NUM_PLAYERS];
 	BitmapText		m_textHighScore[NUM_PLAYERS];
 	MusicWheel		m_MusicWheel;
 	OptionsList		m_OptionsList[NUM_PLAYERS];
 
-	SelectionState		m_SelectionState;
+	SelectionState	m_SelectionState;
 	bool			m_bStepsChosen[NUM_PLAYERS];	// only used in SelectionState_SelectingSteps
 	bool			m_bGoToOptions;
 	RString			m_sSampleMusicToPlay;

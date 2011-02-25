@@ -63,6 +63,35 @@ LuaDeclareType( VertAlign );
 #define align_middle 0.5f
 /** @brief The bottom vertical alignment constant. */
 #define align_bottom 1.0f
+
+/*
+enum EffectAction
+{
+	EffectAction_None,			// no_effect
+	// [Diffuse]
+	EffectAction_DiffuseBlink,	// diffuse_blink
+	EffectAction_DiffuseShift,	// diffuse_shift
+	EffectAction_DiffuseRamp,	// diffuse_ramp
+	EffectAction_Rainbow,		// rainbow
+	// [Glow]
+	EffectAction_GlowBlink,		// glow_blink
+	EffectAction_GlowShift,		// glow_shift
+	EffectAction_GlowRamp,		// glow_ramp
+	// [Translate]
+	EffectAction_Bob,
+	EffectAction_Bounce,
+	EffectAction_Vibrate,
+	// [Rotate]
+	EffectAction_Spin,
+	EffectAction_Wag,
+	// [Zoom]
+	EffectAction_Pulse,
+	NUM_EffectAction,
+	EffectAction_Invalid
+};
+LuaDeclareType( EffectAction );
+*/
+
 /** @brief Base class for all objects that appear on the screen. */
 class Actor : public MessageSubscriber
 {
@@ -92,11 +121,59 @@ public:
 			wag, bounce, bob, pulse,
 			spin, vibrate
 	};
+
+	/** @brief Various values an Actor's effect can be tied to. */
+	enum EffectClock
+	{
+		CLOCK_TIMER,
+		CLOCK_TIMER_GLOBAL,
+		CLOCK_BGM_TIME,
+		CLOCK_BGM_BEAT,
+		CLOCK_BGM_TIME_NO_OFFSET,
+		CLOCK_BGM_BEAT_NO_OFFSET,
+		CLOCK_LIGHT_1 = 1000,
+		CLOCK_LIGHT_LAST = 1100,
+		NUM_CLOCKS
+	};
+
+	///** @brief What type of Effect this is. */
 	/*
 	enum EffectType {
 		EffectType_Diffuse,
+		EffectType_Glow,
 		EffectType_Translate,
-		Num_EffectType
+		EffectType_Rotate,
+		EffectType_Zoom,
+		NUM_EffectType,
+		EffectType_Invalid
+	};
+	*/
+
+	// todo: use this instead of the Effect enum -aj
+	/*
+	struct Effect
+	{
+		Effect() : m_Action(EffectAction_None), m_Type(EffectType_Invalid), m_fSecsIntoEffect(0),
+				m_fEffectDelta(0), m_fEffectRampUp(0.5f), m_fEffectHoldAtHalf(0),
+				m_fEffectRampDown(0.5f), m_fEffectHoldAtZero(0), m_fEffectOffset(0),
+				m_EffectClock(CLOCK_TIMER), m_vEffectMagnitude(RageVector3(0,0,10)),
+				m_effectColor1(RageColor(1,1,1,1)), m_effectColor2(RageColor(1,1,1,1))
+		{ }
+
+		EffectAction	m_Action;
+		EffectType		m_Type; // diffuse, glow, or translate
+		float			m_fSecsIntoEffect;
+		float			m_fEffectDelta;
+		RageColor		m_EffectColor1;
+		RageColor		m_EffectColor2;
+		RageVector3		m_vEffectMagnitude;
+		EffectClock		m_EffectClock;
+		// units depend on m_EffectClock
+		float			m_fEffectRampUp;
+		float			m_fEffectHoldAtHalf;
+		float			m_fEffectRampDown;
+		float			m_fEffectHoldAtZero;
+		float			m_fEffectOffset;
 	};
 	*/
 
@@ -123,23 +200,14 @@ public:
 		 *
 		 * If 0, there is no fade. If 1, it's fully faded. */
 		RectF		fade;
+		/**
+		 * @brief Four values making up the diffuse in this TweenState.
+		 *
+		 * 0 = UpperLeft, 1 = UpperRight, 2 = LowerLeft, 3 = LowerRight */
 		RageColor	diffuse[4];
+		/** @brief The glow color for this TweenState. */
 		RageColor	glow;
 		float		aux;
-	};
-
-	/** @brief Various values an Actor's effect can be tied to. */
-	enum EffectClock
-	{
-		CLOCK_TIMER,
-		CLOCK_TIMER_GLOBAL,
-		CLOCK_BGM_TIME,
-		CLOCK_BGM_BEAT,
-		CLOCK_BGM_TIME_NO_OFFSET,
-		CLOCK_BGM_BEAT_NO_OFFSET,
-		CLOCK_LIGHT_1 = 1000,
-		CLOCK_LIGHT_LAST = 1100,
-		NUM_CLOCKS
 	};
 
 	void Draw();						// calls, EarlyAbortDraw, BeginDraw, DrawPrimitives, EndDraw
@@ -307,7 +375,6 @@ public:
 	void ScaleTo( const RectF &rect, StretchType st );
 
 	void StretchTo( const RectF &rect );
-
 
 	// Alignment settings.  These need to be virtual for BitmapText
 	virtual void SetHorizAlign( float f ) { m_fHorizAlign = f; }
@@ -488,7 +555,6 @@ protected:
 	 * Use the defined constant values for best effect. */
 	float	m_fVertAlign;
 
-
 	// Stuff for effects
 #if defined(SSC_FUTURES) // be able to stack effects
 	vector<Effect> m_Effects;
@@ -514,7 +580,6 @@ protected:
 	RageColor	m_effectColor1;
 	RageColor	m_effectColor2;
 	RageVector3	m_vEffectMagnitude;
-
 
 	// other properties
 	bool		m_bVisible;

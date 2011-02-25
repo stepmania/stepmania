@@ -10,8 +10,20 @@ supported but exist anyways.)
 _____________________________________________________________________________
 
 ================================================================================
-sm-ssc v1.2.3 | 201102??
+sm-ssc v1.2.3 | 2011022?
 --------------------------------------------------------------------------------
+
+20110225
+--------
+* Add lifts and fakes to all Pump noteskins. [Daisuke Master, Wolfman2000]
+
+20110224
+--------
+* [NotesLoaderSSC] Allowed reading of #NOTES2 again. [AJ]
+
+20110223
+--------
+* [Steps] Added GetChartStyle() Lua binding. [AJ]
 
 20110222
 --------

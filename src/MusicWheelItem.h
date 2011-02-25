@@ -1,5 +1,3 @@
-/* MusicWheelItem - An item on the MusicWheel. */
-
 #ifndef MUSIC_WHEEL_ITEM_H
 #define MUSIC_WHEEL_ITEM_H
 
@@ -33,7 +31,7 @@ enum MusicWheelItemType
 	MusicWheelItemType_Invalid,
 };
 const RString& MusicWheelItemTypeToString( MusicWheelItemType i );
-
+/** @brief An item on the MusicWheel. */
 class MusicWheelItem : public WheelItemBase
 {
 public:
@@ -80,8 +78,10 @@ struct MusicWheelItemData : public WheelItemBaseData
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Chris Gomez, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

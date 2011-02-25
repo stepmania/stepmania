@@ -1,11 +1,9 @@
-/* ScreenGameplaySyncMachine - A gameplay screen used for syncing the machine's timing */
-
 #ifndef ScreenGameplaySyncMachine_H
 #define ScreenGameplaySyncMachine_H
 
 #include "ScreenGameplayNormal.h"
 #include "Song.h"
-
+/** @brief A gameplay screen used for syncing the machine's timing. */
 class ScreenGameplaySyncMachine : public ScreenGameplayNormal
 {
 public:
@@ -22,7 +20,9 @@ protected:
 	virtual bool UseSongBackgroundAndForeground() const { return false; }
 	void RefreshText();
 
+	/** @brief the Song used for this screen. */
 	Song	m_Song;
+	/** @brief the Steps used for this screen. */
 	const Steps	*m_pSteps;
 
 	BitmapText	m_textSyncInfo;
@@ -30,8 +30,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

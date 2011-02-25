@@ -1,12 +1,10 @@
-/* ScreenEnding - Ending screen that shows stats. */
-
 #ifndef SCREEN_ENDING_H
 #define SCREEN_ENDING_H
 
 #include "BitmapText.h"
 #include "ScreenAttract.h"
 #include "Sprite.h"
-
+/** @brief Ending screen that shows stats. */
 class ScreenEnding : public ScreenAttract
 {
 public:
@@ -20,8 +18,10 @@ private:
 
 #endif
 
-/*
- * (c) 2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

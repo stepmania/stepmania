@@ -396,13 +396,13 @@ static void AdjustForChangedSystemCapabilities()
 
 	// is this assumption outdated? -aj
 	/* Let's consider 128-meg systems low-memory, and 256-meg systems high-memory.
-	 * Cut off at 192. This is somewhat conservative; many 128-meg systems can
+	 * Cut off at 192. This is pretty conservative; many 128-meg systems can
 	 * deal with higher memory profile settings, but some can't. 
 	 *
 	 * Actually, Windows lops off a meg or two; cut off a little lower to treat
 	 * 192-meg systems as high-memory. */
 	const bool HighMemory = (Memory >= 190);
-	const bool LowMemory = (Memory < 100); /* 64 and 96-meg systems */
+	const bool LowMemory = (Memory < 100); // 64 and 96-meg systems
 
 	/* Two memory-consuming features that we can disable are texture caching and
 	 * preloaded banners. Texture caching can use a lot of memory; disable it for
@@ -1306,13 +1306,13 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		return false; // Attract needs to know because it goes to TitleMenu on > 1 credit
 	}
 
-	// re-added for StepMania 3.9 veterans, plus it's just plain old faster
-	// than the debug menu. However, this is without the LShift capability
-	// that was in 3.9; if we get enough requests, we'll re-add it, but meh. -aj
+	/* Re-added for StepMania 3.9 theming veterans, plus it's just faster than
+	 * the debug menu. However, in sm-ssc, the Shift button only reloads the
+	 * metrics, unlike in 3.9 (where it saved bookkeeping and machine profile). -aj */
 	bool bIsShiftHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT), &input.InputList) ||
 		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT), &input.InputList);
 	bool bIsCtrlHeld = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL), &input.InputList) ||
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL), &input.InputList);
+		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL), &input.InputList);
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F2) )
 	{
 		if( bIsShiftHeld && !bIsCtrlHeld )
@@ -1387,7 +1387,6 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) && 
 		  (INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA), &input.InputList) ||
 		   INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA), &input.InputList)) );
-
 #else
 	/* The default Windows message handler will capture the desktop window upon
 	 * pressing PrntScrn, or will capture the foreground with focus upon pressing
@@ -1407,7 +1406,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		RageTimer timer;
 		StepMania::SaveScreenshot( "Screenshots/", bSaveCompressed, false, -1 );
 		LOG->Trace( "Screenshot took %f seconds.", timer.GetDeltaTime() );
-		return true;	// handled
+		return true; // handled
 	}
 
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_ENTER) &&
@@ -1415,11 +1414,11 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		 INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList)) )
 	{
 		// alt-enter
-		/* In OS X, this is a menu item and will be handled as such. This will happen
-		 * first and then the lower priority GUI thread will happen second causing the
-		 * window to toggle twice. Another solution would be to put a timer in
-		 * ArchHooks::SetToggleWindowed() and just not set the bool it if it's been less
-		 * than, say, half a second. */
+		/* In OS X, this is a menu item and will be handled as such. This will
+		 * happen first and then the lower priority GUI thread will happen second,
+		 * causing the window to toggle twice. Another solution would be to put
+		 * a timer in ArchHooks::SetToggleWindowed() and just not set the bool
+		 * it if it's been less than, say, half a second. */
 #if !defined(MACOSX)
 		ArchHooks::SetToggleWindowed();
 #endif
@@ -1433,10 +1432,11 @@ void HandleInputEvents(float fDeltaTime)
 {
 	INPUTFILTER->Update( fDeltaTime );
 
-	/* Hack: If the topmost screen hasn't been updated yet, don't process input, since
-	 * we must not send inputs to a screen that hasn't at least had one update yet. (The
-	 * first Update should be the very first thing a screen gets.)  We'll process it next
-	 * time.  Do call Update above, so the inputs are read and timestamped. */
+	/* Hack: If the topmost screen hasn't been updated yet, don't process input,
+	 * since we must not send inputs to a screen that hasn't at least had one
+	 * update yet. (The first Update should be the very first thing a screen gets.)
+	 * We'll process it next time. Call Update above, so the inputs are
+	 * read and timestamped. */
 	if( SCREENMAN->GetTopScreen()->IsFirstUpdate() )
 		return;
 
