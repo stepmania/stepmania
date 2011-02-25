@@ -18,7 +18,7 @@
  * TODO:
  * - Metrics/Lua for lighting and camera sweeping.
  * - Ability to load secondary elements i.e. stages.
- * - Remove support for 2D characters? There's no need for them (Lua can do it).
+ * - Remove support for 2D characters (Lua can do it).
  * - Cleanup!
  *
  * -- Colby
@@ -42,7 +42,6 @@ const float CAMERA_STILL_LOOK_AT_HEIGHT = -10.f;
 const float MODEL_X_ONE_PLAYER = 0;
 const float MODEL_X_TWO_PLAYERS[NUM_PLAYERS] = { +8, -8 };
 const float MODEL_ROTATIONY_TWO_PLAYERS[NUM_PLAYERS] = { -90, 90 };
-
 
 DancingCharacters::DancingCharacters()
 {
@@ -68,28 +67,28 @@ DancingCharacters::DancingCharacters()
 		{
 			m_bgIdle[p].Load( sCurrentAnim );
 			m_bgIdle[p]->SetXY(DC_X(p),DC_Y(p));
-		}	
+		}
 
 		sCurrentAnim = sCharacterDirectory + "2DMiss";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
 			m_bgMiss[p].Load( sCurrentAnim );
 			m_bgMiss[p]->SetXY(DC_X(p),DC_Y(p));
-		}	
+		}
 
 		sCurrentAnim = sCharacterDirectory + "2DGood";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
 			m_bgGood[p].Load( sCurrentAnim );
 			m_bgGood[p]->SetXY(DC_X(p),DC_Y(p));
-		}	
+		}
 
 		sCurrentAnim = sCharacterDirectory + "2DGreat";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
 			m_bgGreat[p].Load( sCurrentAnim );
 			m_bgGreat[p]->SetXY(DC_X(p),DC_Y(p));
-		}	
+		}
 
 		sCurrentAnim = sCharacterDirectory + "2DFever";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
@@ -121,12 +120,12 @@ DancingCharacters::DancingCharacters()
 
 		if( pChar->GetModelPath().empty() )
 			continue;
-		
+
 		if( GAMESTATE->GetNumPlayersEnabled()==2 )
 			m_pCharacter[p]->SetX( MODEL_X_TWO_PLAYERS[p] );
 		else
 			m_pCharacter[p]->SetX( MODEL_X_ONE_PLAYER );
-	
+
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_BATTLE:
@@ -165,7 +164,7 @@ void DancingCharacters::LoadNextSong()
 
 	ASSERT( GAMESTATE->m_pCurSong );
 	m_fThisCameraEndBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
-	
+
 	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->IsPlayerEnabled(p) )
 			m_pCharacter[p]->PlayAnimation( "rest" );
@@ -177,7 +176,7 @@ void DancingCharacters::Update( float fDelta )
 {
 	if( GAMESTATE->m_bFreeze || GAMESTATE->m_bDelay )
 	{
-		// spin the camera Matrix style
+		// spin the camera Matrix-style
 		m_CameraPanYStart += fDelta*40;
 		m_CameraPanYEnd += fDelta*40;
 	}
@@ -209,7 +208,6 @@ void DancingCharacters::Update( float fDelta )
 	}
 	bWasGameplayStarting = bGameplayStarting;
 
-
 	static float fLastBeat = GAMESTATE->m_fSongBeat;
 	float fThisBeat = GAMESTATE->m_fSongBeat;
 	if( fLastBeat < GAMESTATE->m_pCurSong->m_fFirstBeat &&
@@ -220,7 +218,6 @@ void DancingCharacters::Update( float fDelta )
 	}
 	fLastBeat = fThisBeat;
 
-
 	// time for a new sweep?
 	if( GAMESTATE->m_fSongBeat > m_fThisCameraEndBeat )
 	{
@@ -230,7 +227,7 @@ void DancingCharacters::Update( float fDelta )
 			m_CameraDistance = CAMERA_SWEEP_DISTANCE + RandomInt(-1,1) * CAMERA_SWEEP_DISTANCE_VARIANCE;
 			m_CameraPanYStart = m_CameraPanYEnd = RandomInt(-1,1) * CAMERA_SWEEP_PAN_Y_RANGE_DEGREES;
 			m_fCameraHeightStart = m_fCameraHeightEnd = CAMERA_STILL_LOOK_AT_HEIGHT;
-			
+
 			m_CameraPanYEnd += RandomInt(-1,1) * CAMERA_SWEEP_PAN_Y_VARIANCE_DEGREES;
 			m_fCameraHeightStart = m_fCameraHeightEnd = m_fCameraHeightStart + RandomInt(-1,1) * CAMERA_SWEEP_HEIGHT_VARIANCE;
 
@@ -337,7 +334,7 @@ void DancingCharacters::DrawPrimitives()
 		bool bDanger = m_bDrawDangerLight;
 
 		DISPLAY->SetLighting( true );
-		
+
 		RageColor ambient  = bFailed ? RageColor(0.2f,0.1f,0.1f,1) : (bDanger ? RageColor(0.4f,0.1f,0.1f,1) : RageColor(0.4f,0.4f,0.4f,1));
 		RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(1,0.95f,0.925f,1));
 		RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
@@ -364,7 +361,7 @@ void DancingCharacters::DrawPrimitives()
 	}
 
 	DISPLAY->CameraPopMatrix();
-	
+
 	/*
 	// Ugly! -Colby
 	// now draw any potential 2D stuff
