@@ -19,7 +19,7 @@ public:
 	void SwapBuffers();
 
 	const VideoModeParams &GetActualVideoModeParams() const { return CurrentParams; }
-	
+
 	void GetDisplayResolutions( DisplayResolutions &out ) const;
 
 	bool SupportsRenderToTexture() const;
@@ -40,7 +40,6 @@ private:
 #error "More than one LowLevelWindow selected!"
 #endif
 #define ARCH_LOW_LEVEL_WINDOW LowLevelWindow_X11
-
 
 #endif
 
