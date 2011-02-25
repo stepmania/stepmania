@@ -1,25 +1,51 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="9.00"
 	Name="smpackage"
 	ProjectGUID="{67179F21-52DD-42E7-A797-67DBEAF9F4F4}"
-	SccProjectName=""
-	SccLocalPath=""
-	Keyword="MFCProj">
+	Keyword="MFCProj"
+	TargetFrameworkVersion="131072"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="../Program"
 			IntermediateDirectory=".\Debug-smpackage"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\../../Program/smpackage.tlb"
+				HeaderFileName=""
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
@@ -27,7 +53,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;DEBUG;_WINDOWS;WINDOWS;SMPACKAGE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile=".\Debug-smpackage/smpackage.pch"
 				AssemblerListingLocation=".\../Debug-smpackage/"
@@ -35,67 +61,96 @@
 				ProgramDataBaseFileName=".\../Debug-smpackage/"
 				BrowseInformation="1"
 				WarningLevel="4"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
+				SuppressStartupBanner="true"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="smpackage\ZipArchive\Debug\ZipArchive.lib"
 				OutputFile="../Program/tools-debug.exe"
 				LinkIncremental="0"
-				SuppressStartupBanner="TRUE"
-				GenerateDebugInformation="TRUE"
+				SuppressStartupBanner="true"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile="../Program/smpackage-debug.pdb"
 				SubSystem="2"
-				TargetMachine="1"/>
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\../../Program/smpackage.tlb"
-				HeaderFileName=""/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCAppVerifierTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="../Program"
 			IntermediateDirectory=".\Release-smpackage"
 			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\../../Program/smpackage.tlb"
+				HeaderFileName=""
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories=".;lua-5.0\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;WINDOWS;SMPACKAGE"
-				StringPooling="TRUE"
+				StringPooling="true"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile=".\Release-smpackage/smpackage.pch"
 				AssemblerListingLocation=".\../Release-smpackage/"
@@ -103,47 +158,53 @@
 				ProgramDataBaseFileName=".\../Release-smpackage/"
 				BrowseInformation="1"
 				WarningLevel="4"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="0"/>
+				SuppressStartupBanner="true"
+				DebugInformationFormat="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="smpackage\ZipArchive\Release\ZipArchive.lib"
 				OutputFile="./../Program/tools.exe"
 				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
+				SuppressStartupBanner="true"
 				ProgramDatabaseFile="../Program/smpackage.pdb"
 				SubSystem="2"
-				TargetMachine="1"/>
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\../../Program/smpackage.tlb"
-				HeaderFileName=""/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCAppVerifierTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -151,661 +212,861 @@
 	<Files>
 		<Filter
 			Name="smpackage"
-			Filter="">
+			>
 			<File
-				RelativePath=".\smpackage\ChangeGameSettings.cpp">
+				RelativePath=".\smpackage\ChangeGameSettings.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\ChangeGameSettings.h">
+				RelativePath=".\smpackage\ChangeGameSettings.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\CreateLanguageDlg.cpp">
+				RelativePath=".\smpackage\CreateLanguageDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\CreateLanguageDlg.h">
+				RelativePath=".\smpackage\CreateLanguageDlg.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\EditInsallations.cpp">
+				RelativePath=".\smpackage\EditInsallations.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\EditInsallations.h">
+				RelativePath=".\smpackage\EditInsallations.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\EnterComment.cpp">
+				RelativePath=".\smpackage\EnterComment.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\EnterComment.h">
+				RelativePath=".\smpackage\EnterComment.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\EnterName.cpp">
+				RelativePath=".\smpackage\EnterName.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\EnterName.h">
+				RelativePath=".\smpackage\EnterName.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\LanguagesDlg.cpp">
+				RelativePath=".\smpackage\LanguagesDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\LanguagesDlg.h">
+				RelativePath=".\smpackage\LanguagesDlg.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\MainMenuDlg.cpp">
+				RelativePath=".\smpackage\MainMenuDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\MainMenuDlg.h">
+				RelativePath=".\smpackage\MainMenuDlg.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\ShowComment.cpp">
+				RelativePath=".\smpackage\ShowComment.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\ShowComment.h">
+				RelativePath=".\smpackage\ShowComment.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\smpackage.cpp">
+				RelativePath=".\smpackage\smpackage.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\smpackage.h">
+				RelativePath=".\smpackage\smpackage.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\SmpackageExportDlg.cpp">
+				RelativePath=".\smpackage\SmpackageExportDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\SmpackageExportDlg.h">
+				RelativePath=".\smpackage\SmpackageExportDlg.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\SMPackageInstallDlg.cpp">
+				RelativePath=".\smpackage\SMPackageInstallDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\SMPackageInstallDlg.h">
+				RelativePath=".\smpackage\SMPackageInstallDlg.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\SMPackageUtil.cpp">
+				RelativePath=".\smpackage\SMPackageUtil.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\smpackageUtil.h">
+				RelativePath=".\smpackage\smpackageUtil.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\StdAfx.h">
+				RelativePath=".\smpackage\StdAfx.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\TreeCtrlEx.cpp">
+				RelativePath=".\smpackage\TreeCtrlEx.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\TreeCtrlEx.h">
+				RelativePath=".\smpackage\TreeCtrlEx.h"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\UninstallOld.cpp">
+				RelativePath=".\smpackage\UninstallOld.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\UninstallOld.h">
+				RelativePath=".\smpackage\UninstallOld.h"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Resources"
-			Filter="">
+			>
 			<File
-				RelativePath=".\smpackage\resource.h">
+				RelativePath=".\smpackage\resource.h"
+				>
 			</File>
 			<File
-				RelativePath="res\smpackage.ico">
+				RelativePath="smpackage.ICO"
+				>
 			</File>
 			<File
-				RelativePath="smpackage.ICO">
+				RelativePath="res\smpackage.ico"
+				>
 			</File>
 			<File
-				RelativePath=".\smpackage\smpackage.rc">
+				RelativePath=".\smpackage\smpackage.rc"
+				>
 			</File>
 			<File
-				RelativePath="res\StepMania.ICO">
+				RelativePath="res\StepMania.ICO"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="StepMania"
-			Filter="">
+			>
 			<File
-				RelativePath=".\global.cpp">
+				RelativePath=".\global.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\global.h">
+				RelativePath=".\global.h"
+				>
 			</File>
 			<File
-				RelativePath=".\ProductInfo.h">
+				RelativePath=".\ProductInfo.h"
+				>
 			</File>
 			<File
-				RelativePath=".\SpecialFiles.cpp">
+				RelativePath=".\SpecialFiles.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\SpecialFiles.h">
+				RelativePath=".\SpecialFiles.h"
+				>
 			</File>
 			<File
-				RelativePath=".\StdString.h">
+				RelativePath=".\StdString.h"
+				>
 			</File>
 			<Filter
-				Name="system">
+				Name="system"
+				>
 				<File
-					RelativePath=".\archutils\Win32\AppInstance.cpp">
+					RelativePath=".\archutils\Win32\AppInstance.cpp"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\AppInstance.h">
+					RelativePath=".\archutils\Win32\AppInstance.h"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\arch_setup.h">
+					RelativePath=".\archutils\Win32\arch_setup.h"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\arch_time.cpp">
+					RelativePath=".\archutils\Win32\arch_time.cpp"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\CommandLine.cpp">
+					RelativePath=".\archutils\Win32\CommandLine.cpp"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\CommandLine.h">
+					RelativePath=".\archutils\Win32\CommandLine.h"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\DialogUtil.cpp">
+					RelativePath=".\archutils\Win32\DialogUtil.cpp"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\DialogUtil.h">
+					RelativePath=".\archutils\Win32\DialogUtil.h"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\ErrorStrings.cpp">
+					RelativePath=".\archutils\Win32\ErrorStrings.cpp"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\ErrorStrings.h">
+					RelativePath=".\archutils\Win32\ErrorStrings.h"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\GotoURL.cpp">
+					RelativePath=".\archutils\Win32\GotoURL.cpp"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\GotoURL.h">
+					RelativePath=".\archutils\Win32\GotoURL.h"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\RegistryAccess.cpp">
+					RelativePath=".\archutils\Win32\RegistryAccess.cpp"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\RegistryAccess.h">
+					RelativePath=".\archutils\Win32\RegistryAccess.h"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\SpecialDirs.cpp">
+					RelativePath=".\archutils\Win32\SpecialDirs.cpp"
+					>
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\SpecialDirs.h">
+					RelativePath=".\archutils\Win32\SpecialDirs.h"
+					>
 				</File>
 			</Filter>
 			<Filter
 				Name="arch"
-				Filter="">
+				>
 				<Filter
 					Name="Threads"
-					Filter="">
+					>
 					<File
-						RelativePath=".\arch\Threads\Threads.h">
+						RelativePath=".\arch\Threads\Threads.h"
+						>
 					</File>
 					<File
-						RelativePath=".\arch\Threads\Threads_Win32.cpp">
+						RelativePath=".\arch\Threads\Threads_Win32.cpp"
+						>
 					</File>
 					<File
-						RelativePath=".\arch\Threads\Threads_Win32.h">
+						RelativePath=".\arch\Threads\Threads_Win32.h"
+						>
 					</File>
 				</Filter>
 				<Filter
 					Name="ArchHooks"
-					Filter="">
+					>
 					<File
-						RelativePath=".\arch\ArchHooks\ArchHooks.h">
+						RelativePath=".\arch\ArchHooks\ArchHooks.h"
+						>
 					</File>
 					<File
-						RelativePath=".\arch\ArchHooks\ArchHooks_Win32.h">
+						RelativePath=".\arch\ArchHooks\ArchHooks_Win32.h"
+						>
 					</File>
 					<File
-						RelativePath=".\arch\ArchHooks\ArchHooks_Win32Static.cpp">
+						RelativePath=".\arch\ArchHooks\ArchHooks_Win32Static.cpp"
+						>
 					</File>
 					<File
-						RelativePath=".\arch\ArchHooks\ArchHooksUtil.cpp">
+						RelativePath=".\arch\ArchHooks\ArchHooksUtil.cpp"
+						>
 					</File>
 				</Filter>
 				<Filter
 					Name="Dialog"
-					Filter="">
+					>
 					<File
-						RelativePath=".\arch\Dialog\Dialog.cpp">
+						RelativePath=".\arch\Dialog\Dialog.cpp"
+						>
 					</File>
 					<File
-						RelativePath=".\arch\Dialog\Dialog.h">
+						RelativePath=".\arch\Dialog\Dialog.h"
+						>
 					</File>
 					<File
-						RelativePath=".\arch\Dialog\DialogDriver.cpp">
+						RelativePath=".\arch\Dialog\DialogDriver.cpp"
+						>
 					</File>
 					<File
-						RelativePath=".\arch\Dialog\DialogDriver.h">
+						RelativePath=".\arch\Dialog\DialogDriver.h"
+						>
 					</File>
 					<File
-						RelativePath=".\arch\Dialog\DialogDriver_Win32.cpp">
+						RelativePath=".\arch\Dialog\DialogDriver_Win32.cpp"
+						>
 					</File>
 					<File
-						RelativePath=".\arch\Dialog\DialogDriver_Win32.h">
+						RelativePath=".\arch\Dialog\DialogDriver_Win32.h"
+						>
 					</File>
 					<File
-						RelativePath=".\arch\Dialog\Selector_Dialog.h">
+						RelativePath=".\arch\Dialog\Selector_Dialog.h"
+						>
 					</File>
 				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="Rage"
-			Filter="">
+			>
 			<File
-				RelativePath=".\RageException.cpp">
+				RelativePath=".\RageException.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageException.h">
+				RelativePath=".\RageException.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFile.cpp">
+				RelativePath=".\RageFile.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFile.h">
+				RelativePath=".\RageFile.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileBasic.cpp">
+				RelativePath=".\RageFileBasic.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileBasic.h">
+				RelativePath=".\RageFileBasic.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriver.cpp">
+				RelativePath=".\RageFileDriver.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriver.h">
+				RelativePath=".\RageFileDriver.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverDeflate.cpp">
+				RelativePath=".\RageFileDriverDeflate.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverDeflate.h">
+				RelativePath=".\RageFileDriverDeflate.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverDirect.cpp">
+				RelativePath=".\RageFileDriverDirect.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverDirect.h">
+				RelativePath=".\RageFileDriverDirect.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverDirectHelpers.cpp">
+				RelativePath=".\RageFileDriverDirectHelpers.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverDirectHelpers.h">
+				RelativePath=".\RageFileDriverDirectHelpers.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverMemory.cpp">
+				RelativePath=".\RageFileDriverMemory.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverMemory.h">
+				RelativePath=".\RageFileDriverMemory.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverSlice.cpp">
+				RelativePath=".\RageFileDriverSlice.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverSlice.h">
+				RelativePath=".\RageFileDriverSlice.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverTimeout.cpp">
+				RelativePath=".\RageFileDriverTimeout.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverTimeout.h">
+				RelativePath=".\RageFileDriverTimeout.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverZip.cpp">
+				RelativePath=".\RageFileDriverZip.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileDriverZip.h">
+				RelativePath=".\RageFileDriverZip.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileManager.cpp">
+				RelativePath=".\RageFileManager.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageFileManager.h">
+				RelativePath=".\RageFileManager.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageLog.cpp">
+				RelativePath=".\RageLog.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageLog.h">
+				RelativePath=".\RageLog.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageThreads.cpp">
+				RelativePath=".\RageThreads.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageThreads.h">
+				RelativePath=".\RageThreads.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageTimer.cpp">
+				RelativePath=".\RageTimer.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageTimer.h">
+				RelativePath=".\RageTimer.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageTypes.cpp">
+				RelativePath=".\RageTypes.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageTypes.h">
+				RelativePath=".\RageTypes.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageUtil.cpp">
+				RelativePath=".\RageUtil.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageUtil.h">
+				RelativePath=".\RageUtil.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageUtil_FileDB.cpp">
+				RelativePath=".\RageUtil_FileDB.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageUtil_FileDB.h">
+				RelativePath=".\RageUtil_FileDB.h"
+				>
 			</File>
 			<File
-				RelativePath=".\RageUtil_WorkerThread.cpp">
+				RelativePath=".\RageUtil_WorkerThread.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RageUtil_WorkerThread.h">
+				RelativePath=".\RageUtil_WorkerThread.h"
+				>
 			</File>
 			<Filter
 				Name="Helpers"
-				Filter="">
+				>
 				<Filter
 					Name="pcre"
-					Filter="">
+					>
 					<File
-						RelativePath=".\pcre\get.c">
+						RelativePath=".\pcre\get.c"
+						>
 					</File>
 					<File
-						RelativePath=".\pcre\internal.h">
+						RelativePath=".\pcre\internal.h"
+						>
 					</File>
 					<File
-						RelativePath=".\pcre\maketables.c">
+						RelativePath=".\pcre\maketables.c"
+						>
 					</File>
 					<File
-						RelativePath=".\pcre\pcre.c">
+						RelativePath=".\pcre\pcre.c"
+						>
 					</File>
 					<File
-						RelativePath=".\pcre\pcre.h">
+						RelativePath=".\pcre\pcre.h"
+						>
 					</File>
 					<File
-						RelativePath=".\pcre\study.c">
+						RelativePath=".\pcre\study.c"
+						>
 					</File>
 				</Filter>
 				<Filter
 					Name="Lua"
-					Filter="">
+					>
 					<File
-						RelativePath=".\lua-5.1\src\lapi.c">
+						RelativePath=".\lua-5.1\src\lapi.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lapi.h">
+						RelativePath=".\lua-5.1\src\lapi.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lauxlib.c">
+						RelativePath=".\lua-5.1\src\lauxlib.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lauxlib.h">
+						RelativePath=".\lua-5.1\src\lauxlib.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lbaselib.c">
+						RelativePath=".\lua-5.1\src\lbaselib.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lcode.c">
+						RelativePath=".\lua-5.1\src\lcode.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lcode.h">
+						RelativePath=".\lua-5.1\src\lcode.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ldblib.c">
+						RelativePath=".\lua-5.1\src\ldblib.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ldebug.c">
+						RelativePath=".\lua-5.1\src\ldebug.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ldebug.h">
+						RelativePath=".\lua-5.1\src\ldebug.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ldo.c">
+						RelativePath=".\lua-5.1\src\ldo.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ldo.h">
+						RelativePath=".\lua-5.1\src\ldo.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ldump.c">
+						RelativePath=".\lua-5.1\src\ldump.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lfunc.c">
+						RelativePath=".\lua-5.1\src\lfunc.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lfunc.h">
+						RelativePath=".\lua-5.1\src\lfunc.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lgc.c">
+						RelativePath=".\lua-5.1\src\lgc.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lgc.h">
+						RelativePath=".\lua-5.1\src\lgc.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\linit.c">
+						RelativePath=".\lua-5.1\src\linit.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\liolib.c">
+						RelativePath=".\lua-5.1\src\liolib.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\llex.c">
+						RelativePath=".\lua-5.1\src\llex.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\llex.h">
+						RelativePath=".\lua-5.1\src\llex.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\llimits.h">
+						RelativePath=".\lua-5.1\src\llimits.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lmathlib.c">
+						RelativePath=".\lua-5.1\src\lmathlib.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lmem.c">
+						RelativePath=".\lua-5.1\src\lmem.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lmem.h">
+						RelativePath=".\lua-5.1\src\lmem.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\loadlib.c">
+						RelativePath=".\lua-5.1\src\loadlib.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lobject.c">
+						RelativePath=".\lua-5.1\src\lobject.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lobject.h">
+						RelativePath=".\lua-5.1\src\lobject.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lopcodes.c">
+						RelativePath=".\lua-5.1\src\lopcodes.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lopcodes.h">
+						RelativePath=".\lua-5.1\src\lopcodes.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\loslib.c">
+						RelativePath=".\lua-5.1\src\loslib.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lparser.c">
+						RelativePath=".\lua-5.1\src\lparser.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lparser.h">
+						RelativePath=".\lua-5.1\src\lparser.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lstate.c">
+						RelativePath=".\lua-5.1\src\lstate.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lstate.h">
+						RelativePath=".\lua-5.1\src\lstate.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lstring.c">
+						RelativePath=".\lua-5.1\src\lstring.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lstring.h">
+						RelativePath=".\lua-5.1\src\lstring.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lstrlib.c">
+						RelativePath=".\lua-5.1\src\lstrlib.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ltable.c">
+						RelativePath=".\lua-5.1\src\ltable.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ltable.h">
+						RelativePath=".\lua-5.1\src\ltable.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ltablib.c">
+						RelativePath=".\lua-5.1\src\ltablib.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ltm.c">
+						RelativePath=".\lua-5.1\src\ltm.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\ltm.h">
+						RelativePath=".\lua-5.1\src\ltm.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lua.h">
+						RelativePath=".\lua-5.1\src\lua.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\luaconf.h">
+						RelativePath=".\lua-5.1\src\luaconf.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lualib.h">
+						RelativePath=".\lua-5.1\src\lualib.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lundump.c">
+						RelativePath=".\lua-5.1\src\lundump.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lundump.h">
+						RelativePath=".\lua-5.1\src\lundump.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lvm.c">
+						RelativePath=".\lua-5.1\src\lvm.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lvm.h">
+						RelativePath=".\lua-5.1\src\lvm.h"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lzio.c">
+						RelativePath=".\lua-5.1\src\lzio.c"
+						>
 					</File>
 					<File
-						RelativePath=".\lua-5.1\src\lzio.h">
+						RelativePath=".\lua-5.1\src\lzio.h"
+						>
 					</File>
 				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="File Types"
-			Filter="">
+			>
 			<File
-				RelativePath=".\CsvFile.cpp">
+				RelativePath=".\CsvFile.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\CsvFile.h">
+				RelativePath=".\CsvFile.h"
+				>
 			</File>
 			<File
-				RelativePath=".\IniFile.cpp">
+				RelativePath=".\IniFile.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\IniFile.h">
+				RelativePath=".\IniFile.h"
+				>
 			</File>
 			<File
-				RelativePath=".\XmlFile.cpp">
+				RelativePath=".\XmlFile.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\XmlFile.h">
+				RelativePath=".\XmlFile.h"
+				>
 			</File>
 			<File
-				RelativePath=".\XmlFileUtil.cpp">
+				RelativePath=".\XmlFileUtil.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\XmlFileUtil.h">
+				RelativePath=".\XmlFileUtil.h"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Data Structures"
-			Filter="">
+			>
 			<File
-				RelativePath=".\Command.cpp">
+				RelativePath=".\Command.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\Command.h">
+				RelativePath=".\Command.h"
+				>
 			</File>
 			<File
-				RelativePath=".\DateTime.cpp">
+				RelativePath=".\DateTime.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\DateTime.h">
+				RelativePath=".\DateTime.h"
+				>
 			</File>
 			<File
-				RelativePath=".\EnumHelper.cpp">
+				RelativePath=".\EnumHelper.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\EnumHelper.h">
+				RelativePath=".\EnumHelper.h"
+				>
 			</File>
 			<File
-				RelativePath=".\FontCharAliases.cpp">
+				RelativePath=".\FontCharAliases.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\FontCharAliases.h">
+				RelativePath=".\FontCharAliases.h"
+				>
 			</File>
 			<File
-				RelativePath=".\LocalizedString.cpp">
+				RelativePath=".\LocalizedString.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\LocalizedString.h">
+				RelativePath=".\LocalizedString.h"
+				>
 			</File>
 			<File
-				RelativePath=".\LuaBinding.cpp">
+				RelativePath=".\LuaBinding.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\LuaBinding.h">
+				RelativePath=".\LuaBinding.h"
+				>
 			</File>
 			<File
-				RelativePath=".\LuaReference.cpp">
+				RelativePath=".\LuaReference.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\LuaReference.h">
+				RelativePath=".\LuaReference.h"
+				>
 			</File>
 			<File
-				RelativePath=".\ThemeMetric.h">
+				RelativePath=".\ThemeMetric.h"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Global Singletons"
-			Filter="">
+			>
 			<File
-				RelativePath=".\LuaManager.cpp">
+				RelativePath=".\LuaManager.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\LuaManager.h">
+				RelativePath=".\LuaManager.h"
+				>
 			</File>
 			<File
-				RelativePath=".\ThemeManager.cpp">
+				RelativePath=".\ThemeManager.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\ThemeManager.h">
+				RelativePath=".\ThemeManager.h"
+				>
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\smpackage\header.bmp">
+			RelativePath=".\smpackage\header.bmp"
+			>
 		</File>
 		<File
-			RelativePath=".\smpackage\install.bmp">
+			RelativePath=".\smpackage\install.bmp"
+			>
 		</File>
 		<File
-			RelativePath=".\smpackage\manage.bmp">
+			RelativePath=".\smpackage\manage.bmp"
+			>
 		</File>
 		<File
-			RelativePath=".\smpackage\menu.bmp">
+			RelativePath=".\smpackage\menu.bmp"
+			>
 		</File>
 		<File
-			RelativePath=".\smpackage\smpackage.ICO">
+			RelativePath=".\smpackage\smpackage.ICO"
+			>
 		</File>
 	</Files>
 	<Globals>
 		<Global
 			Name="RESOURCE_FILE"
-			Value="smpackage\smpackage.rc"/>
+			Value="smpackage\smpackage.rc"
+		/>
 	</Globals>
 </VisualStudioProject>
