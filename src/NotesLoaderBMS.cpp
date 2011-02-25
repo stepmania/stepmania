@@ -704,6 +704,7 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 				if ( ndNotes.GetTapNote(iTransformNewToOld[i], row) == TAP_EMPTY )
 				{
 					iEmptyTrack = iTransformNewToOld[i];
+					break;
 				}
 			}
 			if( iEmptyTrack > -1 )
