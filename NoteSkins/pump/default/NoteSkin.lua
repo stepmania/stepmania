@@ -119,7 +119,7 @@ local function func()
 	end
 	
 	if sElement == "Tap Lift" then
-		t.InitCommand=cmd(pulse;effectclock,"beat";effecttiming,0.25,0.25,0.25,0.25;effectmagnitude,0.5,1,0);
+		t.InitCommand=cmd(pulse;effectclock,"beat";effectmagnitude,1,0.75,0);
 	end
 	
 	return t
