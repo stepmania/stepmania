@@ -1210,12 +1210,10 @@ void ScreenGameplay::LoadNextSong()
 	if( m_pCombinedLifeMeter )
 		m_pCombinedLifeMeter->OnLoadSong();
 
-
 	if( m_pSongForeground )
 		m_pSongForeground->LoadFromSong( GAMESTATE->m_pCurSong );
 
 	m_fTimeSinceLastDancingComment = 0;
-
 
 	/* m_soundMusic and m_pSongBackground take a very long time to load,
 	 * so cap fDelta at 0 so m_NextSong will show up on screen.
