@@ -23,8 +23,8 @@ public:
 	virtual void Unload();
 
 	void FadeToActualBrightness();
-	void SetBrightness( float fBrightness ); /* overrides pref and Cover */
-	
+	void SetBrightness( float fBrightness ); // overrides pref and Cover
+
 	DancingCharacters* GetDancingCharacters();
 
 	void GetLoadedBackgroundChanges( vector<BackgroundChange> **pBackgroundChangesOut );
@@ -32,7 +32,6 @@ public:
 protected:
 	BackgroundImpl *m_pImpl;
 };
-
 
 #endif
 

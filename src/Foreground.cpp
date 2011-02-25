@@ -25,7 +25,7 @@ void Foreground::Unload()
 
 void Foreground::LoadFromSong( const Song *pSong )
 {
-	/* Song graphics can get very big; never keep them in memory. */
+	// Song graphics can get very big; never keep them in memory.
 	RageTextureID::TexPolicy OldPolicy = TEXTUREMAN->GetDefaultTexturePolicy();
 	TEXTUREMAN->SetDefaultTexturePolicy( RageTextureID::TEX_VOLATILE );
 
@@ -58,7 +58,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 
 void Foreground::Update( float fDeltaTime )
 {
-	/* Calls to Update() should *not* be scaled by music rate. Undo it. */
+	// Calls to Update() should *not* be scaled by music rate. Undo it.
 	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
 	for( unsigned i=0; i < m_BGAnimations.size(); ++i )
@@ -67,7 +67,7 @@ void Foreground::Update( float fDeltaTime )
 
 		if( GAMESTATE->m_fSongBeat < bga.m_fStartBeat )
 		{
-			/* The animation hasn't started yet. */
+			// The animation hasn't started yet.
 			continue;
 		}
 
@@ -89,14 +89,14 @@ void Foreground::Update( float fDeltaTime )
 			fDeltaTime = GAMESTATE->m_fMusicSeconds - m_fLastMusicSeconds;
 		}
 
-		/* This shouldn't go down, but be safe: */
+		// This shouldn't go down, but be safe:
 		fDeltaTime = max( fDeltaTime, 0 );
 
 		bga.m_bga->Update( fDeltaTime / fRate );
 
 		if( GAMESTATE->m_fSongBeat > bga.m_fStopBeat )
 		{
-			/* Finished. */
+			// Finished.
 			bga.m_bga->SetVisible( false );
 			bga.m_bFinished = true;
 			continue;
