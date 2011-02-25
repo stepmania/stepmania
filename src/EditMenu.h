@@ -36,6 +36,7 @@ enum EditMenuAction
 	NUM_EditMenuAction, /**< The number of MenuActions available to choose from. */
 	EditMenuAction_Invalid
 };
+/** @brief Loop through each EditMenuAction. */
 #define FOREACH_EditMenuAction( ema ) FOREACH_ENUM( EditMenuAction, ema )
 const RString& EditMenuActionToString( EditMenuAction ema );
 const RString& EditMenuActionToLocalizedString( EditMenuAction ema );
@@ -101,7 +102,9 @@ private:
 	BitmapText	m_textLabel[NUM_EditMenuRow];
 	BitmapText	m_textValue[NUM_EditMenuRow];
 
+	/** @brief The group's banner. */
 	FadingBanner	m_GroupBanner;
+	/** @brief The Song's banner. */
 	FadingBanner	m_SongBanner;
 	TextBanner	m_SongTextBanner;
 	StepsDisplay	m_StepsDisplay;
@@ -114,7 +117,9 @@ private:
 		Difficulty dc;
 	};
 
+	/** @brief The list of groups. */
 	vector<RString>			m_sGroups;
+	/** @brief The list of Songs in a group. */
 	vector<Song*>			m_pSongs;
 	vector<StepsType>		m_StepsTypes;
 	vector<StepsAndDifficulty>	m_vpSteps;
@@ -139,8 +144,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
