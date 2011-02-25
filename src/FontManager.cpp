@@ -40,8 +40,6 @@ void FontManager::ReloadFonts()
 
 Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sChars )
 {
-	PruneFonts();
-
 	Font *pFont;
 	/* Convert the path to lowercase so that we don't load duplicates. Really,
 	 * this does not solve the duplicate problem. We could have two copies of
