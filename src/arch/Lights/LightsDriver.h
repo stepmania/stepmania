@@ -1,5 +1,3 @@
-/* LightsDriver - Controls lights */
-
 #ifndef LightsDriver_H
 #define LightsDriver_H
 
@@ -7,7 +5,7 @@
 #include "arch/RageDriver.h"
 
 struct LightsState;
-
+/** @brief Controls the lights. */
 class LightsDriver: public RageDriver
 {
 public:
@@ -26,8 +24,10 @@ public:
 
 #endif
 
-/*
- * (c) 2003-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
