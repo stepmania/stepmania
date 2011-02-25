@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // $Workfile: stdafx.h $
 // $Archive: /ZipArchive/stdafx.h $
-// $Date: 2006-01-20 13:43:41 -0600 (Fri, 20 Jan 2006) $ $Author: gmaynard $
+// $Date: 2003-07-21 21:10:30 -0500 (Mon, 21 Jul 2003) $ $Author: gmaynard $
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
 // is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
@@ -38,19 +38,9 @@
 
 #define ZIP_ARCHIVE_MFC
 
-#if defined(_DEBUG)
-#undef _DEBUG
-#define RESTORE_DEBUG
-#endif
-
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 #include <afx.h>
 #include <afxwin.h>
-
-#if defined(RESTORE_DEBUG)
-#undef RESTORE_DEBUG
-#define _DEBUG
-#endif
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
