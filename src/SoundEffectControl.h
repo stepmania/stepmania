@@ -1,5 +1,3 @@
-/* SoundEffectControl - Control a sound property through user input. */
-
 #ifndef SOUND_EFFECT_CONTROL_H
 #define SOUND_EFFECT_CONTROL_H
 
@@ -8,7 +6,7 @@
 class RageSoundReader;
 class PlayerState;
 class NoteData;
-
+/** @brief Control a sound property through user input. */
 class SoundEffectControl
 {
 public:
@@ -42,8 +40,10 @@ private:
 
 #endif
 
-/*
- * (c) 2006-2007 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2006-2007
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

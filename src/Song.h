@@ -62,12 +62,12 @@ class Song
 public:
 	void SetSongDir( const RString sDir ) { m_sSongDir = sDir; }
 
-	/** @brief When should this song should be displayed in the music wheel? */
+	/** @brief When should this song be displayed in the music wheel? */
 	enum SelectionDisplay
 	{ 
 		SHOW_ALWAYS,	/**< always show on the wheel. */
 		SHOW_NEVER	/**< never show on the wheel (unless song hiding is turned off). */
-	} m_SelectionDisplay;
+	} /** @brief When should this song be displayed in the music wheel? */ m_SelectionDisplay;
 
 	Song();
 	~Song();
@@ -141,14 +141,23 @@ public:
 	 * this will point to a generated .SSC filename. */
 	RString m_sSongFileName;
 
+	/** @brief The group this Song is in. */
 	RString m_sGroupName;
 
 	ProfileSlot	m_LoadedFromProfile;	// ProfileSlot_Invalid if not loaded from a profile
+	/** @brief Is the song file itself a symlink to another file? */
 	bool	m_bIsSymLink;
 	bool	m_bEnabled;
 
-	RString	m_sMainTitle, m_sSubTitle, m_sArtist;
-	RString m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit;
+	/** @brief The title of the Song. */
+	RString	m_sMainTitle; 
+	/** @brief The subtitle of the Song, if it exists. */
+	RString m_sSubTitle; 
+	/** @brief The artist of the Song, if it exists. */
+	RString m_sArtist;
+	RString m_sMainTitleTranslit;
+	RString m_sSubTitleTranslit;
+	RString m_sArtistTranslit;
 
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit*
 	 * below. Otherwise, they return the main titles. */
@@ -167,7 +176,7 @@ public:
 
 	/** @brief The version of the song/file. */
 	float	m_fVersion;
-
+	/** @brief The genre of the song/file. */
 	RString m_sGenre;
 
 	/**
@@ -216,7 +225,13 @@ public:
 
 	bool HasMusic() const;
 	bool HasInstrumentTrack( InstrumentTrack it ) const;
+	/**
+	 * @brief Does this song have a banner?
+	 * @return true if it does, false otherwise. */
 	bool HasBanner() const;
+	/**
+	 * @brief Does this song have a background?
+	 * @return true if it does, false otherwise. */
 	bool HasBackground() const;
 	//bool HasJacket() const;
 	//bool HasCDImage() const;
@@ -229,6 +244,7 @@ public:
 
 	bool Matches(RString sGroup, RString sSong) const;
 
+	/** @brief The Song's TimingData. */
 	TimingData m_Timing;
 
 	typedef vector<BackgroundChange> 	VBackgroundChange;

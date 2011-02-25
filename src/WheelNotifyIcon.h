@@ -1,10 +1,8 @@
-/* WheelNotifyIcon - A little graphic to the side of the song's text banner in the MusicWheel. */
-
 #ifndef WHEEL_NOTIFY_ICON_H
 #define WHEEL_NOTIFY_ICON_H
 
 #include "Sprite.h"
-
+/** @brief A little graphic to the side of the song's text banner in the MusicWheel. */
 class WheelNotifyIcon : public Sprite
 {
 public:
@@ -25,15 +23,29 @@ public:
 	virtual bool EarlyAbortDraw() const;
 
 protected:
-	enum Icons { training=0, best1, best2, best3, edits, long_ver, marathon, empty };
+	/** @brief What types of icons are available for the Song? */
+	enum Icons
+	{ 
+		training=0, /**< This song is used for training new Players. */
+		best1, /**< This is the most popular Song to play. */
+		best2, /**< This is the second most popular Song to play. */
+		best3, /**< This is the third most popular Song to play. */
+		edits, /**< This Song has edits available. */
+		long_ver, /**< This Song is a long version, and will take 2 Songs in most modes. */
+		marathon, /**< This Song is a marathon version, and will take 3 Songs in most modes. */
+		empty /**< There is no icon meant for this Song. */
+	};
 
+	/** @brief the list of Icons to show. */
 	vector<Icons> m_vIconsToShow;
 };
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
