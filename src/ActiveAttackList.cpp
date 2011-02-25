@@ -7,7 +7,6 @@
 #include "PlayerOptions.h"
 #include "PlayerState.h"
 
-
 ActiveAttackList::ActiveAttackList()
 {
 }
@@ -40,7 +39,7 @@ void ActiveAttackList::Refresh()
 		const Attack& attack = attacks[i];
 
 		if( !attack.bOn )
-			continue; /* hasn't started yet */
+			continue; // hasn't started yet
 		if( !attack.bShowInAttackList )
 			continue;
 
