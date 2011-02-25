@@ -349,6 +349,8 @@ void DancingCharacters::DrawPrimitives()
 
 		DISPLAY->SetLightOff( 0 );
 		DISPLAY->SetLighting( false );
+		
+		DISPLAY->ClearZBuffer();
 	}
 
 

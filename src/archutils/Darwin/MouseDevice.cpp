@@ -104,11 +104,11 @@ void MouseDevice::GetButtonPresses( vector<DeviceInput>& vPresses, IOHIDElementC
 	const Mouse& m = m_Mouse;
 	if( m.x_axis == cookie )
 	{
-		INPUTFILTER->UpdateCursorLocation((float)m.x_axis,(float)m.y_axis);
+//		INPUTFILTER->UpdateCursorLocation(m.x_axis,m.y_axis);
 	}
 	else if( m.y_axis == cookie )
 	{
-		INPUTFILTER->UpdateCursorLocation((float)m.x_axis,(float)m.y_axis);
+//		INPUTFILTER->UpdateCursorLocation((float)m.x_axis,(float)m.y_axis);
 	}
 	else if( m.z_axis == cookie )
 	{

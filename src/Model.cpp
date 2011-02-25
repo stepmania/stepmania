@@ -287,6 +287,7 @@ bool Model::EarlyAbortDraw() const
 
 void Model::DrawCelShaded()
 {
+	// TODO: use shell shader for outline.
 	this->SetGlow(RageColor(0,0,0,1));
 	this->SetDiffuseAlpha(0);
 	DISPLAY->SetPolygonMode( POLYGON_LINE );
