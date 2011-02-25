@@ -133,7 +133,12 @@ public:
 		NUM_CLOCKS
 	};
 
-	///** @brief What type of Effect this is. */
+	/**
+	 * @brief What type of Effect this is.
+	 *
+	 * This is an internal enum for checking if an effect can be run;
+	 * You can't have more than one of most EffectTypes in the Effect list. (You
+	 * might be able to have mutliple EffectType_Translates; not sure yet.) -aj */
 	/*
 	enum EffectType {
 		EffectType_Diffuse,
@@ -148,6 +153,7 @@ public:
 
 	// todo: use this instead of the Effect enum -aj
 	/*
+	// This is similar to Attributes in BitmapText as far as implementation.
 	struct Effect
 	{
 		Effect() : m_Action(EffectAction_None), m_Type(EffectType_Invalid), m_fSecsIntoEffect(0),
@@ -157,6 +163,7 @@ public:
 				m_effectColor1(RageColor(1,1,1,1)), m_effectColor2(RageColor(1,1,1,1))
 		{ }
 
+		RString			m_sName; // friendly name
 		EffectAction	m_Action; // replaces the old Effect enum
 		EffectType		m_Type; // determined by EffectAction
 		float			m_fSecsIntoEffect;
