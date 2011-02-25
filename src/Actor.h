@@ -64,6 +64,7 @@ LuaDeclareType( VertAlign );
 /** @brief The bottom vertical alignment constant. */
 #define align_bottom 1.0f
 
+// ssc futures:
 /*
 enum EffectAction
 {
@@ -113,13 +114,9 @@ public:
 	 * todo: split out into diffuse effects and translation effects, or
 	 * create an effect stack instead. -aj */
 	enum Effect { no_effect,
-			// diffuse effects
 			diffuse_blink, diffuse_shift, diffuse_ramp,
-			glow_blink, glow_shift, glow_ramp,
-			rainbow,
-			// translation effects
-			wag, bounce, bob, pulse,
-			spin, vibrate
+			glow_blink, glow_shift, glow_ramp, rainbow,
+			wag, bounce, bob, pulse, spin, vibrate
 	};
 
 	/** @brief Various values an Actor's effect can be tied to. */
@@ -160,8 +157,8 @@ public:
 				m_effectColor1(RageColor(1,1,1,1)), m_effectColor2(RageColor(1,1,1,1))
 		{ }
 
-		EffectAction	m_Action;
-		EffectType		m_Type; // diffuse, glow, or translate
+		EffectAction	m_Action; // replaces the old Effect enum
+		EffectType		m_Type; // determined by EffectAction
 		float			m_fSecsIntoEffect;
 		float			m_fEffectDelta;
 		RageColor		m_EffectColor1;
@@ -207,6 +204,7 @@ public:
 		RageColor	diffuse[4];
 		/** @brief The glow color for this TweenState. */
 		RageColor	glow;
+		/** @brief A magical value that nobody really knows the use for. ;) */
 		float		aux;
 	};
 
