@@ -662,7 +662,14 @@ void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int
 	Init();
 
 	SetNumTracks( iNewNumTracks );
-
+	
+	// an array to keep transformed tracks
+	bool bTransformedTracks[in.GetNumTracks()];
+	for( int t=0; t<in.GetNumTracks(); t++ )
+	{
+		bTransformedTracks[t] = false;
+	}
+	
 	// copy tracks
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
@@ -673,6 +680,36 @@ void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int
 		if( iOriginalTrack == -1 )
 			continue;
 		m_TapNotes[t] = in.m_TapNotes[iOriginalTrack];
+		bTransformedTracks[iOriginalTrack] = true;
+	}
+	
+	// move uncopied keysound tracks and put them as autokeysound.
+	// someone please fix this pile of code pyramid
+	for( int t=0; t<in.GetNumTracks(); t++ )
+	{
+		if( !bTransformedTracks[t] )
+		{
+			FOREACH_NONEMPTY_ROW_IN_TRACK( in, t, row )
+			{
+				TapNote tn = in.GetTapNote( t, row );
+				if( tn.type == TapNote::autoKeysound || tn.type == TapNote::hold_head || tn.type == TapNote::tap )
+				{
+					if( tn.iKeysoundIndex >= 0 )
+					{
+						for( int i=0; i<GetNumTracks(); i++ )
+						{
+							if ( GetTapNote(i, row) == TAP_EMPTY )
+							{
+								tn.type = TapNote::autoKeysound;
+								tn.subType = TapNote::SubType_Invalid;
+								SetTapNote( i, row, tn );
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 

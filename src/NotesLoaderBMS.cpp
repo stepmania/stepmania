@@ -572,7 +572,6 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		}
 	}
 	
-	
 	out.m_StepsType = DetermineStepsType( iPlayer, ndNotes, sPath );
 	if( out.m_StepsType == StepsType_beat_single5 && GetTagFromMap( mapNameToData, "#title", sData ) )
 	{
@@ -700,8 +699,10 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 		{
 			TapNote tn = ndNotes.GetTapNote( t, row );
 			int iEmptyTrack = -1;
-			for ( int i=0; i<iNumNewTracks; i++ ) {
-				if ( ndNotes.GetTapNote(iTransformNewToOld[i], row) == TAP_EMPTY ) {
+			for( int i=0; i<iNumNewTracks; i++ )
+			{
+				if ( ndNotes.GetTapNote(iTransformNewToOld[i], row) == TAP_EMPTY )
+				{
 					iEmptyTrack = iTransformNewToOld[i];
 				}
 			}
