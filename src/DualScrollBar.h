@@ -1,12 +1,10 @@
-/* DualScrollBar - a scrollbar with two independent thumbs. */
-
 #ifndef DUAL_SCROLLBAR_H
 #define DUAL_SCROLLBAR_H
 
 #include "ActorFrame.h"
 #include "AutoActor.h"
 #include "PlayerNumber.h"
-
+/** @brief A scrollbar with two independent thumbs. */
 class DualScrollBar: public ActorFrame
 {
 public:
@@ -19,6 +17,7 @@ public:
 	void EnablePlayer( PlayerNumber pn, bool on );
 
 private:
+	/** @brief The height of the scrollbar. */
 	float	m_fBarHeight;
 	float	m_fBarTime;
 
@@ -28,8 +27,10 @@ private:
 
 #endif
 
-/*
- * (c) 2001-2004 Glenn Maynard, Chris Danford
+/**
+ * @file
+ * @author Glenn Maynard, Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
