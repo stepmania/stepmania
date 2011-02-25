@@ -1,5 +1,3 @@
-/* SnapDisplay - Graphics on ends of receptors on Edit screen that show the current snap type. */
-
 #ifndef SNAPDISPLAY_H
 #define SNAPDISPLAY_H
 
@@ -12,7 +10,7 @@
  * Convert m_sprIndicators to AutoActors
  * ThemeMetric for deciding to load one or two indicators? -aj
  */
-
+/** @brief Graphics on ends of receptors on Edit screen that show the current snap type. */
 class SnapDisplay : public ActorFrame
 {
 public:
@@ -30,15 +28,18 @@ protected:
 
 	void SnapModeChanged();
 
-	NoteType	m_NoteType;		// snap to this note type
+	/** @brief the NoteType to snap to. */
+	NoteType	m_NoteType;
 	Sprite		m_sprIndicators[2];	// left and right side
 };
 
 
 #endif
 
-/*
- * (c) 2001-2002 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2002
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

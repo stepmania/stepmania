@@ -1,5 +1,3 @@
-/* PaneDisplay - An Actor that displays song information. */
-
 #ifndef PANE_DISPLAY_H
 #define PANE_DISPLAY_H
 
@@ -30,7 +28,7 @@ enum PaneCategory
 	NUM_PaneCategory,
 	PaneCategory_Invalid,
 };
-
+/** @brief An Actor that displays Song information. */
 class PaneDisplay: public ActorFrame
 {
 public:
@@ -60,8 +58,10 @@ private:
 
 #endif
 
-/*
- * (c) 2003 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

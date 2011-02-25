@@ -1,12 +1,10 @@
-/* ScreenSyncOverlay - credits and statistics drawn on top of everything else. */
-
 #ifndef ScreenSyncOverlay_H
 #define ScreenSyncOverlay_H
 
 #include "Screen.h"
 #include "BitmapText.h"
 #include "Quad.h"
-
+/** @brief Credits and statistics drawn on top of everything else. */
 class ScreenSyncOverlay : public Screen
 {
 public:
@@ -31,8 +29,10 @@ private:
 
 #endif
 
-/*
- * (c) 2001-2005 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2005
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

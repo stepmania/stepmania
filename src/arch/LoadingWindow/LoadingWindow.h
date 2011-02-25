@@ -1,9 +1,8 @@
-/* LoadingWindow - opens and displays the loading banner. */
-
 #ifndef LOADING_WINDOW_H
 #define LOADING_WINDOW_H
 
 struct RageSurface;
+/** @brief Opens and displays the loading banner. */
 class LoadingWindow
 {
 public:
@@ -19,8 +18,10 @@ public:
 
 #endif
 
-/*
- * (c) 2002-2004 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2002-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
