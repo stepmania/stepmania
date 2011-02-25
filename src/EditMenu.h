@@ -132,6 +132,7 @@ private:
 	RageSound m_soundChangeRow;
 	RageSound m_soundChangeValue;
 
+	/** @brief A metric to determine if groups are shown. */
 	ThemeMetric<bool> SHOW_GROUPS;
 	ThemeMetric1D<float> ARROWS_X;
 	ThemeMetric<apActorCommands> ARROWS_ENABLED_COMMAND;
