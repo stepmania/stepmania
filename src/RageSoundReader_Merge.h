@@ -1,10 +1,8 @@
-/* RageSoundReader_Merge - Chain sounds together */
-
 #ifndef RAGE_SOUND_READER_MERGE
 #define RAGE_SOUND_READER_MERGE
 
 #include "RageSoundReader.h"
-
+/** @brief Chain different sounds together. */
 class RageSoundReader_Merge: public RageSoundReader
 {
 public:
@@ -26,7 +24,9 @@ public:
 
 	void AddSound( RageSoundReader *pSound );
 
-	/* Finish adding sounds. */
+	/**
+	 * @brief Finish adding sounds. 
+	 * @param iPreferredSampleRate the sample rate for the sounds. */
 	void Finish( int iPreferredSampleRate );
 
 private:
@@ -44,8 +44,10 @@ private:
 
 #endif
 
-/*
- * Copyright (c) 2004-2006 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2004-2006
+ * @section LICENSE
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

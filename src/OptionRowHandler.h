@@ -8,23 +8,23 @@
 struct MenuRowDef;
 class OptionRow;
 struct ConfOption;
-
+/** @brief How many options can be selected on this row? */
 enum SelectType
 {
-	SELECT_ONE,
-	SELECT_MULTIPLE,
-	SELECT_NONE,
+	SELECT_ONE, /**< Only one option can be chosen on this row. */
+	SELECT_MULTIPLE, /**< Multiple options can be chosen on this row. */
+	SELECT_NONE, /**< No options can be chosen on this row. */
 	NUM_SelectType,
 	SelectType_Invalid
 };
 const RString& SelectTypeToString( SelectType pm );
 SelectType StringToSelectType( const RString& s );
 LuaDeclareType( SelectType );
-
+/** @brief How many items are shown on the row? */
 enum LayoutType
 {
-	LAYOUT_SHOW_ALL_IN_ROW,
-	LAYOUT_SHOW_ONE_IN_ROW,
+	LAYOUT_SHOW_ALL_IN_ROW, /**< All of the options are shown at once. */
+	LAYOUT_SHOW_ONE_IN_ROW, /**< Only one option is shown at a time. */
 	NUM_LayoutType,
 	LayoutType_Invalid
 };
@@ -32,10 +32,14 @@ const RString& LayoutTypeToString( LayoutType pm );
 LayoutType StringToLayoutType( const RString& s );
 LuaDeclareType( LayoutType );
 
+/** @brief Define the purpose of the OptionRow. */
 struct OptionRowDefinition
 {
+	/** @brief the name of the option row. */
 	RString m_sName;
+	/** @brief an explanation of the row's purpose. */
 	RString m_sExplanationName;
+	/** @brief Do all players have to share one option from the row? */
 	bool m_bOneChoiceForAllPlayers;
 	SelectType m_selectType;
 	LayoutType m_layoutType;
@@ -43,11 +47,29 @@ struct OptionRowDefinition
 	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
 	int m_iDefault;
 	bool	m_bExportOnChange;
-	bool	m_bAllowThemeItems;	// Should be true for dynamic strings.
-	bool	m_bAllowThemeTitle;	// Should be true for dynamic strings.
-	bool	m_bAllowExplanation;	// if false, ignores ScreenOptions::SHOW_EXPLANATIONS.  Should be true for dynamic strings.
+	/**
+	 * @brief Are theme items allowed here?
+	 *
+	 * This should be true for dynamic strings. */
+	bool	m_bAllowThemeItems;
+	/**
+	 * @brief Are theme titles allowed here?
+	 *
+	 * This should be true for dynamic strings. */
+	bool	m_bAllowThemeTitle;
+	/**
+	 * @brief Are explanations allowed for this row?
+	 *
+	 * If this is false, it will ignore the ScreenOptions::SHOW_EXPLANATIONS metric.
+	 *
+	 * This should be true for dynamic strings. */
+	bool	m_bAllowExplanation;
 	bool	m_bShowChoicesListOnSelect; // (currently unused)
 
+	/**
+	 * @brief Is this option enabled for the Player?
+	 * @param pn the Player the PlayerNumber represents.
+	 * @return true if the option is enabled, false otherwise. */
 	bool IsEnabledForPlayer( PlayerNumber pn ) const 
 	{
 		return m_vEnabledForPlayers.find(pn) != m_vEnabledForPlayers.end(); 
@@ -154,8 +176,10 @@ inline void VerifySelected( SelectType st, const vector<bool> &vbSelected, const
 
 #endif
 
-/*
- * (c) 2002-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2002-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

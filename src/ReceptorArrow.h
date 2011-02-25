@@ -1,5 +1,3 @@
-/* ReceptorArrow - A gray arrow that "receives" the note arrows. */
-
 #ifndef RECEPTOR_ARROW_H
 #define RECEPTOR_ARROW_H
 
@@ -9,7 +7,7 @@
 #include "GameConstantsAndTypes.h"
 
 class PlayerState;
-
+/** @brief A gray arrow that "receives" the note arrows. */
 class ReceptorArrow : public ActorFrame
 {
 public:
@@ -35,8 +33,10 @@ private:
 
 #endif 
 
-/*
- * (c) 2001-2004 Ben Nordstrom, Chris Danford
+/**
+ * @file
+ * @author Ben Nordstrom, Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

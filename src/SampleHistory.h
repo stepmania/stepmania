@@ -1,8 +1,6 @@
-/* SampleHistory - Store a trailing history of values, and retrieve values with interpolation. */
-
 #ifndef SAMPLE_HISTORY_H
 #define SAMPLE_HISTORY_H
-
+/** @brief Store a trailing history of values, and retrieve values with interpolation. */
 class SampleHistory
 {
 public:
@@ -22,8 +20,10 @@ private:
 
 #endif
 
-/*
- * (c) 2006-2007 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2006-2007
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
