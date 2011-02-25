@@ -1,18 +1,15 @@
-/* Foreground - Foreground in front of notes while playing. */
 #ifndef FOREGROUND_H
 #define FOREGROUND_H
 
 #include "ActorFrame.h"
 
 class Song;
-
+/** @brief Foreground in front of notes while playing. */
 class Foreground: public ActorFrame
 {
 public:
 	~Foreground();
-
 	void Unload();
-
 	void LoadFromSong( const Song *pSong );
 
 	virtual void Update( float fDeltaTime );
