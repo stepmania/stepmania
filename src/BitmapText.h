@@ -1,5 +1,3 @@
-/* BitmapText - An actor that holds a Font and draws text to the screen. */
-
 #ifndef BITMAP_TEXT_H
 #define BITMAP_TEXT_H
 
@@ -9,7 +7,7 @@
 class RageTexture;
 class Font;
 struct FontPageTextures;
-
+/** @brief An actor that holds a Font and draws text to the screen. */
 class BitmapText : public Actor
 {
 public:
@@ -101,8 +99,10 @@ private:
 
 #endif
 
-/*
- * (c) 2001-2007 Chris Danford, Charles Lohr, Steve Checkoway
+/**
+ * @file
+ * @author Chris Danford, Charles Lohr, Steve Checkoway (c) 2001-2007
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

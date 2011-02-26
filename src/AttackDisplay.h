@@ -1,4 +1,3 @@
-/* AttackDisplay - A graphical display for attacks. */
 #ifndef AttackDisplay_H
 #define AttackDisplay_H
 
@@ -8,7 +7,7 @@
 #include "RageTexturePreloader.h"
 
 class PlayerState;
-
+/** @brief A graphical display for attacks. */
 class AttackDisplay : public ActorFrame
 {
 public:
@@ -29,8 +28,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2003 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

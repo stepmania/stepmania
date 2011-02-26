@@ -1,4 +1,3 @@
-/* BeginnerHelper - A dancing character that follows the steps of the song. */
 #ifndef BEGINNER_HELPER_H
 #define BEGINNER_HELPER_H
 
@@ -8,7 +7,7 @@
 #include "PlayerNumber.h"
 #include "NoteData.h"
 class Model;
-
+/** @brief A dancing character that follows the steps of the Song. */
 class BeginnerHelper : public ActorFrame
 {
 public:
@@ -42,8 +41,10 @@ protected:
 };
 #endif
 
-/*
- * (c) 2003 Kevin Slaughter, Thad Ward
+/**
+ * @file
+ * @author Kevin Slaughter, Thad Ward (c) 2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

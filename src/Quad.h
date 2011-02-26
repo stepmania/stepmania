@@ -1,11 +1,9 @@
-/** @brief Quad - A rectangle shaped actor with color. */
-
 #ifndef QUAD_H
 #define QUAD_H
 
 #include "Sprite.h"
 
-/** @brief the Rectangular Actor with color. */
+/** @brief A rectangular shaped Actor with color. */
 class Quad : public Sprite
 {
 public:

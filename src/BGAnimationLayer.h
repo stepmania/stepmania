@@ -1,5 +1,3 @@
-/* BGAnimationLayer - layer elements used by BGAnimation */
-
 #ifndef BGANIMATIONLAYER_H
 #define BGANIMATIONLAYER_H
 
@@ -9,6 +7,7 @@
 
 class XNode;
 
+/** @brief Layer elements used by BGAnimation. */
 class BGAnimationLayer : public ActorFrame
 {
 public:
@@ -53,8 +52,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2001-2004 Ben Nordstrom, Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Ben Nordstrom, Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

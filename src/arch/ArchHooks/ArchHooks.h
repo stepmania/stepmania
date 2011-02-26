@@ -18,7 +18,10 @@ public:
 	 * safely log. */
 	virtual void DumpDebugInfo() { }
 
-	/* Re-exec the game.  If this is implemented, it doesn't return. */
+	/**
+	 * @brief Re-exec the game.
+	 *
+	 * If this is implemented, it doesn't return. */
 	virtual void RestartProgram() { }
 
 	/*
@@ -41,15 +44,17 @@ public:
 	virtual void BoostPriority() { }
 	virtual void UnBoostPriority() { }
 
-	/*
+	/**
+	 * @brief Setup the rendering threads for concurrency.
+	 * 
 	 * The priority of the concurrent rendering thread may need to be boosted
 	 * on some schedulers.
 	 */
 	virtual void SetupConcurrentRenderingThread() { }
 
-	/*
-	 * Returns true if the user wants to quit (eg. ^C, or clicked a "close window" button).
-	 */
+	/**
+	 * @brief Determine if the user wants to quit (eg. ^C, or clicked a "close window" button).
+	 * @return true if the user wants to quit, false otherwise. */
 	static bool UserQuit() { return g_bQuitting; }
 	static void SetUserQuit() { g_bQuitting = true; }
 	
@@ -134,8 +139,10 @@ private:
 
 extern ArchHooks *HOOKS;	// global and accessable from anywhere in our program
 
-/*
- * (c) 2003-2004 Glenn Maynard, Chris Danford
+/**
+ * @file
+ * @author Glenn Maynard, Chris Danford (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

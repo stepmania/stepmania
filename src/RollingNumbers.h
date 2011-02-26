@@ -1,11 +1,10 @@
-/** @brief RollingNumbers - animates from one number to another by scrolling its digits. */
-
 #ifndef RollingNumbers_H
 #define RollingNumbers_H
 
 #include "BitmapText.h"
 #include "ThemeMetric.h"
 
+/** @brief Animates from one number to another by scrolling its digits. */
 class RollingNumbers : public BitmapText
 {
 public:

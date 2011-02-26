@@ -1,10 +1,8 @@
-/* ArrowEffects - Functions that return properties of arrows based on Style and PlayerOptions. */
-
 #ifndef ARROWEFFECTS_H
 #define ARROWEFFECTS_H
 
 class PlayerState;
-
+/** @brief Functions that return properties of arrows based on Style and PlayerOptions. */
 class ArrowEffects
 {
 public:
@@ -37,7 +35,7 @@ public:
 	// Due to the handling logic for holds on Twirl, we need to use an offset instead.
 	// It's more intuitive for Roll to be based off offset, so use an offset there too.
 	static float GetRotationX(  const PlayerState* pPlayerState, float fYOffset );
-	static float GetRotationY(  const PlayerState *pPlayerState, float fYOffset );
+	static float GetRotationY(  const PlayerState* pPlayerState, float fYOffset );
 
 	// fXPos is a horizontal position in pixels relative to the center of the field.
 	// This depends on the column of the arrow and possibly the Arrow effect and
@@ -58,7 +56,13 @@ public:
 	// AppearanceType.
 	static float GetGlow( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 
-	// Depends on fYOffset.
+	/**
+	 * @brief Retrieve the current brightness.
+	 *
+	 * Note that this depends on fYOffset.
+	 * @param pPlayerState the present PlayerState.
+	 * @param fNoteBeat the current beat.
+	 * @return the current brightness. */
 	static float GetBrightness( const PlayerState* pPlayerState, float fNoteBeat );
 
 	// This is the zoom of the individual tracks, not of the whole Player.
@@ -69,8 +73,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

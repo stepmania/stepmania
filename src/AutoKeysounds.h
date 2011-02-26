@@ -1,5 +1,3 @@
-/* AutoKeysounds - handle playback of auto keysound notes. */
-
 #ifndef AUTO_KEYSOUNDS_H
 #define AUTO_KEYSOUNDS_H
 
@@ -10,6 +8,7 @@
 class RageSoundReader;
 class RageSoundReader_Chain;
 class Song;
+/** @brief Handle playback of auto keysound notes. */
 class AutoKeysounds
 {
 public:
@@ -34,8 +33,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
