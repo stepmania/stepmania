@@ -1,10 +1,8 @@
-/* LoadingWindow_MacOSX - Loading window for OSX */
-
 #ifndef LOADING_WINDOW_MACOSX_H
 #define LOADING_WINDOW_MACOSX_H
 
 #include "LoadingWindow.h"
-
+/** @brief Loading window for Mac OS X. */
 class LoadingWindow_MacOSX : public LoadingWindow
 {
 public:
@@ -16,8 +14,10 @@ public:
 
 #endif
 
-/*
- * (c) 2003-2005, 2008 Steve Checkoway
+/**
+ * @file
+ * @author Steve Checkoway (c) 2003-2005, 2008
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

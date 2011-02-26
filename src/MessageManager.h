@@ -1,5 +1,3 @@
-/* MessageManager - Control the world. */
-
 #ifndef MessageManager_H
 #define MessageManager_H
 
@@ -8,6 +6,7 @@ struct lua_State;
 class LuaTable;
 class LuaReference;
 
+/** @brief The various messages available to watch for. */
 enum MessageID
 {
 	Message_CurrentGameChanged,
@@ -173,7 +172,7 @@ private:
 	vector<RString> m_vsSubscribedTo;
 };
 
-
+/** @brief Deliver messages to any part of the program as needed. */
 class MessageManager
 {
 public:

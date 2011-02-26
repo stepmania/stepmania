@@ -1,20 +1,24 @@
-/* LyricsLoader - Loads lyrics from an LRC file. */
-
 #ifndef LYRICS_LOADER_H
 #define LYRICS_LOADER_H
 
 class Song;
-
+/** @brief Loads lyrics from an LRC file. */
 class LyricsLoader
 {
 public:
+	/**
+	 * @brief Load the lyrics into the Song.
+	 * @param sPath the path to the Lyrics.
+	 * @param out the Song to receive the Lyrics. */
 	bool LoadFromLRCFile( const RString& sPath, Song &out );
 };
 
 #endif
 
-/*
- * (c) 2003 Kevin Slaughter, Glenn Maynard
+/**
+ * @file
+ * @author Kevin Slaughter, Glenn Maynard (c) 2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

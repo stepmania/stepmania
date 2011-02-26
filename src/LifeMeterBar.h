@@ -1,5 +1,3 @@
-/* LifeMeterBar - The player's life represented as a bar. */
-
 #ifndef LIFEMETERBAR_H
 #define LIFEMETERBAR_H
 
@@ -10,7 +8,7 @@
 #include "ThemeMetric.h"
 class StreamDisplay;
 
-
+/** @brief The player's life represented as a bar. */
 class LifeMeterBar : public LifeMeter
 {
 public:
@@ -59,9 +57,10 @@ private:
 	float		m_fLifeDifficulty;		// essentially same as pref
 
 	int			m_iProgressiveLifebar;		// cached from prefs
-	int			m_iMissCombo;			// current number of progressive W5/miss
-
-	int			m_iComboToRegainLife;		// combo needed before lifebar starts filling up after fail
+	/** @brief The current number of progressive W5/miss rankings. */
+	int			m_iMissCombo;
+	/** @brief The combo needed before the life bar starts to fill up after a Player failed. */
+	int			m_iComboToRegainLife;
 };
 
 #endif
