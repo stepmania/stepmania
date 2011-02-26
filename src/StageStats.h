@@ -17,7 +17,14 @@ public:
 	StageStats();
 	void Init();
 
+	/**
+	 * @brief Ensure that the Player is valid.
+	 * @param pn the PlayerNumber to check. */
 	void AssertValid( PlayerNumber pn ) const;
+	
+	/**
+	 * @brief Ensure that the Player is valid.
+	 * @param mp the Multiplayer to check. */
 	void AssertValid( MultiPlayer mp ) const;
 
 	void AddStats( const StageStats& other );		// accumulate
@@ -34,6 +41,7 @@ public:
 	vector<Song*>	m_vpPlayedSongs;
 	vector<Song*>	m_vpPossibleSongs;
 
+	/** @brief Was an extra stage earned this goaround? */
 	EarnedExtraStage m_EarnedExtraStage;
 	/** @brief Was the gameplay exited by the Player giving up? */
 	bool	m_bGaveUp;

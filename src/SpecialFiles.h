@@ -1,5 +1,3 @@
-/* SpecialFiles -  */
-
 #ifndef SpecialFiles_H
 #define SpecialFiles_H
 
@@ -19,8 +17,11 @@ namespace SpecialFiles
 	extern const RString PACKAGES_DIR;
 	extern const RString KEYMAPS_PATH;
 	extern const RString PREFERENCES_INI_PATH;
+	/** @brief The directory that contains the themes. */
 	extern const RString THEMES_DIR;
+	/** @brief The directory that contains the different languages. */
 	extern const RString LANGUAGES_SUBDIR;
+	/** @brief The base language for most users of this program. */
 	extern const RString BASE_LANGUAGE;
 	extern const RString METRICS_FILE;
 	extern const RString CACHE_DIR;
@@ -28,8 +29,11 @@ namespace SpecialFiles
 	extern const RString DEFAULTS_INI_PATH;
 	extern const RString STATIC_INI_PATH;
 	extern const RString TYPE_TXT_FILE;
+	/** @brief The default Songs directory. */
 	extern const RString SONGS_DIR;
+	/** @brief The default courses directory. */
 	extern const RString COURSES_DIR;
+	/** @brief The default noteskins directory. */
 	extern const RString NOTESKINS_DIR;
 }
 

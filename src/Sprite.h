@@ -1,5 +1,3 @@
-/** @brief Sprite - A bitmap Actor that animates and moves around. */
-
 #ifndef SPRITE_H
 #define SPRITE_H
 
@@ -7,7 +5,7 @@
 #include "RageTextureID.h"
 
 class RageTexture;
-
+/** @brief A bitmap Actor that animates and moves around. */
 class Sprite: public Actor
 {
 public:
