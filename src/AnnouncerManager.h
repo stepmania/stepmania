@@ -24,7 +24,7 @@ public:
 	void SwitchAnnouncer( RString sNewAnnouncerName );
 	/**
 	 * @brief Retrieve the current announcer's name.
-	 * @param the current announcer's name. */
+	 * @return the current announcer's name. */
 	RString GetCurAnnouncerName() const { return m_sCurAnnouncerName; };
 	void NextAnnouncer();
 
