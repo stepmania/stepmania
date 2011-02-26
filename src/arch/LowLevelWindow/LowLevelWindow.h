@@ -1,8 +1,6 @@
 #ifndef LOW_LEVEL_WINDOW_H
 #define LOW_LEVEL_WINDOW_H
 
-/* This handles low-level operations that OGL 1.x doesn't give us. */
-
 #include <set>
 
 class DisplayResolution;
@@ -10,7 +8,7 @@ typedef set<DisplayResolution> DisplayResolutions;
 class VideoModeParams;
 class RenderTarget;
 struct RenderTargetParam;
-
+/** @brief Handle low-level operations that OGL 1.x doesn't give us. */
 class LowLevelWindow
 {
 public:
@@ -46,8 +44,10 @@ public:
 
 #endif
 
-/*
- * (c) 2003-2004 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

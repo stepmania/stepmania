@@ -1,5 +1,3 @@
-/* Inventory - Inventory management for PLAY_MODE_BATTLE. */
-
 #ifndef Inventory_H
 #define Inventory_H
 
@@ -13,7 +11,7 @@ AutoScreenMessage( SM_BattleDamageLevel2 );
 AutoScreenMessage( SM_BattleDamageLevel3 );
 
 class PlayerState;
-
+/** @brief Inventory management for PLAY_MODE_BATTLE. */
 class Inventory : public Actor
 {
 public:
@@ -32,6 +30,7 @@ protected:
 	PlayerState* m_pPlayerState;
 	int m_iLastSeenCombo;
 
+	/** @brief a sound played when an item has been acquired. */
 	RageSound m_soundAcquireItem;
 	vector<RageSound*> m_vpSoundUseItem;
 	RageSound m_soundItemEnding;
@@ -39,8 +38,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2003 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

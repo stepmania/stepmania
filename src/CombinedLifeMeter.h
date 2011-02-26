@@ -5,7 +5,7 @@
 #include "GameConstantsAndTypes.h"
 #include "ActorFrame.h"
 
-
+/** @brief Multiple Players sharing one LifeMeter. */
 class CombinedLifeMeter : public ActorFrame
 {
 public:
@@ -13,11 +13,18 @@ public:
 	virtual ~CombinedLifeMeter() {};
 	
 	virtual void OnLoadSong() {};
-	/* Change life after receiving a tap note grade.  This *is* called for
-	 * the head of hold notes. */
+	/**
+	 * @brief Change life after receiving a tap note grade.
+	 *
+	 * Note that this *is* called for the head of hold/roll notes.
+	 * @param pn the PlayerNumber that hit the TapNote.
+	 * @param tns the score received from the TapNote. */
 	virtual void ChangeLife( PlayerNumber pn, TapNoteScore tns ) = 0;
-	/* Change life after receiving a hold note grade.  tscore is the score
-	 * received for the initial tap note. */
+	/**
+	 * @brief Change life after receiving a hold note grade.
+	 * @param pn the PlayerNumber that received the hold note score.
+	 * @param hns the hold note score recently received.
+	 * @param tns the score from the initial TapNote. */
 	virtual void ChangeLife( PlayerNumber pn, HoldNoteScore hns, TapNoteScore tns ) = 0;
 	virtual void HandleTapScoreNone( PlayerNumber pn ) = 0;
 };
@@ -26,8 +33,10 @@ public:
 
 #endif
 
-/*
- * (c) 2003 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

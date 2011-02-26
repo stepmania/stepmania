@@ -1,5 +1,3 @@
-/* ReceptorArrowRow - A row of ReceptorArrow objects. */
-
 #ifndef RECEPTOR_ARROW_ROW_H
 #define RECEPTOR_ARROW_ROW_H
 
@@ -8,7 +6,7 @@
 #include "GameConstantsAndTypes.h"
 
 class PlayerState;
-
+/** @brief A row of ReceptorArrow objects. */
 class ReceptorArrowRow : public ActorFrame
 {
 public:
@@ -35,8 +33,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2001-2003 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

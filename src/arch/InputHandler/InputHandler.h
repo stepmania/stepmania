@@ -18,7 +18,7 @@
  * if it becomes needed.) */
 #include "RageInputDevice.h"	// for InputDevice
 #include "arch/RageDriver.h"
-
+/** @brief A class designed to handle special input devices. */
 class InputHandler: public RageDriver
 {
 public:
@@ -75,8 +75,10 @@ private:
 
 #endif
 
-/*
- * (c) 2003-2004 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

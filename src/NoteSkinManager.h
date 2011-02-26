@@ -1,5 +1,3 @@
-/* NoteSkinManager - Loads note skins. */
-
 #ifndef NOTE_SKIN_MANAGER_H
 #define NOTE_SKIN_MANAGER_H
 
@@ -10,7 +8,7 @@
 
 class Game;
 struct NoteSkinData;
-
+/** @brief Loads note skins. */
 class NoteSkinManager
 {
 public:
@@ -63,8 +61,10 @@ public:
 
 #endif
 
-/*
- * (c) 2003-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
