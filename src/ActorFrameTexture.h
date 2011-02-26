@@ -46,6 +46,7 @@ private:
 	bool m_bAlphaBuffer;
 	bool m_bFloat;
 	bool m_bPreserveTexture;
+	/** @brief the name of this ActorFrameTexture. */
 	RString m_sTextureName;
 };
 

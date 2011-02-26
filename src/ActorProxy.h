@@ -4,7 +4,7 @@
 #include "Actor.h"
 
 struct lua_State;
-/** @brief Rendrs another actor. */
+/** @brief Renders another actor. */
 class ActorProxy: public Actor
 {
 public:

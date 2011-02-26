@@ -133,7 +133,7 @@ public:
 		NUM_CLOCKS
 	};
 
-	/**
+	/*
 	 * @brief What type of Effect this is.
 	 *
 	 * This is an internal enum for checking if an effect can be run;
@@ -181,6 +181,9 @@ public:
 	};
 	*/
 
+	/**
+	 * @brief The present state for the Tween.
+	 */
 	struct TweenState
 	{
 		void Init();
@@ -220,8 +223,13 @@ public:
 	virtual void BeginDraw();				// pushes transform onto world matrix stack
 	virtual void SetGlobalRenderStates();			// Actor should call this at beginning of their DrawPrimitives()
 	virtual void SetTextureRenderStates();			// Actor should call this after setting a texture
-	virtual void DrawPrimitives() {};			// Derivatives should override
-	virtual void EndDraw();					// pops transform from world matrix stack
+	/**
+	 * @brief Draw the primitives of the Actor.
+	 *
+	 * Derivative classes should override this function. */
+	virtual void DrawPrimitives() {};
+	/** @brief Pop the transform from the world matrix stack. */
+	virtual void EndDraw();
 	
 	// TODO: make Update non virtual and change all classes to override UpdateInternal 
 	// instead.
@@ -246,10 +254,22 @@ public:
 	 * @brief Retrieve the Actor's parent.
 	 * @return the Actor's parent. */
 	Actor *GetParent() { return m_pParent; }
+	/**
+	 * @brief Retrieve the Actor's lineage.
+	 * @return the Actor's lineage. */
 	RString GetLineage() const;
 
+	/**
+	 * @brief Retrieve the Actor's x position.
+	 * @return the Actor's x position. */
 	float GetX() const				{ return m_current.pos.x; };
+	/**
+	 * @brief Retrieve the Actor's y position.
+	 * @return the Actor's y position. */
 	float GetY() const				{ return m_current.pos.y; };
+	/**
+	 * @brief Retrieve the Actor's z position.
+	 * @return the Actor's z position. */
 	float GetZ() const				{ return m_current.pos.z; };
 	float GetDestX() const				{ return DestTweenState().pos.x; };
 	float GetDestY() const				{ return DestTweenState().pos.y; };
@@ -258,8 +278,17 @@ public:
 	void  SetY( float y )				{ DestTweenState().pos.y = y; };
 	void  SetZ( float z )				{ DestTweenState().pos.z = z; };
 	void  SetXY( float x, float y )			{ DestTweenState().pos.x = x; DestTweenState().pos.y = y; };
+	/**
+	 * @brief Add to the x position of this Actor.
+	 * @param x the amount to add to the Actor's x position. */
 	void  AddX( float x )				{ SetX( GetDestX()+x ); }
+	/**
+	 * @brief Add to the y position of this Actor.
+	 * @param y the amount to add to the Actor's y position. */
 	void  AddY( float y )				{ SetY( GetDestY()+y ); }
+	/**
+	 * @brief Add to the z position of this Actor.
+	 * @param z the amount to add to the Actor's z position. */
 	void  AddZ( float z )				{ SetZ( GetDestZ()+z ); }
 
 	// height and width vary depending on zoom
@@ -284,9 +313,23 @@ public:
 	void  SetBaseRotation( const RageVector3 &rot )	{ m_baseRotation = rot; }
 	virtual void  SetBaseAlpha( float fAlpha )	{ m_fBaseAlpha = fAlpha; }
 
-	float GetZoom() const				{ return DestTweenState().scale.x; }	// not accurate in some cases
+	/**
+	 * @brief Retrieve the general zoom factor, using the x coordinate of the Actor.
+	 *
+	 * Note that this is not accurate in some cases.
+	 * @return the zoom factor for the x coordinate of the Actor. */
+	float GetZoom() const				{ return DestTweenState().scale.x; }
+	/**
+	 * @brief Retrieve the zoom factor for the x coordinate of the Actor.
+	 * @return the zoom factor for the x coordinate of the Actor. */
 	float GetZoomX() const				{ return DestTweenState().scale.x; }
+	/**
+	 * @brief Retrieve the zoom factor for the y coordinate of the Actor.
+	 * @return the zoom factor for the y coordinate of the Actor. */
 	float GetZoomY() const				{ return DestTweenState().scale.y; }
+	/**
+	 * @brief Retrieve the zoom factor for the z coordinate of the Actor.
+	 * @return the zoom factor for the z coordinate of the Actor. */
 	float GetZoomZ() const				{ return DestTweenState().scale.z; }
 	void  SetZoom( float zoom )			{ DestTweenState().scale.x = zoom; DestTweenState().scale.y = zoom; DestTweenState().scale.z = zoom; }
 	void  SetZoomX( float zoom )			{ DestTweenState().scale.x = zoom; }
@@ -373,7 +416,12 @@ public:
 	}
 	const TweenState& DestTweenState() const { return const_cast<Actor*>(this)->DestTweenState(); }
 
-	enum StretchType { fit_inside, cover };
+	/** @brief How do we handle stretching the Actor? */
+	enum StretchType
+	{ 
+		fit_inside, /**< Have the Actor fit inside its parent, using the smaller zoom. */
+		cover /**, Have the Actor cover its parent, using the larger zoom. */
+	};
 
 	void ScaleToCover( const RectF &rect )		{ ScaleTo( rect, cover ); }
 	void ScaleToFitInside( const RectF &rect )	{ ScaleTo( rect, fit_inside); };
@@ -454,6 +502,9 @@ public:
 
 
 	// other properties
+	/**
+	 * @brief Determine if the Actor is visible at this time.
+	 * @return true if it's visible, false otherwise. */
 	bool GetVisible() const				{ return m_bVisible; }
 	void SetVisible( bool b )			{ m_bVisible = b; }
 	void SetShadowLength( float fLength )		{ m_fShadowLengthX = fLength; m_fShadowLengthY = fLength; }
@@ -511,9 +562,12 @@ public:
 	HiddenPtr<LuaClass> m_pLuaInstance;
 
 protected:
+	/** @brief the name of the Actor. */
 	RString m_sName;
+	/** @brief the current parent of this Actor if it exists. */
 	Actor *m_pParent;
 
+	/** @brief Some general information about the Tween. */
 	struct TweenInfo
 	{
 		// counters for tweening

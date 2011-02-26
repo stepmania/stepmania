@@ -1,11 +1,9 @@
-/* ActorSound - RageSound Actor interface. */
-
 #ifndef ACTOR_SOUND_H
 #define ACTOR_SOUND_H
 
 #include "Actor.h"
 #include "RageSound.h"
-
+/** @brief RageSound Actor interface. */
 class ActorSound: public Actor
 {
 public:
@@ -30,8 +28,10 @@ private:
 
 #endif
 
-/*
- * (c) 2005 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2005
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

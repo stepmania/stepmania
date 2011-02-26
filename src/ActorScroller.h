@@ -1,5 +1,3 @@
-/* ActorScroller - ActorFrame that moves its children. */
-
 #ifndef ActorScroller_H
 #define ActorScroller_H
 
@@ -7,7 +5,7 @@
 #include "Quad.h"
 class XNode;
 #include "LuaExpressionTransform.h"
-
+/** @brief ActorFrame that moves its children. */
 class ActorScroller : public ActorFrame
 {
 public:
@@ -56,9 +54,21 @@ protected:
 	virtual void ShiftSubActors( int iDist );
 
 	int		m_iNumItems;
-	float	m_fCurrentItem; // Item at center of list, usually between 0 and m_SubActors.size(), approaches destination
+	/**
+	 * @brief the current item we are focused on.
+	 *
+	 * An item at the center of the list, usually between 0 and m_SubActors.size(),
+	 * will approach its destination.
+	 *
+	 * The above comment was paraphrased from what was here previously. It could use
+	 * some clearing up. -Wolfman2000 */
+	float	m_fCurrentItem;
 	float	m_fDestinationItem;
-	float	m_fSecondsPerItem;		// <= 0 means don't scroll
+	/**
+	 * @brief How many seconds are there per item?
+	 *
+	 * If this is less than zero, then we are not scrolling. */
+	float	m_fSecondsPerItem;
 	float	m_fSecondsPauseBetweenItems;
 	float	m_fNumItemsToDraw;
 	int		m_iFirstSubActorIndex;
@@ -85,8 +95,10 @@ public:
 
 #endif
 
-/*
- * (c) 2003-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

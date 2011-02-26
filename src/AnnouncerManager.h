@@ -2,17 +2,30 @@
 #define ANNOUNCER_MANAGER_H
 
 #include "RageTypes.h"
-
+/** @brief The commentators who say seemlingly random things during gameplay. */
 class AnnouncerManager
 {
 public:
 	AnnouncerManager();
 	~AnnouncerManager();
 
+	/**
+	 * @brief Retrieve the announcer names.
+	 * @param AddTo the list of announcer names. */
 	void GetAnnouncerNames( vector<RString>& AddTo );
+	/**
+	 * @brief Determine if the specified announcer exists.
+	 * @param sAnnouncerName the announcer we're checking for.
+	 * @return true if it exists, false otherwise. */
 	bool DoesAnnouncerExist( RString sAnnouncerName );
+	/**
+	 * @brief Switch to a new specified announcer.
+	 * @param sNewAnnouncerName the new announcer the Player will be listening to. */
 	void SwitchAnnouncer( RString sNewAnnouncerName );
-	RString GetCurAnnouncerName() { return m_sCurAnnouncerName; };
+	/**
+	 * @brief Retrieve the current announcer's name.
+	 * @param the current announcer's name. */
+	RString GetCurAnnouncerName() const { return m_sCurAnnouncerName; };
 	void NextAnnouncer();
 
 	RString GetPathTo( RString sFolderName );
@@ -24,7 +37,7 @@ public:
 protected:
 	static RString GetAnnouncerDirFromName( RString sAnnouncerName );
 	RString GetPathTo( RString AnnouncerPath, RString sFolderName );
-
+	/** @brief the current announcer's name. */
 	RString m_sCurAnnouncerName;
 };
 
@@ -33,8 +46,10 @@ extern AnnouncerManager*	ANNOUNCER;	// global and accessable from anywhere in ou
 	
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
