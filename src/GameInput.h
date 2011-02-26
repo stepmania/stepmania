@@ -1,5 +1,3 @@
-/* GameInput - An input event specific to an InputScheme defined by a logical controller and button. */
-
 #ifndef GAME_INPUT_H
 #define GAME_INPUT_H
 
@@ -7,27 +5,29 @@
 
 class InputScheme;
 
+/** @brief the list of controllers in use. */
 enum GameController
 {
-	GameController_1 = 0,	// left controller
-	GameController_2,	// right controller
-	NUM_GameController,	// leave this at the end
+	GameController_1 = 0,	/**< The left controller */
+	GameController_2,	/**< The right controller */
+	NUM_GameController,	/**< The number of controllers allowed. */
 	GameController_Invalid,
 };
 const RString& GameControllerToString( GameController mp );
 LuaDeclareType( GameController );
 
+/** @brief the list of buttons StepMania recognizes. */
 enum GameButton
 {
-	GAME_BUTTON_MENULEFT,
-	GAME_BUTTON_MENURIGHT,
-	GAME_BUTTON_MENUUP,
-	GAME_BUTTON_MENUDOWN,
+	GAME_BUTTON_MENULEFT, /**< Navigate the menus to the left. */
+	GAME_BUTTON_MENURIGHT, /**< Navigate the menus to the right. */
+	GAME_BUTTON_MENUUP, /**< Navigate the menus to the top. */
+	GAME_BUTTON_MENUDOWN, /**< Navigate the menus to the bottom. */
 	GAME_BUTTON_START,
 	GAME_BUTTON_SELECT,
 	GAME_BUTTON_BACK,
-	GAME_BUTTON_COIN,
-	GAME_BUTTON_OPERATOR,
+	GAME_BUTTON_COIN, /**< Insert a coin to play. */
+	GAME_BUTTON_OPERATOR, /**< Access the operator menu. */
 	GAME_BUTTON_EFFECT_UP,
 	GAME_BUTTON_EFFECT_DOWN,
 	GAME_BUTTON_CUSTOM_01,
@@ -64,18 +64,29 @@ GameButton StringToGameButton( const InputScheme* pInputs, const RString& s );
 #define GAME_BUTTON_NEXT		GAME_BUTTON_CUSTOM_01
 
 // dance
+/** @brief Set up the left arrow for dance mode. */
 #define DANCE_BUTTON_LEFT		GAME_BUTTON_CUSTOM_01
+/** @brief Set up the right arrow for dance mode. */
 #define DANCE_BUTTON_RIGHT		GAME_BUTTON_CUSTOM_02
+/** @brief Set up the up arrow for dance mode. */
 #define DANCE_BUTTON_UP			GAME_BUTTON_CUSTOM_03
+/** @brief Set up the down arrow for dance mode. */
 #define DANCE_BUTTON_DOWN		GAME_BUTTON_CUSTOM_04
+/** @brief Set up the upleft arrow for dance mode (solo). */
 #define DANCE_BUTTON_UPLEFT		GAME_BUTTON_CUSTOM_05
+/** @brief Set up the upright arrow for dance mode (solo). */
 #define DANCE_BUTTON_UPRIGHT	GAME_BUTTON_CUSTOM_06
 #define NUM_DANCE_BUTTONS		GAME_BUTTON_CUSTOM_07
 // pump
+/** @brief Set up the upleft arrow for pump mode. */
 #define PUMP_BUTTON_UPLEFT		GAME_BUTTON_CUSTOM_01
+/** @brief Set up the upright arrow for pump mode. */
 #define PUMP_BUTTON_UPRIGHT		GAME_BUTTON_CUSTOM_02
+/** @brief Set up the center arrow for pump mode. */
 #define PUMP_BUTTON_CENTER		GAME_BUTTON_CUSTOM_03
+/** @brief Set up the downleft arrow for pump mode. */
 #define PUMP_BUTTON_DOWNLEFT	GAME_BUTTON_CUSTOM_04
+/** @brief Set up the downright arrow for pump mode. */
 #define PUMP_BUTTON_DOWNRIGHT	GAME_BUTTON_CUSTOM_05
 #define NUM_PUMP_BUTTONS		GAME_BUTTON_CUSTOM_06
 // kb7
@@ -178,7 +189,7 @@ GameButton StringToGameButton( const InputScheme* pInputs, const RString& s );
 #define GAME_BUTTON_DOWN GAME_BUTTON_MENUDOWN
 #define GAME_BUTTON_START GAME_BUTTON_START
 #define GAME_BUTTON_BACK GAME_BUTTON_BACK
-
+/** @brief An input event specific to an InputScheme defined by a logical controller and button. */
 struct GameInput
 {
 	GameInput(): controller(GameController_Invalid), button(GameButton_Invalid) { }
@@ -207,8 +218,10 @@ struct GameInput
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
