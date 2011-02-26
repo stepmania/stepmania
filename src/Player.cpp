@@ -1296,7 +1296,14 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 		// Possibly fixed.
 		if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 		{
-			m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0, min(1.0, fLife * 10.0 - 8.5)));
+			if( tn.subType == TapNote::hold_head_roll )
+			{
+				m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0, min(1.0, fLife * 2.0)));
+			}
+			else
+			{
+				m_vKeysounds[tn.iKeysoundIndex].SetProperty ("Volume", max(0.0, min(1.0, fLife * 10.0 - 8.5)));				
+			}
 			if (tn.HoldResult.fLife == 0)
 			{
 				m_vKeysounds[tn.iKeysoundIndex].StopPlaying();
