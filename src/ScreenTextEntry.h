@@ -133,6 +133,7 @@ private:
 	RageTimer	m_timerToggleCursor;
 };
 
+/** @brief Displays a text entry box and keyboard over the top of another screen. */
 class ScreenTextEntryVisual: public ScreenTextEntry
 {
 public:

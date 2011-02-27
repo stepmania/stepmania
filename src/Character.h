@@ -1,5 +1,3 @@
-/* Character - An persona that defines attacks for use in battle. */
-
 #ifndef Character_H
 #define Character_H
 
@@ -9,14 +7,14 @@
 struct lua_State;
 typedef lua_State Lua;
 
-
+/** @brief A persona that defines attacks for use in battle. */
 class Character
 {
 public:
 	Character();
 	~Character() { }
 
-	bool Load( RString sCharDir );	// return true if success
+	bool Load( RString sCharDir ); // return true if successful
 
 	RString GetTakingABreakPath() const;
 	RString GetCardPath() const { return m_sCardPath; }

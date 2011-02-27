@@ -1,5 +1,3 @@
-/** @brief BPMDisplay - displays a BPM or a range of BPMs. */
-
 #ifndef BPM_DISPLAY_H
 #define BPM_DISPLAY_H
 
@@ -11,7 +9,7 @@ class Song;
 class Course;
 struct DisplayBpms;
 
-/** @brief Display the BPM/range of them as requested. */
+/** @brief Displays a BPM or a range of BPMs. */
 class BPMDisplay : public BitmapText
 {
 public:

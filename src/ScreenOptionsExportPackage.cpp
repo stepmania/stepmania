@@ -156,7 +156,7 @@ void ScreenOptionsExportPackage::ProcessMenuStart( const InputEventPlus &input )
 
 	RString sDirToExport = m_vsPossibleDirsToExport[ iCurRow ];
 	RString sPackageName = ReplaceInvalidFileNameChars( sDirToExport + ".smzip" );
-	
+
 	RString sError;
 	if( ExportPackage(sPackageName, sDirToExport, sError) )
 		ScreenPrompt::Prompt( SM_None, ssprintf("Exported '%s' to the desktop", sDirToExport.c_str()) );
@@ -173,7 +173,6 @@ void ScreenOptionsExportPackage::ExportOptions( int iRow, const vector<PlayerNum
 {
 
 }
-
 
 /*
  * (c) 2002-2004 Chris Danford
