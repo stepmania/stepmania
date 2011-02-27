@@ -62,6 +62,9 @@ public:
 	 * @brief Determine if we're in MultiPlayer.
 	 * @return true if it is MultiPlayer, false otherwise. */
 	bool IsMultiPlayer() const { return m_mp != MultiPlayer_Invalid; }
+	/**
+	 * @brief Retrieve the name of the Player based on the mode.
+	 * @return the name of the Player. */
 	RString GetName() const
 	{
 		if( m_bIsDummy )
