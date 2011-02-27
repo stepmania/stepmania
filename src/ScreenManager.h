@@ -1,5 +1,3 @@
-/* ScreenManager - Manager/container for Screens. */
-
 #ifndef SCREEN_MANAGER_H
 #define SCREEN_MANAGER_H
 
@@ -11,7 +9,7 @@ class Screen;
 struct Menu;
 struct lua_State;
 class InputEventPlus;
-
+/** @brief Manager/container for Screens. */
 class ScreenManager
 {
 public:
@@ -26,7 +24,13 @@ public:
 	// Main screen stack management
 	void SetNewScreen( const RString &sName );
 	void AddNewScreenToTop( const RString &sName, ScreenMessage SendOnPop=SM_None );
-	void PrepareScreen( const RString &sScreenName );	// creates and caches screen so that the next call to SetNewScreen for the prep'd screen will be very quick.
+	/**
+	 * @brief Create and cache the requested Screen.
+	 *
+	 * This is so that the next call to SetNewScreen for this Screen
+	 * will be very quick.
+	 * @param sScreenName the Screen to prepare. */
+	void PrepareScreen( const RString &sScreenName );
 	void GroupScreen( const RString &sScreenName );
 	void PersistantScreen( const RString &sScreenName );
 	void PopTopScreen( ScreenMessage SM );
@@ -48,9 +52,13 @@ public:
 	void ThemeChanged();
 	void ReloadOverlayScreens();
 
-	/* Return true if the given screen is in the main screen stack, but not the
-	 * bottommost screen. If true, the screen should usually exit by popping
-	 * itself, not by loading another screen. */
+	/**
+	 * @brief Is this Screen in the main Screen stack, but not the bottommost Screen?
+	 *
+	 * If this function returns true, the screen should exit by popping
+	 * itself, not by loading another Screen.
+	 * @param pScreen the Screen to check.
+	 * @return true if it's on the stack while not on the bottom, or false otherwise. */
 	bool IsStackedScreen( const Screen *pScreen ) const;
 
 	// Lua
@@ -87,9 +95,11 @@ public:
 
 private:
 	RageSound	m_soundStart;
+	/** @brief The sound played when a coin has been put into the machine. */
 	RageSound	m_soundCoin;
 	RageSound	m_soundCancel;
 	RageSound	m_soundInvalid;
+	/** @brief The sound played when a Player wishes to take a picture of their Score. */
 	RageSound	m_soundScreenshot;
 };
 
@@ -98,8 +108,10 @@ extern ScreenManager*	SCREENMAN;	// global and accessable from anywhere in our p
 
 #endif
 
-/*
- * (c) 2001-2003 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
