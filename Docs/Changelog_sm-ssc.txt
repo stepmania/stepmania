@@ -13,6 +13,13 @@ _____________________________________________________________________________
 sm-ssc v1.2.3 | 2011022?
 --------------------------------------------------------------------------------
 
+20110226
+--------
+* [ScreenOptionsToggleSongs] The structure of this screen has now changed.
+  Before, it contained the entire list of songs. Now, the main page
+  (ScreenOptionsToggleSongs) holds the groups, and a sub-page
+  (ScreenOptionsToggleSongsSubPage) holds the songs in each group. [AJ]
+
 20110225
 --------
 * Add lifts and fakes to all Pump noteskins. [Daisuke Master, Wolfman2000]
