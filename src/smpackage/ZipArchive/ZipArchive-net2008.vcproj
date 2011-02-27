@@ -1,33 +1,53 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="9.00"
 	Name="ZipArchive"
 	ProjectGUID="{F8FE2773-87CB-402F-8DC8-A80837C3E24C}"
-	SccProjectName="&quot;$/ZipArchive&quot;, LDAAAAAA"
-	SccLocalPath="."
-	Keyword="MFCProj">
+	Keyword="MFCProj"
+	TargetFrameworkVersion="131072"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory=".\Debug"
 			IntermediateDirectory=".\Debug"
 			ConfigurationType="4"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				PreprocessorDefinitions="_DEBUG;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="stdafx.h"
+				UsePrecompiledHeader="0"
+				PrecompiledHeaderThrough="StdAfx.h"
 				PrecompiledHeaderFile=".\Debug/ZipArchive.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -35,204 +55,296 @@
 				BrowseInformation="1"
 				BrowseInformationFile=".\Debug/"
 				WarningLevel="4"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
+				SuppressStartupBanner="true"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile=".\Debug\ZipArchive.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"/>
+				Culture="1033"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLibrarianTool"
+				OutputFile=".\Debug\ZipArchive.lib"
+				SuppressStartupBanner="true"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory=".\Release"
 			IntermediateDirectory=".\Release"
 			ConfigurationType="4"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				PreprocessorDefinitions="NDEBUG;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND"
-				StringPooling="TRUE"
+				StringPooling="true"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="stdafx.h"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				PrecompiledHeaderThrough="StdAfx.h"
 				PrecompiledHeaderFile=".\Release/ZipArchive.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"/>
+				SuppressStartupBanner="true"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile=".\Release\ZipArchive.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"/>
+				Culture="1033"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLibrarianTool"
+				OutputFile=".\Release\ZipArchive.lib"
+				SuppressStartupBanner="true"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Unicode Static Release|Win32"
 			OutputDirectory=".\Unicode_Static_Release"
 			IntermediateDirectory=".\Unicode_Static_Release"
 			ConfigurationType="4"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="1"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="1">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				PreprocessorDefinitions="NDEBUG;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND"
-				StringPooling="TRUE"
+				StringPooling="true"
 				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="stdafx.h"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				PrecompiledHeaderThrough="StdAfx.h"
 				PrecompiledHeaderFile=".\Unicode_Static_Release/ZipArchive.pch"
 				AssemblerListingLocation=".\Unicode_Static_Release/"
 				ObjectFile=".\Unicode_Static_Release/"
 				ProgramDataBaseFileName=".\Unicode_Static_Release/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"/>
+				SuppressStartupBanner="true"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile=".\Unicode_Static_Release\ZipArchive.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"/>
+				Culture="1033"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLibrarianTool"
+				OutputFile=".\Unicode_Static_Release\ZipArchive.lib"
+				SuppressStartupBanner="true"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Static Release|Win32"
 			OutputDirectory=".\Static_Release"
 			IntermediateDirectory=".\Static_Release"
 			ConfigurationType="4"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="1"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND"
-				StringPooling="TRUE"
+				StringPooling="true"
 				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="stdafx.h"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				PrecompiledHeaderThrough="StdAfx.h"
 				PrecompiledHeaderFile=".\Static_Release/ZipArchive.pch"
 				AssemblerListingLocation=".\Static_Release/"
 				ObjectFile=".\Static_Release/"
 				ProgramDataBaseFileName=".\Static_Release/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"/>
+				SuppressStartupBanner="true"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile=".\Static_Release\ZipArchive.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"/>
+				Culture="1033"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLibrarianTool"
+				OutputFile=".\Static_Release\ZipArchive.lib"
+				SuppressStartupBanner="true"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Unicode Debug|Win32"
 			OutputDirectory=".\Unicode_Debug"
 			IntermediateDirectory=".\Unicode_Debug"
 			ConfigurationType="4"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="1">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				PreprocessorDefinitions="_DEBUG;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="stdafx.h"
+				UsePrecompiledHeader="0"
+				PrecompiledHeaderThrough="StdAfx.h"
 				PrecompiledHeaderFile=".\Unicode_Debug/ZipArchive.pch"
 				AssemblerListingLocation=".\Unicode_Debug/"
 				ObjectFile=".\Unicode_Debug/"
@@ -240,51 +352,74 @@
 				BrowseInformation="1"
 				BrowseInformationFile=".\Unicode_Debug/"
 				WarningLevel="4"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
+				SuppressStartupBanner="true"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile=".\Unicode_Debug\ZipArchive.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"/>
+				Culture="1033"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLibrarianTool"
+				OutputFile=".\Unicode_Debug\ZipArchive.lib"
+				SuppressStartupBanner="true"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Static Debug|Win32"
 			OutputDirectory=".\Static_Debug"
 			IntermediateDirectory=".\Static_Debug"
 			ConfigurationType="4"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="1"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="stdafx.h"
+				UsePrecompiledHeader="0"
+				PrecompiledHeaderThrough="StdAfx.h"
 				PrecompiledHeaderFile=".\Static_Debug/ZipArchive.pch"
 				AssemblerListingLocation=".\Static_Debug/"
 				ObjectFile=".\Static_Debug/"
@@ -292,85 +427,114 @@
 				BrowseInformation="1"
 				BrowseInformationFile=".\Static_Debug/"
 				WarningLevel="4"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
+				SuppressStartupBanner="true"
+				DebugInformationFormat="4"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile=".\Static_Debug\ZipArchive.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"/>
+				Culture="1033"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLibrarianTool"
+				OutputFile=".\Static_Debug\ZipArchive.lib"
+				SuppressStartupBanner="true"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Unicode Release|Win32"
 			OutputDirectory=".\Unicode_Release"
 			IntermediateDirectory=".\Unicode_Release"
 			ConfigurationType="4"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="1">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				PreprocessorDefinitions="NDEBUG;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND"
-				StringPooling="TRUE"
+				StringPooling="true"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="stdafx.h"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				PrecompiledHeaderThrough="StdAfx.h"
 				PrecompiledHeaderFile=".\Unicode_Release/ZipArchive.pch"
 				AssemblerListingLocation=".\Unicode_Release/"
 				ObjectFile=".\Unicode_Release/"
 				ProgramDataBaseFileName=".\Unicode_Release/"
 				WarningLevel="4"
-				SuppressStartupBanner="TRUE"/>
+				SuppressStartupBanner="true"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile=".\Unicode_Release\ZipArchive.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"/>
+				Culture="1033"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLibrarianTool"
+				OutputFile=".\Unicode_Release\ZipArchive.lib"
+				SuppressStartupBanner="true"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -378,905 +542,1142 @@
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+			>
 			<File
-				RelativePath="stdafx.cpp">
+				RelativePath="StdAfx.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
 						UsePrecompiledHeader="1"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
 						PreprocessorDefinitions=""
-						UsePrecompiledHeader="1"/>
+						UsePrecompiledHeader="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
 						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
-						UsePrecompiledHeader="1"/>
+						UsePrecompiledHeader="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
 						PreprocessorDefinitions=""
-						UsePrecompiledHeader="1"/>
+						UsePrecompiledHeader="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
 						UsePrecompiledHeader="1"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
 						UsePrecompiledHeader="1"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
 						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
-						UsePrecompiledHeader="1"/>
+						UsePrecompiledHeader="1"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipArchive.cpp">
+				RelativePath="ZipArchive.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipAutoBuffer.cpp">
+				RelativePath="ZipAutoBuffer.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipCentralDir.cpp">
+				RelativePath="ZipCentralDir.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipCompatibility.cpp">
+				RelativePath="ZipCompatibility.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipException.cpp">
+				RelativePath="ZipException.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipFile.cpp">
+				RelativePath="ZipFile.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipFileHeader.cpp">
+				RelativePath="ZipFileHeader.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipMemFile.cpp">
+				RelativePath="ZipMemFile.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipPathComponent.cpp">
+				RelativePath="ZipPathComponent.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipPlatform.cpp">
+				RelativePath="ZipPlatform.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipPlatformComm.cpp">
+				RelativePath="ZipPlatformComm.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipStorage.cpp">
+				RelativePath="ZipStorage.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="ZipString.cpp">
+				RelativePath="ZipString.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Static Release|Win32">
+					Name="Unicode Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Release|Win32">
+					Name="Static Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions=""/>
+						PreprocessorDefinitions=""
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Debug|Win32">
+					Name="Unicode Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions="_DEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Static Debug|Win32">
+					Name="Static Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="0"
 						PreprocessorDefinitions=""
 						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
+						BrowseInformation="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Unicode Release|Win32">
+					Name="Unicode Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
 						Optimization="2"
-						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"/>
+						PreprocessorDefinitions="NDEBUG;_AFXDLL;_UNICODE;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND;$(NoInherit)"
+					/>
 				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl">
+			Filter="h;hpp;hxx;hm;inl"
+			>
 			<File
-				RelativePath="stdafx.h">
+				RelativePath="StdAfx.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipAbstractFile.h">
+				RelativePath="ZipAbstractFile.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipArchive.h">
+				RelativePath="ZipArchive.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipAutoBuffer.h">
+				RelativePath="ZipAutoBuffer.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipBaseException.h">
+				RelativePath="ZipBaseException.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipCentralDir.h">
+				RelativePath="ZipCentralDir.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipCollections.h">
+				RelativePath="ZipCollections.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipCompatibility.h">
+				RelativePath="ZipCompatibility.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipException.h">
+				RelativePath="ZipException.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipExport.h">
+				RelativePath="ZipExport.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipFile.h">
+				RelativePath="ZipFile.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipFileHeader.h">
+				RelativePath="ZipFileHeader.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipFileMapping.h">
+				RelativePath="ZipFileMapping.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipMemFile.h">
+				RelativePath="ZipMemFile.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipPathComponent.h">
+				RelativePath="ZipPathComponent.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipPlatform.h">
+				RelativePath="ZipPlatform.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipStorage.h">
+				RelativePath="ZipStorage.h"
+				>
 			</File>
 			<File
-				RelativePath="ZipString.h">
+				RelativePath="ZipString.h"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Information"
-			Filter="txt">
+			Filter="txt"
+			>
 			<File
-				RelativePath="Appnote.txt">
+				RelativePath="Appnote.txt"
+				>
 			</File>
 			<File
-				RelativePath="ChangeLog.txt">
+				RelativePath="ChangeLog.txt"
+				>
 			</File>
 			<File
-				RelativePath="faq.txt">
+				RelativePath="faq.txt"
+				>
 			</File>
 			<File
-				RelativePath="gpl.txt">
+				RelativePath="gpl.txt"
+				>
 			</File>
 			<File
-				RelativePath="License.txt">
+				RelativePath="License.txt"
+				>
 			</File>
 			<File
-				RelativePath="Readme.txt">
+				RelativePath="Readme.txt"
+				>
 			</File>
 		</Filter>
 	</Files>
