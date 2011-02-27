@@ -1,5 +1,3 @@
-/* PlayerOptions - Per-player options that are not saved between sessions. */
-
 #ifndef PLAYER_OPTIONS_H
 #define PLAYER_OPTIONS_H
 
@@ -10,7 +8,7 @@ class Trail;
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
-
+/** @brief Per-player options that are not saved between sessions. */
 class PlayerOptions
 {
 public:
@@ -37,13 +35,13 @@ public:
 	bool operator==( const PlayerOptions &other ) const;
 	bool operator!=( const PlayerOptions &other ) const { return !operator==(other); }
 
-
+	/** @brief The various acceleration mods. */
 	enum Accel {
-		ACCEL_BOOST,
-		ACCEL_BRAKE,
+		ACCEL_BOOST, /**< The arrows start slow, then zoom towards the targets. */
+		ACCEL_BRAKE, /**< The arrows start fast, then slow down as they approach the targets. */
 		ACCEL_WAVE,
 		ACCEL_EXPAND,
-		ACCEL_BOOMERANG,
+		ACCEL_BOOMERANG, /**< The arrows start from above the targets, go down, then come back up. */
 		NUM_ACCELS
 	};
 	enum Effect	{
@@ -63,14 +61,15 @@ public:
 		EFFECT_ROLL,
 		NUM_EFFECTS
 	};
+	/** @brief The various appearance mods. */
 	enum Appearance {
-		APPEARANCE_HIDDEN,
-		APPEARANCE_HIDDEN_OFFSET,
-		APPEARANCE_SUDDEN,
-		APPEARANCE_SUDDEN_OFFSET,
-		APPEARANCE_STEALTH,
-		APPEARANCE_BLINK,
-		APPEARANCE_RANDOMVANISH,
+		APPEARANCE_HIDDEN, /**< The arrows disappear partway up. */
+		APPEARANCE_HIDDEN_OFFSET, /**< This determines when the arrows disappear. */
+		APPEARANCE_SUDDEN, /**< The arrows appear partway up. */
+		APPEARANCE_SUDDEN_OFFSET, /**< This determines when the arrows appear. */
+		APPEARANCE_STEALTH, /**< The arrows are not shown at all. */
+		APPEARANCE_BLINK, /**< The arrows blink constantly. */
+		APPEARANCE_RANDOMVANISH, /**< The arrows disappear, and then reappear in a different column. */
 		NUM_APPEARANCES
 	};
 	enum Turn {
@@ -154,15 +153,21 @@ public:
 	bool		m_bTransforms[NUM_TRANSFORMS];
 	bool		m_bMuteOnError;
 	ScoreDisplay m_ScoreDisplay;
+	/** @brief How can the Player fail a song? */
 	enum FailType { 
-		FAIL_IMMEDIATE=0,			// fail immediately when life touches 0
-		FAIL_IMMEDIATE_CONTINUE,		// fail immediately when life touches 0, but allow playing the rest of the song
-		FAIL_AT_END,				// fail if life is at 0 when the song ends
-		FAIL_OFF				// never fail
+		FAIL_IMMEDIATE=0,		/**< fail immediately when life touches 0 */
+		FAIL_IMMEDIATE_CONTINUE,	/**< Same as above, but allow playing the rest of the song */
+		FAIL_AT_END,			/**< fail if life is at 0 when the song ends */
+		FAIL_OFF			/**< never fail */
 	};
+	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
 
-	RString		m_sNoteSkin;	// "" means "no change"
+	/**
+	 * @brief The Noteskin to use.
+	 *
+	 * If an empty string, it means to not change from the default. */
+	RString		m_sNoteSkin;
 
 	void NextAccel();
 	void NextEffect();
