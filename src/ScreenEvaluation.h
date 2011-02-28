@@ -41,6 +41,8 @@ enum DetailLine
 	DetailLine_Mines,	/**< The number of mines avoided. */
 	DetailLine_Hands,	/**< The number of hands hit (somehow) */
 	DetailLine_Rolls,	/**< The number of rolls hit repeatedly. */
+	DetailLine_Lifts,	/**< The number of lifts lifted up. */
+	DetailLine_Fakes,	/**< The number of fakes to be ignored. */
 	NUM_DetailLine		/**< The nuber of detailed lines. */
 };
 /** @brief Shows the player their score after gameplay has ended. */
