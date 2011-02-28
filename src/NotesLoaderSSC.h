@@ -21,6 +21,8 @@ enum SSCLoadingStates
 	NUM_SSCLoadingStates /**< The number of states used. */
 };
 
+const float VERSION_RADAR_FAKE = 0.53f;
+
 /**
  * @brief The SSCLoader handles all of the parsing needed for .ssc files.
  */
