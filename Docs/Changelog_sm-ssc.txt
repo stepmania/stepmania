@@ -21,6 +21,8 @@ sm-ssc v1.2.3 | 2011022?
   require them. [Wolfman2000]
 * [ArrowEffects] Allow for dizzy hold heads. Again, enable at your own risk.
   [Wolfman2000]
+* [StepsDisplay] Allow for displaying the chart artist in a separate field.
+  This defaults to false for the moment. [Wolfman2000]
 
 20110227
 --------

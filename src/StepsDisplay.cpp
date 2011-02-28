@@ -55,6 +55,7 @@ void StepsDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlaye
 	m_bShowTicks.Load(m_sMetricsGroup,"ShowTicks");
 	m_bShowMeter.Load(m_sMetricsGroup,"ShowMeter");
 	m_bShowDescription.Load(m_sMetricsGroup,"ShowDescription");
+	m_bShowCredit.Load(m_sMetricsGroup,"ShowCredit");
 	m_bShowAutogen.Load(m_sMetricsGroup,"ShowAutogen");
 	m_bShowStepsType.Load(m_sMetricsGroup,"ShowStepsType");
 	m_sZeroMeterString.Load(m_sMetricsGroup,"ZeroMeterString");
@@ -90,6 +91,13 @@ void StepsDisplay::Load( const RString &sMetricsGroup, const PlayerState *pPlaye
 		m_textDescription.LoadFromFont( THEME->GetPathF(m_sMetricsGroup,"Description") );
 		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textDescription, m_sMetricsGroup );
 		this->AddChild( &m_textDescription );
+	}
+	if( m_bShowCredit )
+	{
+		m_textAuthor.SetName( "Step Author" );
+		m_textAuthor.LoadFromFont( THEME->GetPathF(m_sMetricsGroup,"Credit") );
+		ActorUtil::LoadAllCommandsAndSetXYAndOnCommand( m_textAuthor, m_sMetricsGroup );
+		this->AddChild( &m_textAuthor );
 	}
 
 	if( m_bShowAutogen )
@@ -196,6 +204,10 @@ void StepsDisplay::SetInternal( const SetParams &params )
 	else
 		sDisplayDescription = CustomDifficultyToLocalizedString( sCustomDifficulty );
 	msg.SetParam( "DisplayDescription", sDisplayDescription );
+	
+	RString sDisplayCredit;
+	if( params.pSteps )
+		sDisplayCredit = params.pSteps->GetCredit();
 
 	if( params.pSteps )
 		msg.SetParam( "Steps", LuaReference::CreateFromPush(*(Steps*)params.pSteps) );
@@ -240,6 +252,11 @@ void StepsDisplay::SetInternal( const SetParams &params )
 	{
 		m_textDescription.SetText( sDisplayDescription );
 		m_textDescription.HandleMessage( msg );
+	}
+	if( m_bShowCredit )
+	{
+		m_textAuthor.SetText( sDisplayCredit );
+		m_textAuthor.HandleMessage( msg );
 	}
 
 	if( m_bShowAutogen )
