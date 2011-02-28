@@ -40,14 +40,13 @@ bool SnapDisplay::PrevSnapMode()
 
 bool SnapDisplay::NextSnapMode()
 {
-	if( m_NoteType == NOTE_TYPE_192ND )	// this is the smallest snap we should allow
+	if( m_NoteType == NOTE_TYPE_192ND )	// the smallest snap we should allow
 		return false;
 	enum_add( m_NoteType, 1 );
 
 	SnapModeChanged();
 	return true;
 }
-
 
 void SnapDisplay::SnapModeChanged()
 {
