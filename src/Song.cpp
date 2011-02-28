@@ -36,13 +36,12 @@
 #include <set>
 #include <float.h>
 
-/** @brief The version of the .ssc file format. */
-const static float VERSION_NUMBER = 0.52f;
+
 /**
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 164;
+const int FILE_CACHE_VERSION = 165;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -66,7 +65,7 @@ Song::Song()
 	m_ForegroundChanges = AutoPtrCopyOnWrite<VBackgroundChange>(new VBackgroundChange);
 
 	m_LoadedFromProfile = ProfileSlot_Invalid;
-	m_fVersion = VERSION_NUMBER;
+	m_fVersion = STEPFILE_VERSION_NUMBER;
 	m_fMusicSampleStartSeconds = -1;
 	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 	m_fMusicLengthSeconds = 0;

@@ -39,6 +39,7 @@ enum RadarCategory
 	RadarCategory_Hands, /**< How many hands are in the song? */
 	RadarCategory_Rolls, /**< How many rolls are in the song? */
 	RadarCategory_Lifts, /**< How many lifts are in the song? */
+	RadarCategory_Fakes, /**< How many fakes are in the song? */
 	NUM_RadarCategory,	/**< The number of radar categories. */
 	RadarCategory_Invalid
 };

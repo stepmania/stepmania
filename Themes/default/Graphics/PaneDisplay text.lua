@@ -120,16 +120,16 @@ t[#t+1] = Def.ActorFrame {
 		InitCommand=cmd(x,-128+16+8;y,-14+16*3);
 	};
 	-- Center
-	CreatePaneDisplayItem( iPN, "MINES", 'RadarCategory_Mines' ) .. {
+	CreatePaneDisplayItem( iPN, "HANDS", 'RadarCategory_Hands' ) .. {
 		InitCommand=cmd(x,-128+16+8+74;y,-14);
 	};
-	CreatePaneDisplayItem( iPN, "HANDS", 'RadarCategory_Hands' ) .. {
+	CreatePaneDisplayItem( iPN, "ROLLS", 'RadarCategory_Rolls' ) .. {
 		InitCommand=cmd(x,-128+16+8+74;y,-14+16);
 	};
-	CreatePaneDisplayItem( iPN, "ROLLS", 'RadarCategory_Rolls' ) .. {
+	CreatePaneDisplayItem( iPN, "LIFTS", 'RadarCategory_Lifts' ) .. {
 		InitCommand=cmd(x,-128+16+8+74;y,-14+16*2);
 	};
-	CreatePaneDisplayItem( iPN, "LIFTS", 'RadarCategory_Lifts' ) .. {
+	CreatePaneDisplayItem( iPN, "FAKES", 'RadarCategory_Fakes' ) .. {
 		InitCommand=cmd(x,-128+16+8+74;y,-14+16*3);
 	};
 	-- Right

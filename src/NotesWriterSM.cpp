@@ -273,11 +273,17 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
 	
 	vector<RString> asRadarValues;
+	// SM files don't use fakes for radar data. Keep it that way.
+	int categories = NUM_RadarCategory - 1;
 	FOREACH_PlayerNumber( pn )
 	{
 		const RadarValues &rv = in.GetRadarValues( pn );
-		FOREACH_ENUM( RadarCategory, rc )
+		// Can't use the foreach anymore due to flexible radar lines.
+		for( RadarCategory rc = (RadarCategory)0; rc < categories; 
+		    enum_add<RadarCategory>( rc, 1 ) )
+		{
 			asRadarValues.push_back( ssprintf("%.3f", rv[rc]) );
+		}
 	}
 	lines.push_back( ssprintf( "     %s:", join(",",asRadarValues).c_str() ) );
 
