@@ -929,28 +929,27 @@ void NoteDataUtil::RemoveQuads( NoteData &inout, int iStartIndex, int iEndIndex 
 	RemoveSimultaneousNotes( inout, 3, iStartIndex, iEndIndex );
 }
 
-void NoteDataUtil::RemoveMines( NoteData &inout, int iStartIndex, int iEndIndex )
+void NoteDataUtil::RemoveSpecificTapNotes( NoteData &inout, TapNote::Type tn, int iStartIndex, int iEndIndex )
 {
 	for( int t=0; t<inout.GetNumTracks(); t++ )
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, iStartIndex, iEndIndex ) 
-			if( inout.GetTapNote(t,r).type == TapNote::mine )
+			if( inout.GetTapNote(t,r).type == tn )
 				inout.SetTapNote( t, r, TAP_EMPTY );
+}
+
+void NoteDataUtil::RemoveMines( NoteData &inout, int iStartIndex, int iEndIndex )
+{
+	RemoveSpecificTapNotes( inout, TapNote::mine, iStartIndex, iEndIndex );
 }
 
 void NoteDataUtil::RemoveLifts( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	for( int t=0; t<inout.GetNumTracks(); t++ )
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, iStartIndex, iEndIndex ) 
-		if( inout.GetTapNote(t,r).type == TapNote::lift )
-			inout.SetTapNote( t, r, TAP_EMPTY );
+	RemoveSpecificTapNotes( inout, TapNote::lift, iStartIndex, iEndIndex );
 }
 
 void NoteDataUtil::RemoveFakes( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	for( int t=0; t<inout.GetNumTracks(); t++ )
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, iStartIndex, iEndIndex ) 
-		if( inout.GetTapNote(t,r).type == TapNote::fake )
-			inout.SetTapNote( t, r, TAP_EMPTY );
+	RemoveSpecificTapNotes( inout, TapNote::fake, iStartIndex, iEndIndex );
 }
 
 void NoteDataUtil::RemoveAllButOneTap( NoteData &inout, int row )
