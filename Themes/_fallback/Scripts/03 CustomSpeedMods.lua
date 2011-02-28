@@ -263,7 +263,7 @@ function SpeedMods()
 		Choices = GetSpeedMods(),
 
 		LoadSelections = function(self, list, pn)
-			local pMods = GAMESTATE:GetPlayerState(pn):GetPlayerOptions("ModsLevel_Preferred")
+			local pMods = GAMESTATE:GetPlayerState(pn):GetPlayerOptionsString("ModsLevel_Preferred")
 			for i = 1,table.getn(self.Choices) do
 				if string.find(pMods, self.Choices[i]) then
 					list[i] = true
