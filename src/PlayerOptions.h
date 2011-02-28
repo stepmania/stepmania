@@ -76,14 +76,15 @@ public:
 		APPEARANCE_RANDOMVANISH, /**< The arrows disappear, and then reappear in a different column. */
 		NUM_APPEARANCES
 	};
+	/** @brief The various turn mods. */
 	enum Turn {
-		TURN_NONE=0,
-		TURN_MIRROR,
-		TURN_LEFT,
-		TURN_RIGHT,
-		TURN_SHUFFLE,
-		TURN_SOFT_SHUFFLE,
-		TURN_SUPER_SHUFFLE,
+		TURN_NONE=0, /**< No turning of the arrows is performed. */
+		TURN_MIRROR, /**< The arrows are mirrored from their normal position. */
+		TURN_LEFT, /**< The arrows are turned 90 degrees to the left. */
+		TURN_RIGHT, /**< The arrows are turned 90 degress to the right. */
+		TURN_SHUFFLE, /**< Some of the arrow columns are changed throughout the whole song. */
+		TURN_SOFT_SHUFFLE, /**< Only shuffle arrow columns on an axis of symmetry. */
+		TURN_SUPER_SHUFFLE, /**< Every arrow is placed on a random column. */
 		NUM_TURNS 
 	};
 	enum Transform {

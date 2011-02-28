@@ -1,5 +1,3 @@
-/** @brief CommonMetrics - Definitions of metrics that are in the "Common" group */
-
 #ifndef COMMON_METRICS_H
 #define COMMON_METRICS_H
 
@@ -42,7 +40,10 @@ private:
 };
 
 
-/** @brief The common metrics that are used throughout. */
+/** 
+ * @brief Definitions of metrics that are in the "Common" group.
+ *
+ * These metrics are used throughout the metrics file. */
 namespace CommonMetrics
 {
 	/** @brief The first screen in the attract loop. */

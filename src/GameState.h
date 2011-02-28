@@ -115,6 +115,10 @@ public:
 	bool IsPlayerEnabled( const PlayerState* pPlayerState ) const;
 	int	GetNumPlayersEnabled() const;
 
+	/**
+	 * @brief Is the specified Player a human Player?
+	 * @param pn the numbered Player to check.
+	 * @return true if it's a human Player, or false otherwise. */
 	bool IsHumanPlayer( PlayerNumber pn ) const;
 	int GetNumHumanPlayers() const;
 	PlayerNumber GetFirstHumanPlayer() const;
