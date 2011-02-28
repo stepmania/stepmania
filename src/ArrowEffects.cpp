@@ -58,6 +58,7 @@ static ThemeMetric<float>	BEAT_OFFSET_HEIGHT( "ArrowEffects", "BeatOffsetHeight"
 static ThemeMetric<float>	BEAT_PI_HEIGHT( "ArrowEffects", "BeatPIHeight" );
 static ThemeMetric<float>	MINI_PERCENT_BASE( "ArrowEffects", "MiniPercentBase" );
 static ThemeMetric<float>	MINI_PERCENT_GATE( "ArrowEffects", "MiniPercentGate" );
+static ThemeMetric<bool>	DIZZY_HOLD_HEADS( "ArrowEffects", "DizzyHoldHeads" );
 
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
@@ -507,8 +508,8 @@ float ArrowEffects::GetRotationZ( const PlayerState* pPlayerState, float fNoteBe
 	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
 		fRotation += ReceptorGetRotationZ( pPlayerState );
 
-	// Doesn't affect hold heads, unlike confusion
-	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && !bIsHoldHead )
+	// As usual, enable dizzy hold heads at your own risk. -Wolfman2000
+	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && ( DIZZY_HOLD_HEADS || !bIsHoldHead ) )
 	{
 		const float fSongBeat = GAMESTATE->m_fSongBeatVisible;
 		float fDizzyRotation = fNoteBeat - fSongBeat;

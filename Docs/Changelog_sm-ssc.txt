@@ -19,6 +19,8 @@ sm-ssc v1.2.3 | 2011022?
 * [ScreenEdit] Display the number of Lifts and Fakes in a stepchart in the
   editor. These use metrics, so the lines can be made empty in themes that
   require them. [Wolfman2000]
+* [ArrowEffects] Allow for dizzy hold heads. Again, enable at your own risk.
+  [Wolfman2000]
 
 20110227
 --------
