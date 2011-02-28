@@ -23,6 +23,8 @@ sm-ssc v1.2.3 | 2011022?
   [Wolfman2000]
 * [StepsDisplay] Allow for displaying the chart artist in a separate field.
   This defaults to false for the moment. [Wolfman2000]
+* [PlayerOptions, NoteDataUtil] Add transform mods for removing lifts and
+  fakes from the Notedata. This mods can disqualify of course. [Wolfman2000]
 
 20110227
 --------

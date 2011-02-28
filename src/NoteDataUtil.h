@@ -47,6 +47,8 @@ namespace NoteDataUtil
 	void RemoveHands( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveQuads( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveMines( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveLifts( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveFakes( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveStretch( NoteData &inout, StepsType st, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveAllButOneTap( NoteData &inout, int row );
 	void RemoveAllButPlayer( NoteData &inout, PlayerNumber pn );

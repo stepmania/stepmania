@@ -937,6 +937,22 @@ void NoteDataUtil::RemoveMines( NoteData &inout, int iStartIndex, int iEndIndex 
 				inout.SetTapNote( t, r, TAP_EMPTY );
 }
 
+void NoteDataUtil::RemoveLifts( NoteData &inout, int iStartIndex, int iEndIndex )
+{
+	for( int t=0; t<inout.GetNumTracks(); t++ )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, iStartIndex, iEndIndex ) 
+		if( inout.GetTapNote(t,r).type == TapNote::lift )
+			inout.SetTapNote( t, r, TAP_EMPTY );
+}
+
+void NoteDataUtil::RemoveFakes( NoteData &inout, int iStartIndex, int iEndIndex )
+{
+	for( int t=0; t<inout.GetNumTracks(); t++ )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, iStartIndex, iEndIndex ) 
+		if( inout.GetTapNote(t,r).type == TapNote::fake )
+			inout.SetTapNote( t, r, TAP_EMPTY );
+}
+
 void NoteDataUtil::RemoveAllButOneTap( NoteData &inout, int row )
 {
 	if(row < 0) return;
@@ -2094,6 +2110,8 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )	NoteDataUtil::RemoveHoldNotes( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )	NoteDataUtil::RemoveMines( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )	NoteDataUtil::RemoveJumps( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOLIFTS] )	NoteDataUtil::RemoveLifts( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOFAKES] )	NoteDataUtil::RemoveFakes( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )	NoteDataUtil::RemoveHands( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOQUADS] )	NoteDataUtil::RemoveQuads( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOSTRETCH] )	NoteDataUtil::RemoveStretch( nd, st, iStartIndex, iEndIndex );

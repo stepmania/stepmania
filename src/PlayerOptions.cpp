@@ -214,6 +214,8 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	if( m_bTransforms[TRANSFORM_HOLDROLLS] ) AddTo.push_back( "HoldsToRolls" );
 	if( m_bTransforms[TRANSFORM_NOJUMPS] )	AddTo.push_back( "NoJumps" );
 	if( m_bTransforms[TRANSFORM_NOHANDS] )	AddTo.push_back( "NoHands" );
+	if( m_bTransforms[TRANSFORM_NOLIFTS] ) AddTo.push_back( "NoLifts" );
+	if( m_bTransforms[TRANSFORM_NOFAKES] ) AddTo.push_back( "NoFakes" );
 	if( m_bTransforms[TRANSFORM_NOQUADS] )	AddTo.push_back( "NoQuads" );
 	if( m_bTransforms[TRANSFORM_NOSTRETCH] )AddTo.push_back( "NoStretch" );
 	if( m_bMuteOnError )			AddTo.push_back( "MuteOnError" );
@@ -407,6 +409,8 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	else if( sBit == "norolls" )				m_bTransforms[TRANSFORM_NOROLLS] = on;
 	else if( sBit == "nomines" )				m_bTransforms[TRANSFORM_NOMINES] = on;
 	else if( sBit == "nostretch" )				m_bTransforms[TRANSFORM_NOSTRETCH] = on;
+	else if( sBit == "nolifts" )				m_bTransforms[TRANSFORM_NOLIFTS] = on;
+	else if( sBit == "nofakes" )				m_bTransforms[TRANSFORM_NOFAKES] = on;
 	else if( sBit == "dark" )				SET_FLOAT( fDark )
 	else if( sBit == "blind" )				SET_FLOAT( fBlind )
 	else if( sBit == "cover" )				SET_FLOAT( fCover )
@@ -693,6 +697,10 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerN
 		return true;
 	if( m_bTransforms[TRANSFORM_NOJUMPS] && rv[RadarCategory_Jumps]>0 )
 		return true;
+	if( m_bTransforms[TRANSFORM_NOLIFTS] && rv[RadarCategory_Lifts]>0 )
+		return true;
+	if( m_bTransforms[TRANSFORM_NOFAKES] && rv[RadarCategory_Fakes]>0 )
+		return true;
 	if( m_bTransforms[TRANSFORM_NOSTRETCH] )
 		return true;
 
@@ -787,6 +795,8 @@ RString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_bTransforms[TRANSFORM_NOHANDS] );
 	SAVE( m_bTransforms[TRANSFORM_NOQUADS] );
 	SAVE( m_bTransforms[TRANSFORM_NOSTRETCH] );
+	SAVE( m_bTransforms[TRANSFORM_NOLIFTS] );
+	SAVE( m_bTransforms[TRANSFORM_NOFAKES] );
 	SAVE( m_ScoreDisplay );
 	SAVE( m_bMuteOnError );
 	SAVE( m_sNoteSkin );
@@ -818,6 +828,8 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY( m_bTransforms[TRANSFORM_NOHANDS] );
 	CPY( m_bTransforms[TRANSFORM_NOQUADS] );
 	CPY( m_bTransforms[TRANSFORM_NOSTRETCH] );
+	CPY( m_bTransforms[TRANSFORM_NOLIFTS] );
+	CPY( m_bTransforms[TRANSFORM_NOFAKES] );
 	// Don't clear this.
 	// CPY( m_sNoteSkin );
 #undef CPY
