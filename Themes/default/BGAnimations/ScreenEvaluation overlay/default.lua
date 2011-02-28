@@ -33,7 +33,7 @@ local function CreateStats( pnPlayer )
 	--
 	local t = Def.ActorFrame {};
 	t[#t+1] = Def.ActorFrame {
-		InitCommand=cmd(y,-16);
+		InitCommand=cmd(y,-32);
 		LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
 			InitCommand=cmd(zoom,0.875;diffuse,PlayerColor( pnPlayer ));
 		};
@@ -43,7 +43,7 @@ local function CreateStats( pnPlayer )
 		aText .. { Text=string.format("%04i",tValues["ITG_MAX"]); InitCommand=cmd(x,32;y,5;vertalign,bottom;zoom,0.5); };
 	};
 	t[#t+1] = Def.ActorFrame {
-		InitCommand=cmd(y,16);
+		InitCommand=cmd(y,-16);
 		LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
 			InitCommand=cmd(zoom,0.875;diffuse,PlayerColor( pnPlayer ));
 		};
@@ -51,6 +51,14 @@ local function CreateStats( pnPlayer )
 		aText .. { Text=string.format("%04i",tValues["MIGS"]); InitCommand=cmd(x,-8;y,5;vertalign,bottom;zoom,0.675); };
 		aText .. { Text="/"; InitCommand=cmd(x,28;y,5;vertalign,bottom;zoom,0.5;diffusealpha,0.5); };
 		aText .. { Text=string.format("%04i",tValues["MIGS_MAX"]); InitCommand=cmd(x,32;y,5;vertalign,bottom;zoom,0.5); };
+	};
+	t[#t+1] = Def.ActorFrame {
+		InitCommand=cmd(y,0);
+		LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
+			InitCommand=cmd(zoom,0.875;diffuse,PlayerColor( pnPlayer ));
+		};
+		aLabel .. { Text="Signed:"; InitCommand=cmd(x,-64) };
+		aText .. { Text=string.format( #(tPlayerData[PLAYER_1].SignedJudgments) ); InitCommand=cmd(x,-8;y,5;vertalign,bottom;zoom,0.675); };
 	};
 	return t
 end;

@@ -123,6 +123,22 @@ function table.deviation( t )
 	end
 	return offset
 end
+-- See if this exists
+function table.search( t, sFind )
+	for i=1,#t do
+		if t[i] == sFind then
+			return true
+		end
+	end
+end
+-- Retreive the entry that has this
+function table.find( t, sFind )
+	for i=1,#t do
+		if t[i] == sFind then
+			return i
+		end
+	end
+end
 
 function round(val, decimal)
 	if (decimal) then

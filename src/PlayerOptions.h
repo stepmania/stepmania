@@ -5,6 +5,7 @@ class Course;
 class Song;
 class Steps;
 class Trail;
+struct lua_State;
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
@@ -31,6 +32,9 @@ public:
 	bool FromOneModString( const RString &sOneMod, RString &sErrorDetailOut );	// On error, return false and optionally set sErrorDetailOut
 	void ChooseRandomModifiers();
 	bool ContainsTransformOrTurn() const;
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 	bool operator==( const PlayerOptions &other ) const;
 	bool operator!=( const PlayerOptions &other ) const { return !operator==(other); }
@@ -187,7 +191,6 @@ public:
 	void SetOneAppearance( Appearance a );
 	void SetOneScroll( Scroll s );
 	void ToggleOneTurn( Turn t );
-
 
 	// return true if any mods being used will make the song(s) easier
 	bool IsEasierForSongAndSteps( Song* pSong, Steps* pSteps, PlayerNumber pn ) const;
