@@ -1,6 +1,11 @@
 -- sm-ssc Default Theme Preferences Handler
 function InitGamePrefs()
-	local Prefs =
+	local Prefs = 
+	{
+		{ "DefaultFail",	"Immediate" },
+	};
+	
+	local BPrefs =
 	{
 		{ "AutoSetStyle",	false },
 		{ "NotePosition",	true },
@@ -9,6 +14,12 @@ function InitGamePrefs()
 	};
 
 	for idx,pref in ipairs(Prefs) do
+		if GetGamePref( pref[1] ) == nil then
+			SetGamePref( pref[1], pref[2] );
+		end;
+	end;
+	
+	for idx,pref in ipairs(BPrefs) do
 		if GetGamePrefB( pref[1] ) == nil then
 			SetGamePref( pref[1], pref[2] );
 		end;
@@ -449,6 +460,46 @@ function GamePrefNotePosition()
 				val = false;
 			end;
 			WriteGamePrefToFile("NotePosition",val);
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end
+
+function GamePrefDefaultFail()
+	local t = {
+		Name = "GamePrefDefaultFail";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = { "Immediate","ImmediateContinue", "AtEnd", "Off" };
+		LoadSelections = function(self, list, pn)
+			if ReadGamePrefFromFile("DefaultFail") ~= nil then
+				if GetGamePref("DefaultFail") then
+					list[table.find( list, GetGamePref("DefaultFail") )] = true;
+				else
+					list[1] = true;
+				end;
+			else
+				WriteGamePrefToFile("DefaultFail","Immediate");
+				list[1] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			-- This is so stupid.
+			local tChoices = { "Immediate","ImmediateContinue", "AtEnd", "Off" };
+			local val;
+			for i=1,#list do
+				if list[i] then
+					val = i;
+				else
+					val = 1;
+				end
+			end
+			WriteGamePrefToFile("DefaultFail",tChoices[val]);
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
