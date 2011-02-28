@@ -26,9 +26,7 @@
 #include "StatsManager.h"
 
 
-//
 // Defines specific to ScreenNameEntry
-//
 #define CATEGORY_Y			THEME->GetMetricF(m_sName,"CategoryY")
 #define CATEGORY_ZOOM			THEME->GetMetricF(m_sName,"CategoryZoom")
 #define CHARS_ZOOM_SMALL		THEME->GetMetricF(m_sName,"CharsZoomSmall")
@@ -43,7 +41,6 @@
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
 #define PLAYER_X( p, styleType )	THEME->GetMetricF(m_sName,ssprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
 
-
 // cache for frequently used metrics
 static float	g_fCharsZoomSmall;
 static float	g_fCharsZoomLarge; 
@@ -53,6 +50,7 @@ static int	g_iNumCharsToDrawBehind;
 static int	g_iNumCharsToDrawTotal;
 static float	g_fFakeBeatsPerSec;
 
+// TODO: Let themers change this? -aj
 RString ScreenNameEntry::ScrollingText::g_sNameChars = "    ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 void ScreenNameEntry::ScrollingText::Init( const RString &sName, const vector<float> &xs )
@@ -178,7 +176,7 @@ void ScreenNameEntry::Init()
 	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 #endif
-	
+
 	ScreenWithMenuElements::Init();
 
 	// update cache
@@ -212,7 +210,7 @@ void ScreenNameEntry::Init()
 
 	if( !AnyStillEntering() )
 	{
-		/* Nobody made a high score. */
+		// Nobody got a high score.
 		PostScreenMessage( SM_GoToNextScreen, 0 );
 		return;
 	}
@@ -227,7 +225,6 @@ void ScreenNameEntry::Init()
 		PostScreenMessage( SM_GoToNextScreen, 0 );
 		return;
 	}
-
 
 	GAMESTATE->m_bGameplayLeadIn.Set( false );	// enable the gray arrows
 
@@ -264,7 +261,6 @@ void ScreenNameEntry::Init()
 			this->AddChild( &m_ReceptorArrowRow[p] );
 		}
 
-
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 		const int iMaxCols = min( int(ABS_MAX_RANKING_NAME_LENGTH), pStyle->m_iColsPerPlayer );
 		m_ColToStringIndex[p].insert(m_ColToStringIndex[p].begin(), pStyle->m_iColsPerPlayer, -1);
@@ -274,9 +270,9 @@ void ScreenNameEntry::Init()
 		for( int iCol=0; iCol<iMaxCols; ++iCol )
 		{
 			if( CurrentStringIndex == MAX_RANKING_NAME_LENGTH )
-				break; /* We have enough columns. */
+				break; // We have enough columns.
 
-			/* Find out if this column is associated with the START menu button. */
+			// Find out if this column is associated with the START menu button.
 			GameInput gi = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iCol, p );
 			GameButton mb = INPUTMAPPER->GameButtonToMenuButton( gi.button );
 			if( mb == GAME_BUTTON_START )
@@ -340,10 +336,10 @@ void ScreenNameEntry::Update( float fDelta )
 void ScreenNameEntry::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
-		return;	
+		return;
 
 	if( input.type != IET_FIRST_PRESS || !input.GameI.IsValid() )
-		return;		// ignore
+		return; // ignore
 
 	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
 	if( iCol != Column_Invalid && m_bStillEnteringName[input.pn] )
@@ -384,7 +380,7 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 void ScreenNameEntry::MenuStart( const InputEventPlus &input )
 {
 	PlayerNumber pn = input.pn;
-	
+
 	if( !m_bStillEnteringName[pn] )
 		return;
 	m_bStillEnteringName[pn] = false;

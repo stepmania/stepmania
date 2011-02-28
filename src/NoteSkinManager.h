@@ -8,6 +8,7 @@
 
 class Game;
 struct NoteSkinData;
+
 /** @brief Loads note skins. */
 class NoteSkinManager
 {
@@ -46,8 +47,6 @@ protected:
 	RString m_sCurrentNoteSkin;
 	const Game* m_pCurGame;
 };
-
-
 
 extern NoteSkinManager*	NOTESKIN;	// global and accessable from anywhere in our program
 
