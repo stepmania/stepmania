@@ -359,7 +359,8 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 
 		start = end;
 	}
-	DISPLAY->DrawQuads( vertices[0], iNumVertsToDraw );
+	if (!vertices.empty())
+		DISPLAY->DrawQuads( vertices[0], iNumVertsToDraw );
 }
 
 /* sText is UTF-8. If not all of the characters in sText are available in the
