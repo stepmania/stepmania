@@ -17,7 +17,6 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	virtual void MenuStart( const InputEventPlus &input );
-
 private:
 	class ScrollingText : public Actor
 	{

@@ -32,6 +32,7 @@
 #define CHARS_ZOOM_SMALL		THEME->GetMetricF(m_sName,"CharsZoomSmall")
 #define CHARS_ZOOM_LARGE		THEME->GetMetricF(m_sName,"CharsZoomLarge")
 #define CHARS_SPACING_Y			THEME->GetMetricF(m_sName,"CharsSpacingY")
+#define CHARS_CHOICES			THEME->GetMetric(m_sName,"CharsChoices")
 #define SCROLLING_CHARS_COMMAND		THEME->GetMetricA(m_sName,"ScrollingCharsCommand")
 #define SELECTED_CHARS_COMMAND		THEME->GetMetricA(m_sName,"SelectedCharsCommand")
 #define GRAY_ARROWS_Y			THEME->GetMetricF(m_sName,"ReceptorArrowsY")
@@ -50,9 +51,6 @@ static int	g_iNumCharsToDrawBehind;
 static int	g_iNumCharsToDrawTotal;
 static float	g_fFakeBeatsPerSec;
 
-// TODO: Let themers change this? -aj
-RString ScreenNameEntry::ScrollingText::g_sNameChars = "    ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
 void ScreenNameEntry::ScrollingText::Init( const RString &sName, const vector<float> &xs )
 {
 	SetName( sName );
@@ -65,15 +63,15 @@ void ScreenNameEntry::ScrollingText::Init( const RString &sName, const vector<fl
 void ScreenNameEntry::ScrollingText::DrawPrimitives()
 {
 	const float fFakeBeat = GAMESTATE->m_fSongBeat;
-	const size_t iClosestIndex = lrintf( fFakeBeat ) % g_sNameChars.size();
+	const size_t iClosestIndex = lrintf( fFakeBeat ) % CHARS_CHOICES.size();
 	const float fClosestYOffset = GetClosestCharYOffset( fFakeBeat );
 
-	size_t iCharIndex = ( iClosestIndex - NUM_CHARS_TO_DRAW_BEHIND + g_sNameChars.size() ) % g_sNameChars.size();
+	size_t iCharIndex = ( iClosestIndex - NUM_CHARS_TO_DRAW_BEHIND + CHARS_CHOICES.size() ) % CHARS_CHOICES.size();
 	float fY = GRAY_ARROWS_Y + ( fClosestYOffset - g_iNumCharsToDrawBehind ) * g_fCharsSpacingY;
 
 	for( int i = 0; i < NUM_CHARS_TO_DRAW_TOTAL; ++i )
 	{
-		const RString c = g_sNameChars.substr( iCharIndex, 1 );
+		const RString c = CHARS_CHOICES.substr( iCharIndex, 1 );
 		float fZoom = g_fCharsZoomSmall;
 		float fAlpha = 1.f;
 
@@ -94,14 +92,14 @@ void ScreenNameEntry::ScrollingText::DrawPrimitives()
 			m_Stamp.Draw();
 		}
 		fY += g_fCharsSpacingY;
-		iCharIndex = (iCharIndex+1) % g_sNameChars.size();
+		iCharIndex = (iCharIndex+1) % CHARS_CHOICES.size();
 	}
 }
 
 char ScreenNameEntry::ScrollingText::GetClosestChar( float fFakeBeat ) const
 {
 	ASSERT( fFakeBeat >= 0.f );
-	return g_sNameChars[lrintf(fFakeBeat) % g_sNameChars.size()];
+	return CHARS_CHOICES[lrintf(fFakeBeat) % CHARS_CHOICES.size()];
 }
 
 // return value is relative to gray arrows
