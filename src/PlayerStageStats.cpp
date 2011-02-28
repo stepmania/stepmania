@@ -187,7 +187,7 @@ Grade PlayerStageStats::GetGrade() const
 
 	//LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER02_IS_ALL_W2S );
 
-	// todo: move all these conditions to Lua. -aj
+	// TODO: Change these conditions to use Lua instead. -aj
 	if( GRADE_TIER02_IS_ALL_W2S )
 	{
 		if( FullComboOfScore(TNS_W1) )
