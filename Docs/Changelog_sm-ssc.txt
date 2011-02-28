@@ -13,6 +13,13 @@ _____________________________________________________________________________
 sm-ssc v1.2.3 | 2011022?
 --------------------------------------------------------------------------------
 
+20110228
+--------
+* Add Fakes to the RadarCategories. [Wolfman2000]
+* [ScreenEdit] Display the number of Lifts and Fakes in a stepchart in the
+  editor. These use metrics, so the lines can be made empty in themes that
+  require them. [Wolfman2000]
+
 20110227
 --------
 * [PlayerState] The old GetPlayerOptions() binding is now GetPlayerOptionsString().
