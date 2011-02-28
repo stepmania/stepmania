@@ -328,6 +328,9 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 		}
 	}
 
+	vector<RageSpriteVertex*> vertices;
+	int iNumVertsToDraw = 0;
+
 	for( int start = iStartGlyph; start < iEndGlyph; )
 	{
 		int end = start;
@@ -348,14 +351,16 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 			 * the texture wrapping state. If setting the wrapping state is found to be slow, 
 			 * there should probably be a "don't care" texture wrapping mode set in Actor. -Chris */
 			Actor::SetTextureRenderStates();
-
+			
 			RageSpriteVertex &start_vertex = m_aVertices[start*4];
-			int iNumVertsToDraw = (end-start)*4;
-			DISPLAY->DrawQuads( &start_vertex, iNumVertsToDraw );
+			vertices.push_back(&start_vertex);
+			iNumVertsToDraw += (end-start)*4;
 		}
 
 		start = end;
 	}
+	if (!vertices.empty())
+		DISPLAY->DrawQuads( vertices[0], iNumVertsToDraw );
 }
 
 /* sText is UTF-8. If not all of the characters in sText are available in the
