@@ -19,8 +19,16 @@ public:
 		return GetYOffset( pPlayerState, iCol, fNoteBeat, fThrowAway, bThrowAway, bAbsolute );
 	}
 
-	/* Actual display position, with reverse and post-reverse-effects factored in
-	 * (fYOffset -> YPos). */
+	/**
+	 * @brief Retrieve the actual display position.
+	 *
+	 * In this case, reverse and post-reverse-effects are factored in (fYOffset -> YPos). 
+	 * @param pPlayerState the Player's state in question, including mods.
+	 * @param iCol the specific arrow column.
+	 * @param fYOffset the original display position.
+	 * @param fYReverseOffsetPixels the amount offset due to reverse.
+	 * @param WithReverse a flag to see if the Reverse mod is on.
+	 * @return the actual display position. */
 	static float GetYPos(	const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse = true );
 
 	// Inverse of ArrowGetYPos (YPos -> fYOffset).
@@ -42,7 +50,14 @@ public:
 	// fYPos (in the case of EFFECT_DRUNK).
 	static float GetXPos( const PlayerState* pPlayerState, int iCol, float fYOffset );
 
-	// Z position; normally 0. Only visible in perspective modes.
+	/**
+	 * @brief Retrieve the Z position.
+	 *
+	 * This is normally 0. This is only visible with perspective modes.
+	 * @param pPlayerState the Player's state, including the mods.
+	 * @param iCol the specific arrow column.
+	 * @param fYPos the Y position of the arrow.
+	 * @return the Z position. */
 	static float GetZPos( const PlayerState* pPlayerState, int iCol, float fYPos );
 
 	// Enable this if any ZPos effects are enabled.
