@@ -13,6 +13,12 @@ _____________________________________________________________________________
 sm-ssc v1.2.3 | 2011022?
 --------------------------------------------------------------------------------
 
+20110227
+--------
+* [PlayerState] The old GetPlayerOptions() binding is now GetPlayerOptionsString().
+  There is a new GetPlayerOptions() binding that gets the PlayerOptions object,
+  which has a GetNoteSkin() binding (and hopefully more in the future). [AJ]
+
 20110226
 --------
 * [ScreenOptionsToggleSongs] The structure of this screen has now changed.

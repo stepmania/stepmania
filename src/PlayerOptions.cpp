@@ -823,6 +823,24 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 #undef CPY
 }
 
+// lua start
+#include "LuaBinding.h"
+
+/** @brief Allow Lua to have access to PlayerOptions. */ 
+class LunaPlayerOptions: public Luna<PlayerOptions>
+{
+public:
+	DEFINE_METHOD( GetNoteSkin, m_sNoteSkin )
+
+	LunaPlayerOptions()
+	{
+		ADD_METHOD( GetNoteSkin );
+	}
+};
+
+LUA_REGISTER_CLASS( PlayerOptions )
+// lua end
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
