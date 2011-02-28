@@ -16,6 +16,9 @@ class StepsID;
 struct lua_State;
 struct BackgroundChange;
 
+/** @brief The version of the .ssc file format. */
+const static float STEPFILE_VERSION_NUMBER = 0.53f;
+
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
 /** @brief How many edits for this song can be available? */
@@ -73,7 +76,7 @@ public:
 	~Song();
 	void Reset();
 	void DetachSteps();
-
+	
 	/**
 	 * @brief Load a song from the chosen directory.
 	 *
