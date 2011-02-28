@@ -215,8 +215,8 @@ public:
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
 	// Metricable noteskin things
-	//void LoadNoteSkinMetrics( PlayerNumber pn );
 	/*
+	void LoadNoteSkinMetrics( PlayerNumber pn );
 	int			m_iNoteSkinColSpacing[NUM_PLAYERS];
 	int			m_iNoteSkinArrowSize[NUM_PLAYERS];
 	*/
