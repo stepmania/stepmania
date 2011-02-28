@@ -78,9 +78,9 @@ public:
 	 * the three credits needed to begin the game. */
 	BroadcastOnChange<int>			m_iCoins;
 	/** @brief The player number used with Styles where one player controls both sides. */
-	PlayerNumber				m_MasterPlayerNumber;
-	bool					m_bMultiplayer;
-	int					m_iNumMultiplayerNoteFields;
+	PlayerNumber	m_MasterPlayerNumber;
+	bool			m_bMultiplayer;
+	int				m_iNumMultiplayerNoteFields;
 	bool DifficultiesLocked() const;
 	bool ChangePreferredDifficultyAndStepsType( PlayerNumber pn, Difficulty dc, StepsType st );
 	bool ChangePreferredDifficulty( PlayerNumber pn, int dir );
@@ -90,24 +90,24 @@ public:
 	Difficulty GetClosestShownDifficulty( PlayerNumber pn ) const;
 	Difficulty GetEasiestStepsDifficulty() const;
 	Difficulty GetHardestStepsDifficulty() const;
-	RageTimer			m_timeGameStarted;	// from the moment the first player pressed Start
-	LuaTable			*m_Environment;
+	RageTimer		m_timeGameStarted;	// from the moment the first player pressed Start
+	LuaTable		*m_Environment;
 
 	// This is set to a random number per-game/round; it can be used for a random seed.
-	int				m_iGameSeed, m_iStageSeed;
-	RString				m_sStageGUID;
+	int			m_iGameSeed, m_iStageSeed;
+	RString		m_sStageGUID;
 
 	/**
 	 * @brief Determine if a second player can join in at this time.
 	 * @return true if a player can still enter the game, false otherwise. */
-	bool		PlayersCanJoin() const;
-	int 		GetCoinsNeededToJoin() const;
-	bool		EnoughCreditsToJoin() const { return m_iCoins >= GetCoinsNeededToJoin(); }
+	bool	PlayersCanJoin() const;
+	int 	GetCoinsNeededToJoin() const;
+	bool	EnoughCreditsToJoin() const { return m_iCoins >= GetCoinsNeededToJoin(); }
 	int		GetNumSidesJoined() const;
 
 	const Game*	GetCurrentGame();
 	const Style*	GetCurrentStyle() const;
-	void		SetCurrentStyle( const Style *pStyle );
+	void	SetCurrentStyle( const Style *pStyle );
 
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
 	bool IsPlayerEnabled( PlayerNumber pn ) const;
@@ -129,17 +129,17 @@ public:
 
 	BroadcastOnChange<RString>	m_sPreferredSongGroup;		// GROUP_ALL denotes no preferred group
 	BroadcastOnChange<RString>	m_sPreferredCourseGroup;	// GROUP_ALL denotes no preferred group
-	bool				m_bChangedFailTypeOnScreenSongOptions;	// true if FailType was changed in the song options screen
+	bool		m_bChangedFailTypeOnScreenSongOptions;	// true if FailType was changed in the song options screen
 	BroadcastOnChange<StepsType>				m_PreferredStepsType;
 	BroadcastOnChange1D<Difficulty,NUM_PLAYERS>		m_PreferredDifficulty;
 	BroadcastOnChange1D<CourseDifficulty,NUM_PLAYERS>	m_PreferredCourseDifficulty;// used in nonstop
 	BroadcastOnChange<SortOrder>	m_SortOrder;			// set by MusicWheel
-	SortOrder			m_PreferredSortOrder;		// used by MusicWheel
-	EditMode			m_EditMode;
-	bool				IsEditing() const { return m_EditMode != EditMode_Invalid; }
-	bool				m_bDemonstrationOrJukebox;	// ScreenGameplay does special stuff when this is true
-	bool				m_bJukeboxUsesModifiers;
-	int				m_iNumStagesOfThisSong;
+	SortOrder	m_PreferredSortOrder;		// used by MusicWheel
+	EditMode	m_EditMode;
+	bool		IsEditing() const { return m_EditMode != EditMode_Invalid; }
+	bool		m_bDemonstrationOrJukebox;	// ScreenGameplay does special stuff when this is true
+	bool		m_bJukeboxUsesModifiers;
+	int			m_iNumStagesOfThisSong;
 	/**
 	 * @brief Increase this every stage while not resetting on a continue.
 	 *
@@ -159,8 +159,8 @@ public:
 	void		CancelStage();
 	void		CommitStageStats();
 	void		FinishStage();
-	int		GetNumStagesLeft( PlayerNumber pn ) const;
-	int		GetSmallestNumStagesLeftForAnyHumanPlayer() const;
+	int			GetNumStagesLeft( PlayerNumber pn ) const;
+	int			GetSmallestNumStagesLeftForAnyHumanPlayer() const;
 	bool		IsFinalStageForAnyHumanPlayer() const;
 	bool		IsAnExtraStage() const;
 	bool		IsAnExtraStageAndSelectionLocked() const;
@@ -172,7 +172,6 @@ public:
 
 	bool		m_bLoadingNextSong;
 	int		GetLoadingCourseSongIndex() const;
-
 
 	// State Info used during gameplay
 
@@ -212,17 +211,14 @@ public:
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
 	// Metricable noteskin things
+	//void LoadNoteSkinMetrics( PlayerNumber pn );
 	/*
-	void LoadNoteSkinMetrics( PlayerNumber pn );
 	int			m_iNoteSkinColSpacing[NUM_PLAYERS];
 	int			m_iNoteSkinArrowSize[NUM_PLAYERS];
 	*/
 	// not sure I want to let noteskins change row spacing, as that changes how
 	// the speed mods work... -aj
 	//int			m_iNoteSkinRowSpacing[NUM_PLAYERS];
-	// what are these for, exactly? -aj
-	//bool		m_bNoteSkinOverrideDim[NUM_PLAYERS];
-	//bool		m_bNoteSkinOverrideBright[NUM_PLAYERS];
 
 	float		m_fMusicSecondsVisible;
 	float		m_fSongBeatVisible;
