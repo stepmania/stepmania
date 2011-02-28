@@ -53,7 +53,10 @@ private:
 public:
 	apActorCommands m_cmdInit;
 
-	// All the stuff below will be filled in if this character is playable in Rave mode
+	/**
+	 * @brief Is this character playable in the Rave mode?
+	 *
+	 * All of the variables listed below here will be filled in if true. */
 	bool	m_bUsableInRave;
 
 	RString	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
