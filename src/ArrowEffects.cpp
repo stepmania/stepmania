@@ -18,7 +18,12 @@ static ThemeMetric<float>	ARROW_SPACING( "ArrowEffects", "ArrowSpacing" );
 static ThemeMetric<bool>	QUANTIZE_ARROW_Y( "ArrowEffects", "QuantizeArrowYPosition");
 static ThemeMetric<bool>	HIDDEN_SUDDEN_PAST_RECEPTOR( "ArrowEffects", "DrawHiddenNotesAfterReceptor");
 
-// Allow themes to modify effects. (Is this a good idea? -aj)
+/* For better or for worse, allow the themes to modify the various mod
+ * effects for the different mods. In general, it is recommended to not
+ * edit the default values and instead use percentage mods when changes
+ * are wanted. Still, the option is available for those that want it.
+ *
+ * Is this a good idea? We'll find out. -aj & Wolfman2000 */
 static ThemeMetric<float>	BLINK_MOD_FREQUENCY( "ArrowEffects", "BlinkModFrequency" );
 static ThemeMetric<float>	BOOST_MOD_MIN_CLAMP( "ArrowEffects", "BoostModMinClamp" );
 static ThemeMetric<float>	BOOST_MOD_MAX_CLAMP( "ArrowEffects", "BoostModMaxClamp" );
