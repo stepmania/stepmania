@@ -180,7 +180,7 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
-
+	
 	/*
 	ASSERT( !out.m_Timing.m_ComboSegments.empty() );
 	f.Write( "#COMBOS:" );
@@ -301,6 +301,7 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( "#DELAYS:;" );
 	lines.push_back( "#TIMESIGNATURES:;" );
 	lines.push_back( "#TICKCOUNTS:;" );
+	lines.push_back( "#ATTACKS:;" );
 	// lines.push_back( "#COMBOS:;" );
 
 	/*
@@ -364,6 +365,9 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 
 		asComboValues.push_back( ssprintf( "%.6f=%d", NoteRowToBeat(cs.m_iStartRow), cs.m_iComboFactor ) );
 	}
+	
+	lines.push_back( "#ATTACKS:;" );
+	 
 	lines.push_back( ssprintf( "#COMBOS:%s;", join("\n,", asComboValues).c_str() ) );
 
 	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );

@@ -9,6 +9,9 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
+[v0.54] - Wolfman2000
+* Add #ATTACKS tag to the Notedata sections. Right now it does nothing.
+
 [v0.53] - Wolfman2000
 * Added Fakes to the RadarCategories. Start parsing between versions.
 * Always write out the latest version to cache and hard drive.
