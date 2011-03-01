@@ -421,7 +421,7 @@ struct TickcountSegment
 	 * @param s the starting row of this segment.
 	 * @param t the amount of ticks counted per beat.
 	 */
-	TickcountSegment( int s, int t ){ m_iStartRow = max( 0, s ); m_iTicks = max( 1, t ); }
+	TickcountSegment( int s, int t ){ m_iStartRow = max( 0, s ); m_iTicks = max( 0, t ); }
 	/**
 	 * @brief The row in which the TickcountSegment activates.
 	 */

@@ -2644,7 +2644,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if ( SM == SM_BackFromTickcountChange )
 	{
 		int iTick = atoi( ScreenTextEntry::s_sLastAnswer );
-		if ( iTick >= 1 && iTick <= ROWS_PER_BEAT )
+		if ( iTick >= 0 && iTick <= ROWS_PER_BEAT )
 		{
 			m_pSong->m_Timing.SetTickcountAtBeat( GAMESTATE->m_fSongBeat, iTick );
 		}

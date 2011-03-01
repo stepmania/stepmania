@@ -13,6 +13,11 @@ _____________________________________________________________________________
 sm-ssc v1.2.3 | 2011022?
 --------------------------------------------------------------------------------
 
+20110301
+--------
+* Allow Tickcount Segments to have a value of 0 to better replicate some
+  charts in the Pump series. [Wolfman2000]
+
 20110228
 --------
 * Add Fakes to the RadarCategories. [Wolfman2000]
