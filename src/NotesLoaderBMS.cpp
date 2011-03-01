@@ -494,8 +494,8 @@ static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			int row = iRowNo + lrintf( fPercentThroughMeasure * fBeatsPerMeasure * ROWS_PER_BEAT );
 
 			// some BMS files seem to have funky alignment, causing us to write gigantic cache files.
-			// Try to correct for this by quantizing.
-			row = Quantize( row, ROWS_PER_MEASURE/64 );
+			// Try to correct for this by quantizing. // not always
+			// row = Quantize( row, ROWS_PER_MEASURE/64 );
 
 			BmsTrack bmsTrack;
 			bool bIsHold;
@@ -832,13 +832,16 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		{
 			RString sPair = sData.substr( i*2, 2 );
 
-			int iVal = 0;
-			if( sscanf( sPair, "%x", &iVal ) == 0 || iVal == 0 )
-				continue;
-
 			int iRow = iStepIndex + (i * iRowsPerMeasure) / totalPairs;
-			float fBeat = NoteRowToBeat( iRow );
+			float fBeat = NoteRowToBeat( iRow );			
+			int iVal = 0;
+			sscanf( sPair, "%x", &iVal );
 
+			if (sPair == "00")
+			{
+				continue;
+			}
+			
 			switch( iBMSTrackNo )
 			{
 			case BMS_TRACK_BPM:
@@ -861,30 +864,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
 				{
 					float fBPM = StringToFloat( sBPM );
-
-					if( PREFSMAN->m_bQuirksMode )
-					{
-						BPMSegment newSeg( BeatToNoteRow(fBeat), fBPM );
-						out.AddBPMSegment( newSeg );
-						if( fBPM > 0.0f )
-							LOG->Trace( "Inserting new positive BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
-						else
-							LOG->Trace( "Inserting new negative BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
-					}
-					else
-					{
-						if( fBPM > 0.0f )
-						{
-							BPMSegment newSeg( BeatToNoteRow(fBeat), fBPM );
-							out.AddBPMSegment( newSeg );
-							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
-						}
-						else
-						{
-							LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f",
-									  fBeat, fBPM );
-						}
-					}
+					out.SetBPMAtBeat( fBeat, fBPM );
 				}
 				else
 				{
@@ -894,6 +874,10 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 			}
 			case BMS_TRACK_STOP:
 			{
+				if( iVal == 0 )
+				{
+					break;
+				}
 				RString sTagToLookFor = ssprintf( "#stop%02x", iVal );
 				RString sBeats;
 				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBeats ) )
@@ -916,53 +900,6 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 			}
 		}
 
-		switch( iBMSTrackNo )
-		{
-			case BMS_TRACK_BPM_REF:
-			{
-				// XXX: offset
-				int iBPMNo;
-				sscanf( sData, "%x", &iBPMNo );	// data is in hexadecimal
-
-				RString sBPM;
-				RString sTagToLookFor = ssprintf( "#bpm%02x", iBPMNo );
-				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
-				{
-					float fBPM = StringToFloat( sBPM );
-
-					if( PREFSMAN->m_bQuirksMode )
-					{
-						BPMSegment newSeg( iStepIndex, fBPM );
-						out.AddBPMSegment( newSeg );
-						if( fBPM > 0.0f )
-							LOG->Trace( "Inserting new positive BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
-						else
-							LOG->Trace( "Inserting new negative BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
-					}
-					else
-					{
-						if( fBPM > 0.0f )
-						{
-							BPMSegment newSeg( iStepIndex, fBPM );
-							out.AddBPMSegment( newSeg );
-							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartRow), newSeg.GetBPM() );
-
-						}
-						else
-						{
-							LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f.",
-									  NoteRowToBeat(iStepIndex), fBPM );
-						}
-					}
-				}
-				else
-				{
-					LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
-				}
-
-				break;
-			}
-		}
 	}
 
 	// Now that we're done reading BPMs, factor out weird time signatures.
