@@ -479,7 +479,18 @@ function GamePrefDefaultFail()
 		LoadSelections = function(self, list, pn)
 			if ReadGamePrefFromFile("DefaultFail") ~= nil then
 				if GetGamePref("DefaultFail") then
-					list[table.find( list, GetGamePref("DefaultFail") )] = true;
+					if GetGamePref("DefaultFail") == "Immediate" then
+						list[1] = true;
+					elseif GetGamePref("DefaultFail") == "ImmediateContinue" then
+						list[2] = true;
+					elseif GetGamePref("DefaultFail") == "AtEnd" then
+						list[3] = true;
+					elseif GetGamePref("DefaultFail") == "Off" then
+						list[4] = true;
+					else
+						list[1] = true;
+					end
+					-- list[table.find( list, GetGamePref("DefaultFail") )] = true;
 				else
 					list[1] = true;
 				end;
@@ -492,14 +503,18 @@ function GamePrefDefaultFail()
 			-- This is so stupid.
 			local tChoices = { "Immediate","ImmediateContinue", "AtEnd", "Off" };
 			local val;
-			for i=1,#list do
-				if list[i] then
-					val = i;
-				else
-					val = 1;
-				end
+			if list[1] then
+				val = tChoices[1];
+			elseif list[2] then
+				val = tChoices[2];
+			elseif list[3] then
+				val = tChoices[3];
+			elseif list[4] then
+				val = tChoices[4];
+			else
+				val = tChoices[1];
 			end
-			WriteGamePrefToFile("DefaultFail",tChoices[val]);
+			WriteGamePrefToFile("DefaultFail",val);
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
