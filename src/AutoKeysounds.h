@@ -14,6 +14,7 @@ class AutoKeysounds
 public:
 	void Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly );
 	void Update( float fDelta );
+	/** @brief Finish loading the main sounds, and setup the auto keysounds if any. */
 	void FinishLoading();
 	RageSound *GetSound() { return &m_sSound; }
 	RageSoundReader *GetSharedSound() { return m_pSharedSound; }

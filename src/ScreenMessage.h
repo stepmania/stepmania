@@ -1,8 +1,6 @@
-/* ScreenMessage - Definition of common ScreenMessages and helpers. */
-
 #ifndef ScreenMessage_H
 #define ScreenMessage_H
-
+/** @brief Definition of common ScreenMessages and helpers. */
 typedef RString ScreenMessage;
 
 extern const ScreenMessage SM_Invalid;
@@ -28,11 +26,12 @@ namespace ScreenMessageHelpers
 #define AutoScreenMessage( x ) \
 	const ScreenMessage x = ScreenMessageHelpers::ToScreenMessage( #x )
 
-
 #endif
 
-/*
- * (c) 2003-2005 Chris Danford, Charles Lohr
+/**
+ * @file
+ * @author Chris Danford, Charles Lohr (c) 2003-2005
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
