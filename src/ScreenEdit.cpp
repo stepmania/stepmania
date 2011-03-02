@@ -742,6 +742,7 @@ void ScreenEdit::Init()
 
 	m_SnapDisplay.SetXY( EDIT_X, PLAYER_Y_STANDARD );
 	m_SnapDisplay.Load( PLAYER_1 );
+	// xxx: hardcoded command -aj
 	m_SnapDisplay.SetZoom( 0.5f );
 	this->AddChild( &m_SnapDisplay );
 
@@ -1388,13 +1389,13 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			case EDIT_BUTTON_SCROLL_UP_LINE:
 			case EDIT_BUTTON_SCROLL_DOWN_LINE:
 				fBeatsToMove = NoteTypeToBeat( m_SnapDisplay.GetNoteType() );
-				if( EditB == EDIT_BUTTON_SCROLL_UP_LINE )	
+				if( EditB == EDIT_BUTTON_SCROLL_UP_LINE )
 					fBeatsToMove *= -1;
 				break;
 			case EDIT_BUTTON_SCROLL_UP_PAGE:
 			case EDIT_BUTTON_SCROLL_DOWN_PAGE:
 				fBeatsToMove = beatsPerMeasure;
-				if( EditB == EDIT_BUTTON_SCROLL_UP_PAGE )	
+				if( EditB == EDIT_BUTTON_SCROLL_UP_PAGE )
 					fBeatsToMove *= -1;
 				break;
 			}
@@ -2349,10 +2350,10 @@ void ScreenEdit::TransitionEditState( EditState em )
 		m_Background.Unload();
 		m_Foreground.Unload();
 
-		/* Restore the cursor position. */
+		// Restore the cursor position.
 		GAMESTATE->m_fSongBeat = m_fBeatToReturnTo;
 
-		/* Make sure we're snapped. */
+		// Make sure we're snapped.
 		GAMESTATE->m_fSongBeat = Quantize( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 		/* Playing and recording have lead-ins, which may start before beat 0;
