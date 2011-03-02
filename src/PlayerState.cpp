@@ -189,6 +189,26 @@ int PlayerState::GetSumOfActiveAttackLevels() const
 	return iSum;
 }
 
+/*
+void PlayerState::LoadNoteSkinMetrics()
+{
+	// Read metrics from current noteskin for setting row/col spacing and
+	// arrow size (originally from StepMania AMX)
+
+	// steps must exist
+	ASSERT( GAMESTATE->m_pCurSteps[m_PlayerNumber] );
+
+	RString m_sNoteSkin = m_PlayerOptions.GetStage().m_sNoteSkin;
+	RString sStepsType = StringConversion::ToString( GAMESTATE->m_pCurSteps[m_PlayerNumber]->m_StepsType );
+	LOG->Trace("Loading Row/Col/Size values for Noteskin %s | StepsType: %s",m_sNoteSkin.c_str(),sStepsType.c_str());
+
+	//m_iNoteSkinRowSpacing = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "RowSpacing" );
+	// todo: allow per-column spacing values? -aj
+	m_iNoteSkinColSpacing = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "ColSpacing" );
+	m_iNoteSkinArrowSize = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "ArrowSize" );
+}
+*/
+
 // lua start
 #include "LuaBinding.h"
 
