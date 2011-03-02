@@ -5,6 +5,7 @@
 #include "RageLog.h"
 #include "RadarValues.h"
 #include "Steps.h"
+#include "NoteSkinManager.h"
 
 PlayerState::PlayerState()
 {
@@ -27,6 +28,9 @@ void PlayerState::Reset()
 	m_PlayerController = PC_HUMAN;
 
 	m_iCpuSkill = 5;
+
+	m_iNoteSkinColSpacing = 0;
+	m_iNoteSkinArrowSize = 0;
 
 	m_iLastPositiveSumOfAttackLevels = 0;
 	m_fSecondsUntilAttacksPhasedOut = 0;
@@ -189,9 +193,10 @@ int PlayerState::GetSumOfActiveAttackLevels() const
 	return iSum;
 }
 
-/*
+
 void PlayerState::LoadNoteSkinMetrics()
 {
+	/*
 	// Read metrics from current noteskin for setting row/col spacing and
 	// arrow size (originally from StepMania AMX)
 
@@ -206,8 +211,8 @@ void PlayerState::LoadNoteSkinMetrics()
 	// todo: allow per-column spacing values? -aj
 	m_iNoteSkinColSpacing = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "ColSpacing" );
 	m_iNoteSkinArrowSize = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "ArrowSize" );
+	*/
 }
-*/
 
 // lua start
 #include "LuaBinding.h"

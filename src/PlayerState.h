@@ -47,11 +47,9 @@ public:
 	ModsGroup<PlayerOptions>	m_PlayerOptions;
 
 	// Metricable noteskin things
-	/*
 	void LoadNoteSkinMetrics();
 	int m_iNoteSkinColSpacing;
 	int m_iNoteSkinArrowSize;
-	*/
 	// not sure I want to let noteskins change row spacing, as that changes how
 	// the speed mods work... -aj
 	//int m_iNoteSkinRowSpacing;
