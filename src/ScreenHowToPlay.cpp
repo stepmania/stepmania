@@ -135,7 +135,7 @@ void ScreenHowToPlay::Init()
 
 		// Allow themers to use either a .ssc or .sm file for this. -aj
 		RString sStepsPath = THEME->GetPathO(m_sName, "steps");
-		if( sPath.Right(4) == ".ssc" )
+		if( sStepsPath.Right(4) == ".ssc" )
 			SSCLoader::LoadFromSSCFile( sStepsPath, m_Song, false );
 		else
 			SMLoader::LoadFromSMFile( sStepsPath, m_Song, false );
