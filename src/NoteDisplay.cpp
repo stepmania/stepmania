@@ -247,21 +247,21 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 	cache->Load( sButton );
 
 	// "normal" note types
-	m_TapNote.Load( sButton, "Tap Note" );
-	m_TapMine.Load( sButton, "Tap Mine" );
-	m_TapLift.Load( sButton, "Tap Lift" );
-	m_TapFake.Load( sButton, "Tap Fake" );
+	m_TapNote.Load(		sButton, "Tap Note" );
+	m_TapMine.Load(		sButton, "Tap Mine" );
+	m_TapLift.Load(		sButton, "Tap Lift" );
+	m_TapFake.Load(		sButton, "Tap Fake" );
 
 	// hold types
 	FOREACH_HoldType( ht )
 	{
 		FOREACH_ActiveType( at )
 		{
-			m_HoldHead[ht][at].Load(		sButton, HoldTypeToString(ht)+" Head "+ActiveTypeToString(at) );
-			m_HoldTopCap[ht][at].Load(		sButton, HoldTypeToString(ht)+" Topcap "+ActiveTypeToString(at) );
-			m_HoldBody[ht][at].Load(		sButton, HoldTypeToString(ht)+" Body "+ActiveTypeToString(at) );
+			m_HoldHead[ht][at].Load(	sButton, HoldTypeToString(ht)+" Head "+ActiveTypeToString(at) );
+			m_HoldTopCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" Topcap "+ActiveTypeToString(at) );
+			m_HoldBody[ht][at].Load(	sButton, HoldTypeToString(ht)+" Body "+ActiveTypeToString(at) );
 			m_HoldBottomCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" Bottomcap "+ActiveTypeToString(at) );
-			m_HoldTail[ht][at].Load(		sButton, HoldTypeToString(ht)+" Tail "+ActiveTypeToString(at) );
+			m_HoldTail[ht][at].Load(	sButton, HoldTypeToString(ht)+" Tail "+ActiveTypeToString(at) );
 		}
 	}
 }
@@ -274,7 +274,7 @@ bool NoteDisplay::DrawHoldHeadForTapsOnSameRow() const
 void NoteDisplay::Update( float fDeltaTime )
 {
 	/* This function is static: it's called once per game loop, not once per
-	 * NoteDisplay. Update each cached item exactly once. */
+	 * NoteDisplay.  Update each cached item exactly once. */
 	map<NoteSkinAndPath, NoteResource *>::iterator it;
 	for( it = g_NoteResource.begin(); it != g_NoteResource.end(); ++it )
 	{
@@ -285,11 +285,11 @@ void NoteDisplay::Update( float fDeltaTime )
 
 void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLength, bool bVivid )
 {
-	// -inf ... inf
+	/* -inf ... inf */
 	float fBeatOrSecond = cache->m_bAnimationBasedOnBeats ? GAMESTATE->m_fSongBeat : GAMESTATE->m_fMusicSeconds;
-	// -len ... +len
+	/* -len ... +len */
 	float fPercentIntoAnimation = fmodf( fBeatOrSecond, fAnimationLength );
-	// -1 ... 1
+	/* -1 ... 1 */
 	fPercentIntoAnimation /= fAnimationLength;
 
 	if( bVivid )
@@ -304,7 +304,7 @@ void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAni
 	}
 	else
 	{
-		// 0 ... 1, wrapped
+		/* 0 ... 1, wrapped */
 		if( fPercentIntoAnimation < 0 )
 			fPercentIntoAnimation += 1.0f;
 	}
@@ -393,8 +393,8 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	const float fFrameWidth		= pSprite->GetZoomedWidth();
 	const float fFrameHeight	= pSprite->GetZoomedHeight();
 
-	/* Only draw the section that's within the range specified. If a hold note is
-	 * very long, don't process or draw the part outside of the range. Don't change
+	/* Only draw the section that's within the range specified.  If a hold note is
+	 * very long, don't process or draw the part outside of the range.  Don't change
 	 * fYTop or fYBottom; they need to be left alone to calculate texture coordinates. */
 	fYStartPos = max( fYTop, fYStartPos );
 	fYEndPos = min( fYBottom, fYEndPos );
@@ -416,9 +416,9 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 
 	if( bWrapping )
 	{
-		/* For very large hold notes, shift the texture coordinates to be near 0,
-		 * so we don't send very large values to the renderer. */
-		const float fDistFromTop	= fYStartPos - fYTop;
+		/* For very large hold notes, shift the texture coordinates to be near 0, so we
+		 * don't send very large values to the renderer. */
+		const float fDistFromTop	= fYStartPos - fYTop;		
 		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom );
 		fTexCoordTop += fAddToTexCoord;
 		fAddToTexCoord -= floorf( fTexCoordTop );
@@ -479,8 +479,8 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 
 		if( queue.Free() < 3 || bLast )
 		{
-			/* The queue is full. Render it, clear the buffer, and move back
-			 * a step to start off the strip again. */
+			/* The queue is full.  Render it, clear the buffer, and move back a step to
+			 * start off the strip again. */
 			if( !bAllAreTransparent )
 			{
 				FOREACH( Sprite*, vpSpr, spr )
@@ -542,8 +542,8 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	DISPLAY->SetZTestMode( bWavyPartsNeedZBuffer?ZTEST_WRITE_ON_PASS:ZTEST_OFF );
 	DISPLAY->SetZWrite( bWavyPartsNeedZBuffer );
 
-	// Hack: Z effects need a finer grain step.
-	const int fYStep = bWavyPartsNeedZBuffer? 4: 16;	// use small steps only if wavy
+	/* Hack: Z effects need a finer grain step. */
+	const int fYStep = bWavyPartsNeedZBuffer? 4: 16;		// use small steps only if wavy
 
 	if( bFlipHoldBody )
 	{
@@ -610,23 +610,23 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 
 	// HACK: If life > 0, don't set YOffset to 0 so that it doesn't jiggle around the receptor.
 	bool bStartIsPastPeak = true;
-	float fStartYOffset = 0;
+	float fStartYOffset	= 0;
 	if( tn.HoldResult.bActive  &&  tn.HoldResult.fLife > 0 )
-		; // use the default values filled in above
+		;	// use the default values filled in above
 	else
 		fStartYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fStartBeat, fThrowAway, bStartIsPastPeak );
-
+	
 	float fEndPeakYOffset	= 0;
 	bool bEndIsPastPeak = false;
 	float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, iCol, NoteRowToBeat(iEndRow), fEndPeakYOffset, bEndIsPastPeak );
 
-	// In boomerang, the arrows reverse direction at Y offset value fPeakAtYOffset.
-	// If fPeakAtYOffset lies inside of the hold we're drawing, then the we
-	// want to draw the tail at that max Y offset, or else the hold will appear
+	// In boomerang, the arrows reverse direction at Y offset value fPeakAtYOffset.  
+	// If fPeakAtYOffset lies inside of the hold we're drawing, then the we 
+	// want to draw the tail at that max Y offset, or else the hold will appear 
 	// to magically grow as the tail approaches the max Y offset.
 	if( bStartIsPastPeak && !bEndIsPastPeak )
 		fEndYOffset	= fEndPeakYOffset;	// use the calculated PeakYOffset so that long holds don't appear to grow
-
+	
 	// Swap in reverse, so fStartYOffset is always the offset higher on the screen.
 	if( bReverse )
 		swap( fStartYOffset, fEndYOffset );
@@ -641,23 +641,23 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	/* The body and caps should have no overlap, so their order doesn't matter.
 	 * Draw the head last, so it appears on top. */
 	float fBeat = NoteRowToBeat(iRow);
-	/*
-	if( !cache->m_bHoldHeadIsAboveWavyParts )
-	{
-		Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
-		DrawActor( tn, pActor, NotePart_HoldHead, iCol, bFlipHeadAndTail ? fEndYOffset : fStartYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	}
-	if( !cache->m_bHoldTailIsAboveWavyParts )
-	{
-		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
-		DrawActor( tn, pActor, NotePart_HoldTail, iCol, bFlipHeadAndTail ? fStartYOffset : fEndYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	}
-	*/
+	//if( !cache->m_bHoldHeadIsAboveWavyParts )
+	//{
+	//	Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+	//	DrawActor( tn, pActor, NotePart_HoldHead, iCol, bFlipHeadAndTail ? fEndYOffset : fStartYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	//}
+	//if( !cache->m_bHoldTailIsAboveWavyParts )
+	//{
+	//	Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+	//	DrawActor( tn, pActor, NotePart_HoldTail, iCol, bFlipHeadAndTail ? fStartYOffset : fEndYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, fColorScale, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	//}
 
 	DrawHoldBody( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, false, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	DrawHoldBody( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, true, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 
-	// These set the texture mode themselves.
+	/* These set the texture mode themselves. */
+	// this part was modified in pumpmania, where it flips the draw order
+	// of the head and tail. Perhaps make this a theme/noteskin metric? -aj
 	if( cache->m_bHoldTailIsAboveWavyParts )
 	{
 		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
