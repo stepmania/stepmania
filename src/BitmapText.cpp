@@ -351,7 +351,7 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 			 * the texture wrapping state. If setting the wrapping state is found to be slow, 
 			 * there should probably be a "don't care" texture wrapping mode set in Actor. -Chris */
 			Actor::SetTextureRenderStates();
-			
+
 			RageSpriteVertex &start_vertex = m_aVertices[start*4];
 			vertices.push_back(&start_vertex);
 			iNumVertsToDraw += (end-start)*4;
