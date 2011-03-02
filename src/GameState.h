@@ -214,16 +214,6 @@ public:
 	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
-	// Metricable noteskin things
-	/*
-	void LoadNoteSkinMetrics( PlayerNumber pn );
-	int			m_iNoteSkinColSpacing[NUM_PLAYERS];
-	int			m_iNoteSkinArrowSize[NUM_PLAYERS];
-	*/
-	// not sure I want to let noteskins change row spacing, as that changes how
-	// the speed mods work... -aj
-	//int			m_iNoteSkinRowSpacing[NUM_PLAYERS];
-
 	float		m_fMusicSecondsVisible;
 	float		m_fSongBeatVisible;
 

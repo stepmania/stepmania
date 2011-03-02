@@ -1447,27 +1447,6 @@ bool GameState::CurrentOptionsDisqualifyPlayer( PlayerNumber pn )
 		return po.IsEasierForSongAndSteps(  m_pCurSong, m_pCurSteps[pn], pn);
 }
 
-/*
-void GameState::LoadNoteSkinMetrics( PlayerNumber pn )
-{
-	// Read metrics from current noteskin for setting row/col spacing and
-	// arrow size (originally from StepMania AMX)
-	if( !IsPlayerEnabled( pn ) )
-		return;
-
-	ASSERT( this->m_pCurSteps[pn] );
-
-	RString m_sNoteSkin = m_pPlayerState[pn]->m_PlayerOptions.GetStage().m_sNoteSkin;
-	RString sStepsType = StringConversion::ToString( this->m_pCurSteps[pn]->m_StepsType );
-	LOG->Trace("Loading Row/Col/Size values for Noteskin %s | StepsType: %s",m_sNoteSkin.c_str(),sStepsType.c_str());
-
-	//m_iNoteSkinRowSpacing[pn] = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "RowSpacing" );
-	// todo: allow per-column spacing values? -aj
-	m_iNoteSkinColSpacing[pn] = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "ColSpacing" );
-	m_iNoteSkinArrowSize[pn] = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "ArrowSize" );
-}
-*/
-
 /* reset noteskins (?)
  * GameState::ResetNoteSkins()
  * GameState::ResetNoteSkinsForPlayer( PlayerNumber pn )
