@@ -20,7 +20,7 @@ void ScreenGameplaySyncMachine::Init()
 	AdjustSync::ResetOriginalSyncData();
 
 	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music");
-	// Allow themers to use .ssc and .sm files. -aj
+	// Allow themers to use either a .ssc or .sm file for this. -aj
 	if(sFile.Right(4) == ".ssc")
 		SSCLoader::LoadFromSSCFile( sFile, m_Song );
 	else
