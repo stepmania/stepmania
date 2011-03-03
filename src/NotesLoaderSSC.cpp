@@ -565,7 +565,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				}
 
 				else if( sValueName=="COMBOS" )
-				{/*
+				{
 					vector<RString> arrayComboExpressions;
 					split( sParams[1], ",", arrayComboExpressions );
 
@@ -584,7 +584,6 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 						ComboSegment new_seg( BeatToNoteRow( fComboBeat ), iCombos );
 						out.m_Timing.AddComboSegment( new_seg );
 					}
-				  */
 				}
 
 				/* The following are cache tags. Never fill their values
