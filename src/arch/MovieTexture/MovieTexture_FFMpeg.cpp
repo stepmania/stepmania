@@ -689,7 +689,7 @@ int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size )
 	int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size );
 #else
 	int URLRageFile_write( avcodec::URLContext *h, const unsigned char *buf, int size );
-#end
+#endif
 {
 	RageFileBasic *f = (RageFileBasic *) h->priv_data;
 	return f->Write( buf, size );
