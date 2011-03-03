@@ -476,6 +476,82 @@ struct TickcountSegment
 	 */
 	bool operator>=( const TickcountSegment &other ) const { return !operator<(other); }
 };
+
+/**
+ * @brief Identifies when a chart is to have a different combo multiplier value.
+ * 
+ * Admitedly, this would primarily be used for mission mode style charts. However,
+ * it can have its place during normal gameplay.
+ */
+struct ComboSegment
+{
+	/**
+	 * @brief Creates a simple Combo Segment with default values.
+	 *
+	 * It is best to override the values as soon as possible.
+	 */
+	ComboSegment() : m_iStartRow(-1), m_iCombo(1) { }
+	/**
+	 * @brief Creates a Combo Segment with the specified starting row and combo factor.
+	 * @param s the starting row of this segment.
+	 * @param t the amount the combo increases on a succesful hit.
+	 */
+	ComboSegment( int s, int t ){ m_iStartRow = max( 0, s ); m_iCombo = max( 1, t ); }
+	/**
+	 * @brief The row in which the ComboSegment activates.
+	 */
+	int m_iStartRow;
+	/**
+	 * @brief The amount the combo increases at this point.
+	 */
+	int m_iCombo;
+	
+	/**
+	 * @brief Compares two ComboSegments to see if they are equal to each other.
+	 * @param other the other ComboSegment to compare to.
+	 * @return the equality of the two segments.
+	 */
+	bool operator==( const ComboSegment &other ) const
+	{
+		COMPARE( m_iStartRow );
+		COMPARE( m_iCombo );
+		return true;
+	}
+	/**
+	 * @brief Compares two ComboSegments to see if they are not equal to each other.
+	 * @param other the other ComboSegment to compare to.
+	 * @return the inequality of the two segments.
+	 */
+	bool operator!=( const ComboSegment &other ) const { return !operator==(other); }
+	/**
+	 * @brief Compares two ComboSegments to see if one is less than the other.
+	 * @param other the other ComboSegment to compare to.
+	 * @return the truth/falsehood of if the first is less than the second.
+	 */
+	bool operator<( const ComboSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
+	/**
+	 * @brief Compares two ComboSegments to see if one is less than or equal to the other.
+	 * @param other the other ComboSegment to compare to.
+	 * @return the truth/falsehood of if the first is less or equal to than the second.
+	 */
+	bool operator<=( const ComboSegment &other ) const
+	{
+		return ( operator<(other) || operator==(other) );
+	}
+	/**
+	 * @brief Compares two ComboSegments to see if one is greater than the other.
+	 * @param other the other ComboSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than the second.
+	 */
+	bool operator>( const ComboSegment &other ) const { return !operator<=(other); }
+	/**
+	 * @brief Compares two ComboSegments to see if one is greater than or equal to the other.
+	 * @param other the other ComboSegment to compare to.
+	 * @return the truth/falsehood of if the first is greater than or equal to the second.
+	 */
+	bool operator>=( const ComboSegment &other ) const { return !operator<(other); }
+};
+
 /**
  * @brief Holds data for translating beats<->seconds.
  */
@@ -870,6 +946,60 @@ public:
 	 */
 	void AddTickcountSegment( const TickcountSegment &seg );
 	
+	/**
+	 * @brief Retrieve the Combo at the given row.
+	 * @param iNoteRow the row in question.
+	 * @return the Combo.
+	 */
+	int GetComboAtRow( int iNoteRow ) const;
+	/**
+	 * @brief Retrieve the Combo at the given beat.
+	 * @param fBeat the beat in question.
+	 * @return the Combo.
+	 */
+	int GetComboAtBeat( float fBeat ) const { return GetComboAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Set the row to have the new Combo.
+	 * @param iNoteRow the row to have the new Combo.
+	 * @param iTicks the Combo.
+	 */
+	void SetComboAtRow( int iNoteRow, int iCombo );
+	/**
+	 * @brief Set the beat to have the new Combo.
+	 * @param fBeat the beat to have the new Combo.
+	 * @param iTicks the Combo.
+	 */
+	void SetComboAtBeat( float fBeat, int iCombo ) { SetComboAtRow( BeatToNoteRow( fBeat ), iCombo ); }
+	/**
+	 * @brief Retrieve the ComboSegment at the specified row.
+	 * @param iNoteRow the row that has a ComboSegment.
+	 * @return the ComboSegment in question.
+	 */
+	ComboSegment& GetComboSegmentAtRow( int iNoteRow );
+	/**
+	 * @brief Retrieve the ComboSegment at the specified beat.
+	 * @param fBeat the beat that has a ComboSegment.
+	 * @return the ComboSegment in question.
+	 */
+	ComboSegment& GetComboSegmentAtBeat( float fBeat ) { return GetComboSegmentAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Retrieve the index of the ComboSegments at the specified row.
+	 * @param iNoteRow the row that has a ComboSegment.
+	 * @return the ComboSegment's index in question.
+	 */
+	int GetComboSegmentIndexAtRow( int iNoteRow ) const;
+	/**
+	 * @brief Retrieve the index of the ComboSegments at the specified beat.
+	 * @param fBeat the beat that has a ComboSegment.
+	 * @return the ComboSegment's index in question.
+	 */
+	int GetComboSegmentIndexAtBeat( float fBeat ) const { return GetComboSegmentIndexAtRow( BeatToNoteRow(fBeat) ); }
+	/**
+	 * @brief Add the ComboSegment to the TimingData.
+	 * @param seg the new ComboSegment.
+	 */
+	void AddComboSegment( const ComboSegment &seg );
+	
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	
 	void NoteRowToMeasureAndBeat( int iNoteRow, int &iMeasureIndexOut, int &iBeatIndexOut, int &iRowsRemainder ) const;
@@ -934,6 +1064,9 @@ public:
 		COMPARE( m_TickcountSegments.size() );
 		for( unsigned i=0; i<m_TickcountSegments.size(); i++ )
 			COMPARE( m_TickcountSegments[i] );
+		COMPARE( m_ComboSegments.size() );
+		for( unsigned i=0; i<m_ComboSegments.size(); i++ )
+			COMPARE( m_ComboSegments[i] );
 		COMPARE( m_fBeat0OffsetInSeconds );
 		return true;
 	}
@@ -978,6 +1111,10 @@ public:
 	 */
 	vector<TickcountSegment>	m_TickcountSegments;
 	/**
+	 * @brief The collection of ComboSegments.
+	 */
+	vector<ComboSegment>		m_ComboSegments;
+	/**
 	 * @brief The initial offset of a song.
 	 */
 	float	m_fBeat0OffsetInSeconds;
@@ -997,7 +1134,6 @@ public:
 /**
  * @file
  * @author Chris Danford, Glenn Maynard (c) 2001-2004 
- * 
  * @section LICENSE
  * All rights reserved.
  * 
