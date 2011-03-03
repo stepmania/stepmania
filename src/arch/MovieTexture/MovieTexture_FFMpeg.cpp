@@ -685,9 +685,9 @@ int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size )
 	return f->Read( buf, size );
 }
 
-#if defined(MACOSX)
+#if defined(MACOSX) || defined(_MSC_VER) // still using older ffmpeg versions
 	int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
-#else
+#else // assume ffmpeg 0.6 on *nix
 	int URLRageFile_write( avcodec::URLContext *h, const unsigned char *buf, int size )
 #endif
 {
