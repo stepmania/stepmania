@@ -17,6 +17,7 @@ sm-ssc v1.2.3 | 201103??
 --------
 * [ScreenGameplaySyncMachine] Allow themers to use either .ssc or .sm files. [AJ]
 * [ScreenHowToPlay] Allow themers to use either .ssc or .sm files. [AJ]
+* [ScreenGameplay] Footer to prevent 'arrow overflow' [Midiman]
 
 20110301
 --------
