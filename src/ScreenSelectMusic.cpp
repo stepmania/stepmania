@@ -122,11 +122,8 @@ void ScreenSelectMusic::Init()
 
 	this->SubscribeToMessage( Message_PlayerJoined );
 
-	/* Cache: */
-	/* SSC 
-		Marking for change
-		-- Midiman 
-	*/
+	// Cache these values
+	// Marking for change -- Midiman (why? -aj)
 	m_sSectionMusicPath =		THEME->GetPathS(m_sName,"section music");
 	m_sSortMusicPath =			THEME->GetPathS(m_sName,"sort music");
 	m_sRouletteMusicPath =		THEME->GetPathS(m_sName,"roulette music");
@@ -134,7 +131,6 @@ void ScreenSelectMusic::Init()
 	m_sCourseMusicPath =		THEME->GetPathS(m_sName,"course music");
 	m_sLoopMusicPath =			THEME->GetPathS(m_sName,"loop music");
 	m_sFallbackCDTitlePath =	THEME->GetPathG(m_sName,"fallback cdtitle");
-
 
 	m_TexturePreload.Load( m_sFallbackCDTitlePath );
 
