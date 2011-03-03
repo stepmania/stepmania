@@ -29,6 +29,7 @@ Model::Model()
 	m_fDefaultAnimationRate = 1;
 	m_fCurAnimationRate = 1;
 	m_bLoop = true;
+	m_bDrawCelShaded = false;
 	m_pTempGeometry = NULL;
 }
 
@@ -779,6 +780,7 @@ public:
 	static int loop( T* p, lua_State *L )		{ p->SetLoop(BArg(1)); return 0; }
 	static int rate( T* p, lua_State *L )		{ p->SetRate(FArg(1)); return 0; }
 	static int GetNumStates( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumStates() ); return 1; }
+	//static int CelShading( T* p, lua_State *L )		{ p->SetCelShading(BArg(1)); return 0; }
 
 	LunaModel()
 	{
@@ -789,6 +791,7 @@ public:
 		ADD_METHOD( rate );
 		// sm-ssc adds:
 		ADD_METHOD( GetNumStates );
+		//ADD_METHOD( CelShading );
 	}
 };
 
