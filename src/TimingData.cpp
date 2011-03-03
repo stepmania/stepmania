@@ -52,6 +52,11 @@ void TimingData::AddTickcountSegment( const TickcountSegment &seg )
 	m_TickcountSegments.insert( upper_bound(m_TickcountSegments.begin(), m_TickcountSegments.end(), seg), seg );
 }
 
+void TimingData::AddComboSegment( const ComboSegment &seg )
+{
+	m_ComboSegments.insert( upper_bound(m_ComboSegments.begin(), m_ComboSegments.end(), seg), seg );
+}
+
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
 void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 {
@@ -176,6 +181,27 @@ void TimingData::SetTickcountAtRow( int iRow, int iTicks )
 	}
 }
 
+void TimingData::SetComboAtRow( int iRow, int iCombo )
+{
+	unsigned i;
+	for( i=0; i<m_ComboSegments.size(); i++ )
+		if( m_ComboSegments[i].m_iStartRow >= iRow )
+			break;
+	
+	if( i == m_ComboSegments.size() || m_ComboSegments[i].m_iStartRow != iRow )
+	{
+		if( i == 0 || m_ComboSegments[i-1].m_iCombo != iCombo )
+			AddComboSegment( ComboSegment(iRow, iCombo ) );
+	}
+	else
+	{
+		if( i > 0 && m_ComboSegments[i-1].m_iCombo == iCombo )
+			m_ComboSegments.erase( m_ComboSegments.begin()+i, m_ComboSegments.begin()+i+1 );
+		else
+			m_ComboSegments[i].m_iCombo = iCombo;
+	}
+}
+
 float TimingData::GetStopAtRow( int iNoteRow, bool bDelay ) const
 {
 	for( unsigned i=0; i<m_StopSegments.size(); i++ )
@@ -197,6 +223,18 @@ float TimingData::GetStopAtRow( int iRow ) const
 float TimingData::GetDelayAtRow( int iRow ) const
 {
 	return GetStopAtRow( iRow, true );
+}
+
+int TimingData::GetComboAtRow( int iNoteRow ) const
+{
+	for( unsigned i=0; i<m_ComboSegments.size(); i++ )
+	{
+		if( m_ComboSegments[i].m_iStartRow == iNoteRow )
+		{
+			return m_ComboSegments[i].m_iCombo;
+		}
+	}
+	return 0;
 }
 
 int TimingData::GetWarpToRow( int iWarpBeginRow ) const
@@ -309,6 +347,18 @@ int TimingData::GetTimeSignatureDenominatorAtRow( int iRow )
 	return GetTimeSignatureSegmentAtRow( iRow ).m_iDenominator;
 }
 
+int TimingData::GetComboSegmentIndexAtRow( int iRow ) const
+{
+	unsigned i;
+	for( i=0; i<m_ComboSegments.size()-1; i++ )
+	{
+		const ComboSegment& s = m_ComboSegments[i+1];
+		if( s.m_iStartRow > iRow )
+			break;
+	}
+	return (int)i;
+}
+
 BPMSegment& TimingData::GetBPMSegmentAtRow( int iNoteRow )
 {
 	static BPMSegment empty;
@@ -317,6 +367,15 @@ BPMSegment& TimingData::GetBPMSegmentAtRow( int iNoteRow )
 
 	int i = GetBPMSegmentIndexAtRow( iNoteRow );
 	return m_BPMSegments[i];
+}
+
+ComboSegment& TimingData::GetComboSegmentAtRow( int iRow )
+{
+	unsigned i;
+	for( i=0; i<m_ComboSegments.size()-1; i++ )
+		if( m_ComboSegments[i+1].m_iStartRow > iRow )
+			break;
+	return m_ComboSegments[i];
 }
 
 StopSegment& TimingData::GetStopSegmentAtRow( int iNoteRow, bool bDelay )
@@ -487,16 +546,19 @@ void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float
 	vector<WarpSegment> vWS = m_WarpSegments;
 	vector<TimeSignatureSegment> vTSS = m_vTimeSignatureSegments;
 	vector<TickcountSegment> vTS = m_TickcountSegments;
+	vector<ComboSegment> vCS = m_ComboSegments;
 	sort( vBPMS.begin(), vBPMS.end() );
 	sort( vSS.begin(), vSS.end() );
 	sort( vWS.begin(), vWS.end() );
 	sort( vTSS.begin(), vTSS.end() );
 	sort( vTS.begin(), vTS.end() );
+	sort( vCS.begin(), vCS.end() );
 	ASSERT_M( vBPMS == m_BPMSegments, "The BPM segments were not sorted!" );
 	ASSERT_M( vSS == m_StopSegments, "The Stop segments were not sorted!" );
 	ASSERT_M( vWS == m_WarpSegments, "The Warp segments were not sorted!" );
 	ASSERT_M( vTSS == m_vTimeSignatureSegments, "The Time Signature segments were not sorted!" );
 	ASSERT_M( vTS == m_TickcountSegments, "The Tickcount segments were not sorted!" );
+	ASSERT_M( vCS == m_ComboSegments, "The Combo segments were not sorted!" );
 	FAIL_M( ssprintf("Failed to find the appropriate segment for elapsed time %f.", fTime) );
 }
 
@@ -619,6 +681,14 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 			continue;
 		tick.m_iStartRow += iRowsToAdd;
 	}
+	
+	for( unsigned i = 0; i < m_ComboSegments.size(); i++ )
+	{
+		ComboSegment &comb = m_ComboSegments[i];
+		if( comb.m_iStartRow < iStartRow )
+			continue;
+		comb.m_iStartRow += iRowsToAdd;
+	}
 
 	if( iStartRow == 0 )
 	{
@@ -719,6 +789,26 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 		
 		// After deleted region:
 		tick.m_iStartRow -= iRowsToDelete;
+	}
+	
+	for( unsigned i = 0; i < m_ComboSegments.size(); i++ )
+	{
+		ComboSegment &comb = m_ComboSegments[i];
+		
+		// Before deleted region:
+		if( comb.m_iStartRow < iStartRow )
+			continue;
+		
+		// Inside deleted region:
+		if( comb.m_iStartRow < iStartRow+iRowsToDelete )
+		{
+			m_ComboSegments.erase( m_ComboSegments.begin()+i, m_ComboSegments.begin()+i+1 );
+			--i;
+			continue;
+		}
+		
+		// After deleted region:
+		comb.m_iStartRow -= iRowsToDelete;
 	}
 
 	this->SetBPMAtRow( iStartRow, fNewBPM );
