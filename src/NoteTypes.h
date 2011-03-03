@@ -93,8 +93,8 @@ struct TapNote
 	/** @brief The list of a TapNote's sub types. */
 	enum SubType
 	{
-		hold_head_hold,
-		hold_head_roll,
+		hold_head_hold, /**< The start of a traditional hold note. */
+		hold_head_roll, /**< The start of a roll note that must be hit repeatedly. */
 		//hold_head_mine,
 		NUM_SubType,
 		SubType_Invalid
@@ -166,6 +166,10 @@ struct TapNote
 		iDuration = 0;
 		pn = PLAYER_INVALID;
 	}
+	/**
+	 * @brief Determine if the two TapNotes are equal to each other.
+	 * @param other the other TapNote we're checking.
+	 * @return true if the two TapNotes are equal, or false otherwise. */
 	bool operator==( const TapNote &other ) const
 	{
 #define COMPARE(x)	if(x!=other.x) return false
@@ -180,6 +184,10 @@ struct TapNote
 #undef COMPARE
 		return true;
 	}
+	/**
+	 * @brief Determine if the two TapNotes are not equal to each other.
+	 * @param other the other TapNote we're checking.
+	 * @return true if the two TapNotes are not equal, or false otherwise. */
 	bool operator!=( const TapNote &other ) const { return !operator==( other ); }
 };
 
@@ -207,7 +215,10 @@ const int MAX_NOTE_TRACKS = 16;
  * @brief The number of rows per beat.
  *
  * This is a divisor for our "fixed-point" time/beat representation. It must be
- * evenly divisible by 2, 3, and 4, to exactly represent 8th, 12th and 16th notes. */
+ * evenly divisible by 2, 3, and 4, to exactly represent 8th, 12th and 16th notes.
+ *
+ * XXX: Some other forks try to keep this flexible by putting this in the simfile.
+ * Is this a recommended course of action? -Wolfman2000 */
 const int ROWS_PER_BEAT	= 48;
 
 /**
@@ -254,8 +265,20 @@ inline int   BeatToNoteRow( float fBeatNum )
 	return integer + lrintf(fraction * ROWS_PER_BEAT);
 }
 */
+/**
+ * @brief Convert the beat into a note row.
+ * @param fBeatNum the beat to convert.
+ * @return the note row. */
 inline int   BeatToNoteRow( float fBeatNum )		{ return lrintf( fBeatNum * ROWS_PER_BEAT ); }	// round
+/**
+ * @brief Convert the beat into a note row without rounding.
+ * @param fBeatNum the beat to convert.
+ * @return the note row. */
 inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum * ROWS_PER_BEAT ); }
+/**
+ * @brief Convert the note row to a beat.
+ * @param iRow the row to convert.
+ * @return the beat. */
 inline float NoteRowToBeat( int iRow )			{ return iRow / (float)ROWS_PER_BEAT; }
 
 #endif
