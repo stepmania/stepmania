@@ -578,7 +578,7 @@ void ScoreKeeperNormal::HandleHoldCheckpointScore( const NoteData &nd, int iRow,
 	}
 
 	HandleTapNoteScoreInternal( iNumHoldsMissedThisRow == 0? TNS_CheckpointHit:TNS_CheckpointMiss, TNS_CheckpointHit );
-	HandleComboInternal( iNumHoldsHeldThisRow, 0, iNumHoldsMissedThisRow );
+	HandleComboInternal( iNumHoldsHeldThisRow, 0, iNumHoldsMissedThisRow, iRow );
 }
 
 void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteScore maximum )
