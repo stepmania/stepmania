@@ -5,7 +5,6 @@
 #include "RageLog.h"
 #include "RadarValues.h"
 #include "Steps.h"
-//#include "NoteSkinManager.h" // not needed yet, but will be soon -aj
 
 PlayerState::PlayerState()
 {
@@ -28,9 +27,6 @@ void PlayerState::Reset()
 	m_PlayerController = PC_HUMAN;
 
 	m_iCpuSkill = 5;
-
-	m_iNoteSkinColSpacing = 0;
-	m_iNoteSkinArrowSize = 0;
 
 	m_iLastPositiveSumOfAttackLevels = 0;
 	m_fSecondsUntilAttacksPhasedOut = 0;
@@ -191,27 +187,6 @@ int PlayerState::GetSumOfActiveAttackLevels() const
 			iSum += m_ActiveAttacks[s].level;
 
 	return iSum;
-}
-
-
-void PlayerState::LoadNoteSkinMetrics()
-{
-	/*
-	// Read metrics from current noteskin for setting row/col spacing and
-	// arrow size (originally from StepMania AMX)
-
-	// steps must exist
-	ASSERT( GAMESTATE->m_pCurSteps[m_PlayerNumber] );
-
-	RString m_sNoteSkin = m_PlayerOptions.GetStage().m_sNoteSkin;
-	RString sStepsType = StringConversion::ToString( GAMESTATE->m_pCurSteps[m_PlayerNumber]->m_StepsType );
-	LOG->Trace("Loading Row/Col/Size values for Noteskin %s | StepsType: %s",m_sNoteSkin.c_str(),sStepsType.c_str());
-
-	//m_iNoteSkinRowSpacing = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "RowSpacing" );
-	// todo: allow per-column spacing values? -aj
-	m_iNoteSkinColSpacing = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "ColSpacing" );
-	m_iNoteSkinArrowSize = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "ArrowSize" );
-	*/
 }
 
 // lua start
