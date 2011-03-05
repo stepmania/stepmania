@@ -313,6 +313,17 @@ void ScreenInstallOverlay::Init()
 	this->AddChild( &m_textStatus );
 }
 
+bool ScreenInstallOverlay::OverlayInput( const InputEventPlus &input )
+{
+	if( input.DeviceI.button == g_buttonLogin && input.type == IET_FIRST_PRESS )
+	{
+		//HOOKS->GoToURL("http://www.stepmania.com/launch.php");
+		return true;
+	}
+
+	return false;
+}
+
 void ScreenInstallOverlay::Update( float fDeltaTime )
 {
 	Screen::Update(fDeltaTime);

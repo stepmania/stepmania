@@ -1,11 +1,10 @@
-/* ScreenInstallOverlay - package installation processing and messaging. */
-
 #ifndef ScreenInstallOverlay_H
 #define ScreenInstallOverlay_H
 
 #include "Screen.h"
 #include "BitmapText.h"
 
+/** @brief Package installation processing and messaging. */
 class ScreenInstallOverlay : public Screen
 {
 public:
