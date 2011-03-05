@@ -227,14 +227,7 @@ float TimingData::GetDelayAtRow( int iRow ) const
 
 int TimingData::GetComboAtRow( int iNoteRow ) const
 {
-	for( unsigned i=0; i<m_ComboSegments.size(); i++ )
-	{
-		if( m_ComboSegments[i].m_iStartRow == iNoteRow )
-		{
-			return m_ComboSegments[i].m_iCombo;
-		}
-	}
-	return 0;
+	return m_ComboSegments[GetComboSegmentIndexAtRow( iNoteRow )].m_iCombo;
 }
 
 int TimingData::GetWarpToRow( int iWarpBeginRow ) const

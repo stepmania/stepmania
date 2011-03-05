@@ -424,16 +424,19 @@ static ThemeMetric<RageColor> STOP_COLOR ( "NoteField", "StopColor" );
 static ThemeMetric<RageColor> DELAY_COLOR ( "NoteField", "DelayColor" );
 static ThemeMetric<RageColor> TIME_SIGNATURE_COLOR ( "NoteField", "TimeSignatureColor" );
 static ThemeMetric<RageColor> TICKCOUNT_COLOR ( "NoteField", "TickcountColor" );
+static ThemeMetric<RageColor> COMBO_COLOR ( "NoteField", "ComboColor" );
 static ThemeMetric<bool> BPM_IS_LEFT_SIDE ( "NoteField", "BPMIsLeftSide" );
 static ThemeMetric<bool> STOP_IS_LEFT_SIDE ( "NoteField", "StopIsLeftSide" );
 static ThemeMetric<bool> DELAY_IS_LEFT_SIDE ( "NoteField", "DelayIsLeftSide" );
 static ThemeMetric<bool> TIME_SIGNATURE_IS_LEFT_SIDE ( "NoteField", "TimeSignatureIsLeftSide" );
 static ThemeMetric<bool> TICKCOUNT_IS_LEFT_SIDE ( "NoteField", "TickcountIsLeftSide" );
+static ThemeMetric<bool> COMBO_IS_LEFT_SIDE ( "NoteField", "ComboIsLeftSide" );
 static ThemeMetric<float> BPM_OFFSETX ( "NoteField", "BPMOffsetX" );
 static ThemeMetric<float> STOP_OFFSETX ( "NoteField", "StopOffsetX" );
 static ThemeMetric<float> DELAY_OFFSETX ( "NoteField", "DelayOffsetX" );
 static ThemeMetric<float> TIME_SIGNATURE_OFFSETX ( "NoteField", "TimeSignatureOffsetX" );
 static ThemeMetric<float> TICKCOUNT_OFFSETX ( "NoteField", "TickcountOffsetX" );
+static ThemeMetric<float> COMBO_OFFSETX ( "NoteField", "ComboOffsetX" );
 
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
@@ -509,6 +512,23 @@ void NoteField::DrawTickcountText( const float fBeat, int iTicks )
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%d", iTicks) );
 	m_textMeasureNumber.SetXY( (TICKCOUNT_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
+	m_textMeasureNumber.Draw();
+}
+
+void NoteField::DrawComboText( const float fBeat, int iCombo )
+{
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+ 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
+	const float xBase	= GetWidth()/2.f;
+	const float xOffset	= COMBO_OFFSETX * fZoom;
+	
+	m_textMeasureNumber.SetZoom( fZoom );
+	m_textMeasureNumber.SetHorizAlign( COMBO_IS_LEFT_SIDE ? align_right : align_left );
+	m_textMeasureNumber.SetDiffuse( COMBO_COLOR );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
+	m_textMeasureNumber.SetText( ssprintf("%d", iCombo) );
+	m_textMeasureNumber.SetXY( (COMBO_IS_LEFT_SIDE ? -xBase - xOffset : xBase + xOffset), fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -774,6 +794,19 @@ void NoteField::DrawPrimitives()
 				float fBeat = NoteRowToBeat(tTickcountSegments[i].m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
 					DrawTickcountText( fBeat, tTickcountSegments[i].m_iTicks );
+			}
+		}
+		
+		// Combo text
+		const vector<ComboSegment> &tComboSegments = GAMESTATE->m_pCurSong->m_Timing.m_ComboSegments;
+		for( unsigned i=0; i<tComboSegments.size(); i++ )
+		{
+			if( tComboSegments[i].m_iStartRow >= iFirstRowToDraw &&
+			   tComboSegments[i].m_iStartRow <= iLastRowToDraw)
+			{
+				float fBeat = NoteRowToBeat(tComboSegments[i].m_iStartRow);
+				if( IS_ON_SCREEN(fBeat) )
+					DrawComboText( fBeat, tComboSegments[i].m_iCombo );
 			}
 		}
 

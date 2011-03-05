@@ -448,6 +448,7 @@ public:
 		time_signature_numerator,
 		time_signature_denominator,
 		tickcount,
+		combo,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
 	
