@@ -194,10 +194,9 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<RString> &AddT
 	GetAllNoteSkinNamesForGame( pGame, AddTo );
 }
 
-
 bool NoteSkinManager::DoesNoteSkinExist( const RString &sSkinName )
 {
-	vector<RString> asSkinNames;	
+	vector<RString> asSkinNames;
 	GetAllNoteSkinNamesForGame( GAMESTATE->m_pCurGame, asSkinNames );
 	for( unsigned i=0; i<asSkinNames.size(); i++ )
 		if( 0==stricmp(sSkinName, asSkinNames[i]) )
