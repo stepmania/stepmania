@@ -11,7 +11,7 @@ struct lua_State;
 /**
  * @brief Identifies when a song changes its BPM.
  */
-struct BPMSegment 
+struct BPMSegment
 {
 	/**
 	 * @brief Creates a simple BPM Segment with default values.
@@ -99,7 +99,7 @@ struct BPMSegment
  *
  * It is hopeful that stops and delays can be made into their own segments at some point.
  */
-struct StopSegment 
+struct StopSegment
 {
 	/**
 	 * @brief Creates a simple Stop Segment with default values.
@@ -208,7 +208,7 @@ struct StopSegment
  * This only supports simple time signatures. The upper number (called the numerator here, though this isn't
  * properly a fraction) is the number of beats per measure. The lower number (denominator here)
  * is the note value representing one beat. */
-struct TimeSignatureSegment 
+struct TimeSignatureSegment
 {
 	/**
 	 * @brief Creates a simple Time Signature Segment with default values.
@@ -216,6 +216,8 @@ struct TimeSignatureSegment
 	TimeSignatureSegment() : m_iStartRow(-1), m_iNumerator(4), m_iDenominator(4)  { }
 	/**
 	 * @brief Creates a Time Signature Segment at the given row with a supplied numerator.
+	 *
+	 * The denominator will be 4 if this is called.
 	 * @param r the starting row of the segment.
 	 * @param n the numerator for the segment.
 	 */

@@ -86,10 +86,10 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds, bool bDelay )
 {
 	unsigned i;
 	for( i=0; i<m_StopSegments.size(); i++ )
-		if( m_StopSegments[i].m_iStartRow == iRow )
+		if( m_StopSegments[i].m_iStartRow == iRow && m_StopSegments[i].m_bDelay == bDelay )
 			break;
 
-	if( i == m_StopSegments.size() )	// there is no StopSegment at the current beat
+	if( i == m_StopSegments.size() )	// there is no Stop/Delay Segment at the current beat
 	{
 		// create a new StopSegment
 		if( fSeconds > 0 || PREFSMAN->m_bQuirksMode )

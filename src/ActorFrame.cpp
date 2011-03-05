@@ -528,9 +528,10 @@ public:
 	}
 	static int SortByDrawOrder( T* p, lua_State *L )		{ p->SortByDrawOrder(); return 0; }
 
+	//static int CustomLighting( T* p, lua_State *L )			{ p->SetCustomLighting(BArg(1)); return 0; }
 	static int SetAmbientLightColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetAmbientLightColor( c ); return 0; }
 	static int SetDiffuseLightColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLightColor( c ); return 0; }
-	static int SetSpecularLightColor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetSpecularLightColor( c ); return 0; }
+	static int SetSpecularLightColor( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetSpecularLightColor( c ); return 0; }
 	static int SetLightDirection( T* p, lua_State *L )
 	{
 		luaL_checktype( L, 1, LUA_TTABLE );
@@ -546,6 +547,7 @@ public:
 		p->SetLightDirection( vTmp );
 		return 0;
 	}
+
 	// xxx: these might not be good ideas... -aj
 	/*
 	static int AddChild( T* p, lua_State *L )
@@ -585,6 +587,7 @@ public:
 		ADD_METHOD( GetDrawFunction );
 		ADD_METHOD( SetUpdateFunction );
 		ADD_METHOD( SortByDrawOrder );
+		//ADD_METHOD( CustomLighting );
 		ADD_METHOD( SetAmbientLightColor );
 		ADD_METHOD( SetDiffuseLightColor );
 		ADD_METHOD( SetSpecularLightColor );

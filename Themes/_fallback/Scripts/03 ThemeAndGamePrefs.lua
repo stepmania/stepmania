@@ -46,6 +46,7 @@ function InitUserPrefs()
 		{ "UserPrefProtimingP1",		false},
 		{ "UserPrefProtimingP2",		false},
 		{ "FlashyCombos",	false},
+		{ "GameplayFooter",	false},
 	};
 
 	for idx,pref in ipairs(Prefs) do
@@ -316,6 +317,42 @@ function UserPrefFlashyCombo()
 				val = false;
 			end;
 			WritePrefToFile("UserPrefFlashyCombo",val);
+			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
+			THEME:ReloadMetrics();
+		end;
+	};
+	setmetatable( t, t );
+	return t;
+end
+
+function UserPrefGameplayFooter()
+	local t = {
+		Name = "UserPrefGameplayFooter";
+		LayoutType = "ShowAllInRow";
+		SelectType = "SelectOne";
+		OneChoiceForAllPlayers = true;
+		ExportOnChange = false;
+		Choices = { 'Off','On' };
+		LoadSelections = function(self, list, pn)
+			if ReadPrefFromFile("GameplayFooter") ~= nil then
+				if GetUserPrefB("GameplayFooter") then
+					list[2] = true;
+				else
+					list[1] = true;
+				end;
+			else
+				WritePrefToFile("GameplayFooter",false);
+				list[1] = true;
+			end;
+		end;
+		SaveSelections = function(self, list, pn)
+			local val;
+			if list[2] then
+				val = true;
+			else
+				val = false;
+			end;
+			WritePrefToFile("GameplayFooter",val);
 			MESSAGEMAN:Broadcast("PreferenceSet", { Message == "Set Preference" } );
 			THEME:ReloadMetrics();
 		end;
