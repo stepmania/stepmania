@@ -9,6 +9,9 @@ change to JSON, but it is unsure if this will be done.
 Implement .ssc at your own risk.
 ________________________________________________________________________________
 
+[v0.55] - Wolfman2000
+* Add #COMBOS tag to the Song and Steps (does nothing here).
+
 [v0.54] - Wolfman2000
 * Add #ATTACKS tag to the Notedata sections. Right now it does nothing.
 
