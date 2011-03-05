@@ -216,9 +216,10 @@ struct TimeSignatureSegment
 	TimeSignatureSegment() : m_iStartRow(-1), m_iNumerator(4), m_iDenominator(4)  { }
 	/**
 	 * @brief Creates a Time Signature Segment at the given row with a supplied numerator.
+	 *
+	 * The denominator will be 4 if this is called.
 	 * @param r the starting row of the segment.
 	 * @param n the numerator for the segment.
-	 * This creates a TimeSignature with the specified row and numerator. The denominator will be 4.
 	 */
 	TimeSignatureSegment( int r, int n ) {
 		m_iStartRow = max( 0, r );
