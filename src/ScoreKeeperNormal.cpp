@@ -18,6 +18,7 @@
 #include "Game.h"
 #include "Style.h"
 #include "Song.h"
+#include "TimingData.h"
 #include "NoteDataWithScoring.h"
 
 
@@ -593,7 +594,7 @@ void ScoreKeeperNormal::HandleTapNoteScoreInternal( TapNoteScore tns, TapNoteSco
 	m_pPlayerStageStats->m_iCurPossibleDancePoints += TapNoteScoreToDancePoints( maximum );
 }
 
-void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumBreakCombo )
+void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumHitMaintainCombo, int iNumBreakCombo, int iRow )
 {
 	// Regular combo
 	if( m_ComboIsPerRow )
@@ -610,7 +611,9 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 
 	if( iNumBreakCombo == 0 )
 	{
-		m_pPlayerStageStats->m_iCurCombo += iNumHitContinueCombo;
+		TimingData td = GAMESTATE->m_pCurSong->m_Timing;
+		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow ).m_iCombo );
+		m_pPlayerStageStats->m_iCurCombo += iNumHitContinueCombo * multiplier;
 	}
 	else
 	{
@@ -619,7 +622,7 @@ void ScoreKeeperNormal::HandleComboInternal( int iNumHitContinueCombo, int iNumH
 	}
 }
 
-void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsInRow )
+void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsInRow, int iRow )
 {
 	if( m_ComboIsPerRow )
 	{
@@ -628,7 +631,9 @@ void ScoreKeeperNormal::HandleRowComboInternal( TapNoteScore tns, int iNumTapsIn
 	if ( tns >= m_MinScoreToContinueCombo )
 	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
-		m_pPlayerStageStats->m_iCurCombo += iNumTapsInRow;
+		TimingData td = GAMESTATE->m_pCurSong->m_Timing;
+		int multiplier = ( iRow == -1 ? 1 : td.GetComboSegmentAtRow( iRow ).m_iCombo );
+		m_pPlayerStageStats->m_iCurCombo += iNumTapsInRow * multiplier;
 	}
 	else if ( tns < m_MinScoreToMaintainCombo )
 	{
@@ -673,14 +678,14 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow ).result.tns;
 	HandleTapNoteScoreInternal( scoreOfLastTap, TNS_W1 );
-
+	
 	if ( GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately )
 	{
-		HandleComboInternal( iNumHitContinueCombo, iNumHitMaintainCombo, iNumBreakCombo );
+		HandleComboInternal( iNumHitContinueCombo, iNumHitMaintainCombo, iNumBreakCombo, iRow );
 	}
 	else
 	{
-		HandleRowComboInternal( scoreOfLastTap, iNumTapsInRow ); //This should work?
+		HandleRowComboInternal( scoreOfLastTap, iNumTapsInRow, iRow ); //This should work?
 	}
 
 	if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
