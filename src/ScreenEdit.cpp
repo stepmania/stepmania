@@ -741,7 +741,7 @@ void ScreenEdit::Init()
 	this->AddChild( &m_Background );
 
 	m_SnapDisplay.SetXY( EDIT_X, PLAYER_Y_STANDARD );
-	m_SnapDisplay.Load( PLAYER_1 );
+	m_SnapDisplay.Load();
 	// xxx: hardcoded command -aj
 	m_SnapDisplay.SetZoom( 0.5f );
 	this->AddChild( &m_SnapDisplay );
