@@ -3,6 +3,7 @@
 
 #include "Screen.h"
 #include "BitmapText.h"
+#include "InputEventPlus.h"
 
 /** @brief Package installation processing and messaging. */
 class ScreenInstallOverlay : public Screen
