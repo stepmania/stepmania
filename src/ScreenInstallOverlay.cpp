@@ -315,11 +315,13 @@ void ScreenInstallOverlay::Init()
 
 bool ScreenInstallOverlay::OverlayInput( const InputEventPlus &input )
 {
+	/*
 	if( input.DeviceI.button == g_buttonLogin && input.type == IET_FIRST_PRESS )
 	{
-		//HOOKS->GoToURL("http://www.stepmania.com/launch.php");
+		HOOKS->GoToURL("http://www.stepmania.com/launch.php");
 		return true;
 	}
+	*/
 
 	return false;
 }
