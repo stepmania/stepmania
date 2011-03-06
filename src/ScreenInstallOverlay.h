@@ -12,6 +12,7 @@ public:
 	virtual void Init();
 
 	void Update( float fDeltaTime );
+	bool ScreenInstallOverlay::OverlayInput( const InputEventPlus &input );
 
 private:
 	void UpdateText();
