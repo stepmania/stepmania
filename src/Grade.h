@@ -9,7 +9,7 @@
  *
  * TODO: Look into a more flexible system without a fixed number of grades. -Wolfman2000
  */
-enum Grade 
+enum Grade
 { 
 	Grade_Tier01,	/**< Usually an AAAA */
 	Grade_Tier02,	/**< Usually an AAA */
