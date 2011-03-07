@@ -123,7 +123,7 @@ struct NoteResource
 		delete m_pActor;
 	}
 
-	const NoteSkinAndPath m_nsap; /* should be refcounted along with g_NoteResource[] */
+	const NoteSkinAndPath m_nsap; // should be refcounted along with g_NoteResource[]
 	int m_iRefCount;
 	Actor *m_pActor; // todo: AutoActor me? -aj
 };
