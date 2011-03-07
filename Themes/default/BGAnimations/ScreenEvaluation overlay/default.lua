@@ -2,8 +2,8 @@ local vStats = STATSMAN:GetCurStageStats();
 
 local function CreateStats( pnPlayer )
 	-- Actor Templates
-	local aLabel = LoadFont("Common Normal") .. { Text="..."; InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
-	local aText = LoadFont("Common Normal") .. { Text="..."; InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
+	local aLabel = LoadFont("Common Normal") .. { InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
+	local aText = LoadFont("Common Normal") .. { InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
 	-- DA STATS, JIM!!
 	local pnStageStats = vStats:GetPlayerStageStats( pnPlayer );
 	-- Organized Stats.

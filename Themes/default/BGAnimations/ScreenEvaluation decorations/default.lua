@@ -176,23 +176,23 @@ t[#t+1] = StandardDecorationFromFileOptional("SongInformation","SongInformation"
 		local SongOrCourse;
 		if GAMESTATE:GetCurrentSong() then
 			SongOrCourse = GAMESTATE:GetCurrentSong();
-			
+
 			c.TextTitle:settext( SongOrCourse:GetDisplayMainTitle() or nil );
 			c.TextSubtitle:settext( SongOrCourse:GetDisplaySubTitle() or nil );
 			c.TextArtist:settext( SongOrCourse:GetDisplayArtist() or nil );
-			
+
 			if SongOrCourse:GetDisplaySubTitle() == "" then
 				c.TextTitle:visible(true);
 				c.TextTitle:y(-16.5/2);
-				c.Subtitle:visible(false);
-				c.Subtitle:y(0);
+				c.TextSubtitle:visible(false);
+				c.TextSubtitle:y(0);
 				c.TextArtist:visible(true);
 				c.TextArtist:y(18/2);
 			else
 				c.TextTitle:visible(true);
 				c.TextTitle:y(-16.5);
-				c.Subtitle:visible(true);
-				c.Subtitle:y(0);
+				c.TextSubtitle:visible(true);
+				c.TextSubtitle:y(0);
 				c.TextArtist:visible(true);
 				c.TextArtist:y(18);
 			end
