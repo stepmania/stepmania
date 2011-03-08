@@ -1553,10 +1553,9 @@ void RageDisplay_D3D::SetSphereEnvironmentMapping( TextureUnit tu, bool b )
 	g_bSphereMapping[tu] = b;
 }
 
-void RageDisplay_D3D::SetCelShaded( bool b )
+void RageDisplay_D3D::SetCelShaded( int stage )
 {
-	/* AJ doesn't know how to deal with this and he's the only one of the
-	 * sm-ssc team who's touched DirectX in C++ (for all of an hour). */
+	// todo: implement me!
 }
 
 /*
