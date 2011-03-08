@@ -277,7 +277,7 @@ public:
 		const RageVector3 &dir ) = 0;
 
 	virtual void SetSphereEnvironmentMapping( TextureUnit tu, bool b ) = 0;
-	virtual void SetCelShaded( bool b ) = 0;
+	virtual void SetCelShaded( int stage ) = 0;
 
 	virtual RageCompiledGeometry* CreateCompiledGeometry() = 0;
 	virtual void DeleteCompiledGeometry( RageCompiledGeometry* p ) = 0;

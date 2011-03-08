@@ -289,18 +289,19 @@ bool Model::EarlyAbortDraw() const
 
 void Model::DrawCelShaded()
 {
-	// TODO: use shell shader for outline.
-	this->SetZWrite( true );
-
-	// First pass: outline/shell
-//	DISPLAY->SetCelShaded(1);
+	// First pass: shell. We only want the backfaces for this.
+	DISPLAY->SetCelShaded(1);
+	DISPLAY->SetCullMode(CULL_FRONT);
+	this->SetZWrite(false); // XXX: Why on earth isn't the culling working? -Colby
 	this->Draw();
 	
-	// Second pass: normal shading
-//	DISPLAY->SetCelShaded(2);
-//	this->Draw();
+	// Second pass: cel shading
+	DISPLAY->SetCelShaded(2);
+	DISPLAY->SetCullMode(CULL_BACK);
+	this->SetZWrite(true);
+	this->Draw();
 	
-//	DISPLAY->SetCelShaded(0)
+	DISPLAY->SetCelShaded(0);
 }
 
 void Model::DrawPrimitives()

@@ -810,7 +810,7 @@ void RageDisplay::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( (iNumVerts%4) == 0 );
 
-	if(iNumVerts == 0)
+	if(!iNumVerts)
 		return;
 
 	this->DrawQuadsInternal(v,iNumVerts);

@@ -1,24 +1,26 @@
-varying vec2 texCoords;
-varying vec3 normal, viewVector;
-varying vec4 lightVector, lightColor;
+uniform sampler2D Texture0;
 
-uniform sampler2D Texture1;
+varying vec2 vCoord;
+varying vec3 vNor;
 
-void main(void)
-{
-	float intensity = dot(normal, lightVector.xyz);
-	float fresnel = pow(1.0 - dot(viewVector, normal), 5.0);
-	fresnel = fresnel < 0.5 ? 0.0 : 0.4;
+const vec4 shadowColor = vec4(0.6, 0.75, 0.9, 1.0);
+
+void main() {
+	vec3 nor, light;
+	nor = normalize(vNor);
 	
-	float shade = 1.0;
-	if( intensity > 0.35 )
-		shade = clamp(1.0 * intensity + 0.4, 0.0, 1.0);
-	else
-		shade = clamp(0.85 * intensity + 0.25, 0.4, 0.6);
-	shade = clamp(shade - fresnel, 0.3, 1.0);
+	vec4 diffuse, specular, color, lightSource;
+	float ambient = length(gl_FrontMaterial.ambient.rgb);
+	lightSource = gl_LightSource[0].position;
+	light = normalize(gl_ModelViewMatrix * lightSource).xyz;
 	
-	vec4 vcol = gl_FrontMaterial.diffuse;
-	vec4 tex = texture2D(Texture1, texCoords);
+	color = texture2D(Texture0, vCoord.st);
+	float intensity = max(dot(light,nor), 0.0);
+	if (intensity < 0.5) {
+		intensity *= 0.5;
+		color *= shadowColor;
+	}
+	intensity = min(clamp(intensity, ambient, 1.0) + 0.25, 1.0);
 	
-	gl_FragColor = lightColor * vec4(tex.rgb * shade, 1.0);
+	gl_FragColor = color * intensity;
 }
