@@ -266,7 +266,6 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_START,      false )
 	   ),
-	   // TODO: add black and white buttons, as well as other missing inputs -aj
 	   AutoMappings(
 		"dance",
 		"XBOX Gamepad Plugin V0.01",

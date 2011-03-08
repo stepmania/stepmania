@@ -1,11 +1,11 @@
-/* ScreenInstallOverlay - package installation processing and messaging. */
-
 #ifndef ScreenInstallOverlay_H
 #define ScreenInstallOverlay_H
 
 #include "Screen.h"
 #include "BitmapText.h"
+#include "InputEventPlus.h"
 
+/** @brief Package installation processing and messaging. */
 class ScreenInstallOverlay : public Screen
 {
 public:
@@ -13,6 +13,7 @@ public:
 	virtual void Init();
 
 	void Update( float fDeltaTime );
+	bool ScreenInstallOverlay::OverlayInput( const InputEventPlus &input );
 
 private:
 	void UpdateText();

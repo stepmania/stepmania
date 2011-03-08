@@ -3064,7 +3064,7 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 	for( int i=0; i<NUM_StepsType; i++ )
 		if( g_StepsTypeInfos[i].szName == sStepsType )
 			return StepsType(i);
-	
+
 	return StepsType_Invalid;
 }
 

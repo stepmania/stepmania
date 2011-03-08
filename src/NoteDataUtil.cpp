@@ -2020,6 +2020,9 @@ const ValidRow g_ValidRows[] =
 	{ StepsType_dance_double, { f,T,T,T,T,f,f,f } },
 	{ StepsType_dance_double, { f,f,f,T,T,T,T,f } },
 	{ StepsType_dance_double, { f,f,f,f,T,T,T,T } },
+	{ StepsType_pump_double, { T,T,T,T,T,f,f,f,f,f } },
+	{ StepsType_pump_double, { f,f,T,T,T,T,T,T,f,f } },
+	{ StepsType_pump_double, { f,f,f,f,f,T,T,T,T,T } },
 };
 #undef T
 #undef f

@@ -1,8 +1,9 @@
 local vStats = STATSMAN:GetCurStageStats();
+
 local function CreateStats( pnPlayer )
 	-- Actor Templates
-	local aLabel = LoadFont("Common Normal") .. { Text="..."; InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
-	local aText = LoadFont("Common Normal") .. { Text="..."; InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
+	local aLabel = LoadFont("Common Normal") .. { InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
+	local aText = LoadFont("Common Normal") .. { InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
 	-- DA STATS, JIM!!
 	local pnStageStats = vStats:GetPlayerStageStats( pnPlayer );
 	-- Organized Stats.
@@ -28,9 +29,8 @@ local function CreateStats( pnPlayer )
 		MIGS		= ( tStats["W1"]*3 + tStats["W2"]*2 + tStats["W3"] - tStats["W5"]*4 - tStats["Miss"]*8 + tStats["Held"]*6 ),
 		-- (marvcount + perfcount + greatcount + goodcount + boocount + misscount)*3 + (okcount + ngcount)*6
 		MIGS_MAX	= ( (tStats["W1"] + tStats["W2"] + tStats["W3"] + tStats["W4"] + tStats["W5"] + tStats["Miss"])*3 + (tStats["Held"] + tStats["LetGo"])*6 ),
-		
 	};
-	--
+
 	local t = Def.ActorFrame {};
 	t[#t+1] = Def.ActorFrame {
 		InitCommand=cmd(y,-34);
@@ -54,10 +54,11 @@ local function CreateStats( pnPlayer )
 	};
 	return t
 end;
+
+-- xxx: this only currently works for player 1. -aj
 local t = Def.ActorFrame {};
 t[#t+1] = Def.ActorFrame {
-	InitCommand=cmd(x,math.floor(SCREEN_CENTER_X*0.5)-8;y,SCREEN_CENTER_Y);
-	--
+	InitCommand=cmd(x,WideScale(math.floor(SCREEN_CENTER_X*0.3)-8,math.floor(SCREEN_CENTER_X*0.5)-8);y,SCREEN_CENTER_Y);
 	CreateStats( PLAYER_1 );
 };
 return t

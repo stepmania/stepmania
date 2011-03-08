@@ -1055,15 +1055,6 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 		{
 			Steps* pNewNotes = new Steps;
 			pNewNotes->AutogenFrom( pOriginalNotes, ntTo );
-			// Only generate Medium difficulty steps for Pump-Halfdouble, as
-			// that seems to be the only difficulty Half-doubles charts use,
-			// going by Pump Pro. -aj
-			if(ntTo == StepsType_pump_halfdouble && pNewNotes->GetDifficulty() != Difficulty_Medium)
-				continue;
-			// Only generate Medium difficulty steps for Routine modes. -aj
-			if( (ntTo == StepsType_dance_routine || ntTo == StepsType_pump_routine )
-				&& pNewNotes->GetDifficulty() != Difficulty_Medium)
-				continue;
 			this->AddSteps( pNewNotes );
 		}
 	}
