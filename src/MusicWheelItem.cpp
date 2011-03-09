@@ -79,7 +79,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	{
 		m_pText[i] = NULL;
 
-		// Don't init text for Type_Song.  It uses a TextBanner.
+		// Don't init text for Type_Song. It uses a TextBanner.
 		if( i == MusicWheelItemType_Song )
 			continue;
 
@@ -105,7 +105,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	ActorUtil::SetXY( m_WheelNotifyIcon, "MusicWheelItem" );
 	m_WheelNotifyIcon.PlayCommand( "On" );
 	this->AddChild( &m_WheelNotifyIcon );
-	
+
 	FOREACH_PlayerNumber( p )
 	{
 		m_pGradeDisplay[p].Load( THEME->GetPathG(sType,"grades") );
