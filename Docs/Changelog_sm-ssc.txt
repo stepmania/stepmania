@@ -13,6 +13,10 @@ _____________________________________________________________________________
 sm-ssc v1.2.3 | 201103??
 --------------------------------------------------------------------------------
 
+20110309
+--------
+* [MusicWheelItem] Added Label param, renamed SongGroup param to Text. [AJ]
+
 20110308
 --------
 * [WheelBase] Add GetCurrentIndex and GetNumItems Lua bindings. [AJ]
