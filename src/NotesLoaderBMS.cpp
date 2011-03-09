@@ -784,7 +784,12 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		// this is keysound file name.  Looks like "#WAV1A"
 		RString sData = it->second;
 		RString sWavID = sName.Right(2);
-
+		
+		// FIXME: garbled song names seem to crash the app.
+		// this might not be the best place to put this code.
+		if( !utf8_is_valid(sData) )
+			continue;
+		
 		/* Due to bugs in some programs, many BMS files have a "WAV" extension
 		 * on files in the BMS for files that actually have some other extension.
 		 * Do a search. Don't do a wildcard search; if sData is "song.wav",
