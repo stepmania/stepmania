@@ -29,6 +29,7 @@ static const char *MusicWheelItemTypeNames[] = {
 	"Mode",
 	"Random",
 	"Portal",
+	"Custom",
 };
 XToString( MusicWheelItemType );
 
@@ -255,6 +256,10 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 	case TYPE_PORTAL:
 		sDisplayName = THEME->GetString("MusicWheel","Portal");
 		type = MusicWheelItemType_Portal;
+		break;
+	case TYPE_CUSTOM:
+		sDisplayName = pWID->m_sLabel;
+		type = MusicWheelItemType_Custom;
 		break;
 	}
 

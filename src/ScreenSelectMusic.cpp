@@ -1663,6 +1663,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_SORT:
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
+	case TYPE_CUSTOM:
 		FOREACH_PlayerNumber( p )
 			m_iSelection[p] = -1;
 
@@ -1720,6 +1721,12 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_Banner.LoadRandom();
 				//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
 				m_sSampleMusicToPlay = m_sRandomMusicPath;
+				break;
+			case TYPE_CUSTOM:
+				bWantBanner = false; // we load it ourself, or should
+				m_Banner.Load( THEME->GetPathG( "Banner", GetMusicWheel()->GetCurWheelItemData( GetMusicWheel()->GetCurrentIndex() )->m_pAction->m_sName.c_str() ) );
+				if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+					m_sSampleMusicToPlay = m_sSectionMusicPath;
 				break;
 			default:
 				ASSERT(0);
@@ -1857,10 +1864,15 @@ class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
 {
 public:
 	static int GetGoToOptions( T* p, lua_State *L ) { lua_pushboolean( L, p->GetGoToOptions() ); return 1; }
+	static int GetMusicWheel( T* p, lua_State *L ) {
+		p->GetMusicWheel()->PushSelf(L);
+		return 1;
+	}
 
 	LunaScreenSelectMusic()
 	{
   		ADD_METHOD( GetGoToOptions );
+		ADD_METHOD( GetMusicWheel );
 	}
 };
 

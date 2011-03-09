@@ -47,6 +47,7 @@ public:
 	// sm-ssc additions
 	RString JumpToNextGroup();
 	RString JumpToPrevGroup();
+	const MusicWheelItemData *GetCurWheelItemData( int i ) { return (const MusicWheelItemData *) m_CurWheelItemData[i]; }
 
 protected:
 	MusicWheelItem *MakeItem();
@@ -60,7 +61,6 @@ protected:
 	virtual void UpdateSwitch();
 
 	vector<MusicWheelItemData *>		m_WheelItemDatas[NUM_SortOrder];
-	const MusicWheelItemData *GetCurWheelItemData( int i ) { return (const MusicWheelItemData *) m_CurWheelItemData[i]; }
 
 	RString				m_sLastModeMenuItem;
 	SortOrder			m_SortOrder;
@@ -92,6 +92,9 @@ protected:
 	ThemeMetric<RageColor>	RANDOM_COLOR;
 	ThemeMetric<RageColor>	PORTAL_COLOR;
 	vector <int> m_viWheelPositions;
+	ThemeMetric<RString>	CUSTOM_WHEEL_ITEM_NAMES;
+	ThemeMetricMap<RString>	CUSTOM_CHOICES;
+	ThemeMetricMap<RageColor>	CUSTOM_CHOICE_COLORS;
 };
 
 #endif

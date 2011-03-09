@@ -13,6 +13,12 @@ _____________________________________________________________________________
 sm-ssc v1.2.3 | 201103??
 --------------------------------------------------------------------------------
 
+20110308
+--------
+* [WheelBase] Add GetCurrentIndex and GetNumItems Lua bindings. [AJ]
+* [ScreenSelectMusic] Add GetMusicWheel Lua binding. [AJ]
+* Added custom MusicWheel items. [AJ]
+
 20110305
 --------
 * Added #COMBOS tag to the .ssc format. [Wolfman2000]

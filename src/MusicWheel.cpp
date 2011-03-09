@@ -25,10 +25,13 @@
 static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );
 
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
-#define WHEEL_TEXT(s)             THEME->GetString( "MusicWheel", ssprintf("%sText",s.c_str()) );
+#define WHEEL_TEXT(s)		THEME->GetString( "MusicWheel", ssprintf("%sText",s.c_str()) );
+#define CUSTOM_ITEM_WHEEL_TEXT(s)		THEME->GetString( "MusicWheel", ssprintf("CustomItem%sText",s.c_str()) );
 
 static RString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",int(i+1)); }
 static RString CHOICE_NAME( RString s )		{ return ssprintf("Choice%s",s.c_str()); }
+static RString CUSTOM_WHEEL_ITEM_NAME( RString s )		{ return ssprintf("CustomWheelItem%s",s.c_str()); }
+static RString CUSTOM_WHEEL_ITEM_COLOR( RString s )		{ return ssprintf("%sColor",s.c_str()); }
 
 AutoScreenMessage( SM_SongChanged ); // TODO: Replace this with a Message and MESSAGEMAN
 AutoScreenMessage( SM_SortOrderChanging );
@@ -85,6 +88,12 @@ void MusicWheel::Load( RString sType )
 	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
 	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
 	SECTION_COLORS			.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
+
+	CUSTOM_WHEEL_ITEM_NAMES		.Load(sType,"CustomWheelItemNames");
+	vector<RString> vsCustomItemNames;
+	split( CUSTOM_WHEEL_ITEM_NAMES, ",", vsCustomItemNames );
+	CUSTOM_CHOICES.Load(sType,CUSTOM_WHEEL_ITEM_NAME,vsCustomItemNames);
+	CUSTOM_CHOICE_COLORS.Load(sType,CUSTOM_WHEEL_ITEM_COLOR,vsCustomItemNames);
 
 	ROULETTE_COLOR				.Load(sType,"RouletteColor");
 	RANDOM_COLOR				.Load(sType,"RandomColor");
@@ -572,7 +581,6 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 				ASSERT(0);	// unhandled SortOrder
 			}
 
-
 			// Build an array of WheelItemDatas from the sorted list of Song*'s
 			arrayWheelItemDatas.clear();	// clear out the previous wheel items 
 			arrayWheelItemDatas.reserve( arraySongs.size() );
@@ -662,6 +670,23 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 
 				if( SHOW_PORTAL && bFoundAnySong )
 					arrayWheelItemDatas.push_back( new MusicWheelItemData(TYPE_PORTAL, NULL, "", NULL, PORTAL_COLOR, 0) );
+
+				// add custom wheel items
+				vector<RString> vsNames;
+				split( CUSTOM_WHEEL_ITEM_NAMES, ",", vsNames );
+				for( unsigned i=0; i<vsNames.size(); ++i )
+				{
+					MusicWheelItemData wid( TYPE_CUSTOM, NULL, "", NULL, CUSTOM_CHOICE_COLORS.GetValue(vsNames[i]), 0 );
+					wid.m_pAction = HiddenPtr<GameCommand>( new GameCommand );
+					wid.m_pAction->m_sName = vsNames[i];
+					wid.m_pAction->Load( i, ParseCommands(CUSTOM_CHOICES.GetValue(vsNames[i])) );
+					wid.m_sLabel = CUSTOM_ITEM_WHEEL_TEXT( vsNames[i] );
+
+					if( !wid.m_pAction->IsPlayable() )
+						continue;
+
+					arrayWheelItemDatas.push_back( new MusicWheelItemData(wid) );
+				}
 			}
 
 			if( GAMESTATE->IsAnExtraStageAndSelectionLocked() )
@@ -1052,6 +1077,12 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		ChangeSort( GAMESTATE->m_PreferredSortOrder );
 		m_sLastModeMenuItem = GetCurWheelItemData(m_iSelection)->m_pAction->m_sName;
 		return false;
+	case TYPE_CUSTOM:
+		GetCurWheelItemData(m_iSelection)->m_pAction->ApplyToAllPlayers();
+		if( GetCurWheelItemData(m_iSelection)->m_pAction->m_sScreen != "" )
+			return true;
+		else
+			return false;
 	}
 	return true;
 }
