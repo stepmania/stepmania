@@ -524,6 +524,8 @@ public:
 	static int IsSettled( T* p, lua_State *L ){ lua_pushboolean( L, p->IsSettled() ); return 1; }
 	static int IsLocked( T* p, lua_State *L ){ lua_pushboolean( L, p->WheelIsLocked() ); return 1; }
 	static int SetOpenSection( T* p, lua_State *L ){ p->SetOpenSection( SArg(1) ); return 0; }
+	static int GetCurrentIndex( T* p, lua_State *L ){ lua_pushnumber( L, p->GetCurrentIndex() ); return 1; }
+	static int GetNumItems( T* p, lua_State *L ){ lua_pushnumber( L, p->GetNumItems() ); return 1; }
 	// evil shit
 	//static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); return 0; }
 	//static int ChangeMusic( T* p, lua_State *L ){ p->ChangeMusicUnlessLocked( IArg(1) ); return 0; }
@@ -534,6 +536,8 @@ public:
 		ADD_METHOD( IsSettled );
 		ADD_METHOD( IsLocked );
 		ADD_METHOD( SetOpenSection );
+		ADD_METHOD( GetCurrentIndex );
+		ADD_METHOD( GetNumItems );
 		// evil shit
 		//ADD_METHOD( Move );
 		//ADD_METHOD( ChangeMusic );
