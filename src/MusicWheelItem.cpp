@@ -291,10 +291,11 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 		msg.SetParam( "Course", pWID->m_pCourse );
 		msg.SetParam( "Index", iIndex );
 		msg.SetParam( "HasFocus", bHasFocus );
-		msg.SetParam( "SongGroup", pWID->m_sText );
+		msg.SetParam( "Text", pWID->m_sText );
 		msg.SetParam( "DrawIndex", iDrawIndex );
 		msg.SetParam( "Type", MusicWheelItemTypeToString(type) );
 		msg.SetParam( "Color", pWID->m_color );
+		msg.SetParam( "Label", pWID->m_sLabel );
 
 		this->HandleMessage( msg );
 	}
