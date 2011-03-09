@@ -18,6 +18,9 @@ sm-ssc v1.2.3 | 201103??
 * [WheelBase] Add GetCurrentIndex and GetNumItems Lua bindings. [AJ]
 * [ScreenSelectMusic] Add GetMusicWheel Lua binding. [AJ]
 * Added custom MusicWheel items. [AJ]
+* [MeterDisplay] Add Lua binding. "Allow setting and changing the width
+  dynamically. Phase out the "StreamWidth" node property; set it with
+  SetStreamWidth instead." [Glenn Maynard]
 
 20110305
 --------
