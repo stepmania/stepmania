@@ -1,13 +1,14 @@
-/* AutoActor - Smart pointer for Actor. */
-
 #ifndef AutoActor_H
 #define AutoActor_H
 
 class Actor;
 class XNode;
 
-// creates the appropriate Actor derivitive on load and
-// automatically deletes Actor on deconstruction.
+/**
+ * @brief A smart pointer for Actor.
+ *
+ * This creates the appropriate Actor derivative on load and
+ * automatically deletes the Actor on deconstruction. */
 class AutoActor
 {
 public:
@@ -20,6 +21,9 @@ public:
 	const Actor *operator->() const { return m_pActor; }
 	Actor *operator->()		{ return m_pActor; }
 	void Unload();
+	/** 
+	 * @brief Determine if this actor is presently loaded.
+	 * @return true if it is loaded, or false otherwise. */
 	bool IsLoaded() const		{ return m_pActor != NULL; }
 	void Load( Actor *pActor );	// transfer pointer
 	void Load( const RString &sPath );
@@ -28,13 +32,16 @@ public:
 	void LoadAndSetName( const RString &sScreenName, const RString &sActorName );
 
 protected:
+	/** @brief the Actor for which there is a smart pointer to. */
 	Actor* m_pActor;
 };
 
 #endif
 
-/*
- * (c) 2003-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

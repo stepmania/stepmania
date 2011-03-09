@@ -1,5 +1,3 @@
-/** @brief TimingData - Holds data for translating beats<->seconds. */
-
 #ifndef TIMING_DATA_H
 #define TIMING_DATA_H
 
@@ -479,7 +477,7 @@ struct TickcountSegment
 	bool operator>=( const TickcountSegment &other ) const { return !operator<(other); }
 };
 /**
- * @brief Houses all of the TimingData functions.
+ * @brief Holds data for translating beats<->seconds.
  */
 class TimingData
 {

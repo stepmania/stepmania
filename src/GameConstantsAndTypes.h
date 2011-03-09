@@ -39,6 +39,7 @@ enum RadarCategory
 	RadarCategory_Hands, /**< How many hands are in the song? */
 	RadarCategory_Rolls, /**< How many rolls are in the song? */
 	RadarCategory_Lifts, /**< How many lifts are in the song? */
+	RadarCategory_Fakes, /**< How many fakes are in the song? */
 	NUM_RadarCategory,	/**< The number of radar categories. */
 	RadarCategory_Invalid
 };
@@ -583,7 +584,8 @@ enum SampleMusicPreviewMode
 {
 	SampleMusicPreviewMode_Normal,		/**< Music is played as the song is highlighted. */
 	SampleMusicPreviewMode_StartToPreview,	
-	SampleMusicPreviewMode_ScreenMusic,	/**< No music plays. Select it once to preview the music, then once more to select the song. */
+	SampleMusicPreviewMode_ScreenMusic,	/**< No music plays. Select it once to preview the music, 
+						 * then once more to select the song. */
 	SampleMusicPreviewMode_LastSong,	/**< continue playing the last song */
 	NUM_SampleMusicPreviewMode,
 	SampleMusicPreviewMode_Invalid,
@@ -605,7 +607,8 @@ enum Stage
 	Stage_4th, /**< The fourth stage. */
 	Stage_5th, /**< The fifth stage. */
 	Stage_6th, /**< The sixth stage. */
-	Stage_Next, /**< Somewhere between the sixth and final stage. This won't normally happen because 7 stages is the max in the UI. */
+	Stage_Next, /**< Somewhere between the sixth and final stage. 
+		     * This won't normally happen because 7 stages is the max in the UI. */
 	Stage_Final, /**< The last stage. */
 	Stage_Extra1, /**< The first bonus stage, AKA the extra stage. */
 	Stage_Extra2, /**< The last bonus stage, AKA the encore extra stage. */

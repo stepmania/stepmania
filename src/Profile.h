@@ -1,5 +1,3 @@
-/** @brief Profile - Player data that persists between sessions. Can be stored on a local disk or on a memory card. */
-
 #ifndef Profile_H
 #define Profile_H
 
@@ -62,7 +60,10 @@ class Song;
 class Steps;
 class Course;
 class Game;
-
+/** 
+ * @brief Player data that persists between sessions. 
+ *
+ * This can be stored on a local disk or on a memory card. */
 class Profile
 {
 public:
@@ -95,14 +96,20 @@ public:
 	Song *GetMostPopularSong() const;
 	Course *GetMostPopularCourse() const;
 
-	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, int iNumHands, int iNumLifts, float fCaloriesBurned );
+	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, 
+			   int iNumHands, int iNumLifts, float fCaloriesBurned );
 
 	bool IsMachine() const;
 
 	// Editable data
 	RString m_sDisplayName;
 	RString m_sCharacterID;
-	RString m_sLastUsedHighScoreName;	// this doesn't really belong in "editable", but we need it in the smaller editable file so that it can be ready quickly.
+	/**
+	 * @brief The last used name for high scoring purposes.
+	 *
+	 * This really shouldn't be in "editable", but it's needed in the smaller editable file
+	 * so that it can be ready quickly. */
+	RString m_sLastUsedHighScoreName;
 	int m_iWeightPounds;	// 0 == not set
 	//RString m_sProfileImageName;	// todo: add a default image -aj
 
@@ -136,7 +143,13 @@ public:
 	int m_iTotalHands;
 	int m_iTotalLifts;
 	set<RString> m_UnlockedEntryIDs;
-	mutable RString m_sLastPlayedMachineGuid;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
+	/**
+	 * @brief Which machine did we play on last, based on the Guid?
+	 *
+	 * This is mutable because it's overwritten on save, but is usually
+	 * const everywhere else. It was decided to keep const on the whole
+	 * save chain and keep this mutable. -Chris */
+	mutable RString m_sLastPlayedMachineGuid;
 	mutable DateTime m_LastPlayedDate;
 	/* These stats count twice in the machine profile if two players are playing;
 	 * that's the only approach that makes sense for ByDifficulty and ByMeter. */
@@ -217,7 +230,7 @@ public:
 
 
 	/**
-	 * @brief The basics for Calorie Data
+	 * @brief The basics for Calorie Data.
 	 *
 	 * Why track calories in a map, and not in a static sized array like 
 	 * Bookkeeping?  The machine's clock is not guaranteed to be set correctly.

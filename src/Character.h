@@ -1,5 +1,3 @@
-/* Character - An persona that defines attacks for use in battle. */
-
 #ifndef Character_H
 #define Character_H
 
@@ -9,14 +7,14 @@
 struct lua_State;
 typedef lua_State Lua;
 
-
+/** @brief A persona that defines attacks for use in battle. */
 class Character
 {
 public:
 	Character();
 	~Character() { }
 
-	bool Load( RString sCharDir );	// return true if success
+	bool Load( RString sCharDir ); // return true if successful
 
 	RString GetTakingABreakPath() const;
 	RString GetCardPath() const { return m_sCardPath; }
@@ -55,7 +53,10 @@ private:
 public:
 	apActorCommands m_cmdInit;
 
-	// All the stuff below will be filled in if this character is playable in Rave mode
+	/**
+	 * @brief Is this character playable in the Rave mode?
+	 *
+	 * All of the variables listed below here will be filled in if true. */
 	bool	m_bUsableInRave;
 
 	RString	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];

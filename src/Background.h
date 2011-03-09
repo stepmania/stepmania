@@ -1,5 +1,3 @@
-/* Background - Background behind notes while playing. */
-
 #ifndef BACKGROUND_H
 #define BACKGROUND_H
 
@@ -11,7 +9,7 @@
 class DancingCharacters;
 class Song;
 class BackgroundImpl;
-
+/** @brief the Background that is behind the notes while playing. */
 class Background : public ActorFrame
 {
 public:
@@ -25,6 +23,9 @@ public:
 	void FadeToActualBrightness();
 	void SetBrightness( float fBrightness ); // overrides pref and Cover
 
+	/**
+	 * @brief Retrieve whatever dancing characters are in use.
+	 * @return the dancing characters. */
 	DancingCharacters* GetDancingCharacters();
 
 	void GetLoadedBackgroundChanges( vector<BackgroundChange> **pBackgroundChangesOut );
@@ -35,8 +36,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Ben Nordstrom
+/**
+ * @file
+ * @author Chris Danford, Ben Nordstrom (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

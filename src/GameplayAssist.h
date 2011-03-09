@@ -1,5 +1,3 @@
-/** @brief GameplayAssist - Encapsulate playing of handclap and metronome. */
-
 #ifndef GameplayAssist_H
 #define GameplayAssist_H
 

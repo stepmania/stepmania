@@ -8,18 +8,18 @@ class PlayerState;
 struct TapNote;
 struct HoldNoteResult;
 struct NoteMetricCache_t;
-
+/** @brief the various parts of a Note. */
 enum NotePart
 {
-	NotePart_Tap,
-	NotePart_Mine,
-	NotePart_Lift,
-	NotePart_Fake,
-	NotePart_HoldHead,
-	NotePart_HoldTail,
-	NotePart_HoldTopCap,
-	NotePart_HoldBody,
-	NotePart_HoldBottomCap,
+	NotePart_Tap, /**< The part representing a traditional TapNote. */
+	NotePart_Mine, /**< The part representing a mine. */
+	NotePart_Lift, /**< The part representing a lift note. */
+	NotePart_Fake, /**< The part representing a fake note. */
+	NotePart_HoldHead, /**< The part representing a hold head. */
+	NotePart_HoldTail, /**< The part representing a hold tail. */
+	NotePart_HoldTopCap, /**< The part representing a hold's top cap. */
+	NotePart_HoldBody, /**< The part representing a hold's body. */
+	NotePart_HoldBottomCap, /**< The part representing a hold's bottom cap. */
 	NUM_NotePart,
 	NotePart_Invalid
 };
@@ -45,11 +45,11 @@ struct NoteColorSprite
 private:
 	NoteResource *m_p;
 };
-
+/** @brief What types of holds are there? */
 enum HoldType 
 {
-	hold, 
-	roll, 
+	hold, /**< Merely keep your foot held on the body for it to count. */
+	roll, /**< Keep hitting the hold body for it to stay alive. */
 	// minefield,
 	NUM_HoldType,
 	HoldType_Invalid
@@ -120,8 +120,10 @@ private:
 
 #endif
 
-/*
- * (c) 2001-2006 Brian Bugh, Ben Nordstrom, Chris Danford, Steve Checkoway
+/**
+ * @file
+ * @author Brian Bugh, Ben Nordstrom, Chris Danford, Steve Checkoway (c) 2001-2006
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

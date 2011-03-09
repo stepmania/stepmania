@@ -658,12 +658,23 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 				{
 					vector<RString> saValues;
 					split( sParams[1], ",", saValues, true );
-					if( saValues.size() == NUM_RadarCategory * NUM_PLAYERS )
+					
+					int categories = NUM_RadarCategory;
+					if( out.m_fVersion < VERSION_RADAR_FAKE )
+						categories -= 1;
+					
+					if( saValues.size() == (unsigned)categories * NUM_PLAYERS )
 					{
 						RadarValues v[NUM_PLAYERS];
 						FOREACH_PlayerNumber( pn )
-						FOREACH_ENUM( RadarCategory, rc )
-						v[pn][rc] = StringToFloat( saValues[pn*NUM_RadarCategory + rc] );
+						{
+							// Can't use the foreach anymore due to flexible radar lines.
+							for( RadarCategory rc = (RadarCategory)0; rc < categories; 
+							    enum_add<RadarCategory>( rc, +1 ) )
+							{
+								v[pn][rc] = StringToFloat( saValues[pn*categories + rc] );
+							}
+						}
 						pNewNotes->SetCachedRadarValues( v );
 					}
 				}
@@ -917,6 +928,7 @@ bool SSCLoader::LoadFromSSCFile( const RString &sPath, Song &out, bool bFromCach
 			}
 		}
 	}
+	out.m_fVersion = STEPFILE_VERSION_NUMBER;
 	return true;
 }
 

@@ -1,5 +1,3 @@
-/* BannerCache - Maintains a cache of reduced-quality banners. */
-
 #ifndef BANNER_CACHE_H
 #define BANNER_CACHE_H
 
@@ -8,7 +6,7 @@
 #include "RageTexture.h"
 
 class LoadingWindow;
-
+/** @brief Maintains a cache of reduced-quality banners. */
 class BannerCache
 {
 public:
@@ -37,8 +35,10 @@ extern BannerCache *BANNERCACHE; // global and accessable from anywhere in our p
 
 #endif
 
-/*
- * (c) 2003 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

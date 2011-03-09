@@ -1,5 +1,3 @@
-/* BGAnimation - An ActorFrame that loads itself. */
-
 #ifndef BGANIMATION_H
 #define BGANIMATION_H
 
@@ -7,6 +5,7 @@
 
 class XNode;
 
+/** @brief An ActorFrame that loads itself. */
 class BGAnimation : public ActorFrameAutoDeleteChildren
 {
 public:
@@ -24,8 +23,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2001-2004 Ben Nordstrom, Chris Danford
+/**
+ * @file
+ * @author Ben Nordstrom, Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

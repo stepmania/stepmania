@@ -1,5 +1,3 @@
-/* LocalizedString -  */
-
 #ifndef LocalizedString_H
 #define LocalizedString_H
 
@@ -10,7 +8,7 @@ public:
 	virtual void Load( const RString& sGroup, const RString& sName ) = 0;
 	virtual const RString &GetLocalized() const = 0;
 };
-
+/** @brief Get a String based on the user's natural language. */
 class LocalizedString
 {
 public:
@@ -31,8 +29,10 @@ private:
 
 #endif
 
-/*
- * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2005
+ * @section LICENSE
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

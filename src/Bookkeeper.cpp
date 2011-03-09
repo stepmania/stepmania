@@ -10,7 +10,6 @@
 #include "XmlFileUtil.h"
 #include <ctime>
 
-
 Bookkeeper*	BOOKKEEPER = NULL;	// global and accessable from anywhere in our program
 
 static const RString COINS_DAT = "Save/Coins.xml";
@@ -18,7 +17,6 @@ static const RString COINS_DAT = "Save/Coins.xml";
 Bookkeeper::Bookkeeper()
 {
 	ClearAll();
-
 	ReadFromDisk();
 }
 
@@ -171,7 +169,6 @@ int Bookkeeper::GetCoinsTotal() const
 {
 	return GetNumCoinsInRange( m_mapCoinsForHour.begin(), m_mapCoinsForHour.end() );
 }
-
 
 void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] ) const
 {

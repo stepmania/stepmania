@@ -51,7 +51,9 @@ private:
 
 	PercentageDisplay	m_Percent;
 
+	/** @brief The sound played when a Player loses a life. */
 	RageSound	m_soundLoseLife;
+	/** @brief The sound played when a Player gains a life. */
 	RageSound	m_soundGainLife;
 };
 

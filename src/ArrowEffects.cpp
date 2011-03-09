@@ -15,7 +15,15 @@
 #include <float.h>
 
 static ThemeMetric<float>	ARROW_SPACING( "ArrowEffects", "ArrowSpacing" );
+static ThemeMetric<bool>	QUANTIZE_ARROW_Y( "ArrowEffects", "QuantizeArrowYPosition");
 static ThemeMetric<bool>	HIDDEN_SUDDEN_PAST_RECEPTOR( "ArrowEffects", "DrawHiddenNotesAfterReceptor");
+
+/* For better or for worse, allow the themes to modify the various mod
+ * effects for the different mods. In general, it is recommended to not
+ * edit the default values and instead use percentage mods when changes
+ * are wanted. Still, the option is available for those that want it.
+ *
+ * Is this a good idea? We'll find out. -aj & Wolfman2000 */
 static ThemeMetric<float>	BLINK_MOD_FREQUENCY( "ArrowEffects", "BlinkModFrequency" );
 static ThemeMetric<float>	BOOST_MOD_MIN_CLAMP( "ArrowEffects", "BoostModMinClamp" );
 static ThemeMetric<float>	BOOST_MOD_MAX_CLAMP( "ArrowEffects", "BoostModMaxClamp" );
@@ -50,7 +58,7 @@ static ThemeMetric<float>	BEAT_OFFSET_HEIGHT( "ArrowEffects", "BeatOffsetHeight"
 static ThemeMetric<float>	BEAT_PI_HEIGHT( "ArrowEffects", "BeatPIHeight" );
 static ThemeMetric<float>	MINI_PERCENT_BASE( "ArrowEffects", "MiniPercentBase" );
 static ThemeMetric<float>	MINI_PERCENT_GATE( "ArrowEffects", "MiniPercentGate" );
-static ThemeMetric<bool>	QUANTIZE_ARROW_Y( "ArrowEffects", "QuantizeArrowYPosition");
+static ThemeMetric<bool>	DIZZY_HOLD_HEADS( "ArrowEffects", "DizzyHoldHeads" );
 
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
@@ -231,6 +239,8 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		fYOffset += fYOffsetTimeSpacing * pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing;
 	}
 
+	// TODO: If we allow noteskins to have metricable row spacing
+	// (per issue 24), edit this to reflect that. -aj
 	fYOffset *= ARROW_SPACING;
 
 	// don't mess with the arrows after they've crossed 0
@@ -287,8 +297,8 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 			seed = ((seed * 1664525u) + 1013904223u) & 0xFFFFFFFF;
 		float fRandom = seed / 4294967296.0f;
 
-		/* Random speed always increases speed: a random speed of 10 indicates [1,11].
-		 * This keeps it consistent with other mods: 0 means no effect. */
+		/* Random speed always increases speed: a random speed of 10 indicates
+		 * [1,11]. This keeps it consistent with other mods: 0 means no effect. */
 		fScrollSpeed *=
 				SCALE( fRandom,
 						0.0f, 1.0f,
@@ -498,8 +508,8 @@ float ArrowEffects::GetRotationZ( const PlayerState* pPlayerState, float fNoteBe
 	if( fEffects[PlayerOptions::EFFECT_CONFUSION] != 0 )
 		fRotation += ReceptorGetRotationZ( pPlayerState );
 
-	// Doesn't affect hold heads, unlike confusion
-	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && !bIsHoldHead )
+	// As usual, enable dizzy hold heads at your own risk. -Wolfman2000
+	if( fEffects[PlayerOptions::EFFECT_DIZZY] != 0 && ( DIZZY_HOLD_HEADS || !bIsHoldHead ) )
 	{
 		const float fSongBeat = GAMESTATE->m_fSongBeatVisible;
 		float fDizzyRotation = fNoteBeat - fSongBeat;

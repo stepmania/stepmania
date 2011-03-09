@@ -39,6 +39,11 @@ namespace NoteDataUtil
 
 	void CalculateRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out );
 
+	/**
+	 * @brief Remove all of the Hold notes.
+	 * @param inout the Notedata to be transformed.
+	 * @param iStartIndex the starting point for transforming.
+	 * @param iEndIndex the ending point for transforming. */
 	void RemoveHoldNotes( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void ChangeRollsToHolds( NoteData &in, int iStartIndex, int iEndIndex );
 	void ChangeHoldsToRolls( NoteData &in, int iStartIndex, int iEndIndex );
@@ -46,7 +51,31 @@ namespace NoteDataUtil
 	void RemoveJumps( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveHands( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveQuads( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	/**
+	 * @brief Remove all of a specific TapNote Type.
+	 * @param inout the Notedata to be transformed.
+	 * @param tn the TapNote Type to remove.
+	 * @param iStartIndex the starting point for transforming.
+	 * @param iEndIndex the ending point for transforming. */
+	void RemoveSpecificTapNotes( NoteData &inout, TapNote::Type tn, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	/**
+	 * @brief Remove all of the mines from the chart.
+	 * @param inout the Notedata to be transformed.
+	 * @param iStartIndex the starting point for transforming.
+	 * @param iEndIndex the ending point for transforming. */
 	void RemoveMines( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	/**
+	 * @brief Remove all of the lifts from the chart.
+	 * @param inout the Notedata to be transformed.
+	 * @param iStartIndex the starting point for transforming.
+	 * @param iEndIndex the ending point for transforming. */
+	void RemoveLifts( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	/**
+	 * @brief Remove all of the fakes from the chart.
+	 * @param inout the Notedata to be transformed.
+	 * @param iStartIndex the starting point for transforming.
+	 * @param iEndIndex the ending point for transforming. */
+	void RemoveFakes( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveStretch( NoteData &inout, StepsType st, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveAllButOneTap( NoteData &inout, int row );
 	void RemoveAllButPlayer( NoteData &inout, PlayerNumber pn );
@@ -127,8 +156,10 @@ namespace NoteDataUtil
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

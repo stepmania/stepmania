@@ -1,5 +1,3 @@
-/* StepsDisplay - A graphical representation of a Steps or a Trail - has a difficulty number, meter, text, edit description. */
-
 #ifndef StepsDisplay_H
 #define StepsDisplay_H
 
@@ -16,7 +14,10 @@
 class Steps;
 class Trail;
 class PlayerState;
-
+/**
+ * @brief A graphical representation of a Steps or a Trail.
+ *
+ * It has a difficulty number, meter, text, and an edit description. */
 class StepsDisplay : public ActorFrame
 {
 public:
@@ -52,7 +53,13 @@ private:
 	AutoActor	m_sprFrame;
 	BitmapText	m_textTicks; // 111100000
 	BitmapText	m_textMeter; // 3, 9
-	BitmapText	m_textDescription; // Easy, Medium, SuperCoolEdit
+	/**
+	 * @brief The description of the chart.
+	 *
+	 * This is meant to be separate from the author of the chart. */
+	BitmapText	m_textDescription;
+	/** @brief The author of the chart. */
+	BitmapText	m_textAuthor;
 	AutoActor	m_sprAutogen; // visible if Steps and is autogen'd
 	AutoActor	m_sprStepsType;
 
@@ -61,6 +68,7 @@ private:
 	ThemeMetric<bool>	m_bShowTicks;
 	ThemeMetric<bool>	m_bShowMeter;
 	ThemeMetric<bool>	m_bShowDescription;
+	ThemeMetric<bool>	m_bShowCredit;
 	ThemeMetric<bool>	m_bShowAutogen;
 	ThemeMetric<bool>	m_bShowStepsType;
 	ThemeMetric<RString>	m_sZeroMeterString;

@@ -123,7 +123,7 @@ float Steps::PredictMeter() const
 	const float RadarCoeffs[NUM_RadarCategory] =
 	{
 		10.1f, 5.27f,-0.905f, -1.10f, 2.86f,
-		0,0,0,0,0,0
+		0,0,0,0,0,0,0,0
 	};
 	const RadarValues &rv = GetRadarValues( PLAYER_1 );
 	for( int r = 0; r < NUM_RadarCategory; ++r )

@@ -1,11 +1,9 @@
-/* DynamicActorScroller - ActorScroller that fills in its children on the fly. */
-
 #ifndef ACTOR_SCROLLER_H
 #define ACTOR_SCROLLER_H
 
 #include "ActorScroller.h"
 #include "LuaReference.h"
-
+/** @brief ActorScroller that fills in its children on the fly. */
 class DynamicActorScroller: public ActorScroller
 {
 public:
@@ -18,7 +16,7 @@ protected:
 
 	LuaReference m_LoadFunction;
 };
-
+/** @brief an ActorScroller that deletes its children automatically. */
 class DynamicActorScrollerAutoDeleteChildren: public DynamicActorScroller 
 {
 public:
@@ -29,8 +27,10 @@ public:
 
 #endif
 
-/*
- * (c) 2005 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2005
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

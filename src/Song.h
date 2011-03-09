@@ -16,6 +16,9 @@ class StepsID;
 struct lua_State;
 struct BackgroundChange;
 
+/** @brief The version of the .ssc file format. */
+const static float STEPFILE_VERSION_NUMBER = 0.53f;
+
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
 /** @brief How many edits for this song can be available? */
@@ -73,7 +76,7 @@ public:
 	~Song();
 	void Reset();
 	void DetachSteps();
-
+	
 	/**
 	 * @brief Load a song from the chosen directory.
 	 *
@@ -144,7 +147,11 @@ public:
 	/** @brief The group this Song is in. */
 	RString m_sGroupName;
 
-	ProfileSlot	m_LoadedFromProfile;	// ProfileSlot_Invalid if not loaded from a profile
+	/**
+	 * @brief the Profile this came from.
+	 *
+	 * This is ProfileSlot_Invalid if it wasn't loaded from a profile. */
+	ProfileSlot	m_LoadedFromProfile;
 	/** @brief Is the song file itself a symlink to another file? */
 	bool	m_bIsSymLink;
 	bool	m_bEnabled;
@@ -155,8 +162,11 @@ public:
 	RString m_sSubTitle; 
 	/** @brief The artist of the Song, if it exists. */
 	RString m_sArtist;
+	/** @brief The transliterated title of the Song, if it exists. */
 	RString m_sMainTitleTranslit;
+	/** @brief The transliterated subtitle of the Song, if it exists. */
 	RString m_sSubTitleTranslit;
+	/** @brief The transliterated artist of the Song, if it exists. */
 	RString m_sArtistTranslit;
 
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit*
@@ -166,9 +176,27 @@ public:
 	RString GetDisplayArtist() const;
 
 	// Returns the transliterated titles, if any; otherwise returns the main titles.
-	RString GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
-	RString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
-	RString GetTranslitArtist() const { return m_sArtistTranslit.size()? m_sArtistTranslit:m_sArtist; }
+	/**
+	 * @brief Retrieve the transliterated title, or the main title if there is no translit.
+	 * @return the proper title. */
+	RString GetTranslitMainTitle() const
+	{ 
+		return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; 
+	}
+	/**
+	 * @brief Retrieve the transliterated subtitle, or the main subtitle if there is no translit.
+	 * @return the proper subtitle. */
+	RString GetTranslitSubTitle() const 
+	{ 
+		return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle;
+	}
+	/**
+	 * @brief Retrieve the transliterated artist, or the main artist if there is no translit.
+	 * @return the proper artist. */
+	RString GetTranslitArtist() const 
+	{ 
+		return m_sArtistTranslit.size()? m_sArtistTranslit:m_sArtist; 
+	}
 
 	// "title subtitle"
 	RString GetDisplayFullTitle() const;
@@ -249,9 +277,22 @@ public:
 
 	typedef vector<BackgroundChange> 	VBackgroundChange;
 private:
-	// AutoPtr instead of raw pointer so that the auto gen'd copy constructor works correctly.
-	AutoPtrCopyOnWrite<VBackgroundChange>	m_BackgroundChanges[NUM_BackgroundLayer];	// these must be sorted before gameplay
-	AutoPtrCopyOnWrite<VBackgroundChange>	m_ForegroundChanges;	// this must be sorted before gameplay
+	/**
+	 * @brief The background changes (sorted by layer) that are for this Song.
+	 *
+	 * This uses an AutoPtr instead of a raw pointer so that the
+	 * auto gen'd copy constructor works correctly.
+	 *
+	 * This must be sorted before gameplay. */
+	AutoPtrCopyOnWrite<VBackgroundChange>	m_BackgroundChanges[NUM_BackgroundLayer];
+	/**
+	 * @brief The foreground changes that are for this Song.
+	 *
+	 * This uses an AutoPtr instead of a raw pointer so that the
+	 * auto gen'd copy constructor works correctly.
+	 *
+	 * This must be sorted before gameplay. */
+	AutoPtrCopyOnWrite<VBackgroundChange>	m_ForegroundChanges;
 public:
 	const vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl ) const;
 	vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl );
@@ -277,7 +318,14 @@ public:
 	float GetBPMAtBeat( float fBeat ) const { return m_Timing.GetBPMAtBeat( fBeat ); }
 	void SetBPMAtBeat( float fBeat, float fBPM ) { m_Timing.SetBPMAtBeat( fBeat, fBPM ); }
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat ) { return m_Timing.GetBPMSegmentAtBeat( fBeat ); }
-	float GetBeatFromElapsedTime( float fElapsedTime ) const { return m_Timing.GetBeatFromElapsedTime( fElapsedTime ); }
+	/**
+	 * @brief Retrieve the beat based on the specified time.
+	 * @param fElapsedTime the amount of time since the Song started.
+	 * @return the appropriate beat. */
+	float GetBeatFromElapsedTime( float fElapsedTime ) const 
+	{ 
+		return m_Timing.GetBeatFromElapsedTime( fElapsedTime );
+	}
 	float GetElapsedTimeFromBeat( float fBeat ) const { return m_Timing.GetElapsedTimeFromBeat( fBeat ); }
 	bool HasSignificantBpmChangesOrStops() const;
 	float GetStepsSeconds() const;
@@ -327,7 +375,9 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
+	/** @brief the Steps that belong to this Song. */
 	vector<Steps*> m_vpSteps;
+	/** @brief the Steps of a particular StepsType that belong to this Song. */
 	vector<Steps*> m_vpStepsByType[NUM_StepsType];
 };
 

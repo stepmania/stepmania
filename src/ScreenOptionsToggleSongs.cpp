@@ -7,16 +7,76 @@
 #include "SongManager.h"
 #include "UnlockManager.h"
 #include "PrefsManager.h"
+#include "MessageManager.h"
 
+// main page (group list)
 REGISTER_SCREEN_CLASS( ScreenOptionsToggleSongs );
+REGISTER_SCREEN_CLASS( ScreenOptionsToggleSongsSubPage );
 
 void ScreenOptionsToggleSongs::BeginScreen()
+{
+	m_asGroups.clear();
+
+	vector<OptionRowHandler*> vHands;
+
+	vector<RString> asAllGroups;
+	SONGMAN->GetSongGroupNames(asAllGroups);
+	FOREACH_CONST( RString, asAllGroups , s )
+	{
+		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
+		OptionRowDefinition &def = vHands.back()->m_Def;
+		RString sGroup = *s;
+
+		def.m_sName = sGroup;
+		def.m_sExplanationName = "Select Group";
+		def.m_bAllowThemeTitle = false;	// not themable
+		def.m_bAllowThemeItems = false;	// already themed
+		def.m_bOneChoiceForAllPlayers = true;
+		def.m_vsChoices.clear();
+		def.m_vsChoices.push_back( "" );
+
+		m_asGroups.push_back( sGroup );
+	}
+	ScreenOptions::InitMenu( vHands );
+
+	ScreenOptions::BeginScreen();
+}
+
+void ScreenOptionsToggleSongs::ProcessMenuStart( const InputEventPlus &input )
+{
+	if( IsTransitioning() )
+		return;
+
+	// switch to the subpage with the specified group
+	int iRow = GetCurrentRow();
+	OptionRow &row = *m_pRows[iRow];
+	if( row.GetRowType() == OptionRow::RowType_Exit )
+	{
+		ScreenOptions::ProcessMenuStart( input );
+		return;
+	}
+
+	ToggleSongs::m_sGroup = m_asGroups[iRow];
+	SCREENMAN->SetNewScreen("ScreenOptionsToggleSongsSubPage");
+}
+
+void ScreenOptionsToggleSongs::ImportOptions( int row, const vector<PlayerNumber> &vpns )
+{
+
+}
+void ScreenOptionsToggleSongs::ExportOptions( int row, const vector<PlayerNumber> &vpns )
+{
+
+}
+
+// subpage (has the songs in a specific group)
+void ScreenOptionsToggleSongsSubPage::BeginScreen()
 {
 	m_apSongs.clear();
 
 	vector<OptionRowHandler*> vHands;
 
-	const vector<Song *> &apAllSongs = SONGMAN->GetAllSongs();
+	const vector<Song *> &apAllSongs = SONGMAN->GetSongs(ToggleSongs::m_sGroup);
 	FOREACH_CONST( Song *, apAllSongs , s )
 	{
 		Song *pSong = *s;
@@ -43,7 +103,7 @@ void ScreenOptionsToggleSongs::BeginScreen()
 	ScreenOptions::BeginScreen();
 }
 
-void ScreenOptionsToggleSongs::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsToggleSongsSubPage::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 	if( iRow >= (int)m_apSongs.size() )	// exit row
 		return;
@@ -54,7 +114,7 @@ void ScreenOptionsToggleSongs::ImportOptions( int iRow, const vector<PlayerNumbe
 	row.SetOneSharedSelection( iSelection );
 }
 
-void ScreenOptionsToggleSongs::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsToggleSongsSubPage::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 	if( iRow >= (int)m_apSongs.size() )	// exit row
 		return;

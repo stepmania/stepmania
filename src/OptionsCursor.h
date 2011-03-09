@@ -9,7 +9,11 @@
 class OptionsCursor : public ActorFrame
 {
 public:
+	/** @brief Set up a default OptionsCursor. */
 	OptionsCursor();
+	/**
+	 * @brief Set up an OptionsCursor based on an existing copy.
+	 * @param cpy the OptionsCursor we are copying. */
 	OptionsCursor( const OptionsCursor &cpy );
 
 	void Load( const RString &sMetricsGroup, bool bLoadCanGos );

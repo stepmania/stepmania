@@ -13,6 +13,32 @@ _____________________________________________________________________________
 sm-ssc v1.2.3 | 2011022?
 --------------------------------------------------------------------------------
 
+20110228
+--------
+* Add Fakes to the RadarCategories. [Wolfman2000]
+* [ScreenEdit] Display the number of Lifts and Fakes in a stepchart in the
+  editor. These use metrics, so the lines can be made empty in themes that
+  require them. [Wolfman2000]
+* [ArrowEffects] Allow for dizzy hold heads. Again, enable at your own risk.
+  [Wolfman2000]
+* [StepsDisplay] Allow for displaying the chart artist in a separate field.
+  This defaults to false for the moment. [Wolfman2000]
+* [PlayerOptions, NoteDataUtil] Add transform mods for removing lifts and
+  fakes from the Notedata. This mods can disqualify of course. [Wolfman2000]
+
+20110227
+--------
+* [PlayerState] The old GetPlayerOptions() binding is now GetPlayerOptionsString().
+  There is a new GetPlayerOptions() binding that gets the PlayerOptions object,
+  which has a GetNoteSkin() binding (and hopefully more in the future). [AJ]
+
+20110226
+--------
+* [ScreenOptionsToggleSongs] The structure of this screen has now changed.
+  Before, it contained the entire list of songs. Now, the main page
+  (ScreenOptionsToggleSongs) holds the groups, and a sub-page
+  (ScreenOptionsToggleSongsSubPage) holds the songs in each group. [AJ]
+
 20110225
 --------
 * Add lifts and fakes to all Pump noteskins. [Daisuke Master, Wolfman2000]

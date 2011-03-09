@@ -1,5 +1,3 @@
-/** @brief Steps - Holds note information for a Song.  A Song may have one or more Notes. */
-
 #ifndef STEPS_H
 #define STEPS_H
 
@@ -21,7 +19,10 @@ struct lua_State;
  */
 const int MAX_EDIT_STEPS_DESCRIPTION_LENGTH = 12;
 
-/** @brief The collective note pattern and information of the Steps that are played. */
+/** 
+ * @brief Holds note information for a Song.
+ *
+ * A Song may have one or more Notes. */
 class Steps
 {
 public:

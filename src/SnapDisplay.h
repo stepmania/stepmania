@@ -6,10 +6,6 @@
 #include "Sprite.h"
 #include "PlayerNumber.h"
 
-/* sm-ssc todo:
- * Convert m_sprIndicators to AutoActors
- * ThemeMetric for deciding to load one or two indicators? -aj
- */
 /** @brief Graphics on ends of receptors on Edit screen that show the current snap type. */
 class SnapDisplay : public ActorFrame
 {
@@ -30,6 +26,10 @@ protected:
 
 	/** @brief the NoteType to snap to. */
 	NoteType	m_NoteType;
+	/**
+	 * @brief Indicators showing what NoteType is currently snapped to.
+	 * 
+	 * TODO: Convert to an AutoActor. -aj */
 	Sprite		m_sprIndicators[2];	// left and right side
 };
 

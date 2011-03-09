@@ -1,4 +1,4 @@
-/* LuaExpressionTransform - Handle transforming a list of items.  Cache item transforms based on fPositionOffsetFromCenter and iItemIndex for speed. */
+/* LuaExpressionTransform -  */
 
 #ifndef LuaExpressionTransform_H
 #define LuaExpressionTransform_H
@@ -7,6 +7,10 @@
 #include "LuaReference.h"
 #include <map>
 
+/**
+ * @brief Handle transforming a list of items
+ *
+ * Cache item transforms based on fPositionOffsetFromCenter and iItemIndex for speed. */
 class LuaExpressionTransform
 {
 public:

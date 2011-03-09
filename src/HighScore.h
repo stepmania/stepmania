@@ -58,6 +58,9 @@ struct HighScore
 	 * @return true if the score would be disqualified, false otherwise. */
 	bool GetDisqualified() const;
 
+	/**
+	 * @brief Set the name of the Player that earned the score.
+	 * @param sName the name of the Player. */
 	void SetName( const RString &sName );
 	void SetGrade( Grade g );
 	void SetScore( int iScore );

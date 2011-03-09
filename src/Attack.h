@@ -5,12 +5,18 @@
 #include "PlayerNumber.h"
 class Song;
 class PlayerState;
-
+/** @brief An action made against a Player to make things more difficult. */
 struct Attack
 {
 	AttackLevel	level;
-	float fStartSecond; // -1 = now
+	/**
+	 * @brief the starting point of this attack.
+	 *
+	 * If this is -1, then the attack starts now. */
+	float fStartSecond;
+	/** @brief How long does this attack last? */
 	float fSecsRemaining;
+	/** @brief The modifiers used for this attack. */
 	RString sModifiers;
 	bool bOn; // set and used by GAMESTATE
 	bool bGlobal; // true for song-wide course mods
@@ -47,7 +53,14 @@ struct Attack
 
 	void GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBeat ) const;
 	void GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const;
+	/**
+	 * @brief Determine if this attack has no modifiers, and is thus blank or empty.
+	 * @return true if it is blank/empty, or false otherwise. */
 	bool IsBlank() const { return sModifiers.empty(); }
+	/**
+	 * @brief Determine if two Attacks are equal to each other.
+	 * @param rhs the other Attack in question.
+	 * @return true if the two Attacks are equal, or false otherwise. */
 	bool operator== ( const Attack &rhs ) const;
 	bool ContainsTransformOrTurn() const;
 	static Attack FromGlobalCourseModifier( const RString &sModifiers );
@@ -56,13 +69,18 @@ struct Attack
 
 struct AttackArray : public vector<Attack>
 {
+	/**
+	 * @brief Determine if the list of attacks contains a transform or turn mod.
+	 * @return true if it does, or false otherwise. */
 	bool ContainsTransformOrTurn() const;
 };
 
 #endif
 
-/*
- * (c) 2003-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

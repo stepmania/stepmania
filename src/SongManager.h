@@ -1,5 +1,3 @@
-/** @brief SongManager - Holder for all Songs and Steps. */
-
 #ifndef SONGMANAGER_H
 #define SONGMANAGER_H
 
@@ -57,7 +55,8 @@ public:
 	void FreeCourses();
 	void AddCourse( Course *pCourse );	// transfers ownership of pCourse
 	void DeleteCourse( Course *pCourse );	// transfers ownership of pCourse
-	void DeleteAutogenCourses();		// deletes every autogen course
+	/** @brief Remove all of the auto generated courses. */
+	void DeleteAutogenCourses();
 	void InvalidateCachedTrails();
 
 	void InitAll( LoadingWindow *ld );	// songs, courses, groups - everything.
@@ -142,7 +141,9 @@ protected:
 	void AddGroup( RString sDir, RString sGroupDirName );
 	int GetNumEditsLoadedFromProfile( ProfileSlot slot ) const;
 
-	vector<Song*>		m_pSongs;	// all songs that can be played
+	/** @brief All of the songs that can be played. */
+	vector<Song*>		m_pSongs;
+	/** @brief The most popular songs ranked by number of plays. */
 	vector<Song*>		m_pPopularSongs;
 	//vector<Song*>		m_pRecentSongs;	// songs recently played on the machine
 	vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong

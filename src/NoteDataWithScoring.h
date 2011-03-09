@@ -13,17 +13,25 @@ struct TapNote;
 /** @brief NoteData with scores for each TapNote and HoldNote. */
 namespace NoteDataWithScoring
 {
+	/**
+	 * @brief Has the current row of NoteData been judged completely?
+	 * @param in the entire Notedata.
+	 * @param iRow the row to check.
+	 * @return true if it has been completley judged, or false otherwise. */
 	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow );
 	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow );
 	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow );
 
-	void GetActualRadarValues( const NoteData &in, const PlayerStageStats &pss, float fSongSeconds, RadarValues& out );
+	void GetActualRadarValues( const NoteData &in, const PlayerStageStats &pss, 
+				  float fSongSeconds, RadarValues& out );
 };
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

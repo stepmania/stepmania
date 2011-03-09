@@ -635,6 +635,20 @@ int NoteData::GetNumLifts( int iStartIndex, int iEndIndex ) const
 	return iNumLifts;
 }
 
+int NoteData::GetNumFakes( int iStartIndex, int iEndIndex ) const
+{
+	int iNumFakes = 0;
+	
+	for( int t=0; t<GetNumTracks(); t++ )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
+		if( GetTapNote(t, r).type == TapNote::fake )
+			iNumFakes++;
+	}
+	
+	return iNumFakes;
+}
+
 /*
 int NoteData::GetNumMinefields( int iStartIndex, int iEndIndex ) const
 {

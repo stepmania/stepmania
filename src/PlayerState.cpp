@@ -210,8 +210,8 @@ public:
 	static int GetPlayerOptions( T* p, lua_State *L )
 	{
 		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
-		RString s = p->m_PlayerOptions.Get(m).GetString();
-		LuaHelpers::Push( L, s );
+		PlayerOptions po = p->m_PlayerOptions.Get(m);
+		po.PushSelf(L);
 		return 1;
 	}
 	static int GetPlayerOptionsArray( T* p, lua_State *L )
@@ -220,6 +220,13 @@ public:
 		vector<RString> s;
 		p->m_PlayerOptions.Get(m).GetMods(s);
 		LuaHelpers::CreateTableFromArray<RString>( s, L );
+		return 1;
+	}
+	static int GetPlayerOptionsString( T* p, lua_State *L )
+	{
+		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
+		RString s = p->m_PlayerOptions.Get(m).GetString();
+		LuaHelpers::Push( L, s );
 		return 1;
 	}
 	DEFINE_METHOD( GetHealthState, m_HealthState );
@@ -231,6 +238,7 @@ public:
 		ADD_METHOD( SetPlayerOptions );
 		ADD_METHOD( GetPlayerOptions );
 		ADD_METHOD( GetPlayerOptionsArray );
+		ADD_METHOD( GetPlayerOptionsString );
 		ADD_METHOD( GetHealthState );
 	}
 };

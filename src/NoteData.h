@@ -233,6 +233,7 @@ public:
 
 	// and the other notetypes
 	int GetNumLifts( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
+	int GetNumFakes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 
 	// Transformations
 	void LoadTransformed( const NoteData& original, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track

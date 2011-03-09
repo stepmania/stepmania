@@ -26,6 +26,7 @@ static const char *PaneCategoryNames[] = {
 	"Mines",
 	"Hands",
 	"Lifts",
+	"Fakes",
 	"MachineHighScore",
 	"MachineHighName",
 	"ProfileHighScore",
@@ -206,6 +207,7 @@ void PaneDisplay::SetContent( PaneCategory c )
 		case PaneCategory_Mines:		val = rv[RadarCategory_Mines]; break;
 		case PaneCategory_Hands:		val = rv[RadarCategory_Hands]; break;
 		case PaneCategory_Lifts:		val = rv[RadarCategory_Lifts]; break;
+		case PaneCategory_Fakes:		val = rv[RadarCategory_Fakes]; break;
 		case PaneCategory_ProfileHighScore:
 		case PaneCategory_MachineHighName: // set val for color
 		case PaneCategory_MachineHighScore:

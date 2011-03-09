@@ -593,9 +593,7 @@ void Player::Load()
 
 	// parameters are invalid somehow... -aj
 	RageSoundLoadParams SoundParams;
-	//RageSoundParams p;
 	SoundParams.m_bSupportPan = true;
-	//p.StopMode = RageSoundParams::M_STOP;
 
 	float fBalance = GameSoundManager::GetPlayerBalance( pn );
 	for( unsigned i=0; i<m_vKeysounds.size(); i++ )
@@ -605,7 +603,7 @@ void Player::Load()
 		if( sound.GetLoadedFilePath() != sKeysoundFilePath )
 			sound.Load( sKeysoundFilePath, true, &SoundParams );
 		sound.SetProperty( "Pan", fBalance );
-		//sound.SetParams( p );
+		sound.SetStopModeFromString( "stop" );
 	}
 
 	if( m_pPlayerStageStats )

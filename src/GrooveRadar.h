@@ -16,9 +16,16 @@ public:
 	virtual GrooveRadar *Copy() const;
 	virtual void LoadFromNode( const XNode* pNode );
 
+	/** 
+	 * @brief Give the Player an empty GrooveRadar.
+	 * @param pn the Player to give an empty GrooveRadar. */
 	void SetEmpty( PlayerNumber pn );
 	void SetFromRadarValues( PlayerNumber pn, const RadarValues &rv );
-	void SetFromSteps( PlayerNumber pn, Steps* pSteps );	// NULL means no Steps
+	/**
+	 * @brief Give the Player a GrooveRadar based on some Steps.
+	 * @param pn the Player to give a GrooveRadar.
+	 * @param pSteps the Steps to use to make the radar. If NULL, there are no Steps. */
+	void SetFromSteps( PlayerNumber pn, Steps* pSteps );
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -58,8 +65,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

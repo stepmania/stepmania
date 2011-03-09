@@ -63,6 +63,7 @@ static inline RString GradeToString( Grade g )
  *
  * This is mainly for backward compatibility purposes, but the announcer
  * also uses it. Think "AAA", "B", etc.
+ * This is only referenced in ScreenEvaluation at the moment.
  * @param g the current Grade.
  * @return the old styled grade string. */
 RString GradeToOldString( Grade g );

@@ -42,7 +42,6 @@
 #include <ctime>
 #include <set>
 
-
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 
 #define NAME_BLACKLIST_FILE "/Data/NamesBlacklist.txt"
@@ -161,7 +160,7 @@ GameState::GameState() :
 	m_Environment = new LuaTable;
 
 	// Don't reset yet; let the first screen do it, so we can use PREFSMAN and THEME.
-//	Reset();
+	//Reset();
 
 	// Register with Lua.
 	{
@@ -254,7 +253,7 @@ void GameState::Reset()
 		m_MultiPlayerStatus[p] = MultiPlayerStatus_NotJoined;
 	FOREACH_PlayerNumber( pn )
 		MEMCARDMAN->UnlockCard( pn );
-//	m_iCoins = 0;	// don't reset coin count!
+	//m_iCoins = 0;	// don't reset coin count!
 	m_bMultiplayer = false;
 	m_iNumMultiplayerNoteFields = 1;
 	*m_Environment = LuaTable();
@@ -399,7 +398,7 @@ void GameState::UnjoinPlayer( PlayerNumber pn )
 	}
 }
 
-/* handle multiplayer join? */
+/* xxx: handle multiplayer join? -aj */
 
 namespace
 {
@@ -426,7 +425,7 @@ namespace
 	}
 };
 
-// Handle an input that can join a player. Return true if the player joined
+// Handle an input that can join a player. Return true if the player joined.
 bool GameState::JoinInput( PlayerNumber pn )
 {
 	// When AutoJoin is enabled, join all players on a single start press.
@@ -1461,6 +1460,11 @@ void GameState::LoadNoteSkinMetrics( PlayerNumber pn )
 	RString m_sNoteSkin = m_pPlayerState[pn]->m_PlayerOptions.GetStage().m_sNoteSkin;
 	RString sStepsType = StringConversion::ToString( this->m_pCurSteps[pn]->m_StepsType );
 	LOG->Trace("Loading Row/Col/Size values for Noteskin %s | StepsType: %s",m_sNoteSkin.c_str(),sStepsType.c_str());
+
+	//m_iNoteSkinRowSpacing[pn] = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "RowSpacing" );
+	// todo: allow per-column spacing values? -aj
+	m_iNoteSkinColSpacing[pn] = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "ColSpacing" );
+	m_iNoteSkinArrowSize[pn] = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "ArrowSize" );
 }
 */
 

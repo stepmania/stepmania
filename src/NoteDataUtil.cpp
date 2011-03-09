@@ -496,7 +496,7 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 {
 	// reset all notes
 	out.Init();
-
+	
 	if( in.GetNumTracks() > iNewNumTracks )
 	{
 		// Use a different algorithm for reducing tracks.
@@ -561,6 +561,37 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 	}
 }
 
+void PlaceAutoKeysound( const NoteData &in, NoteData &out, int iNewNumTracks, int row, const TapNote &tnFrom )
+{
+	int iEmptyTrack = -1;
+	int iEmptyRow = row - 1;
+	bool bFoundEmptyTrack = false;
+	if( iEmptyRow < 0 )
+	{
+		iEmptyRow = 0;
+	}
+	for( int r = iEmptyRow; r <= iEmptyRow + 2; r += 2 )
+	{
+		for( int i = 0; i < iNewNumTracks; ++i )
+		{
+			if ( out.GetTapNote(i, r) == TAP_EMPTY )
+			{
+				iEmptyTrack = i;
+				iEmptyRow = r;
+				bFoundEmptyTrack = true;
+				break;
+			}
+		}
+		if( bFoundEmptyTrack )
+			break;
+	}
+	
+	if( iEmptyTrack != -1 )
+	{
+		out.SetTapNote( iEmptyTrack, iEmptyRow, tnFrom );
+	}
+}
+
 void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNumTracks )
 {
 	out.SetNumTracks( iNewNumTracks );
@@ -587,7 +618,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 		for( int iTrackFrom = 0; iTrackFrom < in.GetNumTracks(); ++iTrackFrom )
 		{
 			const TapNote &tnFrom = in.GetTapNote( iTrackFrom, row );
-			if( tnFrom.type == TapNote::empty )
+			if( tnFrom.type == TapNote::empty || tnFrom.type == TapNote::autoKeysound )
 				continue;
 
 			// If this is a hold note, find the end.
@@ -609,7 +640,16 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 
 				// If it's still in use, then we just don't have an available track.
 				if( iEndIndex - LastSourceRow[iTrackTo] < ShiftThreshold )
+				{
+					// If it has a keysound, put it in autokeysound track.
+					if( tnFrom.iKeysoundIndex >= 0 )
+					{
+						TapNote akTap = tnFrom;
+						akTap.type = TapNote::autoKeysound;
+						PlaceAutoKeysound( in, out, iNewNumTracks, row, akTap );
+					}
 					continue;
+				}
 			}
 
 			LastSourceTrack[iTrackTo] = iTrackFrom;
@@ -620,6 +660,16 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 				const TapNote &tnTail = in.GetTapNote( iTrackFrom, iEndIndex );
 				out.SetTapNote( iTrackTo, iEndIndex, tnTail );
 			}
+		}
+		
+		// find empty track for autokeysounds in 2 next rows, so you can hear most autokeysounds
+		for( int iTrackFrom = 0; iTrackFrom < in.GetNumTracks(); ++iTrackFrom )
+		{
+			const TapNote &tnFrom = in.GetTapNote( iTrackFrom, row );
+			if( tnFrom.type != TapNote::autoKeysound )
+				continue;
+			
+			PlaceAutoKeysound( in, out, iNewNumTracks, row, tnFrom );
 		}
 	}
 }
@@ -749,6 +799,7 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 		case RadarCategory_Hands:		out[rc] = (float) in.GetNumHands();			break;
 		case RadarCategory_Rolls:		out[rc] = (float) in.GetNumRolls();			break;
 		case RadarCategory_Lifts:		out[rc] = (float) in.GetNumLifts();			break;
+		case RadarCategory_Fakes:		out[rc] = (float) in.GetNumFakes();			break;
 		default:	ASSERT(0);
 		}
 	}
@@ -928,12 +979,27 @@ void NoteDataUtil::RemoveQuads( NoteData &inout, int iStartIndex, int iEndIndex 
 	RemoveSimultaneousNotes( inout, 3, iStartIndex, iEndIndex );
 }
 
-void NoteDataUtil::RemoveMines( NoteData &inout, int iStartIndex, int iEndIndex )
+void NoteDataUtil::RemoveSpecificTapNotes( NoteData &inout, TapNote::Type tn, int iStartIndex, int iEndIndex )
 {
 	for( int t=0; t<inout.GetNumTracks(); t++ )
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, iStartIndex, iEndIndex ) 
-			if( inout.GetTapNote(t,r).type == TapNote::mine )
+			if( inout.GetTapNote(t,r).type == tn )
 				inout.SetTapNote( t, r, TAP_EMPTY );
+}
+
+void NoteDataUtil::RemoveMines( NoteData &inout, int iStartIndex, int iEndIndex )
+{
+	RemoveSpecificTapNotes( inout, TapNote::mine, iStartIndex, iEndIndex );
+}
+
+void NoteDataUtil::RemoveLifts( NoteData &inout, int iStartIndex, int iEndIndex )
+{
+	RemoveSpecificTapNotes( inout, TapNote::lift, iStartIndex, iEndIndex );
+}
+
+void NoteDataUtil::RemoveFakes( NoteData &inout, int iStartIndex, int iEndIndex )
+{
+	RemoveSpecificTapNotes( inout, TapNote::fake, iStartIndex, iEndIndex );
 }
 
 void NoteDataUtil::RemoveAllButOneTap( NoteData &inout, int row )
@@ -2093,6 +2159,8 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )	NoteDataUtil::RemoveHoldNotes( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )	NoteDataUtil::RemoveMines( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )	NoteDataUtil::RemoveJumps( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOLIFTS] )	NoteDataUtil::RemoveLifts( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOFAKES] )	NoteDataUtil::RemoveFakes( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )	NoteDataUtil::RemoveHands( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOQUADS] )	NoteDataUtil::RemoveQuads( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOSTRETCH] )	NoteDataUtil::RemoveStretch( nd, st, iStartIndex, iEndIndex );

@@ -22,6 +22,7 @@ enum PaneCategory
 	PaneCategory_Mines,
 	PaneCategory_Hands,
 	PaneCategory_Lifts,
+	PaneCategory_Fakes,
 	PaneCategory_MachineHighScore,
 	PaneCategory_MachineHighName,
 	PaneCategory_ProfileHighScore,

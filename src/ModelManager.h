@@ -1,4 +1,3 @@
-/* ModelManager - Interface for loading and releasing textures. */
 #ifndef MODEL_MANAGER_H
 #define MODEL_MANAGER_H
 
@@ -25,7 +24,10 @@ struct ModelManagerPrefs
 			m_bDelayedUnload != rhs.m_bDelayedUnload;
 	}
 };
-
+/**
+ * @brief Class for loading and releasing textures.
+ *
+ * Funnily enough, the original documentation claimed this was an Interface. */
 class ModelManager
 {
 public:
@@ -36,7 +38,11 @@ public:
 	void UnloadModel( RageModelGeometry *m );
 //	void ReloadAll();
 
-	bool SetPrefs( const ModelManagerPrefs& prefs );		// returns true if needs display to be reset
+	/**
+	 * @brief Set up new preferences.
+	 * @param prefs the new preferences to set up.
+	 * @return true if the display needs to be reset, false otherwise. */
+	bool SetPrefs( const ModelManagerPrefs& prefs );
 	const ModelManagerPrefs& GetPrefs() { return m_Prefs; }
 
 protected:
@@ -50,8 +56,10 @@ extern ModelManager*	MODELMAN;	// global and accessable from anywhere in our pro
 
 #endif
 
-/*
- * (c) 2003-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

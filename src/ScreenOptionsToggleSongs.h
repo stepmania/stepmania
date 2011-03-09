@@ -4,7 +4,26 @@
 #include "ScreenOptions.h"
 #include "Song.h"
 
+// Can this be done any better? -aj
+namespace ToggleSongs
+{
+	RString m_sGroup;
+}
+
 class ScreenOptionsToggleSongs: public ScreenOptions
+{
+public:
+	virtual void BeginScreen();
+
+private:
+	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns );
+	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
+	virtual void ProcessMenuStart( const InputEventPlus &input );
+
+	vector<RString> m_asGroups;
+};
+
+class ScreenOptionsToggleSongsSubPage: public ScreenOptions
 {
 public:
 	virtual void BeginScreen();

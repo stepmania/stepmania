@@ -8,7 +8,7 @@
 
 class PlayerState;
 class PlayerStageStats;
-
+/** @brief The player's life. */
 class LifeMeter : public ActorFrame
 {
 public:
@@ -22,11 +22,17 @@ public:
 	}
 	virtual void OnLoadSong() {};
 	virtual void OnSongEnded() {};
-	/* Change life after receiving a tap note grade.  This *is* called for
-	 * the head of hold notes. */
+	/**
+	 * @brief Change life after receiving a tap note grade.
+	 *
+	 * This *is* called for the head of hold notes. 
+	 * @param score the tap note grade in question. */
 	virtual void ChangeLife( TapNoteScore score ) = 0;
-	/* Change life after receiving a hold note grade.  tscore is the score
-	 * received for the initial tap note. */
+	/**
+	 * @brief Change life after receiving a hold note grade.
+	 *
+	 * @param hns the hold note grade in question.
+	 * @param tns the score received for the initial tap note. */
 	virtual void ChangeLife( HoldNoteScore hns, TapNoteScore tns ) = 0;
 	virtual void HandleTapScoreNone() = 0;
 	virtual bool IsInDanger() const = 0;
@@ -50,8 +56,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2001-2003 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2003
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

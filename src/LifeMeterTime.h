@@ -1,5 +1,3 @@
-/* LifeMeterTime - Battery life meter used in Survival. */
-
 #ifndef LifeMeterTime_H
 #define LifeMeterTime_H
 
@@ -12,7 +10,7 @@
 #include "MeterDisplay.h"
 #include "Quad.h"
 class StreamDisplay;
-
+/** @brief Battery life meter used in Survival. */
 class LifeMeterTime : public LifeMeter
 {
 public:
@@ -42,15 +40,17 @@ private:
 
 	float		m_fLifeTotalGainedSeconds;
 	float		m_fLifeTotalLostSeconds;
-
+	/** @brief The sound played when time is gained at the start of each Song. */
 	RageSound	m_soundGainLife;
 };
 
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

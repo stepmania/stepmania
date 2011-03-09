@@ -1,5 +1,3 @@
-/* NoteField - An Actor that renders a NoteData. */
-
 #ifndef NOTE_FIELD_H
 #define NOTE_FIELD_H
 
@@ -13,7 +11,7 @@
 
 struct Attack;
 class NoteData;
-
+/** @brief An Actor that renders NoteData. */
 class NoteField : public ActorFrame
 {
 public:
@@ -103,8 +101,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

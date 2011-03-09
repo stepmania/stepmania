@@ -1,5 +1,3 @@
-/* OptionsList - A popup options list. */
-
 #ifndef SCREEN_OPTIONS_LIST_H
 #define SCREEN_OPTIONS_LIST_H
 
@@ -37,7 +35,7 @@ private:
 
 	ThemeMetric<float>	ITEMS_SPACING_Y;
 };
-
+/** @brief A popup options list. */
 class OptionsList: public ActorFrame
 {
 public:
@@ -51,10 +49,10 @@ public:
 
 	void Link( OptionsList *pLink ) { m_pLinked = pLink; }
 
-	// Show the top-level menu.
+	/** @brief Show the top-level menu. */
 	void Open();
 
-	// Close all menus (for menu timer).
+	/** @brief Close all menus (for menu timer). */
 	void Close();
 
 	void Input( const InputEventPlus &input );
@@ -108,8 +106,10 @@ private:
 
 #endif
 
-/*
- * Copyright (c) 2006 Glenn Maynard
+/**
+ * @file
+ * @author 2006 Glenn Maynard (c)
+ * @section LICENSE
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -23,9 +23,11 @@ struct BacktraceContext
 #endif
 };
 
-/* Initialize.  This is optional.  If not called explicitly, it will be
- * called as necessary.  This may do things that are not safe to do in
- * crash conditions. */
+/**
+ * @brief Initialize the backtrace.
+ *
+ * This is optional.  If not called explicitly, it will be called as necessary.
+ * This may do things that are not safe to do in crash conditions. */
 void InitializeBacktrace();
 
 /* Retrieve up to size-1 backtrace pointers in buf.  The array will be
@@ -47,8 +49,10 @@ void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc );
 
 #endif
 
-/*
- * (c) 2003-2004 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -1,10 +1,9 @@
-/** @brief ActorFrame - A container for other actors. */
-
 #ifndef ACTORFRAME_H
 #define ACTORFRAME_H
 
 #include "Actor.h"
 
+/** @brief A container for other Actors. */
 class ActorFrame : public Actor
 {
 public:
@@ -17,7 +16,13 @@ public:
 	void LoadFromNode( const XNode* pNode );
 	virtual ActorFrame *Copy() const;
 
+	/**
+	 * @brief Add a new child to the ActorFrame.
+	 * @param pActor the new Actor to add. */
 	virtual void AddChild( Actor *pActor );
+	/**
+	 * @brief Remove the specified child from the ActorFrame.
+	 * @param pActor the Actor to remove. */
 	virtual void RemoveChild( Actor *pActor );
 	void TransferChildren( ActorFrame *pTo );
 	Actor* GetChild( const RString &sName );
@@ -93,6 +98,7 @@ public:
 protected:
 	void LoadChildrenFromNode( const XNode* pNode );
 
+	/** @brief The children Actors used by the ActorFrame. */
 	vector<Actor*>	m_SubActors;
 	bool m_bPropagateCommands;
 	bool m_bDeleteChildren;
@@ -118,7 +124,7 @@ protected:
 	RageColor m_specularColor;
 	RageVector3 m_lightDirection;
 };
-
+/** @brief an ActorFrame that handles deleting children Actors automatically. */
 class ActorFrameAutoDeleteChildren : public ActorFrame
 {
 public:

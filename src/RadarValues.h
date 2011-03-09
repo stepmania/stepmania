@@ -1,5 +1,3 @@
-/** @brief RadarValues - Cached song statistics. */
-
 #ifndef RARAR_VALUES_H
 #define RARAR_VALUES_H
 
@@ -11,7 +9,7 @@
 
 class XNode;
 struct lua_State;
-/** @brief The collection of radar values. */
+/** @brief Cached song statistics. */
 struct RadarValues
 {
 	union Values
@@ -30,6 +28,7 @@ struct RadarValues
 			float fNumHands;
 			float fNumRolls;
 			float fNumLifts;
+			float fNumFakes;
 		} v;
 		float f[NUM_RadarCategory];
 	} m_Values;

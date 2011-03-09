@@ -128,7 +128,7 @@ void ScreenOptionsEditProfile::ProcessMenuStart( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	int iRow = GetCurrentRow();;
+	int iRow = GetCurrentRow();
 	//OptionRow &row = *m_pRows[iRow];
 
 	switch( iRow )

@@ -5,7 +5,8 @@
 #include "BitmapText.h"
 #include "ReceptorArrowRow.h"
 #include "RageSound.h"
-/** @brief Enter a name for a new high score. */
+
+/** @brief Enter a name for a new high score using a gimmicky interface. */
 class ScreenNameEntry : public ScreenWithMenuElements
 {
 public:
@@ -14,9 +15,8 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	
-	virtual void MenuStart( const InputEventPlus &input );
 
+	virtual void MenuStart( const InputEventPlus &input );
 private:
 	class ScrollingText : public Actor
 	{
@@ -36,7 +36,7 @@ private:
 		BitmapText	m_Stamp;
 		static RString	g_sNameChars;
 	};
-	
+
 	enum { ABS_MAX_RANKING_NAME_LENGTH = 10 };
 	bool AnyStillEntering() const;
 

@@ -1,5 +1,3 @@
-/* GhostArrowRow - Row of GhostArrow actors. */
-
 #ifndef GHOSTARROWROW_H
 #define GHOSTARROWROW_H
 
@@ -8,7 +6,7 @@
 #include "NoteTypes.h"
 
 class PlayerState;
-
+/** @brief Row of GhostArrow Actors. */
 class GhostArrowRow : public ActorFrame
 {
 public:
@@ -34,8 +32,10 @@ protected:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

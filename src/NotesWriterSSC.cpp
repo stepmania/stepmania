@@ -47,7 +47,7 @@ static RString BackgroundChangeToString( const BackgroundChange &bgc )
  * @param out the Song in question. */
 static void WriteGlobalTags( RageFile &f, const Song &out )
 {
-	f.PutLine( ssprintf( "#VERSION:%.2f;", out.m_fVersion ) );
+	f.PutLine( ssprintf( "#VERSION:%.2f;", STEPFILE_VERSION_NUMBER ) );
 	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
 	f.PutLine( ssprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
 	f.PutLine( ssprintf( "#ARTIST:%s;", SmEscape(out.m_sArtist).c_str() ) );

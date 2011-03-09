@@ -1,5 +1,3 @@
-/* PlayerStageStats - Contains statistics for one stage of play - either one song, or a whole course. */
-
 #ifndef PlayerStageStats_H
 #define PlayerStageStats_H
 
@@ -10,7 +8,7 @@
 #include <map>
 class Steps;
 struct lua_State;
-
+/** @brief Contains statistics for one stage of play - either one song, or a whole course. */
 class PlayerStageStats
 {
 public:
@@ -32,10 +30,18 @@ public:
 	bool		m_bJoined;
 	vector<Steps*>  m_vpPossibleSteps;
 	int		m_iStepsPlayed; // how many of m_vpPossibleStepshow many of m_vpPossibleSteps were played
-	float		m_fAliveSeconds; // how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.
+	/**
+	 * @brief How far into the music did the Player last before failing?
+	 *
+	 * This is updated by Gameplay, and scaled by the music rate. */
+	float		m_fAliveSeconds;
 
-	/* Set if the player actually failed at any point during the song.  This is always
-	 * false in FAIL_OFF.  If recovery is enabled and two players are playing,
+	/**
+	 * @brief Have the Players failed at any point during the song?
+	 *
+	 * If FAIL_OFF is in use, this is always false.
+	 * 
+	 * If health recovery is possible after failing (requires two players),
 	 * this is only set if both players were failing at the same time. */
 	bool		m_bFailed;
 
@@ -54,10 +60,15 @@ public:
 	int		m_iMaxScore;
 	RadarValues	m_radarPossible;	// filled in by ScreenGameplay on start of notes
 	RadarValues	m_radarActual;
-	// The number of songs played and passed, respectively.
+	/** @brief How many songs were passed by the Player? */
 	int		m_iSongsPassed;
+	/** @brief How many songs were played by the Player? */
 	int		m_iSongsPlayed;
-	float		m_fLifeRemainingSeconds;	// used in survival
+	/**
+	 * @brief How many seconds were left for the Player?
+	 *
+	 * This is used in the Survival mode. */
+	float		m_fLifeRemainingSeconds;
 
 	// workout
 	float		m_iNumControllerSteps;
@@ -125,8 +136,10 @@ public:
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+/**
+ * @file
+ * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

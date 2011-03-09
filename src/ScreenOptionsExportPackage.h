@@ -6,6 +6,7 @@
 
 class Course;
 
+/** @brief A menu for exporting packages. */
 class ScreenOptionsExportPackage : public ScreenOptions
 {
 public:
@@ -15,7 +16,7 @@ public:
 protected:
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	
+
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 
 	vector<RString> m_vsPossibleDirsToExport;

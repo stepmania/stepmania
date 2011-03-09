@@ -182,6 +182,7 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 			// are more common.
 			//return StepsType_dance_solo;
 			return StepsType_beat_single5;
+		case 7:
 		case 8:		return StepsType_beat_single7;
 		case 9:		return StepsType_popn_nine;
 		default:	return StepsType_Invalid;

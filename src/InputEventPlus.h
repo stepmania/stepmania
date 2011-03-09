@@ -1,12 +1,10 @@
-/* InputEventPlus - Holds a device input plus Game/Menu translations. */
-
 #ifndef INPUT_EVENT_PLUS_H
 #define INPUT_EVENT_PLUS_H
 
 #include "InputFilter.h"
 #include "GameInput.h"
 #include "PlayerNumber.h"
-
+/** @brief Holds a device input plus Game/Menu translations. */
 class InputEventPlus
 {
 public:
@@ -32,8 +30,10 @@ struct AlternateMapping
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -1,4 +1,3 @@
-/* ScreenPackagesSSC - parses JSON for downloadable content. */
 #ifndef SCREEN_PACKAGES_SSC_H
 #define SCREEN_PACKAGES_SSC_H
 
@@ -8,7 +7,7 @@
 #include "RageFileManager.h"
 #include "RageFile.h"
 #include "Sprite.h"
-
+/** @brief Parses JSON for downloadable content. */
 class ScreenPackagesSSC : public ScreenWithMenuElements
 {
 public:
@@ -28,8 +27,10 @@ private:
 
 #endif
 
-/*
- * (c) 2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

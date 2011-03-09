@@ -94,7 +94,6 @@ void BPMDisplay::Update( float fDeltaTime )
 	}
 }
 
-
 void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 {
 	ASSERT( !bpms.vfBpms.empty() );

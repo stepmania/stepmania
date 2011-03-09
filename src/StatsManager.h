@@ -1,10 +1,8 @@
-/* StatsManager - Managed non-persisted statistics. */
-
 #ifndef StatsManager_H
 #define StatsManager_H
 
 #include "StageStats.h"
-
+/** @brief Managed non-persisted statistics. */
 class StatsManager
 {
 public:
@@ -13,7 +11,11 @@ public:
 
 	void Reset();
 
-	StageStats		m_CurStageStats;	// current stage (not necessarily passed if Extra Stage)
+	/**
+	 * @brief The current Stage stats.
+	 *
+	 * This is not necessarily passed stage stats if this is an Extra Stage. */
+	StageStats		m_CurStageStats;
 	vector<StageStats>	m_vPlayedStageStats;
 
 	// Only the latest 3 normal songs + passed extra stages.
@@ -40,8 +42,10 @@ extern StatsManager*	STATSMAN;	// global and accessable from anywhere in our pro
 
 #endif
 
-/*
- * (c) 2001-2004 Chris Danford
+/**
+ * @file
+ * @author Chris Danford (c) 2001-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

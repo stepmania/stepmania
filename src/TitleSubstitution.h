@@ -1,8 +1,7 @@
-/* TitleSubst - automatic translation for song titles */
-
 #ifndef TITLE_SUBSTITUTION_H
-#define TITLE_SUBSTITUTION_H 1
+#define TITLE_SUBSTITUTION_H
 
+/** @brief The different fields to potentially translate. */
 struct TitleFields
 {
 	void SaveToStrings( 
@@ -32,7 +31,7 @@ struct TitleFields
 	RString TitleTranslit, SubtitleTranslit, ArtistTranslit;
 };
 struct TitleTrans;
-
+/** @brief Automatic translation for Song titles. */
 class TitleSubst
 {
 	vector<TitleTrans *> ttab;
@@ -49,8 +48,10 @@ public:
 
 #endif
 
-/*
- * (c) 2003-2004 Glenn Maynard
+/**
+ * @file
+ * @author Glenn Maynard (c) 2003-2004
+ * @section LICENSE
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
