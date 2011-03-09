@@ -460,8 +460,12 @@ static bool CompAscending( const pair<Song *, RString> &a, const pair<Song *, RS
 
 void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool bDescending )
 {
-	/* Optimize by pre-writing a string to compare, since doing GetNumNotesWithGrade
-	 * inside the sort is too slow. */
+	StepsType st;
+	Difficulty dc;
+	SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SORT_EASY_METER, st, dc );
+
+	/* Optimize by pre-writing a string to compare, since doing
+	 * GetNumNotesWithGrade inside the sort is too slow. */
 	typedef pair< Song *, RString > val;
 	vector<val> vals;
 	vals.reserve( vpSongsInOut.size() );
@@ -472,10 +476,7 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 
 		int iCounts[NUM_Grade];
 		const Profile *pProfile = PROFILEMAN->GetMachineProfile();
-		ASSERT( pProfile ); // XXX: Debugging.
-		const Style *pStyle = GAMESTATE->GetCurrentStyle();
-		ASSERT( pStyle );   // XXX: Debugging.
-		StepsType st = pStyle->m_StepsType;
+		ASSERT( pProfile );
 		pProfile->GetGrades( pSong, st, iCounts );
 
 		RString foo;
@@ -620,8 +621,12 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 		return RString();
 	case SORT_TOP_GRADES:
 		{
+			StepsType st;
+			Difficulty dc;
+			SongUtil::GetStepsTypeAndDifficultyFromSortOrder( so, st, dc );
+
 			int iCounts[NUM_Grade];
-			PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
+			PROFILEMAN->GetMachineProfile()->GetGrades( pSong, st, iCounts );
 
 			for( int i=Grade_Tier01; i<NUM_Grade; ++i )
 			{
@@ -968,6 +973,7 @@ bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &
 		return false;
 	}
 
+	bool bDoubles = false;
 	switch( so )
 	{
 	DEFAULT_FAIL( so );
@@ -976,27 +982,36 @@ bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &
 	case SORT_MEDIUM_METER:
 	case SORT_HARD_METER:
 	case SORT_CHALLENGE_METER:
-		stOut = GAMESTATE->GetCurrentStyle()->m_StepsType;
+		bDoubles = false;
 		break;
 	case SORT_DOUBLE_EASY_METER:
 	case SORT_DOUBLE_MEDIUM_METER:
 	case SORT_DOUBLE_HARD_METER:
 	case SORT_DOUBLE_CHALLENGE_METER:
-		stOut = GAMESTATE->GetCurrentStyle()->m_StepsType;	// in case we don't find any matches below
-		vector<const Style*> vpStyles;
-		GAMEMAN->GetStylesForGame(GAMESTATE->m_pCurGame,vpStyles);
-		FOREACH_CONST( const Style*, vpStyles, i )
-		{
-			if( (*i)->m_StyleType == StyleType_OnePlayerTwoSides )
-			{
-				// Ugly hack to ignore pump's half-double.
-				bool bContainsHalf = ((RString)(*i)->m_szName).find("half") != RString::npos;
-				if( bContainsHalf )
-					continue;
-				stOut = (*i)->m_StepsType;
-				break;
-			}
-		}
+		bDoubles = true;
+		break;
+	}
+
+	stOut = StepsType_Invalid;
+
+	vector<const Style*> vpStyles;
+	GAMEMAN->GetStylesForGame(GAMESTATE->m_pCurGame,vpStyles);
+	FOREACH_CONST( const Style*, vpStyles, i )
+	{
+		if( !(*i)->m_bUsedForGameplay )
+			continue;
+
+		if( bDoubles && (*i)->m_StyleType != StyleType_OnePlayerTwoSides )
+			continue;
+		if( !bDoubles && (*i)->m_StyleType != StyleType_OnePlayerOneSide && (*i)->m_StyleType != StyleType_TwoPlayersTwoSides )
+			continue;
+
+		// Ugly hack to ignore pump's half-double.
+		bool bContainsHalf = ((RString)(*i)->m_szName).find("half") != RString::npos;
+		if( bContainsHalf )
+			continue;
+
+		stOut = (*i)->m_StepsType;
 		break;
 	}
 
