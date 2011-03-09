@@ -543,8 +543,6 @@ void MusicWheel::BuildWheelItemDatas( vector<MusicWheelItemData *> &arrayWheelIt
 
 					if( sThisSection != sLastSection )
 					{
-						int iSectionCount = 0;
-
 						// new section, make a section item
 						// todo: preferred sort section color handling? -aj
 						RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
