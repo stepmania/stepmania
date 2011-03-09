@@ -23,4 +23,7 @@ void main() {
 	intensity = min(clamp(intensity, ambient, 1.0) + 0.25, 1.0);
 	
 	gl_FragColor = color * intensity;
+	
+	// Don't allow transparency. Bad Things will happen.
+	gl_FragColor.a = 1.0;
 }
