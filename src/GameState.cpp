@@ -2307,6 +2307,7 @@ public:
 	DEFINE_METHOD( GetNumSidesJoined,		GetNumSidesJoined() )
 	DEFINE_METHOD( GetCoinMode,			GetCoinMode() )
 	DEFINE_METHOD( GetPremium,			GetPremium() )
+	DEFINE_METHOD( Dopefish,			m_bDopefish )
 	DEFINE_METHOD( GetSongOptionsString,		m_SongOptions.GetCurrent().GetString() )
 	static int GetSongOptions( T* p, lua_State *L )
 	{
@@ -2543,6 +2544,7 @@ public:
 		ADD_METHOD( GetCurMusicSeconds );
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );
+		ADD_METHOD( Dopefish );
 	}
 };
 
