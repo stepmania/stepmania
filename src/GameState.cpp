@@ -321,6 +321,7 @@ void GameState::Reset()
 
 	m_bBackedOutOfFinalStage = false;
 	m_bEarnedExtraStage = false;
+	m_bDopefish = false;
 	ApplyCmdline();
 }
 

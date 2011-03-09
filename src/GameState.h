@@ -338,6 +338,8 @@ public:
 	float GetGoalPercentComplete( PlayerNumber pn );
 	bool IsGoalComplete( PlayerNumber pn )	{ return GetGoalPercentComplete( pn ) >= 1; }
 
+	bool m_bDopefish;
+
 	// Lua
 	void PushSelf( lua_State *L );
 

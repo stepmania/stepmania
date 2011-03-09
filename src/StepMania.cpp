@@ -1041,6 +1041,9 @@ int main(int argc, char* argv[])
 
 	GAMESTATE	= new GameState;
 
+	if( GetCommandlineArgument("dopefish") )
+		GAMESTATE->m_bDopefish = true;
+
 	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
 	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
 	if(pLoadingWindow == NULL)
@@ -1125,7 +1128,7 @@ int main(int argc, char* argv[])
 		ShutdownGame();
 		return 0;
 	}
-	
+
 	StartDisplay();
 
 	StoreActualGraphicOptions();
