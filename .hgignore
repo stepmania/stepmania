@@ -28,6 +28,8 @@ Thumbs.db
 Docs/doxygen
 PBProject/build
 Xcode/build
+Xcode/stepmania.xcodeproj/xcuserdata
+Xcode/stepmania.xcodeproj/project.xcworkspace/xcuserdata
 src/build-*
 src/Release-*
 src/libtomcrypt/build-*
