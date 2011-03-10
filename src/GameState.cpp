@@ -159,6 +159,8 @@ GameState::GameState() :
 
 	m_Environment = new LuaTable;
 
+	m_bDopefish = false;
+
 	// Don't reset yet; let the first screen do it, so we can use PREFSMAN and THEME.
 	//Reset();
 
@@ -321,7 +323,6 @@ void GameState::Reset()
 
 	m_bBackedOutOfFinalStage = false;
 	m_bEarnedExtraStage = false;
-	m_bDopefish = false;
 	ApplyCmdline();
 }
 
@@ -2307,7 +2308,6 @@ public:
 	DEFINE_METHOD( GetNumSidesJoined,		GetNumSidesJoined() )
 	DEFINE_METHOD( GetCoinMode,			GetCoinMode() )
 	DEFINE_METHOD( GetPremium,			GetPremium() )
-	DEFINE_METHOD( Dopefish,			m_bDopefish )
 	DEFINE_METHOD( GetSongOptionsString,		m_SongOptions.GetCurrent().GetString() )
 	static int GetSongOptions( T* p, lua_State *L )
 	{
@@ -2446,6 +2446,11 @@ public:
 		if (c)
 			p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)] = c;
 		return 0;
+	}
+	static int Dopefish( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->m_bDopefish);
+		return 1;
 	}
 
 	LunaGameState()

@@ -1041,9 +1041,6 @@ int main(int argc, char* argv[])
 
 	GAMESTATE	= new GameState;
 
-	if( GetCommandlineArgument("dopefish") )
-		GAMESTATE->m_bDopefish = true;
-
 	// This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow.
 	LoadingWindow *pLoadingWindow = LoadingWindow::Create();
 	if(pLoadingWindow == NULL)
@@ -1072,6 +1069,9 @@ int main(int argc, char* argv[])
 	SwitchToLastPlayedGame();
 
 	CommandLineActions::Handle(pLoadingWindow);
+
+	if( GetCommandlineArgument("dopefish") )
+		GAMESTATE->m_bDopefish = true;
 
 	{
 		/* Now that THEME is loaded, load the icon for the current theme into
