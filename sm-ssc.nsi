@@ -40,12 +40,23 @@
 	CRCCheck off
 !endif
 
+	; don't forget to change this before releasing a new verson.
+	; wish this could be automated, but it requires "X.Y.Z.a" format. -aj
+	VIProductVersion "1.2.3.0"
+	VIAddVersionKey "ProductName" "${PRODUCT_ID}"
+	VIAddVersionKey "FileVersion" "${PRODUCT_VER}"
+	VIAddVersionKey "FileDescription" "${PRODUCT_ID} Installer"
+
 	AutoCloseWindow true ; (can be true for the window go away automatically at end)
 	; ShowInstDetails hide ; (can be show to have them shown, or nevershow to disable)
 	SetDateSave on ; (can be on to have files restored to their orginal date)
-	; may not be the best idea for vista/7? -aj
+
+	; I think it may need actual admin privs for writing to the registry... -aj
+	; RequestExecutionLevel user
+	; this folder may not be the best idea for Windows Vista/7. -aj
 	InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
 	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" ""
+
 	; DirShow show ; (make this hide to not let the user change it)
 	DirText "${PRODUCT_DISPLAY}"
 	InstallColors /windows
@@ -464,7 +475,7 @@ Section "Main Section" SecMain
 		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 	!endif
 	!ifdef MAKE_OPEN_SETTINGS_FOLDER_SHORTCUT
-		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_SETTINGS_FOLDER).lnk" "$WINDIR\explorer.exe" "%APPDATA%\${PRODUCT_ID}"
+		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_SETTINGS_FOLDER).lnk" "$WINDIR\explorer.exe" "$APPDATA\${PRODUCT_ID}"
 	!endif
 
 	;CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
@@ -472,6 +483,7 @@ Section "Main Section" SecMain
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk" "$INSTDIR\Manual\index.html"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk" "$INSTDIR\uninstall.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk" "${PRODUCT_URL}"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TEXTURE_FONT_GENERATOR).lnk" '"$INSTDIR\Program\Texture Font Generator.exe"'
 	!ifdef MAKE_UPDATES_SHORTCUT
 		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk" "${UPDATES_URL}"
 	!endif
