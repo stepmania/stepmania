@@ -1361,7 +1361,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				break;
 			}
 			iSpeed = clamp( iSpeed, 0, (int) ARRAYLEN(fSpeeds)-1 );
-			
+
 			if( fSpeeds[iSpeed] != fScrollSpeed )
 			{
 				m_soundMarker.Play();
