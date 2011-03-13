@@ -771,7 +771,7 @@ void MusicWheel::UpdateWheelItemDatas( SortOrder so )
 				continue;
 
 			// Check that we have enough stages to play this song, and that it's not disabled.
-			if( GAMESTATE->GetNumStagesMultiplierForSong(WID.m_pSong) )
+			if( GAMESTATE->GetNumStagesMultiplierForSong(WID.m_pSong) > iMaxStagesForSong )
 			{
 				aiRemove[i] = true;
 				continue;
