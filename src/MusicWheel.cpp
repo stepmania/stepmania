@@ -739,8 +739,7 @@ void MusicWheel::UpdateWheelItemDatas( SortOrder so )
 	vector<bool> aiRemove;
 	aiRemove.insert( aiRemove.begin(), aWheelItemDatas.size(), false );
 
-	SongCriteria sc;
-	sc.m_iMaxStagesForSong = GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer();
+	const int iMaxStagesForSong = GAMESTATE->GetSmallestNumStagesLeftForAnyHumanPlayer();
 
 	Song *pExtraStageSong = NULL;
 	if( GAMESTATE->IsAnExtraStage() )
