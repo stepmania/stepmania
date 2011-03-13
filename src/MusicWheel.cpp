@@ -772,13 +772,18 @@ void MusicWheel::UpdateWheelItemDatas( SortOrder so )
 				continue;
 
 			// Check that we have enough stages to play this song, and that it's not disabled.
-			if( !sc.Matches(WID.m_pSong) )
+			if( GAMESTATE->GetNumStagesMultiplierForSong(WID.m_pSong) )
 			{
 				aiRemove[i] = true;
 				continue;
 			}
 
 			int iLocked = UNLOCKMAN->SongIsLocked( pSong );
+			if( UNLOCKMAN->SongIsLocked(pSong) & LOCKED_DISABLED )
+			{
+				aiRemove[i] = true;
+				continue;
+			}
 
 			// If we're on an extra stage, and this song is selected, ignore #SELECTABLE.
 			if( pSong != GAMESTATE->m_pCurSong || !GAMESTATE->IsAnExtraStage() )
