@@ -51,9 +51,8 @@ enum EditButton
 
 	// These are modifiers to EDIT_BUTTON_COLUMN_*.
 	EDIT_BUTTON_RIGHT_SIDE,
-	EDIT_BUTTON_LAY_MINE_OR_ROLL,
+	EDIT_BUTTON_LAY_ROLL,
 	EDIT_BUTTON_LAY_TAP_ATTACK,
-	EDIT_BUTTON_LAY_LIFT,
 	EDIT_BUTTON_REMOVE_NOTE,
 	
 	// These are modifiers to change the present tap note.
