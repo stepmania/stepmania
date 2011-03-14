@@ -3193,7 +3193,7 @@ void Player::SetCombo( int iCombo, int iMisses )
 	if( GAMESTATE->IsCourseMode() )
 	{
 		int iSongIndexStartColoring = GAMESTATE->m_pCurCourse->GetEstimatedNumStages();
-		iSongIndexStartColoring = floor(iSongIndexStartColoring*PERCENT_UNTIL_COLOR_COMBO);
+		iSongIndexStartColoring = static_cast<int>(floor(iSongIndexStartColoring*PERCENT_UNTIL_COLOR_COMBO));
 		bPastBeginning = GAMESTATE->GetCourseSongIndex() >= iSongIndexStartColoring;
 	}
 	else
