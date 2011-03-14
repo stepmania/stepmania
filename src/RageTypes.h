@@ -290,8 +290,8 @@ class RageVColor
 public:
 	uint8_t b,g,r,a;	// specific ordering required by Direct3D
 
-	RageVColor() { }
-	RageVColor(const RageColor &rc) { *this = rc; }
+	RageVColor(): b(0), g(0), r(0), a(0) { }
+	RageVColor(const RageColor &rc): b(0), g(0), r(0), a(0) { *this = rc; }
 	RageVColor &operator= (const RageColor &rc)
 	{
 		r = FTOC(rc.r); g = FTOC(rc.g); b = FTOC(rc.b); a = FTOC(rc.a);
