@@ -797,12 +797,12 @@ void ScreenGameplay::InitSongQueues()
 
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
-			Trail *pTrail = GAMESTATE->m_pCurTrail[ pi->GetStepsAndTrailIndex() ];
-			ASSERT( pTrail );
+			Trail *lTrail = GAMESTATE->m_pCurTrail[ pi->GetStepsAndTrailIndex() ];
+			ASSERT( lTrail );
 
 			pi->m_vpStepsQueue.clear();
 			pi->m_asModifiersQueue.clear();
-			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+			FOREACH_CONST( TrailEntry, lTrail->m_vEntries, e )
 			{
 				ASSERT( e->pSteps );
 				pi->m_vpStepsQueue.push_back( e->pSteps );

@@ -209,23 +209,23 @@ void NoteField::Load(
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 	FOREACH_EnabledPlayer( pn )
 	{
-		RString sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+		RString sNoteSkinLC = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
 
 		// XXX: Re-setup sNoteSkinLower. Unsure if inserting the skin again is needed.
-		if (sNoteSkinLower.empty())
+		if (sNoteSkinLC.empty())
 		{
-			sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred().m_sNoteSkin;
+			sNoteSkinLC = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred().m_sNoteSkin;
 			
-			if (sNoteSkinLower.empty())
+			if (sNoteSkinLC.empty())
 			{
-				sNoteSkinLower = "default";
+				sNoteSkinLC = "default";
 			}
-			m_NoteDisplays.insert(pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
+			m_NoteDisplays.insert(pair<RString, NoteDisplayCols *> (sNoteSkinLC, badIdea));
 		}
 		
-		sNoteSkinLower.MakeLower();
-		it = m_NoteDisplays.find( sNoteSkinLower );
-		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
+		sNoteSkinLC.MakeLower();
+		it = m_NoteDisplays.find( sNoteSkinLC );
+		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLC );
 		m_pDisplays[pn] = it->second;
 	}
 }
@@ -1005,8 +1005,8 @@ void NoteField::DrawPrimitives()
 		m_pNoteData->GetTapNoteRange( c, iFirstRowToDraw, iLastRowToDraw+1, begin, end );
 		for( ; begin != end; ++begin )
 		{
-			int i = begin->first;
-			const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, i);
+			int j = begin->first;
+			const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, j);
 
 			// Switch modified by Wolfman2000, tested by Saturn2888
 			// Fixes hold head overlapping issue, but not the rolls.
@@ -1031,10 +1031,10 @@ void NoteField::DrawPrimitives()
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
 			// Test every note to make sure it's on screen before drawing.
-			if( !IsOnScreen( NoteRowToBeat(i), c, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels ) )
+			if( !IsOnScreen( NoteRowToBeat(j), c, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels ) )
 				continue; // skip
 
-			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastRowToDraw, iFirstRowToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
+			ASSERT_M( NoteRowToBeat(j) > -2000, ssprintf("%i %i %i, %f %f", j, iLastRowToDraw, iFirstRowToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
 
 			// See if there is a hold step that begins on this index.
 			// Only do this if the noteskin cares.
@@ -1043,7 +1043,7 @@ void NoteField::DrawPrimitives()
 			{
 				for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
 				{
-					if( m_pNoteData->GetTapNote(c2, i).type == TapNote::hold_head)
+					if( m_pNoteData->GetTapNote(c2, j).type == TapNote::hold_head)
 					{
 						bHoldNoteBeginsOnThisBeat = true;
 						break;
@@ -1061,7 +1061,7 @@ void NoteField::DrawPrimitives()
 			NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
 			displayCols->display[c].DrawTap( tn, c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, m_fYReverseOffsetPixels, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
 
-			bool bNoteIsUpcoming = NoteRowToBeat(i) > GAMESTATE->m_fSongBeat;
+			bool bNoteIsUpcoming = NoteRowToBeat(j) > GAMESTATE->m_fSongBeat;
 			bAnyUpcomingInThisCol |= bNoteIsUpcoming;
 		}
 
