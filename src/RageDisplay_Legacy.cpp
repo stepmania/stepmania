@@ -1554,7 +1554,7 @@ void RageDisplay_Legacy::ClearAllTextures()
 
 	// HACK:  Reset the active texture to 0.
 	// TODO:  Change all texture functions to take a stage number.
-	if (glActiveTextureARB)
+	if (GLEW_ARB_multitexture)
 		glActiveTextureARB(GL_TEXTURE0_ARB);
 }
 
@@ -1607,31 +1607,31 @@ void RageDisplay_Legacy::SetTextureMode( TextureUnit tu, TextureMode tm )
 
 		// and this is glowmode,whiten:
 		// Source color is the diffuse color only:
-		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT );
-		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_COMBINE_RGB_EXT), GL_REPLACE );
-		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_SOURCE0_RGB_EXT), GL_PRIMARY_COLOR_EXT );
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
+		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_RGB_EXT), GL_REPLACE);
+		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_RGB_EXT), GL_PRIMARY_COLOR_EXT);
 
 		// Source alpha is texture alpha * diffuse alpha:
-		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_COMBINE_ALPHA_EXT), GL_MODULATE );
-		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_OPERAND0_ALPHA_EXT), GL_SRC_ALPHA );
-		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_SOURCE0_ALPHA_EXT), GL_PRIMARY_COLOR_EXT );
-		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_OPERAND1_ALPHA_EXT), GL_SRC_ALPHA );
-		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_SOURCE1_ALPHA_EXT), GL_TEXTURE );
+		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_COMBINE_ALPHA_EXT), GL_MODULATE);
+		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND0_ALPHA_EXT), GL_SRC_ALPHA);
+		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE0_ALPHA_EXT), GL_PRIMARY_COLOR_EXT);
+		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_OPERAND1_ALPHA_EXT), GL_SRC_ALPHA);
+		glTexEnvi(GL_TEXTURE_ENV, GLenum(GL_SOURCE1_ALPHA_EXT), GL_TEXTURE);
 		break;
 	}
 }
 
 void RageDisplay_Legacy::SetTextureFiltering( TextureUnit tu, bool b )
 {
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, b? GL_LINEAR: GL_NEAREST );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, b ? GL_LINEAR : GL_NEAREST);
 	
 	GLint iMinFilter;
 	if (b)
 	{
 		GLint iWidth1 = -1;
 		GLint iWidth2 = -1;
-		glGetTexLevelParameteriv( GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &iWidth1 );
-		glGetTexLevelParameteriv( GL_TEXTURE_2D, 1, GL_TEXTURE_WIDTH, &iWidth2 );
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &iWidth1);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 1, GL_TEXTURE_WIDTH, &iWidth2);
 		if (iWidth1 > 1 && iWidth2 != 0)
 		{
 			/* Mipmaps are enabled. */
