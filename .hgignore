@@ -37,6 +37,7 @@ src/libtomcrypt/Release-*
 src/libtommath/build-*
 src/libtommath/Release-*
 src/*.old
+src/.deps
 ver.cpp
 lib*_link.a
 Data/UserPrefs
