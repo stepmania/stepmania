@@ -1538,7 +1538,7 @@ void RageDisplay_Legacy::DrawLineStripInternal( const RageSpriteVertex v[], int 
 static bool SetTextureUnit( TextureUnit tu )
 {
 	// If multitexture isn't supported, ignore all textures except for 0.
-	if (GLEW_ARB_multitexture)
+	if (!GLEW_ARB_multitexture && tu != TextureUnit_1)
 		return false;
 
 	if ((int) tu > g_iMaxTextureUnits)
