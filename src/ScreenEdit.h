@@ -9,6 +9,7 @@
 #include "Background.h"
 #include "Foreground.h"
 #include "NoteField.h"
+#include "NoteTypes.h"
 #include "Song.h"
 #include "Steps.h"
 #include "ThemeMetric.h"
@@ -236,6 +237,9 @@ protected:
 	SnapDisplay		m_SnapDisplay;
 
 	BitmapText		m_textInputTips;
+	
+	/** @brief The current TapNote that would be inserted. */
+	TapNote			m_selectedTap;
 
 	void UpdateTextInfo();
 	BitmapText		m_textInfo; // status information that changes

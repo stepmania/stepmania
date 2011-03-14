@@ -16,6 +16,7 @@
 #include "LocalizedString.h"
 #include "NoteDataUtil.h"
 #include "NoteSkinManager.h"
+#include "NoteTypes.h"
 #include "NotesWriterSM.h"
 #include "PrefsManager.h"
 #include "RageSoundManager.h"
@@ -733,6 +734,8 @@ void ScreenEdit::Init()
 	m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	m_bReturnToRecordMenuAfterPlay = false;
 	m_fBeatToReturnTo = 0;
+	
+	m_selectedTap = TAP_ORIGINAL_TAP;
 
 	GAMESTATE->m_bGameplayLeadIn.Set( true );
 	GAMESTATE->m_EditMode = EDIT_MODE.GetValue();
@@ -1027,6 +1030,7 @@ static LocalizedString DESCRIPTION("ScreenEdit", "Description");
 static LocalizedString CHART_STYLE("ScreenEdit", "Chart Style");
 static LocalizedString MAIN_TITLE("ScreenEdit", "Main title");
 static LocalizedString SUBTITLE("ScreenEdit", "Subtitle");
+static LocalizedString TAP_NOTE_TYPE("ScreenEdit", "Tap Note");
 static LocalizedString TAP_STEPS("ScreenEdit", "Tap Steps");
 static LocalizedString JUMPS("ScreenEdit", "Jumps");
 static LocalizedString HANDS("ScreenEdit", "Hands");
@@ -1051,6 +1055,7 @@ static ThemeMetric<RString> DESCRIPTION_FORMAT("ScreenEdit", "DescriptionFormat"
 static ThemeMetric<RString> CHART_STYLE_FORMAT("ScreenEdit", "ChartStyleFormat");
 static ThemeMetric<RString> MAIN_TITLE_FORMAT("ScreenEdit", "MainTitleFormat");
 static ThemeMetric<RString> SUBTITLE_FORMAT("ScreenEdit", "SubtitleFormat");
+static ThemeMetric<RString> TAP_NOTE_TYPE_FORMAT("ScreenEdit", "TapNoteTypeFormat");
 static ThemeMetric<RString> NUM_STEPS_FORMAT("ScreenEdit", "NumStepsFormat");
 static ThemeMetric<RString> NUM_JUMPS_FORMAT("ScreenEdit", "NumJumpsFormat");
 static ThemeMetric<RString> NUM_HOLDS_FORMAT("ScreenEdit", "NumHoldsFormat");
@@ -1119,6 +1124,7 @@ void ScreenEdit::UpdateTextInfo()
 		sText += ssprintf( MAIN_TITLE_FORMAT.GetValue(), MAIN_TITLE.GetValue().c_str(), m_pSong->m_sMainTitle.c_str() );
 		if( m_pSong->m_sSubTitle.size() )
 			sText += ssprintf( SUBTITLE_FORMAT.GetValue(), SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
+		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), TapNoteTypeToString( m_selectedTap.type ).c_str() );
 		break;
 	}
 	sText += ssprintf( NUM_STEPS_FORMAT.GetValue(), TAP_STEPS.GetValue().c_str(), m_NoteDataEdit.GetNumTapNotes() );
@@ -1299,43 +1305,48 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, TAP_EMPTY );
 				// Don't CheckNumberOfNotesAndUndo.  We don't want to revert any change that removes notes.
 			}
-			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
-			{
-				m_soundAddNote.Play();
-				SetDirty( true );
-				SaveUndo();
-				TapNote tn = TAP_ORIGINAL_MINE;
-				tn.pn = m_InputPlayerNumber;
-				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, tn );
-				CheckNumberOfNotesAndUndo();
-			}
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_TAP_ATTACK) )
 			{
 				g_iLastInsertTapAttackTrack = iCol;
 				EditMiniMenu( &g_InsertTapAttack, SM_BackFromInsertTapAttack );
-			}
-			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_LIFT) )
-			{
-				m_soundAddNote.Play();
-				SetDirty( true );
-				SaveUndo();
-				TapNote tn = TAP_ORIGINAL_LIFT;
-				tn.pn = m_InputPlayerNumber;
-				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, tn );
-				CheckNumberOfNotesAndUndo();
 			}
 			else
 			{
 				m_soundAddNote.Play();
 				SetDirty( true );
 				SaveUndo();
-				TapNote tn = TAP_ORIGINAL_TAP;
+				TapNote tn = m_selectedTap;
 				tn.pn = m_InputPlayerNumber;
 				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, tn );
 				CheckNumberOfNotesAndUndo();
 			}
 		}
 		break;
+			
+	case EDIT_BUTTON_CYCLE_TAP_LEFT:
+		{
+			switch ( m_selectedTap.type )
+			{
+				case TapNote::tap:	m_selectedTap = TAP_ORIGINAL_FAKE;	break;
+				case TapNote::mine:	m_selectedTap = TAP_ORIGINAL_TAP;	break;
+				case TapNote::lift:	m_selectedTap = TAP_ORIGINAL_MINE;	break;
+				case TapNote::fake:	m_selectedTap = TAP_ORIGINAL_LIFT;	break;
+				DEFAULT_FAIL( m_selectedTap.type );
+			}
+			break;
+		}
+	case EDIT_BUTTON_CYCLE_TAP_RIGHT:
+		{
+			switch ( m_selectedTap.type )
+			{
+				case TapNote::tap:	m_selectedTap = TAP_ORIGINAL_MINE;	break;
+				case TapNote::mine:	m_selectedTap = TAP_ORIGINAL_LIFT;	break;
+				case TapNote::lift:	m_selectedTap = TAP_ORIGINAL_FAKE;	break;
+				case TapNote::fake:	m_selectedTap = TAP_ORIGINAL_TAP;	break;
+				DEFAULT_FAIL( m_selectedTap.type );
+			}
+			break;
+		}
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
