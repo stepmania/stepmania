@@ -17,6 +17,8 @@ sm-ssc v1.2.4 | 20110???
 --------
 * [NotesWriterSM] Allow for either the #DESCRIPTION or #CREDIT tags to be used
   for the .sm format's description token. [Wolfman2000]
+* [ScreenEdit] Add Tap Note Cycling to allow inputting all of the taps. The way
+  to make holds and rolls are still the same as before. [Wolfman2000]
 
 ================================================================================
 sm-ssc v1.2.3 | 201103??
