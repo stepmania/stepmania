@@ -204,6 +204,10 @@ extern TapNote TAP_ORIGINAL_FAKE;		// 'F'
 extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;
 
+const RString& TapNoteTypeToString( TapNote::Type tn );
+const RString& TapNoteTypeToLocalizedString( TapNote::Type tn );
+LuaDeclareType( TapNote::Type );
+
 /**
  * @brief The number of tracks allowed.
  *
