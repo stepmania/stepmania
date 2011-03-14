@@ -186,9 +186,9 @@ public:
 struct RageColor
 {
 public:
-	RageColor() : r(0), g(0), b(0), a(0) {}
-	explicit RageColor( const float * f )			{ r=f[0]; g=f[1]; b=f[2]; a=f[3]; }
-	RageColor( float r1, float g1, float b1, float a1 )	{ r=r1; g=g1; b=b1; a=a1; }
+	RageColor(): r(0), g(0), b(0), a(0) {}
+	explicit RageColor( const float * f ): r(f[0]), g(f[1]), b(f[2]), a(f[3]) {}
+	RageColor( float r1, float g1, float b1, float a1 ): r(r1), g(g1), b(b1), a(a1) {}
 	
 	// casting
 	operator float* ()					{ return &r; };
@@ -305,8 +305,8 @@ namespace StepMania
 	class Rect
 	{
 public:
-		Rect()	{};
-		Rect(T l, T t, T r, T b)	{ left = l, top = t, right = r, bottom = b; };
+		Rect(): left(0), top(0), right(0), bottom(0) {}
+		Rect(T l, T t, T r, T b): left(l), top(t), right(r), bottom(b) {}
 		
 		T GetWidth() const	{ return right-left; };
 		T GetHeight() const	{ return bottom-top;  };
@@ -349,6 +349,7 @@ struct RageModelVertex	// doesn't have color.  Relies on material color
 		p(0,0,0),
 		n(0,0,0),
 		t(0,0),
+		bone(0),
 		TextureMatrixScale(1,1)
 		{ }
 	RageVector3 p;	// position
