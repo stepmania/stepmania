@@ -2563,13 +2563,18 @@ RString RageDisplay_Legacy::GetTextureDiagnostics( unsigned iTexture ) const
 	return RString();
 }
 
-void RageDisplay_Legacy::SetAlphaTest( bool b )
+/*
+ * XXX: Things like this only have to be set once per context - making
+ * SetDefault call These kinds of functions is wasteful. -Colby
+ */
+void RageDisplay_Legacy::SetAlphaTest(bool b)
 {
-	glAlphaFunc( GL_GREATER, 0.01f );
-	if( b )
-		glEnable( GL_ALPHA_TEST );
+	// Previously this was 0.01, rather than 0x01.
+	glAlphaFunc(GL_GREATER, 0.00390625 /* 1/256 */);
+	if(b)
+		glEnable(GL_ALPHA_TEST);
 	else
-		glDisable( GL_ALPHA_TEST );
+		glDisable(GL_ALPHA_TEST);
 }
 
 
@@ -2587,7 +2592,7 @@ void RageDisplay_Legacy::SetAlphaTest( bool b )
  * Another case of this is incomplete packed pixels support.  Some implementations
  * neglect GL_UNSIGNED_SHORT_*_REV. 
  */
-bool RageDisplay_Legacy::SupportsSurfaceFormat( PixelFormat pixfmt )
+bool RageDisplay_Legacy::SupportsSurfaceFormat(PixelFormat pixfmt)
 {
 	switch( g_GLPixFmtInfo[pixfmt].type )
 	{
@@ -2599,15 +2604,15 @@ bool RageDisplay_Legacy::SupportsSurfaceFormat( PixelFormat pixfmt )
 }
 
 
-bool RageDisplay_Legacy::SupportsTextureFormat( PixelFormat pixfmt, bool bRealtime )
+bool RageDisplay_Legacy::SupportsTextureFormat(PixelFormat pixfmt, bool bRealtime)
 {
 	/* If we support a pixfmt for texture formats but not for surface formats, then
 	 * we'll have to convert the texture to a supported surface format before uploading.
 	 * This is too slow for dynamic textures. */
-	if( bRealtime && !SupportsSurfaceFormat(pixfmt) )
+	if(bRealtime && !SupportsSurfaceFormat(pixfmt))
 		return false;
 
-	switch( g_GLPixFmtInfo[pixfmt].format )
+	switch(g_GLPixFmtInfo[pixfmt].format)
 	{
 	case GL_COLOR_INDEX:
 		return glColorTableEXT && glGetColorTableParameterivEXT;
@@ -2626,22 +2631,22 @@ bool RageDisplay_Legacy::SupportsPerVertexMatrixScale()
 	return glGenBuffersARB  &&  g_bTextureMatrixShader != 0;
 }
 
-void RageDisplay_Legacy::SetSphereEnvironmentMapping( TextureUnit tu, bool b )
+void RageDisplay_Legacy::SetSphereEnvironmentMapping(TextureUnit tu, bool b)
 {
-	if( !SetTextureUnit( tu ) )
+	if(!SetTextureUnit(tu))
 		return;
 
-	if( b )
+	if(b)
 	{
-		glTexGeni( GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP );
-		glTexGeni( GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP );
-		glEnable( GL_TEXTURE_GEN_S );
-		glEnable( GL_TEXTURE_GEN_T );
+		glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+		glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+		glEnable(GL_TEXTURE_GEN_S);
+		glEnable(GL_TEXTURE_GEN_T);
 	}
 	else
 	{
-		glDisable( GL_TEXTURE_GEN_S );
-		glDisable( GL_TEXTURE_GEN_T );
+		glDisable(GL_TEXTURE_GEN_S);
+		glDisable(GL_TEXTURE_GEN_T);
 	}
 }
 
@@ -2649,19 +2654,19 @@ GLint iCelTexture1, iCelTexture2 = 0;
 
 void RageDisplay_Legacy::SetCelShaded( int stage )
 {
-	if( !GLEW_ARB_fragment_shader )
+	if(!GLEW_ARB_fragment_program && !GL_ARB_shading_language_100)
 		return; // not supported
 
-	switch ( stage )
+	switch (stage)
 	{
 	case 1:
-		glUseProgramObjectARB( g_gShellShader );
+		glUseProgramObjectARB(g_gShellShader);
 		break;
 	case 2:
-		glUseProgramObjectARB( g_gCelShader );
+		glUseProgramObjectARB(g_gCelShader);
 		break;
 	default:
-		glUseProgramObjectARB( 0 );
+		glUseProgramObjectARB(0);
 		break;
 	}
 }
