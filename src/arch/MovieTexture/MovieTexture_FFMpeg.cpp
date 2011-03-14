@@ -28,6 +28,7 @@ namespace avcodec
 #endif
 };
 
+/*
 #if defined(_MSC_VER) && !defined(XBOX)
 	#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
 	#pragma comment(lib, "ffmpeg/lib/avformat.lib")
@@ -35,6 +36,7 @@ namespace avcodec
 		#pragma comment(lib, "ffmpeg/lib/swscale.lib")
 	#endif
 #endif // _MSC_VER && !XBOX
+*/
 
 #if defined(XBOX)
 	/* NOTES: ffmpeg static libraries arent included in SVN. You have to build
