@@ -100,7 +100,7 @@ struct lua_State;
 struct RageVector2
 {
 public:
-	RageVector2() {}
+	RageVector2() : x(0), y(0) {}
 	RageVector2( const float * f )		{ x=f[0]; y=f[1]; }
 	RageVector2( float x1, float y1 )	{ x=x1; y=y1; }
 	
@@ -129,7 +129,7 @@ public:
 struct RageVector3
 {
 public:
-	RageVector3() {}
+	RageVector3(): x(0), y(0), z(0) {}
 	RageVector3( const float * f )			{ x=f[0]; y=f[1]; z=f[2]; }
 	RageVector3( float x1, float y1, float z1 )	{ x=x1; y=y1; z=z1; }
 	
@@ -158,7 +158,7 @@ public:
 struct RageVector4
 {
 public:
-	RageVector4() {}
+	RageVector4(): x(0), y(0), z(0), w(0) {}
 	RageVector4( const float * f )				{ x=f[0]; y=f[1]; z=f[2]; w=f[3]; }
 	RageVector4( float x1, float y1, float z1, float w1 )	{ x=x1; y=y1; z=z1; w=w1; }
 	
