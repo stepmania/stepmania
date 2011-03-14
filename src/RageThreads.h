@@ -141,7 +141,6 @@ public:
 private:
 	// Swallow up warnings. If they must be used, define them.
 	LockMutex& operator=(const LockMutex& rhs);
-	LockMutex(const LockMutex& rhs);
 };
 
 #define LockMut(m) LockMutex UNIQUE_NAME(LocalLock) (m, __FILE__, __LINE__)
