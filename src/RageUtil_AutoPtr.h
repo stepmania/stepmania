@@ -27,22 +27,17 @@ class AutoPtrCopyOnWrite
 {
 public:
 	/* This constructor only exists to make us work with STL containers. */
-	inline AutoPtrCopyOnWrite()
+	inline AutoPtrCopyOnWrite(): m_pPtr(NULL), m_iRefCount(new int(1))
 	{
-		m_pPtr = NULL;
-		m_iRefCount = new int(1);
 	}
 
-	explicit inline AutoPtrCopyOnWrite( T *p )
+	explicit inline AutoPtrCopyOnWrite( T *p ): m_pPtr(p), m_iRefCount(new int(1))
 	{
-		m_pPtr = p;
-		m_iRefCount = new int(1);
 	}
 
-	inline AutoPtrCopyOnWrite( const AutoPtrCopyOnWrite &rhs )
+	inline AutoPtrCopyOnWrite( const AutoPtrCopyOnWrite &rhs ):
+		m_pPtr(rhs.m_pPtr), m_iRefCount(rhs.m_iRefCount)
 	{
-		m_pPtr = rhs.m_pPtr;
-		m_iRefCount = rhs.m_iRefCount;
 		++(*m_iRefCount);
 	}
 

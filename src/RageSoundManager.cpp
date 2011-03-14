@@ -35,11 +35,8 @@ static Preference<RString> g_sSoundDrivers( "SoundDrivers", "" ); // "" == DEFAU
 
 RageSoundManager *SOUNDMAN = NULL;
 
-RageSoundManager::RageSoundManager()
-{
-	m_fMixVolume = 1.0f;
-	m_fVolumeOfNonCriticalSounds = 1.0f;
-}
+RageSoundManager::RageSoundManager(): m_pDriver(NULL), m_fMixVolume(1.0f),
+	m_fVolumeOfNonCriticalSounds(1.0f) {}
 
 static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
 void RageSoundManager::Init()
