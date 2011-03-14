@@ -269,6 +269,9 @@ void ScreenEdit::InitEditMappings()
 	// m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_TAP_ATTACK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
 
 	m_EditMappingsDeviceInput.button    [EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
@@ -4035,6 +4038,7 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Shift BPM changes and stops down one beat",	EDIT_BUTTON_INSERT_SHIFT_PAUSES ),
 	EditHelpLine( "Delete beat and shift up",			EDIT_BUTTON_DELETE ),
 	EditHelpLine( "Shift BPM changes and stops up one beat",	EDIT_BUTTON_DELETE_SHIFT_PAUSES ),
+	EditHelpLine( "Cycle between tap notes",			EDIT_BUTTON_CYCLE_TAP_LEFT,		EDIT_BUTTON_CYCLE_TAP_RIGHT ),
 	EditHelpLine( "Lay mine",					EDIT_BUTTON_LAY_MINE_OR_ROLL ),
 	EditHelpLine( "Lay lift",					EDIT_BUTTON_LAY_LIFT ),
 	EditHelpLine( "Add to/remove from right half",			EDIT_BUTTON_RIGHT_SIDE ),
