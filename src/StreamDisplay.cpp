@@ -31,7 +31,7 @@ void StreamDisplay::Load( const RString &_sMetricsGroup )
 	m_transformPill.SetFromReference( THEME->GetMetricR(sMetricsGroup,"PillTransformFunction") );
 
 	float fTextureCoordScaleX = THEME->GetMetricF(sMetricsGroup,"TextureCoordScaleX");
-	int iNumPills = THEME->GetMetricF(sMetricsGroup,"NumPills");
+	int iNumPills = static_cast<int>(THEME->GetMetricF(sMetricsGroup,"NumPills"));
 	m_bAlwaysBounce = THEME->GetMetricB(sMetricsGroup,"AlwaysBounceNormalBar");
 
 	FOREACH_ENUM( StreamType, st )

@@ -261,7 +261,7 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 	{
 	case EditCourseRow_Minutes:
 		row.SetOneSharedSelection( 0 );
-		row.SetOneSharedSelectionIfPresent( MakeMinutesString(GAMESTATE->m_pCurCourse->m_fGoalSeconds/60) );
+		row.SetOneSharedSelectionIfPresent( MakeMinutesString(static_cast<int>(GAMESTATE->m_pCurCourse->m_fGoalSeconds)/60) );
 		break;
 	default:
 		{
