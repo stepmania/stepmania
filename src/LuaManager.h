@@ -42,6 +42,9 @@ public:
 
 private:
 	lua_State *m_pLuaMain;
+	// Swallow up warnings. If they must be used, define them.
+	LuaManager& operator=(const LuaManager& rhs);
+	LuaManager(const LuaManager& rhs);
 };
 
 extern LuaManager *LUA;
@@ -155,6 +158,9 @@ private:
 
 	LuaReference *m_Name;
 	LuaReference *m_pOldValue;
+	
+	// Swallow up warnings. If they must be used, define them.
+	LuaThreadVariable& operator=(const LuaThreadVariable& rhs);
 };
 
 /**

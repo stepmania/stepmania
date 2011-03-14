@@ -112,9 +112,8 @@ class CachedObjectPointer
 public:
 	typedef CachedObject<T> Object;
 
-	CachedObjectPointer()
+	CachedObjectPointer() : m_pCache(NULL), m_bCacheIsSet(false)
 	{
-		m_bCacheIsSet = false;
 		Object::Register( this );
 	}
 
