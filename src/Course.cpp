@@ -519,8 +519,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		if( e->iChooseIndex < int(vSongAndSteps.size()) )
 		{
 			resolved.pSong = vpSongs[e->iChooseIndex];
-			const vector<Steps*> &vpSongs = mapSongToSteps[resolved.pSong];
-			resolved.pSteps = vpSongs[ RandomInt(vpSongs.size()) ];
+			const vector<Steps*> &mappedSongs = mapSongToSteps[resolved.pSong];
+			resolved.pSteps = mappedSongs[ RandomInt(mappedSongs.size()) ];
 		}
 		else
 		{

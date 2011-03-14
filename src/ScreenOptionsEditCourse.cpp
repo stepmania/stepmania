@@ -383,14 +383,14 @@ void ScreenOptionsEditCourse::SetCurrentSong()
 	}
 	else
 	{
-		int iRow = m_iCurrentRow[PLAYER_1];
+		iRow = m_iCurrentRow[PLAYER_1];
 		int iEntryIndex = RowToEntryIndex( iRow );
 		Song *pSong = NULL;
 		if( iEntryIndex != -1 )
 		{
 			int iCurrentSongRow = EntryIndexAndRowTypeToRow(iEntryIndex,RowType_Song);
-			OptionRow &row = *m_pRows[ iCurrentSongRow ];
-			int index = row.GetOneSelection(PLAYER_1);
+			OptionRow &oRow = *m_pRows[ iCurrentSongRow ];
+			int index = oRow.GetOneSelection(PLAYER_1);
 			if( index != 0 )
 				pSong = m_vpSongs[ index - 1 ];
 		}
