@@ -585,8 +585,8 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 			unsigned int opixel = 0;
 			for( int c = 0; c < 4; ++c )
 			{
-				int src = (pixel & src_masks[c]) >> src_shifts[c];
-				opixel |= lookup[c][src] << dst_shifts[c];
+				int lSrc = (pixel & src_masks[c]) >> src_shifts[c];
+				opixel |= lookup[c][lSrc] << dst_shifts[c];
 			}
 
 			// Store it.

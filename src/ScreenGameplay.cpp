@@ -1270,8 +1270,6 @@ void ScreenGameplay::LoadLights()
 	{
 		if( asDifficulties[0].CompareNoCase("selected") == 0 )
 		{
-			PlayerInfo pi;
-
 			// Base lights off current difficulty of active player
 			// Can be either P1 or P2 if they're individual or P1 if both are active
 			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
@@ -1305,8 +1303,6 @@ void ScreenGameplay::LoadLights()
 		// We've also specified for Player 2 to be based off current difficulty
 		if( asDifficulties[1].CompareNoCase("selected") == 0 && GAMESTATE->GetNumPlayersEnabled() > 1 )
 		{
-			PlayerInfo pi;
-
 			// Base lights off current difficulty of active player
 			// Only do this for P2 in a two-player situation, since P1 is taken care of above
 			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )

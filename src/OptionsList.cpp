@@ -138,8 +138,8 @@ void OptionListRow::SetUnderlines( const vector<bool> &aSelections, const Option
 			if( pTarget->m_Def.m_selectType == SELECT_ONE )
 			{
 				int iSelection = m_pOptions->GetOneSelection(sDest);
-				const OptionRowHandler *pHandler = m_pOptions->m_Rows.find(sDest)->second;
-				int iDefault = pHandler->GetDefaultOption();
+				const OptionRowHandler *lHandler = m_pOptions->m_Rows.find(sDest)->second;
+				int iDefault = lHandler->GetDefaultOption();
 				if( iDefault != -1 && iSelection != iDefault )
 					bSelected |= true;
 			}

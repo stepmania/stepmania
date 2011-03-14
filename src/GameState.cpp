@@ -2361,9 +2361,9 @@ public:
 		return 1;
 	}
 
-	static int GetCurrentStepsCredits( T* p, lua_State *L )
+	static int GetCurrentStepsCredits( T* t, lua_State *L )
 	{
-		const Song* pSong = p->m_pCurSong;
+		const Song* pSong = t->m_pCurSong;
 		if( pSong == NULL )
 			return 0;
 

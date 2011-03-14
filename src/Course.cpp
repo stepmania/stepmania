@@ -930,8 +930,8 @@ const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
 		const CourseEntry &entry = *e;
-		Song *pSong = entry.songID.ToSong();
-		if( pSong == pSong )
+		Song *lSong = entry.songID.ToSong();
+		if( pSong == lSong )
 			return &entry;
 	}
 
