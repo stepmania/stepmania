@@ -39,19 +39,10 @@
 #define samplerate() m_pSource->GetSampleRate()
 
 RageSoundParams::RageSoundParams():
-	m_StartTime( RageZeroTimer )
-{
-	m_StartSecond = 0;
-	m_LengthSeconds = -1;
-	m_fFadeInSeconds = 0;
-	m_fFadeOutSeconds = 0;
-	m_Volume = 1.0f;
-	m_fAttractVolume = 1.0f;
-	m_fPitch = 1.0f;
-	m_fSpeed = 1.0f;
-	StopMode = M_AUTO;
-	m_bIsCriticalSound = false;
-}
+	m_StartSecond(0), m_LengthSeconds(-1), m_fFadeInSeconds(0),
+	m_fFadeOutSeconds(0), m_Volume(1.0f), m_fAttractVolume(1.0f),
+	m_fPitch(1.0f), m_fSpeed(1.0f), m_StartTime( RageZeroTimer ),
+	StopMode(M_AUTO), m_bIsCriticalSound(false) {}
 
 RageSoundLoadParams::RageSoundLoadParams()
 {
@@ -60,15 +51,11 @@ RageSoundLoadParams::RageSoundLoadParams()
 }
 
 RageSound::RageSound():
-	m_Mutex( "RageSound" )
+	m_Mutex( "RageSound" ), m_pSource(NULL), m_iStreamFrame(0),
+	m_iStoppedSourceFrame(0), m_bPlaying(false),
+	m_bDeleteWhenFinished(false)
 {
 	ASSERT( SOUNDMAN );
-
-	m_pSource = NULL;
-	m_iStreamFrame = 0;
-	m_iStoppedSourceFrame = 0;
-	m_bPlaying = false;
-	m_bDeleteWhenFinished = false;
 }
 
 RageSound::~RageSound()

@@ -71,6 +71,7 @@ enum PixelFormat
 };
 const RString& PixelFormatToString( PixelFormat i );
 
+/** @brief The parameters used for the present Video Mode. */
 class VideoModeParams
 {
 public:
@@ -91,24 +92,27 @@ public:
 		RString sIconFile_,
 		bool PAL_,
 		float fDisplayAspectRatio_
-	)
-	{
-		windowed = windowed_;
-		width = width_;
-		height = height_;
-		bpp = bpp_;
-		rate = rate_;
-		vsync = vsync_;
-		interlaced = interlaced_;
-		bSmoothLines = bSmoothLines_;
-		bTrilinearFiltering = bTrilinearFiltering_;
-		bAnisotropicFiltering = bAnisotropicFiltering_;
-		sWindowTitle = sWindowTitle_;
-		sIconFile = sIconFile_;
-		PAL = PAL_;
-		fDisplayAspectRatio = fDisplayAspectRatio_;
-	}
-	VideoModeParams() {}
+	):
+		windowed(windowed_),
+		width(width_),
+		height(height_),
+		bpp(bpp_),
+		rate(rate_),
+		vsync(vsync_),
+		interlaced(interlaced_),
+		bSmoothLines(bSmoothLines_),
+		bTrilinearFiltering(bTrilinearFiltering_),
+		bAnisotropicFiltering(bAnisotropicFiltering_),
+		sWindowTitle(sWindowTitle_),
+		sIconFile(sIconFile_),
+		PAL(PAL_),
+		fDisplayAspectRatio(fDisplayAspectRatio_) {}
+
+	VideoModeParams(): windowed(false), width(0), height(0),
+		bpp(0), rate(0), vsync(false), interlaced(false),
+		bSmoothLines(false), bTrilinearFiltering(false),
+		bAnisotropicFiltering(false), sWindowTitle(RString()),
+		sIconFile(RString()), PAL(false), fDisplayAspectRatio(0.0) {}
 
 	bool windowed;
 	int width;
@@ -116,14 +120,14 @@ public:
 	int bpp;
 	int rate;
 	bool vsync;
+	bool interlaced;
 	bool bSmoothLines;
 	bool bTrilinearFiltering;
 	bool bAnisotropicFiltering;
-	bool interlaced;
-	bool PAL;
-	float fDisplayAspectRatio;
 	RString sWindowTitle;
 	RString sIconFile;
+	bool PAL;
+	float fDisplayAspectRatio;
 };
 
 struct RenderTargetParam
