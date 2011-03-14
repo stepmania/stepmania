@@ -1,8 +1,8 @@
 #include "global.h"
 
-#include "RageDisplay_OGL.h"
-#include "RageDisplay_OGL_Helpers.h"
-using namespace RageDisplay_OGL_Helpers;
+#include "RageDisplay_Legacy.h"
+#include "RageDisplay_Legacy_Helpers.h"
+using namespace RageDisplay_Legacy_Helpers;
 
 #include "RageFile.h"
 #include "RageSurface.h"
@@ -249,13 +249,13 @@ static void TurnOffHardwareVBO()
 	}
 }
 
-RageDisplay_OGL::RageDisplay_OGL()
+RageDisplay_Legacy::RageDisplay_Legacy()
 {
-	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
+	LOG->Trace( "RageDisplay_Legacy::RageDisplay_Legacy()" );
 	LOG->MapLog("renderer", "Current renderer: OpenGL");
 
 	FixLittleEndian();
-	RageDisplay_OGL_Helpers::Init();
+	RageDisplay_Legacy_Helpers::Init();
 
 	g_pWind = NULL;
 	g_bTextureMatrixShader = 0;
@@ -442,9 +442,9 @@ void InitShaders()
 	}
 }
 
-static LocalizedString OBTAIN_AN_UPDATED_VIDEO_DRIVER ( "RageDisplay_OGL", "Obtain an updated driver from your video card manufacturer." );
-static LocalizedString GLDIRECT_IS_NOT_COMPATIBLE ( "RageDisplay_OGL", "GLDirect was detected.  GLDirect is not compatible with this game and should be disabled." );
-RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer )
+static LocalizedString OBTAIN_AN_UPDATED_VIDEO_DRIVER ( "RageDisplay_Legacy", "Obtain an updated driver from your video card manufacturer." );
+static LocalizedString GLDIRECT_IS_NOT_COMPATIBLE ( "RageDisplay_Legacy", "GLDirect was detected.  GLDirect is not compatible with this game and should be disabled." );
+RString RageDisplay_Legacy::Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer )
 {
 	g_pWind = LowLevelWindow::Create();
 
@@ -537,12 +537,12 @@ RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 	return RString();
 }
 
-RageDisplay_OGL::~RageDisplay_OGL()
+RageDisplay_Legacy::~RageDisplay_Legacy()
 {
 	delete g_pWind;
 }
 
-void RageDisplay_OGL::GetDisplayResolutions( DisplayResolutions &out ) const
+void RageDisplay_Legacy::GetDisplayResolutions( DisplayResolutions &out ) const
 {
 	out.clear();
 	g_pWind->GetDisplayResolutions( out );
@@ -705,9 +705,9 @@ void SetupExtensions()
 	}
 }
 
-void RageDisplay_OGL::ResolutionChanged()
+void RageDisplay_Legacy::ResolutionChanged()
 {
-	//LOG->Warn( "RageDisplay_OGL::ResolutionChanged" );
+	//LOG->Warn( "RageDisplay_Legacy::ResolutionChanged" );
 
 	/* Clear any junk that's in the framebuffer. */
 	if( BeginFrame() )
@@ -719,9 +719,9 @@ void RageDisplay_OGL::ResolutionChanged()
 // Return true if mode change was successful.
 // bNewDeviceOut is set true if a new device was created and textures
 // need to be reloaded.
-RString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
+RString RageDisplay_Legacy::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
-	//LOG->Warn( "RageDisplay_OGL::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
+	//LOG->Warn( "RageDisplay_Legacy::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
 
 	RString err;
 	err = g_pWind->TryVideoMode( p, bNewDeviceOut );
@@ -761,14 +761,14 @@ RString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDevic
 	return RString();	// successfully set mode
 }
 
-int RageDisplay_OGL::GetMaxTextureSize() const
+int RageDisplay_Legacy::GetMaxTextureSize() const
 {
 	GLint size;
 	glGetIntegerv( GL_MAX_TEXTURE_SIZE, &size );
 	return size;
 }
 
-bool RageDisplay_OGL::BeginFrame()
+bool RageDisplay_Legacy::BeginFrame()
 {
 	/* We do this in here, rather than ResolutionChanged, or we won't update the
 	 * viewport for the concurrent rendering context. */
@@ -784,7 +784,7 @@ bool RageDisplay_OGL::BeginFrame()
 	return RageDisplay::BeginFrame();
 }
 
-void RageDisplay_OGL::EndFrame()
+void RageDisplay_Legacy::EndFrame()
 {
 	glFlush();
 
@@ -797,7 +797,7 @@ void RageDisplay_OGL::EndFrame()
 	RageDisplay::EndFrame();
 }
 
-RageSurface* RageDisplay_OGL::CreateScreenshot()
+RageSurface* RageDisplay_Legacy::CreateScreenshot()
 {
 	int width = g_pWind->GetActualVideoModeParams().width;
 	int height = g_pWind->GetActualVideoModeParams().height;
@@ -820,7 +820,7 @@ RageSurface* RageDisplay_OGL::CreateScreenshot()
 	return image;
 }
 
-RageSurface *RageDisplay_OGL::GetTexture( unsigned iTexture )
+RageSurface *RageDisplay_Legacy::GetTexture( unsigned iTexture )
 {
 	if( iTexture == 0 )
 		return NULL; // XXX
@@ -844,7 +844,7 @@ RageSurface *RageDisplay_OGL::GetTexture( unsigned iTexture )
 	return pImage;
 }
 
-VideoModeParams RageDisplay_OGL::GetActualVideoModeParams() const 
+VideoModeParams RageDisplay_Legacy::GetActualVideoModeParams() const 
 {
 	return g_pWind->GetActualVideoModeParams();
 }
@@ -903,7 +903,7 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 	glNormalPointer( GL_FLOAT, 0, Normal );
 }
 
-void RageDisplay_OGL::SendCurrentMatrices()
+void RageDisplay_Legacy::SendCurrentMatrices()
 {
 	RageMatrix projection;
 	RageMatrixMultiply( &projection, GetCentering(), GetProjectionTop() );
@@ -1364,7 +1364,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	}
 }
 
-RageCompiledGeometry* RageDisplay_OGL::CreateCompiledGeometry()
+RageCompiledGeometry* RageDisplay_Legacy::CreateCompiledGeometry()
 {
 	if( GLExt.glGenBuffersARB )
 		return new RageCompiledGeometryHWOGL;
@@ -1372,12 +1372,12 @@ RageCompiledGeometry* RageDisplay_OGL::CreateCompiledGeometry()
 		return new RageCompiledGeometrySWOGL;
 }
 
-void RageDisplay_OGL::DeleteCompiledGeometry( RageCompiledGeometry* p )
+void RageDisplay_Legacy::DeleteCompiledGeometry( RageCompiledGeometry* p )
 {
 	delete p;
 }
 
-void RageDisplay_OGL::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_Legacy::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1386,7 +1386,7 @@ void RageDisplay_OGL::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVer
 	glDrawArrays( GL_QUADS, 0, iNumVerts );
 }
 
-void RageDisplay_OGL::DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_Legacy::DrawQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1395,7 +1395,7 @@ void RageDisplay_OGL::DrawQuadStripInternal( const RageSpriteVertex v[], int iNu
 	glDrawArrays( GL_QUAD_STRIP, 0, iNumVerts );
 }
 
-void RageDisplay_OGL::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_Legacy::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	int iNumPieces = (iNumVerts-3)/3;
 	int iNumTriangles = iNumPieces*4;
@@ -1434,7 +1434,7 @@ void RageDisplay_OGL::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[]
 		&vIndices[0] );
 }
 
-void RageDisplay_OGL::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_Legacy::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1443,7 +1443,7 @@ void RageDisplay_OGL::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts
 	glDrawArrays( GL_TRIANGLE_FAN, 0, iNumVerts );
 }
 
-void RageDisplay_OGL::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_Legacy::DrawStripInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1452,7 +1452,7 @@ void RageDisplay_OGL::DrawStripInternal( const RageSpriteVertex v[], int iNumVer
 	glDrawArrays( GL_TRIANGLE_STRIP, 0, iNumVerts );
 }
 
-void RageDisplay_OGL::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
+void RageDisplay_Legacy::DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1461,7 +1461,7 @@ void RageDisplay_OGL::DrawTrianglesInternal( const RageSpriteVertex v[], int iNu
 	glDrawArrays( GL_TRIANGLES, 0, iNumVerts );
 }
 
-void RageDisplay_OGL::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex )
+void RageDisplay_Legacy::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex )
 {
 	TurnOffHardwareVBO();
 	SendCurrentMatrices();
@@ -1469,7 +1469,7 @@ void RageDisplay_OGL::DrawCompiledGeometryInternal( const RageCompiledGeometry *
 	p->Draw( iMeshIndex );
 }
 
-void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float fLineWidth )
+void RageDisplay_Legacy::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float fLineWidth )
 {
 	TurnOffHardwareVBO();
 
@@ -1555,7 +1555,7 @@ static bool SetTextureUnit( TextureUnit tu )
 	return true;
 }
 
-void RageDisplay_OGL::ClearAllTextures()
+void RageDisplay_Legacy::ClearAllTextures()
 {
 	FOREACH_ENUM( TextureUnit, i )
 		SetTexture( i, 0 );
@@ -1566,7 +1566,7 @@ void RageDisplay_OGL::ClearAllTextures()
 		GLExt.glActiveTextureARB(GL_TEXTURE0_ARB);
 }
 
-int RageDisplay_OGL::GetNumTextureUnits()
+int RageDisplay_Legacy::GetNumTextureUnits()
 {
 	if( GLExt.glActiveTextureARB == NULL )
 		return 1;
@@ -1574,7 +1574,7 @@ int RageDisplay_OGL::GetNumTextureUnits()
 		return g_iMaxTextureUnits;
 }
 
-void RageDisplay_OGL::SetTexture( TextureUnit tu, unsigned iTexture )
+void RageDisplay_Legacy::SetTexture( TextureUnit tu, unsigned iTexture )
 {
 	if( !SetTextureUnit( tu ) )
 		return;
@@ -1590,7 +1590,7 @@ void RageDisplay_OGL::SetTexture( TextureUnit tu, unsigned iTexture )
 	}
 }
 
-void RageDisplay_OGL::SetTextureMode( TextureUnit tu, TextureMode tm )
+void RageDisplay_Legacy::SetTextureMode( TextureUnit tu, TextureMode tm )
 {
 	if( !SetTextureUnit( tu ) )
 		return;
@@ -1629,7 +1629,7 @@ void RageDisplay_OGL::SetTextureMode( TextureUnit tu, TextureMode tm )
 	}
 }
 
-void RageDisplay_OGL::SetTextureFiltering( TextureUnit tu, bool b )
+void RageDisplay_Legacy::SetTextureFiltering( TextureUnit tu, bool b )
 {
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, b? GL_LINEAR: GL_NEAREST );
 	
@@ -1661,7 +1661,7 @@ void RageDisplay_OGL::SetTextureFiltering( TextureUnit tu, bool b )
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, iMinFilter );
 }
 
-void RageDisplay_OGL::SetEffectMode( EffectMode effect )
+void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 {
 	if( GLExt.glUseProgramObjectARB == NULL )
 		return;
@@ -1700,7 +1700,7 @@ void RageDisplay_OGL::SetEffectMode( EffectMode effect )
 	DebugAssertNoGLError();
 }
 
-bool RageDisplay_OGL::IsEffectModeSupported( EffectMode effect )
+bool RageDisplay_Legacy::IsEffectModeSupported( EffectMode effect )
 {
 	switch( effect )
 	{
@@ -1718,7 +1718,7 @@ bool RageDisplay_OGL::IsEffectModeSupported( EffectMode effect )
 	return false;
 }
 
-void RageDisplay_OGL::SetBlendMode( BlendMode mode )
+void RageDisplay_Legacy::SetBlendMode( BlendMode mode )
 {
 	glEnable(GL_BLEND);
 
@@ -1785,21 +1785,21 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 		glBlendFunc( iSourceRGB, iDestRGB );
 }
 
-bool RageDisplay_OGL::IsZWriteEnabled() const
+bool RageDisplay_Legacy::IsZWriteEnabled() const
 {
 	bool a;
 	glGetBooleanv( GL_DEPTH_WRITEMASK, (unsigned char*)&a );
 	return a;
 }
 
-bool RageDisplay_OGL::IsZTestEnabled() const
+bool RageDisplay_Legacy::IsZTestEnabled() const
 {
 	GLenum a;
 	glGetIntegerv( GL_DEPTH_FUNC, (GLint*)&a );
 	return a != GL_ALWAYS;
 }
 
-void RageDisplay_OGL::ClearZBuffer()
+void RageDisplay_Legacy::ClearZBuffer()
 {
 	bool write = IsZWriteEnabled();
 	SetZWrite( true );
@@ -1807,12 +1807,12 @@ void RageDisplay_OGL::ClearZBuffer()
 	SetZWrite( write );
 }
 
-void RageDisplay_OGL::SetZWrite( bool b )
+void RageDisplay_Legacy::SetZWrite( bool b )
 {
 	glDepthMask( b );
 }
 
-void RageDisplay_OGL::SetZBias( float f )
+void RageDisplay_Legacy::SetZBias( float f )
 {
 	float fNear = SCALE( f, 0.0f, 1.0f, 0.05f, 0.0f );
 	float fFar = SCALE( f, 0.0f, 1.0f, 1.0f, 0.95f );
@@ -1820,7 +1820,7 @@ void RageDisplay_OGL::SetZBias( float f )
 	glDepthRange( fNear, fFar );
 }
 
-void RageDisplay_OGL::SetZTestMode( ZTestMode mode )
+void RageDisplay_Legacy::SetZTestMode( ZTestMode mode )
 {
 	glEnable( GL_DEPTH_TEST );
 	switch( mode )
@@ -1832,7 +1832,7 @@ void RageDisplay_OGL::SetZTestMode( ZTestMode mode )
 	}
 }
 
-void RageDisplay_OGL::SetTextureWrapping( TextureUnit tu, bool b )
+void RageDisplay_Legacy::SetTextureWrapping( TextureUnit tu, bool b )
 {
 	/* This should be per-texture-unit state, but it's per-texture state in OpenGl,
 	 * so we'll behave incorrectly if the same texture is used in more than one texture
@@ -1844,7 +1844,7 @@ void RageDisplay_OGL::SetTextureWrapping( TextureUnit tu, bool b )
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode );
 }
 
-void RageDisplay_OGL::SetMaterial( 
+void RageDisplay_Legacy::SetMaterial( 
 	const RageColor &emissive,
 	const RageColor &ambient,
 	const RageColor &diffuse,
@@ -1878,18 +1878,18 @@ void RageDisplay_OGL::SetMaterial(
 	}
 }
 
-void RageDisplay_OGL::SetLighting( bool b )
+void RageDisplay_Legacy::SetLighting( bool b )
 {
 	if( b )	glEnable( GL_LIGHTING );
 	else	glDisable( GL_LIGHTING );
 }
 
-void RageDisplay_OGL::SetLightOff( int index )
+void RageDisplay_Legacy::SetLightOff( int index )
 {
 	glDisable( GL_LIGHT0+index );
 }
 
-void RageDisplay_OGL::SetLightDirectional( 
+void RageDisplay_Legacy::SetLightDirectional( 
 	int index, 
 	const RageColor &ambient, 
 	const RageColor &diffuse, 
@@ -1911,7 +1911,7 @@ void RageDisplay_OGL::SetLightDirectional(
 	glPopMatrix();
 }
 
-void RageDisplay_OGL::SetCullMode( CullMode mode )
+void RageDisplay_Legacy::SetCullMode( CullMode mode )
 {
 	if (mode != CULL_NONE)
 		glEnable(GL_CULL_FACE);
@@ -1931,39 +1931,39 @@ void RageDisplay_OGL::SetCullMode( CullMode mode )
 	}
 }
 
-const RageDisplay::PixelFormatDesc *RageDisplay_OGL::GetPixelFormatDesc(PixelFormat pf) const
+const RageDisplay::PixelFormatDesc *RageDisplay_Legacy::GetPixelFormatDesc(PixelFormat pf) const
 {
 	ASSERT( pf < NUM_PixelFormat );
 	return &PIXEL_FORMAT_DESC[pf];
 }
 
-bool RageDisplay_OGL::SupportsThreadedRendering()
+bool RageDisplay_Legacy::SupportsThreadedRendering()
 {
 	return g_pWind->SupportsThreadedRendering();
 }
 
-void RageDisplay_OGL::BeginConcurrentRenderingMainThread()
+void RageDisplay_Legacy::BeginConcurrentRenderingMainThread()
 {
 	g_pWind->BeginConcurrentRenderingMainThread();
 }
 
-void RageDisplay_OGL::EndConcurrentRenderingMainThread()
+void RageDisplay_Legacy::EndConcurrentRenderingMainThread()
 {
 	g_pWind->EndConcurrentRenderingMainThread();
 }
 
-void RageDisplay_OGL::BeginConcurrentRendering()
+void RageDisplay_Legacy::BeginConcurrentRendering()
 {
 	g_pWind->BeginConcurrentRendering();
 	RageDisplay::BeginConcurrentRendering();
 }
 
-void RageDisplay_OGL::EndConcurrentRendering()
+void RageDisplay_Legacy::EndConcurrentRendering()
 {
 	g_pWind->EndConcurrentRendering();
 }
 
-void RageDisplay_OGL::DeleteTexture( unsigned iTexture )
+void RageDisplay_Legacy::DeleteTexture( unsigned iTexture )
 {
 	if( iTexture == 0 )
 		return;
@@ -1981,7 +1981,7 @@ void RageDisplay_OGL::DeleteTexture( unsigned iTexture )
 }
 
 
-PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, bool &bFreeImg, int width, int height, bool bPalettedTexture )
+PixelFormat RageDisplay_Legacy::GetImgPixelFormat( RageSurface* &img, bool &bFreeImg, int width, int height, bool bPalettedTexture )
 {
 	PixelFormat pixfmt = FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
 	
@@ -2048,7 +2048,7 @@ void SetPixelMapForSurface( int glImageFormat, int glTexFormat, const RageSurfac
 	DebugAssertNoGLError();
 }
 
-unsigned RageDisplay_OGL::CreateTexture( 
+unsigned RageDisplay_Legacy::CreateTexture( 
 	PixelFormat pixfmt,
 	RageSurface* pImg,
 	bool bGenerateMipMaps )
@@ -2258,7 +2258,7 @@ private:
 	unsigned m_iTexHandle;
 };
 
-RageTextureLock *RageDisplay_OGL::CreateTextureLock()
+RageTextureLock *RageDisplay_Legacy::CreateTextureLock()
 {
 	if( !GLExt.HasExtension("GL_ARB_pixel_buffer_object") )
 		return NULL;
@@ -2266,7 +2266,7 @@ RageTextureLock *RageDisplay_OGL::CreateTextureLock()
 	return new RageTextureLock_OGL;
 }
 
-void RageDisplay_OGL::UpdateTexture( 
+void RageDisplay_Legacy::UpdateTexture( 
 	unsigned iTexHandle, 
 	RageSurface* pImg,
 	int iXOffset, int iYOffset, int iWidth, int iHeight )
@@ -2421,7 +2421,7 @@ void RenderTarget_FramebufferObject::FinishRenderingTo()
         GLExt.glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 );
 }
 
-bool RageDisplay_OGL::SupportsRenderToTexture() const
+bool RageDisplay_Legacy::SupportsRenderToTexture() const
 {
 	return GLExt.m_bGL_EXT_framebuffer_object || g_pWind->SupportsRenderToTexture();
 }
@@ -2432,7 +2432,7 @@ bool RageDisplay_OGL::SupportsRenderToTexture() const
  * particularly GeForce 2, but is simpler and faster when available.
  */
 
-unsigned RageDisplay_OGL::CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
+unsigned RageDisplay_Legacy::CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
 {
 	RenderTarget *pTarget;
 	if( GLExt.m_bGL_EXT_framebuffer_object )
@@ -2449,7 +2449,7 @@ unsigned RageDisplay_OGL::CreateRenderTarget( const RenderTargetParam &param, in
 	return iTexture;
 }
 
-void RageDisplay_OGL::SetRenderTarget( unsigned iTexture, bool bPreserveTexture )
+void RageDisplay_Legacy::SetRenderTarget( unsigned iTexture, bool bPreserveTexture )
 {
 	if( iTexture == 0 )
 	{
@@ -2510,7 +2510,7 @@ void RageDisplay_OGL::SetRenderTarget( unsigned iTexture, bool bPreserveTexture 
 	}
 }
 
-void RageDisplay_OGL::SetPolygonMode( PolygonMode pm )
+void RageDisplay_Legacy::SetPolygonMode( PolygonMode pm )
 {
 	GLenum m;
 	switch( pm )
@@ -2522,12 +2522,12 @@ void RageDisplay_OGL::SetPolygonMode( PolygonMode pm )
 	glPolygonMode( GL_FRONT_AND_BACK, m );
 }
 
-void RageDisplay_OGL::SetLineWidth( float fWidth )
+void RageDisplay_Legacy::SetLineWidth( float fWidth )
 {
 	glLineWidth( fWidth );
 }
 
-RString RageDisplay_OGL::GetTextureDiagnostics( unsigned iTexture ) const
+RString RageDisplay_Legacy::GetTextureDiagnostics( unsigned iTexture ) const
 {
 	/*
 		s << (bGenerateMipMaps? "gluBuild2DMipmaps":"glTexImage2D");
@@ -2560,7 +2560,7 @@ RString RageDisplay_OGL::GetTextureDiagnostics( unsigned iTexture ) const
 	return RString();
 }
 
-void RageDisplay_OGL::SetAlphaTest( bool b )
+void RageDisplay_Legacy::SetAlphaTest( bool b )
 {
 	glAlphaFunc( GL_GREATER, 0.01f );
 	if( b )
@@ -2584,7 +2584,7 @@ void RageDisplay_OGL::SetAlphaTest( bool b )
  * Another case of this is incomplete packed pixels support.  Some implementations
  * neglect GL_UNSIGNED_SHORT_*_REV. 
  */
-bool RageDisplay_OGL::SupportsSurfaceFormat( PixelFormat pixfmt )
+bool RageDisplay_Legacy::SupportsSurfaceFormat( PixelFormat pixfmt )
 {
 	switch( g_GLPixFmtInfo[pixfmt].type )
 	{
@@ -2596,7 +2596,7 @@ bool RageDisplay_OGL::SupportsSurfaceFormat( PixelFormat pixfmt )
 }
 
 
-bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt, bool bRealtime )
+bool RageDisplay_Legacy::SupportsTextureFormat( PixelFormat pixfmt, bool bRealtime )
 {
 	/* If we support a pixfmt for texture formats but not for surface formats, then
 	 * we'll have to convert the texture to a supported surface format before uploading.
@@ -2616,14 +2616,14 @@ bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt, bool bRealtime 
 	}
 }
 
-bool RageDisplay_OGL::SupportsPerVertexMatrixScale()
+bool RageDisplay_Legacy::SupportsPerVertexMatrixScale()
 {
 	// Intel i915 on OSX 10.4.4 supports vertex programs but not hardware vertex buffers.
 	// Our software vertex rendering doesn't support vertex programs.
 	return GLExt.glGenBuffersARB  &&  g_bTextureMatrixShader != 0;
 }
 
-void RageDisplay_OGL::SetSphereEnvironmentMapping( TextureUnit tu, bool b )
+void RageDisplay_Legacy::SetSphereEnvironmentMapping( TextureUnit tu, bool b )
 {
 	if( !SetTextureUnit( tu ) )
 		return;
@@ -2644,7 +2644,7 @@ void RageDisplay_OGL::SetSphereEnvironmentMapping( TextureUnit tu, bool b )
 
 GLint iCelTexture1, iCelTexture2 = NULL;
 
-void RageDisplay_OGL::SetCelShaded( int stage )
+void RageDisplay_Legacy::SetCelShaded( int stage )
 {
 	if( !GLExt.m_bGL_ARB_fragment_shader )
 		return; // not supported

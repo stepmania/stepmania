@@ -1,5 +1,5 @@
 #include "global.h"
-#include "RageDisplay_OGL_Helpers.h"
+#include "RageDisplay_Legacy_Helpers.h"
 #include "RageUtil.h"
 
 #include "RageLog.h"
@@ -31,12 +31,12 @@ namespace
 	}
 };
 
-void RageDisplay_OGL_Helpers::Init()
+void RageDisplay_Legacy_Helpers::Init()
 {
 	InitStringMap();
 }
 
-RString RageDisplay_OGL_Helpers::GLToString( GLenum e )
+RString RageDisplay_Legacy_Helpers::GLToString( GLenum e )
 {
 	if( g_Strings.find(e) != g_Strings.end() )
 		return g_Strings[e];

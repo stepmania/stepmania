@@ -19,7 +19,7 @@
 #undef __glext_h_
 #include "glext.h"
 
-/* Import RageDisplay, for types.  Do not include RageDisplay_OGL.h. */
+/* Import RageDisplay, for types.  Do not include RageDisplay_Legacy.h. */
 #include "RageDisplay.h"
 
 /* Windows defines GL_EXT_paletted_texture incompletely: */
@@ -31,7 +31,7 @@
 typedef bool (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
 
 /** @brief Utilities for working with the RageDisplay. */
-namespace RageDisplay_OGL_Helpers
+namespace RageDisplay_Legacy_Helpers
 {
 	void Init();
 	RString GLToString( GLenum e );

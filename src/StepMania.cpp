@@ -421,12 +421,12 @@ static void AdjustForChangedSystemCapabilities()
 }
 
 #if defined(WIN32)
-#include "RageDisplay_D3D.h"
+//#include "RageDisplay_D3D.h"
 #include "archutils/Win32/VideoDriverInfo.h"
 #endif
 
 #if defined(SUPPORT_OPENGL)
-#include "RageDisplay_OGL.h"
+#include "RageDisplay_Legacy.h"
 #endif
 
 #include "RageDisplay_Null.h"
@@ -469,6 +469,7 @@ struct VideoCardDefaults
 	}
 } const g_VideoCardDefaults[] = 
 {
+/*
 	VideoCardDefaults(
 		"Xbox",
 		"d3d",
@@ -477,9 +478,10 @@ struct VideoCardDefaults
 		2048,
 		true
 	),
+*/
 	VideoCardDefaults(
 		"Voodoo *5",
-		"d3d,opengl",	// received 3 reports of opengl crashing. -Chris
+		"opengl",	// received 3 reports of opengl crashing. -Chris
 		640,480,
 		32,32,32,
 		2048,
@@ -487,7 +489,7 @@ struct VideoCardDefaults
 	),
 	VideoCardDefaults(
 		"Voodoo|3dfx", // all other Voodoos: some drivers don't identify which one
-		"d3d,opengl",
+		"opengl",
 		640,480,
 		16,16,16,
 		256,
@@ -495,7 +497,7 @@ struct VideoCardDefaults
 	),
 	VideoCardDefaults(
 		"Radeon.* 7|Wonder 7500|ArcadeVGA",	// Radeon 7xxx, RADEON Mobility 7500
-		"d3d,opengl",	// movie texture performance is terrible in OpenGL, but fine in D3D.
+		"opengl",	// movie texture performance is terrible in OpenGL, but fine in D3D.
 		640,480,
 		16,16,16,
 		2048,
@@ -503,7 +505,7 @@ struct VideoCardDefaults
 	),
 	VideoCardDefaults(
 		"GeForce|Radeon|Wonder 9|Quadro",
-		"opengl,d3d",
+		"opengl",
 		640,480,
 		32,32,32,	// 32 bit textures are faster to load
 		2048,
@@ -511,7 +513,7 @@ struct VideoCardDefaults
 	),
 	VideoCardDefaults(
 		"TNT|Vanta|M64",
-		"opengl,d3d",
+		"opengl",
 		640,480,
 		16,16,16,	// Athlon 1.2+TNT demonstration w/ movies: 70fps w/ 32bit textures, 86fps w/ 16bit textures
 		2048,
@@ -519,12 +521,13 @@ struct VideoCardDefaults
 	),
 	VideoCardDefaults(
 		"G200|G250|G400",
-		"d3d,opengl",
+		"opengl",
 		640,480,
 		16,16,16,
 		2048,
 		false	// broken, causes black screen
 	),
+/*
 	VideoCardDefaults(
 		"Savage",
 		"d3d",
@@ -548,9 +551,10 @@ struct VideoCardDefaults
 		256,
 		false
 	),
+*/
 	VideoCardDefaults(
 		"RAGE MOBILITY-M1",
-		"d3d,opengl",	// Vertex alpha is broken in OpenGL, but not D3D. -Chris
+		"opengl",	// Vertex alpha is broken in OpenGL, but not D3D. -Chris
 		400,300,	// lower resolution for 60fps
 		16,16,16,
 		256,
@@ -558,7 +562,7 @@ struct VideoCardDefaults
 	),
 	VideoCardDefaults(
 		"Mobility M3",	// ATI Rage Mobility 128 (AKA "M3")
-		"d3d,opengl",	// bad movie texture performance in opengl
+		"opengl",	// bad movie texture performance in opengl
 		640,480,
 		16,16,16,
 		1024,
@@ -566,7 +570,7 @@ struct VideoCardDefaults
 	),
 	VideoCardDefaults(
 		"Intel.*82810|Intel.*82815",
-		"opengl,d3d",// OpenGL is 50%+ faster than D3D w/ latest Intel drivers.  -Chris
+		"opengl",// OpenGL is 50%+ faster than D3D w/ latest Intel drivers.  -Chris
 		512,384,	// lower resolution for 60fps
 		16,16,16,
 		512,
@@ -574,15 +578,15 @@ struct VideoCardDefaults
 	),
 	VideoCardDefaults(
 		"Intel*Extreme Graphics",
-		"d3d",	// OpenGL blue screens w/ XP drivers from 6-21-2002
+		"opengl",	// OpenGL blue screens w/ XP drivers from 6-21-2002
 		640,480,
 		16,16,16,	// slow at 32bpp
 		1024,
 		false
 	),
 	VideoCardDefaults(
-		"Intel.*", /* fallback: all unknown Intel cards to D3D, since Intel is notoriously bad at OpenGL */
-		"d3d,opengl",
+		"Intel.*", /* fallback: all unknown Intel cards to  since Intel is notoriously bad at OpenGL */
+		"opengl",
 		640,480,
 		16,16,16,
 		2048,
@@ -595,17 +599,17 @@ struct VideoCardDefaults
 		// bug 764830: ASSERT fail after glDeleteTextures for "VIA Tech VT8361/VT8601 Graphics Controller"
 		// bug 791950: AV in glsis630!DrvSwapBuffers for "SiS 630/730"
 		"Trident Video Accelerator CyberBlade|VIA.*VT|SiS 6*",
-		"d3d,opengl",
+		"opengl",
 		640,480,
 		16,16,16,
 		2048,
 		false
 	),
 	VideoCardDefaults(
-		/* Unconfirmed texture problems on this; let's try D3D, since it's
+		/* Unconfirmed texture problems on this; let's try  since it's
 		 * a VIA/S3 chipset. */
 		"VIA/S3G KM400/KN400",
-		"d3d,opengl",
+		"opengl",
 		640,480,
 		16,16,16,
 		2048,
@@ -623,7 +627,7 @@ struct VideoCardDefaults
 		// Default graphics settings used for all cards that don't match above.
 		// This must be the very last entry!
 		"",
-		"opengl,d3d",
+		"opengl",
 		640,480,
 		32,32,32,
 		2048,
@@ -762,7 +766,7 @@ RageDisplay *CreateDisplay()
 		if( sRenderer.CompareNoCase("opengl")==0 )
 		{
 #if defined(SUPPORT_OPENGL)
-			pRet = new RageDisplay_OGL;
+			pRet = new RageDisplay_Legacy;
 #endif
 		}
 		else if( sRenderer.CompareNoCase("d3d")==0 )
