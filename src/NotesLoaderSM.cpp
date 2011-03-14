@@ -37,6 +37,7 @@ void SMLoader::LoadFromSMTokens(
 	// insert stepstype hacks from GameManager.cpp here? -aj
 	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
 	out.SetDescription( sDescription );
+	out.SetCredit( sDescription ); // this is often used for both.
 	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDifficulty) );
 
 	// Handle hacks that originated back when StepMania didn't have
