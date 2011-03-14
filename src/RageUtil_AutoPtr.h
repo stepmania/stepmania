@@ -127,16 +127,11 @@ public:
 	T& operator*() { return *m_pPtr; }
 	T* operator->() { return m_pPtr; }
 
-	explicit HiddenPtr( T *p = NULL )
-	{
-		m_pPtr = p;
-	}
+	explicit HiddenPtr( T *p = NULL ): m_pPtr(p) {}
 
-	HiddenPtr( const HiddenPtr<T> &cpy )
+	HiddenPtr( const HiddenPtr<T> &cpy ): m_pPtr(NULL)
 	{
-		if( cpy.m_pPtr == NULL )
-			m_pPtr = NULL;
-		else
+		if( cpy.m_pPtr != NULL )
 			m_pPtr = HiddenPtrTraits<T>::Copy( cpy.m_pPtr );
 	}
 

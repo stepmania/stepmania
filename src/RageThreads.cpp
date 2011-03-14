@@ -65,7 +65,8 @@ struct ThreadSlot
 	int m_iCurCheckpoint, m_iNumCheckpoints;
 	const char *GetFormattedCheckpoint( int lineno );
 
-	ThreadSlot() { Init(); }
+	ThreadSlot(): m_bUsed(false), m_iID(GetInvalidThreadId()),
+		m_pImpl(NULL), m_iCurCheckpoint(0), m_iNumCheckpoints(0) {}
 	void Init()
 	{
 		m_iID = GetInvalidThreadId();

@@ -152,6 +152,9 @@ private:
 	 * file, and no seeking is performed. */
 	bool m_bCRC32Enabled;
 	uint32_t m_iCRC32;
+	
+	// Swallow up warnings. If they must be used, define them.
+	RageFileObj& operator=(const RageFileObj& rhs);
 };
 
 #endif

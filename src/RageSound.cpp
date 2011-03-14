@@ -44,11 +44,8 @@ RageSoundParams::RageSoundParams():
 	m_fPitch(1.0f), m_fSpeed(1.0f), m_StartTime( RageZeroTimer ),
 	StopMode(M_AUTO), m_bIsCriticalSound(false) {}
 
-RageSoundLoadParams::RageSoundLoadParams()
-{
-	m_bSupportRateChanging = false;
-	m_bSupportPan = false;
-}
+RageSoundLoadParams::RageSoundLoadParams():
+	m_bSupportRateChanging(false), m_bSupportPan(false) {}
 
 RageSound::RageSound():
 	m_Mutex( "RageSound" ), m_pSource(NULL), m_iStreamFrame(0),

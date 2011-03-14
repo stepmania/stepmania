@@ -25,6 +25,8 @@ private:
 	void CreateImpl();
 	RString m_sGroup, m_sName;
 	ILocalizedStringImpl *m_pImpl;
+	// Swallow up warnings. If they must be used, define them.
+	LocalizedString& operator=(const LocalizedString& rhs);
 };
 
 #endif
