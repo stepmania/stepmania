@@ -426,7 +426,7 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 				return -1;
 			}
 
-			int ret = fill_buffer();
+			ret = fill_buffer();
 			if( ret <= 0 )
 				return ret;
 			bytes_read += ret;

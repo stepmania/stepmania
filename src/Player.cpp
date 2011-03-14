@@ -2810,16 +2810,16 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				int iNumHoldsMissedThisRow = 0;
 
 				// start at r-1 so that we consider holds whose end rows are equal to the checkpoint row
-				NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( r-1, r, true );
-				for( ; !iter.IsAtEnd(); ++iter )
+				NoteData::all_tracks_iterator nIter = m_NoteData.GetTapNoteRangeAllTracks( r-1, r, true );
+				for( ; !nIter.IsAtEnd(); ++nIter )
 				{
-					TapNote &tn = *iter;
+					TapNote &tn = *nIter;
 					if( tn.type != TapNote::hold_head )
 						continue;
 
-					int iStartRow = iter.Row();
+					int iStartRow = nIter.Row();
 					int iEndRow = iStartRow + tn.iDuration;
-					int iTrack = iter.Track();
+					int iTrack = nIter.Track();
 
 					// "the first row after the hold head that lands on a beat"
 					int iFirstCheckpointOfHold = ((iStartRow+iCheckpointFrequencyRows)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
@@ -3193,7 +3193,7 @@ void Player::SetCombo( int iCombo, int iMisses )
 	if( GAMESTATE->IsCourseMode() )
 	{
 		int iSongIndexStartColoring = GAMESTATE->m_pCurCourse->GetEstimatedNumStages();
-		iSongIndexStartColoring = floor(iSongIndexStartColoring*PERCENT_UNTIL_COLOR_COMBO);
+		iSongIndexStartColoring = static_cast<int>(floor(iSongIndexStartColoring*PERCENT_UNTIL_COLOR_COMBO));
 		bPastBeginning = GAMESTATE->GetCourseSongIndex() >= iSongIndexStartColoring;
 	}
 	else

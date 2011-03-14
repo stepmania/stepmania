@@ -100,9 +100,9 @@ struct lua_State;
 struct RageVector2
 {
 public:
-	RageVector2() {}
-	RageVector2( const float * f )		{ x=f[0]; y=f[1]; }
-	RageVector2( float x1, float y1 )	{ x=x1; y=y1; }
+	RageVector2(): x(0), y(0) {}
+	RageVector2( const float * f ): x(f[0]), y(f[1]) {}
+	RageVector2( float x1, float y1 ): x(x1), y(y1) {}
 	
 	// casting
 	operator float* ()			{ return &x; };
@@ -129,9 +129,9 @@ public:
 struct RageVector3
 {
 public:
-	RageVector3() {}
-	RageVector3( const float * f )			{ x=f[0]; y=f[1]; z=f[2]; }
-	RageVector3( float x1, float y1, float z1 )	{ x=x1; y=y1; z=z1; }
+	RageVector3(): x(0), y(0), z(0) {}
+	RageVector3( const float * f ):	x(f[0]), y(f[1]), z(f[2]) {}
+	RageVector3( float x1, float y1, float z1 ): x(x1), y(y1), z(z1) {}
 	
 	// casting
 	operator float* ()				{ return &x; };
@@ -158,9 +158,9 @@ public:
 struct RageVector4
 {
 public:
-	RageVector4() {}
-	RageVector4( const float * f )				{ x=f[0]; y=f[1]; z=f[2]; w=f[3]; }
-	RageVector4( float x1, float y1, float z1, float w1 )	{ x=x1; y=y1; z=z1; w=w1; }
+	RageVector4(): x(0), y(0), z(0), w(0) {}
+	RageVector4( const float * f ): x(f[0]), y(f[1]), z(f[2]), w(f[3]) {}
+	RageVector4( float x1, float y1, float z1, float w1 ): x(x1), y(y1), z(z1), w(w1) {}
 	
 	// casting
 	operator float* ()					{ return &x; };
@@ -186,9 +186,9 @@ public:
 struct RageColor
 {
 public:
-	RageColor() : r(0), g(0), b(0), a(0) {}
-	explicit RageColor( const float * f )			{ r=f[0]; g=f[1]; b=f[2]; a=f[3]; }
-	RageColor( float r1, float g1, float b1, float a1 )	{ r=r1; g=g1; b=b1; a=a1; }
+	RageColor(): r(0), g(0), b(0), a(0) {}
+	explicit RageColor( const float * f ): r(f[0]), g(f[1]), b(f[2]), a(f[3]) {}
+	RageColor( float r1, float g1, float b1, float a1 ): r(r1), g(g1), b(b1), a(a1) {}
 	
 	// casting
 	operator float* ()					{ return &r; };
@@ -290,8 +290,8 @@ class RageVColor
 public:
 	uint8_t b,g,r,a;	// specific ordering required by Direct3D
 
-	RageVColor() { }
-	RageVColor(const RageColor &rc) { *this = rc; }
+	RageVColor(): b(0), g(0), r(0), a(0) { }
+	RageVColor(const RageColor &rc): b(0), g(0), r(0), a(0) { *this = rc; }
 	RageVColor &operator= (const RageColor &rc)
 	{
 		r = FTOC(rc.r); g = FTOC(rc.g); b = FTOC(rc.b); a = FTOC(rc.a);
@@ -305,8 +305,8 @@ namespace StepMania
 	class Rect
 	{
 public:
-		Rect()	{};
-		Rect(T l, T t, T r, T b)	{ left = l, top = t, right = r, bottom = b; };
+		Rect(): left(0), top(0), right(0), bottom(0) {}
+		Rect(T l, T t, T r, T b): left(l), top(t), right(r), bottom(b) {}
 		
 		T GetWidth() const	{ return right-left; };
 		T GetHeight() const	{ return bottom-top;  };
@@ -349,6 +349,7 @@ struct RageModelVertex	// doesn't have color.  Relies on material color
 		p(0,0,0),
 		n(0,0,0),
 		t(0,0),
+		bone(0),
 		TextureMatrixScale(1,1)
 		{ }
 	RageVector3 p;	// position
