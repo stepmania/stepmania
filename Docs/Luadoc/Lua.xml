@@ -42,10 +42,10 @@
 		<Function name='GamePrefAutoSetStyle'/>
 		<Function name='GamePrefComboOnRolls'/>
 		<Function name='GamePrefComboUnderField'/>
+		<Function name='GamePrefDefaultFail'/>
 		<Function name='GamePrefNotePosition'/>
 		<Function name='GetCoursesToShowRanking'/>
 		<Function name='GetCustomDifficulty'/>
-		<Function name='GetDefaultArrowSpacing'/>
 		<Function name='GetDefaultOptionLines'/>
 		<Function name='GetDirectRadar'/>
 		<Function name='GetEditModeSubScreens'/>
@@ -177,11 +177,11 @@
 		<Function name='TrailToCustomDifficulty'/>
 		<Function name='URLEncode'/>
 		<Function name='UnlockRewardTypeToLocalizedString'/>
-		<Function name='UserPrefAdjustSpeed'/>
 		<Function name='UserPrefAutoSetStyle'/>
 		<Function name='UserPrefComboOnRolls'/>
 		<Function name='UserPrefComboUnderField'/>
 		<Function name='UserPrefFlashyCombo'/>
+		<Function name='UserPrefGameplayFooter'/>
 		<Function name='UserPrefGameplayShowScore'/>
 		<Function name='UserPrefGameplayShowStepsDisplay'/>
 		<Function name='UserPrefLongFail'/>
@@ -672,6 +672,7 @@
 			<Function name='AnyPlayerHasRankingFeats'/>
 			<Function name='ApplyGameCommand'/>
 			<Function name='ClearStageModifiersIllegalForCourse'/>
+			<Function name='Dopefish'/>
 			<Function name='EnoughCreditsToJoin'/>
 			<Function name='Env'/>
 			<Function name='GetCharacter'/>
@@ -801,6 +802,10 @@
 		<Class base='ActorFrame' name='HoldJudgment'>
 			<Function name='LoadFromMultiPlayer'/>
 		</Class>
+		<Class name='InputFilter'>
+			<Function name='GetMouseX'/>
+			<Function name='GetMouseY'/>
+		</Class>
 		<Class base='ActorFrame' name='LifeMeter'>
 			<Function name='GetLife'/>
 			<Function name='IsFailing'/>
@@ -825,6 +830,9 @@
 		</Class>
 		<Class name='MessageManager'>
 			<Function name='Broadcast'/>
+		</Class>
+		<Class base='ActorFrame' name='MeterDisplay'>
+			<Function name='SetStreamWidth'/>
 		</Class>
 		<Class base='ActorFrame' name='ModIconRow'>
 			<Function name='Load'/>
@@ -856,9 +864,11 @@
 		<Class base='ActorFrame' name='OptionRow'>
 			<Function name='FirstItemGoesDown'/>
 			<Function name='GetChoiceInRowWithFocus'/>
+			<Function name='GetLayoutType'/>
 			<Function name='GetName'/>
 			<Function name='GetNumChoices'/>
 			<Function name='GetRowTitle'/>
+			<Function name='GetSelectType'/>
 			<Function name='HasFocus'/>
 			<Function name='OneChoiceForAllPlayers'/>
 		</Class>
@@ -875,6 +885,9 @@
 		<Class name='PlayerInfo'>
 			<Function name='GetLifeMeter'/>
 			<Function name='GetStepsQueueWrapped'/>
+		</Class>
+		<Class name='PlayerOptions'>
+			<Function name='GetNoteSkin'/>
 		</Class>
 		<Class name='PlayerStageStats'>
 			<Function name='FullCombo'/>
@@ -917,6 +930,7 @@
 			<Function name='GetPlayerNumber'/>
 			<Function name='GetPlayerOptions'/>
 			<Function name='GetPlayerOptionsArray'/>
+			<Function name='GetPlayerOptionsString'/>
 			<Function name='SetPlayerOptions'/>
 		</Class>
 		<Class name='PrefsManager'>
@@ -1100,6 +1114,7 @@
 		</Class>
 		<Class base='ScreenWithMenuElements' name='ScreenSelectMusic'>
 			<Function name='GetGoToOptions'/>
+			<Function name='GetMusicWheel'/>
 			<Function name='setupcoursestagemods'/>
 			<Function name='setupmusicstagemods'/>
 		</Class>
@@ -1245,6 +1260,7 @@
 		</Class>
 		<Class name='Steps'>
 			<Function name='GetAuthorCredit'/>
+			<Function name='GetChartStyle'/>
 			<Function name='GetDescription'/>
 			<Function name='GetDifficulty'/>
 			<Function name='GetFilename'/>
@@ -1353,6 +1369,8 @@
 			<Function name='UnlockEntryIndex'/>
 		</Class>
 		<Class base='ActorFrame' name='WheelBase'>
+			<Function name='GetCurrentIndex'/>
+			<Function name='GetNumItems'/>
 			<Function name='GetWheelItem'/>
 			<Function name='IsLocked'/>
 			<Function name='IsSettled'/>
@@ -1583,6 +1601,10 @@
 			<EnumValue name='&apos;JudgmentLine_Held&apos;' value='6'/>
 			<EnumValue name='&apos;JudgmentLine_MaxCombo&apos;' value='7'/>
 		</Enum>
+		<Enum name='LayoutType'>
+			<EnumValue name='&apos;LayoutType_ShowAllInRow&apos;' value='0'/>
+			<EnumValue name='&apos;LayoutType_ShowOneInRow&apos;' value='1'/>
+		</Enum>
 		<Enum name='LightsMode'>
 			<EnumValue name='&apos;LightsMode_Attract&apos;' value='0'/>
 			<EnumValue name='&apos;LightsMode_Joining&apos;' value='1'/>
@@ -1696,9 +1718,10 @@
 			<EnumValue name='&apos;PaneCategory_Mines&apos;' value='4'/>
 			<EnumValue name='&apos;PaneCategory_Hands&apos;' value='5'/>
 			<EnumValue name='&apos;PaneCategory_Lifts&apos;' value='6'/>
-			<EnumValue name='&apos;PaneCategory_MachineHighScore&apos;' value='7'/>
-			<EnumValue name='&apos;PaneCategory_MachineHighName&apos;' value='8'/>
-			<EnumValue name='&apos;PaneCategory_ProfileHighScore&apos;' value='9'/>
+			<EnumValue name='&apos;PaneCategory_Fakes&apos;' value='7'/>
+			<EnumValue name='&apos;PaneCategory_MachineHighScore&apos;' value='8'/>
+			<EnumValue name='&apos;PaneCategory_MachineHighName&apos;' value='9'/>
+			<EnumValue name='&apos;PaneCategory_ProfileHighScore&apos;' value='10'/>
 		</Enum>
 		<Enum name='PeakComboAward'>
 			<EnumValue name='&apos;PeakComboAward_1000&apos;' value='0'/>
@@ -1752,6 +1775,7 @@
 			<EnumValue name='&apos;RadarCategory_Hands&apos;' value='9'/>
 			<EnumValue name='&apos;RadarCategory_Rolls&apos;' value='10'/>
 			<EnumValue name='&apos;RadarCategory_Lifts&apos;' value='11'/>
+			<EnumValue name='&apos;RadarCategory_Fakes&apos;' value='12'/>
 		</Enum>
 		<Enum name='RandomBackgroundMode'>
 			<EnumValue name='&apos;RandomBackgroundMode_Off&apos;' value='0'/>
@@ -1778,6 +1802,11 @@
 			<EnumValue name='&apos;ScreenType_GameMenu&apos;' value='1'/>
 			<EnumValue name='&apos;ScreenType_Gameplay&apos;' value='2'/>
 			<EnumValue name='&apos;ScreenType_SystemMenu&apos;' value='3'/>
+		</Enum>
+		<Enum name='SelectType'>
+			<EnumValue name='&apos;SelectType_SelectOne&apos;' value='0'/>
+			<EnumValue name='&apos;SelectType_SelectMultiple&apos;' value='1'/>
+			<EnumValue name='&apos;SelectType_SelectNone&apos;' value='2'/>
 		</Enum>
 		<Enum name='ShowDancingCharacters'>
 			<EnumValue name='&apos;ShowDancingCharacters_Off&apos;' value='0'/>
@@ -1963,6 +1992,6 @@
 		<Constant name='sGame' value='&apos;dance&apos;'/>
 		<Constant name='top' value='&apos;VertAlign_Top&apos;'/>
 	</Constants>
-	<Version>sm-ssc v1.2.2</Version>
-	<Date>2011-02-21</Date>
+	<Version>sm-ssc v1.2.3</Version>
+	<Date>2011-03-15</Date>
 </Lua>

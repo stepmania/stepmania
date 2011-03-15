@@ -1526,6 +1526,9 @@
 	<Function name='EnoughCreditsToJoin' return='bool' arguments=''>
 		Returns <code>true</code> if enough credits have been inserted to join.
 	</Function>
+	<Function name='Dopefish' sm-ssc='true' return='bool' arguments=''>
+		fishpolk.mid; See also: Rise of the Triad
+	</Function>
 	<Function name='Env' return='table' arguments=''>
 		Returns the environment table. See <Link class='GameCommand' />.
 	</Function>
@@ -1898,6 +1901,14 @@
 		Loads the HoldJudgment for the specified MultiPlayer.
 	</Function>
 </Class>
+<Class name='InputFilter'>
+	<Function name='GetMouseX' sm-ssc='true' return='float' arguments=''>
+		Returns the X position of the mouse.
+	</Function>
+	<Function name='GetMouseY' sm-ssc='true' return='float' arguments=''>
+		Returns the Y position of the mouse.
+	</Function>
+</Class>
 <Class name='LifeMeter'>
 	<Function name='GetLife' return='float' arguments=''>
 		Returns the amount of life left in the LifeMeter as a float in the range 0..1.
@@ -1964,7 +1975,7 @@
 </Class>
 <Class name='MeterDisplay'>
 	<Function name='SetStreamWidth' return='void' arguments='float fWidth'>
-		
+		Sets the width of the MeterDisplay to <code>fWidth</code>.
 	</Function>
 </Class>
 <Class name='Model'>
@@ -2045,6 +2056,9 @@
 	<Function name='GetChoiceInRowWithFocus' sm-ssc='true' return='int' arguments='PlayerNumber pn'>
 		Returns an index of the choice in the row that player <code>pn</code> is on.
 	</Function>
+	<Function name='GetLayoutType' sm-ssc='true' return='LayoutType' arguments=''>
+		Returns the OptionRow's layout type.
+	</Function>
 	<Function name='GetName' sm-ssc='true' return='string' arguments=''>
 		Returns the name of the OptionRow.
 	</Function>
@@ -2053,6 +2067,9 @@
 	</Function>
 	<Function name='GetRowTitle' sm-ssc='true' return='string' arguments=''>
 		Returns the row title string.
+	</Function>
+	<Function name='GetSelectType' sm-ssc='true' return='SelectType' arguments=''>
+		Returns the OptionRow's select type.
 	</Function>
 	<Function name='HasFocus' sm-ssc='true' return='bool' arguments='PlayerNumber pn'>
 		Returns <code>true</code> if this row is focused by player <code>pn</code>.
@@ -2078,6 +2095,11 @@
 	</Function>
 	<Function name='GetStepsQueueWrapped' return='Steps' arguments='int index'>
 		
+	</Function>
+</Class>
+<Class name='PlayerOptions'>
+	<Function name='GetNoteSkin' sm-ssc='true' return='string' arguments=''>
+		Returns the current NoteSkin set in the PlayerOptions.
 	</Function>
 </Class>
 <Class name='PlayerStageStats'>
@@ -2208,8 +2230,11 @@
 	<Function name='GetPlayerNumber' return='PlayerNumber' arguments=''>
 		Returns the player number for this PlayerState.
 	</Function>
-	<Function name='GetPlayerOptions' return='string' arguments='ModsLevel ml'>
-		Returns a string of player options for the specified ModsLevel.
+	<Function name='GetPlayerOptions' renamed='true' return='PlayerOptions' arguments='ModsLevel ml'>
+		Returns a PlayerOptions object for the specified ModsLevel.
+	</Function>
+	<Function name='GetPlayerOptionsString' sm-ssc='true' return='string' arguments='ModsLevel ml'>
+		Returns a string of player options for the specified ModsLevel. (was GetPlayerOptions in v1.2.2 and prior)
 	</Function>
 	<Function name='GetPlayerOptionsArray' return='{string}' arguments='ModsLevel ml'>
 		Returns a table of strings, containing the player options for the specified ModsLevel.
@@ -2667,6 +2692,9 @@
 	<Function name='GetGoToOptions' return='bool' arguments=''>
 		Returns <code>true</code> if the player is going to the options screen.
 	</Function>
+	<Function name='GetMusicWheel' sm-ssc='true' return='MusicWheel' arguments=''>
+		Returns the MusicWheel used on this screen.
+	</Function>
 	<Function name='setupcoursestagemods' theme='_fallback' return='void' arguments=''>
 		[02 StageMods.lua] Sets up modifiers for course modes.
 	</Function>
@@ -3059,11 +3087,14 @@
 	</Function>
 </Class>
 <Class name='Steps'>
-	<Function name='GetDescription' return='string' arguments=''>
-		Returns the Steps description.
-	</Function>
 	<Function name='GetAuthorCredit' return='string' arguments=''>
 		Returns the author that made that particular Steps pattern.
+	</Function>
+	<Function name='GetChartStyle' sm-ssc='true' return='string' arguments=''>
+		Returns the Chart Style for this Steps.
+	</Function>
+	<Function name='GetDescription' return='string' arguments=''>
+		Returns the Steps description.
 	</Function>
 	<Function name='GetDifficulty' return='Difficulty' arguments=''>
 		Returns the Steps difficulty.
@@ -3342,6 +3373,12 @@
 	</Function>
 </Class>
 <Class name='WheelBase'>
+	<Function name='GetCurrentIndex' sm-ssc='true' return='int' arguments=''>
+		Returns the wheel's current index.
+	</Function>
+	<Function name='GetNumItems' sm-ssc='true' return='int' arguments=''>
+		Returns the total number of items in the wheel.
+	</Function>
 	<Function name='GetWheelItem' return='WheelItemBaseData' arguments='int iIndex'>
 		Returns the WheelItem at index <code>iIndex</code>.
 	</Function>
