@@ -1480,14 +1480,15 @@
 				RelativePath="NotesWriterSM.h"
 				>
 			</File>
-			<File
-				RelativePath="NotesWriterSSC.cpp"
+                        <File
+                                RelativePath="NotesWriterSSC.cpp"
 				>
-			</File>
-			<File
-				RelativePath="NotesWriterSSC.h"
+                        </File>
+                        <File
+                                RelativePath="NotesWriterSSC.h"
 				>
-			</File>
+                        </File>
+
 			<File
 				RelativePath="NoteTypes.cpp"
 				>

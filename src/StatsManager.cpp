@@ -396,11 +396,11 @@ public:
 		return 1;
 	}
 
-	static int GetBestFinalGrade( T* t, lua_State *L )
+	static int GetBestFinalGrade( T* p, lua_State *L )
 	{
 		Grade top_grade = Grade_Failed;
 		StageStats stats;
-		t->GetFinalEvalStageStats( stats );
+		p->GetFinalEvalStageStats( stats );
 		FOREACH_HumanPlayer( p )
 		{
 			// If this player failed any stage, then their final grade is an F.

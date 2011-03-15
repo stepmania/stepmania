@@ -53,12 +53,12 @@ void OptionsCursor::Load( const RString &sMetricsGroup, bool bLoadCanGos )
 	}
 #undef LOAD_SPR
 
-	m_iOriginalLeftX = static_cast<int>(m_sprLeft->GetX());
-	m_iOriginalRightX = static_cast<int>(m_sprRight->GetX());
+	m_iOriginalLeftX = m_sprLeft->GetX();
+	m_iOriginalRightX = m_sprRight->GetX();
 	if( bLoadCanGos )
 	{
-		m_iOriginalCanGoLeftX = static_cast<int>(m_sprCanGoLeft->GetX());
-		m_iOriginalCanGoRightX = static_cast<int>(m_sprCanGoRight->GetX());
+		m_iOriginalCanGoLeftX = m_sprCanGoLeft->GetX();
+		m_iOriginalCanGoRightX = m_sprCanGoRight->GetX();
 	}
 
 	SetCanGo( false, false );

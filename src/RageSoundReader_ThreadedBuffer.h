@@ -53,8 +53,7 @@ private:
 		int iFramesBuffered;
 		int iPositionOfFirstFrame;
 		float fRate;
-		Mapping(): iFramesBuffered(0), iPositionOfFirstFrame(0),
-			fRate(1.0f) {}
+		Mapping() { iFramesBuffered = iPositionOfFirstFrame = 0; fRate = 1.0f; }
 	};
 	list<Mapping> m_StreamPosition;
 

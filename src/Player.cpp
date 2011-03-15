@@ -175,15 +175,8 @@ ThemeMetric<bool> REQUIRE_STEP_ON_MINES	( "Player", "RequireStepOnMines" );
  * For those wishing to make a theme very accurate to In The Groove 2, set this to false. */
 ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
 ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
-/**
- * @brief Do we score missed holds and rolls with HoldNoteScores?
- *
- * If set to true, missed holds and rolls are given LetGo judgments.
- * If set to false, missed holds and rolls are given no judgment on the hold side of things. */
-ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" );
-/** @brief How much of the song/course must have gone by before a Player's combo is colored? */
+ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" ); // sm-ssc addition
 ThemeMetric<float> PERCENT_UNTIL_COLOR_COMBO ( "Player", "PercentUntilColorCombo" );
-/** @brief How much combo must be earned before the announcer says "Combo Stopped"? */
 ThemeMetric<int> COMBO_STOPPED_AT ( "Player", "ComboStoppedAt" );
 ThemeMetric<float> ATTACK_RUN_TIME_RANDOM ( "Player", "AttackRunTimeRandom" );
 ThemeMetric<float> ATTACK_RUN_TIME_MINE ( "Player", "AttackRunTimeMine" );
@@ -2817,16 +2810,16 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 				int iNumHoldsMissedThisRow = 0;
 
 				// start at r-1 so that we consider holds whose end rows are equal to the checkpoint row
-				NoteData::all_tracks_iterator nIter = m_NoteData.GetTapNoteRangeAllTracks( r-1, r, true );
-				for( ; !nIter.IsAtEnd(); ++nIter )
+				NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( r-1, r, true );
+				for( ; !iter.IsAtEnd(); ++iter )
 				{
-					TapNote &tn = *nIter;
+					TapNote &tn = *iter;
 					if( tn.type != TapNote::hold_head )
 						continue;
 
-					int iStartRow = nIter.Row();
+					int iStartRow = iter.Row();
 					int iEndRow = iStartRow + tn.iDuration;
-					int iTrack = nIter.Track();
+					int iTrack = iter.Track();
 
 					// "the first row after the hold head that lands on a beat"
 					int iFirstCheckpointOfHold = ((iStartRow+iCheckpointFrequencyRows)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
@@ -3200,7 +3193,7 @@ void Player::SetCombo( int iCombo, int iMisses )
 	if( GAMESTATE->IsCourseMode() )
 	{
 		int iSongIndexStartColoring = GAMESTATE->m_pCurCourse->GetEstimatedNumStages();
-		iSongIndexStartColoring = static_cast<int>(floor(iSongIndexStartColoring*PERCENT_UNTIL_COLOR_COMBO));
+		iSongIndexStartColoring = floor(iSongIndexStartColoring*PERCENT_UNTIL_COLOR_COMBO);
 		bPastBeginning = GAMESTATE->GetCourseSongIndex() >= iSongIndexStartColoring;
 	}
 	else

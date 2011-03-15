@@ -193,10 +193,10 @@ RString MovieDecoder_Theora::ProcessHeaders()
 		while(1)
 		{
 			ogg_packet op;
-			int ret2 = ogg_stream_packetpeek( &m_OggStream, &op );
-			if( ret2 == 0 )
+			int ret = ogg_stream_packetpeek( &m_OggStream, &op );
+			if( ret == 0 )
 				break;
-			if( ret2 < 0 )
+			if( ret < 0 )
 				return ssprintf( "error opening %s: error parsing Theora stream headers", m_File.GetPath().c_str() );
 
 			if( !theora_packet_isheader(&op) )
@@ -208,8 +208,8 @@ RString MovieDecoder_Theora::ProcessHeaders()
 				return RString();
 			}
 
-			ret2 = theora_decode_header( &m_TheoraInfo, &m_TheoraComment, &op);
-			if( ret2 < 0 && ret2 != OC_NEWPACKET )
+			ret = theora_decode_header( &m_TheoraInfo, &m_TheoraComment, &op);
+			if( ret < 0 && ret != OC_NEWPACKET )
 				return ssprintf( "error opening %s: error parsing Theora stream headers", m_File.GetPath().c_str() );
 
 			ogg_stream_packetout( &m_OggStream, NULL );

@@ -244,8 +244,7 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				// No need to shadow at this point.
-				st = pts.aTypes.front().second;
+				StepsType st = pts.aTypes.front().second;
 				HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCategoryHighScoreList(st, pts.category);
 				HighScore hs;
 				bool bRecentHighScore = false;

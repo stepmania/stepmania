@@ -250,11 +250,9 @@ void BeginnerHelper::DrawPrimitives()
 			m_sStepCircle[scd][scde].Draw();
 	
 	if( DrawCelShaded )
-	{
 		FOREACH_PlayerNumber( pn )	// Draw each dancer
 			if( GAMESTATE->IsHumanPlayer(pn) )
 				m_pDancer[pn]->DrawCelShaded();
-	}
 	else
 	{
 		DISPLAY->SetLighting( true );

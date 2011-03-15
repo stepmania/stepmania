@@ -273,30 +273,30 @@ void ScreenDebugOverlay::Init()
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
 	{
 		{
-			BitmapText *bt = new BitmapText;
-			bt->SetName( "ButtonText" );
-			bt->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "line") );
-			bt->SetHorizAlign( align_right );
-			bt->SetText( "blah" );
+			BitmapText *p = new BitmapText;
+			p->SetName( "ButtonText" );
+			p->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "line") );
+			p->SetHorizAlign( align_right );
+			p->SetText( "blah" );
 			//p->SetShadowLength( 2 );
-			LOAD_ALL_COMMANDS( *bt );
+			LOAD_ALL_COMMANDS( *p );
 			// xxx: I shouldn't have to do this:
-			ON_COMMAND( bt );
-			m_vptextButton.push_back( bt );
-			this->AddChild( bt );
+			ON_COMMAND( p );
+			m_vptextButton.push_back( p );
+			this->AddChild( p );
 		}
 		{
-			BitmapText *bt = new BitmapText;
-			bt->SetName( "FunctionText" );
-			bt->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "line") );
-			bt->SetHorizAlign( align_left );
-			bt->SetText( "blah" );
+			BitmapText *p = new BitmapText;
+			p->SetName( "FunctionText" );
+			p->LoadFromFont( THEME->GetPathF("ScreenDebugOverlay", "line") );
+			p->SetHorizAlign( align_left );
+			p->SetText( "blah" );
 			//p->SetShadowLength( 2 );
-			LOAD_ALL_COMMANDS( *bt );
+			LOAD_ALL_COMMANDS( *p );
 			// xxx: I shouldn't have to do this:
-			ON_COMMAND( bt );
-			m_vptextFunction.push_back( bt );
-			this->AddChild( bt );
+			ON_COMMAND( p );
+			m_vptextFunction.push_back( p );
+			this->AddChild( p );
 		}
 	}
 
@@ -498,7 +498,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			bt.FinishTweening();
 			// blink 5 times instead of 8
 			// TODO: make this all metrics instead -aj
-			for( i=0; i<5; i++ )
+			for( int i=0; i<5; i++ )
 			{
 				bt.SetGlow( RageColor(1,0,0,1) );
 				bt.Sleep(0.1f);

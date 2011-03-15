@@ -27,17 +27,22 @@ class AutoPtrCopyOnWrite
 {
 public:
 	/* This constructor only exists to make us work with STL containers. */
-	inline AutoPtrCopyOnWrite(): m_pPtr(NULL), m_iRefCount(new int(1))
+	inline AutoPtrCopyOnWrite()
 	{
+		m_pPtr = NULL;
+		m_iRefCount = new int(1);
 	}
 
-	explicit inline AutoPtrCopyOnWrite( T *p ): m_pPtr(p), m_iRefCount(new int(1))
+	explicit inline AutoPtrCopyOnWrite( T *p )
 	{
+		m_pPtr = p;
+		m_iRefCount = new int(1);
 	}
 
-	inline AutoPtrCopyOnWrite( const AutoPtrCopyOnWrite &rhs ):
-		m_pPtr(rhs.m_pPtr), m_iRefCount(rhs.m_iRefCount)
+	inline AutoPtrCopyOnWrite( const AutoPtrCopyOnWrite &rhs )
 	{
+		m_pPtr = rhs.m_pPtr;
+		m_iRefCount = rhs.m_iRefCount;
 		++(*m_iRefCount);
 	}
 
@@ -127,11 +132,16 @@ public:
 	T& operator*() { return *m_pPtr; }
 	T* operator->() { return m_pPtr; }
 
-	explicit HiddenPtr( T *p = NULL ): m_pPtr(p) {}
-
-	HiddenPtr( const HiddenPtr<T> &cpy ): m_pPtr(NULL)
+	explicit HiddenPtr( T *p = NULL )
 	{
-		if( cpy.m_pPtr != NULL )
+		m_pPtr = p;
+	}
+
+	HiddenPtr( const HiddenPtr<T> &cpy )
+	{
+		if( cpy.m_pPtr == NULL )
+			m_pPtr = NULL;
+		else
 			m_pPtr = HiddenPtrTraits<T>::Copy( cpy.m_pPtr );
 	}
 

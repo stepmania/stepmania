@@ -149,15 +149,15 @@ public:
 
 		{
 			// Parse the basic configuration metric.
-			Commands lCmds = ParseCommands( ENTRY(sParam) );
-			if( lCmds.v.size() < 1 )
+			Commands cmds = ParseCommands( ENTRY(sParam) );
+			if( cmds.v.size() < 1 )
 				RageException::Throw( "Parse error in \"ScreenOptionsMaster::%s\".", sParam.c_str() );
 
 			m_Def.m_bOneChoiceForAllPlayers = false;
-			const int NumCols = atoi( lCmds.v[0].m_vsArgs[0] );
-			for( unsigned i=1; i<lCmds.v.size(); i++ )
+			const int NumCols = atoi( cmds.v[0].m_vsArgs[0] );
+			for( unsigned i=1; i<cmds.v.size(); i++ )
 			{
-				const Command &cmd = lCmds.v[i];
+				const Command &cmd = cmds.v[i];
 				RString sName = cmd.GetName();
 
 				if(	 sName == "together" )		m_Def.m_bOneChoiceForAllPlayers = true;
@@ -188,8 +188,8 @@ public:
 				}
 				else if( sName == "broadcastonexport" )
 				{
-					for( unsigned j=1; j<cmd.m_vsArgs.size(); j++ )
-						m_vsBroadcastOnExport.push_back( cmd.m_vsArgs[j] );
+					for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
+						m_vsBroadcastOnExport.push_back( cmd.m_vsArgs[i] );
 				}
 				else
 				{

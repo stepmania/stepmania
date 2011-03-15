@@ -106,10 +106,10 @@ void ScreenJukebox::SetSong()
 			SONGMAN->GetAllCourses( apCourses, false );
 			vector<const CourseEntry *> apOptions;
 			vector<Course*> apPossibleCourses;
-			for( unsigned j = 0; j < apCourses.size(); ++j )
+			for( unsigned i = 0; i < apCourses.size(); ++i )
 			{
-				Course *lCourse = apCourses[j];
-				const CourseEntry *pEntry = lCourse->FindFixedSong( pSong );
+				Course *pCourse = apCourses[i];
+				const CourseEntry *pEntry = pCourse->FindFixedSong( pSong );
 				if( pEntry == NULL || pEntry->attacks.size() == 0 )
 					continue;
 
@@ -144,14 +144,14 @@ void ScreenJukebox::SetSong()
 			{
 				int iIndex = RandomInt( apOptions.size() );
 				m_pCourseEntry = apOptions[iIndex];
-				Course *lCourse = apPossibleCourses[iIndex]; 
+				Course *pCourse = apPossibleCourses[iIndex]; 
 
-				PlayMode pm = CourseTypeToPlayMode( lCourse->GetCourseType() );
+				PlayMode pm = CourseTypeToPlayMode( pCourse->GetCourseType() );
 				GAMESTATE->m_PlayMode.Set( pm );
-				GAMESTATE->m_pCurCourse.Set( lCourse );
+				GAMESTATE->m_pCurCourse.Set( pCourse );
 				FOREACH_PlayerNumber( p )
 				{
-					GAMESTATE->m_pCurTrail[p].Set( lCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType ) );
+					GAMESTATE->m_pCurTrail[p].Set( pCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType ) );
 					ASSERT( GAMESTATE->m_pCurTrail[p] );
 				}
 			}

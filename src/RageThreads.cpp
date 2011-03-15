@@ -65,8 +65,7 @@ struct ThreadSlot
 	int m_iCurCheckpoint, m_iNumCheckpoints;
 	const char *GetFormattedCheckpoint( int lineno );
 
-	ThreadSlot(): m_bUsed(false), m_iID(GetInvalidThreadId()),
-		m_pImpl(NULL), m_iCurCheckpoint(0), m_iNumCheckpoints(0) {}
+	ThreadSlot() { Init(); }
 	void Init()
 	{
 		m_iID = GetInvalidThreadId();
@@ -207,11 +206,18 @@ static ThreadSlot *GetUnknownThreadSlot()
 	return g_pUnknownThreadSlot;
 }
 
-RageThread::RageThread(): m_pSlot(NULL), m_sName("unnamed") {}
+RageThread::RageThread()
+{
+	m_pSlot = NULL;
+	m_sName = "unnamed";
+}
 
-/* Copying a thread does not start the copy. */
-RageThread::RageThread( const RageThread &cpy ): 
-	m_pSlot(NULL), m_sName(cpy.m_sName) {}
+RageThread::RageThread( const RageThread &cpy )
+{
+	/* Copying a thread does not start the copy. */
+	m_pSlot = NULL;
+	m_sName = cpy.m_sName;
+}
 
 RageThread::~RageThread()
 {
@@ -514,9 +520,12 @@ static set<int> *g_FreeMutexIDs = NULL;
 #endif
 
 RageMutex::RageMutex( const RString &name ):
-	m_sName( name ), m_pMutex( MakeMutex (this ) ), 
-	m_LockedBy(GetInvalidThreadId()), m_LockCnt(0)
+	m_sName( name )
 {
+	m_pMutex = MakeMutex( this );
+	m_LockedBy = GetInvalidThreadId();
+	m_LockCnt = 0;
+
 
 /*	if( g_FreeMutexIDs == NULL )
 	{
@@ -650,8 +659,7 @@ LockMutex::LockMutex( RageMutex &pMutex, const char *file_, int line_ ):
 	mutex( pMutex ),
 	file( file_ ),
 	line( line_ ),
-	locked_at( RageTimer::GetTimeSinceStart() ),
-	locked(false) // ensure it gets locked inside.
+	locked_at( RageTimer::GetTimeSinceStart() )
 {
 	mutex.Lock();
 	locked = true;
@@ -679,7 +687,10 @@ void LockMutex::Unlock()
 }
 
 RageEvent::RageEvent( RString name ):
-	RageMutex( name ), m_pEvent(MakeEvent(m_pMutex)) {}
+	RageMutex( name )
+{
+	m_pEvent = MakeEvent( m_pMutex );
+}
 
 RageEvent::~RageEvent()
 {
@@ -721,7 +732,10 @@ bool RageEvent::WaitTimeoutSupported() const
 }
 
 RageSemaphore::RageSemaphore( RString sName, int iInitialValue ):
-	m_sName( sName ), m_pSema(MakeSemaphore( iInitialValue )) {}
+	m_sName( sName )
+{
+	m_pSema = MakeSemaphore( iInitialValue );
+}
 
 RageSemaphore::~RageSemaphore()
 {

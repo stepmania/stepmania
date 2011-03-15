@@ -53,9 +53,6 @@ private:
 	/* Prefs: */
 	float m_fMixVolume;
 	float m_fVolumeOfNonCriticalSounds;
-	// Swallow up warnings. If they must be used, define them.
-	RageSoundManager& operator=(const RageSoundManager& rhs);
-	RageSoundManager(const RageSoundManager& rhs);
 };
 
 extern RageSoundManager *SOUNDMAN;

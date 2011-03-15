@@ -78,14 +78,19 @@ enum
 	WRITE_LOUD = 0x04
 };
 
-RageLog::RageLog(): m_bLogToDisk(false), m_bInfoToDisk(false),
-m_bUserLogToDisk(false), m_bFlush(false), m_bShowLogOutput(false)
+RageLog::RageLog()
 {
 	g_fileLog = new RageFile;
 	g_fileInfo = new RageFile;
 	g_fileUserLog = new RageFile;
 	
 	g_Mutex = new RageMutex( "Log" );
+
+	m_bLogToDisk = false;
+	m_bInfoToDisk = false;
+	m_bUserLogToDisk = false;
+	m_bFlush = false;
+	m_bShowLogOutput = false;
 }
 
 RageLog::~RageLog()

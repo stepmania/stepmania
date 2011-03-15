@@ -1376,9 +1376,9 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 				// Don't play start sound. We play it again below on finalized
 				//m_soundStart.Play();
 
-				Message lMsg("StepsChosen");
-				lMsg.SetParam( "Player", p );
-				MESSAGEMAN->Broadcast( lMsg );
+				Message msg("StepsChosen");
+				msg.SetParam( "Player", p );
+				MESSAGEMAN->Broadcast( msg );
 			}
 		}
 
@@ -1781,19 +1781,19 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	case TYPE_COURSE:
 	{
-		const Course *lCourse = m_MusicWheel.GetSelectedCourse();
+		const Course *pCourse = m_MusicWheel.GetSelectedCourse();
 		const Style *pStyle = NULL;
 		if( CommonMetrics::AUTO_SET_STYLE )
 			pStyle = pCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
 		if( pStyle == NULL )
 			pStyle = GAMESTATE->GetCurrentStyle();
-		lCourse->GetTrails( m_vpTrails, pStyle->m_StepsType );
+		pCourse->GetTrails( m_vpTrails, pStyle->m_StepsType );
 
 		m_sSampleMusicToPlay = m_sCourseMusicPath;
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
 
-		g_sBannerPath = lCourse->GetBannerPath();
+		g_sBannerPath = pCourse->GetBannerPath();
 		if( g_sBannerPath.empty() )
 			m_Banner.LoadFallback();
 

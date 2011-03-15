@@ -7,42 +7,13 @@ class Steps;
 class Trail;
 struct lua_State;
 
-#define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYLEN(arr); ++Z ) arr[Z]=1.0f; }
-
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 /** @brief Per-player options that are not saved between sessions. */
 class PlayerOptions
 {
 public:
-	/**
-	 * @brief Set up the PlayerOptions with some reasonable defaults.
-	 *
-	 * This code was taken from Init() to use proper initialization. */
-	PlayerOptions(): m_bSetScrollSpeed(false),
-		m_fTimeSpacing(0), m_SpeedfTimeSpacing(1.0f),
-		m_fScrollSpeed(1.0f), m_SpeedfScrollSpeed(1.0f),
-		m_fScrollBPM(200), m_SpeedfScrollBPM(1.0f),
-		m_fDark(0), m_SpeedfDark(1.0f),
-		m_fBlind(0), m_SpeedfBlind(1.0f),
-		m_fCover(0), m_SpeedfCover(1.0f),
-		m_fRandAttack(0), m_SpeedfRandAttack(1.0f),
-		m_fSongAttack(0), m_SpeedfSongAttack(1.0f),
-		m_fPlayerAutoPlay(0), m_SpeedfPlayerAutoPlay(1.0f),
-		m_bSetTiltOrSkew(false),
-		m_fPerspectiveTilt(0), m_SpeedfPerspectiveTilt(1.0f),
-		m_fSkew(0), m_SpeedfSkew(1.0f),
-		m_fPassmark(0), m_SpeedfPassmark(1.0f),
-		m_fRandomSpeed(0), m_SpeedfRandomSpeed(1.0f),
-		m_bMuteOnError(false), m_FailType(FAIL_IMMEDIATE),
-		m_ScoreDisplay(SCORING_ADD), m_sNoteSkin("")
-	{
-		ZERO( m_fAccels );	ONE( m_SpeedfAccels );
-		ZERO( m_fEffects );	ONE( m_SpeedfEffects );
-		ZERO( m_fAppearances );	ONE( m_SpeedfAppearances );
-		ZERO( m_fScrolls );	ONE( m_SpeedfScrolls );
-		ZERO( m_bTurns );	ZERO( m_bTransforms );
-	};
+	PlayerOptions() { Init(); };
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
 	RString GetString( bool bForceNoteSkin = false ) const;

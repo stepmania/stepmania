@@ -6,11 +6,8 @@
 #include "RageFileBasic.h"
 struct lua_State;
 
-/**
- * @brief High-level file access.
- *
- * This is the high-level interface, which interfaces with RageFileObj 
- * implementations and RageFileManager. */
+/* This is the high-level interface, which interfaces with RageFileObj implementations
+ * and RageFileManager. */
 class RageFile: public RageFileBasic
 {
 public:
@@ -84,9 +81,6 @@ private:
 	RString	m_Path;
 	RString	m_sError;
 	int		m_Mode;
-	
-	// Swallow up warnings. If they must be used, define them.
-	RageFile& operator=(const RageFile& rhs);
 };
 
 /** @brief Convenience wrappers for reading binary files. */

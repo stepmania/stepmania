@@ -5,9 +5,10 @@
 #include "RageTextureID.h"
 #include "ActorUtil.h"
 
-Character::Character(): m_sCharDir(""), m_sCharacterID(""),
-	m_sDisplayName(""), m_sCardPath(""), m_sIconPath(""),
-	m_bUsableInRave(false), m_iPreloadRefcount(0) {}
+Character::Character()
+{
+	m_iPreloadRefcount = 0;
+}
 
 bool Character::Load( RString sCharDir )
 {

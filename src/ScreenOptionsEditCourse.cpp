@@ -261,7 +261,7 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 	{
 	case EditCourseRow_Minutes:
 		row.SetOneSharedSelection( 0 );
-		row.SetOneSharedSelectionIfPresent( MakeMinutesString(static_cast<int>(GAMESTATE->m_pCurCourse->m_fGoalSeconds)/60) );
+		row.SetOneSharedSelectionIfPresent( MakeMinutesString(GAMESTATE->m_pCurCourse->m_fGoalSeconds/60) );
 		break;
 	default:
 		{
@@ -383,14 +383,14 @@ void ScreenOptionsEditCourse::SetCurrentSong()
 	}
 	else
 	{
-		iRow = m_iCurrentRow[PLAYER_1];
+		int iRow = m_iCurrentRow[PLAYER_1];
 		int iEntryIndex = RowToEntryIndex( iRow );
 		Song *pSong = NULL;
 		if( iEntryIndex != -1 )
 		{
 			int iCurrentSongRow = EntryIndexAndRowTypeToRow(iEntryIndex,RowType_Song);
-			OptionRow &oRow = *m_pRows[ iCurrentSongRow ];
-			int index = oRow.GetOneSelection(PLAYER_1);
+			OptionRow &row = *m_pRows[ iCurrentSongRow ];
+			int index = row.GetOneSelection(PLAYER_1);
 			if( index != 0 )
 				pSong = m_vpSongs[ index - 1 ];
 		}

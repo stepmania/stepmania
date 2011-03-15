@@ -750,9 +750,9 @@ static bool LoadFromMidi( const RString &sPath, Song &songOut )
 						if( uVelocity == 0 )
 							midiEventType = note_off;
 
-						MidiEvent mEvent = { count, midiEventType };
+						MidiEvent event = { count, midiEventType };
 						//float fBeat = NoteRowToBeat( MidiCountToNoteRow(count) );
-						vMidiEvent[uNoteNumber].push_back( mEvent );
+						vMidiEvent[uNoteNumber].push_back( event );
 					}
 					break;
 				default:
@@ -850,13 +850,13 @@ skip_track:
 						// hold note ending on the same row as a tap note.
 						NoteData::TrackMap::iterator begin, end;
 						noteData.GetTapNoteRangeInclusive( nnt, MidiCountToNoteRow(count), MidiCountToNoteRow(count), begin, end, true );
-						for( NoteData::TrackMap::iterator lIter = begin; lIter != end; lIter++ )
+						for( NoteData::TrackMap::iterator iter = begin; iter != end; iter++ )
 						{
 //							if( gd == expert  &&  fBeat >= 27*4-2  &&  nnt == green )
 //								LOG->Trace( "shortening hold at %f, length %d", fBeat, length );
 
-							ASSERT( lIter->second.type == TapNote::hold_head );
-							lIter->second.iDuration = MidiCountToNoteRow(count) - lIter->first - 2;
+							ASSERT( iter->second.type == TapNote::hold_head );
+							iter->second.iDuration = MidiCountToNoteRow(count) - iter->first - 2;
 						}
 
 						noteData.SetTapNote( nnt, MidiCountToNoteRow(count), tn );

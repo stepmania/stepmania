@@ -445,7 +445,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 				{
 					// find the middle, and split based on iColNum
 					// it's unknown if this will work for routine.
-					const int iMiddleColumn = static_cast<int>(floor(pStyle->m_iColsPerPlayer/2.0f));
+					const int iMiddleColumn = floor(pStyle->m_iColsPerPlayer/2.0f);
 					if( iColNum > iMiddleColumn-1 )
 						fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_XMODE]*-(fYOffset);
 					else

@@ -15,9 +15,6 @@
 #include "RageUtil.h"
 #include "Song.h"
 #include "Steps.h"
-#include "ThemeMetric.h"
-
-ThemeMetric<bool> USE_CREDIT	( "NotesWriterSM", "DescriptionUsesCreditField" );
 
 /**
  * @brief Turn the BackgroundChange into a string.
@@ -271,8 +268,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 		GAMEMAN->GetStepsTypeInfo(in.m_StepsType).szName, SmEscape(in.GetDescription()).c_str()) );
 	lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
 	lines.push_back( ssprintf( "     %s:", GAMEMAN->GetStepsTypeInfo(in.m_StepsType).szName ) );
-	RString desc = (USE_CREDIT ? in.GetCredit() : in.GetDescription());
-	lines.push_back( ssprintf( "     %s:", SmEscape(desc).c_str() ) );
+	lines.push_back( ssprintf( "     %s:", SmEscape(in.GetDescription()).c_str() ) );
 	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
 	

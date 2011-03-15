@@ -59,15 +59,8 @@ struct RageTextureID
 
 	void Init();
 
-	RageTextureID(): filename(RString()), iMaxSize(0), bMipMaps(false),
-		iAlphaBits(0), iGrayscaleBits(0), iColorDepth(0),
-		bDither(false), bStretch(false), bHotPinkColorKey(false),
-		AdditionalTextureHints(RString()), Policy(TEX_DEFAULT)  { Init(); }
-	RageTextureID( const RString &fn ): filename(RString()), iMaxSize(0),
-		bMipMaps(false), iAlphaBits(0), iGrayscaleBits(0),
-		iColorDepth(0), bDither(false), bStretch(false),
-		bHotPinkColorKey(false), AdditionalTextureHints(RString()),
-		Policy(TEX_DEFAULT) { Init(); SetFilename(fn); }
+	RageTextureID() { Init(); }
+	RageTextureID( const RString &fn ) { Init(); SetFilename(fn); }
 	void SetFilename( const RString &fn );
 };
 

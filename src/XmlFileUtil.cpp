@@ -669,21 +669,21 @@ namespace
 						continue;
 				}
 
-				RString nName;
-				LuaHelpers::Pop( L, nName );
-				NodeNamesToAdd.push_back( nName );
+				RString sName;
+				LuaHelpers::Pop( L, sName );
+				NodeNamesToAdd.push_back( sName );
 				NodesToAdd.push_back( LuaReference() );
 				NodesToAdd.back().SetFromStack( L );
 				continue;
 			}
 
-			RString nName;
-			LuaHelpers::Pop( L, nName );
+			RString sName;
+			LuaHelpers::Pop( L, sName );
 
 			// Otherwise, add an attribute.
 			XNodeLuaValue *pValue = new XNodeLuaValue;
 			pValue->SetValueFromStack( L );
-			pNode->AppendAttrFrom( nName, pValue );
+			pNode->AppendAttrFrom( sName, pValue );
 		}
 		lua_pop( L, 1 );
 

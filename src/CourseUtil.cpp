@@ -464,7 +464,7 @@ void EditCourseUtil::PrepareForPlay()
 
 	PROFILEMAN->GetProfile(ProfileSlot_Player1)->m_GoalType = GoalType_Time;
 	Course *pCourse = GAMESTATE->m_pCurCourse;
-	PROFILEMAN->GetProfile(ProfileSlot_Player1)->m_iGoalSeconds = static_cast<int>(pCourse->m_fGoalSeconds);
+	PROFILEMAN->GetProfile(ProfileSlot_Player1)->m_iGoalSeconds = pCourse->m_fGoalSeconds;
 }
 
 void EditCourseUtil::GetAllEditCourses( vector<Course*> &vpCoursesOut )

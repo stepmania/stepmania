@@ -48,12 +48,15 @@ public:
 	} /** @brief The Song's locked status. */ m_Locked;
 
 	/** @brief Set up the initial criteria. */
-	StepsCriteria(): m_difficulty(Difficulty_Invalid),
-		m_iLowMeter(-1), m_iHighMeter(-1),
-		m_st(StepsType_Invalid), m_Locked(Locked_DontCare)
+	StepsCriteria()
 	{
+		m_difficulty = Difficulty_Invalid;
+		m_iLowMeter = -1;
+		m_iHighMeter = -1;
 		//m_fLowBPM = -1;
 		//m_fHighBPM = -1;
+		m_st = StepsType_Invalid;
+		m_Locked = Locked_DontCare;
 	}
 
 	/**

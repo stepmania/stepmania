@@ -46,19 +46,8 @@ public:
 	};
 	SoundEffectType m_SoundEffectType;
 
-	/**
-	 * @brief Set up the SongOptions with reasonable defaults.
-	 *
-	 * This is taken from Init(), but uses the intended
-	 * initialization lists. */
-	SongOptions(): m_LifeType(LIFE_BAR), m_DrainType(DRAIN_NORMAL),
-		m_iBatteryLives(4), m_bAssistClap(false),
-		m_bAssistMetronome(false), m_fMusicRate(1.0f),
-		m_SpeedfMusicRate(1.0f), m_fHaste(0.0f),
-		m_SpeedfHaste(1.0f), m_AutosyncType(AUTOSYNC_OFF),
-		m_SoundEffectType(SOUNDEFFECT_OFF),
-		m_bStaticBackground(false), m_bRandomBGOnly(false),
-		m_bSaveScore(true), m_bSaveReplay(false) {};
+
+	SongOptions() { Init(); };
 	void Init();
 	void Approach( const SongOptions& other, float fDeltaSeconds );
 	void GetMods( vector<RString> &AddTo ) const;

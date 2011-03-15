@@ -77,9 +77,9 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 			else
 			{
 				// import as a single layer
-				BGAnimationLayer* bgLayer = new BGAnimationLayer;
-				bgLayer->LoadFromNode( pKey );
-				this->AddChild( bgLayer );
+				BGAnimationLayer* pLayer = new BGAnimationLayer;
+				pLayer->LoadFromNode( pKey );
+				this->AddChild( pLayer );
 			}
 		}
 	}

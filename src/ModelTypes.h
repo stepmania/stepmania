@@ -66,9 +66,12 @@ private:
 			RageTexture* pTexture_,
 			float		fDelaySecs_,
 			RageVector2	vTranslate_
-				     ):
-			pTexture(pTexture_), fDelaySecs(fDelaySecs_),
-			vTranslate(vTranslate_) {}
+			)
+		{
+			pTexture = pTexture_;
+			fDelaySecs = fDelaySecs_;
+			vTranslate = vTranslate_;
+		}
 
 		RageTexture* pTexture;
 		float		fDelaySecs;

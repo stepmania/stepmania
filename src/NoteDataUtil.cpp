@@ -250,8 +250,8 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 	for( int t=0; t<out.GetNumTracks(); t++ )
 	{
 		NoteData::iterator begin = out.begin( t );
-		NoteData::iterator lEnd = out.end( t );
-		while( begin != lEnd )
+		NoteData::iterator end = out.end( t );
+		while( begin != end )
 		{
 			NoteData::iterator next = Increment( begin );
 			const TapNote &tn = begin->second;
@@ -629,9 +629,12 @@ int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
 	int iMaxTailRow = -1;
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
-		const TapNote &tn = in.GetTapNote( t, iRow );
-		if( tn.type == TapNote::hold_head )
-			iMaxTailRow = max( iMaxTailRow, iRow + tn.iDuration );
+		for( int t=0; t<in.GetNumTracks(); t++ )
+		{
+			const TapNote &tn = in.GetTapNote( t, iRow );
+			if( tn.type == TapNote::hold_head )
+				iMaxTailRow = max( iMaxTailRow, iRow + tn.iDuration );
+		}
 	}
 
 	return iMaxTailRow;

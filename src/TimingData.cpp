@@ -569,11 +569,11 @@ float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 	int iRow = BeatToNoteRow(fBeat);
 	for( unsigned j=0; j<m_StopSegments.size(); j++ )	// foreach freeze
 	{
-		/* A traditional stop has the beat happening before the stop. (>=)
-		 * A Pump delay acts differently: the pause is before the beat. (>)
+		/* A traditional stop has the beat happening before the stop (>=)
+		 * A Pump delay acts differently. [aj: how?] (>)
 		 */
-		if( ( m_StopSegments[j].m_iStartRow >= iRow && !m_StopSegments[j].m_bDelay ) ||
-			( m_StopSegments[j].m_iStartRow > iRow && m_StopSegments[j].m_bDelay ) )
+		if( m_StopSegments[j].m_iStartRow >= iRow && !m_StopSegments[j].m_bDelay ||
+			m_StopSegments[j].m_iStartRow > iRow && m_StopSegments[j].m_bDelay )
 			break;
 		fElapsedTime += m_StopSegments[j].m_fStopSeconds;
 	}

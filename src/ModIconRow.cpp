@@ -155,15 +155,15 @@ void ModIconRow::SetFromGameState()
 			continue;	// skip
 
 		// search for a vacant spot
-		for( int j=iPerferredCol; j<NUM_OPTION_ICONS; j++ )
+		for( int i=iPerferredCol; i<NUM_OPTION_ICONS; i++ )
 		{
-			if( vsText[j] != "" )
+			if( vsText[i] != "" )
 			{
 				continue;
 			}
 			else
 			{
-				vsText[j] = sOption;
+				vsText[i] = sOption;
 				break;
 			}
 		}

@@ -408,9 +408,9 @@ static bool LoadFromPMSFile( const RString &sPath, const NameToData_t &mapNameTo
 			if( sNoteId != "00" )
 			{
 				vTapNotes.push_back( TAP_ORIGINAL_TAP );
-				map<RString,int>::const_iterator rInt = idToKeySoundIndex.find( sNoteId );
-				if( rInt != idToKeySoundIndex.end() )
-					vTapNotes.back().iKeysoundIndex = rInt->second;
+				map<RString,int>::const_iterator it = idToKeySoundIndex.find( sNoteId );
+				if( it != idToKeySoundIndex.end() )
+					vTapNotes.back().iKeysoundIndex = it->second;
 			}
 			else
 			{
@@ -609,31 +609,31 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 			continue;
 
 		// this is keysound file name.  Looks like "#WAV1A"
-		RString nData = it->second;
+		RString sData = it->second;
 		RString sWavID = sName.Right(2);
 
 		/* Due to bugs in some programs, many PMS files have a "WAV" extension
 		 * on files in the PMS for files that actually have some other extension.
 		 * Do a search.  Don't do a wildcard search; if sData is "song.wav",
 		 * we might also have "song.png", which we shouldn't match. */
-		if( !IsAFile(out.GetSongDir()+nData) )
+		if( !IsAFile(out.GetSongDir()+sData) )
 		{
 			const char *exts[] = { "oga", "ogg", "wav", "mp3", NULL }; // XXX: stop duplicating these everywhere
 			for( unsigned i = 0; exts[i] != NULL; ++i )
 			{
-				RString fn = SetExtension( nData, exts[i] );
+				RString fn = SetExtension( sData, exts[i] );
 				if( IsAFile(out.GetSongDir()+fn) )
 				{
-					nData = fn;
+					sData = fn;
 					break;
 				}
 			}
 		}
-		if( !IsAFile(out.GetSongDir()+nData) )
-			LOG->UserLog( "Song file", out.GetSongDir(), "references key \"%s\" that can't be found", nData.c_str() );
+		if( !IsAFile(out.GetSongDir()+sData) )
+			LOG->UserLog( "Song file", out.GetSongDir(), "references key \"%s\" that can't be found", sData.c_str() );
 
 		sWavID.MakeUpper();		// HACK: undo the MakeLower()
-		out.m_vsKeysoundFile.push_back( nData );
+		out.m_vsKeysoundFile.push_back( sData );
 		idToKeySoundIndexOut[ sWavID ] = out.m_vsKeysoundFile.size()-1;
 		LOG->Trace( "Inserting keysound index %u '%s'", unsigned(out.m_vsKeysoundFile.size()-1), sWavID.c_str() );
 	}
@@ -654,11 +654,11 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo, sigAdjustmentsOut );
 		int iRowsPerMeasure = BeatToNoteRow( fBeatsPerMeasure );
 
-		RString nData = it->second;
-		int totalPairs = nData.size() / 2;
+		RString sData = it->second;
+		int totalPairs = sData.size() / 2;
 		for( int i = 0; i < totalPairs; ++i )
 		{
-			RString sPair = nData.substr( i*2, 2 );
+			RString sPair = sData.substr( i*2, 2 );
 
 			int iVal = 0;
 			if( sscanf( sPair, "%x", &iVal ) == 0 || iVal == 0 )
@@ -738,7 +738,7 @@ static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Measur
 			{
 				// XXX: offset
 				int iBPMNo;
-				sscanf( nData, "%x", &iBPMNo );	// data is in hexadecimal
+				sscanf( sData, "%x", &iBPMNo );	// data is in hexadecimal
 
 				RString sBPM;
 				RString sTagToLookFor = ssprintf( "#bpm%02x", iBPMNo );

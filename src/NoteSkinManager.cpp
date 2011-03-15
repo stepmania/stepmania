@@ -282,22 +282,22 @@ try_again:
 	const NoteSkinData &data = iter->second;
 
 	RString sPath;	// fill this in below
-	FOREACH_CONST( RString, data.vsDirSearchOrder, lIter )
+	FOREACH_CONST( RString, data.vsDirSearchOrder, iter )
 	{
 		if( sButtonName.empty() )
-			sPath = GetPathFromDirAndFile( *lIter, sElement );
+			sPath = GetPathFromDirAndFile( *iter, sElement );
 		else
-			sPath = GetPathFromDirAndFile( *lIter, sButtonName+" "+sElement );
+			sPath = GetPathFromDirAndFile( *iter, sButtonName+" "+sElement );
 		if( !sPath.empty() )
 			break;	// done searching
 	}
 
 	if( sPath.empty() )
 	{
-		FOREACH_CONST( RString, data.vsDirSearchOrder, lIter )
+		FOREACH_CONST( RString, data.vsDirSearchOrder, iter )
 		{
 			if( !sButtonName.empty() )
-				sPath = GetPathFromDirAndFile( *lIter, "Fallback "+sElement );
+				sPath = GetPathFromDirAndFile( *iter, "Fallback "+sElement );
 			if( !sPath.empty() )
 				break;	// done searching
 		}
@@ -340,9 +340,9 @@ try_again:
 		GetFileContents( sPath, sNewFileName, true );
 		RString sRealPath;
 
-		FOREACH_CONST( RString, data.vsDirSearchOrder, lIter )
+		FOREACH_CONST( RString, data.vsDirSearchOrder, iter )
 		{
-			 sRealPath = GetPathFromDirAndFile( *lIter, sNewFileName );
+			 sRealPath = GetPathFromDirAndFile( *iter, sNewFileName );
 			 if( !sRealPath.empty() )
 				 break;	// done searching
 		}

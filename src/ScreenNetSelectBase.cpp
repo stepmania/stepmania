@@ -236,15 +236,15 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			RString FirstThree = m_sText.substr( i, 3 );
 			if( FirstThree.CompareNoCase("|c0") == 0 && iCharsLeft > 8 )
 			{
-				ColorChange cChange;
+				ColorChange change;
 				unsigned int r, g, b;
 				sscanf( m_sText.substr( i, 9 ).c_str(), "|%*c0%2x%2x%2x", &r, &g, &b );
-				cChange.c = RageColor( r/255.f, g/255.f, b/255.f, 1.f );
-				cChange.l = iGlyphsSoFar;
+				change.c = RageColor( r/255.f, g/255.f, b/255.f, 1.f );
+				change.l = iGlyphsSoFar;
 				if( iGlyphsSoFar == 0 )
-					m_vColors[0] = cChange;
+					m_vColors[0] = change;
 				else
-					m_vColors.push_back( cChange );
+					m_vColors.push_back( change );
 				i+=8;
 				continue;
 			}

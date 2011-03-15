@@ -519,8 +519,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		if( e->iChooseIndex < int(vSongAndSteps.size()) )
 		{
 			resolved.pSong = vpSongs[e->iChooseIndex];
-			const vector<Steps*> &mappedSongs = mapSongToSteps[resolved.pSong];
-			resolved.pSteps = mappedSongs[ RandomInt(mappedSongs.size()) ];
+			const vector<Steps*> &vpSongs = mapSongToSteps[resolved.pSong];
+			resolved.pSteps = vpSongs[ RandomInt(vpSongs.size()) ];
 		}
 		else
 		{
@@ -930,8 +930,8 @@ const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
 		const CourseEntry &entry = *e;
-		Song *lSong = entry.songID.ToSong();
-		if( pSong == lSong )
+		Song *pSong = entry.songID.ToSong();
+		if( pSong == pSong )
 			return &entry;
 	}
 

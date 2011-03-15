@@ -12,12 +12,20 @@ const int NUM_USER_GAME_TO_DEVICE_SLOTS = 2;
 
 struct AutoMappingEntry
 {
-	AutoMappingEntry( int i, DeviceButton db, GameButton gb, bool b ):
-		m_iSlotIndex(i), m_deviceButton(db),
-		m_gb(gb), m_bSecondController(b) {}
-	AutoMappingEntry(): m_iSlotIndex(-1), 
-		m_deviceButton(DeviceButton_Invalid), m_gb(GameButton_Invalid),
-		m_bSecondController(false) {}
+	AutoMappingEntry( int i, DeviceButton db, GameButton gb, bool b )
+	{
+		m_iSlotIndex = i;
+		m_deviceButton = db;
+		m_gb = gb;
+		m_bSecondController = b;
+	}
+	AutoMappingEntry()
+	{
+		m_iSlotIndex = -1;
+		m_deviceButton = DeviceButton_Invalid;
+		m_gb = GameButton_Invalid;
+		m_bSecondController = false;
+	}
 	bool IsEmpty() const { return m_deviceButton == DeviceButton_Invalid  &&  m_gb == GameButton_Invalid; }
 
 	int m_iSlotIndex;

@@ -488,7 +488,7 @@ void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 				p += m_CustomComboBonusValue;
 		}
 
-		p += static_cast<int>(m_pPlayerStageStats->m_iCurCombo * m_CustomComboMultiplier);
+		p += m_pPlayerStageStats->m_iCurCombo * m_CustomComboMultiplier;
 
 		if( m_iNumNotesHitThisRow == 2 )
 			p = (int)(p * m_DoubleNoteMultiplier);

@@ -245,14 +245,14 @@ int RageFileObjDeflate::WriteInternal( const void *pBuffer, size_t iBytes )
 			
 		if( m_pDeflate->avail_out < sizeof(buf) )
 		{
-			int lBytes = sizeof(buf)-m_pDeflate->avail_out;
-			int iRet = m_pFile->Write( buf, lBytes );
+			int iBytes = sizeof(buf)-m_pDeflate->avail_out;
+			int iRet = m_pFile->Write( buf, iBytes );
 			if( iRet == -1 )
 			{
 				SetError( m_pFile->GetError() );
 				return -1;
 			}
-			if( iRet < lBytes )
+			if( iRet < iBytes )
 			{
 				SetError( "Partial write" );
 				return -1;

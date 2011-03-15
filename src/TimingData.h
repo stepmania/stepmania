@@ -174,7 +174,7 @@ struct StopSegment
 	{
 		return ( m_iStartRow < other.m_iStartRow ) ||
 		( m_iStartRow == other.m_iStartRow && 
-		 ( ( m_bDelay && !other.m_bDelay ) || m_fStopSeconds < other.m_fStopSeconds ));
+		 ( m_bDelay && !other.m_bDelay || m_fStopSeconds < other.m_fStopSeconds ));
 	}
 	/**
 	 * @brief Compares two StopSegments to see if one is less than or equal to the other.

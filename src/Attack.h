@@ -32,10 +32,7 @@ struct Attack
 		bGlobal = false;
 		bShowInAttackList = true;
 	}
-	Attack(): level(ATTACK_LEVEL_1), fStartSecond(-1),
-		fSecsRemaining(0), sModifiers(RString()),
-		bOn(false), bGlobal(false), bShowInAttackList(true)
-		{} // MakeBlank() is effectively called here.
+	Attack() { MakeBlank(); }
 	Attack(
 		AttackLevel	level_,
 		float fStartSecond_,
@@ -43,11 +40,16 @@ struct Attack
 		RString sModifiers_,
 		bool bOn_,
 		bool bGlobal_,
-		bool bShowInAttackList_ = true ):
-		level(level_), fStartSecond(fStartSecond_),
-		fSecsRemaining(fSecsRemaining_), sModifiers(sModifiers_),
-		bOn(bOn_), bGlobal(bGlobal_), 
-		bShowInAttackList(bShowInAttackList_) {}
+		bool bShowInAttackList_ = true )
+	{
+		level = level_;
+		fStartSecond = fStartSecond_;
+		fSecsRemaining = fSecsRemaining_;
+		sModifiers = sModifiers_;
+		bOn = bOn_;
+		bGlobal = bGlobal_;
+		bShowInAttackList = bShowInAttackList_;
+	}
 
 	void GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBeat ) const;
 	void GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const;

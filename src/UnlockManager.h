@@ -52,16 +52,16 @@ enum UnlockEntryStatus {
 class UnlockEntry
 {
 public:
-	/**
-	 * @brief Set up the UnlockEntry with default values.
-	 *
-	 * m_sEntryID starts as an empty string. It will be filled automatically
-	 * if not specified. */
-	UnlockEntry(): m_Type(UnlockRewardType_Invalid),
-		m_dc(Difficulty_Invalid), m_bRequirePassHardSteps(false),
-		m_bRoulette(false), m_sEntryID(RString(""))
+	UnlockEntry()
 	{
+		m_Type = UnlockRewardType_Invalid;
+
+		m_dc = Difficulty_Invalid;
+
 		ZERO( m_fRequirement );
+		m_bRequirePassHardSteps = false;
+		m_bRoulette = false;
+		m_sEntryID = "";	// "" means not yet filled.  This will be filled in automatically if not specified.
 	}
 
 	UnlockRewardType m_Type;

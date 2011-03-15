@@ -38,6 +38,7 @@ class InputList: public BitmapText
 		// Update input texts
 		vector<RString> asInputs;
 
+		DeviceInput di;
 		vector<DeviceInput> DeviceInputs;
 		INPUTFILTER->GetPressedButtons( DeviceInputs );
 		FOREACH( DeviceInput, DeviceInputs, di )

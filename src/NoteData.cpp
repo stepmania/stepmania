@@ -847,9 +847,9 @@ void NoteData::GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow,
 		--prev;
 		if( prev->second.type == TapNote::hold_head )
 		{
-			int localStartRow = prev->first;
+			int iStartRow = prev->first;
 			const TapNote &tn = prev->second;
-			if( localStartRow + tn.iDuration >= iEndRow )
+			if( iStartRow + tn.iDuration >= iEndRow )
 				end = prev;
 		}
 	}

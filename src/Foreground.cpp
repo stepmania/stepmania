@@ -76,23 +76,23 @@ void Foreground::Update( float fDeltaTime )
 
 		/* Update the actor even if we're about to hide it, so queued commands
 		 * are always run. */
-		float lDeltaTime;
+		float fDeltaTime;
 		if( !bga.m_bga->GetVisible() )
 		{
 			bga.m_bga->SetVisible( true );
 
 			const float fStartSecond = m_pSong->m_Timing.GetElapsedTimeFromBeat( bga.m_fStartBeat );
-			lDeltaTime = GAMESTATE->m_fMusicSeconds - fStartSecond;
+			fDeltaTime = GAMESTATE->m_fMusicSeconds - fStartSecond;
 		}
 		else
 		{
-			lDeltaTime = GAMESTATE->m_fMusicSeconds - m_fLastMusicSeconds;
+			fDeltaTime = GAMESTATE->m_fMusicSeconds - m_fLastMusicSeconds;
 		}
 
 		// This shouldn't go down, but be safe:
-		lDeltaTime = max( lDeltaTime, 0 );
+		fDeltaTime = max( fDeltaTime, 0 );
 
-		bga.m_bga->Update( lDeltaTime / fRate );
+		bga.m_bga->Update( fDeltaTime / fRate );
 
 		if( GAMESTATE->m_fSongBeat > bga.m_fStopBeat )
 		{

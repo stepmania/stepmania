@@ -489,10 +489,10 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 				g_vLocalProfile.erase( i );
 
 				// Delete all references to this profileID
-				FOREACH_CONST( Preference<RString>*, m_sDefaultLocalProfileID.m_v, j )
+				FOREACH_CONST( Preference<RString>*, m_sDefaultLocalProfileID.m_v, i )
 				{
-					if( (*j)->Get() == sProfileID )
-						(*j)->Set( "" );
+					if( (*i)->Get() == sProfileID )
+						(*i)->Set( "" );
 				}
 				return true;
 			}

@@ -80,11 +80,11 @@ void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 			bool bSoundIsGlobal = true;
 			{
 				PlayerNumber pn = GetNextEnabledPlayer((PlayerNumber)-1);
-				const TapNote &tap = tn[pn];
+				const TapNote &t = tn[pn];
 				pn = GetNextEnabledPlayer(pn);
 				while( pn != PLAYER_INVALID )
 				{
-					if( tn[pn].type != TapNote::autoKeysound || tn[pn].iKeysoundIndex != tap.iKeysoundIndex )
+					if( tn[pn].type != TapNote::autoKeysound || tn[pn].iKeysoundIndex != t.iKeysoundIndex )
 						bSoundIsGlobal = false;
 					pn = GetNextEnabledPlayer(pn);
 				}

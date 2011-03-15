@@ -746,9 +746,9 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 				
 				if( !change.m_sTransition.empty() )
 				{
-					map<RString,BackgroundTransition>::const_iterator lIter = mapNameToTransition.find( change.m_sTransition );
-					ASSERT( lIter != mapNameToTransition.end() );
-					const BackgroundTransition &bt = lIter->second;
+					map<RString,BackgroundTransition>::const_iterator iter = mapNameToTransition.find( change.m_sTransition );
+					ASSERT( iter != mapNameToTransition.end() );
+					const BackgroundTransition &bt = iter->second;
 					m_pFadingBGA->RunCommandsOnLeaves( *bt.cmdLeaves );
 					m_pFadingBGA->RunCommands( *bt.cmdRoot );
 				}
