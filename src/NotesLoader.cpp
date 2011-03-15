@@ -2,6 +2,7 @@
 #include "NotesLoader.h"
 #include "NotesLoaderSM.h"
 #include "NotesLoaderSSC.h"
+#include "NotesLoaderSMA.h"
 #include "NotesLoaderDWI.h"
 #include "NotesLoaderBMS.h"
 #include "NotesLoaderPMS.h"
@@ -42,6 +43,9 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 	SMLoader::GetApplicableFiles( sPath, list );
 	if (!list.empty() )
 		return SMLoader::LoadFromDir( sPath, out );
+	SMALoader::GetApplicableFiles( sPath, list );
+	if (!list.empty() )
+		return SMALoader::LoadFromDir( sPath, out );
 	DWILoader::GetApplicableFiles( sPath, list );
 	if( !list.empty() )
 		return DWILoader::LoadFromDir( sPath, out, BlacklistedImages );

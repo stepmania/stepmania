@@ -738,26 +738,37 @@ void Song::TidyUpData()
 		 *    filename, and should always be the title of the song (unlike KSFs). */
 		m_sSongFileName = m_sSongDir;
 		vector<RString> asFileNames;
-		GetDirListing( m_sSongDir+"*.ssc", asFileNames );
-		if( !asFileNames.empty() )
+		do
 		{
-			m_sSongFileName += asFileNames[0];
-		}
-		else
-		{
+			GetDirListing( m_sSongDir+"*.ssc", asFileNames );
+			if( !asFileNames.empty() )
+			{
+				m_sSongFileName += asFileNames[0];
+				break;
+			}
+			
+			GetDirListing( m_sSongDir+"*.sma", asFileNames );
+			if (!asFileNames.empty() )
+			{
+				m_sSongFileName += SetExtension( asFileNames[0], "ssc" );
+				break;
+			}
+			
 			GetDirListing( m_sSongDir+"*.sm", asFileNames );
 			if( !asFileNames.empty() )
+			{
 				m_sSongFileName += SetExtension( asFileNames[0], "ssc" );
-			else {
-				GetDirListing( m_sSongDir+"*.dwi", asFileNames );
-				if( !asFileNames.empty() ) {
-					m_sSongFileName += SetExtension( asFileNames[0], "ssc" );
-				} else {
-					m_sSongFileName += Basename(m_sSongDir);
-					m_sSongFileName += ".ssc";
-				}
+				break;
 			}
-		}
+			
+			GetDirListing( m_sSongDir+"*.dwi", asFileNames );
+			if( !asFileNames.empty() ) {
+				m_sSongFileName += SetExtension( asFileNames[0], "ssc" );
+				break;
+			}
+			m_sSongFileName += Basename(m_sSongDir);
+			m_sSongFileName += ".ssc";
+		} while(0);
 	}
 
 	// If no time signature specified, assume 4/4 time for the whole song.

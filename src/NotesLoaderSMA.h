@@ -12,11 +12,13 @@ class TimingData;
 /** @brief Reads a Song from a .SMA file. */
 namespace SMALoader
 {
-	void LoadFromSMATokens( RString sStepsType, RString sDescription, 
-			      RString sDifficulty, RString sMeter, 
-			      RString sMeterType, vector<RString> attackData,
-			      RString sRadarValues, RString sNoteData,
-			      RString sAttackData, Steps &out );
+	void LoadFromSMATokens( RString sStepsType,
+			       RString sDescription,
+			       RString sDifficulty,
+			       RString sMeter,
+			       RString sRadarValues,
+			       RString sNoteData,
+			       Steps &out );
 	
 	bool LoadFromDir( const RString &sPath, Song &out );
 	void TidyUpData( Song &song, bool bFromCache );

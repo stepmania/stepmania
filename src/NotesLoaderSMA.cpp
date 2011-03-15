@@ -23,11 +23,8 @@ void SMALoader::LoadFromSMATokens(
 				  RString sDescription,
 				  RString sDifficulty,
 				  RString sMeter,
-				  RString sMeterType,
-				  vector<RString> attackData,
 				  RString sRadarValues,
 				  RString sNoteData,
-				  RString sAttackData,
 				  Steps &out
 )
 {
@@ -84,6 +81,308 @@ void SMALoader::LoadFromSMATokens(
 	out.SetSMNoteData( sNoteData );
 	
 	out.TidyUpData();
+}
+
+bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
+{
+	vector<RString> aFileNames;
+	GetApplicableFiles( sPath, aFileNames );
+	
+	if( aFileNames.size() > 1 )
+	{
+		LOG->UserLog( "Song", sPath, "has more than one SMA file. There can be only one!" );
+		return false;
+	}
+	ASSERT( aFileNames.size() == 1 );
+	return LoadFromSMAFile( sPath + aFileNames[0], out );
+}
+
+void SMALoader::TidyUpData( Song &song, bool bFromCache )
+{
+	SMLoader::TidyUpData( song, bFromCache );
+}
+
+bool SMALoader::LoadFromSMAFile( const RString &sPath, Song &out )
+{
+	LOG->Trace( "Song::LoadFromSMAFile(%s)", sPath.c_str() );
+	
+	MsdFile msd;
+	if( !msd.ReadFile( sPath, true ) )  // unescape
+	{
+		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", msd.GetError().c_str() );
+		return false;
+	}
+	
+	out.m_Timing.m_sFile = sPath;
+	LoadTimingFromSMAFile( msd, out.m_Timing );
+	
+	for( unsigned i=0; i<msd.GetNumValues(); i++ )
+	{
+		int iNumParams = msd.GetNumParams(i);
+		const MsdFile::value_t &sParams = msd.GetValue(i);
+		RString sValueName = sParams[0];
+		sValueName.MakeUpper();
+		
+		// handle the data
+		/* Don't use GetMainAndSubTitlesFromFullTitle; that's only for heuristically
+		 * splitting other formats that *don't* natively support #SUBTITLE. */
+		if( sValueName=="TITLE" )
+			out.m_sMainTitle = sParams[1];
+		
+		else if( sValueName=="SUBTITLE" )
+			out.m_sSubTitle = sParams[1];
+		
+		else if( sValueName=="ARTIST" )
+			out.m_sArtist = sParams[1];
+		
+		else if( sValueName=="TITLETRANSLIT" )
+			out.m_sMainTitleTranslit = sParams[1];
+		
+		else if( sValueName=="SUBTITLETRANSLIT" )
+			out.m_sSubTitleTranslit = sParams[1];
+		
+		else if( sValueName=="ARTISTTRANSLIT" )
+			out.m_sArtistTranslit = sParams[1];
+		
+		else if( sValueName=="GENRE" )
+			out.m_sGenre = sParams[1];
+		
+		else if( sValueName=="CREDIT" )
+			out.m_sCredit = sParams[1];
+		
+		else if( sValueName=="BANNER" )
+			out.m_sBannerFile = sParams[1];
+		
+		else if( sValueName=="BACKGROUND" )
+			out.m_sBackgroundFile = sParams[1];
+		
+		// Save "#LYRICS" for later, so we can add an internal lyrics tag.
+		else if( sValueName=="LYRICSPATH" )
+			out.m_sLyricsFile = sParams[1];
+		
+		else if( sValueName=="CDTITLE" )
+			out.m_sCDTitleFile = sParams[1];
+		
+		else if( sValueName=="MUSIC" )
+			out.m_sMusicFile = sParams[1];
+		
+		else if( sValueName=="INSTRUMENTTRACK" )
+		{
+			vector<RString> vs1;
+			split( sParams[1], ",", vs1 );
+			FOREACH_CONST( RString, vs1, s )
+			{
+				vector<RString> vs2;
+				split( *s, "=", vs2 );
+				if( vs2.size() >= 2 )
+				{
+					InstrumentTrack it = StringToInstrumentTrack( vs2[0] );
+					if( it != InstrumentTrack_Invalid )
+						out.m_sInstrumentTrackFile[it] = vs2[1];
+				}
+			}
+		}
+		
+		else if( sValueName=="MUSICLENGTH" )
+		{
+			continue;
+		}
+		
+		else if( sValueName=="LASTBEATHINT" )
+			out.m_fSpecifiedLastBeat = StringToFloat( sParams[1] );
+		
+		else if( sValueName=="MUSICBYTES" )
+			; /* ignore */
+		
+		/* We calculate these.  Some SMs in circulation have bogus values for
+		 * these, so make sure we always calculate it ourself. */
+		else if( sValueName=="FIRSTBEAT" )
+		{
+			;
+		}
+		else if( sValueName=="LASTBEAT" )
+		{
+			;		}
+		else if( sValueName=="SONGFILENAME" )
+		{
+			;
+		}
+		else if( sValueName=="HASMUSIC" )
+		{
+			;
+		}
+		else if( sValueName=="HASBANNER" )
+		{
+			;
+		}
+		
+		else if( sValueName=="SAMPLESTART" )
+			out.m_fMusicSampleStartSeconds = HHMMSSToSeconds( sParams[1] );
+		
+		else if( sValueName=="SAMPLELENGTH" )
+			out.m_fMusicSampleLengthSeconds = HHMMSSToSeconds( sParams[1] );
+		
+		// SamplePath is used when the song has a separate preview clip. -aj
+		//else if( sValueName=="SAMPLEPATH" )
+		//out.m_sMusicSamplePath = sParams[1];
+		
+		else if( sValueName=="DISPLAYBPM" )
+		{
+			// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
+			if( sParams[1] == "*" )
+				out.m_DisplayBPMType = Song::DISPLAY_RANDOM;
+			else 
+			{
+				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
+				out.m_fSpecifiedBPMMin = StringToFloat( sParams[1] );
+				if( sParams[2].empty() )
+					out.m_fSpecifiedBPMMax = out.m_fSpecifiedBPMMin;
+				else
+					out.m_fSpecifiedBPMMax = StringToFloat( sParams[2] );
+			}
+		}
+		
+		else if( sValueName=="SELECTABLE" )
+		{
+			if(!stricmp(sParams[1],"YES"))
+				out.m_SelectionDisplay = out.SHOW_ALWAYS;
+			else if(!stricmp(sParams[1],"NO"))
+				out.m_SelectionDisplay = out.SHOW_NEVER;
+			// ROULETTE from 3.9. It was removed since UnlockManager can serve
+			// the same purpose somehow. This, of course, assumes you're using
+			// unlocks. -aj
+			else if(!stricmp(sParams[1],"ROULETTE"))
+				out.m_SelectionDisplay = out.SHOW_ALWAYS;
+			/* The following two cases are just fixes to make sure simfiles that
+			 * used 3.9+ features are not excluded here */
+			else if(!stricmp(sParams[1],"ES") || !stricmp(sParams[1],"OMES"))
+				out.m_SelectionDisplay = out.SHOW_ALWAYS;
+			else if( atoi(sParams[1]) > 0 )
+				out.m_SelectionDisplay = out.SHOW_ALWAYS;
+			else
+				LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
+		}
+		
+		else if( sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES" || sValueName=="ANIMATIONS" )
+		{
+			BackgroundLayer iLayer = BACKGROUND_LAYER_1;
+			if( sscanf(sValueName, "BGCHANGES%d", &*ConvertValue<int>(&iLayer)) == 1 )
+				enum_add(iLayer, -1);	// #BGCHANGES2 = BACKGROUND_LAYER_2
+			
+			bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
+			if( !bValid )
+			{
+				LOG->UserLog( "Song file", sPath, "has a #BGCHANGES tag \"%s\" that is out of range.", sValueName.c_str() );
+			}
+			else
+			{
+				vector<RString> aBGChangeExpressions;
+				split( sParams[1], ",", aBGChangeExpressions );
+				
+				for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
+				{
+					BackgroundChange change;
+					if( LoadFromBGChangesString( change, aBGChangeExpressions[b] ) )
+						out.AddBackgroundChange( iLayer, change );
+				}
+			}
+		}
+		
+		else if( sValueName=="FGCHANGES" )
+		{
+			vector<RString> aFGChangeExpressions;
+			split( sParams[1], ",", aFGChangeExpressions );
+			
+			for( unsigned b=0; b<aFGChangeExpressions.size(); b++ )
+			{
+				BackgroundChange change;
+				if( LoadFromBGChangesString( change, aFGChangeExpressions[b] ) )
+					out.AddForegroundChange( change );
+			}
+		}
+		
+		else if( sValueName=="KEYSOUNDS" )
+		{
+			split( sParams[1], ",", out.m_vsKeysoundFile );
+		}
+		
+		// Attacks loaded from file
+		else if( sValueName=="ATTACKS" )
+		{
+			// Build the RString vector here so we can write it to file again later
+			for( unsigned s=1; s < sParams.params.size(); ++s )
+				out.m_sAttackString.push_back( sParams[s] );
+			
+			Attack attack;
+			float end = -9999;
+			
+			for( unsigned j=1; j < sParams.params.size(); ++j )
+			{
+				vector<RString> sBits;
+				split( sParams[j], "=", sBits, false );
+				
+				// Need an identifer and a value for this to work
+				if( sBits.size() < 2 )
+					continue;
+				
+				TrimLeft( sBits[0] );
+				TrimRight( sBits[0] );
+				
+				if( !sBits[0].CompareNoCase("TIME") )
+					attack.fStartSecond = strtof( sBits[1], NULL );
+				else if( !sBits[0].CompareNoCase("LEN") )
+					attack.fSecsRemaining = strtof( sBits[1], NULL );
+				else if( !sBits[0].CompareNoCase("END") )
+					end = strtof( sBits[1], NULL );
+				else if( !sBits[0].CompareNoCase("MODS") )
+				{
+					attack.sModifiers = sBits[1];
+					
+					if( end != -9999 )
+					{
+						attack.fSecsRemaining = end - attack.fStartSecond;
+						end = -9999;
+					}
+					
+					if( attack.fSecsRemaining < 0.0f )
+						attack.fSecsRemaining = 0.0f;
+					
+					out.m_Attacks.push_back( attack );
+				}
+			}
+		}
+		
+		else if( sValueName=="NOTES" || sValueName=="NOTES2" )
+		{
+			if( iNumParams < 7 )
+			{
+				LOG->UserLog( "Song file", sPath, "has %d fields in a #NOTES tag, but should have at least 7.", iNumParams );
+				continue;
+			}
+			
+			Steps* pNewNotes = new Steps;
+			LoadFromSMATokens( 
+					 sParams[1], 
+					 sParams[2], 
+					 sParams[3], 
+					 sParams[4], 
+					 sParams[5], 
+					 sParams[6],
+					 *pNewNotes );
+			
+			out.AddSteps( pNewNotes );
+		}
+		/*
+		 * We used to check for timing data in this section. That has
+		 * since been moved to a dedicated function.
+		 */
+		else if( sValueName=="OFFSET" || sValueName=="BPMS" || sValueName=="STOPS" || sValueName=="FREEZES" || sValueName=="DELAYS" || sValueName=="TIMESIGNATURES" || sValueName=="LEADTRACK" || sValueName=="TICKCOUNTS" )
+			;
+		else
+			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
+	}
+	
+	return true;
 }
 
 void SMALoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
@@ -321,24 +620,120 @@ void SMALoader::LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out )
 	}
 }
 
-bool SMALoader::LoadFromBGChangesString( BackgroundChange &change, 
-			     const RString &sBGChangeExpression )
+bool SMALoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
 {
-	return SMLoader::LoadFromBGChangesString(change, sBGChangeExpression);
-}
-
-bool SMALoader::LoadFromDir( const RString &sPath, Song &out )
-{
-	vector<RString> aFileNames;
-	GetApplicableFiles( sPath, aFileNames );
+	LOG->Trace( "SMALoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
 	
-	if( aFileNames.size() > 1 )
+	int iBytes = FILEMAN->GetFileSizeInBytes( sEditFilePath );
+	if( iBytes > MAX_EDIT_STEPS_SIZE_BYTES )
 	{
-		LOG->UserLog( "Song", sPath, "has more than one SMA file. There can be only one!" );
+		LOG->UserLog( "Edit file", sEditFilePath, "is unreasonably large. It won't be loaded." );
 		return false;
 	}
-	ASSERT( aFileNames.size() == 1 );
-	return LoadFromSMAFile( sPath + aFileNames[0], out );
+	
+	MsdFile msd;
+	if( !msd.ReadFile( sEditFilePath, true ) ) // unescape
+	{
+		LOG->UserLog( "Edit file", sEditFilePath, "couldn't be opened: %s", msd.GetError().c_str() );
+		return false;
+	}
+	
+	return LoadEditFromMsd( msd, sEditFilePath, slot, bAddStepsToSong );
+}
+
+bool SMALoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot )
+{
+	MsdFile msd;
+	msd.ReadFromString( sBuffer, true ); // unescape
+	return LoadEditFromMsd( msd, sEditFilePath, slot, true );
+}
+
+bool SMALoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
+{
+	Song* pSong = NULL;
+	
+	for( unsigned i=0; i<msd.GetNumValues(); i++ )
+	{
+		int iNumParams = msd.GetNumParams(i);
+		const MsdFile::value_t &sParams = msd.GetValue(i);
+		RString sValueName = sParams[0];
+		sValueName.MakeUpper();
+		
+		// handle the data
+		if( sValueName=="SONG" )
+		{
+			if( pSong )
+			{
+				LOG->UserLog( "Edit file", sEditFilePath, "has more than one #SONG tag." );
+				return false;
+			}
+			
+			RString sSongFullTitle = sParams[1];
+			sSongFullTitle.Replace( '\\', '/' );
+			
+			pSong = SONGMAN->FindSong( sSongFullTitle );
+			if( pSong == NULL )
+			{
+				LOG->UserLog( "Edit file", sEditFilePath, "requires a song \"%s\" that isn't present.", sSongFullTitle.c_str() );
+				return false;
+			}
+			
+			if( pSong->GetNumStepsLoadedFromProfile(slot) >= MAX_EDITS_PER_SONG_PER_PROFILE )
+			{
+				LOG->UserLog( "Song file", sSongFullTitle, "already has the maximum number of edits allowed for ProfileSlotP%d.", slot+1 );
+				return false;
+			}
+		}
+		
+		else if( sValueName=="NOTES" )
+		{
+			if( pSong == NULL )
+			{
+				LOG->UserLog( "Edit file", sEditFilePath, "doesn't have a #SONG tag preceeding the first #NOTES tag." );
+				return false;
+			}
+			
+			if( iNumParams < 7 )
+			{
+				LOG->UserLog( "Edit file", sEditFilePath, "has %d fields in a #NOTES tag, but should have at least 7.", iNumParams );
+				continue;
+			}
+			
+			if( !bAddStepsToSong )
+				return true;
+			
+			Steps* pNewNotes = new Steps;
+			LoadFromSMATokens( 
+					 sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
+					 *pNewNotes);
+			
+			pNewNotes->SetLoadedFromProfile( slot );
+			pNewNotes->SetDifficulty( Difficulty_Edit );
+			pNewNotes->SetFilename( sEditFilePath );
+			
+			if( pSong->IsEditAlreadyLoaded(pNewNotes) )
+			{
+				LOG->UserLog( "Edit file", sEditFilePath, "is a duplicate of another edit that was already loaded." );
+				SAFE_DELETE( pNewNotes );
+				return false;
+			}
+			
+			pSong->AddSteps( pNewNotes );
+			return true; // Only allow one Steps per edit file!
+		}
+		else
+		{
+			LOG->UserLog( "Edit file", sEditFilePath, "has an unexpected value \"%s\".", sValueName.c_str() );
+		}
+	}
+	
+	return true;
+}
+
+bool SMALoader::LoadFromBGChangesString( BackgroundChange &change, 
+					const RString &sBGChangeExpression )
+{
+	return SMLoader::LoadFromBGChangesString(change, sBGChangeExpression);
 }
 
 /**
