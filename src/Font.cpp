@@ -11,10 +11,9 @@
 #include "FontCharAliases.h"
 #include "arch/Dialog/Dialog.h"
 
-FontPage::FontPage()
-{
-	m_iDrawExtraPixelsLeft = m_iDrawExtraPixelsRight = 0;
-}
+FontPage::FontPage(): m_iHeight(0), m_iLineSpacing(0), m_fVshift(0),
+	m_iDrawExtraPixelsLeft(0), m_iDrawExtraPixelsRight(0),
+	m_sTexturePath("") {}
 
 void FontPage::Load( const FontPageSettings &cfg )
 {
