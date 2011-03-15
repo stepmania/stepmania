@@ -162,7 +162,19 @@ void SMALoader::LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out )
 					continue;
 				}
 				
-				const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
+				float fFreezeBeat = 0;
+				RString beat = arrayFreezeValues[0];
+				if( beat.Right(0).MakeUpper() == "R" )
+				{
+					beat = beat.Left(beat.size()-1);
+					fFreezeBeat = StringToFloat( beat ) / rowsPerMeasure;
+				}
+				else
+				{
+					fFreezeBeat = StringToFloat(beat);
+				}
+				
+				//float fFreezeBeat = StringToFloat( arrayBPMChangeValues[0] );
 				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
 				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
 				// XXX: Remove Negatives Bug?
@@ -205,7 +217,19 @@ void SMALoader::LoadTimingFromSMAFile( const MsdFile &msd, TimingData &out )
 					continue;
 				}
 				
-				const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
+				float fBeat = 0;
+				RString beat = arrayBPMChangeValues[0];
+				if( beat.Right(0).MakeUpper() == "R" )
+				{
+					beat = beat.Left(beat.size()-1);
+					fBeat = StringToFloat( beat ) / rowsPerMeasure;
+				}
+				else
+				{
+					fBeat = StringToFloat(beat);
+				}
+				
+				//float fBeat = StringToFloat( arrayBPMChangeValues[0] );
 				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
 				// XXX: Remove Negatives Bug?
 				BPMSegment new_seg;
