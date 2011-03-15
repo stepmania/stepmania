@@ -20,16 +20,17 @@ void ScreenGameplaySyncMachine::Init()
 	AdjustSync::ResetOriginalSyncData();
 
 	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music");
-	// Allow themers to use .ssc and .sm files. -aj
-	bool bLoadedSSCFile = SSCLoader::LoadFromSSCFile( sFile, m_Song );
-	if( !bLoadedSSCFile )
+	// Allow themers to use either a .ssc or .sm file for this. -aj
+	if(sFile.Right(4) == ".ssc")
+		SSCLoader::LoadFromSSCFile( sFile, m_Song );
+	else
 		SMLoader::LoadFromSMFile( sFile, m_Song );
 
 	m_Song.SetSongDir( Dirname(sFile) );
 	m_Song.TidyUpData();
 
 	GAMESTATE->m_pCurSong.Set( &m_Song );
-	// needs proper StepsType - freem
+	// Needs proper StepsType -freem
 	vector<Steps*> vpSteps;
 	SongUtil::GetPlayableSteps( &m_Song, vpSteps );
 	ASSERT_M(vpSteps.size() > 0, "No playable steps for ScreenGameplaySyncMachine");

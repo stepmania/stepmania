@@ -250,8 +250,8 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 	for( int t=0; t<out.GetNumTracks(); t++ )
 	{
 		NoteData::iterator begin = out.begin( t );
-		NoteData::iterator end = out.end( t );
-		while( begin != end )
+		NoteData::iterator lEnd = out.end( t );
+		while( begin != lEnd )
 		{
 			NoteData::iterator next = Increment( begin );
 			const TapNote &tn = begin->second;
@@ -679,12 +679,9 @@ int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
 	int iMaxTailRow = -1;
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
-		for( int t=0; t<in.GetNumTracks(); t++ )
-		{
-			const TapNote &tn = in.GetTapNote( t, iRow );
-			if( tn.type == TapNote::hold_head )
-				iMaxTailRow = max( iMaxTailRow, iRow + tn.iDuration );
-		}
+		const TapNote &tn = in.GetTapNote( t, iRow );
+		if( tn.type == TapNote::hold_head )
+			iMaxTailRow = max( iMaxTailRow, iRow + tn.iDuration );
 	}
 
 	return iMaxTailRow;
@@ -2070,6 +2067,9 @@ const ValidRow g_ValidRows[] =
 	{ StepsType_dance_double, { f,T,T,T,T,f,f,f } },
 	{ StepsType_dance_double, { f,f,f,T,T,T,T,f } },
 	{ StepsType_dance_double, { f,f,f,f,T,T,T,T } },
+	{ StepsType_pump_double, { T,T,T,T,T,f,f,f,f,f } },
+	{ StepsType_pump_double, { f,f,T,T,T,T,T,T,f,f } },
+	{ StepsType_pump_double, { f,f,f,f,f,T,T,T,T,T } },
 };
 #undef T
 #undef f

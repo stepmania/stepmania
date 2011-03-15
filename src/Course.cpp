@@ -85,47 +85,7 @@ int CourseEntry::GetNumModChanges() const
 	return iNumModChanges;
 }
 
-// lua start
-#include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the CourseEntry. */ 
-class LunaCourseEntry: public Luna<CourseEntry>
-{
-public:
-	static int GetSong( T* p, lua_State *L )
-	{
-		if( p->songID.ToSong() )
-			p->songID.ToSong()->PushSelf(L);
-		else
-			lua_pushnil(L);
-		return 1;
-	}
-	DEFINE_METHOD( IsSecret, bSecret );
-	DEFINE_METHOD( IsFixedSong, IsFixedSong() );
-	DEFINE_METHOD( GetGainSeconds, fGainSeconds );
-	DEFINE_METHOD( GetGainLives, iGainLives );
-	DEFINE_METHOD( GetNormalModifiers, sModifiers );
-	// GetTimedModifiers - table
-	DEFINE_METHOD( GetNumModChanges, GetNumModChanges() );
-	DEFINE_METHOD( GetTextDescription, GetTextDescription() );
-
-	LunaCourseEntry()
-	{
-		ADD_METHOD( GetSong );
-		// sm-ssc additions:
-		ADD_METHOD( IsSecret );
-		ADD_METHOD( IsFixedSong );
-		ADD_METHOD( GetGainSeconds );
-		ADD_METHOD( GetGainLives );
-		ADD_METHOD( GetNormalModifiers );
-		//ADD_METHOD( GetTimedModifiers );
-		ADD_METHOD( GetNumModChanges );
-		ADD_METHOD( GetTextDescription );
-	}
-};
-
-LUA_REGISTER_CLASS( CourseEntry )
-// lua end
 
 
 Course::Course()
@@ -559,8 +519,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		if( e->iChooseIndex < int(vSongAndSteps.size()) )
 		{
 			resolved.pSong = vpSongs[e->iChooseIndex];
-			const vector<Steps*> &vpSongs = mapSongToSteps[resolved.pSong];
-			resolved.pSteps = vpSongs[ RandomInt(vpSongs.size()) ];
+			const vector<Steps*> &mappedSongs = mapSongToSteps[resolved.pSong];
+			resolved.pSteps = mappedSongs[ RandomInt(mappedSongs.size()) ];
 		}
 		else
 		{
@@ -970,8 +930,8 @@ const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
 		const CourseEntry &entry = *e;
-		Song *pSong = entry.songID.ToSong();
-		if( pSong == pSong )
+		Song *lSong = entry.songID.ToSong();
+		if( pSong == lSong )
 			return &entry;
 	}
 
@@ -1042,9 +1002,48 @@ bool Course::Matches( RString sGroup, RString sCourse ) const
 	return false;
 }
 
-
 // lua start
 #include "LuaBinding.h"
+
+/** @brief Allow Lua to have access to the CourseEntry. */ 
+class LunaCourseEntry: public Luna<CourseEntry>
+{
+public:
+	static int GetSong( T* p, lua_State *L )
+	{
+		if( p->songID.ToSong() )
+			p->songID.ToSong()->PushSelf(L);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
+	DEFINE_METHOD( IsSecret, bSecret );
+	DEFINE_METHOD( IsFixedSong, IsFixedSong() );
+	DEFINE_METHOD( GetGainSeconds, fGainSeconds );
+	DEFINE_METHOD( GetGainLives, iGainLives );
+	DEFINE_METHOD( GetNormalModifiers, sModifiers );
+	// GetTimedModifiers - table
+	DEFINE_METHOD( GetNumModChanges, GetNumModChanges() );
+	DEFINE_METHOD( GetTextDescription, GetTextDescription() );
+	
+	LunaCourseEntry()
+	{
+		ADD_METHOD( GetSong );
+		// sm-ssc additions:
+		ADD_METHOD( IsSecret );
+		ADD_METHOD( IsFixedSong );
+		ADD_METHOD( GetGainSeconds );
+		ADD_METHOD( GetGainLives );
+		ADD_METHOD( GetNormalModifiers );
+		//ADD_METHOD( GetTimedModifiers );
+		ADD_METHOD( GetNumModChanges );
+		ADD_METHOD( GetTextDescription );
+	}
+};
+
+LUA_REGISTER_CLASS( CourseEntry )
+
+// Not done with lua yet: still another class.
 
 /** @brief Allow Lua to have access to the Course. */ 
 class LunaCourse: public Luna<Course>

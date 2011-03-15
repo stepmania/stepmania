@@ -27,7 +27,7 @@ success () {
 		echo okay.
 	fi
 	if [ $notify -gt 0 ]; then
-		notify send "sm-ssc build script" "$msg...okay."
+		notify-send "sm-ssc build script" "$msg...okay."
 	fi
 }
 

@@ -22,7 +22,10 @@ public:
 	virtual RString GetLoadedFilePath() const = 0;
 };
 
-/* These are parameters to play a sound.  These are normally changed before playing begins,
+/**
+ * @brief The parameters to play a sound.
+ *
+ * These are normally changed before playing begins,
  * and are constant from then on. */
 struct RageSoundParams
 {
@@ -50,17 +53,13 @@ struct RageSoundParams
 	 * If zero, or if not supported, the sound will start immediately. */
 	RageTimer m_StartTime;
 
-	/* M_STOP stops the sound at the end.
-	 * M_LOOP restarts.
-	 * M_CONTINUE feeds silence, which is useful to continue timing longer than the actual sound.
-	 * M_AUTO (default) stops, obeying filename hints.
-	 */
+	/** @brief How does the sound stop itself, if it does? */
 	enum StopMode_t {
-		M_STOP,
-		M_LOOP,
-		M_CONTINUE,
-		M_AUTO
-	} StopMode;
+		M_STOP, /**< The sound is stopped at the end. */
+		M_LOOP, /**< The sound restarts itself. */
+		M_CONTINUE, /**< Silence is fed at the end to continue timing longer than the sound. */
+		M_AUTO /**< The default, the sound stops while obeying filename hints. */
+	} /** @brief How does the sound stop itself, if it does? */ StopMode;
 
 	bool m_bIsCriticalSound; // "is a sound that should be played even during attract"
 };

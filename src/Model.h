@@ -39,6 +39,7 @@ public:
 	virtual void	DrawPrimitives();
 
 	void	DrawCelShaded();
+	void	SetCelShading( bool bShading ) { m_bDrawCelShaded = bShading; }
 
 	virtual int GetNumStates() const;
 	virtual void SetState( int iNewState );
@@ -81,6 +82,7 @@ private:
 	float			m_fDefaultAnimationRate;
 	float			m_fCurAnimationRate;
 	bool			m_bLoop;
+	bool			m_bDrawCelShaded; // for Lua models
 };
 
 #endif

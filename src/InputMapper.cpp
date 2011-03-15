@@ -266,7 +266,6 @@ static const AutoMappings g_AutoMappings[] =
 		AutoMappingEntry( 0, JOY_BUTTON_10,     GAME_BUTTON_BACK,       false ),
 		AutoMappingEntry( 0, JOY_BUTTON_9,      GAME_BUTTON_START,      false )
 	   ),
-	   // TODO: add black and white buttons, as well as other missing inputs -aj
 	   AutoMappings(
 		"dance",
 		"XBOX Gamepad Plugin V0.01",
@@ -1094,12 +1093,12 @@ void InputMappings::ReadMappings( const InputScheme *pInputScheme, RString sFile
 			vector<RString> sDeviceInputStrings;
 			split( value, DEVICE_INPUT_SEPARATOR, sDeviceInputStrings, false );
 
-			for( unsigned i=0; i<sDeviceInputStrings.size() && i<unsigned(NUM_GAME_TO_DEVICE_SLOTS); i++ )
+			for( unsigned j=0; j<sDeviceInputStrings.size() && j<unsigned(NUM_GAME_TO_DEVICE_SLOTS); j++ )
 			{
 				DeviceInput DeviceI;
-				DeviceI.FromString( sDeviceInputStrings[i] );
+				DeviceI.FromString( sDeviceInputStrings[j] );
 				if( DeviceI.IsValid() )
-					SetInputMap( DeviceI, GameI, i );
+					SetInputMap( DeviceI, GameI, j );
 			}
 		}
 	}

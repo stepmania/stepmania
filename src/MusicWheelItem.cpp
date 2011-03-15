@@ -29,6 +29,7 @@ static const char *MusicWheelItemTypeNames[] = {
 	"Mode",
 	"Random",
 	"Portal",
+	"Custom",
 };
 XToString( MusicWheelItemType );
 
@@ -78,7 +79,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	{
 		m_pText[i] = NULL;
 
-		// Don't init text for Type_Song.  It uses a TextBanner.
+		// Don't init text for Type_Song. It uses a TextBanner.
 		if( i == MusicWheelItemType_Song )
 			continue;
 
@@ -104,7 +105,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	ActorUtil::SetXY( m_WheelNotifyIcon, "MusicWheelItem" );
 	m_WheelNotifyIcon.PlayCommand( "On" );
 	this->AddChild( &m_WheelNotifyIcon );
-	
+
 	FOREACH_PlayerNumber( p )
 	{
 		m_pGradeDisplay[p].Load( THEME->GetPathG(sType,"grades") );
@@ -256,6 +257,10 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 		sDisplayName = THEME->GetString("MusicWheel","Portal");
 		type = MusicWheelItemType_Portal;
 		break;
+	case TYPE_CUSTOM:
+		sDisplayName = pWID->m_sLabel;
+		type = MusicWheelItemType_Custom;
+		break;
 	}
 
 	m_sprColorPart[type]->SetVisible( true );
@@ -286,10 +291,11 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 		msg.SetParam( "Course", pWID->m_pCourse );
 		msg.SetParam( "Index", iIndex );
 		msg.SetParam( "HasFocus", bHasFocus );
-		msg.SetParam( "SongGroup", pWID->m_sText );
+		msg.SetParam( "Text", pWID->m_sText );
 		msg.SetParam( "DrawIndex", iDrawIndex );
 		msg.SetParam( "Type", MusicWheelItemTypeToString(type) );
 		msg.SetParam( "Color", pWID->m_color );
+		msg.SetParam( "Label", pWID->m_sLabel );
 
 		this->HandleMessage( msg );
 	}

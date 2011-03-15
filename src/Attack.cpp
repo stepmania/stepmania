@@ -34,8 +34,8 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 	fStartBeat = min( GAMESTATE->m_fSongBeat+8, pPlayerState->m_fLastDrawnBeat );
 	fStartBeat = truncf(fStartBeat)+1;
 
-	const float fStartSecond = pSong->GetElapsedTimeFromBeat( fStartBeat );
-	const float fEndSecond = fStartSecond + fSecsRemaining;
+	const float lStartSecond = pSong->GetElapsedTimeFromBeat( fStartBeat );
+	const float fEndSecond = lStartSecond + fSecsRemaining;
 	fEndBeat = pSong->GetBeatFromElapsedTime( fEndSecond );
 	fEndBeat = truncf(fEndBeat)+1;
 

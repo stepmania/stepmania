@@ -37,6 +37,7 @@ void SMLoader::LoadFromSMTokens(
 	// insert stepstype hacks from GameManager.cpp here? -aj
 	out.m_StepsType = GAMEMAN->StringToStepsType( sStepsType );
 	out.SetDescription( sDescription );
+	out.SetCredit( sDescription ); // this is often used for both.
 	out.SetDifficulty( DwiCompatibleStringToDifficulty(sDifficulty) );
 
 	// Handle hacks that originated back when StepMania didn't have
@@ -413,9 +414,9 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 		if(arrayWarpsFromNegativeBPMs.size() > 0)
 		{
 			// zomg we already have some warps...
-			for( unsigned i=0; i<arrayWarpsFromNegativeBPMs.size(); i++ )
+			for( unsigned j=0; j<arrayWarpsFromNegativeBPMs.size(); j++ )
 			{
-				out.AddWarpSegment( arrayWarpsFromNegativeBPMs[i] );
+				out.AddWarpSegment( arrayWarpsFromNegativeBPMs[j] );
 			}
 		}
 		// warp sorting will need to take place.

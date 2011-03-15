@@ -28,6 +28,8 @@ Thumbs.db
 Docs/doxygen
 PBProject/build
 Xcode/build
+Xcode/stepmania.xcodeproj/xcuserdata
+Xcode/stepmania.xcodeproj/project.xcworkspace/xcuserdata
 src/build-*
 src/Release-*
 src/libtomcrypt/build-*
@@ -35,6 +37,7 @@ src/libtomcrypt/Release-*
 src/libtommath/build-*
 src/libtommath/Release-*
 src/*.old
+src/.deps
 ver.cpp
 lib*_link.a
 Data/UserPrefs

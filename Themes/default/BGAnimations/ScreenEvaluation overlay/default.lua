@@ -1,8 +1,9 @@
 local vStats = STATSMAN:GetCurStageStats();
+
 local function CreateStats( pnPlayer )
 	-- Actor Templates
-	local aLabel = LoadFont("Common Normal") .. { Text="..."; InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
-	local aText = LoadFont("Common Normal") .. { Text="..."; InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
+	local aLabel = LoadFont("Common Normal") .. { InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
+	local aText = LoadFont("Common Normal") .. { InitCommand=cmd(zoom,0.5;shadowlength,1;horizalign,left); };
 	-- DA STATS, JIM!!
 	local pnStageStats = vStats:GetPlayerStageStats( pnPlayer );
 	-- Organized Stats.
@@ -28,12 +29,11 @@ local function CreateStats( pnPlayer )
 		MIGS		= ( tStats["W1"]*3 + tStats["W2"]*2 + tStats["W3"] - tStats["W5"]*4 - tStats["Miss"]*8 + tStats["Held"]*6 ),
 		-- (marvcount + perfcount + greatcount + goodcount + boocount + misscount)*3 + (okcount + ngcount)*6
 		MIGS_MAX	= ( (tStats["W1"] + tStats["W2"] + tStats["W3"] + tStats["W4"] + tStats["W5"] + tStats["Miss"])*3 + (tStats["Held"] + tStats["LetGo"])*6 ),
-		
 	};
-	--
+
 	local t = Def.ActorFrame {};
 	t[#t+1] = Def.ActorFrame {
-		InitCommand=cmd(y,-32);
+		InitCommand=cmd(y,-34);
 		LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
 			InitCommand=cmd(zoom,0.875;diffuse,PlayerColor( pnPlayer ));
 		};
@@ -43,7 +43,7 @@ local function CreateStats( pnPlayer )
 		aText .. { Text=string.format("%04i",tValues["ITG_MAX"]); InitCommand=cmd(x,32;y,5;vertalign,bottom;zoom,0.5); };
 	};
 	t[#t+1] = Def.ActorFrame {
-		InitCommand=cmd(y,-16);
+		InitCommand=cmd(y,-6);
 		LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
 			InitCommand=cmd(zoom,0.875;diffuse,PlayerColor( pnPlayer ));
 		};
@@ -52,20 +52,13 @@ local function CreateStats( pnPlayer )
 		aText .. { Text="/"; InitCommand=cmd(x,28;y,5;vertalign,bottom;zoom,0.5;diffusealpha,0.5); };
 		aText .. { Text=string.format("%04i",tValues["MIGS_MAX"]); InitCommand=cmd(x,32;y,5;vertalign,bottom;zoom,0.5); };
 	};
-	t[#t+1] = Def.ActorFrame {
-		InitCommand=cmd(y,0);
-		LoadActor(THEME:GetPathG("ScreenTitleMenu","PreferenceFrame")) .. {
-			InitCommand=cmd(zoom,0.875;diffuse,PlayerColor( pnPlayer ));
-		};
-		aLabel .. { Text="Signed:"; InitCommand=cmd(x,-64) };
-		aText .. { Text=string.format( #(tPlayerData[PLAYER_1].SignedJudgments) ); InitCommand=cmd(x,-8;y,5;vertalign,bottom;zoom,0.675); };
-	};
 	return t
 end;
+
+-- xxx: this only currently works for player 1. -aj
 local t = Def.ActorFrame {};
 t[#t+1] = Def.ActorFrame {
-	InitCommand=cmd(x,math.floor(SCREEN_CENTER_X*0.5)-8;y,SCREEN_CENTER_Y);
-	--
+	InitCommand=cmd(x,WideScale(math.floor(SCREEN_CENTER_X*0.3)-8,math.floor(SCREEN_CENTER_X*0.5)-8);y,SCREEN_CENTER_Y);
 	CreateStats( PLAYER_1 );
 };
 return t

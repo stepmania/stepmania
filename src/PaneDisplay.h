@@ -11,21 +11,24 @@
 class XNode;
 #include "LocalizedString.h"
 
-/* If the same piece of data is in multiple panes, use separate contents entries,
+/**
+ * @brief The various categories used to display data on Steps.
+ *
+ * If the same piece of data is in multiple panes, use separate contents entries,
  * so it can be themed differently. */
 enum PaneCategory
 {
-	PaneCategory_NumSteps,
-	PaneCategory_Jumps,
-	PaneCategory_Holds,
-	PaneCategory_Rolls,
-	PaneCategory_Mines,
-	PaneCategory_Hands,
-	PaneCategory_Lifts,
-	PaneCategory_Fakes,
-	PaneCategory_MachineHighScore,
-	PaneCategory_MachineHighName,
-	PaneCategory_ProfileHighScore,
+	PaneCategory_NumSteps, /**< The number of steps for the chart. */
+	PaneCategory_Jumps, /**< The number of jumps for the chart. */
+	PaneCategory_Holds, /**< The number of holds for the chart. */
+	PaneCategory_Rolls, /**< The number of rolls for the chart. */
+	PaneCategory_Mines, /**< The number of mines for the chart. */
+	PaneCategory_Hands, /**< The number of hands for the chart. */
+	PaneCategory_Lifts, /**< The number of lifts for the chart. */
+	PaneCategory_Fakes, /**< The number of fakes for the chart. */
+	PaneCategory_MachineHighScore, /**< The high score on the machine. */
+	PaneCategory_MachineHighName, /**< The name associated with the machine high score. */
+	PaneCategory_ProfileHighScore, /**< The personal profile's highest score. */
 	NUM_PaneCategory,
 	PaneCategory_Invalid,
 };

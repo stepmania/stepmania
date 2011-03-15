@@ -93,8 +93,8 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	if( m_pSteps == NULL  &&  m_dc != Difficulty_Invalid )
 	{
 		// Why is this checking for all players?
-		FOREACH_HumanPlayer( pn )
-			if( GAMESTATE->m_PreferredDifficulty[pn] != m_dc )
+		FOREACH_HumanPlayer( human )
+			if( GAMESTATE->m_PreferredDifficulty[human] != m_dc )
 				return false;
 	}
 
@@ -412,7 +412,6 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "fademusic" )
 	{
-		// todo: parse things correctly. -aj
 		if( cmd.m_vsArgs.size() == 3 )
 		{
 			m_bFadeMusic = true;

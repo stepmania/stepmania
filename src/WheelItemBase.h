@@ -19,7 +19,7 @@ enum WheelItemDataType
 	TYPE_PORTAL,	/**< The portal section on the Wheel. */
 	TYPE_COURSE,	/**< A Course on the Wheel. */
 	TYPE_SORT,	/**< A generic sorting item on the Wheel. */
-	//TYPE_CUSTOM
+	TYPE_CUSTOM	/**< A custom item on the Wheel. */
 };
 
 struct WheelItemBaseData

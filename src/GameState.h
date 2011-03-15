@@ -214,16 +214,6 @@ public:
 	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
-	// Metricable noteskin things
-	/*
-	void LoadNoteSkinMetrics( PlayerNumber pn );
-	int			m_iNoteSkinColSpacing[NUM_PLAYERS];
-	int			m_iNoteSkinArrowSize[NUM_PLAYERS];
-	*/
-	// not sure I want to let noteskins change row spacing, as that changes how
-	// the speed mods work... -aj
-	//int			m_iNoteSkinRowSpacing[NUM_PLAYERS];
-
 	float		m_fMusicSecondsVisible;
 	float		m_fSongBeatVisible;
 
@@ -348,6 +338,8 @@ public:
 	float GetGoalPercentComplete( PlayerNumber pn );
 	bool IsGoalComplete( PlayerNumber pn )	{ return GetGoalPercentComplete( pn ) >= 1; }
 
+	bool m_bDopefish;
+
 	// Lua
 	void PushSelf( lua_State *L );
 
@@ -356,6 +348,9 @@ private:
 	EarnedExtraStage	CalculateEarnedExtraStage() const;
 	int	m_iAwardedExtraStages[NUM_PLAYERS];
 	bool	m_bEarnedExtraStage;
+	
+	GameState(const GameState& rhs);
+	GameState& operator=(const GameState& rhs);
 
 };
 

@@ -29,6 +29,7 @@ Model::Model()
 	m_fDefaultAnimationRate = 1;
 	m_fCurAnimationRate = 1;
 	m_bLoop = true;
+	m_bDrawCelShaded = false;
 	m_pTempGeometry = NULL;
 }
 
@@ -288,18 +289,19 @@ bool Model::EarlyAbortDraw() const
 
 void Model::DrawCelShaded()
 {
-	// TODO: use shell shader for outline.
-	this->SetZWrite( true );
-
-	// First pass: outline/shell
-//	DISPLAY->SetCelShaded(1);
+	// First pass: shell. We only want the backfaces for this.
+	DISPLAY->SetCelShaded(1);
+	DISPLAY->SetCullMode(CULL_FRONT);
+	this->SetZWrite(false); // XXX: Why on earth isn't the culling working? -Colby
 	this->Draw();
 	
-	// Second pass: normal shading
-//	DISPLAY->SetCelShaded(2);
-//	this->Draw();
+	// Second pass: cel shading
+	DISPLAY->SetCelShaded(2);
+	DISPLAY->SetCullMode(CULL_BACK);
+	this->SetZWrite(true);
+	this->Draw();
 	
-//	DISPLAY->SetCelShaded(0)
+	DISPLAY->SetCelShaded(0);
 }
 
 void Model::DrawPrimitives()
@@ -779,6 +781,7 @@ public:
 	static int loop( T* p, lua_State *L )		{ p->SetLoop(BArg(1)); return 0; }
 	static int rate( T* p, lua_State *L )		{ p->SetRate(FArg(1)); return 0; }
 	static int GetNumStates( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumStates() ); return 1; }
+	//static int CelShading( T* p, lua_State *L )		{ p->SetCelShading(BArg(1)); return 0; }
 
 	LunaModel()
 	{
@@ -789,6 +792,7 @@ public:
 		ADD_METHOD( rate );
 		// sm-ssc adds:
 		ADD_METHOD( GetNumStates );
+		//ADD_METHOD( CelShading );
 	}
 };
 

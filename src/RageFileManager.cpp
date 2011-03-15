@@ -377,8 +377,8 @@ void RageFileManager::GetDirListing( const RString &sPath_, vector<RString> &Add
 			for( unsigned j = OldStart; j < AddTo.size(); ++j )
 			{
 				/* Skip the trailing slash on the mountpoint; there's already a slash there. */
-				RString &sPath = AddTo[j];
-				sPath.insert( 0, pLoadedDriver->m_sMountPoint, pLoadedDriver->m_sMountPoint.size()-1 );
+				RString &lPath = AddTo[j];
+				lPath.insert( 0, pLoadedDriver->m_sMountPoint, pLoadedDriver->m_sMountPoint.size()-1 );
 			}
 		}
 	}

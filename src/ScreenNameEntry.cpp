@@ -25,7 +25,6 @@
 #include "Song.h"
 #include "StatsManager.h"
 
-
 // Defines specific to ScreenNameEntry
 #define CATEGORY_Y			THEME->GetMetricF(m_sName,"CategoryY")
 #define CATEGORY_ZOOM			THEME->GetMetricF(m_sName,"CategoryZoom")

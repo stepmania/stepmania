@@ -1,4 +1,4 @@
-[as taken from src/ProductInfo.h]
+[as taken from src/ProductInfo.h] (before doxygen)
 
 Version info displayed to the user.
 

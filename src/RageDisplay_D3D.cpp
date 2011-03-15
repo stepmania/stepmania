@@ -34,7 +34,6 @@
 #include <math.h>
 #include <list>
 
-
 RString GetErrorString( HRESULT hr )
 {
 	char szError[1024] = "";
@@ -42,44 +41,40 @@ RString GetErrorString( HRESULT hr )
 	return szError;
 }
 
-
-//
 // Globals
-//
 #if !defined(XBOX)
 HMODULE				g_D3D8_Module = NULL;
 #endif
 LPDIRECT3D8			g_pd3d = NULL;
-LPDIRECT3DDEVICE8		g_pd3dDevice = NULL;
+LPDIRECT3DDEVICE8	g_pd3dDevice = NULL;
 D3DCAPS8			g_DeviceCaps;
-D3DDISPLAYMODE			g_DesktopMode;
-D3DPRESENT_PARAMETERS		g_d3dpp;
-int				g_ModelMatrixCnt=0;
-static bool			g_bSphereMapping[NUM_TextureUnit] = { false, false };
+D3DDISPLAYMODE		g_DesktopMode;
+D3DPRESENT_PARAMETERS	g_d3dpp;
+int					g_ModelMatrixCnt=0;
+static bool		g_bSphereMapping[NUM_TextureUnit] = { false, false };
 
-/* Direct3D doesn't associate a palette with textures.
- * Instead, we load a palette into a slot.  We need to keep track
- * of which texture's palette is stored in what slot. */
+/* Direct3D doesn't associate a palette with textures. Instead, we load a
+ * palette into a slot. We need to keep track of which texture's palette is
+ * stored in what slot. */
 map<unsigned,int>		g_TexResourceToPaletteIndex;
 list<int>			g_PaletteIndex;
 struct TexturePalette { PALETTEENTRY p[256]; };
 map<unsigned,TexturePalette>	g_TexResourceToTexturePalette;
 
-/* Load the palette, if any, for the given texture into a palette slot, and make
- * it current. */
+// Load the palette, if any, for the given texture into a palette slot, and make it current.
 static void SetPalette( unsigned TexResource )
 {
-	/* If the texture isn't paletted, we have nothing to do. */
+	// If the texture isn't paletted, we have nothing to do.
 	if( g_TexResourceToTexturePalette.find(TexResource) == g_TexResourceToTexturePalette.end() )
 		return;
 
-	/* Is the palette already loaded? */
+	// Is the palette already loaded?
 	if( g_TexResourceToPaletteIndex.find(TexResource) == g_TexResourceToPaletteIndex.end() )
 	{
-		/* It's not.  Grab the least recently used slot. */
+		// It's not. Grab the least recently used slot.
 		int iPalIndex = g_PaletteIndex.front();
 
-		/* If any other texture is currently using this slot, mark that palette unloaded. */
+		// If any other texture is currently using this slot, mark that palette unloaded.
 		for( map<unsigned,int>::iterator i = g_TexResourceToPaletteIndex.begin(); i != g_TexResourceToPaletteIndex.end(); ++i )
 		{
 			if( i->second != iPalIndex )
@@ -88,7 +83,7 @@ static void SetPalette( unsigned TexResource )
 			break;
 		}
 
-		/* Load it. */
+		// Load it.
 #if !defined(XBOX)
 		TexturePalette& pal = g_TexResourceToTexturePalette[TexResource];
 		g_pd3dDevice->SetPaletteEntries( iPalIndex, pal.p );
@@ -98,10 +93,10 @@ static void SetPalette( unsigned TexResource )
 
 		g_TexResourceToPaletteIndex[TexResource] = iPalIndex;
 	}
-	
+
 	const int iPalIndex = g_TexResourceToPaletteIndex[TexResource];
 
-	/* Find this palette index in the least-recently-used queue and move it to the end. */
+	// Find this palette index in the least-recently-used queue and move it to the end.
 	for(list<int>::iterator i = g_PaletteIndex.begin(); i != g_PaletteIndex.end(); ++i)
 	{
 		if( *i != iPalIndex )
@@ -184,14 +179,14 @@ static D3DFORMAT D3DFORMATS[NUM_PixelFormat] =
 	D3DFMT_A1R5G5B5,
 	D3DFMT_X1R5G5B5,
 #if defined(XBOX)
-	D3DFMT_UNKNOWN,  /* no RGB */
+	D3DFMT_UNKNOWN,  // no RGB
 #else
 	D3DFMT_R8G8B8,
 #endif
 	D3DFMT_P8,
-	D3DFMT_UNKNOWN, /* no BGR */
-	D3DFMT_UNKNOWN, /* no ABGR */
-	D3DFMT_UNKNOWN, /* X1R5G5B5 */
+	D3DFMT_UNKNOWN, // no BGR
+	D3DFMT_UNKNOWN, // no ABGR
+	D3DFMT_UNKNOWN, // X1R5G5B5
 };
 
 const RageDisplay::PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const
@@ -201,12 +196,10 @@ const RageDisplay::PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFor
 }
 
 
-
 RageDisplay_D3D::RageDisplay_D3D()
 {
 
 }
-
 
 static LocalizedString D3D_NOT_INSTALLED ( "RageDisplay_D3D", "DirectX 8.1 or greater is not installed.  You can download it from:" );
 const RString D3D_URL = "http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en";
@@ -273,10 +266,9 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 	// Save the original desktop format.
 	g_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &g_DesktopMode );
 
-	/* Up until now, all we've done is set up g_pd3d and do some queries.  Now,
-	 * actually initialize the window.  Do this after as many error conditions
-	 * as possible, because if we have to shut it down again we'll flash a window
-	 * briefly. */
+	/* Up until now, all we've done is set up g_pd3d and do some queries. Now,
+	 * actually initialize the window. Do this after as many error conditions as
+	 * possible, because if we have to shut it down again we'll flash a window briefly. */
 	bool bIgnore = false;
 	return SetVideoMode( p, bIgnore );
 }
@@ -299,8 +291,9 @@ RageDisplay_D3D::~RageDisplay_D3D()
 		g_pd3d = NULL;
 	}
 
-	/* Even after we call Release(), D3D may still affect our window.  It seems to subclass
-	 * the window, and never release it.  Free the DLL after destroying the window. */
+	/* Even after we call Release(), D3D may still affect our window. It seems
+	 * to subclass the window, and never release it. Free the DLL after
+	 * destroying the window. */
 #if !defined(XBOX)
 	if( g_D3D8_Module )
 	{
@@ -330,9 +323,9 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	HRESULT hr;
 
 	// If windowed, then bpp is ignored.  Use whatever works.
-	vector<D3DFORMAT> vBackBufferFormats;		// throw all possibilities in here
-	
-	/* When windowed, add all formats; otherwise add only formats that match dwBPP. */
+	vector<D3DFORMAT> vBackBufferFormats; // throw all possibilities in here
+
+	// When windowed, add all formats; otherwise add only formats that match dwBPP.
 	if( iBPP == 16 || bWindowed )
 	{
 		vBackBufferFormats.push_back( D3DFMT_R5G6B5 );
@@ -371,7 +364,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 			fmtDisplay, fmtBackBuffer, bWindowed );
 
 		if( FAILED(hr) )
-			continue;	// skip
+			continue; // skip
 
 		// done searching
 		LOG->Trace( "This will work." );
@@ -384,7 +377,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 
 RString SetD3DParams( bool &bNewDeviceOut )
 {
-	if( g_pd3dDevice == NULL )		// device is not yet created.  We need to create it
+	if( g_pd3dDevice == NULL ) // device is not yet created. We need to create it
 	{
 		bNewDeviceOut = true;
 		HRESULT hr = g_pd3d->CreateDevice(
@@ -419,13 +412,13 @@ RString SetD3DParams( bool &bNewDeviceOut )
 
 	g_pd3dDevice->SetRenderState( D3DRS_NORMALIZENORMALS, TRUE );	
 
-	/* Palettes were lost by Reset(), so mark them unloaded. */
+	// Palettes were lost by Reset(), so mark them unloaded.
 	g_TexResourceToPaletteIndex.clear();
 
 	return RString();
 }
 
-/* If the given parameters have failed, try to lower them. */
+// If the given parameters have failed, try to lower them.
 static bool D3DReduceParams( D3DPRESENT_PARAMETERS *pp )
 {
 	D3DDISPLAYMODE current;
@@ -443,41 +436,41 @@ static bool D3DReduceParams( D3DPRESENT_PARAMETERS *pp )
 		D3DDISPLAYMODE mode;
 		g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, i, &mode );
 
-		/* Never change the format. */
+		// Never change the format.
 		if( mode.Format != current.Format )
 			continue;
-		/* Never increase the parameters. */
+		// Never increase the parameters.
 		if( mode.Height > current.Height || mode.Width > current.Width || mode.RefreshRate > current.RefreshRate )
 			continue;
 
-		/* Never go below 640x480 unless we already are. */
+		// Never go below 640x480 unless we already are.
 		if( (current.Width >= 640 && current.Height >= 480) && (mode.Width < 640 || mode.Height < 480) )
 			continue;
 
-		/* Never go below 60Hz. */
+		// Never go below 60Hz.
 		if( mode.RefreshRate && mode.RefreshRate < 60 )
 			continue;
 
-		/* If mode.RefreshRate is 0, it means "default".  We don't know what that means;
-		 * assume it's 60Hz. */
+		/* If mode.RefreshRate is 0, it means "default". We don't know what
+		 * that means; assume it's 60Hz. */
 
-		/* Higher scores are better. */
+		// Higher scores are better.
 		int iScore = 0;
 		if( current.RefreshRate >= 70 && mode.RefreshRate < 70 )
 		{
-			/* Top priority: we really want to avoid dropping to a refresh rate that's
-			 * below 70Hz. */
+			/* Top priority: we really want to avoid dropping to a refresh rate
+			 * that's below 70Hz. */
 			iScore -= 100000;
 		}
 		else if( mode.RefreshRate < current.RefreshRate )
 		{
-			/* Low priority: We're lowering the refresh rate, but not too far.  current.RefreshRate
-			 * might be 0, in which case this simply gives points for higher refresh
-			 * rates. */
+			/* Low priority: We're lowering the refresh rate, but not too far.
+			 * current.RefreshRate might be 0, in which case this simply gives
+			 * points for higher refresh rates. */
 			iScore += (mode.RefreshRate - current.RefreshRate);
 		}
 
-		/* Medium priority: */
+		// Medium priority:
 		int iResolutionDiff = (current.Height - mode.Height) + (current.Width - mode.Width);
 		iScore -= iResolutionDiff * 100;
 
@@ -534,10 +527,10 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 #else
 	if( XGetVideoStandard() == XC_VIDEO_STANDARD_PAL_I )
 	{
-		/* Get supported video flags. */
+		// Get supported video flags.
 		DWORD VideoFlags = XGetVideoFlags();
-		
-		/* Set pal60 if available. */
+
+		// Set pal60 if available.
 		if( VideoFlags & XC_VIDEO_FLAGS_PAL_60Hz )
 			pD3Dpp->FullScreen_RefreshRateInHz = 60;
 		else
@@ -549,7 +542,6 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 
 	pD3Dpp->Flags = 0;
 
-
 	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
 		pD3Dpp->BackBufferWidth, pD3Dpp->BackBufferHeight, pD3Dpp->BackBufferFormat,
 		pD3Dpp->BackBufferCount,
@@ -560,7 +552,7 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 	);
 }
 
-/* Set the video mode. */
+// Set the video mode.
 RString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDeviceOut )
 {
 	VideoModeParams p = _p;
@@ -572,9 +564,7 @@ RString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 	if( FindBackBufferType( p.windowed, p.bpp ) == D3DFMT_UNKNOWN )	// no possible back buffer formats
 		return ssprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
 
-
-
-	/* Set up and display the window before setting up D3D.  If we don't do this,
+	/* Set up and display the window before setting up D3D. If we don't do this,
 	 * then setting up a fullscreen window (when we're not coming from windowed)
 	 * causes all other windows on the system to be resized to the new resolution. */
 	GraphicsWindow::CreateGraphicsWindow( p );
@@ -586,22 +576,20 @@ RString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 		g_pd3dDevice = D3D__pDevice;
 #endif
 
-	/* Display the window immediately, so we don't display the desktop ... */
-
+	// Display the window immediately, so we don't display the desktop ...
 	while( 1 )
 	{
-		/* Try the video mode. */
+		// Try the video mode.
 		RString sErr = SetD3DParams( bNewDeviceOut );
 		if( sErr.empty() )
 			break;
 
-		/* It failed.  We're probably selecting a video mode that isn't supported.
-		 * If we're fullscreen, search the mode list and find the nearest lower
-		 * mode. */
+		/* It failed. We're probably selecting a video mode that isn't supported.
+		 * If we're fullscreen, search the mode list and find the nearest lower mode. */
 		if( p.windowed || !D3DReduceParams( &g_d3dpp ) )
 			return sErr;
 
-		/* Store the new settings we're about to try. */
+		// Store the new settings we're about to try.
 		p.height = g_d3dpp.BackBufferHeight;
 		p.width = g_d3dpp.BackBufferWidth;
 		if( g_d3dpp.FullScreen_RefreshRateInHz == D3DPRESENT_RATE_DEFAULT )
@@ -610,14 +598,14 @@ RString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 			p.rate = g_d3dpp.FullScreen_RefreshRateInHz;
 	}
 
-	/* Call this again after changing the display mode.  If we're going to a window
-	 * from fullscreen, the first call can't set a larger window than the old fullscreen
-	 * resolution or set the window position. */
+	/* Call this again after changing the display mode. If we're going to a window
+	 * from fullscreen, the first call can't set a larger window than the old
+	 * fullscreen resolution or set the window position. */
 	GraphicsWindow::CreateGraphicsWindow( p );
 
 	ResolutionChanged();
 
-	return RString();	// mode change successful
+	return RString(); // mode change successful
 }
 
 void RageDisplay_D3D::ResolutionChanged()
@@ -683,12 +671,12 @@ void RageDisplay_D3D::EndFrame()
 bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 {
 #if defined(XBOX)
-	// Lazy...  Xbox handles paletted textures completely differently
-	// than regular D3D.  It's not worth writing a bunch of code to handle it.
-	// Paletted textures result in worse cache efficiency anyway (see "Xbox 
-	// Palettized Texture Performance" in XDK).  
-	// So, just force 32bit ARGB textures.  -Chris
-	// This is also needed for XGSwizzleRect().
+	/* Lazy...  Xbox handles paletted textures completely differently than
+	 * regular D3D. It's not worth writing a bunch of code to handle it.
+	 * Paletted textures result in worse cache efficiency anyway (see "Xbox 
+	 * Palettized Texture Performance" in XDK). So, just force 32bit ARGB textures.
+	 * -Chris
+	 * This is also needed for XGSwizzleRect(). */
 	return pixfmt == PixelFormat_RGBA8;
 #endif
 
@@ -722,15 +710,15 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 #if defined(XBOX)
 	return NULL;
 #else
-	/* Get the back buffer. */
+	// Get the back buffer.
 	IDirect3DSurface8* pSurface;
 	g_pd3dDevice->GetBackBuffer( 0, D3DBACKBUFFER_TYPE_MONO, &pSurface );
 
-	/* Get the back buffer description. */
+	// Get the back buffer description.
 	D3DSURFACE_DESC desc;
 	pSurface->GetDesc( &desc );
 
-	/* Copy the back buffer into a surface of a type we support. */
+	// Copy the back buffer into a surface of a type we support.
 	IDirect3DSurface8* pCopy;
 	g_pd3dDevice->CreateImageSurface( desc.Width, desc.Height, D3DFMT_A8R8G8B8, &pCopy );
 
@@ -738,7 +726,7 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 
 	pSurface->Release();
 
-	/* Update desc from the copy. */
+	// Update desc from the copy.
 	pCopy->GetDesc( &desc );
 
 	D3DLOCKED_RECT lr;
@@ -755,7 +743,7 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 	RageSurface *surface = CreateSurfaceFromPixfmt( PixelFormat_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
 	ASSERT( surface );
 
-	/* We need to make a copy, since lr.pBits will go away when we call UnlockRect(). */
+	// We need to make a copy, since lr.pBits will go away when we call UnlockRect().
 	RageSurface *SurfaceCopy = 
 		CreateSurface( surface->w, surface->h,
 			surface->format->BitsPerPixel,
@@ -782,7 +770,7 @@ void RageDisplay_D3D::SendCurrentMatrices()
 	RageMatrix m;
 	RageMatrixMultiply( &m, GetCentering(), GetProjectionTop() );
 
-	/* Convert to OpenGL-style "pixel-centered" coords */
+	// Convert to OpenGL-style "pixel-centered" coords
 	RageMatrix m2 = GetCenteringMatrix( -0.5f, -0.5f, 0, 0 );
 	RageMatrix projection;
 	RageMatrixMultiply( &projection, &m2, &m );
@@ -795,14 +783,13 @@ void RageDisplay_D3D::SendCurrentMatrices()
 	{
 		// Optimization opportunity: Turn off texture transform if not using texture coords.
 		g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
-		
+
 		// If no texture is set for this texture unit, don't bother setting it up.
 		IDirect3DBaseTexture8* pTexture = NULL;
 		g_pd3dDevice->GetTexture( tu, &pTexture );
 		if( pTexture == NULL )
 			 continue;
 		pTexture->Release();
-
 
 		if( g_bSphereMapping[tu] )
 		{
@@ -821,12 +808,10 @@ void RageDisplay_D3D::SendCurrentMatrices()
 		}
 		else
 		{
-			/*
-			 * Direct3D is expecting a 3x3 matrix loaded into the 4x4 in order to transform
-			 * the 2-component texture coordinates.  We currently only use translate and scale,
-			 * and ignore the z component entirely, so convert the texture matrix from
-			 * 4x4 to 3x3 by dropping z.
-			 */
+			/* Direct3D is expecting a 3x3 matrix loaded into the 4x4 in order
+			 * to transform the 2-component texture coordinates. We currently
+			 * only use translate and scale, and ignore the z component entirely,
+			 * so convert the texture matrix from 4x4 to 3x3 by dropping z. */
 
 			const RageMatrix &tex1 = *GetTextureTop();
 			const RageMatrix tex2 = RageMatrix
@@ -1067,12 +1052,10 @@ void RageDisplay_D3D::DrawCompiledGeometryInternal( const RageCompiledGeometry *
 {
 	SendCurrentMatrices();
 
-	/* If lighting is off, then the current material will have no effect.
-	 * We want to still be able to color models with lighting off,
-	 * so shove the material color in texture factor and modify the 
-	 * texture stage to use it instead of the vertex color (our models
-	 * don't have vertex coloring anyway). 
-	 */
+	/* If lighting is off, then the current material will have no effect. We
+	 * want to still be able to color models with lighting off, so shove the
+	 * material color in texture factor and modify the texture stage to use it
+	 * instead of the vertex color (our models don't have vertex coloring anyway). */
 	DWORD bLighting;
 	g_pd3dDevice->GetRenderState( D3DRS_LIGHTING, &bLighting );
 
@@ -1131,17 +1114,19 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, unsigned iTexture )
 	{
 		g_pd3dDevice->SetTexture( tu, NULL );
 
-		// Intentionally commented out.  Don't mess with texture stage state when just setting the texture.  
-		// Model sets its texture modes before setting the final texture.
+		/* Intentionally commented out. Don't mess with texture stage state
+		 * when just setting the texture. Model sets its texture modes before
+		 * setting the final texture. */
 		//g_pd3dDevice->SetTextureStageState( tu, D3DTSS_COLOROP, D3DTOP_DISABLE );
 	}
 	else
 	{
 		IDirect3DTexture8* pTex = (IDirect3DTexture8*) iTexture;
 		g_pd3dDevice->SetTexture( tu, pTex );
-		
-		// Intentionally commented out.  Don't mess with texture stage state when just setting the texture.  
-		// Model sets its texture modes before setting the final texture.
+
+		/* Intentionally commented out. Don't mess with texture stage state
+		 * when just setting the texture. Model sets its texture modes before
+		 * setting the final texture. */
 		//g_pd3dDevice->SetTextureStageState( tu, D3DTSS_COLOROP, D3DTOP_MODULATE );
 
 		// Set palette (if any)
@@ -1188,7 +1173,7 @@ void RageDisplay_D3D::SetTextureMode( TextureUnit tu, TextureMode tm )
 
 void RageDisplay_D3D::SetTextureFiltering( TextureUnit tu, bool b )
 {
-	if( tu >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( tu >= (int) g_DeviceCaps.MaxSimultaneousTextures ) // not supported
 		return;
 
 	g_pd3dDevice->SetTextureStageState( tu, D3DTSS_MINFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
@@ -1222,12 +1207,9 @@ void RageDisplay_D3D::SetBlendMode( BlendMode mode )
 		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ONE );
 		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ZERO );
 		break;
-	/*
-	 * Effects currently missing in D3D:
-	 * BLEND_ALPHA_MASK, BLEND_ALPHA_KNOCK_OUT
+	/* Effects currently missing in D3D: BLEND_ALPHA_MASK, BLEND_ALPHA_KNOCK_OUT
 	 * These two may require DirectX9 since D3DRS_SRCALPHA and D3DRS_DESTALPHA
-	 * don't seem to exist in DX8. -aj
-	 */
+	 * don't seem to exist in DX8. -aj */
 	case BLEND_ALPHA_MASK:
 		// RGB: iSourceRGB = GL_ZERO; iDestRGB = GL_ONE;
 		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ZERO );
@@ -1304,10 +1286,10 @@ void RageDisplay_D3D::SetZTestMode( ZTestMode mode )
 	DWORD dw;
 	switch( mode )
 	{
-	case ZTEST_OFF:				dw = D3DCMP_ALWAYS;		break;
+	case ZTEST_OFF:			dw = D3DCMP_ALWAYS;		break;
 	case ZTEST_WRITE_ON_PASS:	dw = D3DCMP_LESSEQUAL;	break;
 	case ZTEST_WRITE_ON_FAIL:	dw = D3DCMP_GREATER;	break;
-	default:	ASSERT( 0 );
+	default: ASSERT( 0 );
 	}
 	g_pd3dDevice->SetRenderState( D3DRS_ZFUNC, dw );
 }
@@ -1336,11 +1318,9 @@ void RageDisplay_D3D::SetMaterial(
 	)
 {
 	/* If lighting is off, then the current material will have no effect.
-	 * We want to still be able to color models with lighting off,
-	 * so shove the material color in texture factor and modify the 
-	 * texture stage to use it instead of the vertex color (our models
-	 * don't have vertex coloring anyway). 
-	 */
+	 * We want to still be able to color models with lighting off, so shove the
+	 * material color in texture factor and modify the texture stage to use it
+	 * instead of the vertex color (our models don't have vertex coloring anyway). */
 	DWORD bLighting;
 	g_pd3dDevice->GetRenderState( D3DRS_LIGHTING, &bLighting );
 
@@ -1389,15 +1369,15 @@ void RageDisplay_D3D::SetLightDirectional(
 	light.Type = D3DLIGHT_DIRECTIONAL;
 
 	/* Z for lighting is flipped for D3D compared to OpenGL.
-	 * XXX: figure out exactly why this is needed.  Our transforms 
-	 * are probably goofed up, but the Z test is the same for both
-	 * API's, so I'm not sure why we don't see other weirdness. -Chris */
+	 * XXX: figure out exactly why this is needed. Our transforms are probably
+	 * goofed up, but the Z test is the same for both API's, so I'm not sure
+	 * why we don't see other weirdness. -Chris */
 	float position[] = { dir.x, dir.y, -dir.z };
 	memcpy( &light.Direction, position, sizeof(position) );
 	memcpy( &light.Diffuse, diffuse, sizeof(diffuse) );
 	memcpy( &light.Ambient, ambient, sizeof(ambient) );
 	memcpy( &light.Specular, specular, sizeof(specular) );
-	
+
 	// Same as OpenGL defaults.  Not used in directional lights.
 //	light.Attenuation0 = 1;
 //	light.Attenuation1 = 0;
@@ -1494,7 +1474,7 @@ void RageDisplay_D3D::UpdateTexture(
 {
 	IDirect3DTexture8* pTex = (IDirect3DTexture8*)uTexHandle;
 	ASSERT( pTex != NULL );
-	
+
 	RECT rect; 
 	rect.left = xoffset;
 	rect.top = yoffset;
@@ -1503,15 +1483,13 @@ void RageDisplay_D3D::UpdateTexture(
 
 	D3DLOCKED_RECT lr;
 	pTex->LockRect( 0, &lr, &rect, 0 );
-	
+
 	D3DSURFACE_DESC desc;
 	pTex->GetLevelDesc(0, &desc);
 	ASSERT( xoffset+width <= int(desc.Width) );
 	ASSERT( yoffset+height <= int(desc.Height) );
 
-	//
 	// Copy bits
-	//
 #if defined(XBOX)
 	RageSurface *Texture = CreateSurface( width, height, 32,
 			Swap32BE( 0x0000FF00 ),
@@ -1559,7 +1537,7 @@ RageMatrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t, 
 {
 	RageMatrix m = RageDisplay::GetOrthoMatrix( l, r, b, t, zn, zf );
 
-	/* Convert from OpenGL's [-1,+1] Z values to D3D's [0,+1]. */
+	// Convert from OpenGL's [-1,+1] Z values to D3D's [0,+1].
 	RageMatrix tmp;
 	RageMatrixScaling( &tmp, 1, 1, 0.5f );
 	RageMatrixMultiply( &m, &tmp, &m );
@@ -1575,12 +1553,9 @@ void RageDisplay_D3D::SetSphereEnvironmentMapping( TextureUnit tu, bool b )
 	g_bSphereMapping[tu] = b;
 }
 
-void RageDisplay_D3D::SetCelShaded( bool b )
+void RageDisplay_D3D::SetCelShaded( int stage )
 {
-	/* yo AJ doesn't know what the fuck is going on and he's the only one
-	 * of the sm-ssc team who's touched DirectX in C++ (for all of an hour)
-	 * and idkwtf.
-	 */
+	// todo: implement me!
 }
 
 /*

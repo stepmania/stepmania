@@ -74,7 +74,7 @@ function ComboContinue()
 	sGame = GAMESTATE:GetCurrentGame():GetName()
 	local Continue = {
 		dance = GAMESTATE:GetPlayMode() == "PlayMode_Oni" and "TapNoteScore_W2" or "TapNoteScore_W3",
-		pump = "TapNoteScore_W4",
+		pump = "TapNoteScore_W3",
 		beat = "TapNoteScore_W3",
 		kb7 = "TapNoteScore_W3",
 		para = "TapNoteScore_W4"

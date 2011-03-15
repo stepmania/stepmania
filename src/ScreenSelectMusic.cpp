@@ -122,11 +122,8 @@ void ScreenSelectMusic::Init()
 
 	this->SubscribeToMessage( Message_PlayerJoined );
 
-	/* Cache: */
-	/* SSC 
-		Marking for change
-		-- Midiman 
-	*/
+	// Cache these values
+	// Marking for change -- Midiman (why? -aj)
 	m_sSectionMusicPath =		THEME->GetPathS(m_sName,"section music");
 	m_sSortMusicPath =			THEME->GetPathS(m_sName,"sort music");
 	m_sRouletteMusicPath =		THEME->GetPathS(m_sName,"roulette music");
@@ -134,7 +131,6 @@ void ScreenSelectMusic::Init()
 	m_sCourseMusicPath =		THEME->GetPathS(m_sName,"course music");
 	m_sLoopMusicPath =			THEME->GetPathS(m_sName,"loop music");
 	m_sFallbackCDTitlePath =	THEME->GetPathG(m_sName,"fallback cdtitle");
-
 
 	m_TexturePreload.Load( m_sFallbackCDTitlePath );
 
@@ -1380,9 +1376,9 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 				// Don't play start sound. We play it again below on finalized
 				//m_soundStart.Play();
 
-				Message msg("StepsChosen");
-				msg.SetParam( "Player", p );
-				MESSAGEMAN->Broadcast( msg );
+				Message lMsg("StepsChosen");
+				lMsg.SetParam( "Player", p );
+				MESSAGEMAN->Broadcast( lMsg );
 			}
 		}
 
@@ -1667,6 +1663,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_SORT:
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
+	case TYPE_CUSTOM:
 		FOREACH_PlayerNumber( p )
 			m_iSelection[p] = -1;
 
@@ -1725,6 +1722,12 @@ void ScreenSelectMusic::AfterMusicChange()
 				//if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
 				m_sSampleMusicToPlay = m_sRandomMusicPath;
 				break;
+			case TYPE_CUSTOM:
+				bWantBanner = false; // we load it ourself, or should
+				m_Banner.Load( THEME->GetPathG( "Banner", GetMusicWheel()->GetCurWheelItemData( GetMusicWheel()->GetCurrentIndex() )->m_pAction->m_sName.c_str() ) );
+				if( SAMPLE_MUSIC_PREVIEW_MODE != SampleMusicPreviewMode_LastSong )
+					m_sSampleMusicToPlay = m_sSectionMusicPath;
+				break;
 			default:
 				ASSERT(0);
 		}
@@ -1778,19 +1781,19 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	case TYPE_COURSE:
 	{
-		const Course *pCourse = m_MusicWheel.GetSelectedCourse();
+		const Course *lCourse = m_MusicWheel.GetSelectedCourse();
 		const Style *pStyle = NULL;
 		if( CommonMetrics::AUTO_SET_STYLE )
 			pStyle = pCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
 		if( pStyle == NULL )
 			pStyle = GAMESTATE->GetCurrentStyle();
-		pCourse->GetTrails( m_vpTrails, pStyle->m_StepsType );
+		lCourse->GetTrails( m_vpTrails, pStyle->m_StepsType );
 
 		m_sSampleMusicToPlay = m_sCourseMusicPath;
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
 
-		g_sBannerPath = pCourse->GetBannerPath();
+		g_sBannerPath = lCourse->GetBannerPath();
 		if( g_sBannerPath.empty() )
 			m_Banner.LoadFallback();
 
@@ -1861,10 +1864,15 @@ class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
 {
 public:
 	static int GetGoToOptions( T* p, lua_State *L ) { lua_pushboolean( L, p->GetGoToOptions() ); return 1; }
+	static int GetMusicWheel( T* p, lua_State *L ) {
+		p->GetMusicWheel()->PushSelf(L);
+		return 1;
+	}
 
 	LunaScreenSelectMusic()
 	{
   		ADD_METHOD( GetGoToOptions );
+		ADD_METHOD( GetMusicWheel );
 	}
 };
 

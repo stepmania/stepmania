@@ -460,8 +460,8 @@ static bool CompAscending( const pair<Song *, RString> &a, const pair<Song *, RS
 
 void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool bDescending )
 {
-	/* Optimize by pre-writing a string to compare, since doing GetNumNotesWithGrade
-	 * inside the sort is too slow. */
+	/* Optimize by pre-writing a string to compare, since doing
+	 * GetNumNotesWithGrade inside the sort is too slow. */
 	typedef pair< Song *, RString > val;
 	vector<val> vals;
 	vals.reserve( vpSongsInOut.size() );
@@ -472,11 +472,8 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 
 		int iCounts[NUM_Grade];
 		const Profile *pProfile = PROFILEMAN->GetMachineProfile();
-		ASSERT( pProfile ); // XXX: Debugging.
-		const Style *pStyle = GAMESTATE->GetCurrentStyle();
-		ASSERT( pStyle );   // XXX: Debugging.
-		StepsType st = pStyle->m_StepsType;
-		pProfile->GetGrades( pSong, st, iCounts );
+		ASSERT( pProfile );
+		pProfile->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
 
 		RString foo;
 		foo.reserve(256);
@@ -997,7 +994,6 @@ bool SongUtil::GetStepsTypeAndDifficultyFromSortOrder( SortOrder so, StepsType &
 				break;
 			}
 		}
-		break;
 	}
 
 	return true;

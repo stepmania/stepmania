@@ -33,6 +33,9 @@ local ProtimingCmds = {
 local AverageCmds = {
 	Pulse = THEME:GetMetric( "Protiming", "AveragePulseCommand" );
 };
+local TextCmds = {
+	Pulse = THEME:GetMetric( "Protiming", "TextPulseCommand" );
+};
 
 local TNSFrames = {
 	TapNoteScore_W1 = 0;
@@ -62,6 +65,13 @@ t[#t+1] = Def.ActorFrame {
 		Text="";
 		InitCommand=cmd(visible,false);
 		OnCommand=THEME:GetMetric("Protiming","AverageOnCommand");
+		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
+	};
+	LoadFont("Common Normal") .. {
+		Name="TextDisplay";
+		Text="MS";
+		InitCommand=cmd(visible,false);
+		OnCommand=THEME:GetMetric("Protiming","TextOnCommand");
 		ResetCommand=cmd(finishtweening;stopeffect;visible,false);
 	};
 	Def.Quad {
@@ -165,6 +175,9 @@ t[#t+1] = Def.ActorFrame {
 		c.ProtimingAverage:visible( bShowProtiming );
 		c.ProtimingAverage:settextf("%.2f%%",clamp(100 - MakeAverage( tTotalJudgments ) * 1000 ,0,100));
 		AverageCmds['Pulse'](c.ProtimingAverage);
+		
+		c.TextDisplay:visible( bShowProtiming );
+		TextCmds['Pulse'](c.TextDisplay);
 		
 		c.ProtimingGraphBG:visible( bShowProtiming );
 		c.ProtimingGraphUnderlay:visible( bShowProtiming );

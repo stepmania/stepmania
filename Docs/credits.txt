@@ -109,6 +109,10 @@ juanelote
 NitroX72
  * Pump/frame noteskin
 
+Tatsh
+ * A patch to fix building with system ffmpeg
+ (http://ssc.ajworld.net/sm-ssc/bugtracker/view.php?id=218)
+
 ==the beta testers==
 [SSC Beta Testing Team]
 KeithD

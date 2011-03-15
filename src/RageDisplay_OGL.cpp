@@ -332,16 +332,18 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asD
 
 GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
 {
+	// Don't do anything here if not the hardware/driver can't do it!
 	if( !GLExt.m_bGL_ARB_fragment_shader && ShaderType == GL_FRAGMENT_SHADER_ARB )
 		return 0;
 	if( !GLExt.m_bGL_ARB_vertex_shader && ShaderType == GL_VERTEX_SHADER_ARB )
 		return 0;
 
+	// XXX: dumb, but I don't feel like refactoring ragedisplay for this. -Colby
 	GLhandleARB secondaryShader = 0;
-	if( sFile == "Data/Shaders/GLSL/Cel.vert" )
-	{
+	if ( sFile == "Data/Shaders/GLSL/Cel.vert" )
 		secondaryShader = CompileShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Cel.frag", asDefines);
-	}
+	else if ( sFile == "Data/Shaders/GLSL/Shell.vert" )
+		secondaryShader = CompileShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Shell.frag", asDefines);
 	
 	GLhandleARB hShader = CompileShader( ShaderType, sFile, asDefines );
 	if( hShader == 0 )
@@ -349,7 +351,8 @@ GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefi
 
 	GLhandleARB hProgram = GLExt.glCreateProgramObjectARB();
 	GLExt.glAttachObjectARB( hProgram, hShader );
-	if( secondaryShader != 0 )
+	
+	if( secondaryShader )
 	{
 		GLExt.glAttachObjectARB( hProgram, secondaryShader );
 		GLExt.glDeleteObjectARB( secondaryShader );
@@ -380,6 +383,7 @@ static GLhandleARB g_hHardMixShader = 0;
 static GLhandleARB g_hOverlayShader = 0;
 static GLhandleARB g_hScreenShader = 0;
 static GLhandleARB g_hYUYV422Shader = 0;
+static GLhandleARB g_gShellShader = 0;
 static GLhandleARB g_gCelShader = 0;
 
 void InitShaders()
@@ -388,16 +392,23 @@ void InitShaders()
 	// the shaders and determines shader type by file extension. -aj
 	// argh shaders in stepmania are painful -colby
 	vector<RString> asDefines;
-	g_bTextureMatrixShader = LoadShader( GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Texture matrix scaling.vert", asDefines );
-	g_bUnpremultiplyShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Unpremultiply.frag", asDefines );
-	g_bColorBurnShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Color burn.frag", asDefines );
-	g_bColorDodgeShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Color dodge.frag", asDefines );
-	g_bVividLightShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Vivid light.frag", asDefines );
-	g_hHardMixShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Hard mix.frag", asDefines );
-	g_hOverlayShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Overlay.frag", asDefines );
-	g_hScreenShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Screen.frag", asDefines );
-	g_hYUYV422Shader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/YUYV422.frag", asDefines );
-	g_gCelShader = LoadShader( GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Cel.vert", asDefines);
+	
+	// used for scrolling textures (I think)
+	g_bTextureMatrixShader = LoadShader(	GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Texture matrix scaling.vert", asDefines );
+	
+	// these two are for dancing characters and are both actually shader pairs
+	g_gShellShader = LoadShader(			GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Shell.vert", asDefines );
+	g_gCelShader = LoadShader(			GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Cel.vert", asDefines );
+	
+	// effects
+	g_bUnpremultiplyShader	= LoadShader(	GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Unpremultiply.frag", asDefines );
+	g_bColorBurnShader	= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Color burn.frag", asDefines );
+	g_bColorDodgeShader	= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Color dodge.frag", asDefines );
+	g_bVividLightShader		= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Vivid light.frag", asDefines );
+	g_hHardMixShader		= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Hard mix.frag", asDefines );
+	g_hOverlayShader		= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Overlay.frag", asDefines );
+	g_hScreenShader		= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Screen.frag", asDefines );
+	g_hYUYV422Shader		= LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/YUYV422.frag", asDefines );
 	
 	// Bind attributes.
 	if( g_bTextureMatrixShader )
@@ -1699,8 +1710,8 @@ bool RageDisplay_OGL::IsEffectModeSupported( EffectMode effect )
 	case EffectMode_ColorDodge:	return g_bColorDodgeShader != 0;
 	case EffectMode_VividLight:	return g_bVividLightShader != 0;
 	case EffectMode_HardMix:	return g_hHardMixShader != 0;
-	case EffectMode_Overlay:	return g_hOverlayShader != 0;
-	case EffectMode_Screen:	return g_hScreenShader != 0;
+	case EffectMode_Overlay:		return g_hOverlayShader != 0;
+	case EffectMode_Screen:		return g_hScreenShader != 0;
 	case EffectMode_YUYV422:	return g_hYUYV422Shader != 0;
 	}
 
@@ -1902,14 +1913,14 @@ void RageDisplay_OGL::SetLightDirectional(
 
 void RageDisplay_OGL::SetCullMode( CullMode mode )
 {
+	if (mode != CULL_NONE)
+		glEnable(GL_CULL_FACE);
 	switch( mode )
 	{
 	case CULL_BACK:
-		glEnable( GL_CULL_FACE );
 		glCullFace( GL_BACK );
 		break;
 	case CULL_FRONT:
-		glEnable( GL_CULL_FACE );
 		glCullFace( GL_FRONT );
 		break;
 	case CULL_NONE:
@@ -2633,29 +2644,23 @@ void RageDisplay_OGL::SetSphereEnvironmentMapping( TextureUnit tu, bool b )
 
 GLint iCelTexture1, iCelTexture2 = NULL;
 
-void RageDisplay_OGL::SetCelShaded( bool b )
+void RageDisplay_OGL::SetCelShaded( int stage )
 {
-	if( GLExt.glUseProgramObjectARB == NULL )
+	if( !GLExt.m_bGL_ARB_fragment_shader )
 		return; // not supported
 
-	GLhandleARB hShader = 0;
-	if( b )
-		GLExt.glUseProgramObjectARB( g_gCelShader );
-	else
-		GLExt.glUseProgramObjectARB( hShader );
-
-	if( !b )
-		return;
-
-	/*
-	 * Optimization: don't get these again if we have already done it.
-	 * Getting data from the GPU is (relatively) slow, avoid it if possible.
-	 */
-	if( !iCelTexture1 )
+	switch ( stage )
 	{
-		iCelTexture1 = GLExt.glGetUniformLocationARB( hShader, "Texture1" );
+	case 1:
+		GLExt.glUseProgramObjectARB( g_gShellShader );
+		break;
+	case 2:
+		GLExt.glUseProgramObjectARB( g_gCelShader );
+		break;
+	default:
+		GLExt.glUseProgramObjectARB( 0 );
+		break;
 	}
-	GLExt.glUniform1iARB( iCelTexture1, 1 );
 }
 
 /*

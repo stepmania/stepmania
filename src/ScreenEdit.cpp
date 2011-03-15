@@ -16,6 +16,7 @@
 #include "LocalizedString.h"
 #include "NoteDataUtil.h"
 #include "NoteSkinManager.h"
+#include "NoteTypes.h"
 #include "NotesWriterSM.h"
 #include "PrefsManager.h"
 #include "RageSoundManager.h"
@@ -78,6 +79,7 @@ AutoScreenMessage( SM_BackFromDelayChange );
 AutoScreenMessage( SM_BackFromTimeSignatureNumeratorChange );
 AutoScreenMessage( SM_BackFromTimeSignatureDenominatorChange );
 AutoScreenMessage( SM_BackFromTickcountChange );
+AutoScreenMessage( SM_BackFromComboChange );
 AutoScreenMessage( SM_DoSaveAndExit );
 AutoScreenMessage( SM_DoExit );
 AutoScreenMessage( SM_SaveSuccessful );
@@ -264,10 +266,11 @@ void ScreenEdit::InitEditMappings()
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_RIGHT_SIDE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_RIGHT_SIDE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	// m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_TAP_ATTACK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_LEFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cn);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_CYCLE_TAP_RIGHT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
 
 	m_EditMappingsDeviceInput.button    [EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
@@ -326,10 +329,8 @@ void ScreenEdit::InitEditMappings()
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_PlayMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = GAME_BUTTON_BACK;
 
-	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_ROLL][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
@@ -578,7 +579,8 @@ static MenuDef g_TimingDataInformation(
 	MenuRowDef( ScreenEdit::delay,				"Edit delay",			true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::time_signature_numerator,	"Edit time signature (top)",	true, EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::time_signature_denominator,	"Edit time signature (bottom)",	true, EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::tickcount,			"Edit tickcount",		true, EditMode_Full, true, true, 0, NULL )
+	MenuRowDef( ScreenEdit::tickcount,			"Edit tickcount",		true, EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::combo,				"Edit combo",			true, EditMode_Full, true, true, 0, NULL )
 );
 
 enum { song_bganimation, song_movie, song_bitmap, global_bganimation, global_movie, global_movie_song_group, global_movie_song_group_and_genre, dynamic_random, baked_random, none };
@@ -728,6 +730,8 @@ void ScreenEdit::Init()
 	m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	m_bReturnToRecordMenuAfterPlay = false;
 	m_fBeatToReturnTo = 0;
+	
+	m_selectedTap = TAP_ORIGINAL_TAP;
 
 	GAMESTATE->m_bGameplayLeadIn.Set( true );
 	GAMESTATE->m_EditMode = EDIT_MODE.GetValue();
@@ -741,7 +745,8 @@ void ScreenEdit::Init()
 	this->AddChild( &m_Background );
 
 	m_SnapDisplay.SetXY( EDIT_X, PLAYER_Y_STANDARD );
-	m_SnapDisplay.Load( PLAYER_1 );
+	m_SnapDisplay.Load();
+	// xxx: hardcoded command -aj
 	m_SnapDisplay.SetZoom( 0.5f );
 	this->AddChild( &m_SnapDisplay );
 
@@ -951,7 +956,7 @@ void ScreenEdit::Update( float fDeltaTime )
 			else if( fSecsHeld > RECORD_HOLD_SECONDS )
 			{
 				// create or extend a hold or roll note
-				TapNote tn = EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) ? TAP_ORIGINAL_ROLL_HEAD: TAP_ORIGINAL_HOLD_HEAD;
+				TapNote tn = EditIsBeingPressed(EDIT_BUTTON_LAY_ROLL) ? TAP_ORIGINAL_ROLL_HEAD: TAP_ORIGINAL_HOLD_HEAD;
 
 				tn.pn = m_InputPlayerNumber;
 				m_NoteDataRecord.AddHoldNote( t, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), tn );
@@ -1021,6 +1026,7 @@ static LocalizedString DESCRIPTION("ScreenEdit", "Description");
 static LocalizedString CHART_STYLE("ScreenEdit", "Chart Style");
 static LocalizedString MAIN_TITLE("ScreenEdit", "Main title");
 static LocalizedString SUBTITLE("ScreenEdit", "Subtitle");
+static LocalizedString TAP_NOTE_TYPE("ScreenEdit", "Tap Note");
 static LocalizedString TAP_STEPS("ScreenEdit", "Tap Steps");
 static LocalizedString JUMPS("ScreenEdit", "Jumps");
 static LocalizedString HANDS("ScreenEdit", "Hands");
@@ -1045,6 +1051,7 @@ static ThemeMetric<RString> DESCRIPTION_FORMAT("ScreenEdit", "DescriptionFormat"
 static ThemeMetric<RString> CHART_STYLE_FORMAT("ScreenEdit", "ChartStyleFormat");
 static ThemeMetric<RString> MAIN_TITLE_FORMAT("ScreenEdit", "MainTitleFormat");
 static ThemeMetric<RString> SUBTITLE_FORMAT("ScreenEdit", "SubtitleFormat");
+static ThemeMetric<RString> TAP_NOTE_TYPE_FORMAT("ScreenEdit", "TapNoteTypeFormat");
 static ThemeMetric<RString> NUM_STEPS_FORMAT("ScreenEdit", "NumStepsFormat");
 static ThemeMetric<RString> NUM_JUMPS_FORMAT("ScreenEdit", "NumJumpsFormat");
 static ThemeMetric<RString> NUM_HOLDS_FORMAT("ScreenEdit", "NumHoldsFormat");
@@ -1113,6 +1120,7 @@ void ScreenEdit::UpdateTextInfo()
 		sText += ssprintf( MAIN_TITLE_FORMAT.GetValue(), MAIN_TITLE.GetValue().c_str(), m_pSong->m_sMainTitle.c_str() );
 		if( m_pSong->m_sSubTitle.size() )
 			sText += ssprintf( SUBTITLE_FORMAT.GetValue(), SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
+		sText += ssprintf( TAP_NOTE_TYPE_FORMAT.GetValue(), TAP_NOTE_TYPE.GetValue().c_str(), TapNoteTypeToString( m_selectedTap.type ).c_str() );
 		break;
 	}
 	sText += ssprintf( NUM_STEPS_FORMAT.GetValue(), TAP_STEPS.GetValue().c_str(), m_NoteDataEdit.GetNumTapNotes() );
@@ -1293,43 +1301,48 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, TAP_EMPTY );
 				// Don't CheckNumberOfNotesAndUndo.  We don't want to revert any change that removes notes.
 			}
-			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
-			{
-				m_soundAddNote.Play();
-				SetDirty( true );
-				SaveUndo();
-				TapNote tn = TAP_ORIGINAL_MINE;
-				tn.pn = m_InputPlayerNumber;
-				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, tn );
-				CheckNumberOfNotesAndUndo();
-			}
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_TAP_ATTACK) )
 			{
 				g_iLastInsertTapAttackTrack = iCol;
 				EditMiniMenu( &g_InsertTapAttack, SM_BackFromInsertTapAttack );
-			}
-			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_LIFT) )
-			{
-				m_soundAddNote.Play();
-				SetDirty( true );
-				SaveUndo();
-				TapNote tn = TAP_ORIGINAL_LIFT;
-				tn.pn = m_InputPlayerNumber;
-				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, tn );
-				CheckNumberOfNotesAndUndo();
 			}
 			else
 			{
 				m_soundAddNote.Play();
 				SetDirty( true );
 				SaveUndo();
-				TapNote tn = TAP_ORIGINAL_TAP;
+				TapNote tn = m_selectedTap;
 				tn.pn = m_InputPlayerNumber;
 				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, tn );
 				CheckNumberOfNotesAndUndo();
 			}
 		}
 		break;
+			
+	case EDIT_BUTTON_CYCLE_TAP_LEFT:
+		{
+			switch ( m_selectedTap.type )
+			{
+				case TapNote::tap:	m_selectedTap = TAP_ORIGINAL_FAKE;	break;
+				case TapNote::mine:	m_selectedTap = TAP_ORIGINAL_TAP;	break;
+				case TapNote::lift:	m_selectedTap = TAP_ORIGINAL_MINE;	break;
+				case TapNote::fake:	m_selectedTap = TAP_ORIGINAL_LIFT;	break;
+				DEFAULT_FAIL( m_selectedTap.type );
+			}
+			break;
+		}
+	case EDIT_BUTTON_CYCLE_TAP_RIGHT:
+		{
+			switch ( m_selectedTap.type )
+			{
+				case TapNote::tap:	m_selectedTap = TAP_ORIGINAL_MINE;	break;
+				case TapNote::mine:	m_selectedTap = TAP_ORIGINAL_LIFT;	break;
+				case TapNote::lift:	m_selectedTap = TAP_ORIGINAL_FAKE;	break;
+				case TapNote::fake:	m_selectedTap = TAP_ORIGINAL_TAP;	break;
+				DEFAULT_FAIL( m_selectedTap.type );
+			}
+			break;
+		}
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
@@ -1358,7 +1371,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				break;
 			}
 			iSpeed = clamp( iSpeed, 0, (int) ARRAYLEN(fSpeeds)-1 );
-			
+
 			if( fSpeeds[iSpeed] != fScrollSpeed )
 			{
 				m_soundMarker.Play();
@@ -1388,13 +1401,13 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			case EDIT_BUTTON_SCROLL_UP_LINE:
 			case EDIT_BUTTON_SCROLL_DOWN_LINE:
 				fBeatsToMove = NoteTypeToBeat( m_SnapDisplay.GetNoteType() );
-				if( EditB == EDIT_BUTTON_SCROLL_UP_LINE )	
+				if( EditB == EDIT_BUTTON_SCROLL_UP_LINE )
 					fBeatsToMove *= -1;
 				break;
 			case EDIT_BUTTON_SCROLL_UP_PAGE:
 			case EDIT_BUTTON_SCROLL_DOWN_PAGE:
 				fBeatsToMove = beatsPerMeasure;
-				if( EditB == EDIT_BUTTON_SCROLL_UP_PAGE )	
+				if( EditB == EDIT_BUTTON_SCROLL_UP_PAGE )
 					fBeatsToMove *= -1;
 				break;
 			}
@@ -2103,10 +2116,6 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 				m_NoteDataRecord.SetTapNote( iCol, iHeadRow, TAP_EMPTY );
 
 			TapNote tn = TAP_ORIGINAL_TAP;
-			if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
-				tn = TAP_ORIGINAL_MINE;
-			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_LIFT) )
-				tn = TAP_ORIGINAL_LIFT;
 			tn.pn = m_InputPlayerNumber;
 			m_NoteDataRecord.SetTapNote( iCol, iRow, tn );
 			m_NoteFieldRecord.Step( iCol, TNS_W1 );
@@ -2349,10 +2358,10 @@ void ScreenEdit::TransitionEditState( EditState em )
 		m_Background.Unload();
 		m_Foreground.Unload();
 
-		/* Restore the cursor position. */
+		// Restore the cursor position.
 		GAMESTATE->m_fSongBeat = m_fBeatToReturnTo;
 
-		/* Make sure we're snapped. */
+		// Make sure we're snapped.
 		GAMESTATE->m_fSongBeat = Quantize( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 		/* Playing and recording have lead-ins, which may start before beat 0;
@@ -2499,7 +2508,7 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 		// Don't SaveUndo.  We want to undo the whole hold, not just the last segment
 		// that the user made.  Dragging the hold bigger can only absorb and remove
 		// other taps, so dragging won't cause us to exceed the note limit.
-		TapNote tn = EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) ? TAP_ORIGINAL_ROLL_HEAD : TAP_ORIGINAL_HOLD_HEAD;
+		TapNote tn = EditIsBeingPressed(EDIT_BUTTON_LAY_ROLL) ? TAP_ORIGINAL_ROLL_HEAD : TAP_ORIGINAL_HOLD_HEAD;
 
 		tn.pn = m_InputPlayerNumber;
 		m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, tn );
@@ -2644,9 +2653,18 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if ( SM == SM_BackFromTickcountChange )
 	{
 		int iTick = atoi( ScreenTextEntry::s_sLastAnswer );
-		if ( iTick >= 1 && iTick <= ROWS_PER_BEAT )
+		if ( iTick >= 0 && iTick <= ROWS_PER_BEAT )
 		{
 			m_pSong->m_Timing.SetTickcountAtBeat( GAMESTATE->m_fSongBeat, iTick );
+		}
+		SetDirty( true );
+	}
+	else if ( SM == SM_BackFromComboChange )
+	{
+		int iCombo = atoi( ScreenTextEntry::s_sLastAnswer );
+		if ( iCombo >= 0 )
+		{
+			m_pSong->m_Timing.SetComboAtBeat( GAMESTATE->m_fSongBeat, iCombo );
 		}
 		SetDirty( true );
 	}
@@ -3168,6 +3186,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_TimingDataInformation.rows[time_signature_numerator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureNumeratorAtBeat( fBeat ) ) );
 				g_TimingDataInformation.rows[time_signature_denominator].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTimeSignatureDenominatorAtBeat( fBeat ) ) );
 				g_TimingDataInformation.rows[tickcount].SetOneUnthemedChoice( ssprintf("%d", pTime.GetTickcountAtBeat( fBeat ) ) );
+				g_TimingDataInformation.rows[combo].SetOneUnthemedChoice( ssprintf("%d", pTime.GetComboAtBeat( fBeat ) ) );
 				
 				EditMiniMenu( &g_TimingDataInformation, SM_BackFromTimingDataInformation );
 			}
@@ -3619,6 +3638,7 @@ static LocalizedString ENTER_DELAY_VALUE			( "ScreenEdit", "Enter a new Delay va
 static LocalizedString ENTER_TIME_SIGNATURE_NUMERATOR_VALUE	( "ScreenEdit", "Enter a new Time Signature numerator value." );
 static LocalizedString ENTER_TIME_SIGNATURE_DENOMINATOR_VALUE	( "ScreenEdit", "Enter a new Time Signature denominator value." );
 static LocalizedString ENTER_TICKCOUNT_VALUE			( "ScreenEdit", "Enter a new Tickcount value." );
+static LocalizedString ENTER_COMBO_VALUE			( "ScreenEdit", "Enter a new Combo value." );
 void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice c, const vector<int> &iAnswers )
 {
 	switch( c )
@@ -3675,6 +3695,14 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			2
 			);
 		break;
+	case combo:
+		ScreenTextEntry::TextEntry(
+		   SM_BackFromComboChange,
+		   ENTER_COMBO_VALUE,
+		   ssprintf( "%d", m_pSong->m_Timing.GetComboAtBeat( GAMESTATE->m_fSongBeat ) ),
+		   4
+		   );
+	break;
 	}
 }
 
@@ -4000,7 +4028,6 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Play whole song",				EDIT_BUTTON_PLAY_FROM_START ),
 	EditHelpLine( "Record",						EDIT_BUTTON_RECORD_SELECTION ),
 	EditHelpLine( "Set selection",					EDIT_BUTTON_LAY_SELECT ),
-	EditHelpLine( "Drag area marker",				EDIT_BUTTON_SCROLL_SELECT ),
 	EditHelpLine( "Next/prev steps of same StepsType",		EDIT_BUTTON_OPEN_NEXT_STEPS,		EDIT_BUTTON_OPEN_PREV_STEPS ),
 	EditHelpLine( "Decrease/increase BPM at cur beat",		EDIT_BUTTON_BPM_DOWN,			EDIT_BUTTON_BPM_UP ),
 	EditHelpLine( "Decrease/increase stop at cur beat",		EDIT_BUTTON_STOP_DOWN,			EDIT_BUTTON_STOP_UP ),
@@ -4014,8 +4041,7 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Shift BPM changes and stops down one beat",	EDIT_BUTTON_INSERT_SHIFT_PAUSES ),
 	EditHelpLine( "Delete beat and shift up",			EDIT_BUTTON_DELETE ),
 	EditHelpLine( "Shift BPM changes and stops up one beat",	EDIT_BUTTON_DELETE_SHIFT_PAUSES ),
-	EditHelpLine( "Lay mine",					EDIT_BUTTON_LAY_MINE_OR_ROLL ),
-	EditHelpLine( "Lay lift",					EDIT_BUTTON_LAY_LIFT ),
+	EditHelpLine( "Cycle between tap notes",			EDIT_BUTTON_CYCLE_TAP_LEFT,		EDIT_BUTTON_CYCLE_TAP_RIGHT ),
 	EditHelpLine( "Add to/remove from right half",			EDIT_BUTTON_RIGHT_SIDE ),
 	EditHelpLine( "Switch player (Routine only)",			EDIT_BUTTON_SWITCH_PLAYERS ),
 };

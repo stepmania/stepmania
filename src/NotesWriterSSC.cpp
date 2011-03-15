@@ -180,20 +180,20 @@ static void WriteGlobalTags( RageFile &f, const Song &out )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
-
-	/*
+	
+	
 	ASSERT( !out.m_Timing.m_ComboSegments.empty() );
 	f.Write( "#COMBOS:" );
 	for( unsigned i=0; i<out.m_Timing.m_ComboSegments.size(); i++ )
 	{
 		const ComboSegment &cs = out.m_Timing.m_ComboSegments[i];
 
-		f.PutLine( ssprintf( "%.6f=%d", NoteRowToBeat(cs.m_iStartRow), cs.m_iComboFactor ) );
+		f.PutLine( ssprintf( "%.6f=%d", NoteRowToBeat(cs.m_iStartRow), cs.m_iCombo ) );
 		if( i != out.m_Timing.m_ComboSegments.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
-	*/
+	
 	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )
@@ -301,7 +301,8 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 	lines.push_back( "#DELAYS:;" );
 	lines.push_back( "#TIMESIGNATURES:;" );
 	lines.push_back( "#TICKCOUNTS:;" );
-	// lines.push_back( "#COMBOS:;" );
+	lines.push_back( "#ATTACKS:;" );
+	lines.push_back( "#COMBOS:;" );
 
 	/*
 	vector<RString> asBPMValues;
@@ -364,6 +365,9 @@ static RString GetSSCNoteData( const Song &song, const Steps &in, bool bSavingCa
 
 		asComboValues.push_back( ssprintf( "%.6f=%d", NoteRowToBeat(cs.m_iStartRow), cs.m_iComboFactor ) );
 	}
+	
+	lines.push_back( "#ATTACKS:;" );
+	 
 	lines.push_back( ssprintf( "#COMBOS:%s;", join("\n,", asComboValues).c_str() ) );
 
 	lines.push_back( ssprintf( "#OFFSET:%.6f;", in.m_Timing.m_fBeat0OffsetInSeconds ) );

@@ -27,6 +27,7 @@ enum MusicWheelItemType
 	MusicWheelItemType_Mode,
 	MusicWheelItemType_Random,
 	MusicWheelItemType_Portal,
+	MusicWheelItemType_Custom,
 	NUM_MusicWheelItemType,
 	MusicWheelItemType_Invalid,
 };

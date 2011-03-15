@@ -197,8 +197,9 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
 	const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 	if( iCurRow < int(v.size()) )	// a card
 	{
-		const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
-		const UsbStorageDevice &dev = v[iCurRow];
+		// Why is this statement in twice? Doubt it would change right after the if. -Wolfman2000
+		const vector<UsbStorageDevice> &vUSB = m_CurrentUsbStorageDevices;
+		const UsbStorageDevice &dev = vUSB[iCurRow];
 		MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Set( dev.sOsMountDir );
 
 		/* The destination screen must UnmountCard.  XXX: brittle */

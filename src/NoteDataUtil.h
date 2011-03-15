@@ -24,7 +24,21 @@ namespace NoteDataUtil
 	void GetSMNoteDataString( const NoteData &in, RString &notes_out );
 	void SplitCompositeNoteData( const NoteData &in, vector<NoteData> &out );
 	void CombineCompositeNoteData( NoteData &out, const vector<NoteData> &in );
+	/**
+	 * @brief Autogenerate notes from one type to another.
+	 *
+	 * TODO: Look into a more intelligent way of doing so.
+	 * @param in The original NoteData.
+	 * @param out the new NoteData.
+	 * @param iNewNumTracks the number of tracks/columns of the new NoteData. */
 	void LoadTransformedSlidingWindow( const NoteData &in, NoteData &out, int iNewNumTracks );
+	/**
+	 * @brief Autogenerate notes from one type to another.
+	 *
+	 * NOTE: This code assumes that there are more columns in the original type.
+	 * @param in The original NoteData.
+	 * @param out the new NoteData.
+	 * @param iNewNumTracks the number of tracks/columns of the new NoteData. */
 	void LoadOverlapped( const NoteData &in, NoteData &out, int iNewNumTracks );
 	void LoadTransformedLights( const NoteData &in, NoteData &out, int iNewNumTracks );
 	void LoadTransformedLightsFromTwo( const NoteData &marquee, const NoteData &bass, NoteData &out );

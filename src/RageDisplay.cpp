@@ -760,7 +760,7 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 		int iHeight = 480;
 		// This used to be lrintf. However, lrintf causes odd resolutions like
 		// 639x480 (4:3) and 853x480 (16:9). ceilf gives correct values. -aj
-		int iWidth = ceilf( iHeight * GetActualVideoModeParams().fDisplayAspectRatio );
+		int iWidth = static_cast<int>(ceilf( iHeight * GetActualVideoModeParams().fDisplayAspectRatio ));
 		timer.Touch();
 		RageSurfaceUtils::Zoom( surface, iWidth, iHeight );
 //		LOG->Trace( "%ix%i -> %ix%i (%.3f) in %f seconds", surface->w, surface->h, iWidth, iHeight, GetActualVideoModeParams().fDisplayAspectRatio, timer.GetDeltaTime() );
@@ -810,7 +810,7 @@ void RageDisplay::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( (iNumVerts%4) == 0 );
 
-	if(iNumVerts == 0)
+	if(!iNumVerts)
 		return;
 
 	this->DrawQuadsInternal(v,iNumVerts);

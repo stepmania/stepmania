@@ -1,16 +1,9 @@
-varying vec3 normal, viewVector;
-varying vec4 lightVector, lightColor;
-varying vec2 texCoords;
+varying vec2 vCoord;
+varying vec3 vNor;
 
-void main(void)
-{
-	texCoords = gl_MultiTexCoord0.st;
-	
-	vec4 objectPos = gl_ModelViewMatrix * gl_Vertex;
+void main() {
+	vCoord = gl_MultiTexCoord0.st;
+	vNor = gl_Normal.xyz;
 
-	normal = gl_NormalMatrix * gl_Normal;
-	lightVector = normalize(gl_LightSource[0].position);
-	lightColor = gl_LightSource[0].diffuse;
-	viewVector  = normalize(vec3(0) - objectPos.xyz);
-	gl_Position = ftransform();
+	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

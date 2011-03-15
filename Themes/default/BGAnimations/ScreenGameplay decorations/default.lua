@@ -130,9 +130,12 @@ for pn in ivalues(PlayerNumber) do
 		end;
 	};
 end;
+
+t[#t+1] = StandardDecorationFromFileOptional("ScoreFrame","ScoreFrame");
 t[#t+1] = StandardDecorationFromFileOptional("BPMDisplay","BPMDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("StageDisplay","StageDisplay");
 t[#t+1] = StandardDecorationFromFileOptional("SongTitle","SongTitle");
+
 t[#t+1] = Def.ActorFrame {
 	InitCommand=function(self)
 		self:name("SongMeterDisplay"); 
@@ -157,7 +160,7 @@ t[#t+1] = Def.ActorFrame {
 		OnCommand=cmd(x,scale(0.75,0,1,-380/2,380/2);diffuse,Color("Orange");diffusealpha,0.5);
 	};
 	Def.SongMeterDisplay {
-		StreamWidth=THEME:GetMetric( "SongMeterDisplay", 'StreamWidth' );
+		InitCommand=cmd(SetStreamWidth,THEME:GetMetric( "SongMeterDisplay", 'StreamWidth' ));
 		Stream=LoadActor( THEME:GetPathG( 'SongMeterDisplay', 'stream ' .. PlayerNumberToString(PLAYER_1) ) )..{
 			InitCommand=cmd(diffuse,Color("Orange");diffusealpha,0.5;blend,Blend.Add;);
 		};

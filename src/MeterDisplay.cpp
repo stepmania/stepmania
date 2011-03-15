@@ -17,15 +17,13 @@ MeterDisplay::MeterDisplay()
 
 void MeterDisplay::Load( RString sStreamPath, float fStreamWidth, RString sTipPath )
 {
-	m_fStreamWidth = fStreamWidth;
-
 	m_sprStream.Load( sStreamPath );
-	m_sprStream->SetZoomX( fStreamWidth / m_sprStream->GetUnzoomedWidth() );
 	this->AddChild( m_sprStream );
 
 	m_sprTip.Load( sTipPath );
 	this->AddChild( m_sprTip );
 
+	SetStreamWidth( fStreamWidth );
 	SetPercent( 0.5f );
 }
 
@@ -33,14 +31,10 @@ void MeterDisplay::LoadFromNode( const XNode* pNode )
 {
 	LOG->Trace( "MeterDisplay::LoadFromNode(%s)", ActorUtil::GetWhere(pNode).c_str() );
 
-	if( !pNode->GetAttrValue("StreamWidth", m_fStreamWidth) )
-		RageException::Throw( "%s: MeterDisplay: missing the \"StreamWidth\" attribute", ActorUtil::GetWhere(pNode).c_str() );
-
 	const XNode *pStream = pNode->GetChild( "Stream" );
 	if( pStream == NULL )
 		RageException::Throw( "%s: MeterDisplay: missing the \"Stream\" attribute", ActorUtil::GetWhere(pNode).c_str() );
 	m_sprStream.LoadActorFromNode( pStream, this );
-	m_sprStream->SetZoomX( m_fStreamWidth / m_sprStream->GetUnzoomedWidth() );
 	this->AddChild( m_sprStream );
 
 	const XNode* pChild = pNode->GetChild( "Tip" );
@@ -49,6 +43,10 @@ void MeterDisplay::LoadFromNode( const XNode* pNode )
 		m_sprTip.LoadActorFromNode( pChild, this );
 		this->AddChild( m_sprTip );
 	}
+
+	float fStreamWidth = 0;
+	pNode->GetAttrValue( "StreamWidth", fStreamWidth );
+	SetStreamWidth( fStreamWidth );
 
 	SetPercent( 0.5f );
 
@@ -65,6 +63,12 @@ void MeterDisplay::SetPercent( float fPercent )
 		m_sprTip->SetX( SCALE(fPercent, 0.f, 1.f, -m_fStreamWidth/2, m_fStreamWidth/2) );
 }
 
+void MeterDisplay::SetStreamWidth( float fStreamWidth )
+{
+	m_fStreamWidth = fStreamWidth;
+	m_sprStream->SetZoomX( m_fStreamWidth / m_sprStream->GetUnzoomedWidth() );
+}
+
 void SongMeterDisplay::Update( float fDeltaTime )
 {
 	if( GAMESTATE->m_pCurSong )
@@ -79,6 +83,23 @@ void SongMeterDisplay::Update( float fDeltaTime )
 
 	MeterDisplay::Update( fDeltaTime );
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaMeterDisplay: public Luna<MeterDisplay>
+{
+public:
+	static int SetStreamWidth( T* p, lua_State *L )		{ p->SetStreamWidth(FArg(1)); return 0; }
+
+	LunaMeterDisplay()
+	{
+		ADD_METHOD( SetStreamWidth );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( MeterDisplay, ActorFrame )
+// lua end
 
 /*
  * (c) 2003-2004 Chris Danford

@@ -379,6 +379,7 @@ void ScreenEvaluation::Init()
 			SET_XY( m_sprBonusFrame[p] );
 			this->AddChild( m_sprBonusFrame[p] );
 
+			// todo: convert this to use category names instead of numbers? -aj
 			for( int r=0; r<NUM_SHOWN_RADAR_CATEGORIES; r++ )	// foreach line
 			{
 				m_sprPossibleBar[p][r].Load( THEME->GetPathG(m_sName,ssprintf("BarPossible p%d",p+1)) );

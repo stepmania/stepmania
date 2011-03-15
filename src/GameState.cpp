@@ -159,6 +159,8 @@ GameState::GameState() :
 
 	m_Environment = new LuaTable;
 
+	m_bDopefish = false;
+
 	// Don't reset yet; let the first screen do it, so we can use PREFSMAN and THEME.
 	//Reset();
 
@@ -1447,27 +1449,6 @@ bool GameState::CurrentOptionsDisqualifyPlayer( PlayerNumber pn )
 		return po.IsEasierForSongAndSteps(  m_pCurSong, m_pCurSteps[pn], pn);
 }
 
-/*
-void GameState::LoadNoteSkinMetrics( PlayerNumber pn )
-{
-	// Read metrics from current noteskin for setting row/col spacing and
-	// arrow size (originally from StepMania AMX)
-	if( !IsPlayerEnabled( pn ) )
-		return;
-
-	ASSERT( this->m_pCurSteps[pn] );
-
-	RString m_sNoteSkin = m_pPlayerState[pn]->m_PlayerOptions.GetStage().m_sNoteSkin;
-	RString sStepsType = StringConversion::ToString( this->m_pCurSteps[pn]->m_StepsType );
-	LOG->Trace("Loading Row/Col/Size values for Noteskin %s | StepsType: %s",m_sNoteSkin.c_str(),sStepsType.c_str());
-
-	//m_iNoteSkinRowSpacing[pn] = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "RowSpacing" );
-	// todo: allow per-column spacing values? -aj
-	m_iNoteSkinColSpacing[pn] = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "ColSpacing" );
-	m_iNoteSkinArrowSize[pn] = NOTESKIN->GetMetricI( m_sNoteSkin, sStepsType, "ArrowSize" );
-}
-*/
-
 /* reset noteskins (?)
  * GameState::ResetNoteSkins()
  * GameState::ResetNoteSkinsForPlayer( PlayerNumber pn )
@@ -2380,9 +2361,9 @@ public:
 		return 1;
 	}
 
-	static int GetCurrentStepsCredits( T* p, lua_State *L )
+	static int GetCurrentStepsCredits( T* t, lua_State *L )
 	{
-		const Song* pSong = p->m_pCurSong;
+		const Song* pSong = t->m_pCurSong;
 		if( pSong == NULL )
 			return 0;
 
@@ -2465,6 +2446,11 @@ public:
 		if (c)
 			p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)] = c;
 		return 0;
+	}
+	static int Dopefish( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->m_bDopefish);
+		return 1;
 	}
 
 	LunaGameState()
@@ -2563,6 +2549,7 @@ public:
 		ADD_METHOD( GetCurMusicSeconds );
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );
+		ADD_METHOD( Dopefish );
 	}
 };
 

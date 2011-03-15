@@ -29,6 +29,8 @@ private:
 	float m_fPitchRatio;
 	float m_fLastSetSpeedRatio;
 	float m_fLastSetPitchRatio;
+	// Swallow up warnings. If they must be used, define them.
+	RageSoundReader_PitchChange& operator=(const RageSoundReader_PitchChange& rhs);
 };
 
 #endif

@@ -17,7 +17,7 @@
 
 RandomGen g_RandomNumberGenerator;
 
-MersenneTwister::MersenneTwister( int iSeed )
+MersenneTwister::MersenneTwister( int iSeed ) : m_iNext(0)
 {
 	Reset( iSeed );
 }
@@ -1315,15 +1315,13 @@ void Regex::Release()
 	m_sPattern = RString();
 }
 
-Regex::Regex( const RString &sStr )
+Regex::Regex( const RString &sStr ): m_pReg(NULL), m_iBackrefs(0), m_sPattern(RString())
 {
-	m_pReg = NULL;
 	Set( sStr );
 }
 
-Regex::Regex( const Regex &rhs )
+Regex::Regex( const Regex &rhs ): m_pReg(NULL), m_iBackrefs(0), m_sPattern(RString())
 {
-	m_pReg = NULL;
 	Set( rhs.m_sPattern );
 }
 

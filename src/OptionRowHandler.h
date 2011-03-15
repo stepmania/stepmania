@@ -75,7 +75,18 @@ struct OptionRowDefinition
 		return m_vEnabledForPlayers.find(pn) != m_vEnabledForPlayers.end(); 
 	}
 
-	OptionRowDefinition() { Init(); }
+	OptionRowDefinition(): m_sName(""), m_sExplanationName(""),
+		m_bOneChoiceForAllPlayers(false), m_selectType(SELECT_ONE),
+		m_layoutType(LAYOUT_SHOW_ALL_IN_ROW), m_iDefault(-1),
+		m_bExportOnChange(false), m_bAllowThemeItems(true),
+		m_bAllowThemeTitle(true), m_bAllowExplanation(true),
+		m_bShowChoicesListOnSelect(false)
+	{
+		m_vsChoices.clear();
+		m_vEnabledForPlayers.clear();
+		FOREACH_PlayerNumber( pn )
+		m_vEnabledForPlayers.insert( pn ); 
+	}
 	void Init()
 	{
 		m_sName = "";

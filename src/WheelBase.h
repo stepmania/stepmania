@@ -1,5 +1,3 @@
-/* WheelBase - A wheel with data elements. */
-
 #ifndef WHEELBASE_H
 #define WHEELBASE_H
 
@@ -16,6 +14,7 @@
 
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
 
+/** @brief A wheel with data elements. */
 class WheelBase : public ActorFrame
 {
 public:
@@ -48,6 +47,7 @@ public:
 	WheelItemBaseData* LastSelected();
 	WheelItemBase *GetWheelItem( int i ) { if( i < 0 || i >= (int) m_WheelBaseItems.size() ) return NULL; return m_WheelBaseItems[i]; }
 	RString GetExpandedSectionName() { return m_sExpandedSectionName; }
+	int GetCurrentIndex() { return m_iSelection; }
 
 	// Lua
 	void PushSelf( lua_State *L );

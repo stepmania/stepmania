@@ -194,10 +194,9 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<RString> &AddT
 	GetAllNoteSkinNamesForGame( pGame, AddTo );
 }
 
-
 bool NoteSkinManager::DoesNoteSkinExist( const RString &sSkinName )
 {
-	vector<RString> asSkinNames;	
+	vector<RString> asSkinNames;
 	GetAllNoteSkinNamesForGame( GAMESTATE->m_pCurGame, asSkinNames );
 	for( unsigned i=0; i<asSkinNames.size(); i++ )
 		if( 0==stricmp(sSkinName, asSkinNames[i]) )
@@ -283,22 +282,22 @@ try_again:
 	const NoteSkinData &data = iter->second;
 
 	RString sPath;	// fill this in below
-	FOREACH_CONST( RString, data.vsDirSearchOrder, iter )
+	FOREACH_CONST( RString, data.vsDirSearchOrder, lIter )
 	{
 		if( sButtonName.empty() )
-			sPath = GetPathFromDirAndFile( *iter, sElement );
+			sPath = GetPathFromDirAndFile( *lIter, sElement );
 		else
-			sPath = GetPathFromDirAndFile( *iter, sButtonName+" "+sElement );
+			sPath = GetPathFromDirAndFile( *lIter, sButtonName+" "+sElement );
 		if( !sPath.empty() )
 			break;	// done searching
 	}
 
 	if( sPath.empty() )
 	{
-		FOREACH_CONST( RString, data.vsDirSearchOrder, iter )
+		FOREACH_CONST( RString, data.vsDirSearchOrder, lIter )
 		{
 			if( !sButtonName.empty() )
-				sPath = GetPathFromDirAndFile( *iter, "Fallback "+sElement );
+				sPath = GetPathFromDirAndFile( *lIter, "Fallback "+sElement );
 			if( !sPath.empty() )
 				break;	// done searching
 		}
@@ -341,9 +340,9 @@ try_again:
 		GetFileContents( sPath, sNewFileName, true );
 		RString sRealPath;
 
-		FOREACH_CONST( RString, data.vsDirSearchOrder, iter )
+		FOREACH_CONST( RString, data.vsDirSearchOrder, lIter )
 		{
-			 sRealPath = GetPathFromDirAndFile( *iter, sNewFileName );
+			 sRealPath = GetPathFromDirAndFile( *lIter, sNewFileName );
 			 if( !sRealPath.empty() )
 				 break;	// done searching
 		}

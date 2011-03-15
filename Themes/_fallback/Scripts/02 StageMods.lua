@@ -18,9 +18,17 @@ function ScreenSelectMusic:setupmusicstagemods()
 	local pm = GAMESTATE:GetPlayMode()
 
 	if pm == "PlayMode_Battle" or pm == "PlayMode_Rave" then
-		local so = GAMESTATE:GetDefaultSongOptions() .. ",failoff"
-		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
-		MESSAGEMAN:Broadcast( "SongOptionsChanged" )
+		-- FIX DAT BUG;
+		local sFail = "";
+		if GetGamePref("DefaultFail") then
+			sFail = string.format("Fail%s", GetGamePref("DefaultFail") );
+		else
+			sFail = "Failoff";
+		end;
+		--
+		local so = GAMESTATE:GetDefaultSongOptions() .. "," .. sFail;
+		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so );
+		MESSAGEMAN:Broadcast( "SongOptionsChanged" );
 	elseif GAMESTATE:IsAnExtraStage() then
 		if GAMESTATE:GetPreferredSongGroup() == "---Group All---" then
 			local song = GAMESTATE:GetCurrentSong()
@@ -51,7 +59,7 @@ function ScreenSelectMusic:setupmusicstagemods()
 			MESSAGEMAN:Broadcast( "PlayerOptionsChanged", {PlayerNumber = pn} )
 		end
 		
--- 		if PREFSMAN:GetPreference("
+
 
 		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
 		MESSAGEMAN:Broadcast( "SongOptionsChanged" )

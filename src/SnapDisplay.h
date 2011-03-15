@@ -4,7 +4,6 @@
 #include "ActorFrame.h"
 #include "NoteTypes.h"
 #include "Sprite.h"
-#include "PlayerNumber.h"
 
 /** @brief Graphics on ends of receptors on Edit screen that show the current snap type. */
 class SnapDisplay : public ActorFrame
@@ -12,7 +11,7 @@ class SnapDisplay : public ActorFrame
 public:
 	SnapDisplay();
 
-	void Load( PlayerNumber pn );
+	void Load();
 
 	bool PrevSnapMode();
 	bool NextSnapMode();

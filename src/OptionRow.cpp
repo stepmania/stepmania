@@ -603,7 +603,7 @@ void OptionRow::UpdateEnabledDisabled()
 	case LAYOUT_SHOW_ONE_IN_ROW:
 		FOREACH_HumanPlayer( pn )
 		{
-			bool bRowEnabled = m_pHand->m_Def.m_vEnabledForPlayers.find(pn) != m_pHand->m_Def.m_vEnabledForPlayers.end();
+			bRowEnabled = m_pHand->m_Def.m_vEnabledForPlayers.find(pn) != m_pHand->m_Def.m_vEnabledForPlayers.end();
 			
 			if( !m_pHand->m_Def.m_bOneChoiceForAllPlayers )
 			{

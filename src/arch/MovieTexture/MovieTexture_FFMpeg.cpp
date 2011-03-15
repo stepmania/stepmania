@@ -28,6 +28,7 @@ namespace avcodec
 #endif
 };
 
+/*
 #if defined(_MSC_VER) && !defined(XBOX)
 	#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
 	#pragma comment(lib, "ffmpeg/lib/avformat.lib")
@@ -35,6 +36,7 @@ namespace avcodec
 		#pragma comment(lib, "ffmpeg/lib/swscale.lib")
 	#endif
 #endif // _MSC_VER && !XBOX
+*/
 
 #if defined(XBOX)
 	/* NOTES: ffmpeg static libraries arent included in SVN. You have to build
@@ -685,7 +687,11 @@ int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size )
 	return f->Read( buf, size );
 }
 
-int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
+#if defined(MACOSX) || defined(_MSC_VER) // still using older ffmpeg versions
+	int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
+#else // assume ffmpeg 0.6 on *nix
+	int URLRageFile_write( avcodec::URLContext *h, unsigned char *buf, int size )
+#endif
 {
 	RageFileBasic *f = (RageFileBasic *) h->priv_data;
 	return f->Write( buf, size );

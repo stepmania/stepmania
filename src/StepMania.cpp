@@ -103,7 +103,7 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 	{
 		//float fRatio = PREFSMAN->m_iDisplayWidth / PREFSMAN->m_iDisplayHeight;
 		//iWidth = PREFSMAN->m_iDisplayHeight * fRatio;
-		iWidth = ceilf(PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio);
+		iWidth = static_cast<int>(ceilf(PREFSMAN->m_iDisplayHeight * PREFSMAN->m_fDisplayAspectRatio));
 	}
 
 	// todo: allow for PRODUCT_ID + "-" + CommonMetrics::WINDOW_TITLE as
@@ -917,7 +917,7 @@ static void WriteLogHeader()
 #endif
 
 	// this code should only be enabled in distributed builds
-	//LOG->Info("sm-ssc is Copyright ©2009 the spinal shark collective, all rights reserved. Commercial use of this binary is prohibited by law and will be prosecuted to the fullest extent of the law.");
+	//LOG->Info("sm-ssc is Copyright ï¿½2009 the spinal shark collective, all rights reserved. Commercial use of this binary is prohibited by law and will be prosecuted to the fullest extent of the law.");
 	// end limited code
 
 	time_t cur_time;
@@ -1070,6 +1070,9 @@ int main(int argc, char* argv[])
 
 	CommandLineActions::Handle(pLoadingWindow);
 
+	if( GetCommandlineArgument("dopefish") )
+		GAMESTATE->m_bDopefish = true;
+
 	{
 		/* Now that THEME is loaded, load the icon for the current theme into
 		 * the loading window. */
@@ -1125,7 +1128,7 @@ int main(int argc, char* argv[])
 		ShutdownGame();
 		return 0;
 	}
-	
+
 	StartDisplay();
 
 	StoreActualGraphicOptions();

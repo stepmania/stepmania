@@ -25,7 +25,7 @@ class MutexImpl
 public:
 	RageMutex *m_Parent;
 
-	MutexImpl( RageMutex *pParent ) { m_Parent = pParent; }
+	MutexImpl( RageMutex *pParent ): m_Parent(pParent) {}
 	virtual ~MutexImpl() { }
 
 	/* Lock the mutex.  If mutex timeouts are implemented, and the mutex times out,
@@ -40,6 +40,10 @@ public:
 	/* Unlock the mutex.  This must only be called when the mutex is locked; implementations
 	 * may fail with an assertion if the mutex is not locked. */
 	virtual void Unlock() = 0;
+	
+private:
+	MutexImpl(const MutexImpl& rhs);
+	MutexImpl& operator=(const MutexImpl& rhs);
 };
 
 class EventImpl

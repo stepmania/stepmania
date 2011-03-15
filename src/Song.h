@@ -17,7 +17,7 @@ struct lua_State;
 struct BackgroundChange;
 
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.53f;
+const static float STEPFILE_VERSION_NUMBER = 0.55f;
 
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
@@ -98,7 +98,7 @@ public:
 	 * @brief Translate any titles that aren't in english.
 	 *
 	 * This is called by TidyUpData. */
-	void TranslateTitles();	
+	void TranslateTitles();
 
 	/**
 	 * @brief Save to the new SSC file format.

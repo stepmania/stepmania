@@ -138,17 +138,17 @@ void OptionListRow::SetUnderlines( const vector<bool> &aSelections, const Option
 			if( pTarget->m_Def.m_selectType == SELECT_ONE )
 			{
 				int iSelection = m_pOptions->GetOneSelection(sDest);
-				const OptionRowHandler *pHandler = m_pOptions->m_Rows.find(sDest)->second;
-				int iDefault = pHandler->GetDefaultOption();
+				const OptionRowHandler *lHandler = m_pOptions->m_Rows.find(sDest)->second;
+				int iDefault = lHandler->GetDefaultOption();
 				if( iDefault != -1 && iSelection != iDefault )
 					bSelected |= true;
 			}
 			else if( pTarget->m_Def.m_selectType == SELECT_MULTIPLE )
 			{
 				const vector<bool> &bTargetSelections = m_pOptions->m_bSelections.find(sDest)->second;
-				for( unsigned i=0; i<bTargetSelections.size(); i++ )
+				for( unsigned j=0; j<bTargetSelections.size(); j++ )
 				{
-					if( bTargetSelections[i] )
+					if( bTargetSelections[j] )
 						bSelected = true;
 				}
 			}
@@ -400,10 +400,10 @@ void OptionsList::Input( const InputEventPlus &input )
 					wrap( iSelection, bTargetSelections.size() );
 					SelectItem( sDest, iSelection );
 
-					Message msg("OptionsListQuickChange");
-					msg.SetParam( "Player", pn );
-					msg.SetParam( "Direction", iDir );
-					MESSAGEMAN->Broadcast( msg );
+					Message lMsg("OptionsListQuickChange");
+					lMsg.SetParam( "Player", pn );
+					lMsg.SetParam( "Direction", iDir );
+					MESSAGEMAN->Broadcast( lMsg );
 				}
 			}
 			return;
@@ -426,9 +426,9 @@ void OptionsList::Input( const InputEventPlus &input )
 		wrap( m_iMenuStackSelection, pHandler->m_Def.m_vsChoices.size()+1 ); // +1 for exit row
 		PositionCursor();
 
-		Message msg("OptionsListLeft");
-		msg.SetParam( "Player", input.pn );
-		MESSAGEMAN->Broadcast( msg );
+		Message lMsg("OptionsListLeft");
+		lMsg.SetParam( "Player", input.pn );
+		MESSAGEMAN->Broadcast( lMsg );
 		return;
 	}
 	else if( input.MenuI == GAME_BUTTON_RIGHT )
@@ -447,9 +447,9 @@ void OptionsList::Input( const InputEventPlus &input )
 		wrap( m_iMenuStackSelection, pHandler->m_Def.m_vsChoices.size()+1 ); // +1 for exit row
 		PositionCursor();
 
-		Message msg("OptionsListRight");
-		msg.SetParam( "Player", input.pn );
-		MESSAGEMAN->Broadcast( msg );
+		Message lMsg("OptionsListRight");
+		lMsg.SetParam( "Player", input.pn );
+		MESSAGEMAN->Broadcast( lMsg );
 		return;
 	}
 	else if( input.MenuI == GAME_BUTTON_START )

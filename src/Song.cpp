@@ -41,7 +41,7 @@
  * @brief The internal version of the cache for StepMania.
  *
  * Increment this value to invalidate the current cache. */
-const int FILE_CACHE_VERSION = 165;
+const int FILE_CACHE_VERSION = 166;
 
 /** @brief How long does a song sample last by default? */
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -782,6 +782,15 @@ void Song::TidyUpData()
 		seg.m_iTicks = 2;
 		m_Timing.m_TickcountSegments.push_back( seg );
 	}
+	
+	// Have a default combo segment of one just in case.
+	if( m_Timing.m_ComboSegments.empty() )
+	{
+		ComboSegment seg;
+		seg.m_iStartRow = 0;
+		seg.m_iCombo = 1;
+		m_Timing.m_ComboSegments.push_back( seg );
+	}
 }
 
 void Song::TranslateTitles()
@@ -1046,15 +1055,6 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 		{
 			Steps* pNewNotes = new Steps;
 			pNewNotes->AutogenFrom( pOriginalNotes, ntTo );
-			// Only generate Medium difficulty steps for Pump-Halfdouble, as
-			// that seems to be the only difficulty Half-doubles charts use,
-			// going by Pump Pro. -aj
-			if(ntTo == StepsType_pump_halfdouble && pNewNotes->GetDifficulty() != Difficulty_Medium)
-				continue;
-			// Only generate Medium difficulty steps for Routine modes. -aj
-			if( (ntTo == StepsType_dance_routine || ntTo == StepsType_pump_routine )
-				&& pNewNotes->GetDifficulty() != Difficulty_Medium)
-				continue;
 			this->AddSteps( pNewNotes );
 		}
 	}

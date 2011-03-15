@@ -175,8 +175,15 @@ ThemeMetric<bool> REQUIRE_STEP_ON_MINES	( "Player", "RequireStepOnMines" );
  * For those wishing to make a theme very accurate to In The Groove 2, set this to false. */
 ThemeMetric<bool> ROLL_BODY_INCREMENTS_COMBO	( "Player", "RollBodyIncrementsCombo" );
 ThemeMetric<bool> CHECKPOINTS_TAPS_SEPARATE_JUDGMENT	( "Player", "CheckpointsTapsSeparateJudgment" );
-ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" ); // sm-ssc addition
+/**
+ * @brief Do we score missed holds and rolls with HoldNoteScores?
+ *
+ * If set to true, missed holds and rolls are given LetGo judgments.
+ * If set to false, missed holds and rolls are given no judgment on the hold side of things. */
+ThemeMetric<bool> SCORE_MISSED_HOLDS_AND_ROLLS ( "Player", "ScoreMissedHoldsAndRolls" );
+/** @brief How much of the song/course must have gone by before a Player's combo is colored? */
 ThemeMetric<float> PERCENT_UNTIL_COLOR_COMBO ( "Player", "PercentUntilColorCombo" );
+/** @brief How much combo must be earned before the announcer says "Combo Stopped"? */
 ThemeMetric<int> COMBO_STOPPED_AT ( "Player", "ComboStoppedAt" );
 ThemeMetric<float> ATTACK_RUN_TIME_RANDOM ( "Player", "AttackRunTimeRandom" );
 ThemeMetric<float> ATTACK_RUN_TIME_MINE ( "Player", "AttackRunTimeMine" );
@@ -2806,7 +2813,9 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 		int iCheckpointFrequencyRows = ROWS_PER_BEAT/2;
 		if( CHECKPOINTS_USE_TICKCOUNTS )
 		{
-			iCheckpointFrequencyRows = ROWS_PER_BEAT / GAMESTATE->m_pCurSong->m_Timing.GetTickcountAtRow( iLastRowCrossed );
+			int tickCurrent = GAMESTATE->m_pCurSong->m_Timing.GetTickcountAtRow( iLastRowCrossed );
+			// There are some charts that don't want tickcounts involved at all.
+			iCheckpointFrequencyRows = (tickCurrent > 0 ? ROWS_PER_BEAT / tickCurrent : 0);
 		}
 		else if( CHECKPOINTS_USE_TIME_SIGNATURES )
 		{
@@ -2816,59 +2825,62 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 			iCheckpointFrequencyRows = ROWS_PER_BEAT * tSignature.m_iDenominator / (tSignature.m_iNumerator * 4);
 		}
 
-		// "the first row after the start of the range that lands on a beat"
-		int iFirstCheckpointInRange = ((m_iFirstUncrossedRow+iCheckpointFrequencyRows-1)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
-
-		// "the last row or first row earlier that lands on a beat"
-		int iLastCheckpointInRange = ((iLastRowCrossed)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
-
-		for( int r = iFirstCheckpointInRange; r <= iLastCheckpointInRange; r += iCheckpointFrequencyRows )
+		if( iCheckpointFrequencyRows > 0 )
 		{
-			//LOG->Trace( "%d...", r );
-			vector<int> viColsWithHold;
-			int iNumHoldsHeldThisRow = 0;
-			int iNumHoldsMissedThisRow = 0;
+			// "the first row after the start of the range that lands on a beat"
+			int iFirstCheckpointInRange = ((m_iFirstUncrossedRow+iCheckpointFrequencyRows-1)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
 
-			// start at r-1 so that we consider holds whose end rows are equal to the checkpoint row
-			NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( r-1, r, true );
-			for( ; !iter.IsAtEnd(); ++iter )
+			// "the last row or first row earlier that lands on a beat"
+			int iLastCheckpointInRange = ((iLastRowCrossed)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
+
+			for( int r = iFirstCheckpointInRange; r <= iLastCheckpointInRange; r += iCheckpointFrequencyRows )
 			{
-				TapNote &tn = *iter;
-				if( tn.type != TapNote::hold_head )
-					continue;
+				//LOG->Trace( "%d...", r );
+				vector<int> viColsWithHold;
+				int iNumHoldsHeldThisRow = 0;
+				int iNumHoldsMissedThisRow = 0;
 
-				int iStartRow = iter.Row();
-				int iEndRow = iStartRow + tn.iDuration;
-				int iTrack = iter.Track();
-
-				// "the first row after the hold head that lands on a beat"
-				int iFirstCheckpointOfHold = ((iStartRow+iCheckpointFrequencyRows)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
-
-				// "the end row or the first earlier row that lands on a beat"
-				int iLastCheckpointOfHold = ((iEndRow)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
-
-				// count the end of the hold as a checkpoint
-				bool bHoldOverlapsRow = iFirstCheckpointOfHold <= r  &&   r <= iLastCheckpointOfHold;
-				if( !bHoldOverlapsRow )
-					continue;
-
-				viColsWithHold.push_back( iTrack );
-				if( tn.HoldResult.fLife > 0 )
+				// start at r-1 so that we consider holds whose end rows are equal to the checkpoint row
+				NoteData::all_tracks_iterator nIter = m_NoteData.GetTapNoteRangeAllTracks( r-1, r, true );
+				for( ; !nIter.IsAtEnd(); ++nIter )
 				{
-					++iNumHoldsHeldThisRow;
-					++tn.HoldResult.iCheckpointsHit;
-				}
-				else
-				{
-					++iNumHoldsMissedThisRow;
-					++tn.HoldResult.iCheckpointsMissed;
-				}
-			}
+					TapNote &tn = *nIter;
+					if( tn.type != TapNote::hold_head )
+						continue;
 
-			// TODO: Find a better way of handling hold checkpoints with other taps.
-			if( !viColsWithHold.empty() && ( CHECKPOINTS_TAPS_SEPARATE_JUDGMENT || m_NoteData.GetNumTapNotesInRow( iLastRowCrossed ) == 0 ) )
-			{
-				HandleHoldCheckpoint( r, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow, viColsWithHold );
+					int iStartRow = nIter.Row();
+					int iEndRow = iStartRow + tn.iDuration;
+					int iTrack = nIter.Track();
+
+					// "the first row after the hold head that lands on a beat"
+					int iFirstCheckpointOfHold = ((iStartRow+iCheckpointFrequencyRows)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
+
+					// "the end row or the first earlier row that lands on a beat"
+					int iLastCheckpointOfHold = ((iEndRow)/iCheckpointFrequencyRows) * iCheckpointFrequencyRows;
+
+					// count the end of the hold as a checkpoint
+					bool bHoldOverlapsRow = iFirstCheckpointOfHold <= r  &&   r <= iLastCheckpointOfHold;
+					if( !bHoldOverlapsRow )
+						continue;
+
+					viColsWithHold.push_back( iTrack );
+					if( tn.HoldResult.fLife > 0 )
+					{
+						++iNumHoldsHeldThisRow;
+						++tn.HoldResult.iCheckpointsHit;
+					}
+					else
+					{
+						++iNumHoldsMissedThisRow;
+						++tn.HoldResult.iCheckpointsMissed;
+					}
+				}
+
+				// TODO: Find a better way of handling hold checkpoints with other taps.
+				if( !viColsWithHold.empty() && ( CHECKPOINTS_TAPS_SEPARATE_JUDGMENT || m_NoteData.GetNumTapNotesInRow( iLastRowCrossed ) == 0 ) )
+				{
+					HandleHoldCheckpoint( r, iNumHoldsHeldThisRow, iNumHoldsMissedThisRow, viColsWithHold );
+				}
 			}
 		}
 	}
@@ -3212,7 +3224,7 @@ void Player::SetCombo( int iCombo, int iMisses )
 	if( GAMESTATE->IsCourseMode() )
 	{
 		int iSongIndexStartColoring = GAMESTATE->m_pCurCourse->GetEstimatedNumStages();
-		iSongIndexStartColoring = floor(iSongIndexStartColoring*PERCENT_UNTIL_COLOR_COMBO);
+		iSongIndexStartColoring = static_cast<int>(floor(iSongIndexStartColoring*PERCENT_UNTIL_COLOR_COMBO));
 		bPastBeginning = GAMESTATE->GetCourseSongIndex() >= iSongIndexStartColoring;
 	}
 	else

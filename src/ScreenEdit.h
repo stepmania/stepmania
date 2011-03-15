@@ -9,6 +9,7 @@
 #include "Background.h"
 #include "Foreground.h"
 #include "NoteField.h"
+#include "NoteTypes.h"
 #include "Song.h"
 #include "Steps.h"
 #include "ThemeMetric.h"
@@ -50,10 +51,13 @@ enum EditButton
 
 	// These are modifiers to EDIT_BUTTON_COLUMN_*.
 	EDIT_BUTTON_RIGHT_SIDE,
-	EDIT_BUTTON_LAY_MINE_OR_ROLL,
+	EDIT_BUTTON_LAY_ROLL,
 	EDIT_BUTTON_LAY_TAP_ATTACK,
-	EDIT_BUTTON_LAY_LIFT,
 	EDIT_BUTTON_REMOVE_NOTE,
+	
+	// These are modifiers to change the present tap note.
+	EDIT_BUTTON_CYCLE_TAP_LEFT,
+	EDIT_BUTTON_CYCLE_TAP_RIGHT,
 
 	EDIT_BUTTON_SCROLL_UP_LINE,
 	EDIT_BUTTON_SCROLL_UP_PAGE,
@@ -232,6 +236,9 @@ protected:
 	SnapDisplay		m_SnapDisplay;
 
 	BitmapText		m_textInputTips;
+	
+	/** @brief The current TapNote that would be inserted. */
+	TapNote			m_selectedTap;
 
 	void UpdateTextInfo();
 	BitmapText		m_textInfo; // status information that changes
@@ -448,6 +455,7 @@ public:
 		time_signature_numerator,
 		time_signature_denominator,
 		tickcount,
+		combo,
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
 	
