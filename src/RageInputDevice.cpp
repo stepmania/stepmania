@@ -155,9 +155,6 @@ RString DeviceButtonToString( DeviceButton key )
 	if( key >= MIDI_FIRST && key <= MIDI_LAST )
 		return ssprintf( "Midi %d", key-MIDI_FIRST );
 
-	if( key >= MOUSE_LEFT && key <= MOUSE_WHEELDOWN )
-		return ssprintf( "Mouse %d", key-MOUSE_LEFT );
-
 	map<DeviceButton,RString>::const_iterator it = g_mapNamesToString.find( key );
 	if( it != g_mapNamesToString.end() )
 		return it->second;
