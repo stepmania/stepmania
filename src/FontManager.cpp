@@ -22,7 +22,7 @@ FontManager::~FontManager()
 	{
 		const FontName &fn = i->first;
 		Font* pFont = i->second;
-		if(pFont->m_iRefCount>0) {
+		if(pFont->m_iRefCount > 0) {
 			LOG->Trace( "FONT LEAK: '%s', RefCount = %d.", fn.first.c_str(), pFont->m_iRefCount );
 		}
 		delete pFont;
@@ -53,14 +53,13 @@ Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sCha
 	{
 		pFont=p->second;
 		pFont->m_iRefCount++;
-	}
-	else {
-		pFont= new Font;
-		pFont->Load(sFontOrTextureFilePath, sChars);
-		g_mapPathToFont[NewName] = pFont;
+		return pFont;
 	}
 
-	return pFont;
+	Font *f = new Font;
+	f->Load(sFontOrTextureFilePath, sChars);
+	g_mapPathToFont[NewName] = f;
+	return f;
 }
 
 Font *FontManager::CopyFont( Font *pFont )
@@ -79,16 +78,22 @@ void FontManager::UnloadFont( Font *fp )
 		if(i->second != fp)
 			continue;
 
-		ASSERT_M(fp->m_iRefCount>0,"Attempting to unload a font with zero ref count!");
+		ASSERT_M(fp->m_iRefCount > 0,"Attempting to unload a font with zero ref count!");
 
 		i->second->m_iRefCount--;
 
+		if( fp->m_iRefCount == 0 )
+		{
+			delete i->second;		// free the texture
+			g_mapPathToFont.erase( i );	// and remove the key in the map
+		}
 		return;
 	}
 
 	FAIL_M( ssprintf("Unloaded an unknown font (%p)", fp) );
 }
 
+/*
 void FontManager::PruneFonts() {
 	for( std::map<FontName, Font*>::iterator i = g_mapPathToFont.begin();i != g_mapPathToFont.end();) {
 		Font *fp=i->second;
@@ -101,6 +106,7 @@ void FontManager::PruneFonts() {
 		}
 	}
 }
+*/
 
 /*
  * (c) 2001-2003 Chris Danford, Glenn Maynard
